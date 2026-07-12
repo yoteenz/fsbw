@@ -8,13 +8,13 @@
 
 ## Current sprint
 
-**P0 — Independent Forensic Recorder**
+**P0 — Async Governed Generation Work Orders**
 
-**Status: Complete (instrumentation shipped) — shell stall unresolved.**
+**Status: Complete (code shipped) — production proof pending.**
 
-Append-only IFR ledger independent of RSS/GSPU/Black Box stores; IFR-01…IFR-16 disputed-window instrumentation; mobile raw export; reconciliation table.
+Replaced long-lived synchronous `studio-builder-generate` with FAL queue work orders (202 + poll + resume). Experience Lab validation async on by default.
 
-**Previous:** recordShellStage Job Board RSS forensics (`b9ffb71ea`).
+**Previous:** Independent Forensic Recorder (`cf393dd4a`).
 
 ---
 
@@ -22,7 +22,8 @@ Append-only IFR ledger independent of RSS/GSPU/Black Box stores; IFR-01…IFR-16
 
 | ID | Blocker | Status |
 |----|---------|--------|
-| **B1-Shell** | Shell construction never finishes | **In Progress** — IFR shipped; repair awaits founder IFR export |
+| **B1-Layer1** | Governed generation Layer 1 | **In Progress** — async repair shipped; founder device verification pending |
+| **B1-Shell** | Shell / validation compile | **In Progress** — async submit removes ~95s Load failed transport boundary |
 
 ---
 
@@ -32,18 +33,18 @@ Append-only IFR ledger independent of RSS/GSPU/Black Box stores; IFR-01…IFR-16
 /admin/studio/experience-lab?compilerDiag=1
 ```
 
-1. Tap **Start compile run**
-2. Open **INDEPENDENT FORENSIC RECORDER** (top of Black Box panel)
-3. **Copy raw events** or **Export raw JSON**
-4. Compare IFR-01…IFR-16 sequence with RSS Job Board + GSPU micro-trace exports (same `compileRunId`)
+1. Run validation compile
+2. Submit should return quickly (work order accepted)
+3. Leave page / lock phone — job continues server-side
+4. Return and resume — asset should complete without resubmit
+5. Export IFR + job status JSON if diagnosing
 
-**First missing IFR event after a recorded before-event = next proven repair boundary.**
+**Rollback:** set `ASYNC_GOVERNED_GENERATION_V1=0` on Vercel.
 
 ---
 
 ## References
 
+- `docs/studio-os/creative-services/ASYNC_GOVERNED_GENERATION.md`
 - `docs/studio-os/forensics/INDEPENDENT_FORENSIC_RECORDER.md`
-- `docs/studio-os/forensics/RECORD_SHELL_STAGE_JOB_BOARD.md`
-- `docs/studio-os/forensics/GENERATE_SHELL_DISPATCH_DESK.md`
-- `docs/studio-os/forensics/SHELL_FOUNDATION_BLACK_BOX.md`
+- `docs/studio-os/forensics/LAYER1_GENERATION_500_REPAIR.md`

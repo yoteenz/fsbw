@@ -28,7 +28,7 @@
 | FAL via `studioBuilderGeneration.ts` | **Production** adapter — primary image provider today |
 | Model Orchestrator UI (`/admin/studio/model-orchestrator`) | **Production** — demo/localStorage profile |
 | Multi-provider routing at runtime | **Not implemented** |
-| Async creative job queue | **Not implemented** |
+| Async creative job queue | **In Progress** — `ASYNC_GOVERNED_GENERATION_V1` shipped; see `ASYNC_GOVERNED_GENERATION.md` |
 | Provider failover in governed generation | **Not implemented** |
 | Creative Services as Studio World department | **Conceptual** (this document) |
 

@@ -3,7 +3,7 @@
  * Genesis §9B.28 Phase 1.
  */
 
-import type { GovernedGenerationRequest, GovernedGenerationResult } from '../../../src/studio-os-core/creative-production/types.js';
+import type { GovernedGenerationRequest, GovernedGenerationResult, GovernedGenerationAudit } from '../../../src/studio-os-core/creative-production/types.js';
 import {
   representGovernedGenerationRequest,
   createDemoCreativeInitiative,
@@ -216,6 +216,62 @@ async function executeAssetDirectorGeneration(
       : [],
     referenceImageUrl: typeof e.referenceImageUrl === 'string' ? e.referenceImageUrl : undefined,
   });
+}
+
+export async function validateGovernedGenerationForExecution(
+  request: GovernedGenerationRequest,
+  ctx: GatewayContext
+): Promise<
+  | { ok: false; result: GovernedGenerationResult }
+  | { ok: true; request: GovernedGenerationRequest; audit: GovernedGenerationAudit }
+> {
+  const authResolve = resolveLegacyCompatAuthorization({
+    productionAuthorizationId: request.productionAuthorizationId,
+    productionAuthorization: request.productionAuthorization,
+    validationMode: request.validationMode,
+    compileRunId: request.compileRunId,
+    org_id: request.orgId,
+    previewSessionId:
+      typeof request.execution.previewSessionId === 'string'
+        ? request.execution.previewSessionId
+        : request.productionAuthorization?.scope.previewSessionId,
+    departmentId:
+      typeof request.execution.departmentId === 'string' ? request.execution.departmentId : undefined,
+    stationId: typeof request.execution.stationId === 'string' ? request.execution.stationId : undefined,
+    projectId: typeof request.execution.projectId === 'string' ? request.execution.projectId : undefined,
+  });
+  if ('error' in authResolve) {
+    return { ok: false, result: { ok: false, code: authResolve.code, error: authResolve.error } };
+  }
+
+  const authorization = authResolve.authorization;
+  if (!verifyProductionAuthorizationSignature(authorization)) {
+    return { ok: false, result: { ok: false, code: 'AUTH_SIGNATURE_INVALID', error: 'Invalid ProductionAuthorization signature' } };
+  }
+
+  const initiative = createDemoCreativeInitiative();
+  if (authorization.initiativeId !== initiative.id) {
+    return {
+      ok: false,
+      result: {
+        ok: false,
+        code: 'INITIATIVE_NOT_FOUND',
+        error: `Initiative ${authorization.initiativeId} not found (Phase 2 server persistence pending)`,
+      },
+    };
+  }
+
+  const graphResult = representGovernedGenerationRequest({
+    authorization,
+    initiative,
+    request: { ...request, sourceRoute: ctx.sourceRoute },
+  });
+  if (!graphResult.ok) return { ok: false, result: graphResult };
+
+  const cieBlock = await runCieIfRequired(request);
+  if (cieBlock) return { ok: false, result: cieBlock };
+
+  return { ok: true, request, audit: graphResult.audit };
 }
 
 export async function executeGovernedGeneration(

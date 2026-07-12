@@ -47278,7 +47278,6 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 
 ---
 
-<<<<<<< HEAD
 ## 2026-07-12 — Studio OS Nervous System™ Founder Vision sprint
 
 **Context:** Founder Vision + Core Architecture sprint — permanently establish philosophy and Planned architecture for Studio OS self-observability. Documentation only; not debugging/repair/implementation.
@@ -47298,7 +47297,9 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 **Not updated:** CURRENT_HANDOFF, KNOWN_BLOCKERS.
 
 **Spatial Architecture Review:** SKIPPED — docs-only architecture sprint.
-=======
+
+---
+
 ## 2026-07-12 — P0 Independent Forensic Recorder sprint (full conversation)
 
 **Context:** Founder P0 sprint “move security cameras off the Mansion’s electrical grid.” Prior evidence: RSS proved `recordShellStage()` returned (persist + notify completed); GSPU disagreed (GSPU-02a running, GSPU-02b pending). Diagnostic stores useful but not trustworthy as sole evidence. Goal: one append-only independent recorder — no shell repair.
@@ -47323,7 +47324,32 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 **Repair status:** None. Next repair boundary = first IFR gap after recorded before-event.
 
 **Spatial Architecture Review:** SKIPPED — P0 forensic reliability sprint, no new surfaces.
->>>>>>> 0e621c05a (Add independent forensic recorder for trustworthy shell execution evidence)
+
+---
+
+## 2026-07-12 — P0 Async Governed Generation work-order sprint (full conversation)
+
+**Context:** After IFR proved package resolution + authorization + `requestStudioBuilderGenerate` reached, production failed with ~95.5s pending then `TypeError: Load failed` — synchronous transport boundary. Founder-approved repair: async governed work orders, preserve governance/FAL/Scene Stack, no parallel pipeline.
+
+**Deliverables:**
+- `studio_governed_generation_jobs` Supabase migration + job contract types
+- `async-governed-generation.ts` — submit 202, idempotency, FAL queue, worker, status advance, registry
+- `studioBuilderGeneration.ts` — `fal.queue.submit` + poll/finalize (sync `fal.subscribe` retained for rollback)
+- `studio-builder-generate.ts` — async branch when `ASYNC_GOVERNED_GENERATION_V1` (validation default on)
+- `studio-generation-status.ts`, `studio-generation-worker.ts` API routes
+- Client: `async-job-client.ts`, `requestStudioBuilderGenerate` 202 + poll + localStorage resume
+- `useSceneStack` onProgress hook; vercel.json route config
+- Tests + `ASYNC_GOVERNED_GENERATION.md`; CURRENT_HANDOFF, KNOWN_BLOCKERS, CREATIVE_SERVICES_ROADMAP updates
+
+**Documented Fact:** Sync request failed at ~95.5s with Load failed; governance path succeeded before transport drop.
+
+**Inference:** FAL duration exceeds browser connection lifetime for single long request.
+
+**Status:** In Progress — shipped pending founder mobile proof (submit <2s, page-exit continuity, resume, mount).
+
+**Rollback:** `ASYNC_GOVERNED_GENERATION_V1=0`. Creative Studio requires `ASYNC_GOVERNED_GENERATION_CREATIVE_STUDIO=1`.
+
+**Spatial Architecture Review:** SKIPPED — transport repair on existing governed path, no new surfaces.
 
 ---
 

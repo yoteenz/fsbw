@@ -31,25 +31,40 @@
 
 ---
 
-## B1-Layer1 — Governed generation Layer 1 (VERIFY PENDING)
+## B1-Layer1 — Governed generation Layer 1 (ASYNC REPAIR SHIPPED — VERIFY PENDING)
 
 | Field | Detail |
 |-------|--------|
 | **ID** | B1-Layer1 |
-| **Symptom** | Layer 1 `signature-landmark` — generation failure or incomplete scene |
-| **Depends on** | B0 cleared |
-| **Verify** | Authenticated mobile — CDS `arrival` + Experience Lab `frontal-slayer` concept A |
-| **Status** | **In Progress** — founder device |
+| **Symptom** | Layer 1 / shell generation — `TypeError: Load failed` after ~95.5s synchronous pending |
+| **Proven boundary** | Synchronous HTTP transport waiting for full FAL `fal.subscribe` completion |
+| **Repair** | ASYNC_GOVERNED_GENERATION_V1 — `fal.queue.submit` + persisted job + 202 submit + status poll/resume |
+| **Files** | `async-governed-generation.ts`, `studio-builder-generate.ts`, `studioBuilder/api.ts`, migration `studio_governed_generation_jobs` |
+| **Forensic** | `ASYNC_GOVERNED_GENERATION.md` |
+| **Verify** | Mobile — submit <2s, leave page, return, asset mounts without resubmit |
+| **Status** | **In Progress** — code shipped; founder production proof pending |
+| **Rollback** | `ASYNC_GOVERNED_GENERATION_V1=0` restores synchronous path |
 
-### Unknown
+### Documented Fact
 
-- First provider failure after authenticated handler (if any).
-- Whether governed asset returns and mounts in production for one correlated `compileRunId`.
+- Package resolution, authorization, and `requestStudioBuilderGenerate` entry succeeded before transport failure
+- IFR proved execution through IFR-15/16 window; failure was long-lived fetch not returning JSON
 
 ### Do not
 
-- Add canvas fallback or parallel pipeline
-- Declare restored from compile report or 100% bar alone
+- Declare Creative Studio or Experience Lab restored until founder device proof
+- Remove synchronous path until async verified in production
+
+---
+
+## B1-Shell — Shell foundation (ASYNC TRANSPORT REPAIR — VERIFY PENDING)
+
+| Field | Detail |
+|-------|--------|
+| **ID** | B1-Shell |
+| **Symptom** | Building Shell stall when sync fetch dropped at ~95s |
+| **Repair** | Same async work-order path via `requestStudioBuilderGenerate` 202 handling |
+| **Status** | **In Progress** — awaits founder compile with async submit |
 
 ---
 
@@ -75,36 +90,6 @@
 
 - Treat repair shipped as incident resolved without authenticated device proof
 - Revert to compile-only completion authority
-
----
-
-## B1-Shell — Shell foundation construction stall (IFR SHIPPED — REPAIR NOT STARTED)
-
-| Field | Detail |
-|-------|--------|
-| **ID** | B1-Shell |
-| **Symptom** | Pipeline stops at **Building Shell** — stall at `create-shell-request` |
-| **Instrumentation** | Independent Forensic Recorder + RSS Job Board + GSPU Contractor Directory |
-| **Forensic** | `INDEPENDENT_FORENSIC_RECORDER.md`, `RECORD_SHELL_STAGE_JOB_BOARD.md`, `GENERATE_SHELL_DISPATCH_DESK.md` |
-| **Verify** | Mobile `?compilerDiag=1` — export IFR raw JSON; compare IFR-01…IFR-16 vs RSS/GSPU |
-| **Status** | **In Progress** — observation layer reconciled; repair awaits IFR proven boundary |
-| **Authority** | IFR raw sequence > RSS > GSPU > UI labels |
-
-### Documented Fact
-
-- RSS telemetry proved `recordShellStage()` returned successfully (persist + notify completed)
-- GSPU-02a stayed **running** while GSPU-02b stayed **pending** — stores disagreed
-- Diagnostic stores useful but not sole evidence source until IFR export confirms execution order
-
-### Inference
-
-- GSPU marker sequencing bug (02b skipped `running`) contributed to stale GSPU view
-- Actual runtime boundary unknown until post-deploy IFR founder mobile capture
-
-### Do not
-
-- Implement shell repair without IFR raw ledger from founder device
-- Treat RSS or GSPU alone as proof of where execution stopped
 
 ---
 

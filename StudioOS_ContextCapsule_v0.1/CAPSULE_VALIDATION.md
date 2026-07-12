@@ -8,8 +8,8 @@
 |-------|-------|
 | **Capsule Version** | 0.3.2 |
 | **Manifest Version** | 0.3.2 |
-| **Generation Date (UTC)** | 2026-07-12T18:27:15.806Z |
-| **Repository Commit SHA** | b9ffb71eaba284a72b58cb6a55649b5e4ee8a387 |
+| **Generation Date (UTC)** | 2026-07-12T18:55:56.258Z |
+| **Repository Commit SHA** | cf393dd4af8ad0d4fe18323958a8c43602477ab8 |
 | **Validation Status** | pass |
 | **Documents Included** | README_FIRST.md, MANIFEST.md, ONBOARDING_REPORT.md, FOUNDER_PROFILE.md, CHATGPT_OPERATING_MANUAL.md, AI_STYLE_GUIDE.md, AI_CONTEXT.md, CURRENT_HANDOFF.md, AI_GLOSSARY.md, PROJECT_DNA.md, PROJECT_CHANGELOG.md, PROMPT_LIBRARY.md, ROADMAP.md, KNOWN_BLOCKERS.md, OPEN_QUESTIONS.md |
 | **Manifest Hash (reading order SHA-256)** | 7b10d8a919668fc98dd4f47c7383353032cd3d69e8f39f73ff026a55b12e9b30 |
@@ -57,7 +57,7 @@ Verified:
 
 ### Current Implementation Stage
 
-P0 — Independent Forensic Recorder
+P0 — Async Governed Generation Work Orders
 
 ### Current Active Blockers
 
@@ -75,7 +75,7 @@ B0, B1, B1, B1, B2
 |-------|-------|
 | **Capsule Version** | 0.3.2 |
 | **Manifest Version** | 0.3.2 |
-| **Generated** | 2026-07-12T18:27:15.806Z |
+| **Generated** | 2026-07-12T18:55:56.258Z |
 | **Validation Passed** | YES |
 | **Operational Source of Truth** | CURRENT_HANDOFF.md · KNOWN_BLOCKERS.md · PROJECT_CHANGELOG.md |
 | **Current Handoff Document** | CURRENT_HANDOFF.md |

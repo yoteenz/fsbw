@@ -15,6 +15,11 @@ import type { FounderIntentInput } from '../_lib/creativeIntelligenceEngine/type
 import { adaptLegacyBuilderRequest, ensureValidationEphemeralAuth } from '../_lib/creativeProduction/legacy-adapters.js';
 import { executeGovernedGeneration } from '../_lib/creativeProduction/generation-gateway.js';
 import {
+  isAsyncGovernedGenerationEnabledForRequest,
+  submitGovernedGenerationJobAsync,
+} from '../_lib/creativeProduction/async-governed-generation.js';
+import type { GovernedGenerationRequest } from '../../src/studio-os-core/creative-production/types.js';
+import {
   createGenerationTraceId,
   logGenerationDiagnostic,
   normalizeGenerationError,
@@ -127,6 +132,25 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         error: `${body.skipCie ? 'skipCie' : 'forceGenerate'} is forbidden on material generation paths`,
       });
     }
+  }
+
+  const governedRequest = adapted as GovernedGenerationRequest;
+  if (isAsyncGovernedGenerationEnabledForRequest(governedRequest)) {
+    const asyncResult = await submitGovernedGenerationJobAsync(governedRequest, {
+      sourceRoute: '/api/admin/studio-builder-generate',
+      actorId: auth.user.id,
+      actorEmail: auth.user.email,
+    });
+    if (!asyncResult.ok) {
+      return res.status(asyncResult.status).json(asyncResult.body);
+    }
+    res.setHeader('X-Generation-Trace-Id', asyncResult.body.traceId);
+    return res.status(202).json({
+      ...asyncResult.body,
+      elapsedMs: Date.now() - started,
+      model: 'fal-ai/nano-banana-pro/edit',
+      asyncMode: true,
+    });
   }
 
   const result = await executeGovernedGeneration(adapted, {

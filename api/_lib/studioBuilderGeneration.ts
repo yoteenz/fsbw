@@ -85,6 +85,129 @@ function storagePathFor(input: StudioBuilderGenerateInput): string {
   return `${STUDIO_BUILDER_PREFIX}/${safe(input.departmentId)}/${safe(input.packageId)}/${safe(input.projectId)}/${safe(input.productionGroupId)}/${safe(input.heroAssetId)}/${Date.now()}.${ext}`;
 }
 
+export type StudioBuilderFalQueueSubmitResult =
+  | { ok: true; providerRequestId: string; model: string; imageUrls: string[] }
+  | { ok: false; error: string; failureCategory?: string; providerHttpStatus?: number; providerResponsePreview?: string };
+
+export type StudioBuilderFalQueueStatus = 'IN_QUEUE' | 'IN_PROGRESS' | 'COMPLETED' | 'FAILED' | string;
+
+export async function prepareStudioBuilderFalImageUrls(
+  input: StudioBuilderGenerateInput
+): Promise<{ ok: true; imageUrls: string[] } | { ok: false; error: string }> {
+  const falKey = process.env.FAL_KEY?.trim();
+  if (!falKey) return { ok: false, error: 'FAL_KEY not configured on server' };
+
+  const marbleRef = marbleRefPath();
+  try {
+    const { fal } = await import('@fal-ai/client');
+    fal.config({ credentials: falKey });
+
+    const imageUrls: string[] = [];
+    if (input.referenceImageUrls?.length) {
+      const placementRef = input.referenceImageUrls.find((u) => u?.startsWith('http'));
+      if (placementRef) imageUrls.push(placementRef);
+    }
+    if (imageUrls.length === 0) {
+      imageUrls.push(
+        await uploadLocalOrSiteRefToFal(fal, marbleRef, 'assets/marble-half.png', 'Marble brand anchor')
+      );
+    }
+    return { ok: true, imageUrls };
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : 'Failed to prepare FAL image references' };
+  }
+}
+
+export async function submitStudioBuilderFalQueue(
+  input: StudioBuilderGenerateInput,
+  imageUrls: string[]
+): Promise<StudioBuilderFalQueueSubmitResult> {
+  const falKey = process.env.FAL_KEY?.trim();
+  if (!falKey) return { ok: false, error: 'FAL_KEY not configured on server' };
+
+  try {
+    const { fal } = await import('@fal-ai/client');
+    fal.config({ credentials: falKey });
+    const { request_id: providerRequestId } = await fal.queue.submit(STUDIO_BUILDER_FAL_MODEL, {
+      input: {
+        prompt: input.prompt,
+        image_urls: imageUrls,
+        num_images: 1,
+        aspect_ratio: input.aspectRatio as '16:9',
+        output_format: input.outputFormat,
+      },
+    });
+    return { ok: true, providerRequestId, model: STUDIO_BUILDER_FAL_MODEL, imageUrls };
+  } catch (e) {
+    const isApiError =
+      typeof e === 'object' &&
+      e !== null &&
+      (e as { name?: string }).name === 'ApiError' &&
+      typeof (e as { status?: unknown }).status === 'number';
+    if (isApiError) {
+      const apiErr = e as { message: string; status: number; body?: unknown; requestId?: string };
+      const bodyPreview =
+        typeof apiErr.body === 'string'
+          ? apiErr.body.slice(0, 512)
+          : apiErr.body
+            ? JSON.stringify(apiErr.body).slice(0, 512)
+            : undefined;
+      return {
+        ok: false,
+        error: apiErr.message,
+        failureCategory: apiErr.status >= 500 ? 'PROVIDER_REQUEST_FAILED' : 'PROVIDER_REJECTED',
+        providerHttpStatus: apiErr.status,
+        providerResponsePreview: apiErr.requestId
+          ? `[requestId=${apiErr.requestId}] ${bodyPreview ?? ''}`.trim()
+          : bodyPreview,
+      };
+    }
+    return { ok: false, error: e instanceof Error ? e.message : 'FAL queue submit failed' };
+  }
+}
+
+export async function pollStudioBuilderFalQueue(
+  model: string,
+  providerRequestId: string
+): Promise<{ status: StudioBuilderFalQueueStatus; raw: unknown }> {
+  const falKey = process.env.FAL_KEY?.trim();
+  if (!falKey) throw new Error('FAL_KEY not configured on server');
+  const { fal } = await import('@fal-ai/client');
+  fal.config({ credentials: falKey });
+  const queueStatus = await fal.queue.status(model, { requestId: providerRequestId });
+  const status = String((queueStatus as { status?: string }).status || 'IN_PROGRESS');
+  return { status, raw: queueStatus };
+}
+
+export async function fetchStudioBuilderFalResult(model: string, providerRequestId: string): Promise<string | null> {
+  const falKey = process.env.FAL_KEY?.trim();
+  if (!falKey) throw new Error('FAL_KEY not configured on server');
+  const { fal } = await import('@fal-ai/client');
+  fal.config({ credentials: falKey });
+  const result = await fal.queue.result(model, { requestId: providerRequestId });
+  return (result as { data?: { images?: Array<{ url?: string }> } })?.data?.images?.[0]?.url ?? null;
+}
+
+export async function finalizeStudioBuilderFromFalUrl(
+  input: StudioBuilderGenerateInput,
+  imageUrl: string
+): Promise<StudioBuilderGenerateResult> {
+  try {
+    const mime = input.outputFormat === 'webp' ? 'image/webp' : 'image/png';
+    const path = storagePathFor(input);
+    const upload = await uploadStudioBuilderAssetBytes(await downloadImageToBuffer(imageUrl), path, mime);
+    if (!upload.ok) return { ok: false, error: upload.error };
+    return {
+      ok: true,
+      publicUrl: upload.publicUrl,
+      storagePath: upload.storagePath,
+      model: STUDIO_BUILDER_FAL_MODEL,
+    };
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : 'Finalize failed' };
+  }
+}
+
 export async function uploadStudioBuilderAssetBytes(
   bytes: Buffer,
   storagePath: string,

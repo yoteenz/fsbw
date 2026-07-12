@@ -469,7 +469,12 @@ export function useSceneStack(
           });
         }
 
-        const result = await requestStudioBuilderGenerate(generationPayload);
+        const result = await requestStudioBuilderGenerate(generationPayload, {
+          onProgress: (label) => {
+            setPipelineLayer({ stationId, layerId, phase: 'generating' });
+            void label;
+          },
+        });
 
         if (isLayer1 && isWorldCompilerDiagnosticMode()) {
           if (result.ok && result.publicUrl) {

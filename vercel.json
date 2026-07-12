@@ -48,6 +48,13 @@
       "maxDuration": 120,
       "includeFiles": "api/_lib/creativeProduction/studio-os-server.bundle.js,public/assets/marble-half.png"
     },
+    "api/admin/studio-generation-status.ts": {
+      "maxDuration": 30
+    },
+    "api/admin/studio-generation-worker.ts": {
+      "maxDuration": 120,
+      "includeFiles": "api/_lib/creativeProduction/studio-os-server.bundle.js,public/assets/marble-half.png"
+    },
     "api/admin/studio-foundry-generate.ts": {
       "maxDuration": 120,
       "includeFiles": "api/_lib/creativeProduction/studio-os-server.bundle.js"
@@ -251,7 +258,7 @@
       "headers": [
         {
           "key": "Content-Disposition",
-          "value": "attachment; filename=\"StudioOS_ContextUpdate_v1.0.2.zip\""
+          "value": "attachment; filename=\"StudioOS_ContextUpdate_v1.0.3.zip\""
         },
         {
           "key": "Cache-Control",
@@ -263,11 +270,11 @@
         },
         {
           "key": "X-Capsule-Version",
-          "value": "1.0.2"
+          "value": "1.0.3"
         },
         {
           "key": "X-Capsule-Artifact",
-          "value": "StudioOS_ContextUpdate_v1.0.2.zip"
+          "value": "StudioOS_ContextUpdate_v1.0.3.zip"
         }
       ]
     }

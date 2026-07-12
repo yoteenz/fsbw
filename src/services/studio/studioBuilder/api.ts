@@ -12,8 +12,15 @@ import {
   trackGspuInFlightRequest,
 } from '../../../studio-os/diagnostics/world-compiler-investigation/generate-shell-dispatch-desk';
 import { isWorldCompilerDiagnosticMode } from '../../../studio-os/diagnostics/world-compiler-investigation/diagnostic-mode';
+import {
+  buildGovernedGenerationLayerKey,
+  pollGovernedGenerationJobUntilComplete,
+  savePersistedGovernedGenerationJob,
+} from './async-job-client';
 
 import type { ProductionAuthorization } from '../../../studio-os-core/creative-production/types';
+import type { GovernedGenerationProgressPhase } from '../../../studio-os-core/creative-production/governed-generation-job';
+import { GOVERNED_GENERATION_JOB_UI_LABELS } from '../../../studio-os-core/creative-production/governed-generation-job';
 
 export type StudioBuilderGeneratePayload = {
   departmentId: string;
@@ -45,10 +52,22 @@ export type StudioBuilderGenerateApiResponse = {
   model?: string;
   error?: string;
   code?: string;
+  asyncMode?: boolean;
+  jobId?: string;
+  status?: string;
+  statusUrl?: string;
+  traceId?: string;
+  progressPhase?: GovernedGenerationProgressPhase;
+  progressLabel?: string;
+  assetRegistryId?: string;
+  registryAssetId?: string;
 };
 
+export type StudioBuilderGenerateProgressCallback = (label: string, phase?: GovernedGenerationProgressPhase) => void;
+
 export async function requestStudioBuilderGenerate(
-  payload: StudioBuilderGeneratePayload
+  payload: StudioBuilderGeneratePayload,
+  options?: { onProgress?: StudioBuilderGenerateProgressCallback; signal?: AbortSignal }
 ): Promise<StudioBuilderGenerateApiResponse> {
   const diag = isWorldCompilerDiagnosticMode();
   const promiseKey = `studio-builder:${payload.compileRunId ?? payload.projectId}:${payload.departmentId}`;
@@ -160,6 +179,62 @@ export async function requestStudioBuilderGenerate(
         recordGspuSubStage('GSPU-18-response-parse', 'failed');
         recordGspuFetch({ responseBodyParseFailed: true });
       }
+    }
+
+    if (res.status === 202 && data.jobId) {
+      const layerKey = buildGovernedGenerationLayerKey({
+        compileRunId: payload.compileRunId,
+        stationId: payload.stationId,
+        productionGroupId: payload.productionGroupId,
+        heroAssetId: payload.heroAssetId,
+      });
+      savePersistedGovernedGenerationJob({
+        jobId: data.jobId,
+        statusUrl: data.statusUrl ?? `/api/admin/studio-generation-status?jobId=${encodeURIComponent(data.jobId)}`,
+        traceId: data.traceId ?? '',
+        compileRunId: payload.compileRunId ?? null,
+        stationId: payload.stationId ?? null,
+        layerKey,
+        savedAt: Date.now(),
+      });
+      if (diag) {
+        recordGspuSubStage('GSPU-19-forensic-record', 'success', `async-job:${data.jobId}`);
+        recordGspuSubStage('GSPU-20-api-return', 'success', 'async-202-accepted');
+      }
+      options?.onProgress?.(GOVERNED_GENERATION_JOB_UI_LABELS.accepted, 'accepted');
+      const completed = await pollGovernedGenerationJobUntilComplete(data.jobId, {
+        signal: options?.signal,
+        onProgress: (status) => {
+          const label = GOVERNED_GENERATION_JOB_UI_LABELS[status.progressPhase] ?? status.progressPhase;
+          options?.onProgress?.(label, status.progressPhase);
+          if (diag) recordGspuSubStage('GSPU-20-api-return', 'running', `${status.progressPhase}:${status.progressPct}%`);
+        },
+      });
+      const asyncSuccess: StudioBuilderGenerateApiResponse = {
+        ok: true,
+        publicUrl: completed.publicUrl ?? completed.resultAssetUrl ?? undefined,
+        storagePath: completed.storagePath ?? undefined,
+        model: completed.model ?? data.model,
+        asyncMode: true,
+        jobId: data.jobId,
+        status: completed.status,
+        traceId: completed.traceId,
+        assetRegistryId: completed.registryAssetId ?? undefined,
+        registryAssetId: completed.registryAssetId ?? undefined,
+        progressPhase: 'complete',
+        progressLabel: GOVERNED_GENERATION_JOB_UI_LABELS.complete,
+      };
+      recordGenerationRequestHttpForensic({
+        endpoint,
+        httpStatus: 202,
+        responseText: text,
+        contentType,
+        elapsedMs,
+        jsonParseSucceeded,
+        parsed: data,
+        returnedToCaller: asyncSuccess,
+      });
+      return asyncSuccess;
     }
 
     if (!res.ok) {
