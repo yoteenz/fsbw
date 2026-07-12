@@ -8,8 +8,8 @@
 |-------|-------|
 | **Capsule Version** | 0.3.2 |
 | **Manifest Version** | 0.3.2 |
-| **Generation Date (UTC)** | 2026-07-12T23:39:58.509Z |
-| **Repository Commit SHA** | 8cb795b1a30ae963eee2d3ab50c68e67f3a23333 |
+| **Generation Date (UTC)** | 2026-07-12T23:52:40.738Z |
+| **Repository Commit SHA** | 129ec7ca6f378682ef046dd598c78d1762ae11d8 |
 | **Validation Status** | pass |
 | **Documents Included** | README_FIRST.md, MANIFEST.md, ONBOARDING_REPORT.md, FOUNDER_PROFILE.md, CHATGPT_OPERATING_MANUAL.md, AI_STYLE_GUIDE.md, AI_CONTEXT.md, CURRENT_HANDOFF.md, AI_GLOSSARY.md, PROJECT_DNA.md, PROJECT_CHANGELOG.md, PROMPT_LIBRARY.md, ROADMAP.md, KNOWN_BLOCKERS.md, OPEN_QUESTIONS.md |
 | **Manifest Hash (reading order SHA-256)** | 7b10d8a919668fc98dd4f47c7383353032cd3d69e8f39f73ff026a55b12e9b30 |
@@ -57,7 +57,7 @@ Verified:
 
 ### Current Implementation Stage
 
-P0 — Model Registry + Brand-Grounded Isolated Asset Routing
+P0 — Studio World Architecture v2 (Blueprint → Construction → Living World)
 
 ### Current Active Blockers
 
@@ -75,7 +75,7 @@ B0, B1, B1, B1, B1, B1, B2
 |-------|-------|
 | **Capsule Version** | 0.3.2 |
 | **Manifest Version** | 0.3.2 |
-| **Generated** | 2026-07-12T23:39:58.509Z |
+| **Generated** | 2026-07-12T23:52:40.738Z |
 | **Validation Passed** | YES |
 | **Operational Source of Truth** | CURRENT_HANDOFF.md · KNOWN_BLOCKERS.md · PROJECT_CHANGELOG.md |
 | **Current Handoff Document** | CURRENT_HANDOFF.md |

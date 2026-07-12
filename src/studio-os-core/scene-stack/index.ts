@@ -28,3 +28,4 @@ export * from './isolated-layer-quality';
 export * from './layer-quality-recovery';
 export * from './verified-asset-production';
 export * from './world-compiler';
+export * from '../studio-world-architecture-v2';

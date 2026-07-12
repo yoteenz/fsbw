@@ -8,13 +8,13 @@
 
 ## Current sprint
 
-**P0 — Model Registry + Brand-Grounded Isolated Asset Routing**
+**P0 — Studio World Architecture v2 (Blueprint → Construction → Living World)**
 
-**Status: Complete (code shipped) — founder mobile verification pending.**
+**Status: Complete (foundation shipped) — Experience Lab v2 orchestrator integration pending.**
 
-Promotes `fal-ai/nano-banana-2` as production default for isolated Scene Stack assets. Environment shell remains `fal-ai/nano-banana-pro/edit`. Configuration-driven Model Registry (`layer-model-routing.v2`) + Brand Asset Grounding with exact Frontal Slayer marble (`/assets/marble-half.png`). Material fidelity validation in verified pipeline. Evidence panel expanded.
+Canonical hierarchy: Building → Floor → Room Blueprint → Architecture → Hero → Furniture → Decor → Materials → Lighting → Assembly → Immune → Living World. BlueprintShell immutable. Localized recovery. Material library only.
 
-**Previous:** Verified Asset Production Pipeline (`8cb795b1a`).
+**Previous:** Model Registry + Brand-Grounded NB2 (`129ec7ca6`).
 
 ---
 
@@ -22,30 +22,14 @@ Promotes `fal-ai/nano-banana-2` as production default for isolated Scene Stack a
 
 | ID | Blocker | Status |
 |----|---------|--------|
-| **B1-Isolated** | Brand-grounded NB2 isolated generation | **In Progress** — code shipped; founder device proof pending |
-| **B1-Layer1** | Governed generation Layer 1 | **In Progress** — async + immune repair shipped; founder device verification pending |
+| **B1-WorldV2** | v2 orchestrator wired to Experience Lab compile | **In Progress** — foundation code shipped |
+| **B1-Isolated** | Brand-grounded NB2 isolated generation | **In Progress** — founder device proof pending |
 
 ---
 
 ## Founder workflow
 
-```
-/admin/studio/experience-lab?compilerDiag=1
-```
+Verify `runWorldBuildV2` reception fixture tests pass. Next: wire v2 phases into Experience Lab compile UI.
 
-1. Run validation compile
-2. Verify evidence panel shows: model route, NB2, brand marble reference, material verdict
-3. Confirm no shell image in isolated layer references
-4. Layer 1 landmark should use NB2 edit with brand marble when materials required
+**References:** `docs/studio-os/studio-world-architecture-v2/README.md`
 
-**Rollback:** set isolated route `rolloutState: deprecated` on `nano-banana-2-isolated` in `model-registry/routes.ts` — no call-site rewrites.
-
----
-
-## References
-
-- `docs/studio-os/creative-production/MODEL_REGISTRY.md`
-- `docs/studio-os/creative-production/BRAND_ASSET_GROUNDING_STANDARD.md`
-- `docs/studio-os/creative-production/BRAND_MATERIAL_FIDELITY_POLICY.md`
-- `docs/studio-os/creative-production/NANO_BANANA_2_ISOLATED_ASSET_ROUTE.md`
-- `docs/studio-os/creative-production/VERIFIED_ASSET_PRODUCTION_PIPELINE.md`

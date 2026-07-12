@@ -10,6 +10,7 @@ export const ARTICLE_K19 = {
 } as const;
 
 export const WORLD_COMPILER_VERSION = 'world-compiler.v1';
+export const WORLD_COMPILER_V2_BRIDGE_VERSION = 'world-compiler.v2';
 
 export const WORLD_COMPILER_PHILOSOPHY =
   'Studio World is a world compiler. It assembles environments from validated components. It does not blend images. It constructs places.';

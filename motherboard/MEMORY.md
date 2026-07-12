@@ -47548,3 +47548,24 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 
 **Pending:** Founder mobile verification — NB2 route + brand marble in evidence panel on authenticated device.
 
+---
+
+## 2026-07-12 — P0 Studio World Architecture v2 Foundation (full conversation)
+
+**Context:** Founder-approved P0 architectural refactor — replace asset-first generation with world-first assembly. Studio World must behave as a modular world engine, not an image generator assembling unrelated objects.
+
+**Canon hierarchy:** Studio World → Building → Floor → Room Blueprint → Architecture → Hero Assets → Furniture → Decor → Materials → Lighting → Effects → Interaction → Living World.
+
+**Design philosophy:** Separate structure / content / decoration / interaction. Never regenerate structure because content failed. Localized immune recovery only.
+
+**Repair shipped (one commit):**
+- `studio-world-architecture-v2/` — contract, BlueprintShell, Room Blueprint, asset hierarchy (hero/furniture/decor), material library (org-owned, no AI marble), room health, immune room recovery, World Compiler v2 order, Scene Stack v2 assembly (zero generation), model routing v2 matrix, `runWorldBuildV2` orchestrator, reception fixture
+- Exported from `scene-stack/index.ts`; `world-compiler/constants.ts` v2 bridge version
+- 15 tests pass; build pass
+- Docs: 8 spec files + README in `docs/studio-os/studio-world-architecture-v2/`
+- CURRENT_HANDOFF, CORE updated
+
+**Spatial Architecture Review:** Completed as foundation artifact — world-first canonical order; v1 compile pipeline preserved for Experience Lab continuity.
+
+**Pending:** Wire `runWorldBuildV2` into Experience Lab compile UI; founder verification.
+
