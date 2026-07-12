@@ -33,6 +33,10 @@ For full command details and protocol, see **`motherboard/README.md`**.
 - **Forbidden:** push then **`git commit --amend` + `git push --force-with-lease`**; push then **`Motherboard:`** follow-up; running **`agent-commit.sh` twice** for the same task; a second commit for MEMORY, handoff, blockers, or CONCLUSION-convention docs after the main task commit.
 - Full rule: **`.cursor/rules/one-deploy-per-task.mdc`**, **`motherboard/ADDING.md`** rule 0.
 
+## Supabase production migrations
+
+When you add a migration under `supabase/migrations/` that creates or alters **tables/schema required** for the shipped feature, **apply it to production automatically** in the same task via Supabase MCP **`apply_migration`** (`project_id`: `hyycomvcaqxxvyrfupes`), then verify with **`list_tables`**. Do not ask the founder to run SQL manually unless MCP fails. Full protocol: **`.cursor/rules/supabase-production-migrations.mdc`**.
+
 ## Cursor Cloud environment
 
 - Cloud agents should use the repo environment hook in **`.cursor/environment.json`**, which runs **`./scripts/cloud-update.sh`** on startup.

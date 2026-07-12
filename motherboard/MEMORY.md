@@ -47369,3 +47369,23 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 
 **Spatial Architecture Review:** SKIPPED — docs-only constitutional sprint; no new surfaces or nav.
 
+---
+
+## 2026-07-12 — Supabase production auto-migration policy (full conversation)
+
+**Context:** Founder asked whether async governed generation would work after adding missing `studio_governed_generation_jobs` table (confirmed present in production `hyycomvcaqxxvyrfupes`). Then directed: **from now on, whenever a table is created and required, automatically apply migration to production via Supabase MCP** — stop defaulting to manual SQL Editor paste.
+
+**Topics covered:** Async submit unblock vs full mobile E2E proof; production table verification via MCP `list_tables`; standing agent policy for schema migrations.
+
+**Decisions / outcomes:**
+- **Mandatory agent workflow:** same task as migration file → MCP `apply_migration` on `hyycomvcaqxxvyrfupes` → verify `list_tables` → one commit/push
+- **Skip auto-apply:** founder says no · destructive DDL without approval · MCP failure (fallback SQL Editor URL documented)
+- Production project ID canonized in CORE + rule
+
+**Changes:**
+- `.cursor/rules/supabase-production-migrations.mdc` (always-apply rule)
+- `motherboard/CORE.md` — production project + MCP auto-apply note in Stack
+- `AGENTS.md` — Supabase production migrations section
+
+**Conventions:** Do not end schema-dependent tasks with “run in SQL Editor” as primary step when MCP is available.
+

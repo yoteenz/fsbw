@@ -1,0 +1,51 @@
+---
+description: Auto-apply required Supabase migrations to production via MCP
+alwaysApply: true
+---
+
+# Supabase production migrations (mandatory)
+
+When you **create or ship** a migration under `supabase/migrations/` that introduces or alters **tables, indexes, RLS, or functions required** for the feature/API to work in production, **apply it to production automatically** in the **same task** — do **not** ask the founder to paste SQL into the Supabase dashboard.
+
+## Production project
+
+| Field | Value |
+|-------|-------|
+| Name | FS Website (Build-a-Wig production) |
+| `project_id` | `hyycomvcaqxxvyrfupes` |
+
+## Required workflow
+
+1. **Add migration file** in `supabase/migrations/` (idempotent DDL preferred: `create table if not exists`, etc.).
+2. **Before commit/push**, call Supabase MCP **`apply_migration`**:
+   - `project_id`: `hyycomvcaqxxvyrfupes`
+   - `name`: snake_case slug from the migration filename (strip timestamp prefix), e.g. `20260712180000_studio_governed_generation_jobs.sql` → `studio_governed_generation_jobs`
+   - `query`: full SQL contents of the migration file
+3. **Verify** with MCP **`list_tables`** (or targeted `execute_sql`) that new/changed objects exist.
+4. **Report** in the task summary: migration file, `apply_migration` result, verification outcome.
+5. **Commit** migration file + code in one `./scripts/agent-commit.sh` push (see one-deploy-per-task).
+
+## When this applies
+
+- New table required by server routes, RLS policies, or client features
+- New columns, indexes, constraints, or functions the shipped code depends on
+- Fixing production drift where code expects a table that is missing
+
+## When to skip auto-apply
+
+- Founder explicitly says **do not apply to production** or **local/staging only**
+- **Destructive** DDL (`DROP TABLE`, `DROP COLUMN`, mass `DELETE`) without explicit founder approval
+- **Data backfill-only** migrations with no schema dependency for the shipped feature (optional — apply if production data must exist for the feature to work)
+- MCP **`apply_migration` fails** — retry once; if still failing, document error + leave migration in repo and give SQL Editor fallback URL: `https://supabase.com/dashboard/project/hyycomvcaqxxvyrfupes/sql/new`
+
+## Do not
+
+- End a schema-dependent task with “run this in Supabase SQL Editor” as the **primary** step when MCP is available
+- Ship API/client code that queries a table without applying (or verifying) the migration in the same task
+- Hardcode generated row IDs in migration data seeds
+
+## MCP tool order
+
+1. `GetMcpTools` → `apply_migration` (if schema not yet inspected)
+2. `apply_migration`
+3. `list_tables` or `execute_sql` to confirm
