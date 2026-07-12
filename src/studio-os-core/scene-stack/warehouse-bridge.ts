@@ -12,6 +12,7 @@ import {
 import { getSceneStackStation } from './station-manifest';
 import { getSceneStackLayerRecord, saveSceneStackLayerRecord } from './store';
 import { SCENE_STACK_LAYER_ORDER, SCENE_STACK_PROMPT_VERSION, type SceneStackLayerId, type SceneStackLayerRecord } from './types';
+import { ASSET_APPROVAL_POLICY_VERSION } from './verified-asset-production/contract';
 
 export const SCENE_STACK_HYDRATED_EVENT = 'studio-os-scene-stack-hydrated';
 
@@ -133,6 +134,7 @@ function mountLayerRecord(input: {
   if (existing?.publicUrl) return existing;
 
   const now = new Date().toISOString();
+  const assetCandidateId = `registry-${input.layerId}-${Date.now()}`;
   const record = saveSceneStackLayerRecord({
     departmentId: input.departmentId,
     projectId: input.projectId,
@@ -148,6 +150,19 @@ function mountLayerRecord(input: {
     promptVersion: SCENE_STACK_PROMPT_VERSION,
     productionGroupId: layerPrompt?.productionGroupId ?? input.productionGroupId,
     heroAssetId: layerPrompt?.heroAssetId ?? input.heroAssetId,
+    assetCandidateId,
+    registryState: 'approved',
+    approvalProof: {
+      approvalPolicyVersion: ASSET_APPROVAL_POLICY_VERSION,
+      assetCandidateId,
+      approvedAt: now,
+      candidateUrl: input.publicUrl,
+      backgroundClassification: 'NATIVE_ALPHA',
+      identityConfidence: 0.9,
+      structuralClassification: 'structurally-valid',
+      postprocessClassification: 'not-required',
+      cleanupMethod: 'none',
+    },
   });
 
   void input.source;

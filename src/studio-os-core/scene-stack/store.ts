@@ -53,6 +53,12 @@ function slimLayerRecord(rec: SceneStackLayerRecord): SceneStackLayerRecord {
     assemblyLawVersion: rec.assemblyLawVersion,
     qualityStatus: rec.qualityStatus,
     qualityIssues: rec.qualityIssues,
+    assetCandidateId: rec.assetCandidateId,
+    candidateUrl: rec.candidateUrl,
+    approvalProof: rec.approvalProof,
+    productionStage: rec.productionStage,
+    registryState: rec.registryState,
+    quarantineId: rec.quarantineId,
   };
 }
 

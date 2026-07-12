@@ -31,20 +31,19 @@
 
 ---
 
-## B1-Isolated — Full-scene rerender layer failure (PROMPT + MODEL ROUTING REPAIR SHIPPED — VERIFY PENDING)
+## B1-Isolated — Full-scene rerender + unverified mount (VERIFIED PIPELINE SHIPPED — VERIFY PENDING)
 
 | Field | Detail |
 |-------|--------|
 | **ID** | B1-Isolated |
-| **Symptom** | `LANDMARK_VALIDATION_FAILED` / `QUALITY_REGENERATE_REQUIRED` — landmark outputs are full-scene photographs, not isolated mountable plates |
-| **Compile runs** | `run-1783892114155-bnqd8w`, `run-1783893880377-6ymov2` |
-| **Documented fact** | Shell pipeline succeeded; Layer 1 quality guard correctly rejected invalid assets; UI identifies Layer 1 landmark validation failure |
-| **Root cause (proven)** | **COMBINED** — `fal-ai/nano-banana-pro/edit` img2img requires `image_urls`; marble fallback acted as dominant composition source; generic `scene-stack.v3-isolated` prompts insufficient |
-| **Repair** | `signature-landmark-isolated-prompt.v2` + `fal-ai/nano-banana-pro` text-to-image (zero `image_urls`); placement metadata only; `layer-model-routing.v1`; effective-request tracing; pre-dispatch prompt assertions; real regeneration with `jobId` in pipeline HUD |
-| **Docs** | `ISOLATED_ASSET_PROMPT_STANDARD.md`, `LAYER_MODEL_ROUTING_MATRIX.md`, `FULL_SCENE_LAYER_ROOT_CAUSE_ANALYSIS.md`, `ISOLATED_LAYER_GENERATION_CONTRACT.md` |
-| **Verify** | Experience Lab advances beyond Layer 1 with isolated transparent landmark + furniture plates on authenticated mobile |
+| **Symptom** | Layer 1 blocked — full-scene outputs or unverified candidates could not mount |
+| **Compile runs** | `run-1783893880377-6ymov2` and follow-on |
+| **Documented fact** | Shell healthy; prompt/model routing repaired (`0d374488c`); Layer 1 still blocked without candidate→approved gate |
+| **Root cause (proven)** | Raw provider URLs reached Scene Stack as `draft_ready` without identity/structure/background/postprocess approval |
+| **Repair** | `verified-asset-production.v1` — full production pipeline, approval proof required for mount, quarantine, conditional Ideogram cleanup |
+| **Docs** | `VERIFIED_ASSET_PRODUCTION_PIPELINE.md`, `ASSET_APPROVAL_CONTRACT.md`, `BACKGROUND_REMOVAL_POLICY.md`, `UNVERIFIED_LAYER_MOUNT_FAILURE.md` |
+| **Verify** | Experience Lab advances beyond Layer 1 with approved isolated landmark on authenticated mobile |
 | **Status** | **In Progress** — code shipped; founder production proof pending |
-| **Escalation** | After 2 failed regeneration attempts — review governed FAL isolated-object model route |
 
 ### Do not
 

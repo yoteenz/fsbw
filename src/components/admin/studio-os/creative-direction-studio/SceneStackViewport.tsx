@@ -216,13 +216,15 @@ export function SceneStackViewport({
           <p className="cds-stack__pipeline-step">
             {pipeline?.regeneration?.jobId
               ? `Regenerating ${pipeline.currentLayerLabel ?? 'layer'} (attempt ${pipeline.regeneration.attempt}, job ${pipeline.regeneration.jobId}) — shell preserved`
-              : pipeline?.phase === 'queued'
-              ? `Queued · ${pipeline.currentLayerLabel ?? 'preparing'}…`
-              : pipeline?.currentLayerLabel
-                ? `Generating ${pipeline.currentLayerLabel}…`
-                : isWorldCompiler
-                  ? 'Compiling world…'
-                  : 'Assembling layers…'}
+              : pipeline?.productionStageLabel
+                ? pipeline.productionStageLabel
+                : pipeline?.phase === 'queued'
+                  ? `Queued · ${pipeline.currentLayerLabel ?? 'preparing'}…`
+                  : pipeline?.currentLayerLabel
+                    ? `Generating ${pipeline.currentLayerLabel}…`
+                    : isWorldCompiler
+                      ? 'Compiling world…'
+                      : 'Assembling layers…'}
           </p>
           <div className="cds-stack__pipeline-bar" aria-hidden>
             <div

@@ -5,7 +5,6 @@
 
 import type { SceneStackLayerId, SceneStackLayerRecord } from '../types';
 import { isBlendCompositeLayer } from '../reference-chain';
-import { isExperienceLabValidationRender } from '../validation-render';
 
 export type ComponentPlacement = {
   componentId: string;
@@ -104,14 +103,12 @@ export function buildComponentPackageFromRecord(
 export function buildComponentPackagesForStation(
   records: SceneStackLayerRecord[],
   stationId: string,
-  options?: { validationMode?: boolean }
+  _options?: { validationMode?: boolean }
 ): SceneComponentPackage[] {
-  const validationMode = options?.validationMode ?? isExperienceLabValidationRender();
   return records
     .filter((r) => {
       if (!r.publicUrl) return false;
-      if (r.status === 'approved') return true;
-      return validationMode && r.status === 'draft_ready';
+      return r.status === 'approved' && Boolean(r.approvalProof?.assetCandidateId);
     })
     .map((r) => buildComponentPackageFromRecord(r, stationId));
 }

@@ -63,7 +63,7 @@ export type SceneStackManifest = {
   stations: SceneStackStationSpec[];
 };
 
-export type SceneStackLayerStatus = 'idle' | 'generating' | 'draft_ready' | 'approved' | 'failed' | 'discarded';
+export type SceneStackLayerStatus = 'idle' | 'generating' | 'candidate' | 'draft_ready' | 'approved' | 'failed' | 'discarded';
 
 /** Canonical classification — Phase 1 hotfix: generated layers are non_canonical until promotion. */
 export type SceneStackCanonicalStatus = 'non_canonical' | 'promoted';
@@ -95,6 +95,14 @@ export type SceneStackLayerRecord = {
   qualityIssues?: string[];
   /** Non-canonical until explicit promotion through Production Authorization (Phase 1). */
   canonicalStatus?: SceneStackCanonicalStatus;
+  /** Verified Asset Production Pipeline™ — raw provider URL (forensic only) */
+  candidateUrl?: string;
+  assetCandidateId?: string;
+  /** Required for Scene Stack mount — proves candidate passed full production gate */
+  approvalProof?: import('./verified-asset-production/contract').AssetProductionApprovalProof;
+  productionStage?: import('./verified-asset-production/contract').VerifiedAssetProductionStage;
+  registryState?: import('./verified-asset-production/contract').AssetRegistryLifecycleState;
+  quarantineId?: string;
 };
 
 export type SceneStackLayerView = {

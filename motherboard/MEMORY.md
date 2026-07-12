@@ -47497,3 +47497,27 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 
 **Pending:** Founder mobile verification — Experience Lab must advance beyond Layer 1 with valid isolated transparent landmark.
 
+---
+
+## 2026-07-12 — P0 Verified Asset Production Pipeline Sprint (full conversation)
+
+**Context:** Founder-approved P0 after isolated prompt/model routing repair (`0d374488c`). Shell healthy; Layer 1 still blocked. Directive: every generated layer must become a verified standalone asset before mount — no raw provider output in scene.
+
+**Problem:** Raw provider URLs reached Scene Stack as `draft_ready` without identity/structure/background/postprocess gates. Quality guard alone insufficient; background removal was not conditional.
+
+**Repair shipped (one commit):**
+- `verified-asset-production/` — contract, state machine, identity/structure/background/postprocess validation, approval gate (`asset-approval-policy.v1`), quarantine (7-day retention), mount validation, immune events, regeneration decision tree
+- `runVerifiedAssetProductionPipeline` in `useSceneStack.generateLayer` replaces direct quality→save path
+- Only `status: approved` + `approvalProof` mount; failed candidates quarantined without `publicUrl`
+- `api/admin/scene-stack-asset-cleanup.ts` — governed Ideogram background removal
+- `compose.ts` / `component-package.ts` — require approval proof
+- `SceneStackViewport` — real production stage labels; `VerifiedAssetProductionEvidencePanel`
+- Tests: `verified-asset-pipeline.test.ts` (20) + prior isolated tests (32); build pass
+- Docs: `VERIFIED_ASSET_PRODUCTION_PIPELINE.md`, `ASSET_APPROVAL_CONTRACT.md`, `BACKGROUND_REMOVAL_POLICY.md`, `UNVERIFIED_LAYER_MOUNT_FAILURE.md`; CURRENT_HANDOFF, KNOWN_BLOCKERS, CORE
+
+**Spatial Architecture Review:** SKIPPED — production gate on existing layer pipeline; no new nav.
+
+**Branch:** `master` only; one `./scripts/agent-commit.sh` deploy.
+
+**Pending:** Founder mobile verification — Experience Lab beyond Layer 1 with approved landmark.
+

@@ -20,8 +20,8 @@ export function resolveStationLayerViews(
     let status: SceneStackLayerStatus = 'idle';
     if (generatingLayerIds.has(def.id)) status = 'generating';
     else if (failedLayerIds.has(def.id)) status = 'failed';
-    else if (rec?.status === 'approved' && rec.publicUrl) status = 'approved';
-    else if (rec?.publicUrl && rec.status !== 'discarded') status = 'approved';
+    else if (rec?.status === 'approved' && rec.publicUrl && rec.approvalProof) status = 'approved';
+    else if (rec?.status === 'candidate' || (rec?.publicUrl && !rec.approvalProof)) status = 'generating';
 
     return {
       layerId: def.id,

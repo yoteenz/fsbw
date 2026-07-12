@@ -25,8 +25,6 @@ import {
   tryMountSceneStackLayerFromRegistry,
   SCENE_STACK_HYDRATED_EVENT,
   getRegistryAssetForSceneLayer,
-  validateSceneLayerQuality,
-  formatLayerQualityFailureMessage,
   SCENE_ASSEMBLY_LAW_VERSION,
   assertShellImmutableForLayer,
   resolveShellLockState,
@@ -87,6 +85,15 @@ import {
   buildEffectiveGenerationRequestRecord,
   recordEffectiveGenerationRequest,
 } from '../studio-os-core/scene-stack/effective-generation-request';
+import {
+  runVerifiedAssetProductionPipeline,
+  uiLabelForProductionStage,
+  validateSceneMount,
+  emitVerifiedAssetImmuneEvent,
+  type VerifiedAssetProductionStage,
+  type AssetCandidateRecord,
+} from '../studio-os-core/scene-stack/verified-asset-production';
+import { requestSceneStackAssetCleanup } from '../services/studio/sceneStackAssetCleanup/api';
 
 export type SceneStackPipelineProgress = {
   stationId: string;
@@ -95,6 +102,8 @@ export type SceneStackPipelineProgress = {
   currentLayerId: SceneStackLayerId | null;
   currentLayerLabel: string | null;
   phase: 'idle' | 'queued' | 'generating';
+  productionStage?: VerifiedAssetProductionStage | null;
+  productionStageLabel?: string | null;
   regeneration?: {
     layerId: SceneStackLayerId;
     attempt: number;
@@ -136,8 +145,11 @@ export function useSceneStack(
     stationId: string;
     layerId: SceneStackLayerId;
     phase: 'queued' | 'generating';
+    productionStage?: VerifiedAssetProductionStage | null;
+    productionStageLabel?: string | null;
     regeneration?: SceneStackPipelineProgress['regeneration'];
   } | null>(null);
+  const [productionEvidence, setProductionEvidence] = useState<AssetCandidateRecord | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [compileReports, setCompileReports] = useState<Record<string, WorldCompilationReport>>({});
   const [debugView, setDebugView] = useState<ArchitectDebugViewState>(() => createDebugViewState());
@@ -215,7 +227,9 @@ export function useSceneStack(
         ? listGeneratableLayerIdsForStation(departmentId, stationId, station.layerPrompts)
         : [];
       const views = getLayerViews(stationId);
-      const layersComplete = views.filter((l) => l.definition.generatable && l.publicUrl).length;
+      const layersComplete = views.filter(
+        (l) => l.definition.generatable && l.publicUrl && l.status === 'approved'
+      ).length;
       const layersTotal = layerIds.length;
 
       let currentLayerId: SceneStackLayerId | null = null;
@@ -244,6 +258,17 @@ export function useSceneStack(
         currentLayerId,
         currentLayerLabel: currentLayerId ? SCENE_STACK_LAYER_SHORT_LABELS[currentLayerId] : null,
         phase,
+        productionStage: pipelineLayer?.stationId === stationId ? pipelineLayer.productionStage ?? null : null,
+        productionStageLabel:
+          pipelineLayer?.stationId === stationId
+            ? pipelineLayer.productionStageLabel ??
+              (pipelineLayer.productionStage && currentLayerId
+                ? uiLabelForProductionStage(
+                    pipelineLayer.productionStage,
+                    SCENE_STACK_LAYER_SHORT_LABELS[currentLayerId]
+                  )
+                : null)
+            : null,
         regeneration: pipelineLayer?.stationId === stationId ? pipelineLayer.regeneration ?? null : null,
       };
     },
@@ -423,7 +448,10 @@ export function useSceneStack(
 
         let result: Awaited<ReturnType<typeof requestStudioBuilderGenerate>> | null = null;
         let compiled: ReturnType<typeof compileSceneStackLayerPrompt> | null = null;
-        let quality: Awaited<ReturnType<typeof validateSceneLayerQuality>> | null = null;
+        let approvedProduction: Extract<
+          Awaited<ReturnType<typeof runVerifiedAssetProductionPipeline>>,
+          { ok: true }
+        > | null = null;
         let requestInputForensic: Record<string, unknown> = {};
         let qualityPassed = false;
 
@@ -693,19 +721,71 @@ export function useSceneStack(
             });
           }
 
-          quality = await validateSceneLayerQuality({
+          const layerLabel = SCENE_STACK_LAYER_SHORT_LABELS[layerId] ?? layerId;
+          const organizationId =
+            layerCompileOptions?.previewCompileContext?.companyId ??
+            getActiveEphemeralCompileAuthorization(
+              layerCompileOptions?.previewCompileContext?.compileRunId ?? null
+            )?.organizationId ??
+            'frontal-slayer';
+
+          const production = await runVerifiedAssetProductionPipeline({
             layerId,
-            publicUrl: result.publicUrl,
-            blueprint,
+            candidateUrl: result.publicUrl,
+            requestedAssetDescription: compiled.prompt.slice(0, 240),
+            shellReferenceUrl: shellLock.shellUrl,
+            departmentId,
+            stationId,
+            projectId,
+            organizationId,
+            promptVersion: compiled.promptVersion,
+            providerModel: result.model,
+            generationMode: compiled.generationMode,
+            jobId: result.jobId ?? null,
+            compileRunId: layerCompileOptions?.previewCompileContext?.compileRunId ?? null,
+            regenerationAttempt: isolationAttempt,
+            onStageChange: (stage, label) => {
+              setPipelineLayer((prev) => ({
+                stationId,
+                layerId,
+                phase: 'generating',
+                productionStage: stage,
+                productionStageLabel: label,
+                regeneration:
+                  prev?.stationId === stationId && prev.layerId === layerId
+                    ? prev.regeneration
+                    : isolationAttempt > 0 && isIsolatedObjectLayer(layerId)
+                      ? {
+                          layerId,
+                          attempt: isolationAttempt + 1,
+                          status: 'validating' as const,
+                          jobId: result?.jobId ?? null,
+                        }
+                      : null,
+              }));
+            },
+            requestBackgroundCleanup:
+              isIsolatedObjectLayer(layerId) || layerId === 'furniture-objects'
+                ? async (sourceUrl, assetCandidateId) => {
+                    const cleanup = await requestSceneStackAssetCleanup({
+                      sourceUrl,
+                      assetCandidateId,
+                      layerId,
+                      stationId,
+                      projectId,
+                    });
+                    if (!cleanup.ok) return { ok: false as const, error: cleanup.error };
+                    return { ok: true as const, cleanedUrl: cleanup.cleanedUrl, method: cleanup.method };
+                  }
+                : undefined,
           });
 
-          if (quality.status === 'regenerate_required') {
-            const layerLabel =
-              SCENE_STACK_LAYER_SHORT_LABELS[layerId] ?? layerId;
+          setProductionEvidence(production.candidate);
+
+          if (!production.ok) {
             const isFullSceneRerender =
-              quality.classification === 'full-scene-rerender' ||
-              quality.classification === 'opaque-background' ||
-              quality.classification === 'suspicious-scene-rerender';
+              production.failureState === 'REJECTED_FULL_SCENE' ||
+              production.candidate.backgroundClassification === 'FULL_SCENE_RERENDER';
 
             if (isIsolatedObjectLayer(layerId)) {
               recordLayerQualityRecovery('LayerQualityFailureDetected', {
@@ -713,11 +793,11 @@ export function useSceneStack(
                 stationId,
                 departmentId,
                 projectId,
-                classification: quality.classification,
+                classification: production.candidate.qualityClassification as never,
                 isolationAttempt,
                 publicUrl: result.publicUrl,
                 shellPreserved: Boolean(shellLock.shellUrl),
-                message: quality.issues.join(' '),
+                message: production.deniedReasons.join(' '),
               });
               if (isFullSceneRerender) {
                 recordLayerQualityRecovery('FullSceneRerenderDiagnosed', {
@@ -725,9 +805,18 @@ export function useSceneStack(
                   stationId,
                   departmentId,
                   projectId,
-                  classification: quality.classification,
+                  classification: production.candidate.qualityClassification as never,
                   isolationAttempt,
                   publicUrl: result.publicUrl,
+                  shellPreserved: Boolean(shellLock.shellUrl),
+                });
+                emitVerifiedAssetImmuneEvent('FullSceneDetected', {
+                  layerId,
+                  stationId,
+                  departmentId,
+                  projectId,
+                  assetCandidateId: production.candidate.assetCandidateId,
+                  classification: production.candidate.backgroundClassification,
                   shellPreserved: Boolean(shellLock.shellUrl),
                 });
               }
@@ -741,18 +830,28 @@ export function useSceneStack(
             }
 
             const canRetry =
-              isIsolatedObjectLayer(layerId) && isolationAttempt < maxIsolationAttempts - 1;
+              production.requiredNextAction === 'regenerate' &&
+              isIsolatedObjectLayer(layerId) &&
+              isolationAttempt < maxIsolationAttempts - 1;
             if (canRetry) {
+              emitVerifiedAssetImmuneEvent('RegenerationStarted', {
+                layerId,
+                stationId,
+                departmentId,
+                projectId,
+                assetCandidateId: production.candidate.assetCandidateId,
+                shellPreserved: Boolean(shellLock.shellUrl),
+              });
               continue;
             }
 
-            const msg = formatLayerQualityFailureMessage(layerId, layerLabel, quality);
-            const recoveryHint = isIsolatedObjectLayer(layerId)
-              ? isolationAttempt < maxIsolationAttempts - 1 && result.jobId
+            const msg = `Verified asset production denied for ${layerLabel}: ${production.deniedReasons.join(' ')}`;
+            const recoveryHint =
+              isIsolatedObjectLayer(layerId) && result.jobId
                 ? ` Regenerating ${layerLabel.toLowerCase()} only — shell preserved (job ${result.jobId}).`
-                : ` Recovery: Regenerating ${layerLabel.toLowerCase()} only — shell preserved.`
-              : '';
-            const fullMsg = `${msg}${recoveryHint}`;
+                : isIsolatedObjectLayer(layerId)
+                  ? ` Recovery: Regenerating ${layerLabel.toLowerCase()} only — shell preserved.`
+                  : '';
 
             if (isIsolatedObjectLayer(layerId)) {
               recordLayerQualityRecovery('LayerRegenerationEscalated', {
@@ -760,27 +859,27 @@ export function useSceneStack(
                 stationId,
                 departmentId,
                 projectId,
-                classification: quality.classification,
+                classification: production.candidate.qualityClassification as never,
                 isolationAttempt,
                 publicUrl: result.publicUrl,
                 shellPreserved: Boolean(shellLock.shellUrl),
-                message: fullMsg,
+                message: msg,
               });
             }
 
-            failStudioAlphaGeneration(generationId, fullMsg);
-            setErrors((prev) => ({ ...prev, [key]: fullMsg }));
+            failStudioAlphaGeneration(generationId, msg + recoveryHint);
+            setErrors((prev) => ({ ...prev, [key]: msg + recoveryHint }));
             if (isLayer1 && isWorldCompilerDiagnosticMode()) {
               freezeLayer1Failure({
                 failedTransition: 'LANDMARK_VALIDATION_FAILED',
                 errorCode: 'QUALITY_REGENERATE_REQUIRED',
-                errorMessage: fullMsg,
-                failedFunction: 'validateSceneLayerQuality',
-                failedFile: 'src/studio-os-core/scene-stack/quality-guard.ts',
-                adapter: 'scene-layer-quality-guard',
+                errorMessage: msg + recoveryHint,
+                failedFunction: 'runVerifiedAssetProductionPipeline',
+                failedFile: 'src/studio-os-core/scene-stack/verified-asset-production/pipeline.ts',
+                adapter: 'verified-asset-production-pipeline',
                 shellRemainedValid: Boolean(shellLock.shellUrl),
                 requestInput: requestInputForensic,
-                responseOutput: { publicUrl: result.publicUrl, quality },
+                responseOutput: { publicUrl: result.publicUrl, production },
               });
             }
             saveSceneStackLayerRecord({
@@ -790,7 +889,10 @@ export function useSceneStack(
               layerId,
               version: nextVersion,
               status: 'failed',
-              publicUrl: result.publicUrl,
+              candidateUrl: result.publicUrl,
+              assetCandidateId: production.candidate.assetCandidateId,
+              quarantineId: production.quarantineId,
+              publicUrl: undefined,
               storagePath: result.storagePath,
               model: result.model,
               generatedAt: new Date().toISOString(),
@@ -800,10 +902,40 @@ export function useSceneStack(
               blueprintId: compiled.blueprintId,
               assemblyLawVersion: SCENE_ASSEMBLY_LAW_VERSION,
               qualityStatus: 'regenerate_required',
-              qualityIssues: quality.issues,
+              qualityIssues: production.deniedReasons,
+              registryState: 'quarantined',
+              productionStage: production.stage,
             });
             bump();
             return false;
+          }
+
+          const mountCheck = validateSceneMount({
+            layerId,
+            approvedUrl: production.approvedUrl,
+            approvalProof: production.approvalProof,
+            blueprint,
+            shellUrl: shellLock.shellUrl,
+            frameCoverage: production.candidate.frameCoverage,
+          });
+
+          if (!mountCheck.valid && mountCheck.placementFailure) {
+            emitVerifiedAssetImmuneEvent('PlacementFailureDetected', {
+              layerId,
+              stationId,
+              departmentId,
+              projectId,
+              assetCandidateId: production.candidate.assetCandidateId,
+              message: mountCheck.issues.join(' '),
+            });
+          } else {
+            emitVerifiedAssetImmuneEvent('ScenePlacementVerified', {
+              layerId,
+              stationId,
+              departmentId,
+              projectId,
+              assetCandidateId: production.candidate.assetCandidateId,
+            });
           }
 
           if (isIsolatedObjectLayer(layerId)) {
@@ -812,17 +944,19 @@ export function useSceneStack(
               stationId,
               departmentId,
               projectId,
-              classification: quality.classification,
+              classification: production.candidate.qualityClassification as never,
               isolationAttempt,
-              publicUrl: result.publicUrl,
+              publicUrl: production.approvedUrl,
               shellPreserved: Boolean(shellLock.shellUrl),
             });
           }
+
+          approvedProduction = production;
           qualityPassed = true;
           break;
         }
 
-        if (!qualityPassed || !result || !compiled || !quality) {
+        if (!qualityPassed || !result || !compiled || !approvedProduction) {
           return false;
         }
 
@@ -832,24 +966,31 @@ export function useSceneStack(
           assetId,
         });
 
+        const approvedAt = new Date().toISOString();
         saveSceneStackLayerRecord({
           departmentId,
           projectId,
           stationId,
           layerId,
           version: nextVersion,
-          status: 'draft_ready',
-          publicUrl: result.publicUrl,
+          status: 'approved',
+          publicUrl: approvedProduction.approvedUrl,
+          candidateUrl: result.publicUrl,
+          assetCandidateId: approvedProduction.candidate.assetCandidateId,
+          approvalProof: approvedProduction.approvalProof,
+          productionStage: 'REGISTERED',
+          registryState: 'approved',
           storagePath: result.storagePath,
           model: result.model,
-          generatedAt: new Date().toISOString(),
+          generatedAt: approvedAt,
+          approvedAt,
           promptVersion: compiled.promptVersion,
           productionGroupId: compiled.productionGroupId,
           heroAssetId: compiled.heroAssetId,
           blueprintId: compiled.blueprintId,
           assemblyLawVersion: SCENE_ASSEMBLY_LAW_VERSION,
-          qualityStatus: quality.status,
-          qualityIssues: quality.issues,
+          qualityStatus: 'validated',
+          qualityIssues: [],
           canonicalStatus: 'non_canonical',
         });
 
@@ -861,15 +1002,23 @@ export function useSceneStack(
             stationId,
             departmentId,
             projectId,
-            classification: quality.classification,
-            publicUrl: result.publicUrl,
+            classification: approvedProduction.candidate.qualityClassification as never,
+            publicUrl: approvedProduction.approvedUrl,
+            shellPreserved: Boolean(shellLock.shellUrl),
+          });
+          emitVerifiedAssetImmuneEvent('AssetMounted', {
+            layerId,
+            stationId,
+            departmentId,
+            projectId,
+            assetCandidateId: approvedProduction.candidate.assetCandidateId,
             shellPreserved: Boolean(shellLock.shellUrl),
           });
         }
 
         bump();
         if (isLayer1 && isWorldCompilerDiagnosticMode()) {
-          recordLayer1Transition('LAYER_1_COMPLETED', { publicUrl: result.publicUrl });
+          recordLayer1Transition('LAYER_1_COMPLETED', { publicUrl: approvedProduction.approvedUrl });
         }
         recordDuplicateCompileInvocation('generateLayer.fireAndForget', buildEvidenceCtx(departmentId, projectId, stationId, {
           validationMode,
@@ -1187,5 +1336,6 @@ export function useSceneStack(
     planStationCleanRegeneration,
     cleanRegenerateStation,
     exportStationScene,
+    productionEvidence,
   };
 }

@@ -26,4 +26,5 @@ export * from './effective-generation-request';
 export * from './isolated-layer-prompt';
 export * from './isolated-layer-quality';
 export * from './layer-quality-recovery';
+export * from './verified-asset-production';
 export * from './world-compiler';
