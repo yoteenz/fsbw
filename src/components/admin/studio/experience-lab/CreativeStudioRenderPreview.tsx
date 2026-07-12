@@ -67,6 +67,21 @@ export function CreativeStudioRenderPreview({ companyId, conceptId, blindMode = 
 
   const stageResults = compileReport?.stages ?? [];
   const failedStage = compileReport?.failedStage;
+  const isLayer1QualityFailure =
+    Boolean(layer1Forensic) ||
+    layer1Forensic?.failedTransition === 'LANDMARK_VALIDATION_FAILED' ||
+    compileReport?.failedStageErrorCode === 'QUALITY_REGENERATE_REQUIRED';
+  const compileFailureTitle = isLayer1QualityFailure
+    ? 'Render Final Scene / Layer 1 landmark validation'
+    : failedStage === 'load-shell'
+      ? 'LOAD SHELL / compile failure evidence'
+      : 'World compile failure evidence';
+  const compileFailureFunction = isLayer1QualityFailure
+    ? 'validateSceneLayerQuality → scene-layer-quality-guard'
+    : 'compileWorldStation → runStage(load-shell)';
+  const compileFailureFile = isLayer1QualityFailure
+    ? 'src/studio-os-core/scene-stack/quality-guard.ts'
+    : 'src/studio-os-core/scene-stack/world-compiler/compile-pipeline.ts';
   const showRetry =
     !diagMode &&
     !diagnosticFrozen &&
@@ -206,14 +221,14 @@ export function CreativeStudioRenderPreview({ companyId, conceptId, blindMode = 
           {compileReport?.success === false && failedStage ? (
             <details open style={{ marginTop: 8, fontSize: '10px', color: '#991b1b' }}>
               <summary style={{ cursor: 'pointer', fontWeight: 700 }}>
-                LOAD SHELL / compile failure evidence
+                {compileFailureTitle}
               </summary>
               <dl style={{ margin: '8px 0 0', display: 'grid', gap: 4 }}>
-                <DiagnosticRow label="Error code" value={compileReport.failedStageErrorCode ?? 'STAGE_FAILED'} />
-                <DiagnosticRow label="Failed stage" value={worldCompilerStageLabel(failedStage)} />
-                <DiagnosticRow label="Function" value="compileWorldStation → runStage(load-shell)" />
-                <DiagnosticRow label="File" value="src/studio-os-core/scene-stack/world-compiler/compile-pipeline.ts" />
-                <DiagnosticRow label="Detail" value={compileReport.failedStageDetail ?? '—'} />
+                <DiagnosticRow label="Error code" value={compileReport.failedStageErrorCode ?? layer1Forensic?.errorCode ?? 'STAGE_FAILED'} />
+                <DiagnosticRow label="Failed stage" value={isLayer1QualityFailure ? 'Signature Landmark™ validation' : worldCompilerStageLabel(failedStage)} />
+                <DiagnosticRow label="Function" value={compileFailureFunction} />
+                <DiagnosticRow label="File" value={compileFailureFile} />
+                <DiagnosticRow label="Detail" value={layer1Forensic?.errorMessage ?? compileReport.failedStageDetail ?? '—'} />
                 <DiagnosticRow label="Shell ID" value={shellDiagnostic.requestedShellId} />
                 <DiagnosticRow label="Shell status" value={shellDiagnostic.recordStatus ?? 'none'} />
                 <DiagnosticRow label="Resolution" value={shellDiagnostic.resolution} />

@@ -1,26 +1,29 @@
-import { isBlendCompositeLayer } from './reference-chain';
-import type { MasterSceneBlueprint } from './master-scene-blueprint';
 import type { SceneLayerQualityStatus, SceneStackLayerId } from './types';
+import type { MasterSceneBlueprint } from './master-scene-blueprint';
+import { isIsolatedObjectLayer } from './isolated-layer-contract';
+import { analyzeIsolatedLayerQuality, type IsolatedLayerQualityAnalysis } from './isolated-layer-quality';
+import { isBlendCompositeLayer } from './reference-chain';
 
 export type SceneQualityGuardResult = {
   status: SceneLayerQualityStatus;
   issues: string[];
+  classification?: IsolatedLayerQualityAnalysis['classification'];
   metrics: {
     width: number;
     height: number;
     frameCoverage: number;
     shellSimilarity: number | null;
     edgeSharpness: number;
+    alphaChannelPresent?: boolean;
+    transparentSides?: number;
   };
 };
 
-type ImageMetrics = {
-  width: number;
-  height: number;
-  frameCoverage: number;
-  edgeSharpness: number;
-  avgLuminance: number;
-};
+function parseAspectRatio(ratio: string): number {
+  const [w, h] = ratio.split(':').map(Number);
+  if (!w || !h) return 9 / 16;
+  return w / h;
+}
 
 function loadImage(url: string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
@@ -32,7 +35,7 @@ function loadImage(url: string): Promise<HTMLImageElement> {
   });
 }
 
-function sampleImageMetrics(img: HTMLImageElement, sampleSize = 64): ImageMetrics {
+function sampleImageMetrics(img: HTMLImageElement, sampleSize = 64) {
   const canvas = document.createElement('canvas');
   canvas.width = sampleSize;
   canvas.height = sampleSize;
@@ -79,37 +82,37 @@ function sampleImageMetrics(img: HTMLImageElement, sampleSize = 64): ImageMetric
   };
 }
 
-async function computeHistogramSimilarity(urlA: string, urlB: string): Promise<number> {
-  try {
-    const [imgA, imgB] = await Promise.all([loadImage(urlA), loadImage(urlB)]);
-    const mA = sampleImageMetrics(imgA, 32);
-    const mB = sampleImageMetrics(imgB, 32);
-    const covDiff = Math.abs(mA.frameCoverage - mB.frameCoverage);
-    const lumDiff = Math.abs(mA.avgLuminance - mB.avgLuminance) / 255;
-    const sharpDiff = Math.abs(mA.edgeSharpness - mB.edgeSharpness) / Math.max(mA.edgeSharpness, mB.edgeSharpness, 1);
-    return Math.max(0, 1 - (covDiff * 0.5 + lumDiff * 0.3 + sharpDiff * 0.2));
-  } catch {
-    return 0;
-  }
-}
-
-function parseAspectRatio(ratio: string): number {
-  const [w, h] = ratio.split(':').map(Number);
-  if (!w || !h) return 9 / 16;
-  return w / h;
-}
-
 /**
  * Scene Stack Quality Guard™ — validates layer output before approval.
- * Heuristic canvas analysis; marks REGENERATE REQUIRED with human-readable reasons.
  */
 export async function validateSceneLayerQuality(input: {
   layerId: SceneStackLayerId;
   publicUrl: string;
   blueprint: MasterSceneBlueprint;
 }): Promise<SceneQualityGuardResult> {
-  const issues: string[] = [];
+  if (isIsolatedObjectLayer(input.layerId)) {
+    const analysis = await analyzeIsolatedLayerQuality({
+      layerId: input.layerId,
+      publicUrl: input.publicUrl,
+      shellReferenceUrl: input.blueprint.shellReferenceUrl,
+    });
+    return {
+      status: analysis.regenerateRequired ? 'regenerate_required' : 'validated',
+      issues: analysis.issues,
+      classification: analysis.classification,
+      metrics: {
+        width: analysis.metrics.width,
+        height: analysis.metrics.height,
+        frameCoverage: analysis.metrics.frameCoverage,
+        shellSimilarity: analysis.metrics.shellSimilarity,
+        edgeSharpness: analysis.metrics.edgeSharpness,
+        alphaChannelPresent: analysis.metrics.alphaChannelPresent,
+        transparentSides: analysis.metrics.transparentSides,
+      },
+    };
+  }
 
+  const issues: string[] = [];
   let metrics: SceneQualityGuardResult['metrics'] = {
     width: 0,
     height: 0,
@@ -159,25 +162,6 @@ export async function validateSceneLayerQuality(input: {
       if (sampled.avgLuminance > 140) {
         issues.push('Lighting washout detected on overlay pass — REGENERATE REQUIRED.');
       }
-    } else {
-      if (sampled.frameCoverage > 0.82) {
-        issues.push(
-          'Object layer fills entire frame — likely full-scene rerender baking prior layers. REGENERATE REQUIRED.'
-        );
-      }
-    }
-
-    if (input.blueprint.shellReferenceUrl && input.layerId !== 'environment-shell') {
-      const similarity = await computeHistogramSimilarity(
-        input.publicUrl,
-        input.blueprint.shellReferenceUrl
-      );
-      metrics.shellSimilarity = similarity;
-      if (similarity > 0.88 && sampled.frameCoverage > 0.5) {
-        issues.push(
-          'Layer closely matches shell with high frame coverage — likely re-encoded shell instead of isolated plate. REGENERATE REQUIRED.'
-        );
-      }
     }
   } catch {
     issues.push('Quality guard could not analyze image — save blocked until verification succeeds.');
@@ -197,4 +181,28 @@ export async function validateSceneLayerQuality(input: {
 export function formatQualityGuardSummary(result: SceneQualityGuardResult): string {
   if (result.status === 'validated') return 'Quality guard passed.';
   return result.issues.join(' ');
+}
+
+export function formatLayerQualityFailureMessage(
+  layerId: SceneStackLayerId,
+  layerLabel: string,
+  result: SceneQualityGuardResult
+): string {
+  const isFullScene =
+    result.classification === 'full-scene-rerender' ||
+    result.classification === 'opaque-background' ||
+    result.classification === 'suspicious-scene-rerender';
+
+  if (isFullScene) {
+    const subject =
+      layerId === 'signature-landmark'
+        ? 'an isolated landmark'
+        : layerId === 'furniture-objects'
+          ? 'an isolated furniture group'
+          : 'an isolated component';
+    return `${layerLabel} rejected — Generated asset contains a full-scene background instead of ${subject}.`;
+  }
+
+  if (result.status === 'validated') return 'Quality guard passed.';
+  return `${layerLabel} rejected — ${result.issues.join(' ')}`;
 }

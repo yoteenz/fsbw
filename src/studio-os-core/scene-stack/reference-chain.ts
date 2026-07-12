@@ -1,5 +1,6 @@
 import type { SceneStackLayerId } from './types';
 import type { SceneStackLayerLookupOptions } from './scene-stack-lookup-options';
+import { isIsolatedObjectLayer } from './isolated-layer-contract';
 import { getSceneStackLayerRecord } from './store';
 
 /** Layer IDs that must anchor to the approved environment shell (never regenerate from marble alone). */
@@ -29,6 +30,11 @@ export function getLockedReferenceUrlsForLayer(
   lookupOptions?: SceneStackLayerLookupOptions
 ): string[] {
   if (targetLayerId === ANCHOR_LAYER_ID) return [];
+
+  // Isolated object and blend overlay layers must not receive shell as img2img reference.
+  if (isIsolatedObjectLayer(targetLayerId) || SCENE_STACK_BLEND_COMPOSITE_LAYERS.has(targetLayerId)) {
+    return [];
+  }
 
   const shell = getSceneStackLayerRecord(
     departmentId,

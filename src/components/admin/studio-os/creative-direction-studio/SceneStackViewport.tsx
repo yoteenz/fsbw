@@ -239,9 +239,14 @@ export function SceneStackViewport({
         <div className="cds-stack__viewport-error">
           {layer1Failure?.state === 'FAILED_AT_LAYER_1' ? (
             <>
-              <p style={{ fontWeight: 800, letterSpacing: '0.06em' }}>LANDMARK GENERATION FAILED</p>
+              <p style={{ fontWeight: 800, letterSpacing: '0.06em' }}>
+                {layer1Failure.failedLayerLabel} rejected
+              </p>
               <p style={{ marginTop: 6, fontSize: 11, lineHeight: 1.5 }}>
                 Layer 1 ({layer1Failure.failedLayerLabel}) failed after shell loaded successfully.
+                {layer1Failure.errorCode === 'QUALITY_REGENERATE_REQUIRED'
+                  ? ' Recovery: Regenerating landmark only — shell preserved.'
+                  : ''}
               </p>
               <dl style={{ margin: '8px 0 0', fontSize: 10, lineHeight: 1.6, textAlign: 'left' }}>
                 <div>
@@ -287,7 +292,21 @@ export function SceneStackViewport({
           ) : (
             <>
               <p>Layer generation failed.</p>
-              {onRegenerateLayer ? (
+              {onRegenerateLayer && sceneGraph?.shellLocked ? (
+                <button
+                  type="button"
+                  className="cds-genesis__btn"
+                  onClick={() => {
+                    const failedLayer =
+                      layers.find((l) => l.status === 'failed')?.layerId ??
+                      pipeline?.currentLayerId ??
+                      'signature-landmark';
+                    onRegenerateLayer(failedLayer);
+                  }}
+                >
+                  Retry failed layer
+                </button>
+              ) : onRegenerateLayer ? (
                 <button
                   type="button"
                   className="cds-genesis__btn"

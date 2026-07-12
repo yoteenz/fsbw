@@ -31,6 +31,28 @@
 
 ---
 
+## B1-Isolated — Full-scene rerender layer failure (REPAIR SHIPPED — VERIFY PENDING)
+
+| Field | Detail |
+|-------|--------|
+| **ID** | B1-Isolated |
+| **Symptom** | `LANDMARK_VALIDATION_FAILED` / `QUALITY_REGENERATE_REQUIRED` — landmark and furniture outputs were full-scene photographs |
+| **Compile run** | `run-1783892114155-bnqd8w` |
+| **Documented fact** | Shell pipeline succeeded; Layer 1 quality guard correctly rejected invalid assets |
+| **Repair** | Isolated layer contract — no shell img2img for object layers; PNG alpha; dedicated prompts; quality guard; max 2 auto-regeneration |
+| **Docs** | `ISOLATED_LAYER_GENERATION_CONTRACT.md`, `FULL_SCENE_RERENDER_LAYER_FAILURE.md` |
+| **Verify** | Experience Lab advances beyond Layer 1 with isolated transparent landmark + furniture plates |
+| **Status** | **In Progress** — code shipped; founder production proof pending |
+| **Escalation** | After 2 failed regeneration attempts — review governed FAL model route |
+
+### Do not
+
+- Rebuild shell on layer-quality failure
+- Accept full-scene rerenders to advance pipeline
+- Show "Retry Shell Layer" for landmark quality failures
+
+---
+
 ## B1-Layer1 — Governed generation Layer 1 (ASYNC REPAIR SHIPPED — VERIFY PENDING)
 
 | Field | Detail |

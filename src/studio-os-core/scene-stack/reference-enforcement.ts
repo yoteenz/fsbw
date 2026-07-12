@@ -1,4 +1,6 @@
 import { FAL_PLACEMENT_REFERENCE_LAYER, isForbiddenFalReferenceLayer } from './assembly-law';
+import { isIsolatedObjectLayer } from './isolated-layer-contract';
+import { isBlendCompositeLayer } from './reference-chain';
 import { getSceneStackLayerRecord, listSceneStackLayersForStation } from './store';
 import type { SceneStackLayerId } from './types';
 
@@ -60,14 +62,24 @@ export function enforceFalReferenceLaw(input: {
   if (input.targetLayerId === FAL_PLACEMENT_REFERENCE_LAYER) {
     sanitizedUrls = [];
   } else if (shell?.publicUrl) {
-    const shellOnly = input.requestedUrls.filter((u) => u === shell.publicUrl);
-    sanitizedUrls = shellOnly.length ? [shell.publicUrl] : [shell.publicUrl];
-
-    for (const url of input.requestedUrls) {
-      if (url !== shell.publicUrl) {
+    // Isolated object layers must NOT receive shell as img2img input — perspective encoded in prompt only.
+    if (isIsolatedObjectLayer(input.targetLayerId) || isBlendCompositeLayer(input.targetLayerId)) {
+      sanitizedUrls = [];
+      if (input.requestedUrls.length > 0) {
         violations.push(
-          `Stripped non-shell reference URL — only environment-shell may anchor placement.`
+          `Stripped shell reference for isolated layer — shell must not be dominant img2img source.`
         );
+      }
+    } else {
+      const shellOnly = input.requestedUrls.filter((u) => u === shell.publicUrl);
+      sanitizedUrls = shellOnly.length ? [shell.publicUrl] : [shell.publicUrl];
+
+      for (const url of input.requestedUrls) {
+        if (url !== shell.publicUrl) {
+          violations.push(
+            `Stripped non-shell reference URL — only environment-shell may anchor placement.`
+          );
+        }
       }
     }
   } else {

@@ -1,38 +1,43 @@
 {
   "schemaVersion": 1,
   "capsuleType": "delta-context",
-  "currentVersion": "1.0.5",
-  "generatedAt": "2026-07-12T21:45:04.401Z",
-  "gitCommit": "f944066ab4e9334dd0b8f11899d9136a2b9ffb87",
+  "currentVersion": "1.0.6",
+  "generatedAt": "2026-07-12T21:54:04.907Z",
+  "gitCommit": "e612bc4ab438007498441a2ffad2e3c6a1dbd0d1",
   "validationStatus": "pass",
-  "changeCount": 3,
-  "checksumSha256": "714c95d7c18cb9779550d5ffcd6c0388f60fa25f85556a65284c7f9e3c4541ba",
-  "artifact": "StudioOS_ContextUpdate_v1.0.5.zip",
+  "changeCount": 1,
+  "checksumSha256": "e4ce29f98c83eb878871fc581d1cdb0ab69624bb1419d50077f27bda7421ab02",
+  "artifact": "StudioOS_ContextUpdate_v1.0.6.zip",
   "baseOnboardingVersionRequired": "1.2.2",
   "currentOnboardingPackVersion": "1.2.2",
   "compatibilityStatus": "compatible",
   "permanentLatestUrl": "/context-updates/latest",
   "latestDownloadPath": "/context-updates/latest",
   "legacyLatestDownloadPath": "/downloads/context-updates/latest.zip",
-  "versionedDownloadPath": "/downloads/context-updates/archive/StudioOS_ContextUpdate_v1.0.5.zip",
+  "versionedDownloadPath": "/downloads/context-updates/archive/StudioOS_ContextUpdate_v1.0.6.zip",
   "categoriesIncluded": [
     "Architecture",
     "Blockers",
-    "Business Model",
-    "Canon",
-    "Current Handoff",
     "Documentation",
     "Experience Lab",
-    "Genesis",
-    "Implementation Status",
-    "Marketplace",
-    "Studio Institute",
-    "Studio World",
-    "World Compiler"
+    "Implementation Status"
   ],
   "packageHealth": 100,
   "readyForDeltaSync": true,
   "releaseHistory": [
+    {
+      "version": "1.0.6",
+      "generatedAt": "2026-07-12T21:54:04.907Z",
+      "gitCommit": "e612bc4ab438007498441a2ffad2e3c6a1dbd0d1",
+      "checksumSha256": "e4ce29f98c83eb878871fc581d1cdb0ab69624bb1419d50077f27bda7421ab02",
+      "sizeBytes": 14838,
+      "changeCount": 1,
+      "baseOnboardingVersion": "1.2.2",
+      "compatibilityStatus": "compatible",
+      "downloadPath": "/downloads/context-updates/archive/StudioOS_ContextUpdate_v1.0.6.zip",
+      "zipFileName": "StudioOS_ContextUpdate_v1.0.6.zip",
+      "validationStatus": "pass"
+    },
     {
       "version": "1.0.5",
       "generatedAt": "2026-07-12T21:45:04.401Z",
@@ -151,6 +156,6 @@
       "validationStatus": "pass"
     }
   ],
-  "sizeBytes": 24241,
-  "deltaSequence": 6
+  "sizeBytes": 14838,
+  "deltaSequence": 7
 }

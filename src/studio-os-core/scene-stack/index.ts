@@ -18,4 +18,8 @@ export * from './scene-graph';
 export * from './quality-guard';
 export * from './clean-regeneration';
 export * from './scene-export';
+export * from './isolated-layer-contract';
+export * from './isolated-layer-prompt';
+export * from './isolated-layer-quality';
+export * from './layer-quality-recovery';
 export * from './world-compiler';

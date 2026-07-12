@@ -27,6 +27,8 @@ Each layer is independently:
 Dislike the lighting? Regenerate **only** the Lighting Layer™.  
 The room shell remains intact.
 
+**Isolated layer contract (2026-07-12):** `signature-landmark` and `furniture-objects` must deliver transparent PNG object plates — never full-scene rerenders. See **`docs/studio-os/creative-production/ISOLATED_LAYER_GENERATION_CONTRACT.md`**.
+
 ---
 
 ## The 10 Layers

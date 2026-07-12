@@ -47416,7 +47416,32 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 
 ---
 
-## 2026-07-12 — CD Studio stack auth rejection fix (full conversation)
+## 2026-07-12 — P0 Isolated Layer Generation Repair Sprint (full conversation)
+
+**Context:** Founder-approved P0 after shell foundation pipeline proved healthy (`run-1783892114155-bnqd8w`). Shell: HTTP 202, registered, persisted, mount verified, `pipelineComplete: true`. Failure moved to Layer 1: `LANDMARK_VALIDATION_FAILED` / `QUALITY_REGENERATE_REQUIRED`. Quality guard: "Object layer fills entire frame — likely full-scene rerender." `signature-landmark` and `furniture-objects` appeared to be full-scene rerenders, not isolated mountable plates.
+
+**Root cause (inference):** `nano-banana-pro/edit` img2img with shell URL as dominant reference + weak isolation prompts + webp output encouraged scene recreation.
+
+**Repair shipped (one commit):**
+- `isolated-layer-contract.ts` — modes, thresholds, reference policy (`perspective-metadata-only`)
+- `isolated-layer-prompt.ts` — dedicated isolated prompts + negatives (`scene-stack.v3-isolated`)
+- `isolated-layer-quality.ts` — alpha, frame coverage, edge contacts, shell similarity, classification
+- `quality-guard.ts` — integrated isolated analysis; `formatLayerQualityFailureMessage`
+- `reference-chain.ts` / `reference-enforcement.ts` — strip shell ref for isolated/blend layers
+- `prompt-compiler.ts` — PNG for object layers, `isolationAttempt` strengthening
+- `useSceneStack.ts` — bounded regeneration loop (max 2), Immune recovery events, shell preserved
+- `SceneStackViewport.tsx` — landmark rejected messaging; no Retry Shell when shell locked
+- `CreativeStudioRenderPreview.tsx` — correct diagnostic title for Layer 1 quality vs shell failure
+- `layer-quality-recovery.ts` — recovery audit event chain
+- Tests: `isolated-layer-generation.test.ts` (21 cases)
+- Docs: `ISOLATED_LAYER_GENERATION_CONTRACT.md`, `FULL_SCENE_RERENDER_LAYER_FAILURE.md`, CURRENT_HANDOFF, KNOWN_BLOCKERS, scene-stack README, CORE
+
+**Spatial Architecture Review:** SKIPPED — repair layer contract; no new nav/surfaces.
+
+**Branch:** `master` only; one `./scripts/agent-commit.sh` deploy.
+
+**Pending:** Founder verification — Experience Lab must advance beyond Layer 1 on mobile with isolated PNG plates.
+
 
 **Context:** After Immune System sprint (`f944066ab`), founder reported CD Studio still shows `WORLD COMPILE REJECTED™` / `LAYER GENERATION FAILED` / `STACK 0/6` with all layers RETRY on mobile (`fsbw.vercel.app`). Experience Lab validation jobs completing in production; **zero** `surface: creative-studio` jobs — CD Studio never reached async job persistence.
 
