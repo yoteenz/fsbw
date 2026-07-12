@@ -4,6 +4,11 @@
  */
 
 import type { MembershipPaymentRecord } from './membershipPayments';
+import { isWorldCompilerDiagnosticMode } from '../studio-os/diagnostics/world-compiler-investigation/diagnostic-mode';
+import {
+  recordGspuAwait,
+  recordGspuSubStage,
+} from '../studio-os/diagnostics/world-compiler-investigation/generate-shell-dispatch-desk';
 
 const API_BASE =
   (import.meta as unknown as { env?: { VITE_API_BASE?: string } }).env?.VITE_API_BASE ?? '';
@@ -150,10 +155,30 @@ export async function refreshSupabaseSessionOnce(): Promise<void> {
 
 /** Returns a Bearer token, refreshing the Supabase session once if the first read is empty. */
 export async function ensureApiAccessToken(): Promise<string | null> {
+  const diag = isWorldCompilerDiagnosticMode();
+  if (diag) {
+    recordGspuSubStage('GSPU-08-token-get-first', 'running');
+    recordGspuAwait('getAccessToken:first');
+  }
   let token = await getAccessToken();
+  if (diag) {
+    recordGspuSubStage('GSPU-08-token-get-first', 'success', token ? 'present' : 'empty');
+  }
   if (!token) {
+    if (diag) {
+      recordGspuSubStage('GSPU-09-token-refresh', 'running');
+      recordGspuAwait('refreshSupabaseSessionOnce');
+    }
     await refreshSupabaseSessionOnce();
+    if (diag) recordGspuSubStage('GSPU-09-token-refresh', 'success');
+    if (diag) {
+      recordGspuSubStage('GSPU-10-token-get-second', 'running');
+      recordGspuAwait('getAccessToken:second');
+    }
     token = await getAccessToken();
+    if (diag) {
+      recordGspuSubStage('GSPU-10-token-get-second', 'success', token ? 'present' : 'empty');
+    }
   }
   return token;
 }

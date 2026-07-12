@@ -151,6 +151,7 @@ describe('shell foundation black box', () => {
     recordShellStage('generate-shell', 'running');
     recordShellStage('generate-shell', 'success');
     const before = buildShellFoundationBlackBoxState();
+    expect(before.dispatchDesk).toBeDefined();
     const raw = sessionStorage.getItem('shellFoundationBlackBox_v1');
     expect(raw).toBeTruthy();
     clearShellFoundationBlackBox();

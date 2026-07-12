@@ -78,16 +78,16 @@
 
 ---
 
-## B1-Shell — Shell foundation construction stall (BLACK BOX SHIPPED — REPAIR NOT STARTED)
+## B1-Shell — Shell foundation construction stall (DISPATCH DESK SHIPPED — REPAIR NOT STARTED)
 
 | Field | Detail |
 |-------|--------|
 | **ID** | B1-Shell |
 | **Symptom** | Pipeline stops at **Building Shell** — shell never completes (CDS + Experience Lab) |
-| **Instrumentation** | `shell-foundation-black-box.ts` + `ShellFoundationBlackBoxPanel.tsx` (`compilerDiag=1`) |
-| **Forensic** | `SHELL_FOUNDATION_BLACK_BOX.md` |
-| **Verify** | Mobile `?compilerDiag=1` — last successful stage + timeline terminus visible |
-| **Status** | **In Progress** — observe only; repair awaits founder evidence |
+| **Instrumentation** | `shell-foundation-black-box.ts` + `generate-shell-dispatch-desk.ts` + `ShellFoundationBlackBoxPanel.tsx` (`compilerDiag=1`) |
+| **Forensic** | `SHELL_FOUNDATION_BLACK_BOX.md`, `GENERATE_SHELL_DISPATCH_DESK.md` |
+| **Verify** | Mobile `?compilerDiag=1` — Dispatch Desk section shows current sub-stage, auth state, fetch state, stall classification |
+| **Status** | **In Progress** — observe only; repair awaits founder evidence from Dispatch Desk |
 
 ### Documented Fact
 

@@ -7,6 +7,7 @@ import {
   subscribeShellFoundationBlackBox,
   type ShellFoundationBlackBoxState,
 } from '../../../../studio-os/diagnostics/world-compiler-investigation/shell-foundation-black-box';
+import type { GenerateShellDispatchDeskState } from '../../../../studio-os/diagnostics/world-compiler-investigation/generate-shell-dispatch-desk';
 
 type Props = {
   compileRunId: string | null;
@@ -70,6 +71,82 @@ const stageColor: Record<string, string> = {
   failed: '#f87171',
   skipped: '#a8a29e',
 };
+
+function DispatchDeskSection({ desk }: { desk: GenerateShellDispatchDeskState }) {
+  const currentStage = desk.subStages.find((s) => s.subStageId === desk.currentSubStageId);
+  const lastSuccess = desk.subStages.find((s) => s.subStageId === desk.lastSuccessfulSubStageId);
+
+  return (
+    <div data-dispatch-desk>
+      <p style={{ margin: '0 0 6px', fontWeight: 800, color: '#fbbf24' }}>Dispatch Desk</p>
+      <Row label="Invocation count" value={String(desk.invocations.length)} />
+      <Row
+        label="Invocation IDs"
+        value={desk.invocations.map((i) => i.invocationId).join(', ') || '—'}
+      />
+      <Row
+        label="Parent/child"
+        value={
+          desk.invocations
+            .filter((i) => i.parentInvocationId)
+            .map((i) => `${i.invocationId} → parent ${i.parentInvocationId}`)
+            .join('; ') || '—'
+        }
+      />
+      <Row label="Current sub-stage" value={currentStage ? `${currentStage.subStageId} · ${currentStage.label}` : '—'} />
+      <Row
+        label="Last success"
+        value={lastSuccess ? `${lastSuccess.subStageId} · ${lastSuccess.label}` : desk.lastSuccessfulSubStageId ?? '—'}
+      />
+      <Row label="Current await" value={desk.currentAwaitLabel ?? '—'} />
+      <Row
+        label="In-flight promise"
+        value={
+          desk.promiseForensic
+            ? `${desk.promiseForensic.reused ? 'Reused' : 'New'} · ${desk.promiseForensic.promiseKey} · ${desk.promiseForensic.state}${desk.promiseForensic.ageMs != null ? ` · age ${desk.promiseForensic.ageMs}ms` : ''}`
+            : 'None'
+        }
+      />
+      <Row
+        label="Authorization"
+        value={
+          desk.authorization.tokenEnsureEntered
+            ? `token ensure ${desk.authorization.tokenEnsureReturned ? 'returned' : 'pending'} · present=${String(desk.authorization.tokenPresent)} · grant=${desk.authorization.authorizationResult ?? '—'}`
+            : desk.authorization.authorizationResult ?? 'not entered'
+        }
+      />
+      <Row label="Endpoint" value={desk.fetch.endpoint ?? '—'} />
+      <Row label="Fetch started" value={desk.fetch.fetchStarted ? 'Yes' : 'No'} />
+      <Row label="Fetch response" value={desk.fetch.fetchResolved ? `Yes (${desk.fetch.responseStatus ?? '—'})` : desk.fetch.fetchRejected ? 'Rejected' : 'No'} />
+      <Row label="Elapsed" value={desk.elapsedMs != null ? `${desk.elapsedMs}ms` : '—'} />
+      <Row label="Last transition" value={desk.lastStateTransition ?? '—'} />
+      {desk.duplicateCallDetected ? (
+        <p style={{ margin: '6px 0', color: '#fb923c' }}>
+          Duplicate call: Yes — {desk.duplicateCallExplanation ?? 'see invocations'}
+        </p>
+      ) : (
+        <Row label="Duplicate call" value="No" />
+      )}
+      {desk.stallClassification ? (
+        <p style={{ margin: '6px 0 0', color: '#f87171', fontWeight: 700 }}>
+          Stall: {desk.stallClassification}
+          {desk.stallClassificationDetail ? ` — ${desk.stallClassificationDetail}` : ''}
+        </p>
+      ) : null}
+      <div style={{ marginTop: 8, maxHeight: 120, overflowY: 'auto' }}>
+        {desk.subStages
+          .filter((s) => s.status !== 'pending')
+          .map((s) => (
+            <div key={s.subStageId} style={{ color: stageColor[s.status] ?? '#d6d3d1', padding: '2px 0' }}>
+              {s.subStageId} · {s.status}
+              {s.durationMs != null ? ` · ${s.durationMs}ms` : ''}
+              {s.detail ? ` · ${s.detail}` : ''}
+            </div>
+          ))}
+      </div>
+    </div>
+  );
+}
 
 /** compilerDiag=1 — Shell Foundation Black Box (observe-only). */
 export function ShellFoundationBlackBoxPanel({
@@ -148,6 +225,10 @@ export function ShellFoundationBlackBoxPanel({
         {' · '}
         Last event: <strong>{state.lastVisibleEvent ?? lastEvent?.label ?? '—'}</strong>
       </p>
+
+      <Section title="GENERATE SHELL PUBLIC URL — DISPATCH DESK" defaultOpen>
+        <DispatchDeskSection desk={state.dispatchDesk} />
+      </Section>
 
       <Section title="A — Shell pipeline stages" defaultOpen>
         {state.stages.map((stage) => (

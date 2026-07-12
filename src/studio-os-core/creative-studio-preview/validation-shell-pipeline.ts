@@ -20,6 +20,14 @@ import {
   traceShellAsync,
 } from '../../studio-os/diagnostics/world-compiler-investigation/shell-foundation-black-box';
 import {
+  beginGspuInvocation,
+  endGspuInvocation,
+  recordGspuAuthorization,
+  recordGspuAwait,
+  recordGspuFetch,
+  recordGspuSubStage,
+} from '../../studio-os/diagnostics/world-compiler-investigation/generate-shell-dispatch-desk';
+import {
   buildEnvironmentShellRecipe,
   type EnvironmentShellRecipe,
   type ValidationEnvironmentShell,
@@ -53,57 +61,103 @@ async function generateShellPublicUrl(
   },
   workspaceId?: string
 ): Promise<{ publicUrl: string; method: ValidationEnvironmentShell['generationMethod'] } | null> {
-  recordShellFunctionEnter('generateShellPublicUrl', FILE);
+  const invocationId = beginGspuInvocation({
+    callerFunction: 'generateShellPublicUrl',
+    callerFile: FILE,
+    source: 'function-body',
+  });
+  recordGspuSubStage('GSPU-01-enter', 'running');
+  recordShellFunctionEnter('generateShellPublicUrl', FILE, { source: 'function-body' });
+  recordGspuSubStage('GSPU-01-enter', 'success');
+  recordGspuSubStage('GSPU-02-stage-create-shell-request', 'running');
   recordShellStage('create-shell-request', 'running');
 
   try {
-    const api = await requestStudioBuilderGenerate(
-      withValidationEphemeralAuth(
-        {
-          departmentId: recipe.departmentId,
-          packageId: requireDepartmentPackage(recipe.departmentId).packageId,
-          projectId: recipe.projectId,
-          productionGroupId: recipe.shellPrompt.productionGroupId,
-          heroAssetId: recipe.shellPrompt.heroAssetId,
-          prompt: recipe.shellPrompt.primary,
-          aspectRatio: recipe.aspectRatio,
-          outputFormat: recipe.renderTarget.format,
-          forceGenerate: true,
-        },
-        {
-          validationMode: true,
-          compileRunId: authCtx.compileRunId,
-          previewSessionId: authCtx.previewSessionId,
-          organizationId: authCtx.organizationId,
-          departmentId: authCtx.departmentId,
-          stationId: authCtx.stationId,
-          projectId: authCtx.projectId,
-        }
-      )
-    );
+    recordGspuSubStage('GSPU-02-stage-create-shell-request', 'success');
+    recordGspuSubStage('GSPU-03-resolve-package', 'running');
+    const pkg = requireDepartmentPackage(recipe.departmentId);
+    recordGspuSubStage('GSPU-03-resolve-package', 'success', pkg.packageId);
 
+    recordGspuSubStage('GSPU-04-build-payload', 'running');
+    const basePayload = {
+      departmentId: recipe.departmentId,
+      packageId: pkg.packageId,
+      projectId: recipe.projectId,
+      productionGroupId: recipe.shellPrompt.productionGroupId,
+      heroAssetId: recipe.shellPrompt.heroAssetId,
+      prompt: recipe.shellPrompt.primary,
+      aspectRatio: recipe.aspectRatio,
+      outputFormat: recipe.renderTarget.format,
+      forceGenerate: true,
+    };
+    recordGspuSubStage('GSPU-04-build-payload', 'success');
+
+    recordGspuSubStage('GSPU-05-auth-attach', 'running');
+    recordGspuAuthorization({
+      authorizationHelperEntered: true,
+      ephemeralAuthorizationRequested: true,
+      authorizationMode: 'server-issued-ephemeral',
+    });
+    const authPayload = withValidationEphemeralAuth(basePayload, {
+      validationMode: true,
+      compileRunId: authCtx.compileRunId,
+      previewSessionId: authCtx.previewSessionId,
+      organizationId: authCtx.organizationId,
+      departmentId: authCtx.departmentId,
+      stationId: authCtx.stationId,
+      projectId: authCtx.projectId,
+    });
+    recordGspuAuthorization({
+      authorizationHelperReturned: true,
+      productionAuthorizationIdPresent: Boolean(authPayload.productionAuthorizationId),
+      cachedAuthorizationReused: Boolean(authPayload.productionAuthorizationId),
+      authorizationResult: authPayload.productionAuthorizationId ? 'grant-attached' : 'context-only',
+    });
+    recordGspuSubStage('GSPU-05-auth-attach', 'success', authPayload.productionAuthorizationId ? 'grant-attached' : 'context-only');
+
+    recordGspuSubStage('GSPU-06-request-helper-enter', 'running');
+    recordGspuAwait('requestStudioBuilderGenerate');
+    const api = await requestStudioBuilderGenerate(authPayload);
+    recordGspuSubStage('GSPU-06-request-helper-enter', 'success');
+    recordGspuSubStage('GSPU-20-api-return', 'success', api.ok ? 'ok' : api.code ?? 'failed');
+
+    recordGspuSubStage('GSPU-21-network-forensic', 'running');
     recordShellGenerationNetworkFromForensic();
+    recordGspuSubStage('GSPU-21-network-forensic', 'success');
 
+    recordGspuSubStage('GSPU-22-result-validate', 'running');
     if (api.ok && api.publicUrl) {
+      recordGspuSubStage('GSPU-22-result-validate', 'success', 'studio-builder publicUrl');
       recordShellStage('create-shell-request', 'success', { detail: 'studio-builder-generate returned publicUrl' });
+      recordGspuSubStage('GSPU-24-return', 'success', 'studio-builder');
       recordShellFunctionExit('generateShellPublicUrl', FILE, { method: 'studio-builder' });
+      endGspuInvocation(invocationId);
       return { publicUrl: api.publicUrl, method: 'studio-builder' };
     }
+    recordGspuSubStage('GSPU-22-result-validate', 'failed', api.error ?? 'no publicUrl');
   } catch (err) {
     recordShellGenerationNetworkFromForensic();
+    recordGspuFetch({ fetchRejected: true });
+    recordGspuSubStage('GSPU-20-api-return', 'failed', err instanceof Error ? err.message : 'threw');
     recordShellStage('create-shell-request', 'failed', {
       detail: err instanceof Error ? err.message : 'studio-builder-generate threw',
     });
   }
 
   void workspaceId;
+  recordGspuSubStage('GSPU-23-canvas-fallback', 'running');
   recordShellStage('create-shell-request', 'success', { detail: 'Falling through to preview-canvas' });
   const dataUrl = renderValidationShellCanvas(recipe);
   if (!dataUrl) {
+    recordGspuSubStage('GSPU-23-canvas-fallback', 'failed', 'canvas unavailable');
     recordShellFunctionExit('generateShellPublicUrl', FILE, { method: null });
+    endGspuInvocation(invocationId);
     return null;
   }
+  recordGspuSubStage('GSPU-23-canvas-fallback', 'success');
+  recordGspuSubStage('GSPU-24-return', 'success', 'preview-canvas');
   recordShellFunctionExit('generateShellPublicUrl', FILE, { method: 'preview-canvas' });
+  endGspuInvocation(invocationId);
   return { publicUrl: dataUrl, method: 'preview-canvas' };
 }
 

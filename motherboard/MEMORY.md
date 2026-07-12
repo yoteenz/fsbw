@@ -47214,3 +47214,30 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 
 **Spatial Architecture Review:** SKIPPED — diagnostic instrumentation only.
 
+---
+
+## 2026-07-12 — P0 Generate Shell Public URL Dispatch Desk forensic sprint
+
+**Context:** Shell pipeline stops inside `generateShellPublicUrl()` at `create-shell-request` with `network: []`, no exception, and duplicate function trace entries. Founder requested deep forensic instrumentation ("camera over the dispatch desk") — prove exact first unresolved internal await; no repair.
+
+**Prior evidence (Documented Fact):** Shell init succeeds; forceRegenerate skips existing shell; prior invalidation succeeds; compile-preview-spec succeeds; generate-shell stage enters; create-shell-request stays running; generateShellPublicUrl await pending; no network/exception/rejection/shellId; register/persist/verify/return never start.
+
+**Instrumentation shipped:**
+- `generate-shell-dispatch-desk.ts` — GSPU-01…24 sub-stage telemetry, invocation IDs (wrapper vs body), promise in-flight forensics, authorization/fetch forensics, stall classifier (A–L), session restore
+- `shell-foundation-black-box.ts` — `dispatchDesk` in export; `markGspuWrapperInvocation` in `traceShellAsync` for generateShellPublicUrl
+- `validation-shell-pipeline.ts` — full sub-stage instrumentation in `generateShellPublicUrl()`
+- `studioBuilder/api.ts` — token/fetch/parse boundaries; in-flight promise tracking (diag-only)
+- `utils/api.ts` — `ensureApiAccessToken` await sub-stages GSPU-08/09/10
+- `ShellFoundationBlackBoxPanel.tsx` — **GENERATE SHELL PUBLIC URL — DISPATCH DESK** mobile section
+- `GENERATE_SHELL_DISPATCH_DESK.md` forensic report
+
+**Duplicate entry explanation (Inference):** Category F — `traceShellAsync` wrapper `recordShellFunctionEnter` plus inner `function-body` enter; not two independent callers.
+
+**Tests:** 15 in `generate-shell-dispatch-desk.test.ts` + 8 black box tests; build pass.
+
+**Operational:** CURRENT_HANDOFF, KNOWN_BLOCKERS B1-Shell updated — Dispatch Desk shipped; repair awaits founder mobile evidence.
+
+**Repair status:** None. Shell not declared restored.
+
+**Spatial Architecture Review:** SKIPPED — forensic instrumentation sprint.
+

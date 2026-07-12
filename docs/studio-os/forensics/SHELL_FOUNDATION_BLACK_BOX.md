@@ -32,17 +32,19 @@ https://fsbw.vercel.app/admin/studio/experience-lab?compilerDiag=1
 
 | Layer | File | Role |
 |-------|------|------|
-| Black box store | `shell-foundation-black-box.ts` | Stages, traces, awaits, network, timeline, stalls |
+| Dispatch desk | `generate-shell-dispatch-desk.ts` | GSPU sub-stages inside `generateShellPublicUrl()` |
+| Black box store | `shell-foundation-black-box.ts` | Stages, traces, awaits, network, timeline, stalls, dispatchDesk |
 | Shell pipeline | `validation-shell-pipeline.ts` | `traceShellAsync` at each shell phase |
 | UI panel | `ShellFoundationBlackBoxPanel.tsx` | Sections A–J live display |
 | Experience Lab | `CreativeStudioRenderPreview.tsx` | Panel mount when `compilerDiag=1` |
 
 ---
 
-## Sections (A–J)
+## Sections (A–J + Dispatch Desk)
 
 | Section | Content |
 |---------|---------|
+| **Dispatch Desk** | GSPU sub-stages, invocations, auth/fetch/promise state, stall classification |
 | A | Shell pipeline stages (pending/running/success/failed/skipped + duration) |
 | B | Function enter/exit/throw trace |
 | C | Await tracker (pending highlight >5s) |
@@ -66,15 +68,27 @@ https://fsbw.vercel.app/admin/studio/experience-lab?compilerDiag=1
 
 ## Documented Fact
 
-- Shell construction is the first visible unresolved boundary after completion-authority repair
+- Shell construction stops inside `generateShellPublicUrl()` at `create-shell-request`
+- **No observable network activity** in current trace (`network: []`)
+- First unresolved boundary after `create-shell-request` — internal GSPU sub-stage (see Dispatch Desk)
 - **No shell behavior, timing, retry, or API contract changes** in this sprint
 - Shell failure remains **unresolved** — instrumentation only
+
+## Inference
+
+- Duplicate `generateShellPublicUrl()` function trace = Category F (wrapper + inner), not two independent callers
+- Stall before `GSPU-15-fetch-started` → fetch never invoked OR authorization wait at token path
+
+## Unknown
+
+- Exact active sub-stage on founder device until post-deploy mobile run
+- Repair approach until Dispatch Desk evidence captured
 
 ---
 
 ## Tests
 
-`shell-foundation-black-box.test.ts` — stage telemetry, function trace, await, network, errors, stalls, persistence.
+`shell-foundation-black-box.test.ts`, `generate-shell-dispatch-desk.test.ts` — stage telemetry, dispatch sub-stages, awaits, network, stalls, persistence.
 
 ---
 

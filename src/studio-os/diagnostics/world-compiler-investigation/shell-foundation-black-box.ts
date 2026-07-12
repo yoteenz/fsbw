@@ -2,6 +2,14 @@
  * Shell Foundation Black Box — observe-only instrumentation for compilerDiag=1.
  * Does not change shell behavior, timing, retries, or API contracts.
  */
+import {
+  bindGenerateShellDispatchDeskContext,
+  buildGenerateShellDispatchDeskState,
+  markGspuWrapperInvocation,
+  resetGenerateShellDispatchDesk,
+  restoreGenerateShellDispatchDeskFromSnapshot,
+  type GenerateShellDispatchDeskState,
+} from './generate-shell-dispatch-desk';
 import { isWorldCompilerDiagnosticMode } from './diagnostic-mode';
 import { getLastGenerationRequestHttpForensic } from './generation-request-forensic';
 
@@ -165,6 +173,7 @@ export type ShellTimelineEntry = {
 };
 
 export type ShellFoundationBlackBoxState = {
+  dispatchDesk: GenerateShellDispatchDeskState;
   runStartedAt: number | null;
   runContext: {
     compileRunId: string | null;
@@ -380,6 +389,9 @@ export function loadShellFoundationBlackBoxFromSession(): void {
     lastVisibleEvent = parsed.lastVisibleEvent;
     pipelineComplete = parsed.pipelineComplete;
     pipelineOk = parsed.pipelineOk;
+    if (parsed.dispatchDesk) {
+      restoreGenerateShellDispatchDeskFromSnapshot(parsed.dispatchDesk);
+    }
     functionSeq = functionTraces.length;
     networkSeq = networkRecords.length;
     errorSeq = errors.length;
@@ -407,6 +419,7 @@ export function clearShellFoundationBlackBox(): void {
   pipelineComplete = false;
   pipelineOk = null;
   lastProgressAt = null;
+  resetGenerateShellDispatchDesk();
   heartbeat = {
     lastProgressEvent: null,
     lastProgressAt: null,
@@ -464,6 +477,12 @@ export function beginShellFoundationRun(ctx: {
   pipelineComplete = false;
   pipelineOk = null;
   lastProgressAt = runStartedAt;
+  bindGenerateShellDispatchDeskContext({
+    compileRunId: ctx.compileRunId,
+    stationId: ctx.stationId,
+    requestKey: `shell-${ctx.previewSessionId}`,
+    surface: ctx.surface ?? 'experience-lab-validation',
+  });
   pushTimeline('Shell foundation run started', 'state', 'running', ctx.compileRunId);
   recordShellStateSnapshot('run-started', {
     pipelinePhase: 'shell-pipeline',
@@ -774,6 +793,7 @@ export function completeShellFoundationRun(ok: boolean, detail?: string): void {
 export function buildShellFoundationBlackBoxState(): ShellFoundationBlackBoxState {
   detectStalls();
   return {
+    dispatchDesk: buildGenerateShellDispatchDeskState(),
     runStartedAt,
     runContext: { ...runContext },
     stages: SHELL_FOUNDATION_STAGE_DEFS.map((def) => stages.get(def.id)!).filter(Boolean),
@@ -816,7 +836,11 @@ export async function traceShellAsync<T>(
 ): Promise<T> {
   if (!enabled()) return execute();
 
-  recordShellFunctionEnter(functionName, file, { stageId });
+  if (functionName === 'generateShellPublicUrl') {
+    markGspuWrapperInvocation({ callerFunction: functionName, callerFile: file, stageId });
+  }
+
+  recordShellFunctionEnter(functionName, file, { stageId, source: 'traceShellAsync-wrapper' });
   recordShellStage(stageId, 'running');
   const awaitId = beginShellAwait(options?.awaitLabel ?? stageId, functionName, options?.expectedTimeoutMs ?? null);
   try {
