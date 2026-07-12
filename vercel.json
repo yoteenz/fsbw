@@ -118,7 +118,7 @@
       "headers": [
         {
           "key": "Content-Disposition",
-          "value": "attachment; filename=\"StudioOS_ContextCapsule_v0.3.1.zip\""
+          "value": "attachment; filename=\"StudioOS_ContextCapsule_v0.3.2.zip\""
         },
         {
           "key": "Cache-Control",
@@ -130,11 +130,11 @@
         },
         {
           "key": "X-Capsule-Version",
-          "value": "0.3.1"
+          "value": "0.3.2"
         },
         {
           "key": "X-Capsule-Artifact",
-          "value": "StudioOS_ContextCapsule_v0.3.1.zip"
+          "value": "StudioOS_ContextCapsule_v0.3.2.zip"
         }
       ]
     },
@@ -143,7 +143,7 @@
       "headers": [
         {
           "key": "Content-Disposition",
-          "value": "attachment; filename=\"StudioOS_OnboardingPack_v1.2.1.zip\""
+          "value": "attachment; filename=\"StudioOS_OnboardingPack_v1.2.2.zip\""
         },
         {
           "key": "Cache-Control",
@@ -155,11 +155,11 @@
         },
         {
           "key": "X-Capsule-Version",
-          "value": "1.2.1"
+          "value": "1.2.2"
         },
         {
           "key": "X-Capsule-Artifact",
-          "value": "StudioOS_OnboardingPack_v1.2.1.zip"
+          "value": "StudioOS_OnboardingPack_v1.2.2.zip"
         }
       ]
     },

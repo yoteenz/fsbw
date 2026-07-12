@@ -319,13 +319,27 @@ Full detail: `AI_STYLE_GUIDE.md`
 
 | System | Use |
 |--------|-----|
-| `docs/ai-collaboration/` | External AI onboarding (this package) |
-| `motherboard/` | In-repo Cursor agent memory |
+| Unified Onboarding Pack | Deterministic external-AI onboarding (`/onboarding/latest`) |
+| `docs/ai-collaboration/` | External AI collaboration docs |
+| `motherboard/` | Cursor in-repo implementation memory (CORE, CODEBASE, MEMORY) |
+| `StudioOS_ContextCapsule_v0.1/` | Operational handoff + blockers inside repo |
 | `docs/studio-os/` | Product architecture bible |
 | `docs/studio-world/` | Spatial / civilization canon |
 | `docs/studio-institute/` | Learning OS canon |
 
-ChatGPT should read **this package first**, then dive into specific bibles as the task requires.
+ChatGPT should complete **Unified Pack onboarding first**, then reconcile live repo state.
+
+### Cross-context rules (after onboarding approval)
+
+If you have **repository access**:
+
+1. Read `motherboard/CORE.md` and `motherboard/CODEBASE.md` for live Frontal Slayer + Studio OS implementation context
+2. Read latest applicable `motherboard/MEMORY.md` entries as **history** — not automatic current truth
+3. Reconcile: `CURRENT_HANDOFF.md`, `KNOWN_BLOCKERS.md`, Motherboard, and founder production evidence
+4. Motherboard does **not** replace the onboarding manifest — it supplements implementation detail
+5. Historical Collaboration Intelligence must **not** override newer operational evidence
+
+**Authority order for current state:** CURRENT_HANDOFF → KNOWN_BLOCKERS → founder-verified traces → CORE/CODEBASE → latest MEMORY.
 
 ---
 

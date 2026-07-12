@@ -3,7 +3,7 @@
  * Keep in sync with api/_lib/onboardingPackConstants.ts
  */
 
-export const ONBOARDING_PACK_VERSION = '1.2.1';
+export const ONBOARDING_PACK_VERSION = '1.2.2';
 
 export const ONBOARDING_PACK_DOWNLOAD_BASE = '/downloads/onboarding-packs';
 

@@ -11,7 +11,7 @@ import { execSync } from 'node:child_process';
 const ROOT = path.resolve(import.meta.dirname, '..');
 
 /** Single canonical semver for every generated artifact and version-sync check. */
-const CANONICAL_CAPSULE_VERSION = '0.3.1';
+const CANONICAL_CAPSULE_VERSION = '0.3.2';
 const GENERATOR_VERSION = CANONICAL_CAPSULE_VERSION;
 const LATEST_ALIAS = 'latest.zip';
 const RELEASE_MANIFEST = 'release.json';

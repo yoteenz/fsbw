@@ -1,10 +1,10 @@
-# README FIRST — AI Context Capsule 0.3.1
+# README FIRST — AI Context Capsule 0.3.2
 
 > **Unified Onboarding Pack notice:** If this capsule is inside **StudioOS_OnboardingPack/**, follow the pack-level **START_HERE.md** and **MASTER_MANIFEST.md**. Do not begin or complete a separate onboarding process from this capsule alone. Use **ONBOARDING_REPORT_TEMPLATE.md** at the pack root — populate in your own words.
 
-**You are opening:** `StudioOS_ContextCapsule_v0.1` (folder name is stable; **capsule version is 0.3.1**)  
+**You are opening:** `StudioOS_ContextCapsule_v0.1` (folder name is stable; **capsule version is 0.3.2**)  
 **Purpose:** Deterministic **verification** onboarding — reconstruct project and founder working style with **minimal inference**  
-**Capsule version:** 0.3.1  
+**Capsule version:** 0.3.2  
 **Generated:** see `CAPSULE_VALIDATION.md` and `context-capsule.json`
 
 ---
@@ -12,6 +12,8 @@
 ## What this is
 
 This folder is a **complete AI Context Capsule** — a portable briefing room for Studio OS. It is not source code. It is not permission to guess.
+
+**0.3.2 changes:** Cross-context synchronization with Motherboard — live implementation bridge (motherboard/CORE.md, motherboard/CODEBASE.md, motherboard/MEMORY.md) documented in `AI_CONTEXT.md`; Layer 1 blocker language updated to repair-shipped / verify-pending state.
 
 **0.3.1 changes:** self-verifying export — auto-generated Read Verification, Operational Verification, and Capsule Validation footer in `CAPSULE_VALIDATION.md`. Onboarding remains a **verification process** with documented-vs-inferred labels and compliance checklist.
 
@@ -118,6 +120,20 @@ See full hierarchy in `ONBOARDING_REPORT.md` § Operational Source of Truth.
 | **Composer** | Cursor Cloud implementer — code, tests, one deploy per task |
 | **Terra** | Governance — canon alignment before risky changes |
 | **Motherboard** | Cursor in-repo memory — separate from this capsule |
+
+---
+
+## Cross-context rules (Motherboard ↔ Onboarding Pack)
+
+When external AI has **live repository access** after completing onboarding:
+
+1. Read the **Motherboard bridge** — `motherboard/CORE.md`, `motherboard/CODEBASE.md`, and latest applicable `motherboard/MEMORY.md` entries
+2. Reconcile with `CURRENT_HANDOFF.md`, `KNOWN_BLOCKERS.md`, and founder-provided production evidence
+3. Motherboard provides **current implementation detail** — not a replacement for the onboarding manifest
+4. Full onboarding remains **deterministic and manifest-driven** inside the Unified Pack
+5. **Never** let historical Collaboration Intelligence or old MEMORY entries override newer operational handoff/blocker truth
+
+Motherboard files are **not** in the 93-file required onboarding reading order. Use the concise cross-reference in `AI_CONTEXT.md` § Motherboard.
 
 ---
 

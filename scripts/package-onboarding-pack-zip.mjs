@@ -17,7 +17,7 @@ import {
 
 const ROOT = path.resolve(import.meta.dirname, '..');
 
-const PACK_VERSION = '1.2.1';
+const PACK_VERSION = '1.2.2';
 const PACK_FOLDER = 'StudioOS_OnboardingPack';
 const LATEST_ALIAS = 'latest.zip';
 const DOWNLOAD_BASE = '/downloads/onboarding-packs';
@@ -379,6 +379,25 @@ If you received a **single capsule ZIP** without this START_HERE file, that caps
 Inside **StudioOS_OnboardingPack/**, this file and MASTER_MANIFEST always win.
 
 **Preferred complete handoff URL:** \`https://fsbw.vercel.app/onboarding/latest\`
+
+---
+
+## Live Repository Cross-Context After Onboarding
+
+This pack is **not** a permanent replacement for live repository state.
+
+After onboarding approval, if you have **repository access**, also consult (paths at repo root — not inside this ZIP):
+
+- \`StudioOS_ContextCapsule_v0.1/CURRENT_HANDOFF.md\`
+- \`StudioOS_ContextCapsule_v0.1/KNOWN_BLOCKERS.md\`
+- \`motherboard/CORE.md\` — persistent implementation rules
+- \`motherboard/CODEBASE.md\` — live codebase map
+- \`motherboard/MEMORY.md\` — append-only history (latest applicable entries; does not override handoff/blockers)
+- Founder's latest verified production evidence
+
+**Cursor** uses Motherboard as implementation memory. **External AI** uses this pack for deterministic onboarding. Neither replaces the other.
+
+See **ONBOARDING_GUIDE.md** § Live Repository Cross-Context After Onboarding.
 `;
 }
 

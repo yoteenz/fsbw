@@ -70,7 +70,7 @@ const DOCUMENT_METADATA = {
   'START_HERE.md': {
     capsule: 'Unified Pack',
     purpose: 'Single authoritative entry point and onboarding rules',
-    topics: ['Onboarding Process', 'Reading Order', 'Approval Boundary'],
+    topics: ['Onboarding Process', 'Reading Order', 'Approval Boundary', 'Cross-Context', 'Motherboard Bridge'],
     dependencies: [],
     crossReferences: ['MASTER_MANIFEST.md', 'ONBOARDING_GUIDE.md', 'ONBOARDING_REPORT_TEMPLATE.md'],
     reportSections: ['onboarding-compliance', 'read-confirmation', 'approval-boundary'],
@@ -280,6 +280,14 @@ export const CROSS_CAPSULE_CONCEPTS = [
     referencedBy: ['Founder Intelligence Capsule', 'Collaboration Intelligence Capsule'],
   },
   {
+    concept: 'Cross-Context (Motherboard)',
+    canonicalOwner: { capsule: 'Motherboard (repository)', document: 'motherboard/README.md' },
+    supportingDocuments: ['motherboard/CORE.md', 'motherboard/CODEBASE.md', 'AI_Context_Capsule/AI_CONTEXT.md', 'onboarding-pack/ONBOARDING_GUIDE.md'],
+    operationalAuthority: 'Live implementation bridge after onboarding — not inside 93-file reading order',
+    relatedDocuments: ['motherboard/MEMORY.md', 'source-of-truth-map.json'],
+    referencedBy: ['Unified Pack', 'AI Context Capsule', 'Cursor agents'],
+  },
+  {
     concept: 'Founder Strategy',
     canonicalOwner: { capsule: 'Founder Intelligence Capsule', document: 'Founder_Intelligence_Capsule/VISION.md' },
     supportingDocuments: ['Founder_Intelligence_Capsule/PRODUCT_PHILOSOPHY.md', 'Founder_Intelligence_Capsule/STUDIO_WORLD.md'],
@@ -348,6 +356,9 @@ export const CROSS_CAPSULE_CONCEPTS = [
 export const SOURCE_OF_TRUTH_HIERARCHY = [
   { domain: 'Current Implementation', authority: 'AI_Context_Capsule/CURRENT_HANDOFF.md', capsule: 'AI Context Capsule' },
   { domain: 'Current Blockers', authority: 'AI_Context_Capsule/KNOWN_BLOCKERS.md', capsule: 'AI Context Capsule' },
+  { domain: 'Live Implementation Rules', authority: 'motherboard/CORE.md', capsule: 'Motherboard (repository)', repositoryOnly: true },
+  { domain: 'Live Codebase Map', authority: 'motherboard/CODEBASE.md', capsule: 'Motherboard (repository)', repositoryOnly: true },
+  { domain: 'Implementation History', authority: 'motherboard/MEMORY.md', capsule: 'Motherboard (repository)', repositoryOnly: true, note: 'Append-only; latest applicable entries; does not override handoff/blockers' },
   { domain: 'Founder Strategy', authority: 'Founder_Intelligence_Capsule/VISION.md', capsule: 'Founder Intelligence Capsule' },
   { domain: 'Design Judgment', authority: 'Studio_DNA_Capsule/FOUNDER_DESIGN_PHILOSOPHY.md', capsule: 'Studio DNA Capsule', fallback: 'Founder_Intelligence_Capsule/DESIGN_LANGUAGE.md' },
   { domain: 'Collaboration Memory', authority: 'Collaboration_Intelligence_Capsule/COLLABORATION_INTELLIGENCE_INDEX.md', capsule: 'Collaboration Intelligence Capsule' },
@@ -691,9 +702,12 @@ export function generateMachineReadableLayer(input) {
     })),
     resolutionRules: [
       'Context wins for what is built today',
+      'CURRENT_HANDOFF and KNOWN_BLOCKERS override older Motherboard MEMORY for current blockers',
+      'Motherboard CORE and CODEBASE govern live implementation when repository access is available',
       'Founder Intelligence wins for why and strategy',
       'Studio DNA wins for design judgment when included',
       'Collaboration Intelligence wins for institutional collaboration memory',
+      'Cross-context synchronization required when either Motherboard or onboarding pack changes materially',
     ],
   };
 

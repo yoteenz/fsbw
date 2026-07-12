@@ -1,7 +1,7 @@
 # MANIFEST — StudioOS_ContextCapsule_v0.1
 
-**Capsule ID:** `capsule-2026-07-10-v0.3.1-validation`  
-**Capsule Version:** 0.3.1  
+**Capsule ID:** `capsule-2026-07-12-v0.3.2-cross-context`  
+**Capsule Version:** 0.3.2  
 **Format:** Flat Markdown + `context-capsule.json` + `CAPSULE_VALIDATION.md` + ZIP download  
 **Protocol alignment:** AI Context Protocol™ 1.0.0 + 0.3.1 verification onboarding
 
@@ -11,7 +11,7 @@
 
 | Field | Value |
 |-------|-------|
-| **Capsule Version** | 0.3.1 |
+| **Capsule Version** | 0.3.2 |
 | **Project Version** | `build-a-wig@0.0.0` (see git SHA at export) |
 | **Studio OS Version** | git SHA on `master` at export |
 | **Generation Date** | See `CAPSULE_VALIDATION.md` |

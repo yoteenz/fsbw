@@ -3,7 +3,7 @@
 **Purpose:** How to complete onboarding once — across all included capsules.
 
 ---
-**Last Updated:** 2026-07-11  
+**Last Updated:** 2026-07-12  
 **Authority:** Subordinate only to `START_HERE.md` and `MASTER_MANIFEST.md` when inside the Unified Onboarding Pack.
 
 ---
@@ -71,6 +71,32 @@ Use this map in your report (do **not** treat the ZIP as one undifferentiated bl
 | Founder strategy & vision | `Founder_Intelligence_Capsule/VISION.md` |
 
 When sources conflict: **Context** wins for *what is built today*; **Founder Intelligence** wins for *why & strategy*; **Studio DNA** wins for *design judgment* (when included).
+
+---
+
+## Live Repository Cross-Context After Onboarding
+
+The Unified Pack provides portable architecture, founder, canon, and collaboration context. It is **not** a permanent replacement for live repository operational state.
+
+**After onboarding approval**, an AI with repository access should consult:
+
+| Source | Role |
+|--------|------|
+| `AI_Context_Capsule/CURRENT_HANDOFF.md` | Current sprint and implementation status |
+| `AI_Context_Capsule/KNOWN_BLOCKERS.md` | Active gates |
+| `motherboard/CORE.md` | Persistent implementation rules (repo root — not inside ZIP) |
+| `motherboard/CODEBASE.md` | Live codebase map (repo root) |
+| `motherboard/MEMORY.md` | Append-only history — latest applicable entries only |
+| Founder's latest verified production evidence | Black Box exports, device tests |
+
+**Binding hierarchy:** Newer operational evidence overrides older package or MEMORY content. Vision and conceptual documents are not automatically production.
+
+| Agent layer | System |
+|-------------|--------|
+| Cursor | Motherboard (implementation memory) |
+| External AI | Unified Onboarding Pack (deterministic onboarding) |
+
+Cross-context synchronization is required when either system changes materially. Motherboard files are **not** in the 93-file required reading order — use this section and `AI_Context_Capsule/AI_CONTEXT.md` § Motherboard as the bridge.
 
 ---
 

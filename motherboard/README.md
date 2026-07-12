@@ -34,6 +34,45 @@ A Cursor rule (`.cursor/rules/motherboard.mdc`) is set to **always apply**, so a
 2. Use this context as the source of truth for how the site works, how it’s styled, and how to add or change features.
 3. Prefer patterns and conventions described here; only deviate when the user explicitly asks.
 
+**Studio OS tasks:** When the task touches Studio OS architecture, Studio World, Experience Lab, Studio Institute, Genesis, Creative Direction Studio, shared generation, governance, or platform-wide systems, also read:
+
+- `StudioOS_ContextCapsule_v0.1/CURRENT_HANDOFF.md`
+- `StudioOS_ContextCapsule_v0.1/KNOWN_BLOCKERS.md`
+
+Use this **concise cross-context bridge** — do **not** run the full 93-file Unified Onboarding Pack unless the founder explicitly requests full onboarding.
+
+---
+
+## Studio OS Onboarding and Cross-Context Authority
+
+The repository maintains **two complementary agent-context systems**. They are **not** replacements for one another.
+
+| System | Audience | Primary role |
+|--------|----------|--------------|
+| **Motherboard** (`motherboard/`) | Cursor in-repo agents | Persistent **Frontal Slayer implementation** memory — stack, flows, codebase map, append-only conversation history |
+| **Unified Studio OS Onboarding Pack** | External AI (ChatGPT, etc.) | Portable **architecture, founder intelligence, canon, and collaboration** onboarding |
+
+**When to load both:** Studio OS product work, Experience Lab, World Compiler, Scene Stack, governed generation, Studio Institute, Genesis integration, platform governance, or cross-cutting architecture.
+
+**Authority hierarchy (do not collapse):**
+
+| Layer | Source | Governs |
+|-------|--------|---------|
+| **Current operational state** | `CURRENT_HANDOFF.md`, `KNOWN_BLOCKERS.md`, founder-verified production evidence | Active blockers, sprint status, what is shipped vs verified |
+| **Persistent implementation** | `motherboard/CORE.md`, `motherboard/CODEBASE.md`, latest applicable `MEMORY.md` entries | How Frontal Slayer + Studio OS code behaves and is structured |
+| **Strategy & canon** | Founder Intelligence, Studio DNA, Collaboration Intelligence, AI Context (outside handoff/blocker authority) | Why, design judgment, collaboration history |
+
+**Rules:**
+
+- `CURRENT_HANDOFF.md` and `KNOWN_BLOCKERS.md` **override** older Motherboard `MEMORY.md` entries for current blockers and runtime status.
+- `CORE.md` + `CODEBASE.md` override old `MEMORY` for current implementation behavior.
+- `MEMORY.md` is **append-only history** — not automatically current truth.
+- Founder Intelligence and Studio DNA govern intent and experience quality; they must **not** override newer operational evidence.
+- Historical Collaboration Intelligence must **not** override current implementation evidence.
+- Label statements **Documented Fact**, **Inference**, or **Unknown**; classify systems **Production**, **In Progress**, **Planned**, or **Conceptual**.
+
+**External AI:** Approved as Creative Director and strategic architecture partner — does **not** implement code unless the founder changes that model. **Composer** remains implementation authority.
+
 ---
 
 ### "Add to motherboard"
@@ -87,7 +126,7 @@ For **profiles table and sync** (name, photo, socials, birthday, rewards): see `
 
 ## Quick reference for agents
 
-- **"Load motherboard"** → Read `README.md` → `CORE.md` → `CODEBASE.md` → `MEMORY.md` and use that context.
+- **"Load motherboard"** → Read `README.md` → `CORE.md` → `CODEBASE.md` → `MEMORY.md` and use that context. For Studio OS / Experience Lab / shared platform work, also read `StudioOS_ContextCapsule_v0.1/CURRENT_HANDOFF.md` and `KNOWN_BLOCKERS.md`.
 - **"Add to motherboard"** → Add one entry now (per ADDING.md) and **enable auto-add for this chat**; thereafter add at the end of significant exchanges without being asked again. **"Stop adding to motherboard"** → disable auto-add for this chat.
 - **Ship changes:** **`./scripts/agent-commit.sh "message"`** — one commit + one push; MEMORY staged with code (see **`.cursor/rules/one-deploy-per-task.mdc`**).
 - **"Snapshot codebase to motherboard"** → Explore the repo and overwrite `motherboard/CODEBASE.md` with a structured summary of the current codebase so the motherboard has accurate, up-to-date code context.

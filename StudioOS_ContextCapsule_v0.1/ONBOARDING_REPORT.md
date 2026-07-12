@@ -1,9 +1,9 @@
-# AI Onboarding Report — Standard Template (0.3.1)
+# AI Onboarding Report — Standard Template (0.3.2)
 
 > **Unified Onboarding Pack:** If you received **StudioOS_OnboardingPack**, use **ONBOARDING_REPORT_TEMPLATE.md** at the pack root instead of this file. This file remains for **standalone Context Capsule** onboarding only.
 
 **Capsule folder:** `StudioOS_ContextCapsule_v0.1`  
-**Capsule version:** 0.3.1  
+**Capsule version:** 0.3.2  
 **Purpose:** Deterministic **verification** after reading every required document — not a general summary.  
 **Rule:** Complete this document **exactly**. Do **not** begin implementation until the founder approves.
 
@@ -271,7 +271,7 @@ _For each observation, state certainty: **Confirmed** · **Likely** · **Possibl
 
 **Report completed by:** _AI model / session ID_  
 **Date (UTC):** _YYYY-MM-DD_  
-**Capsule version read:** 0.3.1 _(from MANIFEST.md)_
+**Capsule version read:** 0.3.2 _(from MANIFEST.md)_
 
 ---
 

@@ -1,7 +1,7 @@
 # AI Context — Studio OS High-Level Onboarding
 
-**Capsule:** StudioOS_ContextCapsule_v0.1 · **0.3.1**  
-**Last updated:** 2026-07-10  
+**Capsule:** StudioOS_ContextCapsule_v0.1 · **0.3.2**  
+**Last updated:** 2026-07-12  
 **Purpose:** Compressed orientation for external AI — not a substitute for full repo bibles (paths below point to canonical docs in the host repository)
 
 ---
@@ -161,23 +161,57 @@ Recent fix: bundled `studio-world-atlas` golden package + boot validation.
 | Phase | Focus | Status |
 |-------|-------|--------|
 | Platform stabilization | Boot bisection, storage guard, diagnostic isolation | In progress |
-| Experience Lab render pipeline | Shell → Layer 1 → full stack | **Blocked on Layer 1 auth** |
+| Experience Lab render pipeline | Shell → Layer 1 → full stack | **In Progress** — Layer 1 repair shipped; production verify pending |
 | Studio World canon | Master Plan, Atlas, Knowledge Graph, Civilization bibles | Docs delivered |
 | Institute intelligence | V3 Cognitive Engine, Learning DNA bibles | Docs delivered |
 | Creative Direction Studio | Scene Stack production UI | Active, coupled to compiler |
 | Governed generation | ProductionAuthorization on all material routes | Production gate live |
+| Cross-context sync | Motherboard ↔ Unified Onboarding Pack interoperability | Shipped (v1.2.2 / capsule 0.3.2) |
 
 Detailed roadmap: `docs/studio-world/010_IMPLEMENTATION_ROADMAP.md`, `motherboard/CORE.md`.
 
 ---
 
-## 12. Current blockers (2026-07-10)
+## 12. Current blockers (2026-07-12)
 
-| Priority | Blocker | Detail |
-|----------|---------|--------|
-| **P0** | Layer 1 Landmark generation | `AUTH_REQUIRED` on `/api/admin/studio-builder-generate` — validation client sends no `productionAuthorizationId`; shell succeeds via canvas fallback, Landmark does not |
-| **P0** | Diagnostic normal-tab reliability | Isolation shipped (`ef969cb7d`); device verification pending on iOS Safari/Chrome normal tabs |
-| — | Experience Lab → full compile | Do not resume until Layer 1 auth fixed + diagnostics verified |
+| Priority | Blocker | Detail | Classification |
+|----------|---------|--------|----------------|
+| **P0** | Layer 1 `signature-landmark` governed generation | Repair `7a8869404` shipped — JSON diagnostics, FAL preservation, maxDuration 120. **Incident NOT resolved.** Founder mobile verification pending on **both** Creative Studio and Experience Engine (shared runtime). | **In Progress** |
+| **P0** | Diagnostic normal-tab reliability | Isolation shipped; device verification pending | **In Progress** |
+
+**Do not say Creative Studio was restored.** Both surfaces share `/admin/studio/experience-lab`.
+
+**Leading explanation for original non-JSON 500:** Vercel platform termination / invocation failure (`Inference`). **Not definitively proven** until authenticated production traces confirm.
+
+**Proven failure position:** After M1–M7 and shell lock — first failure at Layer 1 `signature-landmark` (`Documented Fact`).
+
+**UI caveat:** "Retry Shell Layer" is not reliable failure-stage evidence.
+
+---
+
+## Motherboard and Live Frontal Slayer Implementation Context
+
+The **Motherboard** (`motherboard/`) is Cursor's in-repository implementation memory. It complements this capsule; it does not replace it.
+
+| File | Role |
+|------|------|
+| `motherboard/CORE.md` | Persistent storefront + Studio OS implementation rules |
+| `motherboard/CODEBASE.md` | Live codebase map (refreshed on snapshot) |
+| `motherboard/MEMORY.md` | Append-only implementation history |
+
+**When to consult Motherboard:** Tasks touching actual Frontal Slayer commerce behavior, admin flows, Build-a-Wig, PSA, bookings, deployment policy, or Studio OS code paths in `src/`.
+
+**Authority:** `CURRENT_HANDOFF.md` and `KNOWN_BLOCKERS.md` **override** older Motherboard `MEMORY.md` for current blockers and runtime status. `CORE.md` + `CODEBASE.md` override old `MEMORY` for current implementation behavior.
+
+**Frontal Slayer context (concise):**
+
+- First production organization and active commerce host in this repository
+- Includes storefront, account, admin, commerce, Build-a-Wig, PSA, bookings, Studio OS, Institute, diagnostics, and governed generation
+- **Mobile-first** real-device verification is the default
+- Production deploys from `master` — **one governed task = one commit + one deploy**
+- **Composer** performs implementation; external AI does not commit unless founder changes operating model
+
+Do not copy all of `motherboard/CORE.md` into this capsule — use the cross-reference above.
 
 ---
 
@@ -201,15 +235,18 @@ Full definitions: `AI_GLOSSARY.md`
 
 ## 14. Agent context systems
 
-| System | Audience |
-|--------|----------|
-| `docs/ai-collaboration/` | ChatGPT / external AI |
-| `motherboard/MEMORY.md` | Cursor agents (append-only timeline) |
-| `motherboard/CORE.md` | Permanent design facts |
-| `motherboard/CODEBASE.md` | Code structure snapshot |
+| System | Audience | Role |
+|--------|----------|------|
+| Unified Onboarding Pack | External AI (ChatGPT) | Deterministic architecture + founder onboarding |
+| `docs/ai-collaboration/` | External AI | Collaboration docs and templates |
+| `motherboard/` | Cursor agents | Implementation memory — CORE, CODEBASE, MEMORY |
+| This capsule | External AI + repo agents | Operational handoff, blockers, compressed orientation |
 
-External AI: start here + `CURRENT_HANDOFF.md`.  
-Cursor agents: motherboard auto-load at chat start.
+**Cross-context workflow:**
+
+- External AI: complete onboarding pack → then reconcile `CURRENT_HANDOFF`, `KNOWN_BLOCKERS`, and (with repo access) `motherboard/CORE.md`, `motherboard/CODEBASE.md`, latest `MEMORY.md`
+- Cursor agents: auto-load Motherboard at chat start; for Studio OS work also read `CURRENT_HANDOFF` + `KNOWN_BLOCKERS`
+- Neither system replaces the other; newer operational evidence wins over historical memory
 
 ---
 

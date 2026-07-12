@@ -46970,3 +46970,57 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 
 **Not done:** Production mobile Safari/Chrome verification (founder device required). No canvas fallback, no parallel pipeline.
 
+---
+
+## 2026-07-12 — Motherboard ↔ Unified Onboarding cross-context synchronization
+
+**Context:** Documentation and institutional-memory sprint to make Motherboard and Unified Studio OS Onboarding Pack explicitly interoperable without collapsing them. No application runtime changes. Layer 1 incident repair/verification out of scope.
+
+**Cross-context gap addressed:**
+
+| System was missing | Added |
+|--------------------|-------|
+| Motherboard | Studio OS onboarding authority, agent roles, handoff/blocker bridge, shared-runtime incident boundaries, link to Unified Pack |
+| Onboarding Pack | Live Motherboard implementation context, CORE/CODEBASE/MEMORY bridge, repo-access reconciliation rules |
+
+**Source-of-truth hierarchy (Documented Fact):**
+
+1. **Current operational:** `CURRENT_HANDOFF.md`, `KNOWN_BLOCKERS.md`, founder-verified production evidence
+2. **Persistent implementation:** `motherboard/CORE.md`, `motherboard/CODEBASE.md`, latest applicable `MEMORY.md`
+3. **Strategy/canon:** Founder Intelligence, Studio DNA, Collaboration Intelligence, AI Context (outside handoff authority)
+
+**MEMORY recovery report:** File was **not empty** at sprint start (~46,972 lines). No git restoration performed. No merge markers. No truncation. One new entry appended.
+
+**Onboarding versions shipped:**
+
+| Artifact | Previous | New |
+|----------|----------|-----|
+| Unified Onboarding Pack | 1.2.1 | **1.2.2** |
+| AI Context Capsule | 0.3.1 | **0.3.2** |
+
+**Reconciled archive (expected unchanged):** 93 required + 3 optional = 96 total.
+
+**Operational state (classification):**
+
+| Item | State |
+|------|-------|
+| Studio OS onboarding approved | **Production** (Documented Fact) |
+| External AI as Creative Director | **Production** (Documented Fact) |
+| Composer implementation authority | **Production** (Documented Fact) |
+| Layer 1 repair `7a8869404` | **Production** (deployed) |
+| Layer 1 incident resolved | **In Progress** — verification pending |
+| Creative Studio / Experience Engine restored | **Unknown** — not verified |
+| Vercel timeout as root cause | **Inference** — not conclusively proven |
+
+**Durable rules recorded:**
+
+- Creative Studio and Experience Engine share Experience Lab runtime
+- "Retry Shell Layer" is not reliable failure-stage evidence
+- Repair shipped ≠ incident resolved
+- Do not revert to superseded Creative-Studio-restored assumption
+- Do not bypass governed generation or add masking fallbacks
+
+**Files updated:** `motherboard/README.md`, `CORE.md`, `CODEBASE.md` (full refresh), `.cursor/rules/motherboard.mdc`, `StudioOS_ContextCapsule_v0.1/AI_CONTEXT.md`, `README_FIRST.md`, `CHATGPT_OPERATING_MANUAL.md`, `CURRENT_HANDOFF.md`, `KNOWN_BLOCKERS.md`, `MANIFEST.md`, `onboarding-pack/ONBOARDING_GUIDE.md`, pack scripts/constants, machine-readable onboarding metadata. Regenerated onboarding artifacts v1.2.2.
+
+**Conventions:** Cursor loads handoff + blockers for Studio OS tasks without full 93-file pack. External AI reconciles Motherboard after onboarding when repo access available.
+

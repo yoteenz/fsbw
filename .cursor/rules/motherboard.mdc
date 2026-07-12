@@ -38,3 +38,24 @@ User wants **one entry added now**. (Auto-add is already on by default; if the u
 When the user says **"stop adding to motherboard"**, turn off auto-add for this chat; only add again if they say "add to motherboard" later.
 
 When you see "load motherboard", "add to motherboard", or "Snapshot codebase to motherboard", act as above without asking for clarification.
+
+## Studio OS cross-context loading (conditional)
+
+When a task involves any of the following, **additionally read** before implementing:
+
+- Studio OS, Studio World, Genesis, Experience Lab, World Compiler, Scene Stack
+- Creative Direction Studio, Studio Institute, Knowledge Vault, Studio Workers
+- Shared generation, Studio Builder generation, Model Orchestrator, FAL provider adapter
+- Platform governance, canon, onboarding pack
+
+**Required additional reads:**
+
+1. `StudioOS_ContextCapsule_v0.1/CURRENT_HANDOFF.md`
+2. `StudioOS_ContextCapsule_v0.1/KNOWN_BLOCKERS.md`
+3. `StudioOS_ContextCapsule_v0.1/PROJECT_DNA.md`
+
+For strategic, founder-intent, design-canon, or marketplace work, consult relevant Founder Intelligence and Studio DNA source documents.
+
+**Do not** load the entire Unified Onboarding Pack (93 files) for routine code tasks — use this concise bridge unless the founder requests full onboarding.
+
+**Do not** let Motherboard `MEMORY.md` history override `CURRENT_HANDOFF` or `KNOWN_BLOCKERS` for current blockers and runtime status.
