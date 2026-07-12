@@ -5,10 +5,10 @@ Strategic cross-reference for Founder Intelligence. Full constitutional authorit
 ---
 **Last Updated:** 2026-07-12  
 **Confidence Level:** High  
-**Source:** Studio Institute LOS Constitution Sprint  
+**Source:** Studio Institute LOS Constitution · Living Systems Bible  
 **Status:** Approved  
 **Version:** 1.0.0  
-**Related Documents:** STUDIO_WORLD.md, CIVILIZATION.md, KNOWLEDGE_CAPTURE.md  
+**Related Documents:** STUDIO_WORLD.md, CIVILIZATION.md, KNOWLEDGE_CAPTURE.md, STUDIO_WORLD_LIVING_SYSTEMS_BIBLE.md  
 **Future Questions:** When should LOS Constitution ship inside unified onboarding pack as a fifth capsule layer?
 
 ---
@@ -46,11 +46,27 @@ Learning is woven through the city — not isolated in a university wing. Every 
 
 See **STUDIO_WORLD.md** for district map; see **LOS Constitution Part II** for discipline-to-organization mappings.
 
+## Living Systems™
+
+**Planned** shared-simulation layer — learner decisions create attributable, cohort-visible changes to **simulated** organizations only.
+
+| Reality | Purpose |
+|---------|---------|
+| **Production** | Real operations |
+| **Living Systems™** | Persistent educational simulation |
+| **Sandbox** | Private experimentation |
+
+**Rule:** Living Systems™ must never modify production data.
+
+Full canon: `docs/studio-world/STUDIO_WORLD_LIVING_SYSTEMS_BIBLE.md`
+
 ## What is Planned vs implemented
 
 | System | Status |
 |--------|--------|
 | LOS Constitution & Studio World Method™ | **Ratified canon** (docs) |
+| Living Systems™ (Three Realities, principles, Phase 1 Prototype) | **Ratified canon** (docs) — **not runtime** |
+| Living Histories™ · Studio World Passport™ (educational) | **Conceptual / Planned** |
 | Persistent world learning routes | **Planned** |
 | Internship routing | **Planned** |
 | Residency Model progression | **Conceptual / Planned** |
@@ -61,5 +77,6 @@ Do not describe Planned or Conceptual systems as production-ready.
 ## Cross-reference
 
 - Full constitution: `docs/studio-institute/STUDIO_INSTITUTE_LEARNING_OPERATING_SYSTEM_CONSTITUTION.md`
+- Living Systems: `docs/studio-world/STUDIO_WORLD_LIVING_SYSTEMS_BIBLE.md`
 - Institute README: `docs/studio-institute/README.md`
 - M93 implementation: `docs/studio-os/studio-institute.md`

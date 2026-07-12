@@ -20,6 +20,7 @@ It is the **Learning Operating System (LOS)** for Studio World™ — the consti
 
 | Document | Role |
 |----------|------|
+| **[STUDIO_WORLD_LIVING_SYSTEMS_BIBLE.md](../studio-world/STUDIO_WORLD_LIVING_SYSTEMS_BIBLE.md)** (v1.0.0) | **Living Systems™** — persistent educational simulation; Three Realities; Phase 1 Prototype |
 | **[STUDIO_INSTITUTE_LEARNING_OPERATING_SYSTEM_CONSTITUTION.md](./STUDIO_INSTITUTE_LEARNING_OPERATING_SYSTEM_CONSTITUTION.md)** (v1.0.0) | **Educational constitution** — LOS, Studio World Method™, learning journey, internships, residency, AI teaching, institutional principles, Founder Manifesto |
 | **[STUDIO_INSTITUTE_VISION_BIBLE_V2.md](./STUDIO_INSTITUTE_VISION_BIBLE_V2.md)** (v2.0.0) | **Product canon** — Adaptive Learning Engine: what Institute is |
 | **[STUDIO_INSTITUTE_VISION_BIBLE_V3.md](./STUDIO_INSTITUTE_VISION_BIBLE_V3.md)** (v3.0.0) | **Per-person intelligence** — Cognitive Engine: how the AI learns how one human learns |
@@ -59,6 +60,7 @@ The LOS Constitution (v1.0.0) permanently establishes:
 | **[STUDIO_INSTITUTE_VISION_BIBLE_V3.md](./STUDIO_INSTITUTE_VISION_BIBLE_V3.md)** | **Per-person intelligence canon** — implements LOS philosophy per learner |
 | **[STUDIO_INSTITUTE_VISION_BIBLE_V2.md](./STUDIO_INSTITUTE_VISION_BIBLE_V2.md)** | **Product canon** — Adaptive Learning Engine, professors, project integration |
 | [STUDIO_INSTITUTE_BIBLE.md](./STUDIO_INSTITUTE_BIBLE.md) | v1.0 spatial learning OS foundation — superseded by V2; retained as reference |
+| [STUDIO_WORLD_LIVING_SYSTEMS_BIBLE.md](../studio-world/STUDIO_WORLD_LIVING_SYSTEMS_BIBLE.md) | **Living Systems™** — shared simulation layer; **Planned**, isolated from production |
 | [STUDIO_WORLD_BIBLE.md](../studio-os/STUDIO_WORLD_BIBLE.md) | Studio World experience constitution — Institute is a defining pillar |
 | [founder-intelligence/EDUCATIONAL_PHILOSOPHY.md](../../founder-intelligence/EDUCATIONAL_PHILOSOPHY.md) | Founder Intelligence strategic cross-reference |
 | [studio-institute.md](../studio-os/studio-institute.md) | M93 learning system — implementation subordinate to all Institute canon |

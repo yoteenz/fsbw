@@ -36,6 +36,7 @@ This document is the **educational constitution** of Studio World. It does not r
 
 | Document | Relationship |
 |----------|--------------|
+| **[STUDIO_WORLD_LIVING_SYSTEMS_BIBLE.md](../studio-world/STUDIO_WORLD_LIVING_SYSTEMS_BIBLE.md)** | **Living Systems™** — persistent educational simulation layer; Three Realities; **Planned**, never production |
 | **[STUDIO_WORLD_BIBLE.md](../studio-os/STUDIO_WORLD_BIBLE.md)** | Studio World experience constitution — Institute is a defining pillar of the living city |
 | **[STUDIO_INSTITUTE_VISION_BIBLE_V2.md](./STUDIO_INSTITUTE_VISION_BIBLE_V2.md)** | Product canon — Adaptive Learning Engine; **subordinate to this LOS Constitution** for educational philosophy |
 | **[STUDIO_INSTITUTE_VISION_BIBLE_V3.md](./STUDIO_INSTITUTE_VISION_BIBLE_V3.md)** | Per-person intelligence — Cognitive Engine; implements LOS philosophy for one learner |

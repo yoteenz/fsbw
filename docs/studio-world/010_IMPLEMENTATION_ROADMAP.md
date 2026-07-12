@@ -179,6 +179,47 @@ Studio World™ is built in **phases** — not features. Each phase proves a lay
 
 ---
 
+## Phase E — Living Systems™ (Educational Simulation)
+
+**Status:** **Planned** / **Conceptual** — documented in [`STUDIO_WORLD_LIVING_SYSTEMS_BIBLE.md`](./STUDIO_WORLD_LIVING_SYSTEMS_BIBLE.md). Does not imply implementation today.
+
+**Objective:** Prove persistent educational simulations where learner decisions create attributable, cohort-visible changes to simulated organizations — **without ever modifying production data**.
+
+**Prerequisite:** LOS Constitution ratified ✅ · Living Systems Bible ratified ✅ · Production phases stable enough for isolation guarantees.
+
+### Phase E.0 — Architecture (docs only) ✅
+
+| Deliverable | Status |
+|-------------|--------|
+| Three Realities model (Production · Living Systems™ · Sandbox) | ✅ This sprint |
+| Living Systems principles (Scoped Authority · Attribution · Replay · Rollback · Analysis · Governance) | ✅ |
+| Phase 1 Prototype specification (Frontal Slayer Seasonal Launch) | ✅ Planned spec |
+| Living Histories™ · Studio World Passport™ (educational) | ✅ Conceptual spec |
+| Curriculum integration guidance | ✅ |
+
+**Gate:** Founder approves Living Systems constitutional canon.  
+**No code. No simulation runtime. No production data paths.**
+
+### Phase E.1 — Phase 1 Prototype (Planned)
+
+**Objective:** One bounded cross-disciplinary scenario — **Frontal Slayer Seasonal Launch**.
+
+| Work | Outcome |
+|------|---------|
+| Simulation branch isolation architecture | Hard separation from Production |
+| Attribution + audit trail | Learner · cohort · decision · rationale · result |
+| Replay + rollback layers | Educator-controlled reconstruction |
+| Causal chain visualization | Marketing → demand → inventory → fulfillment → CX → revenue |
+| Cohort evolution | Cohort B inherits Cohort A simulated state |
+| Educator governance UI (spec) | Stakes · ethics · grading |
+
+**Gate:** Production isolation verified · one full cohort completes scenario · replay proven.  
+**Measures:** Zero production mutations · attribution complete · causal chain visible.
+
+**Forbidden until E.1 gate:** Any learner write path touching production stores.
+
+---
+
 ## Phase Dependencies
 
 ```
@@ -193,6 +234,9 @@ Phase 4 (Living Headquarters)
 Phase 5 (Production Integration)
     ↓
 Phase 6 (Operating Company)
+
+Phase E (Living Systems™) — parallel after E.0 gate; E.1 requires production isolation architecture
+    ↑ subordinate to LOS Constitution + Living Systems Bible
 ```
 
 ---
@@ -256,6 +300,8 @@ Phase 6 (Operating Company)
 - [Foundation Sprint Eras 0–7](../studio-os/foundation-sprint/12_IMPLEMENTATION_ROADMAP.md)
 - [Executive OS Multi-Year](../studio-os/executive-operating-system-sprint/10_MULTI_YEAR_EXPERIENCE_ROADMAP.md)
 - [Creative Services Roadmap](../studio-os/creative-services/CREATIVE_SERVICES_ROADMAP.md) — **Planned** provider-agnostic generation
+- [STUDIO_WORLD_LIVING_SYSTEMS_BIBLE.md](./STUDIO_WORLD_LIVING_SYSTEMS_BIBLE.md) — **Planned** educational simulation (Phase E)
+- [STUDIO_INSTITUTE_LEARNING_OPERATING_SYSTEM_CONSTITUTION.md](../studio-institute/STUDIO_INSTITUTE_LEARNING_OPERATING_SYSTEM_CONSTITUTION.md) — LOS educational philosophy
 - [STUDIO_WORLD_BIBLE.md](../studio-os/STUDIO_WORLD_BIBLE.md) — Section XV
 
 ---
