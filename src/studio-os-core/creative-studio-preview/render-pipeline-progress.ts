@@ -1,5 +1,6 @@
 import { WORLD_COMPILER_STAGES, worldCompilerStageLabel } from '../scene-stack/world-compiler/constants';
 import type { WorldCompileStageResult } from '../scene-stack/world-compiler/compilation-report';
+import type { SceneStackCompositeStatus } from '../scene-stack/types';
 
 /** Full Experience Lab render pipeline — shell generation + World Compiler™ */
 export const RENDER_PIPELINE_STEP_DEFS = [
@@ -29,11 +30,41 @@ export type RenderPipelineProgressInput = {
   shellStage?: 'compile-preview-spec' | 'generate-shell' | 'register-ephemeral' | 'complete';
   ensureStationActive?: boolean;
   layerPipelineActive?: boolean;
+  pipelineRunning?: boolean;
+  pipelinePhase?: 'idle' | 'queued' | 'generating';
+  layersComplete?: number;
+  layersTotal?: number;
+  compositeStatus?: SceneStackCompositeStatus;
   compileStages?: WorldCompileStageResult[];
   compileSuccess?: boolean;
   compileFailedStage?: string | null;
   shellFailed?: boolean;
 };
+
+/** Final Inspection gate — only authority for terminal Render Complete / 100%. */
+export function evaluateRenderTerminalComplete(input: RenderPipelineProgressInput): boolean {
+  if (input.shellFailed || input.shellPhase === 'failed' || input.compileFailedStage) {
+    return false;
+  }
+  if (!input.compileSuccess) {
+    return false;
+  }
+  if (input.layerPipelineActive || input.ensureStationActive || input.pipelineRunning) {
+    return false;
+  }
+  if (input.pipelinePhase && input.pipelinePhase !== 'idle') {
+    return false;
+  }
+  const layersTotal = input.layersTotal ?? 0;
+  const layersComplete = input.layersComplete ?? 0;
+  if (layersTotal <= 0 || layersComplete !== layersTotal) {
+    return false;
+  }
+  if (input.compositeStatus !== 'ready') {
+    return false;
+  }
+  return true;
+}
 
 export type RenderPipelineProgress = {
   steps: RenderPipelineStep[];
@@ -72,8 +103,17 @@ export function computeRenderPipelineProgress(input: RenderPipelineProgressInput
     currentStepId = 'ensure-station';
   } else if (input.compileFailedStage) {
     currentStepId = input.compileFailedStage as RenderPipelineStepId;
-  } else if (input.compileSuccess) {
+  } else if (evaluateRenderTerminalComplete(input)) {
     currentStepId = 'complete';
+  } else if (input.compileSuccess) {
+    const layerAssemblyPending =
+      input.ensureStationActive ||
+      input.layerPipelineActive ||
+      input.pipelineRunning ||
+      (input.pipelinePhase && input.pipelinePhase !== 'idle') ||
+      (input.layersTotal ?? 0) > 0 && (input.layersComplete ?? 0) !== (input.layersTotal ?? 0) ||
+      (input.compositeStatus && input.compositeStatus !== 'ready');
+    currentStepId = layerAssemblyPending ? 'ensure-station' : 'render-final-scene';
   } else if (input.compileStages?.length) {
     const last = input.compileStages[input.compileStages.length - 1];
     if (last?.success === false) {
@@ -99,7 +139,7 @@ export function computeRenderPipelineProgress(input: RenderPipelineProgressInput
     if (idx < stepIndex) status = 'done';
     else if (idx === stepIndex) status = 'active';
 
-    if (def.id === 'complete' && input.compileSuccess) status = 'done';
+    if (def.id === 'complete' && evaluateRenderTerminalComplete(input)) status = 'done';
     if (WORLD_COMPILER_STAGES.includes(def.id as (typeof WORLD_COMPILER_STAGES)[number])) {
       const result = stageResultMap.get(def.id as (typeof WORLD_COMPILER_STAGES)[number]);
       if (result?.success === true) status = 'done';
@@ -118,9 +158,20 @@ export function computeRenderPipelineProgress(input: RenderPipelineProgressInput
     Math.round(((doneCount + activePartial) / totalSteps) * 100)
   );
 
-  const isComplete = Boolean(input.compileSuccess);
+  const isComplete = evaluateRenderTerminalComplete(input);
   const isFailed = Boolean(input.shellFailed || input.shellPhase === 'failed' || input.compileFailedStage);
-  const isRunning = !isComplete && !isFailed && input.shellPhase !== 'idle';
+  const assemblyInProgress = Boolean(
+    input.compileSuccess &&
+      !isComplete &&
+      (input.layerPipelineActive ||
+        input.ensureStationActive ||
+        input.pipelineRunning ||
+        (input.pipelinePhase !== undefined && input.pipelinePhase !== 'idle') ||
+        ((input.layersTotal ?? 0) > 0 && (input.layersComplete ?? 0) !== (input.layersTotal ?? 0)) ||
+        (input.compositeStatus !== undefined && input.compositeStatus !== 'ready'))
+  );
+  const isRunning =
+    !isComplete && !isFailed && (input.shellPhase !== 'idle' || assemblyInProgress);
 
   return {
     steps,

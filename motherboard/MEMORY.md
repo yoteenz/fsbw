@@ -47177,3 +47177,22 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 
 **Spatial Architecture Review:** SKIPPED — forensic sprint, no new surfaces.
 
+---
+
+## 2026-07-12 — P0 render completion authority repair
+
+**Context:** Narrow P0 repair after forensic sprint proved first false-success at `computeRenderPipelineProgress`. Establish Final Inspection authority — no Render Complete until compile + layer assembly + composite ready agree.
+
+**Repair:**
+- `evaluateRenderTerminalComplete` — authoritative gate in `render-pipeline-progress.ts`
+- `computeRenderPipelineProgress` — `isComplete`/100% keyed to gate; complete step pending until pass
+- `experience-lab-render-runtime.ts` — passes layer/composite context to progress; defers `RenderCompleted`; `notifySnapshot` promotes on late layer finish; `isBuilding` stays true until gate passes
+
+**Tests:** 14 invariant tests pass; build pass.
+
+**Operational:** CURRENT_HANDOFF, KNOWN_BLOCKERS — B1-E2E-Completion repair shipped, verify pending. Forensic report §13 updated.
+
+**Not declared restored:** Creative Studio, Experience Lab, incident — authenticated device verification still required (B1-Layer1).
+
+**Spatial Architecture Review:** SKIPPED — completion authority only, no new surfaces.
+

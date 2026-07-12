@@ -1,49 +1,122 @@
 import { describe, expect, it } from 'vitest';
-import { computeRenderPipelineProgress } from './render-pipeline-progress';
+import {
+  computeRenderPipelineProgress,
+  evaluateRenderTerminalComplete,
+} from './render-pipeline-progress';
 
-/**
- * Regression guards for P0 end-to-end reconciliation sprint.
- * Documents proven premature completion boundaries — not product behavior changes.
- */
-describe('render pipeline completion invariants', () => {
-  const compileSuccessStages = [
-    { stage: 'load-shell' as const, label: 'load-shell', success: true, durationMs: 1, detail: 'ok' },
-    { stage: 'lock-shell' as const, label: 'lock-shell', success: true, durationMs: 1, detail: 'ok' },
-    { stage: 'mount-landmark' as const, label: 'mount-landmark', success: true, durationMs: 1, detail: 'skipped' },
-    { stage: 'render-final-scene' as const, label: 'render-final-scene', success: true, durationMs: 1, detail: 'ok' },
-  ];
+const satisfiedAssembly = {
+  shellPhase: 'ready' as const,
+  compileSuccess: true,
+  layerPipelineActive: false,
+  ensureStationActive: false,
+  pipelineRunning: false,
+  pipelinePhase: 'idle' as const,
+  layersComplete: 8,
+  layersTotal: 8,
+  compositeStatus: 'ready' as const,
+};
 
-  it('documents that compileSuccess alone currently forces isComplete and 100% (premature completion boundary)', () => {
+describe('evaluateRenderTerminalComplete', () => {
+  it('accepts completion only when compile and layer assembly invariants agree', () => {
+    expect(evaluateRenderTerminalComplete(satisfiedAssembly)).toBe(true);
+  });
+
+  it('rejects compile success alone', () => {
+    expect(
+      evaluateRenderTerminalComplete({
+        shellPhase: 'ready',
+        compileSuccess: true,
+        layerPipelineActive: true,
+      })
+    ).toBe(false);
+  });
+
+  it('rejects layer count mismatch', () => {
+    expect(
+      evaluateRenderTerminalComplete({
+        ...satisfiedAssembly,
+        layersComplete: 1,
+        layersTotal: 8,
+        compositeStatus: 'partial',
+      })
+    ).toBe(false);
+  });
+
+  it('rejects active queue or generating overlay', () => {
+    expect(
+      evaluateRenderTerminalComplete({
+        ...satisfiedAssembly,
+        pipelinePhase: 'generating',
+        compositeStatus: 'building',
+      })
+    ).toBe(false);
+  });
+
+  it('rejects when Scene Stack composite is not ready', () => {
+    expect(
+      evaluateRenderTerminalComplete({
+        ...satisfiedAssembly,
+        compositeStatus: 'building',
+      })
+    ).toBe(false);
+  });
+
+  it('rejects when pipeline is still running at runtime', () => {
+    expect(
+      evaluateRenderTerminalComplete({
+        ...satisfiedAssembly,
+        pipelineRunning: true,
+      })
+    ).toBe(false);
+  });
+});
+
+describe('computeRenderPipelineProgress completion authority', () => {
+  it('does not emit isComplete or 100% when compile succeeded but layers are incomplete', () => {
     const progress = computeRenderPipelineProgress({
       shellPhase: 'ready',
       compileSuccess: true,
       layerPipelineActive: true,
       ensureStationActive: true,
+      pipelinePhase: 'generating',
+      layersComplete: 1,
+      layersTotal: 8,
+      compositeStatus: 'building',
     });
+    expect(progress.isComplete).toBe(false);
+    expect(progress.progressPct).toBeLessThan(100);
+    expect(progress.isRunning).toBe(true);
+  });
+
+  it('emits isComplete and 100% only when all invariants are satisfied', () => {
+    const progress = computeRenderPipelineProgress(satisfiedAssembly);
     expect(progress.isComplete).toBe(true);
     expect(progress.progressPct).toBe(100);
+    expect(progress.currentStepId).toBe('complete');
   });
 
-  it('does not require layer pipeline idle before isComplete today (regression sentinel)', () => {
-    const withLayersStillRunning = computeRenderPipelineProgress({
+  it('keeps Render complete step pending until terminal invariants pass', () => {
+    const progress = computeRenderPipelineProgress({
       shellPhase: 'ready',
       compileSuccess: true,
-      layerPipelineActive: true,
+      layersComplete: 1,
+      layersTotal: 8,
+      compositeStatus: 'partial',
     });
-    const withLayersIdle = computeRenderPipelineProgress({
-      shellPhase: 'ready',
-      compileSuccess: true,
-      layerPipelineActive: false,
-    });
-    expect(withLayersStillRunning.isComplete).toBe(withLayersIdle.isComplete);
-    expect(withLayersStillRunning.progressPct).toBe(100);
+    const completeStep = progress.steps.find((s) => s.id === 'complete');
+    expect(completeStep?.status).not.toBe('done');
+    expect(progress.currentStepId).not.toBe('complete');
   });
 
-  it('marks prior steps done optimistically when step index advances (screenshot B shell-green pattern)', () => {
+  it('marks prior shell steps done while layer assembly is still active', () => {
     const progress = computeRenderPipelineProgress({
       shellPhase: 'ready',
       ensureStationActive: true,
       layerPipelineActive: true,
+      pipelinePhase: 'queued',
+      layersComplete: 0,
+      layersTotal: 8,
+      compositeStatus: 'building',
     });
     const shellStepIds = ['compile-preview-spec', 'generate-shell', 'register-ephemeral'] as const;
     for (const id of shellStepIds) {
@@ -51,79 +124,58 @@ describe('render pipeline completion invariants', () => {
       expect(step?.status).toBe('done');
     }
     expect(progress.isComplete).toBe(false);
+    expect(progress.progressPct).toBeLessThan(100);
   });
 
   it('keeps isComplete false when compile has not succeeded', () => {
     const progress = computeRenderPipelineProgress({
       shellPhase: 'ready',
-      compileStages: compileSuccessStages.slice(0, 2),
-      layerPipelineActive: false,
+      layersComplete: 8,
+      layersTotal: 8,
+      compositeStatus: 'ready',
     });
     expect(progress.isComplete).toBe(false);
     expect(progress.progressPct).toBeLessThan(100);
   });
 
-  it('fails closed on shell failure even if compileSuccess were true', () => {
+  it('fails closed on shell failure without terminal completion', () => {
     const progress = computeRenderPipelineProgress({
+      ...satisfiedAssembly,
       shellPhase: 'failed',
       shellFailed: true,
-      compileSuccess: true,
     });
     expect(progress.isFailed).toBe(true);
-    expect(progress.isComplete).toBe(true);
+    expect(progress.isComplete).toBe(false);
+    expect(progress.progressPct).toBeLessThan(100);
   });
 });
 
-describe('compound completion invariant (target contract — not yet enforced in product)', () => {
-  function shouldReportTerminalComplete(input: {
-    compileSuccess?: boolean;
-    layerPipelineActive?: boolean;
-    layersComplete: number;
-    layersTotal: number;
-    compositeReady: boolean;
-  }): boolean {
-    return Boolean(
-      input.compileSuccess &&
-        !input.layerPipelineActive &&
-        input.layersTotal > 0 &&
-        input.layersComplete === input.layersTotal &&
-        input.compositeReady
-    );
-  }
-
-  it('rejects 100% terminal state when layers are incomplete', () => {
-    expect(
-      shouldReportTerminalComplete({
-        compileSuccess: true,
-        layerPipelineActive: false,
-        layersComplete: 1,
-        layersTotal: 8,
-        compositeReady: false,
-      })
-    ).toBe(false);
+describe('screenshot A/B contradiction guards', () => {
+  it('cannot show 100% while layer overlay would read 1/8 generating', () => {
+    const progress = computeRenderPipelineProgress({
+      shellPhase: 'ready',
+      compileSuccess: true,
+      pipelinePhase: 'generating',
+      layersComplete: 1,
+      layersTotal: 8,
+      compositeStatus: 'building',
+      layerPipelineActive: true,
+    });
+    expect(progress.progressPct).toBeLessThan(100);
+    expect(progress.isComplete).toBe(false);
   });
 
-  it('rejects terminal state when layer pipeline is still active', () => {
-    expect(
-      shouldReportTerminalComplete({
-        compileSuccess: true,
-        layerPipelineActive: true,
-        layersComplete: 8,
-        layersTotal: 8,
-        compositeReady: true,
-      })
-    ).toBe(false);
-  });
-
-  it('accepts terminal state only when compile and layer assembly agree', () => {
-    expect(
-      shouldReportTerminalComplete({
-        compileSuccess: true,
-        layerPipelineActive: false,
-        layersComplete: 8,
-        layersTotal: 8,
-        compositeReady: true,
-      })
-    ).toBe(true);
+  it('cannot show 100% while queue reads 0/8', () => {
+    const progress = computeRenderPipelineProgress({
+      shellPhase: 'ready',
+      compileSuccess: true,
+      pipelinePhase: 'queued',
+      layersComplete: 0,
+      layersTotal: 8,
+      compositeStatus: 'building',
+      ensureStationActive: true,
+    });
+    expect(progress.progressPct).toBeLessThan(100);
+    expect(progress.isComplete).toBe(false);
   });
 });

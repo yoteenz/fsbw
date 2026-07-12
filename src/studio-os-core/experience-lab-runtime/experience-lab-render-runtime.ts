@@ -253,6 +253,11 @@ function buildSnapshot(session: SessionState): ExperienceLabRuntimeSnapshot | nu
     shellStage: session.shellPipelineStage,
     ensureStationActive,
     layerPipelineActive,
+    pipelineRunning: session.pipelineRunning,
+    pipelinePhase: pipeline.phase,
+    layersComplete: pipeline.layersComplete,
+    layersTotal: pipeline.layersTotal,
+    compositeStatus: status,
     compileStages: compileReport?.stages,
     compileSuccess: compileReport?.success,
     compileFailedStage: compileReport?.failedStage ?? null,
@@ -285,7 +290,11 @@ function buildSnapshot(session: SessionState): ExperienceLabRuntimeSnapshot | nu
   });
 
   const isBuilding =
-    renderPipelineProgress.isRunning || layerPipelineActive || status === 'building' || session.pipelineRunning;
+    renderPipelineProgress.isRunning ||
+    layerPipelineActive ||
+    status === 'building' ||
+    session.pipelineRunning ||
+    (Boolean(compileReport?.success) && !renderPipelineProgress.isComplete);
 
   const snapshot: ExperienceLabRuntimeSnapshot = {
     sessionId: session.previewSessionId,
@@ -327,11 +336,22 @@ function buildSnapshot(session: SessionState): ExperienceLabRuntimeSnapshot | nu
 }
 
 function notifySnapshot(session: SessionState): void {
-  const snapshot = buildSnapshot(session);
-  if (snapshot) {
-    runtimeEventBus.notifySnapshot(session.previewSessionId, snapshot);
-    publishRuntimeEvent(session, 'ProgressUpdated', { progressPct: snapshot.renderPipelineProgress.progressPct });
+  let snapshot = buildSnapshot(session);
+  if (!snapshot) return;
+
+  if (
+    session.renderStatus === 'running' &&
+    !session.pipelineRunning &&
+    snapshot.renderPipelineProgress.isComplete
+  ) {
+    session.renderStatus = 'complete';
+    session.currentStage = 'complete';
+    publishRuntimeEvent(session, 'RenderCompleted', { progressPct: 100 });
+    snapshot = buildSnapshot(session)!;
   }
+
+  runtimeEventBus.notifySnapshot(session.previewSessionId, snapshot);
+  publishRuntimeEvent(session, 'ProgressUpdated', { progressPct: snapshot.renderPipelineProgress.progressPct });
 }
 
 function ensureSessionState(key: ExperienceLabSessionKey): SessionState {
@@ -645,17 +665,35 @@ async function runFullPipeline(session: SessionState): Promise<void> {
   }
 
   session.shellPipelinePhase = 'ready';
-  session.renderStatus = 'complete';
-  session.currentStage = 'complete';
   session.pipelineRunning = false;
-  logPipelineLifecycle('PIPELINE_RUNNING_CLEARED', 'experience-lab-render-runtime.runFullPipeline', sessionEvidenceCtx(session), {
-    reason: 'success',
-  });
-  logPipelineLifecycle('RUN_FULL_PIPELINE_EXIT_SUCCESS', 'experience-lab-render-runtime.runFullPipeline', sessionEvidenceCtx(session));
   session.lastStepChangeAt = Date.now();
-  endCompileRun('success');
   notifySnapshot(session);
-  publishRuntimeEvent(session, 'RenderCompleted', { progressPct: 100 });
+
+  const terminalSnapshot = buildSnapshot(session);
+  const terminalComplete = terminalSnapshot?.renderPipelineProgress.isComplete ?? false;
+
+  if (terminalComplete) {
+    session.renderStatus = 'complete';
+    session.currentStage = 'complete';
+    logPipelineLifecycle('PIPELINE_RUNNING_CLEARED', 'experience-lab-render-runtime.runFullPipeline', sessionEvidenceCtx(session), {
+      reason: 'success',
+    });
+    logPipelineLifecycle('RUN_FULL_PIPELINE_EXIT_SUCCESS', 'experience-lab-render-runtime.runFullPipeline', sessionEvidenceCtx(session));
+    endCompileRun('success');
+    notifySnapshot(session);
+    publishRuntimeEvent(session, 'RenderCompleted', { progressPct: 100 });
+  } else {
+    session.renderStatus = 'running';
+    session.currentStage = terminalSnapshot?.renderPipelineProgress.currentStepId ?? 'ensure-station';
+    logPipelineLifecycle('PIPELINE_RUNNING_CLEARED', 'experience-lab-render-runtime.runFullPipeline', sessionEvidenceCtx(session), {
+      reason: 'compileOkAwaitingFinalInspection',
+      layersComplete: terminalSnapshot?.pipeline.layersComplete ?? null,
+      layersTotal: terminalSnapshot?.pipeline.layersTotal ?? null,
+      compositeStatus: terminalSnapshot?.status ?? null,
+    });
+    endCompileRun('success');
+    notifySnapshot(session);
+  }
   } finally {
     if (pipelineEntered) {
       if (session.compileRunId) {

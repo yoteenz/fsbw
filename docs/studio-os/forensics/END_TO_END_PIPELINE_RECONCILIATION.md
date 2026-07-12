@@ -277,15 +277,34 @@ CDS does not auto-enter `runFullPipeline`. Layer generation only when room trigg
 
 ---
 
-## 9. Repair boundary (not implemented)
+## 9. Repair boundary
 
-**Smallest correction (requires founder approval):**
+**Forensic sprint (fedd0270f):** Documented only — await founder approval.
 
-1. **Progress gate:** In `computeRenderPipelineProgress`, set `isComplete` only when `compileSuccess && !layerPipelineActive && layersComplete === layersTotal` (inputs already available in `buildSnapshot`).  
-2. **Runtime gate:** In `runFullPipeline`, defer `renderStatus: 'complete'` and `RenderCompleted` until same compound invariant.  
-3. **Compile stage:** Fail or defer `mount-landmark` when `signature-landmark` package missing in validation mode (narrow, Layer 1 only).
+**Repair sprint (shipped):** Completion authority gate implemented.
 
-**Out of scope for this sprint:** FAL changes, async queue, canvas fallback, UI rename-only fixes, registry auto-promotion.
+| Change | File | Detail |
+|--------|------|--------|
+| `evaluateRenderTerminalComplete` | `render-pipeline-progress.ts` | Final Inspection gate — requires compile success, layer pipeline idle, `layersComplete === layersTotal`, `compositeStatus === 'ready'`, no queue/generating |
+| `computeRenderPipelineProgress` | same | `isComplete` and 100% keyed to terminal gate only; `complete` step pending until gate passes |
+| `buildSnapshot` inputs | `experience-lab-render-runtime.ts` | Passes `pipelinePhase`, `layersComplete/Total`, `compositeStatus`, `pipelineRunning` |
+| `runFullPipeline` | same | Defers `renderStatus: complete` and `RenderCompleted` until terminal gate passes |
+| `notifySnapshot` | same | Promotes to complete when layers finish after compile |
+| `isBuilding` | same | Stays true when compile succeeded but terminal gate not passed |
+
+**Not changed:** Scene Stack, World Compiler, provider, FAL, registry, auth.
+
+---
+
+## 13. Repair record (2026-07-12)
+
+**Classification:** Repair — completion authority only.
+
+**Invariant gate:** `evaluateRenderTerminalComplete` — all of: `compileSuccess`, `!layerPipelineActive`, `!ensureStationActive`, `!pipelineRunning`, `pipelinePhase === idle`, `layersComplete === layersTotal > 0`, `compositeStatus === ready`.
+
+**Regression tests:** 14 in `render-pipeline-progress.invariants.test.ts`.
+
+**Production verification:** Unit tests pass; authenticated device verification **Unknown**.
 
 ---
 
@@ -293,7 +312,7 @@ CDS does not auto-enter `runFullPipeline`. Layer generation only when room trigg
 
 | Suite | Result |
 |-------|--------|
-| `render-pipeline-progress.invariants.test.ts` | Added — completion invariant regressions |
+| `render-pipeline-progress.invariants.test.ts` | 14 pass — authoritative completion gate |
 | `server-bundle-boundary.test.ts` | Existing — bundle boundary |
 | `layer1-generation-diagnostics.test.ts` | Existing — shared adapter path |
 | `npm run build` | Run at commit time |
@@ -307,7 +326,8 @@ CDS does not auto-enter `runFullPipeline`. Layer generation only when room trigg
 | B0 Dispatch JSON | **Production** — probe verified JSON 401 |
 | B1 Layer 1 authenticated | **Unknown** — founder device pending |
 | Creative Studio (CDS) | **In Progress** — not restored |
-| Experience Lab runtime | **In Progress** — not restored |
+| Completion authority gate | **In Progress** — repair shipped; device verify pending |
+| Experience Lab runtime | **In Progress** — UI authority repaired; E2E unverified |
 | Incident resolved | **No** |
 
 ---

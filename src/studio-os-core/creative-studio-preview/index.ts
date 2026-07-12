@@ -26,9 +26,11 @@ export {
 } from './validation-shell-pipeline';
 export {
   computeRenderPipelineProgress,
+  evaluateRenderTerminalComplete,
   RENDER_PIPELINE_STEP_DEFS,
   RENDER_PIPELINE_STALL_MS,
   type RenderPipelineProgress,
+  type RenderPipelineProgressInput,
   type RenderPipelineStep,
 } from './render-pipeline-progress';
 export {

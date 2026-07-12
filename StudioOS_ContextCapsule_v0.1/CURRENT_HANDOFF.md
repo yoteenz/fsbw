@@ -8,13 +8,13 @@
 
 ## Current sprint
 
-**P0 — End-to-end pipeline reconciliation (“One Work Order, One Finished Room”)**
+**P0 — Render completion authority repair (“Final Inspection before Concierge announces ready”)**
 
-**Status: Complete (forensic) — repair not implemented.**
+**Status: Complete (repair shipped) — authenticated E2E verification pending.**
 
-Traced governed render path Creative Direction Studio vs Experience Lab validation runtime. **First proven divergence:** `computeRenderPipelineProgress` reports terminal completion from `compileReport.success` alone while Scene Stack layer pipeline and viewport overlay can still show building (0/N or Generating …). Full report: `docs/studio-os/forensics/END_TO_END_PIPELINE_RECONCILIATION.md`.
+Replaced optimistic `compileReport.success` → Render Complete with authoritative `evaluateRenderTerminalComplete` gate. Top bar, runtime, and Scene Stack layer counts must agree before 100% / `RenderCompleted`.
 
-**Previous:** P0 Dispatch Office bundle repair (`4ec75321f`); B0 JSON canary now passes unauthenticated probe.
+**Previous:** P0 end-to-end forensic reconciliation (`fedd0270f`); B0 Dispatch JSON canary cleared.
 
 ---
 
@@ -24,9 +24,9 @@ See `KNOWN_BLOCKERS.md` for full detail.
 
 | ID | Blocker | Owner | Unblock |
 |----|---------|-------|---------|
-| **B0-PreHandler** | Dispatch Office pre-handler | — | **Cleared** (JSON 401 on four routes) |
+| **B0-PreHandler** | Dispatch Office pre-handler | — | **Cleared** |
 | **B1-Layer1** | Layer 1 `signature-landmark` governed E2E | Founder (device) | Authenticated mobile Safari + Chrome with `?compilerDiag=1` |
-| **B1-E2E-Completion** | Premature terminal completion signals | Composer (await approval) | Compound invariant gate in progress + runtime |
+| **B1-E2E-Completion** | Premature terminal completion UI | Composer | **Repair shipped** — founder confirms no 100%/N/8 contradiction |
 | **B2** | Diagnostic normal-tab verification | Founder (device) | https://fsbw.vercel.app/__studio-os-recovery |
 
 ---
@@ -35,38 +35,26 @@ See `KNOWN_BLOCKERS.md` for full detail.
 
 | System | Status | Classification |
 |--------|--------|----------------|
+| Completion authority gate | Shipped (pending SHA) | **In Progress** |
 | Dispatch JSON / traceId | Probe verified | **Documented Fact** |
 | Layer 1 FAL path | Not verified authenticated | **Unknown** |
-| Creative Studio (CDS room) | Fails generation path | **Documented Fact** (founder) |
-| Experience Lab runtime | Progresses further; contradictory UI | **Documented Fact** (founder + code) |
+| Creative Studio (CDS) | Not restored | **Documented Fact** |
+| Experience Lab runtime | Completion UI repaired; E2E unverified | **In Progress** |
 | Incident resolved | No | **Documented Fact** |
 
 ---
 
-## Primary canary (verified 2026-07-12)
-
-```
-POST https://fsbw.vercel.app/api/admin/experience-lab-ephemeral-authorization
-POST https://fsbw.vercel.app/api/admin/studio-builder-generate
-```
-
-**Pass:** `content-type: application/json` — not plain-text `FUNCTION_INVOCATION_FAILED`.  
-`studio-builder-generate` returns `traceId` on 401.
-
----
-
-## Authenticated verification (required for B1)
+## Authenticated verification (required)
 
 ```
 https://fsbw.vercel.app/admin/studio/experience-lab?compilerDiag=1
 ```
 
-Mobile Safari + Chrome — Experience Lab `frontal-slayer` concept A (Luxury beauty flagship) and Creative Direction Studio `arrival` station. Required for incident resolution.
+Confirm: top bar never shows **Render complete / 100%** while viewport overlay shows **Generating** or **N/8** with N < total.
 
 ---
 
 ## Forensic references
 
-- `docs/studio-os/forensics/END_TO_END_PIPELINE_RECONCILIATION.md` (this sprint)
+- `docs/studio-os/forensics/END_TO_END_PIPELINE_RECONCILIATION.md` (forensic + repair §13)
 - `docs/studio-os/forensics/DISPATCH_OFFICE_PREHANDLER_FORENSIC.md`
-- `docs/studio-os/forensics/SHARED_GENERATION_PIPELINE_REGRESSION.md`

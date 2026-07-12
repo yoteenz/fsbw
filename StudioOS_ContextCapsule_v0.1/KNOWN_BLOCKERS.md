@@ -10,7 +10,7 @@
 **Do not** describe Creative Direction Studio or Experience Lab validation runtime as restored until:
 
 1. **B1-Layer1** — Founder completes authenticated real-device Layer 1 verification on Mobile Safari and Mobile Chrome with `?compilerDiag=1`, **and**  
-2. **B1-E2E-Completion** — Terminal completion UI requires compound invariant (compile + full layer assembly + composite ready) — repair **not shipped**; forensic boundary documented only.
+2. **B1-E2E-Completion** — Founder confirms top bar and viewport never contradict (no 100% with N/8 generating) on authenticated device.
 
 ---
 
@@ -53,28 +53,28 @@
 
 ---
 
-## B1-E2E-Completion — Premature terminal completion (NEW — FORENSIC PROVEN)
+## B1-E2E-Completion — Premature terminal completion (REPAIR SHIPPED — VERIFY PENDING)
 
 | Field | Detail |
 |-------|--------|
 | **ID** | B1-E2E-Completion |
 | **Symptom** | Top bar **Render complete / 100%** while viewport overlay shows **Generating … N/8** or **0/8** |
-| **Proven boundary** | `computeRenderPipelineProgress` — `isComplete = Boolean(compileSuccess)` without layer pipeline gate |
-| **Secondary** | `compile-pipeline` mount stages succeed on "Stage skipped" with zero packages |
-| **Forensic** | `END_TO_END_PIPELINE_RECONCILIATION.md` |
-| **Repair** | **Not implemented** — compound invariant documented; await founder approval |
-| **Status** | **In Progress** — evidence shipped; repair pending |
+| **Proven boundary** | `computeRenderPipelineProgress` — `isComplete = Boolean(compileSuccess)` |
+| **Repair** | `evaluateRenderTerminalComplete` gate; runtime defers `RenderCompleted` until invariants pass; `notifySnapshot` promotes on late layer finish |
+| **Files** | `render-pipeline-progress.ts`, `experience-lab-render-runtime.ts` |
+| **Tests** | `render-pipeline-progress.invariants.test.ts` (14) |
+| **Forensic** | `END_TO_END_PIPELINE_RECONCILIATION.md` §13 |
+| **Status** | **In Progress** — code shipped; founder authenticated verification pending |
 
 ### Documented Fact
 
-- Creative Studio preview and CDS viewport use **different** progress owners (`ownership-report.ts`).
-- Experience Lab `runFullPipeline` emits `RenderCompleted` on compile report success only.
+- Repair changes completion **authority** only — no Scene Stack, World Compiler, or provider changes.
+- `compileReport.success` = blueprint ready; terminal complete = Final Inspection passed.
 
 ### Do not
 
-- Treat World Compiler `compileReport.success` as guest-ready room
-- Force progress bar to 100% without invariant checks
-- Implement broad architecture changes without approval
+- Treat repair shipped as incident resolved without authenticated device proof
+- Revert to compile-only completion authority
 
 ---
 
