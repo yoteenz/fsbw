@@ -18,7 +18,7 @@ export function computeCostIntelligence(input: {
   concept_count: number;
   asset_type: import('./types.js').AssetType;
 }): CostIntelligence {
-  const { intent, quality, provider, model, reusable_assets, missing_count, step_count, concept_count, asset_type } =
+  const { intent: _intent, quality, provider, model, reusable_assets, missing_count, step_count, concept_count, asset_type } =
     input;
 
   const fullGenCost = estimateProviderCost(provider, model, {

@@ -46951,3 +46951,22 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 
 **Stable URL:** `https://fsbw.vercel.app/onboarding/latest`
 
+---
+
+## 2026-07-12 — Layer 1 generation 500 forensic repair (P0)
+
+**Context:** P0 approved sprint for shared Experience Lab Layer 1 `signature-landmark` failure. Black Box proved M1–M7 + shell lock + ensureStation success; first failure at `requestStudioBuilderGenerate` → `POST /api/admin/studio-builder-generate` with client `Generation failed (500)`. Both Creative Studio and Experience Engine share `experience-lab-render-runtime.runFullPipeline` → `useSceneStack`.
+
+**Root cause (Documented Fact + Inference):** Client `(500)` suffix only when HTTP body is non-JSON — indicates Vercel `FUNCTION_INVOCATION_FAILED` or uncaught handler throw, not normal FAL gateway JSON. Handler lacked top-level try/catch; FAL ApiError details were discarded. Local governed path completes in ~24s with FAL when env configured.
+
+**Shipped:**
+- `api/_lib/creativeProduction/generation-error-diagnostics.ts` — categories, cause chain, safe logging
+- `api/admin/studio-builder-generate.ts` — always-JSON try/catch, traceId, diagnostic on failures
+- `api/_lib/creativeProduction/generation-gateway.ts` — orchestration diagnostics, traceId
+- `api/_lib/studioBuilderGeneration.ts` — FAL ApiError capture, marble fetch hardening
+- `vercel.json` — `studio-builder-generate` maxDuration 120 + marble includeFiles
+- Tests: 13/13 pass (diagnostics + layer1 + shared pipeline); tsc pass
+- Docs: `LAYER1_GENERATION_500_REPAIR.md`, updated HANDOFF/BLOCKERS
+
+**Not done:** Production mobile Safari/Chrome verification (founder device required). No canvas fallback, no parallel pipeline.
+

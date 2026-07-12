@@ -44,6 +44,10 @@
       "maxDuration": 120,
       "includeFiles": "public/assets/marble-half.png,public/assets/NOIR/noir-thumb.png"
     },
+    "api/admin/studio-builder-generate.ts": {
+      "maxDuration": 120,
+      "includeFiles": "public/assets/marble-half.png"
+    },
     "api/admin/context-capsule.ts": {
       "maxDuration": 60,
       "includeFiles": "StudioOS_ContextCapsule_v0.1/**,api/_lib/context-capsule-build-manifest.json,api/_lib/context-capsule-release.json",
@@ -139,7 +143,7 @@
       "headers": [
         {
           "key": "Content-Disposition",
-          "value": "attachment; filename=\"StudioOS_OnboardingPack_v1.2.0.zip\""
+          "value": "attachment; filename=\"StudioOS_OnboardingPack_v1.2.1.zip\""
         },
         {
           "key": "Cache-Control",
@@ -151,11 +155,11 @@
         },
         {
           "key": "X-Capsule-Version",
-          "value": "1.2.0"
+          "value": "1.2.1"
         },
         {
           "key": "X-Capsule-Artifact",
-          "value": "StudioOS_OnboardingPack_v1.2.0.zip"
+          "value": "StudioOS_OnboardingPack_v1.2.1.zip"
         }
       ]
     },

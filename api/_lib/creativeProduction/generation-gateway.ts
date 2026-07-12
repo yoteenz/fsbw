@@ -10,7 +10,7 @@ import { verifyProductionAuthorizationSignature } from './authorization-signing.
 import { resolveLegacyCompatAuthorization } from './legacy-adapters.js';
 import { registerGeneratedAssetWithLineage } from './registry-transaction.js';
 import { getSupabaseAdmin } from '../supabase.js';
-import { generateStudioBuilderAsset } from '../studioBuilderGeneration.js';
+import { generateStudioBuilderAsset, STUDIO_BUILDER_FAL_MODEL } from '../studioBuilderGeneration.js';
 import { generateStudioAssetImage } from '../studioAssetGeneration.js';
 import {
   evaluateCreativeDecision,
@@ -19,6 +19,13 @@ import {
 } from '../creativeIntelligenceEngine/decision-engine.js';
 import type { FounderIntentInput } from '../creativeIntelligenceEngine/types.js';
 import { compileAssetIntent } from '../../../src/studio-os-core/asset-compiler/compiler.js';
+import {
+  createGenerationTraceId,
+  logGenerationDiagnostic,
+  normalizeGenerationError,
+  publicMessageFromDiagnostic,
+  type GenerationErrorDiagnostic,
+} from './generation-error-diagnostics.js';
 
 export type GatewayContext = {
   sourceRoute: string;
@@ -39,7 +46,11 @@ async function runCieIfRequired(
   }
 
   const execution = request.execution;
-  const prompt = String(execution.prompt || execution.promptStack?.[0] || 'studio generation');
+  const prompt = String(
+    execution.prompt ||
+      (Array.isArray(execution.promptStack) ? String(execution.promptStack[0] ?? '') : '') ||
+      'studio generation'
+  );
   const supabase = getSupabaseAdmin();
   const orgId = request.orgId;
 
@@ -84,22 +95,77 @@ async function runCieIfRequired(
 }
 
 async function executeBuilderGeneration(
-  request: GovernedGenerationRequest
-): Promise<{ publicUrl?: string; storagePath?: string; model?: string; error?: string }> {
+  request: GovernedGenerationRequest,
+  traceId: string
+): Promise<{ publicUrl?: string; storagePath?: string; model?: string; error?: string; diagnostic?: GenerationErrorDiagnostic }> {
+  const started = Date.now();
   const e = request.execution;
-  return generateStudioBuilderAsset({
-    departmentId: String(e.departmentId),
-    packageId: String(e.packageId),
-    projectId: String(e.projectId),
-    productionGroupId: String(e.productionGroupId),
-    heroAssetId: String(e.heroAssetId),
-    prompt: String(e.prompt),
-    aspectRatio: String(e.aspectRatio || '16:9'),
-    outputFormat: e.outputFormat === 'webp' ? 'webp' : 'png',
-    referenceImageUrls: Array.isArray(e.referenceImageUrls)
-      ? (e.referenceImageUrls as unknown[]).filter((u): u is string => typeof u === 'string')
-      : undefined,
-  });
+  try {
+    const result = await generateStudioBuilderAsset({
+      departmentId: String(e.departmentId),
+      packageId: String(e.packageId),
+      projectId: String(e.projectId),
+      productionGroupId: String(e.productionGroupId),
+      heroAssetId: String(e.heroAssetId),
+      prompt: String(e.prompt),
+      aspectRatio: String(e.aspectRatio || '16:9'),
+      outputFormat: e.outputFormat === 'webp' ? 'webp' : 'png',
+      referenceImageUrls: Array.isArray(e.referenceImageUrls)
+        ? (e.referenceImageUrls as unknown[]).filter((u): u is string => typeof u === 'string')
+        : undefined,
+    });
+    if (!result.ok) {
+      const diagnostic = normalizeGenerationError({
+        err: new Error(result.error ?? 'Generation failed'),
+        stage: 'generateStudioBuilderAsset',
+        traceId,
+        category:
+          result.failureCategory === 'PROVIDER_REJECTED'
+            ? 'PROVIDER_REJECTED'
+            : result.failureCategory === 'PROVIDER_REQUEST_FAILED'
+              ? 'PROVIDER_REQUEST_FAILED'
+              : 'ORCHESTRATION_FAILED',
+        provider: 'fal',
+        model: STUDIO_BUILDER_FAL_MODEL,
+        adapter: 'generateStudioBuilderAsset',
+        elapsedMs: Date.now() - started,
+        context: {
+          stationId: typeof e.stationId === 'string' ? e.stationId : undefined,
+          organizationId: request.orgId,
+          compileRunId: request.compileRunId,
+          layerId: String(e.productionGroupId || '').includes('signature-landmark')
+            ? 'signature-landmark'
+            : undefined,
+        },
+      });
+      if (result.providerHttpStatus) diagnostic.providerHttpStatus = result.providerHttpStatus;
+      if (result.providerResponsePreview) diagnostic.providerResponsePreview = result.providerResponsePreview;
+      logGenerationDiagnostic(diagnostic);
+      return { error: publicMessageFromDiagnostic(diagnostic), diagnostic };
+    }
+    return result;
+  } catch (err) {
+    const diagnostic = normalizeGenerationError({
+      err,
+      stage: 'generateStudioBuilderAsset',
+      traceId,
+      category: 'ORCHESTRATION_FAILED',
+      provider: 'fal',
+      model: 'fal-ai/nano-banana-pro/edit',
+      adapter: 'generateStudioBuilderAsset',
+      elapsedMs: Date.now() - started,
+      context: {
+        stationId: typeof e.stationId === 'string' ? e.stationId : undefined,
+        organizationId: request.orgId,
+        compileRunId: request.compileRunId,
+        layerId: String(e.productionGroupId || '').includes('signature-landmark')
+          ? 'signature-landmark'
+          : undefined,
+      },
+    });
+    logGenerationDiagnostic(diagnostic);
+    return { error: publicMessageFromDiagnostic(diagnostic), diagnostic };
+  }
 }
 
 async function executeFoundryGeneration(
@@ -154,6 +220,9 @@ export async function executeGovernedGeneration(
   request: GovernedGenerationRequest,
   ctx: GatewayContext
 ): Promise<GovernedGenerationResult> {
+  const traceId = createGenerationTraceId('gov');
+  const started = Date.now();
+  try {
   const authResolve = resolveLegacyCompatAuthorization({
     productionAuthorizationId: request.productionAuthorizationId,
     productionAuthorization: request.productionAuthorization,
@@ -197,10 +266,10 @@ export async function executeGovernedGeneration(
   const cieBlock = await runCieIfRequired(request);
   if (cieBlock) return cieBlock;
 
-  let execResult: { ok?: boolean; publicUrl?: string; storagePath?: string; model?: string; error?: string };
+  let execResult: { ok?: boolean; publicUrl?: string; storagePath?: string; model?: string; error?: string; diagnostic?: GenerationErrorDiagnostic };
   switch (request.sourceSystem) {
     case 'studio-builder':
-      execResult = await executeBuilderGeneration(request);
+      execResult = await executeBuilderGeneration(request, traceId);
       break;
     case 'studio-foundry':
       execResult = await executeFoundryGeneration(request);
@@ -218,6 +287,8 @@ export async function executeGovernedGeneration(
       code: 'GENERATION_FAILED',
       error: execResult.error ?? 'Generation failed',
       audit: graphResult.audit,
+      diagnostic: execResult.diagnostic ? { ...execResult.diagnostic } : undefined,
+      traceId,
     };
   }
 
@@ -265,7 +336,31 @@ export async function executeGovernedGeneration(
     storagePath: execResult.storagePath,
     model: execResult.model,
     assetRegistryId,
+    traceId,
   };
+  } catch (err) {
+    const diagnostic = normalizeGenerationError({
+      err,
+      stage: 'executeGovernedGeneration',
+      traceId,
+      category: 'ORCHESTRATION_FAILED',
+      elapsedMs: Date.now() - started,
+      context: {
+        stationId:
+          typeof request.execution.stationId === 'string' ? request.execution.stationId : undefined,
+        organizationId: request.orgId,
+        compileRunId: request.compileRunId,
+      },
+    });
+    logGenerationDiagnostic(diagnostic);
+    return {
+      ok: false,
+      code: 'ORCHESTRATION_FAILED',
+      error: publicMessageFromDiagnostic(diagnostic),
+      diagnostic,
+      traceId,
+    };
+  }
 }
 
 /** Phase 1 verification — represent request without provider execution. */

@@ -259,12 +259,15 @@ export type GovernedGenerationResult =
       storagePath?: string;
       model?: string;
       assetRegistryId?: string;
+      traceId?: string;
     }
   | {
       ok: false;
       code: string;
       error: string;
       audit?: Partial<GovernedGenerationAudit>;
+      traceId?: string;
+      diagnostic?: Record<string, unknown>;
     };
 
 export type RegistryWritePolicy = {

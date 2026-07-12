@@ -336,4 +336,4 @@ Per founder Black Box evidence — **not primary failure** for this incident:
 
 ---
 
-**STOP — Awaiting founder approval before any repair.**
+**Repair shipped:** See `docs/studio-os/forensics/LAYER1_GENERATION_500_REPAIR.md` (2026-07-12).

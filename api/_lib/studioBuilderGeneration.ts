@@ -29,6 +29,10 @@ export type StudioBuilderGenerateResult = {
   storagePath?: string;
   model?: string;
   error?: string;
+  /** Internal diagnostic category — not for public clients without sanitization */
+  failureCategory?: string;
+  providerHttpStatus?: number;
+  providerResponsePreview?: string;
 };
 
 function repoRoot(): string {
@@ -44,7 +48,8 @@ function marbleRefPath(): string {
 async function uploadLocalOrSiteRefToFal(
   fal: { storage: { upload: (f: File) => Promise<string> } },
   localPath: string,
-  siteRelativePath: string
+  siteRelativePath: string,
+  label: string
 ): Promise<string> {
   if (existsSync(localPath)) {
     const bytes = readFileSync(localPath);
@@ -54,11 +59,18 @@ async function uploadLocalOrSiteRefToFal(
   const { resolveSiteOrigin } = await import('./email/brandAssets.js');
   const assetPath = siteRelativePath.replace(/^\//, '');
   const url = `${resolveSiteOrigin()}/${assetPath.startsWith('assets/') ? assetPath : `assets/${assetPath}`}`;
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`Reference fetch failed (${res.status})`);
-  const bytes = Buffer.from(await res.arrayBuffer());
-  const name = url.split('/').pop()?.split('?')[0] || 'ref.png';
-  return fal.storage.upload(new File([bytes], name, { type: 'image/png' }));
+  try {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`Reference fetch failed (${res.status})`);
+    const bytes = Buffer.from(await res.arrayBuffer());
+    const name = url.split('/').pop()?.split('?')[0] || 'ref.png';
+    return fal.storage.upload(new File([bytes], name, { type: 'image/png' }));
+  } catch (err) {
+    const detail = err instanceof Error ? err.message : String(err);
+    throw new Error(
+      `${label} reference missing locally (${localPath}) and could not fetch ${url}: ${detail}`
+    );
+  }
 }
 
 async function downloadImageToBuffer(url: string): Promise<Buffer> {
@@ -133,7 +145,7 @@ export async function generateStudioBuilderAsset(
     // Marble brand anchor is for environment-shell genesis only — not layered passes.
     if (imageUrls.length === 0) {
       imageUrls.push(
-        await uploadLocalOrSiteRefToFal(fal, marbleRef, 'assets/marble-half.png')
+        await uploadLocalOrSiteRefToFal(fal, marbleRef, 'assets/marble-half.png', 'Marble brand anchor')
       );
     }
 
@@ -142,7 +154,7 @@ export async function generateStudioBuilderAsset(
         prompt: input.prompt,
         image_urls: imageUrls,
         num_images: 1,
-        aspect_ratio: input.aspectRatio,
+        aspect_ratio: input.aspectRatio as '16:9',
         output_format: input.outputFormat,
       },
       logs: false,
@@ -163,6 +175,29 @@ export async function generateStudioBuilderAsset(
       model: STUDIO_BUILDER_FAL_MODEL,
     };
   } catch (e) {
+    const isApiError =
+      typeof e === 'object' &&
+      e !== null &&
+      (e as { name?: string }).name === 'ApiError' &&
+      typeof (e as { status?: unknown }).status === 'number';
+    if (isApiError) {
+      const apiErr = e as { message: string; status: number; body?: unknown; requestId?: string };
+      const bodyPreview =
+        typeof apiErr.body === 'string'
+          ? apiErr.body.slice(0, 512)
+          : apiErr.body
+            ? JSON.stringify(apiErr.body).slice(0, 512)
+            : undefined;
+      return {
+        ok: false,
+        error: apiErr.message,
+        failureCategory: apiErr.status >= 500 ? 'PROVIDER_REQUEST_FAILED' : 'PROVIDER_REJECTED',
+        providerHttpStatus: apiErr.status,
+        providerResponsePreview: apiErr.requestId
+          ? `[requestId=${apiErr.requestId}] ${bodyPreview ?? ''}`.trim()
+          : bodyPreview,
+      };
+    }
     return { ok: false, error: e instanceof Error ? e.message : 'Studio Builder generation failed' };
   }
 }

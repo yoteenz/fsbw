@@ -14,6 +14,12 @@ import {
 import type { FounderIntentInput } from '../_lib/creativeIntelligenceEngine/types.js';
 import { adaptLegacyBuilderRequest, ensureValidationEphemeralAuth } from '../_lib/creativeProduction/legacy-adapters.js';
 import { executeGovernedGeneration } from '../_lib/creativeProduction/generation-gateway.js';
+import {
+  createGenerationTraceId,
+  logGenerationDiagnostic,
+  normalizeGenerationError,
+  publicMessageFromDiagnostic,
+} from '../_lib/creativeProduction/generation-error-diagnostics.js';
 
 function parseBody(req: VercelRequest): Record<string, unknown> | null {
   if (typeof req.body === 'object' && req.body !== null && !Array.isArray(req.body)) {
@@ -35,16 +41,20 @@ function parseBody(req: VercelRequest): Record<string, unknown> | null {
  * Governed Studio Builder generation — routes through Creative Production Gateway™.
  */
 export default async function handler(req: VercelRequest, res: VercelResponse) {
+  const traceId = createGenerationTraceId('route');
+  res.setHeader('X-Generation-Trace-Id', traceId);
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Generation-Trace-Id');
   if (req.method === 'OPTIONS') return res.status(204).end();
-  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
+  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed', traceId });
 
+  const started = Date.now();
+  try {
   const auth = await resolveAdminAuth(req);
   if (!auth.ok) {
     const { status, error, code } = auth.failure;
-    return res.status(status).json({ error, code });
+    return res.status(status).json({ error, code, traceId });
   }
 
   const body = parseBody(req);
@@ -132,7 +142,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           : result.error?.includes('FAL_KEY')
             ? 503
             : 500;
-    return res.status(status).json(result);
+    return res.status(status).json({
+      ...result,
+      traceId: result.traceId ?? traceId,
+      diagnostic: result.diagnostic,
+      elapsedMs: Date.now() - started,
+    });
   }
 
   return res.status(200).json({
@@ -144,5 +159,25 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     assetRegistryId: result.assetRegistryId,
     audit: result.audit,
     legacyCompat: result.audit.legacyCompat ?? false,
+    traceId: result.traceId ?? traceId,
+    elapsedMs: Date.now() - started,
   });
+  } catch (err) {
+    const diagnostic = normalizeGenerationError({
+      err,
+      stage: 'studio-builder-generate.handler',
+      traceId,
+      category: 'API_ROUTE_FAILED',
+      elapsedMs: Date.now() - started,
+    });
+    logGenerationDiagnostic(diagnostic);
+    return res.status(500).json({
+      ok: false,
+      code: 'API_ROUTE_FAILED',
+      error: publicMessageFromDiagnostic(diagnostic),
+      traceId,
+      diagnostic,
+      elapsedMs: Date.now() - started,
+    });
+  }
 }

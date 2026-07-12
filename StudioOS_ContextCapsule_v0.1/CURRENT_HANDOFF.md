@@ -1,18 +1,18 @@
 # Current Handoff — Active Sprint State
 
 **Capsule:** StudioOS_ContextCapsule_v0.1  
-**Last updated:** 2026-07-11  
-**Git reference:** (pending restoration commit)
+**Last updated:** 2026-07-12  
+**Git reference:** (pending Layer 1 repair commit)
 
 ---
 
 ## Current sprint
 
-**P0 Forensic — Shared Generation Pipeline Regression (Creative Studio restoration)**
+**P0 Forensic Repair — Layer 1 `signature-landmark` generation 500 (shared Experience Lab runtime)**
 
-Surgical root-cause isolation and Creative Studio governed-generation restoration on the shared `studio-builder-generate` path. Experience Engine Layer 1 remains a **separate** tracked blocker until founder verifies production traces.
+Narrow repair shipped: structured server diagnostics, handler JSON hardening, FAL error preservation, `vercel.json` duration/includeFiles for `studio-builder-generate`. **Production mobile verification pending founder.**
 
-**Previous:** Invite Manager sharing migration + password recovery (`3051691d2`, `bab32950c`).
+**Previous:** P0 onboarding pack v1.2.1 archive inventory reconciliation.
 
 ---
 
@@ -22,8 +22,8 @@ See `KNOWN_BLOCKERS.md` for full detail.
 
 | ID | Blocker | Owner | Unblock |
 |----|---------|-------|---------|
-| **B1-restored** | Creative Studio validation compile — governed shell/layer generation | Founder (device) | Verify `/admin/studio/experience-lab` on normal mobile Safari + Chrome after deploy |
-| **B1-ee** | Experience Engine Layer 1 — remaining failure after shared-path fix | Composer (separate sprint) | Production Black Box trace review; do not speculative-repair |
+| **B1-layer1** | Layer 1 `signature-landmark` governed generation 500 | Founder (device) | Verify Creative Studio + Experience Engine on mobile Safari + Chrome after repair deploy |
+| **B2** | Diagnostic normal-tab verification | Founder (device) | https://fsbw.vercel.app/__studio-os-recovery |
 
 ---
 
@@ -31,13 +31,11 @@ See `KNOWN_BLOCKERS.md` for full detail.
 
 | System | Status | Notes |
 |--------|--------|-------|
-| Shared pipeline forensic report | ✅ Shipped | `docs/studio-os/forensics/SHARED_GENERATION_PIPELINE_REGRESSION.md` |
-| Validation context gating | ✅ Shipped | `validation-compile-context.ts` + adapter hardening |
-| Regression tests | ✅ 17/17 pass | `shared-generation-pipeline-regression.test.ts` |
-| Lazy server ephemeral auth | ✅ Retained | `ensureValidationEphemeralAuth` on complete scope only |
-| Blocking pre-pipeline auth | ✅ Removed | `ff19d5016` — do not reintroduce |
-| Creative Studio production verify | ⏳ Pending | Founder mobile Safari + Chrome |
-| Experience Engine Layer 1 | ❌ Isolated | Classify separately post-deploy |
+| Layer 1 forensic repair | ✅ Shipped | `docs/studio-os/forensics/LAYER1_GENERATION_500_REPAIR.md` |
+| Handler JSON hardening + diagnostics | ✅ Shipped | `generation-error-diagnostics.ts`, route try/catch, gateway traceId |
+| Regression tests | ✅ 13/13 pass | diagnostics + shared pipeline |
+| Local governed FAL path | ✅ ~24s success | `executeGovernedGeneration` → `generateStudioBuilderAsset` |
+| Production mobile verify | ⏳ Pending | Creative Studio + Experience Engine × Safari + Chrome |
 
 ---
 
