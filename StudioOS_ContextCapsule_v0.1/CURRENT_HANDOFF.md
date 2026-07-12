@@ -8,15 +8,13 @@
 
 ## Current sprint
 
-**P0 — Dispatch Office serverless bundle boundary repair**
+**P0 — End-to-end pipeline reconciliation (“One Work Order, One Finished Room”)**
 
-**Status: In Progress — production canary verification pending.**
+**Status: Complete (forensic) — repair not implemented.**
 
-Repair ships pre-bundled `studio-os-server.bundle.js` so governed-generation routes no longer depend on untraced `api/` → `src/studio-os-core/` runtime imports. **Founder authenticated Layer 1 verification not complete.**
+Traced governed render path Creative Direction Studio vs Experience Lab validation runtime. **First proven divergence:** `computeRenderPipelineProgress` reports terminal completion from `compileReport.success` alone while Scene Stack layer pipeline and viewport overlay can still show building (0/N or Generating …). Full report: `docs/studio-os/forensics/END_TO_END_PIPELINE_RECONCILIATION.md`.
 
-Creative Studio and Experience Engine **share the same runtime** at `/admin/studio/experience-lab`. Pre-handler bundle repair applies to **all four** Dispatch endpoints. Do not treat either surface as restored until canary + authenticated Layer 1 verify.
-
-**Previous:** P0 Dispatch Office forensic + Creative Services roadmap (docs); Layer 1 repair `7a8869404` (handler hardening — did not fix pre-handler class).
+**Previous:** P0 Dispatch Office bundle repair (`4ec75321f`); B0 JSON canary now passes unauthenticated probe.
 
 ---
 
@@ -26,8 +24,9 @@ See `KNOWN_BLOCKERS.md` for full detail.
 
 | ID | Blocker | Owner | Unblock |
 |----|---------|-------|---------|
-| **B0-PreHandler** | Dispatch Office `FUNCTION_INVOCATION_FAILED` pre-handler | Composer (deployed) + production probe | Canary returns JSON on all four endpoints |
-| **B1-Layer1** | Layer 1 `signature-landmark` governed generation | Founder (device) | Mobile Safari + Chrome after B0 passes |
+| **B0-PreHandler** | Dispatch Office pre-handler | — | **Cleared** (JSON 401 on four routes) |
+| **B1-Layer1** | Layer 1 `signature-landmark` governed E2E | Founder (device) | Authenticated mobile Safari + Chrome with `?compilerDiag=1` |
+| **B1-E2E-Completion** | Premature terminal completion signals | Composer (await approval) | Compound invariant gate in progress + runtime |
 | **B2** | Diagnostic normal-tab verification | Founder (device) | https://fsbw.vercel.app/__studio-os-recovery |
 
 ---
@@ -36,37 +35,38 @@ See `KNOWN_BLOCKERS.md` for full detail.
 
 | System | Status | Classification |
 |--------|--------|----------------|
-| Pre-handler bundle repair | Shipped (pending SHA) | **In Progress** |
-| Dispatch canary (ephemeral) | Not verified post-deploy | **Unknown** |
-| Handler JSON / traceId | Should execute after B0 fix | **Inference** |
+| Dispatch JSON / traceId | Probe verified | **Documented Fact** |
 | Layer 1 FAL path | Not verified authenticated | **Unknown** |
+| Creative Studio (CDS room) | Fails generation path | **Documented Fact** (founder) |
+| Experience Lab runtime | Progresses further; contradictory UI | **Documented Fact** (founder + code) |
 | Incident resolved | No | **Documented Fact** |
 
 ---
 
-## Primary canary (post-deploy)
+## Primary canary (verified 2026-07-12)
 
 ```
 POST https://fsbw.vercel.app/api/admin/experience-lab-ephemeral-authorization
+POST https://fsbw.vercel.app/api/admin/studio-builder-generate
 ```
 
-**Pass:** `content-type: application/json` — not plain-text `FUNCTION_INVOCATION_FAILED`.
-
-**Then probe:** `studio-builder-generate`, `studio-foundry-generate`, `studio-generate-asset`.
+**Pass:** `content-type: application/json` — not plain-text `FUNCTION_INVOCATION_FAILED`.  
+`studio-builder-generate` returns `traceId` on 401.
 
 ---
 
-## Authenticated verification (after canary)
+## Authenticated verification (required for B1)
 
 ```
 https://fsbw.vercel.app/admin/studio/experience-lab?compilerDiag=1
 ```
 
-Mobile Safari + Chrome — Creative Studio **and** Experience Engine. Required for incident resolution; not part of this deploy gate alone.
+Mobile Safari + Chrome — Experience Lab `frontal-slayer` concept A (Luxury beauty flagship) and Creative Direction Studio `arrival` station. Required for incident resolution.
 
 ---
 
 ## Forensic references
 
+- `docs/studio-os/forensics/END_TO_END_PIPELINE_RECONCILIATION.md` (this sprint)
 - `docs/studio-os/forensics/DISPATCH_OFFICE_PREHANDLER_FORENSIC.md`
-- `docs/studio-os/creative-services/CREATIVE_SERVICES_ROADMAP.md` (Planned — not in scope)
+- `docs/studio-os/forensics/SHARED_GENERATION_PIPELINE_REGRESSION.md`

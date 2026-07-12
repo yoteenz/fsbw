@@ -47095,6 +47095,8 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 
 ---
 
+---
+
 ## 2026-07-12 — Studio Institute LOS Constitution & Studio World educational philosophy canonization
 
 **Context:** Founder Vision & Canon sprint — establish permanent educational philosophy, learning model, institutional identity, and world integration for Studio Institute. Documentation only; no implementation, no UI, no code.
@@ -47148,4 +47150,30 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 **Outcome:** Founder Intelligence Capsule validation pass (29 required docs); onboarding pack validation pass (94 required files).
 
 **Spatial Architecture Review:** SKIPPED — packaging repair, no new surfaces.
+
+---
+
+## 2026-07-12 — P0 end-to-end pipeline reconciliation sprint (forensic)
+
+**Context:** Founder P0 sprint “One Work Order, One Finished Room” — trace one render request through Concierge → Dispatch → Design → Warehouse → Elevator → Inspection; prove first false-success boundary; no speculative repair.
+
+**Topics covered:** Full journey maps for Creative Direction Studio room vs Experience Lab validation runtime; work-order identity table (`previewSessionId`, `compileRunId`, `productionGroupId`, `traceId`); completion invariant audit; completion signal audit; screenshot A/B reconciliation; CDS vs Experience Lab diff; production probes; regression tests.
+
+**Decisions / outcomes:**
+- **Verdict:** Terminal completion is reported from World Compiler `compileReport.success` alone while Scene Stack layer pipeline and viewport overlay can disagree (100% / Render complete vs Generating N/8 or 0/8).
+- **First proven divergence:** `src/studio-os-core/creative-studio-preview/render-pipeline-progress.ts` → `computeRenderPipelineProgress` lines 121/131 — `isComplete = Boolean(compileSuccess)` forces `progressPct: 100` without layer pipeline idle or full layer count.
+- **Secondary:** `compile-pipeline.ts` mount stages return `success: true` on "Stage skipped" when zero packages.
+- **Classification:** B Incorrect progress calculation (+ A optimistic UI, N preview desync).
+- **B0:** Production probe Documented Fact — four Dispatch routes return JSON 401 (not `FUNCTION_INVOCATION_FAILED`); `studio-builder-generate` returns `traceId`.
+- **Repair:** Not implemented — compound invariant gate documented; await founder approval.
+- Neither Creative Studio (CDS) nor Experience Lab runtime declared restored.
+
+**Changes:**
+- `docs/studio-os/forensics/END_TO_END_PIPELINE_RECONCILIATION.md` — full forensic deliverable
+- `src/studio-os-core/creative-studio-preview/render-pipeline-progress.invariants.test.ts` — 8 regression tests
+- `StudioOS_ContextCapsule_v0.1/CURRENT_HANDOFF.md`, `KNOWN_BLOCKERS.md` — B0 cleared, B1-E2E-Completion added
+
+**Tests:** 15 relevant vitest pass; `npm run build` pass.
+
+**Spatial Architecture Review:** SKIPPED — forensic sprint, no new surfaces.
 
