@@ -85,6 +85,32 @@ Every substantive response should include, when applicable:
 
 For quick factual answers, items 1 and 4 may suffice.
 
+### 4.1 ChatGPT handoff — CONCLUSION code box (mandatory)
+
+When the founder will copy a Cursor/Composer outcome into **ChatGPT**, the agent must end the response with a **single fenced code block** labeled for handoff — **after** all prose, tables, and links.
+
+**Placement:** Always the **very last** element in the message (nothing below it except optional one-line deploy note).
+
+**Format:**
+
+````
+```text
+CONCLUSION — [sprint/topic title]
+
+[3–8 bullet lines: what was done, proven facts, classification, blockers, next boundary, commit SHA if applicable]
+
+Status: [Production / In Progress / Planned / Unknown]
+```
+````
+
+**Rules:**
+
+- Use a plain `text` fence (easy copy-paste into ChatGPT).
+- Summarize the **entire exchange outcome** — not only the latest turn.
+- Label facts **Documented Fact**, **Inference**, **Planned**, **Conceptual** inside the box when relevant.
+- Do **not** imply roadmap items are implemented.
+- Composer adds this box; ChatGPT may mirror the format when replying to the founder if a handoff back to Composer is likely.
+
 ---
 
 ## 5. Explanation style

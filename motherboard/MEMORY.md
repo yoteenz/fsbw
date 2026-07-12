@@ -47026,31 +47026,32 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 
 ---
 
-## 2026-07-12 — P0 serverless invocation pre-handler forensic sprint (Studio OS)
+## 2026-07-12 — P0 Dispatch Office forensic + Creative Services roadmap (Studio OS)
 
-**Context:** P0 forensic-only sprint. Layer 1 repair sprint (`7a8869404`) conclusions treated as historical. Goal: identify why governed-generation Vercel serverless functions return `FUNCTION_INVOCATION_FAILED` **before** route handlers execute — not repair.
+**Context:** Combined sprint — two independent workstreams, one commit. **Workstream A (P0):** Determine why Dispatch Office (shared governed-generation serverless entry) fails before Interior Design (Studio Builder/FAL) is contacted. **Workstream B:** Document long-term Creative Services architecture (docs only, no runtime changes). Layer 1 repair (`7a8869404`) timeout theory superseded. No repair implemented.
 
-**Authoritative production facts (re-verified this sprint):**
-- Failing: `studio-builder-generate`, `studio-foundry-generate`, `studio-generate-asset`, `experience-lab-ephemeral-authorization` — HTTP 500, `x-vercel-error: FUNCTION_INVOCATION_FAILED`, plain text, ~350–650 ms, no `traceId`/JSON
-- Working: `studio-asset-registry`, `studio-creative-intelligence`, `product-photography-generate` — JSON (e.g. 401 `MISSING_TOKEN`)
-- Post-`7a8869404` handler hardening never appears in production responses → handler does not run
-- FAL/provider timeout theory **superseded**
+**Workstream A — Dispatch Office forensics (Documented Fact + Inference):**
+- Dispatch Office = `api/admin/*` governed routes + `api/_lib/creativeProduction/*` (legacy-adapters, generation-gateway)
+- Interior Design / FAL = `studioBuilderGeneration.ts` — **not reached** (ephemeral minimal graph fails without FAL imports)
+- Production re-probed 2026-07-12: ephemeral HTTP 500 `FUNCTION_INVOCATION_FAILED` ~582 ms; registry HTTP 401 JSON
+- Handler does not execute — no traceId/diagnostic after `7a8869404` hardening
+- Only failing intersection: `api/_lib/creativeProduction/*` → `src/studio-os-core/**` (working controls: `api/_lib/` only)
+- Earliest boundary: `legacy-adapters.ts` → `src/studio-os-core/creative-production/demo-seed.js`
+- Classification: **D Build artifact omission** + symptom **A Module evaluation failure**
+- Repair boundary only: colocate under `api/_lib`, explicit `includeFiles`, pre-bundle, or extend tsconfig
 
-**Forensic findings (Documented Fact + Inference):**
-- **Only intersection** across all failing endpoints: `api/_lib/creativeProduction/*` → `src/studio-os-core/**` cross-root imports
-- Working control routes stay in `api/_lib/` only — zero `src/` imports from `api/`
-- Minimal failing graph: ephemeral → `legacy-adapters` → 6 `src/studio-os-core/creative-production/*` modules
-- Earliest shared value import: `legacy-adapters.ts` → `src/studio-os-core/creative-production/demo-seed.js`
-- Local `tsx` + `esbuild` bundle succeeds and inlines `src/`; production differs
-- `tsconfig.json` includes only `src`, not `api/`; `vercel.json` `includeFiles` has marble assets but not `src/studio-os-core/**`
-- Vercel build/runtime logs **unavailable** (no CLI auth) — exact exception string **Unknown**
-- `@vercel/nft` default trace from API entry did not enumerate `src/` deps (2 files only)
+**Workstream B — Creative Services roadmap (Planned/Conceptual only):**
+- Model Orchestrator as Head of Creative Services — provider-agnostic routing (not implemented today)
+- Multi-provider abstraction behind orchestrator — FAL remains primary, not replaced
+- Async creative jobs (work-order model) — queue, status, notifications — not implemented
+- Creative Services Department™ in Studio World with specialty studios (Interior Design, Motion, Audio, 3D, …)
+- All roadmap items labeled Planned or Conceptual; CURRENT_HANDOFF/KNOWN_BLOCKERS untouched
 
-**Root-cause classification:** Primary **D — Build artifact omission**; runtime symptom **A — Module evaluation failure**. FAL/Layer-1-timeout rejected.
+**Deliverables shipped:**
+- `docs/studio-os/forensics/DISPATCH_OFFICE_PREHANDLER_FORENSIC.md` (canonical Dispatch Office report)
+- `docs/studio-os/creative-services/CREATIVE_SERVICES_ROADMAP.md`
+- Updated: `model-orchestrator.md`, `studio-world/003_DEPARTMENTS.md`, `010_IMPLEMENTATION_ROADMAP.md`, `architecture.md`, cross-link in `SERVERLESS_INVOCATION_PREHANDLER_FAILURE.md`
+- Validation: `npx tsc --noEmit` pass; no application code changes
 
-**Deliverable:** `docs/studio-os/forensics/SERVERLESS_INVOCATION_PREHANDLER_FAILURE.md` — full graphs, intersection, bundle/platform analysis, repair boundary only (colocate under `api/_lib`, explicit `includeFiles`, pre-bundle, or extend tsconfig). **No application code changes.**
-
-**Next repair verification gate:** Unauthenticated POST to ephemeral endpoint must return JSON (401/400), not plain-text `FUNCTION_INVOCATION_FAILED`.
-
-**Spatial Architecture Review:** SKIPPED — forensic sprint, no new surfaces.
+**Spatial Architecture Review:** SKIPPED — forensic + roadmap docs only.
 
