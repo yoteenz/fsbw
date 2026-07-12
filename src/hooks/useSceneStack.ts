@@ -94,6 +94,11 @@ import {
   type AssetCandidateRecord,
 } from '../studio-os-core/scene-stack/verified-asset-production';
 import { requestSceneStackAssetCleanup } from '../services/studio/sceneStackAssetCleanup/api';
+import {
+  resolveBrandMaterialPackage,
+  isBrandAssetResolutionError,
+  CIRCULAR_CONCIERGE_DESK_SPEC,
+} from '../studio-os-core/creative-production/brand-asset-grounding';
 
 export type SceneStackPipelineProgress = {
   stationId: string;
@@ -456,6 +461,26 @@ export function useSceneStack(
         let qualityPassed = false;
 
         for (let isolationAttempt = 0; isolationAttempt < maxIsolationAttempts; isolationAttempt++) {
+          const organizationIdForCompile =
+            layerCompileOptions?.previewCompileContext?.companyId ??
+            getActiveEphemeralCompileAuthorization(
+              layerCompileOptions?.previewCompileContext?.compileRunId ?? null
+            )?.organizationId ??
+            'frontal-slayer';
+
+          if (isIsolatedObjectLayer(layerId)) {
+            const brandCheck = resolveBrandMaterialPackage({
+              organizationId: organizationIdForCompile,
+              materialRequests: CIRCULAR_CONCIERGE_DESK_SPEC.materialRequests,
+            });
+            if (isBrandAssetResolutionError(brandCheck)) {
+              const msg = `${brandCheck.code}: ${brandCheck.message}`;
+              failStudioAlphaGeneration(generationId, msg);
+              setErrors((prev) => ({ ...prev, [key]: msg }));
+              return false;
+            }
+          }
+
           compiled = compileSceneStackLayerPrompt({
             departmentId,
             stationId,
@@ -464,6 +489,7 @@ export function useSceneStack(
             projectId,
             referenceImageUrls: referenceImageUrls.length ? referenceImageUrls : undefined,
             isolationAttempt,
+            organizationId: organizationIdForCompile,
           });
 
           if (isolationAttempt > 0 && isIsolatedObjectLayer(layerId)) {
@@ -517,6 +543,8 @@ export function useSceneStack(
                 promptBuilderId: compiled.promptBuilderId,
                 promptContractVersion: compiled.promptVersion,
                 stationId,
+                brandReferenceUrls: compiled.brandReferenceUrls,
+                organizationId: organizationIdForCompile,
               },
               {
                 validationMode,
@@ -563,6 +591,8 @@ export function useSceneStack(
             providerModel: compiled.providerModel,
             textToImageOnly: compiled.textToImageOnly,
             referenceStrategy: compiled.referenceStrategy,
+            routeId: compiled.routeId,
+            brandReferenceUrls: compiled.brandReferenceUrls,
             aspectRatio: compiled.aspectRatio,
             outputFormat: compiled.outputFormat,
             referenceImageUrls,
@@ -587,7 +617,9 @@ export function useSceneStack(
               prompt: compiled.prompt,
               generationMode: compiled.generationMode ?? 'isolated-single-object',
               referenceImageUrls,
+              brandReferenceUrls: compiled.brandReferenceUrls,
               textToImageOnly: compiled.textToImageOnly === true,
+              organizationId: organizationIdForCompile,
             });
             if (!promptAssert.ok) {
               const msg = `Isolated prompt contract violation: ${promptAssert.violations.join(' ')}`;
@@ -606,16 +638,16 @@ export function useSceneStack(
               aspectRatio: compiled.aspectRatio,
               referenceImageUrls,
               compileRunId: layerCompileOptions?.previewCompileContext?.compileRunId ?? null,
-              organizationId:
-                layerCompileOptions?.previewCompileContext?.companyId ??
-                getActiveEphemeralCompileAuthorization(
-                  layerCompileOptions?.previewCompileContext?.compileRunId ?? null
-                )?.organizationId ??
-                null,
+              organizationId: organizationIdForCompile,
               stationId,
               projectId,
               isolationAttempt,
               placementMetadataIncluded: true,
+              routeId: compiled.routeId ?? null,
+              brandReferenceUrls: compiled.brandReferenceUrls,
+              brandReferenceChecksums: compiled.brandMaterialPackage?.referenceChecksums,
+              materialMappings: compiled.brandMaterialPackage?.materialMappings,
+              resolutionTruth: compiled.resolutionTruth,
             })
           );
 
@@ -687,7 +719,7 @@ export function useSceneStack(
                 failedFunction: 'requestStudioBuilderGenerate',
                 failedFile: 'src/services/studio/studioBuilder/api.ts',
                 adapter:
-                  'studio-builder-generate → executeGovernedGeneration (FAL nano-banana-pro/edit)',
+                  'studio-builder-generate → executeGovernedGeneration (Model Registry — NB2 isolated / NBP edit shell)',
                 shellRemainedValid: Boolean(shellLock.shellUrl),
                 requestInput: requestInputForensic,
                 responseOutput: {
@@ -744,6 +776,20 @@ export function useSceneStack(
             jobId: result.jobId ?? null,
             compileRunId: layerCompileOptions?.previewCompileContext?.compileRunId ?? null,
             regenerationAttempt: isolationAttempt,
+            brandMaterialPackage: compiled.brandMaterialPackage ?? null,
+            routeId: compiled.routeId ?? null,
+            brandReferenceUrls: compiled.brandReferenceUrls,
+            resolutionTruth: compiled.resolutionTruth
+              ? {
+                  requestedResolution: compiled.resolutionTruth.requestedResolution,
+                  providerNativeResolution: compiled.resolutionTruth.providerNativeResolution,
+                  outputResolution: compiled.resolutionTruth.providerNativeResolution,
+                  upscaleApplied: false,
+                  truthState: compiled.resolutionTruth.supportsNative4K
+                    ? 'native-4k'
+                    : 'provider-nearest-supported',
+                }
+              : null,
             onStageChange: (stage, label) => {
               setPipelineLayer((prev) => ({
                 stationId,

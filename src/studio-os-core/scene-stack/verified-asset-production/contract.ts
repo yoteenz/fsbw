@@ -1,3 +1,4 @@
+import type { MaterialFidelityEvidence } from '../../creative-production/brand-asset-grounding/contract';
 import type { SceneStackLayerId } from '../types';
 
 export const VERIFIED_ASSET_PRODUCTION_VERSION = 'verified-asset-production.v1';
@@ -82,6 +83,8 @@ export type AssetProductionApprovalProof = {
   cleanupMethod?: 'none' | 'ideogram' | 'white-studio-fallback';
   compileRunId?: string | null;
   jobId?: string | null;
+  materialFidelityVerdict?: string | null;
+  routeId?: string | null;
 };
 
 export type AssetCandidateRecord = {
@@ -143,6 +146,16 @@ export type AssetCandidateRecord = {
   likelyArchitectureDetected: boolean;
   referenceStrategy?: string;
   effectivePromptVersion?: string;
+  routeId?: string | null;
+  resolutionTruth?: {
+    requestedResolution: string;
+    providerNativeResolution: string;
+    outputResolution: string;
+    upscaleApplied: boolean;
+    truthState: string;
+  } | null;
+  materialFidelity?: MaterialFidelityEvidence | null;
+  brandReferenceUrls?: string[];
 };
 
 export type VerifiedAssetProductionResult =

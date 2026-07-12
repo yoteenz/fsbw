@@ -1,20 +1,23 @@
 import type { IsolatedLayerGenerationMode } from './isolated-layer-contract';
-import { getIsolatedLayerContract, isIsolatedObjectLayer, resolveLayerGenerationMode } from './isolated-layer-contract';
+import { isIsolatedObjectLayer, resolveLayerGenerationMode } from './isolated-layer-contract';
 import { SCENE_STACK_LAYER_ORDER, type SceneStackLayerId } from './types';
+import {
+  MODEL_REGISTRY_POLICY_VERSION,
+  resolveSceneStackLayerModelRouteFromRegistry,
+  SCENE_STACK_ISOLATED_OBJECT_FAL_MODEL,
+  SCENE_STACK_SHELL_FAL_MODEL,
+} from '../creative-production/model-registry';
 
-export const SCENE_STACK_MODEL_ROUTING_VERSION = 'layer-model-routing.v1';
+export const SCENE_STACK_MODEL_ROUTING_VERSION = MODEL_REGISTRY_POLICY_VERSION;
 
-/** Environment shell — full-scene img2img with marble or shell anchor. */
-export const SCENE_STACK_SHELL_FAL_MODEL = 'fal-ai/nano-banana-pro/edit' as const;
-
-/** Isolated object layers — text-to-image only; no img2img room repaint. */
-export const SCENE_STACK_ISOLATED_OBJECT_FAL_MODEL = 'fal-ai/nano-banana-pro' as const;
+export { SCENE_STACK_SHELL_FAL_MODEL, SCENE_STACK_ISOLATED_OBJECT_FAL_MODEL };
 
 export type SceneStackReferenceStrategy =
   | 'none'
   | 'marble-genesis-anchor'
   | 'shell-placement-img2img'
-  | 'placement-metadata-only';
+  | 'placement-metadata-only'
+  | 'brand-material-references-only';
 
 export type SceneStackLayerModelRoute = {
   layerId: SceneStackLayerId;
@@ -27,6 +30,14 @@ export type SceneStackLayerModelRoute = {
   requestedAlpha: boolean;
   promptBuilderId: string;
   allowBackgroundExtraction: boolean;
+  routeId: string;
+  brandGroundingCapable: boolean;
+  resolutionTruth: {
+    requestedResolution: string;
+    providerNativeResolution: string;
+    supportsNative4K: boolean;
+    thinkingLevel?: string;
+  };
 };
 
 const FORBIDDEN_ISOLATED_MODES: IsolatedLayerGenerationMode[] = [
@@ -43,56 +54,17 @@ export function resolveLayerIdFromProductionGroupId(productionGroupId: string): 
 
 export function resolveSceneStackLayerModelRoute(
   layerId: SceneStackLayerId,
-  isolationAttempt = 0
+  isolationAttempt = 0,
+  options?: {
+    organizationId?: string | null;
+    brandGroundingRequired?: boolean;
+  }
 ): SceneStackLayerModelRoute {
-  const contract = getIsolatedLayerContract(layerId);
-  const generationMode = resolveLayerGenerationMode(layerId);
-
-  if (layerId === 'environment-shell') {
-    return {
-      layerId,
-      generationMode,
-      provider: 'fal',
-      providerModel: SCENE_STACK_SHELL_FAL_MODEL,
-      providerEndpoint: SCENE_STACK_SHELL_FAL_MODEL,
-      textToImageOnly: false,
-      referenceStrategy: 'marble-genesis-anchor',
-      requestedAlpha: false,
-      promptBuilderId: 'environment-shell-prompt.v1',
-      allowBackgroundExtraction: false,
-    };
-  }
-
-  if (isIsolatedObjectLayer(layerId)) {
-    return {
-      layerId,
-      generationMode,
-      provider: 'fal',
-      providerModel: SCENE_STACK_ISOLATED_OBJECT_FAL_MODEL,
-      providerEndpoint: SCENE_STACK_ISOLATED_OBJECT_FAL_MODEL,
-      textToImageOnly: true,
-      referenceStrategy: isolationAttempt > 0 ? 'placement-metadata-only' : 'placement-metadata-only',
-      requestedAlpha: contract.expectedAlpha,
-      promptBuilderId:
-        layerId === 'signature-landmark'
-          ? 'signature-landmark-isolated-prompt.v2'
-          : 'furniture-objects-isolated-prompt.v2',
-      allowBackgroundExtraction: false,
-    };
-  }
-
-  return {
-    layerId,
-    generationMode,
-    provider: 'fal',
-    providerModel: SCENE_STACK_ISOLATED_OBJECT_FAL_MODEL,
-    providerEndpoint: SCENE_STACK_ISOLATED_OBJECT_FAL_MODEL,
-    textToImageOnly: true,
-    referenceStrategy: 'placement-metadata-only',
-    requestedAlpha: contract.expectedAlpha,
-    promptBuilderId: 'blend-overlay-prompt.v1',
-    allowBackgroundExtraction: false,
-  };
+  return resolveSceneStackLayerModelRouteFromRegistry(layerId, {
+    organizationId: options?.organizationId,
+    brandGroundingRequired: options?.brandGroundingRequired,
+    isolationAttempt,
+  });
 }
 
 export function assertLayerGenerationModeAllowed(
@@ -173,25 +145,25 @@ export function compareModelSuitabilityMatrix(): Array<{
       classification: 'REFERENCE-DOMINANT',
     },
     {
-      scenario: 'C: strict prompt + nano-banana-pro/edit + metadata only',
-      model: SCENE_STACK_SHELL_FAL_MODEL,
-      referenceStrategy: 'placement-metadata-only',
-      expectedTendency: 'full-scene',
-      classification: 'MODEL-DOMINANT',
-    },
-    {
-      scenario: 'D: strict prompt + nano-banana-pro t2i + metadata only',
+      scenario: 'C: strict prompt + nano-banana-2 t2i + brand material refs',
       model: SCENE_STACK_ISOLATED_OBJECT_FAL_MODEL,
-      referenceStrategy: 'placement-metadata-only',
+      referenceStrategy: 'brand-material-references-only',
       expectedTendency: 'isolated-capable',
       classification: 'MODEL-DOMINANT',
     },
     {
-      scenario: 'E: strict prompt + nano-banana-pro t2i + masked guide',
-      model: SCENE_STACK_ISOLATED_OBJECT_FAL_MODEL,
-      referenceStrategy: 'placement-metadata-only',
+      scenario: 'D: strict prompt + nano-banana-2/edit + material refs only',
+      model: 'fal-ai/nano-banana-2/edit',
+      referenceStrategy: 'brand-material-references-only',
       expectedTendency: 'isolated-capable',
       classification: 'COMBINED',
+    },
+    {
+      scenario: 'E: environment shell — nano-banana-pro/edit unchanged',
+      model: SCENE_STACK_SHELL_FAL_MODEL,
+      referenceStrategy: 'marble-genesis-anchor',
+      expectedTendency: 'full-scene',
+      classification: 'REFERENCE-DOMINANT',
     },
   ];
 }

@@ -11,3 +11,5 @@ export * from './lineage';
 export * from './registry-policy';
 export * from './cie-enforcement';
 export * from './demo-seed';
+export * from './model-registry';
+export * from './brand-asset-grounding';

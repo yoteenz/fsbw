@@ -3,15 +3,32 @@ import type { AssetCandidateRecord } from '../../../../studio-os-core/scene-stac
 type Props = {
   evidence: AssetCandidateRecord | null;
   compileRunId?: string | null;
+  modelRoute?: string | null;
+  brandReferenceUrl?: string | null;
 };
 
-export function VerifiedAssetProductionEvidencePanel({ evidence, compileRunId }: Props) {
+export function VerifiedAssetProductionEvidencePanel({
+  evidence,
+  compileRunId,
+  modelRoute,
+  brandReferenceUrl,
+}: Props) {
   if (!evidence) return null;
 
   const exportJson = () => {
-    const payload = { compileRunId: compileRunId ?? null, evidence };
+    const payload = {
+      compileRunId: compileRunId ?? null,
+      modelRoute: modelRoute ?? evidence.routeId ?? null,
+      brandReferenceUrl: brandReferenceUrl ?? evidence.brandReferenceUrls?.[0] ?? null,
+      evidence,
+    };
     void navigator.clipboard?.writeText(JSON.stringify(payload, null, 2));
   };
+
+  const materialVerdict = evidence.materialFidelity?.finalMaterialVerdict;
+  const genericWarning =
+    materialVerdict === 'generic-material-substitution' ||
+    materialVerdict === 'wrong-brand-material';
 
   return (
     <div className="cds-verified-asset-evidence" data-testid="verified-asset-evidence-panel">
@@ -23,6 +40,26 @@ export function VerifiedAssetProductionEvidencePanel({ evidence, compileRunId }:
       </header>
       <dl className="cds-verified-asset-evidence__grid">
         <div>
+          <dt>Organization</dt>
+          <dd>{evidence.organizationId}</dd>
+        </div>
+        <div>
+          <dt>Model route</dt>
+          <dd>{evidence.routeId ?? modelRoute ?? '—'}</dd>
+        </div>
+        <div>
+          <dt>Provider model</dt>
+          <dd>{evidence.providerModel ?? '—'}</dd>
+        </div>
+        <div>
+          <dt>Resolution</dt>
+          <dd>
+            {evidence.resolutionTruth
+              ? `${evidence.resolutionTruth.requestedResolution} → ${evidence.resolutionTruth.outputResolution} (${evidence.resolutionTruth.truthState})`
+              : '—'}
+          </dd>
+        </div>
+        <div>
           <dt>Requested asset</dt>
           <dd>{evidence.requestedAssetDescription}</dd>
         </div>
@@ -31,6 +68,10 @@ export function VerifiedAssetProductionEvidencePanel({ evidence, compileRunId }:
           <dd>
             {evidence.identityMatch ? 'match' : 'reject'} ({Math.round(evidence.identityConfidence * 100)}%)
           </dd>
+        </div>
+        <div>
+          <dt>Material verdict</dt>
+          <dd>{materialVerdict ?? '—'}</dd>
         </div>
         <div>
           <dt>Detected classes</dt>
@@ -65,7 +106,21 @@ export function VerifiedAssetProductionEvidencePanel({ evidence, compileRunId }:
           <dd>{evidence.productionStage}</dd>
         </div>
       </dl>
+      {genericWarning ? (
+        <p className="cds-verified-asset-evidence__warning" data-testid="generic-substitution-warning">
+          Generic material substitution detected — candidate cannot approve.
+        </p>
+      ) : null}
       <div className="cds-verified-asset-evidence__previews">
+        {brandReferenceUrl ?? evidence.brandReferenceUrls?.[0] ? (
+          <a
+            href={brandReferenceUrl ?? evidence.brandReferenceUrls?.[0]}
+            target="_blank"
+            rel="noreferrer"
+          >
+            Open brand reference
+          </a>
+        ) : null}
         {evidence.sourceUrl ? (
           <a href={evidence.sourceUrl} target="_blank" rel="noreferrer">
             Open candidate
@@ -75,6 +130,9 @@ export function VerifiedAssetProductionEvidencePanel({ evidence, compileRunId }:
           <a href={evidence.cleanedAssetUrl} target="_blank" rel="noreferrer">
             Open cleaned asset
           </a>
+        ) : null}
+        {brandReferenceUrl && evidence.sourceUrl ? (
+          <span>Compare material</span>
         ) : null}
       </div>
       {evidence.approvalReason || evidence.safeExplanation ? (

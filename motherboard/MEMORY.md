@@ -47519,5 +47519,32 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 
 **Branch:** `master` only; one `./scripts/agent-commit.sh` deploy.
 
-**Pending:** Founder mobile verification — Experience Lab beyond Layer 1 with approved landmark.
+**Pending:** Founder mobile verification — Experience Lab evidence panel + brand-grounded NB2 landmark on device.
+
+---
+
+## 2026-07-12 — P0 Model Registry + Brand-Grounded Isolated Asset Routing (full conversation)
+
+**Context:** Founder-approved P0 after Verified Asset Production Pipeline (`8cb795b1a`). Controlled visual comparison across Nano Banana 2, Nano Banana Pro, GPT Image 2 selected **NB2** for isolated Studio World assets. Generic marble in qualification test was unacceptable — exact org marble required.
+
+**Founder decision:** `fal-ai/nano-banana-2` default for isolated assets; `fal-ai/nano-banana-pro/edit` unchanged for environment shell; configuration-driven Model Registry; brand-asset grounding with exact Frontal Slayer marble (`/assets/marble-half.png`).
+
+**Repair shipped (one commit):**
+- `creative-production/model-registry/` — `layer-model-routing.v2`, `resolveModelRoute()`, NB2 schema contract (4K, thinking_level high), resolution truth reporting
+- `creative-production/brand-asset-grounding/` — contract, vault, resolver, reference policy, circular concierge desk fixture
+- `layer-model-routing.ts` delegates to registry; stale NBP isolated defaults removed
+- `isolated-asset-prompt.v3` — brand-grounded sections, forbidden marble substitutions
+- `effective-generation-request.v2` — route, brand refs, checksums, material mappings
+- `studioBuilderGeneration.ts` — NB2 4K dispatch; brand refs via `/edit` only (no shell images)
+- `verified-asset-production/material-fidelity-validation.ts` — generic/wrong marble rejection
+- `VerifiedAssetProductionEvidencePanel` — model route, brand refs, material verdict, resolution truth
+- `useSceneStack.ts` — brand pre-dispatch gate; material package through pipeline
+- Tests: model-registry (10) + brand-grounding (11) + isolated-routing (13) + verified-pipeline (20) = 54 pass; build pass
+- Docs: MODEL_REGISTRY, BRAND_ASSET_GROUNDING_STANDARD, BRAND_MATERIAL_FIDELITY_POLICY, NANO_BANANA_2_ISOLATED_ASSET_ROUTE; updated LAYER_MODEL_ROUTING_MATRIX, CURRENT_HANDOFF, KNOWN_BLOCKERS, CORE
+
+**Spatial Architecture Review:** SKIPPED — routing/grounding on existing layer pipeline; no new nav.
+
+**Branch:** `master` only; one `./scripts/agent-commit.sh` deploy.
+
+**Pending:** Founder mobile verification — NB2 route + brand marble in evidence panel on authenticated device.
 

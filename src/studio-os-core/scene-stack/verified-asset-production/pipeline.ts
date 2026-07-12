@@ -1,5 +1,7 @@
+import type { BrandMaterialPackage } from '../../creative-production/brand-asset-grounding';
 import { analyzeIsolatedLayerQuality } from '../isolated-layer-quality';
 import { isIsolatedObjectLayer } from '../isolated-layer-contract';
+import { validateMaterialFidelity, materialFidelityBlocksApproval } from './material-fidelity-validation';
 import type { SceneStackLayerId } from '../types';
 import { validateAssetIdentity } from './identity-validation';
 import { validateAssetStructure } from './structural-validation';
@@ -41,6 +43,10 @@ export type VerifiedAssetPipelineInput = {
   cleanupAttempt?: number;
   onStageChange?: (stage: VerifiedAssetProductionStage, label: string) => void;
   requestBackgroundCleanup?: BackgroundCleanupRequest;
+  brandMaterialPackage?: BrandMaterialPackage | null;
+  routeId?: string | null;
+  resolutionTruth?: AssetCandidateRecord['resolutionTruth'];
+  brandReferenceUrls?: string[];
 };
 
 function candidateId(): string {
@@ -361,6 +367,41 @@ export async function runVerifiedAssetProductionPipeline(
     });
   }
 
+  const materialFidelity = validateMaterialFidelity({
+    brandMaterialPackage: input.brandMaterialPackage,
+    organizationId: input.organizationId,
+    brandMarbleExpected: Boolean(
+      input.brandMaterialPackage?.materialMappings?.deskBase ??
+        input.brandMaterialPackage?.materialSlots.some((s) =>
+          s.resolvedBrandAssetId?.includes('marble')
+        )
+    ),
+    genericMarbleSuspect:
+      identity.fullSceneLikelihood > 0.5 && (quality.metrics.shellSimilarity ?? 0) > 0.6,
+    materialMatchConfidence: identity.confidence,
+  });
+
+  if (
+    isIsolatedObjectLayer(input.layerId) &&
+    materialFidelityBlocksApproval(materialFidelity.verdict) &&
+    input.brandMaterialPackage
+  ) {
+    return rejectCandidate({
+      input,
+      assetCandidateId,
+      stage,
+      identity,
+      quality,
+      structure,
+      background,
+      regenerationAttempt,
+      cleanupAttempt,
+      failureReason: `Material fidelity failed: ${materialFidelity.verdict}.`,
+      failureState: 'REJECTED_LOW_CONFIDENCE',
+      materialFidelity: materialFidelity.evidence,
+    });
+  }
+
   const candidate = buildCandidateRecord({
     input,
     assetCandidateId,
@@ -374,6 +415,7 @@ export async function runVerifiedAssetProductionPipeline(
     cleanedUrl: cleanupUsed ? approvedUrl : null,
     postprocessClassification,
     stage: 'POSTPROCESS_VALIDATING',
+    materialFidelity: materialFidelity.evidence,
   });
 
   const approval = evaluateAssetApproval({
@@ -390,6 +432,8 @@ export async function runVerifiedAssetProductionPipeline(
     shellSimilarity: quality.metrics.shellSimilarity,
     mountMetadataPresent: true,
     organizationId: input.organizationId,
+    materialFidelityPass: materialFidelity.pass,
+    materialFidelityVerdict: materialFidelity.verdict,
   });
 
   if (!approval.approved) {
@@ -478,6 +522,7 @@ function buildCandidateRecord(args: {
   cleanedUrl: string | null;
   postprocessClassification: AssetCandidateRecord['postprocessClassification'];
   stage: VerifiedAssetProductionStage;
+  materialFidelity?: import('../../creative-production/brand-asset-grounding/contract').MaterialFidelityEvidence | null;
 }): AssetCandidateRecord {
   const { input, identity, quality, structure, background } = args;
   return {
@@ -530,6 +575,10 @@ function buildCandidateRecord(args: {
     shellSimilarity: quality.metrics.shellSimilarity,
     likelyArchitectureDetected: identity.fullSceneLikelihood >= 0.75,
     effectivePromptVersion: input.promptVersion,
+    routeId: input.routeId ?? null,
+    resolutionTruth: input.resolutionTruth ?? null,
+    materialFidelity: args.materialFidelity ?? null,
+    brandReferenceUrls: input.brandReferenceUrls,
   };
 }
 
@@ -551,6 +600,7 @@ function rejectCandidate(args: {
   cleanedUrl?: string | null;
   cleanupMethod?: AssetCandidateRecord['cleanupMethod'];
   candidate?: AssetCandidateRecord;
+  materialFidelity?: import('../../creative-production/brand-asset-grounding/contract').MaterialFidelityEvidence | null;
 }): VerifiedAssetProductionResult {
   const candidate =
     args.candidate ??
@@ -579,6 +629,7 @@ function rejectCandidate(args: {
       cleanedUrl: args.cleanedUrl ?? null,
       postprocessClassification: args.postprocess?.classification ?? 'cleanup-failed',
       stage: args.stage,
+      materialFidelity: args.materialFidelity ?? null,
     });
 
   const denied = args.deniedReasons ?? [args.failureReason];

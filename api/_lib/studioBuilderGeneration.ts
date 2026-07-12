@@ -10,6 +10,7 @@ import {
   resolveSceneStackLayerModelRoute,
   SCENE_STACK_SHELL_FAL_MODEL,
 } from '../../src/studio-os-core/scene-stack/layer-model-routing.js';
+import { buildNanoBanana2FalInput } from '../../src/studio-os-core/creative-production/model-registry/nano-banana-2-schema.js';
 
 export const STUDIO_BUILDER_FAL_MODEL = SCENE_STACK_SHELL_FAL_MODEL;
 export const STUDIO_BUILDER_BUCKET = process.env.STUDIO_ASSETS_BUCKET?.trim() || 'live-preview';
@@ -32,6 +33,8 @@ export type StudioBuilderGenerateInput = {
   providerModel?: string;
   isolationAttempt?: number;
   negativePrompt?: string;
+  brandReferenceUrls?: string[];
+  organizationId?: string;
 };
 
 function resolveBuilderRoute(input: StudioBuilderGenerateInput) {
@@ -44,10 +47,14 @@ function resolveBuilderRoute(input: StudioBuilderGenerateInput) {
       textToImageOnly: input.textToImageOnly === true,
     };
   }
-  const route = resolveSceneStackLayerModelRoute(layerId, input.isolationAttempt ?? 0);
+  const route = resolveSceneStackLayerModelRoute(layerId, input.isolationAttempt ?? 0, {
+    organizationId: input.organizationId,
+    brandGroundingRequired: (input.brandReferenceUrls?.length ?? 0) > 0,
+  });
   return {
     model: input.providerModel ?? route.providerModel,
     textToImageOnly: input.textToImageOnly ?? route.textToImageOnly,
+    route,
   };
 }
 
@@ -123,8 +130,34 @@ export async function prepareStudioBuilderFalImageUrls(
   input: StudioBuilderGenerateInput
 ): Promise<{ ok: true; imageUrls: string[]; model: string; textToImageOnly: boolean } | { ok: false; error: string }> {
   const route = resolveBuilderRoute(input);
-  if (route.textToImageOnly) {
+  const brandRefs = input.brandReferenceUrls?.filter((u) => u?.startsWith('http') || u?.startsWith('/')) ?? [];
+
+  if (route.textToImageOnly && brandRefs.length === 0) {
     return { ok: true, imageUrls: [], model: route.model, textToImageOnly: true };
+  }
+
+  if (route.textToImageOnly && brandRefs.length > 0) {
+    const falKey = process.env.FAL_KEY?.trim();
+    if (!falKey) return { ok: false, error: 'FAL_KEY not configured on server' };
+    try {
+      const { fal } = await import('@fal-ai/client');
+      fal.config({ credentials: falKey });
+      const imageUrls: string[] = [];
+      for (const ref of brandRefs) {
+        if (ref.startsWith('http')) {
+          imageUrls.push(ref);
+        } else {
+          const localPath = join(repoRoot(), 'public', ref.replace(/^\//, ''));
+          imageUrls.push(
+            await uploadLocalOrSiteRefToFal(fal, localPath, ref.replace(/^\//, ''), 'Brand material reference')
+          );
+        }
+      }
+      const editModel = 'fal-ai/nano-banana-2/edit';
+      return { ok: true, imageUrls, model: editModel, textToImageOnly: false };
+    } catch (e) {
+      return { ok: false, error: e instanceof Error ? e.message : 'Failed to prepare brand material references' };
+    }
   }
 
   const falKey = process.env.FAL_KEY?.trim();
@@ -162,16 +195,35 @@ export async function submitStudioBuilderFalQueue(
   const route = resolveBuilderRoute(input);
   const model = modelOverride ?? route.model;
   const textToImageOnly = route.textToImageOnly;
+  const brandRefs = input.brandReferenceUrls ?? [];
 
   try {
     const { fal } = await import('@fal-ai/client');
     fal.config({ credentials: falKey });
-    const falInput = textToImageOnly
+
+    const isNanoBanana2 = model.startsWith('fal-ai/nano-banana-2');
+    let falInput: Record<string, unknown>;
+
+    if (isNanoBanana2) {
+      const nb2 = buildNanoBanana2FalInput({
+        prompt: input.prompt,
+        aspectRatio: input.aspectRatio,
+        outputFormat: input.outputFormat,
+        brandReferenceUrls: imageUrls.length ? imageUrls : brandRefs,
+        negativePrompt: input.negativePrompt,
+      });
+      falInput = nb2.falInput as unknown as Record<string, unknown>;
+      const resolvedModel = nb2.usesReferences ? nb2.endpoint : model;
+      const { request_id: providerRequestId } = await fal.queue.submit(resolvedModel, { input: falInput });
+      return { ok: true, providerRequestId, model: resolvedModel, imageUrls };
+    }
+
+    falInput = textToImageOnly
       ? {
           prompt: input.prompt,
           aspect_ratio: input.aspectRatio as '16:9',
           output_format: input.outputFormat,
-          resolution: '2K',
+          resolution: '4K',
           num_images: 1,
         }
       : {

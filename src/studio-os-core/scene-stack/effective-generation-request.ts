@@ -6,6 +6,7 @@ import {
 } from './layer-model-routing';
 import { resolveLayerGenerationMode } from './isolated-layer-contract';
 import { ISOLATED_ASSET_PROMPT_CONTRACT_VERSION } from './isolated-asset-prompt';
+import { validateReferencePolicy } from '../creative-production/brand-asset-grounding';
 
 export const PROHIBITED_ISOLATED_PROMPT_PATTERNS = [
   /create the room/i,
@@ -41,7 +42,7 @@ function hasObjectIdentityMarker(prompt: string): boolean {
 }
 
 export type EffectiveGenerationRequestRecord = {
-  schemaVersion: 'effective-generation-request.v1';
+  schemaVersion: 'effective-generation-request.v2';
   recordedAt: string;
   compileRunId: string | null;
   jobId: string | null;
@@ -73,6 +74,13 @@ export type EffectiveGenerationRequestRecord = {
   projectId: string | null;
   regenerationAttempt: number;
   placementMetadataIncluded: boolean;
+  routeId: string | null;
+  brandReferenceUrls: string[];
+  brandReferenceChecksums: string[];
+  materialMappings: Record<string, string>;
+  resolutionRequested: string;
+  resolutionNative: string;
+  resolutionTruthState: string | null;
 };
 
 function hashText(text: string): string {
@@ -93,7 +101,9 @@ export function assertIsolatedPromptBeforeDispatch(input: {
   prompt: string;
   generationMode: string;
   referenceImageUrls: string[];
+  brandReferenceUrls?: string[];
   textToImageOnly: boolean;
+  organizationId?: string | null;
 }): { ok: true } | { ok: false; code: string; violations: string[] } {
   const modeCheck = assertLayerGenerationModeAllowed(
     input.layerId,
@@ -126,6 +136,29 @@ export function assertIsolatedPromptBeforeDispatch(input: {
     violations.push('Isolated layer must not use dominant img2img reference URLs.');
   }
 
+  const brandRefs = input.brandReferenceUrls ?? [];
+  if (brandRefs.length > 0 && input.organizationId) {
+    const refPolicy = validateReferencePolicy({
+      targetOrganizationId: input.organizationId,
+      references: brandRefs.map((url) => ({
+        url,
+        role: 'material-reference' as const,
+        organizationId: input.organizationId!,
+      })),
+    });
+    if (!refPolicy.ok) {
+      violations.push(refPolicy.reason);
+    }
+  }
+
+  for (const marker of ['do not invent or substitute another marble', 'FORBIDDEN MATERIAL SUBSTITUTIONS']) {
+    if (brandRefs.length > 0 && !positivePrompt.toLowerCase().includes(marker.toLowerCase().slice(0, 20))) {
+      if (marker.includes('FORBIDDEN') && !positivePrompt.includes('FORBIDDEN MATERIAL')) {
+        violations.push(`Missing brand-grounded marker when brand refs supplied: ${marker}`);
+      }
+    }
+  }
+
   if (violations.length > 0) {
     return { ok: false, code: 'ISOLATED_PROMPT_CONTRACT_VIOLATION', violations };
   }
@@ -147,12 +180,25 @@ export function buildEffectiveGenerationRequestRecord(input: {
   projectId?: string | null;
   isolationAttempt?: number;
   placementMetadataIncluded?: boolean;
+  routeId?: string | null;
+  brandReferenceUrls?: string[];
+  brandReferenceChecksums?: string[];
+  materialMappings?: Record<string, string>;
+  resolutionTruth?: {
+    requestedResolution: string;
+    providerNativeResolution: string;
+    supportsNative4K: boolean;
+  };
 }): EffectiveGenerationRequestRecord {
-  const route = resolveSceneStackLayerModelRoute(input.layerId, input.isolationAttempt ?? 0);
+  const route = resolveSceneStackLayerModelRoute(input.layerId, input.isolationAttempt ?? 0, {
+    organizationId: input.organizationId,
+    brandGroundingRequired: (input.brandReferenceUrls?.length ?? 0) > 0,
+  });
   const refs = input.referenceImageUrls ?? [];
+  const brandRefs = input.brandReferenceUrls ?? [];
 
   return {
-    schemaVersion: 'effective-generation-request.v1',
+    schemaVersion: 'effective-generation-request.v2',
     recordedAt: new Date().toISOString(),
     compileRunId: input.compileRunId ?? null,
     jobId: input.jobId ?? null,
@@ -171,12 +217,14 @@ export function buildEffectiveGenerationRequestRecord(input: {
     outputFormat: input.outputFormat,
     requestedAlpha: route.requestedAlpha,
     aspectRatio: input.aspectRatio,
-    referenceCount: route.textToImageOnly ? 0 : refs.length,
-    referenceRoles: route.textToImageOnly
-      ? ['placement-metadata-only']
-      : refs.length
-        ? ['img2img-anchor']
-        : ['marble-genesis-anchor'],
+    referenceCount: route.textToImageOnly ? brandRefs.length : refs.length,
+    referenceRoles: brandRefs.length
+      ? ['material-reference']
+      : route.textToImageOnly
+        ? ['placement-metadata-only']
+        : refs.length
+          ? ['img2img-anchor']
+          : ['marble-genesis-anchor'],
     referenceStrategy: route.referenceStrategy,
     shellImageSupplied: refs.some((u) => u.includes('environment-shell') || u.includes('scene-stack')),
     fullCompositeSupplied: false,
@@ -188,6 +236,13 @@ export function buildEffectiveGenerationRequestRecord(input: {
     projectId: input.projectId ?? null,
     regenerationAttempt: input.isolationAttempt ?? 0,
     placementMetadataIncluded: input.placementMetadataIncluded ?? true,
+    routeId: input.routeId ?? route.routeId ?? null,
+    brandReferenceUrls: brandRefs,
+    brandReferenceChecksums: input.brandReferenceChecksums ?? [],
+    materialMappings: input.materialMappings ?? {},
+    resolutionRequested: input.resolutionTruth?.requestedResolution ?? route.resolutionTruth.requestedResolution,
+    resolutionNative: input.resolutionTruth?.providerNativeResolution ?? route.resolutionTruth.providerNativeResolution,
+    resolutionTruthState: route.resolutionTruth.supportsNative4K ? 'native-4k-capable' : 'provider-nearest-supported',
   };
 }
 

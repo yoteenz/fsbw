@@ -23,6 +23,8 @@ export type AssetApprovalInput = {
   shellSimilarity: number | null;
   mountMetadataPresent: boolean;
   organizationId: string;
+  materialFidelityPass?: boolean;
+  materialFidelityVerdict?: string;
 };
 
 export type AssetApprovalResult = {
@@ -47,6 +49,12 @@ export function evaluateAssetApproval(input: AssetApprovalInput): AssetApprovalR
   }
   if (!input.mountMetadataPresent) {
     deniedReasons.push('Mount metadata not available.');
+  }
+
+  if (input.materialFidelityPass === false) {
+    deniedReasons.push(
+      `Material fidelity validation failed: ${input.materialFidelityVerdict ?? 'unknown'}.`
+    );
   }
 
   if (!input.identityMatch) {
@@ -128,5 +136,7 @@ export function buildApprovalProof(
     cleanupMethod: candidate.cleanupMethod ?? 'none',
     compileRunId: candidate.compileRunId ?? null,
     jobId: candidate.jobId ?? null,
+    materialFidelityVerdict: candidate.materialFidelity?.finalMaterialVerdict ?? null,
+    routeId: candidate.routeId ?? null,
   };
 }

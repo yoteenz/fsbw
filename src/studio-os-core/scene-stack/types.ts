@@ -131,6 +131,15 @@ export type CompiledSceneStackLayerPrompt = {
   providerModel?: string;
   textToImageOnly?: boolean;
   referenceStrategy?: string;
+  routeId?: string;
+  brandMaterialPackage?: import('../creative-production/brand-asset-grounding').BrandMaterialPackage | null;
+  brandReferenceUrls?: string[];
+  resolutionTruth?: {
+    requestedResolution: string;
+    providerNativeResolution: string;
+    supportsNative4K: boolean;
+    thinkingLevel?: string;
+  };
 };
 
 export type SceneStackCompositeStatus = 'idle' | 'building' | 'partial' | 'ready' | 'failed';

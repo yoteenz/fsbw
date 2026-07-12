@@ -20,3 +20,4 @@ export { validateSceneMount, assertMountRequiresApprovalProof } from './mount-va
 export { emitVerifiedAssetImmuneEvent } from './immune-events';
 export { runVerifiedAssetProductionPipeline } from './pipeline';
 export type { VerifiedAssetPipelineInput, BackgroundCleanupRequest } from './pipeline';
+export { validateMaterialFidelity, materialFidelityBlocksApproval } from './material-fidelity-validation';

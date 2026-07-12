@@ -31,18 +31,17 @@
 
 ---
 
-## B1-Isolated — Full-scene rerender + unverified mount (VERIFIED PIPELINE SHIPPED — VERIFY PENDING)
+## B1-Isolated — Brand-grounded NB2 + verified mount (SHIPPED — VERIFY PENDING)
 
 | Field | Detail |
 |-------|--------|
 | **ID** | B1-Isolated |
-| **Symptom** | Layer 1 blocked — full-scene outputs or unverified candidates could not mount |
-| **Compile runs** | `run-1783893880377-6ymov2` and follow-on |
-| **Documented fact** | Shell healthy; prompt/model routing repaired (`0d374488c`); Layer 1 still blocked without candidate→approved gate |
-| **Root cause (proven)** | Raw provider URLs reached Scene Stack as `draft_ready` without identity/structure/background/postprocess approval |
-| **Repair** | `verified-asset-production.v1` — full production pipeline, approval proof required for mount, quarantine, conditional Ideogram cleanup |
-| **Docs** | `VERIFIED_ASSET_PRODUCTION_PIPELINE.md`, `ASSET_APPROVAL_CONTRACT.md`, `BACKGROUND_REMOVAL_POLICY.md`, `UNVERIFIED_LAYER_MOUNT_FAILURE.md` |
-| **Verify** | Experience Lab advances beyond Layer 1 with approved isolated landmark on authenticated mobile |
+| **Symptom** | Generic marble substitution; NBP isolated aesthetic insufficient |
+| **Founder decision** | NB2 default for isolated assets; exact org marble required |
+| **Repair** | Model Registry v2 + Brand Asset Grounding + material fidelity validation |
+| **Isolated model** | `fal-ai/nano-banana-2` / `fal-ai/nano-banana-2/edit` (brand refs) |
+| **Shell model** | `fal-ai/nano-banana-pro/edit` (unchanged) |
+| **Verify** | Experience Lab evidence panel shows brand marble + material pass on mobile |
 | **Status** | **In Progress** — code shipped; founder production proof pending |
 
 ### Do not

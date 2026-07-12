@@ -8,13 +8,13 @@
 
 ## Current sprint
 
-**P0 — Studio OS Immune System™ Foundation (Schema Drift Self-Healing)**
+**P0 — Model Registry + Brand-Grounded Isolated Asset Routing**
 
-**Status: Complete (code shipped) — production auto-repair proof pending env flags.**
+**Status: Complete (code shipped) — founder mobile verification pending.**
 
-First bounded autonomous recovery: detect missing Supabase schema resources, map to checksum-verified repository migrations, authorize Class A additive repairs, verify contract, retry original operation once. Reference incident: missing `public.studio_governed_generation_jobs`.
+Promotes `fal-ai/nano-banana-2` as production default for isolated Scene Stack assets. Environment shell remains `fal-ai/nano-banana-pro/edit`. Configuration-driven Model Registry (`layer-model-routing.v2`) + Brand Asset Grounding with exact Frontal Slayer marble (`/assets/marble-half.png`). Material fidelity validation in verified pipeline. Evidence panel expanded.
 
-**Previous:** Async Governed Generation Work Orders (202 + poll + resume).
+**Previous:** Verified Asset Production Pipeline (`8cb795b1a`).
 
 ---
 
@@ -22,9 +22,8 @@ First bounded autonomous recovery: detect missing Supabase schema resources, map
 
 | ID | Blocker | Status |
 |----|---------|--------|
+| **B1-Isolated** | Brand-grounded NB2 isolated generation | **In Progress** — code shipped; founder device proof pending |
 | **B1-Layer1** | Governed generation Layer 1 | **In Progress** — async + immune repair shipped; founder device verification pending |
-| **B1-Shell** | Shell / validation compile | **In Progress** — async submit removes ~95s Load failed transport boundary |
-| **B1-Immune-Prod** | Immune auto-repair production proof | **In Progress** — requires `IMMUNE_SYSTEM_AUTO_REPAIR=1` + `SUPABASE_DB_URL` or Management API on Vercel |
 
 ---
 
@@ -35,20 +34,18 @@ First bounded autonomous recovery: detect missing Supabase schema resources, map
 ```
 
 1. Run validation compile
-2. Submit should return quickly (work order accepted)
-3. Immune System panel shows governed-generation readiness + recent incidents
-4. Leave page / lock phone — job continues server-side
-5. Return and resume — asset should complete without resubmit
-6. Export IFR + job status JSON + immune incident JSON if diagnosing
+2. Verify evidence panel shows: model route, NB2, brand marble reference, material verdict
+3. Confirm no shell image in isolated layer references
+4. Layer 1 landmark should use NB2 edit with brand marble when materials required
 
-**Rollback:** set `ASYNC_GOVERNED_GENERATION_V1=0` on Vercel. Disable auto-repair: `IMMUNE_SYSTEM_AUTO_REPAIR=0`.
+**Rollback:** set isolated route `rolloutState: deprecated` on `nano-banana-2-isolated` in `model-registry/routes.ts` — no call-site rewrites.
 
 ---
 
 ## References
 
-- `docs/studio-os/autonomous-operations/STUDIO_OS_IMMUNE_SYSTEM.md`
-- `docs/studio-os/autonomous-operations/SCHEMA_DRIFT_SELF_HEALING.md`
-- `docs/studio-os/incidents/MISSING_GENERATION_JOBS_TABLE_INCIDENT.md`
-- `docs/studio-os/creative-services/ASYNC_GOVERNED_GENERATION.md`
-- `docs/studio-os/forensics/INDEPENDENT_FORENSIC_RECORDER.md`
+- `docs/studio-os/creative-production/MODEL_REGISTRY.md`
+- `docs/studio-os/creative-production/BRAND_ASSET_GROUNDING_STANDARD.md`
+- `docs/studio-os/creative-production/BRAND_MATERIAL_FIDELITY_POLICY.md`
+- `docs/studio-os/creative-production/NANO_BANANA_2_ISOLATED_ASSET_ROUTE.md`
+- `docs/studio-os/creative-production/VERIFIED_ASSET_PRODUCTION_PIPELINE.md`

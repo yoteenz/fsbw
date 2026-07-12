@@ -8,6 +8,11 @@ import { resolveIsolatedOutputFormat } from './isolated-layer-prompt';
 import { getIsolatedLayerContract, isIsolatedObjectLayer } from './isolated-layer-contract';
 import { buildIsolatedAssetPrompt, ISOLATED_ASSET_PROMPT_CONTRACT_VERSION } from './isolated-asset-prompt';
 import { resolveSceneStackLayerModelRoute } from './layer-model-routing';
+import {
+  resolveBrandMaterialPackage,
+  isBrandAssetResolutionError,
+  CIRCULAR_CONCIERGE_DESK_SPEC,
+} from '../creative-production/brand-asset-grounding';
 import { getSceneStackStation, requireSceneStackManifest } from './station-manifest';
 import type { CompiledSceneStackLayerPrompt, SceneStackLayerId } from './types';
 import { SCENE_STACK_PROMPT_VERSION } from './types';
@@ -43,6 +48,9 @@ export function compileSceneStackLayerPrompt(input: {
   referenceImageUrls?: string[];
   /** Regeneration attempt for isolated layers (0 = first pass) */
   isolationAttempt?: number;
+  organizationId?: string;
+  /** When true, resolve brand materials for isolated layers */
+  brandGrounding?: boolean;
 }): CompiledSceneStackLayerPrompt {
   const pkg = requireDepartmentPackage(input.departmentId);
   const manifest = requireSceneStackManifest(input.departmentId);
@@ -63,9 +71,27 @@ export function compileSceneStackLayerPrompt(input: {
 
   const layerDef = getLayerDefinition(input.layerId);
   const contract = getIsolatedLayerContract(input.layerId);
-  const route = resolveSceneStackLayerModelRoute(input.layerId, input.isolationAttempt ?? 0);
   const company = resolveCompanyGenomeSnapshot(input.workspaceId);
   const project = resolveActiveProjectGenome(input.departmentId);
+  const organizationId = input.organizationId ?? input.workspaceId ?? 'frontal-slayer';
+  const brandGrounding = input.brandGrounding !== false && isIsolatedObjectLayer(input.layerId);
+
+  let brandMaterialPackage: import('../creative-production/brand-asset-grounding').BrandMaterialPackage | null = null;
+  if (brandGrounding && isIsolatedObjectLayer(input.layerId)) {
+    const materialResult = resolveBrandMaterialPackage({
+      organizationId,
+      organizationName: company.companyName,
+      materialRequests: CIRCULAR_CONCIERGE_DESK_SPEC.materialRequests,
+    });
+    if (!isBrandAssetResolutionError(materialResult)) {
+      brandMaterialPackage = materialResult;
+    }
+  }
+
+  const route = resolveSceneStackLayerModelRoute(input.layerId, input.isolationAttempt ?? 0, {
+    organizationId,
+    brandGroundingRequired: (brandMaterialPackage?.referenceUrls.length ?? 0) > 0,
+  });
   const feeling = pkg.roomDna.defaultFeeling.join(', ');
   const forbidden = pkg.roomDna.forbiddenFeeling.join(', ');
 
@@ -76,6 +102,8 @@ export function compileSceneStackLayerPrompt(input: {
         stationName: station.displayName,
         blueprint,
         isolationAttempt: input.isolationAttempt ?? 0,
+        organizationName: company.companyName,
+        brandMaterialPackage,
       })
     : null;
 
@@ -145,5 +173,9 @@ export function compileSceneStackLayerPrompt(input: {
     providerModel: route.providerModel,
     textToImageOnly: route.textToImageOnly,
     referenceStrategy: route.referenceStrategy,
+    routeId: route.routeId,
+    brandMaterialPackage,
+    brandReferenceUrls: brandMaterialPackage?.referenceUrls ?? [],
+    resolutionTruth: route.resolutionTruth,
   };
 }
