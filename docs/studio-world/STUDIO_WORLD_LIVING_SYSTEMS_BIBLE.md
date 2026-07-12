@@ -1,18 +1,18 @@
 # Studio World Living Systems™ Bible
 
 **P0 Educational Simulation Constitution**  
-**Version:** 1.0.0  
-**Status:** Permanent constitutional canon — July 2026  
-**Authority:** Governs how persistent educational simulations exist inside Studio World™  
-**Sprint:** STUDIO WORLD — Living Systems™ Canon Integration (docs only)
+**Version:** 1.1.0  
+**Status:** Permanent constitutional canon — July 2026 (v1.1.0 Founder Canon Correction)  
+**Authority:** Governs governed educational simulations **within Studio Institute™** — inspired by real Studio World organizations  
+**Sprint:** STUDIO WORLD — Founder Canon Correction Sprint (docs only)
 
 ---
 
-> *Living Systems™ is not the real economy. It is where future professionals learn by managing realistic organizations without risking the real ones.*
+> *Living Systems™ is not Studio World. Living Systems™ lives inside Studio Institute.*
 
-> *Today we are designing the bridge between learning and production. Not building it.*
+> *Studio World is where real organizations operate. Living Systems™ is where students practice — safely — before contributing to those real organizations.*
 
-> *Read this before designing a simulation, curriculum module, cohort scenario, rollback layer, or any code that touches learner decisions inside Studio World.*
+> *Read this before designing a simulation, curriculum module, cohort scenario, rollback layer, or any code that touches learner decisions inside Studio Institute.*
 
 ---
 
@@ -32,11 +32,12 @@ Every statement in this Bible carries one classification. Future agents must not
 
 ## Canon Position
 
-Living Systems™ is the **persistent educational simulation layer** of Studio World. It extends the Studio Institute LOS Constitution — it does not replace it.
+Living Systems™ is the **governed educational simulation capability of Studio Institute™**. It extends the LOS Constitution — it is **not** Studio World itself.
 
 | Document | Relationship |
 |----------|--------------|
-| **[STUDIO_INSTITUTE_LEARNING_OPERATING_SYSTEM_CONSTITUTION.md](../studio-institute/STUDIO_INSTITUTE_LEARNING_OPERATING_SYSTEM_CONSTITUTION.md)** | **Educational constitution** — LOS, Studio World Method™, learning journey, internships |
+| **[STUDIO_WORLD_DIGITAL_TWIN_CONSTITUTION.md](./STUDIO_WORLD_DIGITAL_TWIN_CONSTITUTION.md)** | **Operational identity** — Studio World = digital twin of real economy; Living Systems ≠ Studio World |
+| **[STUDIO_INSTITUTE_LEARNING_OPERATING_SYSTEM_CONSTITUTION.md](../studio-institute/STUDIO_INSTITUTE_LEARNING_OPERATING_SYSTEM_CONSTITUTION.md)** | **Educational constitution** — LOS; Living Systems lives here |
 | **[STUDIO_WORLD_BIBLE.md](../studio-os/STUDIO_WORLD_BIBLE.md)** | Experience constitution — how Studio World must feel |
 | **[STUDIO_WORLD_MASTER_PLAN.md](./STUDIO_WORLD_MASTER_PLAN.md)** | City architecture — where organizations live |
 | **[STUDIO_INSTITUTE_LEARNING_DNA_BIBLE.md](../studio-institute/STUDIO_INSTITUTE_LEARNING_DNA_BIBLE.md)** | Sandbox™ + Simulation Engine™ — per-learner interactive environments |
@@ -47,15 +48,15 @@ Living Systems™ is the **persistent educational simulation layer** of Studio W
 
 | System | What it is |
 |--------|------------|
-| **Living Systems™** | Shared, persistent, cohort-visible educational simulations of organizations |
-| **Sandbox™** (Learning DNA) | Private, temporary, ungraded experimentation |
-| **Simulation Engine™** (Learning DNA) | Per-learner interactive teaching environments |
-| **Production** | Real Studio World operations — real customers, commerce, governance |
-| **Internships** (LOS) | Bridge from learning into real organizations — **Planned** |
+| **Living Systems™** | Institute simulation capability — shared, cohort-visible simulations **inspired by** real organizations |
+| **Sandbox™** (Learning DNA) | Private, temporary, ungraded experimentation (within Institute) |
+| **Simulation Engine™** (Learning DNA) | Per-learner interactive teaching environments (within Institute) |
+| **Studio World (Production)** | Real organizations — real customers, commerce, governance, digital headquarters |
+| **Internships** (LOS) | Bridge from Institute into **real organizations** — **Planned** |
 
-**Read order:** LOS Constitution → **Living Systems Bible (this document)** → Learning DNA Bible (Sandbox/Simulation) → implementation specs.
+**Read order:** Digital Twin Constitution → LOS Constitution → **Living Systems Bible (this document)** → Learning DNA Bible.
 
-**Rule:** Living Systems™ must **never** modify live organizational data. Ever.
+**Rule:** Living Systems™ must **never** modify production organizational data. Living Systems™ is **not** Studio World.
 
 ---
 
@@ -82,15 +83,17 @@ Living Systems™ is the **persistent educational simulation layer** of Studio W
 
 ## Definition
 
-**Living Systems™** is a governed shared-simulation layer where learner decisions create **attributable, replayable, cohort-visible** changes to simulated Studio World organizations.
+**Living Systems™** is a governed shared-simulation capability **within Studio Institute™** where learner decisions create **attributable, replayable, cohort-visible** changes to educational simulations **inspired by real Studio World organizations**.
 
-Students do not study theoretical scenarios in isolation. Their projects leave lasting impacts on Studio World's **simulated** businesses, organizations, and environments — while production remains untouched.
+Students do not study theoretical scenarios in isolation. Their projects leave lasting impacts on **simulation branches** — while **real organizations** in Studio World remain untouched.
 
 ## What Living Systems™ Is Not
 
 | Living Systems™ | ≠ |
 |-----------------|---|
-| **Production** | Real customers, real commerce, real governance, real assets |
+| **Studio World** | Studio World is the real operational digital world — Living Systems is Institute education |
+| **Production** | Real customers, real commerce, real governance in real organizations |
+| **Fictional organizations** | Simulations are inspired by **real businesses** — not invented cities |
 | **Sandbox™** | Private, temporary, ungraded, resettable experimentation |
 | **Generic LMS scenarios** | Disconnected modules with no world persistence |
 | **Implementation today** | **Planned** — constitutional canon only |
@@ -109,15 +112,15 @@ Students do not study theoretical scenarios in isolation. Their projects leave l
 
 ## Relationship to Studio Institute
 
-**Educational Philosophy:** Studio Institute is the **Learning Operating System (LOS)**. Living Systems™ is the **simulation operating environment** where LOS philosophy becomes consequential practice.
+**Educational Philosophy:** Studio Institute is the **Learning Operating System (LOS)**. Living Systems™ is the **simulation capability within Institute** where LOS philosophy becomes consequential practice — before learners contribute to **real organizations** in Studio World.
 
 | LOS Doctrine | Living Systems Expression |
 |--------------|---------------------------|
 | Systems before skills | Simulations expose full causal chains |
 | Experience before abstraction | Students operate simulated organizations |
 | Organizations as classrooms | Simulated orgs are persistent learning environments |
-| Students as contributors | Decisions shape the shared simulated world |
-| Studio World Method™ | Contextual decisions inside real organizational geography |
+| Students as contributors | Decisions shape shared simulations; ultimate contribution is to **real organizations** |
+| Studio World Method™ | Contextual decisions inspired by **real organizational geography** |
 
 ## Approval Status
 
@@ -129,7 +132,7 @@ Students do not study theoretical scenarios in isolation. Their projects leave l
 
 Traditional education runs case studies in slide decks.
 
-Living Systems™ runs case studies as **living cities** — where this cohort's marketing decision changes next cohort's inventory crisis, and both can be replayed, studied, and learned from forever.
+Living Systems™ runs case studies as **practice republics** — mirrors of real organizations like Frontal Slayer — where cohort decisions accumulate as studyable history without touching the real business next door.
 
 ---
 
@@ -137,29 +140,30 @@ Living Systems™ runs case studies as **living cities** — where this cohort's
 
 **Classification:** Educational Philosophy · Founder Vision
 
-Studio World permanently operates across **three distinct environments**. No layer may violate the boundaries of another.
+Studio World permanently operates across **three distinct environments**. Living Systems™ is an **Institute capability** — not a Studio World district or layer.
 
-## 1. Production
+## 1. Production (Studio World)
 
-**Classification:** Documented Fact (environment exists) · Educational Philosophy (boundary)
+**Classification:** Production · Documented Fact
 
-**Purpose:** Operate real Studio World organizations.
+**Purpose:** Operate **real organizations** inside Studio World — digital headquarters for real businesses.
 
 | Characteristic | Description |
 |----------------|-------------|
 | **Real customers** | Commerce, service, fulfillment |
-| **Real businesses** | Revenue, cost, operations |
+| **Real businesses** | Frontal Slayer, Bella Hair Studio, future real organizations |
 | **Real assets** | Registered, governed, lineage-tracked |
 | **Real commerce** | Transactions, payments, fulfillment |
 | **Real governance** | Decisions become institutional memory |
+| **Digital headquarters** | Immersive operational + customer experience via Studio OS |
 
-**Boundary:** Production data is **immutable** from Living Systems™ influence. Learners observe production through internships (**Planned**) — they do not alter it through simulations.
+**Boundary:** Production data is **immutable** from Living Systems™ influence. Learners contribute through internships and real organization projects (**Planned**) — not through simulations.
 
-## 2. Living Systems™
+## 2. Living Systems™ (Studio Institute)
 
 **Classification:** Planned
 
-**Purpose:** Persistent educational simulations.
+**Purpose:** Persistent educational simulations **within Studio Institute**, inspired by real Studio World organizations.
 
 | Characteristic | Description |
 |----------------|-------------|

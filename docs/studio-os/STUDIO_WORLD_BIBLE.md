@@ -9,7 +9,7 @@
 
 > *This document is not a technical specification. It is not a product requirements document. It is the philosophical, experiential, behavioral, and emotional constitution of Studio World™. Every future design and engineering decision must reference this Bible before implementation. Nothing should be built that contradicts it.*
 
-**Complemented by:** [STUDIO_WORLD_MASTER_PLAN.md](../studio-world/STUDIO_WORLD_MASTER_PLAN.md) v1.0.0 — **permanent city architecture**; [STUDIO_WORLD_LIVING_SYSTEMS_BIBLE.md](../studio-world/STUDIO_WORLD_LIVING_SYSTEMS_BIBLE.md) v1.0.0 — **educational simulation** (Living Systems™ · Three Realities · **Planned**); [STUDIO_ATLAS_BIBLE.md](../studio-world/STUDIO_ATLAS_BIBLE.md) v1.0.0 — **geographic map**; [STUDIO_WORLD_LIVING_KNOWLEDGE_GRAPH_BIBLE.md](../studio-world/STUDIO_WORLD_LIVING_KNOWLEDGE_GRAPH_BIBLE.md) v1.0.0 — **relational intelligence**; [STUDIO_WORLD_CIVILIZATION_BIBLE.md](../studio-world/STUDIO_WORLD_CIVILIZATION_BIBLE.md) v1.0.0 — **cultural constitution** (pillars, institutions, traditions, Chronicles); [The Spatial Computing Philosophy™](../../STUDIO_OS_BIBLE/THE_SPATIAL_COMPUTING_PHILOSOPHY.md) — **design constitution** (*where does it live?*, Genesis principle, language law). This Bible governs *how Studio World must feel*; other bibles govern *where*, *how things connect*, *culture*, *educational simulation*, and *spatial placement law*.
+**Complemented by:** [STUDIO_WORLD_DIGITAL_TWIN_CONSTITUTION.md](../studio-world/STUDIO_WORLD_DIGITAL_TWIN_CONSTITUTION.md) v1.0.0 — **operational identity** (digital twin of real economy · real organizations · digital headquarters); [STUDIO_WORLD_MASTER_PLAN.md](../studio-world/STUDIO_WORLD_MASTER_PLAN.md) v1.0.0 — **permanent city architecture**; [STUDIO_WORLD_LIVING_SYSTEMS_BIBLE.md](../studio-world/STUDIO_WORLD_LIVING_SYSTEMS_BIBLE.md) v1.1.0 — **educational simulation within Institute** (Living Systems™ · Three Realities · **Planned**); [STUDIO_ATLAS_BIBLE.md](../studio-world/STUDIO_ATLAS_BIBLE.md) v1.0.0 — **geographic map**; [STUDIO_WORLD_LIVING_KNOWLEDGE_GRAPH_BIBLE.md](../studio-world/STUDIO_WORLD_LIVING_KNOWLEDGE_GRAPH_BIBLE.md) v1.0.0 — **relational intelligence**; [STUDIO_WORLD_CIVILIZATION_BIBLE.md](../studio-world/STUDIO_WORLD_CIVILIZATION_BIBLE.md) v1.0.0 — **cultural constitution** (pillars, institutions, traditions, Chronicles); [The Spatial Computing Philosophy™](../../STUDIO_OS_BIBLE/THE_SPATIAL_COMPUTING_PHILOSOPHY.md) — **design constitution** (*where does it live?*, Genesis principle, language law). This Bible governs *how Studio World must feel*; other bibles govern *what Studio World is*, *where*, *how things connect*, *culture*, *educational simulation*, and *spatial placement law*.
 
 **Relationship to other canon:**
 
@@ -54,19 +54,23 @@ This Bible is the **human constitution** — timeless, inspirational, governing 
 
 ## Executive Summary
 
-**Studio World™** is a living executive organization that exists inside a persistent digital world.
+**Studio World™** is the **persistent digital operational world** where real organizations establish immersive headquarters powered by Studio OS™.
 
-It is not software. It is not an AI chat application. It is not a dashboard. It is the headquarters of the world's most advanced company — one that was already working before the founder arrived, that continues working after they leave, and that remembers everything it has ever decided.
+It is the **digital twin of the real economy** — not a simulated city of fictional businesses, not primarily an educational environment, not software you merely open.
 
-The founder does not *use* Studio World. The founder *runs* it.
+Studio World is where **real companies** live digitally: real customers, real commerce, real employees, real decisions, real memory. Every headquarters is both an **operational workplace** and an **immersive customer experience**.
+
+The founder does not *use* Studio World. The founder *runs* a real organization inside it.
 
 They arrive to a Morning Executive Briefing™, walk into prepared meetings, hear specialists debate with honest tension, make decisions that become institutional memory, and depart knowing their organization keeps moving. They never open a blank workspace. They are never asked what they would like to generate. They are asked what they would like to **decide**.
 
 Every department has a purpose. Every room answers three questions: *Who works here? What happens here? Why does it exist?* Every AI owns a domain, an office, and a point of view — but none owns the truth. The founder remains the visionary.
 
-The objective is not realism. The objective is **presence** — the felt certainty that you have stepped into something alive.
+**Studio Institute™** prepares learners to contribute to these real organizations. **Living Systems™** (within Institute) lets them practice safely first.
 
-This Bible governs all of it. Ten years from now, if a feature cannot be justified by this document, it should not exist.
+The objective is not realism. The objective is **presence** — the felt certainty that you have stepped into a **working headquarters**, not a decorative simulation.
+
+This Bible governs how that headquarters must **feel**. Ten years from now, if a feature cannot be justified by this document, it should not exist.
 
 ---
 
@@ -74,16 +78,17 @@ This Bible governs all of it. Ten years from now, if a feature cannot be justifi
 
 ### What Studio World Is
 
-Studio World™ is a **persistent digital headquarters** where companies live, work, remember, and evolve.
+Studio World™ is a **persistent digital operational world** — the digital twin of the real economy — where real organizations establish immersive headquarters powered by Studio OS™.
 
 It is:
 
+- A **real operational environment** — organizations serve real customers, run real commerce, manage real employees
+- A **digital headquarters** — every real business can establish an immersive operational + customer experience layer
 - A **living executive organization** — departments operating, meetings preparing, production continuing
 - A **physical world** — buildings, studios, boardrooms, laboratories, corridors, observation decks
 - An **organizational memory** — nothing stateless, nothing forgotten without intent
 - A **decision environment** — where founders lead and organizations execute
-- A **creative civilization** — that grows wiser with every meeting, every rejection, every milestone
-- The **experiential manifestation** of Studio OS — the place founders inhabit while their company operates
+- The **experiential manifestation** of Studio OS — the place operators inhabit while their company runs
 
 ### What Studio World Is Not
 
@@ -97,7 +102,9 @@ Studio World™ is not:
 | A prompt interface | You make decisions among prepared options |
 | A collection of pages | A collection of places |
 | A tool you operate | An organization you run |
-| A session that resets | A world that persists |
+| A simulated city of fictional businesses | Organizations represent **real businesses** in the real economy |
+| Primarily an educational environment | Education is **Studio Institute**; Studio World is **operations** |
+| A place students build | Students **contribute to real organizations** already operating |
 | A theme you swap | An architecture that expresses identity |
 
 ### Why Studio World Exists

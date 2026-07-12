@@ -12,7 +12,7 @@ Studio Institute™ is **not** an LMS, online course, YouTube, Udemy, Khan Acade
 
 It is the **Learning Operating System (LOS)** for Studio World™ — the constitutional educational philosophy that governs how every future course, AI instructor, certification, internship, simulation, and learning experience will be designed.
 
-**Studio OS operates businesses. Studio Institute develops the people who build, operate, and improve those businesses.**
+**Studio OS operates businesses. Studio Institute develops the people who operate, improve, and lead real organizations inside Studio World.**
 
 ---
 
@@ -20,13 +20,14 @@ It is the **Learning Operating System (LOS)** for Studio World™ — the consti
 
 | Document | Role |
 |----------|------|
-| **[STUDIO_WORLD_LIVING_SYSTEMS_BIBLE.md](../studio-world/STUDIO_WORLD_LIVING_SYSTEMS_BIBLE.md)** (v1.0.0) | **Living Systems™** — persistent educational simulation; Three Realities; Phase 1 Prototype |
-| **[STUDIO_INSTITUTE_LEARNING_OPERATING_SYSTEM_CONSTITUTION.md](./STUDIO_INSTITUTE_LEARNING_OPERATING_SYSTEM_CONSTITUTION.md)** (v1.0.0) | **Educational constitution** — LOS, Studio World Method™, learning journey, internships, residency, AI teaching, institutional principles, Founder Manifesto |
-| **[STUDIO_INSTITUTE_VISION_BIBLE_V2.md](./STUDIO_INSTITUTE_VISION_BIBLE_V2.md)** (v2.0.0) | **Product canon** — Adaptive Learning Engine: what Institute is |
-| **[STUDIO_INSTITUTE_VISION_BIBLE_V3.md](./STUDIO_INSTITUTE_VISION_BIBLE_V3.md)** (v3.0.0) | **Per-person intelligence** — Cognitive Engine: how the AI learns how one human learns |
-| **[STUDIO_INSTITUTE_LEARNING_DNA_BIBLE.md](./STUDIO_INSTITUTE_LEARNING_DNA_BIBLE.md)** (v1.0.0) | **Global intelligence** — Learning DNA™: how the Institute discovers how humans learn |
+| **[STUDIO_WORLD_DIGITAL_TWIN_CONSTITUTION.md](../studio-world/STUDIO_WORLD_DIGITAL_TWIN_CONSTITUTION.md)** (v1.0.0) | **Operational identity** — Studio World = digital twin; real organizations; contribution pipeline |
+| **[STUDIO_INSTITUTE_LEARNING_OPERATING_SYSTEM_CONSTITUTION.md](./STUDIO_INSTITUTE_LEARNING_OPERATING_SYSTEM_CONSTITUTION.md)** (v1.0.0) | **Educational constitution** — LOS, Studio World Method™, learning journey |
+| **[STUDIO_WORLD_LIVING_SYSTEMS_BIBLE.md](../studio-world/STUDIO_WORLD_LIVING_SYSTEMS_BIBLE.md)** (v1.1.0) | **Living Systems™** — simulations **within Institute**; inspired by real orgs; **Planned** |
+| **[STUDIO_INSTITUTE_VISION_BIBLE_V2.md](./STUDIO_INSTITUTE_VISION_BIBLE_V2.md)** (v2.0.0) | **Product canon** — Adaptive Learning Engine |
+| **[STUDIO_INSTITUTE_VISION_BIBLE_V3.md](./STUDIO_INSTITUTE_VISION_BIBLE_V3.md)** (v3.0.0) | **Per-person intelligence** — Cognitive Engine |
+| **[STUDIO_INSTITUTE_LEARNING_DNA_BIBLE.md](./STUDIO_INSTITUTE_LEARNING_DNA_BIBLE.md)** (v1.0.0) | **Global intelligence** — Learning DNA™ |
 
-**Read order:** **LOS Constitution** (philosophy) → V2 (what) → V3 (per-person how) → Learning DNA Bible (global how). **No implementation** until founder approval.
+**Read order:** Digital Twin → **LOS Constitution** → Living Systems → V2 → V3 → Learning DNA Bible.
 
 ---
 
@@ -60,7 +61,8 @@ The LOS Constitution (v1.0.0) permanently establishes:
 | **[STUDIO_INSTITUTE_VISION_BIBLE_V3.md](./STUDIO_INSTITUTE_VISION_BIBLE_V3.md)** | **Per-person intelligence canon** — implements LOS philosophy per learner |
 | **[STUDIO_INSTITUTE_VISION_BIBLE_V2.md](./STUDIO_INSTITUTE_VISION_BIBLE_V2.md)** | **Product canon** — Adaptive Learning Engine, professors, project integration |
 | [STUDIO_INSTITUTE_BIBLE.md](./STUDIO_INSTITUTE_BIBLE.md) | v1.0 spatial learning OS foundation — superseded by V2; retained as reference |
-| [STUDIO_WORLD_LIVING_SYSTEMS_BIBLE.md](../studio-world/STUDIO_WORLD_LIVING_SYSTEMS_BIBLE.md) | **Living Systems™** — shared simulation layer; **Planned**, isolated from production |
+| [STUDIO_WORLD_DIGITAL_TWIN_CONSTITUTION.md](../studio-world/STUDIO_WORLD_DIGITAL_TWIN_CONSTITUTION.md) | **Operational identity** — real organizations; Institute prepares contributors |
+| [STUDIO_WORLD_LIVING_SYSTEMS_BIBLE.md](../studio-world/STUDIO_WORLD_LIVING_SYSTEMS_BIBLE.md) | **Living Systems™** — within Institute; **Planned**; isolated from production |
 | [STUDIO_WORLD_BIBLE.md](../studio-os/STUDIO_WORLD_BIBLE.md) | Studio World experience constitution — Institute is a defining pillar |
 | [founder-intelligence/EDUCATIONAL_PHILOSOPHY.md](../../founder-intelligence/EDUCATIONAL_PHILOSOPHY.md) | Founder Intelligence strategic cross-reference |
 | [studio-institute.md](../studio-os/studio-institute.md) | M93 learning system — implementation subordinate to all Institute canon |

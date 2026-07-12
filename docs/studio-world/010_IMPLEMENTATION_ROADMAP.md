@@ -183,7 +183,9 @@ Studio World™ is built in **phases** — not features. Each phase proves a lay
 
 **Status:** **Planned** / **Conceptual** — documented in [`STUDIO_WORLD_LIVING_SYSTEMS_BIBLE.md`](./STUDIO_WORLD_LIVING_SYSTEMS_BIBLE.md). Does not imply implementation today.
 
-**Objective:** Prove persistent educational simulations where learner decisions create attributable, cohort-visible changes to simulated organizations — **without ever modifying production data**.
+**Objective:** Prove persistent educational simulations **within Studio Institute** where learner decisions create attributable, cohort-visible changes to simulations **inspired by real organizations** — **without ever modifying production data**.
+
+**Scope correction (v1.1.0):** Living Systems™ is **not** Studio World — it is an Institute capability. Studio World = real organizations.
 
 **Prerequisite:** LOS Constitution ratified ✅ · Living Systems Bible ratified ✅ · Production phases stable enough for isolation guarantees.
 

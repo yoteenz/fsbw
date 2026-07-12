@@ -36,7 +36,8 @@ This document is the **educational constitution** of Studio World. It does not r
 
 | Document | Relationship |
 |----------|--------------|
-| **[STUDIO_WORLD_LIVING_SYSTEMS_BIBLE.md](../studio-world/STUDIO_WORLD_LIVING_SYSTEMS_BIBLE.md)** | **Living Systems™** — persistent educational simulation layer; Three Realities; **Planned**, never production |
+| **[STUDIO_WORLD_DIGITAL_TWIN_CONSTITUTION.md](../studio-world/STUDIO_WORLD_DIGITAL_TWIN_CONSTITUTION.md)** | **Operational identity** — Studio World = digital twin of real economy; real organizations; Institute prepares contributors |
+| **[STUDIO_WORLD_LIVING_SYSTEMS_BIBLE.md](../studio-world/STUDIO_WORLD_LIVING_SYSTEMS_BIBLE.md)** | **Living Systems™** — simulations within Institute; **Planned**, never production |
 | **[STUDIO_WORLD_BIBLE.md](../studio-os/STUDIO_WORLD_BIBLE.md)** | Studio World experience constitution — Institute is a defining pillar of the living city |
 | **[STUDIO_INSTITUTE_VISION_BIBLE_V2.md](./STUDIO_INSTITUTE_VISION_BIBLE_V2.md)** | Product canon — Adaptive Learning Engine; **subordinate to this LOS Constitution** for educational philosophy |
 | **[STUDIO_INSTITUTE_VISION_BIBLE_V3.md](./STUDIO_INSTITUTE_VISION_BIBLE_V3.md)** | Per-person intelligence — Cognitive Engine; implements LOS philosophy for one learner |
@@ -96,13 +97,13 @@ Understanding precedes skill. Systems precede syntax. Context precedes vocabular
 
 ## Mission
 
-**Mission Statement:** Develop the people who will build, operate, and improve Studio World — by teaching them to see systems first, experience concepts in place, and contribute to the civilization they inhabit.
+**Mission Statement:** Develop the people who will operate, improve, innovate within, and eventually lead **real organizations** inside Studio World — by teaching systems first, experience in context, and contribution to real businesses.
 
 ## Educational Philosophy
 
-**Educational Philosophy:** Learning should feel like **living inside a persistent world** — not switching between disconnected classrooms.
+**Educational Philosophy:** Learning should feel like **living inside a persistent operational world** — not switching between disconnected classrooms.
 
-The learner is not a customer purchasing content. The learner is a **future contributor** to Studio World. Every lesson is preparation for participation.
+The learner is not a customer purchasing content. The learner is a **future contributor to real organizations** operating in Studio World. Every lesson is preparation for meaningful contribution to those organizations.
 
 ## Guiding Principles
 
@@ -111,7 +112,7 @@ The learner is not a customer purchasing content. The learner is a **future cont
 | **Systems before skills** | Understand why a system exists before learning how to operate it |
 | **Context before vocabulary** | Build intuition through experience before introducing technical terminology |
 | **World before module** | Every concept maps to a place, role, organization, or activity |
-| **Contribution before completion** | Learning succeeds when the learner can add value to Studio World |
+| **Contribution before completion** | Learning succeeds when the learner can add value to a **real organization** |
 | **Experience before abstraction** | Never teach what cannot first be encountered |
 | **Persistent continuity** | The learner never leaves the world to "go to class" |
 | **Organizations as classrooms** | Every workplace is also a learning environment |
@@ -123,11 +124,9 @@ The learner is not a customer purchasing content. The learner is a **future cont
 
 Ten years from now, if a learning feature cannot be justified by this constitution, it should not exist.
 
-## Relationship to Studio World
+**Educational Philosophy:** Studio World is the **digital operational world** where **real organizations** establish headquarters. Studio Institute is the **university** that prepares learners to contribute to those organizations.
 
-**Educational Philosophy:** Studio World is the **city**. Studio Institute is the **university charter** that governs how every citizen learns inside that city.
-
-Students do not enroll in isolated programs. They **travel** through districts, enter organizations, observe operations, practice roles, and eventually contribute to the same systems they studied.
+Students do not enroll in isolated programs. They **travel** through Studio World, observe **real operations**, practice through **Living Systems™** (Institute simulations), and eventually contribute to the **real organizations** they studied.
 
 ## Relationship to Studio OS
 
@@ -135,16 +134,18 @@ Students do not enroll in isolated programs. They **travel** through districts, 
 
 | System | Role |
 |--------|------|
-| **Studio OS™** | Operates businesses — workflows, decisions, memory, governance, production |
-| **Studio Institute™** | Develops the people who will build, operate, and improve those businesses |
+| **Studio OS™** | Operates **real businesses** — workflows, decisions, memory, governance, production |
+| **Studio World™** | Digital operational world — immersive headquarters for real organizations |
+| **Studio Institute™** | Develops people who will operate, improve, and lead those **real organizations** |
+| **Living Systems™** | Institute simulations inspired by real orgs — **Planned**, isolated from production |
 
-Studio OS runs the organization. Studio Institute grows the humans and intelligences who steward it. The LOS ensures every Studio OS capability has a corresponding learning path — and every learner understands the organizational systems they will one day operate.
+Studio OS runs the organization. Studio World gives it a headquarters. Studio Institute grows the humans who steward it. Living Systems lets them practice safely first.
 
 ### 🏙 Studio World Translation
 
-Traditional universities sit apart from the economy. Students study business in one building and practice business somewhere else.
+Traditional universities sit apart from the economy.
 
-In Studio World, the university has no walls. The city **is** the campus. Studio OS runs the businesses; Studio Institute develops the people who will run them tomorrow. Learning and operations share the same geography.
+In Studio World, the university sits **in the same city** as real headquarters. Studio OS runs real businesses; Studio Institute develops the people who will strengthen them. Students practice in Living Systems, then cross the street to contribute to the real organization next door.
 
 ---
 
@@ -164,7 +165,7 @@ Every element of Studio World is a potential classroom:
 
 | World Element | Educational Role |
 |---------------|------------------|
-| **Organizations** | Living case studies — real operations, real decisions, real consequences |
+| **Organizations** | **Real** operations — living case studies with real customers, commerce, and consequences |
 | **Districts** | Disciplinary neighborhoods — related fields cluster and reinforce |
 | **Businesses** | Economic laboratories — revenue, cost, customer, fulfillment |
 | **Departments** | Specialized craft rooms — narrow expertise in situ |
@@ -207,7 +208,7 @@ Every element of Studio World is a potential classroom:
 
 Students don't simply complete courses.
 
-Students **travel through Studio World**, learning how each organization contributes to society before eventually contributing themselves. They walk from Frontal Slayer to Studio Finance to Experience Engineering — and the city remembers where they have been.
+Students **travel through Studio World**, learning how each **real organization** contributes to the economy before eventually contributing to those organizations themselves. They walk from Frontal Slayer to Studio Finance to Experience Engineering — and the city remembers where they have been.
 
 ---
 

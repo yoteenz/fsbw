@@ -47221,3 +47221,27 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 
 **Spatial Architecture Review:** SKIPPED — docs-only constitutional sprint, no new surfaces.
 
+---
+
+## 2026-07-12 — Studio World Digital Twin Founder Canon Correction
+
+**Context:** Founder clarification sprint — Studio World is NOT primarily a simulated city of fictional organizations. It is the digital operational world where **real organizations** establish digital headquarters via Studio OS (digital twin of real economy). Documentation only.
+
+**Authoritative corrections:**
+- Studio World = persistent digital operational world · real businesses · real customers · real commerce
+- Organizations (Frontal Slayer, Bella Hair Studio, future) = **real businesses** — not decorative/fictional
+- Studio Institute prepares learners to **contribute to real organizations** — not "build Studio World"
+- Living Systems™ repositioned: exists **within Studio Institute** — NOT Studio World; simulations inspired by real orgs
+- Learning Partners™ introduced (Planned) — voluntary real-org participation in Institute
+- Contribution pipeline canonized: Learn→Practice→Simulation→…→Real Organization Project→Internship→Professional Contribution→…
+- Digital Twin chain: Real Businesses → Studio OS → Digital HQ → Studio World
+
+**Changes:**
+- **Created:** `docs/studio-world/STUDIO_WORLD_DIGITAL_TWIN_CONSTITUTION.md` (v1.0.0)
+- **Updated:** `STUDIO_WORLD_LIVING_SYSTEMS_BIBLE.md` (v1.1.0), `STUDIO_WORLD_BIBLE.md`, LOS Constitution, `docs/studio-world/README.md`, `docs/studio-institute/README.md`, `010_IMPLEMENTATION_ROADMAP.md`, `founder-intelligence/STUDIO_WORLD.md`, `founder-intelligence/EDUCATIONAL_PHILOSOPHY.md`, `motherboard/CORE.md`
+- **Not updated:** CURRENT_HANDOFF, KNOWN_BLOCKERS
+
+**Conventions:** Never conflate production organizations with Living Systems simulations. Living Systems is Institute-only.
+
+**Spatial Architecture Review:** SKIPPED — docs-only canon correction, no new surfaces.
+
