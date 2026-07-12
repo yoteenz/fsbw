@@ -33,6 +33,10 @@ import {
   signProductionAuthorization,
   verifyProductionAuthorizationSignature,
 } from './authorization-signing.js';
+import {
+  resolveLayerIdFromProductionGroupId,
+  resolveSceneStackLayerModelRoute,
+} from '../../../src/studio-os-core/scene-stack/layer-model-routing.js';
 
 export type LegacyBuilderBody = Record<string, unknown>;
 
@@ -295,6 +299,18 @@ export function adaptLegacyBuilderRequest(
   const previewSessionId =
     typeof body.previewSessionId === 'string' ? body.previewSessionId.trim() : undefined;
   const stationId = typeof body.stationId === 'string' ? body.stationId.trim() : undefined;
+  const layerId =
+    typeof body.layerId === 'string'
+      ? body.layerId.trim()
+      : resolveLayerIdFromProductionGroupId(productionGroupId) ?? undefined;
+  const isolationAttempt =
+    typeof body.isolationAttempt === 'number' ? body.isolationAttempt : 0;
+  const generationMode =
+    typeof body.generationMode === 'string'
+      ? body.generationMode
+      : layerId
+        ? resolveSceneStackLayerModelRoute(layerId as import('../../../src/studio-os-core/scene-stack/types.js').SceneStackLayerId, isolationAttempt).generationMode
+        : undefined;
 
   const intent = createDemoAssetIntent(initiative.id);
   intent.id = `intent-${heroAssetId}`;
@@ -326,8 +342,31 @@ export function adaptLegacyBuilderRequest(
       aspectRatio: String(body.aspectRatio || '16:9'),
       outputFormat: body.outputFormat === 'webp' ? 'webp' : 'png',
       referenceImageUrls: body.referenceImageUrls,
-      model: 'fal-ai/nano-banana-pro/edit',
+      model:
+        typeof body.providerModel === 'string'
+          ? body.providerModel
+          : layerId
+            ? resolveSceneStackLayerModelRoute(
+                layerId as import('../../../src/studio-os-core/scene-stack/types.js').SceneStackLayerId,
+                isolationAttempt
+              ).providerModel
+            : 'fal-ai/nano-banana-pro/edit',
       legacyCompat,
+      layerId,
+      generationMode,
+      textToImageOnly:
+        body.textToImageOnly === true ||
+        (layerId
+          ? resolveSceneStackLayerModelRoute(
+              layerId as import('../../../src/studio-os-core/scene-stack/types.js').SceneStackLayerId,
+              isolationAttempt
+            ).textToImageOnly
+          : false),
+      isolationAttempt,
+      negativePrompt: typeof body.negativePrompt === 'string' ? body.negativePrompt : undefined,
+      promptBuilderId: typeof body.promptBuilderId === 'string' ? body.promptBuilderId : undefined,
+      promptContractVersion:
+        typeof body.promptContractVersion === 'string' ? body.promptContractVersion : undefined,
       ...(previewSessionId ? { previewSessionId } : {}),
       ...(stationId ? { stationId } : {}),
       ...(compileRunId ? { compileRunId } : {}),

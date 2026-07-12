@@ -2,7 +2,9 @@
 
 **Version:** `isolated-layer-contract.v1`  
 **Quality gate:** `isolated-layer-quality.v1`  
-**Prompt version:** `scene-stack.v3-isolated`
+**Prompt version:** `isolated-asset-prompt.v2` (`signature-landmark-isolated-prompt.v2`, `furniture-objects-isolated-prompt.v2`)  
+**Model routing:** `layer-model-routing.v1`  
+**Effective request:** `effective-generation-request.v1`
 
 ## Rule
 
@@ -61,18 +63,25 @@ Classifications: `isolated-valid`, `suspicious-scene-rerender`, `full-scene-rere
 ## Provider
 
 - Platform: FAL via governed `executeGovernedGeneration`.
-- Model: `fal-ai/nano-banana-pro/edit` — retained for shell; isolated layers use **text-only** generation (no shell img2img) to avoid full-scene repaint tendency.
+- **Environment shell:** `fal-ai/nano-banana-pro/edit` — img2img with marble genesis anchor or shell URL.
+- **Isolated object layers:** `fal-ai/nano-banana-pro` — **text-to-image only** (zero `image_urls`; no marble fallback) to prevent full-scene repaint.
+- Pre-dispatch: `assertIsolatedPromptBeforeDispatch()` rejects prohibited full-scene language on positive prompt.
+- Effective request records: `effective-generation-request.ts` — safe prompt hash, model, reference strategy, regeneration attempt.
 
 ## Modules
 
 | Concern | Path |
 |---------|------|
 | Contract | `src/studio-os-core/scene-stack/isolated-layer-contract.ts` |
-| Prompts | `src/studio-os-core/scene-stack/isolated-layer-prompt.ts` |
+| Prompts (v2) | `src/studio-os-core/scene-stack/isolated-asset-prompt.ts` |
+| Model routing | `src/studio-os-core/scene-stack/layer-model-routing.ts` |
+| Placement metadata | `src/studio-os-core/scene-stack/placement-metadata.ts` |
+| Effective request | `src/studio-os-core/scene-stack/effective-generation-request.ts` |
 | Quality | `src/studio-os-core/scene-stack/isolated-layer-quality.ts` |
 | Guard | `src/studio-os-core/scene-stack/quality-guard.ts` |
 | Recovery | `src/studio-os-core/scene-stack/layer-quality-recovery.ts` |
 | Loop | `src/hooks/useSceneStack.ts` |
+| Server dispatch | `api/_lib/studioBuilderGeneration.ts` |
 
 ## Validation vs production
 

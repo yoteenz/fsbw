@@ -20,6 +20,15 @@ import {
 } from '../_lib/creativeProduction/async-governed-generation.js';
 import type { GovernedGenerationRequest } from '../../src/studio-os-core/creative-production/types.js';
 import {
+  assertIsolatedPromptBeforeDispatch,
+} from '../../src/studio-os-core/scene-stack/effective-generation-request.js';
+import {
+  isIsolatedObjectLayer,
+  resolveLayerGenerationMode,
+} from '../../src/studio-os-core/scene-stack/isolated-layer-contract.js';
+import { resolveLayerIdFromProductionGroupId } from '../../src/studio-os-core/scene-stack/layer-model-routing.js';
+import type { SceneStackLayerId } from '../../src/studio-os-core/scene-stack/types.js';
+import {
   createGenerationTraceId,
   logGenerationDiagnostic,
   normalizeGenerationError,
@@ -138,6 +147,37 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   const governedRequest = adapted as GovernedGenerationRequest;
+  const layerId =
+    (typeof governedRequest.execution.layerId === 'string'
+      ? governedRequest.execution.layerId
+      : resolveLayerIdFromProductionGroupId(productionGroupId)) as SceneStackLayerId | null;
+
+  if (layerId && isIsolatedObjectLayer(layerId)) {
+    const promptAssert = assertIsolatedPromptBeforeDispatch({
+      layerId,
+      prompt,
+      generationMode:
+        typeof governedRequest.execution.generationMode === 'string'
+          ? governedRequest.execution.generationMode
+          : resolveLayerGenerationMode(layerId),
+      referenceImageUrls: referenceImageUrls ?? [],
+      textToImageOnly: governedRequest.execution.textToImageOnly === true,
+    });
+    if (!promptAssert.ok) {
+      return res.status(400).json({
+        ok: false,
+        code: promptAssert.code,
+        error: promptAssert.violations.join(' '),
+        traceId,
+      });
+    }
+  }
+
+  const routedModel =
+    typeof governedRequest.execution.model === 'string'
+      ? governedRequest.execution.model
+      : 'fal-ai/nano-banana-pro/edit';
+
   if (isAsyncGovernedGenerationEnabledForRequest(governedRequest)) {
     const asyncResult = await submitGovernedGenerationJobAsync(governedRequest, {
       sourceRoute: '/api/admin/studio-builder-generate',
@@ -151,7 +191,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(202).json({
       ...asyncResult.body,
       elapsedMs: Date.now() - started,
-      model: 'fal-ai/nano-banana-pro/edit',
+      model: routedModel,
       asyncMode: true,
     });
   }

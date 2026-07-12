@@ -43,6 +43,15 @@ export type StudioBuilderGeneratePayload = {
   previewSessionId?: string;
   org_id?: string;
   stationId?: string;
+  layerId?: string;
+  generationMode?: string;
+  textToImageOnly?: boolean;
+  providerModel?: string;
+  isolationAttempt?: number;
+  negativePrompt?: string;
+  promptBuilderId?: string;
+  promptContractVersion?: string;
+  creativeStudioStackMode?: boolean;
 };
 
 export type StudioBuilderGenerateApiResponse = {

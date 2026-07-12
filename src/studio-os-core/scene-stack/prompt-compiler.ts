@@ -2,17 +2,12 @@ import { requireDepartmentPackage } from '../department-package';
 import { resolveCompanyGenomeSnapshot } from '../studio-builder/genome-context';
 import { resolveActiveProjectGenome } from '../project-genome';
 import { getLayerDefinition } from './layer-catalog';
-import {
-  formatBlueprintPromptClause,
-  resolveMasterSceneBlueprint,
-} from './master-scene-blueprint';
+import { resolveMasterSceneBlueprint } from './master-scene-blueprint';
 import { isBlendCompositeLayer } from './reference-chain';
-import {
-  buildIsolatedLayerPromptClauses,
-  isolatedPromptContractVersion,
-  resolveIsolatedOutputFormat,
-} from './isolated-layer-prompt';
+import { resolveIsolatedOutputFormat } from './isolated-layer-prompt';
 import { getIsolatedLayerContract, isIsolatedObjectLayer } from './isolated-layer-contract';
+import { buildIsolatedAssetPrompt, ISOLATED_ASSET_PROMPT_CONTRACT_VERSION } from './isolated-asset-prompt';
+import { resolveSceneStackLayerModelRoute } from './layer-model-routing';
 import { getSceneStackStation, requireSceneStackManifest } from './station-manifest';
 import type { CompiledSceneStackLayerPrompt, SceneStackLayerId } from './types';
 import { SCENE_STACK_PROMPT_VERSION } from './types';
@@ -68,69 +63,87 @@ export function compileSceneStackLayerPrompt(input: {
 
   const layerDef = getLayerDefinition(input.layerId);
   const contract = getIsolatedLayerContract(input.layerId);
+  const route = resolveSceneStackLayerModelRoute(input.layerId, input.isolationAttempt ?? 0);
   const company = resolveCompanyGenomeSnapshot(input.workspaceId);
   const project = resolveActiveProjectGenome(input.departmentId);
   const feeling = pkg.roomDna.defaultFeeling.join(', ');
   const forbidden = pkg.roomDna.forbiddenFeeling.join(', ');
 
-  const isolatedClauses = isIsolatedObjectLayer(input.layerId)
-    ? buildIsolatedLayerPromptClauses({
+  const isolatedAsset = isIsolatedObjectLayer(input.layerId)
+    ? buildIsolatedAssetPrompt({
         layerId: input.layerId,
-        displayName: layerDef.displayName,
-        stationName: station.displayName,
         objectDescription: layerPrompt.primary,
+        stationName: station.displayName,
+        blueprint,
         isolationAttempt: input.isolationAttempt ?? 0,
       })
     : null;
 
-  const perspectiveClause = isIsolatedObjectLayer(input.layerId)
-    ? 'PERSPECTIVE METADATA ONLY: Match station camera angle and approximate scale from blueprint — do NOT redraw shell, walls, or room.'
-    : (input.referenceImageUrls?.length ?? 0) > 0
-      ? 'PLACEMENT REFERENCE ONLY: Shell reference defines camera angle and room geometry for positioning — NOT an image to redraw or re-encode. Do NOT include walls, ceiling, floor, or any prior layer content in output.'
-      : '';
+  let prompt: string;
+  let negativePrompt: string;
+  let promptBuilderId: string;
 
-  const outputClause = (() => {
-    if (isolatedClauses) return isolatedClauses.outputClause;
-    if (input.layerId === 'environment-shell') {
-      return 'OUTPUT: Full environment shell plate — architecture only. This is the ONLY layer pass permitted as a full-scene render.';
-    }
-    if (isBlendCompositeLayer(input.layerId)) {
-      return 'OUTPUT: Isolated lighting/atmosphere/particle/material overlay on pure black (#000000) or transparent background for runtime CSS blend. NOT a full scene.';
-    }
-    return 'OUTPUT: Isolated asset plate — ONLY this pass\'s landmark/furniture/objects with transparent background outside subjects. NOT a full scene.';
-  })();
-
-  const isolationBody = isolatedClauses
-    ? isolatedClauses.isolationClause
-    : LAYER_ISOLATION[input.layerId];
-
-  const prompt = [
-    `SCENE STACK™ — ${layerDef.displayName.toUpperCase()}.`,
-    `STATION: ${station.displayName} · ${station.stationId}.`,
-    `CONTRACT: ${contract.generationMode} · ${isolatedPromptContractVersion()}.`,
-    formatBlueprintPromptClause(blueprint, input.layerId),
-    isolationBody,
-    perspectiveClause,
-    outputClause,
-    layerPrompt.primary,
-    `PROJECT: ${project.name}. ROOM DNA: ${feeling}. Avoid: ${forbidden}.`,
-    `Company ${company.companyName}: ${company.editorialDirection}.`,
-    `OUTPUT: Mobile portrait ${manifest.aspectRatio} · single isolated layer pass · photoreal · compositing-ready · no UI chrome.`,
-    `NEGATIVE: complete scene single image full room render cumulative layer stack re-encoded reference prior layers baked composite dashboard UI ${layerPrompt.negative}${isolatedClauses ? ` ${isolatedClauses.negativeClause}` : ''}`,
-  ]
-    .filter(Boolean)
-    .join(' ');
+  if (isolatedAsset) {
+    prompt = [
+      isolatedAsset.prompt,
+      `MATERIAL LANGUAGE: ${feeling}. Avoid: ${forbidden}.`,
+      `Company ${company.companyName}: ${company.editorialDirection}.`,
+      `NEGATIVE: ${isolatedAsset.negativePrompt} ${layerPrompt.negative}`,
+    ].join(' ');
+    negativePrompt = isolatedAsset.negativePrompt;
+    promptBuilderId = isolatedAsset.promptBuilderId;
+  } else if (input.layerId === 'environment-shell') {
+    prompt = [
+      `SCENE STACK™ — ${layerDef.displayName.toUpperCase()}.`,
+      `STATION: ${station.displayName} · ${station.stationId}.`,
+      `CONTRACT: ${contract.generationMode} · ${ISOLATED_ASSET_PROMPT_CONTRACT_VERSION}.`,
+      LAYER_ISOLATION[input.layerId],
+      'OUTPUT: Full environment shell plate — architecture only. This is the ONLY layer pass permitted as a full-scene render.',
+      layerPrompt.primary,
+      `PROJECT: ${project.name}. ROOM DNA: ${feeling}. Avoid: ${forbidden}.`,
+      `Company ${company.companyName}: ${company.editorialDirection}.`,
+      `OUTPUT: Mobile portrait ${manifest.aspectRatio} · architecture shell · photoreal · no UI chrome.`,
+      `NEGATIVE: furniture hero objects lighting effects atmosphere people UI ${layerPrompt.negative}`,
+    ].join(' ');
+    negativePrompt = layerPrompt.negative;
+    promptBuilderId = 'environment-shell-prompt.v1';
+  } else if (isBlendCompositeLayer(input.layerId)) {
+    prompt = [
+      `SCENE STACK™ — ${layerDef.displayName.toUpperCase()}.`,
+      `STATION: ${station.displayName}.`,
+      LAYER_ISOLATION[input.layerId],
+      'OUTPUT: Isolated lighting/atmosphere/particle/material overlay on transparent or black background. NOT a full scene.',
+      layerPrompt.primary,
+      `NEGATIVE: full room interior architecture complete scene ${layerPrompt.negative}`,
+    ].join(' ');
+    negativePrompt = layerPrompt.negative;
+    promptBuilderId = 'blend-overlay-prompt.v1';
+  } else {
+    prompt = [
+      `SCENE STACK™ — ${layerDef.displayName.toUpperCase()}.`,
+      LAYER_ISOLATION[input.layerId],
+      layerPrompt.primary,
+      `NEGATIVE: ${layerPrompt.negative}`,
+    ].join(' ');
+    negativePrompt = layerPrompt.negative;
+    promptBuilderId = 'generic-layer-prompt.v1';
+  }
 
   return {
     prompt,
-    negativePrompt: isolatedClauses?.negativeClause ?? layerPrompt.negative,
+    negativePrompt,
     aspectRatio: manifest.aspectRatio,
     outputFormat: resolveIsolatedOutputFormat(input.layerId, manifest.outputFormat),
     stationId: input.stationId,
     layerId: input.layerId,
     productionGroupId: layerPrompt.productionGroupId,
     heroAssetId: layerPrompt.heroAssetId,
-    promptVersion: SCENE_STACK_PROMPT_VERSION,
+    promptVersion: `${SCENE_STACK_PROMPT_VERSION}+${ISOLATED_ASSET_PROMPT_CONTRACT_VERSION}`,
     blueprintId: blueprint.blueprintId,
+    generationMode: route.generationMode,
+    promptBuilderId,
+    providerModel: route.providerModel,
+    textToImageOnly: route.textToImageOnly,
+    referenceStrategy: route.referenceStrategy,
   };
 }

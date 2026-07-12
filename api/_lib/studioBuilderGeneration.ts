@@ -5,8 +5,13 @@
 
 import { readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
+import {
+  resolveLayerIdFromProductionGroupId,
+  resolveSceneStackLayerModelRoute,
+  SCENE_STACK_SHELL_FAL_MODEL,
+} from '../../src/studio-os-core/scene-stack/layer-model-routing.js';
 
-export const STUDIO_BUILDER_FAL_MODEL = 'fal-ai/nano-banana-pro/edit';
+export const STUDIO_BUILDER_FAL_MODEL = SCENE_STACK_SHELL_FAL_MODEL;
 export const STUDIO_BUILDER_BUCKET = process.env.STUDIO_ASSETS_BUCKET?.trim() || 'live-preview';
 export const STUDIO_BUILDER_PREFIX = 'studio-assets/departments';
 
@@ -21,7 +26,30 @@ export type StudioBuilderGenerateInput = {
   outputFormat: 'png' | 'webp';
   /** Shell placement URL only — never cumulative prior layers (see reference-chain.ts) */
   referenceImageUrls?: string[];
+  layerId?: string;
+  generationMode?: string;
+  textToImageOnly?: boolean;
+  providerModel?: string;
+  isolationAttempt?: number;
+  negativePrompt?: string;
 };
+
+function resolveBuilderRoute(input: StudioBuilderGenerateInput) {
+  const layerId = input.layerId
+    ? (input.layerId as import('../../src/studio-os-core/scene-stack/types.js').SceneStackLayerId)
+    : resolveLayerIdFromProductionGroupId(input.productionGroupId);
+  if (!layerId) {
+    return {
+      model: input.providerModel ?? STUDIO_BUILDER_FAL_MODEL,
+      textToImageOnly: input.textToImageOnly === true,
+    };
+  }
+  const route = resolveSceneStackLayerModelRoute(layerId, input.isolationAttempt ?? 0);
+  return {
+    model: input.providerModel ?? route.providerModel,
+    textToImageOnly: input.textToImageOnly ?? route.textToImageOnly,
+  };
+}
 
 export type StudioBuilderGenerateResult = {
   ok: boolean;
@@ -93,7 +121,12 @@ export type StudioBuilderFalQueueStatus = 'IN_QUEUE' | 'IN_PROGRESS' | 'COMPLETE
 
 export async function prepareStudioBuilderFalImageUrls(
   input: StudioBuilderGenerateInput
-): Promise<{ ok: true; imageUrls: string[] } | { ok: false; error: string }> {
+): Promise<{ ok: true; imageUrls: string[]; model: string; textToImageOnly: boolean } | { ok: false; error: string }> {
+  const route = resolveBuilderRoute(input);
+  if (route.textToImageOnly) {
+    return { ok: true, imageUrls: [], model: route.model, textToImageOnly: true };
+  }
+
   const falKey = process.env.FAL_KEY?.trim();
   if (!falKey) return { ok: false, error: 'FAL_KEY not configured on server' };
 
@@ -112,7 +145,7 @@ export async function prepareStudioBuilderFalImageUrls(
         await uploadLocalOrSiteRefToFal(fal, marbleRef, 'assets/marble-half.png', 'Marble brand anchor')
       );
     }
-    return { ok: true, imageUrls };
+    return { ok: true, imageUrls, model: route.model, textToImageOnly: false };
   } catch (e) {
     return { ok: false, error: e instanceof Error ? e.message : 'Failed to prepare FAL image references' };
   }
@@ -120,24 +153,36 @@ export async function prepareStudioBuilderFalImageUrls(
 
 export async function submitStudioBuilderFalQueue(
   input: StudioBuilderGenerateInput,
-  imageUrls: string[]
+  imageUrls: string[],
+  modelOverride?: string
 ): Promise<StudioBuilderFalQueueSubmitResult> {
   const falKey = process.env.FAL_KEY?.trim();
   if (!falKey) return { ok: false, error: 'FAL_KEY not configured on server' };
 
+  const route = resolveBuilderRoute(input);
+  const model = modelOverride ?? route.model;
+  const textToImageOnly = route.textToImageOnly;
+
   try {
     const { fal } = await import('@fal-ai/client');
     fal.config({ credentials: falKey });
-    const { request_id: providerRequestId } = await fal.queue.submit(STUDIO_BUILDER_FAL_MODEL, {
-      input: {
-        prompt: input.prompt,
-        image_urls: imageUrls,
-        num_images: 1,
-        aspect_ratio: input.aspectRatio as '16:9',
-        output_format: input.outputFormat,
-      },
-    });
-    return { ok: true, providerRequestId, model: STUDIO_BUILDER_FAL_MODEL, imageUrls };
+    const falInput = textToImageOnly
+      ? {
+          prompt: input.prompt,
+          aspect_ratio: input.aspectRatio as '16:9',
+          output_format: input.outputFormat,
+          resolution: '2K',
+          num_images: 1,
+        }
+      : {
+          prompt: input.prompt,
+          image_urls: imageUrls,
+          num_images: 1,
+          aspect_ratio: input.aspectRatio as '16:9',
+          output_format: input.outputFormat,
+        };
+    const { request_id: providerRequestId } = await fal.queue.submit(model, { input: falInput });
+    return { ok: true, providerRequestId, model, imageUrls };
   } catch (e) {
     const isApiError =
       typeof e === 'object' &&
@@ -190,18 +235,20 @@ export async function fetchStudioBuilderFalResult(model: string, providerRequest
 
 export async function finalizeStudioBuilderFromFalUrl(
   input: StudioBuilderGenerateInput,
-  imageUrl: string
+  imageUrl: string,
+  model?: string
 ): Promise<StudioBuilderGenerateResult> {
   try {
     const mime = input.outputFormat === 'webp' ? 'image/webp' : 'image/png';
     const path = storagePathFor(input);
     const upload = await uploadStudioBuilderAssetBytes(await downloadImageToBuffer(imageUrl), path, mime);
     if (!upload.ok) return { ok: false, error: upload.error };
+    const resolvedModel = model ?? resolveBuilderRoute(input).model;
     return {
       ok: true,
       publicUrl: upload.publicUrl,
       storagePath: upload.storagePath,
-      model: STUDIO_BUILDER_FAL_MODEL,
+      model: resolvedModel,
     };
   } catch (e) {
     return { ok: false, error: e instanceof Error ? e.message : 'Finalize failed' };
@@ -251,39 +298,51 @@ export async function generateStudioBuilderAsset(
   const falKey = process.env.FAL_KEY?.trim();
   if (!falKey) return { ok: false, error: 'FAL_KEY not configured on server' };
 
+  const route = resolveBuilderRoute(input);
   const marbleRef = marbleRefPath();
 
   try {
     const { fal } = await import('@fal-ai/client');
     fal.config({ credentials: falKey });
 
-    const imageUrls: string[] = [];
+    let result: { data?: { images?: Array<{ url?: string }> } };
 
-    // Placement refs (shell only) — never pass cumulative prior layers; that re-encodes the stack.
-    if (input.referenceImageUrls?.length) {
-      const placementRef = input.referenceImageUrls.find((u) => u?.startsWith('http'));
-      if (placementRef) imageUrls.push(placementRef);
+    if (route.textToImageOnly) {
+      result = await fal.subscribe(route.model, {
+        input: {
+          prompt: input.prompt,
+          aspect_ratio: input.aspectRatio as '16:9',
+          output_format: input.outputFormat,
+          resolution: '2K',
+          num_images: 1,
+        },
+        logs: false,
+      });
+    } else {
+      const imageUrls: string[] = [];
+      if (input.referenceImageUrls?.length) {
+        const placementRef = input.referenceImageUrls.find((u) => u?.startsWith('http'));
+        if (placementRef) imageUrls.push(placementRef);
+      }
+      if (imageUrls.length === 0) {
+        imageUrls.push(
+          await uploadLocalOrSiteRefToFal(fal, marbleRef, 'assets/marble-half.png', 'Marble brand anchor')
+        );
+      }
+
+      result = await fal.subscribe(route.model, {
+        input: {
+          prompt: input.prompt,
+          image_urls: imageUrls,
+          num_images: 1,
+          aspect_ratio: input.aspectRatio as '16:9',
+          output_format: input.outputFormat,
+        },
+        logs: false,
+      });
     }
 
-    // Marble brand anchor is for environment-shell genesis only — not layered passes.
-    if (imageUrls.length === 0) {
-      imageUrls.push(
-        await uploadLocalOrSiteRefToFal(fal, marbleRef, 'assets/marble-half.png', 'Marble brand anchor')
-      );
-    }
-
-    const result = await fal.subscribe(STUDIO_BUILDER_FAL_MODEL, {
-      input: {
-        prompt: input.prompt,
-        image_urls: imageUrls,
-        num_images: 1,
-        aspect_ratio: input.aspectRatio as '16:9',
-        output_format: input.outputFormat,
-      },
-      logs: false,
-    });
-
-    const imageUrl = (result as { data?: { images?: Array<{ url?: string }> } })?.data?.images?.[0]?.url;
+    const imageUrl = result?.data?.images?.[0]?.url;
     if (!imageUrl) return { ok: false, error: 'Fal returned no image URL' };
 
     const mime = input.outputFormat === 'webp' ? 'image/webp' : 'image/png';
@@ -295,7 +354,7 @@ export async function generateStudioBuilderAsset(
       ok: true,
       publicUrl: upload.publicUrl,
       storagePath: upload.storagePath,
-      model: STUDIO_BUILDER_FAL_MODEL,
+      model: route.model,
     };
   } catch (e) {
     const isApiError =

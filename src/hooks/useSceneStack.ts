@@ -82,6 +82,11 @@ import {
   isIsolatedObjectLayer,
 } from '../studio-os-core/scene-stack/isolated-layer-contract';
 import { recordLayerQualityRecovery } from '../studio-os-core/scene-stack/layer-quality-recovery';
+import {
+  assertIsolatedPromptBeforeDispatch,
+  buildEffectiveGenerationRequestRecord,
+  recordEffectiveGenerationRequest,
+} from '../studio-os-core/scene-stack/effective-generation-request';
 
 export type SceneStackPipelineProgress = {
   stationId: string;
@@ -90,6 +95,13 @@ export type SceneStackPipelineProgress = {
   currentLayerId: SceneStackLayerId | null;
   currentLayerLabel: string | null;
   phase: 'idle' | 'queued' | 'generating';
+  regeneration?: {
+    layerId: SceneStackLayerId;
+    attempt: number;
+    status: 'submitting' | 'validating' | 'idle';
+    jobId?: string | null;
+    providerRequestId?: string | null;
+  } | null;
 };
 
 function buildEvidenceCtx(
@@ -124,6 +136,7 @@ export function useSceneStack(
     stationId: string;
     layerId: SceneStackLayerId;
     phase: 'queued' | 'generating';
+    regeneration?: SceneStackPipelineProgress['regeneration'];
   } | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [compileReports, setCompileReports] = useState<Record<string, WorldCompilationReport>>({});
@@ -231,6 +244,7 @@ export function useSceneStack(
         currentLayerId,
         currentLayerLabel: currentLayerId ? SCENE_STACK_LAYER_SHORT_LABELS[currentLayerId] : null,
         phase,
+        regeneration: pipelineLayer?.stationId === stationId ? pipelineLayer.regeneration ?? null : null,
       };
     },
     [departmentId, ensuringStations, generatingKeys, getLayerViews, pipelineLayer, projectId]
@@ -425,6 +439,16 @@ export function useSceneStack(
           });
 
           if (isolationAttempt > 0 && isIsolatedObjectLayer(layerId)) {
+            setPipelineLayer({
+              stationId,
+              layerId,
+              phase: 'generating',
+              regeneration: {
+                layerId,
+                attempt: isolationAttempt + 1,
+                status: 'submitting',
+              },
+            });
             recordLayerQualityRecovery('IsolationPromptStrengthened', {
               layerId,
               stationId,
@@ -452,10 +476,19 @@ export function useSceneStack(
                 productionGroupId: `scene-stack-${stationId}-${layerId}`,
                 heroAssetId: compiled.heroAssetId,
                 prompt: compiled.prompt,
+                negativePrompt: compiled.negativePrompt,
                 aspectRatio: compiled.aspectRatio,
                 outputFormat: compiled.outputFormat,
                 forceGenerate: force || !existing?.publicUrl,
                 referenceImageUrls: referenceImageUrls.length ? referenceImageUrls : undefined,
+                layerId,
+                generationMode: compiled.generationMode,
+                textToImageOnly: compiled.textToImageOnly,
+                providerModel: compiled.providerModel,
+                isolationAttempt,
+                promptBuilderId: compiled.promptBuilderId,
+                promptContractVersion: compiled.promptVersion,
+                stationId,
               },
               {
                 validationMode,
@@ -497,6 +530,11 @@ export function useSceneStack(
             compiledHeroAssetId: compiled.heroAssetId,
             blueprintId: compiled.blueprintId,
             promptVersion: compiled.promptVersion,
+            promptBuilderId: compiled.promptBuilderId,
+            generationMode: compiled.generationMode,
+            providerModel: compiled.providerModel,
+            textToImageOnly: compiled.textToImageOnly,
+            referenceStrategy: compiled.referenceStrategy,
             aspectRatio: compiled.aspectRatio,
             outputFormat: compiled.outputFormat,
             referenceImageUrls,
@@ -511,10 +549,47 @@ export function useSceneStack(
                 layerCompileOptions?.previewCompileContext?.compileRunId ?? null
               )?.productionAuthorizationId ?? null,
             generationProvider: 'POST /api/admin/studio-builder-generate',
-            modelAdapter:
-              'fal-ai/nano-banana-pro/edit via executeGovernedGeneration → generateStudioBuilderAsset',
+            modelAdapter: `${compiled.providerModel ?? 'fal'} via executeGovernedGeneration → generateStudioBuilderAsset`,
             forceGenerate: generationPayload.forceGenerate,
           };
+
+          if (isIsolatedObjectLayer(layerId)) {
+            const promptAssert = assertIsolatedPromptBeforeDispatch({
+              layerId,
+              prompt: compiled.prompt,
+              generationMode: compiled.generationMode ?? 'isolated-single-object',
+              referenceImageUrls,
+              textToImageOnly: compiled.textToImageOnly === true,
+            });
+            if (!promptAssert.ok) {
+              const msg = `Isolated prompt contract violation: ${promptAssert.violations.join(' ')}`;
+              failStudioAlphaGeneration(generationId, msg);
+              setErrors((prev) => ({ ...prev, [key]: msg }));
+              return false;
+            }
+          }
+
+          recordEffectiveGenerationRequest(
+            buildEffectiveGenerationRequestRecord({
+              layerId,
+              prompt: compiled.prompt,
+              negativePrompt: compiled.negativePrompt,
+              outputFormat: compiled.outputFormat,
+              aspectRatio: compiled.aspectRatio,
+              referenceImageUrls,
+              compileRunId: layerCompileOptions?.previewCompileContext?.compileRunId ?? null,
+              organizationId:
+                layerCompileOptions?.previewCompileContext?.companyId ??
+                getActiveEphemeralCompileAuthorization(
+                  layerCompileOptions?.previewCompileContext?.compileRunId ?? null
+                )?.organizationId ??
+                null,
+              stationId,
+              projectId,
+              isolationAttempt,
+              placementMetadataIncluded: true,
+            })
+          );
 
           if (isLayer1 && isWorldCompilerDiagnosticMode() && isolationAttempt === 0) {
             recordLayer1Transition('LANDMARK_REQUEST_CREATED', { requestInputForensic });
@@ -525,10 +600,34 @@ export function useSceneStack(
 
           result = await requestStudioBuilderGenerate(generationPayload, {
             onProgress: (label) => {
-              setPipelineLayer({ stationId, layerId, phase: 'generating' });
+              setPipelineLayer((prev) => ({
+                stationId,
+                layerId,
+                phase: 'generating',
+                regeneration:
+                  prev?.stationId === stationId && prev.layerId === layerId
+                    ? prev.regeneration
+                    : isolationAttempt > 0 && isIsolatedObjectLayer(layerId)
+                      ? { layerId, attempt: isolationAttempt + 1, status: 'submitting' as const }
+                      : null,
+              }));
               void label;
             },
           });
+
+          if (result.jobId && isIsolatedObjectLayer(layerId) && isolationAttempt > 0) {
+            setPipelineLayer({
+              stationId,
+              layerId,
+              phase: 'generating',
+              regeneration: {
+                layerId,
+                attempt: isolationAttempt + 1,
+                status: 'submitting',
+                jobId: result.jobId,
+              },
+            });
+          }
 
           if (isLayer1 && isWorldCompilerDiagnosticMode()) {
             if (result.ok && result.publicUrl) {
@@ -578,6 +677,20 @@ export function useSceneStack(
 
           if (isLayer1 && isWorldCompilerDiagnosticMode()) {
             recordLayer1Transition('LANDMARK_VALIDATION_STARTED', { publicUrl: result.publicUrl });
+          }
+
+          if (isIsolatedObjectLayer(layerId) && isolationAttempt > 0) {
+            setPipelineLayer({
+              stationId,
+              layerId,
+              phase: 'generating',
+              regeneration: {
+                layerId,
+                attempt: isolationAttempt + 1,
+                status: 'validating',
+                jobId: result.jobId ?? null,
+              },
+            });
           }
 
           quality = await validateSceneLayerQuality({
@@ -635,7 +748,9 @@ export function useSceneStack(
 
             const msg = formatLayerQualityFailureMessage(layerId, layerLabel, quality);
             const recoveryHint = isIsolatedObjectLayer(layerId)
-              ? ` Recovery: Regenerating ${layerLabel.toLowerCase()} only — shell preserved.`
+              ? isolationAttempt < maxIsolationAttempts - 1 && result.jobId
+                ? ` Regenerating ${layerLabel.toLowerCase()} only — shell preserved (job ${result.jobId}).`
+                : ` Recovery: Regenerating ${layerLabel.toLowerCase()} only — shell preserved.`
               : '';
             const fullMsg = `${msg}${recoveryHint}`;
 

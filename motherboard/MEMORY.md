@@ -47442,6 +47442,9 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 
 **Pending:** Founder verification — Experience Lab must advance beyond Layer 1 on mobile with isolated PNG plates.
 
+---
+
+## 2026-07-12 — CD Studio stack auth rejection fix (full conversation)
 
 **Context:** After Immune System sprint (`f944066ab`), founder reported CD Studio still shows `WORLD COMPILE REJECTED™` / `LAYER GENERATION FAILED` / `STACK 0/6` with all layers RETRY on mobile (`fsbw.vercel.app`). Experience Lab validation jobs completing in production; **zero** `surface: creative-studio` jobs — CD Studio never reached async job persistence.
 
@@ -47457,4 +47460,40 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 - Tests: `creative-studio-stack-auth.test.ts` (3 cases)
 
 **Founder follow-up for mobile transport:** set `ASYNC_GOVERNED_GENERATION_CREATIVE_STUDIO=1` on Vercel (with `ASYNC_GOVERNED_GENERATION_V1=1`) so CD Studio uses 202 work orders instead of long sync fetch.
+
+---
+
+## 2026-07-12 — P0 Isolated Asset Prompt + Model Routing Repair Sprint (full conversation)
+
+**Context:** Founder-approved P0 sprint on `master` after prior isolated-layer contract repair (`d586c44a5`) still failed in production. Shell pipeline healthy (`run-1783893880377-6ymov2`); Layer 1 `LANDMARK_VALIDATION_FAILED` / `QUALITY_REGENERATE_REQUIRED` — landmark output was full-scene room render, not isolated mountable asset. Sprint mandate: repair prompt contract, generation mode, reference handling, provider model, and runtime routing without modifying shell generation or weakening quality guard.
+
+**Primary questions answered (from live code path):**
+- Failed asset used generic `scene-stack.v3-isolated` prompt via `isolated-layer-prompt.ts`
+- Model: `fal-ai/nano-banana-pro/edit` (img2img-only endpoint)
+- Shell stripped → marble-half.png fallback as dominant img2img source
+- `generationMode` contract said `isolated-single-object` but dispatch path was img2img
+- Model Orchestrator (`multi-model-router.ts`) does not govern image layer routing
+- UI showed regeneration language but diagnostic mode froze at Layer 1 without real job in some paths
+
+**Root cause classification:** **COMBINED** (MODEL-DOMINANT + REFERENCE-DOMINANT + PROMPT)
+
+**Repair shipped (one commit):**
+- `layer-model-routing.ts` — shell → `nano-banana-pro/edit`; landmark/furniture → `nano-banana-pro` t2i
+- `isolated-asset-prompt.ts` — `signature-landmark-isolated-prompt.v2`, strict negative prompt, attempt-2 escalation
+- `placement-metadata.ts` — placement as data (anchor, scale, perspective) in prompt, not baked scene
+- `effective-generation-request.ts` — safe effective-request record, pre-dispatch assertions, browser-safe hash
+- `prompt-compiler.ts` — routes through isolated asset prompt builder; returns routing fields
+- `studioBuilderGeneration.ts` — t2i path: zero `image_urls` for isolated layers; no marble fallback
+- `legacy-adapters.ts`, `generation-gateway.ts`, `async-governed-generation.ts` — pass routing metadata
+- `studio-builder-generate.ts` — server-side `assertIsolatedPromptBeforeDispatch`
+- `useSceneStack.ts` — effective-request recording; regeneration state with real `jobId`; bounded 2 attempts
+- `SceneStackViewport.tsx` — "Regenerating" only when `pipeline.regeneration.jobId` exists
+- Tests: `isolated-asset-routing.test.ts` (11) + `isolated-layer-generation.test.ts` (21) = 32 pass; build pass
+- Docs: `ISOLATED_ASSET_PROMPT_STANDARD.md`, `LAYER_MODEL_ROUTING_MATRIX.md`, `FULL_SCENE_LAYER_ROOT_CAUSE_ANALYSIS.md`; updated `ISOLATED_LAYER_GENERATION_CONTRACT.md`, `CURRENT_HANDOFF.md`, `KNOWN_BLOCKERS.md`, `CORE.md`
+
+**Spatial Architecture Review:** SKIPPED — repair of existing layer contract and dispatch; no new nav/surfaces.
+
+**Branch policy:** `master` only; one `./scripts/agent-commit.sh` deploy.
+
+**Pending:** Founder mobile verification — Experience Lab must advance beyond Layer 1 with valid isolated transparent landmark.
 

@@ -214,7 +214,9 @@ export function SceneStackViewport({
             {isWorldCompiler ? 'World Compiler™' : 'Scene Assembly™'} — {stationLabel}
           </p>
           <p className="cds-stack__pipeline-step">
-            {pipeline?.phase === 'queued'
+            {pipeline?.regeneration?.jobId
+              ? `Regenerating ${pipeline.currentLayerLabel ?? 'layer'} (attempt ${pipeline.regeneration.attempt}, job ${pipeline.regeneration.jobId}) — shell preserved`
+              : pipeline?.phase === 'queued'
               ? `Queued · ${pipeline.currentLayerLabel ?? 'preparing'}…`
               : pipeline?.currentLayerLabel
                 ? `Generating ${pipeline.currentLayerLabel}…`
@@ -244,9 +246,6 @@ export function SceneStackViewport({
               </p>
               <p style={{ marginTop: 6, fontSize: 11, lineHeight: 1.5 }}>
                 Layer 1 ({layer1Failure.failedLayerLabel}) failed after shell loaded successfully.
-                {layer1Failure.errorCode === 'QUALITY_REGENERATE_REQUIRED'
-                  ? ' Recovery: Regenerating landmark only — shell preserved.'
-                  : ''}
               </p>
               <dl style={{ margin: '8px 0 0', fontSize: 10, lineHeight: 1.6, textAlign: 'left' }}>
                 <div>

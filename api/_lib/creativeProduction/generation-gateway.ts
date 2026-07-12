@@ -115,6 +115,12 @@ async function executeBuilderGeneration(
       referenceImageUrls: Array.isArray(e.referenceImageUrls)
         ? (e.referenceImageUrls as unknown[]).filter((u): u is string => typeof u === 'string')
         : undefined,
+      layerId: typeof e.layerId === 'string' ? e.layerId : undefined,
+      generationMode: typeof e.generationMode === 'string' ? e.generationMode : undefined,
+      textToImageOnly: e.textToImageOnly === true,
+      providerModel: typeof e.model === 'string' ? e.model : undefined,
+      isolationAttempt: typeof e.isolationAttempt === 'number' ? e.isolationAttempt : 0,
+      negativePrompt: typeof e.negativePrompt === 'string' ? e.negativePrompt : undefined,
     });
     if (!result.ok) {
       const diagnostic = normalizeGenerationError({

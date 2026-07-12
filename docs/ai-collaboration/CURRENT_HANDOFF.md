@@ -1,78 +1,23 @@
 # Current Handoff — Active Sprint State
 
-**Last updated:** 2026-07-12  
-**Update this file** at every sprint boundary, P0 change, or architecture decision.
-
----
+**Last updated:** 2026-07-12
 
 ## Current sprint
 
-**P0 Isolated Layer Generation Repair — SHIPPED (pending founder verification)**
+**P0 Isolated Asset Prompt + Model Routing Repair — SHIPPED (pending founder verification)**
 
-Repair `LANDMARK_VALIDATION_FAILED` / `QUALITY_REGENERATE_REQUIRED` on `signature-landmark` and `furniture-objects` — outputs were full-scene rerenders instead of isolated mountable plates.
+Root cause for `run-1783893880377-6ymov2`: **COMBINED** — img2img `nano-banana-pro/edit` + marble fallback + insufficient isolation against model behavior.
 
-**Docs:** `docs/studio-os/creative-production/ISOLATED_LAYER_GENERATION_CONTRACT.md` · `docs/studio-os/incidents/FULL_SCENE_RERENDER_LAYER_FAILURE.md`
+**Repair:** `fal-ai/nano-banana-pro` text-to-image for landmark/furniture; strict `isolated-asset-prompt.v2`; effective-request tracing; real regeneration job HUD.
 
-**Previous shipped:** CD Studio stack auth (`e612bc4ab`) · Immune System schema drift (`f944066ab`)
-
----
+**Docs:** `ISOLATED_ASSET_PROMPT_STANDARD.md`, `LAYER_MODEL_ROUTING_MATRIX.md`, `FULL_SCENE_LAYER_ROOT_CAUSE_ANALYSIS.md`
 
 ## Current blocker
 
-| ID | Blocker | Owner | Unblock |
-|----|---------|-------|---------|
-| **B1-Layer** | Founder verification — Experience Lab must advance beyond Layer 1 with isolated landmark/furniture assets | Founder (device) | Run full compile on mobile after deploy; confirm quality guard accepts isolated PNG plates |
-| **B2** | Diagnostic routes — normal-tab verification pending | Founder (device) | Confirm `/__studio-os-*` routes in iOS Safari/Chrome normal tabs |
+| ID | Blocker | Unblock |
+|----|---------|---------|
+| **B1-Isolated** | Founder verification — Experience Lab must mount valid isolated landmark on mobile | Full compile after deploy |
 
-**Documented fact:** Shell pipeline succeeded for `run-1783892114155-bnqd8w`; Layer 1 quality validation failed on full-scene rerender outputs.
+## Documented fact
 
----
-
-## Current debugging status
-
-| System | Status | Notes |
-|--------|--------|-------|
-| Shell foundation pipeline | ✅ Healthy | 202 · register · persist · verify |
-| Isolated layer contract | ✅ Shipped | No shell img2img for landmark/furniture |
-| Quality guard (frame coverage + alpha + shell similarity) | ✅ Shipped | Rejects full-scene rerenders |
-| Auto-regeneration loop (max 2) | ✅ Shipped | Shell preserved |
-| UI truth (landmark vs shell failure) | ✅ Shipped | No misleading Retry Shell for layer-quality failures |
-| Experience Lab Layer 1+ compile | ⏳ Pending | Founder verification after deploy |
-
----
-
-## Latest architectural decisions
-
-| Date | Decision | Rationale |
-|------|----------|-----------|
-| 2026-07-12 | Isolated object layers use perspective-metadata-only — no shell URL to FAL | img2img shell reference encouraged full-scene repaint |
-| 2026-07-12 | PNG required for `signature-landmark` + `furniture-objects` | Alpha transparency required for CSS compositing |
-| 2026-07-12 | Max 2 automatic isolation regeneration attempts | Preserve shell; reject only failed layer |
-| 2026-07-12 | Keep FAL `nano-banana-pro/edit` with text-only path for isolated layers | Governed route; no ungoverned side path |
-
----
-
-## Recently completed work
-
-| Commit / deliverable | Summary |
-|---------------------|---------|
-| This sprint | Isolated layer contract, prompts, quality guard, regeneration loop, UI truth, tests, docs |
-| `e612bc4ab` | CD Studio ephemeral stack authorization |
-| `f944066ab` | Immune System schema drift self-healing |
-
----
-
-## Immediate next priorities
-
-1. **Founder:** Verify Experience Lab compile advances past Layer 1 on mobile
-2. **Founder:** If two regeneration attempts fail, review provider/model routing
-3. **Composer (if needed):** Governed model route change for isolated layers if FAL text-only remains unreliable
-
----
-
-## Known risks
-
-| Risk | Mitigation |
-|------|------------|
-| FAL text-only may still produce opaque plates | Quality guard rejects; escalation after 2 attempts |
-| Provider cannot natively emit alpha PNG | Document limitation; recommend governed model route |
+Shell healthy; Layer 1 landmark failed as full-scene output on `run-1783893880377-6ymov2`.

@@ -118,6 +118,11 @@ export type CompiledSceneStackLayerPrompt = {
   heroAssetId: string;
   promptVersion: string;
   blueprintId: string;
+  generationMode?: string;
+  promptBuilderId?: string;
+  providerModel?: string;
+  textToImageOnly?: boolean;
+  referenceStrategy?: string;
 };
 
 export type SceneStackCompositeStatus = 'idle' | 'building' | 'partial' | 'ready' | 'failed';
