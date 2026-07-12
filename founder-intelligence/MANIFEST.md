@@ -5,7 +5,7 @@
 | **Capsule Version** | 1.0.0 |
 | **Capsule Type** | Founder Intelligence Capsule™ |
 | **Generator** | `scripts/package-founder-intelligence-capsule-zip.mjs` |
-| **Document Count** | 28 required markdown files |
+| **Document Count** | 29 required markdown files |
 | **Companion: Context** | `StudioOS_ContextCapsule_v0.3.1` — `/context/latest` |
 | **Companion: DNA** | `StudioOS_StudioDNACapsule_v1.0` |
 
@@ -26,23 +26,24 @@ Read in this exact sequence:
 9. `DESIGN_LANGUAGE.md`
 10. `CREATIVE_DIRECTION.md`
 11. `STUDIO_WORLD.md`
-12. `CIVILIZATION.md`
-13. `COMPANIES.md`
-14. `BUSINESS_MODEL.md`
-15. `REVENUE_MODEL.md`
-16. `MONETIZATION.md`
-17. `MARKETPLACE.md`
-18. `STUDIO_WORKERS.md`
-19. `KNOWLEDGE_CAPTURE.md`
-20. `INTERVIEW_ENGINE.md`
-21. `EXPERT_TRUST_AND_GOVERNANCE.md`
-22. `DECISION_HISTORY.md`
-23. `COMMUNICATION_STYLE.md`
-24. `FOUNDER_PREFERENCES.md`
-25. `AI_COLLABORATION.md`
-26. `FUTURE_IDEAS.md`
-27. `LONG_TERM_ROADMAP.md`
-28. `FOUNDER_VALIDATION.md` *(auto-generated at export)*
+12. `EDUCATIONAL_PHILOSOPHY.md`
+13. `CIVILIZATION.md`
+14. `COMPANIES.md`
+15. `BUSINESS_MODEL.md`
+16. `REVENUE_MODEL.md`
+17. `MONETIZATION.md`
+18. `MARKETPLACE.md`
+19. `STUDIO_WORKERS.md`
+20. `KNOWLEDGE_CAPTURE.md`
+21. `INTERVIEW_ENGINE.md`
+22. `EXPERT_TRUST_AND_GOVERNANCE.md`
+23. `DECISION_HISTORY.md`
+24. `COMMUNICATION_STYLE.md`
+25. `FOUNDER_PREFERENCES.md`
+26. `AI_COLLABORATION.md`
+27. `FUTURE_IDEAS.md`
+28. `LONG_TERM_ROADMAP.md`
+29. `FOUNDER_VALIDATION.md` *(auto-generated at export)*
 
 ---
 
@@ -57,6 +58,7 @@ Read in this exact sequence:
 | DESIGN_LANGUAGE.md | Creative |
 | CREATIVE_DIRECTION.md | Creative |
 | STUDIO_WORLD.md | Ecosystem |
+| EDUCATIONAL_PHILOSOPHY.md | Ecosystem / Studio Institute LOS |
 | CIVILIZATION.md | Ecosystem |
 | COMPANIES.md | Ecosystem |
 | BUSINESS_MODEL.md | Business |

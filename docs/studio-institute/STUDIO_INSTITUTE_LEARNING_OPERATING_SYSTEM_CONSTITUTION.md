@@ -646,7 +646,9 @@ STUDIO_INSTITUTE_LEARNING_OPERATING_SYSTEM_CONSTITUTION.md  ← Educational phil
 
 ## Founder Intelligence Integration
 
-**Planned:** Add `founder-intelligence/EDUCATIONAL_PHILOSOPHY.md` as a strategic cross-reference capsule pointing to this constitution. Founder Intelligence governs **why**; this constitution governs **how the world teaches**.
+**Planned:** Add LOS Constitution to unified onboarding pack as a dedicated Institute canon layer when founder approves fifth-capsule expansion.
+
+**Documented Fact:** `founder-intelligence/EDUCATIONAL_PHILOSOPHY.md` registered in Founder Intelligence Capsule (required file + reading order).
 
 ## Studio DNA Integration
 

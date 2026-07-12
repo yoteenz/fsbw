@@ -47130,3 +47130,22 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 
 **Spatial Architecture Review:** SKIPPED — docs-only constitutional sprint, no new surfaces.
 
+---
+
+## 2026-07-12 — Fix Founder Intelligence Capsule orphan EDUCATIONAL_PHILOSOPHY.md (Vercel build)
+
+**Context:** Vercel build failed on commit `ed90003` during prebuild: `Founder Intelligence Capsule validation failed: Orphan markdown files: EDUCATIONAL_PHILOSOPHY.md`. Root cause: new `founder-intelligence/EDUCATIONAL_PHILOSOPHY.md` from LOS canon sprint was not registered in capsule REQUIRED_FILES / READING_ORDER.
+
+**Repair:**
+- Registered `EDUCATIONAL_PHILOSOPHY.md` in `scripts/package-founder-intelligence-capsule-zip.mjs` (REQUIRED_FILES + READING_ORDER after STUDIO_WORLD.md)
+- Registered in `scripts/package-onboarding-pack-zip.mjs` (FIC_READING, FIC_COVERAGE, OPERATIONAL_AUTHORITY_MAP)
+- Added Studio Institute LOS topic to `scripts/lib/onboarding-pack-machine-readable.mjs`
+- Updated `founder-intelligence/MANIFEST.md` (29 docs, reading order #12, inventory)
+- Added missing `Future Questions` metadata marker to `EDUCATIONAL_PHILOSOPHY.md`
+- Updated LOS Constitution Part X: EDUCATIONAL_PHILOSOPHY now Documented Fact in capsule
+- Regenerated capsule ZIPs and API manifests via local packaging scripts — validation pass
+
+**Outcome:** Founder Intelligence Capsule validation pass (29 required docs); onboarding pack validation pass (94 required files).
+
+**Spatial Architecture Review:** SKIPPED — packaging repair, no new surfaces.
+

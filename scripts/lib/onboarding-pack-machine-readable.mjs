@@ -247,6 +247,7 @@ export const COVERAGE_TOPIC_DEFS = [
   { topic: 'Interview Engine', keywords: ['interview', 'invite'], documents: ['Founder_Intelligence_Capsule/INTERVIEW_ENGINE.md'] },
   { topic: 'Expert Trust Framework', keywords: ['trust', 'governance', 'authorization'], documents: ['Founder_Intelligence_Capsule/EXPERT_TRUST_AND_GOVERNANCE.md'] },
   { topic: 'Studio World Vision', keywords: ['studio world', 'civilization'], documents: ['Founder_Intelligence_Capsule/STUDIO_WORLD.md', 'Founder_Intelligence_Capsule/CIVILIZATION.md'] },
+  { topic: 'Studio Institute LOS', keywords: ['studio institute', 'learning operating system', 'studio world method'], documents: ['Founder_Intelligence_Capsule/EDUCATIONAL_PHILOSOPHY.md'] },
   { topic: 'Current Implementation', keywords: ['current sprint', 'handoff'], documents: ['AI_Context_Capsule/CURRENT_HANDOFF.md'] },
   { topic: 'Known Blockers', keywords: ['blocker', 'gate'], documents: ['AI_Context_Capsule/KNOWN_BLOCKERS.md'] },
   { topic: 'Black Box', keywords: ['black box', 'world compiler'], documents: ['Collaboration_Intelligence_Capsule/COLLABORATION_GLOSSARY.md', 'Collaboration_Intelligence_Capsule/HISTORICAL_CONTEXT.md'] },

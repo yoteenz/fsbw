@@ -4,7 +4,7 @@
   "capsuleVersion": "1.0.0",
   "manifestVersion": "1.0.0",
   "capsuleFolder": "founder-intelligence",
-  "generatedAt": "2026-07-12T11:38:23.228Z",
+  "generatedAt": "2026-07-12T15:18:36.986Z",
   "companionCapsules": {
     "context": {
       "version": "0.3.1",
@@ -15,7 +15,7 @@
       "latestPath": "/downloads/studio-dna-capsules/latest.zip"
     }
   },
-  "documentCount": 28,
+  "documentCount": 29,
   "readingOrder": [
     "README_FIRST.md",
     "MANIFEST.md",
@@ -28,6 +28,7 @@
     "DESIGN_LANGUAGE.md",
     "CREATIVE_DIRECTION.md",
     "STUDIO_WORLD.md",
+    "EDUCATIONAL_PHILOSOPHY.md",
     "CIVILIZATION.md",
     "COMPANIES.md",
     "BUSINESS_MODEL.md",
@@ -46,7 +47,7 @@
     "LONG_TERM_ROADMAP.md",
     "FOUNDER_VALIDATION.md"
   ],
-  "readingOrderChecksum": "29bc8a2ecf4464baad955a73cbe73aa0454878ed34a5b7f1324cb0728c3dd09b",
+  "readingOrderChecksum": "5fa6a1a01e516c301cba914655222a4b8cd458de0581031468b9f87151531ca5",
   "requiredMarkdownFiles": [
     "README_FIRST.md",
     "MANIFEST.md",
@@ -60,6 +61,7 @@
     "DESIGN_LANGUAGE.md",
     "CREATIVE_DIRECTION.md",
     "STUDIO_WORLD.md",
+    "EDUCATIONAL_PHILOSOPHY.md",
     "CIVILIZATION.md",
     "COMPANIES.md",
     "BUSINESS_MODEL.md",

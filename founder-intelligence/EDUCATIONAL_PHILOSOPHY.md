@@ -9,7 +9,7 @@ Strategic cross-reference for Founder Intelligence. Full constitutional authorit
 **Status:** Approved  
 **Version:** 1.0.0  
 **Related Documents:** STUDIO_WORLD.md, CIVILIZATION.md, KNOWLEDGE_CAPTURE.md  
-**Constitutional Authority:** `docs/studio-institute/STUDIO_INSTITUTE_LEARNING_OPERATING_SYSTEM_CONSTITUTION.md`
+**Future Questions:** When should LOS Constitution ship inside unified onboarding pack as a fifth capsule layer?
 
 ---
 

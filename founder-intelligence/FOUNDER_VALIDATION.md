@@ -4,12 +4,12 @@
 |-------|-------|
 | **Capsule Version** | 1.0.0 |
 | **Capsule Type** | Founder Intelligence Capsule™ |
-| **Generated (UTC)** | 2026-07-12T11:38:23.228Z |
-| **Git Commit** | 7ad78b84782315b23a47bc7aee5ee1ab4e2e1cc0 |
+| **Generated (UTC)** | 2026-07-12T15:18:36.986Z |
+| **Git Commit** | ed900039fbcee4ac130e9ac2f807a39fe8aaa663 |
 | **Validation** | pass |
-| **Required documents** | 28 |
-| **Reading order hash** | 29bc8a2ecf4464baad955a73cbe73aa0454878ed34a5b7f1324cb0728c3dd09b |
-| **Markdown files on disk** | 29 |
+| **Required documents** | 29 |
+| **Reading order hash** | 5fa6a1a01e516c301cba914655222a4b8cd458de0581031468b9f87151531ca5 |
+| **Markdown files on disk** | 30 |
 
 ## Checks
 

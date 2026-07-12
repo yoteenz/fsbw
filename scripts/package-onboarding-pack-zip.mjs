@@ -58,6 +58,7 @@ const FIC_READING = [
   'DESIGN_LANGUAGE.md',
   'CREATIVE_DIRECTION.md',
   'STUDIO_WORLD.md',
+  'EDUCATIONAL_PHILOSOPHY.md',
   'CIVILIZATION.md',
   'COMPANIES.md',
   'BUSINESS_MODEL.md',
@@ -130,6 +131,7 @@ const CI_COVERAGE = [
 /** Substantive coverage checks across Founder Intelligence */
 const FIC_COVERAGE = [
   { topic: 'Studio World vision', file: 'STUDIO_WORLD.md', minChars: 600 },
+  { topic: 'Studio Institute LOS', file: 'EDUCATIONAL_PHILOSOPHY.md', minChars: 400, keywords: ['Learning Operating System', 'Studio World Method'] },
   { topic: 'Marketplace mechanics', file: 'MARKETPLACE.md', minChars: 900, keywords: ['commission', 'subscription'] },
   { topic: 'Marketplace revenue', file: 'REVENUE_MODEL.md', minChars: 700, keywords: ['transaction', 'licensing'] },
   { topic: 'Business subscriptions', file: 'REVENUE_MODEL.md', keywords: ['subscription', 'Membership'] },
@@ -158,6 +160,7 @@ const OPERATIONAL_AUTHORITY_MAP = {
   'AI_CONTEXT.md': 'AI collaboration and repository context',
   'FOUNDER_PROFILE.md': 'Founder operating preferences (collaboration layer)',
   'STUDIO_WORLD.md': 'Long-term Studio World vision',
+  'EDUCATIONAL_PHILOSOPHY.md': 'Studio Institute LOS and Studio World Method educational doctrine',
   'MARKETPLACE.md': 'Marketplace and expert economy mechanics',
   'REVENUE_MODEL.md': 'Revenue streams and monetization',
   'STUDIO_WORKERS.md': 'Studio Team / Workers / HR lifecycle',
