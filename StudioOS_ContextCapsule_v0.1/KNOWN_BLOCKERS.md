@@ -78,27 +78,33 @@
 
 ---
 
-## B1-Shell — Shell foundation construction stall (RSS JOB BOARD SHIPPED — REPAIR NOT STARTED)
+## B1-Shell — Shell foundation construction stall (IFR SHIPPED — REPAIR NOT STARTED)
 
 | Field | Detail |
 |-------|--------|
 | **ID** | B1-Shell |
-| **Symptom** | Pipeline stops at **Building Shell** — stall at `recordShellStage('create-shell-request')` |
-| **Instrumentation** | `record-shell-stage-forensic.ts` + Job Board panel section (`compilerDiag=1`) |
-| **Forensic** | `RECORD_SHELL_STAGE_JOB_BOARD.md`, `GENERATE_SHELL_DISPATCH_DESK.md` |
-| **Verify** | Mobile `?compilerDiag=1` — JOB BOARD FORENSICS shows RSS marker, subscriber, persistence state |
-| **Status** | **In Progress** — observe only; repair awaits founder RSS evidence |
-| **Superseded** | Package-resolution-first theory when RSS proves notify/persist boundary |
+| **Symptom** | Pipeline stops at **Building Shell** — stall at `create-shell-request` |
+| **Instrumentation** | Independent Forensic Recorder + RSS Job Board + GSPU Contractor Directory |
+| **Forensic** | `INDEPENDENT_FORENSIC_RECORDER.md`, `RECORD_SHELL_STAGE_JOB_BOARD.md`, `GENERATE_SHELL_DISPATCH_DESK.md` |
+| **Verify** | Mobile `?compilerDiag=1` — export IFR raw JSON; compare IFR-01…IFR-16 vs RSS/GSPU |
+| **Status** | **In Progress** — observation layer reconciled; repair awaits IFR proven boundary |
+| **Authority** | IFR raw sequence > RSS > GSPU > UI labels |
 
 ### Documented Fact
 
-- Completion authority repair now honestly shows shell stall (no false 100%)
-- Black box does **not** change shell behavior, timing, retries, or APIs
+- RSS telemetry proved `recordShellStage()` returned successfully (persist + notify completed)
+- GSPU-02a stayed **running** while GSPU-02b stayed **pending** — stores disagreed
+- Diagnostic stores useful but not sole evidence source until IFR export confirms execution order
+
+### Inference
+
+- GSPU marker sequencing bug (02b skipped `running`) contributed to stale GSPU view
+- Actual runtime boundary unknown until post-deploy IFR founder mobile capture
 
 ### Do not
 
-- Implement shell repair without black box evidence from founder device
-- Treat instrumentation as incident resolution
+- Implement shell repair without IFR raw ledger from founder device
+- Treat RSS or GSPU alone as proof of where execution stopped
 
 ---
 

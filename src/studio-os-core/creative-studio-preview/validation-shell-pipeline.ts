@@ -34,6 +34,12 @@ import {
   setGspuMicroTraceInvocationId,
 } from '../../studio-os/diagnostics/world-compiler-investigation/generate-shell-package-micro-trace';
 import {
+  recordIfrAsyncFunctionCall,
+  recordIfrCheckpoint,
+  recordIfrFunctionCall,
+  setIndependentForensicRecorderInvocationId,
+} from '../../studio-os/diagnostics/world-compiler-investigation/independent-forensic-recorder';
+import {
   buildEnvironmentShellRecipe,
   type EnvironmentShellRecipe,
   type ValidationEnvironmentShell,
@@ -82,27 +88,51 @@ async function generateShellPublicUrl(
     requestKey: `shell-${authCtx.previewSessionId}`,
   });
   setGspuMicroTraceInvocationId(invocationId);
+  setIndependentForensicRecorderInvocationId(invocationId);
   recordGspuSubStage('GSPU-01-enter', 'running');
   recordShellFunctionEnter('generateShellPublicUrl', FILE, { source: 'function-body' });
   recordGspuSubStage('GSPU-01-enter', 'success');
   recordGspuSubStage('GSPU-02-stage-create-shell-request', 'running');
 
   recordGspuMicroMarker('GSPU-02a-before-record-shell-stage', 'running');
-  recordShellStage('create-shell-request', 'running');
+  recordIfrCheckpoint('IFR-01', 'before-statement', FILE, 'generateShellPublicUrl', 'before recordShellStage(create-shell-request)');
+  recordIfrFunctionCall(
+    () => recordShellStage('create-shell-request', 'running'),
+    'recordShellStage',
+    'shell-foundation-black-box.ts',
+    'create-shell-request,running'
+  );
+  recordIfrCheckpoint('IFR-02', 'after-statement', FILE, 'generateShellPublicUrl', 'after recordShellStage(create-shell-request)');
   recordGspuMicroMarker('GSPU-02a-before-record-shell-stage', 'success');
+  recordGspuMicroMarker('GSPU-02b-after-record-shell-stage', 'running');
   recordGspuMicroMarker('GSPU-02b-after-record-shell-stage', 'success', { resultSummary: 'recordShellStage returned' });
 
   try {
+    recordIfrCheckpoint('IFR-03', 'before-statement', FILE, 'generateShellPublicUrl', 'before GSPU-02 success marker');
     recordGspuMicroMarker('GSPU-02c-before-gspu02-success', 'running');
-    recordGspuSubStage('GSPU-02-stage-create-shell-request', 'success');
+    recordIfrFunctionCall(
+      () => recordGspuSubStage('GSPU-02-stage-create-shell-request', 'success'),
+      'recordGspuSubStage',
+      'generate-shell-dispatch-desk.ts',
+      'GSPU-02-stage-create-shell-request,success'
+    );
     recordGspuMicroMarker('GSPU-02c-before-gspu02-success', 'success');
+    recordIfrCheckpoint('IFR-04', 'after-statement', FILE, 'generateShellPublicUrl', 'after GSPU-02 success marker');
     recordGspuMicroMarker('GSPU-02d-after-gspu02-success', 'success');
 
+    recordIfrCheckpoint('IFR-05', 'before-statement', FILE, 'generateShellPublicUrl', 'before GSPU-03 running marker');
     recordGspuMicroMarker('GSPU-02e-before-gspu03-running', 'running');
-    recordGspuSubStage('GSPU-03-resolve-package', 'running');
+    recordIfrFunctionCall(
+      () => recordGspuSubStage('GSPU-03-resolve-package', 'running'),
+      'recordGspuSubStage',
+      'generate-shell-dispatch-desk.ts',
+      'GSPU-03-resolve-package,running'
+    );
     recordGspuMicroMarker('GSPU-02e-before-gspu03-running', 'success');
+    recordIfrCheckpoint('IFR-06', 'after-statement', FILE, 'generateShellPublicUrl', 'after GSPU-03 running marker');
     recordGspuMicroMarker('GSPU-02f-after-gspu03-running', 'success');
 
+    recordIfrCheckpoint('IFR-07', 'before-statement', FILE, 'generateShellPublicUrl', 'before recipe.departmentId read');
     recordGspuMicroMarker('GSPU-03a-read-department-id', 'running');
     const departmentKey = recipe.departmentId;
     recordGspuPackageRegistryForensic({
@@ -110,8 +140,16 @@ async function generateShellPublicUrl(
       actualPackageKey: departmentKey,
     });
     recordGspuMicroMarker('GSPU-03a-read-department-id', 'success', { resultSummary: departmentKey });
+    recordIfrCheckpoint('IFR-08', 'after-statement', FILE, 'generateShellPublicUrl', `departmentId=${departmentKey}`);
 
-    const pkg = requireDepartmentPackage(departmentKey);
+    recordIfrCheckpoint('IFR-11', 'before-statement', FILE, 'generateShellPublicUrl', 'before requireDepartmentPackage');
+    const pkg = recordIfrFunctionCall(
+      () => requireDepartmentPackage(departmentKey),
+      'requireDepartmentPackage',
+      'department-package/registry.ts',
+      departmentKey
+    );
+    recordIfrCheckpoint('IFR-12', 'after-statement', FILE, 'generateShellPublicUrl', `packageId=${pkg.packageId}`);
     recordGspuSubStage('GSPU-03-resolve-package', 'success', pkg.packageId);
 
     recordGspuSubStage('GSPU-04-build-payload', 'running');
@@ -134,6 +172,7 @@ async function generateShellPublicUrl(
       ephemeralAuthorizationRequested: true,
       authorizationMode: 'server-issued-ephemeral',
     });
+    recordIfrCheckpoint('IFR-13', 'before-statement', FILE, 'generateShellPublicUrl', 'before withValidationEphemeralAuth');
     const authPayload = withValidationEphemeralAuth(basePayload, {
       validationMode: true,
       compileRunId: authCtx.compileRunId,
@@ -143,6 +182,13 @@ async function generateShellPublicUrl(
       stationId: authCtx.stationId,
       projectId: authCtx.projectId,
     });
+    recordIfrCheckpoint(
+      'IFR-14',
+      'after-statement',
+      FILE,
+      'generateShellPublicUrl',
+      authPayload.productionAuthorizationId ? 'grant-attached' : 'context-only'
+    );
     recordGspuAuthorization({
       authorizationHelperReturned: true,
       productionAuthorizationIdPresent: Boolean(authPayload.productionAuthorizationId),
@@ -153,7 +199,14 @@ async function generateShellPublicUrl(
 
     recordGspuSubStage('GSPU-06-request-helper-enter', 'running');
     recordGspuAwait('requestStudioBuilderGenerate');
-    const api = await requestStudioBuilderGenerate(authPayload);
+    recordIfrCheckpoint('IFR-15', 'before-statement', FILE, 'generateShellPublicUrl', 'before requestStudioBuilderGenerate');
+    const api = await recordIfrAsyncFunctionCall(
+      () => requestStudioBuilderGenerate(authPayload),
+      'requestStudioBuilderGenerate',
+      'studioBuilder/api.ts',
+      'studio-builder-generate'
+    );
+    recordIfrCheckpoint('IFR-16', 'after-statement', FILE, 'generateShellPublicUrl', api.ok ? 'api-ok' : api.code ?? 'api-failed');
     recordGspuSubStage('GSPU-06-request-helper-enter', 'success');
     recordGspuSubStage('GSPU-20-api-return', 'success', api.ok ? 'ok' : api.code ?? 'failed');
 

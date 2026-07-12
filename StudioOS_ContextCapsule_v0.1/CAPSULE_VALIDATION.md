@@ -8,8 +8,8 @@
 |-------|-------|
 | **Capsule Version** | 0.3.2 |
 | **Manifest Version** | 0.3.2 |
-| **Generation Date (UTC)** | 2026-07-12T12:49:36.500Z |
-| **Repository Commit SHA** | 7a8869404a35c328986bee24048f2f44896f4169 |
+| **Generation Date (UTC)** | 2026-07-12T18:27:15.806Z |
+| **Repository Commit SHA** | b9ffb71eaba284a72b58cb6a55649b5e4ee8a387 |
 | **Validation Status** | pass |
 | **Documents Included** | README_FIRST.md, MANIFEST.md, ONBOARDING_REPORT.md, FOUNDER_PROFILE.md, CHATGPT_OPERATING_MANUAL.md, AI_STYLE_GUIDE.md, AI_CONTEXT.md, CURRENT_HANDOFF.md, AI_GLOSSARY.md, PROJECT_DNA.md, PROJECT_CHANGELOG.md, PROMPT_LIBRARY.md, ROADMAP.md, KNOWN_BLOCKERS.md, OPEN_QUESTIONS.md |
 | **Manifest Hash (reading order SHA-256)** | 7b10d8a919668fc98dd4f47c7383353032cd3d69e8f39f73ff026a55b12e9b30 |
@@ -57,11 +57,11 @@ Verified:
 
 ### Current Implementation Stage
 
-P0 — Layer 1 `signature-landmark` governed generation (shared Experience Lab runtime)
+P0 — Independent Forensic Recorder
 
 ### Current Active Blockers
 
-B1, B1, B2
+B0, B1, B1, B1, B2
 
 ### Approval Required Before Contribution
 
@@ -75,7 +75,7 @@ B1, B1, B2
 |-------|-------|
 | **Capsule Version** | 0.3.2 |
 | **Manifest Version** | 0.3.2 |
-| **Generated** | 2026-07-12T12:49:36.500Z |
+| **Generated** | 2026-07-12T18:27:15.806Z |
 | **Validation Passed** | YES |
 | **Operational Source of Truth** | CURRENT_HANDOFF.md · KNOWN_BLOCKERS.md · PROJECT_CHANGELOG.md |
 | **Current Handoff Document** | CURRENT_HANDOFF.md |

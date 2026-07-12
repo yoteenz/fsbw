@@ -13,6 +13,10 @@ import {
 import { isWorldCompilerDiagnosticMode } from './diagnostic-mode';
 import { getLastGenerationRequestHttpForensic } from './generation-request-forensic';
 import {
+  bindIndependentForensicRecorderContext,
+  resetIndependentForensicRecorder,
+} from './independent-forensic-recorder';
+import {
   beginRecordShellStageInvocation,
   beginRssSubscriberCallback,
   bindRecordShellStageForensicContext,
@@ -546,6 +550,7 @@ export function clearShellFoundationBlackBox(): void {
   lastProgressAt = null;
   resetGenerateShellDispatchDesk();
   resetRecordShellStageForensic();
+  resetIndependentForensicRecorder();
   subscriberListenerIds.clear();
   heartbeat = {
     lastProgressEvent: null,
@@ -613,6 +618,10 @@ export function beginShellFoundationRun(ctx: {
     surface: ctx.surface ?? 'experience-lab-validation',
   });
   bindRecordShellStageForensicContext({ compileRunId: ctx.compileRunId });
+  bindIndependentForensicRecorderContext({
+    compileRunId: ctx.compileRunId,
+    surface: ctx.surface ?? 'experience-lab-validation',
+  });
   pushTimeline('Shell foundation run started', 'state', 'running', ctx.compileRunId);
   recordShellStateSnapshot('run-started', {
     pipelinePhase: 'shell-pipeline',

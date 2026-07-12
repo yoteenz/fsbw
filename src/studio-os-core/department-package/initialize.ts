@@ -9,6 +9,10 @@ import {
   recordGspuMicroMarker,
   recordGspuPackageRegistryForensic,
 } from '../../studio-os/diagnostics/world-compiler-investigation/generate-shell-package-micro-trace';
+import {
+  recordIfrCheckpoint,
+  recordIfrFunctionCall,
+} from '../../studio-os/diagnostics/world-compiler-investigation/independent-forensic-recorder';
 
 const REGISTRATION_SOURCE = 'bundled-packages:createDepartmentPackageRegistry';
 
@@ -18,6 +22,8 @@ let bootstrapped = false;
 export function ensureDepartmentPackageRegistryInitialized() {
   const diag = isWorldCompilerDiagnosticMode();
   if (diag) {
+    recordIfrCheckpoint('IFR-09', 'before-statement', 'initialize.ts', 'ensureDepartmentPackageRegistryInitialized');
+    recordGspuMicroMarker('GSPU-03b-before-registry-init', 'running');
     recordGspuPackageRegistryForensic({
       bootReady: bootstrapped,
       registryReady: bootstrapped,
@@ -41,15 +47,26 @@ export function ensureDepartmentPackageRegistryInitialized() {
         initializationPromiseState: 'settled',
       });
       recordGspuMicroMarker('GSPU-03c-after-registry-init', 'success', { resultSummary: 'cache-hit' });
+      recordGspuMicroMarker('GSPU-03b-before-registry-init', 'success', { resultSummary: 'cache-hit' });
+      recordIfrCheckpoint('IFR-10', 'after-statement', 'initialize.ts', 'ensureDepartmentPackageRegistryInitialized', 'cache-hit');
     }
     return getDepartmentPackageRegistry();
   }
 
-  const registry = ensureDepartmentPackageRegistry(BUNDLED_DEPARTMENT_PACKAGES, REGISTRATION_SOURCE);
-  validateDepartmentPackageRegistry(registry);
-  bootstrapped = true;
+  const registry = recordIfrFunctionCall(
+    () => {
+      const r = ensureDepartmentPackageRegistry(BUNDLED_DEPARTMENT_PACKAGES, REGISTRATION_SOURCE);
+      validateDepartmentPackageRegistry(r);
+      bootstrapped = true;
+      return r;
+    },
+    'ensureDepartmentPackageRegistryInitialized',
+    'initialize.ts',
+    'first-boot'
+  );
 
   if (diag) {
+    recordGspuMicroMarker('GSPU-03b-before-registry-init', 'success');
     recordGspuMicroMarker('GSPU-03c-after-registry-init', 'success', {
       resultSummary: `registered=${registry.listRegisteredDepartmentIds().length}`,
     });
@@ -63,6 +80,13 @@ export function ensureDepartmentPackageRegistryInitialized() {
       initializationPromiseState: 'settled',
       lockState: 'released',
     });
+    recordIfrCheckpoint(
+      'IFR-10',
+      'after-statement',
+      'initialize.ts',
+      'ensureDepartmentPackageRegistryInitialized',
+      `registered=${registry.listRegisteredDepartmentIds().length}`
+    );
   }
 
   return registry;

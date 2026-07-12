@@ -11,6 +11,19 @@ import type { GenerateShellDispatchDeskState } from '../../../../studio-os/diagn
 import type { GenerateShellPackageMicroTraceState } from '../../../../studio-os/diagnostics/world-compiler-investigation/generate-shell-package-micro-trace';
 import type { RecordShellStageForensicState } from '../../../../studio-os/diagnostics/world-compiler-investigation/record-shell-stage-forensic';
 import { incrementRssRenderLoopCount } from '../../../../studio-os/diagnostics/world-compiler-investigation/record-shell-stage-forensic';
+import {
+  buildIndependentForensicRecorderState,
+  copyIndependentForensicRecorderJson,
+  exportIndependentForensicRecorderJson,
+  loadIndependentForensicRecorderFromSession,
+  markIndependentForensicRecorderPanelMounted,
+  type IndependentForensicRecorderState,
+} from '../../../../studio-os/diagnostics/world-compiler-investigation/independent-forensic-recorder';
+import {
+  buildForensicReconciliationTable,
+  findFirstMissingIfrEventAfterRecordedBefore,
+  findLastProvenIfrEvent,
+} from '../../../../studio-os/diagnostics/world-compiler-investigation/independent-forensic-reconciliation';
 
 type Props = {
   compileRunId: string | null;
@@ -74,6 +87,64 @@ const stageColor: Record<string, string> = {
   failed: '#f87171',
   skipped: '#a8a29e',
 };
+
+function IndependentForensicRecorderSection({
+  ifr,
+  rss,
+  gspuMarkers,
+}: {
+  ifr: IndependentForensicRecorderState;
+  rss: RecordShellStageForensicState;
+  gspuMarkers: GenerateShellPackageMicroTraceState['markers'];
+}) {
+  const lastProven = findLastProvenIfrEvent(ifr.events);
+  const firstGap = findFirstMissingIfrEventAfterRecordedBefore(ifr.events);
+  const reconciliation = buildForensicReconciliationTable({
+    ifrEvents: ifr.events,
+    rssMarkers: rss.markers,
+    gspuMarkers,
+  });
+  const disagreements = reconciliation.filter((r) => r.note);
+
+  return (
+    <div data-independent-forensic-recorder style={{ marginBottom: 10, paddingBottom: 8, borderBottom: '1px solid #44403c' }}>
+      <p style={{ margin: '0 0 6px', fontWeight: 800, color: '#e879f9' }}>INDEPENDENT FORENSIC RECORDER</p>
+      <Row label="Latest sequence" value={String(ifr.latestSequenceNumber)} />
+      <Row
+        label="Latest event"
+        value={ifr.latestEvent ? `${ifr.latestEvent.sourceMarker} · ${ifr.latestEvent.eventType}` : '—'}
+      />
+      <Row label="Last completed marker" value={ifr.lastCompletedSourceMarker ?? lastProven?.sourceMarker ?? '—'} />
+      <Row label="compileRunId" value={ifr.activeCompileRunId ?? '—'} />
+      <Row label="Event count" value={`${ifr.eventCount} / ${ifr.maxEventCapacity}`} />
+      <Row label="Dropped events" value={String(ifr.droppedEventCount)} />
+      <Row label="Persistence" value={ifr.persistenceStatus} />
+      {firstGap ? (
+        <p style={{ margin: '6px 0 0', color: '#fbbf24', fontWeight: 700 }}>
+          First gap: after {firstGap.beforeMarker} → missing {firstGap.missingAfter}
+        </p>
+      ) : null}
+      {disagreements.length > 0 ? (
+        <div style={{ marginTop: 6, maxHeight: 80, overflowY: 'auto', fontSize: 9 }}>
+          {disagreements.slice(0, 6).map((r) => (
+            <div key={r.sourceStep} style={{ color: '#f87171', padding: '2px 0' }}>
+              {r.sourceStep}: IFR={r.independentRecorder} RSS={r.rss} GSPU={r.gspu}
+              {r.note ? ` — ${r.note}` : ''}
+            </div>
+          ))}
+        </div>
+      ) : null}
+      <div style={{ marginTop: 6, maxHeight: 100, overflowY: 'auto' }}>
+        {ifr.events.slice(-24).map((e) => (
+          <div key={e.sequenceNumber} style={{ color: '#d8b4fe', padding: '2px 0', fontSize: 9 }}>
+            #{e.sequenceNumber} {e.sourceMarker} · {e.eventType}
+            {e.safeDetail ? ` · ${e.safeDetail}` : ''}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 function JobBoardForensicsSection({ rss }: { rss: RecordShellStageForensicState }) {
   const current = rss.markers.find((m) => m.markerId === rss.currentMicroMarkerId);
@@ -260,17 +331,25 @@ export function ShellFoundationBlackBoxPanel({
   heartbeatTick,
 }: Props) {
   const [state, setState] = useState<ShellFoundationBlackBoxState>(() => buildShellFoundationBlackBoxState());
+  const [ifrState, setIfrState] = useState<IndependentForensicRecorderState>(() => buildIndependentForensicRecorderState());
   const [copyMsg, setCopyMsg] = useState<string | null>(null);
 
   const refresh = useCallback(() => {
     incrementRssRenderLoopCount();
     loadShellFoundationBlackBoxFromSession();
+    loadIndependentForensicRecorderFromSession();
     setState(buildShellFoundationBlackBoxState());
+    setIfrState(buildIndependentForensicRecorderState());
   }, []);
 
   useEffect(() => {
+    markIndependentForensicRecorderPanelMounted(true);
     refresh();
-    return subscribeShellFoundationBlackBox(() => setState(buildShellFoundationBlackBoxState()));
+    const unsub = subscribeShellFoundationBlackBox(() => setState(buildShellFoundationBlackBoxState()));
+    return () => {
+      markIndependentForensicRecorderPanelMounted(false);
+      unsub();
+    };
   }, [refresh]);
 
   useEffect(() => {
@@ -287,6 +366,18 @@ export function ShellFoundationBlackBoxPanel({
   const handleExport = () => {
     downloadJson(`shell-foundation-black-box-${compileRunId ?? 'run'}.json`, exportShellFoundationBlackBoxJson());
     setCopyMsg('JSON downloaded');
+    window.setTimeout(() => setCopyMsg(null), 3000);
+  };
+
+  const handleCopyIfr = async () => {
+    const ok = await copyIndependentForensicRecorderJson();
+    setCopyMsg(ok ? 'Copied IFR raw JSON' : 'IFR copy failed');
+    window.setTimeout(() => setCopyMsg(null), 3000);
+  };
+
+  const handleExportIfr = () => {
+    downloadJson(`independent-forensic-recorder-${compileRunId ?? 'run'}.json`, exportIndependentForensicRecorderJson());
+    setCopyMsg('IFR JSON downloaded');
     window.setTimeout(() => setCopyMsg(null), 3000);
   };
 
@@ -327,6 +418,22 @@ export function ShellFoundationBlackBoxPanel({
         {' · '}
         Last event: <strong>{state.lastVisibleEvent ?? lastEvent?.label ?? '—'}</strong>
       </p>
+
+      <Section title="INDEPENDENT FORENSIC RECORDER" defaultOpen>
+        <IndependentForensicRecorderSection
+          ifr={ifrState}
+          rss={state.recordShellStageForensic}
+          gspuMarkers={state.dispatchDesk.packageMicroTrace.markers}
+        />
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 6 }}>
+          <button type="button" onClick={() => void handleCopyIfr()} style={btnStyle}>
+            Copy raw events
+          </button>
+          <button type="button" onClick={handleExportIfr} style={btnStyle}>
+            Export raw JSON
+          </button>
+        </div>
+      </Section>
 
       <Section title="JOB BOARD FORENSICS — recordShellStage" defaultOpen>
         <JobBoardForensicsSection rss={state.recordShellStageForensic} />

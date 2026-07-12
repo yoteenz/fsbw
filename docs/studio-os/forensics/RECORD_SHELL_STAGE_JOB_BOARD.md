@@ -47,10 +47,9 @@ Shell Foundation Black Box → **JOB BOARD FORENSICS — recordShellStage**
 
 ## Documented Fact
 
-- Stall occurs before package resolution (GSPU-03 never begins)
-- Leading suspect: `recordShellStage('create-shell-request', 'running')`
-- No auth, request helper, fetch, or provider path reached
-- Wrapper/body duplicate invocation is instrumentation-only
+- RSS telemetry proved `recordShellStage()` returned; GSPU-02a/02b disagreed (02a running, 02b pending)
+- Independent Forensic Recorder (IFR) records execution outside RSS/GSPU/Black Box chain — see `INDEPENDENT_FORENSIC_RECORDER.md`
+- Stall occurs before package resolution in prior captures; IFR export required to prove next boundary post-deploy
 
 ## Inference
 

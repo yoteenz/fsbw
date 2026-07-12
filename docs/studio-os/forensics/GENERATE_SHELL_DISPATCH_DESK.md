@@ -24,7 +24,13 @@ Shell Foundation Black Box panel → **GENERATE SHELL PUBLIC URL — DISPATCH DE
 
 ---
 
-## GSPU-02 → GSPU-03 micro-marker map
+## Evidence authority (post-IFR sprint)
+
+When RSS, GSPU, and IFR disagree, use **Independent Forensic Recorder** raw sequence first (`INDEPENDENT_FORENSIC_RECORDER.md`).
+
+**Documented Fact:** RSS proved `recordShellStage` returned; GSPU-02b could remain pending if marker never received `running` before `success`.
+
+---
 
 | ID | Statement |
 |----|-----------|

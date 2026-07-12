@@ -46,6 +46,7 @@ https://fsbw.vercel.app/admin/studio/experience-lab?compilerDiag=1
 |---------|---------|
 | **Dispatch Desk** | GSPU sub-stages, invocations, auth/fetch/promise state, stall classification |
 | **Job Board** | RSS micro-markers inside `recordShellStage`, subscribers, persistence, reentrancy |
+| **Independent Forensic Recorder** | Append-only raw execution ledger (IFR-01…IFR-16); primary evidence authority |
 | A | Shell pipeline stages (pending/running/success/failed/skipped + duration) |
 | B | Function enter/exit/throw trace |
 | C | Await tracker (pending highlight >5s) |
