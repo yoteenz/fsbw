@@ -204,6 +204,44 @@ Every department in this document includes:
 
 ---
 
+## Creative Services Department™
+
+**Status:** **Planned** / **Conceptual** — Studio World department definition; not a live navigable destination today.
+
+| Field | Detail |
+|-------|--------|
+| **Purpose** | Unified front door for all AI-assisted material production — users request outcomes, not providers |
+| **Responsibilities** | Work-order intake · specialty routing · provider orchestration (via Model Orchestrator™) · job status · quality handoff · audit trail |
+| **Deliverables** | Completed creative assets · generation proofs · job history · approval packages |
+| **Meeting types** | Creative Services Review · Specialty Consult · Generation Status Briefing (Planned) |
+| **Participants** | Model Orchestrator™ (Head of Creative Services) · specialty leads · QA · department requestors · Founder |
+| **Inputs** | ProductionAuthorization · AssetIntent · Scene Blueprint™ · department specs · CIE decisions |
+| **Outputs** | Routed jobs → specialty studios (Interior Design, Motion, Audio, …) → Foundry · Asset Registry |
+| **Relationships** | **Upstream:** Creative Direction · department requests · **Downstream:** Foundry · Production · Asset Registry · **Lateral:** Dispatch Office (serverless entry) · Model Orchestrator™ |
+
+### Specialty studios (Conceptual — internal, not user-facing)
+
+| Specialty | Example outputs |
+|-----------|-----------------|
+| Interior Design | Scene shells, environment layers, room decoration |
+| Architecture | Spatial layouts, structural visuals |
+| Environment Design | Biomes, lighting moods, weather |
+| Furniture Design | Props, set dressing |
+| Lighting Design | Light rigs, HDR, exposure |
+| Typography | Logotype, type treatments |
+| Branding | Campaign visuals, lockups |
+| Product Visualization | PDP heroes, pack shots |
+| Animation · Motion Graphics · Video | Motion and time-based media |
+| Audio | VO, ambience, SFX |
+| 3D | GLB/GLTF spatial assets |
+| Marketing Assets | Social, email heroes |
+
+**Documented Fact:** Providers (FAL, OpenAI Images, Flux, Ideogram, etc.) are **internal specialists** behind this department — hidden from the unified Studio OS experience.
+
+**Roadmap:** [`../studio-os/creative-services/CREATIVE_SERVICES_ROADMAP.md`](../studio-os/creative-services/CREATIVE_SERVICES_ROADMAP.md)
+
+---
+
 ## Foundry™
 
 | Field | Detail |
@@ -263,6 +301,8 @@ BRAND NARR MOTION  PACK   PRODUCT/UX
    └───┴───┴───┬───┴────────┘
                ▼
          RESEARCH · ARCHITECTURE
+               ▼
+    CREATIVE SERVICES (Planned) → specialty routing
                ▼
           FOUNDRY → PRODUCTION → ASSET REGISTRY
                │                    │

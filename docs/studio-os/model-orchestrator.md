@@ -75,3 +75,25 @@ Demo localStorage: `studioOsModelOrchestrator_v1`
 *"Models change. Studio Intelligence™ remains."*
 
 Accent: `#0D9488`
+
+---
+
+## Creative Services Department — Head of Creative Services (Planned)
+
+**Status:** **Planned** / **Conceptual** — not implemented in governed generation runtime today.
+
+The long-term architecture positions **Model Orchestrator™** as **Head of Creative Services** — the provider-agnostic routing layer for all **material creative output** (images, video, audio, 3D, motion), not only reasoning tasks.
+
+| Responsibility | Today | Planned |
+|----------------|-------|---------|
+| Provider selection | FAL wired in `studioBuilderGeneration` path | Policy-based per specialty |
+| Capability routing | Implicit in gateway | Interior Design · Motion · Audio · … |
+| Cost / quality optimization | Not in governed path | Orchestrator + CIE joint routing |
+| Availability / failover | Not implemented | Health-based reroute |
+| User-facing provider choice | N/A | Forbidden — users request outcomes |
+
+**Law (Planned):** Studio Builder, Foundry, Asset Director, and Experience Lab call **Model Orchestrator** — never a provider directly.
+
+**Documented Fact:** Governed generation today flows `generation-gateway` → `studioBuilderGeneration` → FAL without full orchestrator routing.
+
+Full roadmap: [`creative-services/CREATIVE_SERVICES_ROADMAP.md`](./creative-services/CREATIVE_SERVICES_ROADMAP.md)

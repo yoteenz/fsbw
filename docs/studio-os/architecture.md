@@ -63,7 +63,7 @@ Platform logic only. No brand colors, logos, catalog, prompts, shows, talent, or
 | Workspace routing | `workspace/routes.ts` | Route helpers for shell and studio modules |
 | Workspace registry | `workspace/registry.ts` | Injection API — core never imports workspace implementations |
 
-Public entry: `src/studio-os-core/index.ts`
+- [Creative Services Roadmap](../studio-os/creative-services/CREATIVE_SERVICES_ROADMAP.md) — provider-agnostic generation (Planned)
 
 ### Workspace layer (`src/workspaces/`)
 

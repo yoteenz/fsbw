@@ -385,7 +385,8 @@ All four import `api/_lib/creativeProduction/legacy-adapters.ts` (directly or tr
 
 - `docs/studio-os/forensics/SHARED_GENERATION_PIPELINE_REGRESSION.md` — ephemeral `FUNCTION_INVOCATION_FAILED` since `49e48c7e4`
 - `docs/studio-os/forensics/LAYER1_GENERATION_500_REPAIR.md` — handler hardening (historical; superseded for pre-handler class)
-- `docs/studio-os/forensics/GENERATION_FAILED_500_TRACE.md` — client-side trace evidence
+- [`DISPATCH_OFFICE_PREHANDLER_FORENSIC.md`](./DISPATCH_OFFICE_PREHANDLER_FORENSIC.md) — Dispatch Office framing (2026-07-12 sprint)
+- [`../creative-services/CREATIVE_SERVICES_ROADMAP.md`](../creative-services/CREATIVE_SERVICES_ROADMAP.md) — future architecture (Planned)
 
 ---
 

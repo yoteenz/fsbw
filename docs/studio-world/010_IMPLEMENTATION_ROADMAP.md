@@ -140,6 +140,20 @@ Studio World™ is built in **phases** — not features. Each phase proves a lay
 | Marketing Campaign Readiness | Launch gate |
 | Distribution Dock | Publish handoff |
 
+### Creative Services infrastructure (Planned — parallel track)
+
+**Status:** **Planned** / **Conceptual** — documented in [`../studio-os/creative-services/CREATIVE_SERVICES_ROADMAP.md`](../studio-os/creative-services/CREATIVE_SERVICES_ROADMAP.md). Does not imply implementation today.
+
+| Work | Outcome |
+|------|---------|
+| Dispatch Office repair | Governed serverless entry returns JSON |
+| Model Orchestrator as Head of Creative Services | Provider-agnostic routing layer |
+| Multi-provider adapters | FAL + additional specialists behind one interface |
+| Async creative job queue | Work-order model — notify when ready |
+| Creative Services Department™ | Studio World district with specialty studios |
+
+**Prerequisite (Documented Fact):** Dispatch Office pre-handler failure must be resolved before async or multi-provider work proceeds.
+
 **Gate:** Full pipeline walkable — direction to registered asset.  
 **Measures:** Handoff visibility · authorization ceremony · lineage complete.
 
@@ -241,6 +255,7 @@ Phase 6 (Operating Company)
 
 - [Foundation Sprint Eras 0–7](../studio-os/foundation-sprint/12_IMPLEMENTATION_ROADMAP.md)
 - [Executive OS Multi-Year](../studio-os/executive-operating-system-sprint/10_MULTI_YEAR_EXPERIENCE_ROADMAP.md)
+- [Creative Services Roadmap](../studio-os/creative-services/CREATIVE_SERVICES_ROADMAP.md) — **Planned** provider-agnostic generation
 - [STUDIO_WORLD_BIBLE.md](../studio-os/STUDIO_WORLD_BIBLE.md) — Section XV
 
 ---
