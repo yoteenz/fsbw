@@ -129,7 +129,25 @@ Runtime mutation counts observed via storage write tap (genesis/studio keys only
 
 ---
 
+## Evolution: Studio OS Nervous System™
+
+**Classification:** Planned architecture · **Documented Fact** (this forensic layer exists today)
+
+Black Box Investigation is the **forensic precursor** to the permanent **[Studio OS Nervous System™](./STUDIO_OS_NERVOUS_SYSTEM.md)**.
+
+| Today (Documented Fact) | Tomorrow (Planned) |
+|-------------------------|-------------------|
+| Append-only Flight Recorder | Continuous operational intelligence |
+| Forensic routes (`/__studio-os-flight-recorder`) | Org-scoped health always-on |
+| Manual session export | Operational memory + incident history |
+| Observe-only during incidents | Every subsystem explains itself proactively |
+
+**Rule:** Flight Recorder capabilities are **not** temporary. They seed the Nervous System. Do not remove forensic instrumentation when Nervous System phases ship — **elevate** it.
+
+---
+
 ## Related
 
+- **[Studio OS Nervous System™](./STUDIO_OS_NERVOUS_SYSTEM.md)** — Planned operational intelligence constitution
 - Experience Engine bisect: `/__experience-engine-bisect` · `docs/studio-os/experience-engine-freeze-bisect.md`
 - Main-thread overlay: `window.__MTD` (unchanged by this sprint)

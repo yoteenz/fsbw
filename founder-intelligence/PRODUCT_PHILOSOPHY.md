@@ -21,6 +21,7 @@ What Studio OS builds — and refuses to build.
 | **Place over menu** | Navigation is geography, not feature grids |
 | **Governance over generation** | Material assets need authorization |
 | **Memory over repetition** | Capsules + motherboard replace re-explaining |
+| **Self-observability** | Diagnostics become [Nervous System™](../docs/studio-os/STUDIO_OS_NERVOUS_SYSTEM.md) — systems explain themselves (**Planned**; Black Box **Documented Fact**) |
 | **Mobile-first product** | Implementation and QA default to real phones |
 
 ## What we build
@@ -30,6 +31,7 @@ What Studio OS builds — and refuses to build.
 - Knowledge commerce and marketplace surfaces  
 - Multi-company routing and organization boundaries  
 - Institutional export (Context, DNA, Founder Intelligence capsules)  
+- **Studio OS Nervous System™** — operational intelligence; org self-observability (**Planned** architecture)  
 
 ## What we refuse
 

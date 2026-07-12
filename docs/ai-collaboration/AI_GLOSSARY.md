@@ -103,7 +103,10 @@ Signed authorization required for material generation on governed API routes. Va
 ## Diagnostics
 
 ### Black Box / Flight Recorder™
-Global append-only operational event recorder. Routes: `/__studio-os-flight-recorder`, etc. Isolated from main app boot.
+Global append-only operational event recorder. Routes: `/__studio-os-flight-recorder`, etc. Isolated from main app boot. **Documented Fact** — forensic precursor to Nervous System™.
+
+### Studio OS Nervous System™
+**Planned** permanent operational intelligence layer — every subsystem explains itself; every organization knows its health. Canon: `docs/studio-os/STUDIO_OS_NERVOUS_SYSTEM.md`. Black Box evolves into this; not temporary debug mode.
 
 ### FAILED_AT_LAYER_1
 Terminal diagnostic freeze state when Layer 1 generation fails in compiler diagnostic mode.

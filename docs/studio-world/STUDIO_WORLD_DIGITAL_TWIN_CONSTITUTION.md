@@ -133,6 +133,7 @@ They are not decorative environments. They are not fictional destinations. They 
 - Deliver **services**
 - Train employees (via Studio Institute integration)
 - Participate in **Studio Institute partnerships** (**Planned**)
+- Inherit **Studio OS Nervous System™** operational self-observability (**Planned** full rollout; Black Box precursor **Documented Fact** on Frontal Slayer)
 
 **Educational Philosophy:** Every organization may also become a **learning environment** — but the organization itself is real. The classroom layer is additive, not substitutive.
 

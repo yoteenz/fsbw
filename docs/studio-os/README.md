@@ -4,7 +4,8 @@ Platform documentation for the studio os multi-brand operating system. **No Work
 
 | Document | Description |
 |----------|-------------|
-| [../../STUDIO_OS_BIBLE/THE_SPATIAL_COMPUTING_PHILOSOPHY.md](../../STUDIO_OS_BIBLE/THE_SPATIAL_COMPUTING_PHILOSOPHY.md) | **The Spatial Computing Philosophy™** — Studio OS Bible design constitution: places replace pages, departments replace features, **Where does it live?** rule |
+| [STUDIO_OS_NERVOUS_SYSTEM.md](./STUDIO_OS_NERVOUS_SYSTEM.md) | **Studio OS Nervous System™** — Planned operational intelligence; Black Box evolution; org health; Institute education tie-in |
+| [black-box-investigation.md](./black-box-investigation.md) | **Black Box / Flight Recorder™** — Documented Fact forensic precursor to Nervous System |
 | [../../STUDIO_OS_BIBLE/README.md](../../STUDIO_OS_BIBLE/README.md) | **Studio OS Bible™** — index of permanent design constitution documents |
 | [../../STUDIO_OS_BIBLE/SPATIAL_ARCHITECTURE_REVIEW.md](../../STUDIO_OS_BIBLE/SPATIAL_ARCHITECTURE_REVIEW.md) | **Spatial Architecture Review Engine™** — review before code; Composer as Chief Architect; design score gate |
 | [../../STUDIO_OS_BIBLE/BRAND_LANGUAGE_ENGINE.md](../../STUDIO_OS_BIBLE/BRAND_LANGUAGE_ENGINE.md) | **Brand Language Engine™** — naming constitution, tiers, frameworks, social handle methodology, Studio Test |

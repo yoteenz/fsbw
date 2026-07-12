@@ -36,7 +36,8 @@ This document is the **educational constitution** of Studio World. It does not r
 
 | Document | Relationship |
 |----------|--------------|
-| **[STUDIO_WORLD_DIGITAL_TWIN_CONSTITUTION.md](../studio-world/STUDIO_WORLD_DIGITAL_TWIN_CONSTITUTION.md)** | **Operational identity** — Studio World = digital twin of real economy; real organizations; Institute prepares contributors |
+| **[STUDIO_OS_NERVOUS_SYSTEM.md](../studio-os/STUDIO_OS_NERVOUS_SYSTEM.md)** | **Operational intelligence** — how real organizations observe and explain themselves; Institute teaches via Nervous System |
+| **[STUDIO_WORLD_DIGITAL_TWIN_CONSTITUTION.md](../studio-world/STUDIO_WORLD_DIGITAL_TWIN_CONSTITUTION.md)** | **Operational identity** — Studio World = digital twin of real economy; real organizations |
 | **[STUDIO_WORLD_LIVING_SYSTEMS_BIBLE.md](../studio-world/STUDIO_WORLD_LIVING_SYSTEMS_BIBLE.md)** | **Living Systems™** — simulations within Institute; **Planned**, never production |
 | **[STUDIO_WORLD_BIBLE.md](../studio-os/STUDIO_WORLD_BIBLE.md)** | Studio World experience constitution — Institute is a defining pillar of the living city |
 | **[STUDIO_INSTITUTE_VISION_BIBLE_V2.md](./STUDIO_INSTITUTE_VISION_BIBLE_V2.md)** | Product canon — Adaptive Learning Engine; **subordinate to this LOS Constitution** for educational philosophy |
@@ -171,6 +172,9 @@ Every element of Studio World is a potential classroom:
 | **Departments** | Specialized craft rooms — narrow expertise in situ |
 | **Buildings** | Bounded systems — entrance, interior logic, exit |
 | **Simulations** | Safe failure environments — break, repair, understand |
+| **Operational observability** | **Studio OS Nervous System™** — how real organizations explain health, incidents, recovery (**Planned** full curriculum integration) |
+
+**Educational Philosophy:** Students learn systems thinking by observing **real organizational health** (Nervous System) and practicing in **educational simulations** (Living Systems™ within Institute). See [STUDIO_OS_NERVOUS_SYSTEM.md](../studio-os/STUDIO_OS_NERVOUS_SYSTEM.md).
 
 ## Discipline-to-Organization Map
 

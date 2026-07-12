@@ -47276,3 +47276,25 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 
 **Spatial Architecture Review:** SKIPPED — forensic instrumentation only.
 
+---
+
+## 2026-07-12 — Studio OS Nervous System™ Founder Vision sprint
+
+**Context:** Founder Vision + Core Architecture sprint — permanently establish philosophy and Planned architecture for Studio OS self-observability. Documentation only; not debugging/repair/implementation.
+
+**Founder vision:** Diagnostic instrumentation ("cameras") from Experience Engine forensics is NOT temporary — it is permanent architectural capability. Every subsystem should explain itself before humans investigate.
+
+**Canon created:** `docs/studio-os/STUDIO_OS_NERVOUS_SYSTEM.md` v1.0.0 — Operational Intelligence Layer (Planned), health signals, telemetry, timelines, dependency graphs, stall/drift/regression detection, causal chains, operational memory, org health/readiness, Founder Dashboard (Conceptual). Mansion translations throughout.
+
+**Classifications:** Black Box/Flight Recorder = Documented Fact (precursor); full Nervous System = Planned; Founder Dashboard = Conceptual; Institute education tie-in = Educational Philosophy.
+
+**Cross-refs updated:** black-box-investigation.md (evolution path), docs/studio-os/README.md, architecture.md, AI_GLOSSARY.md, LOS Constitution, Digital Twin Constitution, founder-intelligence/PRODUCT_PHILOSOPHY.md, motherboard/CORE.md.
+
+**Studio World:** Every real org (Frontal Slayer, future clients) inherits Nervous System governance.
+
+**Studio Institute:** Students learn how healthy organizations think via Nervous System observability + Living Systems simulations.
+
+**Not updated:** CURRENT_HANDOFF, KNOWN_BLOCKERS.
+
+**Spatial Architecture Review:** SKIPPED — docs-only architecture sprint.
+
