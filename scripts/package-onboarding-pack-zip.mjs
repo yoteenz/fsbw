@@ -10,12 +10,14 @@ import { execSync } from 'node:child_process';
 import {
   generateMachineReadableLayer,
   validateReportTemplateSections,
+  validateArchiveInventory,
+  OPTIONAL_ARCHIVE_FILES,
   REPORT_SECTIONS,
 } from './lib/onboarding-pack-machine-readable.mjs';
 
 const ROOT = path.resolve(import.meta.dirname, '..');
 
-const PACK_VERSION = '1.2.0';
+const PACK_VERSION = '1.2.1';
 const PACK_FOLDER = 'StudioOS_OnboardingPack';
 const LATEST_ALIAS = 'latest.zip';
 const DOWNLOAD_BASE = '/downloads/onboarding-packs';
@@ -390,6 +392,8 @@ function generateMasterManifest(entries, meta) {
     `| **Generated (UTC)** | ${meta.generatedAt} |`,
     `| **Repository commit** | ${meta.gitCommit} |`,
     `| **Required file count** | ${entries.length} |`,
+    `| **Optional file count** | ${OPTIONAL_ARCHIVE_FILES.length} |`,
+    `| **Total archive file count** | ${entries.length + OPTIONAL_ARCHIVE_FILES.length} |`,
     `| **Manifest checksum** | ${meta.manifestChecksum} |`,
     '',
     '## Machine-readable index (phase 0)',
@@ -405,7 +409,15 @@ function generateMasterManifest(entries, meta) {
     '',
     '## Per-capsule counts',
     '',
-    ...Object.entries(meta.perCapsuleFileCounts).map(([k, v]) => `- **${k}:** ${v} files`),
+    ...Object.entries(meta.perCapsuleFileCounts).map(
+      ([k, v]) => `- **${k}:** ${v.requiredFileCount} required + ${v.optionalFileCount} optional = ${v.totalFileCount} total`
+    ),
+    '',
+    '## Optional archive files (not in reading order)',
+    '',
+    ...OPTIONAL_ARCHIVE_FILES.map(
+      (f) => `- \`${f.path}\` — ${f.purpose}`
+    ),
     '',
     `## Expected report sections (${REPORT_SECTIONS.length})`,
     '',
@@ -424,6 +436,7 @@ function generateMasterManifest(entries, meta) {
 }
 
 function writeValidation(packDir, meta, coverageOk) {
+  const inv = meta.archiveInventory ?? {};
   const body = `# Onboarding Pack Validation — Auto-Generated
 
 | Field | Value |
@@ -433,8 +446,11 @@ function writeValidation(packDir, meta, coverageOk) {
 | **Git commit** | ${meta.gitCommit} |
 | **Validation** | pass |
 | **Content coverage** | ${coverageOk ? 'pass' : 'fail'} |
-| **Required files** | ${meta.requiredFileCount} |
-| **Actual files** | ${meta.actualFileCount} |
+| **Required files** | ${inv.requiredFileCount ?? meta.requiredFileCount} |
+| **Optional files** | ${inv.optionalFileCount ?? 0} |
+| **Generated metadata files** | ${inv.generatedMetadataFileCount ?? 0} |
+| **Total inventoried files** | ${inv.totalInventoriedFileCount ?? meta.requiredFileCount} |
+| **Actual archive files** | ${inv.actualArchiveFileCount ?? meta.actualArchiveFileCount} |
 | **Archive checksum** | ${meta.archiveChecksum} |
 
 ## Included capsules
@@ -445,12 +461,32 @@ ${meta.includedCapsules.map((c) => `- ${c}`).join('\n')}
 
 ${meta.missingOptionalCapsules.length ? meta.missingOptionalCapsules.map((c) => `- ${c}`).join('\n') : '- none'}
 
+## Optional archive files (not in MASTER_MANIFEST reading order)
+
+${(inv.optionalFiles ?? [])
+  .map(
+    (f) =>
+      `- \`${f.path}\` — ${f.purpose} (${f.classification}; mustRead=${f.mustRead})`
+  )
+  .join('\n')}
+
+## Per-capsule counts
+
+${Object.entries(meta.perCapsuleFileCounts ?? {})
+  .map(
+    ([k, v]) =>
+      `- **${k}:** ${v.requiredFileCount} required + ${v.optionalFileCount} optional = ${v.totalFileCount} total`
+  )
+  .join('\n')}
+
 ## Checks
 
 - ✓ START_HERE.md, MASTER_MANIFEST.md, ONBOARDING_GUIDE.md, ONBOARDING_REPORT_TEMPLATE.md present
 - ✓ Machine-readable index layer (onboarding-state.json + 5 companion files) generated
 - ✓ Required capsules present (including Collaboration Intelligence Capsule)
 - ✓ Master manifest entries exist on disk
+- ✓ All archive files inventoried (required + optional)
+- ✓ Archive inventory reconciliation passed (no unindexed files)
 - ✓ Founder Intelligence content coverage validated
 - ✓ Collaboration Intelligence content coverage validated
 - ✓ All ${REPORT_SECTIONS.length} report sections answerable from indexed documents
@@ -463,8 +499,33 @@ ${meta.missingOptionalCapsules.length ? meta.missingOptionalCapsules.map((c) => 
   fs.writeFileSync(path.join(packDir, 'ONBOARDING_PACK_VALIDATION.md'), body);
 }
 
+function createZip(stagingRoot, zipPath) {
+  if (fs.existsSync(zipPath)) fs.unlinkSync(zipPath);
+  execSync(`zip -r -q ${JSON.stringify(zipPath)} ${JSON.stringify(PACK_FOLDER)}`, {
+    cwd: stagingRoot,
+    stdio: 'inherit',
+  });
+  verifyZip(zipPath);
+}
+
 function verifyZip(zipPath) {
   execSync(`unzip -t ${JSON.stringify(zipPath)}`, { stdio: 'pipe' });
+}
+
+function finalizeArchiveInventory(packDir, manifestEntries, perCapsuleCounts) {
+  const stagingResult = validateArchiveInventory({
+    target: packDir,
+    isZip: false,
+    manifestEntries,
+    optionalFiles: OPTIONAL_ARCHIVE_FILES,
+    perCapsuleCounts,
+  });
+  if (!stagingResult.pass) {
+    console.error('\n❌ Staging archive inventory validation failed:\n');
+    for (const e of stagingResult.errors) console.error(`   • ${e}`);
+    process.exit(1);
+  }
+  return stagingResult;
 }
 
 function packageOnboardingPack() {
@@ -518,14 +579,6 @@ function packageOnboardingPack() {
   const gitCommit = readGitCommit();
   const manifestChecksum = sha256Text(JSON.stringify(manifestEntries));
 
-  const perCapsuleFileCounts = {
-    'AI Context': CONTEXT_READING.length + 2,
-    'Founder Intelligence': FIC_READING.length + 1,
-    'Collaboration Intelligence': CI_READING.length + 1,
-    'Machine-Readable Index': 6,
-  };
-  if (includeDna) perCapsuleFileCounts['Studio DNA'] = DNA_READING.length + 1;
-
   const meta = {
     generatedAt,
     gitCommit,
@@ -533,7 +586,7 @@ function packageOnboardingPack() {
     requiredFileCount: manifestEntries.length,
     includedCapsules,
     missingOptionalCapsules: missingOptional,
-    perCapsuleFileCounts,
+    perCapsuleFileCounts: {},
   };
 
   const templateErrors = validateReportTemplateSections(packDir);
@@ -572,9 +625,23 @@ function packageOnboardingPack() {
     process.exit(1);
   }
 
+  const perCapsuleFileCounts = machineReadable.perCapsuleCounts;
+
+  const archiveInventory = {
+    requiredFileCount: manifestEntries.length,
+    optionalFileCount: OPTIONAL_ARCHIVE_FILES.length,
+    generatedMetadataFileCount: 0,
+    totalInventoriedFileCount: manifestEntries.length + OPTIONAL_ARCHIVE_FILES.length,
+    actualArchiveFileCount: null,
+    perCapsuleCounts: perCapsuleFileCounts,
+    optionalFiles: machineReadable.onboardingState.archiveInventory.optionalFiles,
+  };
+
+  meta.perCapsuleFileCounts = perCapsuleFileCounts;
+  meta.archiveInventory = archiveInventory;
+
   fs.writeFileSync(path.join(packDir, 'MASTER_MANIFEST.md'), generateMasterManifest(manifestEntries, meta));
 
-  const actualFileCount = manifestEntries.length;
   const onboardingPackJson = {
     schemaVersion: 2,
     packVersion: PACK_VERSION,
@@ -596,8 +663,12 @@ function packageOnboardingPack() {
     })),
     optionalCapsules: ['Studio DNA Capsule'],
     missingOptionalCapsules: missingOptional,
-    requiredFileCount: manifestEntries.length,
-    actualFileCount,
+    requiredFileCount: archiveInventory.requiredFileCount,
+    optionalFileCount: archiveInventory.optionalFileCount,
+    generatedMetadataFileCount: archiveInventory.generatedMetadataFileCount,
+    totalInventoriedFileCount: archiveInventory.totalInventoriedFileCount,
+    actualArchiveFileCount: null,
+    archiveInventory,
     perCapsuleFileCounts,
     masterManifestChecksum: manifestChecksum,
     validationStatus: 'pass',
@@ -613,7 +684,7 @@ function packageOnboardingPack() {
       'topic-index.json',
       'source-of-truth-map.json',
     ],
-    compatibilityVersion: '1.2.0',
+    compatibilityVersion: '1.2.1',
     permanentLatestUrl: PERMANENT_LATEST_PATH,
     capsules: {
       context: { version: contextRelease.currentVersion, artifact: contextRelease.artifact },
@@ -623,16 +694,23 @@ function packageOnboardingPack() {
     },
   };
 
-  meta.actualFileCount = actualFileCount;
-  meta.requiredFileCount = manifestEntries.length;
-  writeValidation(packDir, meta, true);
-
+  writeValidation(packDir, { ...meta, archiveChecksum: null }, true);
   fs.writeFileSync(path.join(packDir, 'onboarding-pack.json'), JSON.stringify(onboardingPackJson, null, 2) + '\n');
+
+  finalizeArchiveInventory(packDir, manifestEntries, perCapsuleFileCounts);
 
   for (const entry of manifestEntries) {
     const fp = path.join(packDir, entry.path);
     if (!fs.existsSync(fp)) {
       console.error(`\n❌ Master manifest entry missing: ${entry.path}\n`);
+      process.exit(1);
+    }
+  }
+
+  for (const opt of OPTIONAL_ARCHIVE_FILES) {
+    const fp = path.join(packDir, opt.path);
+    if (!fs.existsSync(fp)) {
+      console.error(`\n❌ Optional archive file missing: ${opt.path}\n`);
       process.exit(1);
     }
   }
@@ -643,24 +721,96 @@ function packageOnboardingPack() {
   fs.mkdirSync(archiveOut, { recursive: true });
 
   const zipPath = path.join(archiveOut, fileName);
-  execSync(`zip -r -q ${JSON.stringify(zipPath)} ${JSON.stringify(PACK_FOLDER)}`, {
-    cwd: stagingRoot,
-    stdio: 'inherit',
-  });
-  verifyZip(zipPath);
+  createZip(stagingRoot, zipPath);
 
-  const archiveChecksum = sha256File(zipPath);
-  const stat = fs.statSync(zipPath);
+  let zipInventory = validateArchiveInventory({
+    target: zipPath,
+    isZip: true,
+    packFolderName: PACK_FOLDER,
+    manifestEntries,
+    optionalFiles: OPTIONAL_ARCHIVE_FILES,
+    perCapsuleCounts: perCapsuleFileCounts,
+  });
+  if (!zipInventory.pass) {
+    console.error('\n❌ Initial ZIP archive inventory validation failed:\n');
+    for (const e of zipInventory.errors) console.error(`   • ${e}`);
+    process.exit(1);
+  }
+
+  let archiveChecksum = sha256File(zipPath);
+  let stat = fs.statSync(zipPath);
+
   onboardingPackJson.archiveChecksum = archiveChecksum;
+  onboardingPackJson.actualArchiveFileCount = zipInventory.counts.actualArchiveFileCount;
   onboardingPackJson.machineReadableValidation = machineReadable.validation.pass ? 'pass' : 'fail';
+  onboardingPackJson.archiveInventory.actualArchiveFileCount = zipInventory.counts.actualArchiveFileCount;
   fs.writeFileSync(path.join(packDir, 'onboarding-pack.json'), JSON.stringify(onboardingPackJson, null, 2) + '\n');
 
   const statePath = path.join(packDir, 'onboarding-state.json');
   const state = JSON.parse(fs.readFileSync(statePath, 'utf8'));
   state.checksumValidation.archiveChecksumSha256 = archiveChecksum;
   state.checksumValidation.status = 'pass';
+  state.archiveInventory.actualArchiveFileCount = zipInventory.counts.actualArchiveFileCount;
   fs.writeFileSync(statePath, JSON.stringify(state, null, 2) + '\n');
-  writeValidation(packDir, { ...meta, actualFileCount, archiveChecksum }, true);
+  writeValidation(
+    packDir,
+    {
+      ...meta,
+      archiveChecksum,
+      archiveInventory: { ...archiveInventory, actualArchiveFileCount: zipInventory.counts.actualArchiveFileCount },
+    },
+    true
+  );
+
+  createZip(stagingRoot, zipPath);
+  archiveChecksum = sha256File(zipPath);
+  stat = fs.statSync(zipPath);
+
+  zipInventory = validateArchiveInventory({
+    target: zipPath,
+    isZip: true,
+    packFolderName: PACK_FOLDER,
+    manifestEntries,
+    optionalFiles: OPTIONAL_ARCHIVE_FILES,
+    perCapsuleCounts: perCapsuleFileCounts,
+  });
+  if (!zipInventory.pass) {
+    console.error('\n❌ Final production ZIP archive inventory validation failed:\n');
+    for (const e of zipInventory.errors) console.error(`   • ${e}`);
+    process.exit(1);
+  }
+
+  onboardingPackJson.archiveChecksum = archiveChecksum;
+  fs.writeFileSync(path.join(packDir, 'onboarding-pack.json'), JSON.stringify(onboardingPackJson, null, 2) + '\n');
+  state.checksumValidation.archiveChecksumSha256 = archiveChecksum;
+  fs.writeFileSync(statePath, JSON.stringify(state, null, 2) + '\n');
+  writeValidation(
+    packDir,
+    {
+      ...meta,
+      archiveChecksum,
+      archiveInventory: { ...archiveInventory, actualArchiveFileCount: zipInventory.counts.actualArchiveFileCount },
+    },
+    true
+  );
+
+  createZip(stagingRoot, zipPath);
+  archiveChecksum = sha256File(zipPath);
+  stat = fs.statSync(zipPath);
+
+  zipInventory = validateArchiveInventory({
+    target: zipPath,
+    isZip: true,
+    packFolderName: PACK_FOLDER,
+    manifestEntries,
+    optionalFiles: OPTIONAL_ARCHIVE_FILES,
+    perCapsuleCounts: perCapsuleFileCounts,
+  });
+  if (!zipInventory.pass) {
+    console.error('\n❌ Published ZIP archive inventory validation failed:\n');
+    for (const e of zipInventory.errors) console.error(`   • ${e}`);
+    process.exit(1);
+  }
 
   const stagingLatest = path.join(publicOut, '.latest-staging.zip');
   fs.copyFileSync(zipPath, stagingLatest);
@@ -680,7 +830,12 @@ function packageOnboardingPack() {
     validationStatus: 'pass',
     contentCoverageStatus: 'pass',
     machineReadableValidation: 'pass',
-    documentCount: actualFileCount,
+    requiredFileCount: archiveInventory.requiredFileCount,
+    optionalFileCount: archiveInventory.optionalFileCount,
+    generatedMetadataFileCount: archiveInventory.generatedMetadataFileCount,
+    totalInventoriedFileCount: archiveInventory.totalInventoriedFileCount,
+    actualArchiveFileCount: zipInventory.counts.actualArchiveFileCount,
+    documentCount: archiveInventory.requiredFileCount,
     checksumSha256: archiveChecksum,
     artifact: fileName,
     permanentLatestUrl: PERMANENT_LATEST_PATH,
@@ -689,6 +844,7 @@ function packageOnboardingPack() {
     versionedDownloadPath: `${DOWNLOAD_BASE}/${ARCHIVE_SUBDIR}/${fileName}`,
     includedCapsules: onboardingPackJson.includedCapsules,
     missingOptionalCapsules: missingOptional,
+    optionalArchiveFiles: OPTIONAL_ARCHIVE_FILES.map((f) => f.path),
     packageHealth: 100,
     readyForAiOnboarding: true,
   };
@@ -709,7 +865,10 @@ function packageOnboardingPack() {
   console.log(`  Generated:        ${generatedAt}`);
   console.log(`  Validation:       pass`);
   console.log(`  Included:         ${includedCapsules.join(', ')}`);
-  console.log(`  Required files:   ${actualFileCount}`);
+  console.log(`  Required files:   ${archiveInventory.requiredFileCount}`);
+  console.log(`  Optional files:   ${archiveInventory.optionalFileCount}`);
+  console.log(`  Archive total:    ${zipInventory.counts.actualArchiveFileCount}`);
+  console.log(`  Archive checksum: ${archiveChecksum}`);
   console.log(`  Permanent latest: ${PERMANENT_LATEST_PATH}`);
   console.log(`  Dashboard:        /onboarding`);
   console.log(`  Report sections:  ${REPORT_SECTIONS.length}\n`);

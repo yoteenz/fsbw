@@ -46909,3 +46909,45 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 
 **Classification:** Server/Platform + Client serialization; likely environment (function timeout during FAL subscribe). Awaiting founder approval before repair.
 
+---
+
+## 2026-07-11 — Invite Manager: owner view/play/download captured interview work
+
+**Context:** Founder on Invite Manager (`/studio-institute/invites`) saw Karea Armstrong at 25% in progress but no way to open recordings/submissions from the invite card — only metadata (progress %, current question, engagement timestamps). Asked to wire View interview / Play recording / Download submissions.
+
+**Shipped:**
+- **API:** `GET /api/studio-institute/invite-capture?inviteId=` — owner-auth (`X-Studio-Institute-Owner-Key` or admin email); loads invite `session_id` → `expert_capture_sessions` + `expert_capture_media`; returns answers (transcript, AI understanding, status) + **signed playback URLs** (1h) from `expert-capture-media` bucket
+- **Shared auth helper:** `api/_lib/studioInstituteOwnerAuth.ts` (`isStudioInstituteOwner`)
+- **Client:** `invite-capture-api.ts` — `fetchOwnerInviteCaptureReview`, `downloadOwnerCaptureExport` (JSON bundle with transcripts + media URLs)
+- **UI:** `InviteCaptureReviewPanel` on each invite card — **View captured work** toggles panel; expand per-answer for transcript + inline video/audio player + Open recording link; **Download submissions (JSON)** + Refresh
+- **Tests:** owner export bundle shape in `invite-system.test.ts` (15 pass)
+
+**Usage:** Unlock Invite Manager → invite card → **View captured work** → expand questions → play recordings or download JSON export.
+
+**Storage (unchanged):** Supabase `expert_capture_sessions.session_document`, `expert_capture_media`, Storage bucket `expert-capture-media`.
+
+---
+
+## 2026-07-12 — Unified Onboarding Pack v1.2.1: archive inventory reconciliation (P0)
+
+**Context:** External onboarding validation passed all four capsules and 93 required manifest files but **failed final archive reconciliation** — production ZIP had **96 files** while metadata declared **93 required / 0 optional**. Three unindexed files: `AI_Context_Capsule/ONBOARDING_REPORT.md`, `Founder_Intelligence_Capsule/README.md`, `Collaboration_Intelligence_Capsule/README.md`.
+
+**Classification (retain as optional, not removed):**
+| File | Decision | Reason |
+|------|----------|--------|
+| `AI_Context_Capsule/ONBOARDING_REPORT.md` | Optional | Standalone Context Capsule backward-compat report template; unified pack uses root `ONBOARDING_REPORT_TEMPLATE.md` (file itself states this) |
+| `Founder_Intelligence_Capsule/README.md` | Optional | Capsule overview + unified-pack pointer; not duplicate of `README_FIRST.md` (entry-point vs scope overview) |
+| `Collaboration_Intelligence_Capsule/README.md` | Optional | Capsule scope/authority overview for standalone distribution; `README_FIRST.md` remains required entry |
+
+**Shipped (v1.2.1):**
+- `scripts/lib/onboarding-pack-machine-readable.mjs` — `OPTIONAL_ARCHIVE_FILES` (3 entries with path, capsule, purpose, classification, mustRead, checksum, notInMasterManifestReason); `optionalFiles` in `onboarding-index.json`; `archiveInventory` block in `onboarding-state.json`; distinct count fields (`requiredFileCount`, `optionalFileCount`, `generatedMetadataFileCount`, `totalInventoriedFileCount`, `actualArchiveFileCount`); `validateArchiveInventory()` + `listArchiveFiles()` — hard fail on unindexed ZIP/staging files, count mismatches, missing required/optional; filter ZIP directory entries
+- `scripts/package-onboarding-pack-zip.mjs` — v1.2.1; staging + final ZIP inventory validation; re-zip after metadata finalization; updated `ONBOARDING_PACK_VALIDATION.md` / `MASTER_MANIFEST.md` / `onboarding-pack.json` / `release.json` count semantics
+- Constants: `api/_lib/onboardingPackConstants.ts`, `src/studio-os-core/onboarding-pack-export/constants.ts` → `1.2.1`
+- Regenerated artifacts: `public/downloads/onboarding-packs/latest.zip`, `archive/StudioOS_OnboardingPack_v1.2.1.zip`, `release.json`, `api/_lib/onboarding-pack-release.json`
+
+**Reconciled totals:** required 93 + optional 3 = archive 96. Per-capsule: AI Context 16+1=17, Founder Intelligence 29+1=30, Collaboration Intelligence 20+1=21, Studio DNA 16+0=16.
+
+**Local ZIP proof:** extracted + `unzip -Z1` validation — `Unindexed files: NONE`, staging pass + ZIP pass.
+
+**Stable URL:** `https://fsbw.vercel.app/onboarding/latest`
+

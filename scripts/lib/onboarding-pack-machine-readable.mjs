@@ -5,8 +5,43 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
+import { execSync } from 'node:child_process';
 
 export const MACHINE_READABLE_SCHEMA_VERSION = 2;
+
+/** Optional archive files copied with capsule trees but excluded from MASTER_MANIFEST reading order. */
+export const OPTIONAL_ARCHIVE_FILES = [
+  {
+    path: 'AI_Context_Capsule/ONBOARDING_REPORT.md',
+    capsule: 'AI Context Capsule',
+    purpose: 'Standalone Context Capsule onboarding report template (backward compatibility)',
+    classification: 'compatibility-entry-point',
+    mustRead: false,
+    supportsReportSections: [],
+    notInMasterManifestReason:
+      'Unified pack uses root ONBOARDING_REPORT_TEMPLATE.md; retained for standalone Context Capsule distribution only',
+  },
+  {
+    path: 'Founder_Intelligence_Capsule/README.md',
+    capsule: 'Founder Intelligence Capsule',
+    purpose: 'Capsule overview and unified-pack pointer for standalone distribution',
+    classification: 'compatibility-entry-point',
+    mustRead: false,
+    supportsReportSections: [],
+    notInMasterManifestReason:
+      'Informational overview; README_FIRST.md is the required capsule entry point in unified pack reading order',
+  },
+  {
+    path: 'Collaboration_Intelligence_Capsule/README.md',
+    capsule: 'Collaboration Intelligence Capsule',
+    purpose: 'Capsule scope and authority overview for standalone distribution',
+    classification: 'compatibility-entry-point',
+    mustRead: false,
+    supportsReportSections: [],
+    notInMasterManifestReason:
+      'Informational overview; README_FIRST.md is the required capsule entry point in unified pack reading order',
+  },
+];
 
 export const REPORT_SECTIONS = [
   { id: 'onboarding-compliance', number: 1, title: 'Onboarding Compliance', templateHeading: '# 1. Onboarding Compliance' },
@@ -330,6 +365,21 @@ export function registerCapsuleDocuments(contextReading, ficReading, dnaReading,
   if (includeDna) capsuleMeta('Studio DNA Capsule', 'Studio_DNA_Capsule', dnaReading, 'studio-dna-capsule.json', null);
   capsuleMeta('Collaboration Intelligence Capsule', 'Collaboration_Intelligence_Capsule', ciReading, 'collaboration-intelligence.json', null);
 
+  for (const opt of OPTIONAL_ARCHIVE_FILES) {
+    DOCUMENT_METADATA[opt.path] = {
+      capsule: opt.capsule,
+      purpose: opt.purpose,
+      topics: inferTopicsFromFilename(path.basename(opt.path)),
+      dependencies: [],
+      crossReferences: [],
+      reportSections: opt.supportsReportSections,
+      required: false,
+      classification: opt.classification,
+      mustRead: opt.mustRead,
+      notInMasterManifestReason: opt.notInMasterManifestReason,
+    };
+  }
+
   // Enrich key documents
   enrichDoc('AI_Context_Capsule/CURRENT_HANDOFF.md', {
     purpose: 'Current sprint, implementation status, and debugging state',
@@ -453,6 +503,27 @@ function inferCapsuleFromPath(docPath) {
   return 'Unified Pack';
 }
 
+function buildOptionalIndex(packDir) {
+  return OPTIONAL_ARCHIVE_FILES.map((opt, index) => {
+    const fp = path.join(packDir, opt.path);
+    const checksum = fs.existsSync(fp) ? sha256File(fp) : null;
+    return {
+      order: index + 1,
+      documentName: path.basename(opt.path),
+      path: opt.path,
+      capsule: opt.capsule,
+      purpose: opt.purpose,
+      classification: opt.classification,
+      mustRead: opt.mustRead,
+      supportsReportSections: opt.supportsReportSections,
+      notInMasterManifestReason: opt.notInMasterManifestReason,
+      required: false,
+      optional: true,
+      checksumSha256: checksum,
+    };
+  });
+}
+
 function buildOnboardingIndex(manifestEntries, packDir) {
   return manifestEntries.map((entry, index) => {
     const meta = DOCUMENT_METADATA[entry.path] ?? {
@@ -551,6 +622,19 @@ export function generateMachineReadableLayer(input) {
   const handoffMeta = extractDocVersion(packDir, 'AI_Context_Capsule/CURRENT_HANDOFF.md');
   const blockersMeta = extractDocVersion(packDir, 'AI_Context_Capsule/KNOWN_BLOCKERS.md');
 
+  const optionalIndex = buildOptionalIndex(packDir);
+  const optionalChecksums = {};
+  for (const opt of optionalIndex) {
+    if (opt.checksumSha256) optionalChecksums[opt.path] = opt.checksumSha256;
+  }
+
+  const requiredFileCount = manifestEntries.length;
+  const optionalFileCount = OPTIONAL_ARCHIVE_FILES.length;
+  const generatedMetadataFileCount = 0;
+  const totalInventoriedFileCount = requiredFileCount + optionalFileCount + generatedMetadataFileCount;
+
+  const perCapsuleCounts = buildPerCapsuleCounts(manifestEntries, OPTIONAL_ARCHIVE_FILES);
+
   const capsuleInventory = includedCapsules.map((name) => {
     const key =
       name === 'AI Context Capsule'
@@ -569,13 +653,16 @@ export function generateMachineReadableLayer(input) {
           : name === 'Collaboration Intelligence Capsule'
             ? 'Collaboration_Intelligence_Capsule'
             : 'Studio_DNA_Capsule';
-    const fileCount = manifestEntries.filter((e) => e.path.startsWith(`${folder}/`)).length;
+    const requiredCount = manifestEntries.filter((e) => e.path.startsWith(`${folder}/`)).length;
+    const optionalCount = OPTIONAL_ARCHIVE_FILES.filter((o) => o.path.startsWith(`${folder}/`)).length;
     return {
       name,
       folder,
       version: release?.currentVersion ?? release?.version ?? 'unknown',
       required: name !== 'Studio DNA Capsule',
-      fileCount,
+      requiredFileCount: requiredCount,
+      optionalFileCount: optionalCount,
+      fileCount: requiredCount + optionalCount,
       contributesTopics: topicIndex.filter((t) => t.capsules.includes(name)).map((t) => t.topic),
       validationStatus: release?.validationStatus ?? 'pass',
     };
@@ -638,7 +725,16 @@ export function generateMachineReadableLayer(input) {
     generationTimestamp: generatedAt,
     totalCapsules: includedCapsules.length,
     totalRequiredFiles: requiredEntries.length,
-    totalOptionalFiles: missingOptionalCapsules.length,
+    totalOptionalFiles: optionalFileCount,
+    archiveInventory: {
+      requiredFileCount,
+      optionalFileCount,
+      generatedMetadataFileCount,
+      totalInventoriedFileCount,
+      actualArchiveFileCount: null,
+      perCapsuleCounts,
+      optionalFiles: optionalIndex,
+    },
     capsuleInventory,
     manifestValidation: {
       status: 'pass',
@@ -700,8 +796,11 @@ export function generateMachineReadableLayer(input) {
   const onboardingIndexJson = {
     schemaVersion: MACHINE_READABLE_SCHEMA_VERSION,
     generatedAt,
+    requiredDocumentCount: onboardingIndex.length,
+    optionalDocumentCount: optionalIndex.length,
     documentCount: onboardingIndex.length,
     documents: onboardingIndex,
+    optionalFiles: optionalIndex,
   };
 
   const files = {
@@ -733,7 +832,169 @@ export function generateMachineReadableLayer(input) {
 
   fs.writeFileSync(path.join(packDir, 'onboarding-state.json'), JSON.stringify(onboardingState, null, 2) + '\n');
 
-  return { files, onboardingState, validation, fileChecksums };
+  return { files, onboardingState, validation, fileChecksums, optionalChecksums, perCapsuleCounts };
+}
+
+function buildPerCapsuleCounts(manifestEntries, optionalFiles) {
+  const folders = {
+    'AI Context': 'AI_Context_Capsule',
+    'Founder Intelligence': 'Founder_Intelligence_Capsule',
+    'Studio DNA': 'Studio_DNA_Capsule',
+    'Collaboration Intelligence': 'Collaboration_Intelligence_Capsule',
+    'Machine-Readable Index': null,
+  };
+  const counts = {};
+  for (const [label, folder] of Object.entries(folders)) {
+    if (!folder) {
+      const required = manifestEntries.filter((e) =>
+        [
+          'onboarding-state.json',
+          'onboarding-index.json',
+          'coverage-map.json',
+          'cross-capsule-map.json',
+          'topic-index.json',
+          'source-of-truth-map.json',
+        ].includes(e.path)
+      ).length;
+      counts[label] = { requiredFileCount: required, optionalFileCount: 0, totalFileCount: required };
+      continue;
+    }
+    const required = manifestEntries.filter((e) => e.path.startsWith(`${folder}/`)).length;
+    const optional = optionalFiles.filter((o) => o.path.startsWith(`${folder}/`)).length;
+    counts[label] = { requiredFileCount: required, optionalFileCount: optional, totalFileCount: required + optional };
+  }
+  const unifiedRequired = manifestEntries.filter(
+    (e) =>
+      !e.path.includes('_Capsule/') &&
+      ![
+        'onboarding-state.json',
+        'onboarding-index.json',
+        'coverage-map.json',
+        'cross-capsule-map.json',
+        'topic-index.json',
+        'source-of-truth-map.json',
+      ].includes(e.path)
+  ).length;
+  counts['Unified Pack Root'] = { requiredFileCount: unifiedRequired, optionalFileCount: 0, totalFileCount: unifiedRequired };
+  return counts;
+}
+
+/** List relative file paths inside a pack directory or ZIP archive. */
+export function listArchiveFiles(target, { isZip = false, packFolderName = null } = {}) {
+  let rawPaths;
+  if (isZip) {
+    const output = execSync(`unzip -Z1 ${JSON.stringify(target)}`, { encoding: 'utf8' });
+    rawPaths = output.trim().split('\n').filter(Boolean);
+  } else {
+    rawPaths = [];
+    function walk(dir, prefix = '') {
+      for (const name of fs.readdirSync(dir)) {
+        const full = path.join(dir, name);
+        const rel = prefix ? `${prefix}/${name}` : name;
+        if (fs.statSync(full).isDirectory()) walk(full, rel);
+        else rawPaths.push(rel.replace(/\\/g, '/'));
+      }
+    }
+    walk(target);
+  }
+
+  const prefix = packFolderName ? `${packFolderName}/` : null;
+  return rawPaths
+    .map((p) => (prefix && p.startsWith(prefix) ? p.slice(prefix.length) : p))
+    .filter((p) => p.length > 0 && !p.endsWith('/'))
+    .sort();
+}
+
+/**
+ * Hard validation: every physical archive file must be inventoried.
+ * Fails on unindexed files, missing required/optional files, or count mismatches.
+ */
+export function validateArchiveInventory({
+  target,
+  isZip = false,
+  packFolderName = null,
+  manifestEntries,
+  optionalFiles = OPTIONAL_ARCHIVE_FILES,
+  generatedMetadataFiles = [],
+  perCapsuleCounts = null,
+}) {
+  const errors = [];
+  const files = listArchiveFiles(target, { isZip, packFolderName });
+
+  const requiredPaths = new Set(manifestEntries.map((e) => e.path));
+  const optionalPaths = new Set(optionalFiles.map((f) => f.path));
+  const generatedPaths = new Set(generatedMetadataFiles);
+  const allInventoried = new Set([...requiredPaths, ...optionalPaths, ...generatedPaths]);
+
+  for (const file of files) {
+    if (!allInventoried.has(file)) errors.push(`Unindexed archive file: ${file}`);
+  }
+
+  for (const p of requiredPaths) {
+    if (!files.includes(p)) errors.push(`Missing required file: ${p}`);
+  }
+
+  for (const p of optionalPaths) {
+    if (!files.includes(p)) errors.push(`Missing declared optional file: ${p}`);
+  }
+
+  for (const p of allInventoried) {
+    if (!files.includes(p)) errors.push(`Inventoried file missing from archive: ${p}`);
+  }
+
+  const requiredFileCount = requiredPaths.size;
+  const optionalFileCount = optionalPaths.size;
+  const generatedMetadataFileCount = generatedPaths.size;
+  const totalInventoriedFileCount = requiredFileCount + optionalFileCount + generatedMetadataFileCount;
+  const actualArchiveFileCount = files.length;
+
+  if (actualArchiveFileCount !== totalInventoriedFileCount) {
+    errors.push(
+      `Archive count mismatch: actualArchiveFileCount=${actualArchiveFileCount}, totalInventoriedFileCount=${totalInventoriedFileCount}`
+    );
+  }
+
+  if (perCapsuleCounts) {
+    for (const [label, expected] of Object.entries(perCapsuleCounts)) {
+      const folderMap = {
+        'AI Context': 'AI_Context_Capsule',
+        'Founder Intelligence': 'Founder_Intelligence_Capsule',
+        'Studio DNA': 'Studio_DNA_Capsule',
+        'Collaboration Intelligence': 'Collaboration_Intelligence_Capsule',
+      };
+      const folder = folderMap[label];
+      if (!folder) continue;
+      const actualRequired = files.filter((f) => f.startsWith(`${folder}/`) && requiredPaths.has(f)).length;
+      const actualOptional = files.filter((f) => f.startsWith(`${folder}/`) && optionalPaths.has(f)).length;
+      const actualTotal = actualRequired + actualOptional;
+      if (actualRequired !== expected.requiredFileCount) {
+        errors.push(
+          `${label}: required count mismatch (expected ${expected.requiredFileCount}, actual ${actualRequired})`
+        );
+      }
+      if (actualOptional !== expected.optionalFileCount) {
+        errors.push(
+          `${label}: optional count mismatch (expected ${expected.optionalFileCount}, actual ${actualOptional})`
+        );
+      }
+      if (actualTotal !== expected.totalFileCount) {
+        errors.push(`${label}: total count mismatch (expected ${expected.totalFileCount}, actual ${actualTotal})`);
+      }
+    }
+  }
+
+  return {
+    pass: errors.length === 0,
+    errors,
+    files,
+    counts: {
+      requiredFileCount,
+      optionalFileCount,
+      generatedMetadataFileCount,
+      totalInventoriedFileCount,
+      actualArchiveFileCount,
+    },
+  };
 }
 
 export function validateMachineReadableLayer({ packDir, manifestEntries, includeDna, files, capsuleInventory }) {
