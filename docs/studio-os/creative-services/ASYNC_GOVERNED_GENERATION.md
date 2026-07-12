@@ -53,6 +53,22 @@ or `submit → accepted → failed`
 | Experience Lab validation | Default on (`validationMode: true`) unless `ASYNC_GOVERNED_GENERATION_V1=0` |
 | Creative Studio | `ASYNC_GOVERNED_GENERATION_V1=1` **and** `ASYNC_GOVERNED_GENERATION_CREATIVE_STUDIO=1` |
 
+### Immune System™ integration (schema drift)
+
+When `studio_governed_generation_jobs` is missing from production:
+
+1. Job insert fails with schema-cache error
+2. Immune System diagnoses missing table → maps to `20260712180000_studio_governed_generation_jobs`
+3. Class A repair authorized when `IMMUNE_SYSTEM_AUTO_REPAIR=1` + DDL channel configured
+4. Migration applied server-side; schema contract verified; insert retried once
+5. Response includes `immuneRecovery` structured payload
+
+**Preflight:** feature-entry readiness probe blocks submit with 503 only when table missing **and** auto-repair disabled.
+
+**Admin visibility:** Experience Lab `?compilerDiag=1` → Immune System panel; APIs `GET /api/admin/immune-system-health`, `GET /api/admin/immune-system-incidents`.
+
+Canon: `docs/studio-os/autonomous-operations/STUDIO_OS_IMMUNE_SYSTEM.md`
+
 ### Mobile recovery
 
 1. Submit returns `jobId` in <2s (target)

@@ -7,6 +7,7 @@ import { CDS_GENESIS_INTERACTION_STYLES } from '../../studio-os/creative-directi
 import { CDS_IMMERSION_STYLES } from '../../studio-os/creative-direction-studio/cdsImmersionTheme';
 import { CreativeStudioPipelineStatusBar } from './CreativeStudioPipelineStatusBar';
 import { ShellFoundationBlackBoxPanel } from './ShellFoundationBlackBoxPanel';
+import { ImmuneSystemPanel } from './ImmuneSystemPanel';
 import {
   incrementComponentRender,
   isWorldCompilerDiagnosticMode,
@@ -276,6 +277,7 @@ export function CreativeStudioRenderPreview({ companyId, conceptId, blindMode = 
               heartbeatTick={runtimeHeartbeat}
             />
           ) : null}
+          {diagMode ? <ImmuneSystemPanel /> : null}
           {showRetry ? (
             <button
               type="button"

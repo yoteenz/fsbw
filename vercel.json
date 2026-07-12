@@ -55,6 +55,12 @@
       "maxDuration": 120,
       "includeFiles": "api/_lib/creativeProduction/studio-os-server.bundle.js,public/assets/marble-half.png"
     },
+    "api/admin/immune-system-health.ts": {
+      "maxDuration": 30
+    },
+    "api/admin/immune-system-incidents.ts": {
+      "maxDuration": 15
+    },
     "api/admin/studio-foundry-generate.ts": {
       "maxDuration": 120,
       "includeFiles": "api/_lib/creativeProduction/studio-os-server.bundle.js"
@@ -258,7 +264,7 @@
       "headers": [
         {
           "key": "Content-Disposition",
-          "value": "attachment; filename=\"StudioOS_ContextUpdate_v1.0.3.zip\""
+          "value": "attachment; filename=\"StudioOS_ContextUpdate_v1.0.4.zip\""
         },
         {
           "key": "Cache-Control",
@@ -270,11 +276,11 @@
         },
         {
           "key": "X-Capsule-Version",
-          "value": "1.0.3"
+          "value": "1.0.4"
         },
         {
           "key": "X-Capsule-Artifact",
-          "value": "StudioOS_ContextUpdate_v1.0.3.zip"
+          "value": "StudioOS_ContextUpdate_v1.0.4.zip"
         }
       ]
     }

@@ -47389,3 +47389,28 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 
 **Conventions:** Do not end schema-dependent tasks with “run in SQL Editor” as primary step when MCP is available.
 
+---
+
+## 2026-07-12 — Studio OS Immune System P0 foundation (full conversation)
+
+**Context:** Founder-approved P0 sprint — Studio OS must detect, diagnose, and safely repair missing Supabase infrastructure (reference incident: missing `public.studio_governed_generation_jobs` blocked async governed generation). Prior chat topics: async after table add; 2% progress = render pipeline not FAL; CD Studio needs separate env flags; auto-apply Supabase migrations policy (`4101ba17a`).
+
+**Objective:** Schema drift detection + bounded Class A self-healing — one commit, one push, one deployment.
+
+**Implemented (Production):**
+- **Contracts & policy:** `src/studio-os-core/immune-system/` — incident contract, schema contract for `studio_governed_generation_jobs`, drift detector, migration manifest, founder authorization policy, `evaluateAutomaticRepairAuthorization()` (default deny), incident recorder + nervous signals, deployment readiness cache
+- **Server:** `api/_lib/immuneSystem/` — production target verification, migration loader, schema probe, repair executor (pg/Management API), schema-drift orchestrator (detect → authorize → apply → verify → retry signal)
+- **Integration:** `async-governed-generation.ts` — preflight readiness; on missing-table insert error → immune recovery → single retry; `immuneRecovery` in response
+- **Admin:** `GET /api/admin/immune-system-health`, `GET /api/admin/immune-system-incidents`; Experience Lab `ImmuneSystemPanel` under `?compilerDiag=1`
+- **CI/readiness:** `scripts/schema-deployment-readiness.mjs`, `npm run schema:deployment-readiness`
+- **Tests:** 21 immune-system unit cases + reference-recovery isolated test; full suite 170 pass; build pass
+- **Docs:** `STUDIO_OS_IMMUNE_SYSTEM.md`, `SCHEMA_DRIFT_SELF_HEALING.md`, `MISSING_GENERATION_JOBS_TABLE_INCIDENT.md`, `immune-repair-policy.json`, updates to NERVOUS_SYSTEM, architecture, AI_GLOSSARY, ASYNC_GOVERNED_GENERATION, AUTONOMOUS_OPERATIONS, CURRENT_HANDOFF, KNOWN_BLOCKERS, PRODUCT_PHILOSOPHY, CORE
+
+**Env for live auto-repair:** `IMMUNE_SYSTEM_AUTO_REPAIR=1` + `SUPABASE_DB_URL`/`DATABASE_URL` or Management API; project allowlist `hyycomvcaqxxvyrfupes`.
+
+**Blocker B1-Immune:** code shipped; Vercel env + production auto-repair proof pending (do not drop prod table to test).
+
+**Spatial Architecture Review:** SKIPPED — infrastructure/repair layer; diagnostic panel on existing Experience Lab surface only.
+
+**Branch policy:** `master` only; one `./scripts/agent-commit.sh` deploy.
+

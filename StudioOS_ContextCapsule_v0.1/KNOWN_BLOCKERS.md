@@ -68,6 +68,33 @@
 
 ---
 
+## B1-Immune — Schema drift self-healing (SHIPPED — PRODUCTION ENV PENDING)
+
+| Field | Detail |
+|-------|--------|
+| **ID** | B1-Immune |
+| **Symptom** | Missing `studio_governed_generation_jobs` caused schema-cache insert failure; hours of misdirected investigation |
+| **Repair** | Studio OS Immune System™ — drift detector + Class A migration apply + contract verify + single retry |
+| **Reference migration** | `20260712180000_studio_governed_generation_jobs` |
+| **Files** | `src/studio-os-core/immune-system/`, `api/_lib/immuneSystem/`, `async-governed-generation.ts` |
+| **Env** | `IMMUNE_SYSTEM_AUTO_REPAIR=1` + `SUPABASE_DB_URL` or `DATABASE_URL` (preferred) or Management API token |
+| **Verify** | Isolated reference-recovery test passes; production proof requires env + missing-table scenario (do not drop prod table) |
+| **Status** | **In Progress** — code shipped; Vercel env + live auto-repair proof pending |
+| **Rollback** | `IMMUNE_SYSTEM_AUTO_REPAIR=0` — detection/escalation only, no DDL apply |
+
+### Documented Fact
+
+- Missing table was deterministic root cause; adding table restored governed generation workflow
+- FAL was not the active failure during the reference incident
+
+### Do not
+
+- Drop production table to test auto-repair
+- Enable arbitrary SQL endpoints or client-controlled migration IDs
+- Treat immune repair as permission for destructive schema changes
+
+---
+
 ## B1-E2E-Completion — Premature terminal completion (REPAIR SHIPPED — VERIFY PENDING)
 
 | Field | Detail |

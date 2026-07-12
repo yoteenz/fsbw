@@ -1,0 +1,29 @@
+{
+  "version": "immune-repair-policy.v1",
+  "effectiveAt": "2026-07-12",
+  "authorizationSource": "founder-directive-immune-system-p0",
+  "allowedRiskClasses": ["A"],
+  "requiresRepositoryMigration": true,
+  "requiresChecksumVerification": true,
+  "requiresTargetProjectAllowlist": true,
+  "prohibitsDestructiveSql": true,
+  "prohibitsRlsWeakening": true,
+  "maxAutoRepairAttemptsPerIncident": 1,
+  "maxOperationRetryAfterRepair": 1,
+  "allowedProjectRefs": ["hyycomvcaqxxvyrfupes"],
+  "approvedMigrations": [
+    {
+      "migrationId": "20260712180000_studio_governed_generation_jobs",
+      "filename": "20260712180000_studio_governed_generation_jobs.sql",
+      "riskClass": "A",
+      "createsTables": ["public.studio_governed_generation_jobs"],
+      "featureIds": ["async-governed-generation-v1"]
+    }
+  ],
+  "schemaDependencies": [
+    {
+      "featureId": "async-governed-generation-v1",
+      "requiredTables": ["public.studio_governed_generation_jobs"]
+    }
+  ]
+}

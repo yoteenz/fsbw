@@ -108,6 +108,9 @@ Global append-only operational event recorder. Routes: `/__studio-os-flight-reco
 ### Studio OS Nervous System™
 **Planned** permanent operational intelligence layer — every subsystem explains itself; every organization knows its health. Canon: `docs/studio-os/STUDIO_OS_NERVOUS_SYSTEM.md`. Black Box evolves into this; not temporary debug mode.
 
+### Studio OS Immune System™
+**Production** (P0 foundation) — bounded autonomous recovery for deterministic infrastructure drift. First domain: **Supabase schema drift** — detect missing resources, map to checksum-verified repository migrations, authorize Class A additive repairs, verify contract, retry original operation once. Nervous System emits signals; Immune System executes recovery. Canon: `docs/studio-os/autonomous-operations/STUDIO_OS_IMMUNE_SYSTEM.md`. Does not weaken security or run arbitrary SQL.
+
 ### Studio World Data Plane™
 **Planned** constitutional data architecture — Control Plane (identity, policy, governance) vs Data Plane (business data, media, knowledge, archives per organization). Eight data domains; Active → Warm → Archived → Purged lifecycle; vendor-neutral. Canon: `docs/studio-os/STUDIO_WORLD_DATA_PLANE_CONSTITUTION.md`. Nervous System observes; Data Plane stores.
 

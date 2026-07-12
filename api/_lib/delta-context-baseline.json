@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "deltaSequence": 4,
+  "deltaSequence": 5,
   "onboardingPackVersion": "1.2.2",
-  "publishedAt": "2026-07-12T18:54:46.927Z",
-  "gitCommit": "cf393dd4af8ad0d4fe18323958a8c43602477ab8",
+  "publishedAt": "2026-07-12T21:37:53.480Z",
+  "gitCommit": "4101ba17a3374a7e63b50332551afed1211a18a9",
   "capsuleVersions": {
     "ai-context": "0.3.2",
     "founder-intelligence": "1.0.0",
@@ -46,7 +46,7 @@
     "founder-intelligence:MANIFEST.md": "e3972141c5d7c9c62a24aca58b5fc4ba1a2a30620f4640e274ddbf5eae31201a",
     "founder-intelligence:MARKETPLACE.md": "9ad0593b8acf35671e116b8aa992b3e5bda518076a8abb292440d545b2463f48",
     "founder-intelligence:MONETIZATION.md": "32c552736634215b882604bad3e2e628b9e83d9a9092cfcb58c3e6190cca9182",
-    "founder-intelligence:PRODUCT_PHILOSOPHY.md": "032553e21698dcfd371c657ae67489ab0d14183669b816d76228ed330cf73dd7",
+    "founder-intelligence:PRODUCT_PHILOSOPHY.md": "3b934c3628b4bbf61a2c389582aa849cb3e3d80f1b83d3f34023c8fd18afa1b7",
     "founder-intelligence:README.md": "833d6404f598529b08906b0c7ac4ec9079d18ff549e77ad403694f0ef9f40fd7",
     "founder-intelligence:README_FIRST.md": "d86f44865a8b5ed5cb8a37d25df66552cdcb1620942de98a1ac2a50771e9a87b",
     "founder-intelligence:RELATIONSHIP_TO_CONTEXT_CAPSULE.md": "dfe412cb276ad2eb1e3efeef3884e1fd9343d5d8ecb87b8f571e964ac67ca6f0",
@@ -89,5 +89,5 @@
     "collaboration-intelligence:RELATIONSHIP_TO_FOUNDER_INTELLIGENCE_CAPSULE.md": "e627d2c73dbac546f26f57b79532305e562dd1f71e9e3effede8eb0d0b21ae85",
     "collaboration-intelligence:SEARCH_INDEX.md": "724ce8786859dcc183563aa7a2f96ce61d78c0e22b186e939870bb25f1bc753c"
   },
-  "lastDeltaVersion": "1.0.3"
+  "lastDeltaVersion": "1.0.4"
 }

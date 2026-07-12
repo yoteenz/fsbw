@@ -74,7 +74,8 @@
     "bcf:cf-photos:generate": "node scripts/bcf/pregenerate-bcf-cf-photos.mjs",
     "bcf:cf-photos:sync": "node scripts/bcf/sync-bcf-cf-photo-manifest.mjs",
     "bcf:cf-photos:batch": "node scripts/bcf/batch-bcf-cf-photos.mjs",
-    "audit:launch": "node scripts/launch-integrity-auditor.mjs"
+    "audit:launch": "node scripts/launch-integrity-auditor.mjs",
+    "schema:deployment-readiness": "node scripts/schema-deployment-readiness.mjs"
   },
   "dependencies": {
     "@fal-ai/client": "^1.4.0",
@@ -88,6 +89,7 @@
     "jimp": "^1.6.0",
     "jspdf": "^4.2.1",
     "opentype.js": "^2.0.0",
+    "pg": "^8.13.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-router-dom": "^6.8.0",
@@ -98,6 +100,7 @@
   "devDependencies": {
     "@playwright/test": "^1.49.1",
     "@types/node": "^20.0.0",
+    "@types/pg": "^8.11.10",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "@vercel/node": "^3.0.0",

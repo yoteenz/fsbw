@@ -295,6 +295,7 @@ Future founder/operator surfaces may include:
 | **World Compiler Investigation** | `/__world-compiler-investigation` | Forensic freeze + Layer 1 trace |
 | **Flight Recorder routes** | `/__studio-os-flight-recorder`, `/__studio-os-session-report` | Session export |
 | **Runtime Diagnostics** | `src/studio-os-core/runtime-diagnostics/` | Boot diagnostics panel, fail-safe |
+| **Immune System™ (schema drift)** | `src/studio-os-core/immune-system/` + `api/_lib/immuneSystem/` | **Production** — bounded Class A auto-repair for approved migrations; nervous signals; admin health API |
 | **Boot live state** | `useStudioBootLive`, `BootDiagnosticsPanel` | Bootstrap module visibility |
 | **Forensic documentation** | `docs/studio-os/forensics/` | Pipeline reconciliation, generation traces |
 
@@ -314,6 +315,17 @@ Diagnostic instrumentation installed during Experience Engine forensics is the *
 ### In Progress
 
 - Expanding compiler/shell forensic capture (**Documented Fact** — ongoing forensic sprints)
+- **Immune System™ schema drift self-healing** — **Production** (P0 foundation): detect missing schema resources, map to checksum-verified migrations, authorize Class A repairs, verify, retry once. Nervous System emits signals; Immune System executes recovery. Canon: `docs/studio-os/autonomous-operations/STUDIO_OS_IMMUNE_SYSTEM.md`
+
+### Immune System signal path (Production)
+
+```
+SchemaDriftDetected → DiagnosisCompleted → RepairAuthorizationEvaluated
+  → RepairStarted → RepairApplied → RepairVerified → OriginalOperationRetried → IncidentRecovered
+  OR → RepairDenied → FounderEscalationRequired
+```
+
+**Rule:** Nervous System detects and reports; Immune System performs authorized recovery only.
 - Event schema enrichment (`traceId`, `diagnostic.category`) — **Inference** from recent repairs
 
 ---

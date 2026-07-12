@@ -11,6 +11,10 @@ import type {
   GovernedGenerationProgressPhase,
 } from '../../../src/studio-os-core/creative-production/governed-generation-job.js';
 import { getSupabaseAdminServiceRole } from '../supabase.js';
+import { isMissingTableError } from '../../../src/studio-os-core/immune-system/drift-detector.js';
+import { attemptSchemaDriftRecoveryForMissingTable } from '../immuneSystem/schema-drift-orchestrator.js';
+import { probeGovernedGenerationJobsTable } from '../immuneSystem/schema-probe.js';
+import { getGovernedGenerationReadinessFromPresence } from '../../../src/studio-os-core/immune-system/readiness.js';
 import { validateGovernedGenerationForExecution } from './generation-gateway.js';
 import { registerGeneratedAssetWithLineage } from './registry-transaction.js';
 import { createGenerationTraceId } from './generation-error-diagnostics.js';
@@ -257,6 +261,32 @@ export async function submitGovernedGenerationJobAsync(
     };
   }
 
+  try {
+    const supabaseProbe = getSupabaseAdminServiceRole();
+    const jobsProbe = await probeGovernedGenerationJobsTable(supabaseProbe);
+    const readiness = getGovernedGenerationReadinessFromPresence(jobsProbe.tableExists);
+    const { isImmuneAutoRepairEnabled, isImmuneProductionTargetVerified } = await import(
+      '../immuneSystem/production-target.js'
+    );
+    const autoRepair = isImmuneAutoRepairEnabled() && isImmuneProductionTargetVerified();
+    if (readiness.health === 'blocked' && !autoRepair) {
+      return {
+        ok: false,
+        status: 503,
+        body: {
+          ok: false,
+          code: 'INFRASTRUCTURE_BLOCKED',
+          error: readiness.message,
+          errorCategory: 'job-submit-failed',
+          traceId,
+          infrastructureHealth: readiness,
+        },
+      };
+    }
+  } catch {
+    /* probe failure — continue; insert path may trigger immune recovery */
+  }
+
   const idempotencyKey = buildGovernedGenerationIdempotencyKey(request);
   const existing = await findJobByIdempotency(idempotencyKey);
   if (existing) {
@@ -362,7 +392,55 @@ export async function submitGovernedGenerationJobAsync(
   };
 
   const supabase = getSupabaseAdminServiceRole();
-  const { error: insertError } = await supabase.from(JOB_TABLE).insert(row);
+
+  const insertOnce = async () => supabase.from(JOB_TABLE).insert(row);
+
+  let { error: insertError } = await insertOnce();
+
+  if (insertError && isMissingTableError(insertError.message)) {
+    const recovery = await attemptSchemaDriftRecoveryForMissingTable(supabase, {
+      organizationId: request.orgId,
+      affectedSubsystem: 'Governed Generation Dispatch',
+      affectedOperation: 'submitGovernedGenerationJobAsync.insert',
+      errorCode: 'job-submit-failed',
+      errorMessage: insertError.message,
+      correlationIds: [traceId, jobId],
+      hintedTable: JOB_TABLE,
+    });
+    if (recovery.shouldRetryOriginalOperation) {
+      ({ error: insertError } = await insertOnce());
+      if (!insertError) {
+        scheduleGovernedGenerationWorker(jobId);
+        return {
+          ok: true,
+          status: 202,
+          body: {
+            ok: true,
+            async: true,
+            jobId,
+            status: 'queued',
+            acceptedAt: now,
+            statusUrl: `/api/admin/studio-generation-status?jobId=${encodeURIComponent(jobId)}`,
+            traceId,
+            immuneRecovery: recovery.response,
+          },
+        };
+      }
+    }
+    return {
+      ok: false,
+      status: 500,
+      body: {
+        ok: false,
+        code: 'job-submit-failed',
+        error: insertError.message,
+        errorCategory: 'job-submit-failed',
+        traceId,
+        immuneRecovery: recovery.response,
+      },
+    };
+  }
+
   if (insertError) {
     return {
       ok: false,

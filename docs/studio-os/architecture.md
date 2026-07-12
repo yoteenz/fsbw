@@ -20,6 +20,7 @@ Organizations                ← Frontal Slayer, NDXBOOK, VXD INC, All In One En
 |-------|------|----------------|
 | Platform core | `src/studio-os-core/` | Reusable OS logic — modules, tenant isolation, feature inheritance |
 | Diagnostics precursor | `src/studio-os/diagnostics/` | Black Box / Flight Recorder — **Documented Fact**; evolves into [Nervous System™](./STUDIO_OS_NERVOUS_SYSTEM.md) (**Planned**) |
+| Immune System™ | `src/studio-os-core/immune-system/` + `api/_lib/immuneSystem/` | Schema drift detection + bounded Class A self-healing — **Production** (P0 foundation) |
 | Data Plane constitution | [STUDIO_WORLD_DATA_PLANE_CONSTITUTION.md](./STUDIO_WORLD_DATA_PLANE_CONSTITUTION.md) | Control Plane vs Data Plane; eight domains; lifecycle; org isolation — **Founder Vision** (**Planned** enforcement) |
 | Runtime diagnostics | `src/studio-os-core/runtime-diagnostics/` | Boot diagnostics panel, fail-safe — **Documented Fact** |
 | Application shell | `src/studio-os-core/application/` | Product hierarchy, portfolio access, application routes |
