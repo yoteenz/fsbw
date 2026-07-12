@@ -7,66 +7,68 @@
 
 ## Gate rule
 
-**Creative Studio and Experience Engine share the Experience Lab runtime.** The deployed Layer 1 repair (`7a8869404`) applies to **both**.
+**Creative Studio and Experience Engine share the Experience Lab runtime.**
 
-**Do not** describe either surface as restored, resolved, or production-verified until founder completes authenticated real-device verification on **both** Mobile Safari and Mobile Chrome with `?compilerDiag=1`.
+**Do not** describe either surface as restored, resolved, or production-verified until:
 
-**Do not** begin a new repair sprint without founder review of new production evidence.
+1. **B0** — All four Dispatch endpoints return application JSON (not `FUNCTION_INVOCATION_FAILED`), and  
+2. **B1** — Founder completes authenticated real-device Layer 1 verification on **both** Mobile Safari and Mobile Chrome with `?compilerDiag=1`.
 
 ---
 
-## B1-Layer1 — Governed generation 500 (P0 — REPAIR SHIPPED, VERIFY PENDING)
+## B0-PreHandler — Dispatch Office serverless bundle (P0 — REPAIR SHIPPED, CANARY PENDING)
+
+| Field | Detail |
+|-------|--------|
+| **ID** | B0-PreHandler |
+| **Symptom** | Four governed routes return HTTP 500 plain-text `FUNCTION_INVOCATION_FAILED` in ~350–650 ms |
+| **Proven boundary** | `api/_lib/creativeProduction/*` → `src/studio-os-core/**` not in Vercel serverless trace |
+| **Repair shipped** | Pre-bundle `studio-os-server.bundle.js` + `studio-os-server.ts` runtime surface; `prebuild` script; `vercel.json` `includeFiles` on four routes |
+| **Repair class** | D — build/pre-bundle (canonical source remains `src/studio-os-core/`) |
+| **Forensic** | `DISPATCH_OFFICE_PREHANDLER_FORENSIC.md` |
+| **Verify** | `POST /api/admin/experience-lab-ephemeral-authorization` returns JSON (401/400 acceptable) |
+| **Status** | **In Progress** — production canary pending |
+
+### Documented Fact
+
+- Route handler, traceId, and diagnostics did not execute before repair.
+- FAL and Model Orchestrator were not reached.
+- Control endpoints (`studio-asset-registry`, etc.) were unaffected.
+
+### Do not
+
+- Claim incident resolved on canary alone
+- Add FAL/provider changes without new evidence
+- Add async queue or fallback masking
+
+---
+
+## B1-Layer1 — Governed generation Layer 1 (VERIFY PENDING — downstream of B0)
 
 | Field | Detail |
 |-------|--------|
 | **ID** | B1-Layer1 |
-| **Symptom** | Layer 1 `signature-landmark` fails with client `Generation failed (500)` on shared `studio-builder-generate` path |
-| **Proven failure position** | After M1–M7, shell lock, and `ensureStation` — first failure at Layer 1 (`Documented Fact`) |
-| **Leading explanation** | Vercel platform termination / non-JSON 500 before structured handler response (`Inference` — not conclusively proven until authenticated production traces confirm) |
-| **Repair shipped** | Handler top-level JSON try/catch; `generation-error-diagnostics`; FAL ApiError preservation; `vercel.json` maxDuration 120 + marble includeFiles (`Documented Fact`, commit `7a8869404`) |
-| **Forensic reports** | `GENERATION_FAILED_500_TRACE.md`, `LAYER1_GENERATION_500_REPAIR.md` |
-| **Verify** | Mobile Safari + Chrome — Creative Studio **and** Experience Engine at `/admin/studio/experience-lab?compilerDiag=1` |
-| **Status** | **In Progress** — production verification pending |
-
-### Documented Fact
-
-- Repair code is deployed on `master` (`7a8869404`).
-- Regression tests pass locally (13/13).
-- Client `Generation failed (500)` is synthesized when HTTP body is not JSON.
-- Creative Studio and Experience Engine use the same shared runtime.
-
-### Inference
-
-- Vercel duration/platform termination is the leading explanation for the original non-JSON 500.
-- JSON hardening should expose `traceId` + `diagnostic.category` if the handler executes.
+| **Symptom** | Layer 1 `signature-landmark` — `Generation failed (500)` or structured gateway failure |
+| **Depends on** | B0-PreHandler cleared |
+| **Repair history** | Handler JSON hardening `7a8869404` (did not fix pre-handler class) |
+| **Verify** | Authenticated mobile Safari + Chrome — both Creative Studio and Experience Engine |
+| **Status** | **In Progress** — blocked on B0 canary + founder device |
 
 ### Unknown
 
-- Whether authenticated founder production now succeeds on real devices.
-- Whether a downstream provider, normalization, or import-time failure will appear once the handler executes.
-- Whether unauthenticated API probes reflect the authenticated Layer 1 path.
+- First application/provider failure after handler executes (if any).
+- Whether FAL_KEY and provider path succeed in production.
 
 ### Do not
 
-- Add Layer 1 canvas fallback or placeholder assets
-- Reintroduce blocking pre-pipeline ephemeral auth
-- Treat "Retry Shell Layer" UI as shell failure evidence
-- Claim Creative Studio was restored separately from Experience Engine
+- Add canvas fallback or parallel pipeline
 - Treat repair shipped as incident resolved
 
 ---
 
 ## B1-Experience-Engine — Layer 1 (merged into B1-Layer1)
 
-Experience Engine uses the same shared runtime as Creative Studio. Layer 1 repair and verification apply to both surfaces. See **B1-Layer1** above.
-
-### Verify compile diagnostic
-
-```
-https://fsbw.vercel.app/__world-compiler-investigation
-```
-
-Optional query: `?compilerDiag=1` on Experience Lab route.
+Same shared runtime as Creative Studio. See **B1-Layer1**.
 
 ---
 
@@ -80,6 +82,6 @@ Optional query: `?compilerDiag=1` on Experience Lab route.
 
 ---
 
-## Historical reference (superseded)
+## Creative Services roadmap
 
-Pre-2026-07-11 B1 entries documented Layer 1 `AUTH_REQUIRED` with shell canvas fallback masking. Shared-path auth issuance was addressed in prior sprints. Current blocker is governed generation 500 / platform termination — not a separate Experience Engine-only runtime incident.
+**Planned / Conceptual only** — see `docs/studio-os/creative-services/CREATIVE_SERVICES_ROADMAP.md`. Not implemented. Not a blocker for B0 repair.

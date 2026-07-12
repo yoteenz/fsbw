@@ -47055,3 +47055,41 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 
 **Spatial Architecture Review:** SKIPPED — forensic + roadmap docs only.
 
+---
+
+## 2026-07-12 — ChatGPT CONCLUSION code-box handoff convention
+
+**Context:** Founder requested (1) sprint conclusion in a copy-paste code box for ChatGPT, and (2) a durable memory that every ChatGPT-bound prompt ends with that CONCLUSION box.
+
+**Convention (permanent):**
+- Composer ends substantive founder-facing responses with a plain `text` fenced **CONCLUSION** block as the **last** element in the message.
+- Box summarizes full exchange outcome (facts, classification, blockers, commit SHA when applicable).
+- Label Documented Fact / Inference / Planned / Conceptual inside the box when relevant.
+
+**Files updated:** `StudioOS_ContextCapsule_v0.1/CHATGPT_OPERATING_MANUAL.md` §4.1, `motherboard/CORE.md`, `AGENTS.md`, this MEMORY entry.
+
+---
+
+## 2026-07-12 — P0 api→src serverless bundling repair + single-task commit discipline
+
+**Context:** Narrow P0 repair after Dispatch Office forensic boundary. Fix Vercel cold-start failure on four governed-generation endpoints. Reinforce one-commit-per-founder-request (no split code/docs commits). All artifacts in one commit.
+
+**Root cause (Documented Fact):** `@vercel/nft` omits `src/studio-os-core/**` when tracing from `api/_lib/creativeProduction/*`. First failing value import: `legacy-adapters.ts` → `demo-seed.js`. Manifestation: module evaluation failure → `FUNCTION_INVOCATION_FAILED` before handler.
+
+**Repair (Class D — pre-bundle):**
+- `scripts/build-creative-production-server.mjs` → `api/_lib/creativeProduction/studio-os-server.bundle.js`
+- `studio-os-server-entry.ts` + `studio-os-server.ts` — api imports runtime values from bundle; `import type` still from canonical `src/`
+- Updated: legacy-adapters, authorization-signing, ephemeral-validation-auth, generation-gateway, registry-transaction
+- `package.json` prebuild + test runs bundle script
+- `vercel.json` includeFiles bundle on four Dispatch routes
+- Tests: `server-bundle-boundary.test.ts` (5) + existing 23 = 28 pass; `tsc --noEmit` pass
+- Post-repair esbuild: no `src/studio-os-core` refs in ephemeral bundle
+
+**Commit discipline:** Updated `.cursor/rules/one-deploy-per-task.mdc`, `motherboard/ADDING.md`, `AGENTS.md`, `CHATGPT_OPERATING_MANUAL.md` §4.2 — forbid split code/MEMORY/handoff commits per founder request.
+
+**Operational:** `CURRENT_HANDOFF.md`, `KNOWN_BLOCKERS.md` — B0-PreHandler repair shipped, canary pending; B1-Layer1 still pending founder device.
+
+**Not done:** Authenticated mobile Layer 1 verification; incident not resolved. Production canary post-deploy required.
+
+**Spatial Architecture Review:** SKIPPED — P0 bundle repair, no new surfaces.
+

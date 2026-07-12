@@ -158,7 +158,7 @@ export default defineConfig(({ mode, command }) => {
   clearScreen: false,
   test: {
     environment: 'node',
-    include: ['src/**/*.test.ts'],
+    include: ['src/**/*.test.ts', 'api/**/*.test.ts'],
   },
   };
 })

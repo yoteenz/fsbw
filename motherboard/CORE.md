@@ -404,3 +404,7 @@ New production evidence overrides older memory. Vision and conceptual Genesis ar
 - **Repair shipped ≠ incident resolved.** Distinguish deployed code from founder-verified production success.
 
 Current incident specifics live in `CURRENT_HANDOFF.md`, `KNOWN_BLOCKERS.md`, and the latest `MEMORY.md` entry — not in this section.
+
+**ChatGPT handoff (Composer):** End every substantive founder-facing response with a **CONCLUSION** plain `text` code box as the **last** element — summarized outcome for copy-paste into ChatGPT. See `StudioOS_ContextCapsule_v0.1/CHATGPT_OPERATING_MANUAL.md` §4.1.
+
+**Governed generation server bundle (2026-07-12):** Vercel cannot trace runtime `api/` → `src/studio-os-core/` imports. `scripts/build-creative-production-server.mjs` prebuilds `api/_lib/creativeProduction/studio-os-server.bundle.js` from canonical `src/`; api routes import runtime values via `studio-os-server.ts`. Regenerated on every `npm run prebuild` / `npm test`.

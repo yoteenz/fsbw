@@ -111,6 +111,12 @@ Status: [Production / In Progress / Planned / Unknown]
 - Do **not** imply roadmap items are implemented.
 - Composer adds this box; ChatGPT may mirror the format when replying to the founder if a handoff back to Composer is likely.
 
+### 4.2 One commit per founder request (Composer)
+
+**Documented Fact:** Each founder request to Composer = one git commit + one push to `master` (one Vercel deploy).
+
+All artifacts for that request must ship together: code, tests, docs, `motherboard/MEMORY.md`, `CURRENT_HANDOFF.md`, `KNOWN_BLOCKERS.md` when changed, and process-rule updates. **Forbidden:** code commit now, MEMORY or handoff commit later in the same request.
+
 ---
 
 ## 5. Explanation style

@@ -10,7 +10,8 @@ import {
   createDemoCreativeInitiative,
   createDemoProductionAuthorizationPayload,
   DEMO_AUTHORIZATION_ID,
-} from '../../../src/studio-os-core/creative-production/demo-seed.js';
+  hasCompleteValidationCompileContext,
+} from './studio-os-server.js';
 import {
   auditEphemeralAuthEvent,
   isExperienceLabEphemeralAuthorization,
@@ -23,7 +24,6 @@ import {
   signProductionAuthorization,
   verifyProductionAuthorizationSignature,
 } from './authorization-signing.js';
-import { hasCompleteValidationCompileContext } from '../../../src/studio-os-core/creative-production/validation-compile-context.js';
 
 export type LegacyBuilderBody = Record<string, unknown>;
 

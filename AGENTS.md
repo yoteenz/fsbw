@@ -29,7 +29,8 @@ For full command details and protocol, see **`motherboard/README.md`**.
 ## One Vercel deploy per task
 
 - **Each completed user request = one `./scripts/agent-commit.sh` run** (one commit + one push). **Append `motherboard/MEMORY.md` before that run.**
-- **Forbidden:** push then **`git commit --amend` + `git push --force-with-lease`**; push then **`Motherboard:`** follow-up; running **`agent-commit.sh` twice** for the same task.
+- **Stage everything for that request first:** code, tests, generated runtime artifacts, docs, handoff/blockers, MEMORY, and any process-rule updates — then commit once.
+- **Forbidden:** push then **`git commit --amend` + `git push --force-with-lease`**; push then **`Motherboard:`** follow-up; running **`agent-commit.sh` twice** for the same task; a second commit for MEMORY, handoff, blockers, or CONCLUSION-convention docs after the main task commit.
 - Full rule: **`.cursor/rules/one-deploy-per-task.mdc`**, **`motherboard/ADDING.md`** rule 0.
 
 ## Cursor Cloud environment
@@ -45,3 +46,7 @@ For **Studio OS product work** (new modules, admin pages, Genesis integration, n
 - **Skip** for P0 hotfixes, forensic/debugging sprints, and bug fixes with no new surfaces — unless the founder explicitly requests review.
 - When skipping, state: **`Spatial Architecture Review: SKIPPED — [reason]`**
 - See **`.cursor/rules/spatial-architecture-review.mdc`** for the full gate.
+
+## ChatGPT handoff (Composer)
+
+When the founder will sync context with external AI, end substantive responses with a **CONCLUSION** plain `text` code block as the **very last** element — full outcome summary for copy-paste. Canon: `StudioOS_ContextCapsule_v0.1/CHATGPT_OPERATING_MANUAL.md` §4.1 · `motherboard/CORE.md`.

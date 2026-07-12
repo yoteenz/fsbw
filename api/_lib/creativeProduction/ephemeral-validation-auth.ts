@@ -7,12 +7,12 @@ import type { ProductionAuthorization } from '../../../src/studio-os-core/creati
 import {
   createDemoCreativeInitiative,
   createDemoProductionAuthorizationPayload,
-} from '../../../src/studio-os-core/creative-production/demo-seed.js';
+  validateAuthorizationStructure,
+} from './studio-os-server.js';
 import {
   signProductionAuthorization,
   verifyProductionAuthorizationSignature,
 } from './authorization-signing.js';
-import { validateAuthorizationStructure } from '../../../src/studio-os-core/creative-production/authorization.js';
 
 export const EXPERIENCE_LAB_EPHEMERAL_TTL_MS = 30 * 60 * 1000;
 export const EXPERIENCE_LAB_EPHEMERAL_PIPELINE = 'experience-lab-validation' as const;

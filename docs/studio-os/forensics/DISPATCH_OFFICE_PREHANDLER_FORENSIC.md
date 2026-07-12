@@ -265,4 +265,47 @@ import {
 
 ---
 
-*Forensic sprint complete. No application runtime code modified.*
+## 14. Repair shipped (2026-07-12) — Build pre-bundle (Class D)
+
+**Status:** Repair deployed — production canary verification required.
+
+### Root-cause precision (Documented Fact)
+
+| Field | Value |
+|-------|-------|
+| **Missing artifact** | Runtime-resolvable modules at `src/studio-os-core/creative-production/**` and `src/studio-os-core/asset-compiler/**` |
+| **First value import** | `legacy-adapters.ts` → `demo-seed.js` (and transitive closure) |
+| **Mechanism** | `@vercel/nft` does not include cross-root `api/` → `src/` imports in serverless output; ESM evaluation fails before handler |
+| **Why plain text** | Platform `FUNCTION_INVOCATION_FAILED` — application `try/catch` never runs |
+| **Why controls work** | No `src/` imports; graph stays under `api/_lib/` |
+
+### Repair (Class D — build/pre-bundle)
+
+| Item | Detail |
+|------|--------|
+| **Script** | `scripts/build-creative-production-server.mjs` |
+| **Output** | `api/_lib/creativeProduction/studio-os-server.bundle.js` (~31 KB) |
+| **Entry** | `studio-os-server-entry.ts` (re-exports canonical `src/`) |
+| **Runtime surface** | `studio-os-server.ts` — api modules import values here; types remain `import type` from `src/` |
+| **Prebuild** | `package.json` `prebuild` runs bundle script before Vercel build |
+| **vercel.json** | `includeFiles` adds bundle to all four Dispatch endpoints |
+
+**Canonical source unchanged:** `src/studio-os-core/` remains source of truth; bundle is deterministic build output.
+
+### Bundle verification (local — Documented Fact)
+
+| Check | Result |
+|-------|--------|
+| Pre-repair ephemeral esbuild | Inlined `src/studio-os-core/*` comments |
+| Post-repair ephemeral esbuild | Inlines `studio-os-server.bundle.js`; **no** `src/studio-os-core` path refs |
+| Browser globals in bundle | None (`window`, `localStorage`, `document`, `navigator`) |
+| Tests | 28/28 pass (includes `server-bundle-boundary.test.ts`) |
+| `tsc --noEmit` | Pass |
+
+### Production canary
+
+See `CURRENT_HANDOFF.md` after deploy — primary canary: `POST /api/admin/experience-lab-ephemeral-authorization` must return `application/json`.
+
+---
+
+*Forensic phase complete. Repair shipped 2026-07-12.*

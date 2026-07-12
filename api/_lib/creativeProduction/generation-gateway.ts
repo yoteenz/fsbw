@@ -4,8 +4,11 @@
  */
 
 import type { GovernedGenerationRequest, GovernedGenerationResult } from '../../../src/studio-os-core/creative-production/types.js';
-import { representGovernedGenerationRequest } from '../../../src/studio-os-core/creative-production/graph.js';
-import { createDemoCreativeInitiative } from '../../../src/studio-os-core/creative-production/demo-seed.js';
+import {
+  representGovernedGenerationRequest,
+  createDemoCreativeInitiative,
+  compileAssetIntent,
+} from './studio-os-server.js';
 import { verifyProductionAuthorizationSignature } from './authorization-signing.js';
 import { resolveLegacyCompatAuthorization } from './legacy-adapters.js';
 import { registerGeneratedAssetWithLineage } from './registry-transaction.js';
@@ -18,7 +21,6 @@ import {
   persistCreativeDecision,
 } from '../creativeIntelligenceEngine/decision-engine.js';
 import type { FounderIntentInput } from '../creativeIntelligenceEngine/types.js';
-import { compileAssetIntent } from '../../../src/studio-os-core/asset-compiler/compiler.js';
 import {
   createGenerationTraceId,
   logGenerationDiagnostic,

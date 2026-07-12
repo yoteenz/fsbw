@@ -4,7 +4,7 @@
 
 import { createHmac, timingSafeEqual } from 'node:crypto';
 import type { ProductionAuthorization } from '../../../src/studio-os-core/creative-production/types.js';
-import { buildAuthorizationPayloadForSigning } from '../../../src/studio-os-core/creative-production/authorization.js';
+import { buildAuthorizationPayloadForSigning } from './studio-os-server.js';
 
 function signingSecret(): string {
   const explicit = process.env.CREATIVE_PRODUCTION_AUTH_SECRET?.trim();

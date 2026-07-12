@@ -42,11 +42,19 @@
     },
     "api/admin/studio-generate-asset.ts": {
       "maxDuration": 120,
-      "includeFiles": "public/assets/marble-half.png,public/assets/NOIR/noir-thumb.png"
+      "includeFiles": "api/_lib/creativeProduction/studio-os-server.bundle.js,public/assets/marble-half.png,public/assets/NOIR/noir-thumb.png"
     },
     "api/admin/studio-builder-generate.ts": {
       "maxDuration": 120,
-      "includeFiles": "public/assets/marble-half.png"
+      "includeFiles": "api/_lib/creativeProduction/studio-os-server.bundle.js,public/assets/marble-half.png"
+    },
+    "api/admin/studio-foundry-generate.ts": {
+      "maxDuration": 120,
+      "includeFiles": "api/_lib/creativeProduction/studio-os-server.bundle.js"
+    },
+    "api/admin/experience-lab-ephemeral-authorization.ts": {
+      "maxDuration": 30,
+      "includeFiles": "api/_lib/creativeProduction/studio-os-server.bundle.js"
     },
     "api/admin/context-capsule.ts": {
       "maxDuration": 60,

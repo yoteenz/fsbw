@@ -21,6 +21,20 @@ Every extra push to `master` triggers **another Vercel production deploy** (incl
 - **`git push --force`** / **`--force-with-lease`** on `master` to repair the same task (use only if the user explicitly asks to rewrite history).
 - Running **`./scripts/agent-commit.sh`** twice for the same task (first push already deployed).
 - Debug commits with messages like **`test`**, **`wip`**, or **`Motherboard:`** as a second commit after feature code.
+- **Splitting one founder request** into a code commit plus a follow-up docs/MEMORY/handoff/CONCLUSION-convention commit.
+
+## Task completeness (before commit)
+
+One founder request = one governed task. Stage **all** artifacts before the single commit:
+
+- Application code and tests
+- Generated build outputs required at runtime (if not produced solely on Vercel)
+- Documentation and forensic reports
+- `CURRENT_HANDOFF.md` and `KNOWN_BLOCKERS.md` when operational state changes
+- `motherboard/MEMORY.md` (and minimal `CORE.md` if needed)
+- Commit-discipline or agent-convention doc updates when the task changes process rules
+
+Do **not** interpret “one commit” as “commit code first, documentation later.” The plain-text **CONCLUSION** box is normally response-only; if a task changes that convention in the repo, that doc update ships in the **same** commit.
 
 ## If something is wrong before the first push
 

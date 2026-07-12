@@ -2,21 +2,21 @@
 
 **Capsule:** StudioOS_ContextCapsule_v0.1  
 **Last updated:** 2026-07-12  
-**Git reference:** `7a8869404` (Layer 1 repair deployed)
+**Git reference:** pending post-deploy SHA
 
 ---
 
 ## Current sprint
 
-**P0 — Layer 1 `signature-landmark` governed generation (shared Experience Lab runtime)**
+**P0 — Dispatch Office serverless bundle boundary repair**
 
-**Status: In Progress — production verification pending. Incident NOT resolved.**
+**Status: In Progress — production canary verification pending.**
 
-Commit `7a8869404` shipped structured diagnostics, handler JSON hardening, FAL error preservation, `vercel.json` maxDuration 120 + marble includeFiles, and regression tests. **Founder authenticated mobile verification has not confirmed resolution.**
+Repair ships pre-bundled `studio-os-server.bundle.js` so governed-generation routes no longer depend on untraced `api/` → `src/studio-os-core/` runtime imports. **Founder authenticated Layer 1 verification not complete.**
 
-Creative Studio and Experience Engine **share the same runtime** at `/admin/studio/experience-lab`. The deployed repair applies to **both surfaces**. Do not treat either as restored until both pass verification.
+Creative Studio and Experience Engine **share the same runtime** at `/admin/studio/experience-lab`. Pre-handler bundle repair applies to **all four** Dispatch endpoints. Do not treat either surface as restored until canary + authenticated Layer 1 verify.
 
-**Previous:** P0 onboarding pack v1.2.1 archive inventory reconciliation; cross-context Motherboard ↔ onboarding sync (v1.2.2).
+**Previous:** P0 Dispatch Office forensic + Creative Services roadmap (docs); Layer 1 repair `7a8869404` (handler hardening — did not fix pre-handler class).
 
 ---
 
@@ -26,7 +26,8 @@ See `KNOWN_BLOCKERS.md` for full detail.
 
 | ID | Blocker | Owner | Unblock |
 |----|---------|-------|---------|
-| **B1-Layer1** | Layer 1 `signature-landmark` governed generation — repair shipped, verify pending | Founder (device) | Mobile Safari + Chrome on **both** Creative Studio and Experience Engine paths with `?compilerDiag=1` |
+| **B0-PreHandler** | Dispatch Office `FUNCTION_INVOCATION_FAILED` pre-handler | Composer (deployed) + production probe | Canary returns JSON on all four endpoints |
+| **B1-Layer1** | Layer 1 `signature-landmark` governed generation | Founder (device) | Mobile Safari + Chrome after B0 passes |
 | **B2** | Diagnostic normal-tab verification | Founder (device) | https://fsbw.vercel.app/__studio-os-recovery |
 
 ---
@@ -35,52 +36,37 @@ See `KNOWN_BLOCKERS.md` for full detail.
 
 | System | Status | Classification |
 |--------|--------|----------------|
-| Layer 1 forensic repair | Shipped (`7a8869404`) | **Production** (code deployed) |
-| Handler JSON hardening + diagnostics | Shipped | **Production** |
-| Regression tests | 13/13 pass (local) | **Documented Fact** |
-| Local governed FAL path | ~24s success when `FAL_KEY` configured | **Documented Fact** |
-| Production mobile verify | Not complete | **In Progress** |
-| Incident resolved | No | **Documented Fact** — verification pending |
+| Pre-handler bundle repair | Shipped (pending SHA) | **In Progress** |
+| Dispatch canary (ephemeral) | Not verified post-deploy | **Unknown** |
+| Handler JSON / traceId | Should execute after B0 fix | **Inference** |
+| Layer 1 FAL path | Not verified authenticated | **Unknown** |
+| Incident resolved | No | **Documented Fact** |
 
 ---
 
-## Latest proven pipeline state (founder Black Box — pre-repair baseline)
+## Primary canary (post-deploy)
 
-**Documented Fact:**
+```
+POST https://fsbw.vercel.app/api/admin/experience-lab-ephemeral-authorization
+```
 
-- M1–M7 succeeded
-- Shell generated, registered, resolved, verified, locked (`shellLocked = true`)
-- `ensureStation` resolved
-- First actual failure: Layer 1 `signature-landmark`
-- Failing path: `requestStudioBuilderGenerate` → `POST /api/admin/studio-builder-generate` → `executeGovernedGeneration` → `generateStudioBuilderAsset` → FAL provider
+**Pass:** `content-type: application/json` — not plain-text `FUNCTION_INVOCATION_FAILED`.
 
-**UI caveat:** "Retry Shell Layer" is **not** the true failure stage.
+**Then probe:** `studio-builder-generate`, `studio-foundry-generate`, `studio-generate-asset`.
 
 ---
 
-## Founder verification checklist
+## Authenticated verification (after canary)
 
-1. Open https://fsbw.vercel.app/admin/studio/experience-lab?compilerDiag=1 in **normal** mobile Safari (signed in as admin).
-2. Repeat in **normal** mobile Chrome.
-3. Verify **both** Creative Studio and Experience Engine Layer 1 paths (shared runtime).
-4. On failure: export Black Box — capture `traceId`, `diagnostic.category`, `httpForensic.responseBodyPreview`.
-5. Distinguish application JSON vs platform `FUNCTION_INVOCATION_FAILED`.
-6. If stale cache: https://fsbw.vercel.app/__studio-os-recovery first.
+```
+https://fsbw.vercel.app/admin/studio/experience-lab?compilerDiag=1
+```
 
-**Do not begin a new repair sprint** until new authenticated production evidence is reviewed and founder-approved.
+Mobile Safari + Chrome — Creative Studio **and** Experience Engine. Required for incident resolution; not part of this deploy gate alone.
 
 ---
 
-## Immediate next priorities
+## Forensic references
 
-1. **Founder:** Complete mobile verification matrix (Safari + Chrome × both surfaces).
-2. **Founder:** Review verification evidence; approve or reject next repair scope.
-3. **Composer (future, founder-approved only):** Repair sprint from proven traces — no speculation.
-
----
-
-## Key forensic references
-
-- `docs/studio-os/forensics/LAYER1_GENERATION_500_REPAIR.md`
-- `docs/studio-os/forensics/GENERATION_FAILED_500_TRACE.md`
-- `docs/studio-os/forensics/SHARED_GENERATION_PIPELINE_REGRESSION.md`
+- `docs/studio-os/forensics/DISPATCH_OFFICE_PREHANDLER_FORENSIC.md`
+- `docs/studio-os/creative-services/CREATIVE_SERVICES_ROADMAP.md` (Planned — not in scope)

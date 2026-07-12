@@ -5,10 +5,11 @@
 import { createRegistryAsset } from '../assetRegistry/service.js';
 import type { RegistrySupabase } from '../assetRegistry/types.js';
 import type { GovernedGenerationAudit } from '../../../src/studio-os-core/creative-production/types.js';
+import type { RegistryRelationshipDraft } from '../../../src/studio-os-core/creative-production/lineage.js';
 import {
   buildRegistryLineageMetadata,
   lineageToRegistryRelationships,
-} from '../../../src/studio-os-core/creative-production/lineage.js';
+} from './studio-os-server.js';
 
 export type RegisterGeneratedAssetInput = {
   supabase: RegistrySupabase;
@@ -49,7 +50,7 @@ export async function registerGeneratedAssetWithLineage(
       ...lineageMeta,
       ...(input.metadata ?? {}),
     },
-    relationships: relationships.map((rel) => ({
+    relationships: relationships.map((rel: RegistryRelationshipDraft) => ({
       relation_type: rel.relation_type,
       target_kind: rel.target_kind,
       to_asset_id: rel.to_asset_id ?? null,
