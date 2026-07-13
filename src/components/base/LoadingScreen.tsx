@@ -48,7 +48,7 @@ export default function LoadingScreen({
   useLockPageScroll(isVisible);
 
   React.useEffect(() => {
-    const unregister = registerLoadingTerminal(source);
+    const unregister = registerLoadingTerminal(source, maxDurationMs);
     const timer = window.setTimeout(() => {
       const stuck = getActiveLoadingSources();
       void forceLoadingTerminalRecovery(

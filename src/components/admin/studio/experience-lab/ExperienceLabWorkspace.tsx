@@ -13,7 +13,7 @@ export function ExperienceLabWorkspace() {
   }, []);
 
   return (
-    <StudioBootGate through="experience-runtime" diagnosticsWhenReady={false}>
+    <StudioBootGate through="experience-runtime" diagnosticsWhenReady={false} autoSafeModeAfterMs={10_000}>
       <ExperienceLabModeShell />
     </StudioBootGate>
   );

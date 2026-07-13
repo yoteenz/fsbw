@@ -8,8 +8,8 @@
 |-------|-------|
 | **Capsule Version** | 0.3.2 |
 | **Manifest Version** | 0.3.2 |
-| **Generation Date (UTC)** | 2026-07-13T01:54:11.909Z |
-| **Repository Commit SHA** | 74f298ca22d12fdc995853b896ccd25598301205 |
+| **Generation Date (UTC)** | 2026-07-13T02:11:13.349Z |
+| **Repository Commit SHA** | 193f0f24f2465cd3d98e63abff8acbd9cfcfd46c |
 | **Validation Status** | pass |
 | **Documents Included** | README_FIRST.md, MANIFEST.md, ONBOARDING_REPORT.md, FOUNDER_PROFILE.md, CHATGPT_OPERATING_MANUAL.md, AI_STYLE_GUIDE.md, AI_CONTEXT.md, CURRENT_HANDOFF.md, AI_GLOSSARY.md, PROJECT_DNA.md, PROJECT_CHANGELOG.md, PROMPT_LIBRARY.md, ROADMAP.md, KNOWN_BLOCKERS.md, OPEN_QUESTIONS.md |
 | **Manifest Hash (reading order SHA-256)** | 7b10d8a919668fc98dd4f47c7383353032cd3d69e8f39f73ff026a55b12e9b30 |
@@ -57,11 +57,11 @@ Verified:
 
 ### Current Implementation Stage
 
-P0 — FS vs Studio OS Generation Parity Forensics + Surgical Repair
+P0 — True Founder Render™ (Photoreal Full-Room Preview)
 
 ### Current Active Blockers
 
-B0, B1, B1, B1, B1, B1, B1, B2
+B0, B1, B1, B1, B1, B1, B1, B1, B2
 
 ### Approval Required Before Contribution
 
@@ -75,7 +75,7 @@ B0, B1, B1, B1, B1, B1, B1, B2
 |-------|-------|
 | **Capsule Version** | 0.3.2 |
 | **Manifest Version** | 0.3.2 |
-| **Generated** | 2026-07-13T01:54:11.909Z |
+| **Generated** | 2026-07-13T02:11:13.349Z |
 | **Validation Passed** | YES |
 | **Operational Source of Truth** | CURRENT_HANDOFF.md · KNOWN_BLOCKERS.md · PROJECT_CHANGELOG.md |
 | **Current Handoff Document** | CURRENT_HANDOFF.md |

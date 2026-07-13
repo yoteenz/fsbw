@@ -1,10 +1,10 @@
 import { Navigate } from 'react-router-dom';
 import { useEffect } from 'react';
-import { DepartmentGoldenBuildShell } from '../../../../components/admin/studio-os/department-vertical-slice/DepartmentGoldenBuildShell';
 import {
-  ExperienceLabErrorBoundary,
-  ExperienceLabWorkspace,
-} from '../../../../components/admin/studio/experience-lab';
+  DepartmentGoldenBuildShell,
+} from '../../../../components/admin/studio-os/department-vertical-slice/DepartmentGoldenBuildShell';
+import { ExperienceLabErrorBoundary } from '../../../../components/admin/studio/experience-lab/ExperienceLabErrorBoundary';
+import { ExperienceLabWorkspace } from '../../../../components/admin/studio/experience-lab/ExperienceLabWorkspace';
 import { useWorkspace } from '../../../../studio-os-core/context/WorkspaceProvider';
 import { STUDIO_OS_ROUTES } from '../../../../studio-os-core/workspace/routes';
 import { useRequireAdminPageAccess } from '../../../../hooks/useRequireAdminPageAccess';

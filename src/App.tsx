@@ -14,6 +14,7 @@ import AddOnsPage from './pages/build-a-wig/addons/page';
 import { BuildWigCustomizeEditAccessGate } from './components/buildWig/BuildWigCustomizeEditAccessGate';
 import { Suspense } from 'react';
 import LoadingScreen from './components/base/LoadingScreen';
+import { StudioRouteSuspenseFallback } from './components/admin/studio/studio-boot/StudioRouteSuspenseFallback';
 import AdminGuard from './components/AdminGuard';
 import AdminStudioWorkspaceGuard from './components/AdminStudioWorkspaceGuard';
 import StudioAdministrationGuard from './components/admin/studio-os/StudioAdministrationGuard';
@@ -2112,17 +2113,17 @@ function App() {
             </Suspense>
           } />
           <Route path="studio/experience-lab/health" element={
-            <Suspense fallback={<LoadingScreen />}>
+            <Suspense fallback={<StudioRouteSuspenseFallback label="Experience Lab health" />}>
               <AdminStudioExperienceLabHealth />
             </Suspense>
           } />
           <Route path="studio/experience-lab/safe" element={
-            <Suspense fallback={<LoadingScreen />}>
+            <Suspense fallback={<StudioRouteSuspenseFallback label="Experience Lab safe mode" />}>
               <AdminStudioExperienceLabSafe />
             </Suspense>
           } />
           <Route path="studio/experience-lab" element={
-            <Suspense fallback={<LoadingScreen />}>
+            <Suspense fallback={<StudioRouteSuspenseFallback label="Experience Lab" />}>
               <AdminStudioExperienceLab />
             </Suspense>
           } />

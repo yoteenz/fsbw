@@ -47806,3 +47806,24 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 
 **Remaining:** B1-FounderRender — founder mobile verification that real photoreal room image appears in Experience Lab Founder Review on device.
 
+---
+
+## 2026-07-13 — Experience Lab mobile loading recovery fix (full conversation)
+
+**Context:** After True Founder Render deploy (`193f0f24f`), founder reported mobile error at `/admin/studio/experience-lab`: "Loading did not complete" with bootstrap stuck `module=experience-runtime complete=false`.
+
+**Root cause:** Global `LoadingScreen` terminal watchdog fired at 12s while (1) `AdminStudioWorkspaceGuard` workspace import allows up to 15s, and (2) lazy Experience Lab Suspense chunk + studio bootstrap on `experience-runtime` can exceed 12s on mobile networks. Watchdog ignored per-source max duration.
+
+**Repair shipped:**
+
+- `loadingTerminalRegistry.ts` — per-source `maxDurationMs` honored by watchdog
+- `LoadingScreen.tsx` — passes `maxDurationMs` to registry
+- `AdminStudioWorkspaceGuard.tsx` — 20s loading budget (workspace timeout + buffer)
+- `StudioRouteSuspenseFallback.tsx` — lightweight Suspense fallback without terminal registration
+- `App.tsx` — Experience Lab routes use `StudioRouteSuspenseFallback` instead of `LoadingScreen`
+- `StudioBootGate.tsx` — `autoSafeModeAfterMs` prop; Experience Lab auto safe-mode at 10s
+- `studio-kernel.ts` — added missing `department-package-registry` to `STUDIO_BOOT_ORDER`
+- `experience-lab/page.tsx` — direct imports (avoid barrel re-export bloat)
+
+**Remaining:** Founder re-test Experience Lab on mobile after deploy.
+

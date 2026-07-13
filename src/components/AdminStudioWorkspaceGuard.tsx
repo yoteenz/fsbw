@@ -52,7 +52,11 @@ export default function AdminStudioWorkspaceGuard() {
   const [workspacesReady, setWorkspacesReady] = useState(isWorkspacesBootstrapped);
   const [bootstrapError, setBootstrapError] = useState<string | null>(null);
   const workspaceLoading = !bootstrapError && !workspacesReady;
-  const workspaceTimedOut = useGuardLoadingTimeout(workspaceLoading, 'AdminStudioWorkspaceGuard');
+  const workspaceTimedOut = useGuardLoadingTimeout(
+    workspaceLoading,
+    'AdminStudioWorkspaceGuard',
+    WORKSPACE_BOOTSTRAP_TIMEOUT_MS + 5000
+  );
 
   const routeWorkspaceId = useMemo(
     () => resolveBootstrapWorkspaceId(pathname, search, getCachedOrgMembership()),
@@ -162,7 +166,7 @@ export default function AdminStudioWorkspaceGuard() {
   }
 
   if (!workspacesReady) {
-    return <LoadingScreen source="AdminStudioWorkspaceGuard" />;
+    return <LoadingScreen source="AdminStudioWorkspaceGuard" maxDurationMs={WORKSPACE_BOOTSTRAP_TIMEOUT_MS + 5000} />;
   }
 
   return (

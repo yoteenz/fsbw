@@ -7,18 +7,21 @@ export type LoadingTerminalSource = {
 };
 
 const activeSources = new Map<string, LoadingTerminalSource>();
+const sourceMaxMs = new Map<string, number>();
 let recoveryShown = false;
 let watchdogTimer: ReturnType<typeof setInterval> | null = null;
 
 /** Max time any LoadingScreen may block the app before forced recovery. */
 export const DEFAULT_MAX_LOADING_MS = 12_000;
 
-export function registerLoadingTerminal(label: string): () => void {
+export function registerLoadingTerminal(label: string, maxDurationMs = DEFAULT_MAX_LOADING_MS): () => void {
   const id = `${label}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
   activeSources.set(id, { id, label, since: Date.now() });
+  sourceMaxMs.set(id, maxDurationMs);
   ensureLoadingWatchdog();
   return () => {
     activeSources.delete(id);
+    sourceMaxMs.delete(id);
   };
 }
 
@@ -94,7 +97,10 @@ function ensureLoadingWatchdog(): void {
   if (watchdogTimer != null) return;
   watchdogTimer = setInterval(() => {
     const now = Date.now();
-    const stuck = getActiveLoadingSources().filter((s) => now - s.since > DEFAULT_MAX_LOADING_MS);
+    const stuck = getActiveLoadingSources().filter((s) => {
+      const max = sourceMaxMs.get(s.id) ?? DEFAULT_MAX_LOADING_MS;
+      return now - s.since > max;
+    });
     if (stuck.length > 0) {
       void forceLoadingTerminalRecovery(stuck, 'watchdog');
     }
