@@ -47942,3 +47942,13 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 
 **Remaining:** Founder Regenerate Preview on default studio-os tab should now dispatch to FAL (generating → ready) or show provider error, not brand vault missing.
 
+---
+
+## 2026-07-13 — Vercel deploy missed 2ff12f396 — production redeploy trigger (full conversation continuation)
+
+**Context:** Founder reported **nothing deployed** after brand vault fix. GitHub push for `2ff12f396` (03:17:20Z) succeeded but **no Vercel deployment** was created — GitHub deployments API still shows latest `5da19c9` (auth fix). Production fsbw.vercel.app serving cached build without studio-os brand vault alias.
+
+**Action:** Empty redeploy trigger commit on master to force Vercel webhook; no code change beyond MEMORY.
+
+**Verify:** GitHub deployment status for new SHA shows `Vercel – fsbw` success; founder Regenerate Preview on studio-os tab.
+
