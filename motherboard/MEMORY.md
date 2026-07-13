@@ -48856,6 +48856,21 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 - **`experience-lab-v2.css`** — `--elab-cmd-locations-radius: 12px`; `.elab-cmd__locations` gets full pill `border-radius`, inset background + border; `.elab-cmd__row--locations` horizontal margin/padding for gap from rows 1 & 3; identity row bottom border removed; active location tab uses subtle inset ring + inner radius
 - **Tests** — command dock test for locations pill radius; 9/9 PASS
 
-**Spatial Architecture Review:** SKIPPED — Command Dock CSS polish in Phase 1 review.
+**One commit + one push** on `master` via `agent-commit.sh`.
+
+---
+
+## 2026-07-13 — Command Dock status row lighter font weight
+
+**Founder request:** Reduce font weight on Command Dock row 3 status line (`STATUS:`, `PERMIT:`, `AI COST (EST.)`).
+
+**Prior context in chat:** EL V2 Command Dock review — logo/avatar sizing, locations row rounded pill (`2d2cba87f`), workbench height/orb polish.
+
+**Shipped:**
+
+- **`experience-lab-v2.css`** — `.elab-cmd__status-item` font-weight 600→400; `.elab-cmd__status-item strong` (APPROVED/PENDING values) 800→600
+- **Tests** — typography test asserts lighter weights; 9/9 PASS
+
+**Spatial Architecture Review:** SKIPPED — CSS typography polish.
 
 **One commit + one push** on `master` via `agent-commit.sh`.

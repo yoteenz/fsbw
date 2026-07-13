@@ -513,7 +513,7 @@ body.elab-v2-fixed-shell-active {
   background: transparent;
   color: var(--elab-muted);
   font-size: 8px;
-  font-weight: 600;
+  font-weight: 400;
   letter-spacing: 0.08em;
   padding: 0 14px;
   white-space: nowrap;
@@ -525,7 +525,7 @@ body.elab-v2-fixed-shell-active {
 }
 
 .elab-cmd__status-item strong {
-  font-weight: 800;
+  font-weight: 600;
 }
 
 .elab-cmd__status-divider {
