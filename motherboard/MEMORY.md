@@ -48708,3 +48708,17 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 **Changes:** `src/features/studio-world/icons/*`, `src/assets/studio-world/experience-lab/*`, `scripts/build-experience-lab-icon-atlas.mjs`, `docs/studio-os/design-system/EXPERIENCE_LAB_ICON_CATALOG.md`, EL V2 component wiring + CSS, `package.json` prebuild + `experience-lab:build-icons` script.
 
 **Conventions:** Replace labeled source → run `npm run experience-lab:build-icons` → review registry; do not hand-crop individual icons. Search in Command Dock uses `zoomIn` (no dedicated search glyph on sheet).
+
+---
+
+## 2026-07-13 — Experience Lab Command Dock polish (founder refinements)
+
+**Context:** After shipping the labeled icon sprite system (be1e900ba), founder requested Command Dock-only CSS refinements in component review.
+
+**Topics covered:** Logo +20% (1.2× from base title-block height); +1px gap below EXPERIENCE LAB before ARCHITECTURE STUDIO (subtitle margin-top 2px); row 2 location tab text −2px (title 5px, subtitle 4px, chev 8px); row 3 status text +1px (8px); more transparent dock background (rgba 0.52 + locations row 0.16); overflow dots panel border + true vertical center fix; corners 14px bottom radius; more spacing on status row sections (padding 14px, gap 4px, divider margin).
+
+**Decisions / outcomes:** Overflow misalignment was caused by `top: 50%; transform: translateY(-50%)` on `.elab-cmd__overflow` combined with ellipsis baseline + child `translateY(-1px)` — fixed with `top: 0; bottom: 0; margin: auto 0`, fixed 22px height, flex center inside bordered panel; removed transform centering.
+
+**Changes:** `experience-lab-v2.css`, `experience-lab-v2.test.ts`, `experience-lab-v2-command-dock.test.ts` (presentation tests).
+
+**Conventions:** Command Dock polish only — no layout redesign; legacy route untouched.
