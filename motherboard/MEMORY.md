@@ -48871,6 +48871,21 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 - **`experience-lab-v2.css`** — `.elab-cmd__status-item` font-weight 600→400; `.elab-cmd__status-item strong` (APPROVED/PENDING values) 800→600
 - **Tests** — typography test asserts lighter weights; 9/9 PASS
 
+**One commit + one push** on `master` via `agent-commit.sh`.
+
+---
+
+## 2026-07-13 — Command Dock row 2 text +1px
+
+**Founder request:** Increase text size of Command Dock second row (locations) only by 1px.
+
+**Prior context in chat:** EL V2 Command Dock review — locations pill radius, status row lighter weights (`0ac6aeea1`), workbench sizing.
+
+**Shipped:**
+
+- **`experience-lab-v2.css`** — `.elab-cmd__location-title` 5→6px; `.elab-cmd__location-subtitle` 4→5px; `.elab-cmd__location-chev` 8→9px (row 2 only; rows 1 & 3 unchanged)
+- **Tests** — location title/subtitle size assertions updated; 9/9 PASS
+
 **Spatial Architecture Review:** SKIPPED — CSS typography polish.
 
 **One commit + one push** on `master` via `agent-commit.sh`.
