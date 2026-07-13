@@ -48841,6 +48841,21 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 - **`experience-lab-v2.css`** — `--elab-wb-height-scale: 0.6` on `.elab-founder-wb--tiered`; vertical tokens (title/tools/nav padding, tool + nav min-heights, center orb calc from 78/66 base, ring inset, mobile tool min-height) all scale together
 - **Tests** — orb calc assertions + height-scale test; 38/38 PASS
 
-**Spatial Architecture Review:** SKIPPED — CSS compacting only.
+**One commit + one push** on `master` via `agent-commit.sh`.
+
+---
+
+## 2026-07-13 — Command Dock locations row rounded pill (reference)
+
+**Founder request:** Middle row on Command Dock should have rounded corners at top and bottom like reference screenshot (inset HQ locations pill).
+
+**Prior context in chat:** EL V2 component review — icon sprite, Command Dock polish (logo/avatar, typography), workbench layout/orb sizing, workbench 40% height reduction (`fc91a374d`).
+
+**Shipped:**
+
+- **`experience-lab-v2.css`** — `--elab-cmd-locations-radius: 12px`; `.elab-cmd__locations` gets full pill `border-radius`, inset background + border; `.elab-cmd__row--locations` horizontal margin/padding for gap from rows 1 & 3; identity row bottom border removed; active location tab uses subtle inset ring + inner radius
+- **Tests** — command dock test for locations pill radius; 9/9 PASS
+
+**Spatial Architecture Review:** SKIPPED — Command Dock CSS polish in Phase 1 review.
 
 **One commit + one push** on `master` via `agent-commit.sh`.

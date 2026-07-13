@@ -254,6 +254,7 @@ body.elab-v2-fixed-shell-active {
   border-radius: 0 0 14px 14px;
   overflow: hidden;
   --elab-cmd-avatar-size: 28px;
+  --elab-cmd-locations-radius: 12px;
 }
 
 .elab-cmd__row {
@@ -271,13 +272,15 @@ body.elab-v2-fixed-shell-active {
   padding-top: 8px;
   padding-bottom: 8px;
   gap: 10px;
+  border-bottom: none;
 }
 
 .elab-cmd__row--locations {
-  padding: 0;
-  background: rgba(0, 0, 0, 0.16);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-  overflow: hidden;
+  padding: 0 6px;
+  margin: 2px 6px 4px;
+  background: transparent;
+  border-bottom: none;
+  overflow: visible;
   display: flex;
   align-items: stretch;
   justify-content: center;
@@ -400,6 +403,9 @@ body.elab-v2-fixed-shell-active {
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
+  border-radius: var(--elab-cmd-locations-radius);
+  background: rgba(0, 0, 0, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .elab-cmd__locations::-webkit-scrollbar {
@@ -429,7 +435,8 @@ body.elab-v2-fixed-shell-active {
 .elab-cmd__location-tab--active {
   background: rgba(255, 255, 255, 0.06);
   color: var(--elab-text);
-  box-shadow: inset 0 -1px 0 var(--elab-gold-dim);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+  border-radius: calc(var(--elab-cmd-locations-radius) - 2px);
 }
 
 .elab-cmd__location-icon {

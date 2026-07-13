@@ -69,4 +69,10 @@ describe('Experience Lab Command Dock presentation', () => {
     expect(css).toMatch(/\.elab-cmd__status-item\s*\{[\s\S]*?font-size:\s*8px/);
     expect(css).toMatch(/\.elab-cmd__subtitle\s*\{[\s\S]*?margin-top:\s*2px/);
   });
+
+  it('rounds locations row top and bottom like reference pill', () => {
+    expect(css).toContain('--elab-cmd-locations-radius: 12px');
+    expect(css).toMatch(/\.elab-cmd__locations\s*\{[\s\S]*?border-radius:\s*var\(--elab-cmd-locations-radius\)/);
+    expect(css).toMatch(/\.elab-cmd__row--locations\s*\{[\s\S]*?margin:/);
+  });
 });
