@@ -8,6 +8,7 @@ type Props = {
   migration: ExperienceLabV2MigrationReadiness;
   open?: boolean;
   onToggle?: () => void;
+  compact?: boolean;
 };
 
 const READINESS_KEYS: Array<keyof ExperienceLabV2MigrationReadiness> = [
@@ -16,11 +17,11 @@ const READINESS_KEYS: Array<keyof ExperienceLabV2MigrationReadiness> = [
 ];
 
 /** Diagnostics drawer — not stacked dashboard cards. */
-export function ExperienceLabDiagnostics({ testMode, onTestModeChange, migration, open, onToggle }: Props) {
+export function ExperienceLabDiagnostics({ testMode, onTestModeChange, migration, open, onToggle, compact }: Props) {
   if (!open) {
     return (
-      <button type="button" className="elab-diag-toggle" onClick={onToggle}>
-        Diagnostics & migration readiness
+      <button type="button" className={`elab-diag-toggle${compact ? ' elab-diag-toggle--compact' : ''}`} onClick={onToggle}>
+        {compact ? 'DIAG' : 'Diagnostics & migration readiness'}
       </button>
     );
   }

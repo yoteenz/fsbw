@@ -1,17 +1,22 @@
 /** Composition markers — used by tests to verify immersive workstation structure (not dashboard cards). */
 export const ELAB_V2_COMPOSITION = {
+  applicationShell: 'data-elab-application-shell',
   commandDock: 'data-elab-command-dock',
   viewportStage: 'data-elab-viewport-stage',
   studioViewport: 'data-studio-viewport',
   floatingInspector: 'data-elab-floating-inspector',
   founderWorkbench: 'data-elab-founder-workbench',
+  workbenchTabs: 'data-elab-workbench-tabs',
   approvalBridge: 'data-elab-approval-bridge',
+  blockerSheet: 'data-elab-blocker-sheet',
   workbenchDock: 'data-elab-workbench-dock',
   departmentDock: 'data-elab-department-dock',
   registrySidebar: 'data-elab-registry-sidebar',
   governanceSidebar: 'data-elab-governance-sidebar',
   viewAngles: 'data-elab-view-angles',
   modeRail: 'data-elab-viewport-mode-rail',
+  focusMode: 'data-elab-focus-mode',
+  sheet: 'data-elab-sheet',
 } as const;
 
 export const VIEWPORT_MODE_LABELS: Record<string, string> = {

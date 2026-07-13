@@ -6,12 +6,13 @@
   <title>Experience Lab V2 — Review Harness</title>
   <link rel="stylesheet" href="../../../../src/features/studio-world/experience-lab-v2/experience-lab-v2.css" />
   <style>
-    html, body { margin: 0; padding: 0; background: #08090c; }
+    html, body { margin: 0; padding: 0; background: #08090c; height: 100%; overflow: hidden; }
     .review-note { display: none; }
+    #elab-review-root { height: 100vh; height: 100dvh; }
   </style>
 </head>
 <body>
-  <div id="elab-review-root" class="elab-workstation elab-workstation--desktop" data-experience-lab-v2-shell>
+  <div id="elab-review-root" class="elab-workstation elab-app-shell elab-app-shell--desktop" data-experience-lab-v2-shell data-elab-application-shell>
     <div class="elab-v2__env" data-experience-lab-environment aria-hidden>
       <div style="width:100%;height:100%;background:linear-gradient(160deg,#0c0e12 0%,#1a1d26 45%,#0a0b0f 100%)"></div>
       <div class="elab-v2__env-scrim" style="opacity:0.85"></div>
@@ -145,8 +146,9 @@
     const params = new URLSearchParams(location.search);
     const mode = params.get('mode') || 'desktop';
     const root = document.getElementById('elab-review-root');
-    root.classList.toggle('elab-workstation--mobile', mode === 'mobile');
-    root.classList.toggle('elab-workstation--desktop', mode !== 'mobile');
+    root.classList.toggle('elab-app-shell--mobile', mode === 'mobile');
+    root.classList.toggle('elab-app-shell--desktop', mode === 'desktop');
+    root.classList.toggle('elab-app-shell--tablet', mode === 'tablet');
     if (mode === 'mobile') {
       const dock = document.querySelector('[data-elab-command-dock]');
       dock.className = 'elab-cmd';

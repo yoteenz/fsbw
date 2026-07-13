@@ -13,9 +13,11 @@ import { clearLoadingScreenDocumentLock } from '../../../../platform-stabilizati
 
 type Props = {
   children: ReactNode;
+  /** Fixed-viewport application shell — no portal document scroll (Experience Lab V2). */
+  fixedViewport?: boolean;
 };
 
-export function DepartmentGoldenBuildShell({ children }: Props) {
+export function DepartmentGoldenBuildShell({ children, fixedViewport = false }: Props) {
   useRequireAdminPageAccess();
   const { pathname } = useLocation();
   const experienceProfile = resolveExperienceProfileForPath(pathname);
@@ -53,8 +55,8 @@ export function DepartmentGoldenBuildShell({ children }: Props) {
               width: '100vw',
               height: '100dvh',
               overflowX: 'hidden',
-              overflowY: 'auto',
-              WebkitOverflowScrolling: 'touch',
+              overflowY: fixedViewport ? 'hidden' : 'auto',
+              WebkitOverflowScrolling: fixedViewport ? undefined : 'touch',
               overscrollBehaviorY: 'contain',
               background: '#12100e',
             }}

@@ -19,6 +19,7 @@ export type StudioViewportProps = {
   onImageLoad?: () => void;
   modes?: StudioViewportMode[];
   onModeChange?: (mode: StudioViewportMode) => void;
+  onFocusMode?: (mode: StudioViewportMode) => void;
   embedded?: boolean;
 };
 
@@ -118,6 +119,7 @@ export function StudioViewport({
   onImageLoad,
   modes,
   onModeChange,
+  onFocusMode,
   embedded,
 }: StudioViewportProps) {
   const [fullscreen, setFullscreen] = useState(false);
@@ -166,6 +168,11 @@ export function StudioViewport({
           {isStale ? 'STALE' : artifactStatus.toUpperCase()}
         </span>
         <div className="elab-viewport__controls">
+          {onFocusMode ? (
+            <button type="button" className="elab-viewport__ctrl" onClick={() => onFocusMode(mode)} aria-label="Focus mode">
+              ◈
+            </button>
+          ) : null}
           <button type="button" className="elab-viewport__ctrl" onClick={toggleFullscreen} aria-label="Fullscreen">
             {fullscreen ? '✕' : '⛶'}
           </button>

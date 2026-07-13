@@ -48494,3 +48494,22 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 **Conventions:** Reference images are implementation spec, not inspiration. V2 route isolated; no production writes in MOCK/READ_ONLY.
 
 **One commit + one push** on `master` via `agent-commit.sh`.
+
+---
+
+## 2026-07-13 — P0 Experience Lab V2 Fixed-Viewport Application Shell (full conversation)
+
+**Founder request:** Convert Experience Lab V2 from vertically scrolling webpage to fixed-viewport application shell (no document scroll) matching approved reference — mobile tabbed workbench, compact docks, view angles on viewport, sheets for secondary info, focus modes, desktop fixed grid. Preserve legacy route and backend safety. Tests, screenshots, one commit.
+
+**Context:** Visual reconstruction shipped (`fe4199934`) but Founder observed page still scrolls vertically on mobile — stacked modules instead of fixed creative application.
+
+**Shipped:**
+
+- **Fixed shell** — `elab-app-shell` CSS Grid (`100dvh`, `overflow: hidden`); `useExperienceLabAppShell` hook; `experience-lab-v2-layout.ts` tokens; `DepartmentGoldenBuildShell fixedViewport` prop scoped to V2 page only
+- **Mobile** — compact 2-row Command Dock + status sheet; tabbed Founder Workbench (Brief/Review/Timeline/Diagnostics, one pane); view angles attached to viewport bottom; 3 floating inspector summaries; compact tool tray + More sheet; approval blocker chip → sheet
+- **Desktop** — fixed grid, sidebars scroll internally, 4-zone workbench in fixed shell
+- **Focus modes** — viewport/blueprint/render/review; Escape exits overlays and focus
+- **Sheets** — `ExperienceLabSheet` for status, blockers, governance, inspector, tools
+- **Tests** — 27/27 PASS; build PASS
+
+**One commit + one push** on `master` via `agent-commit.sh`.

@@ -91,6 +91,76 @@ describe('Experience Lab V2 — Immersive composition', () => {
   });
 });
 
+describe('Experience Lab V2 — Fixed application shell', () => {
+  it('uses fixed-viewport application shell grid (no document min-height)', () => {
+    const shell = readV2Source('ExperienceLabV2Shell.tsx');
+    const css = readV2Source('experience-lab-v2.css');
+    expect(shell).toContain('elab-app-shell');
+    expect(shell).toContain('ELAB_V2_COMPOSITION.applicationShell');
+    expect(css).toContain('.elab-app-shell__grid');
+    expect(css).toContain('overflow: hidden');
+    expect(css).not.toMatch(/min-height:\s*100vh/);
+  });
+
+  it('V2 page enables fixedViewport on golden build shell', () => {
+    const page = readFileSync(
+      resolve(V2_DIR, '../../../pages/admin/studio/experience-lab-v2/page.tsx'),
+      'utf8'
+    );
+    expect(page).toContain('fixedViewport');
+    const prodPage = readFileSync(
+      resolve(V2_DIR, '../../../pages/admin/studio/experience-lab/page.tsx'),
+      'utf8'
+    );
+    expect(prodPage).not.toContain('fixedViewport');
+  });
+
+  it('mobile Founder Workbench uses tabbed console (one pane at a time)', () => {
+    const wb = readV2Source('ExperienceLabFounderWorkbench.tsx');
+    expect(wb).toContain('ELAB_V2_COMPOSITION.workbenchTabs');
+    expect(wb).toContain('elab-founder-wb--tabbed');
+  });
+
+  it('approval bridge exposes compact blocker sheet trigger', () => {
+    const bridge = readV2Source('ExperienceLabApprovalBridge.tsx');
+    expect(bridge).toContain('ELAB_V2_COMPOSITION.blockerSheet');
+  });
+
+  it('compact workbench dock uses horizontal tool tray with More', () => {
+    const dock = readV2Source('ExperienceLabWorkbenchDock.tsx');
+    expect(dock).toContain('elab-wb-dock--compact-tray');
+    expect(dock).toContain('MORE');
+  });
+
+  it('view angles attach inside viewport on compact layouts', () => {
+    const stage = readV2Source('ExperienceLabViewportStage.tsx');
+    expect(stage).toContain('elab-view-angles--attached');
+  });
+
+  it('focus mode and escape handling exist', () => {
+    const hook = readV2Source('useExperienceLabAppShell.ts');
+    expect(hook).toContain('Escape');
+    expect(hook).toContain('focusMode');
+    expect(readV2Source('experience-lab-v2-layout.ts')).toContain('ElabFocusMode');
+  });
+
+  it('layout tokens and safe-area variables defined centrally', () => {
+    const layout = readV2Source('experience-lab-v2-layout.ts');
+    expect(layout).toContain('--el-v2-safe-top');
+    expect(layout).toContain('resolveElabBreakpoint');
+    const css = readV2Source('experience-lab-v2.css');
+    expect(css).toContain('--el-v2-safe-bottom');
+    expect(css).toContain('elab-v2-fixed-shell-active');
+  });
+
+  it('sheets provide internal scroll without page expansion', () => {
+    expect(readV2Source('ExperienceLabSheet.tsx')).toContain('data-elab-sheet');
+    const css = readV2Source('experience-lab-v2.css');
+    expect(css).toContain('.elab-sheet__body');
+    expect(css).toContain('overflow-y: auto');
+  });
+});
+
 describe('Experience Lab V2 — Routes', () => {
   it('defines canonical V2 route and alias', () => {
     expect(EXPERIENCE_LAB_V2_ROUTE).toBe('/admin/studio/experience-lab-v2');

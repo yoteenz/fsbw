@@ -3,12 +3,14 @@ import { ELAB_V2_COMPOSITION } from './experience-lab-v2-composition';
 
 type Props = {
   model: ExperienceLabV2ViewModel;
+  embedded?: boolean;
 };
 
 /** Desktop right governance stack — scene overview, performance, permits, immune. */
-export function ExperienceLabGovernanceSidebar({ model }: Props) {
+export function ExperienceLabGovernanceSidebar({ model, embedded }: Props) {
+  const Tag = embedded ? 'div' : 'aside';
   return (
-    <aside className="elab-governance" {...{ [ELAB_V2_COMPOSITION.governanceSidebar]: '' }} aria-label="Scene governance">
+    <Tag className={`elab-governance${embedded ? ' elab-governance--embedded' : ''}`} {...(embedded ? {} : { [ELAB_V2_COMPOSITION.governanceSidebar]: '' })} aria-label="Scene governance">
       <section className="elab-gov-panel">
         <p className="elab-side__heading">SCENE OVERVIEW</p>
         <dl className="elab-gov-dl">
@@ -41,6 +43,6 @@ export function ExperienceLabGovernanceSidebar({ model }: Props) {
         <p className="elab-side__heading">IMMUNE SYSTEM</p>
         <p className="elab-status--ok">⬡ No issues detected</p>
       </section>
-    </aside>
+    </Tag>
   );
 }

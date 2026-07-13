@@ -12,7 +12,7 @@ export default function AdminStudioExperienceLabV2Page() {
   useRequireStudioWorldAdmin();
 
   return (
-    <DepartmentGoldenBuildShell>
+    <DepartmentGoldenBuildShell fixedViewport>
       <ExperienceLabErrorBoundary route={EXPERIENCE_LAB_V2_ROUTE}>
         <ExperienceLabV2Shell />
       </ExperienceLabErrorBoundary>

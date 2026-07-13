@@ -13,6 +13,7 @@ import { ExperienceLabApprovalBridge } from './ExperienceLabApprovalBridge';
 import { ExperienceLabWorkbenchDock } from './ExperienceLabWorkbenchDock';
 import { ExperienceLabDepartmentDock } from './ExperienceLabDepartmentDock';
 import { ExperienceLabDiagnostics } from './ExperienceLabDiagnostics';
+import { ExperienceLabSheet } from './ExperienceLabSheet';
 import {
   experienceLabV2ViewModelAdapter,
   parseViewportModeFromQuery,
@@ -21,6 +22,10 @@ import {
 import type { ExperienceLabV2TestMode, StudioViewportMode } from './experience-lab-v2.types';
 import { readExperienceLabV2TestMode } from './experience-lab-v2-test-modes';
 import { resolveExperienceLabV2FeatureFlags } from './experience-lab-v2-feature-flags';
+import { useExperienceLabAppShell } from './useExperienceLabAppShell';
+import { defaultWorkbenchTab, focusModeFromViewportMode } from './experience-lab-v2-layout';
+import type { ElabWorkbenchTab } from './experience-lab-v2-layout';
+import { ELAB_V2_COMPOSITION } from './experience-lab-v2-composition';
 import './experience-lab-v2.css';
 
 type Props = {
@@ -28,7 +33,7 @@ type Props = {
 };
 
 /**
- * Experience Lab V2 — Immersive Command Interface (presentation layer).
+ * Experience Lab V2 — Fixed-viewport application shell (no document scroll).
  * Three layers: Environment · React UI · Viewport content.
  */
 export function ExperienceLabV2Shell({ initialDepartmentId = 'experience-lab' }: Props) {
@@ -37,6 +42,7 @@ export function ExperienceLabV2Shell({ initialDepartmentId = 'experience-lab' }:
   const location = useLocation();
   const navigate = useNavigate();
   const flags = resolveExperienceLabV2FeatureFlags();
+  const shell = useExperienceLabAppShell();
 
   const [departmentId] = useState<CanonicalMainDepartmentId>(initialDepartmentId);
   const [viewportMode, setViewportMode] = useState<StudioViewportMode>(
@@ -45,14 +51,31 @@ export function ExperienceLabV2Shell({ initialDepartmentId = 'experience-lab' }:
   const [activeFloat, setActiveFloat] = useState({ left: 'blueprint', right: 'materials' });
   const [testMode, setTestMode] = useState<ExperienceLabV2TestMode>(() => readExperienceLabV2TestMode());
   const [imageLoaded, setImageLoaded] = useState(false);
-  const [diagnosticsOpen, setDiagnosticsOpen] = useState(false);
-  const [isMobile, setIsMobile] = useState(() => (typeof window !== 'undefined' ? window.innerWidth < 1024 : false));
+  const [inspectorLabel, setInspectorLabel] = useState<string | null>(null);
+
+  const model = useMemo(
+    () =>
+      experienceLabV2ViewModelAdapter({
+        program,
+        departmentId,
+        viewportMode,
+        queue: canonicalQueue.queue,
+        imageLoaded,
+        useMock: testMode === 'MOCK',
+      }),
+    [program, departmentId, viewportMode, canonicalQueue.queue, imageLoaded, testMode]
+  );
+
+  const hasRender = Boolean(model.founderRender?.previewArtifactUrl);
+  const [workbenchTab, setWorkbenchTab] = useState<ElabWorkbenchTab>(() => defaultWorkbenchTab(hasRender));
 
   useEffect(() => {
-    const onResize = () => setIsMobile(window.innerWidth < 1024);
-    window.addEventListener('resize', onResize);
-    return () => window.removeEventListener('resize', onResize);
-  }, []);
+    setWorkbenchTab((prev) => {
+      if (prev === 'review' && !hasRender) return 'brief';
+      if (prev === 'brief' && hasRender) return 'review';
+      return prev;
+    });
+  }, [hasRender]);
 
   const setModeWithQuery = useCallback(
     (mode: StudioViewportMode) => {
@@ -68,25 +91,20 @@ export function ExperienceLabV2Shell({ initialDepartmentId = 'experience-lab' }:
   );
 
   const onFloatSelect = useCallback(
-    (side: 'left' | 'right', slot: string, mode: StudioViewportMode) => {
+    (side: 'left' | 'right', slot: string, mode: StudioViewportMode, label: string) => {
       setActiveFloat((prev) => ({ ...prev, [side]: slot }));
-      if (mode !== 'EMPTY_STATE') setModeWithQuery(mode);
+      if (shell.isCompact) {
+        setInspectorLabel(label);
+        shell.setOverlay('inspector');
+      } else if (mode !== 'EMPTY_STATE') {
+        setModeWithQuery(mode);
+      }
     },
-    [setModeWithQuery]
+    [setModeWithQuery, shell]
   );
 
-  const model = useMemo(
-    () =>
-      experienceLabV2ViewModelAdapter({
-        program,
-        departmentId,
-        viewportMode,
-        queue: canonicalQueue.queue,
-        imageLoaded,
-        useMock: testMode === 'MOCK',
-      }),
-    [program, departmentId, viewportMode, canonicalQueue.queue, imageLoaded, testMode]
-  );
+  const focusClass =
+    shell.focusMode !== 'none' ? ` elab-app-shell--focus-${shell.focusMode}` : '';
 
   if (!flags.experienceLabV2Enabled) {
     return (
@@ -97,51 +115,137 @@ export function ExperienceLabV2Shell({ initialDepartmentId = 'experience-lab' }:
   }
 
   return (
-    <div className={`elab-workstation${isMobile ? ' elab-workstation--mobile' : ' elab-workstation--desktop'}`} data-experience-lab-v2-shell>
-      <ExperienceLabEnvironmentLayer isMobile={isMobile} />
+    <div
+      className={`elab-workstation elab-app-shell elab-app-shell--${shell.breakpoint}${focusClass}`}
+      data-experience-lab-v2-shell
+      {...{ [ELAB_V2_COMPOSITION.applicationShell]: '' }}
+      {...(shell.focusMode !== 'none' ? { [ELAB_V2_COMPOSITION.focusMode]: shell.focusMode } : {})}
+    >
+      <ExperienceLabEnvironmentLayer isMobile={shell.isCompact} />
 
-      <div className="elab-workstation__ui">
-        <div className="elab-v2__badge-row">
+      <div className="elab-app-shell__grid">
+        <div className="elab-app-shell__badges">
           <span className="elab-v2__badge">EXPERIENCE LAB V2 — TEST ENVIRONMENT</span>
           <span className="elab-v2__badge">NOT YET PRODUCTION</span>
         </div>
 
-        <ExperienceLabCommandDock model={{ ...model, testMode }} isMobile={isMobile} />
+        <div className="elab-app-shell__command">
+          <ExperienceLabCommandDock
+            model={{ ...model, testMode }}
+            isCompact={shell.isCompact}
+            onStatusOpen={() => shell.toggleOverlay('status')}
+          />
+        </div>
 
-        <main className="elab-workstation__main">
-          {!isMobile ? <ExperienceLabRegistrySidebar /> : null}
+        <main className="elab-app-shell__workspace">
+          {shell.isDesktop ? <ExperienceLabRegistrySidebar /> : null}
 
-          <div className="elab-workstation__center">
+          <div className="elab-app-shell__viewport-region">
             <ExperienceLabViewportStage
               model={model}
               viewportMode={viewportMode}
               onModeChange={setModeWithQuery}
               onImageLoad={() => setImageLoaded(true)}
-              isMobile={isMobile}
+              isCompact={shell.isCompact}
               onFloatSelect={onFloatSelect}
               activeFloat={activeFloat}
+              onFocusMode={(mode) => shell.setFocusMode(focusModeFromViewportMode(mode))}
+              focusMode={shell.focusMode}
             />
           </div>
 
-          {!isMobile ? <ExperienceLabGovernanceSidebar model={model} /> : null}
+          {shell.isDesktop ? <ExperienceLabGovernanceSidebar model={model} /> : null}
         </main>
 
-        <ExperienceLabFounderWorkbench model={model} />
-        <ExperienceLabApprovalBridge approval={model.approval} testMode={testMode} />
+        {shell.focusMode === 'none' ? (
+          <>
+            <div className="elab-app-shell__workbench">
+              <ExperienceLabFounderWorkbench
+                model={model}
+                isCompact={shell.isCompact}
+                activeTab={workbenchTab}
+                onTabChange={setWorkbenchTab}
+              />
+            </div>
 
-        {flags.experienceLabV2DiagnosticsEnabled ? (
-          <ExperienceLabDiagnostics
-            testMode={testMode}
-            onTestModeChange={setTestMode}
-            migration={model.migrationReadiness}
-            open={diagnosticsOpen}
-            onToggle={() => setDiagnosticsOpen((o) => !o)}
-          />
-        ) : null}
+            <div className="elab-app-shell__approval">
+              <ExperienceLabApprovalBridge
+                approval={model.approval}
+                testMode={testMode}
+                isCompact={shell.isCompact}
+                onBlockersOpen={() => shell.toggleOverlay('blockers')}
+              />
+            </div>
 
-        <ExperienceLabWorkbenchDock isMobile={isMobile} />
-        <ExperienceLabDepartmentDock />
+            {flags.experienceLabV2DiagnosticsEnabled ? (
+              <div className="elab-app-shell__diagnostics">
+                <ExperienceLabDiagnostics
+                  testMode={testMode}
+                  onTestModeChange={setTestMode}
+                  migration={model.migrationReadiness}
+                  open={shell.overlay === 'diagnostics'}
+                  onToggle={() => shell.toggleOverlay('diagnostics')}
+                  compact
+                />
+              </div>
+            ) : null}
+
+            <div className="elab-app-shell__tools">
+              <ExperienceLabWorkbenchDock
+                isCompact={shell.isCompact}
+                onMoreOpen={() => shell.toggleOverlay('tools')}
+              />
+            </div>
+
+            <div className="elab-app-shell__dept-dock">
+              <ExperienceLabDepartmentDock
+                isCompact={shell.isCompact}
+                onGovernanceOpen={shell.isCompact ? () => shell.toggleOverlay('governance') : undefined}
+              />
+            </div>
+          </>
+        ) : (
+          <div className="elab-app-shell__focus-bar">
+            <span>Focus: {shell.focusMode.replace('_', ' ')}</span>
+            <button type="button" onClick={() => shell.setFocusMode('none')}>Exit focus</button>
+          </div>
+        )}
       </div>
+
+      <ExperienceLabSheet open={shell.overlay === 'status'} title="Status & metadata" onClose={shell.closeOverlay}>
+        <dl className="elab-sheet-dl">
+          <div><dt>Status</dt><dd className="elab-status--ok">{model.approvalStatus.toUpperCase()}</dd></div>
+          <div><dt>Permit</dt><dd className="elab-status--ok">{model.permitStatus.toUpperCase()}</dd></div>
+          <div><dt>AI cost</dt><dd>{model.costEstimate}</dd></div>
+          <div><dt>Test mode</dt><dd>{testMode}</dd></div>
+          <div><dt>Revision</dt><dd>r{model.revision}</dd></div>
+        </dl>
+      </ExperienceLabSheet>
+
+      <ExperienceLabSheet open={shell.overlay === 'blockers'} title="Approval requirements" onClose={shell.closeOverlay}>
+        <ul className="elab-sheet-list">
+          {model.approval.disabledReasons.map((r) => (
+            <li key={r}>{r}</li>
+          ))}
+        </ul>
+      </ExperienceLabSheet>
+
+      <ExperienceLabSheet open={shell.overlay === 'governance'} title="Scene governance" onClose={shell.closeOverlay}>
+        <ExperienceLabGovernanceSidebar model={model} embedded />
+      </ExperienceLabSheet>
+
+      <ExperienceLabSheet open={shell.overlay === 'inspector'} title={inspectorLabel ?? 'Inspector'} onClose={shell.closeOverlay}>
+        <p className="elab-sheet-hint">Viewport mode: {viewportMode.replace('_', ' ')}</p>
+        <p className="elab-sheet-hint">Tap a floating summary on the viewport to switch modes. Detailed inspector content opens here without expanding the page.</p>
+      </ExperienceLabSheet>
+
+      <ExperienceLabSheet open={shell.overlay === 'tools'} title="Experience Lab tools" onClose={shell.closeOverlay}>
+        <div className="elab-sheet-tools">
+          {['Architectural Tools', 'Material Library', 'Lighting Studio', 'Camera Studio', 'Budget Forecast', 'Permit Center'].map((t) => (
+            <button key={t} type="button" className="elab-sheet-tool-btn">{t}</button>
+          ))}
+        </div>
+      </ExperienceLabSheet>
     </div>
   );
 }
