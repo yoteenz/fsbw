@@ -48672,3 +48672,18 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 **Tests:** 34/34 composition tests pass.
 
 **One commit + one push** on `master` via `agent-commit.sh`.
+
+---
+
+## 2026-07-13 — Command Dock logo scale, centered location tabs, overflow dots fix (full conversation)
+
+**Context:** Command Dock Phase 1 polish — founder reported overflow **…** sitting low in status row; requested +10% logo, centered second-row location panels.
+
+**Shipped:**
+
+- **Logo** — `+10%` height (`calc(... * 1.1)`, max-height `24.2px`)
+- **Row 2** — location tabs/panels centered (`justify-content: center` on tabs + copy stack)
+- **Row 3** — equal status row padding; overflow button `top: 50%` + `translateY(-50%)` with `elab-cmd__overflow-dots` wrapper for true vertical center
+- **Tests** — 63/63 PASS
+
+**One commit + one push** on `master` via `agent-commit.sh`.

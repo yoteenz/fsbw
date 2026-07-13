@@ -162,7 +162,7 @@ describe('Experience Lab V2 — Fixed application shell', () => {
     expect(dock).toContain('elab-cmd__row--status');
     expect(dock).toContain('elab-cmd__status-center');
     expect(dock).toContain('resolveExperienceLabCommandDockLogoUrl');
-    expect(dock).toContain('AI COST (EST.)');
+    expect(dock).toContain('elab-cmd__overflow-dots');
     expect(dock).not.toContain('isCompact');
     expect(readV2Source('ExperienceLabWorkbenchDock.tsx')).toContain('elab-wb-dock--pro');
     expect(readV2Source('ExperienceLabWorkbenchDock.tsx')).not.toContain('isCompact');

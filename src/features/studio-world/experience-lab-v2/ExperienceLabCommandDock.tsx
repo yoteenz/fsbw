@@ -123,7 +123,7 @@ export function ExperienceLabCommandDock({ model, onStatusOpen, onSearch }: Prop
             </span>
           </div>
           <button type="button" className="elab-cmd__overflow" aria-label="More status options" onClick={openStatus}>
-            …
+            <span className="elab-cmd__overflow-dots" aria-hidden>…</span>
           </button>
         </div>
       </header>

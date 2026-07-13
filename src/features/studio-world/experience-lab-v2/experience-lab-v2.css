@@ -276,11 +276,14 @@ body.elab-v2-fixed-shell-active {
   background: rgba(0, 0, 0, 0.28);
   border-bottom: 1px solid rgba(255, 255, 255, 0.04);
   overflow: hidden;
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
 }
 
 .elab-cmd__row--status {
   color: var(--elab-muted);
-  padding: 5px 10px 7px;
+  padding: 6px 10px;
   border-bottom: none;
   gap: 0;
   flex-wrap: nowrap;
@@ -289,14 +292,14 @@ body.elab-v2-fixed-shell-active {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 26px;
+  min-height: 28px;
 }
 
 .elab-cmd__logo-img {
   flex-shrink: 0;
   width: auto;
-  height: calc(9px * 1.2 + 6px * 1.2);
-  max-height: 22px;
+  height: calc((9px * 1.2 + 6px * 1.2) * 1.1);
+  max-height: calc(22px * 1.1);
   object-fit: contain;
   object-position: left center;
   display: block;
@@ -385,6 +388,7 @@ body.elab-v2-fixed-shell-active {
 .elab-cmd__locations {
   display: flex;
   align-items: stretch;
+  justify-content: center;
   gap: 0;
   width: 100%;
   min-width: 0;
@@ -407,8 +411,9 @@ body.elab-v2-fixed-shell-active {
   scroll-snap-stop: always;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
-  padding: 6px 12px;
+  padding: 6px 10px;
   min-height: 40px;
   box-sizing: border-box;
   border: none;
@@ -416,7 +421,7 @@ body.elab-v2-fixed-shell-active {
   background: transparent;
   color: var(--elab-muted);
   cursor: pointer;
-  text-align: left;
+  text-align: center;
 }
 
 .elab-cmd__location-tab--active {
@@ -435,6 +440,7 @@ body.elab-v2-fixed-shell-active {
 .elab-cmd__location-copy {
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 2px;
   min-width: 0;
 }
@@ -444,6 +450,7 @@ body.elab-v2-fixed-shell-active {
   font-weight: 800;
   letter-spacing: 0.08em;
   white-space: nowrap;
+  text-align: center;
 }
 
 .elab-cmd__location-subtitle {
@@ -451,6 +458,7 @@ body.elab-v2-fixed-shell-active {
   letter-spacing: 0.08em;
   color: var(--elab-muted);
   white-space: nowrap;
+  text-align: center;
 }
 
 .elab-cmd__location-tab--active .elab-cmd__location-subtitle {
@@ -520,19 +528,26 @@ body.elab-v2-fixed-shell-active {
 .elab-cmd__overflow {
   position: absolute;
   right: 8px;
-  top: 0;
-  bottom: 0;
+  top: 50%;
+  transform: translateY(-50%);
   border: none;
   background: transparent;
   color: var(--elab-muted);
-  font-size: 14px;
+  font-size: 12px;
   cursor: pointer;
   padding: 0 8px;
-  margin-left: 0;
+  margin: 0;
   line-height: 1;
-  display: inline-flex;
+  display: flex;
   align-items: center;
   justify-content: center;
+  height: 20px;
+}
+
+.elab-cmd__overflow-dots {
+  display: block;
+  line-height: 1;
+  transform: translateY(-1px);
 }
 
 .elab-status--ok { color: var(--elab-ok); }
