@@ -81,6 +81,8 @@ describe('Experience Lab V2 — Immersive composition', () => {
     expect(css).toContain('.elab-float');
     expect(css).toContain('.elab-approval-bridge');
     expect(css).toContain('.elab-founder-wb');
+    expect(css).toContain('.elab-founder-wb--tiered');
+    expect(css).toContain('scroll-snap-type: x mandatory');
     expect(css).not.toContain('.elab-v2__panel');
   });
 
@@ -118,11 +120,15 @@ describe('Experience Lab V2 — Fixed application shell', () => {
     expect(prodPage).not.toContain('fixedViewport');
   });
 
-  it('mobile Founder Workbench uses tabbed console (one pane at a time)', () => {
+  it('workbench uses three-row tiered layout with scrollable editing tools', () => {
     const wb = readV2Source('ExperienceLabFounderWorkbench.tsx');
-    expect(wb).toContain('ELAB_V2_COMPOSITION.workbenchTabs');
-    expect(wb).toContain('elab-founder-wb--tabbed');
-    expect(wb).not.toContain('elab-founder-wb__console');
+    expect(wb).toContain('elab-founder-wb--tiered');
+    expect(wb).toContain('EXPERIENCE LAB WORKBENCH');
+    expect(wb).toContain('elab-founder-wb__tools-scroll');
+    expect(wb).toContain('elab-founder-wb__world-nav');
+    expect(wb).toContain('resolveExperienceLabWorkbenchCenterLogoUrl');
+    expect(readV2Source('experience-lab-v2-workbench-config.ts')).toContain('material-lab');
+    expect(readV2Source('ExperienceLabWorkbenchDock.tsx')).toContain('EXPERIENCE_LAB_WORKBENCH_EDITING_TOOLS');
   });
 
   it('workstation frame unifies viewport room and lower deck', () => {

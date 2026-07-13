@@ -48629,3 +48629,21 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 **Shipped:** `.elab-cmd--tiered` — **top corners square**, **bottom-left/right rounded** (`border-radius: 0 0 6px 6px` + `overflow: hidden`).
 
 **One commit + one push** on `master` via `agent-commit.sh`.
+
+---
+
+## 2026-07-13 — Experience Lab V2 Workbench three-row layout (full conversation)
+
+**Context:** Experience Lab V2 Component Review — Phase 2 Workbench. Founder reference image + spec: title row, snap-scrolling editing tools, world navigation with center logo. Prior: Command Dock three-row layout, white review backgrounds.
+
+**Shipped:**
+
+- **`ExperienceLabFounderWorkbench.tsx`** — three rows: EXPERIENCE LAB WORKBENCH title · 12 editing tools (6 primary + 6 extended on horizontal scroll/snap) · world nav (DASHBOARD, STUDIO WORLD, center FS hex logo, MARKETPLACE, COMMAND CENTER)
+- **`experience-lab-v2-workbench-config.ts`** — tool + nav registry, center logo via `VITE_SUPABASE_URL`
+- **`ExperienceLabWorkbenchDock.tsx`** — shares same 12-tool scroll strip
+- **`experience-lab-v2.css`** — `.elab-founder-wb--tiered`, scroll-snap tools, world nav, top corners rounded / bottom square
+- **Tests** — 62/62 PASS
+
+**Spatial Architecture Review:** SKIPPED — Phase 2 component refinement in review harness.
+
+**One commit + one push** on `master` via `agent-commit.sh`.

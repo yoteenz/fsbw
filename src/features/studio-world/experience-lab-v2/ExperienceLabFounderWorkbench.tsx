@@ -2,14 +2,13 @@ import { useState } from 'react';
 import type { ExperienceLabV2ViewModel } from './experience-lab-v2.types';
 import type { ElabWorkbenchTab } from './experience-lab-v2-layout';
 import { ELAB_V2_COMPOSITION } from './experience-lab-v2-composition';
-
-const REVISIONS = [13, 14, 15, 16, 17, 18] as const;
-const TABS: { id: ElabWorkbenchTab; label: string }[] = [
-  { id: 'review', label: 'Review' },
-  { id: 'timeline', label: 'Timeline' },
-  { id: 'diagnostics', label: 'Diagnostics' },
-  { id: 'brief', label: 'Brief' },
-];
+import {
+  EXPERIENCE_LAB_WORKBENCH_EDITING_TOOLS,
+  EXPERIENCE_LAB_WORKBENCH_WORLD_NAV,
+  resolveExperienceLabWorkbenchCenterLogoUrl,
+  type WorkbenchEditingToolId,
+  type WorkbenchWorldNavId,
+} from './experience-lab-v2-workbench-config';
 
 type Props = {
   model: ExperienceLabV2ViewModel;
@@ -17,94 +16,124 @@ type Props = {
   onTabChange?: (tab: ElabWorkbenchTab) => void;
 };
 
-function BriefPane({ model }: { model: ExperienceLabV2ViewModel }) {
+function WorkbenchNavIcon({ kind }: { kind: 'dashboard' | 'globe' | 'marketplace' | 'command' }) {
+  if (kind === 'dashboard') {
+    return (
+      <svg viewBox="0 0 16 16" width="14" height="14" focusable="false" aria-hidden>
+        <path
+          d="M2 14V6l6-4 6 4v8H9v-4H7v4H2z"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.2"
+        />
+      </svg>
+    );
+  }
+  if (kind === 'globe') {
+    return (
+      <svg viewBox="0 0 16 16" width="14" height="14" focusable="false" aria-hidden>
+        <circle cx="8" cy="8" r="5.5" fill="none" stroke="currentColor" strokeWidth="1.1" />
+        <path d="M2.5 8h11M8 2.5c1.8 1.6 2.8 3.8 2.8 5.5S9.8 11.9 8 13.5M8 2.5C6.2 4.1 5.2 6.3 5.2 8s1 3.9 2.8 5.5" fill="none" stroke="currentColor" strokeWidth="1" />
+      </svg>
+    );
+  }
+  if (kind === 'marketplace') {
+    return (
+      <svg viewBox="0 0 16 16" width="14" height="14" focusable="false" aria-hidden>
+        <path d="M3 5l1-2h8l1 2v8H3V5z" fill="none" stroke="currentColor" strokeWidth="1.1" />
+        <path d="M3 5h10" stroke="currentColor" strokeWidth="1.1" />
+      </svg>
+    );
+  }
   return (
-    <div className="elab-founder-wb__pane elab-founder-wb__pane--scroll">
-      <p className="elab-founder-wb__brief-text">{model.charterSummary}</p>
-      <p className="elab-founder-wb__mood">Mood: <strong>Luxury / Power / Innovation</strong></p>
-    </div>
+    <svg viewBox="0 0 16 16" width="14" height="14" focusable="false" aria-hidden>
+      <path d="M2 13V4l6-3 6 3v9H9V8H7v5H2z" fill="none" stroke="currentColor" strokeWidth="1.1" />
+    </svg>
   );
 }
 
-function ReviewPane({ model }: { model: ExperienceLabV2ViewModel }) {
-  const fr = model.founderRender;
-  return (
-    <div className="elab-founder-wb__pane">
-      <div className="elab-founder-wb__player">
-        {fr?.previewArtifactUrl ? (
-          <img src={fr.previewArtifactUrl} alt="Founder render preview" className="elab-founder-wb__preview" />
-        ) : (
-          <div className="elab-founder-wb__player-placeholder">
-            <span className="elab-founder-wb__play">▶</span>
-            <span>DRAG TO EXPLORE</span>
-          </div>
-        )}
-      </div>
-      <p className="elab-founder-wb__status">{fr?.status ?? 'no_preview'} · {model.departmentName}</p>
-    </div>
-  );
-}
-
-function TimelinePane({ model }: { model: ExperienceLabV2ViewModel }) {
-  return (
-    <div className="elab-founder-wb__pane elab-founder-wb__pane--scroll">
-      <div className="elab-founder-wb__chart" aria-hidden>
-        <svg viewBox="0 0 240 60" className="elab-founder-wb__chart-svg">
-          <polyline fill="none" stroke="rgba(201,169,98,0.8)" strokeWidth="2" points="0,50 40,45 80,38 120,28 160,18 200,10 240,5" />
-          {REVISIONS.map((r, i) => (
-            <circle key={r} cx={i * 48} cy={50 - i * 8} r="3" fill={r === model.revision ? '#c9a962' : 'rgba(255,255,255,0.3)'} />
-          ))}
-        </svg>
-      </div>
-      <p className="elab-founder-wb__rev-current">Current: r{model.revision}</p>
-      {model.isStale ? <p className="elab-founder-wb__warn">Stale reference warning</p> : null}
-    </div>
-  );
-}
-
-function DiagnosticsPane({ model }: { model: ExperienceLabV2ViewModel }) {
-  const fr = model.founderRender;
-  return (
-    <div className="elab-founder-wb__pane elab-founder-wb__pane--scroll">
-      <p>{model.costEstimate} · {fr?.modelRoute ?? '—'}</p>
-      {model.diagnostics.map((d) => (
-        <p key={d} className="elab-founder-wb__diag-line">{d}</p>
-      ))}
-    </div>
-  );
-}
-
-/** Founder Review Workbench — single tabbed surface (desktop + mobile parity). */
-export function ExperienceLabFounderWorkbench({ model, activeTab: controlledTab, onTabChange }: Props) {
-  const [internalTab, setInternalTab] = useState<ElabWorkbenchTab>('review');
-  const tab = controlledTab ?? internalTab;
-  const setTab = onTabChange ?? setInternalTab;
+/** Three-row Experience Lab Workbench — title · editing tools · world navigation. */
+export function ExperienceLabFounderWorkbench({ model: _model }: Props) {
+  const [activeTool, setActiveTool] = useState<WorkbenchEditingToolId>('architectural-tools');
+  const [activeNav, setActiveNav] = useState<WorkbenchWorldNavId>('dashboard');
+  const leftNav = EXPERIENCE_LAB_WORKBENCH_WORLD_NAV.slice(0, 2);
+  const rightNav = EXPERIENCE_LAB_WORKBENCH_WORLD_NAV.slice(2);
 
   return (
     <section
-      className="elab-founder-wb elab-founder-wb--tabbed"
+      className="elab-founder-wb elab-founder-wb--tiered"
       {...{ [ELAB_V2_COMPOSITION.founderWorkbench]: '' }}
-      aria-label="Founder review workbench"
+      aria-label="Experience Lab workbench"
     >
-      <div className="elab-founder-wb__tabs" {...{ [ELAB_V2_COMPOSITION.workbenchTabs]: '' }} role="tablist">
-        {TABS.map((t) => (
-          <button
-            key={t.id}
-            type="button"
-            role="tab"
-            aria-selected={tab === t.id}
-            className={`elab-founder-wb__tab${tab === t.id ? ' elab-founder-wb__tab--active' : ''}`}
-            onClick={() => setTab(t.id)}
-          >
-            {t.label}
-          </button>
-        ))}
+      <div className="elab-founder-wb__row elab-founder-wb__row--title">
+        <h2 className="elab-founder-wb__title">EXPERIENCE LAB WORKBENCH</h2>
       </div>
-      <div className="elab-founder-wb__tab-panel" role="tabpanel">
-        {tab === 'brief' ? <BriefPane model={model} /> : null}
-        {tab === 'review' ? <ReviewPane model={model} /> : null}
-        {tab === 'timeline' ? <TimelinePane model={model} /> : null}
-        {tab === 'diagnostics' ? <DiagnosticsPane model={model} /> : null}
+
+      <div className="elab-founder-wb__row elab-founder-wb__row--tools">
+        <div
+          className="elab-founder-wb__tools-scroll"
+          {...{ [ELAB_V2_COMPOSITION.workbenchTabs]: '' }}
+          role="toolbar"
+          aria-label="Editing tools"
+        >
+          {EXPERIENCE_LAB_WORKBENCH_EDITING_TOOLS.map((tool) => (
+            <button
+              key={tool.id}
+              type="button"
+              className={`elab-founder-wb__tool${activeTool === tool.id ? ' elab-founder-wb__tool--active' : ''}`}
+              title={tool.label}
+              aria-pressed={activeTool === tool.id}
+              onClick={() => setActiveTool(tool.id)}
+            >
+              <span className="elab-founder-wb__tool-icon" aria-hidden>{tool.icon}</span>
+              <span className="elab-founder-wb__tool-label">{tool.label}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="elab-founder-wb__row elab-founder-wb__row--world-nav">
+        <nav className="elab-founder-wb__world-nav" aria-label="Studio World navigation">
+          {leftNav.map((item) => (
+            <button
+              key={item.id}
+              type="button"
+              className={`elab-founder-wb__nav-item${activeNav === item.id ? ' elab-founder-wb__nav-item--active' : ''}`}
+              aria-current={activeNav === item.id ? 'page' : undefined}
+              onClick={() => setActiveNav(item.id)}
+            >
+              <span className="elab-founder-wb__nav-icon">
+                <WorkbenchNavIcon kind={item.icon} />
+              </span>
+              <span className="elab-founder-wb__nav-label">{item.label}</span>
+            </button>
+          ))}
+
+          <div className="elab-founder-wb__nav-logo-wrap">
+            <img
+              className="elab-founder-wb__nav-logo"
+              src={resolveExperienceLabWorkbenchCenterLogoUrl()}
+              alt=""
+              aria-hidden
+              decoding="async"
+            />
+          </div>
+
+          {rightNav.map((item) => (
+            <button
+              key={item.id}
+              type="button"
+              className={`elab-founder-wb__nav-item${activeNav === item.id ? ' elab-founder-wb__nav-item--active' : ''}`}
+              aria-current={activeNav === item.id ? 'page' : undefined}
+              onClick={() => setActiveNav(item.id)}
+            >
+              <span className="elab-founder-wb__nav-icon">
+                <WorkbenchNavIcon kind={item.icon} />
+              </span>
+              <span className="elab-founder-wb__nav-label">{item.label}</span>
+            </button>
+          ))}
+        </nav>
       </div>
     </section>
   );
