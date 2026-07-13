@@ -13,7 +13,7 @@ export const EXPERIENCE_LAB_ICON_OPTICAL_SCALE: Partial<Record<ExperienceLabIcon
   zoomIn: 1.05,
   zoomOut: 1.05,
   pan: 1.04,
-  orbit: 1.03,
+  orbit: 1.06,
   settings: 1.04,
   diagnostics: 1.05,
   dashboard: 1.04,

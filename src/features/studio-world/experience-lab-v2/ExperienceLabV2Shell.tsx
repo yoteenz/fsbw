@@ -147,18 +147,6 @@ export function ExperienceLabV2Shell({ initialDepartmentId = 'experience-lab' }:
       {review.show('bottom-tool-dock') && !review.show('workbench') ? (
         <ExperienceLabWorkbenchDock onMoreOpen={() => shell.toggleOverlay('tools')} />
       ) : null}
-      {review.show('diagnostics') && flags.experienceLabV2DiagnosticsEnabled ? (
-        <ExperienceLabDiagnostics
-          testMode={testMode}
-          onTestModeChange={setTestMode}
-          migration={model.migrationReadiness}
-          panelDiagnostics={orchestrator.diagnostics}
-          onResetLayout={orchestrator.resetLayout}
-          open={shell.overlay === 'diagnostics'}
-          onToggle={() => shell.toggleOverlay('diagnostics')}
-          compact
-        />
-      ) : null}
     </>
   ) : null;
 

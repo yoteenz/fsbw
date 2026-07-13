@@ -173,11 +173,13 @@ describe('Experience Lab V2 — Fixed application shell', () => {
     expect(shell).toContain("review.show('bottom-tool-dock') && !review.show('workbench')");
   });
 
-  it('full workstation hides approval bridge, department dock hex, and environment orb stack', () => {
+  it('full workstation hides approval bridge, department dock hex, environment orb, and diagnostics strip', () => {
     const shell = readV2Source('ExperienceLabV2Shell.tsx');
+    const lowerDeckBlock = shell.match(/const lowerDeck =[\s\S]*?\) : null;/)?.[0] ?? '';
     expect(shell).not.toContain('review.show(\'approval-bridge\') ?');
     expect(shell).not.toContain('elab-app-shell__dept-dock');
     expect(shell).not.toContain('experienceLabV2EnvironmentAssetEnabled');
+    expect(lowerDeckBlock).not.toContain('ExperienceLabDiagnostics');
     const shellPage = readFileSync(
       resolve(V2_DIR, '../../../components/admin/studio-os/department-vertical-slice/DepartmentGoldenBuildShell.tsx'),
       'utf8',

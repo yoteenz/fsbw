@@ -276,14 +276,14 @@ body.elab-v2-fixed-shell-active {
 }
 
 .elab-cmd__row--locations {
-  padding: 0 6px;
-  margin: 2px 6px 4px;
+  padding: 0;
+  margin: 0;
   background: transparent;
   border-bottom: none;
-  overflow: visible;
+  overflow: hidden;
   display: flex;
   align-items: stretch;
-  justify-content: center;
+  justify-content: stretch;
 }
 
 .elab-cmd__row--status {
@@ -403,9 +403,11 @@ body.elab-v2-fixed-shell-active {
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
-  border-radius: var(--elab-cmd-locations-radius);
+  border-radius: 0;
   background: rgba(0, 0, 0, 0.16);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
 }
 
 .elab-cmd__locations::-webkit-scrollbar {

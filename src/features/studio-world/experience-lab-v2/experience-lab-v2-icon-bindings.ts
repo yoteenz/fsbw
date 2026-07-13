@@ -14,7 +14,7 @@ export const VIEWPORT_MODE_ICON: Partial<Record<StudioViewportMode, ExperienceLa
 };
 
 export const WORKBENCH_TOOL_ICON: Record<WorkbenchEditingToolId, ExperienceLabIconName> = {
-  'architectural-tools': 'experienceLab',
+  'architectural-tools': 'construction',
   'material-library': 'materials',
   'asset-reference': 'attachments',
   'budget-forecast': 'analytics',
@@ -30,7 +30,7 @@ export const WORKBENCH_TOOL_ICON: Record<WorkbenchEditingToolId, ExperienceLabIc
 
 export const WORKBENCH_NAV_ICON: Record<WorkbenchWorldNavId, ExperienceLabIconName> = {
   dashboard: 'dashboard',
-  'studio-world': 'experienceLab',
+  'studio-world': 'orbit',
   marketplace: 'share',
   'command-center': 'terminal',
 };

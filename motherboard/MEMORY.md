@@ -48923,6 +48923,23 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 - **QA:** `/admin/studio/experience-lab-icon-qa`, `EXPERIENCE_LAB_EXTRACTED_ICON_QA.md`, updated catalog
 - **Tests:** 10/10 icon tests + 47/47 EL V2 regression; production build PASS
 
-**Spatial Architecture Review:** SKIPPED — icon fidelity infrastructure; no layout changes.
+**One commit + one push** on `master` via `agent-commit.sh`.
+
+---
+
+## 2026-07-13 — Command Dock row 2 edge-to-edge + workbench icon/diag polish
+
+**Founder request:** (1) Command Dock row 2 extend edge-to-edge; (2) workbench architectural tools → construction icon; (3) remove DIAG strip below workbench; (4) Studio World nav → globe (orbit) icon per reference.
+
+**Prior context:** P0 icon extraction repair (`d571af51a`); Command Dock typography/pill polish; workbench height scale.
+
+**Shipped:**
+
+- **`experience-lab-v2.css`** — locations row margin/padding 0; `.elab-cmd__locations` full-bleed (border-radius 0, top/bottom borders only)
+- **`experience-lab-v2-icon-bindings.ts`** — architectural-tools → `construction`; studio-world → `orbit` (globe)
+- **`ExperienceLabV2Shell.tsx`** — removed compact `ExperienceLabDiagnostics` from full-workstation `lowerDeck` (still in component review sandbox)
+- **Tests** — command dock edge-to-edge, workbench icon bindings, lowerDeck no diagnostics; 52/52 PASS
+
+**Spatial Architecture Review:** SKIPPED — presentation polish only.
 
 **One commit + one push** on `master` via `agent-commit.sh`.
