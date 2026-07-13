@@ -799,8 +799,260 @@ function compileAssetIntent(intent) {
 var FOUNDER_RENDER_ARTIFACT_INTENT = "founder-full-room-preview";
 var FOUNDER_FULL_ROOM_PREVIEW_PROMPT_VERSION = "founder-full-room-preview-prompt.v1";
 
+// src/studio-os-core/creative-production/model-registry/nano-banana-2-schema.ts
+var NANO_BANANA_2_T2I_ENDPOINT = "fal-ai/nano-banana-2";
+var NANO_BANANA_2_EDIT_ENDPOINT = "fal-ai/nano-banana-2/edit";
+var NANO_BANANA_2_PRODUCTION_QUALITY = "4K";
+var NANO_BANANA_2_PRODUCTION_THINKING = "high";
+var NANO_BANANA_2_MAX_REFERENCE_IMAGES = 14;
+function buildNanoBanana2FalInput(input) {
+  const hasBrandRefs = (input.brandReferenceUrls?.length ?? 0) > 0;
+  const endpoint = hasBrandRefs ? NANO_BANANA_2_EDIT_ENDPOINT : NANO_BANANA_2_T2I_ENDPOINT;
+  const falInput = {
+    prompt: input.negativePrompt ? `${input.prompt}
+
+NEGATIVE: ${input.negativePrompt}` : input.prompt,
+    resolution: NANO_BANANA_2_PRODUCTION_QUALITY,
+    aspect_ratio: input.aspectRatio,
+    output_format: input.outputFormat,
+    num_images: 1,
+    thinking_level: NANO_BANANA_2_PRODUCTION_THINKING
+  };
+  if (hasBrandRefs) {
+    falInput.image_urls = input.brandReferenceUrls.slice(0, NANO_BANANA_2_MAX_REFERENCE_IMAGES);
+  }
+  return { endpoint, falInput, usesReferences: hasBrandRefs };
+}
+
 // src/studio-os-core/creative-production/model-registry/routes.ts
 var SCENE_STACK_SHELL_FAL_MODEL = "fal-ai/nano-banana-pro/edit";
+var BACKGROUND_REMOVAL_FAL_MODEL = "fal-ai/birefnet/v2";
+var FOUNDER_APPROVED_AT = "2026-07-12";
+var FOUNDER_APPROVED_BY = "founder-visual-comparison";
+var MODEL_REGISTRY_ROUTES = [
+  {
+    routeId: "nano-banana-pro-edit-shell",
+    assetClass: "environment-shell",
+    generationMode: "image-to-image",
+    provider: "fal",
+    endpointId: SCENE_STACK_SHELL_FAL_MODEL,
+    qualityPreset: "production",
+    targetResolution: "4K",
+    referencePolicy: "marble-genesis-anchor",
+    alphaPolicy: "none",
+    backgroundPolicy: "full-scene",
+    supportsBrandAssetGuidance: false,
+    supportsMultipleReferences: true,
+    fallbackRouteIds: [],
+    enabled: true,
+    rolloutState: "production",
+    policyVersion: "layer-model-routing.v2",
+    approvedBy: FOUNDER_APPROVED_BY,
+    approvedAt: FOUNDER_APPROVED_AT,
+    notes: "UNCHANGED \u2014 environment shell img2img with marble genesis anchor."
+  },
+  {
+    routeId: "nano-banana-pro-founder-full-room",
+    assetClass: "founder-full-room-preview",
+    generationMode: "image-to-image",
+    provider: "fal",
+    endpointId: SCENE_STACK_SHELL_FAL_MODEL,
+    qualityPreset: "production",
+    targetResolution: "4K",
+    referencePolicy: "brand-material-references-only",
+    alphaPolicy: "none",
+    backgroundPolicy: "full-scene",
+    supportsBrandAssetGuidance: true,
+    supportsMultipleReferences: true,
+    fallbackRouteIds: [],
+    enabled: true,
+    rolloutState: "production",
+    policyVersion: "founder-render-routing.v1",
+    approvedBy: FOUNDER_APPROVED_BY,
+    approvedAt: FOUNDER_APPROVED_AT,
+    notes: "Founder Render\u2122 \u2014 photoreal full-room preview for Founder Review approval gate."
+  },
+  {
+    routeId: "nano-banana-2-isolated",
+    assetClass: "signature-landmark",
+    generationMode: "text-to-image",
+    provider: "fal",
+    endpointId: NANO_BANANA_2_T2I_ENDPOINT,
+    qualityPreset: "production",
+    targetResolution: "4K",
+    referencePolicy: "brand-material-references-only",
+    alphaPolicy: "post-cleanup",
+    backgroundPolicy: "studio-seamless",
+    supportsBrandAssetGuidance: true,
+    supportsMultipleReferences: true,
+    fallbackRouteIds: ["nano-banana-2-isolated-edit"],
+    enabled: true,
+    rolloutState: "production",
+    policyVersion: "layer-model-routing.v2",
+    approvedBy: FOUNDER_APPROVED_BY,
+    approvedAt: FOUNDER_APPROVED_AT,
+    notes: "Founder-approved isolated specialist \u2014 signature landmarks."
+  },
+  {
+    routeId: "nano-banana-2-isolated-edit",
+    assetClass: "signature-landmark",
+    generationMode: "image-to-image",
+    provider: "fal",
+    endpointId: NANO_BANANA_2_EDIT_ENDPOINT,
+    qualityPreset: "production",
+    targetResolution: "4K",
+    referencePolicy: "brand-material-references-only",
+    alphaPolicy: "post-cleanup",
+    backgroundPolicy: "studio-seamless",
+    supportsBrandAssetGuidance: true,
+    supportsMultipleReferences: true,
+    fallbackRouteIds: [],
+    enabled: true,
+    rolloutState: "production",
+    policyVersion: "layer-model-routing.v2",
+    approvedBy: FOUNDER_APPROVED_BY,
+    approvedAt: FOUNDER_APPROVED_AT,
+    notes: "Brand-material reference mode \u2014 material URLs only, zero scene images."
+  },
+  {
+    routeId: "nano-banana-2-isolated-group",
+    assetClass: "furniture-objects",
+    generationMode: "text-to-image",
+    provider: "fal",
+    endpointId: NANO_BANANA_2_T2I_ENDPOINT,
+    qualityPreset: "production",
+    targetResolution: "4K",
+    referencePolicy: "brand-material-references-only",
+    alphaPolicy: "post-cleanup",
+    backgroundPolicy: "studio-seamless",
+    supportsBrandAssetGuidance: true,
+    supportsMultipleReferences: true,
+    fallbackRouteIds: ["nano-banana-2-isolated-edit"],
+    enabled: true,
+    rolloutState: "production",
+    policyVersion: "layer-model-routing.v2",
+    approvedBy: FOUNDER_APPROVED_BY,
+    approvedAt: FOUNDER_APPROVED_AT,
+    notes: "Founder-approved isolated specialist \u2014 furniture object groups."
+  },
+  {
+    routeId: "nano-banana-2-reception-structure",
+    assetClass: "reception-structure",
+    generationMode: "text-to-image",
+    provider: "fal",
+    endpointId: NANO_BANANA_2_T2I_ENDPOINT,
+    qualityPreset: "production",
+    targetResolution: "4K",
+    referencePolicy: "brand-material-references-only",
+    alphaPolicy: "post-cleanup",
+    backgroundPolicy: "studio-seamless",
+    supportsBrandAssetGuidance: true,
+    supportsMultipleReferences: true,
+    fallbackRouteIds: ["nano-banana-2-isolated-edit"],
+    enabled: true,
+    rolloutState: "production",
+    policyVersion: "layer-model-routing.v2",
+    approvedBy: FOUNDER_APPROVED_BY,
+    approvedAt: FOUNDER_APPROVED_AT,
+    notes: "Reception structures \u2014 brand-grounded isolated generation."
+  },
+  {
+    routeId: "nano-banana-2-architectural-prop",
+    assetClass: "architectural-prop",
+    generationMode: "text-to-image",
+    provider: "fal",
+    endpointId: NANO_BANANA_2_T2I_ENDPOINT,
+    qualityPreset: "production",
+    targetResolution: "4K",
+    referencePolicy: "brand-material-references-only",
+    alphaPolicy: "post-cleanup",
+    backgroundPolicy: "studio-seamless",
+    supportsBrandAssetGuidance: true,
+    supportsMultipleReferences: true,
+    fallbackRouteIds: ["nano-banana-2-isolated-edit"],
+    enabled: true,
+    rolloutState: "production",
+    policyVersion: "layer-model-routing.v2",
+    approvedBy: FOUNDER_APPROVED_BY,
+    approvedAt: FOUNDER_APPROVED_AT,
+    notes: "Architectural props \u2014 brand-grounded isolated generation."
+  },
+  {
+    routeId: "nano-banana-2-decorative-object",
+    assetClass: "decorative-object",
+    generationMode: "text-to-image",
+    provider: "fal",
+    endpointId: NANO_BANANA_2_T2I_ENDPOINT,
+    qualityPreset: "production",
+    targetResolution: "4K",
+    referencePolicy: "brand-material-references-only",
+    alphaPolicy: "post-cleanup",
+    backgroundPolicy: "studio-seamless",
+    supportsBrandAssetGuidance: true,
+    supportsMultipleReferences: true,
+    fallbackRouteIds: ["nano-banana-2-isolated-edit"],
+    enabled: true,
+    rolloutState: "production",
+    policyVersion: "layer-model-routing.v2",
+    approvedBy: FOUNDER_APPROVED_BY,
+    approvedAt: FOUNDER_APPROVED_AT,
+    notes: "Decorative objects \u2014 brand-grounded isolated generation."
+  },
+  {
+    routeId: "birefnet-background-removal",
+    assetClass: "background-removal",
+    generationMode: "background-removal",
+    provider: "fal",
+    endpointId: BACKGROUND_REMOVAL_FAL_MODEL,
+    qualityPreset: "production",
+    targetResolution: "2K",
+    referencePolicy: "none",
+    alphaPolicy: "requested",
+    backgroundPolicy: "transparent-alpha",
+    supportsBrandAssetGuidance: false,
+    supportsMultipleReferences: false,
+    fallbackRouteIds: [],
+    enabled: true,
+    rolloutState: "production",
+    policyVersion: "layer-model-routing.v2",
+    approvedBy: "verified-pipeline",
+    approvedAt: FOUNDER_APPROVED_AT,
+    notes: "Dedicated background removal \u2014 not NB2."
+  },
+  {
+    routeId: "image-upscale-production",
+    assetClass: "image-upscale",
+    generationMode: "upscale",
+    provider: "fal",
+    endpointId: "fal-ai/clarity-upscaler",
+    qualityPreset: "production",
+    targetResolution: "4K",
+    referencePolicy: "none",
+    alphaPolicy: "requested",
+    backgroundPolicy: "transparent-alpha",
+    supportsBrandAssetGuidance: false,
+    supportsMultipleReferences: false,
+    fallbackRouteIds: [],
+    enabled: true,
+    rolloutState: "production",
+    policyVersion: "layer-model-routing.v2",
+    approvedBy: "resolution-truth-policy",
+    approvedAt: FOUNDER_APPROVED_AT,
+    notes: "Post-approval upscale path \u2014 labels output post-upscaled-4k."
+  }
+];
+function getModelRouteById(routeId) {
+  return MODEL_REGISTRY_ROUTES.find((r) => r.routeId === routeId && r.enabled) ?? null;
+}
+function getPrimaryRouteForAssetClass(assetClass) {
+  const primary = MODEL_REGISTRY_ROUTES.find(
+    (r) => r.assetClass === assetClass && r.enabled && r.rolloutState === "production"
+  );
+  if (!primary) {
+    throw new Error(`No production route for asset class: ${assetClass}`);
+  }
+  return primary;
+}
 
 // src/studio-os-core/founder-render/model-route.ts
 var FOUNDER_RENDER_ROUTE_ID = "nano-banana-pro-founder-full-room";
@@ -1162,6 +1414,118 @@ function isBrandAssetResolutionError(result) {
   return "code" in result && result.code === "BRAND_ASSET_REQUIRED_MISSING";
 }
 
+// src/studio-os-core/scene-stack/isolated-layer-contract.ts
+var ISOLATED_LAYER_QUALITY_GATE_VERSION = "isolated-layer-quality.v1";
+var FORBIDDEN_SCENE_CONTENT = [
+  "full room",
+  "interior environment",
+  "walls",
+  "ceiling",
+  "floor",
+  "windows",
+  "architecture",
+  "showroom",
+  "lobby",
+  "wide shot",
+  "complete composition",
+  "prior layers",
+  "shell recreation"
+];
+function resolveLayerGenerationMode(layerId) {
+  if (layerId === "environment-shell") return "full-scene-shell";
+  if (layerId === "signature-landmark") return "isolated-single-object";
+  if (layerId === "furniture-objects") return "isolated-object-group";
+  if (layerId === "lighting-systems") return "lighting-map";
+  if (layerId === "atmospheric-systems") return "atmosphere-overlay";
+  if (layerId === "surface-materials") return "texture-map";
+  if (layerId === "ambient-motion") return "motion-overlay";
+  return "reflection-overlay";
+}
+function getIsolatedLayerContract(layerId) {
+  if (layerId === "environment-shell") {
+    return {
+      layerId,
+      layerType: "environment-shell",
+      generationMode: "full-scene-shell",
+      isolationMode: "none",
+      expectedContent: "Architecture shell only \u2014 walls, ceiling, floor, proportions.",
+      forbiddenContent: ["furniture", "hero objects", "lighting effects", "people"],
+      expectedAlpha: false,
+      maximumFrameCoverage: 1,
+      minimumTransparentSides: 0,
+      allowFullWidthEdgeContact: true,
+      allowFullHeightEdgeContact: true,
+      shellSimilarityThreshold: 1,
+      referencePolicy: "none",
+      outputFormat: "webp",
+      mountBehavior: "structural",
+      regenerationPolicy: "manual-only",
+      qualityGateVersion: ISOLATED_LAYER_QUALITY_GATE_VERSION
+    };
+  }
+  if (layerId === "signature-landmark") {
+    return {
+      layerId,
+      layerType: "signature-landmark",
+      generationMode: "isolated-single-object",
+      isolationMode: "object-only",
+      expectedContent: "One hero landmark object only \u2014 transparent background, mountable plate.",
+      forbiddenContent: FORBIDDEN_SCENE_CONTENT,
+      expectedAlpha: true,
+      maximumFrameCoverage: 0.7,
+      minimumTransparentSides: 3,
+      allowFullWidthEdgeContact: false,
+      allowFullHeightEdgeContact: false,
+      shellSimilarityThreshold: 0.82,
+      referencePolicy: "perspective-metadata-only",
+      outputFormat: "png",
+      mountBehavior: "css-composite",
+      regenerationPolicy: "auto-up-to-2",
+      qualityGateVersion: ISOLATED_LAYER_QUALITY_GATE_VERSION
+    };
+  }
+  if (layerId === "furniture-objects") {
+    return {
+      layerId,
+      layerType: "furniture-objects",
+      generationMode: "isolated-object-group",
+      isolationMode: "object-group",
+      expectedContent: "Grouped furniture package only \u2014 preserved arrangement, transparent background.",
+      forbiddenContent: FORBIDDEN_SCENE_CONTENT,
+      expectedAlpha: true,
+      maximumFrameCoverage: 0.85,
+      minimumTransparentSides: 2,
+      allowFullWidthEdgeContact: false,
+      allowFullHeightEdgeContact: false,
+      shellSimilarityThreshold: 0.84,
+      referencePolicy: "perspective-metadata-only",
+      outputFormat: "png",
+      mountBehavior: "css-composite",
+      regenerationPolicy: "auto-up-to-2",
+      qualityGateVersion: ISOLATED_LAYER_QUALITY_GATE_VERSION
+    };
+  }
+  return {
+    layerId,
+    layerType: layerId,
+    generationMode: resolveLayerGenerationMode(layerId),
+    isolationMode: "blend-overlay",
+    expectedContent: "Isolated overlay pass \u2014 not a full scene.",
+    forbiddenContent: FORBIDDEN_SCENE_CONTENT,
+    expectedAlpha: true,
+    maximumFrameCoverage: 0.55,
+    minimumTransparentSides: 1,
+    allowFullWidthEdgeContact: true,
+    allowFullHeightEdgeContact: true,
+    shellSimilarityThreshold: 0.9,
+    referencePolicy: "none",
+    outputFormat: "png",
+    mountBehavior: "css-composite",
+    regenerationPolicy: "auto-up-to-2",
+    qualityGateVersion: ISOLATED_LAYER_QUALITY_GATE_VERSION
+  };
+}
+
 // src/studio-os-core/creative-production/artifact-intent.ts
 function validatorExistsForIntent(intent) {
   return [
@@ -1222,13 +1586,136 @@ function runFounderRenderPreflight(plan) {
     materialSetId: plan.materialSet.materialSetId
   };
 }
+
+// src/studio-os-core/scene-stack/types.ts
+var SCENE_STACK_LAYER_ORDER = [
+  "environment-shell",
+  "signature-landmark",
+  "furniture-objects",
+  "lighting-systems",
+  "atmospheric-systems",
+  "surface-materials",
+  "ambient-motion",
+  "interaction",
+  "runtime-effects",
+  "founder-personalization"
+];
+
+// src/studio-os-core/creative-production/model-registry/resolve-model-route.ts
+function layerIdToAssetClass(layerId) {
+  switch (layerId) {
+    case "environment-shell":
+      return "environment-shell";
+    case "signature-landmark":
+      return "signature-landmark";
+    case "furniture-objects":
+      return "furniture-objects";
+    case "surface-materials":
+      return "material-overlay";
+    case "atmospheric-systems":
+      return "atmosphere-overlay";
+    case "ambient-motion":
+      return "motion-overlay";
+    case "lighting-systems":
+      return "reflection-overlay";
+    default:
+      return "decorative-object";
+  }
+}
+var PROMPT_BUILDER_BY_LAYER = {
+  "environment-shell": "environment-shell-prompt.v1",
+  "signature-landmark": "signature-landmark-isolated-prompt.v3",
+  "furniture-objects": "furniture-objects-isolated-prompt.v3"
+};
+function resolveModelRoute(input) {
+  const brandGrounding = input.brandGroundingRequired === true;
+  let route = getPrimaryRouteForAssetClass(input.assetClass);
+  if (brandGrounding && route.supportsBrandAssetGuidance && route.fallbackRouteIds.length > 0) {
+    const editFallback = route.fallbackRouteIds.map((id) => getModelRouteById(id)).find((r) => r?.endpointId === NANO_BANANA_2_EDIT_ENDPOINT);
+    if (editFallback) {
+      route = editFallback;
+    }
+  }
+  const textToImageOnly = route.generationMode === "text-to-image" && route.endpointId === NANO_BANANA_2_T2I_ENDPOINT;
+  return {
+    ...route,
+    providerModel: route.endpointId,
+    providerEndpoint: route.endpointId,
+    textToImageOnly,
+    promptBuilderId: PROMPT_BUILDER_BY_LAYER[input.assetClass] ?? "blend-overlay-prompt.v1",
+    allowBackgroundExtraction: route.assetClass !== "environment-shell",
+    requestedAlpha: route.alphaPolicy === "requested" || route.alphaPolicy === "post-cleanup",
+    resolutionTruth: {
+      requestedResolution: "4K",
+      providerNativeResolution: NANO_BANANA_2_PRODUCTION_QUALITY,
+      supportsNative4K: route.endpointId.startsWith("fal-ai/nano-banana-2"),
+      thinkingLevel: route.endpointId.startsWith("fal-ai/nano-banana-2") ? NANO_BANANA_2_PRODUCTION_THINKING : void 0
+    }
+  };
+}
+function resolveSceneStackLayerModelRouteFromRegistry(layerId, options) {
+  const contract = getIsolatedLayerContract(layerId);
+  const generationMode = contract.generationMode;
+  const assetClass = layerIdToAssetClass(layerId);
+  const brandGrounding = options?.brandGroundingRequired === true;
+  const resolved = resolveModelRoute({
+    organizationId: options?.organizationId,
+    assetClass,
+    brandGroundingRequired: brandGrounding,
+    isolationAttempt: options?.isolationAttempt ?? 0,
+    surface: "scene-stack"
+  });
+  let referenceStrategy;
+  if (layerId === "environment-shell") {
+    referenceStrategy = "marble-genesis-anchor";
+  } else if (resolved.referencePolicy === "brand-material-references-only") {
+    referenceStrategy = brandGrounding ? "placement-metadata-only" : "placement-metadata-only";
+  } else {
+    referenceStrategy = "placement-metadata-only";
+  }
+  const promptBuilderId = layerId === "signature-landmark" ? "signature-landmark-isolated-prompt.v3" : layerId === "furniture-objects" ? "furniture-objects-isolated-prompt.v3" : layerId === "environment-shell" ? "environment-shell-prompt.v1" : "blend-overlay-prompt.v1";
+  return {
+    layerId,
+    generationMode,
+    provider: "fal",
+    providerModel: layerId === "environment-shell" ? SCENE_STACK_SHELL_FAL_MODEL : resolved.providerModel,
+    providerEndpoint: layerId === "environment-shell" ? SCENE_STACK_SHELL_FAL_MODEL : resolved.providerEndpoint,
+    textToImageOnly: layerId === "environment-shell" ? false : resolved.textToImageOnly,
+    referenceStrategy,
+    requestedAlpha: contract.expectedAlpha,
+    promptBuilderId,
+    allowBackgroundExtraction: layerId !== "environment-shell",
+    routeId: layerId === "environment-shell" ? "nano-banana-pro-edit-shell" : resolved.routeId,
+    assetClass,
+    brandGroundingCapable: resolved.supportsBrandAssetGuidance,
+    resolutionTruth: resolved.resolutionTruth
+  };
+}
+
+// src/studio-os-core/scene-stack/layer-model-routing.ts
+function resolveLayerIdFromProductionGroupId(productionGroupId) {
+  if (!productionGroupId.startsWith("scene-stack-")) return null;
+  for (const layerId of [...SCENE_STACK_LAYER_ORDER].reverse()) {
+    if (productionGroupId.endsWith(`-${layerId}`)) return layerId;
+  }
+  return null;
+}
+function resolveSceneStackLayerModelRoute(layerId, isolationAttempt = 0, options) {
+  return resolveSceneStackLayerModelRouteFromRegistry(layerId, {
+    organizationId: options?.organizationId,
+    brandGroundingRequired: options?.brandGroundingRequired,
+    isolationAttempt
+  });
+}
 export {
   DEMO_AUTHORIZATION_ID,
   FOUNDER_FULL_ROOM_PREVIEW_PROMPT_VERSION,
   FOUNDER_RENDER_ARTIFACT_INTENT,
   FOUNDER_RENDER_ROUTE_ID,
+  SCENE_STACK_SHELL_FAL_MODEL,
   buildAuthorizationPayloadForSigning,
   buildFounderFullRoomPreviewPrompt,
+  buildNanoBanana2FalInput,
   buildRegistryLineageMetadata,
   compileAssetIntent,
   createDemoAssetIntent,
@@ -1239,6 +1726,8 @@ export {
   representGovernedGenerationRequest,
   resolveBrandMaterialPackage,
   resolveFounderRenderModelRoute,
+  resolveLayerIdFromProductionGroupId,
+  resolveSceneStackLayerModelRoute,
   runFounderRenderPreflight,
   validateAuthorizationStructure
 };

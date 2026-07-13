@@ -5,14 +5,9 @@
 
 import { readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
-import {
-  resolveLayerIdFromProductionGroupId,
-  resolveSceneStackLayerModelRoute,
-  SCENE_STACK_SHELL_FAL_MODEL,
-} from '../../src/studio-os-core/scene-stack/layer-model-routing.js';
-import { buildNanoBanana2FalInput } from '../../src/studio-os-core/creative-production/model-registry/nano-banana-2-schema.js';
 
-export const STUDIO_BUILDER_FAL_MODEL = SCENE_STACK_SHELL_FAL_MODEL;
+/** Default shell / founder-render FAL endpoint — keep in sync with model-registry routes. */
+export const STUDIO_BUILDER_FAL_MODEL = 'fal-ai/nano-banana-pro/edit';
 export const STUDIO_BUILDER_BUCKET = process.env.STUDIO_ASSETS_BUCKET?.trim() || 'live-preview';
 export const STUDIO_BUILDER_PREFIX = 'studio-assets/departments';
 
@@ -37,7 +32,29 @@ export type StudioBuilderGenerateInput = {
   organizationId?: string;
 };
 
-function resolveBuilderRoute(input: StudioBuilderGenerateInput) {
+type BuilderRoute = {
+  model: string;
+  textToImageOnly: boolean;
+  route?: unknown;
+};
+
+function usesSceneStackRouting(input: StudioBuilderGenerateInput): boolean {
+  return Boolean(input.layerId) || input.productionGroupId.startsWith('scene-stack-');
+}
+
+async function resolveBuilderRoute(input: StudioBuilderGenerateInput): Promise<BuilderRoute> {
+  if (!usesSceneStackRouting(input)) {
+    return {
+      model: input.providerModel ?? STUDIO_BUILDER_FAL_MODEL,
+      textToImageOnly: input.textToImageOnly === true,
+    };
+  }
+
+  const {
+    resolveLayerIdFromProductionGroupId,
+    resolveSceneStackLayerModelRoute,
+  } = await import('./creativeProduction/studio-os-server.bundle.js');
+
   const layerId = input.layerId
     ? (input.layerId as import('../../src/studio-os-core/scene-stack/types.js').SceneStackLayerId)
     : resolveLayerIdFromProductionGroupId(input.productionGroupId);
@@ -129,7 +146,7 @@ export type StudioBuilderFalQueueStatus = 'IN_QUEUE' | 'IN_PROGRESS' | 'COMPLETE
 export async function prepareStudioBuilderFalImageUrls(
   input: StudioBuilderGenerateInput
 ): Promise<{ ok: true; imageUrls: string[]; model: string; textToImageOnly: boolean } | { ok: false; error: string }> {
-  const route = resolveBuilderRoute(input);
+  const route = await resolveBuilderRoute(input);
   const brandRefs = input.brandReferenceUrls?.filter((u) => u?.startsWith('http') || u?.startsWith('/')) ?? [];
 
   if (route.textToImageOnly && brandRefs.length === 0) {
@@ -192,7 +209,7 @@ export async function submitStudioBuilderFalQueue(
   const falKey = process.env.FAL_KEY?.trim();
   if (!falKey) return { ok: false, error: 'FAL_KEY not configured on server' };
 
-  const route = resolveBuilderRoute(input);
+  const route = await resolveBuilderRoute(input);
   const model = modelOverride ?? route.model;
   const textToImageOnly = route.textToImageOnly;
   const brandRefs = input.brandReferenceUrls ?? [];
@@ -205,6 +222,7 @@ export async function submitStudioBuilderFalQueue(
     let falInput: Record<string, unknown>;
 
     if (isNanoBanana2) {
+      const { buildNanoBanana2FalInput } = await import('./creativeProduction/studio-os-server.bundle.js');
       const nb2 = buildNanoBanana2FalInput({
         prompt: input.prompt,
         aspectRatio: input.aspectRatio,
@@ -295,7 +313,7 @@ export async function finalizeStudioBuilderFromFalUrl(
     const path = storagePathFor(input);
     const upload = await uploadStudioBuilderAssetBytes(await downloadImageToBuffer(imageUrl), path, mime);
     if (!upload.ok) return { ok: false, error: upload.error };
-    const resolvedModel = model ?? resolveBuilderRoute(input).model;
+    const resolvedModel = model ?? (await resolveBuilderRoute(input)).model;
     return {
       ok: true,
       publicUrl: upload.publicUrl,
@@ -350,7 +368,7 @@ export async function generateStudioBuilderAsset(
   const falKey = process.env.FAL_KEY?.trim();
   if (!falKey) return { ok: false, error: 'FAL_KEY not configured on server' };
 
-  const route = resolveBuilderRoute(input);
+  const route = await resolveBuilderRoute(input);
   const marbleRef = marbleRefPath();
 
   try {

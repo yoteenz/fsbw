@@ -41,3 +41,11 @@ export { buildFounderFullRoomPreviewPrompt } from '../../../src/studio-os-core/f
 export { runFounderRenderPreflight } from '../../../src/studio-os-core/founder-render/preflight.js';
 
 export { resolveBrandMaterialPackage } from '../../../src/studio-os-core/creative-production/brand-asset-grounding/resolver.js';
+
+export {
+  resolveLayerIdFromProductionGroupId,
+  resolveSceneStackLayerModelRoute,
+  SCENE_STACK_SHELL_FAL_MODEL,
+} from '../../../src/studio-os-core/scene-stack/layer-model-routing.js';
+
+export { buildNanoBanana2FalInput } from '../../../src/studio-os-core/creative-production/model-registry/nano-banana-2-schema.js';

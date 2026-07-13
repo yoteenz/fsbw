@@ -47871,3 +47871,20 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 
 **Remaining:** Founder re-test Generate Founder Preview on mobile after deploy (use **frontal-slayer** org for brand marble vault); confirm photoreal image reaches READY state.
 
+---
+
+## 2026-07-13 — Founder Render scene-stack module crash fix (full conversation continuation)
+
+**Context:** After bundle fix (`f0c6a4342`), founder retried mobile and got new error: `Cannot find module '/var/task/src/studio-os-core/scene-stack/isolated-layer-contract' imported from layer-model-routing.js`. Metadata now correctly showed Failed.
+
+**Root cause:** `founderRenderGeneration.ts` calls `studioBuilderGeneration.ts`, which had **top-level** imports from `src/studio-os-core/scene-stack/layer-model-routing.js`. Vercel NFT omits those `src/` files at runtime even though Founder Render uses `productionGroupId: founder-render-*` (never needs scene-stack routing).
+
+**Repair shipped:**
+
+- `studioBuilderGeneration.ts` — removed top-level scene-stack / nano-banana-2 imports; inlined `STUDIO_BUILDER_FAL_MODEL`; `resolveBuilderRoute` is async with fast path for non-`scene-stack-` jobs (Founder Render skips bundle scene-stack load entirely); scene-stack routing + `buildNanoBanana2FalInput` dynamic-import from `studio-os-server.bundle.js` only when needed
+- `studio-os-server-entry.ts` — added scene-stack routing + nano-banana-2 schema exports; bundle rebuilt (68KB, includes `isolated-layer-contract`)
+
+**Tests:** founder-render 24/24 pass.
+
+**Remaining:** Founder mobile re-test after deploy — expect FAL dispatch or brand/422 errors with readable JSON, not module-not-found.
+
