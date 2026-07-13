@@ -8,17 +8,19 @@
 
 ## Current sprint
 
-**P0 — Implementation Orchestrator™ & Dependency Graph Engine**
+**P0 — Studio World Operating System Scheduler™**
 
-**Status: SHIPPED — Self-managing implementation queue with living dependency graph**
+**Status: SHIPPED — Universal scheduling engine extending Implementation Orchestrator**
 
 **Shipped:**
 
-- **`implementation-orchestrator/`** — schemas, canonical pipeline registry, dependency graph, blocker engine, execution modes, packet compiler, autonomous dispatcher, persistent store, diagnostics
-- **Experience Lab Implementation Queue panel** — ready/blocked/running/founder review, critical path, packets, approve/pause/dispatch
-- **Tests** — implementation-orchestrator 25/25 PASS; build PASS
+- **`implementation-orchestrator/` extended** — universal job model (`os-job.ts`), 10 job classes, priority engine, resource/cost governor, dependency validator, AI workforce dispatch, failure recovery, observability, municipal jobs, founder automations
+- **`os-scheduler-store`** — single store for implementation + municipal + automation workloads; syncs from implementation queue
+- **Experience Lab `SchedulerPanel`** — running/queued/blocked/failed/completed/critical, GPU/budget/worker allocation, dispatch/approve/recover
+- **Command Center integration** — operational scheduler view (throughput, health, capacity, alerts)
+- **Tests** — os-scheduler 18/18 + implementation-orchestrator 25/25 PASS; build PASS
 
-**Previous:** Studio World Constitution (`1026b6c35`); Founder Render bundle hotfix (`5b295c772`); Department Bible (`be4501c4e`).
+**Previous:** Implementation Orchestrator (`3dd1e1e2e`); Studio World Constitution (`1026b6c35`); Founder Render bundle hotfix (`5b295c772`).
 
 ---
 

@@ -13,6 +13,7 @@ import { ExperienceLabProgramSelector } from './ExperienceLabProgramSelector';
 import { CanonicalDepartmentTree } from './CanonicalDepartmentTree';
 import { DepartmentBibleKnowledgePanel } from './DepartmentBibleKnowledgePanel';
 import { ImplementationQueuePanel } from './ImplementationQueuePanel';
+import { SchedulerPanel } from './SchedulerPanel';
 import { CanonicalDepartmentBatchPanel } from './CanonicalDepartmentBatchPanel';
 import { CanonicalDepartmentQueuePanel } from './CanonicalDepartmentQueuePanel';
 import { CanonicalDepartmentFounderReviewGate } from './CanonicalDepartmentFounderReviewGate';
@@ -106,6 +107,7 @@ export function CreativeIntelligencePanel() {
             renderStatusByDepartment={canonicalQueue.renderStatusByDepartment()}
           />
           <DepartmentBibleKnowledgePanel departmentId={selectedCanonicalId} />
+          <SchedulerPanel />
           <ImplementationQueuePanel />
           <CanonicalDepartmentFounderReviewGate departmentId={selectedCanonicalId}>
             <CanonicalDepartmentBatchPanel

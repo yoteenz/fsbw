@@ -10,6 +10,7 @@ import {
   STUDIO_COMMAND_CENTER_HEADLINE,
   STUDIO_COMMAND_CENTER_SUBTITLE,
 } from '../../../../studio-os-core/platform/command-center-demo';
+import { getCommandCenterOperationalView } from '../../../../studio-os-core/implementation-orchestrator';
 import { readWorkspaceRegistryStore } from '../../../../studio-os-core/workspace-registry/store';
 import { useWorkspace } from '../../../../studio-os-core/context/WorkspaceProvider';
 import { useCampusTransition } from '../../../../components/admin/studio-os/campus/CampusTransitionProvider';
@@ -27,6 +28,11 @@ export default function StudioCommandCenterPage() {
   const { travelToWorkspace } = useCampusTransition();
   const { workspaces: registryWorkspaces } = useWorkspaceCreationEngine();
   const registryStore = readWorkspaceRegistryStore();
+
+  const schedulerOps = useMemo(() => {
+    if (typeof window === 'undefined') return null;
+    return getCommandCenterOperationalView();
+  }, []);
 
   const registryById = useMemo(() => {
     const map = new Map<string, (typeof registryWorkspaces)[number]>();
@@ -58,6 +64,28 @@ export default function StudioCommandCenterPage() {
             </div>
           ))}
         </div>
+
+        {schedulerOps ? (
+          <div className="p-3 border" style={{ borderColor: ADMIN_STUDIO_THEME.panelBorder, background: 'rgba(99,102,241,0.04)' }}>
+            <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7px', color: '#6366F1', margin: 0 }}>
+              OPERATING SYSTEM SCHEDULER™ — {schedulerOps.schedulerVersion}
+            </p>
+            <p style={{ fontFamily: '"Futura PT Book"', fontSize: '6px', color: '#444', margin: '6px 0 0', lineHeight: 1.45 }}>
+              Running {schedulerOps.runningCount} · Queued {schedulerOps.queuedCount} · Blocked {schedulerOps.blockedCount} ·
+              Failed {schedulerOps.failedCount} · Throughput {schedulerOps.throughput}/hr · Health {schedulerOps.healthScore}% ·
+              Capacity {schedulerOps.capacityStatus.toUpperCase()}
+            </p>
+            <p style={{ fontFamily: '"Futura PT Book"', fontSize: '6px', color: '#444', margin: '4px 0 0', lineHeight: 1.45 }}>
+              GPU {schedulerOps.gpuUtilizationPct}% · Budget ${schedulerOps.budgetConsumedUsd} · Worker utilization{' '}
+              {schedulerOps.workerUtilization}%
+            </p>
+            {schedulerOps.alerts.length ? (
+              <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '5px', color: '#EB1C24', margin: '6px 0 0' }}>
+                {schedulerOps.alerts.join(' · ')}
+              </p>
+            ) : null}
+          </div>
+        ) : null}
 
         <div className="p-3 border" style={{ borderColor: ADMIN_STUDIO_THEME.panelBorder }}>
           <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7px', color: '#333', margin: 0 }}>ORGANIZATIONS REQUIRING ATTENTION</p>
