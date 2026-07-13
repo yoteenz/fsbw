@@ -48057,3 +48057,21 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 
 **Prior context in chat:** P0 Municipal Governance (`1e523057a`); P1 Model Routing (`68620b38b`); P0 EL→CDS pipeline (`fe2c60b5a`).
 
+---
+
+## 2026-07-13 — Studio World Architectural Shell™ — department shell map audit (full conversation)
+
+**Founder sprint:** Persistent global shell for all Studio World departments — Top Command Deck™ + Immersive Room Workspace + Bottom Workbench™. Departments populate differently; building stays familiar. Apple Store / spaceship bridge / luxury HQ metaphor. Blueprint Author should auto-assemble shell from `commandDeckModules` + `workbenchModules`. User instruction: audit every department first; do not implement immediately.
+
+**Spatial Architecture Review:** APPROVED 4.5 — `docs/studio-os/investigations/SPATIAL_ARCHITECTURE_REVIEW_ARCHITECTURAL_SHELL.md` (from prior turn; still valid).
+
+**Audit completed (docs expanded, no UI code):**
+
+- `docs/studio-os/architecture/STUDIO_WORLD_ARCHITECTURAL_SHELL_DEPARTMENT_MAP.md` — **expanded** with: machine-verified inventory (89 registry routes, 214 nav modules, 213 webpage-like); design language canon; animated continuity rules; current layout component matrix; **Experience Lab** as Flagship 0 (registry gap); **Construction Mode** as assembly department (registry gap); complete registry audit by flagship; satellite route consolidation table; `StudioWorldShell` primitive API sketch; Blueprint Author `DepartmentShellBlueprint` schema + EL/CDS/CM YAML examples; implementation gates G1–G5
+
+**Key findings:** Only 5 routes `immersive-live` today; 65 `standard-room` use `AdminStudioLayout` card; `DepartmentGoldenBuildShell` + `SceneTray` are migration sources not targets; Experience Lab and Construction Mode live in production but missing from `route-registry.ts`; EL uses Mode 1/2 tabs not Command Deck.
+
+**Implementation gates:** G1 shell map founder review · G2 EL/CDS gap analysis · G3 primitive API · G4 Blueprint Author schema · G5 registry gaps. **No `StudioWorldShell` code until G1.**
+
+**Prior context in chat:** EL/CDS identity gap analysis committed (`36c4b7c62`); P0 Municipal Governance; P1 Model Routing; P0 EL→CDS pipeline.
+

@@ -1,9 +1,20 @@
 # Studio World Architectural Shell™ — Complete Department Shell Map
 
-**Status:** Pre-implementation audit  
-**Sprint:** Studio World Architectural Shell (Persistent Command Deck + Workbench)  
+**Status:** Pre-implementation audit — **complete** (awaiting founder approval before code)  
+**Sprint:** Studio World Architectural Shell™ (Persistent Command Deck + Workbench)  
 **Date:** 2026-07-13  
 **Rule:** No department may replace the master shell. Departments populate Top Command Deck™, Immersive Room Workspace, and Bottom Workbench™ differently.
+
+### Audit inventory (machine-verified)
+
+| Source | Count | Notes |
+|--------|-------|-------|
+| `STUDIO_WORLD_ROUTE_REGISTRY` | **89** routes | 7 registered flagships |
+| `ADMIN_STUDIO_MODULES` (nav) | **214** modules | **213** flagged webpage-like today |
+| `immersive-live` routes | **5** | CDS, Warehouse×2, Archives×2 |
+| `immersive-partial` routes | **19** | Command Center observatories, Constitution Hall, etc. |
+| `standard-room` routes | **65** | `AdminStudioLayout` card shell — migrate to parent department shell |
+| Registry gaps | **EL, Construction Mode, Genesis** | Live routes exist; not yet in `route-registry.ts` |
 
 ---
 
@@ -42,6 +53,37 @@
 
 ---
 
+## Design language (shell canon — not department interiors)
+
+The shell fixtures are **engineered into the building**, not drawn over rooms.
+
+| Token | Application |
+|-------|-------------|
+| Glass · acrylic | Command Deck backdrop · deck tab strip · workbench bay dividers |
+| Chrome · brushed aluminum | Deck rail · workbench frame · tool icon bezels |
+| Thin illuminated borders | Active tab · selected tool · approval status ring |
+| Floating shadows | Deck elevation above workspace · workbench floor anchor |
+| World-class typography | Deck identity row · breadcrumb · revision badge |
+| Soft edge lighting | Deck underside glow · workbench rim light |
+| Premium spacing | Fixed deck height · workbench tool bays · no cramped SaaS density |
+
+**Department interiors** (bright EL vs dark CDS) vary inside `ImmersiveWorkspace` only — shell tokens stay constant.
+
+---
+
+## Animated continuity (department transitions)
+
+When the founder moves between departments:
+
+1. **Top Command Deck** — never unmounts; identity row cross-fades; department tabs animate swap (slide + opacity).
+2. **Bottom Workbench** — never unmounts; tool bays cross-fade; inactive tools slide out, department tools slide in.
+3. **Immersive Workspace** — full room transform (dissolve · elevator · door open · camera dolly) — department-owned animation.
+4. **Breadcrumb + Registry** — update in deck without layout shift.
+
+**Anti-pattern:** Full page remount with new top nav — forbidden. `AdminStudioLayout` marble card must not reappear as the outer frame for production departments.
+
+---
+
 ## Current-state vs target-state summary
 
 | Pattern today | Departments using it | Target |
@@ -50,7 +92,64 @@
 | **DepartmentGoldenBuildShell** HUD + no workbench | EL, Genesis workspaces | Add Command Deck + Workbench |
 | **Immersive HUD + SceneTray** (bottom only) | CDS, Warehouse, Command Center | SceneTray → Workbench; add Command Deck |
 | **Plain tab bar** (EL Mode 1/2) | Experience Lab | Replace with Command Deck tabs |
-| **No persistent shell** | Safe/health EL routes | N/A |
+| **No persistent shell** | Safe/health EL routes | N/A (debug only) |
+| **Command Dock portal** | GoldenBuildShell overlay | Retained as Genesis concierge — not Command Deck |
+
+### Current layout components (today)
+
+| Component | File | Role today | Target |
+|-----------|------|------------|--------|
+| `DepartmentGoldenBuildShell` | `department-vertical-slice/DepartmentGoldenBuildShell.tsx` | Full-viewport immersive portal + Orb | Becomes `StudioWorldShell` inner provider |
+| `AdminStudioLayout` | `AdminStudioLayout.tsx` | Marble card + tabs | **Exception only** — pure admin modules |
+| `SceneTray` | `navigation/SceneTray.tsx` | Bottom zone switcher | Migrates to `BottomWorkbench` |
+| `AdminStudioStageShell` | `AdminStudioStageShell.tsx` | Scrollable stage card | Deprecate for production departments |
+| HUD back/identity/pill | Per-room inline | Ad-hoc header | Migrates to `TopCommandDeck` global slots |
+
+---
+
+## Flagship 0 — Experience Lab™ (registry gap — P0)
+
+**Route:** `/admin/studio/experience-lab` → `ExperienceLabWorkspace`  
+**Registry:** **Not in** `STUDIO_WORLD_ROUTE_REGISTRY` — municipal fixture `sceneId: experience-lab`, `flagshipId: experience-lab`  
+**Current shell:** `DepartmentGoldenBuildShell` + **Mode 1/2 tab bar** + stacked panels (`#fafafa`)  
+**Target identity:** Architecture headquarters — bright, holographic, planning-only (see EL/CDS identity gap analysis).
+
+### Top Command Deck (proposed — matches sprint spec)
+
+| Tab | Purpose |
+|-----|---------|
+| Studio World | Registry + campus context |
+| Blueprints | Active blueprint list |
+| Renders | Founder Render gallery |
+| Materials | Material **philosophy** (intent only) |
+| Lighting | Lighting **philosophy** (intent only) |
+| History | Revision timeline |
+| Approvals | Approval wall · founder comments |
+
+**Global slots:** Department = Experience Lab · Workspace = Founder Review / Blueprint Author · Revision = blueprint rev · Approval = Founder Render status · Permit badge.
+
+### Immersive workspace
+
+- Large cinematic Founder Render
+- Floating holographic blueprint
+- Construction timeline · room registry · department hierarchy
+- Future expansion registry · permit wall · budget forecast overlay
+- Environmental simulation (read-only)
+- **Forbidden:** asset lists · layer trees · material painting · mesh editing · post-approval manufacturing
+
+### Bottom Workbench (proposed — matches sprint spec)
+
+| Tool | Module ID |
+|------|-----------|
+| Architectural Tools | `el.architectural-tools` |
+| Material Library | `el.material-library-intent` |
+| Lighting Studio | `el.lighting-philosophy` |
+| Camera Studio | `el.camera-intent` |
+| Budget Forecast | `el.budget-forecast` |
+| Permit Center | `el.permit-center` |
+| Construction Queue | `el.construction-queue` (handoff read-only) |
+
+**Primary CTA (monument):** `APPROVE & SEND TO CREATIVE DIRECTOR STUDIO`
 
 ---
 
@@ -186,6 +285,45 @@
 | Immune System | Inspector status · halt reasons |
 
 **Primary CTA:** `APPROVE ASSET`
+
+---
+
+## Construction Mode™ (assembly department — registry gap — P0)
+
+**Route:** Not yet a dedicated room — today embedded in `FounderReviewExperience` post-approve panels  
+**Target route:** `/admin/studio/world/construction-mode` (proposed) or CDS workbench zone `construction-assembly`  
+**Role:** Licensed assembly crew — **never generates**, only places approved assets at approved coordinates.
+
+### Top Command Deck (proposed)
+
+| Tab | Purpose |
+|-----|---------|
+| Assembly Floor | Active room assembly view |
+| Asset Queue | Approved assets awaiting placement |
+| Socket Map | Approved sockets + coordinates |
+| Dependencies | Resolved dependency order |
+| Inspection | Immune System pass/fail |
+| Occupancy | Post-assembly open gate |
+
+### Immersive workspace
+
+- Physical assembly visualization (workers place assets)
+- Blueprint overlay (read-only, locked)
+- Socket highlight map
+- Progress timeline per asset
+- **Forbidden:** generation · regeneration · blueprint edit
+
+### Bottom Workbench (proposed)
+
+| Tool | Module ID |
+|------|-----------|
+| Construction Queue | `cm.construction-queue` |
+| Immune System | `cm.immune-inspector` |
+| Permit Center | `cm.occupancy-permit` |
+| Municipal Ledger | `cm.assembly-ledger` |
+| Dependency Graph | `cm.dependency-graph` (read-only) |
+
+**Receives from CDS:** approved asset · coordinates · sockets · materials · lighting profile · blueprint · dependencies.
 
 ---
 
@@ -383,21 +521,93 @@ These should **not** remain independent layouts; they populate CDS Command Deck 
 
 ---
 
+## Complete registry audit — routes by flagship
+
+| Flagship | Routes | Shell today | Target shell | Priority |
+|----------|--------|-------------|--------------|----------|
+| Studio Command Center | 28 | 5 immersive · 23 standard | `StudioWorldShell` | P1 |
+| Creative Direction Studio | 11 | 1 immersive · 10 standard | `StudioWorldShell` | P0 |
+| Studio Warehouse | 6 | 2 immersive · 4 standard | `StudioWorldShell` | P1 |
+| Studio Archives | 12 | 4 immersive · 8 standard | `StudioWorldShell` | P2 |
+| Marketplace | 2 | 2 standard | `StudioWorldShell` | P2 |
+| Headquarters | 20 | 1 partial · 19 standard | `StudioWorldShell` | P2 |
+| Expedition Hub | 10 | 10 standard | `StudioWorldShell` | P3 |
+| **Experience Lab** | 0 (gap) | GoldenBuild + tabs | `StudioWorldShell` | **P0** |
+| **Construction Mode** | 0 (gap) | Inline EL panels | `StudioWorldShell` | **P0** |
+
+### Satellite route consolidation (all flagships)
+
+**Rule:** `standard-room` child routes must not keep independent `AdminStudioLayout` — they populate parent Command Deck tab or Workbench tool.
+
+| Parent flagship | Satellite routes (count) | Consolidation target |
+|-----------------|--------------------------|----------------------|
+| Command Center | 23 standard rooms | Deck tabs: Mission Control · Campus Map · Approvals · Health · Systems Dock |
+| CDS | 10 standard rooms | Workbench: render-queue · prompt-library · ai-studio · production-builder |
+| Warehouse | 4 standard rooms | Workbench: asset-registry · generation-bay · media-vault |
+| Archives | 8 standard rooms | Deck: Museum · Blueprint Archive · Innovation District |
+| Headquarters | 19 standard rooms | Deck per HQ wing: Marketing · Distribution · Intelligence · Operations |
+| Expedition Hub | 10 standard rooms | Deck: Expansion · Onboarding · Simulation |
+
+---
+
 ## Component architecture (implementation phase)
 
-| Primitive | Responsibility |
-|-----------|----------------|
-| `StudioWorldShell` | Fixed 3-zone layout · animated continuity |
-| `TopCommandDeck` | Global slots + department tab strip |
-| `BottomWorkbench` | Tool tray · collapsible · department tools |
-| `ImmersiveWorkspace` | Full-bleed room slot |
-| `DepartmentToolbar` | Optional in-deck actions |
-| `DepartmentBreadcrumb` | World path from route registry |
-| `DepartmentActions` | Primary/secondary CTA row |
+| Primitive | Responsibility | Props (sketch) |
+|-----------|----------------|----------------|
+| `StudioWorldShell` | Fixed 3-zone layout · animated continuity · design tokens | `departmentId`, `workspaceId`, `children` |
+| `TopCommandDeck` | Global slots + optional department tab strip | `identity`, `breadcrumb`, `revision`, `approval`, `tabs[]`, `onTabChange` |
+| `BottomWorkbench` | Floor-anchored tool tray · collapsible bays | `tools[]`, `activeToolId`, `onToolSelect` |
+| `ImmersiveWorkspace` | Full-bleed room slot — department owns interior | `children`, `transitionKey` |
+| `DepartmentToolbar` | In-deck contextual actions (non-tab) | `actions[]` |
+| `DepartmentBreadcrumb` | World path from `resolveWorldRouteByPath` | `routeMapping` |
+| `DepartmentActions` | Primary/secondary monument CTAs | `primary`, `secondary[]` |
 
-### Blueprint Author assembly (future)
+**File target:** `src/components/admin/studio-os/studio-world-shell/` (new package — no implementation until gates cleared).
 
-Blueprint declares: `departmentType`, `commandDeckModules[]`, `workbenchModules[]`, `workspaceModules[]` → shell auto-assembles. No manual layout per department.
+### Blueprint Author shell assembly
+
+Blueprint Author extends to declare shell modules — departments **declare capabilities**, Studio World **builds the shell**.
+
+```typescript
+type DepartmentShellBlueprint = {
+  departmentType: 'architecture' | 'production' | 'assembly' | 'executive' | 'vault' | 'commerce' | 'expansion';
+  commandDeckModules: CommandDeckModuleId[];
+  workbenchModules: WorkbenchModuleId[];
+  workspaceModules: WorkspaceModuleId[];
+  visualTheme?: 'bright-architectural' | 'dark-production' | 'neutral-executive'; // workspace only
+};
+```
+
+**Experience Lab blueprint example:**
+
+```yaml
+departmentType: architecture
+commandDeckModules: [studio-world, blueprints, renders, materials-philosophy, lighting-philosophy, history, approvals]
+workspaceModules: [founder-render-hero, holographic-blueprint, construction-timeline, permit-wall, revision-timeline]
+workbenchModules: [architectural-tools, material-library-intent, lighting-philosophy, camera-intent, budget-forecast, permit-center, construction-queue]
+visualTheme: bright-architectural
+```
+
+**Creative Director Studio blueprint example:**
+
+```yaml
+departmentType: production
+commandDeckModules: [dashboard, assets, projects, lighting-tests, materials-tests, approvals, asset-history, construction-mode-status]
+workspaceModules: [frozen-founder-render-reference, asset-turntable, version-gallery, dependency-graph, manufacturing-status]
+workbenchModules: [asset-workbench, material-lab, lighting-studio, camera-suite, asset-library, render-queue, permit-center, construction-handoff, immune-system]
+visualTheme: dark-production
+```
+
+**Construction Mode blueprint example:**
+
+```yaml
+departmentType: assembly
+commandDeckModules: [assembly-floor, asset-queue, socket-map, dependencies, inspection, occupancy]
+workspaceModules: [assembly-visualization, blueprint-overlay-readonly, socket-highlights, progress-timeline]
+workbenchModules: [construction-queue, immune-inspector, occupancy-permit, assembly-ledger]
+```
+
+No manual per-department layout coding after schema ships.
 
 ---
 
@@ -423,6 +633,22 @@ Blueprint declares: `departmentType`, `commandDeckModules[]`, `workbenchModules[
 | Command Deck landmark | Proposed global slots + per-department tabs |
 | Workbench landmark | Tool categories per department |
 | Immersive workspace preserved | Middle zone remains department-owned |
-| Blueprint Author auto-assembly | Module IDs listed per department for blueprint schema extension |
+| Blueprint Author auto-assembly | Module IDs + schema examples per department |
+| Animated continuity | Deck + workbench persist; workspace transforms |
+| Construction Mode assembly-only | Separate department shell map defined |
 
-**Next step:** Implement `StudioWorldShell` primitives — begin with Experience Lab + Creative Director Studio only.
+---
+
+## Implementation gates
+
+| Gate | Requirement |
+|------|-------------|
+| G1 | This department shell map reviewed by founder |
+| G2 | EL/CDS identity gap analysis approved (`EXPERIENCE_LAB_CDS_IDENTITY_GAP_ANALYSIS.md`) |
+| G3 | `StudioWorldShell` primitive API approved |
+| G4 | Blueprint Author `DepartmentShellBlueprint` schema approved |
+| G5 | Experience Lab + Construction Mode added to `route-registry.ts` |
+
+**Do not begin `StudioWorldShell` implementation until G1 confirmed.** P0 departments (EL, CDS, Construction Mode) migrate first after primitives ship.
+
+**Next step after approval:** Implement `StudioWorldShell` + `TopCommandDeck` + `BottomWorkbench` — wire Experience Lab as first consumer.
