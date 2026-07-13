@@ -57,7 +57,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     const dispatch = await prepareFounderRenderDispatch({
       plan,
-      actorId: auth.actor.email,
+      actorId: auth.user.email,
       revisionNote,
     });
 

@@ -1,4 +1,6 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi, beforeEach } from 'vitest';
+import fs from 'node:fs';
+import path from 'node:path';
 import { fixtureReceptionConstructionPlan } from '../blueprint-author/fixtures';
 import {
   buildFounderRenderJobView,
@@ -168,5 +170,81 @@ describe('Founder Render production verification', () => {
   it('founder render does not use isolated-object validation', () => {
     expect(requiresIsolatedObjectValidation('founder-full-room-preview')).toBe(false);
     expect(FOUNDER_RENDER_ARTIFACT_INTENT).toBe('founder-full-room-preview');
+  });
+
+  it('founder-render handlers never reference auth.actor (use auth.user)', () => {
+    const handlerDir = path.join(process.cwd(), 'api/admin');
+    for (const file of ['founder-render-generate.ts', 'founder-render-status.ts', 'founder-render-approve.ts']) {
+      const source = fs.readFileSync(path.join(handlerDir, file), 'utf8');
+      expect(source).not.toContain('auth.actor');
+      if (file !== 'founder-render-status.ts') {
+        expect(source).toContain('auth.user');
+      }
+    }
+  });
+});
+
+describe('Founder Render authenticated handler path', () => {
+  beforeEach(() => {
+    vi.resetModules();
+  });
+
+  it('generate returns 202 JSON when admin auth succeeds (no auth.actor crash)', async () => {
+    vi.doMock('../../../api/_lib/adminAuth.js', () => ({
+      resolveAdminAuth: vi.fn(async () => ({
+        ok: true,
+        user: { id: 'admin-1', email: 'kateenaarmstrong@gmail.com', accessToken: 'token' },
+      })),
+    }));
+    vi.doMock('../../../api/_lib/founderRenderGeneration.js', () => ({
+      prepareFounderRenderDispatch: vi.fn(async () => ({
+        ok: true,
+        providerRequestId: 'fal-req-test',
+        model: 'fal-ai/nano-banana-pro/edit',
+        promptVersion: 'founder-full-room-preview-prompt.v1',
+        promptHash: 'abc123',
+        effectivePrompt: 'test prompt',
+        referenceCount: 1,
+        brandMaterialRefs: ['https://example.com/marble.png'],
+      })),
+    }));
+    vi.doMock('../../../api/_lib/founderRenderJobs.js', () => ({
+      insertFounderRenderJob: vi.fn(async () => ({ ok: true, jobId: 'frj-auth-test' })),
+    }));
+
+    const handler = (await import('../../../api/admin/founder-render-generate.ts')).default;
+    let statusCode = 0;
+    let body = '';
+    const res = {
+      setHeader() {
+        return this;
+      },
+      status(code: number) {
+        statusCode = code;
+        return this;
+      },
+      json(payload: unknown) {
+        body = JSON.stringify(payload);
+        return this;
+      },
+      end() {
+        return this;
+      },
+    };
+
+    await handler(
+      {
+        method: 'POST',
+        headers: { authorization: 'Bearer test' },
+        body: { plan: receptionPlan() },
+      } as never,
+      res as never
+    );
+
+    expect(statusCode).toBe(202);
+    const parsed = JSON.parse(body) as { ok?: boolean; jobId?: string; error?: string };
+    expect(parsed.ok).toBe(true);
+    expect(parsed.jobId).toBe('frj-auth-test');
+    expect(body).not.toContain("reading 'email'");
   });
 });

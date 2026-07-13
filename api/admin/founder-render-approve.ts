@@ -67,26 +67,36 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     });
   }
 
-  const approvalRecord = {
-    previewArtifactId: row.job_id,
-    previewArtifactUrl: row.preview_artifact_url,
-    blueprintId: row.blueprint_id,
-    blueprintRevision: row.blueprint_revision,
-    constructionPlanId: row.construction_plan_id,
-    founderId: auth.actor.email,
-    approvedAt: new Date().toISOString(),
-    model: row.provider_model ?? '',
-    promptVersion: row.prompt_version ?? FOUNDER_FULL_ROOM_PREVIEW_PROMPT_VERSION,
-    materialSet,
-    lightingProfile,
-    cameraProfile,
-  };
+  try {
+    const approvalRecord = {
+      previewArtifactId: row.job_id,
+      previewArtifactUrl: row.preview_artifact_url,
+      blueprintId: row.blueprint_id,
+      blueprintRevision: row.blueprint_revision,
+      constructionPlanId: row.construction_plan_id,
+      founderId: auth.user.email,
+      approvedAt: new Date().toISOString(),
+      model: row.provider_model ?? '',
+      promptVersion: row.prompt_version ?? FOUNDER_FULL_ROOM_PREVIEW_PROMPT_VERSION,
+      materialSet,
+      lightingProfile,
+      cameraProfile,
+    };
 
-  await approveFounderRenderJob({
-    jobId,
-    approvedBy: auth.actor.email,
-    approvalRecord,
-  });
+    await approveFounderRenderJob({
+      jobId,
+      approvedBy: auth.user.email,
+      approvalRecord,
+    });
 
-  return res.status(200).json({ ok: true, jobId, status: 'approved', approvalRecord });
+    return res.status(200).json({ ok: true, jobId, status: 'approved', approvalRecord });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Founder render approval failed';
+    console.error('[founder-render-approve] unhandled', err);
+    return res.status(500).json({
+      ok: false,
+      error: message,
+      code: 'FOUNDER_RENDER_APPROVE_HANDLER_ERROR',
+    });
+  }
 }

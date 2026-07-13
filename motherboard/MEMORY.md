@@ -47903,3 +47903,24 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 
 **Remaining:** Vercel redeploy should succeed; founder mobile Founder Preview re-test.
 
+---
+
+## 2026-07-13 — Founder Render auth.actor.email crash + full-path hardening (full conversation continuation)
+
+**Context:** Founder frustrated with error-after-error fixes. Latest mobile error: `Cannot read properties of undefined (reading 'email')` on Regenerate Preview. Metadata still showed Generating while hero showed Failed.
+
+**Root cause (this error):** `founder-render-generate.ts` and `founder-render-approve.ts` used `auth.actor.email` but `resolveAdminAuth` returns `{ ok: true, user: { id, email, accessToken } }` — `auth.actor` is undefined. Other admin routes (e.g. `studio-builder-generate`) correctly use `auth.user.email`. Production verification only tested unauthenticated paths, so this never fired in CI.
+
+**Comprehensive repair shipped:**
+
+- `auth.actor.email` → `auth.user.email` in generate + approve handlers
+- try/catch JSON errors on status + approve handlers (generate already had)
+- UI: `FounderReviewHero` status label prioritizes failed over isGenerating; `FounderReviewMetadata` accepts workflow `error` prop for consistent Failed label
+- Regression tests: source scan forbids `auth.actor` in founder-render handlers; mocked authenticated generate returns 202 with jobId (would have caught email bug)
+
+**Why prior fixes were incremental:** Each deploy exposed the *next* runtime layer (Vercel NFT bundle → scene-stack import → TS d.ts → auth shape). Tests stopped at unauthenticated canaries.
+
+**Tests:** founder-render 26/26 pass; build pass.
+
+**Remaining:** Founder mobile re-test — should reach FAL dispatch (generating/ready) or operational 422 (brand vault), not handler crashes.
+

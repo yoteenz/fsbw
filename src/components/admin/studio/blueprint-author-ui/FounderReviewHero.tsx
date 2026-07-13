@@ -172,6 +172,8 @@ function HeroBtn({ onClick, label }: { onClick: () => void; label: string }) {
 }
 
 function statusCopy(status: FounderRenderJobView['status'], isGenerating?: boolean): string {
+  if (status === 'failed') return 'Failed';
+  if (status === 'stale') return 'Stale';
   if (isGenerating) return 'Generating';
   switch (status) {
     case 'no_preview':
@@ -182,10 +184,6 @@ function statusCopy(status: FounderRenderJobView['status'], isGenerating?: boole
       return 'Generating';
     case 'ready':
       return 'Ready';
-    case 'failed':
-      return 'Failed';
-    case 'stale':
-      return 'Stale';
     case 'approved':
       return 'Approved';
     default:

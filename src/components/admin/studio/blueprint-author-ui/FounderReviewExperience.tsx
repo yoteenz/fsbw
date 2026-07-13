@@ -132,6 +132,7 @@ export function FounderReviewExperience({ workflow, renderAfterApproval }: Props
             plan={bundle.plan}
             renderJob={founderRenderJob}
             isGeneratingPreview={isGeneratingPreview}
+            error={error}
           />
           <FounderRenderDiagnosticsPanel diagnostics={founderRenderJob.diagnostics} />
 
