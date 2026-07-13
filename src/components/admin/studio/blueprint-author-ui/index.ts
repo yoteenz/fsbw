@@ -8,3 +8,7 @@ export { ApprovalFooter } from './ApprovalFooter';
 export { BlueprintAuthorRequestForm } from './BlueprintAuthorRequestForm';
 export { BlueprintAuthorCreativeDirectorGate } from './BlueprintAuthorCreativeDirectorGate';
 export { BlueprintAuthorWorkflowShell } from './BlueprintAuthorWorkflowShell';
+export { FounderReviewExperience } from './FounderReviewExperience';
+export { FounderReviewHero } from './FounderReviewHero';
+export { VariantStrip } from './VariantStrip';
+export { BlueprintDrawer } from './BlueprintDrawer';

@@ -12,12 +12,23 @@ import {
   mapWorkflowContextToCompileRequest,
   type BlueprintWorkflowContext,
 } from '../studio-os-core/blueprint-author/workflow-mapper';
+import {
+  buildConstructionTimeline,
+  buildFounderRenderModel,
+  buildFounderReviewDiff,
+  buildRoomAssemblyState,
+  FOUNDER_RENDER_VARIANTS,
+  visibleAssetIdsForAssembly,
+  type FounderRenderVariantId,
+} from '../studio-os-core/founder-review';
 
-export type BlueprintWorkflowStep = 'idle' | 'plan' | 'preview' | 'inspector' | 'manufacturing' | 'complete';
+export type BlueprintWorkflowStep = 'idle' | 'founder-review' | 'manufacturing' | 'complete';
 
 export function useBlueprintAuthorWorkflow() {
   const [step, setStep] = useState<BlueprintWorkflowStep>('idle');
-  const [view, setView] = useState<'plan' | 'preview' | 'inspector'>('plan');
+  const [variantId, setVariantId] = useState<FounderRenderVariantId>('current');
+  const [blueprintDrawerOpen, setBlueprintDrawerOpen] = useState(false);
+  const [inspectMode, setInspectMode] = useState(false);
   const [bundle, setBundle] = useState<BlueprintAuthorSessionBundle | null>(null);
   const [manufacturingResult, setManufacturingResult] = useState<ConstructionModeCompileResult | null>(null);
   const [selectedAssetId, setSelectedAssetId] = useState<string | null>(null);
@@ -25,8 +36,57 @@ export function useBlueprintAuthorWorkflow() {
   const [error, setError] = useState<string | null>(null);
   const [isAuthoring, setIsAuthoring] = useState(false);
   const [isManufacturing, setIsManufacturing] = useState(false);
+  const [variantChanged, setVariantChanged] = useState(false);
 
   const summary = useMemo(() => (bundle ? buildConstructionPlanSummary(bundle) : null), [bundle]);
+
+  const liveView = manufacturingResult?.session.liveConstruction ?? bundle?.session.liveConstruction ?? null;
+
+  const assemblyPhase = useMemo<'review' | 'manufacturing' | 'complete'>(() => {
+    if (manufacturingResult?.success) return 'complete';
+    if (step === 'manufacturing') return 'manufacturing';
+    return 'review';
+  }, [manufacturingResult?.success, step]);
+
+  const roomAssembly = useMemo(() => {
+    if (!bundle) return null;
+    return buildRoomAssemblyState({
+      preview: bundle.session.worldPreview,
+      phase: assemblyPhase,
+      liveView,
+    });
+  }, [bundle, assemblyPhase, liveView]);
+
+  const founderRender = useMemo(() => {
+    if (!bundle) return null;
+    const visibleIds = roomAssembly ? [...visibleAssetIdsForAssembly(roomAssembly)] : undefined;
+    return buildFounderRenderModel({
+      plan: bundle.plan,
+      variantId,
+      installedAssetIds: assemblyPhase === 'review' ? undefined : visibleIds,
+    });
+  }, [bundle, variantId, roomAssembly, assemblyPhase]);
+
+  const founderDiff = useMemo(() => {
+    if (!bundle) return null;
+    return buildFounderReviewDiff({
+      plan: bundle.plan,
+      variantChanged,
+      changedRegionIds: variantChanged ? ['lighting', 'materials'] : undefined,
+    });
+  }, [bundle, variantChanged]);
+
+  const constructionTimeline = useMemo(() => {
+    if (!bundle) return null;
+    const phase =
+      step === 'manufacturing' ? 'manufacturing' : manufacturingResult?.success ? 'complete' : 'pre-approval';
+    return buildConstructionTimeline({
+      planId: bundle.plan.planId,
+      queue: bundle.queue,
+      phase,
+      liveView,
+    });
+  }, [bundle, step, manufacturingResult?.success, liveView]);
 
   const selectedInspector = useMemo(() => {
     if (!bundle || !selectedAssetId) return null;
@@ -51,9 +111,12 @@ export function useBlueprintAuthorWorkflow() {
       setRequest(compileRequest);
       const opened = openBlueprintAuthorSession(compileRequest);
       setBundle(opened);
-      setStep('plan');
-      setView('plan');
+      setStep('founder-review');
       setSelectedAssetId(null);
+      setVariantId('current');
+      setVariantChanged(false);
+      setBlueprintDrawerOpen(false);
+      setInspectMode(false);
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
       setError(msg);
@@ -91,15 +154,13 @@ export function useBlueprintAuthorWorkflow() {
   }, [request]);
 
   const goBack = useCallback(() => {
-    if (view === 'inspector') {
-      setView('preview');
+    if (inspectMode && selectedAssetId) {
       setSelectedAssetId(null);
-      setStep('preview');
+      setInspectMode(false);
       return;
     }
-    if (view === 'preview') {
-      setView('plan');
-      setStep('plan');
+    if (blueprintDrawerOpen) {
+      setBlueprintDrawerOpen(false);
       return;
     }
     setStep('idle');
@@ -107,27 +168,49 @@ export function useBlueprintAuthorWorkflow() {
     setManufacturingResult(null);
     setRequest(null);
     setSelectedAssetId(null);
-    setView('plan');
-  }, [view]);
+    setVariantId('current');
+    setVariantChanged(false);
+    setBlueprintDrawerOpen(false);
+    setInspectMode(false);
+  }, [inspectMode, selectedAssetId, blueprintDrawerOpen]);
 
-  const openPreview = useCallback(() => {
-    setView('preview');
-    setStep('preview');
+  const openBlueprintDrawer = useCallback(() => {
+    setBlueprintDrawerOpen(true);
   }, []);
 
-  const openInspector = useCallback((assetId: string) => {
+  const toggleBlueprintDrawer = useCallback(() => {
+    setBlueprintDrawerOpen((v) => !v);
+  }, []);
+
+  const openInspect = useCallback((assetId: string) => {
     setSelectedAssetId(assetId);
-    setView('inspector');
-    setStep('inspector');
+    setInspectMode(true);
+  }, []);
+
+  const closeInspect = useCallback(() => {
+    setSelectedAssetId(null);
+    setInspectMode(false);
+  }, []);
+
+  const selectVariant = useCallback((id: FounderRenderVariantId) => {
+    setVariantId(id);
+    if (id !== 'current') setVariantChanged(true);
+  }, []);
+
+  const enableInspectMode = useCallback(() => {
+    setInspectMode(true);
   }, []);
 
   const reset = useCallback(() => {
     setStep('idle');
-    setView('plan');
     setBundle(null);
     setManufacturingResult(null);
     setRequest(null);
     setSelectedAssetId(null);
+    setVariantId('current');
+    setVariantChanged(false);
+    setBlueprintDrawerOpen(false);
+    setInspectMode(false);
     setError(null);
     setIsAuthoring(false);
     setIsManufacturing(false);
@@ -138,9 +221,15 @@ export function useBlueprintAuthorWorkflow() {
 
   return {
     step,
-    view,
+    variantId,
+    blueprintDrawerOpen,
+    inspectMode,
     summary,
     bundle,
+    founderRender,
+    founderDiff,
+    constructionTimeline,
+    roomAssembly,
     manufacturingResult,
     selectedAssetId,
     selectedInspector,
@@ -150,13 +239,17 @@ export function useBlueprintAuthorWorkflow() {
     isManufacturing,
     isApproved,
     manufacturingBlocked,
+    founderRenderVariants: FOUNDER_RENDER_VARIANTS,
     submitRequest,
     approveAndBuild,
     goBack,
-    openPreview,
-    openInspector,
+    openBlueprintDrawer,
+    toggleBlueprintDrawer,
+    openInspect,
+    closeInspect,
+    selectVariant,
+    enableInspectMode,
     reset,
-    setView,
   };
 }
 

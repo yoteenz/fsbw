@@ -47724,3 +47724,25 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 
 **Remaining blockers (unchanged):** B1-Layer1/B1-E2E founder device verify; B1-Isolated brand marble proof; optional `STUDIO_GENERATION_WORKER_SECRET` for background worker (status poll still advances jobs).
 
+---
+
+## 2026-07-13 — P1 Founder Review Experience™ (full conversation)
+
+**Context:** Sprint P1 — replace Blueprint Author engineering-first UI (dashed rectangles, socket counts) with Founder Review Experience™: founders see finished creative vision first, engineering blueprint in collapsed drawer.
+
+**Spatial Architecture Review:** Completed — score 4.2/5; embedded in Experience Lab + Creative Director gates only (`docs/studio-os/founder-review/SPATIAL_ARCHITECTURE_REVIEW.md`).
+
+**Philosophy shipped:** Two representations — **Founder View** (photoreal hero, metadata, variants) and **Worker View** (engineering blueprint drawer). Variant strip (Current/Luxury/Minimal/Editorial/Signature) updates construction plan via lightweight preview variations, not separate AI builds.
+
+**Core (`src/studio-os-core/founder-review/`):** `founder-render-preview.ts` (Output A), `founder-review-diff.ts`, `construction-timeline.ts` (build movie), `room-assembly.ts` (live assembly layers).
+
+**UI (`blueprint-author-ui/`):** `FounderReviewExperience` replaces primary shell; `FounderReviewHero` (~72vh cinematic render), `FounderReviewMetadata`, `VariantStrip`, `BlueprintDrawer` (collapsed engineering), `LiveDiffPanel`, `ConstructionTimelinePanel`, `LiveRoomAssemblyPanel`, `FounderInspectPanel` (contextual inspect with Replace/Modify/Lock actions).
+
+**Hook:** `useBlueprintAuthorWorkflow` — steps `founder-review` | `manufacturing` | `complete`; variant/drawer/inspect state; integrates timeline + assembly.
+
+**Integration:** `BlueprintAuthorWorkflowShell` delegates to Founder Review; Experience Lab + Creative Director gates unchanged entry points.
+
+**Tests:** `founder-review.test.ts` (4 pass).
+
+**Conventions:** Founders never start with dashed rectangles; `BlueprintPreview` engineering overlays only in drawer (`engineeringMode`).
+

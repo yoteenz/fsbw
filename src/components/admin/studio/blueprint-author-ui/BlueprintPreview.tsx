@@ -17,14 +17,16 @@ type Props = {
   session: ConstructionModeSession;
   onSelectAsset?: (assetId: string) => void;
   selectedAssetId?: string | null;
+  /** Worker View — show engineering overlays (sockets, dependency counts) */
+  engineeringMode?: boolean;
 };
 
-/** Procedural clay blueprint preview — not AI-generated. */
-export function BlueprintPreview({ worldPreview, session, onSelectAsset, selectedAssetId }: Props) {
+/** Procedural clay blueprint preview — engineering view only when engineeringMode. */
+export function BlueprintPreview({ worldPreview, session, onSelectAsset, selectedAssetId, engineeringMode = true }: Props) {
   return (
     <div data-blueprint-preview style={{ fontFamily: 'system-ui, sans-serif' }}>
       <p style={{ margin: '0 0 8px', fontSize: '10px', fontWeight: 800, letterSpacing: '0.08em', color: '#374151' }}>
-        BLUEPRINT PREVIEW · {worldPreview.renderStyle}
+        {engineeringMode ? `ENGINEERING BLUEPRINT · ${worldPreview.renderStyle}` : `BLUEPRINT PREVIEW · ${worldPreview.renderStyle}`}
       </p>
       <div style={shellStyle}>
         <div
@@ -58,23 +60,25 @@ export function BlueprintPreview({ worldPreview, session, onSelectAsset, selecte
             title={asset.label}
           />
         ))}
-        {worldPreview.sockets.map((socket) => (
-          <div
-            key={socket.socketId}
-            style={{
-              position: 'absolute',
-              left: socket.bounds.left,
-              top: socket.bounds.top,
-              width: socket.bounds.width,
-              height: socket.bounds.height,
-              border: '2px dashed #3b82f6',
-              borderRadius: 4,
-              pointerEvents: 'none',
-              opacity: 0.7,
-            }}
-            title={socket.label}
-          />
-        ))}
+        {worldPreview.sockets.map((socket) =>
+          engineeringMode ? (
+            <div
+              key={socket.socketId}
+              style={{
+                position: 'absolute',
+                left: socket.bounds.left,
+                top: socket.bounds.top,
+                width: socket.bounds.width,
+                height: socket.bounds.height,
+                border: '2px dashed #3b82f6',
+                borderRadius: 4,
+                pointerEvents: 'none',
+                opacity: 0.7,
+              }}
+              title={socket.label}
+            />
+          ) : null
+        )}
         {worldPreview.lightingVolumes.map((vol) => (
           <div
             key={vol.volumeId}
@@ -108,14 +112,16 @@ export function BlueprintPreview({ worldPreview, session, onSelectAsset, selecte
           </div>
         ))}
       </div>
-      <div style={{ marginTop: 12, display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 8, fontSize: '10px' }}>
-        <PreviewMeta label="Architecture" value={worldPreview.architecture.shellId} />
-        <PreviewMeta label="Sockets" value={String(worldPreview.sockets.length)} />
-        <PreviewMeta label="Navigation" value={String(worldPreview.navigationNodes.length)} />
-        <PreviewMeta label="Lighting zones" value={String(worldPreview.lightingVolumes.length)} />
-        <PreviewMeta label="Dependencies" value={String(session.dependencies.edges.length)} />
-        <PreviewMeta label="Generation" value={worldPreview.generationOccurred ? 'yes' : 'no'} />
-      </div>
+      {engineeringMode ? (
+        <div style={{ marginTop: 12, display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 8, fontSize: '10px' }}>
+          <PreviewMeta label="Architecture" value={worldPreview.architecture.shellId} />
+          <PreviewMeta label="Sockets" value={String(worldPreview.sockets.length)} />
+          <PreviewMeta label="Navigation" value={String(worldPreview.navigationNodes.length)} />
+          <PreviewMeta label="Lighting zones" value={String(worldPreview.lightingVolumes.length)} />
+          <PreviewMeta label="Dependencies" value={String(session.dependencies.edges.length)} />
+          <PreviewMeta label="Generation" value={worldPreview.generationOccurred ? 'yes' : 'no'} />
+        </div>
+      ) : null}
     </div>
   );
 }
