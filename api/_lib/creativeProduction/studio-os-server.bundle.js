@@ -1524,6 +1524,122 @@ function resolveFounderRenderModelRoute(aspectRatio = "16:9") {
 
 // src/studio-os-core/founder-render/prompt-builder.ts
 import { createHash } from "node:crypto";
+
+// src/studio-os-core/architecture-law-001/contract.ts
+var ARCHITECTURE_LAW_001_VERSION = "architecture-law-001.v1";
+var AI_ALLOWED_ENVIRONMENT_CATEGORIES = [
+  "architecture",
+  "walls",
+  "floors",
+  "ceilings",
+  "furniture",
+  "lighting",
+  "materials",
+  "glass",
+  "acrylic",
+  "chrome",
+  "environment-props",
+  "command-dock-shell",
+  "workbench-shell",
+  "monitor-bezels",
+  "display-frames",
+  "control-consoles",
+  "button-housings",
+  "touch-surfaces",
+  "dashboard-shells",
+  "panel-groupings",
+  "toolbar-frames",
+  "viewport-windows",
+  "graph-containers",
+  "thumbnail-frames",
+  "navigation-rails",
+  "physical-interaction-zones",
+  "placeholder-cards",
+  "placeholder-buttons",
+  "empty-display-screens",
+  "embedded-console-architecture"
+];
+var AI_FORBIDDEN_PRODUCTION_UI_CATEGORIES = [
+  "typography",
+  "words",
+  "letters",
+  "numbers",
+  "dates",
+  "charts",
+  "graphs",
+  "status-values",
+  "progress-bars",
+  "notifications",
+  "icons",
+  "navigation-labels",
+  "company-names",
+  "department-names",
+  "revision-numbers",
+  "button-captions",
+  "logos",
+  "brand-names",
+  "breadcrumbs",
+  "menus",
+  "tooltips",
+  "badges",
+  "dashboard-metrics",
+  "readable-interface-elements"
+];
+var DISPLAY_PLACEHOLDER_TREATMENTS = [
+  "ambient-gradient",
+  "subtle-blueprint-lines",
+  "abstract-geometry",
+  "neutral-scan-pattern",
+  "glass-reflection",
+  "soft-emissive-lighting",
+  "minimal-wireframe",
+  "depth-cue"
+];
+
+// src/studio-os-core/architecture-law-001/prompt-directives.ts
+function buildArchitectureLawPositiveDirective() {
+  return [
+    `STUDIO WORLD ARCHITECTURE LAW #001 (${ARCHITECTURE_LAW_001_VERSION}): AI builds places. Studio World builds interfaces.`,
+    `GENERATE: ${AI_ALLOWED_ENVIRONMENT_CATEGORIES.slice(0, 12).join(", ")}, integrated Command Dock\u2122 shell, Workbench\u2122 console furniture, monitor bezels, display frames, button housings, empty illuminated screens.`,
+    `DISPLAY PLACEHOLDERS: Every monitor powered on, premium glass, illuminated, reflective, active \u2014 but intentionally BLANK. Use: ${DISPLAY_PLACEHOLDER_TREATMENTS.join(", ")}. No readable information.`,
+    `INTEGRATION: Command Dock and Workbench are permanent architectural furniture \u2014 glass, acrylic, chrome, embedded screens, tool slots, console surfaces. Premium, realistic, fully integrated into the room.`
+  ].join("\n");
+}
+function buildArchitectureLawNegativeDirective() {
+  return [
+    ...AI_FORBIDDEN_PRODUCTION_UI_CATEGORIES,
+    "readable text",
+    "legible words",
+    "UI screenshot",
+    "dashboard screenshot",
+    "app interface",
+    "software UI",
+    "HUD overlay text",
+    "status bar text",
+    "menu labels",
+    "button text",
+    "chart labels",
+    "graph axes",
+    "notification banners",
+    "company logo text",
+    "brand lettering",
+    "breadcrumb trail",
+    "tooltip text",
+    "metric numbers",
+    "revision stamp"
+  ].join(", ");
+}
+function appendArchitectureLawToEnvironmentPrompt(prompt) {
+  return `${prompt}
+
+${buildArchitectureLawPositiveDirective()}`;
+}
+function appendArchitectureLawToNegativePrompt(negativePrompt) {
+  const lawNegative = buildArchitectureLawNegativeDirective();
+  return negativePrompt ? `${negativePrompt}, ${lawNegative}` : lawNegative;
+}
+
+// src/studio-os-core/founder-render/prompt-builder.ts
 function hashPrompt(text) {
   return createHash("sha256").update(text).digest("hex").slice(0, 16);
 }
@@ -1568,23 +1684,25 @@ function buildFounderFullRoomPreviewPrompt(input) {
     input.founderRevisionNote ? `FOUNDER REVISION: ${input.founderRevisionNote}` : "",
     `OUTPUT: ${FOUNDER_FULL_ROOM_PREVIEW_PROMPT_VERSION} \xB7 16:9 cinematic interior \xB7 4K photoreal.`
   ].filter(Boolean);
-  const prompt = sections.join("\n\n");
-  const negativePrompt = [
-    "isolated object on transparent background",
-    "product cutout",
-    "wireframe",
-    "blueprint diagram",
-    "CAD view",
-    "floor plan",
-    "bounding boxes",
-    "clay block proxy",
-    "procedural placeholder",
-    "UI mockup",
-    "checkerboard transparency",
-    "generic random marble",
-    "Carrara substitute",
-    "Calacatta substitute"
-  ].join(", ");
+  const prompt = appendArchitectureLawToEnvironmentPrompt(sections.join("\n\n"));
+  const negativePrompt = appendArchitectureLawToNegativePrompt(
+    [
+      "isolated object on transparent background",
+      "product cutout",
+      "wireframe",
+      "blueprint diagram",
+      "CAD view",
+      "floor plan",
+      "bounding boxes",
+      "clay block proxy",
+      "procedural placeholder",
+      "UI mockup",
+      "checkerboard transparency",
+      "generic random marble",
+      "Carrara substitute",
+      "Calacatta substitute"
+    ].join(", ")
+  );
   return {
     prompt,
     negativePrompt,

@@ -7,6 +7,8 @@ import { deriveAllAssetDnaFromPlan } from '../manufacturing-engine/asset-dna';
 import { buildRenderIntentsForPlan } from '../manufacturing-engine/render-intent';
 import { buildManufacturingQueue } from '../manufacturing-engine/manufacturing-queue';
 import type { ConstructionPlan } from './construction-plan-schema';
+import { ARCHITECTURE_LAW_001_VERSION } from '../architecture-law-001/contract';
+import { attachUiSocketBlueprintToConstructionPlan } from '../architecture-law-001/integration';
 import type { AssetDnaRecord } from '../manufacturing-engine/asset-dna';
 import type { RenderIntent } from '../manufacturing-engine/render-intent';
 import type { ManufacturingQueue } from '../manufacturing-engine/manufacturing-queue';
@@ -22,7 +24,15 @@ export type BlueprintAuthorSessionBundle = {
 
 /** Open Construction Mode from Blueprint Author — zero AI generation. */
 export function openBlueprintAuthorSession(request: FounderCompileRequest): BlueprintAuthorSessionBundle {
-  const plan = authorConstructionPlan(request);
+  const basePlan = authorConstructionPlan(request);
+  const enriched = attachUiSocketBlueprintToConstructionPlan({
+    plan: basePlan,
+    departmentId: request.departmentId,
+  });
+  const plan: ConstructionPlan = {
+    ...enriched,
+    architectureLawVersion: ARCHITECTURE_LAW_001_VERSION,
+  };
   const planCheck = assertConstructionPlanComplete(plan);
   const assetDna = deriveAllAssetDnaFromPlan(plan);
   const jobIdMap = Object.fromEntries(assetDna.map((d, i) => [d.assetId, `mfg-job-${String(i + 1).padStart(3, '0')}`]));

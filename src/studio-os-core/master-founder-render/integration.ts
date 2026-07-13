@@ -10,6 +10,10 @@ import type { MasterFounderRender, MasterPortraitRender } from './contract';
 import { approveMasterLandscape } from './master-landscape';
 import { approveMasterPortrait } from './master-portrait';
 import { validatePortraitLandscapeParity } from './quality-guard-composition';
+import {
+  validateFounderRenderBeforeApproval,
+  type RenderUiInspectionInput,
+} from '../immune-system/architecture-law-validation';
 
 export function buildBrandAssetLockBundle(input: {
   landscape: MasterFounderRender;
@@ -56,6 +60,11 @@ export function buildApprovedMasterRenderHandoff(input: {
     approvedAt: new Date().toISOString(),
     approvedBy: input.approvedBy,
   };
+}
+
+/** Architecture Law #001 — reject founder render approval if AI generated production UI. */
+export function validateMasterLandscapeApprovalGate(input: RenderUiInspectionInput) {
+  return validateFounderRenderBeforeApproval(input);
 }
 
 /** CDS receives masters + composition pack — nothing regenerated. */

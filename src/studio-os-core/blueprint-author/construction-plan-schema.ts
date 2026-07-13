@@ -1,6 +1,8 @@
 import type { BlueprintAuthorMetadata, BlueprintRevisionVersions } from './contract';
 import type { AssetSocket } from '../studio-world-architecture-v2/room-blueprint';
 import type { StudioWorldMaterialId } from '../studio-world-architecture-v2/material-library';
+import type { DepartmentUiSocketBlueprint } from '../architecture-law-001/ui-socket-registry';
+import { ARCHITECTURE_LAW_001_VERSION } from '../architecture-law-001/contract';
 
 export const CONSTRUCTION_PLAN_SCHEMA_VERSION = 'construction-plan.v1';
 
@@ -118,6 +120,9 @@ export type ConstructionPlan = {
   accessibilityRules: string[];
   negativeRules: string[];
   organizationRules: string[];
+  /** Architecture Law #001 — UI mount sockets for Studio World runtime. */
+  uiMountSockets?: DepartmentUiSocketBlueprint;
+  architectureLawVersion?: typeof ARCHITECTURE_LAW_001_VERSION;
 };
 
 export function assertConstructionPlanComplete(plan: ConstructionPlan): { ok: true } | { ok: false; missing: string[] } {

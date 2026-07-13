@@ -2,6 +2,10 @@ import { createHash } from 'node:crypto';
 import type { ConstructionPlan } from '../blueprint-author/construction-plan-schema';
 import type { BrandMaterialPackage } from '../creative-production/brand-asset-grounding';
 import { FOUNDER_FULL_ROOM_PREVIEW_PROMPT_VERSION } from './contract';
+import {
+  appendArchitectureLawToEnvironmentPrompt,
+  appendArchitectureLawToNegativePrompt,
+} from '../architecture-law-001/prompt-directives';
 
 export type FounderFullRoomPrompt = {
   prompt: string;
@@ -66,23 +70,25 @@ export function buildFounderFullRoomPreviewPrompt(input: {
     `OUTPUT: ${FOUNDER_FULL_ROOM_PREVIEW_PROMPT_VERSION} · 16:9 cinematic interior · 4K photoreal.`,
   ].filter(Boolean);
 
-  const prompt = sections.join('\n\n');
-  const negativePrompt = [
-    'isolated object on transparent background',
-    'product cutout',
-    'wireframe',
-    'blueprint diagram',
-    'CAD view',
-    'floor plan',
-    'bounding boxes',
-    'clay block proxy',
-    'procedural placeholder',
-    'UI mockup',
-    'checkerboard transparency',
-    'generic random marble',
-    'Carrara substitute',
-    'Calacatta substitute',
-  ].join(', ');
+  const prompt = appendArchitectureLawToEnvironmentPrompt(sections.join('\n\n'));
+  const negativePrompt = appendArchitectureLawToNegativePrompt(
+    [
+      'isolated object on transparent background',
+      'product cutout',
+      'wireframe',
+      'blueprint diagram',
+      'CAD view',
+      'floor plan',
+      'bounding boxes',
+      'clay block proxy',
+      'procedural placeholder',
+      'UI mockup',
+      'checkerboard transparency',
+      'generic random marble',
+      'Carrara substitute',
+      'Calacatta substitute',
+    ].join(', ')
+  );
 
   return {
     prompt,

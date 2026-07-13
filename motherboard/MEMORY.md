@@ -48172,3 +48172,27 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 
 **Prior context in chat:** Canonical Studio World (`35d094db0`); Master Founder Render (`e2dadb712`); Industry Packs (`c0444f25d`); Architectural Shell; EL/CDS identity.
 
+---
+
+## 2026-07-13 — P0 Studio World Architecture Law #001 — AI environments, Studio World interfaces (full conversation)
+
+**Founder sprint:** Permanent platform invariant — AI builds places, Studio World builds interfaces. AI may generate architecture, Command Dock™/Workbench™ shells, display bezels, blank illuminated screens. AI must never generate typography, logos, icons, charts, menus, button captions, or any production UI. Studio World design system (Futura PT, Covered By Your Grace, Bohemy) owns all live interface rendering.
+
+**Spatial Architecture Review:** APPROVED 4.9 — `docs/studio-os/investigations/SPATIAL_ARCHITECTURE_REVIEW_ARCHITECTURE_LAW_001.md`.
+
+**Shipped foundational layer:**
+
+- **Architecture Law #001 module** — `src/studio-os-core/architecture-law-001/` — contract (allowed/forbidden categories, render pipeline), UI Socket Registry™ (16 sockets: COMMAND_DOCK, WORKBENCH, VIEWPORT, DISPLAY_A/B/C, etc.), display placeholder spec, prompt directives (positive/negative), Immune System `detectAiGeneratedProductionUi()` → `AI_UI_DETECTED`, integration hooks
+- **Blueprint Author** — `ui-mount-socket-system.ts`; `ConstructionPlan.uiMountSockets` + `architectureLawVersion`; `openBlueprintAuthorSession` attaches default sockets
+- **Founder render prompts** — `prompt-builder.ts` appends Law #001 directives to environment generation
+- **Immune System** — `architecture-law-validation.ts` export; `validateMasterLandscapeApprovalGate()` in master-founder-render integration
+- **Supabase** — `20260713190000_architecture_law_001.sql` (`studio_department_ui_sockets`)
+- **Canon** — `docs/studio-os/architecture/STUDIO_WORLD_ARCHITECTURE_LAW_001.md`
+- **Tests** — architecture-law-001 9/9 pass; build passes
+
+**Render pipeline (canonical):** EL → architecture → Command Dock → Workbench → display placeholders → socket metadata → founder review → approval → blueprint lock → CDS → React runtime mount.
+
+**Documented gaps:** Vision/OCR pipeline feeding `detectAiGeneratedProductionUi` at approval; per-department socket calibration; `StudioWorldShell` React mount into sockets (blocked on shell primitives G1–G2).
+
+**Prior context in chat:** Experience Lab admin infrastructure (`188f1fc36`); Canonical Studio World (`35d094db0`); Master Founder Render; Industry Packs; Architectural Shell; EL/CDS identity.
+

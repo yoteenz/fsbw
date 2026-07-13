@@ -9,3 +9,4 @@ export * from './drift-detector.js';
 export * from './repair-authorization.js';
 export * from './incident-recorder.js';
 export * from './readiness.js';
+export * from './architecture-law-validation.js';

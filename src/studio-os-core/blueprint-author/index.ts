@@ -1,6 +1,7 @@
 export * from './contract';
 export * from './construction-plan-schema';
 export * from './asset-socket-system';
+export * from './ui-mount-socket-system';
 export * from './material-reference-system';
 export * from './camera-anchor-system';
 export * from './lighting-profile-system';
