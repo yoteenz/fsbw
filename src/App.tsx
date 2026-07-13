@@ -304,6 +304,14 @@ const AdminStudioExperienceLab = lazyWithRetry(
   () => import('./pages/admin/studio/experience-lab/page'),
   'AdminStudioExperienceLab'
 );
+const AdminStudioExperienceLabV2 = lazyWithRetry(
+  () => import('./pages/admin/studio/experience-lab-v2/page'),
+  'AdminStudioExperienceLabV2'
+);
+const AdminStudioExperienceLabTestV2Alias = lazyWithRetry(
+  () => import('./pages/admin/studio/experience-lab/test-v2/page'),
+  'AdminStudioExperienceLabTestV2Alias'
+);
 const AdminStudioProductionSystem = lazyWithRetry(
   () => import('./pages/admin/studio/studio-production/page'),
   'AdminStudioProductionSystem'
@@ -2110,6 +2118,16 @@ function App() {
           <Route path="studio/narrative-intelligence/:roomSlug" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminStudioNarrativeIntelligence />
+            </Suspense>
+          } />
+          <Route path="studio/experience-lab/test-v2" element={
+            <Suspense fallback={<StudioRouteSuspenseFallback label="Experience Lab V2 alias" />}>
+              <AdminStudioExperienceLabTestV2Alias />
+            </Suspense>
+          } />
+          <Route path="studio/experience-lab-v2" element={
+            <Suspense fallback={<StudioRouteSuspenseFallback label="Experience Lab V2" />}>
+              <AdminStudioExperienceLabV2 />
             </Suspense>
           } />
           <Route path="studio/experience-lab/health" element={

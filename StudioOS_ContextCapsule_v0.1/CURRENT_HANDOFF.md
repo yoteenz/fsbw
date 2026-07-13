@@ -8,19 +8,19 @@
 
 ## Current sprint
 
-**P0 — Studio World Operating System Scheduler™**
+**P0 — Experience Lab V2 Test Environment**
 
-**Status: SHIPPED — Universal scheduling engine extending Implementation Orchestrator**
+**Status: SHIPPED — React-first V2 on isolated test route; production Experience Lab preserved**
 
 **Shipped:**
 
-- **`implementation-orchestrator/` extended** — universal job model (`os-job.ts`), 10 job classes, priority engine, resource/cost governor, dependency validator, AI workforce dispatch, failure recovery, observability, municipal jobs, founder automations
-- **`os-scheduler-store`** — single store for implementation + municipal + automation workloads; syncs from implementation queue
-- **Experience Lab `SchedulerPanel`** — running/queued/blocked/failed/completed/critical, GPU/budget/worker allocation, dispatch/approve/recover
-- **Command Center integration** — operational scheduler view (throughput, health, capacity, alerts)
-- **Tests** — os-scheduler 18/18 + implementation-orchestrator 25/25 PASS; build PASS
+- **`/admin/studio/experience-lab-v2`** — canonical V2 test route with native badges (TEST ENVIRONMENT / NOT YET PRODUCTION)
+- **`/admin/studio/experience-lab/test-v2`** — alias redirect to V2
+- **`src/features/studio-world/experience-lab-v2/`** — React-first shell, StudioViewport™, environment layer, inspectors, workbench, approval bar, tool dock, diagnostics, view-model adapter, feature flags, test modes
+- **Production `/admin/studio/experience-lab`** — unchanged, no redirect, no deletion
+- **Tests** — experience-lab-v2.test.ts 13/13 PASS; build PASS
 
-**Previous:** Implementation Orchestrator (`3dd1e1e2e`); Studio World Constitution (`1026b6c35`); Founder Render bundle hotfix (`5b295c772`).
+**Previous:** Operating System Scheduler (`f0b0ba91b`); Implementation Orchestrator (`3dd1e1e2e`).
 
 ---
 

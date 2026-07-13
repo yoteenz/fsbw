@@ -48456,6 +48456,20 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 - **Extended `implementation-orchestrator/`** — `schemas/os-job.ts` universal job model; `scheduler/` priority engine, resource governor, cost governor, dependency validator, workforce dispatcher, recovery engine, observability, os-scheduler-engine; `registry/municipal-jobs.ts` (City Council, permits, marketplace cert, inspection, Quality Guard, Immune System); `registry/founder-automation-jobs.ts` (backups, optimization, royalties, analytics, diagnostics, lighting bake, animation render); `bridge/implementation-to-job.ts` syncs implementation tasks as jobs; `queue/os-scheduler-store.ts` unified persistence
 - **Experience Lab `SchedulerPanel`** — running/queued/blocked/failed/completed/upcoming/critical, GPU/budget/worker allocation, dispatch/approve/recover; wired before Implementation Queue in CreativeIntelligencePanel
 - **Command Center** — `command-center-scheduler.ts` + operational view on Studio Command Center page (throughput, health, capacity, alerts)
-- **Tests** — os-scheduler.test.ts 18/18 + implementation-orchestrator 25/25 PASS; production build PASS
+**One commit + one push** on `master` via `agent-commit.sh`.
+
+---
+
+## 2026-07-13 — P0 Experience Lab V2 Test Environment (full conversation)
+
+**Founder request:** Build complete React-first Experience Lab V2 on separate approval route `/admin/studio/experience-lab-v2` without replacing production `/admin/studio/experience-lab`. StudioViewport™ with Blueprint/Founder Render/Construction/Materials/Lighting/Camera/Split modes; environment layer beneath React UI; test modes (MOCK/READ_ONLY/CONTROLLED_LIVE); feature flags; founder review workbench; approval bar; mobile + desktop; docs; tests. One commit, one push, CONCLUSION.
+
+**Shipped:**
+
+- **`src/features/studio-world/experience-lab-v2/`** — ExperienceLabV2Shell, StudioViewport, ExperienceLabEnvironmentLayer, command dock, context rail, left/right inspectors, workbench, approval bar, tool dock, diagnostics, view-model adapter, feature flags, test modes, CSS readability system
+- **Routes** — `/admin/studio/experience-lab-v2` (canonical); `/admin/studio/experience-lab/test-v2` alias redirect; production route untouched
+- **Server** — `api/_lib/experienceLabV2Flags.ts` for live-write enforcement
+- **Docs** — EXPERIENCE_LAB_V2_TEST_ENVIRONMENT.md, STUDIO_VIEWPORT_ARCHITECTURE.md, LEGACY_TO_V2_CUTOVER_PLAN.md, ENVIRONMENT_VS_INTERFACE_LAYERING.md
+- **Tests** — experience-lab-v2.test.ts 13/13 PASS; build PASS
 
 **One commit + one push** on `master` via `agent-commit.sh`.
