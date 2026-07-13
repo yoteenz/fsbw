@@ -25,6 +25,17 @@ describe('server bundle boundary (api → src repair)', () => {
     expect(text).not.toMatch(/\bnavigator\b/);
     expect(text).toContain('createDemoCreativeInitiative');
     expect(text).toContain('hasCompleteValidationCompileContext');
+    expect(text).toContain('resolveFounderRenderModelRoute');
+    expect(text).toContain('resolveLayerIdFromProductionGroupId');
+    expect(text).toContain('buildNanoBanana2FalInput');
+  });
+
+  it('bundle type surface includes founder-render and scene-stack exports', async () => {
+    const mod = await import('./studio-os-server.bundle.js');
+    expect(typeof mod.resolveFounderRenderModelRoute).toBe('function');
+    expect(typeof mod.resolveLayerIdFromProductionGroupId).toBe('function');
+    expect(typeof mod.buildNanoBanana2FalInput).toBe('function');
+    expect(mod.FOUNDER_RENDER_ROUTE_ID).toBeTruthy();
   });
 
   it('studio-os-server runtime surface imports from bundle', async () => {

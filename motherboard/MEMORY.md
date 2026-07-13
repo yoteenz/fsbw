@@ -47888,3 +47888,18 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 
 **Remaining:** Founder mobile re-test after deploy — expect FAL dispatch or brand/422 errors with readable JSON, not module-not-found.
 
+---
+
+## 2026-07-13 — Vercel build TS2339 — studio-os-server.bundle.d.ts sync (full conversation continuation)
+
+**Context:** Vercel deploy of `dedc6601b` failed at `tsc --noEmit`: `studioBuilderGeneration.ts` dynamic-imported `resolveLayerIdFromProductionGroupId`, `resolveSceneStackLayerModelRoute`, `buildNanoBanana2FalInput` from bundle but `studio-os-server.bundle.d.ts` only declared original creative-production exports.
+
+**Repair shipped:**
+
+- Expanded `api/_lib/creativeProduction/studio-os-server.bundle.d.ts` to match `studio-os-server-entry.ts` (founder-render, brand resolver, scene-stack routing, nano-banana-2 schema)
+- `server-bundle-boundary.test.ts` — asserts bundle contains + exports founder-render and scene-stack symbols
+
+**Verification:** `npm run build` passes locally; bundle boundary tests 6/6 pass.
+
+**Remaining:** Vercel redeploy should succeed; founder mobile Founder Preview re-test.
+
