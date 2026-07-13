@@ -47701,3 +47701,26 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 
 **Non-goals honored:** No bootstrap rewrite, no routing/lazy-load removal, no Experience Lab UI changes.
 
+---
+
+## 2026-07-13 — Supabase migration hygiene + governed job expiry loop fix (full conversation)
+
+**Context:** Founder asked whether repo vs Supabase migration drift would cause Creative Direction Studio / Experience Lab failures; then asked to apply recommended hygiene and fix continuous non-FAL failure loops.
+
+**Migration audit (Documented Fact):** Production FS Website (`hyycomvcaqxxvyrfupes`) had only 5 tracked `schema_migrations` vs 47 repo files, but all CD/EL-critical tables already existed (`studio_governed_generation_jobs` with 17 rows, asset registry, CIE, org memberships, workspace state). Schema was present; history bookkeeping was drifted. Two jobs stuck in `generating` at 55% with FAL `IN_PROGRESS` past `expires_at`.
+
+**Root cause of continuous failure loop (non-FAL):** Async governed generation idempotency reused **stale active jobs** forever — `findJobByIdempotency` returned `generating` rows even when `expires_at` passed or `updated_at` was >15m stale; client poll/resubmit looped on the same dead jobId (`reused: true`) instead of issuing a fresh work order.
+
+**Repair shipped:**
+1. **`governed-generation-job-expiry.ts`** — pure expiry rules: TTL (`expires_at`) + 15m inactivity on active statuses; terminal jobs never re-expired.
+2. **`async-governed-generation.ts`** — expire stale jobs on status poll + idempotency lookup; mark `expired`/`job-expired` with retryable=true; advance path uses resolved row.
+3. **`async-job-client.ts`** — treat `expired` like `failed`; clear persisted localStorage job on expired.
+4. **Migration `20260713130000_studio_os_migration_history_reconcile.sql`** — backfill 6 missing Studio OS migration records; expire stale production jobs; applied to production via MCP (`studio_os_migration_history_reconcile`).
+5. **Tests:** `governed-generation-job-expiry.test.ts` (6) + existing async flag tests pass.
+
+**Production verify after apply:** `schema_migrations` now 12 entries including `studio_governed_generation_jobs`; job counts `complete:15`, `expired:2` (was `generating:2`).
+
+**Conventions:** Stale async work orders must not block idempotency — expiry is server-authoritative on every status poll and submit. Migration hygiene = backfill history only when objects already live; do not re-run DDL that creates existing tables.
+
+**Remaining blockers (unchanged):** B1-Layer1/B1-E2E founder device verify; B1-Isolated brand marble proof; optional `STUDIO_GENERATION_WORKER_SECRET` for background worker (status poll still advances jobs).
+

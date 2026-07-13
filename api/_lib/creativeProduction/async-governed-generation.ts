@@ -27,6 +27,11 @@ import {
   STUDIO_BUILDER_FAL_MODEL,
   type StudioBuilderGenerateInput,
 } from '../studioBuilderGeneration.js';
+import {
+  governedGenerationJobExpiryMessage,
+  isGovernedGenerationJobExpired,
+  isGovernedGenerationJobTerminal,
+} from './governed-generation-job-expiry.js';
 
 const JOB_TABLE = 'studio_governed_generation_jobs';
 const JOB_TTL_MS = 2 * 60 * 60 * 1000;
@@ -174,7 +179,11 @@ function toStatusResponse(row: JobRow): GovernedGenerationJobStatusResponse {
     traceId: row.server_trace_id,
     errorCategory: (row.error_category as GovernedGenerationErrorCategory | null) ?? null,
     errorMessage: row.error_message,
-    retryable: row.error_category === 'provider-timeout' || row.error_category === 'client-status-fetch-failed',
+    retryable:
+      row.status === 'expired' ||
+      row.error_category === 'provider-timeout' ||
+      row.error_category === 'client-status-fetch-failed' ||
+      row.error_category === 'job-expired',
     recommendedNextAction:
       status === 'failed'
         ? row.error_category === 'provider-generation-failed'
@@ -190,6 +199,28 @@ function toStatusResponse(row: JobRow): GovernedGenerationJobStatusResponse {
   };
 }
 
+async function expireGovernedGenerationJob(jobId: string, reason: string): Promise<JobRow | null> {
+  return updateJob(jobId, {
+    status: 'expired',
+    progress_phase: 'failed',
+    progress_pct: 0,
+    error_category: 'job-expired',
+    error_message: reason,
+    failed_at: new Date().toISOString(),
+    provider_state: 'EXPIRED',
+  });
+}
+
+async function resolveActiveJobRow(row: JobRow): Promise<JobRow | null> {
+  if (isGovernedGenerationJobTerminal(row.status)) {
+    return row;
+  }
+  if (!isGovernedGenerationJobExpired(row)) {
+    return row;
+  }
+  return expireGovernedGenerationJob(row.job_id, governedGenerationJobExpiryMessage(row));
+}
+
 async function findJobByIdempotency(idempotencyKey: string): Promise<JobRow | null> {
   const supabase = getSupabaseAdminServiceRole();
   const { data, error } = await supabase
@@ -201,8 +232,10 @@ async function findJobByIdempotency(idempotencyKey: string): Promise<JobRow | nu
     .maybeSingle();
   if (error || !data) return null;
   const row = data as JobRow;
-  if (['complete', 'failed', 'cancelled', 'expired'].includes(row.status)) return null;
-  return row;
+  if (isGovernedGenerationJobTerminal(row.status)) return null;
+  const resolved = await resolveActiveJobRow(row);
+  if (!resolved || resolved.status === 'expired') return null;
+  return resolved;
 }
 
 async function findJobByJobId(jobId: string): Promise<JobRow | null> {
@@ -482,12 +515,14 @@ export async function advanceGovernedGenerationJob(jobId: string): Promise<Gover
   const row = await findJobByJobId(jobId);
   if (!row) return null;
 
-  if (row.status === 'complete') return toStatusResponse(row);
-  if (row.status === 'failed' || row.status === 'cancelled' || row.status === 'expired') {
-    return toStatusResponse(row);
+  const activeRow = await resolveActiveJobRow(row);
+  if (!activeRow) return null;
+  if (activeRow.status === 'complete') return toStatusResponse(activeRow);
+  if (activeRow.status === 'failed' || activeRow.status === 'cancelled' || activeRow.status === 'expired') {
+    return toStatusResponse(activeRow);
   }
 
-  if (!row.provider_request_id || !row.provider_model) {
+  if (!activeRow.provider_request_id || !activeRow.provider_model) {
     const failed = await updateJob(jobId, {
       status: 'failed',
       progress_phase: 'failed',
@@ -499,17 +534,17 @@ export async function advanceGovernedGenerationJob(jobId: string): Promise<Gover
   }
 
   const request = {
-    execution: row.request_payload.execution as Record<string, unknown>,
-    assetIntent: row.request_payload.assetIntent,
-    orgId: row.org_id,
-    sourceSystem: row.source_system,
+    execution: activeRow.request_payload.execution as Record<string, unknown>,
+    assetIntent: activeRow.request_payload.assetIntent,
+    orgId: activeRow.org_id,
+    sourceSystem: activeRow.source_system,
   } as GovernedGenerationRequest;
   const builderInput = builderInputFromRequest(request);
-  const audit = row.audit_payload as GovernedGenerationAudit | null;
+  const audit = activeRow.audit_payload as GovernedGenerationAudit | null;
 
   let poll;
   try {
-    poll = await pollStudioBuilderFalQueue(row.provider_model, row.provider_request_id);
+    poll = await pollStudioBuilderFalQueue(activeRow.provider_model, activeRow.provider_request_id);
   } catch (err) {
     const failed = await updateJob(jobId, {
       status: 'failed',
@@ -553,7 +588,7 @@ export async function advanceGovernedGenerationJob(jobId: string): Promise<Gover
     provider_state: providerState,
   });
 
-  const imageUrl = await fetchStudioBuilderFalResult(row.provider_model, row.provider_request_id);
+  const imageUrl = await fetchStudioBuilderFalResult(activeRow.provider_model, activeRow.provider_request_id);
   if (!imageUrl) {
     const failed = await updateJob(jobId, {
       status: 'failed',
@@ -597,7 +632,7 @@ export async function advanceGovernedGenerationJob(jobId: string): Promise<Gover
       const supabase = getSupabaseAdminServiceRole();
       const registered = await registerGeneratedAssetWithLineage({
         supabase,
-        orgId: row.org_id,
+        orgId: activeRow.org_id,
         audit,
         name: String(builderInput.heroAssetId || 'Generated Asset'),
         category: String((request.assetIntent as { discipline?: string })?.discipline ?? 'static-image'),
@@ -642,7 +677,7 @@ export async function getGovernedGenerationJobStatus(
   if (row.actor_id !== actor.actorId) {
     return null;
   }
-  if (row.status !== 'complete' && row.status !== 'failed' && row.status !== 'cancelled') {
+  if (!isGovernedGenerationJobTerminal(row.status)) {
     const advanced = await advanceGovernedGenerationJob(jobId);
     return advanced ?? toStatusResponse(row);
   }

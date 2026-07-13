@@ -129,7 +129,7 @@ export async function pollGovernedGenerationJobUntilComplete(
     if (status.status === 'complete' && status.publicUrl) {
       return status;
     }
-    if (status.status === 'failed') {
+    if (status.status === 'failed' || status.status === 'expired') {
       throw new Error(status.errorMessage ?? 'Generation job failed');
     }
 
@@ -154,7 +154,7 @@ export async function resumePersistedGovernedGenerationJob(
     clearPersistedGovernedGenerationJob(layerKey);
     return status;
   }
-  if (status.status === 'failed') {
+  if (status.status === 'failed' || status.status === 'expired') {
     clearPersistedGovernedGenerationJob(layerKey);
     throw new Error(status.errorMessage ?? 'Persisted generation job failed');
   }
