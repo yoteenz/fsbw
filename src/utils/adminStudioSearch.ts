@@ -1,5 +1,6 @@
 import {
   ADMIN_STUDIO_MODULES,
+  filterStudioModulesForPrincipal,
   getStudioNavGroup,
   type AdminStudioModule,
   type StudioNavGroupId,
@@ -117,7 +118,7 @@ export function searchStudioModules(query: string, limit = 12): StudioSearchHit[
   const tokens = tokenize(q);
   const hits: StudioSearchHit[] = [];
 
-  for (const mod of ADMIN_STUDIO_MODULES) {
+  for (const mod of filterStudioModulesForPrincipal(ADMIN_STUDIO_MODULES)) {
     const group = getStudioNavGroup(mod.groupId);
     const haystack = buildHaystack([
       mod.id.replace(/-/g, ' '),

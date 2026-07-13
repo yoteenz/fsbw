@@ -1,5 +1,8 @@
-/** Dead-simple health check — no runtime, DNA, or registry imports. */
+import { useRequireStudioWorldAdmin } from '../../../../../hooks/useRequireStudioWorldAdmin';
+
+/** Dead-simple health check — admin infrastructure only. */
 export default function ExperienceLabHealthPage() {
+  useRequireStudioWorldAdmin();
   return (
     <div
       style={{

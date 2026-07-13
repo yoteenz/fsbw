@@ -59,11 +59,11 @@ export function CreativeIntelligencePanel() {
     <div data-xelab-mode="creative-intelligence" style={{ background: '#fafafa', minHeight: '60vh' }}>
       <header style={{ padding: '16px', borderBottom: '1px solid #e5e7eb' }}>
         <p style={{ margin: 0, fontSize: '10px', fontWeight: 800, letterSpacing: '0.1em', color: '#eb1c24' }}>
-          EXPERIENCE LAB™ — MASTER PLANNING DEPARTMENT
+          STUDIO WORLD ADMIN — EXPERIENCE LAB™
         </p>
-        <h1 style={{ margin: '4px 0 8px', fontSize: '16px' }}>Industry Pack Headquarters Generator</h1>
+        <h1 style={{ margin: '4px 0 8px', fontSize: '16px' }}>Internal Architecture Department</h1>
         <p style={{ margin: 0, color: '#555', fontSize: '11px' }}>
-          Studio World canonical infrastructure · Industry Pack templates · Company HQ customization layer
+          Industry Pack planning · canonical headquarters · publish to Industry Pack Registry. Founders never enter this department.
         </p>
         <div style={{ marginTop: 12 }}>
           <button type="button" style={btnStyle} onClick={recompile} disabled>

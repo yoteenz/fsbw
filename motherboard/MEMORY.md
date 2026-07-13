@@ -48147,3 +48147,28 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 
 **Prior context in chat:** Master Founder Render (`e2dadb712`); Industry Packs (`c0444f25d`); Architectural Shell (`6a4050ae6`); EL/CDS identity gap analysis (`36c4b7c62`); Municipal Governance; Model Routing.
 
+---
+
+## 2026-07-13 — P0 Experience Lab becomes Studio World admin infrastructure (full conversation)
+
+**Founder sprint:** Experience Lab is no longer customer-facing — it is Studio World's internal architecture department. Founders never enter Experience Lab; they interact with Creative Director Studio after Studio World has generated and published their headquarters from an approved Industry Pack. New permission model: **Studio World Admin** (portfolio owners) access EL, Blueprint Author, Industry Pack Registry, canonical infrastructure; **Founders** access CDS, Construction Mode, Asset Library, Marketplace, Property Management, Brand Settings only.
+
+**Spatial Architecture Review:** APPROVED 4.7 — `docs/studio-os/investigations/SPATIAL_ARCHITECTURE_REVIEW_EXPERIENCE_LAB_ADMIN_INFRASTRUCTURE.md`.
+
+**Shipped:**
+
+- **Permission model** — `permission-model.ts` — `studio-world-admin` vs `founder` roles, `STUDIO_WORLD_ADMIN_INFRASTRUCTURE_IDS`, `STUDIO_WORLD_FOUNDER_WORKSPACE_IDS`, `assertExperienceLabAccess()`, admin-only path prefixes
+- **Founder workspace entry** — `founder-workspace-entry.ts` — `clonePublishedIndustryPackToFounderWorkspace()` builds `ApprovedHeadquartersHandoff` and returns CDS entry path
+- **Route guard** — `useRequireStudioWorldAdmin` — portfolio owners only; founders redirect to `/admin/studio/department/creative-direction`
+- **EL pages** — main, health, safe routes use new guard (replaces generic admin page access)
+- **Nav/search filtering** — `studioWorldAdminOnly` flag on Experience Lab module; `filterStudioModulesForPrincipal()` hides admin infra from founders in nav + studio search
+- **EL UI copy** — reframed as "Studio World Admin — Internal Architecture Department"
+- **Canon updated** — `CANONICAL_STUDIO_WORLD_ARCHITECTURE.md` permission model + founder vs admin flows
+- **Tests** — canonical-studio-world 13/13 pass; build passes
+
+**Creation flow (canonical):** Admin: EL → Industry Pack → HQ → Founder Render → Blueprint → Publish → Registry. Founder: create company → select published pack → clone to workspace → enter CDS → customize HQ.
+
+**Documented gaps:** Founder company-creation UI wiring to `clonePublishedIndustryPackToFounderWorkspace`; Supabase persistence for published pack instances; CDS room gate on handoff (P0-C); additional admin-only modules (World Compiler, Permit System) can receive `studioWorldAdminOnly` flag in future pass.
+
+**Prior context in chat:** Canonical Studio World (`35d094db0`); Master Founder Render (`e2dadb712`); Industry Packs (`c0444f25d`); Architectural Shell; EL/CDS identity.
+

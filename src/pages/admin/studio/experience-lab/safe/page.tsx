@@ -3,9 +3,11 @@ import {
   probeExperienceLabImports,
   type SafeImportProbeResult,
 } from '../../../../../components/admin/studio/experience-lab/safe-import-probe';
+import { useRequireStudioWorldAdmin } from '../../../../../hooks/useRequireStudioWorldAdmin';
 
-/** Incremental import probe — no genesis barrel at module scope. */
+/** Incremental import probe — Studio World admin infrastructure only. */
 export default function ExperienceLabSafePage() {
+  useRequireStudioWorldAdmin();
   const [results, setResults] = useState<SafeImportProbeResult[] | null>(null);
   const [routeError, setRouteError] = useState<string | null>(null);
 

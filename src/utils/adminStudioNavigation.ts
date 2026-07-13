@@ -5,6 +5,7 @@
 
 import { ADMIN_STUDIO_BASE_PATH } from './adminStudioRoutes';
 import type { StudioOsCoreModuleId } from '../studio-os-core/core/modules';
+import { isStudioWorldAdmin } from '../studio-os-core/canonical-studio-world';
 
 export type StudioNavGroupId =
   | 'overview'
@@ -33,6 +34,8 @@ export type AdminStudioModule = {
   moduleKey?: StudioOsCoreModuleId | 'studio-dashboard';
   /** Shown on overview only — omit on dense sub-nav. */
   featuredOnOverview?: boolean;
+  /** Hidden from founders — Studio World admin infrastructure only. */
+  studioWorldAdminOnly?: boolean;
 };
 
 export type StudioNavGroup = {
@@ -2061,14 +2064,15 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
   {
     id: 'experience-lab',
     title: 'EXPERIENCE LAB™',
-    purpose: 'Permanent development environment — inspect, test, switch, and validate Experience Runtime DNA layers in real time.',
+    purpose: 'Studio World internal architecture — Industry Pack planning, canonical HQ generation, and publish pipeline. Admin only.',
     route: p('experience-lab'),
     groupId: 'intelligence',
     status: 'live',
-    metric: 'Lab',
+    metric: 'Admin',
     ctaLabel: 'OPEN EXPERIENCE LAB',
     moduleKey: 'experience-lab',
     featuredOnOverview: true,
+    studioWorldAdminOnly: true,
   },
   {
     id: 'studio-production-system',
@@ -2617,12 +2621,18 @@ export function getStudioNavGroup(id: StudioNavGroupId): StudioNavGroup | undefi
   return STUDIO_NAV_GROUPS.find((g) => g.id === id);
 }
 
+/** Filter modules visible to the current principal — founders never see admin infrastructure. */
+export function filterStudioModulesForPrincipal(modules: readonly AdminStudioModule[]): AdminStudioModule[] {
+  if (isStudioWorldAdmin()) return [...modules];
+  return modules.filter((m) => !m.studioWorldAdminOnly);
+}
+
 export function getStudioModuleById(id: string): AdminStudioModule | undefined {
   return ADMIN_STUDIO_MODULES.find((m) => m.id === id);
 }
 
 export function getModulesForGroup(groupId: StudioNavGroupId, options?: { overviewOnly?: boolean }): AdminStudioModule[] {
-  const list = ADMIN_STUDIO_MODULES.filter((m) => m.groupId === groupId);
+  const list = filterStudioModulesForPrincipal(ADMIN_STUDIO_MODULES.filter((m) => m.groupId === groupId));
   if (options?.overviewOnly) {
     const featured = list.filter((m) => m.featuredOnOverview);
     return featured.length > 0 ? featured : list.slice(0, 6);
@@ -2632,7 +2642,7 @@ export function getModulesForGroup(groupId: StudioNavGroupId, options?: { overvi
 
 /** M83 — module count for department summarization cards. */
 export function countModulesForGroup(groupId: StudioNavGroupId): number {
-  return ADMIN_STUDIO_MODULES.filter((m) => m.groupId === groupId).length;
+  return filterStudioModulesForPrincipal(ADMIN_STUDIO_MODULES.filter((m) => m.groupId === groupId)).length;
 }
 
 export function resolveStudioModuleFromPath(pathname: string): AdminStudioModule | undefined {

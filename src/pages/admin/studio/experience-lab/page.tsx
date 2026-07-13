@@ -7,16 +7,16 @@ import { ExperienceLabErrorBoundary } from '../../../../components/admin/studio/
 import { ExperienceLabWorkspace } from '../../../../components/admin/studio/experience-lab/ExperienceLabWorkspace';
 import { useWorkspace } from '../../../../studio-os-core/context/WorkspaceProvider';
 import { STUDIO_OS_ROUTES } from '../../../../studio-os-core/workspace/routes';
-import { useRequireAdminPageAccess } from '../../../../hooks/useRequireAdminPageAccess';
+import { useRequireStudioWorldAdmin } from '../../../../hooks/useRequireStudioWorldAdmin';
 
 const EXPERIENCE_LAB_ROUTE = '/admin/studio/experience-lab';
 
 /**
- * Experience Lab™ — permanent development environment for Studio Experience™.
- * `/admin/studio/experience-lab`
+ * Experience Lab™ — Studio World internal architecture department (admin only).
+ * Founders customize approved headquarters in Creative Director Studio.
  */
 export default function AdminStudioExperienceLabPage() {
-  useRequireAdminPageAccess();
+  useRequireStudioWorldAdmin();
   const { workspace } = useWorkspace();
 
   useEffect(() => {
