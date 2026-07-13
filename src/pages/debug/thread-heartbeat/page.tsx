@@ -76,8 +76,8 @@ export default function ThreadHeartbeatDebugPage() {
           {JSON.stringify(snap.startupEnabled, null, 2)}
         </pre>
         <p style={{ color: '#94a3b8', marginTop: 8 }}>
-          Use <code>?startupMax=D</code> or <code>?startupDisable=J</code> on any route. Hide overlay:{' '}
-          <code>?heartbeat=0</code>
+          Use <code>?startupMax=D</code> or <code>?startupDisable=J</code> on any route. Show corner overlay:{' '}
+          <code>?heartbeat=1</code>
         </p>
       </section>
 

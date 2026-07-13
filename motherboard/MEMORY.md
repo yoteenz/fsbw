@@ -48516,6 +48516,8 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 
 ---
 
+---
+
 ## 2026-07-13 — P0 Experience Lab V2 Contextual Panel Orchestration (full conversation)
 
 **Founder request:** Remove viewport clutter on `/admin/studio/experience-lab-v2` by replacing permanently pinned mobile floating panels with adaptive, collapsible, context-aware panel orchestration. Viewport is sacred — one contextual inspector on mobile, inspector switcher, expanded sheets, edge dock zones, view angles in chrome (not overlay), desktop rails, layout persistence + reset, diagnostics, tests, one commit. Do not modify legacy Experience Lab or restore page scroll.
@@ -48722,3 +48724,21 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 **Changes:** `experience-lab-v2.css`, `experience-lab-v2.test.ts`, `experience-lab-v2-command-dock.test.ts` (presentation tests).
 
 **Conventions:** Command Dock polish only — no layout redesign; legacy route untouched.
+
+---
+
+## 2026-07-13 — Hide main-thread heartbeat debug overlay (full conversation)
+
+**Founder request:** Hide/remove heartbeat debugging visible during Experience Lab V2 work.
+
+**Context:** Prior sprints shipped V2 visual reconstruction (`fe4199934`) and fixed-viewport shell (`87d8f4235`). Green "MT heartbeat" corner overlay (hb/raf/to counters) from `initMainThreadDiagnostics()` was showing on all routes by default; only hidden with `?heartbeat=0`.
+
+**Shipped:**
+
+- **`shouldHideHeartbeatOverlay()`** — overlay hidden by default on admin/studio/customer routes; opt-in with `?heartbeat=1` or auto-shown on `/__thread-heartbeat` debug page only
+- **Diagnostics preserved** — heartbeat counters, trace ring, circuit breakers, `window.__MTD` unchanged; only the corner DOM overlay suppressed
+- **Debug page copy** — `/__thread-heartbeat` updated to document `?heartbeat=1` to show overlay
+
+**Not changed:** Experience Lab runtime heartbeat (internal tick/subscribe), black-box Section H (diagMode only), live-presence analytics heartbeat.
+
+**One commit + one push** on `master` via `agent-commit.sh`.

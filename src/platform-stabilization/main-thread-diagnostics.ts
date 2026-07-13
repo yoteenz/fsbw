@@ -134,9 +134,13 @@ export function isStartupStageEnabled(stage: StartupStageId): boolean {
   return startupEnabled[stage] ?? true;
 }
 
+/** Hide the corner overlay by default; opt in with ?heartbeat=1 or on /__thread-heartbeat. */
 export function shouldHideHeartbeatOverlay(): boolean {
-  if (typeof window === 'undefined') return false;
-  return new URLSearchParams(window.location.search).get('heartbeat') === '0';
+  if (typeof window === 'undefined') return true;
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('heartbeat') === '1') return false;
+  if (window.location.pathname.startsWith('/__thread-heartbeat')) return false;
+  return true;
 }
 
 function pushTrace(event: TraceEvent): void {
