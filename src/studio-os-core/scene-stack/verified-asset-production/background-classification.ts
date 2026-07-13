@@ -26,7 +26,16 @@ export function classifyAssetBackground(input: BackgroundClassificationInput): B
     };
   }
 
-  if (fullSceneLikelihood >= 0.78 || (shellSimilarity !== null && shellSimilarity > 0.82)) {
+  if (fullSceneLikelihood >= 0.78 && metrics.frameCoverage > 0.75) {
+    return {
+      classification: 'FULL_SCENE_RERENDER',
+      extractionEligible: false,
+      cleanupRequired: false,
+      safeExplanation: 'Complete room or shell reproduction — not eligible for background removal.',
+    };
+  }
+
+  if (shellSimilarity !== null && shellSimilarity > 0.82 && metrics.frameCoverage > 0.45) {
     return {
       classification: 'FULL_SCENE_RERENDER',
       extractionEligible: false,

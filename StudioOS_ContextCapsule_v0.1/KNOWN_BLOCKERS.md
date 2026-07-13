@@ -1,6 +1,6 @@
 # KNOWN BLOCKERS — Do Not Violate
 
-**Last updated:** 2026-07-12  
+**Last updated:** 2026-07-13  
 **Authority:** Overrides feature work, compile repair, and optimistic assumptions
 
 ---
@@ -28,6 +28,29 @@
 
 - Pre-handler module evaluation failure was real; bundle repair addresses import trace.
 - Handler and `traceId` execute on probed routes post-deploy.
+
+---
+
+---
+
+## B1-Parity — FS vs Studio OS generation divergence (REPAIR SHIPPED — VERIFY PENDING)
+
+| Field | Detail |
+|-------|--------|
+| **ID** | B1-Parity |
+| **Symptom** | `LANDMARK_VALIDATION_FAILED` / `QUALITY_REGENERATE_REQUIRED` on opaque NB2 plates; FS color/styling completes |
+| **Root cause** | Studio OS `runVerifiedAssetProductionPipeline` rejects salvageable opaque studio output before governed background removal |
+| **Repair** | `salvageable-opaque.ts` + structural/quality deferral + artifact-intent routing + `FULL_SCENE_RERENDER` architecture signals |
+| **Forensics** | `docs/studio-os/investigations/FS_VS_STUDIO_OS_GENERATION_PARITY.md` |
+| **Mobile diag** | `?compilerDiag=1` → Generation Parity panel in Shell Foundation Black Box |
+| **Verify** | Isolated layer advances to BACKGROUND_REMOVING on founder device |
+| **Status** | **Verify Pending** |
+
+### Documented Fact
+
+- Frontal Slayer path: `POST /api/wig-preview/live-noir-color` → sync FAL → no Quality Guard.
+- Studio OS path: `studio-builder-generate` → async jobs → verified-asset pipeline (divergence boundary).
+- Supabase schema audit 2026-07-13: critical tables present; no migration required.
 
 ---
 

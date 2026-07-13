@@ -1,6 +1,11 @@
 import type { BrandMaterialPackage } from '../../creative-production/brand-asset-grounding';
+import {
+  requiresIsolatedObjectValidation,
+  resolveArtifactIntent,
+  type ArtifactIntent,
+  type ArtifactIntentSurface,
+} from '../../creative-production/artifact-intent';
 import { analyzeIsolatedLayerQuality } from '../isolated-layer-quality';
-import { isIsolatedObjectLayer } from '../isolated-layer-contract';
 import { validateMaterialFidelity, materialFidelityBlocksApproval } from './material-fidelity-validation';
 import type { SceneStackLayerId } from '../types';
 import { validateAssetIdentity } from './identity-validation';
@@ -47,6 +52,10 @@ export type VerifiedAssetPipelineInput = {
   routeId?: string | null;
   resolutionTruth?: AssetCandidateRecord['resolutionTruth'];
   brandReferenceUrls?: string[];
+  artifactIntent?: ArtifactIntent;
+  artifactIntentSurface?: ArtifactIntentSurface;
+  creativeStudioStackMode?: boolean;
+  cdsArtifactClass?: string | null;
 };
 
 function candidateId(): string {
@@ -69,6 +78,15 @@ export async function runVerifiedAssetProductionPipeline(
   const regenerationAttempt = input.regenerationAttempt ?? 0;
   const cleanupAttempt = input.cleanupAttempt ?? 0;
   const assetCandidateId = candidateId();
+  const artifactIntent =
+    input.artifactIntent ??
+    resolveArtifactIntent({
+      layerId: input.layerId,
+      surface: input.artifactIntentSurface,
+      creativeStudioStackMode: input.creativeStudioStackMode,
+      cdsArtifactClass: input.cdsArtifactClass,
+    });
+  const isolatedValidationRequired = requiresIsolatedObjectValidation(artifactIntent);
 
   let stage: VerifiedAssetProductionStage = 'GENERATED_CANDIDATE';
   input.onStageChange?.(stage, 'Inspecting delivered asset');
@@ -110,7 +128,7 @@ export async function runVerifiedAssetProductionPipeline(
     message: identity.safeExplanation,
   });
 
-  if (!identity.identityMatch && isIsolatedObjectLayer(input.layerId)) {
+  if (!identity.identityMatch && isolatedValidationRequired) {
     emitVerifiedAssetImmuneEvent('WrongAssetDetected', {
       layerId: input.layerId,
       stationId: input.stationId,
@@ -156,7 +174,7 @@ export async function runVerifiedAssetProductionPipeline(
     message: structure.issues.join(' '),
   });
 
-  if (!structure.valid && isIsolatedObjectLayer(input.layerId)) {
+  if (!structure.valid && isolatedValidationRequired) {
     if (structure.classification === 'full-scene' || structure.classification === 'fused-with-environment') {
       emitVerifiedAssetImmuneEvent('FullSceneDetected', {
         layerId: input.layerId,
@@ -202,7 +220,7 @@ export async function runVerifiedAssetProductionPipeline(
     message: background.safeExplanation,
   });
 
-  if (mustRejectBeforeCleanup(background.classification) && isIsolatedObjectLayer(input.layerId)) {
+  if (mustRejectBeforeCleanup(background.classification) && isolatedValidationRequired) {
     if (background.classification === 'FULL_SCENE_RERENDER' || background.classification === 'ENVIRONMENT_FUSED') {
       emitVerifiedAssetImmuneEvent('FullSceneDetected', {
         layerId: input.layerId,
@@ -238,7 +256,7 @@ export async function runVerifiedAssetProductionPipeline(
   }).classification;
 
   const needsCleanup =
-    isIsolatedObjectLayer(input.layerId) &&
+    isolatedValidationRequired &&
     background.cleanupRequired &&
     background.extractionEligible &&
     input.requestBackgroundCleanup;
@@ -382,7 +400,7 @@ export async function runVerifiedAssetProductionPipeline(
   });
 
   if (
-    isIsolatedObjectLayer(input.layerId) &&
+    isolatedValidationRequired &&
     materialFidelityBlocksApproval(materialFidelity.verdict) &&
     input.brandMaterialPackage
   ) {

@@ -94,6 +94,8 @@ import {
   type AssetCandidateRecord,
 } from '../studio-os-core/scene-stack/verified-asset-production';
 import { requestSceneStackAssetCleanup } from '../services/studio/sceneStackAssetCleanup/api';
+import { resolveArtifactIntent } from '../studio-os-core/creative-production/artifact-intent';
+import { recordGenerationParityForensic } from '../studio-os-core/generation-runtime/generation-parity-forensic';
 import {
   resolveBrandMaterialPackage,
   isBrandAssetResolutionError,
@@ -761,6 +763,12 @@ export function useSceneStack(
             )?.organizationId ??
             'frontal-slayer';
 
+          const artifactIntentSurface = layerCompileOptions?.creativeStudioStackMode
+            ? 'creative-direction-studio'
+            : layerCompileOptions?.validationMode
+              ? 'experience-lab'
+              : 'experience-lab';
+
           const production = await runVerifiedAssetProductionPipeline({
             layerId,
             candidateUrl: result.publicUrl,
@@ -779,6 +787,8 @@ export function useSceneStack(
             brandMaterialPackage: compiled.brandMaterialPackage ?? null,
             routeId: compiled.routeId ?? null,
             brandReferenceUrls: compiled.brandReferenceUrls,
+            artifactIntentSurface,
+            creativeStudioStackMode: layerCompileOptions?.creativeStudioStackMode === true,
             resolutionTruth: compiled.resolutionTruth
               ? {
                   requestedResolution: compiled.resolutionTruth.requestedResolution,
@@ -827,6 +837,31 @@ export function useSceneStack(
           });
 
           setProductionEvidence(production.candidate);
+
+          recordGenerationParityForensic({
+            surface: artifactIntentSurface,
+            endpoint: '/api/admin/studio-builder-generate',
+            organizationId,
+            projectId,
+            compileRunId: layerCompileOptions?.previewCompileContext?.compileRunId ?? null,
+            jobId: result.jobId ?? null,
+            artifactIntent: resolveArtifactIntent({
+              layerId,
+              surface: artifactIntentSurface,
+              creativeStudioStackMode: layerCompileOptions?.creativeStudioStackMode === true,
+            }),
+            modelRoute: result.model ?? compiled.providerModel ?? null,
+            promptVersion: compiled.promptVersion,
+            referenceCount: compiled.brandReferenceUrls?.length ?? 0,
+            generationMode: compiled.generationMode ?? null,
+            providerOutputUrls: result.publicUrl ? [result.publicUrl] : [],
+            validationPath: 'runVerifiedAssetProductionPipeline',
+            validationResult: production.ok ? 'approved' : production.failureState ?? 'denied',
+            postprocessing:
+              production.ok && production.cleanupUsed ? 'background-removal' : 'none',
+            sceneStackState: production.stage,
+            finalStatus: production.ok ? 'complete' : 'failed',
+          });
 
           if (!production.ok) {
             const isFullSceneRerender =

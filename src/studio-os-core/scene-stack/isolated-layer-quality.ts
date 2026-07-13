@@ -1,6 +1,7 @@
 import type { IsolatedLayerQualityClassification } from './isolated-layer-contract';
 import { getIsolatedLayerContract, isIsolatedObjectLayer } from './isolated-layer-contract';
 import type { SceneStackLayerId } from './types';
+import { isSalvageableOpaqueStudioPlate } from './verified-asset-production/salvageable-opaque';
 
 export type IsolatedLayerImageMetrics = {
   width: number;
@@ -238,7 +239,7 @@ export async function analyzeIsolatedLayerQuality(input: {
 
   const regenerateRequired = issues.some(
     (i) => i.includes('REGENERATE REQUIRED') || i.includes('save blocked')
-  );
+  ) && !issues.some((i) => i.includes('governed extraction required'));
 
   return { classification, issues, metrics, regenerateRequired };
 }
@@ -255,6 +256,7 @@ export function evaluateIsolatedLayerQualityRules(input: {
     | 'fullWidthEdgeContact'
     | 'fullHeightEdgeContact'
     | 'bakedCheckerboardSuspect'
+    | 'cornerOpacityAvg'
   >;
   shellSimilarity: number | null;
 }): { classification: IsolatedLayerQualityClassification; issues: string[] } {
@@ -263,9 +265,23 @@ export function evaluateIsolatedLayerQualityRules(input: {
   let classification: IsolatedLayerQualityClassification = 'low-confidence-isolation';
 
   if (isIsolatedObjectLayer(input.layerId)) {
-    if (!metrics.alphaChannelPresent) {
+    const salvageableOpaque = isSalvageableOpaqueStudioPlate({
+      layerId: input.layerId,
+      metrics,
+      fullSceneLikelihood:
+        (metrics.frameCoverage > 0.78 ? 0.35 : 0) +
+        (metrics.transparentSides < 2 ? 0.25 : 0) +
+        (metrics.fullWidthEdgeContact && metrics.fullHeightEdgeContact ? 0.2 : 0) +
+        (metrics.cornerOpacityAvg > 200 ? 0.1 : 0) +
+        (shellSimilarity !== null && shellSimilarity > 0.75 ? 0.25 : 0),
+      shellSimilarity,
+    });
+
+    if (!metrics.alphaChannelPresent && !salvageableOpaque) {
       issues.push('Opaque background detected — isolated object layer requires transparent alpha. REGENERATE REQUIRED.');
       classification = 'opaque-background';
+    } else if (!metrics.alphaChannelPresent && salvageableOpaque) {
+      issues.push('Opaque studio background detected — governed extraction required before approval.');
     }
 
     if (metrics.frameCoverage > contract.maximumFrameCoverage) {
@@ -275,11 +291,15 @@ export function evaluateIsolatedLayerQualityRules(input: {
       classification = 'full-scene-rerender';
     }
 
-    if (metrics.transparentSides < contract.minimumTransparentSides) {
+    if (metrics.transparentSides < contract.minimumTransparentSides && !salvageableOpaque) {
       issues.push(
         `Insufficient transparent margin (${metrics.transparentSides}/${contract.minimumTransparentSides} sides). REGENERATE REQUIRED.`
       );
       if (classification === 'low-confidence-isolation') classification = 'suspicious-scene-rerender';
+    } else if (metrics.transparentSides < contract.minimumTransparentSides && salvageableOpaque) {
+      issues.push(
+        `Transparent margin pending extraction (${metrics.transparentSides}/${contract.minimumTransparentSides} sides).`
+      );
     }
 
     if (!contract.allowFullWidthEdgeContact && metrics.fullWidthEdgeContact) {

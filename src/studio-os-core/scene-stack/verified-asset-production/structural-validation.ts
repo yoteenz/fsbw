@@ -2,6 +2,7 @@ import type { IsolatedLayerImageMetrics } from '../isolated-layer-quality';
 import type { SceneStackLayerId } from '../types';
 import { getIsolatedLayerContract, isIsolatedObjectLayer } from '../isolated-layer-contract';
 import type { StructuralClassification } from './contract';
+import { isSalvageableOpaqueStudioPlate } from './salvageable-opaque';
 
 export type StructuralValidationInput = {
   layerId: SceneStackLayerId;
@@ -96,8 +97,15 @@ export function validateAssetStructure(input: StructuralValidationInput): Struct
     };
   }
 
+  const salvageableOpaque = isSalvageableOpaqueStudioPlate({
+    layerId,
+    metrics,
+    fullSceneLikelihood,
+    shellSimilarity: metrics.shellSimilarity,
+  });
+
   const transparentOk = metrics.transparentSides >= contract.minimumTransparentSides;
-  if (!transparentOk && metrics.frameCoverage > 0.65) {
+  if (!transparentOk && metrics.frameCoverage > 0.65 && !salvageableOpaque) {
     issues.push('Insufficient transparent margin for mountable silhouette.');
   }
 
@@ -105,7 +113,7 @@ export function validateAssetStructure(input: StructuralValidationInput): Struct
     issues.length === 0 &&
     metrics.frameCoverage <= contract.maximumFrameCoverage &&
     metrics.frameCoverage >= 0.08 &&
-    (transparentOk || metrics.alphaChannelPresent);
+    (transparentOk || metrics.alphaChannelPresent || salvageableOpaque);
 
   let classification: StructuralClassification = 'structurally-valid';
   if (!valid) {

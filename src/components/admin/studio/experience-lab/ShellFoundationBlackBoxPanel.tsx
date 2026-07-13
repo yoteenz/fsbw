@@ -24,6 +24,7 @@ import {
   findFirstMissingIfrEventAfterRecordedBefore,
   findLastProvenIfrEvent,
 } from '../../../../studio-os/diagnostics/world-compiler-investigation/independent-forensic-reconciliation';
+import { GenerationParityDiagnosticPanel } from './GenerationParityDiagnosticPanel';
 
 type Props = {
   compileRunId: string | null;
@@ -418,6 +419,10 @@ export function ShellFoundationBlackBoxPanel({
         {' · '}
         Last event: <strong>{state.lastVisibleEvent ?? lastEvent?.label ?? '—'}</strong>
       </p>
+
+      <Section title="GENERATION PARITY — FS vs STUDIO OS" defaultOpen>
+        <GenerationParityDiagnosticPanel />
+      </Section>
 
       <Section title="INDEPENDENT FORENSIC RECORDER" defaultOpen>
         <IndependentForensicRecorderSection

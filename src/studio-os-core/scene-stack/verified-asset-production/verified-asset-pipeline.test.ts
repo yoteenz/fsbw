@@ -121,6 +121,16 @@ describe('identity validation', () => {
 });
 
 describe('structural validation', () => {
+  it('passes salvageable opaque studio plate before cleanup', () => {
+    const r = validateAssetStructure({
+      layerId: 'signature-landmark',
+      metrics: FIXTURE_SOLID_BACKGROUND_LANDMARK,
+      fullSceneLikelihood: 0.3,
+    });
+    expect(r.valid).toBe(true);
+    expect(r.classification).toBe('structurally-valid');
+  });
+
   it('rejects full-scene before cleanup', () => {
     const r = validateAssetStructure({
       layerId: 'signature-landmark',

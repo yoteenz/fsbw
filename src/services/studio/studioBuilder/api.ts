@@ -4,6 +4,8 @@ import {
   ensureApiAccessToken,
 } from '../../../utils/api';
 import { recordGenerationRequestHttpForensic } from '../../../studio-os/diagnostics/world-compiler-investigation/generation-request-forensic';
+import { recordGenerationParityForensic } from '../../../studio-os-core/generation-runtime/generation-parity-forensic';
+import { resolveArtifactIntent } from '../../../studio-os-core/creative-production/artifact-intent';
 import {
   recordGspuAuthorization,
   recordGspuAwait,
@@ -280,6 +282,34 @@ export async function requestStudioBuilderGenerate(
       jsonParseSucceeded,
       parsed: data,
       returnedToCaller: success,
+    });
+    const paritySurface = payload.creativeStudioStackMode
+      ? 'creative-direction-studio'
+      : payload.validationMode
+        ? 'experience-lab'
+        : 'experience-lab';
+    recordGenerationParityForensic({
+      surface: paritySurface,
+      endpoint,
+      organizationId: payload.org_id ?? null,
+      projectId: payload.projectId ?? null,
+      compileRunId: payload.compileRunId ?? null,
+      jobId: data.jobId ?? null,
+      artifactIntent: payload.layerId
+        ? resolveArtifactIntent({
+            layerId: payload.layerId as import('../../../studio-os-core/scene-stack/types').SceneStackLayerId,
+            surface: paritySurface,
+            creativeStudioStackMode: payload.creativeStudioStackMode === true,
+          })
+        : null,
+      modelRoute: data.model ?? payload.providerModel ?? null,
+      promptVersion: payload.promptContractVersion ?? payload.promptBuilderId ?? null,
+      referenceCount: payload.referenceImageUrls?.length ?? 0,
+      generationMode: payload.generationMode ?? null,
+      providerLatencyMs: elapsedMs,
+      providerOutputUrls: data.publicUrl ? [data.publicUrl] : [],
+      validationPath: 'provider-dispatch',
+      finalStatus: data.ok ? 'provider-complete' : 'provider-failed',
     });
     if (diag) recordGspuSubStage('GSPU-19-forensic-record', 'success');
     return success;

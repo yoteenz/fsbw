@@ -21,6 +21,7 @@ const FIXTURE = {
     fullWidthEdgeContact: false,
     fullHeightEdgeContact: false,
     bakedCheckerboardSuspect: false,
+    cornerOpacityAvg: 20,
   },
   fullSceneRerender: {
     alphaChannelPresent: false,
@@ -29,6 +30,7 @@ const FIXTURE = {
     fullWidthEdgeContact: true,
     fullHeightEdgeContact: true,
     bakedCheckerboardSuspect: false,
+    cornerOpacityAvg: 240,
   },
   furnitureGroupValid: {
     alphaChannelPresent: true,
@@ -37,6 +39,7 @@ const FIXTURE = {
     fullWidthEdgeContact: false,
     fullHeightEdgeContact: false,
     bakedCheckerboardSuspect: false,
+    cornerOpacityAvg: 30,
   },
   furnitureFullRoom: {
     alphaChannelPresent: false,
@@ -45,6 +48,7 @@ const FIXTURE = {
     fullWidthEdgeContact: true,
     fullHeightEdgeContact: true,
     bakedCheckerboardSuspect: false,
+    cornerOpacityAvg: 250,
   },
   bakedCheckerboard: {
     alphaChannelPresent: true,
@@ -53,6 +57,7 @@ const FIXTURE = {
     fullWidthEdgeContact: false,
     fullHeightEdgeContact: false,
     bakedCheckerboardSuspect: true,
+    cornerOpacityAvg: 200,
   },
   opaqueStudioBg: {
     alphaChannelPresent: false,
@@ -61,6 +66,7 @@ const FIXTURE = {
     fullWidthEdgeContact: false,
     fullHeightEdgeContact: false,
     bakedCheckerboardSuspect: false,
+    cornerOpacityAvg: 255,
   },
   edgeTouchValid: {
     alphaChannelPresent: true,
@@ -69,6 +75,7 @@ const FIXTURE = {
     fullWidthEdgeContact: false,
     fullHeightEdgeContact: false,
     bakedCheckerboardSuspect: false,
+    cornerOpacityAvg: 25,
   },
 };
 
@@ -211,9 +218,11 @@ describe('isolated layer quality fixtures', () => {
     expect(result.classification).toBe('baked-checkerboard');
   });
 
-  it('opaque studio background is rejected', () => {
+  it('opaque studio background defers rejection until extraction', () => {
     const result = evaluate('signature-landmark', 'opaqueStudioBg');
-    expect(result.classification).toBe('opaque-background');
+    expect(result.classification).not.toBe('opaque-background');
+    expect(result.issues.some((i) => i.includes('governed extraction'))).toBe(true);
+    expect(result.issues.some((i) => i.includes('REGENERATE REQUIRED'))).toBe(false);
   });
 
   it('object touching one edge can still pass when otherwise valid', () => {
@@ -229,6 +238,7 @@ describe('isolated layer quality fixtures', () => {
       metrics: {
         ...FIXTURE.validLandmark,
         frameCoverage: 0.55,
+        cornerOpacityAvg: 25,
       },
       shellSimilarity: 0.88,
     });

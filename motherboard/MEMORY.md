@@ -47746,3 +47746,34 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 
 **Conventions:** Founders never start with dashed rectangles; `BlueprintPreview` engineering overlays only in drawer (`engineeringMode`).
 
+---
+
+## 2026-07-13 — P0 FS vs Studio OS Generation Parity Forensics + Surgical Repair (full conversation)
+
+**Context:** One governed P0 sprint — prove exactly where Frontal Slayer generation completes while Experience Lab and Creative Director Studio fail on isolated layers; forensic investigation + smallest repair + one commit/deploy.
+
+**Investigation (Documented Facts):**
+
+- **Frontal Slayer control path:** `POST /api/wig-preview/live-noir-color` / `live-wig-after-color-styling` → sync `fal.subscribe(openai/gpt-image-2/edit)` → Supabase `live-preview` storage → client displays URL. No governed jobs, Scene Stack, Quality Guard, or isolated-layer validation.
+- **Studio OS paths (EL + CDS):** `useSceneStack.generateLayer` → `requestStudioBuilderGenerate` → `POST /api/admin/studio-builder-generate` → `generation-gateway` → FAL (shell: NBP edit; isolated: NB2 T2I) → async `studio_governed_generation_jobs` → **`runVerifiedAssetProductionPipeline`** → Scene Stack assembly.
+- **First causal divergence:** Studio OS applies isolated-layer verified-asset contract on `signature-landmark` / `furniture-objects`; Frontal Slayer never does. Pre-repair: salvageable **opaque studio plates** failed structural/quality checks **before** governed background removal → `LANDMARK_VALIDATION_FAILED` / `QUALITY_REGENERATE_REQUIRED`.
+
+**Hypothesis classification:** Confirmed #9 (FS accepts scenes, SO requires isolated), #10 (quality guard rejects), #12/#13 (validate before postprocess on salvageable opaque), #20 (layer-first vs direct final), #23 (isolation contract vs model output). Rejected primary: missing Supabase tables, duplicated FAL transport, persistence loss.
+
+**Supabase audit (production `hyycomvcaqxxvyrfupes`):** 12 migrations tracked; `studio_governed_generation_jobs`, `studio_asset_registry_*`, `studio_creative_intelligence_*`, `studio_os_org_memberships`, `studio_os_workspace_state` present. No new migration required.
+
+**Repair shipped:**
+
+- `src/studio-os-core/scene-stack/verified-asset-production/salvageable-opaque.ts` — salvageable opaque studio plate detection
+- `structural-validation.ts` + `isolated-layer-quality.ts` — defer hard rejection until extraction
+- `background-classification.ts` — `FULL_SCENE_RERENDER` requires architecture signals (coverage + likelihood / shell similarity)
+- `pipeline.ts` — artifact-intent gating via `requiresIsolatedObjectValidation`
+- `src/studio-os-core/creative-production/artifact-intent.ts` — intent-based validation routing (CDS campaign-composite vs isolated-object)
+- `src/studio-os-core/generation-runtime/generation-parity-forensic.ts` + `GenerationParityDiagnosticPanel.tsx` (`?compilerDiag=1`)
+- `src/studio-os-core/immune-system/generation-preflight.ts` — artifact intent preflight
+- Tests: artifact-intent (7), isolated-layer-generation (21), verified-asset-pipeline (21) — all pass; build passes
+
+**Docs:** `docs/studio-os/investigations/FS_VS_STUDIO_OS_GENERATION_PARITY.md`, `fs-studio-os-generation-parity.json`, SHARED_GENERATION_RUNTIME, ARTIFACT_INTENT_CONTRACT, EL/CDS generation contracts, VALIDATION_ORDER, PREFLIGHT_SCHEMA_HEALTH. Updated `CURRENT_HANDOFF.md`, `KNOWN_BLOCKERS.md` (B1-Parity), `CORE.md`.
+
+**Remaining:** Founder mobile verification that isolated layer reaches BACKGROUND_REMOVING on opaque NB2 output; B1-Layer1/B1-E2E/B1-Isolated device proof unchanged.
+
