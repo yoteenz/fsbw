@@ -1,22 +1,21 @@
 {
   "schemaVersion": 1,
   "capsuleType": "delta-context",
-  "currentVersion": "1.0.13",
-  "generatedAt": "2026-07-13T00:12:39.114Z",
-  "gitCommit": "2d3a4146b0e40da23da4a8d3a1f90a4dba50a514",
+  "currentVersion": "1.0.14",
+  "generatedAt": "2026-07-13T00:20:00.982Z",
+  "gitCommit": "d0148d692cf0b64051a23e339045eac4878018d2",
   "validationStatus": "pass",
   "changeCount": 1,
-  "checksumSha256": "0d410fc4202cc1e84ad95b403cb5454510d422f781a746e61621b29b833b2e67",
-  "artifact": "StudioOS_ContextUpdate_v1.0.13.zip",
+  "checksumSha256": "fe5e074cc9e2889f6c5410a123cb969829feac8a026a09088f922c45fbef27d8",
+  "artifact": "StudioOS_ContextUpdate_v1.0.14.zip",
   "baseOnboardingVersionRequired": "1.2.2",
   "currentOnboardingPackVersion": "1.2.2",
   "compatibilityStatus": "compatible",
   "permanentLatestUrl": "/context-updates/latest",
   "latestDownloadPath": "/context-updates/latest",
   "legacyLatestDownloadPath": "/downloads/context-updates/latest.zip",
-  "versionedDownloadPath": "/downloads/context-updates/archive/StudioOS_ContextUpdate_v1.0.13.zip",
+  "versionedDownloadPath": "/downloads/context-updates/archive/StudioOS_ContextUpdate_v1.0.14.zip",
   "categoriesIncluded": [
-    "Architecture",
     "Blockers",
     "Current Handoff",
     "Documentation",
@@ -27,6 +26,19 @@
   "packageHealth": 100,
   "readyForDeltaSync": true,
   "releaseHistory": [
+    {
+      "version": "1.0.14",
+      "generatedAt": "2026-07-13T00:20:00.982Z",
+      "gitCommit": "d0148d692cf0b64051a23e339045eac4878018d2",
+      "checksumSha256": "fe5e074cc9e2889f6c5410a123cb969829feac8a026a09088f922c45fbef27d8",
+      "sizeBytes": 9173,
+      "changeCount": 1,
+      "baseOnboardingVersion": "1.2.2",
+      "compatibilityStatus": "compatible",
+      "downloadPath": "/downloads/context-updates/archive/StudioOS_ContextUpdate_v1.0.14.zip",
+      "zipFileName": "StudioOS_ContextUpdate_v1.0.14.zip",
+      "validationStatus": "pass"
+    },
     {
       "version": "1.0.13",
       "generatedAt": "2026-07-13T00:12:39.114Z",
@@ -249,6 +261,6 @@
       "validationStatus": "pass"
     }
   ],
-  "sizeBytes": 9268,
-  "deltaSequence": 14
+  "sizeBytes": 9173,
+  "deltaSequence": 15
 }

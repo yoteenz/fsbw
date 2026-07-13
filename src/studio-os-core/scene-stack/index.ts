@@ -31,3 +31,4 @@ export * from './world-compiler';
 export * from '../studio-world-architecture-v2';
 export * from '../blueprint-author';
 export * from '../manufacturing-engine';
+export * from '../construction-mode';

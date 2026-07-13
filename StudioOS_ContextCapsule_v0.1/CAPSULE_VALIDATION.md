@@ -8,8 +8,8 @@
 |-------|-------|
 | **Capsule Version** | 0.3.2 |
 | **Manifest Version** | 0.3.2 |
-| **Generation Date (UTC)** | 2026-07-13T00:14:55.971Z |
-| **Repository Commit SHA** | 2d3a4146b0e40da23da4a8d3a1f90a4dba50a514 |
+| **Generation Date (UTC)** | 2026-07-13T00:21:09.025Z |
+| **Repository Commit SHA** | d0148d692cf0b64051a23e339045eac4878018d2 |
 | **Validation Status** | pass |
 | **Documents Included** | README_FIRST.md, MANIFEST.md, ONBOARDING_REPORT.md, FOUNDER_PROFILE.md, CHATGPT_OPERATING_MANUAL.md, AI_STYLE_GUIDE.md, AI_CONTEXT.md, CURRENT_HANDOFF.md, AI_GLOSSARY.md, PROJECT_DNA.md, PROJECT_CHANGELOG.md, PROMPT_LIBRARY.md, ROADMAP.md, KNOWN_BLOCKERS.md, OPEN_QUESTIONS.md |
 | **Manifest Hash (reading order SHA-256)** | 7b10d8a919668fc98dd4f47c7383353032cd3d69e8f39f73ff026a55b12e9b30 |
@@ -57,7 +57,7 @@ Verified:
 
 ### Current Implementation Stage
 
-P0+ — Studio World Manufacturing Engine™ (Asset DNA + Render Intent + Founder Preview)
+P0+ — Studio World Construction Mode™ (Founder Walks the World Before It Exists)
 
 ### Current Active Blockers
 
@@ -75,7 +75,7 @@ B0, B1, B1, B1, B1, B1, B2
 |-------|-------|
 | **Capsule Version** | 0.3.2 |
 | **Manifest Version** | 0.3.2 |
-| **Generated** | 2026-07-13T00:14:55.971Z |
+| **Generated** | 2026-07-13T00:21:09.025Z |
 | **Validation Passed** | YES |
 | **Operational Source of Truth** | CURRENT_HANDOFF.md · KNOWN_BLOCKERS.md · PROJECT_CHANGELOG.md |
 | **Current Handoff Document** | CURRENT_HANDOFF.md |
