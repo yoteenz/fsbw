@@ -48513,3 +48513,24 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 - **Tests** — 27/27 PASS; build PASS
 
 **One commit + one push** on `master` via `agent-commit.sh`.
+
+---
+
+## 2026-07-13 — P0 Experience Lab V2 Contextual Panel Orchestration (full conversation)
+
+**Founder request:** Remove viewport clutter on `/admin/studio/experience-lab-v2` by replacing permanently pinned mobile floating panels with adaptive, collapsible, context-aware panel orchestration. Viewport is sacred — one contextual inspector on mobile, inspector switcher, expanded sheets, edge dock zones, view angles in chrome (not overlay), desktop rails, layout persistence + reset, diagnostics, tests, one commit. Do not modify legacy Experience Lab or restore page scroll.
+
+**Failure condition addressed:** Fixed-viewport shell removed vertical scroll but Blueprint/Construction/Materials/Lighting/Camera panels remained permanently pinned over StudioViewport on mobile — excessive density, no dismiss, view angles colliding with inspectors.
+
+**Shipped:**
+
+- **`experience-lab-v2-panel-orchestrator.ts`** — pure orchestrator: panel states (HIDDEN/MINIMIZED/DOCKED/EXPANDED), viewport-mode ↔ inspector sync, mobile max-one visible panel, desktop left/right rails, collision snap, safe-zone %, layout persistence key `experience_lab_v2_panel_layout_v1`
+- **`useExperienceLabPanelOrchestrator.ts`** — React hook: select/expand/collapse/dock/reset, persists presentation prefs only
+- **`ExperienceLabInspectorSwitcher.tsx`** — compact viewport chrome control (active inspector + horizontal picker)
+- **Updated** — `ExperienceLabFloatingInspector` (minimized title/status/expand only), `ExperienceLabViewportStage` (orchestrated panels, no unconditional float list), `StudioViewport` (unified chrome bar + angles region below stage), `ExperienceLabV2Shell` (orchestrator wiring, expanded inspector sheet with Open in Viewport), `ExperienceLabDiagnostics` (panel diagnostics + RESET EXPERIENCE LAB LAYOUT), `experience-lab-v2.css` (dock zones, switcher, angles chrome — removed absolute attached overlay)
+- **Tests** — `experience-lab-v2-panel-orchestrator.test.ts` 16/16 + updated composition tests; **46/46** V2 tests PASS; production build PASS
+- **Legacy** — `/admin/studio/experience-lab` unchanged
+
+**Conventions:** Mobile default = one minimized contextual inspector matching active viewport mode + optional status chip; expanded content in bottom sheet/drawer only; center safe zone unobstructed; Focus Mode hides secondary inspectors.
+
+**One commit + one push** on `master` via `agent-commit.sh`.

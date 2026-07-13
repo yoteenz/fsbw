@@ -21,6 +21,12 @@ export type StudioViewportProps = {
   onModeChange?: (mode: StudioViewportMode) => void;
   onFocusMode?: (mode: StudioViewportMode) => void;
   embedded?: boolean;
+  inspectorSwitcher?: React.ReactNode;
+  viewAngles?: React.ReactNode;
+  leftRailCollapsed?: boolean;
+  rightRailCollapsed?: boolean;
+  onToggleLeftRail?: () => void;
+  onToggleRightRail?: () => void;
 };
 
 function BlueprintEmptyState() {
@@ -121,6 +127,12 @@ export function StudioViewport({
   onModeChange,
   onFocusMode,
   embedded,
+  inspectorSwitcher,
+  viewAngles,
+  leftRailCollapsed,
+  rightRailCollapsed,
+  onToggleLeftRail,
+  onToggleRightRail,
 }: StudioViewportProps) {
   const [fullscreen, setFullscreen] = useState(false);
   const toggleFullscreen = useCallback(() => setFullscreen((f) => !f), []);
@@ -159,43 +171,63 @@ export function StudioViewport({
 
   const rootClass = `elab-viewport${fullscreen ? ' elab-viewport--fullscreen' : ''}${embedded ? ' elab-viewport--embedded' : ''}`;
 
+  const modeLabel = VIEWPORT_MODE_LABELS[mode] ?? mode;
+
   return (
     <section className={rootClass} data-studio-viewport data-mode={mode}>
-      <div className="elab-viewport__title-bar">
-        <h2 className="elab-viewport__scene-title">{departmentName.toUpperCase()}</h2>
-        <span className="elab-viewport__revision">REVISION {revision}</span>
-        <span className={`elab-viewport__badge${isStale ? ' elab-viewport__badge--stale' : ' elab-viewport__badge--ok'}`}>
-          {isStale ? 'STALE' : artifactStatus.toUpperCase()}
-        </span>
-        <div className="elab-viewport__controls">
-          {onFocusMode ? (
-            <button type="button" className="elab-viewport__ctrl" onClick={() => onFocusMode(mode)} aria-label="Focus mode">
-              ◈
+      <div className="elab-viewport__chrome">
+        <div className="elab-viewport__title-bar">
+          <div className="elab-viewport__title-group">
+            <h2 className="elab-viewport__scene-title">{departmentName.toUpperCase()}</h2>
+            <span className="elab-viewport__revision">r{revision}</span>
+            <span className={`elab-viewport__badge${isStale ? ' elab-viewport__badge--stale' : ' elab-viewport__badge--ok'}`}>
+              {isStale ? 'STALE' : artifactStatus.toUpperCase()}
+            </span>
+          </div>
+          {inspectorSwitcher}
+          <div className="elab-viewport__controls">
+            <span className="elab-viewport__mode-chip" aria-label={`Viewport mode ${modeLabel}`}>{modeLabel}</span>
+            {onToggleLeftRail ? (
+              <button type="button" className="elab-viewport__ctrl" onClick={onToggleLeftRail} aria-pressed={!leftRailCollapsed} aria-label="Toggle left inspector rail">
+                L
+              </button>
+            ) : null}
+            {onToggleRightRail ? (
+              <button type="button" className="elab-viewport__ctrl" onClick={onToggleRightRail} aria-pressed={!rightRailCollapsed} aria-label="Toggle right inspector rail">
+                R
+              </button>
+            ) : null}
+            {onFocusMode ? (
+              <button type="button" className="elab-viewport__ctrl" onClick={() => onFocusMode(mode)} aria-label="Focus mode">
+                ◈
+              </button>
+            ) : null}
+            <button type="button" className="elab-viewport__ctrl" onClick={toggleFullscreen} aria-label="Fullscreen">
+              {fullscreen ? '✕' : '⛶'}
             </button>
-          ) : null}
-          <button type="button" className="elab-viewport__ctrl" onClick={toggleFullscreen} aria-label="Fullscreen">
-            {fullscreen ? '✕' : '⛶'}
-          </button>
+          </div>
         </div>
+
+        {modes && onModeChange ? (
+          <nav className="elab-viewport__mode-rail" {...{ [ELAB_V2_COMPOSITION.modeRail]: '' }} aria-label="Viewport modes">
+            {modes.map((m) => (
+              <button
+                key={m}
+                type="button"
+                className="elab-viewport__mode-seg"
+                aria-pressed={mode === m}
+                onClick={() => onModeChange(m)}
+              >
+                {VIEWPORT_MODE_LABELS[m] ?? m}
+              </button>
+            ))}
+          </nav>
+        ) : null}
       </div>
 
-      {modes && onModeChange ? (
-        <nav className="elab-viewport__mode-rail" {...{ [ELAB_V2_COMPOSITION.modeRail]: '' }} aria-label="Viewport modes">
-          {modes.map((m) => (
-            <button
-              key={m}
-              type="button"
-              className="elab-viewport__mode-seg"
-              aria-pressed={mode === m}
-              onClick={() => onModeChange(m)}
-            >
-              {VIEWPORT_MODE_LABELS[m] ?? m}
-            </button>
-          ))}
-        </nav>
-      ) : null}
-
       <div className="elab-viewport__stage">{renderStage()}</div>
+
+      {viewAngles ? <div className="elab-viewport__angles-chrome">{viewAngles}</div> : null}
     </section>
   );
 }

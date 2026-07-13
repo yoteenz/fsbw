@@ -7,3 +7,5 @@ export * from './experience-lab-v2-feature-flags';
 export * from './experience-lab-v2-test-modes';
 export * from './experience-lab-v2-approval';
 export * from './experience-lab-v2-view-model-adapter';
+export * from './experience-lab-v2-panel-orchestrator';
+export { useExperienceLabPanelOrchestrator } from './useExperienceLabPanelOrchestrator';

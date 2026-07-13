@@ -132,9 +132,13 @@ describe('Experience Lab V2 — Fixed application shell', () => {
     expect(dock).toContain('MORE');
   });
 
-  it('view angles attach inside viewport on compact layouts', () => {
+  it('view angles live in viewport chrome region (not absolute overlay)', () => {
     const stage = readV2Source('ExperienceLabViewportStage.tsx');
-    expect(stage).toContain('elab-view-angles--attached');
+    expect(stage).toContain('elab-view-angles--chrome');
+    expect(stage).not.toContain('elab-view-angles--attached');
+    const css = readV2Source('experience-lab-v2.css');
+    expect(css).toContain('.elab-viewport__angles-chrome');
+    expect(css).not.toContain('.elab-view-angles--attached');
   });
 
   it('focus mode and escape handling exist', () => {
@@ -293,5 +297,26 @@ describe('Experience Lab V2 — Feature flags & persistence', () => {
     expect(flags).toHaveProperty('experienceLabV2Enabled');
     expect(flags).toHaveProperty('experienceLabV2LiveActionsEnabled');
     expect(flags).toHaveProperty('experienceLabV2EnvironmentAssetEnabled');
+  });
+});
+
+describe('Experience Lab V2 — Panel orchestration', () => {
+  it('shell wires panel orchestrator hook', () => {
+    const shell = readV2Source('ExperienceLabV2Shell.tsx');
+    expect(shell).toContain('useExperienceLabPanelOrchestrator');
+    expect(shell).toContain('orchestrator={orchestrator}');
+    expect(readV2Source('ExperienceLabDiagnostics.tsx')).toContain('RESET EXPERIENCE LAB LAYOUT');
+  });
+
+  it('viewport stage renders orchestrated panels (not unconditional float list)', () => {
+    const stage = readV2Source('ExperienceLabViewportStage.tsx');
+    expect(stage).toContain('orchestrator.panels.map');
+    expect(stage).not.toContain('floats.map');
+    expect(stage).toContain('ExperienceLabInspectorSwitcher');
+  });
+
+  it('composition markers include inspector switcher', () => {
+    expect(ELAB_V2_COMPOSITION.inspectorSwitcher).toBe('data-elab-inspector-switcher');
+    expect(readV2Source('experience-lab-v2-panel-orchestrator.ts')).toContain('PANEL_LAYOUT_STORAGE_KEY');
   });
 });

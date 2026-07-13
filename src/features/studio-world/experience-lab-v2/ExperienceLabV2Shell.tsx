@@ -23,9 +23,11 @@ import type { ExperienceLabV2TestMode, StudioViewportMode } from './experience-l
 import { readExperienceLabV2TestMode } from './experience-lab-v2-test-modes';
 import { resolveExperienceLabV2FeatureFlags } from './experience-lab-v2-feature-flags';
 import { useExperienceLabAppShell } from './useExperienceLabAppShell';
+import { useExperienceLabPanelOrchestrator } from './useExperienceLabPanelOrchestrator';
 import { defaultWorkbenchTab, focusModeFromViewportMode } from './experience-lab-v2-layout';
 import type { ElabWorkbenchTab } from './experience-lab-v2-layout';
 import { ELAB_V2_COMPOSITION } from './experience-lab-v2-composition';
+import { INSPECTOR_PANELS, viewportModeForInspector } from './experience-lab-v2-panel-orchestrator';
 import './experience-lab-v2.css';
 
 type Props = {
@@ -48,10 +50,8 @@ export function ExperienceLabV2Shell({ initialDepartmentId = 'experience-lab' }:
   const [viewportMode, setViewportMode] = useState<StudioViewportMode>(
     () => parseViewportModeFromQuery(location.search) ?? 'BLUEPRINT'
   );
-  const [activeFloat, setActiveFloat] = useState({ left: 'blueprint', right: 'materials' });
   const [testMode, setTestMode] = useState<ExperienceLabV2TestMode>(() => readExperienceLabV2TestMode());
   const [imageLoaded, setImageLoaded] = useState(false);
-  const [inspectorLabel, setInspectorLabel] = useState<string | null>(null);
 
   const model = useMemo(
     () =>
@@ -69,14 +69,6 @@ export function ExperienceLabV2Shell({ initialDepartmentId = 'experience-lab' }:
   const hasRender = Boolean(model.founderRender?.previewArtifactUrl);
   const [workbenchTab, setWorkbenchTab] = useState<ElabWorkbenchTab>(() => defaultWorkbenchTab(hasRender));
 
-  useEffect(() => {
-    setWorkbenchTab((prev) => {
-      if (prev === 'review' && !hasRender) return 'brief';
-      if (prev === 'brief' && hasRender) return 'review';
-      return prev;
-    });
-  }, [hasRender]);
-
   const setModeWithQuery = useCallback(
     (mode: StudioViewportMode) => {
       setViewportMode(mode);
@@ -90,18 +82,34 @@ export function ExperienceLabV2Shell({ initialDepartmentId = 'experience-lab' }:
     [location.pathname, location.search, navigate]
   );
 
-  const onFloatSelect = useCallback(
-    (side: 'left' | 'right', slot: string, mode: StudioViewportMode, label: string) => {
-      setActiveFloat((prev) => ({ ...prev, [side]: slot }));
-      if (shell.isCompact) {
-        setInspectorLabel(label);
-        shell.setOverlay('inspector');
-      } else if (mode !== 'EMPTY_STATE') {
-        setModeWithQuery(mode);
-      }
-    },
-    [setModeWithQuery, shell]
-  );
+  const orchestrator = useExperienceLabPanelOrchestrator({
+    viewportMode,
+    breakpoint: shell.breakpoint,
+    focusMode: shell.focusMode,
+    model,
+    onViewportModeChange: setModeWithQuery,
+  });
+
+  useEffect(() => {
+    setWorkbenchTab((prev) => {
+      if (prev === 'review' && !hasRender) return 'brief';
+      if (prev === 'brief' && hasRender) return 'review';
+      return prev;
+    });
+  }, [hasRender]);
+
+  useEffect(() => {
+    if (orchestrator.expandedPanel) {
+      shell.setOverlay('inspector');
+    } else if (shell.overlay === 'inspector') {
+      shell.closeOverlay();
+    }
+  }, [orchestrator.expandedPanel]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const expandedDef = INSPECTOR_PANELS.find((p) => p.id === orchestrator.expandedPanel);
+  const expandedArtifact = orchestrator.expandedPanel
+    ? model.artifacts[orchestrator.expandedPanel === 'metadata' ? 'founderRender' : orchestrator.expandedPanel]
+    : null;
 
   const focusClass =
     shell.focusMode !== 'none' ? ` elab-app-shell--focus-${shell.focusMode}` : '';
@@ -147,10 +155,9 @@ export function ExperienceLabV2Shell({ initialDepartmentId = 'experience-lab' }:
               onModeChange={setModeWithQuery}
               onImageLoad={() => setImageLoaded(true)}
               isCompact={shell.isCompact}
-              onFloatSelect={onFloatSelect}
-              activeFloat={activeFloat}
               onFocusMode={(mode) => shell.setFocusMode(focusModeFromViewportMode(mode))}
               focusMode={shell.focusMode}
+              orchestrator={orchestrator}
             />
           </div>
 
@@ -183,6 +190,8 @@ export function ExperienceLabV2Shell({ initialDepartmentId = 'experience-lab' }:
                   testMode={testMode}
                   onTestModeChange={setTestMode}
                   migration={model.migrationReadiness}
+                  panelDiagnostics={orchestrator.diagnostics}
+                  onResetLayout={orchestrator.resetLayout}
                   open={shell.overlay === 'diagnostics'}
                   onToggle={() => shell.toggleOverlay('diagnostics')}
                   compact
@@ -234,9 +243,39 @@ export function ExperienceLabV2Shell({ initialDepartmentId = 'experience-lab' }:
         <ExperienceLabGovernanceSidebar model={model} embedded />
       </ExperienceLabSheet>
 
-      <ExperienceLabSheet open={shell.overlay === 'inspector'} title={inspectorLabel ?? 'Inspector'} onClose={shell.closeOverlay}>
-        <p className="elab-sheet-hint">Viewport mode: {viewportMode.replace('_', ' ')}</p>
-        <p className="elab-sheet-hint">Tap a floating summary on the viewport to switch modes. Detailed inspector content opens here without expanding the page.</p>
+      <ExperienceLabSheet
+        open={shell.overlay === 'inspector' && Boolean(orchestrator.expandedPanel)}
+        title={expandedDef?.label ?? 'Inspector'}
+        onClose={() => {
+          orchestrator.collapseExpanded();
+          shell.closeOverlay();
+        }}
+        variant={shell.isCompact ? 'sheet' : 'drawer'}
+      >
+        {expandedDef ? (
+          <>
+            <p className="elab-sheet-hint">{expandedArtifact?.summary ?? model.charterSummary}</p>
+            <dl className="elab-sheet-dl">
+              <div><dt>Revision</dt><dd>r{expandedArtifact?.revision ?? model.revision}</dd></div>
+              <div><dt>Status</dt><dd>{expandedArtifact?.status ?? model.healthState}</dd></div>
+              <div><dt>Viewport mode</dt><dd>{viewportModeForInspector(expandedDef.id).replace('_', ' ')}</dd></div>
+            </dl>
+            {expandedArtifact?.previewUrl ? (
+              <img src={expandedArtifact.previewUrl} alt="" className="elab-sheet-preview" />
+            ) : null}
+            <button
+              type="button"
+              className="elab-sheet-tool-btn"
+              onClick={() => {
+                setModeWithQuery(viewportModeForInspector(expandedDef.id));
+                orchestrator.collapseExpanded();
+                shell.closeOverlay();
+              }}
+            >
+              Open in Viewport
+            </button>
+          </>
+        ) : null}
       </ExperienceLabSheet>
 
       <ExperienceLabSheet open={shell.overlay === 'tools'} title="Experience Lab tools" onClose={shell.closeOverlay}>

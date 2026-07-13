@@ -1,29 +1,60 @@
+import type { PanelDockZone, PanelPresentationState } from './experience-lab-v2-panel-orchestrator';
 import { ELAB_V2_COMPOSITION } from './experience-lab-v2-composition';
 
 type Props = {
   label: string;
-  summary: string;
-  side: 'left' | 'right';
-  slot: string;
+  statusLine: string;
+  dockZone: PanelDockZone;
+  state: PanelPresentationState;
   active?: boolean;
-  compact?: boolean;
-  onClick?: () => void;
-  children?: React.ReactNode;
+  onMinimizeClick?: () => void;
+  onExpandClick?: () => void;
+  onDockClick?: () => void;
 };
 
-/** Floating mounted inspector panel — not a dashboard card. */
-export function ExperienceLabFloatingInspector({ label, summary, side, slot, active, compact, onClick, children }: Props) {
+const DOCK_CLASS: Record<PanelDockZone, string> = {
+  'top-left': 'elab-float--dock-tl',
+  'top-right': 'elab-float--dock-tr',
+  'bottom-left': 'elab-float--dock-bl',
+  'bottom-right': 'elab-float--dock-br',
+  'left-rail': 'elab-float--dock-lrail',
+  'right-rail': 'elab-float--dock-rrail',
+};
+
+/** Minimized contextual inspector — compact edge dock, never center safe zone. */
+export function ExperienceLabFloatingInspector({
+  label,
+  statusLine,
+  dockZone,
+  state,
+  active,
+  onMinimizeClick,
+  onExpandClick,
+  onDockClick,
+}: Props) {
+  if (state === 'HIDDEN' || state === 'EXPANDED') return null;
+
   return (
-    <button
-      type="button"
-      className={`elab-float elab-float--${side} elab-float--${slot}${active ? ' elab-float--active' : ''}${compact ? ' elab-float--compact' : ''}`}
-      {...{ [ELAB_V2_COMPOSITION.floatingInspector]: side }}
-      data-float-slot={slot}
-      onClick={onClick}
-      aria-pressed={active}
+    <div
+      className={`elab-float ${DOCK_CLASS[dockZone]}${active ? ' elab-float--active' : ''} elab-float--minimized`}
+      {...{ [ELAB_V2_COMPOSITION.floatingInspector]: dockZone }}
+      data-panel-state={state}
     >
-      <span className="elab-float__label">{label}</span>
-      {children ?? <span className="elab-float__summary">{summary}</span>}
-    </button>
+      <button type="button" className="elab-float__body" onClick={onExpandClick} aria-label={`Expand ${label} inspector`}>
+        <span className="elab-float__label">{label}</span>
+        <span className="elab-float__status">{statusLine}</span>
+        <span className="elab-float__expand" aria-hidden>⌄</span>
+      </button>
+      {onDockClick ? (
+        <button type="button" className="elab-float__dock" onClick={onDockClick} aria-label={`Move ${label} dock`}>
+          ⠿
+        </button>
+      ) : null}
+      {onMinimizeClick ? (
+        <button type="button" className="elab-float__dismiss" onClick={onMinimizeClick} aria-label={`Dismiss ${label}`}>
+          ✕
+        </button>
+      ) : null}
+    </div>
   );
 }

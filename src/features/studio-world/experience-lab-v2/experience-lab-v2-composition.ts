@@ -17,6 +17,8 @@ export const ELAB_V2_COMPOSITION = {
   modeRail: 'data-elab-viewport-mode-rail',
   focusMode: 'data-elab-focus-mode',
   sheet: 'data-elab-sheet',
+  inspectorSwitcher: 'data-elab-inspector-switcher',
+  panelOrchestrator: 'data-elab-panel-orchestrator',
 } as const;
 
 export const VIEWPORT_MODE_LABELS: Record<string, string> = {
