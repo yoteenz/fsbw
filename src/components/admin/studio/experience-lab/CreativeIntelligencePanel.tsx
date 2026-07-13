@@ -1,16 +1,21 @@
 import type { CSSProperties } from 'react';
+import { useExperienceLabProgram } from '../../../../hooks/useExperienceLabProgram';
+import { useExperienceLabIndustryPack } from '../../../../hooks/useExperienceLabIndustryPack';
+import { useCreativeStudioPreview } from '../../../../hooks/useCreativeStudioPreview';
 import {
   resolveEnvironmentSceneProfile,
   type CreativePreviewConcept,
   type CreativeStudioPreviewResult,
 } from '../../../../studio-os-core/creative-studio-preview';
-import { resolveInternalPreviewBinding } from '../../../../studio-os-core/canonical-studio-world';
-import { useCreativeStudioPreview } from '../../../../hooks/useCreativeStudioPreview';
-import { useExperienceLabIndustryPack } from '../../../../hooks/useExperienceLabIndustryPack';
-import { CreativeStudioRenderPreview } from './CreativeStudioRenderPreview';
-import { BlueprintAuthorExperienceLabGate } from './BlueprintAuthorExperienceLabGate';
+import { resolveInternalPreviewBinding, type CanonicalMainDepartmentId } from '../../../../studio-os-core/canonical-studio-world';
+import { useState } from 'react';
+import { ExperienceLabProgramSelector } from './ExperienceLabProgramSelector';
+import { CanonicalDepartmentTree } from './CanonicalDepartmentTree';
+import { CanonicalDepartmentBatchPanel } from './CanonicalDepartmentBatchPanel';
 import { IndustryPackSelector } from './IndustryPackSelector';
 import { IndustryPackDepartmentTree } from './IndustryPackDepartmentTree';
+import { CreativeStudioRenderPreview } from './CreativeStudioRenderPreview';
+import { BlueprintAuthorExperienceLabGate } from './BlueprintAuthorExperienceLabGate';
 
 const sectionStyle: CSSProperties = {
   padding: '0 16px 20px',
@@ -29,8 +34,11 @@ const btnStyle: CSSProperties = {
   fontSize: '11px',
 };
 
-/** Mode 2 — Environmental Intelligence Validation (Industry Pack → HQ planning). */
+/** Experience Lab admin — Program A (canonical departments) + Program B (Industry Packs). */
 export function CreativeIntelligencePanel() {
+  const { program, selectProgram, isStudioWorldProgram, isIndustryPacksProgram } = useExperienceLabProgram();
+  const [selectedCanonicalId, setSelectedCanonicalId] = useState<CanonicalMainDepartmentId | null>('experience-lab');
+
   const {
     packOptionId,
     packOptions,
@@ -61,50 +69,70 @@ export function CreativeIntelligencePanel() {
         <p style={{ margin: 0, fontSize: '10px', fontWeight: 800, letterSpacing: '0.1em', color: '#eb1c24' }}>
           STUDIO WORLD ADMIN — EXPERIENCE LAB™
         </p>
-        <h1 style={{ margin: '4px 0 8px', fontSize: '16px' }}>Internal Architecture Department</h1>
+        <h1 style={{ margin: '4px 0 8px', fontSize: '16px' }}>Canonical Department & Industry Pack Generator</h1>
         <p style={{ margin: 0, color: '#555', fontSize: '11px' }}>
-          Industry Pack planning · canonical headquarters · publish to Industry Pack Registry. Founders never enter this department.
+          Program A: Studio World infrastructure · Program B: Industry Headquarters Packs. Founders never enter Experience Lab.
         </p>
         <div style={{ marginTop: 12 }}>
           <button type="button" style={btnStyle} onClick={recompile} disabled>
             Recompile previews (after approval)
           </button>
-          <button
-            type="button"
-            style={{ ...btnStyle, fontWeight: blindMode ? 800 : 400, borderColor: blindMode ? '#2563eb' : '#333' }}
-            onClick={toggleBlindMode}
-          >
-            {blindMode ? 'Exit blind test' : 'Blind industry test'}
-          </button>
+          {isIndustryPacksProgram ? (
+            <button
+              type="button"
+              style={{ ...btnStyle, fontWeight: blindMode ? 800 : 400, borderColor: blindMode ? '#2563eb' : '#333' }}
+              onClick={toggleBlindMode}
+            >
+              {blindMode ? 'Exit blind test' : 'Blind industry test'}
+            </button>
+          ) : null}
         </div>
       </header>
 
-      <IndustryPackSelector packOptionId={packOptionId} options={packOptions} onSelect={selectPackOption} />
+      <ExperienceLabProgramSelector program={program} onSelect={selectProgram} />
 
-      {industryPack && headquartersPlan?.ok ? (
-        <IndustryPackDepartmentTree pack={industryPack} plan={headquartersPlan.plan} />
+      {isStudioWorldProgram ? (
+        <>
+          <CanonicalDepartmentTree
+            selectedDepartmentId={selectedCanonicalId}
+            onSelect={setSelectedCanonicalId}
+          />
+          <CanonicalDepartmentBatchPanel selectedDepartmentId={selectedCanonicalId} />
+        </>
       ) : null}
 
-      {blindMode ? (
-        <BlindValidationBanner
-          result={blindTestResult}
-          onRecord={recordBlindTest}
-          industryTarget={packOption?.displayName ?? resolveEnvironmentSceneProfile(previewBinding, conceptId).industryTarget}
-        />
+      {isIndustryPacksProgram ? (
+        <>
+          <section style={{ padding: '16px', borderBottom: '1px solid #e5e7eb' }}>
+            <p style={{ margin: 0, fontSize: '11px', color: '#555' }}>
+              Industry Pack departments belong to founder headquarters templates — not canonical Studio World infrastructure.
+            </p>
+          </section>
+          <IndustryPackSelector packOptionId={packOptionId} options={packOptions} onSelect={selectPackOption} />
+          {industryPack && headquartersPlan?.ok ? (
+            <IndustryPackDepartmentTree pack={industryPack} plan={headquartersPlan.plan} />
+          ) : null}
+          {blindMode ? (
+            <BlindValidationBanner
+              result={blindTestResult}
+              onRecord={recordBlindTest}
+              industryTarget={packOption?.displayName ?? resolveEnvironmentSceneProfile(previewBinding, conceptId).industryTarget}
+            />
+          ) : null}
+          <>
+            <ConceptSwitcher concepts={preview.concepts} activeId={conceptId} onSelect={setConceptId} blindMode={blindMode} />
+            <PreviewFlow
+              preview={preview}
+              concept={activeConcept}
+              conceptId={conceptId}
+              blindMode={blindMode}
+              packOptionId={packOptionId}
+              industryPackId={packOption?.industryPackId ?? 'official-hair-brand'}
+              companyHqOrganizationId={companyHqOrganizationId}
+            />
+          </>
+        </>
       ) : null}
-
-      <>
-        <ConceptSwitcher concepts={preview.concepts} activeId={conceptId} onSelect={setConceptId} blindMode={blindMode} />
-        <PreviewFlow
-          preview={preview}
-          concept={activeConcept}
-          conceptId={conceptId}
-          blindMode={blindMode}
-          packOptionId={packOptionId}
-          industryPackId={packOption?.industryPackId ?? 'official-hair-brand'}
-          companyHqOrganizationId={companyHqOrganizationId}
-        />
-      </>
     </div>
   );
 }
@@ -147,7 +175,6 @@ function BlindValidationBanner({
     </section>
   );
 }
-
 
 function ConceptSwitcher({
   concepts,

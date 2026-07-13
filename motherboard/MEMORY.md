@@ -48196,3 +48196,31 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 
 **Prior context in chat:** Experience Lab admin infrastructure (`188f1fc36`); Canonical Studio World (`35d094db0`); Master Founder Render; Industry Packs; Architectural Shell; EL/CDS identity.
 
+---
+
+## 2026-07-13 — P0 Canonical Studio World Department Generator™ — Program A + Program B (full conversation)
+
+**Founder sprint:** Experience Lab must support two completely separate administrative creation programs — **Program A: BUILD STUDIO WORLD** (canonical main departments) and **Program B: BUILD INDUSTRY PACKS** (headquarters templates). Canonical departments exist once globally; Industry Packs remain founder HQ templates; Shared HQ templates (Reception, Lobby) remain distinct from canonical infrastructure.
+
+**Context:** Continuation of prior sprints — Canonical Studio World (`35d094db0`), Experience Lab admin infrastructure (`188f1fc36`), Architecture Law #001 (`e892b3a65`). Founder observed Experience Lab only generated Industry Packs; missing canonical main department generation for Experience Lab, CDS, Command Center, etc.
+
+**Shipped:**
+
+- **CanonicalStudioWorldDepartmentRegistry™** — `canonical-department-registry.ts` — 25 seeded departments across 6 categories (World Creation, Creative Production, Operations, Governance, Commerce, Founder); dynamic tree, no hardcoded React lists
+- **Department classification** — `department-classification.ts` — three classes with `classifyDepartmentById`, `SHARED_HQ_DEPARTMENT_TEMPLATE_IDS`
+- **Department charters** — `department-charters.ts` — explicit charters for EL, CDS, Command Center; `resolveDepartmentCharter()` defaults
+- **Generation pipeline** — `canonical-department-generation.ts` — 16-phase pipeline, cost estimates, batch planning with confirmation gate, `publishCanonicalDepartmentToRegistry()`
+- **Prompt contracts** — per-department versioned prompts with Architecture Law #001; NBP/NB2 routing
+- **Shell profiles** — Command Dock / Workbench placeholder maps per department role
+- **CDS handoff** — `cds-canonical-handoff.ts` — canonical production handoff with socket/command-dock/workbench maps
+- **Experience Lab program** — `experience-lab-program.ts` + `useExperienceLabProgram` (localStorage last program)
+- **UI** — `ExperienceLabProgramSelector`, `CanonicalDepartmentTree`, `CanonicalDepartmentBatchPanel`; `CreativeIntelligencePanel` rewritten with Program A/B separation; header "STUDIO WORLD ADMIN — EXPERIENCE LAB"
+- **API** — `api/admin/canonical-department-generation.ts` + `api/_lib/studioWorldAdminAccess.ts` — server-enforced admin-only; rejects tenant `organizationId` on canonical ops
+- **Supabase** — `20260713200000_canonical_department_generator.sql` — 10 `studio_world_*` tables + RLS; applied to production `hyycomvcaqxxvyrfupes`
+- **Tests** — `canonical-department-generator.test.ts` 25/25 PASS; build PASS
+- **Docs** — `CANONICAL_DEPARTMENT_GENERATION.md`, `CANONICAL_STUDIO_WORLD_DEPARTMENT_REGISTRY.md`, `DEPARTMENT_CLASSIFICATION.md`, `STUDIO_WORLD_VS_HEADQUARTERS.md`; updated `CURRENT_HANDOFF.md`, `KNOWN_BLOCKERS.md`, `CORE.md`
+
+**Remaining blocker:** B1-CanonicalDept-Runtime — live FAL render queue dispatch for canonical batch generation (planning/UI shipped; runtime wiring next). Prior blockers B1-FounderRender, B1-Layer1, B1-Parity still verify-pending.
+
+**One commit + one push** on `master` via `agent-commit.sh`.
+

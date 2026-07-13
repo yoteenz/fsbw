@@ -76,6 +76,25 @@
 
 ---
 
+---
+
+## B1-CanonicalDept-Runtime — Canonical department live render queue (PLANNING SHIPPED — RUNTIME PENDING)
+
+| Field | Detail |
+|-------|--------|
+| **ID** | B1-CanonicalDept-Runtime |
+| **Symptom** | Experience Lab Program A shows registry, charters, batch cost plan — but does not yet dispatch live FAL render jobs for all canonical departments |
+| **Repair** | `canonical-department-generator` sprint shipped registry + UI + API planning + Supabase persistence; runtime queue wiring to `studio_founder_render_jobs` / governed generation is next |
+| **Verify** | Admin selects Experience Lab canonical department → Generate → photoreal landscape appears in Founder Review |
+| **Status** | **Runtime Pending** — planning layer production-ready |
+
+### Documented Fact
+
+- In-memory registry seeds 25 canonical departments; batch panel requires explicit confirmation before queue dispatch.
+- Industry Pack Program B unchanged and separate from canonical infrastructure.
+
+---
+
 ## B1-Isolated — Brand-grounded NB2 + verified mount (SHIPPED — VERIFY PENDING)
 
 | Field | Detail |

@@ -8,13 +8,20 @@
 
 ## Current sprint
 
-**P0 — Founder Render Production Verification & Regression Audit**
+**P0 — Canonical Studio World Department Generator™**
 
-**Status: NOT Production Ready — surgical API fix shipped, re-probe + founder E2E required**
+**Status: SHIPPED — Experience Lab Program A + Program B separation live**
 
-Automated regression: **348/348 PASS**. Production probe at `ac187a55c`: `founder-render-generate` returned `FUNCTION_INVOCATION_FAILED`. Surgical fix: dynamic imports + vercel `includeFiles`. Report: `docs/studio-os/investigations/FOUNDER_RENDER_PRODUCTION_VERIFICATION.md`.
+Experience Lab now supports two separate admin programs:
 
-**Previous:** True Founder Render (`193f0f24f`); Experience Lab loading fix (`ac187a55c`).
+- **BUILD STUDIO WORLD** — canonical main department registry (25 departments, 6 categories)
+- **BUILD INDUSTRY PACKS** — existing Industry Pack headquarters flow (unchanged, visually separated)
+
+Migration `20260713200000_canonical_department_generator.sql` applied to production Supabase.  
+Tests: `canonical-department-generator.test.ts` — 25/25 PASS.  
+Build: PASS.
+
+**Previous:** Architecture Law #001 (`e892b3a65`); Experience Lab admin infrastructure (`188f1fc36`); Canonical Studio World (`35d094db0`).
 
 ---
 
@@ -24,22 +31,27 @@ Automated regression: **348/348 PASS**. Production probe at `ac187a55c`: `founde
 |----|---------|--------|
 | **B1-FounderRender-API** | `founder-render-generate` cold-start 500 | **Fix shipped** — re-probe after deploy |
 | **B1-FounderRender** | Photoreal full-room Founder Render on mobile Founder Review | **Verify Pending** |
-| **B1-Parity** | Salvageable opaque layer extraction on real device | **Verify Pending** — repair shipped |
+| **B1-CanonicalDept-Runtime** | Canonical department batch dispatch to live FAL render queue | **Not started** — planning/batch UI shipped; runtime queue wiring next |
+| **B1-Parity** | Salvageable opaque layer extraction on real device | **Verify Pending** |
 | **B1-Layer1** | Layer 1 mobile Safari/Chrome with `?compilerDiag=1` | **Verify Pending** |
-| **B1-E2E-Completion** | Top bar vs viewport consistency | **Verify Pending** |
-| **B1-Isolated** | Brand marble + material fidelity on device | **In Progress** |
 
 ---
 
 ## Founder workflow
 
-1. Open Experience Lab → Blueprint Author → Construction Plan → Founder Review.
-2. Tap **Generate Founder Preview** — confirm photoreal room image (not procedural shapes).
-3. Zoom / fullscreen preview; verify blueprint revision + model in diagnostics.
-4. **Approve & Build** only when preview is READY and matches current revision.
+### Admin Founder (Experience Lab)
+
+1. Open Experience Lab → **PROGRAM SELECTOR**
+2. **BUILD STUDIO WORLD** → select canonical department (e.g. Experience Lab, CDS, Command Center) → review charter/plan → controlled batch with cost confirmation
+3. **BUILD INDUSTRY PACKS** → select Industry Pack → department tree (HQ templates only)
+
+### Normal Founder
+
+- Creative Director Studio only — customize approved HQ; never enter Experience Lab
 
 **References:**
 
-- `docs/studio-os/blueprint-author/FOUNDER_RENDER.md`
-- `docs/studio-os/experience-lab/FOUNDER_PREVIEW_WORKFLOW.md`
-- `docs/studio-os/creative-production/FOUNDER_RENDER_ARTIFACT_INTENT.md`
+- `docs/studio-os/experience-lab/CANONICAL_DEPARTMENT_GENERATION.md`
+- `docs/studio-os/registries/CANONICAL_STUDIO_WORLD_DEPARTMENT_REGISTRY.md`
+- `docs/studio-os/industry-packs/DEPARTMENT_CLASSIFICATION.md`
+- `docs/studio-os/architecture/STUDIO_WORLD_VS_HEADQUARTERS.md`
