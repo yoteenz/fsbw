@@ -1,6 +1,10 @@
 /** Primary HQ / department locations shown in Experience Lab Command Dock row 2. */
 
 export const EXPERIENCE_LAB_COMMAND_DOCK_LOGO_PATH =
+  '/storage/v1/object/public/live-preview/Studio%20World/IMG_6220-cutout.png';
+
+/** Fallback if Ideogram cutout is not yet uploaded. */
+export const EXPERIENCE_LAB_COMMAND_DOCK_LOGO_SOURCE_PATH =
   '/storage/v1/object/public/live-preview/Studio%20World/IMG_6220.png';
 
 /** Studio World logo — height matches combined title + subtitle in row 1. */

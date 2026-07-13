@@ -48644,6 +48644,19 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 - **`experience-lab-v2.css`** — `.elab-founder-wb--tiered`, scroll-snap tools, world nav, top corners rounded / bottom square
 - **Tests** — 62/62 PASS
 
-**Spatial Architecture Review:** SKIPPED — Phase 2 component refinement in review harness.
+**One commit + one push** on `master` via `agent-commit.sh`.
+
+---
+
+## 2026-07-13 — Command Dock status centering, 3-tab viewport, Ideogram logo cutout (full conversation)
+
+**Context:** Experience Lab V2 Command Dock Phase 1 refinements after three-row layout.
+
+**Shipped:**
+
+- **Status row** — STATUS / PERMIT / AI COST centered horizontally; overflow **…** vertically centered on right (`elab-cmd__status-center`)
+- **Location tabs** — exactly **3 tabs visible** at a time (`33.3333%` width + scroll-snap)
+- **Logo** — Ideogram background removal via `scripts/studio-world/command-dock-logo-ideogram-cutout.mjs`; uploaded **`IMG_6220-cutout.png`** to Supabase `live-preview/Studio World/`; Command Dock uses transparent cutout
+- **Tests** — 62/62 PASS
 
 **One commit + one push** on `master` via `agent-commit.sh`.

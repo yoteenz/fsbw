@@ -275,6 +275,7 @@ body.elab-v2-fixed-shell-active {
   padding: 0;
   background: rgba(0, 0, 0, 0.28);
   border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  overflow: hidden;
 }
 
 .elab-cmd__row--status {
@@ -283,8 +284,12 @@ body.elab-v2-fixed-shell-active {
   border-bottom: none;
   gap: 0;
   flex-wrap: nowrap;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 26px;
 }
 
 .elab-cmd__logo-img {
@@ -295,6 +300,7 @@ body.elab-v2-fixed-shell-active {
   object-fit: contain;
   object-position: left center;
   display: block;
+  background: transparent;
 }
 
 .elab-cmd__title-block {
@@ -383,6 +389,9 @@ body.elab-v2-fixed-shell-active {
   width: 100%;
   min-width: 0;
   overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
 }
@@ -392,12 +401,16 @@ body.elab-v2-fixed-shell-active {
 }
 
 .elab-cmd__location-tab {
-  flex: 0 0 auto;
+  flex: 0 0 33.3333%;
+  max-width: 33.3333%;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
   display: flex;
   align-items: center;
   gap: 6px;
   padding: 6px 12px;
   min-height: 40px;
+  box-sizing: border-box;
   border: none;
   border-right: 1px solid rgba(255, 255, 255, 0.05);
   background: transparent;
@@ -469,6 +482,14 @@ body.elab-v2-fixed-shell-active {
   margin-left: 2px;
 }
 
+.elab-cmd__status-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: nowrap;
+  min-width: 0;
+}
+
 .elab-cmd__status-item {
   border: none;
   background: transparent;
@@ -497,14 +518,21 @@ body.elab-v2-fixed-shell-active {
 }
 
 .elab-cmd__overflow {
+  position: absolute;
+  right: 8px;
+  top: 0;
+  bottom: 0;
   border: none;
   background: transparent;
   color: var(--elab-muted);
   font-size: 14px;
   cursor: pointer;
   padding: 0 8px;
-  margin-left: auto;
+  margin-left: 0;
   line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .elab-status--ok { color: var(--elab-ok); }

@@ -107,19 +107,21 @@ export function ExperienceLabCommandDock({ model, onStatusOpen, onSearch }: Prop
         </div>
 
         <div className="elab-cmd__row elab-cmd__row--status">
-          <button type="button" className="elab-cmd__status-item" onClick={openStatus}>
-            STATUS:{' '}
-            <strong className={commandDockStatusClass(statusLabel)}>{statusLabel}</strong>
-          </button>
-          <span className="elab-cmd__status-divider" aria-hidden />
-          <button type="button" className="elab-cmd__status-item" onClick={openStatus}>
-            PERMIT:{' '}
-            <strong className={commandDockStatusClass(permitLabel)}>{permitLabel}</strong>
-          </button>
-          <span className="elab-cmd__status-divider" aria-hidden />
-          <span className="elab-cmd__status-item elab-cmd__status-item--static">
-            AI COST (EST.) {costDisplay}
-          </span>
+          <div className="elab-cmd__status-center">
+            <button type="button" className="elab-cmd__status-item" onClick={openStatus}>
+              STATUS:{' '}
+              <strong className={commandDockStatusClass(statusLabel)}>{statusLabel}</strong>
+            </button>
+            <span className="elab-cmd__status-divider" aria-hidden />
+            <button type="button" className="elab-cmd__status-item" onClick={openStatus}>
+              PERMIT:{' '}
+              <strong className={commandDockStatusClass(permitLabel)}>{permitLabel}</strong>
+            </button>
+            <span className="elab-cmd__status-divider" aria-hidden />
+            <span className="elab-cmd__status-item elab-cmd__status-item--static">
+              AI COST (EST.) {costDisplay}
+            </span>
+          </div>
           <button type="button" className="elab-cmd__overflow" aria-label="More status options" onClick={openStatus}>
             …
           </button>

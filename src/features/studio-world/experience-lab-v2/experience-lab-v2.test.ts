@@ -77,7 +77,8 @@ describe('Experience Lab V2 — Immersive composition', () => {
     expect(css).toContain('.elab-cmd');
     expect(css).toContain('.elab-cmd--tiered');
     expect(css).toContain('border-radius: 0 0 6px 6px');
-    expect(css).toContain('.elab-cmd__locations');
+    expect(css).toContain('33.3333%');
+    expect(css).toContain('.elab-cmd__status-center');
     expect(css).toContain('.elab-float');
     expect(css).toContain('.elab-approval-bridge');
     expect(css).toContain('.elab-founder-wb');
@@ -154,6 +155,7 @@ describe('Experience Lab V2 — Fixed application shell', () => {
     expect(dock).toContain('elab-cmd__row--identity');
     expect(dock).toContain('elab-cmd__row--locations');
     expect(dock).toContain('elab-cmd__row--status');
+    expect(dock).toContain('elab-cmd__status-center');
     expect(dock).toContain('resolveExperienceLabCommandDockLogoUrl');
     expect(dock).toContain('AI COST (EST.)');
     expect(dock).not.toContain('isCompact');
