@@ -799,6 +799,98 @@ function compileAssetIntent(intent) {
 var FOUNDER_RENDER_ARTIFACT_INTENT = "founder-full-room-preview";
 var FOUNDER_FULL_ROOM_PREVIEW_PROMPT_VERSION = "founder-full-room-preview-prompt.v1";
 
+// src/studio-os-core/creative-production/model-routing-engine/types.ts
+var MODEL_ROUTING_ENGINE_VERSION = "model-routing-engine.v1";
+
+// src/studio-os-core/creative-production/model-routing-engine/intent-matrix.ts
+var WORLD_ARCHITECT_INTENTS = /* @__PURE__ */ new Set([
+  "founder-full-room-preview",
+  "experience-environment",
+  "world-preview",
+  "world-expansion",
+  "environment-shell",
+  "final-scene",
+  "final-scene-preview"
+]);
+var ASSET_MANUFACTURER_INTENTS = /* @__PURE__ */ new Set([
+  "reception-desk",
+  "furniture-asset",
+  "landmark-asset",
+  "decor-asset",
+  "architecture-piece",
+  "fixture",
+  "lighting-object",
+  "logo-asset",
+  "campaign-graphic",
+  "poster",
+  "packaging-asset",
+  "isolated-object",
+  "object-group",
+  "logo-component",
+  "full-logo",
+  "campaign-composite",
+  "packaging-composite",
+  "campaign-model-replacement"
+]);
+var BLEND_OVERLAY_INTENTS = /* @__PURE__ */ new Set([
+  "transparent-overlay",
+  "material-map"
+]);
+var BACKGROUND_CLEANUP_INTENTS = /* @__PURE__ */ new Set(["background-cleanup"]);
+var INTENT_TO_ASSET_CLASS = {
+  "founder-full-room-preview": "founder-full-room-preview",
+  "experience-environment": "environment-shell",
+  "world-preview": "environment-shell",
+  "world-expansion": "environment-shell",
+  "environment-shell": "environment-shell",
+  "final-scene": "environment-shell",
+  "final-scene-preview": "environment-shell",
+  "reception-desk": "reception-structure",
+  "furniture-asset": "furniture-objects",
+  "landmark-asset": "signature-landmark",
+  "decor-asset": "decorative-object",
+  "architecture-piece": "architectural-prop",
+  "fixture": "architectural-prop",
+  "lighting-object": "decorative-object",
+  "logo-asset": "signature-landmark",
+  "campaign-graphic": "decorative-object",
+  "poster": "decorative-object",
+  "packaging-asset": "decorative-object",
+  "isolated-object": "signature-landmark",
+  "object-group": "furniture-objects",
+  "logo-component": "signature-landmark",
+  "full-logo": "signature-landmark",
+  "campaign-composite": "decorative-object",
+  "packaging-composite": "decorative-object",
+  "campaign-model-replacement": "decorative-object",
+  "transparent-overlay": "decorative-object",
+  "material-map": "decorative-object",
+  "background-cleanup": "background-removal"
+};
+function resolveWorkerFamilyForIntent(intent) {
+  if (WORLD_ARCHITECT_INTENTS.has(intent)) return "world-architect";
+  if (BACKGROUND_CLEANUP_INTENTS.has(intent)) return "background-cleanup";
+  if (BLEND_OVERLAY_INTENTS.has(intent)) return "asset-manufacturer";
+  return "asset-manufacturer";
+}
+function resolveAssetClassForIntent(intent, override) {
+  if (override) return override;
+  const mapped = INTENT_TO_ASSET_CLASS[intent];
+  if (!mapped) {
+    throw new Error(`No asset class mapping for artifact intent: ${intent}`);
+  }
+  return mapped;
+}
+function isWorldEnvironmentIntent(intent) {
+  return WORLD_ARCHITECT_INTENTS.has(intent);
+}
+function isProductionAssetIntent(intent) {
+  return ASSET_MANUFACTURER_INTENTS.has(intent);
+}
+function isBackgroundCleanupIntent(intent) {
+  return BACKGROUND_CLEANUP_INTENTS.has(intent);
+}
+
 // src/studio-os-core/creative-production/model-registry/nano-banana-2-schema.ts
 var NANO_BANANA_2_T2I_ENDPOINT = "fal-ai/nano-banana-2";
 var NANO_BANANA_2_EDIT_ENDPOINT = "fal-ai/nano-banana-2/edit";
@@ -1054,20 +1146,359 @@ function getPrimaryRouteForAssetClass(assetClass) {
   return primary;
 }
 
+// src/studio-os-core/creative-production/prompt-router/prompt-registry.ts
+var VERSIONED_GENERATION_PROMPTS = [
+  {
+    promptBuilderId: "founder-full-room-preview-prompt.v1",
+    promptVersion: "founder-full-room-preview-prompt.v1",
+    artifactIntent: "founder-full-room-preview",
+    assetClass: "founder-full-room-preview",
+    description: "Experience Lab \u2014 photoreal full-room Founder Render preview.",
+    workerFamily: "world-architect"
+  },
+  {
+    promptBuilderId: "environment-shell-prompt.v1",
+    promptVersion: "environment-shell-prompt.v1",
+    artifactIntent: "environment-shell",
+    assetClass: "environment-shell",
+    description: "Experience Lab \u2014 environment shell img2img.",
+    workerFamily: "world-architect"
+  },
+  {
+    promptBuilderId: "experience-environment-prompt.v1",
+    promptVersion: "experience-environment-prompt.v1",
+    artifactIntent: "experience-environment",
+    assetClass: "environment-shell",
+    description: "Experience Lab \u2014 whole environment generation.",
+    workerFamily: "world-architect"
+  },
+  {
+    promptBuilderId: "world-preview-prompt.v1",
+    promptVersion: "world-preview-prompt.v1",
+    artifactIntent: "world-preview",
+    assetClass: "environment-shell",
+    description: "Experience Lab \u2014 world preview render.",
+    workerFamily: "world-architect"
+  },
+  {
+    promptBuilderId: "world-expansion-prompt.v1",
+    promptVersion: "world-expansion-prompt.v1",
+    artifactIntent: "world-expansion",
+    assetClass: "environment-shell",
+    description: "Experience Lab \u2014 world expansion render.",
+    workerFamily: "world-architect"
+  },
+  {
+    promptBuilderId: "asset-reception-desk-prompt.v1",
+    promptVersion: "asset-reception-desk-prompt.v1",
+    artifactIntent: "reception-desk",
+    assetClass: "reception-structure",
+    description: "CD Studio \u2014 reception desk isolated asset.",
+    workerFamily: "asset-manufacturer"
+  },
+  {
+    promptBuilderId: "asset-chair-prompt.v1",
+    promptVersion: "asset-chair-prompt.v1",
+    artifactIntent: "furniture-asset",
+    assetClass: "furniture-objects",
+    description: "CD Studio \u2014 furniture / chair isolated asset.",
+    workerFamily: "asset-manufacturer"
+  },
+  {
+    promptBuilderId: "furniture-objects-isolated-prompt.v3",
+    promptVersion: "furniture-objects-isolated-prompt.v3",
+    artifactIntent: "object-group",
+    assetClass: "furniture-objects",
+    description: "Scene Stack \u2014 furniture object group.",
+    workerFamily: "asset-manufacturer"
+  },
+  {
+    promptBuilderId: "signature-landmark-isolated-prompt.v3",
+    promptVersion: "signature-landmark-isolated-prompt.v3",
+    artifactIntent: "landmark-asset",
+    assetClass: "signature-landmark",
+    description: "CD Studio \u2014 signature landmark isolated asset.",
+    workerFamily: "asset-manufacturer"
+  },
+  {
+    promptBuilderId: "asset-logo-prompt.v1",
+    promptVersion: "asset-logo-prompt.v1",
+    artifactIntent: "logo-asset",
+    assetClass: "signature-landmark",
+    description: "CD Studio \u2014 logo component generation.",
+    workerFamily: "asset-manufacturer"
+  },
+  {
+    promptBuilderId: "asset-campaign-prompt.v1",
+    promptVersion: "asset-campaign-prompt.v1",
+    artifactIntent: "campaign-graphic",
+    assetClass: "decorative-object",
+    description: "CD Studio \u2014 campaign graphic generation.",
+    workerFamily: "asset-manufacturer"
+  },
+  {
+    promptBuilderId: "asset-packaging-prompt.v1",
+    promptVersion: "asset-packaging-prompt.v1",
+    artifactIntent: "packaging-asset",
+    assetClass: "decorative-object",
+    description: "CD Studio \u2014 packaging composite generation.",
+    workerFamily: "asset-manufacturer"
+  },
+  {
+    promptBuilderId: "asset-decor-prompt.v1",
+    promptVersion: "asset-decor-prompt.v1",
+    artifactIntent: "decor-asset",
+    assetClass: "decorative-object",
+    description: "CD Studio \u2014 decorative object generation.",
+    workerFamily: "asset-manufacturer"
+  },
+  {
+    promptBuilderId: "asset-architecture-piece-prompt.v1",
+    promptVersion: "asset-architecture-piece-prompt.v1",
+    artifactIntent: "architecture-piece",
+    assetClass: "architectural-prop",
+    description: "CD Studio \u2014 architectural prop (not full room).",
+    workerFamily: "asset-manufacturer"
+  },
+  {
+    promptBuilderId: "asset-fixture-prompt.v1",
+    promptVersion: "asset-fixture-prompt.v1",
+    artifactIntent: "fixture",
+    assetClass: "architectural-prop",
+    description: "CD Studio \u2014 fixture isolated asset.",
+    workerFamily: "asset-manufacturer"
+  },
+  {
+    promptBuilderId: "asset-lighting-object-prompt.v1",
+    promptVersion: "asset-lighting-object-prompt.v1",
+    artifactIntent: "lighting-object",
+    assetClass: "decorative-object",
+    description: "CD Studio \u2014 lighting object isolated asset.",
+    workerFamily: "asset-manufacturer"
+  },
+  {
+    promptBuilderId: "blend-overlay-prompt.v1",
+    promptVersion: "blend-overlay-prompt.v1",
+    artifactIntent: null,
+    assetClass: null,
+    description: "Scene Stack \u2014 overlay / blend layers.",
+    workerFamily: "any"
+  },
+  {
+    promptBuilderId: "background-cleanup-prompt.v1",
+    promptVersion: "background-cleanup-prompt.v1",
+    artifactIntent: "background-cleanup",
+    assetClass: "background-removal",
+    description: "Background removal / masking / transparency worker.",
+    workerFamily: "background-cleanup"
+  }
+];
+
+// src/studio-os-core/creative-production/prompt-router/types.ts
+var PROMPT_ROUTER_VERSION = "prompt-router.v1";
+
+// src/studio-os-core/creative-production/prompt-router/prompt-router.ts
+var INTENT_PROMPT_MAP = {
+  "founder-full-room-preview": "founder-full-room-preview-prompt.v1",
+  "experience-environment": "experience-environment-prompt.v1",
+  "world-preview": "world-preview-prompt.v1",
+  "world-expansion": "world-expansion-prompt.v1",
+  "environment-shell": "environment-shell-prompt.v1",
+  "final-scene": "environment-shell-prompt.v1",
+  "final-scene-preview": "environment-shell-prompt.v1",
+  "reception-desk": "asset-reception-desk-prompt.v1",
+  "furniture-asset": "asset-chair-prompt.v1",
+  "object-group": "furniture-objects-isolated-prompt.v3",
+  "landmark-asset": "signature-landmark-isolated-prompt.v3",
+  "isolated-object": "signature-landmark-isolated-prompt.v3",
+  "logo-asset": "asset-logo-prompt.v1",
+  "logo-component": "asset-logo-prompt.v1",
+  "full-logo": "asset-logo-prompt.v1",
+  "campaign-graphic": "asset-campaign-prompt.v1",
+  "campaign-composite": "asset-campaign-prompt.v1",
+  "poster": "asset-campaign-prompt.v1",
+  "packaging-asset": "asset-packaging-prompt.v1",
+  "packaging-composite": "asset-packaging-prompt.v1",
+  "decor-asset": "asset-decor-prompt.v1",
+  "architecture-piece": "asset-architecture-piece-prompt.v1",
+  "fixture": "asset-fixture-prompt.v1",
+  "lighting-object": "asset-lighting-object-prompt.v1",
+  "background-cleanup": "background-cleanup-prompt.v1",
+  "transparent-overlay": "blend-overlay-prompt.v1",
+  "material-map": "blend-overlay-prompt.v1",
+  "campaign-model-replacement": "asset-campaign-prompt.v1"
+};
+var ASSET_CLASS_PROMPT_FALLBACK = {
+  "founder-full-room-preview": "founder-full-room-preview-prompt.v1",
+  "environment-shell": "environment-shell-prompt.v1",
+  "signature-landmark": "signature-landmark-isolated-prompt.v3",
+  "furniture-objects": "furniture-objects-isolated-prompt.v3",
+  "reception-structure": "asset-reception-desk-prompt.v1",
+  "architectural-prop": "asset-architecture-piece-prompt.v1",
+  "decorative-object": "asset-decor-prompt.v1",
+  "background-removal": "background-cleanup-prompt.v1",
+  "material-overlay": "blend-overlay-prompt.v1",
+  "atmosphere-overlay": "blend-overlay-prompt.v1",
+  "motion-overlay": "blend-overlay-prompt.v1",
+  "reflection-overlay": "blend-overlay-prompt.v1"
+};
+function resolvePromptBuilderId(intent, assetClass) {
+  return INTENT_PROMPT_MAP[intent] ?? ASSET_CLASS_PROMPT_FALLBACK[assetClass] ?? "blend-overlay-prompt.v1";
+}
+function resolvePromptRouting(input) {
+  const assetClass = input.assetClass ?? resolveAssetClassForIntent(input.artifactIntent);
+  const promptBuilderId = resolvePromptBuilderId(input.artifactIntent, assetClass);
+  const entry = VERSIONED_GENERATION_PROMPTS.find((p) => p.promptBuilderId === promptBuilderId);
+  return {
+    routerVersion: PROMPT_ROUTER_VERSION,
+    promptBuilderId,
+    promptVersion: entry?.promptVersion ?? promptBuilderId,
+    artifactIntent: input.artifactIntent,
+    assetClass
+  };
+}
+
+// src/studio-os-core/creative-production/model-routing-engine/model-routing-engine.ts
+function inferSurface(intent, surface) {
+  if (surface) return surface;
+  if (intent === "founder-full-room-preview") return "founder-render";
+  if (isWorldEnvironmentIntent(intent)) return "experience-lab";
+  if (isProductionAssetIntent(intent)) return "creative-direction-studio";
+  if (isBackgroundCleanupIntent(intent)) return "scene-stack";
+  return "scene-stack";
+}
+function resolveReferenceStrategy(input) {
+  if (input.workerFamily === "background-cleanup") return "none";
+  if (input.workerFamily === "world-architect") {
+    return input.assetClass === "founder-full-room-preview" ? "brand-material-references-only" : "marble-genesis-anchor";
+  }
+  if (input.brandGroundingRequired) return "brand-material-references-only";
+  return "placement-metadata-only";
+}
+function resolveRouteForDecision(input, assetClass) {
+  let route = getPrimaryRouteForAssetClass(assetClass);
+  const brandGrounding = input.brandGroundingRequired === true;
+  if (brandGrounding && route.supportsBrandAssetGuidance && route.fallbackRouteIds.length > 0) {
+    const editFallback = route.fallbackRouteIds.map((id) => getModelRouteById(id)).find((r) => r?.endpointId === NANO_BANANA_2_EDIT_ENDPOINT);
+    if (editFallback) route = editFallback;
+  }
+  if (input.artifactIntent === "founder-full-room-preview") {
+    const founderRoute = getModelRouteById("nano-banana-pro-founder-full-room");
+    if (founderRoute) route = founderRoute;
+  }
+  if (input.artifactIntent === "environment-shell" || input.artifactIntent === "experience-environment") {
+    const shellRoute = getModelRouteById("nano-banana-pro-edit-shell");
+    if (shellRoute) route = shellRoute;
+  }
+  return route;
+}
+function resolveModelRoutingDecision(input) {
+  const workerFamily = resolveWorkerFamilyForIntent(input.artifactIntent);
+  const assetClass = resolveAssetClassForIntent(input.artifactIntent, input.assetClass);
+  const surface = inferSurface(input.artifactIntent, input.surface);
+  const route = resolveRouteForDecision(input, assetClass);
+  const prompt = resolvePromptRouting({ artifactIntent: input.artifactIntent, assetClass });
+  const brandGrounding = input.brandGroundingRequired === true;
+  const referenceStrategy = resolveReferenceStrategy({
+    workerFamily,
+    assetClass,
+    brandGroundingRequired: brandGrounding
+  });
+  const textToImageOnly = route.generationMode === "text-to-image" && route.endpointId === NANO_BANANA_2_T2I_ENDPOINT;
+  return {
+    engineVersion: MODEL_ROUTING_ENGINE_VERSION,
+    artifactIntent: input.artifactIntent,
+    workerFamily,
+    surface,
+    assetClass,
+    routeId: route.routeId,
+    provider: "fal",
+    providerModel: route.endpointId,
+    providerEndpoint: route.endpointId,
+    generationMode: route.generationMode,
+    referenceStrategy,
+    referencePolicy: route.referencePolicy,
+    promptVersion: prompt.promptVersion,
+    promptBuilderId: prompt.promptBuilderId,
+    textToImageOnly,
+    requestedAlpha: route.alphaPolicy === "requested" || route.alphaPolicy === "post-cleanup",
+    allowBackgroundExtraction: workerFamily === "asset-manufacturer",
+    brandGroundingCapable: route.supportsBrandAssetGuidance,
+    policyVersion: route.policyVersion,
+    resolutionTruth: {
+      requestedResolution: "4K",
+      providerNativeResolution: NANO_BANANA_2_PRODUCTION_QUALITY,
+      supportsNative4K: route.endpointId.startsWith("fal-ai/nano-banana-2"),
+      thinkingLevel: route.endpointId.startsWith("fal-ai/nano-banana-2") ? NANO_BANANA_2_PRODUCTION_THINKING : void 0
+    }
+  };
+}
+function resolveModelRoutingFromLayerId(layerId, options) {
+  const intent = layerIdToArtifactIntent(layerId);
+  return resolveModelRoutingDecision({
+    artifactIntent: intent,
+    surface: options?.surface ?? "scene-stack",
+    brandGroundingRequired: options?.brandGroundingRequired,
+    isolationAttempt: options?.isolationAttempt,
+    organizationId: options?.organizationId
+  });
+}
+function layerIdToArtifactIntent(layerId) {
+  switch (layerId) {
+    case "environment-shell":
+      return "environment-shell";
+    case "signature-landmark":
+      return "landmark-asset";
+    case "furniture-objects":
+      return "object-group";
+    case "surface-materials":
+      return "material-map";
+    case "atmospheric-systems":
+      return "transparent-overlay";
+    case "ambient-motion":
+      return "transparent-overlay";
+    case "lighting-systems":
+      return "material-map";
+    default:
+      return "decor-asset";
+  }
+}
+function getWorldArchitectDefaultModel() {
+  const route = getModelRouteById("nano-banana-pro-edit-shell");
+  return route?.endpointId ?? MODEL_REGISTRY_ROUTES.find((r) => r.routeId === "nano-banana-pro-edit-shell").endpointId;
+}
+function getAssetManufacturerDefaultModel() {
+  const route = getModelRouteById("nano-banana-2-isolated");
+  return route?.endpointId ?? NANO_BANANA_2_T2I_ENDPOINT;
+}
+function getBackgroundCleanupModel() {
+  const route = getModelRouteById("birefnet-background-removal");
+  return route?.endpointId ?? "fal-ai/birefnet/v2";
+}
+
 // src/studio-os-core/founder-render/model-route.ts
 var FOUNDER_RENDER_ROUTE_ID = "nano-banana-pro-founder-full-room";
-var FOUNDER_RENDER_MODEL = SCENE_STACK_SHELL_FAL_MODEL;
+function resolveFounderRenderModel(aspectRatio = "16:9") {
+  return resolveFounderRenderModelRoute(aspectRatio).providerModel;
+}
+var FOUNDER_RENDER_MODEL = resolveFounderRenderModel();
 function resolveFounderRenderModelRoute(aspectRatio = "16:9") {
+  const decision = resolveModelRoutingDecision({
+    artifactIntent: FOUNDER_RENDER_ARTIFACT_INTENT,
+    surface: "founder-render"
+  });
   return {
     routeId: FOUNDER_RENDER_ROUTE_ID,
     provider: "fal",
-    providerModel: FOUNDER_RENDER_MODEL,
+    providerModel: decision.providerModel,
     generationMode: "image-to-image",
     aspectRatio,
     outputFormat: "png",
     outputResolution: "4K",
     referencePolicy: "brand-material-references-only",
-    artifactIntent: "founder-full-room-preview"
+    artifactIntent: FOUNDER_RENDER_ARTIFACT_INTENT,
+    promptVersion: decision.promptVersion,
+    promptBuilderId: decision.promptBuilderId
   };
 }
 
@@ -1532,6 +1963,9 @@ function validatorExistsForIntent(intent) {
     "final-scene",
     "final-scene-preview",
     "environment-shell",
+    "experience-environment",
+    "world-preview",
+    "world-expansion",
     "isolated-object",
     "object-group",
     "transparent-overlay",
@@ -1541,7 +1975,19 @@ function validatorExistsForIntent(intent) {
     "full-logo",
     "packaging-composite",
     "campaign-model-replacement",
-    "founder-full-room-preview"
+    "founder-full-room-preview",
+    "reception-desk",
+    "furniture-asset",
+    "landmark-asset",
+    "decor-asset",
+    "architecture-piece",
+    "fixture",
+    "lighting-object",
+    "logo-asset",
+    "campaign-graphic",
+    "poster",
+    "packaging-asset",
+    "background-cleanup"
   ].includes(intent);
 }
 
@@ -1619,93 +2065,41 @@ var SCENE_STACK_LAYER_ORDER = [
 ];
 
 // src/studio-os-core/creative-production/model-registry/resolve-model-route.ts
-function layerIdToAssetClass(layerId) {
-  switch (layerId) {
-    case "environment-shell":
-      return "environment-shell";
-    case "signature-landmark":
-      return "signature-landmark";
-    case "furniture-objects":
-      return "furniture-objects";
-    case "surface-materials":
-      return "material-overlay";
-    case "atmospheric-systems":
-      return "atmosphere-overlay";
-    case "ambient-motion":
-      return "motion-overlay";
-    case "lighting-systems":
-      return "reflection-overlay";
-    default:
-      return "decorative-object";
-  }
-}
-var PROMPT_BUILDER_BY_LAYER = {
-  "environment-shell": "environment-shell-prompt.v1",
-  "signature-landmark": "signature-landmark-isolated-prompt.v3",
-  "furniture-objects": "furniture-objects-isolated-prompt.v3"
-};
-function resolveModelRoute(input) {
-  const brandGrounding = input.brandGroundingRequired === true;
-  let route = getPrimaryRouteForAssetClass(input.assetClass);
-  if (brandGrounding && route.supportsBrandAssetGuidance && route.fallbackRouteIds.length > 0) {
-    const editFallback = route.fallbackRouteIds.map((id) => getModelRouteById(id)).find((r) => r?.endpointId === NANO_BANANA_2_EDIT_ENDPOINT);
-    if (editFallback) {
-      route = editFallback;
-    }
-  }
-  const textToImageOnly = route.generationMode === "text-to-image" && route.endpointId === NANO_BANANA_2_T2I_ENDPOINT;
-  return {
-    ...route,
-    providerModel: route.endpointId,
-    providerEndpoint: route.endpointId,
-    textToImageOnly,
-    promptBuilderId: PROMPT_BUILDER_BY_LAYER[input.assetClass] ?? "blend-overlay-prompt.v1",
-    allowBackgroundExtraction: route.assetClass !== "environment-shell",
-    requestedAlpha: route.alphaPolicy === "requested" || route.alphaPolicy === "post-cleanup",
-    resolutionTruth: {
-      requestedResolution: "4K",
-      providerNativeResolution: NANO_BANANA_2_PRODUCTION_QUALITY,
-      supportsNative4K: route.endpointId.startsWith("fal-ai/nano-banana-2"),
-      thinkingLevel: route.endpointId.startsWith("fal-ai/nano-banana-2") ? NANO_BANANA_2_PRODUCTION_THINKING : void 0
-    }
-  };
-}
 function resolveSceneStackLayerModelRouteFromRegistry(layerId, options) {
   const contract = getIsolatedLayerContract(layerId);
   const generationMode = contract.generationMode;
-  const assetClass = layerIdToAssetClass(layerId);
-  const brandGrounding = options?.brandGroundingRequired === true;
-  const resolved = resolveModelRoute({
+  const decision = resolveModelRoutingFromLayerId(layerId, {
     organizationId: options?.organizationId,
-    assetClass,
-    brandGroundingRequired: brandGrounding,
-    isolationAttempt: options?.isolationAttempt ?? 0,
+    brandGroundingRequired: options?.brandGroundingRequired,
+    isolationAttempt: options?.isolationAttempt,
     surface: "scene-stack"
   });
   let referenceStrategy;
-  if (layerId === "environment-shell") {
+  if (decision.referenceStrategy === "marble-genesis-anchor") {
     referenceStrategy = "marble-genesis-anchor";
-  } else if (resolved.referencePolicy === "brand-material-references-only") {
-    referenceStrategy = brandGrounding ? "placement-metadata-only" : "placement-metadata-only";
+  } else if (decision.referenceStrategy === "brand-material-references-only") {
+    referenceStrategy = "brand-material-references-only";
   } else {
     referenceStrategy = "placement-metadata-only";
   }
-  const promptBuilderId = layerId === "signature-landmark" ? "signature-landmark-isolated-prompt.v3" : layerId === "furniture-objects" ? "furniture-objects-isolated-prompt.v3" : layerId === "environment-shell" ? "environment-shell-prompt.v1" : "blend-overlay-prompt.v1";
   return {
     layerId,
     generationMode,
     provider: "fal",
-    providerModel: layerId === "environment-shell" ? SCENE_STACK_SHELL_FAL_MODEL : resolved.providerModel,
-    providerEndpoint: layerId === "environment-shell" ? SCENE_STACK_SHELL_FAL_MODEL : resolved.providerEndpoint,
-    textToImageOnly: layerId === "environment-shell" ? false : resolved.textToImageOnly,
+    providerModel: decision.providerModel,
+    providerEndpoint: decision.providerEndpoint,
+    textToImageOnly: decision.textToImageOnly,
     referenceStrategy,
     requestedAlpha: contract.expectedAlpha,
-    promptBuilderId,
-    allowBackgroundExtraction: layerId !== "environment-shell",
-    routeId: layerId === "environment-shell" ? "nano-banana-pro-edit-shell" : resolved.routeId,
-    assetClass,
-    brandGroundingCapable: resolved.supportsBrandAssetGuidance,
-    resolutionTruth: resolved.resolutionTruth
+    promptBuilderId: decision.promptBuilderId,
+    allowBackgroundExtraction: decision.allowBackgroundExtraction,
+    routeId: decision.routeId,
+    assetClass: decision.assetClass,
+    brandGroundingCapable: decision.brandGroundingCapable,
+    resolutionTruth: decision.resolutionTruth,
+    artifactIntent: decision.artifactIntent,
+    promptVersion: decision.promptVersion,
+    workerFamily: decision.workerFamily
   };
 }
 
@@ -1724,20 +2118,113 @@ function resolveSceneStackLayerModelRoute(layerId, isolationAttempt = 0, options
     isolationAttempt
   });
 }
+
+// src/studio-os-core/creative-production/generation-routing-record.ts
+var GENERATION_ROUTING_RECORD_VERSION = "generation-routing-record.v1";
+function buildGenerationRoutingRecord(input) {
+  const { decision } = input;
+  return {
+    recordVersion: GENERATION_ROUTING_RECORD_VERSION,
+    recordedAt: input.recordedAt ?? (/* @__PURE__ */ new Date()).toISOString(),
+    artifactIntent: decision.artifactIntent,
+    workerFamily: decision.workerFamily,
+    surface: decision.surface,
+    selectedModel: decision.providerModel,
+    routeId: decision.routeId,
+    promptVersion: decision.promptVersion,
+    promptBuilderId: decision.promptBuilderId,
+    routingDecision: `${decision.workerFamily}:${decision.routeId}`,
+    referenceStrategy: decision.referenceStrategy,
+    referencePolicy: decision.referencePolicy,
+    policyVersion: decision.policyVersion,
+    materialLibraryVersion: input.materialLibraryVersion ?? null,
+    lightingProfileId: input.lightingProfileId ?? null,
+    cameraProfileId: input.cameraProfileId ?? null,
+    perspectiveProfileId: input.perspectiveProfileId ?? null,
+    brandAssetRevision: input.brandAssetRevision ?? null,
+    approvedFounderRenderUrl: input.approvedFounderRenderUrl ?? null,
+    blueprintRevision: input.blueprintRevision ?? null,
+    organizationId: input.organizationId ?? null
+  };
+}
+
+// src/studio-os-core/immune-system/model-routing-validation.ts
+function isNanoBananaProEndpoint(endpoint) {
+  return endpoint.includes("nano-banana-pro");
+}
+function isNanoBanana2Endpoint(endpoint) {
+  return endpoint.includes("nano-banana-2");
+}
+function isBirefnetEndpoint(endpoint) {
+  return endpoint.includes("birefnet");
+}
+function validateModelRoutingDecision(decision) {
+  const { artifactIntent, providerModel, workerFamily } = decision;
+  if (isWorldEnvironmentIntent(artifactIntent) && !isNanoBananaProEndpoint(providerModel)) {
+    return {
+      ok: false,
+      code: "WORLD_INTENT_REQUIRES_NBP",
+      message: `Artifact intent ${artifactIntent} requires Nano Banana Pro (world architect) but received ${providerModel}.`
+    };
+  }
+  if (BLEND_OVERLAY_INTENTS.has(artifactIntent)) {
+    return { ok: true, decision };
+  }
+  if (isProductionAssetIntent(artifactIntent) && !isNanoBanana2Endpoint(providerModel)) {
+    return {
+      ok: false,
+      code: "ASSET_INTENT_REQUIRES_NB2",
+      message: `Artifact intent ${artifactIntent} requires Nano Banana 2 (asset manufacturer) but received ${providerModel}.`
+    };
+  }
+  if (isBackgroundCleanupIntent(artifactIntent) && !isBirefnetEndpoint(providerModel)) {
+    return {
+      ok: false,
+      code: "CLEANUP_INTENT_REQUIRES_BIREFNET",
+      message: `Artifact intent ${artifactIntent} requires background cleanup worker but received ${providerModel}.`
+    };
+  }
+  if (workerFamily === "world-architect" && isProductionAssetIntent(artifactIntent)) {
+    return {
+      ok: false,
+      code: "WORLD_WORKER_ASSET_VIOLATION",
+      message: `World architect worker cannot generate production asset intent ${artifactIntent}.`
+    };
+  }
+  if (workerFamily === "asset-manufacturer" && isWorldEnvironmentIntent(artifactIntent)) {
+    return {
+      ok: false,
+      code: "ASSET_WORKER_ROOM_VIOLATION",
+      message: `Asset manufacturer worker cannot generate environment intent ${artifactIntent}.`
+    };
+  }
+  return { ok: true, decision };
+}
+function validateAndResolveModelRouting(input) {
+  const decision = resolveModelRoutingDecision(input);
+  return validateModelRoutingDecision(decision);
+}
 export {
   DEMO_AUTHORIZATION_ID,
   FOUNDER_FULL_ROOM_PREVIEW_PROMPT_VERSION,
   FOUNDER_RENDER_ARTIFACT_INTENT,
   FOUNDER_RENDER_ROUTE_ID,
+  GENERATION_ROUTING_RECORD_VERSION,
+  MODEL_ROUTING_ENGINE_VERSION,
+  PROMPT_ROUTER_VERSION,
   SCENE_STACK_SHELL_FAL_MODEL,
   buildAuthorizationPayloadForSigning,
   buildFounderFullRoomPreviewPrompt,
+  buildGenerationRoutingRecord,
   buildNanoBanana2FalInput,
   buildRegistryLineageMetadata,
   compileAssetIntent,
   createDemoAssetIntent,
   createDemoCreativeInitiative,
   createDemoProductionAuthorizationPayload,
+  getAssetManufacturerDefaultModel,
+  getBackgroundCleanupModel,
+  getWorldArchitectDefaultModel,
   hasCompleteValidationCompileContext,
   lineageToRegistryRelationships,
   representGovernedGenerationRequest,
@@ -1745,7 +2232,12 @@ export {
   resolveFounderRenderBrandOrganizationId,
   resolveFounderRenderModelRoute,
   resolveLayerIdFromProductionGroupId,
+  resolveModelRoutingDecision,
+  resolveModelRoutingFromLayerId,
+  resolvePromptRouting,
   resolveSceneStackLayerModelRoute,
   runFounderRenderPreflight,
-  validateAuthorizationStructure
+  validateAndResolveModelRouting,
+  validateAuthorizationStructure,
+  validateModelRoutingDecision
 };

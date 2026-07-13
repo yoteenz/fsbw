@@ -6,10 +6,49 @@
 import { readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 
-/** Default shell / founder-render FAL endpoint — keep in sync with model-registry routes. */
-export const STUDIO_BUILDER_FAL_MODEL = 'fal-ai/nano-banana-pro/edit';
 export const STUDIO_BUILDER_BUCKET = process.env.STUDIO_ASSETS_BUCKET?.trim() || 'live-preview';
 export const STUDIO_BUILDER_PREFIX = 'studio-assets/departments';
+
+let cachedWorldArchitectModel: string | null = null;
+
+/** ModelRoutingEngine™ default — cached after first bundle resolve. */
+export async function resolveStudioBuilderFalModel(): Promise<string> {
+  if (cachedWorldArchitectModel) return cachedWorldArchitectModel;
+  const { getWorldArchitectDefaultModel } = await import('./creativeProduction/studio-os-server.bundle.js');
+  cachedWorldArchitectModel = getWorldArchitectDefaultModel();
+  return cachedWorldArchitectModel;
+}
+
+/** @deprecated Use resolveStudioBuilderFalModel() — retained for diagnostic fallbacks only. */
+export const STUDIO_BUILDER_FAL_MODEL = 'fal-ai/nano-banana-pro/edit';
+
+async function resolveDefaultBuilderModel(input: StudioBuilderGenerateInput): Promise<string> {
+  const { getWorldArchitectDefaultModel, resolveModelRoutingFromLayerId, resolveModelRoutingDecision } =
+    await import('./creativeProduction/studio-os-server.bundle.js');
+
+  if (input.productionGroupId.startsWith('founder-render-')) {
+    const decision = resolveModelRoutingDecision({
+      artifactIntent: 'founder-full-room-preview',
+      surface: 'founder-render',
+    });
+    return decision.providerModel;
+  }
+
+  if (input.layerId || input.productionGroupId.startsWith('scene-stack-')) {
+    const { resolveLayerIdFromProductionGroupId } = await import('./creativeProduction/studio-os-server.bundle.js');
+    const layerId = input.layerId
+      ? (input.layerId as import('../../src/studio-os-core/scene-stack/types.js').SceneStackLayerId)
+      : resolveLayerIdFromProductionGroupId(input.productionGroupId);
+    if (layerId) {
+      return resolveModelRoutingFromLayerId(layerId, {
+        organizationId: input.organizationId,
+        brandGroundingRequired: (input.brandReferenceUrls?.length ?? 0) > 0,
+      }).providerModel;
+    }
+  }
+
+  return getWorldArchitectDefaultModel();
+}
 
 export type StudioBuilderGenerateInput = {
   departmentId: string;
@@ -44,8 +83,9 @@ function usesSceneStackRouting(input: StudioBuilderGenerateInput): boolean {
 
 async function resolveBuilderRoute(input: StudioBuilderGenerateInput): Promise<BuilderRoute> {
   if (!usesSceneStackRouting(input)) {
+    const defaultModel = await resolveDefaultBuilderModel(input);
     return {
-      model: input.providerModel ?? STUDIO_BUILDER_FAL_MODEL,
+      model: input.providerModel ?? defaultModel,
       textToImageOnly: input.textToImageOnly === true,
     };
   }
@@ -59,8 +99,9 @@ async function resolveBuilderRoute(input: StudioBuilderGenerateInput): Promise<B
     ? (input.layerId as import('../../src/studio-os-core/scene-stack/types.js').SceneStackLayerId)
     : resolveLayerIdFromProductionGroupId(input.productionGroupId);
   if (!layerId) {
+    const defaultModel = await resolveDefaultBuilderModel(input);
     return {
-      model: input.providerModel ?? STUDIO_BUILDER_FAL_MODEL,
+      model: input.providerModel ?? defaultModel,
       textToImageOnly: input.textToImageOnly === true,
     };
   }
@@ -170,7 +211,13 @@ export async function prepareStudioBuilderFalImageUrls(
           );
         }
       }
-      const editModel = 'fal-ai/nano-banana-2/edit';
+      const { resolveModelRoutingDecision } = await import('./creativeProduction/studio-os-server.bundle.js');
+      const brandEditDecision = resolveModelRoutingDecision({
+        artifactIntent: 'landmark-asset',
+        brandGroundingRequired: true,
+        surface: 'creative-direction-studio',
+      });
+      const editModel = brandEditDecision.providerModel;
       return { ok: true, imageUrls, model: editModel, textToImageOnly: false };
     } catch (e) {
       return { ok: false, error: e instanceof Error ? e.message : 'Failed to prepare brand material references' };

@@ -6,6 +6,9 @@ export type ArtifactIntent =
   | 'final-scene'
   | 'final-scene-preview'
   | 'environment-shell'
+  | 'experience-environment'
+  | 'world-preview'
+  | 'world-expansion'
   | 'isolated-object'
   | 'object-group'
   | 'transparent-overlay'
@@ -15,7 +18,19 @@ export type ArtifactIntent =
   | 'full-logo'
   | 'packaging-composite'
   | 'campaign-model-replacement'
-  | 'founder-full-room-preview';
+  | 'founder-full-room-preview'
+  | 'reception-desk'
+  | 'furniture-asset'
+  | 'landmark-asset'
+  | 'decor-asset'
+  | 'architecture-piece'
+  | 'fixture'
+  | 'lighting-object'
+  | 'logo-asset'
+  | 'campaign-graphic'
+  | 'poster'
+  | 'packaging-asset'
+  | 'background-cleanup';
 
 export type ArtifactIntentSurface = 'frontal-slayer' | 'experience-lab' | 'creative-direction-studio';
 
@@ -68,6 +83,9 @@ export function allowsFullSceneOutput(intent: ArtifactIntent): boolean {
     intent === 'final-scene-preview' ||
     intent === 'founder-full-room-preview' ||
     intent === 'environment-shell' ||
+    intent === 'experience-environment' ||
+    intent === 'world-preview' ||
+    intent === 'world-expansion' ||
     intent === 'campaign-composite' ||
     intent === 'full-logo' ||
     intent === 'packaging-composite' ||
@@ -84,6 +102,9 @@ export function validatorExistsForIntent(intent: ArtifactIntent): boolean {
     'final-scene',
     'final-scene-preview',
     'environment-shell',
+    'experience-environment',
+    'world-preview',
+    'world-expansion',
     'isolated-object',
     'object-group',
     'transparent-overlay',
@@ -94,5 +115,17 @@ export function validatorExistsForIntent(intent: ArtifactIntent): boolean {
     'packaging-composite',
     'campaign-model-replacement',
     'founder-full-room-preview',
+    'reception-desk',
+    'furniture-asset',
+    'landmark-asset',
+    'decor-asset',
+    'architecture-piece',
+    'fixture',
+    'lighting-object',
+    'logo-asset',
+    'campaign-graphic',
+    'poster',
+    'packaging-asset',
+    'background-cleanup',
   ].includes(intent);
 }

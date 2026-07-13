@@ -1,78 +1,88 @@
 import type { SceneStackLayerId } from '../../scene-stack/types';
 import { getIsolatedLayerContract } from '../../scene-stack/isolated-layer-contract';
+import type { ModelAssetClass } from './types';
+import type { ArtifactIntent } from '../artifact-intent';
 import type { ResolveModelRouteInput, ResolvedModelRoute } from './types';
 import {
   getModelRouteById,
-  getPrimaryRouteForAssetClass,
   MODEL_REGISTRY_ROUTES,
   SCENE_STACK_ISOLATED_OBJECT_FAL_MODEL,
   SCENE_STACK_SHELL_FAL_MODEL,
 } from './routes';
+import { NANO_BANANA_2_EDIT_ENDPOINT, NANO_BANANA_2_T2I_ENDPOINT } from './nano-banana-2-schema';
 import {
-  NANO_BANANA_2_EDIT_ENDPOINT,
-  NANO_BANANA_2_PRODUCTION_QUALITY,
-  NANO_BANANA_2_PRODUCTION_THINKING,
-  NANO_BANANA_2_T2I_ENDPOINT,
-} from './nano-banana-2-schema';
+  resolveModelRoutingDecision,
+  resolveModelRoutingFromLayerId,
+} from '../model-routing-engine/model-routing-engine';
 
-export function layerIdToAssetClass(layerId: SceneStackLayerId): import('./types.js').ModelAssetClass {
-  switch (layerId) {
+function assetClassToArtifactIntent(assetClass: ModelAssetClass): ArtifactIntent {
+  switch (assetClass) {
+    case 'founder-full-room-preview':
+      return 'founder-full-room-preview';
     case 'environment-shell':
       return 'environment-shell';
     case 'signature-landmark':
-      return 'signature-landmark';
+      return 'landmark-asset';
     case 'furniture-objects':
-      return 'furniture-objects';
-    case 'surface-materials':
-      return 'material-overlay';
-    case 'atmospheric-systems':
-      return 'atmosphere-overlay';
-    case 'ambient-motion':
-      return 'motion-overlay';
-    case 'lighting-systems':
-      return 'reflection-overlay';
+      return 'object-group';
+    case 'reception-structure':
+      return 'reception-desk';
+    case 'architectural-prop':
+      return 'architecture-piece';
+    case 'decorative-object':
+      return 'decor-asset';
+    case 'background-removal':
+      return 'background-cleanup';
+    case 'material-overlay':
+      return 'material-map';
+    case 'atmosphere-overlay':
+      return 'transparent-overlay';
+    case 'motion-overlay':
+      return 'transparent-overlay';
+    case 'reflection-overlay':
+      return 'material-map';
+    case 'image-upscale':
+      return 'decor-asset';
     default:
-      return 'decorative-object';
+      return 'decor-asset';
   }
 }
 
-const PROMPT_BUILDER_BY_LAYER: Partial<Record<SceneStackLayerId, string>> = {
-  'environment-shell': 'environment-shell-prompt.v1',
-  'signature-landmark': 'signature-landmark-isolated-prompt.v3',
-  'furniture-objects': 'furniture-objects-isolated-prompt.v3',
-};
+export function layerIdToAssetClass(layerId: SceneStackLayerId): ModelAssetClass {
+  return resolveModelRoutingFromLayerId(layerId).assetClass;
+}
 
 export function resolveModelRoute(input: ResolveModelRouteInput): ResolvedModelRoute {
-  const brandGrounding = input.brandGroundingRequired === true;
-  let route = getPrimaryRouteForAssetClass(input.assetClass);
+  const artifactIntent = assetClassToArtifactIntent(input.assetClass);
 
-  if (brandGrounding && route.supportsBrandAssetGuidance && route.fallbackRouteIds.length > 0) {
-    const editFallback = route.fallbackRouteIds
-      .map((id) => getModelRouteById(id))
-      .find((r) => r?.endpointId === NANO_BANANA_2_EDIT_ENDPOINT);
-    if (editFallback) {
-      route = editFallback;
-    }
+  const decision = resolveModelRoutingDecision({
+    artifactIntent,
+    assetClass: input.assetClass,
+    surface:
+      input.surface === 'experience-lab'
+        ? 'experience-lab'
+        : input.surface === 'creative-studio'
+          ? 'creative-direction-studio'
+          : 'scene-stack',
+    brandGroundingRequired: input.brandGroundingRequired,
+    isolationAttempt: input.isolationAttempt,
+    organizationId: input.organizationId,
+  });
+
+  const route = getModelRouteById(decision.routeId);
+  if (!route) {
+    throw new Error(`Route not found: ${decision.routeId}`);
   }
-
-  const textToImageOnly =
-    route.generationMode === 'text-to-image' && route.endpointId === NANO_BANANA_2_T2I_ENDPOINT;
 
   return {
     ...route,
-    providerModel: route.endpointId,
-    providerEndpoint: route.endpointId,
-    textToImageOnly,
-    promptBuilderId: PROMPT_BUILDER_BY_LAYER[input.assetClass as SceneStackLayerId] ?? 'blend-overlay-prompt.v1',
-    allowBackgroundExtraction: route.assetClass !== 'environment-shell',
-    requestedAlpha: route.alphaPolicy === 'requested' || route.alphaPolicy === 'post-cleanup',
-    resolutionTruth: {
-      requestedResolution: '4K',
-      providerNativeResolution: NANO_BANANA_2_PRODUCTION_QUALITY,
-      supportsNative4K: route.endpointId.startsWith('fal-ai/nano-banana-2'),
-      thinkingLevel:
-        route.endpointId.startsWith('fal-ai/nano-banana-2') ? NANO_BANANA_2_PRODUCTION_THINKING : undefined,
-    },
+    providerModel: decision.providerModel,
+    providerEndpoint: decision.providerEndpoint,
+    textToImageOnly: decision.textToImageOnly,
+    promptBuilderId: decision.promptBuilderId,
+    allowBackgroundExtraction: decision.allowBackgroundExtraction,
+    requestedAlpha: decision.requestedAlpha,
+    resolutionTruth: decision.resolutionTruth,
   };
 }
 
@@ -91,6 +101,9 @@ export type SceneStackLayerModelRoute = {
   assetClass: import('./types.js').ModelAssetClass;
   brandGroundingCapable: boolean;
   resolutionTruth: ResolvedModelRoute['resolutionTruth'];
+  artifactIntent: import('../artifact-intent.js').ArtifactIntent;
+  promptVersion: string;
+  workerFamily: import('../model-routing-engine/types.js').GenerationWorkerFamily;
 };
 
 export function resolveSceneStackLayerModelRouteFromRegistry(
@@ -103,52 +116,40 @@ export function resolveSceneStackLayerModelRouteFromRegistry(
 ): SceneStackLayerModelRoute {
   const contract = getIsolatedLayerContract(layerId);
   const generationMode = contract.generationMode;
-  const assetClass = layerIdToAssetClass(layerId);
-  const brandGrounding = options?.brandGroundingRequired === true;
-
-  const resolved = resolveModelRoute({
+  const decision = resolveModelRoutingFromLayerId(layerId, {
     organizationId: options?.organizationId,
-    assetClass,
-    brandGroundingRequired: brandGrounding,
-    isolationAttempt: options?.isolationAttempt ?? 0,
+    brandGroundingRequired: options?.brandGroundingRequired,
+    isolationAttempt: options?.isolationAttempt,
     surface: 'scene-stack',
   });
 
   let referenceStrategy: SceneStackLayerModelRoute['referenceStrategy'];
-  if (layerId === 'environment-shell') {
+  if (decision.referenceStrategy === 'marble-genesis-anchor') {
     referenceStrategy = 'marble-genesis-anchor';
-  } else if (resolved.referencePolicy === 'brand-material-references-only') {
-    referenceStrategy = brandGrounding ? 'placement-metadata-only' : 'placement-metadata-only';
+  } else if (decision.referenceStrategy === 'brand-material-references-only') {
+    referenceStrategy = 'brand-material-references-only';
   } else {
     referenceStrategy = 'placement-metadata-only';
   }
-
-  const promptBuilderId =
-    layerId === 'signature-landmark'
-      ? 'signature-landmark-isolated-prompt.v3'
-      : layerId === 'furniture-objects'
-        ? 'furniture-objects-isolated-prompt.v3'
-        : layerId === 'environment-shell'
-          ? 'environment-shell-prompt.v1'
-          : 'blend-overlay-prompt.v1';
 
   return {
     layerId,
     generationMode,
     provider: 'fal',
-    providerModel:
-      layerId === 'environment-shell' ? SCENE_STACK_SHELL_FAL_MODEL : resolved.providerModel,
-    providerEndpoint:
-      layerId === 'environment-shell' ? SCENE_STACK_SHELL_FAL_MODEL : resolved.providerEndpoint,
-    textToImageOnly: layerId === 'environment-shell' ? false : resolved.textToImageOnly,
+    providerModel: decision.providerModel,
+    providerEndpoint: decision.providerEndpoint,
+    textToImageOnly: decision.textToImageOnly,
     referenceStrategy,
     requestedAlpha: contract.expectedAlpha,
-    promptBuilderId,
-    allowBackgroundExtraction: layerId !== 'environment-shell',
-    routeId: layerId === 'environment-shell' ? 'nano-banana-pro-edit-shell' : resolved.routeId,
-    assetClass,
-    brandGroundingCapable: resolved.supportsBrandAssetGuidance,
-    resolutionTruth: resolved.resolutionTruth,
+    promptBuilderId: decision.promptBuilderId,
+    allowBackgroundExtraction: decision.allowBackgroundExtraction,
+    routeId: decision.routeId,
+    assetClass: decision.assetClass,
+    brandGroundingCapable: decision.brandGroundingCapable,
+    resolutionTruth: decision.resolutionTruth,
+    artifactIntent: decision.artifactIntent,
+    promptVersion: decision.promptVersion,
+    workerFamily: decision.workerFamily,
   };
 }
 
@@ -163,3 +164,4 @@ export function rollbackIsolatedRouteTo(routeId: string): ResolvedModelRoute | n
 }
 
 export { SCENE_STACK_ISOLATED_OBJECT_FAL_MODEL, SCENE_STACK_SHELL_FAL_MODEL };
+export { NANO_BANANA_2_EDIT_ENDPOINT, NANO_BANANA_2_T2I_ENDPOINT };

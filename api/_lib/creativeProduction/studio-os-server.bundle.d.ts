@@ -93,3 +93,61 @@ export function buildNanoBanana2FalInput(input: {
   brandReferenceUrls?: string[];
   negativePrompt?: string;
 }): { endpoint: string; falInput: NanoBanana2FalInput; usesReferences: boolean };
+
+export const MODEL_ROUTING_ENGINE_VERSION: 'model-routing-engine.v1';
+export const PROMPT_ROUTER_VERSION: 'prompt-router.v1';
+export const GENERATION_ROUTING_RECORD_VERSION: 'generation-routing-record.v1';
+
+export function resolveModelRoutingDecision(input: {
+  artifactIntent: import('../../../src/studio-os-core/creative-production/artifact-intent.js').ArtifactIntent;
+  surface?: string;
+  assetClass?: string;
+  organizationId?: string | null;
+  brandGroundingRequired?: boolean;
+  isolationAttempt?: number;
+  aspectRatio?: '16:9' | '21:9';
+}): import('../../../src/studio-os-core/creative-production/model-routing-engine/types.js').ModelRoutingDecision;
+
+export function resolveModelRoutingFromLayerId(
+  layerId: SceneStackLayerId,
+  options?: {
+    organizationId?: string | null;
+    brandGroundingRequired?: boolean;
+    isolationAttempt?: number;
+    surface?: string;
+  }
+): import('../../../src/studio-os-core/creative-production/model-routing-engine/types.js').ModelRoutingDecision;
+
+export function getWorldArchitectDefaultModel(): string;
+export function getAssetManufacturerDefaultModel(): string;
+export function getBackgroundCleanupModel(): string;
+
+export function resolvePromptRouting(input: {
+  artifactIntent: import('../../../src/studio-os-core/creative-production/artifact-intent.js').ArtifactIntent;
+  assetClass?: string;
+}): import('../../../src/studio-os-core/creative-production/prompt-router/types.js').PromptRoutingDecision;
+
+export function buildGenerationRoutingRecord(input: {
+  decision: import('../../../src/studio-os-core/creative-production/model-routing-engine/types.js').ModelRoutingDecision;
+  materialLibraryVersion?: string | null;
+  lightingProfileId?: string | null;
+  cameraProfileId?: string | null;
+  perspectiveProfileId?: string | null;
+  brandAssetRevision?: string | null;
+  approvedFounderRenderUrl?: string | null;
+  blueprintRevision?: number | null;
+  organizationId?: string | null;
+  recordedAt?: string;
+}): import('../../../src/studio-os-core/creative-production/generation-routing-record.js').GenerationRoutingRecord;
+
+export function validateModelRoutingDecision(
+  decision: import('../../../src/studio-os-core/creative-production/model-routing-engine/types.js').ModelRoutingDecision
+): import('../../../src/studio-os-core/creative-production/model-routing-engine/types.js').ModelRoutingValidationResult;
+
+export function validateAndResolveModelRouting(input: {
+  artifactIntent: import('../../../src/studio-os-core/creative-production/artifact-intent.js').ArtifactIntent;
+  surface?: string;
+  brandGroundingRequired?: boolean;
+  organizationId?: string | null;
+  assetClass?: string;
+}): import('../../../src/studio-os-core/creative-production/model-routing-engine/types.js').ModelRoutingValidationResult;

@@ -24,7 +24,6 @@ import {
   pollStudioBuilderFalQueue,
   prepareStudioBuilderFalImageUrls,
   submitStudioBuilderFalQueue,
-  STUDIO_BUILDER_FAL_MODEL,
   type StudioBuilderGenerateInput,
 } from '../studioBuilderGeneration.js';
 import {

@@ -51,3 +51,27 @@ export {
 } from '../../../src/studio-os-core/scene-stack/layer-model-routing.js';
 
 export { buildNanoBanana2FalInput } from '../../../src/studio-os-core/creative-production/model-registry/nano-banana-2-schema.js';
+
+export {
+  MODEL_ROUTING_ENGINE_VERSION,
+  resolveModelRoutingDecision,
+  resolveModelRoutingFromLayerId,
+  getWorldArchitectDefaultModel,
+  getAssetManufacturerDefaultModel,
+  getBackgroundCleanupModel,
+} from '../../../src/studio-os-core/creative-production/model-routing-engine/index.js';
+
+export {
+  PROMPT_ROUTER_VERSION,
+  resolvePromptRouting,
+} from '../../../src/studio-os-core/creative-production/prompt-router/index.js';
+
+export {
+  GENERATION_ROUTING_RECORD_VERSION,
+  buildGenerationRoutingRecord,
+} from '../../../src/studio-os-core/creative-production/generation-routing-record.js';
+
+export {
+  validateModelRoutingDecision,
+  validateAndResolveModelRouting,
+} from '../../../src/studio-os-core/immune-system/model-routing-validation.js';

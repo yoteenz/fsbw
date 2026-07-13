@@ -47973,3 +47973,27 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 
 **Prior context in chat:** Founder Render deploy issues (2ff12f396 missed Vercel, 6093d8a79 redeploy trigger); brand vault alias for studio-os; auth.user.email fix.
 
+---
+
+## 2026-07-13 — P1 Canonical AI Model Routing Architecture (full conversation)
+
+**Founder sprint:** Separate world generation from asset manufacturing. Experience Lab = World Architect (NBP). Creative Director Studio = Asset Production Studio (NB2). Every generation routes through ModelRoutingEngine™ and PromptRouter™ before workers execute. No hardcoded model names in workers. Immune system enforces specialization. Quality Guard records forensic routing metadata.
+
+**Shipped:**
+
+- **ModelRoutingEngine™** — `src/studio-os-core/creative-production/model-routing-engine/` — intent → worker family → registry route; NBP for world intents, NB2 for asset intents, BiRefNet for cleanup
+- **PromptRouter™** — `src/studio-os-core/creative-production/prompt-router/` — versioned prompts (`founder-full-room-preview-prompt.v1`, `asset-reception-desk-prompt.v1`, `asset-chair-prompt.v1`, etc.)
+- **Immune System** — `src/studio-os-core/immune-system/model-routing-validation.ts` — rejects model/intent mismatches and EL↔CDS boundary violations; integrated into `generation-preflight.ts`
+- **Quality Guard forensic** — `src/studio-os-core/creative-production/generation-routing-record.ts` — records model, prompt version, reference strategy, material/lighting/camera profiles for replay
+- **Extended artifact intents** — manufacturing intents in `artifact-intent.ts` (reception-desk, furniture-asset, landmark-asset, experience-environment, world-preview, background-cleanup, etc.)
+- **Generation kernel refactor** — `resolve-model-route.ts`, `founder-render/model-route.ts`, `studioBuilderGeneration.ts`, `generation-gateway.ts` delegate to engine (removed inline NB2 edit hardcode)
+- **Bundle exports** — `studio-os-server-entry.ts` + rebuilt `studio-os-server.bundle.js`
+- **Canon** — `docs/studio-os/production/CANONICAL_MODEL_ROUTING_ARCHITECTURE.md`
+- **Tests** — 17 model-routing-engine tests + existing founder-render / isolated-asset-routing tests pass; `npm run build` passes
+
+**Spatial Architecture Review:** SKIPPED — infrastructure/routing refactor with no new founder-facing surfaces.
+
+**Prior context in chat:** P0 EL→CDS manufacturing pipeline (`fe2c60b5a`); Founder Render fixes (brand vault, auth, bundle, scene-stack lazy routing); deploy gap for `2ff12f396`.
+
+**Remaining gaps:** P0-B handoff persistence on approve; P0-C CDS room gate; per-asset CDS workspace wiring to use `buildGenerationRoutingRecord` at dispatch persistence layer.
+

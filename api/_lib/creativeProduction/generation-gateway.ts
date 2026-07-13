@@ -13,7 +13,7 @@ import { verifyProductionAuthorizationSignature } from './authorization-signing.
 import { resolveLegacyCompatAuthorization } from './legacy-adapters.js';
 import { registerGeneratedAssetWithLineage } from './registry-transaction.js';
 import { getSupabaseAdmin } from '../supabase.js';
-import { generateStudioBuilderAsset, STUDIO_BUILDER_FAL_MODEL } from '../studioBuilderGeneration.js';
+import { generateStudioBuilderAsset, resolveStudioBuilderFalModel } from '../studioBuilderGeneration.js';
 import { generateStudioAssetImage } from '../studioAssetGeneration.js';
 import {
   evaluateCreativeDecision,
@@ -123,6 +123,7 @@ async function executeBuilderGeneration(
       negativePrompt: typeof e.negativePrompt === 'string' ? e.negativePrompt : undefined,
     });
     if (!result.ok) {
+      const fallbackModel = await resolveStudioBuilderFalModel();
       const diagnostic = normalizeGenerationError({
         err: new Error(result.error ?? 'Generation failed'),
         stage: 'generateStudioBuilderAsset',
@@ -134,7 +135,7 @@ async function executeBuilderGeneration(
               ? 'PROVIDER_REQUEST_FAILED'
               : 'ORCHESTRATION_FAILED',
         provider: 'fal',
-        model: STUDIO_BUILDER_FAL_MODEL,
+        model: result.model ?? fallbackModel,
         adapter: 'generateStudioBuilderAsset',
         elapsedMs: Date.now() - started,
         context: {
