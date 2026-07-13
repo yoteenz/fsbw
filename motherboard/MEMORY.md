@@ -48075,3 +48075,28 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 
 **Prior context in chat:** EL/CDS identity gap analysis committed (`36c4b7c62`); P0 Municipal Governance; P1 Model Routing; P0 EL→CDS pipeline.
 
+---
+
+## 2026-07-13 — P0 Studio World Industry Packs™ (full conversation)
+
+**Founder sprint:** Transform Experience Lab from room generator to **Industry Headquarters Generator**. New hierarchy: Studio World → Business Archetype → Industry Pack → Shared Department Registry → Construction Blueprint → Founder Render → Approval → CDS → Construction Mode → Published HQ → Marketplace. Departments are reusable (Reception v6 shared across Hair Salon, Law Firm, Doctor, etc.). Mandatory DepartmentReuseEngine cost optimization. CDS receives entire approved headquarters, not room-by-room invention.
+
+**Spatial Architecture Review:** APPROVED 4.6 — `docs/studio-os/investigations/SPATIAL_ARCHITECTURE_REVIEW_INDUSTRY_PACKS.md`.
+
+**Shipped foundational layer:**
+
+- **Business Archetype Registry™** — 20 archetypes (`business-archetype-registry.ts`)
+- **Shared Department Registry™** — 21 department templates + shared instances (`department-template-registry.ts`)
+- **Industry Pack Registry™** — 10 official packs: Hair Salon, Law Firm, Doctor, Realtor, Restaurant, Fitness, Marketing Agency, Boutique, Coffee Shop, Tattoo Shop (`industry-pack-registry.ts`)
+- **DepartmentReuseEngine™** — reuse before generate; delta update regenerates only changed departments (`department-reuse-engine.ts`)
+- **HeadquartersGenerationPlan** — EL generates ALL departments together
+- **ApprovedHeadquartersHandoff™** — CDS gate for entire HQ (`approved-headquarters-handoff.ts`)
+- **Integration hooks** — EL planning, CDS validation, mod attach to department slots (`integration.ts`)
+- **Supabase migration** — `20260713160000_studio_industry_packs.sql` (archetypes, templates, packs, versions, founder instances, marketplace listings, shared instances)
+- **Canon** — `docs/studio-os/production/STUDIO_WORLD_INDUSTRY_PACKS_ARCHITECTURE.md`
+- **Tests** — 13/13 pass; `npm run build` passes
+
+**Documented gaps (UI phase):** Experience Lab UI still room-centric — migrate to archetype → industry → department tree flow; persist founder pack instances to Supabase; wire handoff on HQ approve; Marketplace pack listing UI; official pack admin authoring UI.
+
+**Prior context in chat:** Architectural Shell department map (`6a4050ae6`); EL/CDS identity gap analysis (`36c4b7c62`); Municipal Governance; Model Routing; EL→CDS pipeline.
+
