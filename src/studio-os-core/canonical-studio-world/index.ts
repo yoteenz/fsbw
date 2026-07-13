@@ -14,4 +14,7 @@ export * from './prompt-contracts';
 export * from './canonical-department-generation';
 export * from './canonical-department-construction-plan';
 export * from './canonical-department-queue';
+export * from './department-blueprint-builder';
+export * from './department-architectural-fingerprints';
+export * from './department-distinctness-validator';
 export * from './cds-canonical-handoff';

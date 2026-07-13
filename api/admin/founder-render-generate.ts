@@ -80,6 +80,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       brandMaterialRefs: dispatch.brandMaterialRefs,
       providerRequestId: dispatch.providerRequestId,
       revisionNote,
+      promptVersion: dispatch.promptVersion,
+      departmentId: dispatch.departmentId,
+      departmentClass: dispatch.departmentClass,
+      cacheKey: dispatch.cacheKey,
+      architecturalFingerprint: dispatch.architecturalFingerprint,
+      referencePackageVersion: dispatch.referencePackageVersion,
     });
 
     if (!inserted.ok) {

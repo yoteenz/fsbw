@@ -22,6 +22,29 @@ import {
 
 export const FOUNDER_RENDER_STORAGE_PREFIX = 'studio-assets/founder-render';
 
+async function loadCanonicalRenderModules() {
+  const [
+    { buildCanonicalFounderRenderPrompt },
+    { isCanonicalDepartmentPlan },
+    { buildFounderRenderCacheIdentity },
+    { validateDepartmentDistinctness },
+    { getCanonicalDepartmentRecord },
+  ] = await Promise.all([
+    import('../../src/studio-os-core/canonical-studio-world/canonical-founder-render-prompt.js'),
+    import('../../src/studio-os-core/canonical-studio-world/department-blueprint-builder.js'),
+    import('../../src/studio-os-core/canonical-studio-world/founder-render-cache-identity.js'),
+    import('../../src/studio-os-core/canonical-studio-world/department-distinctness-validator.js'),
+    import('../../src/studio-os-core/canonical-studio-world/canonical-department-registry.js'),
+  ]);
+  return {
+    buildCanonicalFounderRenderPrompt,
+    isCanonicalDepartmentPlan,
+    buildFounderRenderCacheIdentity,
+    validateDepartmentDistinctness,
+    getCanonicalDepartmentRecord,
+  };
+}
+
 function repoRoot(): string {
   return process.cwd();
 }
@@ -69,6 +92,12 @@ export type FounderRenderGenerateResult =
       referenceCount: number;
       brandMaterialRefs: string[];
       imageUrls: string[];
+      departmentId?: string;
+      departmentClass?: string;
+      cacheKey?: string;
+      architecturalFingerprint?: string[];
+      blueprintRevision?: number;
+      referencePackageVersion?: string;
     }
   | { ok: false; code: string; error: string; missingRole?: string };
 
@@ -92,13 +121,41 @@ export async function prepareFounderRenderDispatch(
     return { ok: false, code: brandPkg.code, error: brandPkg.message, missingRole: brandPkg.missingRole };
   }
 
-  const promptBundle = buildFounderFullRoomPreviewPrompt({
+  const canonical = await loadCanonicalRenderModules();
+
+  const promptBundle = canonical.isCanonicalDepartmentPlan(input.plan)
+    ? canonical.buildCanonicalFounderRenderPrompt({
+        plan: input.plan,
+        brandPackage: brandPkg,
+        founderRevisionNote: input.revisionNote,
+      })
+    : buildFounderFullRoomPreviewPrompt({
+        plan: input.plan,
+        brandPackage: brandPkg,
+        founderRevisionNote: input.revisionNote,
+      });
+
+  const distinctness = canonical.validateDepartmentDistinctness({
     plan: input.plan,
-    brandPackage: brandPkg,
-    founderRevisionNote: input.revisionNote,
+    effectivePrompt: promptBundle.prompt,
   });
+  if (!distinctness.ok) {
+    return { ok: false, code: distinctness.code, error: distinctness.message };
+  }
 
   const route = resolveFounderRenderModelRoute('16:9');
+  const cacheIdentity = canonical.buildFounderRenderCacheIdentity({
+    plan: input.plan,
+    promptVersion: promptBundle.promptVersion,
+    model: route.providerModel,
+    aspectRatio: route.aspectRatio,
+    provider: 'fal',
+    referencePackageVersion: `brand-${brandVaultOrganizationId}-v1`,
+  });
+
+  const deptRecord = canonical.isCanonicalDepartmentPlan(input.plan)
+    ? canonical.getCanonicalDepartmentRecord(input.plan.room.roomId as import('../../src/studio-os-core/canonical-studio-world/canonical-department-registry.js').CanonicalMainDepartmentId)
+    : undefined;
   let imageUrls: string[] = [];
   try {
     imageUrls = await uploadBrandRefsToFal(preflight.brandReferenceUrls);
@@ -107,10 +164,10 @@ export async function prepareFounderRenderDispatch(
   }
 
   const builderInput: StudioBuilderGenerateInput = {
-    departmentId: input.plan.metadata.organizationId,
+    departmentId: input.plan.room.roomId,
     packageId: 'founder-render',
     projectId: input.plan.planId,
-    productionGroupId: `founder-render-${input.plan.room.roomId}`,
+    productionGroupId: `founder-render-${input.plan.room.roomId}-${cacheIdentity.cacheKey.slice(0, 12)}`,
     heroAssetId: 'full-room-preview',
     prompt: promptBundle.prompt,
     negativePrompt: promptBundle.negativePrompt,
@@ -137,6 +194,13 @@ export async function prepareFounderRenderDispatch(
     referenceCount: imageUrls.length,
     brandMaterialRefs: imageUrls,
     imageUrls,
+    departmentId: input.plan.room.roomId,
+    departmentClass: deptRecord?.departmentClass,
+    cacheKey: cacheIdentity.cacheKey,
+    architecturalFingerprint:
+      'architecturalFingerprint' in promptBundle ? promptBundle.architecturalFingerprint : undefined,
+    blueprintRevision: input.plan.metadata.revision,
+    referencePackageVersion: cacheIdentity.referenceRevision,
   };
 }
 

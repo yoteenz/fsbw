@@ -48273,6 +48273,25 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 
 ---
 
+## 2026-07-13 — Canonical department NBP Founder Render approval gate (full conversation)
+
+**Founder request:** Before batch queue / pack generation, canonical departments need the same approval pipeline as Industry Packs — NBP full-room Founder Render preview must be approved first.
+
+**Context:** Prior turn wired canonical render queue (`2e0a1ff7b`) but skipped Founder Review gate. Industry Pack Program B uses BlueprintAuthorExperienceLabGate → FounderReviewExperience → Approve before manufacturing.
+
+**Shipped (`0f4ce7a55`):**
+
+- **`openBlueprintAuthorSessionFromPlan`** — open Blueprint Author from pre-built canonical ConstructionPlan
+- **`useBlueprintAuthorWorkflow`** — `openCanonicalDepartment`, `approvePreviewOnly`, `isPreviewApproved`, `previewApprovedDepartmentId`
+- **`FounderReviewExperience`** — `approvalMode: preview-only` shows **Approve Preview** (no manufacturing until batch)
+- **`CanonicalDepartmentFounderReviewGate`** — Program A: intent form → NBP Founder Review → unlocks batch queue only after approval
+- **Server** — `submitCanonicalDepartmentBatch` rejects `PREVIEW_NOT_APPROVED` without approved founder render
+- **UI order** — Tree → Founder Render Review → (after approve) Batch + Queue panels
+- **Tests** — 29/29 PASS; build PASS
+
+**One commit + one push** on `master` via `agent-commit.sh`.
+---
+
 ## 2026-07-13 — Wire canonical department render queue (full conversation)
 
 **Founder request:** Experience Lab Program A Admin Batch Generation did nothing when clicking Queue; needed physical visible queue and live image generation.
@@ -48295,3 +48314,34 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 
 **One commit + one push** on `master` via `agent-commit.sh`.
 
+---
+
+## 2026-07-13 — Canonical department NBP Founder Render approval gate (full conversation)
+
+**Founder request:** Before batch queue / pack generation, canonical departments need the same approval pipeline as Industry Packs — NBP full-room Founder Render preview must be approved first.
+
+**Context:** Prior turn wired canonical render queue (`2e0a1ff7b`) but skipped Founder Review gate. Industry Pack Program B uses BlueprintAuthorExperienceLabGate → FounderReviewExperience → Approve before manufacturing.
+
+**Shipped (`0f4ce7a55`):**
+
+- **`openBlueprintAuthorSessionFromPlan`** — open Blueprint Author from pre-built canonical ConstructionPlan
+- **`useBlueprintAuthorWorkflow`** — `openCanonicalDepartment`, `approvePreviewOnly`, `isPreviewApproved`, `previewApprovedDepartmentId`
+- **`FounderReviewExperience`** — `approvalMode: preview-only` shows **Approve Preview** (no manufacturing until batch)
+- **`CanonicalDepartmentFounderReviewGate`** — Program A: intent form → NBP Founder Review → unlocks batch queue only after approval
+- **Server** — `submitCanonicalDepartmentBatch` rejects `PREVIEW_NOT_APPROVED` without approved founder render
+- **UI order** — Tree → Founder Render Review → (after approve) Batch + Queue panels
+- **Tests** — 29/29 PASS; build PASS
+
+**One commit + one push** on `master` via `agent-commit.sh`.
+
+---
+
+## 2026-07-13 — P0 Eliminate Cross-Department Render Contamination (full conversation)
+
+**Founder request:** P0 sprint — every canonical Studio World department must generate its own true architecture. Symptom: Experience Lab, Creative Director Studio, Reception, Executive Atrium only changed labels; all rendered the same reception room. Required forensic trace, full isolation fix, one commit, one push, CONCLUSION block.
+
+**Forensic root cause:** `buildCanonicalDepartmentConstructionPlan()` called `fixtureReceptionConstructionPlan()` for ALL canonical departments — forcing ReceptionShell into every department.
+
+**Shipped:** department-blueprint-builder, department-architectural-fingerprints, canonical-founder-render-prompt, founder-render-cache-identity, department-distinctness-validator, expanded charters, founderRenderGeneration/Jobs/Status isolation, Department Render Diagnostics panel, forensic doc, department-render-isolation tests (11/11 PASS), canonical-department-generator (29/29 PASS), build PASS.
+
+**One commit + one push** on `master` via `agent-commit.sh`.

@@ -49,9 +49,16 @@ export async function insertFounderRenderJob(input: {
   brandMaterialRefs: string[];
   providerRequestId: string;
   revisionNote?: string | null;
+  promptVersion?: string;
+  departmentId?: string;
+  departmentClass?: string;
+  cacheKey?: string;
+  architecturalFingerprint?: string[];
+  referencePackageVersion?: string;
 }): Promise<{ ok: true; jobId: string } | { ok: false; error: string }> {
   const admin = getSupabaseAdminServiceRole();
   const jobId = `frj-${randomUUID()}`;
+  const promptVersion = input.promptVersion ?? FOUNDER_FULL_ROOM_PREVIEW_PROMPT_VERSION;
   const { error } = await admin.from(TABLE).insert({
     job_id: jobId,
     organization_id: input.plan.metadata.organizationId,
@@ -66,7 +73,7 @@ export async function insertFounderRenderJob(input: {
     model_route: input.modelRoute,
     provider_model: input.providerModel,
     provider_request_id: input.providerRequestId,
-    prompt_version: FOUNDER_FULL_ROOM_PREVIEW_PROMPT_VERSION,
+    prompt_version: promptVersion,
     prompt_hash: input.promptHash,
     effective_prompt: input.effectivePrompt,
     reference_count: input.referenceCount,
@@ -76,6 +83,15 @@ export async function insertFounderRenderJob(input: {
     diagnostics: {
       dispatchTimestamp: new Date().toISOString(),
       providerJobId: input.providerRequestId,
+      departmentId: input.departmentId ?? input.plan.room.roomId,
+      departmentClass: input.departmentClass ?? null,
+      blueprintId: input.plan.architecture.architectureId,
+      shellSpecId: input.plan.architecture.shellSpecId,
+      promptVersion,
+      cacheKey: input.cacheKey ?? null,
+      architecturalFingerprint: input.architecturalFingerprint ?? [],
+      referencePackageVersion: input.referencePackageVersion ?? null,
+      artifactIntent: FOUNDER_RENDER_ARTIFACT_INTENT,
     },
   });
   if (error) return { ok: false, error: error.message };

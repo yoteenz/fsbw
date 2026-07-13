@@ -1,9 +1,9 @@
 import type { ConstructionPlan } from '../blueprint-author/construction-plan-schema';
-import { fixtureReceptionConstructionPlan } from '../blueprint-author/fixtures';
 import type { CanonicalMainDepartmentId } from './canonical-department-registry';
 import { getCanonicalDepartmentRecord } from './canonical-department-registry';
 import { resolveDepartmentCharter } from './department-charters';
 import { buildCanonicalDepartmentPromptContract } from './prompt-contracts';
+import { buildCanonicalDepartmentBlueprint } from './department-blueprint-builder';
 
 /** Brand vault alias — canonical renders use studio-os → frontal-slayer marble grounding. */
 export const CANONICAL_RENDER_ORGANIZATION_ID = 'studio-os' as const;
@@ -31,35 +31,25 @@ export function buildCanonicalDepartmentConstructionPlan(
   const revision = record.blueprintRevision;
   const requestId = `canonical-${departmentId}-${renderKind}-r${revision}`;
 
-  const plan = fixtureReceptionConstructionPlan({
+  const founderIntent = [
+    `CANONICAL STUDIO WORLD DEPARTMENT — ${record.name}`,
+    charter.mission,
+    contract.positivePrompt.slice(0, 1200),
+  ].join('\n\n');
+
+  const plan = buildCanonicalDepartmentBlueprint({
+    departmentId,
     organizationId: CANONICAL_RENDER_ORGANIZATION_ID,
     buildingId: 'studio-world-hq',
     floorId: 'canonical-infrastructure',
-    roomId: departmentId,
     requestId,
-    founderIntent: [
-      `CANONICAL STUDIO WORLD DEPARTMENT — ${record.name}`,
-      charter.mission,
-      contract.positivePrompt.slice(0, 1200),
-    ].join('\n\n'),
-    styleProfile: {
-      styleId: 'studio-world-canonical',
-      version: '1',
-      organizationStyle: 'studio-world-global',
-      visualLanguage: 'neutral executive infrastructure — Architecture Law #001 compliant',
-    },
+    renderKind,
+    blueprintRevision: revision,
+    promptVersion: record.departmentPromptVersion,
+    founderIntent,
   });
 
-  plan.metadata.revision = revision;
-  plan.metadata.sceneVersion = `scene-canonical-${departmentId}.v${revision}`;
   plan.versions.promptVersion = record.departmentPromptVersion;
-  plan.room = {
-    ...plan.room,
-    roomId: departmentId,
-    roomType: 'canonical-department',
-    displayName: record.name,
-    purpose: charter.mission,
-  };
   plan.planId = `canonical-plan-${departmentId}-${renderKind}-r${revision}`;
 
   return { ok: true, plan };

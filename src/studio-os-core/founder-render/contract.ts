@@ -73,6 +73,16 @@ export type FounderRenderDiagnostics = {
   persistenceStatus: string;
   approvalStatus: string;
   effectivePromptPreview: string | null;
+  departmentId?: string | null;
+  departmentClass?: string | null;
+  blueprintId?: string | null;
+  shellSpecId?: string | null;
+  cacheKey?: string | null;
+  architecturalFingerprint?: string[];
+  referencePackageVersion?: string | null;
+  promptHash?: string | null;
+  jobId?: string | null;
+  renderId?: string | null;
 };
 
 export function buildFounderRenderJobView(input: {

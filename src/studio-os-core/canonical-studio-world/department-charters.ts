@@ -25,6 +25,10 @@ export type DepartmentCharter = {
   healthRequirements: string[];
   permitRequirements: string[];
   lifecycleRules: string[];
+  /** Architectural elements that MUST appear in founder render. */
+  mustInclude?: string[];
+  /** Architectural elements that MUST NEVER appear in founder render. */
+  neverInclude?: string[];
 };
 
 const charter = (
@@ -65,6 +69,23 @@ export const DEPARTMENT_CHARTERS: Partial<Record<CanonicalMainDepartmentId, Depa
     healthRequirements: ['immune-system-clear', 'architecture-law-001-pass'],
     permitRequirements: ['municipal-planning-permit'],
     lifecycleRules: ['must-publish-before-founder-clone', 'no-tenant-ownership'],
+    mustInclude: [
+      'floating holographic room blueprint',
+      'construction holograms',
+      'lighting studies',
+      'material studies',
+      'architectural workbench',
+      'integrated blank command dock',
+      'integrated blank workbench',
+    ],
+    neverInclude: [
+      'reception desk',
+      'waiting room',
+      'receptionist furniture',
+      'corporate lobby',
+      'concierge desk',
+      'ReceptionShell',
+    ],
   }),
   'creative-director-studio': charter('creative-director-studio', {
     mission: 'Manufacture and customize assets on approved architecture.',
@@ -87,6 +108,18 @@ export const DEPARTMENT_CHARTERS: Partial<Record<CanonicalMainDepartmentId, Depa
     healthRequirements: ['approved-handoff-present'],
     permitRequirements: [],
     lifecycleRules: ['requires-approved-blueprint', 'no-architecture-invention'],
+    mustInclude: [
+      'isolated production stages',
+      'material testing',
+      'asset version bays',
+      'lighting rigs',
+      'camera rigs',
+      'reference wall',
+      'production benches',
+      'integrated blank command dock',
+      'integrated blank workbench',
+    ],
+    neverInclude: ['Reception layout', 'reception desk', 'waiting lounge', 'ReceptionShell'],
   }),
   'command-center': charter('command-center', {
     mission: 'Operate Studio World global infrastructure and incident response.',
@@ -109,6 +142,67 @@ export const DEPARTMENT_CHARTERS: Partial<Record<CanonicalMainDepartmentId, Depa
     healthRequirements: ['all-systems-nominal'],
     permitRequirements: [],
     lifecycleRules: ['global-scope-only'],
+    mustInclude: [
+      'mission wall',
+      'city telemetry',
+      'organization graph',
+      'AI monitoring',
+      'municipal command tables',
+    ],
+    neverInclude: ['reception desk', 'waiting lounge', 'ReceptionShell'],
+  }),
+  marketplace: charter('marketplace', {
+    mission: 'Commerce district for industry packs, mods, and licensing.',
+    responsibilities: ['commerce', 'listings', 'licensing displays'],
+    nonResponsibilities: ['canonical architecture invention'],
+    userClasses: ['Founder', 'creators'],
+    coreWorkflows: ['browse', 'purchase', 'license'],
+    requiredTools: ['Marketplace', 'Mod Registry'],
+    requiredCommandModules: ['commerce-context'],
+    requiredWorkbenchModules: ['storefront-tools'],
+    requiredPanels: ['featured-mods'],
+    requiredSockets: ['COMMAND_DOCK', 'WORKBENCH', 'VIEWPORT'],
+    handoffDestinations: ['certification-center'],
+    upstreamDependencies: ['certification-center'],
+    downstreamDependencies: [],
+    visualIdentity: 'commercial district with storefronts',
+    atmosphere: 'bustling commerce plaza',
+    architecturalMetaphor: 'marketplace district',
+    availability: 'founder-accessible',
+    healthRequirements: ['certification-clear'],
+    permitRequirements: [],
+    lifecycleRules: ['marketplace-eligible'],
+    mustInclude: ['storefronts', 'licensing displays', 'creator kiosks', 'featured mods'],
+    neverInclude: ['reception desk', 'waiting lounge', 'ReceptionShell'],
+  }),
+  'founder-suite': charter('founder-suite', {
+    mission: 'Executive headquarters and monumental gathering space.',
+    responsibilities: ['founder executive access', 'global founder tools'],
+    nonResponsibilities: ['tenant HQ customization'],
+    userClasses: ['Founder'],
+    coreWorkflows: ['access', 'present', 'govern'],
+    requiredTools: ['Founder Dashboard'],
+    requiredCommandModules: ['founder-context'],
+    requiredWorkbenchModules: ['founder-tools'],
+    requiredPanels: ['executive-overview'],
+    requiredSockets: ['COMMAND_DOCK', 'WORKBENCH', 'VIEWPORT'],
+    handoffDestinations: ['founder-dashboard'],
+    upstreamDependencies: [],
+    downstreamDependencies: ['founder-dashboard'],
+    visualIdentity: 'monumental executive atrium',
+    atmosphere: 'premium executive headquarters',
+    architecturalMetaphor: 'executive atrium',
+    availability: 'founder-accessible',
+    healthRequirements: ['founder-access'],
+    permitRequirements: [],
+    lifecycleRules: ['global-scope-only'],
+    mustInclude: [
+      'monumental central gathering space',
+      'premium architecture',
+      'executive circulation',
+      'presentation areas',
+    ],
+    neverInclude: ['reception desk', 'concierge desk', 'waiting lounge'],
   }),
 };
 

@@ -8,24 +8,26 @@
 
 ## Current sprint
 
-**P0 — Industry Pack Neutrality, Creator IP Lineage & Marketplace Royalties**
+**P0 — Eliminate Cross-Department Render Contamination**
 
-**Status: SHIPPED — Build-A-Wig Atelier removed from official Hair packs; founder mod IP system live**
+**Status: SHIPPED — Each canonical department now owns isolated blueprint, prompt, cache, and fingerprint**
 
-**Correction:** Build-A-Wig Atelier™ is **not** a neutral Hair Brand/Salon default — it is a **Frontal Slayer** founder-created mod (`FOUNDER_CREATED_MODDED_SCENE`).
+**Root cause:** `buildCanonicalDepartmentConstructionPlan()` called `fixtureReceptionConstructionPlan()` for all departments — every render used ReceptionShell.
 
 **Shipped:**
 
-- **Hair Brand Pack** — 15 neutral departments; no Build-A-Wig Atelier
-- **Hair Salon Pack** — 14 neutral departments; no Build-A-Wig Atelier
-- **Founder mods module** — `src/studio-os-core/founder-mods/` (6 content classes, brand-neutrality validator, IP lineage, royalties, licensing, certification, installation)
-- **Frontal Slayer HQ preserved** — BAW Atelier, Hair Analysis Lab, Transformation Suite remain in `BEAUTY_HEADQUARTERS_REGISTRY` with creator lineage
-- **UI** — `FounderModRegistryPanel` separates founder mods from official pack tree
-- **Supabase** — `20260713210000_founder_mod_ip_lineage.sql` (11 tables + RLS); applied to production `hyycomvcaqxxvyrfupes`
-- **Tests** — `founder-mod-ip-lineage.test.ts` — 24/24 PASS
-- **Docs** — `BRAND_NEUTRALITY_STANDARD.md`, `FOUNDER_MOD_IP_LINEAGE.md`, `CREATOR_ROYALTIES.md`, `MOD_LICENSING.md`, `MOD_CERTIFICATION.md`
+- **`department-blueprint-builder.ts`** — per-department shells (ExperienceLabShell, CreativeDirectorStudioShell, ExecutiveAtriumShell, etc.)
+- **`canonical-founder-render-prompt.ts`** — per-department effective FAL prompts (`canonical-*-founder-render.v1`)
+- **`department-architectural-fingerprints.ts`** — signature elements + reception contamination markers
+- **`founder-render-cache-identity.ts`** — department-isolated cache keys
+- **`department-distinctness-validator.ts`** — rejects RECEPTION_CONTAMINATION and DEPARTMENT_NOT_DISTINCT
+- **Charters expanded** — mustInclude/neverInclude for EL, CDS, Command Center, Marketplace, Founder Suite
+- **Persistence** — job diagnostics store departmentId, blueprint, cacheKey, fingerprint
+- **Diagnostics panel** — Department Render Diagnostics in Founder Review
+- **Tests** — `department-render-isolation.test.ts` 11/11 PASS; canonical-department-generator 29/29 PASS
+- **Forensic doc** — `docs/studio-os/investigations/CROSS_DEPARTMENT_RENDER_CONTAMINATION.md`
 
-**Previous:** Canonical Studio World Department Generator (`c82cbd810`); Architecture Law #001 (`e892b3a65`); Experience Lab admin infrastructure (`188f1fc36`).
+**Previous:** Industry Pack Neutrality (`718ff3556`); Canonical Department Queue (`2e0a1ff7b`); NBP Approval Gate (`0f4ce7a55`).
 
 ---
 
