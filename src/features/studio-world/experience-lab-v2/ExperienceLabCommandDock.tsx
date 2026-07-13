@@ -74,24 +74,18 @@ export function ExperienceLabCommandDock({ model, onStatusOpen, onSearch }: Prop
                   key={tab.id}
                   type="button"
                   className={`elab-cmd__location-tab${active ? ' elab-cmd__location-tab--active' : ''}`}
+                  data-location={tab.id}
                   aria-current={active ? 'page' : undefined}
                   onClick={() => setActiveLocation(tab.id)}
                 >
-                  {tab.id === 'frontal-slayer-hq' ? (
-                    <span className="elab-cmd__location-icon" aria-hidden>
-                      <svg viewBox="0 0 16 16" width="12" height="12" focusable="false">
-                        <path
-                          d="M2 14V6l6-4 6 4v8H9v-4H7v4H2z"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="1.2"
-                        />
-                      </svg>
-                    </span>
-                  ) : null}
+                  <span className="elab-cmd__location-icon" aria-hidden>
+                    <ExperienceLabIcon name={tab.icon} size="xs" decorative />
+                  </span>
                   <span className="elab-cmd__location-copy">
                     <span className="elab-cmd__location-title">{tab.title}</span>
-                    <span className="elab-cmd__location-subtitle">
+                    <span
+                      className={`elab-cmd__location-subtitle${tab.subtitleAlignLeft ? ' elab-cmd__location-subtitle--align-left' : ''}`}
+                    >
                       {commandDockLocationSubtitle(tab, model.revision)}
                     </span>
                   </span>

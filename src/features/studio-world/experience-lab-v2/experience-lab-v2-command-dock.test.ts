@@ -21,9 +21,19 @@ describe('Experience Lab Command Dock locations', () => {
   });
 
   it('lists HQ locations with Experience Lab as primary department tab', () => {
-    expect(EXPERIENCE_LAB_COMMAND_DOCK_LOCATIONS[0]?.title).toBe('FRONTAL SLAYER HQ');
+    expect(EXPERIENCE_LAB_COMMAND_DOCK_LOCATIONS[0]?.title).toBe('FRONTAL SLAYER');
+    expect(EXPERIENCE_LAB_COMMAND_DOCK_LOCATIONS[0]?.subtitleAlignLeft).toBe(true);
     expect(EXPERIENCE_LAB_COMMAND_DOCK_LOCATIONS[1]?.id).toBe('experience-lab');
     expect(EXPERIENCE_LAB_COMMAND_DOCK_LOCATIONS.some((l) => l.id === 'reception')).toBe(true);
+  });
+
+  it('assigns an icon to every location tab', () => {
+    for (const tab of EXPERIENCE_LAB_COMMAND_DOCK_LOCATIONS) {
+      expect(tab.icon).toBeTruthy();
+    }
+    expect(EXPERIENCE_LAB_COMMAND_DOCK_LOCATIONS[0]?.icon).toBe('projects');
+    expect(EXPERIENCE_LAB_COMMAND_DOCK_LOCATIONS[1]?.icon).toBe('experienceLab');
+    expect(EXPERIENCE_LAB_COMMAND_DOCK_LOCATIONS[2]?.icon).toBe('users');
   });
 
   it('maps approval and permit states to uppercase review labels', () => {
@@ -66,8 +76,10 @@ describe('Experience Lab Command Dock presentation', () => {
 
   it('adjusts row 2 and row 3 typography independently', () => {
     expect(css).toMatch(/\.elab-cmd__title\s*\{[\s\S]*?font-size:\s*11px/);
-    expect(css).toMatch(/\.elab-cmd__location-title\s*\{[\s\S]*?font-size:\s*6px/);
+    expect(css).toMatch(/\.elab-cmd__location-title\s*\{[\s\S]*?font-size:\s*7px/);
+    expect(css).toMatch(/\.elab-cmd__location-title\s*\{[\s\S]*?font-weight:\s*600/);
     expect(css).toMatch(/\.elab-cmd__location-subtitle\s*\{[\s\S]*?font-size:\s*5px/);
+    expect(css).toContain('.elab-cmd__location-subtitle--align-left');
     expect(css).toMatch(/\.elab-cmd__status-item\s*\{[\s\S]*?font-size:\s*8px/);
     expect(css).toMatch(/\.elab-cmd__status-item\s*\{[\s\S]*?font-weight:\s*400/);
     expect(css).toMatch(/\.elab-cmd__status-item strong\s*\{[\s\S]*?font-weight:\s*600/);

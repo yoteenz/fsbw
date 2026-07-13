@@ -1,5 +1,7 @@
 /** Primary HQ / department locations shown in Experience Lab Command Dock row 2. */
 
+import type { ExperienceLabIconName } from '../icons/experience-lab-icon-registry';
+
 export const EXPERIENCE_LAB_COMMAND_DOCK_LOGO_PATH =
   '/storage/v1/object/public/live-preview/Studio%20World/IMG_6238.webp';
 
@@ -27,6 +29,9 @@ export type CommandDockLocationTab = {
   id: CommandDockLocationId;
   title: string;
   subtitle: string;
+  icon: ExperienceLabIconName;
+  /** When true, subtitle is left-aligned (e.g. Active Headquarters under HQ name). */
+  subtitleAlignLeft?: boolean;
   /** When true, tab shows live status indicator (e.g. revision pulse). */
   showLiveIndicator?: boolean;
 };
@@ -34,34 +39,41 @@ export type CommandDockLocationTab = {
 export const EXPERIENCE_LAB_COMMAND_DOCK_LOCATIONS: CommandDockLocationTab[] = [
   {
     id: 'frontal-slayer-hq',
-    title: 'FRONTAL SLAYER HQ',
+    title: 'FRONTAL SLAYER',
     subtitle: 'ACTIVE HEADQUARTERS',
+    icon: 'projects',
+    subtitleAlignLeft: true,
   },
   {
     id: 'experience-lab',
     title: 'EXPERIENCE LAB',
     subtitle: 'ARCHITECTURE STUDIO',
+    icon: 'experienceLab',
   },
   {
     id: 'reception',
     title: 'RECEPTION',
     subtitle: 'GUEST ARRIVAL',
+    icon: 'users',
     showLiveIndicator: true,
   },
   {
     id: 'creative-director-studio',
     title: 'CREATIVE DIRECTOR STUDIO',
     subtitle: 'ASSET MANUFACTURING',
+    icon: 'attachments',
   },
   {
     id: 'permit-office',
     title: 'PERMIT OFFICE',
     subtitle: 'MUNICIPAL PERMITS',
+    icon: 'permissions',
   },
   {
     id: 'command-center',
     title: 'COMMAND CENTER',
     subtitle: 'EXECUTIVE BRIDGE',
+    icon: 'terminal',
   },
 ];
 

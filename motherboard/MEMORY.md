@@ -48940,6 +48940,21 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 - **`ExperienceLabV2Shell.tsx`** — removed compact `ExperienceLabDiagnostics` from full-workstation `lowerDeck` (still in component review sandbox)
 - **Tests** — command dock edge-to-edge, workbench icon bindings, lowerDeck no diagnostics; 52/52 PASS
 
-**Spatial Architecture Review:** SKIPPED — presentation polish only.
+**One commit + one push** on `master` via `agent-commit.sh`.
+
+---
+
+## 2026-07-13 — Command Dock row 2: icons, typography, HQ label polish
+
+**Founder request:** (1) left-align “Active Headquarters” subtitle only; (2) remove redundant “HQ” from company name; (3) lighter +1px location titles (FRONTAL SLAYER, EXPERIENCE LAB, RECEPTION…); (4) icon left of text on every row-2 panel.
+
+**Shipped:**
+
+- **`experience-lab-v2-command-dock-locations.ts`** — `FRONTAL SLAYER` (no HQ); `icon` on every tab; `subtitleAlignLeft` for HQ
+- **`ExperienceLabCommandDock.tsx`** — `ExperienceLabIcon` for all location tabs (projects, experienceLab, users, attachments, permissions, terminal)
+- **`experience-lab-v2.css`** — location title 7px/600; subtitle left-align modifier
+- **Tests** — 10/10 PASS
+
+**Spatial Architecture Review:** SKIPPED — Command Dock presentation polish.
 
 **One commit + one push** on `master` via `agent-commit.sh`.

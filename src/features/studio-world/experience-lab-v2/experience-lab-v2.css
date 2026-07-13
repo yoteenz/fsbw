@@ -423,7 +423,7 @@ body.elab-v2-fixed-shell-active {
   align-items: center;
   justify-content: center;
   gap: 6px;
-  padding: 6px 10px;
+  padding: 6px 8px;
   min-height: 40px;
   box-sizing: border-box;
   border: none;
@@ -457,8 +457,8 @@ body.elab-v2-fixed-shell-active {
 }
 
 .elab-cmd__location-title {
-  font-size: 6px;
-  font-weight: 800;
+  font-size: 7px;
+  font-weight: 600;
   letter-spacing: 0.08em;
   white-space: nowrap;
   text-align: center;
@@ -470,6 +470,11 @@ body.elab-v2-fixed-shell-active {
   color: var(--elab-muted);
   white-space: nowrap;
   text-align: center;
+}
+
+.elab-cmd__location-subtitle--align-left {
+  text-align: left;
+  align-self: flex-start;
 }
 
 .elab-cmd__location-tab--active .elab-cmd__location-subtitle {
