@@ -48958,3 +48958,23 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 **Spatial Architecture Review:** SKIPPED — Command Dock presentation polish.
 
 **One commit + one push** on `master` via `agent-commit.sh`.
+
+---
+
+## 2026-07-13 — Site-wide boot freeze (desktop + all routes): flight recorder storage observer loop
+
+**Founder request:** Why isn’t the FSBW desktop site loading?
+
+**Investigation:**
+
+- Production HTML/assets return HTTP 200; deploy `4ea1a44d6` live on `fsbw.vercel.app`.
+- Playwright repro: main thread **permanently blocked** (~45s+) on **all routes** (`/desktop/penthouse`, `/home/shop`), not desktop-specific — `#root` never mounts, CDP evaluate times out.
+- Secondary: after rapid deploys today, old hashed entry chunks (e.g. `index.B2DglyFt.js`) 404 — can cause ChunkLoadError on stale tabs; `chunkLoadRecovery` handles reload but is not the primary freeze.
+
+**Root cause:** `installStorageObserver()` patches `sessionStorage.setItem` to log keys containing `"studio"`. Flight recorder `persistFlightEvent()` writes `studioOsFlightRecorderSummary_v1` on every event → observer calls `recordFlightEvent()` again → infinite synchronous recursion → frozen main thread / white screen.
+
+**Fix:** `src/studio-os/diagnostics/state-monitor/storage-observer.ts` — reentrancy guard (`observerDepth`) + skip observer-internal keys (`studioOsFlightRecorder*`, `studioOsQuarantine_v1_*`). Local Playwright: penthouse + home/shop render with content after fix.
+
+**Spatial Architecture Review:** SKIPPED — P0 infrastructure bugfix, no new surfaces.
+
+**One commit + one push** on `master` via `agent-commit.sh`.
