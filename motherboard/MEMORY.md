@@ -48029,3 +48029,31 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 
 **Prior context in chat:** P1 Model Routing (`68620b38b`); P0 EL→CDS pipeline; Founder Render fixes.
 
+---
+
+## 2026-07-13 — EL + CDS Distinct Department Identities — architectural review (full conversation)
+
+**Founder sprint:** Experience Lab and Creative Director Studio must feel like physically walking between departments in a futuristic HQ — not tabs on one website. Attachment A (EL) and Attachment B (CDS) are canonical UX north stars (artistic direction; not literal recreation). EL = architect only (blueprint, Founder Render, intents, handoff). CDS = luxury production facility (per-asset manufacturing on frozen architecture). Construction Mode = assembly only.
+
+**User instruction:** Do not implement immediately — complete architectural review + gap analysis first; implement after review.
+
+**Spatial Architecture Review:** APPROVED 4.5 — `docs/studio-os/investigations/SPATIAL_ARCHITECTURE_REVIEW_ARCHITECTURAL_SHELL.md`. Command Deck must be diegetic glass bridge, not SaaS nav.
+
+**Audit artifacts (docs only — no production UI changes):**
+
+- `docs/studio-os/investigations/EXPERIENCE_LAB_CDS_IDENTITY_GAP_ANALYSIS.md` — full gap analysis vs canonical spec; 28-item implementation backlog; implementation gates G1–G5
+- `docs/studio-os/architecture/STUDIO_WORLD_ARCHITECTURAL_SHELL_DEPARTMENT_MAP.md` — complete department shell map (Command Deck + Workbench + Immersive Workspace) for all 7 flagships + Beauty HQ + Constitution Hall
+- `docs/studio-os/investigations/SPATIAL_ARCHITECTURE_REVIEW_ARCHITECTURAL_SHELL.md` — shell spatial review
+
+**Critical EL gaps:** Mode 1/2 tabs feel like website; post-approval manufacturing panels + World Compiler preview still in EL; `Approve & Build` not handoff CTA; no elevator/dissolve transition; object inspect in EL; municipal permit/budget not surfaced.
+
+**Critical CDS gaps:** `ensureStation` invents architecture; `environment-shell` regeneration; no frozen Founder Render reference wall; layer-centric viewport not asset turntable; missing Material Lab / Lighting Studio / Camera Suite workbench tools.
+
+**Attachment note:** No concept PNG/JPG found in repo — recommend `docs/studio-os/reference-concepts/` before pixel implementation.
+
+**Implementation gates:** G1 founder reviews gap analysis · G2 shell map approved · G3 P0-B handoff persistence · G4 `StudioWorldShell` primitives API · G5 concept images in repo. **Do not begin UI until G1–G2 confirmed.**
+
+**Recommended implementation order after approval:** (1) `StudioWorldShell` primitives (2) EL identity refactor (3) CDS identity refactor (4) municipal wiring in EL workbench (5) P0-B/C backend handoff + CDS room gate.
+
+**Prior context in chat:** P0 Municipal Governance (`1e523057a`); P1 Model Routing (`68620b38b`); P0 EL→CDS pipeline (`fe2c60b5a`).
+
