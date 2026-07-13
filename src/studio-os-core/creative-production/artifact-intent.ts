@@ -14,7 +14,8 @@ export type ArtifactIntent =
   | 'logo-component'
   | 'full-logo'
   | 'packaging-composite'
-  | 'campaign-model-replacement';
+  | 'campaign-model-replacement'
+  | 'founder-full-room-preview';
 
 export type ArtifactIntentSurface = 'frontal-slayer' | 'experience-lab' | 'creative-direction-studio';
 
@@ -65,6 +66,7 @@ export function allowsFullSceneOutput(intent: ArtifactIntent): boolean {
   return (
     intent === 'final-scene' ||
     intent === 'final-scene-preview' ||
+    intent === 'founder-full-room-preview' ||
     intent === 'environment-shell' ||
     intent === 'campaign-composite' ||
     intent === 'full-logo' ||
@@ -91,5 +93,6 @@ export function validatorExistsForIntent(intent: ArtifactIntent): boolean {
     'full-logo',
     'packaging-composite',
     'campaign-model-replacement',
+    'founder-full-room-preview',
   ].includes(intent);
 }

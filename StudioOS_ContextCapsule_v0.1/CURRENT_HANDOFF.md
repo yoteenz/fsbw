@@ -8,13 +8,13 @@
 
 ## Current sprint
 
-**P0 — FS vs Studio OS Generation Parity Forensics + Surgical Repair**
+**P0 — True Founder Render™ (Photoreal Full-Room Preview)**
 
-**Status: Repair shipped — Founder Verification Pending**
+**Status: Repair shipped — Founder Mobile Verification Pending**
 
-Proven first causal divergence: Frontal Slayer accepts FAL output without verified-asset pipeline; Studio OS rejected salvageable opaque studio plates before background removal. Repair: salvageable-opaque deferral + artifact-intent routing + parity forensic panel (`?compilerDiag=1`).
+Replaced procedural CSS Founder Review hero with durable Founder Render jobs (`founder-full-room-preview`), FAL `fal-ai/nano-banana-pro/edit`, brand-asset preflight, approval gate, and engineering blueprint collapsed to drawer.
 
-**Previous:** P1 Founder Review Experience™ (`ce6afb293`); stale governed job expiry (`e1c422eec`).
+**Previous:** P0 FS vs Studio OS Generation Parity (`74f298ca2`); P1 Founder Review Experience™ (`ce6afb293`).
 
 ---
 
@@ -22,6 +22,7 @@ Proven first causal divergence: Frontal Slayer accepts FAL output without verifi
 
 | ID | Blocker | Status |
 |----|---------|--------|
+| **B1-FounderRender** | Photoreal full-room Founder Render on mobile Founder Review | **Verify Pending** — code shipped |
 | **B1-Parity** | Salvageable opaque layer extraction on real device | **Verify Pending** — repair shipped |
 | **B1-Layer1** | Layer 1 mobile Safari/Chrome with `?compilerDiag=1` | **Verify Pending** |
 | **B1-E2E-Completion** | Top bar vs viewport consistency | **Verify Pending** |
@@ -31,13 +32,13 @@ Proven first causal divergence: Frontal Slayer accepts FAL output without verifi
 
 ## Founder workflow
 
-1. Open Experience Lab validation render on mobile with `?compilerDiag=1`.
-2. Generate shell, then signature-landmark or furniture-objects.
-3. Confirm opaque NB2 output reaches **BACKGROUND_REMOVING** (not immediate `QUALITY_REGENERATE_REQUIRED`).
-4. Export Generation Parity JSON from diagnostic panel.
+1. Open Experience Lab → Blueprint Author → Construction Plan → Founder Review.
+2. Tap **Generate Founder Preview** — confirm photoreal room image (not procedural shapes).
+3. Zoom / fullscreen preview; verify blueprint revision + model in diagnostics.
+4. **Approve & Build** only when preview is READY and matches current revision.
 
 **References:**
 
-- `docs/studio-os/investigations/FS_VS_STUDIO_OS_GENERATION_PARITY.md`
-- `docs/studio-os/investigations/fs-studio-os-generation-parity.json`
-- `docs/studio-os/scene-stack/VALIDATION_ORDER.md`
+- `docs/studio-os/blueprint-author/FOUNDER_RENDER.md`
+- `docs/studio-os/experience-lab/FOUNDER_PREVIEW_WORKFLOW.md`
+- `docs/studio-os/creative-production/FOUNDER_RENDER_ARTIFACT_INTENT.md`

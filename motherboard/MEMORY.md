@@ -47777,3 +47777,32 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 
 **Remaining:** Founder mobile verification that isolated layer reaches BACKGROUND_REMOVING on opaque NB2 output; B1-Layer1/B1-E2E/B1-Isolated device proof unchanged.
 
+---
+
+## 2026-07-13 — P0 True Founder Render™ — Photoreal Full-Room Preview (full conversation)
+
+**Context:** One governed P0 sprint — replace procedural CSS shapes in Founder Review with actual AI-generated photoreal full-room preview from Construction Plan; manufacturing must not start until founder approves real visual.
+
+**Documented Fact (previous production):** `FounderReviewHero` used `buildFounderRenderModel()` procedural rectangles/gradients/glassmorphism (`generationOccurred: false`). Engineering blueprint was misrepresented as Founder Preview.
+
+**Founder Decision:** Founder Review hero must show one photoreal full-room image generated from approved Construction Plan. Engineering Blueprint remains collapsed in drawer only.
+
+**Implementation shipped:**
+
+- **Core:** `src/studio-os-core/founder-render/` — contract, prompt-builder (server), model-route, preflight, 15 tests
+- **Artifact intent:** `founder-full-room-preview` in `artifact-intent.ts`; no isolated-object validation; full-scene output allowed
+- **Model route:** `nano-banana-pro-founder-full-room` → `fal-ai/nano-banana-pro/edit` (registry entry in `routes.ts`)
+- **Prompt:** `founder-full-room-preview-prompt.v1` from live Construction Plan + brand package + revision notes
+- **Brand preflight:** `runFounderRenderPreflight` — required marble via vault; `BRAND_ASSET_REQUIRED_MISSING` blocks dispatch
+- **API:** `POST /api/admin/founder-render-generate`, `GET /api/admin/founder-render-status`, `POST /api/admin/founder-render-approve`
+- **Persistence:** `studio_founder_render_jobs` migration `20260713150000_studio_founder_render_jobs.sql` — applied to production `hyycomvcaqxxvyrfupes`, verified via `list_tables`
+- **UI:** `FounderReviewHero` photoreal image only (states: NO_PREVIEW, GENERATING, READY, FAILED, STALE); zoom/fullscreen; `FounderRenderDiagnosticsPanel`; `FounderReviewMetadata` shows preview status/model/revision; `useBlueprintAuthorWorkflow` generate/poll/approve gate; no procedural fallback on failure
+- **Approval:** `canApproveFounderRender` + durable `approveFounderRenderJob` record before `runConstructionModeCompile`
+- **CDS:** Shared artifact-intent contract documented; artifact-specific renderers **planned** not complete
+
+**Docs:** `docs/studio-os/blueprint-author/FOUNDER_RENDER.md`, `docs/studio-os/experience-lab/FOUNDER_PREVIEW_WORKFLOW.md`, `docs/studio-os/creative-production/FOUNDER_RENDER_ARTIFACT_INTENT.md`. Updated `CURRENT_HANDOFF.md`, `KNOWN_BLOCKERS.md` (B1-FounderRender), `CORE.md`, blueprint-author README.
+
+**Tests:** 20 founder-render + founder-review tests pass; production build passes.
+
+**Remaining:** B1-FounderRender — founder mobile verification that real photoreal room image appears in Experience Lab Founder Review on device.
+

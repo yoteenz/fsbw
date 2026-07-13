@@ -9,6 +9,7 @@ import {
   buildConstructionTimeline,
   FOUNDER_RENDER_VARIANTS,
 } from './index';
+import { buildFounderRenderJobView } from '../founder-render';
 
 function receptionPlan() {
   return fixtureReceptionConstructionPlan({
@@ -30,6 +31,16 @@ describe('founder review core', () => {
     expect(model.variant.id).toBe('luxury');
     expect(model.assets.some((a) => a.visualStyle === 'desk')).toBe(true);
     expect(model.assets.length).toBeGreaterThan(2);
+  });
+
+  it('keeps procedural model for engineering blueprint only — not founder hero', () => {
+    const plan = receptionPlan();
+    const procedural = buildFounderRenderModel({ plan, variantId: 'current' });
+    expect(procedural.generationOccurred).toBe(false);
+    const founderJob = buildFounderRenderJobView({ plan });
+    expect(founderJob.status).toBe('no_preview');
+    expect(founderJob.previewArtifactUrl).toBeNull();
+    expect(founderJob.artifactIntent).toBe('founder-full-room-preview');
   });
 
   it('exposes five visual direction variants', () => {

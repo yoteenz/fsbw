@@ -53,6 +53,7 @@ Founder Request → Blueprint Author → Construction Plan → Job Queue
 - [LIGHTING_PROFILE_SYSTEM.md](./LIGHTING_PROFILE_SYSTEM.md)
 - [BLUEPRINT_VERSIONING.md](./BLUEPRINT_VERSIONING.md)
 - [BLUEPRINT_DIFF_ENGINE.md](./BLUEPRINT_DIFF_ENGINE.md)
+- [FOUNDER_RENDER.md](./FOUNDER_RENDER.md)
 
 ## Spatial Architecture Review
 

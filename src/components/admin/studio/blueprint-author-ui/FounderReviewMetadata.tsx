@@ -1,6 +1,7 @@
 import type { CSSProperties } from 'react';
 import type { ConstructionPlanSummary } from '../../../../studio-os-core/blueprint-author/workflow-session';
 import type { ConstructionPlan } from '../../../../studio-os-core/blueprint-author/construction-plan-schema';
+import type { FounderRenderJobView } from '../../../../studio-os-core/founder-render';
 
 const rowStyle: CSSProperties = {
   display: 'grid',
@@ -26,6 +27,7 @@ const chipStyle: CSSProperties = {
 type Props = {
   summary: ConstructionPlanSummary;
   plan: ConstructionPlan;
+  renderJob?: FounderRenderJobView | null;
 };
 
 function formatDuration(ms: number): string {
@@ -33,11 +35,33 @@ function formatDuration(ms: number): string {
   return `${Math.round(ms / 60_000)}m`;
 }
 
+function previewStatusLabel(status: FounderRenderJobView['status']): string {
+  switch (status) {
+    case 'no_preview':
+      return 'No Preview';
+    case 'queued':
+      return 'Queued';
+    case 'generating':
+      return 'Generating';
+    case 'ready':
+      return 'Ready';
+    case 'failed':
+      return 'Failed';
+    case 'stale':
+      return 'Stale — regenerate required';
+    case 'approved':
+      return 'Approved';
+    default:
+      return status;
+  }
+}
+
 /** Founder-facing metadata — no engineering terminology. */
-export function FounderReviewMetadata({ summary, plan }: Props) {
+export function FounderReviewMetadata({ summary, plan, renderJob }: Props) {
   const items: Array<[string, string]> = [
-    ['Architecture Locked', plan.architecture.architectureId],
-    ['Shell', `${plan.architecture.version}`],
+    ['Preview Status', renderJob ? previewStatusLabel(renderJob.status) : 'No Preview'],
+    ['Blueprint Revision', String(renderJob?.currentBlueprintRevision ?? plan.metadata.revision)],
+    ['Model Used', renderJob?.providerModel ?? 'Pending generation'],
     ['Founder Material Library', plan.materialSet.materialSetId.replace(/-/g, ' ')],
     ['Lighting Profile', plan.lightingProfile.profileId.replace(/-/g, ' ')],
     ['Camera', plan.cameraAnchors[0]?.label ?? 'Hero'],

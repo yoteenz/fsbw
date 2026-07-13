@@ -7,6 +7,7 @@ export const MODEL_REGISTRY_POLICY_VERSION = 'layer-model-routing.v2';
 
 export type ModelAssetClass =
   | 'environment-shell'
+  | 'founder-full-room-preview'
   | 'signature-landmark'
   | 'furniture-objects'
   | 'architectural-prop'

@@ -33,6 +33,27 @@
 
 ---
 
+---
+
+## B1-FounderRender — True Founder Render™ photoreal preview (SHIPPED — VERIFY PENDING)
+
+| Field | Detail |
+|-------|--------|
+| **ID** | B1-FounderRender |
+| **Symptom** | Founder Review showed procedural CSS rectangles, not photoreal room |
+| **Founder decision** | Founder Review must show actual AI-generated full-room image before manufacturing |
+| **Repair** | `founder-full-room-preview` artifact intent + `studio_founder_render_jobs` + FAL NBP edit + brand preflight + approval gate |
+| **Model** | `fal-ai/nano-banana-pro/edit` via `nano-banana-pro-founder-full-room` |
+| **Verify** | Mobile Founder Review shows real photoreal image; Approve & Build gated until READY |
+| **Status** | **Verify Pending** — code shipped; founder mobile proof pending |
+
+### Documented Fact
+
+- Previous hero: `buildFounderRenderModel()` procedural shapes (`generationOccurred: false`).
+- Engineering blueprint remains in collapsed `BlueprintDrawer` only.
+
+---
+
 ## B1-Parity — FS vs Studio OS generation divergence (REPAIR SHIPPED — VERIFY PENDING)
 
 | Field | Detail |

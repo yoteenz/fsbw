@@ -2,7 +2,6 @@ import type { CSSProperties, ReactNode } from 'react';
 import type { UseBlueprintAuthorWorkflowReturn } from '../../../../hooks/useBlueprintAuthorWorkflow';
 import { FounderReviewHero } from './FounderReviewHero';
 import { FounderReviewMetadata } from './FounderReviewMetadata';
-import { VariantStrip } from './VariantStrip';
 import { BlueprintDrawer } from './BlueprintDrawer';
 import { LiveDiffPanel } from './LiveDiffPanel';
 import { ConstructionTimelinePanel } from './ConstructionTimelinePanel';
@@ -11,6 +10,7 @@ import { FounderInspectPanel } from './FounderInspectPanel';
 import { ManufacturingQueuePanel } from './ManufacturingQueue';
 import { WorkerStatus } from './WorkerStatus';
 import { InspectionStatus } from './InspectionStatus';
+import { FounderRenderDiagnosticsPanel } from './FounderRenderDiagnosticsPanel';
 
 const btnPrimary: CSSProperties = {
   padding: '12px 20px',
@@ -38,46 +38,53 @@ const btnSecondary: CSSProperties = {
   color: '#334155',
 };
 
+const btnDisabled: CSSProperties = {
+  ...btnPrimary,
+  opacity: 0.45,
+  cursor: 'not-allowed',
+};
+
 type Props = {
   workflow: UseBlueprintAuthorWorkflowReturn;
   renderAfterApproval?: ReactNode;
 };
 
 /**
- * Founder Review Experience™ — Creative Director review workflow.
- * Founder View first (photoreal hero). Worker View in collapsed blueprint drawer.
+ * Founder Review Experience™ — photoreal Founder Render first; engineering blueprint collapsed.
  */
 export function FounderReviewExperience({ workflow, renderAfterApproval }: Props) {
   const {
     step,
     summary,
     bundle,
-    founderRender,
+    founderRenderJob,
     founderDiff,
     constructionTimeline,
     roomAssembly,
-    variantId,
-    blueprintDrawerOpen,
-    inspectMode,
-    selectedAssetId,
-    selectedInspector,
     manufacturingResult,
     error,
     isManufacturing,
     isApproved,
-    manufacturingBlocked,
-    founderRenderVariants,
+    canApprove,
+    isGeneratingPreview,
+    revisionInput,
+    setRevisionInput,
+    generateFounderPreview,
     approveAndBuild,
+    submitRevision,
     goBack,
     toggleBlueprintDrawer,
     openBlueprintDrawer,
     openInspect,
     closeInspect,
-    selectVariant,
-    enableInspectMode,
+    selectedInspector,
+    inspectMode,
+    selectedAssetId,
+    blueprintDrawerOpen,
+    setPreviewImageLoaded,
   } = workflow;
 
-  if (step === 'idle' || !bundle || !summary || !founderRender || !founderDiff || !constructionTimeline) {
+  if (step === 'idle' || !bundle || !summary || !founderRenderJob || !founderDiff || !constructionTimeline) {
     return null;
   }
 
@@ -99,10 +106,10 @@ export function FounderReviewExperience({ workflow, renderAfterApproval }: Props
           FOUNDER REVIEW™
         </p>
         <h2 style={{ margin: '6px 0 0', fontSize: '22px', fontWeight: 600, letterSpacing: '-0.02em', color: '#0f172a' }}>
-          Construction Plan
+          {founderRenderJob.roomDisplayName}
         </h2>
         <p style={{ margin: '6px 0 0', fontSize: '13px', color: '#64748b', maxWidth: 520 }}>
-          Review and approve before AI workers begin.
+          Review the photoreal full-room Founder Render before manufacturing begins.
         </p>
       </header>
 
@@ -113,13 +120,34 @@ export function FounderReviewExperience({ workflow, renderAfterApproval }: Props
       {!showManufacturing ? (
         <>
           <FounderReviewHero
-            model={founderRender}
-            selectedAssetId={selectedAssetId}
-            onSelectAsset={inspectMode ? openInspect : undefined}
-            inspectMode={inspectMode}
+            job={founderRenderJob}
+            onGenerate={() => void generateFounderPreview()}
+            onRegenerate={() => void generateFounderPreview(revisionInput || null)}
+            isGenerating={isGeneratingPreview}
+            onImageLoaded={() => setPreviewImageLoaded(true)}
+            onImageError={() => setPreviewImageLoaded(false)}
           />
-          <FounderReviewMetadata summary={summary} plan={bundle.plan} />
-          <VariantStrip variants={founderRenderVariants} activeVariantId={variantId} onSelect={selectVariant} />
+          <FounderReviewMetadata summary={summary} plan={bundle.plan} renderJob={founderRenderJob} />
+          <FounderRenderDiagnosticsPanel diagnostics={founderRenderJob.diagnostics} />
+
+          <div style={{ marginTop: 16 }}>
+            <label style={{ display: 'block', fontSize: '10px', fontWeight: 700, letterSpacing: '0.08em', color: '#64748b', textTransform: 'uppercase', marginBottom: 6 }}>
+              Request revision (optional)
+            </label>
+            <textarea
+              value={revisionInput}
+              onChange={(e) => setRevisionInput(e.target.value)}
+              placeholder="e.g. make room brighter, use exact brand marble, change landmark…"
+              rows={2}
+              style={{ width: '100%', padding: 10, borderRadius: 8, border: '1px solid #cbd5e1', fontSize: '12px', resize: 'vertical' }}
+            />
+            {revisionInput.trim() ? (
+              <button type="button" style={{ ...btnSecondary, marginTop: 8 }} onClick={submitRevision} disabled={isGeneratingPreview}>
+                Apply revision &amp; regenerate preview
+              </button>
+            ) : null}
+          </div>
+
           <LiveDiffPanel diff={founderDiff} />
 
           <div
@@ -133,21 +161,26 @@ export function FounderReviewExperience({ workflow, renderAfterApproval }: Props
             }}
           >
             <button type="button" style={btnSecondary} onClick={goBack}>
-              Revise
+              Revise Plan
+            </button>
+            <button type="button" style={btnSecondary} onClick={() => void generateFounderPreview(revisionInput || null)} disabled={isGeneratingPreview}>
+              Regenerate Preview
             </button>
             <button type="button" style={btnSecondary} onClick={toggleBlueprintDrawer}>
               Open Blueprint
             </button>
-            <button type="button" style={btnSecondary} onClick={enableInspectMode}>
-              Inspect Mode
-            </button>
             <button
               type="button"
-              style={{ ...btnPrimary, marginLeft: 'auto', opacity: manufacturingBlocked && !isManufacturing ? 1 : 0.5 }}
-              disabled={!manufacturingBlocked || isManufacturing}
-              onClick={manufacturingBlocked ? approveAndBuild : undefined}
+              style={canApprove ? { ...btnPrimary, marginLeft: 'auto' } : { ...btnDisabled, marginLeft: 'auto' }}
+              disabled={!canApprove || isManufacturing}
+              onClick={canApprove ? () => void approveAndBuild() : undefined}
+              title={
+                !canApprove
+                  ? 'Approve requires ready photoreal preview matching current blueprint revision'
+                  : undefined
+              }
             >
-              {isManufacturing ? 'Approving…' : 'Approve Construction'}
+              {isManufacturing ? 'Approving…' : 'Approve & Build'}
             </button>
           </div>
 
@@ -168,9 +201,14 @@ export function FounderReviewExperience({ workflow, renderAfterApproval }: Props
         <>
           <ConstructionTimelinePanel timeline={constructionTimeline} />
           {roomAssembly ? <LiveRoomAssemblyPanel assembly={roomAssembly} /> : null}
-          <div style={{ marginTop: 16 }}>
-            <FounderReviewHero model={founderRender} inspectMode={false} />
-          </div>
+          {founderRenderJob.previewArtifactUrl ? (
+            <div style={{ marginTop: 16 }}>
+              <FounderReviewHero
+                job={{ ...founderRenderJob, status: 'approved' }}
+                onImageLoaded={() => setPreviewImageLoaded(true)}
+              />
+            </div>
+          ) : null}
           <div style={{ display: 'grid', gap: 16, marginTop: 16 }}>
             <ManufacturingQueuePanel queue={bundle.queue} liveView={liveView} />
             <button type="button" style={{ ...btnSecondary, alignSelf: 'flex-start' }} onClick={openBlueprintDrawer}>

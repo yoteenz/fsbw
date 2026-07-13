@@ -14,15 +14,49 @@ import {
 } from '../studio-os-core/blueprint-author/workflow-mapper';
 import {
   buildConstructionTimeline,
-  buildFounderRenderModel,
   buildFounderReviewDiff,
   buildRoomAssemblyState,
-  FOUNDER_RENDER_VARIANTS,
-  visibleAssetIdsForAssembly,
   type FounderRenderVariantId,
 } from '../studio-os-core/founder-review';
+import {
+  buildFounderRenderJobView,
+  canApproveFounderRender,
+  type FounderRenderJobStatus,
+  type FounderRenderDiagnostics,
+} from '../studio-os-core/founder-render';
+import {
+  pollFounderRenderStatus,
+  requestFounderRenderGenerate,
+  requestFounderRenderApprove,
+} from '../services/studio/founderRender/api';
 
 export type BlueprintWorkflowStep = 'idle' | 'founder-review' | 'manufacturing' | 'complete';
+
+type FounderRenderState = {
+  jobId: string | null;
+  status: FounderRenderJobStatus;
+  previewArtifactUrl: string | null;
+  failureReason: string | null;
+  blueprintRevision: number;
+  modelRoute: string | null;
+  providerModel: string | null;
+  diagnostics: FounderRenderDiagnostics | null;
+  approvalStatus: 'pending' | 'approved';
+  revisionNote: string | null;
+};
+
+const INITIAL_RENDER_STATE: FounderRenderState = {
+  jobId: null,
+  status: 'no_preview',
+  previewArtifactUrl: null,
+  failureReason: null,
+  blueprintRevision: 0,
+  modelRoute: null,
+  providerModel: null,
+  diagnostics: null,
+  approvalStatus: 'pending',
+  revisionNote: null,
+};
 
 export function useBlueprintAuthorWorkflow() {
   const [step, setStep] = useState<BlueprintWorkflowStep>('idle');
@@ -37,6 +71,10 @@ export function useBlueprintAuthorWorkflow() {
   const [isAuthoring, setIsAuthoring] = useState(false);
   const [isManufacturing, setIsManufacturing] = useState(false);
   const [variantChanged, setVariantChanged] = useState(false);
+  const [founderRenderState, setFounderRenderState] = useState<FounderRenderState>(INITIAL_RENDER_STATE);
+  const [isGeneratingPreview, setIsGeneratingPreview] = useState(false);
+  const [previewImageLoaded, setPreviewImageLoaded] = useState(false);
+  const [revisionInput, setRevisionInput] = useState('');
 
   const summary = useMemo(() => (bundle ? buildConstructionPlanSummary(bundle) : null), [bundle]);
 
@@ -57,15 +95,26 @@ export function useBlueprintAuthorWorkflow() {
     });
   }, [bundle, assemblyPhase, liveView]);
 
-  const founderRender = useMemo(() => {
-    if (!bundle) return null;
-    const visibleIds = roomAssembly ? [...visibleAssetIdsForAssembly(roomAssembly)] : undefined;
-    return buildFounderRenderModel({
+  const founderRenderJob = useMemo(() => {
+    if (!bundle || !summary) return null;
+    return buildFounderRenderJobView({
       plan: bundle.plan,
-      variantId,
-      installedAssetIds: assemblyPhase === 'review' ? undefined : visibleIds,
+      job: {
+        jobId: founderRenderState.jobId ?? undefined,
+        status: founderRenderState.status,
+        previewArtifactUrl: founderRenderState.previewArtifactUrl,
+        failureReason: founderRenderState.failureReason,
+        modelRoute: founderRenderState.modelRoute,
+        providerModel: founderRenderState.providerModel,
+        blueprintRevision: founderRenderState.blueprintRevision || bundle.plan.metadata.revision,
+        approvalStatus: founderRenderState.approvalStatus,
+        diagnostics: founderRenderState.diagnostics,
+        revisionNote: founderRenderState.revisionNote,
+      },
+      estimatedCost: summary.estimatedCost,
+      estimatedBuildTimeMs: summary.estimatedBuildTimeMs,
     });
-  }, [bundle, variantId, roomAssembly, assemblyPhase]);
+  }, [bundle, summary, founderRenderState]);
 
   const founderDiff = useMemo(() => {
     if (!bundle) return null;
@@ -102,10 +151,97 @@ export function useBlueprintAuthorWorkflow() {
     });
   }, [bundle, selectedAssetId]);
 
+  const applyStatusResponse = useCallback(
+    (data: Awaited<ReturnType<typeof pollFounderRenderStatus>>) => {
+      if (!data.ok) {
+        setError(data.error ?? 'Founder render failed');
+        setFounderRenderState((prev) => ({
+          ...prev,
+          status: 'failed',
+          failureReason: data.error ?? 'Founder render failed',
+        }));
+        return;
+      }
+      setFounderRenderState((prev) => ({
+        ...prev,
+        jobId: data.jobId ?? prev.jobId,
+        status: data.status ?? prev.status,
+        previewArtifactUrl: data.previewArtifactUrl ?? null,
+        failureReason: data.failureReason ?? null,
+        blueprintRevision: data.blueprintRevision ?? prev.blueprintRevision,
+        modelRoute: data.modelRoute ?? prev.modelRoute,
+        providerModel: data.providerModel ?? prev.providerModel,
+        diagnostics: data.diagnostics ?? null,
+        approvalStatus: data.approvalStatus === 'approved' ? 'approved' : 'pending',
+      }));
+      if (data.status === 'failed') {
+        setPreviewImageLoaded(false);
+      }
+    },
+    []
+  );
+
+  const generateFounderPreview = useCallback(
+    async (revisionNote?: string | null) => {
+      if (!bundle) return;
+      setError(null);
+      setIsGeneratingPreview(true);
+      setPreviewImageLoaded(false);
+      setFounderRenderState((prev) => ({
+        ...prev,
+        status: 'generating',
+        failureReason: null,
+        revisionNote: revisionNote ?? null,
+      }));
+
+      try {
+        const submitted = await requestFounderRenderGenerate({
+          plan: bundle.plan,
+          revisionNote: revisionNote ?? null,
+        });
+        if (!submitted.ok || !submitted.jobId) {
+          setFounderRenderState((prev) => ({
+            ...prev,
+            status: 'failed',
+            failureReason: submitted.error ?? submitted.code ?? 'Dispatch failed',
+          }));
+          setError(submitted.error ?? 'Founder render dispatch failed');
+          return;
+        }
+
+        setFounderRenderState((prev) => ({
+          ...prev,
+          jobId: submitted.jobId!,
+          status: 'generating',
+          modelRoute: submitted.modelRoute ?? null,
+          providerModel: submitted.providerModel ?? null,
+          blueprintRevision: submitted.blueprintRevision ?? bundle.plan.metadata.revision,
+        }));
+
+        const completed = await pollFounderRenderStatus(submitted.jobId, bundle.plan.metadata.revision, {
+          onProgress: (status) => {
+            setFounderRenderState((prev) => ({ ...prev, status }));
+          },
+        });
+        applyStatusResponse(completed);
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : String(err);
+        setError(msg);
+        setFounderRenderState((prev) => ({ ...prev, status: 'failed', failureReason: msg }));
+      } finally {
+        setIsGeneratingPreview(false);
+      }
+    },
+    [bundle, applyStatusResponse]
+  );
+
   const submitRequest = useCallback((ctx: BlueprintWorkflowContext) => {
     setError(null);
     setIsAuthoring(true);
     setManufacturingResult(null);
+    setFounderRenderState(INITIAL_RENDER_STATE);
+    setPreviewImageLoaded(false);
+    setRevisionInput('');
     try {
       const compileRequest = mapWorkflowContextToCompileRequest(ctx);
       setRequest(compileRequest);
@@ -126,11 +262,28 @@ export function useBlueprintAuthorWorkflow() {
     }
   }, []);
 
-  const approveAndBuild = useCallback(() => {
-    if (!request) return;
+  const approveAndBuild = useCallback(async () => {
+    if (!request || !founderRenderJob || !canApproveFounderRender(founderRenderJob, previewImageLoaded)) return;
     setError(null);
     setIsManufacturing(true);
+
+    if (founderRenderJob.jobId) {
+      const approval = await requestFounderRenderApprove({
+        jobId: founderRenderJob.jobId,
+        currentBlueprintRevision: founderRenderJob.currentBlueprintRevision,
+        materialSet: founderRenderJob.materialLibrary,
+        lightingProfile: founderRenderJob.lightingProfile,
+        cameraProfile: founderRenderJob.cameraProfile,
+      });
+      if (!approval.ok) {
+        setError(approval.error ?? 'Founder render approval failed');
+        setIsManufacturing(false);
+        return;
+      }
+    }
+
     setStep('manufacturing');
+    setFounderRenderState((prev) => ({ ...prev, approvalStatus: 'approved', status: 'approved' }));
     try {
       const result = runConstructionModeCompile({ ...request, founderApproved: true });
       setManufacturingResult(result);
@@ -151,7 +304,14 @@ export function useBlueprintAuthorWorkflow() {
     } finally {
       setIsManufacturing(false);
     }
-  }, [request]);
+  }, [request, founderRenderJob, previewImageLoaded]);
+
+  const submitRevision = useCallback(() => {
+    const note = revisionInput.trim();
+    if (!note) return;
+    void generateFounderPreview(note);
+    setRevisionInput('');
+  }, [revisionInput, generateFounderPreview]);
 
   const goBack = useCallback(() => {
     if (inspectMode && selectedAssetId) {
@@ -172,6 +332,8 @@ export function useBlueprintAuthorWorkflow() {
     setVariantChanged(false);
     setBlueprintDrawerOpen(false);
     setInspectMode(false);
+    setFounderRenderState(INITIAL_RENDER_STATE);
+    setPreviewImageLoaded(false);
   }, [inspectMode, selectedAssetId, blueprintDrawerOpen]);
 
   const openBlueprintDrawer = useCallback(() => {
@@ -214,10 +376,14 @@ export function useBlueprintAuthorWorkflow() {
     setError(null);
     setIsAuthoring(false);
     setIsManufacturing(false);
+    setFounderRenderState(INITIAL_RENDER_STATE);
+    setPreviewImageLoaded(false);
+    setRevisionInput('');
   }, []);
 
   const isApproved = Boolean(manufacturingResult?.success);
-  const manufacturingBlocked = !manufacturingResult && bundle?.session.approvalStatus === 'pending';
+  const canApprove =
+    founderRenderJob != null && canApproveFounderRender(founderRenderJob, previewImageLoaded) && !isManufacturing;
 
   return {
     step,
@@ -226,7 +392,7 @@ export function useBlueprintAuthorWorkflow() {
     inspectMode,
     summary,
     bundle,
-    founderRender,
+    founderRenderJob,
     founderDiff,
     constructionTimeline,
     roomAssembly,
@@ -238,10 +404,15 @@ export function useBlueprintAuthorWorkflow() {
     isAuthoring,
     isManufacturing,
     isApproved,
-    manufacturingBlocked,
-    founderRenderVariants: FOUNDER_RENDER_VARIANTS,
+    canApprove,
+    isGeneratingPreview,
+    previewImageLoaded,
+    revisionInput,
+    setRevisionInput,
     submitRequest,
+    generateFounderPreview,
     approveAndBuild,
+    submitRevision,
     goBack,
     openBlueprintDrawer,
     toggleBlueprintDrawer,
@@ -249,6 +420,7 @@ export function useBlueprintAuthorWorkflow() {
     closeInspect,
     selectVariant,
     enableInspectMode,
+    setPreviewImageLoaded,
     reset,
   };
 }
