@@ -10,6 +10,12 @@ import {
   resolveFounderRenderModelRoute,
   runFounderRenderPreflight,
   resolveFounderRenderBrandOrganizationId,
+  buildCanonicalFounderRenderPrompt,
+  isCanonicalDepartmentPlan,
+  buildFounderRenderCacheIdentity,
+  validateDepartmentDistinctness,
+  getCanonicalDepartmentRecord,
+  type CanonicalMainDepartmentId,
 } from './creativeProduction/studio-os-server.bundle.js';
 import {
   finalizeStudioBuilderFromFalUrl,
@@ -21,29 +27,6 @@ import {
 } from './studioBuilderGeneration.js';
 
 export const FOUNDER_RENDER_STORAGE_PREFIX = 'studio-assets/founder-render';
-
-async function loadCanonicalRenderModules() {
-  const [
-    { buildCanonicalFounderRenderPrompt },
-    { isCanonicalDepartmentPlan },
-    { buildFounderRenderCacheIdentity },
-    { validateDepartmentDistinctness },
-    { getCanonicalDepartmentRecord },
-  ] = await Promise.all([
-    import('../../src/studio-os-core/canonical-studio-world/canonical-founder-render-prompt.js'),
-    import('../../src/studio-os-core/canonical-studio-world/department-blueprint-builder.js'),
-    import('../../src/studio-os-core/canonical-studio-world/founder-render-cache-identity.js'),
-    import('../../src/studio-os-core/canonical-studio-world/department-distinctness-validator.js'),
-    import('../../src/studio-os-core/canonical-studio-world/canonical-department-registry.js'),
-  ]);
-  return {
-    buildCanonicalFounderRenderPrompt,
-    isCanonicalDepartmentPlan,
-    buildFounderRenderCacheIdentity,
-    validateDepartmentDistinctness,
-    getCanonicalDepartmentRecord,
-  };
-}
 
 function repoRoot(): string {
   return process.cwd();
@@ -123,10 +106,8 @@ export async function prepareFounderRenderDispatch(
     return { ok: false, code: brandPkg.code, error: brandPkg.message, missingRole: brandPkg.missingRole };
   }
 
-  const canonical = await loadCanonicalRenderModules();
-
-  const promptBundle = canonical.isCanonicalDepartmentPlan(input.plan)
-    ? canonical.buildCanonicalFounderRenderPrompt({
+  const promptBundle = isCanonicalDepartmentPlan(input.plan)
+    ? buildCanonicalFounderRenderPrompt({
         plan: input.plan,
         brandPackage: brandPkg,
         founderRevisionNote: input.revisionNote,
@@ -137,7 +118,7 @@ export async function prepareFounderRenderDispatch(
         founderRevisionNote: input.revisionNote,
       });
 
-  const distinctness = canonical.validateDepartmentDistinctness({
+  const distinctness = validateDepartmentDistinctness({
     plan: input.plan,
     effectivePrompt: promptBundle.prompt,
   });
@@ -146,7 +127,7 @@ export async function prepareFounderRenderDispatch(
   }
 
   const route = resolveFounderRenderModelRoute('16:9');
-  const cacheIdentity = canonical.buildFounderRenderCacheIdentity({
+  const cacheIdentity = buildFounderRenderCacheIdentity({
     plan: input.plan,
     promptVersion: promptBundle.promptVersion,
     model: route.providerModel,
@@ -155,8 +136,8 @@ export async function prepareFounderRenderDispatch(
     referencePackageVersion: `brand-${brandVaultOrganizationId}-v1`,
   });
 
-  const deptRecord = canonical.isCanonicalDepartmentPlan(input.plan)
-    ? canonical.getCanonicalDepartmentRecord(input.plan.room.roomId as import('../../src/studio-os-core/canonical-studio-world/canonical-department-registry.js').CanonicalMainDepartmentId)
+  const deptRecord = isCanonicalDepartmentPlan(input.plan)
+    ? getCanonicalDepartmentRecord(input.plan.room.roomId as CanonicalMainDepartmentId)
     : undefined;
   let imageUrls: string[] = [];
   try {

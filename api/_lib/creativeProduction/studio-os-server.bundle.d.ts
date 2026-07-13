@@ -151,3 +151,33 @@ export function validateAndResolveModelRouting(input: {
   organizationId?: string | null;
   assetClass?: string;
 }): import('../../../src/studio-os-core/creative-production/model-routing-engine/types.js').ModelRoutingValidationResult;
+
+export function buildCanonicalFounderRenderPrompt(input: {
+  plan: ConstructionPlan;
+  brandPackage: BrandMaterialPackage;
+  founderRevisionNote?: string | null;
+  renderKind?: 'landscape' | 'portrait';
+}): import('../../../src/studio-os-core/canonical-studio-world/canonical-founder-render-prompt.js').CanonicalFounderRenderPrompt;
+
+export function isCanonicalDepartmentPlan(plan: ConstructionPlan): boolean;
+
+export function buildFounderRenderCacheIdentity(input: {
+  plan: ConstructionPlan;
+  promptVersion: string;
+  model: string;
+  aspectRatio: string;
+  provider: string;
+  referencePackageVersion?: string;
+}): import('../../../src/studio-os-core/canonical-studio-world/founder-render-cache-identity.js').FounderRenderCacheIdentity;
+
+export function validateDepartmentDistinctness(input: {
+  plan: ConstructionPlan;
+  effectivePrompt: string;
+}): import('../../../src/studio-os-core/canonical-studio-world/department-distinctness-validator.js').DepartmentDistinctnessResult;
+
+export function getCanonicalDepartmentRecord(
+  departmentId: import('../../../src/studio-os-core/canonical-studio-world/canonical-department-registry.js').CanonicalMainDepartmentId
+): import('../../../src/studio-os-core/canonical-studio-world/canonical-department-registry.js').CanonicalDepartmentRecord | undefined;
+
+export type CanonicalMainDepartmentId =
+  import('../../../src/studio-os-core/canonical-studio-world/canonical-department-registry.js').CanonicalMainDepartmentId;

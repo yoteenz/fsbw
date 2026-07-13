@@ -48416,3 +48416,15 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 - **Tests** — studio-world-constitution-supreme 20/20; department-bible 27/27; studio-world-style 20/20; build PASS
 
 **One commit + one push** on `master` via `agent-commit.sh`.
+
+---
+
+## 2026-07-13 — P0 hotfix: Founder Render module not found on Vercel (full conversation)
+
+**User report:** Founder Preview Failed on production (`fsbw.vercel.app`) — `Cannot find module '/var/task/src/studio-os-core/architectural-dna/compiler/founder-render-prompt-compiler' imported from canonical-founder-render-prompt.js`.
+
+**Root cause:** `founderRenderGeneration.ts` dynamically imported `src/studio-os-core/` modules at Vercel cold start; `@vercel/nft` does not trace nested src dependencies into serverless functions.
+
+**Fix:** Added canonical Founder Render modules to `studio-os-server-entry.ts` pre-bundle; `founderRenderGeneration.ts` imports from `studio-os-server.bundle.js` instead of runtime src/ dynamic imports. Updated `studio-os-server.bundle.d.ts`. Bundle rebuilt (~186KB). Build PASS.
+
+**One commit + one push** on `master` via `agent-commit.sh`.

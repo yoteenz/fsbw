@@ -75,3 +75,16 @@ export {
   validateModelRoutingDecision,
   validateAndResolveModelRouting,
 } from '../../../src/studio-os-core/immune-system/model-routing-validation.js';
+
+export { buildCanonicalFounderRenderPrompt } from '../../../src/studio-os-core/canonical-studio-world/canonical-founder-render-prompt.js';
+
+export { isCanonicalDepartmentPlan } from '../../../src/studio-os-core/canonical-studio-world/department-blueprint-builder.js';
+
+export { buildFounderRenderCacheIdentity } from '../../../src/studio-os-core/canonical-studio-world/founder-render-cache-identity.js';
+
+export { validateDepartmentDistinctness } from '../../../src/studio-os-core/canonical-studio-world/department-distinctness-validator.js';
+
+export {
+  getCanonicalDepartmentRecord,
+  type CanonicalMainDepartmentId,
+} from '../../../src/studio-os-core/canonical-studio-world/canonical-department-registry.js';
