@@ -6,6 +6,7 @@ export type ExperienceLabV2FeatureFlags = {
   experienceLabV2EnvironmentAssetEnabled: boolean;
   experienceLabV2DiagnosticsEnabled: boolean;
   experienceLabV2MobileDockEnabled: boolean;
+  experienceLabV2ComponentReviewEnabled: boolean;
 };
 
 function envFlag(key: string, defaultValue = false): boolean {
@@ -28,6 +29,7 @@ export function resolveExperienceLabV2FeatureFlags(): ExperienceLabV2FeatureFlag
     experienceLabV2EnvironmentAssetEnabled: envFlag('VITE_EXPERIENCE_LAB_V2_ENVIRONMENT', true),
     experienceLabV2DiagnosticsEnabled: admin && envFlag('VITE_EXPERIENCE_LAB_V2_DIAGNOSTICS', true),
     experienceLabV2MobileDockEnabled: envFlag('VITE_EXPERIENCE_LAB_V2_MOBILE_DOCK', true),
+    experienceLabV2ComponentReviewEnabled: admin && envFlag('VITE_EXPERIENCE_LAB_V2_COMPONENT_REVIEW', true),
   };
 }
 

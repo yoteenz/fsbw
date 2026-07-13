@@ -20,6 +20,8 @@ export const ELAB_V2_COMPOSITION = {
   inspectorSwitcher: 'data-elab-inspector-switcher',
   panelOrchestrator: 'data-elab-panel-orchestrator',
   workstationFrame: 'data-elab-workstation-frame',
+  componentReviewChrome: 'data-elab-component-review-chrome',
+  componentReviewSandbox: 'data-elab-review-sandbox',
 } as const;
 
 export const VIEWPORT_MODE_LABELS: Record<string, string> = {

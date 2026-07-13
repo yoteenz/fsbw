@@ -1324,6 +1324,183 @@ button.elab-cmd__meta-chip {
   max-height: clamp(64px, 14vh, 120px);
 }
 
+/* ── Component Review Mode (one component at a time) ── */
+.elab-app-shell--component-review {
+  background: #050608;
+}
+
+.elab-app-shell__grid--review {
+  grid-template-rows: minmax(0, 1fr);
+  height: 100%;
+}
+
+.elab-app-shell__review-stage {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+  padding: 0 8px 8px;
+}
+
+.elab-component-review-chrome {
+  flex-shrink: 0;
+  z-index: 50;
+  padding: 6px 10px 8px;
+  background: rgba(8, 10, 14, 0.96);
+  border-bottom: 1px solid var(--elab-border);
+}
+
+.elab-component-review-chrome__head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+  font-size: 8px;
+  letter-spacing: 0.08em;
+}
+
+.elab-component-review-chrome__head strong {
+  color: var(--elab-gold);
+}
+
+.elab-component-review-chrome__phase {
+  color: var(--elab-muted);
+}
+
+.elab-component-review-chrome__exit {
+  margin-left: auto;
+  padding: 4px 8px;
+  border: 1px solid var(--elab-border);
+  border-radius: 4px;
+  background: transparent;
+  color: var(--elab-muted);
+  font-size: 7px;
+  cursor: pointer;
+}
+
+.elab-component-review-chrome__selector {
+  display: flex;
+  gap: 4px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 4px;
+}
+
+.elab-component-review-chrome__option {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--elab-muted);
+  font-size: 7px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.elab-component-review-chrome__option--active {
+  border-color: var(--elab-gold);
+  color: var(--elab-gold);
+  background: var(--elab-gold-dim);
+}
+
+.elab-component-review-chrome__option--locked {
+  opacity: 0.85;
+}
+
+.elab-component-review-chrome__option:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.elab-component-review-chrome__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 4px;
+  font-size: 7px;
+  color: var(--elab-muted);
+}
+
+.elab-component-review-sandbox {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  border: 1px solid var(--elab-border);
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.35);
+  overflow: hidden;
+}
+
+.elab-component-review-sandbox__label {
+  flex-shrink: 0;
+  padding: 4px 10px;
+  font-size: 7px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: var(--elab-gold);
+  border-bottom: 1px solid var(--el-v2-workstation-divider);
+  background: rgba(0, 0, 0, 0.25);
+}
+
+.elab-component-review-sandbox__stage {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.elab-component-review-sandbox--command-dock .elab-component-review-sandbox__stage {
+  justify-content: flex-start;
+}
+
+.elab-component-review-sandbox--command-dock .elab-cmd {
+  width: 100%;
+}
+
+.elab-component-review-sandbox--workbench .elab-founder-wb--tabbed {
+  max-height: none;
+  height: 100%;
+}
+
+.elab-component-review-sandbox--studio-viewport .elab-stage,
+.elab-component-review-sandbox--floating-inspectors .elab-stage,
+.elab-component-review-sandbox--view-angle-strip .elab-stage {
+  height: 100%;
+  min-height: 280px;
+}
+
+.elab-stage--review-isolate.elab-stage--inspectors-only .elab-stage__viewport-wrap--inspectors-backdrop {
+  position: relative;
+  flex: 1;
+  min-height: 240px;
+  background: radial-gradient(ellipse at center, rgba(20, 24, 32, 0.9), rgba(5, 6, 8, 0.95));
+  border: 1px dashed rgba(197, 160, 89, 0.2);
+}
+
+.elab-component-review-env-preview {
+  position: relative;
+  min-height: 320px;
+  overflow: hidden;
+}
+
+.elab-component-review-env-preview .elab-v2__env {
+  position: absolute;
+  inset: 0;
+}
+
+.elab-stage--hidden-placeholder {
+  flex: 1;
+  min-height: 0;
+}
+
 /* Accessibility fallback — allow controlled scroll at high zoom */
 @media (max-height: 400px) {
   .elab-app-shell__grid {

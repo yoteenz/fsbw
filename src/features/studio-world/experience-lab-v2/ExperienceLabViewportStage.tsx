@@ -26,6 +26,8 @@ type Props = {
   onFocusMode?: (mode: StudioViewportMode) => void;
   focusMode?: ElabFocusMode;
   orchestrator: ExperienceLabPanelOrchestrator;
+  /** Isolate one sub-region for component review mode. */
+  reviewIsolate?: 'viewport' | 'inspectors' | 'view-angles';
 };
 
 function nextDockZone(current: PanelDockZone): PanelDockZone {
@@ -43,6 +45,7 @@ export function ExperienceLabViewportStage({
   isCompact,
   onFocusMode,
   orchestrator,
+  reviewIsolate,
 }: Props) {
   const [activeAngle, setActiveAngle] = useState(0);
 
@@ -54,28 +57,90 @@ export function ExperienceLabViewportStage({
   const expandedPanel = orchestrator.panels.find((p) => p.id === orchestrator.expandedPanel)
     ?? orchestrator.panels.find((p) => p.isActive);
 
+  const viewAnglesNav = (
+    <nav
+      className={`elab-view-angles elab-view-angles--chrome${orchestrator.viewAnglesCollapsed ? ' elab-view-angles--collapsed' : ''}`}
+      {...{ [ELAB_V2_COMPOSITION.viewAngles]: '' }}
+      aria-label="View angles"
+    >
+      <div className="elab-view-angles__head">
+        {!isCompact ? <span className="elab-view-angles__label">VIEW ANGLES</span> : null}
+        <button
+          type="button"
+          className="elab-view-angles__collapse"
+          aria-expanded={!orchestrator.viewAnglesCollapsed}
+          onClick={orchestrator.toggleViewAngles}
+        >
+          {orchestrator.viewAnglesCollapsed
+            ? `${VIEW_ANGLES[activeAngle]} · ${VIEW_ANGLES.length}`
+            : 'Collapse'}
+        </button>
+      </div>
+      {!orchestrator.viewAnglesCollapsed ? (
+        <div className="elab-view-angles__strip">
+          {VIEW_ANGLES.map((angle, i) => (
+            <button
+              key={angle}
+              type="button"
+              className={`elab-view-angles__thumb${i === activeAngle ? ' elab-view-angles__thumb--active' : ''}`}
+              aria-pressed={i === activeAngle}
+              onClick={() => setActiveAngle(i)}
+            >
+              <span className="elab-view-angles__thumb-inner" />
+              {!isCompact ? <span className="elab-view-angles__thumb-label">{angle}</span> : null}
+            </button>
+          ))}
+        </div>
+      ) : null}
+    </nav>
+  );
+
+  const floatingInspectors = orchestrator.panels.map((panel) => (
+    <ExperienceLabFloatingInspector
+      key={panel.id}
+      label={panel.label}
+      statusLine={panel.statusLine}
+      dockZone={panel.dockZone}
+      state={panel.state}
+      active={panel.isActive}
+      onExpandClick={() => orchestrator.expandPanel(panel.id)}
+      onDockClick={isCompact ? () => orchestrator.dockPanel(panel.id, nextDockZone(panel.dockZone)) : undefined}
+    />
+  ));
+
+  if (reviewIsolate === 'view-angles') {
+    return (
+      <div className="elab-stage elab-stage--review-isolate" {...{ [ELAB_V2_COMPOSITION.viewportStage]: '' }}>
+        {viewAnglesNav}
+      </div>
+    );
+  }
+
+  if (reviewIsolate === 'inspectors') {
+    return (
+      <div className="elab-stage elab-stage--review-isolate elab-stage--inspectors-only" {...{ [ELAB_V2_COMPOSITION.viewportStage]: '' }}>
+        <div className="elab-stage__viewport-wrap elab-stage__viewport-wrap--inspectors-backdrop">
+          {floatingInspectors}
+        </div>
+      </div>
+    );
+  }
+
+  const showFloats = !reviewIsolate || reviewIsolate === 'viewport';
+  const showViewport = !reviewIsolate || reviewIsolate === 'viewport';
+
   return (
     <div className="elab-stage" {...{ [ELAB_V2_COMPOSITION.viewportStage]: '' }}>
       <div className="elab-stage__viewport-wrap">
-        {orchestrator.panels.map((panel) => (
-          <ExperienceLabFloatingInspector
-            key={panel.id}
-            label={panel.label}
-            statusLine={panel.statusLine}
-            dockZone={panel.dockZone}
-            state={panel.state}
-            active={panel.isActive}
-            onExpandClick={() => orchestrator.expandPanel(panel.id)}
-            onDockClick={isCompact ? () => orchestrator.dockPanel(panel.id, nextDockZone(panel.dockZone)) : undefined}
-          />
-        ))}
+        {showFloats ? floatingInspectors : null}
 
-        {isCompact && orchestrator.statusChip ? (
+        {showFloats && isCompact && orchestrator.statusChip ? (
           <span className="elab-status-chip" data-elab-status-chip>
             {orchestrator.statusChip.toUpperCase()}
           </span>
         ) : null}
 
+        {showViewport ? (
         <StudioViewport
           embedded
           mode={viewportMode}
@@ -97,48 +162,13 @@ export function ExperienceLabViewportStage({
               compact={isCompact}
             />
           }
-          viewAngles={
-            <nav
-              className={`elab-view-angles elab-view-angles--chrome${orchestrator.viewAnglesCollapsed ? ' elab-view-angles--collapsed' : ''}`}
-              {...{ [ELAB_V2_COMPOSITION.viewAngles]: '' }}
-              aria-label="View angles"
-            >
-              <div className="elab-view-angles__head">
-                {!isCompact ? <span className="elab-view-angles__label">VIEW ANGLES</span> : null}
-                <button
-                  type="button"
-                  className="elab-view-angles__collapse"
-                  aria-expanded={!orchestrator.viewAnglesCollapsed}
-                  onClick={orchestrator.toggleViewAngles}
-                >
-                  {orchestrator.viewAnglesCollapsed
-                    ? `${VIEW_ANGLES[activeAngle]} · ${VIEW_ANGLES.length}`
-                    : 'Collapse'}
-                </button>
-              </div>
-              {!orchestrator.viewAnglesCollapsed ? (
-                <div className="elab-view-angles__strip">
-                  {VIEW_ANGLES.map((angle, i) => (
-                    <button
-                      key={angle}
-                      type="button"
-                      className={`elab-view-angles__thumb${i === activeAngle ? ' elab-view-angles__thumb--active' : ''}`}
-                      aria-pressed={i === activeAngle}
-                      onClick={() => setActiveAngle(i)}
-                    >
-                      <span className="elab-view-angles__thumb-inner" />
-                      {!isCompact ? <span className="elab-view-angles__thumb-label">{angle}</span> : null}
-                    </button>
-                  ))}
-                </div>
-              ) : null}
-            </nav>
-          }
+          viewAngles={showFloats ? viewAnglesNav : undefined}
           leftRailCollapsed={orchestrator.leftRailCollapsed}
           rightRailCollapsed={orchestrator.rightRailCollapsed}
           onToggleLeftRail={!isCompact ? orchestrator.toggleLeftRail : undefined}
           onToggleRightRail={!isCompact ? orchestrator.toggleRightRail : undefined}
         />
+        ) : null}
       </div>
 
       {expandedPanel ? (

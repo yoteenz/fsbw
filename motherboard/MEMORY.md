@@ -48557,3 +48557,26 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 **Conventions:** Desktop-first workstation architecture is canonical department standard for future Studio World departments; mobile must not introduce alternate UX patterns.
 
 **One commit + one push** on `master` via `agent-commit.sh`.
+
+---
+
+## 2026-07-13 — P0 Experience Lab V2 Component Review Mode (full conversation)
+
+**Founder request:** Stop whole-page redesigns. Build Experience Lab V2 as Studio World System Components — one component at a time: Design → Founder Review → Approval → Version Lock. Create EXPERIENCE LAB COMPONENT REVIEW MODE — selecting one component hides all others (code preserved, not deleted). Phase 1: Command Dock only. Mandatory implementation order through Environment Layer (last). One commit.
+
+**Shipped:**
+
+- **`experience-lab-v2-component-review.ts`** — component registry, 9 review targets, mandatory phase order, version names (StudioWorldCommandDock v1, etc.), lock registry, visibility helpers
+- **`useExperienceLabComponentReview.ts`** — review state + localStorage + `?elabReview=` query sync; phase gating via `canAdvanceToPhase`
+- **`ExperienceLabComponentReviewChrome.tsx`** — selector UI, hidden count, lock status, Exit review
+- **`ExperienceLabComponentReviewSandbox.tsx`** — isolated stage per component
+- **`ExperienceLabV2Shell`** — review mode default ON (`VITE_EXPERIENCE_LAB_V2_COMPONENT_REVIEW`); Phase 1 shows Command Dock only; all other components hidden not deleted; full workstation when review exited (`?elabReview=off`)
+- **`ExperienceLabViewportStage`** — `reviewIsolate` prop for viewport / inspectors / view-angles sub-review
+- **Feature flag** — `experienceLabV2ComponentReviewEnabled`
+- **Tests** — 54/54 PASS; build PASS
+
+**Current phase:** 1 — Command Dock (StudioWorldCommandDock v1) — **AWAITING founder approval**; no components locked yet.
+
+**Conventions:** One component per perfection sprint; never skip implementation phases; environment layer only after all UI components approved.
+
+**One commit + one push** on `master` via `agent-commit.sh`.

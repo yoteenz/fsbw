@@ -317,7 +317,7 @@ describe('Experience Lab V2 — Panel orchestration', () => {
   it('shell wires panel orchestrator hook', () => {
     const shell = readV2Source('ExperienceLabV2Shell.tsx');
     expect(shell).toContain('useExperienceLabPanelOrchestrator');
-    expect(shell).toContain('orchestrator={orchestrator}');
+    expect(shell).toContain('viewportStageProps');
     expect(readV2Source('ExperienceLabDiagnostics.tsx')).toContain('RESET EXPERIENCE LAB LAYOUT');
   });
 
@@ -331,6 +331,26 @@ describe('Experience Lab V2 — Panel orchestration', () => {
   it('composition markers include inspector switcher', () => {
     expect(ELAB_V2_COMPOSITION.inspectorSwitcher).toBe('data-elab-inspector-switcher');
     expect(ELAB_V2_COMPOSITION.workstationFrame).toBe('data-elab-workstation-frame');
+    expect(ELAB_V2_COMPOSITION.componentReviewChrome).toBe('data-elab-component-review-chrome');
     expect(readV2Source('experience-lab-v2-panel-orchestrator.ts')).toContain('PANEL_LAYOUT_STORAGE_KEY');
+  });
+});
+
+describe('Experience Lab V2 — Component Review Mode integration', () => {
+  it('shell wires component review mode with Phase 1 default', () => {
+    const shell = readV2Source('ExperienceLabV2Shell.tsx');
+    expect(shell).toContain('useExperienceLabComponentReview');
+    expect(shell).toContain('ExperienceLabComponentReviewChrome');
+    expect(shell).toContain('ExperienceLabComponentReviewSandbox');
+    expect(shell).toContain('elab-app-shell--component-review');
+    expect(readV2Source('experience-lab-v2-component-review.ts')).toContain("'command-dock'");
+  });
+
+  it('does not delete components — hides via review.show()', () => {
+    const shell = readV2Source('ExperienceLabV2Shell.tsx');
+    expect(shell).toContain('review.show(');
+    expect(shell).toContain('ExperienceLabCommandDock');
+    expect(shell).toContain('ExperienceLabFounderWorkbench');
+    expect(shell).toContain('ExperienceLabApprovalBridge');
   });
 });

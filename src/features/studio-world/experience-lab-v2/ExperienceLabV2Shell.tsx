@@ -14,6 +14,8 @@ import { ExperienceLabWorkbenchDock } from './ExperienceLabWorkbenchDock';
 import { ExperienceLabDepartmentDock } from './ExperienceLabDepartmentDock';
 import { ExperienceLabWorkstationFrame } from './ExperienceLabWorkstationFrame';
 import { ExperienceLabDiagnostics } from './ExperienceLabDiagnostics';
+import { ExperienceLabComponentReviewChrome } from './ExperienceLabComponentReviewChrome';
+import { ExperienceLabComponentReviewSandbox } from './ExperienceLabComponentReviewSandbox';
 import { ExperienceLabSheet } from './ExperienceLabSheet';
 import {
   experienceLabV2ViewModelAdapter,
@@ -25,6 +27,7 @@ import { readExperienceLabV2TestMode } from './experience-lab-v2-test-modes';
 import { resolveExperienceLabV2FeatureFlags } from './experience-lab-v2-feature-flags';
 import { useExperienceLabAppShell } from './useExperienceLabAppShell';
 import { useExperienceLabPanelOrchestrator } from './useExperienceLabPanelOrchestrator';
+import { useExperienceLabComponentReview } from './useExperienceLabComponentReview';
 import { defaultWorkbenchTab, focusModeFromViewportMode } from './experience-lab-v2-layout';
 import type { ElabWorkbenchTab } from './experience-lab-v2-layout';
 import { ELAB_V2_COMPOSITION } from './experience-lab-v2-composition';
@@ -36,8 +39,8 @@ type Props = {
 };
 
 /**
- * Experience Lab V2 — Immersive application workstation (no document scroll).
- * Desktop is canonical; mobile scales the same architecture.
+ * Experience Lab V2 — Component-by-component production build.
+ * Component Review Mode shows one system component at a time for founder approval.
  */
 export function ExperienceLabV2Shell({ initialDepartmentId = 'experience-lab' }: Props) {
   const { program } = useExperienceLabProgram();
@@ -46,6 +49,7 @@ export function ExperienceLabV2Shell({ initialDepartmentId = 'experience-lab' }:
   const navigate = useNavigate();
   const flags = resolveExperienceLabV2FeatureFlags();
   const shell = useExperienceLabAppShell();
+  const review = useExperienceLabComponentReview();
 
   const [departmentId] = useState<CanonicalMainDepartmentId>(initialDepartmentId);
   const [viewportMode, setViewportMode] = useState<StudioViewportMode>(
@@ -115,6 +119,8 @@ export function ExperienceLabV2Shell({ initialDepartmentId = 'experience-lab' }:
   const focusClass =
     shell.focusMode !== 'none' ? ` elab-app-shell--focus-${shell.focusMode}` : '';
 
+  const reviewClass = review.enabled ? ' elab-app-shell--component-review' : '';
+
   if (!flags.experienceLabV2Enabled) {
     return (
       <div className="elab-workstation elab-workstation--disabled" data-experience-lab-v2-shell>
@@ -123,16 +129,33 @@ export function ExperienceLabV2Shell({ initialDepartmentId = 'experience-lab' }:
     );
   }
 
+  const viewportStageProps = {
+    model,
+    viewportMode,
+    onModeChange: setModeWithQuery,
+    onImageLoad: () => setImageLoaded(true),
+    isCompact: shell.isCompact,
+    onFocusMode: (mode: StudioViewportMode) => shell.setFocusMode(focusModeFromViewportMode(mode)),
+    focusMode: shell.focusMode,
+    orchestrator,
+  };
+
   const lowerDeck = shell.focusMode === 'none' ? (
     <>
-      <ExperienceLabFounderWorkbench model={model} activeTab={workbenchTab} onTabChange={setWorkbenchTab} />
-      <ExperienceLabApprovalBridge
-        approval={model.approval}
-        testMode={testMode}
-        onBlockersOpen={() => shell.toggleOverlay('blockers')}
-      />
-      <ExperienceLabWorkbenchDock onMoreOpen={() => shell.toggleOverlay('tools')} />
-      {flags.experienceLabV2DiagnosticsEnabled ? (
+      {review.show('workbench') ? (
+        <ExperienceLabFounderWorkbench model={model} activeTab={workbenchTab} onTabChange={setWorkbenchTab} />
+      ) : null}
+      {review.show('approval-bridge') ? (
+        <ExperienceLabApprovalBridge
+          approval={model.approval}
+          testMode={testMode}
+          onBlockersOpen={() => shell.toggleOverlay('blockers')}
+        />
+      ) : null}
+      {review.show('bottom-tool-dock') ? (
+        <ExperienceLabWorkbenchDock onMoreOpen={() => shell.toggleOverlay('tools')} />
+      ) : null}
+      {review.show('diagnostics') && flags.experienceLabV2DiagnosticsEnabled ? (
         <ExperienceLabDiagnostics
           testMode={testMode}
           onTestModeChange={setTestMode}
@@ -147,74 +170,175 @@ export function ExperienceLabV2Shell({ initialDepartmentId = 'experience-lab' }:
     </>
   ) : null;
 
-  return (
-    <div
-      className={`elab-workstation elab-app-shell elab-app-shell--${shell.breakpoint}${focusClass}`}
-      data-experience-lab-v2-shell
-      {...{ [ELAB_V2_COMPOSITION.applicationShell]: '' }}
-      {...(shell.focusMode !== 'none' ? { [ELAB_V2_COMPOSITION.focusMode]: shell.focusMode } : {})}
-    >
-      <ExperienceLabEnvironmentLayer isMobile={shell.isCompact} />
+  const renderReviewSandbox = () => {
+    if (!review.enabled) return null;
 
-      <div className="elab-app-shell__grid">
-        <div className="elab-app-shell__badges">
-          <span className="elab-v2__badge">EXPERIENCE LAB V2 — TEST ENVIRONMENT</span>
-          <span className="elab-v2__badge">NOT YET PRODUCTION</span>
-        </div>
-
-        <div className="elab-app-shell__command">
+    if (review.show('command-dock')) {
+      return (
+        <ExperienceLabComponentReviewSandbox componentId="command-dock" label="Command Dock">
           <ExperienceLabCommandDock
             model={{ ...model, testMode }}
             onStatusOpen={() => shell.toggleOverlay('status')}
           />
-        </div>
+        </ExperienceLabComponentReviewSandbox>
+      );
+    }
 
-        {shell.focusMode === 'none' ? (
+    if (review.show('workbench')) {
+      return (
+        <ExperienceLabComponentReviewSandbox componentId="workbench" label="Founder Workbench">
+          <ExperienceLabFounderWorkbench model={model} activeTab={workbenchTab} onTabChange={setWorkbenchTab} />
+        </ExperienceLabComponentReviewSandbox>
+      );
+    }
+
+    if (review.show('studio-viewport')) {
+      return (
+        <ExperienceLabComponentReviewSandbox componentId="studio-viewport" label="Studio Viewport">
+          <ExperienceLabViewportStage {...viewportStageProps} reviewIsolate="viewport" />
+        </ExperienceLabComponentReviewSandbox>
+      );
+    }
+
+    if (review.show('floating-inspectors')) {
+      return (
+        <ExperienceLabComponentReviewSandbox componentId="floating-inspectors" label="Floating Inspectors">
+          <ExperienceLabViewportStage {...viewportStageProps} reviewIsolate="inspectors" />
+        </ExperienceLabComponentReviewSandbox>
+      );
+    }
+
+    if (review.show('approval-bridge')) {
+      return (
+        <ExperienceLabComponentReviewSandbox componentId="approval-bridge" label="Approval Bridge">
+          <ExperienceLabApprovalBridge
+            approval={model.approval}
+            testMode={testMode}
+            onBlockersOpen={() => shell.toggleOverlay('blockers')}
+          />
+        </ExperienceLabComponentReviewSandbox>
+      );
+    }
+
+    if (review.show('bottom-tool-dock')) {
+      return (
+        <ExperienceLabComponentReviewSandbox componentId="bottom-tool-dock" label="Bottom Tool Dock">
+          <ExperienceLabWorkbenchDock onMoreOpen={() => shell.toggleOverlay('tools')} />
+        </ExperienceLabComponentReviewSandbox>
+      );
+    }
+
+    if (review.show('diagnostics')) {
+      return (
+        <ExperienceLabComponentReviewSandbox componentId="diagnostics" label="Diagnostics">
+          <ExperienceLabDiagnostics
+            testMode={testMode}
+            onTestModeChange={setTestMode}
+            migration={model.migrationReadiness}
+            panelDiagnostics={orchestrator.diagnostics}
+            onResetLayout={orchestrator.resetLayout}
+            open
+            compact
+          />
+        </ExperienceLabComponentReviewSandbox>
+      );
+    }
+
+    if (review.show('view-angle-strip')) {
+      return (
+        <ExperienceLabComponentReviewSandbox componentId="view-angle-strip" label="View Angle Strip">
+          <ExperienceLabViewportStage {...viewportStageProps} reviewIsolate="view-angles" />
+        </ExperienceLabComponentReviewSandbox>
+      );
+    }
+
+    if (review.show('environment-layer')) {
+      return (
+        <ExperienceLabComponentReviewSandbox componentId="environment-layer" label="Environment Layer">
+          <div className="elab-component-review-env-preview">
+            <ExperienceLabEnvironmentLayer isMobile={shell.isCompact} />
+          </div>
+        </ExperienceLabComponentReviewSandbox>
+      );
+    }
+
+    return null;
+  };
+
+  return (
+    <div
+      className={`elab-workstation elab-app-shell elab-app-shell--${shell.breakpoint}${focusClass}${reviewClass}`}
+      data-experience-lab-v2-shell
+      data-elab-review-active={review.enabled ? review.activeComponent : undefined}
+      {...{ [ELAB_V2_COMPOSITION.applicationShell]: '' }}
+      {...(shell.focusMode !== 'none' ? { [ELAB_V2_COMPOSITION.focusMode]: shell.focusMode } : {})}
+    >
+      {review.enabled ? <ExperienceLabComponentReviewChrome review={review} /> : null}
+
+      {!review.enabled && flags.experienceLabV2EnvironmentAssetEnabled && review.show('environment-layer') ? (
+        <ExperienceLabEnvironmentLayer isMobile={shell.isCompact} />
+      ) : null}
+
+      <div className={`elab-app-shell__grid${review.enabled ? ' elab-app-shell__grid--review' : ''}`}>
+        {!review.enabled ? (
+          <div className="elab-app-shell__badges">
+            <span className="elab-v2__badge">EXPERIENCE LAB V2 — TEST ENVIRONMENT</span>
+            <span className="elab-v2__badge">NOT YET PRODUCTION</span>
+          </div>
+        ) : null}
+
+        {!review.enabled && review.show('command-dock') ? (
+          <div className="elab-app-shell__command">
+            <ExperienceLabCommandDock
+              model={{ ...model, testMode }}
+              onStatusOpen={() => shell.toggleOverlay('status')}
+            />
+          </div>
+        ) : null}
+
+        {review.enabled ? (
+          <div className="elab-app-shell__review-stage">{renderReviewSandbox()}</div>
+        ) : shell.focusMode === 'none' ? (
           <ExperienceLabWorkstationFrame
             registry={shell.isDesktop ? <ExperienceLabRegistrySidebar /> : undefined}
             governance={shell.isDesktop ? <ExperienceLabGovernanceSidebar model={model} /> : undefined}
             viewport={
-              <ExperienceLabViewportStage
-                model={model}
-                viewportMode={viewportMode}
-                onModeChange={setModeWithQuery}
-                onImageLoad={() => setImageLoaded(true)}
-                isCompact={shell.isCompact}
-                onFocusMode={(mode) => shell.setFocusMode(focusModeFromViewportMode(mode))}
-                focusMode={shell.focusMode}
-                orchestrator={orchestrator}
-              />
+              review.show('studio-viewport') || review.show('floating-inspectors') || review.show('view-angle-strip') ? (
+                <ExperienceLabViewportStage
+                  {...viewportStageProps}
+                  reviewIsolate={
+                    review.show('floating-inspectors')
+                      ? 'inspectors'
+                      : review.show('view-angle-strip')
+                        ? 'view-angles'
+                        : 'viewport'
+                  }
+                />
+              ) : (
+                <div className="elab-stage elab-stage--hidden-placeholder" aria-hidden />
+              )
             }
             lowerDeck={lowerDeck}
           />
         ) : (
           <div className="elab-app-shell__viewport-room elab-app-shell__viewport-room--focus">
-            <ExperienceLabViewportStage
-              model={model}
-              viewportMode={viewportMode}
-              onModeChange={setModeWithQuery}
-              onImageLoad={() => setImageLoaded(true)}
-              isCompact={shell.isCompact}
-              onFocusMode={(mode) => shell.setFocusMode(focusModeFromViewportMode(mode))}
-              focusMode={shell.focusMode}
-              orchestrator={orchestrator}
-            />
+            <ExperienceLabViewportStage {...viewportStageProps} />
           </div>
         )}
 
-        {shell.focusMode !== 'none' ? (
+        {!review.enabled && shell.focusMode !== 'none' ? (
           <div className="elab-app-shell__focus-bar">
             <span>Focus: {shell.focusMode.replace('_', ' ')}</span>
             <button type="button" onClick={() => shell.setFocusMode('none')}>Exit focus</button>
           </div>
-        ) : (
+        ) : !review.enabled ? (
           <div className="elab-app-shell__dept-dock">
             <ExperienceLabDepartmentDock
               isCompact={shell.isCompact}
               onGovernanceOpen={shell.isCompact ? () => shell.toggleOverlay('governance') : undefined}
             />
           </div>
-        )}
+        ) : null}
       </div>
 
       <ExperienceLabSheet open={shell.overlay === 'status'} title="Status & metadata" onClose={shell.closeOverlay}>
