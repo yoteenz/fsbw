@@ -6,12 +6,17 @@ import { runConstructionModeCompile } from '../studio-os-core/construction-mode/
 import {
   buildConstructionPlanSummary,
   openBlueprintAuthorSession,
+  openBlueprintAuthorSessionFromPlan,
   type BlueprintAuthorSessionBundle,
 } from '../studio-os-core/blueprint-author/workflow-session';
 import {
   mapWorkflowContextToCompileRequest,
   type BlueprintWorkflowContext,
 } from '../studio-os-core/blueprint-author/workflow-mapper';
+import {
+  buildCanonicalDepartmentConstructionPlan,
+} from '../studio-os-core/canonical-studio-world/canonical-department-construction-plan';
+import type { CanonicalMainDepartmentId } from '../studio-os-core/canonical-studio-world/canonical-department-registry';
 import {
   buildConstructionTimeline,
   buildFounderReviewDiff,
@@ -75,6 +80,7 @@ export function useBlueprintAuthorWorkflow() {
   const [isGeneratingPreview, setIsGeneratingPreview] = useState(false);
   const [previewImageLoaded, setPreviewImageLoaded] = useState(false);
   const [revisionInput, setRevisionInput] = useState('');
+  const [previewApprovedDepartmentId, setPreviewApprovedDepartmentId] = useState<CanonicalMainDepartmentId | null>(null);
 
   const summary = useMemo(() => (bundle ? buildConstructionPlanSummary(bundle) : null), [bundle]);
 
@@ -235,6 +241,81 @@ export function useBlueprintAuthorWorkflow() {
     [bundle, applyStatusResponse]
   );
 
+  const approvePreviewOnly = useCallback(async () => {
+    if (!bundle || !founderRenderJob || !canApproveFounderRender(founderRenderJob, previewImageLoaded)) return;
+    setError(null);
+    setIsManufacturing(true);
+
+    if (founderRenderJob.jobId) {
+      const approval = await requestFounderRenderApprove({
+        jobId: founderRenderJob.jobId,
+        currentBlueprintRevision: founderRenderJob.currentBlueprintRevision,
+        materialSet: founderRenderJob.materialLibrary,
+        lightingProfile: founderRenderJob.lightingProfile,
+        cameraProfile: founderRenderJob.cameraProfile,
+      });
+      if (!approval.ok) {
+        setError(approval.error ?? 'Founder render approval failed');
+        setIsManufacturing(false);
+        return;
+      }
+    }
+
+    setFounderRenderState((prev) => ({ ...prev, approvalStatus: 'approved', status: 'approved' }));
+    setPreviewApprovedDepartmentId(bundle.plan.room.roomId as CanonicalMainDepartmentId);
+    setStep('complete');
+    setIsManufacturing(false);
+  }, [bundle, founderRenderJob, previewImageLoaded]);
+
+  const openCanonicalDepartment = useCallback((departmentId: CanonicalMainDepartmentId) => {
+    setError(null);
+    setIsAuthoring(true);
+    setManufacturingResult(null);
+    setFounderRenderState(INITIAL_RENDER_STATE);
+    setPreviewImageLoaded(false);
+    setRevisionInput('');
+    setPreviewApprovedDepartmentId(null);
+
+    try {
+      const built = buildCanonicalDepartmentConstructionPlan(departmentId, 'landscape');
+      if (!built.ok) {
+        setError(built.message);
+        setStep('idle');
+        return;
+      }
+
+      const compileRequest: FounderCompileRequest = {
+        requestId: built.plan.planId,
+        organizationId: built.plan.metadata.organizationId,
+        buildingId: built.plan.building.buildingId,
+        floorId: built.plan.floor.floorId,
+        roomId: built.plan.room.roomId,
+        stationId: `canonical-${departmentId}`,
+        departmentId,
+        projectId: built.plan.planId,
+        founderIntent: built.plan.room.purpose,
+        roomType: built.plan.room.roomType,
+        styleProfileId: 'studio-world-canonical',
+      };
+
+      setRequest(compileRequest);
+      const opened = openBlueprintAuthorSessionFromPlan(built.plan, departmentId);
+      setBundle(opened);
+      setStep('founder-review');
+      setSelectedAssetId(null);
+      setVariantId('current');
+      setVariantChanged(false);
+      setBlueprintDrawerOpen(false);
+      setInspectMode(false);
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      setError(msg);
+      setStep('idle');
+    } finally {
+      setIsAuthoring(false);
+    }
+  }, []);
+
   const submitRequest = useCallback((ctx: BlueprintWorkflowContext) => {
     setError(null);
     setIsAuthoring(true);
@@ -334,6 +415,7 @@ export function useBlueprintAuthorWorkflow() {
     setInspectMode(false);
     setFounderRenderState(INITIAL_RENDER_STATE);
     setPreviewImageLoaded(false);
+    setPreviewApprovedDepartmentId(null);
   }, [inspectMode, selectedAssetId, blueprintDrawerOpen]);
 
   const openBlueprintDrawer = useCallback(() => {
@@ -379,9 +461,11 @@ export function useBlueprintAuthorWorkflow() {
     setFounderRenderState(INITIAL_RENDER_STATE);
     setPreviewImageLoaded(false);
     setRevisionInput('');
+    setPreviewApprovedDepartmentId(null);
   }, []);
 
-  const isApproved = Boolean(manufacturingResult?.success);
+  const isPreviewApproved = founderRenderState.approvalStatus === 'approved';
+  const isApproved = Boolean(manufacturingResult?.success) || isPreviewApproved;
   const canApprove =
     founderRenderJob != null && canApproveFounderRender(founderRenderJob, previewImageLoaded) && !isManufacturing;
 
@@ -404,14 +488,18 @@ export function useBlueprintAuthorWorkflow() {
     isAuthoring,
     isManufacturing,
     isApproved,
+    isPreviewApproved,
+    previewApprovedDepartmentId,
     canApprove,
     isGeneratingPreview,
     previewImageLoaded,
     revisionInput,
     setRevisionInput,
     submitRequest,
+    openCanonicalDepartment,
     generateFounderPreview,
     approveAndBuild,
+    approvePreviewOnly,
     submitRevision,
     goBack,
     openBlueprintDrawer,

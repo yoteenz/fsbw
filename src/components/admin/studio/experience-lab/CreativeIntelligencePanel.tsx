@@ -13,6 +13,7 @@ import { ExperienceLabProgramSelector } from './ExperienceLabProgramSelector';
 import { CanonicalDepartmentTree } from './CanonicalDepartmentTree';
 import { CanonicalDepartmentBatchPanel } from './CanonicalDepartmentBatchPanel';
 import { CanonicalDepartmentQueuePanel } from './CanonicalDepartmentQueuePanel';
+import { CanonicalDepartmentFounderReviewGate } from './CanonicalDepartmentFounderReviewGate';
 import { IndustryPackSelector } from './IndustryPackSelector';
 import { IndustryPackDepartmentTree } from './IndustryPackDepartmentTree';
 import { FounderModRegistryPanel } from './FounderModRegistryPanel';
@@ -102,18 +103,20 @@ export function CreativeIntelligencePanel() {
             onSelect={setSelectedCanonicalId}
             renderStatusByDepartment={canonicalQueue.renderStatusByDepartment()}
           />
-          <CanonicalDepartmentBatchPanel
-            selectedDepartmentId={selectedCanonicalId}
-            onQueue={canonicalQueue.submitBatch}
-            submitting={canonicalQueue.submitting}
-            submitError={canonicalQueue.error}
-          />
-          <CanonicalDepartmentQueuePanel
-            queue={canonicalQueue.queue}
-            loading={canonicalQueue.loading}
-            error={canonicalQueue.error}
-            onRefresh={() => void canonicalQueue.refresh()}
-          />
+          <CanonicalDepartmentFounderReviewGate departmentId={selectedCanonicalId}>
+            <CanonicalDepartmentBatchPanel
+              selectedDepartmentId={selectedCanonicalId}
+              onQueue={canonicalQueue.submitBatch}
+              submitting={canonicalQueue.submitting}
+              submitError={canonicalQueue.error}
+            />
+            <CanonicalDepartmentQueuePanel
+              queue={canonicalQueue.queue}
+              loading={canonicalQueue.loading}
+              error={canonicalQueue.error}
+              onRefresh={() => void canonicalQueue.refresh()}
+            />
+          </CanonicalDepartmentFounderReviewGate>
         </>
       ) : null}
 

@@ -1,20 +1,20 @@
 {
   "schemaVersion": 1,
   "capsuleType": "delta-context",
-  "currentVersion": "1.0.20",
-  "generatedAt": "2026-07-13T10:30:28.506Z",
-  "gitCommit": "718ff3556ad8809354db639df181e96df5ee3dd1",
+  "currentVersion": "1.0.21",
+  "generatedAt": "2026-07-13T10:39:42.956Z",
+  "gitCommit": "2e0a1ff7be4f4645c301a9b9ca109b8d00bf0211",
   "validationStatus": "pass",
   "changeCount": 2,
-  "checksumSha256": "c4e23fe754f1a6e1fecf805ee59dab639e3fc7ce8bf7645865aad07d21c21882",
-  "artifact": "StudioOS_ContextUpdate_v1.0.20.zip",
+  "checksumSha256": "58a6e178c29d2e580dd10580110537bb8fc470983df56d059e652da4c3b3594d",
+  "artifact": "StudioOS_ContextUpdate_v1.0.21.zip",
   "baseOnboardingVersionRequired": "1.2.2",
   "currentOnboardingPackVersion": "1.2.2",
   "compatibilityStatus": "compatible",
   "permanentLatestUrl": "/context-updates/latest",
   "latestDownloadPath": "/context-updates/latest",
   "legacyLatestDownloadPath": "/downloads/context-updates/latest.zip",
-  "versionedDownloadPath": "/downloads/context-updates/archive/StudioOS_ContextUpdate_v1.0.20.zip",
+  "versionedDownloadPath": "/downloads/context-updates/archive/StudioOS_ContextUpdate_v1.0.21.zip",
   "categoriesIncluded": [
     "Architecture",
     "Blockers",
@@ -30,6 +30,19 @@
   "packageHealth": 100,
   "readyForDeltaSync": true,
   "releaseHistory": [
+    {
+      "version": "1.0.21",
+      "generatedAt": "2026-07-13T10:39:42.956Z",
+      "gitCommit": "2e0a1ff7be4f4645c301a9b9ca109b8d00bf0211",
+      "checksumSha256": "58a6e178c29d2e580dd10580110537bb8fc470983df56d059e652da4c3b3594d",
+      "sizeBytes": 31033,
+      "changeCount": 2,
+      "baseOnboardingVersion": "1.2.2",
+      "compatibilityStatus": "compatible",
+      "downloadPath": "/downloads/context-updates/archive/StudioOS_ContextUpdate_v1.0.21.zip",
+      "zipFileName": "StudioOS_ContextUpdate_v1.0.21.zip",
+      "validationStatus": "pass"
+    },
     {
       "version": "1.0.20",
       "generatedAt": "2026-07-13T10:30:28.506Z",
@@ -275,19 +288,6 @@
       "compatibilityStatus": "compatible",
       "downloadPath": "/downloads/context-updates/archive/StudioOS_ContextUpdate_v1.0.2.zip",
       "zipFileName": "StudioOS_ContextUpdate_v1.0.2.zip",
-      "validationStatus": "pass"
-    },
-    {
-      "version": "1.0.1",
-      "generatedAt": "2026-07-11T16:13:39.831Z",
-      "gitCommit": "3051691d2b056bf710890c3afec3d75c115137c3",
-      "checksumSha256": "6d42ad471ba9e54f084fc160fa8d3f5531ccc88e0a32c941c15a63ad52d2fd2f",
-      "sizeBytes": 41133,
-      "changeCount": 3,
-      "baseOnboardingVersion": "1.1.0",
-      "compatibilityStatus": "compatible",
-      "downloadPath": "/downloads/context-updates/archive/StudioOS_ContextUpdate_v1.0.1.zip",
-      "zipFileName": "StudioOS_ContextUpdate_v1.0.1.zip",
       "validationStatus": "pass"
     }
   ]

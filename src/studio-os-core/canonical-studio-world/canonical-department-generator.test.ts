@@ -333,6 +333,17 @@ describe('Canonical Department Generator™ — Experience Lab UI contract', () 
     expect(isCanonicalQueueActiveStatus('ready')).toBe(false);
   });
 
+  it('opens blueprint session from canonical construction plan', async () => {
+    const { openBlueprintAuthorSessionFromPlan } = await import('../blueprint-author/workflow-session');
+    const built = buildCanonicalDepartmentConstructionPlan('command-center', 'landscape');
+    expect(built.ok).toBe(true);
+    if (built.ok) {
+      const bundle = openBlueprintAuthorSessionFromPlan(built.plan, 'command-center');
+      expect(bundle.plan.room.roomId).toBe('command-center');
+      expect(bundle.session.dashboard.roomDisplayName).toBeTruthy();
+    }
+  });
+
   it('production admin route loads on mobile (responsive shell contract)', async () => {
     const { CreativeIntelligencePanel } = await import(
       '../../components/admin/studio/experience-lab/CreativeIntelligencePanel'
@@ -340,8 +351,12 @@ describe('Canonical Department Generator™ — Experience Lab UI contract', () 
     const { ExperienceLabProgramSelector } = await import(
       '../../components/admin/studio/experience-lab/ExperienceLabProgramSelector'
     );
+    const { CanonicalDepartmentFounderReviewGate } = await import(
+      '../../components/admin/studio/experience-lab/CanonicalDepartmentFounderReviewGate'
+    );
     expect(typeof CreativeIntelligencePanel).toBe('function');
     expect(typeof ExperienceLabProgramSelector).toBe('function');
+    expect(typeof CanonicalDepartmentFounderReviewGate).toBe('function');
     expect(EXPERIENCE_LAB_PROGRAMS[0].title).toBe('BUILD STUDIO WORLD');
   });
 });

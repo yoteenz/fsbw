@@ -290,6 +290,30 @@ export async function advanceCanonicalRenderQueue(): Promise<CanonicalQueueSnaps
   return fetchCanonicalQueueSnapshot();
 }
 
+async function assertCanonicalDepartmentPreviewApproved(
+  departmentId: CanonicalMainDepartmentId
+): Promise<{ ok: true } | { ok: false; code: string; message: string }> {
+  const admin = getSupabaseAdminServiceRole();
+  const { data, error } = await admin
+    .from(TABLE)
+    .select('job_id, approval_status, status')
+    .eq('organization_id', CANONICAL_RENDER_ORGANIZATION_ID)
+    .eq('room_id', departmentId)
+    .eq('approval_status', 'approved')
+    .order('approved_at', { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (error || !data) {
+    return {
+      ok: false,
+      code: 'PREVIEW_NOT_APPROVED',
+      message: `Founder Render preview must be approved for ${departmentId} before batch queue dispatch.`,
+    };
+  }
+  return { ok: true };
+}
+
 export async function submitCanonicalDepartmentBatch(input: {
   departmentIds: CanonicalMainDepartmentId[];
   confirmed: boolean;
@@ -299,6 +323,11 @@ export async function submitCanonicalDepartmentBatch(input: {
 > {
   const plan = buildCanonicalBatchQueuePlan(input);
   if ('ok' in plan && plan.ok === false) return plan;
+
+  for (const departmentId of input.departmentIds) {
+    const approved = await assertCanonicalDepartmentPreviewApproved(departmentId);
+    if (!approved.ok) return approved;
+  }
 
   const batchId = `cbatch-${randomUUID()}`;
   const queuedJobIds: string[] = [];

@@ -5,12 +5,13 @@ import { FounderReviewExperience } from './FounderReviewExperience';
 type Props = {
   workflow: UseBlueprintAuthorWorkflowReturn;
   renderAfterApproval?: ReactNode;
+  approvalMode?: 'build' | 'preview-only';
 };
 
 /**
  * Blueprint Author workflow shell — delegates to Founder Review Experience™.
  */
-export function BlueprintAuthorWorkflowShell({ workflow, renderAfterApproval }: Props) {
+export function BlueprintAuthorWorkflowShell({ workflow, renderAfterApproval, approvalMode = 'build' }: Props) {
   if (workflow.step === 'idle') return null;
 
   if (!workflow.bundle || !workflow.summary) {
@@ -21,5 +22,5 @@ export function BlueprintAuthorWorkflowShell({ workflow, renderAfterApproval }: 
     );
   }
 
-  return <FounderReviewExperience workflow={workflow} renderAfterApproval={renderAfterApproval} />;
+  return <FounderReviewExperience workflow={workflow} renderAfterApproval={renderAfterApproval} approvalMode={approvalMode} />;
 }

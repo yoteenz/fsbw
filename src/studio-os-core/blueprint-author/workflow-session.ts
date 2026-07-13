@@ -49,6 +49,35 @@ export function openBlueprintAuthorSession(request: FounderCompileRequest): Blue
   return { plan, assetDna, renderIntents, queue, session, planCheck };
 }
 
+/** Open Blueprint Author from an existing Construction Plan (canonical departments, pre-authored plans). */
+export function openBlueprintAuthorSessionFromPlan(
+  plan: ConstructionPlan,
+  departmentId: string
+): BlueprintAuthorSessionBundle {
+  const enriched = attachUiSocketBlueprintToConstructionPlan({
+    plan,
+    departmentId,
+  });
+  const fullPlan: ConstructionPlan = {
+    ...enriched,
+    architectureLawVersion: ARCHITECTURE_LAW_001_VERSION,
+  };
+  const planCheck = assertConstructionPlanComplete(fullPlan);
+  const assetDna = deriveAllAssetDnaFromPlan(fullPlan);
+  const jobIdMap = Object.fromEntries(assetDna.map((d, i) => [d.assetId, `mfg-job-${String(i + 1).padStart(3, '0')}`]));
+  const renderIntents = buildRenderIntentsForPlan({ plan: fullPlan, dnaRecords: assetDna, jobIds: jobIdMap });
+  const queue = buildManufacturingQueue({ plan: fullPlan, dnaRecords: assetDna, renderIntents });
+  const session = openConstructionModeSession({
+    plan: fullPlan,
+    dnaRecords: assetDna,
+    renderIntents,
+    queue,
+    organizationId: fullPlan.metadata.organizationId,
+  });
+
+  return { plan: fullPlan, assetDna, renderIntents, queue, session, planCheck };
+}
+
 export function computePlanConfidenceScore(planCheck: ReturnType<typeof assertConstructionPlanComplete>): number {
   if (!planCheck.ok) return Math.max(35, 88 - planCheck.missing.length * 8);
   return 91;

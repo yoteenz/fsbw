@@ -47,12 +47,14 @@ const btnDisabled: CSSProperties = {
 type Props = {
   workflow: UseBlueprintAuthorWorkflowReturn;
   renderAfterApproval?: ReactNode;
+  /** preview-only: approve NBP render without manufacturing (canonical departments). */
+  approvalMode?: 'build' | 'preview-only';
 };
 
 /**
  * Founder Review Experience™ — photoreal Founder Render first; engineering blueprint collapsed.
  */
-export function FounderReviewExperience({ workflow, renderAfterApproval }: Props) {
+export function FounderReviewExperience({ workflow, renderAfterApproval, approvalMode = 'build' }: Props) {
   const {
     step,
     summary,
@@ -65,12 +67,14 @@ export function FounderReviewExperience({ workflow, renderAfterApproval }: Props
     error,
     isManufacturing,
     isApproved,
+    isPreviewApproved,
     canApprove,
     isGeneratingPreview,
     revisionInput,
     setRevisionInput,
     generateFounderPreview,
     approveAndBuild,
+    approvePreviewOnly,
     submitRevision,
     goBack,
     toggleBlueprintDrawer,
@@ -88,7 +92,8 @@ export function FounderReviewExperience({ workflow, renderAfterApproval }: Props
     return null;
   }
 
-  const showManufacturing = step === 'manufacturing' || step === 'complete';
+  const showManufacturing = approvalMode === 'build' && (step === 'manufacturing' || step === 'complete');
+  const showPreviewApprovedBanner = approvalMode === 'preview-only' && step === 'complete' && isPreviewApproved;
   const liveView = manufacturingResult?.session.liveConstruction ?? bundle.session.liveConstruction;
 
   return (
@@ -117,7 +122,7 @@ export function FounderReviewExperience({ workflow, renderAfterApproval }: Props
         <pre style={{ color: '#eb1c24', fontSize: '11px', whiteSpace: 'pre-wrap', marginBottom: 12 }}>{error}</pre>
       ) : null}
 
-      {!showManufacturing ? (
+      {!showManufacturing && !showPreviewApprovedBanner ? (
         <>
           <FounderReviewHero
             job={founderRenderJob}
@@ -179,14 +184,22 @@ export function FounderReviewExperience({ workflow, renderAfterApproval }: Props
               type="button"
               style={canApprove ? { ...btnPrimary, marginLeft: 'auto' } : { ...btnDisabled, marginLeft: 'auto' }}
               disabled={!canApprove || isManufacturing}
-              onClick={canApprove ? () => void approveAndBuild() : undefined}
+              onClick={
+                canApprove
+                  ? () => void (approvalMode === 'preview-only' ? approvePreviewOnly() : approveAndBuild())
+                  : undefined
+              }
               title={
                 !canApprove
                   ? 'Approve requires ready photoreal preview matching current blueprint revision'
                   : undefined
               }
             >
-              {isManufacturing ? 'Approving…' : 'Approve & Build'}
+              {isManufacturing
+                ? 'Approving…'
+                : approvalMode === 'preview-only'
+                  ? 'Approve Preview'
+                  : 'Approve & Build'}
             </button>
           </div>
 
@@ -202,6 +215,19 @@ export function FounderReviewExperience({ workflow, renderAfterApproval }: Props
               <WorkerStatus monitor={bundle.session.workerMonitor} />
             </div>
           </BlueprintDrawer>
+        </>
+      ) : showPreviewApprovedBanner ? (
+        <>
+          <FounderReviewHero
+            job={{ ...founderRenderJob, status: 'approved' }}
+            onImageLoaded={() => setPreviewImageLoaded(true)}
+          />
+          <p style={{ marginTop: 16, padding: 12, background: '#ecfdf5', borderRadius: 8, color: '#166534', fontSize: '12px' }}>
+            Founder Render preview approved. Batch generation and portrait companion renders are unlocked below.
+          </p>
+          <button type="button" style={{ ...btnSecondary, marginTop: 12 }} onClick={goBack}>
+            Revise department
+          </button>
         </>
       ) : (
         <>

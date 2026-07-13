@@ -91,13 +91,15 @@ Admin batch actions require explicit confirmation and cost review before dispatc
 
 ## Canonical render queue (Program A runtime)
 
-1. Select canonical department(s) in **STUDIO WORLD MAIN DEPARTMENTS**
-2. Confirm batch checkbox → **Queue selected department**
-3. Jobs persist to `studio_founder_render_jobs` with `governance_context.program = canonical-studio-world`
-4. **CANONICAL RENDER QUEUE** panel shows live status; auto-refreshes every 5s while jobs are active
-5. Landscape renders dispatch immediately (max 4 concurrent); portrait jobs queue after landscape is READY
+**Approval gate required:** Batch generation is locked until the NBP Founder Render preview is approved in **FOUNDER RENDER REVIEW (NBP)** — same gate as Industry Pack HQ planning.
 
-API: `POST /api/admin/canonical-department-generation` with `action: queue` | `action: queue-status` · `GET ?view=queue`
+1. Select canonical department(s) in **STUDIO WORLD MAIN DEPARTMENTS**
+2. **FOUNDER RENDER REVIEW** — submit intent → **Generate Founder Preview** (NBP) → review photoreal full-room → **Approve Preview**
+3. After approval, **ADMIN BATCH GENERATION** and **CANONICAL RENDER QUEUE** unlock
+4. Confirm batch checkbox → **Queue selected department**
+5. Portrait jobs auto-queue after landscape READY
+
+API: `POST /api/admin/canonical-department-generation` with `action: queue` (requires `approval_status=approved` founder render for department) | `action: queue-status` · `GET ?view=queue`
 
 ## Founder mod promotion gate
 
