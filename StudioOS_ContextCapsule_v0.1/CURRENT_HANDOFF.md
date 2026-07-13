@@ -8,13 +8,13 @@
 
 ## Current sprint
 
-**P0 — Blueprint Author™ (Deterministic Construction Plans Before AI Generation)**
+**P0+ — Studio World Manufacturing Engine™ (Asset DNA + Render Intent + Founder Preview)**
 
-**Status: Complete (foundation shipped) — Experience Lab blueprint-driven compile UI pending.**
+**Status: Complete (foundation shipped) — Experience Lab manufacturing UI pending.**
 
-Blueprint Author is the first stage of every Studio World compile. Flow: Founder Request → Blueprint Author → Construction Plan → Job Queue → AI Workers → Quality Guard → Immune System → Scene Stack → Living Room. AI executes bounded construction jobs; never invents architecture, materials, or layouts.
+Manufacturing Engine completes Blueprint Author Phase II. Flow: Blueprint → Asset DNA → Render Intent → Manufacturing Queue → Factory Workers → Inspection → Quality Guard (Blueprint→DNA→Intent→Output) → Immune (Expected DNA vs Actual DNA) → Scene Stack → Living World.
 
-**Previous:** Studio World Architecture v2 (`9ae64cc88`). Model Registry + Brand-Grounded NB2 (`129ec7ca6`).
+**Previous:** Blueprint Author™ (`2d3a4146b`). Studio World Architecture v2 (`9ae64cc88`).
 
 ---
 
@@ -22,15 +22,15 @@ Blueprint Author is the first stage of every Studio World compile. Flow: Founder
 
 | ID | Blocker | Status |
 |----|---------|--------|
-| **B1-Blueprint** | Blueprint-driven compile wired to Experience Lab UI | **In Progress** — foundation code shipped |
-| **B1-WorldV2** | v2 orchestrator wired to Experience Lab compile | **In Progress** — `runBlueprintCompile` feeds `runWorldBuildV2` |
+| **B1-Manufacturing** | Founder Preview + Live Manufacturing UI in Experience Lab | **In Progress** — foundation code shipped |
+| **B1-Blueprint** | Blueprint-driven compile wired to Experience Lab UI | **In Progress** |
 | **B1-Isolated** | Brand-grounded NB2 isolated generation | **In Progress** — founder device proof pending |
 
 ---
 
 ## Founder workflow
 
-Verify `runBlueprintCompile` reception fixture tests pass (15 tests). Inspect Construction Plan before AI cost. Next: wire blueprint compile into Experience Lab.
+Verify `runManufacturingCompile` reception tests pass (17 tests). Inspect `founderPreview` before AI cost. Next: wire manufacturing compile + live view into Experience Lab.
 
-**References:** `docs/studio-os/blueprint-author/README.md`, `docs/studio-os/studio-world-architecture-v2/README.md`
+**References:** `docs/studio-os/manufacturing-engine/README.md`, `docs/studio-os/blueprint-author/README.md`
 
