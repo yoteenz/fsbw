@@ -48619,3 +48619,13 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 **Phase 1:** Command Dock still **AWAITING founder approval** after layout update.
 
 **One commit + one push** on `master` via `agent-commit.sh`.
+
+---
+
+## 2026-07-13 — Command Dock bottom corner radius (full conversation)
+
+**Context:** Experience Lab V2 Phase 1 Command Dock review. Prior: three-row layout, white review backgrounds, Component Review Mode.
+
+**Shipped:** `.elab-cmd--tiered` — **top corners square**, **bottom-left/right rounded** (`border-radius: 0 0 6px 6px` + `overflow: hidden`).
+
+**One commit + one push** on `master` via `agent-commit.sh`.

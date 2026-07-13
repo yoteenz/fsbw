@@ -76,6 +76,7 @@ describe('Experience Lab V2 — Immersive composition', () => {
     expect(css).toContain('.elab-workstation');
     expect(css).toContain('.elab-cmd');
     expect(css).toContain('.elab-cmd--tiered');
+    expect(css).toContain('border-radius: 0 0 6px 6px');
     expect(css).toContain('.elab-cmd__locations');
     expect(css).toContain('.elab-float');
     expect(css).toContain('.elab-approval-bridge');

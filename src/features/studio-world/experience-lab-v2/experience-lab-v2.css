@@ -250,6 +250,8 @@ body.elab-v2-fixed-shell-active {
 .elab-cmd--tiered {
   display: flex;
   flex-direction: column;
+  border-radius: 0 0 6px 6px;
+  overflow: hidden;
 }
 
 .elab-cmd__row {
