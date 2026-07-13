@@ -7,4 +7,8 @@ export {
 } from './experience-lab-icon-registry';
 export type { ExperienceLabIconName } from './experience-lab-icon-registry';
 export { EXPERIENCE_LAB_ICON_SPRITE_CONFIG } from './experience-lab-icon-sprite.config';
-export { EXPERIENCE_LAB_ICON_RUNTIME_MAP } from './experience-lab-icon-runtime-map.generated';
+export { EXPERIENCE_LAB_ICON_ASSETS } from './experience-lab-icon-assets.generated';
+export {
+  EXPERIENCE_LAB_ICON_OPTICAL_SCALE,
+  resolveExperienceLabIconOpticalScale,
+} from './experience-lab-icon-optical-scale';

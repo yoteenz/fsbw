@@ -1,10 +1,15 @@
 .elab-icon {
   display: inline-block;
   flex-shrink: 0;
-  background-repeat: no-repeat;
-  image-rendering: -webkit-optimize-contrast;
-  image-rendering: crisp-edges;
   vertical-align: middle;
+}
+
+.elab-icon--img {
+  object-fit: contain;
+  object-position: center;
+  image-rendering: auto;
+  -webkit-user-drag: none;
+  user-select: none;
 }
 
 .elab-icon--missing {

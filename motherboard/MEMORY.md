@@ -48901,6 +48901,28 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 - **`experience-lab-v2.css`** — `.elab-cmd__title` (EXPERIENCE LAB) 9→11px; `.elab-cmd__subtitle` (ARCHITECTURE STUDIO) unchanged at 6px
 - **Tests** — title 11px assertion added; 9/9 PASS
 
-**Spatial Architecture Review:** SKIPPED — CSS typography polish.
+**One commit + one push** on `master` via `agent-commit.sh`.
+
+---
+
+## 2026-07-13 — P0 Experience Lab icon extraction repair (full conversation)
+
+**Founder sprint:** Replace corrupted CSS sprite atlas crops with automated per-glyph transparent PNG extraction from canonical labeled source (`740E9EB1-6B7B-4C5F-B745-E4621EC45EF3.png`).
+
+**Prior context in chat:** EL V2 component review — Command Dock typography/pill polish, workbench sizing; prior sprite system (`build-experience-lab-icon-atlas.mjs` + 768×768 atlas) produced clipped/malformed icons due to binary thresholding, uniform 96×96 slots, incorrect background-size math, crisp-edges rendering, and label-band false positives on wide glyphs.
+
+**Forensic cause:** Uniform crop + CSS sprite scaling — not browser-only scaling.
+
+**Shipped:**
+
+- **`scripts/extract-experience-lab-icons.mjs`** (+ `.ts` alias) — per-cell label exclusion (bottom-band + density heuristic), per-glyph luminance-to-alpha bounds, 256×256 centered PNG export, fail-closed confidence, contact sheet, metadata JSON, manifest TS, QA markdown
+- **`src/assets/studio-world/experience-lab/icons/generated/`** — 64 transparent PNGs + `_contact-sheet.png`
+- **`ExperienceLabIcon`** — `<img>` from `experience-lab-icon-assets.generated.ts` (no CSS sprite)
+- **`experience-lab-icon-optical-scale.ts`** — registry opticalScale for architectural glyphs
+- **Removed** runtime atlas + runtime-map.generated.ts; deprecated old atlas builder → delegates to extractor
+- **QA:** `/admin/studio/experience-lab-icon-qa`, `EXPERIENCE_LAB_EXTRACTED_ICON_QA.md`, updated catalog
+- **Tests:** 10/10 icon tests + 47/47 EL V2 regression; production build PASS
+
+**Spatial Architecture Review:** SKIPPED — icon fidelity infrastructure; no layout changes.
 
 **One commit + one push** on `master` via `agent-commit.sh`.

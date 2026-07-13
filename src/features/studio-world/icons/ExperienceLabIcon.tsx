@@ -4,11 +4,8 @@ import {
   isExperienceLabIconName,
   type ExperienceLabIconName,
 } from './experience-lab-icon-registry';
-import {
-  EXPERIENCE_LAB_ICON_ATLAS_IMPORT,
-  EXPERIENCE_LAB_ICON_RUNTIME_MAP,
-} from './experience-lab-icon-runtime-map.generated';
-import { EXPERIENCE_LAB_ICON_SPRITE_CONFIG } from './experience-lab-icon-sprite.config';
+import { EXPERIENCE_LAB_ICON_ASSETS } from './experience-lab-icon-assets.generated';
+import { resolveExperienceLabIconOpticalScale } from './experience-lab-icon-optical-scale';
 import './experience-lab-icon.css';
 
 export type ExperienceLabIconSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
@@ -45,7 +42,7 @@ function resolveAccessibleName(
   return EXPERIENCE_LAB_ICON_REGISTRY[name].accessibleLabel;
 }
 
-/** White-outline Experience Lab icon glyph from the runtime atlas (labels excluded). */
+/** White-outline Experience Lab icon from extracted transparent PNG assets. */
 export function ExperienceLabIcon({
   name,
   size = 'md',
@@ -73,22 +70,18 @@ export function ExperienceLabIcon({
     );
   }
 
-  const coord = EXPERIENCE_LAB_ICON_RUNTIME_MAP[name];
-  const px = SIZE_PX[size];
-  const scale = px / coord.w;
-  const atlasW = EXPERIENCE_LAB_ICON_SPRITE_CONFIG.runtimeAtlasWidth;
-  const atlasH = EXPERIENCE_LAB_ICON_SPRITE_CONFIG.runtimeAtlasHeight;
+  const asset = EXPERIENCE_LAB_ICON_ASSETS[name];
+  const opticalScale = resolveExperienceLabIconOpticalScale(name);
+  const px = Math.round(SIZE_PX[size] * opticalScale);
 
   const style: CSSProperties = {
     width: px,
     height: px,
-    backgroundImage: `url(${EXPERIENCE_LAB_ICON_ATLAS_IMPORT})`,
-    backgroundPosition: `${-coord.x * scale}px ${-coord.y * scale}px`,
-    backgroundSize: `${atlasW * scale}px ${atlasH * scale}px`,
   };
 
   const classNames = [
     'elab-icon',
+    'elab-icon--img',
     `elab-icon--${size}`,
     active ? 'elab-icon--active' : '',
     selected ? 'elab-icon--selected' : '',
@@ -102,16 +95,19 @@ export function ExperienceLabIcon({
   const resolvedTitle = title ?? (decorative ? undefined : label);
 
   return (
-    <span
+    <img
       className={classNames}
       style={style}
-      role={decorative ? undefined : 'img'}
+      src={asset.src}
+      alt={decorative ? '' : resolveAccessibleName(name, label, ariaLabel)}
       aria-hidden={decorative ? true : undefined}
-      aria-label={decorative ? undefined : resolveAccessibleName(name, label, ariaLabel)}
       aria-disabled={disabled || undefined}
       aria-busy={loading || undefined}
       title={resolvedTitle}
       data-elab-icon={name}
+      draggable={false}
+      loading="lazy"
+      decoding="async"
     />
   );
 }
