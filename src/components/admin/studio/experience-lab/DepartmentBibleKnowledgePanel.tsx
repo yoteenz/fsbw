@@ -19,6 +19,11 @@ import { resolveArchitecturalDna } from '../../../../studio-os-core/architectura
 import { resolveGoldenReferencePack } from '../../../../studio-os-core/architectural-dna/references/golden-reference-library';
 import { resolveStyleBible } from '../../../../studio-os-core/studio-world-style/style-bible/registry';
 import { FOUNDER_RENDER_PROMPT_COMPILER_VERSION } from '../../../../studio-os-core/architectural-dna/schemas/compiler-contract';
+import {
+  listSupremeArticles,
+  validateConstitutionalExecution,
+  getConstitutionalAuditCount,
+} from '../../../../studio-os-core/studio-world-constitution';
 
 const sectionStyle: CSSProperties = {
   padding: '16px',
@@ -86,6 +91,16 @@ export function DepartmentBibleKnowledgePanel({ departmentId }: Props) {
     return buildWorldKnowledgeGraph().nodes.find((n) => n.departmentId === departmentId) ?? null;
   }, [departmentId]);
   const docs = useMemo(() => regenerateDepartmentDocumentation(), []);
+  const constitution = useMemo(() => {
+    if (!departmentId) return null;
+    return validateConstitutionalExecution({
+      kind: 'department-compile',
+      departmentId,
+      actorRole: 'admin',
+      founderApproved: true,
+    });
+  }, [departmentId]);
+  const supremeArticles = useMemo(() => listSupremeArticles(), []);
 
   if (!departmentId || !bible) {
     return (
@@ -138,8 +153,19 @@ export function DepartmentBibleKnowledgePanel({ departmentId }: Props) {
       </div>
 
       <div style={cardStyle}>
+        <strong>Studio World Constitution™</strong>
+        <p style={{ margin: '4px 0 0' }}>
+          Supreme authority — {supremeArticles.length} articles · audit records: {getConstitutionalAuditCount()}
+        </p>
+        <p style={{ margin: '4px 0 0', color: constitution?.ok ? '#166534' : '#b91c1c' }}>
+          Constitutional gate: {constitution?.ok ? 'COMPLIANT' : 'VIOLATION'} · {constitution?.auditRecordId}
+        </p>
+      </div>
+
+      <div style={cardStyle}>
         <strong>Architecture Stack</strong>
         <ul style={{ margin: '4px 0 0', paddingLeft: 18 }}>
+          <li>Constitution: studio-world-constitution-supreme.v1</li>
           <li>Style Bible: {styleBible.authority.bibleVersion} r{styleBible.authority.bibleRevision}</li>
           <li>Department Bible: {bible.bibleVersion} r{bible.bibleRevision}</li>
           <li>Architectural DNA: {dna?.dnaVersion} r{dna?.profileRevision}</li>

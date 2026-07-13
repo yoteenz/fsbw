@@ -9,6 +9,7 @@ import { resolveArchitecturalDna } from '../../architectural-dna/registry/dna-re
 import { resolveGoldenReferencePack } from '../../architectural-dna/references/golden-reference-library';
 import { resolveStyleBible } from '../../studio-world-style/style-bible/registry';
 import { injectStyleBibleForCanonicalDepartment } from '../../studio-world-style/integrations/experience-lab-style-guardian';
+import { validateConstitutionalExecution } from '../../studio-world-constitution/validators/constitutional-gate';
 import type { DepartmentBible } from '../schemas/department-bible';
 import { resolveDepartmentBible } from '../registry/bible-registry';
 import type { ArchitecturalDnaProfile } from '../../architectural-dna/schemas/dna-profile';
@@ -42,7 +43,8 @@ export type CompiledDepartment = {
  */
 export function compileDepartment(
   departmentId: CanonicalMainDepartmentId,
-  renderKind: 'landscape' | 'portrait' = 'landscape'
+  renderKind: 'landscape' | 'portrait' = 'landscape',
+  options?: { skipConstitutionalGate?: boolean }
 ): { ok: true; compiled: CompiledDepartment } | { ok: false; code: string; message: string } {
   const record = getCanonicalDepartmentRecord(departmentId);
   if (!record) {
@@ -54,6 +56,22 @@ export function compileDepartment(
   const styleBible = resolveStyleBible();
   const goldenReferencePack = resolveGoldenReferencePack(departmentId);
   const styleInjection = injectStyleBibleForCanonicalDepartment(departmentId);
+
+  if (!options?.skipConstitutionalGate) {
+    const constitutional = validateConstitutionalExecution({
+      kind: 'department-compile',
+      departmentId,
+      actorRole: 'system',
+      founderApproved: true,
+    });
+    if (!constitutional.ok) {
+      return {
+        ok: false,
+        code: 'CONSTITUTION_VIOLATION',
+        message: constitutional.violations.join('; '),
+      };
+    }
+  }
 
   const built = buildCanonicalDepartmentConstructionPlan(departmentId, renderKind);
   if (!built.ok) return built;

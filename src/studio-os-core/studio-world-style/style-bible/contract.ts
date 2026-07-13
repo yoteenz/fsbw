@@ -1,6 +1,7 @@
 export const STUDIO_WORLD_STYLE_BIBLE_VERSION = 'studio-world-style-bible.v1' as const;
 
 export type StyleBibleHierarchy = [
+  'Studio World Constitution',
   'Studio World Style Bible',
   'Department Bible',
   'Department DNA',

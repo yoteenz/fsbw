@@ -27,7 +27,10 @@ function validateBibleFields(bible: ReturnType<typeof resolveDepartmentBible>): 
   return violations;
 }
 
-export function validateDepartmentBible(departmentId: CanonicalMainDepartmentId): BibleValidationResult {
+export function validateDepartmentBible(
+  departmentId: CanonicalMainDepartmentId,
+  options?: { includeCompile?: boolean }
+): BibleValidationResult {
   const violations: string[] = [];
   const bible = resolveDepartmentBible(departmentId);
 
@@ -48,14 +51,19 @@ export function validateDepartmentBible(departmentId: CanonicalMainDepartmentId)
   if (!styleBible.authority.hierarchy.includes('Department Bible')) {
     violations.push('missing-department-bible-in-hierarchy');
   }
+  if (!styleBible.authority.hierarchy.includes('Studio World Constitution')) {
+    violations.push('missing-constitution-in-hierarchy');
+  }
 
-  const compiled = compileDepartment(departmentId, 'landscape');
-  if (!compiled.ok) {
-    violations.push(`department-compiler-failed:${compiled.code}`);
-  } else {
-    if (!compiled.compiled.constructionPlan.planId) violations.push('missing-blueprint');
-    if (!compiled.compiled.constructionPlan.versions.promptVersion) violations.push('missing-construction-plan');
-    if (!compiled.compiled.styleInjectionOk) violations.push('style-bible-injection-failed');
+  if (options?.includeCompile !== false) {
+    const compiled = compileDepartment(departmentId, 'landscape', { skipConstitutionalGate: true });
+    if (!compiled.ok) {
+      violations.push(`department-compiler-failed:${compiled.code}`);
+    } else {
+      if (!compiled.compiled.constructionPlan.planId) violations.push('missing-blueprint');
+      if (!compiled.compiled.constructionPlan.versions.promptVersion) violations.push('missing-construction-plan');
+      if (!compiled.compiled.styleInjectionOk) violations.push('style-bible-injection-failed');
+    }
   }
 
   return { departmentId, ok: violations.length === 0, violations };

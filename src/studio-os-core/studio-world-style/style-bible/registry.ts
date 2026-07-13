@@ -9,6 +9,7 @@ export const STUDIO_WORLD_STYLE_BIBLE: StudioWorldStyleBible = {
     bibleRevision: 1,
     authority: 'highest-visual-authority',
     hierarchy: [
+      'Studio World Constitution',
       'Studio World Style Bible',
       'Department Bible',
       'Department DNA',

@@ -37,9 +37,10 @@ describe('Studio World Style Bible™ — Registry', () => {
     const bible = resolveStyleBible();
     expect(bible.authority.authority).toBe('highest-visual-authority');
     expect(bible.authority.bibleVersion).toBe('studio-world-style-bible.v1');
-    expect(bible.authority.hierarchy[0]).toBe('Studio World Style Bible');
-    expect(bible.authority.hierarchy[1]).toBe('Department Bible');
-    expect(bible.authority.hierarchy[2]).toBe('Department DNA');
+    expect(bible.authority.hierarchy[0]).toBe('Studio World Constitution');
+    expect(bible.authority.hierarchy[1]).toBe('Studio World Style Bible');
+    expect(bible.authority.hierarchy[2]).toBe('Department Bible');
+    expect(bible.authority.hierarchy[3]).toBe('Department DNA');
   });
 
   it('world language defines universal inherited rules', () => {

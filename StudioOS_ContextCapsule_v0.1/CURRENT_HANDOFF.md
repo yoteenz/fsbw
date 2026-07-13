@@ -8,18 +8,21 @@
 
 ## Current sprint
 
-**P0 — Studio World Canonical Department Bible™**
+**P0 — Studio World Constitution™**
 
-**Status: SHIPPED — Department Bible Registry governs every canonical department's operating manual**
+**Status: SHIPPED — Supreme governing laws established as highest platform authority**
 
 **Shipped:**
 
-- **`department-bible/`** — schemas, registry (25 departments), AI workforce directory, relationship graph, world knowledge graph, permission model, lifecycle model, Department Compiler, validator, encyclopedia, documentation regenerator
-- **Hierarchy enforced:** Style Bible → Department Bible → Department DNA → Golden Reference Library → Blueprint Author → Construction Plan → Founder Render → CDS → Construction Mode → Published Department
-- **Experience Lab Knowledge Panel** — Department Bible, relationship graph, architecture stack, AI workforce, lifecycle, encyclopedia
-- **Tests** — department-bible 27/27 PASS; studio-world-style 20/20; build PASS
+- **`studio-world-constitution/supreme-articles.ts`** — 8 supreme articles (World Identity, Canonical Infrastructure, Founder Property, AI Generation, Blueprint Governance, Mod Governance, Municipal Governance, Immutable Audit)
+- **`constitutional-gate.ts`** — all execution contexts validate against Constitution before proceeding
+- **`immutable-audit.ts`** — Article VIII append-only audit trail
+- **Hierarchy updated** — Constitution supreme above Style Bible → Department Bible → Department DNA → …
+- **Department Compiler** gates through Constitutional Gate before assembly
+- **Experience Lab Knowledge Panel** shows constitutional compliance status
+- **Tests** — studio-world-constitution-supreme 20/20; department-bible 27/27; studio-world-style 20/20; build PASS
 
-**Previous:** Style Bible (`e806fc9d8`); Architectural DNA Registry (`e0148f3ec`); Cross-Department Render Contamination (`def341fa9`).
+**Previous:** Department Bible (`be4501c4e`); Style Bible (`e806fc9d8`); Architectural DNA (`e0148f3ec`).
 
 ---
 

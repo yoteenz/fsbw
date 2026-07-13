@@ -48396,3 +48396,23 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 - **Tests** — department-bible.test.ts 27/27 PASS; studio-world-style 20/20 PASS; production build PASS
 
 **One commit + one push** on `master` via `agent-commit.sh`.
+
+---
+
+## 2026-07-13 — P0 Studio World Constitution™ (full conversation)
+
+**Founder request:** Establish the Studio World Constitution™ as the supreme governing authority — 8 articles covering World Identity, Canonical Infrastructure, Founder Property, AI Generation, Blueprint Governance, Mod Governance, Municipal Governance, and Immutable Audit. All systems must validate against Constitution before execution. One commit, one push.
+
+**Context:** Prior sprints established Department Bible (`be4501c4e`), Style Bible (`e806fc9d8`), and Architectural DNA (`e0148f3ec`). This sprint adds the highest authority layer above all governed infrastructure.
+
+**Shipped:**
+
+- **`supreme-articles.ts`** — 8 supreme articles with rules, prohibitions, enforcement; `GOVERNANCE_HIERARCHY` places Constitution first
+- **`constitutional-gate.ts`** — validates department-compile, founder-render, canonical-modify, CDS-manufacture, marketplace-publish, mod-licensing, construction contexts
+- **`immutable-audit.ts`** — Article VIII append-only audit trail on every validation
+- **Hierarchy updated** — Style Bible hierarchy now: Constitution → Style Bible → Department Bible → …
+- **Department Compiler** gates through Constitutional Gate; bible-validator supports `includeCompile` to prevent recursion
+- **Experience Lab Knowledge Panel** shows constitutional compliance status
+- **Tests** — studio-world-constitution-supreme 20/20; department-bible 27/27; studio-world-style 20/20; build PASS
+
+**One commit + one push** on `master` via `agent-commit.sh`.
