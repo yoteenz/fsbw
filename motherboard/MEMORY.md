@@ -48473,3 +48473,24 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 - **Tests** — experience-lab-v2.test.ts 13/13 PASS; build PASS
 
 **One commit + one push** on `master` via `agent-commit.sh`.
+
+---
+
+## 2026-07-13 — P0 Experience Lab V2 Visual Reconstruction (full conversation)
+
+**Founder request:** Rebuild Experience Lab V2 presentation layer on `/admin/studio/experience-lab-v2` to match attached desktop/mobile reference images as implementation spec — immersive command interface (Command Dock, floating inspectors, dominant viewport, integrated Founder Workbench, Approval Bridge, Workbench Dock, Department Dock). Production `/admin/studio/experience-lab` untouched. Backend adapters/approval/test modes preserved. Tests, screenshots, build, one commit.
+
+**Context:** Prior sprint shipped V2 test environment (`1ac883421`) but presentation reused legacy dashboard cards; this sprint replaced presentation only.
+
+**Shipped:**
+
+- **New immersive components** — `ExperienceLabCommandDock`, `ExperienceLabViewportStage`, `ExperienceLabFloatingInspector`, `ExperienceLabRegistrySidebar`, `ExperienceLabGovernanceSidebar`, `ExperienceLabFounderWorkbench`, `ExperienceLabApprovalBridge`, `ExperienceLabWorkbenchDock`, `ExperienceLabDepartmentDock`, `experience-lab-v2-composition.ts`
+- **Rewritten** — `ExperienceLabV2Shell.tsx` (three-layer layout), `StudioViewport.tsx` (holographic empty states, integrated mode rail), `experience-lab-v2.css` (dark glass/gold/cyan workstation), `ExperienceLabDiagnostics.tsx` (drawer style)
+- **Legacy presentation unwired** — `ExperienceLabV2Header`, `ExperienceLabLeftInspector`, `ExperienceLabRightInspector`, `ExperienceLabWorkbench`, `ExperienceLabApprovalBar`, `ExperienceLabToolDock` remain in folder but shell no longer imports them
+- **Tests** — composition structure tests added; experience-lab-v2.test.ts 18/18 PASS; production route unchanged assertion
+- **Screenshots** — `docs/studio-os/experience-lab/v2-screenshots/` at 390×844, 430×932, tablet portrait, desktop, ultrawide via CSS review harness + Chrome headless; live SPA capture blocked in cloud (SPA boot timeout)
+- **Docs** — EXPERIENCE_LAB_V2_TEST_ENVIRONMENT.md updated; CURRENT_HANDOFF.md updated
+
+**Conventions:** Reference images are implementation spec, not inspiration. V2 route isolated; no production writes in MOCK/READ_ONLY.
+
+**One commit + one push** on `master` via `agent-commit.sh`.

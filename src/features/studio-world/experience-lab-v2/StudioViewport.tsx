@@ -1,5 +1,6 @@
 import { useCallback, useState } from 'react';
 import type { ExperienceLabV2ArtifactRef, StudioViewportMode } from './experience-lab-v2.types';
+import { ELAB_V2_COMPOSITION, VIEWPORT_MODE_LABELS } from './experience-lab-v2-composition';
 
 export type StudioViewportProps = {
   mode: StudioViewportMode;
@@ -16,65 +17,97 @@ export type StudioViewportProps = {
   };
   isStale?: boolean;
   onImageLoad?: () => void;
+  modes?: StudioViewportMode[];
+  onModeChange?: (mode: StudioViewportMode) => void;
+  embedded?: boolean;
 };
+
+function BlueprintEmptyState() {
+  return (
+    <div className="elab-empty elab-empty--blueprint" data-empty-state="blueprint">
+      <svg className="elab-empty__grid" viewBox="0 0 200 200" aria-hidden>
+        <defs>
+          <pattern id="bp-grid" width="20" height="20" patternUnits="userSpaceOnUse">
+            <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(77,163,255,0.25)" strokeWidth="0.5" />
+          </pattern>
+        </defs>
+        <rect width="200" height="200" fill="url(#bp-grid)" />
+        <rect x="40" y="50" width="120" height="80" fill="none" stroke="rgba(77,163,255,0.5)" strokeWidth="1" strokeDasharray="4 2" />
+        <line x1="100" y1="50" x2="100" y2="130" stroke="rgba(77,163,255,0.35)" />
+        <line x1="40" y1="90" x2="160" y2="90" stroke="rgba(77,163,255,0.35)" />
+      </svg>
+      <p className="elab-empty__title">BLUEPRINT MODE</p>
+      <p className="elab-empty__hint">Holographic specification layer · awaiting artifact</p>
+    </div>
+  );
+}
+
+function FounderRenderEmptyState({ status }: { status?: string }) {
+  return (
+    <div className="elab-empty elab-empty--render" data-empty-state="founder-render">
+      <div className="elab-empty__glow" />
+      <p className="elab-empty__title">FOUNDER RENDER</p>
+      <p className="elab-empty__hint">Status: {status ?? 'no_preview'}</p>
+      <p className="elab-empty__hint">Photoreal preview loads here — not in environment layer</p>
+    </div>
+  );
+}
 
 function ArtifactPane({
   title,
   artifact,
-  holographic,
+  variant,
   onImageLoad,
+  renderStatus,
 }: {
   title: string;
   artifact?: ExperienceLabV2ArtifactRef;
-  holographic?: boolean;
+  variant: 'blueprint' | 'render' | 'default';
   onImageLoad?: () => void;
+  renderStatus?: string;
 }) {
   if (!artifact || artifact.status === 'missing') {
+    if (variant === 'blueprint') return <BlueprintEmptyState />;
+    if (variant === 'render') return <FounderRenderEmptyState status={renderStatus} />;
     return (
-      <div className="studio-viewport__pane" data-viewport-pane={title}>
-        <p style={{ fontSize: 11, color: 'var(--elab-text-muted)' }}>{title} — no artifact</p>
+      <div className="elab-empty elab-empty--default">
+        <p className="elab-empty__title">{title}</p>
+        <p className="elab-empty__hint">No artifact loaded</p>
       </div>
     );
   }
   if (artifact.status === 'loading') {
     return (
-      <div className="studio-viewport__pane" data-viewport-pane={title}>
-        <p>Loading {title}…</p>
+      <div className="elab-empty elab-empty--loading">
+        <div className="elab-empty__pulse" />
+        <p className="elab-empty__hint">Loading {title}…</p>
       </div>
     );
   }
   if (artifact.status === 'error') {
     return (
-      <div className="studio-viewport__pane" data-viewport-pane={title}>
-        <p style={{ color: '#eb1c24' }}>{title} error</p>
+      <div className="elab-empty elab-empty--error">
+        <p className="elab-empty__title">{title} ERROR</p>
+        <p className="elab-empty__hint">Generation failed — open diagnostics</p>
       </div>
     );
   }
   return (
-    <div
-      className="studio-viewport__pane"
-      data-viewport-pane={title}
-      style={holographic ? { borderColor: 'rgba(99, 179, 237, 0.5)', boxShadow: 'inset 0 0 24px rgba(99,179,237,0.15)' } : undefined}
-    >
+    <div className={`elab-viewport-pane elab-viewport-pane--${variant}`} data-viewport-pane={title}>
       {artifact.previewUrl ? (
-        <img
-          src={artifact.previewUrl}
-          alt={artifact.label}
-          style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain', borderRadius: 6 }}
-          onLoad={onImageLoad}
-        />
+        <img src={artifact.previewUrl} alt={artifact.label} className="elab-viewport-pane__img" onLoad={onImageLoad} />
       ) : (
-        <div>
-          <p style={{ fontWeight: 800, fontSize: 12, letterSpacing: '0.08em' }}>{artifact.label}</p>
-          <p style={{ fontSize: 10, marginTop: 8, color: 'var(--elab-text-muted)' }}>{artifact.summary}</p>
-          <p style={{ fontSize: 9, marginTop: 4 }}>r{artifact.revision} · {artifact.status}</p>
+        <div className="elab-viewport-pane__meta">
+          <p className="elab-viewport-pane__label">{artifact.label}</p>
+          <p className="elab-viewport-pane__summary">{artifact.summary}</p>
+          <p className="elab-viewport-pane__rev">r{artifact.revision}</p>
         </div>
       )}
     </div>
   );
 }
 
-/** StudioViewport™ — universal center visual workspace. */
+/** StudioViewport™ — hero visual workspace with integrated mode rail. */
 export function StudioViewport({
   mode,
   departmentName,
@@ -83,72 +116,79 @@ export function StudioViewport({
   artifacts,
   isStale,
   onImageLoad,
+  modes,
+  onModeChange,
+  embedded,
 }: StudioViewportProps) {
   const [fullscreen, setFullscreen] = useState(false);
-  const [zoom, setZoom] = useState(1);
-
   const toggleFullscreen = useCallback(() => setFullscreen((f) => !f), []);
-  const fit = useCallback(() => setZoom(1), []);
-
-  const rootClass = `studio-viewport${fullscreen ? ' studio-viewport--fullscreen' : ''}`;
 
   const renderStage = () => {
     switch (mode) {
       case 'LOADING':
-        return <div className="studio-viewport__pane">Loading viewport…</div>;
+        return <div className="elab-empty elab-empty--loading"><div className="elab-empty__pulse" /><p>Syncing viewport…</p></div>;
       case 'ERROR':
-        return <div className="studio-viewport__pane" style={{ color: '#eb1c24' }}>Viewport error</div>;
+        return <div className="elab-empty elab-empty--error"><p>Viewport error</p></div>;
       case 'EMPTY_STATE':
-        return <div className="studio-viewport__pane">Select an inspector module or view mode</div>;
+        return <BlueprintEmptyState />;
       case 'BLUEPRINT':
-        return <ArtifactPane title="Blueprint" artifact={artifacts.blueprint} holographic onImageLoad={onImageLoad} />;
+        return <ArtifactPane title="Blueprint" artifact={artifacts.blueprint} variant="blueprint" />;
       case 'FOUNDER_RENDER':
-        return <ArtifactPane title="Founder Render" artifact={artifacts.founderRender} onImageLoad={onImageLoad} />;
+        return <ArtifactPane title="Founder Render" artifact={artifacts.founderRender} variant="render" onImageLoad={onImageLoad} renderStatus={artifactStatus} />;
       case 'CONSTRUCTION_PLAN':
-        return <ArtifactPane title="Construction Plan" artifact={artifacts.construction} />;
+        return <ArtifactPane title="Construction" artifact={artifacts.construction} variant="default" />;
       case 'MATERIALS':
-        return <ArtifactPane title="Materials" artifact={artifacts.materials} />;
+        return <ArtifactPane title="Materials" artifact={artifacts.materials} variant="default" />;
       case 'LIGHTING':
-        return <ArtifactPane title="Lighting" artifact={artifacts.lighting} />;
+        return <ArtifactPane title="Lighting" artifact={artifacts.lighting} variant="default" />;
       case 'CAMERA':
-        return <ArtifactPane title="Camera" artifact={artifacts.camera} />;
+        return <ArtifactPane title="Camera" artifact={artifacts.camera} variant="default" />;
       case 'SPLIT_VIEW':
         return (
-          <div className="studio-viewport__split" data-split-view>
-            <ArtifactPane title="Blueprint" artifact={artifacts.blueprint} holographic />
-            <ArtifactPane title="Founder Render" artifact={artifacts.founderRender} onImageLoad={onImageLoad} />
+          <div className="elab-viewport-split" data-split-view>
+            <ArtifactPane title="Blueprint" artifact={artifacts.blueprint} variant="blueprint" />
+            <ArtifactPane title="Founder Render" artifact={artifacts.founderRender} variant="render" onImageLoad={onImageLoad} renderStatus={artifactStatus} />
           </div>
         );
       default:
-        return <div className="studio-viewport__pane">Unknown mode</div>;
+        return null;
     }
   };
 
+  const rootClass = `elab-viewport${fullscreen ? ' elab-viewport--fullscreen' : ''}${embedded ? ' elab-viewport--embedded' : ''}`;
+
   return (
     <section className={rootClass} data-studio-viewport data-mode={mode}>
-      <header className="studio-viewport__header">
-        <div>
-          <strong style={{ letterSpacing: '0.08em', fontSize: 10 }}>{mode.replace(/_/g, ' ')}</strong>
-          <span style={{ marginLeft: 8, color: 'var(--elab-text-muted)' }}>
-            {departmentName} · r{revision} · {artifactStatus}
-          </span>
-          {isStale ? <span style={{ marginLeft: 8, color: '#eb1c24' }}>STALE</span> : null}
-        </div>
-        <div style={{ display: 'flex', gap: 6 }}>
-          <button type="button" className="elab-v2__mode-btn" onClick={() => setZoom((z) => Math.min(2, z + 0.1))} aria-label="Zoom in">
-            +
-          </button>
-          <button type="button" className="elab-v2__mode-btn" onClick={fit} aria-label="Fit to viewport">
-            FIT
-          </button>
-          <button type="button" className="elab-v2__mode-btn" onClick={toggleFullscreen} aria-label="Toggle fullscreen">
-            {fullscreen ? 'EXIT' : 'FULL'}
+      <div className="elab-viewport__title-bar">
+        <h2 className="elab-viewport__scene-title">{departmentName.toUpperCase()}</h2>
+        <span className="elab-viewport__revision">REVISION {revision}</span>
+        <span className={`elab-viewport__badge${isStale ? ' elab-viewport__badge--stale' : ' elab-viewport__badge--ok'}`}>
+          {isStale ? 'STALE' : artifactStatus.toUpperCase()}
+        </span>
+        <div className="elab-viewport__controls">
+          <button type="button" className="elab-viewport__ctrl" onClick={toggleFullscreen} aria-label="Fullscreen">
+            {fullscreen ? '✕' : '⛶'}
           </button>
         </div>
-      </header>
-      <div className="studio-viewport__stage" style={{ transform: `scale(${zoom})`, transformOrigin: 'center center' }}>
-        {renderStage()}
       </div>
+
+      {modes && onModeChange ? (
+        <nav className="elab-viewport__mode-rail" {...{ [ELAB_V2_COMPOSITION.modeRail]: '' }} aria-label="Viewport modes">
+          {modes.map((m) => (
+            <button
+              key={m}
+              type="button"
+              className="elab-viewport__mode-seg"
+              aria-pressed={mode === m}
+              onClick={() => onModeChange(m)}
+            >
+              {VIEWPORT_MODE_LABELS[m] ?? m}
+            </button>
+          ))}
+        </nav>
+      ) : null}
+
+      <div className="elab-viewport__stage">{renderStage()}</div>
     </section>
   );
 }

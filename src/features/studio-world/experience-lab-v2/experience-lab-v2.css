@@ -1,170 +1,56 @@
-.elab-v2 {
-  --elab-accent: #c9a962;
-  --elab-accent-dim: rgba(201, 169, 98, 0.35);
-  --elab-glass: rgba(12, 14, 18, 0.72);
-  --elab-glass-light: rgba(255, 255, 255, 0.08);
-  --elab-text: #f4f1ea;
-  --elab-text-muted: rgba(244, 241, 234, 0.72);
-  --elab-scrim: rgba(8, 10, 14, 0.55);
-  --elab-panel: rgba(18, 20, 26, 0.88);
-  --elab-border: rgba(201, 169, 98, 0.22);
-  --elab-focus: #f4d58a;
+/* Experience Lab V2 — Immersive Command Interface (reference-spec presentation) */
+
+.elab-workstation {
+  --elab-gold: #c5a059;
+  --elab-gold-dim: rgba(197, 160, 89, 0.35);
+  --elab-gold-glow: rgba(197, 160, 89, 0.55);
+  --elab-cyan: #4da3ff;
+  --elab-cyan-dim: rgba(77, 163, 255, 0.2);
+  --elab-bg: #08090c;
+  --elab-glass: rgba(14, 16, 22, 0.78);
+  --elab-glass-panel: rgba(18, 20, 28, 0.82);
+  --elab-border: rgba(197, 160, 89, 0.18);
+  --elab-text: #f0ebe3;
+  --elab-muted: rgba(240, 235, 227, 0.62);
+  --elab-ok: #5fd68a;
+  --elab-warn: #e8a54b;
+  --elab-danger: #eb1c24;
+  --elab-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
   color: var(--elab-text);
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
   min-height: 100vh;
   position: relative;
   overflow-x: hidden;
+  background: var(--elab-bg);
 }
 
-.elab-v2--bright {
-  --elab-scrim: rgba(255, 255, 255, 0.65);
-  --elab-panel: rgba(255, 255, 255, 0.92);
-  --elab-text: #111;
-  --elab-text-muted: rgba(17, 17, 17, 0.72);
-  --elab-glass: rgba(255, 255, 255, 0.88);
+.elab-workstation__ui {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  padding-bottom: env(safe-area-inset-bottom);
 }
 
 .elab-v2__badge-row {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  padding: 8px 12px;
-  background: rgba(235, 28, 36, 0.12);
-  border-bottom: 1px solid rgba(235, 28, 36, 0.35);
+  padding: 6px 12px;
+  background: rgba(235, 28, 36, 0.1);
+  border-bottom: 1px solid rgba(235, 28, 36, 0.3);
+  z-index: 5;
 }
 
 .elab-v2__badge {
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 800;
-  letter-spacing: 0.1em;
-  color: #eb1c24;
+  letter-spacing: 0.12em;
+  color: var(--elab-danger);
 }
 
-.elab-v2__shell {
-  position: relative;
-  z-index: 2;
-  display: grid;
-  grid-template-rows: auto auto 1fr auto auto auto;
-  min-height: calc(100vh - 40px);
-  padding: 0 0 env(safe-area-inset-bottom);
-}
-
-.elab-v2__grid {
-  display: grid;
-  grid-template-columns: minmax(200px, 240px) minmax(0, 1fr) minmax(200px, 240px);
-  gap: 12px;
-  padding: 12px;
-  min-height: 0;
-}
-
-.elab-v2__panel {
-  background: var(--elab-panel);
-  border: 1px solid var(--elab-border);
-  border-radius: 10px;
-  backdrop-filter: blur(12px);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.24);
-}
-
-.elab-v2__dock,
-.elab-v2__command {
-  background: var(--elab-glass);
-  border-bottom: 1px solid var(--elab-border);
-  backdrop-filter: blur(14px);
-}
-
-.elab-v2__mode-rail {
-  display: flex;
-  flex-wrap: nowrap;
-  gap: 6px;
-  overflow-x: auto;
-  padding: 8px 12px;
-  -webkit-overflow-scrolling: touch;
-}
-
-.elab-v2__mode-btn {
-  flex: 0 0 auto;
-  padding: 8px 12px;
-  border-radius: 8px;
-  border: 1px solid var(--elab-border);
-  background: var(--elab-glass-light);
-  color: var(--elab-text-muted);
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  cursor: pointer;
-  min-height: 44px;
-}
-
-.elab-v2__mode-btn[aria-pressed='true'] {
-  border-color: var(--elab-accent);
-  color: var(--elab-accent);
-  background: var(--elab-accent-dim);
-}
-
-.elab-v2__mode-btn:focus-visible {
-  outline: 2px solid var(--elab-focus);
-  outline-offset: 2px;
-}
-
-.studio-viewport {
-  display: flex;
-  flex-direction: column;
-  min-height: clamp(280px, 48vh, 560px);
-  background: rgba(0, 0, 0, 0.35);
-  border-radius: 12px;
-  border: 1px solid var(--elab-border);
-  overflow: hidden;
-}
-
-.studio-viewport__header {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 12px;
-  border-bottom: 1px solid var(--elab-border);
-  font-size: 10px;
-}
-
-.studio-viewport__stage {
-  position: relative;
-  flex: 1;
-  min-height: 220px;
-  display: grid;
-  place-items: center;
-  padding: 12px;
-}
-
-.studio-viewport__pane {
-  width: 100%;
-  height: 100%;
-  min-height: 200px;
-  border-radius: 8px;
-  border: 1px dashed var(--elab-border);
-  background: rgba(0, 0, 0, 0.25);
-  display: grid;
-  place-items: center;
-  padding: 16px;
-  text-align: center;
-}
-
-.studio-viewport__split {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  width: 100%;
-  height: 100%;
-}
-
-.studio-viewport--fullscreen {
-  position: fixed;
-  inset: 0;
-  z-index: 100;
-  border-radius: 0;
-  min-height: 100vh;
-}
-
+/* ── Environment layer ── */
 .elab-v2__env {
   position: fixed;
   inset: 0;
@@ -176,111 +62,620 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: var(--elab-env-position, center 35%);
-  transform: scale(var(--elab-env-scale, 1.05));
-  opacity: var(--elab-env-opacity, 0.42);
+  opacity: 0.38;
 }
 
 .elab-v2__env-scrim {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, var(--elab-scrim) 0%, transparent 35%, transparent 65%, var(--elab-scrim) 100%);
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 40%, transparent 0%, rgba(8, 9, 12, 0.5) 70%),
+    linear-gradient(180deg, rgba(8, 9, 12, 0.7) 0%, transparent 25%, transparent 70%, rgba(8, 9, 12, 0.85) 100%);
 }
 
-.elab-v2__inspector-module {
-  padding: 10px 12px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+/* ── Command Dock ── */
+.elab-cmd {
+  background: var(--elab-glass);
+  border-bottom: 1px solid var(--elab-border);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  z-index: 10;
+}
+
+.elab-cmd__row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  flex-wrap: wrap;
+}
+
+.elab-cmd__row--identity { padding-top: 10px; }
+.elab-cmd__row--status { color: var(--elab-muted); padding-bottom: 10px; border-bottom: none; }
+
+.elab-cmd__logo {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--elab-gold);
+  border-radius: 6px;
+  font-weight: 800;
+  font-size: 11px;
+  color: var(--elab-gold);
+}
+
+.elab-cmd__title-block { flex: 1; min-width: 0; }
+.elab-cmd__title { display: block; font-size: 11px; font-weight: 700; color: var(--elab-gold); letter-spacing: 0.1em; }
+.elab-cmd__subtitle { display: block; font-size: 8px; color: var(--elab-muted); letter-spacing: 0.14em; }
+
+.elab-cmd__actions { display: flex; gap: 6px; align-items: center; }
+.elab-cmd__icon-btn {
+  width: 32px; height: 32px; border-radius: 8px;
+  border: 1px solid var(--elab-border); background: rgba(255,255,255,0.04);
+  color: var(--elab-text); cursor: pointer; font-size: 14px; position: relative;
+}
+.elab-cmd__icon-btn--badge span {
+  position: absolute; top: -4px; right: -4px;
+  background: var(--elab-danger); color: #fff; font-size: 8px;
+  width: 14px; height: 14px; border-radius: 50%; display: grid; place-items: center;
+}
+.elab-cmd__avatar {
+  width: 32px; height: 32px; border-radius: 50%;
+  border: 1px solid var(--elab-gold); background: rgba(197,160,89,0.15);
+  color: var(--elab-gold); font-size: 10px; font-weight: 700; cursor: pointer;
+}
+
+.elab-cmd__pill {
+  padding: 6px 10px; border-radius: 20px;
+  border: 1px solid var(--elab-border); background: rgba(255,255,255,0.03);
+  font-size: 8px; white-space: nowrap;
+}
+.elab-cmd__pill--active { border-color: var(--elab-gold); color: var(--elab-gold); background: var(--elab-gold-dim); }
+
+.elab-cmd--desktop .elab-cmd__desktop-top {
+  display: flex; align-items: center; gap: 16px; padding: 12px 20px 8px;
+}
+.elab-cmd__brand { display: flex; align-items: center; gap: 10px; }
+.elab-cmd__nav { display: flex; gap: 4px; flex: 1; flex-wrap: wrap; justify-content: center; }
+.elab-cmd__nav-link {
+  padding: 6px 10px; border: none; background: transparent;
+  color: var(--elab-muted); font-size: 9px; font-weight: 600; letter-spacing: 0.08em; cursor: pointer;
+}
+.elab-cmd__nav-link:hover { color: var(--elab-gold); }
+.elab-cmd__desktop-meta {
+  display: flex; gap: 16px; padding: 0 20px 10px;
+  font-size: 8px; color: var(--elab-muted); letter-spacing: 0.08em; flex-wrap: wrap;
+}
+.elab-cmd__mode-tag { color: var(--elab-cyan); }
+.elab-status--ok { color: var(--elab-ok); }
+.elab-status--warn { color: var(--elab-warn); }
+
+/* ── Main workstation grid ── */
+.elab-workstation__main {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr) 200px;
+  gap: 0;
+  flex: 1;
+  min-height: 0;
+  padding: 8px 8px 0;
+}
+
+.elab-workstation__center {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+/* ── Sidebars ── */
+.elab-side__heading {
+  margin: 0 0 8px; font-size: 8px; font-weight: 800;
+  letter-spacing: 0.12em; color: var(--elab-gold);
+}
+
+.elab-registry, .elab-governance {
+  background: var(--elab-glass-panel);
+  border: 1px solid var(--elab-border);
+  border-radius: 10px;
+  backdrop-filter: blur(12px);
+  padding: 10px;
+  margin: 4px;
+  box-shadow: var(--elab-shadow);
+  overflow-y: auto;
+  max-height: calc(100vh - 280px);
+}
+
+.elab-registry__search {
+  width: 100%; padding: 8px 10px; margin-bottom: 10px;
+  border-radius: 8px; border: 1px solid var(--elab-border);
+  background: rgba(0,0,0,0.35); color: var(--elab-text); font-size: 9px;
+}
+
+.elab-registry__group-label {
+  font-size: 8px; font-weight: 700; color: var(--elab-muted);
+  margin: 8px 0 4px; letter-spacing: 0.08em;
+}
+
+.elab-registry__item {
+  display: flex; align-items: center; gap: 6px; width: 100%;
+  padding: 6px 8px; border: none; background: transparent;
+  color: var(--elab-muted); font-size: 9px; text-align: left; cursor: pointer;
+  border-radius: 6px;
+}
+.elab-registry__item--active { color: var(--elab-gold); background: var(--elab-gold-dim); }
+.elab-registry__dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--elab-muted);
+}
+.elab-registry__item--active .elab-registry__dot { background: var(--elab-ok); }
+.elab-registry__rev { margin-left: auto; font-size: 8px; opacity: 0.7; }
+
+.elab-registry__city-status {
+  margin-top: 16px; padding-top: 12px;
+  border-top: 1px solid var(--elab-border);
+  font-size: 9px; line-height: 1.5;
+}
+
+.elab-gov-panel {
+  margin-bottom: 12px; padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.elab-gov-panel--immune { border-bottom: none; }
+.elab-gov-dl { margin: 0; font-size: 9px; }
+.elab-gov-dl div { display: flex; justify-content: space-between; margin-bottom: 4px; }
+.elab-gov-dl dt { color: var(--elab-muted); }
+.elab-gov-checklist { margin: 0; padding: 0; list-style: none; font-size: 9px; }
+.elab-gov-checklist li { margin-bottom: 4px; }
+
+/* ── Viewport stage + floating inspectors ── */
+.elab-stage {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: clamp(320px, 52vh, 640px);
+}
+
+.elab-stage__viewport-wrap {
+  position: relative;
+  flex: 1;
+  min-height: 280px;
+}
+
+.elab-float {
+  position: absolute;
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px 10px;
+  min-width: 100px;
+  max-width: 140px;
+  background: var(--elab-glass-panel);
+  border: 1px solid var(--elab-border);
+  border-radius: 8px;
+  backdrop-filter: blur(14px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
   cursor: pointer;
   text-align: left;
-  width: 100%;
-  background: transparent;
-  border-left: none;
-  border-right: none;
-  border-top: none;
   color: inherit;
-  min-height: 44px;
+  transition: border-color 0.15s, box-shadow 0.15s;
 }
 
-.elab-v2__inspector-module[aria-selected='true'] {
-  background: var(--elab-accent-dim);
+.elab-float--left.elab-float--blueprint { top: 12%; left: 2%; }
+.elab-float--left.elab-float--construction { top: 38%; left: 2%; }
+.elab-float--left.elab-float--scope { top: 62%; left: 2%; }
+.elab-float--right.elab-float--materials { top: 12%; right: 2%; }
+.elab-float--right.elab-float--lighting { top: 38%; right: 2%; }
+.elab-float--right.elab-float--camera { top: 62%; right: 2%; }
+
+.elab-float--active {
+  border-color: var(--elab-gold);
+  box-shadow: 0 0 20px var(--elab-gold-dim);
 }
 
-.elab-v2__workbench {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 10px;
-  padding: 12px;
+.elab-float--compact { min-width: 72px; max-width: 96px; padding: 6px; font-size: 8px; }
+
+.elab-float__label {
+  font-size: 8px; font-weight: 800; letter-spacing: 0.1em; color: var(--elab-gold);
+}
+.elab-float__summary { font-size: 7px; color: var(--elab-muted); line-height: 1.3; }
+
+.elab-float__mini {
+  height: 36px; border-radius: 4px;
+  background: linear-gradient(135deg, var(--elab-cyan-dim), transparent);
+  border: 1px dashed rgba(77,163,255,0.35);
+}
+.elab-float__mini--chart {
+  background: repeating-linear-gradient(90deg, var(--elab-gold-dim) 0 8px, transparent 8px 12px);
+}
+.elab-float__swatches { display: flex; gap: 3px; }
+.elab-float__swatch {
+  width: 12px; height: 12px; border-radius: 50%;
+  background: linear-gradient(135deg, #888, #ccc);
 }
 
-.elab-v2__approval {
-  padding: 12px;
-  border-top: 1px solid var(--elab-border);
-  background: var(--elab-glass);
-}
-
-.elab-v2__tool-dock {
+/* ── Studio Viewport ── */
+.elab-viewport {
+  position: relative;
+  z-index: 2;
+  height: 100%;
+  min-height: 280px;
+  margin: 0 8%;
   display: flex;
-  gap: 8px;
-  overflow-x: auto;
-  padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
-  background: rgba(8, 10, 14, 0.92);
-  border-top: 1px solid var(--elab-border);
-}
-
-.elab-v2__tool-btn {
-  flex: 0 0 auto;
-  min-width: 72px;
-  min-height: 48px;
-  padding: 8px;
-  border-radius: 10px;
+  flex-direction: column;
+  background: rgba(0, 0, 0, 0.35);
   border: 1px solid var(--elab-border);
-  background: var(--elab-glass-light);
-  color: var(--elab-text-muted);
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: 0.05em;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: inset 0 0 60px rgba(77, 163, 255, 0.06);
 }
 
-.elab-v2__tool-btn[data-active='true'] {
-  color: var(--elab-accent);
-  border-color: var(--elab-accent);
+.elab-viewport--fullscreen {
+  position: fixed; inset: 0; z-index: 200; margin: 0; border-radius: 0;
 }
 
-@media (max-width: 900px) {
-  .elab-v2__grid {
-    grid-template-columns: 1fr;
-    padding: 8px;
-  }
-
-  .elab-v2__side {
-    display: none;
-  }
-
-  .elab-v2__side--open {
-    display: block;
-    position: fixed;
-    inset: auto 0 72px 0;
-    z-index: 50;
-    max-height: 50vh;
-    overflow: auto;
-    margin: 8px;
-  }
-
-  .studio-viewport__split {
-    grid-template-columns: 1fr;
-  }
-
-  .elab-v2__workbench {
-    grid-template-columns: 1fr;
-  }
+.elab-viewport__title-bar {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--elab-border);
+  background: rgba(0,0,0,0.4);
 }
 
-@media (max-width: 430px) {
-  .elab-v2__shell {
-    grid-template-rows: auto auto auto 1fr auto auto auto;
-  }
+.elab-viewport__scene-title {
+  margin: 0; font-size: 14px; font-weight: 700;
+  letter-spacing: 0.14em; color: var(--elab-text);
+}
 
-  .studio-viewport {
-    min-height: clamp(240px, 42vh, 420px);
+.elab-viewport__revision { font-size: 9px; color: var(--elab-muted); }
+.elab-viewport__badge {
+  font-size: 8px; font-weight: 700; padding: 3px 8px; border-radius: 4px;
+  letter-spacing: 0.08em;
+}
+.elab-viewport__badge--ok { background: rgba(95,214,138,0.15); color: var(--elab-ok); }
+.elab-viewport__badge--stale { background: rgba(235,28,36,0.15); color: var(--elab-danger); }
+
+.elab-viewport__controls { margin-left: auto; }
+.elab-viewport__ctrl {
+  width: 28px; height: 28px; border-radius: 6px;
+  border: 1px solid var(--elab-border); background: rgba(255,255,255,0.05);
+  color: var(--elab-text); cursor: pointer;
+}
+
+.elab-viewport__mode-rail {
+  display: flex; gap: 2px; padding: 6px 12px;
+  background: rgba(0,0,0,0.25);
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  overflow-x: auto;
+}
+
+.elab-viewport__mode-seg {
+  flex: 0 0 auto;
+  padding: 5px 10px; border-radius: 6px;
+  border: 1px solid transparent; background: transparent;
+  color: var(--elab-muted); font-size: 8px; font-weight: 700;
+  letter-spacing: 0.06em; cursor: pointer;
+}
+.elab-viewport__mode-seg[aria-pressed='true'] {
+  border-color: var(--elab-gold);
+  color: var(--elab-gold);
+  background: var(--elab-gold-dim);
+}
+
+.elab-viewport__stage {
+  flex: 1; display: grid; place-items: center;
+  padding: 16px; min-height: 200px;
+  position: relative;
+}
+
+/* Empty states */
+.elab-empty {
+  text-align: center; padding: 24px;
+  width: 100%; max-width: 420px;
+}
+.elab-empty--blueprint .elab-empty__grid {
+  width: 160px; height: 160px; margin: 0 auto 12px;
+  opacity: 0.7;
+}
+.elab-empty__title {
+  font-size: 11px; font-weight: 800; letter-spacing: 0.12em;
+  color: var(--elab-cyan); margin: 0 0 6px;
+}
+.elab-empty__hint { font-size: 9px; color: var(--elab-muted); margin: 4px 0; }
+.elab-empty--render .elab-empty__glow {
+  width: 120px; height: 80px; margin: 0 auto 12px;
+  border-radius: 8px;
+  background: radial-gradient(ellipse, var(--elab-gold-dim), transparent);
+  border: 1px solid var(--elab-border);
+}
+.elab-empty__pulse {
+  width: 48px; height: 48px; margin: 0 auto 12px; border-radius: 50%;
+  border: 2px solid var(--elab-cyan);
+  animation: elab-pulse 1.2s ease-in-out infinite;
+}
+@keyframes elab-pulse {
+  0%, 100% { opacity: 0.4; transform: scale(0.95); }
+  50% { opacity: 1; transform: scale(1); }
+}
+
+.elab-viewport-pane {
+  width: 100%; height: 100%; min-height: 180px;
+  display: grid; place-items: center;
+  border-radius: 8px;
+}
+.elab-viewport-pane--blueprint {
+  border: 1px solid rgba(77,163,255,0.4);
+  box-shadow: inset 0 0 40px var(--elab-cyan-dim);
+}
+.elab-viewport-pane__img { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 6px; }
+.elab-viewport-pane__label { font-size: 12px; font-weight: 800; letter-spacing: 0.1em; }
+.elab-viewport-pane__summary { font-size: 10px; color: var(--elab-muted); margin-top: 8px; }
+
+.elab-viewport-split {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+  width: 100%; height: 100%;
+}
+
+/* View angles */
+.elab-view-angles {
+  padding: 8px 12px 12px;
+  margin: 0 4%;
+}
+.elab-view-angles__label {
+  font-size: 8px; font-weight: 800; letter-spacing: 0.12em;
+  color: var(--elab-gold); display: block; margin-bottom: 6px;
+}
+.elab-view-angles__strip {
+  display: flex; gap: 8px; overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 4px;
+}
+.elab-view-angles__thumb {
+  flex: 0 0 auto; display: flex; flex-direction: column; align-items: center; gap: 4px;
+  border: none; background: transparent; cursor: pointer; padding: 0;
+}
+.elab-view-angles__thumb-inner {
+  width: 56px; height: 36px; border-radius: 4px;
+  border: 1px solid var(--elab-border);
+  background: linear-gradient(135deg, rgba(30,32,40,0.9), rgba(50,45,35,0.6));
+}
+.elab-view-angles__thumb--active .elab-view-angles__thumb-inner {
+  border-color: var(--elab-gold);
+  box-shadow: 0 0 12px var(--elab-gold-dim);
+}
+.elab-view-angles__thumb-label { font-size: 7px; color: var(--elab-muted); }
+
+/* ── Founder Workbench (integrated console) ── */
+.elab-founder-wb {
+  margin: 8px 12px 0;
+  background: var(--elab-glass-panel);
+  border: 1px solid var(--elab-border);
+  border-radius: 10px;
+  backdrop-filter: blur(12px);
+  box-shadow: var(--elab-shadow);
+  overflow: hidden;
+}
+
+.elab-founder-wb__console {
+  display: grid;
+  grid-template-columns: 1.1fr 1.4fr 1fr 0.8fr;
+  gap: 0;
+}
+
+.elab-founder-wb__zone {
+  padding: 14px 16px;
+  border-right: 1px solid rgba(255,255,255,0.05);
+}
+.elab-founder-wb__zone:last-child { border-right: none; }
+
+.elab-founder-wb__zone-title {
+  margin: 0 0 10px; font-size: 8px; font-weight: 800;
+  letter-spacing: 0.12em; color: var(--elab-gold);
+}
+
+.elab-founder-wb__brief-text { font-size: 9px; line-height: 1.5; color: var(--elab-muted); margin: 0 0 8px; }
+.elab-founder-wb__mood { font-size: 9px; margin: 0; }
+
+.elab-founder-wb__player {
+  aspect-ratio: 16/9; max-height: 100px;
+  border-radius: 6px; overflow: hidden;
+  border: 1px solid var(--elab-border);
+  background: rgba(0,0,0,0.5);
+}
+.elab-founder-wb__preview { width: 100%; height: 100%; object-fit: cover; }
+.elab-founder-wb__player-placeholder {
+  height: 100%; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 6px;
+  font-size: 8px; color: var(--elab-muted);
+}
+.elab-founder-wb__play {
+  width: 36px; height: 36px; border-radius: 50%;
+  border: 1px solid var(--elab-gold); display: grid; place-items: center;
+  color: var(--elab-gold);
+}
+.elab-founder-wb__status { font-size: 8px; color: var(--elab-muted); margin-top: 6px; }
+
+.elab-founder-wb__chart-svg { width: 100%; height: 48px; }
+.elab-founder-wb__rev-current { font-size: 8px; margin: 4px 0 0; }
+.elab-founder-wb__warn { font-size: 8px; color: var(--elab-danger); margin: 4px 0 0; }
+.elab-founder-wb__diag-line { font-size: 8px; color: var(--elab-muted); margin: 2px 0; }
+
+/* ── Approval Bridge ── */
+.elab-approval-bridge {
+  margin: 10px 12px;
+  text-align: center;
+}
+
+.elab-approval-bridge__primary {
+  position: relative;
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 14px 24px;
+  border: 1px solid var(--elab-gold);
+  border-radius: 8px;
+  background: linear-gradient(180deg, rgba(197,160,89,0.2), rgba(197,160,89,0.05));
+  color: var(--elab-gold);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  box-shadow: 0 0 30px var(--elab-gold-dim);
+}
+.elab-approval-bridge__primary:disabled {
+  opacity: 0.45; cursor: not-allowed; box-shadow: none;
+}
+.elab-approval-bridge__glow {
+  position: absolute; inset: -2px; border-radius: 10px;
+  background: linear-gradient(90deg, transparent, var(--elab-gold-glow), transparent);
+  opacity: 0.4; pointer-events: none;
+  animation: elab-bridge-glow 2.5s ease-in-out infinite;
+}
+@keyframes elab-bridge-glow {
+  0%, 100% { opacity: 0.25; }
+  50% { opacity: 0.55; }
+}
+.elab-approval-bridge__arrow { font-size: 14px; }
+.elab-approval-bridge__locks {
+  margin: 8px 0 0; font-size: 8px; color: var(--elab-muted);
+  letter-spacing: 0.08em;
+}
+.elab-approval-bridge__blocked { font-size: 8px; color: var(--elab-warn); margin-top: 6px; }
+
+/* ── Workbench dock ── */
+.elab-wb-dock {
+  display: flex; gap: 8px; justify-content: center;
+  padding: 10px 12px;
+  margin: 0 12px;
+  background: var(--elab-glass);
+  border: 1px solid var(--elab-border);
+  border-radius: 10px;
+  overflow-x: auto;
+}
+
+.elab-wb-dock__tool {
+  flex: 0 0 auto;
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  min-width: 88px; padding: 10px 8px;
+  border: 1px solid var(--elab-border);
+  border-radius: 8px;
+  background: rgba(255,255,255,0.03);
+  color: var(--elab-muted);
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+.elab-wb-dock__tool:hover { border-color: var(--elab-gold); color: var(--elab-gold); }
+.elab-wb-dock__icon { font-size: 18px; }
+.elab-wb-dock__label { font-size: 7px; font-weight: 700; letter-spacing: 0.06em; text-align: center; }
+
+/* ── Department dock ── */
+.elab-dept-dock {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 16px calc(10px + env(safe-area-inset-bottom));
+  margin-top: 8px;
+  background: rgba(6, 7, 10, 0.95);
+  border-top: 1px solid var(--elab-border);
+  position: sticky; bottom: 0; z-index: 20;
+}
+
+.elab-dept-dock__left, .elab-dept-dock__right {
+  display: flex; gap: 12px; flex: 1;
+}
+.elab-dept-dock__right { justify-content: flex-end; }
+
+.elab-dept-dock__item {
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  border: none; background: transparent;
+  color: var(--elab-muted); font-size: 7px; font-weight: 700;
+  letter-spacing: 0.06em; cursor: pointer; min-width: 64px;
+}
+.elab-dept-dock__item--active { color: var(--elab-gold); }
+.elab-dept-dock__center { flex: 0 0 auto; padding: 0 16px; }
+.elab-dept-dock__hex {
+  display: grid; place-items: center;
+  width: 44px; height: 44px;
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  background: linear-gradient(135deg, var(--elab-gold), #8a7340);
+  color: #111; font-weight: 800; font-size: 12px;
+}
+
+/* ── Diagnostics drawer ── */
+.elab-diag-toggle {
+  margin: 6px 12px; padding: 8px 12px;
+  border: 1px dashed var(--elab-border); border-radius: 6px;
+  background: transparent; color: var(--elab-muted);
+  font-size: 8px; cursor: pointer; width: calc(100% - 24px);
+}
+.elab-diag-drawer {
+  margin: 6px 12px; padding: 12px;
+  background: var(--elab-glass-panel);
+  border: 1px solid var(--elab-border);
+  border-radius: 8px;
+}
+.elab-diag-drawer__head { display: flex; justify-content: space-between; font-size: 9px; margin-bottom: 8px; }
+.elab-diag-drawer__close { border: none; background: transparent; color: var(--elab-muted); cursor: pointer; }
+.elab-diag-drawer__modes { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+.elab-diag-drawer__mode {
+  padding: 6px 10px; border-radius: 6px; border: 1px solid var(--elab-border);
+  background: transparent; color: var(--elab-muted); font-size: 8px; cursor: pointer;
+}
+.elab-diag-drawer__mode--on { border-color: var(--elab-gold); color: var(--elab-gold); }
+.elab-diag-readiness { margin: 0; padding-left: 16px; font-size: 8px; color: var(--elab-muted); }
+
+/* ── Mobile composition ── */
+.elab-workstation--mobile .elab-workstation__main {
+  grid-template-columns: 1fr;
+  padding: 4px;
+}
+
+.elab-workstation--mobile .elab-stage {
+  min-height: clamp(280px, 46vh, 480px);
+}
+
+.elab-workstation--mobile .elab-viewport {
+  margin: 0 2%;
+}
+
+.elab-workstation--mobile .elab-float--left.elab-float--blueprint { top: 4%; left: 1%; }
+.elab-workstation--mobile .elab-float--left.elab-float--construction { top: 4%; left: auto; right: 1%; }
+.elab-workstation--mobile .elab-float--right.elab-float--materials { top: auto; bottom: 8%; left: 1%; }
+.elab-workstation--mobile .elab-float--right.elab-float--lighting { top: auto; bottom: 8%; left: 50%; transform: translateX(-50%); }
+.elab-workstation--mobile .elab-float--right.elab-float--camera { top: auto; bottom: 8%; right: 1%; }
+
+.elab-workstation--mobile .elab-founder-wb__console {
+  grid-template-columns: 1fr;
+}
+
+.elab-workstation--mobile .elab-founder-wb__zone {
+  border-right: none;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.elab-workstation--mobile .elab-wb-dock {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+
+.elab-workstation--mobile .elab-wb-dock__tool { min-width: 0; }
+
+.elab-workstation--mobile .elab-dept-dock__item span:first-child { font-size: 14px; }
+
+/* No horizontal overflow */
+.elab-workstation, .elab-workstation * {
+  box-sizing: border-box;
+}
+.elab-workstation { max-width: 100vw; }
+
+@media (min-width: 1600px) {
+  .elab-workstation__main {
+    grid-template-columns: 240px minmax(0, 1fr) 220px;
   }
+  .elab-viewport { margin: 0 10%; }
 }

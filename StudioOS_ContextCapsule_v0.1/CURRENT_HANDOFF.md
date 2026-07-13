@@ -8,19 +8,20 @@
 
 ## Current sprint
 
-**P0 — Experience Lab V2 Test Environment**
+**P0 — Experience Lab V2 Visual Reconstruction**
 
-**Status: SHIPPED — React-first V2 on isolated test route; production Experience Lab preserved**
+**Status: SHIPPED — Immersive Command Interface on isolated V2 route; production Experience Lab preserved**
 
 **Shipped:**
 
-- **`/admin/studio/experience-lab-v2`** — canonical V2 test route with native badges (TEST ENVIRONMENT / NOT YET PRODUCTION)
-- **`/admin/studio/experience-lab/test-v2`** — alias redirect to V2
-- **`src/features/studio-world/experience-lab-v2/`** — React-first shell, StudioViewport™, environment layer, inspectors, workbench, approval bar, tool dock, diagnostics, view-model adapter, feature flags, test modes
-- **Production `/admin/studio/experience-lab`** — unchanged, no redirect, no deletion
-- **Tests** — experience-lab-v2.test.ts 13/13 PASS; build PASS
+- **`/admin/studio/experience-lab-v2`** — reference-spec immersive workstation (not legacy dashboard cards)
+- **Presentation layer rebuilt** — Command Dock, floating inspectors, dominant StudioViewport, integrated Founder Workbench, Approval Bridge, Workbench Dock, Department Dock
+- **Three-layer architecture** — Environment (decorative) · React UI · Viewport content inside StudioViewport only
+- **Backend preserved** — view-model adapter, approval logic, test modes, feature flags, polling contracts unchanged
+- **Tests** — experience-lab-v2.test.ts 18/18 PASS; build PASS
+- **Review screenshots** — `docs/studio-os/experience-lab/v2-screenshots/` (390×844, 430×932, tablet, desktop, ultrawide)
 
-**Previous:** Operating System Scheduler (`f0b0ba91b`); Implementation Orchestrator (`3dd1e1e2e`).
+**Previous:** Experience Lab V2 Test Environment (`1ac883421`); OS Scheduler (`f0b0ba91b`).
 
 ---
 
@@ -34,6 +35,7 @@
 | **B1-ModMarketplace-Runtime** | Live marketplace mod purchase/install API + Supabase sync for founder mods | **Not started** — domain logic + schema shipped; production API wiring next |
 | **B1-Parity** | Salvageable opaque layer extraction on real device | **Verify Pending** |
 | **B1-Layer1** | Layer 1 mobile Safari/Chrome with `?compilerDiag=1` | **Verify Pending** |
+| **B1-ELabV2-LiveSPA** | Post-deploy live React screenshots on production (cloud agent SPA boot timeout) | **Verify Pending** — CSS harness screenshots shipped for layout review |
 
 ---
 
@@ -51,6 +53,7 @@
 
 **References:**
 
+- `docs/studio-os/experience-lab/EXPERIENCE_LAB_V2_TEST_ENVIRONMENT.md`
 - `docs/studio-os/experience-lab/CANONICAL_DEPARTMENT_GENERATION.md`
 - `docs/studio-os/registries/CANONICAL_STUDIO_WORLD_DEPARTMENT_REGISTRY.md`
 - `docs/studio-os/industry-packs/DEPARTMENT_CLASSIFICATION.md`

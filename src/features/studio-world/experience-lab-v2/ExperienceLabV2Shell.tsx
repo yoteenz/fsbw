@@ -4,14 +4,14 @@ import type { CanonicalMainDepartmentId } from '../../../studio-os-core/canonica
 import { useExperienceLabProgram } from '../../../hooks/useExperienceLabProgram';
 import { useCanonicalDepartmentQueue } from '../../../hooks/useCanonicalDepartmentQueue';
 import { ExperienceLabEnvironmentLayer } from './ExperienceLabEnvironmentLayer';
-import { ExperienceLabV2Header } from './ExperienceLabV2Header';
-import { ExperienceLabV2ContextRail } from './ExperienceLabV2ContextRail';
-import { ExperienceLabLeftInspector } from './ExperienceLabLeftInspector';
-import { ExperienceLabRightInspector } from './ExperienceLabRightInspector';
-import { StudioViewport } from './StudioViewport';
-import { ExperienceLabWorkbench } from './ExperienceLabWorkbench';
-import { ExperienceLabApprovalBar } from './ExperienceLabApprovalBar';
-import { ExperienceLabToolDock } from './ExperienceLabToolDock';
+import { ExperienceLabCommandDock } from './ExperienceLabCommandDock';
+import { ExperienceLabRegistrySidebar } from './ExperienceLabRegistrySidebar';
+import { ExperienceLabGovernanceSidebar } from './ExperienceLabGovernanceSidebar';
+import { ExperienceLabViewportStage } from './ExperienceLabViewportStage';
+import { ExperienceLabFounderWorkbench } from './ExperienceLabFounderWorkbench';
+import { ExperienceLabApprovalBridge } from './ExperienceLabApprovalBridge';
+import { ExperienceLabWorkbenchDock } from './ExperienceLabWorkbenchDock';
+import { ExperienceLabDepartmentDock } from './ExperienceLabDepartmentDock';
 import { ExperienceLabDiagnostics } from './ExperienceLabDiagnostics';
 import {
   experienceLabV2ViewModelAdapter,
@@ -23,40 +23,33 @@ import { readExperienceLabV2TestMode } from './experience-lab-v2-test-modes';
 import { resolveExperienceLabV2FeatureFlags } from './experience-lab-v2-feature-flags';
 import './experience-lab-v2.css';
 
-const VIEWPORT_MODES: StudioViewportMode[] = [
-  'BLUEPRINT',
-  'FOUNDER_RENDER',
-  'CONSTRUCTION_PLAN',
-  'MATERIALS',
-  'LIGHTING',
-  'CAMERA',
-  'SPLIT_VIEW',
-];
-
 type Props = {
   initialDepartmentId?: CanonicalMainDepartmentId;
 };
 
-/** Experience Lab V2 — React-first department shell with universal StudioViewport. */
+/**
+ * Experience Lab V2 — Immersive Command Interface (presentation layer).
+ * Three layers: Environment · React UI · Viewport content.
+ */
 export function ExperienceLabV2Shell({ initialDepartmentId = 'experience-lab' }: Props) {
-  const { program, selectProgram } = useExperienceLabProgram();
+  const { program } = useExperienceLabProgram();
   const canonicalQueue = useCanonicalDepartmentQueue();
   const location = useLocation();
   const navigate = useNavigate();
   const flags = resolveExperienceLabV2FeatureFlags();
 
   const [departmentId] = useState<CanonicalMainDepartmentId>(initialDepartmentId);
-  const [viewportMode, setViewportMode] = useState<StudioViewportMode>(() => parseViewportModeFromQuery(location.search) ?? 'BLUEPRINT');
-  const [leftSelected, setLeftSelected] = useState('blueprint');
-  const [rightSelected, setRightSelected] = useState('materials');
+  const [viewportMode, setViewportMode] = useState<StudioViewportMode>(
+    () => parseViewportModeFromQuery(location.search) ?? 'BLUEPRINT'
+  );
+  const [activeFloat, setActiveFloat] = useState({ left: 'blueprint', right: 'materials' });
   const [testMode, setTestMode] = useState<ExperienceLabV2TestMode>(() => readExperienceLabV2TestMode());
   const [imageLoaded, setImageLoaded] = useState(false);
   const [diagnosticsOpen, setDiagnosticsOpen] = useState(false);
-  const [isMobile, setIsMobile] = useState(() => (typeof window !== 'undefined' ? window.innerWidth < 900 : false));
-  const [envPreset, setEnvPreset] = useState<'dark' | 'bright'>('dark');
+  const [isMobile, setIsMobile] = useState(() => (typeof window !== 'undefined' ? window.innerWidth < 1024 : false));
 
   useEffect(() => {
-    const onResize = () => setIsMobile(window.innerWidth < 900);
+    const onResize = () => setIsMobile(window.innerWidth < 1024);
     window.addEventListener('resize', onResize);
     return () => window.removeEventListener('resize', onResize);
   }, []);
@@ -74,6 +67,14 @@ export function ExperienceLabV2Shell({ initialDepartmentId = 'experience-lab' }:
     [location.pathname, location.search, navigate]
   );
 
+  const onFloatSelect = useCallback(
+    (side: 'left' | 'right', slot: string, mode: StudioViewportMode) => {
+      setActiveFloat((prev) => ({ ...prev, [side]: slot }));
+      if (mode !== 'EMPTY_STATE') setModeWithQuery(mode);
+    },
+    [setModeWithQuery]
+  );
+
   const model = useMemo(
     () =>
       experienceLabV2ViewModelAdapter({
@@ -89,78 +90,44 @@ export function ExperienceLabV2Shell({ initialDepartmentId = 'experience-lab' }:
 
   if (!flags.experienceLabV2Enabled) {
     return (
-      <div className="elab-v2" style={{ padding: 24 }}>
-        <p>Experience Lab V2 is disabled. Set VITE_EXPERIENCE_LAB_V2_ENABLED=true for Studio World Admin.</p>
+      <div className="elab-workstation elab-workstation--disabled" data-experience-lab-v2-shell>
+        <p>Experience Lab V2 is disabled.</p>
       </div>
     );
   }
 
   return (
-    <div className={`elab-v2${envPreset === 'bright' ? ' elab-v2--bright' : ''}`} data-experience-lab-v2-shell>
-      <ExperienceLabEnvironmentLayer preset={envPreset} isMobile={isMobile} />
+    <div className={`elab-workstation${isMobile ? ' elab-workstation--mobile' : ' elab-workstation--desktop'}`} data-experience-lab-v2-shell>
+      <ExperienceLabEnvironmentLayer isMobile={isMobile} />
 
-      <div className="elab-v2__badge-row">
-        <span className="elab-v2__badge">EXPERIENCE LAB V2 — TEST ENVIRONMENT</span>
-        <span className="elab-v2__badge">NOT YET PRODUCTION</span>
-      </div>
+      <div className="elab-workstation__ui">
+        <div className="elab-v2__badge-row">
+          <span className="elab-v2__badge">EXPERIENCE LAB V2 — TEST ENVIRONMENT</span>
+          <span className="elab-v2__badge">NOT YET PRODUCTION</span>
+        </div>
 
-      <div className="elab-v2__shell">
-        <ExperienceLabV2Header model={{ ...model, testMode }} />
-        <ExperienceLabV2ContextRail program={program} healthState={model.healthState} onProgramChange={selectProgram} />
+        <ExperienceLabCommandDock model={{ ...model, testMode }} isMobile={isMobile} />
 
-        <nav className="elab-v2__mode-rail" aria-label="Viewport modes" data-viewport-mode-rail>
-          {VIEWPORT_MODES.map((mode) => (
-            <button
-              key={mode}
-              type="button"
-              className="elab-v2__mode-btn"
-              aria-pressed={viewportMode === mode}
-              aria-label={`${mode.replace(/_/g, ' ')} view`}
-              onClick={() => setModeWithQuery(mode)}
-            >
-              {mode.replace(/_/g, ' ')}
-            </button>
-          ))}
-          {flags.experienceLabV2DiagnosticsEnabled ? (
-            <button type="button" className="elab-v2__mode-btn" onClick={() => setEnvPreset((p) => (p === 'dark' ? 'bright' : 'dark'))}>
-              ENV {envPreset.toUpperCase()}
-            </button>
-          ) : null}
-        </nav>
+        <main className="elab-workstation__main">
+          {!isMobile ? <ExperienceLabRegistrySidebar /> : null}
 
-        <div className="elab-v2__grid">
-          <ExperienceLabLeftInspector
-            selectedId={leftSelected}
-            charterSummary={model.charterSummary}
-            onSelect={(id, mode) => {
-              setLeftSelected(id);
-              if (mode !== 'EMPTY_STATE') setModeWithQuery(mode);
-            }}
-          />
-
-          <div>
-            <StudioViewport
-              mode={viewportMode}
-              departmentName={model.departmentName}
-              revision={model.revision}
-              artifactStatus={model.healthState}
-              artifacts={model.artifacts}
-              isStale={model.isStale}
+          <div className="elab-workstation__center">
+            <ExperienceLabViewportStage
+              model={model}
+              viewportMode={viewportMode}
+              onModeChange={setModeWithQuery}
               onImageLoad={() => setImageLoaded(true)}
+              isMobile={isMobile}
+              onFloatSelect={onFloatSelect}
+              activeFloat={activeFloat}
             />
           </div>
 
-          <ExperienceLabRightInspector
-            selectedId={rightSelected}
-            diagnostics={model.diagnostics}
-            onSelect={(id, mode) => {
-              setRightSelected(id);
-              if (mode !== 'EMPTY_STATE') setModeWithQuery(mode);
-            }}
-          />
-        </div>
+          {!isMobile ? <ExperienceLabGovernanceSidebar model={model} /> : null}
+        </main>
 
-        <ExperienceLabWorkbench model={model} />
+        <ExperienceLabFounderWorkbench model={model} />
+        <ExperienceLabApprovalBridge approval={model.approval} testMode={testMode} />
 
         {flags.experienceLabV2DiagnosticsEnabled ? (
           <ExperienceLabDiagnostics
@@ -172,20 +139,8 @@ export function ExperienceLabV2Shell({ initialDepartmentId = 'experience-lab' }:
           />
         ) : null}
 
-        <ExperienceLabApprovalBar
-          approval={model.approval}
-          testMode={testMode}
-          onOpenDiagnostics={() => setDiagnosticsOpen(true)}
-          onApprove={() => {
-            /* V2 default: no production write unless CONTROLLED_LIVE + confirmation */
-          }}
-        />
-
-        {flags.experienceLabV2MobileDockEnabled ? (
-          <ExperienceLabToolDock isMobile={isMobile} />
-        ) : (
-          <ExperienceLabToolDock isMobile={false} />
-        )}
+        <ExperienceLabWorkbenchDock isMobile={isMobile} />
+        <ExperienceLabDepartmentDock />
       </div>
     </div>
   );

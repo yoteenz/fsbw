@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Experience Lab V2 — Review Harness</title>
+  <link rel="stylesheet" href="../../../../src/features/studio-world/experience-lab-v2/experience-lab-v2.css" />
+  <style>
+    html, body { margin: 0; padding: 0; background: #08090c; }
+    .review-note { display: none; }
+  </style>
+</head>
+<body>
+  <div id="elab-review-root" class="elab-workstation elab-workstation--desktop" data-experience-lab-v2-shell>
+    <div class="elab-v2__env" data-experience-lab-environment aria-hidden>
+      <div style="width:100%;height:100%;background:linear-gradient(160deg,#0c0e12 0%,#1a1d26 45%,#0a0b0f 100%)"></div>
+      <div class="elab-v2__env-scrim" style="opacity:0.85"></div>
+    </div>
+    <div class="elab-workstation__ui">
+      <div class="elab-v2__badge-row">
+        <span class="elab-v2__badge">EXPERIENCE LAB V2 — TEST ENVIRONMENT</span>
+        <span class="elab-v2__badge">NOT YET PRODUCTION</span>
+      </div>
+
+      <header class="elab-cmd elab-cmd--desktop" data-elab-command-dock>
+        <div class="elab-cmd__desktop-top">
+          <div class="elab-cmd__brand">
+            <span class="elab-cmd__logo">FE</span>
+            <div><span class="elab-cmd__title">EXPERIENCE LAB</span><span class="elab-cmd__subtitle">ARCHITECTURE STUDIO</span></div>
+          </div>
+          <nav class="elab-cmd__nav">
+            <button class="elab-cmd__nav-link">STUDIO WORLD</button>
+            <button class="elab-cmd__nav-link">BLUEPRINTS</button>
+            <button class="elab-cmd__nav-link">RENDERS</button>
+            <button class="elab-cmd__nav-link">MATERIALS</button>
+          </nav>
+          <div class="elab-cmd__actions">
+            <button class="elab-cmd__icon-btn">⌕</button>
+            <button class="elab-cmd__icon-btn elab-cmd__icon-btn--badge">🔔<span>3</span></button>
+            <button class="elab-cmd__avatar">FS</button>
+          </div>
+        </div>
+        <div class="elab-cmd__desktop-meta">
+          <span>STUDIO WORLD ADMIN</span><span>RECEPTION</span><span>REVISION 18</span>
+          <span class="elab-status--ok">APPROVED</span><span>PERMIT APPROVED</span><span>AI $0.84</span>
+        </div>
+      </header>
+
+      <main class="elab-workstation__main">
+        <aside class="elab-registry" data-elab-registry-sidebar>
+          <p class="elab-side__heading">STUDIO WORLD REGISTRY</p>
+          <input class="elab-registry__search" placeholder="Search scenes, departments, rooms…" />
+          <div class="elab-registry__tree">
+            <div class="elab-registry__group">
+              <p class="elab-registry__group-label">FRONTAL SLAYER HQ</p>
+              <button class="elab-registry__item elab-registry__item--active"><span class="elab-registry__dot"></span>Reception <span class="elab-registry__rev">REV 18</span></button>
+              <button class="elab-registry__item"><span class="elab-registry__dot"></span>Grand Lobby <span class="elab-registry__rev">REV 12</span></button>
+            </div>
+          </div>
+        </aside>
+
+        <div class="elab-workstation__center">
+          <div class="elab-stage" data-elab-viewport-stage>
+            <div class="elab-stage__viewport-wrap">
+              <button class="elab-float elab-float--left elab-float--blueprint elab-float--active" data-elab-floating-inspector="left">BLUEPRINT</button>
+              <button class="elab-float elab-float--left elab-float--construction" data-elab-floating-inspector="left">CONSTRUCTION</button>
+              <button class="elab-float elab-float--left elab-float--scope" data-elab-floating-inspector="left">SCOPE</button>
+
+              <section class="elab-viewport elab-viewport--embedded" data-studio-viewport data-mode="BLUEPRINT">
+                <div class="elab-viewport__titlebar">
+                  <h2>RECEPTION</h2><span>REVISION 18</span><span class="elab-status--ok">APPROVED</span>
+                </div>
+                <div class="elab-viewport__body">
+                  <div class="elab-empty elab-empty--blueprint">
+                    <p class="elab-empty__title">BLUEPRINT MODE</p>
+                    <p class="elab-empty__hint">Holographic specification layer</p>
+                  </div>
+                </div>
+                <nav class="elab-viewport__mode-rail" data-elab-viewport-mode-rail>
+                  <button class="elab-viewport__mode elab-viewport__mode--active">Blueprint</button>
+                  <button class="elab-viewport__mode">Founder Render</button>
+                  <button class="elab-viewport__mode">Construction</button>
+                </nav>
+              </section>
+
+              <button class="elab-float elab-float--right elab-float--materials elab-float--active" data-elab-floating-inspector="right">MATERIALS</button>
+              <button class="elab-float elab-float--right elab-float--lighting" data-elab-floating-inspector="right">LIGHTING</button>
+              <button class="elab-float elab-float--right elab-float--camera" data-elab-floating-inspector="right">CAMERA</button>
+            </div>
+            <nav class="elab-view-angles" data-elab-view-angles>
+              <span class="elab-view-angles__label">VIEW ANGLES</span>
+              <div class="elab-view-angles__strip">
+                <button class="elab-view-angles__thumb elab-view-angles__thumb--active"><span class="elab-view-angles__thumb-inner"></span></button>
+                <button class="elab-view-angles__thumb"><span class="elab-view-angles__thumb-inner"></span></button>
+                <button class="elab-view-angles__thumb"><span class="elab-view-angles__thumb-inner"></span></button>
+              </div>
+            </nav>
+          </div>
+        </div>
+
+        <aside class="elab-governance" data-elab-governance-sidebar>
+          <section class="elab-gov-panel"><p class="elab-side__heading">SCENE OVERVIEW</p><dl class="elab-gov-dl"><div><dt>Department</dt><dd>FS-REC-001</dd></div></dl></section>
+          <section class="elab-gov-panel"><p class="elab-side__heading">PERFORMANCE IMPACT</p><dl class="elab-gov-dl"><div><dt>AI Cost</dt><dd>$0.84</dd></div></dl></section>
+          <section class="elab-gov-panel"><p class="elab-side__heading">IMMUNE SYSTEM</p><p class="elab-status--ok">⬡ No issues detected</p></section>
+        </aside>
+      </main>
+
+      <section class="elab-founder-wb" data-elab-founder-workbench>
+        <div class="elab-founder-wb__console">
+          <article class="elab-founder-wb__zone elab-founder-wb__zone--brief"><h3 class="elab-founder-wb__zone-title">DESIGN BRIEF</h3><p class="elab-founder-wb__brief-text">Luxury reception area for Frontal Slayer HQ.</p></article>
+          <article class="elab-founder-wb__zone elab-founder-wb__zone--review"><h3 class="elab-founder-wb__zone-title">FOUNDER REVIEW</h3><div class="elab-founder-wb__player-placeholder"><span class="elab-founder-wb__play">▶</span><span>DRAG TO EXPLORE</span></div></article>
+          <article class="elab-founder-wb__zone elab-founder-wb__zone--timeline"><h3 class="elab-founder-wb__zone-title">REVISION TIMELINE</h3><div class="elab-founder-wb__chart"></div></article>
+          <article class="elab-founder-wb__zone elab-founder-wb__zone--diag"><h3 class="elab-founder-wb__zone-title">DIAGNOSTICS</h3><p>$0.84 · MOCK</p></article>
+        </div>
+      </section>
+
+      <section class="elab-approval-bridge" data-elab-approval-bridge>
+        <button class="elab-approval-bridge__primary"><span class="elab-approval-bridge__glow"></span>APPROVE &amp; SEND TO CREATIVE DIRECTOR STUDIO<span class="elab-approval-bridge__arrow">→</span></button>
+        <p class="elab-approval-bridge__locks">LOCK BLUEPRINT · LOCK RENDER · LOCK CONSTRUCTION PLAN</p>
+      </section>
+
+      <nav class="elab-wb-dock" data-elab-workbench-dock>
+        <button class="elab-wb-dock__tool"><span class="elab-wb-dock__icon">◎</span><span class="elab-wb-dock__label">ARCHITECTURAL TOOLS</span></button>
+        <button class="elab-wb-dock__tool"><span class="elab-wb-dock__icon">◉</span><span class="elab-wb-dock__label">MATERIAL LIBRARY</span></button>
+        <button class="elab-wb-dock__tool"><span class="elab-wb-dock__icon">☀</span><span class="elab-wb-dock__label">LIGHTING STUDIO</span></button>
+        <button class="elab-wb-dock__tool"><span class="elab-wb-dock__icon">▣</span><span class="elab-wb-dock__label">CAMERA STUDIO</span></button>
+        <button class="elab-wb-dock__tool"><span class="elab-wb-dock__icon">▥</span><span class="elab-wb-dock__label">BUDGET FORECAST</span></button>
+        <button class="elab-wb-dock__tool"><span class="elab-wb-dock__icon">⬡</span><span class="elab-wb-dock__label">PERMIT CENTER</span></button>
+      </nav>
+
+      <nav class="elab-dept-dock" data-elab-department-dock>
+        <div class="elab-dept-dock__left">
+          <button class="elab-dept-dock__item elab-dept-dock__item--active"><span>🏛</span>EXPERIENCE LAB</button>
+          <button class="elab-dept-dock__item"><span>🌐</span>STUDIO WORLD</button>
+        </div>
+        <div class="elab-dept-dock__center"><span class="elab-dept-dock__hex">FS</span></div>
+        <div class="elab-dept-dock__right">
+          <button class="elab-dept-dock__item"><span>▣</span>ASSET REFERENCE</button>
+          <button class="elab-dept-dock__item"><span>🏢</span>COMMAND CENTER</button>
+        </div>
+      </nav>
+    </div>
+  </div>
+  <script>
+    const params = new URLSearchParams(location.search);
+    const mode = params.get('mode') || 'desktop';
+    const root = document.getElementById('elab-review-root');
+    root.classList.toggle('elab-workstation--mobile', mode === 'mobile');
+    root.classList.toggle('elab-workstation--desktop', mode !== 'mobile');
+    if (mode === 'mobile') {
+      const dock = document.querySelector('[data-elab-command-dock]');
+      dock.className = 'elab-cmd';
+      dock.innerHTML = `
+        <div class="elab-cmd__row elab-cmd__row--identity">
+          <span class="elab-cmd__logo">FE</span>
+          <div class="elab-cmd__title-block"><span class="elab-cmd__title">EXPERIENCE LAB</span><span class="elab-cmd__subtitle">ARCHITECTURE STUDIO</span></div>
+          <div class="elab-cmd__actions"><button class="elab-cmd__icon-btn">⌕</button><button class="elab-cmd__icon-btn elab-cmd__icon-btn--badge">🔔<span>3</span></button><button class="elab-cmd__avatar">FS</button></div>
+        </div>
+        <div class="elab-cmd__row elab-cmd__row--context">
+          <span class="elab-cmd__pill">🏛 FRONTAL SLAYER HQ</span>
+          <span class="elab-cmd__pill elab-cmd__pill--active">EXPERIENCE LAB</span>
+          <span class="elab-cmd__pill">RECEPTION · r18</span>
+        </div>
+        <div class="elab-cmd__row elab-cmd__row--status">
+          <span>STATUS: <strong class="elab-status--ok">APPROVED</strong></span>
+          <span>PERMIT: <strong class="elab-status--ok">APPROVED</strong></span>
+          <span>AI COST: <strong>$0.84</strong></span>
+        </div>`;
+      document.querySelector('[data-elab-registry-sidebar]')?.remove();
+      document.querySelector('[data-elab-governance-sidebar]')?.remove();
+    }
+  </script>
+</body>
+</html>
