@@ -8,8 +8,8 @@
 |-------|-------|
 | **Capsule Version** | 0.3.2 |
 | **Manifest Version** | 0.3.2 |
-| **Generation Date (UTC)** | 2026-07-13T05:31:00.703Z |
-| **Repository Commit SHA** | c0444f25da01003b3a11089c4ef3a8587785c7b9 |
+| **Generation Date (UTC)** | 2026-07-13T06:28:20.006Z |
+| **Repository Commit SHA** | c82cbd81025e4c2a2cc03c2fb961bddcd5ddbc8c |
 | **Validation Status** | pass |
 | **Documents Included** | README_FIRST.md, MANIFEST.md, ONBOARDING_REPORT.md, FOUNDER_PROFILE.md, CHATGPT_OPERATING_MANUAL.md, AI_STYLE_GUIDE.md, AI_CONTEXT.md, CURRENT_HANDOFF.md, AI_GLOSSARY.md, PROJECT_DNA.md, PROJECT_CHANGELOG.md, PROMPT_LIBRARY.md, ROADMAP.md, KNOWN_BLOCKERS.md, OPEN_QUESTIONS.md |
 | **Manifest Hash (reading order SHA-256)** | 7b10d8a919668fc98dd4f47c7383353032cd3d69e8f39f73ff026a55b12e9b30 |
@@ -57,11 +57,11 @@ Verified:
 
 ### Current Implementation Stage
 
-P0 — Founder Render Production Verification & Regression Audit
+P0 — Canonical Studio World Department Generator™
 
 ### Current Active Blockers
 
-B0, B1, B1, B1, B1, B1, B1, B1, B2
+B0, B1, B1, B1, B1, B1, B1, B1, B1, B2
 
 ### Approval Required Before Contribution
 
@@ -75,7 +75,7 @@ B0, B1, B1, B1, B1, B1, B1, B1, B2
 |-------|-------|
 | **Capsule Version** | 0.3.2 |
 | **Manifest Version** | 0.3.2 |
-| **Generated** | 2026-07-13T05:31:00.703Z |
+| **Generated** | 2026-07-13T06:28:20.006Z |
 | **Validation Passed** | YES |
 | **Operational Source of Truth** | CURRENT_HANDOFF.md · KNOWN_BLOCKERS.md · PROJECT_CHANGELOG.md |
 | **Current Handoff Document** | CURRENT_HANDOFF.md |

@@ -8,20 +8,24 @@
 
 ## Current sprint
 
-**P0 — Canonical Studio World Department Generator™**
+**P0 — Industry Pack Neutrality, Creator IP Lineage & Marketplace Royalties**
 
-**Status: SHIPPED — Experience Lab Program A + Program B separation live**
+**Status: SHIPPED — Build-A-Wig Atelier removed from official Hair packs; founder mod IP system live**
 
-Experience Lab now supports two separate admin programs:
+**Correction:** Build-A-Wig Atelier™ is **not** a neutral Hair Brand/Salon default — it is a **Frontal Slayer** founder-created mod (`FOUNDER_CREATED_MODDED_SCENE`).
 
-- **BUILD STUDIO WORLD** — canonical main department registry (25 departments, 6 categories)
-- **BUILD INDUSTRY PACKS** — existing Industry Pack headquarters flow (unchanged, visually separated)
+**Shipped:**
 
-Migration `20260713200000_canonical_department_generator.sql` applied to production Supabase.  
-Tests: `canonical-department-generator.test.ts` — 25/25 PASS.  
-Build: PASS.
+- **Hair Brand Pack** — 15 neutral departments; no Build-A-Wig Atelier
+- **Hair Salon Pack** — 14 neutral departments; no Build-A-Wig Atelier
+- **Founder mods module** — `src/studio-os-core/founder-mods/` (6 content classes, brand-neutrality validator, IP lineage, royalties, licensing, certification, installation)
+- **Frontal Slayer HQ preserved** — BAW Atelier, Hair Analysis Lab, Transformation Suite remain in `BEAUTY_HEADQUARTERS_REGISTRY` with creator lineage
+- **UI** — `FounderModRegistryPanel` separates founder mods from official pack tree
+- **Supabase** — `20260713210000_founder_mod_ip_lineage.sql` (11 tables + RLS); applied to production `hyycomvcaqxxvyrfupes`
+- **Tests** — `founder-mod-ip-lineage.test.ts` — 24/24 PASS
+- **Docs** — `BRAND_NEUTRALITY_STANDARD.md`, `FOUNDER_MOD_IP_LINEAGE.md`, `CREATOR_ROYALTIES.md`, `MOD_LICENSING.md`, `MOD_CERTIFICATION.md`
 
-**Previous:** Architecture Law #001 (`e892b3a65`); Experience Lab admin infrastructure (`188f1fc36`); Canonical Studio World (`35d094db0`).
+**Previous:** Canonical Studio World Department Generator (`c82cbd810`); Architecture Law #001 (`e892b3a65`); Experience Lab admin infrastructure (`188f1fc36`).
 
 ---
 
@@ -32,6 +36,7 @@ Build: PASS.
 | **B1-FounderRender-API** | `founder-render-generate` cold-start 500 | **Fix shipped** — re-probe after deploy |
 | **B1-FounderRender** | Photoreal full-room Founder Render on mobile Founder Review | **Verify Pending** |
 | **B1-CanonicalDept-Runtime** | Canonical department batch dispatch to live FAL render queue | **Not started** — planning/batch UI shipped; runtime queue wiring next |
+| **B1-ModMarketplace-Runtime** | Live marketplace mod purchase/install API + Supabase sync for founder mods | **Not started** — domain logic + schema shipped; production API wiring next |
 | **B1-Parity** | Salvageable opaque layer extraction on real device | **Verify Pending** |
 | **B1-Layer1** | Layer 1 mobile Safari/Chrome with `?compilerDiag=1` | **Verify Pending** |
 

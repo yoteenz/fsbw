@@ -24,9 +24,13 @@ export function IndustryPackDepartmentTree({ pack, plan }: Props) {
         {pack.defaultDepartments.map((slot) => {
           const deptPlan = plan?.departments.find((d) => d.slotId === slot.slotId);
           const reuse = deptPlan?.reuse.action === 'reuse' ? '♻ shared' : '⚡ generate';
+          const isNeutral = !slot.displayName.toLowerCase().includes('build-a-wig');
           return (
             <li key={slot.slotId}>
               <strong>{slot.displayName}</strong>
+              {isNeutral ? (
+                <span style={{ fontSize: '9px', marginLeft: 6, color: '#059669', fontWeight: 700 }}>NEUTRAL</span>
+              ) : null}
               <span style={{ color: '#64748b', fontSize: '10px' }}>
                 {' '}
                 · {slot.templateId} {slot.pinnedVersion} · {reuse}

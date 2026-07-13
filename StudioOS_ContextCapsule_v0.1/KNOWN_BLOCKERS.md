@@ -95,6 +95,24 @@
 
 ---
 
+## B1-ModMarketplace-Runtime — Founder mod marketplace live install (DOMAIN SHIPPED — RUNTIME PENDING)
+
+| Field | Detail |
+|-------|--------|
+| **ID** | B1-ModMarketplace-Runtime |
+| **Symptom** | Founder mod IP lineage, royalties, licensing, and certification logic exist in `src/studio-os-core/founder-mods/` and Supabase schema — but no production API routes yet sync registry to DB or execute buyer installation |
+| **Repair** | P0 Industry Pack Neutrality sprint shipped domain models, brand-neutrality validator, 24 tests, 11 Supabase tables with RLS; live marketplace purchase/install API wiring is next |
+| **Verify** | Buyer with compatible Hair Brand Pack purchases Build-A-Wig Atelier mod → license verified → neutral package installed → creator lineage preserved → royalty ledger entry created |
+| **Status** | **Runtime Pending** — schema + domain logic production-ready |
+
+### Documented Fact
+
+- Build-A-Wig Atelier™ classified `FOUNDER_CREATED_MODDED_SCENE`, creator `frontal-slayer`, not in official Hair Brand/Salon defaults.
+- Royalty rate intentionally null (`royalty-baw-atelier-v1`) — founder-configured per non-goals.
+- City Council certification required before marketplace publication.
+
+---
+
 ## B1-Isolated — Brand-grounded NB2 + verified mount (SHIPPED — VERIFY PENDING)
 
 | Field | Detail |

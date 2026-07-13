@@ -68,7 +68,9 @@ export const BEAUTY_HEADQUARTERS_REGISTRY: StudioWorldRegistry = {
       materialLibraryId: 'founder-material-library',
       version: '1.0.0',
       compatibility: ['studio-os.v1'],
-      marketplaceEligible: true,
+      marketplaceEligible: false,
+      contentClass: 'FOUNDER_CREATED_MODDED_SCENE',
+      creatorOrganizationId: 'frontal-slayer',
     }),
     scene({
       sceneId: 'build-a-wig-atelier',
@@ -88,6 +90,8 @@ export const BEAUTY_HEADQUARTERS_REGISTRY: StudioWorldRegistry = {
       version: '1.0.0',
       compatibility: ['studio-os.v1'],
       marketplaceEligible: true,
+      contentClass: 'FOUNDER_CREATED_MODDED_SCENE',
+      creatorOrganizationId: 'frontal-slayer',
     }),
     scene({
       sceneId: 'hair-analysis-lab',
@@ -107,6 +111,8 @@ export const BEAUTY_HEADQUARTERS_REGISTRY: StudioWorldRegistry = {
       version: '1.0.0',
       compatibility: ['studio-os.v1'],
       marketplaceEligible: false,
+      contentClass: 'FOUNDER_CREATED_MODDED_SCENE',
+      creatorOrganizationId: 'frontal-slayer',
     }),
     scene({
       sceneId: 'extensions-boutique',

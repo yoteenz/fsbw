@@ -87,3 +87,11 @@ Admin batch actions require explicit confirmation and cost review before dispatc
 - `ExperienceLabProgramSelector` — Program A vs B
 - `CanonicalDepartmentTree` — dynamic category tree from registry
 - `CanonicalDepartmentBatchPanel` — controlled batch queue
+
+## Founder mod promotion gate
+
+Experience Lab **must not** silently promote a founder-created mod into an official Industry Pack default.
+
+To promote or license a founder-created feature into an official pack, require an explicit `content_rights_records` acquisition or licensing record (rights holder, territory, duration, compensation, royalty terms, attribution, exclusivity, modification/sublicensing rights, termination).
+
+Without that record, founder-created work (e.g. **Build-A-Wig Atelier™** by Frontal Slayer) remains `FOUNDER_CREATED_MODDED_SCENE` outside official defaults. See `src/studio-os-core/founder-mods/experience-lab-rights-gate.ts` and `docs/studio-os/industry-packs/BRAND_NEUTRALITY_STANDARD.md`.

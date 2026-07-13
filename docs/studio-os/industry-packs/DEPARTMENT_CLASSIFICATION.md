@@ -1,55 +1,50 @@
 # Department Classification
 
-**Version:** `department-classification.v1`
+**Version:** `content-classification.v1`
 
-Studio World maintains **three separate department classes**. These must never be conflated in data, APIs, UI, permissions, or diagnostics.
+Studio World maintains **six content classes**. These must never be conflated in data, APIs, UI, permissions, Marketplace, or diagnostics.
 
 ## 1. CANONICAL_STUDIO_WORLD_DEPARTMENT
 
-**Global infrastructure** used to operate Studio World.
-
-- Exists once globally
-- No tenant ownership
-- Experience Lab program: **BUILD STUDIO WORLD**
-- Examples: Experience Lab, Creative Director Studio, Command Center, Asset Registry
+Global Studio World infrastructure (Experience Lab · BUILD STUDIO WORLD).
 
 ## 2. SHARED_HQ_DEPARTMENT_TEMPLATE
 
-**Reusable headquarters department** referenced across multiple Industry Packs.
+Neutral reusable HQ department (Reception, Lobby, Inventory, Private Office).
 
-- Not canonical Studio World infrastructure
-- Not tenant-owned at template level
-- Experience Lab program: **BUILD INDUSTRY PACKS**
-- Examples: Reception, Lobby, Conference Room, Executive Office, Storage, Staff Lounge, Training Room
+## 3. INDUSTRY_UNIQUE_DEFAULT_TEMPLATE
 
-Shared template IDs: `reception`, `lobby`, `conference-room`, `executive-office`, `storage`, `staff-lounge`, `training-room`, `waiting-area`, `office`.
+Neutral industry-specific default (Salon Wash Area, Medical Exam Room).
 
-## 3. INDUSTRY_UNIQUE_DEPARTMENT_TEMPLATE
+## 4. FOUNDER_CUSTOMIZED_DEPARTMENT
 
-**Specialized headquarters department** belonging to one or more related industries.
+Founder's customized version of a default department.
 
-- Experience Lab program: **BUILD INDUSTRY PACKS**
-- Examples: Hair Analysis Lab, Medical Exam Room, Law Library
+## 5. FOUNDER_CREATED_MODDED_SCENE
 
-## Classification API
+Founder-created scene not in official pack — **Build-A-Wig Atelier™** is Frontal Slayer IP, not a Hair Brand default.
+
+## 6. MARKETPLACE_LICENSED_MOD
+
+Certified installable derivative under license.
+
+## Build-A-Wig Atelier
+
+| Field | Value |
+|-------|-------|
+| Class | `FOUNDER_CREATED_MODDED_SCENE` |
+| Creator | `frontal-slayer` |
+| In official Hair Brand Pack | **No** |
+| In Frontal Slayer HQ | **Yes** (preserved) |
+
+## API
 
 ```typescript
-import { classifyDepartmentById, classifyIndustryPackDepartmentSlot } from 'studio-os-core/canonical-studio-world';
-
-classifyDepartmentById('experience-lab', { isCanonicalRegistryMember: true });
-// → CANONICAL_STUDIO_WORLD_DEPARTMENT
-
-classifyIndustryPackDepartmentSlot('reception');
-// → SHARED_HQ_DEPARTMENT_TEMPLATE
+import { classifyContent } from 'studio-os-core/founder-mods';
+import { validateOfficialPackBrandNeutrality } from 'studio-os-core/founder-mods';
 ```
 
 ## Database
 
-- Canonical: `studio_world_canonical_departments.department_class`
-- Industry templates: `studio_department_templates.department_class` (`SHARED_HQ_DEPARTMENT_TEMPLATE` | `INDUSTRY_UNIQUE_DEPARTMENT_TEMPLATE`)
-
-## Rules
-
-- Industry Packs may **reference** canonical services but never **clone or own** them
-- Reception is **not** a canonical Studio World main department
-- Do not merge canonical departments and Industry Packs into one registry
+- `founder_created_mods.content_class`
+- `official_pack_content_bindings.content_class`

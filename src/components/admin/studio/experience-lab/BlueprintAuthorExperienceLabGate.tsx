@@ -52,7 +52,7 @@ export function BlueprintAuthorExperienceLabGate({
             onSubmit={submit}
             isLoading={workflow.isAuthoring}
             label="Founder request — Industry Pack HQ"
-            placeholder="e.g. Approve Hair Brand Pack headquarters — reception, showroom, atelier, content studio…"
+            placeholder="e.g. Approve Hair Brand Pack headquarters — reception, showroom, consultation, fulfillment…"
           />
         </div>
       ) : (

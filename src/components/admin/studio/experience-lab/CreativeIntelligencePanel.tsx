@@ -14,6 +14,7 @@ import { CanonicalDepartmentTree } from './CanonicalDepartmentTree';
 import { CanonicalDepartmentBatchPanel } from './CanonicalDepartmentBatchPanel';
 import { IndustryPackSelector } from './IndustryPackSelector';
 import { IndustryPackDepartmentTree } from './IndustryPackDepartmentTree';
+import { FounderModRegistryPanel } from './FounderModRegistryPanel';
 import { CreativeStudioRenderPreview } from './CreativeStudioRenderPreview';
 import { BlueprintAuthorExperienceLabGate } from './BlueprintAuthorExperienceLabGate';
 
@@ -112,6 +113,7 @@ export function CreativeIntelligencePanel() {
           {industryPack && headquartersPlan?.ok ? (
             <IndustryPackDepartmentTree pack={industryPack} plan={headquartersPlan.plan} />
           ) : null}
+          {packOptionId === 'hair-brand' || packOptionId === 'hair-salon' ? <FounderModRegistryPanel /> : null}
           {blindMode ? (
             <BlindValidationBanner
               result={blindTestResult}

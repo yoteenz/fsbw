@@ -48222,5 +48222,28 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 
 **Remaining blocker:** B1-CanonicalDept-Runtime — live FAL render queue dispatch for canonical batch generation (planning/UI shipped; runtime wiring next). Prior blockers B1-FounderRender, B1-Layer1, B1-Parity still verify-pending.
 
+---
+
+## 2026-07-13 — P0 Industry Pack Neutrality, Creator IP Lineage & Marketplace Royalties (full conversation)
+
+**Founder sprint:** Official Industry Packs must be brand-neutral. Build-A-Wig Atelier™ was incorrectly included in the official Hair Brand Pack — it is Frontal Slayer IP, not a neutral default. Reclassify as founder-created mod with immutable creator lineage, marketplace neutralization, licensing, configurable royalties, and City Council certification.
+
+**Context:** Continuation of Canonical Department Generator (`c82cbd810`), Experience Lab admin infrastructure, Architecture Law #001. Sprint required one governed implementation, one commit, one push, one deploy.
+
+**Shipped:**
+
+- **Hair Brand Pack correction** — removed Build-A-Wig Atelier; 15 neutral departments (reception, showroom, consultation, fulfillment, product development, etc.) in `industry-pack-canonical-extensions.ts`
+- **Hair Salon Pack correction** — 14 neutral departments in `industry-pack-registry.ts`; no BAW
+- **Founder mods module** — `src/studio-os-core/founder-mods/` — 6 content classes, `FOUNDER_PROTECTED_SCENE_IDS`, brand-neutrality validator (`INDUSTRY_PACK_NOT_BRAND_NEUTRAL`), IP lineage, marketplace neutral package, royalty policies, mod licensing, City Council certification, installation planner, Experience Lab rights gate
+- **Frontal Slayer registry** — `build-a-wig-atelier`, `hair-analysis-lab`, `transformation-suite` as `FOUNDER_CREATED_MODDED_SCENE`, creator `frontal-slayer`; HQ scenes preserved in `BEAUTY_HEADQUARTERS_REGISTRY` / `fixtures.ts`
+- **UI** — `FounderModRegistryPanel`, `IndustryPackDepartmentTree` NEUTRAL badge, `CreativeIntelligencePanel` founder mod section for hair packs
+- **Supabase** — `20260713210000_founder_mod_ip_lineage.sql` — 11 tables (`founder_created_mods`, versions, lineage, licenses, listings, installations, royalty policies/ledger, content rights, pack bindings, certifications) + RLS service_role policies; applied to production `hyycomvcaqxxvyrfupes`
+- **Tests** — `founder-mod-ip-lineage.test.ts` 24/24 PASS; build PASS
+- **Docs** — `BRAND_NEUTRALITY_STANDARD.md`, `FOUNDER_MOD_IP_LINEAGE.md`, `CREATOR_ROYALTIES.md`, `MOD_LICENSING.md`, `MOD_CERTIFICATION.md`; updated `DEPARTMENT_CLASSIFICATION.md`, `CANONICAL_DEPARTMENT_GENERATION.md`, `CURRENT_HANDOFF.md`, `KNOWN_BLOCKERS.md`, `CORE.md`
+
+**Non-goals honored:** Frontal Slayer HQ intact; no auto-publish; royalty rate null (founder-configured); buyers do not become original creators.
+
+**Remaining blocker:** B1-ModMarketplace-Runtime — live marketplace purchase/install API + Supabase sync (domain logic shipped).
+
 **One commit + one push** on `master` via `agent-commit.sh`.
 

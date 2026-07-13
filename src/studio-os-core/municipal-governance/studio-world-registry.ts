@@ -1,4 +1,5 @@
 import type { MunicipalZone } from './contract';
+import type { ContentClass } from '../founder-mods/contract';
 
 export const STUDIO_WORLD_REGISTRY_VERSION = 'studio-world-registry.v1' as const;
 export type StudioWorldSceneRecord = {
@@ -19,6 +20,8 @@ export type StudioWorldSceneRecord = {
   version: string;
   compatibility: string[];
   marketplaceEligible: boolean;
+  contentClass?: ContentClass;
+  creatorOrganizationId?: string;
   registryVersion: typeof STUDIO_WORLD_REGISTRY_VERSION;
 };
 

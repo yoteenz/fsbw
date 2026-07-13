@@ -7,6 +7,7 @@ import type {
 } from './contract';
 import { INDUSTRY_PACKS_VERSION } from './contract';
 import { CANONICAL_INDUSTRY_PACK_EXTENSIONS } from './industry-pack-canonical-extensions';
+import { validateOfficialPackBrandNeutrality } from '../founder-mods/brand-neutrality-validator';
 
 function slot(
   slotId: string,
@@ -75,19 +76,25 @@ export const OFFICIAL_INDUSTRY_PACKS: IndustryPack[] = [
   pack(
     'official-hair-salon',
     'Official Hair Salon Pack',
-    'Canonical beauty headquarters — salon operations',
+    'Neutral salon headquarters — styling, wash, color, retail',
     'beauty',
     '1.0.0',
     true,
     [
       slot('reception', 'reception', 'v6', 'Reception', 'ground'),
-      slot('lobby', 'lobby', 'v4', 'Lobby', 'ground', ['reception']),
-      slot('office', 'office', 'v9', 'Office', 'first', ['lobby']),
-      slot('training', 'training-room', 'v4', 'Training Room', 'first', ['office']),
-      slot('inventory', 'inventory', 'v3', 'Inventory', 'basement', ['office']),
-      slot('checkout', 'checkout', 'v2', 'Checkout', 'ground', ['lobby']),
+      slot('waiting-lounge', 'waiting-area', 'v3', 'Waiting Lounge', 'ground', ['reception']),
+      slot('consultation', 'treatment-room', 'v3', 'Consultation Room', 'first', ['waiting-lounge']),
+      slot('styling-floor', 'studio-floor', 'v2', 'Styling Floor', 'ground', ['waiting-lounge']),
+      slot('wash-area', 'treatment-room', 'v3', 'Wash Area', 'ground', ['styling-floor']),
+      slot('color-room', 'treatment-room', 'v3', 'Color Room', 'first', ['styling-floor']),
+      slot('product-retail', 'retail-boutique', 'v2', 'Product Retail', 'ground', ['reception']),
+      slot('staff-room', 'break-room', 'v2', 'Staff Room', 'first', ['styling-floor']),
+      slot('inventory', 'inventory', 'v3', 'Inventory', 'basement', ['product-retail']),
       slot('storage', 'storage', 'v2', 'Storage', 'basement', ['inventory']),
-      slot('photo-studio', 'photo-studio', 'v2', 'Photo Studio', 'first', ['office']),
+      slot('training', 'training-room', 'v4', 'Training Room', 'first', ['staff-room']),
+      slot('private-office', 'executive-office', 'v3', 'Private Office', 'penthouse', ['staff-room']),
+      slot('content-photo', 'photo-studio', 'v2', 'Content / Photography Area', 'first', ['styling-floor']),
+      slot('checkout', 'checkout', 'v2', 'Checkout', 'ground', ['product-retail']),
     ]
   ),
   pack(
@@ -261,6 +268,14 @@ export function validateIndustryPack(pack: IndustryPack): IndustryPackValidation
         };
       }
     }
+  }
+  const neutrality = validateOfficialPackBrandNeutrality(pack);
+  if (!neutrality.ok) {
+    return {
+      ok: false,
+      code: neutrality.code,
+      message: `Pack ${pack.packId} is not brand-neutral: ${neutrality.violations.map((v) => v.displayName).join(', ')}`,
+    };
   }
   return { ok: true };
 }
