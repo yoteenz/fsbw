@@ -48762,3 +48762,18 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 **Spatial Architecture Review:** SKIPPED — presentation-only workbench polish in existing review harness.
 
 **One commit + one push** on `master` via `agent-commit.sh`.
+
+---
+
+## 2026-07-13 — Experience Lab Command Dock logo swap (full conversation)
+
+**Founder request:** Replace Command Dock logo with `IMG_6238.webp` from Supabase live-preview (`hyycomvcaqxxvyrfupes.supabase.co/.../Studio%20World/IMG_6238.webp`).
+
+**Prior context in chat:** Heartbeat overlay hidden; Workbench orb/title/tool-panel polish (`b9cc018cf`); Command Dock previously used Ideogram cutout `IMG_6220-cutout.png`.
+
+**Shipped:**
+
+- **`experience-lab-v2-command-dock-locations.ts`** — `EXPERIENCE_LAB_COMMAND_DOCK_LOGO_PATH` and source path updated to `IMG_6238.webp`; `resolveExperienceLabCommandDockLogoUrl()` unchanged (still prefixes `VITE_SUPABASE_URL`)
+- **Tests** — command dock location test updated for new asset name; 8/8 PASS
+
+**One commit + one push** on `master` via `agent-commit.sh`.

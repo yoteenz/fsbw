@@ -15,9 +15,9 @@ import {
 const V2_DIR = dirname(fileURLToPath(import.meta.url));
 
 describe('Experience Lab Command Dock locations', () => {
-  it('uses Ideogram cutout logo from live preview storage', () => {
-    expect(EXPERIENCE_LAB_COMMAND_DOCK_LOGO_PATH).toContain('IMG_6220-cutout.png');
-    expect(resolveExperienceLabCommandDockLogoUrl()).toContain('IMG_6220-cutout.png');
+  it('uses Studio World logo from live preview storage', () => {
+    expect(EXPERIENCE_LAB_COMMAND_DOCK_LOGO_PATH).toContain('IMG_6238.webp');
+    expect(resolveExperienceLabCommandDockLogoUrl()).toContain('IMG_6238.webp');
   });
 
   it('lists HQ locations with Experience Lab as primary department tab', () => {
