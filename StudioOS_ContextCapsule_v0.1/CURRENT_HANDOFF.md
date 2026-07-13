@@ -8,21 +8,17 @@
 
 ## Current sprint
 
-**P0 — Studio World Constitution™**
+**P0 — Implementation Orchestrator™ & Dependency Graph Engine**
 
-**Status: SHIPPED — Supreme governing laws established as highest platform authority**
+**Status: SHIPPED — Self-managing implementation queue with living dependency graph**
 
 **Shipped:**
 
-- **`studio-world-constitution/supreme-articles.ts`** — 8 supreme articles (World Identity, Canonical Infrastructure, Founder Property, AI Generation, Blueprint Governance, Mod Governance, Municipal Governance, Immutable Audit)
-- **`constitutional-gate.ts`** — all execution contexts validate against Constitution before proceeding
-- **`immutable-audit.ts`** — Article VIII append-only audit trail
-- **Hierarchy updated** — Constitution supreme above Style Bible → Department Bible → Department DNA → …
-- **Department Compiler** gates through Constitutional Gate before assembly
-- **Experience Lab Knowledge Panel** shows constitutional compliance status
-- **Tests** — studio-world-constitution-supreme 20/20; department-bible 27/27; studio-world-style 20/20; build PASS
+- **`implementation-orchestrator/`** — schemas, canonical pipeline registry, dependency graph, blocker engine, execution modes, packet compiler, autonomous dispatcher, persistent store, diagnostics
+- **Experience Lab Implementation Queue panel** — ready/blocked/running/founder review, critical path, packets, approve/pause/dispatch
+- **Tests** — implementation-orchestrator 25/25 PASS; build PASS
 
-**Previous:** Department Bible (`be4501c4e`); Style Bible (`e806fc9d8`); Architectural DNA (`e0148f3ec`).
+**Previous:** Studio World Constitution (`1026b6c35`); Founder Render bundle hotfix (`5b295c772`); Department Bible (`be4501c4e`).
 
 ---
 

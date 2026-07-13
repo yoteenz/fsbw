@@ -12,6 +12,7 @@ import { useState } from 'react';
 import { ExperienceLabProgramSelector } from './ExperienceLabProgramSelector';
 import { CanonicalDepartmentTree } from './CanonicalDepartmentTree';
 import { DepartmentBibleKnowledgePanel } from './DepartmentBibleKnowledgePanel';
+import { ImplementationQueuePanel } from './ImplementationQueuePanel';
 import { CanonicalDepartmentBatchPanel } from './CanonicalDepartmentBatchPanel';
 import { CanonicalDepartmentQueuePanel } from './CanonicalDepartmentQueuePanel';
 import { CanonicalDepartmentFounderReviewGate } from './CanonicalDepartmentFounderReviewGate';
@@ -105,6 +106,7 @@ export function CreativeIntelligencePanel() {
             renderStatusByDepartment={canonicalQueue.renderStatusByDepartment()}
           />
           <DepartmentBibleKnowledgePanel departmentId={selectedCanonicalId} />
+          <ImplementationQueuePanel />
           <CanonicalDepartmentFounderReviewGate departmentId={selectedCanonicalId}>
             <CanonicalDepartmentBatchPanel
               selectedDepartmentId={selectedCanonicalId}
