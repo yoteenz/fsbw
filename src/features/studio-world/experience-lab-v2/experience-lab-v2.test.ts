@@ -75,6 +75,8 @@ describe('Experience Lab V2 — Immersive composition', () => {
     const css = readV2Source('experience-lab-v2.css');
     expect(css).toContain('.elab-workstation');
     expect(css).toContain('.elab-cmd');
+    expect(css).toContain('.elab-cmd--tiered');
+    expect(css).toContain('.elab-cmd__locations');
     expect(css).toContain('.elab-float');
     expect(css).toContain('.elab-approval-bridge');
     expect(css).toContain('.elab-founder-wb');
@@ -138,9 +140,16 @@ describe('Experience Lab V2 — Fixed application shell', () => {
     expect(bridge).toContain('elab-approval-bridge--strip');
   });
 
-  it('command dock and tool dock use unified pro layout (desktop master)', () => {
-    expect(readV2Source('ExperienceLabCommandDock.tsx')).toContain('elab-cmd--pro');
-    expect(readV2Source('ExperienceLabCommandDock.tsx')).not.toContain('isCompact');
+  it('command dock uses three-row tiered layout with HQ location tabs', () => {
+    const dock = readV2Source('ExperienceLabCommandDock.tsx');
+    expect(dock).toContain('elab-cmd--pro');
+    expect(dock).toContain('elab-cmd--tiered');
+    expect(dock).toContain('elab-cmd__row--identity');
+    expect(dock).toContain('elab-cmd__row--locations');
+    expect(dock).toContain('elab-cmd__row--status');
+    expect(dock).toContain('resolveExperienceLabCommandDockLogoUrl');
+    expect(dock).toContain('AI COST (EST.)');
+    expect(dock).not.toContain('isCompact');
     expect(readV2Source('ExperienceLabWorkbenchDock.tsx')).toContain('elab-wb-dock--pro');
     expect(readV2Source('ExperienceLabWorkbenchDock.tsx')).not.toContain('isCompact');
   });

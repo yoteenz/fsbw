@@ -48598,3 +48598,24 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 **Tests:** 54/54 PASS (Experience Lab V2 suite).
 
 **One commit + one push** on `master` via `agent-commit.sh`.
+
+---
+
+## 2026-07-13 — Experience Lab V2 Command Dock three-row layout (full conversation)
+
+**Context:** Experience Lab V2 Component Review Mode Phase 1 (Command Dock). Prior work: panel orchestration, workstation spatial hierarchy, Component Review Mode, white review backgrounds. Founder provided reference image for Command Dock structure and requested three-row layout with logo, HQ location tabs, status line; all Studio World text uppercase.
+
+**Topics covered:** Component Review re-entry (`?elabReview=command-dock`); Command Dock redesign per reference attachment.
+
+**Shipped:**
+
+- **`ExperienceLabCommandDock.tsx`** — three rows: (1) Studio World logo (`IMG_6220.png` via `VITE_SUPABASE_URL`) + EXPERIENCE LAB / ARCHITECTURE STUDIO + search/alerts/client icons; (2) scrollable HQ location tabs (FRONTAL SLAYER HQ, EXPERIENCE LAB active, RECEPTION + revision, CDS, Permit Office, Command Center); (3) STATUS / PERMIT / AI COST (EST.) status line with color-coded approved/pending/rejected + overflow sheet
+- **`experience-lab-v2-command-dock-locations.ts`** — location registry + status label formatters
+- **`experience-lab-v2.css`** — `.elab-cmd--tiered` three-row styles, location tabs, status row, `text-transform: uppercase` on command dock
+- **Tests** — 59/59 PASS; build PASS
+
+**Spatial Architecture Review:** SKIPPED — Phase 1 component refinement in existing review harness.
+
+**Phase 1:** Command Dock still **AWAITING founder approval** after layout update.
+
+**One commit + one push** on `master` via `agent-commit.sh`.
