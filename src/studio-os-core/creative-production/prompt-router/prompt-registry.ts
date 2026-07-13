@@ -11,6 +11,22 @@ export const VERSIONED_GENERATION_PROMPTS: VersionedPromptEntry[] = [
     workerFamily: 'world-architect',
   },
   {
+    promptBuilderId: 'master-founder-landscape-prompt.v1',
+    promptVersion: 'master-founder-landscape-prompt.v1',
+    artifactIntent: 'master-founder-landscape',
+    assetClass: 'founder-full-room-preview',
+    description: 'Master Founder Render — 21:9 canonical landscape architectural truth.',
+    workerFamily: 'world-architect',
+  },
+  {
+    promptBuilderId: 'master-founder-portrait-recompose-prompt.v1',
+    promptVersion: 'master-founder-portrait-recompose-prompt.v1',
+    artifactIntent: 'master-founder-portrait-recompose',
+    assetClass: 'founder-full-room-preview',
+    description: 'Master Portrait — 9:16 recomposition from approved landscape only.',
+    workerFamily: 'world-architect',
+  },
+  {
     promptBuilderId: 'environment-shell-prompt.v1',
     promptVersion: 'environment-shell-prompt.v1',
     artifactIntent: 'environment-shell',

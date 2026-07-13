@@ -48100,3 +48100,26 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 
 **Prior context in chat:** Architectural Shell department map (`6a4050ae6`); EL/CDS identity gap analysis (`36c4b7c62`); Municipal Governance; Model Routing; EL→CDS pipeline.
 
+---
+
+## 2026-07-13 — P0 Master Founder Render™ + Multi-Device Composition System (full conversation)
+
+**Founder sprint:** Eliminate independent desktop/mobile scene generation. ONE canonical room — Master Founder Render (21:9 landscape) → Composition Pack → device framing only. Portrait (9:16) is recomposition of approved landscape, NOT a new room. Composition Studio™ replaces Camera Studio. Quality Guard verifies portrait matches landscape (architecture/materials/lighting/furniture identical — framing only differs).
+
+**Spatial Architecture Review:** APPROVED 4.7 — `docs/studio-os/investigations/SPATIAL_ARCHITECTURE_REVIEW_MASTER_FOUNDER_RENDER.md`.
+
+**Shipped foundational layer:**
+
+- **Master Founder Render module** — `src/studio-os-core/master-founder-render/` — contracts, master landscape (21:9), master portrait recompose (9:16 after landscape approval), Composition Pack™ (14 default profiles, no new generation), Blueprint composition metadata, Quality Guard parity, brand asset locking, CDS/EL/Construction Mode integration
+- **New artifact intents** — `master-founder-landscape`, `master-founder-portrait-recompose` in artifact-intent, intent-matrix, prompt-registry
+- **ApprovedMasterRenderHandoff** — CDS receives landscape + portrait + locked composition pack
+- **Supabase migration** — `20260713170000_master_founder_render_composition.sql`
+- **Canon** — `docs/studio-os/production/MASTER_FOUNDER_RENDER_COMPOSITION_ARCHITECTURE.md`
+- **Tests** — 11 master-founder-render + 17 model-routing tests pass; build passes
+
+**Portrait mandate:** DO NOT redesign/move architecture/replace furniture/invent materials/change lighting/regenerate layout — only reposition camera.
+
+**Documented gaps (UI/API phase):** Founder Review UI show Master Landscape + Portrait + Composition Pack; wire portrait generate API after landscape approve; persist master renders to Supabase; device crop derivation service; Vision Pro/foldable profile append.
+
+**Prior context in chat:** Industry Packs (`c0444f25d`); Architectural Shell (`6a4050ae6`); EL/CDS identity; Municipal Governance; Model Routing.
+

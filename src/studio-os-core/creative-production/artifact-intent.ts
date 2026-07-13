@@ -19,6 +19,8 @@ export type ArtifactIntent =
   | 'packaging-composite'
   | 'campaign-model-replacement'
   | 'founder-full-room-preview'
+  | 'master-founder-landscape'
+  | 'master-founder-portrait-recompose'
   | 'reception-desk'
   | 'furniture-asset'
   | 'landmark-asset'
@@ -82,6 +84,8 @@ export function allowsFullSceneOutput(intent: ArtifactIntent): boolean {
     intent === 'final-scene' ||
     intent === 'final-scene-preview' ||
     intent === 'founder-full-room-preview' ||
+    intent === 'master-founder-landscape' ||
+    intent === 'master-founder-portrait-recompose' ||
     intent === 'environment-shell' ||
     intent === 'experience-environment' ||
     intent === 'world-preview' ||
@@ -115,6 +119,8 @@ export function validatorExistsForIntent(intent: ArtifactIntent): boolean {
     'packaging-composite',
     'campaign-model-replacement',
     'founder-full-room-preview',
+    'master-founder-landscape',
+    'master-founder-portrait-recompose',
     'reception-desk',
     'furniture-asset',
     'landmark-asset',

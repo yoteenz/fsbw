@@ -805,6 +805,8 @@ var MODEL_ROUTING_ENGINE_VERSION = "model-routing-engine.v1";
 // src/studio-os-core/creative-production/model-routing-engine/intent-matrix.ts
 var WORLD_ARCHITECT_INTENTS = /* @__PURE__ */ new Set([
   "founder-full-room-preview",
+  "master-founder-landscape",
+  "master-founder-portrait-recompose",
   "experience-environment",
   "world-preview",
   "world-expansion",
@@ -839,6 +841,8 @@ var BLEND_OVERLAY_INTENTS = /* @__PURE__ */ new Set([
 var BACKGROUND_CLEANUP_INTENTS = /* @__PURE__ */ new Set(["background-cleanup"]);
 var INTENT_TO_ASSET_CLASS = {
   "founder-full-room-preview": "founder-full-room-preview",
+  "master-founder-landscape": "founder-full-room-preview",
+  "master-founder-portrait-recompose": "founder-full-room-preview",
   "experience-environment": "environment-shell",
   "world-preview": "environment-shell",
   "world-expansion": "environment-shell",
@@ -1154,6 +1158,22 @@ var VERSIONED_GENERATION_PROMPTS = [
     artifactIntent: "founder-full-room-preview",
     assetClass: "founder-full-room-preview",
     description: "Experience Lab \u2014 photoreal full-room Founder Render preview.",
+    workerFamily: "world-architect"
+  },
+  {
+    promptBuilderId: "master-founder-landscape-prompt.v1",
+    promptVersion: "master-founder-landscape-prompt.v1",
+    artifactIntent: "master-founder-landscape",
+    assetClass: "founder-full-room-preview",
+    description: "Master Founder Render \u2014 21:9 canonical landscape architectural truth.",
+    workerFamily: "world-architect"
+  },
+  {
+    promptBuilderId: "master-founder-portrait-recompose-prompt.v1",
+    promptVersion: "master-founder-portrait-recompose-prompt.v1",
+    artifactIntent: "master-founder-portrait-recompose",
+    assetClass: "founder-full-room-preview",
+    description: "Master Portrait \u2014 9:16 recomposition from approved landscape only.",
     workerFamily: "world-architect"
   },
   {
@@ -1976,6 +1996,8 @@ function validatorExistsForIntent(intent) {
     "packaging-composite",
     "campaign-model-replacement",
     "founder-full-room-preview",
+    "master-founder-landscape",
+    "master-founder-portrait-recompose",
     "reception-desk",
     "furniture-asset",
     "landmark-asset",

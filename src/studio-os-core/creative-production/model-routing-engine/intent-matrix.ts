@@ -5,6 +5,8 @@ import type { GenerationWorkerFamily } from './types';
 /** Canonical intent → worker family matrix (P1 sprint). */
 export const WORLD_ARCHITECT_INTENTS: ReadonlySet<ArtifactIntent> = new Set([
   'founder-full-room-preview',
+  'master-founder-landscape',
+  'master-founder-portrait-recompose',
   'experience-environment',
   'world-preview',
   'world-expansion',
@@ -44,6 +46,8 @@ export const BACKGROUND_CLEANUP_INTENTS: ReadonlySet<ArtifactIntent> = new Set([
 
 const INTENT_TO_ASSET_CLASS: Partial<Record<ArtifactIntent, ModelAssetClass>> = {
   'founder-full-room-preview': 'founder-full-room-preview',
+  'master-founder-landscape': 'founder-full-room-preview',
+  'master-founder-portrait-recompose': 'founder-full-room-preview',
   'experience-environment': 'environment-shell',
   'world-preview': 'environment-shell',
   'world-expansion': 'environment-shell',
