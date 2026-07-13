@@ -47569,3 +47569,27 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 
 **Pending:** Wire `runWorldBuildV2` into Experience Lab compile UI; founder verification.
 
+---
+
+## 2026-07-12 — P0 Blueprint Author™ Foundation (full conversation)
+
+**Context:** Founder-approved P0 sprint — introduce Blueprint Author™ as permanent Studio World subsystem. AI stops designing; it starts building from approved construction specifications. Every compile begins with deterministic blueprint generation.
+
+**Philosophy:** Separate DESIGN from CONSTRUCTION. Blueprint Author designs (zero image generation). AI Workers construct bounded jobs. World Compiler assembles. Immune System maintains by asking "What differs from Blueprint?" not "What happened?"
+
+**Compiler order:** Founder Request → Blueprint Author → Construction Plan → Job Queue → AI Workers → Quality Guard → Immune System → Scene Stack → Living Room.
+
+**Repair shipped (one commit):**
+- `blueprint-author/` — contract, construction-plan-schema, asset-socket-system, material-reference-system, camera-anchor-system, lighting-profile-system, style-library, blueprint-author engine, job-queue, ai-worker-contract, quality-verification, blueprint-versioning, blueprint-diff-engine, immune-blueprint-repair, compile-orchestrator (`runBlueprintCompile`), reception fixture
+- Exported from `scene-stack/index.ts`
+- `founder-glass` added to v2 material library (referenced by reception plan)
+- 15 tests pass; build pass
+- Docs: 10 spec files + README in `docs/studio-os/blueprint-author/`
+- CURRENT_HANDOFF, CORE updated
+
+**Reception fixture spec:** ReceptionShell.v4, ReceptionDesk.v7, CrystalLandmark.v5, FounderMaterialLibrary.v12, ExecutiveReceptionLighting.v3, 9 asset sockets, 5 camera anchors, revision 14.
+
+**Spatial Architecture Review:** SKIPPED — foundation/infrastructure layer; no new founder-facing nav surfaces.
+
+**Pending:** Wire `runBlueprintCompile` into Experience Lab compile UI; founder inspection of Construction Plan before AI cost.
+

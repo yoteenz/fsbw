@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "deltaSequence": 12,
+  "deltaSequence": 13,
   "onboardingPackVersion": "1.2.2",
-  "publishedAt": "2026-07-12T23:52:41.063Z",
-  "gitCommit": "129ec7ca6f378682ef046dd598c78d1762ae11d8",
+  "publishedAt": "2026-07-12T23:58:40.881Z",
+  "gitCommit": "9ae64cc888679b84c49274e2d2876709b976459c",
   "capsuleVersions": {
     "ai-context": "0.3.2",
     "founder-intelligence": "1.0.0",
@@ -15,7 +15,7 @@
     "ai-context:AI_GLOSSARY.md": "451870b1a4468f35fddf36c95566fd49b470a702e338590ac4941c398855c1e1",
     "ai-context:AI_STYLE_GUIDE.md": "1dc9c1d20dfc195dfa67a826304a98bebd86c8b3550871aa0036577ecab9103d",
     "ai-context:CHATGPT_OPERATING_MANUAL.md": "a382c630ecea6cecec63ac71d83914e8b757375df3fa4432d6de9c19f4f242fa",
-    "ai-context:CURRENT_HANDOFF.md": "2942df9b8cc7b2c45d282ea76d80220b8ff2fc6b3859044bb8ec3cc5563fe88b",
+    "ai-context:CURRENT_HANDOFF.md": "db70bd3c5e8f3c2d508f68bfbb643f5e09a55a23c4c9b6a09b342c06378c6ade",
     "ai-context:FOUNDER_PROFILE.md": "ee66fff379d3bc92ff15b40064d69ceec6824908db88c30a3d312432e6756295",
     "ai-context:KNOWN_BLOCKERS.md": "ad9b21a549b53ad3bb14f503601ea332545d95f3afdcd01230cb4a5727f1666b",
     "ai-context:MANIFEST.md": "f63ed5da27c39fe771a8116464295de54100eb236c1645c395c702415b4e57d9",
@@ -89,5 +89,5 @@
     "collaboration-intelligence:RELATIONSHIP_TO_FOUNDER_INTELLIGENCE_CAPSULE.md": "e627d2c73dbac546f26f57b79532305e562dd1f71e9e3effede8eb0d0b21ae85",
     "collaboration-intelligence:SEARCH_INDEX.md": "724ce8786859dcc183563aa7a2f96ce61d78c0e22b186e939870bb25f1bc753c"
   },
-  "lastDeltaVersion": "1.0.11"
+  "lastDeltaVersion": "1.0.12"
 }

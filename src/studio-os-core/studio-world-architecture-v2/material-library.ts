@@ -17,6 +17,7 @@ export type StudioWorldMaterialId =
   | 'founder-crystal'
   | 'founder-chrome'
   | 'founder-glass'
+  | 'founder-glass'
   | 'founder-red-illumination'
   | 'brand-metallic'
   | 'brand-frosted-acrylic'
@@ -74,6 +75,17 @@ const FRONTAL_SLAYER_MATERIALS: StudioWorldMaterialEntry[] = [
     version: '1.0.0',
     organizationId: 'frontal-slayer',
     brandAssetRole: 'chrome-finish-reference',
+    canonicalUrl: null,
+    colorToken: null,
+    aiGenerationForbidden: true,
+    approvedForApplication: true,
+  },
+  {
+    materialId: 'founder-glass',
+    displayName: 'Founder Glass',
+    version: '1.0.0',
+    organizationId: 'frontal-slayer',
+    brandAssetRole: null,
     canonicalUrl: null,
     colorToken: null,
     aiGenerationForbidden: true,
