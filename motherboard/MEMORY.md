@@ -47635,3 +47635,21 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 
 **Pending:** Wire Construction Mode interactive UI into Experience Lab.
 
+---
+
+## 2026-07-13 — P0 Director Mode™ Foundation (full conversation)
+
+**Context:** Founder-approved P0 documentation sprint — establish Director Mode as umbrella creative philosophy above Blueprint Author. Evolve Studio World from AI generation platform to Directable Creative Operating System. **Documentation, architecture, contracts only — no runtime UI, no pipeline changes, no Experience Lab changes.**
+
+**Philosophy:** Vision → Direct → Approve → Manufacture → Verify → Deploy. Founders direct specialized workers; selection replaces prompting; every artifact is a directable object with Object ID, version, dependencies, blueprint, materials, approval status, manufacturing/revision history.
+
+**Parent hierarchy:** Director Mode™ → Blueprint Author (planning, shipped) → Construction Mode (walkthrough, shipped) → Manufacturing Engine (factory, shipped) → Quality Guard + Immune System → Living World.
+
+**Docs shipped (16 files in `docs/studio-os/director-mode/`):** README, DIRECTOR_MODE, DIRECTOR_PHILOSOPHY, DIRECTABLE_OBJECTS, CREATIVE_WORKSPACES (Director Studios in Creative District), MANUFACTURING_PIPELINE, ITERATION_ENGINE, APPROVAL_ENGINE, OBJECT_LIFECYCLE, DIRECTOR_CONSTITUTION (10 articles), VISUAL_REPRESENTATION, OBJECT_SELECTION_MODEL, CHANGE_PROPAGATION, MATERIAL_LIBRARY, FOUNDER_DIRECTING_GUIDE, SPATIAL_ARCHITECTURE_REVIEW (Overall World Score 4.5, APPROVED WITH MITIGATIONS).
+
+**Spatial Architecture Review:** Required and completed — Creative District placement, Environment Studio as first shipped wing, Genesis Observe+Coordinate, dashboard-drift mitigations documented.
+
+**Non-goals honored:** No UI, no APIs, no persistence, Blueprint Author runtime unchanged, compile pipeline unchanged, Experience Lab unchanged.
+
+**Pending:** Per-studio Spatial Architecture Reviews before Director Studio UI implementation.
+

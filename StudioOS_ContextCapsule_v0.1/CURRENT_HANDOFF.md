@@ -8,13 +8,13 @@
 
 ## Current sprint
 
-**P0+ — Studio World Construction Mode™ (Founder Walks the World Before It Exists)**
+**P0 Foundation — Director Mode™ (From Prompting to Directing)**
 
-**Status: Complete (foundation shipped) — Experience Lab Construction Mode UI pending.**
+**Status: Complete (documentation canon shipped) — no runtime UI this sprint.**
 
-Construction Mode is the interactive planning environment between Blueprint Author and Manufacturing Engine. Founder previews procedural clay world, inspects every asset/socket/DNA/Render Intent, approves before AI spend, watches live construction and installation, then transitions to Living World.
+Director Mode is the umbrella creative philosophy above Blueprint Author. Founders direct; workers manufacture. Architecture, contracts, and operational foundations documented only. Blueprint Author formally recognized as planning subsystem within Director Mode.
 
-**Previous:** Manufacturing Engine™ (`d0148d692`). Blueprint Author™ (`2d3a4146b`).
+**Previous:** Construction Mode™ (`c3472a58e`). Manufacturing Engine™ (`d0148d692`).
 
 ---
 
@@ -22,15 +22,15 @@ Construction Mode is the interactive planning environment between Blueprint Auth
 
 | ID | Blocker | Status |
 |----|---------|--------|
-| **B1-ConstructionMode** | Construction Mode interactive UI in Experience Lab | **In Progress** — foundation code shipped |
-| **B1-Manufacturing** | Founder Preview + Live Manufacturing UI | **In Progress** |
-| **B1-Isolated** | Brand-grounded NB2 isolated generation | **In Progress** — founder device proof pending |
+| **B1-DirectorMode** | Director Studio UIs (per-studio spatial reviews before build) | **Planned** — canon shipped |
+| **B1-ConstructionMode** | Construction Mode interactive UI in Experience Lab | **In Progress** |
+| **B1-Isolated** | Brand-grounded NB2 isolated generation | **In Progress** |
 
 ---
 
 ## Founder workflow
 
-Verify `runConstructionModeCompile` tests pass (19 tests). Walk procedural preview before approving compile. Next: wire Construction Mode UI into Experience Lab.
+Director Mode is documentation-only. Review `docs/studio-os/director-mode/README.md` and Spatial Architecture Review artifact. No Experience Lab or compile pipeline changes.
 
-**References:** `docs/studio-os/construction-mode/README.md`
+**References:** `docs/studio-os/director-mode/`
 
