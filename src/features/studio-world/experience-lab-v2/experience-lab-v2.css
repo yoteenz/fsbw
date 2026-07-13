@@ -1326,7 +1326,8 @@ button.elab-cmd__meta-chip {
 
 /* ── Component Review Mode (one component at a time) ── */
 .elab-app-shell--component-review {
-  background: #050608;
+  --elab-bg: #ffffff;
+  background: #ffffff;
 }
 
 .elab-app-shell__grid--review {
@@ -1346,7 +1347,7 @@ button.elab-cmd__meta-chip {
   flex-shrink: 0;
   z-index: 50;
   padding: 6px 10px 8px;
-  background: rgba(8, 10, 14, 0.96);
+  background: #ffffff;
   border-bottom: 1px solid var(--elab-border);
 }
 
@@ -1433,7 +1434,7 @@ button.elab-cmd__meta-chip {
   min-height: 0;
   border: 1px solid var(--elab-border);
   border-radius: 6px;
-  background: rgba(0, 0, 0, 0.35);
+  background: #ffffff;
   overflow: hidden;
 }
 
@@ -1445,7 +1446,7 @@ button.elab-cmd__meta-chip {
   letter-spacing: 0.1em;
   color: var(--elab-gold);
   border-bottom: 1px solid var(--el-v2-workstation-divider);
-  background: rgba(0, 0, 0, 0.25);
+  background: #ffffff;
 }
 
 .elab-component-review-sandbox__stage {

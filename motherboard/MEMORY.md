@@ -48580,3 +48580,21 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 **Conventions:** One component per perfection sprint; never skip implementation phases; environment layer only after all UI components approved.
 
 **One commit + one push** on `master` via `agent-commit.sh`.
+
+---
+
+## 2026-07-13 — Experience Lab V2 Component Review white background (full conversation)
+
+**Context:** Continuation of Experience Lab V2 Component Review Mode work (panel orchestration, workstation spatial hierarchy, Component Review Mode with Phase 1 Command Dock). Founder requested **background color ONLY** changed from black to white for better contrast while reviewing Command Dock — no other redesign.
+
+**Topics covered:** Contextual panel orchestration; application workspace spatial hierarchy; Component Review Mode (one component at a time, mandatory phase order); Phase 1 Command Dock review; white background for visibility.
+
+**Shipped (this turn):**
+
+- **`experience-lab-v2.css`** — Component Review Mode backgrounds only: `.elab-app-shell--component-review` (`--elab-bg` + shell), `.elab-component-review-chrome`, `.elab-component-review-sandbox`, `.elab-component-review-sandbox__label` → `#ffffff`. Command Dock and other component styling unchanged (dark glass dock on white page for contrast).
+
+**Spatial Architecture Review:** SKIPPED — UX tweak in existing review harness, no new nav/Genesis surfaces.
+
+**Tests:** 54/54 PASS (Experience Lab V2 suite).
+
+**One commit + one push** on `master` via `agent-commit.sh`.
