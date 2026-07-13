@@ -6,9 +6,10 @@ import {
 import { validatorExistsForIntent } from '../creative-production/artifact-intent';
 import { FOUNDER_RENDER_ARTIFACT_INTENT } from './contract';
 import { resolveFounderRenderModelRoute } from './model-route';
+import { resolveFounderRenderBrandOrganizationId } from './brand-organization';
 
 export type FounderRenderPreflightResult =
-  | { ok: true; brandReferenceUrls: string[]; materialSetId: string }
+  | { ok: true; brandReferenceUrls: string[]; materialSetId: string; brandVaultOrganizationId: string }
   | { ok: false; code: string; message: string; missingRole?: string };
 
 export function runFounderRenderPreflight(plan: ConstructionPlan): FounderRenderPreflightResult {
@@ -21,8 +22,10 @@ export function runFounderRenderPreflight(plan: ConstructionPlan): FounderRender
     return { ok: false, code: 'MODEL_ROUTE_UNAVAILABLE', message: 'Founder render model route unavailable.' };
   }
 
+  const brandVaultOrganizationId = resolveFounderRenderBrandOrganizationId(plan);
+
   const brandResult = resolveBrandMaterialPackage({
-    organizationId: plan.metadata.organizationId,
+    organizationId: brandVaultOrganizationId,
     organizationName: plan.metadata.organizationId,
     materialRequests: [
       { slot: 'floor', requestedMaterial: 'white polished marble', brandRole: 'primary-marble-texture', required: true },
@@ -32,10 +35,15 @@ export function runFounderRenderPreflight(plan: ConstructionPlan): FounderRender
   });
 
   if (isBrandAssetResolutionError(brandResult)) {
+    const planOrg = plan.metadata.organizationId;
+    const message =
+      brandVaultOrganizationId !== planOrg
+        ? `${brandResult.message} (plan org: ${planOrg}, brand vault: ${brandVaultOrganizationId})`
+        : brandResult.message;
     return {
       ok: false,
       code: brandResult.code,
-      message: brandResult.message,
+      message,
       missingRole: brandResult.missingRole,
     };
   }
@@ -54,6 +62,7 @@ export function runFounderRenderPreflight(plan: ConstructionPlan): FounderRender
     ok: true,
     brandReferenceUrls: refs,
     materialSetId: plan.materialSet.materialSetId,
+    brandVaultOrganizationId,
   };
 }
 

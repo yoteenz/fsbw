@@ -159,6 +159,16 @@ describe('Founder Render production verification', () => {
     }
   });
 
+  it('brand vault preflight resolves marble for studio-os via frontal-slayer alias', () => {
+    const plan = receptionPlan();
+    plan.metadata.organizationId = 'studio-os';
+    const preflight = runFounderRenderPreflight(plan);
+    expect(preflight.ok).toBe(true);
+    if (preflight.ok) {
+      expect(preflight.brandVaultOrganizationId).toBe('frontal-slayer');
+    }
+  });
+
   it('missing brand vault blocks with BRAND_ASSET_REQUIRED_MISSING', () => {
     const plan = receptionPlan();
     plan.metadata.organizationId = 'org-without-vault-verify';

@@ -40,6 +40,8 @@ export { buildFounderFullRoomPreviewPrompt } from '../../../src/studio-os-core/f
 
 export { runFounderRenderPreflight } from '../../../src/studio-os-core/founder-render/preflight.js';
 
+export { resolveFounderRenderBrandOrganizationId } from '../../../src/studio-os-core/founder-render/brand-organization.js';
+
 export { resolveBrandMaterialPackage } from '../../../src/studio-os-core/creative-production/brand-asset-grounding/resolver.js';
 
 export {

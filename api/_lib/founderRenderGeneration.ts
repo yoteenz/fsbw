@@ -9,6 +9,7 @@ import {
   resolveBrandMaterialPackage,
   resolveFounderRenderModelRoute,
   runFounderRenderPreflight,
+  resolveFounderRenderBrandOrganizationId,
 } from './creativeProduction/studio-os-server.bundle.js';
 import {
   finalizeStudioBuilderFromFalUrl,
@@ -79,8 +80,10 @@ export async function prepareFounderRenderDispatch(
     return { ok: false, code: preflight.code, error: preflight.message, missingRole: preflight.missingRole };
   }
 
+  const brandVaultOrganizationId = resolveFounderRenderBrandOrganizationId(input.plan);
   const brandPkg = resolveBrandMaterialPackage({
-    organizationId: input.plan.metadata.organizationId,
+    organizationId: brandVaultOrganizationId,
+    organizationName: input.plan.metadata.organizationId,
     materialRequests: [
       { slot: 'floor', requestedMaterial: 'white polished marble', brandRole: 'primary-marble-texture', required: true },
     ],

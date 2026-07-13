@@ -1545,6 +1545,19 @@ function validatorExistsForIntent(intent) {
   ].includes(intent);
 }
 
+// src/studio-os-core/founder-render/brand-organization.ts
+var FOUNDER_RENDER_BRAND_VAULT_ALIASES = {
+  "studio-os": "frontal-slayer",
+  ndx: "frontal-slayer"
+};
+function resolveFounderRenderBrandOrganizationId(plan) {
+  const planOrg = plan.metadata.organizationId;
+  if (getOrganizationBrandVault(planOrg).length > 0) return planOrg;
+  const alias = FOUNDER_RENDER_BRAND_VAULT_ALIASES[planOrg];
+  if (alias && getOrganizationBrandVault(alias).length > 0) return alias;
+  return planOrg;
+}
+
 // src/studio-os-core/founder-render/preflight.ts
 function runFounderRenderPreflight(plan) {
   if (!validatorExistsForIntent("founder-full-room-preview")) {
@@ -1554,8 +1567,9 @@ function runFounderRenderPreflight(plan) {
   if (!route.providerModel) {
     return { ok: false, code: "MODEL_ROUTE_UNAVAILABLE", message: "Founder render model route unavailable." };
   }
+  const brandVaultOrganizationId = resolveFounderRenderBrandOrganizationId(plan);
   const brandResult = resolveBrandMaterialPackage({
-    organizationId: plan.metadata.organizationId,
+    organizationId: brandVaultOrganizationId,
     organizationName: plan.metadata.organizationId,
     materialRequests: [
       { slot: "floor", requestedMaterial: "white polished marble", brandRole: "primary-marble-texture", required: true },
@@ -1564,10 +1578,12 @@ function runFounderRenderPreflight(plan) {
     ]
   });
   if (isBrandAssetResolutionError(brandResult)) {
+    const planOrg = plan.metadata.organizationId;
+    const message = brandVaultOrganizationId !== planOrg ? `${brandResult.message} (plan org: ${planOrg}, brand vault: ${brandVaultOrganizationId})` : brandResult.message;
     return {
       ok: false,
       code: brandResult.code,
-      message: brandResult.message,
+      message,
       missingRole: brandResult.missingRole
     };
   }
@@ -1583,7 +1599,8 @@ function runFounderRenderPreflight(plan) {
   return {
     ok: true,
     brandReferenceUrls: refs,
-    materialSetId: plan.materialSet.materialSetId
+    materialSetId: plan.materialSet.materialSetId,
+    brandVaultOrganizationId
   };
 }
 
@@ -1725,6 +1742,7 @@ export {
   lineageToRegistryRelationships,
   representGovernedGenerationRequest,
   resolveBrandMaterialPackage,
+  resolveFounderRenderBrandOrganizationId,
   resolveFounderRenderModelRoute,
   resolveLayerIdFromProductionGroupId,
   resolveSceneStackLayerModelRoute,

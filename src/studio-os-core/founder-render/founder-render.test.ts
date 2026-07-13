@@ -87,6 +87,27 @@ describe('Founder Render™ — full-room photoreal preview', () => {
     }
   });
 
+  it('inherits frontal-slayer brand vault for studio-os Experience Lab reception', () => {
+    const plan = receptionPlan();
+    plan.metadata.organizationId = 'studio-os';
+    const preflight = runFounderRenderPreflight(plan);
+    expect(preflight.ok).toBe(true);
+    if (preflight.ok) {
+      expect(preflight.brandVaultOrganizationId).toBe('frontal-slayer');
+      expect(preflight.brandReferenceUrls).toContain('/assets/marble-half.png');
+    }
+  });
+
+  it('inherits frontal-slayer brand vault for ndx Experience Lab reception', () => {
+    const plan = receptionPlan();
+    plan.metadata.organizationId = 'ndx';
+    const preflight = runFounderRenderPreflight(plan);
+    expect(preflight.ok).toBe(true);
+    if (preflight.ok) {
+      expect(preflight.brandVaultOrganizationId).toBe('frontal-slayer');
+    }
+  });
+
   it('blocks preview when required brand asset is missing', () => {
     const plan = receptionPlan();
     plan.metadata.organizationId = 'unknown-org-without-vault';

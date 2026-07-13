@@ -65,6 +65,8 @@ export function buildFounderFullRoomPreviewPrompt(input: {
 
 export function runFounderRenderPreflight(plan: ConstructionPlan): FounderRenderPreflightResult;
 
+export function resolveFounderRenderBrandOrganizationId(plan: ConstructionPlan): string;
+
 export function resolveBrandMaterialPackage(input: {
   organizationId: string;
   organizationName?: string;

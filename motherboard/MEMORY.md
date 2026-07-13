@@ -47924,3 +47924,21 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 
 **Remaining:** Founder mobile re-test — should reach FAL dispatch (generating/ready) or operational 422 (brand vault), not handler crashes.
 
+---
+
+## 2026-07-13 — Founder Render studio-os brand vault alias (full conversation continuation)
+
+**Context:** After auth.user fix, founder still failed on mobile with **422 (not crash)**: `No brand vault configured for organization studio-os`. Experience Lab defaults to **studio-os** company tab; Construction Plan uses `companyId` as `organizationId`. Only `frontal-slayer` has marble vault today.
+
+**Root cause:** Product wiring gap — not a handler bug. Preflight correctly blocked dispatch without vault; tests explicitly expected studio-os to fail. Experience Lab Reception preview never mapped preview org → brand vault org.
+
+**Repair shipped:**
+
+- `resolveFounderRenderBrandOrganizationId` — studio-os and ndx inherit `frontal-slayer` vault for Founder Render when plan org has no vault
+- `runFounderRenderPreflight` + `founderRenderGeneration` use resolved brand org for `resolveBrandMaterialPackage`; preflight returns `brandVaultOrganizationId`
+- Bundle entry + `.d.ts` export; tests: studio-os/ndx preflight pass with frontal-slayer marble
+
+**Tests:** founder-render 29/29 (17+12), bundle boundary 6/6, build PASS.
+
+**Remaining:** Founder Regenerate Preview on default studio-os tab should now dispatch to FAL (generating → ready) or show provider error, not brand vault missing.
+
