@@ -12,6 +12,7 @@ import { ExperienceLabFounderWorkbench } from './ExperienceLabFounderWorkbench';
 import { ExperienceLabApprovalBridge } from './ExperienceLabApprovalBridge';
 import { ExperienceLabWorkbenchDock } from './ExperienceLabWorkbenchDock';
 import { ExperienceLabDepartmentDock } from './ExperienceLabDepartmentDock';
+import { ExperienceLabWorkstationFrame } from './ExperienceLabWorkstationFrame';
 import { ExperienceLabDiagnostics } from './ExperienceLabDiagnostics';
 import { ExperienceLabSheet } from './ExperienceLabSheet';
 import {
@@ -35,8 +36,8 @@ type Props = {
 };
 
 /**
- * Experience Lab V2 — Fixed-viewport application shell (no document scroll).
- * Three layers: Environment · React UI · Viewport content.
+ * Experience Lab V2 — Immersive application workstation (no document scroll).
+ * Desktop is canonical; mobile scales the same architecture.
  */
 export function ExperienceLabV2Shell({ initialDepartmentId = 'experience-lab' }: Props) {
   const { program } = useExperienceLabProgram();
@@ -122,6 +123,30 @@ export function ExperienceLabV2Shell({ initialDepartmentId = 'experience-lab' }:
     );
   }
 
+  const lowerDeck = shell.focusMode === 'none' ? (
+    <>
+      <ExperienceLabFounderWorkbench model={model} activeTab={workbenchTab} onTabChange={setWorkbenchTab} />
+      <ExperienceLabApprovalBridge
+        approval={model.approval}
+        testMode={testMode}
+        onBlockersOpen={() => shell.toggleOverlay('blockers')}
+      />
+      <ExperienceLabWorkbenchDock onMoreOpen={() => shell.toggleOverlay('tools')} />
+      {flags.experienceLabV2DiagnosticsEnabled ? (
+        <ExperienceLabDiagnostics
+          testMode={testMode}
+          onTestModeChange={setTestMode}
+          migration={model.migrationReadiness}
+          panelDiagnostics={orchestrator.diagnostics}
+          onResetLayout={orchestrator.resetLayout}
+          open={shell.overlay === 'diagnostics'}
+          onToggle={() => shell.toggleOverlay('diagnostics')}
+          compact
+        />
+      ) : null}
+    </>
+  ) : null;
+
   return (
     <div
       className={`elab-workstation elab-app-shell elab-app-shell--${shell.breakpoint}${focusClass}`}
@@ -140,15 +165,30 @@ export function ExperienceLabV2Shell({ initialDepartmentId = 'experience-lab' }:
         <div className="elab-app-shell__command">
           <ExperienceLabCommandDock
             model={{ ...model, testMode }}
-            isCompact={shell.isCompact}
             onStatusOpen={() => shell.toggleOverlay('status')}
           />
         </div>
 
-        <main className="elab-app-shell__workspace">
-          {shell.isDesktop ? <ExperienceLabRegistrySidebar /> : null}
-
-          <div className="elab-app-shell__viewport-region">
+        {shell.focusMode === 'none' ? (
+          <ExperienceLabWorkstationFrame
+            registry={shell.isDesktop ? <ExperienceLabRegistrySidebar /> : undefined}
+            governance={shell.isDesktop ? <ExperienceLabGovernanceSidebar model={model} /> : undefined}
+            viewport={
+              <ExperienceLabViewportStage
+                model={model}
+                viewportMode={viewportMode}
+                onModeChange={setModeWithQuery}
+                onImageLoad={() => setImageLoaded(true)}
+                isCompact={shell.isCompact}
+                onFocusMode={(mode) => shell.setFocusMode(focusModeFromViewportMode(mode))}
+                focusMode={shell.focusMode}
+                orchestrator={orchestrator}
+              />
+            }
+            lowerDeck={lowerDeck}
+          />
+        ) : (
+          <div className="elab-app-shell__viewport-room elab-app-shell__viewport-room--focus">
             <ExperienceLabViewportStage
               model={model}
               viewportMode={viewportMode}
@@ -160,63 +200,19 @@ export function ExperienceLabV2Shell({ initialDepartmentId = 'experience-lab' }:
               orchestrator={orchestrator}
             />
           </div>
+        )}
 
-          {shell.isDesktop ? <ExperienceLabGovernanceSidebar model={model} /> : null}
-        </main>
-
-        {shell.focusMode === 'none' ? (
-          <>
-            <div className="elab-app-shell__workbench">
-              <ExperienceLabFounderWorkbench
-                model={model}
-                isCompact={shell.isCompact}
-                activeTab={workbenchTab}
-                onTabChange={setWorkbenchTab}
-              />
-            </div>
-
-            <div className="elab-app-shell__approval">
-              <ExperienceLabApprovalBridge
-                approval={model.approval}
-                testMode={testMode}
-                isCompact={shell.isCompact}
-                onBlockersOpen={() => shell.toggleOverlay('blockers')}
-              />
-            </div>
-
-            {flags.experienceLabV2DiagnosticsEnabled ? (
-              <div className="elab-app-shell__diagnostics">
-                <ExperienceLabDiagnostics
-                  testMode={testMode}
-                  onTestModeChange={setTestMode}
-                  migration={model.migrationReadiness}
-                  panelDiagnostics={orchestrator.diagnostics}
-                  onResetLayout={orchestrator.resetLayout}
-                  open={shell.overlay === 'diagnostics'}
-                  onToggle={() => shell.toggleOverlay('diagnostics')}
-                  compact
-                />
-              </div>
-            ) : null}
-
-            <div className="elab-app-shell__tools">
-              <ExperienceLabWorkbenchDock
-                isCompact={shell.isCompact}
-                onMoreOpen={() => shell.toggleOverlay('tools')}
-              />
-            </div>
-
-            <div className="elab-app-shell__dept-dock">
-              <ExperienceLabDepartmentDock
-                isCompact={shell.isCompact}
-                onGovernanceOpen={shell.isCompact ? () => shell.toggleOverlay('governance') : undefined}
-              />
-            </div>
-          </>
-        ) : (
+        {shell.focusMode !== 'none' ? (
           <div className="elab-app-shell__focus-bar">
             <span>Focus: {shell.focusMode.replace('_', ' ')}</span>
             <button type="button" onClick={() => shell.setFocusMode('none')}>Exit focus</button>
+          </div>
+        ) : (
+          <div className="elab-app-shell__dept-dock">
+            <ExperienceLabDepartmentDock
+              isCompact={shell.isCompact}
+              onGovernanceOpen={shell.isCompact ? () => shell.toggleOverlay('governance') : undefined}
+            />
           </div>
         )}
       </div>

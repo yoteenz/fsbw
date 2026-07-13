@@ -18,6 +18,9 @@
   --elab-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
   --el-v2-safe-top: env(safe-area-inset-top, 0px);
   --el-v2-safe-bottom: env(safe-area-inset-bottom, 0px);
+  --el-v2-viewport-room-ratio: 65%;
+  --el-v2-workstation-surface: rgba(10, 12, 16, 0.92);
+  --el-v2-workstation-divider: rgba(255, 255, 255, 0.06);
   color: var(--elab-text);
   font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
   position: relative;
@@ -45,50 +48,90 @@
     auto
     auto
     minmax(0, 1fr)
-    auto
-    auto
-    auto
-    auto
     auto;
 }
 
 .elab-app-shell__badges,
 .elab-app-shell__command,
-.elab-app-shell__workspace,
-.elab-app-shell__workbench,
-.elab-app-shell__approval,
-.elab-app-shell__diagnostics,
-.elab-app-shell__tools,
+.elab-app-shell__workstation,
 .elab-app-shell__dept-dock,
-.elab-app-shell__focus-bar {
+.elab-app-shell__focus-bar,
+.elab-app-shell__viewport-room--focus {
   min-height: 0;
   min-width: 0;
 }
 
-.elab-app-shell__workspace {
+/* ── Continuous application workstation ── */
+.elab-app-shell__workstation {
   display: grid;
-  overflow: hidden;
   min-height: 0;
+  overflow: hidden;
+  margin: 0 4px;
+  background: var(--el-v2-workstation-surface);
+  border: 1px solid var(--elab-border);
+  border-radius: 6px 6px 0 0;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
-.elab-app-shell--desktop .elab-app-shell__workspace {
-  grid-template-columns: minmax(180px, 220px) minmax(0, 1fr) minmax(160px, 200px);
-  gap: 0;
-  padding: 4px 8px 0;
+.elab-app-shell--desktop .elab-app-shell__workstation {
+  grid-template-columns: minmax(168px, 200px) minmax(0, 1fr) minmax(148px, 180px);
 }
 
-.elab-app-shell--tablet .elab-app-shell__workspace,
-.elab-app-shell--mobile .elab-app-shell__workspace {
+.elab-app-shell--tablet .elab-app-shell__workstation,
+.elab-app-shell--mobile .elab-app-shell__workstation {
   grid-template-columns: 1fr;
-  padding: 2px 4px 0;
+  margin: 0 2px;
 }
 
-.elab-app-shell__viewport-region {
+.elab-app-shell__rail {
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--el-v2-workstation-divider);
+}
+
+.elab-app-shell__rail--right {
+  border-right: none;
+  border-left: 1px solid var(--el-v2-workstation-divider);
+}
+
+.elab-app-shell__center-column {
   display: flex;
   flex-direction: column;
   min-height: 0;
   min-width: 0;
   overflow: hidden;
+}
+
+.elab-app-shell__viewport-room {
+  flex: 1 1 var(--el-v2-viewport-room-ratio);
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-bottom: 1px solid var(--el-v2-workstation-divider);
+}
+
+.elab-app-shell__viewport-room--focus {
+  grid-row: 3;
+  margin: 0 4px;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.elab-app-shell__lower-deck {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: rgba(0, 0, 0, 0.22);
+}
+
+.elab-app-shell__lower-deck > * + * {
+  border-top: 1px solid var(--el-v2-workstation-divider);
 }
 
 /* Focus modes — maximize hero region */
@@ -99,23 +142,13 @@
   grid-template-rows: auto minmax(0, 1fr) auto;
 }
 
-.elab-app-shell--focus-viewport .elab-app-shell__workbench,
-.elab-app-shell--focus-viewport .elab-app-shell__approval,
-.elab-app-shell--focus-viewport .elab-app-shell__diagnostics,
-.elab-app-shell--focus-viewport .elab-app-shell__tools,
+.elab-app-shell--focus-viewport .elab-app-shell__lower-deck,
 .elab-app-shell--focus-viewport .elab-app-shell__dept-dock,
-.elab-app-shell--focus-blueprint .elab-app-shell__workbench,
-.elab-app-shell--focus-blueprint .elab-app-shell__approval,
-.elab-app-shell--focus-blueprint .elab-app-shell__diagnostics,
-.elab-app-shell--focus-blueprint .elab-app-shell__tools,
+.elab-app-shell--focus-blueprint .elab-app-shell__lower-deck,
 .elab-app-shell--focus-blueprint .elab-app-shell__dept-dock,
-.elab-app-shell--focus-render .elab-app-shell__workbench,
-.elab-app-shell--focus-render .elab-app-shell__approval,
-.elab-app-shell--focus-render .elab-app-shell__diagnostics,
-.elab-app-shell--focus-render .elab-app-shell__tools,
+.elab-app-shell--focus-render .elab-app-shell__lower-deck,
 .elab-app-shell--focus-render .elab-app-shell__dept-dock,
 .elab-app-shell--focus-review .elab-app-shell__badges,
-.elab-app-shell--focus-review .elab-app-shell__tools,
 .elab-app-shell--focus-review .elab-app-shell__dept-dock {
   display: none;
 }
@@ -166,10 +199,10 @@ body.elab-v2-fixed-shell-active {
 .elab-app-shell__badges {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
-  padding: 4px 10px;
-  background: rgba(235, 28, 36, 0.1);
-  border-bottom: 1px solid rgba(235, 28, 36, 0.3);
+  gap: 4px;
+  padding: 2px 8px;
+  background: rgba(235, 28, 36, 0.08);
+  border-bottom: 1px solid rgba(235, 28, 36, 0.22);
   z-index: 5;
   flex-shrink: 0;
 }
@@ -204,13 +237,74 @@ body.elab-v2-fixed-shell-active {
     linear-gradient(180deg, rgba(8, 9, 12, 0.7) 0%, transparent 25%, transparent 70%, rgba(8, 9, 12, 0.85) 100%);
 }
 
-/* ── Command Dock ── */
+/* ── Command Dock (pro — single dense row) ── */
 .elab-cmd {
   background: var(--elab-glass);
   border-bottom: 1px solid var(--elab-border);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   z-index: 10;
+}
+
+.elab-cmd--pro .elab-cmd__pro-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 8px;
+  min-height: 36px;
+  flex-wrap: nowrap;
+  overflow: hidden;
+}
+
+.elab-cmd__meta {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+  flex-shrink: 0;
+  overflow-x: auto;
+  max-width: 38%;
+}
+
+.elab-cmd__meta-chip {
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+  font-size: 7px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  color: var(--elab-muted);
+  border: none;
+  cursor: default;
+}
+
+button.elab-cmd__meta-chip {
+  cursor: pointer;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.elab-cmd__nav {
+  display: flex;
+  gap: 1px;
+  flex: 1;
+  min-width: 0;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.elab-cmd__nav::-webkit-scrollbar { display: none; }
+
+.elab-app-shell--mobile .elab-cmd__nav,
+.elab-app-shell--tablet .elab-cmd__nav {
+  display: none;
+}
+
+.elab-app-shell--mobile .elab-cmd__meta,
+.elab-app-shell--tablet .elab-cmd__meta {
+  max-width: 55%;
 }
 
 .elab-cmd__row {
@@ -250,24 +344,25 @@ body.elab-v2-fixed-shell-active {
 .elab-cmd__logo {
   display: grid;
   place-items: center;
-  width: 32px;
-  height: 32px;
+  width: 26px;
+  height: 26px;
   border: 1px solid var(--elab-gold);
-  border-radius: 6px;
+  border-radius: 4px;
   font-weight: 800;
-  font-size: 11px;
+  font-size: 9px;
   color: var(--elab-gold);
+  flex-shrink: 0;
 }
 
-.elab-cmd__title-block { flex: 1; min-width: 0; }
-.elab-cmd__title { display: block; font-size: 11px; font-weight: 700; color: var(--elab-gold); letter-spacing: 0.1em; }
-.elab-cmd__subtitle { display: block; font-size: 8px; color: var(--elab-muted); letter-spacing: 0.14em; }
+.elab-cmd__title-block { flex-shrink: 0; min-width: 0; }
+.elab-cmd__title { display: block; font-size: 9px; font-weight: 700; color: var(--elab-gold); letter-spacing: 0.08em; line-height: 1.2; }
+.elab-cmd__subtitle { display: block; font-size: 6px; color: var(--elab-muted); letter-spacing: 0.1em; line-height: 1.2; }
 
-.elab-cmd__actions { display: flex; gap: 6px; align-items: center; }
+.elab-cmd__actions { display: flex; gap: 4px; align-items: center; flex-shrink: 0; }
 .elab-cmd__icon-btn {
-  width: 32px; height: 32px; border-radius: 8px;
+  width: 26px; height: 26px; border-radius: 4px;
   border: 1px solid var(--elab-border); background: rgba(255,255,255,0.04);
-  color: var(--elab-text); cursor: pointer; font-size: 14px; position: relative;
+  color: var(--elab-text); cursor: pointer; font-size: 12px; position: relative;
 }
 .elab-cmd__icon-btn--badge span {
   position: absolute; top: -4px; right: -4px;
@@ -275,33 +370,18 @@ body.elab-v2-fixed-shell-active {
   width: 14px; height: 14px; border-radius: 50%; display: grid; place-items: center;
 }
 .elab-cmd__avatar {
-  width: 32px; height: 32px; border-radius: 50%;
+  width: 26px; height: 26px; border-radius: 50%;
   border: 1px solid var(--elab-gold); background: rgba(197,160,89,0.15);
-  color: var(--elab-gold); font-size: 10px; font-weight: 700; cursor: pointer;
+  color: var(--elab-gold); font-size: 8px; font-weight: 700; cursor: pointer;
 }
 
-.elab-cmd__pill {
-  padding: 6px 10px; border-radius: 20px;
-  border: 1px solid var(--elab-border); background: rgba(255,255,255,0.03);
-  font-size: 8px; white-space: nowrap;
-}
-.elab-cmd__pill--active { border-color: var(--elab-gold); color: var(--elab-gold); background: var(--elab-gold-dim); }
-
-.elab-cmd--desktop .elab-cmd__desktop-top {
-  display: flex; align-items: center; gap: 16px; padding: 12px 20px 8px;
-}
-.elab-cmd__brand { display: flex; align-items: center; gap: 10px; }
-.elab-cmd__nav { display: flex; gap: 4px; flex: 1; flex-wrap: wrap; justify-content: center; }
 .elab-cmd__nav-link {
-  padding: 6px 10px; border: none; background: transparent;
-  color: var(--elab-muted); font-size: 9px; font-weight: 600; letter-spacing: 0.08em; cursor: pointer;
+  padding: 4px 6px; border: none; background: transparent;
+  color: var(--elab-muted); font-size: 7px; font-weight: 600; letter-spacing: 0.06em; cursor: pointer;
+  white-space: nowrap;
 }
 .elab-cmd__nav-link:hover { color: var(--elab-gold); }
-.elab-cmd__desktop-meta {
-  display: flex; gap: 16px; padding: 0 20px 10px;
-  font-size: 8px; color: var(--elab-muted); letter-spacing: 0.08em; flex-wrap: wrap;
-}
-.elab-cmd__mode-tag { color: var(--elab-cyan); }
+.elab-cmd__mode-tag { color: var(--elab-cyan); font-size: 7px; white-space: nowrap; }
 .elab-status--ok { color: var(--elab-ok); }
 .elab-status--warn { color: var(--elab-warn); }
 
@@ -329,18 +409,19 @@ body.elab-v2-fixed-shell-active {
 }
 
 .elab-registry, .elab-governance {
-  background: var(--elab-glass-panel);
-  border: 1px solid var(--elab-border);
-  border-radius: 10px;
-  backdrop-filter: blur(12px);
-  padding: 10px;
-  margin: 4px;
-  box-shadow: var(--elab-shadow);
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  backdrop-filter: none;
+  padding: 6px 8px;
+  margin: 0;
+  box-shadow: none;
   overflow-y: auto;
   overflow-x: hidden;
   min-height: 0;
   max-height: 100%;
   -webkit-overflow-scrolling: touch;
+  flex: 1;
 }
 
 .elab-governance--embedded {
@@ -565,14 +646,14 @@ body.elab-v2-fixed-shell-active {
   z-index: 2;
   flex: 1;
   min-height: 0;
-  margin: 0 4%;
+  margin: 0;
   display: flex;
   flex-direction: column;
-  background: rgba(0, 0, 0, 0.35);
-  border: 1px solid var(--elab-border);
-  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.28);
+  border: none;
+  border-radius: 0;
   overflow: hidden;
-  box-shadow: inset 0 0 60px rgba(77, 163, 255, 0.06);
+  box-shadow: none;
 }
 
 .elab-viewport--fullscreen {
@@ -751,33 +832,49 @@ body.elab-v2-fixed-shell-active {
   color: var(--elab-gold); display: block; margin-bottom: 6px;
 }
 .elab-view-angles__strip {
-  display: flex; gap: 8px; overflow-x: auto;
+  display: flex;
+  gap: 4px;
+  overflow-x: auto;
   -webkit-overflow-scrolling: touch;
-  padding-bottom: 4px;
+  padding: 2px 0 4px;
+  scrollbar-width: thin;
 }
+
 .elab-view-angles__thumb {
-  flex: 0 0 auto; display: flex; flex-direction: column; align-items: center; gap: 4px;
-  border: none; background: transparent; cursor: pointer; padding: 0;
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
 }
+
 .elab-view-angles__thumb-inner {
-  width: 56px; height: 36px; border-radius: 4px;
-  border: 1px solid var(--elab-border);
-  background: linear-gradient(135deg, rgba(30,32,40,0.9), rgba(50,45,35,0.6));
+  width: 48px;
+  height: 30px;
+  border-radius: 2px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: linear-gradient(135deg, rgba(22, 24, 30, 0.95), rgba(40, 36, 28, 0.7));
 }
+
 .elab-view-angles__thumb--active .elab-view-angles__thumb-inner {
   border-color: var(--elab-gold);
-  box-shadow: 0 0 12px var(--elab-gold-dim);
+  box-shadow: 0 0 8px var(--elab-gold-dim);
 }
-.elab-view-angles__thumb-label { font-size: 7px; color: var(--elab-muted); }
 
-/* ── Founder Workbench ── */
+.elab-view-angles__thumb-label { font-size: 6px; color: var(--elab-muted); }
+
+/* ── Founder Workbench (attached surface) ── */
 .elab-founder-wb {
-  margin: 4px 8px 0;
-  background: var(--elab-glass-panel);
-  border: 1px solid var(--elab-border);
-  border-radius: 10px;
-  backdrop-filter: blur(12px);
-  box-shadow: var(--elab-shadow);
+  margin: 0;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  backdrop-filter: none;
+  box-shadow: none;
   overflow: hidden;
   flex-shrink: 0;
 }
@@ -785,26 +882,27 @@ body.elab-v2-fixed-shell-active {
 .elab-founder-wb--tabbed {
   display: flex;
   flex-direction: column;
-  max-height: clamp(100px, 22vh, 180px);
-  margin: 2px 6px 0;
+  max-height: clamp(72px, 16vh, 140px);
+  margin: 0;
 }
 
 .elab-founder-wb__tabs {
   display: flex;
-  gap: 2px;
-  padding: 4px 6px 0;
-  border-bottom: 1px solid rgba(255,255,255,0.06);
+  gap: 0;
+  padding: 0 6px;
+  border-bottom: 1px solid var(--el-v2-workstation-divider);
   flex-shrink: 0;
+  background: rgba(0, 0, 0, 0.18);
 }
 
 .elab-founder-wb__tab {
-  flex: 1;
-  padding: 6px 4px;
+  flex: 0 0 auto;
+  padding: 5px 10px;
   border: none;
   border-bottom: 2px solid transparent;
   background: transparent;
   color: var(--elab-muted);
-  font-size: 8px;
+  font-size: 7px;
   font-weight: 700;
   letter-spacing: 0.06em;
   cursor: pointer;
@@ -853,9 +951,11 @@ body.elab-v2-fixed-shell-active {
 .elab-founder-wb__mood { font-size: 9px; margin: 0; }
 
 .elab-founder-wb__player {
-  aspect-ratio: 16/9; max-height: 100px;
-  border-radius: 6px; overflow: hidden;
-  border: 1px solid var(--elab-border);
+  aspect-ratio: 16/9;
+  max-height: 72px;
+  border-radius: 2px;
+  overflow: hidden;
+  border: 1px solid var(--el-v2-workstation-divider);
   background: rgba(0,0,0,0.5);
 }
 .elab-founder-wb__preview { width: 100%; height: 100%; object-fit: cover; }
@@ -876,145 +976,140 @@ body.elab-v2-fixed-shell-active {
 .elab-founder-wb__warn { font-size: 8px; color: var(--elab-danger); margin: 4px 0 0; }
 .elab-founder-wb__diag-line { font-size: 8px; color: var(--elab-muted); margin: 2px 0; }
 
-/* ── Approval Bridge ── */
+/* ── Approval command strip ── */
 .elab-approval-bridge {
-  margin: 4px 8px;
-  text-align: center;
+  margin: 0;
+  padding: 4px 8px;
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(0, 0, 0, 0.15);
 }
 
-.elab-approval-bridge--compact {
-  margin: 2px 6px;
-}
-
-.elab-approval-bridge--compact .elab-approval-bridge__primary {
-  padding: 10px 14px;
-  font-size: 9px;
-}
-
-.elab-approval-bridge--compact .elab-approval-bridge__locks {
-  margin: 4px 0 0;
-  font-size: 7px;
-}
-
-.elab-approval-bridge__label {
+.elab-approval-bridge--strip .elab-approval-bridge__actions {
+  display: flex;
   flex: 1;
-  text-align: center;
+  gap: 0;
+  min-width: 0;
+  overflow-x: auto;
+  border: 1px solid var(--el-v2-workstation-divider);
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.25);
+}
+
+.elab-approval-bridge__action {
+  flex: 1 0 auto;
+  padding: 6px 10px;
+  border: none;
+  border-right: 1px solid var(--el-v2-workstation-divider);
+  background: transparent;
+  color: var(--elab-muted);
+  font-size: 7px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.elab-approval-bridge__action:last-child {
+  border-right: none;
+}
+
+.elab-approval-bridge__action--primary {
+  color: var(--elab-gold);
+  background: rgba(197, 160, 89, 0.12);
+}
+
+.elab-approval-bridge__action--primary:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.elab-approval-bridge__action:hover:not(:disabled) {
+  color: var(--elab-gold);
+  background: rgba(197, 160, 89, 0.08);
+}
+
+.elab-approval-bridge__locks {
+  font-size: 6px;
+  color: var(--elab-muted);
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .elab-approval-bridge__blocker-chip {
-  margin-top: 4px;
-  padding: 6px 10px;
+  padding: 4px 8px;
   border: 1px solid var(--elab-warn);
-  border-radius: 6px;
-  background: rgba(232, 165, 75, 0.1);
+  border-radius: 4px;
+  background: rgba(232, 165, 75, 0.08);
   color: var(--elab-warn);
-  font-size: 8px;
+  font-size: 7px;
   font-weight: 700;
   cursor: pointer;
-  width: 100%;
-  max-width: 360px;
-}
-
-.elab-approval-bridge__primary {
-  position: relative;
-  width: 100%;
-  max-width: 720px;
-  margin: 0 auto;
-  padding: 14px 24px;
-  border: 1px solid var(--elab-gold);
-  border-radius: 8px;
-  background: linear-gradient(180deg, rgba(197,160,89,0.2), rgba(197,160,89,0.05));
-  color: var(--elab-gold);
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 0.1em;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  box-shadow: 0 0 30px var(--elab-gold-dim);
-}
-.elab-approval-bridge__primary:disabled {
-  opacity: 0.45; cursor: not-allowed; box-shadow: none;
-}
-.elab-approval-bridge__glow {
-  position: absolute; inset: -2px; border-radius: 10px;
-  background: linear-gradient(90deg, transparent, var(--elab-gold-glow), transparent);
-  opacity: 0.4; pointer-events: none;
-  animation: elab-bridge-glow 2.5s ease-in-out infinite;
-}
-@keyframes elab-bridge-glow {
-  0%, 100% { opacity: 0.25; }
-  50% { opacity: 0.55; }
-}
-.elab-approval-bridge__arrow { font-size: 14px; }
-.elab-approval-bridge__locks {
-  margin: 8px 0 0; font-size: 8px; color: var(--elab-muted);
-  letter-spacing: 0.08em;
-}
-.elab-approval-bridge__blocked { font-size: 8px; color: var(--elab-warn); margin-top: 6px; }
-
-/* ── Workbench dock ── */
-.elab-wb-dock {
-  display: flex;
-  gap: 8px;
-  justify-content: center;
-  padding: 6px 8px;
-  margin: 0 6px;
-  background: var(--elab-glass);
-  border: 1px solid var(--elab-border);
-  border-radius: 10px;
-  overflow-x: auto;
   flex-shrink: 0;
 }
 
-.elab-wb-dock--compact-tray {
-  margin: 0 6px;
-  padding: 4px 0;
+/* ── Workbench tool bar (pro app controls) ── */
+.elab-wb-dock--pro {
+  margin: 0;
+  padding: 0;
+  background: rgba(0, 0, 0, 0.2);
+  border: none;
+  border-radius: 0;
+  flex-shrink: 0;
 }
 
-.elab-wb-dock__scroll {
+.elab-wb-dock__bar {
   display: flex;
-  gap: 6px;
+  gap: 0;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
-  padding: 4px 8px;
-  width: 100%;
-}
-
-.elab-wb-dock__tool--compact {
-  min-width: 64px;
-  padding: 8px 6px;
-}
-
-.elab-wb-dock__tool--more {
-  border-style: dashed;
+  padding: 0 4px;
 }
 
 .elab-wb-dock__tool {
   flex: 0 0 auto;
-  display: flex; flex-direction: column; align-items: center; gap: 6px;
-  min-width: 88px; padding: 10px 8px;
-  border: 1px solid var(--elab-border);
-  border-radius: 8px;
-  background: rgba(255,255,255,0.03);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
+  min-width: auto;
+  padding: 5px 10px;
+  border: none;
+  border-right: 1px solid var(--el-v2-workstation-divider);
+  border-radius: 0;
+  background: transparent;
   color: var(--elab-muted);
   cursor: pointer;
-  transition: border-color 0.15s, color 0.15s;
+  transition: color 0.12s, background 0.12s;
 }
-.elab-wb-dock__tool:hover { border-color: var(--elab-gold); color: var(--elab-gold); }
-.elab-wb-dock__icon { font-size: 18px; }
-.elab-wb-dock__label { font-size: 7px; font-weight: 700; letter-spacing: 0.06em; text-align: center; }
+
+.elab-wb-dock__tool:last-child {
+  border-right: none;
+}
+
+.elab-wb-dock__tool:hover {
+  color: var(--elab-gold);
+  background: rgba(197, 160, 89, 0.06);
+}
+
+.elab-wb-dock__tool--more {
+  border-right: none;
+  border-left: 1px dashed var(--el-v2-workstation-divider);
+}
+
+.elab-wb-dock__icon { font-size: 12px; }
+.elab-wb-dock__label { font-size: 7px; font-weight: 700; letter-spacing: 0.05em; }
 
 /* ── Department dock ── */
 .elab-dept-dock {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 6px 12px calc(6px + var(--el-v2-safe-bottom));
-  background: rgba(6, 7, 10, 0.95);
+  padding: 4px 8px calc(4px + var(--el-v2-safe-bottom));
+  background: rgba(6, 7, 10, 0.98);
   border-top: 1px solid var(--elab-border);
   flex-shrink: 0;
   z-index: 20;
@@ -1054,16 +1149,24 @@ body.elab-v2-fixed-shell-active {
 
 /* ── Diagnostics drawer ── */
 .elab-diag-toggle {
-  margin: 6px 12px; padding: 8px 12px;
-  border: 1px dashed var(--elab-border); border-radius: 6px;
-  background: transparent; color: var(--elab-muted);
-  font-size: 8px; cursor: pointer; width: calc(100% - 24px);
+  margin: 0;
+  padding: 4px 8px;
+  border: none;
+  border-top: 1px solid var(--el-v2-workstation-divider);
+  background: rgba(0, 0, 0, 0.12);
+  color: var(--elab-muted);
+  font-size: 7px;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
 }
+
 .elab-diag-drawer {
-  margin: 6px 12px; padding: 12px;
-  background: var(--elab-glass-panel);
-  border: 1px solid var(--elab-border);
-  border-radius: 8px;
+  margin: 0;
+  padding: 8px;
+  background: rgba(0, 0, 0, 0.2);
+  border: none;
+  border-top: 1px solid var(--el-v2-workstation-divider);
 }
 .elab-diag-drawer__head { display: flex; justify-content: space-between; font-size: 9px; margin-bottom: 8px; }
 .elab-diag-drawer__close { border: none; background: transparent; color: var(--elab-muted); cursor: pointer; }
@@ -1213,12 +1316,12 @@ body.elab-v2-fixed-shell-active {
 
 .elab-app-shell--mobile .elab-viewport,
 .elab-app-shell--tablet .elab-viewport {
-  margin: 0 1%;
+  margin: 0;
 }
 
-.elab-app-shell--mobile .elab-founder-wb__console,
-.elab-app-shell--tablet .elab-founder-wb__console {
-  grid-template-columns: 1fr;
+.elab-app-shell--mobile .elab-founder-wb--tabbed,
+.elab-app-shell--tablet .elab-founder-wb--tabbed {
+  max-height: clamp(64px, 14vh, 120px);
 }
 
 /* Accessibility fallback — allow controlled scroll at high zoom */

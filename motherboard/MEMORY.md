@@ -48534,3 +48534,26 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 **Conventions:** Mobile default = one minimized contextual inspector matching active viewport mode + optional status chip; expanded content in bottom sheet/drawer only; center safe zone unobstructed; Focus Mode hides secondary inspectors.
 
 **One commit + one push** on `master` via `agent-commit.sh`.
+
+---
+
+## 2026-07-13 — P0 Experience Lab V2 Application Workspace Spatial Hierarchy (full conversation)
+
+**Founder request:** Transform Experience Lab V2 from fixed responsive webpage into true premium application workspace. Spatial hierarchy only — no new functionality. Desktop is canonical master; mobile is responsive adaptation of same architecture. Viewport owns 60–70%; workbench/approval/tool dock attach as one continuous workstation; remove card mentality; pro-app density (Unreal/Blender/DaVinci/Figma/FCP reference). One commit.
+
+**Context:** Panel orchestration sprint (`c39c59640`) approved conceptually but founder still perceived stacked webpage cards — viewport disconnected from Founder Review, Approval CTA, Tool Dock.
+
+**Shipped:**
+
+- **`ExperienceLabWorkstationFrame.tsx`** — continuous workstation: viewport room (~65%) + attached lower deck (workbench → approval strip → tool bar → diagnostics)
+- **Shell grid simplified** — badges · command · workstation · dept-dock (removed separate grid rows for workbench/approval/tools/diagnostics)
+- **`ExperienceLabFounderWorkbench`** — always tabbed (Review/Timeline/Diagnostics/Brief) on desktop + mobile; removed desktop 4-column card grid
+- **`ExperienceLabApprovalBridge`** — compact command strip: APPROVE · REQUEST CHANGES · SAVE DRAFT · EXPORT
+- **`ExperienceLabCommandDock`** — unified dense `elab-cmd--pro` single row (desktop master, mobile scales)
+- **`ExperienceLabWorkbenchDock`** — unified `elab-wb-dock--pro` horizontal app tool bar (not nav cards)
+- **CSS** — `--el-v2-viewport-room-ratio: 65%`, shared workstation surface, internal dividers, film-strip view angles, compressed spacing, sidebars flush in frame (no isolated rounded cards)
+- **Tests** — 47/47 PASS; build PASS; legacy route unchanged
+
+**Conventions:** Desktop-first workstation architecture is canonical department standard for future Studio World departments; mobile must not introduce alternate UX patterns.
+
+**One commit + one push** on `master` via `agent-commit.sh`.

@@ -5,15 +5,14 @@ import { ELAB_V2_COMPOSITION } from './experience-lab-v2-composition';
 
 const REVISIONS = [13, 14, 15, 16, 17, 18] as const;
 const TABS: { id: ElabWorkbenchTab; label: string }[] = [
-  { id: 'brief', label: 'Brief' },
   { id: 'review', label: 'Review' },
   { id: 'timeline', label: 'Timeline' },
   { id: 'diagnostics', label: 'Diagnostics' },
+  { id: 'brief', label: 'Brief' },
 ];
 
 type Props = {
   model: ExperienceLabV2ViewModel;
-  isCompact?: boolean;
   activeTab?: ElabWorkbenchTab;
   onTabChange?: (tab: ElabWorkbenchTab) => void;
 };
@@ -75,62 +74,37 @@ function DiagnosticsPane({ model }: { model: ExperienceLabV2ViewModel }) {
   );
 }
 
-/** Integrated Founder Review Workbench — tabbed on mobile/tablet, grid on desktop. */
-export function ExperienceLabFounderWorkbench({ model, isCompact, activeTab: controlledTab, onTabChange }: Props) {
+/** Founder Review Workbench — single tabbed surface (desktop + mobile parity). */
+export function ExperienceLabFounderWorkbench({ model, activeTab: controlledTab, onTabChange }: Props) {
   const [internalTab, setInternalTab] = useState<ElabWorkbenchTab>('review');
   const tab = controlledTab ?? internalTab;
   const setTab = onTabChange ?? setInternalTab;
 
-  if (isCompact) {
-    return (
-      <section
-        className="elab-founder-wb elab-founder-wb--tabbed"
-        {...{ [ELAB_V2_COMPOSITION.founderWorkbench]: '' }}
-        aria-label="Founder review workbench"
-      >
-        <div className="elab-founder-wb__tabs" {...{ [ELAB_V2_COMPOSITION.workbenchTabs]: '' }} role="tablist">
-          {TABS.map((t) => (
-            <button
-              key={t.id}
-              type="button"
-              role="tab"
-              aria-selected={tab === t.id}
-              className={`elab-founder-wb__tab${tab === t.id ? ' elab-founder-wb__tab--active' : ''}`}
-              onClick={() => setTab(t.id)}
-            >
-              {t.label}
-            </button>
-          ))}
-        </div>
-        <div className="elab-founder-wb__tab-panel" role="tabpanel">
-          {tab === 'brief' ? <BriefPane model={model} /> : null}
-          {tab === 'review' ? <ReviewPane model={model} /> : null}
-          {tab === 'timeline' ? <TimelinePane model={model} /> : null}
-          {tab === 'diagnostics' ? <DiagnosticsPane model={model} /> : null}
-        </div>
-      </section>
-    );
-  }
-
   return (
-    <section className="elab-founder-wb" {...{ [ELAB_V2_COMPOSITION.founderWorkbench]: '' }} aria-label="Founder review workbench">
-      <div className="elab-founder-wb__console">
-        <article className="elab-founder-wb__zone elab-founder-wb__zone--brief">
-          <h3 className="elab-founder-wb__zone-title">DESIGN BRIEF</h3>
-          <BriefPane model={model} />
-        </article>
-        <article className="elab-founder-wb__zone elab-founder-wb__zone--review">
-          <h3 className="elab-founder-wb__zone-title">FOUNDER REVIEW</h3>
-          <ReviewPane model={model} />
-        </article>
-        <article className="elab-founder-wb__zone elab-founder-wb__zone--timeline">
-          <h3 className="elab-founder-wb__zone-title">REVISION TIMELINE</h3>
-          <TimelinePane model={model} />
-        </article>
-        <article className="elab-founder-wb__zone elab-founder-wb__zone--diag">
-          <h3 className="elab-founder-wb__zone-title">DIAGNOSTICS</h3>
-          <DiagnosticsPane model={model} />
-        </article>
+    <section
+      className="elab-founder-wb elab-founder-wb--tabbed"
+      {...{ [ELAB_V2_COMPOSITION.founderWorkbench]: '' }}
+      aria-label="Founder review workbench"
+    >
+      <div className="elab-founder-wb__tabs" {...{ [ELAB_V2_COMPOSITION.workbenchTabs]: '' }} role="tablist">
+        {TABS.map((t) => (
+          <button
+            key={t.id}
+            type="button"
+            role="tab"
+            aria-selected={tab === t.id}
+            className={`elab-founder-wb__tab${tab === t.id ? ' elab-founder-wb__tab--active' : ''}`}
+            onClick={() => setTab(t.id)}
+          >
+            {t.label}
+          </button>
+        ))}
+      </div>
+      <div className="elab-founder-wb__tab-panel" role="tabpanel">
+        {tab === 'brief' ? <BriefPane model={model} /> : null}
+        {tab === 'review' ? <ReviewPane model={model} /> : null}
+        {tab === 'timeline' ? <TimelinePane model={model} /> : null}
+        {tab === 'diagnostics' ? <DiagnosticsPane model={model} /> : null}
       </div>
     </section>
   );

@@ -119,17 +119,30 @@ describe('Experience Lab V2 — Fixed application shell', () => {
     const wb = readV2Source('ExperienceLabFounderWorkbench.tsx');
     expect(wb).toContain('ELAB_V2_COMPOSITION.workbenchTabs');
     expect(wb).toContain('elab-founder-wb--tabbed');
+    expect(wb).not.toContain('elab-founder-wb__console');
   });
 
-  it('approval bridge exposes compact blocker sheet trigger', () => {
+  it('workstation frame unifies viewport room and lower deck', () => {
+    const shell = readV2Source('ExperienceLabV2Shell.tsx');
+    expect(shell).toContain('ExperienceLabWorkstationFrame');
+    expect(readV2Source('ExperienceLabWorkstationFrame.tsx')).toContain('elab-app-shell__lower-deck');
+    expect(readV2Source('experience-lab-v2.css')).toContain('elab-app-shell__workstation');
+    expect(readV2Source('experience-lab-v2.css')).toContain('--el-v2-viewport-room-ratio');
+  });
+
+  it('approval bridge is compact command strip with multiple actions', () => {
     const bridge = readV2Source('ExperienceLabApprovalBridge.tsx');
-    expect(bridge).toContain('ELAB_V2_COMPOSITION.blockerSheet');
+    expect(bridge).toContain('REQUEST CHANGES');
+    expect(bridge).toContain('SAVE DRAFT');
+    expect(bridge).toContain('EXPORT');
+    expect(bridge).toContain('elab-approval-bridge--strip');
   });
 
-  it('compact workbench dock uses horizontal tool tray with More', () => {
-    const dock = readV2Source('ExperienceLabWorkbenchDock.tsx');
-    expect(dock).toContain('elab-wb-dock--compact-tray');
-    expect(dock).toContain('MORE');
+  it('command dock and tool dock use unified pro layout (desktop master)', () => {
+    expect(readV2Source('ExperienceLabCommandDock.tsx')).toContain('elab-cmd--pro');
+    expect(readV2Source('ExperienceLabCommandDock.tsx')).not.toContain('isCompact');
+    expect(readV2Source('ExperienceLabWorkbenchDock.tsx')).toContain('elab-wb-dock--pro');
+    expect(readV2Source('ExperienceLabWorkbenchDock.tsx')).not.toContain('isCompact');
   });
 
   it('view angles live in viewport chrome region (not absolute overlay)', () => {
@@ -317,6 +330,7 @@ describe('Experience Lab V2 — Panel orchestration', () => {
 
   it('composition markers include inspector switcher', () => {
     expect(ELAB_V2_COMPOSITION.inspectorSwitcher).toBe('data-elab-inspector-switcher');
+    expect(ELAB_V2_COMPOSITION.workstationFrame).toBe('data-elab-workstation-frame');
     expect(readV2Source('experience-lab-v2-panel-orchestrator.ts')).toContain('PANEL_LAYOUT_STORAGE_KEY');
   });
 });

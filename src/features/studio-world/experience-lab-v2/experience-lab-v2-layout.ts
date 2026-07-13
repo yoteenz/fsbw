@@ -21,6 +21,8 @@ export const ELAB_V2_LAYOUT = {
     mobileMax: 767,
     tabletMax: 1023,
   },
+  /** Viewport room occupies ~65% of center column — desktop canonical */
+  viewportRoomRatio: '65%',
   routeBodyClass: 'elab-v2-fixed-shell-active',
   portalDataAttr: 'data-elab-fixed-viewport',
 } as const;

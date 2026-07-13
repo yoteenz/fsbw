@@ -19,6 +19,7 @@ export const ELAB_V2_COMPOSITION = {
   sheet: 'data-elab-sheet',
   inspectorSwitcher: 'data-elab-inspector-switcher',
   panelOrchestrator: 'data-elab-panel-orchestrator',
+  workstationFrame: 'data-elab-workstation-frame',
 } as const;
 
 export const VIEWPORT_MODE_LABELS: Record<string, string> = {
