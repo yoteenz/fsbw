@@ -15,6 +15,11 @@ export const CREATIVE_PREVIEW_COMPANY_IDS: CreativePreviewCompanyId[] = [
   'ndx',
 ];
 
+/**
+ * @deprecated Company selector removed from Experience Lab (2026-07-13).
+ * Use Studio World Registry → Industry Pack selection (`canonical-studio-world/`).
+ * These IDs remain for internal preview compiler bridge only.
+ */
 export const CREATIVE_PREVIEW_COMPANY_LABELS: Record<CreativePreviewCompanyId, string> = {
   'studio-os': 'Studio OS',
   'frontal-slayer': 'Frontal Slayer',

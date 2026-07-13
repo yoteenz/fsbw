@@ -1,40 +1,49 @@
 import { useCallback, useState } from 'react';
-import type { CreativePreviewCompanyId } from '../../../../studio-os-core/creative-studio-preview';
+import type { ExperienceLabIndustryPackOptionId } from '../../../../studio-os-core/canonical-studio-world';
 import { useBlueprintAuthorWorkflow } from '../../../../hooks/useBlueprintAuthorWorkflow';
 import { BlueprintAuthorRequestForm } from '../blueprint-author-ui/BlueprintAuthorRequestForm';
 import { BlueprintAuthorWorkflowShell } from '../blueprint-author-ui/BlueprintAuthorWorkflowShell';
 
 type Props = {
-  companyId: CreativePreviewCompanyId;
+  packOptionId: ExperienceLabIndustryPackOptionId;
+  industryPackId: string;
+  companyHqOrganizationId: string;
   conceptId: 'a' | 'b' | 'c';
   defaultIntent?: string;
   children: React.ReactNode;
 };
 
 /**
- * Gates Experience Lab creative render behind Blueprint Author approval.
- * Children (World Compiler preview) render only after founder approves manufacturing.
+ * Gates Experience Lab HQ planning behind Blueprint Author approval.
+ * Uses Industry Pack + Company HQ org — not deprecated company switcher IDs.
  */
-export function BlueprintAuthorExperienceLabGate({ companyId, conceptId, defaultIntent, children }: Props) {
+export function BlueprintAuthorExperienceLabGate({
+  packOptionId,
+  industryPackId,
+  companyHqOrganizationId,
+  conceptId,
+  defaultIntent,
+  children,
+}: Props) {
   const workflow = useBlueprintAuthorWorkflow();
   const [intent, setIntent] = useState(
-    defaultIntent ?? `Environmental intelligence preview for ${companyId} concept ${conceptId.toUpperCase()}`
+    defaultIntent ?? `Industry Pack ${industryPackId} — headquarters planning (${packOptionId})`
   );
 
   const submit = useCallback(() => {
     workflow.submitRequest({
       source: 'experience-lab',
-      organizationId: companyId,
+      organizationId: companyHqOrganizationId,
       founderIntent: intent,
-      roomType: 'reception',
-      stationId: `xelab-${companyId}-${conceptId}`,
-      departmentId: 'executive',
-      projectId: 'experience-lab',
+      roomType: 'headquarters',
+      stationId: `xelab-pack-${industryPackId}-${conceptId}`,
+      departmentId: 'experience-lab',
+      projectId: industryPackId,
     });
-  }, [workflow, companyId, conceptId, intent]);
+  }, [workflow, companyHqOrganizationId, industryPackId, packOptionId, conceptId, intent]);
 
   return (
-    <div data-blueprint-xelab-gate>
+    <div data-blueprint-xelab-gate data-industry-pack={industryPackId}>
       {workflow.step === 'idle' ? (
         <div style={{ padding: '0 16px 16px' }}>
           <BlueprintAuthorRequestForm
@@ -42,8 +51,8 @@ export function BlueprintAuthorExperienceLabGate({ companyId, conceptId, default
             onChange={setIntent}
             onSubmit={submit}
             isLoading={workflow.isAuthoring}
-            label="Founder request — Experience Lab"
-            placeholder="e.g. Executive reception with landmark, seating, and concierge desk for this environment…"
+            label="Founder request — Industry Pack HQ"
+            placeholder="e.g. Approve Hair Brand Pack headquarters — reception, showroom, atelier, content studio…"
           />
         </div>
       ) : (
@@ -51,7 +60,7 @@ export function BlueprintAuthorExperienceLabGate({ companyId, conceptId, default
       )}
       {workflow.step === 'idle' ? (
         <p style={{ padding: '0 16px', fontSize: '10px', color: '#9ca3af' }}>
-          World Compiler render is locked until Construction Plan approval.
+          HQ manufacturing is locked until entire Industry Pack is approved and handed to Creative Director Studio.
         </p>
       ) : null}
     </div>

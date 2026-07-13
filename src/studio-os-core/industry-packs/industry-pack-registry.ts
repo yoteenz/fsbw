@@ -6,6 +6,7 @@ import type {
   IndustryPackValidationResult,
 } from './contract';
 import { INDUSTRY_PACKS_VERSION } from './contract';
+import { CANONICAL_INDUSTRY_PACK_EXTENSIONS } from './industry-pack-canonical-extensions';
 
 function slot(
   slotId: string,
@@ -47,7 +48,7 @@ function pack(
     defaultAssets: [],
     lightingProfileId: overrides?.lightingProfileId ?? 'founder-lighting-pack',
     materialLibraryId: overrides?.materialLibraryId ?? 'founder-material-library',
-    cameraPackId: 'founder-camera-pack',
+    cameraPackId: 'founder-composition-pack',
     blueprintTemplateId: `hq-blueprint.${packId}`,
     constructionTemplateId: `hq-construction.${packId}`,
     renderPromptId: overrides?.renderPromptId ?? `hq-render-prompt.${packId}`,
@@ -227,7 +228,7 @@ export const OFFICIAL_INDUSTRY_PACKS: IndustryPack[] = [
 
 export const INDUSTRY_PACK_REGISTRY: IndustryPackRegistry = {
   registryVersion: INDUSTRY_PACKS_VERSION,
-  packs: [...OFFICIAL_INDUSTRY_PACKS],
+  packs: [...OFFICIAL_INDUSTRY_PACKS, ...CANONICAL_INDUSTRY_PACK_EXTENSIONS],
 };
 
 export function getIndustryPack(packId: string): IndustryPack | undefined {

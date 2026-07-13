@@ -1,15 +1,16 @@
 import type { CSSProperties } from 'react';
 import {
-  CREATIVE_PREVIEW_COMPANY_IDS,
-  CREATIVE_PREVIEW_COMPANY_LABELS,
   resolveEnvironmentSceneProfile,
-  type CreativePreviewCompanyId,
   type CreativePreviewConcept,
   type CreativeStudioPreviewResult,
 } from '../../../../studio-os-core/creative-studio-preview';
+import { resolveInternalPreviewBinding } from '../../../../studio-os-core/canonical-studio-world';
 import { useCreativeStudioPreview } from '../../../../hooks/useCreativeStudioPreview';
+import { useExperienceLabIndustryPack } from '../../../../hooks/useExperienceLabIndustryPack';
 import { CreativeStudioRenderPreview } from './CreativeStudioRenderPreview';
 import { BlueprintAuthorExperienceLabGate } from './BlueprintAuthorExperienceLabGate';
+import { IndustryPackSelector } from './IndustryPackSelector';
+import { IndustryPackDepartmentTree } from './IndustryPackDepartmentTree';
 
 const sectionStyle: CSSProperties = {
   padding: '0 16px 20px',
@@ -28,45 +29,45 @@ const btnStyle: CSSProperties = {
   fontSize: '11px',
 };
 
-/** Mode 2 — Environmental Intelligence Validation (cinematic previews, blind test). */
+/** Mode 2 — Environmental Intelligence Validation (Industry Pack → HQ planning). */
 export function CreativeIntelligencePanel() {
   const {
-    companyId,
+    packOptionId,
+    packOptions,
+    packOption,
+    industryPack,
+    headquartersPlan,
+    companyHqOrganizationId,
+    selectPackOption,
+  } = useExperienceLabIndustryPack('hair-brand');
+
+  const previewBinding = resolveInternalPreviewBinding(packOptionId);
+
+  const {
     conceptId,
-    compareMode,
     blindMode,
     blindTestResult,
     preview,
     activeConcept,
-    bundle,
-    selectCompany,
     setConceptId,
-    setCompareMode,
     toggleBlindMode,
     recordBlindTest,
     recompile,
-  } = useCreativeStudioPreview('studio-os');
+  } = useCreativeStudioPreview(previewBinding);
 
   return (
     <div data-xelab-mode="creative-intelligence" style={{ background: '#fafafa', minHeight: '60vh' }}>
       <header style={{ padding: '16px', borderBottom: '1px solid #e5e7eb' }}>
         <p style={{ margin: 0, fontSize: '10px', fontWeight: 800, letterSpacing: '0.1em', color: '#eb1c24' }}>
-          CREATIVE STUDIO PREVIEW COMPILER™
+          EXPERIENCE LAB™ — MASTER PLANNING DEPARTMENT
         </p>
-        <h1 style={{ margin: '4px 0 8px', fontSize: '16px' }}>Environmental Intelligence Validation</h1>
+        <h1 style={{ margin: '4px 0 8px', fontSize: '16px' }}>Industry Pack Headquarters Generator</h1>
         <p style={{ margin: 0, color: '#555', fontSize: '11px' }}>
-          Creative Studio render pipeline · World Compiler™ final output · identity without logos or labels
+          Studio World canonical infrastructure · Industry Pack templates · Company HQ customization layer
         </p>
         <div style={{ marginTop: 12 }}>
           <button type="button" style={btnStyle} onClick={recompile} disabled>
             Recompile previews (after approval)
-          </button>
-          <button
-            type="button"
-            style={{ ...btnStyle, fontWeight: compareMode ? 800 : 400 }}
-            onClick={() => setCompareMode(!compareMode)}
-          >
-            {compareMode ? 'Single company view' : 'Compare all companies'}
           </button>
           <button
             type="button"
@@ -78,23 +79,32 @@ export function CreativeIntelligencePanel() {
         </div>
       </header>
 
+      <IndustryPackSelector packOptionId={packOptionId} options={packOptions} onSelect={selectPackOption} />
+
+      {industryPack && headquartersPlan?.ok ? (
+        <IndustryPackDepartmentTree pack={industryPack} plan={headquartersPlan.plan} />
+      ) : null}
+
       {blindMode ? (
         <BlindValidationBanner
           result={blindTestResult}
           onRecord={recordBlindTest}
-          industryTarget={resolveEnvironmentSceneProfile(preview.companyId, conceptId).industryTarget}
+          industryTarget={packOption?.displayName ?? resolveEnvironmentSceneProfile(previewBinding, conceptId).industryTarget}
         />
       ) : null}
 
-      {compareMode ? (
-        <CompareAllCompanies bundle={bundle} blindMode={blindMode} />
-      ) : (
-        <>
-          {!blindMode ? <CompanySwitcher companyId={companyId} onSelect={selectCompany} /> : null}
-          <ConceptSwitcher concepts={preview.concepts} activeId={conceptId} onSelect={setConceptId} blindMode={blindMode} />
-          <PreviewFlow preview={preview} concept={activeConcept} conceptId={conceptId} blindMode={blindMode} />
-        </>
-      )}
+      <>
+        <ConceptSwitcher concepts={preview.concepts} activeId={conceptId} onSelect={setConceptId} blindMode={blindMode} />
+        <PreviewFlow
+          preview={preview}
+          concept={activeConcept}
+          conceptId={conceptId}
+          blindMode={blindMode}
+          packOptionId={packOptionId}
+          industryPackId={packOption?.industryPackId ?? 'official-hair-brand'}
+          companyHqOrganizationId={companyHqOrganizationId}
+        />
+      </>
     </div>
   );
 }
@@ -138,35 +148,6 @@ function BlindValidationBanner({
   );
 }
 
-function CompanySwitcher({
-  companyId,
-  onSelect,
-}: {
-  companyId: CreativePreviewCompanyId;
-  onSelect: (id: CreativePreviewCompanyId) => void;
-}) {
-  return (
-    <section style={sectionStyle}>
-      <h2 style={sectionHeading}>1. Company</h2>
-      <div>
-        {CREATIVE_PREVIEW_COMPANY_IDS.map((id: CreativePreviewCompanyId) => (
-          <button
-            key={id}
-            type="button"
-            onClick={() => onSelect(id)}
-            style={{
-              ...btnStyle,
-              fontWeight: companyId === id ? 800 : 400,
-              borderColor: companyId === id ? '#eb1c24' : '#333',
-            }}
-          >
-            {CREATIVE_PREVIEW_COMPANY_LABELS[id]}
-          </button>
-        ))}
-      </div>
-    </section>
-  );
-}
 
 function ConceptSwitcher({
   concepts,
@@ -218,11 +199,17 @@ function PreviewFlow({
   concept,
   conceptId,
   blindMode,
+  packOptionId,
+  industryPackId,
+  companyHqOrganizationId,
 }: {
   preview: CreativeStudioPreviewResult;
   concept: CreativePreviewConcept;
   conceptId: 'a' | 'b' | 'c';
   blindMode: boolean;
+  packOptionId: import('../../../../studio-os-core/canonical-studio-world').ExperienceLabIndustryPackOptionId;
+  industryPackId: string;
+  companyHqOrganizationId: string;
 }) {
   const spec = concept.specification;
   const sceneProfile = resolveEnvironmentSceneProfile(preview.companyId, conceptId);
@@ -230,11 +217,13 @@ function PreviewFlow({
   return (
     <>
       <section style={sectionStyle}>
-        <h2 style={sectionHeading}>{blindMode ? 'Environment — no branding' : '3. Cinematic environment'}</h2>
+        <h2 style={sectionHeading}>{blindMode ? 'Environment — no branding' : '3. HQ Founder Render planning'}</h2>
         <BlueprintAuthorExperienceLabGate
-          companyId={preview.companyId}
+          packOptionId={packOptionId}
+          industryPackId={industryPackId}
+          companyHqOrganizationId={companyHqOrganizationId}
           conceptId={conceptId}
-          defaultIntent={`${concept.label} — ${sceneProfile.industryTarget} environment`}
+          defaultIntent={`${concept.label} — ${sceneProfile.industryTarget} headquarters from Industry Pack`}
         >
           <CreativeStudioRenderPreview
             companyId={preview.companyId}
@@ -323,56 +312,6 @@ function EnvironmentIntelligenceSummary({
         </dd>
       </div>
     </dl>
-  );
-}
-
-function CompareAllCompanies({
-  bundle,
-  blindMode,
-}: {
-  bundle: ReturnType<typeof useCreativeStudioPreview>['bundle'];
-  blindMode: boolean;
-}) {
-  const labels = ['Environment A', 'Environment B', 'Environment C'];
-
-  return (
-    <section style={sectionStyle}>
-      <h2 style={sectionHeading}>
-        {blindMode ? 'Side-by-side — identify each industry' : 'Side-by-side — company identity without logos'}
-      </h2>
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-          gap: 16,
-        }}
-      >
-        {CREATIVE_PREVIEW_COMPANY_IDS.map((id, idx) => {
-          const p = bundle.companies[id];
-          return (
-            <div key={id} style={{ border: '1px solid #e5e7eb', borderRadius: 12, overflow: 'hidden' }}>
-              {!blindMode ? (
-                <div style={{ padding: '10px 12px', background: '#fff', borderBottom: '1px solid #eee' }}>
-                  <strong>{p.companyLabel}</strong>
-                  <span style={{ display: 'block', fontSize: '10px', color: '#666' }}>
-                    {p.scorecard.overallConfidencePct}% overall · Preview A
-                  </span>
-                </div>
-              ) : (
-                <div style={{ padding: '10px 12px', background: '#fff', borderBottom: '1px solid #eee' }}>
-                  <strong>{labels[idx] ?? `Environment ${idx + 1}`}</strong>
-                </div>
-              )}
-              <div style={{ padding: 12 }}>
-                <BlueprintAuthorExperienceLabGate companyId={id} conceptId="a">
-                  <CreativeStudioRenderPreview companyId={id} conceptId="a" blindMode={blindMode} />
-                </BlueprintAuthorExperienceLabGate>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    </section>
   );
 }
 

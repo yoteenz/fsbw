@@ -48123,3 +48123,27 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 
 **Prior context in chat:** Industry Packs (`c0444f25d`); Architectural Shell (`6a4050ae6`); EL/CDS identity; Municipal Governance; Model Routing.
 
+---
+
+## 2026-07-13 — P0 Canonical Studio World Architecture — remove company-based Experience Lab (full conversation)
+
+**Founder sprint:** Experience Lab is no longer a company-specific design tool — it is Studio World's master architecture department. Only Studio World creates canonical departments (Experience Lab, CDS, Construction Mode, Marketplace, Permit Office, City Council, etc.). Companies never generate their own copies; they only customize the Company HQ layer (departments, rooms, scenes, decor, brand assets). Remove stale company selector (Studio OS · Frontal Slayer · NDX); replace with Studio World Registry → Industry Pack entry flow.
+
+**Spatial Architecture Review:** APPROVED 4.8 — `docs/studio-os/investigations/SPATIAL_ARCHITECTURE_REVIEW_CANONICAL_STUDIO_WORLD.md`.
+
+**Shipped foundational layer + EL UI restructure:**
+
+- **Canonical Studio World module** — `src/studio-os-core/canonical-studio-world/` — `CANONICAL_DEPARTMENT_REGISTRY` (17 global infrastructure departments), `EXPERIENCE_LAB_INDUSTRY_PACK_OPTIONS` (18 pack entry options), `planExperienceLabHeadquartersFromPack()`, `resolveCompanyHqOrganizationId()`, `preview-bridge.ts` (internal pack→legacy preview company mapping until preview compiler migrates), `DEPRECATED_COMPANY_SELECTOR_IDS` (`studio-os`, `frontal-slayer`, `ndx`)
+- **Industry Pack extensions** — `industry-pack-canonical-extensions.ts` — 9 new official packs: Hair Brand, Architecture, Education, Technology, Nonprofit, Hospitality, Corporate, Government, Custom Blank
+- **Supabase migration** — `20260713180000_canonical_studio_world.sql` (canonical departments, industry pack registry metadata, founder HQ instances)
+- **Canon** — `docs/studio-os/architecture/CANONICAL_STUDIO_WORLD_ARCHITECTURE.md`
+- **EL UI** — removed `CompanySwitcher`; added `IndustryPackSelector` (Studio World Registry), `IndustryPackDepartmentTree` (hierarchical department tree), `useExperienceLabIndustryPack` hook; `CreativeIntelligencePanel` reframed as Master Planning Department; `BlueprintAuthorExperienceLabGate` props changed from `companyId` to `packOptionId` / `industryPackId` / `companyHqOrganizationId`
+- **Deprecated** — `CREATIVE_PREVIEW_COMPANY_IDS` in `company-inputs.ts` (kept for internal preview compiler bridge only)
+- **Tests** — canonical-studio-world 9/9 + industry-packs 13/13 pass; `npm run build` passes
+
+**EL workflow (canonical):** Select Industry Pack → Load Canonical Registry → Generate HQ Blueprint → Founder Renders → Approve Entire Pack → Hand Complete Pack to CDS. CDS never invents departments.
+
+**Documented gaps (next phases):** Full hierarchical registry trees (Room/Scene/Asset); Supabase persistence for founder pack instances; wire `resolveCompanyHqOrganizationId()` to real founder workspace org from auth; migrate `creative-studio-preview` off company-based internals; shell primitives (`StudioWorldShell`) blocked on G1–G2; P0-B handoff persistence on approve; P0-C CDS room gate (`ensureStation` still invents rooms).
+
+**Prior context in chat:** Master Founder Render (`e2dadb712`); Industry Packs (`c0444f25d`); Architectural Shell (`6a4050ae6`); EL/CDS identity gap analysis (`36c4b7c62`); Municipal Governance; Model Routing.
+
