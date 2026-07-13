@@ -48345,3 +48345,26 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 **Shipped:** department-blueprint-builder, department-architectural-fingerprints, canonical-founder-render-prompt, founder-render-cache-identity, department-distinctness-validator, expanded charters, founderRenderGeneration/Jobs/Status isolation, Department Render Diagnostics panel, forensic doc, department-render-isolation tests (11/11 PASS), canonical-department-generator (29/29 PASS), build PASS.
 
 **One commit + one push** on `master` via `agent-commit.sh`.
+
+---
+
+## 2026-07-13 — P0 Studio World Architectural DNA & Golden Prompt Registry (full conversation)
+
+**Founder request:** Replace generic founder prompts with governed Architectural DNA Registry, Golden Reference Library, and FounderRenderPromptCompiler. Every canonical department compiles prompts from structured DNA + golden refs + blueprint + company DNA. One commit, one push, CONCLUSION.
+
+**Context:** Prior sprint eliminated cross-department render contamination (`def341fa9`) with per-department blueprints and isolation. This sprint replaces handwritten runtime prompts with permanent governed registry.
+
+**Shipped:**
+
+- **`src/studio-os-core/architectural-dna/`** — schemas (dna-profile, golden-reference, company-dna, compiler-contract), registry (dna-registry for all 25 departments, company-dna-registry), references (golden-reference-library, negative-prompt-library), compiler (founder-render-prompt-compiler.v1), validators (dna-validator)
+- **Experience Lab DNA v1** — monumental architecture studio, holographic room model, bronze/champagne accents, approved design exploration golden refs
+- **Creative Director Studio DNA v1** — luxury production facility, dark stone/glass, lighting rigs, approved design exploration golden refs
+- **Company DNA layer** — separate brand injection (studio-os, frontal-slayer) without altering department architecture
+- **Camera language** — desktop 21:9 hero, mobile 9:16 reframe same architecture
+- **Material language** — per-department floor/wall/ceiling/metal/glass palettes
+- **Negative prompt library** — department-specific forbidden elements
+- **Pipeline wired** — canonical-founder-render-prompt delegates to compiler; founderRenderGeneration/Jobs/Status persist compiler diagnostics
+- **Diagnostics** — DNA version, golden ref version, compiler version, prompt/negative hashes in FounderRenderDiagnosticsPanel
+- **Tests** — architectural-dna.test.ts 14/14 PASS; department-render-isolation 11/11; canonical-department-generator 29/29; build PASS
+
+**One commit + one push** on `master` via `agent-commit.sh`.

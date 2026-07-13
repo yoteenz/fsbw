@@ -10,24 +10,9 @@
 
 **P0 — Eliminate Cross-Department Render Contamination**
 
-**Status: SHIPPED — Each canonical department now owns isolated blueprint, prompt, cache, and fingerprint**
+**Status: SHIPPED — Architectural DNA Registry & FounderRenderPromptCompiler govern all canonical department prompts**
 
-**Root cause:** `buildCanonicalDepartmentConstructionPlan()` called `fixtureReceptionConstructionPlan()` for all departments — every render used ReceptionShell.
-
-**Shipped:**
-
-- **`department-blueprint-builder.ts`** — per-department shells (ExperienceLabShell, CreativeDirectorStudioShell, ExecutiveAtriumShell, etc.)
-- **`canonical-founder-render-prompt.ts`** — per-department effective FAL prompts (`canonical-*-founder-render.v1`)
-- **`department-architectural-fingerprints.ts`** — signature elements + reception contamination markers
-- **`founder-render-cache-identity.ts`** — department-isolated cache keys
-- **`department-distinctness-validator.ts`** — rejects RECEPTION_CONTAMINATION and DEPARTMENT_NOT_DISTINCT
-- **Charters expanded** — mustInclude/neverInclude for EL, CDS, Command Center, Marketplace, Founder Suite
-- **Persistence** — job diagnostics store departmentId, blueprint, cacheKey, fingerprint
-- **Diagnostics panel** — Department Render Diagnostics in Founder Review
-- **Tests** — `department-render-isolation.test.ts` 11/11 PASS; canonical-department-generator 29/29 PASS
-- **Forensic doc** — `docs/studio-os/investigations/CROSS_DEPARTMENT_RENDER_CONTAMINATION.md`
-
-**Previous:** Industry Pack Neutrality (`718ff3556`); Canonical Department Queue (`2e0a1ff7b`); NBP Approval Gate (`0f4ce7a55`).
+**Previous:** Cross-Department Render Contamination (`def341fa9`); Industry Pack Neutrality (`718ff3556`).
 
 ---
 

@@ -81,8 +81,19 @@ export type FounderRenderDiagnostics = {
   architecturalFingerprint?: string[];
   referencePackageVersion?: string | null;
   promptHash?: string | null;
+  negativePromptHash?: string | null;
   jobId?: string | null;
   renderId?: string | null;
+  departmentDnaVersion?: string | null;
+  departmentDnaRevision?: number | null;
+  goldenReferenceVersion?: string | null;
+  goldenReferenceRevision?: number | null;
+  promptCompilerVersion?: string | null;
+  cameraVersion?: string | null;
+  lightingVersion?: string | null;
+  materialVersion?: string | null;
+  qualityVersion?: string | null;
+  companyDnaVersion?: string | null;
 };
 
 export function buildFounderRenderJobView(input: {

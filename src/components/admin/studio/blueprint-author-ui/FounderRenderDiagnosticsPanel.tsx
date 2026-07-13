@@ -52,11 +52,22 @@ export function FounderRenderDiagnosticsPanel({ diagnostics, onCopy }: Props) {
         </button>
       </div>
       <Row label="department" value={diagnostics.departmentId ?? '—'} />
+      <Row label="DNA version" value={diagnostics.departmentDnaVersion ?? '—'} />
+      <Row label="DNA revision" value={diagnostics.departmentDnaRevision != null ? String(diagnostics.departmentDnaRevision) : '—'} />
+      <Row label="golden ref version" value={diagnostics.goldenReferenceVersion ?? '—'} />
+      <Row label="golden ref revision" value={diagnostics.goldenReferenceRevision != null ? String(diagnostics.goldenReferenceRevision) : '—'} />
+      <Row label="prompt compiler" value={diagnostics.promptCompilerVersion ?? '—'} />
+      <Row label="company DNA" value={diagnostics.companyDnaVersion ?? '—'} />
       <Row label="department class" value={diagnostics.departmentClass ?? '—'} />
       <Row label="blueprint" value={diagnostics.blueprintId ?? '—'} />
       <Row label="shell spec" value={diagnostics.shellSpecId ?? '—'} />
       <Row label="prompt" value={diagnostics.promptVersion} />
       <Row label="prompt hash" value={diagnostics.promptHash ?? '—'} />
+      <Row label="negative prompt hash" value={diagnostics.negativePromptHash ?? '—'} />
+      <Row label="camera version" value={diagnostics.cameraVersion ?? '—'} />
+      <Row label="lighting version" value={diagnostics.lightingVersion ?? '—'} />
+      <Row label="material version" value={diagnostics.materialVersion ?? '—'} />
+      <Row label="quality version" value={diagnostics.qualityVersion ?? '—'} />
       <Row label="reference package" value={diagnostics.referencePackageVersion ?? '—'} />
       <Row label="model" value={diagnostics.providerModel ?? '—'} />
       <Row label="model route" value={diagnostics.modelRoute ?? '—'} />

@@ -55,6 +55,8 @@ export async function insertFounderRenderJob(input: {
   cacheKey?: string;
   architecturalFingerprint?: string[];
   referencePackageVersion?: string;
+  compilerDiagnostics?: Record<string, unknown>;
+  negativePromptHash?: string;
 }): Promise<{ ok: true; jobId: string } | { ok: false; error: string }> {
   const admin = getSupabaseAdminServiceRole();
   const jobId = `frj-${randomUUID()}`;
@@ -92,6 +94,8 @@ export async function insertFounderRenderJob(input: {
       architecturalFingerprint: input.architecturalFingerprint ?? [],
       referencePackageVersion: input.referencePackageVersion ?? null,
       artifactIntent: FOUNDER_RENDER_ARTIFACT_INTENT,
+      negativePromptHash: input.negativePromptHash ?? null,
+      ...(input.compilerDiagnostics ?? {}),
     },
   });
   if (error) return { ok: false, error: error.message };

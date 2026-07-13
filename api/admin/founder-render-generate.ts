@@ -86,6 +86,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       cacheKey: dispatch.cacheKey,
       architecturalFingerprint: dispatch.architecturalFingerprint,
       referencePackageVersion: dispatch.referencePackageVersion,
+      compilerDiagnostics: dispatch.compilerDiagnostics,
+      negativePromptHash: dispatch.negativePromptHash,
     });
 
     if (!inserted.ok) {

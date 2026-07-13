@@ -98,6 +98,8 @@ export type FounderRenderGenerateResult =
       architecturalFingerprint?: string[];
       blueprintRevision?: number;
       referencePackageVersion?: string;
+      compilerDiagnostics?: Record<string, unknown>;
+      negativePromptHash?: string;
     }
   | { ok: false; code: string; error: string; missingRole?: string };
 
@@ -201,6 +203,11 @@ export async function prepareFounderRenderDispatch(
       'architecturalFingerprint' in promptBundle ? promptBundle.architecturalFingerprint : undefined,
     blueprintRevision: input.plan.metadata.revision,
     referencePackageVersion: cacheIdentity.referenceRevision,
+    compilerDiagnostics:
+      'compilerDiagnostics' in promptBundle
+        ? (promptBundle.compilerDiagnostics as Record<string, unknown>)
+        : undefined,
+    negativePromptHash: 'negativePromptHash' in promptBundle ? promptBundle.negativePromptHash : undefined,
   };
 }
 
