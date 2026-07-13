@@ -51,10 +51,10 @@ describe('Experience Lab Command Dock locations', () => {
 describe('Experience Lab Command Dock presentation', () => {
   const css = readFileSync(resolve(V2_DIR, 'experience-lab-v2.css'), 'utf8');
 
-  it('uses larger logo, rounded corners, and transparent dock background', () => {
-    expect(css).toContain('* 1.2)');
-    expect(css).toContain('border-radius: 0 0 14px 14px');
-    expect(css).toMatch(/\.elab-cmd\s*\{[\s\S]*?rgba\(14, 16, 22, 0\.52\)/);
+  it('uses larger logo matching avatar circle and shared avatar size token', () => {
+    expect(css).toContain('--elab-cmd-avatar-size: 28px');
+    expect(css).toMatch(/\.elab-cmd__logo-img\s*\{[\s\S]*?height:\s*var\(--elab-cmd-avatar-size\)/);
+    expect(css).toMatch(/\.elab-cmd__avatar\s*\{[\s\S]*?height:\s*var\(--elab-cmd-avatar-size\)/);
   });
 
   it('centers overflow dots vertically with panel border (no top-50% transform override)', () => {

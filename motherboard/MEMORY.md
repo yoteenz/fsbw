@@ -48808,3 +48808,22 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 - Updated icon tests + `EXPERIENCE_LAB_ICON_CATALOG.md`
 
 **Prior issue:** Earlier sprint used a reconstructed placeholder sheet when attachment bytes were unavailable — founder URL is now authoritative source.
+
+---
+
+## 2026-07-13 — Experience Lab V2: workbench orb 3× + Command Dock logo height match
+
+**Founder request (this turn):** (1) Increase workbench center orb size by 3×; (2) size Command Dock logo to exact same height as account avatar circle on the right.
+
+**Prior context in chat:** Full EL V2 component review arc — icon sprite system (labeled atlas + `<ExperienceLabIcon />`), Command Dock polish, bottom clutter removal (approval bridge / dept dock / global Studio Orb), workbench tiered layout with compact CSS nav orb (was ~26px), Command Dock logo swap to `IMG_6238.webp`, founder Supabase sprite source sheet.
+
+**Shipped:**
+
+- **`experience-lab-v2.css`**
+  - Workbench nav orb 3×: `--elab-wb-nav-orb-size: 78px` (was 26px), `--elab-wb-nav-orb-core-size: 66px` (was 22px); ring inset/shadow scaled; nav logo wrap padding increased
+  - Command Dock shared size token: `--elab-cmd-avatar-size: 28px` on `.elab-cmd--tiered`; `.elab-cmd__logo-img` height/max-height and `.elab-cmd__avatar` width/height both use token (logo matches 28px account circle)
+- **Tests** — `experience-lab-v2.test.ts` + `experience-lab-v2-command-dock.test.ts` assert avatar token, logo height var, orb 78/66px; fixed broken workbench layout test wrapper; 45/45 PASS
+
+**Spatial Architecture Review:** SKIPPED — CSS sizing polish only, no new surfaces.
+
+**One commit + one push** on `master` via `agent-commit.sh`.

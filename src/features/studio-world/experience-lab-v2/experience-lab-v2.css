@@ -253,6 +253,7 @@ body.elab-v2-fixed-shell-active {
   flex-direction: column;
   border-radius: 0 0 14px 14px;
   overflow: hidden;
+  --elab-cmd-avatar-size: 28px;
 }
 
 .elab-cmd__row {
@@ -299,8 +300,8 @@ body.elab-v2-fixed-shell-active {
 .elab-cmd__logo-img {
   flex-shrink: 0;
   width: auto;
-  height: calc((9px * 1.2 + 6px * 1.2) * 1.2);
-  max-height: calc(22px * 1.2);
+  height: var(--elab-cmd-avatar-size);
+  max-height: var(--elab-cmd-avatar-size);
   object-fit: contain;
   object-position: left center;
   display: block;
@@ -374,8 +375,8 @@ body.elab-v2-fixed-shell-active {
 }
 
 .elab-cmd__avatar {
-  width: 28px;
-  height: 28px;
+  width: var(--elab-cmd-avatar-size);
+  height: var(--elab-cmd-avatar-size);
   border-radius: 50%;
   border: 1px solid var(--elab-gold);
   background: rgba(197, 160, 89, 0.15);
@@ -1340,7 +1341,7 @@ button.elab-cmd__meta-chip {
   flex: 0 0 auto;
   display: grid;
   place-items: center;
-  padding: 4px 10px;
+  padding: 6px 14px;
   border-left: 1px solid rgba(255, 255, 255, 0.05);
   border-right: 1px solid rgba(255, 255, 255, 0.05);
   height: 100%;
@@ -1349,8 +1350,10 @@ button.elab-cmd__meta-chip {
 
 .elab-founder-wb__nav-orb {
   position: relative;
-  width: 26px;
-  height: 26px;
+  --elab-wb-nav-orb-size: 78px;
+  --elab-wb-nav-orb-core-size: 66px;
+  width: var(--elab-wb-nav-orb-size);
+  height: var(--elab-wb-nav-orb-size);
   flex-shrink: 0;
   display: grid;
   place-items: center;
@@ -1358,24 +1361,24 @@ button.elab-cmd__meta-chip {
 
 .elab-founder-wb__nav-orb-ring {
   position: absolute;
-  inset: -2px;
+  inset: -6px;
   border-radius: 50%;
-  border: 0.5px solid rgba(255, 255, 255, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.35);
   opacity: 0.55;
   pointer-events: none;
 }
 
 .elab-founder-wb__nav-orb-core {
   position: relative;
-  width: 22px;
-  height: 22px;
+  width: var(--elab-wb-nav-orb-core-size);
+  height: var(--elab-wb-nav-orb-core-size);
   border-radius: 50%;
   overflow: hidden;
   background: radial-gradient(circle at 32% 28%, rgba(255, 255, 255, 0.92) 0%, rgba(201, 169, 98, 0.35) 42%, rgba(0, 0, 0, 0.15) 100%);
   box-shadow:
-    0 4px 12px rgba(0, 0, 0, 0.35),
-    inset 0 1px 0 rgba(255, 255, 255, 0.55),
-    inset 0 -4px 10px rgba(201, 169, 98, 0.12);
+    0 12px 36px rgba(0, 0, 0, 0.35),
+    inset 0 3px 0 rgba(255, 255, 255, 0.55),
+    inset 0 -12px 30px rgba(201, 169, 98, 0.12);
 }
 
 .elab-founder-wb__nav-orb-glow {

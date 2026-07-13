@@ -121,7 +121,19 @@ describe('Experience Lab V2 — Fixed application shell', () => {
     expect(prodPage).not.toContain('fixedViewport');
   });
 
-  it('workbench uses three-row tiered layout with scrollable editing tools', () => {
+  it('uses larger logo matching avatar circle and shared avatar size token', () => {
+    const css = readV2Source('experience-lab-v2.css');
+    expect(css).toContain('--elab-cmd-avatar-size: 28px');
+    expect(css).toMatch(/\.elab-cmd__logo-img\s*\{[\s\S]*?height:\s*var\(--elab-cmd-avatar-size\)/);
+  });
+
+  it('workbench center orb is 3x prior size', () => {
+    const css = readV2Source('experience-lab-v2.css');
+    expect(css).toContain('--elab-wb-nav-orb-size: 78px');
+    expect(css).toContain('--elab-wb-nav-orb-core-size: 66px');
+  });
+
+  it('workbench uses tiered layout with world nav and orb', () => {
     const wb = readV2Source('ExperienceLabFounderWorkbench.tsx');
     expect(wb).toContain('elab-founder-wb--tiered');
     expect(wb).toContain('EXPERIENCE LAB WORKBENCH');
