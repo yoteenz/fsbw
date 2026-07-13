@@ -47952,3 +47952,24 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 
 **Verify:** GitHub deployment status for new SHA shows `Vercel – fsbw` success; founder Regenerate Preview on studio-os tab.
 
+---
+
+## 2026-07-13 — P0 EL → CDS Manufacturing Pipeline sprint (full conversation)
+
+**Founder sprint:** Redefine Experience Lab as Architect (design + Founder Render only) and Creative Director Studio as Manufacturing (approved room + per-asset production). Permanent pipeline: Founder Idea → EL → Blueprint Author → Construction Plan → Founder Render → Founder Approval → CDS → Asset Manufacturing → Asset Registry → Construction Mode → Scene Stack → Living Experience. Approved Founder Render = master reference for all downstream systems.
+
+**Spatial Architecture Review:** APPROVED 4.3 — `docs/studio-os/investigations/SPATIAL_ARCHITECTURE_REVIEW_EL_CDS_PIPELINE.md`. EL = Experience Lab wing; CDS = immersive manufacturing room; no new dashboard; Genesis coordinates handoff.
+
+**Shipped foundation (P0-A):**
+
+- Canon: `docs/studio-os/production/EXPERIENCE_LAB_CDS_MANUFACTURING_PIPELINE.md`
+- Contract: `src/studio-os-core/production-pipeline/` — `ApprovedFounderRenderHandoff`, `buildRoomManufacturingGraph`, validation gates
+- Tests: 4/4 production-pipeline tests
+- Updated `CURRENT_HANDOFF.md`, `KNOWN_BLOCKERS.md` (B1-EL-CDS-Handoff, B1-CDS-RoomGate)
+
+**Documented gaps vs target:** No EL→CDS handoff persistence; CDS `ensureStation` invents rooms; mock Construction Mode; Asset Registry lacks founder-shell-reference.
+
+**Next phases:** P0-B persist handoff on approve + registry row; P0-C CDS gate + shell seed from approved render; P1 per-asset workspace + live re-composite.
+
+**Prior context in chat:** Founder Render deploy issues (2ff12f396 missed Vercel, 6093d8a79 redeploy trigger); brand vault alias for studio-os; auth.user.email fix.
+
