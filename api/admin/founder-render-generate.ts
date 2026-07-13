@@ -5,9 +5,6 @@ export const config = {
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { resolveAdminAuth } from '../_lib/adminAuth.js';
 import type { ConstructionPlan } from '../../src/studio-os-core/blueprint-author/construction-plan-schema.js';
-import { prepareFounderRenderDispatch } from '../_lib/founderRenderGeneration.js';
-import { insertFounderRenderJob } from '../_lib/founderRenderJobs.js';
-import { FOUNDER_RENDER_ROUTE_ID } from '../../src/studio-os-core/founder-render/model-route.js';
 
 function parseBody(req: VercelRequest): Record<string, unknown> | null {
   if (typeof req.body === 'object' && req.body !== null && !Array.isArray(req.body)) {
@@ -27,6 +24,7 @@ function parseBody(req: VercelRequest): Record<string, unknown> | null {
 /**
  * POST /api/admin/founder-render-generate
  * Submit Founder Render™ full-room photoreal preview job.
+ * Heavy generation libs are dynamic-imported after auth to avoid cold-start module failures.
  */
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -48,6 +46,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   const revisionNote = typeof body?.revisionNote === 'string' ? body.revisionNote : null;
+
+  const [{ prepareFounderRenderDispatch }, { insertFounderRenderJob }, { FOUNDER_RENDER_ROUTE_ID }] =
+    await Promise.all([
+      import('../_lib/founderRenderGeneration.js'),
+      import('../_lib/founderRenderJobs.js'),
+      import('../../src/studio-os-core/founder-render/model-route.js'),
+    ]);
 
   const dispatch = await prepareFounderRenderDispatch({
     plan,

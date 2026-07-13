@@ -8,13 +8,13 @@
 
 ## Current sprint
 
-**P0 — True Founder Render™ (Photoreal Full-Room Preview)**
+**P0 — Founder Render Production Verification & Regression Audit**
 
-**Status: Repair shipped — Founder Mobile Verification Pending**
+**Status: NOT Production Ready — surgical API fix shipped, re-probe + founder E2E required**
 
-Replaced procedural CSS Founder Review hero with durable Founder Render jobs (`founder-full-room-preview`), FAL `fal-ai/nano-banana-pro/edit`, brand-asset preflight, approval gate, and engineering blueprint collapsed to drawer.
+Automated regression: **348/348 PASS**. Production probe at `ac187a55c`: `founder-render-generate` returned `FUNCTION_INVOCATION_FAILED`. Surgical fix: dynamic imports + vercel `includeFiles`. Report: `docs/studio-os/investigations/FOUNDER_RENDER_PRODUCTION_VERIFICATION.md`.
 
-**Previous:** P0 FS vs Studio OS Generation Parity (`74f298ca2`); P1 Founder Review Experience™ (`ce6afb293`).
+**Previous:** True Founder Render (`193f0f24f`); Experience Lab loading fix (`ac187a55c`).
 
 ---
 
@@ -22,7 +22,8 @@ Replaced procedural CSS Founder Review hero with durable Founder Render jobs (`f
 
 | ID | Blocker | Status |
 |----|---------|--------|
-| **B1-FounderRender** | Photoreal full-room Founder Render on mobile Founder Review | **Verify Pending** — code shipped |
+| **B1-FounderRender-API** | `founder-render-generate` cold-start 500 | **Fix shipped** — re-probe after deploy |
+| **B1-FounderRender** | Photoreal full-room Founder Render on mobile Founder Review | **Verify Pending** |
 | **B1-Parity** | Salvageable opaque layer extraction on real device | **Verify Pending** — repair shipped |
 | **B1-Layer1** | Layer 1 mobile Safari/Chrome with `?compilerDiag=1` | **Verify Pending** |
 | **B1-E2E-Completion** | Top bar vs viewport consistency | **Verify Pending** |

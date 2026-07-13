@@ -5,7 +5,6 @@ export const config = {
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { resolveAdminAuth } from '../_lib/adminAuth.js';
 import type { ConstructionPlan } from '../../src/studio-os-core/blueprint-author/construction-plan-schema.js';
-import { pollFounderRenderToCompletion } from '../_lib/founderRenderGeneration.js';
 import {
   getFounderRenderJob,
   updateFounderRenderJobFailed,

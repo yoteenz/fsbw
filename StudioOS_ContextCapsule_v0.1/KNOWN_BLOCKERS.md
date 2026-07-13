@@ -45,7 +45,8 @@
 | **Repair** | `founder-full-room-preview` artifact intent + `studio_founder_render_jobs` + FAL NBP edit + brand preflight + approval gate |
 | **Model** | `fal-ai/nano-banana-pro/edit` via `nano-banana-pro-founder-full-room` |
 | **Verify** | Mobile Founder Review shows real photoreal image; Approve & Build gated until READY |
-| **Status** | **Verify Pending** — code shipped; founder mobile proof pending |
+| **API verify** | `POST /api/admin/founder-render-generate` must return JSON (not FUNCTION_INVOCATION_FAILED) |
+| **Status** | **Verify Pending** — generate API fix shipped; founder mobile proof pending |
 
 ### Documented Fact
 

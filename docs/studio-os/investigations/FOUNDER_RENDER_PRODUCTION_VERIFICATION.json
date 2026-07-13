@@ -1,0 +1,47 @@
+{
+  "reportVersion": "founder-render-production-verification.v1",
+  "generatedAt": "2026-07-13T02:15:00.000Z",
+  "deploymentSha": "ac187a55c",
+  "repairSha": "pending",
+  "verdict": "NOT_PRODUCTION_READY",
+  "exactBlocker": "POST /api/admin/founder-render-generate FUNCTION_INVOCATION_FAILED + founder mobile E2E pending",
+  "automatedRegression": {
+    "testsPassed": 348,
+    "testFiles": 35,
+    "build": "pass"
+  },
+  "productionProbes": {
+    "founderRenderGenerate": { "method": "POST", "http": 500, "body": "FUNCTION_INVOCATION_FAILED", "pass": false },
+    "founderRenderGenerateOptions": { "method": "OPTIONS", "http": 500, "pass": false },
+    "founderRenderStatus": { "method": "GET", "http": 401, "code": "MISSING_TOKEN", "pass": true },
+    "founderRenderApprove": { "method": "POST", "http": 401, "code": "MISSING_TOKEN", "pass": true },
+    "studioBuilderGenerate": { "method": "POST", "http": 500, "pass": false, "note": "possible B0 regression" },
+    "ephemeralAuthorization": { "method": "POST", "http": 500, "pass": false, "note": "possible B0 regression" }
+  },
+  "supabase": {
+    "projectId": "hyycomvcaqxxvyrfupes",
+    "studio_founder_render_jobs": { "exists": true, "rls": true, "rows": 0 }
+  },
+  "matrix": {
+    "founderRenderCode": "PASS",
+    "founderRenderProductionApi": "FAIL",
+    "blueprintReviewUi": "PASS",
+    "approvalGate": "PASS",
+    "blueprintRevisionLock": "PASS",
+    "brandAssetGrounding": "PASS",
+    "constructionMode": "PASS",
+    "experienceLabAutomated": "PASS",
+    "experienceLabProductionE2E": "FAIL",
+    "sceneStack": "PASS",
+    "qualityGuard": "PASS",
+    "immuneSystem": "PASS",
+    "creativeDirectorStudio": "PASS",
+    "fullRegressionSuite": "PASS",
+    "founderMobileVerification": "FAIL"
+  },
+  "surgicalFixes": [
+    "founder-render-generate dynamic imports after auth",
+    "vercel.json includeFiles for founder-render routes",
+    "founder-render-production-verification.test.ts"
+  ]
+}

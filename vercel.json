@@ -72,6 +72,18 @@
       "maxDuration": 30,
       "includeFiles": "api/_lib/creativeProduction/studio-os-server.bundle.js"
     },
+    "api/admin/founder-render-generate.ts": {
+      "maxDuration": 120,
+      "includeFiles": "api/_lib/creativeProduction/studio-os-server.bundle.js,public/assets/marble-half.png"
+    },
+    "api/admin/founder-render-status.ts": {
+      "maxDuration": 120,
+      "includeFiles": "api/_lib/creativeProduction/studio-os-server.bundle.js,public/assets/marble-half.png"
+    },
+    "api/admin/founder-render-approve.ts": {
+      "maxDuration": 30,
+      "includeFiles": "api/_lib/creativeProduction/studio-os-server.bundle.js"
+    },
     "api/admin/context-capsule.ts": {
       "maxDuration": 60,
       "includeFiles": "StudioOS_ContextCapsule_v0.1/**,api/_lib/context-capsule-build-manifest.json,api/_lib/context-capsule-release.json",

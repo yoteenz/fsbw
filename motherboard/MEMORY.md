@@ -47827,3 +47827,25 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 
 **Remaining:** Founder re-test Experience Lab on mobile after deploy.
 
+---
+
+## 2026-07-13 — P0 Founder Render Production Verification & Regression Audit (full conversation)
+
+**Context:** Verification sprint only — no new UX. Validate 97-file Founder Render deployment, regression audit, forensic report. Founder Render NOT complete until production E2E proven.
+
+**Automated regression:** 348/348 tests PASS, build PASS, Supabase `studio_founder_render_jobs` verified (0 rows, RLS on).
+
+**Production probes (fsbw.vercel.app @ ac187a55c):**
+- `GET founder-render-status` → JSON 401 ✅
+- `POST founder-render-approve` → JSON 401 ✅
+- `POST founder-render-generate` → 500 FUNCTION_INVOCATION_FAILED ❌ (OPTIONS also 500)
+- `POST studio-builder-generate` + ephemeral → 500 at probe (possible B0 regression / transient)
+
+**Code verification PASS:** blueprint revision stale lock, brand marble preflight, approval gate, no procedural hero, construction mode 19 tests, scene stack/quality guard/immune tests.
+
+**Verdict:** ❌ NOT Production Ready. Exact blocker: generate API cold-start failure + founder mobile E2E pending.
+
+**Surgical fix shipped:** dynamic imports in `founder-render-generate.ts`; removed dead import in status; vercel.json includeFiles for founder-render routes; `founder-render-production-verification.test.ts` (9 tests); forensic report `docs/studio-os/investigations/FOUNDER_RENDER_PRODUCTION_VERIFICATION.{md,json}`.
+
+**Remaining:** Re-probe generate API post-deploy; founder mobile E2E; re-probe studio-builder if still 500.
+
