@@ -127,7 +127,12 @@ export function FounderReviewExperience({ workflow, renderAfterApproval }: Props
             onImageLoaded={() => setPreviewImageLoaded(true)}
             onImageError={() => setPreviewImageLoaded(false)}
           />
-          <FounderReviewMetadata summary={summary} plan={bundle.plan} renderJob={founderRenderJob} />
+          <FounderReviewMetadata
+            summary={summary}
+            plan={bundle.plan}
+            renderJob={founderRenderJob}
+            isGeneratingPreview={isGeneratingPreview}
+          />
           <FounderRenderDiagnosticsPanel diagnostics={founderRenderJob.diagnostics} />
 
           <div style={{ marginTop: 16 }}>

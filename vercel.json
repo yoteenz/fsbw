@@ -74,11 +74,11 @@
     },
     "api/admin/founder-render-generate.ts": {
       "maxDuration": 120,
-      "includeFiles": "api/_lib/creativeProduction/studio-os-server.bundle.js,public/assets/marble-half.png"
+      "includeFiles": "api/_lib/creativeProduction/studio-os-server.bundle.js,api/_lib/founderRenderGeneration.ts,api/_lib/founderRenderJobs.ts,api/_lib/studioBuilderGeneration.ts,public/assets/marble-half.png"
     },
     "api/admin/founder-render-status.ts": {
       "maxDuration": 120,
-      "includeFiles": "api/_lib/creativeProduction/studio-os-server.bundle.js,public/assets/marble-half.png"
+      "includeFiles": "api/_lib/creativeProduction/studio-os-server.bundle.js,api/_lib/founderRenderGeneration.ts,api/_lib/founderRenderJobs.ts,api/_lib/studioBuilderGeneration.ts,public/assets/marble-half.png"
     },
     "api/admin/founder-render-approve.ts": {
       "maxDuration": 30,

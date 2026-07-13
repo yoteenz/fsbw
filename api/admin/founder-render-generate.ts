@@ -47,54 +47,64 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   const revisionNote = typeof body?.revisionNote === 'string' ? body.revisionNote : null;
 
-  const [{ prepareFounderRenderDispatch }, { insertFounderRenderJob }, { FOUNDER_RENDER_ROUTE_ID }] =
-    await Promise.all([
-      import('../_lib/founderRenderGeneration.js'),
-      import('../_lib/founderRenderJobs.js'),
-      import('../../src/studio-os-core/founder-render/model-route.js'),
-    ]);
+  try {
+    const [{ prepareFounderRenderDispatch }, { insertFounderRenderJob }, { FOUNDER_RENDER_ROUTE_ID }] =
+      await Promise.all([
+        import('../_lib/founderRenderGeneration.js'),
+        import('../_lib/founderRenderJobs.js'),
+        import('../_lib/creativeProduction/studio-os-server.bundle.js'),
+      ]);
 
-  const dispatch = await prepareFounderRenderDispatch({
-    plan,
-    actorId: auth.actor.email,
-    revisionNote,
-  });
+    const dispatch = await prepareFounderRenderDispatch({
+      plan,
+      actorId: auth.actor.email,
+      revisionNote,
+    });
 
-  if (!dispatch.ok) {
-    return res.status(422).json({
+    if (!dispatch.ok) {
+      return res.status(422).json({
+        ok: false,
+        error: dispatch.error,
+        code: dispatch.code,
+        missingRole: dispatch.missingRole,
+      });
+    }
+
+    const inserted = await insertFounderRenderJob({
+      plan,
+      modelRoute: FOUNDER_RENDER_ROUTE_ID,
+      providerModel: dispatch.model,
+      promptHash: dispatch.promptHash,
+      effectivePrompt: dispatch.effectivePrompt,
+      referenceCount: dispatch.referenceCount,
+      brandMaterialRefs: dispatch.brandMaterialRefs,
+      providerRequestId: dispatch.providerRequestId,
+      revisionNote,
+    });
+
+    if (!inserted.ok) {
+      return res.status(500).json({ ok: false, error: inserted.error, code: 'PERSISTENCE_FAILED' });
+    }
+
+    return res.status(202).json({
+      ok: true,
+      jobId: inserted.jobId,
+      status: 'generating',
+      artifactIntent: 'founder-full-room-preview',
+      modelRoute: FOUNDER_RENDER_ROUTE_ID,
+      providerModel: dispatch.model,
+      promptVersion: dispatch.promptVersion,
+      blueprintRevision: plan.metadata.revision,
+      providerRequestId: dispatch.providerRequestId,
+      referenceCount: dispatch.referenceCount,
+    });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Founder render generation failed';
+    console.error('[founder-render-generate] unhandled', err);
+    return res.status(500).json({
       ok: false,
-      error: dispatch.error,
-      code: dispatch.code,
-      missingRole: dispatch.missingRole,
+      error: message,
+      code: 'FOUNDER_RENDER_HANDLER_ERROR',
     });
   }
-
-  const inserted = await insertFounderRenderJob({
-    plan,
-    modelRoute: FOUNDER_RENDER_ROUTE_ID,
-    providerModel: dispatch.model,
-    promptHash: dispatch.promptHash,
-    effectivePrompt: dispatch.effectivePrompt,
-    referenceCount: dispatch.referenceCount,
-    brandMaterialRefs: dispatch.brandMaterialRefs,
-    providerRequestId: dispatch.providerRequestId,
-    revisionNote,
-  });
-
-  if (!inserted.ok) {
-    return res.status(500).json({ ok: false, error: inserted.error, code: 'PERSISTENCE_FAILED' });
-  }
-
-  return res.status(202).json({
-    ok: true,
-    jobId: inserted.jobId,
-    status: 'generating',
-    artifactIntent: 'founder-full-room-preview',
-    modelRoute: FOUNDER_RENDER_ROUTE_ID,
-    providerModel: dispatch.model,
-    promptVersion: dispatch.promptVersion,
-    blueprintRevision: plan.metadata.revision,
-    providerRequestId: dispatch.providerRequestId,
-    referenceCount: dispatch.referenceCount,
-  });
 }

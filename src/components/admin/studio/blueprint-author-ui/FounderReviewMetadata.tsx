@@ -28,6 +28,7 @@ type Props = {
   summary: ConstructionPlanSummary;
   plan: ConstructionPlan;
   renderJob?: FounderRenderJobView | null;
+  isGeneratingPreview?: boolean;
 };
 
 function formatDuration(ms: number): string {
@@ -35,7 +36,16 @@ function formatDuration(ms: number): string {
   return `${Math.round(ms / 60_000)}m`;
 }
 
-function previewStatusLabel(status: FounderRenderJobView['status']): string {
+function previewStatusLabel(
+  status: FounderRenderJobView['status'],
+  options?: { failureReason?: string | null; isGeneratingPreview?: boolean }
+): string {
+  if (options?.failureReason && status !== 'ready' && status !== 'approved') {
+    return 'Failed';
+  }
+  if (status === 'generating' && options?.isGeneratingPreview === false) {
+    return 'Failed';
+  }
   switch (status) {
     case 'no_preview':
       return 'No Preview';
@@ -57,9 +67,17 @@ function previewStatusLabel(status: FounderRenderJobView['status']): string {
 }
 
 /** Founder-facing metadata — no engineering terminology. */
-export function FounderReviewMetadata({ summary, plan, renderJob }: Props) {
+export function FounderReviewMetadata({ summary, plan, renderJob, isGeneratingPreview }: Props) {
   const items: Array<[string, string]> = [
-    ['Preview Status', renderJob ? previewStatusLabel(renderJob.status) : 'No Preview'],
+    [
+      'Preview Status',
+      renderJob
+        ? previewStatusLabel(renderJob.status, {
+            failureReason: renderJob.failureReason,
+            isGeneratingPreview,
+          })
+        : 'No Preview',
+    ],
     ['Blueprint Revision', String(renderJob?.currentBlueprintRevision ?? plan.metadata.revision)],
     ['Model Used', renderJob?.providerModel ?? 'Pending generation'],
     ['Founder Material Library', plan.materialSet.materialSetId.replace(/-/g, ' ')],

@@ -5,7 +5,7 @@ export const config = {
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { resolveAdminAuth } from '../_lib/adminAuth.js';
 import { approveFounderRenderJob, getFounderRenderJob } from '../_lib/founderRenderJobs.js';
-import { FOUNDER_FULL_ROOM_PREVIEW_PROMPT_VERSION } from '../../src/studio-os-core/founder-render/contract.js';
+import { FOUNDER_FULL_ROOM_PREVIEW_PROMPT_VERSION } from '../_lib/creativeProduction/studio-os-server.bundle.js';
 
 function parseBody(req: VercelRequest): Record<string, unknown> | null {
   if (typeof req.body === 'object' && req.body !== null && !Array.isArray(req.body)) {

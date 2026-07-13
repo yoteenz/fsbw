@@ -10,7 +10,7 @@ import {
   updateFounderRenderJobFailed,
   updateFounderRenderJobReady,
 } from '../_lib/founderRenderJobs.js';
-import { FOUNDER_RENDER_ARTIFACT_INTENT } from '../../src/studio-os-core/founder-render/contract.js';
+import { FOUNDER_RENDER_ARTIFACT_INTENT } from '../_lib/creativeProduction/studio-os-server.bundle.js';
 
 /**
  * GET /api/admin/founder-render-status?jobId=...
@@ -50,7 +50,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           room: { roomId: row.room_id },
         } as ConstructionPlan;
         const { finalizeStudioBuilderFromFalUrl } = await import('../_lib/studioBuilderGeneration.js');
-        const route = (await import('../../src/studio-os-core/founder-render/model-route.js')).resolveFounderRenderModelRoute('16:9');
+        const { resolveFounderRenderModelRoute } = await import('../_lib/creativeProduction/studio-os-server.bundle.js');
+        const route = resolveFounderRenderModelRoute('16:9');
         const finalized = await finalizeStudioBuilderFromFalUrl(
           {
             departmentId: row.organization_id,

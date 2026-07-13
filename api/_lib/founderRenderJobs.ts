@@ -1,6 +1,9 @@
 import { randomUUID } from 'crypto';
 import type { ConstructionPlan } from '../../src/studio-os-core/blueprint-author/construction-plan-schema.js';
-import { FOUNDER_RENDER_ARTIFACT_INTENT, FOUNDER_FULL_ROOM_PREVIEW_PROMPT_VERSION } from '../../src/studio-os-core/founder-render/contract.js';
+import {
+  FOUNDER_RENDER_ARTIFACT_INTENT,
+  FOUNDER_FULL_ROOM_PREVIEW_PROMPT_VERSION,
+} from './creativeProduction/studio-os-server.bundle.js';
 import { getSupabaseAdminServiceRole } from './supabase.js';
 
 const TABLE = 'studio_founder_render_jobs';

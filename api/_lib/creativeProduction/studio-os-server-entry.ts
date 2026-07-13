@@ -25,3 +25,19 @@ export {
 } from '../../../src/studio-os-core/creative-production/lineage.js';
 
 export { compileAssetIntent } from '../../../src/studio-os-core/asset-compiler/compiler.js';
+
+export {
+  FOUNDER_RENDER_ARTIFACT_INTENT,
+  FOUNDER_FULL_ROOM_PREVIEW_PROMPT_VERSION,
+} from '../../../src/studio-os-core/founder-render/contract.js';
+
+export {
+  resolveFounderRenderModelRoute,
+  FOUNDER_RENDER_ROUTE_ID,
+} from '../../../src/studio-os-core/founder-render/model-route.js';
+
+export { buildFounderFullRoomPreviewPrompt } from '../../../src/studio-os-core/founder-render/prompt-builder.js';
+
+export { runFounderRenderPreflight } from '../../../src/studio-os-core/founder-render/preflight.js';
+
+export { resolveBrandMaterialPackage } from '../../../src/studio-os-core/creative-production/brand-asset-grounding/resolver.js';

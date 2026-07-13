@@ -52,10 +52,22 @@ export async function requestFounderRenderGenerate(input: {
   try {
     data = text ? (JSON.parse(text) as FounderRenderGenerateResponse) : { ok: false };
   } catch {
-    data = { ok: false, error: `Founder render failed (${res.status})` };
+    const snippet = text.trim().slice(0, 200);
+    data = {
+      ok: false,
+      error: snippet
+        ? `Founder render failed (${res.status}): ${snippet}`
+        : `Founder render failed (${res.status})`,
+      code: 'FOUNDER_RENDER_NON_JSON',
+    };
   }
-  if (!res.ok && data.ok !== false) {
-    return { ok: false, error: data.error ?? `Founder render failed (${res.status})`, code: data.code };
+  if (!res.ok) {
+    return {
+      ok: false,
+      error: data.error ?? `Founder render failed (${res.status})`,
+      code: data.code ?? 'FOUNDER_RENDER_HTTP_ERROR',
+      missingRole: data.missingRole,
+    };
   }
   return data;
 }

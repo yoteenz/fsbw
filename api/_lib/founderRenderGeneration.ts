@@ -4,9 +4,12 @@
 import { join } from 'node:path';
 import { readFileSync, existsSync } from 'node:fs';
 import type { ConstructionPlan } from '../../src/studio-os-core/blueprint-author/construction-plan-schema.js';
-import { buildFounderFullRoomPreviewPrompt } from '../../src/studio-os-core/founder-render/prompt-builder.js';
-import { resolveFounderRenderModelRoute } from '../../src/studio-os-core/founder-render/model-route.js';
-import { runFounderRenderPreflight } from '../../src/studio-os-core/founder-render/preflight.js';
+import {
+  buildFounderFullRoomPreviewPrompt,
+  resolveBrandMaterialPackage,
+  resolveFounderRenderModelRoute,
+  runFounderRenderPreflight,
+} from './creativeProduction/studio-os-server.bundle.js';
 import {
   finalizeStudioBuilderFromFalUrl,
   fetchStudioBuilderFalResult,
@@ -76,7 +79,7 @@ export async function prepareFounderRenderDispatch(
     return { ok: false, code: preflight.code, error: preflight.message, missingRole: preflight.missingRole };
   }
 
-  const brandPkg = (await import('../../src/studio-os-core/creative-production/brand-asset-grounding/resolver.js')).resolveBrandMaterialPackage({
+  const brandPkg = resolveBrandMaterialPackage({
     organizationId: input.plan.metadata.organizationId,
     materialRequests: [
       { slot: 'floor', requestedMaterial: 'white polished marble', brandRole: 'primary-marble-texture', required: true },

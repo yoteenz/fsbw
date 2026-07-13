@@ -47849,3 +47849,25 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 
 **Remaining:** Re-probe generate API post-deploy; founder mobile E2E; re-probe studio-builder if still 500.
 
+---
+
+## 2026-07-13 — Founder Render mobile 500 fix — bundle + handler hardening (full conversation)
+
+**Context:** Founder reported mobile screenshot: "Founder Preview Failed" / "Founder render failed (500)" on Reception Blueprint rev 14 in Experience Lab Founder Review. Preview metadata showed "Generating" while hero showed failed — UI state desync.
+
+**Root cause:** Authenticated `POST /api/admin/founder-render-generate` still crashed at Vercel cold start because handler dynamic-imported `src/studio-os-core/founder-render/model-route.js` (cross-root NFT omission). `studio-os-server.bundle.js` had not been rebuilt after adding founder-render exports to `studio-os-server-entry.ts`.
+
+**Repair shipped:**
+
+- Rebuilt `api/_lib/creativeProduction/studio-os-server.bundle.js` with founder-render exports (prompt, preflight, model-route, contract, brand resolver)
+- `founderRenderGeneration.ts` + `founderRenderJobs.ts` import founder-render core from bundle (not `src/`)
+- `founder-render-generate.ts` — bundle import for `FOUNDER_RENDER_ROUTE_ID`; full try/catch returns JSON `{ ok: false, code: FOUNDER_RENDER_HANDLER_ERROR }`
+- `founder-render-status.ts` + `founder-render-approve.ts` — contract/model-route imports moved to bundle
+- `vercel.json` — expanded `includeFiles` for generate/status routes (bundle + `founderRenderGeneration.ts`, `founderRenderJobs.ts`, `studioBuilderGeneration.ts`, marble ref)
+- Client `founderRender/api.ts` — better non-JSON 500 error surfacing with code
+- `FounderReviewMetadata` — sync preview status with failureReason / `isGeneratingPreview` so metadata shows Failed when dispatch fails
+
+**Tests:** founder-render production verification 9/9 + full founder-render suite 24/24 pass.
+
+**Remaining:** Founder re-test Generate Founder Preview on mobile after deploy (use **frontal-slayer** org for brand marble vault); confirm photoreal image reaches READY state.
+

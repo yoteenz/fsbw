@@ -794,9 +794,441 @@ function compileAssetIntent(intent) {
     registryEntry
   };
 }
+
+// src/studio-os-core/founder-render/contract.ts
+var FOUNDER_RENDER_ARTIFACT_INTENT = "founder-full-room-preview";
+var FOUNDER_FULL_ROOM_PREVIEW_PROMPT_VERSION = "founder-full-room-preview-prompt.v1";
+
+// src/studio-os-core/creative-production/model-registry/routes.ts
+var SCENE_STACK_SHELL_FAL_MODEL = "fal-ai/nano-banana-pro/edit";
+
+// src/studio-os-core/founder-render/model-route.ts
+var FOUNDER_RENDER_ROUTE_ID = "nano-banana-pro-founder-full-room";
+var FOUNDER_RENDER_MODEL = SCENE_STACK_SHELL_FAL_MODEL;
+function resolveFounderRenderModelRoute(aspectRatio = "16:9") {
+  return {
+    routeId: FOUNDER_RENDER_ROUTE_ID,
+    provider: "fal",
+    providerModel: FOUNDER_RENDER_MODEL,
+    generationMode: "image-to-image",
+    aspectRatio,
+    outputFormat: "png",
+    outputResolution: "4K",
+    referencePolicy: "brand-material-references-only",
+    artifactIntent: "founder-full-room-preview"
+  };
+}
+
+// src/studio-os-core/founder-render/prompt-builder.ts
+import { createHash } from "node:crypto";
+function hashPrompt(text) {
+  return createHash("sha256").update(text).digest("hex").slice(0, 16);
+}
+function describeAssets(plan) {
+  const heroes = plan.heroAssets.map((a) => {
+    const socket = plan.assetSockets.find((s) => s.socketId === a.socketId);
+    return `${socket?.label ?? a.assetId} (${a.assetClass})`;
+  });
+  const furniture = plan.furnitureSet.assets.map((a) => {
+    const socket = plan.assetSockets.find((s) => s.socketId === a.socketId);
+    return `${socket?.label ?? a.assetId}`;
+  });
+  const decor = plan.decorSet.assets.map((a) => {
+    const socket = plan.assetSockets.find((s) => s.socketId === a.socketId);
+    return `${socket?.label ?? a.assetId}`;
+  });
+  return [
+    heroes.length ? `Hero assets: ${heroes.join("; ")}.` : "",
+    furniture.length ? `Furniture: ${furniture.join("; ")}.` : "",
+    decor.length ? `Decor: ${decor.join("; ")}.` : ""
+  ].filter(Boolean).join(" ");
+}
+function buildFounderFullRoomPreviewPrompt(input) {
+  const { plan, brandPackage } = input;
+  const camera = plan.cameraAnchors.find((c) => c.purpose === "overview" || c.purpose === "hero") ?? plan.cameraAnchors[0];
+  const materials = plan.materialSet.materialIds.join(", ");
+  const assetSummary = describeAssets(plan);
+  const sections = [
+    `ROOM IDENTITY: ${plan.room.displayName} \u2014 ${plan.room.purpose}. Building ${plan.building.displayName}, floor ${plan.floor.displayName}.`,
+    `ROOM PURPOSE: ${plan.room.purpose}. Organization visual language: ${plan.styleProfile.visualLanguage}.`,
+    `COMPLETE-ROOM REQUIREMENT: Generate ONE complete photoreal interior room. This is a full environment preview for founder approval \u2014 NOT an isolated object, NOT a diagram, NOT a blueprint, NOT CAD, NOT wireframe, NOT procedural clay, NOT abstract geometry, NOT a UI mockup.`,
+    `ARCHITECTURAL LAYOUT: Architecture ${plan.architecture.architectureId} v${plan.architecture.version}. Shell spec ${plan.architecture.shellSpecId}. Circulation and interaction zones per plan. Collision zones respected.`,
+    `HERO AND FURNITURE PLACEMENT: ${assetSummary}`,
+    `BRAND MATERIAL ASSIGNMENTS: ${materials}. ${brandPackage.promptSections.organizationMaterialAssignments}`,
+    `LIGHTING PROFILE: ${plan.lightingProfile.profileId} \u2014 ${plan.lightingProfile.colorTemperatureK}K, reflection ${plan.lightingProfile.reflectionIntensity}, shadow softness ${plan.lightingProfile.shadowSoftness}, ambient ${plan.lightingProfile.ambientProfile}.`,
+    `CAMERA AND COMPOSITION: ${camera?.label ?? "Wide interior"} \u2014 ${camera?.position ?? "eye-level wide interior"}, ${camera?.orientation ?? "natural architectural lens"}. Wide interior composition with clear foreground, midground, and background. No extreme fisheye. No dutch angle.`,
+    `IMMERSIVE 3D-WORLD: Photoreal immersive explorable interior. Architecture, furniture, lighting, and hero assets appear together in one cohesive finished room visualization.`,
+    `FOUNDER AESTHETIC: Luxury editorial interior photography quality. Trustworthy creative visualization of the intended finished room before manufacturing.`,
+    `ASSET SEPARABILITY: Objects should read as distinct elements within the room even though this is one full-scene render.`,
+    brandPackage.promptSections.forbiddenMaterialSubstitutions ? `FORBIDDEN OUTPUTS: ${brandPackage.promptSections.forbiddenMaterialSubstitutions}` : "",
+    ...plan.negativeRules.length ? [`PLAN NEGATIVE RULES: ${plan.negativeRules.join(" \xB7 ")}`] : [],
+    input.founderRevisionNote ? `FOUNDER REVISION: ${input.founderRevisionNote}` : "",
+    `OUTPUT: ${FOUNDER_FULL_ROOM_PREVIEW_PROMPT_VERSION} \xB7 16:9 cinematic interior \xB7 4K photoreal.`
+  ].filter(Boolean);
+  const prompt = sections.join("\n\n");
+  const negativePrompt = [
+    "isolated object on transparent background",
+    "product cutout",
+    "wireframe",
+    "blueprint diagram",
+    "CAD view",
+    "floor plan",
+    "bounding boxes",
+    "clay block proxy",
+    "procedural placeholder",
+    "UI mockup",
+    "checkerboard transparency",
+    "generic random marble",
+    "Carrara substitute",
+    "Calacatta substitute"
+  ].join(", ");
+  return {
+    prompt,
+    negativePrompt,
+    promptVersion: FOUNDER_FULL_ROOM_PREVIEW_PROMPT_VERSION,
+    promptHash: hashPrompt(prompt)
+  };
+}
+
+// src/studio-os-core/creative-production/brand-asset-grounding/vault.ts
+function brandAssetChecksum(seed) {
+  let h = 2166136261;
+  for (let i = 0; i < seed.length; i++) {
+    h ^= seed.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return `ba-${(h >>> 0).toString(16).padStart(8, "0")}`;
+}
+var FRONTAL_SLAYER_MARBLE_PATH = "/assets/marble-half.png";
+var FRONTAL_SLAYER_RED = "#EB1C24";
+var FRONTAL_SLAYER_VAULT = [
+  {
+    organizationId: "frontal-slayer",
+    brandProfileId: "frontal-slayer-brand-v1",
+    brandAssetSetId: "frontal-slayer-materials-v1",
+    assetRole: "primary-marble-texture",
+    assetId: "fs-primary-marble-half",
+    assetType: "texture",
+    canonicalUrl: FRONTAL_SLAYER_MARBLE_PATH,
+    storagePath: "public/assets/marble-half.png",
+    checksum: brandAssetChecksum("frontal-slayer:primary-marble-texture:marble-half.png"),
+    mimeType: "image/png",
+    width: 2048,
+    height: 2048,
+    colorSpace: "sRGB",
+    repeatPolicy: "tile",
+    cropPolicy: "full",
+    referenceStrengthPolicy: "strong-material",
+    materialScale: "architectural-surface",
+    materialOrientation: "horizontal-vein",
+    approvedForGeneration: true,
+    approvedForPublicOutput: true,
+    sensitivity: "public",
+    active: true,
+    version: "1.0.0",
+    updatedAt: "2026-07-12T00:00:00.000Z"
+  },
+  {
+    organizationId: "frontal-slayer",
+    brandProfileId: "frontal-slayer-brand-v1",
+    brandAssetSetId: "frontal-slayer-materials-v1",
+    assetRole: "color-palette",
+    assetId: "fs-brand-red",
+    assetType: "palette",
+    canonicalUrl: "",
+    storagePath: "",
+    checksum: brandAssetChecksum(`frontal-slayer:color:${FRONTAL_SLAYER_RED}`),
+    mimeType: "application/json",
+    width: 0,
+    height: 0,
+    colorSpace: "sRGB",
+    repeatPolicy: "none",
+    cropPolicy: "none",
+    referenceStrengthPolicy: "strong-material",
+    materialScale: "accent-illumination",
+    materialOrientation: "n/a",
+    approvedForGeneration: true,
+    approvedForPublicOutput: true,
+    sensitivity: "public",
+    active: true,
+    version: "1.0.0",
+    updatedAt: "2026-07-12T00:00:00.000Z"
+  }
+];
+var CANONICAL_FINISH_POLICIES = {
+  "clear-crystal-acrylic": {
+    promptInstruction: "Clear crystal acrylic panels \u2014 optical clarity, subtle internal refraction, premium glass-like acrylic without yellowing.",
+    useMode: "finish-policy"
+  },
+  "mirror-polished-chrome": {
+    promptInstruction: "Mirror-polished chrome trim \u2014 high reflectivity, crisp specular highlights, luxury metal edge treatment.",
+    useMode: "finish-policy"
+  },
+  "subtle-crimson-illumination": {
+    promptInstruction: `Subtle crimson accent illumination using exact Frontal Slayer Red ${FRONTAL_SLAYER_RED} \u2014 restrained glow, not oversaturated.`,
+    useMode: "finish-policy"
+  }
+};
+var ORGANIZATION_VAULTS = {
+  "frontal-slayer": FRONTAL_SLAYER_VAULT
+};
+function getOrganizationBrandVault(organizationId) {
+  return ORGANIZATION_VAULTS[organizationId] ?? [];
+}
+function findBrandAssetByRole(organizationId, role) {
+  const vault = getOrganizationBrandVault(organizationId);
+  return vault.find((a) => a.assetRole === role && a.active && a.approvedForGeneration) ?? null;
+}
+function getFrontalSlayerRedToken() {
+  return FRONTAL_SLAYER_RED;
+}
+
+// src/studio-os-core/creative-production/brand-asset-grounding/resolver.ts
+var MATERIAL_SYNONYMS = {
+  "white polished marble": "primary-marble-texture",
+  "polished white marble": "primary-marble-texture",
+  "approved marble": "primary-marble-texture",
+  "organization marble": "primary-marble-texture",
+  "clear crystal acrylic": "clear-crystal-acrylic",
+  "crystal acrylic": "clear-crystal-acrylic",
+  "mirror-polished chrome": "mirror-polished-chrome",
+  "chrome trim": "mirror-polished-chrome",
+  "crimson illumination": "subtle-crimson-illumination",
+  "subtle crimson illumination": "subtle-crimson-illumination",
+  "subtle red illumination": "subtle-crimson-illumination",
+  "frontal slayer red": "color-token"
+};
+function resolveRoleFromMaterial(requestedMaterial) {
+  const key = requestedMaterial.trim().toLowerCase();
+  return MATERIAL_SYNONYMS[key] ?? null;
+}
+function buildMarblePromptInstruction(orgName) {
+  return [
+    `Use the supplied organization-approved marble texture reference exactly as the material identity for all marble surfaces belonging to ${orgName}.`,
+    "Preserve its base tone, vein character, vein density, vein subtlety, tonal contrast, material scale, and clean luxury appearance.",
+    "Do not replace it with Carrara, Calacatta, generic white marble, dramatic gray-veined marble, gold-veined marble, random luxury stone, or invented veining.",
+    "The reference is material guidance only \u2014 not a room layout or environment photograph."
+  ].join(" ");
+}
+function buildForbiddenSubstitutions() {
+  return [
+    "FORBIDDEN MATERIAL SUBSTITUTIONS:",
+    "Carrara marble",
+    "Calacatta marble",
+    "generic white marble",
+    "dramatic gray-veined marble",
+    "gold-veined marble",
+    "random luxury stone",
+    "invented veining",
+    "substitute marble when approved organization marble is supplied",
+    "generic marble fallback"
+  ].join(" \xB7 ");
+}
+function resolveBrandMaterialPackage(input) {
+  const vault = getOrganizationBrandVault(input.organizationId);
+  if (vault.length === 0 && input.materialRequests.some((r) => r.required !== false)) {
+    return {
+      code: "BRAND_ASSET_REQUIRED_MISSING",
+      missingRole: "primary-marble-texture",
+      organizationId: input.organizationId,
+      message: `No brand vault configured for organization ${input.organizationId}.`
+    };
+  }
+  const orgName = input.organizationName ?? input.organizationId;
+  const profile = vault[0];
+  const slots = [];
+  const referenceUrls = [];
+  const referenceChecksums = [];
+  const colorTokens = {};
+  const materialMappings = {};
+  for (const req of input.materialRequests) {
+    const synonym = req.brandRole ?? resolveRoleFromMaterial(req.requestedMaterial);
+    const required = req.required !== false;
+    if (synonym === "color-token" || req.requestedMaterial.toLowerCase().includes("red")) {
+      const token = getFrontalSlayerRedToken();
+      colorTokens.accentLighting = token;
+      materialMappings[req.slot] = `Frontal Slayer Red ${token}`;
+      slots.push({
+        slot: req.slot,
+        requestedMaterial: req.requestedMaterial,
+        resolvedBrandAssetId: "fs-brand-red",
+        resolvedReferenceUrl: null,
+        checksum: null,
+        useMode: "prompt-token",
+        promptInstruction: CANONICAL_FINISH_POLICIES["subtle-crimson-illumination"].promptInstruction,
+        required,
+        fallbackAllowed: false,
+        referenceRole: "color-reference",
+        referenceWeight: 1,
+        sourceOrganizationId: input.organizationId,
+        appliedToMaterialSlot: req.slot
+      });
+      continue;
+    }
+    if (typeof synonym === "string" && synonym in CANONICAL_FINISH_POLICIES) {
+      const policy = CANONICAL_FINISH_POLICIES[synonym];
+      materialMappings[req.slot] = synonym;
+      slots.push({
+        slot: req.slot,
+        requestedMaterial: req.requestedMaterial,
+        resolvedBrandAssetId: null,
+        resolvedReferenceUrl: null,
+        checksum: null,
+        useMode: "finish-policy",
+        promptInstruction: policy.promptInstruction,
+        required,
+        fallbackAllowed: req.fallbackAllowed ?? false,
+        referenceRole: "material-reference",
+        referenceWeight: 0.6,
+        sourceOrganizationId: input.organizationId,
+        appliedToMaterialSlot: req.slot
+      });
+      continue;
+    }
+    const role = synonym ?? req.brandRole;
+    if (role) {
+      const asset = findBrandAssetByRole(input.organizationId, role);
+      if (!asset && required) {
+        return {
+          code: "BRAND_ASSET_REQUIRED_MISSING",
+          missingRole: role,
+          organizationId: input.organizationId,
+          message: `Required brand asset missing for role ${role} (organization ${input.organizationId}).`
+        };
+      }
+      if (asset) {
+        if (asset.organizationId !== input.organizationId) {
+          return {
+            code: "BRAND_ASSET_REQUIRED_MISSING",
+            missingRole: role,
+            organizationId: input.organizationId,
+            message: `Cross-organization brand asset blocked for role ${role}.`
+          };
+        }
+        materialMappings[req.slot] = role;
+        if (asset.canonicalUrl) {
+          referenceUrls.push(asset.canonicalUrl);
+          referenceChecksums.push(asset.checksum);
+        }
+        const promptInstruction = role === "primary-marble-texture" ? buildMarblePromptInstruction(orgName) : `Use approved organization ${role} reference exactly.`;
+        slots.push({
+          slot: req.slot,
+          requestedMaterial: req.requestedMaterial,
+          resolvedBrandAssetId: asset.assetId,
+          resolvedReferenceUrl: asset.canonicalUrl || null,
+          checksum: asset.checksum,
+          useMode: asset.canonicalUrl ? "reference-image" : "prompt-token",
+          promptInstruction,
+          required,
+          fallbackAllowed: false,
+          referenceRole: "material-reference",
+          referenceWeight: 0.85,
+          sourceOrganizationId: input.organizationId,
+          appliedToMaterialSlot: req.slot
+        });
+        continue;
+      }
+    }
+    if (required) {
+      return {
+        code: "BRAND_ASSET_REQUIRED_MISSING",
+        missingRole: "primary-marble-texture",
+        organizationId: input.organizationId,
+        message: `Cannot resolve required material: ${req.requestedMaterial}`
+      };
+    }
+  }
+  const assignmentLines = slots.map((s) => `${s.slot}: ${materialMappings[s.slot] ?? s.requestedMaterial}`).join(" \xB7 ");
+  const referenceLines = slots.filter((s) => s.resolvedReferenceUrl).map(
+    (s) => `${s.appliedToMaterialSlot} \u2190 ${s.resolvedBrandAssetId} (${s.referenceRole}, weight ${s.referenceWeight})`
+  ).join(" \xB7 ");
+  return {
+    organizationId: input.organizationId,
+    brandProfileId: profile?.brandProfileId ?? `${input.organizationId}-brand`,
+    brandAssetSetId: profile?.brandAssetSetId ?? `${input.organizationId}-materials`,
+    materialSlots: slots,
+    referenceUrls: [...new Set(referenceUrls)],
+    referenceChecksums,
+    colorTokens,
+    materialMappings,
+    promptSections: {
+      organizationMaterialAssignments: `ORGANIZATION MATERIAL ASSIGNMENTS: ${assignmentLines}`,
+      exactBrandAssetReferences: referenceLines ? `EXACT BRAND-ASSET REFERENCES: ${referenceLines}` : "EXACT BRAND-ASSET REFERENCES: finish-policy tokens only.",
+      forbiddenMaterialSubstitutions: buildForbiddenSubstitutions()
+    }
+  };
+}
+function isBrandAssetResolutionError(result) {
+  return "code" in result && result.code === "BRAND_ASSET_REQUIRED_MISSING";
+}
+
+// src/studio-os-core/creative-production/artifact-intent.ts
+function validatorExistsForIntent(intent) {
+  return [
+    "final-scene",
+    "final-scene-preview",
+    "environment-shell",
+    "isolated-object",
+    "object-group",
+    "transparent-overlay",
+    "material-map",
+    "campaign-composite",
+    "logo-component",
+    "full-logo",
+    "packaging-composite",
+    "campaign-model-replacement",
+    "founder-full-room-preview"
+  ].includes(intent);
+}
+
+// src/studio-os-core/founder-render/preflight.ts
+function runFounderRenderPreflight(plan) {
+  if (!validatorExistsForIntent("founder-full-room-preview")) {
+    return { ok: false, code: "NO_VALIDATOR_FOR_ARTIFACT_INTENT", message: "Founder render validator missing." };
+  }
+  const route = resolveFounderRenderModelRoute("16:9");
+  if (!route.providerModel) {
+    return { ok: false, code: "MODEL_ROUTE_UNAVAILABLE", message: "Founder render model route unavailable." };
+  }
+  const brandResult = resolveBrandMaterialPackage({
+    organizationId: plan.metadata.organizationId,
+    organizationName: plan.metadata.organizationId,
+    materialRequests: [
+      { slot: "floor", requestedMaterial: "white polished marble", brandRole: "primary-marble-texture", required: true },
+      { slot: "desk", requestedMaterial: "mirror-polished chrome", brandRole: "chrome-finish-reference", required: false },
+      { slot: "accent", requestedMaterial: "subtle crimson illumination", brandRole: "approved-lighting-reference", required: false }
+    ]
+  });
+  if (isBrandAssetResolutionError(brandResult)) {
+    return {
+      ok: false,
+      code: brandResult.code,
+      message: brandResult.message,
+      missingRole: brandResult.missingRole
+    };
+  }
+  const refs = brandResult.referenceUrls.filter((u) => u.length > 0);
+  if (refs.length === 0) {
+    return {
+      ok: false,
+      code: "BRAND_ASSET_REQUIRED_MISSING",
+      message: "Required brand material references missing for founder render.",
+      missingRole: "primary-marble-texture"
+    };
+  }
+  return {
+    ok: true,
+    brandReferenceUrls: refs,
+    materialSetId: plan.materialSet.materialSetId
+  };
+}
 export {
   DEMO_AUTHORIZATION_ID,
+  FOUNDER_FULL_ROOM_PREVIEW_PROMPT_VERSION,
+  FOUNDER_RENDER_ARTIFACT_INTENT,
+  FOUNDER_RENDER_ROUTE_ID,
   buildAuthorizationPayloadForSigning,
+  buildFounderFullRoomPreviewPrompt,
   buildRegistryLineageMetadata,
   compileAssetIntent,
   createDemoAssetIntent,
@@ -805,5 +1237,8 @@ export {
   hasCompleteValidationCompileContext,
   lineageToRegistryRelationships,
   representGovernedGenerationRequest,
+  resolveBrandMaterialPackage,
+  resolveFounderRenderModelRoute,
+  runFounderRenderPreflight,
   validateAuthorizationStructure
 };
