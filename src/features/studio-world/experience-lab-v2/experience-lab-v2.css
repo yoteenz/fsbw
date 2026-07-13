@@ -1186,12 +1186,13 @@ button.elab-cmd__meta-chip {
   justify-content: center;
   padding: 8px 10px;
   background: rgba(0, 0, 0, 0.22);
+  border-bottom: none;
 }
 
 .elab-founder-wb__title {
   margin: 0;
   font-size: 8px;
-  font-weight: 800;
+  font-weight: 400;
   letter-spacing: 0.12em;
   color: var(--elab-gold);
   line-height: 1.2;
@@ -1222,17 +1223,18 @@ button.elab-cmd__meta-chip {
 }
 
 .elab-founder-wb__tool {
-  flex: 0 0 auto;
+  flex: 0 0 calc((100% - 30px) / 6);
   scroll-snap-align: start;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 5px;
-  min-width: 92px;
-  max-width: 108px;
-  min-height: 58px;
-  padding: 8px 8px;
+  gap: 4px;
+  width: calc((100% - 30px) / 6);
+  min-width: calc((100% - 30px) / 6);
+  max-width: calc((100% - 30px) / 6);
+  min-height: 50px;
+  padding: 5px 3px;
   margin-right: 6px;
   border: 1px solid var(--elab-border);
   border-radius: 5px;
@@ -1260,11 +1262,25 @@ button.elab-cmd__meta-chip {
 }
 
 .elab-founder-wb__tool-label {
-  font-size: 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  width: 100%;
+  font-size: 5px;
   font-weight: 700;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.05em;
   text-align: center;
-  line-height: 1.25;
+  line-height: 1.1;
+}
+
+.elab-founder-wb__tool-label-line {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .elab-founder-wb__row--world-nav {
@@ -1326,14 +1342,59 @@ button.elab-cmd__meta-chip {
   padding: 4px 10px;
   border-left: 1px solid rgba(255, 255, 255, 0.05);
   border-right: 1px solid rgba(255, 255, 255, 0.05);
+  height: 100%;
+  min-height: 0;
 }
 
-.elab-founder-wb__nav-logo {
-  height: 34px;
-  width: auto;
-  max-width: 52px;
-  object-fit: contain;
-  display: block;
+.elab-founder-wb__nav-orb {
+  position: relative;
+  width: 26px;
+  height: 26px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+}
+
+.elab-founder-wb__nav-orb-ring {
+  position: absolute;
+  inset: -2px;
+  border-radius: 50%;
+  border: 0.5px solid rgba(255, 255, 255, 0.35);
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.elab-founder-wb__nav-orb-core {
+  position: relative;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: radial-gradient(circle at 32% 28%, rgba(255, 255, 255, 0.92) 0%, rgba(201, 169, 98, 0.35) 42%, rgba(0, 0, 0, 0.15) 100%);
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    inset 0 -4px 10px rgba(201, 169, 98, 0.12);
+}
+
+.elab-founder-wb__nav-orb-glow {
+  position: absolute;
+  inset: 18%;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 45%, rgba(255, 248, 240, 0.75) 0%, rgba(201, 169, 98, 0.2) 55%, transparent 72%);
+  pointer-events: none;
+}
+
+.elab-founder-wb__nav-orb-lens {
+  position: absolute;
+  top: 12%;
+  left: 18%;
+  width: 38%;
+  height: 28%;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.72);
+  filter: blur(0.4px);
+  pointer-events: none;
 }
 
 .elab-founder-wb--tabbed {
@@ -1814,8 +1875,11 @@ button.elab-cmd__meta-chip {
 
 .elab-app-shell--mobile .elab-founder-wb__tool,
 .elab-app-shell--tablet .elab-founder-wb__tool {
-  min-width: 84px;
-  min-height: 54px;
+  flex-basis: calc((100% - 30px) / 6);
+  width: calc((100% - 30px) / 6);
+  min-width: calc((100% - 30px) / 6);
+  max-width: calc((100% - 30px) / 6);
+  min-height: 46px;
 }
 
 .elab-app-shell--mobile .elab-founder-wb--tabbed,

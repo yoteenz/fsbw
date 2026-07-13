@@ -48742,3 +48742,23 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 **Not changed:** Experience Lab runtime heartbeat (internal tick/subscribe), black-box Section H (diagMode only), live-presence analytics heartbeat.
 
 **One commit + one push** on `master` via `agent-commit.sh`.
+
+---
+
+## 2026-07-13 — Experience Lab V2 Workbench polish (full conversation)
+
+**Founder request (this turn):** Workbench updates — (1) replace center logo with orb so it stops pushing/nudging layout, (2) remove border below EXPERIENCE LAB WORKBENCH title and match font weight to Command Dock ARCHITECTURE STUDIO subtitle, (3) wrap editing-tool labels on two lines and narrow panels so six fit per row.
+
+**Prior context in chat:** Heartbeat debug overlay hidden by default (`fdcb137fd`); extensive EL V2 component review work (Command Dock, Workbench tiered layout, icon sprite system).
+
+**Shipped:**
+
+- **`ExperienceLabFounderWorkbench`** — center nav logo `<img>` replaced with compact CSS Studio Orb badge (`elab-founder-wb__nav-orb`, 22–26px fixed, no async image load)
+- **Title row** — `border-bottom: none` on title row; title `font-weight: 400` (matches `.elab-cmd__subtitle`)
+- **Editing tools** — `splitWorkbenchToolLabel()` in `experience-lab-v2-workbench-config.ts`; two-line labels in workbench + workbench dock; tool panels `calc((100% - 30px) / 6)` width so six visible per viewport row (extended six still horizontal scroll)
+- **CSS** — `experience-lab-v2.css` orb gem styles, tool label stack, mobile/tablet six-across sizing
+- **Tests** — 68/68 PASS (added split-label test + orb wiring assertions)
+
+**Spatial Architecture Review:** SKIPPED — presentation-only workbench polish in existing review harness.
+
+**One commit + one push** on `master` via `agent-commit.sh`.

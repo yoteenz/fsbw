@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { ELAB_V2_COMPOSITION } from './experience-lab-v2-composition';
 import {
   EXPERIENCE_LAB_WORKBENCH_EDITING_TOOLS,
+  splitWorkbenchToolLabel,
   type WorkbenchEditingToolId,
 } from './experience-lab-v2-workbench-config';
 
@@ -16,7 +17,9 @@ export function ExperienceLabWorkbenchDock({ onMoreOpen: _onMoreOpen }: Props) {
   return (
     <nav className="elab-wb-dock elab-wb-dock--pro" {...{ [ELAB_V2_COMPOSITION.workbenchDock]: '' }} aria-label="Experience Lab tools">
       <div className="elab-wb-dock__bar elab-founder-wb__tools-scroll" role="toolbar">
-        {EXPERIENCE_LAB_WORKBENCH_EDITING_TOOLS.map((tool) => (
+        {EXPERIENCE_LAB_WORKBENCH_EDITING_TOOLS.map((tool) => {
+          const [line1, line2] = splitWorkbenchToolLabel(tool.label);
+          return (
           <button
             key={tool.id}
             type="button"
@@ -26,9 +29,13 @@ export function ExperienceLabWorkbenchDock({ onMoreOpen: _onMoreOpen }: Props) {
             onClick={() => setActiveTool(tool.id)}
           >
             <span className="elab-wb-dock__icon elab-founder-wb__tool-icon" aria-hidden>{tool.icon}</span>
-            <span className="elab-wb-dock__label elab-founder-wb__tool-label">{tool.label}</span>
+            <span className="elab-wb-dock__label elab-founder-wb__tool-label">
+              <span className="elab-founder-wb__tool-label-line">{line1}</span>
+              {line2 ? <span className="elab-founder-wb__tool-label-line">{line2}</span> : null}
+            </span>
           </button>
-        ))}
+          );
+        })}
       </div>
     </nav>
   );

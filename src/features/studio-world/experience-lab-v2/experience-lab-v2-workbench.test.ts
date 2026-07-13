@@ -5,6 +5,7 @@ import {
   EXPERIENCE_LAB_WORKBENCH_TOOLS_PRIMARY,
   EXPERIENCE_LAB_WORKBENCH_WORLD_NAV,
   resolveExperienceLabWorkbenchCenterLogoUrl,
+  splitWorkbenchToolLabel,
 } from './experience-lab-v2-workbench-config';
 
 describe('Experience Lab Workbench config', () => {
@@ -34,5 +35,11 @@ describe('Experience Lab Workbench config', () => {
 
   it('resolves center logo path from Supabase public storage', () => {
     expect(resolveExperienceLabWorkbenchCenterLogoUrl()).toContain('D2161224-8335-4CE3-A4D8-794014DDAD32.png');
+  });
+
+  it('splits editing tool labels into two display lines', () => {
+    expect(splitWorkbenchToolLabel('ARCHITECTURAL TOOLS')).toEqual(['ARCHITECTURAL', 'TOOLS']);
+    expect(splitWorkbenchToolLabel('MATERIAL LIBRARY')).toEqual(['MATERIAL', 'LIBRARY']);
+    expect(splitWorkbenchToolLabel('BUDGET FORECAST')).toEqual(['BUDGET', 'FORECAST']);
   });
 });

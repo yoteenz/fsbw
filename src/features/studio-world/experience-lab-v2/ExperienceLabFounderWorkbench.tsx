@@ -5,7 +5,7 @@ import { ELAB_V2_COMPOSITION } from './experience-lab-v2-composition';
 import {
   EXPERIENCE_LAB_WORKBENCH_EDITING_TOOLS,
   EXPERIENCE_LAB_WORKBENCH_WORLD_NAV,
-  resolveExperienceLabWorkbenchCenterLogoUrl,
+  splitWorkbenchToolLabel,
   type WorkbenchEditingToolId,
   type WorkbenchWorldNavId,
 } from './experience-lab-v2-workbench-config';
@@ -20,6 +20,18 @@ type Props = {
 
 function WorkbenchNavIcon({ name }: { name: ExperienceLabIconName }) {
   return <ExperienceLabIcon name={name} size="sm" decorative />;
+}
+
+function WorkbenchNavOrb() {
+  return (
+    <div className="elab-founder-wb__nav-orb" aria-hidden>
+      <span className="elab-founder-wb__nav-orb-ring" />
+      <span className="elab-founder-wb__nav-orb-core">
+        <span className="elab-founder-wb__nav-orb-glow" />
+        <span className="elab-founder-wb__nav-orb-lens" />
+      </span>
+    </div>
+  );
 }
 
 /** Three-row Experience Lab Workbench — title · editing tools · world navigation. */
@@ -46,7 +58,9 @@ export function ExperienceLabFounderWorkbench({ model: _model }: Props) {
           role="toolbar"
           aria-label="Editing tools"
         >
-          {EXPERIENCE_LAB_WORKBENCH_EDITING_TOOLS.map((tool) => (
+          {EXPERIENCE_LAB_WORKBENCH_EDITING_TOOLS.map((tool) => {
+            const [line1, line2] = splitWorkbenchToolLabel(tool.label);
+            return (
             <button
               key={tool.id}
               type="button"
@@ -58,9 +72,13 @@ export function ExperienceLabFounderWorkbench({ model: _model }: Props) {
               <span className="elab-founder-wb__tool-icon" aria-hidden>
                 <ExperienceLabIcon name={tool.icon} size="md" decorative active={activeTool === tool.id} />
               </span>
-              <span className="elab-founder-wb__tool-label">{tool.label}</span>
+              <span className="elab-founder-wb__tool-label">
+                <span className="elab-founder-wb__tool-label-line">{line1}</span>
+                {line2 ? <span className="elab-founder-wb__tool-label-line">{line2}</span> : null}
+              </span>
             </button>
-          ))}
+            );
+          })}
         </div>
       </div>
 
@@ -82,13 +100,7 @@ export function ExperienceLabFounderWorkbench({ model: _model }: Props) {
           ))}
 
           <div className="elab-founder-wb__nav-logo-wrap">
-            <img
-              className="elab-founder-wb__nav-logo"
-              src={resolveExperienceLabWorkbenchCenterLogoUrl()}
-              alt=""
-              aria-hidden
-              decoding="async"
-            />
+            <WorkbenchNavOrb />
           </div>
 
           {rightNav.map((item) => (
