@@ -48886,6 +48886,21 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 - **`experience-lab-v2.css`** — `.elab-cmd__location-title` 5→6px; `.elab-cmd__location-subtitle` 4→5px; `.elab-cmd__location-chev` 8→9px (row 2 only; rows 1 & 3 unchanged)
 - **Tests** — location title/subtitle size assertions updated; 9/9 PASS
 
+**One commit + one push** on `master` via `agent-commit.sh`.
+
+---
+
+## 2026-07-13 — Command Dock “EXPERIENCE LAB” title +2px
+
+**Founder request:** Increase size of “Experience Lab” text only beside the logo on Command Dock by 2px (not subtitle, not row 2).
+
+**Prior context in chat:** EL V2 Command Dock typography polish — locations row +1px (`aa446755e`), status row lighter weights, locations pill radius.
+
+**Shipped:**
+
+- **`experience-lab-v2.css`** — `.elab-cmd__title` (EXPERIENCE LAB) 9→11px; `.elab-cmd__subtitle` (ARCHITECTURE STUDIO) unchanged at 6px
+- **Tests** — title 11px assertion added; 9/9 PASS
+
 **Spatial Architecture Review:** SKIPPED — CSS typography polish.
 
 **One commit + one push** on `master` via `agent-commit.sh`.

@@ -65,6 +65,7 @@ describe('Experience Lab Command Dock presentation', () => {
   });
 
   it('adjusts row 2 and row 3 typography independently', () => {
+    expect(css).toMatch(/\.elab-cmd__title\s*\{[\s\S]*?font-size:\s*11px/);
     expect(css).toMatch(/\.elab-cmd__location-title\s*\{[\s\S]*?font-size:\s*6px/);
     expect(css).toMatch(/\.elab-cmd__location-subtitle\s*\{[\s\S]*?font-size:\s*5px/);
     expect(css).toMatch(/\.elab-cmd__status-item\s*\{[\s\S]*?font-size:\s*8px/);
