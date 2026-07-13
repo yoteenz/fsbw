@@ -47997,3 +47997,35 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 
 **Remaining gaps:** P0-B handoff persistence on approve; P0-C CDS room gate; per-asset CDS workspace wiring to use `buildGenerationRoutingRecord` at dispatch persistence layer.
 
+---
+
+## 2026-07-13 — P0 Studio World Municipal Governance™ (full conversation)
+
+**Founder sprint:** Studio World becomes a self-governed digital city. Plan → Review → Permit → Build → Inspect → Approve → Occupy → Expand. Experience Lab = architecture firm; CDS = licensed contractor; Immune System = building inspector; Quality Guard = code enforcement; Founder = property developer.
+
+**Spatial Architecture Review:** APPROVED 4.5 — `docs/studio-os/investigations/SPATIAL_ARCHITECTURE_REVIEW_MUNICIPAL_GOVERNANCE.md`. Municipal Dashboard = data contract for Constitution Hall wing, not generic SaaS page.
+
+**Shipped foundational layer:**
+
+- **StudioWorldMunicipalGovernment™** — `src/studio-os-core/municipal-governance/` — orchestrator `authorizeConstruction()`
+- **Studio World Registry™** — `BEAUTY_HEADQUARTERS_REGISTRY` fixture (Reception, Grand Lobby, Founder Suite, EL, CDS, departments)
+- **Founder World Registry™** — founder HQ installation tracking
+- **Department Mod Registry™** — publication validation (rejects secrets, private assets, customer data)
+- **City Council™** — `reviewCityCouncilPermit()` budget/security/compatibility gate
+- **Permit Engine™** — full workflow, `isPermitValid()`, permit types
+- **Zoning System™** — floor/zone rules, coexistence rejection
+- **Building Code Engine™** — blueprint/render/material/socket validation
+- **Utility Inspection™** — pre-construction resource verification
+- **Occupancy Permit™** — post-construction open gate
+- **Construction Budget Engine™** — AI/GPU/storage/duration forecast
+- **Permit Fee System™** — configurable fees for future monetization
+- **Municipal Ledger™** — auditable municipal decisions
+- **Municipal Dashboard™** — `MunicipalDashboardState` data contract
+- **Integration hooks** — EL, CDS, Immune System, Quality Guard
+- **Canon** — `docs/studio-os/governance/STUDIO_WORLD_MUNICIPAL_GOVERNANCE.md`
+- **Tests** — 20/20 pass; `npm run build` passes
+
+**Documented gaps (P0-B+):** Permit persistence in Supabase; EL/CDS production gates wired to `authorizeConstruction`; Constitution Hall UI for dashboard; marketplace certification badges.
+
+**Prior context in chat:** P1 Model Routing (`68620b38b`); P0 EL→CDS pipeline; Founder Render fixes.
+
