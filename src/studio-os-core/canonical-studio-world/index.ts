@@ -12,4 +12,6 @@ export * from './department-charters';
 export * from './shell-profiles';
 export * from './prompt-contracts';
 export * from './canonical-department-generation';
+export * from './canonical-department-construction-plan';
+export * from './canonical-department-queue';
 export * from './cds-canonical-handoff';

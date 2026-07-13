@@ -78,20 +78,20 @@
 
 ---
 
-## B1-CanonicalDept-Runtime — Canonical department live render queue (PLANNING SHIPPED — RUNTIME PENDING)
+## B1-CanonicalDept-Runtime — Canonical department live render queue (SHIPPED — VERIFY PENDING)
 
 | Field | Detail |
 |-------|--------|
 | **ID** | B1-CanonicalDept-Runtime |
-| **Symptom** | Experience Lab Program A shows registry, charters, batch cost plan — but does not yet dispatch live FAL render jobs for all canonical departments |
-| **Repair** | `canonical-department-generator` sprint shipped registry + UI + API planning + Supabase persistence; runtime queue wiring to `studio_founder_render_jobs` / governed generation is next |
-| **Verify** | Admin selects Experience Lab canonical department → Generate → photoreal landscape appears in Founder Review |
-| **Status** | **Runtime Pending** — planning layer production-ready |
+| **Symptom** | Experience Lab Program A batch panel showed cost plan but Queue button did nothing; no visible queue |
+| **Repair** | `CanonicalDepartmentBatchPanel` wired to `POST /api/admin/canonical-department-generation` action `queue`; `CanonicalDepartmentQueuePanel` shows live jobs; `api/_lib/canonicalDepartmentQueue.ts` dispatches landscape Founder Renders to FAL via `studio_founder_render_jobs` (capacity 4); portrait auto-queued after landscape ready |
+| **Verify** | Admin selects canonical department → confirms → Queue → CANONICAL RENDER QUEUE shows GENERATING → READY with Preview link |
+| **Status** | **Verify Pending** — code shipped; production FAL proof after deploy |
 
 ### Documented Fact
 
-- In-memory registry seeds 25 canonical departments; batch panel requires explicit confirmation before queue dispatch.
-- Industry Pack Program B unchanged and separate from canonical infrastructure.
+- Queue persists in `studio_founder_render_jobs` with `governance_context.program = canonical-studio-world`.
+- Department tree badges update from queue status (QUEUED / GENERATING / READY).
 
 ---
 

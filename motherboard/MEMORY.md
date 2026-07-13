@@ -48247,3 +48247,27 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 
 **One commit + one push** on `master` via `agent-commit.sh`.
 
+---
+
+## 2026-07-13 — Wire canonical department render queue (full conversation)
+
+**Founder request:** Experience Lab Program A Admin Batch Generation did nothing when clicking Queue; needed physical visible queue and live image generation.
+
+**Context:** Prior sprint shipped planning-only `CanonicalDepartmentBatchPanel` (B1-CanonicalDept-Runtime pending). User screenshot showed Founder Suite/Dashboard/Archive NO RENDER with inert Queue button.
+
+**Shipped:**
+
+- **`canonical-department-construction-plan.ts`** — builds Founder Render `ConstructionPlan` per canonical department (`studio-os` brand vault alias)
+- **`canonical-department-queue.ts`** — queue types, batch validation, capacity 4
+- **`api/_lib/canonicalDepartmentQueue.ts`** — inserts `studio_founder_render_jobs` with `governance_context.program=canonical-studio-world`; dispatches FAL via `prepareFounderRenderDispatch`; advances queue; auto-queues portrait after landscape READY
+- **API** — `canonical-department-generation.ts` actions `queue`, `queue-status`, GET `?view=queue`; maxDuration 120
+- **Client** — `src/services/studio/canonicalDepartment/api.ts`, `useCanonicalDepartmentQueue` hook (5s poll while active)
+- **UI** — `CanonicalDepartmentQueuePanel` (physical queue list); `CanonicalDepartmentBatchPanel` wired onClick; `CanonicalDepartmentTree` shows live status badges
+- **vercel.json** — canonical-department-generation bundle includes
+- **Tests** — canonical-department-generator.test.ts 28/28 PASS; build PASS
+- **Docs** — CANONICAL_DEPARTMENT_GENERATION.md queue section; CURRENT_HANDOFF + KNOWN_BLOCKERS B1-CanonicalDept-Runtime → shipped verify-pending
+
+**User flow after deploy:** BUILD STUDIO WORLD → select department → confirm → Queue → scroll to CANONICAL RENDER QUEUE → watch GENERATING → READY → Preview link.
+
+**One commit + one push** on `master` via `agent-commit.sh`.
+

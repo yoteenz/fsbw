@@ -33,6 +33,10 @@ export type FounderRenderJobRow = {
   brand_material_refs: unknown;
   diagnostics: Record<string, unknown>;
   revision_note: string | null;
+  governance_context?: Record<string, unknown>;
+  created_at?: string;
+  updated_at?: string;
+  started_at?: string | null;
 };
 
 export async function insertFounderRenderJob(input: {

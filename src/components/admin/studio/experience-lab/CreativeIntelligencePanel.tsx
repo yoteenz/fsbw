@@ -12,11 +12,13 @@ import { useState } from 'react';
 import { ExperienceLabProgramSelector } from './ExperienceLabProgramSelector';
 import { CanonicalDepartmentTree } from './CanonicalDepartmentTree';
 import { CanonicalDepartmentBatchPanel } from './CanonicalDepartmentBatchPanel';
+import { CanonicalDepartmentQueuePanel } from './CanonicalDepartmentQueuePanel';
 import { IndustryPackSelector } from './IndustryPackSelector';
 import { IndustryPackDepartmentTree } from './IndustryPackDepartmentTree';
 import { FounderModRegistryPanel } from './FounderModRegistryPanel';
 import { CreativeStudioRenderPreview } from './CreativeStudioRenderPreview';
 import { BlueprintAuthorExperienceLabGate } from './BlueprintAuthorExperienceLabGate';
+import { useCanonicalDepartmentQueue } from '../../../../hooks/useCanonicalDepartmentQueue';
 
 const sectionStyle: CSSProperties = {
   padding: '0 16px 20px',
@@ -39,6 +41,7 @@ const btnStyle: CSSProperties = {
 export function CreativeIntelligencePanel() {
   const { program, selectProgram, isStudioWorldProgram, isIndustryPacksProgram } = useExperienceLabProgram();
   const [selectedCanonicalId, setSelectedCanonicalId] = useState<CanonicalMainDepartmentId | null>('experience-lab');
+  const canonicalQueue = useCanonicalDepartmentQueue();
 
   const {
     packOptionId,
@@ -97,8 +100,20 @@ export function CreativeIntelligencePanel() {
           <CanonicalDepartmentTree
             selectedDepartmentId={selectedCanonicalId}
             onSelect={setSelectedCanonicalId}
+            renderStatusByDepartment={canonicalQueue.renderStatusByDepartment()}
           />
-          <CanonicalDepartmentBatchPanel selectedDepartmentId={selectedCanonicalId} />
+          <CanonicalDepartmentBatchPanel
+            selectedDepartmentId={selectedCanonicalId}
+            onQueue={canonicalQueue.submitBatch}
+            submitting={canonicalQueue.submitting}
+            submitError={canonicalQueue.error}
+          />
+          <CanonicalDepartmentQueuePanel
+            queue={canonicalQueue.queue}
+            loading={canonicalQueue.loading}
+            error={canonicalQueue.error}
+            onRefresh={() => void canonicalQueue.refresh()}
+          />
         </>
       ) : null}
 

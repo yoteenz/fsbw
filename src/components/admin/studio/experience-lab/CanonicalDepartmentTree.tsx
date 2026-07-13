@@ -29,10 +29,11 @@ const badgeStyle: CSSProperties = {
 type Props = {
   selectedDepartmentId: CanonicalMainDepartmentId | null;
   onSelect: (id: CanonicalMainDepartmentId) => void;
+  renderStatusByDepartment?: Map<CanonicalMainDepartmentId, string>;
 };
 
 /** Canonical Main Department Registry tree — dynamic from registry, not hardcoded. */
-export function CanonicalDepartmentTree({ selectedDepartmentId, onSelect }: Props) {
+export function CanonicalDepartmentTree({ selectedDepartmentId, onSelect, renderStatusByDepartment }: Props) {
   const tree = useMemo(() => listCanonicalDepartmentTree(), []);
   const [expanded, setExpanded] = useState<Record<string, boolean>>(() =>
     Object.fromEntries(tree.map((t) => [t.category.categoryId, true]))
@@ -91,7 +92,13 @@ export function CanonicalDepartmentTree({ selectedDepartmentId, onSelect }: Prop
                     <span style={badgeStyle}>CANONICAL / GLOBAL</span>
                     <span style={{ color: '#666' }}>{dept.lifecycleState}</span>
                     <span style={{ color: '#666' }}>BP r{dept.blueprintRevision}</span>
-                    <span style={{ color: '#666' }}>{dept.founderRenderId ? 'RENDER' : 'NO RENDER'}</span>
+                    <span style={{ color: '#666' }}>
+                      {renderStatusByDepartment?.get(dept.departmentId)
+                        ? renderStatusByDepartment.get(dept.departmentId)!.toUpperCase()
+                        : dept.founderRenderId
+                          ? 'RENDER'
+                          : 'NO RENDER'}
+                    </span>
                   </div>
                 ))
               : null}

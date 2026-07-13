@@ -35,7 +35,7 @@
 |----|---------|--------|
 | **B1-FounderRender-API** | `founder-render-generate` cold-start 500 | **Fix shipped** — re-probe after deploy |
 | **B1-FounderRender** | Photoreal full-room Founder Render on mobile Founder Review | **Verify Pending** |
-| **B1-CanonicalDept-Runtime** | Canonical department batch dispatch to live FAL render queue | **Not started** — planning/batch UI shipped; runtime queue wiring next |
+| **B1-CanonicalDept-Runtime** | Canonical department batch dispatch to live FAL render queue | **Shipped** — queue button + physical queue panel + FAL dispatch via `studio_founder_render_jobs`; verify on production after deploy |
 | **B1-ModMarketplace-Runtime** | Live marketplace mod purchase/install API + Supabase sync for founder mods | **Not started** — domain logic + schema shipped; production API wiring next |
 | **B1-Parity** | Salvageable opaque layer extraction on real device | **Verify Pending** |
 | **B1-Layer1** | Layer 1 mobile Safari/Chrome with `?compilerDiag=1` | **Verify Pending** |

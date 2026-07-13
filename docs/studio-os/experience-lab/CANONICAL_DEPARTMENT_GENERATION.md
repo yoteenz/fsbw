@@ -86,7 +86,18 @@ Admin batch actions require explicit confirmation and cost review before dispatc
 
 - `ExperienceLabProgramSelector` — Program A vs B
 - `CanonicalDepartmentTree` — dynamic category tree from registry
-- `CanonicalDepartmentBatchPanel` — controlled batch queue
+- `CanonicalDepartmentBatchPanel` — controlled batch queue (dispatches to live Founder Render queue)
+- `CanonicalDepartmentQueuePanel` — physical queue status (queued · generating · ready · failed)
+
+## Canonical render queue (Program A runtime)
+
+1. Select canonical department(s) in **STUDIO WORLD MAIN DEPARTMENTS**
+2. Confirm batch checkbox → **Queue selected department**
+3. Jobs persist to `studio_founder_render_jobs` with `governance_context.program = canonical-studio-world`
+4. **CANONICAL RENDER QUEUE** panel shows live status; auto-refreshes every 5s while jobs are active
+5. Landscape renders dispatch immediately (max 4 concurrent); portrait jobs queue after landscape is READY
+
+API: `POST /api/admin/canonical-department-generation` with `action: queue` | `action: queue-status` · `GET ?view=queue`
 
 ## Founder mod promotion gate
 

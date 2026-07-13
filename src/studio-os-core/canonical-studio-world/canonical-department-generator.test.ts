@@ -17,6 +17,10 @@ import {
   DEPARTMENT_CLASS_REGISTRY,
   buildCanonicalDepartmentPromptContract,
   resolveCanonicalDepartmentModelRoute,
+  buildCanonicalDepartmentConstructionPlan,
+  buildCanonicalBatchQueuePlan,
+  CANONICAL_QUEUE_CAPACITY,
+  isCanonicalQueueActiveStatus,
   isDeprecatedCompanySelector,
   listExperienceLabPackOptions,
   planExperienceLabHeadquartersFromPack,
@@ -306,6 +310,27 @@ describe('Canonical Department Generator™ — Experience Lab UI contract', () 
     });
     expect(plan.confirmed).toBe(true);
     expect(plan.permitRequired).toBe(true);
+  });
+
+  it('canonical construction plan uses studio-os brand vault alias', () => {
+    const built = buildCanonicalDepartmentConstructionPlan('founder-suite', 'landscape');
+    expect(built.ok).toBe(true);
+    if (built.ok) {
+      expect(built.plan.metadata.organizationId).toBe('studio-os');
+      expect(built.plan.room.roomId).toBe('founder-suite');
+      expect(built.plan.room.displayName).toContain('Founder');
+    }
+  });
+
+  it('batch queue plan rejects unconfirmed submit', () => {
+    const blocked = buildCanonicalBatchQueuePlan({ departmentIds: ['founder-archive'], confirmed: false });
+    expect('ok' in blocked && blocked.ok).toBe(false);
+  });
+
+  it('canonical queue capacity is 4 concurrent jobs', () => {
+    expect(CANONICAL_QUEUE_CAPACITY).toBe(4);
+    expect(isCanonicalQueueActiveStatus('generating')).toBe(true);
+    expect(isCanonicalQueueActiveStatus('ready')).toBe(false);
   });
 
   it('production admin route loads on mobile (responsive shell contract)', async () => {

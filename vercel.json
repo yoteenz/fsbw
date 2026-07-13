@@ -84,6 +84,10 @@
       "maxDuration": 30,
       "includeFiles": "api/_lib/creativeProduction/studio-os-server.bundle.js"
     },
+    "api/admin/canonical-department-generation.ts": {
+      "maxDuration": 120,
+      "includeFiles": "api/_lib/creativeProduction/studio-os-server.bundle.js,api/_lib/founderRenderGeneration.ts,api/_lib/founderRenderJobs.ts,api/_lib/studioBuilderGeneration.ts,api/_lib/canonicalDepartmentQueue.ts,public/assets/marble-half.png"
+    },
     "api/admin/context-capsule.ts": {
       "maxDuration": 60,
       "includeFiles": "StudioOS_ContextCapsule_v0.1/**,api/_lib/context-capsule-build-manifest.json,api/_lib/context-capsule-release.json",
@@ -279,7 +283,7 @@
       "headers": [
         {
           "key": "Content-Disposition",
-          "value": "attachment; filename=\"StudioOS_ContextUpdate_v1.0.19.zip\""
+          "value": "attachment; filename=\"StudioOS_ContextUpdate_v1.0.20.zip\""
         },
         {
           "key": "Cache-Control",
@@ -291,11 +295,11 @@
         },
         {
           "key": "X-Capsule-Version",
-          "value": "1.0.19"
+          "value": "1.0.20"
         },
         {
           "key": "X-Capsule-Artifact",
-          "value": "StudioOS_ContextUpdate_v1.0.19.zip"
+          "value": "StudioOS_ContextUpdate_v1.0.20.zip"
         }
       ]
     }

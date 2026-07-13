@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "deltaSequence": 20,
+  "deltaSequence": 21,
   "onboardingPackVersion": "1.2.2",
-  "publishedAt": "2026-07-13T06:24:34.674Z",
-  "gitCommit": "c82cbd81025e4c2a2cc03c2fb961bddcd5ddbc8c",
+  "publishedAt": "2026-07-13T10:30:28.506Z",
+  "gitCommit": "718ff3556ad8809354db639df181e96df5ee3dd1",
   "capsuleVersions": {
     "ai-context": "0.3.2",
     "founder-intelligence": "1.0.0",
@@ -15,9 +15,9 @@
     "ai-context:AI_GLOSSARY.md": "451870b1a4468f35fddf36c95566fd49b470a702e338590ac4941c398855c1e1",
     "ai-context:AI_STYLE_GUIDE.md": "1dc9c1d20dfc195dfa67a826304a98bebd86c8b3550871aa0036577ecab9103d",
     "ai-context:CHATGPT_OPERATING_MANUAL.md": "a382c630ecea6cecec63ac71d83914e8b757375df3fa4432d6de9c19f4f242fa",
-    "ai-context:CURRENT_HANDOFF.md": "69fa5567a9be3cc90f7b501f3b3390447208be603b1a3f224cfafe11c72a8897",
+    "ai-context:CURRENT_HANDOFF.md": "a7edf95cbb28a04b5cb8d7e196d98ac3990e78d906551601a76023b63808de20",
     "ai-context:FOUNDER_PROFILE.md": "ee66fff379d3bc92ff15b40064d69ceec6824908db88c30a3d312432e6756295",
-    "ai-context:KNOWN_BLOCKERS.md": "3276648089decf8bf1ae1530e79fb439a435eda1f0552db3610f4945616e48fd",
+    "ai-context:KNOWN_BLOCKERS.md": "b7afed9a33fad4d3e197ca21c05d16eb0f8f2caa8ec8e48ce611e5b98486424f",
     "ai-context:MANIFEST.md": "f63ed5da27c39fe771a8116464295de54100eb236c1645c395c702415b4e57d9",
     "ai-context:ONBOARDING_REPORT.md": "9955df1e4e025595accbbb849cfff494d219d9357e4a2085e0fa68e814f2fa3b",
     "ai-context:OPEN_QUESTIONS.md": "985c3e458d89d1284bbfa9b802a69c9ef1a574ba1af4f74e1c66749ca2b70220",
@@ -89,5 +89,5 @@
     "collaboration-intelligence:RELATIONSHIP_TO_FOUNDER_INTELLIGENCE_CAPSULE.md": "e627d2c73dbac546f26f57b79532305e562dd1f71e9e3effede8eb0d0b21ae85",
     "collaboration-intelligence:SEARCH_INDEX.md": "724ce8786859dcc183563aa7a2f96ce61d78c0e22b186e939870bb25f1bc753c"
   },
-  "lastDeltaVersion": "1.0.19"
+  "lastDeltaVersion": "1.0.20"
 }
