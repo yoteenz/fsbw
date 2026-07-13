@@ -10,7 +10,11 @@ import { ARCHITECTURAL_DNA_VERSION } from '../schemas/dna-profile';
 import { resolveDepartmentNegativePrompts } from '../references/negative-prompt-library';
 import { FOUNDER_RENDER_PROMPT_COMPILER_VERSION } from '../schemas/compiler-contract';
 
+import { STUDIO_WORLD_STYLE_BIBLE } from '../../studio-world-style/style-bible/registry';
+
 export const ARCHITECTURAL_DNA_REGISTRY_VERSION = 'architectural-dna-registry.v1' as const;
+
+const STYLE_BIBLE_MATERIALS = STUDIO_WORLD_STYLE_BIBLE.materialPhilosophy.universalDefaults;
 
 const DEFAULT_CAMERA: CameraLanguage = {
   desktopComposition: '21:9 hero composition — wide architectural lens, eye-height, signature framing',
@@ -23,15 +27,15 @@ const DEFAULT_CAMERA: CameraLanguage = {
 };
 
 const CANONICAL_MATERIALS: MaterialPalette = {
-  floorMaterial: 'founder-marble — white polished marble',
-  wallMaterial: 'glass, acrylic, OLED display surfaces',
-  ceilingMaterial: 'architectural lighting ceiling with integrated illumination',
-  glassProfile: 'premium architectural glass — reflective, illuminated bezels',
+  floorMaterial: 'founder-marble slot — white polished marble (Style Bible universal)',
+  wallMaterial: `${STYLE_BIBLE_MATERIALS.filter((m) => ['glass', 'acrylic', 'OLED'].some((k) => m.includes(k))).join(', ')} display surfaces`,
+  ceilingMaterial: 'architectural lighting ceiling — Style Bible primary illumination',
+  glassProfile: STUDIO_WORLD_STYLE_BIBLE.worldLanguage.glassTreatments,
   metalPalette: ['champagne brushed aluminum', 'chrome', 'brushed aluminum'],
-  glassPalette: ['architectural glass', 'OLED bezels', 'acrylic surfaces'],
-  stonePalette: ['founder-marble', 'polished stone accents'],
+  glassPalette: ['architectural glass', 'OLED bezels', 'acrylic surfaces', 'transparent displays'],
+  stonePalette: ['premium stone', 'founder-marble'],
   woodPalette: ['minimal architectural wood accents'],
-  colorPalette: ['white marble', 'champagne', 'chrome', 'subtle red illumination'],
+  colorPalette: ['white marble', 'champagne', 'chrome', 'subtle brand accent illumination'],
 };
 
 type DnaOverride = Partial<ArchitecturalDnaProfile>;

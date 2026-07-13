@@ -9,6 +9,8 @@ import type { CanonicalMainDepartmentId } from './canonical-department-registry'
 import { getCanonicalDepartmentRecord } from './canonical-department-registry';
 import { resolveDepartmentCharter } from './department-charters';
 import { resolveDepartmentFingerprint } from './department-architectural-fingerprints';
+import { UNIVERSAL_COMMAND_DOCK } from '../studio-world-style/command-dock/command-dock-system';
+import { UNIVERSAL_WORKBENCH } from '../studio-world-style/workbench/workbench-system';
 
 export const DEPARTMENT_BLUEPRINT_BUILDER_VERSION = 'department-blueprint-builder.v1' as const;
 
@@ -34,13 +36,13 @@ function buildSpecFromFingerprint(departmentId: CanonicalMainDepartmentId): Depa
     assetId: `${departmentId}-command-dock`,
     assetClass: 'command-dock-shell',
     socketId: 'CommandDockSocket',
-    label: 'Integrated blank command dock',
+    label: `${UNIVERSAL_COMMAND_DOCK.objectId} — integrated blank command dock`,
   };
   const workbenchSocket = {
     assetId: `${departmentId}-workbench`,
     assetClass: 'workbench-shell',
     socketId: 'WorkbenchSocket',
-    label: 'Integrated blank workbench',
+    label: `${UNIVERSAL_WORKBENCH.objectId} — integrated blank workbench`,
   };
 
   const heroFromFingerprint = fp.signatureElements.slice(0, 3).map((el, i) => ({

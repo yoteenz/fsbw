@@ -10,6 +10,11 @@ import { resolveGoldenReferencePack, listGoldenReferenceAssetPaths } from '../re
 import { resolveDepartmentNegativePrompts } from '../references/negative-prompt-library';
 import type { FounderRenderCompileRequest, FounderRenderCompileResult } from '../schemas/compiler-contract';
 import { FOUNDER_RENDER_PROMPT_COMPILER_VERSION } from '../schemas/compiler-contract';
+import { buildStyleBiblePromptSection } from '../../studio-world-style/style-bible/registry';
+import { buildCommandDockPromptSection } from '../../studio-world-style/command-dock/command-dock-system';
+import { buildWorkbenchPromptSection, mapDepartmentToWorkbenchProfile } from '../../studio-world-style/workbench/workbench-system';
+import { buildDesignTokenPromptSection } from '../../studio-world-style/design-tokens/export';
+import { validateWorldCohesion } from '../../studio-world-style/validators/world-cohesion-validator';
 
 function hashText(text: string): string {
   return createHash('sha256').update(text).digest('hex').slice(0, 16);
@@ -51,8 +56,13 @@ export function compileFounderRenderPrompt(request: FounderRenderCompileRequest)
     : `DESKTOP COMPOSITION: ${dna.cameraLanguage.desktopComposition}. Aspect ${dna.cameraLanguage.desktopAspectRatio}.`;
 
   const goldenRefPaths = listGoldenReferenceAssetPaths(departmentId);
+  const workbenchProfile = mapDepartmentToWorkbenchProfile(departmentId);
 
   const sections = [
+    buildStyleBiblePromptSection(),
+    buildCommandDockPromptSection(isPortrait ? 'mobile' : 'desktop'),
+    buildWorkbenchPromptSection(workbenchProfile),
+    buildDesignTokenPromptSection(),
     `COMPILED FOUNDER RENDER — ${dna.departmentName}`,
     `DEPARTMENT DNA: ${dna.dnaVersion} r${dna.profileRevision}`,
     `GOLDEN REFERENCE PACK: ${goldenPack.packId} r${goldenPack.packRevision}`,
@@ -101,6 +111,12 @@ export function compileFounderRenderPrompt(request: FounderRenderCompileRequest)
 
   const negativePrompt = appendArchitectureLawToNegativePrompt([...new Set(negativeItems)].join(', '));
 
+  const cohesion = validateWorldCohesion({ plan, dna, effectivePrompt: prompt });
+  if (!cohesion.ok) {
+    const first = cohesion.violations[0];
+    throw new Error(`WORLD_STYLE_VIOLATION: ${first?.message ?? 'Style Bible cohesion failed'}`);
+  }
+
   const promptHash = hashText(prompt);
   const negativePromptHash = hashText(negativePrompt);
 
@@ -136,6 +152,8 @@ export function compileFounderRenderPrompt(request: FounderRenderCompileRequest)
       organizationId: companyDna.organizationId,
       renderKind,
       aspectRatio: isPortrait ? '9:16' : '21:9',
+      styleBibleVersion: cohesion.bibleVersion,
+      styleBibleRevision: cohesion.bibleRevision,
     },
   };
 }

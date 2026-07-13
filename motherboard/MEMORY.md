@@ -48368,3 +48368,13 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 - **Tests** — architectural-dna.test.ts 14/14 PASS; department-render-isolation 11/11; canonical-department-generator 29/29; build PASS
 
 **One commit + one push** on `master` via `agent-commit.sh`.
+
+---
+
+## 2026-07-13 — P0 Studio World Style Bible & World Design System (full conversation)
+
+**Founder request:** Create universal Studio World visual language (Style Bible) that every canonical department inherits. Command Dock, Workbench, typography placeholders, panel system, lighting/material/motion/navigation philosophy, World Cohesion Validator, design tokens, Experience Lab guardian, CDS mutation guard. One commit, one push, CONCLUSION.
+
+**Shipped:** `src/studio-os-core/studio-world-style/` — style-bible registry (studio-world-style-bible.v1), universal Command Dock & Workbench systems, design token export, World Cohesion Validator (WORLD_STYLE_VIOLATION), Experience Lab style guardian, CDS mutation guard. Wired into FounderRenderPromptCompiler (Style Bible before Department DNA), department-blueprint-builder, DNA registry materials. Diagnostics show styleBibleVersion. Tests: studio-world-style 20/20, architectural-dna 14/14, department-render-isolation 11/11, canonical-department-generator 29/29; build PASS.
+
+**One commit + one push** on `master` via `agent-commit.sh`.

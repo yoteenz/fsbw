@@ -94,6 +94,8 @@ export type FounderRenderDiagnostics = {
   materialVersion?: string | null;
   qualityVersion?: string | null;
   companyDnaVersion?: string | null;
+  styleBibleVersion?: string | null;
+  styleBibleRevision?: number | null;
 };
 
 export function buildFounderRenderJobView(input: {

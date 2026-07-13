@@ -51,4 +51,6 @@ export type FounderRenderCompilerDiagnostics = {
   organizationId: string;
   renderKind: 'landscape' | 'portrait';
   aspectRatio: '21:9' | '9:16';
+  styleBibleVersion: string;
+  styleBibleRevision: number;
 };

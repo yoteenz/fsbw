@@ -57,7 +57,8 @@ export function FounderRenderDiagnosticsPanel({ diagnostics, onCopy }: Props) {
       <Row label="golden ref version" value={diagnostics.goldenReferenceVersion ?? '—'} />
       <Row label="golden ref revision" value={diagnostics.goldenReferenceRevision != null ? String(diagnostics.goldenReferenceRevision) : '—'} />
       <Row label="prompt compiler" value={diagnostics.promptCompilerVersion ?? '—'} />
-      <Row label="company DNA" value={diagnostics.companyDnaVersion ?? '—'} />
+      <Row label="style bible" value={diagnostics.styleBibleVersion ?? '—'} />
+      <Row label="style bible revision" value={diagnostics.styleBibleRevision != null ? String(diagnostics.styleBibleRevision) : '—'} />
       <Row label="department class" value={diagnostics.departmentClass ?? '—'} />
       <Row label="blueprint" value={diagnostics.blueprintId ?? '—'} />
       <Row label="shell spec" value={diagnostics.shellSpecId ?? '—'} />

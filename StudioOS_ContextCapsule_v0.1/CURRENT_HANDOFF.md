@@ -10,9 +10,16 @@
 
 **P0 — Eliminate Cross-Department Render Contamination**
 
-**Status: SHIPPED — Architectural DNA Registry & FounderRenderPromptCompiler govern all canonical department prompts**
+**Status: SHIPPED — Studio World Style Bible™ governs universal visual language for all canonical departments**
 
-**Previous:** Cross-Department Render Contamination (`def341fa9`); Industry Pack Neutrality (`718ff3556`).
+**Shipped:**
+
+- **`studio-world-style/`** — Style Bible registry, Command Dock, Workbench, design tokens, World Cohesion Validator, Experience Lab guardian, CDS mutation guard
+- **Hierarchy enforced:** Style Bible → Department DNA → Company DNA → Founder Assets → Prompt Compiler → Founder Render
+- **Prompt Compiler** injects Style Bible before Department DNA on every canonical render
+- **Tests** — studio-world-style 20/20 PASS; architectural-dna 14/14; department-render-isolation 11/11; canonical-department-generator 29/29
+
+**Previous:** Architectural DNA Registry (`e0148f3ec`); Cross-Department Render Contamination (`def341fa9`).
 
 ---
 
