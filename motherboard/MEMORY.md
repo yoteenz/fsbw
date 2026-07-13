@@ -47653,3 +47653,26 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 
 **Pending:** Per-studio Spatial Architecture Reviews before Director Studio UI implementation.
 
+---
+
+## 2026-07-13 — P0 Experience Lab Bootstrap Forensics (full conversation)
+
+**Context:** P0 forensic sprint — Experience Lab fails before runtime init with `RootAppErrorBoundary` / `Importing a module script failed.` / bootstrap `started=yes complete=no ready=no module=experience-runtime`. **Root cause identification only — no repair code.**
+
+**Investigation (12 phases):**
+- Traced bootstrap order through `STUDIO_BOOT_ORDER`; failure is fetch-layer before `experience-runtime` boot logic completes.
+- Production audit on `fsbw.vercel.app` (build id `970e521ba`): current `index.html` → `index.B3RVPdvc.js` → `main-legacy.DuOAl9i9.js` → `App.zBk1aHa-.js` — all HTTP 200, `application/javascript`.
+- Full `__vite__mapDeps` audit: **82/82** main-legacy chunks 200; Experience Lab page `page.BWq_LdHq.js` + **23/23** deps 200; experience-runtime chain (`engine.LxyAUBZj.js`, `experience-runtime.D-P5Xh1V.js`, `runtime-boot-validator.CQDxbetH.js`, etc.) all 200.
+- Stale-hash proof: `App.DfhJaSwr.js`, `index.BxmigKf6.js`, `main-legacy.TThGzBh0.js`, `engine.CoO6bHpA.js` → **404** on production (prior-deploy chunks deleted).
+- Error class: `Importing a module script failed.` = dynamic import / 404 stale chunk (per `chunkLoadRecovery.ts`), **not** module evaluation exception or boot timeout (`BOOT_MODULE_TIMEOUT_MS` 3s).
+- `module=experience-runtime` is **correlated not causal** — bootstrap runs parallel to lazy `App` import; boot reaches stage 11 when shell chunk 404 fires.
+- Rejected: current-deploy missing assets, manifest mismatch, MIME/CORS, bootstrap ordering, scene-stack barrel in genesis experience-runtime boot, circular deps as root cause (cycles exist in source but wrong error signature).
+
+**Confirmed root cause:** Post-deploy **stale SPA tab** requests **removed hashed `/assets/*.js`** → HTTP 404 → Safari `Importing a module script failed.` Confidence **0.93**.
+
+**Artifact:** `docs/studio-os/experience-lab/BOOTSTRAP_FORENSICS_REPORT.md`
+
+**Recommended repair (not implemented):** Network-tab 404 confirmation on failure; harden `chunkLoadRecovery` before lazy App; ops expectation of stale-tab errors after deploy.
+
+**Non-goals honored:** No bootstrap rewrite, no routing/lazy-load removal, no Experience Lab UI changes.
+
