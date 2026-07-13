@@ -129,8 +129,15 @@ describe('Experience Lab V2 — Fixed application shell', () => {
 
   it('workbench center orb is 3x prior size', () => {
     const css = readV2Source('experience-lab-v2.css');
-    expect(css).toContain('--elab-wb-nav-orb-size: 78px');
-    expect(css).toContain('--elab-wb-nav-orb-core-size: 66px');
+    expect(css).toContain('--elab-wb-nav-orb-size: calc(78px * var(--elab-wb-height-scale))');
+    expect(css).toContain('--elab-wb-nav-orb-core-size: calc(66px * var(--elab-wb-height-scale))');
+  });
+
+  it('workbench panel height is 40% shorter via height scale token', () => {
+    const css = readV2Source('experience-lab-v2.css');
+    expect(css).toMatch(/\.elab-founder-wb--tiered\s*\{[\s\S]*?--elab-wb-height-scale:\s*0\.6/);
+    expect(css).toContain('--elab-wb-tool-min-height: calc(50px * var(--elab-wb-height-scale))');
+    expect(css).toContain('--elab-wb-nav-min-height: calc(52px * var(--elab-wb-height-scale))');
   });
 
   it('workbench uses tiered layout with world nav and orb', () => {

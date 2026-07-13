@@ -1175,6 +1175,20 @@ button.elab-cmd__meta-chip {
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   text-transform: uppercase;
+  --elab-wb-height-scale: 0.6;
+  --elab-wb-title-pad-y: calc(8px * var(--elab-wb-height-scale));
+  --elab-wb-tools-pad-y: calc(6px * var(--elab-wb-height-scale));
+  --elab-wb-tool-min-height: calc(50px * var(--elab-wb-height-scale));
+  --elab-wb-tool-pad-y: calc(5px * var(--elab-wb-height-scale));
+  --elab-wb-tool-gap: calc(4px * var(--elab-wb-height-scale));
+  --elab-wb-nav-min-height: calc(52px * var(--elab-wb-height-scale));
+  --elab-wb-nav-pad-y: calc(6px * var(--elab-wb-height-scale));
+  --elab-wb-nav-gap: calc(4px * var(--elab-wb-height-scale));
+  --elab-wb-nav-orb-size: calc(78px * var(--elab-wb-height-scale));
+  --elab-wb-nav-orb-core-size: calc(66px * var(--elab-wb-height-scale));
+  --elab-wb-nav-orb-ring-inset: calc(-6px * var(--elab-wb-height-scale));
+  --elab-wb-nav-logo-pad-y: calc(6px * var(--elab-wb-height-scale));
+  --elab-wb-world-nav-pad-bottom: calc(6px * var(--elab-wb-height-scale));
 }
 
 .elab-founder-wb__row {
@@ -1186,7 +1200,7 @@ button.elab-cmd__meta-chip {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 8px 10px;
+  padding: var(--elab-wb-title-pad-y, 8px) 10px;
   background: rgba(0, 0, 0, 0.22);
   border-bottom: none;
 }
@@ -1217,7 +1231,7 @@ button.elab-cmd__meta-chip {
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
-  padding: 6px 4px;
+  padding: var(--elab-wb-tools-pad-y, 6px) 4px;
 }
 
 .elab-founder-wb__tools-scroll::-webkit-scrollbar {
@@ -1231,12 +1245,12 @@ button.elab-cmd__meta-chip {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 4px;
+  gap: var(--elab-wb-tool-gap, 4px);
   width: calc((100% - 30px) / 6);
   min-width: calc((100% - 30px) / 6);
   max-width: calc((100% - 30px) / 6);
-  min-height: 50px;
-  padding: 5px 3px;
+  min-height: var(--elab-wb-tool-min-height, 50px);
+  padding: var(--elab-wb-tool-pad-y, 5px) 3px;
   margin-right: 6px;
   border: 1px solid var(--elab-border);
   border-radius: 5px;
@@ -1286,7 +1300,7 @@ button.elab-cmd__meta-chip {
 }
 
 .elab-founder-wb__row--world-nav {
-  padding: 0 0 calc(6px + var(--el-v2-safe-bottom));
+  padding: 0 0 calc(var(--elab-wb-world-nav-pad-bottom, 6px) + var(--el-v2-safe-bottom));
   border-bottom: none;
   background: rgba(0, 0, 0, 0.24);
 }
@@ -1306,10 +1320,10 @@ button.elab-cmd__meta-chip {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 4px;
+  gap: var(--elab-wb-nav-gap, 4px);
   min-width: 0;
-  min-height: 52px;
-  padding: 6px 4px;
+  min-height: var(--elab-wb-nav-min-height, 52px);
+  padding: var(--elab-wb-nav-pad-y, 6px) 4px;
   border: none;
   border-right: 1px solid rgba(255, 255, 255, 0.05);
   background: transparent;
@@ -1341,7 +1355,7 @@ button.elab-cmd__meta-chip {
   flex: 0 0 auto;
   display: grid;
   place-items: center;
-  padding: 6px 14px;
+  padding: var(--elab-wb-nav-logo-pad-y, 6px) 14px;
   border-left: 1px solid rgba(255, 255, 255, 0.05);
   border-right: 1px solid rgba(255, 255, 255, 0.05);
   height: 100%;
@@ -1350,10 +1364,8 @@ button.elab-cmd__meta-chip {
 
 .elab-founder-wb__nav-orb {
   position: relative;
-  --elab-wb-nav-orb-size: 78px;
-  --elab-wb-nav-orb-core-size: 66px;
-  width: var(--elab-wb-nav-orb-size);
-  height: var(--elab-wb-nav-orb-size);
+  width: var(--elab-wb-nav-orb-size, 78px);
+  height: var(--elab-wb-nav-orb-size, 78px);
   flex-shrink: 0;
   display: grid;
   place-items: center;
@@ -1361,7 +1373,7 @@ button.elab-cmd__meta-chip {
 
 .elab-founder-wb__nav-orb-ring {
   position: absolute;
-  inset: -6px;
+  inset: var(--elab-wb-nav-orb-ring-inset, -6px);
   border-radius: 50%;
   border: 1px solid rgba(255, 255, 255, 0.35);
   opacity: 0.55;
@@ -1370,8 +1382,8 @@ button.elab-cmd__meta-chip {
 
 .elab-founder-wb__nav-orb-core {
   position: relative;
-  width: var(--elab-wb-nav-orb-core-size);
-  height: var(--elab-wb-nav-orb-core-size);
+  width: var(--elab-wb-nav-orb-core-size, 66px);
+  height: var(--elab-wb-nav-orb-core-size, 66px);
   border-radius: 50%;
   overflow: hidden;
   background: radial-gradient(circle at 32% 28%, rgba(255, 255, 255, 0.92) 0%, rgba(201, 169, 98, 0.35) 42%, rgba(0, 0, 0, 0.15) 100%);
@@ -1883,7 +1895,7 @@ button.elab-cmd__meta-chip {
   width: calc((100% - 30px) / 6);
   min-width: calc((100% - 30px) / 6);
   max-width: calc((100% - 30px) / 6);
-  min-height: 46px;
+  min-height: calc(46px * var(--elab-wb-height-scale, 1));
 }
 
 .elab-app-shell--mobile .elab-founder-wb--tabbed,

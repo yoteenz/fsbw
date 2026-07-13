@@ -48827,3 +48827,20 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 **Spatial Architecture Review:** SKIPPED — CSS sizing polish only, no new surfaces.
 
 **One commit + one push** on `master` via `agent-commit.sh`.
+
+---
+
+## 2026-07-13 — Experience Lab V2: workbench panel 40% shorter
+
+**Founder request:** Decrease workbench panel height by 40% — panel was too tall (especially after 3× orb sizing).
+
+**Prior context in chat:** EL V2 component review — icon sprite, Command Dock polish, bottom clutter removal, workbench tiered layout, orb 3× + logo/avatar match (`51920655c`).
+
+**Shipped:**
+
+- **`experience-lab-v2.css`** — `--elab-wb-height-scale: 0.6` on `.elab-founder-wb--tiered`; vertical tokens (title/tools/nav padding, tool + nav min-heights, center orb calc from 78/66 base, ring inset, mobile tool min-height) all scale together
+- **Tests** — orb calc assertions + height-scale test; 38/38 PASS
+
+**Spatial Architecture Review:** SKIPPED — CSS compacting only.
+
+**One commit + one push** on `master` via `agent-commit.sh`.
