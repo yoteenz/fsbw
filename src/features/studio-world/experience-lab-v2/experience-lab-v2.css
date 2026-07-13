@@ -127,6 +127,7 @@
   display: flex;
   flex-direction: column;
   min-height: 0;
+  margin-top: auto;
   background: rgba(0, 0, 0, 0.22);
 }
 
@@ -1284,7 +1285,7 @@ button.elab-cmd__meta-chip {
 }
 
 .elab-founder-wb__row--world-nav {
-  padding: 0;
+  padding: 0 0 calc(6px + var(--el-v2-safe-bottom));
   border-bottom: none;
   background: rgba(0, 0, 0, 0.24);
 }

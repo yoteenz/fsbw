@@ -48727,6 +48727,7 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 
 ---
 
+<<<<<<< HEAD
 ## 2026-07-13 — Hide main-thread heartbeat debug overlay (full conversation)
 
 **Founder request:** Hide/remove heartbeat debugging visible during Experience Lab V2 work.
@@ -48777,3 +48778,19 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 - **Tests** — command dock location test updated for new asset name; 8/8 PASS
 
 **One commit + one push** on `master` via `agent-commit.sh`.
+=======
+## 2026-07-13 — Experience Lab V2: remove bottom clutter for workbench anchoring
+
+**Context:** Founder screenshot showed three circled assets pushing workbench up: APPROVE & strip, FS hex badge, large floating Studio Orb sphere.
+
+**Decisions / outcomes:**
+- Removed Approval Bridge from default `lowerDeck` (still available in Component Review sandbox for `approval-bridge` phase).
+- Removed Department Dock (FS hex) from full workstation shell — world nav already lives in tiered workbench row 3.
+- Disabled global `StudioOrbMount` when `DepartmentGoldenBuildShell` uses `fixedViewport` (Experience Lab V2 only) — removes bottom-right metallic orb.
+- Removed default Environment Layer mount from full view (still reviewable via component review sandbox).
+- CSS: `lower-deck` `margin-top: auto`; workbench world-nav row gets safe-area bottom padding.
+
+**Changes:** `ExperienceLabV2Shell.tsx`, `DepartmentGoldenBuildShell.tsx`, `experience-lab-v2.css`, `experience-lab-v2.test.ts`.
+
+**Conventions:** Approval bridge / environment / dept dock components remain in repo for later phases — not mounted in full mobile workstation until founder locks workbench placement.
+>>>>>>> de74a739a (Experience Lab V2: remove approval strip, FS hex dock, and Studio Orb from full view)

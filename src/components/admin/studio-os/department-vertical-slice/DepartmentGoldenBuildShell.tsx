@@ -66,7 +66,7 @@ export function DepartmentGoldenBuildShell({ children, fixedViewport = false }: 
           >
             {children}
           </div>
-          {shouldShowCommandDock(pathname) && typeof document !== 'undefined'
+          {shouldShowCommandDock(pathname) && !fixedViewport && typeof document !== 'undefined'
             ? createPortal(<StudioOrbMount />, document.body)
             : null}
         </StudioWorldExperienceProvider>

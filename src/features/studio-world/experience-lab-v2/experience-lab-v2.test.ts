@@ -39,8 +39,8 @@ describe('Experience Lab V2 — Immersive composition', () => {
     expect(shell).toContain('ExperienceLabFounderWorkbench');
     expect(shell).toContain('ExperienceLabApprovalBridge');
     expect(shell).toContain('ExperienceLabWorkbenchDock');
-    expect(shell).toContain('ExperienceLabDepartmentDock');
     expect(shell).toContain('ExperienceLabEnvironmentLayer');
+    expect(shell).not.toContain('ExperienceLabDepartmentDock');
     expect(shell).not.toMatch(/from '\.\/ExperienceLabV2Header'/);
     expect(shell).not.toMatch(/from '\.\/ExperienceLabLeftInspector'/);
     expect(shell).not.toMatch(/from '\.\/ExperienceLabRightInspector'/);
@@ -152,6 +152,18 @@ describe('Experience Lab V2 — Fixed application shell', () => {
   it('does not mount workbench dock when tiered workbench already includes tools', () => {
     const shell = readV2Source('ExperienceLabV2Shell.tsx');
     expect(shell).toContain("review.show('bottom-tool-dock') && !review.show('workbench')");
+  });
+
+  it('full workstation hides approval bridge, department dock hex, and environment orb stack', () => {
+    const shell = readV2Source('ExperienceLabV2Shell.tsx');
+    expect(shell).not.toContain('review.show(\'approval-bridge\') ?');
+    expect(shell).not.toContain('elab-app-shell__dept-dock');
+    expect(shell).not.toContain('experienceLabV2EnvironmentAssetEnabled');
+    const shellPage = readFileSync(
+      resolve(V2_DIR, '../../../components/admin/studio-os/department-vertical-slice/DepartmentGoldenBuildShell.tsx'),
+      'utf8',
+    );
+    expect(shellPage).toContain('!fixedViewport');
   });
 
   it('command dock uses three-row tiered layout with HQ location tabs', () => {
