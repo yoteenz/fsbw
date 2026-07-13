@@ -14,3 +14,5 @@ export * from './blueprint-diff-engine';
 export * from './immune-blueprint-repair';
 export * from './compile-orchestrator';
 export * from './fixtures';
+export * from './workflow-mapper';
+export * from './workflow-session';

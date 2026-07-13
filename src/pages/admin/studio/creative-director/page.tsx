@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import type { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AdminStudioStageShell } from '../../../../components/admin/studio/AdminStudioStageShell';
@@ -35,9 +36,11 @@ import { ADMIN_STUDIO_CTA_LIBRARY_DEFAULTS, ADMIN_STUDIO_PRODUCT_KNOWLEDGE_DEFAU
 import { ADMIN_STUDIO_PROMPT_FRAMEWORKS_DEFAULTS } from '../../../../utils/adminStudioContentBrainPromptFrameworksDemo';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
 import type { EditorReviewAction } from '../../../../services/studio/creativeDirector/index';
+import { BlueprintAuthorCreativeDirectorGate } from '../../../../components/admin/studio/blueprint-author-ui';
 
 export default function AdminStudioCreativeDirectorPage() {
   const navigate = useNavigate();
+  const [blueprintGateOpen, setBlueprintGateOpen] = useState(false);
   const {
     session,
     pkg,
@@ -412,7 +415,7 @@ export default function AdminStudioCreativeDirectorPage() {
         <button
           type="button"
           disabled={!pkg.qualityGate.canGenerate}
-          onClick={() => navigate('/admin/studio/ai-studio')}
+          onClick={() => setBlueprintGateOpen(true)}
           className="flex-1 py-2 text-[7px] font-futura uppercase border"
           style={{
             fontWeight: 515,
@@ -422,9 +425,18 @@ export default function AdminStudioCreativeDirectorPage() {
             opacity: pkg.qualityGate.canGenerate ? 1 : 0.6,
           }}
         >
-          {pkg.qualityGate.canGenerate ? 'PROCEED TO AI STUDIO →' : 'QUALITY GATE INCOMPLETE'}
+          {pkg.qualityGate.canGenerate ? 'AUTHOR CONSTRUCTION PLAN →' : 'QUALITY GATE INCOMPLETE'}
         </button>
       </div>
+
+      {blueprintGateOpen && pkg.qualityGate.canGenerate ? (
+        <BlueprintAuthorCreativeDirectorGate
+          topic={session.topic}
+          contentPurpose={session.contentPurpose}
+          environment={session.environment}
+          onProceedToAiStudio={() => navigate('/admin/studio/ai-studio')}
+        />
+      ) : null}
 
       <AdminStudioDisclaimerFooter>
         CREATIVE DIRECTOR IS NOT AN AI MODEL — DECISION ENGINE ONLY · NO PROVIDER BYPASS · PHASE 2 AI ORCHESTRATOR NEXT

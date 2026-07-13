@@ -47655,6 +47655,31 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 
 ---
 
+## 2026-07-13 — P0 Blueprint Author UI integration (Experience Lab + Creative Director)
+
+**Context:** Blueprint Author backend existed but Founder could not see it. Sprint wired Blueprint Author as first visible step in creative workflow for Experience Lab and Creative Director Studio — presentation layer only, no duplicate logic, no studio redesign.
+
+**Backend consumed (no parallel implementation):**
+- `openBlueprintAuthorSession()` / `buildConstructionPlanSummary()` — `blueprint-author/workflow-session.ts`
+- `mapWorkflowContextToCompileRequest()` — `workflow-mapper.ts`
+- `authorConstructionPlan`, `openConstructionModeSession`, `buildAssetInspector`, `runConstructionModeCompile({ founderApproved })` gate
+
+**Shared UI (`src/components/admin/studio/blueprint-author-ui/`):** ConstructionPlanCard, BlueprintPreview (procedural clay), ObjectInspector, ManufacturingQueuePanel, WorkerStatus, InspectionStatus, ApprovalFooter, BlueprintAuthorRequestForm, BlueprintAuthorWorkflowShell, BlueprintAuthorCreativeDirectorGate
+
+**Hook:** `useBlueprintAuthorWorkflow` — idle → plan/preview/inspector → manufacturing → complete; Approve & Build calls `runConstructionModeCompile` only after founder approval.
+
+**Experience Lab:** `BlueprintAuthorExperienceLabGate` wraps `CreativeStudioRenderPreview` in Creative Intelligence mode — World Compiler locked until approval.
+
+**Creative Director:** Footer `AUTHOR CONSTRUCTION PLAN →` replaces direct `PROCEED TO AI STUDIO`; post-approval unlocks AI Studio navigation.
+
+**Flow:** Founder Request → Blueprint Author → Construction Plan → Review/Preview/Inspect → Approve & Build → Manufacturing Queue → (then render/AI Studio).
+
+**Tests:** blueprint-author 15 pass; `npm run build` OK.
+
+**Spatial Architecture Review:** SKIPPED — surgical integration into approved Experience Lab + Creative Director sections only; no new nav or departments.
+
+---
+
 ## 2026-07-13 — P0 Experience Lab Bootstrap Forensics (full conversation)
 
 **Context:** P0 forensic sprint — Experience Lab fails before runtime init with `RootAppErrorBoundary` / `Importing a module script failed.` / bootstrap `started=yes complete=no ready=no module=experience-runtime`. **Root cause identification only — no repair code.**

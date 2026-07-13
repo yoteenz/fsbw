@@ -9,6 +9,7 @@ import {
 } from '../../../../studio-os-core/creative-studio-preview';
 import { useCreativeStudioPreview } from '../../../../hooks/useCreativeStudioPreview';
 import { CreativeStudioRenderPreview } from './CreativeStudioRenderPreview';
+import { BlueprintAuthorExperienceLabGate } from './BlueprintAuthorExperienceLabGate';
 
 const sectionStyle: CSSProperties = {
   padding: '0 16px 20px',
@@ -57,8 +58,8 @@ export function CreativeIntelligencePanel() {
           Creative Studio render pipeline · World Compiler™ final output · identity without logos or labels
         </p>
         <div style={{ marginTop: 12 }}>
-          <button type="button" style={btnStyle} onClick={recompile}>
-            Recompile previews
+          <button type="button" style={btnStyle} onClick={recompile} disabled>
+            Recompile previews (after approval)
           </button>
           <button
             type="button"
@@ -230,11 +231,17 @@ function PreviewFlow({
     <>
       <section style={sectionStyle}>
         <h2 style={sectionHeading}>{blindMode ? 'Environment — no branding' : '3. Cinematic environment'}</h2>
-        <CreativeStudioRenderPreview
+        <BlueprintAuthorExperienceLabGate
           companyId={preview.companyId}
           conceptId={conceptId}
-          blindMode={blindMode}
-        />
+          defaultIntent={`${concept.label} — ${sceneProfile.industryTarget} environment`}
+        >
+          <CreativeStudioRenderPreview
+            companyId={preview.companyId}
+            conceptId={conceptId}
+            blindMode={blindMode}
+          />
+        </BlueprintAuthorExperienceLabGate>
         {!blindMode ? (
           <EnvironmentIntelligenceSummary profile={sceneProfile} spec={spec} />
         ) : null}
@@ -357,11 +364,9 @@ function CompareAllCompanies({
                 </div>
               )}
               <div style={{ padding: 12 }}>
-                <CreativeStudioRenderPreview
-                  companyId={id}
-                  conceptId="a"
-                  blindMode={blindMode}
-                />
+                <BlueprintAuthorExperienceLabGate companyId={id} conceptId="a">
+                  <CreativeStudioRenderPreview companyId={id} conceptId="a" blindMode={blindMode} />
+                </BlueprintAuthorExperienceLabGate>
               </div>
             </div>
           );
