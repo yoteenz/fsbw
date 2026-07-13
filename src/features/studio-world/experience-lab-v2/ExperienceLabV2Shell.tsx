@@ -152,7 +152,7 @@ export function ExperienceLabV2Shell({ initialDepartmentId = 'experience-lab' }:
           onBlockersOpen={() => shell.toggleOverlay('blockers')}
         />
       ) : null}
-      {review.show('bottom-tool-dock') ? (
+      {review.show('bottom-tool-dock') && !review.show('workbench') ? (
         <ExperienceLabWorkbenchDock onMoreOpen={() => shell.toggleOverlay('tools')} />
       ) : null}
       {review.show('diagnostics') && flags.experienceLabV2DiagnosticsEnabled ? (

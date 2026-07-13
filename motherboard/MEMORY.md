@@ -48660,3 +48660,15 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 - **Tests** — 62/62 PASS
 
 **One commit + one push** on `master` via `agent-commit.sh`.
+
+---
+
+## 2026-07-13 — Remove duplicate workbench tools row (full conversation)
+
+**Context:** After tiered Workbench shipped editing tools in row 2, full workstation (review off) still mounted **ExperienceLabWorkbenchDock** below — duplicate ARCHITECTURAL TOOLS / MATERIAL LIBRARY row (Approval Bridge visible above).
+
+**Fix:** `ExperienceLabV2Shell` lower deck — render `WorkbenchDock` only when `bottom-tool-dock` visible **and** workbench hidden (`review.show('bottom-tool-dock') && !review.show('workbench')`). Bottom Tool Dock phase review unchanged.
+
+**Tests:** 34/34 composition tests pass.
+
+**One commit + one push** on `master` via `agent-commit.sh`.

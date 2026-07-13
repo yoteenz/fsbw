@@ -148,6 +148,11 @@ describe('Experience Lab V2 — Fixed application shell', () => {
     expect(bridge).toContain('elab-approval-bridge--strip');
   });
 
+  it('does not mount workbench dock when tiered workbench already includes tools', () => {
+    const shell = readV2Source('ExperienceLabV2Shell.tsx');
+    expect(shell).toContain("review.show('bottom-tool-dock') && !review.show('workbench')");
+  });
+
   it('command dock uses three-row tiered layout with HQ location tabs', () => {
     const dock = readV2Source('ExperienceLabCommandDock.tsx');
     expect(dock).toContain('elab-cmd--pro');
