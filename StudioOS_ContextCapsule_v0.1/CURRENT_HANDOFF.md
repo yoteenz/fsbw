@@ -8,18 +8,18 @@
 
 ## Current sprint
 
-**P0 — Eliminate Cross-Department Render Contamination**
+**P0 — Studio World Canonical Department Bible™**
 
-**Status: SHIPPED — Studio World Style Bible™ governs universal visual language for all canonical departments**
+**Status: SHIPPED — Department Bible Registry governs every canonical department's operating manual**
 
 **Shipped:**
 
-- **`studio-world-style/`** — Style Bible registry, Command Dock, Workbench, design tokens, World Cohesion Validator, Experience Lab guardian, CDS mutation guard
-- **Hierarchy enforced:** Style Bible → Department DNA → Company DNA → Founder Assets → Prompt Compiler → Founder Render
-- **Prompt Compiler** injects Style Bible before Department DNA on every canonical render
-- **Tests** — studio-world-style 20/20 PASS; architectural-dna 14/14; department-render-isolation 11/11; canonical-department-generator 29/29
+- **`department-bible/`** — schemas, registry (25 departments), AI workforce directory, relationship graph, world knowledge graph, permission model, lifecycle model, Department Compiler, validator, encyclopedia, documentation regenerator
+- **Hierarchy enforced:** Style Bible → Department Bible → Department DNA → Golden Reference Library → Blueprint Author → Construction Plan → Founder Render → CDS → Construction Mode → Published Department
+- **Experience Lab Knowledge Panel** — Department Bible, relationship graph, architecture stack, AI workforce, lifecycle, encyclopedia
+- **Tests** — department-bible 27/27 PASS; studio-world-style 20/20; build PASS
 
-**Previous:** Architectural DNA Registry (`e0148f3ec`); Cross-Department Render Contamination (`def341fa9`).
+**Previous:** Style Bible (`e806fc9d8`); Architectural DNA Registry (`e0148f3ec`); Cross-Department Render Contamination (`def341fa9`).
 
 ---
 

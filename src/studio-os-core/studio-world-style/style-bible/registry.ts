@@ -10,11 +10,15 @@ export const STUDIO_WORLD_STYLE_BIBLE: StudioWorldStyleBible = {
     authority: 'highest-visual-authority',
     hierarchy: [
       'Studio World Style Bible',
+      'Department Bible',
       'Department DNA',
-      'Company DNA',
-      'Founder Assets',
-      'Prompt Compiler',
+      'Golden Reference Library',
+      'Blueprint Author',
+      'Construction Plan',
       'Founder Render',
+      'Creative Director Studio',
+      'Construction Mode',
+      'Published Department',
     ],
   },
   worldLanguage: {

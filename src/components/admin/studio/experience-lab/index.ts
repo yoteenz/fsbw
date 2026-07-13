@@ -4,6 +4,7 @@ export { ExperienceLabModeShell } from './ExperienceLabModeShell';
 export { ExperienceLabRuntimeLabPanel } from './ExperienceLabRuntimeLabPanel';
 export { RuntimeValidationPanel } from './RuntimeValidationPanel';
 export { CreativeIntelligencePanel } from './CreativeIntelligencePanel';
+export { DepartmentBibleKnowledgePanel } from './DepartmentBibleKnowledgePanel';
 export { CreativeStudioRenderPreview } from './CreativeStudioRenderPreview';
 export { CreativeStudioRenderPreview as CreativePreviewEnvironment } from './CreativeStudioRenderPreview';
 export { RuntimeSafeMode, useRuntimeSafeMode } from './RuntimeSafeMode';

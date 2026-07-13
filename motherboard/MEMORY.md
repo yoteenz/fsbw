@@ -48378,3 +48378,21 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 **Shipped:** `src/studio-os-core/studio-world-style/` — style-bible registry (studio-world-style-bible.v1), universal Command Dock & Workbench systems, design token export, World Cohesion Validator (WORLD_STYLE_VIOLATION), Experience Lab style guardian, CDS mutation guard. Wired into FounderRenderPromptCompiler (Style Bible before Department DNA), department-blueprint-builder, DNA registry materials. Diagnostics show styleBibleVersion. Tests: studio-world-style 20/20, architectural-dna 14/14, department-render-isolation 11/11, canonical-department-generator 29/29; build PASS.
 
 **One commit + one push** on `master` via `agent-commit.sh`.
+
+---
+
+## 2026-07-13 — P0 Studio World Canonical Department Bible™ (full conversation)
+
+**Founder request:** Create the operating manual ("brains") for every canonical Studio World department — Department Bible Registry, relationships, permissions, lifecycle, AI workforce, Knowledge Graph, Department Compiler, Encyclopedia, Admin Knowledge Panel, validation, tests. One implementation, one commit, one push, one production deployment, CONCLUSION.
+
+**Context:** Prior sprints shipped Style Bible (`e806fc9d8`), Architectural DNA & Golden Prompt Registry (`e0148f3ec`), and cross-department render isolation (`def341fa9`). This sprint completes the foundational architecture layer with Department Bible as the constitutional operating manual between Style Bible and Architectural DNA.
+
+**Shipped:**
+
+- **`src/studio-os-core/department-bible/`** — schemas (department-bible, relationships, permissions, lifecycle, ai-workforce), registry (bible-registry.v1 for all 25 departments with rich overrides for Experience Lab, CDS, Command Center, City Council, Marketplace), AI workforce directory, relationship graph (canonical + marketplace pipelines), world knowledge graph, permission model (role-driven), lifecycle model (10 states), DepartmentCompiler™ (Bible + DNA + Style Bible + Golden Refs + Blueprint + Construction Plan), bible-validator, Studio World Encyclopedia, documentation regenerator
+- **Hierarchy updated** — Style Bible → Department Bible → Department DNA → Golden Reference Library → Blueprint Author → Construction Plan → Founder Render → CDS → Construction Mode → Published Department
+- **Experience Lab Knowledge Panel** — `DepartmentBibleKnowledgePanel.tsx` wired into `CreativeIntelligencePanel` after Canonical Department Tree
+- **Key Bibles** — Experience Lab (canonical authoring, never bypass approvals), CDS (manufacture approved architecture), Command Center (operate infrastructure), City Council (governance/IP), Marketplace (distribute without rewriting lineage)
+- **Tests** — department-bible.test.ts 27/27 PASS; studio-world-style 20/20 PASS; production build PASS
+
+**One commit + one push** on `master` via `agent-commit.sh`.

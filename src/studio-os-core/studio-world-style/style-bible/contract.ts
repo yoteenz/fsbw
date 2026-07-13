@@ -1,10 +1,23 @@
 export const STUDIO_WORLD_STYLE_BIBLE_VERSION = 'studio-world-style-bible.v1' as const;
 
+export type StyleBibleHierarchy = [
+  'Studio World Style Bible',
+  'Department Bible',
+  'Department DNA',
+  'Golden Reference Library',
+  'Blueprint Author',
+  'Construction Plan',
+  'Founder Render',
+  'Creative Director Studio',
+  'Construction Mode',
+  'Published Department',
+];
+
 export type StyleBibleAuthority = {
   bibleVersion: typeof STUDIO_WORLD_STYLE_BIBLE_VERSION;
   bibleRevision: number;
   authority: 'highest-visual-authority';
-  hierarchy: ['Studio World Style Bible', 'Department DNA', 'Company DNA', 'Founder Assets', 'Prompt Compiler', 'Founder Render'];
+  hierarchy: StyleBibleHierarchy;
 };
 
 export type WorldLanguageRules = {
