@@ -48727,7 +48727,6 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 
 ---
 
-<<<<<<< HEAD
 ## 2026-07-13 — Hide main-thread heartbeat debug overlay (full conversation)
 
 **Founder request:** Hide/remove heartbeat debugging visible during Experience Lab V2 work.
@@ -48778,7 +48777,9 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 - **Tests** — command dock location test updated for new asset name; 8/8 PASS
 
 **One commit + one push** on `master` via `agent-commit.sh`.
-=======
+
+---
+
 ## 2026-07-13 — Experience Lab V2: remove bottom clutter for workbench anchoring
 
 **Context:** Founder screenshot showed three circled assets pushing workbench up: APPROVE & strip, FS hex badge, large floating Studio Orb sphere.
@@ -48793,4 +48794,17 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 **Changes:** `ExperienceLabV2Shell.tsx`, `DepartmentGoldenBuildShell.tsx`, `experience-lab-v2.css`, `experience-lab-v2.test.ts`.
 
 **Conventions:** Approval bridge / environment / dept dock components remain in repo for later phases — not mounted in full mobile workstation until founder locks workbench placement.
->>>>>>> de74a739a (Experience Lab V2: remove approval strip, FS hex dock, and Studio Orb from full view)
+
+---
+
+## 2026-07-13 — Experience Lab icon sprite: founder Supabase source sheet
+
+**Founder provided canonical labeled sprite URL:** `live-preview/Studio World/740E9EB1-6B7B-4C5F-B745-E4621EC45EF3.png` on Supabase FS Website project.
+
+**Shipped:**
+- Replaced repo labeled source at `src/assets/studio-world/experience-lab/experience-lab-icon-source-labeled.png` (1402×1122, 64 icons, labels intact)
+- Updated `build-experience-lab-icon-atlas.mjs` for non-uniform grid dimensions (rounded cell rects + improved label-band detection)
+- Regenerated runtime transparent atlas + coordinate map + sprite config (`sourcePublicUrl` recorded)
+- Updated icon tests + `EXPERIENCE_LAB_ICON_CATALOG.md`
+
+**Prior issue:** Earlier sprint used a reconstructed placeholder sheet when attachment bytes were unavailable — founder URL is now authoritative source.

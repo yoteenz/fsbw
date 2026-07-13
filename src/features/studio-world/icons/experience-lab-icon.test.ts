@@ -53,13 +53,12 @@ describe('Experience Lab labeled icon sprite system', () => {
   });
 
   it('measured sprite config matches the labeled source dimensions', () => {
-    expect(EXPERIENCE_LAB_ICON_SPRITE_CONFIG.sourceWidth).toBe(1024);
-    expect(EXPERIENCE_LAB_ICON_SPRITE_CONFIG.sourceHeight).toBe(1024);
+    expect(EXPERIENCE_LAB_ICON_SPRITE_CONFIG.sourceWidth).toBe(1402);
+    expect(EXPERIENCE_LAB_ICON_SPRITE_CONFIG.sourceHeight).toBe(1122);
     expect(EXPERIENCE_LAB_ICON_SPRITE_CONFIG.rows).toBe(8);
     expect(EXPERIENCE_LAB_ICON_SPRITE_CONFIG.columns).toBe(8);
-    expect(EXPERIENCE_LAB_ICON_SPRITE_CONFIG.cellWidth).toBe(128);
-    expect(EXPERIENCE_LAB_ICON_SPRITE_CONFIG.cellHeight).toBe(128);
     expect(EXPERIENCE_LAB_ICON_SPRITE_CONFIG.iconCount).toBe(64);
+    expect(EXPERIENCE_LAB_ICON_SPRITE_CONFIG.sourceStoragePath).toContain('740E9EB1-6B7B-4C5F-B745-E4621EC45EF3.png');
   });
 
   it('runtime atlas generation succeeds and preserves white glyph pixels', async () => {

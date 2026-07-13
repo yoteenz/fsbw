@@ -45,25 +45,50 @@ function isWhite(r, g, b) {
   return r >= WHITE_THRESHOLD && g >= WHITE_THRESHOLD && b >= WHITE_THRESHOLD;
 }
 
-/** Detect first row (from bottom) containing label text pixels. */
+/** Detect first row (from bottom) containing label text pixels spread across the cell. */
 function detectLabelStartRow(cellRgba, cellW, cellH, channels) {
-  const rowThreshold = Math.max(8, Math.floor(cellW * 0.012));
+  const rowThreshold = Math.max(6, Math.floor(cellW * 0.01));
+  const spreadThreshold = Math.max(12, Math.floor(cellW * 0.22));
   let labelStart = cellH;
 
-  for (let y = cellH - 1; y >= Math.floor(cellH * 0.45); y -= 1) {
+  for (let y = cellH - 1; y >= Math.floor(cellH * 0.42); y -= 1) {
     let whites = 0;
+    let minX = cellW;
+    let maxX = 0;
     for (let x = 0; x < cellW; x += 1) {
       const i = (y * cellW + x) * channels;
-      if (isWhite(cellRgba[i], cellRgba[i + 1], cellRgba[i + 2])) whites += 1;
+      if (isWhite(cellRgba[i], cellRgba[i + 1], cellRgba[i + 2])) {
+        whites += 1;
+        minX = Math.min(minX, x);
+        maxX = Math.max(maxX, x);
+      }
     }
-    if (whites >= rowThreshold) {
+    const spread = maxX >= minX ? maxX - minX + 1 : 0;
+    const looksLikeLabel = whites >= rowThreshold && spread >= spreadThreshold;
+    if (looksLikeLabel) {
       labelStart = Math.min(labelStart, y);
-    } else if (labelStart < cellH && y < labelStart - 4) {
+    } else if (labelStart < cellH && y < labelStart - 6) {
       break;
     }
   }
 
-  return labelStart;
+  // Fallback: keep at least 55% of cell for glyph when detection fails open.
+  const maxGlyphBottom = Math.floor(cellH * 0.82);
+  if (labelStart <= maxGlyphBottom) return labelStart;
+  return maxGlyphBottom;
+}
+
+function cellRect(width, height, row, column) {
+  const left = Math.round((column * width) / COLS);
+  const top = Math.round((row * height) / ROWS);
+  const right = Math.round(((column + 1) * width) / COLS);
+  const bottom = Math.round(((row + 1) * height) / ROWS);
+  return {
+    left,
+    top,
+    width: Math.max(1, right - left),
+    height: Math.max(1, bottom - top),
+  };
 }
 
 function trimGlyphBounds(rgba, w, h, channels, maxY) {
@@ -120,10 +145,6 @@ async function main() {
   const { width, height } = meta;
   if (!width || !height) throw new Error('Unable to read source dimensions');
 
-  if (width % COLS !== 0 || height % ROWS !== 0) {
-    throw new Error(`Source ${width}x${height} is not divisible by ${COLS}x${ROWS} grid`);
-  }
-
   const cellW = width / COLS;
   const cellH = height / ROWS;
 
@@ -161,17 +182,18 @@ async function main() {
   let glyphPixelsInAtlas = 0;
 
   for (const entry of registryEntries) {
-    const x0 = Math.floor(entry.column * cellW);
-    const y0 = Math.floor(entry.row * cellH);
+    const rect = cellRect(width, height, entry.row, entry.column);
+    const cellWInt = rect.width;
+    const cellHInt = rect.height;
 
     const cellBuf = await sharp(sourcePath)
-      .extract({ left: x0, top: y0, width: cellW, height: cellH })
+      .extract({ left: rect.left, top: rect.top, width: cellWInt, height: cellHInt })
       .ensureAlpha()
       .raw()
       .toBuffer();
 
-    const labelStart = detectLabelStartRow(cellBuf, cellW, cellH, 4);
-    const bounds = trimGlyphBounds(cellBuf, cellW, cellH, 4, labelStart);
+    const labelStart = detectLabelStartRow(cellBuf, cellWInt, cellHInt, 4);
+    const bounds = trimGlyphBounds(cellBuf, cellWInt, cellHInt, 4, labelStart);
 
     const glyphW = bounds.maxX - bounds.minX + 1;
     const glyphH = bounds.maxY - bounds.minY + 1;
@@ -181,7 +203,7 @@ async function main() {
       for (let gx = 0; gx < glyphW; gx += 1) {
         const sx = bounds.minX + gx;
         const sy = bounds.minY + gy;
-        const si = (sy * cellW + sx) * 4;
+        const si = (sy * cellWInt + sx) * 4;
         const di = (gy * glyphW + gx) * 4;
         const r = cellBuf[si];
         const g = cellBuf[si + 1];
@@ -221,9 +243,9 @@ async function main() {
     }
 
     // Verify label region was excluded from placed glyph
-    for (let y = labelStart; y < cellH; y += 1) {
-      for (let x = 0; x < cellW; x += 1) {
-        const i = (y * cellW + x) * 4;
+    for (let y = labelStart; y < cellHInt; y += 1) {
+      for (let x = 0; x < cellWInt; x += 1) {
+        const i = (y * cellWInt + x) * 4;
         if (isWhite(cellBuf[i], cellBuf[i + 1], cellBuf[i + 2])) {
           labelPixelsInAtlas += 0; // excluded by crop — counted separately below
         }
@@ -250,8 +272,19 @@ async function main() {
     .toFile(atlasPath);
 
   const configBody = `/** Measured geometry for Experience Lab labeled icon sprite — auto-updated by build script. */
+export const EXPERIENCE_LAB_ICON_SOURCE_LABELED_STORAGE_PATH =
+  '/storage/v1/object/public/live-preview/Studio%20World/740E9EB1-6B7B-4C5F-B745-E4621EC45EF3.png';
+
+export function resolveExperienceLabIconSourceLabeledUrl(): string {
+  const base =
+    (import.meta as unknown as { env?: { VITE_SUPABASE_URL?: string } }).env?.VITE_SUPABASE_URL?.trim() || '';
+  if (!base) return EXPERIENCE_LAB_ICON_SOURCE_LABELED_STORAGE_PATH;
+  return \`\${base.replace(/\\/$/, '')}\${EXPERIENCE_LAB_ICON_SOURCE_LABELED_STORAGE_PATH}\`;
+}
+
 export const EXPERIENCE_LAB_ICON_SPRITE_CONFIG = {
   sourcePath: '${SOURCE_REL}',
+  sourceStoragePath: EXPERIENCE_LAB_ICON_SOURCE_LABELED_STORAGE_PATH,
   runtimeAtlasPath: '${ATLAS_REL}',
   sourceWidth: ${width},
   sourceHeight: ${height},

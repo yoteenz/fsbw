@@ -1,12 +1,18 @@
 # Experience Lab Icon Catalog
 
-Canonical labeled source (human-readable, labels preserved):
+Founder labeled source storage path: `live-preview/Studio World/740E9EB1-6B7B-4C5F-B745-E4621EC45EF3.png`
+
+Resolve at runtime via `resolveExperienceLabIconSourceLabeledUrl()` (prefixes `VITE_SUPABASE_URL`).
+
+Canonical repo copy (labels preserved):
 
 ![Experience Lab labeled icon source](../../../src/assets/studio-world/experience-lab/experience-lab-icon-source-labeled.png)
 
 Runtime atlas (glyphs only, transparent background):
 
 ![Experience Lab runtime atlas](../../../src/assets/studio-world/experience-lab/experience-lab-icon-runtime-atlas.png)
+
+Measured grid: **1402×1122** · 8×8 · ~175×140 px cells
 
 ## Semantic map
 

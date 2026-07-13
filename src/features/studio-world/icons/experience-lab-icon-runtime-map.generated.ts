@@ -17,7 +17,7 @@ export const EXPERIENCE_LAB_ICON_RUNTIME_MAP: Record<ExperienceLabIconName, Expe
     "w": 96,
     "h": 96,
     "sourceLabel": "EXPERIENCE LAB",
-    "labelStartInCell": 117
+    "labelStartInCell": 84
   },
   "blueprint": {
     "x": 96,
@@ -25,7 +25,7 @@ export const EXPERIENCE_LAB_ICON_RUNTIME_MAP: Record<ExperienceLabIconName, Expe
     "w": 96,
     "h": 96,
     "sourceLabel": "BLUEPRINT",
-    "labelStartInCell": 117
+    "labelStartInCell": 67
   },
   "construction": {
     "x": 192,
@@ -33,7 +33,7 @@ export const EXPERIENCE_LAB_ICON_RUNTIME_MAP: Record<ExperienceLabIconName, Expe
     "w": 96,
     "h": 96,
     "sourceLabel": "CONSTRUCTION",
-    "labelStartInCell": 117
+    "labelStartInCell": 69
   },
   "materials": {
     "x": 288,
@@ -41,7 +41,7 @@ export const EXPERIENCE_LAB_ICON_RUNTIME_MAP: Record<ExperienceLabIconName, Expe
     "w": 96,
     "h": 96,
     "sourceLabel": "MATERIALS",
-    "labelStartInCell": 117
+    "labelStartInCell": 72
   },
   "lighting": {
     "x": 384,
@@ -49,7 +49,7 @@ export const EXPERIENCE_LAB_ICON_RUNTIME_MAP: Record<ExperienceLabIconName, Expe
     "w": 96,
     "h": 96,
     "sourceLabel": "LIGHTING",
-    "labelStartInCell": 117
+    "labelStartInCell": 114
   },
   "camera": {
     "x": 480,
@@ -57,7 +57,7 @@ export const EXPERIENCE_LAB_ICON_RUNTIME_MAP: Record<ExperienceLabIconName, Expe
     "w": 96,
     "h": 96,
     "sourceLabel": "CAMERA",
-    "labelStartInCell": 117
+    "labelStartInCell": 77
   },
   "splitView": {
     "x": 576,
@@ -65,7 +65,7 @@ export const EXPERIENCE_LAB_ICON_RUNTIME_MAP: Record<ExperienceLabIconName, Expe
     "w": 96,
     "h": 96,
     "sourceLabel": "SPLIT VIEW",
-    "labelStartInCell": 117
+    "labelStartInCell": 71
   },
   "founderRender": {
     "x": 672,
@@ -73,7 +73,7 @@ export const EXPERIENCE_LAB_ICON_RUNTIME_MAP: Record<ExperienceLabIconName, Expe
     "w": 96,
     "h": 96,
     "sourceLabel": "FOUNDER RENDER",
-    "labelStartInCell": 117
+    "labelStartInCell": 68
   },
   "projects": {
     "x": 0,
@@ -81,7 +81,7 @@ export const EXPERIENCE_LAB_ICON_RUNTIME_MAP: Record<ExperienceLabIconName, Expe
     "w": 96,
     "h": 96,
     "sourceLabel": "PROJECTS",
-    "labelStartInCell": 116
+    "labelStartInCell": 115
   },
   "history": {
     "x": 96,
@@ -89,7 +89,7 @@ export const EXPERIENCE_LAB_ICON_RUNTIME_MAP: Record<ExperienceLabIconName, Expe
     "w": 96,
     "h": 96,
     "sourceLabel": "HISTORY",
-    "labelStartInCell": 116
+    "labelStartInCell": 89
   },
   "revisions": {
     "x": 192,
@@ -97,7 +97,7 @@ export const EXPERIENCE_LAB_ICON_RUNTIME_MAP: Record<ExperienceLabIconName, Expe
     "w": 96,
     "h": 96,
     "sourceLabel": "REVISIONS",
-    "labelStartInCell": 116
+    "labelStartInCell": 115
   },
   "milestones": {
     "x": 288,
@@ -105,7 +105,7 @@ export const EXPERIENCE_LAB_ICON_RUNTIME_MAP: Record<ExperienceLabIconName, Expe
     "w": 96,
     "h": 96,
     "sourceLabel": "MILESTONES",
-    "labelStartInCell": 116
+    "labelStartInCell": 115
   },
   "analytics": {
     "x": 384,
@@ -113,7 +113,7 @@ export const EXPERIENCE_LAB_ICON_RUNTIME_MAP: Record<ExperienceLabIconName, Expe
     "w": 96,
     "h": 96,
     "sourceLabel": "ANALYTICS",
-    "labelStartInCell": 116
+    "labelStartInCell": 115
   },
   "performance": {
     "x": 480,
@@ -121,7 +121,7 @@ export const EXPERIENCE_LAB_ICON_RUNTIME_MAP: Record<ExperienceLabIconName, Expe
     "w": 96,
     "h": 96,
     "sourceLabel": "PERFORMANCE",
-    "labelStartInCell": 116
+    "labelStartInCell": 86
   },
   "issues": {
     "x": 576,
@@ -129,7 +129,7 @@ export const EXPERIENCE_LAB_ICON_RUNTIME_MAP: Record<ExperienceLabIconName, Expe
     "w": 96,
     "h": 96,
     "sourceLabel": "ISSUES",
-    "labelStartInCell": 116
+    "labelStartInCell": 107
   },
   "approved": {
     "x": 672,
@@ -137,7 +137,7 @@ export const EXPERIENCE_LAB_ICON_RUNTIME_MAP: Record<ExperienceLabIconName, Expe
     "w": 96,
     "h": 96,
     "sourceLabel": "APPROVED",
-    "labelStartInCell": 116
+    "labelStartInCell": 86
   },
   "playback": {
     "x": 0,
@@ -145,7 +145,7 @@ export const EXPERIENCE_LAB_ICON_RUNTIME_MAP: Record<ExperienceLabIconName, Expe
     "w": 96,
     "h": 96,
     "sourceLabel": "PLAYBACK",
-    "labelStartInCell": 115
+    "labelStartInCell": 86
   },
   "pause": {
     "x": 96,
@@ -153,7 +153,7 @@ export const EXPERIENCE_LAB_ICON_RUNTIME_MAP: Record<ExperienceLabIconName, Expe
     "w": 96,
     "h": 96,
     "sourceLabel": "PAUSE",
-    "labelStartInCell": 115
+    "labelStartInCell": 86
   },
   "stop": {
     "x": 192,
@@ -161,7 +161,7 @@ export const EXPERIENCE_LAB_ICON_RUNTIME_MAP: Record<ExperienceLabIconName, Expe
     "w": 96,
     "h": 96,
     "sourceLabel": "STOP",
-    "labelStartInCell": 115
+    "labelStartInCell": 86
   },
   "next": {
     "x": 288,
@@ -169,7 +169,7 @@ export const EXPERIENCE_LAB_ICON_RUNTIME_MAP: Record<ExperienceLabIconName, Expe
     "w": 96,
     "h": 96,
     "sourceLabel": "NEXT",
-    "labelStartInCell": 115
+    "labelStartInCell": 86
   },
   "previous": {
     "x": 384,
@@ -177,7 +177,7 @@ export const EXPERIENCE_LAB_ICON_RUNTIME_MAP: Record<ExperienceLabIconName, Expe
     "w": 96,
     "h": 96,
     "sourceLabel": "PREVIOUS",
-    "labelStartInCell": 115
+    "labelStartInCell": 86
   },
   "loop": {
     "x": 480,
@@ -185,7 +185,7 @@ export const EXPERIENCE_LAB_ICON_RUNTIME_MAP: Record<ExperienceLabIconName, Expe
     "w": 96,
     "h": 96,
     "sourceLabel": "LOOP",
-    "labelStartInCell": 115
+    "labelStartInCell": 111
   },
   "capture": {
     "x": 576,
@@ -193,7 +193,7 @@ export const EXPERIENCE_LAB_ICON_RUNTIME_MAP: Record<ExperienceLabIconName, Expe
     "w": 96,
     "h": 96,
     "sourceLabel": "CAPTURE",
-    "labelStartInCell": 115
+    "labelStartInCell": 114
   },
   "fullscreen": {
     "x": 672,
@@ -201,7 +201,7 @@ export const EXPERIENCE_LAB_ICON_RUNTIME_MAP: Record<ExperienceLabIconName, Expe
     "w": 96,
     "h": 96,
     "sourceLabel": "FULLSCREEN",
-    "labelStartInCell": 115
+    "labelStartInCell": 114
   },
   "zoomIn": {
     "x": 0,
@@ -209,7 +209,7 @@ export const EXPERIENCE_LAB_ICON_RUNTIME_MAP: Record<ExperienceLabIconName, Expe
     "w": 96,
     "h": 96,
     "sourceLabel": "ZOOM IN",
-    "labelStartInCell": 116
+    "labelStartInCell": 84
   },
   "zoomOut": {
     "x": 96,
@@ -217,7 +217,7 @@ export const EXPERIENCE_LAB_ICON_RUNTIME_MAP: Record<ExperienceLabIconName, Expe
     "w": 96,
     "h": 96,
     "sourceLabel": "ZOOM OUT",
-    "labelStartInCell": 116
+    "labelStartInCell": 84
   },
   "pan": {
     "x": 192,
@@ -225,7 +225,7 @@ export const EXPERIENCE_LAB_ICON_RUNTIME_MAP: Record<ExperienceLabIconName, Expe
     "w": 96,
     "h": 96,
     "sourceLabel": "PAN",
-    "labelStartInCell": 116
+    "labelStartInCell": 94
   },
   "fitView": {
     "x": 288,
@@ -233,7 +233,7 @@ export const EXPERIENCE_LAB_ICON_RUNTIME_MAP: Record<ExperienceLabIconName, Expe
     "w": 96,
     "h": 96,
     "sourceLabel": "FIT VIEW",
-    "labelStartInCell": 116
+    "labelStartInCell": 104
   },
   "orbit": {
     "x": 384,
@@ -241,7 +241,7 @@ export const EXPERIENCE_LAB_ICON_RUNTIME_MAP: Record<ExperienceLabIconName, Expe
     "w": 96,
     "h": 96,
     "sourceLabel": "ORBIT",
-    "labelStartInCell": 116
+    "labelStartInCell": 79
   },
   "perspective": {
     "x": 480,
@@ -249,7 +249,7 @@ export const EXPERIENCE_LAB_ICON_RUNTIME_MAP: Record<ExperienceLabIconName, Expe
     "w": 96,
     "h": 96,
     "sourceLabel": "PERSPECTIVE",
-    "labelStartInCell": 116
+    "labelStartInCell": 80
   },
   "toggleUi": {
     "x": 576,
@@ -257,7 +257,7 @@ export const EXPERIENCE_LAB_ICON_RUNTIME_MAP: Record<ExperienceLabIconName, Expe
     "w": 96,
     "h": 96,
     "sourceLabel": "TOGGLE UI",
-    "labelStartInCell": 116
+    "labelStartInCell": 86
   },
   "grid": {
     "x": 672,
@@ -265,7 +265,7 @@ export const EXPERIENCE_LAB_ICON_RUNTIME_MAP: Record<ExperienceLabIconName, Expe
     "w": 96,
     "h": 96,
     "sourceLabel": "GRID",
-    "labelStartInCell": 116
+    "labelStartInCell": 75
   },
   "hide": {
     "x": 0,
@@ -273,7 +273,7 @@ export const EXPERIENCE_LAB_ICON_RUNTIME_MAP: Record<ExperienceLabIconName, Expe
     "w": 96,
     "h": 96,
     "sourceLabel": "HIDE",
-    "labelStartInCell": 114
+    "labelStartInCell": 73
   },
   "lock": {
     "x": 96,
@@ -281,7 +281,7 @@ export const EXPERIENCE_LAB_ICON_RUNTIME_MAP: Record<ExperienceLabIconName, Expe
     "w": 96,
     "h": 96,
     "sourceLabel": "LOCK",
-    "labelStartInCell": 122
+    "labelStartInCell": 114
   },
   "unlock": {
     "x": 192,
@@ -337,7 +337,7 @@ export const EXPERIENCE_LAB_ICON_RUNTIME_MAP: Record<ExperienceLabIconName, Expe
     "w": 96,
     "h": 96,
     "sourceLabel": "EXPORT",
-    "labelStartInCell": 110
+    "labelStartInCell": 107
   },
   "import": {
     "x": 96,
@@ -345,7 +345,7 @@ export const EXPERIENCE_LAB_ICON_RUNTIME_MAP: Record<ExperienceLabIconName, Expe
     "w": 96,
     "h": 96,
     "sourceLabel": "IMPORT",
-    "labelStartInCell": 110
+    "labelStartInCell": 107
   },
   "cloudSync": {
     "x": 192,
@@ -353,7 +353,7 @@ export const EXPERIENCE_LAB_ICON_RUNTIME_MAP: Record<ExperienceLabIconName, Expe
     "w": 96,
     "h": 96,
     "sourceLabel": "CLOUD SYNC",
-    "labelStartInCell": 110
+    "labelStartInCell": 107
   },
   "database": {
     "x": 288,
@@ -361,7 +361,7 @@ export const EXPERIENCE_LAB_ICON_RUNTIME_MAP: Record<ExperienceLabIconName, Expe
     "w": 96,
     "h": 96,
     "sourceLabel": "DATABASE",
-    "labelStartInCell": 110
+    "labelStartInCell": 107
   },
   "link": {
     "x": 384,
@@ -369,7 +369,7 @@ export const EXPERIENCE_LAB_ICON_RUNTIME_MAP: Record<ExperienceLabIconName, Expe
     "w": 96,
     "h": 96,
     "sourceLabel": "LINK",
-    "labelStartInCell": 112
+    "labelStartInCell": 115
   },
   "share": {
     "x": 480,
@@ -377,7 +377,7 @@ export const EXPERIENCE_LAB_ICON_RUNTIME_MAP: Record<ExperienceLabIconName, Expe
     "w": 96,
     "h": 96,
     "sourceLabel": "SHARE",
-    "labelStartInCell": 110
+    "labelStartInCell": 107
   },
   "users": {
     "x": 576,
@@ -385,7 +385,7 @@ export const EXPERIENCE_LAB_ICON_RUNTIME_MAP: Record<ExperienceLabIconName, Expe
     "w": 96,
     "h": 96,
     "sourceLabel": "USERS",
-    "labelStartInCell": 110
+    "labelStartInCell": 107
   },
   "team": {
     "x": 672,
@@ -393,7 +393,7 @@ export const EXPERIENCE_LAB_ICON_RUNTIME_MAP: Record<ExperienceLabIconName, Expe
     "w": 96,
     "h": 96,
     "sourceLabel": "TEAM",
-    "labelStartInCell": 110
+    "labelStartInCell": 107
   },
   "notifications": {
     "x": 0,
@@ -401,7 +401,7 @@ export const EXPERIENCE_LAB_ICON_RUNTIME_MAP: Record<ExperienceLabIconName, Expe
     "w": 96,
     "h": 96,
     "sourceLabel": "NOTIFICATIONS",
-    "labelStartInCell": 105
+    "labelStartInCell": 85
   },
   "comments": {
     "x": 96,
@@ -409,7 +409,7 @@ export const EXPERIENCE_LAB_ICON_RUNTIME_MAP: Record<ExperienceLabIconName, Expe
     "w": 96,
     "h": 96,
     "sourceLabel": "COMMENTS",
-    "labelStartInCell": 105
+    "labelStartInCell": 85
   },
   "notes": {
     "x": 192,
@@ -417,7 +417,7 @@ export const EXPERIENCE_LAB_ICON_RUNTIME_MAP: Record<ExperienceLabIconName, Expe
     "w": 96,
     "h": 96,
     "sourceLabel": "NOTES",
-    "labelStartInCell": 105
+    "labelStartInCell": 85
   },
   "attachments": {
     "x": 288,
@@ -425,7 +425,7 @@ export const EXPERIENCE_LAB_ICON_RUNTIME_MAP: Record<ExperienceLabIconName, Expe
     "w": 96,
     "h": 96,
     "sourceLabel": "ATTACHMENTS",
-    "labelStartInCell": 105
+    "labelStartInCell": 85
   },
   "schedule": {
     "x": 384,
@@ -433,7 +433,7 @@ export const EXPERIENCE_LAB_ICON_RUNTIME_MAP: Record<ExperienceLabIconName, Expe
     "w": 96,
     "h": 96,
     "sourceLabel": "SCHEDULE",
-    "labelStartInCell": 106
+    "labelStartInCell": 85
   },
   "timeTracking": {
     "x": 480,
@@ -441,7 +441,7 @@ export const EXPERIENCE_LAB_ICON_RUNTIME_MAP: Record<ExperienceLabIconName, Expe
     "w": 96,
     "h": 96,
     "sourceLabel": "TIME TRACKING",
-    "labelStartInCell": 105
+    "labelStartInCell": 85
   },
   "flag": {
     "x": 576,
@@ -449,7 +449,7 @@ export const EXPERIENCE_LAB_ICON_RUNTIME_MAP: Record<ExperienceLabIconName, Expe
     "w": 96,
     "h": 96,
     "sourceLabel": "FLAG",
-    "labelStartInCell": 106
+    "labelStartInCell": 114
   },
   "favorite": {
     "x": 672,
@@ -457,7 +457,7 @@ export const EXPERIENCE_LAB_ICON_RUNTIME_MAP: Record<ExperienceLabIconName, Expe
     "w": 96,
     "h": 96,
     "sourceLabel": "FAVORITE",
-    "labelStartInCell": 105
+    "labelStartInCell": 85
   },
   "dashboard": {
     "x": 0,
@@ -465,7 +465,7 @@ export const EXPERIENCE_LAB_ICON_RUNTIME_MAP: Record<ExperienceLabIconName, Expe
     "w": 96,
     "h": 96,
     "sourceLabel": "DASHBOARD",
-    "labelStartInCell": 93
+    "labelStartInCell": 73
   },
   "focusMode": {
     "x": 96,
@@ -473,7 +473,7 @@ export const EXPERIENCE_LAB_ICON_RUNTIME_MAP: Record<ExperienceLabIconName, Expe
     "w": 96,
     "h": 96,
     "sourceLabel": "FOCUS MODE",
-    "labelStartInCell": 92
+    "labelStartInCell": 73
   },
   "terminal": {
     "x": 192,
@@ -481,7 +481,7 @@ export const EXPERIENCE_LAB_ICON_RUNTIME_MAP: Record<ExperienceLabIconName, Expe
     "w": 96,
     "h": 96,
     "sourceLabel": "TERMINAL",
-    "labelStartInCell": 93
+    "labelStartInCell": 74
   },
   "diagnostics": {
     "x": 288,
@@ -489,7 +489,7 @@ export const EXPERIENCE_LAB_ICON_RUNTIME_MAP: Record<ExperienceLabIconName, Expe
     "w": 96,
     "h": 96,
     "sourceLabel": "DIAGNOSTICS",
-    "labelStartInCell": 92
+    "labelStartInCell": 73
   },
   "security": {
     "x": 384,
@@ -497,7 +497,7 @@ export const EXPERIENCE_LAB_ICON_RUNTIME_MAP: Record<ExperienceLabIconName, Expe
     "w": 96,
     "h": 96,
     "sourceLabel": "SECURITY",
-    "labelStartInCell": 93
+    "labelStartInCell": 73
   },
   "permissions": {
     "x": 480,
@@ -505,7 +505,7 @@ export const EXPERIENCE_LAB_ICON_RUNTIME_MAP: Record<ExperienceLabIconName, Expe
     "w": 96,
     "h": 96,
     "sourceLabel": "PERMISSIONS",
-    "labelStartInCell": 93
+    "labelStartInCell": 73
   },
   "help": {
     "x": 576,
@@ -513,7 +513,7 @@ export const EXPERIENCE_LAB_ICON_RUNTIME_MAP: Record<ExperienceLabIconName, Expe
     "w": 96,
     "h": 96,
     "sourceLabel": "HELP",
-    "labelStartInCell": 93
+    "labelStartInCell": 114
   },
   "about": {
     "x": 672,
@@ -521,7 +521,7 @@ export const EXPERIENCE_LAB_ICON_RUNTIME_MAP: Record<ExperienceLabIconName, Expe
     "w": 96,
     "h": 96,
     "sourceLabel": "ABOUT",
-    "labelStartInCell": 93
+    "labelStartInCell": 73
   }
 } as Record<ExperienceLabIconName, ExperienceLabIconRuntimeCoord>;
 
