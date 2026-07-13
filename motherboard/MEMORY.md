@@ -48687,3 +48687,24 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 - **Tests** — 63/63 PASS
 
 **One commit + one push** on `master` via `agent-commit.sh`.
+
+---
+
+## 2026-07-13 — Experience Lab labeled icon sprite system (P0)
+
+**Context:** Founder sprint P0 to implement the approved 8×8 Experience Lab Workbench labeled icon sheet as one reusable sprite/atlas system without manual per-icon extraction. Labels on the source sheet are identification-only; runtime UI uses React for text and a11y.
+
+**Topics covered:** Prior EL V2 work (Command Dock three-row layout, Workbench tiered layout, duplicate workbench row fix, Command Dock polish). This sprint: store canonical labeled source PNG, semantic registry from written labels, measured grid config, automated atlas build script, ExperienceLabIcon React component, catalog doc, wire icons into EL V2 (Command Dock actions, StudioViewport mode rail + controls, Workbench tools/nav, Approval Bridge founder review controls, Diagnostics toggle, floating inspector), 13 icon-system tests + workbench icon mapping test, prebuild integration.
+
+**Decisions / outcomes:**
+- Labeled source preserved unchanged at `src/assets/studio-world/experience-lab/experience-lab-icon-source-labeled.png` (1024×1024, 8×8, labels intact).
+- Build script `scripts/build-experience-lab-icon-atlas.mjs` crops glyph region above detected label band per cell, removes black → transparent runtime atlas `experience-lab-icon-runtime-atlas.png` (768×768) + generated coordinate map.
+- Semantic registry: 64 icons keyed by camelCase from written labels (`experience-lab-icon-registry.ts`).
+- Component: `<ExperienceLabIcon name="blueprint" size="md" />` with xs–xl sizes, decorative/interactive a11y, gold glow active state (non-destructive).
+- CSS-sprite fallback documented; transparent atlas is primary (`mode: transparent-atlas`).
+- Legacy `/admin/studio/experience-lab` untouched; V2 test route only.
+- Spatial Architecture Review: SKIPPED — icon infrastructure + targeted V2 wiring, no new nav surfaces.
+
+**Changes:** `src/features/studio-world/icons/*`, `src/assets/studio-world/experience-lab/*`, `scripts/build-experience-lab-icon-atlas.mjs`, `docs/studio-os/design-system/EXPERIENCE_LAB_ICON_CATALOG.md`, EL V2 component wiring + CSS, `package.json` prebuild + `experience-lab:build-icons` script.
+
+**Conventions:** Replace labeled source → run `npm run experience-lab:build-icons` → review registry; do not hand-crop individual icons. Search in Command Dock uses `zoomIn` (no dedicated search glyph on sheet).

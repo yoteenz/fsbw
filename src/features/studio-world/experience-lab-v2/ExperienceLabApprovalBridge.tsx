@@ -1,6 +1,8 @@
 import type { ExperienceLabV2ApprovalState, ExperienceLabV2TestMode } from './experience-lab-v2.types';
 import { requiresLiveConfirmation } from './experience-lab-v2-test-modes';
 import { ELAB_V2_COMPOSITION } from './experience-lab-v2-composition';
+import { ExperienceLabIcon } from '../icons/ExperienceLabIcon';
+import { FOUNDER_REVIEW_ICONS } from './experience-lab-v2-icon-bindings';
 
 type Props = {
   approval: ExperienceLabV2ApprovalState;
@@ -29,6 +31,23 @@ export function ExperienceLabApprovalBridge({ approval, testMode, onApprove, onB
 
   return (
     <section className="elab-approval-bridge elab-approval-bridge--strip" {...{ [ELAB_V2_COMPOSITION.approvalBridge]: '' }} aria-label="Approval command strip">
+      <div className="elab-approval-bridge__review-controls" aria-label="Founder review playback">
+        <button type="button" className="elab-approval-bridge__review-btn" aria-label="Previous">
+          <ExperienceLabIcon name={FOUNDER_REVIEW_ICONS.previous} size="xs" decorative />
+        </button>
+        <button type="button" className="elab-approval-bridge__review-btn" aria-label="Play">
+          <ExperienceLabIcon name={FOUNDER_REVIEW_ICONS.playback} size="xs" decorative />
+        </button>
+        <button type="button" className="elab-approval-bridge__review-btn" aria-label="Pause">
+          <ExperienceLabIcon name={FOUNDER_REVIEW_ICONS.pause} size="xs" decorative />
+        </button>
+        <button type="button" className="elab-approval-bridge__review-btn" aria-label="Next">
+          <ExperienceLabIcon name={FOUNDER_REVIEW_ICONS.next} size="xs" decorative />
+        </button>
+        <button type="button" className="elab-approval-bridge__review-btn" aria-label="Capture">
+          <ExperienceLabIcon name={FOUNDER_REVIEW_ICONS.capture} size="xs" decorative />
+        </button>
+      </div>
       <div className="elab-approval-bridge__actions">
         {STRIP_ACTIONS.map((action) => {
           const isPrimary = action.id === 'approve';

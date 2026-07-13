@@ -1,6 +1,8 @@
 import { useCallback, useState } from 'react';
 import type { ExperienceLabV2ArtifactRef, StudioViewportMode } from './experience-lab-v2.types';
 import { ELAB_V2_COMPOSITION, VIEWPORT_MODE_LABELS } from './experience-lab-v2-composition';
+import { ExperienceLabIcon } from '../icons/ExperienceLabIcon';
+import { VIEWPORT_MODE_ICON } from './experience-lab-v2-icon-bindings';
 
 export type StudioViewportProps = {
   mode: StudioViewportMode;
@@ -199,18 +201,38 @@ export function StudioViewport({
             ) : null}
             {onFocusMode ? (
               <button type="button" className="elab-viewport__ctrl" onClick={() => onFocusMode(mode)} aria-label="Focus mode">
-                ◈
+                <ExperienceLabIcon name="focusMode" size="sm" decorative />
               </button>
             ) : null}
+            <button type="button" className="elab-viewport__ctrl" aria-label="Toggle grid" aria-pressed={false}>
+              <ExperienceLabIcon name="grid" size="sm" decorative />
+            </button>
+            <button type="button" className="elab-viewport__ctrl" aria-label="Toggle UI">
+              <ExperienceLabIcon name="toggleUi" size="sm" decorative />
+            </button>
+            <button type="button" className="elab-viewport__ctrl" aria-label="Zoom in">
+              <ExperienceLabIcon name="zoomIn" size="sm" decorative />
+            </button>
+            <button type="button" className="elab-viewport__ctrl" aria-label="Zoom out">
+              <ExperienceLabIcon name="zoomOut" size="sm" decorative />
+            </button>
+            <button type="button" className="elab-viewport__ctrl" aria-label="Fit view">
+              <ExperienceLabIcon name="fitView" size="sm" decorative />
+            </button>
+            <button type="button" className="elab-viewport__ctrl" aria-label="Pan">
+              <ExperienceLabIcon name="pan" size="sm" decorative />
+            </button>
             <button type="button" className="elab-viewport__ctrl" onClick={toggleFullscreen} aria-label="Fullscreen">
-              {fullscreen ? '✕' : '⛶'}
+              <ExperienceLabIcon name={fullscreen ? 'stop' : 'fullscreen'} size="sm" decorative />
             </button>
           </div>
         </div>
 
         {modes && onModeChange ? (
           <nav className="elab-viewport__mode-rail" {...{ [ELAB_V2_COMPOSITION.modeRail]: '' }} aria-label="Viewport modes">
-            {modes.map((m) => (
+            {modes.map((m) => {
+              const iconName = VIEWPORT_MODE_ICON[m];
+              return (
               <button
                 key={m}
                 type="button"
@@ -218,9 +240,11 @@ export function StudioViewport({
                 aria-pressed={mode === m}
                 onClick={() => onModeChange(m)}
               >
+                {iconName ? <ExperienceLabIcon name={iconName} size="xs" decorative active={mode === m} /> : null}
                 {VIEWPORT_MODE_LABELS[m] ?? m}
               </button>
-            ))}
+              );
+            })}
           </nav>
         ) : null}
       </div>

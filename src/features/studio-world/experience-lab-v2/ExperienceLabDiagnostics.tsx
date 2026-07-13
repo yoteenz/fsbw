@@ -2,6 +2,8 @@ import type { ExperienceLabV2MigrationReadiness, ExperienceLabV2TestMode } from 
 import { EXPERIENCE_LAB_V2_TEST_MODES } from './experience-lab-v2.types';
 import { testModeLabel, writeExperienceLabV2TestMode } from './experience-lab-v2-test-modes';
 import type { PanelOrchestratorDiagnostics } from './experience-lab-v2-panel-orchestrator';
+import { ExperienceLabIcon } from '../icons/ExperienceLabIcon';
+import { DIAGNOSTICS_ICONS } from './experience-lab-v2-icon-bindings';
 
 type Props = {
   testMode: ExperienceLabV2TestMode;
@@ -33,6 +35,7 @@ export function ExperienceLabDiagnostics({
   if (!open) {
     return (
       <button type="button" className={`elab-diag-toggle${compact ? ' elab-diag-toggle--compact' : ''}`} onClick={onToggle}>
+        <ExperienceLabIcon name={DIAGNOSTICS_ICONS.diagnostics} size="xs" decorative />
         {compact ? 'DIAG' : 'Diagnostics & migration readiness'}
       </button>
     );

@@ -11,6 +11,7 @@ import {
   type CommandDockLocationId,
 } from './experience-lab-v2-command-dock-locations';
 import { ExperienceLabSheet } from './ExperienceLabSheet';
+import { ExperienceLabIcon } from '../icons/ExperienceLabIcon';
 
 type Props = {
   model: ExperienceLabV2ViewModel;
@@ -52,14 +53,14 @@ export function ExperienceLabCommandDock({ model, onStatusOpen, onSearch }: Prop
           </div>
           <div className="elab-cmd__actions">
             <button type="button" className="elab-cmd__icon-btn" aria-label="Search" onClick={onSearch}>
-              <span className="elab-cmd__icon-glyph" aria-hidden>⌕</span>
+              <ExperienceLabIcon name="zoomIn" size="sm" decorative />
             </button>
             <button type="button" className="elab-cmd__icon-btn elab-cmd__icon-btn--badge" aria-label="Alerts">
-              <span className="elab-cmd__icon-glyph" aria-hidden>🔔</span>
+              <ExperienceLabIcon name="notifications" size="sm" decorative />
               <span className="elab-cmd__badge-count">3</span>
             </button>
             <button type="button" className="elab-cmd__avatar" aria-label="Client account">
-              FS
+              <ExperienceLabIcon name="users" size="sm" decorative />
             </button>
           </div>
         </div>

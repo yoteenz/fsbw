@@ -1,0 +1,56 @@
+.elab-icon {
+  display: inline-block;
+  flex-shrink: 0;
+  background-repeat: no-repeat;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  vertical-align: middle;
+}
+
+.elab-icon--missing {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 2px;
+}
+
+.elab-icon--disabled {
+  opacity: 0.45;
+}
+
+.elab-icon--loading {
+  opacity: 0.65;
+  animation: elab-icon-pulse 1.2s ease-in-out infinite;
+}
+
+.elab-icon--active,
+.elab-icon--selected {
+  filter: drop-shadow(0 0 4px rgba(212, 175, 55, 0.55));
+}
+
+@keyframes elab-icon-pulse {
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 0.85;
+  }
+}
+
+/* Dark-surface containers for Command Dock / viewport controls */
+.elab-cmd__icon-btn .elab-icon,
+.elab-viewport__ctrl .elab-icon,
+.elab-founder-wb__tool-icon .elab-icon,
+.elab-approval-bridge__review-icon .elab-icon,
+.elab-diag-toggle .elab-icon {
+  display: block;
+}
+
+.elab-cmd__icon-btn--active,
+.elab-viewport__ctrl[aria-pressed='true'],
+.elab-founder-wb__tool--active {
+  box-shadow: 0 0 0 1px rgba(212, 175, 55, 0.65), 0 0 10px rgba(212, 175, 55, 0.25);
+}
+
+.elab-viewport__mode-seg .elab-icon {
+  margin-right: 4px;
+}

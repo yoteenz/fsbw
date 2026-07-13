@@ -1438,6 +1438,37 @@ button.elab-cmd__meta-chip {
   background: rgba(0, 0, 0, 0.15);
 }
 
+.elab-approval-bridge__review-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.elab-approval-bridge__review-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: 1px solid var(--el-v2-workstation-divider);
+  border-radius: 3px;
+  background: rgba(0, 0, 0, 0.35);
+  cursor: pointer;
+}
+
+.elab-approval-bridge__review-btn:hover {
+  border-color: rgba(212, 175, 55, 0.65);
+  box-shadow: 0 0 8px rgba(212, 175, 55, 0.2);
+}
+
+.elab-cmd__avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .elab-approval-bridge--strip .elab-approval-bridge__actions {
   display: flex;
   flex: 1;

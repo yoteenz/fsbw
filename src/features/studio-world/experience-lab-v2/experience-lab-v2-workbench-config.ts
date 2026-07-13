@@ -24,30 +24,33 @@ export type WorkbenchEditingToolId =
   | 'animation-studio'
   | 'material-lab';
 
+import type { ExperienceLabIconName } from '../icons/experience-lab-icon-registry';
+import { WORKBENCH_NAV_ICON, WORKBENCH_TOOL_ICON } from './experience-lab-v2-icon-bindings';
+
 export type WorkbenchEditingTool = {
   id: WorkbenchEditingToolId;
   label: string;
-  icon: string;
+  icon: ExperienceLabIconName;
 };
 
 /** Primary scroll page — visible before horizontal scroll. */
 export const EXPERIENCE_LAB_WORKBENCH_TOOLS_PRIMARY: WorkbenchEditingTool[] = [
-  { id: 'architectural-tools', label: 'ARCHITECTURAL TOOLS', icon: '◎' },
-  { id: 'material-library', label: 'MATERIAL LIBRARY', icon: '◉' },
-  { id: 'asset-reference', label: 'ASSET REFERENCE', icon: '▣' },
-  { id: 'budget-forecast', label: 'BUDGET FORECAST', icon: '▥' },
-  { id: 'workforce-center', label: 'WORKFORCE CENTER', icon: '⬡' },
-  { id: 'permit-center', label: 'PERMIT CENTER', icon: '⛊' },
+  { id: 'architectural-tools', label: 'ARCHITECTURAL TOOLS', icon: WORKBENCH_TOOL_ICON['architectural-tools'] },
+  { id: 'material-library', label: 'MATERIAL LIBRARY', icon: WORKBENCH_TOOL_ICON['material-library'] },
+  { id: 'asset-reference', label: 'ASSET REFERENCE', icon: WORKBENCH_TOOL_ICON['asset-reference'] },
+  { id: 'budget-forecast', label: 'BUDGET FORECAST', icon: WORKBENCH_TOOL_ICON['budget-forecast'] },
+  { id: 'workforce-center', label: 'WORKFORCE CENTER', icon: WORKBENCH_TOOL_ICON['workforce-center'] },
+  { id: 'permit-center', label: 'PERMIT CENTER', icon: WORKBENCH_TOOL_ICON['permit-center'] },
 ];
 
 /** Revealed after horizontal scroll / snap. */
 export const EXPERIENCE_LAB_WORKBENCH_TOOLS_EXTENDED: WorkbenchEditingTool[] = [
-  { id: 'lighting-studio', label: 'LIGHTING STUDIO', icon: '☀' },
-  { id: 'camera-studio', label: 'CAMERA STUDIO', icon: '▦' },
-  { id: 'composition-studio', label: 'COMPOSITION STUDIO', icon: '◫' },
-  { id: 'character-studio', label: 'CHARACTER STUDIO', icon: '◐' },
-  { id: 'animation-studio', label: 'ANIMATION STUDIO', icon: '▶' },
-  { id: 'material-lab', label: 'MATERIAL LAB', icon: '◈' },
+  { id: 'lighting-studio', label: 'LIGHTING STUDIO', icon: WORKBENCH_TOOL_ICON['lighting-studio'] },
+  { id: 'camera-studio', label: 'CAMERA STUDIO', icon: WORKBENCH_TOOL_ICON['camera-studio'] },
+  { id: 'composition-studio', label: 'COMPOSITION STUDIO', icon: WORKBENCH_TOOL_ICON['composition-studio'] },
+  { id: 'character-studio', label: 'CHARACTER STUDIO', icon: WORKBENCH_TOOL_ICON['character-studio'] },
+  { id: 'animation-studio', label: 'ANIMATION STUDIO', icon: WORKBENCH_TOOL_ICON['animation-studio'] },
+  { id: 'material-lab', label: 'MATERIAL LAB', icon: WORKBENCH_TOOL_ICON['material-lab'] },
 ];
 
 export const EXPERIENCE_LAB_WORKBENCH_EDITING_TOOLS: WorkbenchEditingTool[] = [
@@ -60,12 +63,12 @@ export type WorkbenchWorldNavId = 'dashboard' | 'studio-world' | 'marketplace' |
 type WorkbenchWorldNavItem = {
   id: WorkbenchWorldNavId;
   label: string;
-  icon: 'dashboard' | 'globe' | 'marketplace' | 'command';
+  icon: ExperienceLabIconName;
 };
 
 export const EXPERIENCE_LAB_WORKBENCH_WORLD_NAV: WorkbenchWorldNavItem[] = [
-  { id: 'dashboard', label: 'DASHBOARD', icon: 'dashboard' },
-  { id: 'studio-world', label: 'STUDIO WORLD', icon: 'globe' },
-  { id: 'marketplace', label: 'MARKETPLACE', icon: 'marketplace' },
-  { id: 'command-center', label: 'COMMAND CENTER', icon: 'command' },
+  { id: 'dashboard', label: 'DASHBOARD', icon: WORKBENCH_NAV_ICON.dashboard },
+  { id: 'studio-world', label: 'STUDIO WORLD', icon: WORKBENCH_NAV_ICON['studio-world'] },
+  { id: 'marketplace', label: 'MARKETPLACE', icon: WORKBENCH_NAV_ICON.marketplace },
+  { id: 'command-center', label: 'COMMAND CENTER', icon: WORKBENCH_NAV_ICON['command-center'] },
 ];

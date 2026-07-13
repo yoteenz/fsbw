@@ -9,6 +9,8 @@ import {
   type WorkbenchEditingToolId,
   type WorkbenchWorldNavId,
 } from './experience-lab-v2-workbench-config';
+import type { ExperienceLabIconName } from '../icons/experience-lab-icon-registry';
+import { ExperienceLabIcon } from '../icons/ExperienceLabIcon';
 
 type Props = {
   model: ExperienceLabV2ViewModel;
@@ -16,40 +18,8 @@ type Props = {
   onTabChange?: (tab: ElabWorkbenchTab) => void;
 };
 
-function WorkbenchNavIcon({ kind }: { kind: 'dashboard' | 'globe' | 'marketplace' | 'command' }) {
-  if (kind === 'dashboard') {
-    return (
-      <svg viewBox="0 0 16 16" width="14" height="14" focusable="false" aria-hidden>
-        <path
-          d="M2 14V6l6-4 6 4v8H9v-4H7v4H2z"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.2"
-        />
-      </svg>
-    );
-  }
-  if (kind === 'globe') {
-    return (
-      <svg viewBox="0 0 16 16" width="14" height="14" focusable="false" aria-hidden>
-        <circle cx="8" cy="8" r="5.5" fill="none" stroke="currentColor" strokeWidth="1.1" />
-        <path d="M2.5 8h11M8 2.5c1.8 1.6 2.8 3.8 2.8 5.5S9.8 11.9 8 13.5M8 2.5C6.2 4.1 5.2 6.3 5.2 8s1 3.9 2.8 5.5" fill="none" stroke="currentColor" strokeWidth="1" />
-      </svg>
-    );
-  }
-  if (kind === 'marketplace') {
-    return (
-      <svg viewBox="0 0 16 16" width="14" height="14" focusable="false" aria-hidden>
-        <path d="M3 5l1-2h8l1 2v8H3V5z" fill="none" stroke="currentColor" strokeWidth="1.1" />
-        <path d="M3 5h10" stroke="currentColor" strokeWidth="1.1" />
-      </svg>
-    );
-  }
-  return (
-    <svg viewBox="0 0 16 16" width="14" height="14" focusable="false" aria-hidden>
-      <path d="M2 13V4l6-3 6 3v9H9V8H7v5H2z" fill="none" stroke="currentColor" strokeWidth="1.1" />
-    </svg>
-  );
+function WorkbenchNavIcon({ name }: { name: ExperienceLabIconName }) {
+  return <ExperienceLabIcon name={name} size="sm" decorative />;
 }
 
 /** Three-row Experience Lab Workbench — title · editing tools · world navigation. */
@@ -85,7 +55,9 @@ export function ExperienceLabFounderWorkbench({ model: _model }: Props) {
               aria-pressed={activeTool === tool.id}
               onClick={() => setActiveTool(tool.id)}
             >
-              <span className="elab-founder-wb__tool-icon" aria-hidden>{tool.icon}</span>
+              <span className="elab-founder-wb__tool-icon" aria-hidden>
+                <ExperienceLabIcon name={tool.icon} size="md" decorative active={activeTool === tool.id} />
+              </span>
               <span className="elab-founder-wb__tool-label">{tool.label}</span>
             </button>
           ))}
@@ -103,7 +75,7 @@ export function ExperienceLabFounderWorkbench({ model: _model }: Props) {
               onClick={() => setActiveNav(item.id)}
             >
               <span className="elab-founder-wb__nav-icon">
-                <WorkbenchNavIcon kind={item.icon} />
+                <WorkbenchNavIcon name={item.icon} />
               </span>
               <span className="elab-founder-wb__nav-label">{item.label}</span>
             </button>
@@ -128,7 +100,7 @@ export function ExperienceLabFounderWorkbench({ model: _model }: Props) {
               onClick={() => setActiveNav(item.id)}
             >
               <span className="elab-founder-wb__nav-icon">
-                <WorkbenchNavIcon kind={item.icon} />
+                <WorkbenchNavIcon name={item.icon} />
               </span>
               <span className="elab-founder-wb__nav-label">{item.label}</span>
             </button>

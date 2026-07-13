@@ -1,5 +1,7 @@
 import type { PanelDockZone, PanelPresentationState } from './experience-lab-v2-panel-orchestrator';
 import { ELAB_V2_COMPOSITION } from './experience-lab-v2-composition';
+import { ExperienceLabIcon } from '../icons/ExperienceLabIcon';
+import { INSPECTOR_ACTION_ICONS } from './experience-lab-v2-icon-bindings';
 
 type Props = {
   label: string;
@@ -41,6 +43,7 @@ export function ExperienceLabFloatingInspector({
       data-panel-state={state}
     >
       <button type="button" className="elab-float__body" onClick={onExpandClick} aria-label={`Expand ${label} inspector`}>
+        <ExperienceLabIcon name={INSPECTOR_ACTION_ICONS.settings} size="xs" decorative />
         <span className="elab-float__label">{label}</span>
         <span className="elab-float__status">{statusLine}</span>
         <span className="elab-float__expand" aria-hidden>⌄</span>

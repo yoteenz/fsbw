@@ -26,6 +26,12 @@ describe('Experience Lab Workbench config', () => {
     ]);
   });
 
+  it('maps editing tools to semantic Experience Lab icon names', () => {
+    expect(EXPERIENCE_LAB_WORKBENCH_EDITING_TOOLS[0]?.icon).toBe('experienceLab');
+    expect(EXPERIENCE_LAB_WORKBENCH_EDITING_TOOLS.find((t) => t.id === 'lighting-studio')?.icon).toBe('lighting');
+    expect(EXPERIENCE_LAB_WORKBENCH_WORLD_NAV[0]?.icon).toBe('dashboard');
+  });
+
   it('resolves center logo path from Supabase public storage', () => {
     expect(resolveExperienceLabWorkbenchCenterLogoUrl()).toContain('D2161224-8335-4CE3-A4D8-794014DDAD32.png');
   });
