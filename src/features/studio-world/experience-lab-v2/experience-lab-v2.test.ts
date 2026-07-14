@@ -129,20 +129,57 @@ describe('Experience Lab V2 — Fixed application shell', () => {
 
   it('workbench center orb is 3x prior size', () => {
     const css = readV2Source('experience-lab-v2.css');
-    expect(css).toContain('--elab-wb-nav-orb-size: calc(78px * var(--elab-wb-height-scale))');
-    expect(css).toContain('--elab-wb-nav-orb-core-size: calc(66px * var(--elab-wb-height-scale))');
+    expect(css).toContain('--elab-wb-nav-orb-size: calc(78px * var(--elab-wb-height-scale) * var(--elab-wb-world-nav-height-scale))');
+    expect(css).toContain('--elab-wb-nav-orb-core-size: calc(66px * var(--elab-wb-height-scale) * var(--elab-wb-world-nav-height-scale))');
+  });
+
+  it('workbench world-nav row is 40% shorter than prior nav height', () => {
+    const css = readV2Source('experience-lab-v2.css');
+    expect(css).toContain('--elab-wb-world-nav-height-scale: 0.6');
+    expect(css).toContain('--elab-wb-nav-min-height: calc(52px * var(--elab-wb-height-scale) * var(--elab-wb-world-nav-height-scale))');
+    expect(css).toMatch(/\.elab-founder-wb__nav-label\s*\{[\s\S]*?font-size:\s*calc\(6px \* var\(--elab-wb-world-nav-height-scale/);
   });
 
   it('workbench panel height is 40% shorter via height scale token', () => {
     const css = readV2Source('experience-lab-v2.css');
-    expect(css).toMatch(/\.elab-founder-wb--tiered\s*\{[\s\S]*?--elab-wb-height-scale:\s*0\.6/);
+    expect(css).toMatch(/\.elab-founder-wb--tiered\s*\{[\s\S]*?--elab-wb-height-scale:\s*0\.48/);
+    expect(css).toMatch(/\.elab-founder-wb--tiered\s*\{[\s\S]*?--elab-wb-pill-radius:\s*9999px/);
+    expect(css).toMatch(/\.elab-founder-wb__pill--head\s*\{[\s\S]*?border-radius:\s*var\(--elab-wb-pill-radius\)/);
+    expect(css).toMatch(/\.elab-founder-wb__tool\s*\{[\s\S]*?border-radius:\s*var\(--elab-wb-pill-radius\)/);
+    expect(css).toMatch(/\.elab-founder-wb__tool--active\s*\{[\s\S]*?box-shadow:\s*var\(--elab-selection-glow\)/);
+    expect(css).toContain('--elab-selection-glow-inset');
     expect(css).toContain('--elab-wb-tool-min-height: calc(50px * var(--elab-wb-height-scale))');
-    expect(css).toContain('--elab-wb-nav-min-height: calc(52px * var(--elab-wb-height-scale))');
+    expect(css).toContain('--elab-wb-world-nav-height-scale: 0.6');
+    expect(css).toContain('--elab-wb-tools-pad-x: var(--elab-hud-inset-side, 14px)');
+    expect(css).toContain('--elab-wb-tools-visible: 6');
+    expect(css).toMatch(/\.elab-founder-wb__tools-scroll\s*\{[\s\S]*?gap:\s*var\(--elab-wb-tools-gap/);
+    expect(css).not.toMatch(/\.elab-founder-wb__tool\s*\{[\s\S]*?margin-right/);
+  });
+
+  it('forces uppercase typography on workstation root and boot overlays', () => {
+    const css = readV2Source('experience-lab-v2.css');
+    expect(css).toMatch(/\.elab-workstation\s*\{[\s\S]*?text-transform:\s*uppercase/);
+    const composition = readV2Source('experience-lab-v2-composition.ts');
+    expect(composition).toContain("BLUEPRINT: 'BLUEPRINT'");
+    expect(composition).toContain("label: 'EXPERIENCE LAB'");
+    const suspense = readFileSync(
+      resolve(V2_DIR, '../../../components/admin/studio/studio-boot/StudioRouteSuspenseFallback.tsx'),
+      'utf8'
+    );
+    expect(suspense).toContain("textTransform: 'uppercase'");
+    expect(suspense).toContain('LARGE STUDIO MODULES MAY TAKE A MOMENT ON MOBILE NETWORKS.');
+    const awakening = readFileSync(
+      resolve(V2_DIR, '../../../components/admin/studio/studio-orb/StudioOrbAwakeningOverlay.tsx'),
+      'utf8'
+    );
+    expect(awakening).toContain('STUDIO INTELLIGENCE · AWAKENING');
+    expect(awakening).toContain("textTransform: 'uppercase'");
   });
 
   it('workbench uses tiered layout with world nav and orb', () => {
     const wb = readV2Source('ExperienceLabFounderWorkbench.tsx');
     expect(wb).toContain('elab-founder-wb--tiered');
+    expect(wb).toContain('elab-founder-wb__pill--head');
     expect(wb).toContain('EXPERIENCE LAB WORKBENCH');
     expect(wb).toContain('elab-founder-wb__tools-scroll');
     expect(wb).toContain('elab-founder-wb__world-nav');
@@ -151,6 +188,11 @@ describe('Experience Lab V2 — Fixed application shell', () => {
     expect(wb).toContain('splitWorkbenchToolLabel');
     expect(readV2Source('experience-lab-v2-workbench-config.ts')).toContain('material-lab');
     expect(readV2Source('ExperienceLabWorkbenchDock.tsx')).toContain('EXPERIENCE_LAB_WORKBENCH_EDITING_TOOLS');
+    const css = readV2Source('experience-lab-v2.css');
+    expect(css).toContain('--elab-wb-label-weight: 400');
+    expect(css).toMatch(/\.elab-founder-wb__title\s*\{[\s\S]*?font-weight:\s*var\(--elab-wb-label-weight/);
+    expect(css).toMatch(/\.elab-founder-wb__tool-label\s*\{[\s\S]*?font-weight:\s*var\(--elab-wb-label-weight/);
+    expect(css).toMatch(/\.elab-founder-wb__nav-label\s*\{[\s\S]*?font-weight:\s*var\(--elab-wb-label-weight/);
   });
 
   it('workstation frame unifies viewport room and lower deck', () => {
@@ -167,6 +209,25 @@ describe('Experience Lab V2 — Fixed application shell', () => {
     expect(bridge).toContain('SAVE DRAFT');
     expect(bridge).toContain('EXPORT');
     expect(bridge).toContain('elab-approval-bridge--strip');
+    expect(bridge).toContain('elab-approval-bridge--monument');
+    expect(bridge).toContain('elab-approval-bridge__primary');
+    expect(bridge).toContain('APPROVE AND SEND TO CREATIVE STUDIO');
+    expect(bridge).toContain('elab-approval-bridge__copy');
+    expect(bridge).toContain('LOCK BLUEPRINT • LOCK RENDER • LOCK CONSTRUCTION PLAN');
+    expect(bridge).not.toMatch(/<\/button>\s*<p className="elab-approval-bridge__locks"/);
+    const css = readV2Source('experience-lab-v2.css');
+    expect(css).toMatch(/\.elab-approval-bridge--monument \.elab-approval-bridge__primary[\s\S]*?font-weight:\s*500/);
+    expect(css).toMatch(/\.elab-approval-bridge--monument \.elab-approval-bridge__primary[\s\S]*?border:\s*1px solid rgba\(197,\s*160,\s*89/);
+    expect(css).toMatch(/\.elab-approval-bridge--monument \.elab-approval-bridge__primary[\s\S]*?border-radius:\s*8px/);
+    expect(css).toContain('--elab-monument-cta-v-scale: 0.85');
+    expect(css).toMatch(/\.elab-approval-bridge--monument \.elab-approval-bridge__locks[\s\S]*?color:\s*var\(--elab-gold\)/);
+    expect(css).toMatch(/\.elab-founder-wb__title[\s\S]*?color:\s*var\(--elab-text\)/);
+    expect(css).toMatch(/\.elab-founder-wb__tool\s*\{[\s\S]*?color:\s*var\(--elab-gold\)/);
+    expect(css).toMatch(/\.elab-founder-wb__nav-item\s*\{[\s\S]*?color:\s*var\(--elab-gold\)/);
+    expect(css).toContain('--elab-gold-icon-filter');
+    expect(css).toMatch(/\.elab-founder-wb__tool-icon img[\s\S]*?filter:\s*var\(--elab-gold-icon-filter\)/);
+    expect(css).toMatch(/\.elab-founder-wb__nav-icon img[\s\S]*?filter:\s*var\(--elab-gold-icon-filter\)/);
+    expect(css).toMatch(/\.elab-approval-bridge--monument \.elab-approval-bridge__blocker-chip[\s\S]*?display:\s*none/);
   });
 
   it('does not mount workbench dock when tiered workbench already includes tools', () => {
@@ -174,10 +235,18 @@ describe('Experience Lab V2 — Fixed application shell', () => {
     expect(shell).toContain("review.show('bottom-tool-dock') && !review.show('workbench')");
   });
 
-  it('full workstation hides approval bridge, department dock hex, environment orb, and diagnostics strip', () => {
+  it('full workstation mounts founder review console, approval bridge, then workbench', () => {
     const shell = readV2Source('ExperienceLabV2Shell.tsx');
     const lowerDeckBlock = shell.match(/const lowerDeck =[\s\S]*?\) : null;/)?.[0] ?? '';
-    expect(shell).not.toContain('review.show(\'approval-bridge\') ?');
+    expect(lowerDeckBlock).toContain('ExperienceLabFounderReviewConsole');
+    expect(lowerDeckBlock).toContain("review.show('approval-bridge')");
+    expect(lowerDeckBlock).toContain('ExperienceLabApprovalBridge');
+    expect(lowerDeckBlock.indexOf('ExperienceLabFounderReviewConsole')).toBeLessThan(
+      lowerDeckBlock.indexOf('ExperienceLabApprovalBridge'),
+    );
+    expect(lowerDeckBlock.indexOf('ExperienceLabApprovalBridge')).toBeLessThan(
+      lowerDeckBlock.indexOf('ExperienceLabFounderWorkbench'),
+    );
     expect(shell).not.toContain('elab-app-shell__dept-dock');
     expect(shell).not.toContain('experienceLabV2EnvironmentAssetEnabled');
     expect(lowerDeckBlock).not.toContain('ExperienceLabDiagnostics');
@@ -188,40 +257,68 @@ describe('Experience Lab V2 — Fixed application shell', () => {
     expect(shellPage).toContain('!fixedViewport');
   });
 
-  it('command dock uses three-row tiered layout with HQ location tabs', () => {
+  it('founder review console uses symmetric three-panel row above approval bridge', () => {
+    const consoleSrc = readV2Source('ExperienceLabFounderReviewConsole.tsx');
+    const css = readV2Source('experience-lab-v2.css');
+    expect(consoleSrc).toContain('DESIGN BRIEF');
+    expect(consoleSrc).toContain('FOUNDER REVIEW WALL');
+    expect(consoleSrc).toContain('REVISION TIMELINE');
+    expect(consoleSrc).toContain('ELAB_V2_COMPOSITION.founderReviewConsole');
+    expect(css).toMatch(/\.elab-founder-review-console__grid\s*\{[\s\S]*?grid-template-columns:\s*repeat\(3,\s*minmax\(0,\s*1fr\)\)/);
+    expect(css).toMatch(/\.elab-founder-review-console__panel\s*\{[\s\S]*?min-height:\s*var\(--elab-frc-panel-min-h\)/);
+    expect(css).toContain('--elab-frc-panel-min-h: 56px');
+    expect(css).toMatch(/\.elab-founder-review-console__title[\s\S]*?font-weight:\s*500/);
+    expect(css).toMatch(/\.elab-founder-review-console__title[\s\S]*?white-space:\s*nowrap/);
+    expect(css).toMatch(/\.elab-founder-review-console__panel--brief[\s\S]*?text-align:\s*center/);
+    expect(css).toMatch(/\.elab-founder-review-console__panel--timeline[\s\S]*?text-align:\s*center/);
+    expect(css).toMatch(/\.elab-founder-review-console__panel\s*\{[\s\S]*?border:\s*1px solid var\(--elab-hud-border-color\)/);
+    expect(css).toMatch(/\.elab-founder-review-console\s*\{[\s\S]*?padding:\s*4px\s+0\s+var\(--elab-frc-bridge-gap\)/);
+    expect(css).toMatch(/\.elab-app-shell__lower-deck\s*>\s*\.elab-founder-review-console\s*\+\s*\.elab-approval-bridge[\s\S]*?margin-top:\s*clamp\(8px,\s*1\.2vw,\s*12px\)/);
+    expect(css).toMatch(/\.elab-founder-review-console__grid\s*\{[\s\S]*?gap:\s*clamp\(8px,\s*1\.2vw,\s*14px\)/);
+    expect(css).toMatch(/\.elab-founder-review-console__panel\s*\{[\s\S]*?border-radius:\s*var\(--elab-hud-radius-panel\)/);
+  });
+
+  it('command dock uses tiered layout with program pipeline selectors', () => {
     const dock = readV2Source('ExperienceLabCommandDock.tsx');
     expect(dock).toContain('elab-cmd--pro');
     expect(dock).toContain('elab-cmd--tiered');
     expect(dock).toContain('elab-cmd__row--identity');
-    expect(dock).toContain('elab-cmd__row--locations');
+    expect(dock).toContain('elab-cmd__row--programs');
+    expect(dock).toContain('elab-cmd__row--pipeline');
+    expect(dock).toContain('elab-cmd__row--breadcrumb');
     expect(dock).toContain('elab-cmd__row--status');
     expect(dock).toContain('elab-cmd__status-center');
+    expect(dock).toContain('ProgramSelector');
+    expect(dock).toContain('ActiveContextBreadcrumb');
     expect(dock).toContain('resolveExperienceLabCommandDockLogoUrl');
     expect(dock).toContain('elab-cmd__overflow-dots');
     expect(dock).not.toContain('isCompact');
+    expect(dock).not.toContain('EXPERIENCE_LAB_COMMAND_DOCK_LOCATIONS');
     expect(readV2Source('ExperienceLabWorkbenchDock.tsx')).toContain('elab-wb-dock--pro');
     expect(readV2Source('ExperienceLabWorkbenchDock.tsx')).not.toContain('isCompact');
   });
 
-  it('design variant strip and founder brief row overlay viewport environment', () => {
+  it('view angles live in viewport chrome region (not absolute overlay)', () => {
     const stage = readV2Source('ExperienceLabViewportStage.tsx');
     expect(stage).toContain('ExperienceLabDesignVariantStrip');
-    expect(stage).toContain('ExperienceLabFounderBriefRow');
     expect(stage).toContain('environmentUrl={designVariants.activeEnvironmentUrl}');
-    expect(stage).toContain('stageOverlays={showFloats ? founderBriefRow : undefined}');
-    const viewport = readV2Source('StudioViewport.tsx');
-    expect(viewport).toContain('elab-viewport__stage-overlays');
+    expect(stage).not.toContain('VIEW ANGLES');
+    expect(stage).not.toContain('elab-view-angles--attached');
     const css = readV2Source('experience-lab-v2.css');
-    expect(css).toContain('.elab-viewport__stage-overlays');
-    expect(css).toContain('.elab-founder-brief-row');
-    expect(css).toContain('position: absolute');
+    expect(css).toContain('.elab-viewport__angles-chrome');
+    expect(css).not.toContain('.elab-view-angles--attached');
   });
 
   it('focus mode and escape handling exist', () => {
     const hook = readV2Source('useExperienceLabAppShell.ts');
+    const shell = readV2Source('ExperienceLabV2Shell.tsx');
+    const css = readV2Source('experience-lab-v2.css');
     expect(hook).toContain('Escape');
     expect(hook).toContain('focusMode');
     expect(readV2Source('experience-lab-v2-layout.ts')).toContain('ElabFocusMode');
+    expect(shell).toContain('EXIT FOCUS');
+    expect(shell).toContain('replace(/_/g');
+    expect(css).toMatch(/\.elab-app-shell__focus-bar\s*\{[\s\S]*?text-transform:\s*uppercase/);
   });
 
   it('layout tokens and safe-area variables defined centrally', () => {
@@ -373,6 +470,7 @@ describe('Experience Lab V2 — Feature flags & persistence', () => {
     expect(flags).toHaveProperty('experienceLabV2Enabled');
     expect(flags).toHaveProperty('experienceLabV2LiveActionsEnabled');
     expect(flags).toHaveProperty('experienceLabV2EnvironmentAssetEnabled');
+    expect(flags.experienceLabV2DiagnosticsEnabled).toBe(false);
   });
 });
 
@@ -386,16 +484,54 @@ describe('Experience Lab V2 — Panel orchestration', () => {
 
   it('viewport stage renders orchestrated panels (not unconditional float list)', () => {
     const stage = readV2Source('ExperienceLabViewportStage.tsx');
-    expect(stage).toContain('orchestrator.panels.map');
+    const viewport = readV2Source('StudioViewport.tsx');
+    expect(stage).toContain('orchestrator');
     expect(stage).not.toContain('floats.map');
-    expect(stage).toContain('ExperienceLabInspectorSwitcher');
+    expect(stage).not.toContain('ExperienceLabFloatingInspector');
+    expect(stage).toContain('ExperienceLabDynamicContextCard');
+    expect(viewport).toContain('ExperienceLabBlueprintCard');
+    expect(stage).toContain('workbenchToolId');
   });
 
-  it('composition markers include inspector switcher', () => {
+  it('composition markers include two-panel HUD architecture', () => {
     expect(ELAB_V2_COMPOSITION.inspectorSwitcher).toBe('data-elab-inspector-switcher');
+    expect(ELAB_V2_COMPOSITION.contextualHud).toBe('data-elab-viewport-contextual-hud');
+    expect(ELAB_V2_COMPOSITION.blueprintCard).toBe('data-elab-blueprint-card');
+    expect(ELAB_V2_COMPOSITION.dynamicContextCard).toBe('data-elab-dynamic-context-card');
+    expect(ELAB_V2_COMPOSITION.archPerspective).toBe('data-elab-arch-perspective');
     expect(ELAB_V2_COMPOSITION.workstationFrame).toBe('data-elab-workstation-frame');
     expect(ELAB_V2_COMPOSITION.componentReviewChrome).toBe('data-elab-component-review-chrome');
     expect(readV2Source('experience-lab-v2-panel-orchestrator.ts')).toContain('PANEL_LAYOUT_STORAGE_KEY');
+  });
+
+  it('viewport HUD panels use environment display anchor transforms and parallax hook', () => {
+    const viewport = readV2Source('StudioViewport.tsx');
+    const blueprint = readV2Source('ExperienceLabBlueprintCard.tsx');
+    const context = readV2Source('ExperienceLabDynamicContextCard.tsx');
+    const parallax = readV2Source('useExperienceLabHudParallax.ts');
+    const anchor = readV2Source('ExperienceLabAnchoredEnvironmentDisplay.tsx');
+    const css = readV2Source('experience-lab-v2.css');
+    expect(viewport).toContain('useExperienceLabHudParallax');
+    expect(viewport).toContain('ELAB_V2_COMPOSITION.archPerspective');
+    expect(viewport).toContain('ExperienceLabEnvironmentDisplayAnchorDiagnosticOverlay');
+    expect(blueprint).toContain('ExperienceLabAnchoredEnvironmentDisplay');
+    expect(blueprint).toContain('LEFT_FRONT');
+    expect(context).toContain('ExperienceLabAnchoredEnvironmentDisplay');
+    expect(context).toContain('RIGHT_FRONT');
+    expect(anchor).toContain('data-env-display-transform-owner');
+    expect(anchor).toContain('data-env-display-visible-surface');
+    expect(parallax).toContain('--elab-parallax-x');
+    expect(css).toContain('--env-display-perspective: 1600px');
+    expect(css).toContain('--elab-hud-panel-size-scale: 0.4');
+    expect(css).toMatch(/\.elab-viewport__blueprint-card\s*\{[\s\S]*?max-width:\s*min\(calc\(46vw \* var\(--elab-hud-panel-size-scale\)\)/);
+    expect(css).toMatch(/\.elab-viewport__context-card\s*\{[\s\S]*?width:\s*min\(calc\(42vw \* var\(--elab-hud-panel-size-scale\)\)/);
+    expect(css).toMatch(/perspective:\s*var\(--env-display-perspective\)/);
+    expect(css).toContain('transform-style: preserve-3d');
+    expect(css).toContain('.elab-env-display-transform--left');
+    expect(css).toContain('--display-rotate-y: 11deg');
+    expect(css).toContain('@keyframes elabEnvDisplayEnterRight');
+    expect(css).toMatch(/\.elab-env-display-transform[\s\S]*?will-change:\s*transform/);
+    expect(css).toContain('--display-translate-x');
   });
 });
 
@@ -426,7 +562,42 @@ describe('Experience Lab V2 — Viewport environment', () => {
     expect(stage).toContain('isCompact={isCompact}');
   });
 
-  it('CSS scopes viewport environment with cover/center layering', () => {
+  it('viewport uses HUD architecture — render fills stage, two-panel HUD floats above', () => {
+    const viewport = readV2Source('StudioViewport.tsx');
+    const css = readV2Source('experience-lab-v2.css');
+    expect(viewport).toContain('data-elab-viewport-hud');
+    expect(viewport).toContain('elab-viewport__hud');
+    expect(viewport).toContain('ExperienceLabBlueprintCard');
+    expect(viewport).toContain('dynamicContextCard');
+    expect(viewport).toContain('elab-viewport__stage--focusable');
+    expect(viewport).toContain('ENTER FOCUS MODE');
+    expect(viewport).not.toContain('elab-viewport__focus-ctrl');
+    expect(viewport).not.toContain('focusMode');
+    expect(viewport).toContain('blueprintThumbnailUrl');
+    expect(viewport).not.toContain('elab-viewport__inspector-chips');
+    expect(viewport).not.toContain('elab-viewport__tool-palette');
+    expect(viewport).not.toContain('elab-viewport__chrome');
+    expect(css).toContain('.elab-viewport__hud');
+    expect(css).toContain('.elab-blueprint-card__thumb');
+    expect(css).toContain('.elab-viewport__context-card');
+    expect(css).toContain('@keyframes elabContextSwap');
+    expect(css).toContain('--elab-hud-safe-top');
+    expect(css).toMatch(/\.elab-viewport__stage-content\s*\{[\s\S]*?padding:\s*0/);
+    expect(css).toMatch(/\.elab-viewport__stage-content\s*\{[\s\S]*?position:\s*absolute/);
+  });
+
+  it('defines premium HUD polish tokens for glass, elevation, and motion', () => {
+    const css = readV2Source('experience-lab-v2.css');
+    expect(css).toContain('--elab-hud-glass-fill');
+    expect(css).toContain('--elab-hud-shadow-stack');
+    expect(css).toContain('--elab-hud-edge-top');
+    expect(css).toContain('.elab-hud-glass');
+    expect(css).toContain('--elab-hud-duration');
+    expect(css).toContain('--elab-hud-inset-top');
+    expect(css).toMatch(/@media\s*\(prefers-reduced-motion:\s*reduce\)/);
+  });
+
+  it('scopes viewport environment with cover/center layering', () => {
     const css = readV2Source('experience-lab-v2.css');
     expect(css).toContain('.elab-v2__env--viewport');
     expect(css).toContain('object-position: var(--elab-env-position, center center)');
@@ -452,11 +623,13 @@ describe('Experience Lab V2 — Viewport environment', () => {
     expect(css).toMatch(/\.elab-view-angles__strip\s*\{[\s\S]*?justify-content:\s*center/);
   });
 
-  it('view angles use inset rounded card not edge-to-edge strip', () => {
+  it('view angles strip spans full workbench width edge to edge', () => {
     const css = readV2Source('experience-lab-v2.css');
     expect(css).toMatch(/\.elab-viewport__angles-chrome\s*\{[\s\S]*?background:\s*transparent/);
-    expect(css).toMatch(/\.elab-view-angles--chrome\s*\{[\s\S]*?border-radius:\s*14px/);
-    expect(css).toMatch(/\.elab-view-angles\s*\{[\s\S]*?max-width:\s*88%/);
+    expect(css).toMatch(/\.elab-viewport__angles-chrome\s+\.elab-view-angles--chrome\s*\{[\s\S]*?width:\s*100%/);
+    expect(css).toMatch(/\.elab-viewport__angles-chrome\s+\.elab-view-angles--chrome\s*\{[\s\S]*?border-radius:\s*calc\(var\(--elab-hud-radius-panel\) \+ 2px\)/);
+    expect(css).toMatch(/\.elab-viewport__angles-chrome\s+\.elab-view-angles--chrome\s*\{[\s\S]*?border-bottom:\s*none/);
+    expect(css).toMatch(/\.elab-app-shell__viewport-room\s*\{[\s\S]*?border-bottom:\s*none/);
   });
 
   it('wires render direction design variant system', () => {
@@ -483,9 +656,9 @@ describe('Experience Lab V2 — Viewport environment', () => {
     expect(hook).toContain('ensureExperienceLabVariantPackages');
     expect(bridge).toContain('ensureExperienceLabVariantPackages');
     expect(readV2Source('experience-lab-design-variants.ts')).toContain('environmentPackageId');
-    expect(drawer).toContain('packageModel');
-    expect(drawer).toContain('Package status');
-    expect(shell).toContain('useExperienceLabDesignVariants({ isCompact: shell.isCompact })');
+    expect(drawer).toContain('Approve for Production');
+    expect(drawer).toContain('Promote to Canonical');
+    expect(shell).toContain('approveForProduction');
     expect(shell).toContain('packageModel={designVariants.drawerPackageModel}');
   });
 });
