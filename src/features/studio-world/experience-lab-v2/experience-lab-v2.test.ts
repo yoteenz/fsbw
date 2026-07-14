@@ -221,6 +221,10 @@ describe('Experience Lab V2 — Fixed application shell', () => {
     expect(css).toContain('--elab-frc-panel-min-h: 56px');
     expect(css).toMatch(/\.elab-founder-review-console__title[\s\S]*?font-weight:\s*500/);
     expect(css).toMatch(/\.elab-founder-review-console__title[\s\S]*?white-space:\s*nowrap/);
+    expect(css).toMatch(/\.elab-founder-review-console__panel--brief[\s\S]*?text-align:\s*center/);
+    expect(css).toMatch(/\.elab-founder-review-console__panel--timeline[\s\S]*?text-align:\s*center/);
+    expect(css).toMatch(/\.elab-founder-review-console__panel\s*\{[\s\S]*?border-bottom:\s*none/);
+    expect(css).toMatch(/\.elab-founder-review-console\s*\{[\s\S]*?padding:\s*4px\s+0\s+0/);
   });
 
   it('command dock uses three-row tiered layout with HQ location tabs', () => {
@@ -555,12 +559,12 @@ describe('Experience Lab V2 — Viewport environment', () => {
     expect(css).toMatch(/\.elab-view-angles__strip\s*\{[\s\S]*?justify-content:\s*center/);
   });
 
-  it('view angles use inset rounded card not edge-to-edge strip', () => {
+  it('view angles strip spans full workbench width edge to edge', () => {
     const css = readV2Source('experience-lab-v2.css');
     expect(css).toMatch(/\.elab-viewport__angles-chrome\s*\{[\s\S]*?background:\s*transparent/);
-    expect(css).toMatch(/\.elab-viewport__angles-chrome\s+\.elab-view-angles--chrome\s*\{[\s\S]*?border-radius:\s*calc\(var\(--elab-hud-radius-panel\) \+ 2px\)/);
-    expect(css).toMatch(/\.elab-viewport__angles-chrome\s+\.elab-view-angles--chrome\s*\{[\s\S]*?width:\s*min\(100%,\s*max\(var\(--elab-dv-panel-min\),\s*var\(--elab-dv-panel-max\)\)\)/);
-    expect(css).toMatch(/\.elab-design-variants\s+\.elab-view-angles__strip\s*\{[\s\S]*?overflow-x:\s*visible/);
+    expect(css).toMatch(/\.elab-viewport__angles-chrome\s+\.elab-view-angles--chrome\s*\{[\s\S]*?width:\s*100%/);
+    expect(css).toMatch(/\.elab-viewport__angles-chrome\s+\.elab-view-angles--chrome\s*\{[\s\S]*?border-bottom:\s*none/);
+    expect(css).toMatch(/\.elab-app-shell__viewport-room\s*\{[\s\S]*?border-bottom:\s*none/);
   });
 
   it('wires render direction design variant system', () => {

@@ -49674,3 +49674,17 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 **Files:** `StudioViewport.tsx`, `ExperienceLabBlueprintCard.tsx`, `ExperienceLabDynamicContextCard.tsx`, `experience-lab-v2.css`, `experience-lab-v2.test.ts`. 52 tests PASS.
 
+---
+
+## 2026-07-14 — Experience Lab lower-deck panel borders, centering, full-bleed width
+
+**Founder request:** Remove border lines below Design Variants panel and below Design Brief / Founder Review Wall / Revision Timeline panels; center text in Design Brief and Revision Timeline panels; make Design Variants strip and Founder Review Console row same edge-to-edge width as workbench.
+
+**Changes (`experience-lab-v2.css`):**
+- Removed viewport-room bottom border/inset shadow (line below design variants strip)
+- Design variants chrome: `width: 100%`, zero horizontal padding, `border-bottom: none`, square corners (edge-to-edge)
+- Founder review console: zero horizontal padding; panels `border-bottom: none`, shared edge borders (no gap); brief + timeline titles/body/mood/warn centered
+- Removed lower-deck divider between founder review console and approval bridge
+
+**Tests:** Updated FRC + view-angles width assertions. 52/52 PASS.
+
