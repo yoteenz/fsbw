@@ -1,5 +1,7 @@
 import type { ElabBreakpoint, ElabFocusMode } from './experience-lab-v2-layout';
 import type { StudioViewportMode } from './experience-lab-v2.types';
+import type { WorkbenchEditingToolId } from './experience-lab-v2-workbench-config';
+import { inspectorPanelForWorkbenchTool } from './experience-lab-v2-workbench-config';
 
 /** Panel presentation states for contextual orchestration. */
 export type PanelPresentationState =
@@ -88,6 +90,7 @@ export type PanelOrchestratorInput = {
   viewportMode: StudioViewportMode;
   breakpoint: ElabBreakpoint;
   focusMode: ElabFocusMode;
+  workbenchToolId: WorkbenchEditingToolId | null;
   activeInspector: InspectorPanelId;
   expandedPanel: InspectorPanelId | null;
   dockZones: Partial<Record<InspectorPanelId, PanelDockZone>>;
@@ -199,9 +202,24 @@ export function resolveOrchestratedPanels(input: PanelOrchestratorInput): {
   const modeInspector = inspectorForViewportMode(input.viewportMode);
   const active = input.activeInspector;
   const expanded = input.expandedPanel;
+  const workbenchInspector = input.workbenchToolId
+    ? inspectorPanelForWorkbenchTool(input.workbenchToolId)
+    : null;
   let collisionsPrevented = 0;
 
   const occupiedZones = new Set<PanelDockZone>();
+
+  const contextualActive =
+    input.focusMode !== 'none' || workbenchInspector != null || expanded != null;
+
+  if (!contextualActive) {
+    return {
+      panels: [],
+      statusChip: null,
+      collisionsPrevented: 0,
+      safeZonePct: 96,
+    };
+  }
 
   const makePanel = (
     id: InspectorPanelId,
@@ -236,18 +254,29 @@ export function resolveOrchestratedPanels(input: PanelOrchestratorInput): {
     };
   }
 
+  if (workbenchInspector && !expanded) {
+    const dock = input.dockZones[workbenchInspector] ?? defaultDockForPanel(workbenchInspector, input.breakpoint);
+    return {
+      panels: [makePanel(workbenchInspector, 'MINIMIZED', dock, true)],
+      statusChip: null,
+      collisionsPrevented: 0,
+      safeZonePct: compact ? 90 : 88,
+    };
+  }
+
   if (compact) {
     const visibleIds: InspectorPanelId[] = [];
     if (expanded) {
       visibleIds.push(expanded);
+    } else if (workbenchInspector) {
+      visibleIds.push(workbenchInspector);
     } else if (modeInspector) {
       visibleIds.push(modeInspector);
     } else {
       visibleIds.push(active);
     }
 
-    const statusChip =
-      modeInspector && modeInspector !== visibleIds[0] ? modeInspector : null;
+    const statusChip = null;
 
     const panels: ResolvedPanel[] = visibleIds.slice(0, 1).map((id) => {
       const dock = input.dockZones[id] ?? defaultDockForPanel(id, input.breakpoint);
@@ -267,40 +296,32 @@ export function resolveOrchestratedPanels(input: PanelOrchestratorInput): {
     };
   }
 
-  // Desktop — organized rails; no center safe-zone intrusion
-  const leftIds: InspectorPanelId[] = ['blueprint', 'construction', 'metadata'];
-  const rightIds: InspectorPanelId[] = ['materials', 'lighting', 'camera'];
-  const panels: ResolvedPanel[] = [];
+  // Desktop — show only contextual inspector(s), never scatter full rail set by default
+  if (expanded) {
+    const dock = input.dockZones[expanded] ?? defaultDockForPanel(expanded, input.breakpoint);
+    return {
+      panels: [makePanel(expanded, 'EXPANDED', dock, true)],
+      statusChip: null,
+      collisionsPrevented: 0,
+      safeZonePct: 88,
+    };
+  }
 
-  const pushRail = (ids: InspectorPanelId[], zone: PanelDockZone, collapsed: boolean) => {
-    if (collapsed) return;
-    for (const id of ids) {
-      const isActive = id === active || id === modeInspector;
-      const shouldShow = isActive || input.viewportMode === viewportModeForInspector(id) || id === expanded;
-      if (!shouldShow && input.viewportMode !== 'SPLIT_VIEW') {
-        const priority = INSPECTOR_PANELS.find((p) => p.id === id)?.priority ?? 4;
-        if (priority >= 4) continue;
-      }
-      const dock = input.dockZones[id] ?? zone;
-      if (occupiedZones.has(dock)) {
-        collisionsPrevented += 1;
-        continue;
-      }
-      occupiedZones.add(dock);
-      const state: PanelPresentationState =
-        expanded === id ? 'EXPANDED' : isActive ? 'DOCKED' : 'MINIMIZED';
-      panels.push(makePanel(id, state, dock, isActive));
-    }
-  };
-
-  pushRail(leftIds, 'left-rail', input.leftRailCollapsed);
-  pushRail(rightIds, 'right-rail', input.rightRailCollapsed);
+  if (workbenchInspector) {
+    const dock = input.dockZones[workbenchInspector] ?? defaultDockForPanel(workbenchInspector, input.breakpoint);
+    return {
+      panels: [makePanel(workbenchInspector, 'MINIMIZED', dock, true)],
+      statusChip: null,
+      collisionsPrevented: 0,
+      safeZonePct: 90,
+    };
+  }
 
   return {
-    panels,
+    panels: [],
     statusChip: null,
-    collisionsPrevented,
-    safeZonePct: input.leftRailCollapsed && input.rightRailCollapsed ? 94 : 82,
+    collisionsPrevented: 0,
+    safeZonePct: 96,
   };
 }
 

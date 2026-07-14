@@ -1,19 +1,20 @@
-import { useCallback } from 'react';
+import { useMemo } from 'react';
 import type { ExperienceLabV2ViewModel } from './experience-lab-v2.types';
 import type { StudioViewportMode } from './experience-lab-v2.types';
 import type { ElabFocusMode } from './experience-lab-v2-layout';
 import { StudioViewport } from './StudioViewport';
 import { ExperienceLabFloatingInspector } from './ExperienceLabFloatingInspector';
-import { ExperienceLabInspectorSwitcher } from './ExperienceLabInspectorSwitcher';
 import { ExperienceLabDesignVariantStrip } from './ExperienceLabDesignVariantStrip';
+import { ExperienceLabViewportContextualHud } from './ExperienceLabViewportContextualHud';
 import { ELAB_V2_COMPOSITION } from './experience-lab-v2-composition';
 import type { ExperienceLabPanelOrchestrator } from './useExperienceLabPanelOrchestrator';
 import type { ExperienceLabDesignVariants } from './useExperienceLabDesignVariants';
-import type { InspectorPanelId, PanelDockZone } from './experience-lab-v2-panel-orchestrator';
-
-const VIEWPORT_MODES: StudioViewportMode[] = [
-  'BLUEPRINT', 'FOUNDER_RENDER', 'CONSTRUCTION_PLAN', 'MATERIALS', 'LIGHTING', 'CAMERA', 'SPLIT_VIEW',
-];
+import type { PanelDockZone } from './experience-lab-v2-panel-orchestrator';
+import { viewportModeForInspector } from './experience-lab-v2-panel-orchestrator';
+import {
+  viewportModesForWorkbenchTool,
+  type WorkbenchEditingToolId,
+} from './experience-lab-v2-workbench-config';
 
 const MOBILE_DOCK_CYCLE: PanelDockZone[] = ['top-left', 'top-right', 'bottom-left', 'bottom-right'];
 
@@ -25,6 +26,8 @@ type Props = {
   isCompact?: boolean;
   onFocusMode?: (mode: StudioViewportMode) => void;
   focusMode?: ElabFocusMode;
+  workbenchToolId: WorkbenchEditingToolId | null;
+  designVariantDrawerOpen?: boolean;
   orchestrator: ExperienceLabPanelOrchestrator;
   designVariants: ExperienceLabDesignVariants;
   /** Isolate one sub-region for component review mode. */
@@ -37,7 +40,7 @@ function nextDockZone(current: PanelDockZone): PanelDockZone {
   return MOBILE_DOCK_CYCLE[(idx + 1) % MOBILE_DOCK_CYCLE.length];
 }
 
-/** Viewport stage — orchestrated inspectors, design variants in dedicated chrome region. */
+/** Viewport stage — calm hero render; contextual HUD only when workbench/focus/drawer demands it. */
 export function ExperienceLabViewportStage({
   model,
   viewportMode,
@@ -45,15 +48,13 @@ export function ExperienceLabViewportStage({
   onImageLoad,
   isCompact,
   onFocusMode,
+  focusMode = 'none',
+  workbenchToolId,
+  designVariantDrawerOpen = false,
   orchestrator,
   designVariants,
   reviewIsolate,
 }: Props) {
-  const onInspectorSelect = useCallback(
-    (id: InspectorPanelId) => orchestrator.selectInspector(id, { syncViewport: true }),
-    [orchestrator]
-  );
-
   const expandedPanel = orchestrator.panels.find((p) => p.id === orchestrator.expandedPanel)
     ?? orchestrator.panels.find((p) => p.isActive);
 
@@ -82,6 +83,27 @@ export function ExperienceLabViewportStage({
     />
   ));
 
+  const contextualModes = useMemo(() => {
+    if (workbenchToolId) return viewportModesForWorkbenchTool(workbenchToolId);
+    if (focusMode !== 'none' && orchestrator.activeInspector) {
+      return [viewportModeForInspector(orchestrator.activeInspector)];
+    }
+    if (designVariantDrawerOpen) return [viewportMode];
+    return [];
+  }, [workbenchToolId, focusMode, orchestrator.activeInspector, designVariantDrawerOpen, viewportMode]);
+
+  const showContextualHud =
+    focusMode !== 'none' || workbenchToolId != null || designVariantDrawerOpen || orchestrator.expandedPanel != null;
+
+  const contextualHud = showContextualHud ? (
+    <ExperienceLabViewportContextualHud
+      modes={contextualModes}
+      activeMode={viewportMode}
+      onModeChange={onModeChange}
+      showPlayback={focusMode !== 'none'}
+    />
+  ) : null;
+
   if (reviewIsolate === 'view-angles') {
     return (
       <div className="elab-stage elab-stage--review-isolate" {...{ [ELAB_V2_COMPOSITION.viewportStage]: '' }}>
@@ -108,12 +130,6 @@ export function ExperienceLabViewportStage({
       <div className="elab-stage__viewport-wrap">
         {showFloats ? floatingInspectors : null}
 
-        {showFloats && isCompact && orchestrator.statusChip ? (
-          <span className="elab-status-chip" data-elab-status-chip>
-            {orchestrator.statusChip.toUpperCase()}
-          </span>
-        ) : null}
-
         {showViewport ? (
         <StudioViewport
           embedded
@@ -125,24 +141,11 @@ export function ExperienceLabViewportStage({
           artifacts={model.artifacts}
           isStale={model.isStale}
           onImageLoad={onImageLoad}
-          modes={VIEWPORT_MODES}
-          onModeChange={onModeChange}
           onFocusMode={onFocusMode}
+          focusActive={focusMode !== 'none'}
           environmentUrl={designVariants.activeEnvironmentUrl}
-          inspectorSwitcher={
-            <ExperienceLabInspectorSwitcher
-              activeInspector={orchestrator.activeInspector}
-              open={orchestrator.switcherOpen}
-              onToggle={() => orchestrator.setSwitcherOpen(!orchestrator.switcherOpen)}
-              onSelect={onInspectorSelect}
-              compact={isCompact}
-            />
-          }
+          contextualHud={contextualHud}
           viewAngles={showFloats ? designVariantStrip : undefined}
-          leftRailCollapsed={orchestrator.leftRailCollapsed}
-          rightRailCollapsed={orchestrator.rightRailCollapsed}
-          onToggleLeftRail={!isCompact ? orchestrator.toggleLeftRail : undefined}
-          onToggleRightRail={!isCompact ? orchestrator.toggleRightRail : undefined}
         />
         ) : null}
       </div>

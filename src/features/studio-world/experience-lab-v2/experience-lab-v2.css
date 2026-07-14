@@ -1121,7 +1121,7 @@ button.elab-cmd__meta-chip {
 .elab-viewport {
   --elab-hud-safe-top: var(--elab-hud-inset-top);
   --elab-hud-safe-side: var(--elab-hud-inset-side);
-  --elab-hud-safe-bottom: 18%;
+  --elab-hud-safe-bottom: 10%;
   position: relative;
   z-index: 2;
   flex: 1;
@@ -1199,6 +1199,101 @@ button.elab-cmd__meta-chip {
 .elab-viewport__blueprint-card:hover {
   transform: translateY(var(--elab-hud-lift)) scale(var(--elab-hud-scale-hover));
   box-shadow: var(--elab-hud-shadow-hover), inset 0 1px 0 rgba(255, 248, 232, 0.2);
+}
+
+.elab-viewport__focus-ctrl {
+  position: absolute;
+  bottom: calc(var(--elab-hud-safe-bottom) + 4px);
+  right: var(--elab-hud-safe-side);
+  z-index: 3;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 1px solid var(--elab-hud-border-color);
+  background: var(--elab-hud-glass-shine), var(--elab-hud-glass-fill);
+  backdrop-filter: var(--elab-hud-blur);
+  -webkit-backdrop-filter: var(--elab-hud-blur);
+  color: var(--elab-gold);
+  cursor: pointer;
+  pointer-events: auto;
+  box-shadow: var(--elab-hud-shadow-stack), inset 0 1px 0 var(--elab-hud-edge-top);
+  transition:
+    transform var(--elab-hud-duration) var(--elab-hud-ease),
+    box-shadow var(--elab-hud-duration) var(--elab-hud-ease),
+    border-color var(--elab-hud-duration) var(--elab-hud-ease);
+}
+
+.elab-viewport__focus-ctrl:hover {
+  transform: translateY(var(--elab-hud-lift)) scale(var(--elab-hud-scale-hover));
+  box-shadow: var(--elab-hud-shadow-hover), inset 0 1px 0 var(--elab-hud-edge-top);
+}
+
+.elab-viewport__focus-ctrl[aria-pressed='true'] {
+  border-color: rgba(197, 160, 89, 0.52);
+  background: rgba(197, 160, 89, 0.14);
+  box-shadow: var(--elab-hud-shadow-hover), inset 0 1px 0 rgba(255, 248, 232, 0.16);
+}
+
+.elab-viewport__focus-ctrl:focus-visible {
+  outline: 2px solid rgba(197, 160, 89, 0.55);
+  outline-offset: 2px;
+}
+
+.elab-viewport__contextual-hud {
+  position: absolute;
+  left: var(--elab-hud-safe-side);
+  right: calc(var(--elab-hud-safe-side) + 44px);
+  bottom: calc(var(--elab-hud-safe-bottom) - 2px);
+  z-index: 2;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--elab-hud-chip-gap);
+  padding: var(--elab-hud-chip-pad-y) calc(var(--elab-hud-chip-pad-x) + 2px);
+  border-radius: calc(var(--elab-hud-radius-panel) + 2px);
+  pointer-events: auto;
+  background: var(--elab-hud-glass-shine), var(--elab-hud-glass-fill);
+  backdrop-filter: var(--elab-hud-blur);
+  -webkit-backdrop-filter: var(--elab-hud-blur);
+  border: 1px solid var(--elab-hud-border-color);
+  box-shadow: var(--elab-hud-shadow-stack), inset 0 1px 0 var(--elab-hud-edge-top);
+}
+
+.elab-viewport__contextual-playback {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding-right: 6px;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.elab-viewport__contextual-btn {
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  border-radius: var(--elab-hud-radius-chip);
+  border: 1px solid rgba(197, 160, 89, 0.18);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--elab-muted);
+  cursor: pointer;
+}
+
+.elab-viewport__contextual-btn:hover {
+  color: var(--elab-gold);
+  border-color: rgba(197, 160, 89, 0.36);
+}
+
+.elab-viewport__contextual-modes {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--elab-hud-chip-gap);
 }
 
 .elab-viewport__inspector-hud {
@@ -2710,8 +2805,19 @@ button.elab-cmd__meta-chip {
 .elab-app-shell--tablet .elab-viewport {
   --elab-hud-safe-top: 8px;
   --elab-hud-safe-side: 8px;
-  --elab-hud-safe-bottom: 24%;
+  --elab-hud-safe-bottom: 14%;
   margin: 0;
+}
+
+.elab-app-shell--mobile .elab-viewport__focus-ctrl {
+  width: 30px;
+  height: 30px;
+  bottom: calc(var(--elab-hud-safe-bottom) + 2px);
+  right: 8px;
+}
+
+.elab-app-shell--mobile .elab-viewport__contextual-hud {
+  right: calc(8px + 36px);
 }
 
 .elab-app-shell--mobile .elab-viewport__inspector-hud {
@@ -2958,6 +3064,7 @@ button.elab-cmd__meta-chip {
   .elab-viewport__mode-seg:hover,
   .elab-view-angles__thumb:hover,
   .elab-design-variants__thumb:hover { transform: none; }
+  .elab-viewport__focus-ctrl:hover { transform: none; }
   .elab-approval-bridge--monument .elab-approval-bridge__primary:hover:not(:disabled) { transform: none; }
   .elab-inspector-switcher__picker { transition: none; }
 }

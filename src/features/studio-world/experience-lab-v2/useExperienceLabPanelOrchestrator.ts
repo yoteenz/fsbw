@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { ElabBreakpoint, ElabFocusMode } from './experience-lab-v2-layout';
+import type { WorkbenchEditingToolId } from './experience-lab-v2-workbench-config';
 import type { ExperienceLabV2ViewModel } from './experience-lab-v2.types';
 import type { StudioViewportMode } from './experience-lab-v2.types';
 import {
@@ -24,6 +25,7 @@ type Args = {
   viewportMode: StudioViewportMode;
   breakpoint: ElabBreakpoint;
   focusMode: ElabFocusMode;
+  workbenchToolId: WorkbenchEditingToolId | null;
   model: ExperienceLabV2ViewModel;
   onViewportModeChange: (mode: StudioViewportMode) => void;
 };
@@ -69,6 +71,7 @@ export function useExperienceLabPanelOrchestrator({
   viewportMode,
   breakpoint,
   focusMode,
+  workbenchToolId,
   model,
   onViewportModeChange,
 }: Args) {
@@ -114,6 +117,7 @@ export function useExperienceLabPanelOrchestrator({
       viewportMode,
       breakpoint,
       focusMode,
+      workbenchToolId,
       activeInspector,
       expandedPanel,
       dockZones,
@@ -125,6 +129,7 @@ export function useExperienceLabPanelOrchestrator({
       viewportMode,
       breakpoint,
       focusMode,
+      workbenchToolId,
       activeInspector,
       expandedPanel,
       dockZones,

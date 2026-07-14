@@ -17,6 +17,8 @@ type Props = {
   model: ExperienceLabV2ViewModel;
   activeTab?: ElabWorkbenchTab;
   onTabChange?: (tab: ElabWorkbenchTab) => void;
+  activeTool?: WorkbenchEditingToolId | null;
+  onToolChange?: (tool: WorkbenchEditingToolId | null) => void;
 };
 
 function WorkbenchNavIcon({ name }: { name: ExperienceLabIconName }) {
@@ -24,8 +26,7 @@ function WorkbenchNavIcon({ name }: { name: ExperienceLabIconName }) {
 }
 
 /** Three-row Experience Lab Workbench — title · editing tools · world navigation. */
-export function ExperienceLabFounderWorkbench({ model }: Props) {
-  const [activeTool, setActiveTool] = useState<WorkbenchEditingToolId>('architectural-tools');
+export function ExperienceLabFounderWorkbench({ model, activeTool = null, onToolChange }: Props) {
   const [activeNav, setActiveNav] = useState<WorkbenchWorldNavId>('dashboard');
   const leftNav = EXPERIENCE_LAB_WORKBENCH_WORLD_NAV.slice(0, 2);
   const rightNav = EXPERIENCE_LAB_WORKBENCH_WORLD_NAV.slice(2);
@@ -56,7 +57,7 @@ export function ExperienceLabFounderWorkbench({ model }: Props) {
               className={`elab-founder-wb__tool${activeTool === tool.id ? ' elab-founder-wb__tool--active' : ''}`}
               title={tool.label}
               aria-pressed={activeTool === tool.id}
-              onClick={() => setActiveTool(tool.id)}
+              onClick={() => onToolChange?.(activeTool === tool.id ? null : tool.id)}
             >
               <span className="elab-founder-wb__tool-icon" aria-hidden>
                 <ExperienceLabIcon name={tool.icon} size="md" decorative active={activeTool === tool.id} />

@@ -63,6 +63,47 @@ export const EXPERIENCE_LAB_WORKBENCH_WORLD_NAV: WorkbenchWorldNavItem[] = [
   { id: 'command-center', label: 'COMMAND CENTER', icon: WORKBENCH_NAV_ICON['command-center'] },
 ];
 
+import type { InspectorPanelId } from './experience-lab-v2-panel-orchestrator';
+import type { StudioViewportMode } from './experience-lab-v2.types';
+
+/** Maps workbench tool selection to viewport inspector context (no duplicate HUD rails). */
+export function inspectorPanelForWorkbenchTool(toolId: WorkbenchEditingToolId): InspectorPanelId | null {
+  switch (toolId) {
+    case 'architectural-tools':
+      return 'blueprint';
+    case 'material-library':
+    case 'material-lab':
+    case 'asset-reference':
+      return 'materials';
+    case 'lighting-studio':
+      return 'lighting';
+    case 'camera-studio':
+    case 'composition-studio':
+      return 'camera';
+    default:
+      return null;
+  }
+}
+
+/** Viewport modes exposed when a workbench tool is active (contextual HUD only). */
+export function viewportModesForWorkbenchTool(toolId: WorkbenchEditingToolId): StudioViewportMode[] {
+  switch (toolId) {
+    case 'architectural-tools':
+      return ['BLUEPRINT', 'CONSTRUCTION_PLAN'];
+    case 'material-library':
+    case 'material-lab':
+    case 'asset-reference':
+      return ['MATERIALS'];
+    case 'lighting-studio':
+      return ['LIGHTING'];
+    case 'camera-studio':
+    case 'composition-studio':
+      return ['CAMERA', 'SPLIT_VIEW'];
+    default:
+      return [];
+  }
+}
+
 /** Split tool label into two display lines for compact panels. */
 export function splitWorkbenchToolLabel(label: string): [string, string] {
   const words = label.trim().split(/\s+/).filter(Boolean);

@@ -408,11 +408,13 @@ describe('Experience Lab V2 — Panel orchestration', () => {
     const stage = readV2Source('ExperienceLabViewportStage.tsx');
     expect(stage).toContain('orchestrator.panels.map');
     expect(stage).not.toContain('floats.map');
-    expect(stage).toContain('ExperienceLabInspectorSwitcher');
+    expect(stage).toContain('ExperienceLabViewportContextualHud');
+    expect(stage).toContain('workbenchToolId');
   });
 
-  it('composition markers include inspector switcher', () => {
+  it('composition markers include contextual HUD and inspector switcher', () => {
     expect(ELAB_V2_COMPOSITION.inspectorSwitcher).toBe('data-elab-inspector-switcher');
+    expect(ELAB_V2_COMPOSITION.contextualHud).toBe('data-elab-viewport-contextual-hud');
     expect(ELAB_V2_COMPOSITION.workstationFrame).toBe('data-elab-workstation-frame');
     expect(ELAB_V2_COMPOSITION.componentReviewChrome).toBe('data-elab-component-review-chrome');
     expect(readV2Source('experience-lab-v2-panel-orchestrator.ts')).toContain('PANEL_LAYOUT_STORAGE_KEY');
@@ -446,16 +448,20 @@ describe('Experience Lab V2 — Viewport environment', () => {
     expect(stage).toContain('isCompact={isCompact}');
   });
 
-  it('viewport uses HUD architecture — render fills stage, controls float above', () => {
+  it('viewport uses HUD architecture — render fills stage, calm controls float above', () => {
     const viewport = readV2Source('StudioViewport.tsx');
     const css = readV2Source('experience-lab-v2.css');
     expect(viewport).toContain('data-elab-viewport-hud');
     expect(viewport).toContain('elab-viewport__hud');
     expect(viewport).toContain('elab-viewport__blueprint-card');
-    expect(viewport).toContain('elab-viewport__inspector-chips');
-    expect(viewport).toContain('elab-viewport__tool-palette');
+    expect(viewport).toContain('elab-viewport__focus-ctrl');
+    expect(viewport).toContain('contextualHud');
+    expect(viewport).not.toContain('elab-viewport__inspector-chips');
+    expect(viewport).not.toContain('elab-viewport__tool-palette');
     expect(viewport).not.toContain('elab-viewport__chrome');
     expect(css).toContain('.elab-viewport__hud');
+    expect(css).toContain('.elab-viewport__focus-ctrl');
+    expect(css).toContain('.elab-viewport__contextual-hud');
     expect(css).toContain('--elab-hud-safe-top');
     expect(css).toMatch(/\.elab-viewport__stage-content\s*\{[\s\S]*?padding:\s*0/);
     expect(css).toMatch(/\.elab-viewport__stage-content\s*\{[\s\S]*?position:\s*absolute/);

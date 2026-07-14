@@ -1,9 +1,7 @@
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 import type { ExperienceLabV2ArtifactRef, StudioViewportMode } from './experience-lab-v2.types';
-import { ELAB_V2_COMPOSITION, VIEWPORT_MODE_LABELS } from './experience-lab-v2-composition';
-import { ExperienceLabIcon } from '../icons/ExperienceLabIcon';
-import { VIEWPORT_MODE_ICON } from './experience-lab-v2-icon-bindings';
 import { ExperienceLabEnvironmentLayer } from './ExperienceLabEnvironmentLayer';
+import { ExperienceLabIcon } from '../icons/ExperienceLabIcon';
 
 export type StudioViewportProps = {
   mode: StudioViewportMode;
@@ -20,16 +18,11 @@ export type StudioViewportProps = {
   };
   isStale?: boolean;
   onImageLoad?: () => void;
-  modes?: StudioViewportMode[];
-  onModeChange?: (mode: StudioViewportMode) => void;
   onFocusMode?: (mode: StudioViewportMode) => void;
+  focusActive?: boolean;
   embedded?: boolean;
-  inspectorSwitcher?: React.ReactNode;
+  contextualHud?: React.ReactNode;
   viewAngles?: React.ReactNode;
-  leftRailCollapsed?: boolean;
-  rightRailCollapsed?: boolean;
-  onToggleLeftRail?: () => void;
-  onToggleRightRail?: () => void;
   /** Mobile/tablet use 9:16 environment; desktop uses landscape environment. */
   isCompact?: boolean;
   /** Active design variant environment artwork. */
@@ -88,7 +81,7 @@ function ArtifactPane({
   );
 }
 
-/** StudioViewport™ — hero visual workspace with integrated mode rail. */
+/** StudioViewport™ — hero visual workspace; calm HUD with blueprint card + focus control only. */
 export function StudioViewport({
   mode,
   departmentName,
@@ -97,21 +90,17 @@ export function StudioViewport({
   artifacts,
   isStale,
   onImageLoad,
-  modes,
-  onModeChange,
   onFocusMode,
+  focusActive,
   embedded,
-  inspectorSwitcher,
+  contextualHud,
   viewAngles,
-  leftRailCollapsed,
-  rightRailCollapsed,
-  onToggleLeftRail,
-  onToggleRightRail,
   isCompact,
   environmentUrl,
 }: StudioViewportProps) {
-  const [fullscreen, setFullscreen] = useState(false);
-  const toggleFullscreen = useCallback(() => setFullscreen((f) => !f), []);
+  const toggleFocus = useCallback(() => {
+    onFocusMode?.(mode);
+  }, [mode, onFocusMode]);
 
   const renderStage = () => {
     switch (mode) {
@@ -145,9 +134,7 @@ export function StudioViewport({
     }
   };
 
-  const rootClass = `elab-viewport${fullscreen ? ' elab-viewport--fullscreen' : ''}${embedded ? ' elab-viewport--embedded' : ''}`;
-
-  const modeLabel = VIEWPORT_MODE_LABELS[mode] ?? mode;
+  const rootClass = `elab-viewport${embedded ? ' elab-viewport--embedded' : ''}${focusActive ? ' elab-viewport--focus-active' : ''}`;
 
   return (
     <section className={rootClass} data-studio-viewport data-mode={mode}>
@@ -166,72 +153,20 @@ export function StudioViewport({
               </div>
             </div>
 
-            {inspectorSwitcher ? (
-              <div className="elab-viewport__inspector-hud">{inspectorSwitcher}</div>
+            {onFocusMode ? (
+              <button
+                type="button"
+                className="elab-viewport__focus-ctrl"
+                onClick={toggleFocus}
+                aria-pressed={focusActive}
+                aria-label={focusActive ? 'Exit focus mode' : 'Enter focus mode'}
+                title="Focus mode"
+              >
+                <ExperienceLabIcon name="focusMode" size="sm" decorative active={focusActive} />
+              </button>
             ) : null}
 
-            <div className="elab-viewport__status-hud">
-              <span className="elab-viewport__mode-chip" aria-label={`Viewport mode ${modeLabel}`}>{modeLabel}</span>
-            </div>
-
-            <div className="elab-viewport__tool-palette">
-              {onToggleLeftRail ? (
-                <button type="button" className="elab-viewport__ctrl" onClick={onToggleLeftRail} aria-pressed={!leftRailCollapsed} aria-label="Toggle left inspector rail">
-                  L
-                </button>
-              ) : null}
-              {onToggleRightRail ? (
-                <button type="button" className="elab-viewport__ctrl" onClick={onToggleRightRail} aria-pressed={!rightRailCollapsed} aria-label="Toggle right inspector rail">
-                  R
-                </button>
-              ) : null}
-              {onFocusMode ? (
-                <button type="button" className="elab-viewport__ctrl" onClick={() => onFocusMode(mode)} aria-label="Focus mode">
-                  <ExperienceLabIcon name="focusMode" size="sm" decorative />
-                </button>
-              ) : null}
-              <button type="button" className="elab-viewport__ctrl" aria-label="Toggle grid" aria-pressed={false}>
-                <ExperienceLabIcon name="grid" size="sm" decorative />
-              </button>
-              <button type="button" className="elab-viewport__ctrl" aria-label="Toggle UI">
-                <ExperienceLabIcon name="toggleUi" size="sm" decorative />
-              </button>
-              <button type="button" className="elab-viewport__ctrl" aria-label="Zoom in">
-                <ExperienceLabIcon name="zoomIn" size="sm" decorative />
-              </button>
-              <button type="button" className="elab-viewport__ctrl" aria-label="Zoom out">
-                <ExperienceLabIcon name="zoomOut" size="sm" decorative />
-              </button>
-              <button type="button" className="elab-viewport__ctrl" aria-label="Fit view">
-                <ExperienceLabIcon name="fitView" size="sm" decorative />
-              </button>
-              <button type="button" className="elab-viewport__ctrl" aria-label="Pan">
-                <ExperienceLabIcon name="pan" size="sm" decorative />
-              </button>
-              <button type="button" className="elab-viewport__ctrl" onClick={toggleFullscreen} aria-label="Fullscreen">
-                <ExperienceLabIcon name={fullscreen ? 'stop' : 'fullscreen'} size="sm" decorative />
-              </button>
-            </div>
-
-            {modes && onModeChange ? (
-              <nav className="elab-viewport__inspector-chips" {...{ [ELAB_V2_COMPOSITION.modeRail]: '' }} aria-label="Viewport modes">
-                {modes.map((m) => {
-                  const iconName = VIEWPORT_MODE_ICON[m];
-                  return (
-                    <button
-                      key={m}
-                      type="button"
-                      className="elab-viewport__mode-seg"
-                      aria-pressed={mode === m}
-                      onClick={() => onModeChange(m)}
-                    >
-                      {iconName ? <ExperienceLabIcon name={iconName} size="xs" decorative active={mode === m} /> : null}
-                      {VIEWPORT_MODE_LABELS[m] ?? m}
-                    </button>
-                  );
-                })}
-              </nav>
-            ) : null}
+            {contextualHud}
           </div>
         </div>
 

@@ -32,6 +32,8 @@ import { useExperienceLabDesignVariants } from './useExperienceLabDesignVariants
 import { ExperienceLabDesignVariantDrawerBody } from './ExperienceLabDesignVariantDrawer';
 import { defaultWorkbenchTab, focusModeFromViewportMode } from './experience-lab-v2-layout';
 import type { ElabWorkbenchTab } from './experience-lab-v2-layout';
+import type { WorkbenchEditingToolId } from './experience-lab-v2-workbench-config';
+import { inspectorPanelForWorkbenchTool } from './experience-lab-v2-workbench-config';
 import { ELAB_V2_COMPOSITION } from './experience-lab-v2-composition';
 import { INSPECTOR_PANELS, viewportModeForInspector } from './experience-lab-v2-panel-orchestrator';
 import './experience-lab-v2.css';
@@ -76,6 +78,7 @@ export function ExperienceLabV2Shell({ initialDepartmentId = 'experience-lab' }:
 
   const hasRender = Boolean(model.founderRender?.previewArtifactUrl);
   const [workbenchTab, setWorkbenchTab] = useState<ElabWorkbenchTab>(() => defaultWorkbenchTab(hasRender));
+  const [workbenchToolId, setWorkbenchToolId] = useState<WorkbenchEditingToolId | null>(null);
 
   const setModeWithQuery = useCallback(
     (mode: StudioViewportMode) => {
@@ -94,9 +97,20 @@ export function ExperienceLabV2Shell({ initialDepartmentId = 'experience-lab' }:
     viewportMode,
     breakpoint: shell.breakpoint,
     focusMode: shell.focusMode,
+    workbenchToolId,
     model,
     onViewportModeChange: setModeWithQuery,
   });
+
+  const handleWorkbenchToolChange = useCallback(
+    (tool: WorkbenchEditingToolId | null) => {
+      setWorkbenchToolId(tool);
+      if (!tool) return;
+      const inspector = inspectorPanelForWorkbenchTool(tool);
+      if (inspector) orchestrator.selectInspector(inspector, { syncViewport: true });
+    },
+    [orchestrator]
+  );
 
   useEffect(() => {
     setWorkbenchTab((prev) => {
@@ -142,6 +156,8 @@ export function ExperienceLabV2Shell({ initialDepartmentId = 'experience-lab' }:
     focusMode: shell.focusMode,
     orchestrator,
     designVariants,
+    workbenchToolId,
+    designVariantDrawerOpen: Boolean(designVariants.drawerVariant),
   };
 
   const lowerDeck = shell.focusMode === 'none' ? (
@@ -155,7 +171,13 @@ export function ExperienceLabV2Shell({ initialDepartmentId = 'experience-lab' }:
         />
       ) : null}
       {review.show('workbench') ? (
-        <ExperienceLabFounderWorkbench model={model} activeTab={workbenchTab} onTabChange={setWorkbenchTab} />
+        <ExperienceLabFounderWorkbench
+          model={model}
+          activeTab={workbenchTab}
+          onTabChange={setWorkbenchTab}
+          activeTool={workbenchToolId}
+          onToolChange={handleWorkbenchToolChange}
+        />
       ) : null}
       {review.show('bottom-tool-dock') && !review.show('workbench') ? (
         <ExperienceLabWorkbenchDock onMoreOpen={() => shell.toggleOverlay('tools')} />
@@ -180,7 +202,13 @@ export function ExperienceLabV2Shell({ initialDepartmentId = 'experience-lab' }:
     if (review.show('workbench')) {
       return (
         <ExperienceLabComponentReviewSandbox componentId="workbench" label="Founder Workbench">
-          <ExperienceLabFounderWorkbench model={model} activeTab={workbenchTab} onTabChange={setWorkbenchTab} />
+          <ExperienceLabFounderWorkbench
+            model={model}
+            activeTab={workbenchTab}
+            onTabChange={setWorkbenchTab}
+            activeTool={workbenchToolId}
+            onToolChange={handleWorkbenchToolChange}
+          />
         </ExperienceLabComponentReviewSandbox>
       );
     }

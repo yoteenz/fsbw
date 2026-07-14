@@ -17,6 +17,7 @@ export const ELAB_V2_COMPOSITION = {
   viewAngles: 'data-elab-view-angles',
   designVariants: 'data-elab-design-variants',
   modeRail: 'data-elab-viewport-mode-rail',
+  contextualHud: 'data-elab-viewport-contextual-hud',
   focusMode: 'data-elab-focus-mode',
   sheet: 'data-elab-sheet',
   inspectorSwitcher: 'data-elab-inspector-switcher',
