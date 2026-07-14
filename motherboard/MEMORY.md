@@ -49899,3 +49899,19 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 **Tests:** New world-nav height test + updated orb size assertions in `experience-lab-v2.test.ts`. 54/54 PASS.
 
+---
+
+## 2026-07-14 — Vercel build fix: Experience Lab focus bar `replaceAll` (ES2020)
+
+**Founder request:** Vercel production build failed on commit `2d62d35` — `ExperienceLabV2Shell.tsx(372)`: `Property 'replaceAll' does not exist` on `ElabFocusMode` union (`'review' | 'blueprint' | 'render' | 'viewport'`). Root cause: `tsconfig.json` uses `"lib": ["ES2020", ...]`; `String.prototype.replaceAll` is ES2021.
+
+**Prior thread context (same chat):** Site-wide boot freeze fixed (`storage-observer.ts` reentrancy); Experience Lab icon fidelity sprint (v2 extract pipeline, overrides, QA route) was in progress but not confirmed shipped; prebuild uses `studio-world-icons-v5-source-twin` not v2 extract script.
+
+**Shipped:**
+- `ExperienceLabV2Shell.tsx`: `shell.focusMode.replaceAll('_', ' ')` → `shell.focusMode.replace(/_/g, ' ')` (ES2020-safe; focus modes have no underscores today)
+- `experience-lab-v2.test.ts`: source assertion updated from `replaceAll` to regex for `.replace(/_/g`
+
+**Verification:** `npm run build` PASS; `vitest run experience-lab-v2.test.ts` 54/54 PASS.
+
+**Spatial Architecture Review:** SKIPPED — TypeScript hotfix, no new surfaces.
+
