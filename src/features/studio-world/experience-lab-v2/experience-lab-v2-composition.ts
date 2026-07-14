@@ -6,7 +6,8 @@ export const ELAB_V2_COMPOSITION = {
   studioViewport: 'data-studio-viewport',
   floatingInspector: 'data-elab-floating-inspector',
   founderWorkbench: 'data-elab-founder-workbench',
-  founderReviewConsole: 'data-elab-founder-review-console',
+  founderBriefRow: 'data-elab-founder-brief-row',
+  viewportStageOverlays: 'data-elab-viewport-stage-overlays',
   workbenchTabs: 'data-elab-workbench-tabs',
   approvalBridge: 'data-elab-approval-bridge',
   blockerSheet: 'data-elab-blocker-sheet',
@@ -17,14 +18,6 @@ export const ELAB_V2_COMPOSITION = {
   viewAngles: 'data-elab-view-angles',
   designVariants: 'data-elab-design-variants',
   modeRail: 'data-elab-viewport-mode-rail',
-  contextualHud: 'data-elab-viewport-contextual-hud',
-  blueprintCard: 'data-elab-blueprint-card',
-  dynamicContextCard: 'data-elab-dynamic-context-card',
-  archPerspective: 'data-elab-arch-perspective',
-  environmentDisplayHost: 'data-env-display-host',
-  environmentDisplayTransform: 'data-env-display-transform-owner',
-  environmentDisplaySurface: 'data-env-display-visible-surface',
-  anchorDiagnostics: 'data-elab-anchor-diagnostics',
   focusMode: 'data-elab-focus-mode',
   sheet: 'data-elab-sheet',
   inspectorSwitcher: 'data-elab-inspector-switcher',
@@ -35,23 +28,23 @@ export const ELAB_V2_COMPOSITION = {
 } as const;
 
 export const VIEWPORT_MODE_LABELS: Record<string, string> = {
-  BLUEPRINT: 'BLUEPRINT',
-  FOUNDER_RENDER: 'FOUNDER RENDER',
-  CONSTRUCTION_PLAN: 'CONSTRUCTION',
-  MATERIALS: 'MATERIALS',
-  LIGHTING: 'LIGHTING',
-  CAMERA: 'CAMERA',
-  SPLIT_VIEW: 'SPLIT',
+  BLUEPRINT: 'Blueprint',
+  FOUNDER_RENDER: 'Founder Render',
+  CONSTRUCTION_PLAN: 'Construction',
+  MATERIALS: 'Materials',
+  LIGHTING: 'Lighting',
+  CAMERA: 'Camera',
+  SPLIT_VIEW: 'Split',
 };
 
 export const REGISTRY_TREE = [
   { id: 'fs-hq', label: 'FRONTAL SLAYER HQ', children: [
-    { id: 'reception', label: 'RECEPTION', revision: 18, active: true },
-    { id: 'lobby', label: 'GRAND LOBBY', revision: 12 },
-    { id: 'cds', label: 'CREATIVE DIRECTOR STUDIO', revision: 9 },
+    { id: 'reception', label: 'Reception', revision: 18, active: true },
+    { id: 'lobby', label: 'Grand Lobby', revision: 12 },
+    { id: 'cds', label: 'Creative Director Studio', revision: 9 },
   ]},
   { id: 'studio-os', label: 'STUDIO OS', children: [
-    { id: 'experience-lab', label: 'EXPERIENCE LAB', revision: 4 },
-    { id: 'command', label: 'COMMAND CENTER', revision: 3 },
+    { id: 'experience-lab', label: 'Experience Lab', revision: 4 },
+    { id: 'command', label: 'Command Center', revision: 3 },
   ]},
 ] as const;

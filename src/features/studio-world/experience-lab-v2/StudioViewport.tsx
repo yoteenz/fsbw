@@ -1,12 +1,9 @@
 import { useCallback, useState } from 'react';
-import type { EnvironmentPackageOutputStatus } from '../../../studio-os-core/environment-asset-package/EnvironmentPackageOutputs';
 import type { ExperienceLabV2ArtifactRef, StudioViewportMode } from './experience-lab-v2.types';
+import { ELAB_V2_COMPOSITION, VIEWPORT_MODE_LABELS } from './experience-lab-v2-composition';
+import { ExperienceLabIcon } from '../icons/ExperienceLabIcon';
+import { VIEWPORT_MODE_ICON } from './experience-lab-v2-icon-bindings';
 import { ExperienceLabEnvironmentLayer } from './ExperienceLabEnvironmentLayer';
-import { ExperienceLabBlueprintCard } from './ExperienceLabBlueprintCard';
-import { ELAB_V2_COMPOSITION } from './experience-lab-v2-composition';
-import { useExperienceLabHudParallax } from './useExperienceLabHudParallax';
-import { ExperienceLabEnvironmentDisplayAnchorDiagnosticOverlay } from './ExperienceLabEnvironmentDisplayAnchorDiagnosticOverlay';
-import { resolveExperienceLabV2FeatureFlags } from './experience-lab-v2-feature-flags';
 
 export type StudioViewportProps = {
   mode: StudioViewportMode;
@@ -23,14 +20,18 @@ export type StudioViewportProps = {
   };
   isStale?: boolean;
   onImageLoad?: () => void;
+  modes?: StudioViewportMode[];
+  onModeChange?: (mode: StudioViewportMode) => void;
   onFocusMode?: (mode: StudioViewportMode) => void;
-  focusActive?: boolean;
   embedded?: boolean;
-  blueprintThumbnailUrl?: string | null;
-  blueprintThumbnailStatus?: EnvironmentPackageOutputStatus;
-  onOpenBlueprint?: () => void;
-  dynamicContextCard?: React.ReactNode;
+  inspectorSwitcher?: React.ReactNode;
+  /** Layered on viewport environment (design brief row + design variants). */
+  stageOverlays?: React.ReactNode;
   viewAngles?: React.ReactNode;
+  leftRailCollapsed?: boolean;
+  rightRailCollapsed?: boolean;
+  onToggleLeftRail?: () => void;
+  onToggleRightRail?: () => void;
   /** Mobile/tablet use 9:16 environment; desktop uses landscape environment. */
   isCompact?: boolean;
   /** Active design variant environment artwork. */
@@ -67,7 +68,7 @@ function ArtifactPane({
     return (
       <div className="elab-empty elab-empty--loading">
         <div className="elab-empty__pulse" />
-        <p className="elab-empty__hint">LOADING {title.toUpperCase()}…</p>
+        <p className="elab-empty__hint">Loading {title}…</p>
       </div>
     );
   }
@@ -75,7 +76,7 @@ function ArtifactPane({
     return (
       <div className="elab-empty elab-empty--error">
         <p className="elab-empty__title">{title} ERROR</p>
-        <p className="elab-empty__hint">GENERATION FAILED — OPEN DIAGNOSTICS</p>
+        <p className="elab-empty__hint">Generation failed — open diagnostics</p>
       </div>
     );
   }
@@ -89,7 +90,7 @@ function ArtifactPane({
   );
 }
 
-/** StudioViewport™ — hero visual workspace; two-panel HUD (blueprint + optional context). */
+/** StudioViewport™ — hero visual workspace with integrated mode rail. */
 export function StudioViewport({
   mode,
   departmentName,
@@ -98,56 +99,48 @@ export function StudioViewport({
   artifacts,
   isStale,
   onImageLoad,
+  modes,
+  onModeChange,
   onFocusMode,
-  focusActive,
   embedded,
-  blueprintThumbnailUrl,
-  blueprintThumbnailStatus = 'pending',
-  onOpenBlueprint,
-  dynamicContextCard,
+  inspectorSwitcher,
+  stageOverlays,
   viewAngles,
+  leftRailCollapsed,
+  rightRailCollapsed,
+  onToggleLeftRail,
+  onToggleRightRail,
   isCompact,
   environmentUrl,
 }: StudioViewportProps) {
-  const handleStageBackgroundPress = useCallback(
-    (event: React.MouseEvent<HTMLDivElement> | React.KeyboardEvent<HTMLDivElement>) => {
-      if (!onFocusMode || focusActive) return;
-      if ('key' in event && event.key !== 'Enter' && event.key !== ' ') return;
-      if ('key' in event) event.preventDefault();
-      const target = event.target as HTMLElement;
-      if (target.closest('[data-viewport-pane]')) return;
-      onFocusMode(mode);
-    },
-    [focusActive, mode, onFocusMode]
-  );
-
-  const stageFocusable = Boolean(onFocusMode && !focusActive);
+  const [fullscreen, setFullscreen] = useState(false);
+  const toggleFullscreen = useCallback(() => setFullscreen((f) => !f), []);
 
   const renderStage = () => {
     switch (mode) {
       case 'LOADING':
-        return <div className="elab-empty elab-empty--loading"><div className="elab-empty__pulse" /><p>SYNCING VIEWPORT…</p></div>;
+        return <div className="elab-empty elab-empty--loading"><div className="elab-empty__pulse" /><p>Syncing viewport…</p></div>;
       case 'ERROR':
-        return <div className="elab-empty elab-empty--error"><p>VIEWPORT ERROR</p></div>;
+        return <div className="elab-empty elab-empty--error"><p>Viewport error</p></div>;
       case 'EMPTY_STATE':
         return <BlueprintEmptyState />;
       case 'BLUEPRINT':
-        return <ArtifactPane title="BLUEPRINT" artifact={artifacts.blueprint} variant="blueprint" />;
+        return <ArtifactPane title="Blueprint" artifact={artifacts.blueprint} variant="blueprint" />;
       case 'FOUNDER_RENDER':
-        return <ArtifactPane title="FOUNDER RENDER" artifact={artifacts.founderRender} variant="render" onImageLoad={onImageLoad} renderStatus={artifactStatus} />;
+        return <ArtifactPane title="Founder Render" artifact={artifacts.founderRender} variant="render" onImageLoad={onImageLoad} renderStatus={artifactStatus} />;
       case 'CONSTRUCTION_PLAN':
-        return <ArtifactPane title="CONSTRUCTION" artifact={artifacts.construction} variant="default" />;
+        return <ArtifactPane title="Construction" artifact={artifacts.construction} variant="default" />;
       case 'MATERIALS':
-        return <ArtifactPane title="MATERIALS" artifact={artifacts.materials} variant="default" />;
+        return <ArtifactPane title="Materials" artifact={artifacts.materials} variant="default" />;
       case 'LIGHTING':
-        return <ArtifactPane title="LIGHTING" artifact={artifacts.lighting} variant="default" />;
+        return <ArtifactPane title="Lighting" artifact={artifacts.lighting} variant="default" />;
       case 'CAMERA':
-        return <ArtifactPane title="CAMERA" artifact={artifacts.camera} variant="default" />;
+        return <ArtifactPane title="Camera" artifact={artifacts.camera} variant="default" />;
       case 'SPLIT_VIEW':
         return (
           <div className="elab-viewport-split" data-split-view>
-            <ArtifactPane title="BLUEPRINT" artifact={artifacts.blueprint} variant="blueprint" />
-            <ArtifactPane title="FOUNDER RENDER" artifact={artifacts.founderRender} variant="render" onImageLoad={onImageLoad} renderStatus={artifactStatus} />
+            <ArtifactPane title="Blueprint" artifact={artifacts.blueprint} variant="blueprint" />
+            <ArtifactPane title="Founder Render" artifact={artifacts.founderRender} variant="render" onImageLoad={onImageLoad} renderStatus={artifactStatus} />
           </div>
         );
       default:
@@ -155,52 +148,97 @@ export function StudioViewport({
     }
   };
 
-  const rootClass = `elab-viewport${embedded ? ' elab-viewport--embedded' : ''}${focusActive ? ' elab-viewport--focus-active' : ''}`;
+  const rootClass = `elab-viewport${fullscreen ? ' elab-viewport--fullscreen' : ''}${embedded ? ' elab-viewport--embedded' : ''}`;
 
-  const [viewportEl, setViewportEl] = useState<HTMLElement | null>(null);
-  useExperienceLabHudParallax(viewportEl);
-  const anchorDiagnostics = resolveExperienceLabV2FeatureFlags().experienceLabV2DiagnosticsEnabled;
+  const modeLabel = VIEWPORT_MODE_LABELS[mode] ?? mode;
 
   return (
-    <section
-      ref={setViewportEl}
-      className={rootClass}
-      data-studio-viewport
-      data-mode={mode}
-      {...{ [ELAB_V2_COMPOSITION.archPerspective]: '' }}
-    >
-      <div
-        className={`elab-viewport__stage${stageFocusable ? ' elab-viewport__stage--focusable' : ''}`}
-        onClick={handleStageBackgroundPress}
-        onKeyDown={handleStageBackgroundPress}
-        role={stageFocusable ? 'button' : undefined}
-        tabIndex={stageFocusable ? 0 : undefined}
-        aria-label={stageFocusable ? 'ENTER FOCUS MODE' : undefined}
-      >
+    <section className={rootClass} data-studio-viewport data-mode={mode}>
+      <div className="elab-viewport__chrome">
+        <div className="elab-viewport__title-bar">
+          <div className="elab-viewport__title-group">
+            <h2 className="elab-viewport__scene-title">{departmentName.toUpperCase()}</h2>
+            <span className="elab-viewport__revision">r{revision}</span>
+            <span className={`elab-viewport__badge${isStale ? ' elab-viewport__badge--stale' : ' elab-viewport__badge--ok'}`}>
+              {isStale ? 'STALE' : artifactStatus.toUpperCase()}
+            </span>
+          </div>
+          {inspectorSwitcher}
+          <div className="elab-viewport__controls">
+            <span className="elab-viewport__mode-chip" aria-label={`Viewport mode ${modeLabel}`}>{modeLabel}</span>
+            {onToggleLeftRail ? (
+              <button type="button" className="elab-viewport__ctrl" onClick={onToggleLeftRail} aria-pressed={!leftRailCollapsed} aria-label="Toggle left inspector rail">
+                L
+              </button>
+            ) : null}
+            {onToggleRightRail ? (
+              <button type="button" className="elab-viewport__ctrl" onClick={onToggleRightRail} aria-pressed={!rightRailCollapsed} aria-label="Toggle right inspector rail">
+                R
+              </button>
+            ) : null}
+            {onFocusMode ? (
+              <button type="button" className="elab-viewport__ctrl" onClick={() => onFocusMode(mode)} aria-label="Focus mode">
+                <ExperienceLabIcon name="focusMode" size="sm" decorative />
+              </button>
+            ) : null}
+            <button type="button" className="elab-viewport__ctrl" aria-label="Toggle grid" aria-pressed={false}>
+              <ExperienceLabIcon name="grid" size="sm" decorative />
+            </button>
+            <button type="button" className="elab-viewport__ctrl" aria-label="Toggle UI">
+              <ExperienceLabIcon name="toggleUi" size="sm" decorative />
+            </button>
+            <button type="button" className="elab-viewport__ctrl" aria-label="Zoom in">
+              <ExperienceLabIcon name="zoomIn" size="sm" decorative />
+            </button>
+            <button type="button" className="elab-viewport__ctrl" aria-label="Zoom out">
+              <ExperienceLabIcon name="zoomOut" size="sm" decorative />
+            </button>
+            <button type="button" className="elab-viewport__ctrl" aria-label="Fit view">
+              <ExperienceLabIcon name="fitView" size="sm" decorative />
+            </button>
+            <button type="button" className="elab-viewport__ctrl" aria-label="Pan">
+              <ExperienceLabIcon name="pan" size="sm" decorative />
+            </button>
+            <button type="button" className="elab-viewport__ctrl" onClick={toggleFullscreen} aria-label="Fullscreen">
+              <ExperienceLabIcon name={fullscreen ? 'stop' : 'fullscreen'} size="sm" decorative />
+            </button>
+          </div>
+        </div>
+
+        {modes && onModeChange ? (
+          <nav className="elab-viewport__mode-rail" {...{ [ELAB_V2_COMPOSITION.modeRail]: '' }} aria-label="Viewport modes">
+            {modes.map((m) => {
+              const iconName = VIEWPORT_MODE_ICON[m];
+              return (
+              <button
+                key={m}
+                type="button"
+                className="elab-viewport__mode-seg"
+                aria-pressed={mode === m}
+                onClick={() => onModeChange(m)}
+              >
+                {iconName ? <ExperienceLabIcon name={iconName} size="xs" decorative active={mode === m} /> : null}
+                {VIEWPORT_MODE_LABELS[m] ?? m}
+              </button>
+              );
+            })}
+          </nav>
+        ) : null}
+      </div>
+
+      <div className="elab-viewport__stage">
         <ExperienceLabEnvironmentLayer scope="viewport" isMobile={isCompact} environmentUrl={environmentUrl} />
         <div className="elab-viewport__stage-content">{renderStage()}</div>
+        {stageOverlays ?? viewAngles ? (
+          <div
+            className="elab-viewport__stage-overlays"
+            {...{ [ELAB_V2_COMPOSITION.viewportStageOverlays]: '' }}
+          >
+            {viewAngles ? <div className="elab-viewport__angles-chrome">{viewAngles}</div> : null}
+            {stageOverlays}
+          </div>
+        ) : null}
       </div>
-
-      <div className="elab-viewport__hud" data-elab-viewport-hud aria-label="Viewport HUD">
-        <div className="elab-viewport__hud-safe">
-            <ExperienceLabEnvironmentDisplayAnchorDiagnosticOverlay enabled={anchorDiagnostics} />
-            <ExperienceLabBlueprintCard
-            environmentName={departmentName}
-            revision={revision}
-            status={artifactStatus}
-            isStale={isStale}
-            blueprintUrl={blueprintThumbnailUrl ?? null}
-            blueprintStatus={blueprintThumbnailStatus}
-            onOpenBlueprint={onOpenBlueprint}
-          />
-
-          {dynamicContextCard}
-        </div>
-      </div>
-
-      {viewAngles ? (
-        <div className="elab-viewport__angles-chrome elab-arch-panel elab-arch-panel--center">{viewAngles}</div>
-      ) : null}
     </section>
   );
 }
