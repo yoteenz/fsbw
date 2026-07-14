@@ -16,6 +16,8 @@ type Props = {
   viewportMode: StudioViewportMode;
   onModeChange: (mode: StudioViewportMode) => void;
   onExpand?: () => void;
+  onGenerateBlueprint?: () => void;
+  onRetryBlueprint?: () => void;
 };
 
 function ContextActionRow({
@@ -49,7 +51,12 @@ export function ExperienceLabDynamicContextCard({
   viewportMode,
   onModeChange,
   onExpand,
+  onGenerateBlueprint,
+  onRetryBlueprint,
 }: Props) {
+  const live = model.liveWorkspace;
+  const modules = live?.workbenchModules;
+  const blueprint = live?.blueprintOutput;
   const contentId = contextContentForWorkbenchTool(toolId);
   const title = contextLabelForWorkbenchTool(toolId);
   const modes = viewportModesForWorkbenchTool(toolId);
@@ -68,20 +75,32 @@ export function ExperienceLabDynamicContextCard({
                 onClick={() => onModeChange(mode)}
               />
             ))}
+            {blueprint?.canGenerate && onGenerateBlueprint ? (
+              <ContextActionRow label="GENERATE BLUEPRINT" detail={blueprint.displayState} onClick={onGenerateBlueprint} />
+            ) : null}
+            {blueprint?.canRetry && onRetryBlueprint ? (
+              <ContextActionRow label="RETRY BLUEPRINT" detail={blueprint.failureCode ?? 'STALE'} onClick={onRetryBlueprint} />
+            ) : null}
+            <ContextActionRow
+              label="BLUEPRINT STATUS"
+              detail={`${modules?.architectural.blueprintStatus ?? '—'} · r${modules?.architectural.activeRevision ?? model.revision}`}
+            />
           </div>
         );
       case 'materials':
         return (
           <div className="elab-context-card__body-copy">
-            <p className="elab-context-card__summary">{model.artifacts.materials?.summary ?? 'MATERIAL PROFILE'}</p>
-            <p className="elab-context-card__hint">r{model.artifacts.materials?.revision ?? model.revision} · {(model.artifacts.materials?.status ?? 'idle').toUpperCase()}</p>
+            <p className="elab-context-card__summary">{modules?.materials.summary ?? model.artifacts.materials?.summary ?? 'MATERIAL PROFILE'}</p>
+            <p className="elab-context-card__hint">
+              r{modules?.materials.revision ?? model.revision} · {(modules?.materials.profileStatus ?? 'idle').toUpperCase()} · {modules?.materials.generationJobStatus ?? '—'}
+            </p>
           </div>
         );
       case 'lighting':
         return (
           <div className="elab-context-card__body-copy">
             <p className="elab-context-card__summary">{model.artifacts.lighting?.summary ?? 'LIGHTING PROFILE'}</p>
-            <p className="elab-context-card__hint">EXECUTIVE LIGHTING PLANNER OUTPUT</p>
+            <p className="elab-context-card__hint">{live?.provider ?? '—'} / {live?.model ?? '—'}</p>
           </div>
         );
       case 'camera':
@@ -102,28 +121,40 @@ export function ExperienceLabDynamicContextCard({
         return (
           <div className="elab-context-card__body-copy">
             <p className="elab-context-card__summary">PERMIT STATUS</p>
-            <p className="elab-context-card__hint">{model.permitStatus.toUpperCase()}</p>
+            <p className="elab-context-card__hint">
+              {(modules?.permit.permitStatus ?? model.permitStatus).toUpperCase()} · {modules?.permit.readinessPercent ?? 0}% READY
+            </p>
+            {modules?.permit.blockers.length ? (
+              <p className="elab-context-card__hint">{modules.permit.blockers[0]}</p>
+            ) : null}
           </div>
         );
       case 'asset-reference':
         return (
           <div className="elab-context-card__body-copy">
-            <p className="elab-context-card__summary">ASSET REFERENCE VAULT</p>
-            <p className="elab-context-card__hint">{model.artifacts.materials?.summary ?? 'BRAND VAULT REFS'}</p>
+            <p className="elab-context-card__summary">{modules?.assetReference.summary ?? 'ASSET MANIFEST'}</p>
+            <p className="elab-context-card__hint">
+              {modules?.assetReference.attachedCount ?? 0} attached · {modules?.assetReference.missingCount ?? 0} pending
+            </p>
           </div>
         );
       case 'budget-forecast':
         return (
           <div className="elab-context-card__body-copy">
             <p className="elab-context-card__summary">GENERATION COSTS</p>
-            <p className="elab-context-card__hint">{model.costEstimate}</p>
+            <p className="elab-context-card__hint">{modules?.budget.displayEstimate ?? model.costEstimate}</p>
+            <p className="elab-context-card__hint">
+              {modules?.budget.outputsGenerated ?? 0} generated · {modules?.budget.outputsRemaining ?? 0} remaining
+            </p>
           </div>
         );
       case 'workforce':
         return (
           <div className="elab-context-card__body-copy">
             <p className="elab-context-card__summary">WORKFORCE CENTER</p>
-            <p className="elab-context-card__hint">DEPARTMENT STAFFING AND DIGITAL WORKERS</p>
+            <p className="elab-context-card__hint">
+              {(modules?.workforce.schedulerJobs ?? []).join(' · ') || modules?.workforce.responsibleDepartment || '—'}
+            </p>
           </div>
         );
       default:

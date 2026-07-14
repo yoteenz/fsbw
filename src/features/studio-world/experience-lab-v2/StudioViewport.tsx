@@ -1,5 +1,6 @@
 import { useCallback, useState } from 'react';
 import type { EnvironmentPackageOutputStatus } from '../../../studio-os-core/environment-asset-package/EnvironmentPackageOutputs';
+import type { BlueprintDisplayState } from './live-workspace/ExperienceLabLiveWorkspaceViewModel';
 import type { ExperienceLabV2ArtifactRef, StudioViewportMode } from './experience-lab-v2.types';
 import { ExperienceLabEnvironmentLayer } from './ExperienceLabEnvironmentLayer';
 import { ExperienceLabBlueprintCard } from './ExperienceLabBlueprintCard';
@@ -28,7 +29,11 @@ export type StudioViewportProps = {
   embedded?: boolean;
   blueprintThumbnailUrl?: string | null;
   blueprintThumbnailStatus?: EnvironmentPackageOutputStatus;
+  blueprintDisplayState?: BlueprintDisplayState;
+  blueprintBlockerReason?: string | null;
   onOpenBlueprint?: () => void;
+  onGenerateBlueprint?: () => void;
+  onRetryBlueprint?: () => void;
   dynamicContextCard?: React.ReactNode;
   viewAngles?: React.ReactNode;
   /** Mobile/tablet use 9:16 environment; desktop uses landscape environment. */
@@ -103,7 +108,11 @@ export function StudioViewport({
   embedded,
   blueprintThumbnailUrl,
   blueprintThumbnailStatus = 'pending',
+  blueprintDisplayState,
+  blueprintBlockerReason,
   onOpenBlueprint,
+  onGenerateBlueprint,
+  onRetryBlueprint,
   dynamicContextCard,
   viewAngles,
   isCompact,
@@ -191,7 +200,11 @@ export function StudioViewport({
             isStale={isStale}
             blueprintUrl={blueprintThumbnailUrl ?? null}
             blueprintStatus={blueprintThumbnailStatus}
+            displayState={blueprintDisplayState}
+            blockerReason={blueprintBlockerReason}
             onOpenBlueprint={onOpenBlueprint}
+            onGenerateBlueprint={onGenerateBlueprint}
+            onRetryBlueprint={onRetryBlueprint}
           />
 
           {dynamicContextCard}

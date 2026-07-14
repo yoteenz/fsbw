@@ -24,6 +24,8 @@ type Props = {
   orchestrator: ExperienceLabPanelOrchestrator;
   designVariants: ExperienceLabDesignVariants;
   onOpenInspectorSheet?: () => void;
+  onGenerateBlueprint?: () => void;
+  onRetryBlueprint?: () => void;
   /** Isolate one sub-region for component review mode. */
   reviewIsolate?: 'viewport' | 'inspectors' | 'view-angles';
 };
@@ -42,6 +44,8 @@ export function ExperienceLabViewportStage({
   orchestrator,
   designVariants,
   onOpenInspectorSheet,
+  onGenerateBlueprint,
+  onRetryBlueprint,
   reviewIsolate,
 }: Props) {
   const designVariantStrip = (
@@ -56,10 +60,28 @@ export function ExperienceLabViewportStage({
     />
   );
 
-  const blueprintOutput = useMemo(
-    () => resolveDesignVariantBlueprintFromPackage(designVariants.activeVariantId),
-    [designVariants.activeVariantId, designVariants.activeEnvironmentUrl]
-  );
+  const live = model.liveWorkspace;
+  const blueprintOutput = useMemo(() => {
+    if (live?.blueprintOutput) {
+      return {
+        url: live.blueprintOutput.artifactUrl,
+        status: live.blueprintOutput.outputStatus,
+        displayState: live.blueprintOutput.displayState,
+        blockerReason: live.blueprintOutput.blockerReason,
+        canGenerate: live.blueprintOutput.canGenerate,
+        canRetry: live.blueprintOutput.canRetry,
+      };
+    }
+    const legacy = resolveDesignVariantBlueprintFromPackage(designVariants.activeVariantId);
+    return {
+      url: legacy.url,
+      status: legacy.status,
+      displayState: undefined,
+      blockerReason: null,
+      canGenerate: false,
+      canRetry: false,
+    };
+  }, [live, designVariants.activeVariantId, designVariants.activeEnvironmentUrl]);
 
   const environmentName = designVariants.activeVariant?.name ?? model.departmentName;
 
@@ -77,6 +99,8 @@ export function ExperienceLabViewportStage({
             onOpenInspectorSheet?.();
           }
         }}
+        onGenerateBlueprint={blueprintOutput.canGenerate ? onGenerateBlueprint : undefined}
+        onRetryBlueprint={blueprintOutput.canRetry ? onRetryBlueprint : undefined}
       />
     ) : null;
 
@@ -125,7 +149,11 @@ export function ExperienceLabViewportStage({
             environmentUrl={designVariants.activeEnvironmentUrl}
             blueprintThumbnailUrl={blueprintOutput.url}
             blueprintThumbnailStatus={blueprintOutput.status}
+            blueprintDisplayState={blueprintOutput.displayState}
+            blueprintBlockerReason={blueprintOutput.blockerReason}
             onOpenBlueprint={() => onModeChange('BLUEPRINT')}
+            onGenerateBlueprint={blueprintOutput.canGenerate ? onGenerateBlueprint : undefined}
+            onRetryBlueprint={blueprintOutput.canRetry ? onRetryBlueprint : undefined}
             dynamicContextCard={dynamicContextCard}
             viewAngles={showFloats ? designVariantStrip : undefined}
           />

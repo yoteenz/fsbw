@@ -17,10 +17,10 @@ import { ExperienceLabComponentReviewChrome } from './ExperienceLabComponentRevi
 import { ExperienceLabComponentReviewSandbox } from './ExperienceLabComponentReviewSandbox';
 import { ExperienceLabSheet } from './ExperienceLabSheet';
 import {
-  experienceLabV2ViewModelAdapter,
   parseViewportModeFromQuery,
   viewportModeToQuery,
 } from './experience-lab-v2-view-model-adapter';
+import { liveWorkspaceToV2ViewModel, useExperienceLabLiveWorkspace, ExperienceLabLiveWorkspaceProvider } from './live-workspace';
 import type { ExperienceLabV2TestMode, StudioViewportMode } from './experience-lab-v2.types';
 import { readExperienceLabV2TestMode } from './experience-lab-v2-test-modes';
 import { resolveExperienceLabV2FeatureFlags } from './experience-lab-v2-feature-flags';
@@ -66,7 +66,7 @@ export function ExperienceLabV2Shell({ initialDepartmentId = 'experience-lab' }:
       activeVariantLabel={designVariants.activeVariant?.name ?? null}
       onPipelineDepthChange={handlePipelineDepthChange}
     >
-      <ExperienceLabV2ShellBody
+      <ExperienceLabV2ShellInner
         initialDepartmentId={initialDepartmentId}
         shell={shell}
         designVariants={designVariants}
@@ -75,19 +75,44 @@ export function ExperienceLabV2Shell({ initialDepartmentId = 'experience-lab' }:
   );
 }
 
+type ShellInnerProps = Omit<ShellBodyProps, 'workbenchToolId' | 'onWorkbenchToolChange'>;
+
+function ExperienceLabV2ShellInner(props: ShellInnerProps) {
+  const pipeline = useProgramContext();
+  const canonicalQueue = useCanonicalDepartmentQueue();
+  const departmentId = pipeline.canonicalDepartmentId as CanonicalMainDepartmentId;
+  const [workbenchToolId, setWorkbenchToolId] = useState<WorkbenchEditingToolId | null>(null);
+
+  return (
+    <ExperienceLabLiveWorkspaceProvider
+      designVariants={props.designVariants}
+      canonicalQueue={canonicalQueue.queue}
+      departmentId={departmentId}
+      workbenchToolId={workbenchToolId}
+      onWorkbenchToolChange={setWorkbenchToolId}
+    >
+      <ExperienceLabV2ShellBody {...props} workbenchToolId={workbenchToolId} onWorkbenchToolChange={setWorkbenchToolId} />
+    </ExperienceLabLiveWorkspaceProvider>
+  );
+}
+
 type ShellBodyProps = Props & {
   shell: ReturnType<typeof useExperienceLabAppShell>;
   designVariants: ExperienceLabDesignVariants;
+  workbenchToolId: WorkbenchEditingToolId | null;
+  onWorkbenchToolChange: (tool: WorkbenchEditingToolId | null) => void;
 };
 
-function ExperienceLabV2ShellBody({ initialDepartmentId: _initialDepartmentId, shell, designVariants }: ShellBodyProps) {
-  const pipeline = useProgramContext();
-  const canonicalQueue = useCanonicalDepartmentQueue();
+function ExperienceLabV2ShellBody({
+  initialDepartmentId: _initialDepartmentId,
+  shell,
+  designVariants,
+  workbenchToolId,
+  onWorkbenchToolChange,
+}: ShellBodyProps) {
   const flags = resolveExperienceLabV2FeatureFlags();
   const review = useExperienceLabComponentReview();
 
-  const departmentId = pipeline.canonicalDepartmentId as CanonicalMainDepartmentId;
-  const program = pipeline.state.programId;
   const location = useLocation();
   const navigate = useNavigate();
   const [viewportMode, setViewportMode] = useState<StudioViewportMode>(
@@ -96,22 +121,16 @@ function ExperienceLabV2ShellBody({ initialDepartmentId: _initialDepartmentId, s
   const [testMode, setTestMode] = useState<ExperienceLabV2TestMode>(() => readExperienceLabV2TestMode());
   const [imageLoaded, setImageLoaded] = useState(false);
 
+  const { liveWorkspace, setWorkbenchTool, generateBlueprint, retryBlueprint } = useExperienceLabLiveWorkspace();
+
   const model = useMemo(
     () =>
-      experienceLabV2ViewModelAdapter({
-        program,
-        departmentId,
-        viewportMode,
-        queue: canonicalQueue.queue,
-        imageLoaded,
-        useMock: testMode === 'MOCK',
-      }),
-    [program, departmentId, viewportMode, canonicalQueue.queue, imageLoaded, testMode]
+      liveWorkspaceToV2ViewModel(liveWorkspace, viewportMode, imageLoaded, testMode === 'MOCK'),
+    [liveWorkspace, viewportMode, imageLoaded, testMode]
   );
 
   const hasRender = Boolean(model.founderRender?.previewArtifactUrl);
   const [workbenchTab, setWorkbenchTab] = useState<ElabWorkbenchTab>(() => defaultWorkbenchTab(hasRender));
-  const [workbenchToolId, setWorkbenchToolId] = useState<WorkbenchEditingToolId | null>(null);
 
   const setModeWithQuery = useCallback(
     (mode: StudioViewportMode) => {
@@ -137,7 +156,8 @@ function ExperienceLabV2ShellBody({ initialDepartmentId: _initialDepartmentId, s
 
   const handleWorkbenchToolChange = useCallback(
     (tool: WorkbenchEditingToolId | null) => {
-      setWorkbenchToolId(tool);
+      setWorkbenchTool(tool);
+      onWorkbenchToolChange(tool);
       if (!tool) return;
       const inspector = inspectorPanelForWorkbenchTool(tool);
       if (inspector) {
@@ -147,7 +167,7 @@ function ExperienceLabV2ShellBody({ initialDepartmentId: _initialDepartmentId, s
         setModeWithQuery('BLUEPRINT');
       }
     },
-    [orchestrator, setModeWithQuery]
+    [orchestrator, onWorkbenchToolChange, setModeWithQuery, setWorkbenchTool]
   );
 
   useEffect(() => {
@@ -197,6 +217,8 @@ function ExperienceLabV2ShellBody({ initialDepartmentId: _initialDepartmentId, s
     workbenchToolId,
     designVariantDrawerOpen: Boolean(designVariants.drawerVariant),
     onOpenInspectorSheet: () => shell.toggleOverlay('inspector'),
+    onGenerateBlueprint: () => void generateBlueprint(),
+    onRetryBlueprint: () => void retryBlueprint(),
   };
 
   const lowerDeck = shell.focusMode === 'none' ? (
@@ -207,6 +229,10 @@ function ExperienceLabV2ShellBody({ initialDepartmentId: _initialDepartmentId, s
           approval={model.approval}
           testMode={testMode}
           onBlockersOpen={() => shell.toggleOverlay('blockers')}
+          onApprove={() => {
+            const pkgId = liveWorkspace.environmentPackageId;
+            if (pkgId) void designVariants.approveForProduction(pkgId);
+          }}
         />
       ) : null}
       {review.show('workbench') ? (
@@ -275,6 +301,10 @@ function ExperienceLabV2ShellBody({ initialDepartmentId: _initialDepartmentId, s
             approval={model.approval}
             testMode={testMode}
             onBlockersOpen={() => shell.toggleOverlay('blockers')}
+            onApprove={() => {
+              const pkgId = liveWorkspace.environmentPackageId;
+              if (pkgId) void designVariants.approveForProduction(pkgId);
+            }}
           />
         </ExperienceLabComponentReviewSandbox>
       );
@@ -434,8 +464,18 @@ function ExperienceLabV2ShellBody({ initialDepartmentId: _initialDepartmentId, s
 
       <ExperienceLabSheet open={shell.overlay === 'tools'} title="EXPERIENCE LAB TOOLS" onClose={shell.closeOverlay}>
         <div className="elab-sheet-tools">
-          {['ARCHITECTURAL TOOLS', 'MATERIAL LIBRARY', 'LIGHTING STUDIO', 'CAMERA STUDIO', 'BUDGET FORECAST', 'PERMIT CENTER'].map((t) => (
-            <button key={t} type="button" className="elab-sheet-tool-btn">{t}</button>
+          {['architectural-tools', 'material-library', 'lighting-studio', 'camera-studio', 'budget-forecast', 'permit-center'].map((toolId) => (
+            <button
+              key={toolId}
+              type="button"
+              className="elab-sheet-tool-btn"
+              onClick={() => {
+                handleWorkbenchToolChange(toolId as WorkbenchEditingToolId);
+                shell.closeOverlay();
+              }}
+            >
+              {toolId.replace(/-/g, ' ').toUpperCase()}
+            </button>
           ))}
         </div>
       </ExperienceLabSheet>

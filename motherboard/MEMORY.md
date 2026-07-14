@@ -49944,3 +49944,13 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - `experience-lab-v2-workbench-config.ts` — label `HEADQUARTERS` (internal nav id unchanged)
 - `experience-lab-v2-workbench.test.ts` — updated icon + label assertions. 5/5 PASS.
 
+---
+
+## 2026-07-14 — Command Dock status row top border restored
+
+**Founder request:** Border line above STATUS / PERMIT / AI COST row was missing — add it back.
+
+**Cause:** Legacy location tabs row carried `border-top`/`border-bottom`; after program pipeline refactor, middle rows set `border-bottom: none` with no replacement separator above status.
+
+**Shipped:** `.elab-cmd__row--status` — `border-top: 1px solid rgba(255, 255, 255, 0.05)` in `experience-lab-v2.css`. Test assertion added.
+

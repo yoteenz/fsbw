@@ -89,6 +89,8 @@ export type ExperienceLabV2ViewModel = {
   diagnostics: string[];
   isStale: boolean;
   imageLoaded: boolean;
+  /** Canonical live workspace — single source when provider is active. */
+  liveWorkspace?: import('./live-workspace/ExperienceLabLiveWorkspaceViewModel').ExperienceLabLiveWorkspaceViewModel;
 };
 
 export type ExperienceLabV2InspectorModule = {
