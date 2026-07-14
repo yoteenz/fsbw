@@ -499,6 +499,9 @@ describe('Experience Lab V2 — Panel orchestration', () => {
     expect(anchor).toContain('data-env-display-visible-surface');
     expect(parallax).toContain('--elab-parallax-x');
     expect(css).toContain('--env-display-perspective: 1600px');
+    expect(css).toContain('--elab-hud-panel-size-scale: 0.4');
+    expect(css).toMatch(/\.elab-viewport__blueprint-card\s*\{[\s\S]*?max-width:\s*min\(calc\(46vw \* var\(--elab-hud-panel-size-scale\)\)/);
+    expect(css).toMatch(/\.elab-viewport__context-card\s*\{[\s\S]*?width:\s*min\(calc\(42vw \* var\(--elab-hud-panel-size-scale\)\)/);
     expect(css).toMatch(/perspective:\s*var\(--env-display-perspective\)/);
     expect(css).toContain('transform-style: preserve-3d');
     expect(css).toContain('.elab-env-display-transform--left');

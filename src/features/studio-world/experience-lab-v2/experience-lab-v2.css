@@ -1205,6 +1205,7 @@ button.elab-cmd__meta-chip {
   --elab-hud-safe-top: var(--elab-hud-inset-top);
   --elab-hud-safe-side: var(--elab-hud-inset-side);
   --elab-hud-safe-bottom: 10%;
+  --elab-hud-panel-size-scale: 0.4;
   --elab-parallax-x: 0px;
   --elab-parallax-y: 0px;
   /* Environment Display Anchor System */
@@ -1394,6 +1395,40 @@ button.elab-cmd__meta-chip {
   .elab-app-shell--mobile .elab-env-display-transform--right {
     --display-translate-z: 80px;
     --display-rotate-y: -10deg;
+  }
+}
+
+.elab-viewport .elab-env-display-transform--left {
+  --display-translate-z: calc(95px * var(--elab-hud-panel-size-scale));
+}
+
+.elab-viewport .elab-env-display-transform--right {
+  --display-translate-z: calc(95px * var(--elab-hud-panel-size-scale));
+}
+
+.elab-app-shell--tablet .elab-viewport .elab-env-display-transform--left {
+  --display-translate-z: calc(78px * var(--elab-hud-panel-size-scale));
+}
+
+.elab-app-shell--tablet .elab-viewport .elab-env-display-transform--right {
+  --display-translate-z: calc(78px * var(--elab-hud-panel-size-scale));
+}
+
+.elab-app-shell--mobile .elab-viewport .elab-env-display-transform--left {
+  --display-translate-z: calc(70px * var(--elab-hud-panel-size-scale));
+}
+
+.elab-app-shell--mobile .elab-viewport .elab-env-display-transform--right {
+  --display-translate-z: calc(70px * var(--elab-hud-panel-size-scale));
+}
+
+@media (max-width: 900px) and (orientation: landscape) {
+  .elab-app-shell--mobile .elab-viewport .elab-env-display-transform--left {
+    --display-translate-z: calc(80px * var(--elab-hud-panel-size-scale));
+  }
+
+  .elab-app-shell--mobile .elab-viewport .elab-env-display-transform--right {
+    --display-translate-z: calc(80px * var(--elab-hud-panel-size-scale));
   }
 }
 
@@ -1795,7 +1830,7 @@ button.elab-cmd__meta-chip {
   top: var(--elab-hud-safe-top);
   left: var(--elab-hud-safe-side);
   z-index: 2;
-  max-width: min(46vw, 300px);
+  max-width: min(calc(46vw * var(--elab-hud-panel-size-scale)), calc(300px * var(--elab-hud-panel-size-scale)));
   padding: 0;
   border-radius: var(--elab-hud-radius-panel);
   pointer-events: auto;
@@ -1814,7 +1849,7 @@ button.elab-cmd__meta-chip {
   position: relative;
   width: 100%;
   aspect-ratio: 16 / 10;
-  min-height: 72px;
+  min-height: calc(72px * var(--elab-hud-panel-size-scale));
   background: rgba(8, 10, 14, 0.42);
   border-bottom: 1px solid rgba(197, 160, 89, 0.12);
   overflow: hidden;
@@ -1859,6 +1894,57 @@ button.elab-cmd__meta-chip {
   text-transform: uppercase;
   color: var(--elab-muted);
   line-height: 1.35;
+}
+
+.elab-viewport__blueprint-card .elab-blueprint-card__meta {
+  padding: calc((var(--elab-hud-chip-pad-y) + 1px) * var(--elab-hud-panel-size-scale))
+    calc((var(--elab-hud-chip-pad-x) + 2px) * var(--elab-hud-panel-size-scale));
+}
+
+.elab-viewport__blueprint-card .elab-viewport__scene-title {
+  font-size: calc(12px * var(--elab-hud-panel-size-scale));
+}
+
+.elab-viewport__blueprint-card .elab-viewport__revision,
+.elab-viewport__blueprint-card .elab-viewport__badge {
+  font-size: calc(8px * var(--elab-hud-panel-size-scale));
+}
+
+.elab-viewport__blueprint-card .elab-blueprint-card__open {
+  margin-top: calc(8px * var(--elab-hud-panel-size-scale));
+  padding: calc(6px * var(--elab-hud-panel-size-scale)) calc(10px * var(--elab-hud-panel-size-scale));
+  font-size: calc(8px * var(--elab-hud-panel-size-scale));
+}
+
+.elab-viewport__blueprint-card .elab-blueprint-card__loading-label {
+  font-size: calc(8px * var(--elab-hud-panel-size-scale));
+}
+
+.elab-viewport__context-card .elab-context-card__header {
+  padding: calc(8px * var(--elab-hud-panel-size-scale)) calc(10px * var(--elab-hud-panel-size-scale))
+    calc(6px * var(--elab-hud-panel-size-scale));
+}
+
+.elab-viewport__context-card .elab-context-card__title {
+  font-size: calc(8px * var(--elab-hud-panel-size-scale));
+}
+
+.elab-viewport__context-card .elab-context-card__body {
+  padding: calc(8px * var(--elab-hud-panel-size-scale)) calc(10px * var(--elab-hud-panel-size-scale))
+    calc(10px * var(--elab-hud-panel-size-scale));
+}
+
+.elab-viewport__context-card .elab-context-card__summary {
+  font-size: calc(9px * var(--elab-hud-panel-size-scale));
+}
+
+.elab-viewport__context-card .elab-context-card__hint,
+.elab-viewport__context-card .elab-context-card__action-label {
+  font-size: calc(8px * var(--elab-hud-panel-size-scale));
+}
+
+.elab-viewport__context-card .elab-context-card__action {
+  padding: calc(6px * var(--elab-hud-panel-size-scale)) calc(8px * var(--elab-hud-panel-size-scale));
 }
 
 .elab-blueprint-card__meta {
@@ -1908,7 +1994,7 @@ button.elab-cmd__meta-chip {
   top: var(--elab-hud-safe-top);
   right: var(--elab-hud-safe-side);
   z-index: 2;
-  width: min(42vw, 240px);
+  width: min(calc(42vw * var(--elab-hud-panel-size-scale)), calc(240px * var(--elab-hud-panel-size-scale)));
   pointer-events: auto;
   border-radius: var(--elab-hud-radius-panel);
   background: var(--elab-hud-glass-shine), var(--elab-hud-glass-fill);
@@ -2132,7 +2218,7 @@ button.elab-cmd__meta-chip {
 .elab-viewport__inspector-hud {
   position: absolute;
   top: calc(var(--elab-hud-safe-top) + 2px);
-  left: calc(var(--elab-hud-safe-side) + min(46vw, 280px) + var(--elab-hud-chip-gap) + 4px);
+  left: calc(var(--elab-hud-safe-side) + min(calc(46vw * var(--elab-hud-panel-size-scale)), calc(280px * var(--elab-hud-panel-size-scale))) + var(--elab-hud-chip-gap) + 4px);
   z-index: 2;
   pointer-events: auto;
 }
@@ -3697,11 +3783,11 @@ button.elab-cmd__meta-chip {
 }
 
 .elab-app-shell--mobile .elab-viewport__inspector-hud {
-  left: calc(var(--elab-hud-safe-side) + min(52vw, 220px) + 6px);
+  left: calc(var(--elab-hud-safe-side) + min(calc(52vw * var(--elab-hud-panel-size-scale)), calc(220px * var(--elab-hud-panel-size-scale))) + 6px);
 }
 
 .elab-app-shell--mobile .elab-viewport__blueprint-card {
-  max-width: min(52vw, 220px);
+  max-width: min(calc(52vw * var(--elab-hud-panel-size-scale)), calc(220px * var(--elab-hud-panel-size-scale)));
   padding: 6px 10px;
 }
 

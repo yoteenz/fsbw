@@ -49801,3 +49801,17 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 **Fix:** Default diagnostics flag to **false** in `experience-lab-v2-feature-flags.ts` — overlay only renders when env explicitly sets `VITE_EXPERIENCE_LAB_V2_DIAGNOSTICS=true`. Test asserts `experienceLabV2DiagnosticsEnabled === false`.
 
+---
+
+## 2026-07-14 — Viewport HUD blueprint + context panels 60% smaller
+
+**Founder request:** Blueprint panel and dynamic context panel layered on background render are too large — decrease by 60% (40% of prior size).
+
+**Fix (`experience-lab-v2.css`):**
+- Token `--elab-hud-panel-size-scale: 0.4` on `.elab-viewport`
+- Blueprint `max-width` and context `width` scaled (46vw/300px → 40%, 42vw/240px → 40%)
+- Thumbnail `min-height`, mobile breakpoints, inspector-hud offset, and 3D `translate-z` scaled proportionally
+- Interior typography/padding on both panels scaled via same token
+
+**Tests:** Panel scale token + scaled width assertions in `experience-lab-v2.test.ts`. 53/53 PASS.
+
