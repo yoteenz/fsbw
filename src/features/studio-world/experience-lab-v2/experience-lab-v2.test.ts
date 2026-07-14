@@ -136,6 +136,9 @@ describe('Experience Lab V2 — Fixed application shell', () => {
   it('workbench panel height is 40% shorter via height scale token', () => {
     const css = readV2Source('experience-lab-v2.css');
     expect(css).toMatch(/\.elab-founder-wb--tiered\s*\{[\s\S]*?--elab-wb-height-scale:\s*0\.48/);
+    expect(css).toMatch(/\.elab-founder-wb--tiered\s*\{[\s\S]*?--elab-wb-pill-radius:\s*9999px/);
+    expect(css).toMatch(/\.elab-founder-wb__pill--head\s*\{[\s\S]*?border-radius:\s*var\(--elab-wb-pill-radius\)/);
+    expect(css).toMatch(/\.elab-founder-wb__tool\s*\{[\s\S]*?border-radius:\s*var\(--elab-wb-pill-radius\)/);
     expect(css).toContain('--elab-wb-tool-min-height: calc(50px * var(--elab-wb-height-scale))');
     expect(css).toContain('--elab-wb-nav-min-height: calc(52px * var(--elab-wb-height-scale))');
     expect(css).toContain('--elab-wb-tools-pad-x: var(--elab-hud-inset-side, 14px)');
@@ -167,6 +170,7 @@ describe('Experience Lab V2 — Fixed application shell', () => {
   it('workbench uses tiered layout with world nav and orb', () => {
     const wb = readV2Source('ExperienceLabFounderWorkbench.tsx');
     expect(wb).toContain('elab-founder-wb--tiered');
+    expect(wb).toContain('elab-founder-wb__pill--head');
     expect(wb).toContain('EXPERIENCE LAB WORKBENCH');
     expect(wb).toContain('elab-founder-wb__tools-scroll');
     expect(wb).toContain('elab-founder-wb__world-nav');

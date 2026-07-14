@@ -49842,3 +49842,15 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 **Tests:** `experience-lab-v2-command-dock.test.ts` pill radius assertions. 9/9 PASS.
 
+---
+
+## 2026-07-14 — Workbench title + tools row pill shape
+
+**Founder request:** "EXPERIENCE LAB WORKBENCH" title area and first tools row should be pill-shaped per reference (not square with rounded corners).
+
+**Shipped:**
+- **`ExperienceLabFounderWorkbench.tsx`** — Wrapped title + tools in `elab-founder-wb__pill--head`
+- **`experience-lab-v2.css`** — `--elab-wb-pill-radius: 9999px`; head pill capsule with inset margin; individual tool buttons use pill radius; tiered shell `overflow: visible` + gap for floating pills
+
+**Tests:** Workbench pill wrapper + radius token assertions in `experience-lab-v2.test.ts`. 58/58 PASS.
+

@@ -37,38 +37,40 @@ export function ExperienceLabFounderWorkbench({ model, activeTool = null, onTool
       {...{ [ELAB_V2_COMPOSITION.founderWorkbench]: '' }}
       aria-label="Experience Lab workbench"
     >
-      <div className="elab-founder-wb__row elab-founder-wb__row--title">
-        <h2 className="elab-founder-wb__title">EXPERIENCE LAB WORKBENCH</h2>
-      </div>
+      <div className="elab-founder-wb__pill elab-founder-wb__pill--head">
+        <div className="elab-founder-wb__row elab-founder-wb__row--title">
+          <h2 className="elab-founder-wb__title">EXPERIENCE LAB WORKBENCH</h2>
+        </div>
 
-      <div className="elab-founder-wb__row elab-founder-wb__row--tools">
-        <div
-          className="elab-founder-wb__tools-scroll"
-          {...{ [ELAB_V2_COMPOSITION.workbenchTabs]: '' }}
-          role="toolbar"
-          aria-label="Editing tools"
-        >
-          {EXPERIENCE_LAB_WORKBENCH_EDITING_TOOLS.map((tool) => {
-            const [line1, line2] = splitWorkbenchToolLabel(tool.label);
-            return (
-            <button
-              key={tool.id}
-              type="button"
-              className={`elab-founder-wb__tool${activeTool === tool.id ? ' elab-founder-wb__tool--active' : ''}`}
-              title={tool.label}
-              aria-pressed={activeTool === tool.id}
-              onClick={() => onToolChange?.(activeTool === tool.id ? null : tool.id)}
-            >
-              <span className="elab-founder-wb__tool-icon" aria-hidden>
-                <ExperienceLabIcon name={tool.icon} size="md" decorative active={activeTool === tool.id} />
-              </span>
-              <span className="elab-founder-wb__tool-label">
-                <span className="elab-founder-wb__tool-label-line">{line1}</span>
-                {line2 ? <span className="elab-founder-wb__tool-label-line">{line2}</span> : null}
-              </span>
-            </button>
-            );
-          })}
+        <div className="elab-founder-wb__row elab-founder-wb__row--tools">
+          <div
+            className="elab-founder-wb__tools-scroll"
+            {...{ [ELAB_V2_COMPOSITION.workbenchTabs]: '' }}
+            role="toolbar"
+            aria-label="Editing tools"
+          >
+            {EXPERIENCE_LAB_WORKBENCH_EDITING_TOOLS.map((tool) => {
+              const [line1, line2] = splitWorkbenchToolLabel(tool.label);
+              return (
+              <button
+                key={tool.id}
+                type="button"
+                className={`elab-founder-wb__tool${activeTool === tool.id ? ' elab-founder-wb__tool--active' : ''}`}
+                title={tool.label}
+                aria-pressed={activeTool === tool.id}
+                onClick={() => onToolChange?.(activeTool === tool.id ? null : tool.id)}
+              >
+                <span className="elab-founder-wb__tool-icon" aria-hidden>
+                  <ExperienceLabIcon name={tool.icon} size="md" decorative active={activeTool === tool.id} />
+                </span>
+                <span className="elab-founder-wb__tool-label">
+                  <span className="elab-founder-wb__tool-label-line">{line1}</span>
+                  {line2 ? <span className="elab-founder-wb__tool-label-line">{line2}</span> : null}
+                </span>
+              </button>
+              );
+            })}
+          </div>
         </div>
       </div>
 
