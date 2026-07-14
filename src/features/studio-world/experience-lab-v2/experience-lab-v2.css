@@ -187,8 +187,8 @@
   border-top: 1px solid var(--el-v2-workstation-divider);
 }
 
-.elab-app-shell__lower-deck > .elab-founder-review-console + * {
-  border-top: none;
+.elab-app-shell__lower-deck > .elab-founder-review-console + .elab-approval-bridge {
+  margin-top: clamp(8px, 1.2vw, 12px);
 }
 
 /* Focus modes — maximize hero region */
@@ -2662,7 +2662,7 @@ button.elab-cmd__meta-chip {
     var(--elab-hud-shadow-ambient),
     inset 0 1px 0 rgba(197, 160, 89, 0.1);
   text-transform: uppercase;
-  --elab-wb-height-scale: 0.6;
+  --elab-wb-height-scale: 0.48;
   --elab-wb-title-pad-y: calc(8px * var(--elab-wb-height-scale));
   --elab-wb-tools-pad-y: calc(6px * var(--elab-wb-height-scale));
   --elab-wb-tools-pad-x: var(--elab-hud-inset-side, 14px);
@@ -2962,8 +2962,9 @@ button.elab-cmd__meta-chip {
   --elab-frc-panel-min-h: 56px;
   --elab-frc-media-min-h: 27px;
   --elab-frc-chart-h: 27px;
+  --elab-frc-bridge-gap: clamp(8px, 1.2vw, 12px);
   flex-shrink: 0;
-  padding: 4px 0 0;
+  padding: 4px 0 var(--elab-frc-bridge-gap);
 }
 
 .elab-founder-review-console__grid {
@@ -2980,7 +2981,6 @@ button.elab-cmd__meta-chip {
   height: 100%;
   padding: 4px 5px;
   border: 1px solid var(--elab-hud-border-color);
-  border-bottom: none;
   border-radius: var(--elab-hud-radius-panel);
   background: var(--elab-hud-glass-shine), var(--elab-hud-glass-fill);
   backdrop-filter: var(--elab-hud-blur);
@@ -3182,7 +3182,7 @@ button.elab-cmd__meta-chip {
 
 .elab-approval-bridge--monument {
   --elab-monument-cta-v-scale: 0.85;
-  padding: 6px clamp(12px, 3vw, 20px) 4px;
+  padding: 0 clamp(12px, 3vw, 20px) 4px;
   text-align: center;
   display: block;
   background: transparent;

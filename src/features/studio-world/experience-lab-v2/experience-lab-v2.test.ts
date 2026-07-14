@@ -135,7 +135,7 @@ describe('Experience Lab V2 — Fixed application shell', () => {
 
   it('workbench panel height is 40% shorter via height scale token', () => {
     const css = readV2Source('experience-lab-v2.css');
-    expect(css).toMatch(/\.elab-founder-wb--tiered\s*\{[\s\S]*?--elab-wb-height-scale:\s*0\.6/);
+    expect(css).toMatch(/\.elab-founder-wb--tiered\s*\{[\s\S]*?--elab-wb-height-scale:\s*0\.48/);
     expect(css).toContain('--elab-wb-tool-min-height: calc(50px * var(--elab-wb-height-scale))');
     expect(css).toContain('--elab-wb-nav-min-height: calc(52px * var(--elab-wb-height-scale))');
     expect(css).toContain('--elab-wb-tools-pad-x: var(--elab-hud-inset-side, 14px)');
@@ -253,8 +253,9 @@ describe('Experience Lab V2 — Fixed application shell', () => {
     expect(css).toMatch(/\.elab-founder-review-console__title[\s\S]*?white-space:\s*nowrap/);
     expect(css).toMatch(/\.elab-founder-review-console__panel--brief[\s\S]*?text-align:\s*center/);
     expect(css).toMatch(/\.elab-founder-review-console__panel--timeline[\s\S]*?text-align:\s*center/);
-    expect(css).toMatch(/\.elab-founder-review-console__panel\s*\{[\s\S]*?border-bottom:\s*none/);
-    expect(css).toMatch(/\.elab-founder-review-console\s*\{[\s\S]*?padding:\s*4px\s+0\s+0/);
+    expect(css).toMatch(/\.elab-founder-review-console__panel\s*\{[\s\S]*?border:\s*1px solid var\(--elab-hud-border-color\)/);
+    expect(css).toMatch(/\.elab-founder-review-console\s*\{[\s\S]*?padding:\s*4px\s+0\s+var\(--elab-frc-bridge-gap\)/);
+    expect(css).toMatch(/\.elab-app-shell__lower-deck\s*>\s*\.elab-founder-review-console\s*\+\s*\.elab-approval-bridge[\s\S]*?margin-top:\s*clamp\(8px,\s*1\.2vw,\s*12px\)/);
     expect(css).toMatch(/\.elab-founder-review-console__grid\s*\{[\s\S]*?gap:\s*clamp\(8px,\s*1\.2vw,\s*14px\)/);
     expect(css).toMatch(/\.elab-founder-review-console__panel\s*\{[\s\S]*?border-radius:\s*var\(--elab-hud-radius-panel\)/);
   });

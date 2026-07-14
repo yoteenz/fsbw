@@ -49778,3 +49778,16 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 **Spatial Architecture Review:** SKIPPED — architectural restructure of existing Command Dock, no new surfaces or shell redesign.
 
+---
+
+## 2026-07-14 — Workbench height −20% + approval bridge spacing fix
+
+**Founder request:** Decrease workbench height by 20%; fix approval CTA overlapping/hiding bottom borders of Design Brief, Founder Review Wall, and Revision Timeline panels.
+
+**Fix (`experience-lab-v2.css`):**
+- `--elab-wb-height-scale`: `0.6` → `0.48` (20% reduction on all scaled workbench dimensions: tool rows, nav, orb)
+- Founder review console panels: restored full `border` (removed `border-bottom: none`); added `--elab-frc-bridge-gap` bottom padding on console
+- Approval bridge: `margin-top: clamp(8px, 1.2vw, 12px)` on `.elab-founder-review-console + .elab-approval-bridge`; monument top padding removed (gap handled by margin)
+
+**Tests:** Updated FRC panel border + bridge gap assertions; workbench scale test expects `0.48`. 53/53 layout tests PASS.
+
