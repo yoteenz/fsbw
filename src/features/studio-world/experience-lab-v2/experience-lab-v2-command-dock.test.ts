@@ -78,14 +78,14 @@ describe('Experience Lab Command Dock presentation', () => {
     expect(dock).toContain('elab-cmd__row--breadcrumb');
     expect(dock).not.toContain('EXPERIENCE_LAB_COMMAND_DOCK_LOCATIONS');
     expect(css).toContain('.elab-cmd__locations--programs');
-    expect(css).toMatch(/\.elab-cmd__row--programs\s*\{[\s\S]*?margin:\s*0/);
-    expect(css).toMatch(/\.elab-cmd__row--programs\s*\{[\s\S]*?padding:\s*0/);
+    expect(css).toMatch(/\.elab-cmd__row--programs\s*\{[\s\S]*?padding:\s*5px 12px 6px/);
     expect(css).toContain('.elab-cmd__pipeline-select');
     expect(css).toContain('.elab-cmd__breadcrumb');
   });
 
   it('rounds program selector row like reference pill', () => {
-    expect(css).toContain('--elab-cmd-locations-radius: 12px');
-    expect(css).toMatch(/\.elab-cmd__locations\s*\{[\s\S]*?border-radius:\s*0/);
+    expect(css).toContain('--elab-cmd-program-pill-radius: 9999px');
+    expect(css).toMatch(/\.elab-cmd__locations--programs\s*\{[\s\S]*?border-radius:\s*var\(--elab-cmd-program-pill-radius\)/);
+    expect(css).toMatch(/\.elab-cmd__locations--programs \.elab-cmd__location-tab--active:first-child[\s\S]*?border-radius:\s*var\(--elab-cmd-program-pill-radius\) 0 0 var\(--elab-cmd-program-pill-radius\)/);
   });
 });

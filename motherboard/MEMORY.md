@@ -49828,3 +49828,17 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 **Tests:** HUD test expects stage focusable, no focus-ctrl; focus bar uppercase assertion. 53/53 PASS.
 
+---
+
+## 2026-07-14 — Command Dock program row pill shape
+
+**Founder request:** Second Command Dock row (program selectors) should be pill-shaped per reference — no square edges/corners.
+
+**Fix (`experience-lab-v2.css`):**
+- Token `--elab-cmd-program-pill-radius: 9999px`
+- `.elab-cmd__row--programs` horizontal inset padding (`5px 12px 6px`), `overflow: visible`
+- `.elab-cmd__locations--programs` full capsule border-radius + unified border (replaces flush square bar)
+- Active segment caps follow pill ends (`:first-child` / `:last-child` radius)
+
+**Tests:** `experience-lab-v2-command-dock.test.ts` pill radius assertions. 9/9 PASS.
+
