@@ -170,10 +170,13 @@ describe('Experience Lab V2 — Fixed application shell', () => {
     expect(bridge).toContain('elab-approval-bridge--monument');
     expect(bridge).toContain('elab-approval-bridge__primary');
     expect(bridge).toContain('APPROVE AND SEND TO CREATIVE STUDIO');
+    expect(bridge).toContain('elab-approval-bridge__copy');
     expect(bridge).toContain('LOCK BLUEPRINT • LOCK RENDER • LOCK CONSTRUCTION PLAN');
+    expect(bridge).not.toMatch(/<\/button>\s*<p className="elab-approval-bridge__locks"/);
     const css = readV2Source('experience-lab-v2.css');
     expect(css).toMatch(/\.elab-approval-bridge--monument \.elab-approval-bridge__primary[\s\S]*?font-weight:\s*500/);
     expect(css).toMatch(/\.elab-approval-bridge--monument \.elab-approval-bridge__primary[\s\S]*?border:\s*1px solid rgba\(197,\s*160,\s*89/);
+    expect(css).toMatch(/\.elab-approval-bridge--monument \.elab-approval-bridge__primary[\s\S]*?border-radius:\s*8px/);
     expect(css).toMatch(/\.elab-approval-bridge--monument \.elab-approval-bridge__blocker-chip[\s\S]*?display:\s*none/);
   });
 

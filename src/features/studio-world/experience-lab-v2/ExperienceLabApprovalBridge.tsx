@@ -108,12 +108,14 @@ export function ExperienceLabApprovalBridge({
         onClick={handleApprove}
       >
         <span className="elab-approval-bridge__glow" aria-hidden />
-        <span className="elab-approval-bridge__label">{MONUMENT_CTA_LABEL}</span>
+        <span className="elab-approval-bridge__copy">
+          <span className="elab-approval-bridge__label">{MONUMENT_CTA_LABEL}</span>
+          <span className="elab-approval-bridge__locks">{MONUMENT_LOCKS}</span>
+        </span>
         <span className="elab-approval-bridge__arrow" aria-hidden>
           ›
         </span>
       </button>
-      <p className="elab-approval-bridge__locks">{MONUMENT_LOCKS}</p>
     </section>
   );
 }

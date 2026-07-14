@@ -49621,3 +49621,5 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 **Follow-up (typography):** Monument CTA font-weight 800→500 (lighter); thin gold border `1px solid rgba(197, 160, 89, 0.52)` on primary button to match reference.
 
+**Follow-up (layout):** Lock subtitle moved inside monument button below CTA line (`elab-approval-bridge__copy` stack); button shape squared with `border-radius: 8px` (not pill).
+
