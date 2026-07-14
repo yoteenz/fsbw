@@ -19,8 +19,6 @@ const STRIP_ACTIONS = [
   { id: 'export', label: 'EXPORT' },
 ] as const;
 
-const MONUMENT_LOCKS = 'LOCK BLUEPRINT · LOCK RENDER · LOCK CONSTRUCTION PLAN';
-
 /** Approval bridge — monument CTA above workbench (default) or compact command strip. */
 export function ExperienceLabApprovalBridge({
   approval,
@@ -112,18 +110,6 @@ export function ExperienceLabApprovalBridge({
           ›
         </span>
       </button>
-      {blocked ? (
-        <button
-          type="button"
-          className="elab-approval-bridge__blocker-chip"
-          onClick={onBlockersOpen}
-          {...{ [ELAB_V2_COMPOSITION.blockerSheet]: 'trigger' }}
-        >
-          {approval.disabledReasons.length} BLOCKERS — {approval.disabledReasons.join(' · ')}
-        </button>
-      ) : (
-        <p className="elab-approval-bridge__locks">{MONUMENT_LOCKS}</p>
-      )}
     </section>
   );
 }

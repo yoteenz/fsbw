@@ -49584,4 +49584,36 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 **Spatial review:** SKIPPED — HUD hierarchy cleanup, no new surfaces or nav.
 
-**One commit + one push** on `master` via `agent-commit.sh`.
+**One commit + one push** on `master` via `agent-commit.sh` (`1bac4b086`).
+
+---
+
+## 2026-07-14 — Experience Lab V2 Two-Panel Viewport Architecture (full conversation)
+
+**Founder sprint:** Persistent Blueprint + Single Context Panel Architecture — interaction architecture sprint; viewport panel behavior only. Environment remains visual hero; exactly two floating panels max.
+
+**Locked (unchanged):** Command Dock, Department Dock, Workbench, Design Variants strip, viewport dimensions, Living Orb, typography, colors, glass styling, overall layout.
+
+**New two-panel model:**
+- **Panel 01 — Blueprint Card** (always visible): real blueprint thumbnail from active variant `EnvironmentPackage.outputs.blueprint`; environment name, revision, status, Open Blueprint action; premium loading state when blueprint not yet generated (never empty rectangle)
+- **Panel 02 — Dynamic Context Card** (exactly one): contents replace on Workbench tool change with crossfade animation; no floating inspector stacking
+
+**Removed:** `ExperienceLabFloatingInspector` from viewport stage; `ExperienceLabViewportContextualHud` from stage; floating panel stacking in panel orchestrator (`panels` always `[]`, `contextInspector` tracks active context)
+
+**Shipped (`1fe35b6bd`):**
+- **`ExperienceLabBlueprintCard.tsx`** (new) — `data-elab-blueprint-card`
+- **`ExperienceLabDynamicContextCard.tsx`** (new) — workbench-driven content; `data-elab-dynamic-context-card`
+- **`experience-lab-environment-package-bridge.ts`** — `resolveDesignVariantBlueprintFromPackage()`
+- **`StudioViewport.tsx`**, **`ExperienceLabViewportStage.tsx`**, workbench config, panel orchestrator, CSS
+- **Tests** — 115/115 Experience Lab V2 tests PASS; build PASS
+
+**Spatial review:** SKIPPED — viewport interaction architecture within locked layout.
+
+---
+
+## 2026-07-14 — Approval monument CTA height + hide blockers box
+
+**Founder request:** Shrink "Approve & Send to Creative Director Studio" monument button height ~30%; hide the blockers square box below the button.
+
+**Shipped:** `experience-lab-v2.css` — monument primary padding 12px→8px, font 10px→9px, tighter container padding; locks + blocker-chip `display: none` on monument variant. `ExperienceLabApprovalBridge.tsx` — removed monument blocker chip and lock subtitle markup (strip variant unchanged). Test updated.
+

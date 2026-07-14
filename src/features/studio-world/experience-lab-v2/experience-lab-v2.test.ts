@@ -169,7 +169,8 @@ describe('Experience Lab V2 — Fixed application shell', () => {
     expect(bridge).toContain('elab-approval-bridge--strip');
     expect(bridge).toContain('elab-approval-bridge--monument');
     expect(bridge).toContain('elab-approval-bridge__primary');
-    expect(bridge).toContain('LOCK BLUEPRINT · LOCK RENDER · LOCK CONSTRUCTION PLAN');
+    const css = readV2Source('experience-lab-v2.css');
+    expect(css).toMatch(/\.elab-approval-bridge--monument \.elab-approval-bridge__blocker-chip[\s\S]*?display:\s*none/);
   });
 
   it('does not mount workbench dock when tiered workbench already includes tools', () => {

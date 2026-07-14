@@ -2554,7 +2554,7 @@ button.elab-cmd__meta-chip {
 }
 
 .elab-approval-bridge--monument {
-  padding: 10px clamp(12px, 3vw, 20px) 8px;
+  padding: 6px clamp(12px, 3vw, 20px) 4px;
   text-align: center;
   display: block;
   background: transparent;
@@ -2564,14 +2564,15 @@ button.elab-cmd__meta-chip {
   position: relative;
   width: 100%;
   margin: 0 auto;
-  padding: 12px 44px 12px 20px;
+  padding: 8px 36px 8px 16px;
+  min-height: 0;
   border: 1px solid var(--elab-hud-border-color);
-  border-radius: calc(var(--elab-hud-radius-panel) + 4px);
+  border-radius: calc(var(--elab-hud-radius-panel) + 2px);
   background: var(--elab-hud-glass-shine), rgba(12, 14, 18, 0.42);
   backdrop-filter: var(--elab-hud-blur);
   -webkit-backdrop-filter: var(--elab-hud-blur);
   color: var(--elab-gold);
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 800;
   letter-spacing: 0.1em;
   cursor: pointer;
@@ -2612,7 +2613,7 @@ button.elab-cmd__meta-chip {
   position: relative;
   z-index: 1;
   text-align: center;
-  line-height: 1.25;
+  line-height: 1.15;
 }
 
 .elab-approval-bridge__glow {
@@ -2634,25 +2635,17 @@ button.elab-cmd__meta-chip {
 
 .elab-approval-bridge__arrow {
   position: absolute;
-  right: 18px;
+  right: 14px;
   z-index: 1;
-  font-size: 16px;
+  font-size: 12px;
   line-height: 1;
   color: var(--elab-gold);
   opacity: 0.92;
 }
 
-.elab-approval-bridge--monument .elab-approval-bridge__locks {
-  margin: 8px 0 0;
-  font-size: 7px;
-  font-weight: 700;
-  color: var(--elab-muted);
-  letter-spacing: 0.08em;
-}
-
+.elab-approval-bridge--monument .elab-approval-bridge__locks,
 .elab-approval-bridge--monument .elab-approval-bridge__blocker-chip {
-  margin: 8px auto 0;
-  display: inline-flex;
+  display: none;
 }
 
 .elab-approval-bridge--strip {
