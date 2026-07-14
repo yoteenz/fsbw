@@ -1,6 +1,7 @@
 import type { EnvironmentPackageOutputStatus } from '../../../studio-os-core/environment-asset-package/EnvironmentPackageOutputs';
 import { ELAB_V2_COMPOSITION } from './experience-lab-v2-composition';
 import { ExperienceLabIcon } from '../icons/ExperienceLabIcon';
+import { ExperienceLabAnchoredEnvironmentDisplay } from './ExperienceLabAnchoredEnvironmentDisplay';
 
 type Props = {
   environmentName: string;
@@ -32,12 +33,13 @@ export function ExperienceLabBlueprintCard({
   const loadingLabel = blueprintLoadingLabel(blueprintStatus);
 
   return (
-    <div
-      className="elab-viewport__blueprint-card elab-blueprint-card elab-arch-panel elab-arch-panel--left"
-      {...{ [ELAB_V2_COMPOSITION.blueprintCard]: '' }}
-      aria-label="Blueprint card"
+    <ExperienceLabAnchoredEnvironmentDisplay
+      anchor="LEFT_FRONT"
+      side="left"
+      hostClassName="elab-viewport__blueprint-card elab-blueprint-card"
+      compositionAttr={ELAB_V2_COMPOSITION.blueprintCard}
+      ariaLabel="Blueprint card"
     >
-      <div className="elab-arch-panel__surface">
       <div className="elab-blueprint-card__thumb" aria-hidden={showLoading}>
         {blueprintUrl ? (
           <img src={blueprintUrl} alt="" className="elab-blueprint-card__img" />
@@ -68,7 +70,6 @@ export function ExperienceLabBlueprintCard({
           </button>
         ) : null}
       </div>
-      </div>
-    </div>
+    </ExperienceLabAnchoredEnvironmentDisplay>
   );
 }

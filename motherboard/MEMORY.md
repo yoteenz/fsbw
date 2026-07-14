@@ -49696,3 +49696,24 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 **Change:** `experience-lab-v2.css` — `--elab-monument-cta-v-scale: 0.85` on `.elab-approval-bridge--monument`; vertical padding and copy gap scaled via `calc(* var(--elab-monument-cta-v-scale))`. Test assertion added. 52/52 PASS.
 
+---
+
+## 2026-07-14 — P0 hotfix: Environment Display Anchor inward tilt (Blueprint + Context)
+
+**Founder failure:** Blueprint and Dynamic Context displays remained front-facing flat cards despite prior arch-panel pass.
+
+**Root causes:**
+1. 3D `transform` on transparent `.elab-arch-panel` host while visible glass/backdrop lived on child `.elab-arch-panel__surface` — compositing rendered flat on mobile.
+2. `prefers-reduced-motion` applied `transform: none !important` on arch panels, zeroing static tilt.
+3. Mobile rotation too subtle (10deg) without profile-scoped perspective/translateZ.
+
+**Fix — Environment Display Anchor System:**
+- `ExperienceLabAnchoredEnvironmentDisplay` — host (position anchor) → anchor-slot → transform owner → visible glass surface
+- `experience-lab-environment-display-anchor.ts` — device profiles (desktop/tablet/mobile portrait/landscape)
+- CSS `--display-*` variables; hover/parallax compose via vars not transform replacement
+- Mobile portrait: rotateY ±11deg, translateZ 70px; perspective 1100px
+- Reduced motion: disables entrance/parallax only; preserves static inward rotateY
+- Diagnostic overlay + diagnostics drawer spec when diagnostics flag on
+
+**Shipped:** Blueprint/Context cards refactored; 67 tests PASS; build PASS.
+

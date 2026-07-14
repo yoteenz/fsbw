@@ -1138,14 +1138,15 @@ button.elab-cmd__meta-chip {
   --elab-hud-safe-bottom: 10%;
   --elab-parallax-x: 0px;
   --elab-parallax-y: 0px;
-  /* Arch tokens scoped to viewport (guaranteed even when nested deeply) */
-  --elab-arch-perspective: 1800px;
-  --elab-arch-depth: 90px;
-  --elab-arch-depth-hover: 108px;
-  --elab-arch-rotate-y-left: 10deg;
-  --elab-arch-rotate-y-right: -10deg;
-  --elab-arch-rotate-x: -1deg;
-  --elab-arch-duration: 260ms;
+  /* Environment Display Anchor System */
+  --env-display-perspective: 1600px;
+  --display-translate-x: 0px;
+  --display-translate-y: 0px;
+  --display-translate-z: 95px;
+  --display-rotate-x: -1deg;
+  --display-rotate-y: 0deg;
+  --display-rotate-z: 0deg;
+  --display-scale: 1;
   position: relative;
   z-index: 2;
   flex: 1;
@@ -1161,8 +1162,31 @@ button.elab-cmd__meta-chip {
 }
 
 .elab-viewport[data-elab-arch-perspective] {
-  perspective: var(--elab-arch-perspective);
+  perspective: var(--env-display-perspective);
+  perspective-origin: 50% 45%;
   transform-style: preserve-3d;
+}
+
+.elab-app-shell--desktop .elab-viewport,
+.elab-app-shell--desktop .elab-viewport__hud-safe {
+  --env-display-perspective: 1600px;
+}
+
+.elab-app-shell--tablet .elab-viewport,
+.elab-app-shell--tablet .elab-viewport__hud-safe {
+  --env-display-perspective: 1400px;
+}
+
+.elab-app-shell--mobile .elab-viewport,
+.elab-app-shell--mobile .elab-viewport__hud-safe {
+  --env-display-perspective: 1100px;
+}
+
+@media (max-width: 900px) and (orientation: landscape) {
+  .elab-app-shell--mobile .elab-viewport,
+  .elab-app-shell--mobile .elab-viewport__hud-safe {
+    --env-display-perspective: 1300px;
+  }
 }
 
 .elab-viewport--fullscreen {
@@ -1196,13 +1220,278 @@ button.elab-cmd__meta-chip {
     calc(var(--elab-hud-safe-bottom) + 8px)
     var(--elab-hud-safe-side);
   pointer-events: none;
-  perspective: var(--elab-arch-perspective);
+  perspective: var(--env-display-perspective);
+  perspective-origin: 50% 45%;
   transform-style: preserve-3d;
   overflow: visible;
 }
 
-/* ── Architectural perspective HUD panels (3D room suspension, visual only) ── */
+/* ── Environment Display Anchor System (blueprint + context) ── */
+.elab-env-display-host {
+  transform-style: preserve-3d;
+  overflow: visible;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.elab-env-display-anchor-slot {
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+}
+
+.elab-env-display-transform {
+  --display-translate-x: var(--elab-parallax-x, 0px);
+  --display-translate-y: var(--elab-parallax-y, 0px);
+  --display-translate-z-extra: 0px;
+  --display-rotate-z: 0deg;
+  --display-scale: 1;
+  width: 100%;
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  will-change: transform;
+  transform:
+    translate3d(
+      var(--display-translate-x),
+      var(--display-translate-y),
+      calc(var(--display-translate-z) + var(--display-translate-z-extra))
+    )
+    rotateX(var(--display-rotate-x))
+    rotateY(var(--display-rotate-y))
+    rotateZ(var(--display-rotate-z))
+    scale(var(--display-scale));
+  filter: brightness(var(--env-display-brightness, 1));
+  transition:
+    transform 260ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 260ms cubic-bezier(0.22, 1, 0.36, 1),
+    filter 260ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.elab-env-display-transform--left {
+  --display-translate-z: 95px;
+  --display-rotate-x: -1deg;
+  --display-rotate-y: 10deg;
+  --env-display-brightness: 1.04;
+  --env-display-glass-angle: 148deg;
+  --env-display-scene-shadow: 6px 16px 36px rgba(0, 0, 0, 0.24);
+  --env-display-rim-inset-x: 4px;
+  --env-display-rim-bright: rgba(255, 248, 232, 0.14);
+  --env-display-rim-dim: rgba(0, 0, 0, 0.12);
+  transform-origin: left center;
+}
+
+.elab-env-display-transform--right {
+  --display-translate-z: 95px;
+  --display-rotate-x: -1deg;
+  --display-rotate-y: -10deg;
+  --env-display-brightness: 1.04;
+  --env-display-glass-angle: 212deg;
+  --env-display-scene-shadow: -6px 16px 36px rgba(0, 0, 0, 0.24);
+  --env-display-rim-inset-x: -4px;
+  --env-display-rim-bright: rgba(255, 248, 232, 0.14);
+  --env-display-rim-dim: rgba(0, 0, 0, 0.12);
+  transform-origin: right center;
+}
+
+.elab-app-shell--tablet .elab-env-display-transform--left {
+  --display-translate-z: 78px;
+  --display-rotate-y: 9deg;
+}
+
+.elab-app-shell--tablet .elab-env-display-transform--right {
+  --display-translate-z: 78px;
+  --display-rotate-y: -9deg;
+}
+
+.elab-app-shell--mobile .elab-env-display-transform--left {
+  --display-translate-z: 70px;
+  --display-rotate-y: 11deg;
+}
+
+.elab-app-shell--mobile .elab-env-display-transform--right {
+  --display-translate-z: 70px;
+  --display-rotate-y: -11deg;
+}
+
+@media (max-width: 900px) and (orientation: landscape) {
+  .elab-app-shell--mobile .elab-env-display-transform--left {
+    --display-translate-z: 80px;
+    --display-rotate-y: 10deg;
+  }
+
+  .elab-app-shell--mobile .elab-env-display-transform--right {
+    --display-translate-z: 80px;
+    --display-rotate-y: -10deg;
+  }
+}
+
+.elab-env-display-surface {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  overflow: hidden;
+  pointer-events: auto;
+  background: var(--elab-hud-glass-shine), var(--elab-hud-glass-fill);
+  backdrop-filter: var(--elab-hud-blur);
+  -webkit-backdrop-filter: var(--elab-hud-blur);
+  border: 1px solid var(--elab-hud-border-color);
+  box-shadow:
+    var(--env-display-scene-shadow, 0 10px 32px rgba(0, 0, 0, 0.18)),
+    var(--elab-hud-shadow-stack),
+    inset 0 1px 0 var(--elab-hud-edge-top);
+  transition: box-shadow var(--elab-hud-duration) var(--elab-hud-ease);
+}
+
+.elab-env-display-surface::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 1;
+  background: linear-gradient(
+    var(--env-display-glass-angle, 180deg),
+    var(--env-display-rim-bright, rgba(255, 248, 232, 0.16)) 0%,
+    rgba(255, 255, 255, 0.05) 28%,
+    transparent 54%
+  );
+  opacity: 0.88;
+}
+
+.elab-env-display-surface::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 2;
+  box-shadow:
+    inset var(--env-display-rim-inset-x, 0) 0 16px rgba(197, 160, 89, 0.12),
+    inset 0 0 0 1px rgba(197, 160, 89, 0.22);
+  opacity: 0.9;
+}
+
+.elab-viewport__blueprint-card.elab-env-display-host .elab-env-display-surface::before {
+  background:
+    linear-gradient(180deg, rgba(255, 248, 232, 0.14) 0%, transparent 28%),
+    linear-gradient(
+      var(--env-display-glass-angle, 148deg),
+      var(--env-display-rim-bright, rgba(255, 248, 232, 0.16)) 0%,
+      rgba(255, 255, 255, 0.05) 28%,
+      transparent 54%
+    );
+}
+
+.elab-viewport__blueprint-card.elab-env-display-host:hover .elab-env-display-transform--left,
+.elab-viewport__context-card.elab-env-display-host:hover .elab-env-display-transform--right {
+  --display-translate-z-extra: 14px;
+  --display-scale: 1.01;
+  --env-display-brightness: 1.07;
+}
+
+.elab-env-display-transform--enter.elab-env-display-transform--right {
+  animation: elabEnvDisplayEnterRight 260ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.elab-env-display-transform--enter.elab-env-display-transform--left {
+  animation: elabEnvDisplayEnterLeft 260ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes elabEnvDisplayEnterLeft {
+  from {
+    opacity: 0;
+    transform:
+      translate3d(var(--display-translate-x), var(--display-translate-y), calc(var(--display-translate-z) - 42px + var(--display-translate-z-extra)))
+      rotateX(var(--display-rotate-x))
+      rotateY(14deg)
+      rotateZ(var(--display-rotate-z))
+      scale(var(--display-scale));
+  }
+  to {
+    opacity: 1;
+    transform:
+      translate3d(var(--display-translate-x), var(--display-translate-y), calc(var(--display-translate-z) + var(--display-translate-z-extra)))
+      rotateX(var(--display-rotate-x))
+      rotateY(var(--display-rotate-y))
+      rotateZ(var(--display-rotate-z))
+      scale(var(--display-scale));
+  }
+}
+
+@keyframes elabEnvDisplayEnterRight {
+  from {
+    opacity: 0;
+    transform:
+      translate3d(var(--display-translate-x), var(--display-translate-y), calc(var(--display-translate-z) - 42px + var(--display-translate-z-extra)))
+      rotateX(var(--display-rotate-x))
+      rotateY(-14deg)
+      rotateZ(var(--display-rotate-z))
+      scale(var(--display-scale));
+  }
+  to {
+    opacity: 1;
+    transform:
+      translate3d(var(--display-translate-x), var(--display-translate-y), calc(var(--display-translate-z) + var(--display-translate-z-extra)))
+      rotateX(var(--display-rotate-x))
+      rotateY(var(--display-rotate-y))
+      rotateZ(var(--display-rotate-z))
+      scale(var(--display-scale));
+  }
+}
+
+.elab-viewport__blueprint-card.elab-env-display-host,
+.elab-viewport__context-card.elab-env-display-host {
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border: none;
+  box-shadow: none;
+  overflow: visible;
+}
+
+.elab-env-display-diag {
+  position: absolute;
+  left: 4px;
+  bottom: 4px;
+  z-index: 12;
+  display: grid;
+  gap: 2px;
+  max-width: min(92vw, 360px);
+  padding: 4px 6px;
+  border-radius: 6px;
+  background: rgba(8, 10, 14, 0.82);
+  border: 1px solid rgba(197, 160, 89, 0.28);
+  font-size: 6px;
+  line-height: 1.35;
+  color: var(--elab-muted);
+  pointer-events: none;
+}
+
+.elab-env-display-diag__row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 8px;
+}
+
+.elab-env-display-diag__row strong {
+  color: var(--elab-gold);
+  font-weight: 600;
+}
+
+/* ── Architectural perspective HUD panels (focus + design variants) ── */
 .elab-arch-panel {
+  --elab-arch-perspective: var(--env-display-perspective, 1600px);
+  --elab-arch-depth: 90px;
+  --elab-arch-depth-hover: 108px;
+  --elab-arch-rotate-y-left: 10deg;
+  --elab-arch-rotate-y-right: -10deg;
+  --elab-arch-rotate-x: -1deg;
+  --elab-arch-duration: 260ms;
   --elab-arch-depth-active: var(--elab-arch-depth);
   --elab-arch-rotate-y-active: 0deg;
   --elab-arch-brightness: 1;
@@ -3592,10 +3881,19 @@ button.elab-cmd__meta-chip {
   .elab-arch-panel__surface::before,
   .elab-arch-panel__surface::after {
     animation: none !important;
-    transform: none !important;
     filter: none !important;
   }
-  .elab-viewport[data-elab-arch-perspective] { perspective: none; }
+  .elab-env-display-transform--enter {
+    animation: none !important;
+  }
+  .elab-env-display-transform {
+    transition: none;
+  }
+  .elab-viewport[data-elab-arch-perspective],
+  .elab-viewport__hud-safe {
+    perspective: var(--env-display-perspective);
+    perspective-origin: 50% 45%;
+  }
   .elab-blueprint-card__pulse { animation: none; }
   .elab-context-card__body--swap { animation: none; }
   .elab-approval-bridge--monument .elab-approval-bridge__primary:hover:not(:disabled) { transform: none; }

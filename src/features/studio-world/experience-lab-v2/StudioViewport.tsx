@@ -6,6 +6,8 @@ import { ExperienceLabIcon } from '../icons/ExperienceLabIcon';
 import { ExperienceLabBlueprintCard } from './ExperienceLabBlueprintCard';
 import { ELAB_V2_COMPOSITION } from './experience-lab-v2-composition';
 import { useExperienceLabHudParallax } from './useExperienceLabHudParallax';
+import { ExperienceLabEnvironmentDisplayAnchorDiagnosticOverlay } from './ExperienceLabEnvironmentDisplayAnchorDiagnosticOverlay';
+import { resolveExperienceLabV2FeatureFlags } from './experience-lab-v2-feature-flags';
 
 export type StudioViewportProps = {
   mode: StudioViewportMode;
@@ -148,6 +150,7 @@ export function StudioViewport({
 
   const [viewportEl, setViewportEl] = useState<HTMLElement | null>(null);
   useExperienceLabHudParallax(viewportEl);
+  const anchorDiagnostics = resolveExperienceLabV2FeatureFlags().experienceLabV2DiagnosticsEnabled;
 
   return (
     <section
@@ -164,7 +167,8 @@ export function StudioViewport({
 
       <div className="elab-viewport__hud" data-elab-viewport-hud aria-label="Viewport HUD">
         <div className="elab-viewport__hud-safe">
-          <ExperienceLabBlueprintCard
+            <ExperienceLabEnvironmentDisplayAnchorDiagnosticOverlay enabled={anchorDiagnostics} />
+            <ExperienceLabBlueprintCard
             environmentName={departmentName}
             revision={revision}
             status={artifactStatus}

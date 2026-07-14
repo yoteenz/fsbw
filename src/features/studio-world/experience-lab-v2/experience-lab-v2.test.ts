@@ -443,35 +443,31 @@ describe('Experience Lab V2 — Panel orchestration', () => {
     expect(readV2Source('experience-lab-v2-panel-orchestrator.ts')).toContain('PANEL_LAYOUT_STORAGE_KEY');
   });
 
-  it('viewport HUD panels use architectural perspective transforms and parallax hook', () => {
+  it('viewport HUD panels use environment display anchor transforms and parallax hook', () => {
     const viewport = readV2Source('StudioViewport.tsx');
     const blueprint = readV2Source('ExperienceLabBlueprintCard.tsx');
     const context = readV2Source('ExperienceLabDynamicContextCard.tsx');
     const parallax = readV2Source('useExperienceLabHudParallax.ts');
+    const anchor = readV2Source('ExperienceLabAnchoredEnvironmentDisplay.tsx');
     const css = readV2Source('experience-lab-v2.css');
     expect(viewport).toContain('useExperienceLabHudParallax');
     expect(viewport).toContain('ELAB_V2_COMPOSITION.archPerspective');
-    expect(viewport).toContain('elab-arch-panel elab-arch-panel--right');
-    expect(viewport).toContain('elab-arch-panel elab-arch-panel--center');
-    expect(blueprint).toContain('elab-arch-panel elab-arch-panel--left');
-    expect(blueprint).toContain('elab-arch-panel__surface');
-    expect(context).toContain('elab-arch-panel elab-arch-panel--right elab-arch-panel--enter');
-    expect(context).toContain('elab-arch-panel__surface');
-    expect(viewport).toContain('elab-arch-panel__surface');
-    expect(css).toMatch(/\.elab-viewport__hud-safe\s*\{[\s\S]*?perspective:\s*var\(--elab-arch-perspective\)/);
-    expect(css).toContain('.elab-arch-panel__surface');
+    expect(viewport).toContain('ExperienceLabEnvironmentDisplayAnchorDiagnosticOverlay');
+    expect(blueprint).toContain('ExperienceLabAnchoredEnvironmentDisplay');
+    expect(blueprint).toContain('LEFT_FRONT');
+    expect(context).toContain('ExperienceLabAnchoredEnvironmentDisplay');
+    expect(context).toContain('RIGHT_FRONT');
+    expect(anchor).toContain('data-env-display-transform-owner');
+    expect(anchor).toContain('data-env-display-visible-surface');
     expect(parallax).toContain('--elab-parallax-x');
-    expect(parallax).toContain('MAX_PARALLAX_PX = 6');
-    expect(css).toContain('--elab-arch-perspective: 1800px');
-    expect(css).toContain('.elab-arch-panel__surface');
-    expect(css).toContain('perspective: var(--elab-arch-perspective)');
+    expect(css).toContain('--env-display-perspective: 1600px');
+    expect(css).toMatch(/perspective:\s*var\(--env-display-perspective\)/);
     expect(css).toContain('transform-style: preserve-3d');
-    expect(css).toContain('.elab-arch-panel--left');
-    expect(css).toContain('rotateY(var(--elab-arch-rotate-y-left))');
-    expect(css).toContain('rotateY(var(--elab-arch-rotate-y-right))');
-    expect(css).toContain('@keyframes elabArchEnterRight');
-    expect(css).toContain('will-change: transform');
-    expect(css).toContain('translate3d(var(--elab-parallax-x)');
+    expect(css).toContain('.elab-env-display-transform--left');
+    expect(css).toContain('--display-rotate-y: 11deg');
+    expect(css).toContain('@keyframes elabEnvDisplayEnterRight');
+    expect(css).toMatch(/\.elab-env-display-transform[\s\S]*?will-change:\s*transform/);
+    expect(css).toContain('--display-translate-x');
   });
 });
 

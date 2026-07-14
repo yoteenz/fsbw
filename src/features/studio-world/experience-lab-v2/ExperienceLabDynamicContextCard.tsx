@@ -1,6 +1,7 @@
 import type { ExperienceLabV2ViewModel } from './experience-lab-v2.types';
 import type { StudioViewportMode } from './experience-lab-v2.types';
 import { ELAB_V2_COMPOSITION } from './experience-lab-v2-composition';
+import { ExperienceLabAnchoredEnvironmentDisplay } from './ExperienceLabAnchoredEnvironmentDisplay';
 import {
   contextContentForWorkbenchTool,
   contextLabelForWorkbenchTool,
@@ -131,12 +132,14 @@ export function ExperienceLabDynamicContextCard({
   };
 
   return (
-    <div
-      className="elab-viewport__context-card elab-context-card elab-arch-panel elab-arch-panel--right elab-arch-panel--enter"
-      {...{ [ELAB_V2_COMPOSITION.dynamicContextCard]: '' }}
-      aria-label={`${title} context`}
+    <ExperienceLabAnchoredEnvironmentDisplay
+      anchor="RIGHT_FRONT"
+      side="right"
+      hostClassName="elab-viewport__context-card elab-context-card"
+      compositionAttr={ELAB_V2_COMPOSITION.dynamicContextCard}
+      enter
+      ariaLabel={`${title} context`}
     >
-      <div className="elab-arch-panel__surface">
       <header className="elab-context-card__header">
         <span className="elab-context-card__title">{title}</span>
         {onExpand ? (
@@ -149,7 +152,6 @@ export function ExperienceLabDynamicContextCard({
       <div key={toolId} className="elab-context-card__body elab-context-card__body--swap">
         {renderBody()}
       </div>
-      </div>
-    </div>
+    </ExperienceLabAnchoredEnvironmentDisplay>
   );
 }

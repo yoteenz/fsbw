@@ -77,6 +77,12 @@ export function ExperienceLabDiagnostics({
           <div><dt>Breakpoint</dt><dd>{panelDiagnostics.breakpoint}</dd></div>
         </dl>
       ) : null}
+      <dl className="elab-diag-drawer__panels" data-elab-anchor-diagnostics-spec>
+        <div><dt>Blueprint anchor</dt><dd>LEFT_FRONT · rotateY 10–13deg · origin left center</dd></div>
+        <div><dt>Context anchor</dt><dd>RIGHT_FRONT · rotateY -10 to -13deg · origin right center</dd></div>
+        <div><dt>Transform owner</dt><dd>[data-env-display-transform-owner]</dd></div>
+        <div><dt>Visible surface</dt><dd>[data-env-display-visible-surface]</dd></div>
+      </dl>
       {onResetLayout ? (
         <button type="button" className="elab-diag-drawer__reset" onClick={onResetLayout}>
           RESET EXPERIENCE LAB LAYOUT
