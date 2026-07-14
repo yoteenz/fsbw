@@ -49734,6 +49734,20 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 ---
 
+## 2026-07-14 — Experience Lab uppercase typography (workstation + boot overlays)
+
+**Founder request:** Confirm ALL text on Experience Lab is uppercase, including welcome/orb powering-up popup before page load.
+
+**Audit:** Workstation root lacked global uppercase; many config labels, loading strings, sheet titles, and boot overlays had mixed case.
+
+**Shipped:**
+- **`experience-lab-v2.css`** — `text-transform: uppercase` + letter-spacing on `.elab-workstation` root (cascades to all in-app UI)
+- **Boot / pre-load:** `StudioRouteSuspenseFallback` full-container uppercase + subtitle; `StudioOrbAwakeningOverlay` container + skip button uppercase (phase messages already uppercase); `ExperienceLabErrorBoundary` uppercase
+- **Source strings:** VIEWPORT_MODE_LABELS, REGISTRY_TREE, INSPECTOR_PANELS, component review labels, approval blockers, blueprint loading, dynamic context fallbacks, StudioViewport loading/errors, design variant names, orb aria labels, shell sheet titles/tools
+- **Tests:** Uppercase workstation + boot overlay assertions; orb aria label test updated. 132/132 PASS.
+
+---
+
 ## 2026-07-14 — Edge-to-edge row correction: restore rounded separate panels
 
 **Founder correction:** Prior edge-to-edge pass incorrectly squared corners and merged FRC panels into one continuous band (gap:0, border-left:none, border-radius:0).

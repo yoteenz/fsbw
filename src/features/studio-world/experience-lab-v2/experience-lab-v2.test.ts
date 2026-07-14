@@ -175,6 +175,11 @@ describe('Experience Lab V2 — Fixed application shell', () => {
     expect(wb).toContain('splitWorkbenchToolLabel');
     expect(readV2Source('experience-lab-v2-workbench-config.ts')).toContain('material-lab');
     expect(readV2Source('ExperienceLabWorkbenchDock.tsx')).toContain('EXPERIENCE_LAB_WORKBENCH_EDITING_TOOLS');
+    const css = readV2Source('experience-lab-v2.css');
+    expect(css).toContain('--elab-wb-label-weight: 400');
+    expect(css).toMatch(/\.elab-founder-wb__title\s*\{[\s\S]*?font-weight:\s*var\(--elab-wb-label-weight/);
+    expect(css).toMatch(/\.elab-founder-wb__tool-label\s*\{[\s\S]*?font-weight:\s*var\(--elab-wb-label-weight/);
+    expect(css).toMatch(/\.elab-founder-wb__nav-label\s*\{[\s\S]*?font-weight:\s*var\(--elab-wb-label-weight/);
   });
 
   it('workstation frame unifies viewport room and lower deck', () => {
