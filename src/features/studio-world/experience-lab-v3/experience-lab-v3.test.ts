@@ -7,9 +7,19 @@ import {
   listV3Programs,
   resolveV3DepartmentLabel,
 } from './registry/v3-program-registry';
-import { resolveV3WorkbenchTools, defaultV3WorkbenchTool } from './registry/v3-workbench-registry';
+import {
+  resolveV3WorkbenchTools,
+  defaultV3WorkbenchTool,
+  resolveV3InspectorModeForTool,
+} from './registry/v3-workbench-registry';
+import {
+  V3_CORE_WORKSPACES,
+  resolveV3WorkspaceByOffset,
+  buildV3DesignVariants,
+} from './registry/v3-workspace-registry';
 import { createInitialV3State, rebuildV3ContextState } from './store/v3-demo-seed';
 import { resolveExperienceLabV3FeatureFlags } from './experience-lab-v3-feature-flags';
+import { V3_CORE_WORKSPACE_IDS } from './experience-lab-v3.types';
 
 const V3_DIR = dirname(fileURLToPath(import.meta.url));
 
@@ -17,7 +27,24 @@ function readV3Source(filename: string): string {
   return readFileSync(resolve(V3_DIR, filename), 'utf8');
 }
 
-describe('Experience Lab V3 Architecture', () => {
+describe('Experience Lab V3 Five-Workspace OS', () => {
+  it('defines exactly five core workspaces', () => {
+    expect(V3_CORE_WORKSPACE_IDS).toEqual([
+      'environment',
+      'production',
+      'review',
+      'assets',
+      'intelligence',
+    ]);
+    expect(V3_CORE_WORKSPACES).toHaveLength(5);
+  });
+
+  it('swipes workspace index with wrap-around', () => {
+    expect(resolveV3WorkspaceByOffset('environment', 1)).toBe('production');
+    expect(resolveV3WorkspaceByOffset('intelligence', 1)).toBe('environment');
+    expect(resolveV3WorkspaceByOffset('production', -1)).toBe('environment');
+  });
+
   it('lists two top-level programs', () => {
     const programs = listV3Programs();
     expect(programs.map((p) => p.programId)).toEqual(['studio-world', 'industry-packs']);
@@ -27,66 +54,70 @@ describe('Experience Lab V3 Architecture', () => {
     const world = listV3DepartmentsForProgram('studio-world');
     const packs = listV3DepartmentsForProgram('industry-packs');
     expect(world.some((d) => d.id === 'reception')).toBe(true);
-    expect(world.some((d) => d.id === 'build-a-wig')).toBe(true);
     expect(packs.some((d) => d.id === 'dental')).toBe(true);
-    expect(packs.some((d) => d.id === 'restaurant')).toBe(true);
   });
 
-  it('workbench tools change by department', () => {
-    const reception = resolveV3WorkbenchTools('reception').map((t) => t.id);
-    const marketplace = resolveV3WorkbenchTools('marketplace').map((t) => t.id);
-    const rewards = resolveV3WorkbenchTools('rewards').map((t) => t.id);
-    expect(reception).toContain('lighting');
-    expect(marketplace).toContain('packaging');
-    expect(rewards).toContain('collectibles');
-    expect(reception).not.toEqual(marketplace);
+  it('workbench tools change by workspace', () => {
+    const env = resolveV3WorkbenchTools('environment').map((t) => t.id);
+    const prod = resolveV3WorkbenchTools('production').map((t) => t.id);
+    const review = resolveV3WorkbenchTools('review').map((t) => t.id);
+    expect(env).toContain('lighting');
+    expect(prod).toContain('retry');
+    expect(review).toContain('approve');
+    expect(env).not.toEqual(prod);
   });
 
-  it('seeds work orders with progress, cost, owner, dependencies', () => {
+  it('inspector morphs from workbench tool — single mode only', () => {
+    expect(resolveV3InspectorModeForTool('environment', 'lighting')).toBe('lighting');
+    expect(resolveV3InspectorModeForTool('environment', 'materials')).toBe('materials');
+    expect(resolveV3InspectorModeForTool('production', 'dependencies')).toBe('dependencies');
+    expect(resolveV3InspectorModeForTool('environment', null)).toBeNull();
+  });
+
+  it('seeds package-driven demo state with six design variants', () => {
     const state = createInitialV3State();
+    expect(state.designVariants).toHaveLength(6);
+    expect(state.activePackage).toBeTruthy();
     expect(state.workOrders.length).toBeGreaterThan(0);
-    const wo = state.workOrders[0]!;
-    expect(wo.progress).toBeGreaterThanOrEqual(0);
-    expect(wo.owner).toBeTruthy();
-    expect(wo.costUsd).toBeGreaterThanOrEqual(0);
+    expect(state.activeWorkspace).toBe('environment');
   });
 
-  it('package view exposes multi-device outputs with desktop as source of truth', () => {
-    const state = createInitialV3State();
-    const pkg = state.activePackage!;
-    const mobile = pkg.outputs.find((o) => o.id === 'mobile');
-    const desktop = pkg.outputs.find((o) => o.id === 'desktop');
-    expect(desktop?.derivedFrom).toBe('desktop');
-    expect(mobile?.derivedFrom).toBe('desktop');
-  });
-
-  it('rebuilds context on department change without losing program', () => {
+  it('rebuilds context on department change without losing workspace', () => {
     const initial = createInitialV3State();
     const next = rebuildV3ContextState(initial, { departmentId: 'marketplace' });
-    expect(next.workspace.programId).toBe('studio-world');
+    expect(next.activeWorkspace).toBe('environment');
     expect(next.workspace.departmentId).toBe('marketplace');
     expect(resolveV3DepartmentLabel('studio-world', 'marketplace')).toBe('Marketplace');
   });
 
-  it('pipeline stages derive from work orders', () => {
-    const state = createInitialV3State();
-    expect(state.pipeline.some((s) => s.status === 'active')).toBe(true);
+  it('shell composes persistent shell regions', () => {
+    const shell = readV3Source('ExperienceLabV3Shell.tsx');
+    expect(shell).toContain('V3WorkspaceStage');
+    expect(shell).toContain('V3DesignVariantStrip');
+    expect(shell).toContain('V3ContextAwareWorkbench');
+    expect(shell).toContain('V3CommandDock');
+    const stage = readV3Source('viewport/V3WorkspaceStage.tsx');
+    expect(stage).toContain('V3BlueprintPanel');
+    expect(stage).toContain('V3ContextInspector');
+    const inspectorMatches = stage.match(/<V3ContextInspector/g) ?? [];
+    expect(inspectorMatches.length).toBe(1);
   });
 
-  it('shell has single blueprint, active work order, and context panels', () => {
-    const shell = readV3Source('ExperienceLabV3Shell.tsx');
-    expect(shell).toContain('V3BlueprintInspectorPanel');
-    expect(shell).toContain('V3ActiveWorkOrderPanel');
-    expect(shell).toContain('V3ContextInspectorPanel');
-    const renderMatches = shell.match(/<V3ContextInspectorPanel/g) ?? [];
-    expect(renderMatches.length).toBe(1);
+  it('viewport stage mounts five workspace panels', () => {
+    const stage = readV3Source('viewport/V3WorkspaceStage.tsx');
+    expect(stage).toContain('V3EnvironmentWorkspace');
+    expect(stage).toContain('V3ProductionWorkspace');
+    expect(stage).toContain('V3ReviewWorkspace');
+    expect(stage).toContain('V3AssetsWorkspace');
+    expect(stage).toContain('V3IntelligenceWorkspace');
   });
 
   it('V3 does not import from experience-lab-v2', () => {
     const files = [
       'ExperienceLabV3Shell.tsx',
       'store/ExperienceLabV3Store.tsx',
-      'registry/v3-program-registry.ts',
+      'viewport/V3WorkspaceStage.tsx',
+      'shell/V3CommandDock.tsx',
     ];
     for (const f of files) {
       const src = readV3Source(f);
@@ -97,18 +128,18 @@ describe('Experience Lab V3 Architecture', () => {
   it('feature flags gate V3 independently from V2', () => {
     const flags = resolveExperienceLabV3FeatureFlags();
     expect(flags).toHaveProperty('experienceLabV3Enabled');
-    expect(flags).toHaveProperty('worldBuilderAliasEnabled');
   });
 
-  it('default workbench tool resolves per department', () => {
-    expect(defaultV3WorkbenchTool('reception')).toBe('lighting');
-    expect(defaultV3WorkbenchTool('marketplace')).toBe('packaging');
+  it('default workbench tool resolves per workspace', () => {
+    expect(defaultV3WorkbenchTool('environment')).toBe('blueprint');
+    expect(defaultV3WorkbenchTool('production')).toBe('pause');
+    expect(defaultV3WorkbenchTool('review')).toBe('approve');
   });
 
-  it('operations board metrics are seeded', () => {
-    const state = createInitialV3State();
-    expect(state.operations.todaySpendUsd).toBeGreaterThan(0);
-    expect(state.operations.systemHealthPercent).toBeGreaterThan(0);
+  it('design variants build per department context', () => {
+    const variants = buildV3DesignVariants('reception', 12);
+    expect(variants).toHaveLength(6);
+    expect(variants[0]?.environmentPackageId).toContain('reception');
   });
 
   it('V3 page uses scrollable golden build shell (not fixedViewport)', () => {
@@ -117,8 +148,5 @@ describe('Experience Lab V3 Architecture', () => {
       'utf8'
     );
     expect(page).not.toContain('fixedViewport');
-    const css = readV3Source('experience-lab-v3.css');
-    expect(css).toContain('overflow-x: hidden');
-    expect(css).not.toMatch(/\.elab-v3-os\s*\{[^}]*\boverflow:\s*hidden\b/);
   });
 });

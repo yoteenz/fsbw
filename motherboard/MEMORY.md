@@ -50165,3 +50165,26 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 **Constraints honored:** Experience Lab runtime unchanged; no automatic production icon replacement; founder approval gate on promotion; legacy calibration editor preserved.
 
+---
+
+## 2026-07-14 — Experience Lab V3 Five-Workspace OS Reboot (P0)
+
+**Founder sprint:** Abandon previous V3 Zota-dashboard direction. **V2 frozen** — zero modifications. V3 becomes evolution of V2 via **multi-workspace operating model** preserving V2 shell visual language in a separate implementation.
+
+**Routes:** `/admin/studio/experience-lab-v3` · `/admin/studio/world-builder` · `/admin/studio/world-v3` (new alias).
+
+**Architecture shipped:**
+- **Persistent shell:** `V3CommandDock` (header, program, pipeline, breadcrumb, status), `V3DesignVariantStrip` (always beneath viewport), `V3ContextAwareWorkbench` (tools swap per workspace), Living Orb placeholder in workbench
+- **Swipeable viewport:** `V3WorkspaceStage` — horizontal slide + touch swipe between **five workspaces only:** Environment · Production · Review · Assets · Intelligence
+- **Workspace pills:** `V3WorkspacePills` — tap to jump (no forced swipe)
+- **Persistent Blueprint panel:** `V3BlueprintPanel` — only permanent floating panel; content adapts per workspace
+- **Single inspector:** `V3ContextInspector` — one interchangeable inspector morphs on workbench tool (Lighting → Materials → Camera…); never stacked
+- **Package-driven demo state:** shared environment package across all workspaces; six design variants; work orders, review items, asset library
+- **Removed old V3:** 3-column ops HUD, separate left/right rail panels, `V3ProgramSelector`/`V3WorkspaceContextHud` as primary nav, boards folder
+
+**Key files:** `experience-lab-v3-composition.ts`, `registry/v3-workspace-registry.ts`, `registry/v3-workbench-registry.ts`, `shell/*`, `workspaces/*`, `viewport/V3WorkspaceStage.tsx`, `panels/V3BlueprintPanel.tsx`, `panels/V3ContextInspector.tsx`
+
+**Docs:** `EXPERIENCE_LAB_V3_ARCHITECTURE.md` rewritten for five-workspace OS.
+
+**Tests:** `experience-lab-v3.test.ts` 15/15 PASS. **Build:** PASS. **V2 regression:** no `experience-lab-v2/` files changed.
+

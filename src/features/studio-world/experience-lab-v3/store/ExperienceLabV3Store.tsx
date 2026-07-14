@@ -9,21 +9,31 @@ import {
 } from 'react';
 import type {
   ExperienceLabV3State,
-  SpotlightResult,
-  WorkbenchToolId,
+  V3CoreWorkspaceId,
+  V3DesignVariantId,
+  V3InspectorModeId,
+  V3WorkbenchToolId,
   WorkOrder,
   WorkspaceContextState,
 } from '../experience-lab-v3.types';
 import { createInitialV3State, rebuildV3ContextState } from './v3-demo-seed';
-import { resolveV3DepartmentLabel } from '../registry/v3-program-registry';
+import {
+  defaultV3WorkbenchTool,
+  resolveV3InspectorModeForTool,
+} from '../registry/v3-workbench-registry';
+import { resolveV3WorkspaceByOffset } from '../registry/v3-workspace-registry';
 
 type V3Action =
+  | { type: 'SET_WORKSPACE'; workspace: V3CoreWorkspaceId }
+  | { type: 'SWIPE_WORKSPACE'; direction: -1 | 1 }
   | { type: 'SET_PROGRAM'; programId: WorkspaceContextState['programId'] }
   | { type: 'SET_DEPARTMENT'; departmentId: string }
   | { type: 'SET_VARIANT'; variantId: string; variantLabel: string }
   | { type: 'SET_REVISION'; revision: number }
+  | { type: 'TOGGLE_DESIGN_VARIANTS_COLLAPSED' }
   | { type: 'SET_WORK_ORDER'; workOrderId: string | null }
-  | { type: 'SET_WORKBENCH_TOOL'; tool: WorkbenchToolId | null }
+  | { type: 'SET_REVIEW'; reviewId: string | null }
+  | { type: 'SET_WORKBENCH_TOOL'; tool: V3WorkbenchToolId | null }
   | { type: 'MOVE_WORK_ORDER'; workOrderId: string; column: WorkOrder['queueColumn'] }
   | { type: 'SET_SPOTLIGHT'; open: boolean }
   | { type: 'SET_ASSISTANT'; open: boolean }
@@ -32,13 +42,29 @@ type V3Action =
   | { type: 'TOGGLE_BLUEPRINT_FULLSCREEN' }
   | { type: 'TICK_OPERATIONS' };
 
+function applyWorkspaceChange(
+  state: ExperienceLabV3State,
+  workspace: V3CoreWorkspaceId
+): ExperienceLabV3State {
+  const defaultTool = defaultV3WorkbenchTool(workspace);
+  return {
+    ...state,
+    activeWorkspace: workspace,
+    activeWorkbenchTool: defaultTool,
+    activeInspectorMode: resolveV3InspectorModeForTool(workspace, defaultTool),
+  };
+}
+
 function v3Reducer(state: ExperienceLabV3State, action: V3Action): ExperienceLabV3State {
   switch (action.type) {
+    case 'SET_WORKSPACE':
+      return applyWorkspaceChange(state, action.workspace);
+    case 'SWIPE_WORKSPACE':
+      return applyWorkspaceChange(state, resolveV3WorkspaceByOffset(state.activeWorkspace, action.direction));
     case 'SET_PROGRAM':
       return rebuildV3ContextState(state, {
         programId: action.programId,
         departmentId: action.programId === 'studio-world' ? 'reception' : 'dental',
-        departmentLabel: resolveV3DepartmentLabel(action.programId, action.programId === 'studio-world' ? 'reception' : 'dental'),
       });
     case 'SET_DEPARTMENT':
       return rebuildV3ContextState(state, { departmentId: action.departmentId });
@@ -49,10 +75,20 @@ function v3Reducer(state: ExperienceLabV3State, action: V3Action): ExperienceLab
       });
     case 'SET_REVISION':
       return { ...state, workspace: { ...state.workspace, revision: action.revision } };
+    case 'TOGGLE_DESIGN_VARIANTS_COLLAPSED':
+      return { ...state, designVariantsCollapsed: !state.designVariantsCollapsed };
     case 'SET_WORK_ORDER':
       return { ...state, activeWorkOrderId: action.workOrderId };
-    case 'SET_WORKBENCH_TOOL':
-      return { ...state, activeWorkbenchTool: action.tool };
+    case 'SET_REVIEW':
+      return { ...state, activeReviewId: action.reviewId };
+    case 'SET_WORKBENCH_TOOL': {
+      const tool = action.tool;
+      return {
+        ...state,
+        activeWorkbenchTool: tool,
+        activeInspectorMode: resolveV3InspectorModeForTool(state.activeWorkspace, tool),
+      };
+    }
     case 'MOVE_WORK_ORDER':
       return {
         ...state,
@@ -92,11 +128,14 @@ export type ExperienceLabV3StoreValue = {
   state: ExperienceLabV3State;
   dispatch: Dispatch<V3Action>;
   activeWorkOrder: WorkOrder | null;
+  setWorkspace: (workspace: V3CoreWorkspaceId) => void;
+  swipeWorkspace: (direction: -1 | 1) => void;
   setProgram: (programId: WorkspaceContextState['programId']) => void;
   setDepartment: (departmentId: string) => void;
-  setWorkbenchTool: (tool: WorkbenchToolId) => void;
+  setVariant: (variantId: V3DesignVariantId, variantLabel: string) => void;
+  setWorkbenchTool: (tool: V3WorkbenchToolId | null) => void;
   setActiveWorkOrder: (id: string | null) => void;
-  searchSpotlight: (query: string) => SpotlightResult[];
+  setActiveReview: (id: string | null) => void;
 };
 
 const ExperienceLabV3StoreContext = createContext<ExperienceLabV3StoreValue | null>(null);
@@ -109,6 +148,14 @@ export function ExperienceLabV3StoreProvider({ children }: { children: ReactNode
     [state.workOrders, state.activeWorkOrderId]
   );
 
+  const setWorkspace = useCallback((workspace: V3CoreWorkspaceId) => {
+    dispatch({ type: 'SET_WORKSPACE', workspace });
+  }, []);
+
+  const swipeWorkspace = useCallback((direction: -1 | 1) => {
+    dispatch({ type: 'SWIPE_WORKSPACE', direction });
+  }, []);
+
   const setProgram = useCallback((programId: WorkspaceContextState['programId']) => {
     dispatch({ type: 'SET_PROGRAM', programId });
   }, []);
@@ -117,7 +164,11 @@ export function ExperienceLabV3StoreProvider({ children }: { children: ReactNode
     dispatch({ type: 'SET_DEPARTMENT', departmentId });
   }, []);
 
-  const setWorkbenchTool = useCallback((tool: WorkbenchToolId) => {
+  const setVariant = useCallback((variantId: V3DesignVariantId, variantLabel: string) => {
+    dispatch({ type: 'SET_VARIANT', variantId, variantLabel });
+  }, []);
+
+  const setWorkbenchTool = useCallback((tool: V3WorkbenchToolId | null) => {
     dispatch({ type: 'SET_WORKBENCH_TOOL', tool });
   }, []);
 
@@ -125,50 +176,36 @@ export function ExperienceLabV3StoreProvider({ children }: { children: ReactNode
     dispatch({ type: 'SET_WORK_ORDER', workOrderId: id });
   }, []);
 
-  const searchSpotlight = useCallback(
-    (query: string): SpotlightResult[] => {
-      const q = query.trim().toLowerCase();
-      if (!q) return [];
-      const results: SpotlightResult[] = [];
-
-      for (const wo of state.workOrders) {
-        if (wo.title.toLowerCase().includes(q)) {
-          results.push({ id: wo.id, kind: 'work-order', title: wo.title, subtitle: wo.status });
-        }
-      }
-      if (state.workspace.departmentLabel.toLowerCase().includes(q)) {
-        results.push({
-          id: state.workspace.departmentId,
-          kind: 'department',
-          title: state.workspace.departmentLabel,
-          subtitle: 'Department',
-        });
-      }
-      if (state.activePackage && state.activePackage.packageId.toLowerCase().includes(q)) {
-        results.push({
-          id: state.activePackage.packageId,
-          kind: 'package',
-          title: state.activePackage.packageId,
-          subtitle: `Revision R${state.activePackage.revision}`,
-        });
-      }
-      return results.slice(0, 12);
-    },
-    [state.workOrders, state.workspace, state.activePackage]
-  );
+  const setActiveReview = useCallback((id: string | null) => {
+    dispatch({ type: 'SET_REVIEW', reviewId: id });
+  }, []);
 
   const value = useMemo(
     () => ({
       state,
       dispatch,
       activeWorkOrder,
+      setWorkspace,
+      swipeWorkspace,
       setProgram,
       setDepartment,
+      setVariant,
       setWorkbenchTool,
       setActiveWorkOrder,
-      searchSpotlight,
+      setActiveReview,
     }),
-    [state, activeWorkOrder, setProgram, setDepartment, setWorkbenchTool, setActiveWorkOrder, searchSpotlight]
+    [
+      state,
+      activeWorkOrder,
+      setWorkspace,
+      swipeWorkspace,
+      setProgram,
+      setDepartment,
+      setVariant,
+      setWorkbenchTool,
+      setActiveWorkOrder,
+      setActiveReview,
+    ]
   );
 
   return (
@@ -181,3 +218,5 @@ export function useExperienceLabV3Store(): ExperienceLabV3StoreValue {
   if (!ctx) throw new Error('useExperienceLabV3Store requires ExperienceLabV3StoreProvider');
   return ctx;
 }
+
+export type { V3InspectorModeId };

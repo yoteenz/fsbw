@@ -1,13 +1,19 @@
 import type {
+  AssetLibraryItem,
   ExperienceLabV3Package,
   ExperienceLabV3State,
   OperationsMetrics,
   PipelineStage,
+  ReviewItem,
   WorkOrder,
   WorkOrderStatus,
   WorkspaceContextState,
 } from '../experience-lab-v3.types';
-import { defaultV3WorkbenchTool } from '../registry/v3-workbench-registry';
+import { buildV3DesignVariants } from '../registry/v3-workspace-registry';
+import {
+  defaultV3WorkbenchTool,
+  resolveV3InspectorModeForTool,
+} from '../registry/v3-workbench-registry';
 import { resolveV3DepartmentLabel } from '../registry/v3-program-registry';
 
 const now = () => new Date().toISOString();
@@ -144,6 +150,35 @@ function buildPipeline(workOrders: WorkOrder[]): PipelineStage[] {
   }));
 }
 
+function buildReviewItems(ctx: WorkspaceContextState): ReviewItem[] {
+  return [
+    {
+      id: 'rev-founder-01',
+      title: `${ctx.departmentLabel} · R${ctx.revision} Founder Review`,
+      status: 'pending',
+      revision: ctx.revision,
+      submittedAt: now(),
+    },
+    {
+      id: 'rev-compare-02',
+      title: 'Variant Compare · LUMEN A vs NOIR B',
+      status: 'revision-requested',
+      revision: ctx.revision - 1,
+      submittedAt: now(),
+    },
+  ];
+}
+
+function buildAssetLibrary(ctx: WorkspaceContextState): AssetLibraryItem[] {
+  return [
+    { id: 'asset-bp-01', label: 'Reception Blueprint R18', kind: 'blueprint', updatedAt: now() },
+    { id: 'asset-mat-marble', label: 'Marble Floor Preset', kind: 'material', updatedAt: now() },
+    { id: 'asset-pkg-main', label: ctx.variantLabel, kind: 'package', updatedAt: now() },
+    { id: 'asset-ref-lobby', label: 'Lobby Reference Board', kind: 'reference', updatedAt: now() },
+    { id: 'asset-mkt-icon', label: 'Marketplace Icon Set', kind: 'icon', updatedAt: now() },
+  ];
+}
+
 const DEMO_OPERATIONS: OperationsMetrics = {
   todaySpendUsd: 4.82,
   gpuUsagePercent: 34,
@@ -166,22 +201,31 @@ export function createInitialV3State(): ExperienceLabV3State {
     environmentId: 'experience-lab-main',
     environmentLabel: 'Experience Lab',
     variantId: 'dark-02',
-    variantLabel: 'Dark 02',
+    variantLabel: 'NOIR B',
     revision: 18,
     companionDevice: 'mobile',
     lifecycleStatus: 'Awaiting Approval',
   };
 
+  const activeWorkspace = 'environment' as const;
   const workOrders = buildDemoWorkOrders(workspace);
+  const defaultTool = defaultV3WorkbenchTool(activeWorkspace);
 
   return {
+    activeWorkspace,
     workspace,
+    designVariants: buildV3DesignVariants(workspace.departmentId, workspace.revision),
+    designVariantsCollapsed: false,
+    activeWorkbenchTool: defaultTool,
+    activeInspectorMode: resolveV3InspectorModeForTool(activeWorkspace, defaultTool),
     activeWorkOrderId: 'wo-blueprint',
-    activeWorkbenchTool: defaultV3WorkbenchTool(workspace.departmentId),
+    activeReviewId: 'rev-founder-01',
     workOrders,
     activePackage: buildDemoPackage(workspace),
     pipeline: buildPipeline(workOrders),
     operations: DEMO_OPERATIONS,
+    reviewItems: buildReviewItems(workspace),
+    assetLibrary: buildAssetLibrary(workspace),
     spotlightOpen: false,
     assistantOpen: false,
     blueprintFullscreen: false,
@@ -203,14 +247,19 @@ export function rebuildV3ContextState(
   };
 
   const workOrders = buildDemoWorkOrders(workspace);
+  const defaultTool = defaultV3WorkbenchTool(prev.activeWorkspace);
 
   return {
     ...prev,
     workspace,
+    designVariants: buildV3DesignVariants(workspace.departmentId, workspace.revision),
     workOrders,
     activePackage: buildDemoPackage(workspace),
     pipeline: buildPipeline(workOrders),
+    reviewItems: buildReviewItems(workspace),
+    assetLibrary: buildAssetLibrary(workspace),
     activeWorkOrderId: workOrders[0]?.id ?? null,
-    activeWorkbenchTool: defaultV3WorkbenchTool(workspace.departmentId),
+    activeWorkbenchTool: defaultTool,
+    activeInspectorMode: resolveV3InspectorModeForTool(prev.activeWorkspace, defaultTool),
   };
 }

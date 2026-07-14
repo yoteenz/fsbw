@@ -1,9 +1,42 @@
-/** Experience Lab V3 — isolated experimental OS shell. V2 must never import from here. */
+/** Experience Lab V3 — Five-Workspace OS. V2 must never import from here. */
 
 export const EXPERIENCE_LAB_V3_ROUTE = '/admin/studio/experience-lab-v3' as const;
 export const EXPERIENCE_LAB_V3_WORLD_BUILDER_ROUTE = '/admin/studio/world-builder' as const;
+export const EXPERIENCE_LAB_V3_WORLD_V3_ROUTE = '/admin/studio/world-v3' as const;
+
+/** Five core swipeable workspaces inside the persistent viewport. */
+export const V3_CORE_WORKSPACE_IDS = [
+  'environment',
+  'production',
+  'review',
+  'assets',
+  'intelligence',
+] as const;
+
+export type V3CoreWorkspaceId = (typeof V3_CORE_WORKSPACE_IDS)[number];
 
 export type ExperienceLabV3ProgramId = 'studio-world' | 'industry-packs';
+
+export type V3DesignVariantId =
+  | 'light-01'
+  | 'light-02'
+  | 'light-03'
+  | 'dark-01'
+  | 'dark-02'
+  | 'dark-03';
+
+export type V3DesignVariantTheme = 'light' | 'dark';
+
+export type V3DesignVariantRecord = {
+  id: V3DesignVariantId;
+  name: string;
+  theme: V3DesignVariantTheme;
+  environmentPackageId: string;
+  previewEnvironmentUrl: string;
+  thumbnailUrl: string;
+  revision: number;
+  cardStatus: 'active' | 'generating' | 'approved' | 'canonical';
+};
 
 export type WorkOrderStatus =
   | 'queued'
@@ -117,50 +150,92 @@ export type WorkspaceContextState = {
   lifecycleStatus: string;
 };
 
-export type WorkbenchToolId =
-  | 'architectural-tools'
-  | 'materials'
+/** Context-aware workbench tool ids — swap set per active workspace. */
+export type V3WorkbenchToolId =
+  | 'blueprint'
   | 'lighting'
+  | 'materials'
   | 'construction'
   | 'camera'
-  | 'budget'
-  | 'permit'
-  | 'packaging'
-  | 'pricing'
-  | 'listings'
-  | 'collectibles'
-  | 'points'
-  | 'unlockables'
-  | 'workforce';
-
-export type SpotlightResultKind =
-  | 'department'
-  | 'package'
-  | 'variant'
-  | 'asset'
-  | 'prompt'
-  | 'work-order'
-  | 'blueprint'
+  | 'compare'
+  | 'split-view'
+  | 'pause'
+  | 'retry'
+  | 'dependencies'
+  | 'outputs'
+  | 'logs'
+  | 'priority'
+  | 'assign'
+  | 'approve'
+  | 'reject'
+  | 'comment'
+  | 'promote'
+  | 'request-revision'
   | 'history'
+  | 'publish'
+  | 'save'
+  | 'duplicate'
+  | 'archive'
+  | 'export'
   | 'marketplace'
-  | 'cds';
+  | 'metadata'
+  | 'budget'
+  | 'forecast'
+  | 'providers'
+  | 'diagnostics'
+  | 'reports'
+  | 'performance'
+  | 'queue-health';
 
-export type SpotlightResult = {
+/** Single interchangeable inspector — morphs on workbench tool selection. */
+export type V3InspectorModeId =
+  | 'lighting'
+  | 'materials'
+  | 'camera'
+  | 'construction'
+  | 'work-order'
+  | 'dependencies'
+  | 'queue-health'
+  | 'design-brief'
+  | 'revision-timeline'
+  | 'review-compare'
+  | 'package-detail'
+  | 'material-library'
+  | 'budget-forecast'
+  | 'provider-health'
+  | 'queue-analytics'
+  | 'blueprint-detail';
+
+export type ReviewItem = {
   id: string;
-  kind: SpotlightResultKind;
   title: string;
-  subtitle: string;
-  href?: string;
+  status: 'pending' | 'approved' | 'rejected' | 'revision-requested';
+  revision: number;
+  submittedAt: string;
+};
+
+export type AssetLibraryItem = {
+  id: string;
+  label: string;
+  kind: 'blueprint' | 'material' | 'package' | 'preset' | 'reference' | 'marketplace' | 'icon';
+  updatedAt: string;
 };
 
 export type ExperienceLabV3State = {
+  activeWorkspace: V3CoreWorkspaceId;
   workspace: WorkspaceContextState;
+  designVariants: V3DesignVariantRecord[];
+  designVariantsCollapsed: boolean;
+  activeWorkbenchTool: V3WorkbenchToolId | null;
+  activeInspectorMode: V3InspectorModeId | null;
   activeWorkOrderId: string | null;
-  activeWorkbenchTool: WorkbenchToolId | null;
+  activeReviewId: string | null;
   workOrders: WorkOrder[];
   activePackage: ExperienceLabV3Package | null;
   pipeline: PipelineStage[];
   operations: OperationsMetrics;
+  reviewItems: ReviewItem[];
+  assetLibrary: AssetLibraryItem[];
   spotlightOpen: boolean;
   assistantOpen: boolean;
   blueprintFullscreen: boolean;

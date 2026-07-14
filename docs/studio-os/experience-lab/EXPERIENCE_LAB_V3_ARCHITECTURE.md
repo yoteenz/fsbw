@@ -1,12 +1,12 @@
-# Experience Lab V3 — World-Building OS Architecture
+# Experience Lab V3 — Five-Workspace Operating System
 
-**Status:** Experimental parallel branch  
-**Routes:** `/admin/studio/experience-lab-v3` · `/admin/studio/world-builder` (alias)  
+**Status:** Experimental parallel branch (rebooted 2026-07-14)  
+**Routes:** `/admin/studio/experience-lab-v3` · `/admin/studio/world-builder` · `/admin/studio/world-v3`  
 **V2:** Frozen at `/admin/studio/experience-lab-v2` — **do not modify**
 
-## Design philosophy
+## Vision
 
-V3 studies operational clarity (workflow, speed, hierarchy, awareness) — not Zota branding. Studio World remains luxury, cinematic, architectural, premium. UX communicates **production** over **presentation**.
+Experience Lab V3 is an operating system — not a single page. The **shell stays persistent** while the **viewport becomes a swipeable five-workspace system**. V2 visual language (glass, typography, command dock, design variants, workbench, blueprint panel) is preserved in a **separate V3 implementation**.
 
 ## Isolation rules
 
@@ -21,24 +21,54 @@ V3 studies operational clarity (workflow, speed, hierarchy, awareness) — not Z
 ## Architecture
 
 ```
-ExperienceLabV3Shell
-├── V3ProgramSelector (Studio World / Industry Packs → dynamic departments)
-├── V3WorkspaceContextHud (one-glance context chain)
-├── V3LiveOperationBoard (Queued, Generating, Blocked, Review, …)
-├── Left rail: V3ProductionTimelinePanel, V3PipelineView, V3QueueBoard, V3PackageViewPanel
-├── Center: V3Viewport (hero render) + V3DynamicWorkbench (tool launcher)
-├── Right rail: V3BlueprintInspectorPanel (persistent) + V3ActiveWorkOrderPanel (single) + V3ContextInspectorPanel (single, replaces on tool change)
-├── V3BottomOperationsBoard (mission control metrics)
+ExperienceLabV3Shell (persistent shell)
+├── V3CommandDock (header · program · pipeline · breadcrumb · status)
+├── V3WorkspacePills (Environment → Production → Review → Assets → Intelligence)
+├── V3WorkspaceStage (horizontal swipe viewport)
+│   ├── V3EnvironmentWorkspace (immersive render)
+│   ├── V3ProductionWorkspace (mission control)
+│   ├── V3ReviewWorkspace (founder approval)
+│   ├── V3AssetsWorkspace (warehouse)
+│   ├── V3IntelligenceWorkspace (analytics)
+│   ├── V3BlueprintPanel (persistent floating — content adapts per workspace)
+│   └── V3ContextInspector (single interchangeable inspector)
+├── V3DesignVariantStrip (always beneath viewport, synced across workspaces)
+├── V3ContextAwareWorkbench (tools swap per active workspace)
 ├── V3StudioSpotlightSearch (⌘K)
 └── V3StudioAiAssistantDock
 ```
 
-## Core models
+## Five workspaces
 
-- **Work orders** — every production task (generate blueprint, mobile, materials, package, …) with progress, ETA, priority, cost, owner, dependencies
-- **Package view** — desktop-canonical multi-device outputs (mobile/tablet/hero derive from desktop)
-- **Pipeline** — Queued → Preparing → AI Generation → Validation → Consistency → Founder Review → Canonical → Marketplace
-- **Revision hierarchy** — render → revision → package → environment
+| # | Workspace | Purpose |
+|---|-----------|---------|
+| 01 | Environment | Creative design — full render, blueprint, environment package |
+| 02 | Production | Execution — queue, pipeline, work orders, dependencies |
+| 03 | Review | Founder decisions — brief, timeline, approvals |
+| 04 | Assets | Warehouse — blueprints, materials, packages, presets |
+| 05 | Intelligence | Analytics — budget, providers, diagnostics, queue health |
+
+**Navigation:** horizontal swipe + workspace pills. Shell never changes.
+
+## Panel rules
+
+- **Blueprint panel** — only persistent floating panel; content adapts per workspace
+- **Context inspector** — exactly one; morphs on workbench tool (Lighting → Materials → Camera…)
+- **No stacked overlays** — never multiple floating inspectors
+
+## Context-aware workbench
+
+| Workspace | Tools |
+|-----------|-------|
+| Environment | Blueprint, Lighting, Materials, Construction, Camera, Compare, Split View |
+| Production | Pause, Retry, Dependencies, Outputs, Logs, Priority, Assign |
+| Review | Approve, Reject, Compare, Comment, Promote, Request Revision, History |
+| Assets | Publish, Save, Duplicate, Archive, Export, Marketplace, Metadata |
+| Intelligence | Budget, Forecast, Providers, Diagnostics, Reports, Performance, Queue Health |
+
+## Package integration
+
+All workspaces reference the same Environment Package state — no duplicate variants or revisions.
 
 ## Feature flags
 
@@ -48,7 +78,6 @@ ExperienceLabV3Shell
 | `VITE_EXPERIENCE_LAB_V3_WORLD_BUILDER` | true |
 | `VITE_EXPERIENCE_LAB_V3_SPOTLIGHT` | true |
 | `VITE_EXPERIENCE_LAB_V3_AI_ASSISTANT` | true |
-| `VITE_EXPERIENCE_LAB_V3_QUEUE_DRAG` | false |
 | `VITE_EXPERIENCE_LAB_V3_OPS_TICKER` | true |
 
 ## Tests
@@ -58,4 +87,4 @@ ExperienceLabV3Shell
 ## Related
 
 - V2 live workspace: `docs/studio-os/experience-lab/EXPERIENCE_LAB_EVENT_DRIVEN_WORKSPACE.md`
-- V2 route: `/admin/studio/experience-lab-v2`
+- V2 frozen reference: `/admin/studio/experience-lab-v2`

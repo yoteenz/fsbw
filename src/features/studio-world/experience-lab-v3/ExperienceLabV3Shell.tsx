@@ -1,21 +1,14 @@
 import { useEffect } from 'react';
 import { resolveExperienceLabV3FeatureFlags } from './experience-lab-v3-feature-flags';
 import { ExperienceLabV3StoreProvider, useExperienceLabV3Store } from './store/ExperienceLabV3Store';
-import { V3ProgramSelector } from './hud/V3ProgramSelector';
-import { V3WorkspaceContextHud } from './hud/V3WorkspaceContextHud';
-import { V3LiveOperationBoard } from './boards/V3LiveOperationBoard';
-import { V3QueueBoard } from './boards/V3QueueBoard';
-import { V3PipelineView } from './boards/V3PipelineView';
-import { V3BottomOperationsBoard } from './boards/V3BottomOperationsBoard';
-import { V3ActiveWorkOrderPanel } from './panels/V3ActiveWorkOrderPanel';
-import { V3BlueprintInspectorPanel } from './panels/V3BlueprintInspectorPanel';
-import { V3ContextInspectorPanel } from './panels/V3ContextInspectorPanel';
-import { V3PackageViewPanel } from './panels/V3PackageViewPanel';
-import { V3ProductionTimelinePanel } from './panels/V3ProductionTimelinePanel';
-import { V3DynamicWorkbench } from './workbench/V3DynamicWorkbench';
-import { V3Viewport } from './viewport/V3Viewport';
+import { V3CommandDock } from './shell/V3CommandDock';
+import { V3WorkspacePills } from './shell/V3WorkspacePills';
+import { V3DesignVariantStrip } from './shell/V3DesignVariantStrip';
+import { V3ContextAwareWorkbench } from './shell/V3ContextAwareWorkbench';
+import { V3WorkspaceStage } from './viewport/V3WorkspaceStage';
 import { V3StudioSpotlightSearch } from './search/V3StudioSpotlightSearch';
 import { V3StudioAiAssistantDock } from './assistant/V3StudioAiAssistantDock';
+import { ELAB_V3_COMPOSITION } from './experience-lab-v3-composition';
 import './experience-lab-v3.css';
 
 type Props = {
@@ -53,42 +46,20 @@ function ExperienceLabV3ShellInner() {
 
   return (
     <div className="elab-v3-os" data-experience-lab-v3-shell>
-      <header className="elab-v3-os__top">
-        <V3ProgramSelector />
-        <V3WorkspaceContextHud />
-        <div className="elab-v3-os__top-actions">
-          {flags.spotlightSearchEnabled && (
-            <button type="button" className="elab-v3-os__search" onClick={() => dispatch({ type: 'SET_SPOTLIGHT', open: true })}>
-              Search ⌘K
-            </button>
-          )}
-          <span className="elab-v3-os__badge">V3 EXPERIMENTAL</span>
-        </div>
-      </header>
-
-      <V3LiveOperationBoard />
-
-      <div className="elab-v3-os__body">
-        <aside className="elab-v3-os__left">
-          <V3ProductionTimelinePanel />
-          <V3PipelineView />
-          <V3QueueBoard />
-          <V3PackageViewPanel />
-        </aside>
-
-        <div className="elab-v3-os__center">
-          <V3Viewport />
-          <V3DynamicWorkbench />
+      <div className="elab-v3-app-shell" {...{ [ELAB_V3_COMPOSITION.applicationShell]: '' }}>
+        <div className="elab-v3-app-shell__command">
+          <V3CommandDock />
         </div>
 
-        <aside className="elab-v3-os__right">
-          <V3BlueprintInspectorPanel />
-          <V3ActiveWorkOrderPanel />
-          <V3ContextInspectorPanel />
-        </aside>
+        <V3WorkspacePills />
+
+        <div className="elab-v3-app-shell__stage-wrap">
+          <V3WorkspaceStage />
+          <V3DesignVariantStrip />
+        </div>
+
+        <V3ContextAwareWorkbench />
       </div>
-
-      <V3BottomOperationsBoard />
 
       {flags.spotlightSearchEnabled && <V3StudioSpotlightSearch />}
       {flags.aiAssistantEnabled && <V3StudioAiAssistantDock />}
@@ -96,7 +67,7 @@ function ExperienceLabV3ShellInner() {
   );
 }
 
-/** Experience Lab V3 — parallel experimental world-building OS. V2 untouched. */
+/** Experience Lab V3 — Five-Workspace Operating System. V2 untouched. */
 export function ExperienceLabV3Shell(_props: Props) {
   return (
     <ExperienceLabV3StoreProvider>

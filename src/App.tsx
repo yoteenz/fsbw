@@ -316,6 +316,10 @@ const AdminStudioWorldBuilder = lazyWithRetry(
   () => import('./pages/admin/studio/world-builder/page'),
   'AdminStudioWorldBuilder'
 );
+const AdminStudioWorldV3 = lazyWithRetry(
+  () => import('./pages/admin/studio/world-v3/page'),
+  'AdminStudioWorldV3'
+);
 const AdminStudioExperienceLabTestV2Alias = lazyWithRetry(
   () => import('./pages/admin/studio/experience-lab/test-v2/page'),
   'AdminStudioExperienceLabTestV2Alias'
@@ -2170,6 +2174,11 @@ function App() {
           <Route path="studio/world-builder" element={
             <Suspense fallback={<StudioRouteSuspenseFallback label="World Builder" />}>
               <AdminStudioWorldBuilder />
+            </Suspense>
+          } />
+          <Route path="studio/world-v3" element={
+            <Suspense fallback={<StudioRouteSuspenseFallback label="World V3" />}>
+              <AdminStudioWorldV3 />
             </Suspense>
           } />
           <Route path="studio/experience-lab/health" element={
