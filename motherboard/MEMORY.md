@@ -49688,3 +49688,11 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 **Tests:** Updated FRC + view-angles width assertions. 52/52 PASS.
 
+---
+
+## 2026-07-14 — Monument approval CTA height −15%
+
+**Founder request:** Reduce height of `APPROVE AND SEND TO CREATIVE STUDIO` button by 15%.
+
+**Change:** `experience-lab-v2.css` — `--elab-monument-cta-v-scale: 0.85` on `.elab-approval-bridge--monument`; vertical padding and copy gap scaled via `calc(* var(--elab-monument-cta-v-scale))`. Test assertion added. 52/52 PASS.
+

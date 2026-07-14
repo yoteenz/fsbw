@@ -2826,6 +2826,7 @@ button.elab-cmd__meta-chip {
 }
 
 .elab-approval-bridge--monument {
+  --elab-monument-cta-v-scale: 0.85;
   padding: 6px clamp(12px, 3vw, 20px) 4px;
   text-align: center;
   display: block;
@@ -2836,7 +2837,7 @@ button.elab-cmd__meta-chip {
   position: relative;
   width: 100%;
   margin: 0 auto;
-  padding: 10px 36px 10px 16px;
+  padding: calc(10px * var(--elab-monument-cta-v-scale)) 36px calc(10px * var(--elab-monument-cta-v-scale)) 16px;
   min-height: 0;
   border: 1px solid rgba(197, 160, 89, 0.52);
   border-radius: 8px;
@@ -2907,6 +2908,10 @@ button.elab-cmd__meta-chip {
   text-align: center;
   max-width: calc(100% - 28px);
   color: var(--elab-gold);
+}
+
+.elab-approval-bridge--monument .elab-approval-bridge__copy {
+  gap: calc(4px * var(--elab-monument-cta-v-scale));
 }
 
 .elab-approval-bridge__glow {
