@@ -37,6 +37,7 @@ export function ExperienceLabBlueprintCard({
       {...{ [ELAB_V2_COMPOSITION.blueprintCard]: '' }}
       aria-label="Blueprint card"
     >
+      <div className="elab-arch-panel__surface">
       <div className="elab-blueprint-card__thumb" aria-hidden={showLoading}>
         {blueprintUrl ? (
           <img src={blueprintUrl} alt="" className="elab-blueprint-card__img" />
@@ -66,6 +67,7 @@ export function ExperienceLabBlueprintCard({
             Open Blueprint
           </button>
         ) : null}
+      </div>
       </div>
     </div>
   );

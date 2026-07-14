@@ -449,10 +449,16 @@ describe('Experience Lab V2 — Panel orchestration', () => {
     expect(viewport).toContain('elab-arch-panel elab-arch-panel--right');
     expect(viewport).toContain('elab-arch-panel elab-arch-panel--center');
     expect(blueprint).toContain('elab-arch-panel elab-arch-panel--left');
+    expect(blueprint).toContain('elab-arch-panel__surface');
     expect(context).toContain('elab-arch-panel elab-arch-panel--right elab-arch-panel--enter');
+    expect(context).toContain('elab-arch-panel__surface');
+    expect(viewport).toContain('elab-arch-panel__surface');
+    expect(css).toMatch(/\.elab-viewport__hud-safe\s*\{[\s\S]*?perspective:\s*var\(--elab-arch-perspective\)/);
+    expect(css).toContain('.elab-arch-panel__surface');
     expect(parallax).toContain('--elab-parallax-x');
     expect(parallax).toContain('MAX_PARALLAX_PX = 6');
     expect(css).toContain('--elab-arch-perspective: 1800px');
+    expect(css).toContain('.elab-arch-panel__surface');
     expect(css).toContain('perspective: var(--elab-arch-perspective)');
     expect(css).toContain('transform-style: preserve-3d');
     expect(css).toContain('.elab-arch-panel--left');

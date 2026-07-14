@@ -136,6 +136,7 @@ export function ExperienceLabDynamicContextCard({
       {...{ [ELAB_V2_COMPOSITION.dynamicContextCard]: '' }}
       aria-label={`${title} context`}
     >
+      <div className="elab-arch-panel__surface">
       <header className="elab-context-card__header">
         <span className="elab-context-card__title">{title}</span>
         {onExpand ? (
@@ -147,6 +148,7 @@ export function ExperienceLabDynamicContextCard({
 
       <div key={toolId} className="elab-context-card__body elab-context-card__body--swap">
         {renderBody()}
+      </div>
       </div>
     </div>
   );

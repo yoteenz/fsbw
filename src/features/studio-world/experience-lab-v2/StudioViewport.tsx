@@ -159,37 +159,38 @@ export function StudioViewport({
     >
       <div className="elab-viewport__stage">
         <ExperienceLabEnvironmentLayer scope="viewport" isMobile={isCompact} environmentUrl={environmentUrl} />
-
-        <div className="elab-viewport__hud" data-elab-viewport-hud aria-label="Viewport HUD">
-          <div className="elab-viewport__hud-safe">
-            <ExperienceLabBlueprintCard
-              environmentName={departmentName}
-              revision={revision}
-              status={artifactStatus}
-              isStale={isStale}
-              blueprintUrl={blueprintThumbnailUrl ?? null}
-              blueprintStatus={blueprintThumbnailStatus}
-              onOpenBlueprint={onOpenBlueprint}
-            />
-
-            {dynamicContextCard}
-
-            {onFocusMode ? (
-              <button
-                type="button"
-                className="elab-viewport__focus-ctrl elab-arch-panel elab-arch-panel--right"
-                onClick={toggleFocus}
-                aria-pressed={focusActive}
-                aria-label={focusActive ? 'Exit focus mode' : 'Enter focus mode'}
-                title="Focus mode"
-              >
-                <ExperienceLabIcon name="focusMode" size="sm" decorative active={focusActive} />
-              </button>
-            ) : null}
-          </div>
-        </div>
-
         <div className="elab-viewport__stage-content">{renderStage()}</div>
+      </div>
+
+      <div className="elab-viewport__hud" data-elab-viewport-hud aria-label="Viewport HUD">
+        <div className="elab-viewport__hud-safe">
+          <ExperienceLabBlueprintCard
+            environmentName={departmentName}
+            revision={revision}
+            status={artifactStatus}
+            isStale={isStale}
+            blueprintUrl={blueprintThumbnailUrl ?? null}
+            blueprintStatus={blueprintThumbnailStatus}
+            onOpenBlueprint={onOpenBlueprint}
+          />
+
+          {dynamicContextCard}
+
+          {onFocusMode ? (
+            <button
+              type="button"
+              className="elab-viewport__focus-ctrl elab-arch-panel elab-arch-panel--right"
+              onClick={toggleFocus}
+              aria-pressed={focusActive}
+              aria-label={focusActive ? 'Exit focus mode' : 'Enter focus mode'}
+              title="Focus mode"
+            >
+              <span className="elab-arch-panel__surface">
+                <ExperienceLabIcon name="focusMode" size="sm" decorative active={focusActive} />
+              </span>
+            </button>
+          ) : null}
+        </div>
       </div>
 
       {viewAngles ? (

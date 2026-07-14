@@ -49655,3 +49655,22 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 **Spatial review:** SKIPPED — CSS-only 3D rendering pass, no new surfaces or nav.
 
+---
+
+## 2026-07-14 — Architectural perspective panels tilt fix (full conversation)
+
+**Founder report:** Floating viewport HUD panels in front of the render were not tilting — 3D perspective pass had no visible effect.
+
+**Root causes:**
+1. HUD lived inside `.elab-viewport__stage` (`overflow: hidden`), which flattens 3D transformed descendants before perspective can apply.
+2. `backdrop-filter` + `transform` on the same element prevents reliable 3D rotation in Chromium/WebKit.
+
+**Fix:**
+- Moved `.elab-viewport__hud` to be a **sibling** of `.elab-viewport__stage` (same absolute inset; no layout change).
+- Added `perspective` on `.elab-viewport__hud-safe` + `transform-style: preserve-3d` + `overflow: visible` on HUD chain.
+- Split rendering: outer `.elab-arch-panel` = GPU transform only; inner `.elab-arch-panel__surface` = glass/backdrop/rim.
+- Wrapped Blueprint Card, Context Card, and Focus control contents in `elab-arch-panel__surface`.
+- Scoped arch CSS tokens on `.elab-viewport` for guaranteed inheritance.
+
+**Files:** `StudioViewport.tsx`, `ExperienceLabBlueprintCard.tsx`, `ExperienceLabDynamicContextCard.tsx`, `experience-lab-v2.css`, `experience-lab-v2.test.ts`. 52 tests PASS.
+
