@@ -49619,3 +49619,5 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 **Follow-up:** Monument CTA single-line label `APPROVE AND SEND TO CREATIVE STUDIO`; centered lock subtitle below button `LOCK BLUEPRINT • LOCK RENDER • LOCK CONSTRUCTION PLAN`; blockers chip remains hidden.
 
+**Follow-up (typography):** Monument CTA font-weight 800→500 (lighter); thin gold border `1px solid rgba(197, 160, 89, 0.52)` on primary button to match reference.
+

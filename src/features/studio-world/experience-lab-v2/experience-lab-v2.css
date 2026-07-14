@@ -2566,14 +2566,14 @@ button.elab-cmd__meta-chip {
   margin: 0 auto;
   padding: 8px 36px 8px 16px;
   min-height: 0;
-  border: 1px solid var(--elab-hud-border-color);
+  border: 1px solid rgba(197, 160, 89, 0.52);
   border-radius: calc(var(--elab-hud-radius-panel) + 2px);
   background: var(--elab-hud-glass-shine), rgba(12, 14, 18, 0.42);
   backdrop-filter: var(--elab-hud-blur);
   -webkit-backdrop-filter: var(--elab-hud-blur);
   color: var(--elab-gold);
   font-size: 9px;
-  font-weight: 800;
+  font-weight: 500;
   letter-spacing: 0.1em;
   cursor: pointer;
   display: flex;
@@ -2582,7 +2582,7 @@ button.elab-cmd__meta-chip {
   box-shadow:
     var(--elab-hud-shadow-stack),
     inset 0 1px 0 var(--elab-hud-edge-top),
-    0 0 24px rgba(197, 160, 89, 0.08);
+    0 0 20px rgba(197, 160, 89, 0.06);
   transition:
     transform var(--elab-hud-duration) var(--elab-hud-ease),
     box-shadow var(--elab-hud-duration) var(--elab-hud-ease),
@@ -2591,11 +2591,11 @@ button.elab-cmd__meta-chip {
 
 .elab-approval-bridge--monument .elab-approval-bridge__primary:hover:not(:disabled) {
   transform: translateY(var(--elab-hud-lift));
-  border-color: rgba(197, 160, 89, 0.48);
+  border-color: rgba(197, 160, 89, 0.72);
   box-shadow:
     var(--elab-hud-shadow-hover),
     inset 0 1px 0 rgba(255, 248, 232, 0.18),
-    0 0 28px rgba(197, 160, 89, 0.14);
+    0 0 24px rgba(197, 160, 89, 0.1);
 }
 
 .elab-approval-bridge--monument .elab-approval-bridge__primary:focus-visible {
@@ -2619,6 +2619,7 @@ button.elab-cmd__meta-chip {
 
 .elab-approval-bridge--monument .elab-approval-bridge__label {
   font-size: inherit;
+  font-weight: 500;
   letter-spacing: 0.08em;
 }
 
