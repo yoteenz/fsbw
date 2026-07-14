@@ -49500,3 +49500,24 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 **Preserved:** Viewport dimensions, Design Variant strip position, Workbench, Command Dock, Department Dock, Orb, typography, colors, interactions unchanged.
 
 **Spatial review:** SKIPPED — in-place viewport CSS/DOM refactor, no new surfaces.
+
+---
+
+## 2026-07-14 — Experience Lab V2 Visual Polish Pass 01 (full conversation)
+
+**Founder sprint:** Premium HUD composition + glassmorphism refinement — CSS-only visual polish across floating HUD surfaces. Zero architecture, layout, feature, or component position changes.
+
+**Objective:** Make the HUD feel like world-class OS software (architectural glass, edge lighting, layered elevation, chip consistency, understated motion). Render remains visual hero.
+
+**Shipped:**
+
+- **`experience-lab-v2.css`** — HUD design tokens on `.elab-workstation` (`--elab-hud-inset-*`, `--elab-hud-glass-fill/shine`, `--elab-hud-shadow-stack`, `--elab-hud-edge-*`, motion tokens); `.elab-hud-glass` shared surface pattern; polished blueprint card (fresnel `::before`), tool palette, inspector chips, mode segments, status chip, float panels, inspector switcher; design variant thumb/badge glass + selection glow; workbench harmony (lower-deck gradient, founder-wb tiered glass continuity); expanded `prefers-reduced-motion` for HUD hovers/transitions
+- **`experience-lab-v2.test.ts`** — New polish token test; view-angles border-radius assertion updated for token-based `calc(var(--elab-hud-radius-panel) + 2px)`
+
+**Locked (unchanged):** Viewport, render, Command Dock, Department Dock, Workbench, Orb, Design Variant strip position, Approval Bridge, drawer architecture, Environment Package system, HUD element positions, breakpoints, interactions.
+
+**Tests:** 50/50 `experience-lab-v2.test.ts` PASS; build PASS.
+
+**Spatial review:** SKIPPED — CSS-only refinement, no new surfaces or nav.
+
+**One commit + one push** on `master` via `agent-commit.sh`.

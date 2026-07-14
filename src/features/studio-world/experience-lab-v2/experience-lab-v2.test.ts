@@ -438,6 +438,17 @@ describe('Experience Lab V2 — Viewport environment', () => {
     expect(css).toMatch(/\.elab-viewport__stage-content\s*\{[\s\S]*?position:\s*absolute/);
   });
 
+  it('defines premium HUD polish tokens for glass, elevation, and motion', () => {
+    const css = readV2Source('experience-lab-v2.css');
+    expect(css).toContain('--elab-hud-glass-fill');
+    expect(css).toContain('--elab-hud-shadow-stack');
+    expect(css).toContain('--elab-hud-edge-top');
+    expect(css).toContain('.elab-hud-glass');
+    expect(css).toContain('--elab-hud-duration');
+    expect(css).toContain('--elab-hud-inset-top');
+    expect(css).toMatch(/@media\s*\(prefers-reduced-motion:\s*reduce\)/);
+  });
+
   it('scopes viewport environment with cover/center layering', () => {
     const css = readV2Source('experience-lab-v2.css');
     expect(css).toContain('.elab-v2__env--viewport');
@@ -467,7 +478,7 @@ describe('Experience Lab V2 — Viewport environment', () => {
   it('view angles use inset rounded card not edge-to-edge strip', () => {
     const css = readV2Source('experience-lab-v2.css');
     expect(css).toMatch(/\.elab-viewport__angles-chrome\s*\{[\s\S]*?background:\s*transparent/);
-    expect(css).toMatch(/\.elab-viewport__angles-chrome\s+\.elab-view-angles--chrome\s*\{[\s\S]*?border-radius:\s*14px/);
+    expect(css).toMatch(/\.elab-viewport__angles-chrome\s+\.elab-view-angles--chrome\s*\{[\s\S]*?border-radius:\s*calc\(var\(--elab-hud-radius-panel\) \+ 2px\)/);
     expect(css).toMatch(/\.elab-viewport__angles-chrome\s+\.elab-view-angles--chrome\s*\{[\s\S]*?max-width:\s*88%/);
   });
 
