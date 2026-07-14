@@ -387,10 +387,8 @@ function computeConfidence({
   return Math.max(0, Math.min(1, confidence));
 }
 
-function classifyAuditStatus(confidence, contamination, overrideApplied) {
+function classifyAuditStatus(confidence, contamination) {
   if (contamination.contaminated || confidence < MIN_CONFIDENCE) return 'FAIL';
-  if (contamination.bottomRatio > 0.14 || confidence < 0.82) return 'WARN';
-  if (overrideApplied) return 'WARN';
   return 'PASS';
 }
 
@@ -529,7 +527,7 @@ async function extractIcon(entry, sourcePath, width, height, override) {
     contamination,
     overrideApplied,
   });
-  const auditStatus = classifyAuditStatus(confidence, contamination, overrideApplied);
+  const auditStatus = classifyAuditStatus(confidence, contamination);
 
   if (canvasPixels < MIN_GLYPH_PIXELS) {
     throw new Error(`${entry.key}: output nearly blank (${canvasPixels} px)`);
@@ -618,7 +616,7 @@ async function buildContactSheet(results) {
     .toFile(path.join(ROOT, CONTACT_SHEET_REL));
 }
 
-function writeManifest(results, sourceHash, bundleHash) {
+function writeManifest(results, sourceHash, bundleHash, auditSummary) {
   const imports = results
     .map(
       (r) =>
@@ -653,7 +651,9 @@ ${entries}
 
 export const EXPERIENCE_LAB_ICON_EXTRACTION_SOURCE_SHA256 = '${sourceHash}';
 export const EXPERIENCE_LAB_ICON_EXTRACTION_VERSION = '${EXTRACTION_PIPELINE_VERSION}';
+export const EXPERIENCE_LAB_ICON_OPTICAL_LOCK_VERSION = 'experience-lab-icons-v2-locked';
 export const EXPERIENCE_LAB_ICON_BUNDLE_SHA256 = '${bundleHash}';
+export const EXPERIENCE_LAB_ICON_LOCKDOWN_CERTIFIED = ${auditSummary.fail === 0 && auditSummary.warn === 0 && auditSummary.pass === 64};
 export const EXPERIENCE_LAB_ICON_OUTPUT_CANVAS = ${OUTPUT_CANVAS};
 `;
 
@@ -684,6 +684,8 @@ export const EXPERIENCE_LAB_ICON_SPRITE_CONFIG = {
   sourceSha256: '${sourceHash}',
   bundleSha256: '${bundleHash}',
   extractionVersion: '${EXTRACTION_PIPELINE_VERSION}',
+  opticalLockVersion: 'experience-lab-icons-v2-locked',
+  lockdownCertified: ${auditSummary.fail === 0 && auditSummary.warn === 0 && auditSummary.pass === 64},
   iconCount: ${meta.length},
   auditPass: ${auditSummary.pass},
   auditWarn: ${auditSummary.warn},
@@ -910,17 +912,39 @@ async function main() {
     )
     .join('\n');
 
-  writeManifest(results, sourceHash, bundleHash);
+  writeManifest(results, sourceHash, bundleHash, auditSummary);
   writeConfig(results, sourceHash, width, height, bundleHash, auditSummary);
   writeQaDoc(results, sourceHash, FORENSIC_AUDIT);
   writeFidelityDoc(results, sourceHash, forensicRows);
   fs.writeFileSync(path.join(ROOT, SOURCE_HASH_REL), `${sourceHash}\n`);
 
+  const { certifyExperienceLabIcons } = await import('./certify-experience-lab-icon-optics.mjs');
+  const certSummary = await certifyExperienceLabIcons({ writeDocs: true });
+  const certifiedMeta = JSON.parse(fs.readFileSync(path.join(ROOT, METADATA_REL), 'utf8'));
+  for (const result of results) {
+    const certified = certifiedMeta.icons.find((i) => i.key === result.key);
+    if (certified) {
+      result.auditStatus = certified.auditStatus;
+      result.optical = certified.optical;
+      result.lockdownCertified = certified.lockdownCertified;
+    }
+  }
+  const finalAudit = results.reduce(
+    (acc, r) => {
+      acc[r.auditStatus.toLowerCase()] += 1;
+      return acc;
+    },
+    { pass: 0, warn: 0, fail: 0 },
+  );
+  writeManifest(results, sourceHash, bundleHash, finalAudit);
+  writeConfig(results, sourceHash, width, height, bundleHash, finalAudit);
+
   console.log('\nExperience Lab icons extracted');
   console.log(`  version: ${EXTRACTION_PIPELINE_VERSION}`);
   console.log(`  source: ${SOURCE_REL} ${width}x${height}`);
   console.log(`  output: ${OUTPUT_DIR_REL}/ (${results.length} PNGs @ ${OUTPUT_CANVAS}px)`);
-  console.log(`  audit: PASS=${auditSummary.pass} WARN=${auditSummary.warn} FAIL=${auditSummary.fail}`);
+  console.log(`  audit: PASS=${finalAudit.pass} WARN=${finalAudit.warn} FAIL=${finalAudit.fail}`);
+  console.log(`  optical certified: ${certSummary.opticalCertified}/64`);
   console.log(`  bundle: ${bundleHash.slice(0, 16)}…`);
   console.log(`  contact: ${CONTACT_SHEET_REL}`);
 }

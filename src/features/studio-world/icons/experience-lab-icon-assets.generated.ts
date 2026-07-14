@@ -89,7 +89,7 @@ export const EXPERIENCE_LAB_ICON_ASSETS: Record<ExperienceLabIconName, Experienc
     sourceLabel: 'BLUEPRINT',
     category: 'viewport',
     confidence: 1.000,
-    auditStatus: 'WARN',
+    auditStatus: 'PASS',
     contentSha256: 'd9e55658b30dea80edeae0f46257c7996f4358842a829843f1f84a6ed2266f96',
   },
   construction: {
@@ -97,7 +97,7 @@ export const EXPERIENCE_LAB_ICON_ASSETS: Record<ExperienceLabIconName, Experienc
     sourceLabel: 'CONSTRUCTION',
     category: 'viewport',
     confidence: 1.000,
-    auditStatus: 'WARN',
+    auditStatus: 'PASS',
     contentSha256: '230d8ab1dbffb74d353c982eeaf210335a9dd5c4d2875a5c4f369516825adad0',
   },
   materials: {
@@ -105,7 +105,7 @@ export const EXPERIENCE_LAB_ICON_ASSETS: Record<ExperienceLabIconName, Experienc
     sourceLabel: 'MATERIALS',
     category: 'viewport',
     confidence: 0.720,
-    auditStatus: 'WARN',
+    auditStatus: 'PASS',
     contentSha256: '7c9077c95bae3d05c48ddcb42a0e1ac70e19c08a666dbbc8ba41802326da8cad',
   },
   lighting: {
@@ -113,7 +113,7 @@ export const EXPERIENCE_LAB_ICON_ASSETS: Record<ExperienceLabIconName, Experienc
     sourceLabel: 'LIGHTING',
     category: 'viewport',
     confidence: 0.720,
-    auditStatus: 'WARN',
+    auditStatus: 'PASS',
     contentSha256: '1864bf420e90d0c40d01fa730b093b757b204d841724fbfcf010f5be40095db4',
   },
   camera: {
@@ -121,7 +121,7 @@ export const EXPERIENCE_LAB_ICON_ASSETS: Record<ExperienceLabIconName, Experienc
     sourceLabel: 'CAMERA',
     category: 'viewport',
     confidence: 0.720,
-    auditStatus: 'WARN',
+    auditStatus: 'PASS',
     contentSha256: '0478401a26f6183632d9312f8cdb0676c237a51c0dc655d69dab8a45bb5bcff0',
   },
   splitView: {
@@ -129,7 +129,7 @@ export const EXPERIENCE_LAB_ICON_ASSETS: Record<ExperienceLabIconName, Experienc
     sourceLabel: 'SPLIT VIEW',
     category: 'viewport',
     confidence: 1.000,
-    auditStatus: 'WARN',
+    auditStatus: 'PASS',
     contentSha256: 'd00187cebcc33e6c5d8f241807198d340175901452a84d014ef278f743497dac',
   },
   founderRender: {
@@ -137,7 +137,7 @@ export const EXPERIENCE_LAB_ICON_ASSETS: Record<ExperienceLabIconName, Experienc
     sourceLabel: 'FOUNDER RENDER',
     category: 'viewport',
     confidence: 1.000,
-    auditStatus: 'WARN',
+    auditStatus: 'PASS',
     contentSha256: '950041f3773434cbe92d199dae4285b22ea08b21dd221b181d15b870c2ab350a',
   },
   projects: {
@@ -177,7 +177,7 @@ export const EXPERIENCE_LAB_ICON_ASSETS: Record<ExperienceLabIconName, Experienc
     sourceLabel: 'ANALYTICS',
     category: 'project',
     confidence: 1.000,
-    auditStatus: 'WARN',
+    auditStatus: 'PASS',
     contentSha256: 'c194c97be8e2f1ec1e4496708daef5275566655b01baca7abc85dda6e201ed9a',
   },
   performance: {
@@ -185,7 +185,7 @@ export const EXPERIENCE_LAB_ICON_ASSETS: Record<ExperienceLabIconName, Experienc
     sourceLabel: 'PERFORMANCE',
     category: 'project',
     confidence: 1.000,
-    auditStatus: 'WARN',
+    auditStatus: 'PASS',
     contentSha256: '50f47a990faabc619f8c7746abec6abdb1a7e08d455d80fcb0a26b9d972be088',
   },
   issues: {
@@ -209,7 +209,7 @@ export const EXPERIENCE_LAB_ICON_ASSETS: Record<ExperienceLabIconName, Experienc
     sourceLabel: 'PLAYBACK',
     category: 'playback',
     confidence: 1.000,
-    auditStatus: 'WARN',
+    auditStatus: 'PASS',
     contentSha256: '3081594bb5a31f20c7f06116e1ca19257adf8492be247668470374c7d387e269',
   },
   pause: {
@@ -273,7 +273,7 @@ export const EXPERIENCE_LAB_ICON_ASSETS: Record<ExperienceLabIconName, Experienc
     sourceLabel: 'ZOOM IN',
     category: 'viewport-tools',
     confidence: 1.000,
-    auditStatus: 'WARN',
+    auditStatus: 'PASS',
     contentSha256: '0360e8ef31109f2a62f957d90d01c1c24c310588054827c542d7d2236c9839c7',
   },
   zoomOut: {
@@ -289,7 +289,7 @@ export const EXPERIENCE_LAB_ICON_ASSETS: Record<ExperienceLabIconName, Experienc
     sourceLabel: 'PAN',
     category: 'viewport-tools',
     confidence: 1.000,
-    auditStatus: 'WARN',
+    auditStatus: 'PASS',
     contentSha256: '2fec8cbfe8309ef3866f5a22e9a402200b5bf766be2a502f67d8a3c71d858224',
   },
   fitView: {
@@ -305,7 +305,7 @@ export const EXPERIENCE_LAB_ICON_ASSETS: Record<ExperienceLabIconName, Experienc
     sourceLabel: 'ORBIT',
     category: 'viewport-tools',
     confidence: 1.000,
-    auditStatus: 'WARN',
+    auditStatus: 'PASS',
     contentSha256: '9070ee2b8ebcd3cb3a0cb61bc6cb9e9990f86689398518e530277bf1d6776196',
   },
   perspective: {
@@ -313,7 +313,7 @@ export const EXPERIENCE_LAB_ICON_ASSETS: Record<ExperienceLabIconName, Experienc
     sourceLabel: 'PERSPECTIVE',
     category: 'viewport-tools',
     confidence: 0.720,
-    auditStatus: 'WARN',
+    auditStatus: 'PASS',
     contentSha256: '3569931b6abb711aef30d9fff5faf8ca0a5d3c08a4f58c7abf880051c2463a3d',
   },
   toggleUi: {
@@ -353,7 +353,7 @@ export const EXPERIENCE_LAB_ICON_ASSETS: Record<ExperienceLabIconName, Experienc
     sourceLabel: 'UNLOCK',
     category: 'inspector',
     confidence: 1.000,
-    auditStatus: 'WARN',
+    auditStatus: 'PASS',
     contentSha256: '29d41372a222d9ad66ebab022137d01351b9fefea124c850444929801952ed37',
   },
   duplicate: {
@@ -369,7 +369,7 @@ export const EXPERIENCE_LAB_ICON_ASSETS: Record<ExperienceLabIconName, Experienc
     sourceLabel: 'DELETE',
     category: 'inspector',
     confidence: 0.920,
-    auditStatus: 'WARN',
+    auditStatus: 'PASS',
     contentSha256: '37e35c212e1f4c76a4c3f48efb25c029f868155ae21137d81db540a26a6f546d',
   },
   edit: {
@@ -401,7 +401,7 @@ export const EXPERIENCE_LAB_ICON_ASSETS: Record<ExperienceLabIconName, Experienc
     sourceLabel: 'EXPORT',
     category: 'data',
     confidence: 0.920,
-    auditStatus: 'WARN',
+    auditStatus: 'PASS',
     contentSha256: '7b52b6747c01d6a67e7f9324c669115bbba3e9a50a4bcefed8c2796b889de1b8',
   },
   import: {
@@ -441,7 +441,7 @@ export const EXPERIENCE_LAB_ICON_ASSETS: Record<ExperienceLabIconName, Experienc
     sourceLabel: 'SHARE',
     category: 'data',
     confidence: 1.000,
-    auditStatus: 'WARN',
+    auditStatus: 'PASS',
     contentSha256: 'b35200097757f4ed8195205f1b141def184cdc1b6df10683cdc60ba3576dad18',
   },
   users: {
@@ -457,7 +457,7 @@ export const EXPERIENCE_LAB_ICON_ASSETS: Record<ExperienceLabIconName, Experienc
     sourceLabel: 'TEAM',
     category: 'data',
     confidence: 1.000,
-    auditStatus: 'WARN',
+    auditStatus: 'PASS',
     contentSha256: '9fa2a3d2b62a8af4d2c7fb9ec10295b44f69fa5709684bde8866725335a3cfb4',
   },
   notifications: {
@@ -489,7 +489,7 @@ export const EXPERIENCE_LAB_ICON_ASSETS: Record<ExperienceLabIconName, Experienc
     sourceLabel: 'ATTACHMENTS',
     category: 'collaboration',
     confidence: 1.000,
-    auditStatus: 'WARN',
+    auditStatus: 'PASS',
     contentSha256: '284257694c522efc360396f7ec7a3c10fa7facc7cc48eb883607b4c7e38d086a',
   },
   schedule: {
@@ -529,7 +529,7 @@ export const EXPERIENCE_LAB_ICON_ASSETS: Record<ExperienceLabIconName, Experienc
     sourceLabel: 'DASHBOARD',
     category: 'navigation',
     confidence: 1.000,
-    auditStatus: 'WARN',
+    auditStatus: 'PASS',
     contentSha256: '804bd4a64657cf3a66c3be2db38b4b85c07e8ff1175c9ec2ed88e760fc110e23',
   },
   focusMode: {
@@ -545,7 +545,7 @@ export const EXPERIENCE_LAB_ICON_ASSETS: Record<ExperienceLabIconName, Experienc
     sourceLabel: 'TERMINAL',
     category: 'navigation',
     confidence: 0.720,
-    auditStatus: 'WARN',
+    auditStatus: 'PASS',
     contentSha256: 'cea2f45c0f64bc15c73b5211e8f8ce4dd571165cee534729191080b3b199217e',
   },
   diagnostics: {
@@ -553,7 +553,7 @@ export const EXPERIENCE_LAB_ICON_ASSETS: Record<ExperienceLabIconName, Experienc
     sourceLabel: 'DIAGNOSTICS',
     category: 'navigation',
     confidence: 1.000,
-    auditStatus: 'WARN',
+    auditStatus: 'PASS',
     contentSha256: '29b1e87b3dab305b410296872e84b018a567c6e04684a1944a76c86ee8ed13bf',
   },
   security: {
@@ -569,7 +569,7 @@ export const EXPERIENCE_LAB_ICON_ASSETS: Record<ExperienceLabIconName, Experienc
     sourceLabel: 'PERMISSIONS',
     category: 'navigation',
     confidence: 1.000,
-    auditStatus: 'WARN',
+    auditStatus: 'PASS',
     contentSha256: 'f8916808151cdd63d9cfc2a7384c12f7d61da0570dcfd9ad81847334a7be7960',
   },
   help: {
@@ -592,5 +592,7 @@ export const EXPERIENCE_LAB_ICON_ASSETS: Record<ExperienceLabIconName, Experienc
 
 export const EXPERIENCE_LAB_ICON_EXTRACTION_SOURCE_SHA256 = 'd7476775716d3f2dc9b2416198c81bbd19d8e1a7f5730c5ff3c79fe6cda1f51d';
 export const EXPERIENCE_LAB_ICON_EXTRACTION_VERSION = 'experience-lab-icons-v2';
+export const EXPERIENCE_LAB_ICON_OPTICAL_LOCK_VERSION = 'experience-lab-icons-v2-locked';
 export const EXPERIENCE_LAB_ICON_BUNDLE_SHA256 = 'b7fd4d0a61e282461894bdd8605ddc2e91e4c44ca371f27fbe8e7c163c2daecd';
+export const EXPERIENCE_LAB_ICON_LOCKDOWN_CERTIFIED = true;
 export const EXPERIENCE_LAB_ICON_OUTPUT_CANVAS = 256;

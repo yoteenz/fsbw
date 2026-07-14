@@ -9,6 +9,9 @@ export type { ExperienceLabIconName } from './experience-lab-icon-registry';
 export { EXPERIENCE_LAB_ICON_SPRITE_CONFIG } from './experience-lab-icon-sprite.config';
 export { EXPERIENCE_LAB_ICON_ASSETS } from './experience-lab-icon-assets.generated';
 export {
-  EXPERIENCE_LAB_ICON_OPTICAL_SCALE,
+  EXPERIENCE_LAB_ICON_OPTICAL_PROFILE,
+  EXPERIENCE_LAB_ICON_OPTICAL_CERTIFICATION_VERSION,
+  resolveExperienceLabIconOpticalProfile,
   resolveExperienceLabIconOpticalScale,
-} from './experience-lab-icon-optical-scale';
+  type ExperienceLabIconOpticalProfile,
+} from './experience-lab-icon-optical-profile';

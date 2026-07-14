@@ -5,7 +5,7 @@ import {
   type ExperienceLabIconName,
 } from './experience-lab-icon-registry';
 import { EXPERIENCE_LAB_ICON_ASSETS } from './experience-lab-icon-assets.generated';
-import { resolveExperienceLabIconOpticalScale } from './experience-lab-icon-optical-scale';
+import { resolveExperienceLabIconOpticalProfile } from './experience-lab-icon-optical-profile';
 import './experience-lab-icon.css';
 
 export type ExperienceLabIconSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
@@ -71,12 +71,15 @@ export function ExperienceLabIcon({
   }
 
   const asset = EXPERIENCE_LAB_ICON_ASSETS[name];
-  const opticalScale = resolveExperienceLabIconOpticalScale(name);
+  const optical = resolveExperienceLabIconOpticalProfile(name);
+  const opticalScale = optical.scale;
   const px = Math.round(SIZE_PX[size] * opticalScale);
+  const offsetScale = SIZE_PX[size] / SIZE_PX.md;
 
   const style: CSSProperties = {
     width: px,
     height: px,
+    objectPosition: `calc(50% + ${Math.round(optical.translateX * offsetScale)}px) calc(50% + ${Math.round(optical.translateY * offsetScale)}px)`,
   };
 
   const classNames = [

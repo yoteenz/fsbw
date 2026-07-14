@@ -1,5 +1,5 @@
 {
-  "version": "experience-lab-icons-v2",
+  "version": "experience-lab-icons-v2-locked",
   "sourceSha256": "d7476775716d3f2dc9b2416198c81bbd19d8e1a7f5730c5ff3c79fe6cda1f51d",
   "bundleSha256": "b7fd4d0a61e282461894bdd8605ddc2e91e4c44ca371f27fbe8e7c163c2daecd",
   "icons": [
@@ -36,7 +36,25 @@
         "totalPixels": 6327
       },
       "contentSha256": "f97b64c77da837b6119445f2f2dd92ce0131c9c97d216dad8f9f96976875421f",
-      "overrideReason": null
+      "overrideReason": null,
+      "optical": {
+        "scale": 0.95,
+        "translateX": 0,
+        "translateY": 0,
+        "occupancy": 0.097,
+        "aspect": 1.45,
+        "centeringScore": 0.818,
+        "paddingScore": 1,
+        "scaleScore": 1,
+        "strokeConsistency": 1,
+        "transparencyValid": true,
+        "familyValid": true,
+        "opticalScore": 0.936,
+        "runtimeValidated": true,
+        "certified": true
+      },
+      "runtimeValidated": true,
+      "lockdownCertified": true
     },
     {
       "key": "blueprint",
@@ -60,7 +78,7 @@
       "edgePixels": 0,
       "confidence": 1,
       "overrideApplied": true,
-      "auditStatus": "WARN",
+      "auditStatus": "PASS",
       "textContamination": {
         "contaminated": false,
         "score": 0,
@@ -71,7 +89,25 @@
         "totalPixels": 1313
       },
       "contentSha256": "d9e55658b30dea80edeae0f46257c7996f4358842a829843f1f84a6ed2266f96",
-      "overrideReason": "Blueprint roll glyph label-safe cutoff."
+      "overrideReason": "Blueprint roll glyph label-safe cutoff.",
+      "optical": {
+        "scale": 1.06,
+        "translateX": 0,
+        "translateY": 0,
+        "occupancy": 0.02,
+        "aspect": 1.91,
+        "centeringScore": 0.95,
+        "paddingScore": 1,
+        "scaleScore": 1,
+        "strokeConsistency": 1,
+        "transparencyValid": true,
+        "familyValid": true,
+        "opticalScore": 0.982,
+        "runtimeValidated": true,
+        "certified": true
+      },
+      "runtimeValidated": true,
+      "lockdownCertified": true
     },
     {
       "key": "construction",
@@ -95,7 +131,7 @@
       "edgePixels": 0,
       "confidence": 1,
       "overrideApplied": true,
-      "auditStatus": "WARN",
+      "auditStatus": "PASS",
       "textContamination": {
         "contaminated": false,
         "score": 0,
@@ -106,7 +142,25 @@
         "totalPixels": 1716
       },
       "contentSha256": "230d8ab1dbffb74d353c982eeaf210335a9dd5c4d2875a5c4f369516825adad0",
-      "overrideReason": "Architectural tools hard-hat glyph label-safe cutoff."
+      "overrideReason": "Architectural tools hard-hat glyph label-safe cutoff.",
+      "optical": {
+        "scale": 1.06,
+        "translateX": 0,
+        "translateY": 0,
+        "occupancy": 0.026,
+        "aspect": 2,
+        "centeringScore": 0.883,
+        "paddingScore": 1,
+        "scaleScore": 1,
+        "strokeConsistency": 1,
+        "transparencyValid": true,
+        "familyValid": true,
+        "opticalScore": 0.959,
+        "runtimeValidated": true,
+        "certified": true
+      },
+      "runtimeValidated": true,
+      "lockdownCertified": true
     },
     {
       "key": "materials",
@@ -130,7 +184,7 @@
       "edgePixels": 0,
       "confidence": 0.72,
       "overrideApplied": true,
-      "auditStatus": "WARN",
+      "auditStatus": "PASS",
       "textContamination": {
         "contaminated": false,
         "score": 0,
@@ -141,7 +195,25 @@
         "totalPixels": 591
       },
       "contentSha256": "7c9077c95bae3d05c48ddcb42a0e1ac70e19c08a666dbbc8ba41802326da8cad",
-      "overrideReason": "Paint-bucket glyph sits above MATERIALS label; auto bounds included label strokes."
+      "overrideReason": "Paint-bucket glyph sits above MATERIALS label; auto bounds included label strokes.",
+      "optical": {
+        "scale": 1.06,
+        "translateX": 0,
+        "translateY": 0,
+        "occupancy": 0.009,
+        "aspect": 2.5,
+        "centeringScore": 0.81,
+        "paddingScore": 1,
+        "scaleScore": 1,
+        "strokeConsistency": 1,
+        "transparencyValid": true,
+        "familyValid": true,
+        "opticalScore": 0.934,
+        "runtimeValidated": true,
+        "certified": true
+      },
+      "runtimeValidated": true,
+      "lockdownCertified": true
     },
     {
       "key": "lighting",
@@ -165,7 +237,7 @@
       "edgePixels": 0,
       "confidence": 0.72,
       "overrideApplied": true,
-      "auditStatus": "WARN",
+      "auditStatus": "PASS",
       "textContamination": {
         "contaminated": false,
         "score": 0,
@@ -176,7 +248,25 @@
         "totalPixels": 551
       },
       "contentSha256": "1864bf420e90d0c40d01fa730b093b757b204d841724fbfcf010f5be40095db4",
-      "overrideReason": "Lighting fixture low stroke needed explicit ceiling."
+      "overrideReason": "Lighting fixture low stroke needed explicit ceiling.",
+      "optical": {
+        "scale": 1.06,
+        "translateX": 1,
+        "translateY": 0,
+        "occupancy": 0.008,
+        "aspect": 1.76,
+        "centeringScore": 0.687,
+        "paddingScore": 1,
+        "scaleScore": 1,
+        "strokeConsistency": 1,
+        "transparencyValid": true,
+        "familyValid": true,
+        "opticalScore": 0.89,
+        "runtimeValidated": true,
+        "certified": true
+      },
+      "runtimeValidated": true,
+      "lockdownCertified": true
     },
     {
       "key": "camera",
@@ -200,7 +290,7 @@
       "edgePixels": 0,
       "confidence": 0.72,
       "overrideApplied": true,
-      "auditStatus": "WARN",
+      "auditStatus": "PASS",
       "textContamination": {
         "contaminated": false,
         "score": 0,
@@ -211,7 +301,25 @@
         "totalPixels": 563
       },
       "contentSha256": "0478401a26f6183632d9312f8cdb0676c237a51c0dc655d69dab8a45bb5bcff0",
-      "overrideReason": "Camera body clipped low; label band false-positive extended bounds."
+      "overrideReason": "Camera body clipped low; label band false-positive extended bounds.",
+      "optical": {
+        "scale": 1.06,
+        "translateX": 1,
+        "translateY": 0,
+        "occupancy": 0.009,
+        "aspect": 4.53,
+        "centeringScore": 0.717,
+        "paddingScore": 1,
+        "scaleScore": 1,
+        "strokeConsistency": 1,
+        "transparencyValid": true,
+        "familyValid": true,
+        "opticalScore": 0.901,
+        "runtimeValidated": true,
+        "certified": true
+      },
+      "runtimeValidated": true,
+      "lockdownCertified": true
     },
     {
       "key": "splitView",
@@ -235,7 +343,7 @@
       "edgePixels": 0,
       "confidence": 1,
       "overrideApplied": true,
-      "auditStatus": "WARN",
+      "auditStatus": "PASS",
       "textContamination": {
         "contaminated": false,
         "score": 0,
@@ -246,7 +354,25 @@
         "totalPixels": 917
       },
       "contentSha256": "d00187cebcc33e6c5d8f241807198d340175901452a84d014ef278f743497dac",
-      "overrideReason": "Split-view panes label-safe cutoff."
+      "overrideReason": "Split-view panes label-safe cutoff.",
+      "optical": {
+        "scale": 1.06,
+        "translateX": 1,
+        "translateY": 0,
+        "occupancy": 0.014,
+        "aspect": 2.71,
+        "centeringScore": 0.605,
+        "paddingScore": 1,
+        "scaleScore": 1,
+        "strokeConsistency": 1,
+        "transparencyValid": true,
+        "familyValid": true,
+        "opticalScore": 0.862,
+        "runtimeValidated": true,
+        "certified": true
+      },
+      "runtimeValidated": true,
+      "lockdownCertified": true
     },
     {
       "key": "founderRender",
@@ -270,7 +396,7 @@
       "edgePixels": 0,
       "confidence": 1,
       "overrideApplied": true,
-      "auditStatus": "WARN",
+      "auditStatus": "PASS",
       "textContamination": {
         "contaminated": false,
         "score": 0,
@@ -281,7 +407,25 @@
         "totalPixels": 824
       },
       "contentSha256": "950041f3773434cbe92d199dae4285b22ea08b21dd221b181d15b870c2ab350a",
-      "overrideReason": "Founder render star glyph label-safe cutoff."
+      "overrideReason": "Founder render star glyph label-safe cutoff.",
+      "optical": {
+        "scale": 1.06,
+        "translateX": 1,
+        "translateY": 0,
+        "occupancy": 0.013,
+        "aspect": 2.14,
+        "centeringScore": 0.61,
+        "paddingScore": 1,
+        "scaleScore": 1,
+        "strokeConsistency": 1,
+        "transparencyValid": true,
+        "familyValid": true,
+        "opticalScore": 0.864,
+        "runtimeValidated": true,
+        "certified": true
+      },
+      "runtimeValidated": true,
+      "lockdownCertified": true
     },
     {
       "key": "projects",
@@ -316,7 +460,25 @@
         "totalPixels": 2408
       },
       "contentSha256": "bdb7b556d210069cdb21fa0b543996d65d23079cebee81c965edd1a6fa275943",
-      "overrideReason": null
+      "overrideReason": null,
+      "optical": {
+        "scale": 1.06,
+        "translateX": 0,
+        "translateY": 0,
+        "occupancy": 0.037,
+        "aspect": 10.35,
+        "centeringScore": 0.968,
+        "paddingScore": 0.786,
+        "scaleScore": 1,
+        "strokeConsistency": 1,
+        "transparencyValid": true,
+        "familyValid": true,
+        "opticalScore": 0.935,
+        "runtimeValidated": true,
+        "certified": true
+      },
+      "runtimeValidated": true,
+      "lockdownCertified": true
     },
     {
       "key": "history",
@@ -351,7 +513,25 @@
         "totalPixels": 3185
       },
       "contentSha256": "85cacd7a8d5de92668cc9ed75978fbc62f8864cb617d541cd1c5615cab8eb4ce",
-      "overrideReason": null
+      "overrideReason": null,
+      "optical": {
+        "scale": 1.06,
+        "translateX": 0,
+        "translateY": 0,
+        "occupancy": 0.049,
+        "aspect": 7.19,
+        "centeringScore": 0.96,
+        "paddingScore": 1,
+        "scaleScore": 1,
+        "strokeConsistency": 1,
+        "transparencyValid": true,
+        "familyValid": true,
+        "opticalScore": 0.986,
+        "runtimeValidated": true,
+        "certified": true
+      },
+      "runtimeValidated": true,
+      "lockdownCertified": true
     },
     {
       "key": "revisions",
@@ -386,7 +566,25 @@
         "totalPixels": 2312
       },
       "contentSha256": "b26427d97c5a8d0242da870d880679abfecaef3dddb8d9da79083dc78a68e2c3",
-      "overrideReason": null
+      "overrideReason": null,
+      "optical": {
+        "scale": 1.06,
+        "translateX": 0,
+        "translateY": 0,
+        "occupancy": 0.035,
+        "aspect": 10.1,
+        "centeringScore": 0.991,
+        "paddingScore": 0.964,
+        "scaleScore": 1,
+        "strokeConsistency": 1,
+        "transparencyValid": true,
+        "familyValid": true,
+        "opticalScore": 0.988,
+        "runtimeValidated": true,
+        "certified": true
+      },
+      "runtimeValidated": true,
+      "lockdownCertified": true
     },
     {
       "key": "milestones",
@@ -421,7 +619,25 @@
         "totalPixels": 3110
       },
       "contentSha256": "408da27d9e0893e941b17665e414060ec138c0aacf22e51995aa9d0e5a12389b",
-      "overrideReason": null
+      "overrideReason": null,
+      "optical": {
+        "scale": 1.06,
+        "translateX": 0,
+        "translateY": 0,
+        "occupancy": 0.047,
+        "aspect": 7.22,
+        "centeringScore": 0.979,
+        "paddingScore": 1,
+        "scaleScore": 1,
+        "strokeConsistency": 1,
+        "transparencyValid": true,
+        "familyValid": true,
+        "opticalScore": 0.993,
+        "runtimeValidated": true,
+        "certified": true
+      },
+      "runtimeValidated": true,
+      "lockdownCertified": true
     },
     {
       "key": "analytics",
@@ -445,7 +661,7 @@
       "edgePixels": 0,
       "confidence": 1,
       "overrideApplied": true,
-      "auditStatus": "WARN",
+      "auditStatus": "PASS",
       "textContamination": {
         "contaminated": false,
         "score": 0,
@@ -456,7 +672,25 @@
         "totalPixels": 703
       },
       "contentSha256": "c194c97be8e2f1ec1e4496708daef5275566655b01baca7abc85dda6e201ed9a",
-      "overrideReason": "Bar-chart glyph merged with ANALYTICS word band in single bounding box."
+      "overrideReason": "Bar-chart glyph merged with ANALYTICS word band in single bounding box.",
+      "optical": {
+        "scale": 1.06,
+        "translateX": 1,
+        "translateY": 1,
+        "occupancy": 0.011,
+        "aspect": 5.8,
+        "centeringScore": 0.556,
+        "paddingScore": 1,
+        "scaleScore": 1,
+        "strokeConsistency": 1,
+        "transparencyValid": true,
+        "familyValid": true,
+        "opticalScore": 0.845,
+        "runtimeValidated": true,
+        "certified": true
+      },
+      "runtimeValidated": true,
+      "lockdownCertified": true
     },
     {
       "key": "performance",
@@ -480,7 +714,7 @@
       "edgePixels": 0,
       "confidence": 1,
       "overrideApplied": true,
-      "auditStatus": "WARN",
+      "auditStatus": "PASS",
       "textContamination": {
         "contaminated": false,
         "score": 0,
@@ -491,7 +725,25 @@
         "totalPixels": 687
       },
       "contentSha256": "50f47a990faabc619f8c7746abec6abdb1a7e08d455d80fcb0a26b9d972be088",
-      "overrideReason": "Gauge glyph merged with PERFORMANCE label band."
+      "overrideReason": "Gauge glyph merged with PERFORMANCE label band.",
+      "optical": {
+        "scale": 1.06,
+        "translateX": 1,
+        "translateY": 1,
+        "occupancy": 0.01,
+        "aspect": 5.5,
+        "centeringScore": 0.556,
+        "paddingScore": 1,
+        "scaleScore": 1,
+        "strokeConsistency": 1,
+        "transparencyValid": true,
+        "familyValid": true,
+        "opticalScore": 0.845,
+        "runtimeValidated": true,
+        "certified": true
+      },
+      "runtimeValidated": true,
+      "lockdownCertified": true
     },
     {
       "key": "issues",
@@ -526,7 +778,25 @@
         "totalPixels": 1290
       },
       "contentSha256": "e6157df2919686ac495bb07945c613247de6755e0fa75b27556ab711b12c7dd7",
-      "overrideReason": null
+      "overrideReason": null,
+      "optical": {
+        "scale": 1.06,
+        "translateX": 0,
+        "translateY": 1,
+        "occupancy": 0.02,
+        "aspect": 2.01,
+        "centeringScore": 0.638,
+        "paddingScore": 0.786,
+        "scaleScore": 1,
+        "strokeConsistency": 1,
+        "transparencyValid": true,
+        "familyValid": true,
+        "opticalScore": 0.82,
+        "runtimeValidated": true,
+        "certified": true
+      },
+      "runtimeValidated": true,
+      "lockdownCertified": true
     },
     {
       "key": "approved",
@@ -561,7 +831,25 @@
         "totalPixels": 2644
       },
       "contentSha256": "49c55b2c05abef62b086c9584ab98c21818cea55c622d08a28d66afe4d8a21ff",
-      "overrideReason": null
+      "overrideReason": null,
+      "optical": {
+        "scale": 1.06,
+        "translateX": 0,
+        "translateY": 0,
+        "occupancy": 0.04,
+        "aspect": 9.86,
+        "centeringScore": 0.993,
+        "paddingScore": 0.786,
+        "scaleScore": 1,
+        "strokeConsistency": 1,
+        "transparencyValid": true,
+        "familyValid": true,
+        "opticalScore": 0.944,
+        "runtimeValidated": true,
+        "certified": true
+      },
+      "runtimeValidated": true,
+      "lockdownCertified": true
     },
     {
       "key": "playback",
@@ -585,7 +873,7 @@
       "edgePixels": 0,
       "confidence": 1,
       "overrideApplied": true,
-      "auditStatus": "WARN",
+      "auditStatus": "PASS",
       "textContamination": {
         "contaminated": false,
         "score": 0,
@@ -596,7 +884,25 @@
         "totalPixels": 773
       },
       "contentSha256": "3081594bb5a31f20c7f06116e1ca19257adf8492be247668470374c7d387e269",
-      "overrideReason": "Animation-studio play glyph contaminated by PLAYBACK label strokes."
+      "overrideReason": "Animation-studio play glyph contaminated by PLAYBACK label strokes.",
+      "optical": {
+        "scale": 1.06,
+        "translateX": 0,
+        "translateY": 1,
+        "occupancy": 0.012,
+        "aspect": 6.79,
+        "centeringScore": 0.647,
+        "paddingScore": 1,
+        "scaleScore": 1,
+        "strokeConsistency": 1,
+        "transparencyValid": true,
+        "familyValid": true,
+        "opticalScore": 0.877,
+        "runtimeValidated": true,
+        "certified": true
+      },
+      "runtimeValidated": true,
+      "lockdownCertified": true
     },
     {
       "key": "pause",
@@ -631,7 +937,25 @@
         "totalPixels": 3853
       },
       "contentSha256": "d78e0cd46d217e22df8155ab93761a010baaa1cfe84e0431c21a349d1a4b13cd",
-      "overrideReason": null
+      "overrideReason": null,
+      "optical": {
+        "scale": 1.03,
+        "translateX": 0,
+        "translateY": 0,
+        "occupancy": 0.059,
+        "aspect": 5.62,
+        "centeringScore": 0.957,
+        "paddingScore": 1,
+        "scaleScore": 1,
+        "strokeConsistency": 1,
+        "transparencyValid": true,
+        "familyValid": true,
+        "opticalScore": 0.985,
+        "runtimeValidated": true,
+        "certified": true
+      },
+      "runtimeValidated": true,
+      "lockdownCertified": true
     },
     {
       "key": "stop",
@@ -666,7 +990,25 @@
         "totalPixels": 3453
       },
       "contentSha256": "db1fbd84d1148fcd9d49a3e5177dbf3d5319576a837dc7ca0f2023cc8661aa19",
-      "overrideReason": null
+      "overrideReason": null,
+      "optical": {
+        "scale": 1.06,
+        "translateX": 0,
+        "translateY": 0,
+        "occupancy": 0.053,
+        "aspect": 6.96,
+        "centeringScore": 0.992,
+        "paddingScore": 1,
+        "scaleScore": 1,
+        "strokeConsistency": 1,
+        "transparencyValid": true,
+        "familyValid": true,
+        "opticalScore": 0.997,
+        "runtimeValidated": true,
+        "certified": true
+      },
+      "runtimeValidated": true,
+      "lockdownCertified": true
     },
     {
       "key": "next",
@@ -701,7 +1043,25 @@
         "totalPixels": 3012
       },
       "contentSha256": "982017e499f93fba021e238089e1aafcc58f31debb5e923c26e4c3f71924f5bb",
-      "overrideReason": null
+      "overrideReason": null,
+      "optical": {
+        "scale": 1.06,
+        "translateX": 0,
+        "translateY": 0,
+        "occupancy": 0.046,
+        "aspect": 8.25,
+        "centeringScore": 0.993,
+        "paddingScore": 1,
+        "scaleScore": 1,
+        "strokeConsistency": 1,
+        "transparencyValid": true,
+        "familyValid": true,
+        "opticalScore": 0.997,
+        "runtimeValidated": true,
+        "certified": true
+      },
+      "runtimeValidated": true,
+      "lockdownCertified": true
     },
     {
       "key": "previous",
@@ -736,7 +1096,25 @@
         "totalPixels": 2854
       },
       "contentSha256": "aef7fa5b8e4499add5585fb074ce4ae72f9b3a5fd21d7bc1d038f614f67ba9ab",
-      "overrideReason": null
+      "overrideReason": null,
+      "optical": {
+        "scale": 1.06,
+        "translateX": 0,
+        "translateY": 0,
+        "occupancy": 0.044,
+        "aspect": 7.5,
+        "centeringScore": 0.987,
+        "paddingScore": 1,
+        "scaleScore": 1,
+        "strokeConsistency": 1,
+        "transparencyValid": true,
+        "familyValid": true,
+        "opticalScore": 0.995,
+        "runtimeValidated": true,
+        "certified": true
+      },
+      "runtimeValidated": true,
+      "lockdownCertified": true
     },
     {
       "key": "loop",
@@ -771,7 +1149,25 @@
         "totalPixels": 2851
       },
       "contentSha256": "c58ac9e71aedfcf2071144d750c0438ff46a04e1c8ce0fecc7d17ba7dd104e0d",
-      "overrideReason": null
+      "overrideReason": null,
+      "optical": {
+        "scale": 1.06,
+        "translateX": 0,
+        "translateY": 0,
+        "occupancy": 0.044,
+        "aspect": 9.41,
+        "centeringScore": 0.966,
+        "paddingScore": 0.786,
+        "scaleScore": 1,
+        "strokeConsistency": 1,
+        "transparencyValid": true,
+        "familyValid": true,
+        "opticalScore": 0.935,
+        "runtimeValidated": true,
+        "certified": true
+      },
+      "runtimeValidated": true,
+      "lockdownCertified": true
     },
     {
       "key": "capture",
@@ -806,7 +1202,25 @@
         "totalPixels": 4861
       },
       "contentSha256": "c965f247238aa523f7185db1058afbb08ad483b3aea597639627e441c43d1d7d",
-      "overrideReason": null
+      "overrideReason": null,
+      "optical": {
+        "scale": 0.99,
+        "translateX": 0,
+        "translateY": 0,
+        "occupancy": 0.074,
+        "aspect": 4.67,
+        "centeringScore": 0.991,
+        "paddingScore": 1,
+        "scaleScore": 1,
+        "strokeConsistency": 1,
+        "transparencyValid": true,
+        "familyValid": true,
+        "opticalScore": 0.997,
+        "runtimeValidated": true,
+        "certified": true
+      },
+      "runtimeValidated": true,
+      "lockdownCertified": true
     },
     {
       "key": "fullscreen",
@@ -841,7 +1255,25 @@
         "totalPixels": 3200
       },
       "contentSha256": "1e3600ffba6a11aec48c6f0ef31f609b05ce78dbe318d4789281a376a1d15dcf",
-      "overrideReason": null
+      "overrideReason": null,
+      "optical": {
+        "scale": 1.06,
+        "translateX": 0,
+        "translateY": 0,
+        "occupancy": 0.049,
+        "aspect": 6.96,
+        "centeringScore": 0.979,
+        "paddingScore": 1,
+        "scaleScore": 1,
+        "strokeConsistency": 1,
+        "transparencyValid": true,
+        "familyValid": true,
+        "opticalScore": 0.993,
+        "runtimeValidated": true,
+        "certified": true
+      },
+      "runtimeValidated": true,
+      "lockdownCertified": true
     },
     {
       "key": "zoomIn",
@@ -865,7 +1297,7 @@
       "edgePixels": 0,
       "confidence": 1,
       "overrideApplied": true,
-      "auditStatus": "WARN",
+      "auditStatus": "PASS",
       "textContamination": {
         "contaminated": false,
         "score": 0,
@@ -876,7 +1308,25 @@
         "totalPixels": 1125
       },
       "contentSha256": "0360e8ef31109f2a62f957d90d01c1c24c310588054827c542d7d2236c9839c7",
-      "overrideReason": "Magnifier handle ends above ZOOM IN label band; prior cutoff included label strokes."
+      "overrideReason": "Magnifier handle ends above ZOOM IN label band; prior cutoff included label strokes.",
+      "optical": {
+        "scale": 1.12,
+        "translateX": 0,
+        "translateY": 0,
+        "occupancy": 0.017,
+        "aspect": 1.09,
+        "centeringScore": 0.751,
+        "paddingScore": 1,
+        "scaleScore": 1,
+        "strokeConsistency": 1,
+        "transparencyValid": true,
+        "familyValid": true,
+        "opticalScore": 0.913,
+        "runtimeValidated": true,
+        "certified": true
+      },
+      "runtimeValidated": true,
+      "lockdownCertified": true
     },
     {
       "key": "zoomOut",
@@ -911,7 +1361,25 @@
         "totalPixels": 5081
       },
       "contentSha256": "863a36c63dddf93bbdda6cac635283bb8015c4a2cfc071e6fb97d4c870de07e6",
-      "overrideReason": null
+      "overrideReason": null,
+      "optical": {
+        "scale": 0.99,
+        "translateX": 0,
+        "translateY": 0,
+        "occupancy": 0.078,
+        "aspect": 4.09,
+        "centeringScore": 0.999,
+        "paddingScore": 1,
+        "scaleScore": 1,
+        "strokeConsistency": 1,
+        "transparencyValid": true,
+        "familyValid": true,
+        "opticalScore": 1,
+        "runtimeValidated": true,
+        "certified": true
+      },
+      "runtimeValidated": true,
+      "lockdownCertified": true
     },
     {
       "key": "pan",
@@ -935,7 +1403,7 @@
       "edgePixels": 0,
       "confidence": 1,
       "overrideApplied": false,
-      "auditStatus": "WARN",
+      "auditStatus": "PASS",
       "textContamination": {
         "contaminated": false,
         "score": 0.079365234375,
@@ -946,7 +1414,25 @@
         "totalPixels": 4050
       },
       "contentSha256": "2fec8cbfe8309ef3866f5a22e9a402200b5bf766be2a502f67d8a3c71d858224",
-      "overrideReason": null
+      "overrideReason": null,
+      "optical": {
+        "scale": 1.08,
+        "translateX": 0,
+        "translateY": 1,
+        "occupancy": 0.062,
+        "aspect": 0.67,
+        "centeringScore": 0.714,
+        "paddingScore": 0.786,
+        "scaleScore": 1,
+        "strokeConsistency": 1,
+        "transparencyValid": true,
+        "familyValid": true,
+        "opticalScore": 0.846,
+        "runtimeValidated": true,
+        "certified": true
+      },
+      "runtimeValidated": true,
+      "lockdownCertified": true
     },
     {
       "key": "fitView",
@@ -981,7 +1467,25 @@
         "totalPixels": 5385
       },
       "contentSha256": "8d943decd7d54e59e266f502d8ab46a66582fbbbc2df29d59842a0e594a62c3c",
-      "overrideReason": null
+      "overrideReason": null,
+      "optical": {
+        "scale": 0.99,
+        "translateX": 0,
+        "translateY": 0,
+        "occupancy": 0.082,
+        "aspect": 3.37,
+        "centeringScore": 0.936,
+        "paddingScore": 1,
+        "scaleScore": 1,
+        "strokeConsistency": 1,
+        "transparencyValid": true,
+        "familyValid": true,
+        "opticalScore": 0.978,
+        "runtimeValidated": true,
+        "certified": true
+      },
+      "runtimeValidated": true,
+      "lockdownCertified": true
     },
     {
       "key": "orbit",
@@ -1005,7 +1509,7 @@
       "edgePixels": 0,
       "confidence": 1,
       "overrideApplied": true,
-      "auditStatus": "WARN",
+      "auditStatus": "PASS",
       "textContamination": {
         "contaminated": false,
         "score": 0,
@@ -1016,7 +1520,25 @@
         "totalPixels": 813
       },
       "contentSha256": "9070ee2b8ebcd3cb3a0cb61bc6cb9e9990f86689398518e530277bf1d6776196",
-      "overrideReason": "Studio World orbit ring overlapped ORBIT label strokes."
+      "overrideReason": "Studio World orbit ring overlapped ORBIT label strokes.",
+      "optical": {
+        "scale": 1.06,
+        "translateX": 1,
+        "translateY": 0,
+        "occupancy": 0.012,
+        "aspect": 6.2,
+        "centeringScore": 0.558,
+        "paddingScore": 1,
+        "scaleScore": 1,
+        "strokeConsistency": 1,
+        "transparencyValid": true,
+        "familyValid": true,
+        "opticalScore": 0.845,
+        "runtimeValidated": true,
+        "certified": true
+      },
+      "runtimeValidated": true,
+      "lockdownCertified": true
     },
     {
       "key": "perspective",
@@ -1040,7 +1562,7 @@
       "edgePixels": 0,
       "confidence": 0.72,
       "overrideApplied": true,
-      "auditStatus": "WARN",
+      "auditStatus": "PASS",
       "textContamination": {
         "contaminated": false,
         "score": 0,
@@ -1051,7 +1573,25 @@
         "totalPixels": 391
       },
       "contentSha256": "3569931b6abb711aef30d9fff5faf8ca0a5d3c08a4f58c7abf880051c2463a3d",
-      "overrideReason": "Composition cube picked up PERSPECTIVE label characters."
+      "overrideReason": "Composition cube picked up PERSPECTIVE label characters.",
+      "optical": {
+        "scale": 1.06,
+        "translateX": 1,
+        "translateY": 0,
+        "occupancy": 0.006,
+        "aspect": 3.43,
+        "centeringScore": 0.563,
+        "paddingScore": 1,
+        "scaleScore": 1,
+        "strokeConsistency": 1,
+        "transparencyValid": true,
+        "familyValid": true,
+        "opticalScore": 0.847,
+        "runtimeValidated": true,
+        "certified": true
+      },
+      "runtimeValidated": true,
+      "lockdownCertified": true
     },
     {
       "key": "toggleUi",
@@ -1086,7 +1626,25 @@
         "totalPixels": 3462
       },
       "contentSha256": "0c4a108f5f60a66fa7f81969920b8d738ff29c5970f8f5030a07056dce6ab827",
-      "overrideReason": null
+      "overrideReason": null,
+      "optical": {
+        "scale": 1.06,
+        "translateX": 0,
+        "translateY": 0,
+        "occupancy": 0.053,
+        "aspect": 6,
+        "centeringScore": 0.967,
+        "paddingScore": 1,
+        "scaleScore": 1,
+        "strokeConsistency": 1,
+        "transparencyValid": true,
+        "familyValid": true,
+        "opticalScore": 0.988,
+        "runtimeValidated": true,
+        "certified": true
+      },
+      "runtimeValidated": true,
+      "lockdownCertified": true
     },
     {
       "key": "grid",
@@ -1121,7 +1679,25 @@
         "totalPixels": 3062
       },
       "contentSha256": "6765bf24b0e2fc0826a94374bcc58c3577077d220e313fb969fdeec9dd9ff50e",
-      "overrideReason": null
+      "overrideReason": null,
+      "optical": {
+        "scale": 1.06,
+        "translateX": 0,
+        "translateY": 0,
+        "occupancy": 0.047,
+        "aspect": 8.24,
+        "centeringScore": 0.978,
+        "paddingScore": 0.786,
+        "scaleScore": 1,
+        "strokeConsistency": 1,
+        "transparencyValid": true,
+        "familyValid": true,
+        "opticalScore": 0.939,
+        "runtimeValidated": true,
+        "certified": true
+      },
+      "runtimeValidated": true,
+      "lockdownCertified": true
     },
     {
       "key": "hide",
@@ -1156,7 +1732,25 @@
         "totalPixels": 3732
       },
       "contentSha256": "ba28f4228599b69c139ea5f86639ea58b56dda15648ebc420e10b7fa0bb13224",
-      "overrideReason": null
+      "overrideReason": null,
+      "optical": {
+        "scale": 1.03,
+        "translateX": 0,
+        "translateY": 0,
+        "occupancy": 0.057,
+        "aspect": 5.31,
+        "centeringScore": 0.969,
+        "paddingScore": 1,
+        "scaleScore": 1,
+        "strokeConsistency": 1,
+        "transparencyValid": true,
+        "familyValid": true,
+        "opticalScore": 0.989,
+        "runtimeValidated": true,
+        "certified": true
+      },
+      "runtimeValidated": true,
+      "lockdownCertified": true
     },
     {
       "key": "lock",
@@ -1191,7 +1785,25 @@
         "totalPixels": 3922
       },
       "contentSha256": "43d9257e406374b9812c352a5a48b962ef71970deb7a1a44d5c8de3e8472cd97",
-      "overrideReason": null
+      "overrideReason": null,
+      "optical": {
+        "scale": 1.08,
+        "translateX": 0,
+        "translateY": 1,
+        "occupancy": 0.06,
+        "aspect": 1.19,
+        "centeringScore": 0.743,
+        "paddingScore": 1,
+        "scaleScore": 1,
+        "strokeConsistency": 1,
+        "transparencyValid": true,
+        "familyValid": true,
+        "opticalScore": 0.91,
+        "runtimeValidated": true,
+        "certified": true
+      },
+      "runtimeValidated": true,
+      "lockdownCertified": true
     },
     {
       "key": "unlock",
@@ -1215,7 +1827,7 @@
       "edgePixels": 0,
       "confidence": 1,
       "overrideApplied": false,
-      "auditStatus": "WARN",
+      "auditStatus": "PASS",
       "textContamination": {
         "contaminated": false,
         "score": 0.087890625,
@@ -1226,7 +1838,25 @@
         "totalPixels": 3411
       },
       "contentSha256": "29d41372a222d9ad66ebab022137d01351b9fefea124c850444929801952ed37",
-      "overrideReason": null
+      "overrideReason": null,
+      "optical": {
+        "scale": 1.06,
+        "translateX": 0,
+        "translateY": 0,
+        "occupancy": 0.052,
+        "aspect": 0.58,
+        "centeringScore": 0.948,
+        "paddingScore": 0.786,
+        "scaleScore": 1,
+        "strokeConsistency": 1,
+        "transparencyValid": true,
+        "familyValid": true,
+        "opticalScore": 0.928,
+        "runtimeValidated": true,
+        "certified": true
+      },
+      "runtimeValidated": true,
+      "lockdownCertified": true
     },
     {
       "key": "duplicate",
@@ -1261,7 +1891,25 @@
         "totalPixels": 3541
       },
       "contentSha256": "4ad2b408bb3b94669937e741f775d097386d84070d4bdb4e5f79710090f3360f",
-      "overrideReason": null
+      "overrideReason": null,
+      "optical": {
+        "scale": 1.06,
+        "translateX": 0,
+        "translateY": 0,
+        "occupancy": 0.054,
+        "aspect": 5.49,
+        "centeringScore": 0.951,
+        "paddingScore": 1,
+        "scaleScore": 1,
+        "strokeConsistency": 1,
+        "transparencyValid": true,
+        "familyValid": true,
+        "opticalScore": 0.983,
+        "runtimeValidated": true,
+        "certified": true
+      },
+      "runtimeValidated": true,
+      "lockdownCertified": true
     },
     {
       "key": "delete",
@@ -1285,7 +1933,7 @@
       "edgePixels": 0,
       "confidence": 0.92,
       "overrideApplied": false,
-      "auditStatus": "WARN",
+      "auditStatus": "PASS",
       "textContamination": {
         "contaminated": false,
         "score": 0.09131835937499999,
@@ -1296,7 +1944,25 @@
         "totalPixels": 5034
       },
       "contentSha256": "37e35c212e1f4c76a4c3f48efb25c029f868155ae21137d81db540a26a6f546d",
-      "overrideReason": null
+      "overrideReason": null,
+      "optical": {
+        "scale": 1.04,
+        "translateX": 0,
+        "translateY": 1,
+        "occupancy": 0.077,
+        "aspect": 0.77,
+        "centeringScore": 0.699,
+        "paddingScore": 0.786,
+        "scaleScore": 1,
+        "strokeConsistency": 1,
+        "transparencyValid": true,
+        "familyValid": true,
+        "opticalScore": 0.841,
+        "runtimeValidated": true,
+        "certified": true
+      },
+      "runtimeValidated": true,
+      "lockdownCertified": true
     },
     {
       "key": "edit",
@@ -1331,7 +1997,25 @@
         "totalPixels": 5056
       },
       "contentSha256": "d5c3b79d6ffa72d1580e6df9244108d77ed4447c5cad2d606eb66fad9b29ec71",
-      "overrideReason": null
+      "overrideReason": null,
+      "optical": {
+        "scale": 1.04,
+        "translateX": 0,
+        "translateY": 0,
+        "occupancy": 0.077,
+        "aspect": 0.98,
+        "centeringScore": 0.817,
+        "paddingScore": 1,
+        "scaleScore": 1,
+        "strokeConsistency": 1,
+        "transparencyValid": true,
+        "familyValid": true,
+        "opticalScore": 0.936,
+        "runtimeValidated": true,
+        "certified": true
+      },
+      "runtimeValidated": true,
+      "lockdownCertified": true
     },
     {
       "key": "settings",
@@ -1366,7 +2050,25 @@
         "totalPixels": 2885
       },
       "contentSha256": "ce220b549773154a5fb90fc46b415c6075b16a1a848cb4fbfa78509baffd9c76",
-      "overrideReason": null
+      "overrideReason": null,
+      "optical": {
+        "scale": 1.06,
+        "translateX": 0,
+        "translateY": 0,
+        "occupancy": 0.044,
+        "aspect": 6.62,
+        "centeringScore": 0.996,
+        "paddingScore": 1,
+        "scaleScore": 1,
+        "strokeConsistency": 1,
+        "transparencyValid": true,
+        "familyValid": true,
+        "opticalScore": 0.999,
+        "runtimeValidated": true,
+        "certified": true
+      },
+      "runtimeValidated": true,
+      "lockdownCertified": true
     },
     {
       "key": "filter",
@@ -1401,7 +2103,25 @@
         "totalPixels": 3581
       },
       "contentSha256": "618156b248666adf3d76857cc6c9f52a4b1b1124cce2e49f5ce2913b7284fcda",
-      "overrideReason": null
+      "overrideReason": null,
+      "optical": {
+        "scale": 1.06,
+        "translateX": 0,
+        "translateY": 0,
+        "occupancy": 0.055,
+        "aspect": 0.51,
+        "centeringScore": 0.987,
+        "paddingScore": 0.964,
+        "scaleScore": 1,
+        "strokeConsistency": 1,
+        "transparencyValid": true,
+        "familyValid": true,
+        "opticalScore": 0.987,
+        "runtimeValidated": true,
+        "certified": true
+      },
+      "runtimeValidated": true,
+      "lockdownCertified": true
     },
     {
       "key": "export",
@@ -1425,7 +2145,7 @@
       "edgePixels": 0,
       "confidence": 0.92,
       "overrideApplied": false,
-      "auditStatus": "WARN",
+      "auditStatus": "PASS",
       "textContamination": {
         "contaminated": false,
         "score": 0.18,
@@ -1436,7 +2156,25 @@
         "totalPixels": 8422
       },
       "contentSha256": "7b52b6747c01d6a67e7f9324c669115bbba3e9a50a4bcefed8c2796b889de1b8",
-      "overrideReason": null
+      "overrideReason": null,
+      "optical": {
+        "scale": 0.96,
+        "translateX": 0,
+        "translateY": -1,
+        "occupancy": 0.129,
+        "aspect": 0.96,
+        "centeringScore": 0.744,
+        "paddingScore": 1,
+        "scaleScore": 1,
+        "strokeConsistency": 1,
+        "transparencyValid": true,
+        "familyValid": true,
+        "opticalScore": 0.91,
+        "runtimeValidated": true,
+        "certified": true
+      },
+      "runtimeValidated": true,
+      "lockdownCertified": true
     },
     {
       "key": "import",
@@ -1471,7 +2209,25 @@
         "totalPixels": 7870
       },
       "contentSha256": "2d590d53c06256f2d1e5d30412cff380d15a9f437cd1411a46b130996e0c0505",
-      "overrideReason": null
+      "overrideReason": null,
+      "optical": {
+        "scale": 0.96,
+        "translateX": 0,
+        "translateY": 0,
+        "occupancy": 0.12,
+        "aspect": 0.81,
+        "centeringScore": 0.883,
+        "paddingScore": 1,
+        "scaleScore": 1,
+        "strokeConsistency": 1,
+        "transparencyValid": true,
+        "familyValid": true,
+        "opticalScore": 0.959,
+        "runtimeValidated": true,
+        "certified": true
+      },
+      "runtimeValidated": true,
+      "lockdownCertified": true
     },
     {
       "key": "cloudSync",
@@ -1506,7 +2262,25 @@
         "totalPixels": 3424
       },
       "contentSha256": "b4c6a2ba755ef0df7843f5c31dc868d61f228c97cbaa36c8cb3d8076ffa309ba",
-      "overrideReason": null
+      "overrideReason": null,
+      "optical": {
+        "scale": 1.06,
+        "translateX": 0,
+        "translateY": 0,
+        "occupancy": 0.052,
+        "aspect": 2.64,
+        "centeringScore": 0.962,
+        "paddingScore": 1,
+        "scaleScore": 1,
+        "strokeConsistency": 1,
+        "transparencyValid": true,
+        "familyValid": true,
+        "opticalScore": 0.987,
+        "runtimeValidated": true,
+        "certified": true
+      },
+      "runtimeValidated": true,
+      "lockdownCertified": true
     },
     {
       "key": "database",
@@ -1541,7 +2315,25 @@
         "totalPixels": 8700
       },
       "contentSha256": "3504769164fedb3de935a5ababd20f3f1adc08b84aaa5863198f8f22d7d87789",
-      "overrideReason": null
+      "overrideReason": null,
+      "optical": {
+        "scale": 0.91,
+        "translateX": 0,
+        "translateY": 0,
+        "occupancy": 0.133,
+        "aspect": 1.74,
+        "centeringScore": 0.95,
+        "paddingScore": 1,
+        "scaleScore": 1,
+        "strokeConsistency": 1,
+        "transparencyValid": true,
+        "familyValid": true,
+        "opticalScore": 0.982,
+        "runtimeValidated": true,
+        "certified": true
+      },
+      "runtimeValidated": true,
+      "lockdownCertified": true
     },
     {
       "key": "link",
@@ -1576,7 +2368,25 @@
         "totalPixels": 9114
       },
       "contentSha256": "392a50d30a2d0b8edbe5ca4a2a09a8cb46f740642677a9522ee3b3049387b1b8",
-      "overrideReason": null
+      "overrideReason": null,
+      "optical": {
+        "scale": 0.96,
+        "translateX": 0,
+        "translateY": 0,
+        "occupancy": 0.139,
+        "aspect": 0.97,
+        "centeringScore": 0.995,
+        "paddingScore": 1,
+        "scaleScore": 1,
+        "strokeConsistency": 1,
+        "transparencyValid": true,
+        "familyValid": true,
+        "opticalScore": 0.998,
+        "runtimeValidated": true,
+        "certified": true
+      },
+      "runtimeValidated": true,
+      "lockdownCertified": true
     },
     {
       "key": "share",
@@ -1600,7 +2410,7 @@
       "edgePixels": 0,
       "confidence": 1,
       "overrideApplied": true,
-      "auditStatus": "WARN",
+      "auditStatus": "PASS",
       "textContamination": {
         "contaminated": false,
         "score": 0,
@@ -1611,7 +2421,25 @@
         "totalPixels": 889
       },
       "contentSha256": "b35200097757f4ed8195205f1b141def184cdc1b6df10683cdc60ba3576dad18",
-      "overrideReason": "Marketplace share nodes overlapped SHARE label band."
+      "overrideReason": "Marketplace share nodes overlapped SHARE label band.",
+      "optical": {
+        "scale": 1.12,
+        "translateX": 1,
+        "translateY": 0,
+        "occupancy": 0.014,
+        "aspect": 0.89,
+        "centeringScore": 0.63,
+        "paddingScore": 1,
+        "scaleScore": 1,
+        "strokeConsistency": 1,
+        "transparencyValid": true,
+        "familyValid": true,
+        "opticalScore": 0.87,
+        "runtimeValidated": true,
+        "certified": true
+      },
+      "runtimeValidated": true,
+      "lockdownCertified": true
     },
     {
       "key": "users",
@@ -1646,7 +2474,25 @@
         "totalPixels": 12213
       },
       "contentSha256": "f777a10f8a29617c454f94ed67a2373a1ade6cacafb7f9e361a73f31b64aaf5c",
-      "overrideReason": null
+      "overrideReason": null,
+      "optical": {
+        "scale": 0.92,
+        "translateX": 0,
+        "translateY": 0,
+        "occupancy": 0.186,
+        "aspect": 1.01,
+        "centeringScore": 0.997,
+        "paddingScore": 1,
+        "scaleScore": 1,
+        "strokeConsistency": 1,
+        "transparencyValid": true,
+        "familyValid": true,
+        "opticalScore": 0.999,
+        "runtimeValidated": true,
+        "certified": true
+      },
+      "runtimeValidated": true,
+      "lockdownCertified": true
     },
     {
       "key": "team",
@@ -1670,7 +2516,7 @@
       "edgePixels": 0,
       "confidence": 1,
       "overrideApplied": true,
-      "auditStatus": "WARN",
+      "auditStatus": "PASS",
       "textContamination": {
         "contaminated": false,
         "score": 0,
@@ -1681,7 +2527,25 @@
         "totalPixels": 1274
       },
       "contentSha256": "9fa2a3d2b62a8af4d2c7fb9ec10295b44f69fa5709684bde8866725335a3cfb4",
-      "overrideReason": "Workforce center figures overlapped TEAM label."
+      "overrideReason": "Workforce center figures overlapped TEAM label.",
+      "optical": {
+        "scale": 1.12,
+        "translateX": 1,
+        "translateY": 0,
+        "occupancy": 0.019,
+        "aspect": 1.38,
+        "centeringScore": 0.527,
+        "paddingScore": 1,
+        "scaleScore": 1,
+        "strokeConsistency": 1,
+        "transparencyValid": true,
+        "familyValid": true,
+        "opticalScore": 0.834,
+        "runtimeValidated": true,
+        "certified": true
+      },
+      "runtimeValidated": true,
+      "lockdownCertified": true
     },
     {
       "key": "notifications",
@@ -1716,7 +2580,25 @@
         "totalPixels": 9139
       },
       "contentSha256": "f86c9807f4d751755592f3bdee11c11326cdb67efb46b4e132641634a6d9c660",
-      "overrideReason": null
+      "overrideReason": null,
+      "optical": {
+        "scale": 0.96,
+        "translateX": 0,
+        "translateY": 0,
+        "occupancy": 0.139,
+        "aspect": 0.85,
+        "centeringScore": 0.938,
+        "paddingScore": 1,
+        "scaleScore": 1,
+        "strokeConsistency": 1,
+        "transparencyValid": true,
+        "familyValid": true,
+        "opticalScore": 0.978,
+        "runtimeValidated": true,
+        "certified": true
+      },
+      "runtimeValidated": true,
+      "lockdownCertified": true
     },
     {
       "key": "comments",
@@ -1751,7 +2633,25 @@
         "totalPixels": 10876
       },
       "contentSha256": "877e04286f436ee3ccb33c439cff921e89ca1fd8853f3b7bf5788c637db62b9f",
-      "overrideReason": null
+      "overrideReason": null,
+      "optical": {
+        "scale": 0.92,
+        "translateX": 0,
+        "translateY": 0,
+        "occupancy": 0.166,
+        "aspect": 1.08,
+        "centeringScore": 0.899,
+        "paddingScore": 1,
+        "scaleScore": 1,
+        "strokeConsistency": 1,
+        "transparencyValid": true,
+        "familyValid": true,
+        "opticalScore": 0.965,
+        "runtimeValidated": true,
+        "certified": true
+      },
+      "runtimeValidated": true,
+      "lockdownCertified": true
     },
     {
       "key": "notes",
@@ -1786,7 +2686,25 @@
         "totalPixels": 13245
       },
       "contentSha256": "4fd49b74ae55e25a3a0da53444c2fa6553fed73538e00cf86a4cc9387c6483ab",
-      "overrideReason": null
+      "overrideReason": null,
+      "optical": {
+        "scale": 0.92,
+        "translateX": 0,
+        "translateY": 0,
+        "occupancy": 0.202,
+        "aspect": 0.98,
+        "centeringScore": 0.96,
+        "paddingScore": 1,
+        "scaleScore": 1,
+        "strokeConsistency": 1,
+        "transparencyValid": true,
+        "familyValid": true,
+        "opticalScore": 0.986,
+        "runtimeValidated": true,
+        "certified": true
+      },
+      "runtimeValidated": true,
+      "lockdownCertified": true
     },
     {
       "key": "attachments",
@@ -1810,7 +2728,7 @@
       "edgePixels": 0,
       "confidence": 1,
       "overrideApplied": true,
-      "auditStatus": "WARN",
+      "auditStatus": "PASS",
       "textContamination": {
         "contaminated": false,
         "score": 0,
@@ -1821,7 +2739,25 @@
         "totalPixels": 2287
       },
       "contentSha256": "284257694c522efc360396f7ec7a3c10fa7facc7cc48eb883607b4c7e38d086a",
-      "overrideReason": "Asset-reference clip glyph picked up ATTACHMENTS label strip."
+      "overrideReason": "Asset-reference clip glyph picked up ATTACHMENTS label strip.",
+      "optical": {
+        "scale": 1.06,
+        "translateX": 0,
+        "translateY": 0,
+        "occupancy": 0.035,
+        "aspect": 1.42,
+        "centeringScore": 0.737,
+        "paddingScore": 1,
+        "scaleScore": 1,
+        "strokeConsistency": 1,
+        "transparencyValid": true,
+        "familyValid": true,
+        "opticalScore": 0.908,
+        "runtimeValidated": true,
+        "certified": true
+      },
+      "runtimeValidated": true,
+      "lockdownCertified": true
     },
     {
       "key": "schedule",
@@ -1856,7 +2792,25 @@
         "totalPixels": 12628
       },
       "contentSha256": "ab448b97f074863e3d27d9aaf52da9d62f6d959988959911e259334ac8f6924d",
-      "overrideReason": null
+      "overrideReason": null,
+      "optical": {
+        "scale": 0.92,
+        "translateX": 0,
+        "translateY": 0,
+        "occupancy": 0.193,
+        "aspect": 1.06,
+        "centeringScore": 0.944,
+        "paddingScore": 1,
+        "scaleScore": 1,
+        "strokeConsistency": 1,
+        "transparencyValid": true,
+        "familyValid": true,
+        "opticalScore": 0.981,
+        "runtimeValidated": true,
+        "certified": true
+      },
+      "runtimeValidated": true,
+      "lockdownCertified": true
     },
     {
       "key": "timeTracking",
@@ -1891,7 +2845,25 @@
         "totalPixels": 10148
       },
       "contentSha256": "745a9efd58649e0192aaa8da00bb3c976569ccecf8cf89ec7b1ef16892d76d77",
-      "overrideReason": null
+      "overrideReason": null,
+      "optical": {
+        "scale": 0.92,
+        "translateX": 0,
+        "translateY": 0,
+        "occupancy": 0.155,
+        "aspect": 1.02,
+        "centeringScore": 0.969,
+        "paddingScore": 1,
+        "scaleScore": 1,
+        "strokeConsistency": 1,
+        "transparencyValid": true,
+        "familyValid": true,
+        "opticalScore": 0.989,
+        "runtimeValidated": true,
+        "certified": true
+      },
+      "runtimeValidated": true,
+      "lockdownCertified": true
     },
     {
       "key": "flag",
@@ -1926,7 +2898,25 @@
         "totalPixels": 10224
       },
       "contentSha256": "4c4de9913153078522ae8fe4088e3efe40af4b41bf129abacd0f5b107bc0facb",
-      "overrideReason": null
+      "overrideReason": null,
+      "optical": {
+        "scale": 0.92,
+        "translateX": 0,
+        "translateY": 0,
+        "occupancy": 0.156,
+        "aspect": 0.91,
+        "centeringScore": 0.822,
+        "paddingScore": 1,
+        "scaleScore": 1,
+        "strokeConsistency": 1,
+        "transparencyValid": true,
+        "familyValid": true,
+        "opticalScore": 0.938,
+        "runtimeValidated": true,
+        "certified": true
+      },
+      "runtimeValidated": true,
+      "lockdownCertified": true
     },
     {
       "key": "favorite",
@@ -1961,7 +2951,25 @@
         "totalPixels": 9009
       },
       "contentSha256": "d273b66c70607b3b39d79de7ae419992cf1328fc8c1f8b2aed30b9e4765610df",
-      "overrideReason": null
+      "overrideReason": null,
+      "optical": {
+        "scale": 0.96,
+        "translateX": 0,
+        "translateY": 0,
+        "occupancy": 0.137,
+        "aspect": 1.06,
+        "centeringScore": 0.919,
+        "paddingScore": 1,
+        "scaleScore": 1,
+        "strokeConsistency": 1,
+        "transparencyValid": true,
+        "familyValid": true,
+        "opticalScore": 0.972,
+        "runtimeValidated": true,
+        "certified": true
+      },
+      "runtimeValidated": true,
+      "lockdownCertified": true
     },
     {
       "key": "dashboard",
@@ -1985,7 +2993,7 @@
       "edgePixels": 0,
       "confidence": 1,
       "overrideApplied": true,
-      "auditStatus": "WARN",
+      "auditStatus": "PASS",
       "textContamination": {
         "contaminated": false,
         "score": 0,
@@ -1996,7 +3004,25 @@
         "totalPixels": 1343
       },
       "contentSha256": "804bd4a64657cf3a66c3be2db38b4b85c07e8ff1175c9ec2ed88e760fc110e23",
-      "overrideReason": "Dashboard tiles merged with DASHBOARD label baseline."
+      "overrideReason": "Dashboard tiles merged with DASHBOARD label baseline.",
+      "optical": {
+        "scale": 1.12,
+        "translateX": 0,
+        "translateY": 0,
+        "occupancy": 0.02,
+        "aspect": 0.97,
+        "centeringScore": 0.798,
+        "paddingScore": 1,
+        "scaleScore": 1,
+        "strokeConsistency": 1,
+        "transparencyValid": true,
+        "familyValid": true,
+        "opticalScore": 0.929,
+        "runtimeValidated": true,
+        "certified": true
+      },
+      "runtimeValidated": true,
+      "lockdownCertified": true
     },
     {
       "key": "focusMode",
@@ -2031,7 +3057,25 @@
         "totalPixels": 7162
       },
       "contentSha256": "3aa7953de7357f1f1014919abb061665641e41dc4b641a1f357421785f39edd6",
-      "overrideReason": null
+      "overrideReason": null,
+      "optical": {
+        "scale": 1,
+        "translateX": 0,
+        "translateY": 0,
+        "occupancy": 0.109,
+        "aspect": 1.07,
+        "centeringScore": 0.947,
+        "paddingScore": 1,
+        "scaleScore": 1,
+        "strokeConsistency": 1,
+        "transparencyValid": true,
+        "familyValid": true,
+        "opticalScore": 0.981,
+        "runtimeValidated": true,
+        "certified": true
+      },
+      "runtimeValidated": true,
+      "lockdownCertified": true
     },
     {
       "key": "terminal",
@@ -2055,7 +3099,7 @@
       "edgePixels": 0,
       "confidence": 0.72,
       "overrideApplied": true,
-      "auditStatus": "WARN",
+      "auditStatus": "PASS",
       "textContamination": {
         "contaminated": false,
         "score": 0,
@@ -2066,7 +3110,25 @@
         "totalPixels": 461
       },
       "contentSha256": "cea2f45c0f64bc15c73b5211e8f8ce4dd571165cee534729191080b3b199217e",
-      "overrideReason": "Command-center terminal glyph included TERMINAL word band."
+      "overrideReason": "Command-center terminal glyph included TERMINAL word band.",
+      "optical": {
+        "scale": 1.12,
+        "translateX": 0,
+        "translateY": 0,
+        "occupancy": 0.007,
+        "aspect": 1.26,
+        "centeringScore": 0.861,
+        "paddingScore": 1,
+        "scaleScore": 1,
+        "strokeConsistency": 1,
+        "transparencyValid": true,
+        "familyValid": true,
+        "opticalScore": 0.951,
+        "runtimeValidated": true,
+        "certified": true
+      },
+      "runtimeValidated": true,
+      "lockdownCertified": true
     },
     {
       "key": "diagnostics",
@@ -2090,7 +3152,7 @@
       "edgePixels": 0,
       "confidence": 1,
       "overrideApplied": true,
-      "auditStatus": "WARN",
+      "auditStatus": "PASS",
       "textContamination": {
         "contaminated": false,
         "score": 0,
@@ -2101,7 +3163,25 @@
         "totalPixels": 765
       },
       "contentSha256": "29b1e87b3dab305b410296872e84b018a567c6e04684a1944a76c86ee8ed13bf",
-      "overrideReason": "Diagnostics pulse glyph included DIAGNOSTICS baseline."
+      "overrideReason": "Diagnostics pulse glyph included DIAGNOSTICS baseline.",
+      "optical": {
+        "scale": 1.12,
+        "translateX": 0,
+        "translateY": 0,
+        "occupancy": 0.012,
+        "aspect": 1.19,
+        "centeringScore": 0.762,
+        "paddingScore": 1,
+        "scaleScore": 1,
+        "strokeConsistency": 1,
+        "transparencyValid": true,
+        "familyValid": true,
+        "opticalScore": 0.917,
+        "runtimeValidated": true,
+        "certified": true
+      },
+      "runtimeValidated": true,
+      "lockdownCertified": true
     },
     {
       "key": "security",
@@ -2136,7 +3216,25 @@
         "totalPixels": 9069
       },
       "contentSha256": "3e63bcd7138b272346ae198e771cf2d382dc89edf9a6db329cd15a4242a42cd9",
-      "overrideReason": null
+      "overrideReason": null,
+      "optical": {
+        "scale": 0.96,
+        "translateX": 0,
+        "translateY": 0,
+        "occupancy": 0.138,
+        "aspect": 0.93,
+        "centeringScore": 0.883,
+        "paddingScore": 0.929,
+        "scaleScore": 1,
+        "strokeConsistency": 1,
+        "transparencyValid": true,
+        "familyValid": true,
+        "opticalScore": 0.941,
+        "runtimeValidated": true,
+        "certified": true
+      },
+      "runtimeValidated": true,
+      "lockdownCertified": true
     },
     {
       "key": "permissions",
@@ -2160,7 +3258,7 @@
       "edgePixels": 0,
       "confidence": 1,
       "overrideApplied": true,
-      "auditStatus": "WARN",
+      "auditStatus": "PASS",
       "textContamination": {
         "contaminated": false,
         "score": 0,
@@ -2171,7 +3269,25 @@
         "totalPixels": 1108
       },
       "contentSha256": "f8916808151cdd63d9cfc2a7384c12f7d61da0570dcfd9ad81847334a7be7960",
-      "overrideReason": "Permit shield glyph overlapped PERMISSIONS baseline fragments."
+      "overrideReason": "Permit shield glyph overlapped PERMISSIONS baseline fragments.",
+      "optical": {
+        "scale": 1.12,
+        "translateX": 1,
+        "translateY": 0,
+        "occupancy": 0.017,
+        "aspect": 1.03,
+        "centeringScore": 0.63,
+        "paddingScore": 1,
+        "scaleScore": 1,
+        "strokeConsistency": 1,
+        "transparencyValid": true,
+        "familyValid": true,
+        "opticalScore": 0.871,
+        "runtimeValidated": true,
+        "certified": true
+      },
+      "runtimeValidated": true,
+      "lockdownCertified": true
     },
     {
       "key": "help",
@@ -2206,7 +3322,25 @@
         "totalPixels": 10024
       },
       "contentSha256": "7d2ad6d34e567915949da86fde503b547acc34ced114c8e5fe2c791aad42e728",
-      "overrideReason": null
+      "overrideReason": null,
+      "optical": {
+        "scale": 0.92,
+        "translateX": 0,
+        "translateY": 0,
+        "occupancy": 0.153,
+        "aspect": 1.04,
+        "centeringScore": 0.932,
+        "paddingScore": 1,
+        "scaleScore": 1,
+        "strokeConsistency": 1,
+        "transparencyValid": true,
+        "familyValid": true,
+        "opticalScore": 0.976,
+        "runtimeValidated": true,
+        "certified": true
+      },
+      "runtimeValidated": true,
+      "lockdownCertified": true
     },
     {
       "key": "about",
@@ -2241,7 +3375,30 @@
         "totalPixels": 9463
       },
       "contentSha256": "984d3945e6629e83c25f6d0a33060dd21b70d00f54d0e87e7659d731ab2bf4e2",
-      "overrideReason": null
+      "overrideReason": null,
+      "optical": {
+        "scale": 0.96,
+        "translateX": 0,
+        "translateY": 0,
+        "occupancy": 0.144,
+        "aspect": 1.04,
+        "centeringScore": 0.967,
+        "paddingScore": 1,
+        "scaleScore": 1,
+        "strokeConsistency": 1,
+        "transparencyValid": true,
+        "familyValid": true,
+        "opticalScore": 0.988,
+        "runtimeValidated": true,
+        "certified": true
+      },
+      "runtimeValidated": true,
+      "lockdownCertified": true
     }
-  ]
+  ],
+  "lockdownCertified": true,
+  "opticalCertificationVersion": "experience-lab-icons-v2-locked",
+  "auditPass": 64,
+  "auditWarn": 0,
+  "auditFail": 0
 }

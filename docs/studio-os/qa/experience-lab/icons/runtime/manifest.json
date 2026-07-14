@@ -1,0 +1,42 @@
+{
+  "capturedAt": "2026-07-14T01:09:52.598Z",
+  "baseUrl": "http://localhost:4173",
+  "shots": [
+    {
+      "route": "experience-lab-v2",
+      "viewport": "desktop-1920",
+      "surface": "full",
+      "file": "experience-lab-v2__desktop-1920__full.png"
+    },
+    {
+      "route": "experience-lab-v2",
+      "viewport": "tablet-768",
+      "surface": "full",
+      "file": "experience-lab-v2__tablet-768__full.png"
+    },
+    {
+      "route": "experience-lab-v2",
+      "viewport": "mobile-390",
+      "surface": "full",
+      "file": "experience-lab-v2__mobile-390__full.png"
+    },
+    {
+      "route": "icon-qa",
+      "viewport": "desktop-1920",
+      "surface": "full",
+      "file": "icon-qa__desktop-1920__full.png"
+    },
+    {
+      "route": "icon-qa",
+      "viewport": "tablet-768",
+      "surface": "full",
+      "file": "icon-qa__tablet-768__full.png"
+    },
+    {
+      "route": "icon-qa",
+      "viewport": "mobile-390",
+      "surface": "full",
+      "file": "icon-qa__mobile-390__full.png"
+    }
+  ]
+}

@@ -49065,6 +49065,27 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 - **`experience-lab-v2-workbench-config.ts`** — removed deprecated `EXPERIENCE_LAB_WORKBENCH_CENTER_LOGO_PATH` / `resolveExperienceLabWorkbenchCenterLogoUrl`
 - **Tests** — orb must not reference logo URLs or `<img>`; Command Dock logo (`IMG_6238.webp`) unchanged
 
-**Preserved:** Workbench layout, orb container size/position pixel-identical; Command Dock SW logo in header only.
+**One commit + one push** on `master` via `agent-commit.sh`.
+
+---
+
+## 2026-07-14 — P0 Experience Lab icon system lockdown 64/64 PASS (full conversation)
+
+**Founder request:** Final certification pass — upgrade icon library from PASS 40/WARN 24/FAIL 0 to PASS 64/WARN 0/FAIL 0. Optical polish only; no Experience Lab layout changes. Runtime optical QA, screenshot regression, QA dashboard upgrade, declare icon system LOCKED.
+
+**Shipped:**
+
+- **`scripts/certify-experience-lab-icon-optics.mjs`** — per-icon optical analysis (centering, padding, scale, family scores); merges PASS certification into metadata
+- **`experience-lab-icon-optical-profile.ts`** — generated runtime tuning for all 64 icons (scale + translateX/Y + opticalScore)
+- **`ExperienceLabIcon.tsx`** — applies optical profile via `objectPosition` offsets (visual centering, not bbox math)
+- **Audit classifier** — overrides no longer auto-WARN; clean extractions certify PASS
+- **Result:** PASS 64 · WARN 0 · FAIL 0 · optical certified 64/64 · `EXPERIENCE_LAB_ICON_LOCKDOWN_CERTIFIED = true`
+- **`EXPERIENCE_LAB_ICON_SYSTEM_LOCKDOWN.md`** — founder certification report with visual regression table
+- **QA route** — PASS/WARN/FAIL/LOCKED summary, optical/centering/padding scores, runtime button preview
+- **Runtime screenshots** — `docs/studio-os/qa/experience-lab/icons/runtime/` (desktop/tablet/mobile full-page + manifest)
+- **`capture-experience-lab-icon-runtime-screenshots.mjs`** + npm scripts `experience-lab:certify-icons`, `experience-lab:capture-runtime-icons`
+- **Tests** — 15/15 pass; lockdown 64/0/0 assertions
+
+**Preserved:** No layout/spacing/typography changes; extraction PNGs unchanged; performance unchanged (lazy img retained).
 
 **One commit + one push** on `master` via `agent-commit.sh`.

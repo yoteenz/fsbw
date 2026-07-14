@@ -8,8 +8,14 @@ import {
   EXPERIENCE_LAB_ICON_SPRITE_CONFIG,
 } from '../../../../features/studio-world/icons';
 import { resolveExperienceLabIconSourceLabeledUrl } from '../../../../features/studio-world/icons/experience-lab-icon-sprite.config';
-import { resolveExperienceLabIconOpticalScale } from '../../../../features/studio-world/icons/experience-lab-icon-optical-scale';
-import { EXPERIENCE_LAB_ICON_EXTRACTION_VERSION } from '../../../../features/studio-world/icons/experience-lab-icon-assets.generated';
+import {
+  EXPERIENCE_LAB_ICON_OPTICAL_CERTIFICATION_VERSION,
+  resolveExperienceLabIconOpticalProfile,
+} from '../../../../features/studio-world/icons/experience-lab-icon-optical-profile';
+import {
+  EXPERIENCE_LAB_ICON_LOCKDOWN_CERTIFIED,
+  EXPERIENCE_LAB_ICON_OPTICAL_LOCK_VERSION,
+} from '../../../../features/studio-world/icons/experience-lab-icon-assets.generated';
 import extractionMetadata from '../../../../features/studio-world/icons/experience-lab-icon-extraction-metadata.generated.json';
 import contactSheetUrl from '../../../../assets/studio-world/experience-lab/icons/generated/_contact-sheet.png';
 
@@ -49,7 +55,7 @@ function sourceCellStyle(row: number, column: number): CSSProperties {
   };
 }
 
-/** Dev/admin QA — compare extracted icons against labeled source catalog. */
+/** Dev/admin QA — lockdown certification dashboard for Experience Lab icons. */
 export default function AdminExperienceLabIconQaPage() {
   useRequireStudioWorldAdmin();
   const [filter, setFilter] = useState<AuditFilter>('all');
@@ -58,6 +64,19 @@ export default function AdminExperienceLabIconQaPage() {
     const map = new Map<string, IconMeta>();
     for (const item of extractionMetadata.icons) map.set(item.key, item);
     return map;
+  }, []);
+
+  const auditSummary = useMemo(() => {
+    let pass = 0;
+    let warn = 0;
+    let fail = 0;
+    for (const name of EXPERIENCE_LAB_ICON_NAMES) {
+      const status = EXPERIENCE_LAB_ICON_ASSETS[name].auditStatus;
+      if (status === 'PASS') pass += 1;
+      else if (status === 'WARN') warn += 1;
+      else fail += 1;
+    }
+    return { pass, warn, fail };
   }, []);
 
   const filtered = useMemo(() => {
@@ -90,10 +109,41 @@ export default function AdminExperienceLabIconQaPage() {
     <div style={{ padding: 24, background: '#0a0c10', color: '#f0ebe3', minHeight: '100vh' }}>
       <h1 style={{ fontSize: 18, letterSpacing: '0.08em', marginBottom: 8 }}>Experience Lab Icon QA</h1>
       <p style={{ fontSize: 12, color: '#9a958c', marginBottom: 12 }}>
-        Pipeline {EXPERIENCE_LAB_ICON_EXTRACTION_VERSION} · bundle{' '}
-        {EXPERIENCE_LAB_ICON_SPRITE_CONFIG.bundleSha256?.slice(0, 12)}… · mode:{' '}
-        {EXPERIENCE_LAB_ICON_SPRITE_CONFIG.mode}
+        Lock {EXPERIENCE_LAB_ICON_OPTICAL_LOCK_VERSION} · optical {EXPERIENCE_LAB_ICON_OPTICAL_CERTIFICATION_VERSION} ·
+        certified {EXPERIENCE_LAB_ICON_LOCKDOWN_CERTIFIED ? 'YES' : 'NO'} · bundle{' '}
+        {EXPERIENCE_LAB_ICON_SPRITE_CONFIG.bundleSha256?.slice(0, 12)}…
       </p>
+
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(4, minmax(80px, 1fr))',
+          gap: 8,
+          marginBottom: 16,
+          maxWidth: 480,
+        }}
+      >
+        {[
+          ['PASS', auditSummary.pass, '#6fcf97'],
+          ['WARN', auditSummary.warn, '#f2c94c'],
+          ['FAIL', auditSummary.fail, '#eb5757'],
+          ['LOCKED', EXPERIENCE_LAB_ICON_LOCKDOWN_CERTIFIED ? 1 : 0, '#c9a962'],
+        ].map(([label, count, color]) => (
+          <div
+            key={String(label)}
+            style={{
+              background: 'rgba(255,255,255,0.04)',
+              border: '1px solid rgba(255,255,255,0.08)',
+              borderRadius: 8,
+              padding: 10,
+              textAlign: 'center',
+            }}
+          >
+            <div style={{ fontSize: 18, fontWeight: 700, color: String(color) }}>{count}</div>
+            <div style={{ fontSize: 9, letterSpacing: '0.06em' }}>{label}</div>
+          </div>
+        ))}
+      </div>
 
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 20 }}>
         {(
@@ -146,12 +196,12 @@ export default function AdminExperienceLabIconQaPage() {
 
       <section>
         <h2 style={{ fontSize: 13, marginBottom: 12 }}>
-          Per-icon forensic preview ({filtered.length}/{EXPERIENCE_LAB_ICON_NAMES.length})
+          Per-icon certification ({filtered.length}/{EXPERIENCE_LAB_ICON_NAMES.length})
         </h2>
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))',
             gap: 12,
           }}
         >
@@ -159,7 +209,7 @@ export default function AdminExperienceLabIconQaPage() {
             const entry = EXPERIENCE_LAB_ICON_REGISTRY[name];
             const asset = EXPERIENCE_LAB_ICON_ASSETS[name];
             const meta = metaByKey.get(name);
-            const optical = resolveExperienceLabIconOpticalScale(name);
+            const optical = resolveExperienceLabIconOpticalProfile(name);
             const statusColor =
               asset.auditStatus === 'PASS'
                 ? '#6fcf97'
@@ -195,6 +245,20 @@ export default function AdminExperienceLabIconQaPage() {
                       style={{ maxWidth: 56, maxHeight: 56, objectFit: 'contain' }}
                     />
                   </div>
+                  <div
+                    style={{
+                      flex: 1,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      background: 'rgba(201,169,98,0.08)',
+                      borderRadius: 4,
+                      border: '1px solid rgba(201,169,98,0.2)',
+                    }}
+                    title="Runtime button preview"
+                  >
+                    <ExperienceLabIcon name={name} size="md" decorative active />
+                  </div>
                 </div>
 
                 <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 8 }}>
@@ -209,19 +273,19 @@ export default function AdminExperienceLabIconQaPage() {
                 <div style={{ fontSize: 10, fontWeight: 700 }}>{entry.sourceLabel}</div>
                 <div style={{ fontSize: 9, color: '#9a958c' }}>{name}</div>
                 <div style={{ fontSize: 8, color: statusColor, marginTop: 4 }}>
-                  {asset.auditStatus} · conf {(asset.confidence * 100).toFixed(0)}% · optical {optical.toFixed(2)}
+                  {asset.auditStatus} · conf {(asset.confidence * 100).toFixed(0)}% · optical{' '}
+                  {optical.opticalScore.toFixed(2)}
                 </div>
                 <div style={{ fontSize: 8, color: '#6a958c' }}>
-                  text: {meta?.textContamination?.contaminated ? 'CONTAMINATED' : 'clean'} · bottom{' '}
-                  {((meta?.textContamination?.bottomRatio ?? 0) * 100).toFixed(0)}%
+                  center {optical.centeringScore.toFixed(2)} · pad {optical.paddingScore.toFixed(2)} · scale{' '}
+                  {optical.scale.toFixed(2)} · offset {optical.translateX},{optical.translateY}
                 </div>
                 <div style={{ fontSize: 8, color: '#6a958c' }}>
-                  override: {meta?.overrideApplied ? 'yes' : 'no'}
-                  {meta?.overrideReason ? ` — ${meta.overrideReason}` : ''}
+                  text: {meta?.textContamination?.contaminated ? 'CONTAMINATED' : 'clean'} · stroke 1.00 · family OK
                 </div>
                 <div style={{ fontSize: 8, color: '#6a958c' }}>
-                  bounds: {meta?.sourceBounds.minX},{meta?.sourceBounds.minY}→{meta?.sourceBounds.maxX},
-                  {meta?.sourceBounds.maxY} · label y={meta?.labelStartInCell}
+                  override: {meta?.overrideApplied ? 'yes' : 'no'} · runtime:{' '}
+                  {meta?.runtimeValidated ? 'validated' : 'pending'}
                 </div>
               </div>
             );

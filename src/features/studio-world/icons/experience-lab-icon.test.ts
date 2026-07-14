@@ -16,8 +16,10 @@ import {
   EXPERIENCE_LAB_ICON_ASSETS,
   EXPERIENCE_LAB_ICON_EXTRACTION_VERSION,
   EXPERIENCE_LAB_ICON_BUNDLE_SHA256,
+  EXPERIENCE_LAB_ICON_LOCKDOWN_CERTIFIED,
+  EXPERIENCE_LAB_ICON_OPTICAL_LOCK_VERSION,
 } from './experience-lab-icon-assets.generated';
-import { resolveExperienceLabIconOpticalScale } from './experience-lab-icon-optical-scale';
+import { resolveExperienceLabIconOpticalScale, resolveExperienceLabIconOpticalProfile, EXPERIENCE_LAB_ICON_OPTICAL_PROFILE } from './experience-lab-icon-optical-profile';
 import {
   EXPERIENCE_LAB_ICON_EXTRACTION_OVERRIDES,
   EXPERIENCE_LAB_ICON_FOUNDER_REPORTED_KEYS,
@@ -33,7 +35,9 @@ const OVERRIDES_MJS = resolve(ROOT, 'scripts/experience-lab-icon-extraction-over
 const V2_SHELL = resolve(ICONS_DIR, '../experience-lab-v2/ExperienceLabV2Shell.tsx');
 const LEGACY_PAGE = resolve(ROOT, 'src/pages/admin/studio/experience-lab/page.tsx');
 const FIDELITY_DOC = resolve(ROOT, 'docs/studio-os/design-system/EXPERIENCE_LAB_ICON_FIDELITY_REPAIR.md');
+const LOCKDOWN_DOC = resolve(ROOT, 'docs/studio-os/design-system/EXPERIENCE_LAB_ICON_SYSTEM_LOCKDOWN.md');
 const FAILURE_MANIFEST = resolve(GENERATED_DIR, '_failure-manifest.json');
+const OPTICAL_PROFILE = resolve(ICONS_DIR, 'experience-lab-icon-optical-profile.ts');
 
 function iconFilename(key: string) {
   return `${key.replace(/([A-Z])/g, '-$1').toLowerCase()}.png`;
@@ -132,23 +136,37 @@ describe('Experience Lab extracted icon system v2', () => {
       const item = metadata.icons.find((i) => i.key === name);
       expect(item, name).toBeTruthy();
       expect(item!.textContamination.contaminated, name).toBe(false);
-      expect(['PASS', 'WARN']).toContain(item!.auditStatus);
+      expect(['PASS']).toContain(item!.auditStatus);
       expect(EXPERIENCE_LAB_ICON_ASSETS[name].auditStatus).not.toBe('FAIL');
     }
   });
 
-  it('glyphs stay inset from output edges and no icon fails audit', () => {
+  it('glyphs stay inset from output edges and all 64 icons pass lockdown audit', () => {
     const metadata = JSON.parse(readFileSync(METADATA, 'utf8')) as {
-      icons: Array<{ key: string; confidence: number; edgePixels: number; glyphPixels: number; auditStatus: string }>;
+      lockdownCertified?: boolean;
+      auditPass?: number;
+      auditWarn?: number;
+      auditFail?: number;
+      icons: Array<{ key: string; confidence: number; edgePixels: number; glyphPixels: number; auditStatus: string; lockdownCertified?: boolean }>;
     };
     expect(metadata.icons).toHaveLength(64);
+    let pass = 0;
+    let warn = 0;
     let fail = 0;
     for (const item of metadata.icons) {
       expect(item.confidence).toBeGreaterThanOrEqual(0.55);
       expect(item.edgePixels / Math.max(1, item.glyphPixels)).toBeLessThan(0.12);
+      expect(item.auditStatus).toBe('PASS');
+      if (item.auditStatus === 'PASS') pass += 1;
+      if (item.auditStatus === 'WARN') warn += 1;
       if (item.auditStatus === 'FAIL') fail += 1;
+      expect(EXPERIENCE_LAB_ICON_ASSETS[item.key as keyof typeof EXPERIENCE_LAB_ICON_ASSETS].auditStatus).toBe('PASS');
     }
+    expect(pass).toBe(64);
+    expect(warn).toBe(0);
     expect(fail).toBe(0);
+    expect(metadata.lockdownCertified).toBe(true);
+    expect(EXPERIENCE_LAB_ICON_LOCKDOWN_CERTIFIED).toBe(true);
   });
 
   it('registers per-icon overrides centrally and keeps them in source cells', () => {
@@ -166,14 +184,19 @@ describe('Experience Lab extracted icon system v2', () => {
     }
   });
 
-  it('optical scale values remain within safe bounds', () => {
+  it('optical profiles certify all icons with centering and scale tuning', () => {
+    expect(existsSync(OPTICAL_PROFILE)).toBe(true);
+    expect(Object.keys(EXPERIENCE_LAB_ICON_OPTICAL_PROFILE)).toHaveLength(64);
     for (const name of EXPERIENCE_LAB_ICON_NAMES) {
-      const scale = resolveExperienceLabIconOpticalScale(name);
-      expect(scale).toBeGreaterThanOrEqual(0.9);
-      expect(scale).toBeLessThanOrEqual(1.2);
+      const profile = resolveExperienceLabIconOpticalProfile(name);
+      expect(profile.scale).toBeGreaterThanOrEqual(0.9);
+      expect(profile.scale).toBeLessThanOrEqual(1.2);
+      expect(profile.opticalScore).toBeGreaterThanOrEqual(0.82);
+      expect(profile.certified).toBe(true);
+      expect(Math.abs(profile.translateX)).toBeLessThanOrEqual(4);
+      expect(Math.abs(profile.translateY)).toBeLessThanOrEqual(4);
     }
-    expect(resolveExperienceLabIconOpticalScale('materials')).toBeGreaterThan(1.05);
-    expect(resolveExperienceLabIconOpticalScale('camera')).toBeGreaterThan(1.05);
+    expect(EXPERIENCE_LAB_ICON_OPTICAL_LOCK_VERSION).toBe('experience-lab-icons-v2-locked');
   });
 
   it('manifest version and bundle hash change after v2 regeneration', () => {
@@ -200,7 +223,8 @@ describe('Experience Lab extracted icon system v2', () => {
     for (const size of ['xs', 'sm', 'md', 'lg', 'xl']) {
       expect(src).toContain(size);
     }
-    expect(src).toContain('resolveExperienceLabIconOpticalScale');
+    expect(src).toContain('resolveExperienceLabIconOpticalProfile');
+    expect(src).toContain('objectPosition');
     expect(resolveExperienceLabIconOpticalScale('blueprint')).toBeGreaterThan(1);
     expect(css).toContain('drop-shadow');
     expect(css).not.toContain('crisp-edges');
@@ -225,14 +249,17 @@ describe('Experience Lab extracted icon system v2', () => {
     expect(readFileSync(V2_SHELL, 'utf8')).toContain('ExperienceLabV2Shell');
   });
 
-  it('forensic docs, failure manifest, and QA route exist', () => {
+  it('forensic docs, lockdown certification, and QA route exist', () => {
     expect(existsSync(resolve(GENERATED_DIR, '_contact-sheet.png'))).toBe(true);
     expect(existsSync(resolve(ROOT, 'docs/studio-os/design-system/EXPERIENCE_LAB_EXTRACTED_ICON_QA.md'))).toBe(true);
     expect(existsSync(FIDELITY_DOC)).toBe(true);
+    expect(existsSync(LOCKDOWN_DOC)).toBe(true);
     expect(existsSync(FAILURE_MANIFEST)).toBe(true);
     const qa = readFileSync(resolve(ROOT, 'src/pages/admin/studio/experience-lab-icon-qa/page.tsx'), 'utf8');
     expect(qa).toContain('Founder Reported');
     expect(qa).toContain('Text Contamination');
+    expect(qa).toContain('LOCKED');
+    expect(qa).toContain('opticalScore');
   });
 
   it('metadata records connected-component audit fields for every icon', () => {
@@ -244,7 +271,7 @@ describe('Experience Lab extracted icon system v2', () => {
         sourceBounds: { minX: number; minY: number; maxX: number; maxY: number };
       }>;
     };
-    expect(metadata.version).toBe('experience-lab-icons-v2');
+    expect(metadata.version).toBe('experience-lab-icons-v2-locked');
     for (const item of metadata.icons) {
       expect(item.textContamination.score).toBeGreaterThanOrEqual(0);
       expect(item.sourceBounds.maxY).toBeGreaterThanOrEqual(item.sourceBounds.minY);

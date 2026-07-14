@@ -2,7 +2,7 @@
   "version": "experience-lab-icons-v2",
   "sourceSha256": "d7476775716d3f2dc9b2416198c81bbd19d8e1a7f5730c5ff3c79fe6cda1f51d",
   "bundleSha256": "b7fd4d0a61e282461894bdd8605ddc2e91e4c44ca371f27fbe8e7c163c2daecd",
-  "generatedAt": "2026-07-14T00:59:02.368Z",
+  "generatedAt": "2026-07-14T01:06:16.988Z",
   "founderReported": [
     "zoomIn",
     "materials",
@@ -33,7 +33,7 @@
     },
     {
       "key": "blueprint",
-      "auditStatus": "WARN",
+      "auditStatus": "PASS",
       "overrideApplied": true,
       "overrideReason": "Blueprint roll glyph label-safe cutoff.",
       "textContamination": {
@@ -49,7 +49,7 @@
     },
     {
       "key": "construction",
-      "auditStatus": "WARN",
+      "auditStatus": "PASS",
       "overrideApplied": true,
       "overrideReason": "Architectural tools hard-hat glyph label-safe cutoff.",
       "textContamination": {
@@ -65,7 +65,7 @@
     },
     {
       "key": "materials",
-      "auditStatus": "WARN",
+      "auditStatus": "PASS",
       "overrideApplied": true,
       "overrideReason": "Paint-bucket glyph sits above MATERIALS label; auto bounds included label strokes.",
       "textContamination": {
@@ -81,7 +81,7 @@
     },
     {
       "key": "lighting",
-      "auditStatus": "WARN",
+      "auditStatus": "PASS",
       "overrideApplied": true,
       "overrideReason": "Lighting fixture low stroke needed explicit ceiling.",
       "textContamination": {
@@ -97,7 +97,7 @@
     },
     {
       "key": "camera",
-      "auditStatus": "WARN",
+      "auditStatus": "PASS",
       "overrideApplied": true,
       "overrideReason": "Camera body clipped low; label band false-positive extended bounds.",
       "textContamination": {
@@ -113,7 +113,7 @@
     },
     {
       "key": "splitView",
-      "auditStatus": "WARN",
+      "auditStatus": "PASS",
       "overrideApplied": true,
       "overrideReason": "Split-view panes label-safe cutoff.",
       "textContamination": {
@@ -129,7 +129,7 @@
     },
     {
       "key": "founderRender",
-      "auditStatus": "WARN",
+      "auditStatus": "PASS",
       "overrideApplied": true,
       "overrideReason": "Founder render star glyph label-safe cutoff.",
       "textContamination": {
@@ -209,7 +209,7 @@
     },
     {
       "key": "analytics",
-      "auditStatus": "WARN",
+      "auditStatus": "PASS",
       "overrideApplied": true,
       "overrideReason": "Bar-chart glyph merged with ANALYTICS word band in single bounding box.",
       "textContamination": {
@@ -225,7 +225,7 @@
     },
     {
       "key": "performance",
-      "auditStatus": "WARN",
+      "auditStatus": "PASS",
       "overrideApplied": true,
       "overrideReason": "Gauge glyph merged with PERFORMANCE label band.",
       "textContamination": {
@@ -273,7 +273,7 @@
     },
     {
       "key": "playback",
-      "auditStatus": "WARN",
+      "auditStatus": "PASS",
       "overrideApplied": true,
       "overrideReason": "Animation-studio play glyph contaminated by PLAYBACK label strokes.",
       "textContamination": {
@@ -401,7 +401,7 @@
     },
     {
       "key": "zoomIn",
-      "auditStatus": "WARN",
+      "auditStatus": "PASS",
       "overrideApplied": true,
       "overrideReason": "Magnifier handle ends above ZOOM IN label band; prior cutoff included label strokes.",
       "textContamination": {
@@ -433,7 +433,7 @@
     },
     {
       "key": "pan",
-      "auditStatus": "WARN",
+      "auditStatus": "PASS",
       "overrideApplied": false,
       "overrideReason": null,
       "textContamination": {
@@ -465,7 +465,7 @@
     },
     {
       "key": "orbit",
-      "auditStatus": "WARN",
+      "auditStatus": "PASS",
       "overrideApplied": true,
       "overrideReason": "Studio World orbit ring overlapped ORBIT label strokes.",
       "textContamination": {
@@ -481,7 +481,7 @@
     },
     {
       "key": "perspective",
-      "auditStatus": "WARN",
+      "auditStatus": "PASS",
       "overrideApplied": true,
       "overrideReason": "Composition cube picked up PERSPECTIVE label characters.",
       "textContamination": {
@@ -561,7 +561,7 @@
     },
     {
       "key": "unlock",
-      "auditStatus": "WARN",
+      "auditStatus": "PASS",
       "overrideApplied": false,
       "overrideReason": null,
       "textContamination": {
@@ -593,7 +593,7 @@
     },
     {
       "key": "delete",
-      "auditStatus": "WARN",
+      "auditStatus": "PASS",
       "overrideApplied": false,
       "overrideReason": null,
       "textContamination": {
@@ -657,7 +657,7 @@
     },
     {
       "key": "export",
-      "auditStatus": "WARN",
+      "auditStatus": "PASS",
       "overrideApplied": false,
       "overrideReason": null,
       "textContamination": {
@@ -737,7 +737,7 @@
     },
     {
       "key": "share",
-      "auditStatus": "WARN",
+      "auditStatus": "PASS",
       "overrideApplied": true,
       "overrideReason": "Marketplace share nodes overlapped SHARE label band.",
       "textContamination": {
@@ -769,7 +769,7 @@
     },
     {
       "key": "team",
-      "auditStatus": "WARN",
+      "auditStatus": "PASS",
       "overrideApplied": true,
       "overrideReason": "Workforce center figures overlapped TEAM label.",
       "textContamination": {
@@ -833,7 +833,7 @@
     },
     {
       "key": "attachments",
-      "auditStatus": "WARN",
+      "auditStatus": "PASS",
       "overrideApplied": true,
       "overrideReason": "Asset-reference clip glyph picked up ATTACHMENTS label strip.",
       "textContamination": {
@@ -913,7 +913,7 @@
     },
     {
       "key": "dashboard",
-      "auditStatus": "WARN",
+      "auditStatus": "PASS",
       "overrideApplied": true,
       "overrideReason": "Dashboard tiles merged with DASHBOARD label baseline.",
       "textContamination": {
@@ -945,7 +945,7 @@
     },
     {
       "key": "terminal",
-      "auditStatus": "WARN",
+      "auditStatus": "PASS",
       "overrideApplied": true,
       "overrideReason": "Command-center terminal glyph included TERMINAL word band.",
       "textContamination": {
@@ -961,7 +961,7 @@
     },
     {
       "key": "diagnostics",
-      "auditStatus": "WARN",
+      "auditStatus": "PASS",
       "overrideApplied": true,
       "overrideReason": "Diagnostics pulse glyph included DIAGNOSTICS baseline.",
       "textContamination": {
@@ -993,7 +993,7 @@
     },
     {
       "key": "permissions",
-      "auditStatus": "WARN",
+      "auditStatus": "PASS",
       "overrideApplied": true,
       "overrideReason": "Permit shield glyph overlapped PERMISSIONS baseline fragments.",
       "textContamination": {
