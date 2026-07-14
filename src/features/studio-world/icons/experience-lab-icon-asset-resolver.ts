@@ -6,18 +6,19 @@ import {
   EXPERIENCE_LAB_ICON_SOURCE_ROLE,
 } from './experience-lab-icon-assets.generated';
 
-/** Optical tuning paused until v4 source assets pass founder visual QA. */
+/** Optical tuning paused until v5 source twin passes founder visual QA. */
 export const EXPERIENCE_LAB_ICON_OPTICAL_TUNING_PAUSED = true as const;
 
 export type ResolvedExperienceLabIconAsset = {
   src: string | null;
   approved: boolean;
   auditStatus: 'PASS' | 'WARN' | 'FAIL' | 'PENDING';
-  source: 'v4-unlabeled' | 'missing';
+  source: 'v5-source-twin' | 'missing';
   parityStatus?: 'PASS' | 'WARN' | 'FAIL';
+  twinParityStatus?: 'PASS' | 'WARN' | 'FAIL';
 };
 
-function resolveV4Asset(name: ExperienceLabIconName): ResolvedExperienceLabIconAsset {
+function resolveV5Asset(name: ExperienceLabIconName): ResolvedExperienceLabIconAsset {
   const entry = EXPERIENCE_LAB_ICON_ASSETS[name];
   if (!entry?.src) {
     return { src: null, approved: false, auditStatus: 'FAIL', source: 'missing' };
@@ -27,21 +28,21 @@ function resolveV4Asset(name: ExperienceLabIconName): ResolvedExperienceLabIconA
     src: entry.src,
     approved: entry.approved && audit !== 'FAIL',
     auditStatus: audit,
-    source: 'v4-unlabeled',
+    source: 'v5-source-twin',
     parityStatus: entry.parityStatus,
   };
 }
 
-/** Production runtime — v4 unlabeled grid extraction only. */
+/** Production runtime — v5 pixel-preserving twin grid extraction only. */
 export function resolveProductionExperienceLabIconAsset(
   name: ExperienceLabIconName,
 ): ResolvedExperienceLabIconAsset {
-  return resolveV4Asset(name);
+  return resolveV5Asset(name);
 }
 
-/** QA route — same v4 assets with parity metadata. */
+/** QA route — v5 assets with source-twin parity metadata. */
 export function resolveQaExperienceLabIconAsset(name: ExperienceLabIconName): ResolvedExperienceLabIconAsset {
-  return resolveV4Asset(name);
+  return resolveV5Asset(name);
 }
 
 export function isExperienceLabIconLibraryCertified(): boolean {

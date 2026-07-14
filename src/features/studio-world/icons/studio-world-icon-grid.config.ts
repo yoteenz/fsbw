@@ -1,13 +1,13 @@
 import { STUDIO_WORLD_ICON_SOURCES } from './studio-world-icon-source-manifest';
 
-/** Grid geometry measured from unlabeled production source (1402×1122, 8×8). */
+/** Grid geometry from pixel-preserving unlabeled twin (1402×1122, 8×8). */
 export const STUDIO_WORLD_ICON_GRID_CONFIG = {
-  sourceRole: 'unlabeled-production-source' as const,
-  sourcePath: STUDIO_WORLD_ICON_SOURCES.unlabeledSource.path,
-  sourceWidth: STUDIO_WORLD_ICON_SOURCES.unlabeledSource.width,
-  sourceHeight: STUDIO_WORLD_ICON_SOURCES.unlabeledSource.height,
-  rows: STUDIO_WORLD_ICON_SOURCES.unlabeledSource.rows,
-  columns: STUDIO_WORLD_ICON_SOURCES.unlabeledSource.columns,
+  sourceRole: 'pixel-preserving-unlabeled-twin' as const,
+  sourcePath: STUDIO_WORLD_ICON_SOURCES.unlabeledTwin.path,
+  sourceWidth: STUDIO_WORLD_ICON_SOURCES.unlabeledTwin.width,
+  sourceHeight: STUDIO_WORLD_ICON_SOURCES.unlabeledTwin.height,
+  rows: STUDIO_WORLD_ICON_SOURCES.unlabeledTwin.rows,
+  columns: STUDIO_WORLD_ICON_SOURCES.unlabeledTwin.columns,
   cellWidth: 1402 / 8,
   cellHeight: 1122 / 8,
   cellWidthRounded: 175,
@@ -16,7 +16,7 @@ export const STUDIO_WORLD_ICON_GRID_CONFIG = {
   verticalGutter: 0,
   outerMargin: 0,
   glyphSafePadding: 18,
-  glyphSafeMaxYRatio: 0.72,
+  glyphSafeMaxYRatio: 1,
   outputCanvas: 512,
   alphaFloor: 24,
   blackLuminance: 28,

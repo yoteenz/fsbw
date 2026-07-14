@@ -1,0 +1,11 @@
+{
+  "version": "studio-world-icons-v5-source-twin",
+  "parityPass": 64,
+  "parityWarn": 0,
+  "parityFail": 0,
+  "runtimePass": 64,
+  "runtimeWarn": 0,
+  "runtimeFail": 0,
+  "generated": 64,
+  "bundleHash": "f09695a7e63ec4f43dee3699ba0d21f227a4b830b21cbe8b48ae082555de4500"
+}

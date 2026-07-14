@@ -1,0 +1,2961 @@
+{
+  "version": "studio-world-icons-v5-source-twin",
+  "labeledSha256": "d7476775716d3f2dc9b2416198c81bbd19d8e1a7f5730c5ff3c79fe6cda1f51d",
+  "twinSha256": "96a179e4ac77626f9d59be111486eda69176a5b245749827d8749a4663e0e96b",
+  "width": 1402,
+  "height": 1122,
+  "rows": 8,
+  "columns": 8,
+  "protectedPixelsChanged": 0,
+  "labelPixelsChanged": 614672,
+  "changedPixels": 614672,
+  "parityPass": 64,
+  "parityWarn": 0,
+  "parityFail": 0,
+  "icons": [
+    {
+      "key": "experienceLab",
+      "sourceLabel": "EXPERIENCE LAB",
+      "row": 0,
+      "column": 0,
+      "mask": {
+        "iconSafeTop": 0,
+        "iconSafeBottom": 71,
+        "labelMaskTop": 72,
+        "labelMaskBottom": 139,
+        "left": 0,
+        "right": 174
+      },
+      "iconRegionChecksumBefore": "91efdddba1ebdb8b63170a24539c93430e585bbfe1c1e33681b7deab9b989e28",
+      "iconRegionChecksumAfter": "91efdddba1ebdb8b63170a24539c93430e585bbfe1c1e33681b7deab9b989e28",
+      "iconCentroidBefore": {
+        "cx": 106,
+        "cy": 62.5
+      },
+      "iconCentroidAfter": {
+        "cx": 106,
+        "cy": 62.5
+      },
+      "iconBoundsBefore": {
+        "minX": 89,
+        "maxX": 123,
+        "minY": 54,
+        "maxY": 71,
+        "cx": 106,
+        "cy": 62.5,
+        "count": 256
+      },
+      "iconBoundsAfter": {
+        "minX": 89,
+        "maxX": 123,
+        "minY": 54,
+        "maxY": 71,
+        "cx": 106,
+        "cy": 62.5,
+        "count": 256
+      },
+      "protectedPixelsChanged": 0,
+      "labelPixelsChanged": 11843,
+      "residualTextPixels": 0,
+      "parityStatus": "PASS"
+    },
+    {
+      "key": "blueprint",
+      "sourceLabel": "BLUEPRINT",
+      "row": 0,
+      "column": 1,
+      "mask": {
+        "iconSafeTop": 0,
+        "iconSafeBottom": 71,
+        "labelMaskTop": 72,
+        "labelMaskBottom": 139,
+        "left": 0,
+        "right": 175
+      },
+      "iconRegionChecksumBefore": "774c16310c9ee99868cf8f17913887aa59cd2026e2460048947157ae5b4f7194",
+      "iconRegionChecksumAfter": "774c16310c9ee99868cf8f17913887aa59cd2026e2460048947157ae5b4f7194",
+      "iconCentroidBefore": {
+        "cx": 96.5,
+        "cy": 65.5
+      },
+      "iconCentroidAfter": {
+        "cx": 96.5,
+        "cy": 65.5
+      },
+      "iconBoundsBefore": {
+        "minX": 63,
+        "maxX": 130,
+        "minY": 60,
+        "maxY": 71,
+        "cx": 96.5,
+        "cy": 65.5,
+        "count": 350
+      },
+      "iconBoundsAfter": {
+        "minX": 63,
+        "maxX": 130,
+        "minY": 60,
+        "maxY": 71,
+        "cx": 96.5,
+        "cy": 65.5,
+        "count": 350
+      },
+      "protectedPixelsChanged": 0,
+      "labelPixelsChanged": 10744,
+      "residualTextPixels": 0,
+      "parityStatus": "PASS"
+    },
+    {
+      "key": "construction",
+      "sourceLabel": "CONSTRUCTION",
+      "row": 0,
+      "column": 2,
+      "mask": {
+        "iconSafeTop": 0,
+        "iconSafeBottom": 71,
+        "labelMaskTop": 72,
+        "labelMaskBottom": 139,
+        "left": 0,
+        "right": 174
+      },
+      "iconRegionChecksumBefore": "0ce7d5eaf929260dcbf8fbe206b7aea2e1f035861ce9c325d8bed3b0afb110e4",
+      "iconRegionChecksumAfter": "0ce7d5eaf929260dcbf8fbe206b7aea2e1f035861ce9c325d8bed3b0afb110e4",
+      "iconCentroidBefore": {
+        "cx": 73,
+        "cy": 65.5
+      },
+      "iconCentroidAfter": {
+        "cx": 73,
+        "cy": 65.5
+      },
+      "iconBoundsBefore": {
+        "minX": 46,
+        "maxX": 100,
+        "minY": 60,
+        "maxY": 71,
+        "cx": 73,
+        "cy": 65.5,
+        "count": 271
+      },
+      "iconBoundsAfter": {
+        "minX": 46,
+        "maxX": 100,
+        "minY": 60,
+        "maxY": 71,
+        "cx": 73,
+        "cy": 65.5,
+        "count": 271
+      },
+      "protectedPixelsChanged": 0,
+      "labelPixelsChanged": 11384,
+      "residualTextPixels": 0,
+      "parityStatus": "PASS"
+    },
+    {
+      "key": "materials",
+      "sourceLabel": "MATERIALS",
+      "row": 0,
+      "column": 3,
+      "mask": {
+        "iconSafeTop": 0,
+        "iconSafeBottom": 71,
+        "labelMaskTop": 72,
+        "labelMaskBottom": 139,
+        "left": 0,
+        "right": 174
+      },
+      "iconRegionChecksumBefore": "c074cda18e259540eaedd99d8d6568561eb63ef97955ab943aca6b1865d66d2e",
+      "iconRegionChecksumAfter": "c074cda18e259540eaedd99d8d6568561eb63ef97955ab943aca6b1865d66d2e",
+      "iconCentroidBefore": {
+        "cx": 66.5,
+        "cy": 65.5
+      },
+      "iconCentroidAfter": {
+        "cx": 66.5,
+        "cy": 65.5
+      },
+      "iconBoundsBefore": {
+        "minX": 47,
+        "maxX": 86,
+        "minY": 60,
+        "maxY": 71,
+        "cx": 66.5,
+        "cy": 65.5,
+        "count": 162
+      },
+      "iconBoundsAfter": {
+        "minX": 47,
+        "maxX": 86,
+        "minY": 60,
+        "maxY": 71,
+        "cx": 66.5,
+        "cy": 65.5,
+        "count": 162
+      },
+      "protectedPixelsChanged": 0,
+      "labelPixelsChanged": 10064,
+      "residualTextPixels": 0,
+      "parityStatus": "PASS"
+    },
+    {
+      "key": "lighting",
+      "sourceLabel": "LIGHTING",
+      "row": 0,
+      "column": 4,
+      "mask": {
+        "iconSafeTop": 0,
+        "iconSafeBottom": 71,
+        "labelMaskTop": 72,
+        "labelMaskBottom": 139,
+        "left": 0,
+        "right": 174
+      },
+      "iconRegionChecksumBefore": "246f61def27fcf9701715f0d820869e4b550781fd7e44e94cb2c546481ff1cdf",
+      "iconRegionChecksumAfter": "246f61def27fcf9701715f0d820869e4b550781fd7e44e94cb2c546481ff1cdf",
+      "iconCentroidBefore": {
+        "cx": 58,
+        "cy": 65.5
+      },
+      "iconCentroidAfter": {
+        "cx": 58,
+        "cy": 65.5
+      },
+      "iconBoundsBefore": {
+        "minX": 31,
+        "maxX": 85,
+        "minY": 60,
+        "maxY": 71,
+        "cx": 58,
+        "cy": 65.5,
+        "count": 72
+      },
+      "iconBoundsAfter": {
+        "minX": 31,
+        "maxX": 85,
+        "minY": 60,
+        "maxY": 71,
+        "cx": 58,
+        "cy": 65.5,
+        "count": 72
+      },
+      "protectedPixelsChanged": 0,
+      "labelPixelsChanged": 10290,
+      "residualTextPixels": 0,
+      "parityStatus": "PASS"
+    },
+    {
+      "key": "camera",
+      "sourceLabel": "CAMERA",
+      "row": 0,
+      "column": 5,
+      "mask": {
+        "iconSafeTop": 0,
+        "iconSafeBottom": 71,
+        "labelMaskTop": 72,
+        "labelMaskBottom": 139,
+        "left": 0,
+        "right": 175
+      },
+      "iconRegionChecksumBefore": "89ac51ccadc202cd8cb98ef5122b612192c38734803332222c3cb13ac6938f05",
+      "iconRegionChecksumAfter": "89ac51ccadc202cd8cb98ef5122b612192c38734803332222c3cb13ac6938f05",
+      "iconCentroidBefore": {
+        "cx": 59,
+        "cy": 69
+      },
+      "iconCentroidAfter": {
+        "cx": 59,
+        "cy": 69
+      },
+      "iconBoundsBefore": {
+        "minX": 45,
+        "maxX": 73,
+        "minY": 67,
+        "maxY": 71,
+        "cx": 59,
+        "cy": 69,
+        "count": 112
+      },
+      "iconBoundsAfter": {
+        "minX": 45,
+        "maxX": 73,
+        "minY": 67,
+        "maxY": 71,
+        "cx": 59,
+        "cy": 69,
+        "count": 112
+      },
+      "protectedPixelsChanged": 0,
+      "labelPixelsChanged": 10079,
+      "residualTextPixels": 0,
+      "parityStatus": "PASS"
+    },
+    {
+      "key": "splitView",
+      "sourceLabel": "SPLIT VIEW",
+      "row": 0,
+      "column": 6,
+      "mask": {
+        "iconSafeTop": 0,
+        "iconSafeBottom": 71,
+        "labelMaskTop": 72,
+        "labelMaskBottom": 139,
+        "left": 0,
+        "right": 174
+      },
+      "iconRegionChecksumBefore": "b649ebc4a7687fa7fdcb3b2313005fd3cc53e73eba32e30f1a1fdbd7c5bc9a5f",
+      "iconRegionChecksumAfter": "b649ebc4a7687fa7fdcb3b2313005fd3cc53e73eba32e30f1a1fdbd7c5bc9a5f",
+      "iconCentroidBefore": {
+        "cx": 51.5,
+        "cy": 70.5
+      },
+      "iconCentroidAfter": {
+        "cx": 51.5,
+        "cy": 70.5
+      },
+      "iconBoundsBefore": {
+        "minX": 21,
+        "maxX": 82,
+        "minY": 70,
+        "maxY": 71,
+        "cx": 51.5,
+        "cy": 70.5,
+        "count": 120
+      },
+      "iconBoundsAfter": {
+        "minX": 21,
+        "maxX": 82,
+        "minY": 70,
+        "maxY": 71,
+        "cx": 51.5,
+        "cy": 70.5,
+        "count": 120
+      },
+      "protectedPixelsChanged": 0,
+      "labelPixelsChanged": 11868,
+      "residualTextPixels": 0,
+      "parityStatus": "PASS"
+    },
+    {
+      "key": "founderRender",
+      "sourceLabel": "FOUNDER RENDER",
+      "row": 0,
+      "column": 7,
+      "mask": {
+        "iconSafeTop": 0,
+        "iconSafeBottom": 71,
+        "labelMaskTop": 72,
+        "labelMaskBottom": 139,
+        "left": 0,
+        "right": 174
+      },
+      "iconRegionChecksumBefore": "06b94d33973bd5268b16b3af636107b311cb69da4791c60d838abf85f70e30b2",
+      "iconRegionChecksumAfter": "06b94d33973bd5268b16b3af636107b311cb69da4791c60d838abf85f70e30b2",
+      "iconCentroidBefore": {
+        "cx": 48.5,
+        "cy": 69
+      },
+      "iconCentroidAfter": {
+        "cx": 48.5,
+        "cy": 69
+      },
+      "iconBoundsBefore": {
+        "minX": 18,
+        "maxX": 79,
+        "minY": 67,
+        "maxY": 71,
+        "cx": 48.5,
+        "cy": 69,
+        "count": 246
+      },
+      "iconBoundsAfter": {
+        "minX": 18,
+        "maxX": 79,
+        "minY": 67,
+        "maxY": 71,
+        "cx": 48.5,
+        "cy": 69,
+        "count": 246
+      },
+      "protectedPixelsChanged": 0,
+      "labelPixelsChanged": 10944,
+      "residualTextPixels": 0,
+      "parityStatus": "PASS"
+    },
+    {
+      "key": "projects",
+      "sourceLabel": "PROJECTS",
+      "row": 1,
+      "column": 0,
+      "mask": {
+        "iconSafeTop": 0,
+        "iconSafeBottom": 83,
+        "labelMaskTop": 84,
+        "labelMaskBottom": 140,
+        "left": 0,
+        "right": 174
+      },
+      "iconRegionChecksumBefore": "30ea5da1498f1c1435727866df1472f0aca5298fa92924995a40bbdea9ffcbac",
+      "iconRegionChecksumAfter": "30ea5da1498f1c1435727866df1472f0aca5298fa92924995a40bbdea9ffcbac",
+      "iconCentroidBefore": {
+        "cx": 111.5,
+        "cy": 49
+      },
+      "iconCentroidAfter": {
+        "cx": 111.5,
+        "cy": 49
+      },
+      "iconBoundsBefore": {
+        "minX": 49,
+        "maxX": 174,
+        "minY": 15,
+        "maxY": 83,
+        "cx": 111.5,
+        "cy": 49,
+        "count": 818
+      },
+      "iconBoundsAfter": {
+        "minX": 49,
+        "maxX": 174,
+        "minY": 15,
+        "maxY": 83,
+        "cx": 111.5,
+        "cy": 49,
+        "count": 818
+      },
+      "protectedPixelsChanged": 0,
+      "labelPixelsChanged": 9866,
+      "residualTextPixels": 0,
+      "parityStatus": "PASS"
+    },
+    {
+      "key": "history",
+      "sourceLabel": "HISTORY",
+      "row": 1,
+      "column": 1,
+      "mask": {
+        "iconSafeTop": 0,
+        "iconSafeBottom": 81,
+        "labelMaskTop": 82,
+        "labelMaskBottom": 140,
+        "left": 0,
+        "right": 175
+      },
+      "iconRegionChecksumBefore": "373eaad5344db2c6877e134dbfdd4af276bd13570701bc3f4f5badbc8cbd5b92",
+      "iconRegionChecksumAfter": "373eaad5344db2c6877e134dbfdd4af276bd13570701bc3f4f5badbc8cbd5b92",
+      "iconCentroidBefore": {
+        "cx": 69,
+        "cy": 48
+      },
+      "iconCentroidAfter": {
+        "cx": 69,
+        "cy": 48
+      },
+      "iconBoundsBefore": {
+        "minX": 0,
+        "maxX": 138,
+        "minY": 15,
+        "maxY": 81,
+        "cx": 69,
+        "cy": 48,
+        "count": 594
+      },
+      "iconBoundsAfter": {
+        "minX": 0,
+        "maxX": 138,
+        "minY": 15,
+        "maxY": 81,
+        "cx": 69,
+        "cy": 48,
+        "count": 594
+      },
+      "protectedPixelsChanged": 0,
+      "labelPixelsChanged": 9104,
+      "residualTextPixels": 0,
+      "parityStatus": "PASS"
+    },
+    {
+      "key": "revisions",
+      "sourceLabel": "REVISIONS",
+      "row": 1,
+      "column": 2,
+      "mask": {
+        "iconSafeTop": 0,
+        "iconSafeBottom": 79,
+        "labelMaskTop": 80,
+        "labelMaskBottom": 140,
+        "left": 0,
+        "right": 174
+      },
+      "iconRegionChecksumBefore": "e340b9c7ecfae31d92f9c0a5412a30b4c8475089302e06cf2c84026e1163094f",
+      "iconRegionChecksumAfter": "e340b9c7ecfae31d92f9c0a5412a30b4c8475089302e06cf2c84026e1163094f",
+      "iconCentroidBefore": {
+        "cx": 78,
+        "cy": 20.5
+      },
+      "iconCentroidAfter": {
+        "cx": 78,
+        "cy": 20.5
+      },
+      "iconBoundsBefore": {
+        "minX": 18,
+        "maxX": 138,
+        "minY": 15,
+        "maxY": 26,
+        "cx": 78,
+        "cy": 20.5,
+        "count": 763
+      },
+      "iconBoundsAfter": {
+        "minX": 18,
+        "maxX": 138,
+        "minY": 15,
+        "maxY": 26,
+        "cx": 78,
+        "cy": 20.5,
+        "count": 763
+      },
+      "protectedPixelsChanged": 0,
+      "labelPixelsChanged": 10386,
+      "residualTextPixels": 0,
+      "parityStatus": "PASS"
+    },
+    {
+      "key": "milestones",
+      "sourceLabel": "MILESTONES",
+      "row": 1,
+      "column": 3,
+      "mask": {
+        "iconSafeTop": 0,
+        "iconSafeBottom": 77,
+        "labelMaskTop": 78,
+        "labelMaskBottom": 140,
+        "left": 0,
+        "right": 174
+      },
+      "iconRegionChecksumBefore": "7ce787711e2be03c7d4c17b9a1b148869c383f37bfcf8032329deabf22117fa8",
+      "iconRegionChecksumAfter": "7ce787711e2be03c7d4c17b9a1b148869c383f37bfcf8032329deabf22117fa8",
+      "iconCentroidBefore": {
+        "cx": 67.5,
+        "cy": 20
+      },
+      "iconCentroidAfter": {
+        "cx": 67.5,
+        "cy": 20
+      },
+      "iconBoundsBefore": {
+        "minX": 26,
+        "maxX": 109,
+        "minY": 15,
+        "maxY": 25,
+        "cx": 67.5,
+        "cy": 20,
+        "count": 539
+      },
+      "iconBoundsAfter": {
+        "minX": 26,
+        "maxX": 109,
+        "minY": 15,
+        "maxY": 25,
+        "cx": 67.5,
+        "cy": 20,
+        "count": 539
+      },
+      "protectedPixelsChanged": 0,
+      "labelPixelsChanged": 10187,
+      "residualTextPixels": 0,
+      "parityStatus": "PASS"
+    },
+    {
+      "key": "analytics",
+      "sourceLabel": "ANALYTICS",
+      "row": 1,
+      "column": 4,
+      "mask": {
+        "iconSafeTop": 0,
+        "iconSafeBottom": 88,
+        "labelMaskTop": 89,
+        "labelMaskBottom": 140,
+        "left": 0,
+        "right": 174
+      },
+      "iconRegionChecksumBefore": "25c9b7dd0b9164af6c32130f84931d4b588daeef9826fdc6e0e128f7715ef5a3",
+      "iconRegionChecksumAfter": "25c9b7dd0b9164af6c32130f84931d4b588daeef9826fdc6e0e128f7715ef5a3",
+      "iconCentroidBefore": {
+        "cx": 58,
+        "cy": 51
+      },
+      "iconCentroidAfter": {
+        "cx": 58,
+        "cy": 51
+      },
+      "iconBoundsBefore": {
+        "minX": 23,
+        "maxX": 93,
+        "minY": 14,
+        "maxY": 88,
+        "cx": 58,
+        "cy": 51,
+        "count": 514
+      },
+      "iconBoundsAfter": {
+        "minX": 23,
+        "maxX": 93,
+        "minY": 14,
+        "maxY": 88,
+        "cx": 58,
+        "cy": 51,
+        "count": 514
+      },
+      "protectedPixelsChanged": 0,
+      "labelPixelsChanged": 7620,
+      "residualTextPixels": 0,
+      "parityStatus": "PASS"
+    },
+    {
+      "key": "performance",
+      "sourceLabel": "PERFORMANCE",
+      "row": 1,
+      "column": 5,
+      "mask": {
+        "iconSafeTop": 0,
+        "iconSafeBottom": 80,
+        "labelMaskTop": 81,
+        "labelMaskBottom": 140,
+        "left": 0,
+        "right": 175
+      },
+      "iconRegionChecksumBefore": "a149ac94e97b3a59d19995d156226521ff61f49ddddd98935d6fce4250d571db",
+      "iconRegionChecksumAfter": "a149ac94e97b3a59d19995d156226521ff61f49ddddd98935d6fce4250d571db",
+      "iconCentroidBefore": {
+        "cx": 59,
+        "cy": 47
+      },
+      "iconCentroidAfter": {
+        "cx": 59,
+        "cy": 47
+      },
+      "iconBoundsBefore": {
+        "minX": 28,
+        "maxX": 90,
+        "minY": 14,
+        "maxY": 80,
+        "cx": 59,
+        "cy": 47,
+        "count": 454
+      },
+      "iconBoundsAfter": {
+        "minX": 28,
+        "maxX": 90,
+        "minY": 14,
+        "maxY": 80,
+        "cx": 59,
+        "cy": 47,
+        "count": 454
+      },
+      "protectedPixelsChanged": 0,
+      "labelPixelsChanged": 9549,
+      "residualTextPixels": 0,
+      "parityStatus": "PASS"
+    },
+    {
+      "key": "issues",
+      "sourceLabel": "ISSUES",
+      "row": 1,
+      "column": 6,
+      "mask": {
+        "iconSafeTop": 0,
+        "iconSafeBottom": 87,
+        "labelMaskTop": 88,
+        "labelMaskBottom": 140,
+        "left": 0,
+        "right": 174
+      },
+      "iconRegionChecksumBefore": "0932a5c6d758c76322b4b78a5fc69d2211bff962836704657ca8c45d96664b57",
+      "iconRegionChecksumAfter": "0932a5c6d758c76322b4b78a5fc69d2211bff962836704657ca8c45d96664b57",
+      "iconCentroidBefore": {
+        "cx": 91,
+        "cy": 49.5
+      },
+      "iconCentroidAfter": {
+        "cx": 91,
+        "cy": 49.5
+      },
+      "iconBoundsBefore": {
+        "minX": 9,
+        "maxX": 173,
+        "minY": 12,
+        "maxY": 87,
+        "cx": 91,
+        "cy": 49.5,
+        "count": 695
+      },
+      "iconBoundsAfter": {
+        "minX": 9,
+        "maxX": 173,
+        "minY": 12,
+        "maxY": 87,
+        "cx": 91,
+        "cy": 49.5,
+        "count": 695
+      },
+      "protectedPixelsChanged": 0,
+      "labelPixelsChanged": 7566,
+      "residualTextPixels": 0,
+      "parityStatus": "PASS"
+    },
+    {
+      "key": "approved",
+      "sourceLabel": "APPROVED",
+      "row": 1,
+      "column": 7,
+      "mask": {
+        "iconSafeTop": 0,
+        "iconSafeBottom": 78,
+        "labelMaskTop": 79,
+        "labelMaskBottom": 140,
+        "left": 0,
+        "right": 174
+      },
+      "iconRegionChecksumBefore": "4bff42644cc0fd68d22b68d4c18126724b2a79b9a60349da2a4f093366b70a66",
+      "iconRegionChecksumAfter": "4bff42644cc0fd68d22b68d4c18126724b2a79b9a60349da2a4f093366b70a66",
+      "iconCentroidBefore": {
+        "cx": 59,
+        "cy": 45
+      },
+      "iconCentroidAfter": {
+        "cx": 59,
+        "cy": 45
+      },
+      "iconBoundsBefore": {
+        "minX": 1,
+        "maxX": 117,
+        "minY": 12,
+        "maxY": 78,
+        "cx": 59,
+        "cy": 45,
+        "count": 765
+      },
+      "iconBoundsAfter": {
+        "minX": 1,
+        "maxX": 117,
+        "minY": 12,
+        "maxY": 78,
+        "cx": 59,
+        "cy": 45,
+        "count": 765
+      },
+      "protectedPixelsChanged": 0,
+      "labelPixelsChanged": 10579,
+      "residualTextPixels": 0,
+      "parityStatus": "PASS"
+    },
+    {
+      "key": "playback",
+      "sourceLabel": "PLAYBACK",
+      "row": 2,
+      "column": 0,
+      "mask": {
+        "iconSafeTop": 0,
+        "iconSafeBottom": 79,
+        "labelMaskTop": 80,
+        "labelMaskBottom": 139,
+        "left": 0,
+        "right": 174
+      },
+      "iconRegionChecksumBefore": "b042e82dc418652c94f988f7c31fe17336d568a9e65f35e1b9686c5f5740e092",
+      "iconRegionChecksumAfter": "b042e82dc418652c94f988f7c31fe17336d568a9e65f35e1b9686c5f5740e092",
+      "iconCentroidBefore": {
+        "cx": 106.5,
+        "cy": 47.5
+      },
+      "iconCentroidAfter": {
+        "cx": 106.5,
+        "cy": 47.5
+      },
+      "iconBoundsBefore": {
+        "minX": 68,
+        "maxX": 145,
+        "minY": 16,
+        "maxY": 79,
+        "cx": 106.5,
+        "cy": 47.5,
+        "count": 518
+      },
+      "iconBoundsAfter": {
+        "minX": 68,
+        "maxX": 145,
+        "minY": 16,
+        "maxY": 79,
+        "cx": 106.5,
+        "cy": 47.5,
+        "count": 518
+      },
+      "protectedPixelsChanged": 0,
+      "labelPixelsChanged": 9263,
+      "residualTextPixels": 0,
+      "parityStatus": "PASS"
+    },
+    {
+      "key": "pause",
+      "sourceLabel": "PAUSE",
+      "row": 2,
+      "column": 1,
+      "mask": {
+        "iconSafeTop": 0,
+        "iconSafeBottom": 79,
+        "labelMaskTop": 80,
+        "labelMaskBottom": 139,
+        "left": 0,
+        "right": 175
+      },
+      "iconRegionChecksumBefore": "70ec7e786465b27227b0bf948f516793726b099c4bf705aba16cbf40bebe9a87",
+      "iconRegionChecksumAfter": "70ec7e786465b27227b0bf948f516793726b099c4bf705aba16cbf40bebe9a87",
+      "iconCentroidBefore": {
+        "cx": 96.5,
+        "cy": 48
+      },
+      "iconCentroidAfter": {
+        "cx": 96.5,
+        "cy": 48
+      },
+      "iconBoundsBefore": {
+        "minX": 64,
+        "maxX": 129,
+        "minY": 17,
+        "maxY": 79,
+        "cx": 96.5,
+        "cy": 48,
+        "count": 427
+      },
+      "iconBoundsAfter": {
+        "minX": 64,
+        "maxX": 129,
+        "minY": 17,
+        "maxY": 79,
+        "cx": 96.5,
+        "cy": 48,
+        "count": 427
+      },
+      "protectedPixelsChanged": 0,
+      "labelPixelsChanged": 9318,
+      "residualTextPixels": 0,
+      "parityStatus": "PASS"
+    },
+    {
+      "key": "stop",
+      "sourceLabel": "STOP",
+      "row": 2,
+      "column": 2,
+      "mask": {
+        "iconSafeTop": 0,
+        "iconSafeBottom": 79,
+        "labelMaskTop": 80,
+        "labelMaskBottom": 139,
+        "left": 0,
+        "right": 174
+      },
+      "iconRegionChecksumBefore": "7a974627edfe2f688852ae28418769c877ef0817eeaffaaa94296bd20f38f833",
+      "iconRegionChecksumAfter": "7a974627edfe2f688852ae28418769c877ef0817eeaffaaa94296bd20f38f833",
+      "iconCentroidBefore": {
+        "cx": 78,
+        "cy": 47.5
+      },
+      "iconCentroidAfter": {
+        "cx": 78,
+        "cy": 47.5
+      },
+      "iconBoundsBefore": {
+        "minX": 38,
+        "maxX": 118,
+        "minY": 16,
+        "maxY": 79,
+        "cx": 78,
+        "cy": 47.5,
+        "count": 551
+      },
+      "iconBoundsAfter": {
+        "minX": 38,
+        "maxX": 118,
+        "minY": 16,
+        "maxY": 79,
+        "cx": 78,
+        "cy": 47.5,
+        "count": 551
+      },
+      "protectedPixelsChanged": 0,
+      "labelPixelsChanged": 9128,
+      "residualTextPixels": 0,
+      "parityStatus": "PASS"
+    },
+    {
+      "key": "next",
+      "sourceLabel": "NEXT",
+      "row": 2,
+      "column": 3,
+      "mask": {
+        "iconSafeTop": 0,
+        "iconSafeBottom": 79,
+        "labelMaskTop": 80,
+        "labelMaskBottom": 139,
+        "left": 0,
+        "right": 174
+      },
+      "iconRegionChecksumBefore": "1a14afe37131cc01a0474923f669c4f37364480e065b479bd0466802b28d7f9f",
+      "iconRegionChecksumAfter": "1a14afe37131cc01a0474923f669c4f37364480e065b479bd0466802b28d7f9f",
+      "iconCentroidBefore": {
+        "cx": 67.5,
+        "cy": 48
+      },
+      "iconCentroidAfter": {
+        "cx": 67.5,
+        "cy": 48
+      },
+      "iconBoundsBefore": {
+        "minX": 20,
+        "maxX": 115,
+        "minY": 17,
+        "maxY": 79,
+        "cx": 67.5,
+        "cy": 48,
+        "count": 660
+      },
+      "iconBoundsAfter": {
+        "minX": 20,
+        "maxX": 115,
+        "minY": 17,
+        "maxY": 79,
+        "cx": 67.5,
+        "cy": 48,
+        "count": 660
+      },
+      "protectedPixelsChanged": 0,
+      "labelPixelsChanged": 9399,
+      "residualTextPixels": 0,
+      "parityStatus": "PASS"
+    },
+    {
+      "key": "previous",
+      "sourceLabel": "PREVIOUS",
+      "row": 2,
+      "column": 4,
+      "mask": {
+        "iconSafeTop": 0,
+        "iconSafeBottom": 79,
+        "labelMaskTop": 80,
+        "labelMaskBottom": 139,
+        "left": 0,
+        "right": 174
+      },
+      "iconRegionChecksumBefore": "e27a452e2921a67e401e8d632826eb5562cb0a3b89c9965340233404e3bbbf6e",
+      "iconRegionChecksumAfter": "e27a452e2921a67e401e8d632826eb5562cb0a3b89c9965340233404e3bbbf6e",
+      "iconCentroidBefore": {
+        "cx": 57,
+        "cy": 48
+      },
+      "iconCentroidAfter": {
+        "cx": 57,
+        "cy": 48
+      },
+      "iconBoundsBefore": {
+        "minX": 15,
+        "maxX": 99,
+        "minY": 17,
+        "maxY": 79,
+        "cx": 57,
+        "cy": 48,
+        "count": 542
+      },
+      "iconBoundsAfter": {
+        "minX": 15,
+        "maxX": 99,
+        "minY": 17,
+        "maxY": 79,
+        "cx": 57,
+        "cy": 48,
+        "count": 542
+      },
+      "protectedPixelsChanged": 0,
+      "labelPixelsChanged": 9400,
+      "residualTextPixels": 0,
+      "parityStatus": "PASS"
+    },
+    {
+      "key": "loop",
+      "sourceLabel": "LOOP",
+      "row": 2,
+      "column": 5,
+      "mask": {
+        "iconSafeTop": 0,
+        "iconSafeBottom": 83,
+        "labelMaskTop": 84,
+        "labelMaskBottom": 139,
+        "left": 0,
+        "right": 175
+      },
+      "iconRegionChecksumBefore": "b0aac76ed8f291c5f12a1e1517aabad48dd7c806b5f23054b9c9a9dc71d9c0c1",
+      "iconRegionChecksumAfter": "b0aac76ed8f291c5f12a1e1517aabad48dd7c806b5f23054b9c9a9dc71d9c0c1",
+      "iconCentroidBefore": {
+        "cx": 56.5,
+        "cy": 50
+      },
+      "iconCentroidAfter": {
+        "cx": 56.5,
+        "cy": 50
+      },
+      "iconBoundsBefore": {
+        "minX": 0,
+        "maxX": 113,
+        "minY": 17,
+        "maxY": 83,
+        "cx": 56.5,
+        "cy": 50,
+        "count": 808
+      },
+      "iconBoundsAfter": {
+        "minX": 0,
+        "maxX": 113,
+        "minY": 17,
+        "maxY": 83,
+        "cx": 56.5,
+        "cy": 50,
+        "count": 808
+      },
+      "protectedPixelsChanged": 0,
+      "labelPixelsChanged": 8310,
+      "residualTextPixels": 0,
+      "parityStatus": "PASS"
+    },
+    {
+      "key": "capture",
+      "sourceLabel": "CAPTURE",
+      "row": 2,
+      "column": 6,
+      "mask": {
+        "iconSafeTop": 0,
+        "iconSafeBottom": 78,
+        "labelMaskTop": 79,
+        "labelMaskBottom": 139,
+        "left": 0,
+        "right": 174
+      },
+      "iconRegionChecksumBefore": "73ec9603d83fee1568e9844cab9f1f36a5735f97abc730cfd35cae8f352cb908",
+      "iconRegionChecksumAfter": "73ec9603d83fee1568e9844cab9f1f36a5735f97abc730cfd35cae8f352cb908",
+      "iconCentroidBefore": {
+        "cx": 51,
+        "cy": 23
+      },
+      "iconCentroidAfter": {
+        "cx": 51,
+        "cy": 23
+      },
+      "iconBoundsBefore": {
+        "minX": 25,
+        "maxX": 77,
+        "minY": 17,
+        "maxY": 29,
+        "cx": 51,
+        "cy": 23,
+        "count": 369
+      },
+      "iconBoundsAfter": {
+        "minX": 25,
+        "maxX": 77,
+        "minY": 17,
+        "maxY": 29,
+        "cx": 51,
+        "cy": 23,
+        "count": 369
+      },
+      "protectedPixelsChanged": 0,
+      "labelPixelsChanged": 8810,
+      "residualTextPixels": 0,
+      "parityStatus": "PASS"
+    },
+    {
+      "key": "fullscreen",
+      "sourceLabel": "FULLSCREEN",
+      "row": 2,
+      "column": 7,
+      "mask": {
+        "iconSafeTop": 0,
+        "iconSafeBottom": 80,
+        "labelMaskTop": 81,
+        "labelMaskBottom": 139,
+        "left": 0,
+        "right": 174
+      },
+      "iconRegionChecksumBefore": "d1a967fd53c1811e9da882ab4ad93783bdb316e3175714207d854729b13340f0",
+      "iconRegionChecksumAfter": "d1a967fd53c1811e9da882ab4ad93783bdb316e3175714207d854729b13340f0",
+      "iconCentroidBefore": {
+        "cx": 48,
+        "cy": 22.5
+      },
+      "iconCentroidAfter": {
+        "cx": 48,
+        "cy": 22.5
+      },
+      "iconBoundsBefore": {
+        "minX": 8,
+        "maxX": 88,
+        "minY": 16,
+        "maxY": 29,
+        "cx": 48,
+        "cy": 22.5,
+        "count": 506
+      },
+      "iconBoundsAfter": {
+        "minX": 8,
+        "maxX": 88,
+        "minY": 16,
+        "maxY": 29,
+        "cx": 48,
+        "cy": 22.5,
+        "count": 506
+      },
+      "protectedPixelsChanged": 0,
+      "labelPixelsChanged": 8552,
+      "residualTextPixels": 0,
+      "parityStatus": "PASS"
+    },
+    {
+      "key": "zoomIn",
+      "sourceLabel": "ZOOM IN",
+      "row": 3,
+      "column": 0,
+      "mask": {
+        "iconSafeTop": 0,
+        "iconSafeBottom": 73,
+        "labelMaskTop": 74,
+        "labelMaskBottom": 139,
+        "left": 0,
+        "right": 174
+      },
+      "iconRegionChecksumBefore": "ba3ec574d1a686606372067bf9014b70552d597d0e8d867538bb3d1417a025ff",
+      "iconRegionChecksumAfter": "ba3ec574d1a686606372067bf9014b70552d597d0e8d867538bb3d1417a025ff",
+      "iconCentroidBefore": {
+        "cx": 107,
+        "cy": 44.5
+      },
+      "iconCentroidAfter": {
+        "cx": 107,
+        "cy": 44.5
+      },
+      "iconBoundsBefore": {
+        "minX": 68,
+        "maxX": 146,
+        "minY": 16,
+        "maxY": 73,
+        "cx": 107,
+        "cy": 44.5,
+        "count": 494
+      },
+      "iconBoundsAfter": {
+        "minX": 68,
+        "maxX": 146,
+        "minY": 16,
+        "maxY": 73,
+        "cx": 107,
+        "cy": 44.5,
+        "count": 494
+      },
+      "protectedPixelsChanged": 0,
+      "labelPixelsChanged": 10420,
+      "residualTextPixels": 0,
+      "parityStatus": "PASS"
+    },
+    {
+      "key": "zoomOut",
+      "sourceLabel": "ZOOM OUT",
+      "row": 3,
+      "column": 1,
+      "mask": {
+        "iconSafeTop": 0,
+        "iconSafeBottom": 73,
+        "labelMaskTop": 74,
+        "labelMaskBottom": 139,
+        "left": 0,
+        "right": 175
+      },
+      "iconRegionChecksumBefore": "956b35cd1b5542b0092002cf846cceaf053c5cfaac00dcf6344de3fbafb4ab7c",
+      "iconRegionChecksumAfter": "956b35cd1b5542b0092002cf846cceaf053c5cfaac00dcf6344de3fbafb4ab7c",
+      "iconCentroidBefore": {
+        "cx": 96.5,
+        "cy": 44
+      },
+      "iconCentroidAfter": {
+        "cx": 96.5,
+        "cy": 44
+      },
+      "iconBoundsBefore": {
+        "minX": 73,
+        "maxX": 120,
+        "minY": 15,
+        "maxY": 73,
+        "cx": 96.5,
+        "cy": 44,
+        "count": 356
+      },
+      "iconBoundsAfter": {
+        "minX": 73,
+        "maxX": 120,
+        "minY": 15,
+        "maxY": 73,
+        "cx": 96.5,
+        "cy": 44,
+        "count": 356
+      },
+      "protectedPixelsChanged": 0,
+      "labelPixelsChanged": 10261,
+      "residualTextPixels": 0,
+      "parityStatus": "PASS"
+    },
+    {
+      "key": "pan",
+      "sourceLabel": "PAN",
+      "row": 3,
+      "column": 2,
+      "mask": {
+        "iconSafeTop": 0,
+        "iconSafeBottom": 72,
+        "labelMaskTop": 73,
+        "labelMaskBottom": 139,
+        "left": 0,
+        "right": 174
+      },
+      "iconRegionChecksumBefore": "2aeefb29ec5b64135948e816452bc2989a0a7bc4a8a4b5ace072cebc89f7a229",
+      "iconRegionChecksumAfter": "2aeefb29ec5b64135948e816452bc2989a0a7bc4a8a4b5ace072cebc89f7a229",
+      "iconCentroidBefore": {
+        "cx": 78,
+        "cy": 43.5
+      },
+      "iconCentroidAfter": {
+        "cx": 78,
+        "cy": 43.5
+      },
+      "iconBoundsBefore": {
+        "minX": 59,
+        "maxX": 97,
+        "minY": 15,
+        "maxY": 72,
+        "cx": 78,
+        "cy": 43.5,
+        "count": 274
+      },
+      "iconBoundsAfter": {
+        "minX": 59,
+        "maxX": 97,
+        "minY": 15,
+        "maxY": 72,
+        "cx": 78,
+        "cy": 43.5,
+        "count": 274
+      },
+      "protectedPixelsChanged": 0,
+      "labelPixelsChanged": 11149,
+      "residualTextPixels": 0,
+      "parityStatus": "PASS"
+    },
+    {
+      "key": "fitView",
+      "sourceLabel": "FIT VIEW",
+      "row": 3,
+      "column": 3,
+      "mask": {
+        "iconSafeTop": 0,
+        "iconSafeBottom": 71,
+        "labelMaskTop": 72,
+        "labelMaskBottom": 139,
+        "left": 0,
+        "right": 174
+      },
+      "iconRegionChecksumBefore": "ef670f6f119e1329aba40ccca84d8727266c8dbe905a46ec732e5e92eea32a38",
+      "iconRegionChecksumAfter": "ef670f6f119e1329aba40ccca84d8727266c8dbe905a46ec732e5e92eea32a38",
+      "iconCentroidBefore": {
+        "cx": 66.5,
+        "cy": 21
+      },
+      "iconCentroidAfter": {
+        "cx": 66.5,
+        "cy": 21
+      },
+      "iconBoundsBefore": {
+        "minX": 47,
+        "maxX": 86,
+        "minY": 16,
+        "maxY": 26,
+        "cx": 66.5,
+        "cy": 21,
+        "count": 252
+      },
+      "iconBoundsAfter": {
+        "minX": 47,
+        "maxX": 86,
+        "minY": 16,
+        "maxY": 26,
+        "cx": 66.5,
+        "cy": 21,
+        "count": 252
+      },
+      "protectedPixelsChanged": 0,
+      "labelPixelsChanged": 9325,
+      "residualTextPixels": 0,
+      "parityStatus": "PASS"
+    },
+    {
+      "key": "orbit",
+      "sourceLabel": "ORBIT",
+      "row": 3,
+      "column": 4,
+      "mask": {
+        "iconSafeTop": 0,
+        "iconSafeBottom": 71,
+        "labelMaskTop": 72,
+        "labelMaskBottom": 139,
+        "left": 0,
+        "right": 174
+      },
+      "iconRegionChecksumBefore": "e271786d505cff30de43ebeac680b3d7cbcaea056fe18b4715053c53996e8607",
+      "iconRegionChecksumAfter": "e271786d505cff30de43ebeac680b3d7cbcaea056fe18b4715053c53996e8607",
+      "iconCentroidBefore": {
+        "cx": 57,
+        "cy": 43
+      },
+      "iconCentroidAfter": {
+        "cx": 57,
+        "cy": 43
+      },
+      "iconBoundsBefore": {
+        "minX": 20,
+        "maxX": 94,
+        "minY": 15,
+        "maxY": 71,
+        "cx": 57,
+        "cy": 43,
+        "count": 533
+      },
+      "iconBoundsAfter": {
+        "minX": 20,
+        "maxX": 94,
+        "minY": 15,
+        "maxY": 71,
+        "cx": 57,
+        "cy": 43,
+        "count": 533
+      },
+      "protectedPixelsChanged": 0,
+      "labelPixelsChanged": 11147,
+      "residualTextPixels": 0,
+      "parityStatus": "PASS"
+    },
+    {
+      "key": "perspective",
+      "sourceLabel": "PERSPECTIVE",
+      "row": 3,
+      "column": 5,
+      "mask": {
+        "iconSafeTop": 0,
+        "iconSafeBottom": 73,
+        "labelMaskTop": 74,
+        "labelMaskBottom": 139,
+        "left": 0,
+        "right": 175
+      },
+      "iconRegionChecksumBefore": "2ace64e173d5e2f4a13d7cef3bfc4775f4430f04f6290f594dcdc9c3c3862ab8",
+      "iconRegionChecksumAfter": "2ace64e173d5e2f4a13d7cef3bfc4775f4430f04f6290f594dcdc9c3c3862ab8",
+      "iconCentroidBefore": {
+        "cx": 55.5,
+        "cy": 44
+      },
+      "iconCentroidAfter": {
+        "cx": 55.5,
+        "cy": 44
+      },
+      "iconBoundsBefore": {
+        "minX": 36,
+        "maxX": 75,
+        "minY": 15,
+        "maxY": 73,
+        "cx": 55.5,
+        "cy": 44,
+        "count": 291
+      },
+      "iconBoundsAfter": {
+        "minX": 36,
+        "maxX": 75,
+        "minY": 15,
+        "maxY": 73,
+        "cx": 55.5,
+        "cy": 44,
+        "count": 291
+      },
+      "protectedPixelsChanged": 0,
+      "labelPixelsChanged": 10756,
+      "residualTextPixels": 0,
+      "parityStatus": "PASS"
+    },
+    {
+      "key": "toggleUi",
+      "sourceLabel": "TOGGLE UI",
+      "row": 3,
+      "column": 6,
+      "mask": {
+        "iconSafeTop": 0,
+        "iconSafeBottom": 78,
+        "labelMaskTop": 79,
+        "labelMaskBottom": 139,
+        "left": 0,
+        "right": 174
+      },
+      "iconRegionChecksumBefore": "cc185a21a2ad5919652bec52739e5fbec74f32d5bf5e602f7943e6686042954a",
+      "iconRegionChecksumAfter": "cc185a21a2ad5919652bec52739e5fbec74f32d5bf5e602f7943e6686042954a",
+      "iconCentroidBefore": {
+        "cx": 50.5,
+        "cy": 46.5
+      },
+      "iconCentroidAfter": {
+        "cx": 50.5,
+        "cy": 46.5
+      },
+      "iconBoundsBefore": {
+        "minX": 16,
+        "maxX": 85,
+        "minY": 15,
+        "maxY": 78,
+        "cx": 50.5,
+        "cy": 46.5,
+        "count": 445
+      },
+      "iconBoundsAfter": {
+        "minX": 16,
+        "maxX": 85,
+        "minY": 15,
+        "maxY": 78,
+        "cx": 50.5,
+        "cy": 46.5,
+        "count": 445
+      },
+      "protectedPixelsChanged": 0,
+      "labelPixelsChanged": 9831,
+      "residualTextPixels": 0,
+      "parityStatus": "PASS"
+    },
+    {
+      "key": "grid",
+      "sourceLabel": "GRID",
+      "row": 3,
+      "column": 7,
+      "mask": {
+        "iconSafeTop": 0,
+        "iconSafeBottom": 73,
+        "labelMaskTop": 74,
+        "labelMaskBottom": 139,
+        "left": 0,
+        "right": 174
+      },
+      "iconRegionChecksumBefore": "1c27d892760b13984380db7d08495957a0e467613e5be475454c1c31927c997b",
+      "iconRegionChecksumAfter": "1c27d892760b13984380db7d08495957a0e467613e5be475454c1c31927c997b",
+      "iconCentroidBefore": {
+        "cx": 48,
+        "cy": 20.5
+      },
+      "iconCentroidAfter": {
+        "cx": 48,
+        "cy": 20.5
+      },
+      "iconBoundsBefore": {
+        "minX": 0,
+        "maxX": 96,
+        "minY": 15,
+        "maxY": 26,
+        "cx": 48,
+        "cy": 20.5,
+        "count": 627
+      },
+      "iconBoundsAfter": {
+        "minX": 0,
+        "maxX": 96,
+        "minY": 15,
+        "maxY": 26,
+        "cx": 48,
+        "cy": 20.5,
+        "count": 627
+      },
+      "protectedPixelsChanged": 0,
+      "labelPixelsChanged": 8528,
+      "residualTextPixels": 0,
+      "parityStatus": "PASS"
+    },
+    {
+      "key": "hide",
+      "sourceLabel": "HIDE",
+      "row": 4,
+      "column": 0,
+      "mask": {
+        "iconSafeTop": 0,
+        "iconSafeBottom": 71,
+        "labelMaskTop": 72,
+        "labelMaskBottom": 139,
+        "left": 0,
+        "right": 174
+      },
+      "iconRegionChecksumBefore": "70b3107e08e8e1607d3c42bcaf76d9807e740ae01e7e815b2c63e421792d4207",
+      "iconRegionChecksumAfter": "70b3107e08e8e1607d3c42bcaf76d9807e740ae01e7e815b2c63e421792d4207",
+      "iconCentroidBefore": {
+        "cx": 106.5,
+        "cy": 37.5
+      },
+      "iconCentroidAfter": {
+        "cx": 106.5,
+        "cy": 37.5
+      },
+      "iconBoundsBefore": {
+        "minX": 74,
+        "maxX": 139,
+        "minY": 4,
+        "maxY": 71,
+        "cx": 106.5,
+        "cy": 37.5,
+        "count": 610
+      },
+      "iconBoundsAfter": {
+        "minX": 74,
+        "maxX": 139,
+        "minY": 4,
+        "maxY": 71,
+        "cx": 106.5,
+        "cy": 37.5,
+        "count": 610
+      },
+      "protectedPixelsChanged": 0,
+      "labelPixelsChanged": 9080,
+      "residualTextPixels": 0,
+      "parityStatus": "PASS"
+    },
+    {
+      "key": "lock",
+      "sourceLabel": "LOCK",
+      "row": 4,
+      "column": 1,
+      "mask": {
+        "iconSafeTop": 0,
+        "iconSafeBottom": 71,
+        "labelMaskTop": 72,
+        "labelMaskBottom": 139,
+        "left": 0,
+        "right": 175
+      },
+      "iconRegionChecksumBefore": "27e52acd1d6f5881d97aeb94cf1d111a61667ce8dfd2cc62f04499989f6399de",
+      "iconRegionChecksumAfter": "27e52acd1d6f5881d97aeb94cf1d111a61667ce8dfd2cc62f04499989f6399de",
+      "iconCentroidBefore": {
+        "cx": 96,
+        "cy": 37.5
+      },
+      "iconCentroidAfter": {
+        "cx": 96,
+        "cy": 37.5
+      },
+      "iconBoundsBefore": {
+        "minX": 55,
+        "maxX": 137,
+        "minY": 4,
+        "maxY": 71,
+        "cx": 96,
+        "cy": 37.5,
+        "count": 660
+      },
+      "iconBoundsAfter": {
+        "minX": 55,
+        "maxX": 137,
+        "minY": 4,
+        "maxY": 71,
+        "cx": 96,
+        "cy": 37.5,
+        "count": 660
+      },
+      "protectedPixelsChanged": 0,
+      "labelPixelsChanged": 9563,
+      "residualTextPixels": 0,
+      "parityStatus": "PASS"
+    },
+    {
+      "key": "unlock",
+      "sourceLabel": "UNLOCK",
+      "row": 4,
+      "column": 2,
+      "mask": {
+        "iconSafeTop": 0,
+        "iconSafeBottom": 71,
+        "labelMaskTop": 72,
+        "labelMaskBottom": 139,
+        "left": 0,
+        "right": 174
+      },
+      "iconRegionChecksumBefore": "02fcad4f8040a4b46ec0cf045d13908c8bffcc5f5493c346d5579862e2ee0663",
+      "iconRegionChecksumAfter": "02fcad4f8040a4b46ec0cf045d13908c8bffcc5f5493c346d5579862e2ee0663",
+      "iconCentroidBefore": {
+        "cx": 83.5,
+        "cy": 37.5
+      },
+      "iconCentroidAfter": {
+        "cx": 83.5,
+        "cy": 37.5
+      },
+      "iconBoundsBefore": {
+        "minX": 64,
+        "maxX": 103,
+        "minY": 4,
+        "maxY": 71,
+        "cx": 83.5,
+        "cy": 37.5,
+        "count": 361
+      },
+      "iconBoundsAfter": {
+        "minX": 64,
+        "maxX": 103,
+        "minY": 4,
+        "maxY": 71,
+        "cx": 83.5,
+        "cy": 37.5,
+        "count": 361
+      },
+      "protectedPixelsChanged": 0,
+      "labelPixelsChanged": 10796,
+      "residualTextPixels": 0,
+      "parityStatus": "PASS"
+    },
+    {
+      "key": "duplicate",
+      "sourceLabel": "DUPLICATE",
+      "row": 4,
+      "column": 3,
+      "mask": {
+        "iconSafeTop": 0,
+        "iconSafeBottom": 72,
+        "labelMaskTop": 73,
+        "labelMaskBottom": 139,
+        "left": 0,
+        "right": 174
+      },
+      "iconRegionChecksumBefore": "158117d8a5f1a2116b5dab545407ce5829a1520dd6c61bcbf37ab1b48d508b14",
+      "iconRegionChecksumAfter": "158117d8a5f1a2116b5dab545407ce5829a1520dd6c61bcbf37ab1b48d508b14",
+      "iconCentroidBefore": {
+        "cx": 66.5,
+        "cy": 38
+      },
+      "iconCentroidAfter": {
+        "cx": 66.5,
+        "cy": 38
+      },
+      "iconBoundsBefore": {
+        "minX": 34,
+        "maxX": 99,
+        "minY": 4,
+        "maxY": 72,
+        "cx": 66.5,
+        "cy": 38,
+        "count": 672
+      },
+      "iconBoundsAfter": {
+        "minX": 34,
+        "maxX": 99,
+        "minY": 4,
+        "maxY": 72,
+        "cx": 66.5,
+        "cy": 38,
+        "count": 672
+      },
+      "protectedPixelsChanged": 0,
+      "labelPixelsChanged": 10295,
+      "residualTextPixels": 0,
+      "parityStatus": "PASS"
+    },
+    {
+      "key": "delete",
+      "sourceLabel": "DELETE",
+      "row": 4,
+      "column": 4,
+      "mask": {
+        "iconSafeTop": 0,
+        "iconSafeBottom": 71,
+        "labelMaskTop": 72,
+        "labelMaskBottom": 139,
+        "left": 0,
+        "right": 174
+      },
+      "iconRegionChecksumBefore": "fbfbe77016d0f6b87b3161d12f386a0921eeb3e348b68fa7edb948a0200673e0",
+      "iconRegionChecksumAfter": "fbfbe77016d0f6b87b3161d12f386a0921eeb3e348b68fa7edb948a0200673e0",
+      "iconCentroidBefore": {
+        "cx": 57,
+        "cy": 37.5
+      },
+      "iconCentroidAfter": {
+        "cx": 57,
+        "cy": 37.5
+      },
+      "iconBoundsBefore": {
+        "minX": 34,
+        "maxX": 80,
+        "minY": 4,
+        "maxY": 71,
+        "cx": 57,
+        "cy": 37.5,
+        "count": 635
+      },
+      "iconBoundsAfter": {
+        "minX": 34,
+        "maxX": 80,
+        "minY": 4,
+        "maxY": 71,
+        "cx": 57,
+        "cy": 37.5,
+        "count": 635
+      },
+      "protectedPixelsChanged": 0,
+      "labelPixelsChanged": 9770,
+      "residualTextPixels": 0,
+      "parityStatus": "PASS"
+    },
+    {
+      "key": "edit",
+      "sourceLabel": "EDIT",
+      "row": 4,
+      "column": 5,
+      "mask": {
+        "iconSafeTop": 0,
+        "iconSafeBottom": 71,
+        "labelMaskTop": 72,
+        "labelMaskBottom": 139,
+        "left": 0,
+        "right": 175
+      },
+      "iconRegionChecksumBefore": "dc6b64d22b8f4bb2f472fa9d5d6b4394656c39b16a54ada0dae4b8221e6ea1d6",
+      "iconRegionChecksumAfter": "dc6b64d22b8f4bb2f472fa9d5d6b4394656c39b16a54ada0dae4b8221e6ea1d6",
+      "iconCentroidBefore": {
+        "cx": 55.5,
+        "cy": 37.5
+      },
+      "iconCentroidAfter": {
+        "cx": 55.5,
+        "cy": 37.5
+      },
+      "iconBoundsBefore": {
+        "minX": 5,
+        "maxX": 106,
+        "minY": 4,
+        "maxY": 71,
+        "cx": 55.5,
+        "cy": 37.5,
+        "count": 872
+      },
+      "iconBoundsAfter": {
+        "minX": 5,
+        "maxX": 106,
+        "minY": 4,
+        "maxY": 71,
+        "cx": 55.5,
+        "cy": 37.5,
+        "count": 872
+      },
+      "protectedPixelsChanged": 0,
+      "labelPixelsChanged": 9231,
+      "residualTextPixels": 0,
+      "parityStatus": "PASS"
+    },
+    {
+      "key": "settings",
+      "sourceLabel": "SETTINGS",
+      "row": 4,
+      "column": 6,
+      "mask": {
+        "iconSafeTop": 0,
+        "iconSafeBottom": 79,
+        "labelMaskTop": 80,
+        "labelMaskBottom": 139,
+        "left": 0,
+        "right": 174
+      },
+      "iconRegionChecksumBefore": "38ad64a66870c01a4b91c7147d868faa252bccb087882ee13cab1af239e65946",
+      "iconRegionChecksumAfter": "38ad64a66870c01a4b91c7147d868faa252bccb087882ee13cab1af239e65946",
+      "iconCentroidBefore": {
+        "cx": 50.5,
+        "cy": 41.5
+      },
+      "iconCentroidAfter": {
+        "cx": 50.5,
+        "cy": 41.5
+      },
+      "iconBoundsBefore": {
+        "minX": 10,
+        "maxX": 91,
+        "minY": 4,
+        "maxY": 79,
+        "cx": 50.5,
+        "cy": 41.5,
+        "count": 774
+      },
+      "iconBoundsAfter": {
+        "minX": 10,
+        "maxX": 91,
+        "minY": 4,
+        "maxY": 79,
+        "cx": 50.5,
+        "cy": 41.5,
+        "count": 774
+      },
+      "protectedPixelsChanged": 0,
+      "labelPixelsChanged": 8222,
+      "residualTextPixels": 0,
+      "parityStatus": "PASS"
+    },
+    {
+      "key": "filter",
+      "sourceLabel": "FILTER",
+      "row": 4,
+      "column": 7,
+      "mask": {
+        "iconSafeTop": 0,
+        "iconSafeBottom": 71,
+        "labelMaskTop": 72,
+        "labelMaskBottom": 139,
+        "left": 0,
+        "right": 174
+      },
+      "iconRegionChecksumBefore": "597ba39782389087ecebc028a233856ab21ef4237663ce8c7b77f7a339d1dc8d",
+      "iconRegionChecksumAfter": "597ba39782389087ecebc028a233856ab21ef4237663ce8c7b77f7a339d1dc8d",
+      "iconCentroidBefore": {
+        "cx": 46.5,
+        "cy": 37.5
+      },
+      "iconCentroidAfter": {
+        "cx": 46.5,
+        "cy": 37.5
+      },
+      "iconBoundsBefore": {
+        "minX": 21,
+        "maxX": 72,
+        "minY": 4,
+        "maxY": 71,
+        "cx": 46.5,
+        "cy": 37.5,
+        "count": 570
+      },
+      "iconBoundsAfter": {
+        "minX": 21,
+        "maxX": 72,
+        "minY": 4,
+        "maxY": 71,
+        "cx": 46.5,
+        "cy": 37.5,
+        "count": 570
+      },
+      "protectedPixelsChanged": 0,
+      "labelPixelsChanged": 9973,
+      "residualTextPixels": 0,
+      "parityStatus": "PASS"
+    },
+    {
+      "key": "export",
+      "sourceLabel": "EXPORT",
+      "row": 5,
+      "column": 0,
+      "mask": {
+        "iconSafeTop": 0,
+        "iconSafeBottom": 72,
+        "labelMaskTop": 73,
+        "labelMaskBottom": 140,
+        "left": 0,
+        "right": 174
+      },
+      "iconRegionChecksumBefore": "1e5e192645213e3a48cd239eea2c51a371ad45852f75d053f745b1013cc726c3",
+      "iconRegionChecksumAfter": "1e5e192645213e3a48cd239eea2c51a371ad45852f75d053f745b1013cc726c3",
+      "iconCentroidBefore": {
+        "cx": 105.5,
+        "cy": 36
+      },
+      "iconCentroidAfter": {
+        "cx": 105.5,
+        "cy": 36
+      },
+      "iconBoundsBefore": {
+        "minX": 82,
+        "maxX": 129,
+        "minY": 0,
+        "maxY": 72,
+        "cx": 105.5,
+        "cy": 36,
+        "count": 287
+      },
+      "iconBoundsAfter": {
+        "minX": 82,
+        "maxX": 129,
+        "minY": 0,
+        "maxY": 72,
+        "cx": 105.5,
+        "cy": 36,
+        "count": 287
+      },
+      "protectedPixelsChanged": 0,
+      "labelPixelsChanged": 10308,
+      "residualTextPixels": 0,
+      "parityStatus": "PASS"
+    },
+    {
+      "key": "import",
+      "sourceLabel": "IMPORT",
+      "row": 5,
+      "column": 1,
+      "mask": {
+        "iconSafeTop": 0,
+        "iconSafeBottom": 72,
+        "labelMaskTop": 73,
+        "labelMaskBottom": 140,
+        "left": 0,
+        "right": 175
+      },
+      "iconRegionChecksumBefore": "fc7ea5da8bb1791540d81cf6bdb71dd0d3ac8b708550935740892e400dbdaa81",
+      "iconRegionChecksumAfter": "fc7ea5da8bb1791540d81cf6bdb71dd0d3ac8b708550935740892e400dbdaa81",
+      "iconCentroidBefore": {
+        "cx": 94.5,
+        "cy": 56.5
+      },
+      "iconCentroidAfter": {
+        "cx": 94.5,
+        "cy": 56.5
+      },
+      "iconBoundsBefore": {
+        "minX": 71,
+        "maxX": 118,
+        "minY": 41,
+        "maxY": 72,
+        "cx": 94.5,
+        "cy": 56.5,
+        "count": 284
+      },
+      "iconBoundsAfter": {
+        "minX": 71,
+        "maxX": 118,
+        "minY": 41,
+        "maxY": 72,
+        "cx": 94.5,
+        "cy": 56.5,
+        "count": 284
+      },
+      "protectedPixelsChanged": 0,
+      "labelPixelsChanged": 10626,
+      "residualTextPixels": 0,
+      "parityStatus": "PASS"
+    },
+    {
+      "key": "cloudSync",
+      "sourceLabel": "CLOUD SYNC",
+      "row": 5,
+      "column": 2,
+      "mask": {
+        "iconSafeTop": 0,
+        "iconSafeBottom": 72,
+        "labelMaskTop": 73,
+        "labelMaskBottom": 140,
+        "left": 0,
+        "right": 174
+      },
+      "iconRegionChecksumBefore": "ea0cb977dc64dd829245827e47785086809b9caa887b51fd6515d5eab3b435c5",
+      "iconRegionChecksumAfter": "ea0cb977dc64dd829245827e47785086809b9caa887b51fd6515d5eab3b435c5",
+      "iconCentroidBefore": {
+        "cx": 77.5,
+        "cy": 57.5
+      },
+      "iconCentroidAfter": {
+        "cx": 77.5,
+        "cy": 57.5
+      },
+      "iconBoundsBefore": {
+        "minX": 49,
+        "maxX": 106,
+        "minY": 43,
+        "maxY": 72,
+        "cx": 77.5,
+        "cy": 57.5,
+        "count": 449
+      },
+      "iconBoundsAfter": {
+        "minX": 49,
+        "maxX": 106,
+        "minY": 43,
+        "maxY": 72,
+        "cx": 77.5,
+        "cy": 57.5,
+        "count": 449
+      },
+      "protectedPixelsChanged": 0,
+      "labelPixelsChanged": 10848,
+      "residualTextPixels": 0,
+      "parityStatus": "PASS"
+    },
+    {
+      "key": "database",
+      "sourceLabel": "DATABASE",
+      "row": 5,
+      "column": 3,
+      "mask": {
+        "iconSafeTop": 0,
+        "iconSafeBottom": 72,
+        "labelMaskTop": 73,
+        "labelMaskBottom": 140,
+        "left": 0,
+        "right": 174
+      },
+      "iconRegionChecksumBefore": "7f4b3ec9b4f8c8a8efece3ca244b3624ce6c6ef42587fc2edfa29e6df583b879",
+      "iconRegionChecksumAfter": "7f4b3ec9b4f8c8a8efece3ca244b3624ce6c6ef42587fc2edfa29e6df583b879",
+      "iconCentroidBefore": {
+        "cx": 66,
+        "cy": 55
+      },
+      "iconCentroidAfter": {
+        "cx": 66,
+        "cy": 55
+      },
+      "iconBoundsBefore": {
+        "minX": 45,
+        "maxX": 87,
+        "minY": 38,
+        "maxY": 72,
+        "cx": 66,
+        "cy": 55,
+        "count": 668
+      },
+      "iconBoundsAfter": {
+        "minX": 45,
+        "maxX": 87,
+        "minY": 38,
+        "maxY": 72,
+        "cx": 66,
+        "cy": 55,
+        "count": 668
+      },
+      "protectedPixelsChanged": 0,
+      "labelPixelsChanged": 10069,
+      "residualTextPixels": 0,
+      "parityStatus": "PASS"
+    },
+    {
+      "key": "link",
+      "sourceLabel": "LINK",
+      "row": 5,
+      "column": 4,
+      "mask": {
+        "iconSafeTop": 0,
+        "iconSafeBottom": 74,
+        "labelMaskTop": 75,
+        "labelMaskBottom": 140,
+        "left": 0,
+        "right": 174
+      },
+      "iconRegionChecksumBefore": "aefb03905e0fb16611a8f207ecf62c51bcd1268ddc0dcbfdd4868b79d000d521",
+      "iconRegionChecksumAfter": "aefb03905e0fb16611a8f207ecf62c51bcd1268ddc0dcbfdd4868b79d000d521",
+      "iconCentroidBefore": {
+        "cx": 57,
+        "cy": 57.5
+      },
+      "iconCentroidAfter": {
+        "cx": 57,
+        "cy": 57.5
+      },
+      "iconBoundsBefore": {
+        "minX": 35,
+        "maxX": 79,
+        "minY": 41,
+        "maxY": 74,
+        "cx": 57,
+        "cy": 57.5,
+        "count": 411
+      },
+      "iconBoundsAfter": {
+        "minX": 35,
+        "maxX": 79,
+        "minY": 41,
+        "maxY": 74,
+        "cx": 57,
+        "cy": 57.5,
+        "count": 411
+      },
+      "protectedPixelsChanged": 0,
+      "labelPixelsChanged": 9937,
+      "residualTextPixels": 0,
+      "parityStatus": "PASS"
+    },
+    {
+      "key": "share",
+      "sourceLabel": "SHARE",
+      "row": 5,
+      "column": 5,
+      "mask": {
+        "iconSafeTop": 0,
+        "iconSafeBottom": 105,
+        "labelMaskTop": 106,
+        "labelMaskBottom": 140,
+        "left": 0,
+        "right": 175
+      },
+      "iconRegionChecksumBefore": "55e110bec03c48b85e6933ee9e6d6aacf7a678a2664532910a49144dbd3a90b1",
+      "iconRegionChecksumAfter": "55e110bec03c48b85e6933ee9e6d6aacf7a678a2664532910a49144dbd3a90b1",
+      "iconCentroidBefore": {
+        "cx": 55,
+        "cy": 63.5
+      },
+      "iconCentroidAfter": {
+        "cx": 55,
+        "cy": 63.5
+      },
+      "iconBoundsBefore": {
+        "minX": 35,
+        "maxX": 75,
+        "minY": 41,
+        "maxY": 86,
+        "cx": 55,
+        "cy": 63.5,
+        "count": 590
+      },
+      "iconBoundsAfter": {
+        "minX": 35,
+        "maxX": 75,
+        "minY": 41,
+        "maxY": 86,
+        "cx": 55,
+        "cy": 63.5,
+        "count": 590
+      },
+      "protectedPixelsChanged": 0,
+      "labelPixelsChanged": 5262,
+      "residualTextPixels": 0,
+      "parityStatus": "PASS"
+    },
+    {
+      "key": "users",
+      "sourceLabel": "USERS",
+      "row": 5,
+      "column": 6,
+      "mask": {
+        "iconSafeTop": 0,
+        "iconSafeBottom": 72,
+        "labelMaskTop": 73,
+        "labelMaskBottom": 140,
+        "left": 0,
+        "right": 174
+      },
+      "iconRegionChecksumBefore": "08d801a114fd187a38b8c3f1d5155cb323974157a2c795fed9bac837eaf0bf40",
+      "iconRegionChecksumAfter": "08d801a114fd187a38b8c3f1d5155cb323974157a2c795fed9bac837eaf0bf40",
+      "iconCentroidBefore": {
+        "cx": 50.5,
+        "cy": 56.5
+      },
+      "iconCentroidAfter": {
+        "cx": 50.5,
+        "cy": 56.5
+      },
+      "iconBoundsBefore": {
+        "minX": 34,
+        "maxX": 67,
+        "minY": 41,
+        "maxY": 72,
+        "cx": 50.5,
+        "cy": 56.5,
+        "count": 379
+      },
+      "iconBoundsAfter": {
+        "minX": 34,
+        "maxX": 67,
+        "minY": 41,
+        "maxY": 72,
+        "cx": 50.5,
+        "cy": 56.5,
+        "count": 379
+      },
+      "protectedPixelsChanged": 0,
+      "labelPixelsChanged": 9292,
+      "residualTextPixels": 0,
+      "parityStatus": "PASS"
+    },
+    {
+      "key": "team",
+      "sourceLabel": "TEAM",
+      "row": 5,
+      "column": 7,
+      "mask": {
+        "iconSafeTop": 0,
+        "iconSafeBottom": 72,
+        "labelMaskTop": 73,
+        "labelMaskBottom": 140,
+        "left": 0,
+        "right": 174
+      },
+      "iconRegionChecksumBefore": "e8fdfef5068d74ba0aa84e2f0949c505e738602165431d661aea611cd38331f8",
+      "iconRegionChecksumAfter": "e8fdfef5068d74ba0aa84e2f0949c505e738602165431d661aea611cd38331f8",
+      "iconCentroidBefore": {
+        "cx": 47,
+        "cy": 57.5
+      },
+      "iconCentroidAfter": {
+        "cx": 47,
+        "cy": 57.5
+      },
+      "iconBoundsBefore": {
+        "minX": 20,
+        "maxX": 74,
+        "minY": 43,
+        "maxY": 72,
+        "cx": 47,
+        "cy": 57.5,
+        "count": 629
+      },
+      "iconBoundsAfter": {
+        "minX": 20,
+        "maxX": 74,
+        "minY": 43,
+        "maxY": 72,
+        "cx": 47,
+        "cy": 57.5,
+        "count": 629
+      },
+      "protectedPixelsChanged": 0,
+      "labelPixelsChanged": 9079,
+      "residualTextPixels": 0,
+      "parityStatus": "PASS"
+    },
+    {
+      "key": "notifications",
+      "sourceLabel": "NOTIFICATIONS",
+      "row": 6,
+      "column": 0,
+      "mask": {
+        "iconSafeTop": 0,
+        "iconSafeBottom": 83,
+        "labelMaskTop": 84,
+        "labelMaskBottom": 139,
+        "left": 0,
+        "right": 174
+      },
+      "iconRegionChecksumBefore": "ebbd8a5513d921dbfd58db0408a243b3694fe4927e93f1f1cf0204ab9273384a",
+      "iconRegionChecksumAfter": "ebbd8a5513d921dbfd58db0408a243b3694fe4927e93f1f1cf0204ab9273384a",
+      "iconCentroidBefore": {
+        "cx": 106,
+        "cy": 39
+      },
+      "iconCentroidAfter": {
+        "cx": 106,
+        "cy": 39
+      },
+      "iconBoundsBefore": {
+        "minX": 85,
+        "maxX": 127,
+        "minY": 14,
+        "maxY": 64,
+        "cx": 106,
+        "cy": 39,
+        "count": 659
+      },
+      "iconBoundsAfter": {
+        "minX": 85,
+        "maxX": 127,
+        "minY": 14,
+        "maxY": 64,
+        "cx": 106,
+        "cy": 39,
+        "count": 659
+      },
+      "protectedPixelsChanged": 0,
+      "labelPixelsChanged": 8247,
+      "residualTextPixels": 0,
+      "parityStatus": "PASS"
+    },
+    {
+      "key": "comments",
+      "sourceLabel": "COMMENTS",
+      "row": 6,
+      "column": 1,
+      "mask": {
+        "iconSafeTop": 0,
+        "iconSafeBottom": 83,
+        "labelMaskTop": 84,
+        "labelMaskBottom": 139,
+        "left": 0,
+        "right": 175
+      },
+      "iconRegionChecksumBefore": "383da0a89bc126d4fc18fbd94da9a4383ea413e16a9b099850f94633b94577e5",
+      "iconRegionChecksumAfter": "383da0a89bc126d4fc18fbd94da9a4383ea413e16a9b099850f94633b94577e5",
+      "iconCentroidBefore": {
+        "cx": 94,
+        "cy": 39.5
+      },
+      "iconCentroidAfter": {
+        "cx": 94,
+        "cy": 39.5
+      },
+      "iconBoundsBefore": {
+        "minX": 69,
+        "maxX": 119,
+        "minY": 16,
+        "maxY": 63,
+        "cx": 94,
+        "cy": 39.5,
+        "count": 805
+      },
+      "iconBoundsAfter": {
+        "minX": 69,
+        "maxX": 119,
+        "minY": 16,
+        "maxY": 63,
+        "cx": 94,
+        "cy": 39.5,
+        "count": 805
+      },
+      "protectedPixelsChanged": 0,
+      "labelPixelsChanged": 8841,
+      "residualTextPixels": 0,
+      "parityStatus": "PASS"
+    },
+    {
+      "key": "notes",
+      "sourceLabel": "NOTES",
+      "row": 6,
+      "column": 2,
+      "mask": {
+        "iconSafeTop": 0,
+        "iconSafeBottom": 83,
+        "labelMaskTop": 84,
+        "labelMaskBottom": 139,
+        "left": 0,
+        "right": 174
+      },
+      "iconRegionChecksumBefore": "af6a26343bccd0d9b99d97bc2f1afdef9641b7568fa1e44c869d3010346b0614",
+      "iconRegionChecksumAfter": "af6a26343bccd0d9b99d97bc2f1afdef9641b7568fa1e44c869d3010346b0614",
+      "iconCentroidBefore": {
+        "cx": 77.5,
+        "cy": 39.5
+      },
+      "iconCentroidAfter": {
+        "cx": 77.5,
+        "cy": 39.5
+      },
+      "iconBoundsBefore": {
+        "minX": 56,
+        "maxX": 99,
+        "minY": 15,
+        "maxY": 64,
+        "cx": 77.5,
+        "cy": 39.5,
+        "count": 949
+      },
+      "iconBoundsAfter": {
+        "minX": 56,
+        "maxX": 99,
+        "minY": 15,
+        "maxY": 64,
+        "cx": 77.5,
+        "cy": 39.5,
+        "count": 949
+      },
+      "protectedPixelsChanged": 0,
+      "labelPixelsChanged": 8899,
+      "residualTextPixels": 0,
+      "parityStatus": "PASS"
+    },
+    {
+      "key": "attachments",
+      "sourceLabel": "ATTACHMENTS",
+      "row": 6,
+      "column": 3,
+      "mask": {
+        "iconSafeTop": 0,
+        "iconSafeBottom": 83,
+        "labelMaskTop": 84,
+        "labelMaskBottom": 139,
+        "left": 0,
+        "right": 174
+      },
+      "iconRegionChecksumBefore": "39ec42d499083840faa129bdaf2b181f9e42b19795b8606328340932651f09fb",
+      "iconRegionChecksumAfter": "39ec42d499083840faa129bdaf2b181f9e42b19795b8606328340932651f09fb",
+      "iconCentroidBefore": {
+        "cx": 67.5,
+        "cy": 39
+      },
+      "iconCentroidAfter": {
+        "cx": 67.5,
+        "cy": 39
+      },
+      "iconBoundsBefore": {
+        "minX": 47,
+        "maxX": 88,
+        "minY": 16,
+        "maxY": 62,
+        "cx": 67.5,
+        "cy": 39,
+        "count": 748
+      },
+      "iconBoundsAfter": {
+        "minX": 47,
+        "maxX": 88,
+        "minY": 16,
+        "maxY": 62,
+        "cx": 67.5,
+        "cy": 39,
+        "count": 748
+      },
+      "protectedPixelsChanged": 0,
+      "labelPixelsChanged": 9030,
+      "residualTextPixels": 0,
+      "parityStatus": "PASS"
+    },
+    {
+      "key": "schedule",
+      "sourceLabel": "SCHEDULE",
+      "row": 6,
+      "column": 4,
+      "mask": {
+        "iconSafeTop": 0,
+        "iconSafeBottom": 83,
+        "labelMaskTop": 84,
+        "labelMaskBottom": 139,
+        "left": 0,
+        "right": 174
+      },
+      "iconRegionChecksumBefore": "1a1a2cbd2f274ea78ee53505c20f7f3665831f74cd059af4c3ee1e18ffdb723b",
+      "iconRegionChecksumAfter": "1a1a2cbd2f274ea78ee53505c20f7f3665831f74cd059af4c3ee1e18ffdb723b",
+      "iconCentroidBefore": {
+        "cx": 56.5,
+        "cy": 39.5
+      },
+      "iconCentroidAfter": {
+        "cx": 56.5,
+        "cy": 39.5
+      },
+      "iconBoundsBefore": {
+        "minX": 32,
+        "maxX": 81,
+        "minY": 15,
+        "maxY": 64,
+        "cx": 56.5,
+        "cy": 39.5,
+        "count": 1088
+      },
+      "iconBoundsAfter": {
+        "minX": 32,
+        "maxX": 81,
+        "minY": 15,
+        "maxY": 64,
+        "cx": 56.5,
+        "cy": 39.5,
+        "count": 1088
+      },
+      "protectedPixelsChanged": 0,
+      "labelPixelsChanged": 8656,
+      "residualTextPixels": 0,
+      "parityStatus": "PASS"
+    },
+    {
+      "key": "timeTracking",
+      "sourceLabel": "TIME TRACKING",
+      "row": 6,
+      "column": 5,
+      "mask": {
+        "iconSafeTop": 0,
+        "iconSafeBottom": 83,
+        "labelMaskTop": 84,
+        "labelMaskBottom": 139,
+        "left": 0,
+        "right": 175
+      },
+      "iconRegionChecksumBefore": "ea63ba903632f50c21842702db49ce029eaf613b70489f4ef111febe1086b299",
+      "iconRegionChecksumAfter": "ea63ba903632f50c21842702db49ce029eaf613b70489f4ef111febe1086b299",
+      "iconCentroidBefore": {
+        "cx": 55.5,
+        "cy": 39.5
+      },
+      "iconCentroidAfter": {
+        "cx": 55.5,
+        "cy": 39.5
+      },
+      "iconBoundsBefore": {
+        "minX": 30,
+        "maxX": 81,
+        "minY": 15,
+        "maxY": 64,
+        "cx": 55.5,
+        "cy": 39.5,
+        "count": 752
+      },
+      "iconBoundsAfter": {
+        "minX": 30,
+        "maxX": 81,
+        "minY": 15,
+        "maxY": 64,
+        "cx": 55.5,
+        "cy": 39.5,
+        "count": 752
+      },
+      "protectedPixelsChanged": 0,
+      "labelPixelsChanged": 9159,
+      "residualTextPixels": 0,
+      "parityStatus": "PASS"
+    },
+    {
+      "key": "flag",
+      "sourceLabel": "FLAG",
+      "row": 6,
+      "column": 6,
+      "mask": {
+        "iconSafeTop": 0,
+        "iconSafeBottom": 83,
+        "labelMaskTop": 84,
+        "labelMaskBottom": 139,
+        "left": 0,
+        "right": 174
+      },
+      "iconRegionChecksumBefore": "b8e0b7c442832f237b053a4ef3578b6e0d4b0127abeef7480faa29fd91dba63a",
+      "iconRegionChecksumAfter": "b8e0b7c442832f237b053a4ef3578b6e0d4b0127abeef7480faa29fd91dba63a",
+      "iconCentroidBefore": {
+        "cx": 50,
+        "cy": 39.5
+      },
+      "iconCentroidAfter": {
+        "cx": 50,
+        "cy": 39.5
+      },
+      "iconBoundsBefore": {
+        "minX": 28,
+        "maxX": 72,
+        "minY": 15,
+        "maxY": 64,
+        "cx": 50,
+        "cy": 39.5,
+        "count": 679
+      },
+      "iconBoundsAfter": {
+        "minX": 28,
+        "maxX": 72,
+        "minY": 15,
+        "maxY": 64,
+        "cx": 50,
+        "cy": 39.5,
+        "count": 679
+      },
+      "protectedPixelsChanged": 0,
+      "labelPixelsChanged": 7395,
+      "residualTextPixels": 0,
+      "parityStatus": "PASS"
+    },
+    {
+      "key": "favorite",
+      "sourceLabel": "FAVORITE",
+      "row": 6,
+      "column": 7,
+      "mask": {
+        "iconSafeTop": 0,
+        "iconSafeBottom": 83,
+        "labelMaskTop": 84,
+        "labelMaskBottom": 139,
+        "left": 0,
+        "right": 174
+      },
+      "iconRegionChecksumBefore": "bb0f95aeb13ed5eed5c03afe4d4baa666f916dfdf203fcab897ca67939741030",
+      "iconRegionChecksumAfter": "bb0f95aeb13ed5eed5c03afe4d4baa666f916dfdf203fcab897ca67939741030",
+      "iconCentroidBefore": {
+        "cx": 46.5,
+        "cy": 38.5
+      },
+      "iconCentroidAfter": {
+        "cx": 46.5,
+        "cy": 38.5
+      },
+      "iconBoundsBefore": {
+        "minX": 21,
+        "maxX": 72,
+        "minY": 15,
+        "maxY": 62,
+        "cx": 46.5,
+        "cy": 38.5,
+        "count": 674
+      },
+      "iconBoundsAfter": {
+        "minX": 21,
+        "maxX": 72,
+        "minY": 15,
+        "maxY": 62,
+        "cx": 46.5,
+        "cy": 38.5,
+        "count": 674
+      },
+      "protectedPixelsChanged": 0,
+      "labelPixelsChanged": 7111,
+      "residualTextPixels": 0,
+      "parityStatus": "PASS"
+    },
+    {
+      "key": "dashboard",
+      "sourceLabel": "DASHBOARD",
+      "row": 7,
+      "column": 0,
+      "mask": {
+        "iconSafeTop": 0,
+        "iconSafeBottom": 72,
+        "labelMaskTop": 73,
+        "labelMaskBottom": 139,
+        "left": 0,
+        "right": 174
+      },
+      "iconRegionChecksumBefore": "701c75b423787b4fac462fd6329fb3cc5858e73bcd8cb3531cfc83125a6e7e61",
+      "iconRegionChecksumAfter": "701c75b423787b4fac462fd6329fb3cc5858e73bcd8cb3531cfc83125a6e7e61",
+      "iconCentroidBefore": {
+        "cx": 105.5,
+        "cy": 25.5
+      },
+      "iconCentroidAfter": {
+        "cx": 105.5,
+        "cy": 25.5
+      },
+      "iconBoundsBefore": {
+        "minX": 81,
+        "maxX": 130,
+        "minY": 0,
+        "maxY": 51,
+        "cx": 105.5,
+        "cy": 25.5,
+        "count": 890
+      },
+      "iconBoundsAfter": {
+        "minX": 81,
+        "maxX": 130,
+        "minY": 0,
+        "maxY": 51,
+        "cx": 105.5,
+        "cy": 25.5,
+        "count": 890
+      },
+      "protectedPixelsChanged": 0,
+      "labelPixelsChanged": 9400,
+      "residualTextPixels": 0,
+      "parityStatus": "PASS"
+    },
+    {
+      "key": "focusMode",
+      "sourceLabel": "FOCUS MODE",
+      "row": 7,
+      "column": 1,
+      "mask": {
+        "iconSafeTop": 0,
+        "iconSafeBottom": 72,
+        "labelMaskTop": 73,
+        "labelMaskBottom": 139,
+        "left": 0,
+        "right": 175
+      },
+      "iconRegionChecksumBefore": "2ea320cb6558f983abe09e382e45e9abccc747250ed144ff88b98f15e51cec4d",
+      "iconRegionChecksumAfter": "2ea320cb6558f983abe09e382e45e9abccc747250ed144ff88b98f15e51cec4d",
+      "iconCentroidBefore": {
+        "cx": 95.5,
+        "cy": 26
+      },
+      "iconCentroidAfter": {
+        "cx": 95.5,
+        "cy": 26
+      },
+      "iconBoundsBefore": {
+        "minX": 68,
+        "maxX": 123,
+        "minY": 0,
+        "maxY": 52,
+        "cx": 95.5,
+        "cy": 26,
+        "count": 619
+      },
+      "iconBoundsAfter": {
+        "minX": 68,
+        "maxX": 123,
+        "minY": 0,
+        "maxY": 52,
+        "cx": 95.5,
+        "cy": 26,
+        "count": 619
+      },
+      "protectedPixelsChanged": 0,
+      "labelPixelsChanged": 9178,
+      "residualTextPixels": 0,
+      "parityStatus": "PASS"
+    },
+    {
+      "key": "terminal",
+      "sourceLabel": "TERMINAL",
+      "row": 7,
+      "column": 2,
+      "mask": {
+        "iconSafeTop": 0,
+        "iconSafeBottom": 72,
+        "labelMaskTop": 73,
+        "labelMaskBottom": 139,
+        "left": 0,
+        "right": 174
+      },
+      "iconRegionChecksumBefore": "cd51c10d624ba63bf8430fa1dd45c3a5a0467f2978c33af121b5716ee04ee07f",
+      "iconRegionChecksumAfter": "cd51c10d624ba63bf8430fa1dd45c3a5a0467f2978c33af121b5716ee04ee07f",
+      "iconCentroidBefore": {
+        "cx": 82,
+        "cy": 25
+      },
+      "iconCentroidAfter": {
+        "cx": 82,
+        "cy": 25
+      },
+      "iconBoundsBefore": {
+        "minX": 60,
+        "maxX": 104,
+        "minY": 8,
+        "maxY": 42,
+        "cx": 82,
+        "cy": 25,
+        "count": 290
+      },
+      "iconBoundsAfter": {
+        "minX": 60,
+        "maxX": 104,
+        "minY": 8,
+        "maxY": 42,
+        "cx": 82,
+        "cy": 25,
+        "count": 290
+      },
+      "protectedPixelsChanged": 0,
+      "labelPixelsChanged": 9553,
+      "residualTextPixels": 0,
+      "parityStatus": "PASS"
+    },
+    {
+      "key": "diagnostics",
+      "sourceLabel": "DIAGNOSTICS",
+      "row": 7,
+      "column": 3,
+      "mask": {
+        "iconSafeTop": 0,
+        "iconSafeBottom": 72,
+        "labelMaskTop": 73,
+        "labelMaskBottom": 139,
+        "left": 0,
+        "right": 174
+      },
+      "iconRegionChecksumBefore": "6bed109afb01f2114aab5e9583985b805b7e8729073539fcd7fce5364b749583",
+      "iconRegionChecksumAfter": "6bed109afb01f2114aab5e9583985b805b7e8729073539fcd7fce5364b749583",
+      "iconCentroidBefore": {
+        "cx": 70.5,
+        "cy": 24
+      },
+      "iconCentroidAfter": {
+        "cx": 70.5,
+        "cy": 24
+      },
+      "iconBoundsBefore": {
+        "minX": 43,
+        "maxX": 98,
+        "minY": 1,
+        "maxY": 47,
+        "cx": 70.5,
+        "cy": 24,
+        "count": 506
+      },
+      "iconBoundsAfter": {
+        "minX": 43,
+        "maxX": 98,
+        "minY": 1,
+        "maxY": 47,
+        "cx": 70.5,
+        "cy": 24,
+        "count": 506
+      },
+      "protectedPixelsChanged": 0,
+      "labelPixelsChanged": 11492,
+      "residualTextPixels": 0,
+      "parityStatus": "PASS"
+    },
+    {
+      "key": "security",
+      "sourceLabel": "SECURITY",
+      "row": 7,
+      "column": 4,
+      "mask": {
+        "iconSafeTop": 0,
+        "iconSafeBottom": 72,
+        "labelMaskTop": 73,
+        "labelMaskBottom": 139,
+        "left": 0,
+        "right": 174
+      },
+      "iconRegionChecksumBefore": "172a06bbd0f571bcade7c84c0e0ceb312abdbae676b1b425cbf09dbdc4483cb1",
+      "iconRegionChecksumAfter": "172a06bbd0f571bcade7c84c0e0ceb312abdbae676b1b425cbf09dbdc4483cb1",
+      "iconCentroidBefore": {
+        "cx": 56.5,
+        "cy": 25
+      },
+      "iconCentroidAfter": {
+        "cx": 56.5,
+        "cy": 25
+      },
+      "iconBoundsBefore": {
+        "minX": 32,
+        "maxX": 81,
+        "minY": 0,
+        "maxY": 50,
+        "cx": 56.5,
+        "cy": 25,
+        "count": 608
+      },
+      "iconBoundsAfter": {
+        "minX": 32,
+        "maxX": 81,
+        "minY": 0,
+        "maxY": 50,
+        "cx": 56.5,
+        "cy": 25,
+        "count": 608
+      },
+      "protectedPixelsChanged": 0,
+      "labelPixelsChanged": 9331,
+      "residualTextPixels": 0,
+      "parityStatus": "PASS"
+    },
+    {
+      "key": "permissions",
+      "sourceLabel": "PERMISSIONS",
+      "row": 7,
+      "column": 5,
+      "mask": {
+        "iconSafeTop": 0,
+        "iconSafeBottom": 72,
+        "labelMaskTop": 73,
+        "labelMaskBottom": 139,
+        "left": 0,
+        "right": 175
+      },
+      "iconRegionChecksumBefore": "324a95424564f7e5178c54fa878bb30164a5f9acc96b3ec1859738bca1fa848c",
+      "iconRegionChecksumAfter": "324a95424564f7e5178c54fa878bb30164a5f9acc96b3ec1859738bca1fa848c",
+      "iconCentroidBefore": {
+        "cx": 55.5,
+        "cy": 24.5
+      },
+      "iconCentroidAfter": {
+        "cx": 55.5,
+        "cy": 24.5
+      },
+      "iconBoundsBefore": {
+        "minX": 30,
+        "maxX": 81,
+        "minY": 0,
+        "maxY": 49,
+        "cx": 55.5,
+        "cy": 24.5,
+        "count": 719
+      },
+      "iconBoundsAfter": {
+        "minX": 30,
+        "maxX": 81,
+        "minY": 0,
+        "maxY": 49,
+        "cx": 55.5,
+        "cy": 24.5,
+        "count": 719
+      },
+      "protectedPixelsChanged": 0,
+      "labelPixelsChanged": 11681,
+      "residualTextPixels": 0,
+      "parityStatus": "PASS"
+    },
+    {
+      "key": "help",
+      "sourceLabel": "HELP",
+      "row": 7,
+      "column": 6,
+      "mask": {
+        "iconSafeTop": 0,
+        "iconSafeBottom": 72,
+        "labelMaskTop": 73,
+        "labelMaskBottom": 139,
+        "left": 0,
+        "right": 174
+      },
+      "iconRegionChecksumBefore": "6a1c889aa41a57b87d863e30b21b2013aab02a0861d172e6d62fd6e9d4940129",
+      "iconRegionChecksumAfter": "6a1c889aa41a57b87d863e30b21b2013aab02a0861d172e6d62fd6e9d4940129",
+      "iconCentroidBefore": {
+        "cx": 50.5,
+        "cy": 25.5
+      },
+      "iconCentroidAfter": {
+        "cx": 50.5,
+        "cy": 25.5
+      },
+      "iconBoundsBefore": {
+        "minX": 24,
+        "maxX": 77,
+        "minY": 0,
+        "maxY": 51,
+        "cx": 50.5,
+        "cy": 25.5,
+        "count": 807
+      },
+      "iconBoundsAfter": {
+        "minX": 24,
+        "maxX": 77,
+        "minY": 0,
+        "maxY": 51,
+        "cx": 50.5,
+        "cy": 25.5,
+        "count": 807
+      },
+      "protectedPixelsChanged": 0,
+      "labelPixelsChanged": 10074,
+      "residualTextPixels": 0,
+      "parityStatus": "PASS"
+    },
+    {
+      "key": "about",
+      "sourceLabel": "ABOUT",
+      "row": 7,
+      "column": 7,
+      "mask": {
+        "iconSafeTop": 0,
+        "iconSafeBottom": 72,
+        "labelMaskTop": 73,
+        "labelMaskBottom": 139,
+        "left": 0,
+        "right": 174
+      },
+      "iconRegionChecksumBefore": "7a89b854a90e23a257b135e6a95b5beb4a24c8b7ccdd28fed7323ba3ab6311a8",
+      "iconRegionChecksumAfter": "7a89b854a90e23a257b135e6a95b5beb4a24c8b7ccdd28fed7323ba3ab6311a8",
+      "iconCentroidBefore": {
+        "cx": 47,
+        "cy": 25.5
+      },
+      "iconCentroidAfter": {
+        "cx": 47,
+        "cy": 25.5
+      },
+      "iconBoundsBefore": {
+        "minX": 20,
+        "maxX": 74,
+        "minY": 0,
+        "maxY": 51,
+        "cx": 47,
+        "cy": 25.5,
+        "count": 766
+      },
+      "iconBoundsAfter": {
+        "minX": 20,
+        "maxX": 74,
+        "minY": 0,
+        "maxY": 51,
+        "cx": 47,
+        "cy": 25.5,
+        "count": 766
+      },
+      "protectedPixelsChanged": 0,
+      "labelPixelsChanged": 8604,
+      "residualTextPixels": 0,
+      "parityStatus": "PASS"
+    }
+  ]
+}

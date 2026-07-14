@@ -91,10 +91,10 @@ export function ExperienceLabIconPresentation({
         className={`${styles.wrap} ${styles.wrapMissing} ${className}`.trim()}
         style={presented.style}
         data-elab-icon-missing={name}
-        data-elab-asset-pending="v4"
+        data-elab-asset-pending="v5"
         aria-hidden={ariaHidden}
         aria-label={decorative ? undefined : alt}
-        title={title ?? 'Icon pending v4 source QA'}
+        title={title ?? 'Icon pending v5 source twin QA'}
       />
     );
   }

@@ -49221,6 +49221,43 @@ REACT REGISTRY → ExperienceLabIconPresentation → ExperienceLabIcon
 
 **Verification:** 19/19 icon tests pass; `npm run build` PASS.
 
-**Remaining:** Founder visual QA on source-pair comparison + contact sheet; approve parity WARN/FAIL icons; then resume optical tuning and set lockdown certified.
+**One commit + one push** on `master` via `agent-commit.sh`.
+
+---
+
+## 2026-07-14 — P0 Studio World Icon Source Twin Reconstruction v5 (full conversation)
+
+**Founder request:** P0 blocking sprint — previous founder-supplied unlabeled sheet was NOT structurally identical to labeled catalog (vertical placement, scale, stroke differences). Create **pixel-preserving unlabeled twin** by surgically removing labels from original labeled catalog only; validate protected pixels unchanged; regenerate v5 runtime from twin; retire v4/deprecated unlabeled from production; rebuild QA; no layout/orb changes; optical tuning stays paused.
+
+**Prior context:** v4 migration (`e8955dd4b`) used deprecated unlabeled sheet with 9/39/16 source-pair parity issues.
+
+**Architecture:**
+
+```
+LABELED CATALOG (immutable semantic reference)
+        ↓ surgical label-mask removal only
+PIXEL-PRESERVING UNLABELED TWIN
+        ↓ fixed 8×8 grid extraction
+generated-v5/ transparent PNGs → Experience Lab V2 runtime
+```
+
+**Shipped:**
+
+- `scripts/create-studio-world-unlabeled-source-twin.mjs` — deterministic per-cell label masks; protected-region contract; fails if any icon pixel changes
+- `studio-world-icon-source-unlabeled-twin.png` — sha256 `96a179e4ac77626f9d59be111486eda69176a5b245749827d8749a4663e0e96b`; 1402×1122; **protectedPixelsChanged: 0**
+- `scripts/generate-studio-world-icons-from-source-twin.mjs` — v5 generator; reads twin only after twin parity 64/64 PASS
+- `generated-v5/` — 64×512 PNGs; runtime parity PASS 64/64
+- `studio-world-icon-label-mask.config.ts` — per-cell mask manifest
+- `studio-world-icon-source-twin-parity.generated.json` + `STUDIO_WORLD_ICON_SOURCE_TWIN_PARITY.md`
+- QA artifacts: `source-twin-qa/` + `docs/studio-os/qa/studio-world-icons/source-twin/`
+- Manifest v5: labeledCatalog immutable; unlabeledTwin extraction; deprecatedGeneratedUnlabeled historical-only
+- QA route v5: columns A labeled B twin C protected diff D v5 E–H runtime sizes
+- v4 retired from prebuild and production imports; `EXPERIENCE_LAB_ICON_V4_PIPELINE_RETIRED = true`
+
+**Preserved:** Labeled catalog checksum unchanged (`d7476775…`); Experience Lab layout/orb/legacy untouched; `FOUNDER_OPTICAL_MODE_PAUSED = true`; `LOCKDOWN_CERTIFIED = false`.
+
+**Verification:** 13/13 v5 icon tests + 8 presentation tests pass; `npm run build` PASS.
+
+**Remaining:** Founder visual QA on twin diff artifacts + v5 contact sheet; mobile/desktop runtime screenshots; lockdown certification after approval.
 
 **One commit + one push** on `master` via `agent-commit.sh`.
