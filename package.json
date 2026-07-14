@@ -11,6 +11,7 @@
     "experience-lab:build-icons": "node scripts/extract-experience-lab-icons.mjs",
     "experience-lab:certify-icons": "node scripts/certify-experience-lab-icon-optics.mjs",
     "experience-lab:capture-runtime-icons": "node scripts/capture-experience-lab-icon-runtime-screenshots.mjs",
+    "experience-lab:generate-presentation": "node scripts/generate-icon-presentation-registry.mjs",
     "compile-master-spec": "node scripts/compile-master-spec.mjs",
     "compile-world-graph": "node scripts/compile-world-graph.mjs",
     "build": "tsc --noEmit && vite build",

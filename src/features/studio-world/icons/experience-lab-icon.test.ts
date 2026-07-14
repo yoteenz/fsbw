@@ -208,8 +208,8 @@ describe('Experience Lab extracted icon system v2', () => {
 
   it('ExperienceLabIcon renders img assets (not CSS sprite crops)', () => {
     const src = readFileSync(COMPONENT, 'utf8');
-    expect(src).toContain('EXPERIENCE_LAB_ICON_ASSETS');
-    expect(src).toContain('<img');
+    expect(src).toContain('ExperienceLabIconPresentation');
+    expect(src).not.toContain('EXPERIENCE_LAB_ICON_ASSETS[name].src');
     expect(src).not.toContain('backgroundPosition');
     expect(src).not.toContain('EXPERIENCE_LAB_ICON_RUNTIME_MAP');
     expect(isExperienceLabIconName('blueprint')).toBe(true);
@@ -219,12 +219,14 @@ describe('Experience Lab extracted icon system v2', () => {
 
   it('supports size tokens, a11y, active glow, and optical scale', () => {
     const src = readFileSync(COMPONENT, 'utf8');
+    const presentation = readFileSync(resolve(ICONS_DIR, 'ExperienceLabIconPresentation.tsx'), 'utf8');
+    const presenter = readFileSync(resolve(ICONS_DIR, 'experience-lab-icon-presenter.ts'), 'utf8');
     const css = readFileSync(resolve(ICONS_DIR, 'experience-lab-icon.css'), 'utf8');
     for (const size of ['xs', 'sm', 'md', 'lg', 'xl']) {
-      expect(src).toContain(size);
+      expect(presenter).toContain(size);
     }
-    expect(src).toContain('resolveExperienceLabIconOpticalProfile');
-    expect(src).toContain('objectPosition');
+    expect(src).toContain('ExperienceLabIconPresentation');
+    expect(presentation).toContain('presentExperienceLabIcon');
     expect(resolveExperienceLabIconOpticalScale('blueprint')).toBeGreaterThan(1);
     expect(css).toContain('drop-shadow');
     expect(css).not.toContain('crisp-edges');
@@ -258,8 +260,8 @@ describe('Experience Lab extracted icon system v2', () => {
     const qa = readFileSync(resolve(ROOT, 'src/pages/admin/studio/experience-lab-icon-qa/page.tsx'), 'utf8');
     expect(qa).toContain('Founder Reported');
     expect(qa).toContain('Text Contamination');
-    expect(qa).toContain('LOCKED');
-    expect(qa).toContain('opticalScore');
+    expect(qa).toContain('FounderOpticalTuner');
+    expect(qa).toContain('scores.overall');
   });
 
   it('metadata records connected-component audit fields for every icon', () => {

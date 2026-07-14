@@ -86,18 +86,6 @@ Certification version: **experience-lab-icons-v2-locked**
 | help | PASS | 0.98 | 0.93 | 1.00 | 0.92 |
 | about | PASS | 0.99 | 0.97 | 1.00 | 0.96 |
 
-## Visual regression vs prior deployment
-
-| Metric | Prior (v2 repair) | Locked certification |
-|---|---:|---:|
-| PASS | 40 | **64** |
-| WARN | 24 | **0** |
-| FAIL | 0 | **0** |
-| Text contamination | 0 (founder set) | 0 |
-| Optical certified | — | **64** |
-
-Changes are optical-only: per-icon `scale`, `translateX`, `translateY` via runtime profile. No Experience Lab layout edits.
-
 ## Runtime screenshot references
 
 See `docs/studio-os/qa/experience-lab/icons/runtime/` for desktop and mobile regression captures.

@@ -49089,3 +49089,45 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 **Preserved:** No layout/spacing/typography changes; extraction PNGs unchanged; performance unchanged (lazy img retained).
 
 **One commit + one push** on `master` via `agent-commit.sh`.
+
+---
+
+## 2026-07-14 — P0 Experience Lab Icon Presentation System (full conversation)
+
+**Founder request:** P0 sprint — stop solving icon quality through extraction (pipeline frozen). Introduce permanent **Icon Presentation System** controlling runtime display only: per-icon optical tuning (scale, offsetX/Y, opticalWeight, padding, etc.), canonical registry for all Studio World departments and Industry Packs, Founder Optical Mode with live editing + persistence, runtime QA comparison overlay. **No** PNG regeneration, extraction changes, layout/button/spacing/typography changes.
+
+**Architecture shipped:**
+
+```
+PNG Asset → ExperienceLabIconPresentation → ExperienceLabIcon → Button
+```
+
+**New files:**
+
+- **`experience-lab-icon-presentation.ts`** — `StudioWorldIconPresentationRegistry` (64 per-icon profiles + scores)
+- **`experience-lab-icon-presenter.ts`** — `presentExperienceLabIcon()`, founder localStorage overrides
+- **`ExperienceLabIconPresentation.tsx`** + **`.module.css`** — canonical renderer + guide overlays + compare overlay
+- **`FounderOpticalTuner.tsx`** — hidden dev mode: tap icon, sliders (scale/offset/padding/opticalWeight/baseline), canonical overlay opacity, export TS fragment
+- **`scripts/generate-icon-presentation-registry.mjs`** — regen registry from optical cert (no PNG touch)
+- **`scripts/apply-founder-icon-presentation-patch.mjs`** — merge founder patch JSON into registry TS
+- **`docs/studio-os/design-system/EXPERIENCE_LAB_ICON_PRESENTATION_SYSTEM.md`** — system canon
+- **`experience-lab-icon-presentation.test.ts`** — 8 presentation tests (no extraction rerun)
+
+**Modified:**
+
+- **`ExperienceLabIcon.tsx`** — delegates sizing/positioning to presentation layer (no direct PNG sizing)
+- **`experience-lab-icon-optical-scale.ts`** — deprecated shim → presentation registry
+- **`index.ts`** — exports presentation system APIs
+- **`/admin/studio/experience-lab-icon-qa`** — `FounderOpticalTuner`, presentation scores (`scores.overall`), icon selection
+- **`experience-lab-icon.test.ts`** — updated for presentation layer (15 tests)
+- **`package.json`** — `experience-lab:generate-presentation` script
+
+**Founder-tuned examples:** materials scale 1.26 offsetY -2; construction 1.18/-1; dashboard 1.34; camera 1.16; analytics 1.14; plus zoomIn, permissions, playback, perspective, terminal enhancements.
+
+**Founder Optical Mode:** localStorage keys `studio-world:founder-optical-mode`, `studio-world:icon-presentation-founder-overrides`; export fragment → `apply-founder-icon-presentation-patch.mjs`.
+
+**Preserved:** Extraction pipeline untouched; 64 PNG assets unchanged; Experience Lab layout unchanged; lockdown certification doc intact.
+
+**Verification:** 23/23 icon tests pass; `npm run build` PASS.
+
+**One commit + one push** on `master` via `agent-commit.sh`.

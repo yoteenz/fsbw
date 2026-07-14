@@ -1,4 +1,4 @@
-import { useMemo, useState, type CSSProperties } from 'react';
+import { useEffect, useMemo, useState, type CSSProperties } from 'react';
 import { useRequireStudioWorldAdmin } from '../../../../hooks/useRequireStudioWorldAdmin';
 import {
   ExperienceLabIcon,
@@ -6,12 +6,12 @@ import {
   EXPERIENCE_LAB_ICON_NAMES,
   EXPERIENCE_LAB_ICON_REGISTRY,
   EXPERIENCE_LAB_ICON_SPRITE_CONFIG,
+  STUDIO_WORLD_ICON_PRESENTATION_VERSION,
+  resolveStudioWorldIconPresentation,
 } from '../../../../features/studio-world/icons';
 import { resolveExperienceLabIconSourceLabeledUrl } from '../../../../features/studio-world/icons/experience-lab-icon-sprite.config';
-import {
-  EXPERIENCE_LAB_ICON_OPTICAL_CERTIFICATION_VERSION,
-  resolveExperienceLabIconOpticalProfile,
-} from '../../../../features/studio-world/icons/experience-lab-icon-optical-profile';
+import { FounderOpticalTuner, useFounderOpticalSelection } from '../../../../features/studio-world/icons/FounderOpticalTuner';
+import { isFounderOpticalModeEnabled } from '../../../../features/studio-world/icons/experience-lab-icon-presenter';
 import {
   EXPERIENCE_LAB_ICON_LOCKDOWN_CERTIFIED,
   EXPERIENCE_LAB_ICON_OPTICAL_LOCK_VERSION,
@@ -59,6 +59,15 @@ function sourceCellStyle(row: number, column: number): CSSProperties {
 export default function AdminExperienceLabIconQaPage() {
   useRequireStudioWorldAdmin();
   const [filter, setFilter] = useState<AuditFilter>('all');
+  const { selected, setSelected } = useFounderOpticalSelection();
+  const [founderMode, setFounderMode] = useState(false);
+
+  useEffect(() => {
+    setFounderMode(isFounderOpticalModeEnabled());
+    const handler = () => setFounderMode(isFounderOpticalModeEnabled());
+    window.addEventListener('studio-world:founder-optical-mode', handler);
+    return () => window.removeEventListener('studio-world:founder-optical-mode', handler);
+  }, []);
 
   const metaByKey = useMemo(() => {
     const map = new Map<string, IconMeta>();
@@ -109,7 +118,7 @@ export default function AdminExperienceLabIconQaPage() {
     <div style={{ padding: 24, background: '#0a0c10', color: '#f0ebe3', minHeight: '100vh' }}>
       <h1 style={{ fontSize: 18, letterSpacing: '0.08em', marginBottom: 8 }}>Experience Lab Icon QA</h1>
       <p style={{ fontSize: 12, color: '#9a958c', marginBottom: 12 }}>
-        Lock {EXPERIENCE_LAB_ICON_OPTICAL_LOCK_VERSION} · optical {EXPERIENCE_LAB_ICON_OPTICAL_CERTIFICATION_VERSION} ·
+        Lock {EXPERIENCE_LAB_ICON_OPTICAL_LOCK_VERSION} · presentation {STUDIO_WORLD_ICON_PRESENTATION_VERSION} ·
         certified {EXPERIENCE_LAB_ICON_LOCKDOWN_CERTIFIED ? 'YES' : 'NO'} · bundle{' '}
         {EXPERIENCE_LAB_ICON_SPRITE_CONFIG.bundleSha256?.slice(0, 12)}…
       </p>
@@ -176,6 +185,8 @@ export default function AdminExperienceLabIconQaPage() {
         ))}
       </div>
 
+      <FounderOpticalTuner selected={selected} onSelect={setSelected} />
+
       <section style={{ marginBottom: 24 }}>
         <h2 style={{ fontSize: 13, marginBottom: 8 }}>Labeled source (canonical catalog)</h2>
         <img
@@ -209,7 +220,7 @@ export default function AdminExperienceLabIconQaPage() {
             const entry = EXPERIENCE_LAB_ICON_REGISTRY[name];
             const asset = EXPERIENCE_LAB_ICON_ASSETS[name];
             const meta = metaByKey.get(name);
-            const optical = resolveExperienceLabIconOpticalProfile(name);
+            const presentation = resolveStudioWorldIconPresentation(name);
             const statusColor =
               asset.auditStatus === 'PASS'
                 ? '#6fcf97'
@@ -220,11 +231,22 @@ export default function AdminExperienceLabIconQaPage() {
             return (
               <div
                 key={name}
+                role="button"
+                tabIndex={0}
+                onClick={() => setSelected(name)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') setSelected(name);
+                }}
                 style={{
-                  background: 'rgba(255,255,255,0.04)',
-                  border: '1px solid rgba(255,255,255,0.08)',
+                  background:
+                    selected === name ? 'rgba(201,169,98,0.12)' : 'rgba(255,255,255,0.04)',
+                  border:
+                    selected === name
+                      ? '1px solid rgba(201,169,98,0.35)'
+                      : '1px solid rgba(255,255,255,0.08)',
                   borderRadius: 8,
                   padding: 12,
+                  cursor: founderMode ? 'pointer' : 'default',
                 }}
               >
                 <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
@@ -273,12 +295,12 @@ export default function AdminExperienceLabIconQaPage() {
                 <div style={{ fontSize: 10, fontWeight: 700 }}>{entry.sourceLabel}</div>
                 <div style={{ fontSize: 9, color: '#9a958c' }}>{name}</div>
                 <div style={{ fontSize: 8, color: statusColor, marginTop: 4 }}>
-                  {asset.auditStatus} · conf {(asset.confidence * 100).toFixed(0)}% · optical{' '}
-                  {optical.opticalScore.toFixed(2)}
+                  {asset.auditStatus} · conf {(asset.confidence * 100).toFixed(0)}% · overall{' '}
+                  {presentation.scores.overall}%
                 </div>
                 <div style={{ fontSize: 8, color: '#6a958c' }}>
-                  center {optical.centeringScore.toFixed(2)} · pad {optical.paddingScore.toFixed(2)} · scale{' '}
-                  {optical.scale.toFixed(2)} · offset {optical.translateX},{optical.translateY}
+                  center {presentation.scores.centering}% · pad {presentation.scores.padding}% · scale{' '}
+                  {presentation.scale.toFixed(2)} · offset {presentation.offsetX},{presentation.offsetY}
                 </div>
                 <div style={{ fontSize: 8, color: '#6a958c' }}>
                   text: {meta?.textContamination?.contaminated ? 'CONTAMINATED' : 'clean'} · stroke 1.00 · family OK
