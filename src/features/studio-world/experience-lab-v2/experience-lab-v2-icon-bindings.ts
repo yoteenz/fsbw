@@ -29,7 +29,7 @@ export const WORKBENCH_TOOL_ICON: Record<WorkbenchEditingToolId, ExperienceLabIc
 };
 
 export const WORKBENCH_NAV_ICON: Record<WorkbenchWorldNavId, ExperienceLabIconName> = {
-  dashboard: 'dashboard',
+  dashboard: 'projects',
   'studio-world': 'orbit',
   marketplace: 'share',
   'command-center': 'terminal',

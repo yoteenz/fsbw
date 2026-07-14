@@ -20,19 +20,20 @@ describe('Experience Lab Workbench config', () => {
     expect(EXPERIENCE_LAB_WORKBENCH_EDITING_TOOLS[11]?.id).toBe('material-lab');
   });
 
-  it('defines world navigation with dashboard and studio world before marketplace', () => {
+  it('defines world navigation with headquarters and studio world before marketplace', () => {
     expect(EXPERIENCE_LAB_WORKBENCH_WORLD_NAV.map((n) => n.id)).toEqual([
       'dashboard',
       'studio-world',
       'marketplace',
       'command-center',
     ]);
+    expect(EXPERIENCE_LAB_WORKBENCH_WORLD_NAV[0]?.label).toBe('HEADQUARTERS');
   });
 
   it('maps editing tools to semantic Experience Lab icon names', () => {
     expect(EXPERIENCE_LAB_WORKBENCH_EDITING_TOOLS[0]?.icon).toBe('construction');
     expect(EXPERIENCE_LAB_WORKBENCH_EDITING_TOOLS.find((t) => t.id === 'lighting-studio')?.icon).toBe('lighting');
-    expect(EXPERIENCE_LAB_WORKBENCH_WORLD_NAV[0]?.icon).toBe('dashboard');
+    expect(EXPERIENCE_LAB_WORKBENCH_WORLD_NAV[0]?.icon).toBe('projects');
     expect(EXPERIENCE_LAB_WORKBENCH_WORLD_NAV[1]?.icon).toBe('orbit');
   });
 

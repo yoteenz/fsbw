@@ -57,7 +57,7 @@ type WorkbenchWorldNavItem = {
 };
 
 export const EXPERIENCE_LAB_WORKBENCH_WORLD_NAV: WorkbenchWorldNavItem[] = [
-  { id: 'dashboard', label: 'DASHBOARD', icon: WORKBENCH_NAV_ICON.dashboard },
+  { id: 'dashboard', label: 'HEADQUARTERS', icon: WORKBENCH_NAV_ICON.dashboard },
   { id: 'studio-world', label: 'STUDIO WORLD', icon: WORKBENCH_NAV_ICON['studio-world'] },
   { id: 'marketplace', label: 'MARKETPLACE', icon: WORKBENCH_NAV_ICON.marketplace },
   { id: 'command-center', label: 'COMMAND CENTER', icon: WORKBENCH_NAV_ICON['command-center'] },

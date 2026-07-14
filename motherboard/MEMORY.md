@@ -49911,6 +49911,13 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 ---
 
+<<<<<<< HEAD
+=======
+**Spatial Architecture Review:** SKIPPED — TypeScript hotfix, no new surfaces.
+
+---
+
+>>>>>>> 4a13f5380 (Workbench world-nav: headquarters label and projects icon)
 ## 2026-07-14 — Studio World Icon Grid Calibration Editor (v6 sprint)
 
 **Founder P0 sprint:** Founder-controlled row/column grid calibration over unlabeled icon pack; v6 generator + `/admin/studio/studio-world-icon-grid-calibration` editor; runtime cutover to `generated-v6/`.
@@ -49931,5 +49938,22 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 **Verification:** `npm run build` PASS.
 
+<<<<<<< HEAD
 **Spatial review:** SKIPPED — composition hotfix.
+=======
+**Unchanged:** Experience Lab V2 layout (Command Dock, Workbench, viewport, orb, anchors). `EXPERIENCE_LAB_ICON_LOCKDOWN_CERTIFIED` remains false until founder visual approval.
+
+**Spatial Architecture Review:** SKIPPED — icon infrastructure + dev-only admin editor; no new EL V2 surfaces.
+
+---
+
+## 2026-07-14 — Workbench world-nav: Dashboard → Headquarters (projects icon)
+
+**Founder request:** Workbench first world-nav item should use the headquarters icon (same as Command Dock Active Headquarters / `projects`) and display label "HEADQUARTERS" instead of "DASHBOARD".
+
+**Shipped:**
+- `experience-lab-v2-icon-bindings.ts` — `WORKBENCH_NAV_ICON.dashboard` → `'projects'`
+- `experience-lab-v2-workbench-config.ts` — label `HEADQUARTERS` (internal nav id unchanged)
+- `experience-lab-v2-workbench.test.ts` — updated icon + label assertions. 5/5 PASS.
+>>>>>>> 4a13f5380 (Workbench world-nav: headquarters label and projects icon)
 
