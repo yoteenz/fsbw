@@ -473,6 +473,7 @@ body.elab-v2-fixed-shell-active {
 .elab-cmd__row--status {
   color: var(--elab-muted);
   padding: 6px 48px 6px 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
   border-bottom: none;
   gap: 0;
   flex-wrap: nowrap;

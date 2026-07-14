@@ -294,6 +294,7 @@ describe('Experience Lab V2 — Fixed application shell', () => {
     expect(dock).toContain('elab-cmd__overflow-dots');
     expect(dock).not.toContain('isCompact');
     expect(dock).not.toContain('EXPERIENCE_LAB_COMMAND_DOCK_LOCATIONS');
+    expect(readV2Source('experience-lab-v2.css')).toMatch(/\.elab-cmd__row--status\s*\{[\s\S]*?border-top:\s*1px solid rgba\(255,\s*255,\s*255,\s*0\.05\)/);
     expect(readV2Source('ExperienceLabWorkbenchDock.tsx')).toContain('elab-wb-dock--pro');
     expect(readV2Source('ExperienceLabWorkbenchDock.tsx')).not.toContain('isCompact');
   });
