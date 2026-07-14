@@ -423,7 +423,22 @@ describe('Experience Lab V2 — Viewport environment', () => {
     expect(stage).toContain('isCompact={isCompact}');
   });
 
-  it('CSS scopes viewport environment with cover/center layering', () => {
+  it('viewport uses HUD architecture — render fills stage, controls float above', () => {
+    const viewport = readV2Source('StudioViewport.tsx');
+    const css = readV2Source('experience-lab-v2.css');
+    expect(viewport).toContain('data-elab-viewport-hud');
+    expect(viewport).toContain('elab-viewport__hud');
+    expect(viewport).toContain('elab-viewport__blueprint-card');
+    expect(viewport).toContain('elab-viewport__inspector-chips');
+    expect(viewport).toContain('elab-viewport__tool-palette');
+    expect(viewport).not.toContain('elab-viewport__chrome');
+    expect(css).toContain('.elab-viewport__hud');
+    expect(css).toContain('--elab-hud-safe-top');
+    expect(css).toMatch(/\.elab-viewport__stage-content\s*\{[\s\S]*?padding:\s*0/);
+    expect(css).toMatch(/\.elab-viewport__stage-content\s*\{[\s\S]*?position:\s*absolute/);
+  });
+
+  it('scopes viewport environment with cover/center layering', () => {
     const css = readV2Source('experience-lab-v2.css');
     expect(css).toContain('.elab-v2__env--viewport');
     expect(css).toContain('object-position: var(--elab-env-position, center center)');

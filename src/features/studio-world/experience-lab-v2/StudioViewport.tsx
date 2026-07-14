@@ -151,80 +151,90 @@ export function StudioViewport({
 
   return (
     <section className={rootClass} data-studio-viewport data-mode={mode}>
-      <div className="elab-viewport__chrome">
-        <div className="elab-viewport__title-bar">
-          <div className="elab-viewport__title-group">
-            <h2 className="elab-viewport__scene-title">{departmentName.toUpperCase()}</h2>
-            <span className="elab-viewport__revision">r{revision}</span>
-            <span className={`elab-viewport__badge${isStale ? ' elab-viewport__badge--stale' : ' elab-viewport__badge--ok'}`}>
-              {isStale ? 'STALE' : artifactStatus.toUpperCase()}
-            </span>
-          </div>
-          {inspectorSwitcher}
-          <div className="elab-viewport__controls">
-            <span className="elab-viewport__mode-chip" aria-label={`Viewport mode ${modeLabel}`}>{modeLabel}</span>
-            {onToggleLeftRail ? (
-              <button type="button" className="elab-viewport__ctrl" onClick={onToggleLeftRail} aria-pressed={!leftRailCollapsed} aria-label="Toggle left inspector rail">
-                L
-              </button>
+      <div className="elab-viewport__stage">
+        <ExperienceLabEnvironmentLayer scope="viewport" isMobile={isCompact} environmentUrl={environmentUrl} />
+
+        <div className="elab-viewport__hud" data-elab-viewport-hud aria-label="Viewport HUD">
+          <div className="elab-viewport__hud-safe">
+            <div className="elab-viewport__blueprint-card">
+              <div className="elab-viewport__title-group">
+                <h2 className="elab-viewport__scene-title">{departmentName.toUpperCase()}</h2>
+                <span className="elab-viewport__revision">r{revision}</span>
+                <span className={`elab-viewport__badge${isStale ? ' elab-viewport__badge--stale' : ' elab-viewport__badge--ok'}`}>
+                  {isStale ? 'STALE' : artifactStatus.toUpperCase()}
+                </span>
+              </div>
+            </div>
+
+            {inspectorSwitcher ? (
+              <div className="elab-viewport__inspector-hud">{inspectorSwitcher}</div>
             ) : null}
-            {onToggleRightRail ? (
-              <button type="button" className="elab-viewport__ctrl" onClick={onToggleRightRail} aria-pressed={!rightRailCollapsed} aria-label="Toggle right inspector rail">
-                R
+
+            <div className="elab-viewport__status-hud">
+              <span className="elab-viewport__mode-chip" aria-label={`Viewport mode ${modeLabel}`}>{modeLabel}</span>
+            </div>
+
+            <div className="elab-viewport__tool-palette">
+              {onToggleLeftRail ? (
+                <button type="button" className="elab-viewport__ctrl" onClick={onToggleLeftRail} aria-pressed={!leftRailCollapsed} aria-label="Toggle left inspector rail">
+                  L
+                </button>
+              ) : null}
+              {onToggleRightRail ? (
+                <button type="button" className="elab-viewport__ctrl" onClick={onToggleRightRail} aria-pressed={!rightRailCollapsed} aria-label="Toggle right inspector rail">
+                  R
+                </button>
+              ) : null}
+              {onFocusMode ? (
+                <button type="button" className="elab-viewport__ctrl" onClick={() => onFocusMode(mode)} aria-label="Focus mode">
+                  <ExperienceLabIcon name="focusMode" size="sm" decorative />
+                </button>
+              ) : null}
+              <button type="button" className="elab-viewport__ctrl" aria-label="Toggle grid" aria-pressed={false}>
+                <ExperienceLabIcon name="grid" size="sm" decorative />
               </button>
-            ) : null}
-            {onFocusMode ? (
-              <button type="button" className="elab-viewport__ctrl" onClick={() => onFocusMode(mode)} aria-label="Focus mode">
-                <ExperienceLabIcon name="focusMode" size="sm" decorative />
+              <button type="button" className="elab-viewport__ctrl" aria-label="Toggle UI">
+                <ExperienceLabIcon name="toggleUi" size="sm" decorative />
               </button>
+              <button type="button" className="elab-viewport__ctrl" aria-label="Zoom in">
+                <ExperienceLabIcon name="zoomIn" size="sm" decorative />
+              </button>
+              <button type="button" className="elab-viewport__ctrl" aria-label="Zoom out">
+                <ExperienceLabIcon name="zoomOut" size="sm" decorative />
+              </button>
+              <button type="button" className="elab-viewport__ctrl" aria-label="Fit view">
+                <ExperienceLabIcon name="fitView" size="sm" decorative />
+              </button>
+              <button type="button" className="elab-viewport__ctrl" aria-label="Pan">
+                <ExperienceLabIcon name="pan" size="sm" decorative />
+              </button>
+              <button type="button" className="elab-viewport__ctrl" onClick={toggleFullscreen} aria-label="Fullscreen">
+                <ExperienceLabIcon name={fullscreen ? 'stop' : 'fullscreen'} size="sm" decorative />
+              </button>
+            </div>
+
+            {modes && onModeChange ? (
+              <nav className="elab-viewport__inspector-chips" {...{ [ELAB_V2_COMPOSITION.modeRail]: '' }} aria-label="Viewport modes">
+                {modes.map((m) => {
+                  const iconName = VIEWPORT_MODE_ICON[m];
+                  return (
+                    <button
+                      key={m}
+                      type="button"
+                      className="elab-viewport__mode-seg"
+                      aria-pressed={mode === m}
+                      onClick={() => onModeChange(m)}
+                    >
+                      {iconName ? <ExperienceLabIcon name={iconName} size="xs" decorative active={mode === m} /> : null}
+                      {VIEWPORT_MODE_LABELS[m] ?? m}
+                    </button>
+                  );
+                })}
+              </nav>
             ) : null}
-            <button type="button" className="elab-viewport__ctrl" aria-label="Toggle grid" aria-pressed={false}>
-              <ExperienceLabIcon name="grid" size="sm" decorative />
-            </button>
-            <button type="button" className="elab-viewport__ctrl" aria-label="Toggle UI">
-              <ExperienceLabIcon name="toggleUi" size="sm" decorative />
-            </button>
-            <button type="button" className="elab-viewport__ctrl" aria-label="Zoom in">
-              <ExperienceLabIcon name="zoomIn" size="sm" decorative />
-            </button>
-            <button type="button" className="elab-viewport__ctrl" aria-label="Zoom out">
-              <ExperienceLabIcon name="zoomOut" size="sm" decorative />
-            </button>
-            <button type="button" className="elab-viewport__ctrl" aria-label="Fit view">
-              <ExperienceLabIcon name="fitView" size="sm" decorative />
-            </button>
-            <button type="button" className="elab-viewport__ctrl" aria-label="Pan">
-              <ExperienceLabIcon name="pan" size="sm" decorative />
-            </button>
-            <button type="button" className="elab-viewport__ctrl" onClick={toggleFullscreen} aria-label="Fullscreen">
-              <ExperienceLabIcon name={fullscreen ? 'stop' : 'fullscreen'} size="sm" decorative />
-            </button>
           </div>
         </div>
 
-        {modes && onModeChange ? (
-          <nav className="elab-viewport__mode-rail" {...{ [ELAB_V2_COMPOSITION.modeRail]: '' }} aria-label="Viewport modes">
-            {modes.map((m) => {
-              const iconName = VIEWPORT_MODE_ICON[m];
-              return (
-              <button
-                key={m}
-                type="button"
-                className="elab-viewport__mode-seg"
-                aria-pressed={mode === m}
-                onClick={() => onModeChange(m)}
-              >
-                {iconName ? <ExperienceLabIcon name={iconName} size="xs" decorative active={mode === m} /> : null}
-                {VIEWPORT_MODE_LABELS[m] ?? m}
-              </button>
-              );
-            })}
-          </nav>
-        ) : null}
-      </div>
-
-      <div className="elab-viewport__stage">
-        <ExperienceLabEnvironmentLayer scope="viewport" isMobile={isCompact} environmentUrl={environmentUrl} />
         <div className="elab-viewport__stage-content">{renderStage()}</div>
       </div>
 

@@ -300,7 +300,7 @@
       "headers": [
         {
           "key": "Content-Disposition",
-          "value": "attachment; filename=\"StudioOS_ContextUpdate_v1.0.24.zip\""
+          "value": "attachment; filename=\"StudioOS_ContextUpdate_v1.0.25.zip\""
         },
         {
           "key": "Cache-Control",
@@ -312,11 +312,11 @@
         },
         {
           "key": "X-Capsule-Version",
-          "value": "1.0.24"
+          "value": "1.0.25"
         },
         {
           "key": "X-Capsule-Artifact",
-          "value": "StudioOS_ContextUpdate_v1.0.24.zip"
+          "value": "StudioOS_ContextUpdate_v1.0.25.zip"
         }
       ]
     }

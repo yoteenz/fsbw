@@ -110,7 +110,8 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  border-bottom: 1px solid var(--el-v2-workstation-divider);
+  border-bottom: 1px solid rgba(201, 162, 77, 0.18);
+  box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.35);
   background: transparent;
 }
 
@@ -276,8 +277,8 @@ body.elab-v2-fixed-shell-active {
 .elab-v2__env--viewport .elab-v2__env-scrim {
   z-index: 1;
   background:
-    radial-gradient(ellipse 80% 60% at 50% 40%, transparent 0%, rgba(8, 9, 12, 0.32) 72%),
-    linear-gradient(180deg, rgba(8, 9, 12, 0.42) 0%, transparent 28%, transparent 68%, rgba(8, 9, 12, 0.5) 100%);
+    radial-gradient(ellipse 82% 62% at 50% 42%, transparent 0%, rgba(8, 9, 12, 0.18) 78%),
+    linear-gradient(180deg, rgba(8, 9, 12, 0.22) 0%, transparent 22%, transparent 72%, rgba(8, 9, 12, 0.28) 100%);
 }
 
 .elab-v2__env-scrim {
@@ -847,27 +848,33 @@ button.elab-cmd__meta-chip {
 
 .elab-float {
   position: absolute;
-  z-index: 4;
+  z-index: 6;
   display: flex;
   align-items: stretch;
   gap: 2px;
   min-width: 88px;
   max-width: 112px;
-  background: rgba(12, 14, 18, 0.72);
-  border: 1px solid rgba(201, 162, 77, 0.35);
-  border-radius: 8px;
-  backdrop-filter: blur(14px);
-  box-shadow: 0 4px 16px rgba(0,0,0,0.35);
-  transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+  background: rgba(12, 14, 18, 0.55);
+  border: 1px solid rgba(201, 162, 77, 0.42);
+  border-radius: 10px;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.32), 0 0 0 1px rgba(255, 255, 255, 0.03) inset;
+  transition: border-color 0.2s ease, box-shadow 0.25s ease, transform 0.25s ease;
   pointer-events: auto;
+}
+
+.elab-float:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.38), 0 0 18px rgba(201, 162, 77, 0.12);
 }
 
 .elab-float--minimized { padding: 0; overflow: hidden; }
 
-.elab-float--dock-tl { top: 4%; left: 1%; }
-.elab-float--dock-tr { top: 4%; right: 1%; }
-.elab-float--dock-bl { bottom: 18%; left: 1%; }
-.elab-float--dock-br { bottom: 18%; right: 1%; }
+.elab-float--dock-tl { top: calc(var(--elab-hud-safe-top, 10px) + 52px); left: var(--elab-hud-safe-side, 10px); }
+.elab-float--dock-tr { top: calc(var(--elab-hud-safe-top, 10px) + 52px); right: var(--elab-hud-safe-side, 10px); }
+.elab-float--dock-bl { bottom: calc(var(--elab-hud-safe-bottom, 18%) + 4px); left: var(--elab-hud-safe-side, 10px); }
+.elab-float--dock-br { bottom: calc(var(--elab-hud-safe-bottom, 18%) + 4px); right: var(--elab-hud-safe-side, 10px); }
 .elab-float--dock-lrail { top: 14%; left: 0; transform: translateX(-42%); }
 .elab-float--dock-rrail { top: 14%; right: 0; transform: translateX(42%); }
 
@@ -907,17 +914,20 @@ button.elab-cmd__meta-chip {
 
 .elab-status-chip {
   position: absolute;
-  top: 4%;
-  right: 1%;
-  z-index: 3;
-  padding: 4px 8px;
+  top: calc(var(--elab-hud-safe-top, 10px) + 8px);
+  right: calc(var(--elab-hud-safe-side, 10px) + 132px);
+  z-index: 6;
+  padding: 4px 10px;
   border-radius: 999px;
   font-size: 7px;
   font-weight: 700;
   letter-spacing: 0.08em;
-  background: rgba(0,0,0,0.55);
-  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(8, 10, 14, 0.52);
+  border: 1px solid rgba(201, 162, 77, 0.32);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   color: var(--elab-muted);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.28);
   pointer-events: none;
 }
 
@@ -926,22 +936,31 @@ button.elab-cmd__meta-chip {
   flex-shrink: 0;
 }
 
-.elab-inspector-switcher--compact .elab-inspector-switcher__trigger {
-  padding: 4px 8px;
-  min-width: 72px;
-}
-
 .elab-inspector-switcher__trigger {
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 4px 10px;
-  border-radius: 6px;
-  border: 1px solid rgba(201, 162, 77, 0.35);
-  background: rgba(0,0,0,0.35);
+  padding: 6px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(201, 162, 77, 0.42);
+  background: rgba(8, 10, 14, 0.52);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   color: var(--elab-text);
   cursor: pointer;
   font-size: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.28);
+  transition: border-color 0.2s ease, box-shadow 0.25s ease, transform 0.25s ease;
+}
+
+.elab-inspector-switcher__trigger:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.34), 0 0 14px rgba(201, 162, 77, 0.1);
+}
+
+.elab-inspector-switcher--compact .elab-inspector-switcher__trigger {
+  padding: 4px 8px;
+  min-width: 72px;
 }
 
 .elab-inspector-switcher__label {
@@ -992,8 +1011,11 @@ button.elab-cmd__meta-chip {
 
 .elab-inspector-switcher__option-label { font-weight: 800; letter-spacing: 0.06em; }
 
-/* ── Studio Viewport ── */
+/* ── Studio Viewport — HUD architecture (render IS the viewport) ── */
 .elab-viewport {
+  --elab-hud-safe-top: 10px;
+  --elab-hud-safe-side: 12px;
+  --elab-hud-safe-bottom: 18%;
   position: relative;
   z-index: 2;
   flex: 1;
@@ -1012,16 +1034,117 @@ button.elab-cmd__meta-chip {
   position: fixed; inset: 0; z-index: 200; margin: 0; border-radius: 0;
 }
 
-.elab-viewport__chrome {
-  flex-shrink: 0;
-  border-bottom: 1px solid var(--elab-border);
-  background: rgba(0,0,0,0.4);
+.elab-viewport__stage {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  display: block;
+  background: #08090c;
 }
 
-.elab-viewport__title-bar {
-  display: flex; align-items: center; gap: 8px;
+.elab-viewport__hud {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.elab-viewport__hud-safe {
+  position: absolute;
+  inset: 0;
+  padding:
+    var(--elab-hud-safe-top)
+    var(--elab-hud-safe-side)
+    calc(var(--elab-hud-safe-bottom) + 8px)
+    var(--elab-hud-safe-side);
+  pointer-events: none;
+}
+
+.elab-viewport__blueprint-card {
+  position: absolute;
+  top: var(--elab-hud-safe-top);
+  left: var(--elab-hud-safe-side);
+  z-index: 2;
+  max-width: min(46vw, 280px);
   padding: 8px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(201, 162, 77, 0.38);
+  background: rgba(8, 10, 14, 0.5);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.34), 0 0 24px rgba(201, 162, 77, 0.08);
+  pointer-events: auto;
+  transition: transform 0.25s ease, box-shadow 0.3s ease;
+}
+
+.elab-viewport__blueprint-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.38), 0 0 28px rgba(201, 162, 77, 0.12);
+}
+
+.elab-viewport__inspector-hud {
+  position: absolute;
+  top: calc(var(--elab-hud-safe-top) + 2px);
+  left: calc(var(--elab-hud-safe-side) + min(46vw, 280px) + 10px);
+  z-index: 2;
+  pointer-events: auto;
+}
+
+.elab-viewport__status-hud {
+  position: absolute;
+  top: calc(var(--elab-hud-safe-top) + 10px);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  pointer-events: auto;
+}
+
+.elab-viewport__tool-palette {
+  position: absolute;
+  top: var(--elab-hud-safe-top);
+  right: var(--elab-hud-safe-side);
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 6px;
+  border-radius: 12px;
+  border: 1px solid rgba(201, 162, 77, 0.28);
+  background: rgba(8, 10, 14, 0.48);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.32);
+  pointer-events: auto;
+  transition: box-shadow 0.3s ease;
+}
+
+.elab-viewport__tool-palette:hover {
+  box-shadow: 0 8px 26px rgba(0, 0, 0, 0.36), 0 0 16px rgba(201, 162, 77, 0.08);
+}
+
+.elab-viewport__inspector-chips {
+  position: absolute;
+  left: var(--elab-hud-safe-side);
+  right: var(--elab-hud-safe-side);
+  bottom: calc(var(--elab-hud-safe-bottom) - 4px);
+  z-index: 2;
+  display: flex;
   flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 14px;
+  border: 1px solid rgba(201, 162, 77, 0.28);
+  background: rgba(8, 10, 14, 0.46);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.34);
+  overflow-x: auto;
+  pointer-events: auto;
+  max-width: calc(100% - (var(--elab-hud-safe-side) * 2));
+  margin: 0 auto;
+  width: fit-content;
 }
 
 .elab-viewport__title-group {
@@ -1045,10 +1168,14 @@ button.elab-cmd__meta-chip {
   font-size: 7px;
   font-weight: 700;
   letter-spacing: 0.06em;
-  padding: 3px 6px;
-  border-radius: 4px;
-  border: 1px solid rgba(201, 162, 77, 0.35);
+  padding: 5px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(201, 162, 77, 0.42);
+  background: rgba(8, 10, 14, 0.52);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   color: var(--elab-gold);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.28);
 }
 .elab-viewport__badge {
   font-size: 8px; font-weight: 700; padding: 3px 8px; border-radius: 4px;
@@ -1057,49 +1184,52 @@ button.elab-cmd__meta-chip {
 .elab-viewport__badge--ok { background: rgba(95,214,138,0.15); color: var(--elab-ok); }
 .elab-viewport__badge--stale { background: rgba(235,28,36,0.15); color: var(--elab-danger); }
 
-.elab-viewport__controls { margin-left: auto; }
 .elab-viewport__ctrl {
-  width: 28px; height: 28px; border-radius: 6px;
-  border: 1px solid var(--elab-border); background: rgba(255,255,255,0.05);
-  color: var(--elab-text); cursor: pointer;
+  width: 28px; height: 28px; border-radius: 8px;
+  border: 1px solid rgba(201, 162, 77, 0.22);
+  background: rgba(255,255,255,0.06);
+  color: var(--elab-text);
+  cursor: pointer;
+  transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
 }
 
-.elab-viewport__mode-rail {
-  display: flex; gap: 2px; padding: 6px 12px;
-  background: rgba(0,0,0,0.25);
-  border-bottom: 1px solid rgba(255,255,255,0.04);
-  overflow-x: auto;
+.elab-viewport__ctrl:hover {
+  transform: translateY(-1px);
+  border-color: rgba(201, 162, 77, 0.45);
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .elab-viewport__mode-seg {
   flex: 0 0 auto;
-  padding: 5px 10px; border-radius: 6px;
-  border: 1px solid transparent; background: transparent;
-  color: var(--elab-muted); font-size: 8px; font-weight: 700;
-  letter-spacing: 0.06em; cursor: pointer;
+  padding: 6px 11px;
+  border-radius: 10px;
+  border: 1px solid rgba(201, 162, 77, 0.22);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--elab-muted);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.25s ease;
+}
+.elab-viewport__mode-seg:hover {
+  transform: translateY(-1px);
+  border-color: rgba(201, 162, 77, 0.38);
 }
 .elab-viewport__mode-seg[aria-pressed='true'] {
   border-color: var(--elab-gold);
   color: var(--elab-gold);
   background: var(--elab-gold-dim);
-}
-
-.elab-viewport__stage {
-  flex: 1;
-  min-height: 0;
-  position: relative;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
+  box-shadow: 0 0 14px rgba(201, 162, 77, 0.18);
 }
 
 .elab-viewport__stage-content {
-  position: relative;
-  z-index: 2;
-  flex: 1;
+  position: absolute;
+  inset: 0;
+  z-index: 3;
   display: grid;
   place-items: center;
-  padding: 12px;
+  padding: 0;
   min-height: 0;
   width: 100%;
   background: transparent;
@@ -2014,14 +2144,36 @@ button.elab-cmd__meta-chip {
 }
 
 /* ── Mobile / tablet composition ── */
-.elab-app-shell--mobile .elab-float--dock-tl { top: 2%; left: 1%; }
-.elab-app-shell--mobile .elab-float--dock-tr { top: 2%; right: 1%; }
-.elab-app-shell--mobile .elab-float--dock-bl { bottom: 22%; left: 1%; }
-.elab-app-shell--mobile .elab-float--dock-br { bottom: 22%; right: 1%; }
+.elab-app-shell--mobile .elab-float--dock-tl { top: calc(var(--elab-hud-safe-top, 8px) + 48px); left: 8px; }
+.elab-app-shell--mobile .elab-float--dock-tr { top: calc(var(--elab-hud-safe-top, 8px) + 48px); right: 8px; }
+.elab-app-shell--mobile .elab-float--dock-bl { bottom: calc(24% + 4px); left: 8px; }
+.elab-app-shell--mobile .elab-float--dock-br { bottom: calc(24% + 4px); right: 8px; }
 
 .elab-app-shell--mobile .elab-viewport,
 .elab-app-shell--tablet .elab-viewport {
+  --elab-hud-safe-top: 8px;
+  --elab-hud-safe-side: 8px;
+  --elab-hud-safe-bottom: 24%;
   margin: 0;
+}
+
+.elab-app-shell--mobile .elab-viewport__inspector-hud {
+  left: calc(var(--elab-hud-safe-side) + min(52vw, 220px) + 6px);
+}
+
+.elab-app-shell--mobile .elab-viewport__blueprint-card {
+  max-width: min(52vw, 220px);
+  padding: 6px 10px;
+}
+
+.elab-app-shell--mobile .elab-viewport__tool-palette {
+  gap: 2px;
+  padding: 3px 4px;
+}
+
+.elab-app-shell--mobile .elab-viewport__ctrl {
+  width: 26px;
+  height: 26px;
 }
 
 .elab-app-shell--mobile .elab-founder-wb--tiered,

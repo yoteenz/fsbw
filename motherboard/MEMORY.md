@@ -49483,6 +49483,20 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 **Controlled proof:** Pipeline runs with preview-to-storage copy when production generation OFF; founder must enable flags + review one variant before canonical promotion.
 
-**Remaining:** Founder device review; enable production generation for one variant; explicit canonical promotion pending.
-
 **One commit + one push** on `master` via `agent-commit.sh`.
+
+---
+
+## 2026-07-14 — Experience Lab V2 HUD Viewport Architecture (full conversation)
+
+**Founder sprint:** Remove "UI inside UI" boxed viewport container — render becomes the viewport; all controls float as HUD overlays. No page redesign, no layout moves, pixel alignment preserved.
+
+**Shipped:**
+
+- **`StudioViewport.tsx`** — Removed document-flow `elab-viewport__chrome`; environment render fills `elab-viewport__stage` edge-to-edge; HUD layer (`data-elab-viewport-hud`) with floating blueprint card, inspector switcher, status chip, tool palette, inspector mode chips
+- **`experience-lab-v2.css`** — HUD safe-zone CSS vars (`--elab-hud-safe-*`); absolute HUD positioning; glass/gold floating controls; lighter viewport scrim; floating inspector dock offsets; viewport/workbench divider separation
+- **Tests** — `experience-lab-v2.test.ts` HUD architecture assertions (49/49 PASS); build PASS
+
+**Preserved:** Viewport dimensions, Design Variant strip position, Workbench, Command Dock, Department Dock, Orb, typography, colors, interactions unchanged.
+
+**Spatial review:** SKIPPED — in-place viewport CSS/DOM refactor, no new surfaces.
