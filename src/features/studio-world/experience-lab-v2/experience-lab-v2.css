@@ -219,6 +219,7 @@
   border-top: 1px solid var(--elab-border);
   font-size: 9px;
   letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .elab-app-shell__focus-bar button {
@@ -1270,6 +1271,15 @@ button.elab-cmd__meta-chip {
   overflow: hidden;
   display: block;
   background: #08090c;
+}
+
+.elab-viewport__stage--focusable {
+  cursor: pointer;
+}
+
+.elab-viewport__stage--focusable:focus-visible {
+  outline: 2px solid rgba(197, 160, 89, 0.45);
+  outline-offset: -2px;
 }
 
 .elab-viewport__hud {

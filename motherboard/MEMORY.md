@@ -49815,3 +49815,16 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 **Tests:** Panel scale token + scaled width assertions in `experience-lab-v2.test.ts`. 53/53 PASS.
 
+---
+
+## 2026-07-14 — Background tap focus mode; remove focus icon
+
+**Founder request:** Tap background render to enter focus/maximize; remove focus icon right of Design Variants; confirm focus mode text is uppercase.
+
+**Shipped:**
+- **`StudioViewport.tsx`** — Removed `elab-viewport__focus-ctrl` button; viewport stage is tappable (`elab-viewport__stage--focusable`, aria `ENTER FOCUS MODE`) — click/keyboard on background enters focus; artifact panes excluded
+- **`experience-lab-v2.css`** — Stage focusable cursor + focus ring; `.elab-app-shell__focus-bar` `text-transform: uppercase`
+- **`ExperienceLabV2Shell.tsx`** — Focus label uses `replaceAll('_', ' ').toUpperCase()`; EXIT FOCUS already uppercase
+
+**Tests:** HUD test expects stage focusable, no focus-ctrl; focus bar uppercase assertion. 53/53 PASS.
+

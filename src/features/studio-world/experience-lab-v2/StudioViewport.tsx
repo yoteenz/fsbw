@@ -2,7 +2,6 @@ import { useCallback, useState } from 'react';
 import type { EnvironmentPackageOutputStatus } from '../../../studio-os-core/environment-asset-package/EnvironmentPackageOutputs';
 import type { ExperienceLabV2ArtifactRef, StudioViewportMode } from './experience-lab-v2.types';
 import { ExperienceLabEnvironmentLayer } from './ExperienceLabEnvironmentLayer';
-import { ExperienceLabIcon } from '../icons/ExperienceLabIcon';
 import { ExperienceLabBlueprintCard } from './ExperienceLabBlueprintCard';
 import { ELAB_V2_COMPOSITION } from './experience-lab-v2-composition';
 import { useExperienceLabHudParallax } from './useExperienceLabHudParallax';
@@ -110,9 +109,19 @@ export function StudioViewport({
   isCompact,
   environmentUrl,
 }: StudioViewportProps) {
-  const toggleFocus = useCallback(() => {
-    onFocusMode?.(mode);
-  }, [mode, onFocusMode]);
+  const handleStageBackgroundPress = useCallback(
+    (event: React.MouseEvent<HTMLDivElement> | React.KeyboardEvent<HTMLDivElement>) => {
+      if (!onFocusMode || focusActive) return;
+      if ('key' in event && event.key !== 'Enter' && event.key !== ' ') return;
+      if ('key' in event) event.preventDefault();
+      const target = event.target as HTMLElement;
+      if (target.closest('[data-viewport-pane]')) return;
+      onFocusMode(mode);
+    },
+    [focusActive, mode, onFocusMode]
+  );
+
+  const stageFocusable = Boolean(onFocusMode && !focusActive);
 
   const renderStage = () => {
     switch (mode) {
@@ -160,7 +169,14 @@ export function StudioViewport({
       data-mode={mode}
       {...{ [ELAB_V2_COMPOSITION.archPerspective]: '' }}
     >
-      <div className="elab-viewport__stage">
+      <div
+        className={`elab-viewport__stage${stageFocusable ? ' elab-viewport__stage--focusable' : ''}`}
+        onClick={handleStageBackgroundPress}
+        onKeyDown={handleStageBackgroundPress}
+        role={stageFocusable ? 'button' : undefined}
+        tabIndex={stageFocusable ? 0 : undefined}
+        aria-label={stageFocusable ? 'ENTER FOCUS MODE' : undefined}
+      >
         <ExperienceLabEnvironmentLayer scope="viewport" isMobile={isCompact} environmentUrl={environmentUrl} />
         <div className="elab-viewport__stage-content">{renderStage()}</div>
       </div>
@@ -179,21 +195,6 @@ export function StudioViewport({
           />
 
           {dynamicContextCard}
-
-          {onFocusMode ? (
-            <button
-              type="button"
-              className="elab-viewport__focus-ctrl elab-arch-panel elab-arch-panel--right"
-              onClick={toggleFocus}
-              aria-pressed={focusActive}
-              aria-label={focusActive ? 'Exit focus mode' : 'Enter focus mode'}
-              title="Focus mode"
-            >
-              <span className="elab-arch-panel__surface">
-                <ExperienceLabIcon name="focusMode" size="sm" decorative active={focusActive} />
-              </span>
-            </button>
-          ) : null}
         </div>
       </div>
 

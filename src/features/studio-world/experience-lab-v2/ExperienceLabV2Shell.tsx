@@ -369,7 +369,7 @@ function ExperienceLabV2ShellBody({ initialDepartmentId: _initialDepartmentId, s
 
         {!review.enabled && shell.focusMode !== 'none' ? (
           <div className="elab-app-shell__focus-bar">
-            <span>FOCUS: {shell.focusMode.replace('_', ' ').toUpperCase()}</span>
+            <span>FOCUS: {shell.focusMode.replaceAll('_', ' ').toUpperCase()}</span>
             <button type="button" onClick={() => shell.setFocusMode('none')}>EXIT FOCUS</button>
           </div>
         ) : null}

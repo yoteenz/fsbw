@@ -293,9 +293,14 @@ describe('Experience Lab V2 — Fixed application shell', () => {
 
   it('focus mode and escape handling exist', () => {
     const hook = readV2Source('useExperienceLabAppShell.ts');
+    const shell = readV2Source('ExperienceLabV2Shell.tsx');
+    const css = readV2Source('experience-lab-v2.css');
     expect(hook).toContain('Escape');
     expect(hook).toContain('focusMode');
     expect(readV2Source('experience-lab-v2-layout.ts')).toContain('ElabFocusMode');
+    expect(shell).toContain('EXIT FOCUS');
+    expect(shell).toContain('replaceAll');
+    expect(css).toMatch(/\.elab-app-shell__focus-bar\s*\{[\s\S]*?text-transform:\s*uppercase/);
   });
 
   it('layout tokens and safe-area variables defined centrally', () => {
@@ -546,7 +551,10 @@ describe('Experience Lab V2 — Viewport environment', () => {
     expect(viewport).toContain('elab-viewport__hud');
     expect(viewport).toContain('ExperienceLabBlueprintCard');
     expect(viewport).toContain('dynamicContextCard');
-    expect(viewport).toContain('elab-viewport__focus-ctrl');
+    expect(viewport).toContain('elab-viewport__stage--focusable');
+    expect(viewport).toContain('ENTER FOCUS MODE');
+    expect(viewport).not.toContain('elab-viewport__focus-ctrl');
+    expect(viewport).not.toContain('focusMode');
     expect(viewport).toContain('blueprintThumbnailUrl');
     expect(viewport).not.toContain('elab-viewport__inspector-chips');
     expect(viewport).not.toContain('elab-viewport__tool-palette');
