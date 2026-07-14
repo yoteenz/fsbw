@@ -2,7 +2,7 @@
  * TEMPORARY public debug routes — remove when Experience Lab is stable.
  * Registered in main.tsx BEFORE App (no AdminGuard, workspace bootstrap, or admin layout).
  */
-import { lazy, Suspense } from 'react';
+import { Suspense } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import StudioHealthDebugPage from '../pages/debug/studio-health/page';
 import ChunkDebugPage from '../pages/debug/chunk-debug/page';
@@ -51,9 +51,10 @@ import ContextUpdatesPage from '../pages/context-updates/page';
 import { isStudioInstitutePath } from '../studio-os-core/expert-capture/invite-system/config';
 import { DebugRouteErrorBoundary } from '../pages/debug/DebugRouteErrorBoundary';
 import { RootAppErrorBoundary } from './RootAppErrorBoundary';
-import LoadingScreen from '../components/base/LoadingScreen';
+import { StudioRouteSuspenseFallback } from '../components/admin/studio/studio-boot/StudioRouteSuspenseFallback';
+import { lazyWithRetry } from '../utils/lazyWithRetry';
 
-const App = lazy(() => import('../App'));
+const App = lazyWithRetry(() => import('../App'), 'App');
 
 export const STUDIO_DEBUG_PATHS = [
   '/__studio-health',
@@ -159,7 +160,7 @@ export default function StudioDebugRoutes() {
         path="*"
         element={
           <RootAppErrorBoundary>
-            <Suspense fallback={<LoadingScreen source="App.lazy" />}>
+            <Suspense fallback={<StudioRouteSuspenseFallback label="application" />}>
               <App />
             </Suspense>
           </RootAppErrorBoundary>

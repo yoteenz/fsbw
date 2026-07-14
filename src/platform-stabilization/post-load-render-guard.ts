@@ -90,12 +90,28 @@ async function audit(reason: string): Promise<void> {
   }
 
   if (loadingOverlay) {
+    const source = loadingOverlay.getAttribute('data-loading-source') ?? 'unknown LoadingScreen';
+    // App shell chunk is large — allow bootstrap + lazy import to finish before forced recovery.
+    if (reason === '4s-post-load' || reason === '8s-post-load') {
+      if (source === 'App.lazy' || source.includes('application')) {
+        return;
+      }
+      try {
+        const { getStudioBootstrapLiveState } = await import('../studio-os-core/bootstrap');
+        const live = getStudioBootstrapLiveState();
+        if (live?.started && !live.complete && live.elapsedMs < 20_000) {
+          return;
+        }
+      } catch {
+        /* ignore */
+      }
+    }
+
     const stuck = getActiveLoadingSources();
     if (stuck.length > 0) {
       await forceLoadingTerminalRecovery(stuck, `post-load-guard:${reason}`);
       return;
     }
-    const source = loadingOverlay.getAttribute('data-loading-source') ?? 'unknown LoadingScreen';
     await forceLoadingTerminalRecovery(
       [{ id: source, label: source, since: Date.now() - 12000 }],
       `post-load-guard:${reason}:orphan-overlay`

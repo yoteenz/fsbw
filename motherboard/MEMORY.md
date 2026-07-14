@@ -48780,7 +48780,6 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 
 ---
 
-<<<<<<< HEAD
 ## 2026-07-13 — Experience Lab V2: remove bottom clutter for workbench anchoring
 
 **Context:** Founder screenshot showed three circled assets pushing workbench up: APPROVE & strip, FS hex badge, large floating Studio Orb sphere.
@@ -48999,5 +48998,25 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 **Not changed:** Workbench grid, Command Dock, navigation, spacing, responsiveness, orb container dimensions.
 
 **Spatial Architecture Review:** SKIPPED — visual-only orb upgrade inside approved layout shell.
+
+**One commit + one push** on `master` via `agent-commit.sh`.
+
+---
+
+## 2026-07-14 — Desktop Experience Lab false loading recovery (full conversation)
+
+**Founder report:** Desktop error on `/admin/studio/experience-lab` — "Loading did not complete" recovery panel; blocked by `App.lazy (4s)`; bootstrap `started=true complete=false module=state-dna`.
+
+**Root cause:** Post-load render guard runs `audit('4s-post-load')` at 4s. `StudioDebugRoutes` wrapped lazy `App` in `LoadingScreen` (terminal watchdog). Large App shell chunk + parallel Studio bootstrap routinely exceeds 4s — guard falsely forced recovery while bootstrap was still on `state-dna` (normal, not hung).
+
+**Shipped:**
+
+- **`StudioDebugRoutes.tsx`** — `lazyWithRetry` for App import; `StudioRouteSuspenseFallback` instead of `LoadingScreen source="App.lazy"` (matches Experience Lab route pattern — no false terminal recovery)
+- **`post-load-render-guard.ts`** — defer 4s/8s forced recovery when bootstrap still running (<20s) or overlay source is App shell
+- **Tests** — `post-load-render-guard.test.ts` (2 tests); build PASS
+
+**If still stuck after deploy:** hard reload or `/__studio-os-recovery` to clear stale chunks after rapid deploys.
+
+**Spatial Architecture Review:** SKIPPED — P0 boot/loading hotfix, no new surfaces.
 
 **One commit + one push** on `master` via `agent-commit.sh`.
