@@ -1,7 +1,9 @@
 import type { EnvironmentAssetPackage } from './EnvironmentAssetPackage';
 import { countOutputRegistry } from './EnvironmentPackageOutputs';
+import { getProductionReadinessForPackage } from './ProductionReadinessRepository';
 
 export type EnvironmentPackageHealth = {
+  readinessPercent: number;
   generationPercent: number;
   blueprintPercent: number;
   constructionPercent: number;
@@ -24,6 +26,9 @@ function outputReady(
 export function computeEnvironmentPackageHealth(
   pkg: EnvironmentAssetPackage
 ): EnvironmentPackageHealth {
+  const readiness = getProductionReadinessForPackage(pkg.packageId);
+  const readinessPercent = readiness?.readinessPercent ?? 0;
+
   const counts = countOutputRegistry(pkg.outputs);
   const generationPercent = counts.total > 0
     ? Math.round((counts.generated / counts.total) * 100)
@@ -38,19 +43,21 @@ export function computeEnvironmentPackageHealth(
   const runtimeReady = runtimeOutputs.filter((k) => outputReady(pkg, k) === 100).length;
   const runtimePercent = Math.round((runtimeReady / runtimeOutputs.length) * 100);
 
-  const marketplacePercent = pkg.marketplaceReady ? 100 : pkg.canonical ? 50 : 0;
+  const marketplacePercent = pkg.marketplaceReady ? 100 : readiness?.lifecycleState === 'production-complete' ? 75 : 0;
 
   const overallHealth = Math.round(
-    (generationPercent
+    (readinessPercent
+      + generationPercent
       + blueprintPercent
       + constructionPercent
       + lightingPercent
       + materialsPercent
       + runtimePercent
-      + marketplacePercent) / 7
+      + marketplacePercent) / 8
   );
 
   return {
+    readinessPercent,
     generationPercent,
     blueprintPercent,
     constructionPercent,

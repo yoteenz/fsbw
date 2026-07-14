@@ -8,15 +8,21 @@ export * from './EnvironmentPackageCache';
 export * from './EnvironmentPackageGenerationQueue';
 export * from './EnvironmentPackageStatus';
 export * from './environment-package-feature-flags';
+export * from './ProductionReadinessGate';
+export * from './ProductionReadinessRepository';
+export * from './ProductionReadinessService';
 
 export {
   resolveCdsEnvironmentBinding,
   resolveCdsEnvironmentPlateUrl,
+  resolveCdsPackageAccess,
   type CdsEnvironmentPackageBinding,
+  type CdsPackageAccessResult,
 } from './cds-consumer';
 
 export {
   resolveAssetManufacturingSource,
+  assertAssetManufacturingAccess,
   blueprintGeneratorSource,
   constructionGeneratorSource,
   lightingGeneratorSource,
@@ -24,10 +30,13 @@ export {
   heroGeneratorSource,
   thumbnailGeneratorSource,
   type AssetManufacturingPackageInput,
+  type AssetManufacturingAccessResult,
 } from './asset-manufacturing-consumer';
 
 export {
   resolveMarketplaceListingFromPackage,
+  assertMarketplacePackageAccess,
   marketplaceReferencesPackage,
   type MarketplacePackageListing,
+  type MarketplaceAccessResult,
 } from './marketplace-consumer';

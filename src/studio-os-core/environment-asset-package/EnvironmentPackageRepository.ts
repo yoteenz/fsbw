@@ -1,4 +1,5 @@
 import type { EnvironmentAssetPackage, EnvironmentVariantId } from './EnvironmentAssetPackage';
+import { ensureProductionReadinessForPackage } from './ProductionReadinessService';
 
 /** Canonical in-memory persistence — production storage hooks here later. */
 const PACKAGE_BY_ID = new Map<string, EnvironmentAssetPackage>();
@@ -19,6 +20,7 @@ export class EnvironmentPackageRepository {
       variantIndexKey(pkg.departmentId, pkg.environmentId, pkg.variantId),
       pkg
     );
+    ensureProductionReadinessForPackage(pkg);
   }
 
   getById(packageId: string): EnvironmentAssetPackage | null {

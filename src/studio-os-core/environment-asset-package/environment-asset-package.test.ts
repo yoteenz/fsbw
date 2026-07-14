@@ -25,6 +25,7 @@ import {
   getEnvironmentPackage,
   resetEnvironmentPackageRepository,
 } from './EnvironmentPackageRepository';
+import { resetProductionReadinessRepository } from './ProductionReadinessRepository';
 import {
   buildEnvironmentPackageGenerationQueue,
   countQueueProgress,
@@ -34,10 +35,19 @@ import { resolveEnvironmentPackageFeatureFlags } from './environment-package-fea
 import {
   approveAndGenerateProductionPackage,
   startConceptPreviewGeneration,
+  submitPackageToGenerationQueue,
 } from './EnvironmentPackageGenerationService';
-import { resolveCdsEnvironmentBinding } from './cds-consumer';
-import { blueprintGeneratorSource } from './asset-manufacturing-consumer';
-import { resolveMarketplaceListingFromPackage } from './marketplace-consumer';
+import { resolveCdsEnvironmentBinding, resolveCdsPackageAccess } from './cds-consumer';
+import { blueprintGeneratorSource, assertAssetManufacturingAccess } from './asset-manufacturing-consumer';
+import { resolveMarketplaceListingFromPackage, assertMarketplacePackageAccess } from './marketplace-consumer';
+import {
+  approvePackageForProduction,
+  assertPackageCanEnterGenerationQueue,
+  calculateGenerationEstimate,
+  createProductionReadinessForPackage,
+  validatePackageReadiness,
+} from './ProductionReadinessService';
+import { getProductionReadinessForPackage } from './ProductionReadinessRepository';
 
 const PREVIEW = 'https://example.com/preview-mobile.png';
 const DESKTOP = 'https://example.com/preview-desktop.png';
@@ -59,6 +69,7 @@ function buildTestPackage(variantId: 'light-01' | 'dark-01' = 'light-01') {
 
 beforeEach(() => {
   resetEnvironmentPackageRepository();
+  resetProductionReadinessRepository();
   clearEnvironmentPackageCache();
 });
 
@@ -157,9 +168,11 @@ describe('Environment Asset Package — service, queue, health', () => {
     expect(countQueueProgress(queue).total).toBe(8);
   });
 
-  it('computes package health percentages', () => {
+  it('computes package health including readiness', () => {
     const pkg = buildTestPackage();
+    registerEnvironmentPackage(pkg);
     const health = computeEnvironmentPackageHealth(pkg);
+    expect(health.readinessPercent).toBeGreaterThanOrEqual(0);
     expect(health.generationPercent).toBeGreaterThan(0);
     expect(health.overallHealth).toBeGreaterThanOrEqual(0);
   });
@@ -171,37 +184,132 @@ describe('Environment Asset Package — service, queue, health', () => {
     expect(promoted.status).toBe('production-ready');
   });
 
-  it('generation service starts concept preview and production on approval', () => {
+  it('generation service blocks automatic production without explicit approval', () => {
     const pkg = buildTestPackage();
+    registerEnvironmentPackage(pkg);
     const preview = startConceptPreviewGeneration(pkg);
-    expect(preview.queue.length).toBe(8);
-    const production = approveAndGenerateProductionPackage(pkg);
-    expect(production.package.status).toBe('production-ready');
+    expect(preview.gateBlocked).toBe(true);
+    const gate = assertPackageCanEnterGenerationQueue(pkg);
+    expect(gate.ok).toBe(false);
+    expect(submitPackageToGenerationQueue(pkg)).toBeNull();
+  });
+
+  it('generation service allows production after founder gate approval', () => {
+    const pkg = buildTestPackage();
+    registerEnvironmentPackage(pkg);
+    const production = approveAndGenerateProductionPackage(pkg, 'founder');
+    expect(production.gateBlocked).toBeFalsy();
+    expect(production.package.status).toBe('generating');
+  });
+});
+
+describe('Production Readiness Gate', () => {
+  it('every package owns one readiness record on register', () => {
+    const pkg = buildTestPackage();
+    registerEnvironmentPackage(pkg);
+    const record = getProductionReadinessForPackage(pkg.packageId);
+    expect(record).not.toBeNull();
+    expect(record?.packageId).toBe(pkg.packageId);
+    expect(record?.readinessId).toBe(`readiness.${pkg.packageId}`);
+  });
+
+  it('calculates readiness score and detects blockers', () => {
+    const pkg = buildTestPackage();
+    registerEnvironmentPackage(pkg);
+    const evaluation = validatePackageReadiness(pkg);
+    expect(evaluation.readinessPercent).toBeGreaterThan(0);
+    expect(evaluation.readinessPercent).toBeLessThan(100);
+    expect(evaluation.canGenerate).toBe(false);
+  });
+
+  it('calculates generation cost estimate before spending', () => {
+    const pkg = buildTestPackage();
+    const estimate = calculateGenerationEstimate(pkg);
+    expect(estimate.estimatedCredits).toBeGreaterThan(0);
+    expect(estimate.estimatedDollarsUsd).toBeGreaterThan(0);
+    expect(estimate.estimatedRuntimeMs).toBeGreaterThan(0);
+    expect(estimate.lineItems.length).toBeGreaterThan(8);
+  });
+
+  it('prevents generation below 100% readiness without approval', () => {
+    const pkg = buildTestPackage();
+    registerEnvironmentPackage(pkg);
+    const gate = assertPackageCanEnterGenerationQueue(pkg);
+    expect(gate.ok).toBe(false);
+    expect(gate.code).toBe('FOUNDER_APPROVAL_REQUIRED');
+  });
+
+  it('allows generation at 100% readiness with founder approval', () => {
+    const pkg = buildTestPackage();
+    registerEnvironmentPackage(pkg);
+    const approval = approvePackageForProduction(pkg, 'founder');
+    expect(approval.ok).toBe(true);
+    expect(approval.record?.readinessPercent).toBe(100);
+    const gate = assertPackageCanEnterGenerationQueue(pkg);
+    expect(gate.ok).toBe(true);
+    expect(approval.record?.authorizedQueueEntry?.packageId).toBe(pkg.packageId);
+  });
+
+  it('writes audit history on create and approval', () => {
+    const pkg = buildTestPackage();
+    const record = createProductionReadinessForPackage(pkg);
+    expect(record.auditLog.some((e) => e.eventType === 'created')).toBe(true);
+    registerEnvironmentPackage(pkg);
+    const approval = approvePackageForProduction(pkg, 'founder');
+    expect(approval.record?.auditLog.some((e) => e.eventType === 'approved')).toBe(true);
+    expect(approval.record?.auditLog.some((e) => e.eventType === 'queue-authorized')).toBe(true);
   });
 });
 
 describe('Environment Asset Package — consumers', () => {
-  it('CDS binds to packageId — not loose image URLs', () => {
+  it('CDS blocks packages not production ready', () => {
     const pkg = buildTestPackage();
     registerEnvironmentPackage(pkg);
-    const binding = resolveCdsEnvironmentBinding({ packageId: pkg.packageId });
-    expect(binding?.packageId).toBe(pkg.packageId);
-    expect(binding?.referenceOnly).toBe(true);
+    const blocked = resolveCdsPackageAccess({ packageId: pkg.packageId });
+    expect(blocked.ok).toBe(false);
+    if (!blocked.ok) {
+      expect(blocked.message).toBe('Awaiting Production Approval');
+    }
+    expect(resolveCdsEnvironmentBinding({ packageId: pkg.packageId })).toBeNull();
   });
 
-  it('Asset Manufacturing blueprint generator references package', () => {
+  it('CDS binds after production readiness gate passes', () => {
     const pkg = buildTestPackage();
     registerEnvironmentPackage(pkg);
-    const source = blueprintGeneratorSource({ packageId: pkg.packageId });
-    expect(source?.packageId).toBe(pkg.packageId);
-    expect(source?.assetKind).toBe('blueprint');
+    approvePackageForProduction(pkg, 'founder');
+    const access = resolveCdsPackageAccess({ packageId: pkg.packageId });
+    expect(access.ok).toBe(true);
+    if (access.ok) {
+      expect(access.binding.packageId).toBe(pkg.packageId);
+      expect(access.binding.referenceOnly).toBe(true);
+    }
   });
 
-  it('Marketplace references package not image', () => {
+  it('Asset Manufacturing blocks incomplete packages', () => {
     const pkg = buildTestPackage();
     registerEnvironmentPackage(pkg);
-    const listing = resolveMarketplaceListingFromPackage(pkg.packageId, 'Reception Pack');
-    expect(listing?.packageId).toBe(pkg.packageId);
+    expect(blueprintGeneratorSource({ packageId: pkg.packageId })).toBeNull();
+    const blocked = assertAssetManufacturingAccess({ packageId: pkg.packageId, assetKind: 'blueprint' });
+    expect(blocked.ok).toBe(false);
+  });
+
+  it('Asset Manufacturing executes after production ready', () => {
+    const pkg = buildTestPackage();
+    registerEnvironmentPackage(pkg);
+    approvePackageForProduction(pkg, 'founder');
+    const access = assertAssetManufacturingAccess({ packageId: pkg.packageId, assetKind: 'blueprint' });
+    expect(access.ok).toBe(true);
+    if (access.ok) {
+      expect(access.source.packageId).toBe(pkg.packageId);
+    }
+  });
+
+  it('Marketplace blocks incomplete packages', () => {
+    const pkg = buildTestPackage();
+    registerEnvironmentPackage(pkg);
+    expect(resolveMarketplaceListingFromPackage(pkg.packageId, 'Reception Pack')).toBeNull();
+    const blocked = assertMarketplacePackageAccess(pkg.packageId);
+    expect(blocked.ok).toBe(false);
   });
 
   it('feature flags default ON', () => {

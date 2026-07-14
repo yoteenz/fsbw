@@ -1,5 +1,6 @@
 import type { EnvironmentPackageOutputKey } from './EnvironmentPackageOutputs';
 import { getEnvironmentPackage } from './EnvironmentPackageRepository';
+import { assertPackageProductionReadyForConsumer } from './ProductionReadinessService';
 
 export type AssetManufacturingPackageInput = {
   packageId: string;
@@ -13,8 +14,11 @@ const ASSET_KIND_MAP: Partial<Record<EnvironmentPackageOutputKey, EnvironmentPac
   materialsProfile: 'materialsProfile',
 };
 
-/** Asset Manufacturing generators reference the same Environment Package outputs. */
-export function resolveAssetManufacturingSource(input: AssetManufacturingPackageInput) {
+export type AssetManufacturingAccessResult =
+  | { ok: true; source: NonNullable<ReturnType<typeof resolveAssetManufacturingSourceUnchecked>> }
+  | { ok: false; code: string; message: string };
+
+function resolveAssetManufacturingSourceUnchecked(input: AssetManufacturingPackageInput) {
   const pkg = getEnvironmentPackage(input.packageId);
   if (!pkg) return null;
   const outputKey = ASSET_KIND_MAP[input.assetKind] ?? input.assetKind;
@@ -32,6 +36,29 @@ export function resolveAssetManufacturingSource(input: AssetManufacturingPackage
     promptVersion: pkg.promptVersion,
     seed: pkg.seed,
   };
+}
+
+/** Asset Manufacturing generators reference the same Environment Package outputs. */
+export function resolveAssetManufacturingSource(
+  input: AssetManufacturingPackageInput
+): ReturnType<typeof resolveAssetManufacturingSourceUnchecked> {
+  const gate = assertPackageProductionReadyForConsumer(input.packageId);
+  if (!gate.ok) return null;
+  return resolveAssetManufacturingSourceUnchecked(input);
+}
+
+export function assertAssetManufacturingAccess(
+  input: AssetManufacturingPackageInput
+): AssetManufacturingAccessResult {
+  const gate = assertPackageProductionReadyForConsumer(input.packageId);
+  if (!gate.ok) {
+    return { ok: false, code: gate.code ?? 'NOT_PRODUCTION_READY', message: gate.message ?? 'Awaiting Production Approval' };
+  }
+  const source = resolveAssetManufacturingSourceUnchecked(input);
+  if (!source) {
+    return { ok: false, code: 'SOURCE_NOT_FOUND', message: 'Asset source not found' };
+  }
+  return { ok: true, source };
 }
 
 export function blueprintGeneratorSource(ref: { packageId: string }) {

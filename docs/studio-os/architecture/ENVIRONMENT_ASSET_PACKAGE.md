@@ -29,6 +29,20 @@ Department
 
 **Law:** Every Design Variant owns exactly ONE `environmentPackageId`. Desktop, mobile, and tablet are **outputs** of that package — not separate designs or separate packages.
 
+## Production Readiness Gate
+
+Every Environment Package owns exactly one **Production Readiness** record. No expensive production generation without explicit Founder approval.
+
+**Lifecycle:** draft → preview-ready → founder-reviewing → **production-ready** → generating → production-complete → marketplace-ready → archived
+
+Only `production-ready` packages may enter `EnvironmentPackageGenerationQueue`.
+
+**Service:** `ProductionReadinessService.ts` — validate, calculate readiness %, detect blockers, estimate costs, authorize queue, founder approval.
+
+**Persistence:** `ProductionReadinessRepository.ts` — stored alongside packages (not transient UI state). Permanent audit log.
+
+**Consumers:** CDS and Asset Manufacturing require production-ready. Marketplace requires production-complete.
+
 ---
 
 ## Approval workflow

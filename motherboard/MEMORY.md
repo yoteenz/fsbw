@@ -49430,8 +49430,31 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 **Preserved:** Command Dock, Workbench, Viewport layout, floating inspectors, Department Dock, Approval Bridge, Diagnostics, animations, responsive behavior.
 
-**Tests:** 78 pass. Production build passes.
+**One commit + one push** on `master` via `agent-commit.sh`.
 
-**Spatial review:** SKIPPED — architecture-only, no new surfaces.
+---
+
+## 2026-07-14 — Environment Package Production Readiness Gate (full conversation)
+
+**Founder sprint:** Mandatory Production Readiness Gate before expensive AI generation. Architecture only — no Experience Lab UI redesign.
+
+**Context (full chat arc):** Conversation shipped Experience Lab V2 environment/viewport work, Design Variants, Environment Asset Package architecture (per-variant 1:1 packages), and wired variants into packages. This sprint adds the **production approval system** — GitHub PR-style: Concept → Review → Approve → Generate.
+
+**Shipped:**
+
+- **`ProductionReadinessGate.ts`** — lifecycle states (draft→preview-ready→founder-reviewing→production-ready→generating→production-complete→marketplace-ready→archived), 20-item checklist (pending/passed/failed/blocked/not-required), generation estimate, audit entries, authorized queue entry
+- **`ProductionReadinessRepository.ts`** — persist readiness alongside packages (not transient UI)
+- **`ProductionReadinessService.ts`** — validate, readiness %, blockers, cost estimate, `approvePackageForProduction`, `assertPackageCanEnterGenerationQueue`, consumer assertions
+- **`EnvironmentPackageGenerationService.ts`** — blocks automatic production; `approveAndGenerateProductionPackage` requires gate; `submitPackageToGenerationQueue` returns null if blocked
+- **`EnvironmentPackageRepository`** — auto-creates readiness record on package save
+- **Consumers gated:** CDS/AM require production-ready (`Awaiting Production Approval`); Marketplace requires production-complete
+- **`EnvironmentPackageStatus`** — health now includes readinessPercent
+- Updated canon doc + CORE.md
+
+**Preserved:** All Experience Lab UI, Command Dock, Workbench, Viewport, Orb, variant cards/drawer layout unchanged.
+
+**Tests:** 87 pass. Production build passes.
+
+**Spatial review:** SKIPPED — architecture-only.
 
 **One commit + one push** on `master` via `agent-commit.sh`.

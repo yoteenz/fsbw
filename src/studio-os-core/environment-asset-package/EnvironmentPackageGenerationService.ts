@@ -8,39 +8,80 @@ import {
   type EnvironmentPackageGenerationQueueItem,
 } from './EnvironmentPackageGenerationQueue';
 import { setOutputCached } from './EnvironmentPackageOutputs';
+import {
+  approvePackageForProduction,
+  assertPackageCanEnterGenerationQueue,
+  ensureProductionReadinessForPackage,
+} from './ProductionReadinessService';
+import { appendPackageAuditEntry, saveProductionReadiness } from './ProductionReadinessRepository';
 
 export type PackageGenerationResult = {
   package: EnvironmentAssetPackage;
   queue: EnvironmentPackageGenerationQueueItem[];
   progressPercent: number;
   cached: boolean;
+  gateBlocked?: boolean;
+  gateCode?: string;
+  gateMessage?: string;
 };
 
-/** Stage 1 — concept preview only. Stage 2 — production outputs on founder approval. */
+/** Stage 1 — concept preview only. Never enters production queue without gate. */
 export function startConceptPreviewGeneration(
   pkg: EnvironmentAssetPackage
 ): PackageGenerationResult {
+  ensureProductionReadinessForPackage(pkg);
   const flags = resolveEnvironmentPackageFeatureFlags();
-  if (!flags.enablePackageGeneration) {
-    return {
-      package: pkg,
-      queue: buildEnvironmentPackageGenerationQueue(pkg),
-      progressPercent: 0,
-      cached: true,
-    };
-  }
-
   const queue = buildEnvironmentPackageGenerationQueue(pkg);
   const progress = countQueueProgress(queue);
-  return { package: pkg, queue, progressPercent: progress.percent, cached: false };
+  return {
+    package: pkg,
+    queue,
+    progressPercent: progress.percent,
+    cached: !flags.enablePackageGeneration,
+    gateBlocked: true,
+    gateCode: 'PREVIEW_ONLY',
+    gateMessage: 'Concept preview — production queue requires founder approval',
+  };
 }
 
-/** Founder approval triggers production package generation for ONE variant only. */
+/**
+ * Founder approval triggers production generation.
+ * Gate validates → blockers checked → readiness 100% → queue begins.
+ */
 export function approveAndGenerateProductionPackage(
   pkg: EnvironmentAssetPackage,
   approvedBy = 'founder'
 ): PackageGenerationResult {
   const flags = resolveEnvironmentPackageFeatureFlags();
+  const approval = approvePackageForProduction(pkg, approvedBy);
+
+  if (!approval.ok || !approval.record) {
+    const queue = buildEnvironmentPackageGenerationQueue(pkg);
+    return {
+      package: pkg,
+      queue,
+      progressPercent: countQueueProgress(queue).percent,
+      cached: true,
+      gateBlocked: true,
+      gateCode: approval.code,
+      gateMessage: approval.message,
+    };
+  }
+
+  const gateCheck = assertPackageCanEnterGenerationQueue(pkg);
+  if (!gateCheck.ok) {
+    const queue = buildEnvironmentPackageGenerationQueue(pkg);
+    return {
+      package: pkg,
+      queue,
+      progressPercent: countQueueProgress(queue).percent,
+      cached: true,
+      gateBlocked: true,
+      gateCode: gateCheck.code,
+      gateMessage: gateCheck.message,
+    };
+  }
+
   let promoted = promoteEnvironmentPackage(pkg, approvedBy);
 
   if (!flags.enablePackageGeneration) {
@@ -54,10 +95,10 @@ export function approveAndGenerateProductionPackage(
     };
   }
 
-  // Architecture hook — production outputs marked for generation (lazy in stage 1).
   const now = new Date().toISOString();
   promoted = {
     ...promoted,
+    status: 'generating',
     updatedAt: now,
     outputs: {
       ...promoted.outputs,
@@ -69,6 +110,22 @@ export function approveAndGenerateProductionPackage(
   };
 
   registerEnvironmentPackage(promoted);
+
+  let readiness = approval.record;
+  readiness = {
+    ...readiness,
+    lifecycleState: 'generating',
+    updatedAt: now,
+  };
+  readiness = appendPackageAuditEntry(readiness, {
+    eventType: 'generated',
+    actor: approvedBy,
+    detail: 'Production generation queue started',
+    occurredAt: now,
+    revision: pkg.revision,
+  });
+  saveProductionReadiness(readiness);
+
   const queue = buildEnvironmentPackageGenerationQueue(promoted);
   return {
     package: promoted,
@@ -106,4 +163,13 @@ export function seedPreviewOutputs(
   const updated = { ...pkg, outputs, updatedAt: new Date().toISOString() };
   registerEnvironmentPackage(updated);
   return updated;
+}
+
+/** Attempt queue entry — returns null if gate blocks. */
+export function submitPackageToGenerationQueue(
+  pkg: EnvironmentAssetPackage
+): PackageGenerationResult | null {
+  const gate = assertPackageCanEnterGenerationQueue(pkg);
+  if (!gate.ok) return null;
+  return approveAndGenerateProductionPackage(pkg, pkg.approvedBy ?? 'founder');
 }
