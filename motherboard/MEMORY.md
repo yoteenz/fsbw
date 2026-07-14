@@ -49625,3 +49625,5 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 **Follow-up (color):** Both monument button text lines use `var(--elab-gold)` — same as `EXPERIENCE LAB WORKBENCH` title.
 
+**Follow-up (founder review console):** Panel height −25% (`--elab-frc-panel-min-h` 74→56px, media/chart 36→27px); title `font-weight` 800→500, `white-space: nowrap` single-line headers.
+

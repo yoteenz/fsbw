@@ -218,7 +218,9 @@ describe('Experience Lab V2 — Fixed application shell', () => {
     expect(consoleSrc).toContain('ELAB_V2_COMPOSITION.founderReviewConsole');
     expect(css).toMatch(/\.elab-founder-review-console__grid\s*\{[\s\S]*?grid-template-columns:\s*repeat\(3,\s*minmax\(0,\s*1fr\)\)/);
     expect(css).toMatch(/\.elab-founder-review-console__panel\s*\{[\s\S]*?min-height:\s*var\(--elab-frc-panel-min-h\)/);
-    expect(css).toContain('--elab-frc-panel-min-h: 74px');
+    expect(css).toContain('--elab-frc-panel-min-h: 56px');
+    expect(css).toMatch(/\.elab-founder-review-console__title[\s\S]*?font-weight:\s*500/);
+    expect(css).toMatch(/\.elab-founder-review-console__title[\s\S]*?white-space:\s*nowrap/);
   });
 
   it('command dock uses three-row tiered layout with HQ location tabs', () => {
