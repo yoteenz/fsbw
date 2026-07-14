@@ -167,6 +167,9 @@ describe('Experience Lab V2 — Fixed application shell', () => {
     expect(bridge).toContain('SAVE DRAFT');
     expect(bridge).toContain('EXPORT');
     expect(bridge).toContain('elab-approval-bridge--strip');
+    expect(bridge).toContain('elab-approval-bridge--monument');
+    expect(bridge).toContain('elab-approval-bridge__primary');
+    expect(bridge).toContain('LOCK BLUEPRINT · LOCK RENDER · LOCK CONSTRUCTION PLAN');
   });
 
   it('does not mount workbench dock when tiered workbench already includes tools', () => {
@@ -174,10 +177,14 @@ describe('Experience Lab V2 — Fixed application shell', () => {
     expect(shell).toContain("review.show('bottom-tool-dock') && !review.show('workbench')");
   });
 
-  it('full workstation hides approval bridge, department dock hex, environment orb, and diagnostics strip', () => {
+  it('full workstation mounts approval bridge above workbench in lower deck', () => {
     const shell = readV2Source('ExperienceLabV2Shell.tsx');
     const lowerDeckBlock = shell.match(/const lowerDeck =[\s\S]*?\) : null;/)?.[0] ?? '';
-    expect(shell).not.toContain('review.show(\'approval-bridge\') ?');
+    expect(lowerDeckBlock).toContain("review.show('approval-bridge')");
+    expect(lowerDeckBlock).toContain('ExperienceLabApprovalBridge');
+    expect(lowerDeckBlock.indexOf('ExperienceLabApprovalBridge')).toBeLessThan(
+      lowerDeckBlock.indexOf('ExperienceLabFounderWorkbench'),
+    );
     expect(shell).not.toContain('elab-app-shell__dept-dock');
     expect(shell).not.toContain('experienceLabV2EnvironmentAssetEnabled');
     expect(lowerDeckBlock).not.toContain('ExperienceLabDiagnostics');

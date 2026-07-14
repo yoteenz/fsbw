@@ -49531,3 +49531,11 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 **Change:** `experience-lab-v2.css` — removed `max-width: 88%` / `520px` cap; added `--elab-dv-panel-min/max` tokens; panel uses `width: min(100%, max(var(--elab-dv-panel-min), var(--elab-dv-panel-max)))` inside existing `angles-chrome` side padding (inset preserved); `.elab-design-variants .elab-view-angles__strip` sets `overflow-x: visible`. Test updated.
 
 **Tests:** 50/50 PASS.
+
+---
+
+## 2026-07-14 — Approval monument CTA above workbench
+
+**Founder request:** Add “Approve & Send to Creative Director Studio” button directly above workbench per reference attachment, using same monument button styling.
+
+**Shipped:** Restored `elab-approval-bridge--monument` variant in `ExperienceLabApprovalBridge.tsx` (glass gold CTA, glow, chevron, lock subtitle); mounted in `ExperienceLabV2Shell` lower deck before `ExperienceLabFounderWorkbench`; CSS monument styles aligned with HUD polish tokens; strip variant retained for compact/command use. Tests updated (50/50 PASS).

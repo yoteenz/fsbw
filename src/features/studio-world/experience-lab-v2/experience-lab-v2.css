@@ -2027,11 +2027,116 @@ button.elab-cmd__meta-chip {
 .elab-founder-wb__warn { font-size: 8px; color: var(--elab-danger); margin: 4px 0 0; }
 .elab-founder-wb__diag-line { font-size: 8px; color: var(--elab-muted); margin: 2px 0; }
 
-/* ── Approval command strip ── */
+/* ── Approval bridge — monument CTA + compact command strip ── */
 .elab-approval-bridge {
   margin: 0;
-  padding: 4px 8px;
   flex-shrink: 0;
+}
+
+.elab-approval-bridge--monument {
+  padding: 10px clamp(12px, 3vw, 20px) 8px;
+  text-align: center;
+  display: block;
+  background: transparent;
+}
+
+.elab-approval-bridge--monument .elab-approval-bridge__primary {
+  position: relative;
+  width: 100%;
+  margin: 0 auto;
+  padding: 12px 44px 12px 20px;
+  border: 1px solid var(--elab-hud-border-color);
+  border-radius: calc(var(--elab-hud-radius-panel) + 4px);
+  background: var(--elab-hud-glass-shine), rgba(12, 14, 18, 0.42);
+  backdrop-filter: var(--elab-hud-blur);
+  -webkit-backdrop-filter: var(--elab-hud-blur);
+  color: var(--elab-gold);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow:
+    var(--elab-hud-shadow-stack),
+    inset 0 1px 0 var(--elab-hud-edge-top),
+    0 0 24px rgba(197, 160, 89, 0.08);
+  transition:
+    transform var(--elab-hud-duration) var(--elab-hud-ease),
+    box-shadow var(--elab-hud-duration) var(--elab-hud-ease),
+    border-color var(--elab-hud-duration) var(--elab-hud-ease);
+}
+
+.elab-approval-bridge--monument .elab-approval-bridge__primary:hover:not(:disabled) {
+  transform: translateY(var(--elab-hud-lift));
+  border-color: rgba(197, 160, 89, 0.48);
+  box-shadow:
+    var(--elab-hud-shadow-hover),
+    inset 0 1px 0 rgba(255, 248, 232, 0.18),
+    0 0 28px rgba(197, 160, 89, 0.14);
+}
+
+.elab-approval-bridge--monument .elab-approval-bridge__primary:focus-visible {
+  outline: 2px solid rgba(197, 160, 89, 0.55);
+  outline-offset: 2px;
+}
+
+.elab-approval-bridge--monument .elab-approval-bridge__primary:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  box-shadow: var(--elab-hud-shadow-contact);
+}
+
+.elab-approval-bridge__label {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  line-height: 1.25;
+}
+
+.elab-approval-bridge__glow {
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background:
+    linear-gradient(135deg, rgba(255, 248, 232, 0.22) 0%, transparent 28%, transparent 72%, rgba(197, 160, 89, 0.18) 100%),
+    linear-gradient(90deg, transparent, rgba(197, 160, 89, 0.28), transparent);
+  opacity: 0.45;
+  pointer-events: none;
+  animation: elab-bridge-glow 2.5s ease-in-out infinite;
+}
+
+@keyframes elab-bridge-glow {
+  0%, 100% { opacity: 0.28; }
+  50% { opacity: 0.52; }
+}
+
+.elab-approval-bridge__arrow {
+  position: absolute;
+  right: 18px;
+  z-index: 1;
+  font-size: 16px;
+  line-height: 1;
+  color: var(--elab-gold);
+  opacity: 0.92;
+}
+
+.elab-approval-bridge--monument .elab-approval-bridge__locks {
+  margin: 8px 0 0;
+  font-size: 7px;
+  font-weight: 700;
+  color: var(--elab-muted);
+  letter-spacing: 0.08em;
+}
+
+.elab-approval-bridge--monument .elab-approval-bridge__blocker-chip {
+  margin: 8px auto 0;
+  display: inline-flex;
+}
+
+.elab-approval-bridge--strip {
+  padding: 4px 8px;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -2648,6 +2753,7 @@ button.elab-cmd__meta-chip {
   .elab-viewport__mode-seg:hover,
   .elab-view-angles__thumb:hover,
   .elab-design-variants__thumb:hover { transform: none; }
+  .elab-approval-bridge--monument .elab-approval-bridge__primary:hover:not(:disabled) { transform: none; }
   .elab-inspector-switcher__picker { transition: none; }
 }
 

@@ -145,6 +145,13 @@ export function ExperienceLabV2Shell({ initialDepartmentId = 'experience-lab' }:
 
   const lowerDeck = shell.focusMode === 'none' ? (
     <>
+      {review.show('approval-bridge') ? (
+        <ExperienceLabApprovalBridge
+          approval={model.approval}
+          testMode={testMode}
+          onBlockersOpen={() => shell.toggleOverlay('blockers')}
+        />
+      ) : null}
       {review.show('workbench') ? (
         <ExperienceLabFounderWorkbench model={model} activeTab={workbenchTab} onTabChange={setWorkbenchTab} />
       ) : null}
