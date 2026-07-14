@@ -49373,3 +49373,34 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 **Spatial review:** SKIPPED — strip semantics swap only, no new surfaces.
 
 **One commit + one push** on `master` via `agent-commit.sh`.
+
+---
+
+## 2026-07-14 — Studio World Environment Asset Package system (full conversation)
+
+**Founder sprint:** Introduce canonical Environment Asset Package architecture for Studio World — unified multi-platform rendering pipeline. Architecture only: no UI redesign of Experience Lab, CDS, Asset Manufacturing, Workbench, Viewport, Command Dock, Department Dock, or floating inspectors.
+
+**Context (full chat arc):** Prior turns in this conversation shipped Experience Lab V2 viewport environment (mobile 9:16 + desktop landscape), visibility fix (component review off by default, CSS layering), viewport UI polish (blueprint meta removal, centered design variant strip, inset rounded card), and Design Variants render-direction system (six Light/Dark architectural concepts with crossfade + drawer). This sprint elevates environments from individual images to **Environment Asset Packages**.
+
+**Architecture shipped:**
+
+- **`src/studio-os-core/environment-asset-package/`** — types, output formats (core + future), cache policy, package workflow, resolver, in-memory registry, CDS consumer, Asset Manufacturing consumer
+- **`experience-lab-environment-package-bridge.ts`** — bootstraps `envpkg.experience-lab.reception.r1` from bundled preview PNGs; resolves viewport URLs and drawer model
+- **`useExperienceLabDesignVariants({ isCompact })`** — prefers package resolver URLs over hardcoded variant URLs; exposes `environmentPackageId`, `drawerPackageModel`
+- Exports from **`studio-os-core/index.ts`** and **`canonical-studio-world/index.ts`**
+- Canon doc: **`docs/studio-os/architecture/ENVIRONMENT_ASSET_PACKAGE.md`**
+
+**Key rules encoded:**
+
+- Six variants = architectural directions (not crops/devices)
+- Desktop/mobile/tablet = outputs of one approved variant
+- Founder approves one package; promoted variant generates all production outputs
+- Cache reuse when prompt/seed/revision/department/environment unchanged
+- Lazy-load non-preview outputs; CDS/AM reference package IDs not loose image URLs
+- Marketplace future-ready for selling packages
+
+**Tests:** 70 pass (13 package core + 4 bridge + 5 design variants + 48 V2).
+
+**Spatial review:** SKIPPED — architecture-only, no new surfaces.
+
+**One commit + one push** on `master` via `agent-commit.sh`.

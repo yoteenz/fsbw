@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
   DEFAULT_ACTIVE_DESIGN_VARIANT_ID,
@@ -11,6 +11,12 @@ import {
   type DesignVariantId,
   type DesignVariantRecord,
 } from './experience-lab-design-variants';
+import {
+  ensureExperienceLabEnvironmentPackage,
+  resolveDesignVariantEnvironmentFromPackage,
+  resolveDesignVariantPackageDrawer,
+  EXPERIENCE_LAB_ENVIRONMENT_PACKAGE_ID,
+} from './experience-lab-environment-package-bridge';
 
 type PersistedVariantState = {
   activeVariantId: DesignVariantId;
@@ -33,11 +39,21 @@ function writePersisted(state: PersistedVariantState): void {
   localStorage.setItem(DESIGN_VARIANT_STORAGE_KEY, JSON.stringify(state));
 }
 
-export function useExperienceLabDesignVariants() {
+type UseExperienceLabDesignVariantsOptions = {
+  /** Mobile/tablet breakpoint — resolves mobile vs desktop package outputs. */
+  isCompact?: boolean;
+};
+
+export function useExperienceLabDesignVariants(options?: UseExperienceLabDesignVariantsOptions) {
   const location = useLocation();
   const navigate = useNavigate();
   const persisted = readPersisted();
   const fromQuery = parseDesignVariantFromQuery(location.search);
+  const isCompact = options?.isCompact ?? false;
+
+  useEffect(() => {
+    ensureExperienceLabEnvironmentPackage();
+  }, []);
 
   const [activeVariantId, setActiveVariantId] = useState<DesignVariantId>(
     () => fromQuery ?? persisted?.activeVariantId ?? DEFAULT_ACTIVE_DESIGN_VARIANT_ID
@@ -51,13 +67,19 @@ export function useExperienceLabDesignVariants() {
     [activeVariantId]
   );
 
-  const activeEnvironmentUrl = useMemo(
-    () => resolveVariantEnvironmentUrl(activeVariant),
-    [activeVariant]
-  );
+  const activeEnvironmentUrl = useMemo(() => {
+    const fromPackage = resolveDesignVariantEnvironmentFromPackage(activeVariantId, isCompact);
+    if (fromPackage) return fromPackage;
+    return resolveVariantEnvironmentUrl(activeVariant);
+  }, [activeVariantId, activeVariant, isCompact]);
 
   const drawerVariant = useMemo(
     () => (drawerVariantId ? resolveDesignVariantById(drawerVariantId) : null),
+    [drawerVariantId]
+  );
+
+  const drawerPackageModel = useMemo(
+    () => (drawerVariantId ? resolveDesignVariantPackageDrawer(drawerVariantId) : null),
     [drawerVariantId]
   );
 
@@ -108,8 +130,10 @@ export function useExperienceLabDesignVariants() {
     activeVariantId,
     activeVariant,
     activeEnvironmentUrl,
+    environmentPackageId: EXPERIENCE_LAB_ENVIRONMENT_PACKAGE_ID,
     drawerVariantId,
     drawerVariant,
+    drawerPackageModel,
     selectVariant,
     openDrawer,
     closeDrawer,

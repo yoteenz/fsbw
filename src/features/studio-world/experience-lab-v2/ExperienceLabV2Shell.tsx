@@ -51,7 +51,7 @@ export function ExperienceLabV2Shell({ initialDepartmentId = 'experience-lab' }:
   const flags = resolveExperienceLabV2FeatureFlags();
   const shell = useExperienceLabAppShell();
   const review = useExperienceLabComponentReview();
-  const designVariants = useExperienceLabDesignVariants();
+  const designVariants = useExperienceLabDesignVariants({ isCompact: shell.isCompact });
 
   const [departmentId] = useState<CanonicalMainDepartmentId>(initialDepartmentId);
   const [viewportMode, setViewportMode] = useState<StudioViewportMode>(

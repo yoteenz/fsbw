@@ -467,6 +467,18 @@ describe('Experience Lab V2 — Viewport environment', () => {
     expect(readV2Source('ExperienceLabEnvironmentLayer.tsx')).toContain('environmentUrl');
     expect(readV2Source('experience-lab-v2-composition.ts')).toContain('designVariants');
   });
+
+  it('resolves environment URLs from Environment Asset Package bridge', () => {
+    const hook = readV2Source('useExperienceLabDesignVariants.ts');
+    const bridge = readV2Source('experience-lab-environment-package-bridge.ts');
+    const shell = readV2Source('ExperienceLabV2Shell.tsx');
+    expect(hook).toContain('resolveDesignVariantEnvironmentFromPackage');
+    expect(hook).toContain('environmentPackageId');
+    expect(hook).toContain('drawerPackageModel');
+    expect(hook).toContain('isCompact');
+    expect(bridge).toContain('EXPERIENCE_LAB_RECEPTION_PACKAGE_ID');
+    expect(shell).toContain('useExperienceLabDesignVariants({ isCompact: shell.isCompact })');
+  });
 });
 
 describe('Experience Lab V2 — Component Review Mode integration', () => {

@@ -19,3 +19,4 @@ export * from './department-architectural-fingerprints';
 export * from './department-distinctness-validator';
 export * from './cds-canonical-handoff';
 export * from '../department-bible';
+export * from '../environment-asset-package';
