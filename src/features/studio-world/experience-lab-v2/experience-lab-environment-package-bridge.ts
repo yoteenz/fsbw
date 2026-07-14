@@ -6,6 +6,7 @@ import {
   type EnvironmentAssetPackage,
   type EnvironmentPackageDrawerModel,
 } from '../../../studio-os-core/environment-asset-package';
+import type { EnvironmentPackageOutputStatus } from '../../../studio-os-core/environment-asset-package/EnvironmentPackageOutputs';
 import {
   EXPERIENCE_LAB_DESIGN_VARIANTS,
   type DesignVariantId,
@@ -85,6 +86,25 @@ export function resolveDesignVariantEnvironmentFromPackage(
   const pkg = getDesignVariantPackage(variantId);
   if (!pkg) return null;
   return resolveActiveEnvironmentUrl(pkg, isMobile);
+}
+
+export type DesignVariantBlueprintOutput = {
+  url: string | null;
+  status: EnvironmentPackageOutputStatus;
+};
+
+/** Canonical blueprint thumbnail from the active variant's Environment Package. */
+export function resolveDesignVariantBlueprintFromPackage(
+  variantId: DesignVariantId
+): DesignVariantBlueprintOutput {
+  const pkg = getDesignVariantPackage(variantId);
+  if (!pkg) return { url: null, status: 'pending' };
+  const entry = pkg.outputs.blueprint;
+  const ready = entry.status === 'generated' || entry.status === 'cached';
+  return {
+    url: ready ? entry.url : null,
+    status: entry.status,
+  };
 }
 
 export function resolveDesignVariantPackageDrawer(

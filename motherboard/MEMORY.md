@@ -49555,3 +49555,33 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 **Founder request:** Decrease founder review console panel height by 50% — too tall, blocking background render.
 
 **Shipped:** `experience-lab-v2.css` — `--elab-frc-panel-min-h: 74px` (was 148px), media/chart 36px, tighter padding/typography, brief 2-line clamp. Lower deck order unchanged: console → approval CTA → workbench. Tests 51/51 PASS.
+
+---
+
+## 2026-07-14 — Experience Lab V2 HUD Simplification Pass 02 (full conversation)
+
+**Founder sprint:** Restore viewport as primary visual focus — hierarchy cleanup, not redesign. Remove redundant permanent viewport controls; Workbench becomes canonical tool selector; Focus Mode is the only persistent viewport action.
+
+**Locked (unchanged):** Command Dock, Experience Lab logo, Department Dock, Workbench, Design Variants, Living Orb, viewport dimensions, overall page layout.
+
+**Removed from viewport HUD:**
+- Floating mode palette (Blueprint, Founder Render, Construction, Materials, Lighting, Camera, Split)
+- Horizontal tool strip (Focus, Capture, Playback, Pause, Next, Stop, Approved)
+- Permanent inspector switcher and status chip in `StudioViewport`
+
+**Shipped:**
+- **`StudioViewport.tsx`** — Calm HUD: blueprint card + single `elab-viewport__focus-ctrl` (bottom-right); optional `contextualHud` slot; no permanent mode chips or tool palette
+- **`ExperienceLabViewportContextualHud.tsx`** (new) — Modes + playback row only when focus/workbench/drawer/expanded panel demands it (`data-elab-viewport-contextual-hud`)
+- **`ExperienceLabViewportStage.tsx`** — Wires contextual HUD from `workbenchToolId`, `focusMode`, `designVariantDrawerOpen`, orchestrator state
+- **`ExperienceLabV2Shell.tsx`** — `workbenchToolId` state; syncs inspector/viewport on workbench selection
+- **`ExperienceLabFounderWorkbench.tsx`** — Controlled `activeTool` / `onToolChange`; default `null` (no tool on load); click toggles deselect
+- **`experience-lab-v2-workbench-config.ts`** — `inspectorPanelForWorkbenchTool()`, `viewportModesForWorkbenchTool()`
+- **`experience-lab-v2-panel-orchestrator.ts`** — Calm default = 0 panels; contextual panels for focus/workbench/expanded
+- **`experience-lab-v2.css`** — Focus control + contextual HUD styles; `--elab-hud-safe-bottom` 18%→10%
+- **Tests** — `experience-lab-v2.test.ts` + panel orchestrator tests updated (70/70 PASS); build PASS
+
+**Interaction model:** Workbench tool selection reveals only relevant viewport controls (e.g. Architectural Tools → Blueprint modes; Material Library → Materials). Secondary controls appear only during Focus Mode, active workbench tool, or intentional drawer/panel expansion.
+
+**Spatial review:** SKIPPED — HUD hierarchy cleanup, no new surfaces or nav.
+
+**One commit + one push** on `master` via `agent-commit.sh`.

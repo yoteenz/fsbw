@@ -1,7 +1,9 @@
 import { useCallback } from 'react';
+import type { EnvironmentPackageOutputStatus } from '../../../studio-os-core/environment-asset-package/EnvironmentPackageOutputs';
 import type { ExperienceLabV2ArtifactRef, StudioViewportMode } from './experience-lab-v2.types';
 import { ExperienceLabEnvironmentLayer } from './ExperienceLabEnvironmentLayer';
 import { ExperienceLabIcon } from '../icons/ExperienceLabIcon';
+import { ExperienceLabBlueprintCard } from './ExperienceLabBlueprintCard';
 
 export type StudioViewportProps = {
   mode: StudioViewportMode;
@@ -21,7 +23,10 @@ export type StudioViewportProps = {
   onFocusMode?: (mode: StudioViewportMode) => void;
   focusActive?: boolean;
   embedded?: boolean;
-  contextualHud?: React.ReactNode;
+  blueprintThumbnailUrl?: string | null;
+  blueprintThumbnailStatus?: EnvironmentPackageOutputStatus;
+  onOpenBlueprint?: () => void;
+  dynamicContextCard?: React.ReactNode;
   viewAngles?: React.ReactNode;
   /** Mobile/tablet use 9:16 environment; desktop uses landscape environment. */
   isCompact?: boolean;
@@ -81,7 +86,7 @@ function ArtifactPane({
   );
 }
 
-/** StudioViewport™ — hero visual workspace; calm HUD with blueprint card + focus control only. */
+/** StudioViewport™ — hero visual workspace; two-panel HUD (blueprint + optional context). */
 export function StudioViewport({
   mode,
   departmentName,
@@ -93,7 +98,10 @@ export function StudioViewport({
   onFocusMode,
   focusActive,
   embedded,
-  contextualHud,
+  blueprintThumbnailUrl,
+  blueprintThumbnailStatus = 'pending',
+  onOpenBlueprint,
+  dynamicContextCard,
   viewAngles,
   isCompact,
   environmentUrl,
@@ -143,15 +151,17 @@ export function StudioViewport({
 
         <div className="elab-viewport__hud" data-elab-viewport-hud aria-label="Viewport HUD">
           <div className="elab-viewport__hud-safe">
-            <div className="elab-viewport__blueprint-card">
-              <div className="elab-viewport__title-group">
-                <h2 className="elab-viewport__scene-title">{departmentName.toUpperCase()}</h2>
-                <span className="elab-viewport__revision">r{revision}</span>
-                <span className={`elab-viewport__badge${isStale ? ' elab-viewport__badge--stale' : ' elab-viewport__badge--ok'}`}>
-                  {isStale ? 'STALE' : artifactStatus.toUpperCase()}
-                </span>
-              </div>
-            </div>
+            <ExperienceLabBlueprintCard
+              environmentName={departmentName}
+              revision={revision}
+              status={artifactStatus}
+              isStale={isStale}
+              blueprintUrl={blueprintThumbnailUrl ?? null}
+              blueprintStatus={blueprintThumbnailStatus}
+              onOpenBlueprint={onOpenBlueprint}
+            />
+
+            {dynamicContextCard}
 
             {onFocusMode ? (
               <button
@@ -165,8 +175,6 @@ export function StudioViewport({
                 <ExperienceLabIcon name="focusMode" size="sm" decorative active={focusActive} />
               </button>
             ) : null}
-
-            {contextualHud}
           </div>
         </div>
 

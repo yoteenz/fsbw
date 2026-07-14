@@ -36,43 +36,43 @@ function baseInput(overrides: Partial<PanelOrchestratorInput> = {}): PanelOrches
 }
 
 describe('ExperienceLabPanelOrchestrator', () => {
-  it('calm viewport hides floating inspectors until workbench or focus engages', () => {
+  it('calm viewport has no floating panels — blueprint card is always in HUD', () => {
     const resolved = resolveOrchestratedPanels(baseInput());
     expect(resolved.panels).toHaveLength(0);
+    expect(resolved.contextInspector).toBeNull();
     expect(resolved.safeZonePct).toBeGreaterThanOrEqual(95);
   });
 
-  it('workbench tool selection reveals matching contextual inspector', () => {
+  it('workbench tool tracks single context inspector without stacking panels', () => {
     const resolved = resolveOrchestratedPanels(
       baseInput({ workbenchToolId: 'material-library', viewportMode: 'MATERIALS', activeInspector: 'materials' })
     );
-    expect(resolved.panels).toHaveLength(1);
-    expect(resolved.panels[0]?.id).toBe('materials');
+    expect(resolved.panels).toHaveLength(0);
+    expect(resolved.contextInspector).toBe('materials');
   });
 
-  it('blueprint mode with architectural workbench tool shows blueprint inspector', () => {
+  it('architectural workbench tool maps to construction context (blueprint is HUD-only)', () => {
     const resolved = resolveOrchestratedPanels(
       baseInput({ workbenchToolId: 'architectural-tools', viewportMode: 'BLUEPRINT' })
     );
-    expect(resolved.panels[0]?.id).toBe('blueprint');
+    expect(resolved.panels).toHaveLength(0);
+    expect(resolved.contextInspector).toBe('construction');
   });
 
-  it('unrelated inspectors remain hidden on mobile when workbench tool active', () => {
+  it('only one context inspector id at a time when workbench tool active', () => {
     const resolved = resolveOrchestratedPanels(
       baseInput({ workbenchToolId: 'material-library', viewportMode: 'MATERIALS', activeInspector: 'materials' })
     );
-    const ids = resolved.panels.map((p) => p.id);
-    expect(ids).toEqual(['materials']);
-    expect(ids).not.toContain('blueprint');
-    expect(ids).not.toContain('construction');
+    expect(resolved.contextInspector).toBe('materials');
+    expect(resolved.panels).toHaveLength(0);
   });
 
-  it('blueprint mode activates blueprint inspector when workbench engaged', () => {
+  it('blueprint viewport mode still maps to blueprint inspector id for sync', () => {
     expect(inspectorForViewportMode('BLUEPRINT')).toBe('blueprint');
     const resolved = resolveOrchestratedPanels(
       baseInput({ workbenchToolId: 'architectural-tools', viewportMode: 'BLUEPRINT' })
     );
-    expect(resolved.panels[0]?.id).toBe('blueprint');
+    expect(resolved.contextInspector).toBe('construction');
   });
 
   it('founder render mode uses metadata inspector when camera tool active', () => {
@@ -81,28 +81,30 @@ describe('ExperienceLabPanelOrchestrator', () => {
     const resolved = resolveOrchestratedPanels(
       baseInput({ workbenchToolId: 'camera-studio', viewportMode: 'FOUNDER_RENDER', activeInspector: 'camera' })
     );
-    expect(resolved.panels[0]?.id).toBe('camera');
+    expect(resolved.contextInspector).toBe('camera');
+    expect(resolved.panels).toHaveLength(0);
   });
 
-  it('materials mode activates materials inspector via workbench tool', () => {
+  it('materials mode activates materials context via workbench tool', () => {
     const resolved = resolveOrchestratedPanels(
       baseInput({ workbenchToolId: 'material-library', viewportMode: 'MATERIALS', activeInspector: 'materials' })
     );
-    expect(resolved.panels[0]?.id).toBe('materials');
+    expect(resolved.contextInspector).toBe('materials');
   });
 
-  it('only one panel expands on mobile when drawer expanded', () => {
+  it('expanded panel tracks context without floating stack', () => {
     const resolved = resolveOrchestratedPanels(
       baseInput({ expandedPanel: 'materials', viewportMode: 'MATERIALS', activeInspector: 'materials' })
     );
-    expect(resolved.panels.filter((p) => p.state === 'EXPANDED')).toHaveLength(1);
-    expect(resolved.panels).toHaveLength(1);
+    expect(resolved.panels).toHaveLength(0);
+    expect(resolved.contextInspector).toBe('materials');
   });
 
   it('expanded state is tracked separately from minimized dock', () => {
     const input = baseInput({ expandedPanel: 'lighting', viewportMode: 'LIGHTING', activeInspector: 'lighting' });
     const resolved = resolveOrchestratedPanels(input);
-    expect(resolved.panels[0]?.state).toBe('EXPANDED');
+    expect(resolved.contextInspector).toBe('lighting');
+    expect(resolved.panels).toHaveLength(0);
   });
 
   it('center safe zone remains high when calm', () => {
@@ -110,13 +112,13 @@ describe('ExperienceLabPanelOrchestrator', () => {
     expect(resolved.safeZonePct).toBeGreaterThanOrEqual(95);
   });
 
-  it('split view with camera workbench tool shows camera inspector', () => {
+  it('split view with camera workbench tool shows camera context', () => {
     expect(inspectorForViewportMode('SPLIT_VIEW')).toBeNull();
     const resolved = resolveOrchestratedPanels(
       baseInput({ workbenchToolId: 'camera-studio', viewportMode: 'SPLIT_VIEW', activeInspector: 'camera' })
     );
-    expect(resolved.panels).toHaveLength(1);
-    expect(resolved.panels[0]?.id).toBe('camera');
+    expect(resolved.panels).toHaveLength(0);
+    expect(resolved.contextInspector).toBe('camera');
   });
 
   it('viewport mode and inspector map symmetrically', () => {
@@ -132,21 +134,23 @@ describe('ExperienceLabPanelOrchestrator', () => {
   it('desktop stays calm until workbench tool engages', () => {
     const resolved = resolveOrchestratedPanels(baseInput({ breakpoint: 'desktop', viewportMode: 'BLUEPRINT' }));
     expect(resolved.panels).toHaveLength(0);
+    expect(resolved.contextInspector).toBeNull();
   });
 
-  it('desktop workbench tool shows single contextual inspector', () => {
+  it('desktop workbench tool tracks single context inspector', () => {
     const resolved = resolveOrchestratedPanels(
       baseInput({ breakpoint: 'desktop', workbenchToolId: 'architectural-tools', viewportMode: 'BLUEPRINT' })
     );
-    expect(resolved.panels).toHaveLength(1);
-    expect(resolved.panels[0]?.id).toBe('blueprint');
+    expect(resolved.panels).toHaveLength(0);
+    expect(resolved.contextInspector).toBe('construction');
   });
 
-  it('focus mode hides secondary inspectors', () => {
+  it('focus mode tracks context inspector without floating panels', () => {
     const resolved = resolveOrchestratedPanels(
       baseInput({ focusMode: 'blueprint', viewportMode: 'BLUEPRINT' })
     );
-    expect(resolved.panels).toHaveLength(1);
+    expect(resolved.panels).toHaveLength(0);
+    expect(resolved.contextInspector).toBe('blueprint');
   });
 
   it('reset layout restores defaults when storage available', () => {
@@ -163,13 +167,14 @@ describe('ExperienceLabPanelOrchestrator', () => {
     expect(layout.version).toBe(1);
   });
 
-  it('collision detection increments when zones occupied', () => {
+  it('collision detection is zero — floating panel stacking retired', () => {
     const resolved = resolveOrchestratedPanels(
       baseInput({
         dockZones: { blueprint: 'top-left', materials: 'top-left' },
         viewportMode: 'BLUEPRINT',
       })
     );
-    expect(resolved.collisionsPrevented).toBeGreaterThanOrEqual(0);
+    expect(resolved.collisionsPrevented).toBe(0);
+    expect(resolved.panels).toHaveLength(0);
   });
 });

@@ -18,6 +18,8 @@ export const ELAB_V2_COMPOSITION = {
   designVariants: 'data-elab-design-variants',
   modeRail: 'data-elab-viewport-mode-rail',
   contextualHud: 'data-elab-viewport-contextual-hud',
+  blueprintCard: 'data-elab-blueprint-card',
+  dynamicContextCard: 'data-elab-dynamic-context-card',
   focusMode: 'data-elab-focus-mode',
   sheet: 'data-elab-sheet',
   inspectorSwitcher: 'data-elab-inspector-switcher',

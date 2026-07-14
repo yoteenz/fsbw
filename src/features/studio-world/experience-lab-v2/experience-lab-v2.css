@@ -1172,8 +1172,8 @@ button.elab-cmd__meta-chip {
   top: var(--elab-hud-safe-top);
   left: var(--elab-hud-safe-side);
   z-index: 2;
-  max-width: min(46vw, 280px);
-  padding: calc(var(--elab-hud-chip-pad-y) + 1px) calc(var(--elab-hud-chip-pad-x) + 2px);
+  max-width: min(46vw, 300px);
+  padding: 0;
   border-radius: var(--elab-hud-radius-panel);
   pointer-events: auto;
   background: var(--elab-hud-glass-shine), var(--elab-hud-glass-fill);
@@ -1184,6 +1184,226 @@ button.elab-cmd__meta-chip {
   transition:
     transform var(--elab-hud-duration) var(--elab-hud-ease),
     box-shadow var(--elab-hud-duration) var(--elab-hud-ease);
+  overflow: hidden;
+}
+
+.elab-blueprint-card__thumb {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  min-height: 72px;
+  background: rgba(8, 10, 14, 0.42);
+  border-bottom: 1px solid rgba(197, 160, 89, 0.12);
+  overflow: hidden;
+}
+
+.elab-blueprint-card__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
+.elab-blueprint-card__loading {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  gap: 8px;
+  padding: 10px;
+  text-align: center;
+  background: linear-gradient(145deg, rgba(12, 14, 18, 0.55), rgba(24, 28, 36, 0.38));
+}
+
+.elab-blueprint-card__loading--error {
+  background: linear-gradient(145deg, rgba(40, 12, 14, 0.45), rgba(24, 28, 36, 0.38));
+}
+
+.elab-blueprint-card__pulse {
+  width: 28px;
+  height: 28px;
+  margin: 0 auto;
+  border-radius: 50%;
+  border: 1px solid rgba(197, 160, 89, 0.35);
+  background: radial-gradient(circle at 30% 30%, rgba(197, 160, 89, 0.22), transparent 68%);
+  animation: elabBlueprintPulse 1.8s ease-in-out infinite;
+}
+
+.elab-blueprint-card__loading-label {
+  font-size: 8px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--elab-muted);
+  line-height: 1.35;
+}
+
+.elab-blueprint-card__meta {
+  padding: calc(var(--elab-hud-chip-pad-y) + 1px) calc(var(--elab-hud-chip-pad-x) + 2px);
+}
+
+.elab-blueprint-card__title-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px 8px;
+}
+
+.elab-blueprint-card__name {
+  margin: 0;
+  flex: 1 1 100%;
+}
+
+.elab-blueprint-card__open {
+  margin-top: 8px;
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: calc(var(--elab-hud-radius-panel) - 4px);
+  border: 1px solid rgba(197, 160, 89, 0.28);
+  background: rgba(197, 160, 89, 0.08);
+  color: var(--elab-gold);
+  font-size: 8px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition:
+    background var(--elab-hud-duration) var(--elab-hud-ease),
+    border-color var(--elab-hud-duration) var(--elab-hud-ease);
+}
+
+.elab-blueprint-card__open:hover {
+  background: rgba(197, 160, 89, 0.14);
+  border-color: rgba(197, 160, 89, 0.42);
+}
+
+.elab-viewport__context-card {
+  position: absolute;
+  top: var(--elab-hud-safe-top);
+  right: var(--elab-hud-safe-side);
+  z-index: 2;
+  width: min(42vw, 240px);
+  pointer-events: auto;
+  border-radius: var(--elab-hud-radius-panel);
+  background: var(--elab-hud-glass-shine), var(--elab-hud-glass-fill);
+  backdrop-filter: var(--elab-hud-blur);
+  -webkit-backdrop-filter: var(--elab-hud-blur);
+  border: 1px solid var(--elab-hud-border-color);
+  box-shadow: var(--elab-hud-shadow-stack), inset 0 1px 0 var(--elab-hud-edge-top);
+  overflow: hidden;
+}
+
+.elab-context-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 10px 6px;
+  border-bottom: 1px solid rgba(197, 160, 89, 0.1);
+}
+
+.elab-context-card__title {
+  font-size: 8px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--elab-gold);
+}
+
+.elab-context-card__expand {
+  width: 22px;
+  height: 22px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(197, 160, 89, 0.1);
+  color: var(--elab-muted);
+  cursor: pointer;
+  font-size: 10px;
+  line-height: 1;
+}
+
+.elab-context-card__body {
+  padding: 8px 10px 10px;
+}
+
+.elab-context-card__body--swap {
+  animation: elabContextSwap 280ms var(--elab-hud-ease);
+}
+
+.elab-context-card__body-copy {
+  display: grid;
+  gap: 4px;
+}
+
+.elab-context-card__summary {
+  margin: 0;
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--elab-text);
+  line-height: 1.35;
+}
+
+.elab-context-card__hint {
+  margin: 0;
+  font-size: 8px;
+  color: var(--elab-muted);
+  line-height: 1.35;
+}
+
+.elab-context-card__actions {
+  display: grid;
+  gap: 4px;
+}
+
+.elab-context-card__action {
+  display: grid;
+  gap: 2px;
+  width: 100%;
+  text-align: left;
+  padding: 6px 8px;
+  border-radius: calc(var(--elab-hud-radius-panel) - 6px);
+  border: 1px solid transparent;
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--elab-text);
+  cursor: pointer;
+  transition:
+    background var(--elab-hud-duration) var(--elab-hud-ease),
+    border-color var(--elab-hud-duration) var(--elab-hud-ease);
+}
+
+.elab-context-card__action:hover {
+  background: rgba(197, 160, 89, 0.08);
+  border-color: rgba(197, 160, 89, 0.18);
+}
+
+.elab-context-card__action--active {
+  border-color: rgba(197, 160, 89, 0.38);
+  background: rgba(197, 160, 89, 0.12);
+}
+
+.elab-context-card__action-label {
+  font-size: 8px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.elab-context-card__action-detail {
+  font-size: 7px;
+  color: var(--elab-muted);
+  line-height: 1.3;
+}
+
+@keyframes elabBlueprintPulse {
+  0%, 100% { opacity: 0.55; transform: scale(0.96); }
+  50% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes elabContextSwap {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .elab-viewport__blueprint-card::before {
@@ -3065,6 +3285,8 @@ button.elab-cmd__meta-chip {
   .elab-view-angles__thumb:hover,
   .elab-design-variants__thumb:hover { transform: none; }
   .elab-viewport__focus-ctrl:hover { transform: none; }
+  .elab-blueprint-card__pulse { animation: none; }
+  .elab-context-card__body--swap { animation: none; }
   .elab-approval-bridge--monument .elab-approval-bridge__primary:hover:not(:disabled) { transform: none; }
   .elab-inspector-switcher__picker { transition: none; }
 }

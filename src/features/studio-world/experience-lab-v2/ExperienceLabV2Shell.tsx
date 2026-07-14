@@ -107,9 +107,14 @@ export function ExperienceLabV2Shell({ initialDepartmentId = 'experience-lab' }:
       setWorkbenchToolId(tool);
       if (!tool) return;
       const inspector = inspectorPanelForWorkbenchTool(tool);
-      if (inspector) orchestrator.selectInspector(inspector, { syncViewport: true });
+      if (inspector) {
+        orchestrator.selectInspector(inspector, { syncViewport: tool !== 'architectural-tools' });
+      }
+      if (tool === 'architectural-tools') {
+        setModeWithQuery('BLUEPRINT');
+      }
     },
-    [orchestrator]
+    [orchestrator, setModeWithQuery]
   );
 
   useEffect(() => {
@@ -158,6 +163,7 @@ export function ExperienceLabV2Shell({ initialDepartmentId = 'experience-lab' }:
     designVariants,
     workbenchToolId,
     designVariantDrawerOpen: Boolean(designVariants.drawerVariant),
+    onOpenInspectorSheet: () => shell.toggleOverlay('inspector'),
   };
 
   const lowerDeck = shell.focusMode === 'none' ? (

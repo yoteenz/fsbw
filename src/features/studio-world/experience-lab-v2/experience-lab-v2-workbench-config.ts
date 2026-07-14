@@ -66,11 +66,52 @@ export const EXPERIENCE_LAB_WORKBENCH_WORLD_NAV: WorkbenchWorldNavItem[] = [
 import type { InspectorPanelId } from './experience-lab-v2-panel-orchestrator';
 import type { StudioViewportMode } from './experience-lab-v2.types';
 
+export type ContextCardContentId =
+  | 'blueprint-actions'
+  | 'materials'
+  | 'lighting'
+  | 'camera'
+  | 'permit'
+  | 'asset-reference'
+  | 'budget-forecast'
+  | 'workforce';
+
+/** Dynamic Context Card body — one slot, contents replace on workbench change. */
+export function contextContentForWorkbenchTool(toolId: WorkbenchEditingToolId): ContextCardContentId {
+  switch (toolId) {
+    case 'architectural-tools':
+      return 'blueprint-actions';
+    case 'material-library':
+    case 'material-lab':
+      return 'materials';
+    case 'lighting-studio':
+      return 'lighting';
+    case 'camera-studio':
+    case 'composition-studio':
+      return 'camera';
+    case 'permit-center':
+      return 'permit';
+    case 'asset-reference':
+      return 'asset-reference';
+    case 'budget-forecast':
+      return 'budget-forecast';
+    case 'workforce-center':
+      return 'workforce';
+    default:
+      return 'asset-reference';
+  }
+}
+
+export function contextLabelForWorkbenchTool(toolId: WorkbenchEditingToolId): string {
+  const tool = EXPERIENCE_LAB_WORKBENCH_EDITING_TOOLS.find((t) => t.id === toolId);
+  return tool?.label ?? 'Context';
+}
+
 /** Maps workbench tool selection to viewport inspector context (no duplicate HUD rails). */
 export function inspectorPanelForWorkbenchTool(toolId: WorkbenchEditingToolId): InspectorPanelId | null {
   switch (toolId) {
     case 'architectural-tools':
-      return 'blueprint';
+      return 'construction';
     case 'material-library':
     case 'material-lab':
     case 'asset-reference':

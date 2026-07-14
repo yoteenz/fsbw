@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   ensureExperienceLabVariantPackages,
   getDesignVariantPackage,
+  resolveDesignVariantBlueprintFromPackage,
   resolveDesignVariantEnvironmentFromPackage,
   resolveDesignVariantPackageDrawer,
   resolveDesignVariantPackageId,
@@ -52,6 +53,13 @@ describe('Experience Lab environment package bridge', () => {
     expect(drawer?.variantId).toBe('light-01');
     expect(drawer?.packageId).toBe(resolveDesignVariantPackageId('light-01'));
     expect(drawer?.outputsGenerated).toBeGreaterThan(0);
+  });
+
+  it('resolves blueprint output state from per-variant packages', () => {
+    ensureExperienceLabVariantPackages();
+    const blueprint = resolveDesignVariantBlueprintFromPackage('light-01');
+    expect(blueprint.status).toBeDefined();
+    expect(['pending', 'generating', 'generated', 'cached', 'failed']).toContain(blueprint.status);
   });
 
   it('returns registered package per variant from getter', () => {
