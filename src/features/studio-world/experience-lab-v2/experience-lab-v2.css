@@ -2596,6 +2596,10 @@ button.elab-cmd__meta-chip {
   --elab-wb-height-scale: 0.6;
   --elab-wb-title-pad-y: calc(8px * var(--elab-wb-height-scale));
   --elab-wb-tools-pad-y: calc(6px * var(--elab-wb-height-scale));
+  --elab-wb-tools-pad-x: var(--elab-hud-inset-side, 14px);
+  --elab-wb-tools-gap: 6px;
+  --elab-wb-tools-visible: 6;
+  --elab-wb-tools-gap-total: calc(var(--elab-wb-tools-gap) * (var(--elab-wb-tools-visible) - 1));
   --elab-wb-tool-min-height: calc(50px * var(--elab-wb-height-scale));
   --elab-wb-tool-pad-y: calc(5px * var(--elab-wb-height-scale));
   --elab-wb-tool-gap: calc(4px * var(--elab-wb-height-scale));
@@ -2641,16 +2645,17 @@ button.elab-cmd__meta-chip {
 .elab-founder-wb__tools-scroll {
   display: flex;
   align-items: stretch;
-  gap: 0;
+  gap: var(--elab-wb-tools-gap, 6px);
   width: 100%;
   min-width: 0;
   overflow-x: auto;
   overflow-y: hidden;
   scroll-snap-type: x mandatory;
   scroll-behavior: smooth;
+  scroll-padding-inline: var(--elab-wb-tools-pad-x, 14px);
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
-  padding: var(--elab-wb-tools-pad-y, 6px) 4px;
+  padding: var(--elab-wb-tools-pad-y, 6px) var(--elab-wb-tools-pad-x, 14px);
 }
 
 .elab-founder-wb__tools-scroll::-webkit-scrollbar {
@@ -2658,29 +2663,24 @@ button.elab-cmd__meta-chip {
 }
 
 .elab-founder-wb__tool {
-  flex: 0 0 calc((100% - 30px) / 6);
+  flex: 0 0 calc((100% - var(--elab-wb-tools-gap-total, 30px)) / var(--elab-wb-tools-visible, 6));
   scroll-snap-align: start;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: var(--elab-wb-tool-gap, 4px);
-  width: calc((100% - 30px) / 6);
-  min-width: calc((100% - 30px) / 6);
-  max-width: calc((100% - 30px) / 6);
+  width: calc((100% - var(--elab-wb-tools-gap-total, 30px)) / var(--elab-wb-tools-visible, 6));
+  min-width: calc((100% - var(--elab-wb-tools-gap-total, 30px)) / var(--elab-wb-tools-visible, 6));
+  max-width: calc((100% - var(--elab-wb-tools-gap-total, 30px)) / var(--elab-wb-tools-visible, 6));
   min-height: var(--elab-wb-tool-min-height, 50px);
   padding: var(--elab-wb-tool-pad-y, 5px) 3px;
-  margin-right: 6px;
   border: 1px solid var(--elab-border);
   border-radius: 5px;
   background: rgba(0, 0, 0, 0.28);
   color: var(--elab-muted);
   cursor: pointer;
   transition: color 0.12s, border-color 0.12s, background 0.12s;
-}
-
-.elab-founder-wb__tool:last-child {
-  margin-right: 0;
 }
 
 .elab-founder-wb__tool--active,

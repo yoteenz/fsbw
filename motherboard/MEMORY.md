@@ -49719,6 +49719,21 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 ---
 
+## 2026-07-14 — Workbench tools row: 6-panel viewport + side inset
+
+**Founder request:** First workbench row (editing tools) should show only the first 6 panels; 7th was partly visible on the right; first panel was flush to the left edge without spacing.
+
+**Root cause:** `margin-right: 6px` on every tool except `:last-child` — the 6th primary tool still had trailing margin, adding 6px beyond the 6-tool row and peeking the 7th. Horizontal padding was only 4px.
+
+**Fix (`experience-lab-v2.css`):**
+- Tokens on `.elab-founder-wb--tiered`: `--elab-wb-tools-pad-x` (HUD side inset 14px), `--elab-wb-tools-gap`, `--elab-wb-tools-visible: 6`, `--elab-wb-tools-gap-total`
+- `.elab-founder-wb__tools-scroll`: `gap` instead of per-item margins; `padding-inline` + `scroll-padding-inline` via pad-x token
+- `.elab-founder-wb__tool`: width calc `(100% - gap-total) / 6`; removed `margin-right`
+
+**Tests:** Spacing token assertions in `experience-lab-v2.test.ts`. 57/57 PASS; build PASS.
+
+---
+
 ## 2026-07-14 — Edge-to-edge row correction: restore rounded separate panels
 
 **Founder correction:** Prior edge-to-edge pass incorrectly squared corners and merged FRC panels into one continuous band (gap:0, border-left:none, border-radius:0).
