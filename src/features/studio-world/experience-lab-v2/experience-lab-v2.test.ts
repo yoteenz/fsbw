@@ -226,6 +226,8 @@ describe('Experience Lab V2 — Fixed application shell', () => {
     expect(css).toMatch(/\.elab-founder-review-console__panel--timeline[\s\S]*?text-align:\s*center/);
     expect(css).toMatch(/\.elab-founder-review-console__panel\s*\{[\s\S]*?border-bottom:\s*none/);
     expect(css).toMatch(/\.elab-founder-review-console\s*\{[\s\S]*?padding:\s*4px\s+0\s+0/);
+    expect(css).toMatch(/\.elab-founder-review-console__grid\s*\{[\s\S]*?gap:\s*clamp\(8px,\s*1\.2vw,\s*14px\)/);
+    expect(css).toMatch(/\.elab-founder-review-console__panel\s*\{[\s\S]*?border-radius:\s*var\(--elab-hud-radius-panel\)/);
   });
 
   it('command dock uses three-row tiered layout with HQ location tabs', () => {
@@ -560,6 +562,7 @@ describe('Experience Lab V2 — Viewport environment', () => {
     const css = readV2Source('experience-lab-v2.css');
     expect(css).toMatch(/\.elab-viewport__angles-chrome\s*\{[\s\S]*?background:\s*transparent/);
     expect(css).toMatch(/\.elab-viewport__angles-chrome\s+\.elab-view-angles--chrome\s*\{[\s\S]*?width:\s*100%/);
+    expect(css).toMatch(/\.elab-viewport__angles-chrome\s+\.elab-view-angles--chrome\s*\{[\s\S]*?border-radius:\s*calc\(var\(--elab-hud-radius-panel\) \+ 2px\)/);
     expect(css).toMatch(/\.elab-viewport__angles-chrome\s+\.elab-view-angles--chrome\s*\{[\s\S]*?border-bottom:\s*none/);
     expect(css).toMatch(/\.elab-app-shell__viewport-room\s*\{[\s\S]*?border-bottom:\s*none/);
   });

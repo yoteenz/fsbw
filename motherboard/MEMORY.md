@@ -49717,3 +49717,11 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 **Shipped:** Blueprint/Context cards refactored; 67 tests PASS; build PASS.
 
+---
+
+## 2026-07-14 — Edge-to-edge row correction: restore rounded separate panels
+
+**Founder correction:** Prior edge-to-edge pass incorrectly squared corners and merged FRC panels into one continuous band (gap:0, border-left:none, border-radius:0).
+
+**Fix:** Keep zero horizontal padding on row containers (full center-column width matching workbench). Restore Design Variants chrome `border-radius: calc(var(--elab-hud-radius-panel) + 2px)` at width 100%. Restore FRC `gap: clamp(8px, 1.2vw, 14px)`, per-panel `border-radius: var(--elab-hud-radius-panel)`, full individual borders. Tests updated.
+

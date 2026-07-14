@@ -2294,7 +2294,7 @@ button.elab-cmd__meta-chip {
   max-width: 100%;
   margin: 0;
   padding: calc(var(--elab-hud-chip-pad-y) + 1px) calc(var(--elab-hud-chip-pad-x) + 2px) calc(var(--elab-hud-chip-pad-y) + 3px);
-  border-radius: 0;
+  border-radius: calc(var(--elab-hud-radius-panel) + 2px);
   background: var(--elab-hud-glass-shine), rgba(8, 9, 12, 0.42);
   backdrop-filter: var(--elab-hud-blur);
   -webkit-backdrop-filter: var(--elab-hud-blur);
@@ -2899,7 +2899,7 @@ button.elab-cmd__meta-chip {
 .elab-founder-review-console__grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0;
+  gap: clamp(8px, 1.2vw, 14px);
   align-items: stretch;
 }
 
@@ -2911,15 +2911,11 @@ button.elab-cmd__meta-chip {
   padding: 4px 5px;
   border: 1px solid var(--elab-hud-border-color);
   border-bottom: none;
-  border-radius: 0;
+  border-radius: var(--elab-hud-radius-panel);
   background: var(--elab-hud-glass-shine), var(--elab-hud-glass-fill);
   backdrop-filter: var(--elab-hud-blur);
   -webkit-backdrop-filter: var(--elab-hud-blur);
   box-shadow: var(--elab-hud-shadow-stack), inset 0 1px 0 var(--elab-hud-edge-top);
-}
-
-.elab-founder-review-console__panel + .elab-founder-review-console__panel {
-  border-left: none;
 }
 
 .elab-founder-review-console__title {
