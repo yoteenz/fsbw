@@ -49319,6 +49319,20 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 **Note for founders with cached review state:** add `?elabReview=off` to URL or select **Studio Viewport** in Component Review chrome if review was previously enabled in localStorage.
 
-**Tests:** 43/43 pass. **Spatial review:** SKIPPED (visibility fix only).
+**One commit + one push** on `master` via `agent-commit.sh`.
+
+---
+
+## 2026-07-14 — Experience Lab V2 viewport UI polish (blueprint overlay + view angles)
+
+**Founder request:** Remove blue blueprint meta square centered in viewport; center the six view-angle/camera thumbnail squares below viewport (were left-aligned in card).
+
+**Shipped:**
+
+- `StudioViewport.tsx` — `ArtifactPane` returns `null` when artifact has no `previewUrl` (removes cyan-bordered blueprint meta card; environment-only in Blueprint mode until real preview loads)
+- `experience-lab-v2.css` — `.elab-view-angles__strip { justify-content: center }`
+- Tests: blueprint meta removal + centered strip assertions; 45/45 pass
+
+**Preserved:** Loading/error overlays; actual blueprint/founder-render images still display when `previewUrl` exists.
 
 **One commit + one push** on `master` via `agent-commit.sh`.

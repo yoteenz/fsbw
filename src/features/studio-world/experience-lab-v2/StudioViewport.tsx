@@ -76,17 +76,12 @@ function ArtifactPane({
       </div>
     );
   }
+  if (!artifact.previewUrl) {
+    return null;
+  }
   return (
     <div className={`elab-viewport-pane elab-viewport-pane--${variant}`} data-viewport-pane={title}>
-      {artifact.previewUrl ? (
-        <img src={artifact.previewUrl} alt={artifact.label} className="elab-viewport-pane__img" onLoad={onImageLoad} />
-      ) : (
-        <div className="elab-viewport-pane__meta">
-          <p className="elab-viewport-pane__label">{artifact.label}</p>
-          <p className="elab-viewport-pane__summary">{artifact.summary}</p>
-          <p className="elab-viewport-pane__rev">r{artifact.revision}</p>
-        </div>
-      )}
+      <img src={artifact.previewUrl} alt={artifact.label} className="elab-viewport-pane__img" onLoad={onImageLoad} />
     </div>
   );
 }

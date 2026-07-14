@@ -435,6 +435,17 @@ describe('Experience Lab V2 — Viewport environment', () => {
     expect(shell).toContain('viewport={<ExperienceLabViewportStage {...viewportStageProps} />}');
     expect(shell).not.toContain('elab-stage--hidden-placeholder');
   });
+
+  it('hides blueprint meta pane when no preview image (environment only)', () => {
+    const viewport = readV2Source('StudioViewport.tsx');
+    expect(viewport).toContain('if (!artifact.previewUrl)');
+    expect(viewport).not.toContain('elab-viewport-pane__meta');
+  });
+
+  it('centers view angle thumbnail strip in viewport chrome', () => {
+    const css = readV2Source('experience-lab-v2.css');
+    expect(css).toMatch(/\.elab-view-angles__strip\s*\{[\s\S]*?justify-content:\s*center/);
+  });
 });
 
 describe('Experience Lab V2 — Component Review Mode integration', () => {
