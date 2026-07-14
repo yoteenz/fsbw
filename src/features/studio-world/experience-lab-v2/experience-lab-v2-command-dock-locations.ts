@@ -59,7 +59,7 @@ export const EXPERIENCE_LAB_COMMAND_DOCK_LOCATIONS: CommandDockLocationTab[] = [
   },
   {
     id: 'creative-director-studio',
-    title: 'CREATIVE DIRECTOR STUDIO',
+    title: 'CREATIVE STUDIO',
     subtitle: 'ASSET MANUFACTURING',
     icon: 'attachments',
   },

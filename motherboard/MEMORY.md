@@ -49017,6 +49017,14 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 
 **If still stuck after deploy:** hard reload or `/__studio-os-recovery` to clear stale chunks after rapid deploys.
 
-**Spatial Architecture Review:** SKIPPED — P0 boot/loading hotfix, no new surfaces.
+**One commit + one push** on `master` via `agent-commit.sh`.
+
+---
+
+## 2026-07-14 — Command Dock CDS label shorten (full conversation)
+
+**Founder request:** Shorten “Creative Director Studio” to “Creative Studio” on the Command Dock.
+
+**Shipped:** `experience-lab-v2-command-dock-locations.ts` — `creative-director-studio` tab title `CREATIVE DIRECTOR STUDIO` → `CREATIVE STUDIO` (id/subtitle unchanged).
 
 **One commit + one push** on `master` via `agent-commit.sh`.
