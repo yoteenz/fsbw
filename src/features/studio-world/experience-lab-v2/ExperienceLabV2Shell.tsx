@@ -9,6 +9,7 @@ import { ExperienceLabRegistrySidebar } from './ExperienceLabRegistrySidebar';
 import { ExperienceLabGovernanceSidebar } from './ExperienceLabGovernanceSidebar';
 import { ExperienceLabViewportStage } from './ExperienceLabViewportStage';
 import { ExperienceLabFounderWorkbench } from './ExperienceLabFounderWorkbench';
+import { ExperienceLabFounderReviewConsole } from './ExperienceLabFounderReviewConsole';
 import { ExperienceLabApprovalBridge } from './ExperienceLabApprovalBridge';
 import { ExperienceLabWorkbenchDock } from './ExperienceLabWorkbenchDock';
 import { ExperienceLabWorkstationFrame } from './ExperienceLabWorkstationFrame';
@@ -145,6 +146,7 @@ export function ExperienceLabV2Shell({ initialDepartmentId = 'experience-lab' }:
 
   const lowerDeck = shell.focusMode === 'none' ? (
     <>
+      {review.show('workbench') ? <ExperienceLabFounderReviewConsole model={model} /> : null}
       {review.show('approval-bridge') ? (
         <ExperienceLabApprovalBridge
           approval={model.approval}

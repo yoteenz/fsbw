@@ -6,6 +6,7 @@ export const ELAB_V2_COMPOSITION = {
   studioViewport: 'data-studio-viewport',
   floatingInspector: 'data-elab-floating-inspector',
   founderWorkbench: 'data-elab-founder-workbench',
+  founderReviewConsole: 'data-elab-founder-review-console',
   workbenchTabs: 'data-elab-workbench-tabs',
   approvalBridge: 'data-elab-approval-bridge',
   blockerSheet: 'data-elab-blocker-sheet',

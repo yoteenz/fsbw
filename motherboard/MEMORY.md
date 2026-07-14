@@ -49539,3 +49539,11 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 **Founder request:** Add “Approve & Send to Creative Director Studio” button directly above workbench per reference attachment, using same monument button styling.
 
 **Shipped:** Restored `elab-approval-bridge--monument` variant in `ExperienceLabApprovalBridge.tsx` (glass gold CTA, glow, chevron, lock subtitle); mounted in `ExperienceLabV2Shell` lower deck before `ExperienceLabFounderWorkbench`; CSS monument styles aligned with HUD polish tokens; strip variant retained for compact/command use. Tests updated (50/50 PASS).
+
+---
+
+## 2026-07-14 — Founder review console row (3 symmetric panels)
+
+**Founder request:** Add Design Brief, Founder Review Wall, and Revision Timeline in one equal-height row above the Approve & Send CTA, matching reference attachment.
+
+**Shipped:** New `ExperienceLabFounderReviewConsole.tsx` — 3-column symmetric glass panels (`repeat(3, 1fr)`, min-height 148px); brief with mood line, review wall with player/nav/dots, revision timeline chart with axis labels. Mounted in lower deck order: console → approval bridge → tiered workbench. Composition marker `data-elab-founder-review-console`. Tests 51/51 PASS.

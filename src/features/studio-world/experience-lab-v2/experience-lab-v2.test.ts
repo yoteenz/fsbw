@@ -177,11 +177,15 @@ describe('Experience Lab V2 — Fixed application shell', () => {
     expect(shell).toContain("review.show('bottom-tool-dock') && !review.show('workbench')");
   });
 
-  it('full workstation mounts approval bridge above workbench in lower deck', () => {
+  it('full workstation mounts founder review console, approval bridge, then workbench', () => {
     const shell = readV2Source('ExperienceLabV2Shell.tsx');
     const lowerDeckBlock = shell.match(/const lowerDeck =[\s\S]*?\) : null;/)?.[0] ?? '';
+    expect(lowerDeckBlock).toContain('ExperienceLabFounderReviewConsole');
     expect(lowerDeckBlock).toContain("review.show('approval-bridge')");
     expect(lowerDeckBlock).toContain('ExperienceLabApprovalBridge');
+    expect(lowerDeckBlock.indexOf('ExperienceLabFounderReviewConsole')).toBeLessThan(
+      lowerDeckBlock.indexOf('ExperienceLabApprovalBridge'),
+    );
     expect(lowerDeckBlock.indexOf('ExperienceLabApprovalBridge')).toBeLessThan(
       lowerDeckBlock.indexOf('ExperienceLabFounderWorkbench'),
     );
@@ -193,6 +197,17 @@ describe('Experience Lab V2 — Fixed application shell', () => {
       'utf8',
     );
     expect(shellPage).toContain('!fixedViewport');
+  });
+
+  it('founder review console uses symmetric three-panel row above approval bridge', () => {
+    const consoleSrc = readV2Source('ExperienceLabFounderReviewConsole.tsx');
+    const css = readV2Source('experience-lab-v2.css');
+    expect(consoleSrc).toContain('DESIGN BRIEF');
+    expect(consoleSrc).toContain('FOUNDER REVIEW WALL');
+    expect(consoleSrc).toContain('REVISION TIMELINE');
+    expect(consoleSrc).toContain('ELAB_V2_COMPOSITION.founderReviewConsole');
+    expect(css).toMatch(/\.elab-founder-review-console__grid\s*\{[\s\S]*?grid-template-columns:\s*repeat\(3,\s*minmax\(0,\s*1fr\)\)/);
+    expect(css).toMatch(/\.elab-founder-review-console__panel\s*\{[\s\S]*?min-height:\s*148px/);
   });
 
   it('command dock uses three-row tiered layout with HQ location tabs', () => {

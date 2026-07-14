@@ -2027,6 +2027,204 @@ button.elab-cmd__meta-chip {
 .elab-founder-wb__warn { font-size: 8px; color: var(--elab-danger); margin: 4px 0 0; }
 .elab-founder-wb__diag-line { font-size: 8px; color: var(--elab-muted); margin: 2px 0; }
 
+/* ── Founder review console — three symmetric panels above approval bridge ── */
+.elab-founder-review-console {
+  flex-shrink: 0;
+  padding: 10px clamp(12px, 3vw, 20px) 6px;
+}
+
+.elab-founder-review-console__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(8px, 1.2vw, 14px);
+  align-items: stretch;
+}
+
+.elab-founder-review-console__panel {
+  display: flex;
+  flex-direction: column;
+  min-height: 148px;
+  height: 100%;
+  padding: 12px 14px;
+  border: 1px solid var(--elab-hud-border-color);
+  border-radius: var(--elab-hud-radius-panel);
+  background: var(--elab-hud-glass-shine), var(--elab-hud-glass-fill);
+  backdrop-filter: var(--elab-hud-blur);
+  -webkit-backdrop-filter: var(--elab-hud-blur);
+  box-shadow: var(--elab-hud-shadow-stack), inset 0 1px 0 var(--elab-hud-edge-top);
+}
+
+.elab-founder-review-console__title {
+  margin: 0 0 8px;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: var(--elab-gold);
+  flex-shrink: 0;
+}
+
+.elab-founder-review-console__panel--brief .elab-founder-review-console__title {
+  text-align: left;
+}
+
+.elab-founder-review-console__panel--review .elab-founder-review-console__title {
+  text-align: center;
+}
+
+.elab-founder-review-console__panel--timeline .elab-founder-review-console__title {
+  text-align: right;
+}
+
+.elab-founder-review-console__brief {
+  flex: 1;
+  margin: 0 0 10px;
+  font-size: 9px;
+  line-height: 1.5;
+  color: var(--elab-muted);
+  text-align: left;
+}
+
+.elab-founder-review-console__mood {
+  margin: auto 0 0;
+  font-size: 8px;
+  color: var(--elab-gold);
+  text-align: left;
+}
+
+.elab-founder-review-console__mood strong {
+  font-weight: 700;
+  color: rgba(255, 248, 232, 0.92);
+}
+
+.elab-founder-review-console__hint {
+  margin: 0 0 6px;
+  font-size: 7px;
+  letter-spacing: 0.08em;
+  color: var(--elab-muted);
+  text-align: center;
+}
+
+.elab-founder-review-console__player {
+  flex: 1;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 6px;
+  min-height: 0;
+}
+
+.elab-founder-review-console__nav {
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: 1px solid rgba(197, 160, 89, 0.22);
+  border-radius: var(--elab-hud-radius-chip);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--elab-gold);
+  font-size: 12px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.elab-founder-review-console__player-stage {
+  position: relative;
+  min-height: 72px;
+  height: 100%;
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.45);
+}
+
+.elab-founder-review-console__preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.elab-founder-review-console__player-placeholder {
+  height: 100%;
+  min-height: 72px;
+  display: grid;
+  place-items: center;
+}
+
+.elab-founder-review-console__play {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid var(--elab-gold);
+  display: grid;
+  place-items: center;
+  color: var(--elab-gold);
+  font-size: 10px;
+}
+
+.elab-founder-review-console__dots {
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+  margin-top: 6px;
+}
+
+.elab-founder-review-console__dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.22);
+}
+
+.elab-founder-review-console__dot--active {
+  background: var(--elab-gold);
+  box-shadow: 0 0 8px rgba(197, 160, 89, 0.45);
+}
+
+.elab-founder-review-console__chart {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  min-height: 72px;
+}
+
+.elab-founder-review-console__chart-svg {
+  width: 100%;
+  height: 72px;
+}
+
+.elab-founder-review-console__chart-axis-y,
+.elab-founder-review-console__chart-axis-x,
+.elab-founder-review-console__chart-rev-label {
+  fill: var(--elab-muted);
+  font-size: 7px;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+.elab-founder-review-console__chart-rev-label {
+  fill: var(--elab-gold);
+  font-weight: 700;
+  font-size: 8px;
+}
+
+.elab-founder-review-console__warn {
+  margin: 4px 0 0;
+  font-size: 7px;
+  color: var(--elab-danger);
+  text-align: right;
+}
+
+.elab-app-shell--mobile .elab-founder-review-console__panel {
+  min-height: 128px;
+  padding: 10px 8px;
+}
+
+.elab-app-shell--mobile .elab-founder-review-console__title {
+  font-size: 7px;
+}
+
+.elab-app-shell--mobile .elab-founder-review-console__brief {
+  font-size: 8px;
+}
+
 /* ── Approval bridge — monument CTA + compact command strip ── */
 .elab-approval-bridge {
   margin: 0;
