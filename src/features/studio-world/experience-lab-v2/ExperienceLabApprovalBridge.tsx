@@ -19,6 +19,9 @@ const STRIP_ACTIONS = [
   { id: 'export', label: 'EXPORT' },
 ] as const;
 
+const MONUMENT_CTA_LABEL = 'APPROVE AND SEND TO CREATIVE STUDIO';
+const MONUMENT_LOCKS = 'LOCK BLUEPRINT • LOCK RENDER • LOCK CONSTRUCTION PLAN';
+
 /** Approval bridge — monument CTA above workbench (default) or compact command strip. */
 export function ExperienceLabApprovalBridge({
   approval,
@@ -105,11 +108,12 @@ export function ExperienceLabApprovalBridge({
         onClick={handleApprove}
       >
         <span className="elab-approval-bridge__glow" aria-hidden />
-        <span className="elab-approval-bridge__label">{approval.primaryActionLabel}</span>
+        <span className="elab-approval-bridge__label">{MONUMENT_CTA_LABEL}</span>
         <span className="elab-approval-bridge__arrow" aria-hidden>
           ›
         </span>
       </button>
+      <p className="elab-approval-bridge__locks">{MONUMENT_LOCKS}</p>
     </section>
   );
 }

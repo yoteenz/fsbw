@@ -49617,3 +49617,5 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 **Shipped:** `experience-lab-v2.css` — monument primary padding 12px→8px, font 10px→9px, tighter container padding; locks + blocker-chip `display: none` on monument variant. `ExperienceLabApprovalBridge.tsx` — removed monument blocker chip and lock subtitle markup (strip variant unchanged). Test updated.
 
+**Follow-up:** Monument CTA single-line label `APPROVE AND SEND TO CREATIVE STUDIO`; centered lock subtitle below button `LOCK BLUEPRINT • LOCK RENDER • LOCK CONSTRUCTION PLAN`; blockers chip remains hidden.
+

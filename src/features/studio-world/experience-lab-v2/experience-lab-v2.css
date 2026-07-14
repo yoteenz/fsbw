@@ -2614,6 +2614,12 @@ button.elab-cmd__meta-chip {
   z-index: 1;
   text-align: center;
   line-height: 1.15;
+  white-space: nowrap;
+}
+
+.elab-approval-bridge--monument .elab-approval-bridge__label {
+  font-size: inherit;
+  letter-spacing: 0.08em;
 }
 
 .elab-approval-bridge__glow {
@@ -2643,7 +2649,15 @@ button.elab-cmd__meta-chip {
   opacity: 0.92;
 }
 
-.elab-approval-bridge--monument .elab-approval-bridge__locks,
+.elab-approval-bridge--monument .elab-approval-bridge__locks {
+  margin: 6px 0 0;
+  font-size: 7px;
+  font-weight: 700;
+  color: var(--elab-muted);
+  letter-spacing: 0.08em;
+  text-align: center;
+}
+
 .elab-approval-bridge--monument .elab-approval-bridge__blocker-chip {
   display: none;
 }
