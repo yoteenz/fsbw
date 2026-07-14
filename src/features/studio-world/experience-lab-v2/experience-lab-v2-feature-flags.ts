@@ -32,7 +32,7 @@ export function resolveExperienceLabV2FeatureFlags(): ExperienceLabV2FeatureFlag
     experienceLabV2Enabled: admin && envFlag('VITE_EXPERIENCE_LAB_V2_ENABLED', true),
     experienceLabV2LiveActionsEnabled: admin && envFlag('VITE_EXPERIENCE_LAB_V2_LIVE_ACTIONS', false),
     experienceLabV2EnvironmentAssetEnabled: envFlag('VITE_EXPERIENCE_LAB_V2_ENVIRONMENT', true),
-    experienceLabV2DiagnosticsEnabled: admin && envFlag('VITE_EXPERIENCE_LAB_V2_DIAGNOSTICS', true),
+    experienceLabV2DiagnosticsEnabled: admin && envFlag('VITE_EXPERIENCE_LAB_V2_DIAGNOSTICS', false),
     experienceLabV2MobileDockEnabled: envFlag('VITE_EXPERIENCE_LAB_V2_MOBILE_DOCK', true),
     experienceLabV2ComponentReviewEnabled: admin && envFlag('VITE_EXPERIENCE_LAB_V2_COMPONENT_REVIEW', false),
     enableEnvironmentPackages: packageFlags.enableEnvironmentPackages,

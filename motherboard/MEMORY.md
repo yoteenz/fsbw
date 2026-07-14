@@ -49791,3 +49791,13 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 **Tests:** Updated FRC panel border + bridge gap assertions; workbench scale test expects `0.48`. 53/53 layout tests PASS.
 
+---
+
+## 2026-07-14 — Hide anchor diagnostic overlay on Design Variants
+
+**Founder request:** Remove the monospace transform debug code box overlapping the Design Variants panel (LEFT_FRONT / RIGHT_FRONT rotateY/matrix lines).
+
+**Root cause:** `ExperienceLabEnvironmentDisplayAnchorDiagnosticOverlay` gated by `experienceLabV2DiagnosticsEnabled`, which defaulted `VITE_EXPERIENCE_LAB_V2_DIAGNOSTICS` to **true** for Studio admins.
+
+**Fix:** Default diagnostics flag to **false** in `experience-lab-v2-feature-flags.ts` — overlay only renders when env explicitly sets `VITE_EXPERIENCE_LAB_V2_DIAGNOSTICS=true`. Test asserts `experienceLabV2DiagnosticsEnabled === false`.
+

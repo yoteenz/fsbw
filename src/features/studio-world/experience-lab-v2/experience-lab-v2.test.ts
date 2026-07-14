@@ -447,6 +447,7 @@ describe('Experience Lab V2 — Feature flags & persistence', () => {
     expect(flags).toHaveProperty('experienceLabV2Enabled');
     expect(flags).toHaveProperty('experienceLabV2LiveActionsEnabled');
     expect(flags).toHaveProperty('experienceLabV2EnvironmentAssetEnabled');
+    expect(flags.experienceLabV2DiagnosticsEnabled).toBe(false);
   });
 });
 
