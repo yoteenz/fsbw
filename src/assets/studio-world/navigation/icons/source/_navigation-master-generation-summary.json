@@ -1,0 +1,15 @@
+{
+  "version": "studio-world-navigation-master-sheet-v1",
+  "generatedAt": "2026-07-14T22:47:34.843Z",
+  "sheetSize": 10240,
+  "grid": "10x10",
+  "cellSize": 1024,
+  "iconRenderSize": 594,
+  "iconCount": 93,
+  "blankCells": 7,
+  "outputPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+  "sha256": "b8222359293651a10eecde16facbf8bd93aa358c9727ec0aa9dd119d24f1a93b",
+  "designLanguage": "premium-chrome-outline",
+  "labels": false,
+  "note": "Master artwork for calibration — not a runtime sprite"
+}

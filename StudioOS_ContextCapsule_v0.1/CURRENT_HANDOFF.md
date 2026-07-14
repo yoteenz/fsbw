@@ -8,7 +8,19 @@
 
 ## Current sprint
 
-**Studio World Icon System V1 — Permanent Icon Platform Foundation**
+**Studio World Navigation Master Icon Sheet — Sprint 02 Phase 1**
+
+**Status: SHIPPED — Canonical Navigation master artwork + draft metadata**
+
+**Shipped:**
+
+- Master sheet: `studio-world-navigation-master-sheet.png` (10240×10240, 93 chrome navigation icons, no labels)
+- Registry: `src/features/studio-world/icons/navigation-master/` (semantic map, source manifest, 10×10 calibration, draft bridge)
+- Generator: `npm run navigation-master:generate-sheet`
+- Draft placeholders prepared — **not** registered into production `StudioWorldIconRegistry`
+- Tests 4/4 PASS · Build PASS · **No Experience Lab / runtime changes**
+
+**Previous:** Studio World Icon System V1 — Permanent Icon Platform Foundation
 
 **Status: SHIPPED — Architecture only; zero runtime visual changes**
 

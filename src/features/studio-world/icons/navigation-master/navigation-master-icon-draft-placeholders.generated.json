@@ -1,0 +1,2245 @@
+{
+  "schemaVersion": "studio-world-navigation-draft-placeholders.v1",
+  "generatedAt": "2026-07-14T22:47:34.842Z",
+  "category": "navigation",
+  "certification": "draft",
+  "version": "v1",
+  "designFamily": "studio-world-navigation-chrome-v1",
+  "iconCount": 93,
+  "stateSupport": "pending",
+  "themeSupport": "pending",
+  "icons": [
+    {
+      "id": "navigation.home",
+      "category": "navigation",
+      "displayName": "Home",
+      "aliases": [
+        "HOME",
+        "home",
+        "navigation-home"
+      ],
+      "keywords": [
+        "home",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 0,
+      "column": 0,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.dashboard",
+      "category": "navigation",
+      "displayName": "Dashboard",
+      "aliases": [
+        "DASHBOARD",
+        "dashboard",
+        "navigation-dashboard"
+      ],
+      "keywords": [
+        "dashboard",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 0,
+      "column": 1,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.back",
+      "category": "navigation",
+      "displayName": "Back",
+      "aliases": [
+        "BACK",
+        "back",
+        "navigation-back"
+      ],
+      "keywords": [
+        "back",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 0,
+      "column": 2,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.forward",
+      "category": "navigation",
+      "displayName": "Forward",
+      "aliases": [
+        "FORWARD",
+        "forward",
+        "navigation-forward"
+      ],
+      "keywords": [
+        "forward",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 0,
+      "column": 3,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.previous",
+      "category": "navigation",
+      "displayName": "Previous",
+      "aliases": [
+        "PREVIOUS",
+        "previous",
+        "navigation-previous"
+      ],
+      "keywords": [
+        "previous",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 0,
+      "column": 4,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.next",
+      "category": "navigation",
+      "displayName": "Next",
+      "aliases": [
+        "NEXT",
+        "next",
+        "navigation-next"
+      ],
+      "keywords": [
+        "next",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 0,
+      "column": 5,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.up",
+      "category": "navigation",
+      "displayName": "Up",
+      "aliases": [
+        "UP",
+        "up",
+        "navigation-up"
+      ],
+      "keywords": [
+        "up",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 0,
+      "column": 6,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.down",
+      "category": "navigation",
+      "displayName": "Down",
+      "aliases": [
+        "DOWN",
+        "down",
+        "navigation-down"
+      ],
+      "keywords": [
+        "down",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 0,
+      "column": 7,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.expand",
+      "category": "navigation",
+      "displayName": "Expand",
+      "aliases": [
+        "EXPAND",
+        "expand",
+        "navigation-expand"
+      ],
+      "keywords": [
+        "expand",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 0,
+      "column": 8,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.collapse",
+      "category": "navigation",
+      "displayName": "Collapse",
+      "aliases": [
+        "COLLAPSE",
+        "collapse",
+        "navigation-collapse"
+      ],
+      "keywords": [
+        "collapse",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 0,
+      "column": 9,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.fullscreen",
+      "category": "navigation",
+      "displayName": "Fullscreen",
+      "aliases": [
+        "FULLSCREEN",
+        "fullscreen",
+        "navigation-fullscreen"
+      ],
+      "keywords": [
+        "fullscreen",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 1,
+      "column": 0,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.exitFullscreen",
+      "category": "navigation",
+      "displayName": "Exit Fullscreen",
+      "aliases": [
+        "EXIT FULLSCREEN",
+        "exitFullscreen",
+        "navigation-exitFullscreen"
+      ],
+      "keywords": [
+        "exitFullscreen",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 1,
+      "column": 1,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.menu",
+      "category": "navigation",
+      "displayName": "Menu",
+      "aliases": [
+        "MENU",
+        "menu",
+        "navigation-menu"
+      ],
+      "keywords": [
+        "menu",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 1,
+      "column": 2,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.sidebarLeft",
+      "category": "navigation",
+      "displayName": "Sidebar Left",
+      "aliases": [
+        "SIDEBAR LEFT",
+        "sidebarLeft",
+        "navigation-sidebarLeft"
+      ],
+      "keywords": [
+        "sidebarLeft",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 1,
+      "column": 3,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.sidebarRight",
+      "category": "navigation",
+      "displayName": "Sidebar Right",
+      "aliases": [
+        "SIDEBAR RIGHT",
+        "sidebarRight",
+        "navigation-sidebarRight"
+      ],
+      "keywords": [
+        "sidebarRight",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 1,
+      "column": 4,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.topPanel",
+      "category": "navigation",
+      "displayName": "Top Panel",
+      "aliases": [
+        "TOP PANEL",
+        "topPanel",
+        "navigation-topPanel"
+      ],
+      "keywords": [
+        "topPanel",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 1,
+      "column": 5,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.bottomPanel",
+      "category": "navigation",
+      "displayName": "Bottom Panel",
+      "aliases": [
+        "BOTTOM PANEL",
+        "bottomPanel",
+        "navigation-bottomPanel"
+      ],
+      "keywords": [
+        "bottomPanel",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 1,
+      "column": 6,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.commandDock",
+      "category": "navigation",
+      "displayName": "Command Dock",
+      "aliases": [
+        "COMMAND DOCK",
+        "commandDock",
+        "navigation-commandDock"
+      ],
+      "keywords": [
+        "commandDock",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 1,
+      "column": 7,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.workbench",
+      "category": "navigation",
+      "displayName": "Workbench",
+      "aliases": [
+        "WORKBENCH",
+        "workbench",
+        "navigation-workbench"
+      ],
+      "keywords": [
+        "workbench",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 1,
+      "column": 8,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.departmentSwitcher",
+      "category": "navigation",
+      "displayName": "Department Switcher",
+      "aliases": [
+        "DEPARTMENT SWITCHER",
+        "departmentSwitcher",
+        "navigation-departmentSwitcher"
+      ],
+      "keywords": [
+        "departmentSwitcher",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 1,
+      "column": 9,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.search",
+      "category": "navigation",
+      "displayName": "Search",
+      "aliases": [
+        "SEARCH",
+        "search",
+        "navigation-search"
+      ],
+      "keywords": [
+        "search",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 2,
+      "column": 0,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.globalSearch",
+      "category": "navigation",
+      "displayName": "Global Search",
+      "aliases": [
+        "GLOBAL SEARCH",
+        "globalSearch",
+        "navigation-globalSearch"
+      ],
+      "keywords": [
+        "globalSearch",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 2,
+      "column": 1,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.quickSearch",
+      "category": "navigation",
+      "displayName": "Quick Search",
+      "aliases": [
+        "QUICK SEARCH",
+        "quickSearch",
+        "navigation-quickSearch"
+      ],
+      "keywords": [
+        "quickSearch",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 2,
+      "column": 2,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.filter",
+      "category": "navigation",
+      "displayName": "Filter",
+      "aliases": [
+        "FILTER",
+        "filter",
+        "navigation-filter"
+      ],
+      "keywords": [
+        "filter",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 2,
+      "column": 3,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.advancedFilter",
+      "category": "navigation",
+      "displayName": "Advanced Filter",
+      "aliases": [
+        "ADVANCED FILTER",
+        "advancedFilter",
+        "navigation-advancedFilter"
+      ],
+      "keywords": [
+        "advancedFilter",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 2,
+      "column": 4,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.sort",
+      "category": "navigation",
+      "displayName": "Sort",
+      "aliases": [
+        "SORT",
+        "sort",
+        "navigation-sort"
+      ],
+      "keywords": [
+        "sort",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 2,
+      "column": 5,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.refresh",
+      "category": "navigation",
+      "displayName": "Refresh",
+      "aliases": [
+        "REFRESH",
+        "refresh",
+        "navigation-refresh"
+      ],
+      "keywords": [
+        "refresh",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 2,
+      "column": 6,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.sync",
+      "category": "navigation",
+      "displayName": "Sync",
+      "aliases": [
+        "SYNC",
+        "sync",
+        "navigation-sync"
+      ],
+      "keywords": [
+        "sync",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 2,
+      "column": 7,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.history",
+      "category": "navigation",
+      "displayName": "History",
+      "aliases": [
+        "HISTORY",
+        "history",
+        "navigation-history"
+      ],
+      "keywords": [
+        "history",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 2,
+      "column": 8,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.recent",
+      "category": "navigation",
+      "displayName": "Recent",
+      "aliases": [
+        "RECENT",
+        "recent",
+        "navigation-recent"
+      ],
+      "keywords": [
+        "recent",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 2,
+      "column": 9,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.bookmarks",
+      "category": "navigation",
+      "displayName": "Bookmarks",
+      "aliases": [
+        "BOOKMARKS",
+        "bookmarks",
+        "navigation-bookmarks"
+      ],
+      "keywords": [
+        "bookmarks",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 3,
+      "column": 0,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.favorite",
+      "category": "navigation",
+      "displayName": "Favorite",
+      "aliases": [
+        "FAVORITE",
+        "favorite",
+        "navigation-favorite"
+      ],
+      "keywords": [
+        "favorite",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 3,
+      "column": 1,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.pin",
+      "category": "navigation",
+      "displayName": "Pin",
+      "aliases": [
+        "PIN",
+        "pin",
+        "navigation-pin"
+      ],
+      "keywords": [
+        "pin",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 3,
+      "column": 2,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.unpin",
+      "category": "navigation",
+      "displayName": "Unpin",
+      "aliases": [
+        "UNPIN",
+        "unpin",
+        "navigation-unpin"
+      ],
+      "keywords": [
+        "unpin",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 3,
+      "column": 3,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.location",
+      "category": "navigation",
+      "displayName": "Location",
+      "aliases": [
+        "LOCATION",
+        "location",
+        "navigation-location"
+      ],
+      "keywords": [
+        "location",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 3,
+      "column": 4,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.breadcrumb",
+      "category": "navigation",
+      "displayName": "Breadcrumb",
+      "aliases": [
+        "BREADCRUMB",
+        "breadcrumb",
+        "navigation-breadcrumb"
+      ],
+      "keywords": [
+        "breadcrumb",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 3,
+      "column": 5,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.map",
+      "category": "navigation",
+      "displayName": "Map",
+      "aliases": [
+        "MAP",
+        "map",
+        "navigation-map"
+      ],
+      "keywords": [
+        "map",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 3,
+      "column": 6,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.compass",
+      "category": "navigation",
+      "displayName": "Compass",
+      "aliases": [
+        "COMPASS",
+        "compass",
+        "navigation-compass"
+      ],
+      "keywords": [
+        "compass",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 3,
+      "column": 7,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.target",
+      "category": "navigation",
+      "displayName": "Target",
+      "aliases": [
+        "TARGET",
+        "target",
+        "navigation-target"
+      ],
+      "keywords": [
+        "target",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 3,
+      "column": 8,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.focus",
+      "category": "navigation",
+      "displayName": "Focus",
+      "aliases": [
+        "FOCUS",
+        "focus",
+        "navigation-focus"
+      ],
+      "keywords": [
+        "focus",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 3,
+      "column": 9,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.centerView",
+      "category": "navigation",
+      "displayName": "Center View",
+      "aliases": [
+        "CENTER VIEW",
+        "centerView",
+        "navigation-centerView"
+      ],
+      "keywords": [
+        "centerView",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 4,
+      "column": 0,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.fitView",
+      "category": "navigation",
+      "displayName": "Fit View",
+      "aliases": [
+        "FIT VIEW",
+        "fitView",
+        "navigation-fitView"
+      ],
+      "keywords": [
+        "fitView",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 4,
+      "column": 1,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.zoomIn",
+      "category": "navigation",
+      "displayName": "Zoom In",
+      "aliases": [
+        "ZOOM IN",
+        "zoomIn",
+        "navigation-zoomIn"
+      ],
+      "keywords": [
+        "zoomIn",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 4,
+      "column": 2,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.zoomOut",
+      "category": "navigation",
+      "displayName": "Zoom Out",
+      "aliases": [
+        "ZOOM OUT",
+        "zoomOut",
+        "navigation-zoomOut"
+      ],
+      "keywords": [
+        "zoomOut",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 4,
+      "column": 3,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.pan",
+      "category": "navigation",
+      "displayName": "Pan",
+      "aliases": [
+        "PAN",
+        "pan",
+        "navigation-pan"
+      ],
+      "keywords": [
+        "pan",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 4,
+      "column": 4,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.orbit",
+      "category": "navigation",
+      "displayName": "Orbit",
+      "aliases": [
+        "ORBIT",
+        "orbit",
+        "navigation-orbit"
+      ],
+      "keywords": [
+        "orbit",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 4,
+      "column": 5,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.perspective",
+      "category": "navigation",
+      "displayName": "Perspective",
+      "aliases": [
+        "PERSPECTIVE",
+        "perspective",
+        "navigation-perspective"
+      ],
+      "keywords": [
+        "perspective",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 4,
+      "column": 6,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.grid",
+      "category": "navigation",
+      "displayName": "Grid",
+      "aliases": [
+        "GRID",
+        "grid",
+        "navigation-grid"
+      ],
+      "keywords": [
+        "grid",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 4,
+      "column": 7,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.list",
+      "category": "navigation",
+      "displayName": "List",
+      "aliases": [
+        "LIST",
+        "list",
+        "navigation-list"
+      ],
+      "keywords": [
+        "list",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 4,
+      "column": 8,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.cards",
+      "category": "navigation",
+      "displayName": "Cards",
+      "aliases": [
+        "CARDS",
+        "cards",
+        "navigation-cards"
+      ],
+      "keywords": [
+        "cards",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 4,
+      "column": 9,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.columns",
+      "category": "navigation",
+      "displayName": "Columns",
+      "aliases": [
+        "COLUMNS",
+        "columns",
+        "navigation-columns"
+      ],
+      "keywords": [
+        "columns",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 5,
+      "column": 0,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.treeView",
+      "category": "navigation",
+      "displayName": "Tree View",
+      "aliases": [
+        "TREE VIEW",
+        "treeView",
+        "navigation-treeView"
+      ],
+      "keywords": [
+        "treeView",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 5,
+      "column": 1,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.timeline",
+      "category": "navigation",
+      "displayName": "Timeline",
+      "aliases": [
+        "TIMELINE",
+        "timeline",
+        "navigation-timeline"
+      ],
+      "keywords": [
+        "timeline",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 5,
+      "column": 2,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.gallery",
+      "category": "navigation",
+      "displayName": "Gallery",
+      "aliases": [
+        "GALLERY",
+        "gallery",
+        "navigation-gallery"
+      ],
+      "keywords": [
+        "gallery",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 5,
+      "column": 3,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.splitView",
+      "category": "navigation",
+      "displayName": "Split View",
+      "aliases": [
+        "SPLIT VIEW",
+        "splitView",
+        "navigation-splitView"
+      ],
+      "keywords": [
+        "splitView",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 5,
+      "column": 4,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.tabs",
+      "category": "navigation",
+      "displayName": "Tabs",
+      "aliases": [
+        "TABS",
+        "tabs",
+        "navigation-tabs"
+      ],
+      "keywords": [
+        "tabs",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 5,
+      "column": 5,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.window",
+      "category": "navigation",
+      "displayName": "Window",
+      "aliases": [
+        "WINDOW",
+        "window",
+        "navigation-window"
+      ],
+      "keywords": [
+        "window",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 5,
+      "column": 6,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.newWindow",
+      "category": "navigation",
+      "displayName": "New Window",
+      "aliases": [
+        "NEW WINDOW",
+        "newWindow",
+        "navigation-newWindow"
+      ],
+      "keywords": [
+        "newWindow",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 5,
+      "column": 7,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.duplicateWindow",
+      "category": "navigation",
+      "displayName": "Duplicate Window",
+      "aliases": [
+        "DUPLICATE WINDOW",
+        "duplicateWindow",
+        "navigation-duplicateWindow"
+      ],
+      "keywords": [
+        "duplicateWindow",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 5,
+      "column": 8,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.close",
+      "category": "navigation",
+      "displayName": "Close",
+      "aliases": [
+        "CLOSE",
+        "close",
+        "navigation-close"
+      ],
+      "keywords": [
+        "close",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 5,
+      "column": 9,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.open",
+      "category": "navigation",
+      "displayName": "Open",
+      "aliases": [
+        "OPEN",
+        "open",
+        "navigation-open"
+      ],
+      "keywords": [
+        "open",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 6,
+      "column": 0,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.openInNew",
+      "category": "navigation",
+      "displayName": "Open In New",
+      "aliases": [
+        "OPEN IN NEW",
+        "openInNew",
+        "navigation-openInNew"
+      ],
+      "keywords": [
+        "openInNew",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 6,
+      "column": 1,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.launch",
+      "category": "navigation",
+      "displayName": "Launch",
+      "aliases": [
+        "LAUNCH",
+        "launch",
+        "navigation-launch"
+      ],
+      "keywords": [
+        "launch",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 6,
+      "column": 2,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.externalLink",
+      "category": "navigation",
+      "displayName": "External Link",
+      "aliases": [
+        "EXTERNAL LINK",
+        "externalLink",
+        "navigation-externalLink"
+      ],
+      "keywords": [
+        "externalLink",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 6,
+      "column": 3,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.share",
+      "category": "navigation",
+      "displayName": "Share",
+      "aliases": [
+        "SHARE",
+        "share",
+        "navigation-share"
+      ],
+      "keywords": [
+        "share",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 6,
+      "column": 4,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.copyLink",
+      "category": "navigation",
+      "displayName": "Copy Link",
+      "aliases": [
+        "COPY LINK",
+        "copyLink",
+        "navigation-copyLink"
+      ],
+      "keywords": [
+        "copyLink",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 6,
+      "column": 5,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.navigateTo",
+      "category": "navigation",
+      "displayName": "Navigate To",
+      "aliases": [
+        "NAVIGATE TO",
+        "navigateTo",
+        "navigation-navigateTo"
+      ],
+      "keywords": [
+        "navigateTo",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 6,
+      "column": 6,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.jump",
+      "category": "navigation",
+      "displayName": "Jump",
+      "aliases": [
+        "JUMP",
+        "jump",
+        "navigation-jump"
+      ],
+      "keywords": [
+        "jump",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 6,
+      "column": 7,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.navReturn",
+      "category": "navigation",
+      "displayName": "Return",
+      "aliases": [
+        "RETURN",
+        "navReturn",
+        "navigation-navReturn"
+      ],
+      "keywords": [
+        "navReturn",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 6,
+      "column": 8,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.anchor",
+      "category": "navigation",
+      "displayName": "Anchor",
+      "aliases": [
+        "ANCHOR",
+        "anchor",
+        "navigation-anchor"
+      ],
+      "keywords": [
+        "anchor",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 6,
+      "column": 9,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.bookmarkPosition",
+      "category": "navigation",
+      "displayName": "Bookmark Position",
+      "aliases": [
+        "BOOKMARK POSITION",
+        "bookmarkPosition",
+        "navigation-bookmarkPosition"
+      ],
+      "keywords": [
+        "bookmarkPosition",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 7,
+      "column": 0,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.notification",
+      "category": "navigation",
+      "displayName": "Notification",
+      "aliases": [
+        "NOTIFICATION",
+        "notification",
+        "navigation-notification"
+      ],
+      "keywords": [
+        "notification",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 7,
+      "column": 1,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.alerts",
+      "category": "navigation",
+      "displayName": "Alerts",
+      "aliases": [
+        "ALERTS",
+        "alerts",
+        "navigation-alerts"
+      ],
+      "keywords": [
+        "alerts",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 7,
+      "column": 2,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.help",
+      "category": "navigation",
+      "displayName": "Help",
+      "aliases": [
+        "HELP",
+        "help",
+        "navigation-help"
+      ],
+      "keywords": [
+        "help",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 7,
+      "column": 3,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.information",
+      "category": "navigation",
+      "displayName": "Information",
+      "aliases": [
+        "INFORMATION",
+        "information",
+        "navigation-information"
+      ],
+      "keywords": [
+        "information",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 7,
+      "column": 4,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.settings",
+      "category": "navigation",
+      "displayName": "Settings",
+      "aliases": [
+        "SETTINGS",
+        "settings",
+        "navigation-settings"
+      ],
+      "keywords": [
+        "settings",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 7,
+      "column": 5,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.user",
+      "category": "navigation",
+      "displayName": "User",
+      "aliases": [
+        "USER",
+        "user",
+        "navigation-user"
+      ],
+      "keywords": [
+        "user",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 7,
+      "column": 6,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.profile",
+      "category": "navigation",
+      "displayName": "Profile",
+      "aliases": [
+        "PROFILE",
+        "profile",
+        "navigation-profile"
+      ],
+      "keywords": [
+        "profile",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 7,
+      "column": 7,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.logout",
+      "category": "navigation",
+      "displayName": "Logout",
+      "aliases": [
+        "LOGOUT",
+        "logout",
+        "navigation-logout"
+      ],
+      "keywords": [
+        "logout",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 7,
+      "column": 8,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.login",
+      "category": "navigation",
+      "displayName": "Login",
+      "aliases": [
+        "LOGIN",
+        "login",
+        "navigation-login"
+      ],
+      "keywords": [
+        "login",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 7,
+      "column": 9,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.lock",
+      "category": "navigation",
+      "displayName": "Lock",
+      "aliases": [
+        "LOCK",
+        "lock",
+        "navigation-lock"
+      ],
+      "keywords": [
+        "lock",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 8,
+      "column": 0,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.unlock",
+      "category": "navigation",
+      "displayName": "Unlock",
+      "aliases": [
+        "UNLOCK",
+        "unlock",
+        "navigation-unlock"
+      ],
+      "keywords": [
+        "unlock",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 8,
+      "column": 1,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.visibilityOn",
+      "category": "navigation",
+      "displayName": "Visibility On",
+      "aliases": [
+        "VISIBILITY ON",
+        "visibilityOn",
+        "navigation-visibilityOn"
+      ],
+      "keywords": [
+        "visibilityOn",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 8,
+      "column": 2,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.visibilityOff",
+      "category": "navigation",
+      "displayName": "Visibility Off",
+      "aliases": [
+        "VISIBILITY OFF",
+        "visibilityOff",
+        "navigation-visibilityOff"
+      ],
+      "keywords": [
+        "visibilityOff",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 8,
+      "column": 3,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.chevronLeft",
+      "category": "navigation",
+      "displayName": "Chevron Left",
+      "aliases": [
+        "CHEVRON LEFT",
+        "chevronLeft",
+        "navigation-chevronLeft"
+      ],
+      "keywords": [
+        "chevronLeft",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 8,
+      "column": 4,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.chevronRight",
+      "category": "navigation",
+      "displayName": "Chevron Right",
+      "aliases": [
+        "CHEVRON RIGHT",
+        "chevronRight",
+        "navigation-chevronRight"
+      ],
+      "keywords": [
+        "chevronRight",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 8,
+      "column": 5,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.chevronUp",
+      "category": "navigation",
+      "displayName": "Chevron Up",
+      "aliases": [
+        "CHEVRON UP",
+        "chevronUp",
+        "navigation-chevronUp"
+      ],
+      "keywords": [
+        "chevronUp",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 8,
+      "column": 6,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.chevronDown",
+      "category": "navigation",
+      "displayName": "Chevron Down",
+      "aliases": [
+        "CHEVRON DOWN",
+        "chevronDown",
+        "navigation-chevronDown"
+      ],
+      "keywords": [
+        "chevronDown",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 8,
+      "column": 7,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.plus",
+      "category": "navigation",
+      "displayName": "Plus",
+      "aliases": [
+        "PLUS",
+        "plus",
+        "navigation-plus"
+      ],
+      "keywords": [
+        "plus",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 8,
+      "column": 8,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.minus",
+      "category": "navigation",
+      "displayName": "Minus",
+      "aliases": [
+        "MINUS",
+        "minus",
+        "navigation-minus"
+      ],
+      "keywords": [
+        "minus",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 8,
+      "column": 9,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.closeX",
+      "category": "navigation",
+      "displayName": "Close X",
+      "aliases": [
+        "CLOSE X",
+        "closeX",
+        "navigation-closeX"
+      ],
+      "keywords": [
+        "closeX",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 9,
+      "column": 0,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.check",
+      "category": "navigation",
+      "displayName": "Check",
+      "aliases": [
+        "CHECK",
+        "check",
+        "navigation-check"
+      ],
+      "keywords": [
+        "check",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 9,
+      "column": 1,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    },
+    {
+      "id": "navigation.warning",
+      "category": "navigation",
+      "displayName": "Warning",
+      "aliases": [
+        "WARNING",
+        "warning",
+        "navigation-warning"
+      ],
+      "keywords": [
+        "warning",
+        "navigation",
+        "sprint-02"
+      ],
+      "certification": "draft",
+      "version": "v1",
+      "status": "draft",
+      "row": 9,
+      "column": 2,
+      "pngPath": null,
+      "masterSheetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+      "stateSupport": "pending",
+      "themeSupport": "pending"
+    }
+  ]
+}

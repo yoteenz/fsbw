@@ -109,3 +109,19 @@ export type {
   StudioWorldIconManifest,
   StudioWorldIconDiagnosticReport,
 } from '../../../studio-os-core/studio-world-icon-system';
+
+export {
+  NAVIGATION_MASTER_ICON_REGISTRY,
+  NAVIGATION_MASTER_ICON_NAMES,
+  NAVIGATION_MASTER_ICON_GRID,
+} from './navigation-master/navigation-master-icon-registry';
+export type { NavigationMasterIconName } from './navigation-master/navigation-master-icon-registry';
+export {
+  NAVIGATION_MASTER_ICON_SOURCES,
+  NAVIGATION_MASTER_SHEET_DIMENSIONS,
+} from './navigation-master/navigation-master-icon-source-manifest';
+export {
+  listNavigationMasterDraftIconDefinitions,
+  getNavigationMasterDraftPlaceholdersArtifact,
+  NAVIGATION_MASTER_DRAFT_PREFIX,
+} from './navigation-master/navigation-master-icon-draft-bridge';

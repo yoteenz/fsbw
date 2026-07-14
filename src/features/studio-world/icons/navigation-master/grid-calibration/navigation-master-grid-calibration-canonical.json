@@ -1,0 +1,23 @@
+{
+  "sourceAssetPath": "src/assets/studio-world/navigation/icons/source/studio-world-navigation-master-sheet.png",
+  "sourceWidth": 10240,
+  "sourceHeight": 10240,
+  "rowCount": 10,
+  "columnCount": 10,
+  "outerLeft": 0,
+  "outerRight": 0,
+  "outerTop": 0,
+  "outerBottom": 0,
+  "rowBoundaries": [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1],
+  "columnBoundaries": [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1],
+  "rowOffsets": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  "columnOffsets": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  "rowPadding": [],
+  "columnPadding": [],
+  "cellOverrides": [],
+  "calibrationVersion": "studio-world-navigation-grid-calibration-v1",
+  "updatedAt": "2026-07-14T00:00:00.000Z",
+  "updatedBy": "sprint-02-navigation-master-foundation",
+  "canonical": false,
+  "notes": "Equal 10×10 default grid for Navigation master sheet. Founder calibrates in Calibration Editor before production slice."
+}
