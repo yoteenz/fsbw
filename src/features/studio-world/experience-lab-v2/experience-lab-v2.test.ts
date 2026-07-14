@@ -177,6 +177,8 @@ describe('Experience Lab V2 — Fixed application shell', () => {
     expect(css).toMatch(/\.elab-approval-bridge--monument \.elab-approval-bridge__primary[\s\S]*?font-weight:\s*500/);
     expect(css).toMatch(/\.elab-approval-bridge--monument \.elab-approval-bridge__primary[\s\S]*?border:\s*1px solid rgba\(197,\s*160,\s*89/);
     expect(css).toMatch(/\.elab-approval-bridge--monument \.elab-approval-bridge__primary[\s\S]*?border-radius:\s*8px/);
+    expect(css).toMatch(/\.elab-approval-bridge--monument \.elab-approval-bridge__locks[\s\S]*?color:\s*var\(--elab-gold\)/);
+    expect(css).toMatch(/\.elab-founder-wb__title[\s\S]*?color:\s*var\(--elab-gold\)/);
     expect(css).toMatch(/\.elab-approval-bridge--monument \.elab-approval-bridge__blocker-chip[\s\S]*?display:\s*none/);
   });
 

@@ -2621,6 +2621,7 @@ button.elab-cmd__meta-chip {
   font-size: inherit;
   font-weight: 500;
   letter-spacing: 0.08em;
+  color: var(--elab-gold);
 }
 
 .elab-approval-bridge__copy {
@@ -2633,6 +2634,7 @@ button.elab-cmd__meta-chip {
   gap: 4px;
   text-align: center;
   max-width: calc(100% - 28px);
+  color: var(--elab-gold);
 }
 
 .elab-approval-bridge__glow {
@@ -2666,7 +2668,7 @@ button.elab-cmd__meta-chip {
   margin: 0;
   font-size: 6px;
   font-weight: 600;
-  color: var(--elab-muted);
+  color: var(--elab-gold);
   letter-spacing: 0.06em;
   text-align: center;
   white-space: nowrap;
