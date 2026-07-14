@@ -57,6 +57,16 @@
     + (var(--elab-dv-count) - 1) * var(--elab-hud-chip-gap)
     + 2 * (var(--elab-hud-chip-pad-x) + 2px)
   );
+  /* Architectural perspective HUD — suspended in room (visual only) */
+  --elab-arch-perspective: 1800px;
+  --elab-arch-depth: 90px;
+  --elab-arch-depth-hover: 108px;
+  --elab-arch-rotate-y-left: 10deg;
+  --elab-arch-rotate-y-right: -10deg;
+  --elab-arch-rotate-x: -1deg;
+  --elab-arch-duration: 260ms;
+  --elab-parallax-x: 0px;
+  --elab-parallax-y: 0px;
   color: var(--elab-text);
   font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
   position: relative;
@@ -1122,6 +1132,8 @@ button.elab-cmd__meta-chip {
   --elab-hud-safe-top: var(--elab-hud-inset-top);
   --elab-hud-safe-side: var(--elab-hud-inset-side);
   --elab-hud-safe-bottom: 10%;
+  --elab-parallax-x: 0px;
+  --elab-parallax-y: 0px;
   position: relative;
   z-index: 2;
   flex: 1;
@@ -1134,6 +1146,10 @@ button.elab-cmd__meta-chip {
   border-radius: 0;
   overflow: hidden;
   box-shadow: none;
+}
+
+.elab-viewport[data-elab-arch-perspective] {
+  perspective: var(--elab-arch-perspective);
 }
 
 .elab-viewport--fullscreen {
@@ -1165,6 +1181,186 @@ button.elab-cmd__meta-chip {
     calc(var(--elab-hud-safe-bottom) + 8px)
     var(--elab-hud-safe-side);
   pointer-events: none;
+}
+
+/* ── Architectural perspective HUD panels (3D room suspension, visual only) ── */
+.elab-arch-panel {
+  --elab-arch-depth-active: var(--elab-arch-depth);
+  --elab-arch-rotate-y-active: 0deg;
+  --elab-arch-brightness: 1;
+  --elab-arch-glass-angle: 180deg;
+  --elab-arch-glass-opacity: 0.82;
+  --elab-arch-scene-shadow: 0 10px 32px rgba(0, 0, 0, 0.18);
+  --elab-arch-rim-inset-x: 0px;
+  position: relative;
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  will-change: transform;
+  transform:
+    translate3d(var(--elab-parallax-x), var(--elab-parallax-y), var(--elab-arch-depth-active))
+    rotateX(var(--elab-arch-rotate-x))
+    rotateY(var(--elab-arch-rotate-y-active));
+  filter: brightness(var(--elab-arch-brightness));
+  transition:
+    transform var(--elab-arch-duration) var(--elab-hud-ease),
+    opacity var(--elab-arch-duration) var(--elab-hud-ease),
+    filter var(--elab-arch-duration) var(--elab-hud-ease),
+    box-shadow var(--elab-hud-duration) var(--elab-hud-ease);
+}
+
+.elab-arch-panel--left {
+  --elab-arch-rotate-y-active: var(--elab-arch-rotate-y-left);
+  --elab-arch-brightness: 1.03;
+  --elab-arch-glass-angle: 148deg;
+  --elab-arch-scene-shadow: 4px 14px 34px rgba(0, 0, 0, 0.22);
+  --elab-arch-rim-inset-x: 3px;
+  transform-origin: left center;
+}
+
+.elab-arch-panel--right {
+  --elab-arch-rotate-y-active: var(--elab-arch-rotate-y-right);
+  --elab-arch-brightness: 1.03;
+  --elab-arch-glass-angle: 212deg;
+  --elab-arch-scene-shadow: -4px 14px 34px rgba(0, 0, 0, 0.22);
+  --elab-arch-rim-inset-x: -3px;
+  transform-origin: right center;
+}
+
+.elab-arch-panel--center {
+  --elab-arch-rotate-y-active: 0deg;
+  --elab-arch-brightness: 1.01;
+  --elab-arch-glass-angle: 180deg;
+  --elab-arch-scene-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+  transform-origin: center center;
+}
+
+.elab-arch-panel::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 1;
+  background: linear-gradient(
+    var(--elab-arch-glass-angle),
+    rgba(255, 248, 232, 0.16) 0%,
+    rgba(255, 255, 255, 0.05) 30%,
+    transparent 54%
+  );
+  opacity: var(--elab-arch-glass-opacity);
+  transition: opacity var(--elab-arch-duration) var(--elab-hud-ease);
+}
+
+.elab-arch-panel::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 2;
+  box-shadow:
+    inset var(--elab-arch-rim-inset-x) 0 14px rgba(197, 160, 89, 0.1),
+    inset 0 0 0 1px rgba(197, 160, 89, 0.2);
+  opacity: 0.88;
+}
+
+.elab-arch-panel.elab-viewport__blueprint-card,
+.elab-arch-panel.elab-viewport__context-card,
+.elab-arch-panel.elab-viewport__focus-ctrl {
+  box-shadow:
+    var(--elab-arch-scene-shadow),
+    var(--elab-hud-shadow-stack),
+    inset 0 1px 0 var(--elab-hud-edge-top);
+}
+
+.elab-viewport__angles-chrome.elab-arch-panel .elab-view-angles--chrome {
+  position: relative;
+  box-shadow:
+    var(--elab-arch-scene-shadow),
+    var(--elab-hud-shadow-stack),
+    inset 0 1px 0 var(--elab-hud-edge-top);
+}
+
+.elab-viewport__angles-chrome.elab-arch-panel .elab-view-angles--chrome::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 1;
+  background: linear-gradient(
+    var(--elab-arch-glass-angle),
+    rgba(255, 248, 232, 0.14) 0%,
+    rgba(255, 255, 255, 0.04) 32%,
+    transparent 56%
+  );
+  opacity: var(--elab-arch-glass-opacity);
+}
+
+.elab-viewport__angles-chrome.elab-arch-panel .elab-view-angles--chrome::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 2;
+  box-shadow:
+    inset 0 0 14px rgba(197, 160, 89, 0.06),
+    inset 0 0 0 1px rgba(197, 160, 89, 0.18);
+  opacity: 0.85;
+}
+
+.elab-viewport__blueprint-card.elab-arch-panel:hover,
+.elab-viewport__focus-ctrl.elab-arch-panel:hover {
+  --elab-arch-depth-active: var(--elab-arch-depth-hover);
+  --elab-arch-brightness: 1.06;
+  --elab-arch-glass-opacity: 0.95;
+  box-shadow:
+    var(--elab-arch-scene-shadow),
+    var(--elab-hud-shadow-hover),
+    inset 0 1px 0 rgba(255, 248, 232, 0.2);
+}
+
+.elab-arch-panel--enter.elab-arch-panel--right {
+  animation: elabArchEnterRight var(--elab-arch-duration) var(--elab-hud-ease) both;
+}
+
+.elab-arch-panel--enter.elab-arch-panel--left {
+  animation: elabArchEnterLeft var(--elab-arch-duration) var(--elab-hud-ease) both;
+}
+
+@keyframes elabArchEnterLeft {
+  from {
+    opacity: 0;
+    transform:
+      translate3d(var(--elab-parallax-x), var(--elab-parallax-y), calc(var(--elab-arch-depth) - 48px))
+      rotateX(var(--elab-arch-rotate-x))
+      rotateY(14deg);
+  }
+  to {
+    opacity: 1;
+    transform:
+      translate3d(var(--elab-parallax-x), var(--elab-parallax-y), var(--elab-arch-depth))
+      rotateX(var(--elab-arch-rotate-x))
+      rotateY(var(--elab-arch-rotate-y-left));
+  }
+}
+
+@keyframes elabArchEnterRight {
+  from {
+    opacity: 0;
+    transform:
+      translate3d(var(--elab-parallax-x), var(--elab-parallax-y), calc(var(--elab-arch-depth) - 48px))
+      rotateX(var(--elab-arch-rotate-x))
+      rotateY(-14deg);
+  }
+  to {
+    opacity: 1;
+    transform:
+      translate3d(var(--elab-parallax-x), var(--elab-parallax-y), var(--elab-arch-depth))
+      rotateX(var(--elab-arch-rotate-x))
+      rotateY(var(--elab-arch-rotate-y-right));
+  }
 }
 
 .elab-viewport__blueprint-card {
@@ -1406,17 +1602,18 @@ button.elab-cmd__meta-chip {
   to { opacity: 1; transform: translateY(0); }
 }
 
-.elab-viewport__blueprint-card::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  pointer-events: none;
-  background: linear-gradient(180deg, rgba(255, 248, 232, 0.14) 0%, transparent 28%);
-  opacity: 0.85;
+.elab-viewport__blueprint-card.elab-arch-panel::before {
+  background:
+    linear-gradient(180deg, rgba(255, 248, 232, 0.14) 0%, transparent 28%),
+    linear-gradient(
+      var(--elab-arch-glass-angle),
+      rgba(255, 248, 232, 0.16) 0%,
+      rgba(255, 255, 255, 0.05) 30%,
+      transparent 54%
+    );
 }
 
-.elab-viewport__blueprint-card:hover {
+.elab-viewport__blueprint-card:hover:not(.elab-arch-panel) {
   transform: translateY(var(--elab-hud-lift)) scale(var(--elab-hud-scale-hover));
   box-shadow: var(--elab-hud-shadow-hover), inset 0 1px 0 rgba(255, 248, 232, 0.2);
 }
@@ -1446,7 +1643,7 @@ button.elab-cmd__meta-chip {
     border-color var(--elab-hud-duration) var(--elab-hud-ease);
 }
 
-.elab-viewport__focus-ctrl:hover {
+.elab-viewport__focus-ctrl:hover:not(.elab-arch-panel) {
   transform: translateY(var(--elab-hud-lift)) scale(var(--elab-hud-scale-hover));
   box-shadow: var(--elab-hud-shadow-hover), inset 0 1px 0 var(--elab-hud-edge-top);
 }
@@ -3298,6 +3495,7 @@ button.elab-cmd__meta-chip {
   .elab-float,
   .elab-hud-glass,
   .elab-viewport__blueprint-card,
+  .elab-arch-panel,
   .elab-viewport__ctrl,
   .elab-viewport__mode-seg,
   .elab-inspector-switcher__trigger,
@@ -3312,6 +3510,14 @@ button.elab-cmd__meta-chip {
   .elab-view-angles__thumb:hover,
   .elab-design-variants__thumb:hover { transform: none; }
   .elab-viewport__focus-ctrl:hover { transform: none; }
+  .elab-arch-panel,
+  .elab-arch-panel::before,
+  .elab-arch-panel::after {
+    animation: none !important;
+    transform: none !important;
+    filter: none !important;
+  }
+  .elab-viewport[data-elab-arch-perspective] { perspective: none; }
   .elab-blueprint-card__pulse { animation: none; }
   .elab-context-card__body--swap { animation: none; }
   .elab-approval-bridge--monument .elab-approval-bridge__primary:hover:not(:disabled) { transform: none; }

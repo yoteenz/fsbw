@@ -432,9 +432,35 @@ describe('Experience Lab V2 — Panel orchestration', () => {
     expect(ELAB_V2_COMPOSITION.contextualHud).toBe('data-elab-viewport-contextual-hud');
     expect(ELAB_V2_COMPOSITION.blueprintCard).toBe('data-elab-blueprint-card');
     expect(ELAB_V2_COMPOSITION.dynamicContextCard).toBe('data-elab-dynamic-context-card');
+    expect(ELAB_V2_COMPOSITION.archPerspective).toBe('data-elab-arch-perspective');
     expect(ELAB_V2_COMPOSITION.workstationFrame).toBe('data-elab-workstation-frame');
     expect(ELAB_V2_COMPOSITION.componentReviewChrome).toBe('data-elab-component-review-chrome');
     expect(readV2Source('experience-lab-v2-panel-orchestrator.ts')).toContain('PANEL_LAYOUT_STORAGE_KEY');
+  });
+
+  it('viewport HUD panels use architectural perspective transforms and parallax hook', () => {
+    const viewport = readV2Source('StudioViewport.tsx');
+    const blueprint = readV2Source('ExperienceLabBlueprintCard.tsx');
+    const context = readV2Source('ExperienceLabDynamicContextCard.tsx');
+    const parallax = readV2Source('useExperienceLabHudParallax.ts');
+    const css = readV2Source('experience-lab-v2.css');
+    expect(viewport).toContain('useExperienceLabHudParallax');
+    expect(viewport).toContain('ELAB_V2_COMPOSITION.archPerspective');
+    expect(viewport).toContain('elab-arch-panel elab-arch-panel--right');
+    expect(viewport).toContain('elab-arch-panel elab-arch-panel--center');
+    expect(blueprint).toContain('elab-arch-panel elab-arch-panel--left');
+    expect(context).toContain('elab-arch-panel elab-arch-panel--right elab-arch-panel--enter');
+    expect(parallax).toContain('--elab-parallax-x');
+    expect(parallax).toContain('MAX_PARALLAX_PX = 6');
+    expect(css).toContain('--elab-arch-perspective: 1800px');
+    expect(css).toContain('perspective: var(--elab-arch-perspective)');
+    expect(css).toContain('transform-style: preserve-3d');
+    expect(css).toContain('.elab-arch-panel--left');
+    expect(css).toContain('rotateY(var(--elab-arch-rotate-y-left))');
+    expect(css).toContain('rotateY(var(--elab-arch-rotate-y-right))');
+    expect(css).toContain('@keyframes elabArchEnterRight');
+    expect(css).toContain('will-change: transform');
+    expect(css).toContain('translate3d(var(--elab-parallax-x)');
   });
 });
 

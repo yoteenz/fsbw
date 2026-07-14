@@ -49627,3 +49627,31 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 **Follow-up (founder review console):** Panel height −25% (`--elab-frc-panel-min-h` 74→56px, media/chart 36→27px); title `font-weight` 800→500, `white-space: nowrap` single-line headers.
 
+---
+
+## 2026-07-14 — Experience Lab V2 Architectural Perspective Panels (full conversation)
+
+**Founder sprint:** Convert floating viewport HUD panels from flat UI overlays into architectural HUD panels suspended in 3D room space. CSS-only perspective pass — no card redesign, no content/position/spacing/sizing changes.
+
+**Panels treated:** Blueprint Card (left), Dynamic Context Card (right), Focus control (right), Design Variants / view-angles chrome (center).
+
+**3D treatment:**
+- Left: `rotateY(10deg) rotateX(-1deg)`, `transform-origin: left center`
+- Right: `rotateY(-10deg) rotateX(-1deg)`, `transform-origin: right center`
+- Center: `rotateX(-1deg)` only
+- `perspective: 1800px` on viewport root; `translateZ` depth ~90px (visual only)
+- Soft parallax 2–6px via `--elab-parallax-x/y` from pointer (desktop) or device orientation (mobile)
+- Gold rim light (`::after`), angle-dependent glass reflection (`::before`), ambient scene shadow
+- Enter animation 260ms: `translateZ`, fade, `rotateY` slide-in for context card
+- GPU-only transforms; `prefers-reduced-motion` flattens 3D
+
+**Shipped:**
+- **`useExperienceLabHudParallax.ts`** (new) — sets parallax CSS vars on viewport element
+- **`StudioViewport.tsx`** — parallax + `data-elab-arch-perspective` on viewport section; arch classes on focus + angles chrome
+- **`ExperienceLabBlueprintCard.tsx`**, **`ExperienceLabDynamicContextCard.tsx`** — `elab-arch-panel` modifiers
+- **`experience-lab-v2.css`** — arch tokens, `.elab-arch-panel` system, hover migrated from `translateY/scale` to Z-depth + brightness
+- **`experience-lab-v2-composition.ts`** — `archPerspective` marker
+- **`experience-lab-v2.test.ts`** — arch perspective + parallax assertions (52 tests PASS); build PASS
+
+**Spatial review:** SKIPPED — CSS-only 3D rendering pass, no new surfaces or nav.
+

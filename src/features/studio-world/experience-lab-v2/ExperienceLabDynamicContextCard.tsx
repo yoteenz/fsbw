@@ -132,7 +132,7 @@ export function ExperienceLabDynamicContextCard({
 
   return (
     <div
-      className="elab-viewport__context-card elab-context-card"
+      className="elab-viewport__context-card elab-context-card elab-arch-panel elab-arch-panel--right elab-arch-panel--enter"
       {...{ [ELAB_V2_COMPOSITION.dynamicContextCard]: '' }}
       aria-label={`${title} context`}
     >

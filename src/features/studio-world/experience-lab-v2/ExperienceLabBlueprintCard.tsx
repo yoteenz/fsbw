@@ -33,7 +33,7 @@ export function ExperienceLabBlueprintCard({
 
   return (
     <div
-      className="elab-viewport__blueprint-card elab-blueprint-card"
+      className="elab-viewport__blueprint-card elab-blueprint-card elab-arch-panel elab-arch-panel--left"
       {...{ [ELAB_V2_COMPOSITION.blueprintCard]: '' }}
       aria-label="Blueprint card"
     >

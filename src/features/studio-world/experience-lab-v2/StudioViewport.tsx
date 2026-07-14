@@ -1,9 +1,11 @@
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import type { EnvironmentPackageOutputStatus } from '../../../studio-os-core/environment-asset-package/EnvironmentPackageOutputs';
 import type { ExperienceLabV2ArtifactRef, StudioViewportMode } from './experience-lab-v2.types';
 import { ExperienceLabEnvironmentLayer } from './ExperienceLabEnvironmentLayer';
 import { ExperienceLabIcon } from '../icons/ExperienceLabIcon';
 import { ExperienceLabBlueprintCard } from './ExperienceLabBlueprintCard';
+import { ELAB_V2_COMPOSITION } from './experience-lab-v2-composition';
+import { useExperienceLabHudParallax } from './useExperienceLabHudParallax';
 
 export type StudioViewportProps = {
   mode: StudioViewportMode;
@@ -144,8 +146,17 @@ export function StudioViewport({
 
   const rootClass = `elab-viewport${embedded ? ' elab-viewport--embedded' : ''}${focusActive ? ' elab-viewport--focus-active' : ''}`;
 
+  const [viewportEl, setViewportEl] = useState<HTMLElement | null>(null);
+  useExperienceLabHudParallax(viewportEl);
+
   return (
-    <section className={rootClass} data-studio-viewport data-mode={mode}>
+    <section
+      ref={setViewportEl}
+      className={rootClass}
+      data-studio-viewport
+      data-mode={mode}
+      {...{ [ELAB_V2_COMPOSITION.archPerspective]: '' }}
+    >
       <div className="elab-viewport__stage">
         <ExperienceLabEnvironmentLayer scope="viewport" isMobile={isCompact} environmentUrl={environmentUrl} />
 
@@ -166,7 +177,7 @@ export function StudioViewport({
             {onFocusMode ? (
               <button
                 type="button"
-                className="elab-viewport__focus-ctrl"
+                className="elab-viewport__focus-ctrl elab-arch-panel elab-arch-panel--right"
                 onClick={toggleFocus}
                 aria-pressed={focusActive}
                 aria-label={focusActive ? 'Exit focus mode' : 'Enter focus mode'}
@@ -181,7 +192,9 @@ export function StudioViewport({
         <div className="elab-viewport__stage-content">{renderStage()}</div>
       </div>
 
-      {viewAngles ? <div className="elab-viewport__angles-chrome">{viewAngles}</div> : null}
+      {viewAngles ? (
+        <div className="elab-viewport__angles-chrome elab-arch-panel elab-arch-panel--center">{viewAngles}</div>
+      ) : null}
     </section>
   );
 }
