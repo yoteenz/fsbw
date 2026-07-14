@@ -408,8 +408,17 @@ describe('Experience Lab V2 — Viewport environment', () => {
   it('config wires bundled viewport environment asset', () => {
     const config = readV2Source('experience-lab-v2.config.ts');
     expect(config).toContain('experience-lab-v2-viewport-environment.png');
+    expect(config).toContain('experience-lab-v2-viewport-environment-desktop.png');
     expect(config).toContain('mobileEnvironmentUrl: experienceLabV2ViewportEnvironmentUrl');
+    expect(config).toContain('desktopEnvironmentUrl: experienceLabV2ViewportEnvironmentDesktopUrl');
     expect(config).toContain("environmentPosition: 'center center'");
+  });
+
+  it('selects mobile vs desktop environment by compact breakpoint', () => {
+    const viewport = readV2Source('StudioViewport.tsx');
+    const stage = readV2Source('ExperienceLabViewportStage.tsx');
+    expect(viewport).toContain('isMobile={isCompact}');
+    expect(stage).toContain('isCompact={isCompact}');
   });
 
   it('CSS scopes viewport environment with cover/center layering', () => {

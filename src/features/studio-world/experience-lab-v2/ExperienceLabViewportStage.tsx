@@ -143,6 +143,7 @@ export function ExperienceLabViewportStage({
         {showViewport ? (
         <StudioViewport
           embedded
+          isCompact={isCompact}
           mode={viewportMode}
           departmentName={model.departmentName}
           revision={model.revision}

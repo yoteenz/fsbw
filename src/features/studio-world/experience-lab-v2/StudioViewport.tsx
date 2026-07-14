@@ -30,6 +30,8 @@ export type StudioViewportProps = {
   rightRailCollapsed?: boolean;
   onToggleLeftRail?: () => void;
   onToggleRightRail?: () => void;
+  /** Mobile/tablet use 9:16 environment; desktop uses landscape environment. */
+  isCompact?: boolean;
 };
 
 /** Empty artifact states show only the viewport environment — no placeholder graphics. */
@@ -108,6 +110,7 @@ export function StudioViewport({
   rightRailCollapsed,
   onToggleLeftRail,
   onToggleRightRail,
+  isCompact,
 }: StudioViewportProps) {
   const [fullscreen, setFullscreen] = useState(false);
   const toggleFullscreen = useCallback(() => setFullscreen((f) => !f), []);
@@ -223,7 +226,7 @@ export function StudioViewport({
       </div>
 
       <div className="elab-viewport__stage">
-        <ExperienceLabEnvironmentLayer scope="viewport" isMobile />
+        <ExperienceLabEnvironmentLayer scope="viewport" isMobile={isCompact} />
         <div className="elab-viewport__stage-content">{renderStage()}</div>
       </div>
 

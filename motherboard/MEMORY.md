@@ -49281,6 +49281,22 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 **Layer order preserved:** env z0 → scrim z1 → blueprint/render/split/loading overlays z2 → floating inspectors z4 → chrome z4+ → dock/workbench unchanged.
 
-**Spatial Architecture Review:** SKIPPED — visual-only viewport background swap, no new surfaces or nav.
+**One commit + one push** on `master` via `agent-commit.sh`.
+
+---
+
+## 2026-07-14 — Experience Lab V2 desktop viewport environment (follow-up)
+
+**Founder request:** Use founder-supplied desktop-ratio background (`B4CCB797-014F-4689-8E54-C18B406D3219.png`, 1672×941) for **desktop only**; keep existing 9:16 mobile environment (`experience-lab-v2-viewport-environment.png`) unchanged on mobile/tablet.
+
+**Shipped:**
+
+- `src/assets/studio-world/experience-lab/experience-lab-v2-viewport-environment-desktop.png` — landscape desktop environment
+- `experience-lab-v2.config.ts` — `desktopEnvironmentUrl` → desktop asset; `mobileEnvironmentUrl` → unchanged mobile asset
+- `StudioViewport.tsx` — `isCompact` prop drives `isMobile={isCompact}` on environment layer (mobile/tablet → 9:16, desktop → landscape)
+- `ExperienceLabViewportStage.tsx` — passes `isCompact` into `StudioViewport`
+- Test: desktop/mobile environment selection assertion; 42/42 V2 tests pass
+
+**Preserved:** Mobile 9:16 asset and behavior; all UI/layout unchanged.
 
 **One commit + one push** on `master` via `agent-commit.sh`.

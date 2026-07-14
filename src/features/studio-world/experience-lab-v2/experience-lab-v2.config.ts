@@ -1,9 +1,10 @@
 import type { ExperienceLabV2EnvironmentConfig } from './experience-lab-v2.types';
 import experienceLabV2ViewportEnvironmentUrl from '../../../assets/studio-world/experience-lab/experience-lab-v2-viewport-environment.png';
+import experienceLabV2ViewportEnvironmentDesktopUrl from '../../../assets/studio-world/experience-lab/experience-lab-v2-viewport-environment-desktop.png';
 
 /** Canonical Experience Lab environment — decorative only, no baked UI. */
 export const DEFAULT_V2_ENVIRONMENT: ExperienceLabV2EnvironmentConfig = {
-  desktopEnvironmentUrl: experienceLabV2ViewportEnvironmentUrl,
+  desktopEnvironmentUrl: experienceLabV2ViewportEnvironmentDesktopUrl,
   mobileEnvironmentUrl: experienceLabV2ViewportEnvironmentUrl,
   environmentOpacity: 1,
   environmentPosition: 'center center',
