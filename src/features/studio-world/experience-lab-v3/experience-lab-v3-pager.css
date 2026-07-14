@@ -1,0 +1,211 @@
+/**
+ * Experience Lab V3 — viewport pager only.
+ * Shell chrome uses experience-lab-v2.css unchanged.
+ */
+
+.elab-app-shell--v3 .elab-app-shell__viewport-room {
+  overflow: hidden;
+}
+
+.elab-v3-viewport-pager {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.elab-v3-viewport-pager.elab-stage {
+  padding: 0;
+}
+
+.elab-v3-segmented {
+  display: flex;
+  gap: 4px;
+  padding: 6px 8px 4px;
+  flex-shrink: 0;
+  z-index: 6;
+}
+
+.elab-v3-segmented__item {
+  flex: 1;
+  min-width: 0;
+  padding: 6px 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  background: rgba(12, 14, 18, 0.45);
+  backdrop-filter: blur(8px);
+  color: rgba(255, 255, 255, 0.55);
+  font-family: 'Futura PT', system-ui, sans-serif;
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: border-color 240ms cubic-bezier(0.22, 1, 0.36, 1), color 240ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 240ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.elab-v3-segmented__item.is-active {
+  border-color: rgba(126, 184, 255, 0.65);
+  color: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 0 0 1px rgba(126, 184, 255, 0.15);
+}
+
+.elab-v3-viewport-pager__viewport {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  touch-action: pan-y pinch-zoom;
+  cursor: grab;
+}
+
+.elab-v3-viewport-pager__viewport:active {
+  cursor: grabbing;
+}
+
+.elab-v3-viewport-pager__track {
+  display: flex;
+  height: 100%;
+  width: 500%;
+  will-change: transform;
+}
+
+.elab-v3-viewport-pager__page {
+  flex: 0 0 20%;
+  width: 20%;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.elab-v3-viewport-pager__placeholder {
+  height: 100%;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+/* Non-environment workspaces — dense HUD tiles, no page scroll */
+.elab-v3-ws-pane {
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  padding: 8px 10px 10px;
+}
+
+.elab-v3-ws-pane__grid {
+  display: grid;
+  gap: 6px;
+  height: 100%;
+  min-height: 0;
+}
+
+.elab-v3-ws-pane__grid--production {
+  grid-template-columns: 1.1fr 0.9fr 0.8fr;
+  grid-template-rows: auto 1fr;
+}
+
+.elab-v3-ws-pane__grid--review {
+  grid-template-columns: 1fr 1fr 0.8fr;
+  grid-template-rows: 1fr;
+}
+
+.elab-v3-ws-pane__grid--assets {
+  grid-template-columns: 1fr 1.2fr;
+  grid-template-rows: 1fr;
+}
+
+.elab-v3-ws-pane__grid--command {
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.elab-v3-ws-pane__panel,
+.elab-v3-ws-pane__tile {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  background: rgba(12, 14, 18, 0.52);
+  backdrop-filter: blur(8px);
+  padding: 8px;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.elab-v3-ws-pane__panel h3,
+.elab-v3-ws-pane__tile-label {
+  margin: 0 0 6px;
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.elab-v3-ws-pane__tile-value {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.elab-v3-ws-pane__panel ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  overflow: hidden;
+}
+
+.elab-v3-ws-pane__panel button {
+  width: 100%;
+  text-align: left;
+  padding: 4px 6px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.03);
+  color: inherit;
+  font-size: 9px;
+  cursor: pointer;
+}
+
+.elab-v3-ws-pane__panel button.is-active {
+  border-color: rgba(126, 184, 255, 0.55);
+}
+
+.elab-v3-ws-pane__ops-row {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.elab-v3-ws-pane__ops-chip {
+  padding: 3px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.04);
+  font-size: 8px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.elab-v3-ws-pane__ops-chip strong {
+  color: #7eb8ff;
+  margin-left: 4px;
+}
+
+@media (max-width: 900px) {
+  .elab-v3-segmented__item {
+    font-size: 8px;
+    padding: 5px 4px;
+  }
+
+  .elab-v3-ws-pane__grid--production,
+  .elab-v3-ws-pane__grid--review,
+  .elab-v3-ws-pane__grid--assets {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+  }
+
+  .elab-v3-ws-pane__grid--command {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

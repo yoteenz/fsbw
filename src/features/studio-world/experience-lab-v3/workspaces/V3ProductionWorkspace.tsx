@@ -3,64 +3,68 @@ import { ELAB_V3_COMPOSITION } from '../experience-lab-v3-composition';
 
 const QUEUE_COLUMNS = ['generating', 'waiting', 'blocked', 'review', 'completed'] as const;
 
-/** Workspace 02 — unified production mission control. */
+/** Workspace 02 — Zota-inspired production mission control (viewport-contained). */
 export function V3ProductionWorkspace() {
-  const { state, setActiveWorkOrder } = useExperienceLabV3Store();
+  const { state, activeWorkOrder, setActiveWorkOrder } = useExperienceLabV3Store();
 
   return (
     <section
-      className="elab-v3-ws elab-v3-ws--production"
+      className="elab-v3-ws-pane elab-v3-ws-pane--production"
       {...{ [ELAB_V3_COMPOSITION.productionWorkspace]: '' }}
       aria-label="Production workspace"
     >
-      <div className="elab-v3-ws__ops-chips">
-        {QUEUE_COLUMNS.map((col) => {
-          const count = state.workOrders.filter((w) => w.queueColumn === col).length;
-          return (
-            <span key={col} className="elab-v3-ws__ops-chip">
-              {col} <strong>{count}</strong>
-            </span>
-          );
-        })}
-      </div>
+      <div className="elab-v3-ws-pane__grid elab-v3-ws-pane__grid--production">
+        <div className="elab-v3-ws-pane__ops-row">
+          {QUEUE_COLUMNS.map((col) => {
+            const count = state.workOrders.filter((w) => w.queueColumn === col).length;
+            return (
+              <span key={col} className="elab-v3-ws-pane__ops-chip">
+                {col} <strong>{count}</strong>
+              </span>
+            );
+          })}
+        </div>
 
-      <div className="elab-v3-ws__production-grid">
-        <div className="elab-v3-ws__queue-board">
+        <div className="elab-v3-ws-pane__panel">
+          <h3>Active Work Order</h3>
+          {activeWorkOrder ? (
+            <ul>
+              <li>
+                <span>{activeWorkOrder.title}</span>
+                <span> · {activeWorkOrder.progress}% · ${activeWorkOrder.costUsd.toFixed(2)}</span>
+              </li>
+            </ul>
+          ) : (
+            <p>No active work order</p>
+          )}
+        </div>
+
+        <div className="elab-v3-ws-pane__panel">
           <h3>Production Queue</h3>
           <ul>
-            {state.workOrders.map((wo) => (
+            {state.workOrders.slice(0, 5).map((wo) => (
               <li key={wo.id}>
                 <button
                   type="button"
                   className={state.activeWorkOrderId === wo.id ? 'is-active' : ''}
                   onClick={() => setActiveWorkOrder(wo.id)}
                 >
-                  <span>{wo.title}</span>
-                  <span>{wo.status} · {wo.progress}%</span>
+                  {wo.title} · {wo.status}
                 </button>
               </li>
             ))}
           </ul>
         </div>
 
-        <div className="elab-v3-ws__pipeline">
-          <h3>Production Pipeline</h3>
-          {state.pipeline.map((stage) => (
-            <div key={stage.id} className={`elab-v3-ws__pipeline-stage is-${stage.status}`}>
-              <span>{stage.label}</span>
-              <span>{stage.workOrderCount}</span>
-            </div>
-          ))}
-        </div>
-
-        <div className="elab-v3-ws__metrics">
-          <h3>Queue Health</h3>
-          <dl>
-            <div><dt>GPU</dt><dd>{state.operations.gpuUsagePercent}%</dd></div>
-            <div><dt>Queue</dt><dd>{state.operations.generationQueueCount}</dd></div>
-            <div><dt>Failed</dt><dd>{state.operations.failedJobs}</dd></div>
-            <div><dt>Credits</dt><dd>{state.operations.creditsRemaining}</dd></div>
-          </dl>
+        <div className="elab-v3-ws-pane__panel">
+          <h3>Pipeline</h3>
+          <ul>
+            {state.pipeline.map((stage) => (
+              <li key={stage.id}>
+                {stage.label} · {stage.workOrderCount}
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
     </section>

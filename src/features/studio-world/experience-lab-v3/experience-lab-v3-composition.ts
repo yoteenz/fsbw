@@ -13,7 +13,7 @@ export const ELAB_V3_COMPOSITION = {
   productionWorkspace: 'data-elab-v3-workspace-production',
   reviewWorkspace: 'data-elab-v3-workspace-review',
   assetsWorkspace: 'data-elab-v3-workspace-assets',
-  intelligenceWorkspace: 'data-elab-v3-workspace-intelligence',
+  commandWorkspace: 'data-elab-v3-workspace-command',
 } as const;
 
 export const V3_WORKSPACE_LABELS: Record<string, string> = {
@@ -21,5 +21,5 @@ export const V3_WORKSPACE_LABELS: Record<string, string> = {
   production: 'Production',
   review: 'Review',
   assets: 'Assets',
-  intelligence: 'Intelligence',
+  command: 'Command',
 };

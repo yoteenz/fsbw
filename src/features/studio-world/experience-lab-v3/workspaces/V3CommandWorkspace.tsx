@@ -7,40 +7,33 @@ const METRICS: Array<{ key: keyof ReturnType<typeof useExperienceLabV3Store>['st
   { key: 'generationQueueCount', label: 'Generation Queue' },
   { key: 'creditsRemaining', label: 'Credits' },
   { key: 'pendingReviews', label: 'Pending Reviews' },
-  { key: 'assetManufacturingCount', label: 'Asset Manufacturing' },
-  { key: 'marketplaceJobs', label: 'Marketplace Jobs' },
-  { key: 'cdsQueueCount', label: 'CDS Queue' },
   { key: 'failedJobs', label: 'Failed Jobs' },
   { key: 'systemHealthPercent', label: 'System Health', format: (v) => `${v}%` },
   { key: 'founderNotifications', label: 'Founder Notifications' },
 ];
 
-/** Workspace 05 — studio intelligence and analytics. */
-export function V3IntelligenceWorkspace() {
+/** Workspace 05 — Command / mission control diagnostics (viewport-contained, no scroll). */
+export function V3CommandWorkspace() {
   const { state } = useExperienceLabV3Store();
 
   return (
     <section
-      className="elab-v3-ws elab-v3-ws--intelligence"
-      {...{ [ELAB_V3_COMPOSITION.intelligenceWorkspace]: '' }}
-      aria-label="Intelligence workspace"
+      className="elab-v3-ws-pane elab-v3-ws-pane--command"
+      {...{ [ELAB_V3_COMPOSITION.commandWorkspace]: '' }}
+      aria-label="Command workspace"
     >
-      <div className="elab-v3-ws__intel-grid">
+      <div className="elab-v3-ws-pane__grid elab-v3-ws-pane__grid--command">
         {METRICS.map((m) => {
           const raw = state.operations[m.key] as number;
           const display = m.format ? m.format(raw) : String(raw);
           return (
-            <div key={m.key} className="elab-v3-ws__intel-metric">
-              <span className="elab-v3-ws__intel-label">{m.label}</span>
-              <span className="elab-v3-ws__intel-value">{display}</span>
+            <div key={m.key} className="elab-v3-ws-pane__tile">
+              <span className="elab-v3-ws-pane__tile-label">{m.label}</span>
+              <span className="elab-v3-ws-pane__tile-value">{display}</span>
             </div>
           );
         })}
       </div>
-      <p className="elab-v3-ws__intel-note">
-        Diagnostics, provider health, render history, and queue analytics for package{' '}
-        <strong>{state.activePackage?.packageId}</strong>.
-      </p>
     </section>
   );
 }

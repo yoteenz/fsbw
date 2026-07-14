@@ -52,7 +52,7 @@ const ASSETS_TOOLS: V3WorkbenchToolDef[] = [
   { id: 'metadata', label: 'METADATA', icon: 'settings', inspectorMode: 'package-detail' },
 ];
 
-const INTELLIGENCE_TOOLS: V3WorkbenchToolDef[] = [
+const COMMAND_TOOLS: V3WorkbenchToolDef[] = [
   { id: 'budget', label: 'BUDGET', icon: 'analytics', inspectorMode: 'budget-forecast' },
   { id: 'forecast', label: 'FORECAST', icon: 'milestones', inspectorMode: 'budget-forecast' },
   { id: 'providers', label: 'PROVIDERS', icon: 'cloudSync', inspectorMode: 'provider-health' },
@@ -67,7 +67,7 @@ const TOOLS_BY_WORKSPACE: Record<V3CoreWorkspaceId, V3WorkbenchToolDef[]> = {
   production: PRODUCTION_TOOLS,
   review: REVIEW_TOOLS,
   assets: ASSETS_TOOLS,
-  intelligence: INTELLIGENCE_TOOLS,
+  command: COMMAND_TOOLS,
 };
 
 export function resolveV3WorkbenchTools(workspace: V3CoreWorkspaceId): V3WorkbenchToolDef[] {

@@ -50192,6 +50192,7 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 ---
 
+<<<<<<< HEAD
 ## 2026-07-14 — Studio World Icon State Engine Sprint 04
 
 **Context:** Founder P0 sprint — build procedural multi-state rendering so one certified icon generates every runtime state (hover, active, disabled, loading, generating, AI, etc.) without duplicate artwork or AI regeneration.
@@ -50216,4 +50217,25 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 **Spatial Architecture Review:** SKIPPED — state rendering architecture + isolated QA routes only; no production UI wiring.
 
+=======
+## 2026-07-14 — Experience Lab V3 Sprint 05: Rebase onto V2 shell
+
+**Founder sprint (P0):** V3 had drifted into a separate dashboard layout. **Architecture correction:** rebase V3 onto canonical Experience Lab V2 shell — only the viewport becomes a horizontal workspace pager.
+
+**Rule:** V2 files untouched. V3 imports V2 shell components (`ExperienceLabCommandDock`, `ExperienceLabWorkstationFrame`, `ExperienceLabViewportStage`, `ExperienceLabFounderWorkbench`, side rails, sheets) and `experience-lab-v2.css`.
+
+**Shipped:**
+- `ExperienceLabV3Shell.tsx` rewritten to mirror V2 shell body; viewport slot = `V3WorkspaceViewportPager`
+- **Environment workspace** = full `ExperienceLabViewportStage` (nearly identical to V2)
+- **Production / Review / Assets / Command** workspaces in viewport-contained panes (no vertical page scroll)
+- `V3WorkspaceSegmentedControl` — iOS-style segmented nav synced with swipe
+- `V3WorkspaceViewportPager` — snap paging, pointer drag, velocity-aware swipe, keyboard arrows, lazy mount adjacent panes
+- `v3-workbench-workspace-map.ts` — V2 workbench tools drive workspace context
+- Page restored to `fixedViewport` (same as V2)
+- Renamed Intelligence → **Command** workspace
+- Removed custom V3 shell (`V3CommandDock`, pills, design variant strip duplicate, custom workbench, blueprint/inspector panels)
+- CSS: `experience-lab-v3-pager.css` only (pager); shell uses V2 CSS
+
+**Tests:** `experience-lab-v3.test.ts` 13/13 PASS (V2 shell composition assertions). **Build:** PASS.
+>>>>>>> 403bed025 (Rebase Experience Lab V3 onto V2 shell with viewport workspace pager)
 

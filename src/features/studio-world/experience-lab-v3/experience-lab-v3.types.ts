@@ -10,7 +10,7 @@ export const V3_CORE_WORKSPACE_IDS = [
   'production',
   'review',
   'assets',
-  'intelligence',
+  'command',
 ] as const;
 
 export type V3CoreWorkspaceId = (typeof V3_CORE_WORKSPACE_IDS)[number];

@@ -1,90 +1,55 @@
-# Experience Lab V3 — Five-Workspace Operating System
+# Experience Lab V3 — V2 Shell + Viewport Workspace Pager
 
-**Status:** Experimental parallel branch (rebooted 2026-07-14)  
+**Status:** Experimental (rebased onto V2 shell 2026-07-14)  
 **Routes:** `/admin/studio/experience-lab-v3` · `/admin/studio/world-builder` · `/admin/studio/world-v3`  
 **V2:** Frozen at `/admin/studio/experience-lab-v2` — **do not modify**
 
-## Vision
+## Model
 
-Experience Lab V3 is an operating system — not a single page. The **shell stays persistent** while the **viewport becomes a swipeable five-workspace system**. V2 visual language (glass, typography, command dock, design variants, workbench, blueprint panel) is preserved in a **separate V3 implementation**.
+V3 = **Experience Lab V2 canonical shell** + **horizontal viewport workspace pager**.
 
-## Isolation rules
+When sitting on **Environment**, V2 and V3 should look nearly identical. The only obvious differences:
 
-| Rule | Enforcement |
-|------|-------------|
-| No V2 imports | V3 lives in `src/features/studio-world/experience-lab-v3/` only |
-| No V2 file edits | V2 directory frozen |
-| Separate CSS | `experience-lab-v3.css` only |
-| Separate store | `ExperienceLabV3StoreProvider` |
-| Deletable | Removing V3 folder + routes leaves V2 intact |
+- iOS-style **segmented workspace control** above the viewport
+- Ability to **swipe** between workspaces
 
-## Architecture
+Everything outside the viewport (Command Dock, Workbench, Living Orb, lower deck, drawers, side rails) uses **V2 components and CSS unchanged**.
 
-```
-ExperienceLabV3Shell (persistent shell)
-├── V3CommandDock (header · program · pipeline · breadcrumb · status)
-├── V3WorkspacePills (Environment → Production → Review → Assets → Intelligence)
-├── V3WorkspaceStage (horizontal swipe viewport)
-│   ├── V3EnvironmentWorkspace (immersive render)
-│   ├── V3ProductionWorkspace (mission control)
-│   ├── V3ReviewWorkspace (founder approval)
-│   ├── V3AssetsWorkspace (warehouse)
-│   ├── V3IntelligenceWorkspace (analytics)
-│   ├── V3BlueprintPanel (persistent floating — content adapts per workspace)
-│   └── V3ContextInspector (single interchangeable inspector)
-├── V3DesignVariantStrip (always beneath viewport, synced across workspaces)
-├── V3ContextAwareWorkbench (tools swap per active workspace)
-├── V3StudioSpotlightSearch (⌘K)
-└── V3StudioAiAssistantDock
-```
+## Five viewport workspaces
 
-## Five workspaces
-
-| # | Workspace | Purpose |
+| # | Workspace | Content |
 |---|-----------|---------|
-| 01 | Environment | Creative design — full render, blueprint, environment package |
-| 02 | Production | Execution — queue, pipeline, work orders, dependencies |
-| 03 | Review | Founder decisions — brief, timeline, approvals |
-| 04 | Assets | Warehouse — blueprints, materials, packages, presets |
-| 05 | Intelligence | Analytics — budget, providers, diagnostics, queue health |
+| 01 | Environment | Full `ExperienceLabViewportStage` (today's Experience Lab) |
+| 02 | Production | Zota-inspired ops — queue, pipeline, work orders |
+| 03 | Review | Founder approval wall, brief, timeline |
+| 04 | Assets | Environment package outputs + asset library |
+| 05 | Command | Mission control diagnostics |
 
-**Navigation:** horizontal swipe + workspace pills. Shell never changes.
+**No vertical page switching.** Workspace changes only via swipe or segmented control.
 
-## Panel rules
+## Implementation
 
-- **Blueprint panel** — only persistent floating panel; content adapts per workspace
-- **Context inspector** — exactly one; morphs on workbench tool (Lighting → Materials → Camera…)
-- **No stacked overlays** — never multiple floating inspectors
+```
+ExperienceLabV3Shell
+├── V2: ProgramContextProvider, LiveWorkspaceProvider, useExperienceLabAppShell
+├── V2: ExperienceLabCommandDock (unchanged)
+├── V2: ExperienceLabWorkstationFrame
+│   ├── V2 side rails (desktop)
+│   ├── V3WorkspaceViewportPager (replaces viewport only)
+│   │   ├── V3WorkspaceSegmentedControl
+│   │   └── 5 lazy-mounted panes (adjacent preload)
+│   └── V2 lower deck: FounderReviewConsole, ApprovalBridge, FounderWorkbench, Orb
+└── V2: ExperienceLabSheet overlays
+```
 
-## Context-aware workbench
+**CSS:** `experience-lab-v2.css` (shell) + `experience-lab-v3-pager.css` (pager only)
 
-| Workspace | Tools |
-|-----------|-------|
-| Environment | Blueprint, Lighting, Materials, Construction, Camera, Compare, Split View |
-| Production | Pause, Retry, Dependencies, Outputs, Logs, Priority, Assign |
-| Review | Approve, Reject, Compare, Comment, Promote, Request Revision, History |
-| Assets | Publish, Save, Duplicate, Archive, Export, Marketplace, Metadata |
-| Intelligence | Budget, Forecast, Providers, Diagnostics, Reports, Performance, Queue Health |
+**Page:** `fixedViewport` (same as V2)
 
-## Package integration
+## Workbench integration
 
-All workspaces reference the same Environment Package state — no duplicate variants or revisions.
-
-## Feature flags
-
-| Flag | Default |
-|------|---------|
-| `VITE_EXPERIENCE_LAB_V3_ENABLED` | true (admin) |
-| `VITE_EXPERIENCE_LAB_V3_WORLD_BUILDER` | true |
-| `VITE_EXPERIENCE_LAB_V3_SPOTLIGHT` | true |
-| `VITE_EXPERIENCE_LAB_V3_AI_ASSISTANT` | true |
-| `VITE_EXPERIENCE_LAB_V3_OPS_TICKER` | true |
+V2 workbench tool selection can switch viewport workspace via `v3-workbench-workspace-map.ts` (e.g. Lighting → Environment, Workforce → Production).
 
 ## Tests
 
 `src/features/studio-world/experience-lab-v3/experience-lab-v3.test.ts`
-
-## Related
-
-- V2 live workspace: `docs/studio-os/experience-lab/EXPERIENCE_LAB_EVENT_DRIVEN_WORKSPACE.md`
-- V2 frozen reference: `/admin/studio/experience-lab-v2`

@@ -47,7 +47,7 @@ export const V3_CORE_WORKSPACES: V3WorkspaceDefinition[] = [
   { id: 'production', label: 'PRODUCTION', subtitle: 'Mission control' },
   { id: 'review', label: 'REVIEW', subtitle: 'Founder decisions' },
   { id: 'assets', label: 'ASSETS', subtitle: 'Studio warehouse' },
-  { id: 'intelligence', label: 'INTELLIGENCE', subtitle: 'Studio analytics' },
+  { id: 'command', label: 'COMMAND', subtitle: 'Mission control' },
 ];
 
 export function resolveV3WorkspaceIndex(id: V3CoreWorkspaceId): number {
