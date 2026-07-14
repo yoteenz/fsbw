@@ -255,9 +255,9 @@ export default function AdminExperienceLabIconQaPage() {
       </div>
 
       <section style={{ marginBottom: 24, fontSize: 10, color: '#9a958c' }}>
-        <div>Labeled catalog: {STUDIO_WORLD_ICON_SOURCES.labeledCatalog.path}</div>
-        <div>Unlabeled twin: {STUDIO_WORLD_ICON_SOURCES.unlabeledTwin.path}</div>
-        <div>Deprecated sheet: {STUDIO_WORLD_ICON_SOURCES.deprecatedGeneratedUnlabeled.path}</div>
+        <div>Labeled catalog (reference): {STUDIO_WORLD_ICON_SOURCES.labeledCatalog.path}</div>
+        <div>Unlabeled source (production): {STUDIO_WORLD_ICON_SOURCES.unlabeledSource.path}</div>
+        <div>Retired twin (rollback): {STUDIO_WORLD_ICON_SOURCES.unlabeledTwin.path}</div>
       </section>
 
       <section style={{ marginBottom: 24 }}>
@@ -410,7 +410,7 @@ export default function AdminExperienceLabIconQaPage() {
                   {twin?.labelPixelsChanged ?? '—'}
                 </div>
                 <div style={{ fontSize: 8, color: statusColor(asset.auditStatus) }}>
-                  runtime {asset.auditStatus} · {asset.source} · pos Δ {runtime?.positionDelta ?? '—'}
+                  runtime {asset.auditStatus} · {asset.source} · override {runtime?.hasOverride ? 'yes' : 'no'}
                 </div>
               </div>
             );

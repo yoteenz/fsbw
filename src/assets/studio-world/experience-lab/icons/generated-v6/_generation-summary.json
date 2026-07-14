@@ -1,0 +1,9 @@
+{
+  "version": "studio-world-icons-v6-grid-calibration",
+  "calibration": "studio-world-icon-grid-calibration-v1",
+  "runtimePass": 64,
+  "runtimeWarn": 0,
+  "runtimeFail": 0,
+  "generated": 64,
+  "bundleSha256": "60f08e9e7875a45ae5745789940254b45572253205551e2147b058c997569dc3"
+}

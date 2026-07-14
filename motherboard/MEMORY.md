@@ -49901,6 +49901,7 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 ---
 
+<<<<<<< HEAD
 ## 2026-07-14 — Vercel build fix: Experience Lab focus bar `replaceAll` (ES2020)
 
 **Founder request:** Vercel production build failed on commit `2d62d35` — `ExperienceLabV2Shell.tsx(372)`: `Property 'replaceAll' does not exist` on `ElabFocusMode` union (`'review' | 'blueprint' | 'render' | 'viewport'`). Root cause: `tsconfig.json` uses `"lib": ["ES2020", ...]`; `String.prototype.replaceAll` is ES2021.
@@ -49914,4 +49915,25 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 **Verification:** `npm run build` PASS; `vitest run experience-lab-v2.test.ts` 54/54 PASS.
 
 **Spatial Architecture Review:** SKIPPED — TypeScript hotfix, no new surfaces.
+=======
+## 2026-07-14 — Studio World Icon Grid Calibration Editor (v6 sprint)
+
+**Founder P0 sprint:** Replace failed automatic sprite extraction with founder-controlled adjustable row/column grid calibration over the **unlabeled icon pack only**. No text removal, no OCR, no semantic guessing, no 64 individual crop boxes.
+
+**Forensic audit:** `docs/studio-os/forensics/STUDIO_WORLD_ICON_GRID_CALIBRATION_AUDIT.md` — confirmed corruption from automatic bounds inference + label-removal twin pipeline.
+
+**Shipped:**
+- **Grid calibration model** — `src/features/studio-world/icons/grid-calibration/StudioWorldIconGridCalibration.ts` + canonical JSON
+- **v6 generator** — `scripts/generate-studio-world-icons-from-grid-calibration.mjs` reads unlabeled source + calibration only; outputs `generated-v6/` (64 transparent 512×512 PNGs + contact sheet)
+- **Grid calibration editor** — `/admin/studio/studio-world-icon-grid-calibration` with tabs: Grid / Rows / Columns / Cell Overrides / Preview / Reference / History; undo/redo; row+column boundary steppers; per-cell overrides; multi-select; mobile bottom sheet + desktop 3-column layout; save draft/canonical; import/export JSON; publish confirmation gate
+- **Source manifest v6** — unlabeled pack = production; labeled catalog = reference; twin = historical-only; twin removed from `prebuild`
+- **Runtime cutover** — `experience-lab-icon-assets.generated.ts`, sprite config, asset resolver now v6 `unlabeled-grid-calibrated`
+- **Tests** — `studio-world-icon-grid-calibration.test.ts` (17) + updated `experience-lab-icon.test.ts` (11); 28/28 PASS; production build PASS
+
+**Retired from production path (kept for debug):** `create-studio-world-unlabeled-source-twin.mjs`, `generate-studio-world-icons-from-source-twin.mjs`, v3 crop manifest authority, automatic PASS certification.
+
+**Unchanged:** Experience Lab V2 layout (Command Dock, Workbench, viewport, orb, anchors). `EXPERIENCE_LAB_ICON_LOCKDOWN_CERTIFIED` remains false until founder visual approval.
+
+**Spatial Architecture Review:** SKIPPED — icon infrastructure + dev-only admin editor; no new EL V2 surfaces.
+>>>>>>> 0c46c0232 (Studio World icon grid calibration editor v6 — unlabeled source, row/column boundaries, 64-cell generator)
 

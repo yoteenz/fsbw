@@ -24,7 +24,6 @@ import {
   STUDIO_WORLD_ICON_SOURCES,
   STUDIO_WORLD_ICON_FORBIDDEN_EXTRACTION_PATHS,
 } from './studio-world-icon-source-manifest';
-import twinParity from './studio-world-icon-source-twin-parity.generated.json';
 import { FOUNDER_OPTICAL_MODE_PAUSED } from './experience-lab-icon-presenter';
 import {
   EXPERIENCE_LAB_ICON_OPTICAL_TUNING_PAUSED,
@@ -34,14 +33,14 @@ import {
 const ICONS_DIR = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(ICONS_DIR, '../../../..');
 const LABELED = resolve(ROOT, STUDIO_WORLD_ICON_SOURCES.labeledCatalog.path);
+const UNLABELED = resolve(ROOT, STUDIO_WORLD_ICON_SOURCES.unlabeledSource.path);
 const TWIN = resolve(ROOT, STUDIO_WORLD_ICON_SOURCES.unlabeledTwin.path);
-const DEPRECATED = resolve(ROOT, STUDIO_WORLD_ICON_SOURCES.deprecatedGeneratedUnlabeled.path);
+const V6_DIR = resolve(ROOT, 'src/assets/studio-world/experience-lab/icons/generated-v6');
 const V5_DIR = resolve(ROOT, 'src/assets/studio-world/experience-lab/icons/generated-v5');
 const COMPONENT = resolve(ICONS_DIR, 'ExperienceLabIcon.tsx');
 const V2_SHELL = resolve(ICONS_DIR, '../experience-lab-v2/ExperienceLabV2Shell.tsx');
 const LEGACY_PAGE = resolve(ROOT, 'src/pages/admin/studio/experience-lab/page.tsx');
-const TWIN_SCRIPT = resolve(ROOT, 'scripts/create-studio-world-unlabeled-source-twin.mjs');
-const V5_SCRIPT = resolve(ROOT, 'scripts/generate-studio-world-icons-from-source-twin.mjs');
+const V6_SCRIPT = resolve(ROOT, 'scripts/generate-studio-world-icons-from-grid-calibration.mjs');
 const ASSETS_TS = resolve(ICONS_DIR, 'experience-lab-icon-assets.generated.ts');
 
 function iconFilename(key: string) {
@@ -53,68 +52,42 @@ async function sha256File(path: string) {
   return createHash('sha256').update(readFileSync(path)).digest('hex');
 }
 
-describe('Experience Lab icon system v5 (pixel-preserving source twin)', () => {
+describe('Experience Lab icon system v6 (grid-calibrated unlabeled source)', () => {
   it('preserves labeled catalog byte-for-byte checksum', async () => {
     expect(existsSync(LABELED)).toBe(true);
     expect(await sha256File(LABELED)).toBe(STUDIO_WORLD_ICON_SOURCES.labeledCatalog.checksum);
     expect(EXPERIENCE_LAB_ICON_LABELED_CATALOG_SHA256).toBe(STUDIO_WORLD_ICON_SOURCES.labeledCatalog.checksum);
   });
 
-  it('unlabeled twin matches labeled dimensions and grid', async () => {
-    expect(existsSync(TWIN)).toBe(true);
-    const labeledMeta = await sharp(LABELED).metadata();
-    const twinMeta = await sharp(TWIN).metadata();
-    expect(twinMeta.width).toBe(1402);
-    expect(twinMeta.height).toBe(1122);
-    expect(twinMeta.width).toBe(labeledMeta.width);
-    expect(twinMeta.height).toBe(labeledMeta.height);
-    expect(STUDIO_WORLD_ICON_SOURCES.unlabeledTwin.rows).toBe(8);
-    expect(STUDIO_WORLD_ICON_SOURCES.unlabeledTwin.columns).toBe(8);
+  it('unlabeled source is production extraction source', async () => {
+    expect(existsSync(UNLABELED)).toBe(true);
+    const meta = await sharp(UNLABELED).metadata();
+    expect(meta.width).toBe(1402);
+    expect(meta.height).toBe(1122);
+    expect(STUDIO_WORLD_ICON_SOURCES.unlabeledSource.rows).toBe(8);
+    expect(STUDIO_WORLD_ICON_SOURCES.unlabeledSource.columns).toBe(8);
     expect(EXPERIENCE_LAB_ICON_NAMES).toHaveLength(64);
+    expect(EXPERIENCE_LAB_ICON_EXTRACTION_SOURCE_SHA256).toBe(STUDIO_WORLD_ICON_SOURCES.unlabeledSource.checksum);
   });
 
-  it('source-twin parity is PASS 64 with zero protected pixel changes', () => {
-    expect(twinParity.protectedPixelsChanged).toBe(0);
-    expect(twinParity.parityPass).toBe(64);
-    expect(twinParity.parityWarn).toBe(0);
-    expect(twinParity.parityFail).toBe(0);
-    for (const icon of twinParity.icons) {
-      expect(icon.protectedPixelsChanged).toBe(0);
-      expect(icon.iconRegionChecksumBefore).toBe(icon.iconRegionChecksumAfter);
-      expect(icon.parityStatus).toBe('PASS');
-      expect(icon.residualTextPixels).toBe(0);
-    }
-  });
-
-  it('v5 generator reads only twin; forbidden sources not referenced', () => {
-    const gen = readFileSync(V5_SCRIPT, 'utf8');
-    expect(gen).toContain('studio-world-icon-source-unlabeled-twin.png');
-    expect(gen).not.toContain('generate-studio-world-icons-from-unlabeled-source');
-    expect(EXPERIENCE_LAB_ICON_SOURCE_ROLE).toBe('pixel-preserving-unlabeled-twin');
+  it('v6 generator reads only unlabeled source; labeled and twin forbidden for extraction', () => {
+    const gen = readFileSync(V6_SCRIPT, 'utf8');
+    expect(gen).toContain('studio-world-icon-source-unlabeled.png');
+    expect(gen).not.toContain('create-studio-world-unlabeled-source-twin');
+    expect(gen).toMatch(/cellToTransparentPng\(sourcePath/);
+    expect(gen).not.toMatch(/cellToTransparentPng\(labeledPath/);
+    expect(EXPERIENCE_LAB_ICON_SOURCE_ROLE).toBe('unlabeled-grid-calibrated');
     expect(STUDIO_WORLD_ICON_FORBIDDEN_EXTRACTION_PATHS).toContain(STUDIO_WORLD_ICON_SOURCES.labeledCatalog.path);
-    expect(STUDIO_WORLD_ICON_FORBIDDEN_EXTRACTION_PATHS).toContain(
-      STUDIO_WORLD_ICON_SOURCES.deprecatedGeneratedUnlabeled.path,
-    );
+    expect(STUDIO_WORLD_ICON_FORBIDDEN_EXTRACTION_PATHS).toContain(STUDIO_WORLD_ICON_SOURCES.unlabeledTwin.path);
     const assets = readFileSync(ASSETS_TS, 'utf8');
-    expect(assets).not.toContain('generated-v4/');
-    expect(assets).not.toContain('studio-world-icon-source-unlabeled.png');
-    expect(assets).toContain('generated-v5/');
+    expect(assets).not.toContain('generated-v5/');
+    expect(assets).toContain('generated-v6/');
   });
 
-  it('twin script uses deterministic label masks not generative inpainting', () => {
-    const script = readFileSync(TWIN_SCRIPT, 'utf8');
-    expect(script).toContain('labelMaskTop');
-    expect(script).not.toContain('openai');
-    expect(script).not.toContain('fal-ai');
-    expect(script).toContain('protectedPixelsChanged');
-  });
-
-  it('generates 64 v5 PNGs with transparency', async () => {
-    expect(await sha256File(TWIN)).toBe(STUDIO_WORLD_ICON_SOURCES.unlabeledTwin.checksum);
-    expect(EXPERIENCE_LAB_ICON_EXTRACTION_SOURCE_SHA256).toBe(STUDIO_WORLD_ICON_SOURCES.unlabeledTwin.checksum);
+  it('generates 64 v6 PNGs with transparency', async () => {
     for (const name of EXPERIENCE_LAB_ICON_NAMES) {
-      const file = resolve(V5_DIR, iconFilename(name));
-      expect(existsSync(file), `${name} v5`).toBe(true);
+      const file = resolve(V6_DIR, iconFilename(name));
+      expect(existsSync(file), `${name} v6`).toBe(true);
       const meta = await sharp(file).metadata();
       expect(meta.hasAlpha).toBe(true);
       expect(meta.width).toBe(512);
@@ -128,25 +101,28 @@ describe('Experience Lab icon system v5 (pixel-preserving source twin)', () => {
     }
   });
 
-  it('maps all semantic keys to v5 runtime assets', () => {
-    expect(EXPERIENCE_LAB_ICON_EXTRACTION_VERSION).toBe('studio-world-icons-v5-source-twin');
+  it('maps all semantic keys to v6 runtime assets', () => {
+    expect(EXPERIENCE_LAB_ICON_EXTRACTION_VERSION).toBe('studio-world-icons-v6-grid-calibration');
     expect(EXPERIENCE_LAB_ICON_V2_PIPELINE_FROZEN).toBe(true);
     expect(EXPERIENCE_LAB_ICON_V3_PIPELINE_RETIRED).toBe(true);
     expect(EXPERIENCE_LAB_ICON_V4_PIPELINE_RETIRED).toBe(true);
-    expect(EXPERIENCE_LAB_ICON_SPRITE_CONFIG.mode).toBe('source-twin-grid-v5');
-    expect(EXPERIENCE_LAB_ICON_SPRITE_CONFIG.generatedDir).toContain('generated-v5');
+    expect(EXPERIENCE_LAB_ICON_SPRITE_CONFIG.mode).toBe('grid-calibration-v6');
+    expect(EXPERIENCE_LAB_ICON_SPRITE_CONFIG.generatedDir).toContain('generated-v6');
     for (const name of EXPERIENCE_LAB_ICON_NAMES) {
       const asset = resolveProductionExperienceLabIconAsset(name);
       expect(asset.src, name).toBeTruthy();
-      expect(asset.source).toBe('v5-source-twin');
-      expect(EXPERIENCE_LAB_ICON_ASSETS[name].sourceRole).toBe('pixel-preserving-unlabeled-twin');
+      expect(asset.source).toBe('v6-grid-calibration');
+      expect(EXPERIENCE_LAB_ICON_ASSETS[name].sourceRole).toBe('unlabeled-grid-calibrated');
     }
   });
 
-  it('deprecated unlabeled source exists but is not production extraction path', () => {
-    expect(existsSync(DEPRECATED)).toBe(true);
-    expect(STUDIO_WORLD_ICON_SOURCES.deprecatedGeneratedUnlabeled.role).toBe('historical-only');
-    expect(readFileSync(ASSETS_TS, 'utf8')).not.toContain('studio-world-icon-source-unlabeled.png');
+  it('retired twin and v5 bundle remain rollback-only', () => {
+    expect(existsSync(TWIN)).toBe(true);
+    expect(STUDIO_WORLD_ICON_SOURCES.unlabeledTwin.role).toBe('historical-only');
+    expect(readFileSync(ASSETS_TS, 'utf8')).not.toContain('unlabeled-twin');
+    if (existsSync(V5_DIR)) {
+      expect(readFileSync(ASSETS_TS, 'utf8')).not.toContain('generated-v5/');
+    }
   });
 
   it('optical tuning paused; lockdown not certified until founder QA', () => {
@@ -166,19 +142,16 @@ describe('Experience Lab icon system v5 (pixel-preserving source twin)', () => {
     expect(readFileSync(COMPONENT, 'utf8')).not.toContain('backgroundPosition');
   });
 
-  it('QA route uses v5 source-twin columns', () => {
-    const qa = readFileSync(resolve(ROOT, 'src/pages/admin/studio/experience-lab-icon-qa/page.tsx'), 'utf8');
-    expect(qa).toContain('v5 source twin');
-    expect(qa).toContain('Source Twin Pass');
-    expect(qa).toContain('generated-v5');
-    expect(qa).not.toContain('v4 unlabeled source');
+  it('grid calibration editor route registered', () => {
+    const page = readFileSync(resolve(ROOT, 'src/pages/admin/studio/studio-world-icon-grid-calibration/page.tsx'), 'utf8');
+    expect(page).toContain('Studio World Icon Grid Calibration Editor');
+    expect(page).toContain('unlabeled');
   });
 
-  it('prebuild uses twin creation and v5 generator', () => {
-    const pkg = readFileSync(resolve(ROOT, 'package.json'), 'utf8');
-    expect(pkg).toContain('create-studio-world-unlabeled-source-twin.mjs');
-    expect(pkg).toContain('generate-studio-world-icons-from-source-twin.mjs');
-    expect(pkg).not.toContain('generate-studio-world-icons-from-unlabeled-source.mjs');
+  it('prebuild uses v6 grid calibration generator', () => {
+    const pkg = JSON.parse(readFileSync(resolve(ROOT, 'package.json'), 'utf8')) as { scripts: Record<string, string> };
+    expect(pkg.scripts.prebuild).toContain('generate-studio-world-icons-from-grid-calibration.mjs');
+    expect(pkg.scripts.prebuild).not.toContain('generate-studio-world-icons-from-source-twin.mjs');
   });
 
   it('unknown semantic keys fail safely', () => {

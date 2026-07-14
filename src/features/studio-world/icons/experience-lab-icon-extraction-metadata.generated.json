@@ -1,12 +1,11 @@
 {
-  "version": "studio-world-icons-v5-source-twin",
-  "pipeline": "source-twin-grid-v5",
-  "sourceRole": "pixel-preserving-unlabeled-twin",
+  "version": "studio-world-icons-v6-grid-calibration",
+  "pipeline": "grid-calibration-v6",
+  "sourceRole": "unlabeled-grid-calibrated",
   "labeledSha256": "d7476775716d3f2dc9b2416198c81bbd19d8e1a7f5730c5ff3c79fe6cda1f51d",
-  "twinSha256": "96a179e4ac77626f9d59be111486eda69176a5b245749827d8749a4663e0e96b",
-  "parityPass": 64,
-  "parityWarn": 0,
-  "parityFail": 0,
+  "sourceSha256": "cdc5cd987d42a433a88fb84469cab5c56e5183e2b86a6d14e7c098b91fe2e2f9",
+  "calibrationVersion": "studio-world-icon-grid-calibration-v1",
+  "calibrationCanonical": true,
   "runtimePass": 64,
   "runtimeWarn": 0,
   "runtimeFail": 0,
@@ -20,15 +19,19 @@
       "column": 0,
       "category": "studio-modes",
       "founderPriority": true,
-      "parityStatus": "PASS",
-      "positionDelta": 0,
-      "scaleDelta": 0,
-      "textInUnlabeled": false,
-      "parityNotes": "Protected-region labeled vs twin parity",
       "generated": true,
       "runtimeStatus": "PASS",
-      "contentSha256": "c59542070c16de67e4867cec0d09d173052eac504e127df250851ab9ed5448b4",
-      "failReason": ""
+      "contentSha256": "5456899acca683eb6ec8ffc58c7de90c35f727875983a85c4824fd098926d197",
+      "failReason": "",
+      "approved": true,
+      "hasOverride": false,
+      "cellRect": {
+        "left": 0,
+        "top": 0,
+        "width": 175,
+        "height": 140,
+        "hasOverride": false
+      }
     },
     {
       "key": "blueprint",
@@ -38,15 +41,19 @@
       "column": 1,
       "category": "studio-modes",
       "founderPriority": true,
-      "parityStatus": "PASS",
-      "positionDelta": 0,
-      "scaleDelta": 0,
-      "textInUnlabeled": false,
-      "parityNotes": "Protected-region labeled vs twin parity",
       "generated": true,
       "runtimeStatus": "PASS",
-      "contentSha256": "093660a970927287be6f530de79d7a383c71f000de58bb5f4d31c182f89a9cdd",
-      "failReason": ""
+      "contentSha256": "54cbcca67afd77b36c1d1084283969a8619277fecb23f9ec9948aa592900cd95",
+      "failReason": "",
+      "approved": true,
+      "hasOverride": false,
+      "cellRect": {
+        "left": 175,
+        "top": 0,
+        "width": 176,
+        "height": 140,
+        "hasOverride": false
+      }
     },
     {
       "key": "construction",
@@ -56,15 +63,19 @@
       "column": 2,
       "category": "studio-modes",
       "founderPriority": true,
-      "parityStatus": "PASS",
-      "positionDelta": 0,
-      "scaleDelta": 0,
-      "textInUnlabeled": false,
-      "parityNotes": "Protected-region labeled vs twin parity",
       "generated": true,
       "runtimeStatus": "PASS",
-      "contentSha256": "0ef201ea2283a9f881dc7745b8fd14018530e1a879344371c896c67a9367ffb7",
-      "failReason": ""
+      "contentSha256": "7ee1b6696b6daaca7762e4ebbc16d018d71313e375dd3c6202864859036a95b8",
+      "failReason": "",
+      "approved": true,
+      "hasOverride": false,
+      "cellRect": {
+        "left": 351,
+        "top": 0,
+        "width": 175,
+        "height": 140,
+        "hasOverride": false
+      }
     },
     {
       "key": "materials",
@@ -74,15 +85,19 @@
       "column": 3,
       "category": "studio-modes",
       "founderPriority": true,
-      "parityStatus": "PASS",
-      "positionDelta": 0,
-      "scaleDelta": 0,
-      "textInUnlabeled": false,
-      "parityNotes": "Protected-region labeled vs twin parity",
       "generated": true,
       "runtimeStatus": "PASS",
-      "contentSha256": "8dfd1ceff32eba3f525530966becd710cf1fb9c1eb8bc2a1c8a969b9e0f5b483",
-      "failReason": ""
+      "contentSha256": "db24e568f0e69d0441def02257aa7eca5c65e4194f63a5adf2b2b520a26537c1",
+      "failReason": "",
+      "approved": true,
+      "hasOverride": false,
+      "cellRect": {
+        "left": 526,
+        "top": 0,
+        "width": 175,
+        "height": 140,
+        "hasOverride": false
+      }
     },
     {
       "key": "lighting",
@@ -92,15 +107,19 @@
       "column": 4,
       "category": "studio-modes",
       "founderPriority": true,
-      "parityStatus": "PASS",
-      "positionDelta": 0,
-      "scaleDelta": 0,
-      "textInUnlabeled": false,
-      "parityNotes": "Protected-region labeled vs twin parity",
       "generated": true,
       "runtimeStatus": "PASS",
-      "contentSha256": "3963383b6ab8d3eadd0861086bc196bdba6c096bc7afe7e7d7daba862ac5600b",
-      "failReason": ""
+      "contentSha256": "f0053b3bd0798d161d10285a7a80fb87dbe7d0dd6cdd56247f4aeb7ab9d668fa",
+      "failReason": "",
+      "approved": true,
+      "hasOverride": false,
+      "cellRect": {
+        "left": 701,
+        "top": 0,
+        "width": 175,
+        "height": 140,
+        "hasOverride": false
+      }
     },
     {
       "key": "camera",
@@ -110,15 +129,19 @@
       "column": 5,
       "category": "studio-modes",
       "founderPriority": true,
-      "parityStatus": "PASS",
-      "positionDelta": 0,
-      "scaleDelta": 0,
-      "textInUnlabeled": false,
-      "parityNotes": "Protected-region labeled vs twin parity",
       "generated": true,
       "runtimeStatus": "PASS",
-      "contentSha256": "7f8f0818bb512be65583824b15bb8154c2fea3a0639b38c288c48698f40b2cf0",
-      "failReason": ""
+      "contentSha256": "71ebb7cb10aec6e24e54e68e180e5d0402649296083c2b850059627065499688",
+      "failReason": "",
+      "approved": true,
+      "hasOverride": false,
+      "cellRect": {
+        "left": 876,
+        "top": 0,
+        "width": 176,
+        "height": 140,
+        "hasOverride": false
+      }
     },
     {
       "key": "splitView",
@@ -128,15 +151,19 @@
       "column": 6,
       "category": "studio-modes",
       "founderPriority": false,
-      "parityStatus": "PASS",
-      "positionDelta": 0,
-      "scaleDelta": 0,
-      "textInUnlabeled": false,
-      "parityNotes": "Protected-region labeled vs twin parity",
       "generated": true,
       "runtimeStatus": "PASS",
-      "contentSha256": "a565f33627da9f56d8f1b9e5678d09667b1956cb05a2f372b68da28ad40c2cfd",
-      "failReason": ""
+      "contentSha256": "ba8a6b5606dc66965e3325c07b84c92d7b64ae7fc4d9c8a270782fb172064934",
+      "failReason": "",
+      "approved": true,
+      "hasOverride": false,
+      "cellRect": {
+        "left": 1052,
+        "top": 0,
+        "width": 175,
+        "height": 140,
+        "hasOverride": false
+      }
     },
     {
       "key": "founderRender",
@@ -146,15 +173,19 @@
       "column": 7,
       "category": "studio-modes",
       "founderPriority": false,
-      "parityStatus": "PASS",
-      "positionDelta": 0,
-      "scaleDelta": 0,
-      "textInUnlabeled": false,
-      "parityNotes": "Protected-region labeled vs twin parity",
       "generated": true,
       "runtimeStatus": "PASS",
-      "contentSha256": "afc91bbd3d523919534979a77c4f61d30bbf43da7ca5cb83f7eb6a316f347149",
-      "failReason": ""
+      "contentSha256": "21350b01cafb4f29c166f67fdf951acd6e6b850672f5f518d19ccad259449b4c",
+      "failReason": "",
+      "approved": true,
+      "hasOverride": false,
+      "cellRect": {
+        "left": 1227,
+        "top": 0,
+        "width": 175,
+        "height": 140,
+        "hasOverride": false
+      }
     },
     {
       "key": "projects",
@@ -164,15 +195,19 @@
       "column": 0,
       "category": "project-review",
       "founderPriority": false,
-      "parityStatus": "PASS",
-      "positionDelta": 0,
-      "scaleDelta": 0,
-      "textInUnlabeled": false,
-      "parityNotes": "Protected-region labeled vs twin parity",
       "generated": true,
       "runtimeStatus": "PASS",
-      "contentSha256": "03002d0d7f140cd74c35d7d418be09690a9bee0dfba6941f41270622670bd074",
-      "failReason": ""
+      "contentSha256": "a6cbc418e6c6788374217626383f7bdbf987111e8a9ba294cf45b18b0b4e3c46",
+      "failReason": "",
+      "approved": true,
+      "hasOverride": false,
+      "cellRect": {
+        "left": 0,
+        "top": 140,
+        "width": 175,
+        "height": 141,
+        "hasOverride": false
+      }
     },
     {
       "key": "history",
@@ -182,15 +217,19 @@
       "column": 1,
       "category": "project-review",
       "founderPriority": false,
-      "parityStatus": "PASS",
-      "positionDelta": 0,
-      "scaleDelta": 0,
-      "textInUnlabeled": false,
-      "parityNotes": "Protected-region labeled vs twin parity",
       "generated": true,
       "runtimeStatus": "PASS",
-      "contentSha256": "d8535baf13d68f4fb4c27ce92e69c726358be1f52e9d990afca3715fdbb57038",
-      "failReason": ""
+      "contentSha256": "1690722db9b2236b607ccdfbefd3d1f65cd69fe857a8ca6549f2798a692d5108",
+      "failReason": "",
+      "approved": true,
+      "hasOverride": false,
+      "cellRect": {
+        "left": 175,
+        "top": 140,
+        "width": 176,
+        "height": 141,
+        "hasOverride": false
+      }
     },
     {
       "key": "revisions",
@@ -200,15 +239,19 @@
       "column": 2,
       "category": "project-review",
       "founderPriority": false,
-      "parityStatus": "PASS",
-      "positionDelta": 0,
-      "scaleDelta": 0,
-      "textInUnlabeled": false,
-      "parityNotes": "Protected-region labeled vs twin parity",
       "generated": true,
       "runtimeStatus": "PASS",
-      "contentSha256": "b6ac6587bfdc3fa1c9f0c2a8f3a159491f053cc171c466b6b83756882413ff79",
-      "failReason": ""
+      "contentSha256": "ceaaf28a21f34576d60344f62bf79637798fa32e597d7ac4317593e9902cbf8f",
+      "failReason": "",
+      "approved": true,
+      "hasOverride": false,
+      "cellRect": {
+        "left": 351,
+        "top": 140,
+        "width": 175,
+        "height": 141,
+        "hasOverride": false
+      }
     },
     {
       "key": "milestones",
@@ -218,15 +261,19 @@
       "column": 3,
       "category": "project-review",
       "founderPriority": false,
-      "parityStatus": "PASS",
-      "positionDelta": 0,
-      "scaleDelta": 0,
-      "textInUnlabeled": false,
-      "parityNotes": "Protected-region labeled vs twin parity",
       "generated": true,
       "runtimeStatus": "PASS",
-      "contentSha256": "3eb76ce4d8452617a8d8b9169b724272781456e23439724831ed7fcfadddcfed",
-      "failReason": ""
+      "contentSha256": "eae99a80d6500469d6813a0f069f9863a4e33dc4c2d495a0dbdbe46d4452832f",
+      "failReason": "",
+      "approved": true,
+      "hasOverride": false,
+      "cellRect": {
+        "left": 526,
+        "top": 140,
+        "width": 175,
+        "height": 141,
+        "hasOverride": false
+      }
     },
     {
       "key": "analytics",
@@ -236,15 +283,19 @@
       "column": 4,
       "category": "project-review",
       "founderPriority": true,
-      "parityStatus": "PASS",
-      "positionDelta": 0,
-      "scaleDelta": 0,
-      "textInUnlabeled": false,
-      "parityNotes": "Protected-region labeled vs twin parity",
       "generated": true,
       "runtimeStatus": "PASS",
-      "contentSha256": "c005a15c0bf346afe4d6668b49929c2d1d4ea4012c215259e690bdd3b28641b7",
-      "failReason": ""
+      "contentSha256": "bb43e92996d37ea265e2f72d7738c6931a1539d69bc0cd9784510cddca2e4d21",
+      "failReason": "",
+      "approved": true,
+      "hasOverride": false,
+      "cellRect": {
+        "left": 701,
+        "top": 140,
+        "width": 175,
+        "height": 141,
+        "hasOverride": false
+      }
     },
     {
       "key": "performance",
@@ -254,15 +305,19 @@
       "column": 5,
       "category": "project-review",
       "founderPriority": false,
-      "parityStatus": "PASS",
-      "positionDelta": 0,
-      "scaleDelta": 0,
-      "textInUnlabeled": false,
-      "parityNotes": "Protected-region labeled vs twin parity",
       "generated": true,
       "runtimeStatus": "PASS",
-      "contentSha256": "cbb750dced0a13db24162695b7bab834c0c036ab1bc8105e0ef372fb7e787fbb",
-      "failReason": ""
+      "contentSha256": "3a41c928ec90eb3265f0c35bf828f1c25a14f0adb9efaec8a67fcae4a5f3cf05",
+      "failReason": "",
+      "approved": true,
+      "hasOverride": false,
+      "cellRect": {
+        "left": 876,
+        "top": 140,
+        "width": 176,
+        "height": 141,
+        "hasOverride": false
+      }
     },
     {
       "key": "issues",
@@ -272,15 +327,19 @@
       "column": 6,
       "category": "project-review",
       "founderPriority": false,
-      "parityStatus": "PASS",
-      "positionDelta": 0,
-      "scaleDelta": 0,
-      "textInUnlabeled": false,
-      "parityNotes": "Protected-region labeled vs twin parity",
       "generated": true,
       "runtimeStatus": "PASS",
-      "contentSha256": "908e4fcb231e9b547cded668ffa6210ca499b92e89ce5c90207a8c7130bd4feb",
-      "failReason": ""
+      "contentSha256": "9081d121357a0c9c75ef153ae20d8dfa005b1c53cfe28f1dabf530db01089edd",
+      "failReason": "",
+      "approved": true,
+      "hasOverride": false,
+      "cellRect": {
+        "left": 1052,
+        "top": 140,
+        "width": 175,
+        "height": 141,
+        "hasOverride": false
+      }
     },
     {
       "key": "approved",
@@ -290,15 +349,19 @@
       "column": 7,
       "category": "project-review",
       "founderPriority": false,
-      "parityStatus": "PASS",
-      "positionDelta": 0,
-      "scaleDelta": 0,
-      "textInUnlabeled": false,
-      "parityNotes": "Protected-region labeled vs twin parity",
       "generated": true,
       "runtimeStatus": "PASS",
-      "contentSha256": "f0f9205fa37f3a9a84d69370401c5762c3c32fa2e7ccba2c598ce4efe30fb592",
-      "failReason": ""
+      "contentSha256": "6c1218d9fa2cb7672d09cf06fd7a57a8b7e9d06d7a67ae55d371487a692b3ef9",
+      "failReason": "",
+      "approved": true,
+      "hasOverride": false,
+      "cellRect": {
+        "left": 1227,
+        "top": 140,
+        "width": 175,
+        "height": 141,
+        "hasOverride": false
+      }
     },
     {
       "key": "playback",
@@ -308,15 +371,19 @@
       "column": 0,
       "category": "playback",
       "founderPriority": true,
-      "parityStatus": "PASS",
-      "positionDelta": 0,
-      "scaleDelta": 0,
-      "textInUnlabeled": false,
-      "parityNotes": "Protected-region labeled vs twin parity",
       "generated": true,
       "runtimeStatus": "PASS",
-      "contentSha256": "72a3e22da04b1f9942709670408d2a3e39c9e28e5b574f7fb5ffc3c951ad0d4b",
-      "failReason": ""
+      "contentSha256": "ff486498b6188cfa245bfcbe4a9a91958af17f8cef73cc971cba0a21564bd6c7",
+      "failReason": "",
+      "approved": true,
+      "hasOverride": false,
+      "cellRect": {
+        "left": 0,
+        "top": 281,
+        "width": 175,
+        "height": 140,
+        "hasOverride": false
+      }
     },
     {
       "key": "pause",
@@ -326,15 +393,19 @@
       "column": 1,
       "category": "playback",
       "founderPriority": false,
-      "parityStatus": "PASS",
-      "positionDelta": 0,
-      "scaleDelta": 0,
-      "textInUnlabeled": false,
-      "parityNotes": "Protected-region labeled vs twin parity",
       "generated": true,
       "runtimeStatus": "PASS",
-      "contentSha256": "481c2d3f31712ad406082266a760a8db1c57065c985473852fdc0db2e241981b",
-      "failReason": ""
+      "contentSha256": "511c26d8ee01fa4233eb127fbb27c326fceba0e97e242916c21a61bfc4f8eb7c",
+      "failReason": "",
+      "approved": true,
+      "hasOverride": false,
+      "cellRect": {
+        "left": 175,
+        "top": 281,
+        "width": 176,
+        "height": 140,
+        "hasOverride": false
+      }
     },
     {
       "key": "stop",
@@ -344,15 +415,19 @@
       "column": 2,
       "category": "playback",
       "founderPriority": false,
-      "parityStatus": "PASS",
-      "positionDelta": 0,
-      "scaleDelta": 0,
-      "textInUnlabeled": false,
-      "parityNotes": "Protected-region labeled vs twin parity",
       "generated": true,
       "runtimeStatus": "PASS",
-      "contentSha256": "5170b4b9d144f5f0dc5ee8451c2666fd7551cebf8a10b7b4d8481dd71bd3d602",
-      "failReason": ""
+      "contentSha256": "5a939079720b815a2314e7ce722beaf34163ec9e86301ea84472aa146b90902f",
+      "failReason": "",
+      "approved": true,
+      "hasOverride": false,
+      "cellRect": {
+        "left": 351,
+        "top": 281,
+        "width": 175,
+        "height": 140,
+        "hasOverride": false
+      }
     },
     {
       "key": "next",
@@ -362,15 +437,19 @@
       "column": 3,
       "category": "playback",
       "founderPriority": false,
-      "parityStatus": "PASS",
-      "positionDelta": 0,
-      "scaleDelta": 0,
-      "textInUnlabeled": false,
-      "parityNotes": "Protected-region labeled vs twin parity",
       "generated": true,
       "runtimeStatus": "PASS",
-      "contentSha256": "f904857fdb158d5bb6bd7f386ff2656d08911a7a4e0954fca85484f257f27059",
-      "failReason": ""
+      "contentSha256": "55edcee6b43afd32b5fa78c0c8ec013c0a94f72cd0434551879adb795a5aa4fa",
+      "failReason": "",
+      "approved": true,
+      "hasOverride": false,
+      "cellRect": {
+        "left": 526,
+        "top": 281,
+        "width": 175,
+        "height": 140,
+        "hasOverride": false
+      }
     },
     {
       "key": "previous",
@@ -380,15 +459,19 @@
       "column": 4,
       "category": "playback",
       "founderPriority": false,
-      "parityStatus": "PASS",
-      "positionDelta": 0,
-      "scaleDelta": 0,
-      "textInUnlabeled": false,
-      "parityNotes": "Protected-region labeled vs twin parity",
       "generated": true,
       "runtimeStatus": "PASS",
-      "contentSha256": "bb33376ec5d11b515e8770636c4c1eb4ae2a66a482ca1b106783fcdb8af19c8c",
-      "failReason": ""
+      "contentSha256": "de7d54f398065e8d023cced8d2561b67baba49184d2692de36fdcc331ce19915",
+      "failReason": "",
+      "approved": true,
+      "hasOverride": false,
+      "cellRect": {
+        "left": 701,
+        "top": 281,
+        "width": 175,
+        "height": 140,
+        "hasOverride": false
+      }
     },
     {
       "key": "loop",
@@ -398,15 +481,19 @@
       "column": 5,
       "category": "playback",
       "founderPriority": false,
-      "parityStatus": "PASS",
-      "positionDelta": 0,
-      "scaleDelta": 0,
-      "textInUnlabeled": false,
-      "parityNotes": "Protected-region labeled vs twin parity",
       "generated": true,
       "runtimeStatus": "PASS",
-      "contentSha256": "4e8bb5f0911d350cda881c59d7743df2d803ade319df74ab1befc3260cb1d596",
-      "failReason": ""
+      "contentSha256": "116d3e89494332d908d2bbe7774e5451988ed4176901f86304741c882a3ef6a0",
+      "failReason": "",
+      "approved": true,
+      "hasOverride": false,
+      "cellRect": {
+        "left": 876,
+        "top": 281,
+        "width": 176,
+        "height": 140,
+        "hasOverride": false
+      }
     },
     {
       "key": "capture",
@@ -416,15 +503,19 @@
       "column": 6,
       "category": "playback",
       "founderPriority": false,
-      "parityStatus": "PASS",
-      "positionDelta": 0,
-      "scaleDelta": 0,
-      "textInUnlabeled": false,
-      "parityNotes": "Protected-region labeled vs twin parity",
       "generated": true,
       "runtimeStatus": "PASS",
-      "contentSha256": "dd461d4e37913e174519aac7bc5c5cbbe0134d3fa5826b1a6f721448101af706",
-      "failReason": ""
+      "contentSha256": "4041e6c9173b59c93f1fe7cbf277d618f594887c4ce304889b3ac751bf92ece7",
+      "failReason": "",
+      "approved": true,
+      "hasOverride": false,
+      "cellRect": {
+        "left": 1052,
+        "top": 281,
+        "width": 175,
+        "height": 140,
+        "hasOverride": false
+      }
     },
     {
       "key": "fullscreen",
@@ -434,15 +525,19 @@
       "column": 7,
       "category": "playback",
       "founderPriority": false,
-      "parityStatus": "PASS",
-      "positionDelta": 0,
-      "scaleDelta": 0,
-      "textInUnlabeled": false,
-      "parityNotes": "Protected-region labeled vs twin parity",
       "generated": true,
       "runtimeStatus": "PASS",
-      "contentSha256": "db8c21ce0f9b1b5f8e2fa4f966517d6cf1eee9057146c913ba3312cee8337158",
-      "failReason": ""
+      "contentSha256": "c080b85a81eb3b3451a93d41caccfb48502deeb6ce7a07d8cd2fc3b35e69efbe",
+      "failReason": "",
+      "approved": true,
+      "hasOverride": false,
+      "cellRect": {
+        "left": 1227,
+        "top": 281,
+        "width": 175,
+        "height": 140,
+        "hasOverride": false
+      }
     },
     {
       "key": "zoomIn",
@@ -452,15 +547,19 @@
       "column": 0,
       "category": "viewport-tools",
       "founderPriority": true,
-      "parityStatus": "PASS",
-      "positionDelta": 0,
-      "scaleDelta": 0,
-      "textInUnlabeled": false,
-      "parityNotes": "Protected-region labeled vs twin parity",
       "generated": true,
       "runtimeStatus": "PASS",
-      "contentSha256": "b74baa43160a02294fe8e363aa9709bb8dcdf6440466dff434d3e6036e2eef64",
-      "failReason": ""
+      "contentSha256": "33cafc19d571b3feba80e1a2e46ea5e44d4d485e7c7a68ce84b1a11c5400f0e0",
+      "failReason": "",
+      "approved": true,
+      "hasOverride": false,
+      "cellRect": {
+        "left": 0,
+        "top": 421,
+        "width": 175,
+        "height": 140,
+        "hasOverride": false
+      }
     },
     {
       "key": "zoomOut",
@@ -470,15 +569,19 @@
       "column": 1,
       "category": "viewport-tools",
       "founderPriority": false,
-      "parityStatus": "PASS",
-      "positionDelta": 0,
-      "scaleDelta": 0,
-      "textInUnlabeled": false,
-      "parityNotes": "Protected-region labeled vs twin parity",
       "generated": true,
       "runtimeStatus": "PASS",
-      "contentSha256": "0446100a18f43fae26bd325b83898bc36539e8a7fe04ac7e8cd39367b997b6ba",
-      "failReason": ""
+      "contentSha256": "f3c0800b87fab0eadc4d5386d7e35c4544182fbdbf0262aaf026a1381324be01",
+      "failReason": "",
+      "approved": true,
+      "hasOverride": false,
+      "cellRect": {
+        "left": 175,
+        "top": 421,
+        "width": 176,
+        "height": 140,
+        "hasOverride": false
+      }
     },
     {
       "key": "pan",
@@ -488,15 +591,19 @@
       "column": 2,
       "category": "viewport-tools",
       "founderPriority": false,
-      "parityStatus": "PASS",
-      "positionDelta": 0,
-      "scaleDelta": 0,
-      "textInUnlabeled": false,
-      "parityNotes": "Protected-region labeled vs twin parity",
       "generated": true,
       "runtimeStatus": "PASS",
-      "contentSha256": "c77def594a48f5093d2f551a867b0e71053236ea1eaaacfee1659080d3e954a4",
-      "failReason": ""
+      "contentSha256": "d3e22ce3e46b585d697d67ede3fd0b0745d43b1d9851841850cf4e4358ec35a3",
+      "failReason": "",
+      "approved": true,
+      "hasOverride": false,
+      "cellRect": {
+        "left": 351,
+        "top": 421,
+        "width": 175,
+        "height": 140,
+        "hasOverride": false
+      }
     },
     {
       "key": "fitView",
@@ -506,15 +613,19 @@
       "column": 3,
       "category": "viewport-tools",
       "founderPriority": false,
-      "parityStatus": "PASS",
-      "positionDelta": 0,
-      "scaleDelta": 0,
-      "textInUnlabeled": false,
-      "parityNotes": "Protected-region labeled vs twin parity",
       "generated": true,
       "runtimeStatus": "PASS",
-      "contentSha256": "995fd6d8e36841bb99532552c5d67be5e0a589135ca0026e9844937a6930a2fc",
-      "failReason": ""
+      "contentSha256": "54c4f4e22432f55a419ce3c31a70e361aefb6cfb8de7ae9a4e8c864e52bb947d",
+      "failReason": "",
+      "approved": true,
+      "hasOverride": false,
+      "cellRect": {
+        "left": 526,
+        "top": 421,
+        "width": 175,
+        "height": 140,
+        "hasOverride": false
+      }
     },
     {
       "key": "orbit",
@@ -524,15 +635,19 @@
       "column": 4,
       "category": "viewport-tools",
       "founderPriority": false,
-      "parityStatus": "PASS",
-      "positionDelta": 0,
-      "scaleDelta": 0,
-      "textInUnlabeled": false,
-      "parityNotes": "Protected-region labeled vs twin parity",
       "generated": true,
       "runtimeStatus": "PASS",
-      "contentSha256": "b99c83a77d8d617d4218bba63fca17977262a1ca9df8bae81bd1415fe93e4e16",
-      "failReason": ""
+      "contentSha256": "978545019a207d190d253642a9920fd176ce397b5bc693485932f7a5649b11d7",
+      "failReason": "",
+      "approved": true,
+      "hasOverride": false,
+      "cellRect": {
+        "left": 701,
+        "top": 421,
+        "width": 175,
+        "height": 140,
+        "hasOverride": false
+      }
     },
     {
       "key": "perspective",
@@ -542,15 +657,19 @@
       "column": 5,
       "category": "viewport-tools",
       "founderPriority": true,
-      "parityStatus": "PASS",
-      "positionDelta": 0,
-      "scaleDelta": 0,
-      "textInUnlabeled": false,
-      "parityNotes": "Protected-region labeled vs twin parity",
       "generated": true,
       "runtimeStatus": "PASS",
-      "contentSha256": "dd6abecc1c6fa61df1445c5e300250e14e740653091965f7c4bbe1af65570e3f",
-      "failReason": ""
+      "contentSha256": "8608cffad3c39a937679ef99b8fe4f75a1b32afaf26323a3370017454b4e51af",
+      "failReason": "",
+      "approved": true,
+      "hasOverride": false,
+      "cellRect": {
+        "left": 876,
+        "top": 421,
+        "width": 176,
+        "height": 140,
+        "hasOverride": false
+      }
     },
     {
       "key": "toggleUi",
@@ -560,15 +679,19 @@
       "column": 6,
       "category": "viewport-tools",
       "founderPriority": false,
-      "parityStatus": "PASS",
-      "positionDelta": 0,
-      "scaleDelta": 0,
-      "textInUnlabeled": false,
-      "parityNotes": "Protected-region labeled vs twin parity",
       "generated": true,
       "runtimeStatus": "PASS",
-      "contentSha256": "af34f61c0640552c9a678eef94956f9e253995714ab8aca143b9e71c3334313e",
-      "failReason": ""
+      "contentSha256": "5a3adc9ed16d350582a4174c20ff8f8ea4ad7c53c2df4c574f8c68ed32edf6f4",
+      "failReason": "",
+      "approved": true,
+      "hasOverride": false,
+      "cellRect": {
+        "left": 1052,
+        "top": 421,
+        "width": 175,
+        "height": 140,
+        "hasOverride": false
+      }
     },
     {
       "key": "grid",
@@ -578,15 +701,19 @@
       "column": 7,
       "category": "viewport-tools",
       "founderPriority": false,
-      "parityStatus": "PASS",
-      "positionDelta": 0,
-      "scaleDelta": 0,
-      "textInUnlabeled": false,
-      "parityNotes": "Protected-region labeled vs twin parity",
       "generated": true,
       "runtimeStatus": "PASS",
-      "contentSha256": "4227a093230e69191bd69589ad9f71dfa5b13e65eec4d0e22f77d6c1be4c8c58",
-      "failReason": ""
+      "contentSha256": "e89083f2d4ca8ddce9607adefdbaa4fa72099725d94e9e919440d64d18f1e3a2",
+      "failReason": "",
+      "approved": true,
+      "hasOverride": false,
+      "cellRect": {
+        "left": 1227,
+        "top": 421,
+        "width": 175,
+        "height": 140,
+        "hasOverride": false
+      }
     },
     {
       "key": "hide",
@@ -596,15 +723,19 @@
       "column": 0,
       "category": "inspector",
       "founderPriority": false,
-      "parityStatus": "PASS",
-      "positionDelta": 0,
-      "scaleDelta": 0,
-      "textInUnlabeled": false,
-      "parityNotes": "Protected-region labeled vs twin parity",
       "generated": true,
       "runtimeStatus": "PASS",
-      "contentSha256": "68913188fab6c080ea8def3014af70b64923a1b4fea19d7fec7e657a120692c9",
-      "failReason": ""
+      "contentSha256": "00ea59ad62cd538c6b2d4ada1c51af8b1536e50e3421b9f9ec26c777c5647048",
+      "failReason": "",
+      "approved": true,
+      "hasOverride": false,
+      "cellRect": {
+        "left": 0,
+        "top": 561,
+        "width": 175,
+        "height": 140,
+        "hasOverride": false
+      }
     },
     {
       "key": "lock",
@@ -614,15 +745,19 @@
       "column": 1,
       "category": "inspector",
       "founderPriority": false,
-      "parityStatus": "PASS",
-      "positionDelta": 0,
-      "scaleDelta": 0,
-      "textInUnlabeled": false,
-      "parityNotes": "Protected-region labeled vs twin parity",
       "generated": true,
       "runtimeStatus": "PASS",
-      "contentSha256": "8061b81c2933bd20ead6d33fdf254e487553a39d0c57a8c7a77fa8604d1be532",
-      "failReason": ""
+      "contentSha256": "c2f98564150201694296d7ef4429dc6a4021f81ec6e5ca00828ccd27352cfe94",
+      "failReason": "",
+      "approved": true,
+      "hasOverride": false,
+      "cellRect": {
+        "left": 175,
+        "top": 561,
+        "width": 176,
+        "height": 140,
+        "hasOverride": false
+      }
     },
     {
       "key": "unlock",
@@ -632,15 +767,19 @@
       "column": 2,
       "category": "inspector",
       "founderPriority": false,
-      "parityStatus": "PASS",
-      "positionDelta": 0,
-      "scaleDelta": 0,
-      "textInUnlabeled": false,
-      "parityNotes": "Protected-region labeled vs twin parity",
       "generated": true,
       "runtimeStatus": "PASS",
-      "contentSha256": "085f654720299e186d114fa7d905ed458470f5c511601580fbe58bbcbc0657b1",
-      "failReason": ""
+      "contentSha256": "7a5f96f1167b6eff15165806fc08443831f039a7d0499f83a2f47616769640fc",
+      "failReason": "",
+      "approved": true,
+      "hasOverride": false,
+      "cellRect": {
+        "left": 351,
+        "top": 561,
+        "width": 175,
+        "height": 140,
+        "hasOverride": false
+      }
     },
     {
       "key": "duplicate",
@@ -650,15 +789,19 @@
       "column": 3,
       "category": "inspector",
       "founderPriority": false,
-      "parityStatus": "PASS",
-      "positionDelta": 0,
-      "scaleDelta": 0,
-      "textInUnlabeled": false,
-      "parityNotes": "Protected-region labeled vs twin parity",
       "generated": true,
       "runtimeStatus": "PASS",
-      "contentSha256": "c9e35476dd78ea99e6f4014b793ac52b51c08cc7ae1bd8f429c12c778d2de030",
-      "failReason": ""
+      "contentSha256": "5717bf7964019bd04dd10057bdf45e7056be80197cbbe2b36f84d6fd7304d9c9",
+      "failReason": "",
+      "approved": true,
+      "hasOverride": false,
+      "cellRect": {
+        "left": 526,
+        "top": 561,
+        "width": 175,
+        "height": 140,
+        "hasOverride": false
+      }
     },
     {
       "key": "delete",
@@ -668,15 +811,19 @@
       "column": 4,
       "category": "inspector",
       "founderPriority": false,
-      "parityStatus": "PASS",
-      "positionDelta": 0,
-      "scaleDelta": 0,
-      "textInUnlabeled": false,
-      "parityNotes": "Protected-region labeled vs twin parity",
       "generated": true,
       "runtimeStatus": "PASS",
-      "contentSha256": "d9aa1a993fe2320a42ce1bbcb7a3e3b05e2030fff9666fa014844fc7a1c8b388",
-      "failReason": ""
+      "contentSha256": "55c60e7a498025f0f763003c2099d62d9755b8ba6335b897ca647723d319a727",
+      "failReason": "",
+      "approved": true,
+      "hasOverride": false,
+      "cellRect": {
+        "left": 701,
+        "top": 561,
+        "width": 175,
+        "height": 140,
+        "hasOverride": false
+      }
     },
     {
       "key": "edit",
@@ -686,15 +833,19 @@
       "column": 5,
       "category": "inspector",
       "founderPriority": false,
-      "parityStatus": "PASS",
-      "positionDelta": 0,
-      "scaleDelta": 0,
-      "textInUnlabeled": false,
-      "parityNotes": "Protected-region labeled vs twin parity",
       "generated": true,
       "runtimeStatus": "PASS",
-      "contentSha256": "5d6f0d954041a6343c61e565ed12595aa59882c261927586511b972de0fbc827",
-      "failReason": ""
+      "contentSha256": "99b79cb09fd5b8160cefaff3d470b1058c9bc7f562410855f02d4c2905589b8b",
+      "failReason": "",
+      "approved": true,
+      "hasOverride": false,
+      "cellRect": {
+        "left": 876,
+        "top": 561,
+        "width": 176,
+        "height": 140,
+        "hasOverride": false
+      }
     },
     {
       "key": "settings",
@@ -704,15 +855,19 @@
       "column": 6,
       "category": "inspector",
       "founderPriority": false,
-      "parityStatus": "PASS",
-      "positionDelta": 0,
-      "scaleDelta": 0,
-      "textInUnlabeled": false,
-      "parityNotes": "Protected-region labeled vs twin parity",
       "generated": true,
       "runtimeStatus": "PASS",
-      "contentSha256": "112a304a8a8d309b518d5386c36f8f16f0add721983ba8c28473cf7f506c8a76",
-      "failReason": ""
+      "contentSha256": "1d0e83cad3c74a867f48c0f2061c7cb0850cafe20b51684e6a16a53f5da1b497",
+      "failReason": "",
+      "approved": true,
+      "hasOverride": false,
+      "cellRect": {
+        "left": 1052,
+        "top": 561,
+        "width": 175,
+        "height": 140,
+        "hasOverride": false
+      }
     },
     {
       "key": "filter",
@@ -722,15 +877,19 @@
       "column": 7,
       "category": "inspector",
       "founderPriority": false,
-      "parityStatus": "PASS",
-      "positionDelta": 0,
-      "scaleDelta": 0,
-      "textInUnlabeled": false,
-      "parityNotes": "Protected-region labeled vs twin parity",
       "generated": true,
       "runtimeStatus": "PASS",
-      "contentSha256": "f6b0479577d2bb7eb8ecf598c56b93a07a8c72cc33a869b88568694f6ad47b83",
-      "failReason": ""
+      "contentSha256": "b4a29ec13c9ed125a5f85f847a5746a7bd50513151d66d4964464925a2b74468",
+      "failReason": "",
+      "approved": true,
+      "hasOverride": false,
+      "cellRect": {
+        "left": 1227,
+        "top": 561,
+        "width": 175,
+        "height": 140,
+        "hasOverride": false
+      }
     },
     {
       "key": "export",
@@ -740,15 +899,19 @@
       "column": 0,
       "category": "data-sharing",
       "founderPriority": false,
-      "parityStatus": "PASS",
-      "positionDelta": 0,
-      "scaleDelta": 0,
-      "textInUnlabeled": false,
-      "parityNotes": "Protected-region labeled vs twin parity",
       "generated": true,
       "runtimeStatus": "PASS",
-      "contentSha256": "2a8610cbfc4aacab224e3c49dfbcd74c0633e6d9bb2061be8ad55ce05637fdc7",
-      "failReason": ""
+      "contentSha256": "16b814a2592dcce0ea945096ca2ed4688b9cc9fa123fc7d1a92c34a45766595a",
+      "failReason": "",
+      "approved": true,
+      "hasOverride": false,
+      "cellRect": {
+        "left": 0,
+        "top": 701,
+        "width": 175,
+        "height": 141,
+        "hasOverride": false
+      }
     },
     {
       "key": "import",
@@ -758,15 +921,19 @@
       "column": 1,
       "category": "data-sharing",
       "founderPriority": false,
-      "parityStatus": "PASS",
-      "positionDelta": 0,
-      "scaleDelta": 0,
-      "textInUnlabeled": false,
-      "parityNotes": "Protected-region labeled vs twin parity",
       "generated": true,
       "runtimeStatus": "PASS",
-      "contentSha256": "2425baee3de6c8507cfbdee2f71c8a90fa1fff0a85399b61d81b89fe6e9acde0",
-      "failReason": ""
+      "contentSha256": "ddb7f239a63e95eb0f7a1f71b16755819a7cd2f551ed6e9422b998486b7882b4",
+      "failReason": "",
+      "approved": true,
+      "hasOverride": false,
+      "cellRect": {
+        "left": 175,
+        "top": 701,
+        "width": 176,
+        "height": 141,
+        "hasOverride": false
+      }
     },
     {
       "key": "cloudSync",
@@ -776,15 +943,19 @@
       "column": 2,
       "category": "data-sharing",
       "founderPriority": false,
-      "parityStatus": "PASS",
-      "positionDelta": 0,
-      "scaleDelta": 0,
-      "textInUnlabeled": false,
-      "parityNotes": "Protected-region labeled vs twin parity",
       "generated": true,
       "runtimeStatus": "PASS",
-      "contentSha256": "0d91b78fe59ad071d2a6c9cf593856fa568644306fc7461507bcbf01e453e1f6",
-      "failReason": ""
+      "contentSha256": "41a5121aa55577872a5a06b6d3d8d1aeface3e9972c88b79716bfb9e7490eabf",
+      "failReason": "",
+      "approved": true,
+      "hasOverride": false,
+      "cellRect": {
+        "left": 351,
+        "top": 701,
+        "width": 175,
+        "height": 141,
+        "hasOverride": false
+      }
     },
     {
       "key": "database",
@@ -794,15 +965,19 @@
       "column": 3,
       "category": "data-sharing",
       "founderPriority": false,
-      "parityStatus": "PASS",
-      "positionDelta": 0,
-      "scaleDelta": 0,
-      "textInUnlabeled": false,
-      "parityNotes": "Protected-region labeled vs twin parity",
       "generated": true,
       "runtimeStatus": "PASS",
-      "contentSha256": "29945f42bb1aa7b5b64a4b3d38f306dce5109b9385598f366c2a50e5145307f8",
-      "failReason": ""
+      "contentSha256": "fcf83a1ea5d2c9ad41f9a13e3c43ff0405352d6c12216b70fa50838474ec65ac",
+      "failReason": "",
+      "approved": true,
+      "hasOverride": false,
+      "cellRect": {
+        "left": 526,
+        "top": 701,
+        "width": 175,
+        "height": 141,
+        "hasOverride": false
+      }
     },
     {
       "key": "link",
@@ -812,15 +987,19 @@
       "column": 4,
       "category": "data-sharing",
       "founderPriority": false,
-      "parityStatus": "PASS",
-      "positionDelta": 0,
-      "scaleDelta": 0,
-      "textInUnlabeled": false,
-      "parityNotes": "Protected-region labeled vs twin parity",
       "generated": true,
       "runtimeStatus": "PASS",
-      "contentSha256": "c3e836ecf1e392c1ac0a0edd1bf1aa333de20c9a45a95d845e06ed5bc9a78274",
-      "failReason": ""
+      "contentSha256": "d6bae809dd4b85bd8950dc7ef8dda13504583133c2ca8c07710dd94edf5b8dad",
+      "failReason": "",
+      "approved": true,
+      "hasOverride": false,
+      "cellRect": {
+        "left": 701,
+        "top": 701,
+        "width": 175,
+        "height": 141,
+        "hasOverride": false
+      }
     },
     {
       "key": "share",
@@ -830,15 +1009,19 @@
       "column": 5,
       "category": "data-sharing",
       "founderPriority": true,
-      "parityStatus": "PASS",
-      "positionDelta": 0,
-      "scaleDelta": 0,
-      "textInUnlabeled": false,
-      "parityNotes": "Protected-region labeled vs twin parity",
       "generated": true,
       "runtimeStatus": "PASS",
-      "contentSha256": "41f109301dd53fa75692600d743e5620421b25026b3de4cc37cda069a32cbd74",
-      "failReason": ""
+      "contentSha256": "608a0c2ebdefb0afa113d51c95d79543c5e9fbb39e84845754353acb9fe4c994",
+      "failReason": "",
+      "approved": true,
+      "hasOverride": false,
+      "cellRect": {
+        "left": 876,
+        "top": 701,
+        "width": 176,
+        "height": 141,
+        "hasOverride": false
+      }
     },
     {
       "key": "users",
@@ -848,15 +1031,19 @@
       "column": 6,
       "category": "data-sharing",
       "founderPriority": false,
-      "parityStatus": "PASS",
-      "positionDelta": 0,
-      "scaleDelta": 0,
-      "textInUnlabeled": false,
-      "parityNotes": "Protected-region labeled vs twin parity",
       "generated": true,
       "runtimeStatus": "PASS",
-      "contentSha256": "805b211a045a9df12b42ef95e5efc61060fad7520174cd52db48181e7c128898",
-      "failReason": ""
+      "contentSha256": "9705f1d222d7be576bd0f74b4ab89f320225a74082409ae762b4f357c66a079d",
+      "failReason": "",
+      "approved": true,
+      "hasOverride": false,
+      "cellRect": {
+        "left": 1052,
+        "top": 701,
+        "width": 175,
+        "height": 141,
+        "hasOverride": false
+      }
     },
     {
       "key": "team",
@@ -866,15 +1053,19 @@
       "column": 7,
       "category": "data-sharing",
       "founderPriority": true,
-      "parityStatus": "PASS",
-      "positionDelta": 0,
-      "scaleDelta": 0,
-      "textInUnlabeled": false,
-      "parityNotes": "Protected-region labeled vs twin parity",
       "generated": true,
       "runtimeStatus": "PASS",
-      "contentSha256": "dd3fe0b28539e3bc82b1b4b1aeb13fbbb10347abb89df6f0f9a58251fcb5da8b",
-      "failReason": ""
+      "contentSha256": "cd8e653938663e9a4326355fee70ef5efaeae7e990fe83b7ff28deff6d86fc9b",
+      "failReason": "",
+      "approved": true,
+      "hasOverride": false,
+      "cellRect": {
+        "left": 1227,
+        "top": 701,
+        "width": 175,
+        "height": 141,
+        "hasOverride": false
+      }
     },
     {
       "key": "notifications",
@@ -884,15 +1075,19 @@
       "column": 0,
       "category": "collaboration",
       "founderPriority": false,
-      "parityStatus": "PASS",
-      "positionDelta": 0,
-      "scaleDelta": 0,
-      "textInUnlabeled": false,
-      "parityNotes": "Protected-region labeled vs twin parity",
       "generated": true,
       "runtimeStatus": "PASS",
-      "contentSha256": "6108ffed1c142c1e9203e271e31e94c3a7c433f9916c3946d651ccadf73c955e",
-      "failReason": ""
+      "contentSha256": "bd4e4e33e53b4917b978c7e26a5f5027e1e0a3a3242606ac421c6cfd73cde3c7",
+      "failReason": "",
+      "approved": true,
+      "hasOverride": false,
+      "cellRect": {
+        "left": 0,
+        "top": 842,
+        "width": 175,
+        "height": 140,
+        "hasOverride": false
+      }
     },
     {
       "key": "comments",
@@ -902,15 +1097,19 @@
       "column": 1,
       "category": "collaboration",
       "founderPriority": false,
-      "parityStatus": "PASS",
-      "positionDelta": 0,
-      "scaleDelta": 0,
-      "textInUnlabeled": false,
-      "parityNotes": "Protected-region labeled vs twin parity",
       "generated": true,
       "runtimeStatus": "PASS",
-      "contentSha256": "af54562a0cb4333b162d0b6abffe9adc750210716cfdec88761029c615e5b845",
-      "failReason": ""
+      "contentSha256": "39fcc215fbbdc0b22d4466c134aec435bf11484bd36185d0e67a8454ee2fde13",
+      "failReason": "",
+      "approved": true,
+      "hasOverride": false,
+      "cellRect": {
+        "left": 175,
+        "top": 842,
+        "width": 176,
+        "height": 140,
+        "hasOverride": false
+      }
     },
     {
       "key": "notes",
@@ -920,15 +1119,19 @@
       "column": 2,
       "category": "collaboration",
       "founderPriority": false,
-      "parityStatus": "PASS",
-      "positionDelta": 0,
-      "scaleDelta": 0,
-      "textInUnlabeled": false,
-      "parityNotes": "Protected-region labeled vs twin parity",
       "generated": true,
       "runtimeStatus": "PASS",
-      "contentSha256": "4c44231ee762a80d77e7e0c10020d324fb769768d0e30a3026f329836a9aeb3b",
-      "failReason": ""
+      "contentSha256": "0393439ffc8b487289025943c12c10c2d56294c3bb57592013a1301e58df88b8",
+      "failReason": "",
+      "approved": true,
+      "hasOverride": false,
+      "cellRect": {
+        "left": 351,
+        "top": 842,
+        "width": 175,
+        "height": 140,
+        "hasOverride": false
+      }
     },
     {
       "key": "attachments",
@@ -938,15 +1141,19 @@
       "column": 3,
       "category": "collaboration",
       "founderPriority": true,
-      "parityStatus": "PASS",
-      "positionDelta": 0,
-      "scaleDelta": 0,
-      "textInUnlabeled": false,
-      "parityNotes": "Protected-region labeled vs twin parity",
       "generated": true,
       "runtimeStatus": "PASS",
-      "contentSha256": "10883c8ea2cee663a3eeb3dc242729f3c427228e1a2f4ea24fd2eec47848b694",
-      "failReason": ""
+      "contentSha256": "c9fa6fe6b82b9e711f383ce8d1eceb68cd62cd2e6cdbb9be94ef6bc14822afbf",
+      "failReason": "",
+      "approved": true,
+      "hasOverride": false,
+      "cellRect": {
+        "left": 526,
+        "top": 842,
+        "width": 175,
+        "height": 140,
+        "hasOverride": false
+      }
     },
     {
       "key": "schedule",
@@ -956,15 +1163,19 @@
       "column": 4,
       "category": "collaboration",
       "founderPriority": false,
-      "parityStatus": "PASS",
-      "positionDelta": 0,
-      "scaleDelta": 0,
-      "textInUnlabeled": false,
-      "parityNotes": "Protected-region labeled vs twin parity",
       "generated": true,
       "runtimeStatus": "PASS",
-      "contentSha256": "b3ed07d0a447904c0caa57043c5b1ba406f072c72dba61bd5ff6aa56acb4456f",
-      "failReason": ""
+      "contentSha256": "ae1894910f9adf8a460c079e7d75d88940edaa1ab490c673ee04967a3a01aafd",
+      "failReason": "",
+      "approved": true,
+      "hasOverride": false,
+      "cellRect": {
+        "left": 701,
+        "top": 842,
+        "width": 175,
+        "height": 140,
+        "hasOverride": false
+      }
     },
     {
       "key": "timeTracking",
@@ -974,15 +1185,19 @@
       "column": 5,
       "category": "collaboration",
       "founderPriority": false,
-      "parityStatus": "PASS",
-      "positionDelta": 0,
-      "scaleDelta": 0,
-      "textInUnlabeled": false,
-      "parityNotes": "Protected-region labeled vs twin parity",
       "generated": true,
       "runtimeStatus": "PASS",
-      "contentSha256": "f09e108a1577d64510040c8341697f331160186ec0fd63fb98fa27b635e0123b",
-      "failReason": ""
+      "contentSha256": "503e8adcf515718467cc6fd061591d3c9748e50b9d364823cc56ac5e25d535f7",
+      "failReason": "",
+      "approved": true,
+      "hasOverride": false,
+      "cellRect": {
+        "left": 876,
+        "top": 842,
+        "width": 176,
+        "height": 140,
+        "hasOverride": false
+      }
     },
     {
       "key": "flag",
@@ -992,15 +1207,19 @@
       "column": 6,
       "category": "collaboration",
       "founderPriority": false,
-      "parityStatus": "PASS",
-      "positionDelta": 0,
-      "scaleDelta": 0,
-      "textInUnlabeled": false,
-      "parityNotes": "Protected-region labeled vs twin parity",
       "generated": true,
       "runtimeStatus": "PASS",
-      "contentSha256": "ba9efed428b7be284a9000ea53a436170d3944c7eaa50a636939dfcc5a3228ae",
-      "failReason": ""
+      "contentSha256": "366a0b675e9343e569fc8ff99db786210fa8f9834dd8c90972f69452ee3b154b",
+      "failReason": "",
+      "approved": true,
+      "hasOverride": false,
+      "cellRect": {
+        "left": 1052,
+        "top": 842,
+        "width": 175,
+        "height": 140,
+        "hasOverride": false
+      }
     },
     {
       "key": "favorite",
@@ -1010,15 +1229,19 @@
       "column": 7,
       "category": "collaboration",
       "founderPriority": false,
-      "parityStatus": "PASS",
-      "positionDelta": 0,
-      "scaleDelta": 0,
-      "textInUnlabeled": false,
-      "parityNotes": "Protected-region labeled vs twin parity",
       "generated": true,
       "runtimeStatus": "PASS",
-      "contentSha256": "3f24ce23e5c50c8b0ebf9e7472f104a3fd9c603511f827c75286b7e606734e53",
-      "failReason": ""
+      "contentSha256": "2ab017ac801ad2417b1c8403d30287a1775b80b74ccfcf83119dd4c9191fd6f8",
+      "failReason": "",
+      "approved": true,
+      "hasOverride": false,
+      "cellRect": {
+        "left": 1227,
+        "top": 842,
+        "width": 175,
+        "height": 140,
+        "hasOverride": false
+      }
     },
     {
       "key": "dashboard",
@@ -1028,15 +1251,19 @@
       "column": 0,
       "category": "system",
       "founderPriority": true,
-      "parityStatus": "PASS",
-      "positionDelta": 0,
-      "scaleDelta": 0,
-      "textInUnlabeled": false,
-      "parityNotes": "Protected-region labeled vs twin parity",
       "generated": true,
       "runtimeStatus": "PASS",
-      "contentSha256": "e190b006f91f37a60aa57e975f8e8f24384891cb343e4033db6fbc09bfab7d02",
-      "failReason": ""
+      "contentSha256": "b14f276a253fc5df49718a733d9db28e9066dc755165cff477c0a6bcba53ccc7",
+      "failReason": "",
+      "approved": true,
+      "hasOverride": false,
+      "cellRect": {
+        "left": 0,
+        "top": 982,
+        "width": 175,
+        "height": 140,
+        "hasOverride": false
+      }
     },
     {
       "key": "focusMode",
@@ -1046,15 +1273,19 @@
       "column": 1,
       "category": "system",
       "founderPriority": false,
-      "parityStatus": "PASS",
-      "positionDelta": 0,
-      "scaleDelta": 0,
-      "textInUnlabeled": false,
-      "parityNotes": "Protected-region labeled vs twin parity",
       "generated": true,
       "runtimeStatus": "PASS",
-      "contentSha256": "91e0a57657b3144b4e8c62fc0bd440ed36ad440cdad6537ef971b2327e2364c4",
-      "failReason": ""
+      "contentSha256": "96621dc594f6b5e3cadf8e3fb95c43c934be54553f646573aecb3affafcee476",
+      "failReason": "",
+      "approved": true,
+      "hasOverride": false,
+      "cellRect": {
+        "left": 175,
+        "top": 982,
+        "width": 176,
+        "height": 140,
+        "hasOverride": false
+      }
     },
     {
       "key": "terminal",
@@ -1064,15 +1295,19 @@
       "column": 2,
       "category": "system",
       "founderPriority": true,
-      "parityStatus": "PASS",
-      "positionDelta": 0,
-      "scaleDelta": 0,
-      "textInUnlabeled": false,
-      "parityNotes": "Protected-region labeled vs twin parity",
       "generated": true,
       "runtimeStatus": "PASS",
-      "contentSha256": "cc5be88cf45613cf486d17e6879596a8fdb6ba9d1b0693c132cfd0687998aa25",
-      "failReason": ""
+      "contentSha256": "0b9d3ccb4649c1d3879fc101b9a7b70991156d5f6c972764528e6911e2a42de4",
+      "failReason": "",
+      "approved": true,
+      "hasOverride": false,
+      "cellRect": {
+        "left": 351,
+        "top": 982,
+        "width": 175,
+        "height": 140,
+        "hasOverride": false
+      }
     },
     {
       "key": "diagnostics",
@@ -1082,15 +1317,19 @@
       "column": 3,
       "category": "system",
       "founderPriority": true,
-      "parityStatus": "PASS",
-      "positionDelta": 0,
-      "scaleDelta": 0,
-      "textInUnlabeled": false,
-      "parityNotes": "Protected-region labeled vs twin parity",
       "generated": true,
       "runtimeStatus": "PASS",
-      "contentSha256": "36df2e91a278801961a094ff7ed886b290374c92d28009e9c37a64a70723504e",
-      "failReason": ""
+      "contentSha256": "e013371cb380d41bbea69e026f8f3b67e834449dbdfeead05309601abb09fde3",
+      "failReason": "",
+      "approved": true,
+      "hasOverride": false,
+      "cellRect": {
+        "left": 526,
+        "top": 982,
+        "width": 175,
+        "height": 140,
+        "hasOverride": false
+      }
     },
     {
       "key": "security",
@@ -1100,15 +1339,19 @@
       "column": 4,
       "category": "system",
       "founderPriority": false,
-      "parityStatus": "PASS",
-      "positionDelta": 0,
-      "scaleDelta": 0,
-      "textInUnlabeled": false,
-      "parityNotes": "Protected-region labeled vs twin parity",
       "generated": true,
       "runtimeStatus": "PASS",
-      "contentSha256": "f876c3c4af78086c2e2b7c4c95b22cf5e22338955f5def70fddfa7ba175f9678",
-      "failReason": ""
+      "contentSha256": "685d3ab8f0b4d21f0f918a098488fcc47a794ae7a89550842425b11a824dcb3b",
+      "failReason": "",
+      "approved": true,
+      "hasOverride": false,
+      "cellRect": {
+        "left": 701,
+        "top": 982,
+        "width": 175,
+        "height": 140,
+        "hasOverride": false
+      }
     },
     {
       "key": "permissions",
@@ -1118,15 +1361,19 @@
       "column": 5,
       "category": "system",
       "founderPriority": true,
-      "parityStatus": "PASS",
-      "positionDelta": 0,
-      "scaleDelta": 0,
-      "textInUnlabeled": false,
-      "parityNotes": "Protected-region labeled vs twin parity",
       "generated": true,
       "runtimeStatus": "PASS",
-      "contentSha256": "5f83cd297dd97966d0f59c586400eb48c0de78c67ea5051ecdcb50fcbda446be",
-      "failReason": ""
+      "contentSha256": "f88f7c821f7319d915877e39bad385357a2e0fa2e5d3b984d33c2d8689d268b8",
+      "failReason": "",
+      "approved": true,
+      "hasOverride": false,
+      "cellRect": {
+        "left": 876,
+        "top": 982,
+        "width": 176,
+        "height": 140,
+        "hasOverride": false
+      }
     },
     {
       "key": "help",
@@ -1136,15 +1383,19 @@
       "column": 6,
       "category": "system",
       "founderPriority": false,
-      "parityStatus": "PASS",
-      "positionDelta": 0,
-      "scaleDelta": 0,
-      "textInUnlabeled": false,
-      "parityNotes": "Protected-region labeled vs twin parity",
       "generated": true,
       "runtimeStatus": "PASS",
-      "contentSha256": "4a3e294534b2954ad0b3c2176f33bc373b69c7c5e28ca61d8a7102e65f788e8d",
-      "failReason": ""
+      "contentSha256": "a77df10ee6600950eff7931820bfd3e5dbd138efb2ce93f8d3beab2238a9615a",
+      "failReason": "",
+      "approved": true,
+      "hasOverride": false,
+      "cellRect": {
+        "left": 1052,
+        "top": 982,
+        "width": 175,
+        "height": 140,
+        "hasOverride": false
+      }
     },
     {
       "key": "about",
@@ -1154,15 +1405,19 @@
       "column": 7,
       "category": "system",
       "founderPriority": false,
-      "parityStatus": "PASS",
-      "positionDelta": 0,
-      "scaleDelta": 0,
-      "textInUnlabeled": false,
-      "parityNotes": "Protected-region labeled vs twin parity",
       "generated": true,
       "runtimeStatus": "PASS",
-      "contentSha256": "0eb72a8ad4a474ed887bce786d55e5b2cd00536ba5607235c0ab1ea13adc06e4",
-      "failReason": ""
+      "contentSha256": "01dae235050934621fd7e50c59b3182e52eefe3bcaeb5de315d2da36e13dd487",
+      "failReason": "",
+      "approved": true,
+      "hasOverride": false,
+      "cellRect": {
+        "left": 1227,
+        "top": 982,
+        "width": 175,
+        "height": 140,
+        "hasOverride": false
+      }
     }
   ]
 }

@@ -1,0 +1,41 @@
+{
+  "sourceAssetPath": "src/assets/studio-world/icons/source/studio-world-icon-source-unlabeled.png",
+  "sourceWidth": 1402,
+  "sourceHeight": 1122,
+  "rowCount": 8,
+  "columnCount": 8,
+  "outerLeft": 0,
+  "outerRight": 0,
+  "outerTop": 0,
+  "outerBottom": 0,
+  "rowBoundaries": [0, 0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 0.875, 1],
+  "columnBoundaries": [0, 0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 0.875, 1],
+  "rowOffsets": [0, 0, 0, 0, 0, 0, 0, 0],
+  "columnOffsets": [0, 0, 0, 0, 0, 0, 0, 0],
+  "rowPadding": [
+    { "top": 0, "bottom": 0 },
+    { "top": 0, "bottom": 0 },
+    { "top": 0, "bottom": 0 },
+    { "top": 0, "bottom": 0 },
+    { "top": 0, "bottom": 0 },
+    { "top": 0, "bottom": 0 },
+    { "top": 0, "bottom": 0 },
+    { "top": 0, "bottom": 0 }
+  ],
+  "columnPadding": [
+    { "left": 0, "right": 0 },
+    { "left": 0, "right": 0 },
+    { "left": 0, "right": 0 },
+    { "left": 0, "right": 0 },
+    { "left": 0, "right": 0 },
+    { "left": 0, "right": 0 },
+    { "left": 0, "right": 0 },
+    { "left": 0, "right": 0 }
+  ],
+  "cellOverrides": [],
+  "calibrationVersion": "studio-world-icon-grid-calibration-v1",
+  "updatedAt": "2026-07-14T00:00:00.000Z",
+  "updatedBy": "system",
+  "canonical": true,
+  "notes": "Equal 8×8 grid over founder unlabeled source pack — no label removal, no automatic crop inference."
+}

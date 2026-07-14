@@ -24,17 +24,29 @@ export {
   STUDIO_WORLD_ICON_SOURCE_MANIFEST_VERSION,
   STUDIO_WORLD_ICON_EXTRACTION_SOURCE_ROLE,
   STUDIO_WORLD_ICON_FORBIDDEN_EXTRACTION_PATHS,
+  STUDIO_WORLD_ICON_V6_OUTPUT_DIR,
+  STUDIO_WORLD_ICON_V6_VERSION,
   STUDIO_WORLD_ICON_V5_OUTPUT_DIR,
   STUDIO_WORLD_ICON_V5_VERSION,
   STUDIO_WORLD_ICON_V4_OUTPUT_DIR,
   STUDIO_WORLD_ICON_V4_VERSION,
+  STUDIO_WORLD_ICON_GRID_CALIBRATION_PATH,
 } from './studio-world-icon-source-manifest';
+export {
+  STUDIO_WORLD_ICON_GRID_CALIBRATION_CANONICAL,
+  validateGridCalibration,
+  resolveAllCalibratedCellRects,
+  createDefaultGridCalibration,
+} from './grid-calibration';
+export type { StudioWorldIconGridCalibration, StudioWorldIconCellOverride } from './grid-calibration';
 export { STUDIO_WORLD_ICON_LABEL_MASKS } from './studio-world-icon-label-mask.config';
 export {
   STUDIO_WORLD_ICON_GRID_CONFIG,
   resolveStudioWorldIconCellRect,
 } from './studio-world-icon-grid.config';
 export {
+  resolveExperienceLabIconSourceUnlabeledUrl,
+  resolveExperienceLabIconSourceLabeledUrl,
   resolveExperienceLabIconSourceUnlabeledTwinUrl,
 } from './experience-lab-icon-sprite.config';
 export {
