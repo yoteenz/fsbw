@@ -1,4 +1,4 @@
-/** Primary HQ / department locations shown in Experience Lab Command Dock row 2. */
+/** Legacy HQ location tabs — superseded by program/pipeline selectors (architecture sprint). */
 
 import type { ExperienceLabIconName } from '../icons/experience-lab-icon-registry';
 

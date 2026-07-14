@@ -49754,3 +49754,27 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 **Fix:** Keep zero horizontal padding on row containers (full center-column width matching workbench). Restore Design Variants chrome `border-radius: calc(var(--elab-hud-radius-panel) + 2px)` at width 100%. Restore FRC `gap: clamp(8px, 1.2vw, 14px)`, per-panel `border-radius: var(--elab-hud-radius-panel)`, full individual borders. Tests updated.
 
+---
+
+## 2026-07-14 — Experience Lab V2 Command Dock program architecture refactor
+
+**Founder sprint:** Replace Command Dock department navigation with two canonical program selectors (`BUILD STUDIO WORLD` / `BUILD INDUSTRY PACKS`). Registry-driven department/pack/environment selectors, informational breadcrumb, generation pipeline state. **No visual redesign** — preserve typography, spacing, glass, HUD, viewport, workbench, design variants.
+
+**Prior work in same chat (already on master):** Workbench tools row 6-panel viewport + side inset; global uppercase on workstation + boot overlays; workbench label weight 400 to match title.
+
+**Architecture shipped:**
+- **Registries:** `experience-lab-v2-program-registry`, `department-registry`, `industry-pack-registry`, `environment-registry`
+- **Pipeline:** `experience-lab-v2-generation-pipeline.ts` — state model, breadcrumb builder, reset scopes, canonical department + program-actions profile
+- **Context:** `ProgramContextProvider` + `useProgramContext` / `useGenerationPipelineController`
+- **Command Dock components:** `ProgramSelector`, `DepartmentSelector`, `IndustryPackSelector`, `EnvironmentSelector`, `ActiveContextBreadcrumb`, `PipelineSelectorRow`
+- **`ExperienceLabCommandDock`:** Removed HQ location tabs (Frontal Slayer HQ, Reception, Creative Studio, etc.); rows = identity → programs → pipeline selectors → breadcrumb → status
+- **`ExperienceLabV2Shell`:** Wrapped in `ProgramContextProvider`; view model uses pipeline `programId` + `canonicalDepartmentId`; variant resets on program/department/pack/environment depth changes
+- **CSS:** Minimal rows for programs (50% segmented tabs), pipeline selects, breadcrumb — reuses existing `.elab-cmd__location-tab` styling
+- **Legacy:** `EXPERIENCE_LAB_COMMAND_DOCK_LOCATIONS` marked superseded (logo/status helpers retained)
+
+**Pipeline mental model:** Program → Department OR Industry Pack → Environment → Variant → Environment Package → Workbench
+
+**Tests:** 137/137 Experience Lab V2 PASS; build PASS. New `experience-lab-v2-generation-pipeline.test.ts`; command-dock + shell tests updated.
+
+**Spatial Architecture Review:** SKIPPED — architectural restructure of existing Command Dock, no new surfaces or shell redesign.
+

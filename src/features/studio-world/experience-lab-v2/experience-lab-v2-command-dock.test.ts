@@ -3,37 +3,20 @@ import { readFileSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
-  commandDockLocationSubtitle,
   commandDockStatusClass,
-  EXPERIENCE_LAB_COMMAND_DOCK_LOCATIONS,
   EXPERIENCE_LAB_COMMAND_DOCK_LOGO_PATH,
   resolveExperienceLabCommandDockLogoUrl,
   formatCommandDockApprovalStatus,
   formatCommandDockPermitStatus,
 } from './experience-lab-v2-command-dock-locations';
+import { listExperienceLabV2Programs } from './experience-lab-v2-program-registry';
 
 const V2_DIR = dirname(fileURLToPath(import.meta.url));
 
-describe('Experience Lab Command Dock locations', () => {
+describe('Experience Lab Command Dock', () => {
   it('uses Studio World logo from live preview storage', () => {
     expect(EXPERIENCE_LAB_COMMAND_DOCK_LOGO_PATH).toContain('IMG_6238.webp');
     expect(resolveExperienceLabCommandDockLogoUrl()).toContain('IMG_6238.webp');
-  });
-
-  it('lists HQ locations with Experience Lab as primary department tab', () => {
-    expect(EXPERIENCE_LAB_COMMAND_DOCK_LOCATIONS[0]?.title).toBe('FRONTAL SLAYER');
-    expect(EXPERIENCE_LAB_COMMAND_DOCK_LOCATIONS[0]?.subtitleAlignLeft).toBe(true);
-    expect(EXPERIENCE_LAB_COMMAND_DOCK_LOCATIONS[1]?.id).toBe('experience-lab');
-    expect(EXPERIENCE_LAB_COMMAND_DOCK_LOCATIONS.some((l) => l.id === 'reception')).toBe(true);
-  });
-
-  it('assigns an icon to every location tab', () => {
-    for (const tab of EXPERIENCE_LAB_COMMAND_DOCK_LOCATIONS) {
-      expect(tab.icon).toBeTruthy();
-    }
-    expect(EXPERIENCE_LAB_COMMAND_DOCK_LOCATIONS[0]?.icon).toBe('projects');
-    expect(EXPERIENCE_LAB_COMMAND_DOCK_LOCATIONS[1]?.icon).toBe('experienceLab');
-    expect(EXPERIENCE_LAB_COMMAND_DOCK_LOCATIONS[2]?.icon).toBe('users');
   });
 
   it('maps approval and permit states to uppercase review labels', () => {
@@ -51,15 +34,17 @@ describe('Experience Lab Command Dock locations', () => {
     expect(commandDockStatusClass('PENDING')).toBe('elab-status--warn');
   });
 
-  it('shows revision on reception location subtitle', () => {
-    const reception = EXPERIENCE_LAB_COMMAND_DOCK_LOCATIONS.find((l) => l.id === 'reception');
-    expect(reception).toBeTruthy();
-    expect(commandDockLocationSubtitle(reception!, 18)).toBe('REVISION 18');
+  it('exposes two canonical program selectors via registry', () => {
+    const programs = listExperienceLabV2Programs();
+    expect(programs).toHaveLength(2);
+    expect(programs[0]?.programId).toBe('studio-world');
+    expect(programs[1]?.programId).toBe('industry-packs');
   });
 });
 
 describe('Experience Lab Command Dock presentation', () => {
   const css = readFileSync(resolve(V2_DIR, 'experience-lab-v2.css'), 'utf8');
+  const dock = readFileSync(resolve(V2_DIR, 'ExperienceLabCommandDock.tsx'), 'utf8');
 
   it('uses larger logo matching avatar circle and shared avatar size token', () => {
     expect(css).toContain('--elab-cmd-avatar-size: 28px');
@@ -74,22 +59,33 @@ describe('Experience Lab Command Dock presentation', () => {
     expect(css).not.toMatch(/\.elab-cmd__overflow\s*\{[\s\S]*?top:\s*50%/);
   });
 
-  it('adjusts row 2 and row 3 typography independently', () => {
+  it('adjusts row typography independently', () => {
     expect(css).toMatch(/\.elab-cmd__title\s*\{[\s\S]*?font-size:\s*11px/);
     expect(css).toMatch(/\.elab-cmd__location-title\s*\{[\s\S]*?font-size:\s*7px/);
     expect(css).toMatch(/\.elab-cmd__location-title\s*\{[\s\S]*?font-weight:\s*600/);
-    expect(css).toMatch(/\.elab-cmd__location-subtitle\s*\{[\s\S]*?font-size:\s*5px/);
-    expect(css).toContain('.elab-cmd__location-subtitle--align-left');
     expect(css).toMatch(/\.elab-cmd__status-item\s*\{[\s\S]*?font-size:\s*8px/);
     expect(css).toMatch(/\.elab-cmd__status-item\s*\{[\s\S]*?font-weight:\s*400/);
     expect(css).toMatch(/\.elab-cmd__status-item strong\s*\{[\s\S]*?font-weight:\s*600/);
     expect(css).toMatch(/\.elab-cmd__subtitle\s*\{[\s\S]*?margin-top:\s*2px/);
   });
 
-  it('rounds locations row top and bottom like reference pill', () => {
+  it('uses program row and pipeline selectors instead of HQ location tabs', () => {
+    expect(dock).toContain('ProgramSelector');
+    expect(dock).toContain('PipelineSelectorRow');
+    expect(dock).toContain('ActiveContextBreadcrumb');
+    expect(dock).toContain('elab-cmd__row--programs');
+    expect(dock).toContain('elab-cmd__row--pipeline');
+    expect(dock).toContain('elab-cmd__row--breadcrumb');
+    expect(dock).not.toContain('EXPERIENCE_LAB_COMMAND_DOCK_LOCATIONS');
+    expect(css).toContain('.elab-cmd__locations--programs');
+    expect(css).toMatch(/\.elab-cmd__row--programs\s*\{[\s\S]*?margin:\s*0/);
+    expect(css).toMatch(/\.elab-cmd__row--programs\s*\{[\s\S]*?padding:\s*0/);
+    expect(css).toContain('.elab-cmd__pipeline-select');
+    expect(css).toContain('.elab-cmd__breadcrumb');
+  });
+
+  it('rounds program selector row like reference pill', () => {
     expect(css).toContain('--elab-cmd-locations-radius: 12px');
     expect(css).toMatch(/\.elab-cmd__locations\s*\{[\s\S]*?border-radius:\s*0/);
-    expect(css).toMatch(/\.elab-cmd__row--locations\s*\{[\s\S]*?margin:\s*0/);
-    expect(css).toMatch(/\.elab-cmd__row--locations\s*\{[\s\S]*?padding:\s*0/);
   });
 });

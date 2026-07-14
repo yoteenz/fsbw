@@ -2,16 +2,16 @@ import { useState } from 'react';
 import type { ExperienceLabV2ViewModel } from './experience-lab-v2.types';
 import { ELAB_V2_COMPOSITION } from './experience-lab-v2-composition';
 import {
-  commandDockLocationSubtitle,
   commandDockStatusClass,
-  EXPERIENCE_LAB_COMMAND_DOCK_LOCATIONS,
   formatCommandDockApprovalStatus,
   formatCommandDockPermitStatus,
   resolveExperienceLabCommandDockLogoUrl,
-  type CommandDockLocationId,
 } from './experience-lab-v2-command-dock-locations';
 import { ExperienceLabSheet } from './ExperienceLabSheet';
 import { ExperienceLabIcon } from '../icons/ExperienceLabIcon';
+import { ProgramSelector } from './command-dock/ProgramSelector';
+import { PipelineSelectorRow } from './command-dock/PipelineSelectorRow';
+import { ActiveContextBreadcrumb } from './command-dock/ActiveContextBreadcrumb';
 
 type Props = {
   model: ExperienceLabV2ViewModel;
@@ -19,10 +19,9 @@ type Props = {
   onSearch?: () => void;
 };
 
-/** Three-row Command Dock — identity · HQ location tabs · status line. */
+/** Command Dock — program · pipeline scope · breadcrumb · status (no duplicate department nav). */
 export function ExperienceLabCommandDock({ model, onStatusOpen, onSearch }: Props) {
   const [statusOpen, setStatusOpen] = useState(false);
-  const [activeLocation, setActiveLocation] = useState<CommandDockLocationId>('experience-lab');
 
   const statusLabel = formatCommandDockApprovalStatus(model.approvalStatus);
   const permitLabel = formatCommandDockPermitStatus(model.permitStatus);
@@ -52,53 +51,29 @@ export function ExperienceLabCommandDock({ model, onStatusOpen, onSearch }: Prop
             <span className="elab-cmd__subtitle">ARCHITECTURE STUDIO</span>
           </div>
           <div className="elab-cmd__actions">
-            <button type="button" className="elab-cmd__icon-btn" aria-label="Search" onClick={onSearch}>
+            <button type="button" className="elab-cmd__icon-btn" aria-label="SEARCH" onClick={onSearch}>
               <ExperienceLabIcon name="zoomIn" size="sm" decorative />
             </button>
-            <button type="button" className="elab-cmd__icon-btn elab-cmd__icon-btn--badge" aria-label="Alerts">
+            <button type="button" className="elab-cmd__icon-btn elab-cmd__icon-btn--badge" aria-label="ALERTS">
               <ExperienceLabIcon name="notifications" size="sm" decorative />
               <span className="elab-cmd__badge-count">3</span>
             </button>
-            <button type="button" className="elab-cmd__avatar" aria-label="Client account">
+            <button type="button" className="elab-cmd__avatar" aria-label="CLIENT ACCOUNT">
               <ExperienceLabIcon name="users" size="sm" decorative />
             </button>
           </div>
         </div>
 
-        <div className="elab-cmd__row elab-cmd__row--locations">
-          <nav className="elab-cmd__locations" aria-label="Primary headquarters locations">
-            {EXPERIENCE_LAB_COMMAND_DOCK_LOCATIONS.map((tab) => {
-              const active = tab.id === activeLocation;
-              return (
-                <button
-                  key={tab.id}
-                  type="button"
-                  className={`elab-cmd__location-tab${active ? ' elab-cmd__location-tab--active' : ''}`}
-                  data-location={tab.id}
-                  aria-current={active ? 'page' : undefined}
-                  onClick={() => setActiveLocation(tab.id)}
-                >
-                  <span className="elab-cmd__location-icon" aria-hidden>
-                    <ExperienceLabIcon name={tab.icon} size="xs" decorative />
-                  </span>
-                  <span className="elab-cmd__location-copy">
-                    <span className="elab-cmd__location-title">{tab.title}</span>
-                    <span
-                      className={`elab-cmd__location-subtitle${tab.subtitleAlignLeft ? ' elab-cmd__location-subtitle--align-left' : ''}`}
-                    >
-                      {commandDockLocationSubtitle(tab, model.revision)}
-                    </span>
-                  </span>
-                  {tab.showLiveIndicator ? (
-                    <span className="elab-cmd__location-live" aria-label="Live status">
-                      <span className="elab-cmd__location-live-dot" />
-                    </span>
-                  ) : null}
-                  {active ? <span className="elab-cmd__location-chev" aria-hidden>›</span> : null}
-                </button>
-              );
-            })}
-          </nav>
+        <div className="elab-cmd__row elab-cmd__row--programs">
+          <ProgramSelector />
+        </div>
+
+        <div className="elab-cmd__row elab-cmd__row--pipeline">
+          <PipelineSelectorRow />
+        </div>
+
+        <div className="elab-cmd__row elab-cmd__row--breadcrumb">
+          <ActiveContextBreadcrumb />
         </div>
 
         <div className="elab-cmd__row elab-cmd__row--status">
@@ -117,28 +92,28 @@ export function ExperienceLabCommandDock({ model, onStatusOpen, onSearch }: Prop
               AI COST (EST.) {costDisplay}
             </span>
           </div>
-          <button type="button" className="elab-cmd__overflow" aria-label="More status options" onClick={openStatus}>
+          <button type="button" className="elab-cmd__overflow" aria-label="MORE STATUS OPTIONS" onClick={openStatus}>
             <span className="elab-cmd__overflow-dots" aria-hidden>…</span>
           </button>
         </div>
       </header>
 
-      <ExperienceLabSheet open={statusOpen} title="Status & metadata" onClose={() => setStatusOpen(false)}>
+      <ExperienceLabSheet open={statusOpen} title="STATUS & METADATA" onClose={() => setStatusOpen(false)}>
         <dl className="elab-sheet-dl">
           <div>
-            <dt>Status</dt>
+            <dt>STATUS</dt>
             <dd className={commandDockStatusClass(statusLabel)}>{statusLabel}</dd>
           </div>
           <div>
-            <dt>Permit</dt>
+            <dt>PERMIT</dt>
             <dd className={commandDockStatusClass(permitLabel)}>{permitLabel}</dd>
           </div>
           <div>
-            <dt>AI cost (est.)</dt>
+            <dt>AI COST (EST.)</dt>
             <dd>{costDisplay}</dd>
           </div>
           <div>
-            <dt>Revision</dt>
+            <dt>REVISION</dt>
             <dd>r{model.revision}</dd>
           </div>
         </dl>

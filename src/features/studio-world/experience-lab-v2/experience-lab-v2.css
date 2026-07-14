@@ -380,7 +380,8 @@ body.elab-v2-fixed-shell-active {
   border-bottom: none;
 }
 
-.elab-cmd__row--locations {
+.elab-cmd__row--locations,
+.elab-cmd__row--programs {
   padding: 0;
   margin: 0;
   background: transparent;
@@ -389,6 +390,66 @@ body.elab-v2-fixed-shell-active {
   display: flex;
   align-items: stretch;
   justify-content: stretch;
+}
+
+.elab-cmd__row--pipeline {
+  padding: 4px 10px;
+  gap: 12px;
+  border-bottom: none;
+}
+
+.elab-cmd__pipeline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-width: 0;
+}
+
+.elab-cmd__pipeline-field {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.elab-cmd__pipeline-label {
+  font-size: 5px;
+  letter-spacing: 0.1em;
+  color: var(--elab-muted);
+}
+
+.elab-cmd__pipeline-select {
+  appearance: none;
+  width: 100%;
+  min-width: 0;
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(0, 0, 0, 0.2);
+  color: var(--elab-text);
+  font-size: 7px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+}
+
+.elab-cmd__row--breadcrumb {
+  padding: 2px 10px 4px;
+  border-bottom: none;
+}
+
+.elab-cmd__breadcrumb {
+  margin: 0;
+  font-size: 5px;
+  letter-spacing: 0.1em;
+  color: var(--elab-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
 }
 
 .elab-cmd__row--status {
@@ -517,6 +578,12 @@ body.elab-v2-fixed-shell-active {
 
 .elab-cmd__locations::-webkit-scrollbar {
   display: none;
+}
+
+.elab-cmd__locations--programs .elab-cmd__location-tab,
+.elab-cmd__location-tab--program {
+  flex: 0 0 50%;
+  max-width: 50%;
 }
 
 .elab-cmd__location-tab {

@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import type { CanonicalMainDepartmentId } from '../../../studio-os-core/canonical-studio-world/canonical-department-registry';
-import { useExperienceLabProgram } from '../../../hooks/useExperienceLabProgram';
 import { useCanonicalDepartmentQueue } from '../../../hooks/useCanonicalDepartmentQueue';
 import { ExperienceLabEnvironmentLayer } from './ExperienceLabEnvironmentLayer';
 import { ExperienceLabCommandDock } from './ExperienceLabCommandDock';
@@ -28,7 +27,11 @@ import { resolveExperienceLabV2FeatureFlags } from './experience-lab-v2-feature-
 import { useExperienceLabAppShell } from './useExperienceLabAppShell';
 import { useExperienceLabPanelOrchestrator } from './useExperienceLabPanelOrchestrator';
 import { useExperienceLabComponentReview } from './useExperienceLabComponentReview';
-import { useExperienceLabDesignVariants } from './useExperienceLabDesignVariants';
+import {
+  useExperienceLabDesignVariants,
+  type ExperienceLabDesignVariants,
+} from './useExperienceLabDesignVariants';
+import { DEFAULT_ACTIVE_DESIGN_VARIANT_ID } from './experience-lab-design-variants';
 import { ExperienceLabDesignVariantDrawerBody } from './ExperienceLabDesignVariantDrawer';
 import { defaultWorkbenchTab, focusModeFromViewportMode } from './experience-lab-v2-layout';
 import type { ElabWorkbenchTab } from './experience-lab-v2-layout';
@@ -36,6 +39,7 @@ import type { WorkbenchEditingToolId } from './experience-lab-v2-workbench-confi
 import { inspectorPanelForWorkbenchTool } from './experience-lab-v2-workbench-config';
 import { ELAB_V2_COMPOSITION } from './experience-lab-v2-composition';
 import { INSPECTOR_PANELS, viewportModeForInspector } from './experience-lab-v2-panel-orchestrator';
+import { ProgramContextProvider, useProgramContext } from './ProgramContextProvider';
 import './experience-lab-v2.css';
 
 type Props = {
@@ -47,16 +51,45 @@ type Props = {
  * Component Review Mode shows one system component at a time for founder approval.
  */
 export function ExperienceLabV2Shell({ initialDepartmentId = 'experience-lab' }: Props) {
-  const { program } = useExperienceLabProgram();
-  const canonicalQueue = useCanonicalDepartmentQueue();
-  const location = useLocation();
-  const navigate = useNavigate();
-  const flags = resolveExperienceLabV2FeatureFlags();
   const shell = useExperienceLabAppShell();
-  const review = useExperienceLabComponentReview();
   const designVariants = useExperienceLabDesignVariants({ isCompact: shell.isCompact });
 
-  const [departmentId] = useState<CanonicalMainDepartmentId>(initialDepartmentId);
+  const handlePipelineDepthChange = useCallback(
+    (_scope: 'program' | 'department' | 'pack' | 'environment') => {
+      designVariants.selectVariant(DEFAULT_ACTIVE_DESIGN_VARIANT_ID);
+    },
+    [designVariants]
+  );
+
+  return (
+    <ProgramContextProvider
+      activeVariantLabel={designVariants.activeVariant?.name ?? null}
+      onPipelineDepthChange={handlePipelineDepthChange}
+    >
+      <ExperienceLabV2ShellBody
+        initialDepartmentId={initialDepartmentId}
+        shell={shell}
+        designVariants={designVariants}
+      />
+    </ProgramContextProvider>
+  );
+}
+
+type ShellBodyProps = Props & {
+  shell: ReturnType<typeof useExperienceLabAppShell>;
+  designVariants: ExperienceLabDesignVariants;
+};
+
+function ExperienceLabV2ShellBody({ initialDepartmentId: _initialDepartmentId, shell, designVariants }: ShellBodyProps) {
+  const pipeline = useProgramContext();
+  const canonicalQueue = useCanonicalDepartmentQueue();
+  const flags = resolveExperienceLabV2FeatureFlags();
+  const review = useExperienceLabComponentReview();
+
+  const departmentId = pipeline.canonicalDepartmentId as CanonicalMainDepartmentId;
+  const program = pipeline.state.programId;
+  const location = useLocation();
+  const navigate = useNavigate();
   const [viewportMode, setViewportMode] = useState<StudioViewportMode>(
     () => parseViewportModeFromQuery(location.search) ?? 'BLUEPRINT'
   );

@@ -259,17 +259,22 @@ describe('Experience Lab V2 — Fixed application shell', () => {
     expect(css).toMatch(/\.elab-founder-review-console__panel\s*\{[\s\S]*?border-radius:\s*var\(--elab-hud-radius-panel\)/);
   });
 
-  it('command dock uses three-row tiered layout with HQ location tabs', () => {
+  it('command dock uses tiered layout with program pipeline selectors', () => {
     const dock = readV2Source('ExperienceLabCommandDock.tsx');
     expect(dock).toContain('elab-cmd--pro');
     expect(dock).toContain('elab-cmd--tiered');
     expect(dock).toContain('elab-cmd__row--identity');
-    expect(dock).toContain('elab-cmd__row--locations');
+    expect(dock).toContain('elab-cmd__row--programs');
+    expect(dock).toContain('elab-cmd__row--pipeline');
+    expect(dock).toContain('elab-cmd__row--breadcrumb');
     expect(dock).toContain('elab-cmd__row--status');
     expect(dock).toContain('elab-cmd__status-center');
+    expect(dock).toContain('ProgramSelector');
+    expect(dock).toContain('ActiveContextBreadcrumb');
     expect(dock).toContain('resolveExperienceLabCommandDockLogoUrl');
     expect(dock).toContain('elab-cmd__overflow-dots');
     expect(dock).not.toContain('isCompact');
+    expect(dock).not.toContain('EXPERIENCE_LAB_COMMAND_DOCK_LOCATIONS');
     expect(readV2Source('ExperienceLabWorkbenchDock.tsx')).toContain('elab-wb-dock--pro');
     expect(readV2Source('ExperienceLabWorkbenchDock.tsx')).not.toContain('isCompact');
   });
