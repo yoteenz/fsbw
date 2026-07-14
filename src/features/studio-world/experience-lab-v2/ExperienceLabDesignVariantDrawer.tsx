@@ -8,6 +8,10 @@ type Props = {
   isActive: boolean;
   onActivate: () => void;
   onArchive: () => void;
+  onApproveForProduction?: () => void;
+  onPromoteToCanonical?: () => void;
+  actionBusy?: boolean;
+  actionError?: string | null;
   onClose: () => void;
 };
 
@@ -18,6 +22,10 @@ export function ExperienceLabDesignVariantDrawerBody({
   isActive,
   onActivate,
   onArchive,
+  onApproveForProduction,
+  onPromoteToCanonical,
+  actionBusy,
+  actionError,
   onClose,
 }: Props) {
   const badge = resolveVariantCardBadge(variant, isActive);
@@ -30,10 +38,18 @@ export function ExperienceLabDesignVariantDrawerBody({
         {packageModel ? (
           <>
             <div><dt>Package status</dt><dd>{packageModel.packageStatus.toUpperCase()}</dd></div>
+            <div><dt>Readiness</dt><dd>{packageModel.readinessPercent}%</dd></div>
+            <div><dt>Generation progress</dt><dd>{packageModel.generationProgress}%</dd></div>
             <div><dt>Outputs generated</dt><dd>{packageModel.outputsGenerated}</dd></div>
             <div><dt>Outputs pending</dt><dd>{packageModel.outputsPending}</dd></div>
+            <div><dt>Outputs failed</dt><dd>{packageModel.outputsFailed}</dd></div>
+            <div><dt>Package health</dt><dd>{packageModel.overallHealthPercent}%</dd></div>
             <div><dt>Asset count</dt><dd>{packageModel.assetCount}</dd></div>
+            <div><dt>Estimated cost</dt><dd>${packageModel.estimatedCostUsd.toFixed(2)}</dd></div>
             <div><dt>Generation cost</dt><dd>${packageModel.generationCostUsd.toFixed(2)}</dd></div>
+            {packageModel.actualCostUsd != null ? (
+              <div><dt>Actual cost</dt><dd>${packageModel.actualCostUsd.toFixed(2)}</dd></div>
+            ) : null}
           </>
         ) : null}
         <div><dt>Theme</dt><dd>{variant.theme.toUpperCase()}</dd></div>
@@ -61,7 +77,26 @@ export function ExperienceLabDesignVariantDrawerBody({
         <button type="button" className="elab-sheet-tool-btn" onClick={onArchive}>
           Archive
         </button>
-        <button type="button" className="elab-sheet-tool-btn" disabled title="Stage 2 — after founder selection">
+        {packageModel?.canApproveForProduction ? (
+          <button
+            type="button"
+            className="elab-sheet-tool-btn"
+            disabled={actionBusy}
+            onClick={onApproveForProduction}
+          >
+            Approve for Production
+          </button>
+        ) : (
+          <button type="button" className="elab-sheet-tool-btn" disabled title="Complete readiness first">
+            Promote to Production
+          </button>
+        )}
+        <button
+          type="button"
+          className="elab-sheet-tool-btn"
+          disabled={!packageModel?.canPromoteToCanonical || actionBusy}
+          onClick={onPromoteToCanonical}
+        >
           Promote to Canonical
         </button>
         <button type="button" className="elab-sheet-tool-btn" disabled title="Reserved for compare mode">
@@ -72,8 +107,10 @@ export function ExperienceLabDesignVariantDrawerBody({
         </button>
       </div>
       <p className="elab-sheet-hint">
-        Stage 1 preview concepts only. Production render, blueprint, and construction unlock after founder selects one canonical direction.
+        Stage 1 preview concepts only. Approve for Production after readiness reaches 100% and estimate is accepted.
+        Promote to Canonical after production outputs complete and founder review.
       </p>
+      {actionError ? <p className="elab-sheet-hint" role="alert">{actionError}</p> : null}
     </div>
   );
 }

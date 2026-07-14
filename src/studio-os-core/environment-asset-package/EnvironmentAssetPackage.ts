@@ -224,8 +224,11 @@ export type EnvironmentPackageDrawerModel = {
   tabletPreviewUrl: string | null;
   outputsGenerated: number;
   outputsPending: number;
+  outputsFailed: number;
   assetCount: number;
   generationCostUsd: number;
+  actualCostUsd: number | null;
+  estimatedCostUsd: number;
   provider: string;
   seed: string;
   promptVersion: string;
@@ -235,4 +238,11 @@ export type EnvironmentPackageDrawerModel = {
   materialReady: boolean;
   marketplaceReady: boolean;
   overallHealthPercent: number;
+  readinessPercent: number;
+  readinessBlockers: string[];
+  generationProgress: number;
+  lifecycleState: string;
+  canonical: boolean;
+  canApproveForProduction: boolean;
+  canPromoteToCanonical: boolean;
 };

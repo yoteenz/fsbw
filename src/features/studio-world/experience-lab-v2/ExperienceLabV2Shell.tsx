@@ -379,6 +379,16 @@ export function ExperienceLabV2Shell({ initialDepartmentId = 'experience-lab' }:
               if (designVariants.drawerVariantId) designVariants.activateFromDrawer(designVariants.drawerVariantId);
             }}
             onArchive={() => designVariants.archiveVariant(designVariants.drawerVariant!)}
+            onApproveForProduction={() => {
+              const pkgId = designVariants.drawerVariant?.environmentPackageId;
+              if (pkgId) void designVariants.approveForProduction(pkgId);
+            }}
+            onPromoteToCanonical={() => {
+              const pkgId = designVariants.drawerVariant?.environmentPackageId;
+              if (pkgId) void designVariants.promoteToCanonical(pkgId);
+            }}
+            actionBusy={designVariants.actionBusy}
+            actionError={designVariants.actionError}
             onClose={designVariants.closeDrawer}
           />
         ) : null}

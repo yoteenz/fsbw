@@ -7,6 +7,7 @@ export * from './EnvironmentPackageGenerationService';
 export * from './EnvironmentPackageCache';
 export * from './EnvironmentPackageGenerationQueue';
 export * from './EnvironmentPackageStatus';
+export * from './EnvironmentPackageConsistencyValidator';
 export * from './environment-package-feature-flags';
 export * from './ProductionReadinessGate';
 export * from './ProductionReadinessRepository';

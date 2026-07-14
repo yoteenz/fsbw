@@ -17,6 +17,16 @@ import {
   resolveDesignVariantPackageDrawer,
   resolveActiveVariantPackageId,
 } from './experience-lab-environment-package-bridge';
+import { resolveEnvironmentPackageFeatureFlags } from '../../../studio-os-core/environment-asset-package/environment-package-feature-flags';
+import {
+  approveEnvironmentPackageForProduction,
+  fetchEnvironmentPackageStatus,
+  migrateExperienceLabPackages,
+  pollEnvironmentPackageWorker,
+  promoteEnvironmentPackageToCanonical,
+} from '../../../services/studio/environmentPackage/api';
+import experienceLabV2ViewportEnvironmentUrl from '../../../assets/studio-world/experience-lab/experience-lab-v2-viewport-environment.png';
+import experienceLabV2ViewportEnvironmentDesktopUrl from '../../../assets/studio-world/experience-lab/experience-lab-v2-viewport-environment-desktop.png';
 
 type PersistedVariantState = {
   activeVariantId: DesignVariantId;
@@ -59,6 +69,19 @@ export function useExperienceLabDesignVariants(options?: UseExperienceLabDesignV
     () => fromQuery ?? persisted?.activeVariantId ?? DEFAULT_ACTIVE_DESIGN_VARIANT_ID
   );
   const [drawerVariantId, setDrawerVariantId] = useState<DesignVariantId | null>(null);
+  const [packageSyncTick, setPackageSyncTick] = useState(0);
+  const [actionBusy, setActionBusy] = useState(false);
+  const [actionError, setActionError] = useState<string | null>(null);
+
+  const flags = resolveEnvironmentPackageFeatureFlags();
+
+  useEffect(() => {
+    if (!flags.enablePackagePersistence) return;
+    void migrateExperienceLabPackages({
+      lightPreviewUrl: experienceLabV2ViewportEnvironmentUrl,
+      darkPreviewUrl: experienceLabV2ViewportEnvironmentDesktopUrl,
+    }).catch(() => undefined);
+  }, [flags.enablePackagePersistence]);
 
   const variants = EXPERIENCE_LAB_DESIGN_VARIANTS;
 
@@ -80,8 +103,45 @@ export function useExperienceLabDesignVariants(options?: UseExperienceLabDesignV
 
   const drawerPackageModel = useMemo(
     () => (drawerVariantId ? resolveDesignVariantPackageDrawer(drawerVariantId) : null),
-    [drawerVariantId]
+    [drawerVariantId, packageSyncTick]
   );
+
+  const refreshPackageStatus = useCallback(async (packageId: string) => {
+    if (!flags.enablePackagePersistence) return;
+    const status = await fetchEnvironmentPackageStatus(packageId);
+    if (status.ok) setPackageSyncTick((t) => t + 1);
+  }, [flags.enablePackagePersistence]);
+
+  const approveForProduction = useCallback(async (packageId: string) => {
+    setActionBusy(true);
+    setActionError(null);
+    try {
+      const result = await approveEnvironmentPackageForProduction({ packageId, acceptEstimate: true });
+      if (!result.ok) {
+        setActionError(result.error ?? result.code ?? 'Approval failed');
+        return;
+      }
+      await pollEnvironmentPackageWorker(packageId);
+      await refreshPackageStatus(packageId);
+    } finally {
+      setActionBusy(false);
+    }
+  }, [refreshPackageStatus]);
+
+  const promoteToCanonical = useCallback(async (packageId: string) => {
+    setActionBusy(true);
+    setActionError(null);
+    try {
+      const result = await promoteEnvironmentPackageToCanonical(packageId);
+      if (!result.ok) {
+        setActionError(result.error ?? result.code ?? 'Promotion failed');
+        return;
+      }
+      await refreshPackageStatus(packageId);
+    } finally {
+      setActionBusy(false);
+    }
+  }, [refreshPackageStatus]);
 
   const syncQuery = useCallback(
     (id: DesignVariantId) => {
@@ -139,6 +199,11 @@ export function useExperienceLabDesignVariants(options?: UseExperienceLabDesignV
     closeDrawer,
     activateFromDrawer,
     archiveVariant,
+    approveForProduction,
+    promoteToCanonical,
+    actionBusy,
+    actionError,
+    refreshPackageStatus,
   };
 }
 

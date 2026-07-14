@@ -14,6 +14,8 @@ export type PackageLifecycleState =
   | 'founder-reviewing'
   | 'production-ready'
   | 'generating'
+  | 'partially-complete'
+  | 'awaiting-founder-approval'
   | 'production-complete'
   | 'marketplace-ready'
   | 'archived';

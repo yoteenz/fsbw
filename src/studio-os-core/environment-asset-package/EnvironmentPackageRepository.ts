@@ -1,9 +1,16 @@
 import type { EnvironmentAssetPackage, EnvironmentVariantId } from './EnvironmentAssetPackage';
 import { ensureProductionReadinessForPackage } from './ProductionReadinessService';
+import { isEnvironmentPackageInMemoryOnly } from './environment-package-feature-flags';
 
-/** Canonical in-memory persistence — production storage hooks here later. */
+/** In-memory persistence — tests only. Production uses Supabase via API routes. */
 const PACKAGE_BY_ID = new Map<string, EnvironmentAssetPackage>();
 const PACKAGE_BY_VARIANT = new Map<string, EnvironmentAssetPackage>();
+
+export function assertProductionPersistenceMode(): void {
+  if (!isEnvironmentPackageInMemoryOnly()) {
+    throw new Error('PACKAGE_NOT_PERSISTED: In-memory repository is not allowed in production.');
+  }
+}
 
 function variantIndexKey(
   departmentId: string,
@@ -49,7 +56,12 @@ export class EnvironmentPackageRepository {
 let defaultRepository: EnvironmentPackageRepository | null = null;
 
 export function getEnvironmentPackageRepository(): EnvironmentPackageRepository {
-  if (!defaultRepository) defaultRepository = new EnvironmentPackageRepository();
+  if (!defaultRepository) {
+    if (!isEnvironmentPackageInMemoryOnly() && typeof process !== 'undefined' && process.env?.NODE_ENV === 'production') {
+      throw new Error('PACKAGE_NOT_PERSISTED: Durable persistence required in production.');
+    }
+    defaultRepository = new EnvironmentPackageRepository();
+  }
   return defaultRepository;
 }
 

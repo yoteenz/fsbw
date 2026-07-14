@@ -24,6 +24,7 @@ import {
   resolveViewportOutputUrl,
 } from './EnvironmentPackageOutputs';
 import { buildEnvironmentPackageGenerationQueue } from './EnvironmentPackageGenerationQueue';
+import { getProductionReadinessForPackage } from './ProductionReadinessRepository';
 
 export function resolveActiveEnvironmentUrl(
   pkg: EnvironmentAssetPackage,
@@ -35,6 +36,15 @@ export function resolveActiveEnvironmentUrl(
 export function buildPackageDrawerModel(pkg: EnvironmentAssetPackage): EnvironmentPackageDrawerModel {
   const counts = countOutputRegistry(pkg.outputs);
   const health = computeEnvironmentPackageHealth(pkg);
+  const readiness = getProductionReadinessForPackage(pkg.packageId);
+  const failedCount = Object.values(pkg.outputs).filter((o) => o?.status === 'failed').length;
+  const lifecycleState = readiness?.lifecycleState ?? (pkg.status === 'generating' ? 'generating' : 'preview-ready');
+  const readinessPercent = readiness?.readinessPercent ?? health.readinessPercent;
+  const canApprove = !readiness?.founderApproved && readinessPercent >= 80 && pkg.status !== 'generating';
+  const canPromote =
+    (lifecycleState === 'awaiting-founder-approval' || lifecycleState === 'production-complete')
+    && !pkg.canonical
+    && counts.generated >= 3;
 
   return {
     packageId: pkg.packageId,
@@ -48,8 +58,11 @@ export function buildPackageDrawerModel(pkg: EnvironmentAssetPackage): Environme
     tabletPreviewUrl: resolveOutputUrl(pkg.outputs, 'tablet'),
     outputsGenerated: counts.generated,
     outputsPending: counts.pending,
+    outputsFailed: failedCount,
     assetCount: counts.generated,
     generationCostUsd: pkg.estimatedCostUsd,
+    actualCostUsd: pkg.actualCostUsd,
+    estimatedCostUsd: readiness?.generationEstimate.estimatedDollarsUsd ?? pkg.estimatedCostUsd,
     provider: pkg.provider,
     seed: pkg.seed,
     promptVersion: pkg.promptVersion,
@@ -59,6 +72,13 @@ export function buildPackageDrawerModel(pkg: EnvironmentAssetPackage): Environme
     materialReady: resolveOutputUrl(pkg.outputs, 'materialsProfile') !== null,
     marketplaceReady: pkg.marketplaceReady,
     overallHealthPercent: health.overallHealth,
+    readinessPercent,
+    readinessBlockers: readiness?.blockers ?? [],
+    generationProgress: health.generationPercent,
+    lifecycleState,
+    canonical: pkg.canonical,
+    canApproveForProduction: canApprove,
+    canPromoteToCanonical: canPromote && !pkg.canonical,
   };
 }
 

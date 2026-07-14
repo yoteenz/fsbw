@@ -88,6 +88,23 @@
       "maxDuration": 120,
       "includeFiles": "api/_lib/creativeProduction/studio-os-server.bundle.js,api/_lib/founderRenderGeneration.ts,api/_lib/founderRenderJobs.ts,api/_lib/studioBuilderGeneration.ts,api/_lib/canonicalDepartmentQueue.ts,public/assets/marble-half.png"
     },
+    "api/admin/environment-package-migrate.ts": {
+      "maxDuration": 60
+    },
+    "api/admin/environment-package-status.ts": {
+      "maxDuration": 30
+    },
+    "api/admin/environment-package-approve.ts": {
+      "maxDuration": 60,
+      "includeFiles": "api/_lib/studioBuilderGeneration.ts"
+    },
+    "api/admin/environment-package-worker.ts": {
+      "maxDuration": 120,
+      "includeFiles": "api/_lib/studioBuilderGeneration.ts"
+    },
+    "api/admin/environment-package-promote.ts": {
+      "maxDuration": 30
+    },
     "api/admin/context-capsule.ts": {
       "maxDuration": 60,
       "includeFiles": "StudioOS_ContextCapsule_v0.1/**,api/_lib/context-capsule-build-manifest.json,api/_lib/context-capsule-release.json",

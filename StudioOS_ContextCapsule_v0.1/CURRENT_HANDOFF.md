@@ -8,20 +8,20 @@
 
 ## Current sprint
 
-**P0 — Experience Lab V2 Fixed-Viewport Application Shell**
+**P0 — Environment Asset Package Production Pipeline**
 
-**Status: SHIPPED — No-scroll immersive application on isolated V2 route**
+**Status: SHIPPED — Durable persistence + governed generation pipeline**
 
 **Shipped:**
 
-- **Fixed application shell** — `elab-app-shell` CSS Grid fills viewport; `overflow: hidden` at route shell; `fixedViewport` on `DepartmentGoldenBuildShell` for V2 only
-- **Mobile** — compact Command Dock (2 rows + status sheet); tabbed Founder Workbench (Brief/Review/Timeline/Diagnostics); view angles attached to viewport; compact tool tray + More sheet; approval blocker chip
-- **Desktop** — fixed grid with internal sidebar scroll; integrated 4-zone workbench; no document scroll
-- **Focus modes** — viewport/blueprint/render/review with Escape exit
-- **Tests** — experience-lab-v2.test.ts 27/27 PASS; build PASS
-- **Production `/admin/studio/experience-lab`** — unchanged
+- Supabase tables for environment packages, outputs, readiness, jobs, approvals, CDS handoffs
+- Server API routes: migrate, status, approve, worker, promote
+- Generation pipeline with parent `ENVIRONMENT_PACKAGE_PRODUCTION` + dependency-aware child jobs
+- Experience Lab drawer wired: Approve for Production, Promote to Canonical (feature-flagged)
+- Migration applied to production Supabase (FS Website)
+- Feature flags: production generation + canonical promotion default OFF until founder enables
 
-**Previous:** Experience Lab V2 Visual Reconstruction (`fe4199934`).
+**Previous:** Experience Lab V2 Fixed-Viewport Application Shell.
 
 ---
 
@@ -29,8 +29,8 @@
 
 | ID | Blocker | Status |
 |----|---------|--------|
-| **B1-ELabV2-LiveSPA** | Post-deploy live React screenshots / screen recordings on device | **Verify Pending** |
-| **B1-FounderRender-API** | `founder-render-generate` cold-start 500 | **Fix shipped** — re-probe after deploy |
+| **B1-EnvPkg-LiveProof** | Founder device review + enable `ENABLE_PACKAGE_PRODUCTION_GENERATION` for one variant | **Verify Pending** |
+| **B1-ELabV2-LiveSPA** | Post-deploy live React screenshots on device | **Verify Pending** |
 
 ---
 

@@ -199,7 +199,13 @@ describe('Environment Asset Package — service, queue, health', () => {
     registerEnvironmentPackage(pkg);
     const production = approveAndGenerateProductionPackage(pkg, 'founder');
     expect(production.gateBlocked).toBeFalsy();
-    expect(production.package.status).toBe('generating');
+    const flags = resolveEnvironmentPackageFeatureFlags();
+    if (flags.enablePackageGeneration) {
+      expect(production.package.status).toBe('generating');
+    } else {
+      expect(production.package.status).toBe('production-ready');
+      expect(production.cached).toBe(true);
+    }
   });
 });
 
@@ -312,11 +318,13 @@ describe('Environment Asset Package — consumers', () => {
     expect(blocked.ok).toBe(false);
   });
 
-  it('feature flags default ON', () => {
+  it('feature flags default ON for packages and cache; generation gated OFF until verified', () => {
     const flags = resolveEnvironmentPackageFeatureFlags();
     expect(flags.enableEnvironmentPackages).toBe(true);
-    expect(flags.enablePackageGeneration).toBe(true);
     expect(flags.enablePackageCache).toBe(true);
+    expect(flags.enablePackagePersistence).toBe(true);
+    expect(flags.enablePackageProductionGeneration).toBe(false);
+    expect(flags.enablePackageCanonicalPromotion).toBe(false);
   });
 
   it('ensureVariantEnvironmentPackage is idempotent', () => {

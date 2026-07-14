@@ -240,6 +240,19 @@ Experience Lab validation runtime shares `useSceneStack` driver and `studio-buil
 
 ---
 
+## B1-EnvPkg-Production — Environment Package live generation proof (VERIFY PENDING)
+
+| Field | Detail |
+|-------|--------|
+| **ID** | B1-EnvPkg-Production |
+| **Symptom** | Pipeline shipped with durable Supabase persistence; production FAL generation and canonical promotion default OFF |
+| **Repair** | Migration `20260714140000_environment_asset_packages.sql` applied; API routes migrate/approve/worker/promote/status |
+| **Enable** | Set `ENABLE_PACKAGE_PRODUCTION_GENERATION=1` + founder device proof on one non-canonical variant (e.g. light-02) |
+| **Canonical** | `ENABLE_PACKAGE_CANONICAL_PROMOTION=1` + `ENABLE_PACKAGE_CDS_HANDOFF=1` after founder review |
+| **Status** | **Verify Pending** — awaiting founder device review; do not auto-promote |
+
+---
+
 ## Creative Services roadmap
 
 **Planned / Conceptual only** — see `docs/studio-os/creative-services/CREATIVE_SERVICES_ROADMAP.md`. Not implemented.

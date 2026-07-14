@@ -480,9 +480,9 @@ describe('Experience Lab V2 — Viewport environment', () => {
     expect(hook).toContain('ensureExperienceLabVariantPackages');
     expect(bridge).toContain('ensureExperienceLabVariantPackages');
     expect(readV2Source('experience-lab-design-variants.ts')).toContain('environmentPackageId');
-    expect(drawer).toContain('packageModel');
-    expect(drawer).toContain('Package status');
-    expect(shell).toContain('useExperienceLabDesignVariants({ isCompact: shell.isCompact })');
+    expect(drawer).toContain('Approve for Production');
+    expect(drawer).toContain('Promote to Canonical');
+    expect(shell).toContain('approveForProduction');
     expect(shell).toContain('packageModel={designVariants.drawerPackageModel}');
   });
 });

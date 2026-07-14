@@ -49458,3 +49458,31 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 **Spatial review:** SKIPPED — architecture-only.
 
 **One commit + one push** on `master` via `agent-commit.sh`.
+
+---
+
+## 2026-07-14 — Environment Asset Package Production Pipeline P0 (full conversation)
+
+**Founder sprint:** Close the production pipeline from Design Variant → Production Readiness → Founder approval → governed generation → durable storage → CDS handoff. One forensic audit, one persistence implementation, one governed generation implementation, one migration, one commit, one push. No Experience Lab UI redesign.
+
+**Context (full chat arc):** Prior commits shipped per-variant Environment Asset Packages (`657e43e7a`), Production Readiness Gate (`469a0723f`), and in-memory repository. Blockers: no durable persistence, disabled Promote to Canonical, no FAL connection, no durable outputs/queue, no CDS handoff.
+
+**Forensic audit:** Reuse governed generation (`async-governed-generation.ts`), founder render job pattern, `studioBuilderGeneration` storage; OS scheduler is localStorage-only — package jobs persist in new Supabase job table instead.
+
+**Shipped:**
+
+- **Migration** `supabase/migrations/20260714140000_environment_asset_packages.sql` — 8 tables + RLS service_role policies; **applied to production** FS Website (`hyycomvcaqxxvyrfupes`)
+- **`api/_lib/environmentPackage/`** — config, persistence, migration (6 reception variants), generation-pipeline, consistency-validator, cds-handoff, package-orchestration
+- **API routes** — `environment-package-migrate`, `-status`, `-approve`, `-worker`, `-promote` (+ vercel.json)
+- **`EnvironmentPackageConsistencyValidator`** — PASS/WARN/FAIL + `PACKAGE_OUTPUT_IDENTITY_DRIFT`
+- **Repository** — in-memory tests only; production fails closed without durable persistence
+- **Feature flags** — `ENABLE_PACKAGE_PRODUCTION_GENERATION` + `ENABLE_PACKAGE_CANONICAL_PROMOTION` default OFF (client + server)
+- **Experience Lab wiring** — drawer live fields (readiness %, progress, health, costs); **Approve for Production** + **Promote to Canonical** buttons; hook calls API; no layout changes
+- **Docs** — `docs/studio-os/environment-packages/` (5 files)
+- **Tests** — 34 environment-package tests PASS; build PASS
+
+**Controlled proof:** Pipeline runs with preview-to-storage copy when production generation OFF; founder must enable flags + review one variant before canonical promotion.
+
+**Remaining:** Founder device review; enable production generation for one variant; explicit canonical promotion pending.
+
+**One commit + one push** on `master` via `agent-commit.sh`.
