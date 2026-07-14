@@ -8,24 +8,25 @@
 
 ## Current sprint
 
-**P0 — Experience Lab V2 Live Event Synchronization**
+**Experience Lab V3 — Zota-Inspired World-Building OS (Experimental)**
 
-**Status: SHIPPED — Event-driven workspace sync from active Environment Asset Package**
+**Status: SHIPPED — Parallel V3 shell; V2 frozen**
 
 **Shipped:**
 
-- Canonical `EnvironmentPackageEvent` envelope + registry (~70 types)
-- Durable stream: `studio_environment_package_audit_events` extended with sequence, envelope fields, authenticated read RLS
-- Server `publishEnvironmentPackageEvent` + recovery API `GET /api/admin/environment-package-events`
-- Client `EnvironmentPackageRealtimeClient` + local bus + `useEnvironmentPackageEventSync` in `ExperienceLabLiveWorkspaceProvider`
-- Targeted invalidation matrix + `reconcileExperienceLabWorkspace` + gap recovery + visibility resume
-- Progress throttling (~4/sec), historical-preview safety, diagnostics `eventSynchronization` export
-- Docs: `EXPERIENCE_LAB_EVENT_DRIVEN_WORKSPACE.md`, event contract, recovery, invalidation matrix, forensic audit
-- Tests: `experience-lab-event-sync.test.ts` (28) + `experience-lab-live-workspace.test.ts` (27) PASS
-- Migration applied to production Supabase (FS Website)
-- **Build:** PASS
+- New routes: `/admin/studio/experience-lab-v3` · `/admin/studio/world-builder` (alias)
+- Isolated module: `src/features/studio-world/experience-lab-v3/` (store, CSS, flags — zero V2 imports)
+- Program Selector, dynamic departments, workspace context HUD
+- Live Operation Board, Queue Board, Pipeline, Production Timeline
+- Work Order model, Package view (desktop-canonical multi-device)
+- Single Active Work Order panel + single Context panel + persistent Blueprint inspector
+- Dynamic department-owned Workbench, Bottom Operations Board
+- Spotlight search (⌘K), AI assistant dock architecture
+- Tests 12/12 PASS · Build PASS · **No V2 files modified**
 
-**Previous:** Live Workspace Wiring (Design Brief, Review Wall, Timeline, Blueprint, Workbench, Dynamic Context, Approval Bridge connected to active package).
+**Production candidate:** Experience Lab V2 at `/admin/studio/experience-lab-v2` (unchanged)
+
+**Previous:** V2 Live Event Synchronization (canonical package event stream)
 
 ---
 
@@ -33,15 +34,13 @@
 
 | ID | Blocker | Status |
 |----|---------|--------|
-| **B1-EnvPkg-LiveProof** | Founder device review + enable `ENABLE_PACKAGE_PRODUCTION_GENERATION` for one variant; multi-session realtime proof | **Verify Pending** |
-| **B1-ELabV2-LiveSPA** | Post-deploy live React screenshots on device | **Verify Pending** |
+| **B1-EnvPkg-LiveProof** | Founder device review + production generation flags | **Verify Pending** |
+| **B1-V3-FounderReview** | Founder review of V3 operational UX vs V2 presentation model | **Verify Pending** |
 
 ---
 
 ## References
 
+- `docs/studio-os/experience-lab/EXPERIENCE_LAB_V3_ARCHITECTURE.md`
 - `docs/studio-os/experience-lab/EXPERIENCE_LAB_EVENT_DRIVEN_WORKSPACE.md`
-- `docs/studio-os/environment-packages/ENVIRONMENT_PACKAGE_EVENT_CONTRACT.md`
-- `docs/studio-os/environment-packages/ENVIRONMENT_PACKAGE_REALTIME_RECOVERY.md`
-- `docs/studio-os/forensics/EXPERIENCE_LAB_V2_EVENT_SYNC_AUDIT.md`
-- `docs/studio-os/experience-lab/EXPERIENCE_LAB_V2_TEST_ENVIRONMENT.md`
+- V2 route: `/admin/studio/experience-lab-v2`

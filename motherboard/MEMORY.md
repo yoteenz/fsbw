@@ -50011,3 +50011,30 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 **Remaining blocker:** `B1-EnvPkg-LiveProof` — founder multi-session / mobile Safari live verification with production generation flags enabled.
 
+---
+
+## 2026-07-14 — Experience Lab V3 Architecture Sprint (Zota-inspired OS)
+
+**Founder sprint:** Create Experience Lab V3 as entirely separate experimental world-building OS. **V2 frozen** — zero modifications to `experience-lab-v2/`.
+
+**Routes (new only):** `/admin/studio/experience-lab-v3` · `/admin/studio/world-builder` (alias). V2 remains `/admin/studio/experience-lab-v2`.
+
+**V3 module:** `src/features/studio-world/experience-lab-v3/` — separate store (`ExperienceLabV3StoreProvider`), CSS (`experience-lab-v3.css`), feature flags, no V2 imports.
+
+**Architecture shipped:**
+- OS-style `V3ProgramSelector` (Studio World / Industry Packs → dynamic departments from canonical + industry registries)
+- `V3WorkspaceContextHud` (one-glance context chain)
+- `V3LiveOperationBoard` + `V3QueueBoard` (Generating/Waiting/Blocked/Review/Completed columns, draggable-ready)
+- `V3PipelineView` + `V3ProductionTimelinePanel`
+- Work order model with progress, ETA, priority, cost, owner, dependencies
+- **Single** `V3ActiveWorkOrderPanel` + **single** `V3ContextInspectorPanel` (replaces on tool change) + **persistent** `V3BlueprintInspectorPanel`
+- `V3DynamicWorkbench` (department-owned tool launcher — Reception vs Marketplace vs Rewards tools)
+- `V3PackageViewPanel` (desktop-canonical multi-device outputs)
+- `V3BottomOperationsBoard` (mission control metrics)
+- `V3StudioSpotlightSearch` (⌘K) + `V3StudioAiAssistantDock`
+- Animation tokens in `experience-lab-v3-motion.ts`
+
+**Docs:** `docs/studio-os/experience-lab/EXPERIENCE_LAB_V3_ARCHITECTURE.md`
+
+**Tests:** `experience-lab-v3.test.ts` 12/12 PASS. **Build:** PASS. **V2 regression:** no files in `experience-lab-v2/` changed.
+
