@@ -1,0 +1,1043 @@
+{
+  "version": "experience-lab-icons-v2",
+  "sourceSha256": "d7476775716d3f2dc9b2416198c81bbd19d8e1a7f5730c5ff3c79fe6cda1f51d",
+  "bundleSha256": "b7fd4d0a61e282461894bdd8605ddc2e91e4c44ca371f27fbe8e7c163c2daecd",
+  "generatedAt": "2026-07-14T00:59:02.368Z",
+  "founderReported": [
+    "zoomIn",
+    "materials",
+    "analytics",
+    "permissions",
+    "camera",
+    "playback",
+    "perspective",
+    "terminal",
+    "dashboard"
+  ],
+  "icons": [
+    {
+      "key": "experienceLab",
+      "auditStatus": "PASS",
+      "overrideApplied": false,
+      "overrideReason": null,
+      "textContamination": {
+        "contaminated": false,
+        "score": 0,
+        "bottomRatio": 0,
+        "bottomComponents": 0,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 6327
+      },
+      "confidence": 0.92
+    },
+    {
+      "key": "blueprint",
+      "auditStatus": "WARN",
+      "overrideApplied": true,
+      "overrideReason": "Blueprint roll glyph label-safe cutoff.",
+      "textContamination": {
+        "contaminated": false,
+        "score": 0,
+        "bottomRatio": 0,
+        "bottomComponents": 0,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 1313
+      },
+      "confidence": 1
+    },
+    {
+      "key": "construction",
+      "auditStatus": "WARN",
+      "overrideApplied": true,
+      "overrideReason": "Architectural tools hard-hat glyph label-safe cutoff.",
+      "textContamination": {
+        "contaminated": false,
+        "score": 0,
+        "bottomRatio": 0,
+        "bottomComponents": 0,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 1716
+      },
+      "confidence": 1
+    },
+    {
+      "key": "materials",
+      "auditStatus": "WARN",
+      "overrideApplied": true,
+      "overrideReason": "Paint-bucket glyph sits above MATERIALS label; auto bounds included label strokes.",
+      "textContamination": {
+        "contaminated": false,
+        "score": 0,
+        "bottomRatio": 0,
+        "bottomComponents": 0,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 591
+      },
+      "confidence": 0.72
+    },
+    {
+      "key": "lighting",
+      "auditStatus": "WARN",
+      "overrideApplied": true,
+      "overrideReason": "Lighting fixture low stroke needed explicit ceiling.",
+      "textContamination": {
+        "contaminated": false,
+        "score": 0,
+        "bottomRatio": 0,
+        "bottomComponents": 0,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 551
+      },
+      "confidence": 0.72
+    },
+    {
+      "key": "camera",
+      "auditStatus": "WARN",
+      "overrideApplied": true,
+      "overrideReason": "Camera body clipped low; label band false-positive extended bounds.",
+      "textContamination": {
+        "contaminated": false,
+        "score": 0,
+        "bottomRatio": 0,
+        "bottomComponents": 0,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 563
+      },
+      "confidence": 0.72
+    },
+    {
+      "key": "splitView",
+      "auditStatus": "WARN",
+      "overrideApplied": true,
+      "overrideReason": "Split-view panes label-safe cutoff.",
+      "textContamination": {
+        "contaminated": false,
+        "score": 0,
+        "bottomRatio": 0,
+        "bottomComponents": 0,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 917
+      },
+      "confidence": 1
+    },
+    {
+      "key": "founderRender",
+      "auditStatus": "WARN",
+      "overrideApplied": true,
+      "overrideReason": "Founder render star glyph label-safe cutoff.",
+      "textContamination": {
+        "contaminated": false,
+        "score": 0,
+        "bottomRatio": 0,
+        "bottomComponents": 0,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 824
+      },
+      "confidence": 1
+    },
+    {
+      "key": "projects",
+      "auditStatus": "PASS",
+      "overrideApplied": false,
+      "overrideReason": null,
+      "textContamination": {
+        "contaminated": false,
+        "score": 0,
+        "bottomRatio": 0,
+        "bottomComponents": 0,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 2408
+      },
+      "confidence": 1
+    },
+    {
+      "key": "history",
+      "auditStatus": "PASS",
+      "overrideApplied": false,
+      "overrideReason": null,
+      "textContamination": {
+        "contaminated": false,
+        "score": 0,
+        "bottomRatio": 0,
+        "bottomComponents": 0,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 3185
+      },
+      "confidence": 1
+    },
+    {
+      "key": "revisions",
+      "auditStatus": "PASS",
+      "overrideApplied": false,
+      "overrideReason": null,
+      "textContamination": {
+        "contaminated": false,
+        "score": 0,
+        "bottomRatio": 0,
+        "bottomComponents": 0,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 2312
+      },
+      "confidence": 1
+    },
+    {
+      "key": "milestones",
+      "auditStatus": "PASS",
+      "overrideApplied": false,
+      "overrideReason": null,
+      "textContamination": {
+        "contaminated": false,
+        "score": 0,
+        "bottomRatio": 0,
+        "bottomComponents": 0,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 3110
+      },
+      "confidence": 0.92
+    },
+    {
+      "key": "analytics",
+      "auditStatus": "WARN",
+      "overrideApplied": true,
+      "overrideReason": "Bar-chart glyph merged with ANALYTICS word band in single bounding box.",
+      "textContamination": {
+        "contaminated": false,
+        "score": 0,
+        "bottomRatio": 0,
+        "bottomComponents": 0,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 703
+      },
+      "confidence": 1
+    },
+    {
+      "key": "performance",
+      "auditStatus": "WARN",
+      "overrideApplied": true,
+      "overrideReason": "Gauge glyph merged with PERFORMANCE label band.",
+      "textContamination": {
+        "contaminated": false,
+        "score": 0,
+        "bottomRatio": 0,
+        "bottomComponents": 0,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 687
+      },
+      "confidence": 1
+    },
+    {
+      "key": "issues",
+      "auditStatus": "PASS",
+      "overrideApplied": false,
+      "overrideReason": null,
+      "textContamination": {
+        "contaminated": false,
+        "score": 0,
+        "bottomRatio": 0,
+        "bottomComponents": 0,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 1290
+      },
+      "confidence": 1
+    },
+    {
+      "key": "approved",
+      "auditStatus": "PASS",
+      "overrideApplied": false,
+      "overrideReason": null,
+      "textContamination": {
+        "contaminated": false,
+        "score": 0,
+        "bottomRatio": 0,
+        "bottomComponents": 0,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 2644
+      },
+      "confidence": 1
+    },
+    {
+      "key": "playback",
+      "auditStatus": "WARN",
+      "overrideApplied": true,
+      "overrideReason": "Animation-studio play glyph contaminated by PLAYBACK label strokes.",
+      "textContamination": {
+        "contaminated": false,
+        "score": 0,
+        "bottomRatio": 0,
+        "bottomComponents": 0,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 773
+      },
+      "confidence": 1
+    },
+    {
+      "key": "pause",
+      "auditStatus": "PASS",
+      "overrideApplied": false,
+      "overrideReason": null,
+      "textContamination": {
+        "contaminated": false,
+        "score": 0,
+        "bottomRatio": 0,
+        "bottomComponents": 0,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 3853
+      },
+      "confidence": 1
+    },
+    {
+      "key": "stop",
+      "auditStatus": "PASS",
+      "overrideApplied": false,
+      "overrideReason": null,
+      "textContamination": {
+        "contaminated": false,
+        "score": 0,
+        "bottomRatio": 0,
+        "bottomComponents": 0,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 3453
+      },
+      "confidence": 1
+    },
+    {
+      "key": "next",
+      "auditStatus": "PASS",
+      "overrideApplied": false,
+      "overrideReason": null,
+      "textContamination": {
+        "contaminated": false,
+        "score": 0,
+        "bottomRatio": 0,
+        "bottomComponents": 0,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 3012
+      },
+      "confidence": 1
+    },
+    {
+      "key": "previous",
+      "auditStatus": "PASS",
+      "overrideApplied": false,
+      "overrideReason": null,
+      "textContamination": {
+        "contaminated": false,
+        "score": 0,
+        "bottomRatio": 0,
+        "bottomComponents": 0,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 2854
+      },
+      "confidence": 1
+    },
+    {
+      "key": "loop",
+      "auditStatus": "PASS",
+      "overrideApplied": false,
+      "overrideReason": null,
+      "textContamination": {
+        "contaminated": false,
+        "score": 0,
+        "bottomRatio": 0,
+        "bottomComponents": 0,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 2851
+      },
+      "confidence": 1
+    },
+    {
+      "key": "capture",
+      "auditStatus": "PASS",
+      "overrideApplied": false,
+      "overrideReason": null,
+      "textContamination": {
+        "contaminated": false,
+        "score": 0,
+        "bottomRatio": 0,
+        "bottomComponents": 0,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 4861
+      },
+      "confidence": 1
+    },
+    {
+      "key": "fullscreen",
+      "auditStatus": "PASS",
+      "overrideApplied": false,
+      "overrideReason": null,
+      "textContamination": {
+        "contaminated": false,
+        "score": 0,
+        "bottomRatio": 0,
+        "bottomComponents": 0,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 3200
+      },
+      "confidence": 1
+    },
+    {
+      "key": "zoomIn",
+      "auditStatus": "WARN",
+      "overrideApplied": true,
+      "overrideReason": "Magnifier handle ends above ZOOM IN label band; prior cutoff included label strokes.",
+      "textContamination": {
+        "contaminated": false,
+        "score": 0,
+        "bottomRatio": 0,
+        "bottomComponents": 0,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 1125
+      },
+      "confidence": 1
+    },
+    {
+      "key": "zoomOut",
+      "auditStatus": "PASS",
+      "overrideApplied": false,
+      "overrideReason": null,
+      "textContamination": {
+        "contaminated": false,
+        "score": 0,
+        "bottomRatio": 0,
+        "bottomComponents": 0,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 5081
+      },
+      "confidence": 1
+    },
+    {
+      "key": "pan",
+      "auditStatus": "WARN",
+      "overrideApplied": false,
+      "overrideReason": null,
+      "textContamination": {
+        "contaminated": false,
+        "score": 0.079365234375,
+        "bottomRatio": 0.22296296296296297,
+        "bottomComponents": 1,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 4050
+      },
+      "confidence": 1
+    },
+    {
+      "key": "fitView",
+      "auditStatus": "PASS",
+      "overrideApplied": false,
+      "overrideReason": null,
+      "textContamination": {
+        "contaminated": false,
+        "score": 0,
+        "bottomRatio": 0,
+        "bottomComponents": 0,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 5385
+      },
+      "confidence": 0.92
+    },
+    {
+      "key": "orbit",
+      "auditStatus": "WARN",
+      "overrideApplied": true,
+      "overrideReason": "Studio World orbit ring overlapped ORBIT label strokes.",
+      "textContamination": {
+        "contaminated": false,
+        "score": 0,
+        "bottomRatio": 0,
+        "bottomComponents": 0,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 813
+      },
+      "confidence": 1
+    },
+    {
+      "key": "perspective",
+      "auditStatus": "WARN",
+      "overrideApplied": true,
+      "overrideReason": "Composition cube picked up PERSPECTIVE label characters.",
+      "textContamination": {
+        "contaminated": false,
+        "score": 0,
+        "bottomRatio": 0,
+        "bottomComponents": 0,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 391
+      },
+      "confidence": 0.72
+    },
+    {
+      "key": "toggleUi",
+      "auditStatus": "PASS",
+      "overrideApplied": false,
+      "overrideReason": null,
+      "textContamination": {
+        "contaminated": false,
+        "score": 0,
+        "bottomRatio": 0,
+        "bottomComponents": 0,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 3462
+      },
+      "confidence": 1
+    },
+    {
+      "key": "grid",
+      "auditStatus": "PASS",
+      "overrideApplied": false,
+      "overrideReason": null,
+      "textContamination": {
+        "contaminated": false,
+        "score": 0,
+        "bottomRatio": 0,
+        "bottomComponents": 0,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 3062
+      },
+      "confidence": 1
+    },
+    {
+      "key": "hide",
+      "auditStatus": "PASS",
+      "overrideApplied": false,
+      "overrideReason": null,
+      "textContamination": {
+        "contaminated": false,
+        "score": 0,
+        "bottomRatio": 0,
+        "bottomComponents": 0,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 3732
+      },
+      "confidence": 0.92
+    },
+    {
+      "key": "lock",
+      "auditStatus": "PASS",
+      "overrideApplied": false,
+      "overrideReason": null,
+      "textContamination": {
+        "contaminated": false,
+        "score": 0.02724609375,
+        "bottomRatio": 0.0790413054563998,
+        "bottomComponents": 2,
+        "narrowStrokes": 2,
+        "wordBand": false,
+        "totalPixels": 3922
+      },
+      "confidence": 1
+    },
+    {
+      "key": "unlock",
+      "auditStatus": "WARN",
+      "overrideApplied": false,
+      "overrideReason": null,
+      "textContamination": {
+        "contaminated": false,
+        "score": 0.087890625,
+        "bottomRatio": 0.2931691586045148,
+        "bottomComponents": 2,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 3411
+      },
+      "confidence": 1
+    },
+    {
+      "key": "duplicate",
+      "auditStatus": "PASS",
+      "overrideApplied": false,
+      "overrideReason": null,
+      "textContamination": {
+        "contaminated": false,
+        "score": 0,
+        "bottomRatio": 0,
+        "bottomComponents": 0,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 3541
+      },
+      "confidence": 0.92
+    },
+    {
+      "key": "delete",
+      "auditStatus": "WARN",
+      "overrideApplied": false,
+      "overrideReason": null,
+      "textContamination": {
+        "contaminated": false,
+        "score": 0.09131835937499999,
+        "bottomRatio": 0.20639650377433452,
+        "bottomComponents": 1,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 5034
+      },
+      "confidence": 0.92
+    },
+    {
+      "key": "edit",
+      "auditStatus": "PASS",
+      "overrideApplied": false,
+      "overrideReason": null,
+      "textContamination": {
+        "contaminated": false,
+        "score": 0.061259765625,
+        "bottomRatio": 0.13785601265822786,
+        "bottomComponents": 1,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 5056
+      },
+      "confidence": 1
+    },
+    {
+      "key": "settings",
+      "auditStatus": "PASS",
+      "overrideApplied": false,
+      "overrideReason": null,
+      "textContamination": {
+        "contaminated": false,
+        "score": 0,
+        "bottomRatio": 0,
+        "bottomComponents": 0,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 2885
+      },
+      "confidence": 0.92
+    },
+    {
+      "key": "filter",
+      "auditStatus": "PASS",
+      "overrideApplied": false,
+      "overrideReason": null,
+      "textContamination": {
+        "contaminated": false,
+        "score": 0.043681640625,
+        "bottomRatio": 0.13878804803127617,
+        "bottomComponents": 1,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 3581
+      },
+      "confidence": 1
+    },
+    {
+      "key": "export",
+      "auditStatus": "WARN",
+      "overrideApplied": false,
+      "overrideReason": null,
+      "textContamination": {
+        "contaminated": false,
+        "score": 0.18,
+        "bottomRatio": 0.2656138684398005,
+        "bottomComponents": 1,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 8422
+      },
+      "confidence": 0.92
+    },
+    {
+      "key": "import",
+      "auditStatus": "PASS",
+      "overrideApplied": false,
+      "overrideReason": null,
+      "textContamination": {
+        "contaminated": false,
+        "score": 0.042099609375,
+        "bottomRatio": 0.06086404066073697,
+        "bottomComponents": 1,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 7870
+      },
+      "confidence": 1
+    },
+    {
+      "key": "cloudSync",
+      "auditStatus": "PASS",
+      "overrideApplied": false,
+      "overrideReason": null,
+      "textContamination": {
+        "contaminated": false,
+        "score": 0,
+        "bottomRatio": 0,
+        "bottomComponents": 0,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 3424
+      },
+      "confidence": 0.92
+    },
+    {
+      "key": "database",
+      "auditStatus": "PASS",
+      "overrideApplied": false,
+      "overrideReason": null,
+      "textContamination": {
+        "contaminated": false,
+        "score": 0,
+        "bottomRatio": 0,
+        "bottomComponents": 0,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 8700
+      },
+      "confidence": 0.92
+    },
+    {
+      "key": "link",
+      "auditStatus": "PASS",
+      "overrideApplied": false,
+      "overrideReason": null,
+      "textContamination": {
+        "contaminated": false,
+        "score": 0.0882421875,
+        "bottomRatio": 0.11016019310950187,
+        "bottomComponents": 1,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 9114
+      },
+      "confidence": 1
+    },
+    {
+      "key": "share",
+      "auditStatus": "WARN",
+      "overrideApplied": true,
+      "overrideReason": "Marketplace share nodes overlapped SHARE label band.",
+      "textContamination": {
+        "contaminated": false,
+        "score": 0,
+        "bottomRatio": 0,
+        "bottomComponents": 0,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 889
+      },
+      "confidence": 1
+    },
+    {
+      "key": "users",
+      "auditStatus": "PASS",
+      "overrideApplied": false,
+      "overrideReason": null,
+      "textContamination": {
+        "contaminated": false,
+        "score": 0.04728515625,
+        "bottomRatio": 0.04405142061737493,
+        "bottomComponents": 1,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 12213
+      },
+      "confidence": 0.92
+    },
+    {
+      "key": "team",
+      "auditStatus": "WARN",
+      "overrideApplied": true,
+      "overrideReason": "Workforce center figures overlapped TEAM label.",
+      "textContamination": {
+        "contaminated": false,
+        "score": 0,
+        "bottomRatio": 0,
+        "bottomComponents": 0,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 1274
+      },
+      "confidence": 1
+    },
+    {
+      "key": "notifications",
+      "auditStatus": "PASS",
+      "overrideApplied": false,
+      "overrideReason": null,
+      "textContamination": {
+        "contaminated": false,
+        "score": 0.08288085937499999,
+        "bottomRatio": 0.10318415581573476,
+        "bottomComponents": 1,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 9139
+      },
+      "confidence": 1
+    },
+    {
+      "key": "comments",
+      "auditStatus": "PASS",
+      "overrideApplied": false,
+      "overrideReason": null,
+      "textContamination": {
+        "contaminated": false,
+        "score": 0.028124999999999997,
+        "bottomRatio": 0.02942258183155572,
+        "bottomComponents": 1,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 10876
+      },
+      "confidence": 1
+    },
+    {
+      "key": "notes",
+      "auditStatus": "PASS",
+      "overrideApplied": false,
+      "overrideReason": null,
+      "textContamination": {
+        "contaminated": false,
+        "score": 0.09087890625,
+        "bottomRatio": 0.07806719516798792,
+        "bottomComponents": 2,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 13245
+      },
+      "confidence": 0.92
+    },
+    {
+      "key": "attachments",
+      "auditStatus": "WARN",
+      "overrideApplied": true,
+      "overrideReason": "Asset-reference clip glyph picked up ATTACHMENTS label strip.",
+      "textContamination": {
+        "contaminated": false,
+        "score": 0,
+        "bottomRatio": 0,
+        "bottomComponents": 0,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 2287
+      },
+      "confidence": 1
+    },
+    {
+      "key": "schedule",
+      "auditStatus": "PASS",
+      "overrideApplied": false,
+      "overrideReason": null,
+      "textContamination": {
+        "contaminated": false,
+        "score": 0.058359375,
+        "bottomRatio": 0.052581564776686726,
+        "bottomComponents": 2,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 12628
+      },
+      "confidence": 0.92
+    },
+    {
+      "key": "timeTracking",
+      "auditStatus": "PASS",
+      "overrideApplied": false,
+      "overrideReason": null,
+      "textContamination": {
+        "contaminated": false,
+        "score": 0.120322265625,
+        "bottomRatio": 0.1349034292471423,
+        "bottomComponents": 1,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 10148
+      },
+      "confidence": 1
+    },
+    {
+      "key": "flag",
+      "auditStatus": "PASS",
+      "overrideApplied": false,
+      "overrideReason": null,
+      "textContamination": {
+        "contaminated": false,
+        "score": 0.034892578125,
+        "bottomRatio": 0.0388302034428795,
+        "bottomComponents": 1,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 10224
+      },
+      "confidence": 1
+    },
+    {
+      "key": "favorite",
+      "auditStatus": "PASS",
+      "overrideApplied": false,
+      "overrideReason": null,
+      "textContamination": {
+        "contaminated": false,
+        "score": 0.089560546875,
+        "bottomRatio": 0.1131091131091131,
+        "bottomComponents": 2,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 9009
+      },
+      "confidence": 1
+    },
+    {
+      "key": "dashboard",
+      "auditStatus": "WARN",
+      "overrideApplied": true,
+      "overrideReason": "Dashboard tiles merged with DASHBOARD label baseline.",
+      "textContamination": {
+        "contaminated": false,
+        "score": 0,
+        "bottomRatio": 0,
+        "bottomComponents": 0,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 1343
+      },
+      "confidence": 1
+    },
+    {
+      "key": "focusMode",
+      "auditStatus": "PASS",
+      "overrideApplied": false,
+      "overrideReason": null,
+      "textContamination": {
+        "contaminated": false,
+        "score": 0.014941406249999999,
+        "bottomRatio": 0.023736386484222285,
+        "bottomComponents": 1,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 7162
+      },
+      "confidence": 1
+    },
+    {
+      "key": "terminal",
+      "auditStatus": "WARN",
+      "overrideApplied": true,
+      "overrideReason": "Command-center terminal glyph included TERMINAL word band.",
+      "textContamination": {
+        "contaminated": false,
+        "score": 0,
+        "bottomRatio": 0,
+        "bottomComponents": 0,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 461
+      },
+      "confidence": 0.72
+    },
+    {
+      "key": "diagnostics",
+      "auditStatus": "WARN",
+      "overrideApplied": true,
+      "overrideReason": "Diagnostics pulse glyph included DIAGNOSTICS baseline.",
+      "textContamination": {
+        "contaminated": false,
+        "score": 0,
+        "bottomRatio": 0,
+        "bottomComponents": 0,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 765
+      },
+      "confidence": 1
+    },
+    {
+      "key": "security",
+      "auditStatus": "PASS",
+      "overrideApplied": false,
+      "overrideReason": null,
+      "textContamination": {
+        "contaminated": false,
+        "score": 0.07541015625,
+        "bottomRatio": 0.09460800529275554,
+        "bottomComponents": 1,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 9069
+      },
+      "confidence": 1
+    },
+    {
+      "key": "permissions",
+      "auditStatus": "WARN",
+      "overrideApplied": true,
+      "overrideReason": "Permit shield glyph overlapped PERMISSIONS baseline fragments.",
+      "textContamination": {
+        "contaminated": false,
+        "score": 0,
+        "bottomRatio": 0,
+        "bottomComponents": 0,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 1108
+      },
+      "confidence": 1
+    },
+    {
+      "key": "help",
+      "auditStatus": "PASS",
+      "overrideApplied": false,
+      "overrideReason": null,
+      "textContamination": {
+        "contaminated": false,
+        "score": 0.072158203125,
+        "bottomRatio": 0.08190343176376697,
+        "bottomComponents": 1,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 10024
+      },
+      "confidence": 1
+    },
+    {
+      "key": "about",
+      "auditStatus": "PASS",
+      "overrideApplied": false,
+      "overrideReason": null,
+      "textContamination": {
+        "contaminated": false,
+        "score": 0.071806640625,
+        "bottomRatio": 0.08633625700095107,
+        "bottomComponents": 1,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 9463
+      },
+      "confidence": 1
+    }
+  ]
+}

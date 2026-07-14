@@ -49028,3 +49028,26 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 **Shipped:** `experience-lab-v2-command-dock-locations.ts` — `creative-director-studio` tab title `CREATIVE DIRECTOR STUDIO` → `CREATIVE STUDIO` (id/subtitle unchanged).
 
 **One commit + one push** on `master` via `agent-commit.sh`.
+
+---
+
+## 2026-07-14 — P0 Experience Lab icon fidelity QA & targeted extraction overrides (full conversation)
+
+**Founder request:** P0 sprint to repair corrupted Experience Lab V2 icons (baked source labels, wrong crops, optical size issues) without regressing the 64-icon extraction system. Founder-reported icons: Search (zoomIn), Materials, Budget Forecast (analytics), Permit Center (permissions), Camera, Animation Studio (playback), Composition Studio (perspective), Command Center (terminal), Dashboard. Also audit related icons. One forensic pass, targeted overrides, regenerate assets, tests, QA route upgrade, one commit, one push.
+
+**Root cause:** Automatic label-band heuristic merged printed uppercase label strokes into glyph bounding boxes; confidence formula reported 1.00 while label fragments remained; no glyph vs label connected-component classification; gap detector fired too early in cells.
+
+**Shipped:**
+
+- **`scripts/extract-experience-lab-icons.mjs`** — v2 pipeline (`experience-lab-icons-v2`): CC glyph/label classifier, label-gap detection above label band only, text-contamination detector (bottom 22% word-band heuristics), PASS/WARN/FAIL audit, bundle SHA256, failure manifest
+- **`scripts/config/experience-lab-icon-extraction-overrides.ts`** + **`scripts/experience-lab-icon-extraction-overrides.mjs`** — centralized overrides for 20 icons including all 9 founder-reported keys
+- **Regenerated** all 64 transparent PNGs + contact sheet + metadata + manifests (`audit: PASS=40 WARN=24 FAIL=0`)
+- **`docs/studio-os/design-system/EXPERIENCE_LAB_ICON_FIDELITY_REPAIR.md`** — forensic repair report
+- **`experience-lab-icon-optical-scale.ts`** — tuned optical scales for materials, camera, analytics, playback, perspective, terminal, dashboard, zoomIn
+- **`/admin/studio/experience-lab-icon-qa`** — filters (All/Pass/Warn/Fail/Overrides/Text Contamination/Founder Reported), source cell preview, multi-size runtime, contamination + bounds metadata
+- **`experience-lab-icon.test.ts`** — 15 tests (founder label safe-zone, overrides registry, v2 version/bundle hash, contamination audit)
+- Founder-reported icons: 0% bottom label-band contamination post-repair
+
+**Preserved:** Experience Lab V2 layout unchanged; legacy `/admin/studio/experience-lab` untouched; working icons stable via surgical overrides only.
+
+**One commit + one push** on `master` via `agent-commit.sh`.

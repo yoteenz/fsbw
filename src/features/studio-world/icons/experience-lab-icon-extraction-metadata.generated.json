@@ -1,5 +1,7 @@
 {
+  "version": "experience-lab-icons-v2",
   "sourceSha256": "d7476775716d3f2dc9b2416198c81bbd19d8e1a7f5730c5ff3c79fe6cda1f51d",
+  "bundleSha256": "b7fd4d0a61e282461894bdd8605ddc2e91e4c44ca371f27fbe8e7c163c2daecd",
   "icons": [
     {
       "key": "experienceLab",
@@ -9,20 +11,32 @@
       "column": 0,
       "category": "viewport",
       "sourceBounds": {
-        "minX": 86,
+        "minX": 97,
         "minY": 51,
-        "maxX": 127,
-        "maxY": 80
+        "maxX": 116,
+        "maxY": 61
       },
-      "labelStartInCell": 81,
+      "labelStartInCell": 62,
       "outputWidth": 256,
       "outputHeight": 256,
       "scaledGlyphWidth": 212,
-      "scaledGlyphHeight": 151,
-      "glyphPixels": 11213,
+      "scaledGlyphHeight": 117,
+      "glyphPixels": 7264,
       "edgePixels": 0,
-      "confidence": 1,
-      "overrideApplied": false
+      "confidence": 0.92,
+      "overrideApplied": false,
+      "auditStatus": "PASS",
+      "textContamination": {
+        "contaminated": false,
+        "score": 0,
+        "bottomRatio": 0,
+        "bottomComponents": 0,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 6327
+      },
+      "contentSha256": "f97b64c77da837b6119445f2f2dd92ce0131c9c97d216dad8f9f96976875421f",
+      "overrideReason": null
     },
     {
       "key": "blueprint",
@@ -32,20 +46,32 @@
       "column": 1,
       "category": "viewport",
       "sourceBounds": {
-        "minX": 59,
+        "minX": 0,
         "minY": 57,
-        "maxX": 134,
+        "maxX": 175,
         "maxY": 95
       },
-      "labelStartInCell": 96,
+      "labelStartInCell": 114,
       "outputWidth": 256,
       "outputHeight": 256,
       "scaledGlyphWidth": 212,
-      "scaledGlyphHeight": 109,
-      "glyphPixels": 8111,
+      "scaledGlyphHeight": 47,
+      "glyphPixels": 1461,
       "edgePixels": 0,
       "confidence": 1,
-      "overrideApplied": false
+      "overrideApplied": true,
+      "auditStatus": "WARN",
+      "textContamination": {
+        "contaminated": false,
+        "score": 0,
+        "bottomRatio": 0,
+        "bottomComponents": 0,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 1313
+      },
+      "contentSha256": "d9e55658b30dea80edeae0f46257c7996f4358842a829843f1f84a6ed2266f96",
+      "overrideReason": "Blueprint roll glyph label-safe cutoff."
     },
     {
       "key": "construction",
@@ -55,20 +81,32 @@
       "column": 2,
       "category": "viewport",
       "sourceBounds": {
-        "minX": 39,
+        "minX": 0,
         "minY": 57,
-        "maxX": 117,
+        "maxX": 174,
         "maxY": 95
       },
-      "labelStartInCell": 96,
+      "labelStartInCell": 114,
       "outputWidth": 256,
       "outputHeight": 256,
       "scaledGlyphWidth": 212,
-      "scaledGlyphHeight": 105,
-      "glyphPixels": 9545,
+      "scaledGlyphHeight": 47,
+      "glyphPixels": 1922,
       "edgePixels": 0,
       "confidence": 1,
-      "overrideApplied": false
+      "overrideApplied": true,
+      "auditStatus": "WARN",
+      "textContamination": {
+        "contaminated": false,
+        "score": 0,
+        "bottomRatio": 0,
+        "bottomComponents": 0,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 1716
+      },
+      "contentSha256": "230d8ab1dbffb74d353c982eeaf210335a9dd5c4d2875a5c4f369516825adad0",
+      "overrideReason": "Architectural tools hard-hat glyph label-safe cutoff."
     },
     {
       "key": "materials",
@@ -78,20 +116,32 @@
       "column": 3,
       "category": "viewport",
       "sourceBounds": {
-        "minX": 31,
+        "minX": 0,
         "minY": 57,
-        "maxX": 103,
+        "maxX": 174,
         "maxY": 86
       },
-      "labelStartInCell": 87,
+      "labelStartInCell": 114,
       "outputWidth": 256,
       "outputHeight": 256,
       "scaledGlyphWidth": 212,
-      "scaledGlyphHeight": 87,
-      "glyphPixels": 3960,
+      "scaledGlyphHeight": 36,
+      "glyphPixels": 679,
       "edgePixels": 0,
-      "confidence": 1,
-      "overrideApplied": false
+      "confidence": 0.72,
+      "overrideApplied": true,
+      "auditStatus": "WARN",
+      "textContamination": {
+        "contaminated": false,
+        "score": 0,
+        "bottomRatio": 0,
+        "bottomComponents": 0,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 591
+      },
+      "contentSha256": "7c9077c95bae3d05c48ddcb42a0e1ac70e19c08a666dbbc8ba41802326da8cad",
+      "overrideReason": "Paint-bucket glyph sits above MATERIALS label; auto bounds included label strokes."
     },
     {
       "key": "lighting",
@@ -101,20 +151,32 @@
       "column": 4,
       "category": "viewport",
       "sourceBounds": {
-        "minX": 27,
-        "minY": 57,
-        "maxX": 89,
-        "maxY": 92
+        "minX": 0,
+        "minY": 50,
+        "maxX": 174,
+        "maxY": 90
       },
-      "labelStartInCell": 93,
+      "labelStartInCell": 114,
       "outputWidth": 256,
       "outputHeight": 256,
       "scaledGlyphWidth": 212,
-      "scaledGlyphHeight": 121,
-      "glyphPixels": 5378,
+      "scaledGlyphHeight": 50,
+      "glyphPixels": 657,
       "edgePixels": 0,
-      "confidence": 1,
-      "overrideApplied": false
+      "confidence": 0.72,
+      "overrideApplied": true,
+      "auditStatus": "WARN",
+      "textContamination": {
+        "contaminated": false,
+        "score": 0,
+        "bottomRatio": 0,
+        "bottomComponents": 0,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 551
+      },
+      "contentSha256": "1864bf420e90d0c40d01fa730b093b757b204d841724fbfcf010f5be40095db4",
+      "overrideReason": "Lighting fixture low stroke needed explicit ceiling."
     },
     {
       "key": "camera",
@@ -124,20 +186,32 @@
       "column": 5,
       "category": "viewport",
       "sourceBounds": {
-        "minX": 20,
-        "minY": 64,
-        "maxX": 99,
-        "maxY": 83
+        "minX": 0,
+        "minY": 57,
+        "maxX": 175,
+        "maxY": 82
       },
-      "labelStartInCell": 84,
+      "labelStartInCell": 117,
       "outputWidth": 256,
       "outputHeight": 256,
       "scaledGlyphWidth": 212,
-      "scaledGlyphHeight": 53,
-      "glyphPixels": 3047,
+      "scaledGlyphHeight": 31,
+      "glyphPixels": 607,
       "edgePixels": 0,
-      "confidence": 1,
-      "overrideApplied": false
+      "confidence": 0.72,
+      "overrideApplied": true,
+      "auditStatus": "WARN",
+      "textContamination": {
+        "contaminated": false,
+        "score": 0,
+        "bottomRatio": 0,
+        "bottomComponents": 0,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 563
+      },
+      "contentSha256": "0478401a26f6183632d9312f8cdb0676c237a51c0dc655d69dab8a45bb5bcff0",
+      "overrideReason": "Camera body clipped low; label band false-positive extended bounds."
     },
     {
       "key": "splitView",
@@ -147,20 +221,32 @@
       "column": 6,
       "category": "viewport",
       "sourceBounds": {
-        "minX": 13,
-        "minY": 67,
-        "maxX": 89,
-        "maxY": 116
+        "minX": 0,
+        "minY": 45,
+        "maxX": 174,
+        "maxY": 95
       },
-      "labelStartInCell": 117,
+      "labelStartInCell": 114,
       "outputWidth": 256,
       "outputHeight": 256,
       "scaledGlyphWidth": 212,
-      "scaledGlyphHeight": 138,
-      "glyphPixels": 8043,
+      "scaledGlyphHeight": 62,
+      "glyphPixels": 1081,
       "edgePixels": 0,
       "confidence": 1,
-      "overrideApplied": false
+      "overrideApplied": true,
+      "auditStatus": "WARN",
+      "textContamination": {
+        "contaminated": false,
+        "score": 0,
+        "bottomRatio": 0,
+        "bottomComponents": 0,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 917
+      },
+      "contentSha256": "d00187cebcc33e6c5d8f241807198d340175901452a84d014ef278f743497dac",
+      "overrideReason": "Split-view panes label-safe cutoff."
     },
     {
       "key": "founderRender",
@@ -170,20 +256,32 @@
       "column": 7,
       "category": "viewport",
       "sourceBounds": {
-        "minX": 14,
-        "minY": 64,
-        "maxX": 83,
-        "maxY": 93
+        "minX": 0,
+        "minY": 45,
+        "maxX": 174,
+        "maxY": 95
       },
-      "labelStartInCell": 94,
+      "labelStartInCell": 114,
       "outputWidth": 256,
       "outputHeight": 256,
       "scaledGlyphWidth": 212,
-      "scaledGlyphHeight": 91,
-      "glyphPixels": 5818,
+      "scaledGlyphHeight": 62,
+      "glyphPixels": 977,
       "edgePixels": 0,
       "confidence": 1,
-      "overrideApplied": false
+      "overrideApplied": true,
+      "auditStatus": "WARN",
+      "textContamination": {
+        "contaminated": false,
+        "score": 0,
+        "bottomRatio": 0,
+        "bottomComponents": 0,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 824
+      },
+      "contentSha256": "950041f3773434cbe92d199dae4285b22ea08b21dd221b181d15b870c2ab350a",
+      "overrideReason": "Founder render star glyph label-safe cutoff."
     },
     {
       "key": "projects",
@@ -196,17 +294,29 @@
         "minX": 46,
         "minY": 12,
         "maxX": 174,
-        "maxY": 89
+        "maxY": 29
       },
-      "labelStartInCell": 90,
+      "labelStartInCell": 81,
       "outputWidth": 256,
       "outputHeight": 256,
       "scaledGlyphWidth": 212,
-      "scaledGlyphHeight": 128,
-      "glyphPixels": 3214,
+      "scaledGlyphHeight": 30,
+      "glyphPixels": 2904,
       "edgePixels": 0,
       "confidence": 1,
-      "overrideApplied": false
+      "overrideApplied": false,
+      "auditStatus": "PASS",
+      "textContamination": {
+        "contaminated": false,
+        "score": 0,
+        "bottomRatio": 0,
+        "bottomComponents": 0,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 2408
+      },
+      "contentSha256": "bdb7b556d210069cdb21fa0b543996d65d23079cebee81c965edd1a6fa275943",
+      "overrideReason": null
     },
     {
       "key": "history",
@@ -216,20 +326,32 @@
       "column": 1,
       "category": "project",
       "sourceBounds": {
-        "minX": 0,
+        "minX": 51,
         "minY": 12,
         "maxX": 142,
-        "maxY": 105
+        "maxY": 28
       },
-      "labelStartInCell": 106,
+      "labelStartInCell": 76,
       "outputWidth": 256,
       "outputHeight": 256,
       "scaledGlyphWidth": 212,
-      "scaledGlyphHeight": 139,
-      "glyphPixels": 2704,
+      "scaledGlyphHeight": 39,
+      "glyphPixels": 3969,
       "edgePixels": 0,
       "confidence": 1,
-      "overrideApplied": false
+      "overrideApplied": false,
+      "auditStatus": "PASS",
+      "textContamination": {
+        "contaminated": false,
+        "score": 0,
+        "bottomRatio": 0,
+        "bottomComponents": 0,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 3185
+      },
+      "contentSha256": "85cacd7a8d5de92668cc9ed75978fbc62f8864cb617d541cd1c5615cab8eb4ce",
+      "overrideReason": null
     },
     {
       "key": "revisions",
@@ -242,17 +364,29 @@
         "minX": 14,
         "minY": 12,
         "maxX": 142,
-        "maxY": 97
+        "maxY": 29
       },
-      "labelStartInCell": 98,
+      "labelStartInCell": 71,
       "outputWidth": 256,
       "outputHeight": 256,
       "scaledGlyphWidth": 212,
-      "scaledGlyphHeight": 141,
-      "glyphPixels": 3772,
+      "scaledGlyphHeight": 30,
+      "glyphPixels": 2814,
       "edgePixels": 0,
       "confidence": 1,
-      "overrideApplied": false
+      "overrideApplied": false,
+      "auditStatus": "PASS",
+      "textContamination": {
+        "contaminated": false,
+        "score": 0,
+        "bottomRatio": 0,
+        "bottomComponents": 0,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 2312
+      },
+      "contentSha256": "b26427d97c5a8d0242da870d880679abfecaef3dddb8d9da79083dc78a68e2c3",
+      "overrideReason": null
     },
     {
       "key": "milestones",
@@ -265,17 +399,29 @@
         "minX": 22,
         "minY": 12,
         "maxX": 113,
-        "maxY": 114
+        "maxY": 28
       },
-      "labelStartInCell": 115,
+      "labelStartInCell": 70,
       "outputWidth": 256,
       "outputHeight": 256,
-      "scaledGlyphWidth": 189,
-      "scaledGlyphHeight": 212,
-      "glyphPixels": 5157,
+      "scaledGlyphWidth": 212,
+      "scaledGlyphHeight": 39,
+      "glyphPixels": 3793,
       "edgePixels": 0,
-      "confidence": 1,
-      "overrideApplied": false
+      "confidence": 0.92,
+      "overrideApplied": false,
+      "auditStatus": "PASS",
+      "textContamination": {
+        "contaminated": false,
+        "score": 0,
+        "bottomRatio": 0,
+        "bottomComponents": 0,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 3110
+      },
+      "contentSha256": "408da27d9e0893e941b17665e414060ec138c0aacf22e51995aa9d0e5a12389b",
+      "overrideReason": null
     },
     {
       "key": "analytics",
@@ -285,20 +431,32 @@
       "column": 4,
       "category": "project",
       "sourceBounds": {
-        "minX": 19,
+        "minX": 0,
         "minY": 11,
-        "maxX": 97,
-        "maxY": 126
+        "maxX": 174,
+        "maxY": 78
       },
-      "labelStartInCell": 127,
+      "labelStartInCell": 109,
       "outputWidth": 256,
       "outputHeight": 256,
-      "scaledGlyphWidth": 144,
-      "scaledGlyphHeight": 212,
-      "glyphPixels": 4220,
+      "scaledGlyphWidth": 212,
+      "scaledGlyphHeight": 82,
+      "glyphPixels": 849,
       "edgePixels": 0,
       "confidence": 1,
-      "overrideApplied": false
+      "overrideApplied": true,
+      "auditStatus": "WARN",
+      "textContamination": {
+        "contaminated": false,
+        "score": 0,
+        "bottomRatio": 0,
+        "bottomComponents": 0,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 703
+      },
+      "contentSha256": "c194c97be8e2f1ec1e4496708daef5275566655b01baca7abc85dda6e201ed9a",
+      "overrideReason": "Bar-chart glyph merged with ANALYTICS word band in single bounding box."
     },
     {
       "key": "performance",
@@ -308,20 +466,32 @@
       "column": 5,
       "category": "project",
       "sourceBounds": {
-        "minX": 24,
+        "minX": 0,
         "minY": 11,
-        "maxX": 94,
-        "maxY": 105
+        "maxX": 175,
+        "maxY": 76
       },
-      "labelStartInCell": 106,
+      "labelStartInCell": 109,
       "outputWidth": 256,
       "outputHeight": 256,
-      "scaledGlyphWidth": 158,
-      "scaledGlyphHeight": 212,
-      "glyphPixels": 5692,
+      "scaledGlyphWidth": 212,
+      "scaledGlyphHeight": 80,
+      "glyphPixels": 806,
       "edgePixels": 0,
       "confidence": 1,
-      "overrideApplied": false
+      "overrideApplied": true,
+      "auditStatus": "WARN",
+      "textContamination": {
+        "contaminated": false,
+        "score": 0,
+        "bottomRatio": 0,
+        "bottomComponents": 0,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 687
+      },
+      "contentSha256": "50f47a990faabc619f8c7746abec6abdb1a7e08d455d80fcb0a26b9d972be088",
+      "overrideReason": "Gauge glyph merged with PERFORMANCE label band."
     },
     {
       "key": "issues",
@@ -334,17 +504,29 @@
         "minX": 5,
         "minY": 9,
         "maxX": 174,
-        "maxY": 127
+        "maxY": 94
       },
-      "labelStartInCell": 128,
+      "labelStartInCell": 95,
       "outputWidth": 256,
       "outputHeight": 256,
       "scaledGlyphWidth": 212,
-      "scaledGlyphHeight": 148,
-      "glyphPixels": 2385,
+      "scaledGlyphHeight": 107,
+      "glyphPixels": 1566,
       "edgePixels": 0,
       "confidence": 1,
-      "overrideApplied": false
+      "overrideApplied": false,
+      "auditStatus": "PASS",
+      "textContamination": {
+        "contaminated": false,
+        "score": 0,
+        "bottomRatio": 0,
+        "bottomComponents": 0,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 1290
+      },
+      "contentSha256": "e6157df2919686ac495bb07945c613247de6755e0fa75b27556ab711b12c7dd7",
+      "overrideReason": null
     },
     {
       "key": "approved",
@@ -357,17 +539,29 @@
         "minX": 0,
         "minY": 9,
         "maxX": 121,
-        "maxY": 114
+        "maxY": 25
       },
-      "labelStartInCell": 115,
+      "labelStartInCell": 73,
       "outputWidth": 256,
       "outputHeight": 256,
       "scaledGlyphWidth": 212,
-      "scaledGlyphHeight": 184,
-      "glyphPixels": 5233,
+      "scaledGlyphHeight": 30,
+      "glyphPixels": 3109,
       "edgePixels": 0,
       "confidence": 1,
-      "overrideApplied": false
+      "overrideApplied": false,
+      "auditStatus": "PASS",
+      "textContamination": {
+        "contaminated": false,
+        "score": 0,
+        "bottomRatio": 0,
+        "bottomComponents": 0,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 2644
+      },
+      "contentSha256": "49c55b2c05abef62b086c9584ab98c21818cea55c622d08a28d66afe4d8a21ff",
+      "overrideReason": null
     },
     {
       "key": "playback",
@@ -377,20 +571,32 @@
       "column": 0,
       "category": "playback",
       "sourceBounds": {
-        "minX": 64,
+        "minX": 0,
         "minY": 14,
-        "maxX": 149,
-        "maxY": 113
+        "maxX": 174,
+        "maxY": 76
       },
-      "labelStartInCell": 114,
+      "labelStartInCell": 81,
       "outputWidth": 256,
       "outputHeight": 256,
-      "scaledGlyphWidth": 182,
-      "scaledGlyphHeight": 212,
-      "glyphPixels": 6246,
+      "scaledGlyphWidth": 212,
+      "scaledGlyphHeight": 76,
+      "glyphPixels": 916,
       "edgePixels": 0,
       "confidence": 1,
-      "overrideApplied": false
+      "overrideApplied": true,
+      "auditStatus": "WARN",
+      "textContamination": {
+        "contaminated": false,
+        "score": 0,
+        "bottomRatio": 0,
+        "bottomComponents": 0,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 773
+      },
+      "contentSha256": "3081594bb5a31f20c7f06116e1ca19257adf8492be247668470374c7d387e269",
+      "overrideReason": "Animation-studio play glyph contaminated by PLAYBACK label strokes."
     },
     {
       "key": "pause",
@@ -403,17 +609,29 @@
         "minX": 60,
         "minY": 14,
         "maxX": 132,
-        "maxY": 113
+        "maxY": 30
       },
-      "labelStartInCell": 114,
+      "labelStartInCell": 73,
       "outputWidth": 256,
       "outputHeight": 256,
-      "scaledGlyphWidth": 155,
-      "scaledGlyphHeight": 212,
-      "glyphPixels": 5610,
+      "scaledGlyphWidth": 212,
+      "scaledGlyphHeight": 49,
+      "glyphPixels": 4606,
       "edgePixels": 0,
       "confidence": 1,
-      "overrideApplied": false
+      "overrideApplied": false,
+      "auditStatus": "PASS",
+      "textContamination": {
+        "contaminated": false,
+        "score": 0,
+        "bottomRatio": 0,
+        "bottomComponents": 0,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 3853
+      },
+      "contentSha256": "d78e0cd46d217e22df8155ab93761a010baaa1cfe84e0431c21a349d1a4b13cd",
+      "overrideReason": null
     },
     {
       "key": "stop",
@@ -426,17 +644,29 @@
         "minX": 35,
         "minY": 14,
         "maxX": 122,
-        "maxY": 92
+        "maxY": 30
       },
-      "labelStartInCell": 93,
+      "labelStartInCell": 74,
       "outputWidth": 256,
       "outputHeight": 256,
       "scaledGlyphWidth": 212,
-      "scaledGlyphHeight": 190,
-      "glyphPixels": 5707,
+      "scaledGlyphHeight": 41,
+      "glyphPixels": 4062,
       "edgePixels": 0,
       "confidence": 1,
-      "overrideApplied": false
+      "overrideApplied": false,
+      "auditStatus": "PASS",
+      "textContamination": {
+        "contaminated": false,
+        "score": 0,
+        "bottomRatio": 0,
+        "bottomComponents": 0,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 3453
+      },
+      "contentSha256": "db1fbd84d1148fcd9d49a3e5177dbf3d5319576a837dc7ca0f2023cc8661aa19",
+      "overrideReason": null
     },
     {
       "key": "next",
@@ -449,17 +679,29 @@
         "minX": 16,
         "minY": 14,
         "maxX": 119,
-        "maxY": 98
+        "maxY": 30
       },
-      "labelStartInCell": 99,
+      "labelStartInCell": 73,
       "outputWidth": 256,
       "outputHeight": 256,
       "scaledGlyphWidth": 212,
-      "scaledGlyphHeight": 173,
-      "glyphPixels": 5091,
+      "scaledGlyphHeight": 35,
+      "glyphPixels": 3535,
       "edgePixels": 0,
       "confidence": 1,
-      "overrideApplied": false
+      "overrideApplied": false,
+      "auditStatus": "PASS",
+      "textContamination": {
+        "contaminated": false,
+        "score": 0,
+        "bottomRatio": 0,
+        "bottomComponents": 0,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 3012
+      },
+      "contentSha256": "982017e499f93fba021e238089e1aafcc58f31debb5e923c26e4c3f71924f5bb",
+      "overrideReason": null
     },
     {
       "key": "previous",
@@ -472,17 +714,29 @@
         "minX": 11,
         "minY": 14,
         "maxX": 103,
-        "maxY": 97
+        "maxY": 30
       },
-      "labelStartInCell": 98,
+      "labelStartInCell": 73,
       "outputWidth": 256,
       "outputHeight": 256,
       "scaledGlyphWidth": 212,
-      "scaledGlyphHeight": 191,
-      "glyphPixels": 5364,
+      "scaledGlyphHeight": 39,
+      "glyphPixels": 3522,
       "edgePixels": 0,
       "confidence": 1,
-      "overrideApplied": false
+      "overrideApplied": false,
+      "auditStatus": "PASS",
+      "textContamination": {
+        "contaminated": false,
+        "score": 0,
+        "bottomRatio": 0,
+        "bottomComponents": 0,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 2854
+      },
+      "contentSha256": "aef7fa5b8e4499add5585fb074ce4ae72f9b3a5fd21d7bc1d038f614f67ba9ab",
+      "overrideReason": null
     },
     {
       "key": "loop",
@@ -495,17 +749,29 @@
         "minX": 0,
         "minY": 14,
         "maxX": 117,
-        "maxY": 113
+        "maxY": 30
       },
-      "labelStartInCell": 114,
+      "labelStartInCell": 74,
       "outputWidth": 256,
       "outputHeight": 256,
       "scaledGlyphWidth": 212,
-      "scaledGlyphHeight": 180,
-      "glyphPixels": 4947,
+      "scaledGlyphHeight": 31,
+      "glyphPixels": 3341,
       "edgePixels": 0,
       "confidence": 1,
-      "overrideApplied": false
+      "overrideApplied": false,
+      "auditStatus": "PASS",
+      "textContamination": {
+        "contaminated": false,
+        "score": 0,
+        "bottomRatio": 0,
+        "bottomComponents": 0,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 2851
+      },
+      "contentSha256": "c58ac9e71aedfcf2071144d750c0438ff46a04e1c8ce0fecc7d17ba7dd104e0d",
+      "overrideReason": null
     },
     {
       "key": "capture",
@@ -515,20 +781,32 @@
       "column": 6,
       "category": "playback",
       "sourceBounds": {
-        "minX": 20,
+        "minX": 21,
         "minY": 14,
-        "maxX": 82,
-        "maxY": 91
+        "maxX": 81,
+        "maxY": 30
       },
-      "labelStartInCell": 92,
+      "labelStartInCell": 70,
       "outputWidth": 256,
       "outputHeight": 256,
-      "scaledGlyphWidth": 171,
-      "scaledGlyphHeight": 212,
-      "glyphPixels": 5820,
+      "scaledGlyphWidth": 212,
+      "scaledGlyphHeight": 59,
+      "glyphPixels": 6031,
       "edgePixels": 0,
       "confidence": 1,
-      "overrideApplied": false
+      "overrideApplied": false,
+      "auditStatus": "PASS",
+      "textContamination": {
+        "contaminated": false,
+        "score": 0,
+        "bottomRatio": 0,
+        "bottomComponents": 0,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 4861
+      },
+      "contentSha256": "c965f247238aa523f7185db1058afbb08ad483b3aea597639627e441c43d1d7d",
+      "overrideReason": null
     },
     {
       "key": "fullscreen",
@@ -543,15 +821,27 @@
         "maxX": 92,
         "maxY": 30
       },
-      "labelStartInCell": 81,
+      "labelStartInCell": 72,
       "outputWidth": 256,
       "outputHeight": 256,
       "scaledGlyphWidth": 212,
       "scaledGlyphHeight": 40,
-      "glyphPixels": 3890,
+      "glyphPixels": 3842,
       "edgePixels": 0,
       "confidence": 1,
-      "overrideApplied": false
+      "overrideApplied": false,
+      "auditStatus": "PASS",
+      "textContamination": {
+        "contaminated": false,
+        "score": 0,
+        "bottomRatio": 0,
+        "bottomComponents": 0,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 3200
+      },
+      "contentSha256": "1e3600ffba6a11aec48c6f0ef31f609b05ce78dbe318d4789281a376a1d15dcf",
+      "overrideReason": null
     },
     {
       "key": "zoomIn",
@@ -561,20 +851,32 @@
       "column": 0,
       "category": "viewport-tools",
       "sourceBounds": {
-        "minX": 64,
-        "minY": 13,
-        "maxX": 150,
-        "maxY": 89
+        "minX": 0,
+        "minY": 14,
+        "maxX": 174,
+        "maxY": 87
       },
-      "labelStartInCell": 90,
+      "labelStartInCell": 89,
       "outputWidth": 256,
       "outputHeight": 256,
       "scaledGlyphWidth": 212,
-      "scaledGlyphHeight": 188,
-      "glyphPixels": 5668,
+      "scaledGlyphHeight": 90,
+      "glyphPixels": 1359,
       "edgePixels": 0,
       "confidence": 1,
-      "overrideApplied": false
+      "overrideApplied": true,
+      "auditStatus": "WARN",
+      "textContamination": {
+        "contaminated": false,
+        "score": 0,
+        "bottomRatio": 0,
+        "bottomComponents": 0,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 1125
+      },
+      "contentSha256": "0360e8ef31109f2a62f957d90d01c1c24c310588054827c542d7d2236c9839c7",
+      "overrideReason": "Magnifier handle ends above ZOOM IN label band; prior cutoff included label strokes."
     },
     {
       "key": "zoomOut",
@@ -584,20 +886,32 @@
       "column": 1,
       "category": "viewport-tools",
       "sourceBounds": {
-        "minX": 66,
+        "minX": 69,
         "minY": 13,
         "maxX": 124,
-        "maxY": 89
+        "maxY": 29
       },
-      "labelStartInCell": 90,
+      "labelStartInCell": 70,
       "outputWidth": 256,
       "outputHeight": 256,
-      "scaledGlyphWidth": 162,
-      "scaledGlyphHeight": 212,
-      "glyphPixels": 5388,
+      "scaledGlyphWidth": 212,
+      "scaledGlyphHeight": 64,
+      "glyphPixels": 6115,
       "edgePixels": 0,
       "confidence": 1,
-      "overrideApplied": false
+      "overrideApplied": false,
+      "auditStatus": "PASS",
+      "textContamination": {
+        "contaminated": false,
+        "score": 0,
+        "bottomRatio": 0,
+        "bottomComponents": 0,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 5081
+      },
+      "contentSha256": "863a36c63dddf93bbdda6cac635283bb8015c4a2cfc071e6fb97d4c870de07e6",
+      "overrideReason": null
     },
     {
       "key": "pan",
@@ -609,18 +923,30 @@
       "sourceBounds": {
         "minX": 55,
         "minY": 13,
-        "maxX": 104,
-        "maxY": 90
+        "maxX": 101,
+        "maxY": 74
       },
-      "labelStartInCell": 91,
+      "labelStartInCell": 75,
       "outputWidth": 256,
       "outputHeight": 256,
-      "scaledGlyphWidth": 136,
+      "scaledGlyphWidth": 161,
       "scaledGlyphHeight": 212,
-      "glyphPixels": 6393,
+      "glyphPixels": 4712,
       "edgePixels": 0,
       "confidence": 1,
-      "overrideApplied": false
+      "overrideApplied": false,
+      "auditStatus": "WARN",
+      "textContamination": {
+        "contaminated": false,
+        "score": 0.079365234375,
+        "bottomRatio": 0.22296296296296297,
+        "bottomComponents": 1,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 4050
+      },
+      "contentSha256": "2fec8cbfe8309ef3866f5a22e9a402200b5bf766be2a502f67d8a3c71d858224",
+      "overrideReason": null
     },
     {
       "key": "fitView",
@@ -630,20 +956,32 @@
       "column": 3,
       "category": "viewport-tools",
       "sourceBounds": {
-        "minX": 38,
+        "minX": 43,
         "minY": 13,
-        "maxX": 94,
-        "maxY": 113
+        "maxX": 90,
+        "maxY": 29
       },
-      "labelStartInCell": 114,
+      "labelStartInCell": 69,
       "outputWidth": 256,
       "outputHeight": 256,
-      "scaledGlyphWidth": 120,
-      "scaledGlyphHeight": 212,
-      "glyphPixels": 4127,
+      "scaledGlyphWidth": 212,
+      "scaledGlyphHeight": 75,
+      "glyphPixels": 6562,
       "edgePixels": 0,
-      "confidence": 1,
-      "overrideApplied": false
+      "confidence": 0.92,
+      "overrideApplied": false,
+      "auditStatus": "PASS",
+      "textContamination": {
+        "contaminated": false,
+        "score": 0,
+        "bottomRatio": 0,
+        "bottomComponents": 0,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 5385
+      },
+      "contentSha256": "8d943decd7d54e59e266f502d8ab46a66582fbbbc2df29d59842a0e594a62c3c",
+      "overrideReason": null
     },
     {
       "key": "orbit",
@@ -653,20 +991,32 @@
       "column": 4,
       "category": "viewport-tools",
       "sourceBounds": {
-        "minX": 16,
-        "minY": 13,
-        "maxX": 98,
-        "maxY": 113
+        "minX": 0,
+        "minY": 14,
+        "maxX": 174,
+        "maxY": 68
       },
-      "labelStartInCell": 114,
+      "labelStartInCell": 81,
       "outputWidth": 256,
       "outputHeight": 256,
-      "scaledGlyphWidth": 174,
-      "scaledGlyphHeight": 212,
-      "glyphPixels": 7040,
+      "scaledGlyphWidth": 212,
+      "scaledGlyphHeight": 67,
+      "glyphPixels": 1014,
       "edgePixels": 0,
       "confidence": 1,
-      "overrideApplied": false
+      "overrideApplied": true,
+      "auditStatus": "WARN",
+      "textContamination": {
+        "contaminated": false,
+        "score": 0,
+        "bottomRatio": 0,
+        "bottomComponents": 0,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 813
+      },
+      "contentSha256": "9070ee2b8ebcd3cb3a0cb61bc6cb9e9990f86689398518e530277bf1d6776196",
+      "overrideReason": "Studio World orbit ring overlapped ORBIT label strokes."
     },
     {
       "key": "perspective",
@@ -676,20 +1026,32 @@
       "column": 5,
       "category": "viewport-tools",
       "sourceBounds": {
-        "minX": 28,
+        "minX": 0,
         "minY": 13,
-        "maxX": 84,
-        "maxY": 82
+        "maxX": 175,
+        "maxY": 68
       },
-      "labelStartInCell": 83,
+      "labelStartInCell": 81,
       "outputWidth": 256,
       "outputHeight": 256,
-      "scaledGlyphWidth": 173,
-      "scaledGlyphHeight": 212,
-      "glyphPixels": 5257,
+      "scaledGlyphWidth": 212,
+      "scaledGlyphHeight": 67,
+      "glyphPixels": 477,
       "edgePixels": 0,
-      "confidence": 1,
-      "overrideApplied": false
+      "confidence": 0.72,
+      "overrideApplied": true,
+      "auditStatus": "WARN",
+      "textContamination": {
+        "contaminated": false,
+        "score": 0,
+        "bottomRatio": 0,
+        "bottomComponents": 0,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 391
+      },
+      "contentSha256": "3569931b6abb711aef30d9fff5faf8ca0a5d3c08a4f58c7abf880051c2463a3d",
+      "overrideReason": "Composition cube picked up PERSPECTIVE label characters."
     },
     {
       "key": "toggleUi",
@@ -702,17 +1064,29 @@
         "minX": 12,
         "minY": 13,
         "maxX": 89,
-        "maxY": 85
+        "maxY": 29
       },
-      "labelStartInCell": 86,
+      "labelStartInCell": 73,
       "outputWidth": 256,
       "outputHeight": 256,
       "scaledGlyphWidth": 212,
-      "scaledGlyphHeight": 198,
-      "glyphPixels": 5694,
+      "scaledGlyphHeight": 46,
+      "glyphPixels": 4283,
       "edgePixels": 0,
       "confidence": 1,
-      "overrideApplied": false
+      "overrideApplied": false,
+      "auditStatus": "PASS",
+      "textContamination": {
+        "contaminated": false,
+        "score": 0,
+        "bottomRatio": 0,
+        "bottomComponents": 0,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 3462
+      },
+      "contentSha256": "0c4a108f5f60a66fa7f81969920b8d738ff29c5970f8f5030a07056dce6ab827",
+      "overrideReason": null
     },
     {
       "key": "grid",
@@ -725,17 +1099,29 @@
         "minX": 0,
         "minY": 13,
         "maxX": 100,
-        "maxY": 85
+        "maxY": 29
       },
-      "labelStartInCell": 86,
+      "labelStartInCell": 71,
       "outputWidth": 256,
       "outputHeight": 256,
       "scaledGlyphWidth": 212,
-      "scaledGlyphHeight": 153,
-      "glyphPixels": 5259,
+      "scaledGlyphHeight": 36,
+      "glyphPixels": 3621,
       "edgePixels": 0,
       "confidence": 1,
-      "overrideApplied": false
+      "overrideApplied": false,
+      "auditStatus": "PASS",
+      "textContamination": {
+        "contaminated": false,
+        "score": 0,
+        "bottomRatio": 0,
+        "bottomComponents": 0,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 3062
+      },
+      "contentSha256": "6765bf24b0e2fc0826a94374bcc58c3577077d220e313fb969fdeec9dd9ff50e",
+      "overrideReason": null
     },
     {
       "key": "hide",
@@ -748,17 +1134,29 @@
         "minX": 70,
         "minY": 1,
         "maxX": 142,
-        "maxY": 110
+        "maxY": 18
       },
-      "labelStartInCell": 114,
+      "labelStartInCell": 62,
       "outputWidth": 256,
       "outputHeight": 256,
-      "scaledGlyphWidth": 141,
-      "scaledGlyphHeight": 212,
-      "glyphPixels": 5959,
+      "scaledGlyphWidth": 212,
+      "scaledGlyphHeight": 52,
+      "glyphPixels": 4467,
       "edgePixels": 0,
-      "confidence": 1,
-      "overrideApplied": false
+      "confidence": 0.92,
+      "overrideApplied": false,
+      "auditStatus": "PASS",
+      "textContamination": {
+        "contaminated": false,
+        "score": 0,
+        "bottomRatio": 0,
+        "bottomComponents": 0,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 3732
+      },
+      "contentSha256": "ba28f4228599b69c139ea5f86639ea58b56dda15648ebc420e10b7fa0bb13224",
+      "overrideReason": null
     },
     {
       "key": "lock",
@@ -771,17 +1169,29 @@
         "minX": 51,
         "minY": 1,
         "maxX": 141,
-        "maxY": 101
+        "maxY": 73
       },
-      "labelStartInCell": 102,
+      "labelStartInCell": 74,
       "outputWidth": 256,
       "outputHeight": 256,
-      "scaledGlyphWidth": 191,
-      "scaledGlyphHeight": 212,
-      "glyphPixels": 6080,
+      "scaledGlyphWidth": 212,
+      "scaledGlyphHeight": 170,
+      "glyphPixels": 4776,
       "edgePixels": 0,
       "confidence": 1,
-      "overrideApplied": false
+      "overrideApplied": false,
+      "auditStatus": "PASS",
+      "textContamination": {
+        "contaminated": false,
+        "score": 0.02724609375,
+        "bottomRatio": 0.0790413054563998,
+        "bottomComponents": 2,
+        "narrowStrokes": 2,
+        "wordBand": false,
+        "totalPixels": 3922
+      },
+      "contentSha256": "43d9257e406374b9812c352a5a48b962ef71970deb7a1a44d5c8de3e8472cd97",
+      "overrideReason": null
     },
     {
       "key": "unlock",
@@ -791,20 +1201,32 @@
       "column": 2,
       "category": "inspector",
       "sourceBounds": {
-        "minX": 51,
+        "minX": 60,
         "minY": 1,
         "maxX": 107,
-        "maxY": 110
+        "maxY": 74
       },
-      "labelStartInCell": 127,
+      "labelStartInCell": 75,
       "outputWidth": 256,
       "outputHeight": 256,
-      "scaledGlyphWidth": 110,
+      "scaledGlyphWidth": 138,
       "scaledGlyphHeight": 212,
-      "glyphPixels": 4457,
+      "glyphPixels": 3977,
       "edgePixels": 0,
       "confidence": 1,
-      "overrideApplied": false
+      "overrideApplied": false,
+      "auditStatus": "WARN",
+      "textContamination": {
+        "contaminated": false,
+        "score": 0.087890625,
+        "bottomRatio": 0.2931691586045148,
+        "bottomComponents": 2,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 3411
+      },
+      "contentSha256": "29d41372a222d9ad66ebab022137d01351b9fefea124c850444929801952ed37",
+      "overrideReason": null
     },
     {
       "key": "duplicate",
@@ -817,17 +1239,29 @@
         "minX": 30,
         "minY": 1,
         "maxX": 103,
-        "maxY": 108
+        "maxY": 18
       },
-      "labelStartInCell": 127,
+      "labelStartInCell": 60,
       "outputWidth": 256,
       "outputHeight": 256,
-      "scaledGlyphWidth": 145,
-      "scaledGlyphHeight": 212,
-      "glyphPixels": 6012,
+      "scaledGlyphWidth": 212,
+      "scaledGlyphHeight": 52,
+      "glyphPixels": 4306,
       "edgePixels": 0,
-      "confidence": 1,
-      "overrideApplied": false
+      "confidence": 0.92,
+      "overrideApplied": false,
+      "auditStatus": "PASS",
+      "textContamination": {
+        "contaminated": false,
+        "score": 0,
+        "bottomRatio": 0,
+        "bottomComponents": 0,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 3541
+      },
+      "contentSha256": "4ad2b408bb3b94669937e741f775d097386d84070d4bdb4e5f79710090f3360f",
+      "overrideReason": null
     },
     {
       "key": "delete",
@@ -837,20 +1271,32 @@
       "column": 4,
       "category": "inspector",
       "sourceBounds": {
-        "minX": 30,
+        "minX": 31,
         "minY": 1,
-        "maxX": 84,
-        "maxY": 110
+        "maxX": 83,
+        "maxY": 62
       },
-      "labelStartInCell": 127,
+      "labelStartInCell": 63,
       "outputWidth": 256,
       "outputHeight": 256,
-      "scaledGlyphWidth": 106,
+      "scaledGlyphWidth": 181,
       "scaledGlyphHeight": 212,
-      "glyphPixels": 5858,
+      "glyphPixels": 5875,
       "edgePixels": 0,
-      "confidence": 1,
-      "overrideApplied": false
+      "confidence": 0.92,
+      "overrideApplied": false,
+      "auditStatus": "WARN",
+      "textContamination": {
+        "contaminated": false,
+        "score": 0.09131835937499999,
+        "bottomRatio": 0.20639650377433452,
+        "bottomComponents": 1,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 5034
+      },
+      "contentSha256": "37e35c212e1f4c76a4c3f48efb25c029f868155ae21137d81db540a26a6f546d",
+      "overrideReason": null
     },
     {
       "key": "edit",
@@ -865,15 +1311,27 @@
         "maxX": 110,
         "maxY": 109
       },
-      "labelStartInCell": 114,
+      "labelStartInCell": 126,
       "outputWidth": 256,
       "outputHeight": 256,
       "scaledGlyphWidth": 212,
       "scaledGlyphHeight": 210,
-      "glyphPixels": 6101,
+      "glyphPixels": 6082,
       "edgePixels": 0,
       "confidence": 1,
-      "overrideApplied": false
+      "overrideApplied": false,
+      "auditStatus": "PASS",
+      "textContamination": {
+        "contaminated": false,
+        "score": 0.061259765625,
+        "bottomRatio": 0.13785601265822786,
+        "bottomComponents": 1,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 5056
+      },
+      "contentSha256": "d5c3b79d6ffa72d1580e6df9244108d77ed4447c5cad2d606eb66fad9b29ec71",
+      "overrideReason": null
     },
     {
       "key": "settings",
@@ -886,17 +1344,29 @@
         "minX": 6,
         "minY": 1,
         "maxX": 95,
-        "maxY": 93
+        "maxY": 18
       },
-      "labelStartInCell": 94,
+      "labelStartInCell": 62,
       "outputWidth": 256,
       "outputHeight": 256,
-      "scaledGlyphWidth": 205,
-      "scaledGlyphHeight": 212,
-      "glyphPixels": 6684,
+      "scaledGlyphWidth": 212,
+      "scaledGlyphHeight": 42,
+      "glyphPixels": 3598,
       "edgePixels": 0,
-      "confidence": 1,
-      "overrideApplied": false
+      "confidence": 0.92,
+      "overrideApplied": false,
+      "auditStatus": "PASS",
+      "textContamination": {
+        "contaminated": false,
+        "score": 0,
+        "bottomRatio": 0,
+        "bottomComponents": 0,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 2885
+      },
+      "contentSha256": "ce220b549773154a5fb90fc46b415c6075b16a1a848cb4fbfa78509baffd9c76",
+      "overrideReason": null
     },
     {
       "key": "filter",
@@ -911,15 +1381,27 @@
         "maxX": 76,
         "maxY": 109
       },
-      "labelStartInCell": 127,
+      "labelStartInCell": 126,
       "outputWidth": 256,
       "outputHeight": 256,
       "scaledGlyphWidth": 117,
       "scaledGlyphHeight": 212,
-      "glyphPixels": 4122,
+      "glyphPixels": 4099,
       "edgePixels": 0,
       "confidence": 1,
-      "overrideApplied": false
+      "overrideApplied": false,
+      "auditStatus": "PASS",
+      "textContamination": {
+        "contaminated": false,
+        "score": 0.043681640625,
+        "bottomRatio": 0.13878804803127617,
+        "bottomComponents": 1,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 3581
+      },
+      "contentSha256": "618156b248666adf3d76857cc6c9f52a4b1b1124cce2e49f5ce2913b7284fcda",
+      "overrideReason": null
     },
     {
       "key": "export",
@@ -929,20 +1411,32 @@
       "column": 0,
       "category": "data",
       "sourceBounds": {
-        "minX": 78,
-        "minY": 0,
-        "maxX": 133,
-        "maxY": 80
+        "minX": 89,
+        "minY": 38,
+        "maxX": 122,
+        "maxY": 67
       },
-      "labelStartInCell": 81,
+      "labelStartInCell": 68,
       "outputWidth": 256,
       "outputHeight": 256,
-      "scaledGlyphWidth": 147,
-      "scaledGlyphHeight": 212,
-      "glyphPixels": 2965,
+      "scaledGlyphWidth": 212,
+      "scaledGlyphHeight": 187,
+      "glyphPixels": 9760,
       "edgePixels": 0,
-      "confidence": 1,
-      "overrideApplied": false
+      "confidence": 0.92,
+      "overrideApplied": false,
+      "auditStatus": "WARN",
+      "textContamination": {
+        "contaminated": false,
+        "score": 0.18,
+        "bottomRatio": 0.2656138684398005,
+        "bottomComponents": 1,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 8422
+      },
+      "contentSha256": "7b52b6747c01d6a67e7f9324c669115bbba3e9a50a4bcefed8c2796b889de1b8",
+      "overrideReason": null
     },
     {
       "key": "import",
@@ -952,20 +1446,32 @@
       "column": 1,
       "category": "data",
       "sourceBounds": {
-        "minX": 67,
+        "minX": 77,
         "minY": 38,
-        "maxX": 122,
-        "maxY": 80
+        "maxX": 112,
+        "maxY": 77
       },
-      "labelStartInCell": 81,
+      "labelStartInCell": 80,
       "outputWidth": 256,
       "outputHeight": 256,
-      "scaledGlyphWidth": 212,
-      "scaledGlyphHeight": 163,
-      "glyphPixels": 6129,
+      "scaledGlyphWidth": 191,
+      "scaledGlyphHeight": 212,
+      "glyphPixels": 8943,
       "edgePixels": 0,
       "confidence": 1,
-      "overrideApplied": false
+      "overrideApplied": false,
+      "auditStatus": "PASS",
+      "textContamination": {
+        "contaminated": false,
+        "score": 0.042099609375,
+        "bottomRatio": 0.06086404066073697,
+        "bottomComponents": 1,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 7870
+      },
+      "contentSha256": "2d590d53c06256f2d1e5d30412cff380d15a9f437cd1411a46b130996e0c0505",
+      "overrideReason": null
     },
     {
       "key": "cloudSync",
@@ -975,20 +1481,32 @@
       "column": 2,
       "category": "data",
       "sourceBounds": {
-        "minX": 45,
+        "minX": 47,
         "minY": 40,
-        "maxX": 110,
-        "maxY": 89
+        "maxX": 107,
+        "maxY": 62
       },
-      "labelStartInCell": 104,
+      "labelStartInCell": 63,
       "outputWidth": 256,
       "outputHeight": 256,
       "scaledGlyphWidth": 212,
-      "scaledGlyphHeight": 161,
-      "glyphPixels": 8586,
+      "scaledGlyphHeight": 80,
+      "glyphPixels": 3908,
       "edgePixels": 0,
-      "confidence": 1,
-      "overrideApplied": false
+      "confidence": 0.92,
+      "overrideApplied": false,
+      "auditStatus": "PASS",
+      "textContamination": {
+        "contaminated": false,
+        "score": 0,
+        "bottomRatio": 0,
+        "bottomComponents": 0,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 3424
+      },
+      "contentSha256": "b4c6a2ba755ef0df7843f5c31dc868d61f228c97cbaa36c8cb3d8076ffa309ba",
+      "overrideReason": null
     },
     {
       "key": "database",
@@ -1001,17 +1519,29 @@
         "minX": 41,
         "minY": 37,
         "maxX": 91,
-        "maxY": 90
+        "maxY": 64
       },
-      "labelStartInCell": 104,
+      "labelStartInCell": 65,
       "outputWidth": 256,
       "outputHeight": 256,
-      "scaledGlyphWidth": 200,
-      "scaledGlyphHeight": 212,
-      "glyphPixels": 17544,
+      "scaledGlyphWidth": 212,
+      "scaledGlyphHeight": 116,
+      "glyphPixels": 9800,
       "edgePixels": 0,
-      "confidence": 1,
-      "overrideApplied": false
+      "confidence": 0.92,
+      "overrideApplied": false,
+      "auditStatus": "PASS",
+      "textContamination": {
+        "contaminated": false,
+        "score": 0,
+        "bottomRatio": 0,
+        "bottomComponents": 0,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 8700
+      },
+      "contentSha256": "3504769164fedb3de935a5ababd20f3f1adc08b84aaa5863198f8f22d7d87789",
+      "overrideReason": null
     },
     {
       "key": "link",
@@ -1024,17 +1554,29 @@
         "minX": 31,
         "minY": 38,
         "maxX": 83,
-        "maxY": 114
+        "maxY": 89
       },
-      "labelStartInCell": 115,
+      "labelStartInCell": 98,
       "outputWidth": 256,
       "outputHeight": 256,
-      "scaledGlyphWidth": 146,
-      "scaledGlyphHeight": 212,
-      "glyphPixels": 6665,
+      "scaledGlyphWidth": 212,
+      "scaledGlyphHeight": 208,
+      "glyphPixels": 10308,
       "edgePixels": 0,
       "confidence": 1,
-      "overrideApplied": false
+      "overrideApplied": false,
+      "auditStatus": "PASS",
+      "textContamination": {
+        "contaminated": false,
+        "score": 0.0882421875,
+        "bottomRatio": 0.11016019310950187,
+        "bottomComponents": 1,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 9114
+      },
+      "contentSha256": "392a50d30a2d0b8edbe5ca4a2a09a8cb46f740642677a9522ee3b3049387b1b8",
+      "overrideReason": null
     },
     {
       "key": "share",
@@ -1044,20 +1586,32 @@
       "column": 5,
       "category": "data",
       "sourceBounds": {
-        "minX": 31,
-        "minY": 38,
-        "maxX": 79,
-        "maxY": 89
+        "minX": 0,
+        "minY": 10,
+        "maxX": 175,
+        "maxY": 88
       },
-      "labelStartInCell": 104,
+      "labelStartInCell": 101,
       "outputWidth": 256,
       "outputHeight": 256,
-      "scaledGlyphWidth": 200,
-      "scaledGlyphHeight": 212,
-      "glyphPixels": 11682,
+      "scaledGlyphWidth": 212,
+      "scaledGlyphHeight": 95,
+      "glyphPixels": 1018,
       "edgePixels": 0,
       "confidence": 1,
-      "overrideApplied": false
+      "overrideApplied": true,
+      "auditStatus": "WARN",
+      "textContamination": {
+        "contaminated": false,
+        "score": 0,
+        "bottomRatio": 0,
+        "bottomComponents": 0,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 889
+      },
+      "contentSha256": "b35200097757f4ed8195205f1b141def184cdc1b6df10683cdc60ba3576dad18",
+      "overrideReason": "Marketplace share nodes overlapped SHARE label band."
     },
     {
       "key": "users",
@@ -1067,20 +1621,32 @@
       "column": 6,
       "category": "data",
       "sourceBounds": {
-        "minX": 26,
+        "minX": 35,
         "minY": 38,
-        "maxX": 75,
-        "maxY": 89
+        "maxX": 66,
+        "maxY": 67
       },
-      "labelStartInCell": 104,
+      "labelStartInCell": 68,
       "outputWidth": 256,
       "outputHeight": 256,
-      "scaledGlyphWidth": 204,
-      "scaledGlyphHeight": 212,
-      "glyphPixels": 10326,
+      "scaledGlyphWidth": 212,
+      "scaledGlyphHeight": 199,
+      "glyphPixels": 13890,
       "edgePixels": 0,
-      "confidence": 1,
-      "overrideApplied": false
+      "confidence": 0.92,
+      "overrideApplied": false,
+      "auditStatus": "PASS",
+      "textContamination": {
+        "contaminated": false,
+        "score": 0.04728515625,
+        "bottomRatio": 0.04405142061737493,
+        "bottomComponents": 1,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 12213
+      },
+      "contentSha256": "f777a10f8a29617c454f94ed67a2373a1ade6cacafb7f9e361a73f31b64aaf5c",
+      "overrideReason": null
     },
     {
       "key": "team",
@@ -1090,20 +1656,32 @@
       "column": 7,
       "category": "data",
       "sourceBounds": {
-        "minX": 14,
-        "minY": 40,
-        "maxX": 80,
-        "maxY": 87
+        "minX": 0,
+        "minY": 10,
+        "maxX": 174,
+        "maxY": 88
       },
-      "labelStartInCell": 104,
+      "labelStartInCell": 101,
       "outputWidth": 256,
       "outputHeight": 256,
       "scaledGlyphWidth": 212,
-      "scaledGlyphHeight": 152,
-      "glyphPixels": 10173,
+      "scaledGlyphHeight": 96,
+      "glyphPixels": 1468,
       "edgePixels": 0,
       "confidence": 1,
-      "overrideApplied": false
+      "overrideApplied": true,
+      "auditStatus": "WARN",
+      "textContamination": {
+        "contaminated": false,
+        "score": 0,
+        "bottomRatio": 0,
+        "bottomComponents": 0,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 1274
+      },
+      "contentSha256": "9fa2a3d2b62a8af4d2c7fb9ec10295b44f69fa5709684bde8866725335a3cfb4",
+      "overrideReason": "Workforce center figures overlapped TEAM label."
     },
     {
       "key": "notifications",
@@ -1118,15 +1696,27 @@
         "maxX": 131,
         "maxY": 67
       },
-      "labelStartInCell": 82,
+      "labelStartInCell": 75,
       "outputWidth": 256,
       "outputHeight": 256,
       "scaledGlyphWidth": 190,
       "scaledGlyphHeight": 212,
-      "glyphPixels": 10805,
+      "glyphPixels": 10725,
       "edgePixels": 0,
       "confidence": 1,
-      "overrideApplied": false
+      "overrideApplied": false,
+      "auditStatus": "PASS",
+      "textContamination": {
+        "contaminated": false,
+        "score": 0.08288085937499999,
+        "bottomRatio": 0.10318415581573476,
+        "bottomComponents": 1,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 9139
+      },
+      "contentSha256": "f86c9807f4d751755592f3bdee11c11326cdb67efb46b4e132641634a6d9c660",
+      "overrideReason": null
     },
     {
       "key": "comments",
@@ -1141,15 +1731,27 @@
         "maxX": 123,
         "maxY": 66
       },
-      "labelStartInCell": 82,
+      "labelStartInCell": 75,
       "outputWidth": 256,
       "outputHeight": 256,
       "scaledGlyphWidth": 212,
       "scaledGlyphHeight": 190,
-      "glyphPixels": 12552,
+      "glyphPixels": 12359,
       "edgePixels": 0,
       "confidence": 1,
-      "overrideApplied": false
+      "overrideApplied": false,
+      "auditStatus": "PASS",
+      "textContamination": {
+        "contaminated": false,
+        "score": 0.028124999999999997,
+        "bottomRatio": 0.02942258183155572,
+        "bottomComponents": 1,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 10876
+      },
+      "contentSha256": "877e04286f436ee3ccb33c439cff921e89ca1fd8853f3b7bf5788c637db62b9f",
+      "overrideReason": null
     },
     {
       "key": "notes",
@@ -1162,17 +1764,29 @@
         "minX": 52,
         "minY": 12,
         "maxX": 103,
-        "maxY": 67
+        "maxY": 59
       },
-      "labelStartInCell": 82,
+      "labelStartInCell": 60,
       "outputWidth": 256,
       "outputHeight": 256,
-      "scaledGlyphWidth": 197,
-      "scaledGlyphHeight": 212,
-      "glyphPixels": 16311,
+      "scaledGlyphWidth": 212,
+      "scaledGlyphHeight": 196,
+      "glyphPixels": 15005,
       "edgePixels": 0,
-      "confidence": 1,
-      "overrideApplied": false
+      "confidence": 0.92,
+      "overrideApplied": false,
+      "auditStatus": "PASS",
+      "textContamination": {
+        "contaminated": false,
+        "score": 0.09087890625,
+        "bottomRatio": 0.07806719516798792,
+        "bottomComponents": 2,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 13245
+      },
+      "contentSha256": "4fd49b74ae55e25a3a0da53444c2fa6553fed73538e00cf86a4cc9387c6483ab",
+      "overrideReason": null
     },
     {
       "key": "attachments",
@@ -1182,20 +1796,32 @@
       "column": 3,
       "category": "collaboration",
       "sourceBounds": {
-        "minX": 43,
-        "minY": 13,
-        "maxX": 92,
-        "maxY": 65
+        "minX": 0,
+        "minY": 8,
+        "maxX": 174,
+        "maxY": 95
       },
-      "labelStartInCell": 82,
+      "labelStartInCell": 100,
       "outputWidth": 256,
       "outputHeight": 256,
-      "scaledGlyphWidth": 200,
-      "scaledGlyphHeight": 212,
-      "glyphPixels": 14245,
+      "scaledGlyphWidth": 212,
+      "scaledGlyphHeight": 107,
+      "glyphPixels": 2657,
       "edgePixels": 0,
       "confidence": 1,
-      "overrideApplied": false
+      "overrideApplied": true,
+      "auditStatus": "WARN",
+      "textContamination": {
+        "contaminated": false,
+        "score": 0,
+        "bottomRatio": 0,
+        "bottomComponents": 0,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 2287
+      },
+      "contentSha256": "284257694c522efc360396f7ec7a3c10fa7facc7cc48eb883607b4c7e38d086a",
+      "overrideReason": "Asset-reference clip glyph picked up ATTACHMENTS label strip."
     },
     {
       "key": "schedule",
@@ -1208,17 +1834,29 @@
         "minX": 30,
         "minY": 12,
         "maxX": 85,
-        "maxY": 67
+        "maxY": 59
       },
-      "labelStartInCell": 82,
+      "labelStartInCell": 60,
       "outputWidth": 256,
       "outputHeight": 256,
       "scaledGlyphWidth": 212,
-      "scaledGlyphHeight": 212,
-      "glyphPixels": 18589,
+      "scaledGlyphHeight": 182,
+      "glyphPixels": 14591,
       "edgePixels": 0,
-      "confidence": 1,
-      "overrideApplied": false
+      "confidence": 0.92,
+      "overrideApplied": false,
+      "auditStatus": "PASS",
+      "textContamination": {
+        "contaminated": false,
+        "score": 0.058359375,
+        "bottomRatio": 0.052581564776686726,
+        "bottomComponents": 2,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 12628
+      },
+      "contentSha256": "ab448b97f074863e3d27d9aaf52da9d62f6d959988959911e259334ac8f6924d",
+      "overrideReason": null
     },
     {
       "key": "timeTracking",
@@ -1233,15 +1871,27 @@
         "maxX": 84,
         "maxY": 67
       },
-      "labelStartInCell": 82,
+      "labelStartInCell": 75,
       "outputWidth": 256,
       "outputHeight": 256,
       "scaledGlyphWidth": 212,
       "scaledGlyphHeight": 201,
-      "glyphPixels": 11609,
+      "glyphPixels": 11588,
       "edgePixels": 0,
       "confidence": 1,
-      "overrideApplied": false
+      "overrideApplied": false,
+      "auditStatus": "PASS",
+      "textContamination": {
+        "contaminated": false,
+        "score": 0.120322265625,
+        "bottomRatio": 0.1349034292471423,
+        "bottomComponents": 1,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 10148
+      },
+      "contentSha256": "745a9efd58649e0192aaa8da00bb3c976569ccecf8cf89ec7b1ef16892d76d77",
+      "overrideReason": null
     },
     {
       "key": "flag",
@@ -1254,17 +1904,29 @@
         "minX": 24,
         "minY": 12,
         "maxX": 76,
-        "maxY": 98
+        "maxY": 67
       },
-      "labelStartInCell": 114,
+      "labelStartInCell": 76,
       "outputWidth": 256,
       "outputHeight": 256,
-      "scaledGlyphWidth": 129,
+      "scaledGlyphWidth": 201,
       "scaledGlyphHeight": 212,
-      "glyphPixels": 6749,
+      "glyphPixels": 11645,
       "edgePixels": 0,
       "confidence": 1,
-      "overrideApplied": false
+      "overrideApplied": false,
+      "auditStatus": "PASS",
+      "textContamination": {
+        "contaminated": false,
+        "score": 0.034892578125,
+        "bottomRatio": 0.0388302034428795,
+        "bottomComponents": 1,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 10224
+      },
+      "contentSha256": "4c4de9913153078522ae8fe4088e3efe40af4b41bf129abacd0f5b107bc0facb",
+      "overrideReason": null
     },
     {
       "key": "favorite",
@@ -1279,15 +1941,27 @@
         "maxX": 76,
         "maxY": 65
       },
-      "labelStartInCell": 82,
+      "labelStartInCell": 75,
       "outputWidth": 256,
       "outputHeight": 256,
       "scaledGlyphWidth": 212,
       "scaledGlyphHeight": 194,
-      "glyphPixels": 10331,
+      "glyphPixels": 10291,
       "edgePixels": 0,
       "confidence": 1,
-      "overrideApplied": false
+      "overrideApplied": false,
+      "auditStatus": "PASS",
+      "textContamination": {
+        "contaminated": false,
+        "score": 0.089560546875,
+        "bottomRatio": 0.1131091131091131,
+        "bottomComponents": 2,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 9009
+      },
+      "contentSha256": "d273b66c70607b3b39d79de7ae419992cf1328fc8c1f8b2aed30b9e4765610df",
+      "overrideReason": null
     },
     {
       "key": "dashboard",
@@ -1297,20 +1971,32 @@
       "column": 0,
       "category": "navigation",
       "sourceBounds": {
-        "minX": 56,
+        "minX": 0,
         "minY": 0,
-        "maxX": 157,
-        "maxY": 86
+        "maxX": 174,
+        "maxY": 70
       },
-      "labelStartInCell": 114,
+      "labelStartInCell": 95,
       "outputWidth": 256,
       "outputHeight": 256,
       "scaledGlyphWidth": 212,
-      "scaledGlyphHeight": 181,
-      "glyphPixels": 8236,
+      "scaledGlyphHeight": 86,
+      "glyphPixels": 1556,
       "edgePixels": 0,
       "confidence": 1,
-      "overrideApplied": false
+      "overrideApplied": true,
+      "auditStatus": "WARN",
+      "textContamination": {
+        "contaminated": false,
+        "score": 0,
+        "bottomRatio": 0,
+        "bottomComponents": 0,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 1343
+      },
+      "contentSha256": "804bd4a64657cf3a66c3be2db38b4b85c07e8ff1175c9ec2ed88e760fc110e23",
+      "overrideReason": "Dashboard tiles merged with DASHBOARD label baseline."
     },
     {
       "key": "focusMode",
@@ -1320,20 +2006,32 @@
       "column": 1,
       "category": "navigation",
       "sourceBounds": {
-        "minX": 42,
+        "minX": 64,
         "minY": 0,
-        "maxX": 150,
-        "maxY": 86
+        "maxX": 127,
+        "maxY": 54
       },
-      "labelStartInCell": 114,
+      "labelStartInCell": 70,
       "outputWidth": 256,
       "outputHeight": 256,
       "scaledGlyphWidth": 212,
-      "scaledGlyphHeight": 169,
-      "glyphPixels": 5954,
+      "scaledGlyphHeight": 182,
+      "glyphPixels": 8139,
       "edgePixels": 0,
       "confidence": 1,
-      "overrideApplied": false
+      "overrideApplied": false,
+      "auditStatus": "PASS",
+      "textContamination": {
+        "contaminated": false,
+        "score": 0.014941406249999999,
+        "bottomRatio": 0.023736386484222285,
+        "bottomComponents": 1,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 7162
+      },
+      "contentSha256": "3aa7953de7357f1f1014919abb061665641e41dc4b641a1f357421785f39edd6",
+      "overrideReason": null
     },
     {
       "key": "terminal",
@@ -1343,20 +2041,32 @@
       "column": 2,
       "category": "navigation",
       "sourceBounds": {
-        "minX": 37,
+        "minX": 0,
         "minY": 5,
-        "maxX": 121,
-        "maxY": 86
+        "maxX": 174,
+        "maxY": 70
       },
-      "labelStartInCell": 114,
+      "labelStartInCell": 95,
       "outputWidth": 256,
       "outputHeight": 256,
       "scaledGlyphWidth": 212,
-      "scaledGlyphHeight": 205,
-      "glyphPixels": 6558,
+      "scaledGlyphHeight": 80,
+      "glyphPixels": 537,
       "edgePixels": 0,
-      "confidence": 1,
-      "overrideApplied": false
+      "confidence": 0.72,
+      "overrideApplied": true,
+      "auditStatus": "WARN",
+      "textContamination": {
+        "contaminated": false,
+        "score": 0,
+        "bottomRatio": 0,
+        "bottomComponents": 0,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 461
+      },
+      "contentSha256": "cea2f45c0f64bc15c73b5211e8f8ce4dd571165cee534729191080b3b199217e",
+      "overrideReason": "Command-center terminal glyph included TERMINAL word band."
     },
     {
       "key": "diagnostics",
@@ -1366,20 +2076,32 @@
       "column": 3,
       "category": "navigation",
       "sourceBounds": {
-        "minX": 14,
-        "minY": 0,
-        "maxX": 124,
-        "maxY": 86
+        "minX": 0,
+        "minY": 1,
+        "maxX": 174,
+        "maxY": 70
       },
-      "labelStartInCell": 114,
+      "labelStartInCell": 95,
       "outputWidth": 256,
       "outputHeight": 256,
       "scaledGlyphWidth": 212,
-      "scaledGlyphHeight": 166,
-      "glyphPixels": 5471,
+      "scaledGlyphHeight": 85,
+      "glyphPixels": 882,
       "edgePixels": 0,
       "confidence": 1,
-      "overrideApplied": false
+      "overrideApplied": true,
+      "auditStatus": "WARN",
+      "textContamination": {
+        "contaminated": false,
+        "score": 0,
+        "bottomRatio": 0,
+        "bottomComponents": 0,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 765
+      },
+      "contentSha256": "29b1e87b3dab305b410296872e84b018a567c6e04684a1944a76c86ee8ed13bf",
+      "overrideReason": "Diagnostics pulse glyph included DIAGNOSTICS baseline."
     },
     {
       "key": "security",
@@ -1389,20 +2111,32 @@
       "column": 4,
       "category": "navigation",
       "sourceBounds": {
-        "minX": 17,
+        "minX": 30,
         "minY": 0,
-        "maxX": 99,
-        "maxY": 86
+        "maxX": 85,
+        "maxY": 53
       },
-      "labelStartInCell": 114,
+      "labelStartInCell": 70,
       "outputWidth": 256,
       "outputHeight": 256,
-      "scaledGlyphWidth": 202,
-      "scaledGlyphHeight": 212,
-      "glyphPixels": 8092,
+      "scaledGlyphWidth": 212,
+      "scaledGlyphHeight": 204,
+      "glyphPixels": 10285,
       "edgePixels": 0,
       "confidence": 1,
-      "overrideApplied": false
+      "overrideApplied": false,
+      "auditStatus": "PASS",
+      "textContamination": {
+        "contaminated": false,
+        "score": 0.07541015625,
+        "bottomRatio": 0.09460800529275554,
+        "bottomComponents": 1,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 9069
+      },
+      "contentSha256": "3e63bcd7138b272346ae198e771cf2d382dc89edf9a6db329cd15a4242a42cd9",
+      "overrideReason": null
     },
     {
       "key": "permissions",
@@ -1412,20 +2146,32 @@
       "column": 5,
       "category": "navigation",
       "sourceBounds": {
-        "minX": 1,
+        "minX": 0,
         "minY": 0,
-        "maxX": 111,
-        "maxY": 86
+        "maxX": 175,
+        "maxY": 70
       },
-      "labelStartInCell": 114,
+      "labelStartInCell": 95,
       "outputWidth": 256,
       "outputHeight": 256,
       "scaledGlyphWidth": 212,
-      "scaledGlyphHeight": 166,
-      "glyphPixels": 6603,
+      "scaledGlyphHeight": 86,
+      "glyphPixels": 1250,
       "edgePixels": 0,
       "confidence": 1,
-      "overrideApplied": false
+      "overrideApplied": true,
+      "auditStatus": "WARN",
+      "textContamination": {
+        "contaminated": false,
+        "score": 0,
+        "bottomRatio": 0,
+        "bottomComponents": 0,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 1108
+      },
+      "contentSha256": "f8916808151cdd63d9cfc2a7384c12f7d61da0570dcfd9ad81847334a7be7960",
+      "overrideReason": "Permit shield glyph overlapped PERMISSIONS baseline fragments."
     },
     {
       "key": "help",
@@ -1438,17 +2184,29 @@
         "minX": 20,
         "minY": 0,
         "maxX": 81,
-        "maxY": 86
+        "maxY": 54
       },
-      "labelStartInCell": 114,
+      "labelStartInCell": 70,
       "outputWidth": 256,
       "outputHeight": 256,
-      "scaledGlyphWidth": 151,
-      "scaledGlyphHeight": 212,
-      "glyphPixels": 7795,
+      "scaledGlyphWidth": 212,
+      "scaledGlyphHeight": 188,
+      "glyphPixels": 11561,
       "edgePixels": 0,
       "confidence": 1,
-      "overrideApplied": false
+      "overrideApplied": false,
+      "auditStatus": "PASS",
+      "textContamination": {
+        "contaminated": false,
+        "score": 0.072158203125,
+        "bottomRatio": 0.08190343176376697,
+        "bottomComponents": 1,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 10024
+      },
+      "contentSha256": "7d2ad6d34e567915949da86fde503b547acc34ced114c8e5fe2c791aad42e728",
+      "overrideReason": null
     },
     {
       "key": "about",
@@ -1461,17 +2219,29 @@
         "minX": 16,
         "minY": 0,
         "maxX": 77,
-        "maxY": 86
+        "maxY": 54
       },
-      "labelStartInCell": 114,
+      "labelStartInCell": 70,
       "outputWidth": 256,
       "outputHeight": 256,
-      "scaledGlyphWidth": 151,
-      "scaledGlyphHeight": 212,
-      "glyphPixels": 8055,
+      "scaledGlyphWidth": 212,
+      "scaledGlyphHeight": 188,
+      "glyphPixels": 10787,
       "edgePixels": 0,
       "confidence": 1,
-      "overrideApplied": false
+      "overrideApplied": false,
+      "auditStatus": "PASS",
+      "textContamination": {
+        "contaminated": false,
+        "score": 0.071806640625,
+        "bottomRatio": 0.08633625700095107,
+        "bottomComponents": 1,
+        "narrowStrokes": 0,
+        "wordBand": false,
+        "totalPixels": 9463
+      },
+      "contentSha256": "984d3945e6629e83c25f6d0a33060dd21b70d00f54d0e87e7659d731ab2bf4e2",
+      "overrideReason": null
     }
   ]
 }
