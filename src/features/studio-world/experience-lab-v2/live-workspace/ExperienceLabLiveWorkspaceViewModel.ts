@@ -184,6 +184,7 @@ export type LiveWorkspaceDiagnostics = {
   packageReadinessPercent: number;
   approvalEligible: boolean;
   repositoryMode: 'durable' | 'in-memory';
+  eventSync?: Record<string, unknown>;
 };
 
 /** Canonical Experience Lab live workspace view model — single source for all sections. */

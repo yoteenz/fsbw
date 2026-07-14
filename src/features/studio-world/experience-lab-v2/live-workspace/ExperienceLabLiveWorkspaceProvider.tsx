@@ -28,6 +28,8 @@ import {
   type PackageActionResult,
 } from './experience-lab-package-actions';
 import { exportLiveWorkspaceDiagnosticJson } from './experience-lab-live-workspace-diagnostics';
+import { useEnvironmentPackageEventSync } from './useEnvironmentPackageEventSync';
+import type { EventSyncState } from './useEnvironmentPackageEventSync';
 
 export type ExperienceLabLiveWorkspaceContextValue = {
   liveWorkspace: ExperienceLabLiveWorkspaceViewModel;
@@ -40,6 +42,7 @@ export type ExperienceLabLiveWorkspaceContextValue = {
   generateBlueprint: () => Promise<PackageActionResult>;
   retryBlueprint: () => Promise<PackageActionResult>;
   exportDiagnostics: () => string;
+  eventSync: EventSyncState;
 };
 
 const LiveWorkspaceContext = createContext<ExperienceLabLiveWorkspaceContextValue | null>(null);
@@ -165,6 +168,13 @@ export function ExperienceLabLiveWorkspaceProvider({
     setSyncTick((t) => t + 1);
   }, []);
 
+  const eventSync = useEnvironmentPackageEventSync({
+    packageId: environmentPackage?.packageId ?? null,
+    historicalPreviewRevision,
+    workbenchToolId: resolvedWorkbenchTool,
+    onRefreshPackage: refreshPackage,
+  });
+
   const generateBlueprint = useCallback(async () => {
     if (!environmentPackage) return { ok: false, error: 'No active package' };
     const result = await generateBlueprintOutput(environmentPackage);
@@ -180,8 +190,8 @@ export function ExperienceLabLiveWorkspaceProvider({
   }, [environmentPackage, refreshPackage]);
 
   const exportDiagnostics = useCallback(
-    () => exportLiveWorkspaceDiagnosticJson(liveWorkspace),
-    [liveWorkspace]
+    () => exportLiveWorkspaceDiagnosticJson(liveWorkspace, eventSync),
+    [liveWorkspace, eventSync]
   );
 
   const value = useMemo(
@@ -196,6 +206,7 @@ export function ExperienceLabLiveWorkspaceProvider({
       generateBlueprint,
       retryBlueprint,
       exportDiagnostics,
+      eventSync,
     }),
     [
       liveWorkspace,
@@ -207,6 +218,7 @@ export function ExperienceLabLiveWorkspaceProvider({
       generateBlueprint,
       retryBlueprint,
       exportDiagnostics,
+      eventSync,
     ]
   );
 

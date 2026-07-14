@@ -79,3 +79,33 @@ export async function promoteEnvironmentPackageToCanonical(packageId: string): P
   });
   return res.json() as Promise<{ ok: boolean; handoffId?: string | null; error?: string; code?: string }>;
 }
+
+export async function fetchEnvironmentPackageEvents(input: {
+  packageId: string;
+  afterSequence?: number;
+  limit?: number;
+}): Promise<{
+  ok: boolean;
+  events?: Record<string, unknown>[];
+  latestSequence?: number;
+  error?: string;
+}> {
+  const flags = resolveEnvironmentPackageFeatureFlags();
+  if (!flags.enablePackagePersistence) return { ok: false, error: 'Persistence disabled' };
+
+  const params = new URLSearchParams({
+    packageId: input.packageId,
+    afterSequence: String(input.afterSequence ?? 0),
+  });
+  if (input.limit) params.set('limit', String(input.limit));
+
+  const res = await fetch(`${API_BASE}/api/admin/environment-package-events?${params}`, {
+    headers: await authHeaders(),
+  });
+  return res.json() as Promise<{
+    ok: boolean;
+    events?: Record<string, unknown>[];
+    latestSequence?: number;
+    error?: string;
+  }>;
+}

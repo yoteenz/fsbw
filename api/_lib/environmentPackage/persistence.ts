@@ -1,6 +1,7 @@
 import { createHash, randomUUID } from 'crypto';
 import { getSupabaseAdminServiceRole } from '../supabase.js';
 import { isMissingTableError } from '../../../src/studio-os-core/immune-system/drift-detector.js';
+import { publishEnvironmentPackageEvent } from './event-publisher.js';
 
 export const PACKAGE_TABLE = 'studio_environment_asset_packages';
 export const OUTPUT_TABLE = 'studio_environment_package_outputs';
@@ -96,18 +97,67 @@ export async function appendAuditEvent(input: {
   detail: string;
   revision: number;
   payload?: Record<string, unknown>;
+  variantId?: string | null;
+  environmentId?: string | null;
+  departmentId?: string | null;
+  outputType?: string | null;
+  jobId?: string | null;
+  actorType?: string;
+  source?: string;
+  correlationId?: string | null;
+  causationId?: string | null;
+  failClosed?: boolean;
 }): Promise<void> {
-  const admin = getSupabaseAdminServiceRole();
-  await admin.from(AUDIT_TABLE).insert({
-    event_id: `audit-${randomUUID()}`,
-    package_id: input.packageId,
-    event_type: input.eventType,
-    actor: input.actor,
-    detail: input.detail,
+  await publishEnvironmentPackageEvent({
+    eventType: input.eventType,
+    packageId: input.packageId,
+    variantId: input.variantId,
+    environmentId: input.environmentId,
+    departmentId: input.departmentId,
     revision: input.revision,
-    payload: input.payload ?? {},
-    occurred_at: new Date().toISOString(),
+    outputType: input.outputType,
+    jobId: input.jobId,
+    actorType: input.actorType ?? (input.actor ? 'admin' : 'system'),
+    actorId: input.actor,
+    source: input.source ?? 'package-repository',
+    correlationId: input.correlationId,
+    causationId: input.causationId,
+    detail: input.detail,
+    payload: input.payload,
+    failClosed: input.failClosed,
   });
+}
+
+export async function listPackageAuditEvents(
+  packageId: string,
+  afterSequence = 0,
+  limit = 200
+): Promise<DurablePackageRow[]> {
+  const admin = getSupabaseAdminServiceRole();
+  let query = admin
+    .from(AUDIT_TABLE)
+    .select('*')
+    .eq('package_id', packageId)
+    .order('sequence', { ascending: true })
+    .limit(limit);
+  if (afterSequence > 0) {
+    query = query.gt('sequence', afterSequence);
+  }
+  const { data, error } = await query;
+  if (error || !data) return [];
+  return data as DurablePackageRow[];
+}
+
+export async function getLatestPackageEventSequence(packageId: string): Promise<number> {
+  const admin = getSupabaseAdminServiceRole();
+  const { data } = await admin
+    .from(AUDIT_TABLE)
+    .select('sequence')
+    .eq('package_id', packageId)
+    .order('sequence', { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  return typeof data?.sequence === 'number' ? data.sequence : 0;
 }
 
 export async function insertGenerationJob(row: Record<string, unknown>): Promise<{ ok: true; jobId: string } | { ok: false; error: string }> {

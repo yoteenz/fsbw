@@ -1,7 +1,9 @@
 import type { ExperienceLabLiveWorkspaceViewModel } from './ExperienceLabLiveWorkspaceViewModel';
+import type { EventSyncState } from './useEnvironmentPackageEventSync';
 
 export function buildLiveWorkspaceDiagnosticJson(
-  live: ExperienceLabLiveWorkspaceViewModel
+  live: ExperienceLabLiveWorkspaceViewModel,
+  eventSync?: EventSyncState
 ): Record<string, unknown> {
   return {
     exportedAt: new Date().toISOString(),
@@ -33,6 +35,22 @@ export function buildLiveWorkspaceDiagnosticJson(
       repositoryMode: live.diagnostics.repositoryMode,
       realtimeConnected: live.diagnostics.realtimeConnected,
     },
+    eventSynchronization: eventSync
+      ? {
+          connectionState: eventSync.cursor.connectionState,
+          activeSubscriptionPackageId: eventSync.cursor.packageId,
+          lastEventId: eventSync.cursor.lastEventId,
+          lastSequence: eventSync.cursor.lastSequence,
+          missingEventCount: eventSync.cursor.missingSequenceCount,
+          duplicateEventCount: eventSync.cursor.duplicateEventCount,
+          recoveryCount: eventSync.cursor.recoveryCount,
+          lastRecoveryTime: eventSync.cursor.lastRecoveryAt,
+          lastInvalidationSet: eventSync.lastInvalidationSet,
+          processingErrors: eventSync.cursor.processingErrors,
+          subscriberCount: eventSync.subscriberCount,
+          currentPackageUpdatedWhileHistoricalPreview: eventSync.currentPackageUpdated,
+        }
+      : live.diagnostics.eventSync,
     readiness: {
       percent: live.readinessPercent,
       blockers: live.readinessBlockers,
@@ -46,6 +64,9 @@ export function buildLiveWorkspaceDiagnosticJson(
   };
 }
 
-export function exportLiveWorkspaceDiagnosticJson(live: ExperienceLabLiveWorkspaceViewModel): string {
-  return JSON.stringify(buildLiveWorkspaceDiagnosticJson(live), null, 2);
+export function exportLiveWorkspaceDiagnosticJson(
+  live: ExperienceLabLiveWorkspaceViewModel,
+  eventSync?: EventSyncState
+): string {
+  return JSON.stringify(buildLiveWorkspaceDiagnosticJson(live, eventSync), null, 2);
 }

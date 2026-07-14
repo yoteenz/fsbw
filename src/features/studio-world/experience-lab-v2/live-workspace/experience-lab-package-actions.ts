@@ -1,6 +1,7 @@
 import type { EnvironmentAssetPackage } from '../../../../studio-os-core/environment-asset-package';
 import { registerEnvironmentPackage } from '../../../../studio-os-core/environment-asset-package/EnvironmentPackageRepository';
 import { resolveEnvironmentPackageFeatureFlags, isEnvironmentPackageInMemoryOnly } from '../../../../studio-os-core/environment-asset-package/environment-package-feature-flags';
+import { publishLocalEnvironmentPackageEvent } from '../../../../studio-os-core/environment-asset-package/events';
 import { approvePackageForProduction } from '../../../../studio-os-core/environment-asset-package/ProductionReadinessService';
 import {
   approveEnvironmentPackageForProduction,
@@ -41,6 +42,17 @@ function updateBlueprintOutputStatus(
     ],
   };
   registerEnvironmentPackage(updated);
+  publishLocalEnvironmentPackageEvent({
+    eventType: status === 'generating' ? 'OUTPUT_GENERATING' : 'GENERATION_JOB_RETRYING',
+    packageId: updated.packageId,
+    variantId: updated.variantId,
+    environmentId: updated.environmentId,
+    departmentId: updated.departmentId,
+    revision: updated.revision,
+    outputType: 'blueprint',
+    actorType: 'admin',
+    payload: { status },
+  });
   return updated;
 }
 

@@ -1,6 +1,6 @@
 # KNOWN BLOCKERS — Do Not Violate
 
-**Last updated:** 2026-07-13  
+**Last updated:** 2026-07-14  
 **Authority:** Overrides feature work, compile repair, and optimistic assumptions
 
 ---

@@ -49954,3 +49954,60 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 **Shipped:** `.elab-cmd__row--status` — `border-top: 1px solid rgba(255, 255, 255, 0.05)` in `experience-lab-v2.css`. Test assertion added.
 
+---
+
+## 2026-07-14 — P0 Experience Lab V2 Live Workspace Wiring
+
+**Founder P0 sprint:** Wire Design Brief, Founder Review Wall, Revision Timeline, persistent Blueprint Display, Workbench tools, and single Dynamic Context Display to the active Environment Asset Package. No UI redesign.
+
+**Spatial Architecture Review:** SKIPPED — data/behavior wiring only; no new surfaces or nav.
+
+**Forensic audit:** `docs/studio-os/forensics/EXPERIENCE_LAB_V2_LIVE_WORKSPACE_AUDIT.md` — mapped mock sources (hardcoded mood, REVISION_POINTS chart, dead approval/review nav, tools sheet) to package-driven replacements.
+
+**Canonical view model:** `live-workspace/ExperienceLabLiveWorkspaceViewModel.ts` + `buildExperienceLabLiveWorkspaceViewModel.ts` — single source for program/department/variant/package/revision/outputs/readiness/workbench modules/blueprint/review/timeline.
+
+**Live provider:** `ExperienceLabLiveWorkspaceProvider.tsx` — resolves active package from design variants + Command Dock pipeline; syncTick invalidation on context change; workbench tool persistence via `StudioWorldWorkbenchRegistry.ts`.
+
+**Wiring shipped:**
+- `ExperienceLabV2Shell.tsx` — wraps provider; `liveWorkspaceToV2ViewModel` replaces inline adapter mock path; `onApprove` → `approveForProduction`; tools sheet wires workbench tools; blueprint generate/retry actions
+- `ExperienceLabFounderReviewConsole.tsx` — design brief from `liveWorkspace.designBrief`; review wall from `founderReviewEntries`; timeline from `timelineEvents` (no REVISION_POINTS mock)
+- `ExperienceLabDynamicContextCard.tsx` — workbench modules from `liveWorkspace.workbenchModules`
+- `ExperienceLabBlueprintCard.tsx` — blueprint state machine (NOT_REQUESTED/BLOCKED/QUEUED/GENERATING/GENERATED/STALE/FAILED/APPROVED/CANONICAL)
+- `resolveExperienceLabBlueprintDisplay.ts` — package output resolution priority
+- `experience-lab-package-actions.ts` — generate/retry blueprint via production pipeline (in-memory in Vitest)
+
+**Tests:** `experience-lab-live-workspace.test.ts` — 27/27 PASS. **Build:** PASS.
+
+**Remaining:** Blueprint image requires `outputs.blueprint` generation completion; durable Supabase repo when `VITE_ENABLE_PACKAGE_PERSISTENCE=true`.
+
+---
+
+## 2026-07-14 — P0 Experience Lab V2 Live Event Synchronization
+
+**Founder P0 follow-up sprint:** Make every connected Experience Lab V2 workspace surface event-driven from the active Environment Asset Package — zero refreshes, zero duplicated business state, zero UI redesign.
+
+**Depends on:** Prior Live Workspace Wiring sprint (Design Brief, Review Wall, Timeline, Blueprint, Workbench, Dynamic Context, Approval Bridge already wired to active package).
+
+**Spatial Architecture Review:** SKIPPED — synchronization architecture only; no new surfaces or nav.
+
+**Forensic audit:** `docs/studio-os/forensics/EXPERIENCE_LAB_V2_EVENT_SYNC_AUDIT.md` — pre-sprint had only `syncTick` manual invalidation, no Supabase realtime, basic `appendAuditEvent` without sequence/envelope.
+
+**Canonical event system (`src/studio-os-core/environment-asset-package/events/`):**
+- `EnvironmentPackageEvent.ts` — envelope + ~70-type registry + validation + legacy normalization
+- `EnvironmentPackageEventInvalidationMatrix.ts` — targeted selector invalidation
+- `EnvironmentPackageEventProcessor.ts` — cursor, dedup, sequence gap detection
+- `reconcileExperienceLabWorkspace.ts` — cross-package guard + historical preview safety
+- `EnvironmentPackageLocalEventBus.ts` — same-tab / in-memory transport
+- `EnvironmentPackageRealtimeClient.ts` — Supabase postgres_changes + local bus + progress throttle
+- `recoverEnvironmentPackageEventGap.ts` — API recovery on gap/reconnect/visibility
+
+**Server:** `api/_lib/environmentPackage/event-publisher.ts` (`publishEnvironmentPackageEvent`); `appendAuditEvent` delegates to publisher; `GET /api/admin/environment-package-events` for gap recovery; migration `20260714210000_environment_package_events_canonical.sql` applied to production Supabase.
+
+**Client integration:** `useEnvironmentPackageEventSync.ts` in `ExperienceLabLiveWorkspaceProvider.tsx` — scoped active-package subscription, targeted `refreshPackage` via `syncTick`, diagnostics `eventSynchronization` export. `experience-lab-package-actions.ts` emits `OUTPUT_GENERATING` local events on blueprint generate/retry.
+
+**Docs:** `EXPERIENCE_LAB_EVENT_DRIVEN_WORKSPACE.md`, `ENVIRONMENT_PACKAGE_EVENT_CONTRACT.md`, `ENVIRONMENT_PACKAGE_REALTIME_RECOVERY.md`, `ENVIRONMENT_PACKAGE_EVENT_INVALIDATION_MATRIX.md`.
+
+**Tests:** `experience-lab-event-sync.test.ts` 28/28 PASS; `experience-lab-live-workspace.test.ts` 27/27 PASS. **Build:** PASS.
+
+**Remaining blocker:** `B1-EnvPkg-LiveProof` — founder multi-session / mobile Safari live verification with production generation flags enabled.
+
