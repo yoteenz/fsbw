@@ -49,6 +49,14 @@
   --elab-hud-duration: 200ms;
   --elab-hud-lift: -3px;
   --elab-hud-scale-hover: 1.015;
+  --elab-dv-thumb-w: 48px;
+  --elab-dv-count: 6;
+  --elab-dv-panel-max: 560px;
+  --elab-dv-panel-min: calc(
+    var(--elab-dv-count) * var(--elab-dv-thumb-w)
+    + (var(--elab-dv-count) - 1) * var(--elab-hud-chip-gap)
+    + 2 * (var(--elab-hud-chip-pad-x) + 2px)
+  );
   color: var(--elab-text);
   font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
   position: relative;
@@ -1423,8 +1431,8 @@ button.elab-cmd__meta-chip {
 }
 
 .elab-viewport__angles-chrome .elab-view-angles--chrome {
-  width: min(100%, 520px);
-  max-width: 88%;
+  width: min(100%, max(var(--elab-dv-panel-min), var(--elab-dv-panel-max)));
+  max-width: 100%;
   margin: 0 auto;
   padding: calc(var(--elab-hud-chip-pad-y) + 1px) calc(var(--elab-hud-chip-pad-x) + 2px) calc(var(--elab-hud-chip-pad-y) + 3px);
   border-radius: calc(var(--elab-hud-radius-panel) + 2px);
@@ -1530,6 +1538,12 @@ button.elab-cmd__meta-chip {
   -webkit-overflow-scrolling: touch;
   padding: 2px 0 4px;
   scrollbar-width: thin;
+}
+
+.elab-design-variants .elab-view-angles__strip {
+  overflow-x: visible;
+  justify-content: center;
+  flex-wrap: nowrap;
 }
 
 .elab-view-angles__thumb {

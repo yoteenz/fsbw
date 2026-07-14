@@ -49521,3 +49521,13 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 **Spatial review:** SKIPPED — CSS-only refinement, no new surfaces or nav.
 
 **One commit + one push** on `master` via `agent-commit.sh`.
+
+---
+
+## 2026-07-14 — Design variants panel width (fit six without scroll)
+
+**Founder request:** Widen the design variants panel so all six variants are visible without horizontal scroll; keep inset (not edge-to-edge).
+
+**Change:** `experience-lab-v2.css` — removed `max-width: 88%` / `520px` cap; added `--elab-dv-panel-min/max` tokens; panel uses `width: min(100%, max(var(--elab-dv-panel-min), var(--elab-dv-panel-max)))` inside existing `angles-chrome` side padding (inset preserved); `.elab-design-variants .elab-view-angles__strip` sets `overflow-x: visible`. Test updated.
+
+**Tests:** 50/50 PASS.

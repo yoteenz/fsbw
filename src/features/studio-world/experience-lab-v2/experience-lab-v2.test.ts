@@ -479,7 +479,8 @@ describe('Experience Lab V2 — Viewport environment', () => {
     const css = readV2Source('experience-lab-v2.css');
     expect(css).toMatch(/\.elab-viewport__angles-chrome\s*\{[\s\S]*?background:\s*transparent/);
     expect(css).toMatch(/\.elab-viewport__angles-chrome\s+\.elab-view-angles--chrome\s*\{[\s\S]*?border-radius:\s*calc\(var\(--elab-hud-radius-panel\) \+ 2px\)/);
-    expect(css).toMatch(/\.elab-viewport__angles-chrome\s+\.elab-view-angles--chrome\s*\{[\s\S]*?max-width:\s*88%/);
+    expect(css).toMatch(/\.elab-viewport__angles-chrome\s+\.elab-view-angles--chrome\s*\{[\s\S]*?width:\s*min\(100%,\s*max\(var\(--elab-dv-panel-min\),\s*var\(--elab-dv-panel-max\)\)\)/);
+    expect(css).toMatch(/\.elab-design-variants\s+\.elab-view-angles__strip\s*\{[\s\S]*?overflow-x:\s*visible/);
   });
 
   it('wires render direction design variant system', () => {
