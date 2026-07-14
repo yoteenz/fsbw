@@ -1090,8 +1090,22 @@ button.elab-cmd__meta-chip {
 
 .elab-viewport__angles-chrome {
   flex-shrink: 0;
-  border-top: 1px solid rgba(255,255,255,0.06);
-  background: rgba(0,0,0,0.35);
+  display: flex;
+  justify-content: center;
+  padding: 6px clamp(14px, 7vw, 32px) 8px;
+  background: transparent;
+  border-top: none;
+}
+
+.elab-viewport__angles-chrome .elab-view-angles--chrome {
+  width: min(100%, 520px);
+  max-width: 88%;
+  margin: 0 auto;
+  padding: 8px 12px 10px;
+  background: rgba(8, 9, 12, 0.84);
+  border: 1px solid var(--elab-border);
+  border-radius: 14px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.38);
 }
 
 /* Empty states */
@@ -1153,6 +1167,7 @@ button.elab-cmd__meta-chip {
   margin: 0;
   background: transparent;
   pointer-events: auto;
+  box-sizing: border-box;
 }
 
 .elab-view-angles--collapsed .elab-view-angles__strip {
@@ -1178,7 +1193,7 @@ button.elab-cmd__meta-chip {
 }
 .elab-view-angles__label {
   font-size: 8px; font-weight: 800; letter-spacing: 0.12em;
-  color: var(--elab-gold); display: block; margin-bottom: 6px;
+  color: var(--elab-gold); display: block; margin: 0;
 }
 .elab-view-angles__strip {
   display: flex;

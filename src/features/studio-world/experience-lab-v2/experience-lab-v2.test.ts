@@ -446,6 +446,13 @@ describe('Experience Lab V2 — Viewport environment', () => {
     const css = readV2Source('experience-lab-v2.css');
     expect(css).toMatch(/\.elab-view-angles__strip\s*\{[\s\S]*?justify-content:\s*center/);
   });
+
+  it('view angles use inset rounded card not edge-to-edge strip', () => {
+    const css = readV2Source('experience-lab-v2.css');
+    expect(css).toMatch(/\.elab-viewport__angles-chrome\s*\{[\s\S]*?background:\s*transparent/);
+    expect(css).toMatch(/\.elab-viewport__angles-chrome\s+\.elab-view-angles--chrome\s*\{[\s\S]*?border-radius:\s*14px/);
+    expect(css).toMatch(/\.elab-viewport__angles-chrome\s+\.elab-view-angles--chrome\s*\{[\s\S]*?max-width:\s*88%/);
+  });
 });
 
 describe('Experience Lab V2 — Component Review Mode integration', () => {

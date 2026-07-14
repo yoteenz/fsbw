@@ -49333,6 +49333,19 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - `experience-lab-v2.css` — `.elab-view-angles__strip { justify-content: center }`
 - Tests: blueprint meta removal + centered strip assertions; 45/45 pass
 
-**Preserved:** Loading/error overlays; actual blueprint/founder-render images still display when `previewUrl` exists.
+**One commit + one push** on `master` via `agent-commit.sh`.
+
+---
+
+## 2026-07-14 — Experience Lab V2 view angles inset rounded card
+
+**Founder request:** View angles black strip should not be edge-to-edge; use rounded inset black card like reference (centered ~85% width, gold border, margins showing environment/marble).
+
+**Shipped:**
+
+- `experience-lab-v2.css` — `.elab-viewport__angles-chrome` transparent with horizontal padding; `.elab-viewport__angles-chrome .elab-view-angles--chrome` rounded card (`border-radius: 14px`, `max-width: 88%`, matte `rgba(8,9,12,0.84)`, gold border, shadow); removed full-width `border-top` strip
+- Tests: inset rounded card assertion; 46/46 pass
+
+**Preserved:** Centered thumbnail strip; collapse control; no layout moves elsewhere.
 
 **One commit + one push** on `master` via `agent-commit.sh`.
