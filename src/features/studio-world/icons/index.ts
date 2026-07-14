@@ -125,3 +125,5 @@ export {
   getNavigationMasterDraftPlaceholdersArtifact,
   NAVIGATION_MASTER_DRAFT_PREFIX,
 } from './navigation-master/navigation-master-icon-draft-bridge';
+
+export { IconManufacturingShell, GridCalibrationStudio } from './icon-manufacturing';

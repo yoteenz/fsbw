@@ -8,19 +8,21 @@
 
 ## Current sprint
 
-**Studio World Navigation Master Icon Sheet — Sprint 02 Phase 1**
+**Studio World Icon Manufacturing Pipeline — Sprint 03**
 
-**Status: SHIPPED — Canonical Navigation master artwork + draft metadata**
+**Status: SHIPPED — Permanent icon production home**
 
 **Shipped:**
 
-- Master sheet: `studio-world-navigation-master-sheet.png` (10240×10240, 93 chrome navigation icons, no labels)
-- Registry: `src/features/studio-world/icons/navigation-master/` (semantic map, source manifest, 10×10 calibration, draft bridge)
-- Generator: `npm run navigation-master:generate-sheet`
-- Draft placeholders prepared — **not** registered into production `StudioWorldIconRegistry`
-- Tests 4/4 PASS · Build PASS · **No Experience Lab / runtime changes**
+- Route: `/admin/studio/icon-manufacturing` — Master Library, Calibration Studio, QA, Batch Export, Certification, Registry, Health, History, Production Promotion, Runtime Preview
+- Core: `src/studio-os-core/icon-manufacturing/` (profiles, QA, certification, batch export, promotion, version/history)
+- Profile-aware `GridCalibrationStudio` — 8×8 Experience Lab + 10×10 Navigation Master
+- Row/column/global scale controls — no OCR, no heuristic detection
+- Navigation slice: `npm run navigation-master:build-icons`
+- Legacy `/admin/studio/studio-world-icon-grid-calibration` preserved with manufacturing link
+- Tests 6/6 PASS · Build PASS · **No Experience Lab runtime auto-replacement**
 
-**Previous:** Studio World Icon System V1 — Permanent Icon Platform Foundation
+**Previous:** Navigation Master Icon Sheet Sprint 02 Phase 1
 
 **Status: SHIPPED — Architecture only; zero runtime visual changes**
 

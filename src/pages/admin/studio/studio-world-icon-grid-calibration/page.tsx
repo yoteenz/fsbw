@@ -475,6 +475,9 @@ export default function StudioWorldIconGridCalibrationPage() {
 
   return (
     <div className={styles.shell}>
+      <div style={{ padding: '8px 16px', background: 'rgba(235,28,36,0.12)', borderBottom: '1px solid rgba(235,28,36,0.3)', fontSize: 10 }}>
+        Evolved into <a href="/admin/studio/icon-manufacturing" style={{ color: '#EB1C24' }}>Icon Manufacturing Pipeline</a> — this route preserved for Experience Lab v6 workflow.
+      </div>
       <header className={styles.header}>
         <h1 className={styles.title}>Studio World Icon Grid Calibration Editor</h1>
         <div className={styles.actions}>

@@ -50130,3 +50130,38 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 **Next:** Founder review in Calibration Editor → slice to `navigation/icons/generated-v1/` → certify via Icon Builder.
 
+---
+
+## 2026-07-14 — Studio World Icon Manufacturing Pipeline Sprint 03 (P0)
+
+**Founder P0 sprint:** Transform icon calibration into permanent Icon Manufacturing Pipeline at `/admin/studio/icon-manufacturing`. Evolve existing workflow — no OCR, no heuristic detection, no auto runtime replacement.
+
+**Spatial Architecture Review:** SKIPPED — admin manufacturing infrastructure; no Experience Lab/Studio World visual redesign.
+
+**Platform core (`src/studio-os-core/icon-manufacturing/`):**
+- `IconSheetProfiles` — Experience Lab (8×8 production) + Navigation Master (10×10 draft)
+- `ManufacturingCalibrationExtensions` — global/row/column scale, offset, safe area, optical margin
+- `IconManufacturingQA` — per-cell PASS/WARN/FAIL (centered, clipping, aspect, duplicate, empty, metadata, resolution)
+- `IconManufacturingCertification` — draft → calibrated → qa → founder-approved → certified → production lifecycle
+- `IconManufacturingBatchExport` — export plan + runbook instructions
+- `IconManufacturingPromotion` — founder-approved registry registration (does NOT auto-swap EL runtime)
+- `IconManufacturingVersionHistory` + `IconManufacturingHistory` — audit timeline
+- `IconManufacturingRuntimePreview` — preview architecture constants
+
+**UI (`src/features/studio-world/icons/icon-manufacturing/`):**
+- `IconManufacturingShell` — Master Library, Calibration Studio, QA, Batch Export, Certification, Registry Search, Icon Health, History, Production Promotion, Runtime Preview
+- `GridCalibrationStudio` — profile-aware calibration (row/column/global controls, cell inspector, live preview sizes 24–512px)
+- `useIconManufacturingSheet` — profile registry/calibration/QA helpers
+
+**Routes:**
+- `/admin/studio/icon-manufacturing` (new permanent home)
+- `/admin/studio/studio-world-icon-grid-calibration` preserved — banner links to manufacturing hub
+
+**Navigation slice script:** `npm run navigation-master:build-icons` → 93 PNGs in `navigation/icons/generated-v1/`
+
+**Docs:** `docs/studio-os/design-system/STUDIO_WORLD_ICON_MANUFACTURING_PIPELINE.md`
+
+**Tests:** `icon-manufacturing.test.ts` 6/6 PASS. **Build:** PASS.
+
+**Constraints honored:** Experience Lab runtime unchanged; no automatic production icon replacement; founder approval gate on promotion; legacy calibration editor preserved.
+
