@@ -21,7 +21,7 @@
   color: var(--elab-v3-text);
   background: radial-gradient(ellipse 120% 80% at 50% 0%, #1a2030 0%, #080a0f 55%, #050608 100%);
   font-family: 'Futura PT', system-ui, sans-serif;
-  overflow: hidden;
+  overflow-x: hidden;
 }
 
 .elab-v3-os * {
@@ -182,12 +182,10 @@
 }
 
 .elab-v3-os__body {
-  flex: 1;
   display: grid;
   grid-template-columns: minmax(200px, 240px) 1fr minmax(220px, 280px);
   gap: 10px;
   padding: 10px 12px;
-  min-height: 0;
 }
 
 .elab-v3-os__left,

@@ -14,7 +14,7 @@ export default function AdminStudioExperienceLabV3Page() {
   useRequireStudioWorldAdmin();
 
   return (
-    <DepartmentGoldenBuildShell fixedViewport>
+    <DepartmentGoldenBuildShell>
       <ExperienceLabErrorBoundary route={EXPERIENCE_LAB_V3_ROUTE}>
         <ExperienceLabV3Shell />
       </ExperienceLabErrorBoundary>

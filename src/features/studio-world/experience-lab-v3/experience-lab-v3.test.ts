@@ -110,4 +110,15 @@ describe('Experience Lab V3 Architecture', () => {
     expect(state.operations.todaySpendUsd).toBeGreaterThan(0);
     expect(state.operations.systemHealthPercent).toBeGreaterThan(0);
   });
+
+  it('V3 page uses scrollable golden build shell (not fixedViewport)', () => {
+    const page = readFileSync(
+      resolve(V3_DIR, '../../../pages/admin/studio/experience-lab-v3/page.tsx'),
+      'utf8'
+    );
+    expect(page).not.toContain('fixedViewport');
+    const css = readV3Source('experience-lab-v3.css');
+    expect(css).toContain('overflow-x: hidden');
+    expect(css).not.toMatch(/\.elab-v3-os\s*\{[^}]*\boverflow:\s*hidden\b/);
+  });
 });

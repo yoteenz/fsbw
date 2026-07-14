@@ -50038,3 +50038,18 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 **Tests:** `experience-lab-v3.test.ts` 12/12 PASS. **Build:** PASS. **V2 regression:** no files in `experience-lab-v2/` changed.
 
+---
+
+## 2026-07-14 — Experience Lab V3 page scroll fix
+
+**Context:** Founder reported Experience Lab V3 page scroll not working (`/admin/studio/experience-lab-v3`, `/admin/studio/world-builder`).
+
+**Root cause:** V3 page incorrectly passed `fixedViewport` to `DepartmentGoldenBuildShell` (copied from frozen V2). That locked the immersive portal to `overflowY: hidden`. Combined with `.elab-v3-os { overflow: hidden }` and `.elab-v3-os__body { flex: 1; min-height: 0 }`, the shell was clamped to one viewport height with no document scroll.
+
+**Fix (V3 only — V2 untouched):**
+- Removed `fixedViewport` from `src/pages/admin/studio/experience-lab-v3/page.tsx` so portal uses `overflowY: auto` (same pattern as production Experience Lab).
+- `experience-lab-v3.css`: `.elab-v3-os` `overflow: hidden` → `overflow-x: hidden`; removed `flex: 1` / `min-height: 0` from `.elab-v3-os__body` so content can grow and portal scrolls.
+- Added regression test in `experience-lab-v3.test.ts` asserting no `fixedViewport` and no root `overflow: hidden`.
+
+**Tests:** `experience-lab-v3.test.ts` 13/13 PASS. **Build:** PASS.
+
