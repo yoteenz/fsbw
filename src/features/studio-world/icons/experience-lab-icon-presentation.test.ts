@@ -87,7 +87,7 @@ describe('Experience Lab Icon Presentation System', () => {
       StudioWorldIconPresentationRegistry,
     );
     expect(resolveCanonicalIconPresentation('dashboard').scale).toBe(1.34);
-    // Runtime presentation paused until v3 source approval
+    // Runtime presentation paused until v4 source approval
     expect(resolveIconPresentation('dashboard').scale).toBe(1);
   });
 

@@ -13,18 +13,26 @@ export {
   EXPERIENCE_LAB_ICON_ASSETS,
   EXPERIENCE_LAB_ICON_LOCKDOWN_CERTIFIED,
   EXPERIENCE_LAB_ICON_V2_PIPELINE_FROZEN,
+  EXPERIENCE_LAB_ICON_V3_PIPELINE_RETIRED,
   EXPERIENCE_LAB_ICON_OPTICAL_LOCK_VERSION,
   EXPERIENCE_LAB_ICON_EXTRACTION_VERSION,
+  EXPERIENCE_LAB_ICON_SOURCE_ROLE,
 } from './experience-lab-icon-assets.generated';
 export {
-  StudioWorldIconCropManifest,
-  STUDIO_WORLD_ICON_CROP_MANIFEST_VERSION,
-  STUDIO_WORLD_ICON_SOURCE,
-  STUDIO_WORLD_ICON_CROP_KEYS,
-  resolveStudioWorldIconCrop,
-  isCropInsideCell,
-  EXPERIENCE_LAB_ICON_V2_PIPELINE_FROZEN as CROP_MANIFEST_V2_FROZEN,
-} from './studio-world-icon-crop-manifest';
+  STUDIO_WORLD_ICON_SOURCES,
+  STUDIO_WORLD_ICON_SOURCE_MANIFEST_VERSION,
+  STUDIO_WORLD_ICON_EXTRACTION_SOURCE_ROLE,
+  STUDIO_WORLD_ICON_FORBIDDEN_EXTRACTION_PATH,
+  STUDIO_WORLD_ICON_V4_OUTPUT_DIR,
+  STUDIO_WORLD_ICON_V4_VERSION,
+} from './studio-world-icon-source-manifest';
+export {
+  STUDIO_WORLD_ICON_GRID_CONFIG,
+  resolveStudioWorldIconCellRect,
+} from './studio-world-icon-grid.config';
+export {
+  resolveExperienceLabIconSourceUnlabeledUrl,
+} from './experience-lab-icon-sprite.config';
 export {
   resolveProductionExperienceLabIconAsset,
   resolveQaExperienceLabIconAsset,

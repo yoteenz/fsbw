@@ -49175,3 +49175,52 @@ PNG Asset → ExperienceLabIconPresentation → ExperienceLabIcon → Button
 **Remaining:** Founder visual approval of contact sheet; set `approved: true` per icon via crop editor; then regenerate for production runtime.
 
 **One commit + one push** on `master` via `agent-commit.sh`.
+
+---
+
+## 2026-07-14 — P0 Studio World Unlabeled Icon Source Migration v4 (full conversation)
+
+**Founder request:** P0 sprint — replace failed text-removal / v2/v3 labeled-catalog extraction with new matching **unlabeled icon sheet** as sole production extraction source; preserve labeled catalog as semantic reference only; fixed grid → `generated-v4/` transparent PNGs; rebuild QA route; retire text-removal heuristics; no layout changes; one commit + one push.
+
+**Prior context in chat:** v3 crop manifest shipped (`cda2f7bb2`) with fail-closed production; QA route fixed (`5a4d71580`); presentation system (`9ca7bab8f`).
+
+**Architecture shipped:**
+
+```
+LABELED CATALOG (semantic reference) → registry row/col
+UNLABELED SOURCE (extraction only) → fixed glyph-safe grid zone → generated-v4 PNGs
+REACT REGISTRY → ExperienceLabIconPresentation → ExperienceLabIcon
+```
+
+**Source assets stored:**
+
+- `src/assets/studio-world/icons/source/studio-world-icon-catalog-labeled.png` — 1402×1122, sha256 `d7476775716d3f2dc9b2416198c81bbd19d8e1a7f5730c5ff3c79fe6cda1f51d`, role `semantic-reference`
+- `src/assets/studio-world/icons/source/studio-world-icon-source-unlabeled.png` — 1402×1122, sha256 `cdc5cd987d42a433a88fb84469cab5c56e5183e2b86a6d14e7c098b91fe2e2f9`, role `runtime-extraction-source`
+
+**New files:**
+
+- `studio-world-icon-source-manifest.ts` — dual-role manifest + forbidden extraction path assertion
+- `studio-world-icon-grid.config.ts` — 8×8 geometry, glyph-safe max Y ratio 0.72
+- `scripts/generate-studio-world-icons-from-unlabeled-source.mjs` — v4 grid extractor (luminance-to-alpha, no text-removal/OCR)
+- `generated-v4/` — 64×512 transparent PNGs + contact sheets (`_contact-sheet.png`, `_source-pair-comparison.png`)
+- `studio-world-icon-source-pair-parity.generated.json` + `STUDIO_WORLD_ICON_SOURCE_PAIR_PARITY.md`
+
+**Modified:**
+
+- `package.json` prebuild → v4 unlabeled generator (v3 crop generator retired from prebuild)
+- `experience-lab-icon-assets.generated.ts` / `experience-lab-icon-sprite.config.ts` — v4 paths, `sourceRole: unlabeled-production-source`
+- `experience-lab-icon-asset-resolver.ts` — production serves v4 assets; optical tuning paused
+- `/admin/studio/experience-lab-icon-qa` — columns: labeled cell | unlabeled cell | v4 generated | runtime sizes; filters Source Pair Pass/Warn/Fail, Runtime Pass/Fail, Founder Priority; v2/v3 in history drawer
+- `experience-lab-icon.test.ts` — 11 v4 tests; presentation test comment updated
+- `index.ts` — exports v4 manifest/grid; crop manifest exports removed from barrel
+- `motherboard/CORE.md` — v4 unlabeled source canon
+
+**Parity results (automated):** PASS 9 · WARN 39 · FAIL 16 — many FAILs from vertical layout offset between labeled/unlabeled sheets (icons lower in unlabeled cells); all 64 icons still generated; runtime PASS 9 · WARN 55 · FAIL 0.
+
+**Preserved:** Labeled catalog unchanged; Experience Lab V2 layout untouched; orb untouched; legacy route untouched; v2/v3 assets archived not imported in production path; `FOUNDER_OPTICAL_MODE_PAUSED = true`.
+
+**Verification:** 19/19 icon tests pass; `npm run build` PASS.
+
+**Remaining:** Founder visual QA on source-pair comparison + contact sheet; approve parity WARN/FAIL icons; then resume optical tuning and set lockdown certified.
+
+**One commit + one push** on `master` via `agent-commit.sh`.

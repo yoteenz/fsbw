@@ -1,0 +1,11 @@
+{
+  "version": "studio-world-icons-v4-unlabeled-source",
+  "parityPass": 9,
+  "parityWarn": 39,
+  "parityFail": 16,
+  "runtimePass": 9,
+  "runtimeWarn": 55,
+  "runtimeFail": 0,
+  "generated": 64,
+  "bundleHash": "db0836c52ee5cd9f8aabf0b455e157e945b350af339d73a89a56878bd0613f22"
+}

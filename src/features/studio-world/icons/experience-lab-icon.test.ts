@@ -10,50 +10,88 @@ import {
 } from './experience-lab-icon-registry';
 import { EXPERIENCE_LAB_ICON_SPRITE_CONFIG } from './experience-lab-icon-sprite.config';
 import {
+  EXPERIENCE_LAB_ICON_ASSETS,
   EXPERIENCE_LAB_ICON_EXTRACTION_VERSION,
   EXPERIENCE_LAB_ICON_LOCKDOWN_CERTIFIED,
+  EXPERIENCE_LAB_ICON_SOURCE_ROLE,
   EXPERIENCE_LAB_ICON_V2_PIPELINE_FROZEN,
+  EXPERIENCE_LAB_ICON_V3_PIPELINE_RETIRED,
+  EXPERIENCE_LAB_ICON_LABELED_CATALOG_SHA256,
+  EXPERIENCE_LAB_ICON_EXTRACTION_SOURCE_SHA256,
 } from './experience-lab-icon-assets.generated';
-import { StudioWorldIconCropManifest, STUDIO_WORLD_ICON_SOURCE } from './studio-world-icon-crop-manifest';
+import {
+  STUDIO_WORLD_ICON_SOURCES,
+  STUDIO_WORLD_ICON_FORBIDDEN_EXTRACTION_PATH,
+} from './studio-world-icon-source-manifest';
 import { FOUNDER_OPTICAL_MODE_PAUSED } from './experience-lab-icon-presenter';
-import { resolveProductionExperienceLabIconAsset } from './experience-lab-icon-asset-resolver';
+import {
+  EXPERIENCE_LAB_ICON_OPTICAL_TUNING_PAUSED,
+  resolveProductionExperienceLabIconAsset,
+} from './experience-lab-icon-asset-resolver';
 
 const ICONS_DIR = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(ICONS_DIR, '../../../..');
-const SOURCE = resolve(ROOT, 'src/assets/studio-world/experience-lab/experience-lab-icon-source-labeled.png');
-const V3_PREVIEW_DIR = resolve(ROOT, 'src/assets/studio-world/experience-lab/icons/generated-v3/_preview-unapproved');
+const LABELED = resolve(ROOT, STUDIO_WORLD_ICON_SOURCES.labeledCatalog.path);
+const UNLABELED = resolve(ROOT, STUDIO_WORLD_ICON_SOURCES.unlabeledSource.path);
+const V4_DIR = resolve(ROOT, 'src/assets/studio-world/experience-lab/icons/generated-v4');
 const COMPONENT = resolve(ICONS_DIR, 'ExperienceLabIcon.tsx');
 const V2_SHELL = resolve(ICONS_DIR, '../experience-lab-v2/ExperienceLabV2Shell.tsx');
 const LEGACY_PAGE = resolve(ROOT, 'src/pages/admin/studio/experience-lab/page.tsx');
+const GENERATOR = resolve(ROOT, 'scripts/generate-studio-world-icons-from-unlabeled-source.mjs');
 
 function iconFilename(key: string) {
   return `${key.replace(/([A-Z])/g, '-$1').toLowerCase()}.png`;
 }
 
-describe('Experience Lab icon system v3 (deterministic crops)', () => {
-  it('preserves the original labeled source sheet unchanged', () => {
-    expect(existsSync(SOURCE)).toBe(true);
-    const hash = readFileSync(
-      resolve(ROOT, 'src/features/studio-world/icons/experience-lab-icon-source.sha256'),
-      'utf8',
-    ).trim();
-    expect(STUDIO_WORLD_ICON_SOURCE.sha256).toBe(hash);
+async function sha256File(path: string) {
+  const { createHash } = await import('node:crypto');
+  return createHash('sha256').update(readFileSync(path)).digest('hex');
+}
+
+describe('Experience Lab icon system v4 (unlabeled grid)', () => {
+  it('preserves labeled catalog and unlabeled source unchanged', async () => {
+    expect(existsSync(LABELED)).toBe(true);
+    expect(existsSync(UNLABELED)).toBe(true);
+    expect(await sha256File(LABELED)).toBe(STUDIO_WORLD_ICON_SOURCES.labeledCatalog.checksum);
+    expect(await sha256File(UNLABELED)).toBe(STUDIO_WORLD_ICON_SOURCES.unlabeledSource.checksum);
+    expect(EXPERIENCE_LAB_ICON_LABELED_CATALOG_SHA256).toBe(STUDIO_WORLD_ICON_SOURCES.labeledCatalog.checksum);
+    expect(EXPERIENCE_LAB_ICON_EXTRACTION_SOURCE_SHA256).toBe(STUDIO_WORLD_ICON_SOURCES.unlabeledSource.checksum);
   });
 
-  it('maps 64 icons in crop manifest with explicit coordinates', () => {
+  it('records matching source-pair dimensions and 64 registry entries', () => {
+    expect(STUDIO_WORLD_ICON_SOURCES.labeledCatalog.width).toBe(
+      STUDIO_WORLD_ICON_SOURCES.unlabeledSource.width,
+    );
+    expect(STUDIO_WORLD_ICON_SOURCES.labeledCatalog.height).toBe(
+      STUDIO_WORLD_ICON_SOURCES.unlabeledSource.height,
+    );
+    expect(STUDIO_WORLD_ICON_SOURCES.labeledCatalog.rows).toBe(
+      STUDIO_WORLD_ICON_SOURCES.unlabeledSource.rows,
+    );
+    expect(STUDIO_WORLD_ICON_SOURCES.labeledCatalog.columns).toBe(
+      STUDIO_WORLD_ICON_SOURCES.unlabeledSource.columns,
+    );
     expect(EXPERIENCE_LAB_ICON_NAMES).toHaveLength(64);
     for (const name of EXPERIENCE_LAB_ICON_NAMES) {
-      const crop = StudioWorldIconCropManifest[name];
-      expect(crop.cropWidth).toBeGreaterThan(0);
-      expect(crop.cropHeight).toBeGreaterThan(0);
-      expect(crop.sourceLabel).toBe(EXPERIENCE_LAB_ICON_REGISTRY[name].sourceLabel);
+      expect(EXPERIENCE_LAB_ICON_REGISTRY[name].row).toBeGreaterThanOrEqual(0);
+      expect(EXPERIENCE_LAB_ICON_REGISTRY[name].column).toBeGreaterThanOrEqual(0);
     }
   });
 
-  it('generates v3 preview PNGs with transparency (not blank)', async () => {
+  it('canonical generator reads only unlabeled source; no text-removal in production path', () => {
+    const gen = readFileSync(GENERATOR, 'utf8');
+    expect(gen).toContain('studio-world-icon-source-unlabeled.png');
+    expect(gen).not.toContain('label-band');
+    expect(gen).not.toContain('labelExclusionY');
+    expect(gen).not.toContain('glyph-versus-label');
+    expect(EXPERIENCE_LAB_ICON_SOURCE_ROLE).toBe('unlabeled-production-source');
+    expect(STUDIO_WORLD_ICON_FORBIDDEN_EXTRACTION_PATH).toBe(STUDIO_WORLD_ICON_SOURCES.labeledCatalog.path);
+  });
+
+  it('generates v4 PNGs with transparency and nonblank content', async () => {
     for (const name of EXPERIENCE_LAB_ICON_NAMES) {
-      const file = resolve(V3_PREVIEW_DIR, iconFilename(name));
-      expect(existsSync(file), `${name} preview`).toBe(true);
+      const file = resolve(V4_DIR, iconFilename(name));
+      expect(existsSync(file), `${name} v4`).toBe(true);
       const meta = await sharp(file).metadata();
       expect(meta.hasAlpha).toBe(true);
       expect(meta.width).toBe(512);
@@ -67,38 +105,35 @@ describe('Experience Lab icon system v3 (deterministic crops)', () => {
     }
   });
 
-  it('v2 pipeline frozen; production fail-closed until crops approved', () => {
+  it('maps all semantic keys to v4 runtime assets', () => {
+    expect(EXPERIENCE_LAB_ICON_EXTRACTION_VERSION).toBe('studio-world-icons-v4-unlabeled-source');
     expect(EXPERIENCE_LAB_ICON_V2_PIPELINE_FROZEN).toBe(true);
-    expect(EXPERIENCE_LAB_ICON_LOCKDOWN_CERTIFIED).toBe(false);
-    expect(EXPERIENCE_LAB_ICON_EXTRACTION_VERSION).toBe('studio-world-icons-v3');
+    expect(EXPERIENCE_LAB_ICON_V3_PIPELINE_RETIRED).toBe(true);
+    expect(EXPERIENCE_LAB_ICON_SPRITE_CONFIG.mode).toBe('unlabeled-grid-v4');
+    expect(EXPERIENCE_LAB_ICON_SPRITE_CONFIG.generatedDir).toContain('generated-v4');
     for (const name of EXPERIENCE_LAB_ICON_NAMES) {
       const asset = resolveProductionExperienceLabIconAsset(name);
-      expect(asset.src).toBeNull();
-      expect(asset.approved).toBe(false);
+      expect(asset.src, name).toBeTruthy();
+      expect(asset.source).toBe('v4-unlabeled');
+      expect(EXPERIENCE_LAB_ICON_ASSETS[name].sourceRole).toBe('unlabeled-production-source');
     }
   });
 
-  it('optical tuning paused', () => {
+  it('optical tuning paused; lockdown not certified until founder QA', () => {
     expect(FOUNDER_OPTICAL_MODE_PAUSED).toBe(true);
+    expect(EXPERIENCE_LAB_ICON_OPTICAL_TUNING_PAUSED).toBe(true);
+    expect(EXPERIENCE_LAB_ICON_LOCKDOWN_CERTIFIED).toBe(false);
   });
 
-  it('ExperienceLabIcon uses presentation layer with missing fallback', () => {
+  it('ExperienceLabIcon uses presentation layer without CSS sprites', () => {
     const src = readFileSync(COMPONENT, 'utf8');
     expect(src).toContain('ExperienceLabIconPresentation');
     expect(src).not.toContain('backgroundPosition');
-    expect(src).toContain('elab-icon--missing');
     expect(isExperienceLabIconName('blueprint')).toBe(true);
     expect(isExperienceLabIconName('not-an-icon')).toBe(false);
   });
 
-  it('sprite config points at v3 deterministic mode', () => {
-    expect(EXPERIENCE_LAB_ICON_SPRITE_CONFIG.mode).toBe('deterministic-crop-v3');
-    expect(EXPERIENCE_LAB_ICON_SPRITE_CONFIG.lockdownCertified).toBe(false);
-    expect(EXPERIENCE_LAB_ICON_SPRITE_CONFIG.v2PipelineFrozen).toBe(true);
-    expect(EXPERIENCE_LAB_ICON_SPRITE_CONFIG.generatedDir).toContain('generated-v3');
-  });
-
-  it('Experience Lab V2 uses ExperienceLabIcon; legacy route unchanged', () => {
+  it('Experience Lab V2 uses ExperienceLabIcon; legacy route and orb unchanged', () => {
     const cmd = readFileSync(resolve(ICONS_DIR, '../experience-lab-v2/ExperienceLabCommandDock.tsx'), 'utf8');
     const viewport = readFileSync(resolve(ICONS_DIR, '../experience-lab-v2/StudioViewport.tsx'), 'utf8');
     const workbench = readFileSync(resolve(ICONS_DIR, '../experience-lab-v2/ExperienceLabFounderWorkbench.tsx'), 'utf8');
@@ -107,16 +142,28 @@ describe('Experience Lab icon system v3 (deterministic crops)', () => {
     expect(workbench).toContain('ExperienceLabIcon');
     expect(readFileSync(LEGACY_PAGE, 'utf8')).not.toContain('ExperienceLabIcon');
     expect(readFileSync(V2_SHELL, 'utf8')).toContain('ExperienceLabV2Shell');
+    expect(workbench).toMatch(/orb|Orb/);
   });
 
-  it('QA and crop editor routes exist', () => {
+  it('QA route uses v4 source-pair columns', () => {
     const qa = readFileSync(resolve(ROOT, 'src/pages/admin/studio/experience-lab-icon-qa/page.tsx'), 'utf8');
-    const editor = readFileSync(resolve(ROOT, 'src/pages/admin/studio/experience-lab-icon-crop-editor/page.tsx'), 'utf8');
     const appRoutes = readFileSync(resolve(ROOT, 'src/App.tsx'), 'utf8');
     expect(appRoutes).toContain('studio/experience-lab-icon-qa');
-    expect(appRoutes).toContain('studio/experience-lab-icon-crop-editor');
-    expect(qa).toContain('v3');
-    expect(qa).toContain('optical paused');
-    expect(editor).toContain('Crop Editor');
+    expect(qa).toContain('v4 unlabeled source');
+    expect(qa).toContain('Source Pair Pass');
+    expect(qa).toContain('generated-v4');
+    expect(qa).not.toContain('v3 deterministic crop QA');
+  });
+
+  it('prebuild uses unlabeled generator only', () => {
+    const pkg = readFileSync(resolve(ROOT, 'package.json'), 'utf8');
+    expect(pkg).toContain('generate-studio-world-icons-from-unlabeled-source.mjs');
+    expect(pkg).not.toContain('generate-studio-world-icons-from-crops.mjs');
+  });
+
+  it('unknown semantic keys fail safely', () => {
+    expect(isExperienceLabIconName('notReal')).toBe(false);
+    const asset = resolveProductionExperienceLabIconAsset('blueprint');
+    expect(asset.src).toBeTruthy();
   });
 });
