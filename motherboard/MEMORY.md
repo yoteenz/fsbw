@@ -49854,3 +49854,16 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 **Tests:** Workbench pill wrapper + radius token assertions in `experience-lab-v2.test.ts`. 58/58 PASS.
 
+---
+
+## 2026-07-14 — Selection glow on highlighted panels
+
+**Founder request:** Add slight glow to selected/highlighted panels instead of flat gold border line.
+
+**Shipped (`experience-lab-v2.css`):**
+- Tokens `--elab-selection-glow` + `--elab-selection-glow-inset`
+- Workbench tool `--active`: outer + inner gold glow (hover kept lighter, separate rule)
+- Workbench world-nav `--active`, Command Dock program tab `--active`, context card action `--active`, design variant thumb `--active`: inset/outer glow stack
+
+**Tests:** Selection glow token assertions. 53/53 PASS.
+

@@ -139,6 +139,8 @@ describe('Experience Lab V2 — Fixed application shell', () => {
     expect(css).toMatch(/\.elab-founder-wb--tiered\s*\{[\s\S]*?--elab-wb-pill-radius:\s*9999px/);
     expect(css).toMatch(/\.elab-founder-wb__pill--head\s*\{[\s\S]*?border-radius:\s*var\(--elab-wb-pill-radius\)/);
     expect(css).toMatch(/\.elab-founder-wb__tool\s*\{[\s\S]*?border-radius:\s*var\(--elab-wb-pill-radius\)/);
+    expect(css).toMatch(/\.elab-founder-wb__tool--active\s*\{[\s\S]*?box-shadow:\s*var\(--elab-selection-glow\)/);
+    expect(css).toContain('--elab-selection-glow-inset');
     expect(css).toContain('--elab-wb-tool-min-height: calc(50px * var(--elab-wb-height-scale))');
     expect(css).toContain('--elab-wb-nav-min-height: calc(52px * var(--elab-wb-height-scale))');
     expect(css).toContain('--elab-wb-tools-pad-x: var(--elab-hud-inset-side, 14px)');
