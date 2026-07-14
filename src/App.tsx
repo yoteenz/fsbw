@@ -312,6 +312,10 @@ const AdminStudioExperienceLabTestV2Alias = lazyWithRetry(
   () => import('./pages/admin/studio/experience-lab/test-v2/page'),
   'AdminStudioExperienceLabTestV2Alias'
 );
+const AdminStudioExperienceLabIconQa = lazyWithRetry(
+  () => import('./pages/admin/studio/experience-lab-icon-qa/page'),
+  'AdminStudioExperienceLabIconQa'
+);
 const AdminStudioProductionSystem = lazyWithRetry(
   () => import('./pages/admin/studio/studio-production/page'),
   'AdminStudioProductionSystem'
@@ -2143,6 +2147,11 @@ function App() {
           <Route path="studio/experience-lab" element={
             <Suspense fallback={<StudioRouteSuspenseFallback label="Experience Lab" />}>
               <AdminStudioExperienceLab />
+            </Suspense>
+          } />
+          <Route path="studio/experience-lab-icon-qa" element={
+            <Suspense fallback={<StudioRouteSuspenseFallback label="Experience Lab icon QA" />}>
+              <AdminStudioExperienceLabIconQa />
             </Suspense>
           } />
           <Route path="studio/studio-production" element={

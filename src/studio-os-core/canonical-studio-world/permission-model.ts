@@ -41,6 +41,7 @@ export type StudioWorldFounderWorkspaceId = (typeof STUDIO_WORLD_FOUNDER_WORKSPA
 export const STUDIO_WORLD_ADMIN_ONLY_PATH_PREFIXES = [
   '/admin/studio/experience-lab',
   '/admin/studio/experience-lab-v2',
+  '/admin/studio/experience-lab-icon-qa',
 ] as const;
 
 export const FOUNDER_CREATIVE_WORKSPACE_ENTRY_PATH = '/admin/studio/department/creative-direction' as const;

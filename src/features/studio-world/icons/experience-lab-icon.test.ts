@@ -258,6 +258,9 @@ describe('Experience Lab extracted icon system v2', () => {
     expect(existsSync(LOCKDOWN_DOC)).toBe(true);
     expect(existsSync(FAILURE_MANIFEST)).toBe(true);
     const qa = readFileSync(resolve(ROOT, 'src/pages/admin/studio/experience-lab-icon-qa/page.tsx'), 'utf8');
+    const appRoutes = readFileSync(resolve(ROOT, 'src/App.tsx'), 'utf8');
+    expect(appRoutes).toContain('studio/experience-lab-icon-qa');
+    expect(appRoutes).toContain('AdminStudioExperienceLabIconQa');
     expect(qa).toContain('Founder Reported');
     expect(qa).toContain('Text Contamination');
     expect(qa).toContain('FounderOpticalTuner');

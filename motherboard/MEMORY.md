@@ -49131,3 +49131,19 @@ PNG Asset → ExperienceLabIconPresentation → ExperienceLabIcon → Button
 **Verification:** 23/23 icon tests pass; `npm run build` PASS.
 
 **One commit + one push** on `master` via `agent-commit.sh`.
+
+---
+
+## 2026-07-14 — Fix experience-lab-icon-qa route redirect (full conversation)
+
+**Founder report:** `https://fsbw.vercel.app/admin/studio/experience-lab-icon-qa` kept rerouting to studio overview.
+
+**Root cause:** QA page existed at `src/pages/admin/studio/experience-lab-icon-qa/page.tsx` but was **never registered** in `App.tsx`. URL matched catch-all `studio/:sectionId` → unknown section → `<Navigate to="/admin/studio" />` → command-center/overview.
+
+**Fix:**
+
+- **`App.tsx`** — lazy `AdminStudioExperienceLabIconQa` + explicit `studio/experience-lab-icon-qa` route (before `studio/:sectionId` catch-all)
+- **`permission-model.ts`** — `/admin/studio/experience-lab-icon-qa` in `STUDIO_WORLD_ADMIN_ONLY_PATH_PREFIXES`
+- **Tests** — `experience-lab-icon.test.ts` asserts route wiring; `canonical-studio-world.test.ts` asserts admin-only path
+
+**One commit + one push** on `master` via `agent-commit.sh`.

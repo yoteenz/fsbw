@@ -93,6 +93,7 @@ describe('Studio World permission model', () => {
     const { isStudioWorldAdminOnlyPath } = await import('./permission-model');
     expect(isStudioWorldAdminOnlyPath('/admin/studio/experience-lab')).toBe(true);
     expect(isStudioWorldAdminOnlyPath('/admin/studio/experience-lab/health')).toBe(true);
+    expect(isStudioWorldAdminOnlyPath('/admin/studio/experience-lab-icon-qa')).toBe(true);
     expect(isStudioWorldAdminOnlyPath('/admin/studio/department/creative-direction')).toBe(false);
   });
 });
