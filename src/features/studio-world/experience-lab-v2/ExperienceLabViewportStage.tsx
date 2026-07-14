@@ -1,19 +1,19 @@
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 import type { ExperienceLabV2ViewModel } from './experience-lab-v2.types';
 import type { StudioViewportMode } from './experience-lab-v2.types';
 import type { ElabFocusMode } from './experience-lab-v2-layout';
 import { StudioViewport } from './StudioViewport';
 import { ExperienceLabFloatingInspector } from './ExperienceLabFloatingInspector';
 import { ExperienceLabInspectorSwitcher } from './ExperienceLabInspectorSwitcher';
+import { ExperienceLabDesignVariantStrip } from './ExperienceLabDesignVariantStrip';
 import { ELAB_V2_COMPOSITION } from './experience-lab-v2-composition';
 import type { ExperienceLabPanelOrchestrator } from './useExperienceLabPanelOrchestrator';
+import type { ExperienceLabDesignVariants } from './useExperienceLabDesignVariants';
 import type { InspectorPanelId, PanelDockZone } from './experience-lab-v2-panel-orchestrator';
 
 const VIEWPORT_MODES: StudioViewportMode[] = [
   'BLUEPRINT', 'FOUNDER_RENDER', 'CONSTRUCTION_PLAN', 'MATERIALS', 'LIGHTING', 'CAMERA', 'SPLIT_VIEW',
 ];
-
-const VIEW_ANGLES = ['Hero L', 'Hero P', 'Desktop', 'Mobile', 'Wide', 'Detail'] as const;
 
 const MOBILE_DOCK_CYCLE: PanelDockZone[] = ['top-left', 'top-right', 'bottom-left', 'bottom-right'];
 
@@ -26,6 +26,7 @@ type Props = {
   onFocusMode?: (mode: StudioViewportMode) => void;
   focusMode?: ElabFocusMode;
   orchestrator: ExperienceLabPanelOrchestrator;
+  designVariants: ExperienceLabDesignVariants;
   /** Isolate one sub-region for component review mode. */
   reviewIsolate?: 'viewport' | 'inspectors' | 'view-angles';
 };
@@ -36,7 +37,7 @@ function nextDockZone(current: PanelDockZone): PanelDockZone {
   return MOBILE_DOCK_CYCLE[(idx + 1) % MOBILE_DOCK_CYCLE.length];
 }
 
-/** Viewport stage — orchestrated inspectors, view angles in dedicated chrome region. */
+/** Viewport stage — orchestrated inspectors, design variants in dedicated chrome region. */
 export function ExperienceLabViewportStage({
   model,
   viewportMode,
@@ -45,10 +46,9 @@ export function ExperienceLabViewportStage({
   isCompact,
   onFocusMode,
   orchestrator,
+  designVariants,
   reviewIsolate,
 }: Props) {
-  const [activeAngle, setActiveAngle] = useState(0);
-
   const onInspectorSelect = useCallback(
     (id: InspectorPanelId) => orchestrator.selectInspector(id, { syncViewport: true }),
     [orchestrator]
@@ -57,42 +57,16 @@ export function ExperienceLabViewportStage({
   const expandedPanel = orchestrator.panels.find((p) => p.id === orchestrator.expandedPanel)
     ?? orchestrator.panels.find((p) => p.isActive);
 
-  const viewAnglesNav = (
-    <nav
-      className={`elab-view-angles elab-view-angles--chrome${orchestrator.viewAnglesCollapsed ? ' elab-view-angles--collapsed' : ''}`}
-      {...{ [ELAB_V2_COMPOSITION.viewAngles]: '' }}
-      aria-label="View angles"
-    >
-      <div className="elab-view-angles__head">
-        {!isCompact ? <span className="elab-view-angles__label">VIEW ANGLES</span> : null}
-        <button
-          type="button"
-          className="elab-view-angles__collapse"
-          aria-expanded={!orchestrator.viewAnglesCollapsed}
-          onClick={orchestrator.toggleViewAngles}
-        >
-          {orchestrator.viewAnglesCollapsed
-            ? `${VIEW_ANGLES[activeAngle]} · ${VIEW_ANGLES.length}`
-            : 'Collapse'}
-        </button>
-      </div>
-      {!orchestrator.viewAnglesCollapsed ? (
-        <div className="elab-view-angles__strip">
-          {VIEW_ANGLES.map((angle, i) => (
-            <button
-              key={angle}
-              type="button"
-              className={`elab-view-angles__thumb${i === activeAngle ? ' elab-view-angles__thumb--active' : ''}`}
-              aria-pressed={i === activeAngle}
-              onClick={() => setActiveAngle(i)}
-            >
-              <span className="elab-view-angles__thumb-inner" />
-              {!isCompact ? <span className="elab-view-angles__thumb-label">{angle}</span> : null}
-            </button>
-          ))}
-        </div>
-      ) : null}
-    </nav>
+  const designVariantStrip = (
+    <ExperienceLabDesignVariantStrip
+      variants={designVariants.variants}
+      activeVariantId={designVariants.activeVariantId}
+      collapsed={orchestrator.viewAnglesCollapsed}
+      isCompact={isCompact}
+      onToggleCollapse={orchestrator.toggleViewAngles}
+      onSelect={designVariants.selectVariant}
+      onOpenDrawer={designVariants.openDrawer}
+    />
   );
 
   const floatingInspectors = orchestrator.panels.map((panel) => (
@@ -111,7 +85,7 @@ export function ExperienceLabViewportStage({
   if (reviewIsolate === 'view-angles') {
     return (
       <div className="elab-stage elab-stage--review-isolate" {...{ [ELAB_V2_COMPOSITION.viewportStage]: '' }}>
-        {viewAnglesNav}
+        {designVariantStrip}
       </div>
     );
   }
@@ -154,6 +128,7 @@ export function ExperienceLabViewportStage({
           modes={VIEWPORT_MODES}
           onModeChange={onModeChange}
           onFocusMode={onFocusMode}
+          environmentUrl={designVariants.activeEnvironmentUrl}
           inspectorSwitcher={
             <ExperienceLabInspectorSwitcher
               activeInspector={orchestrator.activeInspector}
@@ -163,7 +138,7 @@ export function ExperienceLabViewportStage({
               compact={isCompact}
             />
           }
-          viewAngles={showFloats ? viewAnglesNav : undefined}
+          viewAngles={showFloats ? designVariantStrip : undefined}
           leftRailCollapsed={orchestrator.leftRailCollapsed}
           rightRailCollapsed={orchestrator.rightRailCollapsed}
           onToggleLeftRail={!isCompact ? orchestrator.toggleLeftRail : undefined}

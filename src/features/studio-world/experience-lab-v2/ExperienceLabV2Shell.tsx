@@ -27,6 +27,8 @@ import { resolveExperienceLabV2FeatureFlags } from './experience-lab-v2-feature-
 import { useExperienceLabAppShell } from './useExperienceLabAppShell';
 import { useExperienceLabPanelOrchestrator } from './useExperienceLabPanelOrchestrator';
 import { useExperienceLabComponentReview } from './useExperienceLabComponentReview';
+import { useExperienceLabDesignVariants } from './useExperienceLabDesignVariants';
+import { ExperienceLabDesignVariantDrawerBody } from './ExperienceLabDesignVariantDrawer';
 import { defaultWorkbenchTab, focusModeFromViewportMode } from './experience-lab-v2-layout';
 import type { ElabWorkbenchTab } from './experience-lab-v2-layout';
 import { ELAB_V2_COMPOSITION } from './experience-lab-v2-composition';
@@ -49,6 +51,7 @@ export function ExperienceLabV2Shell({ initialDepartmentId = 'experience-lab' }:
   const flags = resolveExperienceLabV2FeatureFlags();
   const shell = useExperienceLabAppShell();
   const review = useExperienceLabComponentReview();
+  const designVariants = useExperienceLabDesignVariants();
 
   const [departmentId] = useState<CanonicalMainDepartmentId>(initialDepartmentId);
   const [viewportMode, setViewportMode] = useState<StudioViewportMode>(
@@ -137,6 +140,7 @@ export function ExperienceLabV2Shell({ initialDepartmentId = 'experience-lab' }:
     onFocusMode: (mode: StudioViewportMode) => shell.setFocusMode(focusModeFromViewportMode(mode)),
     focusMode: shell.focusMode,
     orchestrator,
+    designVariants,
   };
 
   const lowerDeck = shell.focusMode === 'none' ? (
@@ -358,6 +362,25 @@ export function ExperienceLabV2Shell({ initialDepartmentId = 'experience-lab' }:
             <button key={t} type="button" className="elab-sheet-tool-btn">{t}</button>
           ))}
         </div>
+      </ExperienceLabSheet>
+
+      <ExperienceLabSheet
+        open={Boolean(designVariants.drawerVariant)}
+        title={designVariants.drawerVariant?.name ?? 'Design Variant'}
+        onClose={designVariants.closeDrawer}
+        variant={shell.isCompact ? 'sheet' : 'drawer'}
+      >
+        {designVariants.drawerVariant ? (
+          <ExperienceLabDesignVariantDrawerBody
+            variant={designVariants.drawerVariant}
+            isActive={designVariants.drawerVariantId === designVariants.activeVariantId}
+            onActivate={() => {
+              if (designVariants.drawerVariantId) designVariants.activateFromDrawer(designVariants.drawerVariantId);
+            }}
+            onArchive={() => designVariants.archiveVariant(designVariants.drawerVariant!)}
+            onClose={designVariants.closeDrawer}
+          />
+        ) : null}
       </ExperienceLabSheet>
     </div>
   );

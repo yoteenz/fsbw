@@ -205,7 +205,9 @@ describe('Experience Lab V2 — Fixed application shell', () => {
 
   it('view angles live in viewport chrome region (not absolute overlay)', () => {
     const stage = readV2Source('ExperienceLabViewportStage.tsx');
-    expect(stage).toContain('elab-view-angles--chrome');
+    expect(stage).toContain('ExperienceLabDesignVariantStrip');
+    expect(stage).toContain('environmentUrl={designVariants.activeEnvironmentUrl}');
+    expect(stage).not.toContain('VIEW ANGLES');
     expect(stage).not.toContain('elab-view-angles--attached');
     const css = readV2Source('experience-lab-v2.css');
     expect(css).toContain('.elab-viewport__angles-chrome');
@@ -452,6 +454,18 @@ describe('Experience Lab V2 — Viewport environment', () => {
     expect(css).toMatch(/\.elab-viewport__angles-chrome\s*\{[\s\S]*?background:\s*transparent/);
     expect(css).toMatch(/\.elab-viewport__angles-chrome\s+\.elab-view-angles--chrome\s*\{[\s\S]*?border-radius:\s*14px/);
     expect(css).toMatch(/\.elab-viewport__angles-chrome\s+\.elab-view-angles--chrome\s*\{[\s\S]*?max-width:\s*88%/);
+  });
+
+  it('wires render direction design variant system', () => {
+    const stage = readV2Source('ExperienceLabViewportStage.tsx');
+    const shell = readV2Source('ExperienceLabV2Shell.tsx');
+    expect(stage).toContain('ExperienceLabDesignVariantStrip');
+    expect(stage).toContain('designVariants');
+    expect(shell).toContain('useExperienceLabDesignVariants');
+    expect(shell).toContain('ExperienceLabDesignVariantDrawerBody');
+    expect(readV2Source('experience-lab-design-variants.ts')).toContain('DESIGN VARIANTS');
+    expect(readV2Source('ExperienceLabEnvironmentLayer.tsx')).toContain('environmentUrl');
+    expect(readV2Source('experience-lab-v2-composition.ts')).toContain('designVariants');
   });
 });
 

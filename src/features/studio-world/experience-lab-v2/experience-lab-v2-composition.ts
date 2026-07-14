@@ -14,6 +14,7 @@ export const ELAB_V2_COMPOSITION = {
   registrySidebar: 'data-elab-registry-sidebar',
   governanceSidebar: 'data-elab-governance-sidebar',
   viewAngles: 'data-elab-view-angles',
+  designVariants: 'data-elab-design-variants',
   modeRail: 'data-elab-viewport-mode-rail',
   focusMode: 'data-elab-focus-mode',
   sheet: 'data-elab-sheet',

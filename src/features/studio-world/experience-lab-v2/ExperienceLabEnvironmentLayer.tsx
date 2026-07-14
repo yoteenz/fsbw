@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from 'react';
 import type { ExperienceLabV2EnvironmentConfig } from './experience-lab-v2.types';
 import { DEFAULT_V2_ENVIRONMENT } from './experience-lab-v2.config';
 
@@ -7,6 +8,10 @@ type Props = {
   isMobile?: boolean;
   /** Viewport scope keeps the environment inside Studio Viewport only (not full shell). */
   scope?: 'shell' | 'viewport';
+  /** Direct environment URL override (design variant preview/production). */
+  environmentUrl?: string | null;
+  /** Crossfade duration when environmentUrl changes (viewport only). */
+  crossfadeMs?: number;
 };
 
 /** Decorative environment beneath React UI — never contains production interface. */
@@ -15,13 +20,39 @@ export function ExperienceLabEnvironmentLayer({
   preset = 'dark',
   isMobile = false,
   scope = 'shell',
+  environmentUrl,
+  crossfadeMs = 300,
 }: Props) {
   const env = { ...DEFAULT_V2_ENVIRONMENT, ...config };
-  const url = isMobile ? env.mobileEnvironmentUrl ?? env.desktopEnvironmentUrl : env.desktopEnvironmentUrl;
+  const fallbackUrl = isMobile ? env.mobileEnvironmentUrl ?? env.desktopEnvironmentUrl : env.desktopEnvironmentUrl;
+  const url = environmentUrl ?? fallbackUrl;
+
+  const [layers, setLayers] = useState<{ current: string | null; previous: string | null }>({
+    current: url,
+    previous: null,
+  });
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    if (!url) return;
+    setLayers((prev) => {
+      if (prev.current === url) return prev;
+      return { current: url, previous: prev.current };
+    });
+    if (timerRef.current) clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(() => {
+      setLayers((prev) => ({ ...prev, previous: null }));
+    }, crossfadeMs);
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
+  }, [url, crossfadeMs]);
+
+  const scrimOpacity = scope === 'viewport' ? Math.min(env.scrimStrength, 0.38) : env.scrimStrength;
 
   return (
     <div
-      className={`elab-v2__env${scope === 'viewport' ? ' elab-v2__env--viewport' : ''}`}
+      className={`elab-v2__env${scope === 'viewport' ? ' elab-v2__env--viewport' : ''}${scope === 'viewport' && layers.previous ? ' elab-v2__env--crossfade' : ''}`}
       data-experience-lab-environment
       data-elab-env-scope={scope}
       aria-hidden
@@ -30,11 +61,15 @@ export function ExperienceLabEnvironmentLayer({
           '--elab-env-opacity': env.environmentOpacity,
           '--elab-env-position': env.environmentPosition,
           '--elab-env-scale': env.environmentScale,
+          '--elab-env-crossfade-ms': `${crossfadeMs}ms`,
         } as React.CSSProperties
       }
     >
-      {url ? (
-        <img src={url} alt="" role="presentation" />
+      {layers.previous ? (
+        <img src={layers.previous} alt="" role="presentation" className="elab-v2__env-img elab-v2__env-img--outgoing" />
+      ) : null}
+      {layers.current ? (
+        <img src={layers.current} alt="" role="presentation" className="elab-v2__env-img elab-v2__env-img--current" />
       ) : (
         <div
           style={{
@@ -47,7 +82,7 @@ export function ExperienceLabEnvironmentLayer({
           }}
         />
       )}
-      <div className="elab-v2__env-scrim" style={{ opacity: scope === 'viewport' ? Math.min(env.scrimStrength, 0.38) : env.scrimStrength }} />
+      <div className="elab-v2__env-scrim" style={{ opacity: scrimOpacity }} />
     </div>
   );
 }

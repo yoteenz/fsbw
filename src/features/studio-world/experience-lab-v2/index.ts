@@ -11,3 +11,6 @@ export * from './experience-lab-v2-panel-orchestrator';
 export * from './experience-lab-v2-component-review';
 export { useExperienceLabPanelOrchestrator } from './useExperienceLabPanelOrchestrator';
 export { useExperienceLabComponentReview } from './useExperienceLabComponentReview';
+export * from './experience-lab-design-variants';
+export { useExperienceLabDesignVariants } from './useExperienceLabDesignVariants';
+export { ExperienceLabDesignVariantStrip } from './ExperienceLabDesignVariantStrip';

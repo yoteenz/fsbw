@@ -67,7 +67,7 @@ function componentReviewLabel(id: ComponentReviewId): string {
     'approval-bridge': 'Approval Bridge',
     'bottom-tool-dock': 'Bottom Tool Dock',
     diagnostics: 'Diagnostics',
-    'view-angle-strip': 'View Angle Strip',
+    'view-angle-strip': 'Design Variant Strip',
     'environment-layer': 'Environment Layer',
   };
   return labels[id];
@@ -82,7 +82,7 @@ function componentVersionName(id: ComponentReviewId): string {
     'approval-bridge': 'StudioApprovalBridge v1',
     'bottom-tool-dock': 'StudioToolDock v1',
     diagnostics: 'StudioDiagnosticsPanel v1',
-    'view-angle-strip': 'StudioViewAngleStrip v1',
+    'view-angle-strip': 'StudioDesignVariantStrip v1',
     'environment-layer': 'StudioEnvironmentLayer v1',
   };
   return names[id];

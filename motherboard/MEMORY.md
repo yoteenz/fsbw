@@ -49346,6 +49346,30 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - `experience-lab-v2.css` — `.elab-viewport__angles-chrome` transparent with horizontal padding; `.elab-viewport__angles-chrome .elab-view-angles--chrome` rounded card (`border-radius: 14px`, `max-width: 88%`, matte `rgba(8,9,12,0.84)`, gold border, shadow); removed full-width `border-top` strip
 - Tests: inset rounded card assertion; 46/46 pass
 
-**Preserved:** Centered thumbnail strip; collapse control; no layout moves elsewhere.
+**One commit + one push** on `master` via `agent-commit.sh`.
+
+---
+
+## 2026-07-14 — Experience Lab V2 Render Direction / Design Variants system (full conversation)
+
+**Founder sprint:** Replace View Angles with professional Render Direction system — six architectural concept variants (Light 01–03, Dark 01–03), not camera angles. No layout/dock/workbench/orb/viewport sizing/spacing/typography changes — thumbnail strip content/behavior only.
+
+**Shipped:**
+
+- `experience-lab-design-variants.ts` — six-variant model, metadata (prompt hash, seed, cost, vault status, readiness), stage 1 preview vs stage 2 production URLs, cache keys, compare-mode reserved flag
+- `useExperienceLabDesignVariants.ts` — active variant state, `?variant=` query sync, localStorage persistence, drawer state
+- `ExperienceLabDesignVariantStrip.tsx` — reuses inset rounded card + six thumbs; label **DESIGN VARIANTS**; ACTIVE/APPROVED/ARCHIVED/GENERATING badges; tap selects + crossfades; ⋯ opens drawer
+- `ExperienceLabDesignVariantDrawer.tsx` — sheet/drawer metadata + Set Active/Archive/Promote/Compare (latter reserved)
+- `ExperienceLabEnvironmentLayer.tsx` — `environmentUrl` override + 300ms crossfade between variants
+- `ExperienceLabViewportStage.tsx` / `StudioViewport.tsx` / `ExperienceLabV2Shell.tsx` — wired variant selection → viewport environment swap
+- Component review label → Design Variant Strip
+- CSS: variant badges, active gold/brightness, crossfade keyframes
+- Tests: 52 pass (47 V2 + 5 design variants)
+
+**Preserved:** Command Dock, Workbench, floating inspectors, viewport chrome slot, panel orchestrator collapse (viewAnglesCollapsed key), responsive layout.
+
+**Not generated:** Six unique production environments (stage 1 uses bundled preview assets); compare mode architecture only.
+
+**Spatial review:** SKIPPED — strip semantics swap only, no new surfaces.
 
 **One commit + one push** on `master` via `agent-commit.sh`.
