@@ -427,6 +427,13 @@ describe('Experience Lab V2 — Viewport environment', () => {
     expect(css).toContain('object-position: var(--elab-env-position, center center)');
     expect(css).toContain('.elab-viewport__stage-content');
     expect(css).toMatch(/\.elab-viewport\s*\{[\s\S]*?background:\s*transparent/);
+    expect(css).toMatch(/\.elab-stage__viewport-wrap\s*\{[\s\S]*?background:\s*transparent/);
+  });
+
+  it('full workstation always mounts viewport stage (environment not gated off)', () => {
+    const shell = readV2Source('ExperienceLabV2Shell.tsx');
+    expect(shell).toContain('viewport={<ExperienceLabViewportStage {...viewportStageProps} />}');
+    expect(shell).not.toContain('elab-stage--hidden-placeholder');
   });
 });
 

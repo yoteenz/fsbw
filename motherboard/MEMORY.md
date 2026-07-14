@@ -49297,6 +49297,28 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - `ExperienceLabViewportStage.tsx` — passes `isCompact` into `StudioViewport`
 - Test: desktop/mobile environment selection assertion; 42/42 V2 tests pass
 
-**Preserved:** Mobile 9:16 asset and behavior; all UI/layout unchanged.
+**One commit + one push** on `master` via `agent-commit.sh`.
+
+---
+
+## 2026-07-14 — Experience Lab V2 viewport environment visibility fix (follow-up)
+
+**Founder report:** Viewport background did not appear to change after environment sprint — suspected black layer hiding the image.
+
+**Root causes identified:**
+
+1. **Component Review Mode** defaulted on for admins (`VITE_EXPERIENCE_LAB_V2_COMPONENT_REVIEW` true) with active phase `command-dock` — full Studio Viewport (and environment layer) never mounted in the main workstation; only an empty `elab-stage--hidden-placeholder` or isolated review sandbox showed.
+2. **CSS stacking** — viewport env image lacked absolute fill positioning; parent stage/wrap/room surfaces and heavy scrim (0.55 on dark gradients) further obscured the scene.
+
+**Shipped:**
+
+- Component review **off by default** (`feature-flags` + `defaultComponentReviewState`)
+- `ExperienceLabV2Shell` **always mounts** `ExperienceLabViewportStage` in full workstation (removed hidden-placeholder gate)
+- CSS: viewport env img `position:absolute; inset:0; object-fit:cover`; lighter viewport-scoped scrim (max opacity 0.38 + softer gradients); transparent backgrounds on viewport-room, stage, viewport-wrap, stage-content
+- `ExperienceLabEnvironmentLayer` caps viewport scrim opacity
+
+**Note for founders with cached review state:** add `?elabReview=off` to URL or select **Studio Viewport** in Component Review chrome if review was previously enabled in localStorage.
+
+**Tests:** 43/43 pass. **Spatial review:** SKIPPED (visibility fix only).
 
 **One commit + one push** on `master` via `agent-commit.sh`.

@@ -278,22 +278,7 @@ export function ExperienceLabV2Shell({ initialDepartmentId = 'experience-lab' }:
           <ExperienceLabWorkstationFrame
             registry={shell.isDesktop ? <ExperienceLabRegistrySidebar /> : undefined}
             governance={shell.isDesktop ? <ExperienceLabGovernanceSidebar model={model} /> : undefined}
-            viewport={
-              review.show('studio-viewport') || review.show('floating-inspectors') || review.show('view-angle-strip') ? (
-                <ExperienceLabViewportStage
-                  {...viewportStageProps}
-                  reviewIsolate={
-                    review.show('floating-inspectors')
-                      ? 'inspectors'
-                      : review.show('view-angle-strip')
-                        ? 'view-angles'
-                        : 'viewport'
-                  }
-                />
-              ) : (
-                <div className="elab-stage elab-stage--hidden-placeholder" aria-hidden />
-              )
-            }
+            viewport={<ExperienceLabViewportStage {...viewportStageProps} />}
             lowerDeck={lowerDeck}
           />
         ) : (

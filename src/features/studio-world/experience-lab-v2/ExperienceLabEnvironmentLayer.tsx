@@ -47,7 +47,7 @@ export function ExperienceLabEnvironmentLayer({
           }}
         />
       )}
-      <div className="elab-v2__env-scrim" style={{ opacity: env.scrimStrength }} />
+      <div className="elab-v2__env-scrim" style={{ opacity: scope === 'viewport' ? Math.min(env.scrimStrength, 0.38) : env.scrimStrength }} />
     </div>
   );
 }

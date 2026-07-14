@@ -29,7 +29,7 @@ export function resolveExperienceLabV2FeatureFlags(): ExperienceLabV2FeatureFlag
     experienceLabV2EnvironmentAssetEnabled: envFlag('VITE_EXPERIENCE_LAB_V2_ENVIRONMENT', true),
     experienceLabV2DiagnosticsEnabled: admin && envFlag('VITE_EXPERIENCE_LAB_V2_DIAGNOSTICS', true),
     experienceLabV2MobileDockEnabled: envFlag('VITE_EXPERIENCE_LAB_V2_MOBILE_DOCK', true),
-    experienceLabV2ComponentReviewEnabled: admin && envFlag('VITE_EXPERIENCE_LAB_V2_COMPONENT_REVIEW', true),
+    experienceLabV2ComponentReviewEnabled: admin && envFlag('VITE_EXPERIENCE_LAB_V2_COMPONENT_REVIEW', false),
   };
 }
 

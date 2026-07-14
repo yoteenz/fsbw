@@ -90,7 +90,7 @@ function componentVersionName(id: ComponentReviewId): string {
 
 export function defaultComponentReviewState(): ComponentReviewState {
   return {
-    enabled: true,
+    enabled: false,
     activeComponent: DEFAULT_REVIEW_COMPONENT,
     lockedVersions: { ...LOCKED_COMPONENT_VERSIONS },
   };
