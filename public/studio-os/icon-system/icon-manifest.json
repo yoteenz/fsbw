@@ -1,0 +1,2182 @@
+{
+  "schemaVersion": "studio-world-icon-manifest.v1",
+  "generatedAt": "2026-07-14T22:40:23.500Z",
+  "iconCount": 80,
+  "categories": [
+    {
+      "id": "navigation",
+      "title": "Navigation",
+      "description": "Wayfinding, menus, breadcrumbs, spatial anchors",
+      "colorToken": "--sw-icon-cat-navigation",
+      "priority": 100,
+      "iconCount": 21,
+      "futureCount": 0,
+      "tags": [
+        "nav",
+        "dock",
+        "hud"
+      ]
+    },
+    {
+      "id": "workspace",
+      "title": "Workspace",
+      "description": "Departments, environments, workbench tools",
+      "colorToken": "--sw-icon-cat-workspace",
+      "priority": 95,
+      "iconCount": 24,
+      "futureCount": 0,
+      "tags": [
+        "department",
+        "workbench"
+      ]
+    },
+    {
+      "id": "ai",
+      "title": "AI",
+      "description": "Genesis, generation, model orchestration",
+      "colorToken": "--sw-icon-cat-ai",
+      "priority": 90,
+      "iconCount": 0,
+      "futureCount": 0,
+      "tags": [
+        "genesis",
+        "generation"
+      ]
+    },
+    {
+      "id": "production",
+      "title": "Production",
+      "description": "Pipeline, jobs, outputs, manufacturing",
+      "colorToken": "--sw-icon-cat-production",
+      "priority": 88,
+      "iconCount": 0,
+      "futureCount": 0,
+      "tags": [
+        "pipeline",
+        "work-order"
+      ]
+    },
+    {
+      "id": "review",
+      "title": "Review",
+      "description": "Founder review, approval, revision",
+      "colorToken": "--sw-icon-cat-review",
+      "priority": 85,
+      "iconCount": 13,
+      "futureCount": 0,
+      "tags": [
+        "approval",
+        "founder"
+      ]
+    },
+    {
+      "id": "assets",
+      "title": "Assets",
+      "description": "Blueprints, materials, manifests, references",
+      "colorToken": "--sw-icon-cat-assets",
+      "priority": 82,
+      "iconCount": 6,
+      "futureCount": 0,
+      "tags": [
+        "blueprint",
+        "material"
+      ]
+    },
+    {
+      "id": "marketplace",
+      "title": "Marketplace",
+      "description": "Listings, commerce, distribution",
+      "colorToken": "--sw-icon-cat-marketplace",
+      "priority": 80,
+      "iconCount": 0,
+      "futureCount": 0,
+      "tags": [
+        "commerce"
+      ]
+    },
+    {
+      "id": "collaboration",
+      "title": "Collaboration",
+      "description": "Teams, comments, sharing",
+      "colorToken": "--sw-icon-cat-collaboration",
+      "priority": 78,
+      "iconCount": 1,
+      "futureCount": 0,
+      "tags": [
+        "team",
+        "share"
+      ]
+    },
+    {
+      "id": "devices",
+      "title": "Devices",
+      "description": "Desktop, mobile, tablet, TV outputs",
+      "colorToken": "--sw-icon-cat-devices",
+      "priority": 75,
+      "iconCount": 0,
+      "futureCount": 0,
+      "tags": [
+        "responsive"
+      ]
+    },
+    {
+      "id": "system",
+      "title": "System",
+      "description": "Settings, diagnostics, terminal",
+      "colorToken": "--sw-icon-cat-system",
+      "priority": 72,
+      "iconCount": 2,
+      "futureCount": 0,
+      "tags": [
+        "settings",
+        "diagnostics"
+      ]
+    },
+    {
+      "id": "analytics",
+      "title": "Analytics",
+      "description": "Metrics, performance, dashboards",
+      "colorToken": "--sw-icon-cat-analytics",
+      "priority": 70,
+      "iconCount": 3,
+      "futureCount": 0,
+      "tags": [
+        "metrics"
+      ]
+    },
+    {
+      "id": "automation",
+      "title": "Automation",
+      "description": "Scheduler, workers, orchestration",
+      "colorToken": "--sw-icon-cat-automation",
+      "priority": 68,
+      "iconCount": 0,
+      "futureCount": 0,
+      "tags": [
+        "scheduler"
+      ]
+    },
+    {
+      "id": "cloud",
+      "title": "Cloud",
+      "description": "Sync, CDN, remote assets",
+      "colorToken": "--sw-icon-cat-cloud",
+      "priority": 65,
+      "iconCount": 2,
+      "futureCount": 0,
+      "tags": [
+        "sync",
+        "cdn"
+      ]
+    },
+    {
+      "id": "security",
+      "title": "Security",
+      "description": "Permissions, locks, governance",
+      "colorToken": "--sw-icon-cat-security",
+      "priority": 63,
+      "iconCount": 3,
+      "futureCount": 0,
+      "tags": [
+        "permissions"
+      ]
+    },
+    {
+      "id": "media",
+      "title": "Media",
+      "description": "Playback, capture, fullscreen",
+      "colorToken": "--sw-icon-cat-media",
+      "priority": 60,
+      "iconCount": 4,
+      "futureCount": 0,
+      "tags": [
+        "playback"
+      ]
+    },
+    {
+      "id": "brand",
+      "title": "Brand",
+      "description": "Frontal Slayer, Studio identity",
+      "colorToken": "--sw-icon-cat-brand",
+      "priority": 58,
+      "iconCount": 0,
+      "futureCount": 0,
+      "tags": [
+        "identity"
+      ]
+    },
+    {
+      "id": "studio-world-exclusive",
+      "title": "Studio World Exclusive",
+      "description": "Canonical Studio World-only symbols",
+      "colorToken": "--sw-icon-cat-exclusive",
+      "priority": 55,
+      "iconCount": 1,
+      "futureCount": 0,
+      "tags": [
+        "canonical"
+      ]
+    },
+    {
+      "id": "future",
+      "title": "Future",
+      "description": "Reserved slots for upcoming symbol families",
+      "colorToken": "--sw-icon-cat-future",
+      "priority": 10,
+      "iconCount": 0,
+      "futureCount": 0,
+      "tags": [
+        "reserved"
+      ]
+    }
+  ],
+  "states": [
+    "default",
+    "hover",
+    "active",
+    "focused",
+    "selected",
+    "pressed",
+    "disabled",
+    "loading",
+    "generating",
+    "approved",
+    "rejected",
+    "archived",
+    "locked",
+    "premium",
+    "ai",
+    "future"
+  ],
+  "themes": [
+    "studio-dark",
+    "studio-light",
+    "luxury-gold",
+    "monochrome",
+    "presentation",
+    "accessibility"
+  ],
+  "icons": [
+    {
+      "id": "experienceLab",
+      "category": "workspace",
+      "displayName": "Experience Lab",
+      "version": "certified",
+      "certification": "qa",
+      "status": "active",
+      "provider": "experience-lab-v6",
+      "defaultAsset": "src/assets/studio-world/experience-lab/icons/generated-v6/experience-lab.png",
+      "pngPath": "src/assets/studio-world/experience-lab/icons/generated-v6/experience-lab.png",
+      "svgPath": null,
+      "states": [
+        "default"
+      ],
+      "themes": [
+        "studio-dark",
+        "studio-light",
+        "monochrome",
+        "presentation",
+        "accessibility"
+      ],
+      "checksum": "473401c0",
+      "usageCount": 0
+    },
+    {
+      "id": "blueprint",
+      "category": "assets",
+      "displayName": "Blueprint",
+      "version": "certified",
+      "certification": "qa",
+      "status": "active",
+      "provider": "experience-lab-v6",
+      "defaultAsset": "src/assets/studio-world/experience-lab/icons/generated-v6/blueprint.png",
+      "pngPath": "src/assets/studio-world/experience-lab/icons/generated-v6/blueprint.png",
+      "svgPath": null,
+      "states": [
+        "default"
+      ],
+      "themes": [
+        "studio-dark",
+        "studio-light",
+        "monochrome",
+        "presentation",
+        "accessibility"
+      ],
+      "checksum": "290c9ad0",
+      "usageCount": 0
+    },
+    {
+      "id": "construction",
+      "category": "assets",
+      "displayName": "Construction",
+      "version": "certified",
+      "certification": "qa",
+      "status": "active",
+      "provider": "experience-lab-v6",
+      "defaultAsset": "src/assets/studio-world/experience-lab/icons/generated-v6/construction.png",
+      "pngPath": "src/assets/studio-world/experience-lab/icons/generated-v6/construction.png",
+      "svgPath": null,
+      "states": [
+        "default"
+      ],
+      "themes": [
+        "studio-dark",
+        "studio-light",
+        "monochrome",
+        "presentation",
+        "accessibility"
+      ],
+      "checksum": "4e3371be",
+      "usageCount": 0
+    },
+    {
+      "id": "materials",
+      "category": "assets",
+      "displayName": "Materials",
+      "version": "certified",
+      "certification": "qa",
+      "status": "active",
+      "provider": "experience-lab-v6",
+      "defaultAsset": "src/assets/studio-world/experience-lab/icons/generated-v6/materials.png",
+      "pngPath": "src/assets/studio-world/experience-lab/icons/generated-v6/materials.png",
+      "svgPath": null,
+      "states": [
+        "default"
+      ],
+      "themes": [
+        "studio-dark",
+        "studio-light",
+        "monochrome",
+        "presentation",
+        "accessibility"
+      ],
+      "checksum": "042bff49",
+      "usageCount": 0
+    },
+    {
+      "id": "lighting",
+      "category": "workspace",
+      "displayName": "Lighting",
+      "version": "certified",
+      "certification": "qa",
+      "status": "active",
+      "provider": "experience-lab-v6",
+      "defaultAsset": "src/assets/studio-world/experience-lab/icons/generated-v6/lighting.png",
+      "pngPath": "src/assets/studio-world/experience-lab/icons/generated-v6/lighting.png",
+      "svgPath": null,
+      "states": [
+        "default"
+      ],
+      "themes": [
+        "studio-dark",
+        "studio-light",
+        "monochrome",
+        "presentation",
+        "accessibility"
+      ],
+      "checksum": "4b1c6fd9",
+      "usageCount": 0
+    },
+    {
+      "id": "camera",
+      "category": "workspace",
+      "displayName": "Camera",
+      "version": "certified",
+      "certification": "qa",
+      "status": "active",
+      "provider": "experience-lab-v6",
+      "defaultAsset": "src/assets/studio-world/experience-lab/icons/generated-v6/camera.png",
+      "pngPath": "src/assets/studio-world/experience-lab/icons/generated-v6/camera.png",
+      "svgPath": null,
+      "states": [
+        "default"
+      ],
+      "themes": [
+        "studio-dark",
+        "studio-light",
+        "monochrome",
+        "presentation",
+        "accessibility"
+      ],
+      "checksum": "14a31912",
+      "usageCount": 0
+    },
+    {
+      "id": "splitView",
+      "category": "workspace",
+      "displayName": "Split view",
+      "version": "certified",
+      "certification": "qa",
+      "status": "active",
+      "provider": "experience-lab-v6",
+      "defaultAsset": "src/assets/studio-world/experience-lab/icons/generated-v6/split-view.png",
+      "pngPath": "src/assets/studio-world/experience-lab/icons/generated-v6/split-view.png",
+      "svgPath": null,
+      "states": [
+        "default"
+      ],
+      "themes": [
+        "studio-dark",
+        "studio-light",
+        "monochrome",
+        "presentation",
+        "accessibility"
+      ],
+      "checksum": "4d193864",
+      "usageCount": 0
+    },
+    {
+      "id": "founderRender",
+      "category": "workspace",
+      "displayName": "Founder render",
+      "version": "certified",
+      "certification": "qa",
+      "status": "active",
+      "provider": "experience-lab-v6",
+      "defaultAsset": "src/assets/studio-world/experience-lab/icons/generated-v6/founder-render.png",
+      "pngPath": "src/assets/studio-world/experience-lab/icons/generated-v6/founder-render.png",
+      "svgPath": null,
+      "states": [
+        "default"
+      ],
+      "themes": [
+        "studio-dark",
+        "studio-light",
+        "monochrome",
+        "presentation",
+        "accessibility"
+      ],
+      "checksum": "5a56e3e2",
+      "usageCount": 0
+    },
+    {
+      "id": "projects",
+      "category": "navigation",
+      "displayName": "Projects",
+      "version": "certified",
+      "certification": "qa",
+      "status": "active",
+      "provider": "experience-lab-v6",
+      "defaultAsset": "src/assets/studio-world/experience-lab/icons/generated-v6/projects.png",
+      "pngPath": "src/assets/studio-world/experience-lab/icons/generated-v6/projects.png",
+      "svgPath": null,
+      "states": [
+        "default"
+      ],
+      "themes": [
+        "studio-dark",
+        "studio-light",
+        "monochrome",
+        "presentation",
+        "accessibility"
+      ],
+      "checksum": "71f4c607",
+      "usageCount": 0
+    },
+    {
+      "id": "history",
+      "category": "review",
+      "displayName": "History",
+      "version": "certified",
+      "certification": "qa",
+      "status": "active",
+      "provider": "experience-lab-v6",
+      "defaultAsset": "src/assets/studio-world/experience-lab/icons/generated-v6/history.png",
+      "pngPath": "src/assets/studio-world/experience-lab/icons/generated-v6/history.png",
+      "svgPath": null,
+      "states": [
+        "default"
+      ],
+      "themes": [
+        "studio-dark",
+        "studio-light",
+        "monochrome",
+        "presentation",
+        "accessibility"
+      ],
+      "checksum": "7b8a6571",
+      "usageCount": 0
+    },
+    {
+      "id": "revisions",
+      "category": "review",
+      "displayName": "Revisions",
+      "version": "certified",
+      "certification": "qa",
+      "status": "active",
+      "provider": "experience-lab-v6",
+      "defaultAsset": "src/assets/studio-world/experience-lab/icons/generated-v6/revisions.png",
+      "pngPath": "src/assets/studio-world/experience-lab/icons/generated-v6/revisions.png",
+      "svgPath": null,
+      "states": [
+        "default"
+      ],
+      "themes": [
+        "studio-dark",
+        "studio-light",
+        "monochrome",
+        "presentation",
+        "accessibility"
+      ],
+      "checksum": "35f48915",
+      "usageCount": 0
+    },
+    {
+      "id": "milestones",
+      "category": "navigation",
+      "displayName": "Milestones",
+      "version": "certified",
+      "certification": "qa",
+      "status": "active",
+      "provider": "experience-lab-v6",
+      "defaultAsset": "src/assets/studio-world/experience-lab/icons/generated-v6/milestones.png",
+      "pngPath": "src/assets/studio-world/experience-lab/icons/generated-v6/milestones.png",
+      "svgPath": null,
+      "states": [
+        "default"
+      ],
+      "themes": [
+        "studio-dark",
+        "studio-light",
+        "monochrome",
+        "presentation",
+        "accessibility"
+      ],
+      "checksum": "4f3bbbd0",
+      "usageCount": 0
+    },
+    {
+      "id": "analytics",
+      "category": "analytics",
+      "displayName": "Analytics",
+      "version": "certified",
+      "certification": "qa",
+      "status": "active",
+      "provider": "experience-lab-v6",
+      "defaultAsset": "src/assets/studio-world/experience-lab/icons/generated-v6/analytics.png",
+      "pngPath": "src/assets/studio-world/experience-lab/icons/generated-v6/analytics.png",
+      "svgPath": null,
+      "states": [
+        "default"
+      ],
+      "themes": [
+        "studio-dark",
+        "studio-light",
+        "monochrome",
+        "presentation",
+        "accessibility"
+      ],
+      "checksum": "7ece37a3",
+      "usageCount": 0
+    },
+    {
+      "id": "performance",
+      "category": "analytics",
+      "displayName": "Performance",
+      "version": "certified",
+      "certification": "qa",
+      "status": "active",
+      "provider": "experience-lab-v6",
+      "defaultAsset": "src/assets/studio-world/experience-lab/icons/generated-v6/performance.png",
+      "pngPath": "src/assets/studio-world/experience-lab/icons/generated-v6/performance.png",
+      "svgPath": null,
+      "states": [
+        "default"
+      ],
+      "themes": [
+        "studio-dark",
+        "studio-light",
+        "monochrome",
+        "presentation",
+        "accessibility"
+      ],
+      "checksum": "73e3ca8d",
+      "usageCount": 0
+    },
+    {
+      "id": "issues",
+      "category": "workspace",
+      "displayName": "Issues",
+      "version": "certified",
+      "certification": "qa",
+      "status": "active",
+      "provider": "experience-lab-v6",
+      "defaultAsset": "src/assets/studio-world/experience-lab/icons/generated-v6/issues.png",
+      "pngPath": "src/assets/studio-world/experience-lab/icons/generated-v6/issues.png",
+      "svgPath": null,
+      "states": [
+        "default"
+      ],
+      "themes": [
+        "studio-dark",
+        "studio-light",
+        "monochrome",
+        "presentation",
+        "accessibility"
+      ],
+      "checksum": "1c699c79",
+      "usageCount": 0
+    },
+    {
+      "id": "approved",
+      "category": "review",
+      "displayName": "Approved",
+      "version": "certified",
+      "certification": "qa",
+      "status": "active",
+      "provider": "experience-lab-v6",
+      "defaultAsset": "src/assets/studio-world/experience-lab/icons/generated-v6/approved.png",
+      "pngPath": "src/assets/studio-world/experience-lab/icons/generated-v6/approved.png",
+      "svgPath": null,
+      "states": [
+        "default"
+      ],
+      "themes": [
+        "studio-dark",
+        "studio-light",
+        "monochrome",
+        "presentation",
+        "accessibility"
+      ],
+      "checksum": "11265464",
+      "usageCount": 0
+    },
+    {
+      "id": "playback",
+      "category": "review",
+      "displayName": "Play",
+      "version": "certified",
+      "certification": "qa",
+      "status": "active",
+      "provider": "experience-lab-v6",
+      "defaultAsset": "src/assets/studio-world/experience-lab/icons/generated-v6/playback.png",
+      "pngPath": "src/assets/studio-world/experience-lab/icons/generated-v6/playback.png",
+      "svgPath": null,
+      "states": [
+        "default"
+      ],
+      "themes": [
+        "studio-dark",
+        "studio-light",
+        "monochrome",
+        "presentation",
+        "accessibility"
+      ],
+      "checksum": "325f55b8",
+      "usageCount": 0
+    },
+    {
+      "id": "pause",
+      "category": "review",
+      "displayName": "Pause",
+      "version": "certified",
+      "certification": "qa",
+      "status": "active",
+      "provider": "experience-lab-v6",
+      "defaultAsset": "src/assets/studio-world/experience-lab/icons/generated-v6/pause.png",
+      "pngPath": "src/assets/studio-world/experience-lab/icons/generated-v6/pause.png",
+      "svgPath": null,
+      "states": [
+        "default"
+      ],
+      "themes": [
+        "studio-dark",
+        "studio-light",
+        "monochrome",
+        "presentation",
+        "accessibility"
+      ],
+      "checksum": "53b43b6d",
+      "usageCount": 0
+    },
+    {
+      "id": "stop",
+      "category": "media",
+      "displayName": "Stop",
+      "version": "certified",
+      "certification": "qa",
+      "status": "active",
+      "provider": "experience-lab-v6",
+      "defaultAsset": "src/assets/studio-world/experience-lab/icons/generated-v6/stop.png",
+      "pngPath": "src/assets/studio-world/experience-lab/icons/generated-v6/stop.png",
+      "svgPath": null,
+      "states": [
+        "default"
+      ],
+      "themes": [
+        "studio-dark",
+        "studio-light",
+        "monochrome",
+        "presentation",
+        "accessibility"
+      ],
+      "checksum": "216672f1",
+      "usageCount": 0
+    },
+    {
+      "id": "next",
+      "category": "review",
+      "displayName": "Next",
+      "version": "certified",
+      "certification": "qa",
+      "status": "active",
+      "provider": "experience-lab-v6",
+      "defaultAsset": "src/assets/studio-world/experience-lab/icons/generated-v6/next.png",
+      "pngPath": "src/assets/studio-world/experience-lab/icons/generated-v6/next.png",
+      "svgPath": null,
+      "states": [
+        "default"
+      ],
+      "themes": [
+        "studio-dark",
+        "studio-light",
+        "monochrome",
+        "presentation",
+        "accessibility"
+      ],
+      "checksum": "3af175e0",
+      "usageCount": 0
+    },
+    {
+      "id": "previous",
+      "category": "review",
+      "displayName": "Previous",
+      "version": "certified",
+      "certification": "qa",
+      "status": "active",
+      "provider": "experience-lab-v6",
+      "defaultAsset": "src/assets/studio-world/experience-lab/icons/generated-v6/previous.png",
+      "pngPath": "src/assets/studio-world/experience-lab/icons/generated-v6/previous.png",
+      "svgPath": null,
+      "states": [
+        "default"
+      ],
+      "themes": [
+        "studio-dark",
+        "studio-light",
+        "monochrome",
+        "presentation",
+        "accessibility"
+      ],
+      "checksum": "7ef62f5c",
+      "usageCount": 0
+    },
+    {
+      "id": "loop",
+      "category": "media",
+      "displayName": "Loop",
+      "version": "certified",
+      "certification": "qa",
+      "status": "active",
+      "provider": "experience-lab-v6",
+      "defaultAsset": "src/assets/studio-world/experience-lab/icons/generated-v6/loop.png",
+      "pngPath": "src/assets/studio-world/experience-lab/icons/generated-v6/loop.png",
+      "svgPath": null,
+      "states": [
+        "default"
+      ],
+      "themes": [
+        "studio-dark",
+        "studio-light",
+        "monochrome",
+        "presentation",
+        "accessibility"
+      ],
+      "checksum": "297ea80f",
+      "usageCount": 0
+    },
+    {
+      "id": "capture",
+      "category": "media",
+      "displayName": "Capture",
+      "version": "certified",
+      "certification": "qa",
+      "status": "active",
+      "provider": "experience-lab-v6",
+      "defaultAsset": "src/assets/studio-world/experience-lab/icons/generated-v6/capture.png",
+      "pngPath": "src/assets/studio-world/experience-lab/icons/generated-v6/capture.png",
+      "svgPath": null,
+      "states": [
+        "default"
+      ],
+      "themes": [
+        "studio-dark",
+        "studio-light",
+        "monochrome",
+        "presentation",
+        "accessibility"
+      ],
+      "checksum": "0dfe5ca3",
+      "usageCount": 0
+    },
+    {
+      "id": "fullscreen",
+      "category": "media",
+      "displayName": "Fullscreen",
+      "version": "certified",
+      "certification": "qa",
+      "status": "active",
+      "provider": "experience-lab-v6",
+      "defaultAsset": "src/assets/studio-world/experience-lab/icons/generated-v6/fullscreen.png",
+      "pngPath": "src/assets/studio-world/experience-lab/icons/generated-v6/fullscreen.png",
+      "svgPath": null,
+      "states": [
+        "default"
+      ],
+      "themes": [
+        "studio-dark",
+        "studio-light",
+        "monochrome",
+        "presentation",
+        "accessibility"
+      ],
+      "checksum": "66d69c18",
+      "usageCount": 0
+    },
+    {
+      "id": "zoomIn",
+      "category": "workspace",
+      "displayName": "Zoom in",
+      "version": "certified",
+      "certification": "qa",
+      "status": "active",
+      "provider": "experience-lab-v6",
+      "defaultAsset": "src/assets/studio-world/experience-lab/icons/generated-v6/zoom-in.png",
+      "pngPath": "src/assets/studio-world/experience-lab/icons/generated-v6/zoom-in.png",
+      "svgPath": null,
+      "states": [
+        "default"
+      ],
+      "themes": [
+        "studio-dark",
+        "studio-light",
+        "monochrome",
+        "presentation",
+        "accessibility"
+      ],
+      "checksum": "4a635173",
+      "usageCount": 0
+    },
+    {
+      "id": "zoomOut",
+      "category": "workspace",
+      "displayName": "Zoom out",
+      "version": "certified",
+      "certification": "qa",
+      "status": "active",
+      "provider": "experience-lab-v6",
+      "defaultAsset": "src/assets/studio-world/experience-lab/icons/generated-v6/zoom-out.png",
+      "pngPath": "src/assets/studio-world/experience-lab/icons/generated-v6/zoom-out.png",
+      "svgPath": null,
+      "states": [
+        "default"
+      ],
+      "themes": [
+        "studio-dark",
+        "studio-light",
+        "monochrome",
+        "presentation",
+        "accessibility"
+      ],
+      "checksum": "4e0ac408",
+      "usageCount": 0
+    },
+    {
+      "id": "pan",
+      "category": "workspace",
+      "displayName": "Pan",
+      "version": "certified",
+      "certification": "qa",
+      "status": "active",
+      "provider": "experience-lab-v6",
+      "defaultAsset": "src/assets/studio-world/experience-lab/icons/generated-v6/pan.png",
+      "pngPath": "src/assets/studio-world/experience-lab/icons/generated-v6/pan.png",
+      "svgPath": null,
+      "states": [
+        "default"
+      ],
+      "themes": [
+        "studio-dark",
+        "studio-light",
+        "monochrome",
+        "presentation",
+        "accessibility"
+      ],
+      "checksum": "3b4496ba",
+      "usageCount": 0
+    },
+    {
+      "id": "fitView",
+      "category": "workspace",
+      "displayName": "Fit view",
+      "version": "certified",
+      "certification": "qa",
+      "status": "active",
+      "provider": "experience-lab-v6",
+      "defaultAsset": "src/assets/studio-world/experience-lab/icons/generated-v6/fit-view.png",
+      "pngPath": "src/assets/studio-world/experience-lab/icons/generated-v6/fit-view.png",
+      "svgPath": null,
+      "states": [
+        "default"
+      ],
+      "themes": [
+        "studio-dark",
+        "studio-light",
+        "monochrome",
+        "presentation",
+        "accessibility"
+      ],
+      "checksum": "27e4dff3",
+      "usageCount": 0
+    },
+    {
+      "id": "orbit",
+      "category": "navigation",
+      "displayName": "Orbit",
+      "version": "certified",
+      "certification": "qa",
+      "status": "active",
+      "provider": "experience-lab-v6",
+      "defaultAsset": "src/assets/studio-world/experience-lab/icons/generated-v6/orbit.png",
+      "pngPath": "src/assets/studio-world/experience-lab/icons/generated-v6/orbit.png",
+      "svgPath": null,
+      "states": [
+        "default"
+      ],
+      "themes": [
+        "studio-dark",
+        "studio-light",
+        "monochrome",
+        "presentation",
+        "accessibility"
+      ],
+      "checksum": "1e4f1ee7",
+      "usageCount": 0
+    },
+    {
+      "id": "perspective",
+      "category": "navigation",
+      "displayName": "Perspective",
+      "version": "certified",
+      "certification": "qa",
+      "status": "active",
+      "provider": "experience-lab-v6",
+      "defaultAsset": "src/assets/studio-world/experience-lab/icons/generated-v6/perspective.png",
+      "pngPath": "src/assets/studio-world/experience-lab/icons/generated-v6/perspective.png",
+      "svgPath": null,
+      "states": [
+        "default"
+      ],
+      "themes": [
+        "studio-dark",
+        "studio-light",
+        "monochrome",
+        "presentation",
+        "accessibility"
+      ],
+      "checksum": "0a688d99",
+      "usageCount": 0
+    },
+    {
+      "id": "toggleUi",
+      "category": "workspace",
+      "displayName": "Toggle UI",
+      "version": "certified",
+      "certification": "qa",
+      "status": "active",
+      "provider": "experience-lab-v6",
+      "defaultAsset": "src/assets/studio-world/experience-lab/icons/generated-v6/toggle-ui.png",
+      "pngPath": "src/assets/studio-world/experience-lab/icons/generated-v6/toggle-ui.png",
+      "svgPath": null,
+      "states": [
+        "default"
+      ],
+      "themes": [
+        "studio-dark",
+        "studio-light",
+        "monochrome",
+        "presentation",
+        "accessibility"
+      ],
+      "checksum": "35fe1fa1",
+      "usageCount": 0
+    },
+    {
+      "id": "grid",
+      "category": "workspace",
+      "displayName": "Grid",
+      "version": "certified",
+      "certification": "qa",
+      "status": "active",
+      "provider": "experience-lab-v6",
+      "defaultAsset": "src/assets/studio-world/experience-lab/icons/generated-v6/grid.png",
+      "pngPath": "src/assets/studio-world/experience-lab/icons/generated-v6/grid.png",
+      "svgPath": null,
+      "states": [
+        "default"
+      ],
+      "themes": [
+        "studio-dark",
+        "studio-light",
+        "monochrome",
+        "presentation",
+        "accessibility"
+      ],
+      "checksum": "2fb2e8d3",
+      "usageCount": 0
+    },
+    {
+      "id": "hide",
+      "category": "workspace",
+      "displayName": "Hide",
+      "version": "certified",
+      "certification": "qa",
+      "status": "active",
+      "provider": "experience-lab-v6",
+      "defaultAsset": "src/assets/studio-world/experience-lab/icons/generated-v6/hide.png",
+      "pngPath": "src/assets/studio-world/experience-lab/icons/generated-v6/hide.png",
+      "svgPath": null,
+      "states": [
+        "default"
+      ],
+      "themes": [
+        "studio-dark",
+        "studio-light",
+        "monochrome",
+        "presentation",
+        "accessibility"
+      ],
+      "checksum": "3d320a4f",
+      "usageCount": 0
+    },
+    {
+      "id": "lock",
+      "category": "workspace",
+      "displayName": "Lock",
+      "version": "certified",
+      "certification": "qa",
+      "status": "active",
+      "provider": "experience-lab-v6",
+      "defaultAsset": "src/assets/studio-world/experience-lab/icons/generated-v6/lock.png",
+      "pngPath": "src/assets/studio-world/experience-lab/icons/generated-v6/lock.png",
+      "svgPath": null,
+      "states": [
+        "default"
+      ],
+      "themes": [
+        "studio-dark",
+        "studio-light",
+        "monochrome",
+        "presentation",
+        "accessibility"
+      ],
+      "checksum": "4702d4a8",
+      "usageCount": 0
+    },
+    {
+      "id": "unlock",
+      "category": "workspace",
+      "displayName": "Unlock",
+      "version": "certified",
+      "certification": "qa",
+      "status": "active",
+      "provider": "experience-lab-v6",
+      "defaultAsset": "src/assets/studio-world/experience-lab/icons/generated-v6/unlock.png",
+      "pngPath": "src/assets/studio-world/experience-lab/icons/generated-v6/unlock.png",
+      "svgPath": null,
+      "states": [
+        "default"
+      ],
+      "themes": [
+        "studio-dark",
+        "studio-light",
+        "monochrome",
+        "presentation",
+        "accessibility"
+      ],
+      "checksum": "4d9ea9d1",
+      "usageCount": 0
+    },
+    {
+      "id": "duplicate",
+      "category": "navigation",
+      "displayName": "Duplicate",
+      "version": "certified",
+      "certification": "qa",
+      "status": "active",
+      "provider": "experience-lab-v6",
+      "defaultAsset": "src/assets/studio-world/experience-lab/icons/generated-v6/duplicate.png",
+      "pngPath": "src/assets/studio-world/experience-lab/icons/generated-v6/duplicate.png",
+      "svgPath": null,
+      "states": [
+        "default"
+      ],
+      "themes": [
+        "studio-dark",
+        "studio-light",
+        "monochrome",
+        "presentation",
+        "accessibility"
+      ],
+      "checksum": "43c583a8",
+      "usageCount": 0
+    },
+    {
+      "id": "delete",
+      "category": "navigation",
+      "displayName": "Delete",
+      "version": "certified",
+      "certification": "qa",
+      "status": "active",
+      "provider": "experience-lab-v6",
+      "defaultAsset": "src/assets/studio-world/experience-lab/icons/generated-v6/delete.png",
+      "pngPath": "src/assets/studio-world/experience-lab/icons/generated-v6/delete.png",
+      "svgPath": null,
+      "states": [
+        "default"
+      ],
+      "themes": [
+        "studio-dark",
+        "studio-light",
+        "monochrome",
+        "presentation",
+        "accessibility"
+      ],
+      "checksum": "2efde828",
+      "usageCount": 0
+    },
+    {
+      "id": "edit",
+      "category": "workspace",
+      "displayName": "Edit",
+      "version": "certified",
+      "certification": "qa",
+      "status": "active",
+      "provider": "experience-lab-v6",
+      "defaultAsset": "src/assets/studio-world/experience-lab/icons/generated-v6/edit.png",
+      "pngPath": "src/assets/studio-world/experience-lab/icons/generated-v6/edit.png",
+      "svgPath": null,
+      "states": [
+        "default"
+      ],
+      "themes": [
+        "studio-dark",
+        "studio-light",
+        "monochrome",
+        "presentation",
+        "accessibility"
+      ],
+      "checksum": "236e9417",
+      "usageCount": 0
+    },
+    {
+      "id": "settings",
+      "category": "workspace",
+      "displayName": "Settings",
+      "version": "certified",
+      "certification": "qa",
+      "status": "active",
+      "provider": "experience-lab-v6",
+      "defaultAsset": "src/assets/studio-world/experience-lab/icons/generated-v6/settings.png",
+      "pngPath": "src/assets/studio-world/experience-lab/icons/generated-v6/settings.png",
+      "svgPath": null,
+      "states": [
+        "default"
+      ],
+      "themes": [
+        "studio-dark",
+        "studio-light",
+        "monochrome",
+        "presentation",
+        "accessibility"
+      ],
+      "checksum": "26979ab0",
+      "usageCount": 0
+    },
+    {
+      "id": "filter",
+      "category": "workspace",
+      "displayName": "Filter",
+      "version": "certified",
+      "certification": "qa",
+      "status": "active",
+      "provider": "experience-lab-v6",
+      "defaultAsset": "src/assets/studio-world/experience-lab/icons/generated-v6/filter.png",
+      "pngPath": "src/assets/studio-world/experience-lab/icons/generated-v6/filter.png",
+      "svgPath": null,
+      "states": [
+        "default"
+      ],
+      "themes": [
+        "studio-dark",
+        "studio-light",
+        "monochrome",
+        "presentation",
+        "accessibility"
+      ],
+      "checksum": "6135aa7b",
+      "usageCount": 0
+    },
+    {
+      "id": "export",
+      "category": "navigation",
+      "displayName": "Export",
+      "version": "certified",
+      "certification": "qa",
+      "status": "active",
+      "provider": "experience-lab-v6",
+      "defaultAsset": "src/assets/studio-world/experience-lab/icons/generated-v6/export.png",
+      "pngPath": "src/assets/studio-world/experience-lab/icons/generated-v6/export.png",
+      "svgPath": null,
+      "states": [
+        "default"
+      ],
+      "themes": [
+        "studio-dark",
+        "studio-light",
+        "monochrome",
+        "presentation",
+        "accessibility"
+      ],
+      "checksum": "4b8467bf",
+      "usageCount": 0
+    },
+    {
+      "id": "import",
+      "category": "navigation",
+      "displayName": "Import",
+      "version": "certified",
+      "certification": "qa",
+      "status": "active",
+      "provider": "experience-lab-v6",
+      "defaultAsset": "src/assets/studio-world/experience-lab/icons/generated-v6/import.png",
+      "pngPath": "src/assets/studio-world/experience-lab/icons/generated-v6/import.png",
+      "svgPath": null,
+      "states": [
+        "default"
+      ],
+      "themes": [
+        "studio-dark",
+        "studio-light",
+        "monochrome",
+        "presentation",
+        "accessibility"
+      ],
+      "checksum": "71387992",
+      "usageCount": 0
+    },
+    {
+      "id": "cloudSync",
+      "category": "cloud",
+      "displayName": "Cloud sync",
+      "version": "certified",
+      "certification": "qa",
+      "status": "active",
+      "provider": "experience-lab-v6",
+      "defaultAsset": "src/assets/studio-world/experience-lab/icons/generated-v6/cloud-sync.png",
+      "pngPath": "src/assets/studio-world/experience-lab/icons/generated-v6/cloud-sync.png",
+      "svgPath": null,
+      "states": [
+        "default"
+      ],
+      "themes": [
+        "studio-dark",
+        "studio-light",
+        "monochrome",
+        "presentation",
+        "accessibility"
+      ],
+      "checksum": "4676f533",
+      "usageCount": 0
+    },
+    {
+      "id": "database",
+      "category": "cloud",
+      "displayName": "Database",
+      "version": "certified",
+      "certification": "qa",
+      "status": "active",
+      "provider": "experience-lab-v6",
+      "defaultAsset": "src/assets/studio-world/experience-lab/icons/generated-v6/database.png",
+      "pngPath": "src/assets/studio-world/experience-lab/icons/generated-v6/database.png",
+      "svgPath": null,
+      "states": [
+        "default"
+      ],
+      "themes": [
+        "studio-dark",
+        "studio-light",
+        "monochrome",
+        "presentation",
+        "accessibility"
+      ],
+      "checksum": "17983e58",
+      "usageCount": 0
+    },
+    {
+      "id": "link",
+      "category": "navigation",
+      "displayName": "Link",
+      "version": "certified",
+      "certification": "qa",
+      "status": "active",
+      "provider": "experience-lab-v6",
+      "defaultAsset": "src/assets/studio-world/experience-lab/icons/generated-v6/link.png",
+      "pngPath": "src/assets/studio-world/experience-lab/icons/generated-v6/link.png",
+      "svgPath": null,
+      "states": [
+        "default"
+      ],
+      "themes": [
+        "studio-dark",
+        "studio-light",
+        "monochrome",
+        "presentation",
+        "accessibility"
+      ],
+      "checksum": "737babf9",
+      "usageCount": 0
+    },
+    {
+      "id": "share",
+      "category": "collaboration",
+      "displayName": "Share",
+      "version": "certified",
+      "certification": "qa",
+      "status": "active",
+      "provider": "experience-lab-v6",
+      "defaultAsset": "src/assets/studio-world/experience-lab/icons/generated-v6/share.png",
+      "pngPath": "src/assets/studio-world/experience-lab/icons/generated-v6/share.png",
+      "svgPath": null,
+      "states": [
+        "default"
+      ],
+      "themes": [
+        "studio-dark",
+        "studio-light",
+        "monochrome",
+        "presentation",
+        "accessibility"
+      ],
+      "checksum": "707a9184",
+      "usageCount": 0
+    },
+    {
+      "id": "users",
+      "category": "navigation",
+      "displayName": "User",
+      "version": "certified",
+      "certification": "qa",
+      "status": "active",
+      "provider": "experience-lab-v6",
+      "defaultAsset": "src/assets/studio-world/experience-lab/icons/generated-v6/users.png",
+      "pngPath": "src/assets/studio-world/experience-lab/icons/generated-v6/users.png",
+      "svgPath": null,
+      "states": [
+        "default"
+      ],
+      "themes": [
+        "studio-dark",
+        "studio-light",
+        "monochrome",
+        "presentation",
+        "accessibility"
+      ],
+      "checksum": "0d2cd35b",
+      "usageCount": 0
+    },
+    {
+      "id": "team",
+      "category": "navigation",
+      "displayName": "Team",
+      "version": "certified",
+      "certification": "qa",
+      "status": "active",
+      "provider": "experience-lab-v6",
+      "defaultAsset": "src/assets/studio-world/experience-lab/icons/generated-v6/team.png",
+      "pngPath": "src/assets/studio-world/experience-lab/icons/generated-v6/team.png",
+      "svgPath": null,
+      "states": [
+        "default"
+      ],
+      "themes": [
+        "studio-dark",
+        "studio-light",
+        "monochrome",
+        "presentation",
+        "accessibility"
+      ],
+      "checksum": "018746ca",
+      "usageCount": 0
+    },
+    {
+      "id": "notifications",
+      "category": "navigation",
+      "displayName": "Notifications",
+      "version": "certified",
+      "certification": "qa",
+      "status": "active",
+      "provider": "experience-lab-v6",
+      "defaultAsset": "src/assets/studio-world/experience-lab/icons/generated-v6/notifications.png",
+      "pngPath": "src/assets/studio-world/experience-lab/icons/generated-v6/notifications.png",
+      "svgPath": null,
+      "states": [
+        "default"
+      ],
+      "themes": [
+        "studio-dark",
+        "studio-light",
+        "monochrome",
+        "presentation",
+        "accessibility"
+      ],
+      "checksum": "4eb14f7b",
+      "usageCount": 0
+    },
+    {
+      "id": "comments",
+      "category": "review",
+      "displayName": "Comments",
+      "version": "certified",
+      "certification": "qa",
+      "status": "active",
+      "provider": "experience-lab-v6",
+      "defaultAsset": "src/assets/studio-world/experience-lab/icons/generated-v6/comments.png",
+      "pngPath": "src/assets/studio-world/experience-lab/icons/generated-v6/comments.png",
+      "svgPath": null,
+      "states": [
+        "default"
+      ],
+      "themes": [
+        "studio-dark",
+        "studio-light",
+        "monochrome",
+        "presentation",
+        "accessibility"
+      ],
+      "checksum": "17d6543f",
+      "usageCount": 0
+    },
+    {
+      "id": "notes",
+      "category": "review",
+      "displayName": "Notes",
+      "version": "certified",
+      "certification": "qa",
+      "status": "active",
+      "provider": "experience-lab-v6",
+      "defaultAsset": "src/assets/studio-world/experience-lab/icons/generated-v6/notes.png",
+      "pngPath": "src/assets/studio-world/experience-lab/icons/generated-v6/notes.png",
+      "svgPath": null,
+      "states": [
+        "default"
+      ],
+      "themes": [
+        "studio-dark",
+        "studio-light",
+        "monochrome",
+        "presentation",
+        "accessibility"
+      ],
+      "checksum": "279c92a2",
+      "usageCount": 0
+    },
+    {
+      "id": "attachments",
+      "category": "review",
+      "displayName": "Attachments",
+      "version": "certified",
+      "certification": "qa",
+      "status": "active",
+      "provider": "experience-lab-v6",
+      "defaultAsset": "src/assets/studio-world/experience-lab/icons/generated-v6/attachments.png",
+      "pngPath": "src/assets/studio-world/experience-lab/icons/generated-v6/attachments.png",
+      "svgPath": null,
+      "states": [
+        "default"
+      ],
+      "themes": [
+        "studio-dark",
+        "studio-light",
+        "monochrome",
+        "presentation",
+        "accessibility"
+      ],
+      "checksum": "217b260d",
+      "usageCount": 0
+    },
+    {
+      "id": "schedule",
+      "category": "navigation",
+      "displayName": "Schedule",
+      "version": "certified",
+      "certification": "qa",
+      "status": "active",
+      "provider": "experience-lab-v6",
+      "defaultAsset": "src/assets/studio-world/experience-lab/icons/generated-v6/schedule.png",
+      "pngPath": "src/assets/studio-world/experience-lab/icons/generated-v6/schedule.png",
+      "svgPath": null,
+      "states": [
+        "default"
+      ],
+      "themes": [
+        "studio-dark",
+        "studio-light",
+        "monochrome",
+        "presentation",
+        "accessibility"
+      ],
+      "checksum": "763153bc",
+      "usageCount": 0
+    },
+    {
+      "id": "timeTracking",
+      "category": "navigation",
+      "displayName": "Time tracking",
+      "version": "certified",
+      "certification": "qa",
+      "status": "active",
+      "provider": "experience-lab-v6",
+      "defaultAsset": "src/assets/studio-world/experience-lab/icons/generated-v6/time-tracking.png",
+      "pngPath": "src/assets/studio-world/experience-lab/icons/generated-v6/time-tracking.png",
+      "svgPath": null,
+      "states": [
+        "default"
+      ],
+      "themes": [
+        "studio-dark",
+        "studio-light",
+        "monochrome",
+        "presentation",
+        "accessibility"
+      ],
+      "checksum": "4e88b757",
+      "usageCount": 0
+    },
+    {
+      "id": "flag",
+      "category": "review",
+      "displayName": "Flag",
+      "version": "certified",
+      "certification": "qa",
+      "status": "active",
+      "provider": "experience-lab-v6",
+      "defaultAsset": "src/assets/studio-world/experience-lab/icons/generated-v6/flag.png",
+      "pngPath": "src/assets/studio-world/experience-lab/icons/generated-v6/flag.png",
+      "svgPath": null,
+      "states": [
+        "default"
+      ],
+      "themes": [
+        "studio-dark",
+        "studio-light",
+        "monochrome",
+        "presentation",
+        "accessibility"
+      ],
+      "checksum": "6b0e7647",
+      "usageCount": 0
+    },
+    {
+      "id": "favorite",
+      "category": "navigation",
+      "displayName": "Favorite",
+      "version": "certified",
+      "certification": "qa",
+      "status": "active",
+      "provider": "experience-lab-v6",
+      "defaultAsset": "src/assets/studio-world/experience-lab/icons/generated-v6/favorite.png",
+      "pngPath": "src/assets/studio-world/experience-lab/icons/generated-v6/favorite.png",
+      "svgPath": null,
+      "states": [
+        "default"
+      ],
+      "themes": [
+        "studio-dark",
+        "studio-light",
+        "monochrome",
+        "presentation",
+        "accessibility"
+      ],
+      "checksum": "331acf97",
+      "usageCount": 0
+    },
+    {
+      "id": "dashboard",
+      "category": "workspace",
+      "displayName": "Dashboard",
+      "version": "certified",
+      "certification": "qa",
+      "status": "active",
+      "provider": "experience-lab-v6",
+      "defaultAsset": "src/assets/studio-world/experience-lab/icons/generated-v6/dashboard.png",
+      "pngPath": "src/assets/studio-world/experience-lab/icons/generated-v6/dashboard.png",
+      "svgPath": null,
+      "states": [
+        "default"
+      ],
+      "themes": [
+        "studio-dark",
+        "studio-light",
+        "monochrome",
+        "presentation",
+        "accessibility"
+      ],
+      "checksum": "2d18624f",
+      "usageCount": 0
+    },
+    {
+      "id": "focusMode",
+      "category": "workspace",
+      "displayName": "Focus mode",
+      "version": "certified",
+      "certification": "qa",
+      "status": "active",
+      "provider": "experience-lab-v6",
+      "defaultAsset": "src/assets/studio-world/experience-lab/icons/generated-v6/focus-mode.png",
+      "pngPath": "src/assets/studio-world/experience-lab/icons/generated-v6/focus-mode.png",
+      "svgPath": null,
+      "states": [
+        "default"
+      ],
+      "themes": [
+        "studio-dark",
+        "studio-light",
+        "monochrome",
+        "presentation",
+        "accessibility"
+      ],
+      "checksum": "40c91f58",
+      "usageCount": 0
+    },
+    {
+      "id": "terminal",
+      "category": "system",
+      "displayName": "Terminal",
+      "version": "certified",
+      "certification": "qa",
+      "status": "active",
+      "provider": "experience-lab-v6",
+      "defaultAsset": "src/assets/studio-world/experience-lab/icons/generated-v6/terminal.png",
+      "pngPath": "src/assets/studio-world/experience-lab/icons/generated-v6/terminal.png",
+      "svgPath": null,
+      "states": [
+        "default"
+      ],
+      "themes": [
+        "studio-dark",
+        "studio-light",
+        "monochrome",
+        "presentation",
+        "accessibility"
+      ],
+      "checksum": "6941bab7",
+      "usageCount": 0
+    },
+    {
+      "id": "diagnostics",
+      "category": "system",
+      "displayName": "Diagnostics",
+      "version": "certified",
+      "certification": "qa",
+      "status": "active",
+      "provider": "experience-lab-v6",
+      "defaultAsset": "src/assets/studio-world/experience-lab/icons/generated-v6/diagnostics.png",
+      "pngPath": "src/assets/studio-world/experience-lab/icons/generated-v6/diagnostics.png",
+      "svgPath": null,
+      "states": [
+        "default"
+      ],
+      "themes": [
+        "studio-dark",
+        "studio-light",
+        "monochrome",
+        "presentation",
+        "accessibility"
+      ],
+      "checksum": "611b3ef7",
+      "usageCount": 0
+    },
+    {
+      "id": "security",
+      "category": "security",
+      "displayName": "Security",
+      "version": "certified",
+      "certification": "qa",
+      "status": "active",
+      "provider": "experience-lab-v6",
+      "defaultAsset": "src/assets/studio-world/experience-lab/icons/generated-v6/security.png",
+      "pngPath": "src/assets/studio-world/experience-lab/icons/generated-v6/security.png",
+      "svgPath": null,
+      "states": [
+        "default"
+      ],
+      "themes": [
+        "studio-dark",
+        "studio-light",
+        "monochrome",
+        "presentation",
+        "accessibility"
+      ],
+      "checksum": "3650d373",
+      "usageCount": 0
+    },
+    {
+      "id": "permissions",
+      "category": "security",
+      "displayName": "Permissions",
+      "version": "certified",
+      "certification": "qa",
+      "status": "active",
+      "provider": "experience-lab-v6",
+      "defaultAsset": "src/assets/studio-world/experience-lab/icons/generated-v6/permissions.png",
+      "pngPath": "src/assets/studio-world/experience-lab/icons/generated-v6/permissions.png",
+      "svgPath": null,
+      "states": [
+        "default"
+      ],
+      "themes": [
+        "studio-dark",
+        "studio-light",
+        "monochrome",
+        "presentation",
+        "accessibility"
+      ],
+      "checksum": "1b63a21f",
+      "usageCount": 0
+    },
+    {
+      "id": "help",
+      "category": "navigation",
+      "displayName": "Help",
+      "version": "certified",
+      "certification": "qa",
+      "status": "active",
+      "provider": "experience-lab-v6",
+      "defaultAsset": "src/assets/studio-world/experience-lab/icons/generated-v6/help.png",
+      "pngPath": "src/assets/studio-world/experience-lab/icons/generated-v6/help.png",
+      "svgPath": null,
+      "states": [
+        "default"
+      ],
+      "themes": [
+        "studio-dark",
+        "studio-light",
+        "monochrome",
+        "presentation",
+        "accessibility"
+      ],
+      "checksum": "7d189fd2",
+      "usageCount": 0
+    },
+    {
+      "id": "about",
+      "category": "studio-world-exclusive",
+      "displayName": "About",
+      "version": "certified",
+      "certification": "qa",
+      "status": "active",
+      "provider": "experience-lab-v6",
+      "defaultAsset": "src/assets/studio-world/experience-lab/icons/generated-v6/about.png",
+      "pngPath": "src/assets/studio-world/experience-lab/icons/generated-v6/about.png",
+      "svgPath": null,
+      "states": [
+        "default"
+      ],
+      "themes": [
+        "studio-dark",
+        "studio-light",
+        "monochrome",
+        "presentation",
+        "accessibility"
+      ],
+      "checksum": "702c422a",
+      "usageCount": 0
+    },
+    {
+      "id": "workbench.architectural-tools",
+      "category": "assets",
+      "displayName": "Construction",
+      "version": "certified",
+      "certification": "qa",
+      "status": "active",
+      "provider": "experience-lab-v6",
+      "defaultAsset": "src/assets/studio-world/experience-lab/icons/generated-v6/construction.png",
+      "pngPath": "src/assets/studio-world/experience-lab/icons/generated-v6/construction.png",
+      "svgPath": null,
+      "states": [
+        "default"
+      ],
+      "themes": [
+        "studio-dark",
+        "studio-light",
+        "monochrome",
+        "presentation",
+        "accessibility"
+      ],
+      "checksum": "0de4b607",
+      "usageCount": 0
+    },
+    {
+      "id": "workbench.material-library",
+      "category": "assets",
+      "displayName": "Materials",
+      "version": "certified",
+      "certification": "qa",
+      "status": "active",
+      "provider": "experience-lab-v6",
+      "defaultAsset": "src/assets/studio-world/experience-lab/icons/generated-v6/materials.png",
+      "pngPath": "src/assets/studio-world/experience-lab/icons/generated-v6/materials.png",
+      "svgPath": null,
+      "states": [
+        "default"
+      ],
+      "themes": [
+        "studio-dark",
+        "studio-light",
+        "monochrome",
+        "presentation",
+        "accessibility"
+      ],
+      "checksum": "6b42743f",
+      "usageCount": 0
+    },
+    {
+      "id": "workbench.asset-reference",
+      "category": "review",
+      "displayName": "Attachments",
+      "version": "certified",
+      "certification": "qa",
+      "status": "active",
+      "provider": "experience-lab-v6",
+      "defaultAsset": "src/assets/studio-world/experience-lab/icons/generated-v6/attachments.png",
+      "pngPath": "src/assets/studio-world/experience-lab/icons/generated-v6/attachments.png",
+      "svgPath": null,
+      "states": [
+        "default"
+      ],
+      "themes": [
+        "studio-dark",
+        "studio-light",
+        "monochrome",
+        "presentation",
+        "accessibility"
+      ],
+      "checksum": "67832682",
+      "usageCount": 0
+    },
+    {
+      "id": "workbench.budget-forecast",
+      "category": "analytics",
+      "displayName": "Analytics",
+      "version": "certified",
+      "certification": "qa",
+      "status": "active",
+      "provider": "experience-lab-v6",
+      "defaultAsset": "src/assets/studio-world/experience-lab/icons/generated-v6/analytics.png",
+      "pngPath": "src/assets/studio-world/experience-lab/icons/generated-v6/analytics.png",
+      "svgPath": null,
+      "states": [
+        "default"
+      ],
+      "themes": [
+        "studio-dark",
+        "studio-light",
+        "monochrome",
+        "presentation",
+        "accessibility"
+      ],
+      "checksum": "20f78f55",
+      "usageCount": 0
+    },
+    {
+      "id": "workbench.workforce-center",
+      "category": "navigation",
+      "displayName": "Team",
+      "version": "certified",
+      "certification": "qa",
+      "status": "active",
+      "provider": "experience-lab-v6",
+      "defaultAsset": "src/assets/studio-world/experience-lab/icons/generated-v6/team.png",
+      "pngPath": "src/assets/studio-world/experience-lab/icons/generated-v6/team.png",
+      "svgPath": null,
+      "states": [
+        "default"
+      ],
+      "themes": [
+        "studio-dark",
+        "studio-light",
+        "monochrome",
+        "presentation",
+        "accessibility"
+      ],
+      "checksum": "63f991c4",
+      "usageCount": 0
+    },
+    {
+      "id": "workbench.permit-center",
+      "category": "security",
+      "displayName": "Permissions",
+      "version": "certified",
+      "certification": "qa",
+      "status": "active",
+      "provider": "experience-lab-v6",
+      "defaultAsset": "src/assets/studio-world/experience-lab/icons/generated-v6/permissions.png",
+      "pngPath": "src/assets/studio-world/experience-lab/icons/generated-v6/permissions.png",
+      "svgPath": null,
+      "states": [
+        "default"
+      ],
+      "themes": [
+        "studio-dark",
+        "studio-light",
+        "monochrome",
+        "presentation",
+        "accessibility"
+      ],
+      "checksum": "2d00650d",
+      "usageCount": 0
+    },
+    {
+      "id": "workbench.lighting-studio",
+      "category": "workspace",
+      "displayName": "Lighting",
+      "version": "certified",
+      "certification": "qa",
+      "status": "active",
+      "provider": "experience-lab-v6",
+      "defaultAsset": "src/assets/studio-world/experience-lab/icons/generated-v6/lighting.png",
+      "pngPath": "src/assets/studio-world/experience-lab/icons/generated-v6/lighting.png",
+      "svgPath": null,
+      "states": [
+        "default"
+      ],
+      "themes": [
+        "studio-dark",
+        "studio-light",
+        "monochrome",
+        "presentation",
+        "accessibility"
+      ],
+      "checksum": "42516d05",
+      "usageCount": 0
+    },
+    {
+      "id": "workbench.camera-studio",
+      "category": "workspace",
+      "displayName": "Camera",
+      "version": "certified",
+      "certification": "qa",
+      "status": "active",
+      "provider": "experience-lab-v6",
+      "defaultAsset": "src/assets/studio-world/experience-lab/icons/generated-v6/camera.png",
+      "pngPath": "src/assets/studio-world/experience-lab/icons/generated-v6/camera.png",
+      "svgPath": null,
+      "states": [
+        "default"
+      ],
+      "themes": [
+        "studio-dark",
+        "studio-light",
+        "monochrome",
+        "presentation",
+        "accessibility"
+      ],
+      "checksum": "5e56872c",
+      "usageCount": 0
+    },
+    {
+      "id": "workbench.composition-studio",
+      "category": "navigation",
+      "displayName": "Perspective",
+      "version": "certified",
+      "certification": "qa",
+      "status": "active",
+      "provider": "experience-lab-v6",
+      "defaultAsset": "src/assets/studio-world/experience-lab/icons/generated-v6/perspective.png",
+      "pngPath": "src/assets/studio-world/experience-lab/icons/generated-v6/perspective.png",
+      "svgPath": null,
+      "states": [
+        "default"
+      ],
+      "themes": [
+        "studio-dark",
+        "studio-light",
+        "monochrome",
+        "presentation",
+        "accessibility"
+      ],
+      "checksum": "73617a63",
+      "usageCount": 0
+    },
+    {
+      "id": "workbench.character-studio",
+      "category": "navigation",
+      "displayName": "User",
+      "version": "certified",
+      "certification": "qa",
+      "status": "active",
+      "provider": "experience-lab-v6",
+      "defaultAsset": "src/assets/studio-world/experience-lab/icons/generated-v6/users.png",
+      "pngPath": "src/assets/studio-world/experience-lab/icons/generated-v6/users.png",
+      "svgPath": null,
+      "states": [
+        "default"
+      ],
+      "themes": [
+        "studio-dark",
+        "studio-light",
+        "monochrome",
+        "presentation",
+        "accessibility"
+      ],
+      "checksum": "75d7ffac",
+      "usageCount": 0
+    },
+    {
+      "id": "workbench.animation-studio",
+      "category": "review",
+      "displayName": "Play",
+      "version": "certified",
+      "certification": "qa",
+      "status": "active",
+      "provider": "experience-lab-v6",
+      "defaultAsset": "src/assets/studio-world/experience-lab/icons/generated-v6/playback.png",
+      "pngPath": "src/assets/studio-world/experience-lab/icons/generated-v6/playback.png",
+      "svgPath": null,
+      "states": [
+        "default"
+      ],
+      "themes": [
+        "studio-dark",
+        "studio-light",
+        "monochrome",
+        "presentation",
+        "accessibility"
+      ],
+      "checksum": "454691bb",
+      "usageCount": 0
+    },
+    {
+      "id": "workbench.material-lab",
+      "category": "assets",
+      "displayName": "Materials",
+      "version": "certified",
+      "certification": "qa",
+      "status": "active",
+      "provider": "experience-lab-v6",
+      "defaultAsset": "src/assets/studio-world/experience-lab/icons/generated-v6/materials.png",
+      "pngPath": "src/assets/studio-world/experience-lab/icons/generated-v6/materials.png",
+      "svgPath": null,
+      "states": [
+        "default"
+      ],
+      "themes": [
+        "studio-dark",
+        "studio-light",
+        "monochrome",
+        "presentation",
+        "accessibility"
+      ],
+      "checksum": "54156f11",
+      "usageCount": 0
+    },
+    {
+      "id": "command-dock.program",
+      "category": "navigation",
+      "displayName": "Orbit",
+      "version": "certified",
+      "certification": "qa",
+      "status": "active",
+      "provider": "experience-lab-v6",
+      "defaultAsset": "src/assets/studio-world/experience-lab/icons/generated-v6/orbit.png",
+      "pngPath": "src/assets/studio-world/experience-lab/icons/generated-v6/orbit.png",
+      "svgPath": null,
+      "states": [
+        "default"
+      ],
+      "themes": [
+        "studio-dark",
+        "studio-light",
+        "monochrome",
+        "presentation",
+        "accessibility"
+      ],
+      "checksum": "716508ea",
+      "usageCount": 0
+    },
+    {
+      "id": "command-dock.department",
+      "category": "navigation",
+      "displayName": "Projects",
+      "version": "certified",
+      "certification": "qa",
+      "status": "active",
+      "provider": "experience-lab-v6",
+      "defaultAsset": "src/assets/studio-world/experience-lab/icons/generated-v6/projects.png",
+      "pngPath": "src/assets/studio-world/experience-lab/icons/generated-v6/projects.png",
+      "svgPath": null,
+      "states": [
+        "default"
+      ],
+      "themes": [
+        "studio-dark",
+        "studio-light",
+        "monochrome",
+        "presentation",
+        "accessibility"
+      ],
+      "checksum": "3b1c0158",
+      "usageCount": 0
+    },
+    {
+      "id": "command-dock.environment",
+      "category": "workspace",
+      "displayName": "Experience Lab",
+      "version": "certified",
+      "certification": "qa",
+      "status": "active",
+      "provider": "experience-lab-v6",
+      "defaultAsset": "src/assets/studio-world/experience-lab/icons/generated-v6/experience-lab.png",
+      "pngPath": "src/assets/studio-world/experience-lab/icons/generated-v6/experience-lab.png",
+      "svgPath": null,
+      "states": [
+        "default"
+      ],
+      "themes": [
+        "studio-dark",
+        "studio-light",
+        "monochrome",
+        "presentation",
+        "accessibility"
+      ],
+      "checksum": "26f230e7",
+      "usageCount": 0
+    },
+    {
+      "id": "command-dock.variant",
+      "category": "workspace",
+      "displayName": "Grid",
+      "version": "certified",
+      "certification": "qa",
+      "status": "active",
+      "provider": "experience-lab-v6",
+      "defaultAsset": "src/assets/studio-world/experience-lab/icons/generated-v6/grid.png",
+      "pngPath": "src/assets/studio-world/experience-lab/icons/generated-v6/grid.png",
+      "svgPath": null,
+      "states": [
+        "default"
+      ],
+      "themes": [
+        "studio-dark",
+        "studio-light",
+        "monochrome",
+        "presentation",
+        "accessibility"
+      ],
+      "checksum": "227bb767",
+      "usageCount": 0
+    }
+  ],
+  "checksum": "057295e7"
+}

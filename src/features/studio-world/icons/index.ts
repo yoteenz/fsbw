@@ -83,3 +83,29 @@ export {
   EXPERIENCE_LAB_ICON_OPTICAL_PROFILE,
   EXPERIENCE_LAB_ICON_OPTICAL_CERTIFICATION_VERSION,
 } from './experience-lab-icon-optical-scale';
+export { StudioWorldIconProvider, useStudioWorldIconSystem } from './StudioWorldIconProvider';
+export { ensureStudioWorldIconSystemBridge } from './studio-world-icon-system-bridge';
+export {
+  registerIcon,
+  getIcon,
+  searchIcons,
+  listByCategory,
+  resolveRuntimeIcon,
+  resolveWorkbenchIcon,
+  resolveCommandDockIcon,
+  resolveDepartmentIcons,
+  analyzeStudioWorldIconDiagnostics,
+  buildStudioWorldIconManifest,
+  STUDIO_WORLD_ICON_CATEGORIES,
+  STUDIO_WORLD_ICON_STATES,
+  STUDIO_WORLD_ICON_THEMES,
+  STUDIO_WORLD_ICON_DESIGN_TOKENS,
+} from '../../../studio-os-core/studio-world-icon-system';
+export type {
+  StudioWorldIconDefinition,
+  StudioWorldIconCategoryId,
+  StudioWorldIconState,
+  StudioWorldIconTheme,
+  StudioWorldIconManifest,
+  StudioWorldIconDiagnosticReport,
+} from '../../../studio-os-core/studio-world-icon-system';

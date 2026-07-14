@@ -332,6 +332,14 @@ const AdminStudioWorldIconGridCalibration = lazyWithRetry(
   () => import('./pages/admin/studio/studio-world-icon-grid-calibration/page'),
   'AdminStudioWorldIconGridCalibration'
 );
+const AdminStudioWorldIconSystem = lazyWithRetry(
+  () => import('./pages/admin/studio/studio-world-icon-system/page'),
+  'AdminStudioWorldIconSystem'
+);
+const AdminStudioWorldIconBuilder = lazyWithRetry(
+  () => import('./pages/admin/studio/studio-world-icon-builder/page'),
+  'AdminStudioWorldIconBuilder'
+);
 const AdminStudioProductionSystem = lazyWithRetry(
   () => import('./pages/admin/studio/studio-production/page'),
   'AdminStudioProductionSystem'
@@ -2188,6 +2196,16 @@ function App() {
           <Route path="studio/studio-world-icon-grid-calibration" element={
             <Suspense fallback={<StudioRouteSuspenseFallback label="Studio World icon grid calibration" />}>
               <AdminStudioWorldIconGridCalibration />
+            </Suspense>
+          } />
+          <Route path="studio/studio-world-icon-system" element={
+            <Suspense fallback={<StudioRouteSuspenseFallback label="Studio World Icon System" />}>
+              <AdminStudioWorldIconSystem />
+            </Suspense>
+          } />
+          <Route path="studio/studio-world-icon-builder" element={
+            <Suspense fallback={<StudioRouteSuspenseFallback label="Studio World Icon Builder" />}>
+              <AdminStudioWorldIconBuilder />
             </Suspense>
           } />
           <Route path="studio/studio-production" element={
