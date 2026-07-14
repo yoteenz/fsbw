@@ -1,25 +1,34 @@
-import { useEffect, useMemo, useState, type CSSProperties } from 'react';
+import { useMemo, useState, type CSSProperties } from 'react';
+import { Link } from 'react-router-dom';
 import { useRequireStudioWorldAdmin } from '../../../../hooks/useRequireStudioWorldAdmin';
 import {
   ExperienceLabIcon,
-  EXPERIENCE_LAB_ICON_ASSETS,
   EXPERIENCE_LAB_ICON_NAMES,
   EXPERIENCE_LAB_ICON_REGISTRY,
   EXPERIENCE_LAB_ICON_SPRITE_CONFIG,
-  STUDIO_WORLD_ICON_PRESENTATION_VERSION,
-  resolveStudioWorldIconPresentation,
 } from '../../../../features/studio-world/icons';
 import { resolveExperienceLabIconSourceLabeledUrl } from '../../../../features/studio-world/icons/experience-lab-icon-sprite.config';
-import { FounderOpticalTuner, useFounderOpticalSelection } from '../../../../features/studio-world/icons/FounderOpticalTuner';
-import { isFounderOpticalModeEnabled } from '../../../../features/studio-world/icons/experience-lab-icon-presenter';
 import {
   EXPERIENCE_LAB_ICON_LOCKDOWN_CERTIFIED,
   EXPERIENCE_LAB_ICON_OPTICAL_LOCK_VERSION,
+  EXPERIENCE_LAB_ICON_V2_PIPELINE_FROZEN,
 } from '../../../../features/studio-world/icons/experience-lab-icon-assets.generated';
+import {
+  EXPERIENCE_LAB_ICON_OPTICAL_TUNING_PAUSED,
+  resolveCropEntry,
+  resolveQaExperienceLabIconAsset,
+} from '../../../../features/studio-world/icons/experience-lab-icon-asset-resolver';
+import { FOUNDER_OPTICAL_MODE_PAUSED } from '../../../../features/studio-world/icons/experience-lab-icon-presenter';
+import {
+  StudioWorldIconCropManifest,
+  STUDIO_WORLD_ICON_CROP_MANIFEST_VERSION,
+  STUDIO_WORLD_ICON_SOURCE,
+  isCropInsideCell,
+} from '../../../../features/studio-world/icons/studio-world-icon-crop-manifest';
 import extractionMetadata from '../../../../features/studio-world/icons/experience-lab-icon-extraction-metadata.generated.json';
-import contactSheetUrl from '../../../../assets/studio-world/experience-lab/icons/generated/_contact-sheet.png';
+import contactSheetUrl from '../../../../assets/studio-world/experience-lab/icons/generated-v3/_contact-sheet.png';
 
-type AuditFilter = 'all' | 'PASS' | 'WARN' | 'FAIL' | 'overrides' | 'contamination' | 'founder';
+type AuditFilter = 'all' | 'PENDING' | 'PASS' | 'FAIL' | 'founder' | 'unapproved';
 
 const FOUNDER_REPORTED = new Set([
   'zoomIn',
@@ -31,23 +40,27 @@ const FOUNDER_REPORTED = new Set([
   'perspective',
   'terminal',
   'dashboard',
+  'blueprint',
+  'construction',
+  'lighting',
+  'attachments',
+  'team',
+  'experienceLab',
+  'share',
+  'diagnostics',
 ]);
 
 const SIZE_TOKENS = ['xs', 'sm', 'md', 'lg'] as const;
-
-type IconMeta = (typeof extractionMetadata.icons)[number];
 
 function sourceCellStyle(row: number, column: number): CSSProperties {
   const { sourceWidth, sourceHeight, rows, columns } = EXPERIENCE_LAB_ICON_SPRITE_CONFIG;
   const cellW = sourceWidth / columns;
   const cellH = sourceHeight / rows;
-  const bgW = sourceWidth;
-  const bgH = sourceHeight;
   return {
     width: 72,
     height: 58,
     backgroundImage: `url(${resolveExperienceLabIconSourceLabeledUrl()})`,
-    backgroundSize: `${bgW}px ${bgH}px`,
+    backgroundSize: `${sourceWidth}px ${sourceHeight}px`,
     backgroundPosition: `-${column * cellW * (72 / cellW)}px -${row * cellH * (58 / cellH)}px`,
     backgroundRepeat: 'no-repeat',
     borderRadius: 4,
@@ -55,73 +68,95 @@ function sourceCellStyle(row: number, column: number): CSSProperties {
   };
 }
 
-/** Dev/admin QA — lockdown certification dashboard for Experience Lab icons. */
+function cropOverlayStyle(name: string): CSSProperties {
+  const crop = resolveCropEntry(name as keyof typeof StudioWorldIconCropManifest);
+  const cell = {
+    left: Math.round((crop.column * STUDIO_WORLD_ICON_SOURCE.width) / 8),
+    top: Math.round((crop.row * STUDIO_WORLD_ICON_SOURCE.height) / 8),
+    width: Math.round(STUDIO_WORLD_ICON_SOURCE.width / 8),
+    height: Math.round(STUDIO_WORLD_ICON_SOURCE.height / 8),
+  };
+  const scale = 72 / cell.width;
+  return {
+    position: 'absolute',
+    left: (crop.cropX - cell.left) * scale,
+    top: (crop.cropY - cell.top) * scale,
+    width: crop.cropWidth * scale,
+    height: crop.cropHeight * scale,
+    border: '1px solid rgba(80,160,255,0.85)',
+    pointerEvents: 'none',
+    boxSizing: 'border-box',
+  };
+}
+
+/** v3 deterministic crop QA — v2 pipeline frozen; optical tuning paused. */
 export default function AdminExperienceLabIconQaPage() {
   useRequireStudioWorldAdmin();
   const [filter, setFilter] = useState<AuditFilter>('all');
-  const { selected, setSelected } = useFounderOpticalSelection();
-  const [founderMode, setFounderMode] = useState(false);
-
-  useEffect(() => {
-    setFounderMode(isFounderOpticalModeEnabled());
-    const handler = () => setFounderMode(isFounderOpticalModeEnabled());
-    window.addEventListener('studio-world:founder-optical-mode', handler);
-    return () => window.removeEventListener('studio-world:founder-optical-mode', handler);
-  }, []);
-
-  const metaByKey = useMemo(() => {
-    const map = new Map<string, IconMeta>();
-    for (const item of extractionMetadata.icons) map.set(item.key, item);
-    return map;
-  }, []);
 
   const auditSummary = useMemo(() => {
     let pass = 0;
-    let warn = 0;
+    let pending = 0;
     let fail = 0;
+    let approved = 0;
     for (const name of EXPERIENCE_LAB_ICON_NAMES) {
-      const status = EXPERIENCE_LAB_ICON_ASSETS[name].auditStatus;
-      if (status === 'PASS') pass += 1;
-      else if (status === 'WARN') warn += 1;
-      else fail += 1;
+      const crop = StudioWorldIconCropManifest[name];
+      const asset = resolveQaExperienceLabIconAsset(name);
+      if (crop.approved) approved += 1;
+      if (asset.auditStatus === 'PASS') pass += 1;
+      else if (asset.auditStatus === 'FAIL') fail += 1;
+      else pending += 1;
     }
-    return { pass, warn, fail };
+    return { pass, pending, fail, approved };
   }, []);
 
   const filtered = useMemo(() => {
     return EXPERIENCE_LAB_ICON_NAMES.filter((name) => {
-      const meta = metaByKey.get(name);
-      const asset = EXPERIENCE_LAB_ICON_ASSETS[name];
-      if (!meta || !asset) return false;
+      const crop = StudioWorldIconCropManifest[name];
+      const asset = resolveQaExperienceLabIconAsset(name);
       switch (filter) {
         case 'PASS':
           return asset.auditStatus === 'PASS';
-        case 'WARN':
-          return asset.auditStatus === 'WARN';
         case 'FAIL':
           return asset.auditStatus === 'FAIL';
-        case 'overrides':
-          return meta.overrideApplied;
-        case 'contamination':
-          return meta.textContamination?.contaminated === true;
+        case 'unapproved':
+          return !crop.approved;
         case 'founder':
           return FOUNDER_REPORTED.has(name);
+        case 'PENDING':
+          return asset.auditStatus === 'PENDING';
         default:
           return true;
       }
     });
-  }, [filter, metaByKey]);
+  }, [filter]);
 
   const sourceUrl = resolveExperienceLabIconSourceLabeledUrl();
 
   return (
     <div style={{ padding: 24, background: '#0a0c10', color: '#f0ebe3', minHeight: '100vh' }}>
-      <h1 style={{ fontSize: 18, letterSpacing: '0.08em', marginBottom: 8 }}>Experience Lab Icon QA</h1>
+      <h1 style={{ fontSize: 18, letterSpacing: '0.08em', marginBottom: 8 }}>Experience Lab Icon QA (v3)</h1>
       <p style={{ fontSize: 12, color: '#9a958c', marginBottom: 12 }}>
-        Lock {EXPERIENCE_LAB_ICON_OPTICAL_LOCK_VERSION} · presentation {STUDIO_WORLD_ICON_PRESENTATION_VERSION} ·
-        certified {EXPERIENCE_LAB_ICON_LOCKDOWN_CERTIFIED ? 'YES' : 'NO'} · bundle{' '}
-        {EXPERIENCE_LAB_ICON_SPRITE_CONFIG.bundleSha256?.slice(0, 12)}…
+        Crop manifest {STUDIO_WORLD_ICON_CROP_MANIFEST_VERSION} · pipeline {EXPERIENCE_LAB_ICON_OPTICAL_LOCK_VERSION} ·
+        v2 frozen {EXPERIENCE_LAB_ICON_V2_PIPELINE_FROZEN ? 'YES' : 'NO'} · certified{' '}
+        {EXPERIENCE_LAB_ICON_LOCKDOWN_CERTIFIED ? 'YES' : 'NO'} · optical paused{' '}
+        {EXPERIENCE_LAB_ICON_OPTICAL_TUNING_PAUSED ? 'YES' : 'NO'}
       </p>
+
+      <p style={{ fontSize: 11, color: '#f2c94c', marginBottom: 12 }}>
+        v2 automated extraction is frozen. Runtime uses approved v3 crops only (fail-closed fallback until founder
+        approval). Tune crops in{' '}
+        <Link to="/admin/studio/experience-lab-icon-crop-editor" style={{ color: '#c9a962' }}>
+          Icon Crop Editor
+        </Link>
+        .
+      </p>
+
+      {FOUNDER_OPTICAL_MODE_PAUSED ? (
+        <p style={{ fontSize: 10, color: '#9a958c', marginBottom: 16 }}>
+          Founder Optical Mode is paused until v3 source assets are approved.
+        </p>
+      ) : null}
 
       <div
         style={{
@@ -129,14 +164,14 @@ export default function AdminExperienceLabIconQaPage() {
           gridTemplateColumns: 'repeat(4, minmax(80px, 1fr))',
           gap: 8,
           marginBottom: 16,
-          maxWidth: 480,
+          maxWidth: 520,
         }}
       >
         {[
+          ['APPROVED', auditSummary.approved, '#c9a962'],
           ['PASS', auditSummary.pass, '#6fcf97'],
-          ['WARN', auditSummary.warn, '#f2c94c'],
+          ['PENDING', auditSummary.pending, '#f2c94c'],
           ['FAIL', auditSummary.fail, '#eb5757'],
-          ['LOCKED', EXPERIENCE_LAB_ICON_LOCKDOWN_CERTIFIED ? 1 : 0, '#c9a962'],
         ].map(([label, count, color]) => (
           <div
             key={String(label)}
@@ -158,12 +193,11 @@ export default function AdminExperienceLabIconQaPage() {
         {(
           [
             ['all', 'All'],
+            ['PENDING', 'Pending'],
+            ['unapproved', 'Unapproved crops'],
+            ['founder', 'Founder priority'],
             ['PASS', 'Pass'],
-            ['WARN', 'Warn'],
             ['FAIL', 'Fail'],
-            ['overrides', 'Overrides'],
-            ['contamination', 'Text Contamination'],
-            ['founder', 'Founder Reported'],
           ] as const
         ).map(([id, label]) => (
           <button
@@ -185,10 +219,8 @@ export default function AdminExperienceLabIconQaPage() {
         ))}
       </div>
 
-      <FounderOpticalTuner selected={selected} onSelect={setSelected} />
-
       <section style={{ marginBottom: 24 }}>
-        <h2 style={{ fontSize: 13, marginBottom: 8 }}>Labeled source (canonical catalog)</h2>
+        <h2 style={{ fontSize: 13, marginBottom: 8 }}>Labeled source (canonical catalog — unchanged)</h2>
         <img
           src={sourceUrl}
           alt="Experience Lab labeled icon source sheet"
@@ -197,17 +229,17 @@ export default function AdminExperienceLabIconQaPage() {
       </section>
 
       <section style={{ marginBottom: 24 }}>
-        <h2 style={{ fontSize: 13, marginBottom: 8 }}>Generated contact sheet</h2>
+        <h2 style={{ fontSize: 13, marginBottom: 8 }}>v3 generated contact sheet (preview glyphs)</h2>
         <img
           src={contactSheetUrl}
-          alt="Extracted icon contact sheet"
+          alt="v3 crop preview contact sheet"
           style={{ maxWidth: '100%', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 8 }}
         />
       </section>
 
       <section>
         <h2 style={{ fontSize: 13, marginBottom: 12 }}>
-          Per-icon certification ({filtered.length}/{EXPERIENCE_LAB_ICON_NAMES.length})
+          Per-icon crop validation ({filtered.length}/{EXPERIENCE_LAB_ICON_NAMES.length})
         </h2>
         <div
           style={{
@@ -218,39 +250,31 @@ export default function AdminExperienceLabIconQaPage() {
         >
           {filtered.map((name) => {
             const entry = EXPERIENCE_LAB_ICON_REGISTRY[name];
-            const asset = EXPERIENCE_LAB_ICON_ASSETS[name];
-            const meta = metaByKey.get(name);
-            const presentation = resolveStudioWorldIconPresentation(name);
+            const crop = StudioWorldIconCropManifest[name];
+            const asset = resolveQaExperienceLabIconAsset(name);
+            const meta = extractionMetadata.icons.find((i) => i.key === name);
             const statusColor =
               asset.auditStatus === 'PASS'
                 ? '#6fcf97'
-                : asset.auditStatus === 'WARN'
-                  ? '#f2c94c'
-                  : '#eb5757';
+                : asset.auditStatus === 'FAIL'
+                  ? '#eb5757'
+                  : '#f2c94c';
 
             return (
               <div
                 key={name}
-                role="button"
-                tabIndex={0}
-                onClick={() => setSelected(name)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') setSelected(name);
-                }}
                 style={{
-                  background:
-                    selected === name ? 'rgba(201,169,98,0.12)' : 'rgba(255,255,255,0.04)',
-                  border:
-                    selected === name
-                      ? '1px solid rgba(201,169,98,0.35)'
-                      : '1px solid rgba(255,255,255,0.08)',
+                  background: 'rgba(255,255,255,0.04)',
+                  border: '1px solid rgba(255,255,255,0.08)',
                   borderRadius: 8,
                   padding: 12,
-                  cursor: founderMode ? 'pointer' : 'default',
                 }}
               >
                 <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
-                  <div style={sourceCellStyle(entry.row, entry.column)} title="Source cell" />
+                  <div style={{ position: 'relative' }}>
+                    <div style={sourceCellStyle(entry.row, entry.column)} title="Source cell" />
+                    <div style={cropOverlayStyle(name)} />
+                  </div>
                   <div
                     style={{
                       width: 72,
@@ -261,11 +285,15 @@ export default function AdminExperienceLabIconQaPage() {
                       borderRadius: 4,
                     }}
                   >
-                    <img
-                      src={asset.src}
-                      alt=""
-                      style={{ maxWidth: 56, maxHeight: 56, objectFit: 'contain' }}
-                    />
+                    {asset.src ? (
+                      <img
+                        src={asset.src}
+                        alt=""
+                        style={{ maxWidth: 56, maxHeight: 56, objectFit: 'contain' }}
+                      />
+                    ) : (
+                      <span style={{ fontSize: 8, color: '#666' }}>pending</span>
+                    )}
                   </div>
                   <div
                     style={{
@@ -277,7 +305,7 @@ export default function AdminExperienceLabIconQaPage() {
                       borderRadius: 4,
                       border: '1px solid rgba(201,169,98,0.2)',
                     }}
-                    title="Runtime button preview"
+                    title="Production runtime (fail-closed)"
                   >
                     <ExperienceLabIcon name={name} size="md" decorative active />
                   </div>
@@ -295,19 +323,15 @@ export default function AdminExperienceLabIconQaPage() {
                 <div style={{ fontSize: 10, fontWeight: 700 }}>{entry.sourceLabel}</div>
                 <div style={{ fontSize: 9, color: '#9a958c' }}>{name}</div>
                 <div style={{ fontSize: 8, color: statusColor, marginTop: 4 }}>
-                  {asset.auditStatus} · conf {(asset.confidence * 100).toFixed(0)}% · overall{' '}
-                  {presentation.scores.overall}%
+                  {asset.auditStatus} · {asset.source} · approved {crop.approved ? 'yes' : 'no'}
                 </div>
                 <div style={{ fontSize: 8, color: '#6a958c' }}>
-                  center {presentation.scores.centering}% · pad {presentation.scores.padding}% · scale{' '}
-                  {presentation.scale.toFixed(2)} · offset {presentation.offsetX},{presentation.offsetY}
+                  crop {crop.cropX},{crop.cropY} {crop.cropWidth}×{crop.cropHeight} · in cell{' '}
+                  {isCropInsideCell(crop) ? 'yes' : 'NO'}
                 </div>
                 <div style={{ fontSize: 8, color: '#6a958c' }}>
-                  text: {meta?.textContamination?.contaminated ? 'CONTAMINATED' : 'clean'} · stroke 1.00 · family OK
-                </div>
-                <div style={{ fontSize: 8, color: '#6a958c' }}>
-                  override: {meta?.overrideApplied ? 'yes' : 'no'} · runtime:{' '}
-                  {meta?.runtimeValidated ? 'validated' : 'pending'}
+                  pipeline: {String(extractionMetadata.pipeline ?? 'v3')} · generated:{' '}
+                  {meta && 'generated' in meta && meta.generated ? 'yes' : 'preview'}
                 </div>
               </div>
             );

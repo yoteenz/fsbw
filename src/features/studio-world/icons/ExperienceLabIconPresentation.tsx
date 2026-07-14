@@ -1,7 +1,10 @@
 import { useEffect, useState } from 'react';
 import type { CSSProperties } from 'react';
 import type { ExperienceLabIconName } from './experience-lab-icon-registry';
-import { EXPERIENCE_LAB_ICON_ASSETS } from './experience-lab-icon-assets.generated';
+import {
+  EXPERIENCE_LAB_ICON_OPTICAL_TUNING_PAUSED,
+  resolveProductionExperienceLabIconAsset,
+} from './experience-lab-icon-asset-resolver';
 import {
   isFounderOpticalModeEnabled,
   presentExperienceLabIcon,
@@ -74,13 +77,27 @@ export function ExperienceLabIconPresentation({
     };
   }, []);
 
-  const asset = EXPERIENCE_LAB_ICON_ASSETS[name];
+  const asset = resolveProductionExperienceLabIconAsset(name);
   const presented = presentExperienceLabIcon(name, size);
-  const canonicalPresented = compareCanonical
+  const canonicalPresented = compareCanonical && !EXPERIENCE_LAB_ICON_OPTICAL_TUNING_PAUSED
     ? presentExperienceLabIcon(name, size, { canonical: true })
     : null;
   const profile = resolveIconPresentation(name);
-  const guides = showGuides || founderMode;
+  const guides = (showGuides || founderMode) && !EXPERIENCE_LAB_ICON_OPTICAL_TUNING_PAUSED;
+
+  if (!asset.src) {
+    return (
+      <span
+        className={`${styles.wrap} ${styles.wrapMissing} ${className}`.trim()}
+        style={presented.style}
+        data-elab-icon-missing={name}
+        data-elab-asset-pending="v3"
+        aria-hidden={ariaHidden}
+        aria-label={decorative ? undefined : alt}
+        title={title ?? 'Icon pending v3 crop approval'}
+      />
+    );
+  }
 
   const wrapClass = [
     styles.wrap,
@@ -126,7 +143,7 @@ export function ExperienceLabIconPresentation({
         <img
           className={`${imgClass} ${styles.compareCanonical}`}
           style={{ ...canonicalPresented.imgStyle, opacity: compareOpacity }}
-          src={asset.src}
+          src={asset.src!}
           alt=""
           aria-hidden
           draggable={false}
@@ -136,7 +153,7 @@ export function ExperienceLabIconPresentation({
       <img
         className={imgClass}
         style={presented.imgStyle}
-        src={asset.src}
+        src={asset.src!}
         alt={decorative ? '' : alt}
         aria-hidden={ariaHidden}
         aria-disabled={ariaDisabled}

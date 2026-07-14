@@ -74,18 +74,35 @@ export function clearFounderPresentationOverride(name: ExperienceLabIconName): v
   window.dispatchEvent(new CustomEvent('studio-world:icon-presentation-updated', { detail: { name } }));
 }
 
+/** Optical tuning paused until v3 deterministic crops are founder-approved. */
+export const FOUNDER_OPTICAL_MODE_PAUSED = true as const;
+
 export function isFounderOpticalModeEnabled(): boolean {
+  if (FOUNDER_OPTICAL_MODE_PAUSED) return false;
   if (typeof window === 'undefined') return false;
   return window.localStorage.getItem(FOUNDER_OPTICAL_MODE_KEY) === '1';
 }
 
 export function setFounderOpticalModeEnabled(enabled: boolean): void {
+  if (FOUNDER_OPTICAL_MODE_PAUSED) return;
   if (typeof window === 'undefined') return;
   window.localStorage.setItem(FOUNDER_OPTICAL_MODE_KEY, enabled ? '1' : '0');
   window.dispatchEvent(new CustomEvent('studio-world:founder-optical-mode', { detail: { enabled } }));
 }
 
 export function resolveIconPresentation(name: ExperienceLabIconName): ResolvedIconPresentation {
+  if (FOUNDER_OPTICAL_MODE_PAUSED) {
+    const neutral = resolveStudioWorldIconPresentation(name);
+    return {
+      ...neutral,
+      scale: 1,
+      offsetX: 0,
+      offsetY: 0,
+      opticalWeight: 1,
+      padding: 0,
+      source: 'registry',
+    };
+  }
   const base = resolveStudioWorldIconPresentation(name);
   const patch = readFounderOverrides()[name];
   if (!patch) return { ...base, source: 'registry' };

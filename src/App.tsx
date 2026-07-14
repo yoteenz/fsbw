@@ -316,6 +316,10 @@ const AdminStudioExperienceLabIconQa = lazyWithRetry(
   () => import('./pages/admin/studio/experience-lab-icon-qa/page'),
   'AdminStudioExperienceLabIconQa'
 );
+const AdminStudioExperienceLabIconCropEditor = lazyWithRetry(
+  () => import('./pages/admin/studio/experience-lab-icon-crop-editor/page'),
+  'AdminStudioExperienceLabIconCropEditor'
+);
 const AdminStudioProductionSystem = lazyWithRetry(
   () => import('./pages/admin/studio/studio-production/page'),
   'AdminStudioProductionSystem'
@@ -2152,6 +2156,11 @@ function App() {
           <Route path="studio/experience-lab-icon-qa" element={
             <Suspense fallback={<StudioRouteSuspenseFallback label="Experience Lab icon QA" />}>
               <AdminStudioExperienceLabIconQa />
+            </Suspense>
+          } />
+          <Route path="studio/experience-lab-icon-crop-editor" element={
+            <Suspense fallback={<StudioRouteSuspenseFallback label="Experience Lab icon crop editor" />}>
+              <AdminStudioExperienceLabIconCropEditor />
             </Suspense>
           } />
           <Route path="studio/studio-production" element={

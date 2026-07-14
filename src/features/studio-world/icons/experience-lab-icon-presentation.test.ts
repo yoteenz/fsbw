@@ -23,7 +23,6 @@ const PRESENTATION = resolve(ICONS_DIR, 'ExperienceLabIconPresentation.tsx');
 const PRESENTER = resolve(ICONS_DIR, 'experience-lab-icon-presenter.ts');
 const PRESENTATION_TS = resolve(ICONS_DIR, 'experience-lab-icon-presentation.ts');
 const TUNER = resolve(ICONS_DIR, 'FounderOpticalTuner.tsx');
-const GENERATED_DIR = resolve(ROOT, 'src/assets/studio-world/experience-lab/icons/generated');
 const DOC = resolve(ROOT, 'docs/studio-os/design-system/EXPERIENCE_LAB_ICON_PRESENTATION_SYSTEM.md');
 
 describe('Experience Lab Icon Presentation System', () => {
@@ -50,7 +49,7 @@ describe('Experience Lab Icon Presentation System', () => {
 
   it('presenter computes optical centering via objectPosition offsets', () => {
     const presented = presentExperienceLabIcon('zoomIn', 'md');
-    expect(presented.boxPx).toBeGreaterThan(SIZE_PX.md);
+    expect(presented.boxPx).toBeGreaterThanOrEqual(SIZE_PX.md);
     expect(String(presented.imgStyle.objectPosition)).toContain('calc(50%');
     expect(presented.scores.overall).toBeGreaterThan(0);
   });
@@ -73,15 +72,11 @@ describe('Experience Lab Icon Presentation System', () => {
     expect(readFileSync(PRESENTER, 'utf8')).toContain('FOUNDER_OPTICAL_STORAGE_KEY');
   });
 
-  it('does not modify extraction PNG assets', () => {
-    const before = readFileSync(
-      resolve(GENERATED_DIR, 'materials.png'),
-    ).length;
+  it('does not modify v2 extraction PNG assets (frozen)', () => {
+    const v2Materials = resolve(ROOT, 'src/assets/studio-world/experience-lab/icons/generated/materials.png');
+    const before = readFileSync(v2Materials).length;
     expect(before).toBeGreaterThan(100);
     expect(existsSync(PRESENTATION_TS)).toBe(true);
-    expect(readFileSync(PRESENTATION_TS, 'utf8')).toContain(
-      'runtime display only (PNG assets frozen)',
-    );
   });
 
   it('exposes ExperienceLabIconPresentationSystem as global canonical renderer', () => {
@@ -92,7 +87,8 @@ describe('Experience Lab Icon Presentation System', () => {
       StudioWorldIconPresentationRegistry,
     );
     expect(resolveCanonicalIconPresentation('dashboard').scale).toBe(1.34);
-    expect(resolveIconPresentation('dashboard').scale).toBe(1.34);
+    // Runtime presentation paused until v3 source approval
+    expect(resolveIconPresentation('dashboard').scale).toBe(1);
   });
 
   it('documents presentation system', () => {

@@ -1,4 +1,4 @@
-/** Extraction config — auto-updated by scripts/extract-experience-lab-icons.mjs */
+/** Sprite config — v3 deterministic crop pipeline (v2 frozen). */
 export const EXPERIENCE_LAB_ICON_SOURCE_LABELED_STORAGE_PATH =
   '/storage/v1/object/public/live-preview/Studio%20World/740E9EB1-6B7B-4C5F-B745-E4621EC45EF3.png';
 
@@ -12,22 +12,23 @@ export function resolveExperienceLabIconSourceLabeledUrl(): string {
 export const EXPERIENCE_LAB_ICON_SPRITE_CONFIG = {
   sourcePath: 'src/assets/studio-world/experience-lab/experience-lab-icon-source-labeled.png',
   sourceStoragePath: EXPERIENCE_LAB_ICON_SOURCE_LABELED_STORAGE_PATH,
-  generatedDir: 'src/assets/studio-world/experience-lab/icons/generated',
+  generatedDir: 'src/assets/studio-world/experience-lab/icons/generated-v3',
   sourceWidth: 1402,
   sourceHeight: 1122,
   rows: 8,
   columns: 8,
-  outputCanvas: 256,
+  outputCanvas: 512,
   sourceSha256: 'd7476775716d3f2dc9b2416198c81bbd19d8e1a7f5730c5ff3c79fe6cda1f51d',
-  bundleSha256: 'b7fd4d0a61e282461894bdd8605ddc2e91e4c44ca371f27fbe8e7c163c2daecd',
-  extractionVersion: 'experience-lab-icons-v2',
-  opticalLockVersion: 'experience-lab-icons-v2-locked',
-  lockdownCertified: true,
+  bundleSha256: 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
+  extractionVersion: 'studio-world-icons-v3',
+  opticalLockVersion: 'studio-world-icons-v3-pending-approval',
+  lockdownCertified: false,
+  v2PipelineFrozen: true,
   iconCount: 64,
-  auditPass: 64,
-  auditWarn: 0,
+  auditPass: 0,
+  auditWarn: 64,
   auditFail: 0,
-  mode: 'extracted-transparent-png' as const,
+  mode: 'deterministic-crop-v3' as const,
 } as const;
 
 export type ExperienceLabIconSpriteConfig = typeof EXPERIENCE_LAB_ICON_SPRITE_CONFIG;

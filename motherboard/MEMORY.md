@@ -49147,3 +49147,31 @@ PNG Asset → ExperienceLabIconPresentation → ExperienceLabIcon → Button
 - **Tests** — `experience-lab-icon.test.ts` asserts route wiring; `canonical-studio-world.test.ts` asserts admin-only path
 
 **One commit + one push** on `master` via `agent-commit.sh`.
+
+---
+
+## 2026-07-14 — P0 Studio World Icon Master Reconstruction v3 (full conversation)
+
+**Founder request:** P0 sprint — replace failed v2 automated glyph detection with deterministic 64-icon crop map from labeled catalog. Freeze v2 extractor; pause Founder Optical Mode; build crop manifest + v3 generator + crop editor; fail-closed until founder approves contact sheet. No layout changes; no v2 PNG regeneration.
+
+**Root cause confirmed:** v2 contact sheet showed label contamination, partial glyphs, wrong regions — runtime optical tuning cannot fix corrupt source assets.
+
+**Shipped:**
+
+- **`studio-world-icon-crop-manifest.ts`** — 64 explicit crop rectangles (approved: false pending founder review)
+- **`scripts/propose-studio-world-icon-crops.mjs`** — generates manifest from labeled master (detection assists only)
+- **`scripts/generate-studio-world-icons-from-crops.mjs`** — v3 transparent PNG generator (512×512); publishes approved only; previews in `_preview-unapproved/`
+- **`scripts/apply-studio-world-icon-crop-patch.mjs`** — merge crop editor patches
+- **Crop editor** `/admin/studio/experience-lab-icon-crop-editor` — source cell · crop overlay · live preview · export patch
+- **QA route upgraded** `/admin/studio/experience-lab-icon-qa` — v3 contact sheet, crop overlay, optical paused banner
+- **`experience-lab-icon-asset-resolver.ts`** — production fail-closed (no v2 fallback); QA shows previews
+- **v2 frozen:** `prebuild` uses v3 generator; `EXPERIENCE_LAB_ICON_LOCKDOWN_CERTIFIED = false`; `FOUNDER_OPTICAL_MODE_PAUSED = true`
+- **Output:** `src/assets/studio-world/experience-lab/icons/generated-v3/` — 64 previews + contact sheet
+- **Docs:** `STUDIO_WORLD_ICON_MASTER_RECONSTRUCTION.md`
+- **Tests:** 39 pass (crop manifest + icon + presentation + canonical)
+
+**Preserved:** Labeled source unchanged (sha256 d7476775…); Experience Lab V2 layout untouched; legacy route untouched.
+
+**Remaining:** Founder visual approval of contact sheet; set `approved: true` per icon via crop editor; then regenerate for production runtime.
+
+**One commit + one push** on `master` via `agent-commit.sh`.

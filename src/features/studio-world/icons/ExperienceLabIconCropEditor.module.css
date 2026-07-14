@@ -1,0 +1,195 @@
+.panel {
+  background: rgba(12, 14, 18, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 12px;
+  min-height: 200px;
+}
+
+.panelTitle {
+  margin: 0 0 10px;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(201, 169, 98, 0.95);
+  font-weight: 600;
+}
+
+.editorRoot {
+  min-height: 100vh;
+  background: #0a0b0d;
+  color: #e8eaed;
+  padding: 16px;
+  font-family: 'Futura PT', system-ui, sans-serif;
+}
+
+.header {
+  margin-bottom: 16px;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 14px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.header p {
+  margin: 6px 0 0;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr 1fr;
+  gap: 12px;
+}
+
+@media (max-width: 900px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.sourceCell {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 175 / 140;
+  background-color: #000;
+  background-repeat: no-repeat;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.cropStage {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 175 / 140;
+  background-color: #000;
+  background-repeat: no-repeat;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.cropRect {
+  position: absolute;
+  border: 2px solid rgba(80, 160, 255, 0.9);
+  background: rgba(80, 160, 255, 0.12);
+  box-sizing: border-box;
+  pointer-events: none;
+}
+
+.previewBox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 180px;
+  background:
+    linear-gradient(45deg, #1a1c22 25%, transparent 25%),
+    linear-gradient(-45deg, #1a1c22 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #1a1c22 75%),
+    linear-gradient(-45deg, transparent 75%, #1a1c22 75%);
+  background-size: 16px 16px;
+  background-position:
+    0 0,
+    0 8px,
+    8px -8px,
+    -8px 0;
+  background-color: #12141a;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.previewImg {
+  max-width: 90%;
+  max-height: 160px;
+  object-fit: contain;
+}
+
+.controls {
+  display: grid;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.controlRow {
+  display: grid;
+  grid-template-columns: 90px 1fr 48px;
+  gap: 8px;
+  align-items: center;
+  font-size: 11px;
+}
+
+.controlRow input[type='range'] {
+  width: 100%;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.btn {
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 8px 12px;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
+  cursor: pointer;
+}
+
+.btnPrimary {
+  border-color: rgba(201, 169, 98, 0.6);
+  background: rgba(201, 169, 98, 0.15);
+}
+
+.iconPicker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 12px;
+  max-height: 120px;
+  overflow-y: auto;
+}
+
+.iconChip {
+  font-size: 9px;
+  padding: 4px 8px;
+  border-radius: 3px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: transparent;
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+}
+
+.iconChipActive {
+  border-color: rgba(201, 169, 98, 0.8);
+  color: #fff;
+}
+
+.status {
+  margin-top: 8px;
+  font-size: 10px;
+  color: rgba(140, 200, 160, 0.9);
+}
+
+.exportBox {
+  margin-top: 12px;
+  width: 100%;
+  min-height: 80px;
+  font-size: 10px;
+  font-family: ui-monospace, monospace;
+  background: #0d0f12;
+  color: #b8c0cc;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 4px;
+  padding: 8px;
+}
