@@ -1,0 +1,126 @@
+/* Keyframes extracted for clarity — imported by LivingStudioWorldOrb.module.css */
+
+@keyframes lswo-breathe {
+  0%,
+  100% {
+    transform: scale(0.99);
+  }
+  50% {
+    transform: scale(1.012);
+  }
+}
+
+@keyframes lswo-core-glow {
+  0%,
+  100% {
+    opacity: 0.55;
+    filter: brightness(1);
+  }
+  50% {
+    opacity: 0.78;
+    filter: brightness(1.12);
+  }
+}
+
+@keyframes lswo-highlight-drift {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  33% {
+    transform: translate(1px, -0.5px);
+  }
+  66% {
+    transform: translate(-0.5px, 1px);
+  }
+}
+
+@keyframes lswo-outer-orbit {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes lswo-inner-orbit {
+  from {
+    transform: rotate(360deg);
+  }
+  to {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes lswo-shimmer {
+  0%,
+  100% {
+    background-position: 120% 0;
+    opacity: 0.2;
+  }
+  45% {
+    background-position: -20% 0;
+    opacity: 0.42;
+  }
+}
+
+@keyframes lswo-pulse-halo {
+  0%,
+  88%,
+  100% {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  92% {
+    opacity: 0.45;
+    transform: scale(1.04);
+  }
+}
+
+@keyframes lswo-generating-energy {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes lswo-approved-bloom {
+  0% {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  35% {
+    opacity: 0.85;
+    transform: scale(1.08);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.14);
+  }
+}
+
+@keyframes lswo-warning-pulse {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 0.62;
+  }
+}
+
+@keyframes lswo-error-pulse {
+  0%,
+  100% {
+    opacity: 0.28;
+  }
+  40% {
+    opacity: 0.52;
+  }
+  70% {
+    opacity: 0.36;
+  }
+}

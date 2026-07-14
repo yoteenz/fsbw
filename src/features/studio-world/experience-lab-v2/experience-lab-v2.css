@@ -1385,48 +1385,6 @@ button.elab-cmd__meta-chip {
   place-items: center;
 }
 
-.elab-founder-wb__nav-orb-ring {
-  position: absolute;
-  inset: var(--elab-wb-nav-orb-ring-inset, -6px);
-  border-radius: 50%;
-  border: 1px solid rgba(255, 255, 255, 0.35);
-  opacity: 0.55;
-  pointer-events: none;
-}
-
-.elab-founder-wb__nav-orb-core {
-  position: relative;
-  width: var(--elab-wb-nav-orb-core-size, 66px);
-  height: var(--elab-wb-nav-orb-core-size, 66px);
-  border-radius: 50%;
-  overflow: hidden;
-  background: radial-gradient(circle at 32% 28%, rgba(255, 255, 255, 0.92) 0%, rgba(201, 169, 98, 0.35) 42%, rgba(0, 0, 0, 0.15) 100%);
-  box-shadow:
-    0 12px 36px rgba(0, 0, 0, 0.35),
-    inset 0 3px 0 rgba(255, 255, 255, 0.55),
-    inset 0 -12px 30px rgba(201, 169, 98, 0.12);
-}
-
-.elab-founder-wb__nav-orb-glow {
-  position: absolute;
-  inset: 18%;
-  border-radius: 50%;
-  background: radial-gradient(circle at 50% 45%, rgba(255, 248, 240, 0.75) 0%, rgba(201, 169, 98, 0.2) 55%, transparent 72%);
-  pointer-events: none;
-}
-
-.elab-founder-wb__nav-orb-lens {
-  position: absolute;
-  top: 12%;
-  left: 18%;
-  width: 38%;
-  height: 28%;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.72);
-  filter: blur(0.4px);
-  pointer-events: none;
-}
-
 .elab-founder-wb--tabbed {
   display: flex;
   flex-direction: column;

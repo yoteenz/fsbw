@@ -146,7 +146,8 @@ describe('Experience Lab V2 — Fixed application shell', () => {
     expect(wb).toContain('EXPERIENCE LAB WORKBENCH');
     expect(wb).toContain('elab-founder-wb__tools-scroll');
     expect(wb).toContain('elab-founder-wb__world-nav');
-    expect(wb).toContain('elab-founder-wb__nav-orb');
+    expect(wb).toContain('LivingStudioWorldOrb');
+    expect(readV2Source('living-studio-world-orb/LivingStudioWorldOrb.tsx')).toContain('elab-founder-wb__nav-orb');
     expect(wb).toContain('splitWorkbenchToolLabel');
     expect(readV2Source('experience-lab-v2-workbench-config.ts')).toContain('material-lab');
     expect(readV2Source('ExperienceLabWorkbenchDock.tsx')).toContain('EXPERIENCE_LAB_WORKBENCH_EDITING_TOOLS');

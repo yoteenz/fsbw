@@ -1,0 +1,298 @@
+@import './living-studio-world-orb-keyframes.css';
+
+.root {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: auto;
+  transform: translateZ(0);
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.root:focus-visible {
+  box-shadow: 0 0 0 1px rgba(201, 169, 98, 0.55);
+  border-radius: 50%;
+}
+
+.stack {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  overflow: visible;
+}
+
+.breatheWrap {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  transform-origin: center center;
+}
+
+.shellMotion .breatheWrap {
+  animation: lswo-breathe 5.4s ease-in-out infinite;
+}
+
+.hoverLift {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.35s ease, filter 0.35s ease;
+}
+
+.shellHover .hoverLift,
+.shellFocus .hoverLift {
+  transform: translateY(-2.5px);
+}
+
+.layer {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+/* ── 1. Ambient glow ── */
+.ambientGlow {
+  inset: -35%;
+  background: radial-gradient(
+    circle at 50% 52%,
+    rgba(201, 169, 98, 0.22) 0%,
+    rgba(201, 169, 98, 0.08) 38%,
+    transparent 68%
+  );
+  opacity: 0.55;
+  filter: blur(1px);
+  animation: lswo-core-glow 5.8s var(--lswo-ease, ease-in-out) infinite;
+}
+
+/* ── 7. Orbit rings ── */
+.outerOrbitRing {
+  inset: -3px;
+  border: 0.5px solid rgba(255, 255, 255, 0.22);
+  opacity: 0.42;
+  animation: lswo-outer-orbit 28s linear infinite;
+}
+
+.innerOrbitRing {
+  inset: 1px;
+  border: 0.5px solid rgba(201, 169, 98, 0.28);
+  opacity: 0.34;
+  animation: lswo-inner-orbit 19s linear infinite;
+}
+
+/* ── Orb base texture ── */
+.orbBase {
+  inset: 2px;
+  overflow: hidden;
+  background: radial-gradient(
+    circle at 32% 28%,
+    rgba(255, 255, 255, 0.18) 0%,
+    rgba(0, 0, 0, 0.2) 100%
+  );
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.45),
+    inset 0 -4px 10px rgba(201, 169, 98, 0.1);
+}
+
+.orbBaseImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  border-radius: 50%;
+}
+
+/* ── 4. Depth overlay ── */
+.depthOverlay {
+  inset: 2px;
+  background: radial-gradient(
+    circle at 50% 68%,
+    rgba(0, 0, 0, 0.38) 0%,
+    transparent 58%
+  );
+  mix-blend-mode: multiply;
+  opacity: 0.72;
+}
+
+/* ── 2. Internal core ── */
+.internalCore {
+  inset: 22%;
+  background: radial-gradient(
+    circle at 50% 45%,
+    rgba(255, 248, 235, 0.82) 0%,
+    rgba(201, 169, 98, 0.34) 48%,
+    transparent 72%
+  );
+  opacity: 0.7;
+  animation: lswo-core-glow 6.2s ease-in-out infinite;
+}
+
+/* ── 3. Highlight ── */
+.highlightLayer {
+  top: 10%;
+  left: 16%;
+  width: 42%;
+  height: 30%;
+  inset: auto;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.68);
+  filter: blur(0.35px);
+  opacity: 0.75;
+  transform: translate(0, 0);
+  transition: transform 0.45s ease-out, opacity 0.25s ease;
+  animation: lswo-highlight-drift 6.8s ease-in-out infinite;
+}
+
+/* ── 5. Surface shimmer ── */
+.surfaceShimmer {
+  inset: 2px;
+  overflow: hidden;
+  opacity: 0.35;
+  background: linear-gradient(
+    118deg,
+    transparent 38%,
+    rgba(255, 255, 255, 0.22) 50%,
+    transparent 62%
+  );
+  background-size: 220% 100%;
+  animation: lswo-shimmer 7.2s ease-in-out infinite;
+}
+
+/* ── 6. Pulse halo ── */
+.pulseHalo {
+  inset: -8%;
+  border-radius: 50%;
+  border: 0.5px solid rgba(201, 169, 98, 0.2);
+  opacity: 0;
+  animation: lswo-pulse-halo 6.5s ease-in-out infinite;
+}
+
+/* ── 8. Atmospheric bloom ── */
+.atmosphericBloom {
+  inset: -18%;
+  background: radial-gradient(circle, rgba(255, 248, 240, 0.12) 0%, transparent 70%);
+  opacity: 0.45;
+}
+
+/* ── Status layer accents ── */
+.statusLayer {
+  inset: 2px;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.statusGenerating {
+  opacity: 1;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    rgba(140, 186, 255, 0.18) 60deg,
+    rgba(201, 169, 98, 0.28) 120deg,
+    transparent 180deg
+  );
+  animation: lswo-generating-energy 4.8s linear infinite;
+}
+
+.statusApproved {
+  opacity: 1;
+  background: radial-gradient(circle, rgba(201, 169, 98, 0.45) 0%, transparent 68%);
+  animation: lswo-approved-bloom 1.4s ease-out 1;
+}
+
+.statusWarning {
+  opacity: 1;
+  background: radial-gradient(circle, rgba(217, 168, 78, 0.28) 0%, transparent 70%);
+  animation: lswo-warning-pulse 4.2s ease-in-out infinite;
+}
+
+.statusError {
+  opacity: 1;
+  background: radial-gradient(circle, rgba(180, 72, 62, 0.32) 0%, rgba(201, 169, 98, 0.12) 55%, transparent 72%);
+  animation: lswo-error-pulse 5.6s ease-in-out infinite;
+}
+
+.statusOffline {
+  opacity: 1;
+  background: radial-gradient(circle, rgba(120, 120, 128, 0.22) 0%, transparent 70%);
+}
+
+/* ── Shell fills parent .elab-founder-wb__nav-orb (26×26) — no layout changes ── */
+.shell {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: default;
+  display: block;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.shell:focus-visible {
+  box-shadow: none;
+}
+
+.shellMotion {
+  transition: filter 0.35s ease;
+}
+
+.shellHover {
+  filter: brightness(1.08);
+}
+
+.shellHover .ambientGlow {
+  opacity: 0.72;
+}
+
+.shellHover .outerOrbitRing,
+.shellFocus .outerOrbitRing {
+  opacity: 0.58;
+}
+
+.shellHover .innerOrbitRing,
+.shellFocus .innerOrbitRing {
+  opacity: 0.48;
+}
+
+.shellFocus {
+  filter: brightness(1.1);
+}
+
+.shellPaused .shellMotion,
+.shellPaused .layer,
+.shellPaused .stack {
+  animation-play-state: paused !important;
+}
+
+.reducedMotion .shellMotion,
+.reducedMotion .layer {
+  animation: none !important;
+}
+
+.reducedMotion .ambientGlow {
+  opacity: 0.5;
+}
+
+.reducedMotion .internalCore {
+  opacity: 0.65;
+}
+
+.reducedMotion .highlightLayer {
+  opacity: 0.6;
+}
+
+.reducedMotion .outerOrbitRing,
+.reducedMotion .innerOrbitRing {
+  opacity: 0.38;
+}

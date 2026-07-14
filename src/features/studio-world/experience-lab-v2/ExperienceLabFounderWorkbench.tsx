@@ -11,6 +11,7 @@ import {
 } from './experience-lab-v2-workbench-config';
 import type { ExperienceLabIconName } from '../icons/experience-lab-icon-registry';
 import { ExperienceLabIcon } from '../icons/ExperienceLabIcon';
+import { LivingStudioWorldOrb } from './living-studio-world-orb/LivingStudioWorldOrb';
 
 type Props = {
   model: ExperienceLabV2ViewModel;
@@ -22,20 +23,8 @@ function WorkbenchNavIcon({ name }: { name: ExperienceLabIconName }) {
   return <ExperienceLabIcon name={name} size="sm" decorative />;
 }
 
-function WorkbenchNavOrb() {
-  return (
-    <div className="elab-founder-wb__nav-orb" aria-hidden>
-      <span className="elab-founder-wb__nav-orb-ring" />
-      <span className="elab-founder-wb__nav-orb-core">
-        <span className="elab-founder-wb__nav-orb-glow" />
-        <span className="elab-founder-wb__nav-orb-lens" />
-      </span>
-    </div>
-  );
-}
-
 /** Three-row Experience Lab Workbench — title · editing tools · world navigation. */
-export function ExperienceLabFounderWorkbench({ model: _model }: Props) {
+export function ExperienceLabFounderWorkbench({ model }: Props) {
   const [activeTool, setActiveTool] = useState<WorkbenchEditingToolId>('architectural-tools');
   const [activeNav, setActiveNav] = useState<WorkbenchWorldNavId>('dashboard');
   const leftNav = EXPERIENCE_LAB_WORKBENCH_WORLD_NAV.slice(0, 2);
@@ -100,7 +89,7 @@ export function ExperienceLabFounderWorkbench({ model: _model }: Props) {
           ))}
 
           <div className="elab-founder-wb__nav-logo-wrap">
-            <WorkbenchNavOrb />
+            <LivingStudioWorldOrb model={model} />
           </div>
 
           {rightNav.map((item) => (

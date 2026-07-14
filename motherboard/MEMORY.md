@@ -48780,6 +48780,7 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 
 ---
 
+<<<<<<< HEAD
 ## 2026-07-13 — Experience Lab V2: remove bottom clutter for workbench anchoring
 
 **Context:** Founder screenshot showed three circled assets pushing workbench up: APPROVE & strip, FS hex badge, large floating Studio Orb sphere.
@@ -48976,5 +48977,27 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 **Fix:** `src/studio-os/diagnostics/state-monitor/storage-observer.ts` — reentrancy guard (`observerDepth`) + skip observer-internal keys (`studioOsFlightRecorder*`, `studioOsQuarantine_v1_*`). Local Playwright: penthouse + home/shop render with content after fix.
 
 **Spatial Architecture Review:** SKIPPED — P0 infrastructure bugfix, no new surfaces.
+
+**One commit + one push** on `master` via `agent-commit.sh`.
+
+---
+
+## 2026-07-13 — P0 Living Studio World Orb™ visual enhancement (full conversation)
+
+**Founder request:** P0 sprint — replace static Workbench center orb with premium animated `LivingStudioWorldOrb` React component. Visual enhancement ONLY — immutable layout contract: no workbench/command dock/nav/spacing/responsive changes; same DOM location and container dimensions (`--elab-wb-nav-orb-size`), zero CLS.
+
+**Prior context in chat:** Heartbeat overlay hidden; Workbench polish; Command Dock logo `IMG_6238.webp`; remote master already had 3× orb sizing + 40% height scale on workbench.
+
+**Shipped:**
+
+- **`living-studio-world-orb/LivingStudioWorldOrb.tsx`** — layered orb: AmbientGlow, Outer/Inner Orbit Rings, OrbBase (existing workbench center PNG texture), DepthOverlay, InternalCore, HighlightLayer (subtle pointer follow), SurfaceShimmer, PulseHalo, AtmosphericBloom, StatusLayer; hover/focus lift on inner wrapper; `prefers-reduced-motion` + tab/off-screen pause
+- **`LivingStudioWorldOrb.module.css`** + **`living-studio-world-orb-keyframes.css`** — subtle breathe, orbit, shimmer, halo, status modes (GENERATING/APPROVED/WARNING/ERROR/OFFLINE)
+- **`orbAnimations.ts`** + **`orbStatusMachine.ts`** — timing tokens + view-model status resolution
+- **`ExperienceLabFounderWorkbench`** — `LivingStudioWorldOrb` mounts inside unchanged `.elab-founder-wb__nav-logo-wrap` / `.elab-founder-wb__nav-orb`; removed static CSS orb inner layers only
+- **Tests** — V2 suite PASS; orb status + layer structure tests added; build PASS
+
+**Not changed:** Workbench grid, Command Dock, navigation, spacing, responsiveness, orb container dimensions.
+
+**Spatial Architecture Review:** SKIPPED — visual-only orb upgrade inside approved layout shell.
 
 **One commit + one push** on `master` via `agent-commit.sh`.
