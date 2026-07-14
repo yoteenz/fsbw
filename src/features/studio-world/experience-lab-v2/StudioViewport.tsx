@@ -3,6 +3,7 @@ import type { ExperienceLabV2ArtifactRef, StudioViewportMode } from './experienc
 import { ELAB_V2_COMPOSITION, VIEWPORT_MODE_LABELS } from './experience-lab-v2-composition';
 import { ExperienceLabIcon } from '../icons/ExperienceLabIcon';
 import { VIEWPORT_MODE_ICON } from './experience-lab-v2-icon-bindings';
+import { ExperienceLabEnvironmentLayer } from './ExperienceLabEnvironmentLayer';
 
 export type StudioViewportProps = {
   mode: StudioViewportMode;
@@ -31,35 +32,13 @@ export type StudioViewportProps = {
   onToggleRightRail?: () => void;
 };
 
+/** Empty artifact states show only the viewport environment — no placeholder graphics. */
 function BlueprintEmptyState() {
-  return (
-    <div className="elab-empty elab-empty--blueprint" data-empty-state="blueprint">
-      <svg className="elab-empty__grid" viewBox="0 0 200 200" aria-hidden>
-        <defs>
-          <pattern id="bp-grid" width="20" height="20" patternUnits="userSpaceOnUse">
-            <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(77,163,255,0.25)" strokeWidth="0.5" />
-          </pattern>
-        </defs>
-        <rect width="200" height="200" fill="url(#bp-grid)" />
-        <rect x="40" y="50" width="120" height="80" fill="none" stroke="rgba(77,163,255,0.5)" strokeWidth="1" strokeDasharray="4 2" />
-        <line x1="100" y1="50" x2="100" y2="130" stroke="rgba(77,163,255,0.35)" />
-        <line x1="40" y1="90" x2="160" y2="90" stroke="rgba(77,163,255,0.35)" />
-      </svg>
-      <p className="elab-empty__title">BLUEPRINT MODE</p>
-      <p className="elab-empty__hint">Holographic specification layer · awaiting artifact</p>
-    </div>
-  );
+  return null;
 }
 
-function FounderRenderEmptyState({ status }: { status?: string }) {
-  return (
-    <div className="elab-empty elab-empty--render" data-empty-state="founder-render">
-      <div className="elab-empty__glow" />
-      <p className="elab-empty__title">FOUNDER RENDER</p>
-      <p className="elab-empty__hint">Status: {status ?? 'no_preview'}</p>
-      <p className="elab-empty__hint">Photoreal preview loads here — not in environment layer</p>
-    </div>
-  );
+function FounderRenderEmptyState() {
+  return null;
 }
 
 function ArtifactPane({
@@ -67,7 +46,6 @@ function ArtifactPane({
   artifact,
   variant,
   onImageLoad,
-  renderStatus,
 }: {
   title: string;
   artifact?: ExperienceLabV2ArtifactRef;
@@ -77,13 +55,8 @@ function ArtifactPane({
 }) {
   if (!artifact || artifact.status === 'missing') {
     if (variant === 'blueprint') return <BlueprintEmptyState />;
-    if (variant === 'render') return <FounderRenderEmptyState status={renderStatus} />;
-    return (
-      <div className="elab-empty elab-empty--default">
-        <p className="elab-empty__title">{title}</p>
-        <p className="elab-empty__hint">No artifact loaded</p>
-      </div>
-    );
+    if (variant === 'render') return <FounderRenderEmptyState />;
+    return null;
   }
   if (artifact.status === 'loading') {
     return (
@@ -249,7 +222,10 @@ export function StudioViewport({
         ) : null}
       </div>
 
-      <div className="elab-viewport__stage">{renderStage()}</div>
+      <div className="elab-viewport__stage">
+        <ExperienceLabEnvironmentLayer scope="viewport" isMobile />
+        <div className="elab-viewport__stage-content">{renderStage()}</div>
+      </div>
 
       {viewAngles ? <div className="elab-viewport__angles-chrome">{viewAngles}</div> : null}
     </section>

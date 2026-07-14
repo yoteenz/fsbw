@@ -49261,3 +49261,26 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 **Remaining:** Founder visual QA on twin diff artifacts + v5 contact sheet; mobile/desktop runtime screenshots; lockdown certification after approval.
 
 **One commit + one push** on `master` via `agent-commit.sh`.
+
+---
+
+## 2026-07-14 — Experience Lab V2 viewport live environment (full conversation)
+
+**Founder request:** Visual-only sprint — replace Studio Viewport placeholder background with attached 9:16 Experience Lab environment image (`C5C97D52-A7E3-41C7-8C47-EA700D4EE74E.png`). No UI/layout/spacing/dock/workbench/inspector/navigation/interaction/animation/logic changes. Environment only inside viewport (z0), scrim z1, overlays z2+, never behind Command Dock/Workbench/nav.
+
+**Prior context (same chat):** P0 Studio World Icon Source Twin Reconstruction v5 completed (`53dea7647`) — pixel-preserving unlabeled twin, generated-v5 runtime 64/64 PASS.
+
+**Shipped:**
+
+- `src/assets/studio-world/experience-lab/experience-lab-v2-viewport-environment.png` — 941×1672 canonical mobile environment (founder Supabase asset)
+- `experience-lab-v2.config.ts` — Vite import; `mobileEnvironmentUrl` + `desktopEnvironmentUrl`; `center center` cover positioning; opacity 1
+- `ExperienceLabEnvironmentLayer.tsx` — `scope="viewport"` variant (`elab-v2__env--viewport`) for viewport-only absolute layering vs shell `fixed`
+- `StudioViewport.tsx` — mounts environment inside `elab-viewport__stage`; content in `elab-viewport__stage-content` (z2); empty blueprint/render/default states return `null` (environment only, no placeholder graphics); loading/error overlays remain above environment
+- `experience-lab-v2.css` — viewport env cover/center/no-stretch; transparent `.elab-viewport` background; stage content grid preserved
+- Tests: 3 new viewport-environment assertions; 41/41 V2 tests pass; `npm run build` PASS
+
+**Layer order preserved:** env z0 → scrim z1 → blueprint/render/split/loading overlays z2 → floating inspectors z4 → chrome z4+ → dock/workbench unchanged.
+
+**Spatial Architecture Review:** SKIPPED — visual-only viewport background swap, no new surfaces or nav.
+
+**One commit + one push** on `master` via `agent-commit.sh`.

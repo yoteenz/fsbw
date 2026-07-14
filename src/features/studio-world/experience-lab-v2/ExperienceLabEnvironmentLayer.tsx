@@ -5,17 +5,25 @@ type Props = {
   config?: Partial<ExperienceLabV2EnvironmentConfig>;
   preset?: 'dark' | 'bright';
   isMobile?: boolean;
+  /** Viewport scope keeps the environment inside Studio Viewport only (not full shell). */
+  scope?: 'shell' | 'viewport';
 };
 
 /** Decorative environment beneath React UI — never contains production interface. */
-export function ExperienceLabEnvironmentLayer({ config, preset = 'dark', isMobile = false }: Props) {
+export function ExperienceLabEnvironmentLayer({
+  config,
+  preset = 'dark',
+  isMobile = false,
+  scope = 'shell',
+}: Props) {
   const env = { ...DEFAULT_V2_ENVIRONMENT, ...config };
   const url = isMobile ? env.mobileEnvironmentUrl ?? env.desktopEnvironmentUrl : env.desktopEnvironmentUrl;
 
   return (
     <div
-      className="elab-v2__env"
+      className={`elab-v2__env${scope === 'viewport' ? ' elab-v2__env--viewport' : ''}`}
       data-experience-lab-environment
+      data-elab-env-scope={scope}
       aria-hidden
       style={
         {

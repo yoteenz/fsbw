@@ -394,6 +394,33 @@ describe('Experience Lab V2 — Panel orchestration', () => {
   });
 });
 
+describe('Experience Lab V2 — Viewport environment', () => {
+  it('mounts canonical environment inside Studio Viewport only', () => {
+    const viewport = readV2Source('StudioViewport.tsx');
+    expect(viewport).toContain('ExperienceLabEnvironmentLayer');
+    expect(viewport).toContain('scope="viewport"');
+    expect(viewport).toContain('elab-viewport__stage-content');
+    expect(viewport).not.toMatch(/function BlueprintEmptyState[\s\S]*elab-empty__grid/);
+    expect(viewport).toContain('function BlueprintEmptyState');
+    expect(viewport).toContain('return null');
+  });
+
+  it('config wires bundled viewport environment asset', () => {
+    const config = readV2Source('experience-lab-v2.config.ts');
+    expect(config).toContain('experience-lab-v2-viewport-environment.png');
+    expect(config).toContain('mobileEnvironmentUrl: experienceLabV2ViewportEnvironmentUrl');
+    expect(config).toContain("environmentPosition: 'center center'");
+  });
+
+  it('CSS scopes viewport environment with cover/center layering', () => {
+    const css = readV2Source('experience-lab-v2.css');
+    expect(css).toContain('.elab-v2__env--viewport');
+    expect(css).toContain('object-position: var(--elab-env-position, center center)');
+    expect(css).toContain('.elab-viewport__stage-content');
+    expect(css).toMatch(/\.elab-viewport\s*\{[\s\S]*?background:\s*transparent/);
+  });
+});
+
 describe('Experience Lab V2 — Component Review Mode integration', () => {
   it('shell wires component review mode with Phase 1 default', () => {
     const shell = readV2Source('ExperienceLabV2Shell.tsx');

@@ -230,6 +230,23 @@ body.elab-v2-fixed-shell-active {
   opacity: 0.38;
 }
 
+.elab-v2__env--viewport {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.elab-v2__env--viewport img {
+  object-position: var(--elab-env-position, center center);
+  opacity: var(--elab-env-opacity, 1);
+  transform: scale(var(--elab-env-scale, 1));
+  transform-origin: center center;
+}
+
+.elab-v2__env--viewport .elab-v2__env-scrim {
+  z-index: 1;
+}
+
 .elab-v2__env-scrim {
   position: absolute;
   inset: 0;
@@ -949,7 +966,7 @@ button.elab-cmd__meta-chip {
   margin: 0;
   display: flex;
   flex-direction: column;
-  background: rgba(0, 0, 0, 0.28);
+  background: transparent;
   border: none;
   border-radius: 0;
   overflow: hidden;
@@ -1033,10 +1050,23 @@ button.elab-cmd__meta-chip {
 }
 
 .elab-viewport__stage {
-  flex: 1; display: grid; place-items: center;
-  padding: 12px; min-height: 0;
+  flex: 1;
+  min-height: 0;
   position: relative;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.elab-viewport__stage-content {
+  position: relative;
+  z-index: 2;
+  flex: 1;
+  display: grid;
+  place-items: center;
+  padding: 12px;
+  min-height: 0;
+  width: 100%;
 }
 
 .elab-viewport__angles-chrome {
