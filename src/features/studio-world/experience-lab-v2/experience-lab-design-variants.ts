@@ -45,6 +45,8 @@ export type DesignVariantRecord = {
   id: DesignVariantId;
   name: string;
   theme: DesignVariantTheme;
+  /** Canonical production object — every variant owns exactly one package. */
+  environmentPackageId: string;
   generationStage: DesignVariantGenerationStage;
   /** Stage 1 lightweight preview environment (viewport swap). */
   previewEnvironmentUrl: string;
@@ -82,11 +84,14 @@ export type DesignVariantCompareRequest = {
 
 export const DESIGN_VARIANT_COMPARE_RESERVED = true;
 
+import {
+  migrateDesignVariantsWithPackageIds,
+} from './experience-lab-design-variant-package-migration';
+
 const LIGHT_PREVIEW = experienceLabV2ViewportEnvironmentUrl;
 const DARK_PREVIEW = experienceLabV2ViewportEnvironmentDesktopUrl;
 
-/** Stage 1 seed — lightweight preview concepts (not production renders). */
-export const EXPERIENCE_LAB_DESIGN_VARIANTS: DesignVariantRecord[] = [
+const RAW_EXPERIENCE_LAB_DESIGN_VARIANTS: Omit<DesignVariantRecord, 'environmentPackageId'>[] = [
   {
     id: 'light-01',
     name: 'Light 01',
@@ -208,6 +213,10 @@ export const EXPERIENCE_LAB_DESIGN_VARIANTS: DesignVariantRecord[] = [
     compareGroup: 'dark',
   },
 ];
+
+/** Stage 1 seed — lightweight preview concepts; auto-migrated with environmentPackageId. */
+export const EXPERIENCE_LAB_DESIGN_VARIANTS: DesignVariantRecord[] =
+  migrateDesignVariantsWithPackageIds(RAW_EXPERIENCE_LAB_DESIGN_VARIANTS);
 
 export const DEFAULT_ACTIVE_DESIGN_VARIANT_ID: DesignVariantId = 'light-01';
 

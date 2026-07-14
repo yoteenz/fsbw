@@ -1,42 +1,63 @@
 import { describe, expect, it } from 'vitest';
 import {
-  ensureExperienceLabEnvironmentPackage,
-  getExperienceLabEnvironmentPackage,
+  ensureExperienceLabVariantPackages,
+  getDesignVariantPackage,
   resolveDesignVariantEnvironmentFromPackage,
   resolveDesignVariantPackageDrawer,
-  EXPERIENCE_LAB_ENVIRONMENT_PACKAGE_ID,
+  resolveDesignVariantPackageId,
 } from './experience-lab-environment-package-bridge';
+import {
+  assertAllVariantsOwnPackages,
+  migrateDesignVariantPackageId,
+} from './experience-lab-design-variant-package-migration';
+import { EXPERIENCE_LAB_DESIGN_VARIANTS } from './experience-lab-design-variants';
 
-describe('Experience Lab environment package bridge', () => {
-  it('bootstraps reception package idempotently', () => {
-    const first = ensureExperienceLabEnvironmentPackage();
-    const second = ensureExperienceLabEnvironmentPackage();
-    expect(first.packageId).toBe(EXPERIENCE_LAB_ENVIRONMENT_PACKAGE_ID);
-    expect(second.packageId).toBe(first.packageId);
+describe('Experience Lab design variant package migration', () => {
+  it('migrates every variant with environmentPackageId automatically', () => {
+    expect(assertAllVariantsOwnPackages(EXPERIENCE_LAB_DESIGN_VARIANTS)).toBe(true);
+    expect(EXPERIENCE_LAB_DESIGN_VARIANTS).toHaveLength(6);
+    for (const variant of EXPERIENCE_LAB_DESIGN_VARIANTS) {
+      expect(variant.environmentPackageId).toContain(variant.id);
+      expect(variant.environmentPackageId).toMatch(/^envpkg\./);
+    }
   });
 
-  it('resolves viewport URLs from package outputs for light and dark variants', () => {
-    ensureExperienceLabEnvironmentPackage();
+  it('generates stable package IDs per variant', () => {
+    const variant = EXPERIENCE_LAB_DESIGN_VARIANTS[0];
+    expect(migrateDesignVariantPackageId(variant)).toBe(variant.environmentPackageId);
+  });
+});
+
+describe('Experience Lab environment package bridge', () => {
+  it('bootstraps one package per variant idempotently', () => {
+    const first = ensureExperienceLabVariantPackages();
+    const second = ensureExperienceLabVariantPackages();
+    expect(first).toHaveLength(6);
+    expect(second).toHaveLength(6);
+    expect(first[0].packageId).toBe(second[0].packageId);
+  });
+
+  it('resolves viewport URLs from per-variant packages', () => {
+    ensureExperienceLabVariantPackages();
     const lightMobile = resolveDesignVariantEnvironmentFromPackage('light-01', true);
     const darkDesktop = resolveDesignVariantEnvironmentFromPackage('dark-01', false);
     expect(lightMobile).toBeTruthy();
     expect(darkDesktop).toBeTruthy();
-    expect(lightMobile).not.toBe(darkDesktop);
   });
 
-  it('exposes package drawer model for variant metadata', () => {
-    ensureExperienceLabEnvironmentPackage();
+  it('exposes package drawer model per variant', () => {
+    ensureExperienceLabVariantPackages();
     const drawer = resolveDesignVariantPackageDrawer('light-01');
     expect(drawer).not.toBeNull();
     expect(drawer?.variantId).toBe('light-01');
-    expect(drawer?.environmentName).toContain('Reception');
-    expect(drawer?.mobilePreviewUrl).toBeTruthy();
+    expect(drawer?.packageId).toBe(resolveDesignVariantPackageId('light-01'));
+    expect(drawer?.outputsGenerated).toBeGreaterThan(0);
   });
 
-  it('returns registered package from getter', () => {
-    ensureExperienceLabEnvironmentPackage();
-    const pkg = getExperienceLabEnvironmentPackage();
-    expect(pkg?.packageId).toBe(EXPERIENCE_LAB_ENVIRONMENT_PACKAGE_ID);
-    expect(pkg?.variants).toHaveLength(6);
+  it('returns registered package per variant from getter', () => {
+    ensureExperienceLabVariantPackages();
+    const pkg = getDesignVariantPackage('light-02');
+    expect(pkg?.variantId).toBe('light-02');
+    expect(pkg?.packageId).toBe(EXPERIENCE_LAB_DESIGN_VARIANTS[1].environmentPackageId);
   });
 });

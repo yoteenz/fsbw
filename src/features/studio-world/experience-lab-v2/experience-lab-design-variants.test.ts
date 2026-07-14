@@ -18,6 +18,14 @@ describe('Experience Lab design variants', () => {
     expect(EXPERIENCE_LAB_DESIGN_VARIANTS.map((v) => v.theme).slice(3)).toEqual(['dark', 'dark', 'dark']);
   });
 
+  it('every variant owns exactly one environmentPackageId', () => {
+    for (const variant of EXPERIENCE_LAB_DESIGN_VARIANTS) {
+      expect(variant.environmentPackageId).toContain(variant.id);
+    }
+    const ids = EXPERIENCE_LAB_DESIGN_VARIANTS.map((v) => v.environmentPackageId);
+    expect(new Set(ids).size).toBe(6);
+  });
+
   it('parses variant query param', () => {
     expect(parseDesignVariantFromQuery('?variant=dark-02')).toBe('dark-02');
     expect(parseDesignVariantFromQuery('?variant=invalid')).toBeNull();

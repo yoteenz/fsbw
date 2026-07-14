@@ -49399,7 +49399,38 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - Lazy-load non-preview outputs; CDS/AM reference package IDs not loose image URLs
 - Marketplace future-ready for selling packages
 
-**Tests:** 70 pass (13 package core + 4 bridge + 5 design variants + 48 V2).
+**One commit + one push** on `master` via `agent-commit.sh`.
+
+---
+
+## 2026-07-14 — Wire Design Variants into Environment Asset Packages (full conversation)
+
+**Founder sprint:** Promote Design Variants from UI objects into canonical production objects. Every Design Variant owns exactly ONE Environment Asset Package. Architecture only — no Experience Lab UI redesign.
+
+**Context (full chat arc):** This conversation previously shipped Experience Lab V2 viewport environment, visibility fixes, viewport UI polish, Design Variants render-direction system, and initial Environment Asset Package architecture (single multi-variant package). This sprint completes integration: **1:1 variant-to-package model**.
+
+**Shipped:**
+
+- Refactored **`environment-asset-package/`** to per-variant canonical model:
+  - `EnvironmentAssetPackage.ts` — one package per design variant (packageId, variantId, theme, revision, canonical, status, costs, timestamps)
+  - `EnvironmentPackageOutputs.ts` — output registry (desktop, mobile, tablet, heroes, thumbnails, blueprint, construction, lighting, materials, future formats)
+  - `EnvironmentPackageRepository.ts` — CRUD + variant index
+  - `EnvironmentPackageService.ts` — resolve viewport, drawer model, promote, ensure variant package
+  - `EnvironmentPackageGenerationService.ts` — concept preview + founder approval → production generation
+  - `EnvironmentPackageCache.ts` — cache keys incl. department bible version
+  - `EnvironmentPackageGenerationQueue.ts` — queue items (desktop, mobile, tablet, hero, blueprint, construction, lighting, materials)
+  - `EnvironmentPackageStatus.ts` — health percentages (generation, blueprint, construction, lighting, materials, runtime, marketplace, overall)
+  - `environment-package-feature-flags.ts` — `VITE_ENABLE_ENVIRONMENT_PACKAGES`, `VITE_ENABLE_PACKAGE_GENERATION`, `VITE_ENABLE_PACKAGE_CACHE` (default ON)
+  - `marketplace-consumer.ts` — marketplace references packages not images
+- **Migration:** `experience-lab-design-variant-package-migration.ts` — auto-assigns `environmentPackageId` to all six variants (`envpkg.experience-lab.reception.{variantId}.r1`)
+- **Bridge:** `experience-lab-environment-package-bridge.ts` — bootstraps 6 packages, per-variant viewport/drawer resolution
+- **Experience Lab wiring:** `environmentPackageId` on `DesignVariantRecord`; hook resolves active package; drawer shows package status/outputs/cost (same sheet styling)
+- Removed legacy multi-variant files: `types.ts`, `package-workflow.ts`, `package-resolver.ts`, `package-registry.ts`, `cache-policy.ts`, `output-formats.ts`
+- Updated canon doc `ENVIRONMENT_ASSET_PACKAGE.md`
+
+**Preserved:** Command Dock, Workbench, Viewport layout, floating inspectors, Department Dock, Approval Bridge, Diagnostics, animations, responsive behavior.
+
+**Tests:** 78 pass. Production build passes.
 
 **Spatial review:** SKIPPED — architecture-only, no new surfaces.
 

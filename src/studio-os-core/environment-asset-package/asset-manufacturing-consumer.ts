@@ -1,63 +1,59 @@
-import type { EnvironmentPackageConsumerRef, EnvironmentProductionAssetKind } from './types';
-import { getEnvironmentPackage } from './package-registry';
-import { resolvePackageVariant } from './package-resolver';
+import type { EnvironmentPackageOutputKey } from './EnvironmentPackageOutputs';
+import { getEnvironmentPackage } from './EnvironmentPackageRepository';
 
 export type AssetManufacturingPackageInput = {
   packageId: string;
-  variantId: string;
-  assetKind: EnvironmentProductionAssetKind;
+  assetKind: EnvironmentPackageOutputKey;
+};
+
+const ASSET_KIND_MAP: Partial<Record<EnvironmentPackageOutputKey, EnvironmentPackageOutputKey>> = {
+  blueprint: 'blueprint',
+  constructionPlan: 'constructionPlan',
+  lightingProfile: 'lightingProfile',
+  materialsProfile: 'materialsProfile',
 };
 
 /** Asset Manufacturing generators reference the same Environment Package outputs. */
 export function resolveAssetManufacturingSource(input: AssetManufacturingPackageInput) {
   const pkg = getEnvironmentPackage(input.packageId);
   if (!pkg) return null;
-  const variant = resolvePackageVariant(pkg, input.variantId);
-  if (!variant) return null;
-  const asset = variant.productionAssets.find((a) => a.kind === input.assetKind);
-  if (!asset) return null;
+  const outputKey = ASSET_KIND_MAP[input.assetKind] ?? input.assetKind;
+  const output = pkg.outputs[outputKey];
+  if (!output) return null;
   return {
     packageId: pkg.packageId,
-    variantId: variant.id,
+    variantId: pkg.variantId,
     assetKind: input.assetKind,
-    status: asset.status,
-    revision: asset.revision,
-    url: asset.url,
-    summary: asset.summary,
-    environmentRevision: pkg.metadata.revision,
-    promptVersion: pkg.metadata.promptVersion,
-    seed: variant.seed,
+    status: output.status,
+    revision: pkg.revision,
+    url: output.url,
+    summary: `${pkg.variantName} ${input.assetKind}`,
+    environmentRevision: pkg.revision,
+    promptVersion: pkg.promptVersion,
+    seed: pkg.seed,
   };
 }
 
-export function blueprintGeneratorSource(ref: EnvironmentPackageConsumerRef) {
-  return resolveAssetManufacturingSource({
-    packageId: ref.packageId,
-    variantId: ref.variantId ?? 'light-01',
-    assetKind: 'blueprint',
-  });
+export function blueprintGeneratorSource(ref: { packageId: string }) {
+  return resolveAssetManufacturingSource({ packageId: ref.packageId, assetKind: 'blueprint' });
 }
 
-export function constructionGeneratorSource(ref: EnvironmentPackageConsumerRef) {
-  return resolveAssetManufacturingSource({
-    packageId: ref.packageId,
-    variantId: ref.variantId ?? 'light-01',
-    assetKind: 'construction-plan',
-  });
+export function constructionGeneratorSource(ref: { packageId: string }) {
+  return resolveAssetManufacturingSource({ packageId: ref.packageId, assetKind: 'constructionPlan' });
 }
 
-export function lightingGeneratorSource(ref: EnvironmentPackageConsumerRef) {
-  return resolveAssetManufacturingSource({
-    packageId: ref.packageId,
-    variantId: ref.variantId ?? 'light-01',
-    assetKind: 'lighting-profile',
-  });
+export function lightingGeneratorSource(ref: { packageId: string }) {
+  return resolveAssetManufacturingSource({ packageId: ref.packageId, assetKind: 'lightingProfile' });
 }
 
-export function materialsGeneratorSource(ref: EnvironmentPackageConsumerRef) {
-  return resolveAssetManufacturingSource({
-    packageId: ref.packageId,
-    variantId: ref.variantId ?? 'light-01',
-    assetKind: 'materials-profile',
-  });
+export function materialsGeneratorSource(ref: { packageId: string }) {
+  return resolveAssetManufacturingSource({ packageId: ref.packageId, assetKind: 'materialsProfile' });
+}
+
+export function heroGeneratorSource(ref: { packageId: string }) {
+  return resolveAssetManufacturingSource({ packageId: ref.packageId, assetKind: 'heroLandscape' });
+}
+
+export function thumbnailGeneratorSource(ref: { packageId: string }) {
+  return resolveAssetManufacturingSource({ packageId: ref.packageId, assetKind: 'squareThumbnail' });
 }

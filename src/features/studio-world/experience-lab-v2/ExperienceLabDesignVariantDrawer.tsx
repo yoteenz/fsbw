@@ -1,8 +1,10 @@
 import type { DesignVariantRecord } from './experience-lab-design-variants';
 import { resolveVariantCardBadge } from './experience-lab-design-variants';
+import type { EnvironmentPackageDrawerModel } from '../../../studio-os-core/environment-asset-package';
 
 type Props = {
   variant: DesignVariantRecord;
+  packageModel?: EnvironmentPackageDrawerModel | null;
   isActive: boolean;
   onActivate: () => void;
   onArchive: () => void;
@@ -12,6 +14,7 @@ type Props = {
 /** Variant metadata drawer — reuses Experience Lab sheet styling. */
 export function ExperienceLabDesignVariantDrawerBody({
   variant,
+  packageModel,
   isActive,
   onActivate,
   onArchive,
@@ -23,12 +26,22 @@ export function ExperienceLabDesignVariantDrawerBody({
     <div className="elab-design-variant-drawer">
       <dl className="elab-sheet-dl">
         <div><dt>Variant</dt><dd>{variant.name}</dd></div>
+        <div><dt>Package ID</dt><dd>{variant.environmentPackageId}</dd></div>
+        {packageModel ? (
+          <>
+            <div><dt>Package status</dt><dd>{packageModel.packageStatus.toUpperCase()}</dd></div>
+            <div><dt>Outputs generated</dt><dd>{packageModel.outputsGenerated}</dd></div>
+            <div><dt>Outputs pending</dt><dd>{packageModel.outputsPending}</dd></div>
+            <div><dt>Asset count</dt><dd>{packageModel.assetCount}</dd></div>
+            <div><dt>Generation cost</dt><dd>${packageModel.generationCostUsd.toFixed(2)}</dd></div>
+          </>
+        ) : null}
         <div><dt>Theme</dt><dd>{variant.theme.toUpperCase()}</dd></div>
-        <div><dt>Revision</dt><dd>r{variant.promptRevision}</dd></div>
-        <div><dt>Prompt version</dt><dd>{variant.promptHash}</dd></div>
+        <div><dt>Revision</dt><dd>r{packageModel?.revision ?? variant.promptRevision}</dd></div>
+        <div><dt>Prompt version</dt><dd>{packageModel?.promptVersion ?? variant.promptHash}</dd></div>
         <div><dt>Estimated cost</dt><dd>${variant.estimatedCostUsd.toFixed(2)}</dd></div>
-        <div><dt>Provider</dt><dd>{variant.generationProvider}</dd></div>
-        <div><dt>Seed</dt><dd>{variant.seed}</dd></div>
+        <div><dt>Provider</dt><dd>{packageModel?.provider ?? variant.generationProvider}</dd></div>
+        <div><dt>Seed</dt><dd>{packageModel?.seed ?? variant.seed}</dd></div>
         <div><dt>Generated</dt><dd>{new Date(variant.generatedAt).toLocaleString()}</dd></div>
         <div><dt>Status</dt><dd>{badge ?? variant.canonicalStatus.toUpperCase()}</dd></div>
         <div><dt>Stage</dt><dd>{variant.generationStage.toUpperCase()}</dd></div>

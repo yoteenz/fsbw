@@ -472,12 +472,18 @@ describe('Experience Lab V2 — Viewport environment', () => {
     const hook = readV2Source('useExperienceLabDesignVariants.ts');
     const bridge = readV2Source('experience-lab-environment-package-bridge.ts');
     const shell = readV2Source('ExperienceLabV2Shell.tsx');
+    const drawer = readV2Source('ExperienceLabDesignVariantDrawer.tsx');
     expect(hook).toContain('resolveDesignVariantEnvironmentFromPackage');
     expect(hook).toContain('environmentPackageId');
     expect(hook).toContain('drawerPackageModel');
     expect(hook).toContain('isCompact');
-    expect(bridge).toContain('EXPERIENCE_LAB_RECEPTION_PACKAGE_ID');
+    expect(hook).toContain('ensureExperienceLabVariantPackages');
+    expect(bridge).toContain('ensureExperienceLabVariantPackages');
+    expect(readV2Source('experience-lab-design-variants.ts')).toContain('environmentPackageId');
+    expect(drawer).toContain('packageModel');
+    expect(drawer).toContain('Package status');
     expect(shell).toContain('useExperienceLabDesignVariants({ isCompact: shell.isCompact })');
+    expect(shell).toContain('packageModel={designVariants.drawerPackageModel}');
   });
 });
 

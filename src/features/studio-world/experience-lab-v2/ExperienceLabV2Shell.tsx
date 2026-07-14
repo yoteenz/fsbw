@@ -373,6 +373,7 @@ export function ExperienceLabV2Shell({ initialDepartmentId = 'experience-lab' }:
         {designVariants.drawerVariant ? (
           <ExperienceLabDesignVariantDrawerBody
             variant={designVariants.drawerVariant}
+            packageModel={designVariants.drawerPackageModel}
             isActive={designVariants.drawerVariantId === designVariants.activeVariantId}
             onActivate={() => {
               if (designVariants.drawerVariantId) designVariants.activateFromDrawer(designVariants.drawerVariantId);

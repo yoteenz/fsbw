@@ -2,7 +2,7 @@
 
 **Status:** Architecture layer (Studio World)  
 **Module:** `src/studio-os-core/environment-asset-package/`  
-**Experience Lab bridge:** `src/features/studio-world/experience-lab-v2/experience-lab-environment-package-bridge.ts`  
+**Key files:** `EnvironmentAssetPackage.ts` · `EnvironmentPackageOutputs.ts` · `EnvironmentPackageRepository.ts` · `EnvironmentPackageService.ts` · `EnvironmentPackageGenerationService.ts` · `EnvironmentPackageCache.ts` · `EnvironmentPackageGenerationQueue.ts` · `EnvironmentPackageStatus.ts`  
 **Spatial review:** SKIPPED — architecture-only sprint; no new surfaces, nav, or Genesis behavior.
 
 ---
@@ -19,24 +19,15 @@ Studio World stops thinking in terms of generating individual images. Every depa
 ## Hierarchy
 
 ```
-Environment Asset Package
-  ├── Environment (department + environmentId + revision)
-  ├── Variants (exactly six architectural directions)
-  │     ├── Light 01 · Light 02 · Light 03
-  │     └── Dark 01 · Dark 02 · Dark 03
-  ├── Outputs (responsive formats — same design, different framing)
-  │     ├── Desktop 21:9
-  │     ├── Mobile 9:16
-  │     ├── Tablet 4:3
-  │     ├── Hero Landscape · Hero Portrait
-  │     └── Thumbnails · Preview Card · Studio Preview
-  └── Production Assets
-        ├── Blueprint · Construction Plan
-        ├── Lighting Profile · Materials Profile
-        └── Asset Manifest · Prompt/Seed Archive · Revision History
+Department
+  Environment
+    Design Variant (head)
+      Environment Package (1:1 — one variant owns exactly one package)
+        Outputs (desktop · mobile · tablet · heroes · thumbnails)
+        Production Assets (blueprint · construction · lighting · materials)
 ```
 
-**Law:** Desktop, mobile, and tablet are **outputs** of the same approved variant — not separate designs. Same architecture, materials, lighting, layout, furniture, props, branding, and composition language. Different only: camera framing, aspect ratio, responsive composition.
+**Law:** Every Design Variant owns exactly ONE `environmentPackageId`. Desktop, mobile, and tablet are **outputs** of that package — not separate designs or separate packages.
 
 ---
 
@@ -121,10 +112,11 @@ Registry: in-memory `package-registry.ts` today; production persistence hooks he
 
 ## Experience Lab integration (no UI redesign)
 
-- Six design variants remain visually unchanged.
-- `useExperienceLabDesignVariants({ isCompact })` resolves viewport URLs from package outputs.
-- `drawerPackageModel` exposes package metadata for future drawer — no drawer redesign in this sprint.
-- Seed package: `envpkg.experience-lab.reception.r1`
+- Six design variants remain visually unchanged; each variant record includes `environmentPackageId`
+- `useExperienceLabDesignVariants({ isCompact })` resolves viewport from per-variant package outputs
+- Drawer displays package status, outputs generated/pending, cost, revision, provider, seed
+- Auto-migration: `experience-lab-design-variant-package-migration.ts`
+- Package IDs: `envpkg.experience-lab.reception.{variantId}.r1`
 
 ---
 

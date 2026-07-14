@@ -12,10 +12,10 @@ import {
   type DesignVariantRecord,
 } from './experience-lab-design-variants';
 import {
-  ensureExperienceLabEnvironmentPackage,
+  ensureExperienceLabVariantPackages,
   resolveDesignVariantEnvironmentFromPackage,
   resolveDesignVariantPackageDrawer,
-  EXPERIENCE_LAB_ENVIRONMENT_PACKAGE_ID,
+  resolveActiveVariantPackageId,
 } from './experience-lab-environment-package-bridge';
 
 type PersistedVariantState = {
@@ -52,7 +52,7 @@ export function useExperienceLabDesignVariants(options?: UseExperienceLabDesignV
   const isCompact = options?.isCompact ?? false;
 
   useEffect(() => {
-    ensureExperienceLabEnvironmentPackage();
+    ensureExperienceLabVariantPackages();
   }, []);
 
   const [activeVariantId, setActiveVariantId] = useState<DesignVariantId>(
@@ -130,7 +130,7 @@ export function useExperienceLabDesignVariants(options?: UseExperienceLabDesignV
     activeVariantId,
     activeVariant,
     activeEnvironmentUrl,
-    environmentPackageId: EXPERIENCE_LAB_ENVIRONMENT_PACKAGE_ID,
+    environmentPackageId: resolveActiveVariantPackageId(activeVariantId),
     drawerVariantId,
     drawerVariant,
     drawerPackageModel,
