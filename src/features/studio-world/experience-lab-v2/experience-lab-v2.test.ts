@@ -214,7 +214,12 @@ describe('Experience Lab V2 — Fixed application shell', () => {
     expect(css).toMatch(/\.elab-approval-bridge--monument \.elab-approval-bridge__primary[\s\S]*?border-radius:\s*8px/);
     expect(css).toContain('--elab-monument-cta-v-scale: 0.85');
     expect(css).toMatch(/\.elab-approval-bridge--monument \.elab-approval-bridge__locks[\s\S]*?color:\s*var\(--elab-gold\)/);
-    expect(css).toMatch(/\.elab-founder-wb__title[\s\S]*?color:\s*var\(--elab-gold\)/);
+    expect(css).toMatch(/\.elab-founder-wb__title[\s\S]*?color:\s*var\(--elab-text\)/);
+    expect(css).toMatch(/\.elab-founder-wb__tool\s*\{[\s\S]*?color:\s*var\(--elab-gold\)/);
+    expect(css).toMatch(/\.elab-founder-wb__nav-item\s*\{[\s\S]*?color:\s*var\(--elab-gold\)/);
+    expect(css).toContain('--elab-gold-icon-filter');
+    expect(css).toMatch(/\.elab-founder-wb__tool-icon img[\s\S]*?filter:\s*var\(--elab-gold-icon-filter\)/);
+    expect(css).toMatch(/\.elab-founder-wb__nav-icon img[\s\S]*?filter:\s*var\(--elab-gold-icon-filter\)/);
     expect(css).toMatch(/\.elab-approval-bridge--monument \.elab-approval-bridge__blocker-chip[\s\S]*?display:\s*none/);
   });
 

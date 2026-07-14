@@ -49867,3 +49867,22 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 **Tests:** Selection glow token assertions. 53/53 PASS.
 
+---
+
+## 2026-07-14 — Experience Lab workbench color hierarchy (title white · tools + nav gold)
+
+**Founder request:** Change "EXPERIENCE LAB WORKBENCH" title text to white; change the first two content rows (editing tools + world navigation) text and icons to gold.
+
+**Shipped (`experience-lab-v2.css`):**
+- Title `.elab-founder-wb__title` → `color: var(--elab-text)` (white/cream workstation text)
+- Tools `.elab-founder-wb__tool` default → `color: var(--elab-gold)` (was muted)
+- World nav `.elab-founder-wb__nav-item` default → `color: var(--elab-gold)` (was muted)
+- Token `--elab-gold-icon-filter` tints white PNG workbench icons to brand gold
+- `.elab-founder-wb__tool-icon img` + `.elab-founder-wb__nav-icon img` use gold filter; active states stack filter + drop-shadow glow
+
+**Tests:** Updated `experience-lab-v2.test.ts` — title white, tool/nav default gold, gold icon filter assertions. 53/53 PASS.
+
+**Prior thread context (same sprint, already on master):** Command Dock program pipeline refactor; workbench −20% height + FRC spacing; diagnostics overlay default off; HUD panels 60% smaller; viewport tap focus mode; Command Dock + workbench pill shapes; selection glow on active panels.
+
+**Spatial Architecture Review:** SKIPPED — styling-only color change, no new surfaces or nav.
+

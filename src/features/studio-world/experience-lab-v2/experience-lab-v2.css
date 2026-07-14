@@ -4,6 +4,7 @@
   --elab-gold: #c5a059;
   --elab-gold-dim: rgba(197, 160, 89, 0.35);
   --elab-gold-glow: rgba(197, 160, 89, 0.55);
+  --elab-gold-icon-filter: brightness(0) saturate(100%) invert(73%) sepia(28%) saturate(567%) hue-rotate(6deg) brightness(91%) contrast(88%);
   --elab-selection-glow: 0 0 16px rgba(197, 160, 89, 0.24), 0 0 6px rgba(197, 160, 89, 0.14);
   --elab-selection-glow-inset:
     inset 0 0 0 1px rgba(197, 160, 89, 0.34),
@@ -2869,7 +2870,7 @@ button.elab-cmd__meta-chip {
   font-size: 8px;
   font-weight: var(--elab-wb-label-weight, 400);
   letter-spacing: 0.12em;
-  color: var(--elab-gold);
+  color: var(--elab-text);
   line-height: 1.2;
 }
 
@@ -2914,7 +2915,7 @@ button.elab-cmd__meta-chip {
   border: 1px solid var(--elab-border);
   border-radius: var(--elab-wb-pill-radius);
   background: rgba(0, 0, 0, 0.28);
-  color: var(--elab-muted);
+  color: var(--elab-gold);
   cursor: pointer;
   transition: color 0.12s, border-color 0.12s, background 0.12s, box-shadow 0.12s;
 }
@@ -2936,6 +2937,14 @@ button.elab-cmd__meta-chip {
 .elab-founder-wb__tool-icon {
   font-size: 14px;
   line-height: 1;
+}
+
+.elab-founder-wb__tool-icon img {
+  filter: var(--elab-gold-icon-filter);
+}
+
+.elab-founder-wb__tool--active .elab-founder-wb__tool-icon img {
+  filter: var(--elab-gold-icon-filter) drop-shadow(0 0 4px rgba(212, 175, 55, 0.55));
 }
 
 .elab-founder-wb__tool-label {
@@ -2988,7 +2997,7 @@ button.elab-cmd__meta-chip {
   border: none;
   border-right: 1px solid rgba(255, 255, 255, 0.05);
   background: transparent;
-  color: var(--elab-muted);
+  color: var(--elab-gold);
   cursor: pointer;
 }
 
@@ -3002,6 +3011,14 @@ button.elab-cmd__meta-chip {
   display: grid;
   place-items: center;
   color: currentColor;
+}
+
+.elab-founder-wb__nav-icon img {
+  filter: var(--elab-gold-icon-filter);
+}
+
+.elab-founder-wb__nav-item--active .elab-founder-wb__nav-icon img {
+  filter: var(--elab-gold-icon-filter) drop-shadow(0 0 4px rgba(212, 175, 55, 0.55));
 }
 
 .elab-founder-wb__nav-label {
