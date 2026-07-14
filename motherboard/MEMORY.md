@@ -49901,39 +49901,35 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 ---
 
-<<<<<<< HEAD
 ## 2026-07-14 — Vercel build fix: Experience Lab focus bar `replaceAll` (ES2020)
 
-**Founder request:** Vercel production build failed on commit `2d62d35` — `ExperienceLabV2Shell.tsx(372)`: `Property 'replaceAll' does not exist` on `ElabFocusMode` union (`'review' | 'blueprint' | 'render' | 'viewport'`). Root cause: `tsconfig.json` uses `"lib": ["ES2020", ...]`; `String.prototype.replaceAll` is ES2021.
+**Founder request:** Vercel production build failed on commit `2d62d35` — `ExperienceLabV2Shell.tsx(372)`: `Property 'replaceAll' does not exist` on `ElabFocusMode` union. Root cause: `tsconfig.json` uses ES2020 lib; `replaceAll` is ES2021.
 
-**Prior thread context (same chat):** Site-wide boot freeze fixed (`storage-observer.ts` reentrancy); Experience Lab icon fidelity sprint (v2 extract pipeline, overrides, QA route) was in progress but not confirmed shipped; prebuild uses `studio-world-icons-v5-source-twin` not v2 extract script.
+**Shipped:** `replaceAll` → `replace(/_/g, ' ')` in `ExperienceLabV2Shell.tsx`; test assertion updated. Build PASS.
 
-**Shipped:**
-- `ExperienceLabV2Shell.tsx`: `shell.focusMode.replaceAll('_', ' ')` → `shell.focusMode.replace(/_/g, ' ')` (ES2020-safe; focus modes have no underscores today)
-- `experience-lab-v2.test.ts`: source assertion updated from `replaceAll` to regex for `.replace(/_/g`
+**Spatial Architecture Review:** SKIPPED — TypeScript hotfix.
 
-**Verification:** `npm run build` PASS; `vitest run experience-lab-v2.test.ts` 54/54 PASS.
+---
 
-**Spatial Architecture Review:** SKIPPED — TypeScript hotfix, no new surfaces.
-=======
 ## 2026-07-14 — Studio World Icon Grid Calibration Editor (v6 sprint)
 
-**Founder P0 sprint:** Replace failed automatic sprite extraction with founder-controlled adjustable row/column grid calibration over the **unlabeled icon pack only**. No text removal, no OCR, no semantic guessing, no 64 individual crop boxes.
+**Founder P0 sprint:** Founder-controlled row/column grid calibration over unlabeled icon pack; v6 generator + `/admin/studio/studio-world-icon-grid-calibration` editor; runtime cutover to `generated-v6/`.
 
-**Forensic audit:** `docs/studio-os/forensics/STUDIO_WORLD_ICON_GRID_CALIBRATION_AUDIT.md` — confirmed corruption from automatic bounds inference + label-removal twin pipeline.
+**Spatial Architecture Review:** SKIPPED — icon infrastructure + dev-only admin editor.
+
+---
+
+## 2026-07-14 — Vercel build fix: restore ELAB_V2_COMPOSITION markers (full conversation)
+
+**Founder request:** Vercel build on `18b55a5` failed — `blueprintCard`, `dynamicContextCard`, `founderReviewConsole`, `contextualHud`, `environmentDisplayHost`, `environmentDisplayTransform` missing from `ELAB_V2_COMPOSITION` after overlay rebase dropped keys from environment-display / two-panel viewport commits.
+
+**Also in chat:** Viewport overlay layout (design variant + brief rows on environment image) shipped in `27cfaa616`; upstream `MEMORY.md` had unresolved merge conflict markers.
 
 **Shipped:**
-- **Grid calibration model** — `src/features/studio-world/icons/grid-calibration/StudioWorldIconGridCalibration.ts` + canonical JSON
-- **v6 generator** — `scripts/generate-studio-world-icons-from-grid-calibration.mjs` reads unlabeled source + calibration only; outputs `generated-v6/` (64 transparent 512×512 PNGs + contact sheet)
-- **Grid calibration editor** — `/admin/studio/studio-world-icon-grid-calibration` with tabs: Grid / Rows / Columns / Cell Overrides / Preview / Reference / History; undo/redo; row+column boundary steppers; per-cell overrides; multi-select; mobile bottom sheet + desktop 3-column layout; save draft/canonical; import/export JSON; publish confirmation gate
-- **Source manifest v6** — unlabeled pack = production; labeled catalog = reference; twin = historical-only; twin removed from `prebuild`
-- **Runtime cutover** — `experience-lab-icon-assets.generated.ts`, sprite config, asset resolver now v6 `unlabeled-grid-calibrated`
-- **Tests** — `studio-world-icon-grid-calibration.test.ts` (17) + updated `experience-lab-icon.test.ts` (11); 28/28 PASS; production build PASS
+- Restored all dropped composition markers in `experience-lab-v2-composition.ts` (kept `founderBriefRow`, `viewportStageOverlays`)
+- Resolved `motherboard/MEMORY.md` conflict (focus-bar + icon-grid entries)
 
-**Retired from production path (kept for debug):** `create-studio-world-unlabeled-source-twin.mjs`, `generate-studio-world-icons-from-source-twin.mjs`, v3 crop manifest authority, automatic PASS certification.
+**Verification:** `npm run build` PASS.
 
-**Unchanged:** Experience Lab V2 layout (Command Dock, Workbench, viewport, orb, anchors). `EXPERIENCE_LAB_ICON_LOCKDOWN_CERTIFIED` remains false until founder visual approval.
-
-**Spatial Architecture Review:** SKIPPED — icon infrastructure + dev-only admin editor; no new EL V2 surfaces.
->>>>>>> 0c46c0232 (Studio World icon grid calibration editor v6 — unlabeled source, row/column boundaries, 64-cell generator)
+**Spatial review:** SKIPPED — composition hotfix.
 
