@@ -348,6 +348,14 @@ const AdminStudioWorldIconBuilder = lazyWithRetry(
   () => import('./pages/admin/studio/studio-world-icon-builder/page'),
   'AdminStudioWorldIconBuilder'
 );
+const AdminIconStateTester = lazyWithRetry(
+  () => import('./pages/admin/studio/icon-state-tester/page'),
+  'AdminIconStateTester'
+);
+const AdminIconStateMatrix = lazyWithRetry(
+  () => import('./pages/admin/studio/icon-state-matrix/page'),
+  'AdminIconStateMatrix'
+);
 const AdminStudioProductionSystem = lazyWithRetry(
   () => import('./pages/admin/studio/studio-production/page'),
   'AdminStudioProductionSystem'
@@ -2224,6 +2232,16 @@ function App() {
           <Route path="studio/studio-world-icon-builder" element={
             <Suspense fallback={<StudioRouteSuspenseFallback label="Studio World Icon Builder" />}>
               <AdminStudioWorldIconBuilder />
+            </Suspense>
+          } />
+          <Route path="studio/icon-state-tester" element={
+            <Suspense fallback={<StudioRouteSuspenseFallback label="Icon State Tester" />}>
+              <AdminIconStateTester />
+            </Suspense>
+          } />
+          <Route path="studio/icon-state-matrix" element={
+            <Suspense fallback={<StudioRouteSuspenseFallback label="Icon State Matrix" />}>
+              <AdminIconStateMatrix />
             </Suspense>
           } />
           <Route path="studio/studio-production" element={

@@ -1,0 +1,226 @@
+.swi-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  flex-shrink: 0;
+  vertical-align: middle;
+  width: var(--swi-size, 24px);
+  height: var(--swi-size, 24px);
+  opacity: var(--swi-opacity, 1);
+  transform: scale(var(--swi-scale, 1));
+  transition: var(--swi-transition, filter, opacity, transform) var(--swi-duration, 120ms) ease-out;
+  will-change: auto;
+}
+
+.swi-icon__img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  filter: var(--swi-filter, none);
+  -webkit-user-drag: none;
+  user-select: none;
+  pointer-events: none;
+}
+
+.swi-icon__lock {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  width: 28%;
+  height: 28%;
+  min-width: 6px;
+  min-height: 6px;
+  border-radius: 50%;
+  background: rgba(200, 210, 220, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  box-shadow: 0 0 4px rgba(255, 255, 255, 0.2);
+}
+
+.swi-icon__lock::after {
+  content: '';
+  position: absolute;
+  top: 20%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40%;
+  height: 35%;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-bottom: none;
+  border-radius: 2px 2px 0 0;
+}
+
+.swi-icon--focused {
+  outline: 2px solid rgba(255, 255, 255, 0.65);
+  outline-offset: 2px;
+}
+
+.swi-icon--high-contrast.swi-icon--focused {
+  outline-width: 3px;
+  outline-color: #fff;
+}
+
+.swi-icon--disabled .swi-icon__img,
+.swi-icon--offline .swi-icon__img,
+.swi-icon--archived .swi-icon__img {
+  filter: grayscale(0.35) brightness(0.85) var(--swi-filter, none);
+}
+
+.swi-icon--locked .swi-icon__img {
+  filter: blur(0.3px) brightness(0.9) var(--swi-filter, none);
+}
+
+/* Hover — max 150ms */
+.swi-anim--hover {
+  transition-duration: 150ms;
+}
+
+.swi-anim--pressed {
+  transform: scale(0.96);
+}
+
+/* Loading — breathe */
+.swi-anim--loading {
+  animation: swi-breathe var(--swi-loading-speed, 1.8s) ease-in-out infinite;
+}
+
+@keyframes swi-breathe {
+  0%,
+  100% {
+    opacity: 0.55;
+    filter: brightness(0.9) var(--swi-filter, none);
+  }
+  50% {
+    opacity: 1;
+    filter: brightness(1.1) var(--swi-filter, none);
+  }
+}
+
+/* Generating — energy flow around chrome outline */
+.swi-anim--generating::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 4px;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    rgba(255, 255, 255, 0.7) 40deg,
+    transparent 80deg,
+    transparent 360deg
+  );
+  animation: swi-energy-flow var(--swi-generating-energy, 1.2s) linear infinite;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  -webkit-mask-composite: xor;
+  padding: 1px;
+  pointer-events: none;
+}
+
+@keyframes swi-energy-flow {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Focused / warning / live — pulse */
+.swi-anim--focused,
+.swi-anim--warning,
+.swi-anim--live,
+.swi-anim--new,
+.swi-anim--favorite,
+.swi-anim--beta {
+  animation: swi-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes swi-pulse {
+  0%,
+  100% {
+    opacity: 0.85;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* AI — white → electric blue → white */
+.swi-anim--ai .swi-icon__img {
+  animation: swi-ai-shift 2.4s ease-in-out infinite;
+}
+
+@keyframes swi-ai-shift {
+  0%,
+  100% {
+    filter: brightness(1) var(--swi-filter, none);
+  }
+  50% {
+    filter: hue-rotate(180deg) brightness(1.15) saturate(1.2) var(--swi-filter, none);
+  }
+}
+
+/* Syncing / experimental — edge trace */
+.swi-anim--syncing::before,
+.swi-anim--experimental::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 1px solid transparent;
+  border-image: linear-gradient(90deg, transparent, rgba(96, 165, 250, 0.6), transparent) 1;
+  animation: swi-edge-trace 1.5s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes swi-edge-trace {
+  0% {
+    clip-path: inset(0 100% 0 0);
+  }
+  50% {
+    clip-path: inset(0 0 0 0);
+  }
+  100% {
+    clip-path: inset(0 0 0 100%);
+  }
+}
+
+/* Success / premium — sparkle */
+.swi-anim--success::after,
+.swi-anim--premium::after,
+.swi-anim--approved::after {
+  content: '';
+  position: absolute;
+  top: 10%;
+  right: 10%;
+  width: 4px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 50%;
+  animation: swi-sparkle 0.6s ease-out;
+  pointer-events: none;
+}
+
+@keyframes swi-sparkle {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.5);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0);
+    opacity: 0;
+  }
+}
+
+.swi-icon--reduced-motion,
+.swi-icon--reduced-motion * {
+  animation: none !important;
+  transition-duration: 0ms !important;
+}
+
+.swi-icon--reduced-motion::before,
+.swi-icon--reduced-motion::after {
+  display: none !important;
+}

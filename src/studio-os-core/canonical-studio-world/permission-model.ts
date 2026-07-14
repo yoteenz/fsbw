@@ -47,6 +47,8 @@ export const STUDIO_WORLD_ADMIN_ONLY_PATH_PREFIXES = [
   '/admin/studio/icon-manufacturing',
   '/admin/studio/studio-world-icon-system',
   '/admin/studio/studio-world-icon-builder',
+  '/admin/studio/icon-state-tester',
+  '/admin/studio/icon-state-matrix',
 ] as const;
 
 export const FOUNDER_CREATIVE_WORKSPACE_ENTRY_PATH = '/admin/studio/department/creative-direction' as const;

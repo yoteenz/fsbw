@@ -127,3 +127,14 @@ export {
 } from './navigation-master/navigation-master-icon-draft-bridge';
 
 export { IconManufacturingShell, GridCalibrationStudio } from './icon-manufacturing';
+
+export { StudioIcon, IconStateTesterShell, IconStateMatrixShell } from './icon-state-engine';
+export type { StudioIconProps, StudioIconTheme } from './icon-state-engine';
+export {
+  studioWorldIconStateEngine,
+  renderIconState,
+  ICON_STATE_ENGINE_VERSION,
+  STUDIO_WORLD_ICON_STATES as ICON_STATE_ENGINE_STATES,
+  ICON_ANIMATION_PRESETS,
+  ICON_STATE_DEVICES,
+} from '../../../studio-os-core/icon-state-engine';

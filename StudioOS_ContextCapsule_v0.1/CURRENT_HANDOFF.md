@@ -8,7 +8,21 @@
 
 ## Current sprint
 
-**Studio World Icon Manufacturing Pipeline — Sprint 03**
+**Studio World Icon State Engine — Sprint 04**
+
+**Status: SHIPPED — Procedural multi-state rendering architecture**
+
+**Shipped:**
+
+- Core: `src/studio-os-core/icon-state-engine/` — StateEngine, Renderer, AnimationController, InteractionResolver, GlowEngine, MaterialSystem, LightingEngine, ThemeModifier, AccessibilityRenderer, PerformanceManager, runtime tokens
+- Extended `STUDIO_WORLD_ICON_STATES` to 27 procedural states (success, warning, error, new, favorite, pinned, live, syncing, offline, beta, experimental, etc.)
+- Component API: `<StudioIcon id="search" state="active" theme="dark" size={32} animated />` — resolves through registry + state engine; never imports PNGs directly
+- QA routes: `/admin/studio/icon-state-tester` (live state/theme/device/animation toggles) · `/admin/studio/icon-state-matrix` (icon × state × theme × size regression grid)
+- CSS: `studio-icon.css` — GPU-friendly filters, energy-flow generating, breathe loading, AI color shift, reduced-motion overrides
+- Docs: `docs/studio-os/design-system/STUDIO_WORLD_ICON_STATE_ENGINE.md`
+- Tests 9/9 PASS (state engine) + 11/11 (icon system) · Build PASS · **No Experience Lab / Command Dock / Workbench runtime changes**
+
+**Previous:** Studio World Icon Manufacturing Pipeline — Sprint 03
 
 **Status: SHIPPED — Permanent icon production home**
 
@@ -17,12 +31,10 @@
 - Route: `/admin/studio/icon-manufacturing` — Master Library, Calibration Studio, QA, Batch Export, Certification, Registry, Health, History, Production Promotion, Runtime Preview
 - Core: `src/studio-os-core/icon-manufacturing/` (profiles, QA, certification, batch export, promotion, version/history)
 - Profile-aware `GridCalibrationStudio` — 8×8 Experience Lab + 10×10 Navigation Master
-- Row/column/global scale controls — no OCR, no heuristic detection
 - Navigation slice: `npm run navigation-master:build-icons`
-- Legacy `/admin/studio/studio-world-icon-grid-calibration` preserved with manufacturing link
 - Tests 6/6 PASS · Build PASS · **No Experience Lab runtime auto-replacement**
 
-**Previous:** Navigation Master Icon Sheet Sprint 02 Phase 1
+**Previous:** Studio World Icon System V1 + Navigation Master Sheet Sprint 02
 
 **Status: SHIPPED — Architecture only; zero runtime visual changes**
 
