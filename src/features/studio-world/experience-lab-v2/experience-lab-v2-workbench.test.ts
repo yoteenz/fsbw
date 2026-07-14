@@ -1,10 +1,12 @@
 import { describe, expect, it } from 'vitest';
+import { readFileSync } from 'node:fs';
+import { resolve, dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import {
   EXPERIENCE_LAB_WORKBENCH_EDITING_TOOLS,
   EXPERIENCE_LAB_WORKBENCH_TOOLS_EXTENDED,
   EXPERIENCE_LAB_WORKBENCH_TOOLS_PRIMARY,
   EXPERIENCE_LAB_WORKBENCH_WORLD_NAV,
-  resolveExperienceLabWorkbenchCenterLogoUrl,
   splitWorkbenchToolLabel,
 } from './experience-lab-v2-workbench-config';
 
@@ -34,8 +36,13 @@ describe('Experience Lab Workbench config', () => {
     expect(EXPERIENCE_LAB_WORKBENCH_WORLD_NAV[1]?.icon).toBe('orbit');
   });
 
-  it('resolves center logo path from Supabase public storage', () => {
-    expect(resolveExperienceLabWorkbenchCenterLogoUrl()).toContain('D2161224-8335-4CE3-A4D8-794014DDAD32.png');
+  it('keeps Studio World logo out of workbench orb (brand vs living sphere)', () => {
+    const orb = readFileSync(
+      resolve(dirname(fileURLToPath(import.meta.url)), 'living-studio-world-orb/LivingStudioWorldOrb.tsx'),
+      'utf8',
+    );
+    expect(orb).not.toContain('resolveExperienceLabWorkbenchCenterLogoUrl');
+    expect(orb).not.toContain('<img');
   });
 
   it('splits editing tool labels into two display lines', () => {

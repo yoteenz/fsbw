@@ -87,27 +87,49 @@
   animation: lswo-inner-orbit 19s linear infinite;
 }
 
-/* ── Orb base texture ── */
-.orbBase {
+/* ── Orb sphere body — layered glass + gold energy (no branding imagery) ── */
+.orbSphere {
   inset: 2px;
   overflow: hidden;
-  background: radial-gradient(
-    circle at 32% 28%,
-    rgba(255, 255, 255, 0.18) 0%,
-    rgba(0, 0, 0, 0.2) 100%
-  );
+  background:
+    radial-gradient(circle at 38% 32%, rgba(255, 255, 255, 0.28) 0%, transparent 42%),
+    radial-gradient(circle at 62% 68%, rgba(201, 169, 98, 0.22) 0%, transparent 48%),
+    radial-gradient(circle at 50% 58%, rgba(18, 20, 28, 0.55) 0%, rgba(8, 10, 16, 0.82) 72%),
+    radial-gradient(circle at 50% 50%, rgba(42, 46, 58, 0.9) 0%, rgba(12, 14, 20, 0.95) 100%);
   box-shadow:
-    0 4px 12px rgba(0, 0, 0, 0.35),
-    inset 0 1px 0 rgba(255, 255, 255, 0.45),
-    inset 0 -4px 10px rgba(201, 169, 98, 0.1);
+    0 4px 14px rgba(0, 0, 0, 0.38),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    inset 0 -5px 12px rgba(201, 169, 98, 0.14);
 }
 
-.orbBaseImg {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
+.orbSphereGlass {
+  position: absolute;
+  inset: 0;
   border-radius: 50%;
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.22) 0%,
+    transparent 38%,
+    transparent 62%,
+    rgba(255, 255, 255, 0.08) 100%
+  );
+  mix-blend-mode: screen;
+  opacity: 0.85;
+}
+
+.orbSphereCore {
+  position: absolute;
+  inset: 18%;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 48% 42%,
+    rgba(255, 244, 228, 0.75) 0%,
+    rgba(201, 169, 98, 0.42) 38%,
+    rgba(140, 108, 48, 0.18) 62%,
+    transparent 78%
+  );
+  opacity: 0.82;
+  animation: lswo-core-glow 6.4s ease-in-out infinite;
 }
 
 /* ── 4. Depth overlay ── */

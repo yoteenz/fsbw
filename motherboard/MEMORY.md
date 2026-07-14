@@ -49051,3 +49051,20 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 **Preserved:** Experience Lab V2 layout unchanged; legacy `/admin/studio/experience-lab` untouched; working icons stable via surgical overrides only.
 
 **One commit + one push** on `master` via `agent-commit.sh`.
+
+---
+
+## 2026-07-14 — P0 hotfix: separate Studio World logo from living orb (full conversation)
+
+**Founder request:** Previous sprint incorrectly placed Studio World logo (SW branding) inside the Workbench living orb. Logo and orb are distinct assets — logo is static brand identity (Command Dock only); orb is animated premium energy sphere with no initials, text, or emblem.
+
+**Shipped:**
+
+- **`LivingStudioWorldOrb.tsx`** — removed `resolveExperienceLabWorkbenchCenterLogoUrl`, `artworkSrc`, and `<img>`; replaced `OrbBase` with CSS-only `OrbSphere` (glass + gold gradient layers)
+- **`LivingStudioWorldOrb.module.css`** — `.orbSphere`, `.orbSphereGlass`, `.orbSphereCore`; removed `.orbBaseImg`
+- **`experience-lab-v2-workbench-config.ts`** — removed deprecated `EXPERIENCE_LAB_WORKBENCH_CENTER_LOGO_PATH` / `resolveExperienceLabWorkbenchCenterLogoUrl`
+- **Tests** — orb must not reference logo URLs or `<img>`; Command Dock logo (`IMG_6238.webp`) unchanged
+
+**Preserved:** Workbench layout, orb container size/position pixel-identical; Command Dock SW logo in header only.
+
+**One commit + one push** on `master` via `agent-commit.sh`.

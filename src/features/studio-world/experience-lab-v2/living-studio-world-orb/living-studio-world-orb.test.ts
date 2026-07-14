@@ -13,7 +13,7 @@ describe('LivingStudioWorldOrb', () => {
     expect(component).toContain('AmbientGlowLayer');
     expect(component).toContain('OuterOrbitRing');
     expect(component).toContain('InnerOrbitRing');
-    expect(component).toContain('OrbBase');
+    expect(component).toContain('OrbSphere');
     expect(component).toContain('DepthOverlay');
     expect(component).toContain('InternalCore');
     expect(component).toContain('HighlightLayer');
@@ -22,9 +22,18 @@ describe('LivingStudioWorldOrb', () => {
     expect(component).toContain('StatusLayer');
   });
 
+  it('is a standalone living sphere — no Studio World logo or branding imagery', () => {
+    expect(component).not.toContain('<img');
+    expect(component).not.toContain('resolveExperienceLabWorkbenchCenterLogoUrl');
+    expect(component).not.toContain('artworkSrc');
+    expect(component).not.toContain('IMG_6238');
+    expect(component).not.toContain('D2161224');
+    expect(css).toContain('.orbSphere');
+    expect(css).not.toContain('.orbBaseImg');
+  });
+
   it('mounts inside approved workbench orb container without layout props', () => {
     expect(component).toContain('elab-founder-wb__nav-orb');
-    expect(component).toContain('resolveExperienceLabWorkbenchCenterLogoUrl');
     expect(component).not.toMatch(/width:\s*['"]?\d+px/);
   });
 

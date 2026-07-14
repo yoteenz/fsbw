@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, type RefObject } from 'react';
-import { resolveExperienceLabWorkbenchCenterLogoUrl } from '../experience-lab-v2-workbench-config';
 import type { ExperienceLabV2ViewModel } from '../experience-lab-v2.types';
 import styles from './LivingStudioWorldOrb.module.css';
 import { ORB_APPROVED_BLOOM_MS, ORB_HIGHLIGHT_DRIFT_PX } from './orbAnimations';
@@ -13,7 +12,6 @@ import {
 type Props = {
   model?: ExperienceLabV2ViewModel;
   status?: OrbStatus;
-  artworkSrc?: string;
 };
 
 function usePrefersReducedMotion(): boolean {
@@ -77,10 +75,12 @@ function InnerOrbitRing() {
   return <span className={`${styles.layer} ${styles.innerOrbitRing}`} aria-hidden />;
 }
 
-function OrbBase({ src }: { src: string }) {
+/** Premium glass sphere — no logo, text, initials, or branding imagery. */
+function OrbSphere() {
   return (
-    <span className={`${styles.layer} ${styles.orbBase}`} aria-hidden>
-      <img className={styles.orbBaseImg} src={src} alt="" decoding="async" draggable={false} />
+    <span className={`${styles.layer} ${styles.orbSphere}`} aria-hidden>
+      <span className={styles.orbSphereGlass} aria-hidden />
+      <span className={styles.orbSphereCore} aria-hidden />
     </span>
   );
 }
@@ -135,10 +135,11 @@ function StatusLayer({ status, approvedBloom }: { status: OrbStatus; approvedBlo
 }
 
 /**
- * Living Studio World Orb™ — visual heartbeat of Studio World.
+ * Living Studio World Orb™ — visual energy core of Studio World (not branding).
+ * Pure CSS glass/gold sphere with animation layers only — no logo, text, or emblem.
  * Mounts inside `.elab-founder-wb__nav-orb` without altering workbench layout.
  */
-export function LivingStudioWorldOrb({ model, status: statusProp, artworkSrc }: Props) {
+export function LivingStudioWorldOrb({ model, status: statusProp }: Props) {
   const shellRef = useRef<HTMLDivElement>(null);
   const [isHovered, setIsHovered] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
@@ -151,7 +152,6 @@ export function LivingStudioWorldOrb({ model, status: statusProp, artworkSrc }: 
   const baseStatus = statusProp ?? (model ? resolveOrbStatusFromViewModel(model) : 'IDLE');
   const presentationStatus = deriveOrbPresentationStatus(baseStatus, isHovered, isFocused);
   const ariaLabel = orbStatusAriaLabel(presentationStatus);
-  const textureSrc = artworkSrc ?? resolveExperienceLabWorkbenchCenterLogoUrl();
 
   useEffect(() => {
     const isApproved =
@@ -217,7 +217,7 @@ export function LivingStudioWorldOrb({ model, status: statusProp, artworkSrc }: 
               <AmbientGlowLayer />
               <OuterOrbitRing />
               <InnerOrbitRing />
-              <OrbBase src={textureSrc} />
+              <OrbSphere />
               <DepthOverlay />
               <InternalCore />
               <HighlightLayer offset={highlightOffset} />
