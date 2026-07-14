@@ -49547,3 +49547,5 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 **Founder request:** Add Design Brief, Founder Review Wall, and Revision Timeline in one equal-height row above the Approve & Send CTA, matching reference attachment.
 
 **Shipped:** New `ExperienceLabFounderReviewConsole.tsx` — 3-column symmetric glass panels (`repeat(3, 1fr)`, min-height 148px); brief with mood line, review wall with player/nav/dots, revision timeline chart with axis labels. Mounted in lower deck order: console → approval bridge → tiered workbench. Composition marker `data-elab-founder-review-console`. Tests 51/51 PASS.
+
+**Follow-up:** Founder asked to halve panel height (blocking viewport). CSS tokens `--elab-frc-panel-min-h: 74px`, media/chart 36px; proportional padding/typography; brief 2-line clamp.
