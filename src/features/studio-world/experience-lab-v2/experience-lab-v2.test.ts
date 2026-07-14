@@ -129,8 +129,15 @@ describe('Experience Lab V2 — Fixed application shell', () => {
 
   it('workbench center orb is 3x prior size', () => {
     const css = readV2Source('experience-lab-v2.css');
-    expect(css).toContain('--elab-wb-nav-orb-size: calc(78px * var(--elab-wb-height-scale))');
-    expect(css).toContain('--elab-wb-nav-orb-core-size: calc(66px * var(--elab-wb-height-scale))');
+    expect(css).toContain('--elab-wb-nav-orb-size: calc(78px * var(--elab-wb-height-scale) * var(--elab-wb-world-nav-height-scale))');
+    expect(css).toContain('--elab-wb-nav-orb-core-size: calc(66px * var(--elab-wb-height-scale) * var(--elab-wb-world-nav-height-scale))');
+  });
+
+  it('workbench world-nav row is 40% shorter than prior nav height', () => {
+    const css = readV2Source('experience-lab-v2.css');
+    expect(css).toContain('--elab-wb-world-nav-height-scale: 0.6');
+    expect(css).toContain('--elab-wb-nav-min-height: calc(52px * var(--elab-wb-height-scale) * var(--elab-wb-world-nav-height-scale))');
+    expect(css).toMatch(/\.elab-founder-wb__nav-label\s*\{[\s\S]*?font-size:\s*calc\(6px \* var\(--elab-wb-world-nav-height-scale/);
   });
 
   it('workbench panel height is 40% shorter via height scale token', () => {
@@ -142,7 +149,7 @@ describe('Experience Lab V2 — Fixed application shell', () => {
     expect(css).toMatch(/\.elab-founder-wb__tool--active\s*\{[\s\S]*?box-shadow:\s*var\(--elab-selection-glow\)/);
     expect(css).toContain('--elab-selection-glow-inset');
     expect(css).toContain('--elab-wb-tool-min-height: calc(50px * var(--elab-wb-height-scale))');
-    expect(css).toContain('--elab-wb-nav-min-height: calc(52px * var(--elab-wb-height-scale))');
+    expect(css).toContain('--elab-wb-world-nav-height-scale: 0.6');
     expect(css).toContain('--elab-wb-tools-pad-x: var(--elab-hud-inset-side, 14px)');
     expect(css).toContain('--elab-wb-tools-visible: 6');
     expect(css).toMatch(/\.elab-founder-wb__tools-scroll\s*\{[\s\S]*?gap:\s*var\(--elab-wb-tools-gap/);

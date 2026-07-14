@@ -49886,3 +49886,16 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 **Spatial Architecture Review:** SKIPPED — styling-only color change, no new surfaces or nav.
 
+---
+
+## 2026-07-14 — Workbench world-nav row height −40% (orb row only)
+
+**Founder request:** Decrease height of the second workbench row (world navigation with center orb) by 40% only — leave title + tools pill row unchanged.
+
+**Shipped (`experience-lab-v2.css`):**
+- Token `--elab-wb-world-nav-height-scale: 0.6` on `.elab-founder-wb--tiered`
+- Nav vertical sizing (min-height, padding, gap, orb size/core/ring, logo pad, row bottom pad) multiplies existing `--elab-wb-height-scale` by `0.6`
+- Nav label font scales with same token
+
+**Tests:** New world-nav height test + updated orb size assertions in `experience-lab-v2.test.ts`. 54/54 PASS.
+
