@@ -39,12 +39,12 @@ export type InspectorPanelDefinition = {
 };
 
 export const INSPECTOR_PANELS: InspectorPanelDefinition[] = [
-  { id: 'blueprint', label: 'Blueprint', shortLabel: 'BP', viewportMode: 'BLUEPRINT', priority: 1, defaultDock: 'top-left' },
-  { id: 'construction', label: 'Construction', shortLabel: 'BLD', viewportMode: 'CONSTRUCTION_PLAN', priority: 1, defaultDock: 'top-right' },
-  { id: 'materials', label: 'Materials', shortLabel: 'MAT', viewportMode: 'MATERIALS', priority: 3, defaultDock: 'bottom-right' },
-  { id: 'lighting', label: 'Lighting', shortLabel: 'LGT', viewportMode: 'LIGHTING', priority: 3, defaultDock: 'bottom-left' },
-  { id: 'camera', label: 'Camera', shortLabel: 'CAM', viewportMode: 'CAMERA', priority: 3, defaultDock: 'bottom-right' },
-  { id: 'metadata', label: 'Metadata', shortLabel: 'META', viewportMode: 'FOUNDER_RENDER', priority: 2, defaultDock: 'top-left', statusKey: 'render' },
+  { id: 'blueprint', label: 'BLUEPRINT', shortLabel: 'BP', viewportMode: 'BLUEPRINT', priority: 1, defaultDock: 'top-left' },
+  { id: 'construction', label: 'CONSTRUCTION', shortLabel: 'BLD', viewportMode: 'CONSTRUCTION_PLAN', priority: 1, defaultDock: 'top-right' },
+  { id: 'materials', label: 'MATERIALS', shortLabel: 'MAT', viewportMode: 'MATERIALS', priority: 3, defaultDock: 'bottom-right' },
+  { id: 'lighting', label: 'LIGHTING', shortLabel: 'LGT', viewportMode: 'LIGHTING', priority: 3, defaultDock: 'bottom-left' },
+  { id: 'camera', label: 'CAMERA', shortLabel: 'CAM', viewportMode: 'CAMERA', priority: 3, defaultDock: 'bottom-right' },
+  { id: 'metadata', label: 'METADATA', shortLabel: 'META', viewportMode: 'FOUNDER_RENDER', priority: 2, defaultDock: 'top-left', statusKey: 'render' },
 ];
 
 export const PANEL_LAYOUT_STORAGE_KEY = 'experience_lab_v2_panel_layout_v1';

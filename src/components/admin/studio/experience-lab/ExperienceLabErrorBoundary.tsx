@@ -40,20 +40,22 @@ export class ExperienceLabErrorBoundary extends Component<Props, State> {
           fontSize: '13px',
           color: '#1a1a1a',
           background: '#fff',
+          textTransform: 'uppercase',
+          letterSpacing: '0.06em',
         }}
         data-xelab-error-boundary
       >
-        <h1 style={{ fontSize: '16px', color: '#eb1c24', margin: '0 0 12px' }}>Experience Lab Error</h1>
+        <h1 style={{ fontSize: '16px', color: '#eb1c24', margin: '0 0 12px' }}>EXPERIENCE LAB ERROR</h1>
         <p style={{ margin: '0 0 8px' }}>
-          <strong>Route:</strong> {this.props.route}
+          <strong>ROUTE:</strong> {this.props.route}
         </p>
         {failedModule ? (
           <p style={{ margin: '0 0 8px' }}>
-            <strong>Component stack:</strong> {failedModule}
+            <strong>COMPONENT STACK:</strong> {failedModule}
           </p>
         ) : null}
         <p style={{ margin: '0 0 8px' }}>
-          <strong>Message:</strong> {error.message}
+          <strong>MESSAGE:</strong> {error.message}
         </p>
         {error.stack ? (
           <pre

@@ -68,7 +68,7 @@ function ArtifactPane({
     return (
       <div className="elab-empty elab-empty--loading">
         <div className="elab-empty__pulse" />
-        <p className="elab-empty__hint">Loading {title}…</p>
+        <p className="elab-empty__hint">LOADING {title.toUpperCase()}…</p>
       </div>
     );
   }
@@ -76,7 +76,7 @@ function ArtifactPane({
     return (
       <div className="elab-empty elab-empty--error">
         <p className="elab-empty__title">{title} ERROR</p>
-        <p className="elab-empty__hint">Generation failed — open diagnostics</p>
+        <p className="elab-empty__hint">GENERATION FAILED — OPEN DIAGNOSTICS</p>
       </div>
     );
   }
@@ -117,28 +117,28 @@ export function StudioViewport({
   const renderStage = () => {
     switch (mode) {
       case 'LOADING':
-        return <div className="elab-empty elab-empty--loading"><div className="elab-empty__pulse" /><p>Syncing viewport…</p></div>;
+        return <div className="elab-empty elab-empty--loading"><div className="elab-empty__pulse" /><p>SYNCING VIEWPORT…</p></div>;
       case 'ERROR':
-        return <div className="elab-empty elab-empty--error"><p>Viewport error</p></div>;
+        return <div className="elab-empty elab-empty--error"><p>VIEWPORT ERROR</p></div>;
       case 'EMPTY_STATE':
         return <BlueprintEmptyState />;
       case 'BLUEPRINT':
-        return <ArtifactPane title="Blueprint" artifact={artifacts.blueprint} variant="blueprint" />;
+        return <ArtifactPane title="BLUEPRINT" artifact={artifacts.blueprint} variant="blueprint" />;
       case 'FOUNDER_RENDER':
-        return <ArtifactPane title="Founder Render" artifact={artifacts.founderRender} variant="render" onImageLoad={onImageLoad} renderStatus={artifactStatus} />;
+        return <ArtifactPane title="FOUNDER RENDER" artifact={artifacts.founderRender} variant="render" onImageLoad={onImageLoad} renderStatus={artifactStatus} />;
       case 'CONSTRUCTION_PLAN':
-        return <ArtifactPane title="Construction" artifact={artifacts.construction} variant="default" />;
+        return <ArtifactPane title="CONSTRUCTION" artifact={artifacts.construction} variant="default" />;
       case 'MATERIALS':
-        return <ArtifactPane title="Materials" artifact={artifacts.materials} variant="default" />;
+        return <ArtifactPane title="MATERIALS" artifact={artifacts.materials} variant="default" />;
       case 'LIGHTING':
-        return <ArtifactPane title="Lighting" artifact={artifacts.lighting} variant="default" />;
+        return <ArtifactPane title="LIGHTING" artifact={artifacts.lighting} variant="default" />;
       case 'CAMERA':
-        return <ArtifactPane title="Camera" artifact={artifacts.camera} variant="default" />;
+        return <ArtifactPane title="CAMERA" artifact={artifacts.camera} variant="default" />;
       case 'SPLIT_VIEW':
         return (
           <div className="elab-viewport-split" data-split-view>
-            <ArtifactPane title="Blueprint" artifact={artifacts.blueprint} variant="blueprint" />
-            <ArtifactPane title="Founder Render" artifact={artifacts.founderRender} variant="render" onImageLoad={onImageLoad} renderStatus={artifactStatus} />
+            <ArtifactPane title="BLUEPRINT" artifact={artifacts.blueprint} variant="blueprint" />
+            <ArtifactPane title="FOUNDER RENDER" artifact={artifacts.founderRender} variant="render" onImageLoad={onImageLoad} renderStatus={artifactStatus} />
           </div>
         );
       default:

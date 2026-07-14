@@ -144,6 +144,26 @@ describe('Experience Lab V2 — Fixed application shell', () => {
     expect(css).not.toMatch(/\.elab-founder-wb__tool\s*\{[\s\S]*?margin-right/);
   });
 
+  it('forces uppercase typography on workstation root and boot overlays', () => {
+    const css = readV2Source('experience-lab-v2.css');
+    expect(css).toMatch(/\.elab-workstation\s*\{[\s\S]*?text-transform:\s*uppercase/);
+    const composition = readV2Source('experience-lab-v2-composition.ts');
+    expect(composition).toContain("BLUEPRINT: 'BLUEPRINT'");
+    expect(composition).toContain("label: 'EXPERIENCE LAB'");
+    const suspense = readFileSync(
+      resolve(V2_DIR, '../../../components/admin/studio/studio-boot/StudioRouteSuspenseFallback.tsx'),
+      'utf8'
+    );
+    expect(suspense).toContain("textTransform: 'uppercase'");
+    expect(suspense).toContain('LARGE STUDIO MODULES MAY TAKE A MOMENT ON MOBILE NETWORKS.');
+    const awakening = readFileSync(
+      resolve(V2_DIR, '../../../components/admin/studio/studio-orb/StudioOrbAwakeningOverlay.tsx'),
+      'utf8'
+    );
+    expect(awakening).toContain('STUDIO INTELLIGENCE · AWAKENING');
+    expect(awakening).toContain("textTransform: 'uppercase'");
+  });
+
   it('workbench uses tiered layout with world nav and orb', () => {
     const wb = readV2Source('ExperienceLabFounderWorkbench.tsx');
     expect(wb).toContain('elab-founder-wb--tiered');

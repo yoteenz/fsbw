@@ -92,7 +92,7 @@ describe('orbStatusMachine', () => {
   });
 
   it('exposes accessible status labels', () => {
-    expect(orbStatusAriaLabel('GENERATING')).toContain('generating');
-    expect(orbStatusAriaLabel('IDLE')).toContain('idle');
+    expect(orbStatusAriaLabel('GENERATING')).toBe('STUDIO WORLD ORB — GENERATING');
+    expect(orbStatusAriaLabel('IDLE')).toBe('STUDIO WORLD ORB — IDLE');
   });
 });

@@ -32,7 +32,7 @@ export function ExperienceLabApprovalBridge({
 }: Props) {
   const handleApprove = () => {
     if (requiresLiveConfirmation(testMode)) {
-      if (!window.confirm('CONTROLLED LIVE: Approve and send to Creative Director Studio?')) return;
+      if (!window.confirm('CONTROLLED LIVE: APPROVE AND SEND TO CREATIVE DIRECTOR STUDIO?')) return;
     }
     onApprove?.();
   };

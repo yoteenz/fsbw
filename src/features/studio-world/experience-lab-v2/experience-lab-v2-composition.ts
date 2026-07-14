@@ -35,23 +35,23 @@ export const ELAB_V2_COMPOSITION = {
 } as const;
 
 export const VIEWPORT_MODE_LABELS: Record<string, string> = {
-  BLUEPRINT: 'Blueprint',
-  FOUNDER_RENDER: 'Founder Render',
-  CONSTRUCTION_PLAN: 'Construction',
-  MATERIALS: 'Materials',
-  LIGHTING: 'Lighting',
-  CAMERA: 'Camera',
-  SPLIT_VIEW: 'Split',
+  BLUEPRINT: 'BLUEPRINT',
+  FOUNDER_RENDER: 'FOUNDER RENDER',
+  CONSTRUCTION_PLAN: 'CONSTRUCTION',
+  MATERIALS: 'MATERIALS',
+  LIGHTING: 'LIGHTING',
+  CAMERA: 'CAMERA',
+  SPLIT_VIEW: 'SPLIT',
 };
 
 export const REGISTRY_TREE = [
   { id: 'fs-hq', label: 'FRONTAL SLAYER HQ', children: [
-    { id: 'reception', label: 'Reception', revision: 18, active: true },
-    { id: 'lobby', label: 'Grand Lobby', revision: 12 },
-    { id: 'cds', label: 'Creative Director Studio', revision: 9 },
+    { id: 'reception', label: 'RECEPTION', revision: 18, active: true },
+    { id: 'lobby', label: 'GRAND LOBBY', revision: 12 },
+    { id: 'cds', label: 'CREATIVE DIRECTOR STUDIO', revision: 9 },
   ]},
   { id: 'studio-os', label: 'STUDIO OS', children: [
-    { id: 'experience-lab', label: 'Experience Lab', revision: 4 },
-    { id: 'command', label: 'Command Center', revision: 3 },
+    { id: 'experience-lab', label: 'EXPERIENCE LAB', revision: 4 },
+    { id: 'command', label: 'COMMAND CENTER', revision: 3 },
   ]},
 ] as const;

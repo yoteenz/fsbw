@@ -62,19 +62,19 @@ export function deriveOrbPresentationStatus(
 export function orbStatusAriaLabel(status: OrbStatus): string {
   switch (status) {
     case 'GENERATING':
-      return 'Studio World Orb — generating';
+      return 'STUDIO WORLD ORB — GENERATING';
     case 'APPROVED':
-      return 'Studio World Orb — approved';
+      return 'STUDIO WORLD ORB — APPROVED';
     case 'WARNING':
-      return 'Studio World Orb — attention required';
+      return 'STUDIO WORLD ORB — ATTENTION REQUIRED';
     case 'ERROR':
-      return 'Studio World Orb — error state';
+      return 'STUDIO WORLD ORB — ERROR STATE';
     case 'OFFLINE':
-      return 'Studio World Orb — offline';
+      return 'STUDIO WORLD ORB — OFFLINE';
     case 'HOVER':
     case 'FOCUSED':
-      return 'Studio World Orb — active';
+      return 'STUDIO WORLD ORB — ACTIVE';
     default:
-      return 'Studio World Orb — idle';
+      return 'STUDIO WORLD ORB — IDLE';
   }
 }

@@ -14,9 +14,9 @@ type Props = {
 };
 
 function blueprintLoadingLabel(status: EnvironmentPackageOutputStatus): string {
-  if (status === 'generating') return 'Generating blueprint…';
-  if (status === 'failed') return 'Blueprint generation failed';
-  return 'Blueprint pending';
+  if (status === 'generating') return 'GENERATING BLUEPRINT…';
+  if (status === 'failed') return 'BLUEPRINT GENERATION FAILED';
+  return 'BLUEPRINT PENDING';
 }
 
 /** Panel 01 — persistent architectural context with real package blueprint thumbnail. */
@@ -38,7 +38,7 @@ export function ExperienceLabBlueprintCard({
       side="left"
       hostClassName="elab-viewport__blueprint-card elab-blueprint-card"
       compositionAttr={ELAB_V2_COMPOSITION.blueprintCard}
-      ariaLabel="Blueprint card"
+      ariaLabel="BLUEPRINT CARD"
     >
       <div className="elab-blueprint-card__thumb" aria-hidden={showLoading}>
         {blueprintUrl ? (

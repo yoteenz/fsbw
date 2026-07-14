@@ -146,7 +146,7 @@ export function ExperienceLabV2Shell({ initialDepartmentId = 'experience-lab' }:
   if (!flags.experienceLabV2Enabled) {
     return (
       <div className="elab-workstation elab-workstation--disabled" data-experience-lab-v2-shell>
-        <p>Experience Lab V2 is disabled.</p>
+        <p>EXPERIENCE LAB V2 IS DISABLED.</p>
       </div>
     );
   }
@@ -336,13 +336,13 @@ export function ExperienceLabV2Shell({ initialDepartmentId = 'experience-lab' }:
 
         {!review.enabled && shell.focusMode !== 'none' ? (
           <div className="elab-app-shell__focus-bar">
-            <span>Focus: {shell.focusMode.replace('_', ' ')}</span>
-            <button type="button" onClick={() => shell.setFocusMode('none')}>Exit focus</button>
+            <span>FOCUS: {shell.focusMode.replace('_', ' ').toUpperCase()}</span>
+            <button type="button" onClick={() => shell.setFocusMode('none')}>EXIT FOCUS</button>
           </div>
         ) : null}
       </div>
 
-      <ExperienceLabSheet open={shell.overlay === 'status'} title="Status & metadata" onClose={shell.closeOverlay}>
+      <ExperienceLabSheet open={shell.overlay === 'status'} title="STATUS & METADATA" onClose={shell.closeOverlay}>
         <dl className="elab-sheet-dl">
           <div><dt>Status</dt><dd className="elab-status--ok">{model.approvalStatus.toUpperCase()}</dd></div>
           <div><dt>Permit</dt><dd className="elab-status--ok">{model.permitStatus.toUpperCase()}</dd></div>
@@ -352,7 +352,7 @@ export function ExperienceLabV2Shell({ initialDepartmentId = 'experience-lab' }:
         </dl>
       </ExperienceLabSheet>
 
-      <ExperienceLabSheet open={shell.overlay === 'blockers'} title="Approval requirements" onClose={shell.closeOverlay}>
+      <ExperienceLabSheet open={shell.overlay === 'blockers'} title="APPROVAL REQUIREMENTS" onClose={shell.closeOverlay}>
         <ul className="elab-sheet-list">
           {model.approval.disabledReasons.map((r) => (
             <li key={r}>{r}</li>
@@ -360,13 +360,13 @@ export function ExperienceLabV2Shell({ initialDepartmentId = 'experience-lab' }:
         </ul>
       </ExperienceLabSheet>
 
-      <ExperienceLabSheet open={shell.overlay === 'governance'} title="Scene governance" onClose={shell.closeOverlay}>
+      <ExperienceLabSheet open={shell.overlay === 'governance'} title="SCENE GOVERNANCE" onClose={shell.closeOverlay}>
         <ExperienceLabGovernanceSidebar model={model} embedded />
       </ExperienceLabSheet>
 
       <ExperienceLabSheet
         open={shell.overlay === 'inspector' && Boolean(orchestrator.expandedPanel)}
-        title={expandedDef?.label ?? 'Inspector'}
+        title={expandedDef?.label ?? 'INSPECTOR'}
         onClose={() => {
           orchestrator.collapseExpanded();
           shell.closeOverlay();
@@ -393,15 +393,15 @@ export function ExperienceLabV2Shell({ initialDepartmentId = 'experience-lab' }:
                 shell.closeOverlay();
               }}
             >
-              Open in Viewport
+              OPEN IN VIEWPORT
             </button>
           </>
         ) : null}
       </ExperienceLabSheet>
 
-      <ExperienceLabSheet open={shell.overlay === 'tools'} title="Experience Lab tools" onClose={shell.closeOverlay}>
+      <ExperienceLabSheet open={shell.overlay === 'tools'} title="EXPERIENCE LAB TOOLS" onClose={shell.closeOverlay}>
         <div className="elab-sheet-tools">
-          {['Architectural Tools', 'Material Library', 'Lighting Studio', 'Camera Studio', 'Budget Forecast', 'Permit Center'].map((t) => (
+          {['ARCHITECTURAL TOOLS', 'MATERIAL LIBRARY', 'LIGHTING STUDIO', 'CAMERA STUDIO', 'BUDGET FORECAST', 'PERMIT CENTER'].map((t) => (
             <button key={t} type="button" className="elab-sheet-tool-btn">{t}</button>
           ))}
         </div>
@@ -409,7 +409,7 @@ export function ExperienceLabV2Shell({ initialDepartmentId = 'experience-lab' }:
 
       <ExperienceLabSheet
         open={Boolean(designVariants.drawerVariant)}
-        title={designVariants.drawerVariant?.name ?? 'Design Variant'}
+        title={designVariants.drawerVariant?.name ?? 'DESIGN VARIANT'}
         onClose={designVariants.closeDrawer}
         variant={shell.isCompact ? 'sheet' : 'drawer'}
       >

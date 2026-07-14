@@ -73,15 +73,15 @@ export function ExperienceLabDynamicContextCard({
       case 'materials':
         return (
           <div className="elab-context-card__body-copy">
-            <p className="elab-context-card__summary">{model.artifacts.materials?.summary ?? 'Material profile'}</p>
-            <p className="elab-context-card__hint">r{model.artifacts.materials?.revision ?? model.revision} · {model.artifacts.materials?.status ?? 'idle'}</p>
+            <p className="elab-context-card__summary">{model.artifacts.materials?.summary ?? 'MATERIAL PROFILE'}</p>
+            <p className="elab-context-card__hint">r{model.artifacts.materials?.revision ?? model.revision} · {(model.artifacts.materials?.status ?? 'idle').toUpperCase()}</p>
           </div>
         );
       case 'lighting':
         return (
           <div className="elab-context-card__body-copy">
-            <p className="elab-context-card__summary">{model.artifacts.lighting?.summary ?? 'Lighting profile'}</p>
-            <p className="elab-context-card__hint">Executive lighting planner output</p>
+            <p className="elab-context-card__summary">{model.artifacts.lighting?.summary ?? 'LIGHTING PROFILE'}</p>
+            <p className="elab-context-card__hint">EXECUTIVE LIGHTING PLANNER OUTPUT</p>
           </div>
         );
       case 'camera':
@@ -101,29 +101,29 @@ export function ExperienceLabDynamicContextCard({
       case 'permit':
         return (
           <div className="elab-context-card__body-copy">
-            <p className="elab-context-card__summary">Permit status</p>
+            <p className="elab-context-card__summary">PERMIT STATUS</p>
             <p className="elab-context-card__hint">{model.permitStatus.toUpperCase()}</p>
           </div>
         );
       case 'asset-reference':
         return (
           <div className="elab-context-card__body-copy">
-            <p className="elab-context-card__summary">Asset reference vault</p>
-            <p className="elab-context-card__hint">{model.artifacts.materials?.summary ?? 'Brand vault refs'}</p>
+            <p className="elab-context-card__summary">ASSET REFERENCE VAULT</p>
+            <p className="elab-context-card__hint">{model.artifacts.materials?.summary ?? 'BRAND VAULT REFS'}</p>
           </div>
         );
       case 'budget-forecast':
         return (
           <div className="elab-context-card__body-copy">
-            <p className="elab-context-card__summary">Generation costs</p>
+            <p className="elab-context-card__summary">GENERATION COSTS</p>
             <p className="elab-context-card__hint">{model.costEstimate}</p>
           </div>
         );
       case 'workforce':
         return (
           <div className="elab-context-card__body-copy">
-            <p className="elab-context-card__summary">Workforce center</p>
-            <p className="elab-context-card__hint">Department staffing and digital workers</p>
+            <p className="elab-context-card__summary">WORKFORCE CENTER</p>
+            <p className="elab-context-card__hint">DEPARTMENT STAFFING AND DIGITAL WORKERS</p>
           </div>
         );
       default:
@@ -138,12 +138,12 @@ export function ExperienceLabDynamicContextCard({
       hostClassName="elab-viewport__context-card elab-context-card"
       compositionAttr={ELAB_V2_COMPOSITION.dynamicContextCard}
       enter
-      ariaLabel={`${title} context`}
+      ariaLabel={`${title} CONTEXT`}
     >
       <header className="elab-context-card__header">
         <span className="elab-context-card__title">{title}</span>
         {onExpand ? (
-          <button type="button" className="elab-context-card__expand" onClick={onExpand} aria-label={`Expand ${title}`}>
+          <button type="button" className="elab-context-card__expand" onClick={onExpand} aria-label={`EXPAND ${title}`}>
             ⌄
           </button>
         ) : null}

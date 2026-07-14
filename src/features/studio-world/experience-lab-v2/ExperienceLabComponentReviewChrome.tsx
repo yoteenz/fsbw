@@ -24,7 +24,7 @@ export function ExperienceLabComponentReviewChrome({ review }: Props) {
       <div className="elab-component-review-chrome__head">
         <strong>COMPONENT REVIEW MODE</strong>
         <span className="elab-component-review-chrome__phase">
-          Phase {activeDef?.phase ?? 1} · {activeDef?.label ?? 'Command Dock'}
+          Phase {activeDef?.phase ?? 1} · {activeDef?.label ?? 'COMMAND DOCK'}
         </span>
         <button
           type="button"

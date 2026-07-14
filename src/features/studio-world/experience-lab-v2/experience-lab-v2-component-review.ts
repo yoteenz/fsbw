@@ -60,15 +60,15 @@ export type ComponentReviewState = {
 
 function componentReviewLabel(id: ComponentReviewId): string {
   const labels: Record<ComponentReviewId, string> = {
-    'command-dock': 'Command Dock',
-    workbench: 'Workbench',
-    'studio-viewport': 'Studio Viewport',
-    'floating-inspectors': 'Floating Inspectors',
-    'approval-bridge': 'Approval Bridge',
-    'bottom-tool-dock': 'Bottom Tool Dock',
-    diagnostics: 'Diagnostics',
-    'view-angle-strip': 'Design Variant Strip',
-    'environment-layer': 'Environment Layer',
+    'command-dock': 'COMMAND DOCK',
+    workbench: 'WORKBENCH',
+    'studio-viewport': 'STUDIO VIEWPORT',
+    'floating-inspectors': 'FLOATING INSPECTORS',
+    'approval-bridge': 'APPROVAL BRIDGE',
+    'bottom-tool-dock': 'BOTTOM TOOL DOCK',
+    diagnostics: 'DIAGNOSTICS',
+    'view-angle-strip': 'DESIGN VARIANT STRIP',
+    'environment-layer': 'ENVIRONMENT LAYER',
   };
   return labels[id];
 }

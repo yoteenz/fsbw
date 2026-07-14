@@ -47,6 +47,8 @@ export function StudioOrbAwakeningOverlay() {
           background: phase < 2 ? 'rgba(8, 7, 6, 0.92)' : 'rgba(12, 11, 10, 0.78)',
           transition: 'background 1.2s ease',
           animation: 'studio-orb-awaken-fade 0.8s ease-out',
+          textTransform: 'uppercase',
+          letterSpacing: '0.08em',
         }}
         aria-live="polite"
         aria-busy="true"
@@ -107,6 +109,7 @@ export function StudioOrbAwakeningOverlay() {
               cursor: 'pointer',
               textDecoration: 'underline',
               textUnderlineOffset: '3px',
+              textTransform: 'uppercase',
             }}
           >
             SKIP INTRO

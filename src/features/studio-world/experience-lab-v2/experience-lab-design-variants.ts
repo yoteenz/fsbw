@@ -94,7 +94,7 @@ const DARK_PREVIEW = experienceLabV2ViewportEnvironmentDesktopUrl;
 const RAW_EXPERIENCE_LAB_DESIGN_VARIANTS: Omit<DesignVariantRecord, 'environmentPackageId'>[] = [
   {
     id: 'light-01',
-    name: 'Light 01',
+    name: 'LIGHT 01',
     theme: 'light',
     generationStage: 'preview',
     previewEnvironmentUrl: LIGHT_PREVIEW,
@@ -114,7 +114,7 @@ const RAW_EXPERIENCE_LAB_DESIGN_VARIANTS: Omit<DesignVariantRecord, 'environment
   },
   {
     id: 'light-02',
-    name: 'Light 02',
+    name: 'LIGHT 02',
     theme: 'light',
     generationStage: 'preview',
     previewEnvironmentUrl: LIGHT_PREVIEW,
@@ -134,7 +134,7 @@ const RAW_EXPERIENCE_LAB_DESIGN_VARIANTS: Omit<DesignVariantRecord, 'environment
   },
   {
     id: 'light-03',
-    name: 'Light 03',
+    name: 'LIGHT 03',
     theme: 'light',
     generationStage: 'preview',
     previewEnvironmentUrl: LIGHT_PREVIEW,
@@ -154,7 +154,7 @@ const RAW_EXPERIENCE_LAB_DESIGN_VARIANTS: Omit<DesignVariantRecord, 'environment
   },
   {
     id: 'dark-01',
-    name: 'Dark 01',
+    name: 'DARK 01',
     theme: 'dark',
     generationStage: 'preview',
     previewEnvironmentUrl: DARK_PREVIEW,
@@ -174,7 +174,7 @@ const RAW_EXPERIENCE_LAB_DESIGN_VARIANTS: Omit<DesignVariantRecord, 'environment
   },
   {
     id: 'dark-02',
-    name: 'Dark 02',
+    name: 'DARK 02',
     theme: 'dark',
     generationStage: 'preview',
     previewEnvironmentUrl: DARK_PREVIEW,
@@ -194,7 +194,7 @@ const RAW_EXPERIENCE_LAB_DESIGN_VARIANTS: Omit<DesignVariantRecord, 'environment
   },
   {
     id: 'dark-03',
-    name: 'Dark 03',
+    name: 'DARK 03',
     theme: 'dark',
     generationStage: 'preview',
     previewEnvironmentUrl: DARK_PREVIEW,

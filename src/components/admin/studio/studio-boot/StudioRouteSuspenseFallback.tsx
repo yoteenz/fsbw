@@ -20,13 +20,15 @@ export function StudioRouteSuspenseFallback({ label = 'Studio route' }: { label?
         fontSize: '12px',
         color: '#64748b',
         background: '#f8fafc',
+        textTransform: 'uppercase',
+        letterSpacing: '0.08em',
       }}
     >
       <p style={{ margin: 0, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
         Loading {label}…
       </p>
       <p style={{ margin: '8px 0 0', fontSize: '11px', color: '#94a3b8' }}>
-        Large Studio modules may take a moment on mobile networks.
+        LARGE STUDIO MODULES MAY TAKE A MOMENT ON MOBILE NETWORKS.
       </p>
     </div>
   );

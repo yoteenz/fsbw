@@ -23,11 +23,11 @@ export function ExperienceLabInspectorSwitcher({ activeInspector, open, onToggle
         className="elab-inspector-switcher__trigger"
         aria-expanded={open}
         aria-haspopup="listbox"
-        aria-label={`Inspector: ${active?.label ?? 'Blueprint'}. Open inspector picker`}
+        aria-label={`INSPECTOR: ${active?.label ?? 'BLUEPRINT'}. OPEN INSPECTOR PICKER`}
         onClick={onToggle}
       >
         <span className="elab-inspector-switcher__label">{active?.shortLabel ?? 'BP'}</span>
-        <span className="elab-inspector-switcher__name">{active?.label ?? 'Blueprint'}</span>
+        <span className="elab-inspector-switcher__name">{active?.label ?? 'BLUEPRINT'}</span>
         <span className="elab-inspector-switcher__chev" aria-hidden>{open ? '⌃' : '⌄'}</span>
       </button>
 

@@ -104,7 +104,7 @@ export function contextContentForWorkbenchTool(toolId: WorkbenchEditingToolId): 
 
 export function contextLabelForWorkbenchTool(toolId: WorkbenchEditingToolId): string {
   const tool = EXPERIENCE_LAB_WORKBENCH_EDITING_TOOLS.find((t) => t.id === toolId);
-  return tool?.label ?? 'Context';
+  return tool?.label ?? 'CONTEXT';
 }
 
 /** Maps workbench tool selection to viewport inspector context (no duplicate HUD rails). */
