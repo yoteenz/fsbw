@@ -135,6 +135,10 @@ export type OperationsMetrics = {
   failedJobs: number;
   systemHealthPercent: number;
   founderNotifications: number;
+  cacheSavingsUsd?: number;
+  schedulerStatus?: string;
+  providerStatus?: string;
+  storageHealthPercent?: number;
 };
 
 export type WorkspaceContextState = {
@@ -212,6 +216,11 @@ export type ReviewItem = {
   status: 'pending' | 'approved' | 'rejected' | 'revision-requested';
   revision: number;
   submittedAt: string;
+  outputType?: string;
+  provider?: string;
+  costUsd?: number | null;
+  thumbnailUrl?: string | null;
+  founderComment?: string | null;
 };
 
 export type AssetLibraryItem = {
@@ -219,6 +228,25 @@ export type AssetLibraryItem = {
   label: string;
   kind: 'blueprint' | 'material' | 'package' | 'preset' | 'reference' | 'marketplace' | 'icon';
   updatedAt: string;
+  status?: WorkOrderStatus;
+  revision?: number;
+};
+
+export type V3WorkspaceMemory = {
+  environment: { inspector?: string; zoom?: number; variantId?: string };
+  production: { lane?: string; workOrderId?: string | null; module?: string };
+  review: { revision?: number; comparisonMode?: 'side-by-side' | 'slider'; reviewItemId?: string | null };
+  assets: { category?: string; assetId?: string | null; viewMode?: 'grid' | 'rail' };
+  command: { module?: string; scope?: 'package' | 'department' | 'world'; filter?: string };
+};
+
+export type V3WorkspaceDataState = 'loading' | 'ready' | 'empty' | 'error' | 'blocked';
+
+export type V3AttentionItem = {
+  id: string;
+  label: string;
+  severity: 'info' | 'warning' | 'critical';
+  action?: string;
 };
 
 export type ExperienceLabV3State = {
@@ -230,15 +258,22 @@ export type ExperienceLabV3State = {
   activeInspectorMode: V3InspectorModeId | null;
   activeWorkOrderId: string | null;
   activeReviewId: string | null;
+  activeAssetId: string | null;
+  activeOutputId: string | null;
   workOrders: WorkOrder[];
   activePackage: ExperienceLabV3Package | null;
   pipeline: PipelineStage[];
   operations: OperationsMetrics;
   reviewItems: ReviewItem[];
   assetLibrary: AssetLibraryItem[];
+  attentionItems: V3AttentionItem[];
+  workspaceMemory: V3WorkspaceMemory;
+  workspaceDataState: Record<V3CoreWorkspaceId, V3WorkspaceDataState>;
+  lastPageError: string | null;
   spotlightOpen: boolean;
   assistantOpen: boolean;
   blueprintFullscreen: boolean;
   blueprintZoom: number;
   blueprintPan: { x: number; y: number };
+  useLiveData: boolean;
 };

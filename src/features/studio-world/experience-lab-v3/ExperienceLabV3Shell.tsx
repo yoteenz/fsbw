@@ -40,11 +40,13 @@ import '../experience-lab-v2/experience-lab-v2.css';
 import './experience-lab-v3-pager.css';
 
 import { resolveExperienceLabV3FeatureFlags } from './experience-lab-v3-feature-flags';
-import { ExperienceLabV3StoreProvider } from './store/ExperienceLabV3Store';
-import { V3WorkspaceProvider, useV3Workspace } from './context/V3WorkspaceContext';
+import { ExperienceLabV3StoreProvider, useExperienceLabV3Store } from './store/ExperienceLabV3Store';
+import { ExperienceLabV3WorkspaceProvider, useV3Workspace } from './context/ExperienceLabV3WorkspaceProvider';
 import { V3WorkspaceViewportPager } from './viewport/V3WorkspaceViewportPager';
 import { V3WorkspacePaneRenderer } from './viewport/V3WorkspacePaneRenderer';
 import { resolveV3WorkspaceForWorkbenchTool } from './registry/v3-workbench-workspace-map';
+import { V3WorkspaceToolStrip } from './workbench/V3WorkspaceToolStrip';
+import { V3WorkspaceDiagnostics } from './diagnostics/V3WorkspaceDiagnostics';
 
 type Props = {
   initialDepartmentId?: CanonicalMainDepartmentId;
@@ -64,18 +66,16 @@ export function ExperienceLabV3Shell({ initialDepartmentId = 'experience-lab' }:
 
   return (
     <ExperienceLabV3StoreProvider>
-      <V3WorkspaceProvider>
-        <ProgramContextProvider
-          activeVariantLabel={designVariants.activeVariant?.name ?? null}
-          onPipelineDepthChange={handlePipelineDepthChange}
-        >
-          <ExperienceLabV3ShellInner
-            initialDepartmentId={initialDepartmentId}
-            shell={shell}
-            designVariants={designVariants}
-          />
-        </ProgramContextProvider>
-      </V3WorkspaceProvider>
+      <ProgramContextProvider
+        activeVariantLabel={designVariants.activeVariant?.name ?? null}
+        onPipelineDepthChange={handlePipelineDepthChange}
+      >
+        <ExperienceLabV3ShellInner
+          initialDepartmentId={initialDepartmentId}
+          shell={shell}
+          designVariants={designVariants}
+        />
+      </ProgramContextProvider>
     </ExperienceLabV3StoreProvider>
   );
 }
@@ -89,18 +89,20 @@ function ExperienceLabV3ShellInner(props: ShellInnerProps) {
   const [workbenchToolId, setWorkbenchToolId] = useState<WorkbenchEditingToolId | null>(null);
 
   return (
-    <ExperienceLabLiveWorkspaceProvider
+      <ExperienceLabLiveWorkspaceProvider
       designVariants={props.designVariants}
       canonicalQueue={canonicalQueue.queue}
       departmentId={departmentId}
       workbenchToolId={workbenchToolId}
       onWorkbenchToolChange={setWorkbenchToolId}
     >
-      <ExperienceLabV3ShellBody
-        {...props}
-        workbenchToolId={workbenchToolId}
-        onWorkbenchToolChange={setWorkbenchToolId}
-      />
+      <ExperienceLabV3WorkspaceProvider>
+        <ExperienceLabV3ShellBody
+          {...props}
+          workbenchToolId={workbenchToolId}
+          onWorkbenchToolChange={setWorkbenchToolId}
+        />
+      </ExperienceLabV3WorkspaceProvider>
     </ExperienceLabLiveWorkspaceProvider>
   );
 }
@@ -122,6 +124,8 @@ function ExperienceLabV3ShellBody({
   const v3Flags = resolveExperienceLabV3FeatureFlags();
   const v2Flags = resolveExperienceLabV2FeatureFlags();
   const { setWorkspace } = useV3Workspace();
+  const { state: v3State } = useExperienceLabV3Store();
+  const activeWorkspace = v3State.activeWorkspace;
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -251,6 +255,7 @@ function ExperienceLabV3ShellBody({
             if (pkgId) void designVariants.approveForProduction(pkgId);
           }}
         />
+        {activeWorkspace !== 'environment' ? <V3WorkspaceToolStrip workspace={activeWorkspace} /> : null}
         <ExperienceLabFounderWorkbench
           model={model}
           activeTab={workbenchTab}
@@ -261,6 +266,7 @@ function ExperienceLabV3ShellBody({
         {!shell.isCompact ? (
           <ExperienceLabWorkbenchDock onMoreOpen={() => shell.toggleOverlay('tools')} />
         ) : null}
+        <V3WorkspaceDiagnostics />
       </>
     ) : null;
 
@@ -270,6 +276,7 @@ function ExperienceLabV3ShellBody({
     <div
       className={`elab-workstation elab-app-shell elab-app-shell--${shell.breakpoint}${focusClass} elab-app-shell--v3`}
       data-experience-lab-v3-shell
+      data-elab-v3-active-workspace={activeWorkspace}
       {...{ [ELAB_V2_COMPOSITION.applicationShell]: '' }}
       {...(shell.focusMode !== 'none' ? { [ELAB_V2_COMPOSITION.focusMode]: shell.focusMode } : {})}
     >

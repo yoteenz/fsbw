@@ -1,22 +1,54 @@
 /**
- * Experience Lab V3 — viewport pager only.
+ * Experience Lab V3 — viewport pager + workspace panes only.
  * Shell chrome uses experience-lab-v2.css unchanged.
  */
 
+.elab-v3-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 .elab-app-shell--v3 .elab-app-shell__viewport-room {
   overflow: hidden;
+  min-height: 0;
+}
+
+.elab-app-shell--v3[data-elab-v3-active-workspace]:not([data-elab-v3-active-workspace='environment'])
+  .elab-founder-wb__row--tools {
+  display: none;
+}
+
+.elab-v3-ws-toolstrip {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding: 6px 10px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.elab-v3-ws-toolstrip::-webkit-scrollbar {
+  display: none;
 }
 
 .elab-v3-viewport-pager {
   display: flex;
   flex-direction: column;
   height: 100%;
-  min-height: 0;
+  min-height: 220px;
   overflow: hidden;
 }
 
 .elab-v3-viewport-pager.elab-stage {
   padding: 0;
+  min-height: 0;
 }
 
 .elab-v3-segmented {
@@ -25,11 +57,13 @@
   padding: 6px 8px 4px;
   flex-shrink: 0;
   z-index: 6;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .elab-v3-segmented__item {
   flex: 1;
-  min-width: 0;
+  min-width: 64px;
   padding: 6px 8px;
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 8px;
@@ -76,62 +110,71 @@
   height: 100%;
   min-height: 0;
   overflow: hidden;
+  position: relative;
+  background: rgba(8, 10, 14, 0.85);
 }
 
 .elab-v3-viewport-pager__placeholder {
   height: 100%;
-  background: rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, rgba(18, 22, 30, 0.9), rgba(8, 10, 14, 0.95));
 }
 
-/* Non-environment workspaces — dense HUD tiles, no page scroll */
+.elab-v3-viewport-pager__placeholder-label {
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.35);
+}
+
+/* Workspace panes — fill viewport, no page scroll */
 .elab-v3-ws-pane {
   height: 100%;
   min-height: 0;
   overflow: hidden;
-  padding: 8px 10px 10px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
 }
 
-.elab-v3-ws-pane__grid {
+.elab-v3-ws-pane__layout {
+  flex: 1;
+  min-height: 0;
   display: grid;
   gap: 6px;
-  height: 100%;
+  padding: 6px 8px 8px;
+  overflow: hidden;
+}
+
+.elab-v3-ws-pane__layout--production {
+  grid-template-rows: auto 1fr auto;
+}
+
+.elab-v3-ws-pane__layout--review {
+  grid-template-rows: auto 1fr auto;
+}
+
+.elab-v3-ws-pane__layout--assets {
+  grid-template-rows: auto 1fr auto;
+}
+
+.elab-v3-ws-pane__layout--command {
+  grid-template-rows: 1fr auto;
+}
+
+.elab-v3-ws-pane__region {
   min-height: 0;
-}
-
-.elab-v3-ws-pane__grid--production {
-  grid-template-columns: 1.1fr 0.9fr 0.8fr;
-  grid-template-rows: auto 1fr;
-}
-
-.elab-v3-ws-pane__grid--review {
-  grid-template-columns: 1fr 1fr 0.8fr;
-  grid-template-rows: 1fr;
-}
-
-.elab-v3-ws-pane__grid--assets {
-  grid-template-columns: 1fr 1.2fr;
-  grid-template-rows: 1fr;
-}
-
-.elab-v3-ws-pane__grid--command {
-  grid-template-columns: repeat(4, 1fr);
-  grid-template-rows: repeat(2, 1fr);
-  gap: 8px;
-}
-
-.elab-v3-ws-pane__panel,
-.elab-v3-ws-pane__tile {
+  overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 8px;
   background: rgba(12, 14, 18, 0.52);
   backdrop-filter: blur(8px);
   padding: 8px;
-  min-height: 0;
-  overflow: hidden;
 }
 
-.elab-v3-ws-pane__panel h3,
-.elab-v3-ws-pane__tile-label {
+.elab-v3-ws-pane__region h3 {
   margin: 0 0 6px;
   font-size: 9px;
   letter-spacing: 0.08em;
@@ -139,73 +182,460 @@
   color: rgba(255, 255, 255, 0.55);
 }
 
-.elab-v3-ws-pane__tile-value {
-  font-size: 14px;
+.elab-v3-ws-floats {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  right: 8px;
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  pointer-events: none;
+  z-index: 4;
+}
+
+.elab-v3-ws-float {
+  pointer-events: auto;
+  max-width: 42%;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  background: rgba(10, 12, 16, 0.72);
+  backdrop-filter: blur(10px);
+  padding: 6px 8px;
+  font-size: 9px;
+}
+
+.elab-v3-ws-float__label {
+  display: block;
+  margin-bottom: 4px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.elab-v3-ws-float__body {
+  color: rgba(255, 255, 255, 0.88);
+  max-height: 72px;
+  overflow: hidden;
+}
+
+.elab-v3-ws-pane__dl {
+  margin: 0;
+  display: grid;
+  gap: 2px;
+}
+
+.elab-v3-ws-pane__dl dt {
+  font-size: 7px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.elab-v3-ws-pane__dl dd {
+  margin: 0;
+  font-size: 9px;
+}
+
+.elab-v3-ws-pane__muted {
+  color: rgba(255, 255, 255, 0.45);
+  font-size: 9px;
+}
+
+.elab-v3-ws-pane__hero-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.elab-v3-ws-pane__hero-title {
+  font-size: 11px;
   color: rgba(255, 255, 255, 0.92);
 }
 
-.elab-v3-ws-pane__panel ul {
+.elab-v3-ws-pane__hero-meta {
+  font-size: 8px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.elab-v3-ws-pane__progress-bar {
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+.elab-v3-ws-pane__progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #7eb8ff, #4a8fd9);
+  border-radius: inherit;
+}
+
+.elab-v3-ws-pane__turn-board {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+  height: 100%;
+  min-height: 0;
+}
+
+.elab-v3-ws-pane__turn-lane {
+  min-height: 0;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 6px;
+  padding: 4px;
+}
+
+.elab-v3-ws-pane__turn-lane-label {
+  display: block;
+  font-size: 7px;
+  letter-spacing: 0.06em;
+  margin-bottom: 4px;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.elab-v3-ws-pane__turn-lane ul {
   list-style: none;
   margin: 0;
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  overflow: hidden;
+  gap: 3px;
 }
 
-.elab-v3-ws-pane__panel button {
+.elab-v3-ws-pane__turn-lane button {
   width: 100%;
   text-align: left;
-  padding: 4px 6px;
+  padding: 4px;
   border: 1px solid transparent;
   border-radius: 4px;
   background: rgba(255, 255, 255, 0.03);
   color: inherit;
-  font-size: 9px;
+  font-size: 8px;
   cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
-.elab-v3-ws-pane__panel button.is-active {
+.elab-v3-ws-pane__turn-lane button.is-active {
   border-color: rgba(126, 184, 255, 0.55);
 }
 
-.elab-v3-ws-pane__ops-row {
-  grid-column: 1 / -1;
+.elab-v3-ws-pane__pipeline {
+  list-style: none;
+  margin: 0;
+  padding: 0;
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.elab-v3-ws-pane__pipeline li {
+  display: flex;
+  justify-content: space-between;
+  font-size: 8px;
+}
+
+.elab-v3-ws-pane__pipeline li.is-active strong {
+  color: #7eb8ff;
+}
+
+.elab-v3-ws-pane__split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.elab-v3-ws-pane__review-wall {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+}
+
+.elab-v3-ws-pane__review-wall button {
+  flex: 0 0 auto;
+  width: 88px;
+  padding: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.03);
+  color: inherit;
+  font-size: 7px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.elab-v3-ws-pane__review-wall button.is-active {
+  border-color: rgba(126, 184, 255, 0.55);
+}
+
+.elab-v3-ws-pane__review-wall img {
+  width: 100%;
+  height: 48px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.elab-v3-ws-pane__thumb-fallback {
+  display: block;
+  height: 48px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 4px;
+}
+
+.elab-v3-ws-pane__timeline {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-size: 8px;
+}
+
+.elab-v3-ws-pane__timeline li {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
   gap: 6px;
 }
 
-.elab-v3-ws-pane__ops-chip {
-  padding: 3px 8px;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+.elab-v3-ws-pane__actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+
+.elab-v3-ws-pane__actions button {
+  padding: 4px 8px;
+  font-size: 8px;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
   background: rgba(255, 255, 255, 0.04);
+  color: inherit;
+  cursor: pointer;
+}
+
+.elab-v3-ws-pane__actions button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.elab-v3-ws-pane__compare-panes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+
+.elab-v3-ws-pane__compare-thumb {
+  height: 48px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 8px;
+  overflow: hidden;
+}
+
+.elab-v3-ws-pane__compare-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.elab-v3-ws-pane__asset-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
+  overflow-y: auto;
+  max-height: 100%;
+}
+
+.elab-v3-ws-pane__asset-card {
+  text-align: left;
+  padding: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.03);
+  color: inherit;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-height: 64px;
+}
+
+.elab-v3-ws-pane__asset-card.is-active {
+  border-color: rgba(126, 184, 255, 0.55);
+}
+
+.elab-v3-ws-pane__asset-type {
+  font-size: 9px;
+  font-weight: 600;
+}
+
+.elab-v3-ws-pane__asset-status,
+.elab-v3-ws-pane__asset-meta {
+  font-size: 8px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.elab-v3-ws-pane__metric-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
+  padding: 6px 8px;
+}
+
+.elab-v3-ws-pane__tile {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  background: rgba(12, 14, 18, 0.52);
+  padding: 8px;
+}
+
+.elab-v3-ws-pane__tile-label {
+  display: block;
   font-size: 8px;
   letter-spacing: 0.06em;
   text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.45);
+  margin-bottom: 4px;
 }
 
-.elab-v3-ws-pane__ops-chip strong {
+.elab-v3-ws-pane__tile-value {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.elab-v3-ws-pane__health-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.elab-v3-ws-pane__health-chip {
+  font-size: 8px;
+  padding: 2px 6px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.elab-v3-ws-pane__health-chip strong {
   color: #7eb8ff;
-  margin-left: 4px;
+  margin-left: 3px;
+}
+
+.elab-v3-ws-pane__attention--critical {
+  color: #ff6b6b;
+}
+
+.elab-v3-ws-pane__attention--warning {
+  color: #ffc857;
+}
+
+.elab-v3-ws-state {
+  height: 100%;
+  min-height: 180px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px;
+  text-align: center;
+}
+
+.elab-v3-ws-state h3 {
+  margin: 0;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.elab-v3-ws-state p {
+  margin: 0;
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.55);
+  max-width: 280px;
+}
+
+.elab-v3-ws-state__action {
+  padding: 6px 12px;
+  font-size: 9px;
+  border-radius: 6px;
+  border: 1px solid rgba(126, 184, 255, 0.4);
+  background: rgba(126, 184, 255, 0.12);
+  color: inherit;
+  cursor: pointer;
+}
+
+.elab-v3-ws-state--loading .elab-v3-ws-state__skeleton {
+  width: 80%;
+  height: 12px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.04));
+  background-size: 200% 100%;
+  animation: elab-v3-skeleton 1.2s ease-in-out infinite;
+}
+
+.elab-v3-ws-state__skeleton--hero {
+  height: 48px;
+}
+
+@keyframes elab-v3-skeleton {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
 }
 
 @media (max-width: 900px) {
   .elab-v3-segmented__item {
     font-size: 8px;
     padding: 5px 4px;
+    min-width: 56px;
   }
 
-  .elab-v3-ws-pane__grid--production,
-  .elab-v3-ws-pane__grid--review,
-  .elab-v3-ws-pane__grid--assets {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto;
-  }
-
-  .elab-v3-ws-pane__grid--command {
+  .elab-v3-ws-pane__turn-board {
     grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+  }
+
+  .elab-v3-ws-float {
+    max-width: 48%;
+    font-size: 8px;
+  }
+
+  .elab-v3-ws-floats {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .elab-v3-ws-float {
+    max-width: 100%;
+  }
+
+  .elab-v3-ws-pane__layout {
+    padding-top: 88px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .elab-v3-viewport-pager__track {
+    transition: none !important;
+  }
+
+  .elab-v3-ws-state--loading .elab-v3-ws-state__skeleton {
+    animation: none;
   }
 }

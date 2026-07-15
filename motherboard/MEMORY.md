@@ -50192,7 +50192,6 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 ---
 
-<<<<<<< HEAD
 ## 2026-07-14 — Studio World Icon State Engine Sprint 04
 
 **Context:** Founder P0 sprint — build procedural multi-state rendering so one certified icon generates every runtime state (hover, active, disabled, loading, generating, AI, etc.) without duplicate artwork or AI regeneration.
@@ -50217,7 +50216,8 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 **Spatial Architecture Review:** SKIPPED — state rendering architecture + isolated QA routes only; no production UI wiring.
 
-=======
+---
+
 ## 2026-07-14 — Experience Lab V3 Sprint 05: Rebase onto V2 shell
 
 **Founder sprint (P0):** V3 had drifted into a separate dashboard layout. **Architecture correction:** rebase V3 onto canonical Experience Lab V2 shell — only the viewport becomes a horizontal workspace pager.
@@ -50237,5 +50237,4 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - CSS: `experience-lab-v3-pager.css` only (pager); shell uses V2 CSS
 
 **Tests:** `experience-lab-v3.test.ts` 13/13 PASS (V2 shell composition assertions). **Build:** PASS.
->>>>>>> 403bed025 (Rebase Experience Lab V3 onto V2 shell with viewport workspace pager)
 

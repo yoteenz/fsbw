@@ -4,8 +4,8 @@
 |-------|-------|
 | **Capsule Version** | 1.0.0 |
 | **Capsule Type** | Studio DNA Capsule™ |
-| **Generated (UTC)** | 2026-07-14T23:10:17.943Z |
-| **Git Commit** | 9cc575bb0e080cb118b0a817683be31f989875f3 |
+| **Generated (UTC)** | 2026-07-15T00:28:15.497Z |
+| **Git Commit** | c3b6ddeee4ad4e8641471ba6501d5ac545732f6c |
 | **Validation** | pass |
 | **Documents** | 14 required |
 | **Reading Order Hash** | 667e270ba42347d632ea871c23dba9c3a909c98310cf5dba9398c2c9453eb8af |
