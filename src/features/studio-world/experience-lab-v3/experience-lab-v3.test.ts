@@ -374,9 +374,16 @@ describe('Experience Lab V3 — workspace population sprint', () => {
 
   it('mobile V3 reserves lower-deck space for workbench', () => {
     const css = readV3Source('experience-lab-v3-pager.css');
-    expect(css).toContain('max-height: var(--el-v2-viewport-room-ratio)');
+    expect(css).toContain('grid-template-rows: minmax(0, 1fr) auto');
     expect(css).toContain('elab-app-shell__lower-deck');
-    expect(css).toContain('--el-v2-viewport-room-ratio: 50%');
+    expect(css).toContain('data-elab-v3-compact-scroll');
+    expect(css).toContain('max-height: min(46vh');
+  });
+
+  it('V3 shell enables compact portal scroll on mobile', () => {
+    const shell = readV3Source('ExperienceLabV3Shell.tsx');
+    expect(shell).toContain('data-elab-v3-compact-scroll');
+    expect(shell).toContain('shell.isCompact');
   });
 
   it('V3 page uses fixedViewport like V2', () => {

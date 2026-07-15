@@ -202,6 +202,18 @@ function ExperienceLabV3ShellBody({
     }
   }, [orchestrator.expandedPanel]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  /* Mobile/tablet: allow portal scroll — fixed-viewport V2 CSS clips the lower deck on iOS */
+  useEffect(() => {
+    const portal = document.querySelector('.gb-immersive-portal');
+    if (!portal) return;
+    if (shell.isCompact) {
+      portal.setAttribute('data-elab-v3-compact-scroll', 'true');
+    } else {
+      portal.removeAttribute('data-elab-v3-compact-scroll');
+    }
+    return () => portal.removeAttribute('data-elab-v3-compact-scroll');
+  }, [shell.isCompact]);
+
   const expandedDef = INSPECTOR_PANELS.find((p) => p.id === orchestrator.expandedPanel);
   const expandedArtifact = orchestrator.expandedPanel
     ? model.artifacts[orchestrator.expandedPanel === 'metadata' ? 'founderRender' : orchestrator.expandedPanel]

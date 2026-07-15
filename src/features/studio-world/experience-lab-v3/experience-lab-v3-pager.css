@@ -15,19 +15,45 @@
   border: 0;
 }
 
-.elab-app-shell--v3 .elab-app-shell__viewport-room {
-  overflow: hidden;
+/* Center column: grid guarantees lower deck row — flex % caps were clipping on iOS */
+.elab-app-shell--v3 .elab-app-shell__center-column {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
   min-height: 0;
-  /* Do not let the pager grow past the V2 viewport budget — lower deck must stay visible */
-  flex: 0 1 var(--el-v2-viewport-room-ratio);
-  max-height: var(--el-v2-viewport-room-ratio);
+  overflow: hidden;
+}
+
+.elab-app-shell--v3 .elab-app-shell__viewport-room {
+  min-height: 0;
+  overflow: hidden;
+  flex: unset;
+  max-height: none;
 }
 
 .elab-app-shell--v3 .elab-app-shell__lower-deck {
-  flex: 1 1 auto;
   min-height: 0;
+  flex: unset;
   margin-top: 0;
-  flex-shrink: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* V3 compact: portal may scroll when shell content exceeds viewport */
+.gb-immersive-portal[data-elab-v3-compact-scroll] {
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch;
+}
+
+.gb-immersive-portal[data-elab-v3-compact-scroll] .elab-app-shell--v3 {
+  height: auto;
+  min-height: 100%;
+  max-height: none;
+}
+
+.gb-immersive-portal[data-elab-v3-compact-scroll] .elab-app-shell--v3 .elab-app-shell__grid {
+  height: auto;
+  min-height: 100%;
+  overflow: visible;
 }
 
 .elab-app-shell--v3[data-elab-v3-active-workspace]:not([data-elab-v3-active-workspace='environment'])
@@ -616,23 +642,23 @@
     min-width: 56px;
   }
 
-  /* Mobile: segmented control + command chrome — reserve space for workbench lower deck */
-  .elab-app-shell--v3.elab-app-shell--mobile,
-  .elab-app-shell--v3.elab-app-shell--tablet {
-    --el-v2-viewport-room-ratio: 50%;
-  }
-
-  .elab-app-shell--v3.elab-app-shell--mobile .elab-app-shell__grid,
-  .elab-app-shell--v3.elab-app-shell--tablet .elab-app-shell__grid {
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
+  /* Mobile/tablet: cap viewport row so segmented pager + environment never eat the workbench */
+  .elab-app-shell--v3.elab-app-shell--mobile .elab-app-shell__viewport-room,
+  .elab-app-shell--v3.elab-app-shell--tablet .elab-app-shell__viewport-room {
+    max-height: min(46vh, 52dvh);
   }
 
   .elab-app-shell--v3.elab-app-shell--mobile .elab-app-shell__lower-deck,
   .elab-app-shell--v3.elab-app-shell--tablet .elab-app-shell__lower-deck {
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    min-height: min(38vh, 280px);
+    flex-shrink: 0;
+    min-height: min(36vh, 300px);
+    max-height: min(48vh, 380px);
+  }
+
+  .elab-app-shell--v3.elab-app-shell--mobile .elab-app-shell__workstation,
+  .elab-app-shell--v3.elab-app-shell--tablet .elab-app-shell__workstation {
+    height: 100%;
+    min-height: 0;
   }
 
   .elab-v3-ws-pane__turn-board {

@@ -50267,3 +50267,29 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 **Fix:** Test fixture uses `experience-lab` department id and full `approvalState` shape (`primaryActionLabel`, `permitStatus`, `approvalRecorded`). Build PASS.
 
+---
+
+## 2026-07-15 — V3 mobile workbench clipped (layout fix)
+
+**Founder report:** On iPhone, Environment workspace filled entire screen; Founder Review / Approval / Workbench (lower deck) not visible; no scroll (`fixedViewport` + `overflow: hidden`).
+
+**Cause:** V3 viewport pager (`min-height: 220px`, `flex: 1 1 65%` grow) consumed full workstation height; lower deck pushed below clipped overflow. Extra segmented control reduced vertical budget.
+
+**Fix (`experience-lab-v3-pager.css`):** Cap viewport-room at `--el-v2-viewport-room-ratio` (`max-height`, `flex: 0 1`); remove pager `min-height: 220px`; mobile/tablet `--el-v2-viewport-room-ratio: 50%`; lower-deck `min-height` + internal scroll; grid `overflow-y: auto` fallback on mobile.
+
+---
+
+## 2026-07-15 — V3 mobile workbench still missing (grid + portal scroll fix)
+
+**Founder follow-up:** After `0a6bd788f` layout fix, iPhone still showed no scroll and no workbench — Environment filled screen from workspace tabs to browser chrome.
+
+**Root cause:** V3 flex overrides (`flex: 0 1` % on viewport-room, `flex: 1 1 auto` on lower-deck, removed `margin-top: auto`) fought V2 fixed-viewport flex column; percentage `max-height` unreliable on iOS; `overflow-y: auto` on `.elab-app-shell__grid` ineffective because parent chain (`overflow: hidden` on grid, workstation, portal `data-elab-fixed-viewport`) blocked scroll.
+
+**Fix:**
+- **Center column CSS grid** for V3: `grid-template-rows: minmax(0, 1fr) auto` — lower deck always gets dedicated `auto` row
+- Remove flex/% viewport caps; mobile/tablet explicit `vh` bounds (`viewport-room max-height: min(46vh, 52dvh)`; lower-deck `min-height`/`max-height` with internal scroll)
+- **`data-elab-v3-compact-scroll`** on portal when `shell.isCompact` (`ExperienceLabV3Shell.tsx`) + CSS `overflow-y: auto !important` on portal and `height: auto` shell/grid fallback so iPhone can scroll to workbench if needed
+- Tests updated (31/31 PASS)
+
+**V2 files:** untouched. **Spatial Architecture Review:** SKIPPED — P0 layout hotfix.
+
