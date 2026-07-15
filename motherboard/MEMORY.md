@@ -50238,3 +50238,24 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 **Tests:** `experience-lab-v3.test.ts` 13/13 PASS (V2 shell composition assertions). **Build:** PASS.
 
+---
+
+## 2026-07-15 — Experience Lab V3 P0 Follow-Up: Populate five swipeable workspaces
+
+**Founder sprint (P0):** Production, Review, Assets, and Command showed empty black viewports after Sprint 05 shell rebase. Root cause: **pager transform math** used `-activeIndex * 100%` on a 500%-wide track (each page = 20%) — only Environment (index 0) aligned; other workspaces translated off-screen into blank black area.
+
+**Shipped (V2 shell unchanged):**
+- **Pager fix:** `V3_PAGE_WIDTH_PCT = 20`; `translate3d(-index * 20%, …)`; drag offset track-relative; pointer capture with `data-v3-no-swipe` guard for nested controls
+- **`ExperienceLabV3WorkspaceProvider`** — canonical provider syncing `ExperienceLabLiveWorkspaceProvider` → store via `SYNC_FROM_LIVE`; pager offset/swipe progress; a11y workspace announcements
+- **`adapters/liveWorkspaceToV3Model.ts`** — derives work orders from `buildEnvironmentPackageGenerationQueue`, review items from `founderReviewEntries`, assets from package outputs, ops from `workbenchModules.budget`/diagnostics (no fabricated package state when live empty)
+- **Populated workspaces:** `V3ProductionWorkspace` (Active WO, AI Turn Board lanes, pipeline, costs, attention), `V3ReviewWorkspace` (design brief, comparison, review wall, timeline, gated approve/reject), `V3AssetsWorkspace` (package summary, asset grid, selected output), `V3CommandWorkspace` (system health, jobs/workers/failures, diagnostic export)
+- **`V3WorkspaceFloatingDisplays`** — exactly two floats per workspace (persistent + interchangeable); workbench tool updates interchangeable module
+- **`V3WorkspaceStateGate`** — loading skeleton, empty, error states (no blank black page)
+- **`V3WorkspaceToolStrip`** — workspace-specific workbench tools above V2 workbench; CSS hides V2 tool row when not Environment
+- **`V3WorkspaceDiagnostics`** — export JSON (dev)
+- CSS: `experience-lab-v3-pager.css` expanded for mobile 390px, filled viewport height, reduced motion
+
+**Tests:** `experience-lab-v3.test.ts` 29/29 PASS. **Build:** PASS.
+
+**Remaining:** Founder visual QA on deployed iPhone (swipe proof screenshots); trackpad horizontal wheel not explicitly wired.
+

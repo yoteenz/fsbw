@@ -20,6 +20,7 @@ import { V3_CORE_WORKSPACE_IDS, V3_CORE_WORKSPACE_IDS as WS_IDS } from './experi
 import { V3_PAGE_WIDTH_PCT } from './context/ExperienceLabV3WorkspaceProvider';
 import { deriveV3ModelFromLiveWorkspace } from './adapters/liveWorkspaceToV3Model';
 import type { ExperienceLabLiveWorkspaceViewModel } from '../experience-lab-v2/live-workspace/ExperienceLabLiveWorkspaceViewModel';
+import type { CanonicalMainDepartmentId } from '../../../studio-os-core/canonical-studio-world/canonical-department-registry';
 
 const V3_DIR = dirname(fileURLToPath(import.meta.url));
 const V2_DIR = resolve(V3_DIR, '../experience-lab-v2');
@@ -35,8 +36,8 @@ function readV2Source(filename: string): string {
 function minimalLiveWorkspace(overrides: Partial<ExperienceLabLiveWorkspaceViewModel> = {}): ExperienceLabLiveWorkspaceViewModel {
   return {
     programId: 'studio-world',
-    departmentId: 'reception',
-    departmentName: 'Reception',
+    departmentId: 'experience-lab' as CanonicalMainDepartmentId,
+    departmentName: 'Experience Lab',
     industryPackId: null,
     environmentId: 'experience-lab-main',
     environmentName: 'Experience Lab',
@@ -69,7 +70,7 @@ function minimalLiveWorkspace(overrides: Partial<ExperienceLabLiveWorkspaceViewM
     blueprintOutput: {
       packageId: 'pkg',
       variantId: 'dark-02',
-      environmentName: 'Reception',
+      environmentName: 'Experience Lab',
       artifactUrl: null,
       outputStatus: 'generating',
       displayState: 'GENERATING',
@@ -91,14 +92,20 @@ function minimalLiveWorkspace(overrides: Partial<ExperienceLabLiveWorkspaceViewM
       canOpen: false,
     },
     blueprintStatus: 'GENERATING',
-    approvalState: { canApprove: false, disabledReasons: [], blockers: [] },
+    approvalState: {
+      canApprove: false,
+      disabledReasons: [],
+      primaryActionLabel: 'APPROVE',
+      permitStatus: 'pending',
+      approvalRecorded: false,
+    },
     canonicalState: false,
     cdsHandoffState: 'none',
     updatedAt: new Date().toISOString(),
     designBrief: {
       currentObjective: 'Review reception',
       programLabel: 'Studio World',
-      departmentOrPackLabel: 'Reception',
+      departmentOrPackLabel: 'Experience Lab',
       environmentLabel: 'Experience Lab',
       variantName: 'NOIR B',
       theme: 'dark',
