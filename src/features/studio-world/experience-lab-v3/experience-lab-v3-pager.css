@@ -18,6 +18,16 @@
 .elab-app-shell--v3 .elab-app-shell__viewport-room {
   overflow: hidden;
   min-height: 0;
+  /* Do not let the pager grow past the V2 viewport budget — lower deck must stay visible */
+  flex: 0 1 var(--el-v2-viewport-room-ratio);
+  max-height: var(--el-v2-viewport-room-ratio);
+}
+
+.elab-app-shell--v3 .elab-app-shell__lower-deck {
+  flex: 1 1 auto;
+  min-height: 0;
+  margin-top: 0;
+  flex-shrink: 0;
 }
 
 .elab-app-shell--v3[data-elab-v3-active-workspace]:not([data-elab-v3-active-workspace='environment'])
@@ -42,7 +52,7 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-  min-height: 220px;
+  min-height: 0;
   overflow: hidden;
 }
 
@@ -606,6 +616,25 @@
     min-width: 56px;
   }
 
+  /* Mobile: segmented control + command chrome — reserve space for workbench lower deck */
+  .elab-app-shell--v3.elab-app-shell--mobile,
+  .elab-app-shell--v3.elab-app-shell--tablet {
+    --el-v2-viewport-room-ratio: 50%;
+  }
+
+  .elab-app-shell--v3.elab-app-shell--mobile .elab-app-shell__grid,
+  .elab-app-shell--v3.elab-app-shell--tablet .elab-app-shell__grid {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .elab-app-shell--v3.elab-app-shell--mobile .elab-app-shell__lower-deck,
+  .elab-app-shell--v3.elab-app-shell--tablet .elab-app-shell__lower-deck {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    min-height: min(38vh, 280px);
+  }
+
   .elab-v3-ws-pane__turn-board {
     grid-template-columns: repeat(2, 1fr);
     grid-template-rows: repeat(2, 1fr);
@@ -627,6 +656,12 @@
 
   .elab-v3-ws-pane__layout {
     padding-top: 88px;
+  }
+
+  .elab-v3-viewport-pager__page .elab-stage {
+    min-height: 0;
+    height: 100%;
+    max-height: 100%;
   }
 }
 

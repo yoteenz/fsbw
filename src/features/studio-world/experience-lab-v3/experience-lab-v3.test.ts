@@ -372,6 +372,13 @@ describe('Experience Lab V3 — workspace population sprint', () => {
     expect(resolveV3WorkbenchTools('production').map((t) => t.id)).toContain('retry');
   });
 
+  it('mobile V3 reserves lower-deck space for workbench', () => {
+    const css = readV3Source('experience-lab-v3-pager.css');
+    expect(css).toContain('max-height: var(--el-v2-viewport-room-ratio)');
+    expect(css).toContain('elab-app-shell__lower-deck');
+    expect(css).toContain('--el-v2-viewport-room-ratio: 50%');
+  });
+
   it('V3 page uses fixedViewport like V2', () => {
     const page = readFileSync(resolve(V3_DIR, '../../../pages/admin/studio/experience-lab-v3/page.tsx'), 'utf8');
     expect(page).toContain('fixedViewport');

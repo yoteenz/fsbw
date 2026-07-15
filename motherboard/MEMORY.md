@@ -50259,3 +50259,11 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 **Remaining:** Founder visual QA on deployed iPhone (swipe proof screenshots); trackpad horizontal wheel not explicitly wired.
 
+---
+
+## 2026-07-15 — Vercel build fix: Experience Lab V3 test types
+
+**Issue:** Vercel deploy for `00ce0b1` failed `tsc --noEmit` on `experience-lab-v3.test.ts`: invalid `departmentId: 'reception'` (not `CanonicalMainDepartmentId`) and `approvalState.blockers` (not on `ExperienceLabV2ApprovalState`).
+
+**Fix:** Test fixture uses `experience-lab` department id and full `approvalState` shape (`primaryActionLabel`, `permitStatus`, `approvalRecorded`). Build PASS.
+
