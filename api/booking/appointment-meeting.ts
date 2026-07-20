@@ -104,7 +104,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         .slice(0, 12)
     : [];
   const bookingUnitPriceUsd = Math.max(0, Math.round(Number(body.bookingUnitPriceUsd) || 0));
-  const defaultInstallFeeUsd = bookingInstallKind === 'RE_INSTALL' ? 225 : 275;
+  const defaultInstallFeeUsd = bookingInstallKind === 'RE_INSTALL' ? 200 : 250;
   const bookingInstallFeeUsd = Math.max(
     0,
     Math.round(Number(body.bookingInstallFeeUsd) || defaultInstallFeeUsd)

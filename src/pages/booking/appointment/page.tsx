@@ -89,8 +89,8 @@ function timeSlotHour24(slot: string): number | null {
 }
 
 const INSTALL_BASE: Record<InstallKind, { label: string; sub: string; price: number }> = {
-  NEW_INSTALL: { label: 'NEW INSTALL', sub: '+2.5 HOURS', price: 275 },
-  RE_INSTALL: { label: 'RE-INSTALL', sub: '+2 HOURS', price: 225 }
+  NEW_INSTALL: { label: 'NEW INSTALL', sub: '+2.5 HOURS', price: 250 },
+  RE_INSTALL: { label: 'RE-INSTALL', sub: '+2 HOURS', price: 200 }
 };
 
 /** Base service length in minutes (before add-ons). */

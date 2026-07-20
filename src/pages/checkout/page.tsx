@@ -557,7 +557,7 @@ function CheckoutPage() {
           const meetingTime = String(item.bookingPreferredTime).trim();
           const idempotencyKey = `BOOKING_APPT:${orderNumberForNotes}:${meetingDate}:${meetingTime}:${idx}`;
 
-          const installFeeUsd = installKind === 'RE_INSTALL' ? 225 : 275;
+          const installFeeUsd = installKind === 'RE_INSTALL' ? 200 : 250;
           await postBookingAppointmentMeeting({
             meetingDate,
             meetingTime,

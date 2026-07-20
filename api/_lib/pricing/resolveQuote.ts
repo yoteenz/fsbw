@@ -44,8 +44,8 @@ export type QuoteResult = {
 
 /** Mirror `src/pages/booking/appointment/page.tsx` (USD, before currency display). */
 const INSTALL_USD: Record<string, number> = {
-  NEW_INSTALL: 275,
-  RE_INSTALL: 225
+  NEW_INSTALL: 250,
+  RE_INSTALL: 200
 };
 
 const ADDON_USD: Record<string, number> = {

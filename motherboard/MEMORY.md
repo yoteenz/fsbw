@@ -50293,3 +50293,12 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 **V2 files:** untouched. **Spatial Architecture Review:** SKIPPED — P0 layout hotfix.
 
+---
+
+## 2026-07-20 — Hair install base pricing update ($250 new / $200 re-install)
+
+- **Context:** Founder requested updated install service base prices for booking/checkout.
+- **Decisions / outcomes:** **NEW INSTALL** base fee **$250** (was $275). **RE-INSTALL** base fee **$200** (was $225). Add-ons and styling surcharges unchanged.
+- **Changes:** `src/pages/booking/appointment/page.tsx` (`INSTALL_BASE`); server quote `api/_lib/pricing/resolveQuote.ts` (`INSTALL_USD`); `api/booking/appointment-meeting.ts` default install fee metadata; `src/pages/checkout/page.tsx` order install fee snapshot; `src/utils/adminMeetingClientPanels.tsx` admin install fee display helpers.
+- **Conventions:** Keep `INSTALL_BASE` (client) and `INSTALL_USD` (server) in sync when install base prices change.
+

@@ -654,7 +654,7 @@ export function bookingInstallFeeUsdFromMeeting(m: AdminMeeting): number {
     .trim()
     .toUpperCase()
     .replace(/\s+/g, '_');
-  return kind.includes('RE_INSTALL') || kind.includes('RE-INSTALL') || kind.includes('REINSTALL') ? 225 : 275;
+  return kind.includes('RE_INSTALL') || kind.includes('RE-INSTALL') || kind.includes('REINSTALL') ? 200 : 250;
 }
 
 /**
@@ -759,7 +759,7 @@ export type BookingPaymentStatus = {
 
 export function getBookingPaymentStatusForCard(m: AdminMeeting): BookingPaymentStatus {
   const details = getBookingCardDetails(m);
-  const installFeeUsd = details.installKind === 'RE-INSTALL' ? 225 : 275;
+  const installFeeUsd = details.installKind === 'RE-INSTALL' ? 200 : 250;
   const meta = (m.metadata && typeof m.metadata === 'object' ? m.metadata : {}) as Record<string, unknown>;
 
   const orderTotalCandidates = [
