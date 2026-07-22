@@ -378,10 +378,11 @@ export function LoungeTvOverlay({
 
   const resolvedSeedancePhase: SeedanceTvPhase =
     isOpen && useSeedanceClip && seedancePhase === 'idle' ? 'opening' : seedancePhase;
+  const seedanceClosing = seedancePhase === 'closing';
   const seedanceOpening = resolvedSeedancePhase === 'opening';
+  const seedancePlaybackActive = seedanceOpening || seedanceClosing;
 
   const frameExpanded = useSeedanceClip ? seedancePhase === 'ready' : animatedIn;
-  const seedanceClosing = seedancePhase === 'closing';
   const showLegacyChoreography = !useSeedanceClip;
   const showTvChrome = !useSeedanceClip || seedancePhase === 'ready';
   const showSeedanceMenuShell = useSeedanceClip && seedancePhase === 'ready';
@@ -441,11 +442,12 @@ export function LoungeTvOverlay({
     >
       {showSeedanceVideo ? (
         <LoungeTvAnimationVideo
-          active={seedanceOpening || seedanceClosing}
+          active={seedancePlaybackActive}
           direction={seedanceClosing ? 'reverse' : 'forward'}
-          onComplete={
-            seedanceOpening ? handleOpenVideoComplete : handleCloseVideoComplete
-          }
+          onComplete={() => {
+            if (seedanceClosing) handleCloseVideoComplete();
+            else if (seedanceOpening) handleOpenVideoComplete();
+          }}
         />
       ) : null}
       <div

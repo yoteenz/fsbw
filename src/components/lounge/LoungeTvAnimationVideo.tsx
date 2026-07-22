@@ -156,7 +156,9 @@ export function LoungeTvAnimationVideo({ active, direction, onComplete }: Props)
           playsInline
           muted
           preload="auto"
-          onError={finish}
+          onError={() => {
+            if (active) finish();
+          }}
           style={{
             ...loungeTvAnimationMediaLayerStyle(direction),
             opacity: frameVisible ? 1 : 0,

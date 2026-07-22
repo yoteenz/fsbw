@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState, type CSSProperties, type RefObject } from 'react';
 import { useLocation } from 'react-router-dom';
-import { lobbyCarouselIndexFromPath } from '../../utils/lobbyCarouselRoutes';
+import { lobbyCarouselIndexFromPath, LOBBY_CAROUSEL_LOUNGE_PATH } from '../../utils/lobbyCarouselRoutes';
 import {
   LOUNGE_TV_ANIMATION_VIDEO_ENABLED,
   LOUNGE_TV_ANIMATION_VIDEO_SRC,
@@ -44,13 +44,22 @@ type Props = {
  */
 export function LoungeCompositeTvPlay({ measureRef }: Props) {
   const location = useLocation();
-  const onLoungeRoute = lobbyCarouselIndexFromPath(location.pathname) === 1;
+  const onLoungeRoute =
+    lobbyCarouselIndexFromPath(location.pathname) === 1 ||
+    location.pathname.startsWith(`${LOBBY_CAROUSEL_LOUNGE_PATH}/`);
 
   const tvAnchorRef = useRef<HTMLDivElement>(null);
-  const [tvOpen, setTvOpen] = useState(() => readLoungeTvOpenRestoreAfterReload(onLoungeRoute));
+  const initialRestoreOpen = useState(() => {
+    if (typeof window === 'undefined') return false;
+    const onLounge =
+      lobbyCarouselIndexFromPath(window.location.pathname) === 1 ||
+      window.location.pathname.startsWith(`${LOBBY_CAROUSEL_LOUNGE_PATH}/`);
+    return readLoungeTvOpenRestoreAfterReload(onLounge);
+  })[0];
+  const [tvOpen, setTvOpen] = useState(initialRestoreOpen);
   const [tvOriginRect, setTvOriginRect] = useState<DOMRect | null>(null);
   /** True only after reload on lounge — skip Seedance open animation. */
-  const resumeSessionOpen = useState(() => readLoungeTvOpenRestoreAfterReload(onLoungeRoute))[0];
+  const resumeSessionOpen = initialRestoreOpen;
 
   const hitDebug = useSceneHitDebugEnabled();
   const hitEdit = useSceneHitEditEnabled();

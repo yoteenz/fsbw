@@ -50326,3 +50326,12 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Decisions / outcomes:** Restore only when **`performance.navigation.type === 'reload'`** and pathname is lounge carousel (`/lobby/lounge`). **`LoungeCompositeTvPlay`** watches route: leaving lounge slide (`/lobby`) or site clears session flag and sets **`tvOpen` false**; stale session cleared when on lounge with TV closed.
 - **Changes:** `loungeTvOpenSession.ts` (`readLoungeTvOpenRestoreAfterReload`), `LoungeCompositeTvPlay.tsx`. CORE updated. Build verified.
 
+---
+
+## 2026-07-22 — Lounge TV refresh restore: stop auto-close after reload
+
+- **Context:** Founder reported TV correctly re-opens on lounge refresh but then **auto-closes** a moment later.
+- **Cause:** After **`resumeSessionOpen`**, Seedance phase is **`ready`** while **`LoungeTvAnimationVideo`** stayed mounted with **`onComplete`** wired to **`handleCloseVideoComplete`** whenever not opening; parked video **`onError`** / load edge cases invoked close.
+- **Fix:** **`onComplete`** only runs close/open handlers when phase is **`closing`** / **`opening`**; video **`onError`** ignored when clip inactive. Initial restore reads pathname from **`window.location`** at mount.
+- **Changes:** `LoungeTvOverlay.tsx`, `LoungeTvAnimationVideo.tsx`, `LoungeCompositeTvPlay.tsx`. Build verified.
+
