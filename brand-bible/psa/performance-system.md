@@ -564,6 +564,7 @@ Each child document **answers specific questions** and **depends** on this syste
 | **Code sync** | psaInstructions changes require personality/voice/dialogue alignment check |
 | **Expression manifest** | New slug requires facial-expressions + identity compliance |
 | **Character continuity** | Cross-media ship requires [`character-continuity.md`](./character-continuity.md) tier + gate pass |
+| **Final QA** | Publication requires [`character-qa-checklist.md`](./character-qa-checklist.md) pass |
 
 ---
 
@@ -597,6 +598,15 @@ Documents that **span L2–L4** and **govern ship approval** (not a replacement 
 | **Questions it answers** | *Which asset is canonical? Where does it live? Is it approved?* |
 | **Dependencies** | character-turnaround, character-continuity, expression manifest, psaConfig |
 | **Ownership** | Digital Asset Management / Brand Ops |
+
+### [`character-qa-checklist.md`](./character-qa-checklist.md) — **SHIPPED v1.0**
+
+| Field | Detail |
+| --- | --- |
+| **Purpose** | Final ship/no-ship QA: departmental reviews, severity, master checklist, platform modifiers, metrics |
+| **Questions it answers** | *May this PSA asset publish?* |
+| **Dependencies** | performance-system gates, continuity, reference library, all child bibles |
+| **Ownership** | QA / Continuity Supervision |
 
 ---
 

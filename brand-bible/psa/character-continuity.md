@@ -483,6 +483,7 @@ New PSA asset requested
 | [`identity.md`](./identity.md) | Likeness lock |
 | [`character-turnaround.md`](./character-turnaround.md) | Visual reference angles, naming, vault |
 | [`character-reference-library.md`](./character-reference-library.md) | Asset catalog, lifecycle, kits, metadata |
+| [`character-qa-checklist.md`](./character-qa-checklist.md) | Final publication QA checklist |
 | [`performance-system.md`](./performance-system.md) | Cohesion + governance |
 
 ---

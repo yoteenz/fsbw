@@ -536,7 +536,7 @@ Read-only **exports** under `psa-reference-vault/exports/` — manifests list As
 
 ### Pre-publish gate (summary)
 
-Align with [`character-continuity.md`](./character-continuity.md) Gates A–F + [`character-turnaround.md`](./character-turnaround.md) visual QA.
+Align with [`character-continuity.md`](./character-continuity.md) Gates A–F + [`character-turnaround.md`](./character-turnaround.md) visual QA + [`character-qa-checklist.md`](./character-qa-checklist.md) master form.
 
 ---
 

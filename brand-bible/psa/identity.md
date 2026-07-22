@@ -355,6 +355,7 @@ The following sections are **reserved** for Version 1.1+ — do not fill with sp
 | `brand-bible/psa/character-continuity.md` | PSA cross-media continuity, tiers, versioning, ship QA |
 | `brand-bible/psa/character-turnaround.md` | PSA master visual reference system (angles, naming, workflow) |
 | `brand-bible/psa/character-reference-library.md` | PSA master asset catalog (DAM index, lifecycle, kits) |
+| `brand-bible/psa/character-qa-checklist.md` | PSA final publication QA system |
 | `src/constants/psaConfig.ts` | Runtime avatar asset paths and cache version |
 
 ---

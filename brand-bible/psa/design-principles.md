@@ -290,6 +290,7 @@ Reserved for Version 1.1+ production bibles. Do not populate with speculative ru
 | **`character-continuity.md`** | PSA cross-media continuity, tiers, versioning, master QA |
 | **`character-turnaround.md`** | PSA master visual reference (angles, poses, naming, vault workflow) |
 | **`character-reference-library.md`** | PSA master asset catalog (DAM index, lifecycle, kits, metadata) |
+| **`character-qa-checklist.md`** | PSA final publication QA (master checklist, severity, workflow) |
 | _Future_ | movement.md |
 
 ---
