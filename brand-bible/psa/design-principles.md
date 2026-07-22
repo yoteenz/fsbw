@@ -278,6 +278,7 @@ Reserved for Version 1.1+ production bibles. Do not populate with speculative ru
 | **`jewelry-accessories.md`** | PSA jewelry & accessory lock (signature stack, continuity) |
 | **`personality.md`** | PSA psychology, voice behavior, always/never |
 | **`voice.md`** | PSA vocal identity, language, channel direction |
+| **`nails.md`** | PSA nail grooming, shape, color, hand continuity |
 | _Future_ | How to execute (lighting, wardrobe, measured color specs) |
 
 ---

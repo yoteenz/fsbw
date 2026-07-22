@@ -50465,3 +50465,12 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Topics covered (full chat arc):** Full PSA brand-bible stack (identity, design, hair, makeup, jewelry, personality, MASTER_ROADMAP, etc.); this voice bible.
 - **Deliverable:** **`brand-bible/psa/voice.md`** v1.0 — voice philosophy, emotional objectives, vocal identity (pitch, resonance, tone, pace, pauses, diction, pronunciation), language systems (hospitality, education, luxury, conversational, professional), interaction vocal patterns (greeting, closing, celebration, correction, difficult news), brand vocabulary, prefer/avoid words, always/avoid saying patterns, sentence structures, channel matrix (commercials, Lounge TV, chat, push, email, future tech), prohibited vocal characteristics, continuity, QA checklist; bridges **`psaInstructions.ts`** + **`personality.md`**. **`identity.md`** Future Expansion voice link updated; cross-links in design-principles map.
 - **Changes:** `brand-bible/psa/voice.md` (new), `brand-bible/psa/identity.md`, `brand-bible/psa/design-principles.md`, `motherboard/MEMORY.md`. Docs only.
+
+---
+
+## 2026-07-22 — PSA Nails Bible v1.0 (brand-bible)
+
+- **Context:** Founder requested permanent **PSA nail grooming production documentation** at **`brand-bible/psa/nails.md`** — not tutorials, beauty advice, or prompts; Grooming Standards for hands across all media.
+- **Topics covered (full chat arc):** Full PSA brand-bible stack including voice, personality, jewelry, makeup, hair, identity; this nails bible.
+- **Deliverable:** **`brand-bible/psa/nails.md`** v1.0 — philosophy, signature identity (**short–short-medium**, soft square/almond, sheer nude or classic soft French, high gloss, no art), shape/length/cuticle/finish/color rules, event/seasonal limits, close-up & hand modeling, jewelry interaction, demo standards, realism, continuity checklist, prohibited list, cross-media matrix, QA. Cross-links in **`identity.md`** and **`design-principles.md`**.
+- **Changes:** `brand-bible/psa/nails.md` (new), `brand-bible/psa/identity.md`, `brand-bible/psa/design-principles.md`, `motherboard/MEMORY.md`. Docs only.
