@@ -50420,3 +50420,12 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Deliverable:** **`brand-bible/MASTER_ROADMAP.md`** v1.0 — ~40+ DOC-* registry entries, dependency graph, immediate next actions (Phase 0: README, governance, glossary, external index). **`motherboard/CORE.md`** — Brand Bible pointer under Design system.
 - **Conventions:** Philosophy files hold no prompts/hex sprawl; prompts never inside **`/brand-bible/`**; scope banner customer brand vs Studio OS admin.
 - **Changes:** `brand-bible/MASTER_ROADMAP.md` (new), `motherboard/CORE.md`, `motherboard/MEMORY.md`. Docs only. **Spatial Architecture Review:** SKIPPED — documentation architecture.
+
+---
+
+## 2026-07-22 — PSA Hair Bible v1.0 (brand-bible)
+
+- **Context:** Founder requested permanent **PSA hairstyle production documentation** at **`brand-bible/psa/hair.md`** — not prompts, marketing, or product shade copy; Hair Department handbook for all media.
+- **Topics covered (full chat arc):** Lounge TV streaming/catalog work; PSA identity + design principles + visual/storytelling bibles; MASTER_ROADMAP; this hair bible.
+- **Deliverable:** **`brand-bible/psa/hair.md`** v1.0 — hair philosophy; exhaustive signature specs (silhouette, length, density, wave, part subject’s right, lace hairline, shine, color dimension warm brunette + copper/caramel highlights, shadow root); variations matrix; physics behavior; luxury quality standards; continuity checklist; permitted/prohibited styling; medium translation; Frontal Slayer product relationship; QA checklist; future expansion placeholders. Locked to approved master avatar reference family. Cross-links added in **`identity.md`** and **`design-principles.md`**.
+- **Changes:** `brand-bible/psa/hair.md` (new), `brand-bible/psa/identity.md`, `brand-bible/psa/design-principles.md`, `motherboard/MEMORY.md`. Docs only.
