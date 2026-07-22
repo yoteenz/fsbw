@@ -50600,3 +50600,12 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Topics covered:** Purpose (experience vs advertise, brand strength, equal weight emotion/education/entertainment/aspiration/luxury/transformation); story philosophy (curiosity, discovery, aspiration, emotional/educational/experiential/cinematic storytelling, world vs website); **11 core pillars** expanded; **story hierarchy** brand→campaign→season→episode→scene→shot; content type taxonomy; emotional journey before/during/after; always/never rules + luxury/authenticity/consistency; high-level approval pipeline; department relationships (Character, Environment, Production, Brand, Marketing, Design, Development); future expansion without breaking continuity; guiding principles.
 - **Deliverable:** **`story-department-overview.md`** v1.0. Cross-links **`storytelling-philosophy.md`**, PSA QA/performance/scenario bibles, **`MASTER_ROADMAP.md`** (DOC-STY-001B SHIPPED).
 - **Changes:** `brand-bible/storytelling/story-department-overview.md` (new), `brand-bible/storytelling/storytelling-philosophy.md`, `brand-bible/MASTER_ROADMAP.md`, `motherboard/MEMORY.md`. Docs only.
+
+---
+
+## 2026-07-22 — Frontal Slayer Cinematic Universe Bible v1.0 (brand-bible)
+
+- **Context:** Founder requested definitive **cinematic universe** production doc — fictional/experiential world for all FS stories (not fantasy/sci-fi; premium modern reality slightly elevated; not marketing/scripts).
+- **Deliverable:** **`brand-bible/storytelling/cinematic-universe-bible.md`** v1.0 — purpose; canon definition; the world (atmosphere, tone, tech sophistication, realism band); core characters (PSA, customer, founder, future cast — **refs Character Dept**); protagonist + PSA guide roles; time/simultaneous campaigns/chronology/standalone; location **purpose** taxonomy; technology in-universe; product integration; tone; visual identity refs; continuity rules; expansion rules; **Universe Manifesto**.
+- **Cross-links:** storytelling-philosophy, story-department-overview, MASTER_ROADMAP DOC-STY-001C SHIPPED.
+- **Changes:** `brand-bible/storytelling/cinematic-universe-bible.md` (new), `brand-bible/storytelling/storytelling-philosophy.md`, `brand-bible/storytelling/story-department-overview.md`, `brand-bible/MASTER_ROADMAP.md`, `motherboard/MEMORY.md`. Docs only.

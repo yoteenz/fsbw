@@ -534,6 +534,15 @@ Each entry: **ID** for tracking. **Priority:** P0 (blocking production), P1 (hig
 | **Priority** | P0 |
 | **Phase** | 2 (done) |
 
+#### DOC-STY-001C — `storytelling/cinematic-universe-bible.md` ✅ **SHIPPED v1.0**
+
+| Field | Detail |
+| --- | --- |
+| **Purpose** | Definitive FS cinematic/experiential universe — canon, world, time, locations, tech, tone, continuity, expansion, manifesto |
+| **Dependencies** | storytelling-philosophy, story-department-overview, visual-language (ref), PSA bibles (ref) |
+| **Priority** | P0 |
+| **Phase** | 2 (done) |
+
 #### DOC-STY-002 — `storytelling/campaign-framework.md`
 
 | Field | Detail |

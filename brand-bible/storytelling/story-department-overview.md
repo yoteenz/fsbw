@@ -386,6 +386,7 @@ Campaigns may expand the universe by:
 | Document | Role |
 | --- | --- |
 | [`storytelling-philosophy.md`](./storytelling-philosophy.md) | Narrative constitution |
+| [`cinematic-universe-bible.md`](./cinematic-universe-bible.md) | Universe canon & manifesto |
 | [`../visual-language/visual-language.md`](../visual-language/visual-language.md) | Look and feel |
 | [`../psa/performance-system.md`](../psa/performance-system.md) | PSA behavioral stack |
 | [`../psa/behavioral-scenario-library.md`](../psa/behavioral-scenario-library.md) | Interaction objectives (no scripts) |
