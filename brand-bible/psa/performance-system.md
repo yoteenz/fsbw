@@ -563,6 +563,22 @@ Each child document **answers specific questions** and **depends** on this syste
 | **Deprecation** | Mark child sections deprecated; point to successor—never silent drift |
 | **Code sync** | psaInstructions changes require personality/voice/dialogue alignment check |
 | **Expression manifest** | New slug requires facial-expressions + identity compliance |
+| **Character continuity** | Cross-media ship requires [`character-continuity.md`](./character-continuity.md) tier + gate pass |
+
+---
+
+## Cross-Cutting Production Bibles
+
+Documents that **span L2–L4** and **govern ship approval** (not a replacement for child specs):
+
+### [`character-continuity.md`](./character-continuity.md) — **SHIPPED v1.0**
+
+| Field | Detail |
+| --- | --- |
+| **Purpose** | Continuity philosophy, tier hierarchy, cross-media standards, versioning, review workflows, master QA |
+| **Questions it answers** | *Is this the same PSA? What may change? Who approves?* |
+| **Dependencies** | identity, storytelling-philosophy, all PSA child bibles, performance-system gates |
+| **Ownership** | Continuity Supervision / ECD |
 
 ---
 

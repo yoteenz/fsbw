@@ -671,6 +671,7 @@ Teach one concept → check understanding → offer Lounge lesson if heavy → i
 | [`body-language.md`](./body-language.md) | Posture, proximity |
 | [`gesture.md`](./gesture.md) | Hands |
 | [`facial-expressions.md`](./facial-expressions.md) | Face performance, intensity, slug usage |
+| [`character-continuity.md`](./character-continuity.md) | Cross-media tiers, versioning, ship QA |
 | [`identity.md`](./identity.md) | Face slugs, likeness |
 | [`storytelling/storytelling-philosophy.md`](../storytelling/storytelling-philosophy.md) | Protagonist/guide |
 

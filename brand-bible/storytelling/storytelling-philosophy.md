@@ -350,6 +350,7 @@ Reserved for Version 1.1+ — do not fill with speculative lore here.
 | **`../visual-language/visual-language.md`** | How the world looks |
 | **`../psa/design-principles.md`** | How PSA looks |
 | **`../psa/identity.md`** | Who PSA is (locked) |
+| **`../psa/character-continuity.md`** | PSA cross-media continuity & versioning |
 | **`docs/frontal-slayer/BRAND_RULES.md`** | Voice + product truth |
 
 ---

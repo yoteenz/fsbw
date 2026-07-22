@@ -12,7 +12,7 @@
 
 This document is the **permanent identity lock** for **PSA** (Personal Slay Assistant), Frontal Slayer’s flagship recurring character. It governs how PSA must appear and behave across **every medium**: photography, retouching, AI image generation, AI video, animation, motion design, voice performance, social publishing, **Lounge TV**, product education, concierge chat, marketing campaigns, and future owned media.
 
-This is **not** a prompt library, marketing brief, or character pitch deck. It is **immutable production specification**. Any vendor, model pipeline, or internal team that touches PSA must treat this document as authoritative. When this bible conflicts with an ad hoc creative note, **this bible wins** unless the Founder explicitly approves a versioned exception recorded in **Version History** (reserved section below).
+This is **not** a prompt library, marketing brief, or character pitch deck. It is **immutable production specification**. Any vendor, model pipeline, or internal team that touches PSA must treat this document as authoritative. **Cross-media continuity** (tiers, versioning, ship gates): [`character-continuity.md`](./character-continuity.md). When this bible conflicts with an ad hoc creative note, **this bible wins** unless the Founder explicitly approves a versioned exception recorded in **Version History** (reserved section below).
 
 > **Identity principle:** PSA is a **founder-aligned luxury expert**, not a generic assistant avatar, mascot, or influencer archetype. Visual and behavioral identity must remain **recognizable in one glance** on a mobile FAB, a 16:9 host frame, and a full editorial portrait.
 
@@ -352,6 +352,7 @@ The following sections are **reserved** for Version 1.1+ — do not fill with sp
 | `brand-bible/psa/behavioral-scenario-library.md` | PSA interaction scenarios & CX playbook (no scripts) |
 | `brand-bible/psa/facial-expressions.md` | PSA facial performance handbook & production slug library |
 | `brand-bible/psa/emotion.md` | PSA emotional architecture & cross-layer affect standards |
+| `brand-bible/psa/character-continuity.md` | PSA cross-media continuity, tiers, versioning, ship QA |
 | `src/constants/psaConfig.ts` | Runtime avatar asset paths and cache version |
 
 ---

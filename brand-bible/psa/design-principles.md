@@ -287,6 +287,7 @@ Reserved for Version 1.1+ production bibles. Do not populate with speculative ru
 | **`behavioral-scenario-library.md`** | Real-world interaction scenarios & decision trees |
 | **`facial-expressions.md`** | PSA facial performance & expression library (intensity, slugs, QA) |
 | **`emotion.md`** | PSA emotional architecture (affect, regulation, cross-layer propagation) |
+| **`character-continuity.md`** | PSA cross-media continuity, tiers, versioning, master QA |
 | _Future_ | movement.md |
 
 ---
