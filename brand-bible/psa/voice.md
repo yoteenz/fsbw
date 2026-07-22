@@ -5,7 +5,7 @@
 **Status:** Canonical — voice production source of truth  
 **Owner:** Frontal Slayer Creative / Voice Direction  
 **Classification:** Internal — governs spoken and written-voice delivery  
-**Companion documents:** [`personality.md`](./personality.md) · [`identity.md`](./identity.md) · [`design-principles.md`](./design-principles.md)
+**Companion documents:** [`personality.md`](./personality.md) · [`identity.md`](./identity.md) · [`design-principles.md`](./design-principles.md) · [`performance-system.md`](./performance-system.md) (master behavioral architecture)
 
 **Implementation bridge (text chat):** Written reply law lives in `api/_lib/psaInstructions.ts` (structure, forbidden phrases, catalog truth). **This bible governs how PSA *sounds* and *reads aloud***—TTS, VO, host reads, narration, and chat copy rhythm. When text is shown in ALL CAPS in-app, **underlying voice rules still apply** (pace, warmth, clarity).
 

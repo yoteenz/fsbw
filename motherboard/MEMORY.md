@@ -50474,3 +50474,12 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Topics covered (full chat arc):** Full PSA brand-bible stack including voice, personality, jewelry, makeup, hair, identity; this nails bible.
 - **Deliverable:** **`brand-bible/psa/nails.md`** v1.0 — philosophy, signature identity (**short–short-medium**, soft square/almond, sheer nude or classic soft French, high gloss, no art), shape/length/cuticle/finish/color rules, event/seasonal limits, close-up & hand modeling, jewelry interaction, demo standards, realism, continuity checklist, prohibited list, cross-media matrix, QA. Cross-links in **`identity.md`** and **`design-principles.md`**.
 - **Changes:** `brand-bible/psa/nails.md` (new), `brand-bible/psa/identity.md`, `brand-bible/psa/design-principles.md`, `motherboard/MEMORY.md`. Docs only.
+
+---
+
+## 2026-07-22 — PSA Performance System v1.0 (brand-bible)
+
+- **Context:** Founder requested master **behavioral architecture** at **`brand-bible/psa/performance-system.md`** — parent framework for personality, voice, and future performance bibles (dialogue, acting, body language, gesture, facial expressions, emotion, movement); not lore, acting tips, prompts, or scripts.
+- **Topics covered (full chat arc):** Full PSA bible stack; this performance system as L1 parent over L2 mind/speech/body children + L3 appearance locks + L4 runtime (`psaInstructions`, avatar manifest).
+- **Deliverable:** **`performance-system.md`** v1.0 — philosophy, performance stack diagram, behavioral hierarchy, EQ/hospitality/education/concierge/communication frameworks, consistency, motivation, audience psychology, trust/connection/profidence, **cohesion matrix** (emotion → dialogue/voice/face/gesture/movement), cross-media rules, **child bible registry** (shipped: personality, voice; planned: dialogue, acting, body-language, gesture, facial-expressions, emotion, movement) with purpose/questions/deps/ownership, shared terminology, **Performance Decision Framework** (7 gates + decision tree), QA + governance. Cross-links added to **`personality.md`**, **`voice.md`**, **`identity.md`**, **`design-principles.md`**.
+- **Changes:** `brand-bible/psa/performance-system.md` (new), `brand-bible/psa/personality.md`, `brand-bible/psa/voice.md`, `brand-bible/psa/identity.md`, `brand-bible/psa/design-principles.md`, `motherboard/MEMORY.md`. Docs only.
