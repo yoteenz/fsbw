@@ -50393,3 +50393,11 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Context:** Founder requested permanent **visual philosophy** for PSA (not prompts, marketing, or wardrobe specs) — foundation for all future PSA production docs.
 - **Deliverable:** **`brand-bible/psa/design-principles.md`** v1.0 — core philosophy, emotional objectives, luxury language, styling/color philosophy, brand relationship, timelessness, consistency, decision checklist, future expansion; cross-links **`identity.md`**.
 - **Changes:** `brand-bible/psa/design-principles.md` (new). Docs only.
+
+---
+
+## 2026-07-22 — Frontal Slayer Visual Language v1.0 (brand-bible)
+
+- **Context:** Founder requested permanent **brand-wide visual language** handbook (not prompts, mood board, or marketing) at **`brand-bible/visual-language/visual-language.md`**.
+- **Deliverable:** v1.0 — core philosophy, atmosphere, architecture, material hierarchy, lighting/color/texture, composition, motion, environmental storytelling (lobby, TV Lounge, atelier, etc.), cinematic + graphic language, luxury standards, decision checklist, future expansion; links to BRAND_RULES, PSA bibles.
+- **Changes:** `brand-bible/visual-language/visual-language.md` (new). Docs only.
