@@ -50335,3 +50335,11 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Fix:** **`onComplete`** only runs close/open handlers when phase is **`closing`** / **`opening`**; video **`onError`** ignored when clip inactive. Initial restore reads pathname from **`window.location`** at mount.
 - **Changes:** `LoungeTvOverlay.tsx`, `LoungeTvAnimationVideo.tsx`, `LoungeCompositeTvPlay.tsx`. Build verified.
 
+
+---
+
+## 2026-07-22 — Lounge TV Learn/Explore/Live/Library: stacked rows (no left sidebar overlap)
+
+- **Context:** Founder wanted subcategory labels (Learn, Explore, Live, Library) **above** horizontally scrolling rows — not a left column overlapping the content panel.
+- **Decisions / outcomes:** Removed left **aside** nav and absolute media-panel insets. Vertical stack of sections: section title on top, horizontal **LoungeTvContentRow** (or Live/Library blocks) below — Netflix-style. Learn/Explore render all paths/sections; Live/Library stack all sidebar sections.
+- **Changes:** `LoungeTvScreen.tsx`. Build verified.

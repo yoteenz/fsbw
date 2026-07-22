@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -12,7 +12,6 @@ import type { LoungeContentPack } from './loungeTvContentPack';
 import { resolveContentPackFormat } from './loungeTvContentPack';
 import { contentPacksForExploreSection, contentPacksForLearningPath } from './loungeTvContentPack';
 import { LoungeTvInnerLayoutEditor } from './LoungeTvInnerLayoutEditor';
-import { loungeTvInnerAbsolutePanelStyle } from '../../utils/loungeTvInnerLayout';
 import {
   LOUNGE_TV_CONFIG_UPDATED_EVENT,
   resolveLoungeTvTiles,
@@ -25,8 +24,6 @@ import {
   LOUNGE_TV_GLASS_NAV_FONT,
   LOUNGE_TV_GLASS_PADDING_X,
   LOUNGE_TV_GLASS_PADDING_Y,
-  LOUNGE_TV_GLASS_SIDEBAR_FONT,
-  LOUNGE_TV_GLASS_SIDEBAR_WIDTH,
   loungeTvGlassCqw,
 } from './loungeTvResponsive';
 import ConfirmationModal from '../ConfirmationModal';
@@ -50,11 +47,14 @@ import { LoungeTvVideoDetailView } from './LoungeTvVideoDetailView';
 import { LoungeTvLivePlaceholder } from './LoungeTvLivePlaceholder';
 import { LoungeTvLibrarySections } from './LoungeTvLibrarySections';
 import { LOUNGE_TV_LIBRARY_UPDATED_EVENT, togglePackSaved } from '../../utils/loungeTvLibrary';
-import { LOUNGE_TV_BRAND_RED } from './loungeTvTheme';
 
-const BRAND_RED = LOUNGE_TV_BRAND_RED;
 const LOUNGE_TV_BODY_SIDEBAR_GAP = loungeTvGlassCqw(2.5, 6, 10);
-const LOUNGE_TV_SIDEBAR_ITEM_GAP = loungeTvGlassCqw(3.1, 8, 12);
+const LOUNGE_TV_STACKED_SECTIONS_STYLE: React.CSSProperties = {
+  display: 'flex',
+  flexDirection: 'column',
+  width: '100%',
+  gap: loungeTvGlassCqw(1.5, 4, 8),
+};
 
 type TvViewState =
   | { kind: 'browse' }
@@ -66,13 +66,14 @@ export function LoungeTvScreen({
   mainTab,
   sidebarId,
   onMainTabChange,
-  onSidebarChange,
+  onSidebarChange: _onSidebarChange,
 }: {
   mainTab: LoungeTvMainTab;
   sidebarId: string;
   onMainTabChange: (tab: LoungeTvMainTab) => void;
   onSidebarChange: (id: string) => void;
 }) {
+  void _onSidebarChange;
   const navigate = useNavigate();
   const [userData, setUserData] = useState<Record<string, unknown> | null>(() => {
     try {
@@ -90,13 +91,8 @@ export function LoungeTvScreen({
   const [tilesRevision, setTilesRevision] = useState(0);
   const [viewedRevision, setViewedRevision] = useState(0);
   const [libraryRevision, setLibraryRevision] = useState(0);
-  const bodyRowRef = useRef<HTMLDivElement>(null);
   const navRef = useRef<HTMLElement>(null);
-  const firstSidebarRef = useRef<HTMLButtonElement>(null);
-  const [mediaInsets, setMediaInsets] = useState({ left: 0, right: 0 });
-  const [mediaTopPx, setMediaTopPx] = useState(0);
   const sidebar = LOUNGE_TV_SIDEBAR[mainTab];
-  const showSidebar = sidebar.length > 0;
   const mediaPanelRegion = useSceneHitRegionConfig('lounge-tv-media-panel');
 
   const tiles = useMemo(
@@ -157,48 +153,6 @@ export function LoungeTvScreen({
     setViewState({ kind: 'browse' });
   }, [mainTab, sidebarId]);
 
-  const measureMediaInsets = useCallback(() => {
-    const bodyEl = bodyRowRef.current;
-    const navEl = navRef.current;
-    if (!bodyEl || !navEl) return;
-    const firstBtn = navEl.querySelector<HTMLElement>('[data-lounge-tv-tab="featured"]');
-    const lastBtn = navEl.querySelector<HTMLElement>('[data-lounge-tv-tab="library"]');
-    if (!firstBtn || !lastBtn) return;
-    const bodyRect = bodyEl.getBoundingClientRect();
-    const firstRect = firstBtn.getBoundingClientRect();
-    const lastRect = lastBtn.getBoundingClientRect();
-    setMediaInsets({
-      left: Math.max(0, Math.round(firstRect.left - bodyRect.left)),
-      right: Math.max(0, Math.round(bodyRect.right - lastRect.right)),
-    });
-  }, []);
-
-  const measureMediaTop = useCallback(() => {
-    const rowEl = bodyRowRef.current;
-    const firstBtn = firstSidebarRef.current;
-    if (!rowEl || !firstBtn) return;
-    const rowRect = rowEl.getBoundingClientRect();
-    const btnRect = firstBtn.getBoundingClientRect();
-    const padTop = parseFloat(getComputedStyle(firstBtn).paddingTop) || 0;
-    setMediaTopPx(Math.max(0, Math.round(btnRect.top - rowRect.top + padTop)));
-  }, []);
-
-  useLayoutEffect(() => {
-    measureMediaInsets();
-    if (showSidebar) measureMediaTop();
-    const raf = requestAnimationFrame(() => {
-      measureMediaInsets();
-      if (showSidebar) measureMediaTop();
-    });
-    window.addEventListener('resize', measureMediaInsets);
-    window.addEventListener('resize', measureMediaTop);
-    return () => {
-      cancelAnimationFrame(raf);
-      window.removeEventListener('resize', measureMediaInsets);
-      window.removeEventListener('resize', measureMediaTop);
-    };
-  }, [measureMediaInsets, measureMediaTop, mainTab, sidebar.length, showSidebar]);
-
   const handleMainTabClick = useCallback(
     (tab: LoungeTvMainTab) => {
       if (tab === mainTab && viewState.kind !== 'browse') {
@@ -209,14 +163,6 @@ export function LoungeTvScreen({
       onMainTabChange(tab);
     },
     [mainTab, onMainTabChange, viewState.kind]
-  );
-
-  const handleSidebarClick = useCallback(
-    (id: string) => {
-      setViewState({ kind: 'browse' });
-      onSidebarChange(id);
-    },
-    [onSidebarChange]
   );
 
   const requestContentAccess = useCallback(
@@ -301,22 +247,6 @@ export function LoungeTvScreen({
     [handleToggleSave]
   );
 
-  const navLinkStyle = (active: boolean): React.CSSProperties => ({
-    fontFamily: '"Futura PT Medium", Futura, sans-serif',
-    fontSize: LOUNGE_TV_GLASS_SIDEBAR_FONT,
-    letterSpacing: '0.04em',
-    lineHeight: 1.35,
-    textTransform: 'uppercase',
-    color: active ? BRAND_RED : '#ffffff',
-    background: 'none',
-    border: 'none',
-    padding: `${loungeTvGlassCqw(0.65, 1, 3)} 0`,
-    cursor: 'pointer',
-    whiteSpace: 'nowrap',
-    width: '100%',
-    textAlign: 'left',
-  });
-
   const mainTabNavStyle = (active: boolean): React.CSSProperties => ({
     fontFamily: '"Futura PT Medium", Futura, sans-serif',
     fontSize: LOUNGE_TV_GLASS_NAV_FONT,
@@ -345,49 +275,67 @@ export function LoungeTvScreen({
     }
 
     if (mainTab === 'live') {
-      const section = sidebar.find((s) => s.id === sidebarId) ?? sidebar[0];
-      return section ? <LoungeTvLivePlaceholder section={section} /> : null;
+      return (
+        <div style={LOUNGE_TV_STACKED_SECTIONS_STYLE}>
+          {sidebar.map((section) => (
+            <LoungeTvLivePlaceholder key={section.id} section={section} />
+          ))}
+        </div>
+      );
     }
 
     if (mainTab === 'library') {
       return (
-        <LoungeTvLibrarySections
-          sectionId={sidebarId}
-          onSelect={openPack}
-          onToggleSave={onToggleSavePack}
-          isUnlocked={isUnlocked}
-          unlocks={unlocks}
-        />
+        <div style={LOUNGE_TV_STACKED_SECTIONS_STYLE}>
+          {sidebar.map((section) => (
+            <LoungeTvLibrarySections
+              key={section.id}
+              sectionId={section.id}
+              onSelect={openPack}
+              onToggleSave={onToggleSavePack}
+              isUnlocked={isUnlocked}
+              unlocks={unlocks}
+            />
+          ))}
+        </div>
       );
     }
 
     if (mainTab === 'learn') {
-      const packs = contentPacksForLearningPath(sidebarId);
       return (
-        <LoungeTvContentRow
-          title={sidebar.find((s) => s.id === sidebarId)?.label ?? 'LESSONS'}
-          packs={packs}
-          onSelect={openPack}
-          onToggleSave={onToggleSavePack}
-          isUnlocked={isUnlocked}
-          unlocks={unlocks}
-          emptyLabel="LESSONS COMING SOON."
-        />
+        <div style={LOUNGE_TV_STACKED_SECTIONS_STYLE}>
+          {sidebar.map((section) => (
+            <LoungeTvContentRow
+              key={section.id}
+              title={section.label}
+              packs={contentPacksForLearningPath(section.id)}
+              onSelect={openPack}
+              onToggleSave={onToggleSavePack}
+              isUnlocked={isUnlocked}
+              unlocks={unlocks}
+              emptyLabel="LESSONS COMING SOON."
+            />
+          ))}
+        </div>
       );
     }
 
     if (mainTab === 'explore') {
-      const packs = contentPacksForExploreSection(sidebarId);
       return (
-        <LoungeTvContentRow
-          title={sidebar.find((s) => s.id === sidebarId)?.label ?? 'EXPLORE'}
-          packs={packs}
-          onSelect={openPack}
-          onToggleSave={onToggleSavePack}
-          isUnlocked={isUnlocked}
-          unlocks={unlocks}
-          emptyLabel="CONTENT COMING SOON."
-        />
+        <div style={LOUNGE_TV_STACKED_SECTIONS_STYLE}>
+          {sidebar.map((section) => (
+            <LoungeTvContentRow
+              key={section.id}
+              title={section.label}
+              packs={contentPacksForExploreSection(section.id)}
+              onSelect={openPack}
+              onToggleSave={onToggleSavePack}
+              isUnlocked={isUnlocked}
+              unlocks={unlocks}
+              emptyLabel="CONTENT COMING SOON."
+            />
+          ))}
+        </div>
       );
     }
 
@@ -516,60 +464,23 @@ export function LoungeTvScreen({
         </nav>
 
         <div
-          ref={bodyRowRef}
           style={{
             position: 'relative',
             display: 'flex',
             flex: 1,
             minHeight: 0,
-            gap: showSidebar ? LOUNGE_TV_BODY_SIDEBAR_GAP : 0,
+            flexDirection: 'column',
           }}
         >
-          {showSidebar ? (
-            <aside
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'flex-start',
-                gap: LOUNGE_TV_SIDEBAR_ITEM_GAP,
-                flexShrink: 0,
-                width: LOUNGE_TV_GLASS_SIDEBAR_WIDTH,
-                paddingTop: loungeTvGlassCqw(1.3, 3, 5),
-              }}
-              aria-label="Subcategories"
-            >
-              {sidebar.map((item, index) => (
-                <button
-                  key={item.id}
-                  ref={index === 0 ? firstSidebarRef : undefined}
-                  type="button"
-                  style={navLinkStyle(sidebarId === item.id)}
-                  onClick={() => handleSidebarClick(item.id)}
-                >
-                  {item.label}
-                </button>
-              ))}
-            </aside>
-          ) : null}
-
           <LoungeTvInnerLayoutEditor
             regionId="lounge-tv-media-panel"
             label="tv media panel"
             layout={mediaPanelRegion.layout}
             style={{
-              position: showSidebar ? 'absolute' : 'relative',
-              ...(showSidebar
-                ? loungeTvInnerAbsolutePanelStyle(
-                    {
-                      left: mediaInsets.left > 0 ? mediaInsets.left : 0,
-                      right: mediaInsets.right > 0 ? mediaInsets.right : 0,
-                      top: mediaTopPx > 0 ? mediaTopPx : 0,
-                    },
-                    mediaPanelRegion.layout
-                  )
-                : { flex: 1, minWidth: 0 }),
+              position: 'relative',
+              flex: 1,
               minWidth: 0,
-              bottom: showSidebar ? 0 : undefined,
+              minHeight: 0,
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'flex-start',
