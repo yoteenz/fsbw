@@ -6,7 +6,7 @@
 **Owner:** Frontal Slayer Chief Story / Executive Creative  
 **Classification:** Internal — pre-production development system  
 
-**Universe & story law:** [`cinematic-universe-bible.md`](./cinematic-universe-bible.md) · [`storytelling-philosophy.md`](./storytelling-philosophy.md) · [`story-department-overview.md`](./story-department-overview.md)  
+**Universe & story law:** [`cinematic-universe-bible.md`](./cinematic-universe-bible.md) · [`storytelling-philosophy.md`](./storytelling-philosophy.md) · [`story-department-overview.md`](./story-department-overview.md) · [`content-distribution-bible.md`](./content-distribution-bible.md) (Content Packages & platform deliverables)  
 **Character (reference):** [`../psa/performance-system.md`](../psa/performance-system.md) · [`../psa/behavioral-scenario-library.md`](../psa/behavioral-scenario-library.md) · [`../psa/character-qa-checklist.md`](../psa/character-qa-checklist.md)  
 **Visual (reference):** [`../visual-language/visual-language.md`](../visual-language/visual-language.md)
 
@@ -369,7 +369,7 @@ Cross-check [`../visual-language/visual-language.md`](../visual-language/visual-
 
 ## Platform Adaptation
 
-Same **story spine**; adapt **length, crop, caption, CTA placement**.
+Same **story spine**; adapt **length, crop, caption, CTA placement**. Full **Content Package** matrix, perspective distribution, continuity, and campaign sequencing: [`content-distribution-bible.md`](./content-distribution-bible.md).
 
 | Platform | Adaptation rules |
 | --- | --- |
@@ -498,6 +498,7 @@ Before AI-assisted image/video generation batches, **EDP must include**:
 | --- | --- |
 | [`story-department-overview.md`](./story-department-overview.md) | Department OS & hierarchy |
 | [`cinematic-universe-bible.md`](./cinematic-universe-bible.md) | World canon |
+| [`content-distribution-bible.md`](./content-distribution-bible.md) | Cross-platform expansion OS |
 | [`../MASTER_ROADMAP.md`](../MASTER_ROADMAP.md) | Registry |
 
 ---

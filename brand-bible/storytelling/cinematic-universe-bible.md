@@ -336,6 +336,7 @@ That is the cinematic universe members return to—**because it feels like their
 | [`storytelling-philosophy.md`](./storytelling-philosophy.md) | Narrative constitution |
 | [`story-department-overview.md`](./story-department-overview.md) | Department OS |
 | [`episode-development-bible.md`](./episode-development-bible.md) | Episode development OS |
+| [`content-distribution-bible.md`](./content-distribution-bible.md) | Cross-platform distribution architecture |
 | [`../MASTER_ROADMAP.md`](../MASTER_ROADMAP.md) | Bible registry |
 | [`docs/frontal-slayer/BRAND_RULES.md`](../../docs/frontal-slayer/BRAND_RULES.md) | Implementation digest |
 

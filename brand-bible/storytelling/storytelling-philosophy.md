@@ -5,7 +5,7 @@
 **Status:** Canonical — narrative source of truth  
 **Owner:** Frontal Slayer Chief Story / Executive Creative  
 **Classification:** Internal — governs all content and campaigns  
-**Companion documents:** [`../visual-language/visual-language.md`](../visual-language/visual-language.md), [`../psa/design-principles.md`](../psa/design-principles.md), [`../psa/identity.md`](../psa/identity.md), [`story-department-overview.md`](./story-department-overview.md) (department OS), [`cinematic-universe-bible.md`](./cinematic-universe-bible.md) (universe canon), [`episode-development-bible.md`](./episode-development-bible.md) (episode development OS)
+**Companion documents:** [`../visual-language/visual-language.md`](../visual-language/visual-language.md), [`../psa/design-principles.md`](../psa/design-principles.md), [`../psa/identity.md`](../psa/identity.md), [`story-department-overview.md`](./story-department-overview.md) (department OS), [`cinematic-universe-bible.md`](./cinematic-universe-bible.md) (universe canon), [`episode-development-bible.md`](./episode-development-bible.md) (episode development OS), [`content-distribution-bible.md`](./content-distribution-bible.md) (cross-platform story expansion)
 
 ---
 
@@ -350,6 +350,7 @@ Reserved for Version 1.1+ — do not fill with speculative lore here.
 | **`story-department-overview.md`** | Story Department OS — workflow, hierarchy, pillars ops, approvals |
 | **`cinematic-universe-bible.md`** | Universe canon — world, time, locations, tone, expansion |
 | **`episode-development-bible.md`** | How to build episodes — lifecycle, structure, EDP, QA |
+| **`content-distribution-bible.md`** | Story-first cross-platform distribution — Content Packages, perspectives, continuity |
 | **`../visual-language/visual-language.md`** | How the world looks |
 | **`../psa/design-principles.md`** | How PSA looks |
 | **`../psa/identity.md`** | Who PSA is (locked) |

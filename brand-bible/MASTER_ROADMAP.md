@@ -552,6 +552,15 @@ Each entry: **ID** for tracking. **Priority:** P0 (blocking production), P1 (hig
 | **Priority** | P0 |
 | **Phase** | 2 (done) |
 
+#### DOC-STY-001E — `storytelling/content-distribution-bible.md` ✅ **SHIPPED v1.0**
+
+| Field | Detail |
+| --- | --- |
+| **Purpose** | Master story-first cross-platform distribution — Content Packages, platform philosophy (no algorithms), perspective system, continuity, information layering, audience rewards, campaign structure, repurposing standards, luxury bar, manifesto |
+| **Dependencies** | storytelling-philosophy, cinematic-universe-bible, story-department-overview, episode-development-bible |
+| **Priority** | P0 |
+| **Phase** | 2 (done) |
+
 #### DOC-STY-002 — `storytelling/campaign-framework.md`
 
 | Field | Detail |
