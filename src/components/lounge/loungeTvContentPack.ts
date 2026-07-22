@@ -6,6 +6,14 @@ import {
 
 export type ContentPackFormat = 'watch' | 'read' | 'both';
 
+export type FeaturedPremiereKind =
+  | 'psa-welcome'
+  | 'new-this-week'
+  | 'featured-lesson'
+  | 'product-premiere'
+  | 'seasonal-collection'
+  | 'brand-film';
+
 export type ContentPackArticleStep = {
   title: string;
   body: string;
@@ -22,7 +30,14 @@ export type LoungeContentPack = {
   title: string;
   subtitle?: string;
   category?: string;
+  /** Display series / curriculum name (e.g. PSA ACADEMY). */
   series?: string;
+  originalSeries?: string;
+  programSeries?: string;
+  season?: number | string;
+  episode?: number;
+  episodeTitle?: string;
+  host?: string;
   difficulty?: string;
   runtime?: string;
   readTime?: string;
@@ -48,14 +63,30 @@ export type LoungeContentPack = {
   isPremium?: boolean;
   isNew?: boolean;
   isFeatured?: boolean;
+  isTrending?: boolean;
+  isRecommended?: boolean;
+  justAdded?: boolean;
+  membersFavorite?: boolean;
+  /** Rotating featured tab premiere slot. */
+  featuredPremiere?: FeaturedPremiereKind;
   /** Explicit format; derived from video/article when omitted. */
   contentFormat?: ContentPackFormat;
   /** Placement hints for Featured rows (metadata-driven). */
   featuredRows?: Array<
-    'hero' | 'continue' | 'new' | 'trending' | 'psa-recommends' | 'premium'
+    | 'hero'
+    | 'continue'
+    | 'new'
+    | 'trending'
+    | 'psa-recommends'
+    | 'premium'
+    | 'recently-added'
+    | 'because-you-watched'
+    | 'members-favorites'
   >;
   /** Learning path id (learn tab sidebar). */
   learningPathId?: string;
+  /** Sort order within a learning path curriculum. */
+  learningPathOrder?: number;
   /** Explore section id (explore tab sidebar). */
   exploreSectionId?: string;
 };
@@ -104,6 +135,12 @@ export const LOUNGE_TV_CONTENT_PACKS: LoungeContentPack[] = [
     subtitle: 'TRIM AND SHAPE YOUR LACE FRONT FOR A CLEAN HAIRLINE BEFORE INSTALL.',
     category: 'Lace Mastery',
     series: 'Lace Mastery',
+    originalSeries: 'PSA ACADEMY',
+    programSeries: 'psa-academy',
+    host: 'PSA',
+    season: 1,
+    episode: 1,
+    episodeTitle: 'CUTTING YOUR LACE',
     difficulty: 'BEGINNER',
     runtime: '8 MIN',
     readTime: '4 MIN',
@@ -111,14 +148,19 @@ export const LOUNGE_TV_CONTENT_PACKS: LoungeContentPack[] = [
     isFreePreview: true,
     isNew: true,
     isFeatured: true,
+    isTrending: true,
+    isRecommended: true,
+    justAdded: true,
+    membersFavorite: true,
+    featuredPremiere: 'featured-lesson',
     contentFormat: 'both',
     thumbnail: '/assets/NOIR/wave-thumb.png',
     heroImage: '/assets/NOIR/wave-thumb.png',
     previewVideo: videoForPack('cutting-lace'),
     fullVideo: videoForPack('cutting-lace'),
     learningPathId: 'lace-mastery',
-    exploreSectionId: 'brand-films',
-    featuredRows: ['hero', 'new', 'trending', 'psa-recommends'],
+    learningPathOrder: 1,
+    featuredRows: ['hero', 'new', 'trending', 'psa-recommends', 'recently-added', 'members-favorites'],
     releaseDate: '2026-06-28',
     tags: ['lace', 'install', 'beginner'],
     article: {
@@ -157,7 +199,14 @@ export const LOUNGE_TV_CONTENT_PACKS: LoungeContentPack[] = [
     previewVideo: videoForPack('tinting-lace'),
     fullVideo: videoForPack('tinting-lace'),
     learningPathId: 'lace-mastery',
-    featuredRows: ['trending'],
+    learningPathOrder: 3,
+    host: 'PSA',
+    originalSeries: 'PSA ACADEMY',
+    season: 1,
+    episode: 3,
+    episodeTitle: 'TINTING YOUR LACE',
+    isTrending: true,
+    featuredRows: ['trending', 'recently-added'],
     article: {
       intro: 'MATCH LACE TO YOUR UNDERTONE SO EDGES DISAPPEAR ON CAMERA AND IN NATURAL LIGHT.',
       takeaways: ['TEST ON A SCRAP FIRST', 'BUILD COLOR IN LAYERS', 'LET DRY FULLY BEFORE INSTALL'],
@@ -184,7 +233,14 @@ export const LOUNGE_TV_CONTENT_PACKS: LoungeContentPack[] = [
     previewVideo: videoForPack('bleaching-knots'),
     fullVideo: videoForPack('bleaching-knots'),
     learningPathId: 'lace-mastery',
-    featuredRows: ['psa-recommends'],
+    learningPathOrder: 2,
+    host: 'PSA',
+    originalSeries: 'PSA ACADEMY',
+    season: 1,
+    episode: 2,
+    episodeTitle: 'BLEACHING YOUR KNOTS',
+    isRecommended: true,
+    featuredRows: ['psa-recommends', 'recently-added'],
     article: {
       intro: 'CONTROLLED BLEACHING OPENS THE LACE WITHOUT DAMAGING FIBERS.',
       takeaways: ['WATCH THE CLOCK', 'RINSE THOROUGHLY', 'NEUTRALIZE AFTER BLEACH'],
@@ -211,7 +267,13 @@ export const LOUNGE_TV_CONTENT_PACKS: LoungeContentPack[] = [
     previewVideo: videoForPack(LOUNGE_TV_PLUCKING_LACE_TILE_ID),
     fullVideo: videoForPack(LOUNGE_TV_PLUCKING_LACE_TILE_ID),
     learningPathId: 'lace-mastery',
-    featuredRows: ['premium'],
+    learningPathOrder: 4,
+    host: 'PSA',
+    originalSeries: 'PSA ACADEMY',
+    season: 1,
+    episode: 4,
+    episodeTitle: 'PLUCKING YOUR LACE',
+    featuredRows: ['premium', 'members-favorites'],
     isPremium: false,
     article: {
       intro: 'STRATEGIC PLUCKING CREATES A GRADUATED HAIRLINE THAT MIMICS NATURAL GROWTH.',
@@ -383,6 +445,24 @@ export const LOUNGE_TV_CONTENT_PACKS: LoungeContentPack[] = [
     },
   },
   {
+    id: 'psa-welcome-frontal-slayer',
+    title: 'WELCOME TO FRONTAL SLAYER TV',
+    subtitle: 'MEET PSA — YOUR LUXURY BEAUTY CONCIERGE AND HOST OF THE NETWORK.',
+    category: 'PSA Welcome',
+    originalSeries: 'FRONTAL SLAYER ORIGINALS',
+    host: 'PSA',
+    contentFormat: 'watch',
+    runtime: '2 MIN',
+    ticketCost: 0,
+    isFreePreview: true,
+    featuredPremiere: 'psa-welcome',
+    thumbnail: '/assets/NOIR/noir-thumb.png',
+    heroImage: '/assets/NOIR/noir-thumb.png',
+    previewVideo: videoForPack('psa-welcome-frontal-slayer'),
+    fullVideo: videoForPack('psa-welcome-frontal-slayer'),
+    featuredRows: ['psa-recommends', 'members-favorites'],
+  },
+  {
     id: 'brand-film-noir',
     title: 'NOIR — BRAND FILM',
     subtitle: 'THE STORY BEHIND OUR SIGNATURE SILHOUETTE.',
@@ -396,7 +476,9 @@ export const LOUNGE_TV_CONTENT_PACKS: LoungeContentPack[] = [
     exploreSectionId: 'brand-films',
     ticketCost: 0,
     isFreePreview: true,
-    featuredRows: ['hero'],
+    featuredPremiere: 'brand-film',
+    host: 'PSA',
+    featuredRows: ['members-favorites'],
   },
   {
     id: 'trend-report-summer',
@@ -408,6 +490,7 @@ export const LOUNGE_TV_CONTENT_PACKS: LoungeContentPack[] = [
     thumbnail: '/assets/NOIR/wave-thumb.png',
     heroImage: '/assets/NOIR/wave-thumb.png',
     exploreSectionId: 'trend-reports',
+    featuredPremiere: 'seasonal-collection',
     ticketCost: 0,
     article: {
       intro: 'SUMMER CALLS FOR LIGHTER LAYERS, CENTER PARTS, AND GLOSSY FINISHES.',
@@ -444,6 +527,10 @@ export const LOUNGE_TV_CONTENT_PACKS: LoungeContentPack[] = [
     exploreSectionId: 'product-reveals',
     ticketCost: 0,
     isFreePreview: true,
+    featuredPremiere: 'product-premiere',
+    host: 'PSA',
+    justAdded: true,
+    featuredRows: ['new', 'recently-added'],
     article: {
       intro: 'SOFT WAVE DELIVERS MOVEMENT WITHOUT WEIGHT.',
       takeaways: ['LIGHT BODY', 'EASY STYLING', 'HD-FRIENDLY SHEEN'],
@@ -486,6 +573,152 @@ export const LOUNGE_TV_CONTENT_PACKS: LoungeContentPack[] = [
       steps: [],
     },
   },
+  {
+    id: 'transformation-diary-noir-install',
+    title: 'TRANSFORMATION DIARY — NOIR INSTALL',
+    subtitle: 'FROM CONSULT TO CAMERA-READY — A MEMBER JOURNEY.',
+    category: 'Transformation Diaries',
+    originalSeries: 'TRANSFORMATION DIARIES',
+    host: 'PSA',
+    contentFormat: 'both',
+    runtime: '5 MIN',
+    readTime: '3 MIN',
+    thumbnail: '/assets/NOIR/noir-thumb.png',
+    heroImage: '/assets/NOIR/noir-thumb.png',
+    previewVideo: videoForPack('transformation-diary-noir-install'),
+    fullVideo: videoForPack('transformation-diary-noir-install'),
+    exploreSectionId: 'transformation-diaries',
+    ticketCost: 0,
+    isFreePreview: true,
+    article: {
+      intro: 'REAL TIMELINE — CONSULT, CUSTOM BUILD, INSTALL, AND REVEAL.',
+      takeaways: ['DOCUMENT EACH STAGE', 'PROTECT YOUR LACE', 'CELEBRATE THE REVEAL'],
+      steps: [{ title: 'CHAPTER 1', body: 'CONSULT AND UNIT SELECTION WITH PSA.' }],
+    },
+  },
+  {
+    id: 'founder-story-origin',
+    title: 'FOUNDER STORY — WHY FRONTAL SLAYER',
+    subtitle: 'THE MISSION BEHIND THE BRAND AND THE LOUNGE.',
+    category: 'Founder Stories',
+    originalSeries: 'FOUNDER SESSIONS',
+    host: 'PSA',
+    contentFormat: 'watch',
+    runtime: '4 MIN',
+    thumbnail: '/assets/NOIR/blanco-thumb.png',
+    heroImage: '/assets/NOIR/blanco-thumb.png',
+    previewVideo: videoForPack('founder-story-origin'),
+    fullVideo: videoForPack('founder-story-origin'),
+    exploreSectionId: 'founder-stories',
+    ticketCost: 0,
+    isFreePreview: true,
+  },
+  {
+    id: 'texture-spotlight-ocean-curl',
+    title: 'TEXTURE SPOTLIGHT — OCEAN CURL',
+    subtitle: 'MOVEMENT, SHINE, AND INSTALL TIPS FOR OCEAN CURL.',
+    category: 'Texture Spotlights',
+    originalSeries: 'LUXURY HAIR SCIENCE',
+    host: 'PSA',
+    contentFormat: 'both',
+    runtime: '3 MIN',
+    readTime: '2 MIN',
+    thumbnail: '/assets/NOIR/curl-thumb.png',
+    heroImage: '/assets/NOIR/curl-thumb.png',
+    previewVideo: videoForPack('texture-spotlight-ocean-curl'),
+    fullVideo: videoForPack('texture-spotlight-ocean-curl'),
+    exploreSectionId: 'texture-spotlights',
+    ticketCost: 0,
+    isFreePreview: true,
+    article: {
+      intro: 'OCEAN CURL BALANCES DEFINITION WITH SOFT BODY FOR EVERYDAY SLAY.',
+      takeaways: ['DETANGLE WET', 'USE LIGHT HOLD', 'PROTECT OVERNIGHT'],
+      steps: [],
+    },
+  },
+  {
+    id: 'customer-favorite-middle-part',
+    title: 'CUSTOMER FAVORITE — MIDDLE PART NOIR',
+    subtitle: 'THE LOOK MEMBERS REPLAY MOST THIS MONTH.',
+    category: 'Customer Favorites',
+    originalSeries: 'MEMBERS FAVORITES',
+    host: 'PSA',
+    contentFormat: 'watch',
+    runtime: '3 MIN',
+    thumbnail: '/assets/NOIR/noir-thumb.png',
+    heroImage: '/assets/NOIR/noir-thumb.png',
+    previewVideo: videoForPack('customer-favorite-middle-part'),
+    fullVideo: videoForPack('customer-favorite-middle-part'),
+    exploreSectionId: 'customer-favorites',
+    ticketCost: 1,
+    membersFavorite: true,
+    featuredRows: ['members-favorites'],
+  },
+  {
+    id: 'luxury-hair-science-fiber-care',
+    title: 'LUXURY HAIR SCIENCE — FIBER CARE',
+    subtitle: 'HOW PREMIUM FIBERS HOLD COLOR, SHINE, AND STRUCTURE.',
+    category: 'Luxury Hair Science',
+    originalSeries: 'LUXURY HAIR SCIENCE',
+    host: 'PSA',
+    contentFormat: 'read',
+    readTime: '6 MIN',
+    thumbnail: '/assets/NOIR/wave-thumb.png',
+    heroImage: '/assets/NOIR/wave-thumb.png',
+    exploreSectionId: 'luxury-hair-science',
+    ticketCost: 0,
+    isFreePreview: true,
+    article: {
+      intro: 'SCIENCE-FORWARD CARE WITHOUT STRIPPING YOUR INVESTMENT.',
+      takeaways: ['PH-BALANCED CLEANSE', 'HEAT WITH BARRIER', 'STORE ON A STAND'],
+      steps: [{ title: 'LAB NOTE 1', body: 'FIBER CUTICLE BEHAVIOR UNDER HEAT AND HUMIDITY.' }],
+    },
+  },
+  {
+    id: 'psa-answers-lace-faq',
+    title: 'PSA ANSWERS — LACE FAQ',
+    subtitle: 'YOUR TOP LACE QUESTIONS IN ONE LUXURY FAQ EPISODE.',
+    category: 'PSA Answers',
+    originalSeries: 'PSA ANSWERS',
+    host: 'PSA',
+    contentFormat: 'both',
+    runtime: '4 MIN',
+    readTime: '3 MIN',
+    thumbnail: '/assets/NOIR/wave-thumb.png',
+    heroImage: '/assets/NOIR/wave-thumb.png',
+    previewVideo: videoForPack('psa-answers-lace-faq'),
+    fullVideo: videoForPack('psa-answers-lace-faq'),
+    exploreSectionId: 'psa-sessions',
+    ticketCost: 0,
+    isFreePreview: true,
+    featuredPremiere: 'new-this-week',
+    featuredRows: ['new', 'recently-added'],
+    article: {
+      intro: 'SHORT ANSWERS — NO GATEKEEPING.',
+      takeaways: ['BUFFER LACE', 'TINT BEFORE BLEACH WHEN YOU CAN', 'MELT WITH PATIENCE'],
+      steps: [],
+    },
+  },
+  {
+    id: 'slay-school-first-install',
+    title: 'SLAY SCHOOL — YOUR FIRST INSTALL',
+    subtitle: 'A QUICK BEGINNER EPISODE BEFORE YOU PRESS GO.',
+    category: 'Slay School',
+    originalSeries: 'SLAY SCHOOL',
+    host: 'PSA',
+    difficulty: 'BEGINNER',
+    contentFormat: 'watch',
+    runtime: '3 MIN',
+    thumbnail: '/assets/NOIR/blanco-thumb.png',
+    heroImage: '/assets/NOIR/blanco-thumb.png',
+    previewVideo: videoForPack('slay-school-first-install'),
+    fullVideo: videoForPack('slay-school-first-install'),
+    learningPathId: 'beginner-essentials',
+    learningPathOrder: 1,
+    ticketCost: 0,
+    isFreePreview: true,
+    featuredRows: ['new'],
+  },
 ];
 
 const packById = new Map(LOUNGE_TV_CONTENT_PACKS.map((p) => [p.id, p]));
@@ -506,7 +739,12 @@ export function resolveContentPackFormat(pack: LoungeContentPack): ContentPackFo
 }
 
 export function contentPacksForLearningPath(pathId: string): LoungeContentPack[] {
-  return LOUNGE_TV_CONTENT_PACKS.filter((p) => p.learningPathId === pathId);
+  return LOUNGE_TV_CONTENT_PACKS.filter((p) => p.learningPathId === pathId).sort((a, b) => {
+    const ao = a.learningPathOrder ?? 999;
+    const bo = b.learningPathOrder ?? 999;
+    if (ao !== bo) return ao - bo;
+    return (a.episode ?? 999) - (b.episode ?? 999);
+  });
 }
 
 export function contentPacksForExploreSection(sectionId: string): LoungeContentPack[] {

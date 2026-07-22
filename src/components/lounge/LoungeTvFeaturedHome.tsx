@@ -1,12 +1,8 @@
+import { useMemo, useState } from 'react';
 import type { LoungeContentPack } from './loungeTvContentPack';
-import {
-  contentPacksForFeaturedRow,
-  getContentPackById,
-} from './loungeTvContentPack';
 import { LoungeTvContentPackCard } from './LoungeTvContentPackCard';
 import { LoungeTvContentRow } from './LoungeTvContentRow';
 import type { LoungeContentUnlock } from '../../utils/slayTicketHistoryDisplay';
-import { getWatchProgressMap } from '../../utils/loungeTvLibrary';
 import { loungeTvGlassCqw } from './loungeTvResponsive';
 import {
   LOUNGE_TV_FONT_BOOK,
@@ -14,6 +10,15 @@ import {
   LOUNGE_TV_TEXT_GRAY,
   LOUNGE_TV_TEXT_WHITE,
 } from './loungeTvTheme';
+import {
+  FEATURED_RAIL_ORDER,
+  buildPsaFeaturedIntro,
+  featuredPremiereLabel,
+  packsForFeaturedRail,
+  resolveFeaturedPremiereHero,
+} from './loungeTvStreamingCatalog';
+import { LoungeTvPsaHeroIntro } from './LoungeTvPsaHeroIntro';
+import { readLoungeTvPsaIntroDismissed } from '../../utils/loungeTvPsaIntroSession';
 
 type LoungeTvFeaturedHomeProps = {
   onSelect: (pack: LoungeContentPack) => void;
@@ -22,99 +27,83 @@ type LoungeTvFeaturedHomeProps = {
   unlocks?: LoungeContentUnlock[];
 };
 
-function continueWatchingPacks(): LoungeContentPack[] {
-  const progress = getWatchProgressMap();
-  return Object.values(progress)
-    .sort((a, b) => b.updatedAt - a.updatedAt)
-    .map((row) => getContentPackById(row.packId))
-    .filter((p): p is LoungeContentPack => Boolean(p));
-}
-
 export function LoungeTvFeaturedHome({
   onSelect,
   onToggleSave,
   isUnlocked,
   unlocks,
 }: LoungeTvFeaturedHomeProps) {
-  const hero =
-    contentPacksForFeaturedRow('hero')[0] ??
-    contentPacksForFeaturedRow('new')[0] ??
-    null;
+  const hero = useMemo(() => resolveFeaturedPremiereHero(), []);
+  const [introDismissed, setIntroDismissed] = useState(() => readLoungeTvPsaIntroDismissed());
+  const showIntro = Boolean(hero && !introDismissed);
+
+  const premiereLabel = hero
+    ? `FEATURED PREMIERE · ${featuredPremiereLabel(hero.featuredPremiere)}`
+    : 'FEATURED PREMIERE';
 
   return (
     <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: loungeTvGlassCqw(1.5, 4, 8) }}>
       {hero ? (
         <section>
-          <LoungeTvContentPackCard
-            pack={hero}
-            variant="hero"
-            onSelect={onSelect}
-            onToggleSave={onToggleSave}
-            isUnlocked={isUnlocked}
-            unlocks={unlocks}
-          />
-          {hero.subtitle ? (
-            <p
-              style={{
-                margin: `${loungeTvGlassCqw(0.8, 2, 4)} 0 0`,
-                fontFamily: LOUNGE_TV_FONT_BOOK,
-                fontSize: loungeTvGlassCqw(1.35, 3, 6),
-                lineHeight: 1.35,
-                color: LOUNGE_TV_TEXT_GRAY,
-                textTransform: 'uppercase',
-              }}
-            >
-              {hero.subtitle}
-            </p>
-          ) : null}
+          {showIntro ? (
+            <LoungeTvPsaHeroIntro
+              premiereLabel={premiereLabel}
+              message={buildPsaFeaturedIntro(hero)}
+              onSkip={() => setIntroDismissed(true)}
+            />
+          ) : (
+            <>
+              <p
+                style={{
+                  margin: `0 0 ${loungeTvGlassCqw(0.6, 1.5, 3)}`,
+                  fontFamily: LOUNGE_TV_FONT_MEDIUM,
+                  fontSize: loungeTvGlassCqw(1.25, 2.8, 5.5),
+                  letterSpacing: '0.1em',
+                  color: '#EB1C24',
+                  textTransform: 'uppercase',
+                }}
+              >
+                {premiereLabel}
+              </p>
+              <LoungeTvContentPackCard
+                pack={hero}
+                variant="hero"
+                onSelect={onSelect}
+                onToggleSave={onToggleSave}
+                isUnlocked={isUnlocked}
+                unlocks={unlocks}
+              />
+              {hero.subtitle ? (
+                <p
+                  style={{
+                    margin: `${loungeTvGlassCqw(0.8, 2, 4)} 0 0`,
+                    fontFamily: LOUNGE_TV_FONT_BOOK,
+                    fontSize: loungeTvGlassCqw(1.35, 3, 6),
+                    lineHeight: 1.35,
+                    color: LOUNGE_TV_TEXT_GRAY,
+                    textTransform: 'uppercase',
+                  }}
+                >
+                  {hero.subtitle}
+                </p>
+              ) : null}
+            </>
+          )}
         </section>
       ) : null}
 
-      <LoungeTvContentRow
-        title="CONTINUE WATCHING"
-        packs={continueWatchingPacks()}
-        onSelect={onSelect}
-        onToggleSave={onToggleSave}
-        isUnlocked={isUnlocked}
-        unlocks={unlocks}
-        emptyLabel="START A LESSON TO SEE IT HERE."
-      />
-
-      <LoungeTvContentRow
-        title="NEW THIS WEEK"
-        packs={contentPacksForFeaturedRow('new')}
-        onSelect={onSelect}
-        onToggleSave={onToggleSave}
-        isUnlocked={isUnlocked}
-        unlocks={unlocks}
-      />
-
-      <LoungeTvContentRow
-        title="TRENDING LESSONS"
-        packs={contentPacksForFeaturedRow('trending')}
-        onSelect={onSelect}
-        onToggleSave={onToggleSave}
-        isUnlocked={isUnlocked}
-        unlocks={unlocks}
-      />
-
-      <LoungeTvContentRow
-        title="PSA RECOMMENDS"
-        packs={contentPacksForFeaturedRow('psa-recommends')}
-        onSelect={onSelect}
-        onToggleSave={onToggleSave}
-        isUnlocked={isUnlocked}
-        unlocks={unlocks}
-      />
-
-      <LoungeTvContentRow
-        title="PREMIUM EXCLUSIVES"
-        packs={contentPacksForFeaturedRow('premium')}
-        onSelect={onSelect}
-        onToggleSave={onToggleSave}
-        isUnlocked={isUnlocked}
-        unlocks={unlocks}
-      />
+      {FEATURED_RAIL_ORDER.map(({ key, title }) => (
+        <LoungeTvContentRow
+          key={key}
+          title={title}
+          packs={packsForFeaturedRail(key)}
+          onSelect={onSelect}
+          onToggleSave={onToggleSave}
+          isUnlocked={isUnlocked}
+          unlocks={unlocks}
+          emptyLabel={key === 'continue' ? 'START A LESSON TO SEE IT HERE.' : undefined}
+        />
+      ))}
     </div>
   );
 }

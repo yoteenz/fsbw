@@ -59,6 +59,10 @@ export function LoungeTvLibrarySections({
         });
       case 'completed':
         return packsFromIds(getCompletedPackIds());
+      case 'downloads':
+        return [];
+      case 'certificates':
+        return [];
       case 'history': {
         const progress = getWatchProgressMap();
         return Object.values(progress)
@@ -76,8 +80,15 @@ export function LoungeTvLibrarySections({
     saved: 'SAVED',
     unlocked: 'UNLOCKED',
     purchased: 'PURCHASED',
-    completed: 'COMPLETED',
-    history: 'HISTORY',
+    downloads: 'DOWNLOADS',
+    completed: 'COMPLETED COURSES',
+    certificates: 'CERTIFICATES',
+    history: 'WATCH HISTORY',
+  };
+
+  const emptyLabels: Record<string, string> = {
+    downloads: 'OFFLINE DOWNLOADS ARRIVE IN A FUTURE UPDATE.',
+    certificates: 'COURSE CERTIFICATES COMING SOON.',
   };
 
   return (
@@ -88,7 +99,7 @@ export function LoungeTvLibrarySections({
       onToggleSave={onToggleSave}
       isUnlocked={isUnlocked}
       unlocks={unlocks}
-      emptyLabel="NOTHING HERE YET."
+      emptyLabel={emptyLabels[sectionId] ?? 'NOTHING HERE YET.'}
     />
   );
 }

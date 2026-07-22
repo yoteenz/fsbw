@@ -10,7 +10,7 @@ import {
 } from './loungeTvContent';
 import type { LoungeContentPack } from './loungeTvContentPack';
 import { resolveContentPackFormat } from './loungeTvContentPack';
-import { contentPacksForExploreSection, contentPacksForLearningPath } from './loungeTvContentPack';
+import { academyPacksForLearningPath, explorePacksForSection } from './loungeTvStreamingCatalog';
 import { LoungeTvInnerLayoutEditor } from './LoungeTvInnerLayoutEditor';
 import {
   LOUNGE_TV_CONFIG_UPDATED_EVENT,
@@ -308,7 +308,7 @@ export function LoungeTvScreen({
             <LoungeTvContentRow
               key={section.id}
               title={section.label}
-              packs={contentPacksForLearningPath(section.id)}
+              packs={academyPacksForLearningPath(section.id)}
               onSelect={openPack}
               onToggleSave={onToggleSavePack}
               isUnlocked={isUnlocked}
@@ -327,7 +327,7 @@ export function LoungeTvScreen({
             <LoungeTvContentRow
               key={section.id}
               title={section.label}
-              packs={contentPacksForExploreSection(section.id)}
+              packs={explorePacksForSection(section.id)}
               onSelect={openPack}
               onToggleSave={onToggleSavePack}
               isUnlocked={isUnlocked}

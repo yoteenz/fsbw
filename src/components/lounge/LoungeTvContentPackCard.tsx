@@ -1,8 +1,5 @@
 import type { CSSProperties } from 'react';
 import type { LoungeContentPack } from './loungeTvContentPack';
-import {
-  contentPackRuntimeOrRead,
-} from './loungeTvContentPack';
 import { contentPackToTile } from './loungeTvContent';
 import {
   loungeTvLockedThumbnailOverlayLabel,
@@ -18,6 +15,7 @@ import {
 } from './loungeTvTheme';
 import { loungeTvGlassCqw } from './loungeTvResponsive';
 import { loungeTvTileShowsAsNew } from '../../utils/loungeTvViewedTiles';
+import { loungeTvCardMetaLines } from './loungeTvCardMetadata';
 
 type LoungeTvContentPackCardProps = {
   pack: LoungeContentPack;
@@ -75,7 +73,7 @@ export function LoungeTvContentPackCard({
   unlocks,
 }: LoungeTvContentPackCardProps) {
   const tile = contentPackToTile(pack);
-  const runtimeLabel = contentPackRuntimeOrRead(pack);
+  const metaLines = loungeTvCardMetaLines(pack, tile, unlocks, isUnlocked);
   const showNew = loungeTvTileShowsAsNew(tile);
   const ticketLocked = loungeTvTileShowsTicketLock(tile, unlocks, isUnlocked);
   const lockedOverlayLabel = loungeTvLockedThumbnailOverlayLabel(tile, unlocks, isUnlocked);
@@ -186,41 +184,22 @@ export function LoungeTvContentPackCard({
           </span>
         ) : null}
         <span style={cardTitleStyle}>{pack.title}</span>
-        <span
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            gap: loungeTvGlassCqw(0.8, 2, 4),
-          }}
-        >
-          {runtimeLabel ? (
-            <span
-              style={{
-                fontFamily: LOUNGE_TV_FONT_MEDIUM,
-                fontSize: loungeTvGlassCqw(1.2, 2.8, 5.5),
-                color: LOUNGE_TV_TEXT_GRAY,
-              }}
-            >
-              {runtimeLabel}
-            </span>
-          ) : (
-            <span />
-          )}
-          {pack.isFreePreview ? (
-            <span
-              style={{
-                fontFamily: LOUNGE_TV_FONT_MEDIUM,
-                fontSize: loungeTvGlassCqw(1.2, 2.8, 5.5),
-                color: LOUNGE_TV_TEXT_GRAY,
-              }}
-            >
-              FREE PREVIEW
-            </span>
-          ) : (
-            <span />
-          )}
-        </span>
+        {metaLines.map((line, idx) => (
+          <span
+            key={`${line.text}-${idx}`}
+            style={{
+              fontFamily: LOUNGE_TV_FONT_MEDIUM,
+              fontSize: loungeTvGlassCqw(1.15, 2.6, 5),
+              lineHeight: 1.25,
+              color: line.accent ? LOUNGE_TV_BRAND_RED : LOUNGE_TV_TEXT_GRAY,
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            {line.text}
+          </span>
+        ))}
       </span>
     </button>
   );
