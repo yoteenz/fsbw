@@ -50447,3 +50447,12 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Topics covered (full chat arc):** Brand bible system (MASTER_ROADMAP, visual/storytelling, PSA identity/design, hair, makeup); this accessories bible.
 - **Deliverable:** **`brand-bible/psa/jewelry-accessories.md`** v1.0 — philosophy, restraint, hierarchy; **signature canon**: small yellow-gold stud + **three-layer polished gold necklace stack** (fine cable / paperclip mid / heavy curb anchor, no pendants); category standards (earrings through travel/demo props); metals, stones, diamonds/pearls, chrome integration, materials, finishes, reflections, layering, proportion; continuity + prohibited list; cross-media rules; QA checklist; future expansion. Locked to master avatar reference. Cross-links in **`identity.md`** and **`design-principles.md`**.
 - **Changes:** `brand-bible/psa/jewelry-accessories.md` (new), `brand-bible/psa/identity.md`, `brand-bible/psa/design-principles.md`, `motherboard/MEMORY.md`. Docs only.
+
+---
+
+## 2026-07-22 — PSA Personality Bible v1.0 (brand-bible)
+
+- **Context:** Founder requested permanent **PSA psychological blueprint** at **`brand-bible/psa/personality.md`** — not backstory, marketing, or prompts; Character Psychology handbook for all platforms.
+- **Topics covered (full chat arc):** Brand bible ecosystem; PSA visual docs (identity, design, hair, makeup, jewelry); MASTER_ROADMAP; this personality bible.
+- **Deliverable:** **`brand-bible/psa/personality.md`** v1.0 — philosophy, purpose, archetype, psychological profile, EQ, hospitality/concierge/teaching, leadership, communication, confidence, empathy, patience, listening, decisions, curiosity, humor, professionalism, regulation, conflict, trust, relationships, brand representation, values, strengths/limitations, consistency rules, interaction playbooks (welcome, educate, celebrate, bad news, mistakes, pressure, questions, advice, encourage, calm), extensive **Always/Never**, psychological continuity, forbidden matrix, QA checklist; bridges **`psaInstructions.ts`** + storytelling guide role (PSA = guide, member = protagonist). Cross-links in **`identity.md`** and **`design-principles.md`**.
+- **Changes:** `brand-bible/psa/personality.md` (new), `brand-bible/psa/identity.md`, `brand-bible/psa/design-principles.md`, `motherboard/MEMORY.md`. Docs only.
