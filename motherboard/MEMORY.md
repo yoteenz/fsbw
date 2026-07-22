@@ -50377,3 +50377,11 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Context:** Founder screenshot — row tile metadata stacked on posters looked cluttered; artwork was blocked.
 - **Fix:** **`LoungeTvContentPackCard`** row variant = clean poster on top (lock/save/progress/*NEW* chip only on image); **title + compact caption** (`loungeTvCardCaptionLines`) below. Hero unchanged layout intent (wide poster + title under). Row flex **`alignItems: flex-start`** in **`LoungeTvContentRow`**. Removed gradient text overlay on thumbs.
 - **Changes:** `LoungeTvContentPackCard.tsx`, `loungeTvCardMetadata.ts`, `LoungeTvContentRow.tsx`. Build OK.
+
+---
+
+## 2026-07-22 — PSA Identity Bible v1.0 (brand-bible)
+
+- **Context:** Founder requested official production documentation for PSA — permanent identity source of truth (not prompts, not marketing). Path: **`brand-bible/psa/identity.md`**.
+- **Content:** Version 1.0 bible — purpose, character overview (PSA = Personal Slay Assistant), identity lock specs, recognizable features, design philosophy, facial consistency rules, approved expressions (aligned with expression manifest), preservation checklist, future expansion placeholders, version history. Cross-references existing voice/avatar canon (`psaInstructions`, golden-prompts, BRAND_RULES).
+- **Changes:** `brand-bible/psa/identity.md` (new). Docs only.
