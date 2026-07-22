@@ -349,6 +349,7 @@ The following sections are **reserved** for Version 1.1+ — do not fill with sp
 | `brand-bible/psa/acting.md` | PSA on-screen performance direction |
 | `brand-bible/psa/body-language.md` | PSA body language & physical presence |
 | `brand-bible/psa/gesture.md` | PSA gesture language (hands & arms) |
+| `brand-bible/psa/behavioral-scenario-library.md` | PSA interaction scenarios & CX playbook (no scripts) |
 | `src/constants/psaConfig.ts` | Runtime avatar asset paths and cache version |
 
 ---

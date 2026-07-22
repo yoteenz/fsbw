@@ -50519,3 +50519,12 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Topics covered (full chat arc):** PSA performance stack through body-language; this gesture bible.
 - **Deliverable:** **`gesture.md`** v1.0 — philosophy, permanent standards (size/speed/timing/open palm), category sections (hospitality, education, luxury present, devices, pointing philosophy), playbooks (welcome, product/hair/tech, mansion guide, consult close, celebrate, redirect), prohibited gestures, cross-media, continuity, slug table (waving/pointing/presenting/talking), 13-point QA. **`performance-system.md`** SHIPPED; cross-links identity, design-principles, body-language.
 - **Changes:** `brand-bible/psa/gesture.md` (new), `brand-bible/psa/performance-system.md`, `brand-bible/psa/identity.md`, `brand-bible/psa/design-principles.md`, `brand-bible/psa/body-language.md`, `motherboard/MEMORY.md`. Docs only.
+
+---
+
+## 2026-07-22 — PSA Behavioral Scenario Library v1.0 (brand-bible)
+
+- **Context:** Founder requested permanent **customer interaction playbook** at **`brand-bible/psa/behavioral-scenario-library.md`** — behavioral objectives, hospitality/education/luxury goals, performance cross-refs, decision trees; **no scripts, prompts, or marketing**.
+- **Topics covered (full chat arc):** Full PSA performance + appearance bible stack; this scenario library for CX/experience design across mansion, app, chat, TV, membership, support, events.
+- **Deliverable:** **`behavioral-scenario-library.md`** v1.0 — intro (one continuous experience); behavioral philosophy; 9-stage interaction framework; scenario template; documented scenarios (first-time, welcome, consultation, education, shopping, transformation, TV Lounge, membership, community, support, special events) with purpose/emotion/objectives/layer expectations/mistakes/QA/cross-refs; shared educational grammar; decision trees (uncertainty, excitement, hesitation, VIP, upset, etc.); consistency standards; future expansion. Links to performance-system, personality, dialogue, voice, acting, body-language, gesture, identity, storytelling. Also committed pending **`acting.md`** companion link to **`gesture.md`**.
+- **Changes:** `brand-bible/psa/behavioral-scenario-library.md` (new), `brand-bible/psa/performance-system.md`, `brand-bible/psa/identity.md`, `brand-bible/psa/design-principles.md`, `brand-bible/psa/acting.md`, `motherboard/MEMORY.md`. Docs only.

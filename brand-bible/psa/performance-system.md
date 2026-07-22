@@ -21,6 +21,8 @@ Every future performance-related document **inherits from this framework** befor
 
 > **Implementation law:** Premium **text chat** behavior is encoded in `api/_lib/psaInstructions.ts`. Child bibles and this system are **canonical intent**; code must **converge** on changes, not silently diverge.
 
+**Scenario playbook:** Real-world interaction objectives by context → [`behavioral-scenario-library.md`](./behavioral-scenario-library.md) (no scripts).
+
 ---
 
 ## Performance Philosophy

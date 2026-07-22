@@ -284,6 +284,7 @@ Reserved for Version 1.1+ production bibles. Do not populate with speculative ru
 | **`acting.md`** | PSA on-screen performance direction (how she performs) |
 | **`body-language.md`** | PSA posture, proximity, physical presence |
 | **`gesture.md`** | PSA hand & arm gesture language |
+| **`behavioral-scenario-library.md`** | Real-world interaction scenarios & decision trees |
 | _Future_ | facial-expressions.md, emotion.md, movement.md |
 
 ---
