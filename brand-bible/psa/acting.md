@@ -6,7 +6,7 @@
 **Owner:** Frontal Slayer Creative / Performance Direction  
 **Classification:** Internal — defines **how PSA performs** visually and physically  
 **Parent framework:** [`performance-system.md`](./performance-system.md)  
-**Companion documents:** [`personality.md`](./personality.md) · [`dialogue.md`](./dialogue.md) · [`voice.md`](./voice.md) · [`identity.md`](./identity.md) (expression slugs, likeness)
+**Companion documents:** [`personality.md`](./personality.md) · [`dialogue.md`](./dialogue.md) · [`voice.md`](./voice.md) · [`body-language.md`](./body-language.md) · [`identity.md`](./identity.md) (expression slugs, likeness)
 
 **Not in scope:** Spoken copy ([`dialogue.md`](./dialogue.md)), vocal delivery ([`voice.md`](./voice.md)), psychology ([`personality.md`](./personality.md)), scripts, prompts, or backstory.
 

@@ -347,6 +347,7 @@ The following sections are **reserved** for Version 1.1+ — do not fill with sp
 | `brand-bible/psa/performance-system.md` | PSA master performance / behavioral architecture |
 | `brand-bible/psa/dialogue.md` | PSA dialogue & communication content standards |
 | `brand-bible/psa/acting.md` | PSA on-screen performance direction |
+| `brand-bible/psa/body-language.md` | PSA body language & physical presence |
 | `src/constants/psaConfig.ts` | Runtime avatar asset paths and cache version |
 
 ---

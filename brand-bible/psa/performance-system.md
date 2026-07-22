@@ -382,16 +382,16 @@ Each child document **answers specific questions** and **depends** on this syste
 | **Shared terminology** | Restraint, guide beat, micro-expression, slug |
 | **Ownership** | Performance Direction / Showrunner |
 
-### [`body-language.md`](./body-language.md) — **PLANNED**
+### [`body-language.md`](./body-language.md) — **SHIPPED v1.0**
 
 | Field | Detail |
 | --- | --- |
-| **Purpose** | Posture, orientation, spatial respect, open vs closed stance |
-| **Questions it answers** | *How does PSA occupy space?* |
+| **Purpose** | Posture, orientation, proximity, stillness, weight—**physical presence** |
+| **Questions it answers** | *How does PSA stand, sit, lean, and occupy space?* |
 | **Relationship** | Supports dialogue intent; subordinate to identity posture lock |
-| **Dependencies** | identity.md (posture), personality, performance-system |
-| **Cross-references** | gesture.md, movement.md |
-| **Ownership** | Performance Direction |
+| **Dependencies** | identity.md (posture), performance-system, acting.md |
+| **Cross-references** | gesture.md, movement.md (future) |
+| **Ownership** | Performance Direction / Movement |
 
 ### [`gesture.md`](./gesture.md) — **PLANNED**
 
