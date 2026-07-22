@@ -685,8 +685,10 @@ Performance direction for **micro-states**. Map extended slugs in [`identity.md`
 | Document | Scope |
 | --- | --- |
 | [`performance-system.md`](./performance-system.md) | Parent + QA framework |
-| [`identity.md`](./identity.md) | Expression specs |
-| _Future_ | [`gesture.md`](./gesture.md), [`movement.md`](./movement.md), [`facial-expressions.md`](./facial-expressions.md) |
+| [`identity.md`](./identity.md) | Expression specs (likeness lock) |
+| [`gesture.md`](./gesture.md) | Hand & arm vocabulary |
+| [`facial-expressions.md`](./facial-expressions.md) | Facial performance & slug library |
+| _Future_ | [`movement.md`](./movement.md) |
 
 ---
 

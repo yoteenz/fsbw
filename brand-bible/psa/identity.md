@@ -227,7 +227,7 @@ Production must treat the face as **locked geometry**, not a suggestion.
 
 ## Approved Facial Expressions
 
-PSA expression library is **production-managed**. Canonical slugs and filenames are registered in `scripts/psa-avatar-expression-manifest.mjs` and mapped in `src/components/psa/resolvePsaAvatarExpression.ts`. Below: **approved expression specifications** for animation, illustration, and video — not generation prompts.
+PSA expression library is **production-managed**. Canonical slugs and filenames are registered in `scripts/psa-avatar-expression-manifest.mjs` and mapped in `src/components/psa/resolvePsaAvatarExpression.ts`. **Performance direction** (intensity, transitions, prohibited faces, cross-media): [`facial-expressions.md`](./facial-expressions.md). Below: **approved expression specifications** for animation, illustration, and video — not generation prompts.
 
 ### Core idle and conversation
 
@@ -324,7 +324,7 @@ The following sections are **reserved** for Version 1.1+ — do not fill with sp
 | **3D Model Reference** | _Reserved — if rigged host for real-time_ |
 | **Animation Reference** | _Reserved — viseme / blink standards_ |
 | **Motion Capture** | _Reserved — if live host pipeline_ |
-| **Expression Library** | _In progress — see `public/assets/psa-avatar-*.png` + manifest_ |
+| **Expression Library** | **v1.0** — [`facial-expressions.md`](./facial-expressions.md) + `public/assets/psa-avatar-*.png` + manifest |
 | **Photographic References** | _Reserved — founder-aligned shoot contacts_ |
 | **Video References** | _Reserved — Lounge TV host master takes_ |
 | **Voice References** | _Link to `voice.md` when VO master exists_ |
@@ -350,6 +350,7 @@ The following sections are **reserved** for Version 1.1+ — do not fill with sp
 | `brand-bible/psa/body-language.md` | PSA body language & physical presence |
 | `brand-bible/psa/gesture.md` | PSA gesture language (hands & arms) |
 | `brand-bible/psa/behavioral-scenario-library.md` | PSA interaction scenarios & CX playbook (no scripts) |
+| `brand-bible/psa/facial-expressions.md` | PSA facial performance handbook & production slug library |
 | `src/constants/psaConfig.ts` | Runtime avatar asset paths and cache version |
 
 ---

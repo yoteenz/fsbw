@@ -285,7 +285,8 @@ Reserved for Version 1.1+ production bibles. Do not populate with speculative ru
 | **`body-language.md`** | PSA posture, proximity, physical presence |
 | **`gesture.md`** | PSA hand & arm gesture language |
 | **`behavioral-scenario-library.md`** | Real-world interaction scenarios & decision trees |
-| _Future_ | facial-expressions.md, emotion.md, movement.md |
+| **`facial-expressions.md`** | PSA facial performance & expression library (intensity, slugs, QA) |
+| _Future_ | emotion.md, movement.md |
 
 ---
 

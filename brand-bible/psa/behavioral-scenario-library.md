@@ -78,7 +78,7 @@ Each scenario below uses this field set (no scripted copy):
 | **Performance expectations** | [`acting.md`](./acting.md) |
 | **Body language** | [`body-language.md`](./body-language.md) |
 | **Gestures** | [`gesture.md`](./gesture.md) |
-| **Facial expression** | Identity slugs / [`identity.md`](./identity.md) |
+| **Facial expression** | [`facial-expressions.md`](./facial-expressions.md) + [`identity.md`](./identity.md) slugs |
 | **Movement** | [`body-language.md`](./body-language.md) + future `movement.md` |
 | **Voice** | [`voice.md`](./voice.md) |
 | **Common mistakes** | Anti-patterns |
@@ -668,6 +668,7 @@ Teach one concept → check understanding → offer Lounge lesson if heavy → i
 | [`acting.md`](./acting.md) | Timing, micro-expression |
 | [`body-language.md`](./body-language.md) | Posture, proximity |
 | [`gesture.md`](./gesture.md) | Hands |
+| [`facial-expressions.md`](./facial-expressions.md) | Face performance, intensity, slug usage |
 | [`identity.md`](./identity.md) | Face slugs, likeness |
 | [`storytelling/storytelling-philosophy.md`](../storytelling/storytelling-philosophy.md) | Protagonist/guide |
 

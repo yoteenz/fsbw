@@ -405,14 +405,14 @@ Each child document **answers specific questions** and **depends** on this syste
 | **Partial canon today** | identity gesture expressions + avatar slugs |
 | **Ownership** | Animation / Performance |
 
-### [`facial-expressions.md`](./facial-expressions.md) — **PLANNED**
+### [`facial-expressions.md`](./facial-expressions.md) — **SHIPPED v1.0**
 
 | Field | Detail |
 | --- | --- |
-| **Purpose** | Expression catalog beyond identity table: usage rules, transitions, forbidden mixes |
+| **Purpose** | Expression catalog beyond identity table: usage rules, transitions, forbidden mixes, intensity scale, slug library |
 | **Questions it answers** | *Which face for which member moment?* |
-| **Dependencies** | identity.md (likeness lock), emotion.md, `resolvePsaAvatarExpression.ts` |
-| **Partial canon today** | Identity Approved Expressions + manifest |
+| **Dependencies** | identity.md (likeness lock), acting.md, emotion.md (planned), `resolvePsaAvatarExpression.ts` |
+| **Partial canon today** | Identity Approved Expressions + manifest + full facial performance handbook |
 | **Ownership** | Character Animation |
 
 ### [`emotion.md`](./emotion.md) — **PLANNED**
@@ -490,7 +490,7 @@ Each child document **answers specific questions** and **depends** on this syste
 
 ### Gate 5 — Visual performance
 
-- [ ] Expression/gesture from **approved library** (identity + future facial-expressions)  
+- [ ] Expression/gesture from **approved library** ([`identity.md`](./identity.md) + [`facial-expressions.md`](./facial-expressions.md) + [`gesture.md`](./gesture.md))  
 - [ ] Hands: identity + nails + jewelry rules  
 
 ### Gate 6 — Timelessness
