@@ -20,6 +20,11 @@ export { LoungeTvScreen } from './LoungeTvScreen';
 import { LoungeTvContentProtection } from './LoungeTvContentProtection';
 import { hydrateLoungeTvAdminConfig } from '../../utils/loungeTvAdminConfig';
 import { setLoungeTvTheaterMode } from '../../utils/loungeTvTheaterMode';
+import {
+  readLoungeTvSessionMainTab,
+  readLoungeTvSessionSidebarId,
+  writeLoungeTvSessionBrowseState,
+} from '../../utils/loungeTvOpenSession';
 import { getLoungeTvAdminConfig } from '../../utils/api';
 import { LOUNGE_TV_ANIMATION_VIDEO_ENABLED } from '../../constants/loungeTvAnimationVideo';
 import { useSceneCarouselMeasureBox } from '../../hooks/useSceneCarouselMeasureBox';
@@ -149,8 +154,14 @@ export function LoungeTvOverlay({
   const [poweringOff, setPoweringOff] = useState(false);
   const [closePhase, setClosePhase] = useState<LoungeTvClosePhase>('idle');
   const isClosingRef = useRef(false);
-  const [mainTab, setMainTab] = useState<LoungeTvMainTab>('featured');
-  const [sidebarId, setSidebarId] = useState('lace-mastery');
+  const [mainTab, setMainTab] = useState<LoungeTvMainTab>(() => {
+    if (!resumeSessionOpen) return 'featured';
+    return readLoungeTvSessionMainTab() ?? 'featured';
+  });
+  const [sidebarId, setSidebarId] = useState(() => {
+    if (!resumeSessionOpen) return 'lace-mastery';
+    return readLoungeTvSessionSidebarId() ?? 'lace-mastery';
+  });
   const [seedancePhase, setSeedancePhase] = useState<SeedanceTvPhase>('idle');
   const consumedSessionResumeRef = useRef(false);
 
@@ -168,6 +179,11 @@ export function LoungeTvOverlay({
   useEffect(() => {
     setLoungeTvTheaterMode(isOpen || visible);
   }, [isOpen, visible]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    writeLoungeTvSessionBrowseState(mainTab, sidebarId);
+  }, [isOpen, mainTab, sidebarId]);
 
   useEffect(() => () => setLoungeTvTheaterMode(false), []);
 

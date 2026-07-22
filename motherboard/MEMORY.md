@@ -50343,3 +50343,11 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Context:** Founder wanted subcategory labels (Learn, Explore, Live, Library) **above** horizontally scrolling rows — not a left column overlapping the content panel.
 - **Decisions / outcomes:** Removed left **aside** nav and absolute media-panel insets. Vertical stack of sections: section title on top, horizontal **LoungeTvContentRow** (or Live/Library blocks) below — Netflix-style. Learn/Explore render all paths/sections; Live/Library stack all sidebar sections.
 - **Changes:** `LoungeTvScreen.tsx`. Build verified.
+
+---
+
+## 2026-07-22 — Lounge TV: persist main tab on lounge refresh
+
+- **Context:** Founder reported refresh on lounge reset Lounge TV to **FEATURED** instead of the active tab (Learn, etc.).
+- **Decisions / outcomes:** **`sessionStorage`** stores **`loungeTvSessionMainTab`** (+ sidebar id) while TV is open; restored when **`resumeSessionOpen`** after reload; cleared when TV closes or user leaves lounge (same as open flag).
+- **Changes:** `loungeTvOpenSession.ts`, `LoungeTvOverlay.tsx`. Build verified.
