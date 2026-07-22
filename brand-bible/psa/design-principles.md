@@ -274,6 +274,7 @@ Reserved for Version 1.1+ production bibles. Do not populate with speculative ru
 | **`design-principles.md` (this file)** | Why visual decisions are made |
 | **`identity.md`** | What must never change (likeness, anatomy, expressions) |
 | **`hair.md`** | PSA hairstyle lock (length, color, part, continuity) |
+| **`makeup.md`** | PSA makeup lock (soft glam, skin, eyes, lips, continuity) |
 | _Future_ | How to execute (lighting, wardrobe, measured color specs) |
 
 ---

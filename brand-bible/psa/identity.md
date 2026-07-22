@@ -339,6 +339,7 @@ The following sections are **reserved** for Version 1.1+ — do not fill with sp
 | `motherboard/golden-prompts/psa-avatar-expressions-nbp.md` | Expression slug registry (technical pipeline — not identity) |
 | `docs/frontal-slayer/BRAND_RULES.md` | Brand visual and voice standards |
 | `brand-bible/psa/hair.md` | PSA hairstyle production lock |
+| `brand-bible/psa/makeup.md` | PSA makeup production lock |
 | `src/constants/psaConfig.ts` | Runtime avatar asset paths and cache version |
 
 ---

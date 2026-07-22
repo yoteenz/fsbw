@@ -50429,3 +50429,12 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Topics covered (full chat arc):** Lounge TV streaming/catalog work; PSA identity + design principles + visual/storytelling bibles; MASTER_ROADMAP; this hair bible.
 - **Deliverable:** **`brand-bible/psa/hair.md`** v1.0 — hair philosophy; exhaustive signature specs (silhouette, length, density, wave, part subject’s right, lace hairline, shine, color dimension warm brunette + copper/caramel highlights, shadow root); variations matrix; physics behavior; luxury quality standards; continuity checklist; permitted/prohibited styling; medium translation; Frontal Slayer product relationship; QA checklist; future expansion placeholders. Locked to approved master avatar reference family. Cross-links added in **`identity.md`** and **`design-principles.md`**.
 - **Changes:** `brand-bible/psa/hair.md` (new), `brand-bible/psa/identity.md`, `brand-bible/psa/design-principles.md`, `motherboard/MEMORY.md`. Docs only.
+
+---
+
+## 2026-07-22 — PSA Makeup Bible v1.0 (brand-bible)
+
+- **Context:** Founder requested permanent **PSA makeup production documentation** at **`brand-bible/psa/makeup.md`** — not prompts, marketing, or tutorials; Makeup Department handbook aligned with luxury host + education mission.
+- **Topics covered (full chat arc):** Lounge TV/catalog; PSA identity, design principles, visual/storytelling bibles, MASTER_ROADMAP, Hair Bible; this makeup bible.
+- **Deliverable:** **`brand-bible/psa/makeup.md`** v1.0 — makeup philosophy; signature **editorial soft glam** (luminous satin skin, warm contour/blush, champagne highlight, warm neutral eye + cat-eye wing, wispy full lashes, groomed dark-brown brows, nude-plus satin/gloss lip); lighting contexts including holographic rim rules; continuity standards + checklist; approved intensity variations; brand relationship; QA checklist; future expansion placeholders. Locked to master avatar reference. Cross-links in **`identity.md`** and **`design-principles.md`**.
+- **Changes:** `brand-bible/psa/makeup.md` (new), `brand-bible/psa/identity.md`, `brand-bible/psa/design-principles.md`, `motherboard/MEMORY.md`. Docs only.
