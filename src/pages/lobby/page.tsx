@@ -581,7 +581,7 @@ const LobbyApp: React.FC = () => {
 
   return (
     <>
-      {showLoading && <LoadingScreen />}
+      {showLoading && <LoadingScreen source="LobbyApp.initial" />}
       <SceneHitLayoutEditorProvider>
       <div
         ref={lobbyScrollRef}

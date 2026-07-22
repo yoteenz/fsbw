@@ -50582,3 +50582,12 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Topics covered (full chat arc):** PSA ops stack (performance-system Gates 0–7, continuity, turnaround, reference library, child bibles); QA philosophy; departmental reviews (Identity I1–I12, Appearance, Performance P1–P10, Technical T1–T11, Brand B1–B8, Environment E1–E8, Asset R1–R8); platform modifiers (photo, commercial, TV, web, app, AI, tutorials, social, ads, XR, robotics); **severity** Critical→Cosmetic + ship thresholds aligned Gate 7; approval workflow; **Master Production Checklist** + ship decision tree; optional scorecard; metrics/reporting (pass rate, issue codes, improvement loop); future AI/XR QA placeholders.
 - **Deliverable:** **`character-qa-checklist.md`** v1.0. **`performance-system.md`** Cross-Cutting SHIPPED + governance Final QA link. Cross-links: design-principles, identity, character-continuity, character-reference-library.
 - **Changes:** `brand-bible/psa/character-qa-checklist.md` (new), `brand-bible/psa/performance-system.md`, `brand-bible/psa/design-principles.md`, `brand-bible/psa/identity.md`, `brand-bible/psa/character-continuity.md`, `brand-bible/psa/character-reference-library.md`, `motherboard/MEMORY.md`. Docs only.
+
+---
+
+## 2026-07-22 — Lobby/lounge false “Loading did not complete” recovery (mobile)
+
+- **Context:** Founder saw production recovery panel on **`/lobby/lounge`** (fsbw.vercel.app mobile): “Loading did not complete”, **Blocked by: LoadingScreen (4s)**, bootstrap **`complete=true ready=true module=none`** (boot finished; not a Studio hang).
+- **Root cause:** **`LobbyApp`** shows intentional **`LoadingScreen`** for **3s** after mount while scene assets render. **`registerPostLoadRenderGuard()`** runs **`audit('4s-post-load')`** from **initial page load**, not lobby mount. On slower mobile, App boot + lobby mount means the splash can still be visible at **4s wall-clock** → post-load guard treats it as forbidden non-terminal loading and **`forceLoadingTerminalRecovery`** (same red panel as true hangs).
+- **Fix:** **`LobbyApp.initial`** `source` on lobby **`LoadingScreen`**; **`post-load-render-guard.ts`** skips 4s/8s forced recovery for that source (12s LoadingScreen terminal + lobby timer still apply).
+- **Changes:** `src/pages/lobby/page.tsx`, `src/platform-stabilization/post-load-render-guard.ts`, `motherboard/MEMORY.md`.

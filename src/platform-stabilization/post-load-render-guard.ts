@@ -96,6 +96,10 @@ async function audit(reason: string): Promise<void> {
       if (source === 'App.lazy' || source.includes('application')) {
         return;
       }
+      // Lobby/lounge intentionally shows a ~3s asset splash after route mount (can start after App boot).
+      if (source === 'LobbyApp.initial') {
+        return;
+      }
       try {
         const { getStudioBootstrapLiveState } = await import('../studio-os-core/bootstrap');
         const live = getStudioBootstrapLiveState();
