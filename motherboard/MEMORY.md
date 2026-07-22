@@ -50409,3 +50409,14 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Context:** Founder requested permanent **storytelling philosophy** (not campaigns, prompts, or marketing) at **`brand-bible/storytelling/storytelling-philosophy.md`** — narrative foundation for all content.
 - **Deliverable:** v1.0 — experiences not ads, narrative principles, customer-as-protagonist, PSA-as-guide, mansion-as-character, episodic continuity, edutainment, emotional journey, campaign-as-chapter, dialogue/cinematic beats, continuity + immersion standards, decision checklist, future expansion; links Visual Language + PSA bibles + BRAND_RULES.
 - **Changes:** `brand-bible/storytelling/storytelling-philosophy.md` (new). Docs only.
+
+---
+
+## 2026-07-22 — Brand Bible Master Roadmap (documentation architecture)
+
+- **Context:** Founder (Executive Creative Director brief) requested audit of existing Brand Bible docs, gap analysis, merge/split recommendations, full proposed document registry (purpose, scope, dependencies, audience, priority, phase, maintenance), phased creation order (0–10), scalable folder hierarchy, governance (versioning, approval, ownership, review, deprecation, contribution), and a single master TOC at **`brand-bible/MASTER_ROADMAP.md`** — operating system for creative org, not marketing/prompts.
+- **Topics covered (full chat arc):** Lounge TV Phase 2 streaming catalog + architecture + row caption layout; PSA **`identity.md`** + **`design-principles.md`**; **`visual-language.md`**; **`storytelling-philosophy.md`**; this master roadmap task.
+- **Audit outcomes:** Four L0 bible files strong; gaps in governance, glossary, measured visual-system specs, film/TV production standards, brand-wide voice, UI language, AI governance, QA/approval, audio/retail (later phases). **`docs/frontal-slayer/`** (product photography bible, asset factory, design-dna-canon, BRAND_RULES) and **`motherboard/golden-prompts/`** remain external — link via registry, do not duplicate. Layer model: L0 Constitution → L1 Standards → L2 Systems → L3 Reference.
+- **Deliverable:** **`brand-bible/MASTER_ROADMAP.md`** v1.0 — ~40+ DOC-* registry entries, dependency graph, immediate next actions (Phase 0: README, governance, glossary, external index). **`motherboard/CORE.md`** — Brand Bible pointer under Design system.
+- **Conventions:** Philosophy files hold no prompts/hex sprawl; prompts never inside **`/brand-bible/`**; scope banner customer brand vs Studio OS admin.
+- **Changes:** `brand-bible/MASTER_ROADMAP.md` (new), `motherboard/CORE.md`, `motherboard/MEMORY.md`. Docs only. **Spatial Architecture Review:** SKIPPED — documentation architecture.
