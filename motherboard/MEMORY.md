@@ -50438,3 +50438,12 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Topics covered (full chat arc):** Lounge TV/catalog; PSA identity, design principles, visual/storytelling bibles, MASTER_ROADMAP, Hair Bible; this makeup bible.
 - **Deliverable:** **`brand-bible/psa/makeup.md`** v1.0 — makeup philosophy; signature **editorial soft glam** (luminous satin skin, warm contour/blush, champagne highlight, warm neutral eye + cat-eye wing, wispy full lashes, groomed dark-brown brows, nude-plus satin/gloss lip); lighting contexts including holographic rim rules; continuity standards + checklist; approved intensity variations; brand relationship; QA checklist; future expansion placeholders. Locked to master avatar reference. Cross-links in **`identity.md`** and **`design-principles.md`**.
 - **Changes:** `brand-bible/psa/makeup.md` (new), `brand-bible/psa/identity.md`, `brand-bible/psa/design-principles.md`, `motherboard/MEMORY.md`. Docs only.
+
+---
+
+## 2026-07-22 — PSA Jewelry & Accessories Bible v1.0 (brand-bible)
+
+- **Context:** Founder requested permanent **PSA jewelry and accessory production documentation** at **`brand-bible/psa/jewelry-accessories.md`** — not prompts, fashion/shopping guides; Accessories Department handbook for all media.
+- **Topics covered (full chat arc):** Brand bible system (MASTER_ROADMAP, visual/storytelling, PSA identity/design, hair, makeup); this accessories bible.
+- **Deliverable:** **`brand-bible/psa/jewelry-accessories.md`** v1.0 — philosophy, restraint, hierarchy; **signature canon**: small yellow-gold stud + **three-layer polished gold necklace stack** (fine cable / paperclip mid / heavy curb anchor, no pendants); category standards (earrings through travel/demo props); metals, stones, diamonds/pearls, chrome integration, materials, finishes, reflections, layering, proportion; continuity + prohibited list; cross-media rules; QA checklist; future expansion. Locked to master avatar reference. Cross-links in **`identity.md`** and **`design-principles.md`**.
+- **Changes:** `brand-bible/psa/jewelry-accessories.md` (new), `brand-bible/psa/identity.md`, `brand-bible/psa/design-principles.md`, `motherboard/MEMORY.md`. Docs only.
