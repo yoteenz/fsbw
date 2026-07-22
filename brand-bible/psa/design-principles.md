@@ -283,7 +283,8 @@ Reserved for Version 1.1+ production bibles. Do not populate with speculative ru
 | **`dialogue.md`** | PSA dialogue / communication content standards (what she says) |
 | **`acting.md`** | PSA on-screen performance direction (how she performs) |
 | **`body-language.md`** | PSA posture, proximity, physical presence |
-| _Future_ | gesture.md, facial-expressions.md, emotion.md, movement.md |
+| **`gesture.md`** | PSA hand & arm gesture language |
+| _Future_ | facial-expressions.md, emotion.md, movement.md |
 
 ---
 

@@ -393,14 +393,14 @@ Each child document **answers specific questions** and **depends** on this syste
 | **Cross-references** | gesture.md, movement.md (future) |
 | **Ownership** | Performance Direction / Movement |
 
-### [`gesture.md`](./gesture.md) — **PLANNED**
+### [`gesture.md`](./gesture.md) — **SHIPPED v1.0**
 
 | Field | Detail |
 | --- | --- |
-| **Purpose** | Hand vocabulary: welcome wave, present, point, talk—**concierge not aggressive** |
-| **Questions it answers** | *What do hands do in each beat?* |
-| **Dependencies** | identity (five fingers), nails, jewelry, body-language |
-| **Partial canon today** | [`identity.md`](./identity.md) gesture expressions + avatar slugs |
+| **Purpose** | Hand/arm **vocabulary**: welcome, present, point, demo, device interaction |
+| **Questions it answers** | *What do PSA’s hands do in each beat?* |
+| **Dependencies** | identity (five fingers), nails, jewelry, body-language, acting |
+| **Partial canon today** | identity gesture expressions + avatar slugs |
 | **Ownership** | Animation / Performance |
 
 ### [`facial-expressions.md`](./facial-expressions.md) — **PLANNED**

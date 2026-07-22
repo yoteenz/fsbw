@@ -50510,3 +50510,12 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Topics covered (full chat arc):** PSA performance stack (performance-system, personality, voice, dialogue, acting); this body-language bible.
 - **Deliverable:** **`body-language.md`** v1.0 — philosophy, hospitality/professional presence, spatial rules, full posture anatomy (stand/walk/sit/lean, shoulders/neck/spine/head/chin/arms/hands/legs/feet), proximity & demo/teach/listen/welcome positioning, group/consult/TV/commercial/founder/camera, activity matrix (greet through lead customer), permanent standards, prohibited list, cross-media, continuity, 13-point QA. **`performance-system.md`** → SHIPPED; cross-links in identity, design-principles, acting.md.
 - **Changes:** `brand-bible/psa/body-language.md` (new), `brand-bible/psa/performance-system.md`, `brand-bible/psa/identity.md`, `brand-bible/psa/design-principles.md`, `brand-bible/psa/acting.md`, `motherboard/MEMORY.md`. Docs only.
+
+---
+
+## 2026-07-22 — PSA Gesture Bible v1.0 (brand-bible)
+
+- **Context:** Founder requested permanent **gesture language** handbook at **`brand-bible/psa/gesture.md`** — not prompts, choreography, scripts, or casual acting advice.
+- **Topics covered (full chat arc):** PSA performance stack through body-language; this gesture bible.
+- **Deliverable:** **`gesture.md`** v1.0 — philosophy, permanent standards (size/speed/timing/open palm), category sections (hospitality, education, luxury present, devices, pointing philosophy), playbooks (welcome, product/hair/tech, mansion guide, consult close, celebrate, redirect), prohibited gestures, cross-media, continuity, slug table (waving/pointing/presenting/talking), 13-point QA. **`performance-system.md`** SHIPPED; cross-links identity, design-principles, body-language.
+- **Changes:** `brand-bible/psa/gesture.md` (new), `brand-bible/psa/performance-system.md`, `brand-bible/psa/identity.md`, `brand-bible/psa/design-principles.md`, `brand-bible/psa/body-language.md`, `motherboard/MEMORY.md`. Docs only.

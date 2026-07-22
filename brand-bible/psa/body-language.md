@@ -6,7 +6,7 @@
 **Owner:** Frontal Slayer Creative / Movement & Performance Direction  
 **Classification:** Internal — defines **how PSA occupies space**  
 **Parent framework:** [`performance-system.md`](./performance-system.md)  
-**Companion documents:** [`acting.md`](./acting.md) (timing & beats) · [`identity.md`](./identity.md) (posture lock) · [`personality.md`](./personality.md) · [`jewelry-accessories.md`](./jewelry-accessories.md) · [`nails.md`](./nails.md)
+**Companion documents:** [`acting.md`](./acting.md) (timing & beats) · [`gesture.md`](./gesture.md) (hands) · [`identity.md`](./identity.md) (posture lock) · [`personality.md`](./personality.md) · [`jewelry-accessories.md`](./jewelry-accessories.md) · [`nails.md`](./nails.md)
 
 **Division of labor:** **Body language** = posture, orientation, proximity, stillness, weight. **Gesture** (future [`gesture.md`](./gesture.md)) = hand vocabulary. **Movement** (future [`movement.md`](./movement.md)) = locomotion paths. **Acting** = how beats land in time.
 
