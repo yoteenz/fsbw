@@ -2,14 +2,11 @@ import type { CSSProperties } from 'react';
 import type { LoungeContentPack } from './loungeTvContentPack';
 import {
   contentPackRuntimeOrRead,
-  resolveContentPackFormat,
 } from './loungeTvContentPack';
-import { contentPackToTile, type LoungeTvVideoTile } from './loungeTvContent';
-import { LoungeTvTileTicketChrome } from './LoungeTvTileTicketChrome';
+import { contentPackToTile } from './loungeTvContent';
 import {
-  loungeTvContentIsAccessible,
-  loungeTvTicketCostLabel,
-  resolveLoungeTvBadgeCost,
+  loungeTvLockedThumbnailOverlayLabel,
+  loungeTvTileShowsTicketLock,
 } from './loungeTvTicketAccess';
 import type { LoungeContentUnlock } from '../../utils/slayTicketHistoryDisplay';
 import { isPackSaved } from '../../utils/loungeTvLibrary';
@@ -57,6 +54,18 @@ const cardTitleStyle: CSSProperties = {
   WebkitBoxOrient: 'vertical',
 };
 
+const lockedOverlayTextStyle: CSSProperties = {
+  fontFamily: LOUNGE_TV_FONT_MEDIUM,
+  fontSize: loungeTvGlassCqw(1.35, 3, 6.5),
+  lineHeight: 1.35,
+  color: LOUNGE_TV_TEXT_WHITE,
+  textTransform: 'uppercase',
+  textAlign: 'center',
+  textShadow: '0 2px 12px rgba(0,0,0,0.9)',
+  letterSpacing: '0.04em',
+  maxWidth: '92%',
+};
+
 export function LoungeTvContentPackCard({
   pack,
   onSelect,
@@ -65,12 +74,11 @@ export function LoungeTvContentPackCard({
   isUnlocked,
   unlocks,
 }: LoungeTvContentPackCardProps) {
-  const tile: LoungeTvVideoTile = contentPackToTile(pack);
-  const formatBadge = resolveContentPackFormat(pack);
+  const tile = contentPackToTile(pack);
   const runtimeLabel = contentPackRuntimeOrRead(pack);
   const showNew = loungeTvTileShowsAsNew(tile);
-  const accessible = loungeTvContentIsAccessible(tile, unlocks ?? isUnlocked);
-  const badgeCost = resolveLoungeTvBadgeCost(tile, unlocks);
+  const ticketLocked = loungeTvTileShowsTicketLock(tile, unlocks, isUnlocked);
+  const lockedOverlayLabel = loungeTvLockedThumbnailOverlayLabel(tile, unlocks, isUnlocked);
   const saved = isPackSaved(pack.id);
   const isHero = variant === 'hero';
 
@@ -105,8 +113,8 @@ export function LoungeTvContentPackCard({
             height: '100%',
             objectFit: 'cover',
             display: 'block',
-            filter: showNew ? 'blur(4px)' : accessible ? 'none' : 'brightness(0.72)',
-            transform: showNew ? 'scale(1.04)' : 'none',
+            filter: ticketLocked ? 'blur(4px)' : 'none',
+            transform: ticketLocked ? 'scale(1.04)' : 'none',
             transition: 'filter 0.2s ease, transform 0.2s ease',
           }}
         />
@@ -114,47 +122,23 @@ export function LoungeTvContentPackCard({
         <span style={{ display: 'block', width: '100%', height: '100%', background: '#111' }} />
       )}
 
-      <LoungeTvTileTicketChrome tile={tile} isUnlocked={isUnlocked} unlocks={unlocks} />
-
-      <span
-        style={{
-          position: 'absolute',
-          top: loungeTvGlassCqw(0.7, 1.5, 3),
-          left: loungeTvGlassCqw(0.7, 1.5, 3),
-          display: 'flex',
-          gap: loungeTvGlassCqw(0.4, 1, 2),
-          zIndex: 5,
-          pointerEvents: 'none',
-        }}
-      >
+      {ticketLocked && lockedOverlayLabel ? (
         <span
+          aria-hidden
           style={{
-            fontFamily: LOUNGE_TV_FONT_MEDIUM,
-            fontSize: loungeTvGlassCqw(1.2, 2.8, 5.5),
-            padding: `${loungeTvGlassCqw(0.35, 0.8, 1.5)} ${loungeTvGlassCqw(0.6, 1.2, 2.5)}`,
-            background: 'rgba(0,0,0,0.78)',
-            color: LOUNGE_TV_BRAND_RED,
-            border: `1px solid ${LOUNGE_TV_BRAND_RED}`,
-            textTransform: 'uppercase',
+            position: 'absolute',
+            inset: 0,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 3,
+            pointerEvents: 'none',
+            padding: loungeTvGlassCqw(1, 2.5, 5),
           }}
         >
-          {formatBadge}
+          <span style={lockedOverlayTextStyle}>{lockedOverlayLabel}</span>
         </span>
-        {pack.isPremium ? (
-          <span
-            style={{
-              fontFamily: LOUNGE_TV_FONT_MEDIUM,
-              fontSize: loungeTvGlassCqw(1.2, 2.8, 5.5),
-              padding: `${loungeTvGlassCqw(0.35, 0.8, 1.5)} ${loungeTvGlassCqw(0.6, 1.2, 2.5)}`,
-              background: 'rgba(235,28,36,0.9)',
-              color: LOUNGE_TV_TEXT_WHITE,
-              textTransform: 'uppercase',
-            }}
-          >
-            PREMIUM
-          </span>
-        ) : null}
-      </span>
+      ) : null}
 
       {onToggleSave ? (
         <span
@@ -223,15 +207,19 @@ export function LoungeTvContentPackCard({
           ) : (
             <span />
           )}
-          <span
-            style={{
-              fontFamily: LOUNGE_TV_FONT_MEDIUM,
-              fontSize: loungeTvGlassCqw(1.2, 2.8, 5.5),
-              color: pack.isFreePreview ? LOUNGE_TV_BRAND_RED : badgeCost > 0 ? LOUNGE_TV_TEXT_WHITE : LOUNGE_TV_BRAND_RED,
-            }}
-          >
-            {pack.isFreePreview ? 'FREE PREVIEW' : loungeTvTicketCostLabel(badgeCost)}
-          </span>
+          {pack.isFreePreview ? (
+            <span
+              style={{
+                fontFamily: LOUNGE_TV_FONT_MEDIUM,
+                fontSize: loungeTvGlassCqw(1.2, 2.8, 5.5),
+                color: LOUNGE_TV_TEXT_GRAY,
+              }}
+            >
+              FREE PREVIEW
+            </span>
+          ) : (
+            <span />
+          )}
         </span>
       </span>
     </button>

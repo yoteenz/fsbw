@@ -1,12 +1,8 @@
 import type { LoungeTvVideoTile } from './loungeTvContent';
 import { loungeTvTileShowsAsNew } from '../../utils/loungeTvViewedTiles';
-import { LOUNGE_TV_TICKET_LOCK_WATERMARK_SRC } from '../../constants/slayTicketAssets';
-import { loungeTvBlogThumbLockWatermarkStyle } from './LoungeTvTileTicketChrome';
 import {
-  loungeTvTileActionLabel,
-  loungeTvTicketCostLabel,
+  loungeTvLockedThumbnailOverlayLabel,
   loungeTvTileShowsTicketLock,
-  resolveLoungeTvBadgeCost,
 } from './loungeTvTicketAccess';
 import type { LoungeContentUnlock } from '../../utils/slayTicketHistoryDisplay';
 
@@ -36,7 +32,6 @@ type LoungeTvBlogPostListProps = {
 /** Slay Tips index — vertical blog cards (not the Watch + Learn video grid). */
 export function LoungeTvBlogPostList({ tiles, onSelect, isUnlocked, unlocks }: LoungeTvBlogPostListProps) {
   const unlockedFn = isUnlocked ?? (() => false);
-  const unlocksOrFn = unlocks ?? unlockedFn;
   return (
     <div
       style={{
@@ -49,9 +44,8 @@ export function LoungeTvBlogPostList({ tiles, onSelect, isUnlocked, unlocks }: L
       {tiles.map((tile) => {
         const showNew = loungeTvTileShowsAsNew(tile);
         const body = blogBodyText(tile);
-        const cost = resolveLoungeTvBadgeCost(tile, unlocks);
-        const action = loungeTvTileActionLabel(tile, unlocksOrFn);
         const ticketLocked = loungeTvTileShowsTicketLock(tile, unlocks, unlockedFn);
+        const lockedLabel = loungeTvLockedThumbnailOverlayLabel(tile, unlocks, unlockedFn);
         return (
           <button
             key={tile.id}
@@ -85,18 +79,10 @@ export function LoungeTvBlogPostList({ tiles, onSelect, isUnlocked, unlocks }: L
                     height: '44px',
                     objectFit: 'cover',
                     display: 'block',
-                    filter: showNew ? 'blur(3px)' : 'none',
+                    filter: ticketLocked ? 'blur(3px)' : 'none',
+                    transform: ticketLocked ? 'scale(1.06)' : 'none',
                   }}
                 />
-                {ticketLocked ? (
-                  <img
-                    src={LOUNGE_TV_TICKET_LOCK_WATERMARK_SRC}
-                    alt=""
-                    aria-hidden
-                    draggable={false}
-                    style={loungeTvBlogThumbLockWatermarkStyle}
-                  />
-                ) : null}
               </span>
             ) : (
               <span
@@ -138,26 +124,21 @@ export function LoungeTvBlogPostList({ tiles, onSelect, isUnlocked, unlocks }: L
                   style={{
                     fontFamily: BODY_FONT,
                     fontSize: '7px',
-                    color: cost > 0 ? '#ffffff' : BRAND_RED,
+                    color: '#808080',
                     textTransform: 'uppercase',
                     flexShrink: 0,
+                    textAlign: 'right',
+                    maxWidth: '42%',
+                    lineHeight: 1.3,
                   }}
                 >
-                  {loungeTvTicketCostLabel(cost)}
+                  {ticketLocked && lockedLabel
+                    ? lockedLabel
+                    : tile.isFreePreview
+                      ? 'FREE PREVIEW'
+                      : ''}
                 </span>
               </span>
-              {tile.isFreePreview ? (
-                <span
-                  style={{
-                    fontFamily: BODY_FONT,
-                    fontSize: '7px',
-                    color: BRAND_RED,
-                    textTransform: 'uppercase',
-                  }}
-                >
-                  FREE PREVIEW
-                </span>
-              ) : null}
               {body ? (
                 <span
                   style={{
@@ -171,16 +152,6 @@ export function LoungeTvBlogPostList({ tiles, onSelect, isUnlocked, unlocks }: L
                   {excerpt(body)}
                 </span>
               ) : null}
-              <span
-                style={{
-                  fontFamily: BODY_FONT,
-                  fontSize: '7px',
-                  color: action === 'WATCH' ? BRAND_RED : '#ffffff',
-                  textTransform: 'uppercase',
-                }}
-              >
-                {action}
-              </span>
             </span>
           </button>
         );

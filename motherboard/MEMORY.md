@@ -50302,3 +50302,11 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Changes:** `src/pages/booking/appointment/page.tsx` (`INSTALL_BASE`); server quote `api/_lib/pricing/resolveQuote.ts` (`INSTALL_USD`); `api/booking/appointment-meeting.ts` default install fee metadata; `src/pages/checkout/page.tsx` order install fee snapshot; `src/utils/adminMeetingClientPanels.tsx` admin install fee display helpers.
 - **Conventions:** Keep `INSTALL_BASE` (client) and `INSTALL_USD` (server) in sync when install base prices change.
 
+---
+
+## 2026-07-22 — Lounge TV: Netflix-style locked thumbs (no locks/red badges)
+
+- **Context:** Founder wanted Lounge TV tiles less busy and more premium (Netflix-like): remove acrylic lock watermarks and red corner badges (BOTH/PREVIEW/UNLOCK chips); locked content should use the same blurred thumb treatment as unwatched tiles, with clear copy for Slay Ticket cost to watch or rewatch; unlocked library content shows crisp thumbnails.
+- **Decisions / outcomes:** Ticket-gated tiles blur + slight scale when not accessible; centered uppercase overlay e.g. `1 SLAY TICKET TO WATCH` / `1 SLAY TICKET TO REWATCH` via **`loungeTvLockedThumbnailOverlayLabel`**. Unlocked or free-preview tiles stay unblurred. Removed **`LoungeTvTileTicketChrome`** (lock + corner badge stack) and format/PREMIUM red pills on **`LoungeTvContentPackCard`**. Slay Tips list drops lock art; locked rows show ticket copy in gray text with blurred 44px thumb.
+- **Changes:** `loungeTvTicketAccess.ts`, `LoungeTvContentPackCard.tsx`, `LoungeTvBlogPostView.tsx`; deleted `LoungeTvTileTicketChrome.tsx`. Build verified.
+

@@ -112,6 +112,21 @@ export function loungeTvTileShowsTicketLock(
   return !loungeTvContentIsAccessible(tile, unlocks ?? isUnlocked ?? (() => false));
 }
 
+/** Centered thumb copy for ticket-gated content (no lock icon). */
+export function loungeTvLockedThumbnailOverlayLabel(
+  tile: LoungeTvVideoTile,
+  unlocks: LoungeContentUnlock[] | undefined,
+  isUnlocked?: (contentId: string) => boolean
+): string | null {
+  if (!loungeTvTileShowsTicketLock(tile, unlocks, isUnlocked)) return null;
+  const cost = resolveLoungeTvUnlockCost(tile, unlocks);
+  const ticketPhrase =
+    cost === 1 ? '1 SLAY TICKET' : cost > 1 ? `${cost} SLAY TICKETS` : 'SLAY TICKET';
+  const action = loungeTvTileActionLabel(tile, unlocks ?? isUnlocked ?? (() => false));
+  if (action === 'REWATCH') return `${ticketPhrase} TO REWATCH`;
+  return `${ticketPhrase} TO WATCH`;
+}
+
 export function loungeTvLibraryExpiresAtIso(): string {
   return new Date(Date.now() + LOUNGE_TV_LIBRARY_ACCESS_MS).toISOString();
 }
