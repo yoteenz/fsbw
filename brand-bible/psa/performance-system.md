@@ -371,15 +371,15 @@ Each child document **answers specific questions** and **depends** on this syste
 | **Cross-references** | psaInstructions.ts (implementation) |
 | **Ownership** | Narrative / CX Writing |
 
-### [`acting.md`](./acting.md) — **PLANNED**
+### [`acting.md`](./acting.md) — **SHIPPED v1.0**
 
 | Field | Detail |
 | --- | --- |
-| **Purpose** | Performance direction for **live action and VO**: intention, beats, blocking subordinate to guide role |
-| **Questions it answers** | *What is PSA’s objective in the scene? What is the beat before the line?* |
-| **Relationship** | Orchestrates face, body, voice for film/TV |
-| **Dependencies** | performance-system, personality, voice, dialogue |
-| **Shared terminology** | Guide beat, protagonist frame |
+| **Purpose** | On-screen **performance direction**: timing, presence, gaze, breath, body beats for film/TV/animation/video |
+| **Questions it answers** | *How does PSA land a beat physically? What timing and restraint?* |
+| **Relationship** | Orchestrates performance of dialogue + voice; uses identity expression slugs |
+| **Dependencies** | performance-system, personality, dialogue, voice, identity |
+| **Shared terminology** | Restraint, guide beat, micro-expression, slug |
 | **Ownership** | Performance Direction / Showrunner |
 
 ### [`body-language.md`](./body-language.md) — **PLANNED**

@@ -50492,3 +50492,12 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Topics covered (full chat arc):** Full PSA stack including performance-system parent; this dialogue bible as L2 speech content child.
 - **Deliverable:** **`dialogue.md`** v1.0 — dialogue philosophy; hospitality/education/concierge frameworks; conversation types (product, BAW, membership, analysis, support, difficult, celebration, TV/commercial/tutorial/social/email/push/in-app/AI); structural pattern library (intro, transition, explain, confirm, redirect, uncertainty, close, explore); greeting/closing/follow-up/recommendation/instruction/celebration/reassurance/hospitality/educational standards; prefer/avoid words, brand vocabulary, forbidden styles; cross-media adaptation; 15-point QA; future expansion. Aligned with **`psaInstructions.ts`**. Updated **`performance-system.md`** child registry to SHIPPED; cross-links in personality, voice, identity, design-principles.
 - **Changes:** `brand-bible/psa/dialogue.md` (new), `brand-bible/psa/performance-system.md`, `brand-bible/psa/personality.md`, `brand-bible/psa/voice.md`, `brand-bible/psa/identity.md`, `brand-bible/psa/design-principles.md`, `motherboard/MEMORY.md`. Docs only.
+
+---
+
+## 2026-07-22 — PSA Acting Bible v1.0 (brand-bible)
+
+- **Context:** Founder requested permanent **on-screen performance direction** at **`brand-bible/psa/acting.md`** — HOW PSA performs (not personality, dialogue, voice, scripts, lore, or casual acting tips).
+- **Topics covered (full chat arc):** Performance stack (performance-system, personality, voice, dialogue); this acting bible as L2 body/orchestration doc.
+- **Deliverable:** **`acting.md`** v1.0 — performance philosophy, luxury restraint, presence/scene awareness, hospitality/education/listening/teaching/demo/consult beats, eye/facial/reaction/conversational timing, pause/silence/breath, enter/exit, stand/sit/walk, channel directions (commercial, TV Lounge, founder, AI), performance playbooks, **micro-expression library** (12 states with timing/face/eyes/head/breath/restraint + identity slug maps), prohibited styles, cross-media, continuity, QA. **`performance-system.md`** registry → SHIPPED; cross-links in identity, design-principles.
+- **Changes:** `brand-bible/psa/acting.md` (new), `brand-bible/psa/performance-system.md`, `brand-bible/psa/identity.md`, `brand-bible/psa/design-principles.md`, `motherboard/MEMORY.md`. Docs only.
