@@ -77,3 +77,48 @@ export function loungeTvCardMetaLines(
 
   return lines;
 }
+
+/** Two-line caption under row thumbnails — detail line + badges. */
+export function loungeTvCardCaptionLines(
+  pack: LoungeContentPack,
+  tile: LoungeTvVideoTile,
+  unlocks: LoungeContentUnlock[] | undefined,
+  isUnlocked: (contentId: string) => boolean
+): LoungeTvCardMetaLine[] {
+  const accessible = loungeTvContentIsAccessible(tile, unlocks ?? isUnlocked);
+  const ticketCost = resolveLoungeTvTicketCost(tile);
+  const flags = resolveContentStatusFlags(pack, tile, unlocks, isUnlocked);
+
+  const detailParts: string[] = [];
+  const seriesLabel = pack.originalSeries ?? pack.series;
+  if (seriesLabel) detailParts.push(seriesLabel);
+  const ep = episodeLabel(pack);
+  if (ep) detailParts.push(ep);
+  if (pack.season != null) {
+    detailParts.push(typeof pack.season === 'number' ? `S${pack.season}` : String(pack.season));
+  }
+  const runtime = contentPackRuntimeOrRead(pack);
+  if (runtime) detailParts.push(runtime);
+
+  const badges: string[] = [];
+  if (pack.isFreePreview || flags.includes('free-preview')) badges.push('FREE PREVIEW');
+  else if (ticketCost > 0 && !accessible) badges.push(loungeTvTicketCostLabel(ticketCost));
+  else if (pack.membershipRequired || pack.isPremium || flags.includes('members-only')) {
+    badges.push('MEMBERS ONLY');
+  }
+  const statusBadges = statusFlagsToBadgeLabels(
+    flags.filter((f) => f !== 'free-preview' && f !== 'members-only' && f !== 'continue-watching')
+  );
+  badges.push(...statusBadges);
+
+  const out: LoungeTvCardMetaLine[] = [];
+  if (detailParts.length) out.push({ text: detailParts.join(' · ') });
+  const uniqueBadges = [...new Set(badges)];
+  if (uniqueBadges.length) {
+    out.push({
+      text: uniqueBadges.slice(0, 4).join(' · '),
+      accent: uniqueBadges.some((b) => b === 'NEW' || b === 'PREMIERE'),
+    });
+  }
+  return out;
+}

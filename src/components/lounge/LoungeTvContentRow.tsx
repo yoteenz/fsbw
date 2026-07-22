@@ -54,6 +54,7 @@ export function LoungeTvContentRow({
         style={{
           display: 'flex',
           flexDirection: 'row',
+          alignItems: 'flex-start',
           gap: loungeTvGlassCqw(1.2, 3, 6),
           overflowX: 'auto',
           overflowY: 'hidden',

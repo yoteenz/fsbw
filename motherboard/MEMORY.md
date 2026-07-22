@@ -50369,3 +50369,11 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Topics covered (conversation):** Prior Phase 2 + tile/session/tab fixes; this pass adds frontend architecture for hundreds of titles via metadata.
 - **Decisions / outcomes:** **`LoungeContentPack.streaming`** + **`loungeTvStreamingTypes.ts`** (access methods, lifecycle, trailers, episode experience placeholders, product integration, analytics seed, future achievements). **PSA Academy S1** in **`loungeTvStreamSeriesData.ts`** (6 episodes). **Collections** catalog; **personalized rail** resolvers (reuse rows when wired). **Artwork** resolver per role; **status** resolver for NEW/TRENDING/COMPLETED/etc. **Watch progress** extended (`percent`, `durationSec`, `completedAt`, resume in **`LoungeTvWatchLearnPlayer`**). **Cards:** metadata lines + subtle progress bar, premiere ribbon, poster fade, gentle focus scale. **PSA** contextual intro messages (non-repetitive pools, skippable, no audio).
 - **Changes:** New lounge streaming modules listed in CORE; updates to `loungeTvContentPack.ts`, `loungeTvLibrary.ts`, `loungeTvCardMetadata.ts`, `LoungeTvContentPackCard.tsx`, `LoungeTvFeaturedHome.tsx`, `LoungeTvWatchLearnPlayer.tsx`, `motherboard/CORE.md`. Build OK. **Spatial Architecture Review:** SKIPPED — metadata/architecture sprint.
+
+---
+
+## 2026-07-22 — Lounge TV row cards: caption below thumbnail
+
+- **Context:** Founder screenshot — row tile metadata stacked on posters looked cluttered; artwork was blocked.
+- **Fix:** **`LoungeTvContentPackCard`** row variant = clean poster on top (lock/save/progress/*NEW* chip only on image); **title + compact caption** (`loungeTvCardCaptionLines`) below. Hero unchanged layout intent (wide poster + title under). Row flex **`alignItems: flex-start`** in **`LoungeTvContentRow`**. Removed gradient text overlay on thumbs.
+- **Changes:** `LoungeTvContentPackCard.tsx`, `loungeTvCardMetadata.ts`, `LoungeTvContentRow.tsx`. Build OK.
