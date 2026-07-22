@@ -50401,3 +50401,11 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Context:** Founder requested permanent **brand-wide visual language** handbook (not prompts, mood board, or marketing) at **`brand-bible/visual-language/visual-language.md`**.
 - **Deliverable:** v1.0 — core philosophy, atmosphere, architecture, material hierarchy, lighting/color/texture, composition, motion, environmental storytelling (lobby, TV Lounge, atelier, etc.), cinematic + graphic language, luxury standards, decision checklist, future expansion; links to BRAND_RULES, PSA bibles.
 - **Changes:** `brand-bible/visual-language/visual-language.md` (new). Docs only.
+
+---
+
+## 2026-07-22 — Frontal Slayer Storytelling Philosophy v1.0 (brand-bible)
+
+- **Context:** Founder requested permanent **storytelling philosophy** (not campaigns, prompts, or marketing) at **`brand-bible/storytelling/storytelling-philosophy.md`** — narrative foundation for all content.
+- **Deliverable:** v1.0 — experiences not ads, narrative principles, customer-as-protagonist, PSA-as-guide, mansion-as-character, episodic continuity, edutainment, emotional journey, campaign-as-chapter, dialogue/cinematic beats, continuity + immersion standards, decision checklist, future expansion; links Visual Language + PSA bibles + BRAND_RULES.
+- **Changes:** `brand-bible/storytelling/storytelling-philosophy.md` (new). Docs only.
