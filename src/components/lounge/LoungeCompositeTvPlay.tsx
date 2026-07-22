@@ -25,6 +25,10 @@ import {
   LOUNGE_TV_PRESS_PLAY_LABEL_STYLE,
 } from '../../constants/loungeTvPressPlay';
 import { LoungeTvOverlay } from './LoungeTvOverlay';
+import {
+  readLoungeTvSessionOpen,
+  writeLoungeTvSessionOpen,
+} from '../../utils/loungeTvOpenSession';
 
 type Props = {
   /** {@link SceneCarouselViewportStage} root — `100dvh` cover box on `final-lounge.png`. */
@@ -38,8 +42,10 @@ type Props = {
  */
 export function LoungeCompositeTvPlay({ measureRef }: Props) {
   const tvAnchorRef = useRef<HTMLDivElement>(null);
-  const [tvOpen, setTvOpen] = useState(false);
+  const [tvOpen, setTvOpen] = useState(() => readLoungeTvSessionOpen());
   const [tvOriginRect, setTvOriginRect] = useState<DOMRect | null>(null);
+  /** True only on first mount when TV was already open before refresh — skip Seedance open. */
+  const resumeSessionOpen = useState(() => readLoungeTvSessionOpen())[0];
 
   const hitDebug = useSceneHitDebugEnabled();
   const hitEdit = useSceneHitEditEnabled();
@@ -68,12 +74,24 @@ export function LoungeCompositeTvPlay({ measureRef }: Props) {
     } else {
       setTvOriginRect(anchor?.getBoundingClientRect() ?? null);
     }
+    writeLoungeTvSessionOpen(true);
     setTvOpen(true);
   }, [measureRef]);
 
   const closeLoungeTv = useCallback(() => {
+    writeLoungeTvSessionOpen(false);
     setTvOpen(false);
   }, []);
+
+  /** After refresh with TV still open, map grow origin once the lounge stage is measured. */
+  useEffect(() => {
+    if (!tvOpen || tvOriginRect) return;
+    const anchor = tvAnchorRef.current;
+    const stage = measureRef.current;
+    if (!anchor || !stage) return;
+    const r = domRectRelativeToContainer(anchor.getBoundingClientRect(), stage);
+    setTvOriginRect(new DOMRect(r.left, r.top, r.width, r.height));
+  }, [tvOpen, tvOriginRect, measureRef]);
 
   useEffect(() => {
     if (!LOUNGE_TV_ANIMATION_VIDEO_ENABLED) return;
@@ -228,6 +246,7 @@ export function LoungeCompositeTvPlay({ measureRef }: Props) {
           originRect={tvOriginRect}
           onClose={closeLoungeTv}
           viewportMeasureRef={measureRef}
+          resumeSessionOpen={resumeSessionOpen}
         />
       </SceneViewportOverlay>
     </>

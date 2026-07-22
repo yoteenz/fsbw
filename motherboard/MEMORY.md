@@ -50310,3 +50310,11 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Decisions / outcomes:** Ticket-gated tiles blur + slight scale when not accessible; centered uppercase overlay e.g. `1 SLAY TICKET TO WATCH` / `1 SLAY TICKET TO REWATCH` via **`loungeTvLockedThumbnailOverlayLabel`**. Unlocked or free-preview tiles stay unblurred. Removed **`LoungeTvTileTicketChrome`** (lock + corner badge stack) and format/PREMIUM red pills on **`LoungeTvContentPackCard`**. Slay Tips list drops lock art; locked rows show ticket copy in gray text with blurred 44px thumb.
 - **Changes:** `loungeTvTicketAccess.ts`, `LoungeTvContentPackCard.tsx`, `LoungeTvBlogPostView.tsx`; deleted `LoungeTvTileTicketChrome.tsx`. Build verified.
 
+---
+
+## 2026-07-22 — Lounge TV: persist open on refresh; close via X only
+
+- **Context:** (Same chat as Netflix-style tiles.) Founder wanted Lounge TV to **stay open after browser refresh** on the lounge; dismiss **only** via the top-right **X**, not backdrop tap or Escape.
+- **Decisions / outcomes:** **`sessionStorage`** flag **`loungeTvSessionOpen`** (`loungeTvOpenSession.ts`) set on play open, cleared on X close. **`LoungeCompositeTvPlay`** initializes `tvOpen` from session; **`LoungeTvOverlay`** **`resumeSessionOpen`** skips Seedance open animation after refresh and lands on menu ready state. Full-screen dimmer is non-interactive (`pointerEvents: none`); **Escape** listener removed.
+- **Changes:** `loungeTvOpenSession.ts`, `LoungeCompositeTvPlay.tsx`, `LoungeTvOverlay.tsx`. Build verified.
+

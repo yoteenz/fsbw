@@ -55,6 +55,8 @@ type LoungeTvOverlayProps = {
   onClose: () => void;
   /** {@link SceneCarouselViewportStage} on the lounge slide (scene-locked overlay). */
   viewportMeasureRef: RefObject<HTMLElement | null>;
+  /** After refresh while TV was open — show menu without replaying open animation. */
+  resumeSessionOpen?: boolean;
 };
 
 function curtainPanelStyle(side: 'left' | 'right', closed: boolean): React.CSSProperties {
@@ -134,6 +136,7 @@ export function LoungeTvOverlay({
   originRect,
   onClose,
   viewportMeasureRef,
+  resumeSessionOpen = false,
 }: LoungeTvOverlayProps) {
   const [visible, setVisible] = useState(false);
   const [animatedIn, setAnimatedIn] = useState(false);
@@ -149,6 +152,18 @@ export function LoungeTvOverlay({
   const [mainTab, setMainTab] = useState<LoungeTvMainTab>('featured');
   const [sidebarId, setSidebarId] = useState('lace-mastery');
   const [seedancePhase, setSeedancePhase] = useState<SeedanceTvPhase>('idle');
+  const consumedSessionResumeRef = useRef(false);
+
+  const applyOpenReadyState = useCallback(() => {
+    setSeedancePhase('ready');
+    setAnimatedIn(true);
+    setShowContent(true);
+    setCurtainsReady(true);
+    setTvGrowDone(true);
+    setHandRevealDone(true);
+    setRemoteHandReady(true);
+    setShowStatic(false);
+  }, []);
 
   useEffect(() => {
     setLoungeTvTheaterMode(isOpen || visible);
@@ -216,10 +231,19 @@ export function LoungeTvOverlay({
   useLayoutEffect(() => {
     if (!isOpen) return;
     setVisible(true);
+    if (
+      resumeSessionOpen &&
+      !consumedSessionResumeRef.current &&
+      !isClosingRef.current
+    ) {
+      consumedSessionResumeRef.current = true;
+      applyOpenReadyState();
+      return;
+    }
     if (useSeedanceClip) {
       setSeedancePhase((phase) => (phase === 'idle' ? 'opening' : phase));
     }
-  }, [isOpen, useSeedanceClip]);
+  }, [isOpen, useSeedanceClip, resumeSessionOpen, applyOpenReadyState]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -247,14 +271,8 @@ export function LoungeTvOverlay({
   }, []);
 
   const handleOpenVideoComplete = useCallback(() => {
-    setSeedancePhase('ready');
-    setAnimatedIn(true);
-    setShowContent(true);
-    setCurtainsReady(true);
-    setTvGrowDone(true);
-    setHandRevealDone(true);
-    setRemoteHandReady(true);
-  }, []);
+    applyOpenReadyState();
+  }, [applyOpenReadyState]);
 
   const handleCloseVideoComplete = useCallback(() => {
     isClosingRef.current = false;
@@ -349,15 +367,6 @@ export function LoungeTvOverlay({
     setRemoteHandReady(true);
   }, []);
 
-  useEffect(() => {
-    if (!visible) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') requestClose();
-    };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [visible, requestClose]);
-
   const handleMainTab = useCallback((tab: LoungeTvMainTab) => {
     setMainTab(tab);
     setSidebarId(LOUNGE_TV_SIDEBAR[tab][0]?.id ?? '');
@@ -439,10 +448,9 @@ export function LoungeTvOverlay({
           }
         />
       ) : null}
-      <button
-        type="button"
-        aria-label="Close lounge TV"
-        onClick={requestClose}
+      <div
+        role="presentation"
+        aria-hidden
         style={{
           position: 'absolute',
           inset: 0,
@@ -450,6 +458,7 @@ export function LoungeTvOverlay({
           border: 'none',
           padding: 0,
           margin: 0,
+          pointerEvents: 'none',
           background:
             useFullscreenShell
               ? seedanceOpening || seedanceClosing
@@ -470,14 +479,6 @@ export function LoungeTvOverlay({
               : frameExpanded && closePhase === 'idle' && seedancePhase === 'ready'
                 ? 'blur(10px)'
                 : 'none',
-          cursor:
-            closePhase === 'idle' && isOpen && !seedanceOpening && !seedanceClosing
-              ? 'pointer'
-              : 'default',
-          pointerEvents:
-            closePhase === 'idle' && isOpen && !seedanceOpening && !seedanceClosing
-              ? 'auto'
-              : 'none',
           transition: useFullscreenShell ? 'none' : `background ${ANIM_MS}ms ease`,
         }}
       />
