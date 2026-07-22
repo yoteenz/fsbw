@@ -543,6 +543,15 @@ Each entry: **ID** for tracking. **Priority:** P0 (blocking production), P1 (hig
 | **Priority** | P0 |
 | **Phase** | 2 (done) |
 
+#### DOC-STY-001D — `storytelling/episode-development-bible.md` ✅ **SHIPPED v1.0**
+
+| Field | Detail |
+| --- | --- |
+| **Purpose** | Episode development OS — lifecycle, structure, story/character/env/product/emotion/education, platform, AI EDP, QA, mistakes, best practices |
+| **Dependencies** | storytelling-philosophy, cinematic-universe-bible, story-department-overview, PSA/character QA refs |
+| **Priority** | P0 |
+| **Phase** | 2 (done) |
+
 #### DOC-STY-002 — `storytelling/campaign-framework.md`
 
 | Field | Detail |

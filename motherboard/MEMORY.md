@@ -50609,3 +50609,12 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Deliverable:** **`brand-bible/storytelling/cinematic-universe-bible.md`** v1.0 — purpose; canon definition; the world (atmosphere, tone, tech sophistication, realism band); core characters (PSA, customer, founder, future cast — **refs Character Dept**); protagonist + PSA guide roles; time/simultaneous campaigns/chronology/standalone; location **purpose** taxonomy; technology in-universe; product integration; tone; visual identity refs; continuity rules; expansion rules; **Universe Manifesto**.
 - **Cross-links:** storytelling-philosophy, story-department-overview, MASTER_ROADMAP DOC-STY-001C SHIPPED.
 - **Changes:** `brand-bible/storytelling/cinematic-universe-bible.md` (new), `brand-bible/storytelling/storytelling-philosophy.md`, `brand-bible/storytelling/story-department-overview.md`, `brand-bible/MASTER_ROADMAP.md`, `motherboard/MEMORY.md`. Docs only.
+
+---
+
+## 2026-07-22 — Episode Development Bible v1.0 (brand-bible)
+
+- **Context:** Founder requested permanent **episode development system** — HOW to build every FS episode (not an episode, screenplay, or storyboard); blueprint for writers, CD, AI film, marketing, producers.
+- **Deliverable:** **`brand-bible/storytelling/episode-development-bible.md`** v1.0 — purpose; stacked objectives (education, entertainment, luxury, trust, emotion, discovery, community, conversion, retention); full lifecycle (idea→publish); recommended beat structure (hook through invitation); story engines (conflict/curiosity/discovery/reward/transformation/satisfaction); character usage refs PSA/customer/founder/supporting; environment selection by purpose; product integration; emotional + educational design; luxury standards; platform adaptation; **AI Production Readiness / EDP** package; extensive episode review checklist; common mistakes; best practices.
+- **Cross-links:** storytelling-philosophy, story-department-overview, cinematic-universe-bible, MASTER_ROADMAP DOC-STY-001D SHIPPED.
+- **Changes:** `brand-bible/storytelling/episode-development-bible.md` (new), `brand-bible/storytelling/storytelling-philosophy.md`, `brand-bible/storytelling/story-department-overview.md`, `brand-bible/storytelling/cinematic-universe-bible.md`, `brand-bible/MASTER_ROADMAP.md`, `motherboard/MEMORY.md`. Docs only.
