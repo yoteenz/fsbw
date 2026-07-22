@@ -17,6 +17,7 @@ import {
   packsForFeaturedRail,
   resolveFeaturedPremiereHero,
 } from './loungeTvStreamingCatalog';
+import { resolvePsaHostContext, resolvePsaHostMessage } from './loungeTvPsaHostMessages';
 import { LoungeTvPsaHeroIntro } from './LoungeTvPsaHeroIntro';
 import { readLoungeTvPsaIntroDismissed } from '../../utils/loungeTvPsaIntroSession';
 
@@ -41,6 +42,11 @@ export function LoungeTvFeaturedHome({
     ? `FEATURED PREMIERE · ${featuredPremiereLabel(hero.featuredPremiere)}`
     : 'FEATURED PREMIERE';
 
+  const psaContext = resolvePsaHostContext(hero);
+  const introMessage = hero
+    ? resolvePsaHostMessage(psaContext, hero, buildPsaFeaturedIntro(hero))
+    : '';
+
   return (
     <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: loungeTvGlassCqw(1.5, 4, 8) }}>
       {hero ? (
@@ -48,7 +54,7 @@ export function LoungeTvFeaturedHome({
           {showIntro ? (
             <LoungeTvPsaHeroIntro
               premiereLabel={premiereLabel}
-              message={buildPsaFeaturedIntro(hero)}
+              message={introMessage}
               onSkip={() => setIntroDismissed(true)}
             />
           ) : (

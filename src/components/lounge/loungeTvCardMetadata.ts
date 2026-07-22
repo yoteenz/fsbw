@@ -2,13 +2,13 @@ import type { LoungeContentPack } from './loungeTvContentPack';
 import { contentPackRuntimeOrRead } from './loungeTvContentPack';
 import type { LoungeTvVideoTile } from './loungeTvContent';
 import {
-  loungeTvContentIsAccessible,
   loungeTvTicketCostLabel,
   resolveLoungeTvTicketCost,
+  loungeTvContentIsAccessible,
 } from './loungeTvTicketAccess';
 import type { LoungeContentUnlock } from '../../utils/slayTicketHistoryDisplay';
-import { getCompletedPackIds } from '../../utils/loungeTvLibrary';
-import { loungeTvTileShowsAsNew } from '../../utils/loungeTvViewedTiles';
+import { resolveContentStatusFlags, statusFlagsToBadgeLabels } from './loungeTvContentStatus';
+import { episodeRefForPack } from './loungeTvStreamSeries';
 
 export type LoungeTvCardMetaLine = {
   text: string;
@@ -16,10 +16,12 @@ export type LoungeTvCardMetaLine = {
 };
 
 function episodeLabel(pack: LoungeContentPack): string | null {
-  if (pack.episode == null) return null;
-  const title = pack.episodeTitle?.trim();
-  if (title) return `EP ${pack.episode} · ${title}`;
-  return `EP ${pack.episode}`;
+  const ref = episodeRefForPack(pack);
+  const num = pack.episode ?? ref?.episodeNumber;
+  if (num == null) return null;
+  const title = (pack.episodeTitle ?? ref?.episodeTitle)?.trim();
+  if (title) return `EP ${num} · ${title}`;
+  return `EP ${num}`;
 }
 
 /** Metadata-only lines for existing card chrome (no layout redesign). */
@@ -30,13 +32,12 @@ export function loungeTvCardMetaLines(
   isUnlocked: (contentId: string) => boolean
 ): LoungeTvCardMetaLine[] {
   const lines: LoungeTvCardMetaLine[] = [];
-  const completed = getCompletedPackIds().includes(pack.id);
   const accessible = loungeTvContentIsAccessible(tile, unlocks ?? isUnlocked);
   const ticketCost = resolveLoungeTvTicketCost(tile);
+  const flags = resolveContentStatusFlags(pack, tile, unlocks, isUnlocked);
 
-  if (pack.originalSeries || pack.series) {
-    lines.push({ text: (pack.originalSeries ?? pack.series)! });
-  }
+  const seriesLabel = pack.originalSeries ?? pack.series ?? pack.programSeries?.toUpperCase();
+  if (seriesLabel) lines.push({ text: seriesLabel });
 
   const ep = episodeLabel(pack);
   if (ep) lines.push({ text: ep });
@@ -45,43 +46,34 @@ export function loungeTvCardMetaLines(
     lines.push({ text: typeof pack.season === 'number' ? `SEASON ${pack.season}` : String(pack.season) });
   }
 
-  if (pack.difficulty) {
-    lines.push({ text: pack.difficulty });
-  }
+  if (pack.host) lines.push({ text: `HOST · ${pack.host}` });
+
+  if (pack.difficulty) lines.push({ text: pack.difficulty });
 
   const runtime = contentPackRuntimeOrRead(pack);
   if (runtime) lines.push({ text: runtime });
 
   const badges: string[] = [];
-  if (pack.isFreePreview) badges.push('FREE PREVIEW');
-  else if (ticketCost > 0 && !accessible) {
-    badges.push(loungeTvTicketCostLabel(ticketCost));
-  } else if (pack.membershipRequired || pack.isPremium) {
+  if (pack.isFreePreview || flags.includes('free-preview')) badges.push('FREE PREVIEW');
+  else if (ticketCost > 0 && !accessible) badges.push(loungeTvTicketCostLabel(ticketCost));
+  else if (pack.membershipRequired || pack.isPremium || flags.includes('members-only')) {
     badges.push('MEMBERS ONLY');
   }
 
-  if (loungeTvTileShowsAsNew(tile) || pack.isNew) badges.push('NEW');
-  if (pack.isTrending) badges.push('TRENDING');
-  if (pack.justAdded) badges.push('JUST ADDED');
-  if (pack.isRecommended) badges.push('PSA RECOMMENDS');
-  if (completed) badges.push('COMPLETED');
-  else if (accessible && getWatchProgressHint(pack.id)) badges.push('WATCHED');
+  const statusBadges = statusFlagsToBadgeLabels(
+    flags.filter(
+      (f) =>
+        f !== 'free-preview' &&
+        f !== 'members-only' &&
+        f !== 'continue-watching'
+    )
+  );
+  badges.push(...statusBadges);
 
-  if (badges.length) {
-    lines.push({ text: badges.join(' · '), accent: badges.includes('NEW') });
+  const unique = [...new Set(badges)];
+  if (unique.length) {
+    lines.push({ text: unique.join(' · '), accent: unique.some((b) => b === 'NEW' || b === 'PREMIERE') });
   }
 
   return lines;
-}
-
-function getWatchProgressHint(packId: string): boolean {
-  try {
-    const raw = localStorage.getItem('loungeTvWatchProgress');
-    if (!raw) return false;
-    const map = JSON.parse(raw) as Record<string, { positionSec?: number }>;
-    const row = map[packId];
-    return Boolean(row && (row.positionSec ?? 0) > 0);
-  } catch {
-    return false;
-  }
 }

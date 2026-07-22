@@ -4,6 +4,9 @@ import {
   LOUNGE_TV_PLUCKING_LACE_TILE_ID,
 } from './loungeTvAssets';
 
+import type { LoungeContentStreamingMeta } from './loungeTvStreamingTypes';
+import { hydrateAllContentPacks } from './loungeTvStreamingMeta';
+
 export type ContentPackFormat = 'watch' | 'read' | 'both';
 
 export type FeaturedPremiereKind =
@@ -89,6 +92,8 @@ export type LoungeContentPack = {
   learningPathOrder?: number;
   /** Explore section id (explore tab sidebar). */
   exploreSectionId?: string;
+  /** Streaming platform metadata (series, artwork, lifecycle, future pages). */
+  streaming?: LoungeContentStreamingMeta;
 };
 
 export type ContentPackFormatBadge = 'WATCH' | 'READ' | 'BOTH';
@@ -128,7 +133,7 @@ const LACE_ARTICLE_BASE = {
   ],
 };
 
-export const LOUNGE_TV_CONTENT_PACKS: LoungeContentPack[] = [
+const LOUNGE_TV_CONTENT_PACKS_RAW: LoungeContentPack[] = [
   {
     id: 'cutting-lace',
     title: 'CUTTING YOUR LACE',
@@ -140,7 +145,7 @@ export const LOUNGE_TV_CONTENT_PACKS: LoungeContentPack[] = [
     host: 'PSA',
     season: 1,
     episode: 1,
-    episodeTitle: 'CUTTING YOUR LACE',
+    episodeTitle: 'CHOOSING YOUR LACE',
     difficulty: 'BEGINNER',
     runtime: '8 MIN',
     readTime: '4 MIN',
@@ -161,6 +166,21 @@ export const LOUNGE_TV_CONTENT_PACKS: LoungeContentPack[] = [
     learningPathId: 'lace-mastery',
     learningPathOrder: 1,
     featuredRows: ['hero', 'new', 'trending', 'psa-recommends', 'recently-added', 'members-favorites'],
+    streaming: {
+      seriesId: 'psa-academy-s1',
+      durationSec: 8 * 60,
+      artwork: {
+        landscapeCover: '/assets/NOIR/wave-thumb.png',
+        portraitCover: '/assets/NOIR/noir-thumb.png',
+        heroBanner: '/assets/NOIR/wave-thumb.png',
+        episodeThumbnail: '/assets/NOIR/wave-thumb.png',
+        previewImage: '/assets/NOIR/blanco-thumb.png',
+        hoverImage: '/assets/NOIR/curl-thumb.png',
+      },
+      productIntegration: { unitKey: 'noir', installationGuideIds: ['cutting-lace'] },
+      achievementsFuture: { certificateEligible: true, loyaltyPoints: 50 },
+      analyticsSeed: { views: 1240, completionRate: 0.72, averageWatchTimeSec: 360 },
+    },
     releaseDate: '2026-06-28',
     tags: ['lace', 'install', 'beginner'],
     article: {
@@ -720,6 +740,8 @@ export const LOUNGE_TV_CONTENT_PACKS: LoungeContentPack[] = [
     featuredRows: ['new'],
   },
 ];
+
+export const LOUNGE_TV_CONTENT_PACKS: LoungeContentPack[] = hydrateAllContentPacks(LOUNGE_TV_CONTENT_PACKS_RAW);
 
 const packById = new Map(LOUNGE_TV_CONTENT_PACKS.map((p) => [p.id, p]));
 

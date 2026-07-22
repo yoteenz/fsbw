@@ -16,6 +16,9 @@ import {
 import { loungeTvGlassCqw } from './loungeTvResponsive';
 import { loungeTvTileShowsAsNew } from '../../utils/loungeTvViewedTiles';
 import { loungeTvCardMetaLines } from './loungeTvCardMetadata';
+import { resolvePackArtwork } from './loungeTvArtwork';
+import { resolvePackCardEnhancements } from './loungeTvCardEnhancements';
+import { useState } from 'react';
 
 type LoungeTvContentPackCardProps = {
   pack: LoungeContentPack;
@@ -73,12 +76,15 @@ export function LoungeTvContentPackCard({
   unlocks,
 }: LoungeTvContentPackCardProps) {
   const tile = contentPackToTile(pack);
+  const saved = isPackSaved(pack.id);
+  const isHero = variant === 'hero';
   const metaLines = loungeTvCardMetaLines(pack, tile, unlocks, isUnlocked);
+  const enhancements = resolvePackCardEnhancements(pack, tile, unlocks, isUnlocked);
+  const posterSrc = resolvePackArtwork(pack, isHero ? 'hero' : 'card');
+  const [imgLoaded, setImgLoaded] = useState(false);
   const showNew = loungeTvTileShowsAsNew(tile);
   const ticketLocked = loungeTvTileShowsTicketLock(tile, unlocks, isUnlocked);
   const lockedOverlayLabel = loungeTvLockedThumbnailOverlayLabel(tile, unlocks, isUnlocked);
-  const saved = isPackSaved(pack.id);
-  const isHero = variant === 'hero';
 
   const aspectRatio = isHero ? '16 / 9' : '1';
   const minWidth = isHero ? '100%' : loungeTvGlassCqw(22, 52, 88);
@@ -98,14 +104,41 @@ export function LoungeTvContentPackCard({
         cursor: 'pointer',
         overflow: 'hidden',
         textAlign: 'left',
+        transition: 'transform 0.35s cubic-bezier(0.22, 1, 0.36, 1)',
+      }}
+      onFocus={(e) => {
+        e.currentTarget.style.transform = 'scale(1.02)';
+      }}
+      onBlur={(e) => {
+        e.currentTarget.style.transform = 'scale(1)';
       }}
       aria-label={pack.title}
     >
-      {pack.thumbnail ? (
+      {enhancements.premiereRibbon && isHero ? (
+        <span
+          aria-hidden
+          style={{
+            position: 'absolute',
+            top: loungeTvGlassCqw(0.8, 2, 4),
+            left: loungeTvGlassCqw(0.8, 2, 4),
+            zIndex: 5,
+            fontFamily: LOUNGE_TV_FONT_MEDIUM,
+            fontSize: loungeTvGlassCqw(1.1, 2.5, 5),
+            letterSpacing: '0.08em',
+            color: LOUNGE_TV_TEXT_WHITE,
+            background: 'rgba(235, 28, 36, 0.92)',
+            padding: `${loungeTvGlassCqw(0.35, 0.8, 1.6)} ${loungeTvGlassCqw(0.6, 1.4, 2.8)}`,
+          }}
+        >
+          {enhancements.premiereRibbon}
+        </span>
+      ) : null}
+      {posterSrc ? (
         <img
-          src={pack.thumbnail}
+          src={posterSrc}
           alt=""
           draggable={false}
+          onLoad={() => setImgLoaded(true)}
           style={{
             width: '100%',
             height: '100%',
@@ -113,7 +146,8 @@ export function LoungeTvContentPackCard({
             display: 'block',
             filter: ticketLocked ? 'blur(4px)' : 'none',
             transform: ticketLocked ? 'scale(1.04)' : 'none',
-            transition: 'filter 0.2s ease, transform 0.2s ease',
+            opacity: imgLoaded ? 1 : 0.35,
+            transition: 'filter 0.2s ease, transform 0.2s ease, opacity 0.45s ease',
           }}
         />
       ) : (
@@ -161,6 +195,50 @@ export function LoungeTvContentPackCard({
           }}
         >
           <SaveIcon saved={saved} />
+        </span>
+      ) : null}
+
+      {enhancements.progressPercent != null &&
+      enhancements.progressPercent > 0 &&
+      enhancements.progressPercent < 100 ? (
+        <span
+          aria-hidden
+          style={{
+            position: 'absolute',
+            left: 0,
+            right: 0,
+            bottom: 0,
+            height: loungeTvGlassCqw(0.35, 0.9, 1.8),
+            background: 'rgba(255,255,255,0.15)',
+            zIndex: 5,
+          }}
+        >
+          <span
+            style={{
+              display: 'block',
+              height: '100%',
+              width: `${enhancements.progressPercent}%`,
+              background: LOUNGE_TV_BRAND_RED,
+              transition: 'width 0.4s ease',
+            }}
+          />
+        </span>
+      ) : null}
+
+      {enhancements.showCompletionCheck ? (
+        <span
+          aria-hidden
+          style={{
+            position: 'absolute',
+            top: loungeTvGlassCqw(0.7, 1.5, 3),
+            left: loungeTvGlassCqw(0.7, 1.5, 3),
+            zIndex: 6,
+            fontFamily: LOUNGE_TV_FONT_MEDIUM,
+            fontSize: loungeTvGlassCqw(1.2, 2.8, 5.5),
+            color: LOUNGE_TV_BRAND_RED,
+          }}
+        >
+          ✓
         </span>
       ) : null}
 

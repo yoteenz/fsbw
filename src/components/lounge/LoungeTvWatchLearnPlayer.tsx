@@ -1,6 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { resolveWatchLearnDescription, type LoungeTvVideoTile } from './loungeTvContent';
 import { formatLoungeTvVideoDuration } from './loungeTvVideoUtils';
+import { getResumePositionSec, setWatchProgress } from '../../utils/loungeTvLibrary';
+import { defaultDurationSec } from './loungeTvStreamingMeta';
+import { getContentPackById } from './loungeTvContentPack';
 import { useSceneHitRegionConfig } from '../lobby/SceneHitLayoutEditorContext';
 import { LoungeTvInnerLayoutEditor } from './LoungeTvInnerLayoutEditor';
 import { loungeTvVideoShellStyle } from '../../utils/loungeTvInnerLayout';
@@ -137,9 +140,19 @@ export function LoungeTvWatchLearnPlayer({
     if (!tile.videoSrc) return;
     const video = videoRef.current;
     if (!video) return;
-    video.currentTime = 0;
-    setCurrentTime(0);
-    setDuration(0);
+    const resumeAt = getResumePositionSec(tile.id);
+    const applyStart = () => {
+      if (resumeAt > 0 && Number.isFinite(video.duration) && resumeAt < video.duration - 2) {
+        video.currentTime = resumeAt;
+        setCurrentTime(resumeAt);
+      } else {
+        video.currentTime = 0;
+        setCurrentTime(0);
+      }
+      setDuration(Number.isFinite(video.duration) ? video.duration : 0);
+    };
+    if (video.readyState >= 1) applyStart();
+    else video.addEventListener('loadedmetadata', applyStart, { once: true });
     if (playBlocked) {
       video.pause();
       setPaused(true);
@@ -152,6 +165,25 @@ export function LoungeTvWatchLearnPlayer({
     } else {
       syncPaused();
     }
+  }, [tile.id, tile.videoSrc, playBlocked]);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video || playBlocked) return;
+    let lastSave = 0;
+    const onTime = () => {
+      const now = Date.now();
+      if (now - lastSave < 4000) return;
+      lastSave = now;
+      const pack = getContentPackById(tile.id);
+      const durationSec =
+        Number.isFinite(video.duration) && video.duration > 0
+          ? video.duration
+          : (pack ? defaultDurationSec(pack) : undefined);
+      setWatchProgress(tile.id, video.currentTime, { durationSec });
+    };
+    video.addEventListener('timeupdate', onTime);
+    return () => video.removeEventListener('timeupdate', onTime);
   }, [tile.id, playBlocked]);
 
   useEffect(() => {
