@@ -580,6 +580,15 @@ Documents that **span L2–L4** and **govern ship approval** (not a replacement 
 | **Dependencies** | identity, storytelling-philosophy, all PSA child bibles, performance-system gates |
 | **Ownership** | Continuity Supervision / ECD |
 
+### [`character-turnaround.md`](./character-turnaround.md) — **SHIPPED v1.0**
+
+| Field | Detail |
+| --- | --- |
+| **Purpose** | Master visual reference system: angles, poses, hair/face/wardrobe/jewelry turnaround, light/camera, asset naming, vault workflow, visual QA |
+| **Questions it answers** | *How does PSA look from every required angle? Where do approved plates live?* |
+| **Dependencies** | identity, hair, makeup, jewelry, design-principles, character-continuity, facial-expressions |
+| **Ownership** | Character Art Direction / ECD |
+
 ---
 
 ## Future Expansion

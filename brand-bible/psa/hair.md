@@ -17,7 +17,7 @@ This document is **permanent production specification** for PSA’s hair only. I
 
 > **Hierarchy:** [`design-principles.md`](./design-principles.md) (why) → [`identity.md`](./identity.md) (likeness lock) → **this document** (hair execution) → shot-specific styling notes. Prompts and model parameters live **outside** this bible (`motherboard/golden-prompts/`); they must **obey** this document.
 
-> **Master reference authority:** Measured color swatches, turnaround photography, and strand-level references are **locked to the approved master portrait set** (canonical expression assets in `public/assets/psa-avatar-*.png` and secure master vault — see *Future Expansion*). Where this bible describes observable canonical reference, it documents **production truth**, not aspirational redesign.
+> **Master reference authority:** Measured color swatches, turnaround photography, and strand-level references are **locked to the approved master portrait set** (canonical expression assets in `public/assets/psa-avatar-*.png` and secure master vault — [`character-turnaround.md`](./character-turnaround.md)). Where this bible describes observable canonical reference, it documents **production truth**, not aspirational redesign.
 
 ---
 

@@ -481,6 +481,7 @@ New PSA asset requested
 | --- | --- |
 | [`../storytelling/storytelling-philosophy.md`](../storytelling/storytelling-philosophy.md) | Universe + mansion continuity |
 | [`identity.md`](./identity.md) | Likeness lock |
+| [`character-turnaround.md`](./character-turnaround.md) | Visual reference angles, naming, vault |
 | [`performance-system.md`](./performance-system.md) | Cohesion + governance |
 
 ---
