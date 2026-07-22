@@ -327,7 +327,7 @@ The following sections are **reserved** for Version 1.1+ — do not fill with sp
 | **Expression Library** | _In progress — see `public/assets/psa-avatar-*.png` + manifest_ |
 | **Photographic References** | _Reserved — founder-aligned shoot contacts_ |
 | **Video References** | _Reserved — Lounge TV host master takes_ |
-| **Voice References** | _Reserved — link to voice bible when published_ |
+| **Voice References** | _Link to `voice.md` when VO master exists_ |
 | **Version History** | _Start log at 1.0 with this document_ |
 
 ### Related internal documents (cross-reference only)
@@ -342,6 +342,7 @@ The following sections are **reserved** for Version 1.1+ — do not fill with sp
 | `brand-bible/psa/makeup.md` | PSA makeup production lock |
 | `brand-bible/psa/jewelry-accessories.md` | PSA jewelry & accessory production lock |
 | `brand-bible/psa/personality.md` | PSA personality & behavioral source of truth |
+| `brand-bible/psa/voice.md` | PSA voice production handbook (spoken + written rhythm) |
 | `src/constants/psaConfig.ts` | Runtime avatar asset paths and cache version |
 
 ---

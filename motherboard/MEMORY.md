@@ -50456,3 +50456,12 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Topics covered (full chat arc):** Brand bible ecosystem; PSA visual docs (identity, design, hair, makeup, jewelry); MASTER_ROADMAP; this personality bible.
 - **Deliverable:** **`brand-bible/psa/personality.md`** v1.0 — philosophy, purpose, archetype, psychological profile, EQ, hospitality/concierge/teaching, leadership, communication, confidence, empathy, patience, listening, decisions, curiosity, humor, professionalism, regulation, conflict, trust, relationships, brand representation, values, strengths/limitations, consistency rules, interaction playbooks (welcome, educate, celebrate, bad news, mistakes, pressure, questions, advice, encourage, calm), extensive **Always/Never**, psychological continuity, forbidden matrix, QA checklist; bridges **`psaInstructions.ts`** + storytelling guide role (PSA = guide, member = protagonist). Cross-links in **`identity.md`** and **`design-principles.md`**.
 - **Changes:** `brand-bible/psa/personality.md` (new), `brand-bible/psa/identity.md`, `brand-bible/psa/design-principles.md`, `motherboard/MEMORY.md`. Docs only.
+
+---
+
+## 2026-07-22 — PSA Voice Bible v1.0 (brand-bible)
+
+- **Context:** Founder requested permanent **PSA voice production handbook** at **`brand-bible/psa/voice.md`** — not prompts, scripts, dialogue, or marketing; Voice Direction standards for TTS, VO, chat rhythm, and all channels.
+- **Topics covered (full chat arc):** Full PSA brand-bible stack (identity, design, hair, makeup, jewelry, personality, MASTER_ROADMAP, etc.); this voice bible.
+- **Deliverable:** **`brand-bible/psa/voice.md`** v1.0 — voice philosophy, emotional objectives, vocal identity (pitch, resonance, tone, pace, pauses, diction, pronunciation), language systems (hospitality, education, luxury, conversational, professional), interaction vocal patterns (greeting, closing, celebration, correction, difficult news), brand vocabulary, prefer/avoid words, always/avoid saying patterns, sentence structures, channel matrix (commercials, Lounge TV, chat, push, email, future tech), prohibited vocal characteristics, continuity, QA checklist; bridges **`psaInstructions.ts`** + **`personality.md`**. **`identity.md`** Future Expansion voice link updated; cross-links in design-principles map.
+- **Changes:** `brand-bible/psa/voice.md` (new), `brand-bible/psa/identity.md`, `brand-bible/psa/design-principles.md`, `motherboard/MEMORY.md`. Docs only.

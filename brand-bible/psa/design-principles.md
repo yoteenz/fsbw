@@ -277,6 +277,7 @@ Reserved for Version 1.1+ production bibles. Do not populate with speculative ru
 | **`makeup.md`** | PSA makeup lock (soft glam, skin, eyes, lips, continuity) |
 | **`jewelry-accessories.md`** | PSA jewelry & accessory lock (signature stack, continuity) |
 | **`personality.md`** | PSA psychology, voice behavior, always/never |
+| **`voice.md`** | PSA vocal identity, language, channel direction |
 | _Future_ | How to execute (lighting, wardrobe, measured color specs) |
 
 ---
