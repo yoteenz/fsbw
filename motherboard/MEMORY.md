@@ -50591,3 +50591,12 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Root cause:** **`LobbyApp`** shows intentional **`LoadingScreen`** for **3s** after mount while scene assets render. **`registerPostLoadRenderGuard()`** runs **`audit('4s-post-load')`** from **initial page load**, not lobby mount. On slower mobile, App boot + lobby mount means the splash can still be visible at **4s wall-clock** → post-load guard treats it as forbidden non-terminal loading and **`forceLoadingTerminalRecovery`** (same red panel as true hangs).
 - **Fix:** **`LobbyApp.initial`** `source` on lobby **`LoadingScreen`**; **`post-load-render-guard.ts`** skips 4s/8s forced recovery for that source (12s LoadingScreen terminal + lobby timer still apply).
 - **Changes:** `src/pages/lobby/page.tsx`, `src/platform-stabilization/post-load-render-guard.ts`, `motherboard/MEMORY.md`.
+
+---
+
+## 2026-07-22 — Story Department Overview v1.0 (brand-bible)
+
+- **Context:** Founder requested permanent **Story Department operating system** at **`brand-bible/storytelling/story-department-overview.md`** — department philosophy, workflow, responsibilities (not marketing, customer copy, screenplay, or episode).
+- **Topics covered:** Purpose (experience vs advertise, brand strength, equal weight emotion/education/entertainment/aspiration/luxury/transformation); story philosophy (curiosity, discovery, aspiration, emotional/educational/experiential/cinematic storytelling, world vs website); **11 core pillars** expanded; **story hierarchy** brand→campaign→season→episode→scene→shot; content type taxonomy; emotional journey before/during/after; always/never rules + luxury/authenticity/consistency; high-level approval pipeline; department relationships (Character, Environment, Production, Brand, Marketing, Design, Development); future expansion without breaking continuity; guiding principles.
+- **Deliverable:** **`story-department-overview.md`** v1.0. Cross-links **`storytelling-philosophy.md`**, PSA QA/performance/scenario bibles, **`MASTER_ROADMAP.md`** (DOC-STY-001B SHIPPED).
+- **Changes:** `brand-bible/storytelling/story-department-overview.md` (new), `brand-bible/storytelling/storytelling-philosophy.md`, `brand-bible/MASTER_ROADMAP.md`, `motherboard/MEMORY.md`. Docs only.

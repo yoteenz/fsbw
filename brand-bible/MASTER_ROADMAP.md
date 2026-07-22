@@ -525,6 +525,15 @@ Each entry: **ID** for tracking. **Priority:** P0 (blocking production), P1 (hig
 | Priority | P0 — maintain |
 | **Phase** | 2 (done) |
 
+#### DOC-STY-001B — `storytelling/story-department-overview.md` ✅ **SHIPPED v1.0**
+
+| Field | Detail |
+| --- | --- |
+| **Purpose** | Story Department master OS — purpose, pillars, hierarchy, content types, emotional journey ops, rules, approval, cross-dept |
+| **Dependencies** | storytelling-philosophy |
+| **Priority** | P0 |
+| **Phase** | 2 (done) |
+
 #### DOC-STY-002 — `storytelling/campaign-framework.md`
 
 | Field | Detail |
