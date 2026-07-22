@@ -106,7 +106,7 @@ When two performance cues conflict, resolve **top-down**:
 
 ## Emotional Intelligence Framework
 
-Shared EQ model across child bibles ([`personality.md`](./personality.md) expands; [`emotion.md`](./emotion.md) will operationalize states).
+Shared EQ model across child bibles ([`personality.md`](./personality.md) expands traits; [`emotion.md`](./emotion.md) operationalizes affect states, intensity, duration, propagation).
 
 | Stage | Performance output |
 | --- | --- |
@@ -411,17 +411,18 @@ Each child document **answers specific questions** and **depends** on this syste
 | --- | --- |
 | **Purpose** | Expression catalog beyond identity table: usage rules, transitions, forbidden mixes, intensity scale, slug library |
 | **Questions it answers** | *Which face for which member moment?* |
-| **Dependencies** | identity.md (likeness lock), acting.md, emotion.md (planned), `resolvePsaAvatarExpression.ts` |
+| **Dependencies** | identity.md (likeness lock), acting.md, [`emotion.md`](./emotion.md), `resolvePsaAvatarExpression.ts` |
 | **Partial canon today** | Identity Approved Expressions + manifest + full facial performance handbook |
 | **Ownership** | Character Animation |
 
-### [`emotion.md`](./emotion.md) — **PLANNED**
+### [`emotion.md`](./emotion.md) — **SHIPPED v1.0**
 
 | Field | Detail |
 | --- | --- |
-| **Purpose** | Allowed affect states, intensity scale, duration, cross-layer propagation |
+| **Purpose** | Allowed affect states, intensity/duration, triggers, transitions, cross-layer propagation, channel standards |
 | **Questions it answers** | *How feeling maps to face/voice/body/dialogue?* |
-| **Dependencies** | personality, performance-system cohesion matrix |
+| **Dependencies** | personality, performance-system cohesion matrix, facial-expressions |
+| **Partial canon today** | Cohesion matrix in this doc + full emotional architecture handbook |
 | **Ownership** | Character Psychology + Animation |
 
 ### [`movement.md`](./movement.md) — **PLANNED**
@@ -471,6 +472,7 @@ Each child document **answers specific questions** and **depends** on this syste
 ### Gate 1 — Psychology
 
 - [ ] Aligns with [`personality.md`](./personality.md) always/never  
+- [ ] Primary affect aligns with [`emotion.md`](./emotion.md) intensity + propagation  
 - [ ] Motivation serves **member outcome**, not spectacle  
 
 ### Gate 2 — Truth

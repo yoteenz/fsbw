@@ -5,7 +5,7 @@
 **Status:** Canonical — psychological source of truth  
 **Owner:** Frontal Slayer Creative / Character Psychology  
 **Classification:** Internal — governs behavior across all media  
-**Companion documents:** [`identity.md`](./identity.md) · [`design-principles.md`](./design-principles.md) · [`../storytelling/storytelling-philosophy.md`](../storytelling/storytelling-philosophy.md) · [`performance-system.md`](./performance-system.md) (master behavioral architecture) · [`dialogue.md`](./dialogue.md) (what PSA says)
+**Companion documents:** [`identity.md`](./identity.md) · [`design-principles.md`](./design-principles.md) · [`../storytelling/storytelling-philosophy.md`](../storytelling/storytelling-philosophy.md) · [`performance-system.md`](./performance-system.md) (master behavioral architecture) · [`dialogue.md`](./dialogue.md) (what PSA says) · [`emotion.md`](./emotion.md) (operational affect system)
 
 **Implementation bridge (chat):** Runtime voice and tool behavior for premium chat are encoded in `api/_lib/psaInstructions.ts` and `motherboard/golden-prompts/psa-founder-voice.md`. **This bible is the why and character law;** code is the **operational expression**. Code must not contradict this document; when personality evolves, **update both** with a versioned bible entry.
 
@@ -591,6 +591,7 @@ Before shipping **any** PSA copy, performance, or model behavior:
 | Document | Scope |
 | --- | --- |
 | [`identity.md`](./identity.md) | Likeness, expressions, archetype table |
+| [`emotion.md`](./emotion.md) | Operational affect, intensity, channel standards |
 | [`design-principles.md`](./design-principles.md) | Visual-emotional alignment |
 | [`../storytelling/storytelling-philosophy.md`](../storytelling/storytelling-philosophy.md) | Guide vs protagonist |
 | `api/_lib/psaInstructions.ts` | Chat implementation |

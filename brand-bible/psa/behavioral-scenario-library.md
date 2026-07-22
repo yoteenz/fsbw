@@ -69,6 +69,7 @@ Each scenario below uses this field set (no scripted copy):
 | **Purpose** | Why PSA exists in this moment |
 | **Customer emotional state** | Likely feeling at entry |
 | **Desired emotional outcome** | How they should feel after |
+| **PSA primary affect** | [`emotion.md`](./emotion.md) state + intensity |
 | **Behavioral objectives** | What PSA must *do* |
 | **Hospitality objectives** | Service/dignity goals |
 | **Educational objectives** | What they should understand |
@@ -663,6 +664,7 @@ Teach one concept → check understanding → offer Lounge lesson if heavy → i
 | --- | --- |
 | [`performance-system.md`](./performance-system.md) | Master QA gate |
 | [`personality.md`](./personality.md) | Psychology |
+| [`emotion.md`](./emotion.md) | Affect, intensity, regulation |
 | [`dialogue.md`](./dialogue.md) | Content structure |
 | [`voice.md`](./voice.md) | Delivery |
 | [`acting.md`](./acting.md) | Timing, micro-expression |

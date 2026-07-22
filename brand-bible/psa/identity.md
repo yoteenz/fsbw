@@ -351,6 +351,7 @@ The following sections are **reserved** for Version 1.1+ — do not fill with sp
 | `brand-bible/psa/gesture.md` | PSA gesture language (hands & arms) |
 | `brand-bible/psa/behavioral-scenario-library.md` | PSA interaction scenarios & CX playbook (no scripts) |
 | `brand-bible/psa/facial-expressions.md` | PSA facial performance handbook & production slug library |
+| `brand-bible/psa/emotion.md` | PSA emotional architecture & cross-layer affect standards |
 | `src/constants/psaConfig.ts` | Runtime avatar asset paths and cache version |
 
 ---

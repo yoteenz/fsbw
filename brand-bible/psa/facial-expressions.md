@@ -6,7 +6,7 @@
 **Owner:** Frontal Slayer Creative / Facial Animation Direction  
 **Classification:** Internal — defines **how PSA’s face expresses emotion**  
 **Parent framework:** [`performance-system.md`](./performance-system.md)  
-**Companion documents:** [`identity.md`](./identity.md) (likeness lock + summary table) · [`acting.md`](./acting.md) (timing) · [`makeup.md`](./makeup.md) · [`dialogue.md`](./dialogue.md) · [`behavioral-scenario-library.md`](./behavioral-scenario-library.md)
+**Companion documents:** [`identity.md`](./identity.md) (likeness lock + summary table) · [`emotion.md`](./emotion.md) (affect system) · [`acting.md`](./acting.md) (timing) · [`makeup.md`](./makeup.md) · [`dialogue.md`](./dialogue.md) · [`behavioral-scenario-library.md`](./behavioral-scenario-library.md)
 
 **Asset registry:** Production slugs map to `public/assets/psa-avatar-{slug}.png`, `src/constants/psaConfig.ts`, `scripts/psa-avatar-expression-manifest.mjs`, `resolvePsaAvatarExpression.ts`. **New slugs require bible + manifest + identity review.**
 
