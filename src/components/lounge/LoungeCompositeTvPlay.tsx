@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useRef, useState, type CSSProperties, type RefObject } from 'react';
+import { useLocation } from 'react-router-dom';
+import { lobbyCarouselIndexFromPath } from '../../utils/lobbyCarouselRoutes';
 import {
   LOUNGE_TV_ANIMATION_VIDEO_ENABLED,
   LOUNGE_TV_ANIMATION_VIDEO_SRC,
@@ -26,7 +28,7 @@ import {
 } from '../../constants/loungeTvPressPlay';
 import { LoungeTvOverlay } from './LoungeTvOverlay';
 import {
-  readLoungeTvSessionOpen,
+  readLoungeTvOpenRestoreAfterReload,
   writeLoungeTvSessionOpen,
 } from '../../utils/loungeTvOpenSession';
 
@@ -41,11 +43,14 @@ type Props = {
  * (not legacy `lounge-tv-design.png` layout).
  */
 export function LoungeCompositeTvPlay({ measureRef }: Props) {
+  const location = useLocation();
+  const onLoungeRoute = lobbyCarouselIndexFromPath(location.pathname) === 1;
+
   const tvAnchorRef = useRef<HTMLDivElement>(null);
-  const [tvOpen, setTvOpen] = useState(() => readLoungeTvSessionOpen());
+  const [tvOpen, setTvOpen] = useState(() => readLoungeTvOpenRestoreAfterReload(onLoungeRoute));
   const [tvOriginRect, setTvOriginRect] = useState<DOMRect | null>(null);
-  /** True only on first mount when TV was already open before refresh — skip Seedance open. */
-  const resumeSessionOpen = useState(() => readLoungeTvSessionOpen())[0];
+  /** True only after reload on lounge — skip Seedance open animation. */
+  const resumeSessionOpen = useState(() => readLoungeTvOpenRestoreAfterReload(onLoungeRoute))[0];
 
   const hitDebug = useSceneHitDebugEnabled();
   const hitEdit = useSceneHitEditEnabled();
@@ -82,6 +87,16 @@ export function LoungeCompositeTvPlay({ measureRef }: Props) {
     writeLoungeTvSessionOpen(false);
     setTvOpen(false);
   }, []);
+
+  /** Leave lounge slide or lobby entirely — collapse TV; do not restore until next play or lounge refresh. */
+  useEffect(() => {
+    if (onLoungeRoute) {
+      if (!tvOpen) writeLoungeTvSessionOpen(false);
+      return;
+    }
+    writeLoungeTvSessionOpen(false);
+    setTvOpen(false);
+  }, [onLoungeRoute, tvOpen]);
 
   /** After refresh with TV still open, map grow origin once the lounge stage is measured. */
   useEffect(() => {

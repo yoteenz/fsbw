@@ -50318,3 +50318,11 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Decisions / outcomes:** **`sessionStorage`** flag **`loungeTvSessionOpen`** (`loungeTvOpenSession.ts`) set on play open, cleared on X close. **`LoungeCompositeTvPlay`** initializes `tvOpen` from session; **`LoungeTvOverlay`** **`resumeSessionOpen`** skips Seedance open animation after refresh and lands on menu ready state. Full-screen dimmer is non-interactive (`pointerEvents: none`); **Escape** listener removed.
 - **Changes:** `loungeTvOpenSession.ts`, `LoungeCompositeTvPlay.tsx`, `LoungeTvOverlay.tsx`. Build verified.
 
+---
+
+## 2026-07-22 — Lounge TV session: reload-on-lounge only; collapse on navigate away
+
+- **Context:** Founder asked to confirm TV persistence is **only** for refresh on the lounge page; navigating away should collapse the TV (prior implementation kept **`sessionStorage`** until X and would re-open when returning to lounge).
+- **Decisions / outcomes:** Restore only when **`performance.navigation.type === 'reload'`** and pathname is lounge carousel (`/lobby/lounge`). **`LoungeCompositeTvPlay`** watches route: leaving lounge slide (`/lobby`) or site clears session flag and sets **`tvOpen` false**; stale session cleared when on lounge with TV closed.
+- **Changes:** `loungeTvOpenSession.ts` (`readLoungeTvOpenRestoreAfterReload`), `LoungeCompositeTvPlay.tsx`. CORE updated. Build verified.
+
