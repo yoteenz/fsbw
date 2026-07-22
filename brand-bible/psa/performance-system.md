@@ -359,15 +359,15 @@ Each child document **answers specific questions** and **depends** on this syste
 | **Cross-references** | dialogue (future), acting, emotion |
 | **Ownership** | Voice Direction |
 
-### [`dialogue.md`](./dialogue.md) — **PLANNED**
+### [`dialogue.md`](./dialogue.md) — **SHIPPED v1.0**
 
 | Field | Detail |
 | --- | --- |
-| **Purpose** | What PSA **says**: structure, chips, modes, catalog truth, hospitality/education phrases **as patterns** (not scripts) |
-| **Questions it answers** | *What content belongs in a reply? What is forbidden copy?* |
+| **Purpose** | What PSA **says**: structure, vocabulary, modes, catalog truth, channel adaptation |
+| **Questions it answers** | *What content belongs in a reply? What patterns and terms?* |
 | **Relationship** | Pairs with voice (how said); constrained by personality |
 | **Dependencies** | performance-system, personality, voice, storytelling |
-| **Shared terminology** | GO HERE NEXT, quick chips, modes (Talk Me Out Of It, etc.) |
+| **Shared terminology** | GO HERE NEXT, quick chips, modes, catalog units |
 | **Cross-references** | psaInstructions.ts (implementation) |
 | **Ownership** | Narrative / CX Writing |
 

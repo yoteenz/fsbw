@@ -280,7 +280,8 @@ Reserved for Version 1.1+ production bibles. Do not populate with speculative ru
 | **`voice.md`** | PSA vocal identity, language, channel direction |
 | **`nails.md`** | PSA nail grooming, shape, color, hand continuity |
 | **`performance-system.md`** | Master PSA behavioral architecture (parent of personality, voice, future dialogue/acting/etc.) |
-| _Future_ | dialogue.md, acting.md, body-language.md, gesture.md, facial-expressions.md, emotion.md, movement.md |
+| **`dialogue.md`** | PSA dialogue / communication content standards (what she says) |
+| _Future_ | acting.md, body-language.md, gesture.md, facial-expressions.md, emotion.md, movement.md |
 
 ---
 

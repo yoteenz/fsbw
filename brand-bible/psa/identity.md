@@ -345,6 +345,7 @@ The following sections are **reserved** for Version 1.1+ — do not fill with sp
 | `brand-bible/psa/voice.md` | PSA voice production handbook (spoken + written rhythm) |
 | `brand-bible/psa/nails.md` | PSA nail & hand grooming production lock |
 | `brand-bible/psa/performance-system.md` | PSA master performance / behavioral architecture |
+| `brand-bible/psa/dialogue.md` | PSA dialogue & communication content standards |
 | `src/constants/psaConfig.ts` | Runtime avatar asset paths and cache version |
 
 ---
