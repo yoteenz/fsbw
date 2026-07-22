@@ -318,7 +318,7 @@ The following sections are **reserved** for Version 1.1+ — do not fill with sp
 
 | Section | Status |
 | --- | --- |
-| **Reference Images** | _Vault index — [`character-turnaround.md`](./character-turnaround.md)_ |
+| **Reference Images** | _Master index — [`character-reference-library.md`](./character-reference-library.md)_ |
 | **Approved Master Portraits** | _Vault — REF-PORTRAIT-CANON + expression PNGs_ |
 | **Facial Turnaround Sheets** | _Spec — [`character-turnaround.md`](./character-turnaround.md) Facial Turnaround_ |
 | **3D Model Reference** | _Reserved — if rigged host for real-time_ |
@@ -354,6 +354,7 @@ The following sections are **reserved** for Version 1.1+ — do not fill with sp
 | `brand-bible/psa/emotion.md` | PSA emotional architecture & cross-layer affect standards |
 | `brand-bible/psa/character-continuity.md` | PSA cross-media continuity, tiers, versioning, ship QA |
 | `brand-bible/psa/character-turnaround.md` | PSA master visual reference system (angles, naming, workflow) |
+| `brand-bible/psa/character-reference-library.md` | PSA master asset catalog (DAM index, lifecycle, kits) |
 | `src/constants/psaConfig.ts` | Runtime avatar asset paths and cache version |
 
 ---

@@ -352,6 +352,7 @@ Reserved for Version 1.1+ — do not fill with speculative lore here.
 | **`../psa/identity.md`** | Who PSA is (locked) |
 | **`../psa/character-continuity.md`** | PSA cross-media continuity & versioning |
 | **`../psa/character-turnaround.md`** | PSA visual reference angles & vault standards |
+| **`../psa/character-reference-library.md`** | PSA master asset catalog (DAM index) |
 | **`docs/frontal-slayer/BRAND_RULES.md`** | Voice + product truth |
 
 ---

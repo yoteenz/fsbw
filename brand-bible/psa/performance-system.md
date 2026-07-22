@@ -589,6 +589,15 @@ Documents that **span L2–L4** and **govern ship approval** (not a replacement 
 | **Dependencies** | identity, hair, makeup, jewelry, design-principles, character-continuity, facial-expressions |
 | **Ownership** | Character Art Direction / ECD |
 
+### [`character-reference-library.md`](./character-reference-library.md) — **SHIPPED v1.0**
+
+| Field | Detail |
+| --- | --- |
+| **Purpose** | Master **index/catalog** of approved PSA assets: IDs, metadata, lifecycle, kits, DAM hierarchy—not binaries |
+| **Questions it answers** | *Which asset is canonical? Where does it live? Is it approved?* |
+| **Dependencies** | character-turnaround, character-continuity, expression manifest, psaConfig |
+| **Ownership** | Digital Asset Management / Brand Ops |
+
 ---
 
 ## Future Expansion

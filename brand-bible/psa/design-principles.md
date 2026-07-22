@@ -289,6 +289,7 @@ Reserved for Version 1.1+ production bibles. Do not populate with speculative ru
 | **`emotion.md`** | PSA emotional architecture (affect, regulation, cross-layer propagation) |
 | **`character-continuity.md`** | PSA cross-media continuity, tiers, versioning, master QA |
 | **`character-turnaround.md`** | PSA master visual reference (angles, poses, naming, vault workflow) |
+| **`character-reference-library.md`** | PSA master asset catalog (DAM index, lifecycle, kits, metadata) |
 | _Future_ | movement.md |
 
 ---

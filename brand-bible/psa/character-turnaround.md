@@ -272,7 +272,7 @@ Reference lighting **standardizes comparison**; campaign lighting **derives** fr
 
 ## Approved Reference Library
 
-Structured catalog—**vault asset IDs** register here when photography exists. Status: **PLANNED vault** unless noted.
+Structured catalog—**authoritative asset rows** live in [`character-reference-library.md`](./character-reference-library.md). **REF roles** below map to catalog Asset IDs when vault photography exists. Status: **PLANNED vault** unless noted.
 
 | Library role | Asset ID | Status | Primary angle / slug |
 | --- | --- | --- | --- |
@@ -446,6 +446,7 @@ Side-by-side **REF-ORTHO-FRONT-PORTRAIT** opacity overlay on candidate still—r
 | --- | --- |
 | [`identity.md`](./identity.md) | Likeness lock |
 | [`character-continuity.md`](./character-continuity.md) | Tiers, versioning, ship |
+| [`character-reference-library.md`](./character-reference-library.md) | Master asset catalog & kits |
 | [`facial-expressions.md`](./facial-expressions.md) | Slug performance |
 | [`../visual-language/visual-language.md`](../visual-language/visual-language.md) | Brand-world light/material |
 
