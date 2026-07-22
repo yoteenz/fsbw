@@ -50385,3 +50385,11 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Context:** Founder requested official production documentation for PSA — permanent identity source of truth (not prompts, not marketing). Path: **`brand-bible/psa/identity.md`**.
 - **Content:** Version 1.0 bible — purpose, character overview (PSA = Personal Slay Assistant), identity lock specs, recognizable features, design philosophy, facial consistency rules, approved expressions (aligned with expression manifest), preservation checklist, future expansion placeholders, version history. Cross-references existing voice/avatar canon (`psaInstructions`, golden-prompts, BRAND_RULES).
 - **Changes:** `brand-bible/psa/identity.md` (new). Docs only.
+
+---
+
+## 2026-07-22 — PSA Design Principles v1.0 (brand-bible)
+
+- **Context:** Founder requested permanent **visual philosophy** for PSA (not prompts, marketing, or wardrobe specs) — foundation for all future PSA production docs.
+- **Deliverable:** **`brand-bible/psa/design-principles.md`** v1.0 — core philosophy, emotional objectives, luxury language, styling/color philosophy, brand relationship, timelessness, consistency, decision checklist, future expansion; cross-links **`identity.md`**.
+- **Changes:** `brand-bible/psa/design-principles.md` (new). Docs only.
