@@ -5,6 +5,7 @@
 **Status:** Canonical — narrative source of truth  
 **Owner:** Frontal Slayer Chief Story / Executive Creative  
 **Classification:** Internal — governs all content and campaigns  
+**Supreme law:** [`../frontal-slayer-north-star-manifesto.md`](../frontal-slayer-north-star-manifesto.md) — on conflict, North Star wins unless Founder documents exception  
 **Companion documents:** [`../visual-language/visual-language.md`](../visual-language/visual-language.md), [`../psa/design-principles.md`](../psa/design-principles.md), [`../psa/identity.md`](../psa/identity.md), [`story-department-overview.md`](./story-department-overview.md) (department OS), [`cinematic-universe-bible.md`](./cinematic-universe-bible.md) (universe canon), [`episode-development-bible.md`](./episode-development-bible.md) (episode development OS), [`content-distribution-bible.md`](./content-distribution-bible.md) (cross-platform story expansion), [`season-one-creative-bible.md`](./season-one-creative-bible.md) (Season One launch constitution), [`chapter-one-creative-bible.md`](./chapter-one-creative-bible.md) (Chapter One constitution)
 
 ---

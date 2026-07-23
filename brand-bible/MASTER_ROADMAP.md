@@ -38,6 +38,8 @@ This roadmap defines:
 
 **Missing at brand-bible root:** Index, governance charter, glossary, decision trees, explicit **bridge** to `docs/frontal-slayer/` operational bibles.
 
+| [`frontal-slayer-north-star-manifesto.md`](frontal-slayer-north-star-manifesto.md) | 1.0 | **Highest creative constitution** — tie-break principles | Timeless one-page North Star | Subordinate docs must not contradict |
+
 ### 1.2 Related internal docs (not yet in Brand Bible — **do not duplicate**)
 
 | Location | Contents | Relationship to Brand Bible |
@@ -326,6 +328,20 @@ Each entry: **ID** for tracking. **Priority:** P0 (blocking production), P1 (hig
 | **Phase** | 0 |
 | **Future expansion** | External vendor onboarding |
 | **Maintenance** | As needed |
+
+---
+
+### North Star (supreme creative constitution)
+
+#### DOC-NS-001 — `frontal-slayer-north-star-manifesto.md` ✅ **SHIPPED v1.0**
+
+| Field | Detail |
+| --- | --- |
+| **Purpose** | One-page permanent manifesto — tie-break when creative ideas compete; highest-level creative law |
+| **Dependencies** | None (supersedes tone of subordinate bibles on conflict; Founder exception only) |
+| **Primary audience** | All creatives, leadership, ECD |
+| **Priority** | P0 |
+| **Phase** | 0 (done) |
 
 ---
 

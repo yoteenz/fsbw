@@ -50682,3 +50682,12 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Deliverable:** **`film-i-screenplay-design-packet.md`** v1.0 — Film intent & audience promise; emotional/narrative/character/PSA/customer/world/mystery/hospitality/luxury objectives; beginning/middle/end requirements; emotional & narrative milestones E1–E8 / N1–N8; **7 required turning points**; **7 signature moment categories** (S3 OPEN + S7 forward non-negotiable); symbolism/motifs; dialogue/visual/scene/transition/pacing philosophy; constraints & opportunities; writer checklist; creative approval gates; success/failure; post-draft chain.
 - **Cross-links:** narrative-design-bible (handoff to packet), discovery packet, storytelling-philosophy; MASTER_ROADMAP **DOC-STY-001K SHIPPED**.
 - **Changes:** `brand-bible/storytelling/film-i-screenplay-design-packet.md` (new), `film-i-narrative-design-bible.md`, `film-i-the-arrival-discovery-packet.md`, `storytelling-philosophy.md`, MASTER_ROADMAP, `motherboard/MEMORY.md`. Docs only.
+
+---
+
+## 2026-07-23 — Frontal Slayer North Star Manifesto v1.0 (brand-bible)
+
+- **Context:** Founder requested permanent **North Star** constitution — not strategy, brand guide, marketing, or storytelling doc. One page, ~20–30 standalone quotable principles, timeless/direct, highest-level creative tie-break for Frontal Slayer (world, Chapters, guests, hair as artifact, story before product, luxury through restraint/mystery/hospitality).
+- **Deliverable:** **`brand-bible/frontal-slayer-north-star-manifesto.md`** — title + 28 principles + closing constitution line; no paragraphs/examples/commentary in body.
+- **Registry:** MASTER_ROADMAP **DOC-NS-001 SHIPPED**; `motherboard/CORE.md` Brand Bible points to North Star as supreme creative law; `storytelling-philosophy.md` conflict note.
+- **Changes:** `brand-bible/frontal-slayer-north-star-manifesto.md` (new), `brand-bible/MASTER_ROADMAP.md`, `brand-bible/storytelling/storytelling-philosophy.md`, `motherboard/CORE.md`, `motherboard/MEMORY.md`. Docs only.
