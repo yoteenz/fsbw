@@ -50700,3 +50700,12 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Deliverable:** **`brand-bible/storytelling/the-guest-bible.md`** v1.0.
 - **Cross-links:** film-i-screenplay-design-packet, storytelling-philosophy; MASTER_ROADMAP **DOC-STY-001L SHIPPED**.
 - **Changes:** `brand-bible/storytelling/the-guest-bible.md` (new), `film-i-screenplay-design-packet.md`, `storytelling-philosophy.md`, `MASTER_ROADMAP.md`, `motherboard/MEMORY.md`. Docs only.
+
+---
+
+## 2026-07-23 — Film Trilogy Master Cinematography Bible v1.0 LOCKED (brand-bible)
+
+- **Context:** Founder shipped **FRONTAL SLAYER FILM TRILOGY MASTER CINEMATOGRAPHY BIBLE v1.0 (LOCKED)** — mandatory canon for trilogy camera, edit, sound approach, AI/storyboard/animation; memory-not-ad tone; golden rule (discovery via movement not edit); pedestrian camera; 50/35/85mm; morning natural light; Nia protagonist performance (**brain catch-up rule**, recognition comedy); locked Nia look (wardrobe/hair/accessories); before/after FS contrast; **locked opening FRAME 001–007**; final rule ordinary morning interrupted.
+- **Deliverable:** **`brand-bible/production/film-trilogy-master-cinematography-bible.md`**. Links Guest Bible (emotional archetype), visual-language, North Star. Note: trilogy **Nia** on-screen grammar coexists with Guest archetype docs — ECD reconciles with Film I screenplay packet when both apply.
+- **Registry:** MASTER_ROADMAP **DOC-PRD-001T SHIPPED (LOCKED)** + production folder architecture.
+- **Changes:** `brand-bible/production/film-trilogy-master-cinematography-bible.md` (new), `brand-bible/MASTER_ROADMAP.md`, `motherboard/MEMORY.md`. Docs only.
