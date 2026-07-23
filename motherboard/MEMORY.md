@@ -50691,3 +50691,12 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Deliverable:** **`brand-bible/frontal-slayer-north-star-manifesto.md`** — title + 28 principles + closing constitution line; no paragraphs/examples/commentary in body.
 - **Registry:** MASTER_ROADMAP **DOC-NS-001 SHIPPED**; `motherboard/CORE.md` Brand Bible points to North Star as supreme creative law; `storytelling-philosophy.md` conflict note.
 - **Changes:** `brand-bible/frontal-slayer-north-star-manifesto.md` (new), `brand-bible/MASTER_ROADMAP.md`, `brand-bible/storytelling/storytelling-philosophy.md`, `motherboard/CORE.md`, `motherboard/MEMORY.md`. Docs only.
+
+---
+
+## 2026-07-23 — The Guest Bible v1.0 (brand-bible)
+
+- **Context:** Composer sprint — definitive emotional blueprint for **Film I: The Arrival** protagonist (**The Guest**). Not screenplay/scenes/casting/demographics; universal Slayer archetype audience projects onto. Nine sections: emotional season, quiet beliefs, true seeking (not shopping), threshold pause, invisible decision, pre-product transformation, gift to audience, enduring archetype, 20 writer principles.
+- **Deliverable:** **`brand-bible/storytelling/the-guest-bible.md`** v1.0.
+- **Cross-links:** film-i-screenplay-design-packet, storytelling-philosophy; MASTER_ROADMAP **DOC-STY-001L SHIPPED**.
+- **Changes:** `brand-bible/storytelling/the-guest-bible.md` (new), `film-i-screenplay-design-packet.md`, `storytelling-philosophy.md`, `MASTER_ROADMAP.md`, `motherboard/MEMORY.md`. Docs only.

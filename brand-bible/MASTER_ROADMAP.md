@@ -633,6 +633,15 @@ Each entry: **ID** for tracking. **Priority:** P0 (blocking production), P1 (hig
 | **Priority** | P0 |
 | **Phase** | 2 (done) |
 
+#### DOC-STY-001L — `storytelling/the-guest-bible.md` ✅ **SHIPPED v1.0**
+
+| Field | Detail |
+| --- | --- |
+| **Purpose** | **The Guest Bible** — emotional archetype for Film I protagonist / Slayer projection: emotional season, quiet beliefs, seeking, threshold pause, invisible decision, pre-product transformation, audience mirror, enduring archetype, writer principles |
+| **Dependencies** | North Star, storytelling-philosophy, Film I screenplay design packet, experience bible |
+| **Priority** | P0 |
+| **Phase** | 2 (done) |
+
 ---
 
 ### Experience (guest journey & hospitality)

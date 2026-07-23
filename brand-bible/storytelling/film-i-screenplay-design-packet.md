@@ -12,7 +12,7 @@
 
 **Supporting law:** [`storytelling-philosophy.md`](./storytelling-philosophy.md) · [`cinematic-universe-bible.md`](./cinematic-universe-bible.md) · [`content-distribution-bible.md`](./content-distribution-bible.md) · [`episode-development-bible.md`](./episode-development-bible.md)  
 
-**Character execution (reference):** [`../psa/identity.md`](../psa/identity.md) · [`../psa/performance-system.md`](../psa/performance-system.md)  
+**Character execution (reference):** [`../psa/identity.md`](../psa/identity.md) · [`../psa/performance-system.md`](../psa/performance-system.md) · [`the-guest-bible.md`](./the-guest-bible.md) (protagonist archetype — The Guest)  
 
 **Film identity:** **Film I** · **THE ARRIVAL** · Season One · Chapter One hero  
 
