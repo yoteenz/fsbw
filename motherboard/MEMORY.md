@@ -50775,3 +50775,11 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Context:** Full chat arc includes Flagship Production Bible Phases 2–5 (Experience Registry, Program, Architectural Language DOC-ENV-005, SET-001 DOC-ENV-006, Production Dossier DOC-ENV-007). Latest task: **Studio World Architectural Inventory** — read-only; no code/refactor/rename/delete/move; FS customer surfaces out of scope unless shared dependency.
 - **Deliverable:** **`repo-audit/studio-world/`** — 14 documents: `01_architecture.md` through `14_summary.md` covering HQ vs studio-os admin, `studio-os-core` (~3177 files), 262 studio pages / 312 route declarations, components, systems (Genesis, Experience Lab, world compiler, CDS, governed generation, institute), data flow, Supabase studio_* migrations/tables, AI/agents, state, assets, dependencies, technical debt observations, completion estimates, executive summary. Authority cited: KNOWN_BLOCKERS, CODEBASE, route-registry, adminStudioNavigation.
 - **Changes:** `repo-audit/studio-world/*.md` (new), `motherboard/MEMORY.md`. Docs only; **no application code modified**.
+
+---
+
+## 2026-07-23 — Studio World separation addendum to architectural inventory (repo-audit)
+
+- **Context:** After base inventory (`repo-audit/studio-world/01–14`), Founder **Future Separation Directive** — document factual boundaries for eventual independent Studio World product (own repo, domain, deploy, DB, auth) without performing separation. Read-only; no moves/imports/code changes.
+- **Deliverable:** Addendum docs **`15_system_boundary.md`** (SW/FS/SHARED classifications) · **`16_separation_dependency_map.md`** (S0–S4) · **`17_studio_world_ownership_inventory.md`** · **`18_data_separation_inventory.md`** · **`19_identity_and_auth_boundary.md`** · **`20_infrastructure_boundary.md`** · **`21_visual_identity_boundary.md`** · **`22_separation_risk_register.md`** · **`23_independent_readiness_scorecard.md`** (scores + 7-point final conclusion: **cannot operate independently today**; blockers monolith/auth/Supabase/imports/generation). Updated `14_summary.md` index.
+- **Changes:** `repo-audit/studio-world/15–23.md`, `14_summary.md`, `motherboard/MEMORY.md`. Docs only.

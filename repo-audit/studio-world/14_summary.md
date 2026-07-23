@@ -82,6 +82,20 @@ Maturity pattern: **“platform cathedral”** — many rooms, shared chrome (la
 | `13_completion_report.md` | Completion estimates |
 | `14_summary.md` | This summary |
 
+**Separation addendum (Founder directive):**
+
+| File | Contents |
+| --- | --- |
+| `15_system_boundary.md` | SW/FS classification per system |
+| `16_separation_dependency_map.md` | Cross-boundary dependencies + severity |
+| `17_studio_world_ownership_inventory.md` | Future independent ownership checklist |
+| `18_data_separation_inventory.md` | Data classification |
+| `19_identity_and_auth_boundary.md` | Auth/session boundary |
+| `20_infrastructure_boundary.md` | Shared infra |
+| `21_visual_identity_boundary.md` | Visual inheritance |
+| `22_separation_risk_register.md` | Detachment risks |
+| `23_independent_readiness_scorecard.md` | Readiness scores + **final separation conclusion** |
+
 **No application code was modified** during this audit.
 
 ---
