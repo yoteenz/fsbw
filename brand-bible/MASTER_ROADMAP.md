@@ -588,6 +588,15 @@ Each entry: **ID** for tracking. **Priority:** P0 (blocking production), P1 (hig
 | **Priority** | P0 |
 | **Phase** | 2 (done) |
 
+#### DOC-STY-001I — `storytelling/film-i-the-arrival-emotional-architecture-blueprint.md` ✅ **SHIPPED v1.0**
+
+| Field | Detail |
+| --- | --- |
+| **Purpose** | Film I **The Arrival** — Emotional Experience Department blueprint: emotional thesis, journey, phased beats, peaks, curiosity/trust/luxury/hospitality/wonder/anticipation architecture, rhythm, psychology timeline, memory & rewatch design, cross-platform continuity, creative review framework |
+| **Dependencies** | film-i-the-arrival-discovery-packet, chapter-one-creative-bible, season-one-creative-bible, content-distribution-bible |
+| **Priority** | P0 |
+| **Phase** | 2 (done) |
+
 #### DOC-STY-002 — `storytelling/campaign-framework.md`
 
 | Field | Detail |

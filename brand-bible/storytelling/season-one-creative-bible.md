@@ -10,7 +10,7 @@
 **Character & performance (reference only):** [`../psa/identity.md`](../psa/identity.md) · [`../psa/performance-system.md`](../psa/performance-system.md) · Character Department bibles  
 **Visual (reference only):** [`../visual-language/visual-language.md`](../visual-language/visual-language.md)  
 
-**Companion chapter bible:** [`chapter-one-creative-bible.md`](./chapter-one-creative-bible.md) · [`film-i-the-arrival-discovery-packet.md`](./film-i-the-arrival-discovery-packet.md) (Film I discovery)  
+**Companion chapter bible:** [`chapter-one-creative-bible.md`](./chapter-one-creative-bible.md) · [`film-i-the-arrival-discovery-packet.md`](./film-i-the-arrival-discovery-packet.md) (Film I discovery) · [`film-i-the-arrival-emotional-architecture-blueprint.md`](./film-i-the-arrival-emotional-architecture-blueprint.md) (Film I emotional OS)  
 
 **Not in scope:** Screenplays, scene lists, dialogue, storyboards, shot lists, generative prompts, posting calendars, media budgets, or SKU copy. This document governs **creative intent, standards, and decision logic** for Season One.
 

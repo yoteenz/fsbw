@@ -732,6 +732,7 @@ Before screenplay development, Story Department confirms:
 | Document | Role |
 | --- | --- |
 | [`chapter-one-creative-bible.md`](./chapter-one-creative-bible.md) | Chapter constitution |
+| [`film-i-the-arrival-emotional-architecture-blueprint.md`](./film-i-the-arrival-emotional-architecture-blueprint.md) | Emotional OS for production |
 | [`season-one-creative-bible.md`](./season-one-creative-bible.md) | Season arc & standards |
 | [`episode-development-bible.md`](./episode-development-bible.md) | Next: episode/EDP after script |
 | [`content-distribution-bible.md`](./content-distribution-bible.md) | Package perspectives |

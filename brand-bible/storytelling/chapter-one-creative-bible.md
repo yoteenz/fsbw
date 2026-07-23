@@ -585,6 +585,7 @@ Chapter One **succeeds** when:
 | --- | --- |
 | [`season-one-creative-bible.md`](./season-one-creative-bible.md) | Season arc & standards |
 | [`film-i-the-arrival-discovery-packet.md`](./film-i-the-arrival-discovery-packet.md) | Film I hero — story discovery |
+| [`film-i-the-arrival-emotional-architecture-blueprint.md`](./film-i-the-arrival-emotional-architecture-blueprint.md) | Film I — emotional operating system |
 | [`content-distribution-bible.md`](./content-distribution-bible.md) | Package & platform law |
 | [`episode-development-bible.md`](./episode-development-bible.md) | EDP & lifecycle |
 | [`cinematic-universe-bible.md`](./cinematic-universe-bible.md) | Canon |
