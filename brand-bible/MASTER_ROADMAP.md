@@ -599,6 +599,15 @@ Each entry: **ID** for tracking. **Priority:** P0 (blocking production), P1 (hig
 | **Priority** | P0 |
 | **Phase** | 2 (done) |
 
+#### DOC-STY-001J — `storytelling/film-i-narrative-design-bible.md` ✅ **SHIPPED v1.0**
+
+| Field | Detail |
+| --- | --- |
+| **Purpose** | Film I **The Arrival** — narrative structure for screenplay: spine, information/mystery/reveal/curiosity architecture, POV, escalation/tension/wonder, beginning/middle/end functions, ending image, Film II setup, review checklist |
+| **Dependencies** | film-i discovery + emotional architecture, chapter/season bibles, experience bible, storytelling-philosophy |
+| **Priority** | P0 |
+| **Phase** | 2 (done) |
+
 ---
 
 ### Experience (guest journey & hospitality)

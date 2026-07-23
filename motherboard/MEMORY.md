@@ -50664,3 +50664,12 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Deliverable:** **`brand-bible/experience/frontal-slayer-experience-bible.md`** v1.0 — **12 sections:** (1) Experience philosophy vs retail/hospitality/ecommerce + guest description targets; (2) Guest journey phases before discovery→advocacy; (3) Nine expanded luxury principles; (4) Hospitality standards welcome/recognize/remember/celebrate/individual importance; (5) Sensory design system; (6) Emotional design qualities; (7) Language philosophy speak/listen/guide/reassure/surprise/celebrate/educate/mystery; (8) Ritual design arrival→return; (9) Platform experience DNA (film, social, web, app, mansion, packaging, CS, education, community); (10) Invisible details; (11) 20 experience commandments; (12) Unified experience review system by department + universal gates.
 - **Cross-links:** storytelling-philosophy, story-department-overview, MASTER_ROADMAP **DOC-EXP-001 SHIPPED** + folder architecture.
 - **Changes:** `brand-bible/experience/frontal-slayer-experience-bible.md` (new), `brand-bible/storytelling/storytelling-philosophy.md`, `brand-bible/storytelling/story-department-overview.md`, `brand-bible/MASTER_ROADMAP.md`, `motherboard/MEMORY.md`. Docs only.
+
+---
+
+## 2026-07-23 — Film I Narrative Design Bible v1.0 (brand-bible)
+
+- **Context:** Narrative Design Department sprint — **Film I: THE ARRIVAL** structural architecture before screenplay. Canon: Season/Chapter One bibles, Film I Discovery Packet, Emotional Architecture Blueprint, Experience Bible. Not scenes/dialogue/shot lists.
+- **Deliverable:** **`film-i-narrative-design-bible.md`** v1.0 — Narrative purpose/premise/promise/payoff; central dramatic question; **narrative spine** (NOTICE→…→forward vector); structural philosophy; information classes A–G; mystery/reveal/curiosity; audience & character knowledge timelines; hybrid POV strategy; escalation/tension/wonder/transition; beginning/middle/end functions; ending image philosophy; Film II trust setup; never/clear/implied reveals; risks/opportunities; structural review checklist; success/failure; writer handoff order.
+- **Cross-links:** film-i discovery + emotional architecture, chapter-one, storytelling-philosophy; MASTER_ROADMAP **DOC-STY-001J SHIPPED**.
+- **Changes:** `brand-bible/storytelling/film-i-narrative-design-bible.md` (new), cross-links in discovery/emotional/chapter-one/storytelling-philosophy, MASTER_ROADMAP, `motherboard/MEMORY.md`. Docs only.

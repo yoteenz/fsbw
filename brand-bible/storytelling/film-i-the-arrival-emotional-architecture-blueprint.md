@@ -473,6 +473,7 @@ Every **screenplay, storyboard, edit, score, color, performance, and cut-down** 
 | Document | Role |
 | --- | --- |
 | [`film-i-the-arrival-discovery-packet.md`](./film-i-the-arrival-discovery-packet.md) | Story discovery |
+| [`film-i-narrative-design-bible.md`](./film-i-narrative-design-bible.md) | Narrative structure for writers |
 | [`chapter-one-creative-bible.md`](./chapter-one-creative-bible.md) | Chapter constitution |
 | [`season-one-creative-bible.md`](./season-one-creative-bible.md) | Season standards |
 | [`content-distribution-bible.md`](./content-distribution-bible.md) | Platform perspectives |
