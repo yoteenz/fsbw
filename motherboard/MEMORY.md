@@ -50767,3 +50767,11 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Context:** Founder declared prior phases canonical; **Phase 5 — SET-001 Production Design Dossier** — concise execution packet (not replanning) for artists, OpenArt/Kling/Cursor, photographers, 3D, architects. No images/UI/code; no redesign.
 - **Deliverable:** **`brand-bible/environments/set-001-production-design-dossier.md` v1.0 (DOC-ENV-007)** — 12 sections: project identity, executive summary, SET registry (Z1–Z10 + space IDs + M-*), material lock, color, lighting registry, **camera registry** (CAM-EXT/ARR/REC/GAL/LAB/ATL/TRN/VIP/FND/DEP/CHK), continuity rules, visualization guidelines, medium-specific notes, digital twin summary, version control; QC verified. Updated production bible, set-001 design dev pointer, MASTER_ROADMAP.
 - **Changes:** `set-001-production-design-dossier.md` (new), `flagship-production-bible.md`, `set-001-design-development.md`, `MASTER_ROADMAP.md`, `motherboard/MEMORY.md`. Docs only.
+
+---
+
+## 2026-07-23 — Studio World architectural inventory read-only audit (repo-audit)
+
+- **Context:** Full chat arc includes Flagship Production Bible Phases 2–5 (Experience Registry, Program, Architectural Language DOC-ENV-005, SET-001 DOC-ENV-006, Production Dossier DOC-ENV-007). Latest task: **Studio World Architectural Inventory** — read-only; no code/refactor/rename/delete/move; FS customer surfaces out of scope unless shared dependency.
+- **Deliverable:** **`repo-audit/studio-world/`** — 14 documents: `01_architecture.md` through `14_summary.md` covering HQ vs studio-os admin, `studio-os-core` (~3177 files), 262 studio pages / 312 route declarations, components, systems (Genesis, Experience Lab, world compiler, CDS, governed generation, institute), data flow, Supabase studio_* migrations/tables, AI/agents, state, assets, dependencies, technical debt observations, completion estimates, executive summary. Authority cited: KNOWN_BLOCKERS, CODEBASE, route-registry, adminStudioNavigation.
+- **Changes:** `repo-audit/studio-world/*.md` (new), `motherboard/MEMORY.md`. Docs only; **no application code modified**.
