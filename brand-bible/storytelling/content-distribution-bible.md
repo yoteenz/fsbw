@@ -509,6 +509,8 @@ The audience is not scrolling through content.
 | Document | Role |
 | --- | --- |
 | [`storytelling-philosophy.md`](./storytelling-philosophy.md) | Narrative constitution |
+| [`season-one-creative-bible.md`](./season-one-creative-bible.md) | Season One launch constitution |
+| [`chapter-one-creative-bible.md`](./chapter-one-creative-bible.md) | Chapter One constitution |
 | [`episode-development-bible.md`](./episode-development-bible.md) | Episode lifecycle & EDP |
 | [`story-department-overview.md`](./story-department-overview.md) | Department OS |
 | [`cinematic-universe-bible.md`](./cinematic-universe-bible.md) | Universe canon |

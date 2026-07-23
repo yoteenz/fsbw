@@ -499,6 +499,8 @@ Before AI-assisted image/video generation batches, **EDP must include**:
 | [`story-department-overview.md`](./story-department-overview.md) | Department OS & hierarchy |
 | [`cinematic-universe-bible.md`](./cinematic-universe-bible.md) | World canon |
 | [`content-distribution-bible.md`](./content-distribution-bible.md) | Cross-platform expansion OS |
+| [`season-one-creative-bible.md`](./season-one-creative-bible.md) | Season One arc & launch standards |
+| [`chapter-one-creative-bible.md`](./chapter-one-creative-bible.md) | Chapter One creative constitution |
 | [`../MASTER_ROADMAP.md`](../MASTER_ROADMAP.md) | Registry |
 
 ---

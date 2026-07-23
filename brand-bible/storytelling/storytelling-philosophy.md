@@ -5,7 +5,7 @@
 **Status:** Canonical — narrative source of truth  
 **Owner:** Frontal Slayer Chief Story / Executive Creative  
 **Classification:** Internal — governs all content and campaigns  
-**Companion documents:** [`../visual-language/visual-language.md`](../visual-language/visual-language.md), [`../psa/design-principles.md`](../psa/design-principles.md), [`../psa/identity.md`](../psa/identity.md), [`story-department-overview.md`](./story-department-overview.md) (department OS), [`cinematic-universe-bible.md`](./cinematic-universe-bible.md) (universe canon), [`episode-development-bible.md`](./episode-development-bible.md) (episode development OS), [`content-distribution-bible.md`](./content-distribution-bible.md) (cross-platform story expansion)
+**Companion documents:** [`../visual-language/visual-language.md`](../visual-language/visual-language.md), [`../psa/design-principles.md`](../psa/design-principles.md), [`../psa/identity.md`](../psa/identity.md), [`story-department-overview.md`](./story-department-overview.md) (department OS), [`cinematic-universe-bible.md`](./cinematic-universe-bible.md) (universe canon), [`episode-development-bible.md`](./episode-development-bible.md) (episode development OS), [`content-distribution-bible.md`](./content-distribution-bible.md) (cross-platform story expansion), [`season-one-creative-bible.md`](./season-one-creative-bible.md) (Season One launch constitution), [`chapter-one-creative-bible.md`](./chapter-one-creative-bible.md) (Chapter One constitution)
 
 ---
 
@@ -351,6 +351,8 @@ Reserved for Version 1.1+ — do not fill with speculative lore here.
 | **`cinematic-universe-bible.md`** | Universe canon — world, time, locations, tone, expansion |
 | **`episode-development-bible.md`** | How to build episodes — lifecycle, structure, EDP, QA |
 | **`content-distribution-bible.md`** | Story-first cross-platform distribution — Content Packages, perspectives, continuity |
+| **`season-one-creative-bible.md`** | Season One launch season — relationship arc, creative standards |
+| **`chapter-one-creative-bible.md`** | Chapter One — “Who are you?” creative constitution |
 | **`../visual-language/visual-language.md`** | How the world looks |
 | **`../psa/design-principles.md`** | How PSA looks |
 | **`../psa/identity.md`** | Who PSA is (locked) |

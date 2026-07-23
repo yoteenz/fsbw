@@ -561,6 +561,24 @@ Each entry: **ID** for tracking. **Priority:** P0 (blocking production), P1 (hig
 | **Priority** | P0 |
 | **Phase** | 2 (done) |
 
+#### DOC-STY-001F — `storytelling/season-one-creative-bible.md` ✅ **SHIPPED v1.0**
+
+| Field | Detail |
+| --- | --- |
+| **Purpose** | Season One flagship launch constitution — relationship arc (4 chapters), mystery/product reveal rules, craft philosophies (visual/light/camera/sound/edit), hospitality, motifs, decision framework, review gates, scalability |
+| **Dependencies** | storytelling-philosophy, cinematic-universe-bible, content-distribution-bible, visual-language (ref), PSA bibles (ref) |
+| **Priority** | P0 |
+| **Phase** | 2 (done) |
+
+#### DOC-STY-001G — `storytelling/chapter-one-creative-bible.md` ✅ **SHIPPED v1.0**
+
+| Field | Detail |
+| --- | --- |
+| **Purpose** | Chapter One “Who are you?” creative constitution — dramatic question, mystery/reveal ladder, character roles, sensory direction, platform package opportunities, Ch2 setup, success/failure signals |
+| **Dependencies** | season-one-creative-bible, storytelling-philosophy, content-distribution-bible, episode-development-bible |
+| **Priority** | P0 |
+| **Phase** | 2 (done) |
+
 #### DOC-STY-002 — `storytelling/campaign-framework.md`
 
 | Field | Detail |

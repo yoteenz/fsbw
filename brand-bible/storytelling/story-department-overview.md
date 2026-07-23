@@ -389,6 +389,8 @@ Campaigns may expand the universe by:
 | [`cinematic-universe-bible.md`](./cinematic-universe-bible.md) | Universe canon & manifesto |
 | [`episode-development-bible.md`](./episode-development-bible.md) | Episode lifecycle, structure, EDP, review |
 | [`content-distribution-bible.md`](./content-distribution-bible.md) | Cross-platform story expansion — Content Packages, platform philosophy |
+| [`season-one-creative-bible.md`](./season-one-creative-bible.md) | Season One launch creative constitution |
+| [`chapter-one-creative-bible.md`](./chapter-one-creative-bible.md) | Chapter One creative constitution |
 | [`../visual-language/visual-language.md`](../visual-language/visual-language.md) | Look and feel |
 | [`../psa/performance-system.md`](../psa/performance-system.md) | PSA behavioral stack |
 | [`../psa/behavioral-scenario-library.md`](../psa/behavioral-scenario-library.md) | Interaction objectives (no scripts) |

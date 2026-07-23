@@ -337,6 +337,8 @@ That is the cinematic universe members return to—**because it feels like their
 | [`story-department-overview.md`](./story-department-overview.md) | Department OS |
 | [`episode-development-bible.md`](./episode-development-bible.md) | Episode development OS |
 | [`content-distribution-bible.md`](./content-distribution-bible.md) | Cross-platform distribution architecture |
+| [`season-one-creative-bible.md`](./season-one-creative-bible.md) | Season One launch constitution |
+| [`chapter-one-creative-bible.md`](./chapter-one-creative-bible.md) | Chapter One constitution |
 | [`../MASTER_ROADMAP.md`](../MASTER_ROADMAP.md) | Bible registry |
 | [`docs/frontal-slayer/BRAND_RULES.md`](../../docs/frontal-slayer/BRAND_RULES.md) | Implementation digest |
 
