@@ -355,6 +355,7 @@ Reserved for Version 1.1+ — do not fill with speculative lore here.
 | **`chapter-one-creative-bible.md`** | Chapter One — “Who are you?” creative constitution |
 | **`film-i-the-arrival-discovery-packet.md`** | Film I — The Arrival (pre-screenplay story discovery) |
 | **`film-i-the-arrival-emotional-architecture-blueprint.md`** | Film I — emotional architecture / experience OS |
+| **`../experience/frontal-slayer-experience-bible.md`** | Guest experience constitution — hospitality, journey, sensory, commandments |
 | **`../visual-language/visual-language.md`** | How the world looks |
 | **`../psa/design-principles.md`** | How PSA looks |
 | **`../psa/identity.md`** | Who PSA is (locked) |

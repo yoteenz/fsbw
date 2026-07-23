@@ -137,6 +137,8 @@ brand-bible/
 │   ├── campaign-framework.md
 │   ├── universe-timeline.md          ← reserved chronology
 │   └── continuity-registry.md
+├── experience/
+│   └── frontal-slayer-experience-bible.md  ✅ SHIPPED v1.0
 ├── psa/
 │   ├── identity.md                   ✅ exists
 │   ├── design-principles.md          ✅ exists
@@ -594,6 +596,20 @@ Each entry: **ID** for tracking. **Priority:** P0 (blocking production), P1 (hig
 | --- | --- |
 | **Purpose** | Film I **The Arrival** — Emotional Experience Department blueprint: emotional thesis, journey, phased beats, peaks, curiosity/trust/luxury/hospitality/wonder/anticipation architecture, rhythm, psychology timeline, memory & rewatch design, cross-platform continuity, creative review framework |
 | **Dependencies** | film-i-the-arrival-discovery-packet, chapter-one-creative-bible, season-one-creative-bible, content-distribution-bible |
+| **Priority** | P0 |
+| **Phase** | 2 (done) |
+
+---
+
+### Experience (guest journey & hospitality)
+
+#### DOC-EXP-001 — `experience/frontal-slayer-experience-bible.md` ✅ **SHIPPED v1.0**
+
+| Field | Detail |
+| --- | --- |
+| **Purpose** | Permanent guest experience constitution — philosophy, journey, luxury & hospitality standards, sensory/emotional design, language philosophy, rituals, platform DNA, invisible details, commandments, cross-department review system |
+| **Dependencies** | storytelling-philosophy, cinematic-universe-bible, content-distribution-bible, visual-language, Film I emotional architecture (ref), season/chapter bibles (ref) |
+| **Primary audience** | Experience Design, ECD, Product, Marketing, CS, Retail (future), all guest-facing teams |
 | **Priority** | P0 |
 | **Phase** | 2 (done) |
 

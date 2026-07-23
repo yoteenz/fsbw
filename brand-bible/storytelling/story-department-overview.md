@@ -391,6 +391,7 @@ Campaigns may expand the universe by:
 | [`content-distribution-bible.md`](./content-distribution-bible.md) | Cross-platform story expansion — Content Packages, platform philosophy |
 | [`season-one-creative-bible.md`](./season-one-creative-bible.md) | Season One launch creative constitution |
 | [`chapter-one-creative-bible.md`](./chapter-one-creative-bible.md) | Chapter One creative constitution |
+| [`../experience/frontal-slayer-experience-bible.md`](../experience/frontal-slayer-experience-bible.md) | Guest experience constitution |
 | [`../visual-language/visual-language.md`](../visual-language/visual-language.md) | Look and feel |
 | [`../psa/performance-system.md`](../psa/performance-system.md) | PSA behavioral stack |
 | [`../psa/behavioral-scenario-library.md`](../psa/behavioral-scenario-library.md) | Interaction objectives (no scripts) |
