@@ -1,8 +1,8 @@
 # FRONTAL SLAYER — FLAGSHIP PRODUCTION BIBLE
 
 **Document:** Flagship Production Bible  
-**Version:** 0.3 — **Phase 1–3** (pre-production)  
-**Status:** In pre-production — **Phase 3 Flagship Program complete**; **Phase 4 (architectural design) locked** until Founder approval  
+**Version:** 0.3 — **Phase 1–3** (+ Phase 4A language guide)  
+**Status:** In pre-production — **Phase 4A Architectural Language** complete (DOC-ENV-005); **Phase 4B (building design) locked** until Founder approval  
 **Owner:** Executive Creative / Production Design  
 **Classification:** Internal — world foundation before any room is architected  
 
@@ -296,8 +296,9 @@ Add these as **Phase 1 annex** or **early Phase 2 gates**—no floor plans yet, 
 | --- | --- |
 | **Phase 1 — Story Universe** | **Approved** (advanced by Founder to Phase 2) |
 | **Phase 2 — Experience Architecture** | **Approved** (Founder opened Phase 3) |
-| **Phase 3 — Flagship programming** | **Complete** — awaiting **Founder approval** for Phase 4 |
-| **Phase 4 — Architectural design** | **LOCKED** until Phase 3 approved |
+| **Phase 3 — Flagship programming** | **Approved** (Founder opened Phase 4A) |
+| **Phase 4A — Architectural language** | **Complete** — [`flagship-architectural-language.md`](./flagship-architectural-language.md) DOC-ENV-005 |
+| **Phase 4B — Building design (plans)** | **LOCKED** until Phase 4A approved |
 | **Phase 5+** | Not started |
 
 ---
@@ -854,6 +855,7 @@ What guests **see** vs **must not see** from major program locations (no dimensi
 | [`../MASTER_ROADMAP.md`](../MASTER_ROADMAP.md) | Registry |
 | [`../storytelling/cinematic-universe-bible.md`](../storytelling/cinematic-universe-bible.md) | Universe canon |
 | [`production/film-trilogy-visual-story-bible.md`](./production/film-trilogy-visual-story-bible.md) | Reality One story structure |
+| [`flagship-architectural-language.md`](./flagship-architectural-language.md) | Phase 4A — systems, materials, light (DOC-ENV-005) |
 | Future `environments/mansion-and-rooms.md` | Phase 5+ — must inherit zone + twin map from this bible |
 
 ---

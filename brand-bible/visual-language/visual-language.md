@@ -63,6 +63,8 @@ Every asset should feel as if it belongs to one of these **reference atmospheres
 
 Frontal Slayer spaces share a **recognizable architectural DNA** — even when fictional or composited.
 
+> **Flagship specialization:** Permanent systems, expanded material/light law, and twin rules for the physical set + Mansion live in [`../environments/flagship-architectural-language.md`](../environments/flagship-architectural-language.md) (DOC-ENV-005). This section remains the **brand-wide** summary; flagship build must obey **both**.
+
 ### Recurring elements
 
 | Element | Role |

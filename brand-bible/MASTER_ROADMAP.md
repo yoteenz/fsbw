@@ -152,7 +152,8 @@ brand-bible/
 ├── characters/
 │   └── future-characters-template.md ← single template until cast exists
 ├── environments/
-│   ├── flagship-production-bible.md     ✅ Phase 1–3 v0.3 (pre-production; Phase 4 gated)
+│   ├── flagship-production-bible.md     ✅ Phase 1–3 + 4A ref (pre-production; Phase 4B gated)
+│   ├── flagship-architectural-language.md  ✅ Phase 4A v1.0 (DOC-ENV-005)
 │   ├── mansion-and-rooms.md
 │   ├── digital-spaces-registry.md    ← links design-dna-canon
 │   ├── tv-lounge-set-standards.md
@@ -754,7 +755,16 @@ Each entry: **ID** for tracking. **Priority:** P0 (blocking production), P1 (hig
 | **Purpose** | Flagship + Mansion twin production bible — Phase 1 world; Phase 2 Experience Registry; **Phase 3 Flagship Program** (zones, spaces, circulation, visibility, twin brief for architecture) |
 | **Dependencies** | north-star, cinematic-universe, trilogy bibles, experience bible, visual-language |
 | **Priority** | P0 |
-| **Phase** | Pre-production (Phase 4 architectural design locked until Phase 3 approved) |
+| **Phase** | Pre-production (Phase 4B building design locked until DOC-ENV-005 approved) |
+
+#### DOC-ENV-005 — `environments/flagship-architectural-language.md` 🟡 **v1.0 Phase 4A (Phase 4B gated)**
+
+| Field | Detail |
+| --- | --- |
+| **Purpose** | Permanent flagship architectural language — exterior/interior **systems**, material library, color, lighting, furniture rules, environmental signatures, 20 principles, digital twin compatibility — **before** floor plans |
+| **Dependencies** | north-star, visual-language, flagship-production-bible (Phase 3), trilogy cinematography |
+| **Priority** | P0 |
+| **Phase** | Pre-production (Phase 4B locked until approved) |
 
 #### DOC-ENV-001 — `environments/mansion-and-rooms.md`
 
