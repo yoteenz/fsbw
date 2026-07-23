@@ -50735,3 +50735,11 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Context:** Founder opened **Phase 2 — Experience Architecture** (still no building/floor plans/images/UI/code). Architecture must emerge from experience. Core principle: room only if experience exists.
 - **Deliverable:** **`flagship-production-bible.md` v0.2** — Experience progression (Discovery→Advocacy); registry conventions (access, physical/mobile/mansion, Twin Strict/Enhanced/Mansion Exclusive); **master registry** auditing founder list + campaign arrival, Mansion Tour, Slay Challenge, consult/digital order, waitlist, future decade experiences; progression map; Phase 2 production notes for Phase 3; Phase 3 **locked** pending approval.
 - **Changes:** `flagship-production-bible.md`, `MASTER_ROADMAP.md`, `motherboard/MEMORY.md`. Docs only.
+
+---
+
+## 2026-07-23 — Flagship Production Bible Phase 3 Flagship Program (brand-bible)
+
+- **Context:** Founder opened **Phase 3 — Flagship Programming** (still no floor plans, concept art, UI, code). Translate approved Phase 2 Experience Registry into architectural **program** only—spaces, connections, visibility, circulation, sightlines, zones, twin mapping—for Phase 4 design brief.
+- **Deliverable:** **`brand-bible/environments/flagship-production-bible.md` v0.3** — Hybrid circulation (Guided Luxury Spine + member/service spokes + isolated production loop); **10 zones** (Z1–Z10); **master space program** (~35+ named spaces + Mansion-only logical halls) with access, visibility (IV/PR/HI), twin class, dwell time, ops dependencies, adjacency rules, story importance; **visibility program** from street/reception/showroom/atelier/checkout; **sightline program** (immediate vs delayed reveals); public/private layers; **digital twin zone mapping**; campaign/medium requirements; experience↔space index; Phase 4 notes. Phase 2 marked **approved**; Phase 4 **locked** pending Founder approval.
+- **Changes:** `flagship-production-bible.md`, `MASTER_ROADMAP.md` (DOC-ENV-000 v0.3), `motherboard/MEMORY.md`. Docs only.

@@ -1,8 +1,8 @@
 # FRONTAL SLAYER — FLAGSHIP PRODUCTION BIBLE
 
 **Document:** Flagship Production Bible  
-**Version:** 0.2 — **Phase 1–2** (pre-production)  
-**Status:** In pre-production — **Phase 2 complete**; **Phase 3 (architecture) locked** until Founder approval  
+**Version:** 0.3 — **Phase 1–3** (pre-production)  
+**Status:** In pre-production — **Phase 3 Flagship Program complete**; **Phase 4 (architectural design) locked** until Founder approval  
 **Owner:** Executive Creative / Production Design  
 **Classification:** Internal — world foundation before any room is architected  
 
@@ -295,9 +295,10 @@ Add these as **Phase 1 annex** or **early Phase 2 gates**—no floor plans yet, 
 | Phase | Status |
 | --- | --- |
 | **Phase 1 — Story Universe** | **Approved** (advanced by Founder to Phase 2) |
-| **Phase 2 — Experience Architecture** | **Complete** — awaiting **Founder approval** for Phase 3 |
-| **Phase 3 — Flagship architectural program / design** | **LOCKED** until Phase 2 approved |
-| **Phase 4+** | Not started |
+| **Phase 2 — Experience Architecture** | **Approved** (Founder opened Phase 3) |
+| **Phase 3 — Flagship programming** | **Complete** — awaiting **Founder approval** for Phase 4 |
+| **Phase 4 — Architectural design** | **LOCKED** until Phase 3 approved |
+| **Phase 5+** | Not started |
 
 ---
 
@@ -492,6 +493,360 @@ Experiences **not** fully live today but **architect into program** now:
 
 ---
 
+# PHASE 3 — FLAGSHIP PROGRAMMING
+
+## PRE-PRODUCTION (Phase 3)
+
+We are **still not** designing the building.
+
+**Do not** create floor plans, concept art, elevations, UI, or code.
+
+**Role:** Architect · Production Designer · Hospitality Designer · Luxury Retail Planner · Film Set Designer · Experience Systems Architect.
+
+**Objective:** Translate the **Phase 2 Experience Registry** into an **architectural program**—spaces, connections, visibility, circulation, sightlines, zones, and twin mapping—so Phase 4 can design **one** flagship that reads as a single journey and a permanent film set.
+
+**Core principle:** Every **space** exists because it supports one or more **experiences**. Every **transition** is intentional. Every **reveal** is emotionally earned.
+
+**Output:** **Flagship Program** — official brief for Phase 4 architectural design.
+
+**Input law:** Phase 2 registry rows are **binding**; spaces below map 1:1 to experiences—no decorative program.
+
+---
+
+## EXPERIENCE FLOW (GUEST JOURNEY SEQUENCE)
+
+Physical guest path (emotional beats, not departments):
+
+```
+Street → Storefront discovery → Threshold → Reception → Orientation
+→ Confidence (comparison, PSA handoff) → Education → Exploration (showroom)
+→ Customization (atelier) → Transformation → Celebration → Purchase
+→ Membership (optional branch) → Departure → Digital Mansion (continuity)
+```
+
+**Parallel paths (same building, different choreography):**
+
+| Path | Entry | Emphasis | Exit |
+| --- | --- | --- | --- |
+| **First-time discoverer** | Street / campaign echo | Discovery → education → soft sell | Departure + Mansion invite |
+| **Return shopper** | Reception recognition | Exploration → customization | Purchase |
+| **Booked service** | Side threshold or reception | Consult/analysis → transform → install | Celebration → purchase |
+| **Member** | Member recognition | TV Lounge / community / VIP tease | Retention touchpoints |
+| **Campaign unit (Nia / chapters)** | Street → threshold | Subset of strict spine; no back-of-house | Cut / chapter handoff |
+| **Production / content** | Staff only | Content set ↔ showroom ↔ atelier | No guest cross |
+
+Every transition **prepares** the next emotional state (Phase 2 ladder: Discovery → Advocacy).
+
+---
+
+## CIRCULATION STRATEGY
+
+**Recommendation: Hybrid — Guided Luxury Spine + Member/Service Spokes + Isolated Production Loop**
+
+| Model | Role in flagship | Why |
+| --- | --- | --- |
+| **Guided Luxury Spine (primary)** | Single **guest-readable** sequence from threshold through showroom toward atelier/transform | Supports **campaign** blocking (Nia walk-in), **earned reveals**, hospitality choreography, film **one-direction discovery** |
+| **Hub-and-Spoke (secondary)** | **Reception** as social hub; spokes to consult rooms, transformation suite, VIP wing, event hall | Daily **salon ops**, appointments, members without breaking public spine |
+| **Loop (tertiary, soft)** | Optional return loop showroom ↔ education ↔ comparison | **Retail** browsing without forcing linear exit |
+| **Isolated loop (staff)** | Back-of-house ↔ inventory ↔ content set ↔ repair (future) | **Production**, restock, shoots—never crosses guest spine |
+
+**Not recommended as primary:** Pure linear (traps browsers); pure open plan (kills reveals); mall hub (department store feel).
+
+**Digital twin alignment:** Mansion **mirrors spine** as navigable path; spokes become **rooms/portals**; staff/production **never** guest-navigable in Mansion.
+
+**Campaign:** Trilogy uses **Street → Threshold → Reception → Showroom → (optional Atelier tease)** without requiring full member/VIP build on day one.
+
+---
+
+## ZONE STRATEGY (CONCEPTUAL — NO FLOOR PLAN)
+
+Zones are **organizational**, not drawn walls. Adjacency rules live in the **Space Program** table.
+
+| Zone | Narrative role | Primary experiences (Phase 2) | Guest access |
+| --- | --- | --- | --- |
+| **Z1 — Arrival & threshold** | World entry; recognition | Street threshold, reception, first visit, PSA handoff | Public → semi-private |
+| **Z2 — Exploration & retail craft** | Objects as sculpture; literacy | Showroom, texture, color, comparison, product discovery | Public |
+| **Z3 — Education & media** | Confidence through mastery | Education, TV Lounge, content discovery | Public / members |
+| **Z4 — Consultation & analysis** | Human + visual expertise | Hair consultation, hair analysis | Private (invited) |
+| **Z5 — Customization** | Agency; Build-A-Wig | Atelier, premium options | Private (invited) |
+| **Z6 — Transformation & service** | Change + finish | Transformation suite, styling, installation, photography | Private |
+| **Z7 — Celebration & commerce** | Dignified close | Milestone, checkout, gift cards, membership desk | Semi-private / private |
+| **Z8 — Community, VIP & chapters** | Belonging; events | VIP lounge, events, community beats, founder (future) | Members / VIP |
+| **Z9 — Production & continuity** | Set that never breaks | Content creation, campaign holds, broadcast (future), archive (future) | Staff |
+| **Z10 — Operations & support** | Invisible luxury | Lockers, quiet room, receiving, staff support, B2B bay (future) | Staff / selective |
+
+**Zone rule:** Guest **spine** flows Z1 → Z2 → (Z3/Z4 branches) → Z5 → Z6 → Z7 → departure. Z8 connects via **invitation**, not storefront window. Z9/Z10 **never** visible from Z1.
+
+---
+
+## SPACE PROGRAM (MASTER)
+
+**Legend — Visibility:** **IV** Immediately Visible · **PR** Partially Revealed · **HI** Hidden Until Invited  
+**Story:** **Hero** · **Support** · **Background**  
+**Twin:** **Strict** · **Enhanced** · **Mansion-only (no physical room)** · **Physical-only**
+
+### Z1 — Arrival & threshold
+
+| Space | Primary purpose | Experiences supported | Access | Visibility | Twin | Est. dwell | Operational dependencies | Required adjacent | Should NOT adjacent | Story |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| **Street & sidewalk set** | Campaign first impression; approach | Campaign arrival, street threshold | Public | IV (exterior) | Strict | 0–3 min | Security, signage, window lighting | Storefront vitrine, threshold | Back-of-house doors | Hero |
+| **Storefront vitrine / window gallery** | Pull without explaining | Street threshold, product discovery (tease) | Public | IV | Strict | 0–5 min | Merchandising, lighting | Street, threshold interior | Staff corridors | Hero |
+| **Threshold airlock** | Pause; leave street energy | Reception, first visit, campaign beat | Public | PR (depth teased) | Strict | 1–2 min | Host staffing, climate | Reception, vitrine | Checkout, stock | Hero |
+| **Reception & guest recognition** | Ceremony; routing | Reception, first visit, PSA handoff, booking check-in | Public / semi-private | IV from threshold; PR beyond | Strict | 3–8 min | CRM recognition, hosts, queue | Threshold, orientation nook, spine to Z2 | Inventory, content set | Hero |
+| **Orientation nook** | Quiet map without lecture | First visit, Mansion Tour handoff | Semi-private | PR | Enhanced | 2–5 min | Digital concierge, print optional | Reception | Atelier door (direct) | Support |
+
+### Z2 — Exploration & retail craft
+
+| Space | Primary purpose | Experiences supported | Access | Visibility | Twin | Est. dwell | Operational dependencies | Required adjacent | Should NOT adjacent | Story |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| **Hair showroom (hero gallery)** | Units as sculpture; touch quality | Hair showroom, product discovery, comparison (partial) | Public | PR from reception; IV once entered | Strict | 10–25 min | Fixture standards, security | Texture/color stations, spine, consult ante | Receiving, trash, staff break | Hero |
+| **Texture discovery station** | Match hair to identity | Texture discovery | Public | IV within showroom | Strict | 5–12 min | Sample inventory, sanitation | Showroom, color station | Transformation suite | Support |
+| **Color consultation station** | Truthful color guidance | Color consultation | Public | IV within showroom | Strict | 5–15 min | Lighting accuracy (D65-class program) | Texture, showroom | TV Lounge (color clash) | Support |
+| **Comparison alcove** | Side-by-side clarity | Product comparison | Public | PR | Enhanced | 3–8 min | Display pairs, digital mirror optional | Showroom | Checkout | Background |
+
+### Z3 — Education & media
+
+| Space | Primary purpose | Experiences supported | Access | Visibility | Twin | Est. dwell | Operational dependencies | Required adjacent | Should NOT adjacent | Story |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| **Craft education gallery** | Literacy before buy | Education (general craft) | Public | PR from showroom spine | Enhanced | 5–15 min | Content refresh, PSA scripts | Showroom, TV Lounge ante | Atelier (direct sightline) | Support |
+| **TV Lounge (physical set)** | Serialized learn + entertain | TV Lounge, content discovery | Members (semi-public tease) | HI / PR (glow or door hint) | Enhanced (dark mood exception) | 15–45 min | A/V, seating, host path | Education gallery, member path | Color station (grade clash) | Hero |
+| **TV Lounge ante / member threshold** | Earned entry; status | Membership tease, TV Lounge | Members | PR | Enhanced | 1–3 min | Host escort | TV Lounge, reception recognition | Public checkout queue | Support |
+
+### Z4 — Consultation & analysis
+
+| Space | Primary purpose | Experiences supported | Access | Visibility | Twin | Est. dwell | Operational dependencies | Required adjacent | Should NOT adjacent | Story |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| **Consultation ante** | Wait with dignity | Hair consultation (queue) | Private | HI | Strict | 5–10 min | Scheduling, refreshments | Consult rooms, reception spoke | Showroom loud zone | Support |
+| **Consultation room(s)** | Expert plan | Hair consultation | Private | HI | Strict | 30–60 min | Stylist, records, privacy | Consult ante, analysis lab spoke | Storefront window | Support |
+| **Hair analysis lab** | Visual possibilities | Hair analysis | Private | HI (delayed reveal from showroom) | Enhanced | 15–30 min | Capture gear, privacy | Consult room, atelier handoff | Public spine direct view | Hero (reveal) |
+
+### Z5 — Customization
+
+| Space | Primary purpose | Experiences supported | Access | Visibility | Twin | Est. dwell | Operational dependencies | Required adjacent | Should NOT adjacent | Story |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| **Atelier threshold** | Invitation-only craft | Build-A-Wig (approach) | Private | HI until escort | Strict | 1–2 min | Host, appointment | Atelier floor, consult/analysis | Checkout | Support |
+| **Build-A-Wig atelier floor** | Customer authors unit | Build-A-Wig, customization options | Private | HI (hero reveal at threshold) | Strict | 45–120 min | Builders, materials, QA | Atelier threshold, transformation spoke | Showroom public | Hero |
+| **Material & sample library** | Premium steps | Customization options, texture (staff assist) | Private / staff | HI | Enhanced | 5–20 min | Inventory control | Atelier | Public uncontrolled access | Background |
+
+### Z6 — Transformation & service
+
+| Space | Primary purpose | Experiences supported | Access | Visibility | Twin | Est. dwell | Operational dependencies | Required adjacent | Should NOT adjacent | Story |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| **Transformation suite(s)** | Private change + mirror beat | Transformation suite | Private | HI | Strict | 20–45 min | Privacy, mirrors, seating | Styling bay, celebration spoke | Storefront | Hero |
+| **Styling & demo bay** | Finish + teach | Styling | Private / semi-private | HI | Strict | 20–40 min | Tools, sanitation | Transformation, installation | Reception queue | Support |
+| **Installation suite** | Professional install | Installation | Private | HI | Strict | 30–90 min | Stylists, appointments | Styling, consult spoke | Showroom | Support |
+| **Portrait / photography alcove** | Document moment | Photography, celebration | Private | HI | Enhanced | 5–15 min | Lighting, consent | Transformation, celebration | Operations | Support |
+
+### Z7 — Celebration & commerce
+
+| Space | Primary purpose | Experiences supported | Access | Visibility | Twin | Est. dwell | Operational dependencies | Required adjacent | Should NOT adjacent | Story |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| **Celebration pause** | Honor milestone | Celebration / milestone | Semi-private | PR | Enhanced | 3–10 min | Host script | Portrait, checkout | Stock | Support |
+| **Checkout & bag ceremony** | Dignified departure commerce | Checkout, gift cards (partial) | Semi-private | PR (never from street) | Enhanced | 5–15 min | POS, security, packaging | Celebration, reception spoke, departure | Atelier floor | Hero |
+| **Membership enrollment desk** | Belong to house | Membership enrollment, rewards visibility | Semi-private | PR | Enhanced | 5–12 min | CRM, tier benefits | Checkout, TV Lounge ante | Loading dock | Support |
+| **Departure threshold & Mansion bridge** | Continuity to digital | First visit (exit), Mansion Tour invite, notifications handoff | Public | IV (exit light) | Enhanced | 1–3 min | QR/kiosk, concierge | Checkout, street | Back-of-house | Support |
+
+### Z8 — Community, VIP & chapters
+
+| Space | Primary purpose | Experiences supported | Access | Visibility | Twin | Est. dwell | Operational dependencies | Required adjacent | Should NOT adjacent | Story |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| **VIP lounge wing** | Rest + insider status | VIP lounge | VIP | HI / PR (no street view) | Enhanced | 15–60 min | Bar service, privacy | Member path, event hall | Receiving | Hero (member) |
+| **Event / chapter hall** | Launches & gatherings | Events, future campaigns, future product launches | Public / members | HI until event | Enhanced | 30–120 min | A/V, flex seating | VIP spoke, showroom (controlled open) | Daily stock clutter | Hero (chapter) |
+| **Founder experience hold** | Standard-bearer soul | Founder experience | Founder / VIP | HI | Enhanced | By invitation | Founder schedule | Private suite spoke (future) | Public tours | Support |
+| **Community story wall (physical)** | Consented UGC | Community | Members | PR in member zones | Enhanced | 5–10 min | Moderation | TV Lounge, event hall | Checkout | Background |
+
+### Z9 — Production & continuity
+
+| Space | Primary purpose | Experiences supported | Access | Visibility | Twin | Est. dwell | Operational dependencies | Required adjacent | Should NOT adjacent | Story |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| **Content creation gallery** | Shoot in-world | Content creation, social, campaign pickup | Staff / select | HI | Strict (set match) | 1–8 hrs | Lighting grid, reset discipline | Showroom, atelier (controlled) | Guest toilet queue | Hero (production) |
+| **Campaign blocking hold** | Trilogy/chapter resets | Campaign events, future campaign events | Staff | HI | Strict | Variable | Set continuity bible | Street, threshold, showroom | Open retail hours conflict | Support |
+| **Live broadcast booth (future)** | TV origin in flagship | Live stream (future), TV Lounge | Staff | HI | Enhanced | 1–4 hrs | A/V tie to TV Lounge | TV Lounge, content set | Guest spine | Support |
+| **Archive / canon gallery (future)** | Franchise memory | Archive (future) | Members | HI | Mansion-led | 10–30 min | Curatorial | Event hall | Loading | Background |
+
+### Z10 — Operations & support
+
+| Space | Primary purpose | Experiences supported | Access | Visibility | Twin | Est. dwell | Operational dependencies | Required adjacent | Should NOT adjacent | Story |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| **Guest locker & coat hospitality** | Arrival ceremony scale | Reception support | Staff / guest | HI | Enhanced | 1–5 min | Attendant | Reception, threshold | Showroom | Background |
+| **Quiet / accessibility room** | Inclusion by design | Education, support breaks | Private | HI | Enhanced | 5–20 min | ADA program | Reception spoke | Noise sources | Support |
+| **Care & repair bar (future)** | Post-purchase craft | Returns / care education | Semi-private | HI | Enhanced | 15–30 min | Technicians | Receiving spoke | Showroom | Support |
+| **Receiving & inventory** | Stock truth | Product discovery (backend) | Staff | HI | Physical-only | Staff | Logistics | Repair, showroom back | Guest spine | Background |
+| **Staff support & PSA desk back** | Human ops | Customer support (physical), PSA staff | Staff | HI | Physical-only | Staff | CRM | Reception back | Guest | Background |
+| **Private client suite (future)** | Whale privacy | Private client suite (future) | VIP | HI | Strict | 60+ min | Dedicated host | VIP wing | Public showroom | Hero (whale) |
+| **B2B / pro academy bay (future)** | Channel education | B2B (future) | Private | HI | Enhanced | 2–4 hrs | Separate circulation | Own entry spoke | Guest spine | Support |
+| **Pop-up export module (future)** | Satellite DNA slice | Pop-up (future) | Public (off-site) | IV (off-site) | Enhanced | N/A | Modular set kit | Design from Z2/Z5 kit | N/A | Background |
+
+### Mansion-only services (no dedicated guest room — program still required)
+
+| Space (logical) | Primary purpose | Experiences | Access | Visibility in Mansion | Twin |
+| --- | --- | --- | --- | --- | --- |
+| **Guest profile & identity hall** | Account dignity | Profile management | Private | IV post-login | Mansion-only |
+| **Notification & message center** | Host continuity | Notifications | Private | PR | Mansion-only |
+| **Order & fulfillment observatory** | Transparent ops | Order tracking, waitlist | Private | PR | Mansion-only |
+| **Affiliate & partner studio** | Advocate tools | Affiliate | Private | HI | Mansion-only |
+| **Booking & calendar salon** | Schedule human time | Booking calendar | Private | PR | Mansion-only |
+| **Retention garden** | Quiet return | Retention / win-back | Private | HI | Mansion-only |
+| **Slay Challenge arena** | Long-game mastery | Slay Challenge | Members | PR → IV | Enhanced |
+| **Consult offer vault** | Async custom journey | Consult offer / digital order | Private | HI until opened | Enhanced |
+
+**Rule:** Mansion-only spaces **inherit materials, tone, and host voice** from Z1/Z7—they are not a separate product UI.
+
+---
+
+## VISIBILITY PROGRAM
+
+What guests **see** vs **must not see** from major program locations (no dimensions—sightline **intent** only).
+
+### From sidewalk / street (campaign FRAME 001–009 grammar)
+
+| Visible | Hidden |
+| --- | --- |
+| Storefront vitrine, rose/marble/glass **truth**, threshold glow, **hint** of depth (not full showroom) | Atelier, transformation suites, inventory, staff, pricing clutter, TV Lounge interior |
+| Optional: **partial** silhouette of showroom sculpture (PR) | VIP wing, event hall doors, loading, content set |
+
+### From threshold airlock (first step inside)
+
+| Visible | Hidden |
+| --- | --- |
+| Reception ceremony, **controlled** glimpse of showroom axis, hospitality details | Checkout, private suites, back-of-house, full atelier |
+| PSA / host presence (partial) | Analysis lab, transformation doors |
+
+### From reception (standing at host)
+
+| Visible | Hidden |
+| --- | --- |
+| Showroom **mouth** (PR→IV on approach), orientation nook, education tease | Atelier threshold (HI until escort), transformation, inventory |
+| Member path **hint** (door or light) for recognized guests | Production set, receiving |
+
+### From hair showroom
+
+| Visible | Hidden |
+| --- | --- |
+| Texture/color stations, comparison alcove, **tease** of education gallery | Full atelier activity (HI), consult/analysis doors (closed) |
+| **Delayed** sightline to analysis lab door (PR) — curiosity | Transformation suite entries |
+
+### Near Build-A-Wig / atelier threshold (invited)
+
+| Visible | Hidden |
+| --- | --- |
+| Atelier floor hero reveal (IV at invitation), material library (partial) | Other guests’ suites, stock |
+| **Future** sightline to transformation **after** craft (PR) | Street, campaign exterior |
+
+### From celebration / checkout
+
+| Visible | Hidden |
+| --- | --- |
+| Departure light, Mansion bridge, membership desk (PR) | Atelier, analysis, production |
+| Optional soft view back to showroom (closure loop) | VIP interior |
+
+**Curiosity rule:** Each zone may **increase** visibility of **one** deeper zone only—never reveal entire back-of-house at once.
+
+---
+
+## SIGHTLINE PROGRAM (KEY MOMENTS)
+
+| Moment | Timing | Emotional job | Program note |
+| --- | --- | --- | --- |
+| **First impression (sidewalk)** | Immediate | Wonder; boutique does not chase | Vitrine + threshold only; aligns trilogy exterior discovery |
+| **First step inside** | Immediate | Recognition; safety | Reception + controlled depth axis |
+| **First view beyond reception** | Immediate on approach | Awe; craft as art | Showroom mouth — **hero** |
+| **First glimpse education / TV** | Delayed (PR) | Mastery is possible | Glow or framed door—not full lounge |
+| **First reveal analysis lab** | Delayed (HI→invite) | Hope; technology with taste | From consult or escorted spoke—not from street |
+| **First reveal Build-A-Wig atelier** | Delayed (HI→invite) | Agency; pride | Threshold pause then floor IV |
+| **First reveal transformation suite** | Delayed (after craft or service book) | Transformation | Mirror beat private |
+| **Checkout / bag** | Delayed (never from street) | Calm completion | Separated from discovery spine |
+| **Departure → Mansion** | Immediate at exit | Continuity | Bridge kiosk / invite |
+
+**Campaign shots** prioritize rows 1–3 and showroom; **atelier/transform** optional later chapters.
+
+---
+
+## PUBLIC / PRIVATE ORGANIZATION
+
+| Layer | Spaces | Guest rule |
+| --- | --- | --- |
+| **Public** | Street, vitrine, threshold, showroom floor, texture/color, comparison, education gallery (public hours) | Self-guided with hosts available |
+| **Semi-private** | Reception side desks, celebration, checkout, membership desk, consult ante | Escorted or queued |
+| **Private (invited)** | Consult rooms, analysis lab, atelier, transformation, styling, installation, portrait | Appointment or host unlock |
+| **Members / VIP** | TV Lounge, VIP wing, event hall (gated), community wall | Recognition + tier |
+| **Staff / production** | Z9, Z10, content set | Never on guest map |
+| **Founder** | Founder hold, private suite (future) | By invitation only |
+
+**Service circulation** may enter **private** zones from **staff spokes** without crossing **public spine** mid-journey.
+
+---
+
+## DIGITAL TWIN — ZONE MAPPING
+
+| Zone | Mansion relationship | Notes |
+| --- | --- | --- |
+| **Z1 Arrival** | **Identical identity** + Enhanced routing | Mansion **Reception** mirrors threshold ceremony; PSA digital |
+| **Z2 Showroom** | **Identical** + Enhanced browse | Infinite catalog **feels** like same gallery grammar |
+| **Z3 Education / TV** | **Enhanced** | TV Lounge **expands** episodes, library, live—physical set is **origin** |
+| **Z4 Consult / analysis** | **Enhanced** | Async consult offer vault; analysis tools deepen |
+| **Z5 Atelier** | **Strict** core + Enhanced tools | Build-A-Wig **must** match physical craft steps |
+| **Z6 Transform / install** | **Strict** emotional beats + Partial physical install | Install may be **appointment-only** physical |
+| **Z7 Commerce** | **Enhanced** checkout + Mansion-only order/profile | Checkout ritual **tone** matches bag ceremony |
+| **Z8 Community / VIP** | **Enhanced** | Mansion **expands** lounge, events, Slay Challenge |
+| **Z9 Production** | **Partial echo** | Behind-the-scenes content **optional**—never guest-navigable as ops |
+| **Z10 Operations** | **Not mirrored** | Fulfillment logic Mansion-only; no “stock room” fantasy |
+
+**Mansion Exclusive** services (profile, notifications, affiliate, booking) live in **logical halls** off Z1/Z7—not a separate app aesthetic.
+
+---
+
+## CAMPAIGN & MEDIUM REQUIREMENTS (PROGRAM)
+
+| Medium | Required program elements | Must remain permanent on set |
+| --- | --- | --- |
+| **Nia trilogy / chapters** | Street, vitrine, threshold, reception, showroom; optional atelier tease | Same walls for all angles—**content creation gallery** adjacent |
+| **Product launches** | Event/chapter hall + showroom controlled reveal | No temporary décor zone—flex **program** not new room |
+| **Education / TV** | TV Lounge set + education gallery | Dark mood exception documented |
+| **Social / photography** | Portrait alcove, content set, showroom | Reset discipline |
+| **Membership** | TV ante, VIP wing (phased), Mansion bridge at departure | Recognition at reception |
+| **Website / mobile** | Strict zones as **reference photography**; Enhanced for depth | One material truth |
+| **Desktop Mansion** | Full zone map + Exclusive services | Spines match Phase 3 circulation |
+
+---
+
+## EXPERIENCE ↔ SPACE INDEX (QUICK REFERENCE)
+
+| Phase 2 experience | Primary space(s) |
+| --- | --- |
+| Reception | Reception & guest recognition |
+| First visit | Orientation nook + Mansion bridge |
+| Hair consultation | Consultation room(s) |
+| Hair analysis | Hair analysis lab |
+| Hair showroom | Hair showroom |
+| Build-A-Wig atelier | Atelier floor |
+| Texture / color | Discovery stations in Z2 |
+| Transformation suite | Transformation suite(s) |
+| Styling / installation | Styling bay / installation suite |
+| Photography | Portrait alcove |
+| Checkout / gift / membership | Z7 commerce cluster |
+| TV Lounge | TV Lounge + ante |
+| VIP lounge | VIP wing |
+| PSA / support | Reception + staff PSA back (physical partial) |
+| Events / launches | Event / chapter hall |
+| Content creation | Content creation gallery |
+| Future decade rows | Marked **future** in space program—zone reserved |
+
+---
+
+## PHASE 3 PRODUCTION NOTES (FOR PHASE 4)
+
+| Note | Phase 4 implication |
+| --- | --- |
+| **Hero spaces (set priority)** | Street/vitrine, threshold, reception, showroom, atelier reveal, transformation, event hall, content set |
+| **No adjacency violations** | Never: checkout↔atelier direct; receiving↔vitrine; stock↔transformation mirror |
+| **Circulation** | Design **one** guest spine + **three** hidden spoke families (service, member, production) |
+| **Phasing** | Build **strict spine** first; VIP wing, archive, broadcast, B2B **future** without moving spine |
+| **Twin** | Phase 4 materials must match **Strict** rows before Enhanced embellishment |
+| **Still forbidden in Phase 4 brief** | Arbitrary rooms without row in **Space Program** table |
+
+---
+
 ## Related Documents
 
 | Document | Role |
@@ -499,7 +854,7 @@ Experiences **not** fully live today but **architect into program** now:
 | [`../MASTER_ROADMAP.md`](../MASTER_ROADMAP.md) | Registry |
 | [`../storytelling/cinematic-universe-bible.md`](../storytelling/cinematic-universe-bible.md) | Universe canon |
 | [`production/film-trilogy-visual-story-bible.md`](./production/film-trilogy-visual-story-bible.md) | Reality One story structure |
-| Future `environments/mansion-and-rooms.md` | Must inherit twin map from this bible |
+| Future `environments/mansion-and-rooms.md` | Phase 5+ — must inherit zone + twin map from this bible |
 
 ---
 
@@ -508,8 +863,9 @@ Experiences **not** fully live today but **architect into program** now:
 | Version | Date | Summary | Approver |
 | --- | --- | --- | --- |
 | **0.1** | 2026-07-23 | Phase 1 Story Universe + Production Design Review | Founder (Phase 2 opened) |
-| **0.2** | 2026-07-23 | Phase 2 Experience Registry + progression map | Pending Founder (Phase 3) |
+| **0.2** | 2026-07-23 | Phase 2 Experience Registry + progression map | Founder (Phase 3 opened) |
+| **0.3** | 2026-07-23 | Phase 3 Flagship Program (zones, spaces, circulation, visibility, twin) | Pending Founder (Phase 4) |
 
 ---
 
-*End of Flagship Production Bible — through Phase 2 (pre-production). Phase 3 architectural design **locked** until Founder approval.*
+*End of Flagship Production Bible — through Phase 3 (pre-production). Phase 4 architectural design **locked** until Founder approval.*
