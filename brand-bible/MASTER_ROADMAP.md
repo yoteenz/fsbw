@@ -152,6 +152,7 @@ brand-bible/
 ├── characters/
 │   └── future-characters-template.md ← single template until cast exists
 ├── environments/
+│   ├── flagship-production-bible.md     ✅ Phase 1 v0.1 (pre-production; Phase 2 gated)
 │   ├── mansion-and-rooms.md
 │   ├── digital-spaces-registry.md    ← links design-dna-canon
 │   ├── tv-lounge-set-standards.md

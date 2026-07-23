@@ -50718,3 +50718,12 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Deliverable:** **`brand-bible/production/film-trilogy-visual-story-bible.md`**. **`film-trilogy-master-cinematography-bible.md`** updated — opening frames aligned to **001–009**, points to Visual Story as authoritative frame detail.
 - **Registry:** MASTER_ROADMAP **DOC-PRD-001V SHIPPED (LOCKED)**.
 - **Changes:** `brand-bible/production/film-trilogy-visual-story-bible.md` (new), `film-trilogy-master-cinematography-bible.md`, `MASTER_ROADMAP.md`, `motherboard/MEMORY.md`. Docs only.
+
+---
+
+## 2026-07-23 — Flagship Production Bible Phase 1 + review (brand-bible)
+
+- **Context:** Founder pre-production mission — build **Frontal Slayer Universe** as permanent Hollywood-style flagship set + Mansion digital twin (not UI/web/AI-gen thinking). Phase 1 **Story Universe** only — no architecture/floor plans/images. Task: critique, continuity risks, structural improvements, recommended bible sections; **wait for approval before Phase 2**.
+- **Deliverable:** **`brand-bible/environments/flagship-production-bible.md`** v0.1 — Phase 1 canon text (three realities, journey, roles, emotional arc, design philosophy, golden rule) + **Production Design Review** (strengths; inconsistencies Nia/PSA/protagonist, journey vs Season One, mobile vs desktop; continuity risks; structural improvements; mobile/Mansion/chapter flags; **14 recommended foundational sections** before Phase 2).
+- **Registry:** MASTER_ROADMAP **DOC-ENV-001 Phase 1** (pending Founder approval for Phase 2).
+- **Changes:** `brand-bible/environments/flagship-production-bible.md` (new), `brand-bible/MASTER_ROADMAP.md`, `motherboard/MEMORY.md`. Docs only.
