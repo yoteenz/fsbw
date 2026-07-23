@@ -50673,3 +50673,12 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Deliverable:** **`film-i-narrative-design-bible.md`** v1.0 — Narrative purpose/premise/promise/payoff; central dramatic question; **narrative spine** (NOTICE→…→forward vector); structural philosophy; information classes A–G; mystery/reveal/curiosity; audience & character knowledge timelines; hybrid POV strategy; escalation/tension/wonder/transition; beginning/middle/end functions; ending image philosophy; Film II trust setup; never/clear/implied reveals; risks/opportunities; structural review checklist; success/failure; writer handoff order.
 - **Cross-links:** film-i discovery + emotional architecture, chapter-one, storytelling-philosophy; MASTER_ROADMAP **DOC-STY-001J SHIPPED**.
 - **Changes:** `brand-bible/storytelling/film-i-narrative-design-bible.md` (new), cross-links in discovery/emotional/chapter-one/storytelling-philosophy, MASTER_ROADMAP, `motherboard/MEMORY.md`. Docs only.
+
+---
+
+## 2026-07-23 — Film I Screenplay Design Packet v1.0 (brand-bible)
+
+- **Context:** Head of Story — development complete; final **writer brief** before Film I screenplay draft. Full canon stack (Season/Chapter One, Discovery, Emotional Architecture, Experience Bible, Narrative Design). Not screenplay/scenes/dialogue/camera/prompts.
+- **Deliverable:** **`film-i-screenplay-design-packet.md`** v1.0 — Film intent & audience promise; emotional/narrative/character/PSA/customer/world/mystery/hospitality/luxury objectives; beginning/middle/end requirements; emotional & narrative milestones E1–E8 / N1–N8; **7 required turning points**; **7 signature moment categories** (S3 OPEN + S7 forward non-negotiable); symbolism/motifs; dialogue/visual/scene/transition/pacing philosophy; constraints & opportunities; writer checklist; creative approval gates; success/failure; post-draft chain.
+- **Cross-links:** narrative-design-bible (handoff to packet), discovery packet, storytelling-philosophy; MASTER_ROADMAP **DOC-STY-001K SHIPPED**.
+- **Changes:** `brand-bible/storytelling/film-i-screenplay-design-packet.md` (new), `film-i-narrative-design-bible.md`, `film-i-the-arrival-discovery-packet.md`, `storytelling-philosophy.md`, MASTER_ROADMAP, `motherboard/MEMORY.md`. Docs only.

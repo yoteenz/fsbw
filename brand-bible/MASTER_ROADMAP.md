@@ -608,6 +608,15 @@ Each entry: **ID** for tracking. **Priority:** P0 (blocking production), P1 (hig
 | **Priority** | P0 |
 | **Phase** | 2 (done) |
 
+#### DOC-STY-001K — `storytelling/film-i-screenplay-design-packet.md` ✅ **SHIPPED v1.0**
+
+| Field | Detail |
+| --- | --- |
+| **Purpose** | Film I **The Arrival** — final writer brief before screenplay: intent, promises, objectives (emotion/narrative/character/PSA/world/mystery/hospitality/luxury), beginning/middle/end requirements, milestones, turning points, signature moments, symbolism/motifs, dialogue/visual/scene/transition/pacing philosophy, constraints/opportunities, writer & approval checklists, success/failure |
+| **Dependencies** | full Film I canon stack (discovery, emotional, narrative, experience, chapter/season) |
+| **Priority** | P0 |
+| **Phase** | 2 (done) |
+
 ---
 
 ### Experience (guest journey & hospitality)

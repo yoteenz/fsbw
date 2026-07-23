@@ -568,6 +568,8 @@ Writers **must read in order:**
 
 **Writer deliverable next:** Screenplay that **implements spine states**—Scene breakdown is **allowed** in separate doc, **not** here.
 
+**Writer brief:** [`film-i-screenplay-design-packet.md`](./film-i-screenplay-design-packet.md) — draft contract before v1.
+
 ---
 
 ## Related Documents

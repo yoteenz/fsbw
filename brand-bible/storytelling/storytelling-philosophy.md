@@ -356,6 +356,7 @@ Reserved for Version 1.1+ — do not fill with speculative lore here.
 | **`film-i-the-arrival-discovery-packet.md`** | Film I — The Arrival (pre-screenplay story discovery) |
 | **`film-i-the-arrival-emotional-architecture-blueprint.md`** | Film I — emotional architecture / experience OS |
 | **`film-i-narrative-design-bible.md`** | Film I — narrative structure (pre-screenplay) |
+| **`film-i-screenplay-design-packet.md`** | Film I — writer brief before draft |
 | **`../experience/frontal-slayer-experience-bible.md`** | Guest experience constitution — hospitality, journey, sensory, commandments |
 | **`../visual-language/visual-language.md`** | How the world looks |
 | **`../psa/design-principles.md`** | How PSA looks |
