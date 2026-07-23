@@ -2,7 +2,7 @@
 
 **Document:** Flagship Production Bible  
 **Version:** 0.3 — **Phase 1–3** (+ Phase 4A language guide)  
-**Status:** In pre-production — **SET-001 Design Development (Phase 4B)** canonical · [`set-001-design-development.md`](./set-001-design-development.md) DOC-ENV-006  
+**Status:** In pre-production — **SET-001 Production Dossier (Phase 5)** canonical · [`set-001-production-design-dossier.md`](./set-001-production-design-dossier.md) DOC-ENV-007  
 **Owner:** Executive Creative / Production Design  
 **Classification:** Internal — world foundation before any room is architected  
 
@@ -298,8 +298,9 @@ Add these as **Phase 1 annex** or **early Phase 2 gates**—no floor plans yet, 
 | **Phase 2 — Experience Architecture** | **Approved** (Founder opened Phase 3) |
 | **Phase 3 — Flagship programming** | **Approved** (Founder opened Phase 4A) |
 | **Phase 4A — Architectural language** | **Approved** — DOC-ENV-005 |
-| **Phase 4B — SET-001 design development** | **Complete** — DOC-ENV-006 |
-| **Phase 5+ — Visualization / CAD / Mansion room packs** | Inherit SET-001; no major reinvention |
+| **Phase 4B — SET-001 design development** | **Approved** — DOC-ENV-006 |
+| **Phase 5 — Production Design Dossier** | **Complete** — DOC-ENV-007 |
+| **Visualization / implementation** | Execute from DOC-ENV-007; no redesign |
 
 ---
 
@@ -856,8 +857,8 @@ What guests **see** vs **must not see** from major program locations (no dimensi
 | [`../storytelling/cinematic-universe-bible.md`](../storytelling/cinematic-universe-bible.md) | Universe canon |
 | [`production/film-trilogy-visual-story-bible.md`](./production/film-trilogy-visual-story-bible.md) | Reality One story structure |
 | [`flagship-architectural-language.md`](./flagship-architectural-language.md) | Phase 4A — DOC-ENV-005 |
-| [`set-001-design-development.md`](./set-001-design-development.md) | **Phase 4B** — SET-001 definitive physical design (DOC-ENV-006) |
-| Future `mansion-and-rooms.md` / visualization | Phase 5+ — inherit SET-001 space IDs |
+| [`set-001-design-development.md`](./set-001-design-development.md) | Phase 4B — DOC-ENV-006 |
+| [`set-001-production-design-dossier.md`](./set-001-production-design-dossier.md) | **Phase 5** — execution packet (DOC-ENV-007) |
 
 ---
 

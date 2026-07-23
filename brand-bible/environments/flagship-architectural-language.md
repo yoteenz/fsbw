@@ -478,6 +478,8 @@ Phase 4B must:
 
 **Phase 4B complete:** [`set-001-design-development.md`](./set-001-design-development.md) **SET-001** (DOC-ENV-006) — visualization inherits space IDs without reinventing major decisions.
 
+**Production execution:** [`set-001-production-design-dossier.md`](./set-001-production-design-dossier.md) **DOC-ENV-007** — canonical handoff for all viz/film/digital.
+
 ---
 
 ## Related Documents

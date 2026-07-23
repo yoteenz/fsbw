@@ -4,7 +4,7 @@
 **Document:** SET-001 Design Development Package  
 **Registry:** DOC-ENV-006  
 **Version:** 1.0 — **Phase 4B** (design development)  
-**Status:** Canonical physical resolution — **visualization (Phase 5+) inherits without reinventing**  
+**Status:** Canonical physical resolution — execute via **DOC-ENV-007** Production Design Dossier  
 **Owner:** Lead Architect / Production Design / Operations Planning  
 **Classification:** Internal — definitive buildable design (no artwork in this package)  
 

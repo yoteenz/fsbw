@@ -50759,3 +50759,11 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Context:** Founder declared Phases 1–4A **approved and canonical**; opened **Phase 4B SET-001 Design Development** — resolve definitive physical flagship (no images, concept art, UI, code). Must trace all future campaign, web, mobile, Mansion, expansions to this building.
 - **Deliverable:** **`brand-bible/environments/set-001-design-development.md` v1.0 (DOC-ENV-006)** — SET-001 narrative; ~16.5k SF ground + ~7k SF lower ops + future north wing; hybrid circulation **GS-1/PS-1/MS-1/ST-1/SV-1**; **40+ space IDs** (S1-EXT through S10-B2B + M-* Mansion halls) with scale, privacy, visibility, dwell, ops, adjacency, twin; spatial sequence with emotional transitions; architectural composition (massing, rhythm, double-height showroom); exterior/interior architecture by zone; operational design (retail, salon, events, content, emergency, ADA); campaign location matrix; **complete digital twin map**; longevity phasing; QC checklist verified. Updated production bible phase status, architectural language Phase 4B pointer, MASTER_ROADMAP.
 - **Changes:** `set-001-design-development.md` (new), `flagship-production-bible.md`, `flagship-architectural-language.md`, `MASTER_ROADMAP.md`, `motherboard/MEMORY.md`. Docs only.
+
+---
+
+## 2026-07-23 — SET-001 Production Design Dossier Phase 5 (brand-bible)
+
+- **Context:** Founder declared prior phases canonical; **Phase 5 — SET-001 Production Design Dossier** — concise execution packet (not replanning) for artists, OpenArt/Kling/Cursor, photographers, 3D, architects. No images/UI/code; no redesign.
+- **Deliverable:** **`brand-bible/environments/set-001-production-design-dossier.md` v1.0 (DOC-ENV-007)** — 12 sections: project identity, executive summary, SET registry (Z1–Z10 + space IDs + M-*), material lock, color, lighting registry, **camera registry** (CAM-EXT/ARR/REC/GAL/LAB/ATL/TRN/VIP/FND/DEP/CHK), continuity rules, visualization guidelines, medium-specific notes, digital twin summary, version control; QC verified. Updated production bible, set-001 design dev pointer, MASTER_ROADMAP.
+- **Changes:** `set-001-production-design-dossier.md` (new), `flagship-production-bible.md`, `set-001-design-development.md`, `MASTER_ROADMAP.md`, `motherboard/MEMORY.md`. Docs only.

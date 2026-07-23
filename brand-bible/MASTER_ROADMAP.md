@@ -153,7 +153,7 @@ brand-bible/
 │   └── future-characters-template.md ← single template until cast exists
 ├── environments/
 │   ├── flagship-production-bible.md     ✅ Phase 1–3 + 4A ref (pre-production; Phase 4B gated)
-│   ├── set-001-design-development.md      ✅ SET-001 Phase 4B v1.0 (DOC-ENV-006)
+│   ├── set-001-production-design-dossier.md  ✅ Phase 5 v1.0 (DOC-ENV-007)
 │   ├── mansion-and-rooms.md
 │   ├── digital-spaces-registry.md    ← links design-dna-canon
 │   ├── tv-lounge-set-standards.md
@@ -773,7 +773,16 @@ Each entry: **ID** for tracking. **Priority:** P0 (blocking production), P1 (hig
 | **Purpose** | **SET-001** definitive physical flagship — narrative, organization, space IDs/scales, operations, campaign + twin resolution |
 | **Dependencies** | DOC-ENV-000 Phases 1–3, DOC-ENV-005, trilogy visual story |
 | **Priority** | P0 |
-| **Phase** | Design development complete — visualization Phase 5+ inherits |
+| **Phase** | Design development complete — **execute via DOC-ENV-007** |
+
+#### DOC-ENV-007 — `environments/set-001-production-design-dossier.md` ✅ **v1.0 Phase 5**
+
+| Field | Detail |
+| --- | --- |
+| **Purpose** | **SET-001 Production Design Dossier** — execution handoff: registry, material/color/light lock, camera registry, continuity, viz guidelines, medium notes, twin summary, governance |
+| **Dependencies** | DOC-ENV-005, DOC-ENV-006, visual-language, trilogy cinematography |
+| **Priority** | P0 |
+| **Phase** | **LOCKED** production packet for all viz/film/digital |
 
 #### DOC-ENV-001 — `environments/mansion-and-rooms.md`
 
