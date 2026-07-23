@@ -747,6 +747,15 @@ Each entry: **ID** for tracking. **Priority:** P0 (blocking production), P1 (hig
 
 ### Environments
 
+#### DOC-ENV-000 — `environments/flagship-production-bible.md` 🟡 **v0.2 Phase 1–2 (Phase 3 gated)**
+
+| Field | Detail |
+| --- | --- |
+| **Purpose** | Flagship + Mansion twin production bible — Phase 1 world layers; **Phase 2 Experience Registry** (architectural program input) |
+| **Dependencies** | north-star, cinematic-universe, trilogy bibles, experience bible, visual-language |
+| **Priority** | P0 |
+| **Phase** | Pre-production (Phase 3 architecture locked until approved) |
+
 #### DOC-ENV-001 — `environments/mansion-and-rooms.md`
 
 | Field | Detail |

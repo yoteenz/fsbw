@@ -1,8 +1,8 @@
 # FRONTAL SLAYER — FLAGSHIP PRODUCTION BIBLE
 
 **Document:** Flagship Production Bible  
-**Version:** 0.1 — **Phase 1 only** (pre-production)  
-**Status:** In pre-production — **Phase 1 submitted for Founder approval**; do **not** advance to Phase 2 (architecture) without explicit approval  
+**Version:** 0.2 — **Phase 1–2** (pre-production)  
+**Status:** In pre-production — **Phase 2 complete**; **Phase 3 (architecture) locked** until Founder approval  
 **Owner:** Executive Creative / Production Design  
 **Classification:** Internal — world foundation before any room is architected  
 
@@ -294,9 +294,201 @@ Add these as **Phase 1 annex** or **early Phase 2 gates**—no floor plans yet, 
 
 | Phase | Status |
 | --- | --- |
-| **Phase 1 — Story Universe** | **Draft complete** — awaiting **Founder approval** |
-| **Phase 2 — Flagship architecture** | **LOCKED** until approval |
-| **Phase 3+** | Not started |
+| **Phase 1 — Story Universe** | **Approved** (advanced by Founder to Phase 2) |
+| **Phase 2 — Experience Architecture** | **Complete** — awaiting **Founder approval** for Phase 3 |
+| **Phase 3 — Flagship architectural program / design** | **LOCKED** until Phase 2 approved |
+| **Phase 4+** | Not started |
+
+---
+
+# PHASE 2 — EXPERIENCE ARCHITECTURE
+
+## PRE-PRODUCTION (Phase 2)
+
+We are **still not** designing the building.
+
+**Do not** generate architecture, floor plans, images, UI, or code.
+
+**Role:** Production Designer · Experience Architect · World Builder · Hospitality Consultant · Creative Director.
+
+**Objective:** Define **every experience** the flagship must support so architecture **emerges from experience**, never the reverse.
+
+**Core principle:** Every **room** exists because it enables an **experience**. No room exists only to look impressive. If an experience does not exist, the room should not exist.
+
+**Output:** **Experience Registry** — official program for Phase 3 architectural design.
+
+---
+
+## EXPERIENCE PROGRESSION (FLAGSHIP STORY)
+
+Experiences are **not** isolated features. They form one **choreographed journey**:
+
+```
+Discovery → Welcome → Education → Confidence → Customization → Transformation
+→ Celebration → Purchase → Membership → Community → Retention → Advocacy
+```
+
+**Campaign / Reality One** feeds **Discovery** before **Welcome**. **Mobile** carries **Welcome → Purchase** with low friction. **Mansion** deepens **Education → Community** and **rewards curiosity**.
+
+**Season One note:** Early chapters emphasize **Discovery → Welcome → Education**; **Purchase** intensifies mid-season—registry supports **lifetime** journey, not launch-day funnel only.
+
+---
+
+## REGISTRY CONVENTIONS
+
+| Field | Definition |
+| --- | --- |
+| **Access** | **Public** · **Private** (signed-in) · **Members** · **VIP/Black** · **Founder** · **Staff** |
+| **Physical** | **Yes** = must exist in flagship set · **Partial** = physical analog or desk, not full room yet · **Future** = plan for build · **No** = digital/service only |
+| **Mobile** | **Yes** / **Partial** / **No** |
+| **Mansion** | **Yes** / **Partial** / **No** |
+| **Twin class** | **Twin Strict** · **Twin Enhanced** · **Mansion Exclusive** |
+
+**Twin Strict:** Must exist **physically and digitally** with matched identity.  
+**Twin Enhanced:** Physical exists; Mansion **adds** depth, tools, or scale—not different materials.  
+**Mansion Exclusive:** **No** physical room required; must **not** contradict flagship materials/tone.
+
+---
+
+## EXPERIENCE REGISTRY (MASTER)
+
+### Discovery & threshold
+
+| Experience | Purpose | Customer goal | Business goal | Emotional goal | Access | Physical | Mobile | Mansion | Twin |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| **Campaign arrival (witness)** | Introduce world via Nia; boutique discovered, not explained | Feel curiosity; see self in pause | Brand desire; film/chapter reach | Curiosity, wonder | Public | Yes | Partial (clips) | Partial (echo) | Twin Enhanced |
+| **Street threshold / window discovery** | First contact with flagship exterior | Decide whether to pause | Foot traffic → entry | Pull, safety | Public | Yes | No | Partial | Twin Strict |
+| **Product discovery (browse)** | Explore catalog as **objects in world** | Find what fits identity | Consideration, SEO | Exploration | Public | Partial (showroom) | Yes | Yes | Twin Enhanced |
+| **Product comparison** | Compare units with craft literacy | Choose with confidence | Conversion quality | Clarity | Public | Partial | Yes | Yes | Twin Enhanced |
+| **Content discovery (film/social)** | Many doors, one set | Follow story across surfaces | Distribution reach | Curiosity reward | Public | Partial | Yes | Partial | Twin Enhanced |
+
+### Welcome & hospitality
+
+| Experience | Purpose | Customer goal | Business goal | Emotional goal | Access | Physical | Mobile | Mansion | Twin |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| **Reception / guest recognition** | Arrival ceremony; guest **seen** | Feel expected | Service standard | Recognition, honor | Public | Yes | Partial | Yes | Twin Strict |
+| **First visit / onboarding** | Orient without lecture | Know where I am | Activation | Comfort | Private | Yes | Yes | Yes | Twin Enhanced |
+| **Mansion Tour (first path)** | Narrative onboarding through **rooms** | Learn mansion as **place** | Retention, depth | Discovery | Private | Partial | Partial | Yes | Twin Enhanced |
+| **PSA concierge (guide)** | Guide, educate, never close | Get honest help | Trust, support deflection | Confidence | Private | Partial | Yes | Yes | Twin Enhanced |
+| **Notifications / guest messages** | Host continuity between visits | Stay informed with dignity | Re-engagement | Belonging | Private | No | Yes | Partial | Mansion Exclusive |
+| **Customer support** | Human concierge extension | Resolve issues | CSAT, save sale | Respect | Private | Partial (desk) | Yes | Partial | Twin Enhanced |
+
+### Education & confidence
+
+| Experience | Purpose | Customer goal | Business goal | Emotional goal | Access | Physical | Mobile | Mansion | Twin |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| **Education (general craft)** | Build literacy before buy | Understand why | High-consideration trust | Confidence | Public | Partial | Yes | Yes | Twin Enhanced |
+| **TV Lounge (learn/watch)** | Serialized education + entertainment | Master skills | Lounge retention | Mastery joy | Members | Partial | Partial | Yes | Twin Enhanced |
+| **Texture discovery** | Match hair to identity | Find right texture | SKU fit | Self-knowledge | Public | Yes | Yes | Yes | Twin Strict |
+| **Color consultation** | Truthful color guidance | Avoid mistakes | Returns reduction | Safety | Public | Yes | Yes | Yes | Twin Strict |
+| **Hair consultation (booked)** | High-touch human expert | Personal plan | Consult revenue | Trust | Private | Yes | Yes | Partial | Twin Strict |
+| **Hair analysis (style / inspo)** | Visual analysis add-on | See possibilities | Attach revenue | Hope | Private | Partial | Yes | Partial | Twin Enhanced |
+| **Hair showroom** | Units as **sculpture** in space | Touch quality | Premium positioning | Awe | Public | Yes | Partial | Yes | Twin Strict |
+| **Founder experience (select)** | Standard-bearer craft soul | Connect to brand ethos | Founder brand equity | Inspiration | Founder/VIP | Future | Partial | Partial | Twin Enhanced |
+
+### Customization & transformation
+
+| Experience | Purpose | Customer goal | Business goal | Emotional goal | Access | Physical | Mobile | Mansion | Twin |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| **Build-A-Wig atelier** | Customer **authors** unit | Create my artifact | BAW revenue, differentiation | Agency, pride | Private | Yes | Yes | Yes | Twin Strict |
+| **Customization options (premium steps)** | Gated craft choices | Refine unit | ARPU | Mastery | Members | Yes | Yes | Yes | Twin Enhanced |
+| **Transformation suite** | Private change + mirror beat | See self transformed | Emotional conversion | Transformation | Private | Yes | Partial | Yes | Twin Strict |
+| **Styling (in-chair / demo)** | Finish and teach | Wear with confidence | Service attach | Delight | Private | Yes | Partial | Partial | Twin Strict |
+| **Installation (appointment)** | Professional install | Wear correctly | Service revenue | Relief | Private | Yes | Yes | Partial | Twin Strict |
+| **Photography (moment)** | Document transformation | Keep memory | UGC, social proof | Celebration | Private | Partial | Partial | Partial | Twin Enhanced |
+
+### Celebration, purchase, account
+
+| Experience | Purpose | Customer goal | Business goal | Emotional goal | Access | Physical | Mobile | Mansion | Twin |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| **Celebration / milestone** | Honor purchase or mastery | Feel seen | Loyalty | Pride | Private | Partial | Yes | Yes | Twin Enhanced |
+| **Checkout / bag** | Dignified departure ritual | Pay without anxiety | Revenue | Completion calm | Private | Partial | Yes | Partial | Twin Enhanced |
+| **Gift cards** | Give access to world | Gift meaningfully | Cash flow | Generosity | Public | Partial | Yes | Partial | Twin Enhanced |
+| **Order tracking** | Transparent fulfillment | Know status | Trust ops | Patience | Private | No | Yes | Partial | Mansion Exclusive |
+| **Consult offer / digital order** | Async quote journey | Claim custom offer | Custom unit sales | Anticipation | Private | Partial | Yes | Partial | Twin Enhanced |
+| **Profile management** | Guest identity in house | Control account | Data | Agency | Private | No | Yes | Yes | Mansion Exclusive |
+| **Rewards / loyalty chart** | Visible progression | See path | Repeat purchase | Motivation | Private | Partial | Yes | Yes | Twin Enhanced |
+| **Slay Challenge (cycles)** | Long-game mastery game | Earn reward | Retention | Playful pride | Members | Partial | Yes | Yes | Twin Enhanced |
+| **Membership enrollment** | Belong to house | Join tier | MRR | Belonging | Private | Partial | Yes | Yes | Twin Enhanced |
+| **Affiliate / partner** | Advocate with structure | Earn share | Acquisition | Empowerment | Private | No | Partial | Partial | Mansion Exclusive |
+
+### Community, lounge, retention
+
+| Experience | Purpose | Customer goal | Business goal | Emotional goal | Access | Physical | Mobile | Mansion | Twin |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| **VIP lounge (physical-digital)** | Rest + status | Feel insider | Tier value | Belonging | VIP | Future | Partial | Yes | Twin Enhanced |
+| **TV Lounge (library + live)** | Stay in world between visits | Keep learning | Watch time | Mastery | Members | Partial | Partial | Yes | Twin Enhanced |
+| **Community (stories, UGC)** | Member chapters with consent | Share journey | Social proof | Connection | Members | Partial | Yes | Yes | Twin Enhanced |
+| **Events (launch, seasonal)** | Chapter gatherings | Participate | Hype without cheap | Excitement | Public/Members | Yes | Partial | Yes | Twin Enhanced |
+| **Content creation (set)** | Shoot in-world | Create | Marketing assets | Creativity | Staff/Select | Yes | No | Partial | Twin Strict |
+| **Retention / win-back** | Quiet return invitation | Come home | LTV | Nostalgia | Private | No | Yes | Partial | Mansion Exclusive |
+| **Advocacy / referral** | Organic growth | Recommend world | CAC | Pride | Private | Partial | Yes | Partial | Twin Enhanced |
+
+### Operations & future decade
+
+| Experience | Purpose | Customer goal | Business goal | Emotional goal | Access | Physical | Mobile | Mansion | Twin |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| **Future product launches** | New artifact in same house | Discover next chapter | Launch revenue | Anticipation | Public | Yes | Yes | Yes | Twin Enhanced |
+| **Future campaign events** | In-flagship chapter beats | Live story | PR | Wonder | Public | Yes | Partial | Yes | Twin Strict |
+| **Waitlist / notify (restock)** | Dignified scarcity | Get unit when ready | Demand capture | Hope | Private | No | Yes | Partial | Mansion Exclusive |
+| **Returns / care education** | Post-purchase honesty | Care for investment | Returns cost | Trust | Private | Partial | Yes | Yes | Twin Enhanced |
+| **Booking (install/consult) calendar** | Schedule human time | Plan visit | Utilization | Control | Private | Partial | Yes | Partial | Mansion Exclusive |
+| **International / shipping guest** | Remote Slayers | Receive artifact | Expansion | Inclusion | Public | Partial | Yes | Partial | Twin Enhanced |
+| **Pop-up / satellite (future)** | Extend brand **from** flagship DNA | Access in city | Growth | Discovery | Public | Future | Yes | Partial | Twin Enhanced |
+| **Private client suite (future)** | Ultra-high-touch | Total privacy | Whale ARPU | Exclusivity | VIP | Future | Partial | Yes | Twin Strict |
+| **Archive / canon museum (future)** | Brand memory in-house | See legacy | Culture | Awe | Members | Future | Partial | Yes | Mansion Exclusive |
+| **Live stream from flagship (future)** | Broadcast from set | Attend remotely | Reach | Presence | Public | Yes | Yes | Yes | Twin Enhanced |
+| **AI-assisted preview (future)** | Try before commit | Visualize | Conversion | Confidence | Private | Partial | Yes | Yes | Twin Enhanced |
+| **B2B / pro education (future)** | Stylists, partners | Professional mastery | Channel | Respect | Private | Future | Partial | Yes | Twin Enhanced |
+
+---
+
+## EXPERIENCE-TO-PROGRESSION MAP
+
+| Progression stage | Primary experiences (IDs by name) |
+| --- | --- |
+| **Discovery** | Campaign arrival, Street threshold, Product/content discovery |
+| **Welcome** | Reception, First visit, Mansion Tour, PSA concierge |
+| **Education** | Education, TV Lounge, Texture/color, Showroom, Consultation, Analysis |
+| **Confidence** | PSA, Support, Comparison, Rewards visibility |
+| **Customization** | Build-A-Wig, Premium options, Atelier flow |
+| **Transformation** | Transformation suite, Styling, Installation, Photography |
+| **Celebration** | Milestone, Photography, Event beats |
+| **Purchase** | Checkout, Gift cards, Consult offer claim |
+| **Membership** | Enrollment, Slay Challenge, VIP paths |
+| **Community** | TV Lounge, Community stories, Events |
+| **Retention** | Notifications, Order tracking, Win-back, Education sequels |
+| **Advocacy** | Affiliate, Referral, UGC, Campaign events |
+
+---
+
+## LONG-TERM (10-YEAR) RECOMMENDATIONS
+
+Experiences **not** fully live today but **architect into program** now:
+
+1. **Private client suite** — protects whale service without breaking public set logic.  
+2. **Physical VIP lounge wing** — twin to Mansion lounge; avoids “VIP = UI badge only.”  
+3. **Archive / canon gallery** — supports franchise memory (aligns Legacy / chapters).  
+4. **Pop-up module** — exportable **slice** of flagship set, not new brand.  
+5. **Pro / B2B academy bay** — separate circulation from consumer guest path.  
+6. **Live broadcast booth** — TV Lounge **origin** in physical set.  
+7. **Event / chapter hall** — seasonal launches without rebuilding storefront.  
+8. **Care & repair bar** — post-purchase craft relationship.  
+9. **Guest locker / arrival hospitality** — supports reception ceremony at scale.  
+10. **Accessibility & quiet room** — luxury inclusion as **designed** experience, not afterthought.
+
+---
+
+## PHASE 2 PRODUCTION NOTES (NO ARCHITECTURE)
+
+| Note | Implication for Phase 3 |
+| --- | --- |
+| **Highest Twin Strict density** | Reception, threshold, showroom, atelier, texture/color, transformation, styling/install—**core set spine** |
+| **Mansion Exclusive cluster** | Profile, notifications, parts of order journey—**must feel like flagship services**, not SaaS |
+| **Partial physical today** | Product maps to **showroom + atelier**, not “web shop room”—Phase 3 assigns **one** retail grammar |
+| **TV Lounge** | **Twin Enhanced** with **named dark mood** exception (lighting bible) |
+| **Campaign** | Uses **subset** of strict zones—does not require every room built day one |
+| **Circulation** | Phase 3 must separate **Public guest**, **Member**, **Service**, **Production** paths implied by table |
 
 ---
 
@@ -315,8 +507,9 @@ Add these as **Phase 1 annex** or **early Phase 2 gates**—no floor plans yet, 
 
 | Version | Date | Summary | Approver |
 | --- | --- | --- | --- |
-| **0.1** | 2026-07-23 | Phase 1 Story Universe + Production Design Review | Pending Founder |
+| **0.1** | 2026-07-23 | Phase 1 Story Universe + Production Design Review | Founder (Phase 2 opened) |
+| **0.2** | 2026-07-23 | Phase 2 Experience Registry + progression map | Pending Founder (Phase 3) |
 
 ---
 
-*End of Flagship Production Bible — Phase 1 (pre-production)*
+*End of Flagship Production Bible — through Phase 2 (pre-production). Phase 3 architectural design **locked** until Founder approval.*

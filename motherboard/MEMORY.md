@@ -50727,3 +50727,11 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Deliverable:** **`brand-bible/environments/flagship-production-bible.md`** v0.1 — Phase 1 canon text (three realities, journey, roles, emotional arc, design philosophy, golden rule) + **Production Design Review** (strengths; inconsistencies Nia/PSA/protagonist, journey vs Season One, mobile vs desktop; continuity risks; structural improvements; mobile/Mansion/chapter flags; **14 recommended foundational sections** before Phase 2).
 - **Registry:** MASTER_ROADMAP **DOC-ENV-001 Phase 1** (pending Founder approval for Phase 2).
 - **Changes:** `brand-bible/environments/flagship-production-bible.md` (new), `brand-bible/MASTER_ROADMAP.md`, `motherboard/MEMORY.md`. Docs only.
+
+---
+
+## 2026-07-23 — Flagship Production Bible Phase 2 Experience Registry (brand-bible)
+
+- **Context:** Founder opened **Phase 2 — Experience Architecture** (still no building/floor plans/images/UI/code). Architecture must emerge from experience. Core principle: room only if experience exists.
+- **Deliverable:** **`flagship-production-bible.md` v0.2** — Experience progression (Discovery→Advocacy); registry conventions (access, physical/mobile/mansion, Twin Strict/Enhanced/Mansion Exclusive); **master registry** auditing founder list + campaign arrival, Mansion Tour, Slay Challenge, consult/digital order, waitlist, future decade experiences; progression map; Phase 2 production notes for Phase 3; Phase 3 **locked** pending approval.
+- **Changes:** `flagship-production-bible.md`, `MASTER_ROADMAP.md`, `motherboard/MEMORY.md`. Docs only.
