@@ -50709,3 +50709,12 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Deliverable:** **`brand-bible/production/film-trilogy-master-cinematography-bible.md`**. Links Guest Bible (emotional archetype), visual-language, North Star. Note: trilogy **Nia** on-screen grammar coexists with Guest archetype docs — ECD reconciles with Film I screenplay packet when both apply.
 - **Registry:** MASTER_ROADMAP **DOC-PRD-001T SHIPPED (LOCKED)** + production folder architecture.
 - **Changes:** `brand-bible/production/film-trilogy-master-cinematography-bible.md` (new), `brand-bible/MASTER_ROADMAP.md`, `motherboard/MEMORY.md`. Docs only.
+
+---
+
+## 2026-07-23 — Film Trilogy Visual Story Bible v1.0 LOCKED (brand-bible)
+
+- **Context:** Founder shipped **FILM TRILOGY VISUAL STORY BIBLE v1.0 (LOCKED)** — SSoT for storyboards, AI image/video, shot lists, camera/character blocking, scene pacing, story progression. Ordinary morning interrupted; Nia discovers FS (boutique never chases); audience **is** Nia; locked Nia look + personality; boutique timeless; pacing one beat per frame; **First Act FRAME 001–009** (Boutique Awakens → Choice/CUT); earbud rules; comedy/discovery/final principle.
+- **Deliverable:** **`brand-bible/production/film-trilogy-visual-story-bible.md`**. **`film-trilogy-master-cinematography-bible.md`** updated — opening frames aligned to **001–009**, points to Visual Story as authoritative frame detail.
+- **Registry:** MASTER_ROADMAP **DOC-PRD-001V SHIPPED (LOCKED)**.
+- **Changes:** `brand-bible/production/film-trilogy-visual-story-bible.md` (new), `film-trilogy-master-cinematography-bible.md`, `MASTER_ROADMAP.md`, `motherboard/MEMORY.md`. Docs only.

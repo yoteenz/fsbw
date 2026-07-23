@@ -164,6 +164,7 @@ brand-bible/
 │   └── launch-methodology.md
 ├── production/
 │   ├── film-trilogy-master-cinematography-bible.md  ✅ SHIPPED v1.0 LOCKED
+│   ├── film-trilogy-visual-story-bible.md           ✅ SHIPPED v1.0 LOCKED
 │   ├── art-direction-workflow.md
 │   ├── photography-registry.md       ← points to product-photography-bible
 │   ├── film-standards.md
@@ -840,6 +841,16 @@ Each entry: **ID** for tracking. **Priority:** P0 (blocking production), P1 (hig
 | **Purpose** | **Film trilogy** master cinematography — camera personality, movement, lens, composition, light, color, reflection, edit, sound, **Nia** performance/comedy/discovery, locked look, story contrast, **locked opening frames 001–007** |
 | **Dependencies** | north-star, visual-language, the-guest-bible (emotional archetype) |
 | **Authority** | Mandatory for trilogy cinematic sequences, storyboards, AI gen, animation, camera, edit — no deviation unless Founder/ECD instructs |
+| **Priority** | P0 |
+| **Phase** | 6 (done) |
+
+#### DOC-PRD-001V — `production/film-trilogy-visual-story-bible.md` ✅ **SHIPPED v1.0 (LOCKED)**
+
+| Field | Detail |
+| --- | --- |
+| **Purpose** | **Visual Story Bible** — trilogy SSoT for storyboards, AI image/video, shot lists, blocking, pacing; Nia/boutique discovery story; emotional journey; **First Act FRAME 001–009**; music/comedy/discovery rules |
+| **Dependencies** | north-star, film-trilogy-master-cinematography-bible, the-guest-bible, visual-language |
+| **Authority** | Nothing in trilogy generation/blocking should contradict; supersedes prior 001–007-only frame summary where they differ |
 | **Priority** | P0 |
 | **Phase** | 6 (done) |
 

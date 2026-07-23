@@ -356,6 +356,8 @@ It **interrupts** an already beautiful morning.
 
 ## OPENING SHOT LIST (LOCKED)
 
+**First Act frame structure (001–009):** Authoritative detail in [`film-trilogy-visual-story-bible.md`](./film-trilogy-visual-story-bible.md). Summary below aligned to Visual Story Bible v1.0.
+
 **FRAME 001**  
 Interior boutique. Bell finishes settling. Stillness.
 
@@ -375,7 +377,13 @@ She gives Frontal Slayer the **exact same casual glance**. Looks forward. Keeps 
 One step. Two steps. Her lyric trails off. She instinctively removes one earbud. She stops. Still looking forward.
 
 **FRAME 007**  
-She slowly backs up **without looking** at the boutique. Only after she is positioned in front of the storefront does she turn her head. Her mouth opens slightly. She removes the second earbud. She takes one intentional step toward Frontal Slayer.
+She slowly backs up **without looking** at the boutique.
+
+**FRAME 008**  
+Only after she is positioned in front of the storefront does she turn. Her mouth opens slightly. Genuine curiosity.
+
+**FRAME 009**  
+She removes the second earbud. One intentional step toward Frontal Slayer. **CUT.**
 
 ---
 
@@ -395,6 +403,7 @@ We're making the right film.
 
 | Document | Role |
 | --- | --- |
+| [`film-trilogy-visual-story-bible.md`](./film-trilogy-visual-story-bible.md) | **SSoT** — First Act frames, blocking, pacing, story progression |
 | [`../visual-language/visual-language.md`](../visual-language/visual-language.md) | Brand-wide visual constitution |
 | [`../storytelling/the-guest-bible.md`](../storytelling/the-guest-bible.md) | Emotional archetype |
 | [`../storytelling/film-i-screenplay-design-packet.md`](../storytelling/film-i-screenplay-design-packet.md) | Story draft contract (reconcile with ECD when both apply) |
