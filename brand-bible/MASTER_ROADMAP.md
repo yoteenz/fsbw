@@ -579,6 +579,15 @@ Each entry: **ID** for tracking. **Priority:** P0 (blocking production), P1 (hig
 | **Priority** | P0 |
 | **Phase** | 2 (done) |
 
+#### DOC-STY-001H — `storytelling/film-i-the-arrival-discovery-packet.md` ✅ **SHIPPED v1.0**
+
+| Field | Detail |
+| --- | --- |
+| **Purpose** | Film I **The Arrival** — Story Trust discovery packet (pre-screenplay): emotional/thematic architecture, curiosity journey, character intentions, symbolism, craft roles, risks, weaknesses, improvements; no script/scenes/dialogue |
+| **Dependencies** | season-one-creative-bible, chapter-one-creative-bible, storytelling-philosophy, content-distribution-bible |
+| **Priority** | P0 |
+| **Phase** | 2 (done) |
+
 #### DOC-STY-002 — `storytelling/campaign-framework.md`
 
 | Field | Detail |
