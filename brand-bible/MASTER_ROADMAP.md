@@ -153,7 +153,7 @@ brand-bible/
 │   └── future-characters-template.md ← single template until cast exists
 ├── environments/
 │   ├── flagship-production-bible.md     ✅ Phase 1–3 + 4A ref (pre-production; Phase 4B gated)
-│   ├── flagship-architectural-language.md  ✅ Phase 4A v1.0 (DOC-ENV-005)
+│   ├── set-001-design-development.md      ✅ SET-001 Phase 4B v1.0 (DOC-ENV-006)
 │   ├── mansion-and-rooms.md
 │   ├── digital-spaces-registry.md    ← links design-dna-canon
 │   ├── tv-lounge-set-standards.md
@@ -748,23 +748,32 @@ Each entry: **ID** for tracking. **Priority:** P0 (blocking production), P1 (hig
 
 ### Environments
 
-#### DOC-ENV-000 — `environments/flagship-production-bible.md` 🟡 **v0.3 Phase 1–3 (Phase 4 gated)**
+#### DOC-ENV-000 — `environments/flagship-production-bible.md` ✅ **v0.3 Phase 1–3 + 4A/4B refs**
 
 | Field | Detail |
 | --- | --- |
-| **Purpose** | Flagship + Mansion twin production bible — Phase 1 world; Phase 2 Experience Registry; **Phase 3 Flagship Program** (zones, spaces, circulation, visibility, twin brief for architecture) |
+| **Purpose** | Flagship + Mansion twin production bible — Phases 1–3 program; points to DOC-ENV-005 / DOC-ENV-006 |
 | **Dependencies** | north-star, cinematic-universe, trilogy bibles, experience bible, visual-language |
 | **Priority** | P0 |
-| **Phase** | Pre-production (Phase 4B building design locked until DOC-ENV-005 approved) |
+| **Phase** | Pre-production through SET-001 resolution |
 
-#### DOC-ENV-005 — `environments/flagship-architectural-language.md` 🟡 **v1.0 Phase 4A (Phase 4B gated)**
+#### DOC-ENV-005 — `environments/flagship-architectural-language.md` ✅ **v1.0 Phase 4A**
 
 | Field | Detail |
 | --- | --- |
-| **Purpose** | Permanent flagship architectural language — exterior/interior **systems**, material library, color, lighting, furniture rules, environmental signatures, 20 principles, digital twin compatibility — **before** floor plans |
-| **Dependencies** | north-star, visual-language, flagship-production-bible (Phase 3), trilogy cinematography |
+| **Purpose** | Permanent flagship architectural language — systems, materials, light, twin law |
+| **Dependencies** | north-star, visual-language, flagship-production-bible, trilogy cinematography |
 | **Priority** | P0 |
-| **Phase** | Pre-production (Phase 4B locked until approved) |
+| **Phase** | Canonical — SET-001 built under this guide |
+
+#### DOC-ENV-006 — `environments/set-001-design-development.md` ✅ **v1.0 SET-001 Phase 4B**
+
+| Field | Detail |
+| --- | --- |
+| **Purpose** | **SET-001** definitive physical flagship — narrative, organization, space IDs/scales, operations, campaign + twin resolution |
+| **Dependencies** | DOC-ENV-000 Phases 1–3, DOC-ENV-005, trilogy visual story |
+| **Priority** | P0 |
+| **Phase** | Design development complete — visualization Phase 5+ inherits |
 
 #### DOC-ENV-001 — `environments/mansion-and-rooms.md`
 

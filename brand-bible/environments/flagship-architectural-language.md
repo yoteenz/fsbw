@@ -3,7 +3,7 @@
 **Document:** Flagship Architectural Language Guide  
 **Registry:** DOC-ENV-005  
 **Version:** 1.0 — **Phase 4A** (pre-production)  
-**Status:** Canonical for flagship + Mansion twin — **Phase 4B (building design) locked** until Founder approval  
+**Status:** Canonical for flagship + Mansion twin — Phase 4B **SET-001** resolves buildable design in DOC-ENV-006  
 **Owner:** Lead Architect / Production Design / Executive Creative  
 **Classification:** Internal — permanent visual rulebook before any plan is drawn  
 
@@ -475,6 +475,8 @@ Phase 4B must:
 - Inherit **every** Phase 3 space program row.  
 - Use **only** systems and materials defined here.  
 - Document any **requested exception** in writing with ECD approval.
+
+**Phase 4B complete:** [`set-001-design-development.md`](./set-001-design-development.md) **SET-001** (DOC-ENV-006) — visualization inherits space IDs without reinventing major decisions.
 
 ---
 
