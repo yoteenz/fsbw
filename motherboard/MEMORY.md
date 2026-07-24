@@ -50783,3 +50783,22 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Context:** After base inventory (`repo-audit/studio-world/01–14`), Founder **Future Separation Directive** — document factual boundaries for eventual independent Studio World product (own repo, domain, deploy, DB, auth) without performing separation. Read-only; no moves/imports/code changes.
 - **Deliverable:** Addendum docs **`15_system_boundary.md`** (SW/FS/SHARED classifications) · **`16_separation_dependency_map.md`** (S0–S4) · **`17_studio_world_ownership_inventory.md`** · **`18_data_separation_inventory.md`** · **`19_identity_and_auth_boundary.md`** · **`20_infrastructure_boundary.md`** · **`21_visual_identity_boundary.md`** · **`22_separation_risk_register.md`** · **`23_independent_readiness_scorecard.md`** (scores + 7-point final conclusion: **cannot operate independently today**; blockers monolith/auth/Supabase/imports/generation). Updated `14_summary.md` index.
 - **Changes:** `repo-audit/studio-world/15–23.md`, `14_summary.md`, `motherboard/MEMORY.md`. Docs only.
+
+---
+
+## 2026-07-24 — Frontal Slayer Motion System (FSMS) — official motion framework
+
+- **Context:** Founder requested the **Frontal Slayer Motion System (FSMS)** — not a one-off animation but a reusable motion graphics framework powering website, mobile, Studio World, campaigns, commercials, UI motion, logo reveals, and typography. Design direction: Apple × A24 × architectural glass × luxury retail × museum installation — restrained, elegant, confident; **no** bounce/elastic/neon/cyberpunk. Typography = premium cast optical acrylic revealed by light (sparkle → sweep → visible → hold → dissolve).
+- **Stack:** React 19, Vite, TypeScript, Framer Motion, CSS variables (no Three.js/R3F added).
+- **Deliverable:** New **`src/motion/`** Motion Design System:
+  - **Tokens:** `tokens/types.ts`, `easing.ts`, `presets.ts` (7 presets: Luxury Reveal, Morning Reveal, Sunlight Sweep, Crystal Fade, Elegant Dissolve, Campaign Intro, Campaign Outro), `css-variables.ts`
+  - **Engine:** `engine/lighting.ts`, `sparkles.ts`, `reflections.ts` — light sweeps, deterministic micro-glints, soft environment reflections
+  - **Hooks:** `useReducedMotion`, `useFsmsPreset`, `useCrystalReveal`
+  - **Styles:** `styles/fsms.css` — crystal acrylic material, beveled edges, bloom, sweep, sparkles
+  - **Components:** `CrystalTitle`, `CrystalSubtitle`, `CrystalLogo`, `LightSweep`, `SparkleSystem`, `RevealMask`, `FadeSequence`, `GlassOverlay`, `TransitionLayer`, `SceneIntro`, `SceneOutro`, `SectionDivider`, `LogoReveal`, `CampaignTitle`, `ChapterTitle`, `FloatingGlassPanel`, shared `CrystalTextBase`
+  - **Public API:** `src/motion/index.ts` — import once; CSS auto-loaded
+- **Primary API example:** `<CrystalTitle text="EVERY GREAT SLAY..." preset="Morning Reveal" align="center" duration={2500} />` — presets accept kebab-case or display names via `resolvePresetId`.
+- **Verification:** `npm run build` passes (`tsc --noEmit && vite build`).
+- **Not in scope:** No page integration yet — system delivered standalone for future campaigns/experiences.
+- **Prior chat context (same arc):** Flagship brand-bible Phases 2–5 (Experience Registry, Program, Architectural Language DOC-ENV-005, SET-001 DOC-ENV-006, Production Dossier DOC-ENV-007); Studio World read-only inventory + separation addendum (docs 15–23, readiness ~2.2/5, no migration performed).
+- **Changes:** `src/motion/**` (new), `motherboard/CORE.md` (FSMS pointer), `motherboard/MEMORY.md`.
