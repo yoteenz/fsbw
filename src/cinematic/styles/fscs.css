@@ -1,0 +1,145 @@
+/**
+ * Frontal Slayer Cinematic System (FSCS)
+ * Cinematic rhythm, pacing, and presentation layer.
+ */
+
+.fscs-root {
+  --fscs-ease-luxury: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --fscs-ease-dissolve: cubic-bezier(0.4, 0, 0.2, 1);
+  --fscs-color-lower-third: rgba(255, 255, 255, 0.88);
+  --fscs-overlay-scrim: rgba(15, 20, 28, 0.35);
+  position: relative;
+  width: 100%;
+}
+
+.fscs-scene {
+  position: relative;
+  width: 100%;
+  min-height: min(50vh, 480px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(1.5rem, 5vw, 4rem);
+  overflow: hidden;
+}
+
+.fscs-scene__camera {
+  position: absolute;
+  inset: -4%;
+  pointer-events: none;
+  transform: translateZ(0);
+  transition: transform var(--fscs-camera-ms, 3600ms) var(--fscs-ease-luxury);
+}
+
+.fscs-scene--camera-active .fscs-scene__camera {
+  transform: scale(1.02) translateY(-1%);
+}
+
+.fscs-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.fscs-overlay--scrim {
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    var(--fscs-overlay-scrim) 55%,
+    rgba(15, 20, 28, 0.55) 100%
+  );
+}
+
+.fscs-overlay--vignette {
+  background: radial-gradient(ellipse at 50% 45%, transparent 40%, rgba(15, 20, 28, 0.25) 100%);
+}
+
+.fscs-lower-third {
+  position: absolute;
+  left: clamp(1rem, 4vw, 2.5rem);
+  bottom: clamp(1.5rem, 6vw, 3rem);
+  max-width: min(90%, 28rem);
+  padding: var(--fds-space-sm, 0.5rem) var(--fds-space-md, 1rem);
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.82) 0%,
+    rgba(255, 255, 255, 0.55) 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 8px 32px rgba(15, 20, 28, 0.08);
+  opacity: 0;
+  transform: translateY(12px);
+  transition:
+    opacity var(--fscs-overlay-ms, 900ms) var(--fscs-ease-luxury),
+    transform var(--fscs-overlay-ms, 900ms) var(--fscs-ease-luxury);
+}
+
+.fscs-lower-third--visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.fscs-lower-third__primary {
+  margin: 0;
+  font-family: var(--fds-font-demi, 'Futura PT Demi', Futura, sans-serif);
+  font-size: clamp(0.6875rem, 1.6vw, 0.8125rem);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--fds-color-text-primary, #1a1a1a);
+}
+
+.fscs-lower-third__secondary {
+  margin: 0.25rem 0 0;
+  font-family: var(--fds-font-book, 'Futura PT Book', Futura, sans-serif);
+  font-size: clamp(0.625rem, 1.4vw, 0.75rem);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fds-color-text-secondary, #808080);
+}
+
+.fscs-credits {
+  text-align: center;
+  padding: var(--fds-space-xl, 2rem);
+}
+
+.fscs-credits__line {
+  margin: 0.35rem 0;
+  font-family: var(--fds-font-book, 'Futura PT Book', Futura, sans-serif);
+  font-size: 0.625rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--fds-color-text-secondary, #808080);
+}
+
+.fscs-timeline-bar {
+  position: relative;
+  width: 100%;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.15);
+  overflow: hidden;
+}
+
+.fscs-timeline-bar__progress {
+  height: 100%;
+  background: var(--fds-color-primary, #eb1c24);
+  transform-origin: left;
+  transform: scaleX(var(--fscs-progress, 0));
+  transition: transform 120ms linear;
+}
+
+.fscs-beat-marker {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: rgba(255, 255, 255, 0.35);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fscs-scene__camera,
+  .fscs-lower-third {
+    transition-duration: 0.01ms !important;
+  }
+}

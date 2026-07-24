@@ -50819,3 +50819,28 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Not in scope:** No page migration yet — system delivered standalone; existing pages keep current styles until explicitly migrated.
 - **Pairs with:** FSMS (`src/motion/`) for motion language.
 - **Changes:** `src/design-system/**` (new), `motherboard/CORE.md` (FDS pointer), `motherboard/MEMORY.md`.
+
+---
+
+## 2026-07-24 — Frontal Slayer Cinematic System (FSCS) — official cinematic language
+
+- **Context:** Same chat arc as FSMS + FDS. Founder requested **Frontal Slayer Cinematic System (FSCS)** — not a video player but reusable cinematic language for commercials, campaigns, teasers, onboarding, website animation, mobile, Studio World, launch films, immersive presentations. Brand rules: quiet, elegant, architectural, natural, premium, intentional, human — never over-edited, trendy, or chaotic.
+- **Deliverable:** New **`src/cinematic/`**:
+  - **Camera:** 12 presets (Drone Push, Slow Push, Side/Rear/Front Tracking, Orbit, Pedestal, Reveal, Static Luxury, Macro Detail, Hero Product, Architectural Reveal) — movement speed, acceleration, framing, focal length sim, parallax, timing
+  - **Shot library:** 10 templates (Opening Establishing through Logo Ending)
+  - **Transitions:** 9 presets mapped to FSMS where applicable (Crystal Fade, Luxury Dissolve, Architectural Reveal, Light Sweep, Glass Reflection, Soft Blur, Morning Glow, Elegant Cut, Invisible Match Cut)
+  - **Timeline:** 8 presets (30s/60s commercial, 90s brand film, launch campaign, social reel, product reveal, documentary, founder story) with beat duration allocation
+  - **Story:** Campaign structure (10 beats: Opening Atmosphere → End Card), rhythm rules (silence before reveal, hold before transition, breathing room)
+  - **Audio:** 9 cue types + beat-to-cue mapping + timeline audio markers
+  - **Scene templates:** 10 (Luxury Arrival, Morning Routine, Showroom Walkthrough, Campaign Ending, etc.)
+  - **Titles:** FSMS integration — `CinematicTitle`, campaign/chapter/scene/location/product/episode/credits variants, `CinematicLogoEnding`
+  - **Overlays:** `LowerThird`, `CinematicOverlay`, `CreditsOverlay`
+  - **Scenes:** `CinematicScene`, `CinematicSequence` (timeline + beat orchestrator), named scene wrappers
+  - **Hooks:** `useCinematicTimeline`, `useCameraPreset`, `useCinematicTransition`
+  - **Styles:** `styles/fscs.css`
+  - **Public API:** `src/cinematic/index.ts`
+- **Integration:** FSMS (transitions/titles), FDS (CSS vars for overlays), Studio World + future AI pipeline noted in `FSCS_INTEGRATION` constant.
+- **Verification:** `npm run build` passes.
+- **Not in scope:** No page/production integration yet — creative blueprint delivered standalone.
+- **Prior arc:** FSMS (`644821fa3`), FDS (`d30227c46`), flagship brand-bible phases, Studio World inventory.
+- **Changes:** `src/cinematic/**` (new), `motherboard/CORE.md`, `motherboard/MEMORY.md`.
