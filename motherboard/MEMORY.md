@@ -50844,3 +50844,29 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Not in scope:** No page/production integration yet — creative blueprint delivered standalone.
 - **Prior arc:** FSMS (`644821fa3`), FDS (`d30227c46`), flagship brand-bible phases, Studio World inventory.
 - **Changes:** `src/cinematic/**` (new), `motherboard/CORE.md`, `motherboard/MEMORY.md`.
+
+---
+
+## 2026-07-24 — Frontal Slayer Music & Sonic System (FSMSS) — audio architecture (docs only)
+
+- **Context:** Same chat arc as FSMS, FDS, FSCS. Founder requested **Frontal Slayer Music & Sonic System** — **architecture and planning only, no code**. Frontal Slayer treated as cinematic universe; music functions like professional film score; different areas/scenes/emotional moments get musical identity within one world. Goal: audio ecosystem comparable to Apple, Disney, Pixar — instantly recognizable.
+- **Deliverable:** Complete documentation at **`brand-bible/audio/`** (DOC-AUD-SYSTEM-001):
+  - **Three-layer model:** L1 Score (brand themes) · L2 Brand Sonic (Discovery Chime, UI families) · L3 Environmental (diegetic — never brand identity)
+  - **Music Bible:** Instrumentation palette, emotional progression, dynamics/tempo, motifs, Nia's music vs FS score (film law), silence rules
+  - **Sonic Identity Guide:** Sonic DNA pillars, five reusable families (SF-GLASS, SF-AIR, SF-CHIME, SF-TONE, SF-SILENCE), forbidden sounds
+  - **Discovery Chime Spec:** Official sonic logo — tonal language for all UI; SET-001 bell continuity
+  - **Theme Library:** Arrival, Discovery, Flagship, Mansion, UI — emotions, placement maps, planned stems
+  - **UI Sonic Language:** Full taxonomy (buttons, drawers, modals, confirm/error/loading, concierge, rewards, membership, elevator, transitions, achievements)
+  - **Environmental Audio Library:** birds, wind, footsteps, cafés, city — `env-*` prefix, not brand
+  - **Audio Asset Library:** Registry schema, storage architecture, workflow
+  - **Transition Library:** Score/UI transitions aligned with FSCS/FSMS
+  - **Mixing Guidelines + Volume Hierarchy:** Stem buses, LUFS targets, ducking, priority stack P0–P8
+  - **Audio Naming Convention:** `fs-brand-*`, `fs-score-*`, `env-*`
+  - **Implementation Strategy:** Phased rollout A–E — explicit **no runtime code until Chime master approved**
+  - **Future Expansion Strategy:** Studio World bridge, AI pipeline sidecar, spatial audio, retail
+  - **Registry stubs:** `registry/audio-asset-registry.yaml`, `ui-sonic-manifest.yaml`, `fscs-audio-map.yaml`
+- **Integration:** FSMS motion sync · FDS component mapping · FSCS cue IDs · film trilogy Visual Story Bible (music rule) · flagship production bible (bell)
+- **MASTER_ROADMAP:** Updated — FSMSS v1.0 registered; DOC-AUD-001/002 superseded
+- **Explicitly not delivered:** No WAV/AAC assets, no `src/audio/` code, no page integration
+- **Next milestone:** Commission Discovery Chime v1 master recording
+- **Changes:** `brand-bible/audio/**` (new), `brand-bible/MASTER_ROADMAP.md`, `motherboard/CORE.md`, `motherboard/MEMORY.md`. Docs only.

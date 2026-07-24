@@ -1,0 +1,16 @@
+# FSCS Audio Map — cinematic cue IDs to FSMSS asset IDs
+# Version: 1.0.0
+# See: src/cinematic/audio/cues.ts + ENVIRONMENTAL_AUDIO_LIBRARY.md
+
+version: "1.0.0"
+
+cues:
+  music-main: fs-score-discovery-hold-v1
+  music-ambient: fs-score-arrival-ambience-bed-v1
+  ambient-city: env-city-distant-v1
+  footsteps: env-footsteps-concrete-v1
+  door-chime: fs-brand-chime-full-v1
+  coffee-bell: env-coffee-bell-v1
+  wind: env-wind-light-v1
+  birds: env-birds-morning-v1
+  room-tone: env-room-tone-soft-v1

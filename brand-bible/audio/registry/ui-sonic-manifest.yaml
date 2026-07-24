@@ -1,0 +1,21 @@
+# UI Sonic Manifest — maps UI slugs to asset IDs
+# Version: 1.0.0
+# See: UI_SONIC_LANGUAGE.md
+
+version: "1.0.0"
+
+mappings:
+  UI-BTN-TAP: fs-brand-ui-btn-tap-v1
+  UI-BTN-HOVER: fs-brand-ui-btn-hover-v1
+  UI-GLASS-TAP: fs-brand-ui-glass-tap-v1
+  UI-DRAWER-OPEN: fs-brand-ui-drawer-open-v1
+  UI-DRAWER-CLOSE: fs-brand-ui-drawer-close-v1
+  UI-MODAL-OPEN: fs-brand-ui-modal-open-v1
+  UI-MODAL-CLOSE: fs-brand-ui-modal-close-v1
+  UI-CONFIRM: fs-brand-ui-confirm-v1
+  UI-ERROR: fs-brand-ui-error-v1
+  UI-NOTIFY: fs-brand-ui-notify-v1
+  UI-MEMBER-UNLOCK: fs-brand-chime-half-v1
+  UI-ELEVATOR-TRAVEL: fs-brand-ui-elevator-travel-v1
+  UI-ELEVATOR-ARRIVE: fs-brand-ui-elevator-arrive-v1
+  UI-TRANSITION: fs-brand-ui-transition-v1

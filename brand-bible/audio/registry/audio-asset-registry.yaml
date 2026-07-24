@@ -1,0 +1,28 @@
+# Frontal Slayer Audio Asset Registry
+# Version: 1.0.0
+# Status: planning — no approved assets yet
+# Schema: see AUDIO_ASSET_LIBRARY.md
+
+version: "1.0.0"
+status: planning
+last_updated: "2026-07-24"
+
+layers:
+  brand:
+    prefix: fs-brand
+    count_planned: 39
+  score:
+    prefix: fs-score
+    count_planned: 25
+  environmental:
+    prefix: env
+    count_planned: 15
+
+assets: []
+# Populate when masters exist. Example entry:
+# - id: fs-brand-chime-full-v1
+#   layer: brand
+#   family: SF-CHIME
+#   status: approved
+#   duration_ms: 1500
+#   lufs_peak: -22

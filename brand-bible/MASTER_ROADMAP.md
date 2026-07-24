@@ -68,7 +68,7 @@ This roadmap defines:
 | **QA / approval** | Missing | Create **`operations/creative-approval-workflow.md`**, **`quality-assurance/visual-qa-checklist.md`** |
 | **AI governance** | Prompts in motherboard | Create **`ai-systems/generation-governance.md`** (rules, not prompts) |
 | **Retail / events** | Missing | Phase 8+ placeholders |
-| **Sound / music** | Missing | Phase 7 **`audio/sound-design-direction.md`** |
+| **Sound / music** | **FSMSS v1.0** (`audio/`) | Phase 7–8 — asset production next |
 | **Glossary** | Missing | **`reference/glossary.md`** early — reduces drift |
 
 ### 1.4 Redundancy and merge decisions
@@ -178,9 +178,25 @@ brand-bible/
 │   ├── interaction-principles.md
 │   ├── accessibility-standards.md
 │   └── onboarding-story-standards.md ← Mansion Tour alignment
-├── audio/
-│   ├── sound-design-direction.md
-│   └── music-direction.md
+├── audio/                            ← FSMSS v1.0 (DOC-AUD-SYSTEM-001)
+│   ├── README.md
+│   ├── MUSIC_BIBLE.md
+│   ├── SONIC_IDENTITY_GUIDE.md
+│   ├── DISCOVERY_CHIME_SPEC.md
+│   ├── THEME_LIBRARY.md
+│   ├── UI_SONIC_LANGUAGE.md
+│   ├── ENVIRONMENTAL_AUDIO_LIBRARY.md
+│   ├── AUDIO_ASSET_LIBRARY.md
+│   ├── TRANSITION_LIBRARY.md
+│   ├── MIXING_GUIDELINES.md
+│   ├── VOLUME_HIERARCHY.md
+│   ├── AUDIO_NAMING_CONVENTION.md
+│   ├── IMPLEMENTATION_STRATEGY.md
+│   ├── FUTURE_EXPANSION_STRATEGY.md
+│   └── registry/
+│       ├── audio-asset-registry.yaml
+│       ├── ui-sonic-manifest.yaml
+│       └── fscs-audio-map.yaml
 ├── packaging/
 │   └── packaging-standards.md
 ├── partnerships/
@@ -990,15 +1006,31 @@ Each entry: **ID** for tracking. **Priority:** P0 (blocking production), P1 (hig
 
 ### Audio & packaging
 
-#### DOC-AUD-001 — `audio/sound-design-direction.md`
+#### DOC-AUD-SYSTEM-001 — `audio/` **Frontal Slayer Music & Sonic System (FSMSS)** — **v1.0 shipped 2026-07-24**
+
+| Field | Detail |
+| --- | --- |
+| **Purpose** | Complete audio architecture — score themes, sonic identity, UI language, environmental separation, mixing, naming, implementation plan |
+| **Index** | [`audio/README.md`](audio/README.md) |
+| **Status** | Architecture & planning complete — **no production assets or runtime code yet** |
+| **Priority** | P1 (creative constitution) |
+| **Phase** | 7–8 bridge |
+
+**Child documents:** MUSIC_BIBLE · SONIC_IDENTITY_GUIDE · DISCOVERY_CHIME_SPEC · THEME_LIBRARY · UI_SONIC_LANGUAGE · ENVIRONMENTAL_AUDIO_LIBRARY · AUDIO_ASSET_LIBRARY · TRANSITION_LIBRARY · MIXING_GUIDELINES · VOLUME_HIERARCHY · AUDIO_NAMING_CONVENTION · IMPLEMENTATION_STRATEGY · FUTURE_EXPANSION_STRATEGY · `registry/*.yaml`
+
+**Integrates with:** FSMS (`src/motion/`) · FDS (`src/design-system/`) · FSCS (`src/cinematic/`) · Film Trilogy bibles · SET-001 flagship continuity
+
+#### DOC-AUD-001 — `audio/sound-design-direction.md` — **superseded by FSMSS**
 
 | Field | Detail |
 | --- | --- |
 | **Purpose** | UI sounds, lobby ambience, restraint |
+| **Status** | Absorbed into SONIC_IDENTITY_GUIDE + UI_SONIC_LANGUAGE |
 | **Priority** | P3 |
 | **Phase** | 8 |
 
-#### DOC-AUD-002 — `audio/music-direction.md`
+#### DOC-AUD-002 — `audio/music-direction.md` — **superseded by FSMSS**
+
 
 | Field | Detail |
 | --- | --- |
