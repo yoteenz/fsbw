@@ -12,7 +12,7 @@ A Cursor rule (`.cursor/rules/motherboard.mdc`) is set to **always apply**, so a
 
 - **New chats:** The Cursor rule tells the agent to treat the motherboard as **auto-loaded** at the start of each new conversation. So you do **not** need to say "load motherboard" in every new chat—the agent is instructed to read and use README, CORE, CODEBASE, and MEMORY at conversation start.
 - **"Load motherboard":** Say it when you want the agent to **re-read** those files and refresh context (e.g. after you've updated the motherboard).
-- **"Add to motherboard":** Auto-add is **on by default** for every new chat—the agent adds to MEMORY at the end of significant exchanges without you saying it. Saying "add to motherboard" adds **one entry now** (and re-enables auto-add if you had said "stop adding to motherboard" earlier).
+- **"Add to motherboard":** Say this to append **one MEMORY entry now**. **Auto-add after every task is OFF** — agents do not append MEMORY unless you ask or batch for deploy.
 
 **Adding from old chats:** If you add to the motherboard from an old chat (e.g. 30 days old), that only **appends** a new entry—it does **not** overwrite or remove existing entries. The new entry is a historical record of that past conversation. For current context, agents should treat **CORE + CODEBASE + the latest MEMORY entries** as the source of truth; older MEMORY entries are timeline/history.
 
@@ -127,7 +127,7 @@ For **profiles table and sync** (name, photo, socials, birthday, rewards): see `
 ## Quick reference for agents
 
 - **"Load motherboard"** → Read `README.md` → `CORE.md` → `CODEBASE.md` → `MEMORY.md` and use that context. For Studio OS / Experience Lab / shared platform work, also read `StudioOS_ContextCapsule_v0.1/CURRENT_HANDOFF.md` and `KNOWN_BLOCKERS.md`.
-- **"Add to motherboard"** → Add one entry now (per ADDING.md) and **enable auto-add for this chat**; thereafter add at the end of significant exchanges without being asked again. **"Stop adding to motherboard"** → disable auto-add for this chat.
-- **Ship changes:** **`./scripts/agent-commit.sh "message"`** — one commit + one push; MEMORY staged with code (see **`.cursor/rules/one-deploy-per-task.mdc`**).
+- **"Add to motherboard"** → Append one entry to `MEMORY.md` now (per ADDING.md). **Auto-add after every task is OFF** — only add when asked or when batching for deploy.
+- **Ship changes:** Only when the founder says **"deploy now"** — **`./scripts/agent-commit.sh --deploy-now "message"`** (one commit + one push to **`master`**). Docs/MEMORY-only commits skip the Vercel build. See **`.cursor/rules/one-deploy-per-task.mdc`**.
 - **"Snapshot codebase to motherboard"** → Explore the repo and overwrite `motherboard/CODEBASE.md` with a structured summary of the current codebase so the motherboard has accurate, up-to-date code context.
 - **Golden models / prompts** → `motherboard/golden-models/` and `motherboard/golden-prompts/` store Fal models and prompts that work best in this stack; update when the product owner confirms a keeper.

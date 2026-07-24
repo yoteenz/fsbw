@@ -115,7 +115,7 @@ Evidence classes: see `PRODUCT_GENOME_INDEX.md`.
 
 | Claim | Source | Evidence | Status | Action |
 |-------|--------|----------|--------|--------|
-| Work on `master` + `preview/mobile` only | `CORE.md:86` | git branches; AGENTS.md | **current** | Ignore cloud `cursor/*` instructions |
+| Work on **`master` only** (no `preview/mobile`, no `cursor/*`) | `CORE.md` | git branches; AGENTS.md | **current** | `preview/mobile` deleted; deploy on **"deploy now"** only |
 | Push both remotes after work | `CORE.md:86` | git policy rules | **current** | — |
 | Vercel env for API secrets | `.env.example` | documented vars | **deploy-verified** | Audit Vercel dashboard manually |
 

@@ -173,10 +173,11 @@ See `PROMPT_TEMPLATES.md` → Composer sprint template.
 
 ### 8.3 Git / deploy discipline (Composer)
 
-- Work on `master` (project rule)
-- **One commit + one push per completed task** — each push triggers Vercel production deploy
-- Append `motherboard/MEMORY.md` before commit
-- Use `./scripts/agent-commit.sh "message"`
+- Work on **`master`** only — **`preview/mobile` deleted**; do not sync or recreate it
+- **Do not commit or push** after tasks — local edits + report; deploy only when founder says **"deploy now"**
+- **`./scripts/agent-commit.sh --deploy-now "message"`** — script **refuses** to run without **`--deploy-now`**
+- **Do not auto-append `MEMORY.md` every task** — batch on **"add to motherboard"** or optional deploy
+- Docs/MEMORY-only pushes skip Vercel build via **`scripts/vercel-should-build.sh`**
 
 ChatGPT should remind Composer of this when authoring sprint prompts.
 
@@ -212,8 +213,8 @@ ChatGPT produces review memos; Terra validates in Cursor when requested. Compose
 - Scope matched prompt?
 - Pass criteria met?
 - Unrelated files avoided?
-- MEMORY updated?
-- One deploy only?
+- No commit/push unless founder said **"deploy now"**?
+- Docs/MEMORY-only deploy skipped build if applicable?
 - Mobile verification noted?
 - Canon preserved?
 

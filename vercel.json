@@ -1,4 +1,5 @@
 {
+  "ignoreCommand": "bash scripts/vercel-should-build.sh",
   "functions": {
     "api/live-try-on-ensure-overlays.ts": {
       "maxDuration": 10

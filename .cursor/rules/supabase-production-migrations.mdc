@@ -23,7 +23,7 @@ When you **create or ship** a migration under `supabase/migrations/` that introd
    - `query`: full SQL contents of the migration file
 3. **Verify** with MCP **`list_tables`** (or targeted `execute_sql`) that new/changed objects exist.
 4. **Report** in the task summary: migration file, `apply_migration` result, verification outcome.
-5. **Commit** migration file + code in one `./scripts/agent-commit.sh` push (see one-deploy-per-task).
+5. **Commit** migration file + code when the founder says **"deploy now"** (one `./scripts/agent-commit.sh --deploy-now` push — see **`.cursor/rules/one-deploy-per-task.mdc`**). Apply migration to production in the same task regardless; git push waits for explicit deploy authorization.
 
 ## When this applies
 

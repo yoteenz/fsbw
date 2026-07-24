@@ -191,7 +191,7 @@ Restart dev server after changing local env.
 
 ### Step 3 — Deploy the API route
 
-1. Commit and push to `master` (and sync `preview/mobile`).
+1. When the founder says **"deploy now"**, commit and push to **`master`** only (one commit, one push).
 2. Confirm route exists: `POST https://YOUR-DEPLOYMENT/api/psa/chat`
 3. Test with curl (replace token with a **premium** user’s Supabase JWT):
    ```bash
@@ -225,7 +225,7 @@ Restart dev server after changing local env.
 
 2. **Variable name must be exact:** `OPENAI_API_KEY` (no `VITE_` prefix — Vite-prefixed vars are frontend-only and are **not** sent to API routes).
 
-3. **Environment scope in Vercel:** check **Production** and **Preview** (preview/mobile branch deploys use Preview). “Development” alone does **not** update live/preview URLs.
+3. **Environment scope in Vercel:** check **Production** (and **Preview** if you use preview deployments from PRs). “Development” alone does **not** update live URLs.
 
 4. **Redeploy required:** adding/changing env vars does not update already-running functions until you **Redeploy** (Deployments → … → Redeploy).
 

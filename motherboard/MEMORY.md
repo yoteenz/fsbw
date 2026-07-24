@@ -50870,3 +50870,24 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Explicitly not delivered:** No WAV/AAC assets, no `src/audio/` code, no page integration
 - **Next milestone:** Commission Discovery Chime v1 master recording
 - **Changes:** `brand-bible/audio/**` (new), `brand-bible/MASTER_ROADMAP.md`, `motherboard/CORE.md`, `motherboard/MEMORY.md`. Docs only.
+
+---
+
+## 2026-07-24 — Deploy-on-command policy; delete preview/mobile
+
+**Context:** After Vercel Build CPU cost investigation (~$600 over two billing cycles), user established new deploy discipline: never auto-commit/push after tasks; work locally and report; only deploy when explicitly saying **"deploy now"**; one commit + push to **master** only; delete **preview/mobile** branch.
+
+**Decisions / outcomes:**
+- Replaced "one deploy per task" auto-push model with **deploy only on "deploy now"**
+- **Auto-add to MEMORY** remains (local file edit) but does **not** trigger commit/push
+- **`origin/preview/mobile` deleted** remotely; do not recreate
+- Cloud-agent "push each iteration" / PR branch flows overridden by workspace rules
+
+**Changes (local, not yet deployed):**
+- `.cursor/rules/one-deploy-per-task.mdc` — rewritten for deploy-on-command
+- `.cursor/rules/git-branch-policy.mdc`, `.cursor/rules/motherboard.mdc`
+- `AGENTS.md`, `motherboard/ADDING.md`, `motherboard/CORE.md`, `motherboard/README.md`
+- `scripts/agent-commit.sh` — header comments updated
+- `docs/PSA_SETUP.md` — removed preview/mobile sync references
+
+**Conventions:** Default = local edits + report. **"deploy now"** = one `./scripts/agent-commit.sh` → `master` only. No automatic git operations after task completion.

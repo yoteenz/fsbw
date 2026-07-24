@@ -1,13 +1,48 @@
 #!/usr/bin/env bash
-# One Vercel deploy per agent task: stage code + motherboard/MEMORY.md, single commit, single push.
-# Usage: ./scripts/agent-commit.sh "commit message"
+# Deploy ONLY when founder explicitly authorizes (see --deploy-now below).
+# Usage: ./scripts/agent-commit.sh --deploy-now "commit message"
+#    or: FSBW_DEPLOY_NOW=1 ./scripts/agent-commit.sh "commit message"
 #
-# Do NOT run twice for the same task. Do NOT amend + force-push after this script succeeds.
+# This script must NOT be invoked automatically at end of agent tasks.
+# Do NOT run twice for the same deploy. Do NOT amend + force-push after success.
 set -euo pipefail
 
-MSG="${1:-}"
+DEPLOY_NOW=false
+MSG=""
+for arg in "$@"; do
+  case "$arg" in
+    --deploy-now) DEPLOY_NOW=true ;;
+    -h|--help)
+      echo "Usage: ./scripts/agent-commit.sh --deploy-now \"commit message\"" >&2
+      echo "   or: FSBW_DEPLOY_NOW=1 ./scripts/agent-commit.sh \"commit message\"" >&2
+      echo "" >&2
+      echo "Refuses to run without explicit deploy authorization." >&2
+      exit 0
+      ;;
+    *)
+      if [[ -z "$MSG" ]]; then
+        MSG="$arg"
+      else
+        MSG="$MSG $arg"
+      fi
+      ;;
+  esac
+done
+
+if [[ "${FSBW_DEPLOY_NOW:-}" == "1" ]]; then
+  DEPLOY_NOW=true
+fi
+
+if ! $DEPLOY_NOW; then
+  echo "ERROR: Refusing to run without explicit deploy authorization." >&2
+  echo "Founder must say \"deploy now\" before agents commit/push." >&2
+  echo "Usage: ./scripts/agent-commit.sh --deploy-now \"commit message\"" >&2
+  echo "   or: FSBW_DEPLOY_NOW=1 ./scripts/agent-commit.sh \"commit message\"" >&2
+  exit 1
+fi
+
 if [[ -z "$MSG" ]]; then
-  echo "Usage: ./scripts/agent-commit.sh \"commit message\"" >&2
+  echo "Usage: ./scripts/agent-commit.sh --deploy-now \"commit message\"" >&2
   exit 1
 fi
 
@@ -15,7 +50,6 @@ fi
 shopt -s nocasematch
 if [[ "$MSG" =~ ^(test|wip|fix|tmp|asdf|xxx)$ ]] || [[ ${#MSG} -lt 12 ]]; then
   echo "ERROR: Use a real commit message (≥12 chars, not test/wip/fix)." >&2
-  echo "Append motherboard/MEMORY.md first, then run once with the final message." >&2
   exit 1
 fi
 shopt -u nocasematch
@@ -32,38 +66,12 @@ if git rev-parse '@{u}' >/dev/null 2>&1; then
   ahead="$(git rev-list --count '@{u}..HEAD' 2>/dev/null || echo 0)"
   if [[ "${ahead}" != "0" ]]; then
     echo "ERROR: Local master is ${ahead} commit(s) ahead of origin but not pushed." >&2
-    echo "Push those once, or reset — do not stack a second agent-commit for the same task." >&2
+    echo "Push those once with --deploy-now, or reset — do not stack a second deploy." >&2
     exit 1
   fi
-fi
-
-mapfile -t changed < <( { git diff --name-only; git diff --cached --name-only; } | sort -u )
-
-code_changed=false
-memory_touched=false
-for f in "${changed[@]}"; do
-  [[ -z "$f" ]] && continue
-  if [[ "$f" == motherboard/MEMORY.md ]]; then
-    memory_touched=true
-  elif [[ "$f" != motherboard/* ]]; then
-    code_changed=true
-  fi
-done
-
-if $code_changed && ! $memory_touched; then
-  echo "ERROR: Non-motherboard files changed but motherboard/MEMORY.md was not updated." >&2
-  echo "Append a MEMORY entry (motherboard/ADDING.md), then re-run this script once." >&2
-  exit 1
 fi
 
 git add -A
-
-if $code_changed; then
-  if ! git diff --cached --name-only | grep -qx 'motherboard/MEMORY.md'; then
-    echo "ERROR: motherboard/MEMORY.md must be staged with code changes (one deploy)." >&2
-    exit 1
-  fi
-fi
 
 if git diff --cached --quiet; then
   echo "Nothing staged to commit." >&2
@@ -75,3 +83,4 @@ git push -u origin master
 
 echo "OK: one commit pushed to origin/master."
 echo "Do not amend+force-push this commit — that triggers a second Vercel deploy."
+echo "Docs/MEMORY-only commits may skip the build via scripts/vercel-should-build.sh."

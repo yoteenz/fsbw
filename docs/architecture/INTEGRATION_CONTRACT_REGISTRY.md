@@ -182,4 +182,4 @@ See `.env.example` (lines 1–110+). Critical groups:
 | Vercel Node serverless for `api/` | file-based routing |
 | Same-origin or `VITE_API_BASE` proxy | `.env.example` |
 | Mobile Safari session restore | `session-restore.ts`, `session-cookie.ts` |
-| Branches `master` + `preview/mobile` | `CORE.md:86` |
+| Branch **`master` only** | `CORE.md` |

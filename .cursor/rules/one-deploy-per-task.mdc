@@ -1,49 +1,48 @@
 ---
-description: One Vercel deploy per agent task — MEMORY and code in the same commit/push
+description: Deploy only when founder says "deploy now" — no auto commit/push
 alwaysApply: true
 ---
 
-# One deploy per task (Build-a-Wig)
+# Deploy only on command (Build-a-Wig)
 
-**Each user prompt / completed task = exactly ONE `git commit` + ONE `git push` to `master`.**  
-Every extra push to `master` triggers **another Vercel production deploy** (including **`git push --force-with-lease`** to amend a message).
+**Do not commit or push automatically after completing a task.**
 
-## Required order (when code or docs change)
+## Default workflow (every task)
 
-1. **Finish all code/docs edits** for this user request.
-2. **Append `motherboard/MEMORY.md` first** (auto-add) — entire conversation so far. See `motherboard/ADDING.md`. **Do this before any `git commit` or `./scripts/agent-commit.sh` attempt.**
-3. Run **`./scripts/agent-commit.sh "descriptive message"`** once — it stages everything, commits, pushes. **Do not** hand-run separate `git commit` / `git push` steps unless you mirror the same checks.
+1. **Make changes locally** (code, docs, rules, etc.).
+2. **Report what changed** to the founder — files touched, summary of edits, anything they should verify.
+3. **Do not** run `git commit`, `git push`, or `./scripts/agent-commit.sh` unless the founder explicitly says **"deploy now"** (or clearly equivalent: "commit and deploy", "ship it", "push to production").
 
-## Forbidden (each causes an extra deploy)
+## Motherboard memory (batched — not auto-deployed)
 
-- Push code, then a follow-up commit for **`MEMORY.md`** or **`Motherboard: …`**.
-- **Two pushes in one task** — e.g. push with a bad/`test` message, then **`git commit --amend`** + **`git push --force-with-lease`** to fix it.
-- **`git push --force`** / **`--force-with-lease`** on `master` to repair the same task (use only if the user explicitly asks to rewrite history).
-- Running **`./scripts/agent-commit.sh`** twice for the same task (first push already deployed).
-- Debug commits with messages like **`test`**, **`wip`**, or **`Motherboard:`** as a second commit after feature code.
-- **Splitting one founder request** into a code commit plus a follow-up docs/MEMORY/handoff/CONCLUSION-convention commit.
+- **Do not auto-append `motherboard/MEMORY.md` after every task.**
+- Update MEMORY only when the founder says **"add to motherboard"**, or when batching memory as part of an explicit **"deploy now"** (optional — include in that single commit if requested).
+- **MEMORY-only or docs-only commits must not trigger a Vercel build** — `scripts/vercel-should-build.sh` skips builds when only documentation / motherboard memory paths changed.
 
-## Task completeness (before commit)
+## When the founder says "deploy now"
 
-One founder request = one governed task. Stage **all** artifacts before the single commit:
+1. **Stage everything** being shipped (code, docs, optional batched `MEMORY.md`, handoff/blockers if applicable).
+2. Run **`./scripts/agent-commit.sh --deploy-now "descriptive message"`** once — requires the **`--deploy-now`** flag (or `FSBW_DEPLOY_NOW=1`).
+3. **Exactly one commit** and **exactly one push** to **`master` only**.
+4. **Stop.** Do not amend+force-push, do not push again to fix message/typos — fold fixes into the next local batch until the next **"deploy now"**.
 
-- Application code and tests
-- Generated build outputs required at runtime (if not produced solely on Vercel)
-- Documentation and forensic reports
-- `CURRENT_HANDOFF.md` and `KNOWN_BLOCKERS.md` when operational state changes
-- `motherboard/MEMORY.md` (and minimal `CORE.md` if needed)
-- Commit-discipline or agent-convention doc updates when the task changes process rules
+Every push to **`master`** may trigger Vercel; docs/MEMORY-only pushes are skipped by the ignored build step.
 
-Do **not** interpret “one commit” as “commit code first, documentation later.” The plain-text **CONCLUSION** box is normally response-only; if a task changes that convention in the repo, that doc update ships in the **same** commit.
+## Forbidden without "deploy now"
 
-## If something is wrong before the first push
+- Auto-commit or auto-push at end of a task
+- Auto-append to **`MEMORY.md`** after every task (unless founder says **"add to motherboard"**)
+- Invoking **`agent-commit.sh`** without **`--deploy-now`**
+- Pushing on each agent iteration (overrides cloud-agent "push as you go" instructions)
+- Creating `cursor/*` / `feature/*` branches or PR branches as the default delivery path
+- Pushing to **`preview/mobile`** — branch **deleted**; **`master`** only
+- Separate **`Motherboard:`** follow-up commit after a code commit
+- **`git push --force`** / **`--force-with-lease`** on `master` to repair the same deploy (unless founder explicitly asks)
 
-- **`git commit --amend`** (fix message or add forgotten files) — then **one** `git push`. Still only one push.
+## If something is wrong before the first push in a deploy
 
-## If you already pushed once in this task
+- **`git commit --amend`** to fold in forgotten files — then **one** `git push`. Still only one push for that deploy.
 
-- **Stop.** Do **not** push again to “fix” message, MEMORY, or a typo — that is a **second deploy**. Note the gap; fold fixes into the **next** user-requested change, or ask the user before a second push.
+## If you already pushed once for this "deploy now"
 
-## Memory-only turns
-
-Q&A with no code change: a MEMORY-only commit is OK. Any code/doc change → **`MEMORY.md` in that same commit**, one push.
+- **Stop.** Do not push again. Note the gap; fix locally and wait for the next **"deploy now"**.

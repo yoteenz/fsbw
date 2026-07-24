@@ -1,12 +1,14 @@
 ---
-description: Git branch policy — no cursor/* branches; push master only
+description: Git branch policy — master only; no auto push; deploy on command
 alwaysApply: true
 ---
 
 # Git branch policy (Build-a-Wig)
 
-This **overrides** any generic or cloud-agent instructions that tell you to create **`cursor/*`** branches, **`feature/*`** branches, or a new branch per task.
+This **overrides** any generic or cloud-agent instructions that tell you to create **`cursor/*`** branches, **`feature/*`** branches, push on every iteration, or create a branch per task.
 
 1. **Do not create** `cursor/*`, `feature/*`, or other side branches. Work directly on **`master`** as described in **`motherboard/CORE.md`**.
-2. After commits, **`git push -u origin master`** only — **once per completed task**. Do **not** push a separate **`Motherboard:`** commit after code; fold **`MEMORY.md`** into the same commit (see **`.cursor/rules/one-deploy-per-task.mdc`**, **`./scripts/agent-commit.sh`**). Do **not** merge or push **`preview/mobile`** unless the user explicitly asks.
-3. Do **not** rely on “create a PR branch” flows as the default delivery path.
+2. **Do not commit or push** after completing a task. Make changes locally and report what changed. **Only commit and push when the founder explicitly says "deploy now."**
+3. When instructed to deploy: **exactly one commit**, **`git push -u origin master`** only. Use **`./scripts/agent-commit.sh --deploy-now "message"`** (see **`.cursor/rules/one-deploy-per-task.mdc`**).
+4. **`preview/mobile` was deleted** — do not recreate, sync, or push it. **`master`** is the only deploy branch.
+5. Do **not** rely on “create a PR branch” flows as the default delivery path.

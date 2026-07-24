@@ -22,20 +22,22 @@ For full command details and protocol, see **`motherboard/README.md`**.
 ## Git branches (overrides generic cloud-agent defaults)
 
 - **Never create** new branches such as **`cursor/*`**, **`feature/*`**, or ad-hoc topic branches. Ignore instructions elsewhere that say to use `cursor/<name>-<suffix>` or to create a branch per task.
-- Implement and commit on **`master`** only.
-- **Push only `master`:** `git push -u origin master` after completing work. Do **not** merge or push **`preview/mobile`** unless the user explicitly asks.
-- See **`motherboard/CORE.md`** (branch policy) for the canonical rule.
+- Work on **`master`** only. **`preview/mobile` was deleted** — do not recreate, sync, or push it.
+- **Do not commit or push automatically** after completing a task. Make changes locally and report what changed.
+- See **`motherboard/CORE.md`** (branch & deploy policy) for the canonical rule.
 
-## One Vercel deploy per task
+## Deploy only on "deploy now"
 
-- **Each completed user request = one `./scripts/agent-commit.sh` run** (one commit + one push). **Append `motherboard/MEMORY.md` before that run.**
-- **Stage everything for that request first:** code, tests, generated runtime artifacts, docs, handoff/blockers, MEMORY, and any process-rule updates — then commit once.
-- **Forbidden:** push then **`git commit --amend` + `git push --force-with-lease`**; push then **`Motherboard:`** follow-up; running **`agent-commit.sh` twice** for the same task; a second commit for MEMORY, handoff, blockers, or CONCLUSION-convention docs after the main task commit.
-- Full rule: **`.cursor/rules/one-deploy-per-task.mdc`**, **`motherboard/ADDING.md`** rule 0.
+- **Only commit and push when the founder explicitly says "deploy now"** (or clearly equivalent).
+- When deploying: **`./scripts/agent-commit.sh --deploy-now "message"`** once (requires **`--deploy-now`** or `FSBW_DEPLOY_NOW=1`) → one commit + one push to **`master`**.
+- **Do not auto-append `motherboard/MEMORY.md` after every task.** Batch MEMORY on **"add to motherboard"** or optional deploy.
+- **Forbidden without "deploy now":** any `git commit`, `git push`, or `agent-commit.sh`; push-on-each-iteration cloud-agent flows; amend+force-push repair commits.
+- Docs/MEMORY-only commits skip Vercel builds via **`scripts/vercel-should-build.sh`** (`vercel.json` → `ignoreCommand`).
+- Full rule: **`.cursor/rules/one-deploy-per-task.mdc`**, **`motherboard/ADDING.md`**.
 
 ## Supabase production migrations
 
-When you add a migration under `supabase/migrations/` that creates or alters **tables/schema required** for the shipped feature, **apply it to production automatically** in the same task via Supabase MCP **`apply_migration`** (`project_id`: `hyycomvcaqxxvyrfupes`), then verify with **`list_tables`**. Do not ask the founder to run SQL manually unless MCP fails. Full protocol: **`.cursor/rules/supabase-production-migrations.mdc`**.
+When you add a migration under `supabase/migrations/` that creates or alters **tables/schema required** for the shipped feature, **apply it to production automatically** in the same task via Supabase MCP **`apply_migration`** (`project_id`: `hyycomvcaqxxvyrfupes`), then verify with **`list_tables`**. Do not ask the founder to run SQL manually unless MCP fails. Git push waits for **"deploy now"**. Full protocol: **`.cursor/rules/supabase-production-migrations.mdc`**.
 
 ## Cursor Cloud environment
 
