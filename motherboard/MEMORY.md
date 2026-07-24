@@ -50802,3 +50802,20 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Not in scope:** No page integration yet — system delivered standalone for future campaigns/experiences.
 - **Prior chat context (same arc):** Flagship brand-bible Phases 2–5 (Experience Registry, Program, Architectural Language DOC-ENV-005, SET-001 DOC-ENV-006, Production Dossier DOC-ENV-007); Studio World read-only inventory + separation addendum (docs 15–23, readiness ~2.2/5, no migration performed).
 - **Changes:** `src/motion/**` (new), `motherboard/CORE.md` (FSMS pointer), `motherboard/MEMORY.md`.
+
+---
+
+## 2026-07-24 — Frontal Slayer Design System (FDS) — official visual DNA
+
+- **Context:** Same chat arc as FSMS. Founder requested the **Frontal Slayer Design System (FDS)** — not a component library alone but centralized visual DNA enforcing consistency across website, mobile, Studio World, admin, marketing, campaigns, and future apps. Principles: luxury over complexity, whitespace over clutter, glass over solid surfaces, precision over excess; no duplicated styling, arbitrary spacing, or hardcoded colors.
+- **Deliverable:** New **`src/design-system/`** with full token + component architecture:
+  - **Tokens:** `colors/` (brand + semantic CSS vars), `typography/` (Display XL → Legal with responsive clamp), `spacing/` (8pt XS–4XL), `radius/`, `shadows/`, `glass/`, `animations/`, `themes/`
+  - **Components:** glass system (Card, Panel, Window, Drawer, Navigation, Modal, Sidebar, Tooltip, Badge, Chip); buttons (Primary, Secondary, Ghost, Glass, Luxury, Icon, Floating, Loading, Disabled); cards (Standard, Luxury, Glass, Product, Campaign, Analytics, Feature, Dashboard); panels (Floating Acrylic, Desktop, Lobby, Dashboard, Luxury Modal, Drawer, Info, Notification, Content); forms (`FdsField`, `FdsLabel`, `FdsInput`, `FdsTextarea`, `FdsSelect`); `FdsIcon` wrapper; layouts (Desktop, Mobile, Full Screen, Split, Dashboard, Marketing, Landing, Immersive)
+  - **Hooks:** `useBreakpoint`, `useFdsTheme`, `useGlassStyle`
+  - **Styles:** `styles/fds.css` — all `--fds-*` CSS variables, typography classes, glass material, buttons, cards, panels, forms, icons, responsive layouts
+  - **Public API:** `src/design-system/index.ts` — import once; CSS auto-loaded. Card glass variant exported as `GlassStyleCard` to distinguish from glass-system `GlassCard`.
+- **Brand tokens:** Primary Red `#EB1C24`, Pure White, Chrome Silver, Crystal Glass, Luxury Marble, Soft Gray — all via CSS variables.
+- **Verification:** `npm run build` passes.
+- **Not in scope:** No page migration yet — system delivered standalone; existing pages keep current styles until explicitly migrated.
+- **Pairs with:** FSMS (`src/motion/`) for motion language.
+- **Changes:** `src/design-system/**` (new), `motherboard/CORE.md` (FDS pointer), `motherboard/MEMORY.md`.
