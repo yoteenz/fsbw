@@ -142,9 +142,15 @@ export default defineConfig(({ mode, command }) => {
   server: {
     port: 3001,
     host: '0.0.0.0', // Explicitly bind to all interfaces for mobile access
+    // Cloud Agent mobile preview (Cloudflare Quick Tunnel — Option A)
+    allowedHosts: ['.trycloudflare.com'],
     open: false,
     strictPort: true, // Force port 3001, don't fall back to other ports
-    hmr: true,
+    // HMR through HTTPS reverse proxy (trycloudflare.com)
+    hmr: {
+      protocol: 'wss',
+      clientPort: 443,
+    },
     proxy,
     watch: {
       // Polling: server reliably sees file changes (helps on Windows / paths with spaces)

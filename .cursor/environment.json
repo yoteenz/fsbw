@@ -1,3 +1,22 @@
 {
-  "install": "./scripts/cloud-update.sh"
+  "name": "Build-a-Wig mobile preview",
+  "install": "./scripts/cloud-update.sh",
+  "terminals": [
+    {
+      "name": "vite",
+      "command": "npm run dev",
+      "description": "Vite dev server on port 3001 — live UI; /api proxied to production"
+    },
+    {
+      "name": "preview-tunnel",
+      "command": "./scripts/cloud-preview-tunnel.sh",
+      "description": "Cloudflare Quick Tunnel — prints public HTTPS mobile preview URL (trycloudflare.com)"
+    }
+  ],
+  "ports": [
+    {
+      "name": "vite",
+      "port": 3001
+    }
+  ]
 }

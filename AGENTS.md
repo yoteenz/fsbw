@@ -45,6 +45,17 @@ When you add a migration under `supabase/migrations/` that creates or alters **t
 - The install hook uses **`npm ci`** at repo root so local project binaries like **`tsc`** and **`vite`** are available before verification commands such as **`npm run build`**.
 - Keep secrets in Cursor web environment settings, not in this repository.
 
+### Mobile live preview (no Vercel)
+
+Cloud agents auto-start two terminals from **`.cursor/environment.json`**:
+
+1. **`vite`** — `npm run dev` on port **3001** (UI live; `/api` proxied to production).
+2. **`preview-tunnel`** — **`./scripts/cloud-preview-tunnel.sh`** prints a **`https://….trycloudflare.com`** URL.
+
+**Founder workflow:** open the **`preview-tunnel`** terminal (or read **`/tmp/cloud-preview-url.txt`**) and paste the URL on your phone. URL changes each agent session. Production is untouched until **"deploy now"**.
+
+**Agent duty:** after starting work, share the mobile preview URL from the tunnel terminal in chat if the founder is on mobile.
+
 ## Spatial Architecture Review (Studio OS)
 
 For **Studio OS product work** (new modules, admin pages, Genesis integration, navigation), read **`STUDIO_OS_BIBLE/SPATIAL_ARCHITECTURE_REVIEW.md`** and complete the review artifact **before** implementation code.
