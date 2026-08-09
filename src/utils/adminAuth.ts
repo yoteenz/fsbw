@@ -520,6 +520,9 @@ export function isPreviewEnvironment(): boolean {
       return true;
     }
     if (host.endsWith('.vercel.app')) return true;
+    if (host === 'preview.fsbw-dev.com' || host.endsWith('.fsbw-dev.com') || host.endsWith('.trycloudflare.com')) {
+      return true;
+    }
   }
   const env =
     (typeof import.meta !== 'undefined' && (import.meta as { env?: Record<string, string> }).env?.VITE_VERCEL_ENV) ||

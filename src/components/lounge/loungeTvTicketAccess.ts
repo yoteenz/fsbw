@@ -112,7 +112,7 @@ export function loungeTvTileShowsTicketLock(
   return !loungeTvContentIsAccessible(tile, unlocks ?? isUnlocked ?? (() => false));
 }
 
-/** Centered thumb copy for ticket-gated content (no lock icon). */
+/** Caption / list-row copy for ticket-gated content (acrylic icon on thumbnails). */
 export function loungeTvLockedThumbnailOverlayLabel(
   tile: LoungeTvVideoTile,
   unlocks: LoungeContentUnlock[] | undefined,

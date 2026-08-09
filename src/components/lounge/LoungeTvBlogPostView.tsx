@@ -4,6 +4,7 @@ import {
   loungeTvLockedThumbnailOverlayLabel,
   loungeTvTileShowsTicketLock,
 } from './loungeTvTicketAccess';
+import { LoungeTvTicketLockWatermark } from './LoungeTvTicketLockWatermark';
 import type { LoungeContentUnlock } from '../../utils/slayTicketHistoryDisplay';
 
 const BODY_FONT = '"Futura PT Medium", Futura, sans-serif';
@@ -83,6 +84,21 @@ export function LoungeTvBlogPostList({ tiles, onSelect, isUnlocked, unlocks }: L
                     transform: ticketLocked ? 'scale(1.06)' : 'none',
                   }}
                 />
+                {ticketLocked ? (
+                  <span
+                    aria-hidden
+                    style={{
+                      position: 'absolute',
+                      inset: 0,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      pointerEvents: 'none',
+                    }}
+                  >
+                    <LoungeTvTicketLockWatermark variant="blogThumb" />
+                  </span>
+                ) : null}
               </span>
             ) : (
               <span

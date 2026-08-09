@@ -2,10 +2,8 @@ import type { CSSProperties } from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { LoungeContentPack } from './loungeTvContentPack';
 import { contentPackToTile } from './loungeTvContent';
-import {
-  loungeTvLockedThumbnailOverlayLabel,
-  loungeTvTileShowsTicketLock,
-} from './loungeTvTicketAccess';
+import { loungeTvTileShowsTicketLock } from './loungeTvTicketAccess';
+import { LoungeTvTicketLockWatermark } from './LoungeTvTicketLockWatermark';
 import type { LoungeContentUnlock } from '../../utils/slayTicketHistoryDisplay';
 import { isPackSaved } from '../../utils/loungeTvLibrary';
 import {
@@ -53,18 +51,6 @@ const cardTitleStyle: CSSProperties = {
   display: '-webkit-box',
   WebkitLineClamp: 2,
   WebkitBoxOrient: 'vertical',
-};
-
-const lockedOverlayTextStyle: CSSProperties = {
-  fontFamily: LOUNGE_TV_FONT_MEDIUM,
-  fontSize: loungeTvGlassCqw(1.35, 3, 6.5),
-  lineHeight: 1.35,
-  color: LOUNGE_TV_TEXT_WHITE,
-  textTransform: 'uppercase',
-  textAlign: 'center',
-  textShadow: '0 2px 12px rgba(0,0,0,0.9)',
-  letterSpacing: '0.04em',
-  maxWidth: '92%',
 };
 
 export function LoungeTvContentPackCard({
@@ -118,7 +104,6 @@ export function LoungeTvContentPackCard({
   }, []);
   const showNew = loungeTvTileShowsAsNew(tile);
   const ticketLocked = loungeTvTileShowsTicketLock(tile, unlocks, isUnlocked);
-  const lockedOverlayLabel = loungeTvLockedThumbnailOverlayLabel(tile, unlocks, isUnlocked);
 
   const thumbAspect = '16 / 9';
   const cardWidth = isHero ? '100%' : LOUNGE_TV_RAIL_CARD_WIDTH;
@@ -251,7 +236,7 @@ export function LoungeTvContentPackCard({
           </div>
         ) : null}
 
-        {ticketLocked && lockedOverlayLabel ? (
+        {ticketLocked ? (
           <span
             aria-hidden
             style={{
@@ -260,12 +245,11 @@ export function LoungeTvContentPackCard({
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              zIndex: 3,
+              zIndex: 4,
               pointerEvents: 'none',
-              padding: loungeTvGlassCqw(1, 2.5, 5),
             }}
           >
-            <span style={lockedOverlayTextStyle}>{lockedOverlayLabel}</span>
+            <LoungeTvTicketLockWatermark variant="card" />
           </span>
         ) : null}
 

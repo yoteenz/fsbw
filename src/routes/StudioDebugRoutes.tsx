@@ -51,7 +51,6 @@ import ContextUpdatesPage from '../pages/context-updates/page';
 import { isStudioInstitutePath } from '../studio-os-core/expert-capture/invite-system/config';
 import { DebugRouteErrorBoundary } from '../pages/debug/DebugRouteErrorBoundary';
 import { RootAppErrorBoundary } from './RootAppErrorBoundary';
-import { StudioRouteSuspenseFallback } from '../components/admin/studio/studio-boot/StudioRouteSuspenseFallback';
 import { lazyWithRetry } from '../utils/lazyWithRetry';
 
 const App = lazyWithRetry(() => import('../App'), 'App');
@@ -160,7 +159,7 @@ export default function StudioDebugRoutes() {
         path="*"
         element={
           <RootAppErrorBoundary>
-            <Suspense fallback={<StudioRouteSuspenseFallback label="application" />}>
+            <Suspense fallback={null}>
               <App />
             </Suspense>
           </RootAppErrorBoundary>

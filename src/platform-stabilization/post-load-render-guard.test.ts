@@ -14,10 +14,11 @@ describe('post-load-render-guard', () => {
 });
 
 describe('StudioDebugRoutes app shell', () => {
-  it('uses lightweight Studio route suspense fallback instead of LoadingScreen watchdog', () => {
+  it('uses null App suspense fallback to avoid duplicate loading screens', () => {
     const src = readFileSync(resolve(DIR, '../routes/StudioDebugRoutes.tsx'), 'utf8');
-    expect(src).toContain('StudioRouteSuspenseFallback');
+    expect(src).toContain('fallback={null}');
     expect(src).toContain('lazyWithRetry');
     expect(src).not.toContain('LoadingScreen source="App.lazy"');
+    expect(src).not.toContain('StudioRouteSuspenseFallback label="application"');
   });
 });
