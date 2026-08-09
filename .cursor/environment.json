@@ -4,13 +4,13 @@
   "terminals": [
     {
       "name": "vite",
-      "command": "npm run dev",
+      "command": "FSBW_CLOUD_MOBILE_PREVIEW=1 npm run dev",
       "description": "Vite dev server on port 3001 — live UI; /api proxied to production"
     },
     {
       "name": "preview-tunnel",
       "command": "./scripts/cloud-preview-tunnel.sh",
-      "description": "Cloudflare Quick Tunnel — prints public HTTPS mobile preview URL (trycloudflare.com)"
+      "description": "Cloudflare tunnel — persistent URL when CLOUDFLARE_TUNNEL_TOKEN is set; else trycloudflare.com"
     }
   ],
   "ports": [

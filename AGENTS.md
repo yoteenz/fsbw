@@ -50,7 +50,7 @@ When you add a migration under `supabase/migrations/` that creates or alters **t
 Cloud agents auto-start two terminals from **`.cursor/environment.json`**:
 
 1. **`vite`** — `npm run dev` on port **3001** (UI live; `/api` proxied to production).
-2. **`preview-tunnel`** — **`./scripts/cloud-preview-tunnel.sh`** prints a **`https://….trycloudflare.com`** URL.
+2. **`preview-tunnel`** — **`./scripts/cloud-preview-tunnel.sh`** prints a mobile preview URL. With **`CLOUDFLARE_TUNNEL_TOKEN`** + **`CLOUDFLARE_TUNNEL_HOSTNAME`** secrets, uses a **persistent** hostname (see **`docs/cloud-agent/persistent-preview-tunnel.md`**). Otherwise prints a ephemeral **`https://….trycloudflare.com`** URL.
 
 **Founder workflow:** open the **`preview-tunnel`** terminal (or read **`/tmp/cloud-preview-url.txt`**) and paste the URL on your phone. URL changes each agent session. Production is untouched until **"deploy now"**.
 

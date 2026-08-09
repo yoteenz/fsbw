@@ -1,4 +1,8 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
+import {
+  isHairPurchaseSlayTicketEarningEnabled,
+  SLAY_TICKET_ECONOMY_MIGRATION_NOTE,
+} from '../../src/content/education/commerce/slayTicketEconomyPolicy.js';
 
 export type SlayTicketTransactionType = 'earned' | 'used' | 'purchased' | 'adjusted' | 'expired';
 
@@ -46,7 +50,13 @@ export function isPhysicalHairProductLine(line: SlayTicketLineItem | null | unde
   return WIG_UNIT_NAMES.has(name);
 }
 
-export function slayTicketsEarnedForLineItems(lines: SlayTicketLineItem[] | null | undefined): number {
+export function slayTicketsEarnedForLineItems(
+  lines: SlayTicketLineItem[] | null | undefined,
+  options?: { orderPlacedAt?: string | number | Date }
+): number {
+  if (!isHairPurchaseSlayTicketEarningEnabled(options?.orderPlacedAt)) {
+    return 0;
+  }
   if (!Array.isArray(lines)) return 0;
   return lines.reduce((sum, line) => {
     if (!isPhysicalHairProductLine(line)) return sum;
@@ -140,11 +150,14 @@ async function insertTransaction(
 export async function creditSlayTicketsForOrder(
   supabase: SupabaseClient,
   userId: string,
-  params: { orderId: string; lineItems: SlayTicketLineItem[] }
-): Promise<{ ok: boolean; credited: number; balance: number; error?: string }> {
-  const earned = slayTicketsEarnedForLineItems(params.lineItems);
+  params: { orderId: string; lineItems: SlayTicketLineItem[]; orderPlacedAt?: string }
+): Promise<{ ok: boolean; credited: number; balance: number; error?: string; hairEarnSkipped?: boolean }> {
+  const earned = slayTicketsEarnedForLineItems(params.lineItems, {
+    orderPlacedAt: params.orderPlacedAt ?? new Date().toISOString(),
+  });
   const purchased = slayTicketsPurchasedForLineItems(params.lineItems);
   const totalCredit = earned + purchased;
+  const hairEarnSkipped = earned === 0 && slayTicketsEarnedForLineItems(params.lineItems, { orderPlacedAt: 0 }) > 0;
   if (totalCredit <= 0) {
     const balance = await readBalance(supabase, userId);
     return { ok: true, credited: 0, balance };
@@ -199,8 +212,10 @@ export async function creditSlayTicketsForOrder(
   }
 
   const balance = await readBalance(supabase, userId);
-  return { ok: true, credited: totalCredit, balance };
+  return { ok: true, credited: totalCredit, balance, hairEarnSkipped: hairEarnSkipped || undefined };
 }
+
+export { SLAY_TICKET_ECONOMY_MIGRATION_NOTE };
 
 const LOUNGE_TV_LIBRARY_ACCESS_MS = 365 * 24 * 60 * 60 * 1000;
 const LOUNGE_TV_REWATCH_TICKET_COST = 1;
@@ -232,6 +247,8 @@ export async function unlockLoungeContentWithTickets(
     accessType?: 'permanent' | 'rental';
     expiresAt?: string | null;
     contentTitle?: string;
+    /** PSA Today re-redemption — always charge catalog cost, not 1-ticket rewatch. */
+    forceCatalogCost?: boolean;
   }
 ): Promise<{ ok: boolean; balance: number; error?: string; alreadyUnlocked?: boolean }> {
   const catalogCost = Math.max(0, Math.floor(params.ticketCost));
@@ -245,12 +262,16 @@ export async function unlockLoungeContentWithTickets(
     .eq('content_id', contentId)
     .maybeSingle();
 
-  if (existingUnlock && unlockRowIsActive(existingUnlock as { expires_at?: string | null; unlocked_at?: string })) {
+  if (
+    existingUnlock &&
+    unlockRowIsActive(existingUnlock as { expires_at?: string | null; unlocked_at?: string }) &&
+    !params.forceCatalogCost
+  ) {
     const balance = await readBalance(supabase, userId);
     return { ok: true, balance, alreadyUnlocked: true };
   }
 
-  const isRewatch = Boolean(existingUnlock);
+  const isRewatch = Boolean(existingUnlock) && !params.forceCatalogCost;
   const chargeCost = isRewatch ? LOUNGE_TV_REWATCH_TICKET_COST : catalogCost;
   const expiresAt = params.expiresAt ?? computeLibraryExpiresAt();
 

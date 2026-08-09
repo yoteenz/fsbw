@@ -8,7 +8,7 @@
  * **Elsewhere (not path-redirected here):**
  * - SHOP menu / deep links: `bookingMemberRoutes.ts` (`bookingConsultationHref`, `bookingAppointmentHref`, …).
  * - Build-a-wig premium steps: `useBuildWigPremiumMembershipStepGate`.
- * - Lobby lounge: `LobbyApp` + `isPremiumMemberForGatedFeatures`.
+ * - Lobby lounge TV content: slay-ticket unlock flow in `LoungeTvScreen` (lobby/lounge pages are open to all).
  * - Cart eligibility: `stripIneligibleBcfBundleDealLines` / `isPremiumGatedCartLine`.
  */
 

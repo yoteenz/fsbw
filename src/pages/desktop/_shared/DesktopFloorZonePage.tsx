@@ -40,6 +40,7 @@ import {
   DESKTOP_PSA_SUITE_ART_WIDTH,
 } from '../../../constants/desktopPsaSuiteLayout';
 import { PerspectivePanelPageDebugOverlays } from '../../../components/perspective-panel/PerspectivePanelPageDebugOverlays';
+import { RewardsRoomCertificationWall } from '../../../components/desktop-rewards/RewardsRoomCertificationWall';
 import { preloadDesktopRoomBackground } from '../../../utils/desktopRoomBackgroundCache';
 import { DESKTOP_ROOM_SHELL_BACKGROUND } from '../../../constants/desktopRoomHeroArt';
 import {
@@ -205,6 +206,10 @@ export default function DesktopFloorZonePage({ floor }: Props) {
             page="psa-suite"
             image={{ width: DESKTOP_PSA_SUITE_ART_WIDTH, height: DESKTOP_PSA_SUITE_ART_HEIGHT }}
           />
+        ) : null}
+
+        {zoneId === 'rewards-gallery' ? (
+          <RewardsRoomCertificationWall measureRef={viewportMeasureRef} />
         ) : null}
 
         <MansionDebugLayer />

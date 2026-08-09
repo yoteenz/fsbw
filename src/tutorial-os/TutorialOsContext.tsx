@@ -13,7 +13,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { isSignedIn } from '../utils/adminAuth';
 import { getAccessToken } from '../utils/api';
 import type { TutorialFeatureCardDef, TutorialStep, TutorialTour } from './types';
-import { MANSION_TOUR_ID, ONBOARDING_TUTORIAL_LABEL } from './constants';
+import { MANSION_TOUR_ID, ONBOARDING_TUTORIAL_LABEL, isTutorialWelcomeEligiblePath } from './constants';
 import { findStepIndex, getFeaturedTour, getTourById, getTourSteps } from './registry';
 import {
   exportProgressForApi,
@@ -238,14 +238,18 @@ export function TutorialOsProvider({ children }: { children: ReactNode }) {
     }
   }, [location.search, hideChrome]);
 
-  /** First-visit welcome prompt */
+  /** First-visit welcome prompt — lobby landing only; hide when navigating away. */
   useEffect(() => {
+    if (!isTutorialWelcomeEligiblePath(location.pathname)) {
+      setShowWelcome(false);
+      return;
+    }
     if (hideChrome || previewMode || activeTourId) return;
     const timer = window.setTimeout(() => {
       if (shouldShowWelcomePrompt()) setShowWelcome(true);
     }, 1200);
     return () => window.clearTimeout(timer);
-  }, [hideChrome, previewMode, activeTourId]);
+  }, [location.pathname, hideChrome, previewMode, activeTourId]);
 
   /** Load remote progress on sign-in */
   useEffect(() => {
@@ -365,13 +369,6 @@ export function TutorialOsProvider({ children }: { children: ReactNode }) {
     bumpStore();
   }, [bumpStore]);
 
-  const handleWelcomeSkip = useCallback(() => {
-    markWelcomeDismissed('skip');
-    upsertTourProgress(MANSION_TOUR_ID, { status: 'dismissed', dismissedAt: new Date().toISOString() });
-    bumpStore();
-    setShowWelcome(false);
-  }, [bumpStore]);
-
   const handleAction = useCallback(() => {
     if (!activeStep?.actionRoute) return;
     navigate(activeStep.actionRoute);
@@ -447,12 +444,11 @@ export function TutorialOsProvider({ children }: { children: ReactNode }) {
     typeof document !== 'undefined'
       ? createPortal(
           <>
-            {showWelcome && featured && !hideChrome ? (
+            {showWelcome && featured && !hideChrome && isTutorialWelcomeEligiblePath(location.pathname) ? (
               <TutorialWelcomePrompt
                 estimatedMinutes={featured.estimatedMinutes}
                 onStart={handleWelcomeStart}
                 onMaybeLater={handleWelcomeMaybeLater}
-                onSkip={handleWelcomeSkip}
               />
             ) : null}
             <TutorialSearchModal open={searchModalOpen && !hideChrome} onClose={closeSearchModal} onSelect={handleSearchSelect} />

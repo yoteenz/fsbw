@@ -84,9 +84,11 @@ export function LoungeTvCtaButton({
 type LoungeTvSectionTitleProps = {
   title: string;
   action?: ReactNode;
+  /** Smaller muted rail headings (Featured tab). */
+  compact?: boolean;
 };
 
-export function LoungeTvSectionTitle({ title, action }: LoungeTvSectionTitleProps) {
+export function LoungeTvSectionTitle({ title, action, compact = false }: LoungeTvSectionTitleProps) {
   return (
     <div
       style={{
@@ -94,13 +96,13 @@ export function LoungeTvSectionTitle({ title, action }: LoungeTvSectionTitleProp
         alignItems: 'center',
         justifyContent: 'space-between',
         gap: loungeTvGlassCqw(1.5, 4, 8),
-        marginBottom: loungeTvGlassCqw(1, 2.5, 5),
+        marginBottom: loungeTvGlassCqw(compact ? 0.75 : 1, compact ? 1.8 : 2.5, compact ? 3.5 : 5),
       }}
     >
       <span
         style={{
           fontFamily: LOUNGE_TV_FONT_MEDIUM,
-          fontSize: loungeTvGlassCqw(1.7, 4, 8),
+          fontSize: loungeTvGlassCqw(1.85, 4.2, 8.5),
           letterSpacing: '0.08em',
           color: LOUNGE_TV_TEXT_WHITE,
           textTransform: 'uppercase',

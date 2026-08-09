@@ -8,6 +8,10 @@ const CACHE_BUST_FLAG_KEY = 'fsbw_stale_chunk_cache_bust_at';
 const RELOAD_COOLDOWN_MS = 60_000;
 const CACHE_BUST_COOLDOWN_MS = 15_000;
 
+function devAutoReloadDisabled(): boolean {
+  return typeof import.meta !== 'undefined' && Boolean(import.meta.env?.DEV);
+}
+
 export function staleChunkReloadRecentlyAttempted(): boolean {
   if (typeof window === 'undefined') return false;
   try {
@@ -49,6 +53,7 @@ export function isDynamicImportChunkFailure(error: unknown): boolean {
 
 /** Hard reload at most once per cooldown window (sessionStorage). Returns true if reload was invoked. */
 export function hardReloadOnceForStaleChunks(): boolean {
+  if (devAutoReloadDisabled()) return false;
   if (typeof window === 'undefined') return false;
   if (window.location.pathname.startsWith('/__studio-os-')) return false;
   try {
@@ -68,6 +73,7 @@ export function hardReloadOnceForStaleChunks(): boolean {
 
 /** Full navigation with cache-bust query (fresh index.html + new chunk hashes). */
 export function cacheBustReloadOnceForStaleChunks(): boolean {
+  if (devAutoReloadDisabled()) return false;
   if (typeof window === 'undefined') return false;
   const now = Date.now();
   try {
@@ -107,6 +113,7 @@ let globalHandlersRegistered = false;
 
 export function registerGlobalChunkLoadRecovery(): void {
   if (typeof window === 'undefined' || globalHandlersRegistered) return;
+  if (devAutoReloadDisabled()) return;
   globalHandlersRegistered = true;
 
   const tryRecover = (error: unknown) => {

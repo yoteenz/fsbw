@@ -3,8 +3,8 @@ import { isCreativePreviewMode } from './creativePreviewMode';
 import { isTutorialOsConciergeBypassActive } from '../tutorial-os/conciergeBypass';
 
 /**
- * Same gate as `/lobby` and PSA: signed-in users need an active premium **subscription** and/or **BLACK** spend tier
- * to access subscriber-only areas (lobby, lounge, PSA, premium-only PDP options, etc.).
+ * Premium membership gate for subscriber-only features (PSA, premium-only PDP options, booking, etc.).
+ * Lobby/lounge pages are open to all; lounge TV content uses slay-ticket unlocks instead.
  * Onboarding Tutorial bypasses this for view-only feature showcase.
  */
 export function isPremiumMemberForGatedFeatures(): boolean {

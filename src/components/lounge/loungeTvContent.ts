@@ -54,10 +54,8 @@ export const LOUNGE_TV_SIDEBAR: Record<LoungeTvMainTab, LoungeTvSidebarItem[]> =
   featured: [],
   learn: [
     { id: 'lace-mastery', label: 'LACE MASTERY' },
-    { id: 'install-pro', label: 'INSTALL LIKE A PRO' },
-    { id: 'hair-care', label: 'HAIR CARE' },
-    { id: 'styling-academy', label: 'STYLING ACADEMY' },
-    { id: 'color-lab', label: 'COLOR LAB' },
+    { id: 'care-mastery', label: 'CARE MASTERY' },
+    { id: 'styling-academy', label: 'STYLING MASTERY' },
     { id: 'baw-academy', label: 'BUILD-A-WIG ACADEMY' },
     { id: 'beginner-essentials', label: 'BEGINNER ESSENTIALS' },
     { id: 'advanced-techniques', label: 'ADVANCED TECHNIQUES' },
@@ -66,25 +64,17 @@ export const LOUNGE_TV_SIDEBAR: Record<LoungeTvMainTab, LoungeTvSidebarItem[]> =
     { id: 'brand-films', label: 'BRAND FILMS' },
     { id: 'behind-brand', label: 'BEHIND FRONTAL SLAYER' },
     { id: 'trend-reports', label: 'TREND REPORTS' },
+    { id: 'the-archive', label: 'THE ARCHIVE' },
     { id: 'slay-cam', label: 'SLAY CAM STORIES' },
-    { id: 'transformation-diaries', label: 'TRANSFORMATION DIARIES' },
     { id: 'product-reveals', label: 'PRODUCT REVEALS' },
-    { id: 'founder-stories', label: 'FOUNDER STORIES' },
-    { id: 'texture-spotlights', label: 'TEXTURE SPOTLIGHTS' },
-    { id: 'customer-favorites', label: 'CUSTOMER FAVORITES' },
-    { id: 'luxury-hair-science', label: 'LUXURY HAIR SCIENCE' },
-    { id: 'psa-sessions', label: 'PSA SESSIONS' },
   ],
   live: [
-    { id: 'upcoming-classes', label: 'UPCOMING CLASSES' },
-    { id: 'psa-live-qa', label: 'PSA LIVE Q&A' },
+    { id: 'live-masterclasses', label: 'LIVE MASTERCLASSES' },
+    { id: 'psa-live-qa', label: 'PSA LIVE' },
     { id: 'product-premieres', label: 'PRODUCT PREMIERES' },
-    { id: 'founder-sessions', label: 'FOUNDER SESSIONS' },
-    { id: 'holiday-events', label: 'HOLIDAY EVENTS' },
-    { id: 'launch-events', label: 'LAUNCH EVENTS' },
     { id: 'member-workshops', label: 'MEMBER WORKSHOPS' },
-    { id: 'live-shopping', label: 'LIVE SHOPPING' },
-    { id: 'early-access', label: 'EARLY ACCESS EVENTS' },
+    { id: 'launch-events', label: 'LAUNCH EVENTS' },
+    { id: 'mansion-events', label: 'MANSION EVENTS' },
   ],
   library: [
     { id: 'continue', label: 'CONTINUE WATCHING' },
@@ -98,9 +88,8 @@ export const LOUNGE_TV_SIDEBAR: Record<LoungeTvMainTab, LoungeTvSidebarItem[]> =
   ],
 };
 
-/** Stock clip for non–plucking-lace tiles (remote fallback). */
-export const LOUNGE_TV_PLACEHOLDER_VIDEO_SRC =
-  'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4';
+/** Local bundled preview fallback (same pool as content packs). */
+export const LOUNGE_TV_PLACEHOLDER_VIDEO_SRC = '/assets/lounge-tv-animation.mp4';
 
 /** Default Slay Ticket access per tile id (admin config can override). */
 export const LOUNGE_TV_DEFAULT_TICKET_ACCESS: Record<

@@ -666,6 +666,7 @@ const SharedWishlistListPage = lazyWithRetry(
 const AccountPage = lazyWithRetry(() => import('./pages/account/page'), 'AccountPage');
 const ConciergePage = lazyWithRetry(() => import('./pages/account/concierge/page'), 'ConciergePage');
 const RewardsPage = lazyWithRetry(() => import('./pages/account/rewards/page'), 'RewardsPage');
+const CollectiblesPage = lazyWithRetry(() => import('./pages/account/collectibles/page'), 'CollectiblesPage');
 const ReferralsPage = lazyWithRetry(() => import('./pages/account/referrals/page'), 'ReferralsPage');
 const AffiliatePage = lazyWithRetry(() => import('./pages/account/affiliate/page'), 'AffiliatePage');
 const NotificationsPage = lazyWithRetry(() => import('./pages/account/notifications/page'), 'NotificationsPage');
@@ -3367,6 +3368,13 @@ function App() {
           <AccountRouteGuard>
             <Suspense fallback={<LoadingScreen />}>
               <RewardsPage />
+            </Suspense>
+          </AccountRouteGuard>
+        } />
+        <Route path="/account/collectibles" element={
+          <AccountRouteGuard>
+            <Suspense fallback={<LoadingScreen />}>
+              <CollectiblesPage />
             </Suspense>
           </AccountRouteGuard>
         } />

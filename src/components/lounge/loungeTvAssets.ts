@@ -131,9 +131,20 @@ export const LOUNGE_TV_SCREEN_SRC = '/assets/tv-screen.png';
  * `public/assets/tv-content-video.mp4` (not a symlink to another shop video).
  * Cache-bust query helps browsers pick up replacements after deploy.
  */
-export const LOUNGE_TV_CONTENT_VIDEO_SRC = '/assets/tv-content-video.mp4?v=tv-content-1';
+/** Bundled PSA / lace content clip (`public/assets/TV content.mp4`). */
+export const LOUNGE_TV_CONTENT_VIDEO_SRC = '/assets/TV%20content.mp4?v=tv-content-1';
 
 export const LOUNGE_TV_PLUCKING_LACE_TILE_ID = 'plucking-lace';
+
+/** Replace preview/full MP4 paths when production assets ship (Supabase Storage or /assets/). */
+export const LOUNGE_TV_MEDIA = {
+  previews: {
+    psaTopLace: '/assets/TV%20content.mp4',
+    straightFrontal: '/assets/straight-frontal-video.mp4',
+    straightClosure: '/assets/straight-closure-video.mp4',
+    loungeAnimation: '/assets/lounge-tv-animation.mp4',
+  },
+} as const;
 
 /** Supabase green-screen original (for re-baking `lounge-tv-remote-hand.png`). */
 export const LOUNGE_TV_REMOTE_HAND_SRC_REMOTE =

@@ -5,10 +5,7 @@ import {
   lobbyCarouselPathFromIndex,
 } from '../../utils/lobbyCarouselRoutes';
 import LoadingScreen from '../../components/base/LoadingScreen';
-import ConfirmationModal from '../../components/ConfirmationModal';
 import { onSignInSuccess } from '../../utils/adminAuth';
-import { isPremiumMemberForGatedFeatures, prepareMembershipUpgradeNavigation } from '../../utils/premiumMemberAccess';
-import { TUTORIAL_OS_CONCIERGE_CHANGED } from '../../tutorial-os/conciergeBypass';
 import { getSupabase, isSupabaseConfigured, signOutIfSessionEmailUnconfirmed } from '../../utils/supabase';
 import {
   syncAllFromApi,
@@ -391,7 +388,6 @@ const LobbyApp: React.FC = () => {
   );
   const [isTransitioning, setIsTransitioning] = useState<boolean>(false);
   const [showLoading, setShowLoading] = useState<boolean>(true);
-  const [showUpgradeModal, setShowUpgradeModal] = useState<boolean>(false);
   const loungeTvTheater = useLoungeTvTheaterMode();
 
   useEffect(() => {
@@ -438,51 +434,6 @@ const LobbyApp: React.FC = () => {
     },
     [location.pathname, location.search, navigate]
   );
-
-  // Confirm membership by syncing the authenticated client's profile from the backend
-  // (same underlying profile data the rewards page + admin client details display).
-  useEffect(() => {
-    let cancelled = false;
-    const run = async () => {
-      // Always attempt a profile sync first when Supabase is available.
-      // This prevents stale localStorage membership fields from triggering the modal incorrectly.
-      if (isSupabaseConfigured() && localStorage.getItem('isSignedIn') === 'true') {
-        try {
-          await syncAllFromApi();
-        } catch (_) {}
-      }
-
-      if (cancelled) return;
-      setShowUpgradeModal(!isPremiumMemberForGatedFeatures());
-    };
-
-    void run();
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  useEffect(() => {
-    const onConciergeChange = () => {
-      if (isPremiumMemberForGatedFeatures()) setShowUpgradeModal(false);
-    };
-    window.addEventListener(TUTORIAL_OS_CONCIERGE_CHANGED, onConciergeChange);
-    return () => window.removeEventListener(TUTORIAL_OS_CONCIERGE_CHANGED, onConciergeChange);
-  }, []);
-
-  const handleUpgrade = () => {
-    setShowUpgradeModal(false);
-    prepareMembershipUpgradeNavigation();
-    navigate('/account/rewards');
-  };
-
-  const handleCancel = () => {
-    setShowUpgradeModal(false);
-    // Go back to wherever the user came from before entering /lobby.
-    // Fallback for direct-link cases (no meaningful history).
-    if (typeof window !== 'undefined' && window.history.length > 1) navigate(-1);
-    else navigate('/home/shop');
-  };
 
   const completeRoomTransitionOverlay = useCallback(
     (direction: LobbyLoungeTransitionDirection) => {
@@ -637,18 +588,6 @@ const LobbyApp: React.FC = () => {
       </div>
       <SceneHitLayoutEditorPanel />
       </SceneHitLayoutEditorProvider>
-      
-      {/* Upgrade Subscription Modal */}
-      <ConfirmationModal
-        isOpen={showUpgradeModal}
-        onClose={handleCancel}
-        onConfirm={handleUpgrade}
-        title="UPGRADE YOUR SUBSCRIPTION"
-        message="YOU MUST BE A PREMIUM MEMBER TO ACCESS THIS AREA."
-        confirmText="UPGRADE"
-        cancelText="CANCEL"
-        dataAttribute="upgrade-subscription-modal"
-      />
     </>
   );
 };

@@ -32,14 +32,12 @@ const PREMIERE_ROTATION: FeaturedPremiereKind[] = [
 ];
 
 export const FEATURED_RAIL_ORDER = [
-  { key: 'continue' as const, title: 'CONTINUE WATCHING' },
   { key: 'new' as const, title: 'NEW THIS WEEK' },
-  { key: 'trending' as const, title: 'TRENDING LESSONS' },
-  { key: 'psa-recommends' as const, title: 'PSA RECOMMENDS' },
-  { key: 'premium' as const, title: 'PREMIUM EXCLUSIVES' },
+  { key: 'continue' as const, title: 'CONTINUE WATCHING' },
+  { key: 'trending' as const, title: 'TRENDING IN THE MANSION' },
+  { key: 'psa-recommends' as const, title: 'PSA TODAY' },
+  { key: 'members-favorites' as const, title: 'RECOMMENDED FOR YOU' },
   { key: 'recently-added' as const, title: 'RECENTLY ADDED' },
-  { key: 'because-you-watched' as const, title: 'BECAUSE YOU WATCHED…' },
-  { key: 'members-favorites' as const, title: "MEMBERS' FAVORITES" },
 ] as const;
 
 export type FeaturedRailKey = (typeof FEATURED_RAIL_ORDER)[number]['key'];
@@ -71,10 +69,10 @@ export function packsForFeaturedRail(key: FeaturedRailKey): LoungeContentPack[] 
   switch (key) {
     case 'continue':
       return continueWatchingPacks();
-    case 'because-you-watched':
-      return becauseYouWatchedPacks();
-    case 'members-favorites':
-      return membersFavoritePacks();
+    case 'members-favorites': {
+      const favorites = membersFavoritePacks();
+      return favorites.length ? favorites : becauseYouWatchedPacks();
+    }
     case 'recently-added':
       return recentlyAddedPacks();
     default:

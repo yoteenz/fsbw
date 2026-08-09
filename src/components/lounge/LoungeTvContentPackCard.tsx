@@ -1,5 +1,5 @@
 import type { CSSProperties } from 'react';
-import { useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import type { LoungeContentPack } from './loungeTvContentPack';
 import { contentPackToTile } from './loungeTvContent';
 import {
@@ -14,11 +14,24 @@ import {
   LOUNGE_TV_TEXT_GRAY,
   LOUNGE_TV_TEXT_WHITE,
 } from './loungeTvTheme';
-import { loungeTvGlassCqw } from './loungeTvResponsive';
+import { loungeTvGlassCqw, LOUNGE_TV_RAIL_CARD_WIDTH } from './loungeTvResponsive';
 import { loungeTvTileShowsAsNew } from '../../utils/loungeTvViewedTiles';
 import { loungeTvCardCaptionLines } from './loungeTvCardMetadata';
 import { resolvePackArtwork } from './loungeTvArtwork';
 import { resolvePackCardEnhancements } from './loungeTvCardEnhancements';
+import { LoungeTvVideoPreview } from './LoungeTvVideoPreview';
+import { AcrylicSaveBookmarkControl } from './AcrylicSaveBookmarkControl';
+
+const PREVIEW_HOVER_DELAY_MS = 450;
+
+/** Only one rail thumbnail preview plays at a time. */
+let activeCardPreviewId: string | null = null;
+const previewListeners = new Set<(id: string | null) => void>();
+
+function setActiveCardPreview(id: string | null) {
+  activeCardPreviewId = id;
+  previewListeners.forEach((fn) => fn(id));
+}
 
 type LoungeTvContentPackCardProps = {
   pack: LoungeContentPack;
@@ -29,22 +42,9 @@ type LoungeTvContentPackCardProps = {
   unlocks?: LoungeContentUnlock[];
 };
 
-function SaveIcon({ saved }: { saved: boolean }) {
-  return (
-    <svg width="10" height="10" viewBox="0 0 24 24" fill={saved ? LOUNGE_TV_BRAND_RED : 'none'} aria-hidden>
-      <path
-        d="M5 3h14v18l-7-5-7 5V3z"
-        stroke={saved ? LOUNGE_TV_BRAND_RED : LOUNGE_TV_TEXT_WHITE}
-        strokeWidth="2"
-        strokeLinejoin="miter"
-      />
-    </svg>
-  );
-}
-
 const cardTitleStyle: CSSProperties = {
   fontFamily: LOUNGE_TV_FONT_MEDIUM,
-  fontSize: loungeTvGlassCqw(1.35, 3, 6),
+  fontSize: loungeTvGlassCqw(1.5, 3.5, 7),
   lineHeight: 1.25,
   color: LOUNGE_TV_TEXT_WHITE,
   textTransform: 'uppercase',
@@ -81,18 +81,58 @@ export function LoungeTvContentPackCard({
   const captionLines = loungeTvCardCaptionLines(pack, tile, unlocks, isUnlocked);
   const enhancements = resolvePackCardEnhancements(pack, tile, unlocks, isUnlocked);
   const posterSrc = resolvePackArtwork(pack, isHero ? 'hero' : 'card');
+  const previewSrc = !isHero ? (pack.previewVideo ?? pack.fullVideo) : undefined;
   const [imgLoaded, setImgLoaded] = useState(false);
+  const [previewActive, setPreviewActive] = useState(false);
+  const hoverTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    const onActiveChange = (id: string | null) => {
+      setPreviewActive(id === pack.id);
+    };
+    previewListeners.add(onActiveChange);
+    return () => {
+      previewListeners.delete(onActiveChange);
+      if (activeCardPreviewId === pack.id) setActiveCardPreview(null);
+    };
+  }, [pack.id]);
+
+  const beginPreview = useCallback(() => {
+    if (isHero || !previewSrc) return;
+    if (hoverTimerRef.current) clearTimeout(hoverTimerRef.current);
+    hoverTimerRef.current = setTimeout(() => setActiveCardPreview(pack.id), PREVIEW_HOVER_DELAY_MS);
+  }, [isHero, pack.id, previewSrc]);
+
+  const endPreview = useCallback(() => {
+    if (hoverTimerRef.current) {
+      clearTimeout(hoverTimerRef.current);
+      hoverTimerRef.current = null;
+    }
+    if (activeCardPreviewId === pack.id) setActiveCardPreview(null);
+  }, [pack.id]);
+
+  useEffect(() => {
+    return () => {
+      if (hoverTimerRef.current) clearTimeout(hoverTimerRef.current);
+    };
+  }, []);
   const showNew = loungeTvTileShowsAsNew(tile);
   const ticketLocked = loungeTvTileShowsTicketLock(tile, unlocks, isUnlocked);
   const lockedOverlayLabel = loungeTvLockedThumbnailOverlayLabel(tile, unlocks, isUnlocked);
 
-  const thumbAspect = isHero ? '16 / 9' : '1';
-  const cardWidth = isHero ? '100%' : loungeTvGlassCqw(22, 52, 88);
+  const thumbAspect = '16 / 9';
+  const cardWidth = isHero ? '100%' : LOUNGE_TV_RAIL_CARD_WIDTH;
 
   return (
     <button
       type="button"
+      data-lounge-tv-focusable
+      data-lounge-tv-focus-id={pack.id}
       onClick={() => onSelect(pack)}
+      onMouseEnter={beginPreview}
+      onMouseLeave={endPreview}
+      onFocus={beginPreview}
+      onBlur={endPreview}
       style={{
         display: 'flex',
         flexDirection: 'column',
@@ -109,11 +149,15 @@ export function LoungeTvContentPackCard({
         scrollSnapAlign: 'start',
         transition: 'transform 0.35s cubic-bezier(0.22, 1, 0.36, 1)',
       }}
-      onFocus={(e) => {
-        e.currentTarget.style.transform = 'scale(1.02)';
+      onFocusCapture={(e) => {
+        e.currentTarget.style.transform = 'scale(1.05)';
+        e.currentTarget.style.zIndex = '2';
+        e.currentTarget.style.boxShadow = '0 0 0 2px rgba(255,255,255,0.85), 0 8px 32px rgba(0,0,0,0.55)';
       }}
-      onBlur={(e) => {
+      onBlurCapture={(e) => {
         e.currentTarget.style.transform = 'scale(1)';
+        e.currentTarget.style.zIndex = '';
+        e.currentTarget.style.boxShadow = '';
       }}
       aria-label={pack.title}
     >
@@ -158,8 +202,7 @@ export function LoungeTvContentPackCard({
               fontFamily: LOUNGE_TV_FONT_MEDIUM,
               fontSize: loungeTvGlassCqw(1.05, 2.4, 4.8),
               color: LOUNGE_TV_BRAND_RED,
-              background: 'rgba(0,0,0,0.65)',
-              padding: `${loungeTvGlassCqw(0.25, 0.6, 1.2)} ${loungeTvGlassCqw(0.45, 1, 2)}`,
+              textShadow: '0 1px 4px rgba(0,0,0,0.75)',
             }}
           >
             *NEW*
@@ -179,13 +222,34 @@ export function LoungeTvContentPackCard({
               display: 'block',
               filter: ticketLocked ? 'blur(4px)' : 'none',
               transform: ticketLocked ? 'scale(1.04)' : 'none',
-              opacity: imgLoaded ? 1 : 0.35,
+              opacity: imgLoaded && !previewActive ? 1 : previewActive ? 0 : 0.35,
               transition: 'filter 0.2s ease, transform 0.2s ease, opacity 0.45s ease',
             }}
           />
         ) : (
           <span style={{ display: 'block', width: '100%', height: '100%', background: '#111' }} />
         )}
+
+        {previewSrc && !ticketLocked ? (
+          <div
+            style={{
+              position: 'absolute',
+              inset: 0,
+              opacity: previewActive ? 1 : 0,
+              transition: 'opacity 0.35s ease',
+              pointerEvents: 'none',
+            }}
+          >
+            <LoungeTvVideoPreview
+              src={previewSrc}
+              poster={posterSrc}
+              active={previewActive}
+              loop
+              muted
+              ariaLabel={`Preview: ${pack.title}`}
+            />
+          </div>
+        ) : null}
 
         {ticketLocked && lockedOverlayLabel ? (
           <span
@@ -206,8 +270,10 @@ export function LoungeTvContentPackCard({
         ) : null}
 
         {onToggleSave ? (
-          <span
-            role="presentation"
+          <AcrylicSaveBookmarkControl
+            saved={saved}
+            glyphSize="13px"
+            hitSize={loungeTvGlassCqw(3.5, 8, 16)}
             onClick={(e) => {
               e.stopPropagation();
               onToggleSave(pack);
@@ -217,18 +283,8 @@ export function LoungeTvContentPackCard({
               top: loungeTvGlassCqw(0.7, 1.5, 3),
               right: loungeTvGlassCqw(0.7, 1.5, 3),
               zIndex: 6,
-              width: loungeTvGlassCqw(3.5, 8, 16),
-              height: loungeTvGlassCqw(3.5, 8, 16),
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              background: 'rgba(0,0,0,0.55)',
-              borderRadius: '1px',
-              cursor: 'pointer',
             }}
-          >
-            <SaveIcon saved={saved} />
-          </span>
+          />
         ) : null}
 
         {enhancements.progressPercent != null &&

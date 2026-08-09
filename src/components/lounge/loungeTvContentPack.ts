@@ -1,13 +1,9 @@
 import type { LoungeTvAccessType } from './loungeTvContent';
 import {
   LOUNGE_TV_CONTENT_VIDEO_SRC,
+  LOUNGE_TV_MEDIA,
   LOUNGE_TV_PLUCKING_LACE_TILE_ID,
 } from './loungeTvAssets';
-
-import type { LoungeContentStreamingMeta } from './loungeTvStreamingTypes';
-import { hydrateAllContentPacks } from './loungeTvStreamingMeta';
-
-export type ContentPackFormat = 'watch' | 'read' | 'both';
 
 export type FeaturedPremiereKind =
   | 'psa-welcome'
@@ -98,12 +94,23 @@ export type LoungeContentPack = {
 
 export type ContentPackFormatBadge = 'WATCH' | 'READ' | 'BOTH';
 
-const PLACEHOLDER_VIDEO =
-  'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4';
+import type { LoungeContentStreamingMeta } from './loungeTvStreamingTypes';
+import { hydrateAllContentPacks } from './loungeTvStreamingMeta';
+
+export type ContentPackFormat = 'watch' | 'read' | 'both';
+
+const LOCAL_PREVIEW_POOL = [
+  LOUNGE_TV_MEDIA.previews.psaTopLace,
+  LOUNGE_TV_MEDIA.previews.straightFrontal,
+  LOUNGE_TV_MEDIA.previews.straightClosure,
+  LOUNGE_TV_MEDIA.previews.loungeAnimation,
+] as const;
 
 function videoForPack(id: string): string | undefined {
   if (id === LOUNGE_TV_PLUCKING_LACE_TILE_ID) return LOUNGE_TV_CONTENT_VIDEO_SRC;
-  return PLACEHOLDER_VIDEO;
+  let h = 0;
+  for (let i = 0; i < id.length; i += 1) h = (h + id.charCodeAt(i) * (i + 1)) % LOCAL_PREVIEW_POOL.length;
+  return LOCAL_PREVIEW_POOL[h] ?? LOUNGE_TV_MEDIA.previews.loungeAnimation;
 }
 
 const LACE_ARTICLE_BASE = {

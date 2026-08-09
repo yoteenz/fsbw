@@ -155,6 +155,7 @@ const lineStyle: React.CSSProperties = {
   lineHeight: 1.45,
   letterSpacing: '0.02em',
   textAlign: 'center',
+  textDecoration: 'none',
 };
 
 const contactLineMediumGrayStyle: React.CSSProperties = {
@@ -491,6 +492,7 @@ export function LobbyCasePropPopover({
           role="dialog"
           aria-label={title}
           data-lobby-prop-popover
+          x-apple-data-detectors="false"
           style={{
             position: 'absolute',
             bottom: panelBottom,

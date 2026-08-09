@@ -18,19 +18,20 @@ const LIVE_PLACEHOLDER_COPY: Record<string, string> = {
 
 type LoungeTvLivePlaceholderProps = {
   section: LoungeTvSidebarItem;
+  compact?: boolean;
 };
 
-export function LoungeTvLivePlaceholder({ section }: LoungeTvLivePlaceholderProps) {
-  const copy = LIVE_PLACEHOLDER_COPY[section.id] ?? 'COMING SOON TO LOUNGE TV LIVE.';
+export function LoungeTvLivePlaceholder({ section, compact = false }: LoungeTvLivePlaceholderProps) {
+  const copy = LIVE_PLACEHOLDER_COPY[section.id] ?? 'PROGRAMMING COMING TO LOUNGE TV LIVE.';
 
   return (
     <div
       style={{
         ...loungeTvGlassPanelStyle,
-        padding: loungeTvGlassCqw(2, 5, 10),
+        padding: compact ? loungeTvGlassCqw(1.2, 3, 6) : loungeTvGlassCqw(2, 5, 10),
         display: 'flex',
         flexDirection: 'column',
-        gap: loungeTvGlassCqw(1, 2.5, 5),
+        gap: loungeTvGlassCqw(0.8, 2, 4),
         textTransform: 'uppercase',
       }}
     >
@@ -38,31 +39,33 @@ export function LoungeTvLivePlaceholder({ section }: LoungeTvLivePlaceholderProp
         style={{
           margin: 0,
           fontFamily: LOUNGE_TV_FONT_MEDIUM,
-          fontSize: loungeTvGlassCqw(1.7, 4, 8),
+          fontSize: loungeTvGlassCqw(compact ? 1.4 : 1.7, compact ? 3.2 : 4, compact ? 6.5 : 8),
           color: '#ffffff',
         }}
       >
         {section.label}
       </h2>
-      <p
-        style={{
-          margin: 0,
-          fontFamily: LOUNGE_TV_FONT_BOOK,
-          fontSize: loungeTvGlassCqw(1.35, 3.2, 6.5),
-          lineHeight: 1.4,
-          color: LOUNGE_TV_TEXT_GRAY,
-        }}
-      >
-        {copy}
-      </p>
+      {!compact ? (
+        <p
+          style={{
+            margin: 0,
+            fontFamily: LOUNGE_TV_FONT_BOOK,
+            fontSize: loungeTvGlassCqw(1.35, 3.2, 6.5),
+            lineHeight: 1.4,
+            color: LOUNGE_TV_TEXT_GRAY,
+          }}
+        >
+          {copy}
+        </p>
+      ) : null}
       <span
         style={{
           fontFamily: LOUNGE_TV_FONT_MEDIUM,
-          fontSize: loungeTvGlassCqw(1.3, 3, 6),
+          fontSize: loungeTvGlassCqw(1.2, 2.8, 5.5),
           color: '#EB1C24',
         }}
       >
-        COMING SOON
+        ON THE SCHEDULE
       </span>
     </div>
   );

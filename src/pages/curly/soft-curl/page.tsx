@@ -1690,13 +1690,13 @@ function SoftCurlSelection() {
             }}
           />
           <div
-            className="border border-black flex flex-col pt-4 pb-4 px-5 mb-1 bg-white/60 backdrop-blur-sm transition-all duration-300 ease-out"
+            className="border border-black flex flex-col pt-4 pb-4 px-5 mb-1 transition-all duration-300 ease-out"
             style={{
               borderWidth: '1.3px',
               minWidth: '100%',
               maxWidth: 'none',
               overflow: 'hidden',
-              backgroundColor: 'rgba(255, 255, 255, 0.6)',
+              backgroundColor: 'transparent',
               paddingBottom: '16px',
               marginTop: '24px',
             }}

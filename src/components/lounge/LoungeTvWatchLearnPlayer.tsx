@@ -19,6 +19,13 @@ type LoungeTvWatchLearnPlayerProps = {
   /** When true, tap-to-play opens ticket purchase instead of starting playback. */
   playBlocked?: boolean;
   onPlayBlocked?: () => void;
+  /** Actual playback samples for PSA Today watch metering (Camera B only). */
+  onPlaybackSample?: (sample: {
+    currentTimeSec: number;
+    playing: boolean;
+    seeking: boolean;
+    buffering: boolean;
+  }) => void;
 };
 
 function FullscreenExpandIcon() {
@@ -58,6 +65,7 @@ export function LoungeTvWatchLearnPlayer({
   tile,
   playBlocked = false,
   onPlayBlocked,
+  onPlaybackSample,
 }: LoungeTvWatchLearnPlayerProps) {
   const videoFrameRegion = useSceneHitRegionConfig('lounge-tv-video-frame');
   const shellRef = useRef<HTMLDivElement>(null);
@@ -185,6 +193,65 @@ export function LoungeTvWatchLearnPlayer({
     video.addEventListener('timeupdate', onTime);
     return () => video.removeEventListener('timeupdate', onTime);
   }, [tile.id, playBlocked]);
+
+  useEffect(() => {
+    if (!onPlaybackSample) return;
+    const video = videoRef.current;
+    if (!video) return;
+
+    let seeking = false;
+    let buffering = false;
+
+    const emit = () => {
+      onPlaybackSample({
+        currentTimeSec: video.currentTime,
+        playing: !video.paused && !video.ended,
+        seeking: seeking || isScrubbingRef.current,
+        buffering,
+      });
+    };
+
+    const onSeeking = () => {
+      seeking = true;
+      emit();
+    };
+    const onSeeked = () => {
+      seeking = false;
+      emit();
+    };
+    const onWaiting = () => {
+      buffering = true;
+      emit();
+    };
+    const onPlaying = () => {
+      buffering = false;
+      emit();
+    };
+
+    video.addEventListener('timeupdate', emit);
+    video.addEventListener('play', emit);
+    video.addEventListener('pause', emit);
+    video.addEventListener('seeking', onSeeking);
+    video.addEventListener('seeked', onSeeked);
+    video.addEventListener('waiting', onWaiting);
+    video.addEventListener('playing', onPlaying);
+    video.addEventListener('canplay', onPlaying);
+
+    const interval = window.setInterval(emit, 1000);
+    emit();
+
+    return () => {
+      window.clearInterval(interval);
+      video.removeEventListener('timeupdate', emit);
+      video.removeEventListener('play', emit);
+      video.removeEventListener('pause', emit);
+      video.removeEventListener('seeking', onSeeking);
+      video.removeEventListener('seeked', onSeeked);
+      video.removeEventListener('waiting', onWaiting);
+      video.removeEventListener('playing', onPlaying);
+      video.removeEventListener('canplay', onPlaying);
+    };
+  }, [onPlaybackSample, tile.id, tile.videoSrc]);
 
   useEffect(() => {
     return () => {

@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
-# Exposes the Cloud Agent Vite dev server (port 3001) via a Cloudflare Quick Tunnel.
-# Prints a public HTTPS URL for mobile preview — no Vercel deploy required.
+# Exposes the Cloud Agent Vite dev server (port 3001) for mobile preview.
+#
+# Option A (default): Cloudflare Quick Tunnel — random *.trycloudflare.com URL per session.
+# Option B (persistent): Named tunnel via CLOUDFLARE_TUNNEL_TOKEN — stable hostname you configure
+#   in Cloudflare Zero Trust (e.g. https://preview.yourdomain.com).
+#
+# Setup guide: docs/cloud-agent/persistent-preview-tunnel.md
 set -euo pipefail
 
 CF="${CLOUDFLARED_BIN:-/tmp/cloudflared}"
@@ -28,7 +33,34 @@ if ! $ready; then
 fi
 
 rm -f "$URL_FILE"
+
+if [[ -n "${CLOUDFLARE_TUNNEL_TOKEN:-}" ]]; then
+  hostname="${CLOUDFLARE_TUNNEL_HOSTNAME:-}"
+  if [[ -z "$hostname" ]]; then
+    echo "[cloud-preview] WARN: CLOUDFLARE_TUNNEL_HOSTNAME unset — set it to your public URL (e.g. https://preview.example.com)" >&2
+  else
+    # Normalize: allow host-only or full URL
+    if [[ "$hostname" != http* ]]; then
+      hostname="https://${hostname}"
+    fi
+    printf '%s\n' "$hostname" >"$URL_FILE"
+    echo ""
+    echo "============================================================"
+    echo " MOBILE PREVIEW URL (persistent — bookmark this):"
+    echo " ${hostname}"
+    echo " Lounge TV: ${hostname%/}/lobby/lounge"
+    echo " Saved to: ${URL_FILE}"
+    echo "============================================================"
+    echo ""
+  fi
+
+  echo "[cloud-preview] Starting Named Cloudflare Tunnel (Option B — token)..."
+  echo "[cloud-preview] Routing is configured in Cloudflare Zero Trust → Networks → Tunnels."
+  exec "$CF" tunnel run --token "${CLOUDFLARE_TUNNEL_TOKEN}"
+fi
+
 echo "[cloud-preview] Starting Cloudflare Quick Tunnel (Option A — ephemeral URL)..."
+echo "[cloud-preview] Tip: for a stable URL, set CLOUDFLARE_TUNNEL_TOKEN — see docs/cloud-agent/persistent-preview-tunnel.md"
 
 "$CF" tunnel --url "${VITE_URL}" 2>&1 | while IFS= read -r line; do
   echo "$line"
@@ -40,6 +72,7 @@ echo "[cloud-preview] Starting Cloudflare Quick Tunnel (Option A — ephemeral U
       echo "============================================================"
       echo " MOBILE PREVIEW URL (open on your phone):"
       echo " ${url}"
+      echo " Lounge TV: ${url}/lobby/lounge"
       echo " Saved to: ${URL_FILE}"
       echo "============================================================"
       echo ""

@@ -5,16 +5,16 @@ export const UNIT_PDP_MAIN_CARD_STYLE: CSSProperties = {
   paddingBottom: '6px',
 };
 
-/** Second card: product shots + details tabs. */
+/** Second card: product shots + details tabs — transparent so tab copy sits on marble. */
 export const UNIT_PDP_DETAILS_CARD_CLASS =
-  'border border-black flex flex-col pt-4 pb-4 px-5 mb-1 bg-white/60 backdrop-blur-sm transition-all duration-300 ease-out';
+  'border border-black flex flex-col pt-4 pb-4 px-5 mb-1 transition-all duration-300 ease-out';
 
 export const UNIT_PDP_DETAILS_CARD_STYLE: CSSProperties = {
   borderWidth: '1.3px',
   minWidth: '100%',
   maxWidth: 'none',
   overflow: 'hidden',
-  backgroundColor: 'rgba(255, 255, 255, 0.6)',
+  backgroundColor: 'transparent',
   paddingBottom: '16px',
   marginTop: '24px',
 };
@@ -43,16 +43,14 @@ export const UNIT_PDP_CAP_SIZE_CHART_MODAL_IMG_SRC =
 /** Product shots + details tabs share `mt-2 mb-4`; tabs must stay inside that wrapper (NOIR layout). */
 export const UNIT_PDP_PRODUCT_SHOTS_SECTION_CLASS = 'mt-2 mb-4';
 
-/** BCF / tools PDP tab row — frosted layer matches card; blocks option rows bleeding into tab copy. */
+/** BCF / unit PDP tab row — transparent; tab copy sits on page marble. */
 export const PDP_TABS_WRAPPER_STYLE: CSSProperties = {
   paddingTop: '4px',
   position: 'relative',
   zIndex: 2,
   isolation: 'isolate',
   overflow: 'hidden',
-  backgroundColor: 'rgba(255, 255, 255, 0.6)',
-  backdropFilter: 'blur(4px)',
-  WebkitBackdropFilter: 'blur(4px)',
+  backgroundColor: 'transparent',
 };
 
 export const UNIT_PDP_TABS_SECTION_STYLE: CSSProperties = {

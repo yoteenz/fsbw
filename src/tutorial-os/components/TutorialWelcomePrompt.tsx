@@ -2,12 +2,11 @@ type Props = {
   estimatedMinutes: number;
   onStart: () => void;
   onMaybeLater: () => void;
-  onSkip: () => void;
 };
 
-export function TutorialWelcomePrompt({ estimatedMinutes, onStart, onMaybeLater, onSkip }: Props) {
+export function TutorialWelcomePrompt({ estimatedMinutes, onStart, onMaybeLater }: Props) {
   return (
-    <div className="tutorial-os-welcome-backdrop" role="dialog" aria-modal="true" aria-label="Welcome to Frontal Slayer">
+    <div className="tutorial-os-welcome-backdrop" role="dialog" aria-modal="true" aria-label="WELCOME TO FRONTAL SLAYER!">
       <div className="tutorial-os-welcome-card">
         <p
           style={{
@@ -31,18 +30,19 @@ export function TutorialWelcomePrompt({ estimatedMinutes, onStart, onMaybeLater,
             marginBottom: '10px',
           }}
         >
-          WELCOME TO FRONTAL SLAYER
+          WELCOME TO FRONTAL SLAYER!
         </h2>
         <p
           style={{
             fontFamily: '"Futura PT Book"',
             fontSize: '11px',
             lineHeight: 1.5,
+            textTransform: 'uppercase',
             color: '#1A1A1A',
             marginBottom: '6px',
           }}
         >
-          take the guided tour with our concierge?
+          TAKE THE GUIDED TOUR WITH OUR CONCIERGE?
         </p>
         <p
           style={{
@@ -63,9 +63,6 @@ export function TutorialWelcomePrompt({ estimatedMinutes, onStart, onMaybeLater,
           <button type="button" onClick={onMaybeLater} className="tutorial-os-welcome-btn">
             MAYBE LATER
           </button>
-          <button type="button" onClick={onSkip} className="tutorial-os-welcome-btn tutorial-os-welcome-btn--ghost">
-            SKIP
-          </button>
         </div>
       </div>
       <style>{`
@@ -82,14 +79,9 @@ export function TutorialWelcomePrompt({ estimatedMinutes, onStart, onMaybeLater,
           width: 100%;
         }
         .tutorial-os-welcome-btn--primary {
-          background: #EB1C24;
-          color: #fff;
+          background: #fff;
+          color: #EB1C24;
           border-color: #EB1C24;
-        }
-        .tutorial-os-welcome-btn--ghost {
-          border-color: transparent;
-          background: transparent;
-          color: #808080;
         }
       `}</style>
     </div>

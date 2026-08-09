@@ -1,25 +1,10 @@
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import type { LoungeContentPack } from './loungeTvContentPack';
-import { LoungeTvContentPackCard } from './LoungeTvContentPackCard';
-import { LoungeTvContentRow } from './LoungeTvContentRow';
 import type { LoungeContentUnlock } from '../../utils/slayTicketHistoryDisplay';
 import { loungeTvGlassCqw } from './loungeTvResponsive';
-import {
-  LOUNGE_TV_FONT_BOOK,
-  LOUNGE_TV_FONT_MEDIUM,
-  LOUNGE_TV_TEXT_GRAY,
-  LOUNGE_TV_TEXT_WHITE,
-} from './loungeTvTheme';
-import {
-  FEATURED_RAIL_ORDER,
-  buildPsaFeaturedIntro,
-  featuredPremiereLabel,
-  packsForFeaturedRail,
-  resolveFeaturedPremiereHero,
-} from './loungeTvStreamingCatalog';
-import { resolvePsaHostContext, resolvePsaHostMessage } from './loungeTvPsaHostMessages';
-import { LoungeTvPsaHeroIntro } from './LoungeTvPsaHeroIntro';
-import { readLoungeTvPsaIntroDismissed } from '../../utils/loungeTvPsaIntroSession';
+import { FEATURED_RAIL_ORDER, packsForFeaturedRail } from './loungeTvStreamingCatalog';
+import { LoungeTvFeaturedHero } from './LoungeTvFeaturedHero';
+import { LoungeTvContentRow } from './LoungeTvContentRow';
 
 type LoungeTvFeaturedHomeProps = {
   onSelect: (pack: LoungeContentPack) => void;
@@ -34,80 +19,37 @@ export function LoungeTvFeaturedHome({
   isUnlocked,
   unlocks,
 }: LoungeTvFeaturedHomeProps) {
-  const hero = useMemo(() => resolveFeaturedPremiereHero(), []);
-  const [introDismissed, setIntroDismissed] = useState(() => readLoungeTvPsaIntroDismissed());
-  const showIntro = Boolean(hero && !introDismissed);
-
-  const premiereLabel = hero
-    ? `FEATURED PREMIERE · ${featuredPremiereLabel(hero.featuredPremiere)}`
-    : 'FEATURED PREMIERE';
-
-  const psaContext = resolvePsaHostContext(hero);
-  const introMessage = hero
-    ? resolvePsaHostMessage(psaContext, hero, buildPsaFeaturedIntro(hero))
-    : '';
+  const rails = useMemo(() => {
+    return FEATURED_RAIL_ORDER.filter(({ key }) => {
+      if (key === 'continue') return packsForFeaturedRail('continue').length > 0;
+      return packsForFeaturedRail(key).length > 0;
+    });
+  }, []);
 
   return (
-    <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: loungeTvGlassCqw(1.5, 4, 8) }}>
-      {hero ? (
-        <section>
-          {showIntro ? (
-            <LoungeTvPsaHeroIntro
-              premiereLabel={premiereLabel}
-              message={introMessage}
-              onSkip={() => setIntroDismissed(true)}
-            />
-          ) : (
-            <>
-              <p
-                style={{
-                  margin: `0 0 ${loungeTvGlassCqw(0.6, 1.5, 3)}`,
-                  fontFamily: LOUNGE_TV_FONT_MEDIUM,
-                  fontSize: loungeTvGlassCqw(1.25, 2.8, 5.5),
-                  letterSpacing: '0.1em',
-                  color: '#EB1C24',
-                  textTransform: 'uppercase',
-                }}
-              >
-                {premiereLabel}
-              </p>
-              <LoungeTvContentPackCard
-                pack={hero}
-                variant="hero"
-                onSelect={onSelect}
-                onToggleSave={onToggleSave}
-                isUnlocked={isUnlocked}
-                unlocks={unlocks}
-              />
-              {hero.subtitle ? (
-                <p
-                  style={{
-                    margin: `${loungeTvGlassCqw(0.8, 2, 4)} 0 0`,
-                    fontFamily: LOUNGE_TV_FONT_BOOK,
-                    fontSize: loungeTvGlassCqw(1.35, 3, 6),
-                    lineHeight: 1.35,
-                    color: LOUNGE_TV_TEXT_GRAY,
-                    textTransform: 'uppercase',
-                  }}
-                >
-                  {hero.subtitle}
-                </p>
-              ) : null}
-            </>
-          )}
-        </section>
-      ) : null}
+    <div
+      style={{
+        width: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: loungeTvGlassCqw(2, 5, 10),
+      }}
+    >
+      <div data-lounge-tv-rail="featured-hero">
+        <LoungeTvFeaturedHero onWatch={onSelect} onToggleSave={onToggleSave} />
+      </div>
 
-      {FEATURED_RAIL_ORDER.map(({ key, title }) => (
+      {rails.map(({ key, title }) => (
         <LoungeTvContentRow
           key={key}
+          railId={`featured-${key}`}
           title={title}
           packs={packsForFeaturedRail(key)}
           onSelect={onSelect}
           onToggleSave={onToggleSave}
           isUnlocked={isUnlocked}
           unlocks={unlocks}
-          emptyLabel={key === 'continue' ? 'START A LESSON TO SEE IT HERE.' : undefined}
+          emptyLabel={undefined}
         />
       ))}
     </div>
@@ -126,6 +68,7 @@ export function LoungeTvLessonHub({ pack, onWatch, onRead, onBack }: LoungeTvLes
     <div style={{ display: 'flex', flexDirection: 'column', gap: loungeTvGlassCqw(1.5, 4, 8), width: '100%' }}>
       <button
         type="button"
+        data-lounge-tv-focusable
         onClick={onBack}
         style={{
           alignSelf: 'flex-start',
@@ -133,7 +76,7 @@ export function LoungeTvLessonHub({ pack, onWatch, onRead, onBack }: LoungeTvLes
           padding: 0,
           border: 'none',
           background: 'none',
-          fontFamily: LOUNGE_TV_FONT_MEDIUM,
+          fontFamily: '"Futura PT Medium", Futura, sans-serif',
           fontSize: loungeTvGlassCqw(1.5, 3.5, 7),
           color: '#EB1C24',
           cursor: 'pointer',
@@ -162,9 +105,9 @@ export function LoungeTvLessonHub({ pack, onWatch, onRead, onBack }: LoungeTvLes
         <h1
           style={{
             margin: 0,
-            fontFamily: LOUNGE_TV_FONT_MEDIUM,
+            fontFamily: '"Futura PT Medium", Futura, sans-serif',
             fontSize: loungeTvGlassCqw(2, 5, 10),
-            color: LOUNGE_TV_TEXT_WHITE,
+            color: '#ffffff',
             textTransform: 'uppercase',
             lineHeight: 1.2,
           }}
@@ -175,9 +118,9 @@ export function LoungeTvLessonHub({ pack, onWatch, onRead, onBack }: LoungeTvLes
           <p
             style={{
               margin: `${loungeTvGlassCqw(0.6, 1.5, 3)} 0 0`,
-              fontFamily: LOUNGE_TV_FONT_BOOK,
+              fontFamily: '"Futura PT Book", Futura, sans-serif',
               fontSize: loungeTvGlassCqw(1.35, 3, 6),
-              color: LOUNGE_TV_TEXT_GRAY,
+              color: '#808080',
               textTransform: 'uppercase',
               lineHeight: 1.35,
             }}
@@ -190,15 +133,16 @@ export function LoungeTvLessonHub({ pack, onWatch, onRead, onBack }: LoungeTvLes
       <div style={{ display: 'flex', flexDirection: 'column', gap: loungeTvGlassCqw(0.8, 2, 4) }}>
         <button
           type="button"
+          data-lounge-tv-focusable
           onClick={onWatch}
           style={{
-            fontFamily: LOUNGE_TV_FONT_MEDIUM,
+            fontFamily: '"Futura PT Medium", Futura, sans-serif',
             fontSize: loungeTvGlassCqw(1.5, 3.5, 7),
             letterSpacing: '0.06em',
             textTransform: 'uppercase',
             padding: `${loungeTvGlassCqw(1, 2.5, 5)} ${loungeTvGlassCqw(1.5, 4, 8)}`,
             background: '#EB1C24',
-            color: LOUNGE_TV_TEXT_WHITE,
+            color: '#ffffff',
             border: 'none',
             cursor: 'pointer',
           }}
@@ -207,15 +151,16 @@ export function LoungeTvLessonHub({ pack, onWatch, onRead, onBack }: LoungeTvLes
         </button>
         <button
           type="button"
+          data-lounge-tv-focusable
           onClick={onRead}
           style={{
-            fontFamily: LOUNGE_TV_FONT_MEDIUM,
+            fontFamily: '"Futura PT Medium", Futura, sans-serif',
             fontSize: loungeTvGlassCqw(1.5, 3.5, 7),
             letterSpacing: '0.06em',
             textTransform: 'uppercase',
             padding: `${loungeTvGlassCqw(1, 2.5, 5)} ${loungeTvGlassCqw(1.5, 4, 8)}`,
             background: 'transparent',
-            color: LOUNGE_TV_TEXT_WHITE,
+            color: '#ffffff',
             border: '1px solid #EB1C24',
             cursor: 'pointer',
           }}

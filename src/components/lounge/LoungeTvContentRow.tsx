@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import type { LoungeContentPack } from './loungeTvContentPack';
 import { LoungeTvContentPackCard } from './LoungeTvContentPackCard';
 import { LoungeTvSectionTitle } from './LoungeTvUiPrimitives';
+import { LoungeTvEmptyState } from './LoungeTvEmptyState';
 import type { LoungeContentUnlock } from '../../utils/slayTicketHistoryDisplay';
 import { loungeTvGlassCqw } from './loungeTvResponsive';
 
@@ -14,6 +15,9 @@ type LoungeTvContentRowProps = {
   unlocks?: LoungeContentUnlock[];
   emptyLabel?: string;
   action?: ReactNode;
+  /** @deprecated compact headings removed for 10-foot TV */
+  compactHeading?: boolean;
+  railId?: string;
 };
 
 export function LoungeTvContentRow({
@@ -25,22 +29,16 @@ export function LoungeTvContentRow({
   unlocks,
   emptyLabel,
   action,
+  railId = 'content-row',
 }: LoungeTvContentRowProps) {
   if (!packs.length && emptyLabel) {
     return (
-      <section style={{ marginBottom: loungeTvGlassCqw(2, 5, 10) }}>
-        <LoungeTvSectionTitle title={title} action={action} />
-        <p
-          style={{
-            margin: 0,
-            fontFamily: '"Futura PT Book", Futura, sans-serif',
-            fontSize: loungeTvGlassCqw(1.4, 3.2, 6.5),
-            color: '#808080',
-            textTransform: 'uppercase',
-          }}
-        >
-          {emptyLabel}
-        </p>
+      <section
+        data-lounge-tv-rail={railId}
+        style={{ marginBottom: loungeTvGlassCqw(2, 5, 10) }}
+      >
+        {title ? <LoungeTvSectionTitle title={title} action={action} /> : null}
+        <LoungeTvEmptyState message={emptyLabel} />
       </section>
     );
   }
@@ -48,20 +46,20 @@ export function LoungeTvContentRow({
   if (!packs.length) return null;
 
   return (
-    <section style={{ marginBottom: loungeTvGlassCqw(2, 5, 10) }}>
-      <LoungeTvSectionTitle title={title} action={action} />
+    <section data-lounge-tv-rail={railId} style={{ marginBottom: loungeTvGlassCqw(2, 5, 10) }}>
+      {title ? <LoungeTvSectionTitle title={title} action={action} /> : null}
       <div
+        data-lounge-tv-rail-scroll
         style={{
           display: 'flex',
           flexDirection: 'row',
           alignItems: 'flex-start',
-          gap: loungeTvGlassCqw(1.2, 3, 6),
+          gap: loungeTvGlassCqw(1.5, 3.5, 7),
           overflowX: 'auto',
           overflowY: 'hidden',
           WebkitOverflowScrolling: 'touch',
           scrollSnapType: 'x proximity',
-          paddingBottom: loungeTvGlassCqw(0.5, 1, 2),
-          marginRight: `-${loungeTvGlassCqw(0.5, 1, 2)}`,
+          paddingBottom: loungeTvGlassCqw(0.6, 1.5, 3),
         }}
       >
         {packs.map((pack) => (

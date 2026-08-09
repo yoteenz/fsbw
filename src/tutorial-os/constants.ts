@@ -10,6 +10,13 @@ export const TUTORIAL_MISSING_TARGETS_KEY = 'fsTutorialMissingTargets_v1';
 
 export const MANSION_TOUR_ID = 'mansion-tour';
 
+/** First-visit welcome modal — lobby landing only (`/lobby`), not lounge or other routes. */
+export const TUTORIAL_WELCOME_ELIGIBLE_PATHS = ['/lobby'] as const;
+
+export function isTutorialWelcomeEligiblePath(pathname: string): boolean {
+  return pathname === '/lobby';
+}
+
 export const PLACEHOLDER_TOUR_IDS = [
   'build-a-wig-tour',
   'rewards-tour',

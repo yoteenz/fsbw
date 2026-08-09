@@ -561,7 +561,7 @@ input[type="file"]::-webkit-file-upload-button {
 }
 
 /* Typed text: brand uppercase. Passwords stay case-sensitive (including reveal-as-text via .password-field). */
-input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="hidden"]):not([type="password"]):not([type="file"]),
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="hidden"]):not([type="password"]):not([type="file"]):not(.password-field),
 textarea,
 select {
   text-transform: uppercase !important;
@@ -2788,6 +2788,12 @@ img.natural-front-mobile {
   text-decoration: none !important;
 }
 
+/* Lobby phone popover — iOS/Safari auto-detected mailto links */
+[data-lobby-prop-popover] a {
+  text-decoration: none !important;
+  color: inherit !important;
+}
+
 /* ULTIMATE OVERRIDE for natural front mobile image */
 img.natural-front-mobile {
   width: 460px !important;
@@ -4239,21 +4245,22 @@ img.object-contain {
   padding-top: 0.75rem !important; /* was pt-6 (1.5rem); reduce excess above 2D/3D */
 }
 
-/* BCF PDP (`/shop/bundles|closures|frontals`): Noir uses `paddingBottom: 34px` + tab body `marginBottom: -93px` with nowrap lines.
-   BCF tab copy wraps → taller body; extra bottom padding keeps DETAILS+ tabs inside the card. Scoped + !important so utilities don’t shrink it. */
+/* BCF PDP main card — tabs moved outside card; standard bottom padding only */
 .bcf-pdp-main-card.border.border-black.flex-col.pt-6:has(.product-wig-preview) {
-  padding-bottom: calc(34px + 5.5rem) !important;
+  padding-bottom: 34px !important;
 }
 
-/* PDP tabs — clip inactive layers; frosted wrapper blocks option-row bleed on BCF */
+/* PDP tabs — clip inactive layers; transparent wrapper (marble shows through) */
 .product-tab-panel {
   overflow: hidden;
   isolation: isolate;
   contain: paint;
+  background-color: transparent;
 }
 
 .bcf-pdp-tabs {
   isolation: isolate;
+  background-color: transparent;
 }
 
 /* Client details orders tab: center status tag text vertically in pill (override any conflicting styles) */
@@ -4682,6 +4689,208 @@ html[data-loading-screen='true'] #root {
   }
   50% {
     opacity: 1;
+  }
+}
+
+@keyframes lounge-tv-hero-crossfade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes lounge-tv-media-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.lounge-tv-media-spinner {
+  animation: lounge-tv-media-spin 0.85s linear infinite;
+}
+
+.lounge-tv-screen-root [data-lounge-tv-focusable]:focus {
+  outline: none;
+}
+
+.lounge-tv-screen-root [data-lounge-tv-focusable]:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.85),
+    0 0 12px rgba(255, 255, 255, 0.25);
+}
+
+.lounge-tv-screen-root [data-lounge-tv-tab][aria-current='page'] {
+  color: #ffffff;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lounge-tv-media-spinner {
+    animation: none;
+  }
+}
+
+/* ── Acrylic media Play / Pause (Lounge TV + reusable) ── */
+.acrylic-media-control {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--acrylic-hit-size, 48px);
+  height: var(--acrylic-hit-size, 48px);
+  padding: 0;
+  margin: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  isolation: isolate;
+}
+
+.acrylic-media-control--decorative {
+  pointer-events: none;
+  cursor: default;
+}
+
+.acrylic-media-control__hit {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+}
+
+.acrylic-media-control__glyph {
+  position: relative;
+  z-index: 2;
+  width: var(--acrylic-glyph-size, 48px);
+  height: var(--acrylic-glyph-size, 48px);
+  flex-shrink: 0;
+  overflow: visible;
+  filter:
+    drop-shadow(0 0 1px rgba(0, 0, 0, 0.9))
+    drop-shadow(0 1px 2px rgba(0, 0, 0, 0.75))
+    drop-shadow(0 0 1px rgba(255, 255, 255, 0.95));
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.acrylic-glyph-structure {
+  opacity: 1;
+}
+
+/* Playing — quiet; glyph hidden until hover (touch UIs use --always-visible) */
+.acrylic-media-control--playing .acrylic-media-control__glyph {
+  opacity: 0;
+  transform: scale(1);
+}
+
+.acrylic-media-control--playing.acrylic-media-control--always-visible .acrylic-media-control__glyph {
+  opacity: 0.92 !important;
+  transform: scale(1);
+}
+
+.acrylic-media-control--playing:hover .acrylic-media-control__glyph,
+.acrylic-media-control--playing:focus-visible .acrylic-media-control__glyph {
+  opacity: 0.55;
+  transform: scale(1.02);
+}
+
+/* Paused — icon stays fully opaque; never animate whole-glyph opacity */
+.acrylic-media-control--paused .acrylic-media-control__glyph {
+  opacity: 1 !important;
+  transform: scale(1.025);
+  animation: none !important;
+}
+
+.acrylic-media-control--paused.acrylic-media-control--settling .acrylic-media-control__glyph {
+  animation: acrylic-media-settle-scale 380ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes acrylic-media-settle-scale {
+  0% {
+    transform: scale(0.97);
+  }
+  100% {
+    transform: scale(1.025);
+  }
+}
+
+/*
+ * Paused sunlight — bright edge lines only (min opacity 0.82).
+ * No overlay pseudo-elements — those sat above the glyph and washed it out.
+ */
+.acrylic-media-control--paused:not(.acrylic-media-control--bookmark)::before,
+.acrylic-media-control--paused:not(.acrylic-media-control--bookmark)::after {
+  content: none;
+  display: none;
+}
+
+.acrylic-media-control--paused .acrylic-glyph-edge--bright {
+  animation: acrylic-edge-shimmer 5.4s ease-in-out infinite;
+}
+
+.acrylic-media-control--paused .acrylic-glyph-bar--right .acrylic-glyph-edge--bright {
+  animation-delay: 1.3s;
+}
+
+@keyframes acrylic-edge-shimmer {
+  0%,
+  18%,
+  100% {
+    opacity: 0.82;
+  }
+  44% {
+    opacity: 1;
+  }
+  58% {
+    opacity: 0.88;
+  }
+}
+
+.acrylic-media-control--bookmark .acrylic-media-control__glyph {
+  opacity: 1 !important;
+  transform: none;
+  filter:
+    drop-shadow(0 1px 1px rgba(0, 0, 0, 0.7))
+    drop-shadow(0 0 0.5px rgba(255, 255, 255, 0.9));
+}
+
+.acrylic-media-control--volume .acrylic-media-control__glyph {
+  opacity: 1 !important;
+  transform: none;
+  filter:
+    drop-shadow(0 1px 1px rgba(0, 0, 0, 0.7))
+    drop-shadow(0 0 0.5px rgba(255, 255, 255, 0.9));
+}
+
+.acrylic-media-control--bookmark::before,
+.acrylic-media-control--bookmark::after {
+  display: none;
+}
+
+.acrylic-media-control--volume::before,
+.acrylic-media-control--volume::after {
+  display: none;
+}
+
+.acrylic-media-control:focus-visible {
+  outline: none;
+}
+
+.acrylic-media-control:focus-visible .acrylic-media-control__hit {
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.45);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .acrylic-media-control--paused .acrylic-media-control__glyph,
+  .acrylic-media-control--playing .acrylic-media-control__glyph {
+    animation: none !important;
+    transform: scale(1);
+  }
+
+  .acrylic-media-control--paused .acrylic-glyph-edge--bright {
+    animation: none !important;
+    opacity: 1 !important;
   }
 }
 

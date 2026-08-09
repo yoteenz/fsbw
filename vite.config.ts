@@ -4,39 +4,11 @@
  */
 import { defineConfig, loadEnv } from 'vite'
 import react from '@vitejs/plugin-react'
-import http from 'node:http'
-
-const LIVE_RELOAD_PORT = 3002
-
-/** Separate server for reload token so it works from mobile (no Vite middleware order issues). */
-function liveReloadPolling() {
-  let reloadToken = 0
-  return {
-    name: 'live-reload-polling',
-    configureServer(server: any) {
-      console.log('[vite] live-reload plugin: starting...')
-      server.watcher.on('change', () => { reloadToken++ })
-      const reloadServer = http.createServer((_req, res) => {
-        res.setHeader('Content-Type', 'text/plain')
-        res.setHeader('Cache-Control', 'no-store')
-        res.setHeader('Access-Control-Allow-Origin', '*')
-        res.end(String(reloadToken))
-      })
-      reloadServer.on('error', (err: NodeJS.ErrnoException) => {
-        console.error('[vite] live-reload port', LIVE_RELOAD_PORT, 'failed:', err.message)
-        if (err.code === 'EADDRINUSE') console.error('[vite] Try closing whatever is using port', LIVE_RELOAD_PORT)
-      })
-      reloadServer.listen(LIVE_RELOAD_PORT, '0.0.0.0', () => {
-        console.log(`[vite] live-reload: http://localhost:${LIVE_RELOAD_PORT} (or http://<your-ip>:${LIVE_RELOAD_PORT}) — page auto-reloads when you save a file`)
-      })
-    },
-  }
-}
 
 /** Default deployed API origin when env is missing — matches `npm run dev:proxy` so /api/session-* works locally. */
 const DEFAULT_DEV_API_TARGET = 'https://fsbw.vercel.app'
 
-/** Log after dev server hooks run (same phase as live-reload) so the line is not lost to screen clear / config-load quirks. */
+/** Log after dev server hooks run so the line is not lost to screen clear / config-load quirks. */
 function logDevApiProxyPlugin(apiTarget: string) {
   return {
     name: 'log-dev-api-proxy',
@@ -93,13 +65,52 @@ export default defineConfig(({ mode, command }) => {
     process.env.VERCEL_GIT_COMMIT_SHA ||
     process.env.GITHUB_SHA ||
     process.env.CF_PAGES_COMMIT_SHA ||
-    Date.now().toString(36)
+    (mode === 'development' ? 'dev-local' : Date.now().toString(36))
+
+  /** Cloud Agent mobile preview (trycloudflare or named Cloudflare Tunnel): no HMR on mobile. */
+  const cloudMobilePreview =
+    command === 'serve' &&
+    (process.env.FSBW_CLOUD_MOBILE_PREVIEW === '1' || process.env.FSBW_CLOUD_MOBILE_PREVIEW === 'true')
+
+  const tunnelHostname = (process.env.CLOUDFLARE_TUNNEL_HOSTNAME || '').trim()
+  let tunnelAllowedHost: string | undefined
+  if (tunnelHostname) {
+    try {
+      tunnelAllowedHost = new URL(
+        tunnelHostname.includes('://') ? tunnelHostname : `https://${tunnelHostname}`,
+      ).hostname
+    } catch {
+      tunnelAllowedHost = tunnelHostname.replace(/^https?:\/\//, '').split('/')[0]
+    }
+  }
 
   function injectAppBuildIdPlugin() {
     return {
       name: 'inject-app-build-id',
       transformIndexHtml(html: string) {
         return html.replace(/__APP_BUILD_ID__/g, globeEmbedBuild)
+      },
+    }
+  }
+
+  function logCloudMobilePreviewPlugin() {
+    return {
+      name: 'log-cloud-mobile-preview',
+      configureServer() {
+        console.log('[vite] Cloud mobile preview: HMR disabled — pull-to-refresh / manual reload only (no auto-reload on tab return).')
+      },
+    }
+  }
+
+  /** Vite still injects /@vite/client when hmr:false; that client reloads on WS reconnect after tab background. */
+  function stripViteClientForCloudPreviewPlugin() {
+    return {
+      name: 'strip-vite-client-cloud-preview',
+      transformIndexHtml: {
+        order: 'post' as const,
+        handler(html: string) {
+          return html.replace(/\s*<script type="module" src="\/@vite\/client"><\/script>\s*/g, '\n')
+        },
       },
     }
   }
@@ -114,9 +125,9 @@ export default defineConfig(({ mode, command }) => {
   plugins: [
     injectAppBuildIdPlugin(),
     ...(command === 'serve' ? [logDevApiProxyPlugin(apiTarget)] : []),
+    ...(cloudMobilePreview ? [logCloudMobilePreviewPlugin(), stripViteClientForCloudPreviewPlugin()] : []),
     apiDevNoProxyGuard(apiTarget),
-    liveReloadPolling(),
-    react(),
+    react(cloudMobilePreview ? { fastRefresh: false } : undefined),
   ],
   base: '/',
   build: {
@@ -142,19 +153,26 @@ export default defineConfig(({ mode, command }) => {
   server: {
     port: 3001,
     host: '0.0.0.0', // Explicitly bind to all interfaces for mobile access
-    // Cloud Agent mobile preview (Cloudflare Quick Tunnel — Option A)
-    allowedHosts: ['.trycloudflare.com'],
+    // Cloud Agent mobile preview (Quick Tunnel or Named Tunnel)
+    allowedHosts: [
+      '.trycloudflare.com',
+      ...(tunnelAllowedHost ? [tunnelAllowedHost] : []),
+    ],
     open: false,
     strictPort: true, // Force port 3001, don't fall back to other ports
-    // HMR through HTTPS reverse proxy (trycloudflare.com)
-    hmr: {
-      protocol: 'wss',
-      clientPort: 443,
-    },
+    // Cloud Agent tunnel: HMR off — Vite's dev client calls location.reload() after WS reconnect when the tab
+    // returns from background (mobile Safari/Chrome suspend the socket). Founder refreshes manually instead.
+    // Local dev / LAN: HMR through HTTPS reverse proxy when tunneled without FSBW_CLOUD_MOBILE_PREVIEW.
+    hmr: cloudMobilePreview
+      ? false
+      : {
+          protocol: 'wss',
+          clientPort: 443,
+        },
     proxy,
     watch: {
-      // Polling: server reliably sees file changes (helps on Windows / paths with spaces)
-      usePolling: true,
+      // Polling only on Windows; Linux cloud agents use native fs events (fewer spurious HMR triggers).
+      usePolling: process.platform === 'win32',
       interval: 300,
     },
     // Ensure SPA routing works - all routes serve index.html

@@ -361,7 +361,7 @@ export function buildPenthouseSuiteDashboardData(
     },
     rewardsCollection: {
       rewardCount: Math.max(countRewardsCollection(user), 0),
-      href: '/account/rewards',
+      href: '/account/collectibles',
     },
     referrals: {
       successfulCount: referrals.count,

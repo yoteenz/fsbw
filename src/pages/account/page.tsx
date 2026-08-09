@@ -1163,6 +1163,7 @@ function AccountPage() {
         route: '/account/orders' 
       },
       { title: 'REWARDS', subtitle: 'UNLOCK POINTS, PERKS + UPGRADES', route: '/account/rewards' },
+      { title: 'COLLECTIBLES', subtitle: 'YOUR FRONTAL SLAYER COLLECTION', route: '/account/collectibles' },
       { title: 'SLAY CAM', subtitle: 'SHOWCASE YOUR LOOKS + EARN REWARDS', route: '/slay-cam' },
       { 
         title: 'REVIEWS', 

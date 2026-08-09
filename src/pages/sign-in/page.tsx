@@ -795,6 +795,9 @@ function SignInPage() {
                           type={showSignInPassword ? "text" : "password"}
                           name="password"
                           autoComplete="current-password"
+                          autoCapitalize="none"
+                          autoCorrect="off"
+                          spellCheck={false}
                           defaultValue=""
                           className="password-field"
                           style={{
@@ -1158,6 +1161,9 @@ function SignInPage() {
                           type={showPassword ? "text" : "password"}
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
+                          autoCapitalize="none"
+                          autoCorrect="off"
+                          spellCheck={false}
                           className="password-field"
                           style={{
                             width: '100%',
@@ -1256,6 +1262,9 @@ function SignInPage() {
                           type={showConfirmPassword ? "text" : "password"}
                           value={confirmPassword}
                           onChange={(e) => setConfirmPassword(e.target.value)}
+                          autoCapitalize="none"
+                          autoCorrect="off"
+                          spellCheck={false}
                           className="password-field"
                           style={{
                             width: '100%',

@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import {
-  LOUNGE_TV_MAIN_TABS,
   LOUNGE_TV_SIDEBAR,
   contentPackToTile,
   resolveContentPack,
@@ -10,7 +9,6 @@ import {
 } from './loungeTvContent';
 import type { LoungeContentPack } from './loungeTvContentPack';
 import { resolveContentPackFormat } from './loungeTvContentPack';
-import { academyPacksForLearningPath, explorePacksForSection } from './loungeTvStreamingCatalog';
 import { LoungeTvInnerLayoutEditor } from './LoungeTvInnerLayoutEditor';
 import {
   LOUNGE_TV_CONFIG_UPDATED_EVENT,
@@ -21,7 +19,6 @@ import {
   markLoungeTvTileViewed,
 } from '../../utils/loungeTvViewedTiles';
 import {
-  LOUNGE_TV_GLASS_NAV_FONT,
   LOUNGE_TV_GLASS_PADDING_X,
   LOUNGE_TV_GLASS_PADDING_Y,
   loungeTvGlassCqw,
@@ -35,18 +32,53 @@ import {
 } from './loungeTvTicketAccess';
 import { useSlayTickets } from '../../hooks/useSlayTickets';
 import { unlockLoungeTvContent } from '../../utils/api';
+import { redeemPsaEpisode } from './psa-today/psaTodayEntitlementApi';
+import { resolvePsaWatchPolicy } from './psa-today/psaWatchPolicy';
+import { psaEpisodeContentIdForUnlock, resolvePsaEpisodeTicketCost } from './psa-today/psaTodayAccess';
 import { getCurrentUserEmailFromStorage } from '../../utils/perUserStorage';
-import { isPremiumMemberForGatedFeatures } from '../../utils/premiumMemberAccess';
 import { slayTicketPackPdpPath } from '../../utils/slayTicketPacks';
 import { useSceneHitRegionConfig } from '../lobby/SceneHitLayoutEditorContext';
 import { LoungeTvFeaturedHome, LoungeTvLessonHub } from './LoungeTvFeaturedHome';
+import { LoungeTvLearnPanel } from './LoungeTvLearnPanel';
+import { LoungeTvExplorePanel } from './LoungeTvExplorePanel';
+import { LoungeTvLivePanel } from './LoungeTvLivePanel';
+import { LoungeTvContentDetail } from './LoungeTvContentDetail';
+import { LoungeTvTopNav } from './LoungeTvTopNav';
+import { LoungeTvDebugOverlay } from './LoungeTvDebugOverlay';
 import { LoungeTvContentRow } from './LoungeTvContentRow';
-import { LoungeTvContentPackCard } from './LoungeTvContentPackCard';
 import { LoungeTvArticleView } from './LoungeTvArticleView';
 import { LoungeTvVideoDetailView } from './LoungeTvVideoDetailView';
-import { LoungeTvLivePlaceholder } from './LoungeTvLivePlaceholder';
 import { LoungeTvLibrarySections } from './LoungeTvLibrarySections';
 import { LOUNGE_TV_LIBRARY_UPDATED_EVENT, togglePackSaved } from '../../utils/loungeTvLibrary';
+import { useLoungeTvFocusNav } from '../../hooks/useLoungeTvFocusNav';
+import { saveLoungeTvFocusMemory } from './loungeTvFocusMemory';
+import {
+  getPsaTodayEpisodeForContentPack,
+  getPsaTodayEpisodeById,
+  PSATodayEpisodeView,
+} from './psa-today';
+import { SlayTipViewer } from './slay-tips';
+import { CareLessonViewer, CareDebugInspector } from './care';
+import { CurriculumDebugInspector } from './curriculum';
+import {
+  EducationMasteryView,
+  EducationSeasonView,
+  EducationHierarchyDebugInspector,
+} from './education';
+import {
+  getEducationMasteryById,
+  getEducationSeasonById,
+  getSlayTipById,
+} from '../../content/education';
+import { useSeasonPassAccess } from '../../hooks/useSeasonPassAccess';
+import { redeemSeasonPass } from './education/seasonPassApi';
+import { useCareAccess } from '../../hooks/useCareAccess';
+import {
+  getCareLessonById,
+} from '../../content/education';
+import type { SlayTip, CareLesson } from '../../content/education/types';
+import type { PSATodayEpisode } from './psa-today/types';
+import { trackCareEvent } from './care/careAnalytics';
 
 const LOUNGE_TV_BODY_SIDEBAR_GAP = loungeTvGlassCqw(2.5, 6, 10);
 const LOUNGE_TV_STACKED_SECTIONS_STYLE: React.CSSProperties = {
@@ -58,9 +90,15 @@ const LOUNGE_TV_STACKED_SECTIONS_STYLE: React.CSSProperties = {
 
 type TvViewState =
   | { kind: 'browse' }
+  | { kind: 'detail'; packId: string }
   | { kind: 'lesson'; packId: string }
   | { kind: 'video'; packId: string }
-  | { kind: 'article'; packId: string };
+  | { kind: 'article'; packId: string }
+  | { kind: 'psa-episode'; episodeId: string }
+  | { kind: 'slay-tip'; tipId: string }
+  | { kind: 'care-lesson'; lessonId: string }
+  | { kind: 'mastery'; masteryId: string }
+  | { kind: 'season'; seasonId: string };
 
 export function LoungeTvScreen({
   mainTab,
@@ -84,14 +122,28 @@ export function LoungeTvScreen({
     }
   });
   const { balance, isUnlocked, unlocks, refresh } = useSlayTickets(userData);
+  const {
+    unlockedSet: careUnlockedSet,
+    isUnlocked: isCareUnlocked,
+    purchaseProfiles: carePurchaseProfiles,
+    ownedUnits: careOwnedUnits,
+    careGuideEntitlements,
+    careMasterySeasonAccess,
+    unlockedGuideIds: careUnlockedGuideIds,
+    loading: careAccessLoading,
+    refresh: refreshCareAccess,
+  } = useCareAccess();
+  const { refresh: refreshSeasonPass } = useSeasonPassAccess();
   const [unlockConfirmPack, setUnlockConfirmPack] = useState<LoungeContentPack | null>(null);
+  const [unlockConfirmPsaEpisode, setUnlockConfirmPsaEpisode] = useState<PSATodayEpisode | null>(null);
   const [showNeedMoreTickets, setShowNeedMoreTickets] = useState(false);
   const [unlockBusy, setUnlockBusy] = useState(false);
   const [viewState, setViewState] = useState<TvViewState>({ kind: 'browse' });
+  const [restoreFocusId, setRestoreFocusId] = useState<string | null>(null);
   const [tilesRevision, setTilesRevision] = useState(0);
   const [viewedRevision, setViewedRevision] = useState(0);
   const [libraryRevision, setLibraryRevision] = useState(0);
-  const navRef = useRef<HTMLElement>(null);
+  const mediaPanelRef = useRef<HTMLDivElement>(null);
   const sidebar = LOUNGE_TV_SIDEBAR[mainTab];
   const mediaPanelRegion = useSceneHitRegionConfig('lounge-tv-media-panel');
 
@@ -102,8 +154,27 @@ export function LoungeTvScreen({
   );
 
   const activePack = useMemo(() => {
-    if (viewState.kind === 'browse') return null;
+    if (
+      viewState.kind === 'browse' ||
+      viewState.kind === 'psa-episode' ||
+      viewState.kind === 'slay-tip' ||
+      viewState.kind === 'care-lesson' ||
+      viewState.kind === 'mastery' ||
+      viewState.kind === 'season'
+    ) {
+      return null;
+    }
     return resolveContentPack(viewState.packId) ?? null;
+  }, [viewState]);
+
+  const activePsaEpisode = useMemo((): PSATodayEpisode | null => {
+    if (viewState.kind === 'psa-episode') {
+      return getPsaTodayEpisodeById(viewState.episodeId) ?? null;
+    }
+    if (viewState.kind === 'video') {
+      return getPsaTodayEpisodeForContentPack(viewState.packId) ?? null;
+    }
+    return null;
   }, [viewState]);
 
   useEffect(() => {
@@ -133,6 +204,10 @@ export function LoungeTvScreen({
   }, []);
 
   useEffect(() => {
+    void refreshCareAccess();
+  }, [userData, refreshCareAccess]);
+
+  useEffect(() => {
     const onViewedUpdated = () => setViewedRevision((n) => n + 1);
     window.addEventListener(LOUNGE_TV_VIEWED_UPDATED_EVENT, onViewedUpdated);
     return () => window.removeEventListener(LOUNGE_TV_VIEWED_UPDATED_EVENT, onViewedUpdated);
@@ -144,14 +219,67 @@ export function LoungeTvScreen({
     return () => window.removeEventListener(LOUNGE_TV_LIBRARY_UPDATED_EVENT, onLibraryUpdated);
   }, []);
 
-  useEffect(() => {
-    if (viewState.kind === 'browse') return;
-    markLoungeTvTileViewed(viewState.packId);
+  const activeSlayTip = useMemo((): SlayTip | null => {
+    if (viewState.kind === 'slay-tip') {
+      return getSlayTipById(viewState.tipId) ?? null;
+    }
+    return null;
+  }, [viewState]);
+
+  const activeCareLesson = useMemo((): CareLesson | null => {
+    if (viewState.kind === 'care-lesson') {
+      return getCareLessonById(viewState.lessonId) ?? null;
+    }
+    return null;
   }, [viewState]);
 
   useEffect(() => {
+    if (viewState.kind === 'browse') return;
+    if (viewState.kind === 'psa-episode') {
+      markLoungeTvTileViewed(viewState.episodeId);
+      return;
+    }
+    if (viewState.kind === 'slay-tip') {
+      markLoungeTvTileViewed(viewState.tipId);
+      return;
+    }
+    if (viewState.kind === 'care-lesson') {
+      markLoungeTvTileViewed(viewState.lessonId);
+      return;
+    }
+    if (viewState.kind === 'mastery') {
+      markLoungeTvTileViewed(viewState.masteryId);
+      return;
+    }
+    if (viewState.kind === 'season') {
+      markLoungeTvTileViewed(viewState.seasonId);
+      return;
+    }
+    if (
+      viewState.kind === 'lesson' ||
+      viewState.kind === 'video' ||
+      viewState.kind === 'article'
+    ) {
+      markLoungeTvTileViewed(viewState.packId);
+    }
+  }, [viewState]);
+
+  useEffect(() => {
+    if (mainTab === 'learn' && viewState.kind === 'browse') {
+      trackCareEvent('care_guide_opened', { surface: 'learn_tab' });
+    }
+  }, [mainTab, viewState.kind]);
+
+  useEffect(() => {
     setViewState({ kind: 'browse' });
+    setRestoreFocusId(null);
   }, [mainTab, sidebarId]);
+
+  useEffect(() => {
+    if (viewState.kind !== 'browse' || !restoreFocusId) return;
+    const t = window.setTimeout(() => setRestoreFocusId(null), 400);
+    return () => window.clearTimeout(t);
+  }, [viewState.kind, restoreFocusId]);
 
   const handleMainTabClick = useCallback(
     (tab: LoungeTvMainTab) => {
@@ -168,25 +296,33 @@ export function LoungeTvScreen({
   const requestContentAccess = useCallback(
     (pack: LoungeContentPack): boolean => {
       const tile = contentPackToTile(pack);
-      if (tile.isPremium && !isPremiumMemberForGatedFeatures()) {
-        setShowNeedMoreTickets(false);
-        navigate('/account/rewards');
-        return false;
-      }
       if (loungeTvContentIsAccessible(tile, unlocks)) return true;
       const cost = resolveLoungeTvUnlockCost(tile, unlocks);
       if (resolveLoungeTvTicketCost(tile) === 0) return true;
       if (balance >= cost) {
         setUnlockConfirmPack(pack);
+        setUnlockConfirmPsaEpisode(getPsaTodayEpisodeForContentPack(pack.id) ?? null);
         return false;
       }
       setShowNeedMoreTickets(true);
       return false;
     },
-    [balance, unlocks, navigate]
+    [balance, unlocks]
   );
 
-  const openPack = useCallback(
+  const openPsaEpisode = useCallback((episode: PSATodayEpisode) => {
+    setViewState({ kind: 'psa-episode', episodeId: episode.id });
+  }, []);
+
+  const openSlayTip = useCallback((tip: SlayTip) => {
+    setViewState({ kind: 'slay-tip', tipId: tip.id });
+  }, []);
+
+  const openCareLesson = useCallback((lesson: CareLesson) => {
+    setViewState({ kind: 'care-lesson', lessonId: lesson.id });
+  }, []);
+
+  const playPack = useCallback(
     (pack: LoungeContentPack) => {
       if (!requestContentAccess(pack)) return;
       const format = resolveContentPackFormat(pack);
@@ -203,6 +339,26 @@ export function LoungeTvScreen({
     [mainTab, requestContentAccess]
   );
 
+  const openPack = useCallback(
+    (pack: LoungeContentPack) => {
+      const psaEpisode = getPsaTodayEpisodeForContentPack(pack.id);
+      if (psaEpisode) {
+        saveLoungeTvFocusMemory({ mainTab, focusId: pack.id });
+        setRestoreFocusId(pack.id);
+        openPsaEpisode(psaEpisode);
+        return;
+      }
+      saveLoungeTvFocusMemory({ mainTab, focusId: pack.id });
+      setRestoreFocusId(pack.id);
+      setViewState({ kind: 'detail', packId: pack.id });
+    },
+    [mainTab, openPsaEpisode]
+  );
+
+  const goBackToBrowse = useCallback(() => {
+    setViewState({ kind: 'browse' });
+  }, []);
+
   const confirmUnlockAndOpen = useCallback(async () => {
     const pack = unlockConfirmPack;
     if (!pack) return;
@@ -214,8 +370,34 @@ export function LoungeTvScreen({
       if (!email) {
         setShowNeedMoreTickets(true);
         setUnlockConfirmPack(null);
+        setUnlockConfirmPsaEpisode(null);
         return;
       }
+
+      if (unlockConfirmPsaEpisode) {
+        const ep = unlockConfirmPsaEpisode;
+        const policy = resolvePsaWatchPolicy(ep);
+        const result = await redeemPsaEpisode({
+          episodeId: ep.id,
+          contentId: psaEpisodeContentIdForUnlock(ep),
+          ticketCost: resolvePsaEpisodeTicketCost(ep),
+          contentTitle: ep.title,
+          includedWatches: policy.includedWatches,
+          accessDurationYears: policy.accessDurationYears,
+        });
+        if ('error' in result) {
+          setUnlockConfirmPack(null);
+          setUnlockConfirmPsaEpisode(null);
+          setShowNeedMoreTickets(true);
+          return;
+        }
+        await refresh();
+        setUnlockConfirmPack(null);
+        setUnlockConfirmPsaEpisode(null);
+        openPsaEpisode(ep);
+        return;
+      }
+
       const result = await unlockLoungeTvContent({
         contentId: pack.id,
         ticketCost: pack.ticketCost ?? cost,
@@ -229,11 +411,46 @@ export function LoungeTvScreen({
       }
       await refresh();
       setUnlockConfirmPack(null);
-      openPack(pack);
+      playPack(pack);
     } finally {
       setUnlockBusy(false);
     }
-  }, [unlockConfirmPack, unlocks, openPack, refresh]);
+  }, [unlockConfirmPack, unlockConfirmPsaEpisode, unlocks, playPack, openPsaEpisode, refresh]);
+
+  useLoungeTvFocusNav({
+    enabled: true,
+    containerRef: mediaPanelRef,
+    restoreFocusId: viewState.kind === 'browse' ? restoreFocusId : null,
+    onHome: () => {
+      setViewState({ kind: 'browse' });
+      onMainTabChange('featured');
+    },
+    onEscape: () => {
+      if (viewState.kind === 'detail') {
+        goBackToBrowse();
+        return;
+      }
+      if (viewState.kind !== 'browse') {
+        if (viewState.kind === 'video' && mainTab === 'learn') {
+          setViewState({ kind: 'lesson', packId: viewState.packId });
+        } else if (
+          viewState.kind === 'psa-episode' ||
+          viewState.kind === 'slay-tip' ||
+          viewState.kind === 'care-lesson' ||
+          viewState.kind === 'mastery' ||
+          viewState.kind === 'season'
+        ) {
+          setViewState({ kind: 'browse' });
+        } else if (viewState.kind === 'lesson' || viewState.kind === 'article') {
+          const pack = resolveContentPack(viewState.packId);
+          if (pack) setViewState({ kind: 'detail', packId: pack.id });
+          else setViewState({ kind: 'browse' });
+        } else {
+          setViewState({ kind: 'browse' });
+        }
+      }
+    },
+  });
 
   const handleToggleSave = useCallback(() => {
     setLibraryRevision((n) => n + 1);
@@ -246,19 +463,6 @@ export function LoungeTvScreen({
     },
     [handleToggleSave]
   );
-
-  const mainTabNavStyle = (active: boolean): React.CSSProperties => ({
-    fontFamily: '"Futura PT Medium", Futura, sans-serif',
-    fontSize: LOUNGE_TV_GLASS_NAV_FONT,
-    letterSpacing: '0.04em',
-    textTransform: 'uppercase',
-    color: active ? '#ffffff' : '#9a9a9a',
-    background: 'none',
-    border: 'none',
-    padding: `${loungeTvGlassCqw(0.65, 1, 3)} 0`,
-    cursor: 'pointer',
-    whiteSpace: 'nowrap',
-  });
 
   const renderBrowseContent = () => {
     void libraryRevision;
@@ -275,13 +479,7 @@ export function LoungeTvScreen({
     }
 
     if (mainTab === 'live') {
-      return (
-        <div style={LOUNGE_TV_STACKED_SECTIONS_STYLE}>
-          {sidebar.map((section) => (
-            <LoungeTvLivePlaceholder key={section.id} section={section} />
-          ))}
-        </div>
-      );
+      return <LoungeTvLivePanel />;
     }
 
     if (mainTab === 'library') {
@@ -293,8 +491,11 @@ export function LoungeTvScreen({
               sectionId={section.id}
               onSelect={openPack}
               onToggleSave={onToggleSavePack}
+              onSelectSlayTip={openSlayTip}
+              onSelectCareLesson={openCareLesson}
               isUnlocked={isUnlocked}
               unlocks={unlocks}
+              careUnlockedSet={careUnlockedSet}
             />
           ))}
         </div>
@@ -304,38 +505,40 @@ export function LoungeTvScreen({
     if (mainTab === 'learn') {
       return (
         <div style={LOUNGE_TV_STACKED_SECTIONS_STYLE}>
-          {sidebar.map((section) => (
-            <LoungeTvContentRow
-              key={section.id}
-              title={section.label}
-              packs={academyPacksForLearningPath(section.id)}
-              onSelect={openPack}
-              onToggleSave={onToggleSavePack}
-              isUnlocked={isUnlocked}
-              unlocks={unlocks}
-              emptyLabel="LESSONS COMING SOON."
-            />
-          ))}
+          <LoungeTvLearnPanel
+            onSelectMastery={(masteryId) => setViewState({ kind: 'mastery', masteryId })}
+            onSelectPack={openPack}
+            onSelectPsaEpisode={openPsaEpisode}
+            onSelectSlayTip={openSlayTip}
+            onSelectCareLesson={openCareLesson}
+            onToggleSave={onToggleSavePack}
+            isUnlocked={isUnlocked}
+            unlocks={unlocks}
+            careUnlockedSet={careUnlockedSet}
+            isCareUnlocked={isCareUnlocked}
+          />
+          <CareDebugInspector
+            purchaseProfiles={carePurchaseProfiles}
+            ownedUnits={careOwnedUnits}
+            careGuideEntitlements={careGuideEntitlements}
+            unlockedGuideIds={careUnlockedGuideIds}
+            careMasterySeasonAccess={careMasterySeasonAccess}
+            loading={careAccessLoading}
+          />
+          <CurriculumDebugInspector />
+          <EducationHierarchyDebugInspector />
         </div>
       );
     }
 
     if (mainTab === 'explore') {
       return (
-        <div style={LOUNGE_TV_STACKED_SECTIONS_STYLE}>
-          {sidebar.map((section) => (
-            <LoungeTvContentRow
-              key={section.id}
-              title={section.label}
-              packs={explorePacksForSection(section.id)}
-              onSelect={openPack}
-              onToggleSave={onToggleSavePack}
-              isUnlocked={isUnlocked}
-              unlocks={unlocks}
-              emptyLabel="CONTENT COMING SOON."
-            />
-          ))}
-        </div>
+        <LoungeTvExplorePanel
+          onSelect={openPack}
+          onToggleSave={onToggleSavePack}
+          isUnlocked={isUnlocked}
+          unlocks={unlocks}
+        />
       );
     }
 
@@ -344,26 +547,15 @@ export function LoungeTvScreen({
         .map((t) => resolveContentPack(t.id))
         .filter((p): p is LoungeContentPack => Boolean(p));
       return (
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
-            columnGap: loungeTvGlassCqw(1.9, 4, 8),
-            rowGap: loungeTvGlassCqw(1.9, 4, 8),
-            width: '100%',
-          }}
-        >
-          {packs.map((pack) => (
-            <LoungeTvContentPackCard
-              key={pack.id}
-              pack={pack}
-              onSelect={openPack}
-              onToggleSave={onToggleSavePack}
-              isUnlocked={isUnlocked}
-              unlocks={unlocks}
-            />
-          ))}
-        </div>
+        <LoungeTvContentRow
+          railId="admin-tiles"
+          title={sidebar.find((s) => s.id === sidebarId)?.label ?? 'PROGRAMMING'}
+          packs={packs}
+          onSelect={openPack}
+          onToggleSave={onToggleSavePack}
+          isUnlocked={isUnlocked}
+          unlocks={unlocks}
+        />
       );
     }
 
@@ -371,13 +563,117 @@ export function LoungeTvScreen({
   };
 
   const renderDetailContent = () => {
+    if (viewState.kind === 'mastery') {
+      const mastery = getEducationMasteryById(viewState.masteryId);
+      if (!mastery) return null;
+      return (
+        <EducationMasteryView
+          mastery={mastery}
+          onBack={() => setViewState({ kind: 'browse' })}
+          onSelectSeason={(seasonId) => setViewState({ kind: 'season', seasonId })}
+        />
+      );
+    }
+
+    if (viewState.kind === 'season') {
+      const season = getEducationSeasonById(viewState.seasonId);
+      if (!season) return null;
+      return (
+        <EducationSeasonView
+          season={season}
+          onBack={() => {
+            const mastery = getEducationMasteryById(season.masteryId);
+            if (mastery) setViewState({ kind: 'mastery', masteryId: mastery.id });
+            else setViewState({ kind: 'browse' });
+          }}
+          onSelectEpisode={(episodeId) => setViewState({ kind: 'psa-episode', episodeId })}
+          onRedeemSeasonPass={async (seasonId, ticketCost) => {
+            const result = await redeemSeasonPass({ seasonId, ticketCost });
+            if ('error' in result) return;
+            await refreshSeasonPass();
+            await refresh();
+          }}
+          onGoToRewardsRoom={() => navigate('/desktop/gallery?zone=rewards-gallery')}
+        />
+      );
+    }
+
+    if (viewState.kind === 'care-lesson' && activeCareLesson) {
+      return (
+        <CareLessonViewer
+          lesson={activeCareLesson}
+          unlocked={isCareUnlocked(activeCareLesson.id)}
+          onBack={() => setViewState({ kind: 'browse' })}
+        />
+      );
+    }
+
+    if (viewState.kind === 'slay-tip' && activeSlayTip) {
+      return (
+        <SlayTipViewer
+          tip={activeSlayTip}
+          onBack={() => setViewState({ kind: 'browse' })}
+          onViewRelatedPsa={openPsaEpisode}
+          unlocks={unlocks}
+          isUnlocked={isUnlocked}
+          onTicketsRefresh={refresh}
+        />
+      );
+    }
+
+    if (viewState.kind === 'psa-episode' && activePsaEpisode) {
+      return (
+        <PSATodayEpisodeView
+          episode={activePsaEpisode}
+          onBack={() => setViewState({ kind: 'browse' })}
+          unlocks={unlocks}
+          isUnlocked={isUnlocked}
+          onTicketsRefresh={refresh}
+          onOpenSlayTip={openSlayTip}
+        />
+      );
+    }
+
     if (!activePack) return null;
+
+    if (viewState.kind === 'detail') {
+      const format = resolveContentPackFormat(activePack);
+      return (
+        <LoungeTvContentDetail
+          pack={activePack}
+          onBack={goBackToBrowse}
+          onPlay={() => playPack(activePack)}
+          onSelectRelated={openPack}
+          onRead={
+            format === 'BOTH' || format === 'READ'
+              ? () => setViewState({ kind: 'article', packId: activePack.id })
+              : undefined
+          }
+          unlocks={unlocks}
+          isUnlocked={isUnlocked}
+          onToggleSave={handleToggleSave}
+        />
+      );
+    }
+
+    if (viewState.kind === 'video' && activePsaEpisode) {
+      return (
+        <PSATodayEpisodeView
+          episode={activePsaEpisode}
+          onBack={() => setViewState({ kind: 'browse' })}
+          unlocks={unlocks}
+          isUnlocked={isUnlocked}
+          onTicketsRefresh={refresh}
+          onOpenSlayTip={openSlayTip}
+        />
+      );
+    }
 
     if (viewState.kind === 'lesson') {
       return (
         <LoungeTvLessonHub
           pack={activePack}
-          onBack={() => setViewState({ kind: 'browse' })}
+          onBack={() => setViewState({ kind: 'detail', packId: activePack.id })}
           onWatch={() => setViewState({ kind: 'video', packId: activePack.id })}
           onRead={() => setViewState({ kind: 'article', packId: activePack.id })}
         />
@@ -391,7 +687,7 @@ export function LoungeTvScreen({
           onBack={() =>
             mainTab === 'learn'
               ? setViewState({ kind: 'lesson', packId: activePack.id })
-              : setViewState({ kind: 'browse' })
+              : setViewState({ kind: 'detail', packId: activePack.id })
           }
           onWatchEpisode={() => setViewState({ kind: 'video', packId: activePack.id })}
         />
@@ -407,7 +703,7 @@ export function LoungeTvScreen({
           pack={activePack}
           onBack={() => {
             if (mainTab === 'learn') setViewState({ kind: 'lesson', packId: activePack.id });
-            else setViewState({ kind: 'browse' });
+            else setViewState({ kind: 'detail', packId: activePack.id });
           }}
           onReadGuide={() => setViewState({ kind: 'article', packId: activePack.id })}
           playBlocked={playBlocked}
@@ -426,6 +722,8 @@ export function LoungeTvScreen({
   return (
     <>
       <div
+        ref={mediaPanelRef}
+        className="lounge-tv-screen-root"
         style={{
           width: '100%',
           height: '100%',
@@ -437,31 +735,9 @@ export function LoungeTvScreen({
           textTransform: 'uppercase',
         }}
       >
-        <nav
-          ref={navRef}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            width: '100%',
-            marginBottom: LOUNGE_TV_BODY_SIDEBAR_GAP,
-            flexShrink: 0,
-            gap: loungeTvGlassCqw(0.5, 1, 2),
-          }}
-          aria-label="Lounge TV categories"
-        >
-          {LOUNGE_TV_MAIN_TABS.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              data-lounge-tv-tab={tab.id}
-              style={mainTabNavStyle(mainTab === tab.id)}
-              onClick={() => handleMainTabClick(tab.id)}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </nav>
+        <div style={{ marginBottom: LOUNGE_TV_BODY_SIDEBAR_GAP, flexShrink: 0 }}>
+          <LoungeTvTopNav activeTab={mainTab} onTabChange={handleMainTabClick} />
+        </div>
 
         <div
           style={{
@@ -472,6 +748,7 @@ export function LoungeTvScreen({
             flexDirection: 'column',
           }}
         >
+          <LoungeTvDebugOverlay mainTab={mainTab} viewKind={viewState.kind} focusId={restoreFocusId ?? undefined} />
           <LoungeTvInnerLayoutEditor
             regionId="lounge-tv-media-panel"
             label="tv media panel"
@@ -505,26 +782,36 @@ export function LoungeTvScreen({
             <>
               <ConfirmationModal
                 isOpen={Boolean(unlockConfirmPack)}
-                onClose={() => !unlockBusy && setUnlockConfirmPack(null)}
+                onClose={() => {
+                  if (unlockBusy) return;
+                  setUnlockConfirmPack(null);
+                  setUnlockConfirmPsaEpisode(null);
+                }}
                 onConfirm={() => void confirmUnlockAndOpen()}
                 title={
-                  unlockTile
-                    ? loungeTvTileActionLabel(unlockTile, unlocks) === 'REWATCH'
-                      ? `REWATCH WITH ${resolveLoungeTvUnlockCost(unlockTile, unlocks)} SLAY TICKET?`
-                      : `UNLOCK WITH ${resolveLoungeTvUnlockCost(unlockTile, unlocks)} SLAY TICKET(S)?`
-                    : 'UNLOCK CONTENT'
+                  unlockConfirmPsaEpisode
+                    ? `USE ${resolvePsaEpisodeTicketCost(unlockConfirmPsaEpisode)} SLAY TICKET(S)?`
+                    : unlockTile
+                      ? loungeTvTileActionLabel(unlockTile, unlocks) === 'REWATCH'
+                        ? `REWATCH WITH ${resolveLoungeTvUnlockCost(unlockTile, unlocks)} SLAY TICKET?`
+                        : `UNLOCK WITH ${resolveLoungeTvUnlockCost(unlockTile, unlocks)} SLAY TICKET(S)?`
+                      : 'UNLOCK CONTENT'
                 }
                 message={
-                  unlockConfirmPack
-                    ? loungeTvTileActionLabel(unlockTile!, unlocks) === 'REWATCH'
-                      ? `YOUR LIBRARY ACCESS EXPIRED. SPEND 1 SLAY TICKET TO REWATCH "${unlockConfirmPack.title}" FOR ANOTHER YEAR.`
-                      : `SPEND ${resolveLoungeTvUnlockCost(unlockTile!, unlocks)} SLAY TICKET(S) TO ADD "${unlockConfirmPack.title}" TO YOUR LIBRARY FOR 1 YEAR. REWATCHES AFTER EXPIRY COST 1 TICKET.`
-                    : ''
+                  unlockConfirmPsaEpisode
+                    ? `INCLUDES 3 WATCHES AND 1 YEAR OF ACCESS. A WATCH IS USED AFTER YOU VIEW AT LEAST ONE-THIRD OF THE LESSON.`
+                    : unlockConfirmPack
+                      ? loungeTvTileActionLabel(unlockTile!, unlocks) === 'REWATCH'
+                        ? `YOUR LIBRARY ACCESS EXPIRED. SPEND 1 SLAY TICKET TO REWATCH "${unlockConfirmPack.title}" FOR ANOTHER YEAR.`
+                        : `SPEND ${resolveLoungeTvUnlockCost(unlockTile!, unlocks)} SLAY TICKET(S) TO ADD "${unlockConfirmPack.title}" TO YOUR LIBRARY FOR 1 YEAR. REWATCHES AFTER EXPIRY COST 1 TICKET.`
+                      : ''
                 }
                 confirmText={
-                  unlockTile && loungeTvTileActionLabel(unlockTile, unlocks) === 'REWATCH'
-                    ? 'REWATCH'
-                    : 'UNLOCK + WATCH'
+                  unlockConfirmPsaEpisode
+                    ? 'USE SLAY TICKETS'
+                    : unlockTile && loungeTvTileActionLabel(unlockTile, unlocks) === 'REWATCH'
+                      ? 'REWATCH'
+                      : 'UNLOCK + WATCH'
                 }
                 cancelText="CANCEL"
                 dataAttribute="lounge-tv-unlock-confirm"
