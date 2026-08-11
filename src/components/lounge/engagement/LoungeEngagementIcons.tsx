@@ -1,4 +1,8 @@
 import type { CSSProperties } from 'react';
+import {
+  LOUNGE_TV_HEART_ACTIVE_ICON_SRC,
+  LOUNGE_TV_HEART_ICON_SRC,
+} from '../loungeTvAssets';
 import { LOUNGE_TV_BRAND_RED, LOUNGE_TV_TEXT_GRAY, LOUNGE_TV_TEXT_WHITE } from '../loungeTvTheme';
 
 export type LoungeEngagementIconKind = 'helpful' | 'view' | 'comment' | 'bookmark';
@@ -19,7 +23,10 @@ export const LOUNGE_ENGAGEMENT_ICON_ASSETS: Record<
   LoungeEngagementIconKind,
   { inactive?: string; active?: string; default?: string }
 > = {
-  helpful: { inactive: undefined, active: undefined },
+  helpful: {
+    inactive: LOUNGE_TV_HEART_ICON_SRC,
+    active: LOUNGE_TV_HEART_ACTIVE_ICON_SRC,
+  },
   view: { default: undefined },
   comment: { default: undefined },
   bookmark: { inactive: undefined, active: undefined },

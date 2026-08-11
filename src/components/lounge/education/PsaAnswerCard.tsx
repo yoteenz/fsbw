@@ -172,8 +172,6 @@ export function PsaAnswerCard({
         <AcrylicLikeControl
           liked={helpfulActive}
           pending={helpfulPending}
-          glyphSize={loungeTvGlassCqw(1.2, 2.8, 5.6)}
-          hitSize={loungeTvGlassCqw(3.2, 7.5, 15)}
           data-lounge-tv-focusable
           className="lounge-tv-psa-answer-like"
           ariaLabel={

@@ -15,6 +15,7 @@ import {
   MASTERY_PANEL_TYPE_META_PLUS_1,
   MASTERY_PANEL_TYPE_TITLE_MINUS_1,
 } from './LearnMasterySelector';
+import { LEARN_ACRYLIC_HIT_SIZE } from '../learnAcrylicGlyphSizes';
 
 type LearnBrowseFiltersProps<T extends string> = {
   filters: readonly T[];
@@ -63,15 +64,24 @@ export function LearnBrowseFilters<T extends string>({
               onClick={() => onChange(filter)}
               onFocusCapture={loungeTvFocusGlowIn}
               onBlurCapture={loungeTvFocusGlowOut}
-              className={
+              className={[
                 selected
                   ? 'lounge-tv-learn-browse-filter lounge-tv-learn-browse-filter--active'
-                  : 'lounge-tv-learn-browse-filter'
-              }
+                  : 'lounge-tv-learn-browse-filter',
+                filter === 'LIKES' ? 'lounge-tv-learn-browse-filter--likes' : '',
+              ]
+                .filter(Boolean)
+                .join(' ')}
               style={{
                 fontFamily: LOUNGE_TV_FONT_MEDIUM,
                 fontSize: `calc(${LOUNGE_TV_TYPE.l4} + 2px)`,
                 letterSpacing: '0.06em',
+                ...(filter === 'LIKES'
+                  ? {
+                      minWidth: LEARN_ACRYLIC_HIT_SIZE,
+                      minHeight: LEARN_ACRYLIC_HIT_SIZE,
+                    }
+                  : null),
               }}
             >
               <span className="lounge-tv-learn-browse-filter__content">

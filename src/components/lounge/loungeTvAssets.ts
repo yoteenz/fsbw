@@ -53,6 +53,16 @@ export const LOUNGE_TV_BOOKMARK_SAVED_ICON_SRC = loungeTvLivePreviewPublicUrl(
   '3D%20Stock/Lounge/A812A9C4-CC9C-433B-B45E-66AC2CC9F523.png',
 );
 
+/** Clear-acrylic heart — Learn browse like/helpful (inactive). */
+export const LOUNGE_TV_HEART_ICON_SRC = loungeTvLivePreviewPublicUrl(
+  '3D%20Stock/Lounge/2125224D-BB03-423F-9F79-8D9B6F170698.png',
+);
+
+/** Clear-acrylic heart — Learn browse like/helpful (active / liked). */
+export const LOUNGE_TV_HEART_ACTIVE_ICON_SRC = loungeTvLivePreviewPublicUrl(
+  '3D%20Stock/Lounge/7C8B93FF-C771-44C9-87DE-E327A6D50E1D.png',
+);
+
 /** @deprecated Use {@link LOUNGE_TV_TICKET_LOCK_WATERMARK_SRC} from `slayTicketAssets.ts`. */
 export const LOUNGE_TV_ACRYLIC_LOCK_ASSET_VERSION = 'v1';
 

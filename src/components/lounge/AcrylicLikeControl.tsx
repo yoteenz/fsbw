@@ -1,6 +1,6 @@
 import type { CSSProperties, MouseEvent, PointerEvent } from 'react';
-import { loungeTvGlassCqw } from './loungeTvResponsive';
-import { LoungeEngagementIcon } from './engagement/LoungeEngagementIcons';
+import { AcrylicHeartGlyph } from './AcrylicHeartGlyph';
+import { LEARN_ACRYLIC_GLYPH_SIZE, LEARN_ACRYLIC_HIT_SIZE } from './learnAcrylicGlyphSizes';
 
 export type AcrylicLikeControlProps = {
   liked?: boolean;
@@ -24,8 +24,8 @@ export function AcrylicLikeControl({
   onPointerDown,
   onPointerUp,
   ariaLabel,
-  glyphSize = '13px',
-  hitSize = loungeTvGlassCqw(3.5, 8, 16),
+  glyphSize = LEARN_ACRYLIC_GLYPH_SIZE,
+  hitSize = LEARN_ACRYLIC_HIT_SIZE,
   className = '',
   style,
   'data-lounge-tv-focusable': focusable,
@@ -74,13 +74,7 @@ export function AcrylicLikeControl({
       }
     >
       <span className="acrylic-media-control__hit" aria-hidden />
-      <span className="acrylic-media-control__glyph acrylic-media-control__glyph--like">
-        <LoungeEngagementIcon
-          kind="helpful"
-          state={liked ? 'active' : 'inactive'}
-          size="100%"
-        />
-      </span>
+      <AcrylicHeartGlyph liked={liked} className="acrylic-media-control__glyph acrylic-media-control__glyph--like" />
     </button>
   );
 }

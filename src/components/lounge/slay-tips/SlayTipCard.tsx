@@ -7,7 +7,6 @@ import {
 import type { SlayTip } from '../../../content/education/types';
 import type { LoungeEngagementSummary } from '../../../utils/loungeEngagementTypes';
 import type { LoungeContentUnlock } from '../../../utils/slayTicketHistoryDisplay';
-import { loungeTvGlassCqw } from '../loungeTvResponsive';
 import { AcrylicLikeControl } from '../AcrylicLikeControl';
 import { LOUNGE_TV_TICKET_LOCK_WATERMARK_SRC } from '../../../constants/slayTicketAssets';
 import { slayTipAccessGranted, slayTipUnlockCost } from './slayTipAccess';
@@ -244,8 +243,6 @@ export function SlayTipCard({
           <AcrylicLikeControl
             liked={engagementHelpfulActive}
             pending={engagementHelpfulPending}
-            glyphSize={loungeTvGlassCqw(1.1, 2.5, 5)}
-            hitSize={loungeTvGlassCqw(2.8, 6.5, 13)}
             data-lounge-tv-focusable
             className="lounge-tv-slay-tip-like"
             ariaLabel={
@@ -321,8 +318,6 @@ export function SlayTipCard({
         <AcrylicLikeControl
           liked={engagementHelpfulActive}
           pending={engagementHelpfulPending}
-          glyphSize={loungeTvGlassCqw(1.05, 2.4, 4.8)}
-          hitSize={loungeTvGlassCqw(2.6, 6, 12)}
           data-lounge-tv-focusable
           className="lounge-tv-slay-tip-like"
           ariaLabel={

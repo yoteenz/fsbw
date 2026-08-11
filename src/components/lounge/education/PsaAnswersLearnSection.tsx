@@ -19,6 +19,7 @@ import {
   LearnSectionTitle,
   LearnSectionViewAllToggle,
 } from './LearnBrowseChrome';
+import { renderLearnLikesFilterContent } from './LearnLikesFilterContent';
 import { LoungeTvEmptyState } from '../LoungeTvEmptyState';
 import {
   engagementItemKey,
@@ -153,6 +154,7 @@ export function PsaAnswersLearnSection({
         onChange={setActiveFilter}
         focusIdPrefix="psa-answers-filter"
         ariaLabel="PSA Answers categories"
+        renderFilterContent={renderLearnLikesFilterContent}
       />
 
       <LearnSectionHeaderRow

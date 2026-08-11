@@ -21,6 +21,7 @@ import {
   LearnSectionTitle,
   LearnSectionViewAllToggle,
 } from '../education/LearnBrowseChrome';
+import { renderLearnLikesFilterContent } from '../education/LearnLikesFilterContent';
 import {
   engagementItemKey,
   engagementKeyForSlayTip,
@@ -182,6 +183,7 @@ function SlayTipDiscoveryBoard({
         focusIdPrefix="slay-tips-filter"
         ariaLabel="Slay Tips categories"
         filtersClassName="lounge-tv-slay-tips-filters"
+        renderFilterContent={renderLearnLikesFilterContent}
       />
 
       <LearnSectionHeaderRow
