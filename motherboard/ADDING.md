@@ -6,9 +6,9 @@ When the user says **"add to motherboard"** (in this or any past chat), follow t
 
 ## Rules
 
-0. **Deploy only on "deploy now" (critical).** **Do not commit or push** automatically after completing a task. Make changes locally; report what changed. When the founder says **"deploy now"**, ship with **`./scripts/agent-commit.sh --deploy-now "message"`** once — **exactly one commit + one push to `master`**. **Never** push then amend+**force-push** to fix the message. See **`.cursor/rules/one-deploy-per-task.mdc`**.
+0. **Sync after tasks; deploy on command.** After completing a user-requested task, run **`./scripts/agent-commit.sh --sync-only "message"`** (GitHub sync; Vercel skipped). **Only use `--deploy-now`** when the founder says **"deploy now"**.
 
-0b. **MEMORY auto-add is ON by default.** After any exchange where you completed a user-requested task, append **one** entry to **`MEMORY.md`** per the format below (full conversation summary). **Do not skip** for small scope. **Do not commit or push** after MEMORY-only edits unless the founder says **"deploy now"** or explicitly asks to commit/sync. MEMORY-only pushes must not trigger a Vercel build (see **`scripts/vercel-should-build.sh`**).
+0b. **MEMORY auto-add is ON by default.** Append **`MEMORY.md`** after completed tasks. Include MEMORY in the same **`--sync-only`** commit when possible.
 
 1. **Append only.** Do not remove, replace, or rewrite existing sections in `CORE.md` or `MEMORY.md`. Only add new content.
 2. **No duplicates.** Before adding, read the full `MEMORY.md` and `CORE.md`. If the same fact or decision is already stated, do not add it again. You may add a short cross-reference or "(see entry YYYY-MM-DD)" if useful.
@@ -16,7 +16,7 @@ When the user says **"add to motherboard"** (in this or any past chat), follow t
 4. **Full conversation context.** Every entry must reflect the **entire conversation so far** in this chat—from inception to now—not just the last message. Summarize all prompts, topics, decisions, and changes so the motherboard stays fully up to date and accurate. When in doubt, err on the side of including more context so future agents have the full picture.
 5. **CORE.md updates are optional and minimal.** Only add to `CORE.md` when you have a **new, permanent** fact about design, stack, or flows that is not already there and that future agents should always see. Do not duplicate what's already in CORE.
 6. **MEMORY.md is the default place for conversation summaries.** Put learnings, one-off decisions, and "what we did in this chat" in `MEMORY.md`. Entries can be longer when summarizing a whole conversation; use bullets or short paragraphs per topic so they stay scannable.
-7. **Deploy (when founder says "deploy now").** Stage all local work with **`git add -A`**, then **`./scripts/agent-commit.sh --deploy-now "message"`** — one commit, one push to **`master`**. Optional: include batched **`MEMORY.md`** in that commit. **Forbidden:** committing or pushing before **"deploy now"**; standalone MEMORY-only deploys are skipped by Vercel when only docs/memory paths changed.
+7. **Sync (default):** **`./scripts/agent-commit.sh --sync-only "message"`** after tasks. **Deploy:** **`--deploy-now`** only when founder says deploy now.
 
 ---
 
@@ -49,7 +49,7 @@ Append to **`MEMORY.md`** at the end of any exchange where you completed a user-
 - **Every entry must summarize the entire conversation so far** (from chat inception to now), not just the latest turn.
 - **"Add to motherboard"** = append one entry now + re-enable auto-add if the user had said **"stop adding to motherboard"**.
 - **When to skip:** Q&A with no request to record, "thanks"/"ok", or when the founder said **"stop adding to motherboard"**.
-- **Never commit or push** because of a MEMORY update alone unless the founder says **"deploy now"** or explicitly asks to commit/sync (docs-only deploys skip the Vercel build).
+- **Never commit or push** because of a MEMORY update alone unless you are syncing the batch with **`--sync-only`** or deploying with **`--deploy-now`**.
 
 ---
 
@@ -60,5 +60,5 @@ Append to **`MEMORY.md`** at the end of any exchange where you completed a user-
 - [ ] Appended **one** new entry to `MEMORY.md` in the format above.
 - [ ] Optionally added a small, non-duplicative update to `CORE.md` only if it's a lasting design/stack/flow fact.
 - [ ] Did not delete or overwrite existing content.
-- [ ] **Did not commit or push** unless the founder said **"deploy now"**.
-- [ ] If **"deploy now"**: staged with **`git add -A`**, **one commit**, **`./scripts/agent-commit.sh --deploy-now "message"`** → **`master`** only.
+- [ ] **Did not use `--deploy-now`** unless the founder said **"deploy now"**.
+- [ ] After tasks: **`./scripts/agent-commit.sh --sync-only "message"`** when shipping work.

@@ -55,6 +55,12 @@ fi
 
 mapfile -t CHANGED < <(git diff --name-only "$DIFF_RANGE" 2>/dev/null || true)
 
+COMMIT_MSG="$(git log -1 --pretty=%B "${VERCEL_GIT_COMMIT_SHA:-HEAD}" 2>/dev/null || git log -1 --pretty=%B 2>/dev/null || true)"
+if [[ "$COMMIT_MSG" == *"[sync-only]"* ]]; then
+  echo "Skip build: commit marked [sync-only] (GitHub sync without Vercel deploy)"
+  exit 0
+fi
+
 if [[ ${#CHANGED[@]} -eq 0 ]]; then
   echo "Build required: empty diff in range ${DIFF_RANGE}"
   exit 1

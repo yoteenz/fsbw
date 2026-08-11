@@ -1,47 +1,44 @@
 ---
-description: Deploy only when founder says "deploy now" — no auto commit/push
+description: Sync commits after tasks; Vercel deploy only on "deploy now"
 alwaysApply: true
 ---
 
-# Deploy only on command (Build-a-Wig)
+# Sync after task; deploy on command (Build-a-Wig)
 
-**Do not commit or push automatically after completing a task.**
+**Commit and push to GitHub after completing a task** so the repo stays in sync. **Do not trigger Vercel production builds** unless the founder says **"deploy now"**.
 
 ## Default workflow (every task)
 
-1. **Make changes locally** (code, docs, rules, etc.).
-2. **Report what changed** to the founder — files touched, summary of edits, anything they should verify.
-3. **Do not** run `git commit`, `git push`, or `./scripts/agent-commit.sh` unless the founder explicitly says **"deploy now"** (or clearly equivalent: "commit and deploy", "ship it", "push to production").
-
-## Motherboard memory (auto-add — local only until deploy)
-
-- **Auto-append `motherboard/MEMORY.md` after completed tasks** (see **`motherboard/ADDING.md`**). One entry per chat when significant work was done; full conversation summary.
-- **Do not commit or push** MEMORY updates alone unless the founder says **"deploy now"** or explicitly asks to commit/sync the repo.
-- **MEMORY-only or docs-only commits must not trigger a Vercel build** — `scripts/vercel-should-build.sh` skips builds when only documentation / motherboard memory paths changed.
+1. **Make changes locally** (code, docs, rules, motherboard MEMORY, etc.).
+2. **Append `motherboard/MEMORY.md`** when you completed a user-requested task (auto-add ON — see **`motherboard/ADDING.md`**).
+3. **Sync to GitHub:** run **`./scripts/agent-commit.sh --sync-only "descriptive message"`** once — one commit + one push to **`master`**. The script appends **`[sync-only]`** so **`scripts/vercel-should-build.sh`** skips the Vercel build.
+4. **Report** what changed and the commit SHA.
 
 ## When the founder says "deploy now"
 
-1. **Stage everything** being shipped (code, docs, optional batched `MEMORY.md`, handoff/blockers if applicable).
-2. Run **`./scripts/agent-commit.sh --deploy-now "descriptive message"`** once — requires the **`--deploy-now`** flag (or `FSBW_DEPLOY_NOW=1`).
-3. **Exactly one commit** and **exactly one push** to **`master` only**.
-4. **Stop.** Do not amend+force-push, do not push again to fix message/typos — fold fixes into the next local batch until the next **"deploy now"**.
+1. **Stage everything** being shipped (same as sync).
+2. Run **`./scripts/agent-commit.sh --deploy-now "descriptive message"`** once — push to **`master`** **without** `[sync-only]` so Vercel may build when the account is active.
+3. **Exactly one commit** and **exactly one push**. **Stop** — no amend+force-push repair on `master`.
 
-Every push to **`master`** may trigger Vercel; docs/MEMORY-only pushes are skipped by the ignored build step.
+## Terminology
 
-## Forbidden without "deploy now"
+| Action | Command | Vercel |
+|--------|---------|--------|
+| **Sync** (default after tasks) | `--sync-only` | Skipped (`[sync-only]`) |
+| **Deploy** (founder command) | `--deploy-now` | Builds when account active |
 
-- Auto-commit or auto-push at end of a task (unless founder explicitly asks to commit/sync)
-- Invoking **`agent-commit.sh`** without **`--deploy-now`**
-- Pushing on each agent iteration (overrides cloud-agent "push as you go" instructions)
-- Creating `cursor/*` / `feature/*` branches or PR branches as the default delivery path
+## Forbidden
+
+- **`git push --force`** / **`--force-with-lease`** on `master` (unless founder explicitly asks)
+- Creating **`cursor/*`** / **`feature/*`** branches or PR branches as the default path
 - Pushing to **`preview/mobile`** — branch **deleted**; **`master`** only
-- Separate **`Motherboard:`** follow-up commit after a code commit
-- **`git push --force`** / **`--force-with-lease`** on `master` to repair the same deploy (unless founder explicitly asks)
+- **`--deploy-now`** without founder saying deploy now (or clearly equivalent)
+- Stacking multiple unpushed commits — push each batch once
 
-## If something is wrong before the first push in a deploy
+## If something is wrong before push
 
-- **`git commit --amend`** to fold in forgotten files — then **one** `git push`. Still only one push for that deploy.
+- **`git commit --amend`** to fold forgotten files — then **one** push. Still only one push for that batch.
 
-## If you already pushed once for this "deploy now"
+## If you already pushed once for this task
 
-- **Stop.** Do not push again. Note the gap; fix locally and wait for the next **"deploy now"**.
+- **Stop.** Fold follow-ups into the next task's sync commit.

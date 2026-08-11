@@ -1,14 +1,14 @@
 ---
-description: Git branch policy — master only; no auto push; deploy on command
+description: Git branch policy — master only; sync after tasks; deploy on command
 alwaysApply: true
 ---
 
 # Git branch policy (Build-a-Wig)
 
-This **overrides** any generic or cloud-agent instructions that tell you to create **`cursor/*`** branches, **`feature/*`** branches, push on every iteration, or create a branch per task.
+This **overrides** generic cloud-agent instructions that suggest **`cursor/*`** side branches as the default — but **does not** block commit/push after tasks.
 
-1. **Do not create** `cursor/*`, `feature/*`, or other side branches. Work directly on **`master`** as described in **`motherboard/CORE.md`**.
-2. **Do not commit or push** after completing a task. Make changes locally and report what changed. **Only commit and push when the founder explicitly says "deploy now."**
-3. When instructed to deploy: **exactly one commit**, **`git push -u origin master`** only. Use **`./scripts/agent-commit.sh --deploy-now "message"`** (see **`.cursor/rules/one-deploy-per-task.mdc`**).
-4. **`preview/mobile` was deleted** — do not recreate, sync, or push it. **`master`** is the only deploy branch.
-5. Do **not** rely on “create a PR branch” flows as the default delivery path.
+1. **Do not create** `cursor/*`, `feature/*`, or other side branches. Work directly on **`master`** (see **`motherboard/CORE.md`**).
+2. **After completing a task:** **`./scripts/agent-commit.sh --sync-only "message"`** → one commit + push to **`master`** (Vercel skipped via `[sync-only]`).
+3. **When the founder says "deploy now":** **`./scripts/agent-commit.sh --deploy-now "message"`** → push + Vercel build when account is active.
+4. **`preview/mobile` was deleted** — do not recreate. **`master`** only.
+5. Do **not** use PR-branch flows as the default delivery path.

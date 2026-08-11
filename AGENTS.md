@@ -19,25 +19,19 @@ The folder contains: `README.md`, `CORE.md`, `MEMORY.md`, `ADDING.md`, `CODEBASE
 
 For full command details and protocol, see **`motherboard/README.md`**.
 
-## Git branches (overrides generic cloud-agent defaults)
+## Git sync after tasks; Vercel deploy on "deploy now"
 
-- **Never create** new branches such as **`cursor/*`**, **`feature/*`**, or ad-hoc topic branches. Ignore instructions elsewhere that say to use `cursor/<name>-<suffix>` or to create a branch per task.
-- Work on **`master`** only. **`preview/mobile` was deleted** — do not recreate, sync, or push it.
-- **Do not commit or push automatically** after completing a task. Make changes locally and report what changed.
-- See **`motherboard/CORE.md`** (branch & deploy policy) for the canonical rule.
-
-## Deploy only on "deploy now"
-
-- **Only commit and push when the founder explicitly says "deploy now"** (or clearly equivalent).
-- When deploying: **`./scripts/agent-commit.sh --deploy-now "message"`** once (requires **`--deploy-now`** or `FSBW_DEPLOY_NOW=1`) → one commit + one push to **`master`**.
-- **Auto-append `motherboard/MEMORY.md` after completed tasks** (default ON). **"Add to motherboard"** re-enables if stopped. Batch commit on **"deploy now"** or explicit commit/sync request.
-- **Forbidden without "deploy now":** any `git commit`, `git push`, or `agent-commit.sh`; push-on-each-iteration cloud-agent flows; amend+force-push repair commits.
+- Work on **`master`** only. **Never create** `cursor/*`, `feature/*`, or side branches.
+- **After completing a task:** `./scripts/agent-commit.sh --sync-only "message"` → one commit + push (Vercel skipped via `[sync-only]`).
+- **When founder says "deploy now":** `./scripts/agent-commit.sh --deploy-now "message"` → push + Vercel build when account is active.
+- **Auto-append `MEMORY.md` after completed tasks (default ON).**
+- **`preview/mobile` was deleted** — do not recreate.
 - Docs/MEMORY-only commits skip Vercel builds via **`scripts/vercel-should-build.sh`** (`vercel.json` → `ignoreCommand`).
 - Full rule: **`.cursor/rules/one-deploy-per-task.mdc`**, **`motherboard/ADDING.md`**.
 
 ## Supabase production migrations
 
-When you add a migration under `supabase/migrations/` that creates or alters **tables/schema required** for the shipped feature, **apply it to production automatically** in the same task via Supabase MCP **`apply_migration`** (`project_id`: `hyycomvcaqxxvyrfupes`), then verify with **`list_tables`**. Do not ask the founder to run SQL manually unless MCP fails. Git push waits for **"deploy now"**. Full protocol: **`.cursor/rules/supabase-production-migrations.mdc`**.
+When you add a migration under `supabase/migrations/` that creates or alters **tables/schema required** for the shipped feature, **apply it to production automatically** in the same task via Supabase MCP **`apply_migration`** (`project_id`: `hyycomvcaqxxvyrfupes`), then verify with **`list_tables`**. Sync code with **`--sync-only`** after the task; say **"deploy now"** for Vercel. Full protocol: **`.cursor/rules/supabase-production-migrations.mdc`**.
 
 ## Cursor Cloud environment
 
@@ -52,7 +46,7 @@ Cloud agents auto-start two terminals from **`.cursor/environment.json`**:
 1. **`vite`** — `npm run dev` on port **3001** (UI live; `/api` proxied to production).
 2. **`preview-tunnel`** — **`./scripts/cloud-preview-tunnel.sh`** prints a mobile preview URL. With **`CLOUDFLARE_TUNNEL_TOKEN`** + **`CLOUDFLARE_TUNNEL_HOSTNAME`** secrets, uses a **persistent** hostname (see **`docs/cloud-agent/persistent-preview-tunnel.md`**). Otherwise prints a ephemeral **`https://….trycloudflare.com`** URL.
 
-**Founder workflow:** open the **`preview-tunnel`** terminal (or read **`/tmp/cloud-preview-url.txt`**) and paste the URL on your phone. URL changes each agent session. Production is untouched until **"deploy now"**.
+**Founder workflow:** open the **`preview-tunnel`** terminal (or read **`/tmp/cloud-preview-url.txt`**) and paste the URL on your phone. URL changes each agent session. Production Vercel deploy waits for **"deploy now"** (`--deploy-now`).
 
 **Agent duty:** after starting work, share the mobile preview URL from the tunnel terminal in chat if the founder is on mobile.
 
