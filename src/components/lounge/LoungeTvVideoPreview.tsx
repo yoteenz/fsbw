@@ -2,7 +2,15 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import type { LoungeTvMediaState } from './loungeTvStreamingMedia';
 import { loungeTvGlassCqw } from './loungeTvResponsive';
 import { LOUNGE_TV_FONT_BOOK, LOUNGE_TV_FONT_MEDIUM, LOUNGE_TV_TEXT_WHITE } from './loungeTvTheme';
-import { applyLoungeTvMutedPlayback, pauseLoungeTvVideo, playLoungeTvMuted } from './loungeTvMutedPlayback';
+import {
+  applyLoungeTvDecorativeMotionPlayback,
+  applyLoungeTvMutedPlayback,
+  LOUNGE_TV_DECORATIVE_MOTION_ATTR,
+  loungeTvVideoMayPlayUserAudio,
+  pauseLoungeTvVideo,
+  playLoungeTvDecorativeMotion,
+  playLoungeTvMuted,
+} from './loungeTvMutedPlayback';
 
 export type LoungeTvVideoPreviewProps = {
   src?: string;
@@ -11,6 +19,8 @@ export type LoungeTvVideoPreviewProps = {
   active?: boolean;
   loop?: boolean;
   muted?: boolean;
+  /** Silent decorative loop — animation only; never joins audio-capable playback logic. */
+  decorativeMotion?: boolean;
   className?: string;
   ariaLabel?: string;
   objectFit?: 'cover' | 'contain';
@@ -31,6 +41,7 @@ export function LoungeTvVideoPreview({
   active = true,
   loop = true,
   muted = true,
+  decorativeMotion = false,
   ariaLabel = 'Video preview',
   objectFit = 'cover',
   className,
@@ -52,14 +63,18 @@ export function LoungeTvVideoPreview({
       setMediaState('paused');
       return;
     }
+    const useDecorative = decorativeMotion || (muted && !loungeTvVideoMayPlayUserAudio(video));
     try {
-      if (muted) {
+      if (useDecorative) {
+        await playLoungeTvDecorativeMotion(video);
+      } else if (muted) {
         await playLoungeTvMuted(video);
       } else {
         video.muted = false;
         video.defaultMuted = false;
         video.volume = 1;
         video.removeAttribute('muted');
+        video.removeAttribute(LOUNGE_TV_DECORATIVE_MOTION_ATTR);
         await video.play();
       }
       setMediaState('playing');
@@ -67,7 +82,7 @@ export function LoungeTvVideoPreview({
     } catch {
       setMediaState('paused');
     }
-  }, [active, muted, src]);
+  }, [active, decorativeMotion, muted, src]);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -89,6 +104,10 @@ export function LoungeTvVideoPreview({
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
+    if (decorativeMotion) {
+      applyLoungeTvDecorativeMotionPlayback(video);
+      return;
+    }
     if (muted) {
       applyLoungeTvMutedPlayback(video);
     } else {
@@ -96,8 +115,9 @@ export function LoungeTvVideoPreview({
       video.defaultMuted = false;
       video.volume = 1;
       video.removeAttribute('muted');
+      video.removeAttribute(LOUNGE_TV_DECORATIVE_MOTION_ATTR);
     }
-  }, [muted]);
+  }, [decorativeMotion, muted]);
 
   useEffect(() => {
     return () => {

@@ -115,6 +115,7 @@ const CardThumbnailPreview = memo(function CardThumbnailPreview({
         active={previewActive}
         loop
         muted
+        decorativeMotion
         ariaLabel={ariaLabel}
       />
     </div>

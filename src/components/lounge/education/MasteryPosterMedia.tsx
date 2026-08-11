@@ -1,6 +1,11 @@
 import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import type { MasteryTrackPresentation } from '../../../content/education/hierarchy/masteryTracks';
-import { applyLoungeTvMutedPlayback, pauseLoungeTvVideo, playLoungeTvMuted } from '../loungeTvMutedPlayback';
+import {
+  applyLoungeTvDecorativeMotionPlayback,
+  LOUNGE_TV_DECORATIVE_MOTION_ATTR,
+  pauseLoungeTvVideo,
+  playLoungeTvDecorativeMotion,
+} from '../loungeTvMutedPlayback';
 
 const MASTERY_POSTER_SCRIM =
   'linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.06) 34%, rgba(0,0,0,0.52) 62%, rgba(0,0,0,0.86) 100%)';
@@ -46,14 +51,15 @@ type MasteryPosterMediaProps = {
   track: MasteryTrackPresentation;
   /** Living loop when this card is highlighted (focus / touch drag-over). */
   motionActive?: boolean;
-  /** Learn browse — still-only; avoids `<video>.play()` hijacking phone/TV audio on iOS. */
+  /** When false, still-only (no decorative motion loop). */
   allowVideoMotion?: boolean;
   /** Top-row panels — scrim weighted for copy at the top edge. */
   metaAtTop?: boolean;
 };
 
 /**
- * Mastery collage media — still by default; muted loop only while the panel is highlighted.
+ * Mastery collage media — still by default; decorative motion loop only while highlighted.
+ * Motion uses the silent decorative path — never registered as audio-capable media.
  */
 export function MasteryPosterMedia({
   track,
@@ -91,19 +97,25 @@ export function MasteryPosterMedia({
     if (!video) return;
 
     setMotionPaintReady(false);
-    applyLoungeTvMutedPlayback(video);
+    applyLoungeTvDecorativeMotionPlayback(video);
 
-    const markReady = () => setMotionPaintReady(true);
+    const markReady = () => {
+      applyLoungeTvDecorativeMotionPlayback(video);
+      setMotionPaintReady(true);
+    };
     const onError = () => setMotionFailed(true);
+    const onMetadata = () => applyLoungeTvDecorativeMotionPlayback(video);
 
     video.addEventListener('loadeddata', markReady);
     video.addEventListener('canplay', markReady);
+    video.addEventListener('loadedmetadata', onMetadata);
     video.addEventListener('error', onError);
     video.load();
 
     return () => {
       video.removeEventListener('loadeddata', markReady);
       video.removeEventListener('canplay', markReady);
+      video.removeEventListener('loadedmetadata', onMetadata);
       video.removeEventListener('error', onError);
       pauseLoungeTvVideo(video);
     };
@@ -116,7 +128,7 @@ export function MasteryPosterMedia({
     }
     const video = videoRef.current;
     if (!video) return;
-    void playLoungeTvMuted(video).catch(() => setMotionFailed(true));
+    void playLoungeTvDecorativeMotion(video).catch(() => setMotionFailed(true));
   }, [shouldAnimate, motionPaintReady]);
 
   useEffect(() => {
@@ -158,6 +170,7 @@ export function MasteryPosterMedia({
         <video
           ref={videoRef}
           className="lounge-tv-mastery-poster-video"
+          {...{ [LOUNGE_TV_DECORATIVE_MOTION_ATTR]: 'true' }}
           src={animatedHeroUrl}
           muted
           loop
@@ -166,6 +179,7 @@ export function MasteryPosterMedia({
           disablePictureInPicture
           disableRemotePlayback
           tabIndex={-1}
+          aria-hidden
           style={{
             ...layerStyle,
             zIndex: 1,
