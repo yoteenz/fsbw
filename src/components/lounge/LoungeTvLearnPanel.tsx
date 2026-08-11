@@ -1,34 +1,30 @@
+import { useCallback, useLayoutEffect, useState } from 'react';
+import { pauseLoungeTvBrowseMedia } from './loungeTvMutedPlayback';
 import type { LoungeContentPack } from './loungeTvContentPack';
 import type { LoungeContentUnlock } from '../../utils/slayTicketHistoryDisplay';
 import { loungeTvGlassCqw } from './loungeTvResponsive';
-import { LOUNGE_TV_FONT_BOOK, LOUNGE_TV_FONT_MEDIUM, LOUNGE_TV_TEXT_GRAY, LOUNGE_TV_TEXT_WHITE } from './loungeTvTheme';
-import { getPublishedMasteriesWithSeasons } from '../../content/education';
+import { loungeTvFocusGlowIn, loungeTvFocusGlowOut } from './loungeTvFocusHandlers';
 import {
-  EDUCATION_PILLAR_RAILS,
+  LOUNGE_TV_BRAND_RED,
+  LOUNGE_TV_FONT_MEDIUM,
+} from './loungeTvTheme';
+import { MASTERY_PANEL_TYPE_TITLE_MINUS_1 } from './education/LearnMasterySelector';
+import {
   getSlayTipsForLearnRail,
   getCareLessonsForLearnRail,
-  CARE_LEARN_RAILS,
 } from '../../content/education';
-import { PSA_TODAY_LEARN_RAILS, getPsaTodayLearnRailEpisodes, PSATodayEpisodeRow } from './psa-today';
+import { PsaTodayLearnSection } from './education/PsaTodayLearnSection';
+import { PsaAnswersLearnSection } from './education/PsaAnswersLearnSection';
+import { ProductEducationLearnSection } from './education/ProductEducationLearnSection';
 import { CareLessonRow } from './care';
 import { SlayTipRow } from './slay-tips';
-import { LoungeTvContentRow } from './LoungeTvContentRow';
-import { academyPacksForLearningPath } from './loungeTvStreamingCatalog';
-import { LOUNGE_TV_SIDEBAR } from './loungeTvContent';
+import { LoungeTvCareLibraryPanel } from './LoungeTvCareLibraryPanel';
 import type { SlayTip, CareLesson } from '../../content/education/types';
-import type { PSATodayEpisode } from './psa-today/types';
-
-const LEARN_MASTERY_SLOTS = [
-  { id: 'lace-mastery', label: 'LACE MASTERY', masterySlug: 'lace-mastery' },
-  { id: 'care-mastery', label: 'CARE MASTERY', masterySlug: 'care-mastery' },
-  { id: 'styling-mastery', label: 'STYLING MASTERY', masterySlug: 'style-mastery' },
-  { id: 'baw-academy', label: 'BUILD-A-WIG ACADEMY', pathId: 'baw-academy' },
-] as const;
+import { LoungeTvSectionDivider } from './LoungeTvSectionDivider';
 
 type LoungeTvLearnPanelProps = {
   onSelectMastery: (masteryId: string) => void;
   onSelectPack: (pack: LoungeContentPack) => void;
-  onSelectPsaEpisode: (ep: PSATodayEpisode) => void;
   onSelectSlayTip: (tip: SlayTip) => void;
   onSelectCareLesson: (lesson: CareLesson) => void;
   onToggleSave?: (pack: LoungeContentPack) => void;
@@ -36,12 +32,50 @@ type LoungeTvLearnPanelProps = {
   unlocks?: LoungeContentUnlock[];
   careUnlockedSet: Set<string>;
   isCareUnlocked: (id: string) => boolean;
+  /** Whether Care Library destination is open (controlled by parent for back nav). */
+  careLibraryOpen?: boolean;
+  onCareLibraryOpenChange?: (open: boolean) => void;
+  onEngagementRequireSignIn?: () => void;
+  onEngagementOpenDiscussion?: (pack: LoungeContentPack) => void;
+  onEngagementOpenSlayTipDiscussion?: (tip: SlayTip) => void;
+  engagementToast?: (message: string) => void;
 };
+
+const CARE_LIBRARY_SUBTITLE = 'CARE EDUCATION PERSONALIZED TO THE HAIR YOU OWN.';
+const CARE_LIBRARY_EMPTY =
+  'CARE GUIDES UNLOCK WITH QUALIFYING DELIVERED HAIR PURCHASES.';
+
+function CareLibraryViewAllButton({ onClick }: { onClick: () => void }) {
+  return (
+    <button
+      type="button"
+      data-lounge-tv-focusable
+      data-lounge-tv-focus-id="learn-care-library-view-all"
+      onClick={onClick}
+      onFocusCapture={loungeTvFocusGlowIn}
+      onBlurCapture={loungeTvFocusGlowOut}
+      style={{
+        fontFamily: LOUNGE_TV_FONT_MEDIUM,
+        fontSize: MASTERY_PANEL_TYPE_TITLE_MINUS_1,
+        letterSpacing: '0.05em',
+        textTransform: 'uppercase',
+        color: LOUNGE_TV_BRAND_RED,
+        background: 'transparent',
+        border: 'none',
+        padding: `${loungeTvGlassCqw(0.45, 1, 2)} 0`,
+        marginBottom: '3px',
+        cursor: 'pointer',
+        flexShrink: 0,
+      }}
+    >
+      {'VIEW ALL >'}
+    </button>
+  );
+}
 
 export function LoungeTvLearnPanel({
   onSelectMastery,
   onSelectPack,
-  onSelectPsaEpisode,
   onSelectSlayTip,
   onSelectCareLesson,
   onToggleSave,
@@ -49,154 +83,99 @@ export function LoungeTvLearnPanel({
   unlocks,
   careUnlockedSet,
   isCareUnlocked,
+  careLibraryOpen: controlledCareLibraryOpen,
+  onCareLibraryOpenChange,
+  onEngagementRequireSignIn,
+  onEngagementOpenSlayTipDiscussion,
+  engagementToast,
 }: LoungeTvLearnPanelProps) {
-  const publishedMasteries = getPublishedMasteriesWithSeasons();
-  const sidebar = LOUNGE_TV_SIDEBAR.learn;
+  const [internalCareLibraryOpen, setInternalCareLibraryOpen] = useState(false);
+  const careLibraryOpen = controlledCareLibraryOpen ?? internalCareLibraryOpen;
+
+  const openCareLibrary = useCallback(() => {
+    if (onCareLibraryOpenChange) onCareLibraryOpenChange(true);
+    else setInternalCareLibraryOpen(true);
+  }, [onCareLibraryOpenChange]);
+
+  const closeCareLibrary = useCallback(() => {
+    if (onCareLibraryOpenChange) onCareLibraryOpenChange(false);
+    else setInternalCareLibraryOpen(false);
+  }, [onCareLibraryOpenChange]);
+
+  const libraryPreviewLessons = getCareLessonsForLearnRail('care-your-library', careUnlockedSet);
+
+  useLayoutEffect(() => {
+    pauseLoungeTvBrowseMedia();
+  }, []);
+
+  if (careLibraryOpen) {
+    return (
+      <LoungeTvCareLibraryPanel
+        onBack={closeCareLibrary}
+        onSelectCareLesson={onSelectCareLesson}
+        isCareUnlocked={isCareUnlocked}
+        careUnlockedSet={careUnlockedSet}
+      />
+    );
+  }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: loungeTvGlassCqw(2.5, 6, 12), width: '100%' }}>
-      <section data-lounge-tv-rail="learn-masteries">
-        <h2
-          style={{
-            margin: `0 0 ${loungeTvGlassCqw(1, 2.5, 5)}`,
-            fontFamily: LOUNGE_TV_FONT_MEDIUM,
-            fontSize: loungeTvGlassCqw(1.8, 4.2, 8.5),
-            color: LOUNGE_TV_TEXT_WHITE,
-            letterSpacing: '0.08em',
-          }}
-        >
-          MASTERIES
-        </h2>
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
-            gap: loungeTvGlassCqw(1, 2.5, 5),
-          }}
-        >
-          {LEARN_MASTERY_SLOTS.map((slot) => {
-            const masterySlug = 'masterySlug' in slot ? slot.masterySlug : undefined;
-            const pathId = 'pathId' in slot ? slot.pathId : undefined;
-            const mastery = masterySlug
-              ? publishedMasteries.find((m) => m.slug === masterySlug)
-              : undefined;
-            const bawPacks = pathId === 'baw-academy' ? academyPacksForLearningPath('baw-academy') : [];
-            const available = Boolean(mastery) || bawPacks.length > 0 || slot.id === 'baw-academy';
-            return (
-              <button
-                key={slot.id}
-                type="button"
-                data-lounge-tv-focusable
-                data-lounge-tv-focus-id={`learn-${slot.id}`}
-                disabled={!available}
-                onClick={() => {
-                  if (mastery) onSelectMastery(mastery.id);
-                  else if (bawPacks[0]) onSelectPack(bawPacks[0]);
-                }}
-                style={{
-                  textAlign: 'left',
-                  padding: loungeTvGlassCqw(1.2, 3, 6),
-                  minHeight: loungeTvGlassCqw(8, 18, 32),
-                  border: '1px solid rgba(255,255,255,0.14)',
-                  background: available ? 'rgba(255,255,255,0.04)' : 'rgba(255,255,255,0.02)',
-                  color: available ? LOUNGE_TV_TEXT_WHITE : LOUNGE_TV_TEXT_GRAY,
-                  cursor: mastery ? 'pointer' : 'default',
-                  textTransform: 'uppercase',
-                  fontFamily: LOUNGE_TV_FONT_MEDIUM,
-                  fontSize: loungeTvGlassCqw(1.5, 3.5, 7),
-                  lineHeight: 1.25,
-                  opacity: available ? 1 : 0.55,
-                }}
-              >
-                {slot.label}
-                {!mastery && slot.id !== 'baw-academy' ? (
-                  <span
-                    style={{
-                      display: 'block',
-                      marginTop: loungeTvGlassCqw(0.5, 1.2, 2.4),
-                      fontFamily: LOUNGE_TV_FONT_BOOK,
-                      fontSize: loungeTvGlassCqw(1.1, 2.5, 5),
-                      color: LOUNGE_TV_TEXT_GRAY,
-                    }}
-                  >
-                    COMING SOON
-                  </span>
-                ) : null}
-              </button>
-            );
-          })}
-        </div>
-      </section>
+    <div
+      className="lounge-tv-learn-panel"
+      style={{ display: 'flex', flexDirection: 'column', gap: loungeTvGlassCqw(2, 4.5, 9), width: '100%' }}
+    >
+      <PsaTodayLearnSection onSelectMastery={onSelectMastery} />
 
-      {PSA_TODAY_LEARN_RAILS.map((rail) => (
-        <div key={rail.id} data-lounge-tv-rail={`learn-${rail.id}`}>
-          <PSATodayEpisodeRow
-            title={rail.id === 'psa-today' ? 'PSA TODAY' : rail.title}
-            episodes={getPsaTodayLearnRailEpisodes(rail.id)}
-            onSelect={onSelectPsaEpisode}
-            emptyLabel={rail.id === 'psa-today' ? undefined : 'LESSONS COMING SOON.'}
-          />
-        </div>
-      ))}
+      <LoungeTvSectionDivider
+        marginTop={loungeTvGlassCqw(1.2, 3, 6)}
+        marginBottom={loungeTvGlassCqw(1.5, 3.5, 7)}
+      />
 
-      {CARE_LEARN_RAILS.map((rail) => {
-        const lessons = getCareLessonsForLearnRail(rail.id, careUnlockedSet);
-        if (rail.id !== 'care-your-care-guides' && rail.id !== 'care-your-library' && lessons.length === 0) {
-          return null;
-        }
-        return (
-          <div key={rail.id} data-lounge-tv-rail={`learn-${rail.id}`}>
-            <CareLessonRow
-              title={rail.title}
-              lessons={lessons}
-              onSelect={onSelectCareLesson}
-              isUnlocked={isCareUnlocked}
-              emptyLabel={
-                rail.id === 'care-your-care-guides' || rail.id === 'care-your-library'
-                  ? 'YOUR CARE GUIDES UNLOCK WITH QUALIFYING DELIVERED HAIR PURCHASES.'
-                  : undefined
-              }
-            />
-          </div>
-        );
-      })}
+      <SlayTipRow
+        title="SLAY TIPS"
+        tips={getSlayTipsForLearnRail('slay-tips')}
+        onSelect={onSelectSlayTip}
+        unlocks={unlocks}
+        isUnlocked={isUnlocked}
+        railId="slay-tips"
+        embeddedSection
+        onEngagementRequireSignIn={onEngagementRequireSignIn}
+        onEngagementOpenSlayTipDiscussion={onEngagementOpenSlayTipDiscussion}
+        engagementToast={engagementToast}
+      />
 
-      <div data-lounge-tv-rail="learn-slay-tips">
-        <SlayTipRow
-          title="SLAY TIPS"
-          tips={getSlayTipsForLearnRail('slay-tips')}
-          onSelect={onSelectSlayTip}
-          unlocks={unlocks}
-          isUnlocked={isUnlocked}
-        />
-      </div>
+      <LoungeTvSectionDivider />
 
-      {EDUCATION_PILLAR_RAILS.filter((rail) => rail.id !== 'care').map((rail) => (
-        <div key={rail.id} data-lounge-tv-rail={`learn-pillar-${rail.id}`}>
-          <SlayTipRow
-            title={rail.title}
-            tips={getSlayTipsForLearnRail(rail.id)}
-            onSelect={onSelectSlayTip}
-            emptyLabel="SLAY TIPS COMING SOON."
-            unlocks={unlocks}
-            isUnlocked={isUnlocked}
-          />
-        </div>
-      ))}
+      <PsaAnswersLearnSection
+        onSelect={onSelectPack}
+        isUnlocked={isUnlocked}
+        unlocks={unlocks}
+        onEngagementRequireSignIn={onEngagementRequireSignIn}
+        engagementToast={engagementToast}
+      />
 
-      {sidebar.map((section) => (
-        <LoungeTvContentRow
-          key={section.id}
-          railId={`learn-path-${section.id}`}
-          title={section.label}
-          packs={academyPacksForLearningPath(section.id)}
-          onSelect={onSelectPack}
-          onToggleSave={onToggleSave}
-          isUnlocked={isUnlocked}
-          unlocks={unlocks}
-          emptyLabel="LESSONS COMING SOON."
-        />
-      ))}
+      <LoungeTvSectionDivider />
+
+      <ProductEducationLearnSection
+        onSelectPack={onSelectPack}
+        onToggleSave={onToggleSave}
+        onOpenCareLibrary={openCareLibrary}
+      />
+
+      <LoungeTvSectionDivider />
+
+      <CareLessonRow
+        railId="learn-care-library-preview"
+        title="CARE LIBRARY"
+        subtitle={CARE_LIBRARY_SUBTITLE}
+        lessons={libraryPreviewLessons}
+        onSelect={onSelectCareLesson}
+        isUnlocked={isCareUnlocked}
+        emptyLabel={CARE_LIBRARY_EMPTY}
+        action={<CareLibraryViewAllButton onClick={openCareLibrary} />}
+        displayMode="rail"
+        embeddedSection
+      />
     </div>
   );
 }

@@ -234,6 +234,7 @@ const LOUNGE_TV_CONTENT_PACKS_RAW: LoungeContentPack[] = [
     episodeTitle: 'TINTING YOUR LACE',
     isTrending: true,
     featuredRows: ['trending', 'recently-added'],
+    releaseDate: '2026-07-12',
     article: {
       intro: 'MATCH LACE TO YOUR UNDERTONE SO EDGES DISAPPEAR ON CAMERA AND IN NATURAL LIGHT.',
       takeaways: ['TEST ON A SCRAP FIRST', 'BUILD COLOR IN LAYERS', 'LET DRY FULLY BEFORE INSTALL'],
@@ -268,6 +269,7 @@ const LOUNGE_TV_CONTENT_PACKS_RAW: LoungeContentPack[] = [
     episodeTitle: 'BLEACHING YOUR KNOTS',
     isRecommended: true,
     featuredRows: ['psa-recommends', 'recently-added'],
+    releaseDate: '2026-07-05',
     article: {
       intro: 'CONTROLLED BLEACHING OPENS THE LACE WITHOUT DAMAGING FIBERS.',
       takeaways: ['WATCH THE CLOCK', 'RINSE THOROUGHLY', 'NEUTRALIZE AFTER BLEACH'],
@@ -301,6 +303,7 @@ const LOUNGE_TV_CONTENT_PACKS_RAW: LoungeContentPack[] = [
     episode: 4,
     episodeTitle: 'PLUCKING YOUR LACE',
     featuredRows: ['premium', 'members-favorites'],
+    releaseDate: '2026-07-15',
     isPremium: false,
     article: {
       intro: 'STRATEGIC PLUCKING CREATES A GRADUATED HAIRLINE THAT MIMICS NATURAL GROWTH.',
@@ -329,6 +332,7 @@ const LOUNGE_TV_CONTENT_PACKS_RAW: LoungeContentPack[] = [
     fullVideo: videoForPack('melting-lace'),
     learningPathId: 'install-pro',
     featuredRows: ['trending'],
+    releaseDate: '2026-07-19',
     article: {
       intro: 'MELTING IS WHERE LACE BECOMES SKIN. PRESSURE, HEAT, AND TIMING MATTER.',
       takeaways: ['PREP SKIN FIRST', 'USE THIN ADHESIVE LAYERS', 'PRESS — DO NOT SLIDE'],
@@ -382,6 +386,7 @@ const LOUNGE_TV_CONTENT_PACKS_RAW: LoungeContentPack[] = [
     fullVideo: videoForPack('cleaning-lace'),
     learningPathId: 'hair-care',
     featuredRows: ['new'],
+    releaseDate: '2026-08-02',
     article: {
       intro: 'GENTLE CLEANSING EXTENDS THE LIFE OF YOUR LACE AND KEEPS TINT TRUE.',
       takeaways: ['DETANGLE FIRST', 'USE SULFATE-FREE CLEANSER', 'AIR DRY ON A STAND'],
@@ -395,8 +400,8 @@ const LOUNGE_TV_CONTENT_PACKS_RAW: LoungeContentPack[] = [
     id: 'styling-layers-demo',
     title: 'LAYERED STYLING BASICS',
     subtitle: 'BUILD SOFT LAYERS THAT FRAME THE FACE WITHOUT HIDING THE LACE LINE.',
-    category: 'Styling Academy',
-    series: 'Styling Academy',
+    category: 'STYLING',
+    series: 'STYLING',
     difficulty: 'INTERMEDIATE',
     runtime: '6 MIN',
     readTime: '4 MIN',
@@ -435,6 +440,7 @@ const LOUNGE_TV_CONTENT_PACKS_RAW: LoungeContentPack[] = [
     fullVideo: videoForPack('color-lab-swatches'),
     learningPathId: 'color-lab',
     featuredRows: ['premium'],
+    releaseDate: '2026-06-18',
     article: {
       intro: 'UNDERTONE IS EVERYTHING. TEST SWATCHES IN DAYLIGHT AND INDOOR LIGHT.',
       takeaways: ['IDENTIFY UNDERTONE', 'TEST TWO SWATCHES', 'DOCUMENT YOUR FORMULA'],
@@ -446,10 +452,11 @@ const LOUNGE_TV_CONTENT_PACKS_RAW: LoungeContentPack[] = [
   },
   {
     id: 'baw-academy-intro',
-    title: 'BUILD-A-WIG ACADEMY — INTRO',
+    title: 'BUILD-A-WIG — PRODUCT WALKTHROUGH',
     subtitle: 'HOW TO USE BUILD-A-WIG OPTIONS TO PREVIEW YOUR FINAL LOOK.',
-    category: 'Build-A-Wig Academy',
-    series: 'Build-A-Wig Academy',
+    category: 'Product Education',
+    series: 'PSA TODAY',
+    originalSeries: 'PRODUCT EDUCATION',
     difficulty: 'BEGINNER',
     runtime: '5 MIN',
     readTime: '3 MIN',
@@ -460,8 +467,9 @@ const LOUNGE_TV_CONTENT_PACKS_RAW: LoungeContentPack[] = [
     heroImage: '/assets/NOIR/blanco-thumb.png',
     previewVideo: videoForPack('baw-academy-intro'),
     fullVideo: videoForPack('baw-academy-intro'),
-    learningPathId: 'baw-academy',
+    learningPathId: 'product-education',
     featuredRows: ['psa-recommends'],
+    releaseDate: '2026-06-22',
     article: {
       intro: 'BUILD-A-WIG LETS YOU CUSTOMIZE LENGTH, DENSITY, COLOR, AND STYLING BEFORE YOU BUY.',
       takeaways: ['START WITH A UNIT', 'CONFIRM EACH STEP', 'SAVE YOUR BUILD'],
@@ -488,6 +496,7 @@ const LOUNGE_TV_CONTENT_PACKS_RAW: LoungeContentPack[] = [
     previewVideo: videoForPack('psa-welcome-frontal-slayer'),
     fullVideo: videoForPack('psa-welcome-frontal-slayer'),
     featuredRows: ['psa-recommends', 'members-favorites'],
+    releaseDate: '2026-06-01',
   },
   {
     id: 'brand-film-noir',
@@ -506,6 +515,7 @@ const LOUNGE_TV_CONTENT_PACKS_RAW: LoungeContentPack[] = [
     featuredPremiere: 'brand-film',
     host: 'PSA',
     featuredRows: ['members-favorites'],
+    releaseDate: '2026-05-20',
   },
   {
     id: 'trend-report-summer',
@@ -558,6 +568,7 @@ const LOUNGE_TV_CONTENT_PACKS_RAW: LoungeContentPack[] = [
     host: 'PSA',
     justAdded: true,
     featuredRows: ['new', 'recently-added'],
+    releaseDate: '2026-07-08',
     article: {
       intro: 'SOFT WAVE DELIVERS MOVEMENT WITHOUT WEIGHT.',
       takeaways: ['LIGHT BODY', 'EASY STYLING', 'HD-FRIENDLY SHEEN'],
@@ -680,6 +691,7 @@ const LOUNGE_TV_CONTENT_PACKS_RAW: LoungeContentPack[] = [
     ticketCost: 1,
     membersFavorite: true,
     featuredRows: ['members-favorites'],
+    releaseDate: '2026-07-02',
   },
   {
     id: 'luxury-hair-science-fiber-care',
@@ -707,6 +719,7 @@ const LOUNGE_TV_CONTENT_PACKS_RAW: LoungeContentPack[] = [
     subtitle: 'YOUR TOP LACE QUESTIONS IN ONE LUXURY FAQ EPISODE.',
     category: 'PSA Answers',
     originalSeries: 'PSA ANSWERS',
+    episode: 1,
     host: 'PSA',
     contentFormat: 'both',
     runtime: '4 MIN',
@@ -720,6 +733,7 @@ const LOUNGE_TV_CONTENT_PACKS_RAW: LoungeContentPack[] = [
     isFreePreview: true,
     featuredPremiere: 'new-this-week',
     featuredRows: ['new', 'recently-added'],
+    releaseDate: '2026-07-10',
     article: {
       intro: 'SHORT ANSWERS — NO GATEKEEPING.',
       takeaways: ['BUFFER LACE', 'TINT BEFORE BLEACH WHEN YOU CAN', 'MELT WITH PATIENCE'],
@@ -745,6 +759,7 @@ const LOUNGE_TV_CONTENT_PACKS_RAW: LoungeContentPack[] = [
     ticketCost: 0,
     isFreePreview: true,
     featuredRows: ['new'],
+    releaseDate: '2026-07-04',
   },
 ];
 
@@ -786,14 +801,19 @@ export function contentPacksForFeaturedRow(
   return LOUNGE_TV_CONTENT_PACKS.filter((p) => p.featuredRows?.includes(row));
 }
 
+export function contentPackPrimaryRuntimeForCard(pack: LoungeContentPack): string | null {
+  const format = resolveContentPackFormat(pack);
+  if (format === 'READ') return pack.readTime ?? null;
+  if (pack.runtime) return pack.runtime;
+  if (format === 'BOTH' && pack.readTime) return pack.readTime;
+  return pack.readTime ?? pack.runtime ?? null;
+}
+
 export function contentPackRuntimeOrRead(pack: LoungeContentPack): string {
+  const primary = contentPackPrimaryRuntimeForCard(pack);
+  if (primary) return primary;
   const badge = resolveContentPackFormat(pack);
-  if (badge === 'READ' && pack.readTime) return pack.readTime;
-  if (badge === 'WATCH' && pack.runtime) return pack.runtime;
-  if (badge === 'BOTH') {
-    if (pack.runtime && pack.readTime) return `${pack.runtime} · ${pack.readTime}`;
-    return pack.runtime ?? pack.readTime ?? '';
-  }
+  if (badge === 'BOTH' && pack.runtime && pack.readTime) return `${pack.runtime} · ${pack.readTime}`;
   return pack.runtime ?? pack.readTime ?? '';
 }
 

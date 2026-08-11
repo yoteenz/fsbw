@@ -1,159 +1,336 @@
-import type { SlayTip } from '../../../content/education/types';
-import { loungeTvGlassCqw } from '../loungeTvResponsive';
 import {
-  LOUNGE_TV_BRAND_RED,
-  LOUNGE_TV_FONT_BOOK,
-  LOUNGE_TV_FONT_MEDIUM,
-  LOUNGE_TV_TEXT_GRAY,
-  LOUNGE_TV_TEXT_WHITE,
-} from '../loungeTvTheme';
+  useCallback,
+  type CSSProperties,
+  type KeyboardEvent,
+  type MouseEvent,
+} from 'react';
+import type { SlayTip } from '../../../content/education/types';
+import type { LoungeEngagementSummary } from '../../../utils/loungeEngagementTypes';
+import type { LoungeContentUnlock } from '../../../utils/slayTicketHistoryDisplay';
+import { loungeTvGlassCqw } from '../loungeTvResponsive';
+import { AcrylicLikeControl } from '../AcrylicLikeControl';
+import { LOUNGE_TV_TICKET_LOCK_WATERMARK_SRC } from '../../../constants/slayTicketAssets';
+import { slayTipAccessGranted, slayTipUnlockCost } from './slayTipAccess';
+import { slayTipPreviewCopy, slayTipPublicTitle } from './slayTipContent';
+import {
+  slayTipImageCropForTip,
+  slayTipImageScaleForTip,
+  slayTipPinMetaLine,
+  slayTipPinGridSpansTwoRows,
+  type SlayTipPinArchetype,
+} from './slayTipDiscoveryMeta';
+import { LoungeEngagementMetaRow } from '../engagement/LoungeEngagementMetaRow';
+
+export type SlayTipCardVariant = 'discovery' | 'rail';
 
 type SlayTipCardProps = {
   tip: SlayTip;
   onSelect: (tip: SlayTip) => void;
-  progressLabel?: string;
-  unlocked?: boolean;
+  unlocks?: LoungeContentUnlock[];
+  isUnlocked?: (contentId: string) => boolean;
+  variant?: SlayTipCardVariant;
+  pinArchetype?: SlayTipPinArchetype;
+  pinIndex?: number;
+  pinGridPlacement?: CSSProperties;
+  engagementSummary?: LoungeEngagementSummary;
+  engagementHelpfulActive?: boolean;
+  engagementHelpfulPending?: boolean;
+  onEngagementHelpful?: () => void;
+  onEngagementComments?: () => void;
 };
 
-/** Scrapbook-style card — visually distinct from PSA Today video tiles. */
-export function SlayTipCard({ tip, onSelect, progressLabel, unlocked }: SlayTipCardProps) {
-  const cover = tip.thumbnailUrl ?? tip.coverImageUrl;
-
+function isSlayTipLikeTarget(target: EventTarget | null): boolean {
   return (
-    <button
-      type="button"
-      data-lounge-tv-focusable
-      onClick={() => onSelect(tip)}
-      aria-label={tip.title}
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        flex: `0 0 ${loungeTvGlassCqw(20, 46, 78)}`,
-        width: loungeTvGlassCqw(20, 46, 78),
-        padding: 0,
-        border: 'none',
-        background: 'transparent',
-        cursor: 'pointer',
-        textAlign: 'left',
-        scrollSnapAlign: 'start',
-        textTransform: 'uppercase',
-      }}
+    target instanceof Element &&
+    Boolean(target.closest('.lounge-tv-slay-tip-like, [data-lounge-engagement-meta]'))
+  );
+}
+
+function SlayTipPinMedia({
+  cover,
+  crop,
+  scale,
+  archetype,
+}: {
+  cover?: string;
+  crop: string;
+  scale: number;
+  archetype: SlayTipPinArchetype;
+}) {
+  return (
+    <span
+      className={`lounge-tv-slay-tip-pin__media lounge-tv-slay-tip-pin__media--${archetype}`}
+      aria-hidden
     >
-      <span
-        style={{
-          position: 'relative',
-          display: 'block',
-          width: '100%',
-          aspectRatio: '3 / 4',
-          overflow: 'hidden',
-          background: '#141414',
-          border: '1px solid rgba(255,255,255,0.14)',
-          boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.06)',
-        }}
-      >
-        {cover ? (
-          <img
-            src={cover}
-            alt=""
-            draggable={false}
-            style={{
-              width: '100%',
-              height: '100%',
-              objectFit: 'cover',
-              display: 'block',
-              filter: 'contrast(1.02) saturate(0.92)',
-            }}
+      {cover ? (
+        <img
+          src={cover}
+          alt=""
+          draggable={false}
+          className="lounge-tv-slay-tip-pin__image"
+          style={
+            {
+              objectPosition: crop,
+              '--pin-image-scale': scale,
+            } as CSSProperties
+          }
+          loading="lazy"
+        />
+      ) : (
+        <span className="lounge-tv-slay-tip-pin__placeholder" />
+      )}
+      <span className="lounge-tv-slay-tip-pin__veil" />
+      <span className="lounge-tv-slay-tip-pin__chrome" aria-hidden />
+    </span>
+  );
+}
+
+function SlayTipPinAccess({
+  tip,
+  unlocked,
+  unlocks,
+  compact = false,
+}: {
+  tip: SlayTip;
+  unlocked: boolean;
+  unlocks?: LoungeContentUnlock[];
+  compact?: boolean;
+}) {
+  if (tip.comingSoon) {
+    return <span className="lounge-tv-slay-tip-pin__access">COMING SOON</span>;
+  }
+  if (tip.slayTicketCost <= 0 || unlocked) {
+    return compact ? null : <span className="lounge-tv-slay-tip-pin__access lounge-tv-slay-tip-pin__access--free">FREE</span>;
+  }
+  const cost = slayTipUnlockCost(tip, unlocks);
+  return (
+    <span className="lounge-tv-slay-tip-pin__access lounge-tv-slay-tip-pin__access--ticket">
+      <img src={LOUNGE_TV_TICKET_LOCK_WATERMARK_SRC} alt="" aria-hidden draggable={false} />
+      <span>{cost}</span>
+    </span>
+  );
+}
+
+function SlayTipPinFocusLayer({
+  tip,
+  title,
+  teaser,
+  unlocked,
+  unlocks,
+  engagementSummary,
+  engagementHelpfulActive,
+  engagementHelpfulPending,
+  onEngagementHelpful,
+  onEngagementComments,
+}: {
+  tip: SlayTip;
+  title: string;
+  teaser: string | null;
+  unlocked: boolean;
+  unlocks?: LoungeContentUnlock[];
+  engagementSummary?: LoungeEngagementSummary;
+  engagementHelpfulActive?: boolean;
+  engagementHelpfulPending?: boolean;
+  onEngagementHelpful?: () => void;
+  onEngagementComments?: () => void;
+}) {
+  return (
+    <span className="lounge-tv-slay-tip-pin__focus-layer" aria-hidden>
+      {teaser ? <span className="lounge-tv-slay-tip-pin__teaser">{teaser.toUpperCase()}</span> : null}
+      {!unlocked && tip.slayTicketCost > 0 && !tip.comingSoon ? (
+        <span className="lounge-tv-slay-tip-pin__ticket lounge-tv-slay-tip-pin__ticket--cost">
+          <img src={LOUNGE_TV_TICKET_LOCK_WATERMARK_SRC} alt="" aria-hidden draggable={false} />
+          <span>
+            {slayTipUnlockCost(tip, unlocks)} SLAY TICKET
+            {slayTipUnlockCost(tip, unlocks) === 1 ? '' : 'S'}
+          </span>
+        </span>
+      ) : null}
+      <span className="lounge-tv-slay-tip-pin__cta">VIEW TIP {'>'}</span>
+      {onEngagementHelpful || onEngagementComments ? (
+        <span className="lounge-tv-slay-tip-pin__engagement">
+          <LoungeEngagementMetaRow
+            contentTitle={title}
+            summary={engagementSummary}
+            helpfulActive={engagementHelpfulActive}
+            helpfulPending={engagementHelpfulPending}
+            onHelpfulClick={onEngagementHelpful ? () => onEngagementHelpful() : undefined}
+            onCommentsClick={onEngagementComments ? () => onEngagementComments() : undefined}
+          />
+        </span>
+      ) : null}
+    </span>
+  );
+}
+
+/** Editorial pin — borderless image-first Slay Tip for Learn discovery board. */
+export function SlayTipCard({
+  tip,
+  onSelect,
+  unlocks,
+  isUnlocked,
+  variant = 'discovery',
+  pinArchetype = 'standard',
+  pinIndex = 0,
+  pinGridPlacement,
+  engagementSummary,
+  engagementHelpfulActive = false,
+  engagementHelpfulPending = false,
+  onEngagementHelpful,
+  onEngagementComments,
+}: SlayTipCardProps) {
+  const cover = tip.thumbnailUrl ?? tip.coverImageUrl;
+  const title = slayTipPublicTitle(tip);
+  const teaser = slayTipPreviewCopy(tip);
+  const unlocked = slayTipAccessGranted(tip, unlocks, isUnlocked);
+  const isRail = variant === 'rail';
+  const crop = slayTipImageCropForTip(tip, pinIndex, pinArchetype);
+  const scale = slayTipImageScaleForTip(tip);
+  const metaLine = slayTipPinMetaLine(tip);
+
+  const handleActivate = useCallback(
+    (e: MouseEvent<HTMLDivElement>) => {
+      if (isSlayTipLikeTarget(e.target)) return;
+      onSelect(tip);
+    },
+    [onSelect, tip],
+  );
+
+  const handleKeyDown = useCallback(
+    (e: KeyboardEvent<HTMLDivElement>) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        onSelect(tip);
+      }
+    },
+    [onSelect, tip],
+  );
+
+  const focusLayer = (
+    <SlayTipPinFocusLayer
+      tip={tip}
+      title={title}
+      teaser={teaser}
+      unlocked={unlocked}
+      unlocks={unlocks}
+      engagementSummary={engagementSummary}
+      engagementHelpfulActive={engagementHelpfulActive}
+      engagementHelpfulPending={engagementHelpfulPending}
+      onEngagementHelpful={onEngagementHelpful}
+      onEngagementComments={onEngagementComments}
+    />
+  );
+
+  if (isRail) {
+    return (
+      <div className="lounge-tv-slay-tip-discovery-wrap lounge-tv-slay-tip-discovery-wrap--rail">
+        <div
+          role="button"
+          tabIndex={0}
+          data-lounge-tv-focusable
+          data-lounge-tv-focus-id={tip.id}
+          className="lounge-tv-slay-tip-pin lounge-tv-slay-tip-pin--rail"
+          aria-label={`Open Slay Tip: ${title}`}
+          onClick={handleActivate}
+          onKeyDown={handleKeyDown}
+        >
+          <SlayTipPinMedia cover={cover} crop={crop} scale={scale} archetype="standard" />
+          <span className="lounge-tv-slay-tip-pin__copy">
+            <span className="lounge-tv-slay-tip-pin__title">{title}</span>
+            <span className="lounge-tv-slay-tip-pin__meta">{metaLine}</span>
+          </span>
+        </div>
+        {onEngagementHelpful ? (
+          <AcrylicLikeControl
+            liked={engagementHelpfulActive}
+            pending={engagementHelpfulPending}
+            glyphSize={loungeTvGlassCqw(1.1, 2.5, 5)}
+            hitSize={loungeTvGlassCqw(2.8, 6.5, 13)}
+            data-lounge-tv-focusable
+            className="lounge-tv-slay-tip-like"
+            ariaLabel={
+              engagementHelpfulActive ? `Unlike ${title}` : `Like ${title}`
+            }
+            onClick={() => onEngagementHelpful()}
           />
         ) : null}
-        <span
-          style={{
-            position: 'absolute',
-            top: loungeTvGlassCqw(0.45, 1, 2),
-            left: loungeTvGlassCqw(0.45, 1, 2),
-            fontFamily: LOUNGE_TV_FONT_MEDIUM,
-            fontSize: loungeTvGlassCqw(0.85, 1.9, 3.8),
-            letterSpacing: '0.08em',
-            color: LOUNGE_TV_TEXT_WHITE,
-            background: 'rgba(0,0,0,0.72)',
-            padding: `${loungeTvGlassCqw(0.2, 0.5, 1)} ${loungeTvGlassCqw(0.35, 0.85, 1.7)}`,
-          }}
-        >
-          SLAY TIP
-        </span>
-        {tip.comingSoon ? (
-          <span
-            style={{
-              position: 'absolute',
-              bottom: loungeTvGlassCqw(0.45, 1, 2),
-              left: loungeTvGlassCqw(0.45, 1, 2),
-              fontFamily: LOUNGE_TV_FONT_MEDIUM,
-              fontSize: loungeTvGlassCqw(0.85, 1.9, 3.8),
-              color: LOUNGE_TV_BRAND_RED,
-              background: 'rgba(0,0,0,0.72)',
-              padding: `${loungeTvGlassCqw(0.2, 0.5, 1)} ${loungeTvGlassCqw(0.35, 0.85, 1.7)}`,
-            }}
-          >
-            COMING SOON
-          </span>
-        ) : null}
-        {unlocked ? (
-          <span
-            aria-hidden
-            style={{
-              position: 'absolute',
-              top: loungeTvGlassCqw(0.45, 1, 2),
-              right: loungeTvGlassCqw(0.45, 1, 2),
-              fontFamily: LOUNGE_TV_FONT_MEDIUM,
-              fontSize: loungeTvGlassCqw(0.85, 1.9, 3.8),
-              color: LOUNGE_TV_BRAND_RED,
-            }}
-          >
-            ✓
-          </span>
-        ) : null}
-        {progressLabel ? (
-          <span
-            style={{
-              position: 'absolute',
-              bottom: loungeTvGlassCqw(0.45, 1, 2),
-              right: loungeTvGlassCqw(0.45, 1, 2),
-              fontFamily: LOUNGE_TV_FONT_BOOK,
-              fontSize: loungeTvGlassCqw(0.75, 1.7, 3.4),
-              color: LOUNGE_TV_TEXT_GRAY,
-              background: 'rgba(0,0,0,0.72)',
-              padding: `${loungeTvGlassCqw(0.15, 0.4, 0.8)} ${loungeTvGlassCqw(0.3, 0.7, 1.4)}`,
-            }}
-          >
-            {progressLabel}
-          </span>
-        ) : null}
-      </span>
-      <span
-        style={{
-          display: 'block',
-          paddingTop: loungeTvGlassCqw(0.5, 1.2, 2.4),
-          fontFamily: LOUNGE_TV_FONT_MEDIUM,
-          fontSize: loungeTvGlassCqw(1.05, 2.4, 4.8),
-          lineHeight: 1.25,
-          color: LOUNGE_TV_TEXT_WHITE,
-        }}
+      </div>
+    );
+  }
+
+  const isOverlayPin =
+    pinArchetype === 'hero' ||
+    pinArchetype === 'detail' ||
+    pinArchetype === 'portrait' ||
+    pinArchetype === 'stack' ||
+    pinArchetype === 'duo';
+  const isFooterPin = pinArchetype === 'standard';
+  const isBodyPin = pinArchetype === 'compact' || pinArchetype === 'micro';
+  const heroSpansTwoRows = pinArchetype === 'hero' && slayTipPinGridSpansTwoRows(pinIndex);
+
+  return (
+    <div
+      className={`lounge-tv-slay-tip-pin-wrap lounge-tv-slay-tip-pin-wrap--${pinArchetype}${heroSpansTwoRows ? ' lounge-tv-slay-tip-pin-wrap--band-hero' : ''}`}
+      style={pinGridPlacement}
+    >
+      <div
+        role="button"
+        tabIndex={0}
+        data-lounge-tv-focusable
+        data-lounge-tv-focus-id={tip.id}
+        className={`lounge-tv-slay-tip-pin lounge-tv-slay-tip-pin--${pinArchetype}${heroSpansTwoRows ? ' lounge-tv-slay-tip-pin--band-hero' : ''}`}
+        aria-label={`Open Slay Tip: ${title}`}
+        onClick={handleActivate}
+        onKeyDown={handleKeyDown}
       >
-        {tip.title}
-      </span>
-      <span
-        style={{
-          fontFamily: LOUNGE_TV_FONT_BOOK,
-          fontSize: loungeTvGlassCqw(0.95, 2.1, 4.2),
-          color: LOUNGE_TV_TEXT_GRAY,
-          marginTop: loungeTvGlassCqw(0.25, 0.6, 1.2),
-          lineHeight: 1.35,
-        }}
-      >
-        {String(tip.pillar).toUpperCase()}
-        {tip.slayTicketCost > 0
-          ? ` · ${tip.slayTicketCost} SLAY TICKET${tip.slayTicketCost === 1 ? '' : 'S'}`
-          : ' · FREE'}
-      </span>
-    </button>
+        <SlayTipPinMedia cover={cover} crop={crop} scale={scale} archetype={pinArchetype} />
+
+        {isOverlayPin ? (
+          <span className="lounge-tv-slay-tip-pin__copy lounge-tv-slay-tip-pin__copy--overlay">
+            <span className="lounge-tv-slay-tip-pin__title">{title}</span>
+            <span className="lounge-tv-slay-tip-pin__meta">{metaLine}</span>
+            <SlayTipPinAccess tip={tip} unlocked={unlocked} unlocks={unlocks} />
+            {focusLayer}
+          </span>
+        ) : null}
+
+        {isFooterPin ? (
+          <>
+            <span className="lounge-tv-slay-tip-pin__footer">
+              <span className="lounge-tv-slay-tip-pin__title">{title}</span>
+              <span className="lounge-tv-slay-tip-pin__meta">{metaLine}</span>
+              <SlayTipPinAccess tip={tip} unlocked={unlocked} unlocks={unlocks} />
+            </span>
+            {focusLayer}
+          </>
+        ) : null}
+
+        {isBodyPin ? (
+          <>
+            <span className={`lounge-tv-slay-tip-pin__body lounge-tv-slay-tip-pin__body--${pinArchetype}`}>
+              <span className="lounge-tv-slay-tip-pin__title">{title}</span>
+              <span className="lounge-tv-slay-tip-pin__meta">{metaLine}</span>
+              <SlayTipPinAccess tip={tip} unlocked={unlocked} unlocks={unlocks} compact={pinArchetype === 'micro'} />
+            </span>
+            {focusLayer}
+          </>
+        ) : null}
+      </div>
+
+      {onEngagementHelpful ? (
+        <AcrylicLikeControl
+          liked={engagementHelpfulActive}
+          pending={engagementHelpfulPending}
+          glyphSize={loungeTvGlassCqw(1.05, 2.4, 4.8)}
+          hitSize={loungeTvGlassCqw(2.6, 6, 12)}
+          data-lounge-tv-focusable
+          className="lounge-tv-slay-tip-like"
+          ariaLabel={
+            engagementHelpfulActive ? `Unlike ${title}` : `Like ${title}`
+          }
+          onClick={() => onEngagementHelpful()}
+        />
+      ) : null}
+    </div>
   );
 }

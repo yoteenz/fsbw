@@ -10,6 +10,14 @@ function isPrintScreenKey(e: KeyboardEvent): boolean {
   );
 }
 
+function isEditableFieldFocused(): boolean {
+  const el = document.activeElement;
+  if (!el || !(el instanceof HTMLElement)) return false;
+  const tag = el.tagName;
+  if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return true;
+  return el.isContentEditable;
+}
+
 /** Heuristic: iOS/Android may shrink visual viewport when system screen capture is active. */
 function viewportSuggestsExternalCapture(): boolean {
   if (typeof window === 'undefined') return false;
@@ -93,15 +101,33 @@ export function useLoungeTvCaptureGuard(active: boolean) {
 
     const vv = window.visualViewport;
     const onViewportChange = () => {
-      if (viewportSuggestsExternalCapture()) {
-        showShieldUntilVisible();
+      if (isEditableFieldFocused()) {
+        setShieldActive(false);
+        clearHoldTimer();
+        return;
       }
+      if (viewportSuggestsExternalCapture()) {
+        showShield(1200);
+        return;
+      }
+      setShieldActive(false);
+      clearHoldTimer();
     };
     vv?.addEventListener('resize', onViewportChange);
     vv?.addEventListener('scroll', onViewportChange);
 
     pollRef.current = setInterval(() => {
-      if (viewportSuggestsExternalCapture()) showShieldUntilVisible();
+      if (isEditableFieldFocused()) {
+        setShieldActive(false);
+        clearHoldTimer();
+        return;
+      }
+      if (viewportSuggestsExternalCapture()) {
+        showShield(1200);
+      } else if (document.visibilityState === 'visible') {
+        setShieldActive(false);
+        clearHoldTimer();
+      }
     }, 400);
 
     return () => {

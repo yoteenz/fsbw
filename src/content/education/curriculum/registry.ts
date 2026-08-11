@@ -215,7 +215,10 @@ export function curriculumRefLabel(refId: string): string {
   const ep = getPsaTodayEpisodeById(refId);
   if (ep) return `PSA · ${ep.title}`;
   const tip = getAllSlayTips().find((t) => t.id === refId);
-  if (tip) return `SLAY TIP · ${tip.title}`;
+  if (tip) {
+    const label = tip.publicTitle?.trim() || tip.cardTitle?.trim() || tip.title.trim();
+    return `SLAY TIP · ${label}`;
+  }
   const care = getAllCareLessons().find((l) => l.id === refId);
   if (care) return `CARE · ${care.title}`;
   return refId;

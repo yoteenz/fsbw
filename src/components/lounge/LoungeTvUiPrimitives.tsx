@@ -8,26 +8,31 @@ import {
   LOUNGE_TV_TEXT_WHITE,
 } from './loungeTvTheme';
 import { loungeTvGlassCqw } from './loungeTvResponsive';
+import { LOUNGE_TV_TYPE } from './loungeTvTypography';
 
 type LoungeTvBadgeProps = {
   label: string;
   accent?: boolean;
+  /** Red label text only — no border or background (detail access lines). */
+  textAccent?: boolean;
   style?: CSSProperties;
 };
 
-export function LoungeTvBadge({ label, accent, style }: LoungeTvBadgeProps) {
+export function LoungeTvBadge({ label, accent, textAccent, style }: LoungeTvBadgeProps) {
   return (
     <span
       style={{
         fontFamily: LOUNGE_TV_FONT_MEDIUM,
-        fontSize: loungeTvGlassCqw(1.35, 3, 6),
+        fontSize: LOUNGE_TV_TYPE.l4,
         lineHeight: 1,
         textTransform: 'uppercase',
         letterSpacing: '0.04em',
-        padding: `${loungeTvGlassCqw(0.4, 1, 2)} ${loungeTvGlassCqw(0.7, 1.5, 3)}`,
-        background: accent ? 'rgba(235, 28, 36, 0.88)' : 'rgba(0,0,0,0.72)',
-        color: accent ? LOUNGE_TV_TEXT_WHITE : LOUNGE_TV_TEXT_GRAY,
-        border: accent ? 'none' : '1px solid rgba(255,255,255,0.18)',
+        padding: textAccent
+          ? 0
+          : `${loungeTvGlassCqw(0.4, 1, 2)} ${loungeTvGlassCqw(0.7, 1.5, 3)}`,
+        background: textAccent ? 'transparent' : accent ? 'rgba(235, 28, 36, 0.88)' : 'rgba(0,0,0,0.72)',
+        color: textAccent ? LOUNGE_TV_BRAND_RED : accent ? LOUNGE_TV_TEXT_WHITE : LOUNGE_TV_TEXT_GRAY,
+        border: textAccent || accent ? 'none' : '1px solid rgba(255,255,255,0.18)',
         borderRadius: '1px',
         whiteSpace: 'nowrap',
         ...style,
@@ -41,20 +46,18 @@ export function LoungeTvBadge({ label, accent, style }: LoungeTvBadgeProps) {
 type LoungeTvCtaButtonProps = {
   label: string;
   onClick?: () => void;
-  variant?: 'primary' | 'ghost';
+  variant?: 'primary' | 'secondary' | 'tertiary' | 'ghost';
   fullWidth?: boolean;
 };
 
 const ctaBase: CSSProperties = {
   fontFamily: LOUNGE_TV_FONT_MEDIUM,
-  fontSize: loungeTvGlassCqw(1.5, 3.5, 7),
   letterSpacing: '0.06em',
   textTransform: 'uppercase',
-  padding: `${loungeTvGlassCqw(1, 2.5, 5)} ${loungeTvGlassCqw(1.5, 4, 8)}`,
   cursor: 'pointer',
   borderRadius: '1px',
   lineHeight: 1.2,
-  transition: 'background 0.15s ease, color 0.15s ease, border-color 0.15s ease',
+  transition: 'background 0.15s ease, color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease',
 };
 
 export function LoungeTvCtaButton({
@@ -63,17 +66,31 @@ export function LoungeTvCtaButton({
   variant = 'primary',
   fullWidth,
 }: LoungeTvCtaButtonProps) {
-  const isPrimary = variant === 'primary';
+  const resolved = variant === 'ghost' ? 'secondary' : variant;
+  const isPrimary = resolved === 'primary';
+  const isTertiary = resolved === 'tertiary';
+  const fontSize = isPrimary
+    ? LOUNGE_TV_TYPE.l3
+    : isTertiary
+      ? loungeTvGlassCqw(1.05, 2.2, 4.4)
+      : loungeTvGlassCqw(1.1, 2.45, 4.8);
+  const paddingY = isTertiary ? loungeTvGlassCqw(0.65, 1.5, 3) : loungeTvGlassCqw(1, 2.5, 5);
+  const paddingX = isTertiary ? loungeTvGlassCqw(1, 2.2, 4.5) : loungeTvGlassCqw(1.5, 4, 8);
+
   return (
     <button
       type="button"
+      data-lounge-tv-focusable
       onClick={onClick}
       style={{
         ...ctaBase,
+        fontSize,
         width: fullWidth ? '100%' : undefined,
-        background: isPrimary ? LOUNGE_TV_BRAND_RED : 'transparent',
-        color: LOUNGE_TV_TEXT_WHITE,
-        border: isPrimary ? 'none' : `1px solid ${LOUNGE_TV_BRAND_RED}`,
+        padding: `${paddingY} ${paddingX}`,
+        background: isPrimary ? LOUNGE_TV_TEXT_WHITE : 'transparent',
+        color: isPrimary ? LOUNGE_TV_BRAND_RED : isTertiary ? LOUNGE_TV_TEXT_GRAY : LOUNGE_TV_TEXT_WHITE,
+        border: isPrimary ? 'none' : isTertiary ? '1px solid rgba(255,255,255,0.14)' : '1px solid rgba(255,255,255,0.22)',
+        opacity: isTertiary ? 0.92 : 1,
       }}
     >
       {label}
@@ -102,7 +119,7 @@ export function LoungeTvSectionTitle({ title, action, compact = false }: LoungeT
       <span
         style={{
           fontFamily: LOUNGE_TV_FONT_MEDIUM,
-          fontSize: loungeTvGlassCqw(1.85, 4.2, 8.5),
+          fontSize: LOUNGE_TV_TYPE.l2,
           letterSpacing: '0.08em',
           color: LOUNGE_TV_TEXT_WHITE,
           textTransform: 'uppercase',
@@ -122,10 +139,12 @@ export const loungeTvGlassPanelStyle: CSSProperties = {
   WebkitBackdropFilter: 'blur(6px)',
 };
 
-export function LoungeTvBackButton({ onClick, label = '← BACK' }: { onClick: () => void; label?: string }) {
+export function LoungeTvBackButton({ onClick, label = '< BACK' }: { onClick: () => void; label?: string }) {
   return (
     <button
       type="button"
+      data-lounge-tv-focusable
+      data-lounge-tv-focus-id="lounge-tv-back"
       onClick={onClick}
       style={{
         alignSelf: 'flex-start',
@@ -134,7 +153,7 @@ export function LoungeTvBackButton({ onClick, label = '← BACK' }: { onClick: (
         border: 'none',
         background: 'none',
         fontFamily: LOUNGE_TV_FONT_MEDIUM,
-        fontSize: loungeTvGlassCqw(1.5, 3.5, 7),
+        fontSize: LOUNGE_TV_TYPE.l3,
         letterSpacing: '0.06em',
         color: LOUNGE_TV_BRAND_RED,
         cursor: 'pointer',

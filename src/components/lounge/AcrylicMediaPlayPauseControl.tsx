@@ -1,6 +1,7 @@
 import {
   useEffect,
   useRef,
+  useState,
   type CSSProperties,
   type MouseEvent,
   type ReactNode,
@@ -16,6 +17,10 @@ export type AcrylicMediaPlayPauseControlProps = {
   glyphMode?: AcrylicGlyphMode;
   /** Keep glyph visible while playing — required on touch (no hover). */
   alwaysVisible?: boolean;
+  /** Hide while playing; show pause glyph until play again (featured hero). */
+  persistWhenPaused?: boolean;
+  /** Skip settle-in animation (featured hero — avoids post-slide flicker). */
+  suppressSettling?: boolean;
   onToggle?: () => void;
   ariaLabel?: string;
   /** When true, control is visual-only (parent handles tap). */
@@ -31,6 +36,8 @@ export type AcrylicMediaPlayPauseControlProps = {
 function AcrylicControlShell({
   paused,
   alwaysVisible,
+  persistWhenPaused,
+  resumeFlash,
   decorative,
   className,
   style,
@@ -41,6 +48,8 @@ function AcrylicControlShell({
 }: {
   paused: boolean;
   alwaysVisible: boolean;
+  persistWhenPaused: boolean;
+  resumeFlash: boolean;
   decorative: boolean;
   className: string;
   style?: CSSProperties;
@@ -53,6 +62,8 @@ function AcrylicControlShell({
     'acrylic-media-control',
     paused ? 'acrylic-media-control--paused' : 'acrylic-media-control--playing',
     alwaysVisible ? 'acrylic-media-control--always-visible' : '',
+    persistWhenPaused ? 'acrylic-media-control--persist-when-paused' : '',
+    resumeFlash ? 'acrylic-media-control--resume-flash' : '',
     decorative ? 'acrylic-media-control--decorative' : '',
     className,
   ]
@@ -74,6 +85,8 @@ function AcrylicControlShell({
       className={shellClass}
       aria-label={ariaLabel}
       onClick={onClick}
+      onPointerDown={(e) => e.stopPropagation()}
+      onPointerUp={(e) => e.stopPropagation()}
       style={style}
     >
       {children}
@@ -89,6 +102,8 @@ export function AcrylicMediaPlayPauseControl({
   paused,
   glyphMode,
   alwaysVisible = false,
+  persistWhenPaused = false,
+  suppressSettling = false,
   onToggle,
   ariaLabel,
   decorative = false,
@@ -98,10 +113,29 @@ export function AcrylicMediaPlayPauseControl({
   style,
 }: AcrylicMediaPlayPauseControlProps) {
   const shellRef = useRef<HTMLDivElement | HTMLButtonElement>(null);
-  const glyphSize = glyphSizeProp ?? loungeTvGlassCqw(2.8, 6.5, 13);
-  const hitSize = hitSizeProp ?? loungeTvGlassCqw(5.5, 12, 24);
+  const prevPausedRef = useRef(paused);
+  const [resumeFlash, setResumeFlash] = useState(false);
+  const glyphSize = glyphSizeProp ?? loungeTvGlassCqw(1.12, 2.6, 5.2);
+  const hitSize = hitSizeProp ?? loungeTvGlassCqw(2.2, 4.8, 9.6);
 
   useEffect(() => {
+    const wasPaused = prevPausedRef.current;
+    prevPausedRef.current = paused;
+
+    if (paused) {
+      setResumeFlash(false);
+      return;
+    }
+
+    if (!wasPaused) return;
+
+    setResumeFlash(true);
+    const t = window.setTimeout(() => setResumeFlash(false), 520);
+    return () => window.clearTimeout(t);
+  }, [paused]);
+
+  useEffect(() => {
+    if (suppressSettling) return;
     const el = shellRef.current;
     if (!el || !paused) return;
     el.classList.remove('acrylic-media-control--settling');
@@ -109,7 +143,7 @@ export function AcrylicMediaPlayPauseControl({
     el.classList.add('acrylic-media-control--settling');
     const t = window.setTimeout(() => el.classList.remove('acrylic-media-control--settling'), 420);
     return () => window.clearTimeout(t);
-  }, [paused]);
+  }, [paused, suppressSettling]);
 
   const handleClick = (e: MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
@@ -137,6 +171,8 @@ export function AcrylicMediaPlayPauseControl({
     <AcrylicControlShell
       paused={paused}
       alwaysVisible={alwaysVisible}
+      persistWhenPaused={persistWhenPaused}
+      resumeFlash={resumeFlash}
       decorative={decorative}
       className={className}
       style={cssVars}

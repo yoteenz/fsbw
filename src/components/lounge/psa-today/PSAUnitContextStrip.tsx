@@ -69,7 +69,6 @@ export function PSAUnitContextStrip({
             fontSize: loungeTvGlassCqw(0.85, 1.9, 3.8),
             color: LOUNGE_TV_TEXT_GRAY,
             lineHeight: 1.35,
-            textTransform: 'none',
           }}
         >
           {demonstrationUnitReason ?? context.demonstrationUnitReason}

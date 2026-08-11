@@ -1,9 +1,13 @@
 import type { EducationContentFamily, EducationPillar, SlayTip } from './types';
 import { FAMILY_PLUCKING } from './families/plucking';
 import { SLAY_TIP_DEV_WET_HAIRLINE } from './slay-tips/dev-wet-hairline-plucking';
+import { SLAY_TIP_LEARN_DENSITY_DEMOS } from './slay-tips/learn-density-demos';
 
 const FAMILIES: EducationContentFamily[] = [FAMILY_PLUCKING];
-const SLAY_TIPS: SlayTip[] = [SLAY_TIP_DEV_WET_HAIRLINE];
+const SLAY_TIPS: SlayTip[] = [
+  SLAY_TIP_DEV_WET_HAIRLINE,
+  ...(import.meta.env.DEV ? SLAY_TIP_LEARN_DENSITY_DEMOS : []),
+];
 
 const familyById = new Map(FAMILIES.map((f) => [f.id, f]));
 const familyBySlug = new Map(FAMILIES.map((f) => [f.slug, f]));

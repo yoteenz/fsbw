@@ -1,5 +1,6 @@
 import { loungeTvGlassCqw } from '../loungeTvResponsive';
 import { LOUNGE_TV_FONT_BOOK, LOUNGE_TV_TEXT_GRAY } from '../loungeTvTheme';
+import { isLoungeTvDebugUiEnabled } from '../loungeTvDebugUi';
 import type { ResolvedPsaSeasonAccess } from '../../../content/education/types';
 import { CARE_MASTERY_CANONICAL_SEASON_ID } from '../../../content/education/hierarchy/care/seasons';
 
@@ -15,7 +16,7 @@ export function CareMasteryAccessDebugInspector({
   loading,
   careGuideUnlockedCount,
 }: CareMasteryAccessDebugInspectorProps) {
-  if (!import.meta.env.DEV) return null;
+  if (!isLoungeTvDebugUiEnabled()) return null;
 
   return (
     <details

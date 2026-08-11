@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -23,7 +23,8 @@ import {
   LOUNGE_TV_GLASS_PADDING_Y,
   loungeTvGlassCqw,
 } from './loungeTvResponsive';
-import ConfirmationModal from '../ConfirmationModal';
+import { pauseLoungeTvBrowseMedia } from './loungeTvMutedPlayback';
+import { clearLoungeTvCardPreview } from './LoungeTvContentPackCard';
 import {
   loungeTvContentIsAccessible,
   resolveLoungeTvTicketCost,
@@ -46,9 +47,18 @@ import { LoungeTvContentDetail } from './LoungeTvContentDetail';
 import { LoungeTvTopNav } from './LoungeTvTopNav';
 import { LoungeTvDebugOverlay } from './LoungeTvDebugOverlay';
 import { LoungeTvContentRow } from './LoungeTvContentRow';
+import ConfirmationModal from '../ConfirmationModal';
+import BuildAWigFeatureSignInModal from '../BuildAWigFeatureSignInModal';
+import { LoungeDiscussionPanel } from './engagement/LoungeDiscussionPanel';
+import {
+  engagementKeyForPack,
+  engagementKeyForSlayTip,
+  type LoungeEngagementContentKey,
+} from '../../utils/loungeEngagementTypes';
+import { isAdminEmail } from '../../utils/adminAuth';
 import { LoungeTvArticleView } from './LoungeTvArticleView';
 import { LoungeTvVideoDetailView } from './LoungeTvVideoDetailView';
-import { LoungeTvLibrarySections } from './LoungeTvLibrarySections';
+import { LoungeTvLibraryPanel } from './LoungeTvLibraryPanel';
 import { LOUNGE_TV_LIBRARY_UPDATED_EVENT, togglePackSaved } from '../../utils/loungeTvLibrary';
 import { useLoungeTvFocusNav } from '../../hooks/useLoungeTvFocusNav';
 import { saveLoungeTvFocusMemory } from './loungeTvFocusMemory';
@@ -57,7 +67,7 @@ import {
   getPsaTodayEpisodeById,
   PSATodayEpisodeView,
 } from './psa-today';
-import { SlayTipViewer } from './slay-tips';
+import { SlayTipViewer, slayTipPublicTitle } from './slay-tips';
 import { CareLessonViewer, CareDebugInspector } from './care';
 import { CurriculumDebugInspector } from './curriculum';
 import {
@@ -66,15 +76,17 @@ import {
   EducationHierarchyDebugInspector,
 } from './education';
 import {
-  getEducationMasteryById,
-  getEducationSeasonById,
-  getSlayTipById,
-} from '../../content/education';
+  masteryTrackFocusIdForMastery,
+  seasonFocusId,
+} from '../../content/education/hierarchy/masteryTracks';
 import { useSeasonPassAccess } from '../../hooks/useSeasonPassAccess';
 import { redeemSeasonPass } from './education/seasonPassApi';
 import { useCareAccess } from '../../hooks/useCareAccess';
 import {
   getCareLessonById,
+  getEducationMasteryById,
+  getEducationSeasonById,
+  getSlayTipById,
 } from '../../content/education';
 import type { SlayTip, CareLesson } from '../../content/education/types';
 import type { PSATodayEpisode } from './psa-today/types';
@@ -85,6 +97,9 @@ const LOUNGE_TV_STACKED_SECTIONS_STYLE: React.CSSProperties = {
   display: 'flex',
   flexDirection: 'column',
   width: '100%',
+  minWidth: 0,
+  maxWidth: '100%',
+  boxSizing: 'border-box',
   gap: loungeTvGlassCqw(1.5, 4, 8),
 };
 
@@ -140,9 +155,16 @@ export function LoungeTvScreen({
   const [unlockBusy, setUnlockBusy] = useState(false);
   const [viewState, setViewState] = useState<TvViewState>({ kind: 'browse' });
   const [restoreFocusId, setRestoreFocusId] = useState<string | null>(null);
+  const [careLibraryOpen, setCareLibraryOpen] = useState(false);
   const [tilesRevision, setTilesRevision] = useState(0);
   const [viewedRevision, setViewedRevision] = useState(0);
   const [libraryRevision, setLibraryRevision] = useState(0);
+  const [showEngagementSignIn, setShowEngagementSignIn] = useState(false);
+  const [browseDiscussion, setBrowseDiscussion] = useState<{
+    contentKey: LoungeEngagementContentKey;
+    contentTitle: string;
+  } | null>(null);
+  const [engagementToast, setEngagementToast] = useState<string | null>(null);
   const mediaPanelRef = useRef<HTMLDivElement>(null);
   const sidebar = LOUNGE_TV_SIDEBAR[mainTab];
   const mediaPanelRegion = useSceneHitRegionConfig('lounge-tv-media-panel');
@@ -270,19 +292,26 @@ export function LoungeTvScreen({
     }
   }, [mainTab, viewState.kind]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     setViewState({ kind: 'browse' });
     setRestoreFocusId(null);
+    setCareLibraryOpen(false);
+    pauseLoungeTvBrowseMedia();
+    clearLoungeTvCardPreview();
   }, [mainTab, sidebarId]);
 
-  useEffect(() => {
-    if (viewState.kind !== 'browse' || !restoreFocusId) return;
-    const t = window.setTimeout(() => setRestoreFocusId(null), 400);
-    return () => window.clearTimeout(t);
-  }, [viewState.kind, restoreFocusId]);
+  useLayoutEffect(() => {
+    if (viewState.kind === 'browse') return;
+    pauseLoungeTvBrowseMedia();
+    clearLoungeTvCardPreview();
+  }, [viewState.kind]);
+
+  const viewRestoreTrigger = `${viewState.kind}:${viewState.kind === 'browse' ? mainTab : ''}`;
 
   const handleMainTabClick = useCallback(
     (tab: LoungeTvMainTab) => {
+      pauseLoungeTvBrowseMedia();
+      clearLoungeTvCardPreview();
       if (tab === mainTab && viewState.kind !== 'browse') {
         setViewState({ kind: 'browse' });
         return;
@@ -315,12 +344,16 @@ export function LoungeTvScreen({
   }, []);
 
   const openSlayTip = useCallback((tip: SlayTip) => {
+    saveLoungeTvFocusMemory({ mainTab, focusId: tip.id });
+    setRestoreFocusId(tip.id);
     setViewState({ kind: 'slay-tip', tipId: tip.id });
-  }, []);
+  }, [mainTab]);
 
   const openCareLesson = useCallback((lesson: CareLesson) => {
+    saveLoungeTvFocusMemory({ mainTab, focusId: lesson.id });
+    setRestoreFocusId(lesson.id);
     setViewState({ kind: 'care-lesson', lessonId: lesson.id });
-  }, []);
+  }, [mainTab]);
 
   const playPack = useCallback(
     (pack: LoungeContentPack) => {
@@ -355,7 +388,31 @@ export function LoungeTvScreen({
     [mainTab, openPsaEpisode]
   );
 
+  const openMastery = useCallback(
+    (masteryId: string) => {
+      const focusId = masteryTrackFocusIdForMastery(masteryId);
+      if (focusId) {
+        saveLoungeTvFocusMemory({ mainTab, focusId });
+        setRestoreFocusId(focusId);
+      }
+      setViewState({ kind: 'mastery', masteryId });
+    },
+    [mainTab],
+  );
+
+  const openSeason = useCallback(
+    (seasonId: string) => {
+      const focusId = seasonFocusId(seasonId);
+      saveLoungeTvFocusMemory({ mainTab, focusId });
+      setRestoreFocusId(focusId);
+      setViewState({ kind: 'season', seasonId });
+    },
+    [mainTab],
+  );
+
   const goBackToBrowse = useCallback(() => {
+    const active = document.activeElement;
+    if (active instanceof HTMLElement) active.blur();
     setViewState({ kind: 'browse' });
   }, []);
 
@@ -420,12 +477,18 @@ export function LoungeTvScreen({
   useLoungeTvFocusNav({
     enabled: true,
     containerRef: mediaPanelRef,
-    restoreFocusId: viewState.kind === 'browse' ? restoreFocusId : null,
+    restoreFocusId,
+    restoreTrigger: viewRestoreTrigger,
     onHome: () => {
       setViewState({ kind: 'browse' });
       onMainTabChange('featured');
     },
     onEscape: () => {
+      if (viewState.kind === 'browse' && mainTab === 'learn' && careLibraryOpen) {
+        setCareLibraryOpen(false);
+        setRestoreFocusId('learn-care-library-view-all');
+        return;
+      }
       if (viewState.kind === 'detail') {
         goBackToBrowse();
         return;
@@ -458,10 +521,50 @@ export function LoungeTvScreen({
 
   const onToggleSavePack = useCallback(
     (pack: LoungeContentPack) => {
-      togglePackSaved(pack.id);
+      const isSaved = togglePackSaved(pack.id);
+      if (!isSaved) {
+        clearLoungeTvCardPreview(pack.id);
+      }
       handleToggleSave();
     },
     [handleToggleSave]
+  );
+
+  const engagementUserEmail =
+    typeof userData?.email === 'string' ? (userData.email as string) : null;
+  const isSignedInForEngagement = Boolean(engagementUserEmail);
+
+  const showEngagementToast = useCallback((message: string) => {
+    setEngagementToast(message);
+    window.setTimeout(() => setEngagementToast(null), 3200);
+  }, []);
+
+  const engagementRowProps = useMemo(
+    () => ({
+      onEngagementRequireSignIn: () => setShowEngagementSignIn(true),
+      onEngagementOpenDiscussion: (pack: LoungeContentPack) =>
+        setBrowseDiscussion({
+          contentKey: engagementKeyForPack(pack.id),
+          contentTitle: pack.title,
+        }),
+      onEngagementOpenSlayTipDiscussion: (tip: SlayTip) =>
+        setBrowseDiscussion({
+          contentKey: engagementKeyForSlayTip(tip),
+          contentTitle: slayTipPublicTitle(tip),
+        }),
+      engagementToast: showEngagementToast,
+    }),
+    [showEngagementToast]
+  );
+
+  const engagementDetailProps = useMemo(
+    () => ({
+      onEngagementRequireSignIn: () => setShowEngagementSignIn(true),
+      isSignedInForEngagement,
+      engagementUserEmail,
+      engagementToast: showEngagementToast,
+    }),
+    [engagementUserEmail, isSignedInForEngagement, showEngagementToast]
   );
 
   const renderBrowseContent = () => {
@@ -474,6 +577,7 @@ export function LoungeTvScreen({
           onToggleSave={onToggleSavePack}
           isUnlocked={isUnlocked}
           unlocks={unlocks}
+          {...engagementRowProps}
         />
       );
     }
@@ -484,21 +588,19 @@ export function LoungeTvScreen({
 
     if (mainTab === 'library') {
       return (
-        <div style={LOUNGE_TV_STACKED_SECTIONS_STYLE}>
-          {sidebar.map((section) => (
-            <LoungeTvLibrarySections
-              key={section.id}
-              sectionId={section.id}
-              onSelect={openPack}
-              onToggleSave={onToggleSavePack}
-              onSelectSlayTip={openSlayTip}
-              onSelectCareLesson={openCareLesson}
-              isUnlocked={isUnlocked}
-              unlocks={unlocks}
-              careUnlockedSet={careUnlockedSet}
-            />
-          ))}
-        </div>
+        <LoungeTvLibraryPanel
+          onSelect={openPack}
+          onToggleSave={onToggleSavePack}
+          onSelectSlayTip={openSlayTip}
+          onSelectCareLesson={openCareLesson}
+          onSelectPsaEpisode={openPsaEpisode}
+          onSelectMastery={openMastery}
+          onSelectSeason={openSeason}
+          isUnlocked={isUnlocked}
+          unlocks={unlocks}
+          careUnlockedSet={careUnlockedSet}
+          {...engagementRowProps}
+        />
       );
     }
 
@@ -506,9 +608,8 @@ export function LoungeTvScreen({
       return (
         <div style={LOUNGE_TV_STACKED_SECTIONS_STYLE}>
           <LoungeTvLearnPanel
-            onSelectMastery={(masteryId) => setViewState({ kind: 'mastery', masteryId })}
+            onSelectMastery={openMastery}
             onSelectPack={openPack}
-            onSelectPsaEpisode={openPsaEpisode}
             onSelectSlayTip={openSlayTip}
             onSelectCareLesson={openCareLesson}
             onToggleSave={onToggleSavePack}
@@ -516,6 +617,13 @@ export function LoungeTvScreen({
             unlocks={unlocks}
             careUnlockedSet={careUnlockedSet}
             isCareUnlocked={isCareUnlocked}
+            careLibraryOpen={careLibraryOpen}
+            onCareLibraryOpenChange={(open) => {
+              setCareLibraryOpen(open);
+              if (open) setRestoreFocusId(null);
+              else setRestoreFocusId('learn-care-library-view-all');
+            }}
+            {...engagementRowProps}
           />
           <CareDebugInspector
             purchaseProfiles={carePurchaseProfiles}
@@ -538,6 +646,7 @@ export function LoungeTvScreen({
           onToggleSave={onToggleSavePack}
           isUnlocked={isUnlocked}
           unlocks={unlocks}
+          {...engagementRowProps}
         />
       );
     }
@@ -555,6 +664,7 @@ export function LoungeTvScreen({
           onToggleSave={onToggleSavePack}
           isUnlocked={isUnlocked}
           unlocks={unlocks}
+          {...engagementRowProps}
         />
       );
     }
@@ -570,7 +680,8 @@ export function LoungeTvScreen({
         <EducationMasteryView
           mastery={mastery}
           onBack={() => setViewState({ kind: 'browse' })}
-          onSelectSeason={(seasonId) => setViewState({ kind: 'season', seasonId })}
+          onSelectSeason={openSeason}
+          onSelectEpisode={(episodeId) => setViewState({ kind: 'psa-episode', episodeId })}
         />
       );
     }
@@ -617,6 +728,7 @@ export function LoungeTvScreen({
           unlocks={unlocks}
           isUnlocked={isUnlocked}
           onTicketsRefresh={refresh}
+          {...engagementDetailProps}
         />
       );
     }
@@ -630,6 +742,7 @@ export function LoungeTvScreen({
           isUnlocked={isUnlocked}
           onTicketsRefresh={refresh}
           onOpenSlayTip={openSlayTip}
+          {...engagementDetailProps}
         />
       );
     }
@@ -652,6 +765,7 @@ export function LoungeTvScreen({
           unlocks={unlocks}
           isUnlocked={isUnlocked}
           onToggleSave={handleToggleSave}
+          {...engagementDetailProps}
         />
       );
     }
@@ -665,6 +779,7 @@ export function LoungeTvScreen({
           isUnlocked={isUnlocked}
           onTicketsRefresh={refresh}
           onOpenSlayTip={openSlayTip}
+          {...engagementDetailProps}
         />
       );
     }
@@ -710,6 +825,7 @@ export function LoungeTvScreen({
           onPlayBlocked={() => requestContentAccess(activePack)}
           unlocks={unlocks}
           isUnlocked={isUnlocked}
+          {...engagementDetailProps}
         />
       );
     }
@@ -761,9 +877,11 @@ export function LoungeTvScreen({
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'flex-start',
+              overflowX: 'hidden',
               overflowY: 'auto',
               WebkitOverflowScrolling: 'touch',
-              overscrollBehavior: 'contain',
+              overscrollBehaviorX: 'none',
+              overscrollBehaviorY: 'contain',
               paddingBottom: loungeTvGlassCqw(2.5, 6, 10),
               boxSizing: 'border-box',
             }}
@@ -830,10 +948,50 @@ export function LoungeTvScreen({
                 cancelText="CANCEL"
                 dataAttribute="lounge-tv-need-tickets"
               />
+
+              <BuildAWigFeatureSignInModal
+                isOpen={showEngagementSignIn}
+                onClose={() => setShowEngagementSignIn(false)}
+                returnTo={{ pathname: '/lobby/lounge' }}
+              />
             </>,
             document.body
           )
         : null}
+
+      {browseDiscussion ? (
+        <LoungeDiscussionPanel
+          open
+          onClose={() => setBrowseDiscussion(null)}
+          contentKey={browseDiscussion.contentKey}
+          contentTitle={browseDiscussion.contentTitle}
+          onRequireAuth={() => setShowEngagementSignIn(true)}
+          isAdmin={isSignedInForEngagement && Boolean(engagementUserEmail && isAdminEmail(engagementUserEmail))}
+        />
+      ) : null}
+
+      {engagementToast ? (
+        <div
+          role="status"
+          style={{
+            position: 'fixed',
+            left: '50%',
+            bottom: '12%',
+            transform: 'translateX(-50%)',
+            zIndex: 100001,
+            background: 'rgba(0,0,0,0.88)',
+            color: '#fff',
+            fontFamily: '"Futura PT Medium", Futura, sans-serif',
+            fontSize: '11px',
+            letterSpacing: '0.06em',
+            padding: '10px 16px',
+            textTransform: 'uppercase',
+            pointerEvents: 'none',
+          }}
+        >
+          {engagementToast}
+        </div>
+      ) : null}
     </>
   );
 }

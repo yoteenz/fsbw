@@ -17,8 +17,8 @@ export function AcrylicMuteControl({
   muted = true,
   onClick,
   ariaLabel,
-  glyphSize = loungeTvGlassCqw(2.4, 5.5, 11),
-  hitSize = loungeTvGlassCqw(3.2, 7.5, 15),
+  glyphSize = loungeTvGlassCqw(1.2, 2.75, 5.5),
+  hitSize = loungeTvGlassCqw(1.6, 3.75, 7.5),
   className = '',
   style,
   ...rest

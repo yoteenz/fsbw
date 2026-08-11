@@ -8,7 +8,7 @@ export const LOUNGE_TV_STREAM_SERIES: LoungeTvStreamSeries[] = [
     season: 1,
     description:
       'SEASON ONE WALKS YOU FROM LACE CHOICE THROUGH INSTALL AND MAINTENANCE — HOSTED BY PSA.',
-    difficulty: 'BEGINNER → INTERMEDIATE',
+    difficulty: 'BEGINNER > INTERMEDIATE',
     episodes: [
       { episodeNumber: 1, episodeTitle: 'CHOOSING YOUR LACE', contentPackId: 'cutting-lace' },
       { episodeNumber: 2, episodeTitle: 'BLEACHING KNOTS', contentPackId: 'bleaching-knots' },
@@ -21,7 +21,7 @@ export const LOUNGE_TV_STREAM_SERIES: LoungeTvStreamSeries[] = [
       description:
         'FRONTAL SLAYER ORIGINAL MASTERCLASS — EPISODIC LACE AND INSTALL CURRICULUM WITH PSA AS YOUR HOST.',
       host: 'PSA',
-      difficulty: 'BEGINNER → INTERMEDIATE',
+      difficulty: 'BEGINNER > INTERMEDIATE',
       estimatedCompletionMinutes: 42,
       episodeCount: 6,
       prerequisiteSeriesIds: [],

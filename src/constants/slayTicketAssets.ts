@@ -11,5 +11,5 @@ export const SLAY_TICKET_PREVIEW_IMAGES = [
 /** Tools hub, cart, bag, checkout strip — icon asset (not PDP hero). */
 export const SLAY_TICKET_CART_THUMBNAIL_SRC = `${SLAY_TICKET_PREVIEW_BASE}/IMG_3403.png`;
 
-/** Lounge TV ticket-gate acrylic icon on locked thumbnails (IMG_3405). */
-export const LOUNGE_TV_TICKET_LOCK_WATERMARK_SRC = `${SLAY_TICKET_PREVIEW_BASE}/IMG_3405.png`;
+/** Lounge TV ticket-gate frame watermark on locked thumbnails. */
+export const LOUNGE_TV_TICKET_LOCK_WATERMARK_SRC = `${SLAY_TICKET_PREVIEW_BASE}/E0F41BC1-D053-44B1-83F5-A0940718ACFF.png`;

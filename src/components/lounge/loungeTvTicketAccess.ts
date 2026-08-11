@@ -99,7 +99,7 @@ export function loungeTvTileActionLabel(
 
 export function loungeTvTicketCostLabel(cost: number): string {
   if (cost <= 0) return 'FREE';
-  return cost === 1 ? '1 TICKET' : `${cost} TICKETS`;
+  return cost === 1 ? '1 SLAY TICKET' : `${cost} SLAY TICKETS`;
 }
 
 export function loungeTvTileShowsTicketLock(

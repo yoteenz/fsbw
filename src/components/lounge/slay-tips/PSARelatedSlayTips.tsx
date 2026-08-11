@@ -68,6 +68,7 @@ export function PSARelatedSlayTips({
           <SlayTipCard
             key={tip.id}
             tip={tip}
+            variant="rail"
             onSelect={(t) => {
               trackPsaTodayEvent('psa_related_slay_tip_clicked', {
                 episodeId,

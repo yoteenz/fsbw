@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import type { LoungeTvMediaState } from './loungeTvStreamingMedia';
 import { loungeTvGlassCqw } from './loungeTvResponsive';
 import { LOUNGE_TV_FONT_BOOK, LOUNGE_TV_FONT_MEDIUM, LOUNGE_TV_TEXT_WHITE } from './loungeTvTheme';
+import { applyLoungeTvMutedPlayback, pauseLoungeTvVideo, playLoungeTvMuted } from './loungeTvMutedPlayback';
 
 export type LoungeTvVideoPreviewProps = {
   src?: string;
@@ -32,6 +33,7 @@ export function LoungeTvVideoPreview({
   muted = true,
   ariaLabel = 'Video preview',
   objectFit = 'cover',
+  className,
   onReady,
   onError,
   onPlayingChange,
@@ -51,8 +53,15 @@ export function LoungeTvVideoPreview({
       return;
     }
     try {
-      video.muted = muted;
-      await video.play();
+      if (muted) {
+        await playLoungeTvMuted(video);
+      } else {
+        video.muted = false;
+        video.defaultMuted = false;
+        video.volume = 1;
+        video.removeAttribute('muted');
+        await video.play();
+      }
       setMediaState('playing');
       setVideoVisible(true);
     } catch {
@@ -64,12 +73,12 @@ export function LoungeTvVideoPreview({
     const video = videoRef.current;
     if (!video) return;
     if (!active || !src) {
-      video.pause();
+      pauseLoungeTvVideo(video);
       setMediaState(src ? 'paused' : 'idle');
       return;
     }
     if (prefersReducedMotion()) {
-      video.pause();
+      pauseLoungeTvVideo(video);
       setMediaState('paused');
       return;
     }
@@ -79,12 +88,20 @@ export function LoungeTvVideoPreview({
 
   useEffect(() => {
     const video = videoRef.current;
-    if (video) video.muted = muted;
+    if (!video) return;
+    if (muted) {
+      applyLoungeTvMutedPlayback(video);
+    } else {
+      video.muted = false;
+      video.defaultMuted = false;
+      video.volume = 1;
+      video.removeAttribute('muted');
+    }
   }, [muted]);
 
   useEffect(() => {
     return () => {
-      videoRef.current?.pause();
+      pauseLoungeTvVideo(videoRef.current);
     };
   }, []);
 
@@ -94,6 +111,7 @@ export function LoungeTvVideoPreview({
 
   return (
     <div
+      className={className}
       style={{
         position: 'relative',
         width: '100%',

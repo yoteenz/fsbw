@@ -32,6 +32,10 @@ export function getEducationMasteryById(id: string): EducationMastery | undefine
   return masteryById.get(id);
 }
 
+export function getEducationMasteryBySlug(slug: string): EducationMastery | undefined {
+  return EDUCATION_MASTERIES.find((m) => m.slug === slug);
+}
+
 export function getAllEducationSeasons(): EducationSeason[] {
   return ALL_EDUCATION_SEASONS;
 }
@@ -40,8 +44,14 @@ export function getEducationSeasonById(id: string): EducationSeason | undefined 
   return seasonById.get(id);
 }
 
-export function getSeasonsForMastery(masteryId: string): EducationSeason[] {
-  return ALL_EDUCATION_SEASONS.filter((s) => s.masteryId === masteryId && s.published !== false);
+export function getSeasonsForMastery(masteryId: string, options?: { includeHidden?: boolean }): EducationSeason[] {
+  return ALL_EDUCATION_SEASONS.filter((s) => {
+    if (s.masteryId !== masteryId) return false;
+    if (options?.includeHidden) return true;
+    if (s.published === false) return false;
+    if (s.customerVisible === false) return false;
+    return true;
+  }).sort((a, b) => a.seasonNumber - b.seasonNumber);
 }
 
 export function getPublishedMasteriesWithSeasons(): EducationMastery[] {

@@ -5,6 +5,15 @@ import { getCollectibleForSeason } from '../../../content/education/collectibles
 import { CertificationCollectibleAsset } from '../../account/collectibles/CertificationCollectibleAsset';
 import { markCertificationRevealSeen } from './certificationApi';
 import { trackEducationHierarchyEvent } from './educationHierarchyAnalytics';
+import { loungeTvGlassCqw } from '../loungeTvResponsive';
+import { LOUNGE_TV_NESTED_TYPE } from '../loungeTvTypography';
+import {
+  LOUNGE_TV_BRAND_RED,
+  LOUNGE_TV_FONT_BOOK,
+  LOUNGE_TV_FONT_MEDIUM,
+  LOUNGE_TV_TEXT_GRAY,
+  LOUNGE_TV_TEXT_WHITE,
+} from '../loungeTvTheme';
 
 type CertificationRevealModalProps = {
   open: boolean;
@@ -78,37 +87,71 @@ export function CertificationRevealModal({
           id="cert-reveal-title"
           style={{
             margin: 0,
-            fontFamily: '"Futura PT Medium"',
-            color: '#EB1C24',
-            letterSpacing: '0.14em',
-            fontSize: 11,
+            fontFamily: LOUNGE_TV_FONT_MEDIUM,
+            color: LOUNGE_TV_BRAND_RED,
+            letterSpacing: '0.12em',
+            fontSize: LOUNGE_TV_NESTED_TYPE.meta,
           }}
         >
           SEASON COMPLETE
         </p>
         <div
           style={{
-            margin: '24px auto',
+            margin: `${loungeTvGlassCqw(1.2, 3, 6)} auto`,
             animation: 'certRevealGlow 2.4s ease-in-out infinite alternate',
           }}
         >
-          <CertificationCollectibleAsset definition={definition} earned title={season.title} size={140} />
+          <CertificationCollectibleAsset definition={definition} earned title={season.title} size={120} />
         </div>
-        <p style={{ margin: '0 0 6px', fontFamily: '"Futura PT Medium"', color: '#fff', fontSize: 16 }}>
+        <p
+          style={{
+            margin: '0 0 6px',
+            fontFamily: LOUNGE_TV_FONT_MEDIUM,
+            color: LOUNGE_TV_TEXT_WHITE,
+            fontSize: LOUNGE_TV_NESTED_TYPE.cardTitle,
+            lineHeight: 1.25,
+          }}
+        >
           {season.title}
         </p>
-        <p style={{ margin: '0 0 20px', fontFamily: '"Futura PT Book"', color: '#aaa', fontSize: 11, lineHeight: 1.5 }}>
+        <p
+          style={{
+            margin: `0 0 ${loungeTvGlassCqw(1, 2.5, 5)}`,
+            fontFamily: LOUNGE_TV_FONT_BOOK,
+            color: LOUNGE_TV_TEXT_GRAY,
+            fontSize: LOUNGE_TV_NESTED_TYPE.body,
+            lineHeight: 1.45,
+          }}
+        >
           FRONTAL SLAYER CERTIFICATION EARNED
           <br />
           {mastery?.title} · SEASON {season.seasonNumber}
         </p>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-          <button type="button" onClick={() => { void handleClose(); onViewCertification(); }}>
-            VIEW CERTIFICATION
+        <div style={{ display: 'flex', flexDirection: 'column', gap: loungeTvGlassCqw(0.6, 1.4, 2.8) }}>
+          <button
+            type="button"
+            data-lounge-tv-focusable
+            onClick={() => {
+              void handleClose();
+              onViewCertification();
+            }}
+            style={{
+              fontFamily: LOUNGE_TV_FONT_MEDIUM,
+              fontSize: LOUNGE_TV_NESTED_TYPE.cta,
+              color: LOUNGE_TV_BRAND_RED,
+              background: LOUNGE_TV_TEXT_WHITE,
+              border: 'none',
+              padding: `${loungeTvGlassCqw(0.7, 1.6, 3.2)} ${loungeTvGlassCqw(1, 2.5, 5)}`,
+              cursor: 'pointer',
+              textTransform: 'uppercase',
+            }}
+          >
+            {'VIEW CERTIFICATION >'}
           </button>
           {onGoToRewardsRoom ? (
             <button
               type="button"
+              data-lounge-tv-focusable
               onClick={() => {
                 trackEducationHierarchyEvent('education_certification_rewards_room_clicked', {
                   certificationId: certification.id,
@@ -117,8 +160,18 @@ export function CertificationRevealModal({
                 void handleClose();
                 onGoToRewardsRoom();
               }}
+              style={{
+                fontFamily: LOUNGE_TV_FONT_MEDIUM,
+                fontSize: LOUNGE_TV_NESTED_TYPE.cta,
+                color: LOUNGE_TV_TEXT_WHITE,
+                background: 'transparent',
+                border: '1px solid rgba(255,255,255,0.22)',
+                padding: `${loungeTvGlassCqw(0.7, 1.6, 3.2)} ${loungeTvGlassCqw(1, 2.5, 5)}`,
+                cursor: 'pointer',
+                textTransform: 'uppercase',
+              }}
             >
-              GO TO REWARDS ROOM
+              {'GO TO REWARDS ROOM >'}
             </button>
           ) : null}
         </div>

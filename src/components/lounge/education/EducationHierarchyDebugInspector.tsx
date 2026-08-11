@@ -12,11 +12,12 @@ import {
 import { getCurriculumBibleEntryById } from '../../../content/education/curriculum/registry';
 import { loungeTvGlassCqw } from '../loungeTvResponsive';
 import { LOUNGE_TV_FONT_BOOK, LOUNGE_TV_TEXT_GRAY, LOUNGE_TV_TEXT_WHITE } from '../loungeTvTheme';
+import { isLoungeTvDebugUiEnabled } from '../loungeTvDebugUi';
 import { useSeasonPassAccess } from '../../../hooks/useSeasonPassAccess';
 import { usePsaSeasonAccess } from '../../../hooks/usePsaSeasonAccess';
 
 export function EducationHierarchyDebugInspector() {
-  if (!import.meta.env.DEV) return null;
+  if (!isLoungeTvDebugUiEnabled()) return null;
 
   const [masteryId, setMasteryId] = useState('mastery-lace');
   const [seasonId, setSeasonId] = useState('season-lace-02-customize-your-lace');

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { LoungeContentPack } from './loungeTvContentPack';
 import {
   LOUNGE_TV_HERO_ROTATION_MS,
@@ -6,22 +6,27 @@ import {
   resolvePosterUrl,
   resolvePreviewUrl,
   packToLoungeVideo,
+  type LoungeFeaturedHeroSlot,
 } from './loungeTvStreamingMedia';
 import { LoungeTvVideoPreview } from './LoungeTvVideoPreview';
 import { AcrylicMediaPlayPauseControl } from './AcrylicMediaPlayPauseControl';
 import { AcrylicMuteControl } from './AcrylicMuteControl';
 import { loungeTvGlassCqw } from './loungeTvResponsive';
+import { loungeTvDisplayTitle } from './loungeTvDisplayText';
 import {
+  LOUNGE_TV_BRAND_RED,
   LOUNGE_TV_FONT_BOOK,
   LOUNGE_TV_FONT_MEDIUM,
   LOUNGE_TV_TEXT_WHITE,
 } from './loungeTvTheme';
-import { isPackSaved, togglePackSaved } from '../../utils/loungeTvLibrary';
+import { isPackSaved, LOUNGE_TV_LIBRARY_UPDATED_EVENT } from '../../utils/loungeTvLibrary';
 
 type LoungeTvFeaturedHeroProps = {
   onWatch: (pack: LoungeContentPack) => void;
   onToggleSave?: (pack: LoungeContentPack) => void;
 };
+
+type FeaturedHeroSlot = LoungeFeaturedHeroSlot & { pack: LoungeContentPack };
 
 function heroWatchButtonStyle(): React.CSSProperties {
   return {
@@ -30,9 +35,9 @@ function heroWatchButtonStyle(): React.CSSProperties {
     letterSpacing: '0.06em',
     textTransform: 'uppercase',
     padding: `${loungeTvGlassCqw(0.55, 1.3, 2.6)} ${loungeTvGlassCqw(1, 2.4, 4.8)}`,
-    background: 'rgba(235, 28, 36, 0.82)',
-    color: LOUNGE_TV_TEXT_WHITE,
-    border: '1px solid rgba(235, 28, 36, 0.95)',
+    background: LOUNGE_TV_TEXT_WHITE,
+    color: LOUNGE_TV_BRAND_RED,
+    border: `1px solid ${LOUNGE_TV_BRAND_RED}`,
     cursor: 'pointer',
     lineHeight: 1.2,
     transition: 'background 0.2s ease, border-color 0.2s ease, opacity 0.2s ease',
@@ -72,60 +77,193 @@ function heroEyebrowLabel(category: string, eyebrow?: string): string {
   return `${cat} · FEATURED PREMIERE`;
 }
 
-export function LoungeTvFeaturedHero({ onWatch, onToggleSave }: LoungeTvFeaturedHeroProps) {
+const FeaturedHeroPreview = memo(function FeaturedHeroPreview({
+  slot,
+  fadeKey,
+  paused,
+  muted,
+  title,
+}: {
+  slot: FeaturedHeroSlot;
+  fadeKey: number;
+  paused: boolean;
+  muted: boolean;
+  title: string;
+}) {
+  const video = useMemo(() => packToLoungeVideo(slot.pack), [slot.pack]);
+  const previewSrc = resolvePreviewUrl(video);
+  const posterSrc = resolvePosterUrl(video);
+
+  return (
+    <div
+      key={fadeKey}
+      className="lounge-tv-hero-preview-layer"
+      style={{
+        position: 'absolute',
+        inset: 0,
+        zIndex: 1,
+      }}
+    >
+      <LoungeTvVideoPreview
+        src={previewSrc}
+        poster={posterSrc}
+        active={!paused}
+        loop
+        muted={muted}
+        ariaLabel={`Featured preview: ${title}`}
+        objectFit="cover"
+        className="lounge-tv-hero-preview-fade-in"
+      />
+    </div>
+  );
+});
+
+function HeroSaveButton({
+  pack,
+  onToggleSave,
+}: {
+  pack: LoungeContentPack;
+  onToggleSave?: (pack: LoungeContentPack) => void;
+}) {
+  const [, setRevision] = useState(0);
+
+  useEffect(() => {
+    const onLibraryUpdated = () => setRevision((n) => n + 1);
+    window.addEventListener(LOUNGE_TV_LIBRARY_UPDATED_EVENT, onLibraryUpdated);
+    return () => window.removeEventListener(LOUNGE_TV_LIBRARY_UPDATED_EVENT, onLibraryUpdated);
+  }, []);
+
+  const saved = isPackSaved(pack.id);
+
+  return (
+    <button
+      type="button"
+      data-lounge-tv-focusable
+      data-lounge-tv-action="save"
+      style={heroListButtonStyle()}
+      aria-pressed={saved}
+      onPointerDown={(e) => e.stopPropagation()}
+      onPointerUp={(e) => e.stopPropagation()}
+      onClick={(e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        onToggleSave?.(pack);
+      }}
+    >
+      {saved ? '✓ MY LIST' : '+ MY LIST'}
+    </button>
+  );
+}
+
+export function LoungeTvFeaturedHero({
+  onWatch,
+  onToggleSave,
+}: LoungeTvFeaturedHeroProps) {
   const slots = useMemo(() => getFeaturedHeroSlots(), []);
   const [activeIndex, setActiveIndex] = useState(0);
-  const [rotationPaused, setRotationPaused] = useState(false);
+  /** Autoplay muted on tab enter — user can unmute or pause via hero controls / tap. */
   const [previewPaused, setPreviewPaused] = useState(false);
   const [previewMuted, setPreviewMuted] = useState(true);
   const [fadeKey, setFadeKey] = useState(0);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const dragRef = useRef<{ x: number; y: number; swiped: boolean } | null>(null);
 
   const activeSlot = slots[activeIndex] ?? slots[0];
   const activeVideo = activeSlot ? packToLoungeVideo(activeSlot.pack) : null;
 
-  const pauseRotation = useCallback(() => setRotationPaused(true), []);
-
   const togglePreviewPause = useCallback(() => {
-    pauseRotation();
     setPreviewPaused((p) => !p);
-  }, [pauseRotation]);
+  }, []);
 
   const togglePreviewMute = useCallback(() => {
-    pauseRotation();
     setPreviewMuted((m) => !m);
-  }, [pauseRotation]);
+  }, []);
 
   const goToIndex = useCallback(
     (idx: number) => {
       if (!slots.length) return;
       const next = ((idx % slots.length) + slots.length) % slots.length;
+      setPreviewPaused(false);
+      setPreviewMuted(true);
       setActiveIndex(next);
       setFadeKey((k) => k + 1);
-      pauseRotation();
     },
-    [pauseRotation, slots.length]
+    [slots.length]
   );
 
+  const goNext = useCallback(() => goToIndex(activeIndex + 1), [activeIndex, goToIndex]);
+  const goPrev = useCallback(() => goToIndex(activeIndex - 1), [activeIndex, goToIndex]);
+
   useEffect(() => {
-    if (rotationPaused || slots.length <= 1) return;
+    if (previewPaused || slots.length <= 1) return;
     if (typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       return;
     }
     timerRef.current = setInterval(() => {
+      setPreviewPaused(false);
+      setPreviewMuted(true);
       setActiveIndex((i) => (i + 1) % slots.length);
       setFadeKey((k) => k + 1);
     }, LOUNGE_TV_HERO_ROTATION_MS);
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [rotationPaused, slots.length]);
+  }, [previewPaused, slots.length]);
+
+  const heroPointerDownTargetRef = useRef<Element | null>(null);
+
+  const handleHeroPointerDown = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
+    if (e.button !== 0) return;
+    heroPointerDownTargetRef.current = e.target as Element;
+    dragRef.current = { x: e.clientX, y: e.clientY, swiped: false };
+    if ((e.target as Element).closest?.('.lounge-tv-hero-controls-root, .lounge-tv-hero-carousel-dots')) return;
+    e.currentTarget.setPointerCapture(e.pointerId);
+  }, []);
+
+  const handleHeroPointerMove = useCallback(
+    (e: React.PointerEvent<HTMLDivElement>) => {
+      if (!dragRef.current || dragRef.current.swiped || slots.length <= 1) return;
+      const dx = e.clientX - dragRef.current.x;
+      const dy = e.clientY - dragRef.current.y;
+      if (Math.abs(dx) >= 40 && Math.abs(dx) > Math.abs(dy) * 1.15) {
+        dragRef.current.swiped = true;
+        if (dx < 0) goNext();
+        else goPrev();
+      }
+    },
+    [goNext, goPrev, slots.length]
+  );
+
+  const handleHeroPointerUp = useCallback(
+    (e: React.PointerEvent<HTMLDivElement>) => {
+      if (!dragRef.current) return;
+      const dx = e.clientX - dragRef.current.x;
+      const dy = e.clientY - dragRef.current.y;
+      const wasTap = !dragRef.current.swiped && Math.abs(dx) < 12 && Math.abs(dy) < 12;
+      dragRef.current = null;
+      if (e.currentTarget.hasPointerCapture(e.pointerId)) {
+        e.currentTarget.releasePointerCapture(e.pointerId);
+      }
+      if (wasTap && !(e.target as Element).closest?.('.lounge-tv-hero-controls-root, .lounge-tv-hero-carousel-dots')) {
+        if (heroPointerDownTargetRef.current?.closest?.('.lounge-tv-hero-controls-root, .lounge-tv-hero-carousel-dots')) {
+          heroPointerDownTargetRef.current = null;
+          return;
+        }
+        togglePreviewPause();
+      }
+      heroPointerDownTargetRef.current = null;
+    },
+    [togglePreviewPause]
+  );
+
+  const handleHeroPointerCancel = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
+    dragRef.current = null;
+    if (e.currentTarget.hasPointerCapture(e.pointerId)) {
+      e.currentTarget.releasePointerCapture(e.pointerId);
+    }
+  }, []);
 
   if (!activeSlot || !activeVideo) return null;
-
-  const previewSrc = resolvePreviewUrl(activeVideo);
-  const posterSrc = resolvePosterUrl(activeVideo);
-  const saved = isPackSaved(activeSlot.pack.id);
 
   const eyebrow = heroEyebrowLabel(
     activeSlot.displayCategory ?? activeVideo.category,
@@ -137,261 +275,278 @@ export function LoungeTvFeaturedHero({ onWatch, onToggleSave }: LoungeTvFeatured
   );
 
   return (
-    <section
-      aria-label="Featured premiere"
+    <div
       style={{
-        position: 'relative',
         width: '100%',
-        aspectRatio: '16 / 9',
-        overflow: 'hidden',
-        flexShrink: 0,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'stretch',
+        gap: loungeTvGlassCqw(0.85, 2, 4),
       }}
-      onPointerDown={pauseRotation}
-      onFocus={pauseRotation}
     >
-      <div
-        key={fadeKey}
+      <section
+        aria-label="Featured premiere"
         style={{
-          position: 'absolute',
-          inset: 0,
-          animation: 'lounge-tv-hero-crossfade 0.75s ease forwards',
-        }}
-      >
-        <LoungeTvVideoPreview
-          src={previewSrc}
-          poster={posterSrc}
-          active={!previewPaused}
-          loop
-          muted={previewMuted}
-          ariaLabel={`Featured preview: ${title}`}
-          objectFit="cover"
-        />
-      </div>
-
-      <button
-        type="button"
-        aria-label={previewPaused ? 'Resume featured preview' : 'Pause featured preview'}
-        onClick={togglePreviewPause}
-        style={{
-          position: 'absolute',
-          inset: 0,
-          zIndex: 6,
-          margin: 0,
-          padding: 0,
-          border: 'none',
-          background: 'transparent',
-          cursor: 'pointer',
-        }}
-      />
-
-      <div
-        style={{
-          position: 'absolute',
-          inset: 0,
-          zIndex: 8,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          pointerEvents: 'none',
-        }}
-      >
-        <AcrylicMediaPlayPauseControl
-          paused={previewPaused}
-          glyphMode="pause"
-          alwaysVisible
-          onToggle={togglePreviewPause}
-          glyphSize={loungeTvGlassCqw(8.4, 19.5, 39)}
-          hitSize={loungeTvGlassCqw(16.5, 36, 72)}
-          style={{ pointerEvents: 'auto' }}
-        />
-      </div>
-
-      <AcrylicMuteControl
-        muted={previewMuted}
-        glyphSize={loungeTvGlassCqw(2.4, 5.5, 11)}
-        hitSize={loungeTvGlassCqw(3.2, 7.5, 15)}
-        ariaLabel={previewMuted ? 'Unmute featured preview' : 'Mute featured preview'}
-        className="lounge-tv-hero-mute"
-        onClick={(e) => {
-          e.stopPropagation();
-          togglePreviewMute();
-        }}
-        style={{
-          position: 'absolute',
-          top: loungeTvGlassCqw(0.8, 2, 4),
-          right: loungeTvGlassCqw(0.8, 2, 4),
-          zIndex: 12,
-        }}
-        data-lounge-tv-focusable
-      />
-
-      {/* Soft vignette — legibility without a visible panel */}
-      <div
-        aria-hidden
-        style={{
-          position: 'absolute',
-          inset: 0,
-          zIndex: 4,
-          background: `
-            linear-gradient(to top, rgba(0,0,0,0.62) 0%, rgba(0,0,0,0.18) 42%, transparent 68%),
-            linear-gradient(to right, rgba(0,0,0,0.38) 0%, transparent 48%),
-            radial-gradient(ellipse 90% 80% at 50% 50%, transparent 55%, rgba(0,0,0,0.12) 100%)
-          `,
-          pointerEvents: 'none',
-        }}
-      />
-
-      <div
-        style={{
-          position: 'absolute',
-          left: loungeTvGlassCqw(1.2, 3, 6),
-          bottom: loungeTvGlassCqw(2.8, 6.5, 13),
-          maxWidth: 'min(52%, 20em)',
+          width: '100%',
           display: 'flex',
           flexDirection: 'column',
-          alignItems: 'flex-start',
-          gap: loungeTvGlassCqw(0.35, 0.75, 1.5),
-          textTransform: 'uppercase',
-          pointerEvents: 'none',
-          zIndex: 10,
+          flexShrink: 0,
         }}
       >
-        <span
+        <div
           style={{
-            fontFamily: LOUNGE_TV_FONT_MEDIUM,
-            fontSize: loungeTvGlassCqw(1.05, 2.4, 4.8),
-            letterSpacing: '0.11em',
-            color: 'rgba(255,255,255,0.5)',
-          }}
-        >
-          {eyebrow.replace(' · FEATURED PREMIERE', '')}
-          <span style={{ color: 'rgba(255,255,255,0.35)' }}> · </span>
-          <span style={{ color: 'rgba(235, 28, 36, 0.78)' }}>FEATURED PREMIERE</span>
-        </span>
-
-        <h2
-          style={{
-            margin: 0,
-            fontFamily: LOUNGE_TV_FONT_MEDIUM,
-            fontSize: loungeTvGlassCqw(1.85, 4.2, 8.5),
-            lineHeight: 1.12,
-            color: LOUNGE_TV_TEXT_WHITE,
-            letterSpacing: '0.02em',
-            display: '-webkit-box',
-            WebkitLineClamp: 2,
-            WebkitBoxOrient: 'vertical',
+            position: 'relative',
+            width: '100%',
+            aspectRatio: '16 / 9',
+            minHeight: loungeTvGlassCqw(52, 115, 200),
+            maxHeight: '48cqh',
             overflow: 'hidden',
+            touchAction: 'pan-y',
           }}
         >
-          {title}
-        </h2>
+          <FeaturedHeroPreview
+            slot={activeSlot}
+            fadeKey={fadeKey}
+            paused={previewPaused}
+            muted={previewMuted}
+            title={title}
+          />
 
-        {description ? (
-          <p
+          <div
+            role="presentation"
+            aria-hidden
+            onPointerDown={handleHeroPointerDown}
+            onPointerMove={handleHeroPointerMove}
+            onPointerUp={handleHeroPointerUp}
+            onPointerCancel={handleHeroPointerCancel}
             style={{
+              position: 'absolute',
+              inset: 0,
+              zIndex: 5,
               margin: 0,
-              fontFamily: LOUNGE_TV_FONT_BOOK,
-              fontSize: loungeTvGlassCqw(1.1, 2.5, 5),
-              lineHeight: 1.3,
-              color: 'rgba(255,255,255,0.58)',
-              display: '-webkit-box',
-              WebkitLineClamp: 2,
-              WebkitBoxOrient: 'vertical',
-              overflow: 'hidden',
+              padding: 0,
+              border: 'none',
+              background: 'transparent',
+              cursor: 'pointer',
+              touchAction: 'pan-y',
             }}
-          >
-            {description}
-          </p>
-        ) : null}
+          />
 
-        <div
-          style={{
-            display: 'flex',
-            flexWrap: 'wrap',
-            alignItems: 'center',
-            gap: loungeTvGlassCqw(0.45, 1.1, 2.2),
-            marginTop: loungeTvGlassCqw(0.35, 0.85, 1.7),
-            pointerEvents: 'auto',
-          }}
-        >
-          <button
-            type="button"
-            data-lounge-tv-focusable
-            data-lounge-tv-action="watch"
-            style={heroWatchButtonStyle()}
-            onClick={() => {
-              pauseRotation();
-              onWatch(activeSlot.pack);
+          <div
+            className="lounge-tv-hero-controls-root"
+            style={{
+              position: 'absolute',
+              inset: 0,
+              zIndex: 20,
+              pointerEvents: 'none',
+              isolation: 'isolate',
             }}
           >
-            ▶ WATCH NOW
-          </button>
-          <button
-            type="button"
-            data-lounge-tv-focusable
-            data-lounge-tv-action="save"
-            style={heroListButtonStyle()}
-            aria-pressed={saved}
-            onClick={() => {
-              pauseRotation();
-              togglePackSaved(activeSlot.pack.id);
-              onToggleSave?.(activeSlot.pack);
+            <div
+              className="lounge-tv-hero-play-pause-shell"
+              style={{
+                position: 'absolute',
+                inset: 0,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                pointerEvents: 'none',
+                zIndex: 1,
+              }}
+            >
+              <AcrylicMediaPlayPauseControl
+                className="lounge-tv-hero-media-control"
+                paused={previewPaused}
+                persistWhenPaused
+                suppressSettling
+                onToggle={togglePreviewPause}
+                glyphSize="14px"
+                hitSize="26px"
+                style={{ pointerEvents: 'auto' }}
+              />
+            </div>
+
+            <div
+              className={
+                previewMuted || previewPaused
+                  ? 'lounge-tv-hero-mute-shell'
+                  : 'lounge-tv-hero-mute-shell lounge-tv-hero-mute-shell--hidden'
+              }
+              aria-hidden={!(previewMuted || previewPaused)}
+              style={{
+                position: 'absolute',
+                top: '7px',
+                right: '7px',
+                zIndex: 2,
+                pointerEvents: previewMuted || previewPaused ? 'auto' : 'none',
+              }}
+            >
+              <AcrylicMuteControl
+                muted={previewMuted}
+                glyphSize="12px"
+                hitSize="18px"
+                ariaLabel={previewMuted ? 'Unmute featured preview' : 'Mute featured preview'}
+                className="lounge-tv-hero-mute"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  togglePreviewMute();
+                }}
+                style={{ pointerEvents: 'auto' }}
+                data-lounge-tv-focusable
+                tabIndex={previewMuted || previewPaused ? 0 : -1}
+              />
+            </div>
+          </div>
+
+          <div
+            aria-hidden
+            style={{
+              position: 'absolute',
+              inset: 0,
+              zIndex: 4,
+              background: `
+                linear-gradient(to top, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.12) 38%, transparent 62%),
+                linear-gradient(to right, rgba(0,0,0,0.28) 0%, transparent 48%)
+              `,
+              pointerEvents: 'none',
             }}
-          >
-            {saved ? '✓ MY LIST' : '+ MY LIST'}
-          </button>
+          />
         </div>
-      </div>
 
-      {slots.length > 1 ? (
         <div
-          role="tablist"
-          aria-label="Featured carousel"
+          aria-live="polite"
           style={{
-            position: 'absolute',
-            bottom: loungeTvGlassCqw(0.8, 2, 4),
-            right: loungeTvGlassCqw(1.2, 3, 6),
+            width: '100%',
             display: 'flex',
-            alignItems: 'center',
-            gap: loungeTvGlassCqw(0.5, 1.2, 2.4),
-            pointerEvents: 'auto',
-            zIndex: 11,
+            flexDirection: 'row',
+            alignItems: 'flex-start',
+            justifyContent: 'space-between',
+            gap: loungeTvGlassCqw(0.85, 2, 4),
+            textTransform: 'uppercase',
+            padding: `${loungeTvGlassCqw(0.55, 1.35, 2.7)} ${loungeTvGlassCqw(1.2, 3, 6)} 0`,
+            boxSizing: 'border-box',
+            flexShrink: 0,
           }}
         >
+          <div
+            style={{
+              flex: 1,
+              minWidth: 0,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'flex-start',
+              gap: loungeTvGlassCqw(0.35, 0.75, 1.5),
+            }}
+          >
           <span
             style={{
               fontFamily: LOUNGE_TV_FONT_MEDIUM,
-              fontSize: loungeTvGlassCqw(0.95, 2.1, 4.2),
-              color: 'rgba(255,255,255,0.45)',
-              letterSpacing: '0.06em',
-              marginRight: loungeTvGlassCqw(0.3, 0.8, 1.6),
+              fontSize: loungeTvGlassCqw(1.05, 2.4, 4.8),
+              letterSpacing: '0.11em',
+              color: 'rgba(255,255,255,0.5)',
             }}
           >
-            {String(activeIndex + 1).padStart(2, '0')} / {String(slots.length).padStart(2, '0')}
+            {eyebrow.replace(' · FEATURED PREMIERE', '')}
+            <span style={{ color: 'rgba(255,255,255,0.35)' }}> · </span>
+            <span style={{ color: 'rgba(235, 28, 36, 0.78)' }}>FEATURED PREMIERE</span>
           </span>
-          {slots.map((_, idx) => (
-            <button
-              key={idx}
-              type="button"
-              role="tab"
-              aria-selected={idx === activeIndex}
-              aria-label={`Featured item ${idx + 1}`}
-              data-lounge-tv-focusable
-              onClick={() => goToIndex(idx)}
+
+          <h2
+            style={{
+              margin: 0,
+              fontFamily: LOUNGE_TV_FONT_MEDIUM,
+              fontSize: loungeTvGlassCqw(1.85, 4.2, 8.5),
+              lineHeight: 1.12,
+              color: LOUNGE_TV_TEXT_WHITE,
+              letterSpacing: '0.02em',
+            }}
+          >
+            {loungeTvDisplayTitle(title)}
+          </h2>
+
+          {description ? (
+            <p
               style={{
-                width: loungeTvGlassCqw(0.65, 1.5, 3),
-                height: loungeTvGlassCqw(0.65, 1.5, 3),
-                padding: 0,
-                border: 'none',
-                borderRadius: '50%',
-                cursor: 'pointer',
-                background: idx === activeIndex ? LOUNGE_TV_TEXT_WHITE : 'rgba(255,255,255,0.28)',
-                transition: 'background 0.25s ease, transform 0.2s ease',
+                margin: 0,
+                fontFamily: LOUNGE_TV_FONT_BOOK,
+                fontSize: loungeTvGlassCqw(1.1, 2.5, 5),
+                lineHeight: 1.35,
+                color: 'rgba(255,255,255,0.58)',
               }}
-            />
-          ))}
+            >
+              {description}
+            </p>
+          ) : null}
+
+          <div
+            style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              alignItems: 'center',
+              gap: loungeTvGlassCqw(0.45, 1.1, 2.2),
+              marginTop: loungeTvGlassCqw(0.25, 0.6, 1.2),
+            }}
+          >
+            <button
+              type="button"
+              data-lounge-tv-focusable
+              data-lounge-tv-action="watch"
+              style={heroWatchButtonStyle()}
+              onClick={() => onWatch(activeSlot.pack)}
+            >
+              WATCH NOW
+            </button>
+            <HeroSaveButton pack={activeSlot.pack} onToggleSave={onToggleSave} />
+          </div>
+          </div>
+
+          {slots.length > 1 ? (
+            <div
+              role="tablist"
+              aria-label="Featured carousel"
+              className="lounge-tv-hero-carousel-dots"
+              style={{
+                flexShrink: 0,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'flex-end',
+                gap: loungeTvGlassCqw(0.55, 1.3, 2.6),
+                marginTop: loungeTvGlassCqw(0.15, 0.35, 0.75),
+                pointerEvents: 'auto',
+              }}
+            >
+              {slots.map((_, idx) => (
+                <button
+                  key={idx}
+                  type="button"
+                  role="tab"
+                  aria-selected={idx === activeIndex}
+                  aria-label={`Featured item ${idx + 1} of ${slots.length}`}
+                  data-lounge-tv-focusable
+                  onClick={() => goToIndex(idx)}
+                  style={{
+                    width: loungeTvGlassCqw(1.35, 3.2, 6.5),
+                    height: loungeTvGlassCqw(1.35, 3.2, 6.5),
+                    minWidth: '6px',
+                    minHeight: '6px',
+                    padding: 0,
+                    border:
+                      idx === activeIndex
+                        ? `0.5px solid ${LOUNGE_TV_BRAND_RED}`
+                        : '1px solid rgba(255,255,255,0.28)',
+                    borderRadius: '50%',
+                    cursor: 'pointer',
+                    background: idx === activeIndex ? LOUNGE_TV_TEXT_WHITE : 'rgba(255,255,255,0.28)',
+                    transform: idx === activeIndex ? 'scale(1.12)' : 'scale(1)',
+                    transition: 'background 0.25s ease, transform 0.2s ease, border-color 0.2s ease',
+                    boxShadow: 'none',
+                  }}
+                />
+              ))}
+            </div>
+          ) : null}
         </div>
-      ) : null}
-    </section>
+      </section>
+    </div>
   );
 }

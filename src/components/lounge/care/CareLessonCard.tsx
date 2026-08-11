@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react';
 import type { CareLesson } from '../../../content/education/types';
 import { loungeTvGlassCqw } from '../loungeTvResponsive';
 import {
@@ -8,28 +9,75 @@ import {
   LOUNGE_TV_TEXT_WHITE,
 } from '../loungeTvTheme';
 import { CARE_GUIDE_LOCKED_LABEL, CARE_GUIDE_INCLUDED_BADGE } from './careAccess';
+import {
+  LOUNGE_TV_CARE_RAIL_CARD_WIDTH,
+  LOUNGE_TV_FEATURE_CARD_WIDTH,
+  LOUNGE_TV_PAIR_CARD_WIDTH,
+  type LoungeTvRailLayoutMode,
+} from '../loungeTvAdaptiveRail';
+import { LOUNGE_TV_TYPE } from '../loungeTvTypography';
+import { loungeTvFocusGlowIn, loungeTvFocusGlowOut } from '../loungeTvFocusHandlers';
 
 type CareLessonCardProps = {
   lesson: CareLesson;
   onSelect: (lesson: CareLesson) => void;
   unlocked: boolean;
   progressPercent?: number;
+  cardSize?: LoungeTvRailLayoutMode;
 };
 
-export function CareLessonCard({ lesson, onSelect, unlocked, progressPercent }: CareLessonCardProps) {
+function cardWidthForSize(size: LoungeTvRailLayoutMode): string {
+  if (size === 'feature') return LOUNGE_TV_FEATURE_CARD_WIDTH;
+  if (size === 'pair') return LOUNGE_TV_PAIR_CARD_WIDTH;
+  return LOUNGE_TV_CARE_RAIL_CARD_WIDTH;
+}
+
+function statusLine(unlocked: boolean, comingSoon?: boolean): string {
+  if (comingSoon) return 'COMING SOON';
+  return unlocked ? CARE_GUIDE_INCLUDED_BADGE : CARE_GUIDE_LOCKED_LABEL;
+}
+
+export function CareLessonCard({
+  lesson,
+  onSelect,
+  unlocked,
+  progressPercent,
+  cardSize = 'rail',
+}: CareLessonCardProps) {
   const poster = lesson.thumbnailUrl ?? lesson.posterUrl;
+  const isFeature = cardSize === 'feature';
+  const cardWidth = cardWidthForSize(cardSize);
+
+  const titleStyle: CSSProperties = {
+    fontFamily: LOUNGE_TV_FONT_MEDIUM,
+    fontSize: isFeature ? LOUNGE_TV_TYPE.l1 : LOUNGE_TV_TYPE.l2,
+    lineHeight: 1.2,
+    color: LOUNGE_TV_TEXT_WHITE,
+    textTransform: 'uppercase',
+  };
+
+  const statusStyle: CSSProperties = {
+    fontFamily: LOUNGE_TV_FONT_BOOK,
+    fontSize: LOUNGE_TV_TYPE.l3,
+    color: unlocked ? LOUNGE_TV_TEXT_GRAY : LOUNGE_TV_TEXT_GRAY,
+    marginTop: loungeTvGlassCqw(0.35, 0.8, 1.6),
+    lineHeight: 1.35,
+  };
 
   return (
     <button
       type="button"
       data-lounge-tv-focusable
+      data-lounge-tv-focus-id={lesson.id}
       onClick={() => onSelect(lesson)}
       aria-label={lesson.title}
       style={{
         display: 'flex',
         flexDirection: 'column',
-        flex: `0 0 ${loungeTvGlassCqw(24, 56, 92)}`,
-        width: loungeTvGlassCqw(24, 56, 92),
+        flex: isFeature ? '1 1 100%' : `0 0 ${cardWidth}`,
+        width: isFeature ? '100%' : cardWidth,
+        minWidth: isFeature ? 0 : cardWidth,
+        maxWidth: isFeature ? '100%' : cardWidth,
         padding: 0,
         border: 'none',
         background: 'transparent',
@@ -37,15 +85,18 @@ export function CareLessonCard({ lesson, onSelect, unlocked, progressPercent }: 
         textAlign: 'left',
         scrollSnapAlign: 'start',
         textTransform: 'uppercase',
-        opacity: unlocked ? 1 : 0.88,
+        opacity: unlocked ? 1 : 0.9,
+        transition: 'box-shadow 0.28s ease',
       }}
+      onFocusCapture={loungeTvFocusGlowIn}
+      onBlurCapture={loungeTvFocusGlowOut}
     >
       <span
         style={{
           position: 'relative',
           display: 'block',
           width: '100%',
-          aspectRatio: '16 / 9',
+          aspectRatio: isFeature ? '21 / 9' : '16 / 9',
           overflow: 'hidden',
           background: '#121212',
           border: unlocked ? '1px solid rgba(235, 28, 36, 0.35)' : '1px solid rgba(255,255,255,0.12)',
@@ -65,55 +116,6 @@ export function CareLessonCard({ lesson, onSelect, unlocked, progressPercent }: 
             }}
           />
         ) : null}
-        <span
-          style={{
-            position: 'absolute',
-            top: loungeTvGlassCqw(0.45, 1, 2),
-            left: loungeTvGlassCqw(0.45, 1, 2),
-            fontFamily: LOUNGE_TV_FONT_MEDIUM,
-            fontSize: loungeTvGlassCqw(0.85, 1.9, 3.8),
-            letterSpacing: '0.07em',
-            color: LOUNGE_TV_TEXT_WHITE,
-            background: 'rgba(0,0,0,0.72)',
-            padding: `${loungeTvGlassCqw(0.2, 0.5, 1)} ${loungeTvGlassCqw(0.35, 0.85, 1.7)}`,
-          }}
-        >
-          CARE GUIDE
-        </span>
-        {lesson.comingSoon ? (
-          <span
-            style={{
-              position: 'absolute',
-              bottom: loungeTvGlassCqw(0.45, 1, 2),
-              right: loungeTvGlassCqw(0.45, 1, 2),
-              fontFamily: LOUNGE_TV_FONT_BOOK,
-              fontSize: loungeTvGlassCqw(0.8, 1.8, 3.6),
-              color: LOUNGE_TV_TEXT_GRAY,
-              background: 'rgba(0,0,0,0.72)',
-              padding: `${loungeTvGlassCqw(0.15, 0.4, 0.8)} ${loungeTvGlassCqw(0.3, 0.7, 1.4)}`,
-            }}
-          >
-            COMING SOON
-          </span>
-        ) : null}
-        {!unlocked ? (
-          <span
-            style={{
-              position: 'absolute',
-              bottom: loungeTvGlassCqw(0.45, 1, 2),
-              left: loungeTvGlassCqw(0.45, 1, 2),
-              right: loungeTvGlassCqw(0.45, 1, 2),
-              fontFamily: LOUNGE_TV_FONT_BOOK,
-              fontSize: loungeTvGlassCqw(0.72, 1.6, 3.2),
-              color: LOUNGE_TV_TEXT_GRAY,
-              background: 'rgba(0,0,0,0.78)',
-              padding: `${loungeTvGlassCqw(0.2, 0.5, 1)} ${loungeTvGlassCqw(0.3, 0.7, 1.4)}`,
-              lineHeight: 1.3,
-            }}
-          >
-            {CARE_GUIDE_LOCKED_LABEL}
-          </span>
-        ) : null}
         {progressPercent != null && progressPercent > 0 && progressPercent < 100 ? (
           <span
             aria-hidden
@@ -122,7 +124,7 @@ export function CareLessonCard({ lesson, onSelect, unlocked, progressPercent }: 
               left: 0,
               right: 0,
               bottom: 0,
-              height: loungeTvGlassCqw(0.35, 0.9, 1.8),
+              height: loungeTvGlassCqw(0.4, 1, 2),
               background: 'rgba(255,255,255,0.12)',
             }}
           >
@@ -140,25 +142,13 @@ export function CareLessonCard({ lesson, onSelect, unlocked, progressPercent }: 
       <span
         style={{
           display: 'block',
-          paddingTop: loungeTvGlassCqw(0.5, 1.2, 2.4),
-          fontFamily: LOUNGE_TV_FONT_MEDIUM,
-          fontSize: loungeTvGlassCqw(1.05, 2.4, 4.8),
-          lineHeight: 1.25,
-          color: LOUNGE_TV_TEXT_WHITE,
+          paddingTop: loungeTvGlassCqw(0.7, 1.6, 3.2),
+          ...titleStyle,
         }}
       >
         {lesson.title}
       </span>
-      <span
-        style={{
-          fontFamily: LOUNGE_TV_FONT_BOOK,
-          fontSize: loungeTvGlassCqw(0.95, 2.1, 4.2),
-          color: LOUNGE_TV_TEXT_GRAY,
-          marginTop: loungeTvGlassCqw(0.25, 0.6, 1.2),
-        }}
-      >
-        {String(lesson.category).toUpperCase()} · {CARE_GUIDE_INCLUDED_BADGE}
-      </span>
+      <span style={statusStyle}>{statusLine(unlocked, lesson.comingSoon)}</span>
     </button>
   );
 }

@@ -17,6 +17,7 @@ import { PSAReadyToStart } from './PSAReadyToStart';
 import { PSAChapterNav } from './PSAChapterNav';
 import { PSAEntitlementStatusStrip } from './PSAEntitlementStatusStrip';
 import { PSATodayDebugInspector } from './PSATodayDebugInspector';
+import { isLoungeTvDebugUiEnabled } from '../loungeTvDebugUi';
 import {
   psaChapterIsAccessible,
   psaEpisodeContentIdForUnlock,
@@ -43,6 +44,9 @@ import { useEducationUnitContext } from '../../../hooks/useEducationUnitContext'
 import { resolveChapterMedia } from '../../../content/education/signature-units';
 import { writeContinuityUnitPreference } from '../../../content/education/signature-units';
 import { PSAUnitContextStrip } from './PSAUnitContextStrip';
+import { engagementKeyForPsaEpisode } from '../../../utils/loungeEngagementTypes';
+import { useLoungeQualifiedViewTracking } from '../../../hooks/useLoungeQualifiedViewTracking';
+import { LoungeTvPackEngagementHost } from '../engagement/LoungeTvPackEngagementHost';
 
 type PSATodayEpisodeViewProps = {
   episode: PSATodayEpisode;
@@ -51,6 +55,10 @@ type PSATodayEpisodeViewProps = {
   isUnlocked: (contentId: string) => boolean;
   onTicketsRefresh?: () => void;
   onOpenSlayTip?: (tip: SlayTip) => void;
+  onEngagementRequireSignIn?: () => void;
+  isSignedInForEngagement?: boolean;
+  engagementUserEmail?: string | null;
+  engagementToast?: (message: string) => void;
 };
 
 export function PSATodayEpisodeView({
@@ -60,6 +68,10 @@ export function PSATodayEpisodeView({
   isUnlocked: _isUnlocked,
   onTicketsRefresh,
   onOpenSlayTip,
+  onEngagementRequireSignIn,
+  isSignedInForEngagement = false,
+  engagementUserEmail = null,
+  engagementToast,
 }: PSATodayEpisodeViewProps) {
   const {
     entitlement,
@@ -119,6 +131,11 @@ export function PSATodayEpisodeView({
     ? getContentPackById(episode.linkedContentPackId)
     : undefined;
   const cameraBTile = linkedPack ? contentPackToTile(linkedPack) : null;
+  const engagementKey = useMemo(() => engagementKeyForPsaEpisode(episode), [episode]);
+  const { onSample: onEngagementViewSample } = useLoungeQualifiedViewTracking(engagementKey, {
+    contentTitle: episode.title,
+    enabled: phase === 'camera-b-lesson',
+  });
 
   const lessonDurationSeconds = useMemo(() => {
     if (episode.runtimeSeconds && episode.runtimeSeconds > 0) return episode.runtimeSeconds;
@@ -371,6 +388,17 @@ export function PSATodayEpisodeView({
         ) : null}
       </header>
 
+      {linkedPack && onEngagementRequireSignIn ? (
+        <LoungeTvPackEngagementHost
+          pack={linkedPack}
+          variant="bar"
+          onRequireSignIn={onEngagementRequireSignIn}
+          isSignedIn={isSignedInForEngagement}
+          userEmail={engagementUserEmail}
+          engagementToast={engagementToast}
+        />
+      ) : null}
+
       {(phase === 'camera-a-preview' ||
         phase === 'camera-a-transition' ||
         phase === 'access-gate') && (
@@ -491,6 +519,7 @@ export function PSATodayEpisodeView({
                   tile={cameraBTile}
                   playBlocked={false}
                   onPlaybackSample={watchSessionEnabled ? handleSample : undefined}
+                  onEngagementViewSample={onEngagementViewSample}
                 />
               ) : (
                 <CameraBPlaceholder poster={episode.cameraB?.posterUrl ?? cameraAPoster} />
@@ -513,7 +542,7 @@ export function PSATodayEpisodeView({
         </>
       ) : null}
 
-      {import.meta.env.DEV ? (
+      {isLoungeTvDebugUiEnabled() ? (
         <PSATodayDebugInspector
           episode={episode}
           phase={phase}

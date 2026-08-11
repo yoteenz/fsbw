@@ -4,6 +4,7 @@ import { getAllCareGuides } from '../../../content/education/care/guides/catalog
 import { getDepositedCareGuideIds } from '../../../utils/careGuideLibrary';
 import { loungeTvGlassCqw } from '../loungeTvResponsive';
 import { LOUNGE_TV_FONT_BOOK, LOUNGE_TV_TEXT_GRAY } from '../loungeTvTheme';
+import { isLoungeTvDebugUiEnabled } from '../loungeTvDebugUi';
 
 type CareDebugInspectorProps = {
   purchaseProfiles: CarePurchaseProfile[];
@@ -24,7 +25,7 @@ export function CareDebugInspector({
   careMasterySeasonAccess,
   loading,
 }: CareDebugInspectorProps) {
-  if (!import.meta.env.DEV) return null;
+  if (!isLoungeTvDebugUiEnabled()) return null;
 
   const deposited = getDepositedCareGuideIds();
   const applicableGuideIds = careGuideEntitlements.map((e) => e.contentId);

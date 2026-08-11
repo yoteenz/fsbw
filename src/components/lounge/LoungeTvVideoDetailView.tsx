@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import type { LoungeContentPack } from './loungeTvContentPack';
 import { relatedContentPacks, resolveContentPackFormat } from './loungeTvContentPack';
 import { contentPackToTile } from './loungeTvContent';
@@ -20,6 +20,9 @@ import {
   resolveLoungeTvTicketCost,
 } from './loungeTvTicketAccess';
 import type { LoungeContentUnlock } from '../../utils/slayTicketHistoryDisplay';
+import { engagementKeyForPack } from '../../utils/loungeEngagementTypes';
+import { useLoungeQualifiedViewTracking } from '../../hooks/useLoungeQualifiedViewTracking';
+import { LoungeTvPackEngagementHost } from './engagement/LoungeTvPackEngagementHost';
 
 type LoungeTvVideoDetailViewProps = {
   pack: LoungeContentPack;
@@ -29,6 +32,10 @@ type LoungeTvVideoDetailViewProps = {
   onPlayBlocked?: () => void;
   unlocks?: LoungeContentUnlock[];
   isUnlocked: (contentId: string) => boolean;
+  onEngagementRequireSignIn?: () => void;
+  isSignedInForEngagement?: boolean;
+  engagementUserEmail?: string | null;
+  engagementToast?: (message: string) => void;
 };
 
 export function LoungeTvVideoDetailView({
@@ -39,9 +46,18 @@ export function LoungeTvVideoDetailView({
   onPlayBlocked,
   unlocks,
   isUnlocked,
+  onEngagementRequireSignIn,
+  isSignedInForEngagement = false,
+  engagementUserEmail = null,
+  engagementToast,
 }: LoungeTvVideoDetailViewProps) {
   const navigate = useNavigate();
   const tile = contentPackToTile(pack);
+  const engagementKey = useMemo(() => engagementKeyForPack(pack.id), [pack.id]);
+  const { onSample: onEngagementViewSample } = useLoungeQualifiedViewTracking(engagementKey, {
+    contentTitle: pack.title,
+    enabled: !playBlocked,
+  });
   const related = relatedContentPacks(pack);
   const format = resolveContentPackFormat(pack);
   const [mode, setMode] = useState<'watch' | 'read'>('watch');
@@ -70,6 +86,7 @@ export function LoungeTvVideoDetailView({
           tile={tile}
           playBlocked={playBlocked}
           onPlayBlocked={onPlayBlocked}
+          onEngagementViewSample={onEngagementViewSample}
         />
       ) : null}
 
@@ -120,6 +137,15 @@ export function LoungeTvVideoDetailView({
           {pack.subtitle}
         </p>
       ) : null}
+
+      <LoungeTvPackEngagementHost
+        pack={pack}
+        variant="bar"
+        onRequireSignIn={() => onEngagementRequireSignIn?.()}
+        isSignedIn={isSignedInForEngagement}
+        userEmail={engagementUserEmail}
+        engagementToast={engagementToast}
+      />
 
       {canRead ? (
         <div style={{ display: 'flex', gap: loungeTvGlassCqw(0.6, 1.5, 3) }}>

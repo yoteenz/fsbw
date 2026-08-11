@@ -49,8 +49,8 @@ export {
 };
 
 export const CARE_LEARN_RAILS = [
-  { id: 'care-your-care-guides', title: 'YOUR CARE GUIDES' },
-  { id: 'care-your-library', title: 'YOUR CARE LIBRARY' },
+  { id: 'care-your-care-guides', title: 'CARE GUIDES' },
+  { id: 'care-your-library', title: 'CARE LIBRARY' },
   { id: 'care-universal', title: 'UNIVERSAL HAIR CARE' },
   { id: 'care-unit', title: 'UNIT CARE' },
   { id: 'care-texture', title: 'TEXTURE CARE' },

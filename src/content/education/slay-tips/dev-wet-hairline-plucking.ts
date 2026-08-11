@@ -8,9 +8,13 @@ export const SLAY_TIP_DEV_WET_HAIRLINE: SlayTip = {
   id: 'slay-tip-dev-wet-hairline-plucking',
   slug: 'wet-hairline-before-plucking',
   title: 'WET YOUR HAIRLINE BEFORE PLUCKING',
+  publicTitle: 'BEFORE YOU PLUCK',
+  revealTitle: 'DAMPEN THE HAIRLINE FIRST.',
+  previewCopy:
+    "There's one step worth taking before your tweezers ever touch the hairline.",
   subtitle: 'SLAY TIP · DEV PLACEHOLDER',
   shortDescription:
-    'ONE FOCUSED TECHNIQUE MODIFIER FOR A CLEANER, MORE CONTROLLED PLUCKING SESSION.',
+    "There's one step worth taking before your tweezers ever touch the hairline.",
   fullDescription:
     'THIS MICRO-LESSON EXPLAINS WHY A LIGHTLY DAMPENED HAIRLINE CAN IMPROVE VISIBILITY AND CONTROL — WITHOUT REPLACING THE FULL PLUCKING CLASS.',
   pillar: 'lace',

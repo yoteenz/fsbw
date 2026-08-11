@@ -1,4 +1,5 @@
 import { useEffect, useRef, type RefObject } from 'react';
+import { applyLoungeTvMutedPlayback, playLoungeTvMuted } from '../components/lounge/loungeTvMutedPlayback';
 
 export type SceneCoverVideoDirection = 'forward' | 'reverse';
 
@@ -66,6 +67,7 @@ export function useSceneCoverVideoPlayback(
       if (video) {
         video.pause();
         video.playbackRate = 1;
+        applyLoungeTvMutedPlayback(video);
         if (direction === 'reverse') video.currentTime = 0;
       }
       onCompleteRef.current();
@@ -120,6 +122,7 @@ export function useSceneCoverVideoPlayback(
         });
 
       const playForward = async () => {
+        applyLoungeTvMutedPlayback(el);
         el.playbackRate = 1;
         el.currentTime = 0;
 
@@ -135,14 +138,14 @@ export function useSceneCoverVideoPlayback(
         revealIfDecoded();
 
         try {
-          await el.play();
+          await playLoungeTvMuted(el);
         } catch {
           try {
             if (el.readyState < HTMLMediaElement.HAVE_CURRENT_DATA) {
               await waitUntilCanStart();
               revealIfDecoded();
             }
-            await el.play();
+            await playLoungeTvMuted(el);
           } catch {
             finish();
           }
@@ -155,6 +158,7 @@ export function useSceneCoverVideoPlayback(
       };
 
       const playReverse = async () => {
+        applyLoungeTvMutedPlayback(el);
         const rate = reversePlaybackRate;
 
         const waitForDuration = () =>
@@ -181,6 +185,7 @@ export function useSceneCoverVideoPlayback(
 
         el.pause();
         el.playbackRate = 1;
+        applyLoungeTvMutedPlayback(el);
 
         const frac = Math.min(1, Math.max(0, reverseStartFraction));
         const reverseStartTime =

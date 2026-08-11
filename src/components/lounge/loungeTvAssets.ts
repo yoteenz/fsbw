@@ -5,6 +5,54 @@ export const LOUNGE_CURTAIN_RIGHT_SRC = '/assets/lounge-curtain-right.jpeg';
 /** Chroma-keyed hand + remote (bottom of lounge TV overlay). */
 export const LOUNGE_TV_REMOTE_HAND_SRC = '/assets/lounge-tv-remote-hand.png';
 
+/** FS Website production Supabase — fallback when env URL is missing or redacted in preview. */
+const LOUNGE_TV_SUPABASE_FALLBACK = 'https://' + 'hyycomvcaqxxvyrfupes' + '.supabase.co';
+
+function loungeTvSupabaseProjectBase(): string {
+  const fromEnv =
+    (import.meta as unknown as { env?: { VITE_SUPABASE_URL?: string } }).env?.VITE_SUPABASE_URL?.trim() ||
+    '';
+  if (fromEnv && !/YOUR_PROJECT|\[REDACTED\]/i.test(fromEnv)) {
+    return fromEnv.replace(/\/$/, '');
+  }
+  return LOUNGE_TV_SUPABASE_FALLBACK;
+}
+
+/** Public object URL under Supabase `live-preview/` (path segments may be pre-encoded). */
+export function loungeTvLivePreviewPublicUrl(objectPath: string): string {
+  return `${loungeTvSupabaseProjectBase()}/storage/v1/object/public/live-preview/${objectPath}`;
+}
+
+/** Clear-acrylic pause bars — Featured hero + lounge media controls. */
+export const LOUNGE_TV_PAUSE_ICON_SRC = loungeTvLivePreviewPublicUrl(
+  '3D%20Stock/Lounge/E201DF7E-D7B8-489B-92B2-30270FF83409.png',
+);
+
+/** Clear-acrylic play triangle — resume flash + hover affordance. */
+export const LOUNGE_TV_PLAY_ICON_SRC = loungeTvLivePreviewPublicUrl(
+  '3D%20Stock/Lounge/F11EEA6E-7B11-4423-A9F3-D23B321FFD8A.png',
+);
+
+/** Clear-acrylic speaker — muted state (slash / silent). */
+export const LOUNGE_TV_MUTED_ICON_SRC = loungeTvLivePreviewPublicUrl(
+  '3D%20Stock/Lounge/0E2165B3-2762-4712-AE37-15ABC20A4196.png',
+);
+
+/** Clear-acrylic speaker — unmuted state (sound on). */
+export const LOUNGE_TV_UNMUTED_ICON_SRC = loungeTvLivePreviewPublicUrl(
+  '3D%20Stock/Lounge/2D300F22-F0CD-4C64-8415-38509188F72F.png',
+);
+
+/** Clear-acrylic bookmark — mastery grid + content rail save control. */
+export const LOUNGE_TV_BOOKMARK_ICON_SRC = loungeTvLivePreviewPublicUrl(
+  '3D%20Stock/Lounge/4336000F-2C08-4626-9C52-1DAFF552C190.png',
+);
+
+/** Clear-acrylic bookmark — saved / filled state. */
+export const LOUNGE_TV_BOOKMARK_SAVED_ICON_SRC = loungeTvLivePreviewPublicUrl(
+  '3D%20Stock/Lounge/A812A9C4-CC9C-433B-B45E-66AC2CC9F523.png',
+);
+
 /** @deprecated Use {@link LOUNGE_TV_TICKET_LOCK_WATERMARK_SRC} from `slayTicketAssets.ts`. */
 export const LOUNGE_TV_ACRYLIC_LOCK_ASSET_VERSION = 'v1';
 
@@ -15,7 +63,9 @@ export const LOUNGE_TV_ACRYLIC_LOCK_SRC = `/assets/lounge-tv-acrylic-lock.svg?v=
 export const LOUNGE_TV_CONTENT_FRAME_ASSET_VERSION = 'final-lp-tv-frame-jun2';
 
 export const LOUNGE_TV_CONTENT_FRAME_SRC_REMOTE =
-  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/Final%20LP/ChatGPT%20Image%20Jun%202,%202026%20at%2006_28_39%20PM.png';
+  loungeTvLivePreviewPublicUrl(
+  'Final%20LP/ChatGPT%20Image%20Jun%202,%202026%20at%2006_28_39%20PM.png',
+);
 
 export const LOUNGE_TV_CONTENT_FRAME_SRC = `/assets/lounge-tv-content-frame.png?v=${LOUNGE_TV_CONTENT_FRAME_ASSET_VERSION}`;
 
@@ -94,7 +144,9 @@ export const LOUNGE_TV_CONTENT_FRAME_LAYER_OFFSET_Y_PX = LOUNGE_TV_CONTENT_FRAME
 export const LOUNGE_TV_DESIGN_ASSET_VERSION = 'kv6DR-v2';
 
 export const LOUNGE_TV_DESIGN_SRC_REMOTE =
-  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/LP%20Images/kv6DR-SLYFfBb8V4UPFOr_WHgmeCou.jpeg';
+  loungeTvLivePreviewPublicUrl(
+  'LP%20Images/kv6DR-SLYFfBb8V4UPFOr_WHgmeCou.jpeg',
+);
 
 /** Full TV bezel + off screen PNG; lounge slide renders this image (play overlay on top). */
 export const LOUNGE_TV_DESIGN_SRC = `/assets/lounge-tv-design.png?v=${LOUNGE_TV_DESIGN_ASSET_VERSION}`;
@@ -148,10 +200,16 @@ export const LOUNGE_TV_MEDIA = {
 
 /** Supabase green-screen original (for re-baking `lounge-tv-remote-hand.png`). */
 export const LOUNGE_TV_REMOTE_HAND_SRC_REMOTE =
-  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/wig-preview-live/Untitled%20folder/DqaxvQ6qq4XteORiCsfiW_kPRRBKiq.jpeg';
+  loungeTvLivePreviewPublicUrl(
+  'wig-preview-live/Untitled%20folder/DqaxvQ6qq4XteORiCsfiW_kPRRBKiq.jpeg',
+);
 
 /** Supabase originals (same files as bundled assets). */
 export const LOUNGE_CURTAIN_LEFT_SRC_REMOTE =
-  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/wig-preview-live/Untitled%20folder/1rmzkVKNKkP6hpLD9gOVF_41oSopA5.jpeg';
+  loungeTvLivePreviewPublicUrl(
+  'wig-preview-live/Untitled%20folder/1rmzkVKNKkP6hpLD9gOVF_41oSopA5.jpeg',
+);
 export const LOUNGE_CURTAIN_RIGHT_SRC_REMOTE =
-  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/wig-preview-live/Untitled%20folder/rnAnKKGlJDhcNOHJZNbRC_ftDz6eCk.jpeg';
+  loungeTvLivePreviewPublicUrl(
+  'wig-preview-live/Untitled%20folder/rnAnKKGlJDhcNOHJZNbRC_ftDz6eCk.jpeg',
+);

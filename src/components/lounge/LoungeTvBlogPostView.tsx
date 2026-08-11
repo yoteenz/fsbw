@@ -214,7 +214,7 @@ export function LoungeTvBlogPostDetail({ tile, onBack }: LoungeTvBlogPostDetailP
           textTransform: 'uppercase',
         }}
       >
-        ← BACK
+        {'< BACK'}
       </button>
 
       <header style={{ borderBottom: DIVIDER, paddingBottom: '8px' }}>

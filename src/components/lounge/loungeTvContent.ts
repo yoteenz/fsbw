@@ -55,10 +55,10 @@ export const LOUNGE_TV_SIDEBAR: Record<LoungeTvMainTab, LoungeTvSidebarItem[]> =
   learn: [
     { id: 'lace-mastery', label: 'LACE MASTERY' },
     { id: 'care-mastery', label: 'CARE MASTERY' },
-    { id: 'styling-academy', label: 'STYLING MASTERY' },
-    { id: 'baw-academy', label: 'BUILD-A-WIG ACADEMY' },
-    { id: 'beginner-essentials', label: 'BEGINNER ESSENTIALS' },
-    { id: 'advanced-techniques', label: 'ADVANCED TECHNIQUES' },
+    { id: 'color-mastery', label: 'COLOR MASTERY' },
+    { id: 'installation-mastery', label: 'INSTALLATION MASTERY' },
+    { id: 'styling-mastery', label: 'STYLING MASTERY' },
+    { id: 'after-care-mastery', label: 'UPKEEP MASTERY' },
   ],
   explore: [
     { id: 'brand-films', label: 'BRAND FILMS' },

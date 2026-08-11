@@ -115,6 +115,7 @@ export {
 export {
   getAllEducationMasteries,
   getEducationMasteryById,
+  getEducationMasteryBySlug,
   getAllEducationSeasons,
   getEducationSeasonById,
   getSeasonsForMastery,
@@ -201,6 +202,28 @@ export {
   isHairPurchaseSlayTicketEarningEnabled,
   HAIR_PURCHASE_SLAY_TICKET_EARNING_DEPRECATED,
 } from './commerce/slayTicketEconomyPolicy';
+
+export {
+  listMasteryTrackPresentations,
+  getMasteryTrackById,
+  resolveMasteryTrackStatus,
+  MASTERY_TRACKS,
+  PSA_TODAY_LEARN_UMBRELLA,
+  FRONTAL_SLAYER_ACADEMY_FUTURE_NOTE,
+} from './hierarchy/masteryTracks';
+export {
+  PSA_TODAY_CONTENT_FAMILY,
+  PSA_LEARN_SECONDARY_RAILS,
+  type PsaTeachingFormat,
+  type PsaMasteryTrackKey,
+} from './psaTodayTaxonomy';
+export {
+  MASTERY_KIT_COPY,
+  OFFICIAL_MASTERY_KIT_FULFILLMENT_ENABLED,
+  resolveMasteryKitPresentationMode,
+  type MasteryKitItem,
+  type MasteryKitPresentationMode,
+} from './masteryKitModel';
 
 export { resolveMasteryCertificationReadiness, listMasteriesWithCertificationProgress } from './hierarchy/masteryCompletion';
 

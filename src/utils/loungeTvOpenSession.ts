@@ -70,18 +70,8 @@ export function writeLoungeTvSessionBrowseState(
   }
 }
 
-function navigationWasReload(): boolean {
-  try {
-    const nav = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined;
-    return nav?.type === 'reload';
-  } catch {
-    return false;
-  }
-}
-
-/** Restore TV open only after a full reload while still on the lounge carousel route. */
+/** Restore TV open on the lounge route when the session flag is set (survives refresh). */
 export function readLoungeTvOpenRestoreAfterReload(onLoungeRoute: boolean): boolean {
   if (!onLoungeRoute) return false;
-  if (!navigationWasReload()) return false;
   return readLoungeTvSessionOpen();
 }

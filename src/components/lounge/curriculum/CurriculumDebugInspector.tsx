@@ -8,6 +8,7 @@ import {
 } from '../../../content/education/curriculum/registry';
 import { loungeTvGlassCqw } from '../loungeTvResponsive';
 import { LOUNGE_TV_FONT_BOOK, LOUNGE_TV_TEXT_GRAY, LOUNGE_TV_TEXT_WHITE } from '../loungeTvTheme';
+import { isLoungeTvDebugUiEnabled } from '../loungeTvDebugUi';
 
 type FilterState = {
   pillar: EducationPillar | 'all';
@@ -16,7 +17,7 @@ type FilterState = {
 };
 
 export function CurriculumDebugInspector() {
-  if (!import.meta.env.DEV) return null;
+  if (!isLoungeTvDebugUiEnabled()) return null;
 
   const [filter, setFilter] = useState<FilterState>({
     pillar: 'all',

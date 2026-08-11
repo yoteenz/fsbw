@@ -8,4 +8,5 @@ export const LOUNGE_TV_GLASS_BORDER = '1px solid rgba(255,255,255,0.12)';
 export const LOUNGE_TV_PANEL_BG = 'rgba(0,0,0,0.55)';
 
 export const LOUNGE_TV_FONT_MEDIUM = '"Futura PT Medium", Futura, sans-serif';
+export const LOUNGE_TV_FONT_DEMI = '"Futura PT Demi", Futura, sans-serif';
 export const LOUNGE_TV_FONT_BOOK = '"Futura PT Book", Futura, sans-serif';

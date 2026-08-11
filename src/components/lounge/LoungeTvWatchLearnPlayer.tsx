@@ -7,6 +7,7 @@ import { getContentPackById } from './loungeTvContentPack';
 import { useSceneHitRegionConfig } from '../lobby/SceneHitLayoutEditorContext';
 import { LoungeTvInnerLayoutEditor } from './LoungeTvInnerLayoutEditor';
 import { loungeTvVideoShellStyle } from '../../utils/loungeTvInnerLayout';
+import { applyLoungeTvMutedPlayback, playLoungeTvMuted } from './loungeTvMutedPlayback';
 
 const BODY_FONT = '"Futura PT Medium", Futura, sans-serif';
 const TIME_FONT = '"Futura PT Book", Futura, sans-serif';
@@ -26,6 +27,8 @@ type LoungeTvWatchLearnPlayerProps = {
     seeking: boolean;
     buffering: boolean;
   }) => void;
+  /** Engagement qualified-view samples (separate from PSA access watch metering). */
+  onEngagementViewSample?: (sample: { currentTimeSec: number; durationSec: number; playing: boolean }) => void;
 };
 
 function FullscreenExpandIcon() {
@@ -66,6 +69,7 @@ export function LoungeTvWatchLearnPlayer({
   playBlocked = false,
   onPlayBlocked,
   onPlaybackSample,
+  onEngagementViewSample,
 }: LoungeTvWatchLearnPlayerProps) {
   const videoFrameRegion = useSceneHitRegionConfig('lounge-tv-video-frame');
   const shellRef = useRef<HTMLDivElement>(null);
@@ -122,7 +126,7 @@ export function LoungeTvWatchLearnPlayer({
             video.pause();
             setPaused(true);
           } else {
-            void video.play();
+            void playLoungeTvMuted(video);
             setPaused(false);
           }
           setCurrentTime(video.currentTime);
@@ -162,12 +166,14 @@ export function LoungeTvWatchLearnPlayer({
     if (video.readyState >= 1) applyStart();
     else video.addEventListener('loadedmetadata', applyStart, { once: true });
     if (playBlocked) {
+      applyLoungeTvMutedPlayback(video);
       video.pause();
       setPaused(true);
       return;
     }
+    applyLoungeTvMutedPlayback(video);
     const syncPaused = () => setPaused(video.paused);
-    const playPromise = video.play();
+    const playPromise = playLoungeTvMuted(video);
     if (playPromise) {
       void playPromise.then(syncPaused).catch(syncPaused);
     } else {
@@ -187,7 +193,7 @@ export function LoungeTvWatchLearnPlayer({
       const durationSec =
         Number.isFinite(video.duration) && video.duration > 0
           ? video.duration
-          : (pack ? defaultDurationSec(pack) : undefined);
+          : (pack ? defaultDurationSec(pack) : 0);
       setWatchProgress(tile.id, video.currentTime, { durationSec });
     };
     video.addEventListener('timeupdate', onTime);
@@ -254,6 +260,38 @@ export function LoungeTvWatchLearnPlayer({
   }, [onPlaybackSample, tile.id, tile.videoSrc]);
 
   useEffect(() => {
+    if (!onEngagementViewSample) return;
+    const video = videoRef.current;
+    if (!video || playBlocked) return;
+
+    const emit = () => {
+      const pack = getContentPackById(tile.id);
+      const durationSec =
+        Number.isFinite(video.duration) && video.duration > 0
+          ? video.duration
+          : (pack ? defaultDurationSec(pack) ?? 0 : 0);
+      onEngagementViewSample({
+        currentTimeSec: video.currentTime,
+        durationSec,
+        playing: !video.paused && !video.ended,
+      });
+    };
+
+    video.addEventListener('timeupdate', emit);
+    video.addEventListener('play', emit);
+    video.addEventListener('pause', emit);
+    const interval = window.setInterval(emit, 2000);
+    emit();
+
+    return () => {
+      window.clearInterval(interval);
+      video.removeEventListener('timeupdate', emit);
+      video.removeEventListener('play', emit);
+      video.removeEventListener('pause', emit);
+    };
+  }, [onEngagementViewSample, playBlocked, tile.id]);
+
+  useEffect(() => {
     return () => {
       if (tapTimerRef.current) clearTimeout(tapTimerRef.current);
     };
@@ -267,7 +305,7 @@ export function LoungeTvWatchLearnPlayer({
         onPlayBlocked?.();
         return;
       }
-      void video.play();
+      void playLoungeTvMuted(video);
       setPaused(false);
     } else {
       video.pause();
@@ -387,7 +425,7 @@ export function LoungeTvWatchLearnPlayer({
     if (!video) return;
     setCurrentTime(video.currentTime);
     if (wasPlayingBeforeScrubRef.current && !playBlocked) {
-      void video.play();
+      void playLoungeTvMuted(video);
       setPaused(false);
     }
   }, [playBlocked]);
@@ -472,6 +510,7 @@ export function LoungeTvWatchLearnPlayer({
               ref={videoRef}
               src={videoSrc}
               playsInline
+              muted
               loop
               preload="auto"
               controls={false}

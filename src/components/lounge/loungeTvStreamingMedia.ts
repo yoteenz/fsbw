@@ -46,8 +46,15 @@ import { LOUNGE_TV_MEDIA } from './loungeTvAssets';
 /** Replace preview/full MP4 paths when production assets ship — see {@link LOUNGE_TV_MEDIA}. */
 export { LOUNGE_TV_MEDIA };
 
-/** ~3–4 featured hero items — rotates automatically on Featured tab. */
+/** ~3 featured hero items — rotates automatically on Featured tab. */
 export const LOUNGE_TV_FEATURED_HERO_ROTATION: LoungeFeaturedHeroSlot[] = [
+  {
+    packId: 'cutting-lace',
+    eyebrow: 'FEATURED PREMIERE · LACE MASTERY',
+    displayTitle: 'CUTTING YOUR LACE',
+    displayCategory: 'LACE MASTERY',
+    displayDescription: 'TRIM AND SHAPE YOUR LACE FRONT FOR A CLEAN HAIRLINE BEFORE INSTALL.',
+  },
   {
     packId: 'psa-answers-lace-faq',
     eyebrow: 'FEATURED PREMIERE · NEW THIS WEEK',
@@ -56,25 +63,11 @@ export const LOUNGE_TV_FEATURED_HERO_ROTATION: LoungeFeaturedHeroSlot[] = [
     displayDescription: 'YOUR MOST-ASKED LACE QUESTIONS, ANSWERED.',
   },
   {
-    packId: 'melting-lace',
-    eyebrow: 'FEATURED PREMIERE · HAIR SCHOOL',
-    displayTitle: 'THE PERFECT MELT',
-    displayCategory: 'HAIR SCHOOL',
-    displayDescription: 'MELT LACE INTO SKIN WITH THE RIGHT ADHESIVE AND PRESSURE.',
-  },
-  {
-    packId: 'transformation-diary-noir-install',
-    eyebrow: 'FEATURED PREMIERE · MEMBER STORY',
-    displayTitle: 'FROM INSTALL TO FINAL SLAY',
-    displayCategory: 'TRANSFORMATION STORIES',
-    displayDescription: 'FROM CONSULT TO CAMERA-READY — A MEMBER JOURNEY.',
-  },
-  {
-    packId: 'behind-brand-studio',
-    eyebrow: 'FEATURED PREMIERE · EXCLUSIVE',
-    displayTitle: 'BEHIND THE BUILD',
-    displayCategory: 'INSIDE THE MANSION',
-    displayDescription: 'A DAY ON SET WITH THE FRONTAL SLAYER TEAM.',
+    packId: 'brand-film-noir',
+    eyebrow: 'FEATURED PREMIERE · BRAND FILM',
+    displayTitle: 'NOIR — BRAND FILM',
+    displayCategory: 'BRAND FILM',
+    displayDescription: 'THE STORY BEHIND OUR SIGNATURE SILHOUETTE.',
   },
 ];
 
@@ -174,7 +167,7 @@ export type LoungeLiveUpNextItem = {
 export const LOUNGE_TV_LIVE_UP_NEXT: LoungeLiveUpNextItem[] = [
   {
     id: 'live-psa-qa',
-    title: 'PSA LIVE Q&A — LACE & INSTALL',
+    title: 'PSA LIVE Q&A: LACE & INSTALL',
     category: 'PSA LIVE Q&A',
     scheduledAt: 'FRI · 7:00 PM ET',
     duration: '45 MIN',
@@ -190,7 +183,7 @@ export const LOUNGE_TV_LIVE_UP_NEXT: LoungeLiveUpNextItem[] = [
   },
   {
     id: 'live-member-workshop',
-    title: 'MEMBER WORKSHOP — MELT MASTERCLASS',
+    title: 'MEMBER WORKSHOP: MELT MASTERCLASS',
     category: 'MEMBER WORKSHOPS',
     scheduledAt: 'SUN · 4:00 PM ET',
     duration: '60 MIN',

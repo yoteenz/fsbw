@@ -4,6 +4,10 @@ import { getWatchProgressMap, isPackCompleted } from '../../../utils/loungeTvLib
 import { getPsaTodayEpisodeById } from '../psa-today/psaTodayCatalog';
 import { syncEpisodeCompletion } from './certificationApi';
 import { trackEducationHierarchyEvent } from './educationHierarchyAnalytics';
+import {
+  isEpisodeFullLessonReleased,
+  resolveSlotPsaEpisode,
+} from '../../../content/education/hierarchy/catalog';
 
 const STORAGE_KEY = 'lounge_season_progress_v1';
 
@@ -92,12 +96,38 @@ export function computeSeasonProgress(season: EducationSeason): {
   total: number;
   percent: number;
   isComplete: boolean;
+  /** Denominator uses released episodes when any are available. */
+  releasedTotal: number;
 } {
   const completedSet = new Set(getCompletedEpisodeIdsForSeason(season));
-  const total = season.episodeSlots.length;
-  const completed = Math.min(total, completedSet.size);
+  const slotTotal = season.episodeSlots.length;
+  let releasedTotal = 0;
+  let completedReleased = 0;
+
+  for (const slot of season.episodeSlots) {
+    const ep = resolveSlotPsaEpisode(slot);
+    if (!ep || !isEpisodeFullLessonReleased(ep)) continue;
+    releasedTotal += 1;
+    const packId = ep.linkedContentPackId ?? ep.id;
+    if (
+      completedSet.has(ep.id) ||
+      completedSet.has(slot.careLessonId ?? '') ||
+      isPackCompleted(packId)
+    ) {
+      completedReleased += 1;
+    }
+  }
+
+  const total = releasedTotal > 0 ? releasedTotal : slotTotal;
+  const completed = releasedTotal > 0 ? completedReleased : Math.min(slotTotal, completedSet.size);
   const percent = total > 0 ? (completed / total) * 100 : 0;
-  return { completed, total, percent, isComplete: total > 0 && completed >= total };
+  return {
+    completed,
+    total,
+    percent,
+    isComplete: total > 0 && completed >= total,
+    releasedTotal,
+  };
 }
 
 export function markSeasonCompletedIfReady(season: EducationSeason): boolean {

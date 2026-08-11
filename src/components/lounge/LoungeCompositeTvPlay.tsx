@@ -31,6 +31,7 @@ import {
   readLoungeTvOpenRestoreAfterReload,
   writeLoungeTvSessionOpen,
 } from '../../utils/loungeTvOpenSession';
+import { applyLoungeTvMutedPlayback } from './loungeTvMutedPlayback';
 
 type Props = {
   /** {@link SceneCarouselViewportStage} root — `100dvh` cover box on `final-lounge.png`. */
@@ -97,15 +98,12 @@ export function LoungeCompositeTvPlay({ measureRef }: Props) {
     setTvOpen(false);
   }, []);
 
-  /** Leave lounge slide or lobby entirely — collapse TV; do not restore until next play or lounge refresh. */
+  /** Leave lounge slide — collapse TV and clear persisted open (manual close already cleared session). */
   useEffect(() => {
-    if (onLoungeRoute) {
-      if (!tvOpen) writeLoungeTvSessionOpen(false);
-      return;
-    }
+    if (onLoungeRoute) return;
     writeLoungeTvSessionOpen(false);
     setTvOpen(false);
-  }, [onLoungeRoute, tvOpen]);
+  }, [onLoungeRoute]);
 
   /** After refresh with TV still open, map grow origin once the lounge stage is measured. */
   useEffect(() => {
@@ -126,9 +124,9 @@ export function LoungeCompositeTvPlay({ measureRef }: Props) {
     document.head.appendChild(link);
 
     const warmup = document.createElement('video');
-    warmup.muted = true;
+    applyLoungeTvMutedPlayback(warmup);
     warmup.playsInline = true;
-    warmup.preload = 'auto';
+    warmup.preload = 'metadata';
     warmup.src = LOUNGE_TV_ANIMATION_VIDEO_SRC;
     warmup.setAttribute('aria-hidden', 'true');
     warmup.tabIndex = -1;

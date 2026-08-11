@@ -11,6 +11,7 @@ import {
   getSavedPackIds,
   getWatchProgressMap,
 } from '../../utils/loungeTvLibrary';
+import { useLoungeTvLibraryRevision } from '../../hooks/useLoungeTvLibraryRevision';
 import {
   findLoungeContentUnlock,
   loungeTvContentIsAccessible,
@@ -30,6 +31,14 @@ type LoungeTvLibrarySectionsProps = {
   isUnlocked: (contentId: string) => boolean;
   unlocks?: LoungeContentUnlock[];
   careUnlockedSet?: Set<string>;
+  suppressTitle?: boolean;
+  /** Hide section entirely when empty (Library root rails). */
+  hideWhenEmpty?: boolean;
+  /** When true, parent handles section spacing (Library tab dividers). */
+  embeddedSection?: boolean;
+  onEngagementRequireSignIn?: () => void;
+  onEngagementOpenDiscussion?: (pack: LoungeContentPack) => void;
+  engagementToast?: (message: string) => void;
 };
 
 function packsFromIds(ids: string[]): LoungeContentPack[] {
@@ -45,7 +54,15 @@ export function LoungeTvLibrarySections({
   isUnlocked,
   unlocks,
   careUnlockedSet,
+  suppressTitle = false,
+  hideWhenEmpty = false,
+  embeddedSection = false,
+  onEngagementRequireSignIn,
+  onEngagementOpenDiscussion,
+  engagementToast,
 }: LoungeTvLibrarySectionsProps) {
+  const libraryRevision = useLoungeTvLibraryRevision();
+
   const packs = useMemo(() => {
     switch (sectionId) {
       case 'continue': {
@@ -85,7 +102,7 @@ export function LoungeTvLibrarySections({
       default:
         return [];
     }
-  }, [sectionId, isUnlocked, unlocks]);
+  }, [sectionId, isUnlocked, unlocks, libraryRevision]);
 
   const slayTips = useMemo(() => {
     if (!onSelectSlayTip) return [];
@@ -134,13 +151,21 @@ export function LoungeTvLibrarySections({
     unlocked: 'UNLOCKED CONTENT WILL APPEAR HERE.',
     purchased: 'NOTHING PURCHASED YET.',
     downloads: 'OFFLINE DOWNLOADS ARRIVE IN A FUTURE UPDATE.',
-    completed: 'COMPLETED COURSES WILL APPEAR HERE.',
-    certificates: 'COURSE CERTIFICATES WILL APPEAR HERE.',
+    completed: 'NO COMPLETED COURSES YET.',
+    certificates: 'NO CERTIFICATES YET. COMPLETED ELIGIBLE MASTERS WILL APPEAR HERE.',
     history: 'WATCH HISTORY WILL APPEAR HERE.',
   };
 
   const slayTipSectionTitle =
     sectionId === 'purchased' ? 'PURCHASED SLAY TIPS' : sectionId === 'unlocked' ? 'UNLOCKED SLAY TIPS' : '';
+
+  const hasCareRows =
+    careYourLibraryLessons.length > 0 || careContinueLessons.length > 0;
+  const hasContent = packs.length > 0 || slayTips.length > 0 || hasCareRows;
+
+  if (hideWhenEmpty && !hasContent) return null;
+
+  const emptyLabel = hideWhenEmpty ? undefined : (emptyLabels[sectionId] ?? 'NOTHING HERE YET.');
 
   return (
     <>
@@ -150,6 +175,7 @@ export function LoungeTvLibrarySections({
           lessons={careYourLibraryLessons}
           onSelect={onSelectCareLesson}
           isUnlocked={careIsUnlocked}
+          embeddedSection={embeddedSection}
         />
       ) : null}
       {careContinueLessons.length > 0 && onSelectCareLesson ? (
@@ -158,6 +184,7 @@ export function LoungeTvLibrarySections({
           lessons={careContinueLessons}
           onSelect={onSelectCareLesson}
           isUnlocked={careIsUnlocked}
+          embeddedSection={embeddedSection}
         />
       ) : null}
       <LoungeTvContentRow
@@ -167,7 +194,13 @@ export function LoungeTvLibrarySections({
         onToggleSave={onToggleSave}
         isUnlocked={isUnlocked}
         unlocks={unlocks}
-        emptyLabel={emptyLabels[sectionId] ?? 'NOTHING HERE YET.'}
+        emptyLabel={emptyLabel}
+        suppressTitle={suppressTitle}
+        embeddedSection={embeddedSection}
+        sectionMarginTop={sectionId === 'continue' ? '6px' : undefined}
+        onEngagementRequireSignIn={onEngagementRequireSignIn}
+        onEngagementOpenDiscussion={onEngagementOpenDiscussion}
+        engagementToast={engagementToast}
       />
       {slayTips.length > 0 && onSelectSlayTip ? (
         <SlayTipRow
@@ -176,6 +209,7 @@ export function LoungeTvLibrarySections({
           onSelect={onSelectSlayTip}
           unlocks={unlocks}
           isUnlocked={isUnlocked}
+          embeddedSection={embeddedSection}
         />
       ) : null}
     </>

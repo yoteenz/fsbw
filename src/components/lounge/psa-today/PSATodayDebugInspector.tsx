@@ -10,6 +10,7 @@ import { resolvePsaWatchPolicy, qualificationThresholdSeconds } from './psaWatch
 import { getEducationMasteryById } from '../../../content/education/hierarchy/catalog';
 import { loungeTvGlassCqw } from '../loungeTvResponsive';
 import { LOUNGE_TV_FONT_BOOK, LOUNGE_TV_TEXT_GRAY } from '../loungeTvTheme';
+import { isLoungeTvDebugUiEnabled } from '../loungeTvDebugUi';
 
 type PSATodayDebugInspectorProps = {
   episode: PSATodayEpisode;
@@ -37,7 +38,7 @@ const SLOTS = [
 ] as const;
 
 export function PSATodayDebugInspector(props: PSATodayDebugInspectorProps) {
-  if (!import.meta.env.DEV) return null;
+  if (!isLoungeTvDebugUiEnabled()) return null;
 
   const policy = resolvePsaWatchPolicy(props.episode);
   const lessonDuration = props.episode.runtimeSeconds ?? 0;

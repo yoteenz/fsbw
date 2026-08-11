@@ -28,6 +28,7 @@ import {
 import { getLoungeTvAdminConfig } from '../../utils/api';
 import { LOUNGE_TV_ANIMATION_VIDEO_ENABLED } from '../../constants/loungeTvAnimationVideo';
 import { useSceneCarouselMeasureBox } from '../../hooks/useSceneCarouselMeasureBox';
+import { pauseAllLoungeTvVideos, pauseLoungeTvBrowseMedia } from './loungeTvMutedPlayback';
 import { LoungeTvAnimationVideo } from './LoungeTvAnimationVideo';
 
 type SeedanceTvPhase = 'idle' | 'opening' | 'ready' | 'closing';
@@ -187,6 +188,21 @@ export function LoungeTvOverlay({
 
   useEffect(() => () => setLoungeTvTheaterMode(false), []);
 
+  useEffect(() => {
+    if (!isOpen) {
+      pauseAllLoungeTvVideos();
+    }
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const onVisibility = () => {
+      if (document.visibilityState === 'hidden') pauseAllLoungeTvVideos();
+    };
+    document.addEventListener('visibilitychange', onVisibility);
+    return () => document.removeEventListener('visibilitychange', onVisibility);
+  }, [isOpen]);
+
   const useSeedanceClip = LOUNGE_TV_ANIMATION_VIDEO_ENABLED;
 
   const requestClose = useCallback(() => {
@@ -304,29 +320,33 @@ export function LoungeTvOverlay({
   }, [isOpen, seedancePhase]);
 
   useEffect(() => {
-    if (isOpen) {
-      isClosingRef.current = false;
-      setPoweringOff(false);
-      setClosePhase('idle');
-      setCurtainsReady(false);
-      setRemoteHandReady(false);
-      setTvGrowDone(false);
-      setHandRevealDone(false);
-      setShowStatic(false);
-      let cancelled = false;
-      Promise.all([preloadImage(LOUNGE_CURTAIN_LEFT_SRC), preloadImage(LOUNGE_CURTAIN_RIGHT_SRC)]).then(() => {
-        if (!cancelled) setCurtainsReady(true);
-      });
-      preloadImage(LOUNGE_TV_REMOTE_HAND_SRC).then(() => {
-        if (!cancelled) setRemoteHandReady(true);
-      });
-      return () => {
-        cancelled = true;
-      };
+    if (!isOpen) {
+      if (visible) return;
+      resetOverlayState();
+      return;
     }
-    if (visible) return;
-    resetOverlayState();
-  }, [isOpen, visible, resetOverlayState]);
+    // Session resume: useLayoutEffect already applied ready state — do not reset animation flags.
+    if (resumeSessionOpen && consumedSessionResumeRef.current) return;
+
+    isClosingRef.current = false;
+    setPoweringOff(false);
+    setClosePhase('idle');
+    setCurtainsReady(false);
+    setRemoteHandReady(false);
+    setTvGrowDone(false);
+    setHandRevealDone(false);
+    setShowStatic(false);
+    let cancelled = false;
+    Promise.all([preloadImage(LOUNGE_CURTAIN_LEFT_SRC), preloadImage(LOUNGE_CURTAIN_RIGHT_SRC)]).then(() => {
+      if (!cancelled) setCurtainsReady(true);
+    });
+    preloadImage(LOUNGE_TV_REMOTE_HAND_SRC).then(() => {
+      if (!cancelled) setRemoteHandReady(true);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [isOpen, visible, resetOverlayState, resumeSessionOpen]);
 
   /** Grow TV once curtains are ready (hand reveals after grow completes). */
   useEffect(() => {
@@ -384,6 +404,7 @@ export function LoungeTvOverlay({
   }, []);
 
   const handleMainTab = useCallback((tab: LoungeTvMainTab) => {
+    pauseLoungeTvBrowseMedia();
     setMainTab(tab);
     setSidebarId(LOUNGE_TV_SIDEBAR[tab][0]?.id ?? '');
   }, []);

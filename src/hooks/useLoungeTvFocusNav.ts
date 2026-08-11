@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { restoreLoungeTvFocus } from '../components/lounge/loungeTvFocusMemory';
+import { restoreLoungeTvFocusWithRetry } from '../components/lounge/loungeTvFocusMemory';
 
 type UseLoungeTvFocusNavOptions = {
   enabled?: boolean;
@@ -7,6 +7,8 @@ type UseLoungeTvFocusNavOptions = {
   onHome?: () => void;
   containerRef?: React.RefObject<HTMLElement | null>;
   restoreFocusId?: string | null;
+  /** Re-run focus restore when navigation layer changes (e.g. slay-tip → browse). */
+  restoreTrigger?: string;
 };
 
 const FOCUSABLE =
@@ -45,6 +47,11 @@ function scrollIntoRailView(el: HTMLElement): void {
   const rail = el.closest<HTMLElement>('[data-lounge-tv-rail]');
   const scroller = rail?.querySelector<HTMLElement>('[data-lounge-tv-rail-scroll]') ?? rail;
   if (scroller && scroller !== el) {
+    const style = getComputedStyle(scroller);
+    const canScrollX =
+      (style.overflowX === 'auto' || style.overflowX === 'scroll') &&
+      scroller.scrollWidth > scroller.clientWidth + 1;
+    if (!canScrollX) return;
     const er = el.getBoundingClientRect();
     const sr = scroller.getBoundingClientRect();
     if (er.left < sr.left) scroller.scrollLeft -= sr.left - er.left + 16;
@@ -58,6 +65,7 @@ export function useLoungeTvFocusNav({
   onHome,
   containerRef,
   restoreFocusId,
+  restoreTrigger,
 }: UseLoungeTvFocusNavOptions) {
   const onEscapeRef = useRef(onEscape);
   const onHomeRef = useRef(onHome);
@@ -67,9 +75,8 @@ export function useLoungeTvFocusNav({
   useEffect(() => {
     if (!enabled || !restoreFocusId) return;
     const root = containerRef?.current ?? document;
-    const t = window.setTimeout(() => restoreLoungeTvFocus(root, restoreFocusId), 50);
-    return () => window.clearTimeout(t);
-  }, [enabled, restoreFocusId, containerRef]);
+    return restoreLoungeTvFocusWithRetry(root, restoreFocusId);
+  }, [enabled, restoreFocusId, restoreTrigger, containerRef]);
 
   useEffect(() => {
     if (!enabled) return;

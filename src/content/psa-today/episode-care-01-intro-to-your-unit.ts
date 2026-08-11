@@ -16,7 +16,7 @@ export const PSA_CARE_EPISODE_01: PSATodayEpisode = {
   masteryId: 'mastery-care',
   seasonId: 'season-care-mastery',
   title: 'INTRODUCTION TO YOUR UNIT',
-  subtitle: 'CARE MASTERY · SEASON 1 · EPISODE 01',
+  subtitle: 'KNOW YOUR UNIT · SEASON 01 · EPISODE 01',
   shortDescription:
     'MEET YOUR UNIT, LEARN THE VOCABULARY, AND UNDERSTAND WHAT YOU ARE LOOKING AT BEFORE FUTURE CARE AND CUSTOMIZATION CLASSES.',
   fullDescription:
@@ -68,7 +68,7 @@ export const PSA_CARE_EPISODE_01: PSATodayEpisode = {
       'color transformation',
       'installation',
       'finished hairstyling',
-      'aftercare maintenance procedures',
+      'upkeep maintenance procedures',
     ],
   },
   runtimeSeconds: undefined,
@@ -210,7 +210,7 @@ export const PSA_CARE_EPISODE_01: PSATodayEpisode = {
       startSeconds: 780,
       gated: true,
       learningObjective:
-        'Connect anatomy vocabulary to future Care, Lace, Color, Install, Styling, and Aftercare classes.',
+        'Connect anatomy vocabulary to future Care, Lace, Color, Install, Styling, and Upkeep classes.',
       sharedModule: {
         learningObjective: 'Shared vocabulary bridge — no mini-tutorials for future courses.',
       },

@@ -91,6 +91,25 @@ export type SlayTip = {
   campaignId?: string;
   /** Optional lounge unlock id when distinct from tip id. */
   linkedContentPackId?: string;
+  /** Optional authored read duration label (e.g. "3 MIN"). Estimated from pages when omitted. */
+  readTime?: string;
+  /**
+   * Curiosity hook for locked cards and public browse.
+   * Must not reveal the actionable solution — sell the information gap.
+   */
+  publicTitle?: string;
+  /**
+   * Unlocked reveal — the concise actionable tip ("THE TIP") shown after Slay Ticket spend.
+   * Distinct from {@link publicTitle} and from full scrapbook {@link pages} body content.
+   */
+  revealTitle?: string;
+  /**
+   * Non-spoiler preview for locked state — establishes relevance without stating the answer.
+   * Complements {@link publicTitle}; distinct from paid {@link pages} instruction.
+   */
+  previewCopy?: string;
+  /** @deprecated Use {@link publicTitle}. Kept for legacy records pending editorial migration. */
+  cardTitle?: string;
   accessPolicy?: ScrapbookAccessPolicy;
   educationOwnership?: EducationOwnership;
   prerequisiteContentIds?: string[];
@@ -381,6 +400,13 @@ export type SeasonReleaseStrategy = 'scheduled' | 'all-at-once' | 'manual';
 
 export type SeasonStatus = 'planned' | 'announced' | 'releasing' | 'complete' | 'archived';
 
+/** Customer-facing season availability derived from episode release data + editorial status. */
+export type SeasonCustomerReleaseState =
+  | 'available'
+  | 'upcoming'
+  | 'partially_released'
+  | 'completed';
+
 export type EducationSeasonEpisodeSlot = {
   slotId: string;
   curriculumBibleId: string;
@@ -412,6 +438,8 @@ export type EducationSeason = {
   title: string;
   subtitle?: string;
   description?: string;
+  /** One-line season thesis for mastery detail cards. */
+  shortPremise?: string;
   learningObjective: string;
   episodeSlots: EducationSeasonEpisodeSlot[];
   releaseStrategy: SeasonReleaseStrategy;
@@ -428,6 +456,8 @@ export type EducationSeason = {
   releaseEndDate?: string;
   status: SeasonStatus;
   published?: boolean;
+  /** When false, season is hidden from customer mastery pages while remaining in data. */
+  customerVisible?: boolean;
   campaignId?: string;
   certification?: SeasonCertificationConfig;
   /** Editorial — curriculum not approved for customer-facing episodes yet. */

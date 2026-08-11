@@ -1,34 +1,33 @@
 import type { LoungeTvSidebarItem } from './loungeTvContent';
 import { loungeTvGlassCqw } from './loungeTvResponsive';
-import { LOUNGE_TV_FONT_BOOK, LOUNGE_TV_FONT_MEDIUM, LOUNGE_TV_TEXT_GRAY } from './loungeTvTheme';
-import { loungeTvGlassPanelStyle } from './LoungeTvUiPrimitives';
+import { LOUNGE_TV_TYPE } from './loungeTvTypography';
+import { LOUNGE_TV_FONT_MEDIUM } from './loungeTvTheme';
+import { LoungeTvEmptyState } from './LoungeTvEmptyState';
 
-const LIVE_PLACEHOLDER_COPY: Record<string, string> = {
-  'upcoming-classes': 'MEMBERS-ONLY MASTERCLASSES WITH PSA AND GUEST EDUCATORS — DATES AND TOPICS POSTED HERE.',
-  'psa-live-qa': 'LIVE Q&A WITH PSA — SUBMIT QUESTIONS ON LACE, INSTALL, AND MEMBER PERKS.',
-  'product-premieres': 'BE FIRST TO SEE NEW TEXTURES, COLORS, AND LIMITED UNITS ON FRONTAL SLAYER TV.',
-  'founder-sessions': 'FOUNDER SESSIONS — STRATEGY, TECHNIQUE, AND BRAND STORY STRAIGHT FROM THE SOURCE.',
-  'holiday-events': 'SEASONAL COLLECTIONS AND HOLIDAY SLAY EVENTS — MEMBER EARLY ACCESS.',
-  'launch-events': 'OFFICIAL LAUNCH NIGHTS FOR NEW ORIGINALS AND LIMITED DROPS.',
-  'member-workshops': 'SMALL-GROUP WORKSHOPS FOR HANDS-ON TECHNIQUE WITH PSA.',
-  'live-shopping': 'LIVE SHOPPING WITH FOUNDER PICKS AND MEMBER-ONLY OFFERS.',
-  'early-access': 'EARLY ACCESS EVENTS — WATCH PREMIERES BEFORE THE PUBLIC RELEASE.',
-  'lounge-events': 'EXCLUSIVE LOUNGE EVENTS — EARLY ACCESS DROPS, Q&A, AND MEMBER MIXERS.',
+const LIVE_EMPTY_COPY: Record<string, string> = {
+  'upcoming-classes': 'NOTHING SCHEDULED YET. CHECK BACK FOR THE NEXT CLASS.',
+  'psa-live-qa': 'NOTHING SCHEDULED YET. CHECK BACK FOR THE NEXT Q&A.',
+  'product-premieres': 'NOTHING SCHEDULED YET. PREMIERES WILL APPEAR HERE.',
+  'founder-sessions': 'NOTHING SCHEDULED YET. FOUNDER SESSIONS POST HERE.',
+  'holiday-events': 'NOTHING SCHEDULED YET. SEASONAL EVENTS WILL APPEAR HERE.',
+  'launch-events': 'NOTHING SCHEDULED YET. LAUNCH NIGHTS WILL APPEAR HERE.',
+  'member-workshops': 'NOTHING SCHEDULED YET. WORKSHOPS WILL APPEAR HERE.',
+  'live-shopping': 'NOTHING SCHEDULED YET. LIVE SHOPPING EVENTS POST HERE.',
+  'early-access': 'NOTHING SCHEDULED YET. EARLY ACCESS EVENTS WILL APPEAR HERE.',
+  'lounge-events': 'NOTHING SCHEDULED YET. LOUNGE EVENTS WILL APPEAR HERE.',
 };
 
 type LoungeTvLivePlaceholderProps = {
   section: LoungeTvSidebarItem;
-  compact?: boolean;
 };
 
-export function LoungeTvLivePlaceholder({ section, compact = false }: LoungeTvLivePlaceholderProps) {
-  const copy = LIVE_PLACEHOLDER_COPY[section.id] ?? 'PROGRAMMING COMING TO LOUNGE TV LIVE.';
+export function LoungeTvLivePlaceholder({ section }: LoungeTvLivePlaceholderProps) {
+  const copy = LIVE_EMPTY_COPY[section.id] ?? 'NOTHING SCHEDULED YET. CHECK BACK SOON.';
 
   return (
-    <div
+    <section
+      data-lounge-tv-rail={`live-empty-${section.id}`}
       style={{
-        ...loungeTvGlassPanelStyle,
-        padding: compact ? loungeTvGlassCqw(1.2, 3, 6) : loungeTvGlassCqw(2, 5, 10),
         display: 'flex',
         flexDirection: 'column',
         gap: loungeTvGlassCqw(0.8, 2, 4),
@@ -39,34 +38,13 @@ export function LoungeTvLivePlaceholder({ section, compact = false }: LoungeTvLi
         style={{
           margin: 0,
           fontFamily: LOUNGE_TV_FONT_MEDIUM,
-          fontSize: loungeTvGlassCqw(compact ? 1.4 : 1.7, compact ? 3.2 : 4, compact ? 6.5 : 8),
+          fontSize: LOUNGE_TV_TYPE.l2,
           color: '#ffffff',
         }}
       >
         {section.label}
       </h2>
-      {!compact ? (
-        <p
-          style={{
-            margin: 0,
-            fontFamily: LOUNGE_TV_FONT_BOOK,
-            fontSize: loungeTvGlassCqw(1.35, 3.2, 6.5),
-            lineHeight: 1.4,
-            color: LOUNGE_TV_TEXT_GRAY,
-          }}
-        >
-          {copy}
-        </p>
-      ) : null}
-      <span
-        style={{
-          fontFamily: LOUNGE_TV_FONT_MEDIUM,
-          fontSize: loungeTvGlassCqw(1.2, 2.8, 5.5),
-          color: '#EB1C24',
-        }}
-      >
-        ON THE SCHEDULE
-      </span>
-    </div>
+      <LoungeTvEmptyState message={copy} />
+    </section>
   );
 }

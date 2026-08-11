@@ -44,6 +44,8 @@ import {
   UNIT_PDP_CAP_CHART_ROW_STYLE,
   UNIT_PDP_CAP_SIZE_CHART_MODAL_IMG_SRC,
   UNIT_PDP_CAP_SIZE_HEADER_STYLE,
+  UNIT_PDP_DETAILS_CARD_CLASS,
+  UNIT_PDP_DETAILS_CARD_STYLE,
   UNIT_PDP_MAIN_CARD_STYLE,
   UNIT_PDP_TAB_CONTENT_STYLE,
   UNIT_PDP_TABS_SECTION_STYLE,
@@ -1736,18 +1738,7 @@ fontSize: '11px',
             }}
           />
 
-          <div
-            className="border border-black flex flex-col pt-4 pb-4 px-5 mb-1 transition-all duration-300 ease-out"
-            style={{
-              borderWidth: '1.3px',
-              minWidth: '100%',
-              maxWidth: 'none',
-              overflow: 'hidden',
-              backgroundColor: 'transparent',
-              paddingBottom: '16px',
-              marginTop: '24px',
-            }}
-          >
+          <div className={UNIT_PDP_DETAILS_CARD_CLASS} style={UNIT_PDP_DETAILS_CARD_STYLE}>
             {/* PRODUCT SHOTS SECTION */}
             <div className="mt-2 mb-4">
               {/* Product Images with Drag/Swipe Scroll */}

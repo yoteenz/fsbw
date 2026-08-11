@@ -54,7 +54,7 @@ export const CARE_CURRICULUM_ENTRIES: CurriculumBibleEntry[] = [
       'color transformation',
       'installation',
       'finished hairstyling',
-      'aftercare maintenance',
+      'upkeep maintenance',
     ],
     cameraBVisualRequirements: [
       'Unit inspection walkthrough',

@@ -1,6 +1,7 @@
 import { loungeTvGlassCqw } from './loungeTvResponsive';
 import { LOUNGE_TV_FONT_BOOK, LOUNGE_TV_TEXT_GRAY } from './loungeTvTheme';
 import type { LoungeTvMainTab } from './loungeTvContent';
+import { isLoungeTvDebugUiEnabled } from './loungeTvDebugUi';
 
 type LoungeTvDebugOverlayProps = {
   mainTab: LoungeTvMainTab;
@@ -10,13 +11,14 @@ type LoungeTvDebugOverlayProps = {
 
 /** Dev-only TV IA / focus diagnostics. */
 export function LoungeTvDebugOverlay({ mainTab, viewKind, focusId }: LoungeTvDebugOverlayProps) {
-  if (!import.meta.env.DEV) return null;
+  if (!isLoungeTvDebugUiEnabled()) return null;
 
   const active = document.activeElement as HTMLElement | null;
   const rail = active?.closest<HTMLElement>('[data-lounge-tv-rail]')?.dataset.loungeTvRail;
 
   return (
     <div
+      data-lounge-tv-preserve-case
       style={{
         position: 'absolute',
         bottom: loungeTvGlassCqw(0.5, 1.2, 2.4),

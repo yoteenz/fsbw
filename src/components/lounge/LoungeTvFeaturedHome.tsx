@@ -1,4 +1,3 @@
-import { useMemo } from 'react';
 import type { LoungeContentPack } from './loungeTvContentPack';
 import type { LoungeContentUnlock } from '../../utils/slayTicketHistoryDisplay';
 import { loungeTvGlassCqw } from './loungeTvResponsive';
@@ -11,6 +10,9 @@ type LoungeTvFeaturedHomeProps = {
   onToggleSave?: (pack: LoungeContentPack) => void;
   isUnlocked: (contentId: string) => boolean;
   unlocks?: LoungeContentUnlock[];
+  onEngagementRequireSignIn?: () => void;
+  onEngagementOpenDiscussion?: (pack: LoungeContentPack) => void;
+  engagementToast?: (message: string) => void;
 };
 
 export function LoungeTvFeaturedHome({
@@ -18,14 +20,10 @@ export function LoungeTvFeaturedHome({
   onToggleSave,
   isUnlocked,
   unlocks,
+  onEngagementRequireSignIn,
+  onEngagementOpenDiscussion,
+  engagementToast,
 }: LoungeTvFeaturedHomeProps) {
-  const rails = useMemo(() => {
-    return FEATURED_RAIL_ORDER.filter(({ key }) => {
-      if (key === 'continue') return packsForFeaturedRail('continue').length > 0;
-      return packsForFeaturedRail(key).length > 0;
-    });
-  }, []);
-
   return (
     <div
       style={{
@@ -33,25 +31,34 @@ export function LoungeTvFeaturedHome({
         display: 'flex',
         flexDirection: 'column',
         gap: loungeTvGlassCqw(2, 5, 10),
+        paddingBottom: loungeTvGlassCqw(2, 5, 10),
       }}
     >
       <div data-lounge-tv-rail="featured-hero">
         <LoungeTvFeaturedHero onWatch={onSelect} onToggleSave={onToggleSave} />
       </div>
 
-      {rails.map(({ key, title }) => (
-        <LoungeTvContentRow
-          key={key}
-          railId={`featured-${key}`}
-          title={title}
-          packs={packsForFeaturedRail(key)}
-          onSelect={onSelect}
-          onToggleSave={onToggleSave}
-          isUnlocked={isUnlocked}
-          unlocks={unlocks}
-          emptyLabel={undefined}
-        />
-      ))}
+      {FEATURED_RAIL_ORDER.map(({ key, title }) => {
+        const packs = packsForFeaturedRail(key);
+        if (!packs.length && key !== 'continue') return null;
+
+        return (
+          <LoungeTvContentRow
+            key={key}
+            railId={`featured-${key}`}
+            title={title}
+            packs={packs}
+            onSelect={onSelect}
+            onToggleSave={onToggleSave}
+            isUnlocked={isUnlocked}
+            unlocks={unlocks}
+            emptyLabel={key === 'continue' ? 'START A LESSON TO SEE IT HERE.' : undefined}
+            onEngagementRequireSignIn={onEngagementRequireSignIn}
+            onEngagementOpenDiscussion={onEngagementOpenDiscussion}
+            engagementToast={engagementToast}
+          />
+        );
+      })}
     </div>
   );
 }
@@ -83,7 +90,7 @@ export function LoungeTvLessonHub({ pack, onWatch, onRead, onBack }: LoungeTvLes
           textTransform: 'uppercase',
         }}
       >
-        ← BACK
+        {'< BACK'}
       </button>
 
       {pack.heroImage || pack.thumbnail ? (

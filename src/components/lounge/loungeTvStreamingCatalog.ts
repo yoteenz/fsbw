@@ -32,12 +32,13 @@ const PREMIERE_ROTATION: FeaturedPremiereKind[] = [
 ];
 
 export const FEATURED_RAIL_ORDER = [
-  { key: 'new' as const, title: 'NEW THIS WEEK' },
   { key: 'continue' as const, title: 'CONTINUE WATCHING' },
-  { key: 'trending' as const, title: 'TRENDING IN THE MANSION' },
-  { key: 'psa-recommends' as const, title: 'PSA TODAY' },
-  { key: 'members-favorites' as const, title: 'RECOMMENDED FOR YOU' },
   { key: 'recently-added' as const, title: 'RECENTLY ADDED' },
+  { key: 'new' as const, title: 'NEW THIS WEEK' },
+  { key: 'trending' as const, title: 'TRENDING RIGHT NOW' },
+  { key: 'psa-recommends' as const, title: 'PSA TODAY' },
+  { key: 'premium' as const, title: 'PREMIUM EXCLUSIVES' },
+  { key: 'members-favorites' as const, title: 'RECOMMENDED FOR YOU' },
 ] as const;
 
 export type FeaturedRailKey = (typeof FEATURED_RAIL_ORDER)[number]['key'];

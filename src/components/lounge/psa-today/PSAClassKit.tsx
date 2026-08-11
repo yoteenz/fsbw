@@ -17,6 +17,12 @@ import {
   type ShoppingResolution,
 } from './psaTodayShopping';
 import { PSAFullKitSelector } from './PSAFullKitSelector';
+import {
+  MASTERY_KIT_COPY,
+  OFFICIAL_MASTERY_KIT_FULFILLMENT_ENABLED,
+  resolveMasteryKitPresentationMode,
+} from '../../../content/education/masteryKitModel';
+import { isPremiumMemberForGatedFeatures } from '../../../utils/premiumMemberAccess';
 
 type PSAClassKitProps = {
   episodeId: string;
@@ -28,6 +34,13 @@ export function PSAClassKit({ episodeId, kit, onContinue }: PSAClassKitProps) {
   const [activeTool, setActiveTool] = useState<PSAClassKitItem | null>(null);
   const [showFullKit, setShowFullKit] = useState(false);
   const disclosure = getAffiliateDisclosure();
+  const isPremium = isPremiumMemberForGatedFeatures();
+  const kitMode = resolveMasteryKitPresentationMode(isPremium);
+  const introText =
+    kit.introText ??
+    (kitMode === 'official-kit-future'
+      ? MASTERY_KIT_COPY.premiumFutureIntro
+      : MASTERY_KIT_COPY.selfSourceIntro);
 
   const handleOpenKit = () => {
     trackPsaTodayEvent('psa_class_kit_opened', { episodeId });
@@ -47,18 +60,42 @@ export function PSAClassKit({ episodeId, kit, onContinue }: PSAClassKitProps) {
             color: LOUNGE_TV_TEXT_WHITE,
           }}
         >
-          {kit.title ?? 'CLASS KIT'}
+          {kit.title ?? MASTERY_KIT_COPY.selfSourceTitle}
         </h3>
-        {kit.introText ? (
+        <p
+          style={{
+            margin: `${loungeTvGlassCqw(0.5, 1.2, 2.4)} 0 0`,
+            fontFamily: LOUNGE_TV_FONT_BOOK,
+            fontSize: loungeTvGlassCqw(1.05, 2.4, 4.8),
+            color: LOUNGE_TV_TEXT_GRAY,
+          }}
+        >
+          {introText}
+        </p>
+        {kitMode === 'self-source' ? (
           <p
             style={{
               margin: `${loungeTvGlassCqw(0.5, 1.2, 2.4)} 0 0`,
               fontFamily: LOUNGE_TV_FONT_BOOK,
-              fontSize: loungeTvGlassCqw(1.05, 2.4, 4.8),
+              fontSize: loungeTvGlassCqw(0.95, 2.1, 4.2),
               color: LOUNGE_TV_TEXT_GRAY,
+              lineHeight: 1.35,
             }}
           >
-            {kit.introText}
+            {MASTERY_KIT_COPY.selfSourceNote}
+          </p>
+        ) : null}
+        {isPremium && !OFFICIAL_MASTERY_KIT_FULFILLMENT_ENABLED ? (
+          <p
+            style={{
+              margin: `${loungeTvGlassCqw(0.5, 1.2, 2.4)} 0 0`,
+              fontFamily: LOUNGE_TV_FONT_BOOK,
+              fontSize: loungeTvGlassCqw(0.95, 2.1, 4.2),
+              color: LOUNGE_TV_TEXT_GRAY,
+              lineHeight: 1.35,
+            }}
+          >
+            {MASTERY_KIT_COPY.premiumFutureDisabled}
           </p>
         ) : null}
       </div>
@@ -126,7 +163,7 @@ export function PSAClassKit({ episodeId, kit, onContinue }: PSAClassKitProps) {
         <button type="button" data-lounge-tv-focusable style={ghostBtn} onClick={() => setActiveTool(null)}>
           VIEW ALL TOOLS
         </button>
-        {kit.fullKit ? (
+        {kit.fullKit && OFFICIAL_MASTERY_KIT_FULFILLMENT_ENABLED && kitMode === 'official-kit-future' ? (
           <button
             type="button"
             data-lounge-tv-focusable
@@ -204,7 +241,7 @@ export function PSAClassKit({ episodeId, kit, onContinue }: PSAClassKitProps) {
         </p>
       ) : null}
 
-      {showFullKit && kit.fullKit ? (
+      {showFullKit && kit.fullKit && OFFICIAL_MASTERY_KIT_FULFILLMENT_ENABLED ? (
         <PSAFullKitSelector
           resolution={resolveFullKitShopping(kit.fullKit)}
           onClose={() => setShowFullKit(false)}

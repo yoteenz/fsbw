@@ -15,11 +15,14 @@ import {
   LOUNGE_TV_TEXT_WHITE,
 } from './loungeTvTheme';
 import { resolvePackArtwork } from './loungeTvArtwork';
+import { loungeTvContentDetailHeading, loungeTvDisplayBodyText } from './loungeTvDisplayText';
 import { loungeTvTileActionLabel, loungeTvContentIsAccessible } from './loungeTvTicketAccess';
 import type { LoungeContentUnlock } from '../../utils/slayTicketHistoryDisplay';
 import { getWatchProgress, isPackSaved, togglePackSaved } from '../../utils/loungeTvLibrary';
 import { LoungeTvContentPackCard } from './LoungeTvContentPackCard';
 import { relatedContentPacks } from './loungeTvContentPack';
+import { LOUNGE_TV_DETAIL_TYPE } from './loungeTvTypography';
+import { LoungeTvPackEngagementHost } from './engagement/LoungeTvPackEngagementHost';
 
 type LoungeTvContentDetailProps = {
   pack: LoungeContentPack;
@@ -30,6 +33,10 @@ type LoungeTvContentDetailProps = {
   unlocks?: LoungeContentUnlock[];
   isUnlocked: (contentId: string) => boolean;
   onToggleSave?: () => void;
+  onEngagementRequireSignIn?: () => void;
+  isSignedInForEngagement?: boolean;
+  engagementUserEmail?: string | null;
+  engagementToast?: (message: string) => void;
 };
 
 export function LoungeTvContentDetail({
@@ -41,6 +48,10 @@ export function LoungeTvContentDetail({
   unlocks,
   isUnlocked,
   onToggleSave,
+  onEngagementRequireSignIn,
+  isSignedInForEngagement = false,
+  engagementUserEmail = null,
+  engagementToast,
 }: LoungeTvContentDetailProps) {
   const description = pack.article?.intro ?? pack.subtitle;
   const durationLabel = pack.runtime ?? pack.readTime;
@@ -56,6 +67,10 @@ export function LoungeTvContentDetail({
       : 'PLAY'
     : loungeTvTileActionLabel(tile, unlocks);
 
+  const categoryLine = [pack.category ?? pack.series ?? 'FRONTAL SLAYER TV', durationLabel]
+    .filter(Boolean)
+    .join(' · ');
+
   const related = relatedContentPacks(pack).slice(0, 6);
 
   return (
@@ -64,7 +79,7 @@ export function LoungeTvContentDetail({
         width: '100%',
         display: 'flex',
         flexDirection: 'column',
-        gap: loungeTvGlassCqw(1.5, 4, 8),
+        gap: loungeTvGlassCqw(1.3, 3.2, 6.5),
         textTransform: 'uppercase',
       }}
     >
@@ -85,9 +100,9 @@ export function LoungeTvContentDetail({
         />
       ) : null}
 
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: loungeTvGlassCqw(0.5, 1.2, 2.4) }}>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: loungeTvGlassCqw(0.5, 1.2, 2.4), alignItems: 'center' }}>
+        {pack.isFreePreview ? <LoungeTvBadge label="FREE PREVIEW" textAccent /> : null}
         {pack.isNew ? <LoungeTvBadge label="NEW" accent /> : null}
-        {pack.isFreePreview ? <LoungeTvBadge label="FREE PREVIEW" /> : null}
         {pack.isPremium ? <LoungeTvBadge label="PREMIUM" accent /> : null}
         {!accessible && tile.ticketCost != null && tile.ticketCost > 0 ? (
           <LoungeTvBadge label={`${tile.ticketCost} SLAY TICKET${tile.ticketCost > 1 ? 'S' : ''}`} accent />
@@ -95,49 +110,59 @@ export function LoungeTvContentDetail({
       </div>
 
       <div>
-        <p
-          style={{
-            margin: 0,
-            fontFamily: LOUNGE_TV_FONT_BOOK,
-            fontSize: loungeTvGlassCqw(1.2, 2.8, 5.5),
-            color: LOUNGE_TV_TEXT_GRAY,
-            letterSpacing: '0.06em',
-          }}
-        >
-          {pack.category ?? pack.series ?? 'FRONTAL SLAYER TV'}
-          {durationLabel ? ` · ${durationLabel}` : ''}
-        </p>
+        {categoryLine ? (
+          <p
+            style={{
+              margin: 0,
+              fontFamily: LOUNGE_TV_FONT_BOOK,
+              fontSize: LOUNGE_TV_DETAIL_TYPE.meta,
+              color: LOUNGE_TV_TEXT_GRAY,
+              letterSpacing: '0.06em',
+            }}
+          >
+            {categoryLine}
+          </p>
+        ) : null}
         <h1
           style={{
-            margin: `${loungeTvGlassCqw(0.4, 1, 2)} 0 0`,
+            margin: `${loungeTvGlassCqw(0.45, 1.1, 2.2)} 0 0`,
             fontFamily: LOUNGE_TV_FONT_MEDIUM,
-            fontSize: loungeTvGlassCqw(2, 5, 10),
+            fontSize: LOUNGE_TV_DETAIL_TYPE.pageTitle,
             color: LOUNGE_TV_TEXT_WHITE,
             lineHeight: 1.15,
           }}
         >
-          {pack.title}
+          {loungeTvContentDetailHeading(pack)}
         </h1>
         {description ? (
           <p
             style={{
-              margin: `${loungeTvGlassCqw(0.6, 1.5, 3)} 0 0`,
+              margin: `${loungeTvGlassCqw(0.55, 1.3, 2.6)} 0 0`,
               fontFamily: LOUNGE_TV_FONT_BOOK,
-              fontSize: loungeTvGlassCqw(1.25, 2.8, 5.5),
+              fontSize: LOUNGE_TV_DETAIL_TYPE.body,
               color: LOUNGE_TV_TEXT_GRAY,
-              lineHeight: 1.4,
-              textTransform: 'none',
+              lineHeight: 1.45,
+              maxWidth: '40em',
             }}
           >
-            {description}
+            {loungeTvDisplayBodyText(description)}
           </p>
         ) : null}
       </div>
 
+      <LoungeTvPackEngagementHost
+        pack={pack}
+        variant="bar"
+        onRequireSignIn={() => onEngagementRequireSignIn?.()}
+        isSignedIn={isSignedInForEngagement}
+        userEmail={engagementUserEmail}
+        engagementToast={engagementToast}
+      />
+
       {progress?.percent != null && progress.percent > 0 && progress.percent < 100 ? (
         <div
           style={{
-            height: loungeTvGlassCqw(0.45, 1.1, 2.2),
+            height: loungeTvGlassCqw(0.4, 0.95, 1.9),
             background: 'rgba(255,255,255,0.12)',
             width: '100%',
           }}
@@ -153,35 +178,38 @@ export function LoungeTvContentDetail({
         </div>
       ) : null}
 
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: loungeTvGlassCqw(0.8, 2, 4) }}>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: loungeTvGlassCqw(0.7, 1.8, 3.6), alignItems: 'center' }}>
         <LoungeTvCtaButton label={actionLabel} onClick={onPlay} />
         <LoungeTvCtaButton
           label={saved ? 'SAVED' : '+ SAVE'}
-          variant="ghost"
+          variant="secondary"
           onClick={() => {
             togglePackSaved(pack.id);
             onToggleSave?.();
           }}
         />
         {onRead && (format === 'BOTH' || format === 'READ') ? (
-          <LoungeTvCtaButton label="READ GUIDE" variant="ghost" onClick={onRead} />
+          <LoungeTvCtaButton label="READ GUIDE" variant="tertiary" onClick={onRead} />
         ) : null}
       </div>
 
       {related.length ? (
         <div data-lounge-tv-rail="detail-related">
           <LoungeTvSectionTitle title="RELATED" />
-        <div data-lounge-tv-rail-scroll style={{ display: 'flex', gap: loungeTvGlassCqw(1.5, 3.5, 7), overflowX: 'auto' }}>
-          {related.map((rel) => (
-            <LoungeTvContentPackCard
-              key={rel.id}
-              pack={rel}
-              onSelect={() => (onSelectRelated ? onSelectRelated(rel) : onPlay())}
-              isUnlocked={isUnlocked}
-              unlocks={unlocks}
-            />
-          ))}
-        </div>
+          <div
+            data-lounge-tv-rail-scroll
+            style={{ display: 'flex', gap: loungeTvGlassCqw(1.5, 3.5, 7), overflowX: 'auto' }}
+          >
+            {related.map((rel) => (
+              <LoungeTvContentPackCard
+                key={rel.id}
+                pack={rel}
+                onSelect={() => (onSelectRelated ? onSelectRelated(rel) : onPlay())}
+                isUnlocked={isUnlocked}
+                unlocks={unlocks}
+              />
+            ))}
+          </div>
         </div>
       ) : null}
     </div>
