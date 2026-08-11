@@ -1,32 +1,34 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { LoungeContentUnlock } from '../../../utils/slayTicketHistoryDisplay';
 import type { SlayTip } from '../../../content/education/types';
 import { LoungeTvBackButton } from '../LoungeTvUiPrimitives';
-import { loungeTvGlassCqw } from '../loungeTvResponsive';
 import { slayTipAccessGranted, slayTipUnlockContentId, slayTipUnlockCost } from './slayTipAccess';
-import { slayTipPreviewImageUrl } from './slayTipDetailMeta';
 import { slayTipPublicTitle } from './slayTipContent';
-import { getSlayTipProgress, markSlayTipCompleted, setSlayTipPageIndex } from './slayTipProgress';
+import { markSlayTipArticleCompleted } from './slayTipProgress';
 import { trackSlayTipEvent } from './slayTipAnalytics';
-import {
-  SlayTipContentNav,
-  SlayTipContentPage,
-  SlayTipDetailHeader,
-  SlayTipDetailSectionRule,
-  SlayTipPreview,
-  SlayTipRelatedContent,
-  SlayTipReveal,
-  SlayTipUnlock,
-} from './SlayTipDetailSections';
-import { getPsaTodayEpisodeById } from '../psa-today/psaTodayCatalog';
+import { SlayTipDetailSectionRule, SlayTipUnlock } from './SlayTipDetailSections';
 import { unlockLoungeTvContent } from '../../../utils/api';
 import type { PSATodayEpisode } from '../psa-today/types';
 import { SlayTipEngagementHost } from './SlayTipEngagementHost';
+import {
+  SlayTipArticleRenderer,
+  SlayTipHeroCollage,
+  SlayTipMasthead,
+  SlayTipRelatedFooter,
+} from './SlayTipEditorialArticle';
+import {
+  resolveSlayTipHeroMedia,
+  resolveSlayTipLockedHeroMedia,
+  resolveSlayTipModules,
+} from './slayTipEditorialResolve';
 
 type SlayTipViewerProps = {
   tip: SlayTip;
   onBack: () => void;
   onViewRelatedPsa: (episode: PSATodayEpisode) => void;
+  onViewRelatedSlayTip?: (tip: SlayTip) => void;
+  onViewDeeperSeason?: (seasonId: string) => void;
+  onViewDeeperMastery?: (masteryId: string) => void;
   unlocks?: LoungeContentUnlock[];
   isUnlocked: (contentId: string) => boolean;
   onTicketsRefresh?: () => void;
@@ -36,14 +38,13 @@ type SlayTipViewerProps = {
   engagementToast?: (message: string) => void;
 };
 
-function sortedPages(tip: SlayTip) {
-  return [...(tip.pages ?? [])].sort((a, b) => a.order - b.order);
-}
-
 export function SlayTipViewer({
   tip,
   onBack,
   onViewRelatedPsa,
+  onViewRelatedSlayTip,
+  onViewDeeperSeason,
+  onViewDeeperMastery,
   unlocks,
   isUnlocked,
   onTicketsRefresh,
@@ -52,18 +53,16 @@ export function SlayTipViewer({
   engagementUserEmail = null,
   engagementToast,
 }: SlayTipViewerProps) {
-  const pages = useMemo(() => sortedPages(tip), [tip]);
   const accessGranted = slayTipAccessGranted(tip, unlocks, isUnlocked);
   const ticketCost = slayTipUnlockCost(tip, unlocks);
-  const saved = getSlayTipProgress(tip.id);
-  const [pageIndex, setPageIndex] = useState(saved?.pageIndex ?? 0);
   const [redeemBusy, setRedeemBusy] = useState(false);
   const [showUnlock, setShowUnlock] = useState(!accessGranted);
+  const articleEndRef = useRef<HTMLDivElement>(null);
+  const completionRecordedRef = useRef(false);
 
-  const relatedEpisode = tip.relatedPSAEpisodeId
-    ? getPsaTodayEpisodeById(tip.relatedPSAEpisodeId)
-    : undefined;
-  const previewImage = slayTipPreviewImageUrl(tip);
+  const heroMedia = useMemo(() => resolveSlayTipHeroMedia(tip), [tip]);
+  const lockedHero = useMemo(() => resolveSlayTipLockedHeroMedia(tip), [tip]);
+  const modules = useMemo(() => resolveSlayTipModules(tip), [tip]);
   const locked = showUnlock && !accessGranted;
   const ticketLabel = ticketCost === 1 ? '1 SLAY TICKET' : `${ticketCost} SLAY TICKETS`;
 
@@ -75,17 +74,29 @@ export function SlayTipViewer({
     if (accessGranted) setShowUnlock(false);
   }, [accessGranted]);
 
-  const currentPage = pages[pageIndex];
+  useEffect(() => {
+    completionRecordedRef.current = false;
+  }, [tip.id]);
 
   useEffect(() => {
-    if (!accessGranted || !currentPage) return;
-    setSlayTipPageIndex(tip.id, pageIndex, pages.length);
-    trackSlayTipEvent('slay_tip_page_viewed', {
-      tipId: tip.id,
-      pageId: currentPage.id,
-      pageIndex,
-    });
-  }, [accessGranted, tip.id, pageIndex, currentPage, pages.length]);
+    if (!accessGranted || locked) return;
+    const node = articleEndRef.current;
+    if (!node) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries.some((e) => e.isIntersecting && e.intersectionRatio >= 0.35);
+        if (!visible || completionRecordedRef.current) return;
+        completionRecordedRef.current = true;
+        markSlayTipArticleCompleted(tip.id);
+        trackSlayTipEvent('slay_tip_completed', { tipId: tip.id });
+      },
+      { threshold: [0.35, 0.6] }
+    );
+
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [accessGranted, locked, tip.id]);
 
   const handleRedeem = useCallback(async () => {
     if (redeemBusy) return;
@@ -108,36 +119,21 @@ export function SlayTipViewer({
     }
   }, [redeemBusy, tip, ticketCost, onTicketsRefresh]);
 
-  const goPrev = useCallback(() => {
-    setPageIndex((i) => Math.max(0, i - 1));
-  }, []);
-
-  const goNext = useCallback(() => {
-    if (pageIndex >= pages.length - 1) {
-      markSlayTipCompleted(tip.id, pages.length);
-      trackSlayTipEvent('slay_tip_completed', { tipId: tip.id });
-      return;
-    }
-    setPageIndex((i) => Math.min(pages.length - 1, i + 1));
-  }, [pageIndex, pages.length, tip.id]);
-
   const requireSignIn = onEngagementRequireSignIn ?? (() => {});
+  const openRelatedTip = onViewRelatedSlayTip ?? (() => {});
 
   return (
-    <div className="lounge-tv-slay-tip-viewer">
-      <div
-        className="lounge-tv-slay-tip-viewer__scroll"
-        style={{
-          gap: loungeTvGlassCqw(1.6, 3.8, 7.5),
-          textTransform: 'uppercase',
-          paddingBottom: 'env(safe-area-inset-bottom, 0px)',
-        }}
-      >
+    <div className="lounge-tv-slay-tip-viewer lounge-tv-slay-tip-viewer--editorial">
+      <div className="lounge-tv-slay-tip-viewer__scroll lounge-tv-slay-tip-editorial">
         <LoungeTvBackButton onClick={onBack} />
 
-        <SlayTipDetailHeader tip={tip} showTeaser={locked} />
+        <SlayTipMasthead tip={tip} accessGranted={accessGranted} showTeaser />
 
-        {locked ? <SlayTipPreview src={previewImage} alt={tip.publicTitle ?? tip.title} /> : null}
+        {locked ? (
+          <SlayTipHeroCollage images={lockedHero} locked />
+        ) : (
+          <SlayTipHeroCollage images={heroMedia} />
+        )}
 
         {locked ? (
           <SlayTipDetailSectionRule>
@@ -149,15 +145,14 @@ export function SlayTipViewer({
           </SlayTipDetailSectionRule>
         ) : (
           <>
-            <SlayTipReveal tip={tip} />
-            {currentPage ? (
-              <SlayTipContentPage page={currentPage} coverFallback={tip.coverImageUrl} />
-            ) : null}
-            <SlayTipContentNav
-              pageIndex={pageIndex}
-              pageCount={pages.length}
-              onPrev={goPrev}
-              onNext={goNext}
+            <SlayTipArticleRenderer tip={tip} modules={modules} />
+            <div ref={articleEndRef} className="lounge-tv-slay-tip-editorial__end-marker" aria-hidden />
+            <SlayTipRelatedFooter
+              tip={tip}
+              onViewRelatedSlayTip={openRelatedTip}
+              onViewRelatedPsa={onViewRelatedPsa}
+              onViewDeeperSeason={onViewDeeperSeason}
+              onViewDeeperMastery={onViewDeeperMastery}
             />
           </>
         )}
@@ -170,21 +165,6 @@ export function SlayTipViewer({
           userEmail={engagementUserEmail}
           engagementToast={engagementToast}
         />
-
-        {relatedEpisode ? (
-          <SlayTipDetailSectionRule>
-            <SlayTipRelatedContent
-              episode={relatedEpisode}
-              onViewClass={(ep) => {
-                trackSlayTipEvent('slay_tip_related_psa_clicked', {
-                  tipId: tip.id,
-                  relatedPsaEpisodeId: ep.id,
-                });
-                onViewRelatedPsa(ep);
-              }}
-            />
-          </SlayTipDetailSectionRule>
-        ) : null}
       </div>
     </div>
   );

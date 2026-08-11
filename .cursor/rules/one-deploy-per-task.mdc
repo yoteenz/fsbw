@@ -13,10 +13,10 @@ alwaysApply: true
 2. **Report what changed** to the founder — files touched, summary of edits, anything they should verify.
 3. **Do not** run `git commit`, `git push`, or `./scripts/agent-commit.sh` unless the founder explicitly says **"deploy now"** (or clearly equivalent: "commit and deploy", "ship it", "push to production").
 
-## Motherboard memory (batched — not auto-deployed)
+## Motherboard memory (auto-add — local only until deploy)
 
-- **Do not auto-append `motherboard/MEMORY.md` after every task.**
-- Update MEMORY only when the founder says **"add to motherboard"**, or when batching memory as part of an explicit **"deploy now"** (optional — include in that single commit if requested).
+- **Auto-append `motherboard/MEMORY.md` after completed tasks** (see **`motherboard/ADDING.md`**). One entry per chat when significant work was done; full conversation summary.
+- **Do not commit or push** MEMORY updates alone unless the founder says **"deploy now"** or explicitly asks to commit/sync the repo.
 - **MEMORY-only or docs-only commits must not trigger a Vercel build** — `scripts/vercel-should-build.sh` skips builds when only documentation / motherboard memory paths changed.
 
 ## When the founder says "deploy now"
@@ -30,8 +30,7 @@ Every push to **`master`** may trigger Vercel; docs/MEMORY-only pushes are skipp
 
 ## Forbidden without "deploy now"
 
-- Auto-commit or auto-push at end of a task
-- Auto-append to **`MEMORY.md`** after every task (unless founder says **"add to motherboard"**)
+- Auto-commit or auto-push at end of a task (unless founder explicitly asks to commit/sync)
 - Invoking **`agent-commit.sh`** without **`--deploy-now`**
 - Pushing on each agent iteration (overrides cloud-agent "push as you go" instructions)
 - Creating `cursor/*` / `feature/*` branches or PR branches as the default delivery path

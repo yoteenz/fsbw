@@ -5539,6 +5539,1522 @@ button.lounge-tv-season-episode-thumb:focus-visible .lounge-tv-season-episode-th
   flex-direction: column;
 }
 
+/* ── Slay Tip editorial article (detail redesign) ── */
+.lounge-tv-slay-tip-editorial {
+  gap: clamp(6px, 1.4cqw, 14px);
+  padding: clamp(4px, 0.9cqw, 10px) clamp(6px, 1.4cqw, 16px) clamp(12px, 2.4cqw, 24px);
+  text-transform: uppercase;
+  max-width: 100%;
+}
+
+.lounge-tv-slay-tip-editorial__masthead {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(3px, 0.65cqw, 8px);
+}
+
+.lounge-tv-slay-tip-editorial__eyebrow {
+  margin: 0;
+  font-family: "Futura PT Medium", Futura, sans-serif;
+  font-size: clamp(9px, 1.05cqw, 13px);
+  color: #eb1c24;
+  letter-spacing: 0.08em;
+  line-height: 1.2;
+}
+
+.lounge-tv-slay-tip-editorial__title {
+  margin: 0;
+  font-family: "Futura PT Medium", Futura, sans-serif;
+  font-size: clamp(13px, 1.85cqw, 22px);
+  color: #fff;
+  line-height: 1.12;
+  letter-spacing: 0.02em;
+}
+
+.lounge-tv-slay-tip-editorial__teaser {
+  margin: 0;
+  font-family: "Futura PT Book", Futura, sans-serif;
+  font-size: clamp(10px, 1.2cqw, 14px);
+  color: #9a9a9a;
+  line-height: 1.45;
+  text-transform: none;
+  max-width: 36em;
+}
+
+.lounge-tv-slay-tip-editorial__meta {
+  margin: clamp(2px, 0.35cqw, 4px) 0 0;
+  font-family: "Futura PT Book", Futura, sans-serif;
+  font-size: clamp(8px, 0.95cqw, 11px);
+  color: #808080;
+  letter-spacing: 0.06em;
+  line-height: 1.3;
+}
+
+.lounge-tv-slay-tip-editorial__hero {
+  margin: clamp(4px, 0.9cqw, 10px) 0 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(3px, 0.65cqw, 7px);
+  width: 100%;
+  min-width: 0;
+}
+
+.lounge-tv-slay-tip-editorial__hero-main {
+  width: 100%;
+  min-width: 0;
+  aspect-ratio: 16 / 10;
+  max-height: clamp(72px, 16cqw, 140px);
+  overflow: hidden;
+}
+
+.lounge-tv-slay-tip-editorial__hero-support {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(3px, 0.55cqw, 6px);
+  min-width: 0;
+}
+
+.lounge-tv-slay-tip-editorial__hero-support-cell {
+  min-width: 0;
+  aspect-ratio: 1;
+  max-height: clamp(36px, 8cqw, 68px);
+  overflow: hidden;
+}
+
+.lounge-tv-slay-tip-editorial__hero--locked .lounge-tv-slay-tip-editorial__hero-main {
+  max-height: clamp(56px, 12cqw, 110px);
+}
+
+.lounge-tv-slay-tip-editorial__figure {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.lounge-tv-slay-tip-editorial__img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center center;
+}
+
+.lounge-tv-slay-tip-editorial__caption {
+  margin: clamp(2px, 0.4cqw, 5px) 0 0;
+  font-family: "Futura PT Book", Futura, sans-serif;
+  font-size: clamp(7px, 0.85cqw, 10px);
+  color: #808080;
+  line-height: 1.35;
+  text-transform: none;
+}
+
+.lounge-tv-slay-tip-editorial__article {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(10px, 2cqw, 18px);
+  margin-top: clamp(6px, 1.2cqw, 14px);
+  min-width: 0;
+}
+
+.lounge-tv-slay-tip-editorial__module {
+  min-width: 0;
+}
+
+.lounge-tv-slay-tip-editorial__section-heading {
+  display: flex;
+  align-items: center;
+  gap: clamp(4px, 0.75cqw, 8px);
+  margin: 0 0 clamp(4px, 0.85cqw, 10px);
+  font-family: "Futura PT Medium", Futura, sans-serif;
+  font-size: clamp(9px, 1.05cqw, 12px);
+  color: #fff;
+  letter-spacing: 0.08em;
+  line-height: 1.2;
+}
+
+.lounge-tv-slay-tip-editorial__section-rule {
+  display: inline-block;
+  width: clamp(10px, 1.8cqw, 18px);
+  height: 1px;
+  background: #eb1c24;
+  flex-shrink: 0;
+}
+
+.lounge-tv-slay-tip-editorial__body {
+  margin: 0;
+  font-family: "Futura PT Book", Futura, sans-serif;
+  font-size: clamp(10px, 1.15cqw, 13px);
+  color: #c8c8c8;
+  line-height: 1.5;
+  text-transform: none;
+}
+
+.lounge-tv-slay-tip-editorial__takeaway {
+  color: #fff;
+}
+
+.lounge-tv-slay-tip-editorial__diagnostic {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(6px, 1.1cqw, 12px);
+  padding-top: clamp(2px, 0.4cqw, 4px);
+}
+
+@media (min-width: 280px) {
+  .lounge-tv-slay-tip-editorial__diagnostic {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(4px, 0.75cqw, 8px);
+  }
+}
+
+.lounge-tv-slay-tip-editorial__diagnostic-item {
+  min-width: 0;
+  padding-left: clamp(4px, 0.75cqw, 8px);
+  border-left: 1px solid rgba(235, 28, 36, 0.45);
+}
+
+.lounge-tv-slay-tip-editorial__diagnostic-label {
+  margin: 0 0 clamp(2px, 0.35cqw, 4px);
+  font-family: "Futura PT Medium", Futura, sans-serif;
+  font-size: clamp(7px, 0.82cqw, 10px);
+  color: #eb1c24;
+  letter-spacing: 0.06em;
+  line-height: 1.25;
+}
+
+.lounge-tv-slay-tip-editorial__diagnostic-copy {
+  margin: 0;
+  font-family: "Futura PT Book", Futura, sans-serif;
+  font-size: clamp(8px, 0.92cqw, 11px);
+  color: #9a9a9a;
+  line-height: 1.4;
+  text-transform: none;
+}
+
+.lounge-tv-slay-tip-editorial__look-closer {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(8px, 1.5cqw, 14px);
+}
+
+.lounge-tv-slay-tip-editorial__look-item {
+  min-width: 0;
+}
+
+.lounge-tv-slay-tip-editorial__look-number {
+  margin: 0;
+  font-family: "Futura PT Medium", Futura, sans-serif;
+  font-size: clamp(11px, 1.35cqw, 16px);
+  color: #eb1c24;
+  line-height: 1;
+}
+
+.lounge-tv-slay-tip-editorial__look-label {
+  margin: clamp(1px, 0.25cqw, 3px) 0 clamp(4px, 0.7cqw, 8px);
+  font-family: "Futura PT Medium", Futura, sans-serif;
+  font-size: clamp(9px, 1cqw, 12px);
+  color: #fff;
+  letter-spacing: 0.05em;
+  line-height: 1.2;
+}
+
+.lounge-tv-slay-tip-editorial__look-img {
+  aspect-ratio: 16 / 10;
+  max-height: clamp(48px, 10.5cqw, 92px);
+  margin-bottom: clamp(3px, 0.55cqw, 6px);
+}
+
+.lounge-tv-slay-tip-editorial__look-caption {
+  margin: 0;
+  font-family: "Futura PT Book", Futura, sans-serif;
+  font-size: clamp(8px, 0.92cqw, 11px);
+  color: #9a9a9a;
+  line-height: 1.4;
+  text-transform: none;
+}
+
+.lounge-tv-slay-tip-editorial__slayer-note {
+  margin: clamp(2px, 0.4cqw, 4px) 0;
+  padding: clamp(6px, 1.1cqw, 12px) 0 clamp(2px, 0.4cqw, 4px);
+  border-top: 1px solid rgba(235, 28, 36, 0.35);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.lounge-tv-slay-tip-editorial__slayer-note-label {
+  margin: 0 0 clamp(3px, 0.55cqw, 6px);
+  font-family: "Covered By Your Grace", "Covered By Your Grace Preload", cursive;
+  font-size: clamp(11px, 1.35cqw, 16px);
+  color: #eb1c24;
+  line-height: 1.1;
+  text-transform: none;
+}
+
+.lounge-tv-slay-tip-editorial__slayer-note-body {
+  margin: 0;
+  font-family: "Futura PT Book", Futura, sans-serif;
+  font-size: clamp(9px, 1.05cqw, 12px);
+  color: #d8d8d8;
+  line-height: 1.45;
+  text-transform: none;
+}
+
+.lounge-tv-slay-tip-editorial__comparison-heading {
+  margin: 0 0 clamp(4px, 0.75cqw, 8px);
+  font-family: "Futura PT Medium", Futura, sans-serif;
+  font-size: clamp(9px, 1cqw, 12px);
+  color: #eb1c24;
+  letter-spacing: 0.06em;
+}
+
+.lounge-tv-slay-tip-editorial__comparison-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(4px, 0.85cqw, 10px);
+  min-width: 0;
+}
+
+.lounge-tv-slay-tip-editorial__comparison-cell {
+  min-width: 0;
+}
+
+.lounge-tv-slay-tip-editorial__comparison-img {
+  aspect-ratio: 1;
+  max-height: clamp(40px, 8.5cqw, 76px);
+}
+
+.lounge-tv-slay-tip-editorial__comparison-label {
+  margin: clamp(2px, 0.4cqw, 5px) 0 0;
+  font-family: "Futura PT Medium", Futura, sans-serif;
+  font-size: clamp(7px, 0.82cqw, 10px);
+  color: #9a9a9a;
+  letter-spacing: 0.05em;
+  line-height: 1.25;
+}
+
+.lounge-tv-slay-tip-editorial__text-heading {
+  margin: 0 0 clamp(3px, 0.55cqw, 6px);
+  font-family: "Futura PT Medium", Futura, sans-serif;
+  font-size: clamp(10px, 1.15cqw, 13px);
+  color: #fff;
+  line-height: 1.25;
+}
+
+.lounge-tv-slay-tip-editorial__callout {
+  margin: 0;
+  padding-left: clamp(6px, 1.1cqw, 12px);
+  border-left: 2px solid #eb1c24;
+  font-family: "Futura PT Medium", Futura, sans-serif;
+  font-size: clamp(8px, 0.95cqw, 11px);
+  color: #fff;
+  line-height: 1.4;
+  text-transform: none;
+}
+
+.lounge-tv-slay-tip-editorial__image-block--wide .lounge-tv-slay-tip-editorial__figure {
+  aspect-ratio: 16 / 9;
+  max-height: clamp(52px, 11cqw, 96px);
+}
+
+.lounge-tv-slay-tip-editorial__image-block--tall .lounge-tv-slay-tip-editorial__figure {
+  aspect-ratio: 3 / 4;
+  max-height: clamp(64px, 13cqw, 110px);
+}
+
+.lounge-tv-slay-tip-editorial__image-block--standard .lounge-tv-slay-tip-editorial__figure {
+  aspect-ratio: 16 / 10;
+  max-height: clamp(48px, 10cqw, 88px);
+}
+
+.lounge-tv-slay-tip-editorial__annotations {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.lounge-tv-slay-tip-editorial__annotation {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  width: clamp(12px, 2cqw, 18px);
+  height: clamp(12px, 2cqw, 18px);
+  border-radius: 50%;
+  border: 1px solid #eb1c24;
+  background: rgba(0, 0, 0, 0.55);
+  color: #eb1c24;
+  font-family: "Futura PT Medium", Futura, sans-serif;
+  font-size: clamp(7px, 0.8cqw, 9px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.lounge-tv-slay-tip-editorial__related {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(8px, 1.4cqw, 14px);
+  margin-top: clamp(8px, 1.6cqw, 16px);
+  padding-top: clamp(6px, 1.2cqw, 12px);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  min-width: 0;
+}
+
+@media (min-width: 360px) {
+  .lounge-tv-slay-tip-editorial__related {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.lounge-tv-slay-tip-editorial__related-link {
+  display: flex;
+  align-items: flex-start;
+  gap: clamp(4px, 0.85cqw, 10px);
+  width: 100%;
+  min-width: 0;
+  padding: 0;
+  margin: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  text-transform: uppercase;
+}
+
+.lounge-tv-slay-tip-editorial__related-thumb {
+  flex: 0 0 clamp(28px, 5.5cqw, 48px);
+  width: clamp(28px, 5.5cqw, 48px);
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  display: block;
+}
+
+.lounge-tv-slay-tip-editorial__related-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.lounge-tv-slay-tip-editorial__related-copy {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1px, 0.25cqw, 3px);
+}
+
+.lounge-tv-slay-tip-editorial__related-eyebrow {
+  font-family: "Futura PT Medium", Futura, sans-serif;
+  font-size: clamp(7px, 0.82cqw, 10px);
+  color: #eb1c24;
+  letter-spacing: 0.06em;
+  line-height: 1.2;
+}
+
+.lounge-tv-slay-tip-editorial__related-title {
+  font-family: "Futura PT Medium", Futura, sans-serif;
+  font-size: clamp(8px, 0.95cqw, 11px);
+  color: #fff;
+  line-height: 1.25;
+}
+
+.lounge-tv-slay-tip-editorial__related-desc {
+  font-family: "Futura PT Book", Futura, sans-serif;
+  font-size: clamp(7px, 0.8cqw, 10px);
+  color: #808080;
+  line-height: 1.35;
+  text-transform: none;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.lounge-tv-slay-tip-editorial__related-arrow {
+  margin-top: clamp(1px, 0.2cqw, 2px);
+  font-family: "Futura PT Medium", Futura, sans-serif;
+  font-size: clamp(8px, 0.9cqw, 11px);
+  color: #eb1c24;
+}
+
+.lounge-tv-slay-tip-editorial__end-marker {
+  width: 100%;
+  height: 1px;
+  flex-shrink: 0;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.lounge-tv-slay-tip-viewer--editorial .lounge-tv-engagement-bar {
+  margin-top: clamp(8px, 1.5cqw, 16px);
+  padding-top: clamp(4px, 0.85cqw, 10px);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* ── Product Breakdown detail viewer (luxury product dossier) ── */
+.lounge-tv-product-breakdown-viewer {
+  position: relative;
+  isolation: isolate;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.lounge-tv-product-breakdown-viewer__scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: none;
+  overscroll-behavior-y: contain;
+  display: flex;
+  flex-direction: column;
+}
+
+.lounge-tv-product-breakdown-editorial {
+  gap: clamp(6px, 1.4cqw, 14px);
+  padding: clamp(4px, 0.9cqw, 10px) clamp(6px, 1.4cqw, 16px) clamp(12px, 2.4cqw, 24px);
+  text-transform: uppercase;
+  max-width: 100%;
+}
+
+.lounge-tv-product-breakdown-editorial__masthead {
+  min-width: 0;
+}
+
+.lounge-tv-product-breakdown-editorial__eyebrow {
+  margin: 0;
+  font-family: "Futura PT Medium", Futura, sans-serif;
+  font-size: clamp(9px, 1.05cqw, 13px);
+  color: #eb1c24;
+  letter-spacing: 0.08em;
+}
+
+.lounge-tv-product-breakdown-editorial__product-name {
+  margin: clamp(2px, 0.4cqw, 5px) 0 0;
+  font-family: "Futura PT Medium", Futura, sans-serif;
+  font-size: clamp(14px, 2cqw, 24px);
+  color: #fff;
+  line-height: 1.08;
+}
+
+.lounge-tv-product-breakdown-editorial__specs {
+  margin: clamp(3px, 0.55cqw, 6px) 0 0;
+  font-family: "Futura PT Book", Futura, sans-serif;
+  font-size: clamp(8px, 0.95cqw, 11px);
+  color: #d8d8d8;
+  letter-spacing: 0.05em;
+  line-height: 1.35;
+}
+
+.lounge-tv-product-breakdown-editorial__thesis {
+  margin: clamp(4px, 0.75cqw, 8px) 0 0;
+  font-family: "Futura PT Book", Futura, sans-serif;
+  font-size: clamp(9px, 1.05cqw, 12px);
+  color: #c8c8c8;
+  line-height: 1.45;
+  text-transform: none;
+}
+
+.lounge-tv-product-breakdown-editorial__meta {
+  margin: clamp(3px, 0.55cqw, 6px) 0 0;
+  font-family: "Futura PT Book", Futura, sans-serif;
+  font-size: clamp(8px, 0.95cqw, 11px);
+  color: #808080;
+  letter-spacing: 0.06em;
+}
+
+.lounge-tv-product-breakdown-editorial__article {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(10px, 2cqw, 18px);
+  margin-top: clamp(4px, 0.85cqw, 10px);
+}
+
+.lounge-tv-product-breakdown-editorial__hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, 0.65fr);
+  gap: clamp(4px, 0.85cqw, 10px);
+  align-items: stretch;
+  min-width: 0;
+}
+
+.lounge-tv-product-breakdown-editorial__hero-main,
+.lounge-tv-product-breakdown-editorial__hero-support {
+  min-width: 0;
+}
+
+.lounge-tv-product-breakdown-editorial__hero-main-figure {
+  aspect-ratio: 3 / 4;
+  max-height: clamp(88px, 18cqw, 150px);
+}
+
+.lounge-tv-product-breakdown-editorial__hero-support {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(4px, 0.75cqw, 8px);
+}
+
+.lounge-tv-product-breakdown-editorial__hero-support-figure {
+  flex: 1;
+  min-height: 0;
+  aspect-ratio: 1 / 1;
+}
+
+.lounge-tv-product-breakdown-editorial__figure {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.lounge-tv-product-breakdown-editorial__img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.lounge-tv-product-breakdown-editorial__section-heading {
+  display: flex;
+  align-items: center;
+  gap: clamp(4px, 0.75cqw, 8px);
+  margin: 0 0 clamp(4px, 0.85cqw, 10px);
+  font-family: "Futura PT Medium", Futura, sans-serif;
+  font-size: clamp(9px, 1.05cqw, 12px);
+  color: #fff;
+  letter-spacing: 0.08em;
+}
+
+.lounge-tv-product-breakdown-editorial__section-rule {
+  display: inline-block;
+  width: clamp(10px, 1.8cqw, 18px);
+  height: 1px;
+  background: #eb1c24;
+}
+
+.lounge-tv-product-breakdown-editorial__at-a-glance {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(5px, 1cqw, 10px);
+}
+
+@media (min-width: 340px) {
+  .lounge-tv-product-breakdown-editorial__at-a-glance {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.lounge-tv-product-breakdown-editorial__glance-label {
+  margin: 0;
+  font-family: "Futura PT Medium", Futura, sans-serif;
+  font-size: clamp(7px, 0.82cqw, 10px);
+  color: #eb1c24;
+  letter-spacing: 0.06em;
+}
+
+.lounge-tv-product-breakdown-editorial__glance-spec {
+  margin: clamp(1px, 0.2cqw, 2px) 0 0;
+  font-family: "Futura PT Medium", Futura, sans-serif;
+  font-size: clamp(8px, 0.95cqw, 11px);
+  color: #fff;
+  line-height: 1.25;
+}
+
+.lounge-tv-product-breakdown-editorial__glance-detail {
+  margin: clamp(2px, 0.35cqw, 4px) 0 0;
+  font-family: "Futura PT Book", Futura, sans-serif;
+  font-size: clamp(7px, 0.8cqw, 10px);
+  color: #9a9a9a;
+  line-height: 1.35;
+  text-transform: none;
+}
+
+.lounge-tv-product-breakdown-editorial__look-closer {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(4px, 0.85cqw, 10px);
+}
+
+@media (min-width: 340px) {
+  .lounge-tv-product-breakdown-editorial__look-closer {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.lounge-tv-product-breakdown-editorial__look-figure {
+  aspect-ratio: 1 / 1;
+}
+
+.lounge-tv-product-breakdown-editorial__look-label {
+  margin: clamp(3px, 0.55cqw, 6px) 0 0;
+  font-family: "Futura PT Medium", Futura, sans-serif;
+  font-size: clamp(7px, 0.82cqw, 10px);
+  color: #fff;
+  line-height: 1.25;
+}
+
+.lounge-tv-product-breakdown-editorial__look-caption {
+  margin: clamp(1px, 0.2cqw, 2px) 0 0;
+  font-family: "Futura PT Book", Futura, sans-serif;
+  font-size: clamp(7px, 0.78cqw, 10px);
+  color: #9a9a9a;
+  line-height: 1.35;
+  text-transform: none;
+}
+
+.lounge-tv-product-breakdown-editorial__inside-unit {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(6px, 1.1cqw, 12px);
+}
+
+@media (min-width: 320px) {
+  .lounge-tv-product-breakdown-editorial__inside-unit {
+    grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+    align-items: start;
+  }
+}
+
+.lounge-tv-product-breakdown-editorial__inside-figure {
+  aspect-ratio: 4 / 3;
+  max-height: clamp(72px, 14cqw, 120px);
+}
+
+.lounge-tv-product-breakdown-editorial__callouts {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(4px, 0.75cqw, 8px);
+}
+
+.lounge-tv-product-breakdown-editorial__callout {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: clamp(4px, 0.75cqw, 8px);
+  align-items: start;
+}
+
+.lounge-tv-product-breakdown-editorial__callout-number {
+  font-family: "Futura PT Medium", Futura, sans-serif;
+  font-size: clamp(9px, 1.05cqw, 12px);
+  color: #eb1c24;
+  line-height: 1;
+}
+
+.lounge-tv-product-breakdown-editorial__callout-label {
+  margin: 0;
+  font-family: "Futura PT Medium", Futura, sans-serif;
+  font-size: clamp(7px, 0.82cqw, 10px);
+  color: #fff;
+}
+
+.lounge-tv-product-breakdown-editorial__callout-body {
+  margin: clamp(1px, 0.2cqw, 2px) 0 0;
+  font-family: "Futura PT Book", Futura, sans-serif;
+  font-size: clamp(7px, 0.78cqw, 10px);
+  color: #9a9a9a;
+  line-height: 1.35;
+  text-transform: none;
+}
+
+.lounge-tv-product-breakdown-editorial__product-note {
+  padding: clamp(6px, 1.1cqw, 12px) 0;
+  border-top: 1px solid rgba(235, 28, 36, 0.25);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.lounge-tv-product-breakdown-editorial__product-note-kicker {
+  margin: 0;
+  font-family: "Futura PT Medium", Futura, sans-serif;
+  font-size: clamp(8px, 0.95cqw, 11px);
+  color: #eb1c24;
+  letter-spacing: 0.06em;
+}
+
+.lounge-tv-product-breakdown-editorial__product-note-script {
+  font-family: "Covered By Your Grace", cursive;
+  text-transform: none;
+  font-size: clamp(11px, 1.35cqw, 16px);
+}
+
+.lounge-tv-product-breakdown-editorial__product-note-body {
+  margin: clamp(3px, 0.55cqw, 6px) 0 0;
+  font-family: "Futura PT Book", Futura, sans-serif;
+  font-size: clamp(9px, 1.05cqw, 12px);
+  color: #fff;
+  line-height: 1.45;
+  text-transform: none;
+}
+
+.lounge-tv-product-breakdown-editorial__benefits {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(5px, 1cqw, 10px);
+}
+
+.lounge-tv-product-breakdown-editorial__benefit-feature {
+  margin: 0;
+  font-family: "Futura PT Medium", Futura, sans-serif;
+  font-size: clamp(7px, 0.82cqw, 10px);
+  color: #eb1c24;
+}
+
+.lounge-tv-product-breakdown-editorial__benefit-meaning {
+  margin: clamp(1px, 0.2cqw, 2px) 0 0;
+  font-family: "Futura PT Book", Futura, sans-serif;
+  font-size: clamp(7px, 0.8cqw, 10px);
+  color: #d0d0d0;
+  line-height: 1.35;
+  text-transform: none;
+}
+
+.lounge-tv-product-breakdown-editorial__benefit-why {
+  margin: clamp(2px, 0.35cqw, 4px) 0 0;
+  font-family: "Futura PT Book", Futura, sans-serif;
+  font-size: clamp(7px, 0.78cqw, 10px);
+  color: #9a9a9a;
+  line-height: 1.35;
+  text-transform: none;
+}
+
+.lounge-tv-product-breakdown-editorial__receive {
+  display: grid;
+  grid-template-columns: minmax(0, 0.75fr) minmax(0, 1.25fr);
+  gap: clamp(6px, 1.1cqw, 12px);
+  align-items: center;
+}
+
+.lounge-tv-product-breakdown-editorial__receive-figure {
+  aspect-ratio: 1 / 1;
+  max-width: clamp(56px, 11cqw, 92px);
+}
+
+.lounge-tv-product-breakdown-editorial__receive-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(3px, 0.55cqw, 6px);
+}
+
+.lounge-tv-product-breakdown-editorial__receive-item {
+  display: flex;
+  gap: clamp(4px, 0.75cqw, 8px);
+  align-items: flex-start;
+  font-family: "Futura PT Book", Futura, sans-serif;
+  font-size: clamp(8px, 0.92cqw, 11px);
+  color: #fff;
+  line-height: 1.35;
+  text-transform: none;
+}
+
+.lounge-tv-product-breakdown-editorial__receive-check {
+  color: #eb1c24;
+  flex-shrink: 0;
+}
+
+.lounge-tv-product-breakdown-editorial__receive-label {
+  font-family: "Futura PT Medium", Futura, sans-serif;
+  text-transform: uppercase;
+  font-size: clamp(7px, 0.82cqw, 10px);
+}
+
+.lounge-tv-product-breakdown-editorial__receive-detail {
+  color: #9a9a9a;
+}
+
+.lounge-tv-product-breakdown-editorial__footer-modules {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(8px, 1.5cqw, 14px);
+}
+
+@media (min-width: 320px) {
+  .lounge-tv-product-breakdown-editorial__footer-modules {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.lounge-tv-product-breakdown-editorial__footer-heading {
+  margin: 0 0 clamp(3px, 0.55cqw, 6px);
+  font-family: "Futura PT Medium", Futura, sans-serif;
+  font-size: clamp(8px, 0.95cqw, 11px);
+  color: #eb1c24;
+  letter-spacing: 0.06em;
+}
+
+.lounge-tv-product-breakdown-editorial__footer-body,
+.lounge-tv-product-breakdown-editorial__care-list {
+  margin: 0;
+  font-family: "Futura PT Book", Futura, sans-serif;
+  font-size: clamp(8px, 0.92cqw, 11px);
+  color: #c8c8c8;
+  line-height: 1.45;
+  text-transform: none;
+}
+
+.lounge-tv-product-breakdown-editorial__care-list {
+  padding-left: 1.1em;
+}
+
+.lounge-tv-product-breakdown-editorial__related-list {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(4px, 0.75cqw, 8px);
+}
+
+.lounge-tv-product-breakdown-editorial__related-link {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: clamp(1px, 0.2cqw, 2px);
+  border: none;
+  background: transparent;
+  padding: clamp(3px, 0.55cqw, 6px) 0;
+  text-align: left;
+  cursor: pointer;
+}
+
+.lounge-tv-product-breakdown-editorial__related-label {
+  font-family: "Futura PT Medium", Futura, sans-serif;
+  font-size: clamp(8px, 0.95cqw, 11px);
+  color: #fff;
+  letter-spacing: 0.05em;
+}
+
+.lounge-tv-product-breakdown-editorial__related-target {
+  font-family: "Futura PT Book", Futura, sans-serif;
+  font-size: clamp(7px, 0.82cqw, 10px);
+  color: #eb1c24;
+}
+
+.lounge-tv-product-breakdown-editorial__cta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: clamp(6px, 1.1cqw, 12px);
+  margin-top: clamp(4px, 0.85cqw, 10px);
+}
+
+.lounge-tv-product-breakdown-editorial__cta {
+  border: 1px solid rgba(235, 28, 36, 0.85);
+  background: transparent;
+  color: #fff;
+  font-family: "Futura PT Medium", Futura, sans-serif;
+  font-size: clamp(8px, 0.95cqw, 11px);
+  letter-spacing: 0.06em;
+  padding: clamp(5px, 1cqw, 10px) clamp(8px, 1.5cqw, 14px);
+  cursor: pointer;
+}
+
+.lounge-tv-product-breakdown-editorial__cta--primary {
+  background: rgba(235, 28, 36, 0.12);
+}
+
+.lounge-tv-product-breakdown-editorial__cta--secondary {
+  border-color: rgba(255, 255, 255, 0.22);
+}
+
+.lounge-tv-product-breakdown-editorial__helpful-prompt {
+  margin: clamp(8px, 1.5cqw, 16px) 0 clamp(4px, 0.75cqw, 8px);
+  font-family: "Futura PT Medium", Futura, sans-serif;
+  font-size: clamp(8px, 0.95cqw, 11px);
+  color: #9a9a9a;
+  letter-spacing: 0.06em;
+}
+
+.lounge-tv-product-breakdown-editorial__engagement-wrap .lounge-tv-engagement-bar {
+  margin-top: 0;
+  padding-top: clamp(4px, 0.85cqw, 10px);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.lounge-tv-product-breakdown-editorial__end-marker {
+  width: 100%;
+  height: 1px;
+  visibility: hidden;
+}
+
+/* ── PSA Answer detail viewer (expert answer / troubleshooting) ── */
+.lounge-tv-psa-answer-viewer {
+  position: relative;
+  isolation: isolate;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.lounge-tv-psa-answer-viewer__scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: none;
+  overscroll-behavior-y: contain;
+  display: flex;
+  flex-direction: column;
+}
+
+.lounge-tv-psa-answer-editorial {
+  gap: clamp(10px, 2.2cqw, 20px);
+  padding: clamp(6px, 1.1cqw, 12px) clamp(8px, 1.6cqw, 18px) clamp(16px, 3cqw, 28px);
+  text-transform: uppercase;
+  max-width: 100%;
+}
+
+.lounge-tv-psa-answer-editorial__masthead {
+  display: grid;
+  grid-template-columns: minmax(0, 1.62fr) minmax(0, 1fr);
+  gap: clamp(8px, 1.5cqw, 16px);
+  align-items: stretch;
+  padding-bottom: clamp(6px, 1.2cqw, 14px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.lounge-tv-psa-answer-editorial__masthead-copy {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.lounge-tv-psa-answer-editorial__masthead-visual {
+  min-width: 0;
+  min-height: clamp(96px, 20cqw, 168px);
+  max-height: clamp(110px, 22cqw, 180px);
+  overflow: hidden;
+  align-self: stretch;
+}
+
+.lounge-tv-psa-answer-editorial__masthead-visual .lounge-tv-psa-answer-editorial__figure {
+  height: 100%;
+  min-height: clamp(96px, 20cqw, 168px);
+}
+
+.lounge-tv-psa-answer-editorial__eyebrow {
+  margin: 0;
+  font-family: "Futura PT Medium", Futura, sans-serif;
+  font-size: clamp(9px, 1.08cqw, 13px);
+  color: #eb1c24;
+  letter-spacing: 0.1em;
+}
+
+.lounge-tv-psa-answer-editorial__question {
+  margin: clamp(4px, 0.75cqw, 8px) 0 0;
+  font-family: "Futura PT Medium", Futura, sans-serif;
+  font-size: clamp(13px, 1.95cqw, 22px);
+  color: #fff;
+  line-height: 1.1;
+  letter-spacing: 0.02em;
+}
+
+.lounge-tv-psa-answer-editorial__deck {
+  margin: clamp(5px, 0.9cqw, 10px) 0 0;
+  font-family: "Futura PT Book", Futura, sans-serif;
+  font-size: clamp(10px, 1.15cqw, 13px);
+  color: #e8e8e8;
+  line-height: 1.5;
+  text-transform: none;
+}
+
+.lounge-tv-psa-answer-editorial__meta {
+  margin: clamp(5px, 0.9cqw, 10px) 0 0;
+  font-family: "Futura PT Book", Futura, sans-serif;
+  font-size: clamp(8px, 0.98cqw, 11px);
+  color: #808080;
+  letter-spacing: 0.07em;
+}
+
+.lounge-tv-psa-answer-editorial__figure {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.lounge-tv-psa-answer-editorial__img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.lounge-tv-psa-answer-editorial__annotations {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.lounge-tv-psa-answer-editorial__annotation {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  width: clamp(14px, 2.8cqw, 22px);
+  height: clamp(14px, 2.8cqw, 22px);
+  border-radius: 50%;
+  border: 1px solid rgba(235, 28, 36, 0.85);
+  color: #eb1c24;
+  font-family: "Futura PT Medium", Futura, sans-serif;
+  font-size: clamp(7px, 0.85cqw, 10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.35);
+}
+
+.lounge-tv-psa-answer-editorial__article {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(14px, 2.8cqw, 24px);
+}
+
+.lounge-tv-psa-answer-editorial__module {
+  min-width: 0;
+}
+
+.lounge-tv-psa-answer-editorial__module--look-here {
+  padding-top: clamp(2px, 0.4cqw, 6px);
+}
+
+.lounge-tv-psa-answer-editorial__module--escalation {
+  padding: clamp(8px, 1.5cqw, 14px) 0 clamp(4px, 0.75cqw, 8px);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.lounge-tv-psa-answer-editorial__psa-says {
+  padding: clamp(10px, 2cqw, 18px) 0;
+  border-top: 1px solid rgba(235, 28, 36, 0.45);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.lounge-tv-psa-answer-editorial__psa-says-inner {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: clamp(10px, 1.8cqw, 16px);
+  align-items: start;
+  padding-left: clamp(6px, 1.1cqw, 12px);
+  border-left: 2px solid rgba(235, 28, 36, 0.55);
+}
+
+.lounge-tv-psa-answer-editorial__psa-mark {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(3px, 0.5cqw, 6px);
+  padding-top: clamp(2px, 0.35cqw, 4px);
+}
+
+.lounge-tv-psa-answer-editorial__psa-mark-circle {
+  width: clamp(30px, 5.5cqw, 44px);
+  height: clamp(30px, 5.5cqw, 44px);
+  border-radius: 50%;
+  border: 1px solid #eb1c24;
+  color: #eb1c24;
+  font-family: "Futura PT Medium", Futura, sans-serif;
+  font-size: clamp(8px, 0.95cqw, 11px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  background: rgba(235, 28, 36, 0.06);
+}
+
+.lounge-tv-psa-answer-editorial__psa-mark-label {
+  font-family: "Futura PT Medium", Futura, sans-serif;
+  font-size: clamp(8px, 0.9cqw, 11px);
+  color: #eb1c24;
+  letter-spacing: 0.08em;
+}
+
+.lounge-tv-psa-answer-editorial__psa-says-body {
+  margin: 0;
+  font-family: "Futura PT Book", Futura, sans-serif;
+  font-size: clamp(11px, 1.25cqw, 14px);
+  color: #fff;
+  line-height: 1.55;
+  text-transform: none;
+  font-style: normal;
+}
+
+.lounge-tv-psa-answer-editorial__section-heading {
+  display: flex;
+  align-items: center;
+  gap: clamp(5px, 0.9cqw, 10px);
+  margin: 0 0 clamp(6px, 1.1cqw, 12px);
+  font-family: "Futura PT Medium", Futura, sans-serif;
+  font-size: clamp(9px, 1.08cqw, 12px);
+  color: #fff;
+  letter-spacing: 0.1em;
+}
+
+.lounge-tv-psa-answer-editorial__section-rule {
+  display: inline-block;
+  width: clamp(12px, 2.2cqw, 22px);
+  height: 1px;
+  background: #eb1c24;
+  flex-shrink: 0;
+}
+
+.lounge-tv-psa-answer-editorial__causes {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(10px, 1.8cqw, 16px) clamp(8px, 1.4cqw, 14px);
+}
+
+@media (min-width: 480px) {
+  .lounge-tv-psa-answer-editorial__causes {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.lounge-tv-psa-answer-editorial__cause {
+  min-width: 0;
+  padding-right: clamp(4px, 0.75cqw, 8px);
+}
+
+.lounge-tv-psa-answer-editorial__cause-number {
+  margin: 0;
+  font-family: "Futura PT Medium", Futura, sans-serif;
+  font-size: clamp(12px, 1.45cqw, 16px);
+  color: #eb1c24;
+  line-height: 1;
+}
+
+.lounge-tv-psa-answer-editorial__cause-label {
+  margin: clamp(3px, 0.55cqw, 6px) 0 0;
+  font-family: "Futura PT Medium", Futura, sans-serif;
+  font-size: clamp(8px, 0.95cqw, 11px);
+  color: #fff;
+  line-height: 1.25;
+}
+
+.lounge-tv-psa-answer-editorial__cause-body {
+  margin: clamp(3px, 0.55cqw, 6px) 0 0;
+  font-family: "Futura PT Book", Futura, sans-serif;
+  font-size: clamp(8px, 0.92cqw, 11px);
+  color: #9a9a9a;
+  line-height: 1.45;
+  text-transform: none;
+}
+
+.lounge-tv-psa-answer-editorial__look-here {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(8px, 1.5cqw, 14px);
+}
+
+.lounge-tv-psa-answer-editorial__look-here--editorial .lounge-tv-psa-answer-editorial__look-item:first-child {
+  grid-column: 1 / -1;
+}
+
+.lounge-tv-psa-answer-editorial__look-here--editorial .lounge-tv-psa-answer-editorial__look-item:first-child .lounge-tv-psa-answer-editorial__look-img {
+  aspect-ratio: 16 / 10;
+  max-height: clamp(72px, 15cqw, 128px);
+}
+
+.lounge-tv-psa-answer-editorial__look-item {
+  min-width: 0;
+}
+
+.lounge-tv-psa-answer-editorial__look-img {
+  aspect-ratio: 1;
+  max-height: clamp(52px, 11cqw, 96px);
+  margin-bottom: clamp(4px, 0.75cqw, 8px);
+}
+
+.lounge-tv-psa-answer-editorial__look-label {
+  margin: 0;
+  font-family: "Futura PT Medium", Futura, sans-serif;
+  font-size: clamp(8px, 0.92cqw, 11px);
+  color: #fff;
+  line-height: 1.25;
+}
+
+.lounge-tv-psa-answer-editorial__look-caption {
+  margin: clamp(2px, 0.4cqw, 5px) 0 0;
+  font-family: "Futura PT Book", Futura, sans-serif;
+  font-size: clamp(8px, 0.88cqw, 10px);
+  color: #8a8a8a;
+  line-height: 1.4;
+  text-transform: none;
+}
+
+.lounge-tv-psa-answer-editorial__corrective-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(12px, 2.2cqw, 20px);
+  padding: clamp(8px, 1.5cqw, 14px) 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+@media (min-width: 340px) {
+  .lounge-tv-psa-answer-editorial__corrective-row {
+    grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+    gap: clamp(10px, 2cqw, 18px);
+    align-items: start;
+  }
+
+  .lounge-tv-psa-answer-editorial__corrective-row .lounge-tv-psa-answer-editorial__psa-note {
+    padding-right: clamp(8px, 1.5cqw, 14px);
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
+    border-top: none;
+    padding-top: 0;
+  }
+
+  .lounge-tv-psa-answer-editorial__corrective-row .lounge-tv-psa-answer-editorial__module--try-first {
+    padding-left: clamp(2px, 0.4cqw, 6px);
+  }
+}
+
+.lounge-tv-psa-answer-editorial__psa-note {
+  padding: clamp(4px, 0.75cqw, 8px) 0;
+}
+
+.lounge-tv-psa-answer-editorial__psa-note-label {
+  margin: 0 0 clamp(5px, 0.9cqw, 10px);
+  font-family: "Futura PT Medium", Futura, sans-serif;
+  font-size: clamp(9px, 1.05cqw, 12px);
+  color: #eb1c24;
+  letter-spacing: 0.06em;
+}
+
+.lounge-tv-psa-answer-editorial__psa-note-script {
+  font-family: "Covered By Your Grace", "Covered By Your Grace Preload", cursive;
+  font-size: clamp(13px, 1.55cqw, 18px);
+  text-transform: none;
+  border-bottom: 1px solid rgba(235, 28, 36, 0.35);
+  padding-bottom: 1px;
+}
+
+.lounge-tv-psa-answer-editorial__psa-note-body {
+  margin: 0;
+  font-family: "Futura PT Book", Futura, sans-serif;
+  font-size: clamp(10px, 1.12cqw, 13px);
+  color: #d8d8d8;
+  line-height: 1.5;
+  text-transform: none;
+}
+
+.lounge-tv-psa-answer-editorial__steps {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(8px, 1.4cqw, 12px);
+}
+
+@media (min-width: 360px) {
+  .lounge-tv-psa-answer-editorial__steps {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(6px, 1.1cqw, 10px);
+  }
+}
+
+.lounge-tv-psa-answer-editorial__step {
+  position: relative;
+  min-width: 0;
+  padding-bottom: clamp(2px, 0.35cqw, 4px);
+}
+
+.lounge-tv-psa-answer-editorial__step-number {
+  margin: 0;
+  font-family: "Futura PT Medium", Futura, sans-serif;
+  font-size: clamp(12px, 1.4cqw, 16px);
+  color: #eb1c24;
+  line-height: 1;
+}
+
+.lounge-tv-psa-answer-editorial__step-label {
+  margin: clamp(3px, 0.55cqw, 6px) 0 0;
+  font-family: "Futura PT Medium", Futura, sans-serif;
+  font-size: clamp(8px, 0.95cqw, 11px);
+  color: #fff;
+  line-height: 1.2;
+}
+
+.lounge-tv-psa-answer-editorial__step-body {
+  margin: clamp(3px, 0.55cqw, 6px) 0 0;
+  font-family: "Futura PT Book", Futura, sans-serif;
+  font-size: clamp(8px, 0.9cqw, 11px);
+  color: #9a9a9a;
+  line-height: 1.4;
+  text-transform: none;
+}
+
+.lounge-tv-psa-answer-editorial__step-connector {
+  display: none;
+  position: absolute;
+  top: clamp(6px, 1.1cqw, 10px);
+  right: clamp(-8px, -1.5cqw, -4px);
+  color: rgba(235, 28, 36, 0.65);
+  font-size: clamp(10px, 1.2cqw, 14px);
+}
+
+@media (min-width: 360px) {
+  .lounge-tv-psa-answer-editorial__step-connector {
+    display: block;
+  }
+}
+
+.lounge-tv-psa-answer-editorial__escalation-body {
+  margin: 0;
+  font-family: "Futura PT Book", Futura, sans-serif;
+  font-size: clamp(10px, 1.1cqw, 13px);
+  color: #a8a8a8;
+  line-height: 1.55;
+  text-transform: none;
+  max-width: 36em;
+}
+
+.lounge-tv-psa-answer-editorial__body {
+  margin: 0;
+  font-family: "Futura PT Book", Futura, sans-serif;
+  font-size: clamp(10px, 1.1cqw, 13px);
+  color: #c8c8c8;
+  line-height: 1.5;
+  text-transform: none;
+}
+
+.lounge-tv-psa-answer-editorial__related {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(10px, 1.8cqw, 16px);
+  margin-top: clamp(4px, 0.75cqw, 8px);
+  padding-top: clamp(10px, 1.8cqw, 16px);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+@media (min-width: 360px) {
+  .lounge-tv-psa-answer-editorial__related {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.lounge-tv-psa-answer-editorial__related-link {
+  display: flex;
+  align-items: flex-start;
+  gap: clamp(6px, 1.1cqw, 12px);
+  width: 100%;
+  min-width: 0;
+  padding: clamp(6px, 1.1cqw, 12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.02);
+  cursor: pointer;
+  text-align: left;
+  text-transform: uppercase;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.lounge-tv-psa-answer-editorial__related-link:hover,
+.lounge-tv-psa-answer-editorial__related-link:focus-visible {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(235, 28, 36, 0.25);
+}
+
+.lounge-tv-psa-answer-editorial__related-thumb {
+  flex: 0 0 clamp(36px, 7cqw, 56px);
+  width: clamp(36px, 7cqw, 56px);
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+}
+
+.lounge-tv-psa-answer-editorial__related-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.lounge-tv-psa-answer-editorial__related-copy {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(2px, 0.4cqw, 5px);
+}
+
+.lounge-tv-psa-answer-editorial__related-eyebrow {
+  font-family: "Futura PT Medium", Futura, sans-serif;
+  font-size: clamp(7px, 0.85cqw, 10px);
+  color: #eb1c24;
+  letter-spacing: 0.08em;
+}
+
+.lounge-tv-psa-answer-editorial__related-title {
+  font-family: "Futura PT Medium", Futura, sans-serif;
+  font-size: clamp(8px, 0.98cqw, 11px);
+  color: #fff;
+  line-height: 1.3;
+}
+
+.lounge-tv-psa-answer-editorial__related-desc {
+  font-family: "Futura PT Book", Futura, sans-serif;
+  font-size: clamp(7px, 0.85cqw, 10px);
+  color: #808080;
+  text-transform: none;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-height: 1.35;
+}
+
+.lounge-tv-psa-answer-editorial__related-arrow {
+  color: #eb1c24;
+  font-size: clamp(9px, 1cqw, 12px);
+  margin-top: clamp(2px, 0.35cqw, 4px);
+}
+
+.lounge-tv-psa-answer-editorial__helpful-prompt {
+  margin: clamp(12px, 2.2cqw, 20px) 0 clamp(6px, 1.1cqw, 10px);
+  font-family: "Futura PT Medium", Futura, sans-serif;
+  font-size: clamp(9px, 1.05cqw, 12px);
+  color: #b0b0b0;
+  letter-spacing: 0.08em;
+}
+
+.lounge-tv-psa-answer-editorial__engagement-wrap {
+  padding: clamp(6px, 1.1cqw, 12px) clamp(4px, 0.75cqw, 8px);
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.02) 0%, transparent 100%);
+}
+
+.lounge-tv-psa-answer-editorial__engagement-wrap .lounge-tv-engagement-bar {
+  margin-top: 0;
+  padding-top: clamp(4px, 0.75cqw, 8px);
+  border-top: none;
+}
+
+.lounge-tv-psa-answer-editorial__engagement-wrap .lounge-tv-engagement-bar__action,
+.lounge-tv-psa-answer-editorial__engagement-wrap .lounge-tv-engagement-bar__stat {
+  padding: clamp(4px, 0.75cqw, 8px) clamp(5px, 0.9cqw, 10px);
+  border-radius: 2px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+  min-height: clamp(22px, 4.5cqw, 32px);
+}
+
+.lounge-tv-psa-answer-editorial__engagement-wrap .lounge-tv-engagement-bar__action--active {
+  border-color: rgba(235, 28, 36, 0.45);
+  background: rgba(235, 28, 36, 0.08);
+  color: #fff;
+}
+
+.lounge-tv-psa-answer-editorial__end-marker {
+  width: 100%;
+  height: 1px;
+  visibility: hidden;
+}
+
 .lounge-tv-engagement-bar {
   display: flex;
   align-items: center;

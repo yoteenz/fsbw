@@ -4,7 +4,6 @@ import { listMasteryTrackPresentations } from '../../../content/education/hierar
 import { computeSeasonProgress } from './seasonProgress';
 import { getSeasonsForMastery } from '../../../content/education/hierarchy/catalog';
 import { loungeTvGlassCqw } from '../loungeTvResponsive';
-import { isLoungeTvSilentFocus } from '../loungeTvFocusHandlers';
 import {
   LOUNGE_TV_BRAND_RED,
   LOUNGE_TV_FONT_BOOK,
@@ -182,6 +181,26 @@ export function LearnMasterySelector({
   const isCompact = viewMode === 'compact';
   const CardComponent = isCompact ? MasterySeriesCompactTile : MasteryTrackCard;
 
+  useEffect(() => {
+    const syncFocusedTrack = () => {
+      const active = document.activeElement;
+      if (!(active instanceof HTMLElement)) {
+        setFocusedId(null);
+        return;
+      }
+      const focusId = active.dataset.loungeTvFocusId;
+      if (focusId?.startsWith('learn-mastery-')) {
+        setFocusedId(focusId.slice('learn-mastery-'.length));
+        return;
+      }
+      setFocusedId(null);
+    };
+
+    syncFocusedTrack();
+    document.addEventListener('focusin', syncFocusedTrack);
+    return () => document.removeEventListener('focusin', syncFocusedTrack);
+  }, []);
+
   const handleSelect = useCallback(
     (track: MasteryTrackPresentation) => {
       if (track.status !== 'available' || !track.mastery) return;
@@ -220,10 +239,7 @@ export function LearnMasterySelector({
           progressPercent={track.mastery ? aggregateMasteryProgress(track.mastery.id) : null}
           motionActive={focusedId === track.id}
           metaAtTop={masteryPanelMetaAtTop(track)}
-          onFocus={(e) => {
-            if (isLoungeTvSilentFocus(e.currentTarget)) return;
-            setFocusedId(track.id);
-          }}
+          onFocus={() => setFocusedId(track.id)}
           onBlur={() => setFocusedId((prev) => (prev === track.id ? null : prev))}
           onSelect={() => handleSelect(track)}
         />
@@ -320,7 +336,6 @@ function MasteryTrackCard({
         <MasteryPosterMedia
           track={track}
           motionActive={motionActive}
-          allowVideoMotion={false}
           metaAtTop={metaAtTop}
         />
 
@@ -525,7 +540,6 @@ function MasterySeriesCompactTile({
         <MasteryPosterMedia
           track={track}
           motionActive={motionActive}
-          allowVideoMotion={false}
           metaAtTop={metaAtTop}
         />
 

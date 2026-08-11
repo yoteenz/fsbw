@@ -8,7 +8,7 @@ When the user says **"add to motherboard"** (in this or any past chat), follow t
 
 0. **Deploy only on "deploy now" (critical).** **Do not commit or push** automatically after completing a task. Make changes locally; report what changed. When the founder says **"deploy now"**, ship with **`./scripts/agent-commit.sh --deploy-now "message"`** once — **exactly one commit + one push to `master`**. **Never** push then amend+**force-push** to fix the message. See **`.cursor/rules/one-deploy-per-task.mdc`**.
 
-0b. **MEMORY is batched — not auto-appended every task.** Append **`MEMORY.md` only** when the founder says **"add to motherboard"** or when explicitly batching memory into a **"deploy now"** commit. **Do not** append MEMORY after every code change by default. MEMORY-only pushes must not trigger a Vercel build (see **`scripts/vercel-should-build.sh`**).
+0b. **MEMORY auto-add is ON by default.** After any exchange where you completed a user-requested task, append **one** entry to **`MEMORY.md`** per the format below (full conversation summary). **Do not skip** for small scope. **Do not commit or push** after MEMORY-only edits unless the founder says **"deploy now"** or explicitly asks to commit/sync. MEMORY-only pushes must not trigger a Vercel build (see **`scripts/vercel-should-build.sh`**).
 
 1. **Append only.** Do not remove, replace, or rewrite existing sections in `CORE.md` or `MEMORY.md`. Only add new content.
 2. **No duplicates.** Before adding, read the full `MEMORY.md` and `CORE.md`. If the same fact or decision is already stated, do not add it again. You may add a short cross-reference or "(see entry YYYY-MM-DD)" if useful.
@@ -42,16 +42,14 @@ Use real date (today's date when adding). Title can be a short topic (e.g. "Admi
 
 ---
 
-## When to add (explicit only — auto-add is OFF)
+## Auto-add is on by default
 
-**Do not auto-append MEMORY after every task.** Append only when:
-
-- The founder says **"add to motherboard"** (one entry now), or
-- The founder asks to batch memory into an upcoming **"deploy now"** commit.
+Append to **`MEMORY.md`** at the end of any exchange where you completed a user-requested task (code change, fix, feature, or decision). **Do not skip** because the change was small. Only skip when there is nothing to record (thanks/ok, clarifying Q with no code or decision).
 
 - **Every entry must summarize the entire conversation so far** (from chat inception to now), not just the latest turn.
+- **"Add to motherboard"** = append one entry now + re-enable auto-add if the user had said **"stop adding to motherboard"**.
 - **When to skip:** Q&A with no request to record, "thanks"/"ok", or when the founder said **"stop adding to motherboard"**.
-- **Never commit or push** because of a MEMORY update alone unless the founder says **"deploy now"** (and docs-only deploys skip the Vercel build).
+- **Never commit or push** because of a MEMORY update alone unless the founder says **"deploy now"** or explicitly asks to commit/sync (docs-only deploys skip the Vercel build).
 
 ---
 

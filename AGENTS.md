@@ -30,7 +30,7 @@ For full command details and protocol, see **`motherboard/README.md`**.
 
 - **Only commit and push when the founder explicitly says "deploy now"** (or clearly equivalent).
 - When deploying: **`./scripts/agent-commit.sh --deploy-now "message"`** once (requires **`--deploy-now`** or `FSBW_DEPLOY_NOW=1`) → one commit + one push to **`master`**.
-- **Do not auto-append `motherboard/MEMORY.md` after every task.** Batch MEMORY on **"add to motherboard"** or optional deploy.
+- **Auto-append `motherboard/MEMORY.md` after completed tasks** (default ON). **"Add to motherboard"** re-enables if stopped. Batch commit on **"deploy now"** or explicit commit/sync request.
 - **Forbidden without "deploy now":** any `git commit`, `git push`, or `agent-commit.sh`; push-on-each-iteration cloud-agent flows; amend+force-push repair commits.
 - Docs/MEMORY-only commits skip Vercel builds via **`scripts/vercel-should-build.sh`** (`vercel.json` → `ignoreCommand`).
 - Full rule: **`.cursor/rules/one-deploy-per-task.mdc`**, **`motherboard/ADDING.md`**.

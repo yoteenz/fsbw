@@ -62,6 +62,84 @@ export type SlayTipPage = {
   altText?: string;
 };
 
+/** Editorial image roles for Slay Tip detail hero + macro modules. */
+export type SlayTipEditorialImageRole =
+  | 'hero'
+  | 'macro'
+  | 'detail'
+  | 'comparisonLeft'
+  | 'comparisonRight'
+  | 'annotation'
+  | 'supporting';
+
+export type SlayTipImageAnnotation = {
+  id: string;
+  label?: string;
+  /** Percentage position (0–100) within image frame. */
+  x: number;
+  y: number;
+  marker?: number;
+};
+
+export type SlayTipEditorialImage = {
+  id: string;
+  src: string;
+  alt?: string;
+  caption?: string;
+  role?: SlayTipEditorialImageRole;
+  objectPosition?: string;
+  order?: number;
+  annotations?: SlayTipImageAnnotation[];
+};
+
+export type SlayTipDeeperContentType = 'episode' | 'season' | 'mastery';
+
+export type SlayTipDeeperContent = {
+  contentType: SlayTipDeeperContentType;
+  episodeId?: string;
+  seasonId?: string;
+  masteryId?: string;
+  /** Optional display overrides when routing target lacks copy. */
+  title?: string;
+  description?: string;
+};
+
+export type SlayTipLookCloserItem = {
+  number: string;
+  label: string;
+  caption: string;
+  imageId?: string;
+  image?: SlayTipEditorialImage;
+};
+
+export type SlayTipArticleModule =
+  | { type: 'quickRead'; body: string }
+  | {
+      type: 'diagnosticRow';
+      seeing: string;
+      notToDo: string;
+      move: string;
+    }
+  | { type: 'lookCloser'; items: SlayTipLookCloserItem[] }
+  | { type: 'slayerNote'; number?: string; body: string }
+  | {
+      type: 'comparison';
+      leftLabel: string;
+      rightLabel: string;
+      leftImageId?: string;
+      rightImageId?: string;
+      leftImage?: SlayTipEditorialImage;
+      rightImage?: SlayTipEditorialImage;
+    }
+  | { type: 'takeaway'; body: string }
+  | { type: 'text'; heading?: string; body: string }
+  | {
+      type: 'image';
+      image: SlayTipEditorialImage;
+      layout?: 'wide' | 'tall' | 'standard';
+    }
+  | { type: 'callout'; body: string };
+
 export type SlayTipFormat = 'scrapbook';
 
 export type SlayTip = {
@@ -87,6 +165,14 @@ export type SlayTip = {
   thumbnailUrl?: string;
   coverImageUrl?: string;
   pages?: SlayTipPage[];
+  /** Editorial hero collage — dominant + supporting macro stills. */
+  heroMedia?: SlayTipEditorialImage[];
+  /** Modular editorial article blocks rendered as one vertical scroll. */
+  modules?: SlayTipArticleModule[];
+  /** Related micro-guide for TRY THIS NEXT footer. */
+  relatedSlayTipId?: string;
+  /** Bridge into PSA Today / Mastery for GO DEEPER footer. */
+  deeperContent?: SlayTipDeeperContent;
   releaseDate?: string;
   campaignId?: string;
   /** Optional lounge unlock id when distinct from tip id. */

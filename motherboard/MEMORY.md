@@ -50891,3 +50891,29 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - `docs/PSA_SETUP.md` — removed preview/mobile sync references
 
 **Conventions:** Default = local edits + report. **"deploy now"** = one `./scripts/agent-commit.sh` → `master` only. No automatic git operations after task completion.
+
+---
+
+## 2026-08-11 — Lounge TV Learn editorial viewers, refresh persistence, mastery focus motion, motherboard auto-add restored
+
+- **Context:** Founder sprint on Lounge TV **Learn tab** — luxury editorial detail pages (Product Breakdown, PSA Answers, Slay Tips), refresh should restore same detail + scroll, mastery poster loops on focus, then repo sync + motherboard auto-add re-enabled (Vercel deploy account disabled — commit/push only).
+
+- **Topics covered (full chat):**
+  1. **Product Breakdown detail redesign** — transform Product Education signature-unit detail from video-player pattern into luxury **product dossier** (no PLAY / FREE PREVIEW / READ GUIDE).
+  2. **PSA Answers editorial refinement** — polish existing PSA Answers detail (CSS + minimal component polish; not rebuild).
+  3. **Refresh persistence bug** — page refresh reset to Learn browse instead of same detail + scroll position.
+  4. **Mastery animations on focus** — user reported hero loops “completely removed”; root cause was `allowVideoMotion={false}` in `LearnMasterySelector` plus silent-focus skip blocking `focusedId`.
+  5. **Commit/sync question** — nothing had been committed; user asked to turn motherboard auto-add back on and commit all chat work (no Vercel deploy yet).
+
+- **Decisions / outcomes:**
+  - **Product Breakdown:** Dedicated `ProductBreakdownViewer` + editorial article/engagement host; `LoungeTvScreen` view state `product-breakdown`; signature units route via `openProductBreakdown` / pack intercept; content under `src/content/education/product-breakdown/`; read-only content packs in `loungeTvContentPack.ts`.
+  - **PSA Answers:** Editorial CSS overhaul (`.lounge-tv-psa-answer-editorial*`), `PsaAnswerEditorialArticle` polish (PSA SAYS blockquote, corrective row, Look Here dominant first image, step connectors).
+  - **Refresh persistence:** New `src/utils/loungeTvViewSession.ts` persists `viewState` + scroll in `sessionStorage` while TV session open; `LoungeTvScreen` initializes from session, skips nav-reset on first mount when restoring detail; cleared on TV close via `loungeTvOpenSession.ts`.
+  - **Mastery motion:** Removed `allowVideoMotion={false}`; `focusin` sync for `focusedId`; muted loops via existing `MasteryPosterMedia` + `playLoungeTvMuted`.
+  - **Motherboard:** Founder re-enabled **auto-add ON by default** (`.cursor/rules/motherboard.mdc`, `one-deploy-per-task.mdc`, `ADDING.md`, `README.md`, `AGENTS.md`, `CORE.md`). This entry + full code batch committed/pushed to `master` on founder request (sync only — Vercel account disabled).
+
+- **Key files:**
+  - New: `ProductBreakdownViewer.tsx`, `ProductBreakdownEditorialArticle.tsx`, `ProductBreakdownEngagementHost.tsx`, `productBreakdownPresentation.ts`, `productBreakdownEditorialResolve.ts`, `PsaAnswerViewer.tsx`, `PsaAnswerEditorialArticle.tsx`, `SlayTipEditorialArticle.tsx`, `loungeTvViewSession.ts`, `src/content/education/product-breakdown/*`, QA capture scripts.
+  - Modified: `LoungeTvScreen.tsx`, `LoungeTvLearnPanel.tsx`, `LearnMasterySelector.tsx`, `index.css`, `loungeTvOpenSession.ts`, slay-tips/PSA/product-education presentation + packs.
+
+- **Conventions:** Lounge TV detail scroll keys per view kind; mastery poster motion = focus-driven muted crossfade (not disabled for iOS — uses `applyLoungeTvMutedPlayback`). Deploy still on **"deploy now"** for Vercel; founder may explicitly request commit/sync without deploy when Vercel is disabled.

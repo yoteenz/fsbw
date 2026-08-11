@@ -63,7 +63,7 @@ type PsaAnswerCardProps = {
   entry: PsaAnswerPresentationEntry;
   pack: LoungeContentPack;
   editorialVariant?: number;
-  onSelect: (pack: LoungeContentPack) => void;
+  onSelect: (entry: PsaAnswerPresentationEntry) => void;
   unlocks?: LoungeContentUnlock[];
   isUnlocked: (contentId: string) => boolean;
   helpfulActive?: boolean;
@@ -88,9 +88,9 @@ export function PsaAnswerCard({
   const handleActivate = useCallback(
     (e: MouseEvent<HTMLDivElement>) => {
       if (isPsaAnswerLikeTarget(e.target)) return;
-      onSelect(pack);
+      onSelect(entry);
     },
-    [onSelect, pack],
+    [onSelect, entry],
   );
 
   return (
@@ -106,7 +106,7 @@ export function PsaAnswerCard({
         onKeyDown={(e) => {
           if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();
-            onSelect(pack);
+            onSelect(entry);
           }
         }}
         onFocusCapture={loungeTvFocusGlowIn}

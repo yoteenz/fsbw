@@ -1,4 +1,5 @@
 import type { SlayTip } from '../types';
+import { SLAY_TIP_DEV_EDITORIAL_LACE_NOT_DIRTY } from './learn-density-lace-not-dirty-editorial';
 
 /**
  * DEV-ONLY presentation density — never shipped in production builds.
@@ -51,21 +52,7 @@ export const SLAY_TIP_LEARN_DENSITY_DEMOS: SlayTip[] = [
     pages: [demoPage('DEV', 'Placeholder scrapbook page.')],
   },
   {
-    id: 'slay-tip-dev-density-lace-not-dirty',
-    slug: 'dev-lace-not-dirty',
-    title: 'YOUR LACE IS NOT DIRTY',
-    publicTitle: 'YOUR LACE ISN\'T DIRTY',
-    previewCopy: 'Discoloration and product buildup are not the same problem.',
-    subtitle: 'SLAY TIP · DEV DENSITY',
-    shortDescription: 'Discoloration and product buildup are not the same problem.',
-    pillar: 'care',
-    format: 'scrapbook',
-    slayTicketCost: 0,
-    published: true,
-    readTime: '1 MIN',
-    thumbnailUrl: DEMO_THUMB,
-    coverImageUrl: DEMO_THUMB,
-    pages: [demoPage('DEV', 'Placeholder scrapbook page.')],
+    ...SLAY_TIP_DEV_EDITORIAL_LACE_NOT_DIRTY,
   },
   {
     id: 'slay-tip-dev-density-low-heat',

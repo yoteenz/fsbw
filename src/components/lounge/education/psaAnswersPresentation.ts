@@ -211,3 +211,7 @@ export function filterPsaAnswerEntries(
 export function resolvePsaAnswerPack(entry: PsaAnswerPresentationEntry): LoungeContentPack | undefined {
   return getContentPackById(entry.packId);
 }
+
+export function getPsaAnswerPresentationEntryById(id: string): PsaAnswerPresentationEntry | undefined {
+  return listPsaAnswerPresentationEntries().find((entry) => entry.id === id);
+}

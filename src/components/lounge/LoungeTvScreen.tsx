@@ -61,7 +61,18 @@ import { LoungeTvVideoDetailView } from './LoungeTvVideoDetailView';
 import { LoungeTvLibraryPanel } from './LoungeTvLibraryPanel';
 import { LOUNGE_TV_LIBRARY_UPDATED_EVENT, togglePackSaved } from '../../utils/loungeTvLibrary';
 import { useLoungeTvFocusNav } from '../../hooks/useLoungeTvFocusNav';
-import { saveLoungeTvFocusMemory } from './loungeTvFocusMemory';
+import { saveLoungeTvFocusMemory, readLoungeTvFocusMemory } from './loungeTvFocusMemory';
+import { readLoungeTvSessionOpen } from '../../utils/loungeTvOpenSession';
+import {
+  loungeTvViewSessionScrollKey,
+  readLoungeTvSessionViewScroll,
+  readLoungeTvSessionViewState,
+  resolveLoungeTvScrollContainer,
+  restoreLoungeTvScrollPosition,
+  writeLoungeTvSessionViewScroll,
+  writeLoungeTvSessionViewState,
+  type LoungeTvSessionViewState,
+} from '../../utils/loungeTvViewSession';
 import {
   getPsaTodayEpisodeForContentPack,
   getPsaTodayEpisodeById,
@@ -74,7 +85,19 @@ import {
   EducationMasteryView,
   EducationSeasonView,
   EducationHierarchyDebugInspector,
+  PsaAnswerViewer,
+  ProductBreakdownViewer,
 } from './education';
+import {
+  getPsaAnswerPresentationEntryById,
+  listPsaAnswerPresentationEntries,
+  type PsaAnswerPresentationEntry,
+} from './education/psaAnswersPresentation';
+import {
+  getProductBreakdownPresentationEntryById,
+  isProductBreakdownPackId,
+  type ProductBreakdownPresentationEntry,
+} from './education/productBreakdownPresentation';
 import {
   masteryTrackFocusIdForMastery,
   seasonFocusId,
@@ -103,17 +126,17 @@ const LOUNGE_TV_STACKED_SECTIONS_STYLE: React.CSSProperties = {
   gap: loungeTvGlassCqw(1.5, 4, 8),
 };
 
-type TvViewState =
-  | { kind: 'browse' }
-  | { kind: 'detail'; packId: string }
-  | { kind: 'lesson'; packId: string }
-  | { kind: 'video'; packId: string }
-  | { kind: 'article'; packId: string }
-  | { kind: 'psa-episode'; episodeId: string }
-  | { kind: 'slay-tip'; tipId: string }
-  | { kind: 'care-lesson'; lessonId: string }
-  | { kind: 'mastery'; masteryId: string }
-  | { kind: 'season'; seasonId: string };
+type TvViewState = LoungeTvSessionViewState;
+
+function readInitialLoungeTvViewState(): TvViewState {
+  if (!readLoungeTvSessionOpen()) return { kind: 'browse' };
+  return readLoungeTvSessionViewState() ?? { kind: 'browse' };
+}
+
+function readInitialLoungeTvRestoreFocusId(): string | null {
+  if (!readLoungeTvSessionOpen()) return null;
+  return readLoungeTvFocusMemory()?.focusId ?? null;
+}
 
 export function LoungeTvScreen({
   mainTab,
@@ -153,8 +176,12 @@ export function LoungeTvScreen({
   const [unlockConfirmPsaEpisode, setUnlockConfirmPsaEpisode] = useState<PSATodayEpisode | null>(null);
   const [showNeedMoreTickets, setShowNeedMoreTickets] = useState(false);
   const [unlockBusy, setUnlockBusy] = useState(false);
-  const [viewState, setViewState] = useState<TvViewState>({ kind: 'browse' });
-  const [restoreFocusId, setRestoreFocusId] = useState<string | null>(null);
+  const [viewState, setViewState] = useState<TvViewState>(readInitialLoungeTvViewState);
+  const [restoreFocusId, setRestoreFocusId] = useState<string | null>(readInitialLoungeTvRestoreFocusId);
+  const browseNavRef = useRef({ mainTab, sidebarId });
+  const skipNavResetOnceRef = useRef(
+    readLoungeTvSessionOpen() && readLoungeTvSessionViewState()?.kind !== 'browse',
+  );
   const [careLibraryOpen, setCareLibraryOpen] = useState(false);
   const [tilesRevision, setTilesRevision] = useState(0);
   const [viewedRevision, setViewedRevision] = useState(0);
@@ -180,6 +207,8 @@ export function LoungeTvScreen({
       viewState.kind === 'browse' ||
       viewState.kind === 'psa-episode' ||
       viewState.kind === 'slay-tip' ||
+      viewState.kind === 'psa-answer' ||
+      viewState.kind === 'product-breakdown' ||
       viewState.kind === 'care-lesson' ||
       viewState.kind === 'mastery' ||
       viewState.kind === 'season'
@@ -248,6 +277,20 @@ export function LoungeTvScreen({
     return null;
   }, [viewState]);
 
+  const activePsaAnswer = useMemo((): PsaAnswerPresentationEntry | null => {
+    if (viewState.kind === 'psa-answer') {
+      return getPsaAnswerPresentationEntryById(viewState.answerId) ?? null;
+    }
+    return null;
+  }, [viewState]);
+
+  const activeProductBreakdown = useMemo((): ProductBreakdownPresentationEntry | null => {
+    if (viewState.kind === 'product-breakdown') {
+      return getProductBreakdownPresentationEntryById(viewState.breakdownId) ?? null;
+    }
+    return null;
+  }, [viewState]);
+
   const activeCareLesson = useMemo((): CareLesson | null => {
     if (viewState.kind === 'care-lesson') {
       return getCareLessonById(viewState.lessonId) ?? null;
@@ -263,6 +306,14 @@ export function LoungeTvScreen({
     }
     if (viewState.kind === 'slay-tip') {
       markLoungeTvTileViewed(viewState.tipId);
+      return;
+    }
+    if (viewState.kind === 'psa-answer') {
+      markLoungeTvTileViewed(viewState.answerId);
+      return;
+    }
+    if (viewState.kind === 'product-breakdown') {
+      markLoungeTvTileViewed(viewState.breakdownId);
       return;
     }
     if (viewState.kind === 'care-lesson') {
@@ -292,7 +343,22 @@ export function LoungeTvScreen({
     }
   }, [mainTab, viewState.kind]);
 
+  useEffect(() => {
+    if (!readLoungeTvSessionOpen()) return;
+    writeLoungeTvSessionViewState(viewState);
+  }, [viewState]);
+
   useLayoutEffect(() => {
+    const prev = browseNavRef.current;
+    const navChanged = prev.mainTab !== mainTab || prev.sidebarId !== sidebarId;
+    browseNavRef.current = { mainTab, sidebarId };
+
+    if (skipNavResetOnceRef.current) {
+      skipNavResetOnceRef.current = false;
+      return;
+    }
+    if (!navChanged) return;
+
     setViewState({ kind: 'browse' });
     setRestoreFocusId(null);
     setCareLibraryOpen(false);
@@ -307,6 +373,62 @@ export function LoungeTvScreen({
   }, [viewState.kind]);
 
   const viewRestoreTrigger = `${viewState.kind}:${viewState.kind === 'browse' ? mainTab : ''}`;
+  const viewScrollKey = loungeTvViewSessionScrollKey(viewState, mainTab);
+
+  useLayoutEffect(() => {
+    const root = mediaPanelRef.current;
+    if (!root) return;
+
+    const savedScrollTop = readLoungeTvSessionViewScroll(viewScrollKey);
+    if (savedScrollTop == null) return;
+
+    let cancelled = false;
+    let attempts = 0;
+    const maxAttempts = 16;
+
+    const tryRestore = () => {
+      if (cancelled) return;
+      const scroller = resolveLoungeTvScrollContainer(root, viewState);
+      if (!scroller) {
+        attempts += 1;
+        if (attempts < maxAttempts) requestAnimationFrame(tryRestore);
+        return;
+      }
+      restoreLoungeTvScrollPosition(scroller, savedScrollTop);
+    };
+
+    tryRestore();
+    return () => {
+      cancelled = true;
+    };
+  }, [viewScrollKey, viewState]);
+
+  useEffect(() => {
+    const root = mediaPanelRef.current;
+    if (!root) return;
+
+    const scroller = resolveLoungeTvScrollContainer(root, viewState);
+    if (!scroller) return;
+
+    let raf = 0;
+    const persistScroll = () => {
+      if (!readLoungeTvSessionOpen()) return;
+      writeLoungeTvSessionViewScroll(viewScrollKey, scroller.scrollTop);
+    };
+    const onScroll = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(persistScroll);
+    };
+
+    scroller.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('beforeunload', persistScroll);
+    return () => {
+      cancelAnimationFrame(raf);
+      scroller.removeEventListener('scroll', onScroll);
+      window.removeEventListener('beforeunload', persistScroll);
+      persistScroll();
+    };
+  }, [viewScrollKey, viewState]);
 
   const handleMainTabClick = useCallback(
     (tab: LoungeTvMainTab) => {
@@ -349,6 +471,18 @@ export function LoungeTvScreen({
     setViewState({ kind: 'slay-tip', tipId: tip.id });
   }, [mainTab]);
 
+  const openPsaAnswer = useCallback((entry: PsaAnswerPresentationEntry) => {
+    saveLoungeTvFocusMemory({ mainTab, focusId: entry.id });
+    setRestoreFocusId(entry.id);
+    setViewState({ kind: 'psa-answer', answerId: entry.id });
+  }, [mainTab]);
+
+  const openProductBreakdown = useCallback((entry: ProductBreakdownPresentationEntry) => {
+    saveLoungeTvFocusMemory({ mainTab, focusId: entry.id });
+    setRestoreFocusId(entry.id);
+    setViewState({ kind: 'product-breakdown', breakdownId: entry.id });
+  }, [mainTab]);
+
   const openCareLesson = useCallback((lesson: CareLesson) => {
     saveLoungeTvFocusMemory({ mainTab, focusId: lesson.id });
     setRestoreFocusId(lesson.id);
@@ -381,11 +515,30 @@ export function LoungeTvScreen({
         openPsaEpisode(psaEpisode);
         return;
       }
+      const isPsaAnswersPack =
+        pack.originalSeries?.toUpperCase() === 'PSA ANSWERS' ||
+        pack.category?.toUpperCase() === 'PSA ANSWERS';
+      if (isPsaAnswersPack) {
+        const entry =
+          listPsaAnswerPresentationEntries().find((e) => e.packId === pack.id) ??
+          getPsaAnswerPresentationEntryById(`psa-answer-${pack.id}`);
+        if (entry) {
+          openPsaAnswer(entry);
+          return;
+        }
+      }
+      if (isProductBreakdownPackId(pack.id)) {
+        const entry = getProductBreakdownPresentationEntryById(pack.id);
+        if (entry) {
+          openProductBreakdown(entry);
+          return;
+        }
+      }
       saveLoungeTvFocusMemory({ mainTab, focusId: pack.id });
       setRestoreFocusId(pack.id);
       setViewState({ kind: 'detail', packId: pack.id });
     },
-    [mainTab, openPsaEpisode]
+    [mainTab, openPsaEpisode, openPsaAnswer, openProductBreakdown]
   );
 
   const openMastery = useCallback(
@@ -499,6 +652,8 @@ export function LoungeTvScreen({
         } else if (
           viewState.kind === 'psa-episode' ||
           viewState.kind === 'slay-tip' ||
+          viewState.kind === 'psa-answer' ||
+          viewState.kind === 'product-breakdown' ||
           viewState.kind === 'care-lesson' ||
           viewState.kind === 'mastery' ||
           viewState.kind === 'season'
@@ -609,8 +764,10 @@ export function LoungeTvScreen({
         <div style={LOUNGE_TV_STACKED_SECTIONS_STYLE}>
           <LoungeTvLearnPanel
             onSelectMastery={openMastery}
-            onSelectPack={openPack}
-            onSelectSlayTip={openSlayTip}
+          onSelectPack={openPack}
+          onSelectPsaAnswer={openPsaAnswer}
+          onSelectProductBreakdown={openProductBreakdown}
+          onSelectSlayTip={openSlayTip}
             onSelectCareLesson={openCareLesson}
             onToggleSave={onToggleSavePack}
             isUnlocked={isUnlocked}
@@ -719,12 +876,47 @@ export function LoungeTvScreen({
       );
     }
 
+    if (viewState.kind === 'psa-answer' && activePsaAnswer) {
+      return (
+        <PsaAnswerViewer
+          entry={activePsaAnswer}
+          onBack={() => setViewState({ kind: 'browse' })}
+          onViewRelatedAnswer={openPsaAnswer}
+          onViewRelatedPsa={openPsaEpisode}
+          onViewDeeperSeason={openSeason}
+          onViewDeeperMastery={openMastery}
+          unlocks={unlocks}
+          isUnlocked={isUnlocked}
+          {...engagementDetailProps}
+        />
+      );
+    }
+
+    if (viewState.kind === 'product-breakdown' && activeProductBreakdown) {
+      return (
+        <ProductBreakdownViewer
+          entry={activeProductBreakdown}
+          onBack={() => setViewState({ kind: 'browse' })}
+          onViewRelatedPsa={openPsaEpisode}
+          onViewRelatedSlayTip={openSlayTip}
+          onViewDeeperSeason={openSeason}
+          onViewDeeperMastery={openMastery}
+          unlocks={unlocks}
+          isUnlocked={isUnlocked}
+          {...engagementDetailProps}
+        />
+      );
+    }
+
     if (viewState.kind === 'slay-tip' && activeSlayTip) {
       return (
         <SlayTipViewer
           tip={activeSlayTip}
           onBack={() => setViewState({ kind: 'browse' })}
           onViewRelatedPsa={openPsaEpisode}
+          onViewRelatedSlayTip={openSlayTip}
+          onViewDeeperSeason={openSeason}
+          onViewDeeperMastery={openMastery}
           unlocks={unlocks}
           isUnlocked={isUnlocked}
           onTicketsRefresh={refresh}

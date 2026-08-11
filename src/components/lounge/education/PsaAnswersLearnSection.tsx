@@ -28,7 +28,7 @@ import { useLoungeEngagementSummaries } from '../../../hooks/useLoungeEngagement
 import { useLoungeHelpfulToggle } from '../../../hooks/useLoungeHelpfulToggle';
 
 type PsaAnswersLearnSectionProps = {
-  onSelect: (pack: LoungeContentPack) => void;
+  onSelectEntry: (entry: PsaAnswerPresentationEntry) => void;
   isUnlocked: (contentId: string) => boolean;
   unlocks?: LoungeContentUnlock[];
   onEngagementRequireSignIn?: () => void;
@@ -52,7 +52,7 @@ function PsaAnswerEngagementCard({
   entry: PsaAnswerPresentationEntry;
   pack: LoungeContentPack;
   editorialVariant: number;
-  onSelect: (pack: LoungeContentPack) => void;
+  onSelect: (entry: PsaAnswerPresentationEntry) => void;
   unlocks?: LoungeContentUnlock[];
   isUnlocked: (contentId: string) => boolean;
   summaryMap: ReturnType<typeof useLoungeEngagementSummaries>['map'];
@@ -88,7 +88,7 @@ function PsaAnswerEngagementCard({
 }
 
 export function PsaAnswersLearnSection({
-  onSelect,
+  onSelectEntry,
   isUnlocked,
   unlocks,
   onEngagementRequireSignIn,
@@ -196,7 +196,7 @@ export function PsaAnswersLearnSection({
                   entry={entry}
                   pack={pack}
                   editorialVariant={index % 3}
-                  onSelect={onSelect}
+                  onSelect={onSelectEntry}
                   unlocks={unlocks}
                   isUnlocked={isUnlocked}
                   summaryMap={summaryMap}

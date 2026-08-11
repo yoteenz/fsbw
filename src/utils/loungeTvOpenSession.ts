@@ -1,3 +1,5 @@
+import { clearLoungeTvViewSession } from './loungeTvViewSession';
+
 /** Persists Lounge TV open + browse tab across refresh on the lounge slide only (tab session). */
 const LOUNGE_TV_SESSION_OPEN_KEY = 'loungeTvSessionOpen';
 const LOUNGE_TV_SESSION_MAIN_TAB_KEY = 'loungeTvSessionMainTab';
@@ -23,6 +25,7 @@ function clearLoungeTvSessionBrowseState(): void {
   try {
     sessionStorage.removeItem(LOUNGE_TV_SESSION_MAIN_TAB_KEY);
     sessionStorage.removeItem(LOUNGE_TV_SESSION_SIDEBAR_ID_KEY);
+    clearLoungeTvViewSession();
   } catch {
     /* ignore */
   }

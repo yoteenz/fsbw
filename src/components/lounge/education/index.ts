@@ -18,6 +18,8 @@ export {
 export { EducationMasteryView } from './EducationMasteryView';
 export { EducationSeasonView } from './EducationSeasonView';
 export { EducationHierarchyDebugInspector } from './EducationHierarchyDebugInspector';
+export { PsaAnswerViewer } from './PsaAnswerViewer';
+export { ProductBreakdownViewer } from './ProductBreakdownViewer';
 export { fetchSeasonPassEntitlements, redeemSeasonPass, syncSeasonPassGrants } from './seasonPassApi';
 export {
   computeSeasonProgress,

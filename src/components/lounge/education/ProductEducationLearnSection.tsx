@@ -12,6 +12,9 @@ import {
   resolveProductEducationGuidePack,
   type ProductEducationGuideEntry,
 } from './productEducationPresentation';
+import type { WigUnitSlug } from '../../../content/education/care/productCatalog';
+import { getProductBreakdownPresentationEntryByUnitId } from './productBreakdownPresentation';
+import type { ProductBreakdownPresentationEntry } from './productBreakdownPresentation';
 import { ProductEducationGuideCard } from './ProductEducationGuideCard';
 import {
   LearnSectionHeaderRow,
@@ -22,12 +25,14 @@ import {
 
 type ProductEducationLearnSectionProps = {
   onSelectPack: (pack: LoungeContentPack) => void;
+  onOpenProductBreakdown?: (entry: ProductBreakdownPresentationEntry) => void;
   onToggleSave?: (pack: LoungeContentPack) => void;
   onOpenCareLibrary?: () => void;
 };
 
 export function ProductEducationLearnSection({
   onSelectPack,
+  onOpenProductBreakdown,
   onToggleSave,
   onOpenCareLibrary,
 }: ProductEducationLearnSectionProps) {
@@ -141,6 +146,9 @@ export function ProductEducationLearnSection({
                     signatureUnits.map((unit) => {
                       const pack = resolveProductEducationGuidePack({ ...guide, packId: unit.packId });
                       if (!pack) return null;
+                      const breakdownEntry = getProductBreakdownPresentationEntryByUnitId(
+                        unit.unitId as WigUnitSlug,
+                      );
                       return (
                         <ProductEducationGuideCard
                           key={unit.unitId}
@@ -152,9 +160,12 @@ export function ProductEducationLearnSection({
                             packId: unit.packId,
                           }}
                           variant="compact"
-                          onExplore={(g) => {
-                            const destination = resolveProductEducationGuidePack(g);
-                            if (destination) onSelectPack(destination);
+                          onExplore={() => {
+                            if (breakdownEntry && onOpenProductBreakdown) {
+                              onOpenProductBreakdown(breakdownEntry);
+                              return;
+                            }
+                            if (pack) onSelectPack(pack);
                           }}
                           onToggleSave={onToggleSave}
                           savePack={pack}

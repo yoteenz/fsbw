@@ -71,14 +71,14 @@ const PRODUCT_EDUCATION_GUIDES: ProductEducationGuideEntry[] = [
   },
 ];
 
-/** Signature unit spotlight links — real packs only. */
+/** Signature unit spotlight links — product breakdown packs. */
 const SIGNATURE_UNIT_PACK_MAP: Partial<Record<string, string>> = {
-  noir: 'brand-film-noir',
-  blanco: 'brand-film-noir',
-  'soft-wave': 'product-reveal-soft-wave',
-  'beach-wave': 'product-reveal-soft-wave',
-  'soft-curl': 'texture-spotlight-ocean-curl',
-  'ocean-curl': 'texture-spotlight-ocean-curl',
+  noir: 'product-breakdown-noir',
+  blanco: 'product-breakdown-blanco',
+  'soft-wave': 'product-breakdown-soft-wave',
+  'beach-wave': 'product-breakdown-beach-wave',
+  'soft-curl': 'product-breakdown-soft-curl',
+  'ocean-curl': 'product-breakdown-ocean-curl',
 };
 
 export function listProductEducationGuides(): ProductEducationGuideEntry[] {

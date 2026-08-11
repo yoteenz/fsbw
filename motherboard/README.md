@@ -12,7 +12,7 @@ A Cursor rule (`.cursor/rules/motherboard.mdc`) is set to **always apply**, so a
 
 - **New chats:** The Cursor rule tells the agent to treat the motherboard as **auto-loaded** at the start of each new conversation. So you do **not** need to say "load motherboard" in every new chat—the agent is instructed to read and use README, CORE, CODEBASE, and MEMORY at conversation start.
 - **"Load motherboard":** Say it when you want the agent to **re-read** those files and refresh context (e.g. after you've updated the motherboard).
-- **"Add to motherboard":** Say this to append **one MEMORY entry now**. **Auto-add after every task is OFF** — agents do not append MEMORY unless you ask or batch for deploy.
+- **"Add to motherboard":** Say this to append **one MEMORY entry now** and re-enable auto-add if it was turned off. **Auto-add after completed tasks is ON by default** — agents append MEMORY at end of significant exchanges without needing this command every time.
 
 **Adding from old chats:** If you add to the motherboard from an old chat (e.g. 30 days old), that only **appends** a new entry—it does **not** overwrite or remove existing entries. The new entry is a historical record of that past conversation. For current context, agents should treat **CORE + CODEBASE + the latest MEMORY entries** as the source of truth; older MEMORY entries are timeline/history.
 

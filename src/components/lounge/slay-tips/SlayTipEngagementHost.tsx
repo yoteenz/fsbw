@@ -17,9 +17,21 @@ function estimateSlayTipReadDurationSec(tip: SlayTip): number {
     const match = tip.readTime.match(/(\d+)/);
     if (match) return Math.max(45, Number(match[1]) * 60);
   }
+  const modules = tip.modules ?? [];
   const pages = tip.pages ?? [];
-  const wordCount = pages
-    .flatMap((p) => [p.heading, p.body, p.callout])
+  const wordCount = (modules.length ? modules : pages)
+    .flatMap((entry) => {
+      if ('type' in entry) {
+        const m = entry;
+        if (m.type === 'quickRead' || m.type === 'takeaway' || m.type === 'callout') return [m.body];
+        if (m.type === 'text') return [m.heading, m.body];
+        if (m.type === 'slayerNote') return [m.body];
+        if (m.type === 'lookCloser') return m.items.flatMap((i) => [i.label, i.caption]);
+        if (m.type === 'diagnosticRow') return [m.seeing, m.notToDo, m.move];
+        return [];
+      }
+      return [entry.heading, entry.body, entry.callout];
+    })
     .filter(Boolean)
     .join(' ')
     .split(/\s+/)

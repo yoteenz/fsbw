@@ -25,6 +25,8 @@ import { LoungeTvSectionDivider } from './LoungeTvSectionDivider';
 type LoungeTvLearnPanelProps = {
   onSelectMastery: (masteryId: string) => void;
   onSelectPack: (pack: LoungeContentPack) => void;
+  onSelectPsaAnswer: (entry: import('./education/psaAnswersPresentation').PsaAnswerPresentationEntry) => void;
+  onSelectProductBreakdown?: (entry: import('./education/productBreakdownPresentation').ProductBreakdownPresentationEntry) => void;
   onSelectSlayTip: (tip: SlayTip) => void;
   onSelectCareLesson: (lesson: CareLesson) => void;
   onToggleSave?: (pack: LoungeContentPack) => void;
@@ -76,6 +78,8 @@ function CareLibraryViewAllButton({ onClick }: { onClick: () => void }) {
 export function LoungeTvLearnPanel({
   onSelectMastery,
   onSelectPack,
+  onSelectPsaAnswer,
+  onSelectProductBreakdown,
   onSelectSlayTip,
   onSelectCareLesson,
   onToggleSave,
@@ -147,7 +151,7 @@ export function LoungeTvLearnPanel({
       <LoungeTvSectionDivider />
 
       <PsaAnswersLearnSection
-        onSelect={onSelectPack}
+        onSelectEntry={onSelectPsaAnswer}
         isUnlocked={isUnlocked}
         unlocks={unlocks}
         onEngagementRequireSignIn={onEngagementRequireSignIn}
@@ -158,6 +162,7 @@ export function LoungeTvLearnPanel({
 
       <ProductEducationLearnSection
         onSelectPack={onSelectPack}
+        onOpenProductBreakdown={onSelectProductBreakdown}
         onToggleSave={onToggleSave}
         onOpenCareLibrary={openCareLibrary}
       />
