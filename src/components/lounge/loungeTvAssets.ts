@@ -55,12 +55,12 @@ export const LOUNGE_TV_BOOKMARK_SAVED_ICON_SRC = loungeTvLivePreviewPublicUrl(
 
 /** Clear-acrylic heart — Learn browse like/helpful (inactive). */
 export const LOUNGE_TV_HEART_ICON_SRC = loungeTvLivePreviewPublicUrl(
-  '3D%20Stock/Lounge/2125224D-BB03-423F-9F79-8D9B6F170698.png',
+  '3D%20Stock/Lounge/3679933E-EB22-4BD8-90B1-8D5D7819B7E0.png',
 );
 
 /** Clear-acrylic heart — Learn browse like/helpful (active / liked). */
 export const LOUNGE_TV_HEART_ACTIVE_ICON_SRC = loungeTvLivePreviewPublicUrl(
-  '3D%20Stock/Lounge/7C8B93FF-C771-44C9-87DE-E327A6D50E1D.png',
+  '3D%20Stock/Lounge/3B6A3034-AD97-4175-A41A-2C9253A3E716.png',
 );
 
 /** @deprecated Use {@link LOUNGE_TV_TICKET_LOCK_WATERMARK_SRC} from `slayTicketAssets.ts`. */
