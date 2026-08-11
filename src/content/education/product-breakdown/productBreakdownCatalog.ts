@@ -1,9 +1,4 @@
 import type { WigUnitSlug } from '../care/productCatalog';
-import { getSignatureUnitEducationProfile } from '../signature-units/registry';
-import {
-  getUnitPdpDetailsConfig,
-  type WigUnitKey,
-} from '../../../utils/unitPdpDetailsConfig';
 import type { ProductBreakdownPresentationEntry } from '../../../components/lounge/education/productBreakdownPresentation';
 import type {
   ProductBreakdownAtAGlanceItem,
@@ -13,79 +8,71 @@ import type {
   ProductBreakdownInteriorCallout,
 } from './types';
 import { PRODUCT_BREAKDOWN_EDITORIAL_BLANCO } from './product-breakdown-blanco-editorial';
+import { PRODUCT_BREAKDOWN_EDITORIAL_NOIR } from './product-breakdown-noir-editorial';
 import {
   buildDefaultHeroMedia,
-  buildDefaultInspectionPoints,
+  buildDefaultInspectionImages,
+  buildInteriorImage,
   getUnitMediaAssets,
 } from './unitMediaAssets';
+import {
+  getSignatureUnitCanonicalSpecs,
+  signatureUnitCoreSpecLine,
+} from './signatureUnitSpecs';
 import { getWigUnitProductRoute } from '../../../utils/wigUnitProductRoutes';
 
-const EDITORIAL_BY_UNIT: Partial<Record<WigUnitSlug, ProductBreakdownEditorialContent>> = {
+const EDITORIAL_BY_UNIT: Partial<Record<WigUnitSlug, Partial<ProductBreakdownEditorialContent>>> = {
+  noir: PRODUCT_BREAKDOWN_EDITORIAL_NOIR,
   blanco: PRODUCT_BREAKDOWN_EDITORIAL_BLANCO,
 };
 
-const SHARED_LACE = '13×6 HD FILM LACE';
-const SHARED_HAIRLINE = 'PRE-PLUCKED HAIRLINE';
+function isWigUnitKey(unitId: string): unitId is import('../../../utils/unitPdpDetailsConfig').WigUnitKey {
+  return ['noir', 'blanco', 'soft-wave', 'beach-wave', 'soft-curl', 'ocean-curl'].includes(unitId);
+}
 
-function isWigUnitKey(unitId: string): unitId is WigUnitKey {
+function buildDefaultAtAGlance(specs: NonNullable<ReturnType<typeof getSignatureUnitCanonicalSpecs>>): ProductBreakdownAtAGlanceItem[] {
+  const hairLabel = specs.pattern.charAt(0) + specs.pattern.slice(1).toLowerCase();
   return [
-    'noir',
-    'blanco',
-    'soft-wave',
-    'beach-wave',
-    'soft-curl',
-    'ocean-curl',
-  ].includes(unitId);
-}
-
-function buildSpecLine(_unitId: WigUnitKey, origin: string, pattern: string, density: string): string {
-  return `${SHARED_LACE} · RAW ${origin} ${pattern} · ${density}`;
-}
-
-function buildAtAGlance(unitId: WigUnitKey, origin: string, pattern: string, density: string): ProductBreakdownAtAGlanceItem[] {
-  const hairLabel = pattern.charAt(0) + pattern.slice(1).toLowerCase();
-  const items: ProductBreakdownAtAGlanceItem[] = [
     {
       id: 'lace',
       label: 'LACE',
-      spec: '13×6 HD Film Lace',
+      spec: specs.lace,
       detail: 'Ultra-thin construction intended to melt seamlessly into the skin.',
     },
     {
       id: 'hair',
       label: 'HAIR',
-      spec: `Raw ${origin} ${hairLabel}`,
+      spec: `Raw ${specs.origin} ${hairLabel}`,
       detail: 'Single-donor human hair selected for longevity and versatility.',
     },
     {
       id: 'density',
       label: 'DENSITY',
-      spec: density,
+      spec: specs.density,
       detail: 'Handmade fullness from root to tip for volume and styling flexibility.',
     },
     {
       id: 'length',
       label: 'LENGTH',
-      spec: '16" – 30"',
+      spec: specs.lengths,
       detail: 'True-to-length options available through Build-A-Wig customization.',
     },
     {
       id: 'hairline',
       label: 'HAIRLINE',
-      spec: SHARED_HAIRLINE,
+      spec: specs.hairline,
       detail:
-        unitId === 'blanco'
+        specs.unitId === 'blanco'
           ? 'Ventilated single-strand knots for a ready-to-wear melt.'
           : 'Lightly bleached single-strand knots for a natural finish.',
     },
     {
       id: 'cap',
       label: 'CAP / FIT',
-      spec: 'Breathable stretch cap',
+      spec: specs.cap,
       detail: 'Removable combs and adjustable elastic band for a secure fit.',
     },
   ];
-  return items;
 }
 
 const DEFAULT_INTERIOR_CALLOUTS: ProductBreakdownInteriorCallout[] = [
@@ -127,16 +114,16 @@ function resolveInspectionPoints(
   heroMedia: ProductBreakdownImage[],
   authored?: ProductBreakdownInspectionPoint[],
 ): ProductBreakdownInspectionPoint[] {
-  const imagePool = [...buildDefaultInspectionPoints(unitId, displayName), ...heroMedia];
+  const imagePool = [...buildDefaultInspectionImages(unitId, displayName), ...heroMedia];
   const imageById = new Map(imagePool.map((img) => [img.id, img]));
 
   if (authored?.length) {
-    return authored.map((point) => {
-      const img =
-        point.image ??
-        (point.imageId ? imageById.get(point.imageId) : undefined);
-      return { ...point, image: img };
-    }).filter((point) => point.image || point.caption);
+    return authored
+      .map((point) => {
+        const img = point.image ?? (point.imageId ? imageById.get(point.imageId) : undefined);
+        return { ...point, image: img };
+      })
+      .filter((point) => point.image || point.caption);
   }
 
   return imagePool
@@ -150,56 +137,10 @@ function resolveInspectionPoints(
     }));
 }
 
-export function resolveProductBreakdownEditorial(
-  entry: ProductBreakdownPresentationEntry,
-): ProductBreakdownEditorialContent {
-  const profile = getSignatureUnitEducationProfile(entry.unitId);
-  const authored = EDITORIAL_BY_UNIT[entry.unitId];
-  const unitKey = entry.unitId;
-
-  if (!profile || !isWigUnitKey(unitKey)) {
-    return {
-      id: entry.id,
-      unitId: entry.unitId,
-      productType: entry.productType,
-      ...authored,
-    };
-  }
-
-  const pdp = getUnitPdpDetailsConfig(unitKey);
-  const spec = {
-    origin: pdp.bullets[0]?.match(/RAW (\w+)/)?.[1] ?? profile.hairOrigin ?? 'PREMIUM',
-    pattern: profile.textureFamily === 'straight' ? 'STRAIGHT' : profile.textureFamily === 'wavy' ? 'WAVY' : 'CURLY',
-    density: profile.density ?? '200%',
-  };
-
-  const displayName = profile.displayName;
-  const heroMedia = mergeImages(buildDefaultHeroMedia(unitKey, displayName), authored?.heroMedia);
-  const media = getUnitMediaAssets(unitKey);
-
-  const interiorImage: ProductBreakdownImage | undefined = media?.capInterior
-    ? {
-        id: `${unitKey}-cap-interior`,
-        src: media.capInterior,
-        alt: `${displayName} cap interior`,
-        role: 'capInterior',
-        order: 0,
-      }
-    : undefined;
-
-  const includedImage: ProductBreakdownImage | undefined = media?.heroFront
-    ? {
-        id: `${unitKey}-included-hero`,
-        src: media.thumb ?? media.heroFront,
-        alt: `${displayName} unit`,
-        role: 'includedItem',
-        order: 0,
-      }
-    : undefined;
-
-  const defaultBenefits = pdp.signatureFeatures.slice(0, 4).map((feature, index) => ({
-    feature: feature.split(' ').slice(0, 3).join(' '),
-    meaning: feature,
+function buildDefaultBenefits(specs: NonNullable<ReturnType<typeof getSignatureUnitCanonicalSpecs>>) {
+  return specs.signatureFeatures.slice(0, 4).map((feature, index) => ({
+    feature,
+    meaning: '',
     whyItMatters:
       index === 0
         ? 'Supports a finer-looking hairline transition at the front.'
@@ -209,33 +150,74 @@ export function resolveProductBreakdownEditorial(
             ? 'Raw origin hair selected for movement and longevity.'
             : 'Construction details that support confident everyday wear.',
   }));
+}
+
+export function resolveProductBreakdownEditorial(
+  entry: ProductBreakdownPresentationEntry,
+): ProductBreakdownEditorialContent {
+  const authored = EDITORIAL_BY_UNIT[entry.unitId];
+  const unitKey = entry.unitId;
+
+  if (!isWigUnitKey(unitKey)) {
+    return {
+      id: entry.id,
+      unitId: entry.unitId,
+      productType: entry.productType,
+      ...authored,
+    };
+  }
+
+  const specs = getSignatureUnitCanonicalSpecs(unitKey);
+  if (!specs) {
+    return {
+      id: entry.id,
+      unitId: entry.unitId,
+      productType: entry.productType,
+      ...authored,
+    };
+  }
+
+  const displayName = specs.displayName;
+  const heroMedia = mergeImages(buildDefaultHeroMedia(unitKey, displayName), authored?.heroMedia);
+  const media = getUnitMediaAssets(unitKey);
+  const interiorImage = authored?.interiorImage ?? buildInteriorImage(unitKey, displayName);
+
+  const includedImage: ProductBreakdownImage | undefined =
+    authored?.includedImage ??
+    (media?.heroFront
+      ? {
+          id: `${unitKey}-included-hero`,
+          src: media.thumb ?? media.heroFront,
+          alt: `${displayName} unit`,
+          role: 'includedItem',
+          order: 0,
+        }
+      : undefined);
 
   return {
     id: entry.id,
     unitId: entry.unitId,
     productType: entry.productType,
-    thesis: authored?.thesis ?? pdp.intro.split('.')[0] + '.',
+    thesis: authored?.thesis ?? `${displayName} signature unit — inspect construction, texture, and customization potential.`,
     readTime: authored?.readTime ?? '4 MIN',
     heroMedia,
-    atAGlance: authored?.atAGlance ?? buildAtAGlance(unitKey, spec.origin, spec.pattern, spec.density),
+    atAGlance: authored?.atAGlance ?? buildDefaultAtAGlance(specs),
     inspectionPoints: resolveInspectionPoints(unitKey, displayName, heroMedia, authored?.inspectionPoints),
     interiorCallouts: authored?.interiorCallouts ?? DEFAULT_INTERIOR_CALLOUTS,
-    interiorImage: authored?.interiorImage ?? interiorImage,
+    interiorImage,
     productNote: authored?.productNote,
-    benefitPoints: authored?.benefitPoints ?? defaultBenefits,
+    benefitPoints: authored?.benefitPoints ?? buildDefaultBenefits(specs),
     includedItems: authored?.includedItems ?? [
       { label: '1 SIGNATURE UNIT', detail: 'Delivered in its natural, uncustomized state.' },
     ],
-    includedImage: authored?.includedImage ?? includedImage,
+    includedImage,
     bestFor:
       authored?.bestFor ??
-      `Clients seeking a ${spec.pattern.toLowerCase()} ${displayName} silhouette with ${spec.density} density and Build-A-Wig customization.`,
-    careNotes:
-      authored?.careNotes ??
-      profile.educationNotes?.careConsiderations ?? [
-        'Handle lace gently and avoid heavy product buildup at the hairline.',
-        'Raw hair can be professionally colored when properly cared for.',
-      ],
+      `Clients seeking a ${specs.pattern.toLowerCase()} ${displayName} silhouette with ${specs.density} density and Build-A-Wig customization.`,
+    careNotes: authored?.careNotes ?? [
+      'Handle lace gently and avoid heavy product buildup at the hairline.',
+      'Raw hair can be professionally colored when properly cared for.',
+    ],
     relatedEducation: authored?.relatedEducation ?? [
       {
         id: `${unitKey}-lace-mastery`,
@@ -258,22 +240,12 @@ export function resolveProductBreakdownEditorial(
 }
 
 export function productBreakdownCoreSpecLine(entry: ProductBreakdownPresentationEntry): string {
-  const profile = getSignatureUnitEducationProfile(entry.unitId);
-  if (!profile || !isWigUnitKey(entry.unitId)) return '';
-  const pdp = getUnitPdpDetailsConfig(entry.unitId);
-  const origin = profile.hairOrigin ?? pdp.bullets[0]?.match(/RAW (\w+)/)?.[1] ?? 'PREMIUM';
-  const pattern =
-    profile.textureFamily === 'straight'
-      ? 'STRAIGHT'
-      : profile.textureFamily === 'wavy'
-        ? 'WAVY'
-        : 'CURLY';
-  const density = profile.density ?? '200%';
-  return buildSpecLine(entry.unitId, origin, pattern, density);
+  if (!isWigUnitKey(entry.unitId)) return '';
+  return signatureUnitCoreSpecLine(entry.unitId);
 }
 
 export function getProductBreakdownEditorialByUnitId(
   unitId: WigUnitSlug,
-): ProductBreakdownEditorialContent | undefined {
+): Partial<ProductBreakdownEditorialContent> | undefined {
   return EDITORIAL_BY_UNIT[unitId];
 }

@@ -30,6 +30,8 @@ export type ProductBreakdownAtAGlanceItem = {
   label: string;
   spec: string;
   detail: string;
+  /** Presentation tier — layouts decide visual hierarchy. */
+  tier?: 'primary' | 'secondary';
 };
 
 export type ProductBreakdownInspectionPoint = {

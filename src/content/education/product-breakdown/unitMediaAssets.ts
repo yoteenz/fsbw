@@ -11,40 +11,83 @@ type UnitMediaSet = {
   capInterior?: string;
 };
 
+/** Public asset paths — encode spaces for reliable loading. */
+const A = {
+  noirFront: '/assets/NOIR/noir%20front.png',
+  noirLeft: '/assets/NOIR/noir%20left.png',
+  noirRight: '/assets/NOIR/noir%20right.png',
+  noirThumb: '/assets/NOIR/noir-thumb.png',
+  blancoFront: '/assets/2D%20BLANCO%20FRONT.png',
+  blancoLeft: '/assets/2D%20BLANCO%20LEFT.png',
+  blancoRight: '/assets/2D%20BLANCO%20RIGHT.png',
+  blancoThumb: '/assets/NOIR/blanco-thumb.png',
+  wavyFront: '/assets/2D%20WAVY%20FRONT.png',
+  wavyLeft: '/assets/2D%20WAVY%20LEFT.png',
+  wavyRight: '/assets/2D%20WAVY%20RIGHT.png',
+  waveThumb: '/assets/NOIR/wave-thumb.png',
+  curlyFront: '/assets/2D%20CURLY%20FRONT.png',
+  curlyLeft: '/assets/2D%20CURLY%20LEFT.png',
+  curlyRight: '/assets/2D%20CURLY%20RIGHT.png',
+  curlThumb: '/assets/NOIR/curl-thumb.png',
+  hairlineMacro: '/assets/BLANCO%20Hairline.png',
+  laceMacro: '/assets/BLANCO%20LACE.png',
+  capInterior: '/assets/NOIR/mannequin%20bottom.png',
+};
+
 const UNIT_MEDIA: Partial<Record<WigUnitSlug, UnitMediaSet>> = {
   noir: {
-    thumb: '/assets/NOIR/noir-thumb.png',
-    heroFront: '/assets/2D%20NOIR%20FRONT.png',
-    heroLeft: '/assets/2D%20NOIR%20LEFT.png',
-    heroRight: '/assets/2D%20NOIR%20RIGHT.png',
-    hairlineMacro: '/assets/BLANCO%20Hairline.png',
-    laceMacro: '/assets/BLANCO%20LACE.png',
-    capInterior: '/assets/NOIR/mannequin%20bottom.png',
+    thumb: A.noirThumb,
+    heroFront: A.noirFront,
+    heroLeft: A.noirLeft,
+    heroRight: A.noirRight,
+    hairlineMacro: A.hairlineMacro,
+    laceMacro: A.laceMacro,
+    capInterior: A.capInterior,
   },
   blanco: {
-    thumb: '/assets/NOIR/blanco-thumb.png',
-    heroFront: '/assets/2D%20BLANCO%20FRONT.png',
-    heroLeft: '/assets/2D%20BLANCO%20LEFT.png',
-    heroRight: '/assets/2D%20BLANCO%20RIGHT.png',
-    hairlineMacro: '/assets/BLANCO%20Hairline.png',
-    laceMacro: '/assets/BLANCO%20LACE.png',
-    capInterior: '/assets/NOIR/mannequin%20bottom.png',
+    thumb: A.blancoThumb,
+    heroFront: A.blancoFront,
+    heroLeft: A.blancoLeft,
+    heroRight: A.blancoRight,
+    hairlineMacro: A.hairlineMacro,
+    laceMacro: A.laceMacro,
+    capInterior: A.capInterior,
   },
   'soft-wave': {
-    thumb: '/assets/NOIR/wave-thumb.png',
-    heroFront: '/assets/NOIR/wave-thumb.png',
+    thumb: A.waveThumb,
+    heroFront: A.wavyFront,
+    heroLeft: A.wavyLeft,
+    heroRight: A.wavyRight,
+    hairlineMacro: A.hairlineMacro,
+    laceMacro: A.laceMacro,
+    capInterior: A.capInterior,
   },
   'beach-wave': {
-    thumb: '/assets/NOIR/wave-thumb.png',
-    heroFront: '/assets/NOIR/wave-thumb.png',
+    thumb: A.waveThumb,
+    heroFront: A.wavyFront,
+    heroLeft: A.wavyLeft,
+    heroRight: A.wavyRight,
+    hairlineMacro: A.hairlineMacro,
+    laceMacro: A.laceMacro,
+    capInterior: A.capInterior,
   },
   'soft-curl': {
-    thumb: '/assets/NOIR/curl-thumb.png',
-    heroFront: '/assets/NOIR/curl-thumb.png',
+    thumb: A.curlThumb,
+    heroFront: A.curlyFront,
+    heroLeft: A.curlyLeft,
+    heroRight: A.curlyRight,
+    hairlineMacro: A.hairlineMacro,
+    laceMacro: A.laceMacro,
+    capInterior: A.capInterior,
   },
   'ocean-curl': {
-    thumb: '/assets/NOIR/curl-thumb.png',
-    heroFront: '/assets/NOIR/curl-thumb.png',
+    thumb: A.curlThumb,
+    heroFront: A.curlyFront,
+    heroLeft: A.curlyLeft,
+    heroRight: A.curlyRight,
+    hairlineMacro: A.hairlineMacro,
+    laceMacro: A.laceMacro,
+    capInterior: A.capInterior,
   },
 };
 
@@ -92,7 +135,7 @@ export function buildDefaultHeroMedia(unitId: WigUnitSlug, displayName: string):
   return items;
 }
 
-export function buildDefaultInspectionPoints(
+export function buildDefaultInspectionImages(
   unitId: WigUnitSlug,
   displayName: string,
 ): ProductBreakdownImage[] {
@@ -106,7 +149,6 @@ export function buildDefaultInspectionPoints(
       src: media.hairlineMacro,
       alt: `${displayName} pre-plucked hairline`,
       role: 'hairline',
-      caption: 'PRE-PLUCKED HAIRLINE',
       order: 0,
     });
   }
@@ -116,7 +158,6 @@ export function buildDefaultInspectionPoints(
       src: media.laceMacro,
       alt: `${displayName} HD film lace`,
       role: 'laceMacro',
-      caption: 'HD FILM LACE',
       order: 1,
     });
   }
@@ -126,7 +167,6 @@ export function buildDefaultInspectionPoints(
       src: media.heroLeft,
       alt: `${displayName} side profile`,
       role: 'sideProfile',
-      caption: 'SIDE PROFILE',
       order: 2,
     });
   }
@@ -136,10 +176,37 @@ export function buildDefaultInspectionPoints(
       src: media.heroRight,
       alt: `${displayName} alternate angle`,
       role: 'supporting',
-      caption: 'CONSTRUCTION VIEW',
       order: 3,
     });
   }
 
   return points;
+}
+
+/** @deprecated Use buildDefaultInspectionImages */
+export const buildDefaultInspectionPoints = buildDefaultInspectionImages;
+
+export function buildInteriorImage(unitId: WigUnitSlug, displayName: string): ProductBreakdownImage | undefined {
+  const media = getUnitMediaAssets(unitId);
+  if (!media?.capInterior) return undefined;
+
+  const annotations =
+    unitId === 'noir'
+      ? [
+          { id: 'noir-ann-1', label: '01', x: 48, y: 18 },
+          { id: 'noir-ann-2', label: '02', x: 72, y: 52 },
+          { id: 'noir-ann-3', label: '03', x: 28, y: 62 },
+          { id: 'noir-ann-4', label: '04', x: 55, y: 78 },
+        ]
+      : undefined;
+
+  return {
+    id: `${unitId}-cap-interior`,
+    src: media.capInterior,
+    alt: `${displayName} cap interior`,
+    role: 'capInterior',
+    order: 0,
+    objectPosition: 'center center',
+    annotations,
+  };
 }

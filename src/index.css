@@ -6483,6 +6483,510 @@ button.lounge-tv-season-episode-thumb:focus-visible .lounge-tv-season-episode-th
   visibility: hidden;
 }
 
+/* ── Product Breakdown shared editorial primitives (pbd) ── */
+.lounge-tv-pbd-editorial__composition {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(10px, 2cqw, 18px);
+  margin-top: clamp(4px, 0.85cqw, 10px);
+  min-width: 0;
+}
+
+.lounge-tv-pbd-editorial__module {
+  min-width: 0;
+}
+
+.lounge-tv-pbd-editorial__section-heading {
+  display: flex;
+  align-items: center;
+  gap: clamp(4px, 0.75cqw, 8px);
+  margin: 0 0 clamp(4px, 0.85cqw, 10px);
+  font-family: "Futura PT Medium", Futura, sans-serif;
+  font-size: clamp(9px, 1.05cqw, 12px);
+  color: #fff;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.lounge-tv-pbd-editorial__section-rule {
+  display: inline-block;
+  width: clamp(10px, 1.8cqw, 18px);
+  height: 1px;
+  background: #eb1c24;
+}
+
+.lounge-tv-pbd-editorial__figure {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  overflow: hidden;
+  margin: 0;
+}
+
+.lounge-tv-pbd-editorial__img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.lounge-tv-pbd-editorial__media-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(2px, 0.35cqw, 4px);
+  width: 100%;
+  height: 100%;
+  min-height: clamp(48px, 10cqw, 80px);
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.01));
+  border: 1px dashed rgba(235, 28, 36, 0.35);
+}
+
+.lounge-tv-pbd-editorial__media-placeholder-label {
+  font-family: "Futura PT Medium", Futura, sans-serif;
+  font-size: clamp(7px, 0.78cqw, 9px);
+  color: #eb1c24;
+  letter-spacing: 0.1em;
+}
+
+.lounge-tv-pbd-editorial__media-placeholder-unit {
+  font-family: "Futura PT Book", Futura, sans-serif;
+  font-size: clamp(6px, 0.72cqw, 8px);
+  color: #666;
+  text-transform: none;
+  text-align: center;
+  padding: 0 clamp(4px, 0.75cqw, 8px);
+  line-height: 1.3;
+}
+
+.lounge-tv-pbd-editorial__annotations {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.lounge-tv-pbd-editorial__annotation {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: clamp(14px, 2.2cqw, 22px);
+  height: clamp(14px, 2.2cqw, 22px);
+  border-radius: 50%;
+  border: 1px solid rgba(235, 28, 36, 0.85);
+  background: rgba(0, 0, 0, 0.72);
+  font-family: "Futura PT Medium", Futura, sans-serif;
+  font-size: clamp(7px, 0.82cqw, 10px);
+  color: #eb1c24;
+  line-height: 1;
+}
+
+.lounge-tv-pbd-editorial__stat-label {
+  margin: 0;
+  font-family: "Futura PT Medium", Futura, sans-serif;
+  font-size: clamp(7px, 0.82cqw, 10px);
+  color: #eb1c24;
+  letter-spacing: 0.06em;
+}
+
+.lounge-tv-pbd-editorial__stat-value {
+  margin: clamp(2px, 0.35cqw, 4px) 0 0;
+  font-family: "Futura PT Medium", Futura, sans-serif;
+  font-size: clamp(9px, 1.1cqw, 13px);
+  color: #fff;
+  line-height: 1.2;
+}
+
+.lounge-tv-pbd-editorial__stat-detail {
+  margin: clamp(2px, 0.35cqw, 4px) 0 0;
+  font-family: "Futura PT Book", Futura, sans-serif;
+  font-size: clamp(7px, 0.78cqw, 10px);
+  color: #8a8a8a;
+  line-height: 1.35;
+  text-transform: none;
+}
+
+.lounge-tv-pbd-editorial__stat--secondary .lounge-tv-pbd-editorial__stat-value {
+  font-size: clamp(8px, 0.95cqw, 11px);
+  color: #d8d8d8;
+}
+
+.lounge-tv-pbd-editorial__stat--secondary .lounge-tv-pbd-editorial__stat-detail {
+  font-size: clamp(6px, 0.72cqw, 9px);
+  color: #707070;
+}
+
+.lounge-tv-pbd-editorial__feature-benefit {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  gap: clamp(3px, 0.55cqw, 6px);
+  align-items: center;
+  padding: clamp(4px, 0.75cqw, 8px) 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.lounge-tv-pbd-editorial__feature-benefit:last-child {
+  border-bottom: none;
+}
+
+.lounge-tv-pbd-editorial__feature-benefit-feature {
+  margin: 0;
+  font-family: "Futura PT Medium", Futura, sans-serif;
+  font-size: clamp(7px, 0.82cqw, 10px);
+  color: #eb1c24;
+  line-height: 1.25;
+}
+
+.lounge-tv-pbd-editorial__feature-benefit-arrow {
+  font-family: "Futura PT Medium", Futura, sans-serif;
+  font-size: clamp(9px, 1.05cqw, 12px);
+  color: #666;
+}
+
+.lounge-tv-pbd-editorial__feature-benefit-outcome {
+  margin: 0;
+  font-family: "Futura PT Medium", Futura, sans-serif;
+  font-size: clamp(7px, 0.82cqw, 10px);
+  color: #fff;
+  line-height: 1.25;
+  text-align: right;
+}
+
+.lounge-tv-pbd-editorial__caption {
+  margin: clamp(3px, 0.55cqw, 6px) 0 0;
+}
+
+.lounge-tv-pbd-editorial__caption-label {
+  margin: 0;
+  font-family: "Futura PT Medium", Futura, sans-serif;
+  font-size: clamp(7px, 0.82cqw, 10px);
+  color: #fff;
+  line-height: 1.25;
+}
+
+.lounge-tv-pbd-editorial__caption-body {
+  margin: clamp(1px, 0.2cqw, 2px) 0 0;
+  font-family: "Futura PT Book", Futura, sans-serif;
+  font-size: clamp(7px, 0.78cqw, 10px);
+  color: #9a9a9a;
+  line-height: 1.35;
+  text-transform: none;
+}
+
+/* ── NOIR anatomy / precision layout ── */
+.lounge-tv-pbd-noir__hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(0, 0.55fr);
+  gap: clamp(4px, 0.85cqw, 10px);
+  align-items: stretch;
+  min-width: 0;
+}
+
+.lounge-tv-pbd-noir__hero-dominant-figure {
+  aspect-ratio: 3 / 4;
+  max-height: clamp(96px, 20cqw, 168px);
+}
+
+.lounge-tv-pbd-noir__hero-support {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(4px, 0.75cqw, 8px);
+  min-width: 0;
+}
+
+.lounge-tv-pbd-noir__hero-support-figure {
+  flex: 1;
+  min-height: 0;
+  aspect-ratio: 1 / 1;
+}
+
+.lounge-tv-pbd-noir__hero-support-figure--macro {
+  aspect-ratio: 4 / 3;
+}
+
+.lounge-tv-pbd-noir__glance-primary {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(6px, 1.1cqw, 12px);
+}
+
+@media (min-width: 320px) {
+  .lounge-tv-pbd-noir__glance-primary {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.lounge-tv-pbd-noir__glance-secondary {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(5px, 1cqw, 10px);
+  margin-top: clamp(6px, 1.1cqw, 12px);
+  padding-top: clamp(6px, 1.1cqw, 12px);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.lounge-tv-pbd-noir__inspection {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(6px, 1.1cqw, 12px);
+}
+
+@media (min-width: 300px) {
+  .lounge-tv-pbd-noir__inspection {
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr);
+  }
+}
+
+.lounge-tv-pbd-noir__inspection-dominant-figure {
+  aspect-ratio: 4 / 3;
+  max-height: clamp(72px, 15cqw, 120px);
+}
+
+.lounge-tv-pbd-noir__inspection-support {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(4px, 0.75cqw, 8px);
+}
+
+.lounge-tv-pbd-noir__inspection-support-figure {
+  aspect-ratio: 1 / 1;
+  max-height: clamp(40px, 8cqw, 64px);
+}
+
+.lounge-tv-pbd-noir__anatomy {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(8px, 1.5cqw, 14px);
+}
+
+@media (min-width: 300px) {
+  .lounge-tv-pbd-noir__anatomy {
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+    align-items: start;
+  }
+}
+
+.lounge-tv-pbd-noir__anatomy-figure {
+  aspect-ratio: 4 / 3;
+  max-height: clamp(80px, 16cqw, 132px);
+}
+
+.lounge-tv-pbd-noir__anatomy-callouts {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(4px, 0.75cqw, 8px);
+}
+
+.lounge-tv-pbd-noir__anatomy-callout {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: clamp(4px, 0.75cqw, 8px);
+  align-items: start;
+}
+
+.lounge-tv-pbd-noir__anatomy-marker {
+  font-family: "Futura PT Medium", Futura, sans-serif;
+  font-size: clamp(9px, 1.05cqw, 12px);
+  color: #eb1c24;
+  line-height: 1;
+}
+
+.lounge-tv-pbd-noir__anatomy-label {
+  margin: 0;
+  font-family: "Futura PT Medium", Futura, sans-serif;
+  font-size: clamp(7px, 0.82cqw, 10px);
+  color: #fff;
+}
+
+.lounge-tv-pbd-noir__anatomy-body {
+  margin: clamp(1px, 0.2cqw, 2px) 0 0;
+  font-family: "Futura PT Book", Futura, sans-serif;
+  font-size: clamp(7px, 0.78cqw, 10px);
+  color: #9a9a9a;
+  line-height: 1.35;
+  text-transform: none;
+}
+
+.lounge-tv-pbd-noir__product-note {
+  margin-top: clamp(6px, 1.1cqw, 12px);
+  padding: clamp(6px, 1.1cqw, 12px) 0 0;
+  border-top: 1px solid rgba(235, 28, 36, 0.25);
+}
+
+.lounge-tv-pbd-noir__product-note-kicker {
+  margin: 0;
+  font-family: "Futura PT Medium", Futura, sans-serif;
+  font-size: clamp(8px, 0.95cqw, 11px);
+  color: #eb1c24;
+  letter-spacing: 0.06em;
+}
+
+.lounge-tv-pbd-noir__product-note-script {
+  font-family: "Covered By Your Grace", cursive;
+  text-transform: none;
+  font-size: clamp(11px, 1.35cqw, 16px);
+}
+
+.lounge-tv-pbd-noir__product-note-body {
+  margin: clamp(3px, 0.55cqw, 6px) 0 0;
+  font-family: "Futura PT Book", Futura, sans-serif;
+  font-size: clamp(9px, 1.05cqw, 12px);
+  color: #fff;
+  line-height: 1.45;
+  text-transform: none;
+}
+
+.lounge-tv-pbd-noir__benefits {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.lounge-tv-pbd-noir__receive {
+  display: grid;
+  grid-template-columns: minmax(0, 0.7fr) minmax(0, 1.3fr);
+  gap: clamp(6px, 1.1cqw, 12px);
+  align-items: center;
+}
+
+.lounge-tv-pbd-noir__receive-figure {
+  aspect-ratio: 1 / 1;
+  max-width: clamp(64px, 13cqw, 108px);
+}
+
+.lounge-tv-pbd-noir__receive-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(3px, 0.55cqw, 6px);
+}
+
+.lounge-tv-pbd-noir__receive-item {
+  display: flex;
+  gap: clamp(4px, 0.75cqw, 8px);
+  align-items: flex-start;
+  font-family: "Futura PT Book", Futura, sans-serif;
+  font-size: clamp(8px, 0.92cqw, 11px);
+  color: #fff;
+  line-height: 1.35;
+  text-transform: none;
+}
+
+.lounge-tv-pbd-noir__receive-check {
+  color: #eb1c24;
+  flex-shrink: 0;
+}
+
+.lounge-tv-pbd-noir__receive-label {
+  font-family: "Futura PT Medium", Futura, sans-serif;
+  text-transform: uppercase;
+  font-size: clamp(7px, 0.82cqw, 10px);
+}
+
+.lounge-tv-pbd-noir__receive-detail {
+  color: #9a9a9a;
+}
+
+.lounge-tv-pbd-noir__footer-modules {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(8px, 1.5cqw, 14px);
+}
+
+@media (min-width: 300px) {
+  .lounge-tv-pbd-noir__footer-modules {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.lounge-tv-pbd-noir__footer-block--best-for {
+  padding-right: clamp(4px, 0.75cqw, 8px);
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.lounge-tv-pbd-noir__footer-heading {
+  margin: 0 0 clamp(3px, 0.55cqw, 6px);
+  font-family: "Futura PT Medium", Futura, sans-serif;
+  font-size: clamp(8px, 0.95cqw, 11px);
+  color: #eb1c24;
+  letter-spacing: 0.06em;
+}
+
+.lounge-tv-pbd-noir__footer-body,
+.lounge-tv-pbd-noir__care-list {
+  margin: 0;
+  font-family: "Futura PT Book", Futura, sans-serif;
+  font-size: clamp(8px, 0.92cqw, 11px);
+  color: #c8c8c8;
+  line-height: 1.45;
+  text-transform: none;
+}
+
+.lounge-tv-pbd-noir__care-list {
+  padding-left: 1.1em;
+}
+
+/* ── Scaffold layout (non-NOIR units — distinct rhythm) ── */
+.lounge-tv-pbd-scaffold__archetype {
+  margin: 0;
+  font-family: "Futura PT Book", Futura, sans-serif;
+  font-size: clamp(8px, 0.92cqw, 11px);
+  color: #eb1c24;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.lounge-tv-pbd-scaffold__hero-figure {
+  aspect-ratio: 16 / 9;
+  max-height: clamp(72px, 14cqw, 120px);
+}
+
+.lounge-tv-pbd-scaffold__intro {
+  margin: clamp(4px, 0.75cqw, 8px) 0 0;
+  font-family: "Futura PT Book", Futura, sans-serif;
+  font-size: clamp(9px, 1.05cqw, 12px);
+  color: #c8c8c8;
+  line-height: 1.45;
+  text-transform: none;
+}
+
+.lounge-tv-pbd-scaffold__specs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(5px, 1cqw, 10px);
+}
+
+@media (min-width: 320px) {
+  .lounge-tv-pbd-scaffold__specs {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 299px) {
+  .lounge-tv-pbd-noir__hero {
+    grid-template-columns: 1fr;
+  }
+
+  .lounge-tv-pbd-noir__hero-support {
+    flex-direction: row;
+  }
+
+  .lounge-tv-pbd-noir__footer-block--best-for {
+    border-right: none;
+    padding-right: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    padding-bottom: clamp(6px, 1.1cqw, 12px);
+  }
+}
+
 /* ── PSA Answer detail viewer (expert answer / troubleshooting) ── */
 .lounge-tv-psa-answer-viewer {
   position: relative;

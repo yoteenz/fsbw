@@ -50917,3 +50917,48 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
   - Modified: `LoungeTvScreen.tsx`, `LoungeTvLearnPanel.tsx`, `LearnMasterySelector.tsx`, `index.css`, `loungeTvOpenSession.ts`, slay-tips/PSA/product-education presentation + packs.
 
 - **Conventions:** Lounge TV detail scroll keys per view kind; mastery poster motion = focus-driven muted crossfade (not disabled for iOS — uses `applyLoungeTvMutedPlayback`). Deploy still on **"deploy now"** for Vercel; founder may explicitly request commit/sync without deploy when Vercel is disabled.
+
+---
+
+## 2026-08-11 — Git sync after every task; Vercel deploy still on "deploy now"
+
+- **Context:** Founder asked to **resume commit + push after tasks** while **Vercel remains off** (deployment account disabled). Distinction: **sync to GitHub** ≠ **deploy to Vercel**.
+
+- **Decisions / outcomes:**
+  - **`./scripts/agent-commit.sh --sync-only "message"`** — default after completed tasks; appends **`[sync-only]`** to commit message.
+  - **`scripts/vercel-should-build.sh`** — skips Vercel build when commit message contains **`[sync-only]`**.
+  - **`./scripts/agent-commit.sh --deploy-now "message"`** — unchanged; founder says **"deploy now"** when ready for production/Vercel.
+  - Policy docs updated: **`one-deploy-per-task.mdc`**, **`git-branch-policy.mdc`**, **`motherboard.mdc`**, **`ADDING.md`**, **`CORE.md`**, **`AGENTS.md`**.
+
+- **Conventions:** Agents commit/push each task batch with **`--sync-only`**. Vercel production only on explicit **"deploy now"**.
+
+---
+
+## 2026-08-11 — Product Breakdown shared editorial system + NOIR anatomy refinement
+
+- **Context:** Founder sprint to refine **NOIR Product Breakdown** in Lounge TV Learn and restructure architecture so all six Signature Units can have **distinct editorial compositions** (shared design system + vocabulary + shell, NOT one universal page template).
+
+- **Topics covered:**
+  1. Phase 0 audit — routes, catalog, NOIR media paths, engagement, CTAs, canonical specs.
+  2. Shared editorial system — shell vs product-specific layout vs primitives vs canonical data.
+  3. NOIR cleanup — fixed broken media, hero asymmetry, tiered AT A GLANCE, dominant LOOK CLOSER, annotated INSIDE THE UNIT, feature→benefit WHY IT MATTERS, engagement reuse.
+  4. Architecture for six archetypes — NOIR full layout; other five minimal scaffold (not NOIR clones).
+
+- **Decisions / outcomes:**
+  - **`ProductBreakdownShell`** — universal scroll, masthead, related, CTAs, engagement; does NOT dictate section order.
+  - **`layoutRegistry`** — `noir` → `NoirBreakdownLayout`; others → `ScaffoldBreakdownLayout` until art-directed individually.
+  - **Canonical specs** — `signatureUnitSpecs.ts` single source; editorial presentation separate in per-unit editorial files.
+  - **Archetypes** — `productBreakdownArchetypes.ts` (anatomyPrecision, colorTransformation, etc.).
+  - **NOIR media** — paths fixed to `/assets/NOIR/noir front.png` etc.; branded placeholder on load failure.
+  - **NOIR is NOT the universal template** — editing BLANCO layout later will not alter NOIR composition.
+
+- **Canonical data conflicts (not resolved — report only):**
+  - `soft-curl` origin: registry `VIETNAMESE` vs PDP `FILIPINO`
+  - `ocean-curl` origin: registry `FILIPINO` vs PDP `VIETNAMESE`
+  - NOIR macro assets reuse `BLANCO Hairline.png` / `BLANCO LACE.png` (no NOIR-specific macro files on disk)
+
+- **Key files:**
+  - New: `product-breakdown/ProductBreakdownShell.tsx`, `layoutRegistry.tsx`, `layouts/NoirBreakdownLayout.tsx`, `layouts/ScaffoldBreakdownLayout.tsx`, `primitives/EditorialPrimitives.tsx`, `signatureUnitSpecs.ts`, `productBreakdownArchetypes.ts`, `product-breakdown-noir-editorial.ts`
+  - Modified: `ProductBreakdownViewer.tsx`, `productBreakdownCatalog.ts`, `unitMediaAssets.ts`, `types.ts`, `index.css`, `index.ts` exports
+
+- **Spatial Architecture Review:** SKIPPED — refinement within existing Learn → Product Breakdown surface; no Lounge shell/nav changes.
