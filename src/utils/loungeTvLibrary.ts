@@ -1,4 +1,5 @@
 const SAVED_KEY = 'loungeTvSavedPacks';
+const FORECAST_SAVED_KEY = 'loungeTvSavedForecastSignals';
 const PROGRESS_KEY = 'loungeTvWatchProgress';
 const COMPLETED_KEY = 'loungeTvCompletedPacks';
 const COMPLETED_AT_KEY = 'loungeTvCompletedAt';
@@ -167,4 +168,22 @@ export function getRecentlyUnlockedPackIds(
     .sort((a, b) => (b.unlockedAt || '').localeCompare(a.unlockedAt || ''))
     .slice(0, limit)
     .map((u) => u.contentId);
+}
+
+export function getSavedForecastSignalIds(): string[] {
+  return readJsonArray(FORECAST_SAVED_KEY);
+}
+
+export function isForecastSignalSaved(signalId: string): boolean {
+  return getSavedForecastSignalIds().includes(signalId);
+}
+
+export function toggleForecastSignalSaved(signalId: string): boolean {
+  const ids = getSavedForecastSignalIds();
+  const next = ids.includes(signalId)
+    ? ids.filter((id) => id !== signalId)
+    : [...ids, signalId];
+  writeJsonArray(FORECAST_SAVED_KEY, next);
+  dispatchLibraryUpdated();
+  return next.includes(signalId);
 }

@@ -2,6 +2,8 @@ import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { useSyncMenuToggleOpenState } from '../../utils/menuToggleOpenState';
 import { useNavigate, useLocation } from 'react-router-dom';
 import LoadingScreen from '../../components/base/LoadingScreen';
+import { usePageLoadGate } from '../../hooks/usePageLoadGate';
+import { BAW_MARBLE_BACKGROUND_SRC } from '../../utils/pageLoadReadiness';
 import ConfirmationModal from '../../components/ConfirmationModal';
 import BrandMenuLinks from '../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../components/SocialMenuIcons';
@@ -123,7 +125,7 @@ export default function BuildAWigPage() {
   }, [rawPathname]);
 
   const [selectedView, setSelectedView] = useState(1);
-  const [showLoading, setShowLoading] = useState(true);
+  const showLoading = usePageLoadGate({ imageUrls: [BAW_MARBLE_BACKGROUND_SRC] });
   const [showPremiumMembershipHubModal, setShowPremiumMembershipHubModal] = useState(false);
 
   // Track the current route to detect navigation changes
@@ -3242,13 +3244,6 @@ export default function BuildAWigPage() {
       window.removeEventListener('signInStateChanged', refresh as EventListener);
     };
   }, [customization.styling, bawPathname]);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowLoading(false);
-    }, 3000);
-    return () => clearTimeout(timer);
-  }, []);
 
   // REMOVED: Load saved selections - this page never loads from localStorage
   // Editing is handled by noir/edit page, not this page

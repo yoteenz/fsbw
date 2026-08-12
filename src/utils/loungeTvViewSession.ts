@@ -1,5 +1,7 @@
 /** Persists Lounge TV detail view + scroll across refresh while the TV session is open. */
 
+import type { LearnHubId } from '../components/lounge/education/learnHubTypes';
+
 const LOUNGE_TV_SESSION_VIEW_STATE_KEY = 'loungeTvSessionViewState';
 const LOUNGE_TV_SESSION_VIEW_SCROLL_KEY = 'loungeTvSessionViewScroll';
 
@@ -15,7 +17,12 @@ export type LoungeTvSessionViewState =
   | { kind: 'product-breakdown'; breakdownId: string }
   | { kind: 'care-lesson'; lessonId: string }
   | { kind: 'mastery'; masteryId: string }
-  | { kind: 'season'; seasonId: string };
+  | { kind: 'season'; seasonId: string }
+  | { kind: 'learn-hub'; hub: LearnHubId }
+  | { kind: 'slay-forecast-hub'; editionId: string }
+  | { kind: 'slay-forecast-history'; editionId?: string }
+  | { kind: 'slay-forecast-signal'; seasonId: string; signalId: string; editionId?: string }
+  | { kind: 'trend-report'; packId: string };
 
 const VIEW_KINDS = [
   'browse',
@@ -30,6 +37,11 @@ const VIEW_KINDS = [
   'care-lesson',
   'mastery',
   'season',
+  'learn-hub',
+  'slay-forecast-hub',
+  'slay-forecast-history',
+  'slay-forecast-signal',
+  'trend-report',
 ] as const;
 
 function isNonEmptyString(value: unknown): value is string {
@@ -79,6 +91,51 @@ function parseViewState(raw: unknown): LoungeTvSessionViewState | null {
       const seasonId = (raw as { seasonId?: unknown }).seasonId;
       return isNonEmptyString(seasonId) ? { kind: 'season', seasonId } : null;
     }
+    case 'learn-hub': {
+      const hub = (raw as { hub?: unknown }).hub;
+      if (
+        hub === 'psa-today' ||
+        hub === 'slay-tips' ||
+        hub === 'psa-answers' ||
+        hub === 'product-breakdown'
+      ) {
+        return { kind: 'learn-hub', hub };
+      }
+      return null;
+    }
+    case 'slay-forecast-hub': {
+      const editionId = (raw as { editionId?: unknown }).editionId;
+      if (isNonEmptyString(editionId)) {
+        return { kind: 'slay-forecast-hub', editionId };
+      }
+      const seasonId = (raw as { seasonId?: unknown }).seasonId;
+      if (isNonEmptyString(seasonId)) {
+        return { kind: 'slay-forecast-hub', editionId: seasonId };
+      }
+      return null;
+    }
+    case 'slay-forecast-history': {
+      const editionId = (raw as { editionId?: unknown }).editionId;
+      return isNonEmptyString(editionId)
+        ? { kind: 'slay-forecast-history', editionId }
+        : { kind: 'slay-forecast-history' };
+    }
+    case 'slay-forecast-signal': {
+      const seasonId = (raw as { seasonId?: unknown }).seasonId;
+      const signalId = (raw as { signalId?: unknown }).signalId;
+      const editionId = (raw as { editionId?: unknown }).editionId;
+      if (!isNonEmptyString(seasonId) || !isNonEmptyString(signalId)) return null;
+      return {
+        kind: 'slay-forecast-signal',
+        seasonId,
+        signalId,
+        editionId: isNonEmptyString(editionId) ? editionId : undefined,
+      };
+    }
+    case 'trend-report': {
+      const packId = (raw as { packId?: unknown }).packId;
+      return isNonEmptyString(packId) ? { kind: 'trend-report', packId } : null;
+    }
     default:
       return null;
   }
@@ -113,6 +170,16 @@ export function loungeTvViewSessionScrollKey(
       return `mastery:${viewState.masteryId}`;
     case 'season':
       return `season:${viewState.seasonId}`;
+    case 'learn-hub':
+      return `learn-hub:${viewState.hub}`;
+    case 'slay-forecast-hub':
+      return `slay-forecast-hub:${viewState.editionId}`;
+    case 'slay-forecast-history':
+      return `slay-forecast-history:${viewState.editionId ?? 'all'}`;
+    case 'slay-forecast-signal':
+      return `slay-forecast-signal:${viewState.editionId ?? viewState.seasonId}:${viewState.signalId}`;
+    case 'trend-report':
+      return `trend-report:${viewState.packId}`;
     default:
       return 'browse';
   }
@@ -189,7 +256,12 @@ export function resolveLoungeTvScrollContainer(
   root: HTMLElement,
   viewState: LoungeTvSessionViewState,
 ): HTMLElement | null {
-  if (viewState.kind !== 'browse') {
+  if (
+    viewState.kind !== 'browse' &&
+    viewState.kind !== 'learn-hub' &&
+    viewState.kind !== 'slay-forecast-hub' &&
+    viewState.kind !== 'slay-forecast-history'
+  ) {
     return root.querySelector<HTMLElement>('[class*="viewer__scroll"]');
   }
   return root.querySelector<HTMLElement>('[data-scene-hit-region="lounge-tv-media-panel"]');

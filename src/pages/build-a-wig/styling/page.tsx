@@ -4,6 +4,8 @@ import { useSyncMenuToggleOpenState } from '../../../utils/menuToggleOpenState';
 import { useNavigate, useLocation } from 'react-router-dom';
 import ThumbBox from '../../../components/ThumbBox';
 import LoadingScreen from '../../../components/base/LoadingScreen';
+import { usePageLoadGate } from '../../../hooks/usePageLoadGate';
+import { BAW_MARBLE_BACKGROUND_SRC } from '../../../utils/pageLoadReadiness';
 import ConfirmationModal from '../../../components/ConfirmationModal';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
@@ -206,7 +208,7 @@ export default function StylingSelectionPage() {
     
     return storedPartSelection;
   });
-  const [showLoading, setShowLoading] = useState(true);
+  const showLoading = usePageLoadGate({ imageUrls: [BAW_MARBLE_BACKGROUND_SRC] });
 
   // Mobile menu state
   const [showMobileMenu, setShowMobileMenu] = useState(false);
@@ -234,15 +236,6 @@ export default function StylingSelectionPage() {
   const [liveBangsLoading, setLiveBangsLoading] = useState(false);
   const [liveStylingError, setLiveStylingError] = useState<string | null>(null);
   const [regenStylingAngle, setRegenStylingAngle] = useState<'left' | 'front' | 'right' | null>(null);
-
-  useEffect(() => {
-    // Hide loading screen after 2 seconds
-    const timer = setTimeout(() => {
-      setShowLoading(false);
-    }, 2000);
-
-    return () => clearTimeout(timer);
-  }, []);
 
   useEffect(() => {
     const p = location.pathname;

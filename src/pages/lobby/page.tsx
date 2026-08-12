@@ -5,6 +5,7 @@ import {
   lobbyCarouselPathFromIndex,
 } from '../../utils/lobbyCarouselRoutes';
 import LoadingScreen from '../../components/base/LoadingScreen';
+import { usePageLoadGate } from '../../hooks/usePageLoadGate';
 import { onSignInSuccess } from '../../utils/adminAuth';
 import { getSupabase, isSupabaseConfigured, signOutIfSessionEmailUnconfirmed } from '../../utils/supabase';
 import {
@@ -21,7 +22,10 @@ import { SceneViewportOverlay } from '../../components/lobby/SceneViewportOverla
 import { LobbySceneHotspots } from '../../components/lobby/LobbySceneHotspots';
 import { SceneCarouselViewportStage } from '../../components/lobby/SceneCarouselViewportStage';
 import { LoungeCompositeTvPlay } from '../../components/lounge/LoungeCompositeTvPlay';
-import { FINAL_LOBBY_BACKGROUND_SRC, FINAL_LOUNGE_BACKGROUND_SRC } from '../../constants/finalLobbySceneAssets';
+import {
+  FINAL_LOBBY_BACKGROUND_SRC,
+  FINAL_LOUNGE_BACKGROUND_SRC,
+} from '../../constants/finalLobbySceneAssets';
 import type { LobbyCasePopoverId } from '../../constants/lobbyCasePopover';
 import {
   isLobbyTransitionVideoEnabledFromSearch,
@@ -32,6 +36,8 @@ import { LoungeSceneHotspots } from '../../components/lounge/LoungeSceneHotspots
 import { useLoungeTvTheaterMode } from '../../utils/loungeTvTheaterMode';
 import { SceneHitLayoutEditorProvider } from '../../components/lobby/SceneHitLayoutEditorContext';
 import { SceneHitLayoutEditorPanel } from '../../components/lobby/SceneHitLayoutEditorPanel';
+
+const LOBBY_INITIAL_PRELOAD_IMAGES = [FINAL_LOBBY_BACKGROUND_SRC, FINAL_LOUNGE_BACKGROUND_SRC] as const;
 
 /** Lobby page → lounge nav (arrow + label) — brand red shadow (#EB1C24). */
 const LOBBY_PAGE_LOUNGE_NAV_SHADOW_FILTER =
@@ -387,7 +393,10 @@ const LobbyApp: React.FC = () => {
     null,
   );
   const [isTransitioning, setIsTransitioning] = useState<boolean>(false);
-  const [showLoading, setShowLoading] = useState<boolean>(true);
+  const showLoading = usePageLoadGate({
+    imageUrls: LOBBY_INITIAL_PRELOAD_IMAGES,
+    minMs: 800,
+  });
   const loungeTvTheater = useLoungeTvTheaterMode();
 
   useEffect(() => {
@@ -522,14 +531,6 @@ const LobbyApp: React.FC = () => {
     };
   }, [routePage, goToCarouselPage]);
 
-  // Hide loading screen after assets have time to load
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowLoading(false);
-    }, 3000); // 3 seconds to allow assets to fully render
-    return () => clearTimeout(timer);
-  }, []);
-
   return (
     <>
       {showLoading && <LoadingScreen source="LobbyApp.initial" />}
@@ -545,10 +546,9 @@ const LobbyApp: React.FC = () => {
           backgroundColor: 'transparent',
           WebkitOverflowScrolling: 'touch',
           scrollBehavior: 'auto',
-          display: showLoading ? 'none' : 'block',
         }}
       >
-        {/* Slide Container — not painted until loading screen hides (no peek-through) */}
+        {/* Slide Container — white LoadingScreen overlay blocks peek-through while assets load underneath */}
         <div
           style={{
             display: 'flex',

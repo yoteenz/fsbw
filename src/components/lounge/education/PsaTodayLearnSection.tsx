@@ -4,23 +4,21 @@ import {
   PSA_TODAY_LEARN_UMBRELLA,
 } from '../../../content/education/hierarchy/masteryTracks';
 import { loungeTvGlassCqw } from '../loungeTvResponsive';
-import { LOUNGE_TV_TYPE } from '../loungeTvTypography';
+import { LearnMasterySelector } from './LearnMasterySelector';
+import { LearnSectionNavHeader } from './LearnSectionNavHeader';
+import { PsaTodayCompactBrowser } from './PsaTodayCompactBrowser';
+import type { LearnSectionSurface } from './learnHubTypes';
+import { LEARN_HUB_NAV_FOCUS_IDS } from './learnHubTypes';
 import {
-  LOUNGE_TV_BRAND_RED,
-  LOUNGE_TV_FONT_BOOK,
-  LOUNGE_TV_FONT_DEMI,
-  LOUNGE_TV_FONT_MEDIUM,
-  LOUNGE_TV_TEXT_WHITE,
-} from '../loungeTvTheme';
-import {
-  LearnMasterySelector,
-  MASTERY_PANEL_BORDER_COLOR,
-  MASTERY_PANEL_TYPE_META_PLUS_1,
-  MASTERY_PANEL_TYPE_TITLE_MINUS_1,
-} from './LearnMasterySelector';
+  LearnSectionHeaderRow,
+  LearnSectionViewAllToggle,
+} from './LearnBrowseChrome';
 
 type PsaTodayLearnSectionProps = {
   onSelectMastery: (masteryId: string) => void;
+  onSelectEpisode?: (episodeId: string) => void;
+  onOpenHub?: () => void;
+  surface?: LearnSectionSurface;
 };
 
 function formatPsaTodaySeriesMeta(seriesCount: number, episodeCount: number): string {
@@ -29,18 +27,38 @@ function formatPsaTodaySeriesMeta(seriesCount: number, episodeCount: number): st
   return `${seriesLabel} · ${episodeLabel}`;
 }
 
-export function PsaTodayLearnSection({ onSelectMastery }: PsaTodayLearnSectionProps) {
+export function PsaTodayLearnSection({
+  onSelectMastery,
+  onOpenHub,
+  surface = 'compact',
+}: PsaTodayLearnSectionProps) {
   const seriesRegionId = useId();
+  const [seriesExpanded, setSeriesExpanded] = useState(false);
   const tracks = useMemo(() => listMasteryTrackPresentations(), []);
   const totalEpisodes = useMemo(
     () => tracks.reduce((sum, track) => sum + track.episodeCount, 0),
     [tracks],
   );
-  const [expanded, setExpanded] = useState(false);
 
-  const toggleExpanded = useCallback(() => {
-    setExpanded((prev) => !prev);
+  const toggleSeriesExpanded = useCallback(() => {
+    setSeriesExpanded((prev) => !prev);
   }, []);
+
+  const handlePosterMasterySelect = useCallback((_masteryId: string) => {
+    setSeriesExpanded(true);
+  }, []);
+
+  if (surface === 'hub') {
+    return (
+      <section
+        data-lounge-tv-rail="learn-hub-psa-today-masteries"
+        className="lounge-tv-psa-today-hub-masteries"
+        style={{ width: '100%', minWidth: 0 }}
+      >
+        <LearnMasterySelector onSelectMastery={onSelectMastery} viewMode="poster" />
+      </section>
+    );
+  }
 
   return (
     <section
@@ -48,89 +66,44 @@ export function PsaTodayLearnSection({ onSelectMastery }: PsaTodayLearnSectionPr
       className="lounge-tv-psa-today-series"
       style={{ width: '100%', minWidth: 0, maxWidth: '100%', boxSizing: 'border-box' }}
     >
-      <header data-lounge-tv-rail="learn-psa-today-umbrella">
-        <h2
-          style={{
-            margin: 0,
-            fontFamily: LOUNGE_TV_FONT_MEDIUM,
-            fontSize: `calc(${LOUNGE_TV_TYPE.l2} + 2px)`,
-            color: LOUNGE_TV_BRAND_RED,
-            letterSpacing: '0.08em',
-            textTransform: 'uppercase',
-            fontWeight: 400,
-          }}
-        >
-          {PSA_TODAY_LEARN_UMBRELLA.title}
-        </h2>
-        <p
-          className="lounge-tv-psa-today-tagline"
-          style={{
-            margin: `${loungeTvGlassCqw(0.45, 1.05, 2.1)} 0 0`,
-            fontFamily: LOUNGE_TV_FONT_BOOK,
-            fontSize: MASTERY_PANEL_TYPE_META_PLUS_1,
-            lineHeight: 1.25,
-            color: LOUNGE_TV_TEXT_WHITE,
-            letterSpacing: '0.04em',
-            maxWidth: '42em',
-          }}
-        >
-          {PSA_TODAY_LEARN_UMBRELLA.tagline}
-        </p>
-      </header>
+      <LearnSectionNavHeader
+        title={PSA_TODAY_LEARN_UMBRELLA.title}
+        tagline={PSA_TODAY_LEARN_UMBRELLA.tagline}
+        onNavigate={onOpenHub}
+        focusId={LEARN_HUB_NAV_FOCUS_IDS['psa-today']}
+        taglineSpacing="education"
+      />
 
-      <div
-        className="lounge-tv-psa-today-series-nav"
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          gap: loungeTvGlassCqw(1, 2.4, 4.8),
-          marginTop: loungeTvGlassCqw(0.85, 2, 4),
-          marginBottom: `calc(${loungeTvGlassCqw(0.55, 1.35, 2.7)} - 6px)`,
-          minWidth: 0,
-        }}
-      >
-        <span
-          style={{
-            fontFamily: LOUNGE_TV_FONT_DEMI,
-            fontSize: MASTERY_PANEL_TYPE_META_PLUS_1,
-            color: MASTERY_PANEL_BORDER_COLOR,
-            letterSpacing: '0.04em',
-            flexShrink: 0,
-          }}
-        >
-          {formatPsaTodaySeriesMeta(tracks.length, totalEpisodes)}
-        </span>
-        <button
-          type="button"
-          className="lounge-tv-psa-today-series-toggle"
-          data-lounge-tv-focusable
-          data-lounge-tv-focus-id="learn-psa-today-series-toggle"
-          aria-expanded={expanded}
-          aria-controls={seriesRegionId}
-          onClick={toggleExpanded}
-          style={{
-            fontFamily: LOUNGE_TV_FONT_MEDIUM,
-            fontSize: MASTERY_PANEL_TYPE_TITLE_MINUS_1,
-            color: LOUNGE_TV_BRAND_RED,
-            letterSpacing: '0.05em',
-            textDecoration: 'none',
-          }}
-        >
-          {expanded ? 'COLLAPSE ALL SERIES' : 'VIEW ALL SERIES >'}
-        </button>
-      </div>
+      <LearnSectionHeaderRow
+        meta={formatPsaTodaySeriesMeta(tracks.length, totalEpisodes)}
+        toggle={
+          <LearnSectionViewAllToggle
+            expanded={seriesExpanded}
+            onToggle={toggleSeriesExpanded}
+            expandLabel="VIEW ALL SERIES >"
+            collapseLabel="COLLAPSE ALL SERIES"
+            focusId="learn-psa-today-series-toggle"
+            controlsId={seriesRegionId}
+          />
+        }
+      />
 
       <div
         id={seriesRegionId}
-        className={`lounge-tv-psa-today-series-stage${expanded ? ' lounge-tv-psa-today-series-stage--expanded' : ' lounge-tv-psa-today-series-stage--collapsed'}`}
-        data-lounge-tv-psa-today-expanded={expanded ? 'true' : 'false'}
+        className={[
+          'lounge-tv-psa-today-compact-shell',
+          seriesExpanded ? 'lounge-tv-psa-today-compact-shell--expanded' : '',
+        ]
+          .filter(Boolean)
+          .join(' ')}
+        style={{ marginTop: loungeTvGlassCqw(0.65, 1.5, 3) }}
+        data-lounge-tv-psa-today-expanded={seriesExpanded ? 'true' : 'false'}
       >
-        <LearnMasterySelector
-          key={expanded ? 'compact' : 'poster'}
-          onSelectMastery={onSelectMastery}
-          viewMode={expanded ? 'compact' : 'poster'}
-        />
+        {seriesExpanded ? (
+          <PsaTodayCompactBrowser />
+        ) : (
+          <LearnMasterySelector onSelectMastery={handlePosterMasterySelect} viewMode="poster" />
+        )}
       </div>
     </section>
   );

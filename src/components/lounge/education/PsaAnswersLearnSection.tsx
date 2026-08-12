@@ -12,12 +12,13 @@ import {
   type PsaAnswerPresentationEntry,
 } from './psaAnswersPresentation';
 import { PsaAnswerCard } from './PsaAnswerCard';
+import { LearnSectionNavHeader } from './LearnSectionNavHeader';
+import type { LearnSectionSurface } from './learnHubTypes';
+import { LEARN_HUB_NAV_FOCUS_IDS } from './learnHubTypes';
 import {
   LearnBrowseFilters,
   LearnSectionHeaderRow,
-  LearnSectionTagline,
-  LearnSectionTitle,
-  LearnSectionViewAllToggle,
+  LearnSectionViewAllLink,
 } from './LearnBrowseChrome';
 import { renderLearnLikesFilterContent } from './LearnLikesFilterContent';
 import { LoungeTvEmptyState } from '../LoungeTvEmptyState';
@@ -27,11 +28,14 @@ import {
 } from '../../../utils/loungeEngagementTypes';
 import { useLoungeEngagementSummaries } from '../../../hooks/useLoungeEngagementSummaries';
 import { useLoungeHelpfulToggle } from '../../../hooks/useLoungeHelpfulToggle';
+import { resolveLearnBrowseViewerHelpful } from '../../../utils/learnBrowseLocalHelpful';
 
 type PsaAnswersLearnSectionProps = {
   onSelectEntry: (entry: PsaAnswerPresentationEntry) => void;
   isUnlocked: (contentId: string) => boolean;
   unlocks?: LoungeContentUnlock[];
+  surface?: LearnSectionSurface;
+  onOpenHub?: () => void;
   onEngagementRequireSignIn?: () => void;
   engagementToast?: (message: string) => void;
 };
@@ -68,6 +72,7 @@ function PsaAnswerEngagementCard({
     key,
     summary,
     contentTitle: entry.displayQuestion,
+    allowAnonymousLocal: true,
     onRequireAuth: () => onEngagementRequireSignIn?.(),
     onPatch: (patch) => patchSummary(key, patch),
     onError: (msg) => engagementToast?.(msg),
@@ -92,12 +97,16 @@ export function PsaAnswersLearnSection({
   onSelectEntry,
   isUnlocked,
   unlocks,
+  surface = 'compact',
+  onOpenHub,
   onEngagementRequireSignIn,
   engagementToast,
 }: PsaAnswersLearnSectionProps) {
   const stageId = useId();
-  const [expanded, setExpanded] = useState(false);
+  const hubMode = surface === 'hub';
+  const [expanded, setExpanded] = useState(hubMode);
   const [activeFilter, setActiveFilter] = useState<PsaAnswerCategoryFilter>('ALL');
+  const isCategoryFiltered = activeFilter !== 'ALL';
 
   const allEntries = useMemo(() => listPsaAnswerPresentationEntries(), []);
 
@@ -116,7 +125,10 @@ export function PsaAnswersLearnSection({
 
   const isPackLiked = useCallback(
     (packId: string) =>
-      Boolean(summaryMap.get(engagementItemKey(engagementKeyForPack(packId)))?.viewerHelpful),
+      resolveLearnBrowseViewerHelpful(
+        engagementKeyForPack(packId),
+        summaryMap.get(engagementItemKey(engagementKeyForPack(packId))),
+      ),
     [summaryMap],
   );
 
@@ -125,13 +137,21 @@ export function PsaAnswersLearnSection({
     [allEntries, activeFilter, isPackLiked],
   );
 
-  const visibleEntries = expanded
-    ? filteredEntries
-    : filteredEntries.slice(0, PSA_ANSWERS_PREVIEW_COUNT);
+  const visibleEntries =
+    hubMode || expanded || isCategoryFiltered
+      ? filteredEntries
+      : filteredEntries.slice(0, PSA_ANSWERS_PREVIEW_COUNT);
 
-  const toggleExpanded = useCallback(() => {
-    setExpanded((prev) => !prev);
-  }, []);
+  const handleEntrySelect = useCallback(
+    (entry: PsaAnswerPresentationEntry) => {
+      if (hubMode) {
+        onSelectEntry(entry);
+        return;
+      }
+      setExpanded(true);
+    },
+    [hubMode, onSelectEntry],
+  );
 
   if (!allEntries.length) return null;
 
@@ -139,14 +159,19 @@ export function PsaAnswersLearnSection({
 
   return (
     <section
-      data-lounge-tv-rail="learn-psa-answers"
+      data-lounge-tv-rail={hubMode ? 'learn-hub-psa-answers' : 'learn-psa-answers'}
       className="lounge-tv-psa-answers-section"
       style={{ width: '100%', minWidth: 0 }}
     >
-      <header>
-        <LearnSectionTitle title="PSA ANSWERS" />
-        <LearnSectionTagline spacingVariant="browse">{PSA_ANSWERS_SECTION_TAGLINE}</LearnSectionTagline>
-      </header>
+      {!hubMode ? (
+        <LearnSectionNavHeader
+          title="PSA ANSWERS"
+          tagline={PSA_ANSWERS_SECTION_TAGLINE}
+          onNavigate={onOpenHub}
+          focusId={LEARN_HUB_NAV_FOCUS_IDS['psa-answers']}
+          taglineSpacing="browse"
+        />
+      ) : null}
 
       <LearnBrowseFilters
         filters={PSA_ANSWER_CATEGORY_FILTERS}
@@ -157,19 +182,22 @@ export function PsaAnswersLearnSection({
         renderFilterContent={renderLearnLikesFilterContent}
       />
 
-      <LearnSectionHeaderRow
-        meta={meta}
-        toggle={
-          <LearnSectionViewAllToggle
-            expanded={expanded}
-            onToggle={toggleExpanded}
-            expandLabel="VIEW ALL ANSWERS >"
-            collapseLabel="COLLAPSE"
-            focusId="psa-answers-view-all"
-            controlsId={stageId}
-          />
-        }
-      />
+      {!hubMode ? (
+        <LearnSectionHeaderRow
+          meta={meta}
+          toggle={
+            onOpenHub ? (
+              <LearnSectionViewAllLink
+                label="VIEW ALL ANSWERS >"
+                onNavigate={onOpenHub}
+                focusId="psa-answers-view-all"
+              />
+            ) : null
+          }
+        />
+      ) : (
+        <LearnSectionHeaderRow meta={meta} />
+      )}
 
       {activeFilter === 'LIKES' && filteredEntries.length === 0 ? (
         <div className="lounge-tv-psa-answers-likes-empty">
@@ -181,12 +209,17 @@ export function PsaAnswersLearnSection({
       {visibleEntries.length > 0 ? (
         <div
           id={stageId}
-          className={
-            expanded
-              ? 'lounge-tv-psa-answers-stage lounge-tv-psa-answers-stage--expanded'
-              : 'lounge-tv-psa-answers-stage lounge-tv-psa-answers-stage--preview'
-          }
-          data-lounge-tv-psa-answers-expanded={expanded ? 'true' : 'false'}
+          className={[
+            'lounge-tv-psa-answers-stage',
+            hubMode || expanded
+              ? 'lounge-tv-psa-answers-stage--expanded'
+              : 'lounge-tv-psa-answers-stage--preview',
+            isCategoryFiltered ? 'lounge-tv-psa-answers-stage--filtered' : '',
+          ]
+            .filter(Boolean)
+            .join(' ')}
+          data-lounge-tv-psa-answers-expanded={hubMode || expanded ? 'true' : 'false'}
+          data-lounge-tv-psa-answers-filtered={isCategoryFiltered ? 'true' : 'false'}
         >
           <div className="lounge-tv-psa-answers-grid">
             {visibleEntries.map((entry, index) => {
@@ -198,7 +231,7 @@ export function PsaAnswersLearnSection({
                   entry={entry}
                   pack={pack}
                   editorialVariant={index % 3}
-                  onSelect={onSelectEntry}
+                  onSelect={handleEntrySelect}
                   unlocks={unlocks}
                   isUnlocked={isUnlocked}
                   summaryMap={summaryMap}

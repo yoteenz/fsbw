@@ -20,10 +20,13 @@ import { CareLessonRow } from './care';
 import { SlayTipRow } from './slay-tips';
 import { LoungeTvCareLibraryPanel } from './LoungeTvCareLibraryPanel';
 import type { SlayTip, CareLesson } from '../../content/education/types';
+import type { LearnHubId } from './education/learnHubTypes';
 import { LoungeTvSectionDivider } from './LoungeTvSectionDivider';
 
 type LoungeTvLearnPanelProps = {
   onSelectMastery: (masteryId: string) => void;
+  onSelectEpisode?: (episodeId: string) => void;
+  onOpenLearnHub: (hub: LearnHubId) => void;
   onSelectPack: (pack: LoungeContentPack) => void;
   onSelectPsaAnswer: (entry: import('./education/psaAnswersPresentation').PsaAnswerPresentationEntry) => void;
   onSelectProductBreakdown?: (entry: import('./education/productBreakdownPresentation').ProductBreakdownPresentationEntry) => void;
@@ -77,6 +80,8 @@ function CareLibraryViewAllButton({ onClick }: { onClick: () => void }) {
 
 export function LoungeTvLearnPanel({
   onSelectMastery,
+  onSelectEpisode,
+  onOpenLearnHub,
   onSelectPack,
   onSelectPsaAnswer,
   onSelectProductBreakdown,
@@ -128,7 +133,11 @@ export function LoungeTvLearnPanel({
       className="lounge-tv-learn-panel"
       style={{ display: 'flex', flexDirection: 'column', gap: loungeTvGlassCqw(2, 4.5, 9), width: '100%' }}
     >
-      <PsaTodayLearnSection onSelectMastery={onSelectMastery} />
+      <PsaTodayLearnSection
+        onSelectMastery={onSelectMastery}
+        onSelectEpisode={onSelectEpisode}
+        onOpenHub={() => onOpenLearnHub('psa-today')}
+      />
 
       <LoungeTvSectionDivider
         marginTop={loungeTvGlassCqw(1.2, 3, 6)}
@@ -146,6 +155,7 @@ export function LoungeTvLearnPanel({
         onEngagementRequireSignIn={onEngagementRequireSignIn}
         onEngagementOpenSlayTipDiscussion={onEngagementOpenSlayTipDiscussion}
         engagementToast={engagementToast}
+        onOpenHub={() => onOpenLearnHub('slay-tips')}
       />
 
       <LoungeTvSectionDivider />
@@ -154,6 +164,7 @@ export function LoungeTvLearnPanel({
         onSelectEntry={onSelectPsaAnswer}
         isUnlocked={isUnlocked}
         unlocks={unlocks}
+        onOpenHub={() => onOpenLearnHub('psa-answers')}
         onEngagementRequireSignIn={onEngagementRequireSignIn}
         engagementToast={engagementToast}
       />
@@ -165,6 +176,7 @@ export function LoungeTvLearnPanel({
         onOpenProductBreakdown={onSelectProductBreakdown}
         onToggleSave={onToggleSave}
         onOpenCareLibrary={openCareLibrary}
+        onOpenHub={() => onOpenLearnHub('product-breakdown')}
       />
 
       <LoungeTvSectionDivider />

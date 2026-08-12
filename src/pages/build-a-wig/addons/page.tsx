@@ -3,6 +3,8 @@ import { useSyncMenuToggleOpenState } from '../../../utils/menuToggleOpenState';
 import { useNavigate, useLocation } from 'react-router-dom';
 import ThumbBox from '../../../components/ThumbBox';
 import LoadingScreen from '../../../components/base/LoadingScreen';
+import { usePageLoadGate } from '../../../hooks/usePageLoadGate';
+import { BAW_MARBLE_BACKGROUND_SRC } from '../../../utils/pageLoadReadiness';
 import ConfirmationModal from '../../../components/ConfirmationModal';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
@@ -109,7 +111,7 @@ export default function AddOnsSelectionPage() {
     
     return initial;
   });
-  const [showLoading, setShowLoading] = useState(true);
+  const showLoading = usePageLoadGate({ imageUrls: [BAW_MARBLE_BACKGROUND_SRC] });
 
   // Mobile menu state
   const [showMobileMenu, setShowMobileMenu] = useState(false);
@@ -126,15 +128,6 @@ export default function AddOnsSelectionPage() {
   const [mobileMenuExpandedItems, setMobileMenuExpandedItems] = useState<string[]>([]);
   const [isSignedIn, setIsSignedIn] = useSignedInFromStorage();
   const [showSignOutConfirm, setShowSignOutConfirm] = useState(false);
-
-  useEffect(() => {
-    // Hide loading screen after 2 seconds
-    const timer = setTimeout(() => {
-      setShowLoading(false);
-    }, 2000);
-
-    return () => clearTimeout(timer);
-  }, []);
 
   // EDIT/CUSTOMIZE: Auto-select BLEACH + PLUCK only when a real styling option is confirmed (uses module-level isStylingValueConfirmed).
   useEffect(() => {

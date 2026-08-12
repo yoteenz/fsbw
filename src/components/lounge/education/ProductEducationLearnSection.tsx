@@ -16,11 +16,12 @@ import type { WigUnitSlug } from '../../../content/education/care/productCatalog
 import { getProductBreakdownPresentationEntryByUnitId } from './productBreakdownPresentation';
 import type { ProductBreakdownPresentationEntry } from './productBreakdownPresentation';
 import { ProductEducationGuideCard } from './ProductEducationGuideCard';
+import { LearnSectionNavHeader } from './LearnSectionNavHeader';
+import type { LearnSectionSurface } from './learnHubTypes';
+import { LEARN_HUB_NAV_FOCUS_IDS } from './learnHubTypes';
 import {
   LearnSectionHeaderRow,
-  LearnSectionTagline,
-  LearnSectionTitle,
-  LearnSectionViewAllToggle,
+  LearnSectionViewAllLink,
 } from './LearnBrowseChrome';
 
 type ProductEducationLearnSectionProps = {
@@ -28,6 +29,8 @@ type ProductEducationLearnSectionProps = {
   onOpenProductBreakdown?: (entry: ProductBreakdownPresentationEntry) => void;
   onToggleSave?: (pack: LoungeContentPack) => void;
   onOpenCareLibrary?: () => void;
+  surface?: LearnSectionSurface;
+  onOpenHub?: () => void;
 };
 
 export function ProductEducationLearnSection({
@@ -35,18 +38,17 @@ export function ProductEducationLearnSection({
   onOpenProductBreakdown,
   onToggleSave,
   onOpenCareLibrary,
+  surface = 'compact',
+  onOpenHub,
 }: ProductEducationLearnSectionProps) {
   const stageId = useId();
-  const [expanded, setExpanded] = useState(false);
+  const hubMode = surface === 'hub';
+  const [expanded, setExpanded] = useState(hubMode);
 
   const heroGuide = useMemo(() => getProductEducationHeroGuide(), []);
   const supportGuides = useMemo(() => getProductEducationSupportGuides(), []);
   const signatureUnits = useMemo(() => listSignatureUnitGuideLinks(), []);
   const allGuides = useMemo(() => listProductEducationGuides(), []);
-
-  const toggleExpanded = useCallback(() => {
-    setExpanded((prev) => !prev);
-  }, []);
 
   const handleExplore = useCallback(
     (guide: ProductEducationGuideEntry) => {
@@ -54,49 +56,85 @@ export function ProductEducationLearnSection({
         onOpenCareLibrary?.();
         return;
       }
-      const pack = resolveProductEducationGuidePack(guide);
-      if (pack) onSelectPack(pack);
+      if (hubMode) {
+        const pack = resolveProductEducationGuidePack(guide);
+        if (pack) onSelectPack(pack);
+        return;
+      }
+      setExpanded(true);
     },
-    [onOpenCareLibrary, onSelectPack],
+    [hubMode, onOpenCareLibrary, onSelectPack],
+  );
+
+  const handleSignatureUnitExplore = useCallback(
+    (unit: (typeof signatureUnits)[number]) => {
+      if (hubMode) {
+        const pack = resolveProductEducationGuidePack({
+          id: 'signature-units',
+          title: unit.displayName,
+          descriptor: unit.descriptor,
+          packId: unit.packId,
+        } as ProductEducationGuideEntry);
+        const breakdownEntry = getProductBreakdownPresentationEntryByUnitId(
+          unit.unitId as WigUnitSlug,
+        );
+        if (breakdownEntry && onOpenProductBreakdown) {
+          onOpenProductBreakdown(breakdownEntry);
+          return;
+        }
+        if (pack) onSelectPack(pack);
+        return;
+      }
+      setExpanded(true);
+    },
+    [hubMode, onOpenProductBreakdown, onSelectPack],
   );
 
   if (!allGuides.length) return null;
 
   return (
     <section
-      data-lounge-tv-rail="learn-product-education"
+      data-lounge-tv-rail={hubMode ? 'learn-hub-product-education' : 'learn-product-education'}
       className="lounge-tv-product-education-section"
       style={{ width: '100%', minWidth: 0 }}
     >
-      <header>
-        <LearnSectionTitle title="PRODUCT EDUCATION" />
-        <LearnSectionTagline spacingVariant="education">{PRODUCT_EDUCATION_SECTION_TAGLINE}</LearnSectionTagline>
-      </header>
+      {!hubMode ? (
+        <LearnSectionNavHeader
+          title="PRODUCT EDUCATION"
+          tagline={PRODUCT_EDUCATION_SECTION_TAGLINE}
+          onNavigate={onOpenHub}
+          focusId={LEARN_HUB_NAV_FOCUS_IDS['product-breakdown']}
+          taglineSpacing="education"
+        />
+      ) : null}
 
-      <LearnSectionHeaderRow
-        meta={`${allGuides.length} GUIDE${allGuides.length === 1 ? '' : 'S'}`}
-        toggle={
-          <LearnSectionViewAllToggle
-            expanded={expanded}
-            onToggle={toggleExpanded}
-            expandLabel="VIEW ALL GUIDES >"
-            collapseLabel="COLLAPSE"
-            focusId="product-education-view-all"
-            controlsId={stageId}
-          />
-        }
-      />
+      {!hubMode ? (
+        <LearnSectionHeaderRow
+          meta={`${allGuides.length} GUIDE${allGuides.length === 1 ? '' : 'S'}`}
+          toggle={
+            onOpenHub ? (
+              <LearnSectionViewAllLink
+                label="VIEW ALL GUIDES >"
+                onNavigate={onOpenHub}
+                focusId="product-education-view-all"
+              />
+            ) : null
+          }
+        />
+      ) : (
+        <LearnSectionHeaderRow meta={`${allGuides.length} GUIDE${allGuides.length === 1 ? '' : 'S'}`} />
+      )}
 
       <div
         id={stageId}
         className={
-          expanded
+          hubMode || expanded
             ? 'lounge-tv-product-education-stage lounge-tv-product-education-stage--expanded'
             : 'lounge-tv-product-education-stage lounge-tv-product-education-stage--preview'
         }
-        data-lounge-tv-product-education-expanded={expanded ? 'true' : 'false'}
+        data-lounge-tv-product-education-expanded={hubMode || expanded ? 'true' : 'false'}
       >
-        {!expanded ? (
+        {!hubMode && !expanded ? (
           <div className="lounge-tv-product-education-preview">
             {heroGuide ? (
               <ProductEducationGuideCard
@@ -146,9 +184,6 @@ export function ProductEducationLearnSection({
                     signatureUnits.map((unit) => {
                       const pack = resolveProductEducationGuidePack({ ...guide, packId: unit.packId });
                       if (!pack) return null;
-                      const breakdownEntry = getProductBreakdownPresentationEntryByUnitId(
-                        unit.unitId as WigUnitSlug,
-                      );
                       return (
                         <ProductEducationGuideCard
                           key={unit.unitId}
@@ -160,13 +195,7 @@ export function ProductEducationLearnSection({
                             packId: unit.packId,
                           }}
                           variant="compact"
-                          onExplore={() => {
-                            if (breakdownEntry && onOpenProductBreakdown) {
-                              onOpenProductBreakdown(breakdownEntry);
-                              return;
-                            }
-                            if (pack) onSelectPack(pack);
-                          }}
+                          onExplore={() => handleSignatureUnitExplore(unit)}
                           onToggleSave={onToggleSave}
                           savePack={pack}
                         />

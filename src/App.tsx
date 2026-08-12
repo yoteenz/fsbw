@@ -85,6 +85,11 @@ const AdminViewWaitlist = lazyWithRetry(() => import('./pages/admin/revenue/view
 const AdminReviews = lazyWithRetry(() => import('./pages/admin/reviews/page'), 'AdminReviews');
 const AdminReferrals = lazyWithRetry(() => import('./pages/admin/referrals/page'), 'AdminReferrals');
 const AdminAnalytics = lazyWithRetry(() => import('./pages/admin/analytics/page'), 'AdminAnalytics');
+const AdminTrendDesk = lazyWithRetry(() => import('./pages/admin/trend-desk/page'), 'AdminTrendDesk');
+const AdminSlayForecastBroadcast = lazyWithRetry(
+  () => import('./pages/admin/slay-forecast-broadcast/page'),
+  'AdminSlayForecastBroadcast',
+);
 const AdminUsers = lazyWithRetry(() => import('./pages/admin/users/page'), 'AdminUsers');
 const AdminNotifications = lazyWithRetry(() => import('./pages/admin/notifications/page'), 'AdminNotifications');
 const AdminMessages = lazyWithRetry(() => import('./pages/admin/messages/page'), 'AdminMessages');
@@ -2957,6 +2962,16 @@ function App() {
           <Route path="analytics" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminAnalytics />
+            </Suspense>
+          } />
+          <Route path="trend-desk" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminTrendDesk />
+            </Suspense>
+          } />
+          <Route path="slay-forecast-broadcast" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminSlayForecastBroadcast />
             </Suspense>
           } />
           <Route path="users" element={

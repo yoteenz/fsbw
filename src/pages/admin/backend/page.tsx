@@ -172,6 +172,24 @@ export default function AdminBackend() {
         />
 
         <div className="pb-8 px-4 max-w-md mx-auto">
+            <div className="mb-3 text-center">
+              <button
+                type="button"
+                onClick={() => navigate('/admin/trend-desk')}
+                className="text-[10px] tracking-widest text-red-600 hover:text-red-500 mr-4"
+                style={{ fontFamily: '"Futura PT Medium"' }}
+              >
+                TREND DESK →
+              </button>
+              <button
+                type="button"
+                onClick={() => navigate('/admin/slay-forecast-broadcast')}
+                className="text-[10px] tracking-widest text-red-600 hover:text-red-500"
+                style={{ fontFamily: '"Futura PT Medium"' }}
+              >
+                PSA BROADCAST →
+              </button>
+            </div>
             <div
               className="bg-white/60 backdrop-blur-sm border border-black flex flex-col overflow-hidden min-h-0"
               style={{ borderWidth: '1.3px', minHeight: 'calc(100dvh - 160px)' }}

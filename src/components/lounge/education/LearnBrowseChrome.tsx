@@ -11,12 +11,9 @@ import {
 } from '../loungeTvTheme';
 import { LOUNGE_TV_TYPE } from '../loungeTvTypography';
 import {
-  MASTERY_PANEL_BORDER_COLOR,
   MASTERY_PANEL_TYPE_META_PLUS_1,
   MASTERY_PANEL_TYPE_TITLE_MINUS_1,
 } from './LearnMasterySelector';
-import { LEARN_ACRYLIC_HIT_SIZE } from '../learnAcrylicGlyphSizes';
-
 type LearnBrowseFiltersProps<T extends string> = {
   filters: readonly T[];
   active: T;
@@ -64,24 +61,15 @@ export function LearnBrowseFilters<T extends string>({
               onClick={() => onChange(filter)}
               onFocusCapture={loungeTvFocusGlowIn}
               onBlurCapture={loungeTvFocusGlowOut}
-              className={[
+              className={
                 selected
                   ? 'lounge-tv-learn-browse-filter lounge-tv-learn-browse-filter--active'
-                  : 'lounge-tv-learn-browse-filter',
-                filter === 'LIKES' ? 'lounge-tv-learn-browse-filter--likes' : '',
-              ]
-                .filter(Boolean)
-                .join(' ')}
+                  : 'lounge-tv-learn-browse-filter'
+              }
               style={{
                 fontFamily: LOUNGE_TV_FONT_MEDIUM,
                 fontSize: `calc(${LOUNGE_TV_TYPE.l4} + 2px)`,
                 letterSpacing: '0.06em',
-                ...(filter === 'LIKES'
-                  ? {
-                      minWidth: LEARN_ACRYLIC_HIT_SIZE,
-                      minHeight: LEARN_ACRYLIC_HIT_SIZE,
-                    }
-                  : null),
               }}
             >
               <span className="lounge-tv-learn-browse-filter__content">
@@ -138,6 +126,42 @@ export function LearnSectionViewAllToggle({
       }}
     >
       {expanded ? collapseLabel : expandLabel}
+    </button>
+  );
+}
+
+type LearnSectionViewAllLinkProps = {
+  label: string;
+  onNavigate: () => void;
+  focusId: string;
+};
+
+/** Opens the section hub — same destination as the section header title. */
+export function LearnSectionViewAllLink({ label, onNavigate, focusId }: LearnSectionViewAllLinkProps) {
+  return (
+    <button
+      type="button"
+      className="lounge-tv-learn-section-toggle"
+      data-lounge-tv-focusable
+      data-lounge-tv-focus-id={focusId}
+      onClick={onNavigate}
+      onFocusCapture={loungeTvFocusGlowIn}
+      onBlurCapture={loungeTvFocusGlowOut}
+      style={{
+        fontFamily: LOUNGE_TV_FONT_MEDIUM,
+        fontSize: MASTERY_PANEL_TYPE_TITLE_MINUS_1,
+        color: LOUNGE_TV_BRAND_RED,
+        letterSpacing: '0.05em',
+        textTransform: 'uppercase',
+        background: 'transparent',
+        border: 'none',
+        padding: `${loungeTvGlassCqw(0.45, 1, 2)} 0`,
+        marginBottom: '3px',
+        cursor: 'pointer',
+        flexShrink: 0,
+      }}
+    >
+      {label}
     </button>
   );
 }
@@ -207,7 +231,7 @@ export function LearnSectionHeaderRow({
   toggle,
 }: {
   meta?: string;
-  toggle: ReactNode;
+  toggle?: ReactNode;
 }) {
   return (
     <div
@@ -227,7 +251,7 @@ export function LearnSectionHeaderRow({
           style={{
             fontFamily: LOUNGE_TV_FONT_DEMI,
             fontSize: MASTERY_PANEL_TYPE_META_PLUS_1,
-            color: MASTERY_PANEL_BORDER_COLOR,
+            color: LOUNGE_TV_TEXT_WHITE,
             letterSpacing: '0.04em',
             flexShrink: 0,
             minWidth: 0,

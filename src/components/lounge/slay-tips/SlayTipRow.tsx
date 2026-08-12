@@ -11,15 +11,17 @@ import {
   SLAY_TIPS_EDITORIAL_BAND_SIZE,
   slayTipMatchesDiscoveryFilter,
   slayTipPinArchetypeForIndex,
+  slayTipFilteredGridPlacement,
   slayTipPinGridPlacement,
   type SlayTipDiscoveryFilter,
 } from './slayTipDiscoveryMeta';
+import type { LearnSectionSurface } from '../education/learnHubTypes';
+import { LEARN_HUB_NAV_FOCUS_IDS } from '../education/learnHubTypes';
+import { LearnSectionNavHeader } from '../education/LearnSectionNavHeader';
 import {
   LearnBrowseFilters,
   LearnSectionHeaderRow,
-  LearnSectionTagline,
-  LearnSectionTitle,
-  LearnSectionViewAllToggle,
+  LearnSectionViewAllLink,
 } from '../education/LearnBrowseChrome';
 import { renderLearnLikesFilterContent } from '../education/LearnLikesFilterContent';
 import {
@@ -28,6 +30,7 @@ import {
 } from '../../../utils/loungeEngagementTypes';
 import { useLoungeEngagementSummaries } from '../../../hooks/useLoungeEngagementSummaries';
 import { useLoungeHelpfulToggle } from '../../../hooks/useLoungeHelpfulToggle';
+import { resolveLearnBrowseViewerHelpful } from '../../../utils/learnBrowseLocalHelpful';
 import { slayTipPublicTitle } from './slayTipContent';
 
 /** One full editorial band — hero row, portrait row, duo row. */
@@ -45,6 +48,8 @@ type SlayTipRowProps = {
   embeddedSection?: boolean;
   /** Learn tab — full discovery board (masonry + filters). */
   discoveryBoard?: boolean;
+  surface?: LearnSectionSurface;
+  onOpenHub?: () => void;
   onEngagementRequireSignIn?: () => void;
   onEngagementOpenSlayTipDiscussion?: (tip: SlayTip) => void;
   engagementToast?: (message: string) => void;
@@ -87,6 +92,7 @@ function SlayTipEngagementCard({
     key,
     summary,
     contentTitle,
+    allowAnonymousLocal: true,
     onRequireAuth: () => onEngagementRequireSignIn?.(),
     onPatch: (patch) => patchSummary(key, patch),
     onError: (msg) => engagementToast?.(msg),
@@ -133,13 +139,17 @@ function SlayTipDiscoveryBoard({
   unlocks,
   isUnlocked,
   embeddedSection,
+  surface = 'compact',
+  onOpenHub,
   onEngagementRequireSignIn,
   onEngagementOpenSlayTipDiscussion,
   engagementToast,
 }: Omit<SlayTipRowProps, 'emptyLabel' | 'railId' | 'discoveryBoard'>) {
   const stageId = useId();
-  const [expanded, setExpanded] = useState(false);
+  const hubMode = surface === 'hub';
+  const [expanded, setExpanded] = useState(hubMode);
   const [activeFilter, setActiveFilter] = useState<SlayTipDiscoveryFilter>('ALL');
+  const isCategoryFiltered = activeFilter !== 'ALL';
 
   const engagementItems = useMemo(() => tips.map((tip) => engagementKeyForSlayTip(tip)), [tips]);
   const { map: summaryMap, patchSummary } = useLoungeEngagementSummaries(engagementItems);
@@ -147,34 +157,48 @@ function SlayTipDiscoveryBoard({
   const filteredTips = useMemo(
     () =>
       tips.filter((tip) => {
-        const summary = summaryMap.get(engagementItemKey(engagementKeyForSlayTip(tip)));
+        const key = engagementKeyForSlayTip(tip);
+        const summary = summaryMap.get(engagementItemKey(key));
         return slayTipMatchesDiscoveryFilter(tip, activeFilter, {
-          viewerHelpful: summary?.viewerHelpful,
+          viewerHelpful: resolveLearnBrowseViewerHelpful(key, summary),
         });
       }),
     [tips, activeFilter, summaryMap],
   );
 
-  const visibleTips = expanded
-    ? filteredTips
-    : filteredTips.slice(0, SLAY_TIPS_PREVIEW_COUNT);
+  const visibleTips =
+    hubMode || expanded || isCategoryFiltered
+      ? filteredTips
+      : filteredTips.slice(0, SLAY_TIPS_PREVIEW_COUNT);
 
-  const toggleExpanded = useCallback(() => {
-    setExpanded((prev) => !prev);
-  }, []);
+  const handleTipSelect = useCallback(
+    (tip: SlayTip) => {
+      if (hubMode) {
+        onSelect(tip);
+        return;
+      }
+      setExpanded(true);
+    },
+    [hubMode, onSelect],
+  );
 
   const sectionFooterGap = embeddedSection ? '0' : loungeTvGlassCqw(2.5, 6, 12);
 
   return (
     <section
-      data-lounge-tv-rail="learn-slay-tips-discovery"
+      data-lounge-tv-rail={hubMode ? 'learn-hub-slay-tips-board' : 'learn-slay-tips-discovery'}
       className="lounge-tv-slay-tips-discovery-section"
       style={{ marginBottom: sectionFooterGap, width: '100%', minWidth: 0 }}
     >
-      <header>
-        <LearnSectionTitle title={title} />
-        <LearnSectionTagline spacingVariant="browse">{SLAY_TIPS_DISCOVERY_TAGLINE}</LearnSectionTagline>
-      </header>
+      {!hubMode ? (
+        <LearnSectionNavHeader
+          title={title}
+          tagline={SLAY_TIPS_DISCOVERY_TAGLINE}
+          onNavigate={onOpenHub}
+          focusId={LEARN_HUB_NAV_FOCUS_IDS['slay-tips']}
+          taglineSpacing="browse"
+        />
+      ) : null}
 
       <LearnBrowseFilters
         filters={SLAY_TIP_DISCOVERY_FILTERS}
@@ -186,19 +210,22 @@ function SlayTipDiscoveryBoard({
         renderFilterContent={renderLearnLikesFilterContent}
       />
 
-      <LearnSectionHeaderRow
-        meta={`${filteredTips.length} TIP${filteredTips.length === 1 ? '' : 'S'}`}
-        toggle={
-          <LearnSectionViewAllToggle
-            expanded={expanded}
-            onToggle={toggleExpanded}
-            expandLabel="VIEW ALL TIPS >"
-            collapseLabel="COLLAPSE"
-            focusId="slay-tips-view-all"
-            controlsId={stageId}
-          />
-        }
-      />
+      {!hubMode ? (
+        <LearnSectionHeaderRow
+          meta={`${filteredTips.length} TIP${filteredTips.length === 1 ? '' : 'S'}`}
+          toggle={
+            onOpenHub ? (
+              <LearnSectionViewAllLink
+                label="VIEW ALL TIPS >"
+                onNavigate={onOpenHub}
+                focusId="slay-tips-view-all"
+              />
+            ) : null
+          }
+        />
+      ) : (
+        <LearnSectionHeaderRow meta={`${filteredTips.length} TIP${filteredTips.length === 1 ? '' : 'S'}`} toggle={null} />
+      )}
 
       {activeFilter === 'LIKES' && filteredTips.length === 0 ? (
         <div className="lounge-tv-slay-tips-likes-empty">
@@ -210,12 +237,17 @@ function SlayTipDiscoveryBoard({
       {visibleTips.length > 0 ? (
         <div
           id={stageId}
-          className={
-            expanded
-              ? 'lounge-tv-slay-tips-stage lounge-tv-slay-tips-stage--expanded'
-              : 'lounge-tv-slay-tips-stage lounge-tv-slay-tips-stage--preview'
-          }
-          data-lounge-tv-slay-tips-expanded={expanded ? 'true' : 'false'}
+          className={[
+            'lounge-tv-slay-tips-stage',
+            hubMode || expanded
+              ? 'lounge-tv-slay-tips-stage--expanded'
+              : 'lounge-tv-slay-tips-stage--preview',
+            isCategoryFiltered ? 'lounge-tv-slay-tips-stage--filtered' : '',
+          ]
+            .filter(Boolean)
+            .join(' ')}
+          data-lounge-tv-slay-tips-expanded={hubMode || expanded ? 'true' : 'false'}
+          data-lounge-tv-slay-tips-filtered={isCategoryFiltered ? 'true' : 'false'}
           style={{ width: '100%', minWidth: 0, maxWidth: '100%' }}
         >
           <div
@@ -223,17 +255,30 @@ function SlayTipDiscoveryBoard({
             data-slay-tips-board-version="grid-v3"
             style={{ width: '100%', minWidth: 0, maxWidth: '100%' }}
           >
-            <div className="lounge-tv-slay-tips-pinboard">
+            <div
+              className={[
+                'lounge-tv-slay-tips-pinboard',
+                isCategoryFiltered ? 'lounge-tv-slay-tips-pinboard--filtered' : '',
+              ]
+                .filter(Boolean)
+                .join(' ')}
+            >
             {visibleTips.map((tip, index) => (
               <SlayTipEngagementCard
                 key={tip.id}
                 tip={tip}
-                onSelect={onSelect}
+                onSelect={handleTipSelect}
                 unlocks={unlocks}
                 isUnlocked={isUnlocked}
-                pinArchetype={slayTipPinArchetypeForIndex(index)}
+                pinArchetype={
+                  isCategoryFiltered ? 'portrait' : slayTipPinArchetypeForIndex(index)
+                }
                 pinIndex={index}
-                pinGridPlacement={slayTipPinGridPlacement(index)}
+                pinGridPlacement={
+                  isCategoryFiltered
+                    ? slayTipFilteredGridPlacement(index)
+                    : slayTipPinGridPlacement(index)
+                }
                 variant="discovery"
                 summaryMap={summaryMap}
                 patchSummary={patchSummary}
@@ -323,6 +368,8 @@ export function SlayTipRow({
   railId = 'slay-tips',
   embeddedSection = false,
   discoveryBoard = railId === 'slay-tips',
+  surface = 'compact',
+  onOpenHub,
   onEngagementRequireSignIn,
   onEngagementOpenSlayTipDiscussion,
   engagementToast,
@@ -337,6 +384,8 @@ export function SlayTipRow({
         unlocks={unlocks}
         isUnlocked={isUnlocked}
         embeddedSection={embeddedSection}
+        surface={surface}
+        onOpenHub={onOpenHub}
         onEngagementRequireSignIn={onEngagementRequireSignIn}
         onEngagementOpenSlayTipDiscussion={onEngagementOpenSlayTipDiscussion}
         engagementToast={engagementToast}

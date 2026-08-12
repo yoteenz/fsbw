@@ -7,6 +7,8 @@ import { createPortal } from 'react-dom';
 import ThumbBox from '../../../components/ThumbBox';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import LoadingScreen from '../../../components/base/LoadingScreen';
+import { usePageLoadGate } from '../../../hooks/usePageLoadGate';
+import { BAW_MARBLE_BACKGROUND_SRC } from '../../../utils/pageLoadReadiness';
 import ConfirmationModal from '../../../components/ConfirmationModal';
 import BuildAWigFeatureSignInModal from '../../../components/BuildAWigFeatureSignInModal';
 import ImageViewerModal, { type ImageViewerDownloadLink } from '../../../components/ImageViewerModal';
@@ -187,7 +189,7 @@ function NoirSelection() {
   });
   const [selectedCustomCap, setSelectedCustomCap] = useState('M');
   const [selectedFlexibleCap, setSelectedFlexibleCap] = useState('');
-  const [showLoading, setShowLoading] = useState(true);
+  const showLoading = usePageLoadGate({ imageUrls: [BAW_MARBLE_BACKGROUND_SRC] });
   const [quantity, setQuantity] = useState(1);
   const [showChartModal, setShowChartModal] = useState(false);
   const [selectedMannequinView, setSelectedMannequinView] = useState(0);
@@ -2055,18 +2057,6 @@ function NoirSelection() {
   };
 
   const totalPrice = getTotalPrice();
-
-  useEffect(() => {
-    // Hide loading screen immediately for testing
-    setShowLoading(false);
-    
-    // Hide loading screen after 2 seconds (original behavior)
-    // const timer = setTimeout(() => {
-    //   setShowLoading(false);
-    // }, 2000);
-
-    // return () => clearTimeout(timer);
-  }, []);
 
   // CRITICAL: Clear edit/customize localStorage price values on page load
   // This ensures the units/noir page price is NOT affected by cart items in edit/customize mode

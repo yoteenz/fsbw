@@ -41,7 +41,29 @@ import { slayTicketPackPdpPath } from '../../utils/slayTicketPacks';
 import { useSceneHitRegionConfig } from '../lobby/SceneHitLayoutEditorContext';
 import { LoungeTvFeaturedHome, LoungeTvLessonHub } from './LoungeTvFeaturedHome';
 import { LoungeTvLearnPanel } from './LoungeTvLearnPanel';
+import { LoungeTvLearnHubPanel } from './LoungeTvLearnHubPanel';
+import type { LearnHubId } from './education/learnHubTypes';
+import { LEARN_HUB_NAV_FOCUS_IDS } from './education/learnHubTypes';
+import {
+  clearLearnReturnHub,
+  readLearnReturnHub,
+  setLearnReturnHub,
+} from '../../utils/learnHubSession';
 import { LoungeTvExplorePanel } from './LoungeTvExplorePanel';
+import { SlayForecastHubPanel } from './explore/slay-forecast/SlayForecastHubPanel';
+import { SlayForecastSignalDetail } from './explore/slay-forecast/SlayForecastSignalDetail';
+import { TrendReportEditorialView } from './explore/trend-reports/TrendReportEditorialView';
+import {
+  getCurrentForecastEdition,
+  getForecastEditionById,
+  resolveEditionSignalDetailIds,
+} from '../../content/slay-forecast';
+import { getTrendReportEditorial, isTrendReportPackId } from '../../content/trend-reports';
+import {
+  clearSlayForecastReturn,
+  readSlayForecastReturn,
+  setSlayForecastReturn,
+} from '../../utils/slayForecastSession';
 import { LoungeTvLivePanel } from './LoungeTvLivePanel';
 import { LoungeTvContentDetail } from './LoungeTvContentDetail';
 import { LoungeTvTopNav } from './LoungeTvTopNav';
@@ -205,6 +227,11 @@ export function LoungeTvScreen({
   const activePack = useMemo(() => {
     if (
       viewState.kind === 'browse' ||
+      viewState.kind === 'learn-hub' ||
+      viewState.kind === 'slay-forecast-hub' ||
+      viewState.kind === 'slay-forecast-history' ||
+      viewState.kind === 'slay-forecast-signal' ||
+      viewState.kind === 'trend-report' ||
       viewState.kind === 'psa-episode' ||
       viewState.kind === 'slay-tip' ||
       viewState.kind === 'psa-answer' ||
@@ -439,6 +466,7 @@ export function LoungeTvScreen({
         return;
       }
       setViewState({ kind: 'browse' });
+      clearSlayForecastReturn();
       onMainTabChange(tab);
     },
     [mainTab, onMainTabChange, viewState.kind]
@@ -489,9 +517,23 @@ export function LoungeTvScreen({
     setViewState({ kind: 'care-lesson', lessonId: lesson.id });
   }, [mainTab]);
 
+  const openTrendReport = useCallback(
+    (pack: LoungeContentPack) => {
+      if (!isTrendReportPackId(pack.id)) return;
+      saveLoungeTvFocusMemory({ mainTab: 'explore', focusId: pack.id });
+      setRestoreFocusId(pack.id);
+      setViewState({ kind: 'trend-report', packId: pack.id });
+    },
+    [mainTab],
+  );
+
   const playPack = useCallback(
     (pack: LoungeContentPack) => {
       if (!requestContentAccess(pack)) return;
+      if (isTrendReportPackId(pack.id)) {
+        openTrendReport(pack);
+        return;
+      }
       const format = resolveContentPackFormat(pack);
       if (mainTab === 'learn') {
         setViewState({ kind: 'lesson', packId: pack.id });
@@ -503,11 +545,15 @@ export function LoungeTvScreen({
       }
       setViewState({ kind: 'video', packId: pack.id });
     },
-    [mainTab, requestContentAccess]
+    [mainTab, openTrendReport, requestContentAccess]
   );
 
   const openPack = useCallback(
     (pack: LoungeContentPack) => {
+      if (isTrendReportPackId(pack.id)) {
+        openTrendReport(pack);
+        return;
+      }
       const psaEpisode = getPsaTodayEpisodeForContentPack(pack.id);
       if (psaEpisode) {
         saveLoungeTvFocusMemory({ mainTab, focusId: pack.id });
@@ -538,7 +584,7 @@ export function LoungeTvScreen({
       setRestoreFocusId(pack.id);
       setViewState({ kind: 'detail', packId: pack.id });
     },
-    [mainTab, openPsaEpisode, openPsaAnswer, openProductBreakdown]
+    [mainTab, openPsaEpisode, openPsaAnswer, openProductBreakdown, openTrendReport]
   );
 
   const openMastery = useCallback(
@@ -566,8 +612,215 @@ export function LoungeTvScreen({
   const goBackToBrowse = useCallback(() => {
     const active = document.activeElement;
     if (active instanceof HTMLElement) active.blur();
+    const forecastReturn = readSlayForecastReturn();
+    if (forecastReturn?.kind === 'signal') {
+      setViewState({
+        kind: 'slay-forecast-signal',
+        seasonId: forecastReturn.seasonId,
+        signalId: forecastReturn.signalId,
+        editionId: forecastReturn.editionId,
+      });
+      clearSlayForecastReturn();
+      return;
+    }
+    if (forecastReturn?.kind === 'hub') {
+      setViewState({ kind: 'slay-forecast-hub', editionId: forecastReturn.editionId });
+      clearSlayForecastReturn();
+      return;
+    }
+    if (forecastReturn?.kind === 'trend-report') {
+      setViewState({ kind: 'trend-report', packId: forecastReturn.packId });
+      clearSlayForecastReturn();
+      return;
+    }
+    if (forecastReturn?.kind === 'history') {
+      setViewState({
+        kind: 'slay-forecast-history',
+        editionId: forecastReturn.editionId,
+      });
+      clearSlayForecastReturn();
+      return;
+    }
+    clearLearnReturnHub();
+    clearSlayForecastReturn();
     setViewState({ kind: 'browse' });
   }, []);
+
+  const goBackFromDetail = useCallback(() => {
+    const active = document.activeElement;
+    if (active instanceof HTMLElement) active.blur();
+    const forecastReturn = readSlayForecastReturn();
+    if (forecastReturn?.kind === 'signal') {
+      setViewState({
+        kind: 'slay-forecast-signal',
+        seasonId: forecastReturn.seasonId,
+        signalId: forecastReturn.signalId,
+        editionId: forecastReturn.editionId,
+      });
+      clearSlayForecastReturn();
+      return;
+    }
+    if (forecastReturn?.kind === 'hub') {
+      setViewState({ kind: 'slay-forecast-hub', editionId: forecastReturn.editionId });
+      clearSlayForecastReturn();
+      return;
+    }
+    if (forecastReturn?.kind === 'history') {
+      setViewState({
+        kind: 'slay-forecast-history',
+        editionId: forecastReturn.editionId,
+      });
+      clearSlayForecastReturn();
+      return;
+    }
+    if (forecastReturn?.kind === 'trend-report') {
+      setViewState({ kind: 'trend-report', packId: forecastReturn.packId });
+      clearSlayForecastReturn();
+      return;
+    }
+    const hub = readLearnReturnHub();
+    if (hub) setViewState({ kind: 'learn-hub', hub });
+    else setViewState({ kind: 'browse' });
+  }, []);
+
+  const openLearnHub = useCallback(
+    (hub: LearnHubId) => {
+      const focusId = LEARN_HUB_NAV_FOCUS_IDS[hub];
+      saveLoungeTvFocusMemory({ mainTab, focusId });
+      setRestoreFocusId(focusId);
+      clearLearnReturnHub();
+      clearSlayForecastReturn();
+      setViewState({ kind: 'learn-hub', hub });
+    },
+    [mainTab],
+  );
+
+  const openSlayForecastHub = useCallback((editionId?: string) => {
+    const edition = editionId ? getForecastEditionById(editionId) : getCurrentForecastEdition();
+    if (!edition) return;
+    saveLoungeTvFocusMemory({ mainTab: 'explore', focusId: 'explore-slay-forecast-enter' });
+    setRestoreFocusId('explore-slay-forecast-enter');
+    clearSlayForecastReturn();
+    setViewState({ kind: 'slay-forecast-hub', editionId: edition.id });
+  }, []);
+
+  const openSlayForecastHistory = useCallback((editionId?: string) => {
+    saveLoungeTvFocusMemory({ mainTab: 'explore', focusId: 'forecast-history-view-all' });
+    setRestoreFocusId('forecast-history-view-all');
+    clearSlayForecastReturn();
+    setViewState({
+      kind: 'slay-forecast-history',
+      editionId: editionId ?? getCurrentForecastEdition()?.id,
+    });
+  }, []);
+
+  const openSlayForecastSignal = useCallback(
+    (seasonId: string, signalId: string, editionId?: string) => {
+      saveLoungeTvFocusMemory({ mainTab: 'explore', focusId: `forecast-radar-${signalId}` });
+      setRestoreFocusId(`forecast-radar-${signalId}`);
+      setViewState({ kind: 'slay-forecast-signal', seasonId, signalId, editionId });
+    },
+    [],
+  );
+
+  const goBackFromSlayForecastSignal = useCallback(() => {
+    if (viewState.kind !== 'slay-forecast-signal') {
+      goBackToBrowse();
+      return;
+    }
+    const editionId =
+      viewState.editionId ??
+      getForecastEditionById(viewState.seasonId)?.id ??
+      getCurrentForecastEdition()?.id;
+    if (editionId) {
+      setViewState({ kind: 'slay-forecast-hub', editionId });
+      return;
+    }
+    goBackToBrowse();
+  }, [goBackToBrowse, viewState]);
+
+  const goBackFromSlayForecastHistory = useCallback(() => {
+    if (viewState.kind !== 'slay-forecast-history') {
+      goBackToBrowse();
+      return;
+    }
+    const editionId = viewState.editionId ?? getCurrentForecastEdition()?.id;
+    if (editionId) {
+      setViewState({ kind: 'slay-forecast-hub', editionId });
+      return;
+    }
+    goBackToBrowse();
+  }, [goBackToBrowse, viewState]);
+
+  const openPackFromSlayForecast = useCallback(
+    (pack: LoungeContentPack, returnView: { seasonId: string; signalId: string; editionId?: string }) => {
+      setSlayForecastReturn({ kind: 'signal', ...returnView });
+      openPack(pack);
+    },
+    [openPack],
+  );
+
+  const openTrendReportFromSlayForecast = useCallback(
+    (packId: string, returnEditionId: string) => {
+      const pack = resolveContentPack(packId);
+      if (!pack) return;
+      setSlayForecastReturn({ kind: 'hub', editionId: returnEditionId });
+      openTrendReport(pack);
+    },
+    [openTrendReport],
+  );
+
+  const openMasteryFromSlayForecast = useCallback(
+    (masteryId: string, returnView: { seasonId: string; signalId: string; editionId?: string }) => {
+      setSlayForecastReturn({ kind: 'signal', ...returnView });
+      openMastery(masteryId);
+    },
+    [openMastery],
+  );
+
+  const openMasteryFromHub = useCallback(
+    (hub: LearnHubId, masteryId: string) => {
+      setLearnReturnHub(hub);
+      openMastery(masteryId);
+    },
+    [openMastery],
+  );
+
+  const openSlayTipFromLearn = useCallback(
+    (tip: SlayTip, fromHub?: LearnHubId) => {
+      if (fromHub) setLearnReturnHub(fromHub);
+      else clearLearnReturnHub();
+      openSlayTip(tip);
+    },
+    [openSlayTip],
+  );
+
+  const openPsaAnswerFromLearn = useCallback(
+    (entry: PsaAnswerPresentationEntry, fromHub?: LearnHubId) => {
+      if (fromHub) setLearnReturnHub(fromHub);
+      else clearLearnReturnHub();
+      openPsaAnswer(entry);
+    },
+    [openPsaAnswer],
+  );
+
+  const openProductBreakdownFromLearn = useCallback(
+    (entry: ProductBreakdownPresentationEntry, fromHub?: LearnHubId) => {
+      if (fromHub) setLearnReturnHub(fromHub);
+      else clearLearnReturnHub();
+      openProductBreakdown(entry);
+    },
+    [openProductBreakdown],
+  );
+
+  const openPsaEpisodeFromLearn = useCallback(
+    (episode: PSATodayEpisode, fromHub?: LearnHubId) => {
+      if (fromHub) setLearnReturnHub(fromHub);
+      else clearLearnReturnHub();
+      openPsaEpisode(episode);
+    },
+    [openPsaEpisode],
+  );
 
   const confirmUnlockAndOpen = useCallback(async () => {
     const pack = unlockConfirmPack;
@@ -642,6 +895,10 @@ export function LoungeTvScreen({
         setRestoreFocusId('learn-care-library-view-all');
         return;
       }
+      if (viewState.kind === 'learn-hub') {
+        goBackToBrowse();
+        return;
+      }
       if (viewState.kind === 'detail') {
         goBackToBrowse();
         return;
@@ -658,7 +915,7 @@ export function LoungeTvScreen({
           viewState.kind === 'mastery' ||
           viewState.kind === 'season'
         ) {
-          setViewState({ kind: 'browse' });
+          goBackFromDetail();
         } else if (viewState.kind === 'lesson' || viewState.kind === 'article') {
           const pack = resolveContentPack(viewState.packId);
           if (pack) setViewState({ kind: 'detail', packId: pack.id });
@@ -764,10 +1021,15 @@ export function LoungeTvScreen({
         <div style={LOUNGE_TV_STACKED_SECTIONS_STYLE}>
           <LoungeTvLearnPanel
             onSelectMastery={openMastery}
-          onSelectPack={openPack}
-          onSelectPsaAnswer={openPsaAnswer}
-          onSelectProductBreakdown={openProductBreakdown}
-          onSelectSlayTip={openSlayTip}
+            onSelectEpisode={(episodeId) => {
+              const episode = getPsaTodayEpisodeById(episodeId);
+              if (episode) openPsaEpisodeFromLearn(episode);
+            }}
+            onOpenLearnHub={openLearnHub}
+            onSelectPack={openPack}
+            onSelectPsaAnswer={(entry) => openPsaAnswerFromLearn(entry)}
+            onSelectProductBreakdown={(entry) => openProductBreakdownFromLearn(entry)}
+            onSelectSlayTip={(tip) => openSlayTipFromLearn(tip)}
             onSelectCareLesson={openCareLesson}
             onToggleSave={onToggleSavePack}
             isUnlocked={isUnlocked}
@@ -803,6 +1065,8 @@ export function LoungeTvScreen({
           onToggleSave={onToggleSavePack}
           isUnlocked={isUnlocked}
           unlocks={unlocks}
+          onOpenSlayForecast={openSlayForecastHub}
+          onOpenSlayForecastSignal={openSlayForecastSignal}
           {...engagementRowProps}
         />
       );
@@ -830,13 +1094,123 @@ export function LoungeTvScreen({
   };
 
   const renderDetailContent = () => {
+    if (viewState.kind === 'slay-forecast-hub') {
+      return (
+        <SlayForecastHubPanel
+          editionId={viewState.editionId}
+          onBack={goBackToBrowse}
+          onSelectEdition={(editionId) => openSlayForecastHub(editionId)}
+          onSelectSignal={(editionId, signal) => {
+            const edition = getForecastEditionById(editionId);
+            if (!edition) return;
+            const detail = resolveEditionSignalDetailIds(edition, signal.id);
+            if (detail) {
+              openSlayForecastSignal(detail.seasonId, detail.signalId, editionId);
+            }
+          }}
+          onOpenTrendReport={(packId) => openTrendReportFromSlayForecast(packId, viewState.editionId)}
+          onViewForecastHistory={() => openSlayForecastHistory(viewState.editionId)}
+        />
+      );
+    }
+
+    if (viewState.kind === 'slay-forecast-history') {
+      const editionId = viewState.editionId ?? getCurrentForecastEdition()?.id;
+      if (!editionId) return null;
+      return (
+        <SlayForecastHubPanel
+          editionId={editionId}
+          showHistoryOnly
+          onBack={goBackFromSlayForecastHistory}
+          onSelectEdition={(nextEditionId) => openSlayForecastHub(nextEditionId)}
+          onSelectSignal={(nextEditionId, signal) => {
+            const edition = getForecastEditionById(nextEditionId);
+            if (!edition) return;
+            const detail = resolveEditionSignalDetailIds(edition, signal.id);
+            if (detail) {
+              openSlayForecastSignal(detail.seasonId, detail.signalId, nextEditionId);
+            }
+          }}
+        />
+      );
+    }
+
+    if (viewState.kind === 'slay-forecast-signal') {
+      return (
+        <SlayForecastSignalDetail
+          seasonId={viewState.seasonId}
+          signalId={viewState.signalId}
+          onBack={goBackFromSlayForecastSignal}
+          onOpenSignal={openSlayForecastSignal}
+          onOpenContentPack={(packId) => {
+            const pack = resolveContentPack(packId);
+            if (pack) {
+              openPackFromSlayForecast(pack, {
+                seasonId: viewState.seasonId,
+                signalId: viewState.signalId,
+                editionId: viewState.editionId,
+              });
+            }
+          }}
+          onOpenMastery={(masteryId) =>
+            openMasteryFromSlayForecast(masteryId, {
+              seasonId: viewState.seasonId,
+              signalId: viewState.signalId,
+              editionId: viewState.editionId,
+            })
+          }
+        />
+      );
+    }
+
+    if (viewState.kind === 'trend-report') {
+      const editorial = getTrendReportEditorial(viewState.packId);
+      if (!editorial) return null;
+      return (
+        <TrendReportEditorialView
+          editorial={editorial}
+          onBack={goBackToBrowse}
+          onOpenForecast={(editionId) => {
+            setSlayForecastReturn({ kind: 'trend-report', packId: editorial.packId });
+            openSlayForecastHub(editionId);
+          }}
+        />
+      );
+    }
+
+    if (viewState.kind === 'learn-hub') {
+      return (
+        <LoungeTvLearnHubPanel
+          hub={viewState.hub}
+          onBack={goBackToBrowse}
+          onSelectMastery={(masteryId) => openMasteryFromHub(viewState.hub, masteryId)}
+          onSelectEpisode={(episodeId) => {
+            const episode = getPsaTodayEpisodeById(episodeId);
+            if (episode) openPsaEpisodeFromLearn(episode, viewState.hub);
+          }}
+          onSelectSlayTip={(tip) => openSlayTipFromLearn(tip, viewState.hub)}
+          onSelectPsaAnswer={(entry) => openPsaAnswerFromLearn(entry, viewState.hub)}
+          onSelectPack={openPack}
+          onOpenProductBreakdown={(entry) => openProductBreakdownFromLearn(entry, viewState.hub)}
+          onToggleSave={onToggleSavePack}
+          onOpenCareLibrary={() => {
+            setCareLibraryOpen(true);
+            goBackToBrowse();
+          }}
+          isUnlocked={isUnlocked}
+          unlocks={unlocks}
+          {...engagementRowProps}
+        />
+      );
+    }
+
     if (viewState.kind === 'mastery') {
       const mastery = getEducationMasteryById(viewState.masteryId);
       if (!mastery) return null;
       return (
         <EducationMasteryView
           mastery={mastery}
-          onBack={() => setViewState({ kind: 'browse' })}
+          onBack={goBackFromDetail}
           onSelectSeason={openSeason}
           onSelectEpisode={(episodeId) => setViewState({ kind: 'psa-episode', episodeId })}
         />
@@ -871,7 +1245,7 @@ export function LoungeTvScreen({
         <CareLessonViewer
           lesson={activeCareLesson}
           unlocked={isCareUnlocked(activeCareLesson.id)}
-          onBack={() => setViewState({ kind: 'browse' })}
+          onBack={goBackFromDetail}
         />
       );
     }
@@ -880,7 +1254,7 @@ export function LoungeTvScreen({
       return (
         <PsaAnswerViewer
           entry={activePsaAnswer}
-          onBack={() => setViewState({ kind: 'browse' })}
+          onBack={goBackFromDetail}
           onViewRelatedAnswer={openPsaAnswer}
           onViewRelatedPsa={openPsaEpisode}
           onViewDeeperSeason={openSeason}
@@ -896,7 +1270,7 @@ export function LoungeTvScreen({
       return (
         <ProductBreakdownViewer
           entry={activeProductBreakdown}
-          onBack={() => setViewState({ kind: 'browse' })}
+          onBack={goBackFromDetail}
           onViewRelatedPsa={openPsaEpisode}
           onViewRelatedSlayTip={openSlayTip}
           onViewDeeperSeason={openSeason}
@@ -912,7 +1286,7 @@ export function LoungeTvScreen({
       return (
         <SlayTipViewer
           tip={activeSlayTip}
-          onBack={() => setViewState({ kind: 'browse' })}
+          onBack={goBackFromDetail}
           onViewRelatedPsa={openPsaEpisode}
           onViewRelatedSlayTip={openSlayTip}
           onViewDeeperSeason={openSeason}
@@ -929,7 +1303,7 @@ export function LoungeTvScreen({
       return (
         <PSATodayEpisodeView
           episode={activePsaEpisode}
-          onBack={() => setViewState({ kind: 'browse' })}
+          onBack={goBackFromDetail}
           unlocks={unlocks}
           isUnlocked={isUnlocked}
           onTicketsRefresh={refresh}

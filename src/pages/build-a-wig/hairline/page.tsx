@@ -4,6 +4,8 @@ import { useSyncMenuToggleOpenState } from '../../../utils/menuToggleOpenState';
 import { useNavigate, useLocation } from 'react-router-dom';
 import ThumbBox from '../../../components/ThumbBox';
 import LoadingScreen from '../../../components/base/LoadingScreen';
+import { usePageLoadGate } from '../../../hooks/usePageLoadGate';
+import { BAW_MARBLE_BACKGROUND_SRC } from '../../../utils/pageLoadReadiness';
 import ConfirmationModal from '../../../components/ConfirmationModal';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
@@ -47,7 +49,7 @@ function HairlineSelection() {
   const navigate = useNavigate();
   const location = useLocation();
   const premiumMembershipStepModal = useBuildWigPremiumMembershipStepGate();
-  const [showLoading, setShowLoading] = useState(true);
+  const showLoading = usePageLoadGate({ imageUrls: [BAW_MARBLE_BACKGROUND_SRC] });
   const [selectedHairline, setSelectedHairline] = useState<string[]>(() => {
     const pathname = window.location.pathname;
     const isOnEditRoute = pathname.includes('/edit');
@@ -412,15 +414,6 @@ function HairlineSelection() {
   };
 
   const totalPrice = getSelectedPrice();
-
-  useEffect(() => {
-    // Hide loading screen after 2 seconds
-    const timer = setTimeout(() => {
-      setShowLoading(false);
-    }, 2000);
-
-    return () => clearTimeout(timer);
-  }, []);
 
   return (
     <BuildWigSubscriptionPageRoot>

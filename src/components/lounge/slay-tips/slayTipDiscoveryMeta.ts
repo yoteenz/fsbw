@@ -176,6 +176,12 @@ export function slayTipPinGridSpansTwoRows(index: number): boolean {
   return index % SLAY_TIPS_EDITORIAL_BAND_SIZE === 0;
 }
 
+/** Two-column portrait placement when a category/LIKES filter yields a partial board. */
+export function slayTipFilteredGridPlacement(index: number): CSSProperties {
+  const colStart = index % 2 === 0 ? 1 : 4;
+  return { gridColumn: `${colStart} / span 3`, gridRow: 'auto' };
+}
+
 export function slayTipImageCropForPin(index: number, archetype: SlayTipPinArchetype): string {
   const crops = PIN_IMAGE_CROPS[archetype];
   return crops[index % crops.length];

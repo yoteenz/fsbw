@@ -139,7 +139,15 @@ export const loungeTvGlassPanelStyle: CSSProperties = {
   WebkitBackdropFilter: 'blur(6px)',
 };
 
-export function LoungeTvBackButton({ onClick, label = '< BACK' }: { onClick: () => void; label?: string }) {
+export function LoungeTvBackButton({
+  onClick,
+  label = '< BACK',
+  fontSize,
+}: {
+  onClick: () => void;
+  label?: string;
+  fontSize?: string;
+}) {
   return (
     <button
       type="button"
@@ -153,7 +161,7 @@ export function LoungeTvBackButton({ onClick, label = '< BACK' }: { onClick: () 
         border: 'none',
         background: 'none',
         fontFamily: LOUNGE_TV_FONT_MEDIUM,
-        fontSize: LOUNGE_TV_TYPE.l3,
+        fontSize: fontSize ?? LOUNGE_TV_TYPE.l3,
         letterSpacing: '0.06em',
         color: LOUNGE_TV_BRAND_RED,
         cursor: 'pointer',

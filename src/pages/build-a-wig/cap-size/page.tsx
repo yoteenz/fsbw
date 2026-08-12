@@ -4,6 +4,8 @@ import { useSyncMenuToggleOpenState } from '../../../utils/menuToggleOpenState';
 import { useNavigate, useLocation } from 'react-router-dom';
 import ThumbBox from '../../../components/ThumbBox';
 import LoadingScreen from '../../../components/base/LoadingScreen';
+import { usePageLoadGate } from '../../../hooks/usePageLoadGate';
+import { BAW_MARBLE_BACKGROUND_SRC } from '../../../utils/pageLoadReadiness';
 import ConfirmationModal from '../../../components/ConfirmationModal';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
@@ -109,7 +111,7 @@ function CapSizeSelection() {
     }
   }, [location.pathname]); // Only reload when route changes, not when selectedCapSize changes
   const [selectedView, setSelectedView] = useState(1); // Changed from 0 to 1 (middle image)
-  const [showLoading, setShowLoading] = useState(true);
+  const showLoading = usePageLoadGate({ imageUrls: [BAW_MARBLE_BACKGROUND_SRC] });
 
   // Mobile menu state
   const [showMobileMenu, setShowMobileMenu] = useState(false);
@@ -424,15 +426,6 @@ function CapSizeSelection() {
   };
 
   const totalPrice = getSelectedPrice();
-
-  useEffect(() => {
-    // Hide loading screen after 2 seconds
-    const timer = setTimeout(() => {
-      setShowLoading(false);
-    }, 2000);
-
-    return () => clearTimeout(timer);
-  }, []);
 
   // Initialize with edit mode or customize mode data if available
   useEffect(() => {
