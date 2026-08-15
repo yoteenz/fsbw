@@ -103,6 +103,7 @@ type DemoStoreV8 = Omit<
   | 'coverageHistory'
   | 'brokerageCounters'
   | 'shipperPortalOrgId'
+  | 'brokeragePortalClientId'
 > & { version: 8 };
 
 function upgradeStoreV8ToV9(store: DemoStoreV8): DemoStore {
@@ -112,6 +113,7 @@ function upgradeStoreV8ToV9(store: DemoStoreV8): DemoStore {
     ...store,
     version: 9,
     shipperPortalOrgId: 'client-e',
+    brokeragePortalClientId: 'client-b',
     brokerageCapability: brokerage.capability,
     shipperProfiles: brokerage.shipperProfiles,
     shipmentRequests: brokerage.shipmentRequests,

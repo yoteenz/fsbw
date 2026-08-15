@@ -29,6 +29,15 @@ export function getShipperOrganizationId(store: DemoStore = loadDemoStore()): st
   return store.shipperPortalOrgId ?? 'client-e';
 }
 
+/** Resolves carrier org for brokerage portal — defaults to Heartland demo when portal org has no network profile. */
+export function getCarrierPortalOrganizationId(store: DemoStore = loadDemoStore()): string {
+  const portalOrg = store.portalClientId ?? store.clients[0]?.id ?? 'client-a';
+  const hasNetwork = store.carrierNetworkProfiles.some((p) => p.organizationId === portalOrg);
+  const hasOffers = store.carrierOffers.some((o) => o.carrierOrganizationId === portalOrg);
+  if (hasNetwork || hasOffers) return portalOrg;
+  return store.brokeragePortalClientId ?? 'client-b';
+}
+
 export function getBrokerageMetrics(store: DemoStore = loadDemoStore()) {
   const loads = store.loads.filter((l) => l.sourceType === 'brokerage');
   return {

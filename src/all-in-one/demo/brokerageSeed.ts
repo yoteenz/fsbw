@@ -307,10 +307,14 @@ export function createBrokerageSeedData(): {
       originState: 'MI',
       destinationCity: 'Nashville',
       destinationState: 'TN',
-      operationalStatus: 'booked',
+      operationalStatus: 'opportunity',
+      offerStatus: 'draft',
       brokerName: 'All In One Brokerage (Demo)',
       pickupDate: daysAhead(1),
       deliveryDate: daysAhead(3),
+      linehaulMinor: 0,
+      grossMinor: 0,
+      confirmedGrossMinor: 0,
     }),
     mkLoad('br-load-b', 'BR-LD-2026-0002', {
       shipperOrganizationId: 'client-e',
@@ -406,8 +410,8 @@ export function createBrokerageSeedData(): {
       deliveryDate: daysAhead(-4),
     }),
     mkLoad('br-load-h', 'BR-LD-2026-0008', {
-      organizationId: 'client-g',
-      brokerageCarrierOrganizationId: 'client-g',
+      organizationId: 'client-d',
+      brokerageCarrierOrganizationId: 'client-d',
       brokerageCarrierNetworkProfileId: 'cn-blueline',
       shipperOrganizationId: 'client-e',
       brokerageCoverageStatus: 'booked',
@@ -487,18 +491,33 @@ export function createBrokerageSeedData(): {
     },
   ];
 
+  const financialScenarios: Record<
+    string,
+    { shipper: number; carrier: number; confirmedShipper: number; confirmedCarrier: number }
+  > = {
+    'br-load-a': { shipper: 3000, carrier: 0, confirmedShipper: 3000, confirmedCarrier: 0 },
+    'br-load-b': { shipper: 2800, carrier: 0, confirmedShipper: 2800, confirmedCarrier: 0 },
+    'br-load-c': { shipper: 2800, carrier: 1950, confirmedShipper: 2800, confirmedCarrier: 1950 },
+    'br-load-d': { shipper: 2800, carrier: 2400, confirmedShipper: 2800, confirmedCarrier: 2400 },
+    'br-load-e': { shipper: 2800, carrier: 2400, confirmedShipper: 2800, confirmedCarrier: 2400 },
+    'br-load-f': { shipper: 2800, carrier: 2400, confirmedShipper: 2800, confirmedCarrier: 2400 },
+    'br-load-g': { shipper: 3000, carrier: 2500, confirmedShipper: 3000, confirmedCarrier: 2500 },
+    'br-load-h': { shipper: 2200, carrier: 1800, confirmedShipper: 2200, confirmedCarrier: 1800 },
+  };
+
   const financials: BrokerageLoadFinancials[] = loads.map((l) => {
-    const shipper = l.id === 'br-load-g' ? dollarsToMinor(3000) : dollarsToMinor(2800);
-    const carrier = l.confirmedGrossMinor;
+    const scenario = financialScenarios[l.id] ?? { shipper: 2800, carrier: l.confirmedGrossMinor, confirmedShipper: 0, confirmedCarrier: 0 };
+    const shipperMinor = dollarsToMinor(scenario.shipper);
+    const carrierMinor = dollarsToMinor(scenario.carrier);
     return {
       loadId: l.id,
-      shipperChargeMinor: shipper,
-      carrierLinehaulMinor: carrier,
+      shipperChargeMinor: shipperMinor,
+      carrierLinehaulMinor: carrierMinor,
       carrierFuelSurchargeMinor: 0,
       carrierAccessorialMinor: 0,
-      totalCarrierPayMinor: carrier,
-      confirmedShipperChargeMinor: l.operationalStatus === 'complete' || l.operationalStatus === 'pod_needed' ? shipper : 0,
-      confirmedCarrierPayMinor: ['booked', 'in_transit', 'pod_needed', 'complete'].includes(l.operationalStatus) ? carrier : 0,
+      totalCarrierPayMinor: carrierMinor,
+      confirmedShipperChargeMinor: dollarsToMinor(scenario.confirmedShipper),
+      confirmedCarrierPayMinor: dollarsToMinor(scenario.confirmedCarrier),
       currency: 'USD',
       version: 1,
       updatedAt: isoNow(),
@@ -549,7 +568,7 @@ export function createBrokerageSeedData(): {
       id: 'cp-h',
       loadId: 'br-load-h',
       carrierNetworkProfileId: 'cn-blueline',
-      carrierOrganizationId: 'client-g',
+      carrierOrganizationId: 'client-d',
       confirmedAmountMinor: dollarsToMinor(1800),
       accessorialAmountMinor: 0,
       deductionsMinor: 0,

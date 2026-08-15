@@ -355,6 +355,8 @@ export interface DemoStore {
   requestCounter: number;
   portalClientId?: string;
   shipperPortalOrgId?: string;
+  /** Demo default org for carrier brokerage portal (Heartland Freight). */
+  brokeragePortalClientId?: string;
   intake: IntakeAnswers;
   roadmap: RoadmapResult | null;
   servicePlan: ServicePlanItem[];

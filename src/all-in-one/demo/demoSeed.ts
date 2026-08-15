@@ -45,6 +45,7 @@ export function createDemoSeed(): DemoStore {
     requestCounter: 4,
     portalClientId: 'client-a',
     shipperPortalOrgId: 'client-e',
+    brokeragePortalClientId: 'client-b',
     intake: defaultIntakeAnswers(),
     roadmap: null,
     servicePlan: [],

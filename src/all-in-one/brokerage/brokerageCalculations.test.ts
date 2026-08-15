@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { createBrokerageSeedData } from '../demo/brokerageSeed';
 import {
   computeBrokerageGrossMargin,
   computeCarrierPayableTotal,
@@ -33,5 +34,12 @@ describe('brokerageCalculations', () => {
 
   it('computes carrier payable total with deductions', () => {
     expect(computeCarrierPayableTotal(240_000, 10_000, 0)).toBe(250_000);
+  });
+
+  it('seeds demo load G with $3,000 shipper / $2,500 carrier / $500 margin', () => {
+    const fin = createBrokerageSeedData().financials.find((f) => f.loadId === 'br-load-g');
+    expect(fin?.confirmedShipperChargeMinor).toBe(300_000);
+    expect(fin?.confirmedCarrierPayMinor).toBe(250_000);
+    expect(computeBrokerageGrossMargin(fin!.confirmedShipperChargeMinor, fin!.confirmedCarrierPayMinor)).toBe(50_000);
   });
 });

@@ -51159,3 +51159,17 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Spatial Architecture Review:** SKIPPED — documentation-only sprint; no product surfaces changed.
 
+---
+
+## 2026-08-15 — All In One Sprint 10: Brokerage Operations + Shipper Portal + Carrier Network
+
+- **Context:** Founder issued full Sprint 10 spec — freight brokerage operating layer (shipper portal, carrier network, coverage, quotes, financial model, capability gate default `demo`). Must preserve **Dispatch ≠ Brokerage ≠ Factoring** and financial boundaries (shipper freight charge ≠ carrier pay ≠ gross margin ≠ Sprint 07 service invoice).
+
+- **Topics covered:** Core module `src/all-in-one/brokerage/` (types, config, rules, calculations + 10 vitest tests); demo store **v9** + `brokerageSeed.ts` + `brokerageActions.ts`; canonical Load extensions (`sourceType: brokerage`, shipper/brokerage metadata); shipper portal routes (`/shipper/*`); carrier brokerage portal (`/portal/brokerage/*`); office brokerage command center + readiness/shippers/coverage/carriers/finance/loads; notifications `BROKERAGE_*`; docs (4 new + 12 updated canon). Follow-up fixes: per-scenario demo financials (Load G $3k/$2.5k/$500 margin), `brokeragePortalClientId` for Heartland carrier demo, br-load-a needs-coverage status, br-load-h BlueLine org alignment, portal nav Brokerage link.
+
+- **Decisions / outcomes:** Sprint 10 COMPLETE in demo mode. `brokerageCapability: demo` default — not production-active. Single canonical Load for physical shipment; BSI-* shipper invoices distinct from AIO-* service and HF-* freight invoices. Build passes; vitest 10/10 brokerage tests; manual QA on office command center, finance closeout, shipper portal, carrier offers.
+
+- **Key routes:** `/debug/all-in-one/shipper/*`, `/debug/all-in-one/portal/brokerage/*`, `/debug/all-in-one/office/brokerage/*`.
+
+- **Spatial Architecture Review:** SKIPPED — isolated AIO namespace under `/debug/all-in-one`; no Frontal Slayer regression.
+

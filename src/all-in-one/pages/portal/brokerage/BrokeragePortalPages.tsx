@@ -1,6 +1,6 @@
 import { Link, useParams } from 'react-router-dom';
 import { useDemoStore } from '../../../demo/useDemoStore';
-import { getOrganizationId } from '../../../demo/factoringActions';
+import { getCarrierPortalOrganizationId } from '../../../demo/brokerageActions';
 import { getCarrierOffers, respondCarrierOffer } from '../../../demo/brokerageActions';
 import { CARRIER_OFFER_STATUS_LABELS, CARRIER_PAYABLE_STATUS_LABELS, DEMO_BROKERAGE_LABEL } from '../../../brokerage/brokerageConfig';
 import { formatMoney } from '../../../billing/money';
@@ -8,7 +8,7 @@ import { aioPaths } from '../../../utils/paths';
 
 export function CarrierBrokerageHomePage() {
   const store = useDemoStore();
-  const orgId = getOrganizationId(store);
+  const orgId = getCarrierPortalOrganizationId(store);
   const offers = getCarrierOffers(orgId, store).filter((o) => ['sent', 'viewed'].includes(o.status));
   const loads = store.loads.filter((l) => l.sourceType === 'brokerage' && l.brokerageCarrierOrganizationId === orgId);
 
@@ -30,30 +30,34 @@ export function CarrierBrokerageHomePage() {
 
 export function CarrierBrokerageOffersPage() {
   const store = useDemoStore();
-  const orgId = getOrganizationId(store);
+  const orgId = getCarrierPortalOrganizationId(store);
   const offers = getCarrierOffers(orgId, store);
 
   return (
     <div className="aio-brokerage">
       <Link to={aioPaths.portalBrokerage} className="aio-rr-link">← Brokerage</Link>
       <h1>Load Offers</h1>
-      {offers.map((o) => {
-        const load = store.loads.find((l) => l.id === o.loadId);
-        return (
-          <div key={o.id} className="aio-brokerage-card">
-            <strong>{load?.loadNumber ?? o.loadId}</strong>
-            <p>{load?.originCity}, {load?.originState} → {load?.destinationCity}, {load?.destinationState}</p>
-            <p>Carrier pay: {formatMoney(o.carrierPayMinor)}</p>
-            <p>{CARRIER_OFFER_STATUS_LABELS[o.status]}</p>
-            {o.status === 'sent' && (
-              <div className="aio-brokerage-actions">
-                <button type="button" className="aio-btn aio-btn--gold aio-btn--sm" onClick={() => respondCarrierOffer(o.id, true, orgId)}>Accept</button>
-                <button type="button" className="aio-btn aio-btn--outline aio-btn--sm" onClick={() => respondCarrierOffer(o.id, false, orgId)}>Decline</button>
-              </div>
-            )}
-          </div>
-        );
-      })}
+      {offers.length === 0 ? (
+        <p className="aio-prototype-note">No pending offers for your organization.</p>
+      ) : (
+        offers.map((o) => {
+          const load = store.loads.find((l) => l.id === o.loadId);
+          return (
+            <div key={o.id} className="aio-brokerage-card">
+              <strong>{load?.loadNumber ?? o.loadId}</strong>
+              <p>{load?.originCity}, {load?.originState} → {load?.destinationCity}, {load?.destinationState}</p>
+              <p>Carrier pay: {formatMoney(o.carrierPayMinor)}</p>
+              <p>{CARRIER_OFFER_STATUS_LABELS[o.status]}</p>
+              {o.status === 'sent' && (
+                <div className="aio-brokerage-actions">
+                  <button type="button" className="aio-btn aio-btn--gold aio-btn--sm" onClick={() => respondCarrierOffer(o.id, true, orgId)}>Accept</button>
+                  <button type="button" className="aio-btn aio-btn--outline aio-btn--sm" onClick={() => respondCarrierOffer(o.id, false, orgId)}>Decline</button>
+                </div>
+              )}
+            </div>
+          );
+        })
+      )}
       <p className="aio-prototype-note">Shipper charge and brokerage margin are never shown to carriers.</p>
     </div>
   );
@@ -62,7 +66,7 @@ export function CarrierBrokerageOffersPage() {
 export function CarrierBrokerageLoadPage() {
   const { loadId } = useParams();
   const store = useDemoStore();
-  const orgId = getOrganizationId(store);
+  const orgId = getCarrierPortalOrganizationId(store);
   const load = store.loads.find(
     (l) => l.id === loadId && l.sourceType === 'brokerage' && l.brokerageCarrierOrganizationId === orgId,
   );
@@ -80,7 +84,7 @@ export function CarrierBrokerageLoadPage() {
 
 export function CarrierBrokeragePaymentsPage() {
   const store = useDemoStore();
-  const orgId = getOrganizationId(store);
+  const orgId = getCarrierPortalOrganizationId(store);
   const payables = store.carrierPayables.filter((p) => p.carrierOrganizationId === orgId);
 
   return (
