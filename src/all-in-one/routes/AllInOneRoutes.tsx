@@ -52,6 +52,7 @@ import { DispatchHomePage } from '../pages/portal/dispatch/DispatchHomePage';
 import { DispatchOnboardingPage } from '../pages/portal/dispatch/DispatchOnboardingPage';
 import { DispatchLoadsPage } from '../pages/portal/dispatch/DispatchLoadsPage';
 import { DispatchLoadDetailPage } from '../pages/portal/dispatch/DispatchLoadDetailPage';
+import { DispatchHistoryPage } from '../pages/portal/dispatch/DispatchHistoryPage';
 import { FreightInvoicePrintPage } from '../pages/portal/factoring/FreightInvoicePrintPage';
 import { aioAppConfig } from '../config/appConfig';
 

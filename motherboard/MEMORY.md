@@ -51117,3 +51117,17 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Spatial Architecture Review:** SKIPPED — isolated AIO dispatch namespace; no Frontal Slayer regression.
 
+---
+
+## 2026-08-15 — All In One Sprint 09: Factoring documentation canon
+
+- **Context:** Founder requested comprehensive Sprint 09 factoring documentation in `docs/all-in-one/` — create four new canon files and update twelve existing docs to reflect implemented factoring module (assistance + partner modes, freight invoices, submissions, reported funding, dispatch handoff, demo v8). No code changes; docs only.
+
+- **Topics covered:** New docs — `FACTORING_SYSTEM.md`, `FREIGHT_RECEIVABLES_DOMAIN.md` (mandatory Load vs Freight Invoice vs Submission vs Provider Funding vs Service Invoice), `FACTORING_SECURITY.md`, `DIRECT_FACTORING_FUTURE.md` (checklist, no legal conclusions). Updated — `SPRINT_STATUS.md` (Sprint 09 COMPLETE), `FINANCIAL_BOUNDARIES.md`, `LOAD_DOMAIN.md`, `DISPATCH_SYSTEM.md`, `NOTIFICATION_SYSTEM.md`, `DOCUMENT_VAULT_SYSTEM.md`, `FUTURE_DATA_MODEL.md`, `FUTURE_ROLE_MODEL.md`, `AUTHORIZATION_MATRIX.md`, `SECURITY_FOUNDATION.md`, `MASTER_PRODUCT_BLUEPRINT.md`, `DEBUG_ARCHITECTURE.md` (demo v8), `EXTRACTION_PLAN.md`.
+
+- **Decisions / outcomes:** Documentation aligned to code in `src/all-in-one/factoring/`, `demo/factoringActions.ts`, `demo/factoringSeed.ts`, routes `/all-in-one/portal/factoring` and `/all-in-one/office/factoring` (legacy `/debug/all-in-one/*` aliases). `directFactoringEnabled = false`; no direct funding or bank storage. Sprint history preserved in updated files.
+
+- **Conventions:** Factoring amounts labeled "reported" / provider-reported; freight invoices (`HF-*`) never mixed with Sprint 07 service invoices; five-way financial distinction is mandatory in all future factoring work.
+
+- **Spatial Architecture Review:** SKIPPED — documentation-only sprint; no product surfaces changed.
+

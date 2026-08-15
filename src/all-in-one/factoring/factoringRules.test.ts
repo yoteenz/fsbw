@@ -41,13 +41,14 @@ function baseInvoice(overrides: Partial<FreightInvoice> = {}): FreightInvoice {
     organizationId: 'org-1',
     loadId: 'load-1',
     invoiceNumber: 'HF-2026-0001',
-    debtorType: 'broker',
     debtorName: 'Demo Broker LLC',
     amountMinor: 250_000,
     currency: 'USD',
-    status: 'open',
+    invoiceDate: '2026-08-15',
+    status: 'issued',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
+    version: 1,
     ...overrides,
   };
 }
