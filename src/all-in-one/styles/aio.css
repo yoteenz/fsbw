@@ -3581,3 +3581,58 @@
   .aio-portal__sidebar, .aio-portal__mobile-bar, .aio-debug-banner { display: none !important; }
 }
 
+/* ——— Sprint 08: Dispatch ——— */
+.aio-dispatch { padding: 1rem 1.25rem; max-width: 42rem; margin: 0 auto; }
+.aio-dispatch-office { padding: 0 0 2rem; max-width: none; }
+.aio-dispatch-hero { margin-bottom: 1.5rem; }
+.aio-dispatch-hero--compact h1 { font-size: 1.5rem; }
+.aio-dispatch-hero__eyebrow { text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.75rem; opacity: 0.7; }
+.aio-dispatch-card { display: block; padding: 1rem 1.25rem; border: 1px solid #e5e7eb; border-radius: var(--aio-radius-md, 8px); margin-bottom: 1rem; background: #fff; color: inherit; text-decoration: none; }
+.aio-dispatch-card--primary { border-color: var(--aio-gold, #c9a227); background: #fefce8; }
+.aio-dispatch-card--offer { border-color: #2563eb; }
+.aio-dispatch-card--warn { border-color: #dc2626; background: #fef2f2; }
+.aio-dispatch-list-card:hover { border-color: var(--aio-gold, #c9a227); }
+.aio-dispatch-lane { display: flex; flex-wrap: wrap; align-items: center; gap: 0.35rem; font-weight: 600; margin: 0.5rem 0; }
+.aio-dispatch-lane__arrow { opacity: 0.5; }
+.aio-dispatch-metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem 1rem; margin: 0.75rem 0; }
+.aio-dispatch-metrics--compact { grid-template-columns: 1fr 1fr; }
+.aio-dispatch-metrics--inline { grid-template-columns: repeat(3, 1fr); }
+.aio-dispatch-metrics div { display: flex; flex-direction: column; gap: 0.15rem; }
+.aio-dispatch-metrics dt { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.04em; opacity: 0.65; }
+.aio-dispatch-metrics dd { margin: 0; font-weight: 600; }
+.aio-dispatch-status { display: inline-block; padding: 0.2rem 0.5rem; border-radius: 4px; background: #f3f4f6; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; }
+.aio-dispatch-truck-avail { font-size: 0.75rem; font-weight: 600; padding: 0.15rem 0.4rem; border-radius: 4px; background: #ecfdf5; }
+.aio-dispatch-truck-avail--in_transit { background: #eff6ff; }
+.aio-dispatch-truck-avail--home_time { background: #f5f3ff; }
+.aio-dispatch-truck-row { display: flex; flex-wrap: wrap; gap: 0.5rem 1rem; padding: 0.5rem 0; border-bottom: 1px solid #f3f4f6; }
+.aio-dispatch-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem; }
+.aio-dispatch-actions--offer .aio-btn { flex: 1 1 140px; min-height: 2.75rem; }
+.aio-btn--decline { border-color: #dc2626; color: #b91c1c; }
+.aio-dispatch-next-action { width: 100%; text-align: center; min-height: 3rem; font-size: 1rem; }
+.aio-dispatch-cta { display: flex; flex-direction: column; gap: 0.75rem; margin: 1.5rem 0; }
+.aio-dispatch-form label { display: flex; flex-direction: column; gap: 0.35rem; margin-bottom: 1rem; font-size: 0.875rem; }
+.aio-dispatch-form input, .aio-dispatch-form select, .aio-dispatch-form textarea { padding: 0.65rem; border: 1px solid #d1d5db; border-radius: 6px; font-size: 1rem; min-height: 2.75rem; }
+.aio-dispatch-form__row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+.aio-dispatch-form--office { max-width: 36rem; }
+.aio-dispatch-upload input[type="file"] { margin-top: 0.5rem; min-height: 2.75rem; }
+.aio-dispatch-timeline { list-style: none; padding: 0; margin: 0; }
+.aio-dispatch-timeline li { padding: 0.5rem 0; border-bottom: 1px solid #f3f4f6; display: flex; flex-direction: column; gap: 0.15rem; }
+.aio-dispatch-appt { display: flex; flex-wrap: wrap; gap: 0.35rem 0.75rem; margin: 0.35rem 0; }
+.aio-dispatch-appt__label { font-weight: 600; font-size: 0.75rem; text-transform: uppercase; }
+.aio-dispatch-target::before { content: 'Target · '; font-weight: 400; opacity: 0.7; font-size: 0.7rem; }
+.aio-dispatch-office-metrics { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; margin-bottom: 1.5rem; }
+@media (min-width: 900px) { .aio-dispatch-office-metrics { grid-template-columns: repeat(6, 1fr); } }
+.aio-dispatch-office-layout { display: grid; gap: 1rem; }
+@media (min-width: 1100px) {
+  .aio-dispatch-office-layout { grid-template-columns: 220px 1fr 240px; align-items: start; }
+}
+.aio-dispatch-board__columns { display: flex; gap: 0.75rem; overflow-x: auto; padding-bottom: 0.5rem; }
+.aio-dispatch-board__col { min-width: 180px; flex: 0 0 180px; background: #f9fafb; border-radius: 8px; padding: 0.5rem; }
+.aio-dispatch-board__col h3 { font-size: 0.7rem; text-transform: uppercase; margin: 0 0 0.5rem; }
+.aio-dispatch-board-card { display: block; padding: 0.5rem; background: #fff; border: 1px solid #e5e7eb; border-radius: 6px; margin-bottom: 0.5rem; text-decoration: none; color: inherit; font-size: 0.8rem; }
+.aio-dispatch-truck-card { display: block; padding: 0.65rem; border: 1px solid #e5e7eb; border-radius: 6px; margin-bottom: 0.5rem; text-decoration: none; color: inherit; font-size: 0.85rem; }
+.aio-dispatch-schedule-row { display: block; padding: 0.35rem 0; font-size: 0.85rem; }
+.aio-dispatch-schedule-row--warn { color: #b45309; }
+.aio-dispatch-confirm div { display: flex; justify-content: space-between; padding: 0.35rem 0; border-bottom: 1px solid #f3f4f6; }
+.aio-dispatch-prefs { font-size: 0.75rem; overflow: auto; max-height: 12rem; }
+

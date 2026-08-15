@@ -1,7 +1,26 @@
 # All In One — Sprint Status
 
-**Sprint:** 07 — Service Pricing + Quotes + Billing + Payments Foundation  
+**Sprint:** 08 — Dispatch Operations + Load Command Center  
 **Last updated:** 2026-08-15
+
+---
+
+## SPRINT 08 COMPLETE (Dispatch · Loads · Command Center)
+
+- **Dispatch core module** — types, calculations, rules, config (`src/all-in-one/dispatch/`)
+- **Dispatch enrollment** — per-organization service relationship, agreement status, onboarding
+- **Canonical Load domain** — single extensible load entity, offer vs operational status, timeline
+- **Carrier load offers** — accept / decline with structured reasons
+- **Truck availability** — per power unit, next available location/date
+- **Office Command Center** — metrics, needs-load queue, dispatch board, today schedule
+- **Office routes** — loads, clients, brokers, load detail ops
+- **Customer portal** — dispatch home, onboarding, loads, history (mobile-first)
+- **Vault integration** — rate confirmation, BOL, POD on loads
+- **Factoring handoff foundation** — `not_ready` / `ready` / `submitted_future` — no funding
+- **Dispatch billing foundation** — fee config + billing events; distinct from load gross
+- **Demo store v7** — dispatch seed (carriers A–E scenarios), migration from v6
+- **Unit tests** — RPM, deadhead %, gross, dispatch fee calculations
+- **Documentation** — `DISPATCH_SYSTEM.md`, `LOAD_DOMAIN.md`, updated `FINANCIAL_BOUNDARIES.md`
 
 ---
 
@@ -60,7 +79,7 @@
 Dedicated All In One Supabase project credentials are **not yet configured**.
 
 - App runs in **Demo Mode** (default)
-- Billing backend tables deferred — demo store is source of truth for Sprint 07 review
+- Dispatch + billing backend tables deferred — demo store v7 is source of truth for Sprint 08 review
 - Payment provider mode: **demo** (no live charges)
 - No Frontal Slayer schema touched
 
@@ -76,7 +95,6 @@ Dedicated All In One Supabase project credentials are **not yet configured**.
 
 ## Production pending
 
-- Apply billing + Road Ready migrations to dedicated AIO Supabase when backend activated
+- Apply dispatch + billing + Road Ready migrations to dedicated AIO Supabase when backend activated
 - Payment provider selection + webhook deployment
-- Secure document upload bucket
-- External notifications from billing/Road Ready event hooks
+- Attorney-approved dispatch agreement terms before production enrollment

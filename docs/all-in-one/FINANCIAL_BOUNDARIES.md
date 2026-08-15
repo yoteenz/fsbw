@@ -1,6 +1,6 @@
 # All In One — Financial Boundaries
 
-**Sprint:** 07 · **Last updated:** 2026-08-15
+**Sprint:** 08 · **Last updated:** 2026-08-15
 
 ---
 
@@ -59,7 +59,24 @@ Insurance services show **Quote Required / Request Quote**. Do not collect premi
 
 ## Dispatch / brokerage boundary
 
-Load rates in Dispatch Center are operational previews — not All In One service invoices. Settlement belongs to later sprints.
+### Load gross vs All In One dispatch fee (Sprint 08)
+
+| Concept | Meaning | All In One revenue? |
+|---------|---------|---------------------|
+| **Load Gross** | Carrier freight pay for the movement | **No** |
+| **All In One Dispatch Fee** | Configured service fee (% or flat per load) | **Yes** (service revenue) |
+| **Carrier Gross After Dispatch Fee** | Load gross minus dispatch fee — operational preview only | **No** (not profit; excludes fuel, insurance, driver pay, etc.) |
+| **Brokerage Revenue** (future) | Freight margin under brokerage authority | Separate domain |
+| **Carrier Settlement** (future) | Pay carrier net of deductions | Separate domain |
+| **Factoring Funding** (future) | Advance against receivable | Separate domain |
+
+Office metrics like **Gross Load Value Managed** count carrier load gross under management — **not** company revenue.
+
+Dispatch billing events (`dispatchBillingEvents`) record the **dispatch fee** only. Sprint 07 invoice cadence may aggregate weekly/monthly per config.
+
+Load rates in Dispatch are operational — not All In One service invoices unless billed as dispatch fees via billing module.
+
+Settlement belongs to later sprints.
 
 ---
 

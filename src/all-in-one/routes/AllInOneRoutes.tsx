@@ -42,6 +42,11 @@ import { BillingPage } from '../pages/portal/BillingPage';
 import { InvoiceDetailPage } from '../pages/portal/InvoiceDetailPage';
 import { PayInvoicePage } from '../pages/portal/PayInvoicePage';
 import { ReceiptPage } from '../pages/portal/ReceiptPage';
+import { DispatchHomePage } from '../pages/portal/dispatch/DispatchHomePage';
+import { DispatchOnboardingPage } from '../pages/portal/dispatch/DispatchOnboardingPage';
+import { DispatchLoadsPage } from '../pages/portal/dispatch/DispatchLoadsPage';
+import { DispatchLoadDetailPage } from '../pages/portal/dispatch/DispatchLoadDetailPage';
+import { DispatchHistoryPage } from '../pages/portal/dispatch/DispatchHistoryPage';
 import { aioAppConfig } from '../config/appConfig';
 
 const OfficeRoutesLazy = lazy(() => import('../office/routes/OfficeRoutes'));
@@ -110,6 +115,11 @@ export default function AllInOneRoutes() {
             <Route path="billing/invoices/:invoiceId" element={<InvoiceDetailPage />} />
             <Route path="billing/pay/:invoiceId" element={<PayInvoicePage />} />
             <Route path="billing/receipts/:receiptId" element={<ReceiptPage />} />
+            <Route path="dispatch" element={<DispatchHomePage />} />
+            <Route path="dispatch/onboarding" element={<DispatchOnboardingPage />} />
+            <Route path="dispatch/loads" element={<DispatchLoadsPage />} />
+            <Route path="dispatch/loads/:loadId" element={<DispatchLoadDetailPage />} />
+            <Route path="dispatch/history" element={<DispatchHistoryPage />} />
             <Route path="factoring" element={<FactoringPortalPage />} />
             <Route path="requests/:requestId" element={<RequestDetailPage />} />
             <Route path="settings" element={<PortalSettingsPage />} />

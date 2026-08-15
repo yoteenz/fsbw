@@ -103,7 +103,20 @@ export function createRoadReadySeedData(): {
     lastCustomerUpdateAt: daysAgo(3),
   };
 
-  let itemsB = buildRoadReadyItems(profileB);
+  const unitsB: PowerUnit[] = [
+    {
+      id: 'unit-b1',
+      organizationId: 'client-b',
+      nickname: 'Truck 204',
+      year: '2018',
+      make: 'Freightliner',
+      model: 'Cascadia',
+      status: 'active',
+      readiness: 'ready',
+    },
+  ];
+
+  let itemsB = buildRoadReadyItems(profileB, unitsB);
   for (const key of ['usdot', 'operating_authority', 'boc3', 'irp', 'ifta', 'vehicle_registration']) {
     const i = itemsB.find((x) => x.requirementKey === key);
     if (i) {
@@ -180,7 +193,12 @@ export function createRoadReadySeedData(): {
     lastCustomerUpdateAt: daysAgo(5),
   };
 
-  let itemsD = buildRoadReadyItems(profileD);
+  const unitsD: PowerUnit[] = [
+    { id: 'unit-d1', organizationId: 'client-d', nickname: 'Unit 7', year: '2019', make: 'Peterbilt', status: 'active', readiness: 'ready' },
+    { id: 'unit-d2', organizationId: 'client-d', nickname: 'Unit 8', year: '2020', make: 'Kenworth', status: 'active', readiness: 'ready' },
+  ];
+
+  let itemsD = buildRoadReadyItems(profileD, unitsD);
   itemsD.forEach((i) => {
     if (i.requiredForProgress && i.applicable) {
       i.status = 'completed';
@@ -218,7 +236,9 @@ export function createRoadReadySeedData(): {
   ];
 
   const drivers: DriverPlaceholder[] = [
+    { id: 'drv-b1', organizationId: 'client-b', name: 'Jordan Hayes', phone: '(614) 555-0202', assignedUnitId: 'unit-b1', status: 'active' },
     { id: 'drv-c1', organizationId: 'client-c', name: 'Demo Driver One', phone: '(404) 555-0101', assignedUnitId: 'unit-c1', status: 'active' },
+    { id: 'drv-d1', organizationId: 'client-d', name: 'Casey Brooks', phone: '(904) 555-0303', assignedUnitId: 'unit-d1', status: 'active' },
   ];
 
   return {
@@ -226,7 +246,7 @@ export function createRoadReadySeedData(): {
     items: [...itemsA, ...itemsB, ...itemsC, ...itemsD],
     history,
     verifications,
-    powerUnits: [...unitsA, ...unitsC],
+    powerUnits: [...unitsA, ...unitsB, ...unitsC, ...unitsD],
     trailers,
     drivers,
   };

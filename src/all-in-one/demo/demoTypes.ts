@@ -6,14 +6,23 @@ import type { RenewalRecord } from '../renewals/renewalTypes';
 import type { VaultDocument } from '../vault/vaultTypes';
 import type { DeadlineSource, DeadlineType, DeadlineVerification } from '../calendar/calendarTypes';
 import type {
+  BrokerContact,
+  DispatchBillingConfig,
+  DispatchBillingEvent,
+  DispatchCounters,
+  DispatchEnrollment,
+  Load,
+  TruckDispatchProfile,
+} from '../dispatch/dispatchTypes';
+import type {
   BillingCounters,
   BillingInvoice,
+  BillingStatus,
   CreditRecord,
   PaymentRecord,
   Quote,
   Receipt,
   ServicePricingConfig,
-  BillingStatus,
 } from '../billing/billingTypes';
 import type {
   DriverPlaceholder,
@@ -72,7 +81,20 @@ export type ActivityKind =
   | 'INVOICE_VOIDED'
   | 'REFUND_REQUESTED'
   | 'REFUND_SUCCEEDED'
-  | 'RECEIPT_CREATED';
+  | 'RECEIPT_CREATED'
+  | 'DISPATCH_ENROLLMENT_CREATED'
+  | 'DISPATCH_ENROLLMENT_ACTIVATED'
+  | 'TRUCK_AVAILABILITY_CHANGED'
+  | 'LOAD_CREATED'
+  | 'LOAD_OFFERED'
+  | 'LOAD_ACCEPTED'
+  | 'LOAD_DECLINED'
+  | 'LOAD_BOOKED'
+  | 'LOAD_RATE_REVISED'
+  | 'LOAD_DOCUMENT_UPLOADED'
+  | 'LOAD_COMPLETED'
+  | 'FACTORING_HANDOFF_READY'
+  | 'DISPATCH_BILLING_EVENT_CREATED';
 
 export interface StaffMember {
   id: string;
@@ -183,6 +205,7 @@ export interface Message {
   id: string;
   clientId: string;
   requestId?: string;
+  loadId?: string;
   division?: string;
   from: 'staff' | 'customer';
   authorName: string;
@@ -220,41 +243,6 @@ export interface ActivityEvent {
 
 /** @deprecated use AioNotification */
 export type Notification = AioNotification;
-
-export type LoadStatus =
-  | 'available'
-  | 'offered'
-  | 'booked'
-  | 'at_pickup'
-  | 'in_transit'
-  | 'at_delivery'
-  | 'delivered'
-  | 'documents_pending'
-  | 'closed';
-
-export interface DispatchLoad {
-  id: string;
-  loadNumber: string;
-  clientId: string;
-  carrierName: string;
-  truck: string;
-  driverPlaceholder?: string;
-  broker?: string;
-  origin: string;
-  destination: string;
-  pickup: string;
-  delivery: string;
-  miles: number;
-  rate: number;
-  status: LoadStatus;
-  equipment: string;
-  hasRateCon: boolean;
-  hasBol: boolean;
-  hasPod: boolean;
-  hasInvoice: boolean;
-  factoringEligible: boolean;
-  notes?: string;
-}
 
 export type FactoringStatus =
   | 'inquiry'
@@ -325,7 +313,7 @@ export interface BrokerageShipment extends BrokerageQuote {
 export interface Invoice extends BillingInvoice {}
 
 export interface DemoStore {
-  version: 6;
+  version: 7;
   requestCounter: number;
   portalClientId?: string;
   intake: IntakeAnswers;
@@ -341,7 +329,13 @@ export interface DemoStore {
   deadlines: Deadline[];
   activity: ActivityEvent[];
   staff: StaffMember[];
-  loads: DispatchLoad[];
+  loads: Load[];
+  dispatchEnrollments: DispatchEnrollment[];
+  truckProfiles: TruckDispatchProfile[];
+  brokerContacts: BrokerContact[];
+  dispatchBillingConfigs: DispatchBillingConfig[];
+  dispatchBillingEvents: DispatchBillingEvent[];
+  dispatchCounters: DispatchCounters;
   factoringSubmissions: FactoringSubmission[];
   brokerageQuotes: BrokerageQuote[];
   shipments: BrokerageShipment[];

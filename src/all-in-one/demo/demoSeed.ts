@@ -3,6 +3,7 @@ import type { DemoStore, StaffMember } from './demoTypes';
 import { createRoadReadySeedData } from './roadReadySeed';
 import { createVaultSeedData, defaultNotificationPreferences } from './vaultSeed';
 import { createBillingSeedData, defaultServicePricingSeed } from './billingSeed';
+import { createDispatchSeedData } from './dispatchSeed';
 
 const STAFF: StaffMember[] = [
   { id: 'staff-1', name: 'Taylor Brooks', initials: 'TB', role: 'Administrator', status: 'available' },
@@ -22,6 +23,7 @@ export function createDemoSeed(): DemoStore {
 
   const billing = createBillingSeedData();
   const vault = createVaultSeedData();
+  const dispatch = createDispatchSeedData();
 
   const requests = [
       mkRequest('req-1', 'AIO-DEMO-0001', 'client-a', 'Authority + BOC-3 Assistance', 'permitting', 'new_request', 'staff-2', daysAgo(3), ['vdoc-a1', 'vdoc-a2']),
@@ -35,7 +37,7 @@ export function createDemoSeed(): DemoStore {
     });
 
   return {
-    version: 6,
+    version: 7,
     requestCounter: 4,
     portalClientId: 'client-a',
     intake: defaultIntakeAnswers(),
@@ -179,56 +181,21 @@ export function createDemoSeed(): DemoStore {
       evt('act-2', 'REQUEST_ASSIGNED', 'Request assigned to Jordan Lee', 'client-a', 'req-1', daysAgo(2)),
       evt('act-3', 'DOCUMENT_REQUESTED', 'Insurance Certificate requested', 'client-a', 'req-1', daysAgo(2)),
       evt('act-4', 'MESSAGE_SENT', 'Staff message sent to customer', 'client-a', 'req-1', daysAgo(2)),
-      evt('act-5', 'LOAD_STATUS_CHANGED', 'Load LD-1002 marked delivered', 'client-c', undefined, daysAgo(1)),
+      evt('act-5', 'LOAD_STATUS_CHANGED', 'Load in transit updated', 'client-b', undefined, daysAgo(1)),
       evt('act-6', 'FACTORING_STATUS_CHANGED', 'Factoring review opened', 'client-d', undefined, daysAgo(1)),
     ],
-    loads: [
-      {
-        id: 'load-1',
-        loadNumber: 'LD-1001',
-        clientId: 'client-c',
-        carrierName: 'Pioneer Fleet Services',
-        truck: 'Unit 12',
-        origin: 'Atlanta, GA',
-        destination: 'Charlotte, NC',
-        pickup: daysAhead(-2),
-        delivery: daysAhead(1),
-        miles: 245,
-        rate: 850,
-        status: 'in_transit',
-        equipment: 'Dry Van',
-        hasRateCon: true,
-        hasBol: true,
-        hasPod: false,
-        hasInvoice: false,
-        factoringEligible: false,
-      },
-      {
-        id: 'load-2',
-        loadNumber: 'LD-1002',
-        clientId: 'client-c',
-        carrierName: 'Pioneer Fleet Services',
-        truck: 'Unit 08',
-        origin: 'Jacksonville, FL',
-        destination: 'Savannah, GA',
-        pickup: daysAhead(-5),
-        delivery: daysAhead(-1),
-        miles: 180,
-        rate: 720,
-        status: 'delivered',
-        equipment: 'Dry Van',
-        hasRateCon: true,
-        hasBol: true,
-        hasPod: true,
-        hasInvoice: true,
-        factoringEligible: true,
-      },
-    ],
+    loads: dispatch.loads,
+    dispatchEnrollments: dispatch.enrollments,
+    truckProfiles: dispatch.truckProfiles,
+    brokerContacts: dispatch.brokerContacts,
+    dispatchBillingConfigs: dispatch.dispatchBillingConfigs,
+    dispatchBillingEvents: [],
+    dispatchCounters: dispatch.dispatchCounters,
     factoringSubmissions: [
       {
         id: 'fac-1',
         clientId: 'client-d',
-        loadId: 'load-2',
+        loadId: 'load-d-complete',
         carrierName: 'BlueLine Transport',
         debtorName: 'Demo Broker LLC',
         invoiceAmount: 4200,

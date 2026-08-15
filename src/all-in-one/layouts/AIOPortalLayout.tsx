@@ -14,6 +14,7 @@ const portalNav = [
   { label: 'Calendar', href: aioPaths.portalCalendar },
   { label: 'Renewals', href: aioPaths.portalRenewals },
   { label: 'Billing', href: aioPaths.portalBilling },
+  { label: 'Dispatch', href: aioPaths.portalDispatch },
   { label: 'Fleet', href: aioPaths.portalFleet },
   { label: 'Notifications', href: aioPaths.portalNotifications },
   { label: 'Service Plan', href: aioPaths.servicePlan },

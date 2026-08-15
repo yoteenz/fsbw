@@ -16,6 +16,8 @@ import type {
 import { computePriority } from '../office/priorityEngine';
 import { buildCustomerTimeline, getWorkflowForDivision, statusLabelForStep } from '../office/workflows/workflowEngine';
 import { buildNotification } from '../notifications/notificationEngine';
+import { updateLoadOperationalStatus } from './dispatchActions';
+import type { LoadOperationalStatus } from '../dispatch/dispatchTypes';
 
 function uid(): string {
   return crypto.randomUUID();
@@ -380,39 +382,34 @@ export function completeTask(taskId: string): void {
   });
 }
 
-export function updateLoadStatus(loadId: string, status: DemoStore['loads'][0]['status']): void {
-  updateDemoStore((s) => {
-    const load = s.loads.find((l) => l.id === loadId);
-    if (!load) return s;
-    load.status = status;
-    if (status === 'delivered' && load.hasPod && load.hasInvoice) load.factoringEligible = true;
-    logActivity(s, 'LOAD_STATUS_CHANGED', `Load ${load.loadNumber} → ${status}`, { clientId: load.clientId, visibility: 'customer' });
-    return s;
-  });
+export function updateLoadStatus(loadId: string, status: LoadOperationalStatus): void {
+  updateLoadOperationalStatus(loadId, status);
 }
 
 export function sendLoadToFactoring(loadId: string): void {
   updateDemoStore((s) => {
     const load = s.loads.find((l) => l.id === loadId);
-    if (!load || !load.factoringEligible) return s;
+    if (!load || load.factoringHandoffStatus !== 'ready') return s;
+    const client = s.clients.find((c) => c.id === load.organizationId);
     const sub = {
       id: uid(),
-      clientId: load.clientId,
+      clientId: load.organizationId,
       loadId,
-      carrierName: load.carrierName,
-      debtorName: load.broker ?? 'Demo Broker LLC',
-      invoiceAmount: load.rate * 5,
+      carrierName: client?.companyName ?? 'Demo Carrier',
+      debtorName: load.brokerName,
+      invoiceAmount: Math.round(load.confirmedGrossMinor / 100),
       status: 'invoice_review' as const,
       statusLabel: 'Invoice Review',
-      documentIds: [],
+      documentIds: [load.rateConfirmationDocumentId, load.bolDocumentId, load.podDocumentId].filter(Boolean) as string[],
       eligibilityStatus: 'Eligible for Review',
       partnerStatus: 'Not Submitted',
-      estimatedFee: Math.round(load.rate * 5 * 0.03),
-      estimatedNet: Math.round(load.rate * 5 * 0.97),
+      estimatedFee: Math.round((load.confirmedGrossMinor / 100) * 0.03),
+      estimatedNet: Math.round((load.confirmedGrossMinor / 100) * 0.97),
       createdAt: new Date().toISOString(),
     };
+    load.factoringHandoffStatus = 'submitted_future';
     s.factoringSubmissions.unshift(sub);
-    logActivity(s, 'FACTORING_STATUS_CHANGED', 'Sent to factoring review', { clientId: load.clientId, visibility: 'customer' });
+    logActivity(s, 'FACTORING_STATUS_CHANGED', 'Sent to factoring review', { clientId: load.organizationId, visibility: 'customer' });
     return s;
   });
 }
@@ -447,7 +444,7 @@ export function getOfficeMetrics(): import('./demoTypes').OfficeMetrics {
     waitingOnClient: s.requests.filter((r) => ['documents_needed', 'information_needed'].includes(r.status)).length,
     deadlinesThisWeek: s.deadlines.filter((d) => !d.complete && new Date(d.dueDate).getTime() <= weekEnd).length,
     documentsNeeded: s.documents.filter((d) => d.status === 'requested').length,
-    activeDispatchLoads: s.loads.filter((l) => !['closed', 'delivered'].includes(l.status)).length,
+    activeDispatchLoads: s.loads.filter((l) => !['complete', 'cancelled'].includes(l.operationalStatus)).length,
     factoringReviews: s.factoringSubmissions.filter((f) => !['funded', 'closed'].includes(f.status)).length,
     brokerageQuotes: s.brokerageQuotes.filter((q) => !['closed', 'booked'].includes(q.status)).length,
   };

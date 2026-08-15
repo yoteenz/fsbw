@@ -1,8 +1,6 @@
 import { Link, useParams } from 'react-router-dom';
 import { useDemoStore } from '../../demo/useDemoStore';
 import {
-  updateLoadStatus,
-  sendLoadToFactoring,
   updateFactoringStatus,
   updateBrokerageQuoteStatus,
   getOfficeMetrics,
@@ -29,64 +27,6 @@ export function DivisionQueuePage({ division, title }: Props) {
           </Link>
         );
       })}
-    </div>
-  );
-}
-
-export function DispatchCenterPage() {
-  const store = useDemoStore();
-  return (
-    <div className="aio-office-page">
-      <header className="aio-office-page__header"><h1>Dispatch Center</h1></header>
-      <h2 className="aio-office-subheading">Active Loads</h2>
-      <div className="aio-office-table-wrap">
-        <table className="aio-office-table">
-          <thead><tr><th>Load</th><th>Lane</th><th>Rate</th><th>Miles</th><th>Status</th><th>Docs</th></tr></thead>
-          <tbody>
-            {store.loads.map((l) => (
-              <tr key={l.id}>
-                <td><Link to={aioPaths.officeLoad(l.id)}>{l.loadNumber}</Link></td>
-                <td>{l.origin} → {l.destination}</td>
-                <td>${l.rate}</td>
-                <td>{l.miles}</td>
-                <td>{l.status}</td>
-                <td>{[l.hasRateCon && 'RC', l.hasPod && 'POD', l.hasInvoice && 'INV'].filter(Boolean).join(', ') || '—'}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  );
-}
-
-export function LoadDetailPage() {
-  const { loadId } = useParams<{ loadId: string }>();
-  const store = useDemoStore();
-  const load = store.loads.find((l) => l.id === loadId);
-  if (!load) return <p>Load not found.</p>;
-
-  return (
-    <div className="aio-office-page">
-      <Link to={aioPaths.officeDispatch} className="aio-office-link">← Dispatch</Link>
-      <h1>{load.loadNumber}</h1>
-      <dl className="aio-office-dl">
-        <dt>Carrier</dt><dd>{load.carrierName}</dd>
-        <dt>Lane</dt><dd>{load.origin} → {load.destination}</dd>
-        <dt>Rate / Mile</dt><dd>${load.rate} / ${(load.rate / load.miles).toFixed(2)}</dd>
-        <dt>Status</dt><dd>{load.status}</dd>
-      </dl>
-      <div className="aio-office-action-bar">
-        <button type="button" className="aio-btn aio-btn--sm aio-btn--gold" onClick={() => updateLoadStatus(load.id, 'in_transit')}>Mark In Transit</button>
-        <button type="button" className="aio-btn aio-btn--sm aio-btn--gold" onClick={() => updateLoadStatus(load.id, 'delivered')}>Mark Delivered</button>
-      </div>
-      {load.factoringEligible && (
-        <section className="aio-office-panel aio-office-panel--highlight">
-          <h2>Factoring Options</h2>
-          <p>Eligible for Factoring Review — illustrative only.</p>
-          <button type="button" className="aio-btn aio-btn--gold" onClick={() => sendLoadToFactoring(load.id)}>Send to Factoring</button>
-        </section>
-      )}
     </div>
   );
 }

@@ -51089,3 +51089,17 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Spatial Architecture Review:** SKIPPED — infrastructure + isolated AIO namespace; no FS regression.
 
+---
+
+## 2026-08-15 — All In One Sprint 07: Service Pricing + Quotes + Billing + Payments Foundation
+
+- **Context:** Founder issued Sprint 07 spec — commercial transaction layer for All In One service billing: pricing, quotes/estimates, invoices, payment provider abstraction, receipts, balance tracking, office billing ops. Must separate All In One fees from government/third-party fees; integer minor units; demo mode fully functional; no Frontal Slayer payment/Supabase coupling.
+
+- **Topics covered:** Billing core (`src/all-in-one/billing/` — money, types, calculator + unit tests, servicePricingConfig, paymentProvider); demo store v6 migration + billingSeed + billingActions; portal pages (quotes, billing center, invoice, pay, receipt); office pages (billing dashboard, quotes queue/detail, invoice detail, pricing settings); routes + nav; portal dashboard billing summary; service catalog/plan pricing display; request detail billing sections (portal + office); notification category `billing`; `runBillingEvaluation()` on portal mount; docs (`BILLING_SYSTEM.md`, `PAYMENT_SECURITY.md`, `FINANCIAL_BOUNDARIES.md`, updated sprint status, auth matrix, data model, notifications).
+
+- **Decisions / outcomes:** Sprint 07 COMPLETE in demo mode. Pending external fees never treated as $0. Quote versioning with immutable acceptance. Demo payment simulate success/failure without card data. Payment modes: demo (default), disabled, provider (stub). Build passes; billingCalculator 6/6 vitest; manual QA verified quote fee separation, pay flow, receipt, office billing center.
+
+- **Key routes:** `/all-in-one/portal/billing`, `/portal/quotes`, `/portal/billing/pay/:invoiceId`, `/portal/billing/receipts/:receiptId`, `/office/billing`, `/office/quotes`, `/office/settings/pricing`.
+
+- **Spatial Architecture Review:** SKIPPED — isolated AIO billing namespace; no Frontal Slayer or Studio OS surface changes.
+

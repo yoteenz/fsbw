@@ -8,8 +8,6 @@ import { OfficeRequestDetailPage } from '../pages/OfficeRequestDetailPage';
 import { TasksPage, DeadlinesPage, DocumentsPage, MessagesPage } from '../pages/OperationsPages';
 import {
   DivisionQueuePage,
-  DispatchCenterPage,
-  LoadDetailPage,
   FactoringOpsPage,
   BrokerageOpsPage,
   ShipmentDetailPage,
@@ -18,6 +16,14 @@ import {
   TeamPage,
   ReportsPage,
 } from '../pages/DivisionOpsPages';
+import {
+  DispatchCommandCenterPage,
+  DispatchLoadsListPage,
+  DispatchClientsListPage,
+  DispatchBrokersPage,
+} from '../pages/DispatchPages';
+import { DispatchLoadNewPage } from '../pages/DispatchLoadNewPage';
+import { OfficeDispatchLoadDetailPage, DispatchClientDetailPage } from '../pages/DispatchLoadDetailPage';
 import {
   OfficeBillingDashboardPage,
   OfficeQuotesPage,
@@ -48,8 +54,13 @@ export default function OfficeRoutes() {
         <Route path="permitting" element={<DivisionQueuePage division="permitting" title="Permitting & Compliance" />} />
         <Route path="business-formation" element={<DivisionQueuePage division="business-formation" title="Business Formation" />} />
         <Route path="insurance" element={<DivisionQueuePage division="insurance" title="Insurance Operations" />} />
-        <Route path="dispatch" element={<DispatchCenterPage />} />
-        <Route path="dispatch/loads/:loadId" element={<LoadDetailPage />} />
+        <Route path="dispatch" element={<DispatchCommandCenterPage />} />
+        <Route path="dispatch/loads" element={<DispatchLoadsListPage />} />
+        <Route path="dispatch/loads/new" element={<DispatchLoadNewPage />} />
+        <Route path="dispatch/loads/:loadId" element={<OfficeDispatchLoadDetailPage />} />
+        <Route path="dispatch/clients" element={<DispatchClientsListPage />} />
+        <Route path="dispatch/clients/:clientId" element={<DispatchClientDetailPage />} />
+        <Route path="dispatch/brokers" element={<DispatchBrokersPage />} />
         <Route path="factoring" element={<FactoringOpsPage />} />
         <Route path="brokerage" element={<BrokerageOpsPage />} />
         <Route path="brokerage/shipments/:shipmentId" element={<ShipmentDetailPage />} />
