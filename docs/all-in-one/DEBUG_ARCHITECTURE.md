@@ -24,7 +24,13 @@ This is **not** a Frontal Slayer product surface. It must not appear in storefro
 | `/all-in-one/request/confirmation/:id` | Demo request confirmation |
 | `/all-in-one/portal` | Client dashboard |
 | `/all-in-one/portal/requests/:requestId` | Request detail + timeline |
-| `/all-in-one/office/*` | Internal Office (CRM + operations) · INTERNAL PREVIEW |
+| `/all-in-one/login` | Auth — sign in |
+| `/all-in-one/sign-up` | Auth — create account |
+| `/all-in-one/forgot-password` | Password reset request |
+| `/all-in-one/reset-password` | Set new password |
+| `/all-in-one/onboarding` | First-login setup |
+| `/all-in-one/portal/settings` | Account settings |
+| `/all-in-one/office/*` | Internal Office · INTERNAL PREVIEW (demo) or staff auth (backend) |
 | `/all-in-one/portal/factoring` | Factoring portal (mock) |
 | `/debug/all-in-one/*` | Legacy redirect → `/all-in-one/*` |
 
@@ -38,6 +44,8 @@ Registered in `src/routes/StudioDebugRoutes.tsx` **before** the catch-all `App` 
 src/all-in-one/
   config/appConfig.ts      # Company, contact, routes, feature flags
   demo/                    # Sprint 03 — centralized demo store + seed + actions
+  data/                    # Sprint 04 — repositories (demo + supabase), supabase client
+  auth/                    # Sprint 04 — AIOAuthProvider, authService, route guards
   office/                  # Sprint 03 — internal Office app, workflows, priority engine
     layouts/               # AIOOfficeLayout (sidebar shell)
     pages/                 # Dashboard, CRM, requests, ops, division centers
@@ -90,6 +98,17 @@ docs/all-in-one/           # Project documentation
 | `mockFactoring.ts` | Dashboard metrics, invoices, history, workflow docs, operate-grow steps |
 
 **No financial backend.** No Supabase tables. No API routes. No bank/ACH data collected.
+
+### Sprint 04 — data modes
+
+| Mode | Storage | Auth |
+|------|---------|------|
+| `demo` | `aio_debug_store` localStorage | Optional demo portal/office entry |
+| `backend` | Dedicated AIO Supabase (`aio_*` tables) | Supabase Auth + RLS |
+
+**Reset Demo Data** — only when `VITE_AIO_DATA_MODE=demo`.
+
+Backend migrations: `all-in-one/supabase/migrations/` — **not** Frontal Slayer `supabase/migrations/`.
 
 ### Sprint 03 — centralized demo store
 

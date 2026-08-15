@@ -1,28 +1,42 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { intakeRepository } from '../intake/intakeState';
-import { roadmapRepository } from '../repositories/roadmapRepository';
-import { servicePlanRepository } from '../repositories/servicePlanRepository';
-import { serviceRequestRepository } from '../repositories/serviceRequestRepository';
+import { useAioRepositories } from '../data/repositories/registry';
+import type { ServiceRequest } from '../demo/demoTypes';
+import type { ServicePlanItem } from '../repositories/servicePlanRepository';
 import { AIOButton } from '../components/AIOButton';
 import { aioPaths } from '../utils/paths';
+import { isBackendMode } from '../config/dataMode';
+import { useAIOAuth } from '../auth/AIOAuthProvider';
 
 export function RequestSubmitPage() {
   const navigate = useNavigate();
+  const repos = useAioRepositories();
+  const { isAuthenticated } = useAIOAuth();
   const intake = intakeRepository.load();
-  const roadmap = roadmapRepository.load();
-  const plan = servicePlanRepository.load();
+  const roadmap = repos.roadmap.load();
+  const plan = repos.servicePlan.load();
   const [notes, setNotes] = useState('');
+  const [submitting, setSubmitting] = useState(false);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (plan.length === 0) return;
-    const request = serviceRequestRepository.create({
-      services: plan.map((p) => ({ slug: p.slug, title: p.title, division: p.division })),
-      intake,
-      roadmap,
-      notes,
-    });
-    navigate(aioPaths.requestConfirmation(request.id));
+    if (isBackendMode() && !isAuthenticated) {
+      navigate(aioPaths.signUp);
+      return;
+    }
+    setSubmitting(true);
+    try {
+      const request = await repos.serviceRequests.create({
+        services: plan.map((p: { slug: string; title: string; division: string }) => ({ slug: p.slug, title: p.title, division: p.division })),
+        intake,
+        roadmap,
+        notes,
+      });
+      navigate(aioPaths.requestConfirmation(request.id));
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -59,7 +73,7 @@ export function RequestSubmitPage() {
               </p>
             ) : (
               <ul>
-                {plan.map((s) => (
+                {plan.map((s: ServicePlanItem) => (
                   <li key={s.slug}>{s.title}</li>
                 ))}
               </ul>
@@ -94,8 +108,8 @@ export function RequestSubmitPage() {
             <Link to={aioPaths.servicePlan}>
               <AIOButton variant="outline-dark">Back to Plan</AIOButton>
             </Link>
-            <AIOButton variant="gold" onClick={handleSubmit} disabled={plan.length === 0}>
-              Submit Service Request
+            <AIOButton variant="gold" onClick={handleSubmit} disabled={plan.length === 0 || submitting}>
+              {submitting ? 'Submitting…' : 'Submit Service Request'}
             </AIOButton>
           </div>
         </div>
@@ -105,7 +119,12 @@ export function RequestSubmitPage() {
 }
 
 export function RequestConfirmationPage({ requestId }: { requestId: string }) {
-  const request = serviceRequestRepository.getById(requestId);
+  const repos = useAioRepositories();
+  const [request, setRequest] = useState<ServiceRequest | undefined>();
+
+  useEffect(() => {
+    void Promise.resolve(repos.serviceRequests.getById(requestId)).then(setRequest);
+  }, [repos.serviceRequests, requestId]);
 
   if (!request) {
     return (

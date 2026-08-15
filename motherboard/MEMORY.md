@@ -51047,3 +51047,17 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Spatial Architecture Review:** SKIPPED — isolated debug prototype; no Frontal Slayer or Studio OS surface changes.
 
+---
+
+## 2026-08-15 — All In One Sprint 04: Production Data Foundation + Auth + Permissions
+
+- **Context:** Founder issued Sprint 04 spec — replace prototype localStorage foundation with extraction-ready production architecture: real accounts, organizations, RBAC, persistent requests/portal/office state, while preserving Demo Mode for review.
+
+- **Topics covered:** `VITE_AIO_DATA_MODE` demo/backend config; isolated `VITE_AIO_SUPABASE_*` env (never Frontal Slayer); repository layer (`data/repositories/` demo + supabase); dedicated migrations in `all-in-one/supabase/migrations/` with RLS; auth pages (login, sign-up, forgot/reset password, verify, onboarding); `AIOAuthProvider` + route guards for portal/office; identity model (profiles, organizations, memberships, internal staff); backend-ready persistence for intake, roadmap, requests, tasks, docs, notes, messages, activity, dispatch, factoring, brokerage, invoices; demo mode retained with reset isolated from backend; docs: `BACKEND_SETUP.md`, `AUTHORIZATION_MATRIX.md`, `SECURITY_FOUNDATION.md`.
+
+- **Decisions / outcomes:** ARCHITECTURE COMPLETE; BACKEND ACTIVATION PENDING (no dedicated AIO Supabase credentials in env yet — app defaults to demo mode). No Frontal Slayer schema/auth/storage changes. Migrations NOT applied to FS project `hyycomvcaqxxvyrfupes`. Build passes.
+
+- **Key paths:** `src/all-in-one/config/dataMode.ts`, `config/env.ts`, `auth/`, `data/repositories/`, `data/supabase/`, `all-in-one/supabase/migrations/`, auth pages, `PortalSettingsPage`, updated `AllInOneRoutes`, `AIODebugBanner`.
+
+- **Next step for founder:** Create dedicated AIO Supabase project → set env vars → apply migrations per `BACKEND_SETUP.md` → say "deploy now" when ready for Vercel.
+

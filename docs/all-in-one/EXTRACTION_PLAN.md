@@ -13,7 +13,10 @@ src/all-in-one/          → src/ (or keep src/all-in-one/ in new repo)
   intake/                → Sprint 02 Smart Intake (config-driven)
   roadmap/               → Sprint 02 mock recommendation engine
   demo/                    → centralized store (Sprint 03)
+  data/                    → repository layer + supabase client (Sprint 04)
+  auth/                    → authentication (Sprint 04)
   office/                  → internal Office app + workflows
+all-in-one/supabase/migrations/ → dedicated backend schema (Sprint 04)
   storage/demoStorage.ts → localStorage keys + reset
   data/services.ts       → Service catalog + bundles
   data/mockFactoring.ts
@@ -59,12 +62,13 @@ routes: {
 
 Update `aioPaths` helper accordingly.
 
-Environment variables (future):
+Environment variables:
 
-- `VITE_AIO_API_URL`
-- `VITE_AIO_SUPABASE_URL` (new project — **not** Frontal Slayer `hyycomvcaqxxvyrfupes`)
-- `VITE_AIO_CONTACT_PHONE`
+- `VITE_AIO_DATA_MODE` — `demo` | `backend`
+- `VITE_AIO_SUPABASE_URL` — dedicated AIO project only (**not** Frontal Slayer `hyycomvcaqxxvyrfupes`)
+- `VITE_AIO_SUPABASE_ANON_KEY`
 - `VITE_AIO_SITE_URL`
+- `VITE_AIO_CONTACT_PHONE` (optional)
 
 ---
 

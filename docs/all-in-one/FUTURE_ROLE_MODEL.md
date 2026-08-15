@@ -1,6 +1,15 @@
 # All In One — Future Role Model
 
-**Status:** Planning document. No production authorization in Sprint 03.
+**Status:** Sprint 04 foundation implemented in migrations + RLS. Demo mode uses mock staff ids.
+
+---
+
+## Production role implementation
+
+- Customer roles stored in `aio_organization_memberships.role`
+- Internal roles stored in `aio_internal_staff.role`
+- RLS policies enforce tenant isolation and internal-only tables
+- Route guards supplement UX — not authorization alone
 
 ---
 

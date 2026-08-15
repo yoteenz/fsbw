@@ -4,7 +4,33 @@
 
 ---
 
-## Core entities
+## Core entities (Sprint 04 production schema)
+
+| Entity | Table | Purpose |
+|--------|-------|---------|
+| User profile | `aio_profiles` | Authenticated human (extends auth.users) |
+| Organization | `aio_organizations` | Company/entity |
+| Membership | `aio_organization_memberships` | User ↔ org role |
+| Internal staff | `aio_internal_staff` | All In One employees |
+| Intake session | `aio_intake_sessions` | Smart Intake persistence |
+| Roadmap | `aio_roadmaps` + `aio_roadmap_items` | Preliminary roadmap + rule_version |
+| ServiceRequest | `aio_service_requests` | Unit of customer work |
+| Status history | `aio_service_request_status_history` | Audit trail |
+| Task | `aio_tasks` | Internal work items |
+| Document | `aio_documents` | Metadata (storage_reference future) |
+| InternalNote | `aio_internal_notes` | Staff-only — separate table |
+| Conversation / Message | `aio_conversations`, `aio_messages` | Portal messaging |
+| ActivityEvent | `aio_activity_events` | Audit stream |
+| Notification | `aio_notifications` | In-app alerts |
+| Deadline | `aio_deadlines` | Compliance dates (verified flag) |
+| DispatchLoad | `aio_dispatch_loads` | Carrier loads |
+| FactoringCase | `aio_factoring_cases` | Workflow only — no funding |
+| BrokerageQuote/Shipment | `aio_brokerage_quotes`, `aio_brokerage_shipments` | Shipper freight |
+| Invoice | `aio_invoices` | Billing foundation |
+
+---
+
+## Core entities (Sprint 03 prototype mapping)
 
 | Entity | Purpose |
 |--------|---------|

@@ -2,7 +2,46 @@
 
 **Company:** ALL IN ONE ENTERPRISES INC.  
 **Positioning:** The business office behind the truck.  
-**Status:** Sprint 03 — All In One Office + shared demo store (debug prototype inside Frontal Slayer host repo, temporary).
+**Status:** Sprint 04 — Production data foundation + auth (debug prototype; backend activation pending dedicated Supabase project).
+
+---
+
+## Sprint 04 — Identity & Persistence Architecture
+
+### Data modes
+
+| Mode | Config | Behavior |
+|------|--------|----------|
+| **Demo** | `VITE_AIO_DATA_MODE=demo` (default) | Local seed store, reset, demo office entry |
+| **Backend** | `VITE_AIO_DATA_MODE=backend` + AIO Supabase credentials | Real auth, RLS, persistent data |
+
+### Core identity model
+
+```
+User (auth.users + aio_profiles)
+  ↓
+Organization Membership (aio_organization_memberships)
+  ↓
+Organization (aio_organizations)
+  ↓
+Business data (requests, roadmap, documents, …)
+```
+
+Internal staff: `aio_internal_staff` row + role — separate from customer memberships.
+
+### Repository layer
+
+UI accesses data through `useAioRepositories()` — not localStorage directly.
+
+Implementations: `Demo*Repository` | `Supabase*Repository`
+
+### Auth routes
+
+- `/all-in-one/login`, `/sign-up`, `/forgot-password`, `/reset-password`
+- Portal protected in backend mode; demo portal entry in demo mode
+- Office requires internal staff role in backend mode; demo office in demo mode
+
+See: `SECURITY_FOUNDATION.md`, `AUTHORIZATION_MATRIX.md`, `BACKEND_SETUP.md`
 
 ---
 

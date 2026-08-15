@@ -46,6 +46,13 @@ export const aioPaths = {
   officePayments: `${BASE}/office/payments`,
   officeTeam: `${BASE}/office/team`,
   officeReports: `${BASE}/office/reports`,
+  login: `${BASE}/login`,
+  signUp: `${BASE}/sign-up`,
+  forgotPassword: `${BASE}/forgot-password`,
+  resetPassword: `${BASE}/reset-password`,
+  verifyEmail: `${BASE}/verify-email`,
+  onboarding: `${BASE}/onboarding`,
+  portalSettings: `${BASE}/portal/settings`,
 } as const;
 
 export function aioServicePath(slug: string): string {

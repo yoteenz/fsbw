@@ -92,7 +92,7 @@ export interface ServiceRequest {
   documentIds: string[];
   relatedRoadmapItems?: string[];
   taskIds: string[];
-  isDemo: true;
+  isDemo?: boolean;
 }
 
 export interface DocumentMetadata {
