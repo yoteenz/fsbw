@@ -51201,3 +51201,31 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Spatial Architecture Review:** SKIPPED — isolated AIO namespace under `/debug/all-in-one`; no Frontal Slayer regression.
 
+---
+
+## 2026-08-15 — All In One Sprint 12: Client Command Center documentation (docs-only task)
+
+- **Context:** Founder requested Sprint 12 documentation for All In One Client Command Center in `docs/all-in-one/` — no code modifications in agent session.
+
+- **Topics covered:** New docs `CLIENT_COMMAND_CENTER.md`, `CLIENT_INFORMATION_ARCHITECTURE.md`, `CLIENT_ATTENTION_ENGINE.md`. Updated `MASTER_PRODUCT_BLUEPRINT.md`, `SPRINT_STATUS.md` (Sprint 12 COMPLETE), `DEBUG_ARCHITECTURE.md` (v12), `FUTURE_DATA_MODEL.md`, `FUTURE_ROLE_MODEL.md`, `AUTHORIZATION_MATRIX.md`, `SECURITY_FOUNDATION.md`, `ROAD_READY_SYSTEM.md`, `NOTIFICATION_SYSTEM.md`, `EXTRACTION_PLAN.md`.
+
+- **Decisions / outcomes:** Canon documents `ClientCommandCenterService`, demo store v12 (`portalMemberRole`, `organizationMembers`), hub routes, legacy route preservation, financial domain separation, insurance dedupe key `insurance-expiry:{orgId}:{date}`, demo org switcher in `AIODebugBanner`.
+
+- **Changes:** Documentation only in this chat turn. Sync commit `10fec5340`.
+
+- **Spatial Architecture Review:** SKIPPED — documentation sprint; no new product surfaces.
+
+---
+
+## 2026-08-15 — All In One Sprint 12: Unified Client Command Center (implementation + QA)
+
+- **Context:** Founder issued Sprint 12 spec — unify Sprints 01–11 into one intelligent client operating system (MY BUSINESS / Command Center). Must not duplicate domains; orchestrate not aggregate; financial boundaries preserved; role-aware views.
+
+- **Topics covered:** `src/all-in-one/portal/` — `ClientCommandCenterService`, `ClientAttentionAggregator` (`clientAttentionEngine.ts`), `ClientNextActionEngine`, `organizationContext.ts`, `customerStatusLanguage.ts`, `useClientCommandCenter` hook; demo store **v12** (`portalMemberRole`, `organizationMembers`, `commandCenterSeed.ts`); upgraded `PortalPage` command center UI + `CommandCenterComponents.tsx`; hub pages in `ClientPortalPages.tsx` (business, operations, money, documents, communication, requests, services, activity, team, search); reorganized `AIOPortalLayout` nav (HOME / MY BUSINESS / OPERATIONS / MONEY / DOCUMENTS / COMMUNICATION / ACCOUNT) + mobile bottom nav; demo org/role switcher in `AIODebugBanner`; routes + paths; CSS `.aio-cc-*`; 8 vitest tests (`clientCommandCenter.test.ts`); docs (3 new + 10 updated) at `10fec5340`. Manual QA: command center, org switch client-a→client-b, money domain separation, operations load hero, driver role billing restriction, documents hub.
+
+- **Decisions / outcomes:** Sprint 12 COMPLETE in demo mode. Single next action via deterministic priority engine; attention deduplication (`insurance-expiry:{orgId}:{date}` merges insurance/renewal/Road Ready); optional service recommendations suppressed when operational items exist; driver role excludes money summary; shipper portalKind skips Road Ready score; no combined financial total. Build + 8/8 command center tests pass.
+
+- **Key routes:** `/debug/all-in-one/portal` (command center), `/portal/business`, `/portal/operations`, `/portal/money`, `/portal/documents`, `/portal/communication`, `/portal/requests`, `/portal/services`, `/portal/activity`, `/portal/team`, `/portal/search` — all legacy domain routes preserved.
+
+- **Spatial Architecture Review:** SKIPPED — unified portal IA under existing `/debug/all-in-one/portal`; no Frontal Slayer regression.
+
