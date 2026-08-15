@@ -7,7 +7,6 @@ import {
 import {
   canTransitionOfferStatus,
   canTransitionQuoteStatus,
-  canTransitionShipmentRequest,
   isReadyToBill,
 } from '../brokerage/brokerageRules';
 import type {

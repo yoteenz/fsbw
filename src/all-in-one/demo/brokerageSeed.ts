@@ -30,16 +30,12 @@ function mkLoad(
   const acc = partial.accessorialMinor ?? 0;
   const gross = partial.grossMinor ?? computeGrossMinor(linehaul, fuel, acc);
   return {
+    ...partial,
     id,
     loadNumber: num,
     organizationId: partial.organizationId ?? 'client-b',
     sourceType: 'brokerage',
-    brokerName: partial.brokerName,
     equipmentType: partial.equipmentType ?? 'Dry Van',
-    originCity: partial.originCity,
-    originState: partial.originState,
-    destinationCity: partial.destinationCity,
-    destinationState: partial.destinationState,
     pickupDate: partial.pickupDate ?? daysAhead(1),
     deliveryDate: partial.deliveryDate ?? daysAhead(3),
     loadedMiles: partial.loadedMiles ?? 650,
@@ -51,7 +47,6 @@ function mkLoad(
     confirmedGrossMinor: partial.confirmedGrossMinor ?? gross,
     currency: 'USD',
     offerStatus: partial.offerStatus ?? 'accepted',
-    operationalStatus: partial.operationalStatus,
     rateConfirmationStatus: partial.rateConfirmationStatus ?? 'verified',
     rateDetailsReviewed: true,
     factoringHandoffStatus: partial.factoringHandoffStatus ?? 'not_ready',
@@ -64,7 +59,6 @@ function mkLoad(
     createdAt: daysAgo(5),
     updatedAt: isoNow(),
     version: 1,
-    ...partial,
   };
 }
 

@@ -51145,3 +51145,17 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Spatial Architecture Review:** SKIPPED — isolated AIO factoring namespace; no Frontal Slayer regression.
 
+---
+
+## 2026-08-15 — All In One Sprint 10: Brokerage documentation canon
+
+- **Context:** Founder requested comprehensive Sprint 10 brokerage documentation in `docs/all-in-one/` — create four new canon files and update twelve existing docs to reflect implemented brokerage module (capability gate default `demo`, shipper portal, coverage, carrier offers, financial domain, demo v9). Documentation-only task aligned to existing code in `src/all-in-one/brokerage/`.
+
+- **Topics covered:** New docs — `BROKERAGE_SYSTEM.md`, `BROKERAGE_FINANCIAL_DOMAIN.md` (mandatory Shipper Freight Charge vs Carrier Pay vs Gross Margin vs BSI vs Carrier Payable vs Service Invoice vs Dispatch Fee vs Factoring), `BROKERAGE_SECURITY.md`, `BROKERAGE_ACTIVATION.md` (readiness checklist, no legal conclusions). Updated — `SPRINT_STATUS.md` (Sprint 10 COMPLETE), `FINANCIAL_BOUNDARIES.md`, `LOAD_DOMAIN.md`, `DISPATCH_SYSTEM.md`, `FACTORING_SYSTEM.md`, `FREIGHT_RECEIVABLES_DOMAIN.md`, `NOTIFICATION_SYSTEM.md`, `MASTER_PRODUCT_BLUEPRINT.md`, `FUTURE_DATA_MODEL.md`, `FUTURE_ROLE_MODEL.md`, `AUTHORIZATION_MATRIX.md`, `SECURITY_FOUNDATION.md`, `DEBUG_ARCHITECTURE.md` (demo v9), `EXTRACTION_PLAN.md`.
+
+- **Decisions / outcomes:** Documentation aligned to routes `/all-in-one/shipper/*`, `/all-in-one/portal/brokerage/*`, `/all-in-one/office/brokerage/*`; default `brokerageCapability: demo`; **Dispatch ≠ Brokerage** called out as mandatory in all updated canon. Sprint history preserved. No production broker activation implied.
+
+- **Conventions:** Shippers see freight charge only; carriers see carrier pay only; gross margin office-only. `BSI-*` shipper invoices distinct from `HF-*` freight invoices and `AIO-*` service invoices. Rate confirmation remains dev template until activation checklist complete.
+
+- **Spatial Architecture Review:** SKIPPED — documentation-only sprint; no product surfaces changed.
+
