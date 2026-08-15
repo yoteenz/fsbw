@@ -3552,3 +3552,32 @@
 
 .aio-badge--complete { background: #dcfce7; color: #166534; }
 
+/* Sprint 07 — Billing */
+.aio-billing { padding: 1.25rem; max-width: 48rem; margin: 0 auto; }
+.aio-billing__hero { margin-bottom: 1.5rem; }
+.aio-billing-balance { padding: 1.25rem; background: #fefce8; border: 1px solid #e5e7eb; border-radius: var(--aio-radius-md, 8px); margin-bottom: 1.5rem; }
+.aio-billing-balance__amount { font-size: 1.75rem; font-weight: 700; margin: 0.25rem 0; }
+.aio-billing-section { margin-bottom: 1.5rem; }
+.aio-billing-card { display: flex; flex-direction: column; gap: 0.25rem; padding: 1rem; border: 1px solid #e5e7eb; border-radius: var(--aio-radius-sm, 6px); margin-bottom: 0.5rem; text-decoration: none; color: inherit; }
+.aio-billing-card:hover { border-color: var(--aio-gold, #c9a227); }
+.aio-billing-card--compact { padding: 0.75rem; }
+.aio-billing-list { list-style: none; padding: 0; margin: 0; }
+.aio-billing-summary { display: grid; gap: 0.5rem; margin: 1rem 0; }
+.aio-billing-summary div { display: flex; justify-content: space-between; gap: 1rem; }
+.aio-billing-summary__total { font-weight: 700; border-top: 1px solid #e5e7eb; padding-top: 0.5rem; margin-top: 0.5rem; }
+.aio-billing-lines__mobile { display: block; list-style: none; padding: 0; margin: 0; }
+.aio-billing-lines__table { display: none; }
+@media (min-width: 640px) {
+  .aio-billing-lines__mobile { display: none; }
+  .aio-billing-lines__table { display: table; width: 100%; }
+}
+.aio-billing-lines__mobile li { padding: 0.75rem 0; border-bottom: 1px solid #e5e7eb; display: flex; flex-direction: column; gap: 0.25rem; }
+.aio-billing-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem; }
+.aio-billing-accept { margin-top: 1.5rem; padding: 1rem; border: 1px solid #e5e7eb; border-radius: var(--aio-radius-sm); }
+.aio-billing-checkout .aio-billing-demo-pay { margin-top: 1rem; padding: 1rem; background: #fef9e7; border-radius: var(--aio-radius-sm); }
+.aio-print-friendly { max-width: 40rem; }
+@media print {
+  .no-print { display: none !important; }
+  .aio-portal__sidebar, .aio-portal__mobile-bar, .aio-debug-banner { display: none !important; }
+}
+

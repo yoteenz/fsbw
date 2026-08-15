@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { AIOLogo } from '../components/AIOLogo';
 import { AIODebugBanner } from '../components/AIODebugBanner';
 import { runExpirationEvaluation } from '../demo/vaultActions';
+import { runBillingEvaluation } from '../demo/billingActions';
 import { useDemoStore } from '../demo/useDemoStore';
 import { aioPaths } from '../utils/paths';
 
@@ -12,6 +13,7 @@ const portalNav = [
   { label: 'Vault', href: aioPaths.portalVault },
   { label: 'Calendar', href: aioPaths.portalCalendar },
   { label: 'Renewals', href: aioPaths.portalRenewals },
+  { label: 'Billing', href: aioPaths.portalBilling },
   { label: 'Fleet', href: aioPaths.portalFleet },
   { label: 'Notifications', href: aioPaths.portalNotifications },
   { label: 'Service Plan', href: aioPaths.servicePlan },
@@ -27,6 +29,7 @@ export function AIOPortalLayout() {
 
   useEffect(() => {
     runExpirationEvaluation();
+    runBillingEvaluation();
   }, []);
 
   const isActive = (href: string) => location.pathname === href || location.pathname.startsWith(`${href}/`);

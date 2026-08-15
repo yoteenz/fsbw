@@ -171,13 +171,17 @@ Reset demo restores v4 seed including Road Ready.
 
 ---
 
-## Notification Hooks (future)
+## Notification Hooks (Sprint 06 — active in demo)
 
-Event types reserved: expiration windows, document requested/rejected, verification complete, service request update, profile status changed.
+In-app notifications via `notificationEngine` + `notificationScheduler`. Events: document upload/verify/reject/expiring/expired, renewal window, deadline thresholds, service request updates. Dedupe keys prevent duplicate reminders. Portal runs `runExpirationEvaluation()` on layout mount; production should use server cron.
+
+**Vault integration:** Road Ready items link to `documentId`; category cards and item rows link to Vault document detail and Renewal Center. Verified documents sync deadlines and renewal records. Upload ≠ verification (Sprint 05 rule preserved).
+
+See: `DOCUMENT_VAULT_SYSTEM.md`, `RENEWAL_SYSTEM.md`, `NOTIFICATION_SYSTEM.md`.
 
 ---
 
-## Safety Limitations (Sprint 05)
+## Safety Limitations (Sprint 05–06)
 
 Not built: government API verification, FMCSA live check, automated compliance certificates, OCR auto-approval, AI legal decisions, payment/banking/factoring funding.
 
@@ -194,6 +198,13 @@ Printable **Road Ready Summary** placeholder only — never “Certificate of Co
 | `/all-in-one/portal/fleet` | Fleet profile |
 | `/all-in-one/portal/fleet/vehicles/:id` | Vehicle detail |
 | `/all-in-one/office/road-ready` | Staff queue |
+| `/all-in-one/portal/vault` | Document Vault |
+| `/all-in-one/portal/vault/:id` | Document detail |
+| `/all-in-one/portal/calendar` | Compliance Calendar |
+| `/all-in-one/portal/renewals` | Renewal Center |
+| `/all-in-one/portal/notifications` | Notification Center |
+| `/all-in-one/office/documents` | Office Document Center |
+| `/all-in-one/office/deadlines` | Office Deadline Center |
 | `/all-in-one/office/clients/:id/road-ready` | Staff verification review |
 
 Legacy `/debug/all-in-one/*` redirects to `/all-in-one/*`.

@@ -4,6 +4,7 @@ import { AIOLogo } from '../../components/AIOLogo';
 import { aioPaths } from '../../utils/paths';
 import { useDemoStore } from '../../demo/useDemoStore';
 import { createTask } from '../../demo/demoActions';
+import { searchBilling } from '../../demo/billingActions';
 
 const navGroups = [
   {
@@ -40,10 +41,13 @@ const navGroups = [
     ],
   },
   {
-    label: 'Financial Preview',
+    label: 'Financial',
     items: [
+      { label: 'Billing Center', to: aioPaths.officeBilling },
+      { label: 'Quotes', to: aioPaths.officeQuotes },
       { label: 'Invoices', to: aioPaths.officeInvoices },
       { label: 'Payments', to: aioPaths.officePayments },
+      { label: 'Pricing Settings', to: aioPaths.officePricingSettings },
     ],
   },
   {
@@ -77,6 +81,11 @@ export function AIOOfficeLayout() {
     if (renewal) return navigate(aioPaths.officeRenewals);
     const load = store.loads.find((l) => l.loadNumber.toLowerCase().includes(q));
     if (load) return navigate(aioPaths.officeLoad(load.id));
+    for (const hit of searchBilling(q, store)) {
+      if (hit.type === 'quote') return navigate(aioPaths.officeQuote(hit.id));
+      if (hit.type === 'invoice') return navigate(aioPaths.officeInvoice(hit.id));
+      if (hit.type === 'receipt') return navigate(aioPaths.officeBilling);
+    }
   };
 
   return (
@@ -124,7 +133,7 @@ export function AIOOfficeLayout() {
               <input
                 id="office-search"
                 type="search"
-                placeholder="Search clients, requests, loads…"
+                placeholder="Search clients, requests, quotes, invoices…"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />

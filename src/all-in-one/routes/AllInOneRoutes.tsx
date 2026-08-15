@@ -36,6 +36,12 @@ import { CalendarPage } from '../pages/portal/CalendarPage';
 import { RenewalsPage } from '../pages/portal/RenewalsPage';
 import { NotificationsPage } from '../pages/portal/NotificationsPage';
 import { NotificationSettingsPage } from '../pages/portal/NotificationSettingsPage';
+import { QuotesPage } from '../pages/portal/QuotesPage';
+import { QuoteDetailPage } from '../pages/portal/QuoteDetailPage';
+import { BillingPage } from '../pages/portal/BillingPage';
+import { InvoiceDetailPage } from '../pages/portal/InvoiceDetailPage';
+import { PayInvoicePage } from '../pages/portal/PayInvoicePage';
+import { ReceiptPage } from '../pages/portal/ReceiptPage';
 import { aioAppConfig } from '../config/appConfig';
 
 const OfficeRoutesLazy = lazy(() => import('../office/routes/OfficeRoutes'));
@@ -98,6 +104,12 @@ export default function AllInOneRoutes() {
             <Route path="renewals" element={<RenewalsPage />} />
             <Route path="notifications" element={<NotificationsPage />} />
             <Route path="settings/notifications" element={<NotificationSettingsPage />} />
+            <Route path="quotes" element={<QuotesPage />} />
+            <Route path="quotes/:quoteId" element={<QuoteDetailPage />} />
+            <Route path="billing" element={<BillingPage />} />
+            <Route path="billing/invoices/:invoiceId" element={<InvoiceDetailPage />} />
+            <Route path="billing/pay/:invoiceId" element={<PayInvoicePage />} />
+            <Route path="billing/receipts/:receiptId" element={<ReceiptPage />} />
             <Route path="factoring" element={<FactoringPortalPage />} />
             <Route path="requests/:requestId" element={<RequestDetailPage />} />
             <Route path="settings" element={<PortalSettingsPage />} />

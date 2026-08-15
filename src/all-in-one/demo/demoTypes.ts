@@ -6,6 +6,16 @@ import type { RenewalRecord } from '../renewals/renewalTypes';
 import type { VaultDocument } from '../vault/vaultTypes';
 import type { DeadlineSource, DeadlineType, DeadlineVerification } from '../calendar/calendarTypes';
 import type {
+  BillingCounters,
+  BillingInvoice,
+  CreditRecord,
+  PaymentRecord,
+  Quote,
+  Receipt,
+  ServicePricingConfig,
+  BillingStatus,
+} from '../billing/billingTypes';
+import type {
   DriverPlaceholder,
   PowerUnit,
   RoadReadyHistoryEvent,
@@ -46,7 +56,23 @@ export type ActivityKind =
   | 'DOCUMENT_SUPERSEDED'
   | 'RENEWAL_CREATED'
   | 'RENEWAL_COMPLETED'
-  | 'NOTIFICATION_GENERATED';
+  | 'NOTIFICATION_GENERATED'
+  | 'QUOTE_CREATED'
+  | 'QUOTE_SENT'
+  | 'QUOTE_VIEWED'
+  | 'QUOTE_ACCEPTED'
+  | 'QUOTE_DECLINED'
+  | 'QUOTE_REVISED'
+  | 'INVOICE_CREATED'
+  | 'INVOICE_ISSUED'
+  | 'PAYMENT_INITIATED'
+  | 'PAYMENT_SUCCEEDED'
+  | 'PAYMENT_FAILED'
+  | 'CREDIT_APPLIED'
+  | 'INVOICE_VOIDED'
+  | 'REFUND_REQUESTED'
+  | 'REFUND_SUCCEEDED'
+  | 'RECEIPT_CREATED';
 
 export interface StaffMember {
   id: string;
@@ -116,6 +142,7 @@ export interface ServiceRequest {
   relatedRoadmapItems?: string[];
   taskIds: string[];
   isDemo?: boolean;
+  billingStatus?: BillingStatus;
 }
 
 /** @deprecated use VaultDocument */
@@ -295,20 +322,10 @@ export interface BrokerageShipment extends BrokerageQuote {
   hasPod: boolean;
 }
 
-export interface Invoice {
-  id: string;
-  invoiceNumber: string;
-  clientId: string;
-  requestId?: string;
-  service: string;
-  amount: number;
-  status: 'draft' | 'sent' | 'paid' | 'past_due' | 'void';
-  issuedAt: string;
-  dueAt: string;
-}
+export interface Invoice extends BillingInvoice {}
 
 export interface DemoStore {
-  version: 5;
+  version: 6;
   requestCounter: number;
   portalClientId?: string;
   intake: IntakeAnswers;
@@ -328,7 +345,13 @@ export interface DemoStore {
   factoringSubmissions: FactoringSubmission[];
   brokerageQuotes: BrokerageQuote[];
   shipments: BrokerageShipment[];
-  invoices: Invoice[];
+  quotes: Quote[];
+  invoices: BillingInvoice[];
+  payments: PaymentRecord[];
+  receipts: Receipt[];
+  credits: CreditRecord[];
+  servicePricing: ServicePricingConfig[];
+  billingCounters: BillingCounters;
   notifications: AioNotification[];
   notificationPreferences: NotificationPreference[];
   roadReadyProfiles: RoadReadyProfile[];
@@ -339,6 +362,7 @@ export interface DemoStore {
   trailers: Trailer[];
   drivers: DriverPlaceholder[];
   expirationEvaluatorLastRun?: string;
+  billingEvaluatorLastRun?: string;
 }
 
 export interface OfficeMetrics {

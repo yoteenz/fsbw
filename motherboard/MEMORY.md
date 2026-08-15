@@ -51075,3 +51075,17 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Spatial Architecture Review:** SKIPPED — isolated All In One debug prototype; no Frontal Slayer or Studio OS surface changes.
 
+---
+
+## 2026-08-15 — All In One Sprint 06: Vault + Calendar + Renewals + Notification Engine
+
+- **Context:** Founder issued Sprint 06 spec — build persistent operational memory layer: Document Vault, Compliance Calendar, Renewal Center, Notification Engine; connect to Road Ready, dashboard, fleet, Office, service requests; demo store v5 with relative-date clients A–E; no Frontal Slayer coupling.
+
+- **Topics covered:** Core modules (`vault/`, `calendar/`, `renewals/`, `notifications/`); demo store v5 migration; portal pages (vault, calendar, renewals, notifications, notification settings); office upgrades (document center queues + verify/reject, deadline center filters, renewal center + batch view); portal/office dashboard integrations; fleet compliance matrix; expiration evaluator with dedupe; storage abstraction (demo data URLs; backend placeholder); docs (`DOCUMENT_VAULT_SYSTEM.md`, `RENEWAL_SYSTEM.md`, `NOTIFICATION_SYSTEM.md`, updated sprint status + ROAD_READY).
+
+- **Decisions / outcomes:** Sprint 06 COMPLETE in demo mode. Single source of truth for deadlines (derived, not duplicated). Renewals → service requests. In-app notifications only; email/SMS adapters stubbed. Build passes. Manual QA: vault, calendar, renewals, notifications, office documents verified.
+
+- **Key routes:** `/all-in-one/portal/vault`, `/portal/calendar`, `/portal/renewals`, `/portal/notifications`, `/office/documents`, `/office/deadlines`, `/office/renewals`.
+
+- **Spatial Architecture Review:** SKIPPED — infrastructure + isolated AIO namespace; no FS regression.
+

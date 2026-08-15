@@ -15,7 +15,21 @@ export type NotificationEventType =
   | 'RENEWAL_STATUS_CHANGED'
   | 'RENEWAL_COMPLETED'
   | 'SERVICE_REQUEST_STATUS_CHANGED'
-  | 'MESSAGE_RECEIVED';
+  | 'MESSAGE_RECEIVED'
+  | 'QUOTE_AVAILABLE'
+  | 'QUOTE_ACCEPTED'
+  | 'QUOTE_DECLINED'
+  | 'QUOTE_REVISED'
+  | 'QUOTE_EXPIRING'
+  | 'INVOICE_ISSUED'
+  | 'INVOICE_DUE_SOON'
+  | 'INVOICE_PAST_DUE'
+  | 'PAYMENT_PROCESSING'
+  | 'PAYMENT_SUCCEEDED'
+  | 'PAYMENT_FAILED'
+  | 'RECEIPT_AVAILABLE'
+  | 'REFUND_PROCESSED'
+  | 'CREDIT_APPLIED';
 
 export type NotificationCategory =
   | 'road_ready'
@@ -25,7 +39,8 @@ export type NotificationCategory =
   | 'operations'
   | 'dispatch'
   | 'factoring'
-  | 'brokerage';
+  | 'brokerage'
+  | 'billing';
 
 export type NotificationRecipientType = 'customer' | 'staff';
 
@@ -64,4 +79,5 @@ export const DEFAULT_NOTIFICATION_PREFERENCES: NotificationPreference[] = [
   { category: 'dispatch', inApp: true, emailFuture: false, smsFuture: false },
   { category: 'factoring', inApp: true, emailFuture: false, smsFuture: false },
   { category: 'brokerage', inApp: true, emailFuture: false, smsFuture: false },
+  { category: 'billing', inApp: true, emailFuture: false, smsFuture: false },
 ];

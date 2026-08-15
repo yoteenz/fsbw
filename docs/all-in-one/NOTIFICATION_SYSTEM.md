@@ -33,7 +33,9 @@ Unified **event-driven** in-app notification engine. Components do **not** emit 
 
 ## Event types (centralized)
 
-Includes: `DOCUMENT_*`, `DEADLINE_*`, `RENEWAL_*`, `ROAD_READY_ATTENTION_REQUIRED`, `SERVICE_REQUEST_STATUS_CHANGED`, `MESSAGE_RECEIVED`, etc. (see `notificationTypes.ts`).
+Includes: `DOCUMENT_*`, `DEADLINE_*`, `RENEWAL_*`, `QUOTE_*`, `INVOICE_*`, `PAYMENT_*`, `RECEIPT_*`, `ROAD_READY_ATTENTION_REQUIRED`, `SERVICE_REQUEST_STATUS_CHANGED`, `MESSAGE_RECEIVED`, etc. (see `notificationTypes.ts`).
+
+Billing events use category **`billing`**.
 
 ---
 
@@ -65,7 +67,7 @@ Running `runExpirationEvaluator()` multiple times must **not** create duplicate 
 
 ## Scheduled evaluation
 
-`runExpirationEvaluation()` runs on portal layout mount (demo). Production should use server-side cron/job calling the same idempotent evaluator — **not** browser timers as authoritative source.
+`runExpirationEvaluation()` and `runBillingEvaluation()` run on portal layout mount (demo). Production should use server-side cron/job — **not** browser timers as authoritative source.
 
 Uses server/trusted time via `daysUntil()` in `calendarService`.
 

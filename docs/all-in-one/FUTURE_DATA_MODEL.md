@@ -27,8 +27,29 @@
 | FactoringCase | `aio_factoring_cases` | Workflow only — no funding |
 | BrokerageQuote/Shipment | `aio_brokerage_quotes`, `aio_brokerage_shipments` | Shipper freight |
 | Invoice | `aio_invoices` | Billing foundation |
+| Quote | `aio_quotes` + `aio_quote_versions` + `aio_quote_line_items` | Service estimates |
+| QuoteAcceptance | `aio_quote_acceptances` | Immutable accepted version |
+| InvoiceLineItem | `aio_invoice_line_items` | Snapshot at issue |
+| Payment | `aio_payments` | Provider-confirmed payments |
+| Receipt | `aio_receipts` | Post-payment record |
+| Credit / Refund | `aio_credits`, `aio_refunds` | Adjustments |
+| ServicePricing | `aio_service_pricing` | Catalog commercial config |
 
-### Road Ready domain (Sprint 05)
+Demo mode: `DemoStore` v6 fields mirror billing relationships in localStorage.
+
+### Billing domain (Sprint 07)
+
+| Entity | Table (planned) | Purpose |
+|--------|-----------------|---------|
+| ServicePricing | `aio_service_pricing` | pricing_mode, fees, payment_timing |
+| Quote | `aio_quotes` | Header + status |
+| QuoteVersion | `aio_quote_versions` | Immutable line snapshots |
+| QuoteLineItem | `aio_quote_line_items` | fee_category, amount_status |
+| Invoice | `aio_invoices` | balance_due, status lifecycle |
+| Payment | `aio_payments` | provider id, idempotency |
+| Receipt | `aio_receipts` | Post-payment artifact |
+
+---
 
 | Entity | Table (planned) | Purpose |
 |--------|-----------------|---------|

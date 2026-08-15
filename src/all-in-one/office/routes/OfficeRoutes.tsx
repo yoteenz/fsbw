@@ -18,6 +18,13 @@ import {
   TeamPage,
   ReportsPage,
 } from '../pages/DivisionOpsPages';
+import {
+  OfficeBillingDashboardPage,
+  OfficeQuotesPage,
+  OfficeQuoteDetailPage,
+  OfficeInvoiceDetailPage,
+  OfficePricingSettingsPage,
+} from '../pages/BillingPages';
 import { OfficeRoadReadyQueuePage } from '../pages/OfficeRoadReadyQueuePage';
 import { ClientRoadReadyReviewPage } from '../pages/ClientRoadReadyReviewPage';
 import { OfficeRenewalsPage } from '../pages/OfficeRenewalsPage';
@@ -47,7 +54,12 @@ export default function OfficeRoutes() {
         <Route path="brokerage" element={<BrokerageOpsPage />} />
         <Route path="brokerage/shipments/:shipmentId" element={<ShipmentDetailPage />} />
         <Route path="invoices" element={<InvoicesPage />} />
+        <Route path="invoices/:invoiceId" element={<OfficeInvoiceDetailPage />} />
         <Route path="payments" element={<PaymentsPage />} />
+        <Route path="billing" element={<OfficeBillingDashboardPage />} />
+        <Route path="quotes" element={<OfficeQuotesPage />} />
+        <Route path="quotes/:quoteId" element={<OfficeQuoteDetailPage />} />
+        <Route path="settings/pricing" element={<OfficePricingSettingsPage />} />
         <Route path="team" element={<TeamPage />} />
         <Route path="reports" element={<ReportsPage />} />
       </Route>

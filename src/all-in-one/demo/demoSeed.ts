@@ -2,6 +2,7 @@ import { defaultIntakeAnswers } from '../intake/intakeTypes';
 import type { DemoStore, StaffMember } from './demoTypes';
 import { createRoadReadySeedData } from './roadReadySeed';
 import { createVaultSeedData, defaultNotificationPreferences } from './vaultSeed';
+import { createBillingSeedData, defaultServicePricingSeed } from './billingSeed';
 
 const STAFF: StaffMember[] = [
   { id: 'staff-1', name: 'Taylor Brooks', initials: 'TB', role: 'Administrator', status: 'available' },
@@ -19,8 +20,22 @@ export function createDemoSeed(): DemoStore {
   const daysAgo = (d: number) => new Date(now.getTime() - d * 86400000).toISOString();
   const daysAhead = (d: number) => new Date(now.getTime() + d * 86400000).toISOString().slice(0, 10);
 
+  const billing = createBillingSeedData();
+  const vault = createVaultSeedData();
+
+  const requests = [
+      mkRequest('req-1', 'AIO-DEMO-0001', 'client-a', 'Authority + BOC-3 Assistance', 'permitting', 'new_request', 'staff-2', daysAgo(3), ['vdoc-a1', 'vdoc-a2']),
+      mkRequest('req-2', 'AIO-DEMO-0002', 'client-b', 'IRP / Apportioned Registration', 'permitting', 'documents_needed', 'staff-2', daysAgo(10), ['vdoc-b2']),
+      mkRequest('req-3', 'AIO-DEMO-0003', 'client-c', 'Carrier Dispatch Support', 'dispatching', 'in_progress', 'staff-4', daysAgo(5), []),
+      mkRequest('req-4', 'AIO-DEMO-0004', 'client-e', 'Freight Quote', 'brokerage', 'under_review', 'staff-7', daysAgo(2), []),
+    ].map((r) => {
+      if (r.id === 'req-1') return { ...r, billingStatus: 'awaiting_quote_acceptance' as const };
+      if (r.id === 'req-2') return { ...r, billingStatus: 'paid' as const, nextStep: 'Payment received — processing IRP renewal' };
+      return r;
+    });
+
   return {
-    version: 5,
+    version: 6,
     requestCounter: 4,
     portalClientId: 'client-a',
     intake: defaultIntakeAnswers(),
@@ -109,17 +124,9 @@ export function createDemoSeed(): DemoStore {
         lastActivityAt: daysAgo(1),
       },
     ],
-    requests: [
-      mkRequest('req-1', 'AIO-DEMO-0001', 'client-a', 'Authority + BOC-3 Assistance', 'permitting', 'new_request', 'staff-2', daysAgo(3), ['vdoc-a1', 'vdoc-a2']),
-      mkRequest('req-2', 'AIO-DEMO-0002', 'client-b', 'IRP / Apportioned Registration', 'permitting', 'documents_needed', 'staff-2', daysAgo(10), ['vdoc-b2']),
-      mkRequest('req-3', 'AIO-DEMO-0003', 'client-c', 'Carrier Dispatch Support', 'dispatching', 'in_progress', 'staff-4', daysAgo(5), []),
-      mkRequest('req-4', 'AIO-DEMO-0004', 'client-e', 'Freight Quote', 'brokerage', 'under_review', 'staff-7', daysAgo(2), []),
-    ],
-    documents: (() => {
-      const v = createVaultSeedData();
-      return v.documents;
-    })(),
-    renewals: createVaultSeedData().renewals,
+    requests,
+    documents: vault.documents,
+    renewals: vault.renewals,
     notes: [
       {
         id: 'note-1',
@@ -164,7 +171,7 @@ export function createDemoSeed(): DemoStore {
       { id: 'task-4', title: 'Review factoring invoice', clientId: 'client-d', assignedStaffId: 'staff-6', priority: 'normal', status: 'open', category: 'Factoring', dueDate: daysAhead(3), createdAt: daysAgo(2) },
       { id: 'task-5', title: 'Prepare brokerage quote', clientId: 'client-e', requestId: 'req-4', assignedStaffId: 'staff-7', priority: 'high', status: 'open', category: 'Brokerage', dueDate: daysAhead(1), createdAt: daysAgo(1) },
     ],
-    deadlines: createVaultSeedData().deadlines.concat([
+    deadlines: vault.deadlines.concat([
       { id: 'dl-5', label: 'Service request deadline — Authority filing', clientId: 'client-a', dueDate: daysAhead(7), severity: 'upcoming', category: 'Service Request', complete: false, requestId: 'req-1', source: 'service_request' },
     ]),
     activity: [
@@ -271,31 +278,15 @@ export function createDemoSeed(): DemoStore {
         hasPod: false,
       },
     ],
-    invoices: [
-      {
-        id: 'inv-1',
-        invoiceNumber: 'INV-DEMO-001',
-        clientId: 'client-b',
-        requestId: 'req-2',
-        service: 'IRP Registration Assistance',
-        amount: 450,
-        status: 'sent',
-        issuedAt: daysAgo(5).slice(0, 10),
-        dueAt: daysAhead(25),
-      },
-      {
-        id: 'inv-2',
-        invoiceNumber: 'INV-DEMO-002',
-        clientId: 'client-a',
-        requestId: 'req-1',
-        service: 'Authority + BOC-3 Assistance',
-        amount: 325,
-        status: 'draft',
-        issuedAt: daysAgo(1).slice(0, 10),
-        dueAt: daysAhead(30),
-      },
-    ],
-    notifications: createVaultSeedData().notifications,
+    quotes: billing.quotes,
+    invoices: billing.invoices,
+    payments: billing.payments,
+    receipts: billing.receipts,
+    credits: billing.credits,
+    servicePricing: defaultServicePricingSeed(),
+    billingCounters: billing.billingCounters,
+    billingEvaluatorLastRun: new Date().toISOString(),
+    notifications: [...vault.notifications],
     notificationPreferences: defaultNotificationPreferences(),
     expirationEvaluatorLastRun: new Date().toISOString(),
     ...(() => {

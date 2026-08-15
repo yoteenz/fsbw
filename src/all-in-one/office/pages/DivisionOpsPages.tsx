@@ -1,5 +1,4 @@
-import { useParams } from 'react-router-dom';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { useDemoStore } from '../../demo/useDemoStore';
 import {
   updateLoadStatus,
@@ -9,6 +8,8 @@ import {
   getOfficeMetrics,
   getStaffWorkload,
 } from '../../demo/demoActions';
+import { getPayments } from '../../demo/billingActions';
+import { formatMoney } from '../../billing/money';
 import { aioPaths } from '../../utils/paths';
 
 type Props = { division: string; title: string };
@@ -145,29 +146,29 @@ export function ShipmentDetailPage() {
 
 export function PaymentsPage() {
   const store = useDemoStore();
-  const payments = store.invoices
-    .filter((inv) => inv.status === 'paid' || inv.status === 'sent')
-    .map((inv) => {
-      const client = store.clients.find((c) => c.id === inv.clientId);
-      return {
-        id: inv.id,
-        invoiceNumber: inv.invoiceNumber,
-        clientName: client?.companyName ?? 'Unknown',
-        amount: inv.amount,
-        status: inv.status === 'paid' ? 'Recorded (mock)' : 'Pending (mock)',
-        method: inv.status === 'paid' ? 'Check · demo' : '—',
-        paidAt: inv.status === 'paid' ? inv.issuedAt : '—',
-      };
-    });
+  const payments = getPayments().map((p) => {
+    const client = store.clients.find((c) => c.id === p.organizationId);
+    const invoice = store.invoices.find((i) => i.id === p.invoiceId);
+    return {
+      id: p.id,
+      invoiceNumber: invoice?.invoiceNumber ?? p.invoiceId,
+      clientName: client?.companyName ?? 'Unknown',
+      amount: p.amountMinor,
+      status: p.status.replace(/_/g, ' '),
+      method: p.methodDisplay ?? '—',
+      paidAt: p.processedAt ? new Date(p.processedAt).toLocaleDateString() : '—',
+      provider: p.provider,
+    };
+  });
 
   return (
     <div className="aio-office-page">
       <header className="aio-office-page__header">
         <h1>Payments</h1>
-        <p>Future-state preview only — no payment processing, cards, ACH, or bank data</p>
+        <p>Payment activity · demo mode simulates provider confirmation</p>
       </header>
       <p className="aio-prototype-note">
-        Production will require secure payment partners, PCI scope minimization, and audit logging. This page shows illustrative payment records linked to mock invoices.
+        Production will require secure payment partners, PCI scope minimization, and audit logging. Demo mode simulates payment without card data.
       </p>
       <div className="aio-office-table-wrap">
         <table className="aio-office-table">
@@ -178,6 +179,7 @@ export function PaymentsPage() {
               <th>Amount</th>
               <th>Method</th>
               <th>Status</th>
+              <th>Provider</th>
               <th>Date</th>
             </tr>
           </thead>
@@ -186,9 +188,10 @@ export function PaymentsPage() {
               <tr key={p.id}>
                 <td>{p.invoiceNumber}</td>
                 <td>{p.clientName}</td>
-                <td>${p.amount}</td>
+                <td>{formatMoney(p.amount)}</td>
                 <td>{p.method}</td>
                 <td>{p.status}</td>
+                <td>{p.provider}</td>
                 <td>{p.paidAt}</td>
               </tr>
             ))}
@@ -203,15 +206,27 @@ export function InvoicesPage() {
   const store = useDemoStore();
   return (
     <div className="aio-office-page">
-      <header className="aio-office-page__header"><h1>Invoices</h1><p>Financial preview · mock/demo amounts</p></header>
+      <header className="aio-office-page__header">
+        <h1>Invoices</h1>
+        <p>Service billing · <Link to={aioPaths.officeBilling}>Billing Center →</Link></p>
+      </header>
       <div className="aio-office-table-wrap">
         <table className="aio-office-table">
-          <thead><tr><th>Invoice</th><th>Client</th><th>Service</th><th>Amount</th><th>Status</th><th>Due</th></tr></thead>
+          <thead><tr><th>Invoice</th><th>Client</th><th>Service</th><th>Total</th><th>Paid</th><th>Balance</th><th>Status</th><th>Due</th></tr></thead>
           <tbody>
             {store.invoices.map((inv) => {
-              const client = store.clients.find((c) => c.id === inv.clientId);
+              const client = store.clients.find((c) => c.id === inv.organizationId);
               return (
-                <tr key={inv.id}><td>{inv.invoiceNumber}</td><td>{client?.companyName}</td><td>{inv.service}</td><td>${inv.amount}</td><td>{inv.status}</td><td>{inv.dueAt}</td></tr>
+                <tr key={inv.id}>
+                  <td><Link to={aioPaths.officeInvoice(inv.id)}>{inv.invoiceNumber}</Link></td>
+                  <td>{client?.companyName}</td>
+                  <td>{inv.serviceTitle}</td>
+                  <td>{formatMoney(inv.totalMinor)}</td>
+                  <td>{formatMoney(inv.amountPaidMinor)}</td>
+                  <td>{formatMoney(inv.balanceDueMinor)}</td>
+                  <td>{inv.status.replace(/_/g, ' ')}</td>
+                  <td>{inv.dueAt ?? '—'}</td>
+                </tr>
               );
             })}
           </tbody>
@@ -248,6 +263,12 @@ export function ReportsPage() {
   const expired = store.documents.filter((d) => d.isCurrent && d.expiresAt && new Date(d.expiresAt) < new Date()).length;
   const clientResponse = store.documents.filter((d) => d.status === 'requested' || d.status === 'rejected').length;
   const renewalsComplete = store.renewals.filter((r) => r.status === 'completed').length;
+  const serviceFeesIssued = store.invoices.reduce((s, i) => s + i.subtotalServiceFeesMinor, 0);
+  const serviceFeesCollected = store.payments.filter((p) => p.status === 'succeeded').reduce((s, p) => s + p.amountMinor, 0);
+  const outstandingServiceFees = store.invoices
+    .filter((i) => ['issued', 'partially_paid', 'past_due'].includes(i.status))
+    .reduce((s, i) => s + i.subtotalServiceFeesMinor, 0);
+  const externalFeesTracked = store.invoices.reduce((s, i) => s + i.subtotalExternalFeesMinor, 0);
 
   return (
     <div className="aio-office-page">
@@ -261,6 +282,18 @@ export function ReportsPage() {
         <div className="aio-office-metric-card"><span className="aio-office-metric-card__value">{store.clients.length}</span><span className="aio-office-metric-card__label">Active Clients</span></div>
         <div className="aio-office-metric-card"><span className="aio-office-metric-card__value">{metrics.inProgress}</span><span className="aio-office-metric-card__label">In Progress</span></div>
       </div>
+
+      <section className="aio-office-panel">
+        <h2>Billing Summary (Operations)</h2>
+        <dl className="aio-office-dl">
+          <dt>Service Fees Issued</dt><dd>{formatMoney(serviceFeesIssued)}</dd>
+          <dt>Service Fees Collected</dt><dd>{formatMoney(serviceFeesCollected)}</dd>
+          <dt>Outstanding Service Fees</dt><dd>{formatMoney(outstandingServiceFees)}</dd>
+          <dt>External Fees Tracked</dt><dd>{formatMoney(externalFeesTracked)}</dd>
+          <dt>Credits</dt><dd>{formatMoney(store.credits.reduce((s, c) => s + c.amountMinor, 0))}</dd>
+        </dl>
+        <p className="aio-prototype-note">Not GAAP accounting. Pass-through fees are not All In One revenue.</p>
+      </section>
     </div>
   );
 }

@@ -1,6 +1,6 @@
 # All In One — Authorization Matrix
 
-**Status:** Sprint 05 Road Ready permissions added. Enforced via Supabase RLS when backend mode is active.
+**Status:** Sprint 07 billing permissions added. Enforced via Supabase RLS when backend mode is active.
 
 ---
 
@@ -48,6 +48,8 @@
 | **Road Ready self-report** | ✓ | ✓ | ✓ | — |
 | **Road Ready staff verify** | — | — | — | — |
 | Portal messages | ✓ | ✓ | ✓ | ✓ |
+| **Quotes (own org)** | ✓ accept/decline | ✓ | R | — |
+| **Invoices / pay / receipts** | ✓ | ✓ | R | — |
 | Office | — | — | — | — |
 | Internal notes | — | — | — | — |
 | Other organizations | — | — | — | — |
@@ -56,7 +58,26 @@
 
 ---
 
-## Enforcement layers
+## Billing permissions (Sprint 07)
+
+| Permission | Super Admin | Administrator | Permitting | Others |
+|------------|-------------|---------------|------------|--------|
+| `quotes.read` | ✓ | ✓ | ✓ | R where relevant |
+| `quotes.create` / `quotes.manage` | ✓ | ✓ | A | — |
+| `invoices.read` | ✓ | ✓ | R | R |
+| `invoices.create` / `invoices.manage` | ✓ | ✓ | A | — |
+| `pricing.read` | ✓ | ✓ | R | — |
+| `pricing.manage` | ✓ | ✓ | — | — |
+| `payments.read` | ✓ | ✓ | R | — |
+| `credits.create` | ✓ | ✓ | — | — |
+| `refunds.request` / `refunds.approve` | ✓ | A | — | — |
+| `financial_reports.read` | ✓ | ✓ | R | — |
+
+Customers may view/accept quotes and pay invoices for their organization only. Customers cannot edit amounts, apply credits, or mark invoices paid.
+
+Internal pricing notes on quote versions are staff-only (`visibility: internal`).
+
+---
 
 1. **Supabase RLS** — primary enforcement (backend mode)
 2. **Route guards** — UX layer; not sufficient alone

@@ -12,6 +12,9 @@ import {
 import { aioPaths } from '../../utils/paths';
 import { getWorkflowForDivision } from '../workflows/workflowEngine';
 import { AIORequestTimeline } from '../../components/AIORequestTimeline';
+import { getInvoices, getPayments, getQuotes } from '../../demo/billingActions';
+import { createQuoteForRequest } from './BillingPages';
+import { formatMoney } from '../../billing/money';
 
 const DOC_OPTIONS = ['Insurance Certificate', 'Vehicle Registration', 'Rate Confirmation', 'POD', 'Invoice', 'Business Formation Documents'];
 
@@ -33,6 +36,9 @@ export function OfficeRequestDetailPage() {
   const notes = store.notes.filter((n) => n.requestId === req.id);
   const messages = store.messages.filter((m) => m.requestId === req.id && m.visibility === 'customer');
   const wf = getWorkflowForDivision(req.division);
+  const reqQuotes = getQuotes(undefined, store).filter((q) => q.serviceRequestId === req.id);
+  const reqInvoices = getInvoices(undefined, store).filter((i) => i.serviceRequestId === req.id);
+  const reqPayments = reqInvoices.flatMap((inv) => getPayments(inv.organizationId, store).filter((p) => p.invoiceId === inv.id));
 
   return (
     <div className="aio-office-page">
@@ -90,6 +96,25 @@ export function OfficeRequestDetailPage() {
             </li>
           ))}
         </ul>
+      </section>
+
+      <section className="aio-office-panel">
+        <h2>Billing</h2>
+        <dl className="aio-office-dl">
+          <dt>Billing Status</dt><dd>{req.billingStatus?.replace(/_/g, ' ') ?? 'Not set'}</dd>
+          {reqQuotes[0] && <dt>Quote</dt>}
+          {reqQuotes[0] && <dd><Link to={aioPaths.officeQuote(reqQuotes[0].id)}>{reqQuotes[0].quoteNumber} — {reqQuotes[0].status}</Link></dd>}
+          {reqInvoices[0] && <dt>Invoice</dt>}
+          {reqInvoices[0] && <dd><Link to={aioPaths.officeInvoice(reqInvoices[0].id)}>{reqInvoices[0].invoiceNumber} — {formatMoney(reqInvoices[0].balanceDueMinor)} balance</Link></dd>}
+          {reqPayments[0] && <dt>Latest Payment</dt>}
+          {reqPayments[0] && <dd>{formatMoney(reqPayments[0].amountMinor)} · {reqPayments[0].status}</dd>}
+        </dl>
+        <div className="aio-office-action-bar">
+          {reqQuotes.length === 0 && (
+            <button type="button" className="aio-btn aio-btn--sm aio-btn--gold" onClick={() => createQuoteForRequest(req.id)}>Create Quote</button>
+          )}
+          {reqQuotes[0] && <Link to={aioPaths.officeQuote(reqQuotes[0].id)} className="aio-btn aio-btn--sm aio-btn--outline-dark">Manage Quote</Link>}
+        </div>
       </section>
 
       <section className="aio-office-panel">

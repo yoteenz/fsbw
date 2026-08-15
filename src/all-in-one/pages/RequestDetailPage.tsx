@@ -2,6 +2,8 @@ import { Link, useParams } from 'react-router-dom';
 import { useState } from 'react';
 import { useDemoStore } from '../demo/useDemoStore';
 import { getClientMessages, simulateCustomerUpload, sendCustomerMessage } from '../demo/demoActions';
+import { getInvoices, getQuotes, getReceipts } from '../demo/billingActions';
+import { formatMoney } from '../billing/money';
 import { AIORequestTimeline } from '../components/AIORequestTimeline';
 import { aioPaths } from '../utils/paths';
 
@@ -23,6 +25,11 @@ export function RequestDetailPage() {
   const docs = store.documents.filter((d) => request.documentIds.includes(d.id) && d.visibility === 'customer');
   const messages = getClientMessages(request.clientId, request.id);
   const staff = store.staff.find((s) => s.id === request.assignedStaffId);
+  const requestQuotes = getQuotes(request.clientId, store).filter((q) => q.serviceRequestId === request.id);
+  const requestInvoices = getInvoices(request.clientId, store).filter((i) => i.serviceRequestId === request.id);
+  const requestReceipts = requestInvoices.flatMap((inv) =>
+    getReceipts(request.clientId, store).filter((r) => r.invoiceId === inv.id),
+  );
 
   return (
     <div className="aio-portal-dashboard">
@@ -66,6 +73,25 @@ export function RequestDetailPage() {
               </li>
             ))}
           </ul>
+        )}
+      </div>
+
+      <div className="aio-portal-panel">
+        <h2 className="aio-portal-panel__title">Billing</h2>
+        <dl className="aio-rr-detail-dl">
+          <div><dt>Payment Status</dt><dd>{request.billingStatus?.replace(/_/g, ' ') ?? 'Not required'}</dd></div>
+          {requestQuotes[0] && (
+            <div><dt>Quote</dt><dd><Link to={aioPaths.portalQuote(requestQuotes[0].id)}>{requestQuotes[0].quoteNumber} — {requestQuotes[0].status.replace(/_/g, ' ')}</Link></dd></div>
+          )}
+          {requestInvoices[0] && (
+            <div><dt>Invoice</dt><dd><Link to={aioPaths.portalInvoice(requestInvoices[0].id)}>{requestInvoices[0].invoiceNumber} — {formatMoney(requestInvoices[0].balanceDueMinor)} due</Link></dd></div>
+          )}
+          {requestReceipts[0] && (
+            <div><dt>Receipt</dt><dd><Link to={aioPaths.portalReceipt(requestReceipts[0].id)}>{requestReceipts[0].receiptNumber}</Link></dd></div>
+          )}
+        </dl>
+        {(requestQuotes.length > 0 || requestInvoices.length > 0) && (
+          <Link to={aioPaths.portalBilling} className="aio-portal-panel__link">Open Billing Center →</Link>
         )}
       </div>
 

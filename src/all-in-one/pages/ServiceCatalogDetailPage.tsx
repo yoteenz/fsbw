@@ -4,6 +4,8 @@ import { useServicePlan } from '../components/AIOServicePlanBar';
 import { AIOButton } from '../components/AIOButton';
 import { aioPaths } from '../utils/paths';
 import { servicePageMeta } from '../data/mockServices';
+import { useDemoStore } from '../demo/useDemoStore';
+import { customerPriceLabel, getServicePricing } from '../billing/servicePricingConfig';
 
 type Props = {
   slug?: string;
@@ -13,6 +15,7 @@ export function ServiceCatalogDetailPage({ slug: slugProp }: Props) {
   const { serviceSlug } = useParams<{ serviceSlug: string }>();
   const slug = slugProp ?? serviceSlug ?? '';
   const { add, items } = useServicePlan();
+  const store = useDemoStore();
 
   if (isDivisionSlug(slug)) {
     const division = slug as ServiceDivision;
@@ -47,6 +50,7 @@ export function ServiceCatalogDetailPage({ slug: slugProp }: Props) {
   }
 
   const inPlan = items.some((i) => i.slug === service.slug);
+  const pricing = getServicePricing(service.slug, store.servicePricing);
 
   const handleAdd = () => {
     add({
@@ -89,7 +93,10 @@ export function ServiceCatalogDetailPage({ slug: slugProp }: Props) {
 
             <aside className="aio-portal-panel">
               <h2 className="aio-portal-panel__title">Get Started</h2>
-              <p className="aio-service-plan-item__pricing">Pricing available after review</p>
+              <p className="aio-service-plan-item__pricing">{customerPriceLabel(pricing)}</p>
+              {pricing?.externalFeeLabel && (
+                <p className="aio-prototype-note">+ {pricing.externalFeeLabel}</p>
+              )}
               {inPlan ? (
                 <Link to={aioPaths.servicePlan}>
                   <AIOButton variant="gold">In My Plan — Review</AIOButton>

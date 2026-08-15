@@ -14,6 +14,8 @@ import { RoadReadyAttentionCenter, RoadReadyNextStep } from '../components/RoadR
 import { useRoadReady } from '../road-ready/useRoadReady';
 import { ROAD_READY_PRODUCT_NAME } from '../road-ready/roadReadyConfig';
 import { formatDaysRemaining } from '../calendar/calendarService';
+import { getBillingSummary } from '../demo/billingActions';
+import { formatMoney } from '../billing/money';
 import { aioPaths } from '../utils/paths';
 
 export function PortalPage() {
@@ -46,6 +48,7 @@ export function PortalPage() {
     [orgId, store.renewals],
   );
   const unreadNotifs = getPortalNotifications(orgId, store).filter((n) => !n.read).length;
+  const billingSummary = useMemo(() => getBillingSummary(orgId, store), [orgId, store.invoices, store.quotes, store.payments]);
   const attentionCount = summary?.scores.needsAttentionCount ?? 0;
   const allCaughtUp = attention.length === 0 && portalDocs.length === 0 && !upcomingDeadlines.some((e) => e.state === 'overdue' || e.state === 'due_soon');
 
@@ -184,6 +187,19 @@ export function PortalPage() {
             </>
           )}
           <Link to={aioPaths.portalVault} className="aio-portal-panel__link">Open Vault →</Link>
+        </section>
+
+        <section className="aio-portal-panel">
+          <h2 className="aio-portal-panel__title">Billing</h2>
+          {billingSummary.balanceDueMinor > 0 ? (
+            <>
+              <p><strong>{formatMoney(billingSummary.balanceDueMinor)}</strong> balance due</p>
+              <p>{billingSummary.openInvoices.length} open invoice{billingSummary.openInvoices.length === 1 ? '' : 's'}</p>
+            </>
+          ) : (
+            <p className="aio-vault-caught-up">No balance due</p>
+          )}
+          <Link to={aioPaths.portalBilling} className="aio-portal-panel__link">View Billing →</Link>
         </section>
 
         <section className="aio-portal-panel">

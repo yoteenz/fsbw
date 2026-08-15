@@ -1,11 +1,14 @@
 import { Link } from 'react-router-dom';
 import { useServicePlan } from '../components/AIOServicePlanBar';
 import { getServiceBySlug } from '../data/services';
+import { useDemoStore } from '../demo/useDemoStore';
+import { customerPriceLabel, getServicePricing } from '../billing/servicePricingConfig';
 import { AIOButton } from '../components/AIOButton';
 import { aioPaths } from '../utils/paths';
 
 export function ServicePlanPage() {
   const { items, remove } = useServicePlan();
+  const store = useDemoStore();
 
   return (
     <>
@@ -49,7 +52,9 @@ export function ServicePlanPage() {
                         {item.fromRoadmap && (
                           <span className="aio-badge aio-badge--optional">From Roadmap</span>
                         )}
-                        <p className="aio-service-plan-item__pricing">Pricing available after review</p>
+                        <p className="aio-service-plan-item__pricing">
+                          {customerPriceLabel(getServicePricing(item.slug, store.servicePricing))}
+                        </p>
                         {service && (
                           <details className="aio-service-plan-item__docs">
                             <summary>Information you may need</summary>
