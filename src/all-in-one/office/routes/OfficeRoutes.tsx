@@ -73,6 +73,15 @@ import {
   InsuranceRenewalsOfficePage,
   InsuranceReadinessPage,
 } from '../pages/InsurancePages';
+import {
+  OfficeWorkflowsListPage,
+  OfficeWorkflowDetailPage,
+  OfficeWorkflowSettingsPage,
+  OfficeWorkflowTemplateDetailPage,
+  OfficeAutomationSettingsPage,
+  OfficeAutomationExceptionsPage,
+  OfficeWorkflowHealthPage,
+} from '../pages/WorkflowPages';
 
 export default function OfficeRoutes() {
   return (
@@ -89,6 +98,13 @@ export default function OfficeRoutes() {
         <Route path="workload" element={<OfficeWorkloadPage />} />
         <Route path="activity" element={<OfficeActivityPage />} />
         <Route path="audit" element={<OfficeAuditPage />} />
+        <Route path="workflows" element={<OfficeWorkflowsListPage />} />
+        <Route path="workflows/:workflowId" element={<OfficeWorkflowDetailPage />} />
+        <Route path="settings/workflows" element={<OfficeWorkflowSettingsPage />} />
+        <Route path="settings/workflows/:templateId" element={<OfficeWorkflowTemplateDetailPage />} />
+        <Route path="settings/automations" element={<OfficeAutomationSettingsPage />} />
+        <Route path="automation-exceptions" element={<OfficeAutomationExceptionsPage />} />
+        <Route path="workflow-health" element={<OfficeWorkflowHealthPage />} />
         <Route path="clients" element={<ClientsListPage />} />
         <Route path="clients/:clientId/road-ready" element={<ClientRoadReadyReviewPage />} />
         <Route path="clients/:clientId" element={<ClientDetailPage />} />

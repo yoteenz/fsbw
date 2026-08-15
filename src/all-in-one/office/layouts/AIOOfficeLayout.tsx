@@ -42,6 +42,9 @@ const navGroups = [
   {
     label: 'Operations',
     items: [
+      { label: 'Workflows', to: aioPaths.officeWorkflows },
+      { label: 'Workflow Health', to: aioPaths.officeWorkflowHealth },
+      { label: 'Automation Exceptions', to: aioPaths.officeAutomationExceptions },
       { label: 'Loads', to: aioPaths.officeDispatchLoads },
       { label: 'Renewals', to: aioPaths.officeRenewals },
       { label: 'Document Review', to: aioPaths.officeDocumentsReview },
@@ -69,6 +72,8 @@ const navGroups = [
   {
     label: 'Management',
     items: [
+      { label: 'Workflow Templates', to: aioPaths.officeWorkflowSettings },
+      { label: 'Automation Rules', to: aioPaths.officeAutomationSettings },
       { label: 'Team', to: aioPaths.officeTeam },
       { label: 'Workload', to: aioPaths.officeWorkload },
       { label: 'Reports', to: aioPaths.officeReports },

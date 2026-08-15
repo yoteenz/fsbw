@@ -93,6 +93,7 @@ import {
   ShipperBillingPage,
   ShipperInvoiceDetailPage,
 } from '../pages/shipper/ShipperPortalPages';
+import { PortalServiceTrackerPage, PortalJourneyRoadmapPage } from '../pages/portal/WorkflowPortalPages';
 import { aioAppConfig } from '../config/appConfig';
 
 const OfficeRoutesLazy = lazy(() => import('../office/routes/OfficeRoutes'));
@@ -195,6 +196,8 @@ export default function AllInOneRoutes() {
             <Route path="brokerage/loads/:loadId" element={<CarrierBrokerageLoadPage />} />
             <Route path="brokerage/payments" element={<CarrierBrokeragePaymentsPage />} />
             <Route path="requests/:requestId" element={<RequestDetailPage />} />
+            <Route path="services/:serviceRequestId" element={<PortalServiceTrackerPage />} />
+            <Route path="roadmap" element={<PortalJourneyRoadmapPage />} />
             <Route path="settings" element={<PortalSettingsPage />} />
           </Route>
           <Route path="shipper" element={<AIOPortalLayout />}>

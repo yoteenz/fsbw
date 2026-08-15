@@ -1,11 +1,28 @@
 # All In One — Sprint Status
 
-**Sprint:** 13 — Office 2.0 · Unified Staff Operations  
+**Sprint:** 14 — Workflow Automation + Service Orchestration  
 **Last updated:** 2026-08-15
 
 ---
 
-## SPRINT 13 COMPLETE (Office 2.0 · Work Engine · Client 360)
+## SPRINT 14 COMPLETE (Workflow Engine · Automation · Service Journeys)
+
+- **Workflow core module** — `src/all-in-one/workflow/` (types, validation, engine, orchestrator, domain events, business days)
+- **Template versioning** — published immutable versions; Operating Authority v1/v2 demo
+- **Workflow instances & steps** — dependency graph, weighted progress, conditional skip, payment gates
+- **Automation engine** — event bus, rules, idempotent execution, kill switch, exceptions queue
+- **Service journeys** — New Carrier Startup demo bundles multiple workflow instances
+- **Office routes** — `/office/workflows`, `/office/workflows/:id`, `/office/settings/workflows`, `/office/settings/automations`, `/office/automation-exceptions`, `/office/workflow-health`
+- **Portal routes** — `/portal/services/:serviceRequestId` (service tracker), `/portal/roadmap` (journey)
+- **Integrations** — Service request → workflow; document upload → workflow; Client CC + Office attention sync
+- **Demo store v14** — `workflowSeed.ts`, migration from v13
+- **Permissions** — `workflows.*`, `workflow_templates.*`, `automation_*` added to Office roles
+- **Unit tests** — 11 workflow tests (validation, cycles, idempotency, versioning, journeys)
+- **Documentation** — `WORKFLOW_ENGINE.md`, `AUTOMATION_ENGINE.md`, `SERVICE_ORCHESTRATION.md`, `SERVICE_JOURNEYS.md`, `WORKFLOW_SOURCE_OF_TRUTH.md`
+
+---
+
+## SPRINT 13 COMPLETE (Office 2.0 · Unified Staff Operations)
 
 - **Office 2.0 IA** — Home / Work / Clients / Services / Operations / Finance / Communication / Management nav
 - **Office core module** — `src/all-in-one/office-core/` (work types, work engine, attention, next-action, command center, Client 360, context)

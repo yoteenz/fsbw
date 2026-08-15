@@ -45,6 +45,7 @@ import type {
 } from './clientCommandCenterTypes';
 import { clientTypeLabel, formatCustomerStatus, greetingForHour } from './customerStatusLanguage';
 import { resolvePortalContext } from './organizationContext';
+import { getPortalWorkflowActions } from '../demo/workflowActions';
 
 function priorityFromDays(days: number): RawAttentionCandidate['priority'] {
   if (days < 0) return 'urgent';
@@ -339,6 +340,21 @@ function collectAttentionCandidates(
       ctaLabel: 'LEARN MORE',
       ctaHref: aioPaths.portalFactoring,
       sortScore: 50,
+    });
+  }
+
+  for (const action of getPortalWorkflowActions(orgId)) {
+    out.push({
+      dedupeKey: action.dedupeKey,
+      category: 'services',
+      priority: action.priority,
+      title: action.title,
+      explanation: action.description,
+      statusLabel: 'WORKFLOW ACTION',
+      ctaLabel: action.ctaLabel,
+      ctaHref: action.ctaHref,
+      sortScore: action.priority === 'urgent' ? 420 : action.priority === 'high' ? 380 : 300,
+      entityType: 'workflow_step',
     });
   }
 

@@ -9,6 +9,7 @@ import { createBrokerageSeedData } from './brokerageSeed';
 import { createInsuranceSeedData } from './insuranceSeed';
 import { createCommandCenterSeedData } from './commandCenterSeed';
 import { createOfficeSeedData } from './officeSeed';
+import { createWorkflowSeedData } from './workflowSeed';
 
 export function createDemoSeed(): DemoStore {
   const now = new Date();
@@ -23,6 +24,7 @@ export function createDemoSeed(): DemoStore {
   const insurance = createInsuranceSeedData();
   const commandCenter = createCommandCenterSeedData();
   const office = createOfficeSeedData(now);
+  const workflow = createWorkflowSeedData(now);
 
   const requests = [
       mkRequest('req-1', 'AIO-DEMO-0001', 'client-a', 'Authority + BOC-3 Assistance', 'permitting', 'new_request', 'staff-2', daysAgo(3), ['vdoc-a1', 'vdoc-a2']),
@@ -30,13 +32,13 @@ export function createDemoSeed(): DemoStore {
       mkRequest('req-3', 'AIO-DEMO-0003', 'client-c', 'Carrier Dispatch Support', 'dispatching', 'in_progress', 'staff-4', daysAgo(5), []),
       mkRequest('req-4', 'AIO-DEMO-0004', 'client-e', 'Freight Quote', 'brokerage', 'under_review', 'staff-7', daysAgo(2), []),
     ].map((r) => {
-      if (r.id === 'req-1') return { ...r, billingStatus: 'awaiting_quote_acceptance' as const };
+      if (r.id === 'req-1') return { ...r, billingStatus: 'paid' as const };
       if (r.id === 'req-2') return { ...r, billingStatus: 'paid' as const, nextStep: 'Payment received — processing IRP renewal' };
       return r;
     });
 
   return {
-    version: 13,
+    version: 14,
     requestCounter: 4,
     portalClientId: 'client-a',
     shipperPortalOrgId: 'client-e',
@@ -312,6 +314,18 @@ export function createDemoSeed(): DemoStore {
         drivers: rr.drivers,
       };
     })(),
+    workflowTemplates: workflow.workflowTemplates,
+    workflowTemplateVersions: workflow.workflowTemplateVersions,
+    documentRequirementDefs: workflow.documentRequirementDefs,
+    workflowInstances: workflow.workflowInstances,
+    workflowStepInstances: workflow.workflowStepInstances,
+    workflowEvents: workflow.workflowEvents,
+    automationRules: workflow.automationRules,
+    automationExecutions: workflow.automationExecutions,
+    automationExceptions: workflow.automationExceptions,
+    workflowReminders: workflow.workflowReminders,
+    serviceJourneys: workflow.serviceJourneys,
+    workflowKillSwitch: workflow.workflowKillSwitch,
   };
 }
 

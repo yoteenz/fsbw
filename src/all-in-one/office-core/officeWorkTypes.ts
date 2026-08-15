@@ -261,7 +261,16 @@ export type OfficePermission =
   | 'brokerage_finance.read'
   | 'factoring_finance.read'
   | 'audit.read'
-  | 'workload.read';
+  | 'workload.read'
+  | 'workflows.read'
+  | 'workflows.manage'
+  | 'workflows.override'
+  | 'workflow_templates.read'
+  | 'workflow_templates.manage'
+  | 'automation_rules.read'
+  | 'automation_rules.manage'
+  | 'automation_exceptions.read'
+  | 'automation_exceptions.resolve';
 
 export interface OfficeAttentionItem {
   id: string;

@@ -2,6 +2,7 @@ import type { Priority } from '../demo/demoTypes';
 import type { DemoStore } from '../demo/demoTypes';
 import type { OfficeAttentionItem, OfficeWaitingOn } from './officeWorkTypes';
 import { aioPaths } from '../utils/paths';
+import { instanceStatusLabel } from '../workflow/workflowEngine';
 
 export interface RawOfficeAttentionCandidate {
   dedupeKey: string;
@@ -168,6 +169,31 @@ export function collectOfficeAttentionCandidates(store: DemoStore): RawOfficeAtt
       waitingOn: 'all_in_one',
       sortScore: 320,
     });
+  }
+
+  for (const wf of store.workflowInstances ?? []) {
+    if (['completed', 'cancelled'].includes(wf.status)) continue;
+    const client = store.clients.find((c) => c.id === wf.organizationId);
+    const template = store.workflowTemplates?.find((t) => t.id === wf.templateId);
+    if (['waiting_on_customer', 'waiting_external', 'blocked', 'ready_for_review'].includes(wf.status)) {
+      out.push({
+        dedupeKey: `workflow:${wf.id}`,
+        category: 'workflows',
+        priority: wf.status === 'blocked' ? 'urgent' : wf.status === 'ready_for_review' ? 'high' : 'normal',
+        title: `${template?.name ?? 'Workflow'} — ${instanceStatusLabel(wf.status)}`,
+        explanation: `Workflow at ${wf.progress}% — ${instanceStatusLabel(wf.status)}`,
+        statusLabel: instanceStatusLabel(wf.status).toUpperCase(),
+        organizationId: wf.organizationId,
+        organizationName: client?.companyName,
+        ctaLabel: 'OPEN WORKFLOW',
+        ctaHref: aioPaths.officeWorkflow(wf.id),
+        affectedAreas: ['Workflows', template?.division.replace('_', ' ') ?? 'Services'],
+        entityType: 'workflow_instance',
+        entityId: wf.id,
+        waitingOn: wf.status === 'waiting_on_customer' ? 'customer' : wf.status === 'waiting_external' ? 'external_provider' : 'all_in_one',
+        sortScore: wf.status === 'blocked' ? 360 : 240,
+      });
+    }
   }
 
   return out;

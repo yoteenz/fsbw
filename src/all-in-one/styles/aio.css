@@ -3814,3 +3814,23 @@
   .aio-oc-table__row { grid-template-columns: 1fr; gap: 0.25rem; padding: 0.75rem 0; }
 }
 
+/* Sprint 14 — Workflow orchestration */
+.aio-workflow-timeline { display: flex; flex-direction: column; gap: 1rem; }
+.aio-workflow-phase { border-left: 3px solid #e5e7eb; padding-left: 1rem; }
+.aio-workflow-phase.is-current { border-color: var(--aio-gold, #c9a227); }
+.aio-workflow-phase.is-complete { border-color: #22c55e; opacity: 0.85; }
+.aio-workflow-phase__label { font-weight: 700; font-size: 0.9rem; margin-bottom: 0.35rem; }
+.aio-workflow-steps { list-style: none; margin: 0; padding: 0; font-size: 0.85rem; }
+.aio-workflow-step { display: flex; justify-content: space-between; align-items: center; padding: 0.25rem 0; gap: 0.5rem; }
+.aio-tracker-phases { list-style: none; margin: 0; padding: 0; }
+.aio-tracker-phase { display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem 0; font-size: 0.95rem; }
+.aio-tracker-phase--current { font-weight: 700; }
+.aio-tracker-phase__icon { width: 1.25rem; text-align: center; color: var(--aio-gold, #c9a227); }
+.aio-journey-workflows { list-style: none; margin: 0.5rem 0 0; padding: 0; }
+.aio-journey-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem 0; border-bottom: 1px solid #f3f4f6; }
+.aio-journey-item.is-locked { opacity: 0.55; }
+.aio-filter-row { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-bottom: 1rem; }
+.aio-chip { padding: 0.35rem 0.65rem; border: 1px solid #d1d5db; border-radius: 999px; background: #fff; font-size: 0.75rem; cursor: pointer; }
+.aio-chip--active { border-color: var(--aio-gold, #c9a227); background: rgba(201, 162, 39, 0.1); }
+.aio-demo-note { font-size: 0.8rem; color: #6b7280; margin-top: 1rem; font-style: italic; }
+

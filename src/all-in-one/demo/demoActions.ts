@@ -18,6 +18,8 @@ import { buildCustomerTimeline, getWorkflowForDivision, statusLabelForStep } fro
 import { buildNotification } from '../notifications/notificationEngine';
 import { updateLoadOperationalStatus } from './dispatchActions';
 import type { LoadOperationalStatus } from '../dispatch/dispatchTypes';
+import { createWorkflowInstanceFromRequest, handleDocumentReceivedForWorkflow } from '../workflow/workflowOrchestrator';
+import { resolveTemplateIdForService } from './workflowSeed';
 
 function uid(): string {
   return crypto.randomUUID();
@@ -159,6 +161,7 @@ export function submitServiceRequest(payload: {
       requestId: request.id,
       visibility: 'customer',
     });
+    const templateId = resolveTemplateIdForService(payload.services[0]?.slug ?? '');
     s.notifications.unshift(
       buildNotification({
         recipientType: 'staff',
@@ -170,7 +173,9 @@ export function submitServiceRequest(payload: {
         link: `/all-in-one/office/requests/${request.id}`,
       }),
     );
-
+    if (templateId) {
+      return createWorkflowInstanceFromRequest(s, request.id, templateId);
+    }
     return s;
   }).requests[0];
 }
@@ -294,7 +299,7 @@ export function markDocumentReceived(docId: string, staffId?: string): void {
       staffId,
       visibility: 'customer',
     });
-    return s;
+    return handleDocumentReceivedForWorkflow(s, doc.organizationId ?? doc.clientId ?? '', docId);
   });
 }
 

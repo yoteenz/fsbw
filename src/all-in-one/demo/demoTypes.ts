@@ -85,6 +85,20 @@ import type {
   OfficeWorkItem,
   InternalNoteType,
 } from '../office-core/officeWorkTypes';
+import type {
+  AutomationException,
+  AutomationExecution,
+  AutomationRule,
+  DocumentRequirementDef,
+  ServiceJourney,
+  WorkflowEventRecord,
+  WorkflowInstance,
+  WorkflowKillSwitch,
+  WorkflowReminder,
+  WorkflowStepInstance,
+  WorkflowTemplate,
+  WorkflowTemplateVersion,
+} from '../workflow/workflowTypes';
 
 export type Visibility = 'internal' | 'customer';
 
@@ -401,7 +415,7 @@ export interface OrganizationMember {
 }
 
 export interface DemoStore {
-  version: 13;
+  version: 14;
   requestCounter: number;
   portalClientId?: string;
   shipperPortalOrgId?: string;
@@ -500,6 +514,19 @@ export interface DemoStore {
   drivers: DriverPlaceholder[];
   expirationEvaluatorLastRun?: string;
   billingEvaluatorLastRun?: string;
+  /** Sprint 14 — workflow orchestration */
+  workflowTemplates?: WorkflowTemplate[];
+  workflowTemplateVersions?: WorkflowTemplateVersion[];
+  documentRequirementDefs?: DocumentRequirementDef[];
+  workflowInstances?: WorkflowInstance[];
+  workflowStepInstances?: WorkflowStepInstance[];
+  workflowEvents?: WorkflowEventRecord[];
+  automationRules?: AutomationRule[];
+  automationExecutions?: AutomationExecution[];
+  automationExceptions?: AutomationException[];
+  workflowReminders?: WorkflowReminder[];
+  serviceJourneys?: ServiceJourney[];
+  workflowKillSwitch?: WorkflowKillSwitch;
 }
 
 export interface OfficeMetrics {
