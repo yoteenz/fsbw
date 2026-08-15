@@ -50962,3 +50962,21 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
   - Modified: `ProductBreakdownViewer.tsx`, `productBreakdownCatalog.ts`, `unitMediaAssets.ts`, `types.ts`, `index.css`, `index.ts` exports
 
 - **Spatial Architecture Review:** SKIPPED — refinement within existing Learn → Product Breakdown surface; no Lounge shell/nav changes.
+
+---
+
+## 2026-08-15 — All In One Enterprises Inc. Sprint 01 (isolated debug website shell)
+
+- **Context:** Founder sprint to begin **ALL IN ONE ENTERPRISES INC.** — transportation business-services platform (replacing Perfect Choice Permitting). Temporary host inside Frontal Slayer repo for Cloudflare preview review; must extract cleanly later.
+
+- **Topics covered:** Sprint 01 website shell only (no dispatch TMS, filings, auth, Supabase, payments). Isolation from Frontal Slayer. Debug route `/debug/all-in-one/*`. Approved black/gold concept. Mock data only. Docs in `docs/all-in-one/`.
+
+- **Decisions / outcomes:**
+  - **`src/all-in-one/`** — config, AIO* components, layouts, sections, pages, mock data, scoped `aio.css`.
+  - Lazy **`AllInOneRouteHost`** in `StudioDebugRoutes.tsx`; **`isAllInOneDebugPath()`** skips storefront bootstrap.
+  - Client Login → portal prototype; no FS auth. No All In One Supabase tables.
+  - Commit **`52ba707e7`** [sync-only].
+
+- **Key paths:** `src/all-in-one/`, `docs/all-in-one/`, `src/routes/StudioDebugRoutes.tsx`, `src/routes/studio-institute-paths.ts`
+
+- **Spatial Architecture Review:** SKIPPED — isolated debug marketing shell; not Studio OS / FS customer surface.
