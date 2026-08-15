@@ -2,7 +2,39 @@
 
 **Company:** ALL IN ONE ENTERPRISES INC.  
 **Positioning:** The business office behind the truck.  
-**Status:** Sprint 01 (+ factoring follow-up) — debug website shell inside Frontal Slayer host repo (temporary).
+**Status:** Sprint 02 — Smart Intake + Roadmap + Service Marketplace (debug prototype inside Frontal Slayer host repo, temporary).
+
+---
+
+## Sprint 02 — Smart Intake + Roadmap (prototype)
+
+### Smart Intake architecture
+
+- Single configurable engine at `src/all-in-one/intake/`
+- Entry: `/all-in-one/get-started` with optional `?goal=` pre-selection
+- Progressive disclosure: goal → journey → business → operating → assets → pain points → branch questions → contact
+- Shipper branch bypasses carrier compliance questions
+- No SSN, EIN, or sensitive identifiers collected
+
+### Roadmap recommendation architecture
+
+- Mock engine at `src/all-in-one/roadmap/` — **not** a regulatory rules engine
+- Language: Preliminary Roadmap, Recommended, Needs Review, May Be Needed
+- Explainable items with acronym microcopy (IRP, IFTA, BOC-3, USDOT, MC)
+- Separate compliance progress from optional business services (factoring, dispatch)
+
+### Service marketplace + plan + request lifecycle
+
+- Marketplace by division + service bundles
+- Config-driven detail pages from `data/services.ts`
+- My Service Plan (local, not shopping cart)
+- Mock request submission → portal Active Requests → request detail with config-driven timeline
+- Preliminary document checklists (upload coming in future sprint)
+
+### Local demo persistence + future backend
+
+- localStorage via repository abstractions (`IntakeRepository`, `RoadmapRepository`, `ServicePlanRepository`, `ServiceRequestRepository`)
+- Future: swap `LocalDemo*` for `Supabase*` without rewriting UI
 
 ---
 

@@ -16,10 +16,21 @@ export const aioPaths = {
   about: `${BASE}/about`,
   contact: `${BASE}/contact`,
   roadmap: `${BASE}/roadmap`,
+  getStarted: `${BASE}/get-started`,
+  roadmapResults: `${BASE}/roadmap/results`,
+  servicePlan: `${BASE}/service-plan`,
+  requestSubmit: `${BASE}/request/submit`,
   industries: `${BASE}/about#industries`,
   resources: `${BASE}/about#resources`,
+  serviceSlug: (slug: string) => `${BASE}/services/${slug}`,
+  portalRequest: (requestId: string) => `${BASE}/portal/requests/${requestId}`,
+  requestConfirmation: (requestId: string) => `${BASE}/request/confirmation/${requestId}`,
 } as const;
 
 export function aioServicePath(slug: string): string {
-  return `${BASE}/services/${slug}`;
+  return aioPaths.serviceSlug(slug);
+}
+
+export function aioGetStarted(goal?: string): string {
+  return goal ? `${BASE}/get-started?goal=${goal}` : `${BASE}/get-started`;
 }

@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { aioAppConfig } from '../config/appConfig';
-import { aioPaths } from '../utils/paths';
+import { aioGetStarted, aioPaths } from '../utils/paths';
 import { AIOButton } from '../components/AIOButton';
 
 export function HeroSection() {
@@ -23,10 +23,10 @@ export function HeroSection() {
           so you can focus on operating your business and staying on the road.
         </p>
         <div className="aio-hero__actions">
-          <Link to={aioPaths.businessFormation}>
+          <Link to={aioGetStarted('start-business')}>
             <AIOButton variant="gold">Start My Trucking Business</AIOButton>
           </Link>
-          <Link to={aioPaths.roadmap}>
+          <Link to={aioPaths.getStarted}>
             <AIOButton variant="outline">Get My Roadmap</AIOButton>
           </Link>
         </div>

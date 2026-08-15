@@ -10,11 +10,16 @@ Copy entire tree:
 
 ```
 src/all-in-one/          → src/ (or keep src/all-in-one/ in new repo)
+  intake/                → Sprint 02 Smart Intake (config-driven)
+  roadmap/               → Sprint 02 mock recommendation engine
+  repositories/          → Persistence abstractions (LocalDemo* → Supabase* later)
+  storage/demoStorage.ts → localStorage keys + reset
+  data/services.ts       → Service catalog + bundles
   data/mockFactoring.ts
   services/factoring/
-  pages/FactoringPage.tsx
-  pages/FactoringPortalPage.tsx
-  components/AIOFactoring*.tsx
+  pages/GetStartedPage.tsx, RoadmapResultsPage.tsx, ServicePlanPage.tsx, …
+  pages/FactoringPage.tsx, FactoringPortalPage.tsx
+  components/AIOFactoring*.tsx, AIODebugBanner.tsx, IntakeQuestionField.tsx, …
 docs/all-in-one/         → docs/
 ```
 

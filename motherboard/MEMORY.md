@@ -50997,3 +50997,20 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Decisions / outcomes:** No financial backend, no Supabase, no bank/ACH data. Illustrative fees labeled Sample. Invoice workflow demo ends at "Demo Submission Complete." Canonical routes now **`/all-in-one/*`** with legacy `/debug/all-in-one/*` redirect.
 
 - **Key paths:** `src/all-in-one/data/mockFactoring.ts`, `pages/FactoringPage.tsx`, `pages/FactoringPortalPage.tsx`, `services/factoring/`, factoring AIO* components.
+
+---
+
+## 2026-08-15 — All In One Sprint 02: Smart Intake + Roadmap + Service Marketplace
+
+- **Context:** Founder issued full Sprint 02 spec — first interactive customer journey from goal selection through preliminary roadmap, service marketplace, mock service request, and portal integration. Still debug prototype under `/all-in-one/*`; no production backend.
+
+- **Topics covered:** Config-driven Smart Intake (`src/all-in-one/intake/`), goal query params, carrier/shipper/factoring/insurance branches, mock roadmap engine (`src/all-in-one/roadmap/`), service catalog (`data/services.ts`), My Service Plan, demo requests (`AIO-DEMO-XXXX`), portal dashboard upgrade, localStorage persistence, debug banner + Reset Demo Data, repository abstractions for future Supabase migration.
+
+- **Decisions / outcomes:** UI PROTOTYPE COMPLETE; PRODUCTION IMPLEMENTATION PENDING. Roadmap language is preliminary (not legal compliance). Factoring/dispatch optional — separate compliance vs business-services progress. No Supabase, no sensitive data, no payments. Build passes (`npm run build`). Routes verified 200 on dev server.
+
+- **Key routes:** `/all-in-one/get-started`, `/roadmap/results`, `/services`, `/services/:serviceSlug`, `/service-plan`, `/request/submit`, `/portal/requests/:requestId`.
+
+- **Key paths:** `src/all-in-one/intake/`, `roadmap/`, `repositories/`, `storage/demoStorage.ts`, `data/services.ts`, new pages (GetStarted, RoadmapResults, ServicePlan, ServiceCatalogDetail, RequestSubmit, RequestDetail), `docs/all-in-one/SPRINT_STATUS.md` updated.
+
+- **Spatial Architecture Review:** SKIPPED — debug prototype extension; no Studio OS / Frontal Slayer customer surface changes.
+

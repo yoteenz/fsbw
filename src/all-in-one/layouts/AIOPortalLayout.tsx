@@ -1,24 +1,19 @@
 import { Link, Outlet, useLocation } from 'react-router-dom';
 import { useState } from 'react';
 import { AIOLogo } from '../components/AIOLogo';
+import { AIODebugBanner } from '../components/AIODebugBanner';
 import { aioPaths } from '../utils/paths';
 
 const portalNav = [
   { label: 'Dashboard', href: aioPaths.portal },
-  { label: 'My Company', href: aioPaths.portal },
-  { label: 'My Fleet', href: aioPaths.portal },
-  { label: 'Permits & Registrations', href: aioPaths.portal },
-  { label: 'Taxes & Filings', href: aioPaths.portal },
+  { label: 'My Roadmap', href: aioPaths.roadmapResults },
+  { label: 'Service Plan', href: aioPaths.servicePlan },
+  { label: 'Permits & Registrations', href: aioPaths.permitting },
   { label: 'Insurance', href: aioPaths.insurance },
   { label: 'Dispatch', href: aioPaths.dispatching },
-  { label: 'Loads', href: aioPaths.portal },
   { label: 'Factoring', href: aioPaths.portalFactoring },
   { label: 'Documents', href: aioPaths.portal },
-  { label: 'Invoices', href: aioPaths.portal },
-  { label: 'Messages', href: aioPaths.portal },
   { label: 'Compliance Calendar', href: aioPaths.roadmap },
-  { label: 'Reports', href: aioPaths.portal },
-  { label: 'Account Settings', href: aioPaths.portal },
   { label: 'Support', href: aioPaths.contact },
 ];
 
@@ -30,6 +25,7 @@ export function AIOPortalLayout() {
 
   return (
     <div className="aio-app aio-portal">
+      <AIODebugBanner />
       <div className="aio-portal__mobile-bar">
         <AIOLogo />
         <button type="button" className="aio-btn aio-btn--gold aio-btn--sm" onClick={() => setSidebarOpen((o) => !o)}>

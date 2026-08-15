@@ -7,6 +7,7 @@ import { AIOButton } from './AIOButton';
 
 const navLinks = [
   { label: 'Services', href: aioPaths.services },
+  { label: 'Get Started', href: aioPaths.getStarted },
   { label: 'Industries', href: aioPaths.industries },
   { label: 'Resources', href: aioPaths.resources },
   { label: 'About Us', href: aioPaths.about },
