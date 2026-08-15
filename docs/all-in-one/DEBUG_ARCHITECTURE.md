@@ -70,7 +70,7 @@ Registered in `src/routes/StudioDebugRoutes.tsx` **before** the catch-all `App` 
 ```
 src/all-in-one/
   config/appConfig.ts      # Company, contact, routes, feature flags
-  demo/                    # Sprint 03–10 — demo store v9 + seed/actions
+  demo/                    # Sprint 03–10 — demo store v10 + seed/actions
   brokerage/               # Sprint 10 — types, rules, calculations, config
   factoring/               # Sprint 09 — types, rules, calculations, config
   dispatch/                # Sprint 08 — load domain, handoff rules
@@ -148,7 +148,7 @@ Backend migrations: `all-in-one/supabase/migrations/` — **not** Frontal Slayer
 
 ### Sprint 03 — centralized demo store
 
-Single key: `aio_debug_store`. Current version: **9** (Sprint 10 brokerage). Legacy versions migrate on first load (v3→…→v8→v9).
+Single key: `aio_debug_store`. Current version: **10** (Sprint 10 brokerage financial refresh). Legacy versions migrate on first load (v3→…→v9→v10).
 
 Entities: clients, requests, tasks, documents, deadlines, notes, messages, activity, staff, loads, dispatch enrollments, factoringProfiles, factoringProviders, debtorAccounts, freightInvoices, factoringSubmissions, factoringIssues, factoringCounters, **brokerageCapability**, **shipperProfiles**, **shipmentRequests**, **brokerageFreightQuotes**, **carrierNetworkProfiles**, **carrierOffers**, **brokerageRateConfirmations**, **brokerageLoadFinancials**, **brokerageAccessorials**, **brokerageShipperInvoices**, **carrierPayables**, **brokerageIssues**, **coverageHistory**, **brokerageCounters**, invoices, notifications, billing, road ready, fleet.
 
@@ -205,15 +205,16 @@ Seed: `factoringSeed.ts` — clients A–G scenarios (interested, in review, act
 
 Actions: `factoringActions.ts` — enrollment, freight invoice, submission lifecycle, notifications.
 
-**Reset Demo Data** restores v9 seed via `demoSeed.ts`.
+**Reset Demo Data** restores v10 seed via `demoSeed.ts`.
 
 Factoring UI banner: `DEMO · Fictional providers, amounts, and funding for review only`
 
-### Sprint 10 — demo store v9 (brokerage)
+### Sprint 10 — demo store v10 (brokerage)
 
 | Upgrade | Adds |
 |---------|------|
 | v8 → v9 | Full brokerage graph: capability, shippers, shipment requests, freight quotes, carrier network, offers, rate confirmations, load financials, shipper invoices, carrier payables, issues, coverage history; brokerage loads merged into `loads[]` with `sourceType: 'brokerage'` |
+| v9 → v10 | Refreshes brokerage financials (per-scenario margins, Load G $500), patches br-load-a/br-load-h, sets `brokeragePortalClientId: client-b` |
 
 Seed: `brokerageSeed.ts` — loads **A–H** scenarios (coverage, in transit, POD issue, ready to bill, invoiced, factoring-protected payable).
 
@@ -223,7 +224,7 @@ Default capability: **`demo`** (`DEFAULT_BROKERAGE_CAPABILITY`).
 
 Brokerage UI banner: `DEMO_BROKERAGE_LABEL` from `brokerageConfig.ts`.
 
-**Reset Demo Data** restores v9 seed via `demoSeed.ts`.
+**Reset Demo Data** restores v10 seed via `demoSeed.ts`.
 
 ### Factoring components (Sprint 01 + Sprint 09)
 

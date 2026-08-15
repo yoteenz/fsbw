@@ -41,7 +41,7 @@ export function createDemoSeed(): DemoStore {
     });
 
   return {
-    version: 9,
+    version: 10,
     requestCounter: 4,
     portalClientId: 'client-a',
     shipperPortalOrgId: 'client-e',

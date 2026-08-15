@@ -351,7 +351,7 @@ export interface BrokerageShipment extends BrokerageQuote {
 export interface Invoice extends BillingInvoice {}
 
 export interface DemoStore {
-  version: 9;
+  version: 10;
   requestCounter: number;
   portalClientId?: string;
   shipperPortalOrgId?: string;

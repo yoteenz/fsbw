@@ -13,18 +13,26 @@ const STORE_EVENT = 'aio-demo-store-change';
 export function loadDemoStore(): DemoStore {
   if (typeof window === 'undefined') return createDemoSeed();
 
-  const existing = readStorage<DemoStore | (Omit<DemoStore, 'version'> & { version: 3 | 4 | 5 | 6 | 7 | 8 }) | null>(DEMO_STORE_KEY, null);
-  if (existing?.version === 9) return existing as DemoStore;
+  const existing = readStorage<DemoStore | (Omit<DemoStore, 'version'> & { version: 3 | 4 | 5 | 6 | 7 | 8 | 9 }) | null>(DEMO_STORE_KEY, null);
+  if (existing?.version === 10) return existing as DemoStore;
+
+  if (existing?.version === 9) {
+    const upgraded = upgradeStoreV9ToV10(existing as DemoStoreV9);
+    saveDemoStore(upgraded);
+    return upgraded;
+  }
 
   if (existing?.version === 8) {
-    const upgraded = upgradeStoreV8ToV9(existing as DemoStoreV8);
+    const v9 = upgradeStoreV8ToV9(existing as DemoStoreV8);
+    const upgraded = upgradeStoreV9ToV10(v9);
     saveDemoStore(upgraded);
     return upgraded;
   }
 
   if (existing?.version === 7) {
     const v8 = upgradeStoreV7ToV8(existing as unknown as DemoStoreV7);
-    const upgraded = upgradeStoreV8ToV9(v8);
+    const v9 = upgradeStoreV8ToV9(v8);
+    const upgraded = upgradeStoreV9ToV10(v9);
     saveDemoStore(upgraded);
     return upgraded;
   }
@@ -32,7 +40,8 @@ export function loadDemoStore(): DemoStore {
   if (existing?.version === 6) {
     const v7 = upgradeStoreV6ToV7(existing as DemoStoreV6);
     const v8 = upgradeStoreV7ToV8(v7);
-    const upgraded = upgradeStoreV8ToV9(v8);
+    const v9 = upgradeStoreV8ToV9(v8);
+    const upgraded = upgradeStoreV9ToV10(v9);
     saveDemoStore(upgraded);
     return upgraded;
   }
@@ -41,7 +50,8 @@ export function loadDemoStore(): DemoStore {
     const v6 = upgradeStoreV5ToV6(existing as DemoStoreV5);
     const v7 = upgradeStoreV6ToV7(v6);
     const v8 = upgradeStoreV7ToV8(v7);
-    const upgraded = upgradeStoreV8ToV9(v8);
+    const v9 = upgradeStoreV8ToV9(v8);
+    const upgraded = upgradeStoreV9ToV10(v9);
     saveDemoStore(upgraded);
     return upgraded;
   }
@@ -51,7 +61,8 @@ export function loadDemoStore(): DemoStore {
     const v6 = upgradeStoreV5ToV6(v5);
     const v7 = upgradeStoreV6ToV7(v6);
     const v8 = upgradeStoreV7ToV8(v7);
-    const upgraded = upgradeStoreV8ToV9(v8);
+    const v9 = upgradeStoreV8ToV9(v8);
+    const upgraded = upgradeStoreV9ToV10(v9);
     saveDemoStore(upgraded);
     return upgraded;
   }
@@ -62,7 +73,8 @@ export function loadDemoStore(): DemoStore {
     const v6 = upgradeStoreV5ToV6(v5);
     const v7 = upgradeStoreV6ToV7(v6);
     const v8 = upgradeStoreV7ToV8(v7);
-    const upgraded = upgradeStoreV8ToV9(v8);
+    const v9 = upgradeStoreV8ToV9(v8);
+    const upgraded = upgradeStoreV9ToV10(v9);
     saveDemoStore(upgraded);
     return upgraded;
   }
@@ -106,14 +118,13 @@ type DemoStoreV8 = Omit<
   | 'brokeragePortalClientId'
 > & { version: 8 };
 
-function upgradeStoreV8ToV9(store: DemoStoreV8): DemoStore {
+function upgradeStoreV8ToV9(store: DemoStoreV8): DemoStoreV9 {
   const brokerage = createBrokerageSeedData();
   const dispatchOnlyLoads = store.loads.filter((l) => l.sourceType !== 'brokerage');
   return {
     ...store,
     version: 9,
     shipperPortalOrgId: 'client-e',
-    brokeragePortalClientId: 'client-b',
     brokerageCapability: brokerage.capability,
     shipperProfiles: brokerage.shipperProfiles,
     shipmentRequests: brokerage.shipmentRequests,
@@ -131,7 +142,43 @@ function upgradeStoreV8ToV9(store: DemoStoreV8): DemoStore {
     brokerageCounters: brokerage.counters,
     brokerageQuotes: [],
     shipments: [],
-  } as DemoStore;
+  } as DemoStoreV9;
+}
+
+type DemoStoreV9 = Omit<DemoStore, 'version'> & { version: 9 };
+
+function upgradeStoreV9ToV10(store: DemoStoreV9): DemoStore {
+  const seed = createBrokerageSeedData();
+  const seedLoads = new Map(seed.loads.map((l) => [l.id, l]));
+  const seedFinancials = new Map(seed.financials.map((f) => [f.loadId, f]));
+
+  return {
+    ...store,
+    version: 10,
+    brokeragePortalClientId: store.brokeragePortalClientId ?? 'client-b',
+    loads: store.loads.map((load) => {
+      if (load.sourceType !== 'brokerage') return load;
+      const seeded = seedLoads.get(load.id);
+      if (!seeded) return load;
+      return {
+        ...load,
+        operationalStatus: seeded.operationalStatus,
+        offerStatus: seeded.offerStatus,
+        brokerageCoverageStatus: seeded.brokerageCoverageStatus,
+        brokerageCarrierOrganizationId: seeded.brokerageCarrierOrganizationId,
+        brokerageCarrierNetworkProfileId: seeded.brokerageCarrierNetworkProfileId,
+        organizationId: seeded.organizationId,
+        linehaulMinor: seeded.linehaulMinor,
+        grossMinor: seeded.grossMinor,
+        confirmedGrossMinor: seeded.confirmedGrossMinor,
+      };
+    }),
+    brokerageLoadFinancials: store.brokerageLoadFinancials.map((fin) => seedFinancials.get(fin.loadId) ?? fin),
+    carrierPayables: store.carrierPayables.map((payable) => {
+      if (payable.id !== 'cp-h') return payable;
+      return { ...payable, carrierOrganizationId: 'client-d' };
+    }),
+  };
 }
 
 type DemoStoreV7 = Omit<

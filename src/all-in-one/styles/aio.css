@@ -3666,6 +3666,14 @@
 .aio-brokerage-card { padding: 1rem; border: 1px solid #e5e7eb; border-radius: 8px; margin-bottom: 1rem; }
 .aio-brokerage-row { display: flex; flex-direction: column; gap: 0.25rem; padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: 6px; margin-bottom: 0.5rem; text-decoration: none; color: inherit; }
 .aio-brokerage-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem; }
+.aio-brokerage .aio-btn--outline {
+  color: var(--aio-charcoal);
+  border-color: rgba(17, 24, 39, 0.45);
+}
+.aio-brokerage .aio-btn--outline:hover {
+  border-color: var(--aio-gold);
+  color: var(--aio-gold-dark, #8a6f1a);
+}
 .aio-brokerage-charge { font-size: 1.25rem; font-weight: 700; }
 .aio-brokerage-warn { color: #b45309; font-size: 0.85rem; }
 .aio-brokerage-office-metrics { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; margin-bottom: 1.5rem; }
