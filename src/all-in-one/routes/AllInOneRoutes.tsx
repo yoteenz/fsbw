@@ -8,6 +8,8 @@ import { ServiceDetailPage } from '../pages/ServiceDetailPage';
 import { AboutPage } from '../pages/AboutPage';
 import { ContactPage } from '../pages/ContactPage';
 import { RoadmapPage } from '../pages/RoadmapPage';
+import { FactoringPage } from '../pages/FactoringPage';
+import { FactoringPortalPage } from '../pages/FactoringPortalPage';
 import { aioAppConfig } from '../config/appConfig';
 
 export function AllInOneLoading() {
@@ -26,6 +28,7 @@ export default function AllInOneRoutes() {
         <Route path="services/business-formation" element={<ServiceDetailPage slug="business-formation" />} />
         <Route path="services/insurance" element={<ServiceDetailPage slug="insurance" />} />
         <Route path="services/dispatching" element={<ServiceDetailPage slug="dispatching" />} />
+        <Route path="services/factoring" element={<FactoringPage />} />
         <Route path="services/brokerage" element={<ServiceDetailPage slug="brokerage" />} />
         <Route path="about" element={<AboutPage />} />
         <Route path="contact" element={<ContactPage />} />
@@ -34,6 +37,7 @@ export default function AllInOneRoutes() {
 
       <Route path="portal" element={<AIOPortalLayout />}>
         <Route index element={<PortalPage />} />
+        <Route path="factoring" element={<FactoringPortalPage />} />
       </Route>
 
       <Route path="*" element={<Navigate to={base} replace />} />

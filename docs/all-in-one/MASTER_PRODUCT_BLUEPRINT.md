@@ -2,7 +2,7 @@
 
 **Company:** ALL IN ONE ENTERPRISES INC.  
 **Positioning:** The business office behind the truck.  
-**Status:** Sprint 01 — debug website shell inside Frontal Slayer host repo (temporary).
+**Status:** Sprint 01 (+ factoring follow-up) — debug website shell inside Frontal Slayer host repo (temporary).
 
 ---
 
@@ -10,21 +10,121 @@
 
 All In One Enterprises Inc. is a transportation business-services company helping trucking entrepreneurs, owner-operators, carriers, fleets, and shippers manage administrative and operational services surrounding transportation.
 
-The ecosystem is broader than permit filing. It spans compliance, formation, insurance assistance, dispatch support, brokerage, document management, and a future customer command center.
+The ecosystem spans compliance, formation, insurance assistance, dispatch support, **factoring**, brokerage, document management, and a future customer command center.
 
 ---
 
-## Service Divisions
+## Operational Lifecycle
+
+```
+START → Business Formation
+LEGALIZE → Permitting, Authorities, Tags, Taxes & Compliance
+PROTECT → Trucking Insurance
+OPERATE → Dispatching
+GET PAID → Factoring
+GROW → Brokerage, Fleet Expansion, Additional Services
+```
+
+Factoring is a natural continuation of the carrier workflow — not a disconnected financial product.
+
+---
+
+## Service Divisions (six primary)
 
 | Division | Customer focus | Sprint 01 |
 |----------|----------------|-----------|
 | Permitting & Compliance | Carriers — tags, IRP, IFTA, authority, renewals | Shell + homepage messaging |
 | Business Formation | New trucking businesses — LLC, corp, EIN guidance | Shell |
 | Trucking Insurance | Coverage inquiries — liability, cargo, physical damage | Shell (compliant language) |
-| Dispatching | Carriers — load coordination, dispatch support | Preview UI only |
+| Dispatching | Carriers — load coordination, dispatch support | Preview UI + load→factoring link |
+| **Factoring** | Carriers — invoice funding options, cash flow | Public page + portal prototype (mock) |
 | Brokerage | Shippers — freight quotes, tracking | Preview UI only |
 
-**Language rules:** No legal guarantees. No unverified licensing claims. Insurance = assistance / quote requests, not carrier binding unless explicitly documented later.
+**Language rules:** No legal guarantees. No unverified licensing claims. Factoring = solutions / review / subject to approval — All In One does not directly purchase receivables or advance funds until a real partner structure exists.
+
+---
+
+## FACTORING DIVISION
+
+### Purpose
+
+Help eligible carriers turn approved freight invoices into faster access to working capital through a future **embedded factoring partner model**.
+
+### Target users
+
+- Owner-operators and small carriers waiting on broker payment terms
+- Growing fleets managing cash flow between loads
+
+### Partner-first business model
+
+```
+Carrier → All In One App → Submit Eligible Invoice → Factoring Partner
+→ Underwriting / Verification / Funding → Status returned to All In One
+```
+
+All In One owns the customer-facing experience; a future qualified partner handles underlying financial transactions. No specific partner is hard-coded in Sprint 01.
+
+### Relationships
+
+| System | Relationship |
+|--------|--------------|
+| Dispatch | Delivered load → invoice → factoring eligibility |
+| Invoices | FactoringSubmission associates with carrier invoice |
+| Brokerage | Distinct — brokerage serves shippers; factoring serves carriers |
+| Documents | Reuse rate con, BOL, POD, invoice from load record |
+
+### Future eligibility workflow
+
+1. Load completed, POD uploaded
+2. Invoice generated
+3. Invoice + debtor reviewed for eligibility
+4. Broker/debtor credit concept (Approved · Review Required · Not Approved · Credit Limit Reached)
+5. Submit for partner review
+6. Funding per applicable agreement (not automatic)
+
+### Future funding workflow
+
+Statuses (centralized): `eligible`, `not_eligible`, `not_submitted`, `submitted`, `verification`, `additional_documents_required`, `approved`, `funding_processing`, `funded`, `rejected`, `closed`
+
+### Partner abstraction
+
+`src/all-in-one/services/factoring/factoringProvider.ts` — interfaces only. Future methods: `checkInvoiceEligibility`, `checkDebtorEligibility`, `submitInvoice`, `getSubmissionStatus`, `getFundingStatus`, `getFactoringHistory`.
+
+### Future statements
+
+Monthly/period statements — view/download placeholders in portal prototype.
+
+### Document requirements
+
+Rate Confirmation, Invoice, POD, Carrier Information, BOL, broker/debtor details — reuse from load when on file.
+
+### Roadmap distinction
+
+**Factoring is optional / available** — does NOT reduce Road Ready compliance %. Separate **Operate & Grow** pathway after startup steps (Dispatch · Factor · Scale).
+
+### Compliance / security (future)
+
+Financial data sensitivity — no bank accounts, routing numbers, SSNs, or ACH auth in Sprint 01 prototype.
+
+### Deferred (not Sprint 01)
+
+Underwriting, ACH, Plaid, vendor APIs, broker credit APIs, UCC, collections, reserves, KYC/KYB, real fee calculators, production agreements, ledger, accounting integration.
+
+---
+
+## Future conceptual entities (no production DB yet)
+
+`FactoringAccount`, `FactoringInvoice`, `FactoringSubmission`, `FactoringDocument`, `FactoringDebtor`, `FactoringFunding`, `FactoringFee`, `FactoringStatement`, `FactoringProvider`
+
+### Relationship model
+
+```
+Carrier → Load → Invoice → FactoringSubmission
+  ├── Documents
+  ├── DebtorReview
+  ├── FundingStatus
+  └── Statement
+```
 
 ---
 
@@ -40,13 +140,14 @@ The ecosystem is broader than permit filing. It spans compliance, formation, ins
 ## Future Product Ecosystem
 
 1. **Public website** — marketing, intent-based discovery, trust
-2. **Roadmap system** — onboarding + compliance progress (prototype in Sprint 01)
-3. **Customer command center** — dashboard, documents, renewals, messages
-4. **Dispatch platform** — carrier load operations
-5. **Brokerage platform** — shipper quotes and freight movement
-6. **Shipper portal** — shipment status, BOL/POD/invoice
-7. **Internal employee system** — future ops/admin (not in host repo long-term)
-8. **Compliance / document system** — deadlines, filings, storage
+2. **Roadmap system** — onboarding + compliance progress (factoring optional)
+3. **Customer command center** — dashboard, factoring, documents, renewals
+4. **Dispatch platform** — carrier load operations → payment/factoring options
+5. **Factoring platform** — invoice review, partner submission, funding status
+6. **Brokerage platform** — shipper quotes and freight movement
+7. **Shipper portal** — shipment status, BOL/POD/invoice
+8. **Internal employee system** — future ops/admin
+9. **Compliance / document system** — deadlines, filings, storage
 
 ---
 
@@ -54,9 +155,8 @@ The ecosystem is broader than permit filing. It spans compliance, formation, ins
 
 - **Isolated codebase:** `src/all-in-one/` — extraction-first
 - **Debug route only:** `/debug/all-in-one/*` — not in Frontal Slayer nav
-- **No shared Supabase customer data** with Frontal Slayer in Sprint 01
-- **No Frontal Slayer auth** for Client Login (prototype only)
-- **Mock data layer** until standalone backend exists
+- **No shared Supabase customer data** with Frontal Slayer
+- **Mock data layer** for all factoring UI in Sprint 01
 
 ---
 
@@ -64,22 +164,20 @@ The ecosystem is broader than permit filing. It spans compliance, formation, ins
 
 | Phase | Scope |
 |-------|--------|
-| Sprint 01 ✅ | Website shell, design system, mock prototypes, docs |
-| Sprint 02+ | Service page content, intake forms, lead capture |
-| Future | Roadmap rules engine, compliance tracking |
+| Sprint 01 ✅ | Website shell, factoring prototype, mock data, docs |
+| Sprint 02+ | Service content, intake forms, lead capture |
+| Future | Factoring partner integration, real eligibility engine |
 | Future | Production auth, customer portal backend |
-| Future | Dispatch TMS, load boards, GPS/ELD |
-| Future | Brokerage workflow, shipper billing |
-| Future | Government/DMV/IRP/IFTA integrations |
-| Future | Insurance carrier integrations |
-| Extraction | Standalone repo, domain, Supabase project, Vercel/Cloudflare |
+| Extraction | Standalone repo, domain, Supabase project |
 
 ---
 
 ## Canonical reads for future agents
 
-1. This file — product vision
-2. `docs/all-in-one/DEBUG_ARCHITECTURE.md` — current host setup
-3. `docs/all-in-one/EXTRACTION_PLAN.md` — how to separate
-4. `docs/all-in-one/SPRINT_STATUS.md` — sprint tracker
-5. `src/all-in-one/config/appConfig.ts` — runtime configuration
+1. This file — product vision + **Factoring Division**
+2. `docs/all-in-one/DEBUG_ARCHITECTURE.md`
+3. `docs/all-in-one/EXTRACTION_PLAN.md`
+4. `docs/all-in-one/SPRINT_STATUS.md`
+5. `src/all-in-one/config/appConfig.ts`
+6. `src/all-in-one/data/mockFactoring.ts`
+7. `src/all-in-one/services/factoring/`

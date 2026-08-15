@@ -27,6 +27,12 @@ function ServiceIcon({ type }: { type: AioServiceDivision['icon'] }) {
         <circle cx="17" cy="17" r="2" />
       </svg>
     ),
+    factoring: (
+      <svg className="aio-service-strip__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+        <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+        <path d="M14 2v6h6M12 18v-4M9 15h6" />
+      </svg>
+    ),
     brokerage: (
       <svg className="aio-service-strip__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
         <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />

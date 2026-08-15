@@ -19,8 +19,8 @@ export function HeroSection() {
           EVERYTHING YOU NEED. <em>ALL IN ONE</em> PLACE.
         </h1>
         <p className="aio-hero__sub">
-          Permitting. Compliance. Insurance. Dispatching. Brokerage. Business Formation. We handle the details so you
-          can focus on operating your business and staying on the road.
+          Permitting. Compliance. Insurance. Dispatching. Factoring. Brokerage. Business Formation. We handle the details
+          so you can focus on operating your business and staying on the road.
         </p>
         <div className="aio-hero__actions">
           <Link to={aioPaths.businessFormation}>

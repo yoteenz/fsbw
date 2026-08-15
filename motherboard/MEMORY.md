@@ -50980,3 +50980,15 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Key paths:** `src/all-in-one/`, `docs/all-in-one/`, `src/routes/StudioDebugRoutes.tsx`, `src/routes/studio-institute-paths.ts`
 
 - **Spatial Architecture Review:** SKIPPED — isolated debug marketing shell; not Studio OS / FS customer surface.
+
+---
+
+## 2026-08-15 — All In One Sprint 01 follow-up: Factoring division
+
+- **Context:** Extend Sprint 01 without rewrite — add **Factoring** as sixth primary service division (partner-ready mock UI only).
+
+- **Topics covered:** Lifecycle GET PAID stage; embedded/partner model; compliant language (no guarantees/direct funding claims); six-division architecture; homepage strip + intent card **Get Paid Faster**; public `/services/factoring`; portal `/portal/factoring`; dispatch→factoring link; roadmap Factoring = Available (optional, not compliance); Operate & Grow pathway; mockFactoring.ts + factoringProvider stub; docs updated.
+
+- **Decisions / outcomes:** No financial backend, no Supabase, no bank/ACH data. Illustrative fees labeled Sample. Invoice workflow demo ends at "Demo Submission Complete."
+
+- **Key paths:** `src/all-in-one/data/mockFactoring.ts`, `pages/FactoringPage.tsx`, `pages/FactoringPortalPage.tsx`, `services/factoring/`, factoring AIO* components.

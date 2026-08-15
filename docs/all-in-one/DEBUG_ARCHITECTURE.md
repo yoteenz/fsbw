@@ -18,7 +18,8 @@ This is **not** a Frontal Slayer product surface. It must not appear in storefro
 | `/debug/all-in-one/about` | About shell |
 | `/debug/all-in-one/contact` | Contact shell |
 | `/debug/all-in-one/roadmap` | Full roadmap page |
-| `/debug/all-in-one/portal` | Client portal prototype |
+| `/debug/all-in-one/services/factoring` | Factoring public service page |
+| `/debug/all-in-one/portal/factoring` | Factoring portal dashboard (mock) |
 
 Registered in `src/routes/StudioDebugRoutes.tsx` **before** the catch-all `App` route. Lazy-loaded via `src/all-in-one/routes/AllInOneRouteHost.tsx`.
 
@@ -33,7 +34,8 @@ src/all-in-one/
   layouts/                 # Public + portal layouts
   sections/                # Homepage sections
   pages/                   # Route pages
-  data/                    # Mock data only
+  data/                    # Mock data only (incl. mockFactoring.ts)
+  services/factoring/      # Partner abstraction types + placeholder provider
   styles/aio.css           # Scoped under .aio-app
   routes/                  # AllInOneRoutes + lazy host
   types/ utils/ hooks/
@@ -66,9 +68,18 @@ docs/all-in-one/           # Project documentation
 | `mockRoadmap.ts` | Progress %, checklist, business steps |
 | `mockDashboard.ts` | Portal metrics, activity, documents |
 | `mockLoads.ts` | Dispatch load, brokerage form, shipper timeline |
-| `mockServices.ts` | Service divisions, intent cards, page meta |
+| `mockServices.ts` | Six service divisions, intent cards, page meta |
+| `mockFactoring.ts` | Dashboard metrics, invoices, history, workflow docs, operate-grow steps |
 
-No Supabase tables. No API routes. No production customer records.
+**No financial backend.** No Supabase tables. No API routes. No bank/ACH data collected.
+
+### Factoring components (Sprint 01 follow-up)
+
+`AIOFactoringMetricCard`, `AIOFactoringInvoiceRow`, `AIOFactoringStatusBadge`, `AIOFactoringWorkflow`, `AIOFundingEstimate`, `AIODocumentChecklist`, `AIOFactoringHistory`
+
+---
+
+## Mock data (original Sprint 01)
 
 ---
 

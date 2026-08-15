@@ -12,6 +12,7 @@ export const mockRoadmapItems: AioRoadmapItem[] = [
   { id: 'ifta', label: 'IFTA Registration', status: 'needed' },
   { id: 'permits', label: 'Permits & Taxes', status: 'in-progress' },
   { id: 'dispatch', label: 'Dispatching', status: 'optional' },
+  { id: 'factoring', label: 'Factoring', status: 'available' },
 ];
 
 export const mockBusinessSteps: AioBusinessStep[] = [

@@ -1,17 +1,23 @@
+import { Link } from 'react-router-dom';
 import {
   mockDashboardGreeting,
   mockDashboardMetrics,
   mockExpiringSoon,
 } from '../data/mockDashboard';
+import { mockFactoringDashboardCard } from '../data/mockFactoring';
 import {
   mockActiveLoad,
+  mockDeliveredLoad,
   mockBrokerageQuoteFields,
   mockShipperTimeline,
   mockShipperLoadNumber,
 } from '../data/mockLoads';
+import { aioPaths } from '../utils/paths';
 import { AIOButton } from './AIOButton';
 
 export function AIOPortalPreview() {
+  const load = mockDeliveredLoad;
+
   return (
     <div className="aio-platform-grid">
       <div className="aio-platform-panel">
@@ -26,6 +32,28 @@ export function AIOPortalPreview() {
               </div>
             ))}
           </div>
+          <div className="aio-cash-flow-card" style={{ marginTop: '1rem' }}>
+            <p className="aio-cash-flow-card__title">Cash Flow</p>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', fontSize: '0.75rem' }}>
+              <div>
+                <span style={{ color: 'rgba(255,255,255,0.5)' }}>Eligible for Factoring</span>
+                <div className="aio-metric-card__value" style={{ fontSize: '1rem' }}>
+                  ${mockFactoringDashboardCard.eligibleForFactoring.toLocaleString()}
+                </div>
+              </div>
+              <div>
+                <span style={{ color: 'rgba(255,255,255,0.5)' }}>In Review</span>
+                <div className="aio-metric-card__value" style={{ fontSize: '1rem' }}>
+                  ${mockFactoringDashboardCard.inReview.toLocaleString()}
+                </div>
+              </div>
+            </div>
+            <Link to={aioPaths.portalFactoring} style={{ display: 'inline-block', marginTop: '0.75rem' }}>
+              <AIOButton variant="gold" size="sm">
+                View Factoring
+              </AIOButton>
+            </Link>
+          </div>
           <p style={{ margin: '1rem 0 0.5rem', fontSize: '0.625rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)' }}>
             Expiring Soon
           </p>
@@ -39,17 +67,36 @@ export function AIOPortalPreview() {
       </div>
 
       <div className="aio-platform-panel">
-        <div className="aio-platform-panel__header">Dispatch Portal</div>
+        <div className="aio-platform-panel__header">Dispatch Portal · Load #{load.id.replace('LD-', '')}</div>
         <div className="aio-platform-panel__body">
           <p>
-            <strong>{mockActiveLoad.origin}</strong> → <strong>{mockActiveLoad.destination}</strong>
+            <strong>{load.origin}</strong> → <strong>{load.destination}</strong>
           </p>
           <div className="aio-map-placeholder">Route Map Preview</div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', fontSize: '0.75rem' }}>
-            <span>Rate: {mockActiveLoad.rate}</span>
-            <span>Miles: {mockActiveLoad.mileage}</span>
-            <span>Pickup: {mockActiveLoad.pickup}</span>
-            <span>Status: {mockActiveLoad.status}</span>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', fontSize: '0.75rem', marginBottom: '1rem' }}>
+            <span>Rate: {load.rate}</span>
+            <span>Miles: {load.mileage}</span>
+            <span>Delivery: {load.delivery}</span>
+            <span>Status: {load.status}</span>
+          </div>
+
+          <p className="aio-label" style={{ color: 'rgba(255,255,255,0.5)', marginBottom: '0.5rem' }}>
+            Payment Options
+          </p>
+          <div className="aio-payment-options">
+            <div className="aio-payment-options__item">
+              <strong>Standard Payment</strong>
+              <p>Broker payment according to normal invoice terms.</p>
+            </div>
+            <div className="aio-payment-options__item aio-payment-options__item--highlight">
+              <strong>Factoring</strong>
+              <p>Submit the eligible invoice for faster funding review.</p>
+              <Link to={aioPaths.portalFactoring}>
+                <AIOButton variant="gold" size="sm">
+                  View Factoring Option
+                </AIOButton>
+              </Link>
+            </div>
           </div>
         </div>
       </div>
@@ -92,6 +139,9 @@ export function AIOPortalPreview() {
           </p>
         </div>
       </div>
+
+      {/* In-transit load reference kept out of primary preview — delivered load drives factoring link */}
+      <span className="aio-sr-only">Active in-transit load {mockActiveLoad.id} available in dispatch prototype.</span>
     </div>
   );
 }

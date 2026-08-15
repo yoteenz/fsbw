@@ -10,8 +10,12 @@ Copy entire tree:
 
 ```
 src/all-in-one/          → src/ (or keep src/all-in-one/ in new repo)
+  data/mockFactoring.ts
+  services/factoring/
+  pages/FactoringPage.tsx
+  pages/FactoringPortalPage.tsx
+  components/AIOFactoring*.tsx
 docs/all-in-one/         → docs/
-public/assets/all-in-one/ → public/assets/ (when local assets exist)
 ```
 
 Do **not** copy Frontal Slayer-specific paths (`src/pages/`, `src/components/`, `motherboard/`, etc.).
@@ -63,7 +67,8 @@ Environment variables (future):
 | Debug (host) | Production (standalone) |
 |--------------|-------------------------|
 | `/debug/all-in-one` | `/` |
-| `/debug/all-in-one/portal` | `/portal` |
+| `/debug/all-in-one/portal/factoring` | `/portal/factoring` |
+| `/debug/all-in-one/services/factoring` | `/services/factoring` |
 | `/debug/all-in-one/services/...` | `/services/...` |
 
 Remove registration from `StudioDebugRoutes.tsx` and `studio-institute-paths.ts` in host repo after cutover.

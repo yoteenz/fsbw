@@ -1,4 +1,4 @@
-export type AioRoadmapItemStatus = 'complete' | 'in-progress' | 'needed' | 'optional';
+export type AioRoadmapItemStatus = 'complete' | 'in-progress' | 'needed' | 'optional' | 'available';
 
 export interface AioRoadmapItem {
   id: string;
@@ -12,14 +12,15 @@ export interface AioIntentCard {
   description: string;
   cta: string;
   href: string;
-  icon: 'startup' | 'legal' | 'compliance' | 'dispatch' | 'freight' | 'insurance';
+  icon: 'startup' | 'legal' | 'compliance' | 'dispatch' | 'freight' | 'insurance' | 'factoring';
+  row?: 1 | 2;
 }
 
 export interface AioServiceDivision {
   id: string;
   title: string;
   slug: string;
-  icon: 'permitting' | 'formation' | 'insurance' | 'dispatching' | 'brokerage';
+  icon: 'permitting' | 'formation' | 'insurance' | 'dispatching' | 'factoring' | 'brokerage';
 }
 
 export interface AioBusinessStep {
@@ -44,6 +45,8 @@ export interface AioLoadPreview {
   rate: string;
   mileage: string;
   status: string;
+  delivered?: boolean;
+  invoiceAmount?: number;
 }
 
 export interface AioPortalNavItem {

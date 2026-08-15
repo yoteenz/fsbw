@@ -6,6 +6,7 @@ export const serviceDivisions: AioServiceDivision[] = [
   { id: 'formation', title: 'BUSINESS FORMATION', slug: 'business-formation', icon: 'formation' },
   { id: 'insurance', title: 'TRUCKING INSURANCE', slug: 'insurance', icon: 'insurance' },
   { id: 'dispatching', title: 'DISPATCHING SERVICES', slug: 'dispatching', icon: 'dispatching' },
+  { id: 'factoring', title: 'FACTORING', slug: 'factoring', icon: 'factoring' },
   { id: 'brokerage', title: 'BROKERAGE SERVICES', slug: 'brokerage', icon: 'brokerage' },
 ];
 
@@ -17,6 +18,7 @@ export const intentCards: AioIntentCard[] = [
     cta: 'GET STARTED',
     href: aioPaths.businessFormation,
     icon: 'startup',
+    row: 1,
   },
   {
     id: 'legal',
@@ -25,6 +27,7 @@ export const intentCards: AioIntentCard[] = [
     cta: 'GET STARTED',
     href: aioPaths.permitting,
     icon: 'legal',
+    row: 1,
   },
   {
     id: 'compliance',
@@ -33,22 +36,7 @@ export const intentCards: AioIntentCard[] = [
     cta: 'GET STARTED',
     href: aioPaths.roadmap,
     icon: 'compliance',
-  },
-  {
-    id: 'dispatch',
-    title: 'FIND LOADS & RUN MY TRUCK',
-    description: 'Dispatch support to keep the carrier moving.',
-    cta: 'GET STARTED',
-    href: aioPaths.dispatching,
-    icon: 'dispatch',
-  },
-  {
-    id: 'freight',
-    title: 'MOVE FREIGHT',
-    description: 'Brokerage solutions for moving freight.',
-    cta: 'REQUEST A QUOTE',
-    href: aioPaths.brokerage,
-    icon: 'freight',
+    row: 1,
   },
   {
     id: 'insurance',
@@ -57,6 +45,34 @@ export const intentCards: AioIntentCard[] = [
     cta: 'GET A QUOTE',
     href: aioPaths.insurance,
     icon: 'insurance',
+    row: 1,
+  },
+  {
+    id: 'dispatch',
+    title: 'FIND LOADS & RUN MY TRUCK',
+    description: 'Dispatch support to keep the carrier moving.',
+    cta: 'GET STARTED',
+    href: aioPaths.dispatching,
+    icon: 'dispatch',
+    row: 2,
+  },
+  {
+    id: 'factoring',
+    title: 'GET PAID FASTER',
+    description: 'Turn completed loads into cash flow without waiting weeks for broker payment.',
+    cta: 'EXPLORE FACTORING',
+    href: aioPaths.factoring,
+    icon: 'factoring',
+    row: 2,
+  },
+  {
+    id: 'freight',
+    title: 'MOVE FREIGHT',
+    description: 'Brokerage solutions for moving freight.',
+    cta: 'REQUEST A QUOTE',
+    href: aioPaths.brokerage,
+    icon: 'freight',
+    row: 2,
   },
 ];
 
@@ -87,6 +103,12 @@ export const servicePageMeta: Record<
     headline: 'Keep your truck moving.',
     description:
       'Dispatch support, load coordination, and carrier-focused operational assistance.',
+  },
+  factoring: {
+    title: 'Factoring Solutions',
+    headline: "Don't let completed loads tie up your cash flow.",
+    description:
+      'Invoice funding options designed to help eligible carriers access working capital through future factoring partners. Funding subject to approval and applicable terms.',
   },
   brokerage: {
     title: 'Brokerage Services',

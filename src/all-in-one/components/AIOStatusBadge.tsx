@@ -5,6 +5,7 @@ const statusLabels: Record<AioRoadmapItemStatus, string> = {
   'in-progress': 'In Progress',
   needed: 'Needed',
   optional: 'Optional',
+  available: 'Available',
 };
 
 const statusClass: Record<AioRoadmapItemStatus, string> = {
@@ -12,6 +13,7 @@ const statusClass: Record<AioRoadmapItemStatus, string> = {
   'in-progress': 'aio-badge--progress',
   needed: 'aio-badge--needed',
   optional: 'aio-badge--optional',
+  available: 'aio-badge--optional',
 };
 
 type Props = {

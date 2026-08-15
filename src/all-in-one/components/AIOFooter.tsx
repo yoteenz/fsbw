@@ -11,6 +11,7 @@ const footerGroups = [
       { label: 'Business Formation', href: aioPaths.businessFormation },
       { label: 'Trucking Insurance', href: aioPaths.insurance },
       { label: 'Dispatching', href: aioPaths.dispatching },
+      { label: 'Factoring', href: aioPaths.factoring },
       { label: 'Brokerage', href: aioPaths.brokerage },
     ],
   },
@@ -28,6 +29,7 @@ const footerGroups = [
       { label: 'Start Your Business', href: aioPaths.businessFormation },
       { label: 'Compliance Guide', href: aioPaths.roadmap },
       { label: 'Insurance Assistance', href: aioPaths.insurance },
+      { label: 'Factoring Solutions', href: aioPaths.factoring },
     ],
   },
   {

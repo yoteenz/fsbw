@@ -11,6 +11,20 @@ export const mockActiveLoad: AioLoadPreview = {
   status: 'In Transit',
 };
 
+/** Delivered load — used for load-to-factoring integration preview. */
+export const mockDeliveredLoad: AioLoadPreview = {
+  id: 'LD-2047',
+  origin: 'Chicago, IL',
+  destination: 'Nashville, TN',
+  pickup: 'Mar 08, 2026 · 06:00',
+  delivery: 'Mar 10, 2026 · 16:30',
+  rate: '$2.14/mi',
+  mileage: '472 mi',
+  status: 'Delivered',
+  delivered: true,
+  invoiceAmount: 3100,
+};
+
 export const mockBrokerageQuoteFields = [
   { id: 'origin', label: 'Origin', placeholder: 'City, State' },
   { id: 'destination', label: 'Destination', placeholder: 'City, State' },

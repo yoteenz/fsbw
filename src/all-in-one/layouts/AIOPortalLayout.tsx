@@ -1,10 +1,10 @@
-import { Link, Outlet } from 'react-router-dom';
+import { Link, Outlet, useLocation } from 'react-router-dom';
 import { useState } from 'react';
 import { AIOLogo } from '../components/AIOLogo';
 import { aioPaths } from '../utils/paths';
 
 const portalNav = [
-  { label: 'Dashboard', href: aioPaths.portal, active: true },
+  { label: 'Dashboard', href: aioPaths.portal },
   { label: 'My Company', href: aioPaths.portal },
   { label: 'My Fleet', href: aioPaths.portal },
   { label: 'Permits & Registrations', href: aioPaths.portal },
@@ -12,6 +12,7 @@ const portalNav = [
   { label: 'Insurance', href: aioPaths.insurance },
   { label: 'Dispatch', href: aioPaths.dispatching },
   { label: 'Loads', href: aioPaths.portal },
+  { label: 'Factoring', href: aioPaths.portalFactoring },
   { label: 'Documents', href: aioPaths.portal },
   { label: 'Invoices', href: aioPaths.portal },
   { label: 'Messages', href: aioPaths.portal },
@@ -23,6 +24,9 @@ const portalNav = [
 
 export function AIOPortalLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const location = useLocation();
+
+  const isActive = (href: string) => location.pathname === href;
 
   return (
     <div className="aio-app aio-portal">
@@ -46,7 +50,7 @@ export function AIOPortalLayout() {
             <Link
               key={item.label}
               to={item.href}
-              className={`aio-portal__nav-link ${item.active ? 'aio-portal__nav-link--active' : ''}`}
+              className={`aio-portal__nav-link ${isActive(item.href) ? 'aio-portal__nav-link--active' : ''}`}
               onClick={() => setSidebarOpen(false)}
             >
               {item.label}

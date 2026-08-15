@@ -1,4 +1,5 @@
 import { mockRoadmapItems, mockRoadmapProgress, mockBusinessSteps } from '../data/mockRoadmap';
+import { mockOperateGrowSteps } from '../data/mockFactoring';
 import { AIORoadmapProgress } from '../components/AIORoadmapProgress';
 
 export function RoadmapPage() {
@@ -25,6 +26,22 @@ export function RoadmapPage() {
           </h2>
           <div className="aio-steps">
             {mockBusinessSteps.map((step) => (
+              <article key={step.step} className="aio-step">
+                <div className="aio-step__num">{step.step}</div>
+                <h3 className="aio-step__title">{step.title}</h3>
+                <p className="aio-step__sub">{step.subtitle}</p>
+              </article>
+            ))}
+          </div>
+
+          <h2 className="aio-display-md" style={{ margin: '2.5rem 0 1rem' }}>
+            Operate &amp; Grow
+          </h2>
+          <p style={{ maxWidth: '40rem', color: 'var(--aio-gray-600)', marginBottom: '1.5rem', lineHeight: 1.65 }}>
+            Factoring is an optional operational service — it does not affect Road Ready compliance completion.
+          </p>
+          <div className="aio-steps aio-steps--grow">
+            {mockOperateGrowSteps.map((step) => (
               <article key={step.step} className="aio-step">
                 <div className="aio-step__num">{step.step}</div>
                 <h3 className="aio-step__title">{step.title}</h3>
