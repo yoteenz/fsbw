@@ -50988,6 +50988,7 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 ---
 
+<<<<<<< Updated upstream
 ## 2026-08-15 — All In One Sprint 01 follow-up: Factoring division
 
 - **Context:** Extend Sprint 01 without rewrite — add **Factoring** as sixth primary service division (partner-ready mock UI only).
@@ -50997,3 +50998,17 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Decisions / outcomes:** No financial backend, no Supabase, no bank/ACH data. Illustrative fees labeled Sample. Invoice workflow demo ends at "Demo Submission Complete." Canonical routes now **`/all-in-one/*`** with legacy `/debug/all-in-one/*` redirect.
 
 - **Key paths:** `src/all-in-one/data/mockFactoring.ts`, `pages/FactoringPage.tsx`, `pages/FactoringPortalPage.tsx`, `services/factoring/`, factoring AIO* components.
+=======
+## 2026-08-15 — /all-in-one post-load guard false positive (follow-up)
+
+- **Context:** Founder reported error **still persisting** on `preview.fsbw-dev.com/all-in-one` after route fix.
+
+- **Root cause (second layer):** Route fix worked but **`post-load-render-guard`** fired on cold load while All In One lazy chunks were still loading (~4–12s). Minimal Suspense fallback (`Loading All In One…`) counted as blank root; overlay **stuck** even after page rendered.
+
+- **Fix:**
+  - **`main-legacy.tsx`:** skip registering post-load guard on **`isIsolatedStudioRoute()`** paths (All In One, Expert Capture, etc.).
+  - **`post-load-render-guard.ts`:** treat `.aio-loading` / `[data-route-loading]` as non-blank; extend grace for `/all-in-one` paths; auto-dismiss overlay if content recovers.
+  - **`StudioDebugRoutes.tsx`:** explicit `/all-in-one` route; shared loading shell with `data-route-loading="all-in-one"`; App catch-all Suspense fallback no longer `null`.
+
+- **Verified:** Cleared site data → `preview.fsbw-dev.com/all-in-one` → 15s wait → no error overlay; homepage renders.
+>>>>>>> Stashed changes

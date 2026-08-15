@@ -60,6 +60,37 @@ const AllInOneRouteHost = lazyWithRetry(
 
 const App = lazyWithRetry(() => import('../App'), 'App');
 
+function AllInOneRouteLoading() {
+  return (
+    <div
+      data-route-loading="all-in-one"
+      className="aio-loading"
+      style={{
+        minHeight: '100dvh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: '#0a0a0a',
+        color: '#d4af37',
+        fontFamily: 'system-ui, sans-serif',
+        letterSpacing: '0.1em',
+        textTransform: 'uppercase',
+        fontSize: '0.875rem',
+      }}
+    >
+      Loading All In One…
+    </div>
+  );
+}
+
+const allInOneRouteElement = (
+  <DebugRouteErrorBoundary route="/all-in-one">
+    <Suspense fallback={<AllInOneRouteLoading />}>
+      <AllInOneRouteHost />
+    </Suspense>
+  </DebugRouteErrorBoundary>
+);
+
 function DebugAllInOneLegacyRedirect() {
   const location = useLocation();
   const tail = location.pathname.replace(/^\/debug\/all-in-one\/?/, '');
@@ -167,42 +198,31 @@ export default function StudioDebugRoutes() {
       <Route path="/collaboration-intelligence" element={<CollaborationIntelligenceDownloadPage />} />
       <Route path="/onboarding" element={<OnboardingPackPage />} />
       <Route path="/context-updates" element={<ContextUpdatesPage />} />
-      <Route
-        path="/all-in-one/*"
-        element={
-          <DebugRouteErrorBoundary route="/all-in-one">
-            <Suspense
-              fallback={
-                <div
-                  style={{
-                    minHeight: '100dvh',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    background: '#0a0a0a',
-                    color: '#d4af37',
-                    fontFamily: 'system-ui, sans-serif',
-                    letterSpacing: '0.1em',
-                    textTransform: 'uppercase',
-                    fontSize: '0.875rem',
-                  }}
-                >
-                  Loading All In One…
-                </div>
-              }
-            >
-              <AllInOneRouteHost />
-            </Suspense>
-          </DebugRouteErrorBoundary>
-        }
-      />
+      <Route path="/all-in-one" element={allInOneRouteElement} />
+      <Route path="/all-in-one/*" element={allInOneRouteElement} />
       <Route path="/debug/all-in-one/*" element={<DebugAllInOneLegacyRedirect />} />
       <Route path="/debug/all-in-one" element={<DebugAllInOneLegacyRedirect />} />
       <Route
         path="*"
         element={
           <RootAppErrorBoundary>
-            <Suspense fallback={null}>
+            <Suspense
+              fallback={
+                <div
+                  data-route-loading="app-shell"
+                  style={{
+                    minHeight: '100dvh',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontFamily: 'system-ui, sans-serif',
+                    color: '#444',
+                  }}
+                >
+                  Loading…
+                </div>
+              }
+            >
               <App />
             </Suspense>
           </RootAppErrorBoundary>
