@@ -137,7 +137,8 @@ Factoring is a natural continuation of the carrier workflow — not a disconnect
 | Trucking Insurance | Coverage inquiries — liability, cargo, physical damage | Shell (compliant language) |
 | Dispatching | Carriers — load coordination, dispatch support | Sprint 08 ops + Sprint 09 factoring handoff |
 | **Factoring** | Carriers — receivables assistance, partner submission | Sprint 09 module + portal/office |
-| Brokerage | Shippers — freight quotes, tracking | Preview UI only |
+| **Brokerage** | Shippers — freight quotes, coverage, shipper billing | Sprint 10 module + `/shipper` + `/office/brokerage` |
+| **Brokerage** | Shippers — freight quotes, coverage, shipper billing | Sprint 10 module + `/shipper` + `/office/brokerage` |
 
 **Language rules:** No legal guarantees. No unverified licensing claims. Factoring = solutions / review / subject to approval — All In One does not directly purchase receivables or advance funds until a real partner structure exists.
 
@@ -221,6 +222,71 @@ Live partner API, webhooks, underwriting engine, UCC, direct funding ledger — 
 - `FREIGHT_RECEIVABLES_DOMAIN.md`
 - `FACTORING_SECURITY.md`
 - `DIRECT_FACTORING_FUTURE.md`
+
+---
+
+## BROKERAGE DIVISION (Sprint 10)
+
+### Purpose
+
+Arrange freight between **shippers** and **carriers** — shipment requests, quotes, coverage, booking, and brokerage-side A/R and A/P tracking. Default capability **`demo`** — not licensed production brokerage until activation checklist complete.
+
+**Dispatch ≠ Brokerage:** Dispatch serves enrolled carriers; brokerage serves shippers and network carriers on `sourceType: 'brokerage'` loads.
+
+### Target users
+
+- Manufacturers and distributors needing truckload coverage
+- Shippers seeking managed freight quotes and status visibility
+- Network carriers receiving offers via `/portal/brokerage` (distinct from dispatch enrollment)
+
+### Workflow (demo)
+
+```
+Shipper → Shipment Request → Broker Quote → Accept → Canonical Load
+  → Coverage / Carrier Offer → Rate Confirmation → Booked → POD
+  → Shipper Invoice (BSI-*) / Carrier Payable
+```
+
+### Capability gate
+
+`disabled` | `demo` | `prelaunch` | `active` — see **`BROKERAGE_ACTIVATION.md`**.
+
+### Financial model
+
+| Concept | Document |
+|---------|----------|
+| Shipper freight charge | `BrokerageFreightQuote` / `BSI-*` |
+| Carrier pay | `CarrierOffer` / `CarrierPayable` |
+| Gross margin | `BrokerageLoadFinancials` (office only) |
+| Service fees | Sprint 07 `AIO-*` only when explicitly billed |
+
+See **`BROKERAGE_FINANCIAL_DOMAIN.md`**.
+
+### Relationships
+
+| System | Relationship |
+|--------|--------------|
+| Dispatch | Shared `Load` entity — separate queues and revenue |
+| Factoring | Carrier `HF-*` on completed haul; payable may have factoring assignment flag |
+| Billing (Sprint 07) | **Separate** — no freight charges through service invoices |
+| Vault | BOL, POD, rate con on brokerage loads |
+
+### Routes
+
+- Shipper: `/all-in-one/shipper/*`
+- Carrier: `/all-in-one/portal/brokerage/*`
+- Office: `/all-in-one/office/brokerage/*`
+
+### Compliance / security
+
+See **`BROKERAGE_SECURITY.md`**. No bank storage, dev rate con template, role-filtered financial visibility.
+
+### Canonical docs
+
+- `BROKERAGE_SYSTEM.md`
+- `BROKERAGE_FINANCIAL_DOMAIN.md`
+- `BROKERAGE_SECURITY.md`
+- `BROKERAGE_ACTIVATION.md`
 
 ---
 
@@ -320,10 +386,10 @@ Carrier → Load → Invoice → FactoringSubmission
 3. **Customer command center** — dashboard, factoring, documents, renewals
 4. **Dispatch platform** — carrier load operations → payment/factoring options
 5. **Factoring platform** — invoice review, partner submission, funding status
-6. **Brokerage platform** — shipper quotes and freight movement
-7. **Shipper portal** — shipment status, BOL/POD/invoice
-8. **Internal employee system** — future ops/admin
-9. **Compliance / document system** — deadlines, filings, storage
+6. **Brokerage platform** — shipper quotes, coverage, shipper/carrier portals (Sprint 10 demo)
+7. **Shipper portal** — `/shipper` — shipment status, quotes, BSI billing
+8. **Internal employee system** — Office at `/office/*`
+9. **Compliance / document system** — Vault, deadlines, renewals
 
 ---
 
@@ -342,6 +408,7 @@ Carrier → Load → Invoice → FactoringSubmission
 |-------|--------|
 | Sprint 01 ✅ | Website shell, factoring prototype, mock data, docs |
 | Sprint 09 ✅ | Factoring module, freight invoices, submissions, office command center, demo v8 |
+| Sprint 10 ✅ | Brokerage module, shipper portal, carrier offers, coverage, finance, demo v9 |
 | Sprint 02+ | Service content, intake forms, lead capture |
 | Future | Factoring partner integration, real eligibility engine |
 | Future | Production auth, customer portal backend |

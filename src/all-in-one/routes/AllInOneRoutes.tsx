@@ -54,6 +54,23 @@ import { DispatchLoadsPage } from '../pages/portal/dispatch/DispatchLoadsPage';
 import { DispatchLoadDetailPage } from '../pages/portal/dispatch/DispatchLoadDetailPage';
 import { DispatchHistoryPage } from '../pages/portal/dispatch/DispatchHistoryPage';
 import { FreightInvoicePrintPage } from '../pages/portal/factoring/FreightInvoicePrintPage';
+import {
+  CarrierBrokerageHomePage,
+  CarrierBrokerageOffersPage,
+  CarrierBrokerageLoadPage,
+  CarrierBrokeragePaymentsPage,
+} from '../pages/portal/brokerage/BrokeragePortalPages';
+import {
+  ShipperHomePage,
+  ShipperOnboardingPage,
+  ShipperNewShipmentPage,
+  ShipperShipmentsPage,
+  ShipperShipmentDetailPage,
+  ShipperQuotesPage,
+  ShipperQuoteDetailPage,
+  ShipperBillingPage,
+  ShipperInvoiceDetailPage,
+} from '../pages/shipper/ShipperPortalPages';
 import { aioAppConfig } from '../config/appConfig';
 
 const OfficeRoutesLazy = lazy(() => import('../office/routes/OfficeRoutes'));
@@ -133,8 +150,23 @@ export default function AllInOneRoutes() {
             <Route path="factoring/submissions/:submissionId" element={<FactoringSubmissionDetailPage />} />
             <Route path="factoring/history" element={<FactoringHistoryPage />} />
             <Route path="factoring/invoices/:invoiceId" element={<FreightInvoicePrintPage />} />
+            <Route path="brokerage" element={<CarrierBrokerageHomePage />} />
+            <Route path="brokerage/offers" element={<CarrierBrokerageOffersPage />} />
+            <Route path="brokerage/loads/:loadId" element={<CarrierBrokerageLoadPage />} />
+            <Route path="brokerage/payments" element={<CarrierBrokeragePaymentsPage />} />
             <Route path="requests/:requestId" element={<RequestDetailPage />} />
             <Route path="settings" element={<PortalSettingsPage />} />
+          </Route>
+          <Route path="shipper" element={<AIOPortalLayout />}>
+            <Route index element={<ShipperHomePage />} />
+            <Route path="onboarding" element={<ShipperOnboardingPage />} />
+            <Route path="shipments" element={<ShipperShipmentsPage />} />
+            <Route path="shipments/new" element={<ShipperNewShipmentPage />} />
+            <Route path="shipments/:loadId" element={<ShipperShipmentDetailPage />} />
+            <Route path="quotes" element={<ShipperQuotesPage />} />
+            <Route path="quotes/:quoteId" element={<ShipperQuoteDetailPage />} />
+            <Route path="billing" element={<ShipperBillingPage />} />
+            <Route path="billing/:invoiceId" element={<ShipperInvoiceDetailPage />} />
           </Route>
         </Route>
 

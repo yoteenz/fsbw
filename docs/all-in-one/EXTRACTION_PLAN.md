@@ -12,7 +12,8 @@ Copy entire tree:
 src/all-in-one/          → src/ (or keep src/all-in-one/ in new repo)
   intake/                → Sprint 02 Smart Intake (config-driven)
   roadmap/               → Sprint 02 mock recommendation engine
-  demo/                    # centralized store (Sprint 03–09, v8)
+  demo/                    # centralized store (Sprint 03–10, v9)
+  brokerage/               # Sprint 10 core module
   factoring/               # Sprint 09 core module
   dispatch/                # Sprint 08
   billing/                 # Sprint 07
@@ -24,10 +25,11 @@ all-in-one/supabase/migrations/ → dedicated backend schema (Sprint 04)
   data/services.ts       → Service catalog + bundles
   data/mockFactoring.ts    # Sprint 01 legacy mock (superseded by factoring/ + demo seed for Sprint 09)
   factoring/               # Sprint 09 — extract entire module
-  services/factoring/      # Sprint 01 partner abstraction
+  brokerage/               # Sprint 10 — extract entire module
+  pages/shipper/
+  pages/portal/brokerage/
+  office/pages/BrokeragePages.tsx
   components/factoring/    # Sprint 09 UI
-  office/pages/FactoringPages.tsx
-  pages/portal/factoring/
 docs/all-in-one/         → docs/
 ```
 
@@ -153,7 +155,24 @@ Dependencies to keep with module on extraction:
 
 No Frontal Slayer or Sprint 07 invoice tables required for factoring workflow demo.
 
-Docs to copy: `FACTORING_SYSTEM.md`, `FREIGHT_RECEIVABLES_DOMAIN.md`, `FACTORING_SECURITY.md`, `DIRECT_FACTORING_FUTURE.md`.
+Docs to copy: `FACTORING_SYSTEM.md`, `FREIGHT_RECEIVABLES_DOMAIN.md`, `FACTORING_SECURITY.md`, `DIRECT_FACTORING_FUTURE.md`, `BROKERAGE_SYSTEM.md`, `BROKERAGE_FINANCIAL_DOMAIN.md`, `BROKERAGE_SECURITY.md`, `BROKERAGE_ACTIVATION.md`.
+
+---
+
+## Brokerage module extractable (Sprint 10)
+
+Self-contained under `src/all-in-one/brokerage/` with demo actions in `demo/brokerageActions.ts` and `demo/brokerageSeed.ts`.
+
+Dependencies to keep with module on extraction:
+
+| Dependency | Reason |
+|------------|--------|
+| `billing/money.ts` | Minor units + `formatMoney` |
+| `dispatch/dispatchTypes.ts` | Canonical `Load` + operational statuses |
+| `notifications/notificationEngine.ts` | Brokerage alerts |
+| `vault/` (reference ids only) | BOL/POD on loads |
+
+**Dispatch ≠ Brokerage:** extract shared `Load` types via `dispatch/` but keep UI routes separate (`/shipper`, `/portal/brokerage`, `/office/brokerage` vs `/portal/dispatch`).
 
 ---
 

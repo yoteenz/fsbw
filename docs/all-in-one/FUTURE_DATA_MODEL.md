@@ -31,7 +31,7 @@
 | FactoringSubmission | `aio_factoring_submissions` | Package workflow + reported funding fields |
 | FactoringIssue | `aio_factoring_issues` | Blockers and customer actions |
 | FactoringCase | `aio_factoring_cases` | **Deprecated name** — use FactoringSubmission |
-| BrokerageQuote/Shipment | `aio_brokerage_quotes`, `aio_brokerage_shipments` | Shipper freight |
+| BrokerageQuote/Shipment | `aio_brokerage_quotes`, `aio_brokerage_shipments` | **Legacy names** — see Sprint 10 brokerage domain |
 | Invoice | `aio_invoices` | Billing foundation |
 | Quote | `aio_quotes` + `aio_quote_versions` + `aio_quote_line_items` | Service estimates |
 | QuoteAcceptance | `aio_quote_acceptances` | Immutable accepted version |
@@ -41,7 +41,7 @@
 | Credit / Refund | `aio_credits`, `aio_refunds` | Adjustments |
 | ServicePricing | `aio_service_pricing` | Catalog commercial config |
 
-Demo mode: `DemoStore` v8 fields mirror billing + factoring relationships in localStorage.
+Demo mode: `DemoStore` v9 fields mirror billing + factoring + brokerage relationships in localStorage.
 
 ### Billing domain (Sprint 07)
 
@@ -97,6 +97,46 @@ DebtorAccount *—* Load (via broker reference)
 ```
 
 No funding ledger table in Sprint 09 — `reportedAdvanceMinor` on submission only.
+
+---
+
+### Brokerage domain (Sprint 10)
+
+| Entity | Table (planned) | Purpose |
+|--------|-----------------|---------|
+| BrokerageCapabilityState | `aio_brokerage_capability` | `disabled` / `demo` / `prelaunch` / `active` |
+| ShipperProfile | `aio_shipper_profiles` | Shipper onboarding + agreement |
+| ShipmentRequest | `aio_shipment_requests` | `SR-*` intake |
+| BrokerageFreightQuote | `aio_brokerage_freight_quotes` | `BQ-*` shipper freight charge |
+| BrokerageQuoteRevision | `aio_brokerage_quote_revisions` | Immutable quote history |
+| CarrierNetworkProfile | `aio_carrier_network_profiles` | Internal carrier directory |
+| CarrierOffer | `aio_carrier_offers` | Carrier pay offers |
+| BrokerageRateConfirmation | `aio_brokerage_rate_confirmations` | Rate con workflow |
+| BrokerageLoadFinancials | `aio_brokerage_load_financials` | Shipper charge / carrier pay / margin |
+| BrokerageAccessorial | `aio_brokerage_accessorials` | Per-side accessorials |
+| BrokerageShipperInvoice | `aio_brokerage_shipper_invoices` | `BSI-*` A/R |
+| CarrierPayable | `aio_carrier_payables` | A/P to carrier |
+| BrokerageIssue | `aio_brokerage_issues` | Operational issues |
+| CoverageHistoryEvent | `aio_coverage_history_events` | Coverage audit |
+
+Demo store keys: `brokerageCapability`, `shipperProfiles`, `shipmentRequests`, `brokerageFreightQuotes`, `carrierNetworkProfiles`, `carrierOffers`, `brokerageRateConfirmations`, `brokerageLoadFinancials`, `brokerageAccessorials`, `brokerageShipperInvoices`, `carrierPayables`, `brokerageIssues`, `coverageHistory`, `brokerageCounters`.
+
+Relationships:
+
+```
+ShipperProfile 1—* ShipmentRequest
+ShipmentRequest 1—* BrokerageFreightQuote
+BrokerageFreightQuote 0—1 Load (sourceType brokerage)
+Load 1—1 BrokerageLoadFinancials
+Load 1—* CarrierOffer
+Load 0—1 BrokerageShipperInvoice
+Load 0—1 CarrierPayable
+CarrierNetworkProfile 1—* CarrierOffer
+```
+
+Canonical load remains in dispatch load table / `loads[]` — no duplicate movement rows.
+
+See **`BROKERAGE_SYSTEM.md`**.
 
 ---
 

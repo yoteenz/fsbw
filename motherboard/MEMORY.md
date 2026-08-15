@@ -51131,3 +51131,17 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Spatial Architecture Review:** SKIPPED — documentation-only sprint; no product surfaces changed.
 
+---
+
+## 2026-08-15 — All In One Sprint 09: Factoring Operations + Invoice Funding Readiness
+
+- **Context:** Founder issued Sprint 09 spec — factoring assistance/partner workflow (NOT direct funding): enrollment, provider directory, freight invoices (carrier receivables), submission packages, dispatch handoff, office command center, duplicate protection, reported funding, demo scenarios A–G. Financial boundary: freight receivable ≠ factoring advance ≠ All In One service revenue.
+
+- **Topics covered:** Core module `src/all-in-one/factoring/` (types, config, rules, calculations, provider adapter); demo store **v8** + `factoringSeed.ts` + `factoringActions.ts` + v7→v8 migration; portal routes (`/portal/factoring`, application, ready, submissions/:id, history, freight invoice print); office routes (command center, submissions, clients, providers); `LoadFactoringSection` on dispatch load detail; notifications `FACTORING_*`; unit tests (factoringRules + factoringCalculations, 15 tests); docs (4 new + 12 updated).
+
+- **Decisions / outcomes:** Sprint 09 COMPLETE in demo mode. `directFactoringEnabled = false`. Service modes: `factoring_assistance`, `partner_factoring`, `direct_factoring_future` (placeholder). Manual provider submission workflow; funding fields provider-reported only. Duplicate submission detection via `findDuplicateSubmission`; funded records locked. Build passes; vitest 15/15; manual QA on office command center + submission review.
+
+- **Key routes:** `/debug/all-in-one/portal/factoring/*`, `/debug/all-in-one/office/factoring/*`.
+
+- **Spatial Architecture Review:** SKIPPED — isolated AIO factoring namespace; no Frontal Slayer regression.
+

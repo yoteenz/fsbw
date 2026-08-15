@@ -5,6 +5,7 @@ import { createVaultSeedData, defaultNotificationPreferences } from './vaultSeed
 import { createBillingSeedData, defaultServicePricingSeed } from './billingSeed';
 import { createDispatchSeedData } from './dispatchSeed';
 import { createFactoringSeedData } from './factoringSeed';
+import { createBrokerageSeedData } from './brokerageSeed';
 
 const STAFF: StaffMember[] = [
   { id: 'staff-1', name: 'Taylor Brooks', initials: 'TB', role: 'Administrator', status: 'available' },
@@ -26,6 +27,7 @@ export function createDemoSeed(): DemoStore {
   const vault = createVaultSeedData();
   const dispatch = createDispatchSeedData();
   const factoring = createFactoringSeedData();
+  const brokerage = createBrokerageSeedData();
 
   const requests = [
       mkRequest('req-1', 'AIO-DEMO-0001', 'client-a', 'Authority + BOC-3 Assistance', 'permitting', 'new_request', 'staff-2', daysAgo(3), ['vdoc-a1', 'vdoc-a2']),
@@ -39,9 +41,10 @@ export function createDemoSeed(): DemoStore {
     });
 
   return {
-    version: 8,
+    version: 9,
     requestCounter: 4,
     portalClientId: 'client-a',
+    shipperPortalOrgId: 'client-e',
     intake: defaultIntakeAnswers(),
     roadmap: null,
     servicePlan: [],
@@ -123,6 +126,22 @@ export function createDemoSeed(): DemoStore {
         roadmapProgress: 0,
         customerSince: daysAgo(7).slice(0, 10),
         services: ['Freight Quote', 'Shipment Coordination'],
+        activeRequestCount: 1,
+        documentsNeededCount: 0,
+        lastActivityAt: daysAgo(1),
+      },
+      {
+        id: 'shipper-demo-b',
+        companyName: 'Lakeview Distribution Co.',
+        contactName: 'Pat Morrison',
+        contactEmail: 'pat.demo@lakeview.example',
+        clientType: 'shipper',
+        primaryState: 'IN',
+        accountStatus: 'pending',
+        assignedStaffId: 'staff-7',
+        roadmapProgress: 0,
+        customerSince: daysAgo(3).slice(0, 10),
+        services: ['Brokerage'],
         activeRequestCount: 1,
         documentsNeededCount: 0,
         lastActivityAt: daysAgo(1),
@@ -218,7 +237,7 @@ export function createDemoSeed(): DemoStore {
       evt('act-5', 'LOAD_STATUS_CHANGED', 'Load in transit updated', 'client-b', undefined, daysAgo(1)),
       evt('act-6', 'FACTORING_STATUS_CHANGED', 'Factoring review opened', 'client-d', undefined, daysAgo(1)),
     ],
-    loads: dispatch.loads,
+    loads: [...dispatch.loads, ...brokerage.loads],
     dispatchEnrollments: dispatch.enrollments,
     truckProfiles: dispatch.truckProfiles,
     brokerContacts: dispatch.brokerContacts,
@@ -232,42 +251,22 @@ export function createDemoSeed(): DemoStore {
     factoringSubmissions: factoring.submissions,
     factoringIssues: factoring.issues,
     factoringCounters: factoring.counters,
-    brokerageQuotes: [
-      {
-        id: 'quote-1',
-        clientId: 'client-e',
-        requestId: 'req-4',
-        shipperName: 'NorthStar Manufacturing',
-        origin: 'Chicago, IL',
-        destination: 'Dallas, TX',
-        commodity: 'Industrial Equipment',
-        weight: '32,000 lbs',
-        equipment: 'Flatbed',
-        status: 'reviewing',
-        createdAt: daysAgo(2),
-      },
-    ],
-    shipments: [
-      {
-        id: 'ship-1',
-        shipmentNumber: 'SH-2001',
-        clientId: 'client-e',
-        shipperName: 'NorthStar Manufacturing',
-        origin: 'Detroit, MI',
-        destination: 'Nashville, TN',
-        commodity: 'Auto Parts',
-        weight: '18,000 lbs',
-        equipment: 'Dry Van',
-        status: 'in_transit',
-        createdAt: daysAgo(14),
-        carrier: 'Demo Carrier Inc.',
-        rate: 2100,
-        pickup: daysAhead(-1),
-        delivery: daysAhead(2),
-        hasBol: true,
-        hasPod: false,
-      },
-    ],
+    brokerageCapability: brokerage.capability,
+    shipperProfiles: brokerage.shipperProfiles,
+    shipmentRequests: brokerage.shipmentRequests,
+    brokerageFreightQuotes: brokerage.freightQuotes,
+    carrierNetworkProfiles: brokerage.carrierNetwork,
+    carrierOffers: brokerage.carrierOffers,
+    brokerageRateConfirmations: brokerage.rateConfirmations,
+    brokerageLoadFinancials: brokerage.financials,
+    brokerageAccessorials: brokerage.accessorials,
+    brokerageShipperInvoices: brokerage.shipperInvoices,
+    carrierPayables: brokerage.carrierPayables,
+    brokerageIssues: brokerage.issues,
+    coverageHistory: brokerage.coverageHistory,
+    brokerageCounters: brokerage.counters,
+    brokerageQuotes: [],
+    shipments: [],
     quotes: billing.quotes,
     invoices: billing.invoices,
     payments: billing.payments,

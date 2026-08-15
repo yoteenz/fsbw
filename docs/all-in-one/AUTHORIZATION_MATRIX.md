@@ -1,6 +1,6 @@
 # All In One — Authorization Matrix
 
-**Status:** Sprint 09 factoring permissions added. Enforced via Supabase RLS when backend mode is active.
+**Status:** Sprint 10 brokerage permissions added. Enforced via Supabase RLS when backend mode is active.
 
 ---
 
@@ -103,6 +103,34 @@ Rules:
 - `direct_factoring_future` operations — **denied** while `directFactoringEnabled = false`
 
 See **`FACTORING_SECURITY.md`**.
+
+---
+
+## Brokerage permissions (Sprint 10)
+
+| Permission | Super Admin | Administrator | Brokerage Specialist | Dispatcher | Factoring | Support | Shipper | Carrier (portal) |
+|------------|-------------|---------------|----------------------|------------|-----------|---------|---------|------------------|
+| `brokerage.read` | ✓ | ✓ | ✓ | — | R | R | ✓ (own org) | ✓ (offers/loads) |
+| `brokerage.capability.manage` | ✓ | ✓ | — | — | — | — | — | — |
+| `brokerage.shippers.manage` | ✓ | ✓ | ✓ | — | — | R | — | — |
+| `brokerage.requests.manage` | ✓ | ✓ | ✓ | — | — | — | ✓ (create own) | — |
+| `brokerage.quotes.manage` | ✓ | ✓ | ✓ | — | — | — | ✓ (accept/decline own) | — |
+| `brokerage.coverage.manage` | ✓ | ✓ | ✓ | — | — | — | — | — |
+| `brokerage.offers.manage` | ✓ | ✓ | ✓ | — | — | — | — | ✓ (respond own) |
+| `brokerage.financials.read` | ✓ | ✓ | ✓ | — | R | — | R (shipper charge only) | R (carrier pay only) |
+| `brokerage.margin.read` | ✓ | ✓ | ✓ | — | — | — | — | — |
+| `brokerage.shipper_invoices.manage` | ✓ | ✓ | ✓ | — | — | — | R (own) | — |
+| `brokerage.carrier_payables.manage` | ✓ | ✓ | ✓ | — | R | — | — | R (own status) |
+| `brokerage.carriers.manage` | ✓ | ✓ | ✓ | — | — | R | — | — |
+
+Rules:
+
+- All brokerage queries scoped by `organizationId` (shipper, carrier, or broker staff context)
+- **`canViewGrossMargin()`** — broker finance/ops only
+- Default **`brokerageCapability: demo`** — production `active` requires readiness checklist
+- Dispatch role has **no write** on brokerage loads by default
+
+See **`BROKERAGE_SECURITY.md`**.
 
 ---
 

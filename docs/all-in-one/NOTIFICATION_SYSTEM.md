@@ -1,6 +1,6 @@
 # All In One — Notification System
 
-**Sprint:** 09 · **Last updated:** 2026-08-15
+**Sprint:** 10 · **Last updated:** 2026-08-15
 
 ---
 
@@ -59,6 +59,28 @@ Billing events use category **`billing`**. Factoring events use category **`fact
 Demo implementation: `factoringActions.ts` calls `buildNotification()` with `category: 'factoring'` and portal deep links to submission detail.
 
 Preferences: factoring category toggle in notification preferences (in-app only Sprint 09).
+
+---
+
+## Brokerage notification types (Sprint 10)
+
+| Event type | Typical trigger |
+|------------|-----------------|
+| `SHIPMENT_REQUEST_SUBMITTED` | Shipper submits request — staff alert |
+| `BROKERAGE_QUOTE_AVAILABLE` | Quote sent to shipper |
+| `BROKERAGE_QUOTE_ACCEPTED` | Shipper accepts — load conversion |
+| `BROKERAGE_LOAD_NEEDS_COVERAGE` | Load awaiting carrier assignment |
+| `BROKERAGE_LOAD_BOOKED` | Coverage booked / rate con path |
+| `BROKERAGE_POD_NEEDED` | Delivery complete, POD missing |
+| `BROKERAGE_POD_RECEIVED` | POD linked on load |
+| `BROKERAGE_READY_TO_BILL` | `isReadyToBill()` satisfied |
+| `SHIPPER_INVOICE_ISSUED` | `BSI-*` created |
+
+Demo implementation: `brokerageActions.ts` calls `buildNotification()` with `category: 'brokerage'` and deep links to `/shipper/quotes/:id` or office brokerage routes.
+
+Preferences: brokerage category toggle (in-app only Sprint 10).
+
+**Visibility:** Notifications must not include carrier pay in shipper alerts or shipper charge in carrier alerts — see **`BROKERAGE_SECURITY.md`**.
 
 ---
 

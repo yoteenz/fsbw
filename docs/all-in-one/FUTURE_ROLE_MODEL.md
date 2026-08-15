@@ -73,3 +73,25 @@ Demo staff id **`staff-6`** owns factoring seed submissions.
 | View freight invoices | ✓ | R on assigned loads | R |
 
 Customers: view own profile, submissions, issues requiring action; create freight invoice from ready load; cannot change submission status or reported funding.
+
+---
+
+## Brokerage specialist role (Sprint 10)
+
+Demo staff id **`staff-7`** owns brokerage seed requests and quotes.
+
+| Capability | Brokerage Specialist | Dispatcher | Factoring | Support |
+|------------|---------------------|------------|-----------|---------|
+| View brokerage command center | ✓ | — | R | R |
+| Manage capability / readiness | Admin only | — | — | — |
+| Shipment requests / quotes | ✓ | — | — | R |
+| Coverage / carrier offers | ✓ | — | — | — |
+| Shipper invoices / payables | ✓ | — | R (factoring flags) | R |
+| Carrier network directory | ✓ | — | — | R |
+| View gross margin | ✓ | — | — | — |
+
+Shipper users: `/shipper/*` only — accept/decline own quotes, view own invoices; no carrier pay or margin.
+
+Carrier users: `/portal/brokerage/*` — respond to offers, view payables; no shipper charge or margin.
+
+See **`BROKERAGE_SECURITY.md`** and **`AUTHORIZATION_MATRIX.md`**.

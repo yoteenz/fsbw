@@ -1,6 +1,6 @@
 # All In One — Factoring System
 
-**Sprint:** 09 · **Last updated:** 2026-08-15
+**Sprint:** 10 · **Last updated:** 2026-08-15
 
 ---
 
@@ -290,6 +290,24 @@ src/all-in-one/office/pages/
 ```
 
 Demo store **v8** — migration from v7 adds factoring entities. See **`DEBUG_ARCHITECTURE.md`**.
+
+---
+
+## Brokerage cross-reference (Sprint 10)
+
+Factoring remains **carrier receivables assistance**. Brokerage adds separate **shipper billing** and **carrier payables**:
+
+| Document | Sprint | Purpose |
+|----------|--------|---------|
+| `FreightInvoice` (`HF-*`) | 09 | Carrier bills **broker/debtor** — factoring submission input |
+| `BrokerageShipperInvoice` (`BSI-*`) | 10 | Broker bills **shipper** — not factored through Sprint 09 workflow |
+| `CarrierPayable` | 10 | Broker owes carrier — may set `factoringAssignmentOnFile` |
+
+When All In One acts as broker (future `active` capability), the **debtor** on carrier `HF-*` invoices may be All In One — factoring handoff rules still apply on **`confirmedGrossMinor`** for the carrier haul.
+
+**Dispatch ≠ Brokerage:** Factoring handoff on load detail applies to **carrier** completed loads (dispatch or brokerage-assigned carrier). Shipper invoices (`BSI-*`) do not create factoring submissions in Sprint 10.
+
+See **`BROKERAGE_FINANCIAL_DOMAIN.md`** and **`BROKERAGE_SYSTEM.md`**.
 
 ---
 

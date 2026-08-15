@@ -34,6 +34,22 @@ import type {
   ServicePricingConfig,
 } from '../billing/billingTypes';
 import type {
+  BrokerageAccessorial,
+  BrokerageCapabilityState,
+  BrokerageCounters,
+  BrokerageFreightQuote,
+  BrokerageIssue,
+  BrokerageLoadFinancials,
+  BrokerageRateConfirmation,
+  BrokerageShipperInvoice,
+  CarrierNetworkProfile,
+  CarrierOffer,
+  CarrierPayable,
+  CoverageHistoryEvent,
+  ShipperProfile,
+  ShipmentRequest,
+} from '../brokerage/brokerageTypes';
+import type {
   DriverPlaceholder,
   PowerUnit,
   RoadReadyHistoryEvent,
@@ -117,7 +133,21 @@ export type ActivityKind =
   | 'FACTORING_FUNDING_REPORTED'
   | 'FACTORING_ISSUE_CREATED'
   | 'FACTORING_ISSUE_RESOLVED'
-  | 'FACTORING_PROVIDER_CHANGED';
+  | 'FACTORING_PROVIDER_CHANGED'
+  | 'SHIPMENT_REQUEST_SUBMITTED'
+  | 'BROKERAGE_QUOTE_AVAILABLE'
+  | 'BROKERAGE_QUOTE_ACCEPTED'
+  | 'BROKERAGE_LOAD_NEEDS_COVERAGE'
+  | 'CARRIER_OFFER_SENT'
+  | 'CARRIER_OFFER_ACCEPTED'
+  | 'CARRIER_OFFER_DECLINED'
+  | 'BROKERAGE_LOAD_BOOKED'
+  | 'BROKERAGE_POD_NEEDED'
+  | 'BROKERAGE_POD_RECEIVED'
+  | 'BROKERAGE_READY_TO_BILL'
+  | 'SHIPPER_INVOICE_ISSUED'
+  | 'CARRIER_PAYABLE_READY'
+  | 'SHIPPER_INVOICE_CREATED';
 
 export interface StaffMember {
   id: string;
@@ -321,9 +351,10 @@ export interface BrokerageShipment extends BrokerageQuote {
 export interface Invoice extends BillingInvoice {}
 
 export interface DemoStore {
-  version: 8;
+  version: 9;
   requestCounter: number;
   portalClientId?: string;
+  shipperPortalOrgId?: string;
   intake: IntakeAnswers;
   roadmap: RoadmapResult | null;
   servicePlan: ServicePlanItem[];
@@ -351,7 +382,23 @@ export interface DemoStore {
   factoringSubmissions: FactoringSubmission[];
   factoringIssues: FactoringIssue[];
   factoringCounters: FactoringCounters;
+  brokerageCapability: BrokerageCapabilityState;
+  shipperProfiles: ShipperProfile[];
+  shipmentRequests: ShipmentRequest[];
+  brokerageFreightQuotes: BrokerageFreightQuote[];
+  carrierNetworkProfiles: CarrierNetworkProfile[];
+  carrierOffers: CarrierOffer[];
+  brokerageRateConfirmations: BrokerageRateConfirmation[];
+  brokerageLoadFinancials: BrokerageLoadFinancials[];
+  brokerageAccessorials: BrokerageAccessorial[];
+  brokerageShipperInvoices: BrokerageShipperInvoice[];
+  carrierPayables: CarrierPayable[];
+  brokerageIssues: BrokerageIssue[];
+  coverageHistory: CoverageHistoryEvent[];
+  brokerageCounters: BrokerageCounters;
+  /** @deprecated legacy Sprint 03 mock — use brokerageFreightQuotes */
   brokerageQuotes: BrokerageQuote[];
+  /** @deprecated legacy Sprint 03 mock — use canonical loads with sourceType brokerage */
   shipments: BrokerageShipment[];
   quotes: Quote[];
   invoices: BillingInvoice[];

@@ -1,4 +1,5 @@
 import type { CurrencyCode } from '../billing/money';
+import type { BrokerageCoverageStatus } from '../brokerage/brokerageTypes';
 
 export type DispatchEnrollmentStatus =
   | 'interested'
@@ -26,7 +27,7 @@ export type TruckAvailabilityStatus =
   | 'home_time'
   | 'paused';
 
-export type LoadSourceType = 'manual' | 'carrier_provided' | 'broker_email_future' | 'load_board_future' | 'brokerage_future';
+export type LoadSourceType = 'manual' | 'carrier_provided' | 'broker_email_future' | 'load_board_future' | 'brokerage';
 
 export type LoadOfferStatus =
   | 'draft'
@@ -234,6 +235,14 @@ export interface Load {
   trailerId?: string;
   primaryDriverId?: string;
   assignedDispatcherStaffId?: string;
+
+  shipperOrganizationId?: string;
+  brokerageShipmentRequestId?: string;
+  brokerageQuoteId?: string;
+  brokerageCoverageStatus?: BrokerageCoverageStatus;
+  assignedBrokerStaffId?: string;
+  brokerageCarrierNetworkProfileId?: string;
+  brokerageCarrierOrganizationId?: string;
 
   sourceType: LoadSourceType;
   sourceReference?: string;

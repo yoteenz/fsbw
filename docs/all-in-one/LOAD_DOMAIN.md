@@ -1,6 +1,6 @@
 # All In One — Load Domain
 
-**Sprint:** 09 · **Last updated:** 2026-08-15
+**Sprint:** 10 · **Last updated:** 2026-08-15
 
 ---
 
@@ -32,15 +32,30 @@ Type: `Load` in `src/all-in-one/dispatch/dispatchTypes.ts`
 | `brokerContactId` / broker fields | Broker directory or inline manual entry |
 | Vault documents | `rateConfirmationDocumentId`, `bolDocumentId`, `podDocumentId` |
 
-Future: brokerage shipment id — **reference**, not copy.
+Future: additional brokerage metadata — **reference**, not copy.
 
 Sprint 09: factoring links via `freightInvoices[].loadId` and `factoringSubmissions[].loadId` — not embedded on load row.
+
+Sprint 10: brokerage links on load row + `brokerageLoadFinancials[]` sidecar:
+
+| Field | Purpose |
+|-------|---------|
+| `sourceType: 'brokerage'` | Marks brokerage-arranged movement |
+| `shipperOrganizationId` | Shipper org |
+| `brokerageShipmentRequestId` | Originating `ShipmentRequest` |
+| `brokerageQuoteId` | Accepted `BrokerageFreightQuote` |
+| `brokerageCoverageStatus` | Coverage workflow state |
+| `brokerageCarrierNetworkProfileId` | Assigned network carrier |
+| `brokerageCarrierOrganizationId` | Carrier portal org when linked |
 
 ---
 
 ## Source
 
-`sourceType`: `manual`, `carrier_provided`, `broker_email_future`, `load_board_future`, `brokerage_future`
+`sourceType`: `manual`, `carrier_provided`, `broker_email_future`, `load_board_future`, **`brokerage`**
+
+- **`brokerage`** — created from accepted shipper quote (Sprint 10). Uses shipper charge + carrier pay financial model. Not a dispatch enrollment load.
+- Dispatch loads remain `manual`, `carrier_provided`, etc. — never mixed in brokerage office queues without explicit filter.
 
 No provider-specific fields on the core model.
 
@@ -70,7 +85,9 @@ Invariants (enforced in `dispatchRules.ts`):
 | `confirmedGrossMinor` | After approved accessorials |
 | `accessorials[]` | Detention, layover, TONU, lumper, other |
 
-**Load gross is carrier freight pay — not All In One revenue.**
+**Load gross on dispatch loads is carrier freight pay — not All In One revenue.**
+
+On **`sourceType: 'brokerage'`** loads, `confirmedGrossMinor` tracks **carrier pay**; shipper charge lives in `brokerageLoadFinancials.confirmedShipperChargeMinor`. See **`BROKERAGE_FINANCIAL_DOMAIN.md`**.
 
 Rate revisions stored in `rateRevisions[]` — no silent overwrites.
 

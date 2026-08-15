@@ -469,7 +469,7 @@ export function getOfficeMetrics(): import('./demoTypes').OfficeMetrics {
     documentsNeeded: s.documents.filter((d) => d.status === 'requested').length,
     activeDispatchLoads: s.loads.filter((l) => !['complete', 'cancelled'].includes(l.operationalStatus)).length,
     factoringReviews: s.factoringSubmissions.filter((f) => !['funded', 'closed', 'declined', 'cancelled'].includes(f.status)).length,
-    brokerageQuotes: s.brokerageQuotes.filter((q) => !['closed', 'booked'].includes(q.status)).length,
+    brokerageQuotes: s.shipmentRequests.filter((r) => !['converted_to_load', 'cancelled', 'declined'].includes(r.status)).length,
   };
 }
 

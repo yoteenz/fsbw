@@ -1,7 +1,33 @@
 # All In One — Sprint Status
 
-**Sprint:** 09 — Factoring Operations + Receivables Workflow  
+**Sprint:** 10 — Brokerage Operations + Shipper Portal  
 **Last updated:** 2026-08-15
+
+---
+
+## SPRINT 10 COMPLETE (Brokerage · Shipper Portal · Coverage · Finance)
+
+- **Brokerage core module** — types, rules, calculations, config (`src/all-in-one/brokerage/`)
+- **Capability gate** — `disabled` | `demo` | `prelaunch` | `active`; default **`demo`**
+- **Shipper onboarding & profiles** — `ShipperProfile`, agreement status, `/shipper/onboarding`
+- **Shipment requests** — `SR-YYYY-####`, status machine, shipper submission flow
+- **Freight quotes** — `BQ-YYYY-####`, revisions, accept → canonical load conversion
+- **Canonical load conversion** — `sourceType: 'brokerage'`, `BR-LD-*`, financials sidecar
+- **Coverage workflow** — needs coverage queue, coverage history, carrier contact/offer states
+- **Carrier network** — internal directory, verification levels, W-9 status
+- **Carrier offers** — accept/decline, revision history, portal at `/portal/brokerage/offers`
+- **Rate confirmations** — dev template only; production gate in activation checklist
+- **Brokerage financials** — shipper charge vs carrier pay vs gross margin (office-only margin)
+- **Shipper invoices** — `BSI-YYYY-####`, ready-to-bill rules, shipper billing portal
+- **Carrier payables** — approval workflow, factoring assignment flags (demo)
+- **Dispatch ≠ Brokerage** — mandatory domain separation documented and enforced in UI visibility
+- **Shipper portal** — `/shipper/*` (home, shipments, quotes, billing)
+- **Carrier brokerage portal** — `/portal/brokerage/*` (offers, loads, payables)
+- **Office Command Center** — `/office/brokerage/*` (readiness, shippers, coverage, carriers, finance)
+- **Notifications** — brokerage category events (quote, coverage, POD, invoice)
+- **Demo store v9** — brokerage seed (loads A–H scenarios), migration from v8
+- **Unit tests** — margin calculations, quote/offer/request status transitions, ready-to-bill rules
+- **Documentation** — `BROKERAGE_SYSTEM.md`, `BROKERAGE_FINANCIAL_DOMAIN.md`, `BROKERAGE_SECURITY.md`, `BROKERAGE_ACTIVATION.md`, updated canon docs
 
 ---
 
@@ -100,7 +126,7 @@
 Dedicated All In One Supabase project credentials are **not yet configured**.
 
 - App runs in **Demo Mode** (default)
-- Dispatch + billing + factoring backend tables deferred — demo store v8 is source of truth for Sprint 09 review
+- Dispatch + billing + factoring + brokerage backend tables deferred — demo store v9 is source of truth for Sprint 10 review
 - Payment provider mode: **demo** (no live charges)
 - No Frontal Slayer schema touched
 

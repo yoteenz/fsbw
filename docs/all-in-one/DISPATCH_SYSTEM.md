@@ -1,6 +1,6 @@
 # All In One — Dispatch System
 
-**Sprint:** 09 · **Last updated:** 2026-08-15
+**Sprint:** 10 · **Last updated:** 2026-08-15
 
 ---
 
@@ -20,7 +20,7 @@ Lifecycle:
 |----------|--------|
 | Road Ready | Compliance, permits, registrations |
 | **Dispatch** | Operational load assistance for enrolled carriers |
-| Brokerage | Shipper–carrier arrangement (future) |
+| **Brokerage** | Shipper–carrier arrangement (Sprint 10) — **`/shipper`**, **`/office/brokerage`** |
 | Factoring | Receivables assistance — freight invoice + partner submission (Sprint 09) |
 | Billing (Sprint 07) | All In One **service fees** only |
 
@@ -46,7 +46,9 @@ Lifecycle:
 
 ## Canonical load domain
 
-See **`LOAD_DOMAIN.md`**. Single `Load` entity shared across dispatch, future brokerage/factoring.
+See **`LOAD_DOMAIN.md`**. Single `Load` entity shared across dispatch, brokerage, and factoring.
+
+**Dispatch ≠ Brokerage:** Dispatch loads require `dispatchEnrollmentId` and carrier client context. Brokerage loads use `sourceType: 'brokerage'`, shipper org, and coverage workflow — no dispatch fee billing. A carrier org may appear in both systems on **different loads**.
 
 - Identifier: `AIO-LD-YYYY-######`
 - Money: integer minor units (Sprint 07)
@@ -180,3 +182,18 @@ src/all-in-one/demo/
 ```
 
 Demo store **v7** adds enrollments, truck profiles, loads, brokers, dispatch billing.
+
+---
+
+## Brokerage distinction (Sprint 10)
+
+Dispatch Command Center (`/office/dispatch`) and Brokerage Command Center (`/office/brokerage`) are **separate surfaces**.
+
+| Topic | Dispatch | Brokerage |
+|-------|----------|-----------|
+| Primary portal | `/portal/dispatch` | `/shipper` + carrier `/portal/brokerage` |
+| Load filter | `sourceType !== 'brokerage'` in dispatch UI | `sourceType === 'brokerage'` |
+| Revenue | Dispatch fee (Sprint 07 service) | Gross margin (Sprint 10 financial domain) |
+| Carrier relationship | Enrolled dispatch client | Network carrier offer |
+
+Do not route shipper shipment requests through dispatch onboarding. See **`BROKERAGE_SYSTEM.md`**.

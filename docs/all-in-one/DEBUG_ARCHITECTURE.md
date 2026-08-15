@@ -39,6 +39,24 @@ This is **not** a Frontal Slayer product surface. It must not appear in storefro
 | `/all-in-one/office/clients/:id/road-ready` | Staff verification review |
 | `/all-in-one/portal/factoring` | Factoring portal (Sprint 09) |
 | `/all-in-one/office/factoring` | Factoring Command Center (Sprint 09) |
+| `/all-in-one/shipper` | Shipper portal home (Sprint 10) |
+| `/all-in-one/shipper/onboarding` | Shipper onboarding |
+| `/all-in-one/shipper/shipments` | Shipper shipments list |
+| `/all-in-one/shipper/shipments/new` | New shipment request |
+| `/all-in-one/shipper/shipments/:loadId` | Shipment detail |
+| `/all-in-one/shipper/quotes` | Freight quotes |
+| `/all-in-one/shipper/quotes/:quoteId` | Quote review / accept |
+| `/all-in-one/shipper/billing` | Shipper invoices (`BSI-*`) |
+| `/all-in-one/portal/brokerage` | Carrier brokerage home (Sprint 10) |
+| `/all-in-one/portal/brokerage/offers` | Carrier offers |
+| `/all-in-one/portal/brokerage/loads/:loadId` | Carrier brokerage load |
+| `/all-in-one/portal/brokerage/payments` | Carrier payables |
+| `/all-in-one/office/brokerage` | Brokerage Command Center (Sprint 10) |
+| `/all-in-one/office/brokerage/readiness` | Capability + activation checklist |
+| `/all-in-one/office/brokerage/shippers` | Shipper directory |
+| `/all-in-one/office/brokerage/coverage` | Needs-coverage queue |
+| `/all-in-one/office/brokerage/carriers` | Carrier network |
+| `/all-in-one/office/brokerage/finance` | Shipper invoices + carrier payables |
 | `/debug/all-in-one/portal/factoring` | Legacy alias → `/all-in-one/portal/factoring` |
 | `/debug/all-in-one/office/factoring` | Legacy alias → `/all-in-one/office/factoring` |
 | `/debug/all-in-one/*` | Legacy redirect → `/all-in-one/*` |
@@ -52,7 +70,8 @@ Registered in `src/routes/StudioDebugRoutes.tsx` **before** the catch-all `App` 
 ```
 src/all-in-one/
   config/appConfig.ts      # Company, contact, routes, feature flags
-  demo/                    # Sprint 03–09 — demo store v8 + seed/actions
+  demo/                    # Sprint 03–10 — demo store v9 + seed/actions
+  brokerage/               # Sprint 10 — types, rules, calculations, config
   factoring/               # Sprint 09 — types, rules, calculations, config
   dispatch/                # Sprint 08 — load domain, handoff rules
   road-ready/              # Sprint 05 — Road Ready config, rules, scoring, types
@@ -71,8 +90,11 @@ src/all-in-one/
   components/              # AIO* design system + intake/roadmap/request UI
   layouts/                 # Public + portal layouts (+ debug banner)
   sections/                # Homepage sections
-  pages/                   # Route pages (intake, marketplace, portal, requests, factoring)
+  pages/                   # Route pages (intake, marketplace, portal, shipper, factoring, brokerage)
+  pages/shipper/           # Sprint 10 — ShipperPortalPages
+  pages/portal/brokerage/  # Sprint 10 — carrier brokerage portal
   components/factoring/    # Sprint 09 — LoadFactoringSection
+  office/pages/BrokeragePages.tsx
   office/pages/FactoringPages.tsx
   data/                    # Mock data (mockFactoring.ts legacy, mockServices.ts, …)
   services/factoring/      # Partner abstraction + Sprint 09 adapter stub
@@ -126,9 +148,9 @@ Backend migrations: `all-in-one/supabase/migrations/` — **not** Frontal Slayer
 
 ### Sprint 03 — centralized demo store
 
-Single key: `aio_debug_store`. Current version: **8** (Sprint 09 factoring). Legacy versions migrate on first load (v3→v4→v5→v6→v7→v8).
+Single key: `aio_debug_store`. Current version: **9** (Sprint 10 brokerage). Legacy versions migrate on first load (v3→…→v8→v9).
 
-Entities: clients, requests, tasks, documents, deadlines, notes, messages, activity, staff, loads, dispatch enrollments, **factoringProfiles**, **factoringProviders**, **debtorAccounts**, **freightInvoices**, **factoringSubmissions**, **factoringIssues**, **factoringCounters**, brokerage, invoices, notifications, billing, road ready, fleet.
+Entities: clients, requests, tasks, documents, deadlines, notes, messages, activity, staff, loads, dispatch enrollments, factoringProfiles, factoringProviders, debtorAccounts, freightInvoices, factoringSubmissions, factoringIssues, factoringCounters, **brokerageCapability**, **shipperProfiles**, **shipmentRequests**, **brokerageFreightQuotes**, **carrierNetworkProfiles**, **carrierOffers**, **brokerageRateConfirmations**, **brokerageLoadFinancials**, **brokerageAccessorials**, **brokerageShipperInvoices**, **carrierPayables**, **brokerageIssues**, **coverageHistory**, **brokerageCounters**, invoices, notifications, billing, road ready, fleet.
 
 **Cross-portal sync:** Portal and Office read/write the same store. `portalClientId` links customer session to client record.
 
@@ -183,15 +205,33 @@ Seed: `factoringSeed.ts` — clients A–G scenarios (interested, in review, act
 
 Actions: `factoringActions.ts` — enrollment, freight invoice, submission lifecycle, notifications.
 
-**Reset Demo Data** restores v8 seed via `demoSeed.ts`.
+**Reset Demo Data** restores v9 seed via `demoSeed.ts`.
 
 Factoring UI banner: `DEMO · Fictional providers, amounts, and funding for review only`
+
+### Sprint 10 — demo store v9 (brokerage)
+
+| Upgrade | Adds |
+|---------|------|
+| v8 → v9 | Full brokerage graph: capability, shippers, shipment requests, freight quotes, carrier network, offers, rate confirmations, load financials, shipper invoices, carrier payables, issues, coverage history; brokerage loads merged into `loads[]` with `sourceType: 'brokerage'` |
+
+Seed: `brokerageSeed.ts` — loads **A–H** scenarios (coverage, in transit, POD issue, ready to bill, invoiced, factoring-protected payable).
+
+Actions: `brokerageActions.ts` — requests, quotes, load conversion, offers, shipper invoices, notifications.
+
+Default capability: **`demo`** (`DEFAULT_BROKERAGE_CAPABILITY`).
+
+Brokerage UI banner: `DEMO_BROKERAGE_LABEL` from `brokerageConfig.ts`.
+
+**Reset Demo Data** restores v9 seed via `demoSeed.ts`.
 
 ### Factoring components (Sprint 01 + Sprint 09)
 
 Sprint 01: `AIOFactoringMetricCard`, `AIOFactoringInvoiceRow`, `AIOFactoringStatusBadge`, `AIOFactoringWorkflow`, `AIOFundingEstimate`, `AIODocumentChecklist`, `AIOFactoringHistory`
 
 Sprint 09: `LoadFactoringSection`, `FactoringPortalPages`, `FactoringPages` (office), `FreightInvoicePrintPage`, module under `src/all-in-one/factoring/`
+
+Sprint 10: `ShipperPortalPages`, `BrokeragePortalPages`, `BrokeragePages` (office), module under `src/all-in-one/brokerage/`
 
 ---
 

@@ -8,13 +8,23 @@ import { OfficeRequestDetailPage } from '../pages/OfficeRequestDetailPage';
 import { TasksPage, DeadlinesPage, DocumentsPage, MessagesPage } from '../pages/OperationsPages';
 import {
   DivisionQueuePage,
-  BrokerageOpsPage,
-  ShipmentDetailPage,
   InvoicesPage,
   PaymentsPage,
   TeamPage,
   ReportsPage,
 } from '../pages/DivisionOpsPages';
+import {
+  BrokerageCommandCenterPage,
+  BrokerageReadinessPage,
+  BrokerageShippersPage,
+  BrokerageShipperDetailPage,
+  BrokerageCoveragePage,
+  BrokerageCarriersPage,
+  BrokerageCarrierDetailPage,
+  BrokerageLoadDetailPage,
+  BrokerageFinancePage,
+  BrokerageLoadsListPage,
+} from '../pages/BrokeragePages';
 import {
   FactoringCommandCenterPage,
   FactoringSubmissionsListPage,
@@ -74,8 +84,16 @@ export default function OfficeRoutes() {
         <Route path="factoring/clients" element={<FactoringClientsListPage />} />
         <Route path="factoring/clients/:clientId" element={<FactoringClientDetailPage />} />
         <Route path="factoring/providers" element={<FactoringProvidersPage />} />
-        <Route path="brokerage" element={<BrokerageOpsPage />} />
-        <Route path="brokerage/shipments/:shipmentId" element={<ShipmentDetailPage />} />
+        <Route path="brokerage" element={<BrokerageCommandCenterPage />} />
+        <Route path="brokerage/readiness" element={<BrokerageReadinessPage />} />
+        <Route path="brokerage/shippers" element={<BrokerageShippersPage />} />
+        <Route path="brokerage/shippers/:shipperId" element={<BrokerageShipperDetailPage />} />
+        <Route path="brokerage/loads" element={<BrokerageLoadsListPage />} />
+        <Route path="brokerage/loads/:loadId" element={<BrokerageLoadDetailPage />} />
+        <Route path="brokerage/coverage" element={<BrokerageCoveragePage />} />
+        <Route path="brokerage/carriers" element={<BrokerageCarriersPage />} />
+        <Route path="brokerage/carriers/:carrierId" element={<BrokerageCarrierDetailPage />} />
+        <Route path="brokerage/finance" element={<BrokerageFinancePage />} />
         <Route path="invoices" element={<InvoicesPage />} />
         <Route path="invoices/:invoiceId" element={<OfficeInvoiceDetailPage />} />
         <Route path="payments" element={<PaymentsPage />} />

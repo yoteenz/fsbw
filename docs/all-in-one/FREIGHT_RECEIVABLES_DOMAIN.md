@@ -1,6 +1,6 @@
 # All In One — Freight Receivables Domain
 
-**Sprint:** 09 · **Last updated:** 2026-08-15
+**Sprint:** 10 · **Last updated:** 2026-08-15
 
 ---
 
@@ -144,3 +144,19 @@ Office dashboards must separate:
 | Service Invoice | `Invoice` | `invoices[]` |
 
 See **`FINANCIAL_BOUNDARIES.md`** for revenue vs pass-through rules.
+
+---
+
+## Brokerage financial concepts (Sprint 10)
+
+Brokerage adds **three more concepts** that must not be merged with the five above:
+
+| Concept | Relation to factoring domain |
+|---------|----------------------------|
+| **Shipper Freight Charge** | What shipper pays broker — input to `BSI-*`, not `HF-*` |
+| **Brokerage Gross Margin** | Shipper charge − carrier pay — broker spread, not factoring advance |
+| **Carrier Payable** | Broker A/P — separate from provider-reported factoring funding |
+
+Full matrix: **`BROKERAGE_FINANCIAL_DOMAIN.md`**.
+
+**Rule:** A carrier may have both an **`HF-*`** (factoring) and a **`CarrierPayable`** (brokerage) referencing the same brokerage load — different workflows, different documents, no duplicate payment in demo.

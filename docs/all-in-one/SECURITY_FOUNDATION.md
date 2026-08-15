@@ -90,6 +90,18 @@ Migrations: `all-in-one/supabase/migrations/` — apply **only** to AIO project.
 
 Full boundary spec: **`FACTORING_SECURITY.md`**.
 
+### Brokerage (Sprint 10)
+
+| Data | Handling |
+|------|----------|
+| Bank account / routing (carrier or shipper) | **Not stored** |
+| Shipper freight charge / carrier pay | Role-filtered visibility — see `brokerageRules.ts` |
+| Gross margin | Broker staff only |
+| `brokerageCapability` | Staff-only write; default `demo` |
+| Rate confirmation production PDF | Dev template only until activation |
+
+Full boundary spec: **`BROKERAGE_SECURITY.md`**.
+
 ---
 
 ## Storage boundary

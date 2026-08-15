@@ -3654,3 +3654,20 @@
 .aio-factoring-office-metrics { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; margin-bottom: 1.5rem; }
 @media (min-width: 900px) { .aio-factoring-office-metrics { grid-template-columns: repeat(6, 1fr); } }
 
+/* ——— Sprint 10: Brokerage ——— */
+.aio-brokerage { padding: 1rem 1.25rem; max-width: 42rem; margin: 0 auto; }
+.aio-brokerage-office { max-width: none; }
+.aio-brokerage-hero { margin-bottom: 1.5rem; }
+.aio-brokerage-hero--compact h1 { font-size: 1.5rem; }
+.aio-brokerage-metrics { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; margin: 1rem 0; }
+.aio-brokerage-metric { padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: 8px; text-align: center; }
+.aio-brokerage-metric span { display: block; font-size: 1.5rem; font-weight: 700; }
+.aio-brokerage-metric label { font-size: 0.7rem; text-transform: uppercase; opacity: 0.7; }
+.aio-brokerage-card { padding: 1rem; border: 1px solid #e5e7eb; border-radius: 8px; margin-bottom: 1rem; }
+.aio-brokerage-row { display: flex; flex-direction: column; gap: 0.25rem; padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: 6px; margin-bottom: 0.5rem; text-decoration: none; color: inherit; }
+.aio-brokerage-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem; }
+.aio-brokerage-charge { font-size: 1.25rem; font-weight: 700; }
+.aio-brokerage-warn { color: #b45309; font-size: 0.85rem; }
+.aio-brokerage-office-metrics { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; margin-bottom: 1.5rem; }
+@media (min-width: 900px) { .aio-brokerage-office-metrics { grid-template-columns: repeat(6, 1fr); } }
+
