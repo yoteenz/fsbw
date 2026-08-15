@@ -170,3 +170,26 @@ Default categories in `DEFAULT_NOTIFICATION_PREFERENCES`. Email/SMS shown as dis
 - In-app only in Sprint 06
 - No SMS/email/push providers connected
 - High-volume reminder spam suppressed via dedupe keys (not duplicated in customer activity feed)
+
+---
+
+## Command center attention keys (Sprint 12)
+
+Parallel to notifications — command center uses its own dedupe namespace in `clientAttentionEngine.ts`:
+
+| Key pattern | Example |
+|-------------|---------|
+| `insurance-expiry:{orgId}:{date}` | Collapses policy + insurance renewal |
+| `doc-expiry:{documentId}` | Vault expiring document |
+| `doc-needed:{documentId}` | Requested upload |
+| `load-pod:{loadId}` | POD action |
+| `invoice:{invoiceId}` | Billing due/past due |
+| `rr:{itemId}` | Road Ready attention item |
+
+Future production should align notification and attention keys for the same customer-visible issue where possible.
+
+Command center list is capped at **12 items**; notifications may retain longer history.
+
+See **`CLIENT_ATTENTION_ENGINE.md`**.
+
+---

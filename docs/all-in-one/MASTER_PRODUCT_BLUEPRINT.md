@@ -352,6 +352,61 @@ See **`INSURANCE_DATA_SECURITY.md`**, **`INSURANCE_REGULATORY_BOUNDARIES.md`**. 
 
 ---
 
+## CLIENT COMMAND CENTER (Sprint 12)
+
+### Purpose
+
+Unified **customer operating home** at `/all-in-one/portal` — aggregates Road Ready, documents, dispatch, factoring, billing, insurance, renewals, and service requests into one **next-action + attention** experience without merging financial domains.
+
+### Module layout
+
+```
+src/all-in-one/portal/
+  clientCommandCenterService.ts   # View assembly + collectors
+  clientAttentionEngine.ts        # Dedupe + sort
+  clientNextActionEngine.ts       # Single hero action
+  organizationContext.ts          # Org, role, portal kind
+  clientCommandCenterTypes.ts
+  useClientCommandCenter.ts
+```
+
+### Hub routes (Sprint 12)
+
+| Route | Purpose |
+|-------|---------|
+| `/portal` | Command Center home |
+| `/portal/business` | Company profile + services |
+| `/portal/business/summary` | Printable summary |
+| `/portal/operations` | Dispatch / loads hub |
+| `/portal/money` | Separate financial domain cards |
+| `/portal/documents` | Document status hub |
+| `/portal/communication` | Messages + notifications |
+| `/portal/requests` | Service requests list |
+| `/portal/services` | Services center |
+| `/portal/activity` | Activity timeline |
+| `/portal/team` | Organization members |
+| `/portal/search` | Portal search |
+
+All Sprint 05–11 module routes remain valid deep links.
+
+### Attention & dedupe
+
+- Canonical insurance expiration key: **`insurance-expiry:{orgId}:{date}`**
+- Optional growth (`category: services`, low priority) suppressed for next action when operational items exist
+- **`allCaughtUp`** when attention list empty — demo org **client-g**
+
+### Role-aware modules
+
+Demo: `portalMemberRole` + `organizationMembers` (store v12). Production maps to `aio_organization_memberships.role`. Driver/viewer roles exclude billing and combined money summaries.
+
+### Canonical docs
+
+- `CLIENT_COMMAND_CENTER.md`
+- `CLIENT_INFORMATION_ARCHITECTURE.md`
+- `CLIENT_ATTENTION_ENGINE.md`
+
+---
+
 ## FACTORING DIVISION (Sprint 01 — historical)
 
 ### Target users
@@ -445,7 +500,7 @@ Carrier → Load → Invoice → FactoringSubmission
 
 1. **Public website** — marketing, intent-based discovery, trust
 2. **Roadmap system** — onboarding + compliance progress (factoring optional)
-3. **Customer command center** — dashboard, factoring, documents, renewals
+3. **Customer command center** — Sprint 12 `/portal` home, attention engine, hub IA (factoring, documents, renewals aggregated)
 4. **Dispatch platform** — carrier load operations → payment/factoring options
 5. **Factoring platform** — invoice review, partner submission, funding status
 6. **Brokerage platform** — shipper quotes, coverage, shipper/carrier portals (Sprint 10 demo)
@@ -473,6 +528,7 @@ Carrier → Load → Invoice → FactoringSubmission
 | Sprint 09 ✅ | Factoring module, freight invoices, submissions, office command center, demo v8 |
 | Sprint 10 ✅ | Brokerage module, shipper portal, carrier offers, coverage, finance, demo v10 |
 | Sprint 11 ✅ | Insurance module, assistance mode, partner referral, quotes, COI, Road Ready sync, demo v11 |
+| Sprint 12 ✅ | Client Command Center, portal IA hubs, attention/next-action engines, role-aware modules, demo v12 |
 | Sprint 02+ | Service content, intake forms, lead capture |
 | Future | Factoring partner integration, real eligibility engine |
 | Future | Production auth, customer portal backend |
@@ -482,10 +538,12 @@ Carrier → Load → Invoice → FactoringSubmission
 
 ## Canonical reads for future agents
 
-1. This file — product vision + **Factoring Division**
-2. `docs/all-in-one/DEBUG_ARCHITECTURE.md`
-3. `docs/all-in-one/EXTRACTION_PLAN.md`
-4. `docs/all-in-one/SPRINT_STATUS.md`
-5. `src/all-in-one/config/appConfig.ts`
-6. `src/all-in-one/data/mockFactoring.ts`
-7. `src/all-in-one/services/factoring/`
+1. This file — product vision + division architecture
+2. `docs/all-in-one/CLIENT_COMMAND_CENTER.md` — Sprint 12 portal home
+3. `docs/all-in-one/CLIENT_INFORMATION_ARCHITECTURE.md` — routes + nav
+4. `docs/all-in-one/CLIENT_ATTENTION_ENGINE.md` — attention + dedupe
+5. `docs/all-in-one/DEBUG_ARCHITECTURE.md`
+6. `docs/all-in-one/EXTRACTION_PLAN.md`
+7. `docs/all-in-one/SPRINT_STATUS.md`
+8. `src/all-in-one/config/appConfig.ts`
+9. `src/all-in-one/portal/clientCommandCenterService.ts`

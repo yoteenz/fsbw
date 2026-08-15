@@ -7,6 +7,7 @@ import { createDispatchSeedData } from './dispatchSeed';
 import { createFactoringSeedData } from './factoringSeed';
 import { createBrokerageSeedData } from './brokerageSeed';
 import { createInsuranceSeedData } from './insuranceSeed';
+import { createCommandCenterSeedData } from './commandCenterSeed';
 
 const STAFF: StaffMember[] = [
   { id: 'staff-1', name: 'Taylor Brooks', initials: 'TB', role: 'Administrator', status: 'available' },
@@ -30,6 +31,7 @@ export function createDemoSeed(): DemoStore {
   const factoring = createFactoringSeedData();
   const brokerage = createBrokerageSeedData();
   const insurance = createInsuranceSeedData();
+  const commandCenter = createCommandCenterSeedData();
 
   const requests = [
       mkRequest('req-1', 'AIO-DEMO-0001', 'client-a', 'Authority + BOC-3 Assistance', 'permitting', 'new_request', 'staff-2', daysAgo(3), ['vdoc-a1', 'vdoc-a2']),
@@ -43,11 +45,13 @@ export function createDemoSeed(): DemoStore {
     });
 
   return {
-    version: 11,
+    version: 12,
     requestCounter: 4,
     portalClientId: 'client-a',
     shipperPortalOrgId: 'client-e',
     brokeragePortalClientId: 'client-b',
+    portalMemberRole: commandCenter.portalMemberRole,
+    organizationMembers: commandCenter.organizationMembers,
     intake: defaultIntakeAnswers(),
     roadmap: null,
     servicePlan: [],

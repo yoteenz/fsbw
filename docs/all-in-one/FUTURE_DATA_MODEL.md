@@ -41,7 +41,7 @@
 | Credit / Refund | `aio_credits`, `aio_refunds` | Adjustments |
 | ServicePricing | `aio_service_pricing` | Catalog commercial config |
 
-Demo mode: `DemoStore` v9 fields mirror billing + factoring + brokerage relationships in localStorage.
+Demo mode: `DemoStore` v12 fields mirror billing + factoring + brokerage + command center relationships in localStorage.
 
 ### Billing domain (Sprint 07)
 
@@ -236,8 +236,32 @@ StaffMember 1—* Task (assigned)
 | Factoring submission (own org) | Status + customer timeline | Full + reported funding entry |
 | Reported funding amounts | Summary when funded | Full + edit until locked |
 | Activity (internal) | Filtered | Full |
+| Command center money cards | Role-filtered; domains never combined | N/A |
 
 Production must enforce visibility **server-side** — not UI-only hiding.
+
+---
+
+## Command center domain (Sprint 12)
+
+Demo: aggregated view only — no new tables. Production may add:
+
+| Entity | Table (planned) | Purpose |
+|--------|-----------------|---------|
+| OrganizationMember | `aio_organization_memberships` (existing) | Role + status + last activity |
+| AttentionItem (materialized) | `aio_attention_items` (future) | Deduped customer actions; `dedupe_key` unique per org |
+| CommandCenterSnapshot (optional) | `aio_portal_snapshots` (future) | Cached JSON view with TTL |
+
+Demo store v12 fields:
+
+| Field | Type | Purpose |
+|-------|------|---------|
+| `portalMemberRole` | enum | Simulated membership role for current session |
+| `organizationMembers` | `OrganizationMember[]` | Team roster seed |
+
+Canonical dedupe key for insurance expiration: **`insurance-expiry:{organizationId}:{expirationDate}`** — align notification, attention, and calendar jobs.
+
+See **`CLIENT_ATTENTION_ENGINE.md`**, **`CLIENT_COMMAND_CENTER.md`**.
 
 ---
 

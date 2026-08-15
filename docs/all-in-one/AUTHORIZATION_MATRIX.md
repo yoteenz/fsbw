@@ -1,6 +1,6 @@
 # All In One — Authorization Matrix
 
-**Status:** Sprint 11 insurance permissions added. Enforced via Supabase RLS when backend mode is active.
+**Status:** Sprint 12 portal command center roles added. Enforced via Supabase RLS when backend mode is active.
 
 ---
 
@@ -163,6 +163,37 @@ Rules:
 *COI issuance marks `issued` status — authorized staff/partner workflow only; not customer self-service.
 
 See **`INSURANCE_DATA_SECURITY.md`**, **`INSURANCE_REGULATORY_BOUNDARIES.md`**.
+
+---
+
+## Portal command center permissions (Sprint 12)
+
+Demo simulates membership via `portalMemberRole`. Production maps to `aio_organization_memberships.role`.
+
+| Capability | owner | admin | accounting | operations | driver | viewer |
+|------------|-------|-------|------------|------------|--------|--------|
+| View command center home | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| View attention / next action | ✓ | ✓ | ✓ | ✓ | ✓ | R |
+| View Road Ready / fleet summaries | ✓ | ✓ | ✓ | ✓ | ✓ | R |
+| View operations / dispatch hub | ✓ | ✓ | ✓ | ✓ | ✓ | R |
+| View AIO billing / invoices | ✓ | ✓ | ✓ | — | — | — |
+| View freight receivables (factoring) | ✓ | ✓ | ✓ | ✓ | — | — |
+| View brokerage payables | ✓ | ✓ | ✓ | ✓ | — | — |
+| Pay service invoices | ✓ | ✓ | ✓ | — | — | — |
+| Submit POD / respond to load offers | ✓ | ✓ | — | ✓ | R | — |
+| Upload vault documents | ✓ | ✓ | ✓ | ✓ | ✓ | — |
+| View team roster | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| Manage team (invite/remove) | ✓ | ✓ | — | — | — | — |
+
+Rules:
+
+- **`canViewBilling`** — owner, admin, accounting (`organizationContext.ts`)
+- **`canViewFullMoney`** — owner, admin, accounting, operations
+- **Financial domains never combined** in UI — separate authorization per domain still applies at API layer
+- Command center aggregation must **not** leak internal notes, margin, or staff-only fields
+- Shipper portal kind uses shipper nav — no carrier Road Ready or dispatch money
+
+See **`CLIENT_COMMAND_CENTER.md`**, **`CLIENT_INFORMATION_ARCHITECTURE.md`**.
 
 ---
 

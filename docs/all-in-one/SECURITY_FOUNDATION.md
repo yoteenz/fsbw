@@ -114,6 +114,20 @@ Full boundary spec: **`BROKERAGE_SECURITY.md`**.
 
 Full boundary spec: **`INSURANCE_DATA_SECURITY.md`**.
 
+### Command center (Sprint 12)
+
+| Data | Handling |
+|------|----------|
+| Aggregated money summaries | Role-filtered; **no combined total** across billing/factoring/brokerage |
+| Attention items | Customer-actionable only; no internal issue queue fields |
+| Organization members | Name, email, role, status — no internal staff notes |
+| `portalMemberRole` (demo) | Debug only — not an auth boundary |
+| Module errors | Generic customer message — no stack traces |
+
+Command center reads domain modules read-only; writes occur on destination routes with existing domain guards.
+
+See **`CLIENT_COMMAND_CENTER.md`**, **`SECURITY_FOUNDATION.md`**.
+
 ---
 
 ## Storage boundary

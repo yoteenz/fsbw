@@ -387,3 +387,7 @@ export function getCarrierOffers(orgId: string, store: DemoStore = loadDemoStore
   const profileIds = store.carrierNetworkProfiles.filter((p) => p.organizationId === orgId).map((p) => p.id);
   return store.carrierOffers.filter((o) => profileIds.includes(o.carrierNetworkProfileId) || o.carrierOrganizationId === orgId);
 }
+
+export function getCarrierPayablesFromStore(orgId: string, store: DemoStore = loadDemoStore()) {
+  return store.carrierPayables.filter((p) => p.carrierOrganizationId === orgId);
+}

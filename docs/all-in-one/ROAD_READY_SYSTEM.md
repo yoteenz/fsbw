@@ -232,3 +232,19 @@ Verification mapping on sync:
 Insurance assistance is **Operate & Grow** optional service — does not replace compliance scoring rules from Sprint 05.
 
 See **`INSURANCE_SYSTEM.md`**, **`ROAD_READY_SYSTEM.md`** (this file).
+
+---
+
+## Command center integration (Sprint 12)
+
+| Integration | Behavior |
+|-------------|----------|
+| Command Center home | `/portal` — Road Ready hero shows setup/verified % + attention count |
+| Attention candidates | Road Ready items emitted with `dedupeKey: rr:{itemId}` |
+| Business health grid | Road Ready progress alongside documents, renewals, fleet |
+| Quick actions | "Add Vehicle" links to `/portal/onboarding` |
+| Insurance expiry dedupe | Shares `insurance-expiry:{orgId}:{date}` with renewals — one attention row |
+
+Road Ready remains the **authoritative compliance surface**; command center summarizes and routes — it does not duplicate verification workflows.
+
+See **`CLIENT_COMMAND_CENTER.md`**, **`CLIENT_ATTENTION_ENGINE.md`**.

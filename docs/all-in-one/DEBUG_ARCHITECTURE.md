@@ -22,7 +22,18 @@ This is **not** a Frontal Slayer product surface. It must not appear in storefro
 | `/all-in-one/service-plan` | My Service Plan |
 | `/all-in-one/request/submit` | Mock service request review |
 | `/all-in-one/request/confirmation/:id` | Demo request confirmation |
-| `/all-in-one/portal` | Client dashboard |
+| `/all-in-one/portal` | Client Command Center home (Sprint 12) |
+| `/all-in-one/portal/business` | My Business profile (Sprint 12) |
+| `/all-in-one/portal/business/summary` | Printable business summary (Sprint 12) |
+| `/all-in-one/portal/operations` | Operations hub (Sprint 12) |
+| `/all-in-one/portal/money` | Money hub — separate domains (Sprint 12) |
+| `/all-in-one/portal/documents` | Document center hub (Sprint 12) |
+| `/all-in-one/portal/communication` | Communication hub (Sprint 12) |
+| `/all-in-one/portal/requests` | Service requests list (Sprint 12) |
+| `/all-in-one/portal/services` | Services center (Sprint 12) |
+| `/all-in-one/portal/activity` | Activity timeline (Sprint 12) |
+| `/all-in-one/portal/team` | Team roster (Sprint 12) |
+| `/all-in-one/portal/search` | Portal search (Sprint 12) |
 | `/all-in-one/portal/onboarding` | Road Ready onboarding (10-step) |
 | `/all-in-one/portal/road-ready` | Road Ready persistent home |
 | `/all-in-one/portal/fleet` | Fleet profile |
@@ -84,7 +95,8 @@ Registered in `src/routes/StudioDebugRoutes.tsx` **before** the catch-all `App` 
 ```
 src/all-in-one/
   config/appConfig.ts      # Company, contact, routes, feature flags
-  demo/                    # Sprint 03–10 — demo store v10 + seed/actions
+  demo/                    # Sprint 03–12 — demo store v12 + seed/actions
+  portal/                  # Sprint 12 — command center, attention engine, org context
   brokerage/               # Sprint 10 — types, rules, calculations, config
   insurance/               # Sprint 11 — types, rules, calculations, config, partner adapter
   factoring/               # Sprint 09 — types, rules, calculations, config
@@ -105,7 +117,8 @@ src/all-in-one/
   components/              # AIO* design system + intake/roadmap/request UI
   layouts/                 # Public + portal layouts (+ debug banner)
   sections/                # Homepage sections
-  pages/                   # Route pages (intake, marketplace, portal, shipper, factoring, brokerage)
+  pages/portal/ClientPortalPages.tsx  # Sprint 12 — hub pages
+  components/CommandCenterComponents.tsx  # Sprint 12 — CC UI blocks
   pages/shipper/           # Sprint 10 — ShipperPortalPages
   pages/portal/brokerage/  # Sprint 10 — carrier brokerage portal
   pages/portal/insurance/  # Sprint 11 — InsurancePortalPages
@@ -165,9 +178,9 @@ Backend migrations: `all-in-one/supabase/migrations/` — **not** Frontal Slayer
 
 ### Sprint 03 — centralized demo store
 
-Single key: `aio_debug_store`. Current version: **11** (Sprint 11 insurance). Legacy versions migrate on first load (v3→…→v10→v11).
+Single key: `aio_debug_store`. Current version: **12** (Sprint 12 command center). Legacy versions migrate on first load (v3→…→v11→v12).
 
-Entities: clients, requests, tasks, documents, deadlines, notes, messages, activity, staff, loads, dispatch enrollments, factoringProfiles, factoringProviders, debtorAccounts, freightInvoices, factoringSubmissions, factoringIssues, factoringCounters, **brokerageCapability**, **shipperProfiles**, **shipmentRequests**, **brokerageFreightQuotes**, **carrierNetworkProfiles**, **carrierOffers**, **brokerageRateConfirmations**, **brokerageLoadFinancials**, **brokerageAccessorials**, **brokerageShipperInvoices**, **carrierPayables**, **brokerageIssues**, **coverageHistory**, **brokerageCounters**, invoices, notifications, billing, road ready, fleet.
+Entities: clients, requests, tasks, documents, deadlines, notes, messages, activity, staff, loads, dispatch enrollments, factoringProfiles, factoringProviders, debtorAccounts, freightInvoices, factoringSubmissions, factoringIssues, factoringCounters, **brokerageCapability**, **shipperProfiles**, **shipmentRequests**, **brokerageFreightQuotes**, **carrierNetworkProfiles**, **carrierOffers**, **brokerageRateConfirmations**, **brokerageLoadFinancials**, **brokerageAccessorials**, **brokerageShipperInvoices**, **carrierPayables**, **brokerageIssues**, **coverageHistory**, **brokerageCounters**, invoices, notifications, billing, road ready, fleet, **portalMemberRole**, **organizationMembers**.
 
 **Cross-portal sync:** Portal and Office read/write the same store. `portalClientId` links customer session to client record.
 
@@ -259,6 +272,36 @@ Insurance UI banner: `DEMO_INSURANCE_LABEL` from `insuranceConfig.ts`.
 
 **Reset Demo Data** restores v11 seed via `demoSeed.ts`.
 
+### Sprint 12 — demo store v12 (command center)
+
+| Upgrade | Adds |
+|---------|------|
+| v11 → v12 | `portalMemberRole` (default `owner`), `organizationMembers[]` seeded per demo org (owners, driver on client-b, admin/ops on client-c) |
+
+Seed: `commandCenterSeed.ts` — membership roster for clients a–g + shipper client-e.
+
+Actions: none new — command center reads existing domain actions via `clientCommandCenterService.ts`.
+
+Debug controls (`AIODebugBanner`):
+
+- Organization `<select>` → `setPortalOrganization()` / `portalClientId`
+- Role `<select>` → `setPortalMemberRole()` / `portalMemberRole`
+- **Shipper Org** → `shipperPortalOrgId = client-e`
+
+Demo scenarios by org:
+
+| Org | Command center QA focus |
+|-----|-------------------------|
+| client-a | New owner-operator baseline |
+| client-b | Mixed attention + driver role member |
+| client-c | Fleet admin/ops roles |
+| client-d | Factoring in progress |
+| client-f | Active load / POD |
+| client-g | All caught up |
+| client-e | Shipper quotes (via shipper portal) |
+
+**Reset Demo Data** restores v12 seed via `demoSeed.ts`.
+
 ### Factoring components (Sprint 01 + Sprint 09)
 
 Sprint 01: `AIOFactoringMetricCard`, `AIOFactoringInvoiceRow`, `AIOFactoringStatusBadge`, `AIOFactoringWorkflow`, `AIOFundingEstimate`, `AIODocumentChecklist`, `AIOFactoringHistory`
@@ -268,6 +311,8 @@ Sprint 09: `LoadFactoringSection`, `FactoringPortalPages`, `FactoringPages` (off
 Sprint 10: `ShipperPortalPages`, `BrokeragePortalPages`, `BrokeragePages` (office), module under `src/all-in-one/brokerage/`
 
 Sprint 11: `InsurancePortalPages`, `InsurancePages` (office), module under `src/all-in-one/insurance/`
+
+Sprint 12: `ClientPortalPages` (hub routes), `CommandCenterComponents`, `portal/*` (command center service + engines), `PortalPage` command center home
 
 ---
 

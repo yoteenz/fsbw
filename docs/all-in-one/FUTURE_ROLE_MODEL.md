@@ -116,3 +116,24 @@ Demo coordinator: **`staff-5`** assigned on insurance seed requests.
 Customers: view own policies (masked numbers), submit requests, request COI, select quote externally — **cannot** verify policy or issue COI.
 
 See **`INSURANCE_DATA_SECURITY.md`**, **`AUTHORIZATION_MATRIX.md`**.
+
+---
+
+## Portal membership roles (Sprint 12)
+
+Production target: extend `aio_organization_memberships.role` with operational portal roles (demo uses same enum in `portalMemberRole`).
+
+| Role | Command center | Billing / pay | Full money (factoring + brokerage) | Typical user |
+|------|----------------|---------------|-----------------------------------|--------------|
+| `owner` | Full | ✓ | ✓ | Business owner |
+| `admin` | Full | ✓ | ✓ | Office manager |
+| `accounting` | Full | ✓ | ✓ | Bookkeeper |
+| `operations` | Full | — | ✓ | Dispatcher / fleet mgr |
+| `driver` | Limited | — | — | Driver — ops + docs, no money |
+| `viewer` | Read-only summaries | — | — | Auditor / partner read |
+
+Demo: `organizationMembers[]` in store v12; role switcher in `AIODebugBanner`.
+
+Team management (invite, deactivate) — future sprint; `/portal/team` read-only in Sprint 12.
+
+See **`CLIENT_COMMAND_CENTER.md`**, **`FUTURE_DATA_MODEL.md`** (OrganizationMember).

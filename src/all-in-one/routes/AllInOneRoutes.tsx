@@ -31,6 +31,19 @@ import { ForgotPasswordPage } from '../pages/auth/ForgotPasswordPage';
 import { ResetPasswordPage } from '../pages/auth/ResetPasswordPage';
 import { VerifyEmailPage } from '../pages/auth/VerifyEmailPage';
 import { OnboardingPage } from '../pages/auth/OnboardingPage';
+import {
+  BusinessProfilePage,
+  BusinessSummaryPage,
+  OperationsCenterPage,
+  MoneyCenterPage,
+  DocumentCenterPage,
+  CommunicationHubPage,
+  ServiceRequestsCenterPage,
+  ServicesCenterPage,
+  ActivityTimelinePage,
+  TeamPage,
+  PortalSearchPage,
+} from '../pages/portal/ClientPortalPages';
 import { PortalSettingsPage } from '../pages/portal/PortalSettingsPage';
 import { RoadReadyOnboardingPage } from '../pages/portal/RoadReadyOnboardingPage';
 import { RoadReadyPage } from '../pages/portal/RoadReadyPage';
@@ -132,6 +145,17 @@ export default function AllInOneRoutes() {
         <Route element={<CustomerRouteGuard />}>
           <Route path="portal" element={<AIOPortalLayout />}>
             <Route index element={<PortalPage />} />
+            <Route path="business" element={<BusinessProfilePage />} />
+            <Route path="business/summary" element={<BusinessSummaryPage />} />
+            <Route path="operations" element={<OperationsCenterPage />} />
+            <Route path="money" element={<MoneyCenterPage />} />
+            <Route path="documents" element={<DocumentCenterPage />} />
+            <Route path="communication" element={<CommunicationHubPage />} />
+            <Route path="requests" element={<ServiceRequestsCenterPage />} />
+            <Route path="services" element={<ServicesCenterPage />} />
+            <Route path="activity" element={<ActivityTimelinePage />} />
+            <Route path="team" element={<TeamPage />} />
+            <Route path="search" element={<PortalSearchPage />} />
             <Route path="onboarding" element={<RoadReadyOnboardingPage />} />
             <Route path="road-ready" element={<RoadReadyPage />} />
             <Route path="fleet" element={<FleetPage />} />

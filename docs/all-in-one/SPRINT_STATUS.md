@@ -1,7 +1,26 @@
 # All In One — Sprint Status
 
-**Sprint:** 11 — Insurance Assistance + Policy Records + Partner Coordination  
+**Sprint:** 12 — Client Command Center · Portal IA · Attention Engine  
 **Last updated:** 2026-08-15
+
+---
+
+## SPRINT 12 COMPLETE (Client Command Center · Portal IA · Attention Engine)
+
+- **Client Command Center** — `/portal` home replaces flat dashboard; `ClientCommandCenterService` aggregates cross-domain state
+- **Portal module** — `src/all-in-one/portal/` (command center service, attention engine, next-action engine, organization context, types, hook)
+- **Hub routes** — `/portal/business`, `/portal/business/summary`, `/portal/operations`, `/portal/money`, `/portal/documents`, `/portal/communication`, `/portal/requests` (list), `/portal/services`, `/portal/activity`, `/portal/team`, `/portal/search`
+- **Legacy routes preserved** — Road Ready, Vault, Dispatch, Factoring, Brokerage, Insurance, Billing deep links unchanged
+- **Attention engine** — dedupe by `dedupeKey`; insurance expiry canonical key `insurance-expiry:{orgId}:{date}`
+- **Next-action engine** — deterministic precedence; optional growth suppressed when operational items exist
+- **Financial domains** — AIO billing, freight receivables, brokerage payables, factoring in-process shown separately — **never combined**
+- **Role-aware portal** — `portalMemberRole` gates billing/money/quick actions (owner, admin, accounting, operations, driver, viewer)
+- **Organization members** — team roster on `/portal/team`; demo seed per org
+- **Demo org switcher** — `AIODebugBanner` organization + role selects; shipper org button
+- **Mobile IA** — bottom nav (Home · Business · Ops · Money · More); collapsible sidebar
+- **Demo store v12** — adds `portalMemberRole`, `organizationMembers`; migration from v11
+- **Unit tests** — attention dedupe, optional suppression, next-action precedence, driver money exclusion, no combined money total
+- **Documentation** — `CLIENT_COMMAND_CENTER.md`, `CLIENT_INFORMATION_ARCHITECTURE.md`, `CLIENT_ATTENTION_ENGINE.md`, updated canon docs
 
 ---
 
@@ -147,7 +166,7 @@
 Dedicated All In One Supabase project credentials are **not yet configured**.
 
 - App runs in **Demo Mode** (default)
-- Dispatch + billing + factoring + brokerage + insurance backend tables deferred — demo store v11 is source of truth for Sprint 11 review
+- Dispatch + billing + factoring + brokerage + insurance + command center backend tables deferred — demo store v12 is source of truth for Sprint 12 review
 - Payment provider mode: **demo** (no live charges)
 - No Frontal Slayer schema touched
 

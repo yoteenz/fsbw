@@ -12,7 +12,8 @@ Copy entire tree:
 src/all-in-one/          → src/ (or keep src/all-in-one/ in new repo)
   intake/                → Sprint 02 Smart Intake (config-driven)
   roadmap/               → Sprint 02 mock recommendation engine
-  demo/                    # centralized store (Sprint 03–11, v11)
+  demo/                    # centralized store (Sprint 03–12, v12)
+  portal/                  # Sprint 12 — command center + attention engine
   insurance/               # Sprint 11 core module
   brokerage/               # Sprint 10 core module
   factoring/               # Sprint 09 core module
@@ -31,6 +32,8 @@ all-in-one/supabase/migrations/ → dedicated backend schema (Sprint 04)
   pages/shipper/
   pages/portal/brokerage/
   pages/portal/insurance/
+  pages/portal/ClientPortalPages.tsx  # Sprint 12 hub pages
+  portal/                  # Sprint 12 — extract command center module
   office/pages/BrokeragePages.tsx
   office/pages/InsurancePages.tsx
   components/factoring/    # Sprint 09 UI
@@ -195,6 +198,27 @@ Dependencies to keep with module on extraction:
 | `demo/roadReadySeed.ts` | Fleet units for vehicle schedule (read-only ids) |
 
 **Premium ≠ service revenue:** do not merge `InsuranceQuoteRecord` into Sprint 07 billing on extraction.
+
+---
+
+## Command center module extractable (Sprint 12)
+
+Self-contained under `src/all-in-one/portal/` with UI in `pages/portal/ClientPortalPages.tsx`, `pages/PortalPage.tsx`, `components/CommandCenterComponents.tsx`.
+
+Dependencies to keep with module on extraction:
+
+| Dependency | Reason |
+|------------|--------|
+| All domain demo actions | Collectors read dispatch, vault, billing, insurance, etc. |
+| `utils/paths.ts` | Canonical route constants |
+| `layouts/AIOPortalLayout.tsx` | Nav + mobile chrome |
+| Domain modules (read-only aggregation) | No circular imports — portal imports domains, not reverse |
+
+**Financial separation:** extract `MoneySummaryView` rules — never add combined totals on extraction.
+
+**Dedupe contract:** preserve `insurance-expiry:{orgId}:{date}` across host and standalone repo.
+
+Docs to copy: `CLIENT_COMMAND_CENTER.md`, `CLIENT_INFORMATION_ARCHITECTURE.md`, `CLIENT_ATTENTION_ENGINE.md`.
 
 ---
 

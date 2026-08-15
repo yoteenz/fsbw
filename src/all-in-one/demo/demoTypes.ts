@@ -370,13 +370,27 @@ export interface BrokerageShipment extends BrokerageQuote {
 
 export interface Invoice extends BillingInvoice {}
 
+export interface OrganizationMember {
+  id: string;
+  organizationId: string;
+  name: string;
+  email: string;
+  role: 'owner' | 'admin' | 'operations' | 'driver' | 'accounting' | 'viewer';
+  status: 'active' | 'invited' | 'inactive';
+  lastActivityAt?: string;
+}
+
 export interface DemoStore {
-  version: 11;
+  version: 12;
   requestCounter: number;
   portalClientId?: string;
   shipperPortalOrgId?: string;
   /** Demo default org for carrier brokerage portal (Heartland Freight). */
   brokeragePortalClientId?: string;
+  /** Current portal member role for command-center authorization demo. */
+  portalMemberRole?: 'owner' | 'admin' | 'operations' | 'driver' | 'accounting' | 'viewer';
+  /** Organization team members for portal team view. */
+  organizationMembers?: OrganizationMember[];
   intake: IntakeAnswers;
   roadmap: RoadmapResult | null;
   servicePlan: ServicePlanItem[];
