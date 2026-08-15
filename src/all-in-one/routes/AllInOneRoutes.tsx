@@ -1,4 +1,5 @@
 import { Navigate, Route, Routes, useParams } from 'react-router-dom';
+import { lazy, Suspense } from 'react';
 import { AIOPublicLayout } from '../layouts/AIOPublicLayout';
 import { AIOPortalLayout } from '../layouts/AIOPortalLayout';
 import { HomePage } from '../pages/HomePage';
@@ -16,6 +17,8 @@ import { RequestSubmitPage, RequestConfirmationPage } from '../pages/RequestSubm
 import { RequestDetailPage } from '../pages/RequestDetailPage';
 import { ServiceCatalogDetailPage } from '../pages/ServiceCatalogDetailPage';
 import { aioAppConfig } from '../config/appConfig';
+
+const OfficeRoutesLazy = lazy(() => import('../office/routes/OfficeRoutes'));
 
 export function AllInOneLoading() {
   return <div className="aio-loading">Loading All In One…</div>;
@@ -57,6 +60,15 @@ export default function AllInOneRoutes() {
         <Route path="factoring" element={<FactoringPortalPage />} />
         <Route path="requests/:requestId" element={<RequestDetailPage />} />
       </Route>
+
+      <Route
+        path="office/*"
+        element={
+          <Suspense fallback={<AllInOneLoading />}>
+            <OfficeRoutesLazy />
+          </Suspense>
+        }
+      />
 
       <Route path="*" element={<Navigate to={base} replace />} />
     </Routes>

@@ -2247,3 +2247,559 @@
 .aio-portal-panel--placeholder {
   opacity: 0.85;
 }
+
+.aio-debug-banner__office-link {
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--aio-charcoal);
+  text-decoration: underline;
+}
+
+.aio-portal-message {
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
+  border-radius: var(--aio-radius);
+  font-size: 0.875rem;
+}
+
+.aio-portal-message--staff {
+  background: var(--aio-gray-100);
+}
+
+.aio-portal-message--customer {
+  background: rgba(201, 162, 39, 0.08);
+}
+
+/* Sprint 03 — All In One Office */
+.aio-office {
+  background: #f3f4f6;
+  min-height: 100dvh;
+}
+
+.aio-office-preview-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding: 0.375rem 1rem;
+  background: #1a1a1a;
+  color: #d4af37;
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.aio-office-preview-bar a {
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 0.625rem;
+}
+
+.aio-office__shell {
+  display: flex;
+  min-height: calc(100dvh - 28px);
+}
+
+.aio-office__sidebar {
+  width: 260px;
+  flex-shrink: 0;
+  background: #0a0a0a;
+  color: #fff;
+  padding: 1rem 0;
+  display: none;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+@media (min-width: 1024px) {
+  .aio-office__sidebar {
+    display: flex;
+  }
+}
+
+.aio-office__sidebar--open {
+  display: flex;
+  position: fixed;
+  inset: 28px auto 0 0;
+  z-index: 200;
+  width: min(280px, 85vw);
+}
+
+.aio-office__sidebar-brand {
+  padding: 0 1.25rem 1rem;
+  border-bottom: 1px solid rgba(201, 162, 39, 0.15);
+}
+
+.aio-office__sidebar-title {
+  font-size: 0.6875rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--aio-gold-light);
+  margin-top: 0.5rem;
+  display: block;
+}
+
+.aio-office__nav-group {
+  padding: 0.75rem 0;
+}
+
+.aio-office__nav-group-label {
+  font-size: 0.5625rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.4);
+  padding: 0 1.25rem;
+  margin-bottom: 0.375rem;
+}
+
+.aio-office__nav-link {
+  display: block;
+  padding: 0.5rem 1.25rem;
+  font-size: 0.8125rem;
+  color: rgba(255, 255, 255, 0.8);
+  border-left: 3px solid transparent;
+}
+
+.aio-office__nav-link:hover,
+.aio-office__nav-link--active {
+  color: var(--aio-gold-light);
+  background: rgba(201, 162, 39, 0.08);
+  border-left-color: var(--aio-gold);
+}
+
+.aio-office__main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.aio-office__topbar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: #fff;
+  border-bottom: 1px solid var(--aio-gray-200);
+  flex-wrap: wrap;
+}
+
+.aio-office__menu-btn {
+  display: block;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border: 1px solid var(--aio-gray-200);
+  border-radius: var(--aio-radius);
+}
+
+@media (min-width: 1024px) {
+  .aio-office__menu-btn {
+    display: none;
+  }
+}
+
+.aio-office__search {
+  flex: 1;
+  min-width: 160px;
+}
+
+.aio-office__search input {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--aio-gray-200);
+  border-radius: var(--aio-radius);
+  font: inherit;
+}
+
+.aio-office__topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.aio-office__notif-btn {
+  font-size: 0.75rem;
+  font-weight: 600;
+  position: relative;
+}
+
+.aio-office__notif-count {
+  background: var(--aio-red);
+  color: #fff;
+  font-size: 0.625rem;
+  padding: 0.125rem 0.375rem;
+  border-radius: 999px;
+  margin-left: 0.25rem;
+}
+
+.aio-office__quick-create {
+  position: relative;
+}
+
+.aio-office__quick-menu {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  margin-top: 0.25rem;
+  background: #fff;
+  border: 1px solid var(--aio-gray-200);
+  border-radius: var(--aio-radius-lg);
+  box-shadow: var(--aio-shadow);
+  min-width: 200px;
+  z-index: 50;
+}
+
+.aio-office__quick-menu button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 0.625rem 1rem;
+  font-size: 0.8125rem;
+  border-bottom: 1px solid var(--aio-gray-200);
+}
+
+.aio-office__content {
+  flex: 1;
+  padding: 1.25rem;
+  overflow-x: auto;
+}
+
+.aio-office-page__header h1 {
+  font-size: 1.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.aio-office-page__header p {
+  color: var(--aio-gray-600);
+  font-size: 0.875rem;
+}
+
+.aio-office-metrics {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  margin: 1.25rem 0;
+}
+
+.aio-office-metric-card {
+  background: #fff;
+  border: 1px solid var(--aio-gray-200);
+  border-radius: var(--aio-radius-lg);
+  padding: 1rem;
+  text-align: center;
+  transition: box-shadow var(--aio-transition);
+}
+
+.aio-office-metric-card:hover {
+  box-shadow: var(--aio-shadow);
+}
+
+.aio-office-metric-card__value {
+  display: block;
+  font-family: var(--aio-font-display);
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--aio-gold-dark);
+}
+
+.aio-office-metric-card__label {
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--aio-gray-600);
+}
+
+.aio-office-two-col {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 900px) {
+  .aio-office-two-col {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.aio-office-panel {
+  background: #fff;
+  border: 1px solid var(--aio-gray-200);
+  border-radius: var(--aio-radius-lg);
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.aio-office-panel h2 {
+  font-size: 0.875rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 0.75rem;
+}
+
+.aio-office-panel--highlight {
+  border-color: rgba(201, 162, 39, 0.4);
+  background: rgba(201, 162, 39, 0.04);
+}
+
+.aio-office-priority-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.aio-office-priority-list li {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.625rem 0;
+  border-bottom: 1px solid var(--aio-gray-200);
+  font-size: 0.875rem;
+}
+
+.aio-office-activity {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.aio-office-activity li {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 0.75rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--aio-gray-200);
+  font-size: 0.8125rem;
+}
+
+.aio-office-activity time {
+  color: var(--aio-gray-600);
+}
+
+.aio-office-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.aio-office-filters input,
+.aio-office-filters select {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--aio-gray-200);
+  border-radius: var(--aio-radius);
+  font: inherit;
+}
+
+.aio-office-table-wrap {
+  overflow-x: auto;
+  background: #fff;
+  border: 1px solid var(--aio-gray-200);
+  border-radius: var(--aio-radius-lg);
+}
+
+.aio-office-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8125rem;
+}
+
+.aio-office-table th,
+.aio-office-table td {
+  padding: 0.625rem 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid var(--aio-gray-200);
+}
+
+.aio-office-table th {
+  background: #f9fafb;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--aio-gray-600);
+}
+
+.aio-office-table tbody tr:hover {
+  background: rgba(201, 162, 39, 0.04);
+}
+
+.aio-office-list-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--aio-gray-200);
+  font-size: 0.875rem;
+  color: inherit;
+}
+
+.aio-office-link {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--aio-gold-dark);
+}
+
+.aio-office-action-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+
+.aio-office-action-bar select {
+  padding: 0.5rem;
+  border: 1px solid var(--aio-gray-200);
+  border-radius: var(--aio-radius);
+  font: inherit;
+}
+
+.aio-office-board {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  overflow-x: auto;
+}
+
+.aio-office-board__col {
+  background: #e5e7eb;
+  border-radius: var(--aio-radius-lg);
+  padding: 0.75rem;
+  min-width: 180px;
+}
+
+.aio-office-board__col h3 {
+  font-size: 0.625rem;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.75rem;
+}
+
+.aio-office-board__card {
+  background: #fff;
+  border-radius: var(--aio-radius);
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.8125rem;
+}
+
+.aio-office-board__card select {
+  width: 100%;
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+}
+
+.aio-office-view-toggle button {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.75rem;
+  border: 1px solid var(--aio-gray-200);
+}
+
+.aio-office-view-toggle button.active {
+  background: var(--aio-gold);
+  border-color: var(--aio-gold);
+}
+
+.aio-office-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  margin: 1rem 0;
+  border-bottom: 1px solid var(--aio-gray-200);
+}
+
+.aio-office-tabs button {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-bottom: 2px solid transparent;
+}
+
+.aio-office-tabs__tab--active {
+  color: var(--aio-gold-dark);
+  border-bottom-color: var(--aio-gold) !important;
+}
+
+.aio-office-client-header h1 {
+  font-size: 1.375rem;
+}
+
+.aio-office-client-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin: 0.75rem 0;
+  font-size: 0.8125rem;
+}
+
+.aio-office-note {
+  padding: 0.75rem;
+  background: #fef3c7;
+  border-radius: var(--aio-radius);
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.aio-office-note header {
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.aio-office-dl {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: 0.375rem 1rem;
+  font-size: 0.875rem;
+}
+
+.aio-office-dl dt {
+  font-weight: 600;
+  color: var(--aio-gray-600);
+}
+
+.aio-office-message {
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
+  border-radius: var(--aio-radius);
+  font-size: 0.875rem;
+}
+
+.aio-office-message--staff {
+  background: var(--aio-gray-100);
+}
+
+.aio-office-message--customer {
+  background: rgba(201, 162, 39, 0.08);
+}
+
+.aio-office-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 300;
+  padding: 1rem;
+}
+
+.aio-office-modal__content {
+  background: #fff;
+  border-radius: var(--aio-radius-lg);
+  padding: 1.5rem;
+  max-width: 420px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.aio-office-subheading {
+  font-size: 1rem;
+  margin: 1.25rem 0 0.75rem;
+}

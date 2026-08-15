@@ -6,6 +6,7 @@ import {
   mockFactoringHistory,
   mockFactoringStatements,
 } from '../data/mockFactoring';
+import { useDemoStore } from '../demo/useDemoStore';
 import { AIOFactoringMetricCard } from '../components/AIOFactoringMetricCard';
 import { AIOFactoringInvoiceRow, AIOFactoringInvoiceCard } from '../components/AIOFactoringInvoiceRow';
 import { AIOFactoringWorkflow } from '../components/AIOFactoringWorkflow';
@@ -13,6 +14,8 @@ import { AIOFactoringHistory } from '../components/AIOFactoringHistory';
 import { AIOButton } from '../components/AIOButton';
 
 export function FactoringPortalPage() {
+  const store = useDemoStore();
+  const portalFactoring = store.factoringSubmissions.filter((f) => f.clientId === store.portalClientId);
   const [reviewInvoice, setReviewInvoice] = useState<MockFactoringInvoice | null>(null);
   const [workflowStep, setWorkflowStep] = useState<'review' | 'complete'>('review');
 
@@ -32,6 +35,19 @@ export function FactoringPortalPage() {
         <h1>Factoring</h1>
         <p>Invoice funding options · mock data only · no financial transactions</p>
       </header>
+
+      {portalFactoring.length > 0 && (
+        <div className="aio-portal-panel" style={{ marginBottom: '1rem' }}>
+          <h2 className="aio-portal-panel__title">Your Factoring Reviews</h2>
+          {portalFactoring.map((f) => (
+            <div key={f.id} className="aio-portal-list__item">
+              <span>{f.statusLabel} — illustrative net ${f.estimatedNet}</span>
+              <span className="aio-badge aio-badge--optional">Demo</span>
+            </div>
+          ))}
+          <p className="aio-prototype-note">Status updates sync from All In One Office.</p>
+        </div>
+      )}
 
       <div className="aio-factoring-metrics">
         <AIOFactoringMetricCard

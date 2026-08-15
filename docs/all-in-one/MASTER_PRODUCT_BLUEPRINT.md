@@ -2,11 +2,27 @@
 
 **Company:** ALL IN ONE ENTERPRISES INC.  
 **Positioning:** The business office behind the truck.  
-**Status:** Sprint 02 — Smart Intake + Roadmap + Service Marketplace (debug prototype inside Frontal Slayer host repo, temporary).
+**Status:** Sprint 03 — All In One Office + shared demo store (debug prototype inside Frontal Slayer host repo, temporary).
 
 ---
 
-## Sprint 02 — Smart Intake + Roadmap (prototype)
+## ALL IN ONE OFFICE (Sprint 03)
+
+Internal operating system at `/all-in-one/office/*`:
+
+- CRM (clients, Client 360)
+- Service request operations + workflows
+- Tasks, deadlines, documents, messages
+- Division queues (permitting, insurance, dispatch, factoring, brokerage)
+- Dispatch load ops + factoring handoff
+- Team, reports, billing preview
+- Shared demo store with customer portal
+
+Entry: debug banner **Internal Office →** only (not public homepage).
+
+Production: dedicated auth, Supabase, server-side RBAC — see `FUTURE_ROLE_MODEL.md`.
+
+---
 
 ### Smart Intake architecture
 

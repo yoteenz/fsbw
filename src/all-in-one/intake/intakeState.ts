@@ -1,6 +1,7 @@
-import { AIO_STORAGE_KEYS, readStorage, writeStorage } from '../storage/demoStorage';
-import type { IntakeAnswers } from './intakeTypes';
-import { defaultIntakeAnswers } from './intakeTypes';
+import { defaultIntakeAnswers } from '../intake/intakeTypes';
+import type { IntakeAnswers } from '../intake/intakeTypes';
+import { getStore, saveIntake } from '../demo/demoActions';
+import { resetDemoStore } from '../demo/demoStore';
 
 export interface IntakeRepository {
   load(): IntakeAnswers;
@@ -10,15 +11,15 @@ export interface IntakeRepository {
 
 export class LocalDemoIntakeRepository implements IntakeRepository {
   load(): IntakeAnswers {
-    return readStorage(AIO_STORAGE_KEYS.intake, defaultIntakeAnswers());
+    return getStore().intake ?? defaultIntakeAnswers();
   }
 
   save(answers: IntakeAnswers): void {
-    writeStorage(AIO_STORAGE_KEYS.intake, answers);
+    saveIntake(answers);
   }
 
   clear(): void {
-    writeStorage(AIO_STORAGE_KEYS.intake, defaultIntakeAnswers());
+    resetDemoStore();
   }
 }
 

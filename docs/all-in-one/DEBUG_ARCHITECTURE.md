@@ -24,6 +24,7 @@ This is **not** a Frontal Slayer product surface. It must not appear in storefro
 | `/all-in-one/request/confirmation/:id` | Demo request confirmation |
 | `/all-in-one/portal` | Client dashboard |
 | `/all-in-one/portal/requests/:requestId` | Request detail + timeline |
+| `/all-in-one/office/*` | Internal Office (CRM + operations) · INTERNAL PREVIEW |
 | `/all-in-one/portal/factoring` | Factoring portal (mock) |
 | `/debug/all-in-one/*` | Legacy redirect → `/all-in-one/*` |
 
@@ -36,9 +37,15 @@ Registered in `src/routes/StudioDebugRoutes.tsx` **before** the catch-all `App` 
 ```
 src/all-in-one/
   config/appConfig.ts      # Company, contact, routes, feature flags
+  demo/                    # Sprint 03 — centralized demo store + seed + actions
+  office/                  # Sprint 03 — internal Office app, workflows, priority engine
+    layouts/               # AIOOfficeLayout (sidebar shell)
+    pages/                 # Dashboard, CRM, requests, ops, division centers
+    routes/OfficeRoutes.tsx
+    workflows/             # Division workflow definitions + engine
   intake/                  # Sprint 02 — config-driven Smart Intake
   roadmap/                 # Sprint 02 — mock recommendation engine
-  repositories/            # Sprint 02 — LocalDemo* persistence abstractions
+  repositories/            # Sprint 02 — LocalDemo* (now backed by demo store)
   storage/demoStorage.ts   # localStorage namespaces + reset
   data/services.ts         # Sprint 02 — full service catalog + bundles
   components/              # AIO* design system + intake/roadmap/request UI
@@ -47,7 +54,7 @@ src/all-in-one/
   pages/                   # Route pages (intake, marketplace, portal, requests)
   data/                    # Mock data (mockFactoring.ts, mockServices.ts, …)
   services/factoring/      # Partner abstraction types + placeholder provider
-  styles/aio.css           # Scoped under .aio-app
+  styles/aio.css           # Scoped under .aio-app (+ .aio-office)
   routes/                  # AllInOneRoutes + lazy host
   types/ utils/ hooks/
 docs/all-in-one/           # Project documentation
@@ -84,7 +91,19 @@ docs/all-in-one/           # Project documentation
 
 **No financial backend.** No Supabase tables. No API routes. No bank/ACH data collected.
 
-### Sprint 02 — localStorage namespaces
+### Sprint 03 — centralized demo store
+
+Single key: `aio_debug_store` (version 3). Legacy Sprint 02 keys migrate on first load.
+
+Entities: clients, requests, tasks, documents, deadlines, notes, messages, activity, staff, loads, factoring, brokerage, invoices, notifications.
+
+**Cross-portal sync:** Portal and Office read/write the same store. `portalClientId` links customer session to client record.
+
+**Reset:** `resetDemoStore()` restores `demoSeed.ts` canonical fictional data.
+
+**Visibility:** `internal` vs `customer` on notes, messages, documents — internal notes never render in portal.
+
+### Sprint 02 — localStorage namespaces (legacy, migrated)
 
 | Key | Contents |
 |-----|----------|

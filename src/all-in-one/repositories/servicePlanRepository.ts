@@ -1,4 +1,5 @@
-import { AIO_STORAGE_KEYS, readStorage, writeStorage } from '../storage/demoStorage';
+import { getStore, addToServicePlan, removeFromServicePlan } from '../demo/demoActions';
+import { resetDemoStore, updateDemoStore } from '../demo/demoStore';
 
 export interface ServicePlanItem {
   slug: string;
@@ -19,27 +20,28 @@ export interface ServicePlanRepository {
 
 export class LocalDemoServicePlanRepository implements ServicePlanRepository {
   load(): ServicePlanItem[] {
-    return readStorage(AIO_STORAGE_KEYS.servicePlan, []);
+    return getStore().servicePlan;
   }
 
   save(items: ServicePlanItem[]): void {
-    writeStorage(AIO_STORAGE_KEYS.servicePlan, items);
+    updateDemoStore((s) => {
+      s.servicePlan = items;
+      return s;
+    });
   }
 
   add(item: ServicePlanItem): void {
-    const current = this.load();
-    if (current.some((i) => i.slug === item.slug)) return;
-    this.save([...current, item]);
-    window.dispatchEvent(new Event('aio-service-plan-change'));
+    addToServicePlan(item);
+    if (typeof window !== 'undefined') window.dispatchEvent(new Event('aio-service-plan-change'));
   }
 
   remove(slug: string): void {
-    this.save(this.load().filter((i) => i.slug !== slug));
-    window.dispatchEvent(new Event('aio-service-plan-change'));
+    removeFromServicePlan(slug);
+    if (typeof window !== 'undefined') window.dispatchEvent(new Event('aio-service-plan-change'));
   }
 
   clear(): void {
-    writeStorage(AIO_STORAGE_KEYS.servicePlan, []);
+    resetDemoStore();
   }
 }
 

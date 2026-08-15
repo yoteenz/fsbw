@@ -12,7 +12,8 @@ Copy entire tree:
 src/all-in-one/          → src/ (or keep src/all-in-one/ in new repo)
   intake/                → Sprint 02 Smart Intake (config-driven)
   roadmap/               → Sprint 02 mock recommendation engine
-  repositories/          → Persistence abstractions (LocalDemo* → Supabase* later)
+  demo/                    → centralized store (Sprint 03)
+  office/                  → internal Office app + workflows
   storage/demoStorage.ts → localStorage keys + reset
   data/services.ts       → Service catalog + bundles
   data/mockFactoring.ts

@@ -1,76 +1,55 @@
 # All In One — Sprint Status
 
-**Sprint:** 02 — Smart Intake + Business Roadmap + Service Marketplace  
+**Sprint:** 03 — Internal Office + CRM + Service Operations  
 **Last updated:** 2026-08-15
+
+---
+
+## UI PROTOTYPE COMPLETE (Sprint 03)
+
+- **All In One Office** — `/all-in-one/office/*` (INTERNAL PREVIEW, not in public nav)
+- **Operational dashboard** — metrics, today's priorities, my tasks, activity feed
+- **Client CRM** — list + Client 360 profile with tabs and internal notes
+- **Request operations center** — table + workflow board, rich request detail
+- **Configurable workflows** — `src/all-in-one/office/workflows/` per division
+- **Tasks, deadlines, documents, messages** — operational pages
+- **Division queues** — permitting, formation, insurance, dispatch, factoring, brokerage
+- **Dispatch center** — loads, load detail, delivered → factoring handoff
+- **Factoring operations** — review detail, mock status updates
+- **Brokerage operations** — quotes, shipments, shipment detail
+- **Team, reports, invoices, payments** — management + financial preview
+- **Centralized demo store** — `src/all-in-one/demo/` shared by portal + office
+- **Cross-portal sync** — request status, documents, messages sync both ways
+- **Activity/audit model** — events on key actions
+- **Search + Quick Create + notifications** — office top bar
+- **Future docs** — `FUTURE_DATA_MODEL.md`, `FUTURE_ROLE_MODEL.md`
 
 ---
 
 ## UI PROTOTYPE COMPLETE (Sprint 02)
 
-- **Smart Intake** — `/all-in-one/get-started` with goal query params (`?goal=start-business`, etc.)
-- **Config-driven intake engine** — `src/all-in-one/intake/` (sections, conditional branches)
-- **Carrier, shipper, factoring, insurance branches** — single intake system, not separate forms
-- **Preliminary Roadmap engine** — `src/all-in-one/roadmap/` (mock deterministic rules, not legal compliance)
-- **Roadmap results** — `/all-in-one/roadmap/results` with explainable recommendations, dual progress bars
-- **Service Marketplace** — upgraded `/all-in-one/services` with divisions, bundles, 30+ service cards
-- **Config-driven service detail** — `/all-in-one/services/:serviceSlug` + division landing pages
-- **Service bundles** — Start Trucking, Get Legal, Keep Compliant, Run My Truck
-- **My Service Plan** — `/all-in-one/service-plan` (not a shopping cart)
-- **Mock service request** — submit → `AIO-DEMO-XXXX` confirmation → portal Active Requests
-- **Request detail + timeline** — `/all-in-one/portal/requests/:requestId`
-- **Portal dashboard upgrade** — roadmap, requests, documents needed, deadlines, dispatch/factoring previews
-- **localStorage persistence** — `aio_debug_intake`, `aio_debug_roadmap`, `aio_debug_service_plan`, `aio_debug_requests`
-- **Debug banner + Reset Demo Data** — visible in All In One app only
-- **Repository abstractions** — Intake, Roadmap, ServicePlan, ServiceRequest (LocalDemo* implementations)
+- Smart Intake, Roadmap engine, Service Marketplace, Service Plan, mock requests, portal integration
 
 ---
 
-## COMPLETED (Sprint 01 core)
+## UI PROTOTYPE COMPLETE (Sprint 01)
 
-- Isolated `src/all-in-one/` architecture
-- Canonical route `/all-in-one/*` + legacy `/debug/all-in-one/*` redirect
-- Homepage, portal shell, design system, docs
-- Frontal Slayer isolation preserved
+- Isolated architecture, public website, design system, factoring division, portal shell
 
 ---
 
-## COMPLETED FOR PROTOTYPE (Sprint 01 Factoring follow-up)
+## PRODUCTION BACKEND PENDING
 
-- Six primary service divisions including Factoring
-- Public `/all-in-one/services/factoring` + portal `/all-in-one/portal/factoring`
-- Mock factoring layer + partner-ready provider stub
-- Compliant language — no guarantees, illustrative fees labeled Sample
-
----
-
-## PRODUCTION IMPLEMENTATION PENDING
-
-- Production auth, CRM, real compliance rules engine
-- Government, insurance, factoring, brokerage, dispatch integrations
-- Supabase schema for All In One (separate from Frontal Slayer)
-- Document upload/storage, messaging, specialist assignment
-- Partner factoring API, underwriting, ACH/banking/KYC
-- Verified contact info, final logo, real factoring partner
-
----
-
-## PARTIALLY COMPLETED
-
-- Contact form: nonfunctional prototype
-- Document upload buttons: labeled "Coming in Future Sprint"
-- Portal nav items beyond Dashboard/Roadmap/Plan/Factoring: mostly stubs
-
----
-
-## BLOCKED
-
-- Verified contact info, final logo, real factoring partner selection
+- Production auth (Office + portal), Supabase schema (All In One–dedicated)
+- Real document storage, messaging (SMS/email), payments, integrations
+- Government, insurance, factoring partner, load board APIs
+- Server-side role authorization and tenant isolation
 
 ---
 
 ## Assumptions
 
-1. Sprint 02 roadmap is **preliminary guidance only** — not legal compliance determination
-2. Factoring/dispatch optional — do not reduce compliance progress score
-3. All demo requests persist in localStorage only
-4. Embedded/partner factoring model for future production
+1. Office is debug-only entry (banner link) — no production staff auth
+2. All data in `aio_debug_store` localStorage — resets to seed
+3. Financial figures labeled sample/illustrative
+4. Internal notes never exposed to customer portal

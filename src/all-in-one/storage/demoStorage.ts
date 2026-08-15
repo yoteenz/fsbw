@@ -1,4 +1,4 @@
-/** localStorage namespaces for All In One debug prototype */
+/** localStorage namespaces — legacy keys migrated into aio_debug_store */
 
 export const AIO_STORAGE_KEYS = {
   intake: 'aio_debug_intake',
@@ -6,6 +6,7 @@ export const AIO_STORAGE_KEYS = {
   servicePlan: 'aio_debug_service_plan',
   requests: 'aio_debug_requests',
   requestCounter: 'aio_debug_request_counter',
+  store: 'aio_debug_store',
 } as const;
 
 function safeParse<T>(raw: string | null, fallback: T): T {

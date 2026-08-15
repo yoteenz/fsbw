@@ -50988,7 +50988,8 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 ---
 
-<<<<<<< Updated upstream
+---
+
 ## 2026-08-15 — All In One Sprint 01 follow-up: Factoring division
 
 - **Context:** Extend Sprint 01 without rewrite — add **Factoring** as sixth primary service division (partner-ready mock UI only).
@@ -50998,7 +50999,6 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Decisions / outcomes:** No financial backend, no Supabase, no bank/ACH data. Illustrative fees labeled Sample. Invoice workflow demo ends at "Demo Submission Complete." Canonical routes now **`/all-in-one/*`** with legacy `/debug/all-in-one/*` redirect.
 
 - **Key paths:** `src/all-in-one/data/mockFactoring.ts`, `pages/FactoringPage.tsx`, `pages/FactoringPortalPage.tsx`, `services/factoring/`, factoring AIO* components.
-<<<<<<< HEAD
 
 ---
 
@@ -51016,8 +51016,8 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Spatial Architecture Review:** SKIPPED — debug prototype extension; no Studio OS / Frontal Slayer customer surface changes.
 
-=======
-=======
+---
+
 ## 2026-08-15 — /all-in-one post-load guard false positive (follow-up)
 
 - **Context:** Founder reported error **still persisting** on `preview.fsbw-dev.com/all-in-one` after route fix.
@@ -51030,5 +51030,20 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
   - **`StudioDebugRoutes.tsx`:** explicit `/all-in-one` route; shared loading shell with `data-route-loading="all-in-one"`; App catch-all Suspense fallback no longer `null`.
 
 - **Verified:** Cleared site data → `preview.fsbw-dev.com/all-in-one` → 15s wait → no error overlay; homepage renders.
->>>>>>> Stashed changes
->>>>>>> origin/master
+
+---
+
+## 2026-08-15 — All In One Sprint 03: Internal Office + CRM + Service Operations
+
+- **Context:** Founder issued full Sprint 03 spec — build **All In One Office** internal operating system (CRM, request ops, workflows, tasks, deadlines, documents, messaging, dispatch/factoring/brokerage ops) with **shared demo store** syncing customer portal ↔ office. Debug-only at `/all-in-one/office/*`; no production auth/Supabase.
+
+- **Topics covered:** Centralized demo store (`src/all-in-one/demo/`), workflow engine per division, Office shell (dark sidebar, INTERNAL PREVIEW bar), operational dashboard, Client CRM + Client 360, request table/board + detail workspace, division queues, dispatch center + load detail + delivered→factoring handoff, factoring/brokerage ops, team/reports/invoices/payments preview, activity/audit events, portal sync (status, docs, messages), future docs (`FUTURE_DATA_MODEL.md`, `FUTURE_ROLE_MODEL.md`), blueprint/debug/extraction/sprint status updates.
+
+- **Decisions / outcomes:** UI PROTOTYPE COMPLETE; PRODUCTION BACKEND PENDING. Single localStorage key `aio_debug_store` (v3) with legacy Sprint 02 migration. Internal notes `visibility: internal` — never in portal. Financial figures illustrative. Office entry via debug banner only. Build passes; cross-portal QA journeys verified (request sync, document flow, dispatch→factoring CTA).
+
+- **Key routes:** `/all-in-one/office`, `/office/clients/:id`, `/office/requests/:id`, `/office/tasks`, `/office/deadlines`, `/office/documents`, `/office/messages`, division ops, `/office/dispatch/loads/:id`, `/office/factoring`, `/office/brokerage/shipments/:id`, `/office/invoices`, `/office/payments`, `/office/team`, `/office/reports`.
+
+- **Key paths:** `src/all-in-one/demo/`, `src/all-in-one/office/`, migrated `repositories/*`, updated `PortalPage`, `RequestDetailPage`, `FactoringPortalPage`, `AIODebugBanner`, `aio.css` (`.aio-office`).
+
+- **Spatial Architecture Review:** SKIPPED — isolated debug prototype; no Frontal Slayer or Studio OS surface changes.
+
