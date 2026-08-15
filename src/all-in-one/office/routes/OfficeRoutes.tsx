@@ -50,6 +50,7 @@ import {
 } from '../pages/BillingPages';
 import { OfficeRoadReadyQueuePage } from '../pages/OfficeRoadReadyQueuePage';
 import { ClientRoadReadyReviewPage } from '../pages/ClientRoadReadyReviewPage';
+import { OfficeRenewalsPage } from '../pages/OfficeRenewalsPage';
 import {
   InsuranceCommandCenterPage,
   InsuranceRequestsListPage,

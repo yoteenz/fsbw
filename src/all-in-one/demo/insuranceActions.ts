@@ -70,7 +70,7 @@ export function syncInsuranceToRoadReady(orgId: string, store: DemoStore): DemoS
     if (derived === 'active' || derived === 'expiring_soon') {
       item.status = derived === 'expiring_soon' ? 'action_needed' : 'completed';
       item.verificationStatus = active.verificationState === 'staff_reviewed' ? 'verified' : 'self_reported';
-      item.expirationDate = active.expirationDate;
+      item.expiresAt = active.expirationDate;
     } else if (derived === 'expired') {
       item.status = 'action_needed';
       item.verificationStatus = 'expired';
@@ -202,7 +202,7 @@ export function recordPartnerReferral(requestId: string, partnerId: string, staf
         category: 'insurance',
         title: 'Insurance request referred',
         body: 'Your information was prepared for a licensed insurance professional.',
-        link: aioPaths.portalInsuranceRequest(req.id),
+        link: aioPaths.portalInsuranceRequestDetail(req.id),
       }),
     );
     return s;
@@ -244,7 +244,7 @@ export function recordInsuranceQuote(
         category: 'insurance',
         title: 'Coverage option received',
         body: 'Review quote information from your insurance provider.',
-        link: aioPaths.portalInsuranceRequest(req.id),
+        link: aioPaths.portalInsuranceRequestDetail(req.id),
       }),
     );
     return s;
@@ -279,6 +279,7 @@ export function activatePolicyFromEvidence(policyId: string, staffId: string): v
         eventType: 'INSURANCE_POLICY_RECORDED',
         category: 'insurance',
         title: 'Policy record updated',
+        body: 'Your policy information has been updated with supporting documentation.',
         link: aioPaths.portalInsurancePolicy(policy.id),
       }),
     );
@@ -316,6 +317,7 @@ export function requestCertificate(
         eventType: 'INSURANCE_COI_REQUESTED',
         category: 'insurance',
         title: 'Certificate of Insurance requested',
+        body: 'A coordinator will review your certificate request.',
         link: aioPaths.officeInsuranceCertificates,
       }),
     );

@@ -233,8 +233,8 @@ export function InsurancePolicyDetailPage() {
       <dl className="aio-office-dl">
         <dt>Policy Number</dt><dd>{maskPolicyNumber(policy.policyNumber)}</dd>
         <dt>Effective</dt><dd>{policy.effectiveDate ?? '—'}</dd>
-        <dt>Expiration</dt><dd>{policy.expirationDate ?? '—'}</dt>
-        <dt>Agency</dt><dd>{policy.agencyName ?? '—'}</dt>
+            <dt>Expiration</dt><dd>{policy.expirationDate ?? '—'}</dd>
+            <dt>Agency</dt><dd>{policy.agencyName ?? '—'}</dd>
       </dl>
       <section className="aio-insurance-panel">
         <h2>Coverages</h2>

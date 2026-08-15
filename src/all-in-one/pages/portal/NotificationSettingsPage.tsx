@@ -15,6 +15,7 @@ const CATEGORY_LABELS: Record<NotificationCategory, string> = {
   dispatch: 'Dispatch',
   factoring: 'Factoring',
   brokerage: 'Brokerage',
+  insurance: 'Insurance',
   billing: 'Billing & Payments',
 };
 

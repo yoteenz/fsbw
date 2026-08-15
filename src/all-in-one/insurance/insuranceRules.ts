@@ -1,7 +1,6 @@
 import type {
   InsurancePolicy,
   InsuranceQuoteRecord,
-  InsuranceRequest,
   InsuranceRequestStatus,
 } from './insuranceTypes';
 import { derivePolicyStatusFromDates } from './insuranceCalculations';

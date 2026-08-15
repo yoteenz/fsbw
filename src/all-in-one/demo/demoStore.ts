@@ -203,7 +203,7 @@ type DemoStoreV10 = Omit<
 
 type DemoStoreV9 = Omit<DemoStore, 'version'> & { version: 9 };
 
-function upgradeStoreV9ToV10(store: DemoStoreV9): DemoStore {
+function upgradeStoreV9ToV10(store: DemoStoreV9): DemoStoreV10 {
   const seed = createBrokerageSeedData();
   const seedLoads = new Map(seed.loads.map((l) => [l.id, l]));
   const seedFinancials = new Map(seed.financials.map((f) => [f.loadId, f]));

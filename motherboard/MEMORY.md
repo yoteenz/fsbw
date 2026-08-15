@@ -51173,3 +51173,31 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Spatial Architecture Review:** SKIPPED — isolated AIO namespace under `/debug/all-in-one`; no Frontal Slayer regression.
 
+---
+
+## 2026-08-15 — All In One Sprint 11: Insurance documentation canon
+
+- **Context:** Founder requested comprehensive Sprint 11 insurance documentation in `docs/all-in-one/` — four new canon files and updates to fourteen existing docs reflecting implemented insurance module (default operating mode `assistance`, capability gate `demo`, partner manual referral, quote source attribution, COI coordination, Road Ready sync, demo store v11). Documentation-only — no code changes.
+
+- **Topics covered:** New docs — `INSURANCE_SYSTEM.md` (modes, entities, routes, demo scenarios A–I), `INSURANCE_REGULATORY_BOUNDARIES.md` (assistance vs referral vs partner vs direct_future; premium ≠ AIO service revenue; customer cannot verify/issue COI), `INSURANCE_DATA_SECURITY.md` (policy number masking, org isolation), `INSURANCE_ACTIVATION.md` (software vs business readiness). Updated — `SPRINT_STATUS.md` (Sprint 11 COMPLETE), `MASTER_PRODUCT_BLUEPRINT.md`, `ROAD_READY_SYSTEM.md`, `DOCUMENT_VAULT_SYSTEM.md`, `RENEWAL_SYSTEM.md`, `NOTIFICATION_SYSTEM.md`, `BILLING_SYSTEM.md`, `FINANCIAL_BOUNDARIES.md`, `BROKERAGE_SYSTEM.md`, `FUTURE_DATA_MODEL.md`, `FUTURE_ROLE_MODEL.md`, `AUTHORIZATION_MATRIX.md`, `SECURITY_FOUNDATION.md`, `DEBUG_ARCHITECTURE.md` (demo v11), `EXTRACTION_PLAN.md`.
+
+- **Decisions / outcomes:** All In One documented as **not** carrier/underwriter/agency; `DIRECT_INSURANCE_ENABLED = false`; quote premiums display-only with required `InsuranceQuoteSource`; demo scenarios A–I mapped to clients a–g + readiness + Road Ready sync. Sprint history preserved in all updated files.
+
+- **Key routes documented:** `/all-in-one/portal/insurance/*`, `/all-in-one/office/insurance/*`.
+
+- **Spatial Architecture Review:** SKIPPED — documentation-only sprint; no product surfaces changed.
+
+---
+
+## 2026-08-15 — All In One Sprint 11: Insurance Operations (implementation)
+
+- **Context:** Founder issued full Sprint 11 spec — trucking insurance operating layer with strict regulatory boundaries (All In One is NOT carrier/agency/producer; default `assistance` mode; premium ≠ Sprint 07 service revenue). Must extend existing org/fleet/vault/Road Ready/brokerage systems — no parallel insurance silos.
+
+- **Topics covered:** Core module `src/all-in-one/insurance/` (types, config, rules, calculations, partner adapter stub, 8 vitest tests); demo store **v11** + `insuranceSeed.ts` (scenarios A–I, relative dates) + `insuranceActions.ts` (metrics, submit request, add policy, partner referral, quote recording, COI request, `syncInsuranceToRoadReady()`); portal routes (`/portal/insurance/*` — center, request, request detail, policy detail, certificates, renewals); office routes (`/office/insurance/*` — command center, requests, policies, partners, certificates, renewals, readiness); brokerage carrier insurance via `getBrokerageCarrierInsurance()`; notifications `INSURANCE_*` + insurance notification category; docs (4 new + 14 updated canon at commit `0b2ee0c02`). Build fixes: JSX `</dd>` typo, demoStore v10→v11 migration typing, `expiresAt` on RoadReadyItem, `portalInsuranceRequestDetail` path, notification `body` fields, `OfficeRenewalsPage` import.
+
+- **Decisions / outcomes:** Sprint 11 COMPLETE in demo mode. `insuranceOperatingMode: assistance`, `insuranceCapability: demo`. Customer cannot verify policy or issue COI; quotes require partner attribution; policy selected external ≠ active until evidence. Road Ready consumes canonical insurance via sync. Manual QA passed on portal center, request form, office command center, partners, readiness, quote review (no BUY NOW). Build + 8/8 insurance tests pass.
+
+- **Key routes:** `/debug/all-in-one/portal/insurance/*`, `/debug/all-in-one/office/insurance/*`.
+
+- **Spatial Architecture Review:** SKIPPED — isolated AIO namespace under `/debug/all-in-one`; no Frontal Slayer regression.
+
