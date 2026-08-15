@@ -1,6 +1,6 @@
 # All In One — Authorization Matrix
 
-**Status:** Sprint 10 brokerage permissions added. Enforced via Supabase RLS when backend mode is active.
+**Status:** Sprint 11 insurance permissions added. Enforced via Supabase RLS when backend mode is active.
 
 ---
 
@@ -131,6 +131,38 @@ Rules:
 - Dispatch role has **no write** on brokerage loads by default
 
 See **`BROKERAGE_SECURITY.md`**.
+
+---
+
+## Insurance permissions (Sprint 11)
+
+| Permission | Super Admin | Administrator | Insurance Specialist | Compliance | Support | Customer (org owner/admin) |
+|------------|-------------|---------------|----------------------|------------|---------|----------------------------|
+| `insurance.read` | ✓ | ✓ | ✓ | R | R | ✓ (own org) |
+| `insurance.capability.manage` | ✓ | ✓ | — | — | — | — |
+| `insurance.requests.manage` | ✓ | ✓ | ✓ | R | R | ✓ (create/submit own) |
+| `insurance.policies.manage` | ✓ | ✓ | ✓ | R | — | ✓ (intake own — customer_reported only) |
+| `insurance.policies.activate` | ✓ | ✓ | ✓ | — | — | — |
+| `insurance.quotes.record` | ✓ | ✓ | ✓ | — | — | — |
+| `insurance.quotes.read` | ✓ | ✓ | ✓ | R | R | ✓ (own request quotes) |
+| `insurance.quotes.select_external` | ✓ | ✓ | — | — | — | ✓ (own request — records choice only) |
+| `insurance.referrals.manage` | ✓ | ✓ | ✓ | — | — | — |
+| `insurance.partners.manage` | ✓ | ✓ | R | — | — | — |
+| `insurance.coi.manage` | ✓ | ✓ | ✓ | — | R | ✓ (request own) |
+| `insurance.coi.issue` | ✓ | ✓ | ✓* | — | — | **—** |
+| `insurance.policy_number.full` | ✓ | ✓ | ✓ | R | — | **—** (masked) |
+
+Rules:
+
+- All insurance queries scoped by `organizationId`
+- **`canCustomerMarkPolicyVerified()`** and **`canCustomerMarkCoiIssued()`** — always **denied** for customers
+- Reported premiums — staff write; customer read on own quotes with source label
+- Default **`insuranceCapability: demo`** — production `assistance` requires readiness checklist
+- Quote **`source`** required on staff-created quote records
+
+*COI issuance marks `issued` status — authorized staff/partner workflow only; not customer self-service.
+
+See **`INSURANCE_DATA_SECURITY.md`**, **`INSURANCE_REGULATORY_BOUNDARIES.md`**.
 
 ---
 

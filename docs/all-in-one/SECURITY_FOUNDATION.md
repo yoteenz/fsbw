@@ -102,6 +102,18 @@ Full boundary spec: **`FACTORING_SECURITY.md`**.
 
 Full boundary spec: **`BROKERAGE_SECURITY.md`**.
 
+### Insurance (Sprint 11)
+
+| Data | Handling |
+|------|----------|
+| Policy numbers | **Masked** for customers (`maskPolicyNumber`); full for coordinator/admin |
+| Reported premiums | Display only — **not** payment targets; org-scoped read |
+| Partner handoff notes | Staff coordination — internal visibility |
+| Producer credentials (`InsuranceCredential`) | **Future internal only** — not customer-facing |
+| `insuranceCapability` | Staff-only write; default `demo`; `DIRECT_INSURANCE_ENABLED = false` |
+
+Full boundary spec: **`INSURANCE_DATA_SECURITY.md`**.
+
 ---
 
 ## Storage boundary

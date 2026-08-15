@@ -208,3 +208,27 @@ Printable **Road Ready Summary** placeholder only — never “Certificate of Co
 | `/all-in-one/office/clients/:id/road-ready` | Staff verification review |
 
 Legacy `/debug/all-in-one/*` redirects to `/all-in-one/*`.
+
+---
+
+## Insurance integration (Sprint 11)
+
+Module: `src/all-in-one/insurance/`, demo `insuranceActions.ts`, `insuranceSeed.ts`.
+
+| Integration | Behavior |
+|-------------|----------|
+| Onboarding step 7 | High-level insurance status (unchanged Sprint 05) |
+| **`commercial_insurance` item** | Updated by `syncInsuranceToRoadReady()` from active/expiring `InsurancePolicy` |
+| Profile `insurance` block | `hasInsurance`, `carrierName`, `expirationDate` when `isPolicyActiveForRoadReady()` |
+| Portal Insurance Center | `/portal/insurance/*` — parallel to Road Ready insurance step |
+| Expiration | Shared `EXPIRING_SOON_DAYS` (45) via `derivePolicyStatusFromDates()` |
+
+Verification mapping on sync:
+
+- Policy `staff_reviewed` → item `verificationStatus: verified`
+- Otherwise → `self_reported`
+- Expired policy → item `action_needed` + `verificationStatus: expired`
+
+Insurance assistance is **Operate & Grow** optional service — does not replace compliance scoring rules from Sprint 05.
+
+See **`INSURANCE_SYSTEM.md`**, **`ROAD_READY_SYSTEM.md`** (this file).

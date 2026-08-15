@@ -57,6 +57,20 @@ This is **not** a Frontal Slayer product surface. It must not appear in storefro
 | `/all-in-one/office/brokerage/coverage` | Needs-coverage queue |
 | `/all-in-one/office/brokerage/carriers` | Carrier network |
 | `/all-in-one/office/brokerage/finance` | Shipper invoices + carrier payables |
+| `/all-in-one/portal/insurance` | Insurance Center (Sprint 11) |
+| `/all-in-one/portal/insurance/request` | Request help / add existing policy |
+| `/all-in-one/portal/insurance/requests/:requestId` | Insurance request detail |
+| `/all-in-one/portal/insurance/policies/:policyId` | Policy detail (masked number) |
+| `/all-in-one/portal/insurance/certificates` | COI list |
+| `/all-in-one/portal/insurance/certificates/new` | Request COI |
+| `/all-in-one/portal/insurance/renewals` | Insurance renewals |
+| `/all-in-one/office/insurance` | Insurance Command Center (Sprint 11) |
+| `/all-in-one/office/insurance/readiness` | Capability + activation checklist |
+| `/all-in-one/office/insurance/requests` | Insurance requests queue |
+| `/all-in-one/office/insurance/policies` | Policy administration |
+| `/all-in-one/office/insurance/partners` | Partner directory |
+| `/all-in-one/office/insurance/certificates` | COI requests |
+| `/all-in-one/office/insurance/renewals` | Expiring policies |
 | `/debug/all-in-one/portal/factoring` | Legacy alias → `/all-in-one/portal/factoring` |
 | `/debug/all-in-one/office/factoring` | Legacy alias → `/all-in-one/office/factoring` |
 | `/debug/all-in-one/*` | Legacy redirect → `/all-in-one/*` |
@@ -72,6 +86,7 @@ src/all-in-one/
   config/appConfig.ts      # Company, contact, routes, feature flags
   demo/                    # Sprint 03–10 — demo store v10 + seed/actions
   brokerage/               # Sprint 10 — types, rules, calculations, config
+  insurance/               # Sprint 11 — types, rules, calculations, config, partner adapter
   factoring/               # Sprint 09 — types, rules, calculations, config
   dispatch/                # Sprint 08 — load domain, handoff rules
   road-ready/              # Sprint 05 — Road Ready config, rules, scoring, types
@@ -93,9 +108,11 @@ src/all-in-one/
   pages/                   # Route pages (intake, marketplace, portal, shipper, factoring, brokerage)
   pages/shipper/           # Sprint 10 — ShipperPortalPages
   pages/portal/brokerage/  # Sprint 10 — carrier brokerage portal
+  pages/portal/insurance/  # Sprint 11 — InsurancePortalPages
   components/factoring/    # Sprint 09 — LoadFactoringSection
   office/pages/BrokeragePages.tsx
   office/pages/FactoringPages.tsx
+  office/pages/InsurancePages.tsx
   data/                    # Mock data (mockFactoring.ts legacy, mockServices.ts, …)
   services/factoring/      # Partner abstraction + Sprint 09 adapter stub
   styles/aio.css           # Scoped under .aio-app (+ .aio-office)
@@ -148,7 +165,7 @@ Backend migrations: `all-in-one/supabase/migrations/` — **not** Frontal Slayer
 
 ### Sprint 03 — centralized demo store
 
-Single key: `aio_debug_store`. Current version: **10** (Sprint 10 brokerage financial refresh). Legacy versions migrate on first load (v3→…→v9→v10).
+Single key: `aio_debug_store`. Current version: **11** (Sprint 11 insurance). Legacy versions migrate on first load (v3→…→v10→v11).
 
 Entities: clients, requests, tasks, documents, deadlines, notes, messages, activity, staff, loads, dispatch enrollments, factoringProfiles, factoringProviders, debtorAccounts, freightInvoices, factoringSubmissions, factoringIssues, factoringCounters, **brokerageCapability**, **shipperProfiles**, **shipmentRequests**, **brokerageFreightQuotes**, **carrierNetworkProfiles**, **carrierOffers**, **brokerageRateConfirmations**, **brokerageLoadFinancials**, **brokerageAccessorials**, **brokerageShipperInvoices**, **carrierPayables**, **brokerageIssues**, **coverageHistory**, **brokerageCounters**, invoices, notifications, billing, road ready, fleet.
 
@@ -224,7 +241,23 @@ Default capability: **`demo`** (`DEFAULT_BROKERAGE_CAPABILITY`).
 
 Brokerage UI banner: `DEMO_BROKERAGE_LABEL` from `brokerageConfig.ts`.
 
-**Reset Demo Data** restores v10 seed via `demoSeed.ts`.
+**Reset Demo Data** restores v10 brokerage slice via `demoSeed.ts` (full store now v11 — see below).
+
+### Sprint 11 — demo store v11 (insurance)
+
+| Upgrade | Adds |
+|---------|------|
+| v10 → v11 | Full insurance graph: capability, partners, policies, coverages, policy vehicles, requests, handoffs, quote records, certificate holders, certificates, issues, counters; `syncInsuranceToRoadReady` for client-b and client-c |
+
+Seed: `insuranceSeed.ts` — scenarios **A–I** (clients a–g + readiness gate + Road Ready sync).
+
+Actions: `insuranceActions.ts` — requests, policy intake, referral, quotes, COI, Road Ready sync, notifications.
+
+Default capability: **`demo`** (`DEFAULT_INSURANCE_CAPABILITY`). Default operating mode: **`assistance`**.
+
+Insurance UI banner: `DEMO_INSURANCE_LABEL` from `insuranceConfig.ts`.
+
+**Reset Demo Data** restores v11 seed via `demoSeed.ts`.
 
 ### Factoring components (Sprint 01 + Sprint 09)
 
@@ -233,6 +266,8 @@ Sprint 01: `AIOFactoringMetricCard`, `AIOFactoringInvoiceRow`, `AIOFactoringStat
 Sprint 09: `LoadFactoringSection`, `FactoringPortalPages`, `FactoringPages` (office), `FreightInvoicePrintPage`, module under `src/all-in-one/factoring/`
 
 Sprint 10: `ShipperPortalPages`, `BrokeragePortalPages`, `BrokeragePages` (office), module under `src/all-in-one/brokerage/`
+
+Sprint 11: `InsurancePortalPages`, `InsurancePages` (office), module under `src/all-in-one/insurance/`
 
 ---
 

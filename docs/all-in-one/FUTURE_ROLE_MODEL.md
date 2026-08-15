@@ -95,3 +95,24 @@ Shipper users: `/shipper/*` only — accept/decline own quotes, view own invoice
 Carrier users: `/portal/brokerage/*` — respond to offers, view payables; no shipper charge or margin.
 
 See **`BROKERAGE_SECURITY.md`** and **`AUTHORIZATION_MATRIX.md`**.
+
+---
+
+## Insurance specialist role (Sprint 11)
+
+Demo coordinator: **`staff-5`** assigned on insurance seed requests.
+
+| Capability | Insurance Specialist | Compliance | Brokerage | Support |
+|------------|---------------------|------------|-----------|---------|
+| View insurance command center | ✓ | R | R | R |
+| Manage capability / readiness | Admin only | — | — | — |
+| Insurance requests / referrals | ✓ | R | — | R |
+| Record partner quotes | ✓ | — | — | — |
+| Activate policy from evidence | ✓ | R | — | — |
+| COI queue | ✓ | — | — | R |
+| View full policy numbers | ✓ | R (masked default) | — | — |
+| Issue COI (`issued` status) | ✓ | — | — | — |
+
+Customers: view own policies (masked numbers), submit requests, request COI, select quote externally — **cannot** verify policy or issue COI.
+
+See **`INSURANCE_DATA_SECURITY.md`**, **`AUTHORIZATION_MATRIX.md`**.

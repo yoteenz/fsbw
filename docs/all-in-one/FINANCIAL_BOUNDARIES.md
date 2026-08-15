@@ -1,6 +1,6 @@
 # All In One — Financial Boundaries
 
-**Sprint:** 10 · **Last updated:** 2026-08-15
+**Sprint:** 11 · **Last updated:** 2026-08-15
 
 ---
 
@@ -63,9 +63,20 @@ Factoring in Office (`/office/factoring`) is **assistance + manual partner hando
 
 ---
 
-## Insurance boundary
+## Insurance boundary (Sprint 11)
 
-Insurance services show **Quote Required / Request Quote**. Do not collect premiums through generic billing unless licensed arrangement exists.
+See **`INSURANCE_REGULATORY_BOUNDARIES.md`** and **`INSURANCE_SYSTEM.md`**.
+
+| Concept | Sprint 07 billing? | Notes |
+|---------|-------------------|-------|
+| **Insurance premium** (`InsuranceQuoteRecord.premiumMinor`) | **No** | Partner-reported display only — `isPremiumAllInOneServiceRevenue()` → `false` |
+| **Down payment (reported)** | **No** | On quote record — not checkout |
+| **All In One assistance fee** | **Yes** (when quoted) | Sprint 07 `service_fee` — `consultation` / `manual_billing` on insurance SKUs |
+| **Policy record** | **No** | Operational/compliance record — not an invoice |
+
+Insurance services show **Quote Required / Consultation** on catalog. Do **not** collect premiums through Sprint 07 checkout. Quote cards must show **source attribution** (`partner_reported`, `document_supported`, etc.).
+
+Customer **selecting a quote externally** does not create a paid invoice or active policy in AIO billing.
 
 ---
 
@@ -117,7 +128,7 @@ No shipper freight payment or carrier disbursement through Sprint 07 Stripe demo
 
 All In One billing:
 
-- Separate demo store (v9)
+- Separate demo store (v11)
 - No Frontal Slayer Supabase
 - No Frontal Slayer Stripe
 - No shared customer accounts or order tables

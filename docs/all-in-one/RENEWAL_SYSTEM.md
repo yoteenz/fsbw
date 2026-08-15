@@ -1,6 +1,6 @@
 # All In One — Renewal System
 
-**Sprint:** 06 · **Last updated:** 2026-08-15
+**Sprint:** 11 · **Last updated:** 2026-08-15
 
 ---
 
@@ -17,7 +17,9 @@ Renewals reuse the **existing service request engine** — no separate business-
 | Surface | Path |
 |---------|------|
 | Customer Renewal Center | `/all-in-one/portal/renewals` |
+| Customer Insurance Renewals | `/all-in-one/portal/insurance/renewals` |
 | Office Renewal Center | `/all-in-one/office/renewals` |
+| Office Insurance Renewals | `/all-in-one/office/insurance/renewals` |
 
 ---
 
@@ -94,3 +96,20 @@ Office Renewal Center **Batch View** summarizes counts (e.g. IRP due next month,
 
 - Payment checkout / government fee breakdown when approved data exists
 - External agency filing APIs (explicitly out of Sprint 06 scope)
+
+---
+
+## Insurance renewals (Sprint 11)
+
+Insurance expiration drives two parallel paths:
+
+1. **Renewal Center** — `category: 'insurance'` renewal records from verified document expiration (Sprint 06 engine)
+2. **Insurance module** — `/portal/insurance/renewals` lists `expiring_soon` policies + links to **`renewal_help`** request (`submitInsuranceRequest` / portal request flow)
+
+Office **`/office/insurance/renewals`** — queue of policies with `status: expiring_soon` across all clients.
+
+Insurance renewal assistance fees (when billed) use Sprint 07 service invoices — **not** carrier premium. See **`FINANCIAL_BOUNDARIES.md`**.
+
+Policy replacement chain (`replacesPolicyId` / `replacedByPolicyId`) is tracked on `InsurancePolicy` — demo scenario **C** (Pioneer Fleet).
+
+See **`INSURANCE_SYSTEM.md`**.

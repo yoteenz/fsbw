@@ -6,6 +6,7 @@ import { createBillingSeedData, defaultServicePricingSeed } from './billingSeed'
 import { createDispatchSeedData } from './dispatchSeed';
 import { createFactoringSeedData } from './factoringSeed';
 import { createBrokerageSeedData } from './brokerageSeed';
+import { createInsuranceSeedData } from './insuranceSeed';
 
 const STAFF: StaffMember[] = [
   { id: 'staff-1', name: 'Taylor Brooks', initials: 'TB', role: 'Administrator', status: 'available' },
@@ -28,6 +29,7 @@ export function createDemoSeed(): DemoStore {
   const dispatch = createDispatchSeedData();
   const factoring = createFactoringSeedData();
   const brokerage = createBrokerageSeedData();
+  const insurance = createInsuranceSeedData();
 
   const requests = [
       mkRequest('req-1', 'AIO-DEMO-0001', 'client-a', 'Authority + BOC-3 Assistance', 'permitting', 'new_request', 'staff-2', daysAgo(3), ['vdoc-a1', 'vdoc-a2']),
@@ -41,7 +43,7 @@ export function createDemoSeed(): DemoStore {
     });
 
   return {
-    version: 10,
+    version: 11,
     requestCounter: 4,
     portalClientId: 'client-a',
     shipperPortalOrgId: 'client-e',
@@ -266,6 +268,18 @@ export function createDemoSeed(): DemoStore {
     brokerageIssues: brokerage.issues,
     coverageHistory: brokerage.coverageHistory,
     brokerageCounters: brokerage.counters,
+    insuranceCapability: insurance.capability,
+    insurancePartners: insurance.partners,
+    insurancePolicies: insurance.policies,
+    insurancePolicyCoverages: insurance.coverages,
+    insurancePolicyVehicles: insurance.policyVehicles,
+    insuranceRequests: insurance.requests,
+    insurancePartnerHandoffs: insurance.handoffs,
+    insuranceQuoteRecords: insurance.quoteRecords,
+    insuranceCertificateHolders: insurance.certificateHolders,
+    insuranceCertificates: insurance.certificates,
+    insuranceIssues: insurance.issues,
+    insuranceCounters: insurance.counters,
     brokerageQuotes: [],
     shipments: [],
     quotes: billing.quotes,

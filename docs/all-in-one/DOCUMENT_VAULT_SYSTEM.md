@@ -1,6 +1,6 @@
 # All In One — Document Vault System
 
-**Sprint:** 09 · **Last updated:** 2026-08-15
+**Sprint:** 11 · **Last updated:** 2026-08-15
 
 ---
 
@@ -123,6 +123,26 @@ Category **`dispatch`** for load movement docs; category **`factoring`** availab
 Readiness rules (`factoringRules.ts`) require POD + rate confirmation (or reviewed rate details) before submission. Missing docs may create `FactoringIssue` types `missing_pod`, `missing_rate_confirmation`, `document_quality`.
 
 See **`FACTORING_SYSTEM.md`**.
+
+---
+
+## Insurance document references (Sprint 11)
+
+Insurance does **not** duplicate Vault files. Policies and certificates hold **document id references**:
+
+| Document | Entity field |
+|----------|--------------|
+| Policy declaration / dec page | `InsurancePolicy.documentIds[]` |
+| Issued COI PDF | `InsuranceCertificate.documentId` |
+| Quote/proposal (optional) | `InsuranceQuoteRecord.documentIds[]` |
+
+Category **`insurance`** in Vault taxonomy. Upload supports `document_supported` verification state on policies — upload alone does not equal verified coverage.
+
+Staff **`activatePolicyFromEvidence()`** requires evidence workflow (demo: button on pending policies in office).
+
+Partner adapter lists required documents: Certificate of Insurance, Policy Document (`manualInsurancePartnerAdapter.getRequirements()`).
+
+See **`INSURANCE_SYSTEM.md`**, **`INSURANCE_DATA_SECURITY.md`**.
 
 ---
 

@@ -1,6 +1,6 @@
 # All In One — Notification System
 
-**Sprint:** 10 · **Last updated:** 2026-08-15
+**Sprint:** 11 · **Last updated:** 2026-08-15
 
 ---
 
@@ -81,6 +81,35 @@ Demo implementation: `brokerageActions.ts` calls `buildNotification()` with `cat
 Preferences: brokerage category toggle (in-app only Sprint 10).
 
 **Visibility:** Notifications must not include carrier pay in shipper alerts or shipper charge in carrier alerts — see **`BROKERAGE_SECURITY.md`**.
+
+---
+
+## Insurance notification types (Sprint 11)
+
+| Event type | Typical trigger |
+|------------|-----------------|
+| `INSURANCE_REQUEST_SUBMITTED` | Customer submits insurance help request — staff alert |
+| `INSURANCE_INFORMATION_NEEDED` | Staff needs more info from customer |
+| `INSURANCE_REQUEST_READY_FOR_REFERRAL` | Internal review complete — ready for partner |
+| `INSURANCE_REFERRED` | Partner referral recorded — customer notified |
+| `INSURANCE_PARTNER_UPDATE` | Partner handoff status change |
+| `INSURANCE_QUOTE_REPORTED` | Quote option recorded — customer review |
+| `INSURANCE_POLICY_RECORDED` | Policy intake or staff update |
+| `INSURANCE_POLICY_EXPIRING` | Derived expiring_soon threshold |
+| `INSURANCE_POLICY_EXPIRED` | Past expiration date |
+| `INSURANCE_POLICY_REPLACED` | Replacement chain updated |
+| `INSURANCE_COI_REQUESTED` | Customer COI request — staff queue |
+| `INSURANCE_COI_ISSUED` | Authorized issuance recorded |
+| `INSURANCE_COI_ACTION_NEEDED` | COI blocked — holder/policy info needed |
+| `INSURANCE_RENEWAL_STARTED` | Renewal help request opened |
+| `INSURANCE_RENEWAL_COMPLETED` | Renewal workflow closed |
+| `INSURANCE_ROAD_READY_IMPACT` | Policy change affects Road Ready item |
+
+Demo implementation: `insuranceActions.ts` calls `buildNotification()` with `category: 'insurance'` and deep links to `/portal/insurance/*` or `/office/insurance/*`.
+
+Preferences: insurance category toggle (in-app only Sprint 11).
+
+**Visibility:** Notification bodies must not include full policy numbers or present premiums as amounts owed to All In One.
 
 ---
 

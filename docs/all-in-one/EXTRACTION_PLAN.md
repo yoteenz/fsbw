@@ -12,7 +12,8 @@ Copy entire tree:
 src/all-in-one/          → src/ (or keep src/all-in-one/ in new repo)
   intake/                → Sprint 02 Smart Intake (config-driven)
   roadmap/               → Sprint 02 mock recommendation engine
-  demo/                    # centralized store (Sprint 03–10, v9)
+  demo/                    # centralized store (Sprint 03–11, v11)
+  insurance/               # Sprint 11 core module
   brokerage/               # Sprint 10 core module
   factoring/               # Sprint 09 core module
   dispatch/                # Sprint 08
@@ -26,9 +27,12 @@ all-in-one/supabase/migrations/ → dedicated backend schema (Sprint 04)
   data/mockFactoring.ts    # Sprint 01 legacy mock (superseded by factoring/ + demo seed for Sprint 09)
   factoring/               # Sprint 09 — extract entire module
   brokerage/               # Sprint 10 — extract entire module
+  insurance/               # Sprint 11 — extract entire module
   pages/shipper/
   pages/portal/brokerage/
+  pages/portal/insurance/
   office/pages/BrokeragePages.tsx
+  office/pages/InsurancePages.tsx
   components/factoring/    # Sprint 09 UI
 docs/all-in-one/         → docs/
 ```
@@ -155,7 +159,7 @@ Dependencies to keep with module on extraction:
 
 No Frontal Slayer or Sprint 07 invoice tables required for factoring workflow demo.
 
-Docs to copy: `FACTORING_SYSTEM.md`, `FREIGHT_RECEIVABLES_DOMAIN.md`, `FACTORING_SECURITY.md`, `DIRECT_FACTORING_FUTURE.md`, `BROKERAGE_SYSTEM.md`, `BROKERAGE_FINANCIAL_DOMAIN.md`, `BROKERAGE_SECURITY.md`, `BROKERAGE_ACTIVATION.md`.
+Docs to copy: `FACTORING_SYSTEM.md`, `FREIGHT_RECEIVABLES_DOMAIN.md`, `FACTORING_SECURITY.md`, `DIRECT_FACTORING_FUTURE.md`, `BROKERAGE_SYSTEM.md`, `BROKERAGE_FINANCIAL_DOMAIN.md`, `BROKERAGE_SECURITY.md`, `BROKERAGE_ACTIVATION.md`, `INSURANCE_SYSTEM.md`, `INSURANCE_REGULATORY_BOUNDARIES.md`, `INSURANCE_DATA_SECURITY.md`, `INSURANCE_ACTIVATION.md`.
 
 ---
 
@@ -173,6 +177,24 @@ Dependencies to keep with module on extraction:
 | `vault/` (reference ids only) | BOL/POD on loads |
 
 **Dispatch ≠ Brokerage:** extract shared `Load` types via `dispatch/` but keep UI routes separate (`/shipper`, `/portal/brokerage`, `/office/brokerage` vs `/portal/dispatch`).
+
+---
+
+## Insurance module extractable (Sprint 11)
+
+Self-contained under `src/all-in-one/insurance/` with demo actions in `demo/insuranceActions.ts` and `demo/insuranceSeed.ts`.
+
+Dependencies to keep with module on extraction:
+
+| Dependency | Reason |
+|------------|--------|
+| `billing/money.ts` | Minor units + `formatMoney` for limits/premiums display |
+| `road-ready/` (types + sync hook) | `syncInsuranceToRoadReady`, `isPolicyActiveForRoadReady` |
+| `notifications/notificationEngine.ts` | Insurance alerts |
+| `vault/` (reference ids only) | Policy/COI document links |
+| `demo/roadReadySeed.ts` | Fleet units for vehicle schedule (read-only ids) |
+
+**Premium ≠ service revenue:** do not merge `InsuranceQuoteRecord` into Sprint 07 billing on extraction.
 
 ---
 

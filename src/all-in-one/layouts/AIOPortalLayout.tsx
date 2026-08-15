@@ -19,6 +19,7 @@ const portalNav = [
   { label: 'Notifications', href: aioPaths.portalNotifications },
   { label: 'Service Plan', href: aioPaths.servicePlan },
   { label: 'Factoring', href: aioPaths.portalFactoring },
+  { label: 'Insurance', href: aioPaths.portalInsurance },
   { label: 'Brokerage', href: aioPaths.portalBrokerage },
   { label: 'Support', href: aioPaths.contact },
 ];

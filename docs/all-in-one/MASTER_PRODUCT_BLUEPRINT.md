@@ -290,6 +290,68 @@ See **`BROKERAGE_SECURITY.md`**. No bank storage, dev rate con template, role-fi
 
 ---
 
+## INSURANCE DIVISION (Sprint 11)
+
+### Purpose
+
+**Insurance assistance** for commercial trucking — policy records, coverage requests, partner referrals, quote coordination, COI requests, renewal help. Default operating mode **`assistance`**. All In One is **not** a carrier, underwriter, or agency.
+
+### Target users
+
+- Owner-operators and carriers needing coverage organization
+- Fleets tracking expiration, vehicle schedules, and COI requests
+- Staff coordinating referrals to licensed partners
+
+### Workflow (demo)
+
+```
+Customer Intake / Request → Internal Review → Partner Referral (manual)
+  → Partner-Reported Quotes → Customer External Selection → Policy Setup (evidence)
+  → Active Policy Record → COI Coordination → Renewal Help
+```
+
+### Capability gate
+
+`demo` | `assistance` | `partner` | `direct_disabled` — see **`INSURANCE_ACTIVATION.md`**. `DIRECT_INSURANCE_ENABLED = false`.
+
+### Financial model
+
+| Concept | Document |
+|---------|----------|
+| Reported insurance premium | `InsuranceQuoteRecord` — **not AIO revenue** |
+| Assistance service fee | Sprint 07 when explicitly quoted |
+| Policy record | Operational — not an invoice |
+
+See **`FINANCIAL_BOUNDARIES.md`**, **`INSURANCE_REGULATORY_BOUNDARIES.md`**.
+
+### Relationships
+
+| System | Relationship |
+|--------|--------------|
+| Road Ready | `syncInsuranceToRoadReady()` — `commercial_insurance` item |
+| Vault | Policy/COI `documentIds` references |
+| Renewals | Insurance category + `/portal/insurance/renewals` |
+| Brokerage | `getBrokerageCarrierInsurance()` on carrier profile — read-only |
+| Billing (Sprint 07) | **Separate** — no premium checkout |
+
+### Routes
+
+- Customer: `/all-in-one/portal/insurance/*`
+- Office: `/all-in-one/office/insurance/*`
+
+### Compliance / security
+
+See **`INSURANCE_DATA_SECURITY.md`**, **`INSURANCE_REGULATORY_BOUNDARIES.md`**. Customers cannot verify policy or issue COI. Quote source attribution required.
+
+### Canonical docs
+
+- `INSURANCE_SYSTEM.md`
+- `INSURANCE_REGULATORY_BOUNDARIES.md`
+- `INSURANCE_DATA_SECURITY.md`
+- `INSURANCE_ACTIVATION.md`
+
+---
+
 ## FACTORING DIVISION (Sprint 01 — historical)
 
 ### Target users
@@ -387,9 +449,10 @@ Carrier → Load → Invoice → FactoringSubmission
 4. **Dispatch platform** — carrier load operations → payment/factoring options
 5. **Factoring platform** — invoice review, partner submission, funding status
 6. **Brokerage platform** — shipper quotes, coverage, shipper/carrier portals (Sprint 10 demo)
-7. **Shipper portal** — `/shipper` — shipment status, quotes, BSI billing
-8. **Internal employee system** — Office at `/office/*`
-9. **Compliance / document system** — Vault, deadlines, renewals
+7. **Insurance platform** — assistance, policy records, partner coordination, COI (Sprint 11 demo)
+8. **Shipper portal** — `/shipper` — shipment status, quotes, BSI billing
+9. **Internal employee system** — Office at `/office/*`
+10. **Compliance / document system** — Vault, deadlines, renewals
 
 ---
 
@@ -408,7 +471,8 @@ Carrier → Load → Invoice → FactoringSubmission
 |-------|--------|
 | Sprint 01 ✅ | Website shell, factoring prototype, mock data, docs |
 | Sprint 09 ✅ | Factoring module, freight invoices, submissions, office command center, demo v8 |
-| Sprint 10 ✅ | Brokerage module, shipper portal, carrier offers, coverage, finance, demo v9 |
+| Sprint 10 ✅ | Brokerage module, shipper portal, carrier offers, coverage, finance, demo v10 |
+| Sprint 11 ✅ | Insurance module, assistance mode, partner referral, quotes, COI, Road Ready sync, demo v11 |
 | Sprint 02+ | Service content, intake forms, lead capture |
 | Future | Factoring partner integration, real eligibility engine |
 | Future | Production auth, customer portal backend |

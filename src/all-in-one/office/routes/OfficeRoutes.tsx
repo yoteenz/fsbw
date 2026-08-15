@@ -50,7 +50,16 @@ import {
 } from '../pages/BillingPages';
 import { OfficeRoadReadyQueuePage } from '../pages/OfficeRoadReadyQueuePage';
 import { ClientRoadReadyReviewPage } from '../pages/ClientRoadReadyReviewPage';
-import { OfficeRenewalsPage } from '../pages/OfficeRenewalsPage';
+import {
+  InsuranceCommandCenterPage,
+  InsuranceRequestsListPage,
+  InsuranceRequestDetailOfficePage,
+  InsurancePoliciesListPage,
+  InsurancePartnersPage,
+  InsuranceCertificatesOfficePage,
+  InsuranceRenewalsOfficePage,
+  InsuranceReadinessPage,
+} from '../pages/InsurancePages';
 
 export default function OfficeRoutes() {
   return (
@@ -70,7 +79,14 @@ export default function OfficeRoutes() {
         <Route path="messages" element={<MessagesPage />} />
         <Route path="permitting" element={<DivisionQueuePage division="permitting" title="Permitting & Compliance" />} />
         <Route path="business-formation" element={<DivisionQueuePage division="business-formation" title="Business Formation" />} />
-        <Route path="insurance" element={<DivisionQueuePage division="insurance" title="Insurance Operations" />} />
+        <Route path="insurance" element={<InsuranceCommandCenterPage />} />
+        <Route path="insurance/requests" element={<InsuranceRequestsListPage />} />
+        <Route path="insurance/requests/:requestId" element={<InsuranceRequestDetailOfficePage />} />
+        <Route path="insurance/policies" element={<InsurancePoliciesListPage />} />
+        <Route path="insurance/partners" element={<InsurancePartnersPage />} />
+        <Route path="insurance/certificates" element={<InsuranceCertificatesOfficePage />} />
+        <Route path="insurance/renewals" element={<InsuranceRenewalsOfficePage />} />
+        <Route path="insurance/readiness" element={<InsuranceReadinessPage />} />
         <Route path="dispatch" element={<DispatchCommandCenterPage />} />
         <Route path="dispatch/loads" element={<DispatchLoadsListPage />} />
         <Route path="dispatch/loads/new" element={<DispatchLoadNewPage />} />

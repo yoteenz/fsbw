@@ -1,7 +1,28 @@
 # All In One — Sprint Status
 
-**Sprint:** 10 — Brokerage Operations + Shipper Portal  
+**Sprint:** 11 — Insurance Assistance + Policy Records + Partner Coordination  
 **Last updated:** 2026-08-15
+
+---
+
+## SPRINT 11 COMPLETE (Insurance · Assistance Mode · COI · Road Ready Sync)
+
+- **Insurance core module** — types, rules, calculations, config, partner adapter stub (`src/all-in-one/insurance/`)
+- **Operating modes** — `assistance` (default) · `referral` · `partner` · `direct_future` (disabled)
+- **Capability gate** — `demo` | `assistance` | `partner` | `direct_disabled`; default **`demo`**
+- **Policy records** — intake, verification states, derived expiration, replacement chain, vehicle linkage
+- **Insurance requests** — `IR-YYYY-####`, status machine, coverage needs, fleet prefill from Road Ready
+- **Partner directory & handoffs** — manual referral adapter; fictional demo partner
+- **Quote records** — partner-reported with required source attribution; premium ≠ AIO revenue
+- **COI workflow** — request + status; customer cannot issue COI
+- **Issues queue** — expiring policy, vehicle schedule, partner info flags
+- **Road Ready integration** — `syncInsuranceToRoadReady()`; brokerage carrier insurance read
+- **Customer portal** — `/portal/insurance/*` (home, request, policies, certificates, renewals)
+- **Office Command Center** — `/office/insurance/*` (requests, policies, partners, COIs, readiness)
+- **Notifications** — insurance category events (request, quote, policy, COI, renewal)
+- **Demo store v11** — insurance seed (scenarios A–I), migration from v10
+- **Unit tests** — policy date derivation, masking, status transitions, regulatory invariants
+- **Documentation** — `INSURANCE_SYSTEM.md`, `INSURANCE_REGULATORY_BOUNDARIES.md`, `INSURANCE_DATA_SECURITY.md`, `INSURANCE_ACTIVATION.md`, updated canon docs
 
 ---
 
@@ -126,7 +147,7 @@
 Dedicated All In One Supabase project credentials are **not yet configured**.
 
 - App runs in **Demo Mode** (default)
-- Dispatch + billing + factoring + brokerage backend tables deferred — demo store v9 is source of truth for Sprint 10 review
+- Dispatch + billing + factoring + brokerage + insurance backend tables deferred — demo store v11 is source of truth for Sprint 11 review
 - Payment provider mode: **demo** (no live charges)
 - No Frontal Slayer schema touched
 

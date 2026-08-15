@@ -13,18 +13,26 @@ const STORE_EVENT = 'aio-demo-store-change';
 export function loadDemoStore(): DemoStore {
   if (typeof window === 'undefined') return createDemoSeed();
 
-  const existing = readStorage<DemoStore | (Omit<DemoStore, 'version'> & { version: 3 | 4 | 5 | 6 | 7 | 8 | 9 }) | null>(DEMO_STORE_KEY, null);
-  if (existing?.version === 10) return existing as DemoStore;
+  const existing = readStorage<DemoStore | (Omit<DemoStore, 'version'> & { version: 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 }) | null>(DEMO_STORE_KEY, null);
+  if (existing?.version === 11) return existing as DemoStore;
+
+  if (existing?.version === 10) {
+    const upgraded = upgradeStoreV10ToV11(existing as DemoStoreV10);
+    saveDemoStore(upgraded);
+    return upgraded;
+  }
 
   if (existing?.version === 9) {
-    const upgraded = upgradeStoreV9ToV10(existing as DemoStoreV9);
+    const v10 = upgradeStoreV9ToV10(existing as DemoStoreV9);
+    const upgraded = upgradeStoreV10ToV11(v10);
     saveDemoStore(upgraded);
     return upgraded;
   }
 
   if (existing?.version === 8) {
     const v9 = upgradeStoreV8ToV9(existing as DemoStoreV8);
-    const upgraded = upgradeStoreV9ToV10(v9);
+    const v10 = upgradeStoreV9ToV10(v9);
+    const upgraded = upgradeStoreV10ToV11(v10);
     saveDemoStore(upgraded);
     return upgraded;
   }
@@ -32,7 +40,8 @@ export function loadDemoStore(): DemoStore {
   if (existing?.version === 7) {
     const v8 = upgradeStoreV7ToV8(existing as unknown as DemoStoreV7);
     const v9 = upgradeStoreV8ToV9(v8);
-    const upgraded = upgradeStoreV9ToV10(v9);
+    const v10 = upgradeStoreV9ToV10(v9);
+    const upgraded = upgradeStoreV10ToV11(v10);
     saveDemoStore(upgraded);
     return upgraded;
   }
@@ -41,7 +50,8 @@ export function loadDemoStore(): DemoStore {
     const v7 = upgradeStoreV6ToV7(existing as DemoStoreV6);
     const v8 = upgradeStoreV7ToV8(v7);
     const v9 = upgradeStoreV8ToV9(v8);
-    const upgraded = upgradeStoreV9ToV10(v9);
+    const v10 = upgradeStoreV9ToV10(v9);
+    const upgraded = upgradeStoreV10ToV11(v10);
     saveDemoStore(upgraded);
     return upgraded;
   }
@@ -51,7 +61,8 @@ export function loadDemoStore(): DemoStore {
     const v7 = upgradeStoreV6ToV7(v6);
     const v8 = upgradeStoreV7ToV8(v7);
     const v9 = upgradeStoreV8ToV9(v8);
-    const upgraded = upgradeStoreV9ToV10(v9);
+    const v10 = upgradeStoreV9ToV10(v9);
+    const upgraded = upgradeStoreV10ToV11(v10);
     saveDemoStore(upgraded);
     return upgraded;
   }
@@ -62,7 +73,8 @@ export function loadDemoStore(): DemoStore {
     const v7 = upgradeStoreV6ToV7(v6);
     const v8 = upgradeStoreV7ToV8(v7);
     const v9 = upgradeStoreV8ToV9(v8);
-    const upgraded = upgradeStoreV9ToV10(v9);
+    const v10 = upgradeStoreV9ToV10(v9);
+    const upgraded = upgradeStoreV10ToV11(v10);
     saveDemoStore(upgraded);
     return upgraded;
   }
@@ -74,7 +86,8 @@ export function loadDemoStore(): DemoStore {
     const v7 = upgradeStoreV6ToV7(v6);
     const v8 = upgradeStoreV7ToV8(v7);
     const v9 = upgradeStoreV8ToV9(v8);
-    const upgraded = upgradeStoreV9ToV10(v9);
+    const v10 = upgradeStoreV9ToV10(v9);
+    const upgraded = upgradeStoreV10ToV11(v10);
     saveDemoStore(upgraded);
     return upgraded;
   }
@@ -96,6 +109,8 @@ import { createBillingSeedData, defaultServicePricingSeed } from './billingSeed'
 import { createDispatchSeedData } from './dispatchSeed';
 import { createFactoringSeedData } from './factoringSeed';
 import { createBrokerageSeedData } from './brokerageSeed';
+import { createInsuranceSeedData } from './insuranceSeed';
+import { syncInsuranceToRoadReady } from './insuranceActions';
 
 type DemoStoreV8 = Omit<
   DemoStore,
@@ -144,6 +159,47 @@ function upgradeStoreV8ToV9(store: DemoStoreV8): DemoStoreV9 {
     shipments: [],
   } as DemoStoreV9;
 }
+
+function upgradeStoreV10ToV11(store: DemoStoreV10): DemoStore {
+  const insurance = createInsuranceSeedData();
+  let next = {
+    ...store,
+    version: 11 as const,
+    insuranceCapability: insurance.capability,
+    insurancePartners: insurance.partners,
+    insurancePolicies: insurance.policies,
+    insurancePolicyCoverages: insurance.coverages,
+    insurancePolicyVehicles: insurance.policyVehicles,
+    insuranceRequests: insurance.requests,
+    insurancePartnerHandoffs: insurance.handoffs,
+    insuranceQuoteRecords: insurance.quoteRecords,
+    insuranceCertificateHolders: insurance.certificateHolders,
+    insuranceCertificates: insurance.certificates,
+    insuranceIssues: insurance.issues,
+    insuranceCounters: insurance.counters,
+  } as DemoStore;
+  for (const orgId of ['client-b', 'client-c']) {
+    next = syncInsuranceToRoadReady(orgId, next);
+  }
+  return next;
+}
+
+type DemoStoreV10 = Omit<
+  DemoStore,
+  | 'version'
+  | 'insuranceCapability'
+  | 'insurancePartners'
+  | 'insurancePolicies'
+  | 'insurancePolicyCoverages'
+  | 'insurancePolicyVehicles'
+  | 'insuranceRequests'
+  | 'insurancePartnerHandoffs'
+  | 'insuranceQuoteRecords'
+  | 'insuranceCertificateHolders'
+  | 'insuranceCertificates'
+  | 'insuranceIssues'
+  | 'insuranceCounters'
+> & { version: 10 };
 
 type DemoStoreV9 = Omit<DemoStore, 'version'> & { version: 9 };
 

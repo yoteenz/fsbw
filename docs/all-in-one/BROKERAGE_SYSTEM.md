@@ -332,6 +332,22 @@ Do not conflate `BSI-*` shipper invoices with `HF-*` freight invoices or Sprint 
 
 ---
 
+## Insurance cross-reference (Sprint 11)
+
+Carrier network profiles display read-only insurance summary via `getBrokerageCarrierInsurance()`:
+
+- Auto liability / cargo flags from `InsurancePolicyCoverage`
+- `reviewNeeded` when policy expiring, expired, or customer-reported only
+- **Not** a shipper COI — brokerage loads may still require separate certificate workflow
+
+Warning copy: *"Insurance review needed — not a safety certification."*
+
+Brokerage **`authorityVerification`** / **`insuranceVerification`** on carrier profiles remain separate self-report fields — insurance module does not auto-sync into those fields in Sprint 11.
+
+See **`INSURANCE_SYSTEM.md`**, **`INSURANCE_REGULATORY_BOUNDARIES.md`**.
+
+---
+
 ## Code layout
 
 ```

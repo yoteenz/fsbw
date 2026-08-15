@@ -69,7 +69,23 @@ export type NotificationEventType =
   | 'BROKERAGE_POD_RECEIVED'
   | 'BROKERAGE_READY_TO_BILL'
   | 'SHIPPER_INVOICE_ISSUED'
-  | 'CARRIER_PAYABLE_READY';
+  | 'CARRIER_PAYABLE_READY'
+  | 'INSURANCE_REQUEST_SUBMITTED'
+  | 'INSURANCE_INFORMATION_NEEDED'
+  | 'INSURANCE_REQUEST_READY_FOR_REFERRAL'
+  | 'INSURANCE_REFERRED'
+  | 'INSURANCE_PARTNER_UPDATE'
+  | 'INSURANCE_QUOTE_REPORTED'
+  | 'INSURANCE_POLICY_RECORDED'
+  | 'INSURANCE_POLICY_EXPIRING'
+  | 'INSURANCE_POLICY_EXPIRED'
+  | 'INSURANCE_POLICY_REPLACED'
+  | 'INSURANCE_COI_REQUESTED'
+  | 'INSURANCE_COI_ISSUED'
+  | 'INSURANCE_COI_ACTION_NEEDED'
+  | 'INSURANCE_RENEWAL_STARTED'
+  | 'INSURANCE_RENEWAL_COMPLETED'
+  | 'INSURANCE_ROAD_READY_IMPACT';
 
 export type NotificationCategory =
   | 'road_ready'
@@ -80,6 +96,7 @@ export type NotificationCategory =
   | 'dispatch'
   | 'factoring'
   | 'brokerage'
+  | 'insurance'
   | 'billing';
 
 export type NotificationRecipientType = 'customer' | 'staff';
@@ -119,5 +136,6 @@ export const DEFAULT_NOTIFICATION_PREFERENCES: NotificationPreference[] = [
   { category: 'dispatch', inApp: true, emailFuture: false, smsFuture: false },
   { category: 'factoring', inApp: true, emailFuture: false, smsFuture: false },
   { category: 'brokerage', inApp: true, emailFuture: false, smsFuture: false },
+  { category: 'insurance', inApp: true, emailFuture: false, smsFuture: false },
   { category: 'billing', inApp: true, emailFuture: false, smsFuture: false },
 ];

@@ -1,6 +1,6 @@
 # All In One — Billing System
 
-**Sprint:** 07 · **Last updated:** 2026-08-15
+**Sprint:** 11 · **Last updated:** 2026-08-15
 
 ---
 
@@ -8,7 +8,7 @@
 
 Production-oriented foundation for **All In One service billing** — quotes, invoices, payments, receipts, and balance tracking. Separates **All In One service fees** from **government/third-party pass-through fees**.
 
-Not carrier settlements, factoring, insurance premiums, or freight billing (see `FINANCIAL_BOUNDARIES.md`).
+Not carrier settlements, factoring, **insurance premiums**, or freight billing (see `FINANCIAL_BOUNDARIES.md`).
 
 ---
 
@@ -151,3 +151,19 @@ See `AUTHORIZATION_MATRIX.md`.
 - No QuickBooks/accounting export
 - Credits/refunds architecture only — limited UI
 - Backend Supabase billing tables deferred until AIO backend activation
+
+---
+
+## Insurance billing boundary (Sprint 11)
+
+| Charge type | Sprint 07 billing? | Notes |
+|-------------|-------------------|-------|
+| All In One insurance **assistance** fee | **Yes** (when quoted) | `commercial-auto-liability` — `pricingMode: consultation`, `paymentTiming: manual_billing` |
+| **Insurance premium** on quote records | **No** | `InsuranceQuoteRecord.premiumMinor` — display only; source attribution required |
+| Policy binding / down payment | **No** | No checkout route; `DIRECT_INSURANCE_ENABLED = false` |
+
+Office quote cards and portal request detail must display: *"Premium is NOT All In One service revenue."*
+
+Customers selecting a quote externally (`selectQuoteExternal`) do **not** generate an invoice or payment in Sprint 07.
+
+See **`INSURANCE_REGULATORY_BOUNDARIES.md`**, **`INSURANCE_SYSTEM.md`**.

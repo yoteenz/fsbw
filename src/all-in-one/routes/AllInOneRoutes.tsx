@@ -61,6 +61,15 @@ import {
   CarrierBrokeragePaymentsPage,
 } from '../pages/portal/brokerage/BrokeragePortalPages';
 import {
+  InsuranceHomePage,
+  InsuranceRequestPage,
+  InsuranceRequestDetailPage,
+  InsurancePolicyDetailPage,
+  InsuranceCertificatesPage,
+  InsuranceCertificateNewPage,
+  InsuranceRenewalsPage,
+} from '../pages/portal/insurance/InsurancePortalPages';
+import {
   ShipperHomePage,
   ShipperOnboardingPage,
   ShipperNewShipmentPage,
@@ -150,6 +159,13 @@ export default function AllInOneRoutes() {
             <Route path="factoring/submissions/:submissionId" element={<FactoringSubmissionDetailPage />} />
             <Route path="factoring/history" element={<FactoringHistoryPage />} />
             <Route path="factoring/invoices/:invoiceId" element={<FreightInvoicePrintPage />} />
+            <Route path="insurance" element={<InsuranceHomePage />} />
+            <Route path="insurance/request" element={<InsuranceRequestPage />} />
+            <Route path="insurance/requests/:requestId" element={<InsuranceRequestDetailPage />} />
+            <Route path="insurance/policies/:policyId" element={<InsurancePolicyDetailPage />} />
+            <Route path="insurance/certificates" element={<InsuranceCertificatesPage />} />
+            <Route path="insurance/certificates/new" element={<InsuranceCertificateNewPage />} />
+            <Route path="insurance/renewals" element={<InsuranceRenewalsPage />} />
             <Route path="brokerage" element={<CarrierBrokerageHomePage />} />
             <Route path="brokerage/offers" element={<CarrierBrokerageOffersPage />} />
             <Route path="brokerage/loads/:loadId" element={<CarrierBrokerageLoadPage />} />

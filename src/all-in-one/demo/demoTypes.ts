@@ -50,6 +50,20 @@ import type {
   ShipmentRequest,
 } from '../brokerage/brokerageTypes';
 import type {
+  CertificateHolder,
+  InsuranceCapabilityState,
+  InsuranceCertificate,
+  InsuranceCounters,
+  InsuranceIssue,
+  InsurancePartner,
+  InsurancePartnerHandoff,
+  InsurancePolicy,
+  InsurancePolicyCoverage,
+  InsurancePolicyVehicle,
+  InsuranceQuoteRecord,
+  InsuranceRequest,
+} from '../insurance/insuranceTypes';
+import type {
   DriverPlaceholder,
   PowerUnit,
   RoadReadyHistoryEvent,
@@ -78,6 +92,12 @@ export type ActivityKind =
   | 'LOAD_STATUS_CHANGED'
   | 'FACTORING_STATUS_CHANGED'
   | 'BROKERAGE_STATUS_CHANGED'
+  | 'INSURANCE_REQUEST_SUBMITTED'
+  | 'INSURANCE_REQUEST_STATUS_CHANGED'
+  | 'INSURANCE_POLICY_CREATED'
+  | 'INSURANCE_POLICY_UPDATED'
+  | 'INSURANCE_QUOTE_RECORDED'
+  | 'INSURANCE_COI_REQUESTED'
   | 'NOTE_ADDED'
   | 'ROADMAP_GENERATED'
   | 'INTAKE_COMPLETED'
@@ -351,7 +371,7 @@ export interface BrokerageShipment extends BrokerageQuote {
 export interface Invoice extends BillingInvoice {}
 
 export interface DemoStore {
-  version: 10;
+  version: 11;
   requestCounter: number;
   portalClientId?: string;
   shipperPortalOrgId?: string;
@@ -398,6 +418,18 @@ export interface DemoStore {
   brokerageIssues: BrokerageIssue[];
   coverageHistory: CoverageHistoryEvent[];
   brokerageCounters: BrokerageCounters;
+  insuranceCapability: InsuranceCapabilityState;
+  insurancePartners: InsurancePartner[];
+  insurancePolicies: InsurancePolicy[];
+  insurancePolicyCoverages: InsurancePolicyCoverage[];
+  insurancePolicyVehicles: InsurancePolicyVehicle[];
+  insuranceRequests: InsuranceRequest[];
+  insurancePartnerHandoffs: InsurancePartnerHandoff[];
+  insuranceQuoteRecords: InsuranceQuoteRecord[];
+  insuranceCertificateHolders: CertificateHolder[];
+  insuranceCertificates: InsuranceCertificate[];
+  insuranceIssues: InsuranceIssue[];
+  insuranceCounters: InsuranceCounters;
   /** @deprecated legacy Sprint 03 mock — use brokerageFreightQuotes */
   brokerageQuotes: BrokerageQuote[];
   /** @deprecated legacy Sprint 03 mock — use canonical loads with sourceType brokerage */

@@ -17,6 +17,7 @@ import {
 } from '../../brokerage/brokerageConfig';
 import { formatMoney } from '../../billing/money';
 import { aioPaths } from '../../utils/paths';
+import { getBrokerageCarrierInsurance } from '../../demo/insuranceActions';
 import { computeGrossMarginPercent } from '../../brokerage/brokerageCalculations';
 
 export function BrokerageCommandCenterPage() {
@@ -180,12 +181,21 @@ export function BrokerageCarrierDetailPage() {
   const store = useDemoStore();
   const profile = store.carrierNetworkProfiles.find((c) => c.id === carrierId);
   if (!profile) return <p>Not found.</p>;
+  const ins = profile.organizationId ? getBrokerageCarrierInsurance(profile.organizationId, store) : null;
   return (
     <div className="aio-office-page">
       <Link to={aioPaths.officeBrokerageCarriers} className="aio-office-link">← Carriers</Link>
       <h1>{profile.legalName}</h1>
       <p>USDOT {profile.usdot ?? '—'} · MC {profile.mcNumber ?? '—'}</p>
       <p>Authority: {profile.authorityVerification.replace(/_/g, ' ')} — not live FMCSA verification.</p>
+      {ins && (
+        <section className="aio-office-panel">
+          <h2>Insurance (Canonical)</h2>
+          <p>Auto Liability: {ins.autoLiability ? 'On file' : '—'} · Cargo: {ins.cargo ? 'On file' : '—'}</p>
+          <p>Expiration: {ins.expirationDate ?? '—'} · {ins.verificationState.replace(/_/g, ' ')}</p>
+          {ins.reviewNeeded && <p className="aio-insurance-warn">Insurance review needed — not a safety certification.</p>}
+        </section>
+      )}
     </div>
   );
 }

@@ -140,6 +140,45 @@ See **`BROKERAGE_SYSTEM.md`**.
 
 ---
 
+### Insurance domain (Sprint 11)
+
+| Entity | Table (planned) | Purpose |
+|--------|-----------------|---------|
+| InsuranceCapabilityState | `aio_insurance_capability` | `demo` / `assistance` / `partner` / `direct_disabled` |
+| InsurancePolicy | `aio_insurance_policies` | Org policy records — not binding proof |
+| InsurancePolicyCoverage | `aio_insurance_policy_coverages` | Limits by coverage type |
+| InsurancePolicyVehicle | `aio_insurance_policy_vehicles` | Fleet unit linkage |
+| InsuranceRequest | `aio_insurance_requests` | `IR-*` assistance workflow |
+| InsurancePartner | `aio_insurance_partners` | Licensed partner directory |
+| InsurancePartnerHandoff | `aio_insurance_partner_handoffs` | Manual/API referral tracking |
+| InsuranceQuoteRecord | `aio_insurance_quote_records` | Partner-reported quotes + source |
+| CertificateHolder | `aio_certificate_holders` | COI holder directory |
+| InsuranceCertificate | `aio_insurance_certificates` | COI request/status |
+| InsuranceIssue | `aio_insurance_issues` | Operational flags |
+| InsuranceCredential | `aio_insurance_credentials` | Future staff license tracking — internal |
+
+Demo store keys: `insuranceCapability`, `insurancePolicies`, `insurancePolicyCoverages`, `insurancePolicyVehicles`, `insuranceRequests`, `insurancePartners`, `insurancePartnerHandoffs`, `insuranceQuoteRecords`, `insuranceCertificateHolders`, `insuranceCertificates`, `insuranceIssues`, `insuranceCounters`.
+
+Relationships:
+
+```
+Organization 1—* InsurancePolicy
+InsurancePolicy 1—* InsurancePolicyCoverage
+InsurancePolicy 1—* InsurancePolicyVehicle → PowerUnit
+Organization 1—* InsuranceRequest
+InsuranceRequest 0—* InsuranceQuoteRecord
+InsuranceRequest 0—1 InsurancePartnerHandoff → InsurancePartner
+Organization 1—* InsuranceCertificate → CertificateHolder
+InsurancePolicy 0—* InsuranceCertificate
+VaultDocument *—* InsurancePolicy (documentIds)
+```
+
+Premiums on quote records are **not** billing invoice line items.
+
+See **`INSURANCE_SYSTEM.md`**, **`FUTURE_DATA_MODEL.md`** (this file).
+
+---
+
 ## Core entities (Sprint 03 prototype mapping)
 
 | Entity | Purpose |
