@@ -1,8 +1,13 @@
 import { isStudioInstitutePath } from '../studio-os-core/expert-capture/invite-system/config';
 
-/** All In One Enterprises Inc. debug website — isolated from Frontal Slayer bootstrap. */
+/** All In One Enterprises Inc. website — isolated from Frontal Slayer bootstrap. */
 export function isAllInOneDebugPath(pathname: string): boolean {
-  return pathname === '/debug/all-in-one' || pathname.startsWith('/debug/all-in-one/');
+  return (
+    pathname === '/all-in-one' ||
+    pathname.startsWith('/all-in-one/') ||
+    pathname === '/debug/all-in-one' ||
+    pathname.startsWith('/debug/all-in-one/')
+  );
 }
 
 /** Routes that skip main storefront bootstrap (Expert Capture + Studio Institute + All In One debug). */

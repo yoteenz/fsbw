@@ -3,7 +3,7 @@
  * Registered in main.tsx BEFORE App (no AdminGuard, workspace bootstrap, or admin layout).
  */
 import { Suspense } from 'react';
-import { Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import StudioHealthDebugPage from '../pages/debug/studio-health/page';
 import ChunkDebugPage from '../pages/debug/chunk-debug/page';
 import BootDebugPage from '../pages/debug/boot-debug/page';
@@ -59,6 +59,13 @@ const AllInOneRouteHost = lazyWithRetry(
 );
 
 const App = lazyWithRetry(() => import('../App'), 'App');
+
+function DebugAllInOneLegacyRedirect() {
+  const location = useLocation();
+  const tail = location.pathname.replace(/^\/debug\/all-in-one\/?/, '');
+  const target = tail ? `/all-in-one/${tail}` : '/all-in-one';
+  return <Navigate to={`${target}${location.search}${location.hash}`} replace />;
+}
 
 export const STUDIO_DEBUG_PATHS = [
   '/__studio-health',
@@ -161,9 +168,9 @@ export default function StudioDebugRoutes() {
       <Route path="/onboarding" element={<OnboardingPackPage />} />
       <Route path="/context-updates" element={<ContextUpdatesPage />} />
       <Route
-        path="/debug/all-in-one/*"
+        path="/all-in-one/*"
         element={
-          <DebugRouteErrorBoundary route="/debug/all-in-one">
+          <DebugRouteErrorBoundary route="/all-in-one">
             <Suspense
               fallback={
                 <div
@@ -189,6 +196,8 @@ export default function StudioDebugRoutes() {
           </DebugRouteErrorBoundary>
         }
       />
+      <Route path="/debug/all-in-one/*" element={<DebugAllInOneLegacyRedirect />} />
+      <Route path="/debug/all-in-one" element={<DebugAllInOneLegacyRedirect />} />
       <Route
         path="*"
         element={
