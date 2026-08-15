@@ -135,6 +135,12 @@ export function RoadReadyPage() {
                     <RoadReadyStatusBadge kind="verification" value={item.verificationStatus} />
                   </div>
                   <div className="aio-rr-item-actions">
+                    {item.documentId && (
+                      <Link to={aioPaths.portalVaultDocument(item.documentId)} className="aio-btn aio-btn--outline aio-btn--sm">View Document</Link>
+                    )}
+                    {item.expiresAt && (
+                      <Link to={aioPaths.portalRenewals} className="aio-btn aio-btn--outline aio-btn--sm">Review Renewal</Link>
+                    )}
                     {(item.status === 'action_needed' || item.status === 'needs_review') && item.serviceSlug && (
                       <button
                         type="button"

@@ -15,6 +15,7 @@ import type {
 } from './demoTypes';
 import { computePriority } from '../office/priorityEngine';
 import { buildCustomerTimeline, getWorkflowForDivision, statusLabelForStep } from '../office/workflows/workflowEngine';
+import { buildNotification } from '../notifications/notificationEngine';
 
 function uid(): string {
   return crypto.randomUUID();
@@ -156,13 +157,17 @@ export function submitServiceRequest(payload: {
       requestId: request.id,
       visibility: 'customer',
     });
-    s.notifications.unshift({
-      id: uid(),
-      title: `New service request — ${client.companyName}`,
-      read: false,
-      createdAt: new Date().toISOString(),
-      link: `/all-in-one/office/requests/${request.id}`,
-    });
+    s.notifications.unshift(
+      buildNotification({
+        recipientType: 'staff',
+        staffId: 'staff-2',
+        eventType: 'SERVICE_REQUEST_STATUS_CHANGED',
+        category: 'operations',
+        title: `New service request — ${client.companyName}`,
+        body: requestNumber,
+        link: `/all-in-one/office/requests/${request.id}`,
+      }),
+    );
 
     return s;
   }).requests[0];
@@ -218,13 +223,20 @@ export function requestDocuments(
     for (const name of docNames) {
       const doc: DocumentMetadata = {
         id: uid(),
+        organizationId: req.clientId,
         name,
-        category: 'Other',
+        title: name,
+        category: 'business',
+        documentType: name,
         clientId: req.clientId,
-        requestId,
+        serviceRequestId: requestId,
         status: 'requested',
+        verificationStatus: 'unverified',
         visibility: 'customer',
+        isCurrent: true,
         requestedAt: new Date().toISOString(),
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
       };
       s.documents.push(doc);
       req.documentIds.push(doc.id);
@@ -271,11 +283,12 @@ export function markDocumentReceived(docId: string, staffId?: string): void {
   updateDemoStore((s) => {
     const doc = s.documents.find((d) => d.id === docId);
     if (!doc) return s;
-    doc.status = 'received';
-    doc.receivedAt = new Date().toISOString();
-    logActivity(s, 'DOCUMENT_RECEIVED', `${doc.name} received`, {
-      clientId: doc.clientId,
-      requestId: doc.requestId,
+    doc.status = 'uploaded';
+    doc.verificationStatus = 'pending_review';
+    doc.uploadedAt = new Date().toISOString();
+    logActivity(s, 'DOCUMENT_RECEIVED', `${doc.title ?? doc.name} received`, {
+      clientId: doc.organizationId ?? doc.clientId,
+      requestId: doc.serviceRequestId,
       staffId,
       visibility: 'customer',
     });
@@ -287,9 +300,11 @@ export function markDocumentAccepted(docId: string, staffId?: string): void {
   updateDemoStore((s) => {
     const doc = s.documents.find((d) => d.id === docId);
     if (!doc) return s;
-    doc.status = 'accepted';
-    doc.verifiedBy = s.staff.find((st) => st.id === staffId)?.name ?? 'Staff';
-    const client = s.clients.find((c) => c.id === doc.clientId);
+    doc.status = 'verified';
+    doc.verificationStatus = 'verified';
+    doc.verifiedAt = new Date().toISOString();
+    doc.verifiedByStaffId = staffId;
+    const client = s.clients.find((c) => c.id === (doc.organizationId ?? doc.clientId));
     if (client && client.documentsNeededCount > 0) client.documentsNeededCount -= 1;
     return s;
   });
@@ -440,7 +455,7 @@ export function getOfficeMetrics(): import('./demoTypes').OfficeMetrics {
 
 export function getClientDocuments(clientId: string, visibility?: Visibility): DocumentMetadata[] {
   const s = loadDemoStore();
-  return s.documents.filter((d) => d.clientId === clientId && (!visibility || d.visibility === visibility));
+  return s.documents.filter((d) => (d.organizationId ?? d.clientId) === clientId && (!visibility || d.visibility === visibility));
 }
 
 export function getClientMessages(clientId: string, requestId?: string): Message[] {

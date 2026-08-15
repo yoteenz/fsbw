@@ -54,11 +54,14 @@ export function RequestDetailPage() {
           <ul className="aio-doc-checklist">
             {docs.map((doc) => (
               <li key={doc.id}>
-                {doc.name} — <span className="aio-badge aio-badge--progress">{doc.status.replace('_', ' ')}</span>
+                {doc.title ?? doc.name} — <span className="aio-badge aio-badge--progress">{doc.status.replace(/_/g, ' ')}</span>
                 {doc.status === 'requested' && (
-                  <button type="button" className="aio-btn aio-btn--gold aio-btn--sm" onClick={() => simulateCustomerUpload(doc.id)}>
-                    Simulate Upload (Demo)
-                  </button>
+                  <>
+                    <button type="button" className="aio-btn aio-btn--gold aio-btn--sm" onClick={() => simulateCustomerUpload(doc.id)}>
+                      Simulate Upload (Demo)
+                    </button>
+                    <Link to={aioPaths.portalVault} className="aio-btn aio-btn--outline aio-btn--sm">Upload in Vault</Link>
+                  </>
                 )}
               </li>
             ))}

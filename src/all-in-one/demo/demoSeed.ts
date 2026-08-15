@@ -1,6 +1,7 @@
 import { defaultIntakeAnswers } from '../intake/intakeTypes';
 import type { DemoStore, StaffMember } from './demoTypes';
 import { createRoadReadySeedData } from './roadReadySeed';
+import { createVaultSeedData, defaultNotificationPreferences } from './vaultSeed';
 
 const STAFF: StaffMember[] = [
   { id: 'staff-1', name: 'Taylor Brooks', initials: 'TB', role: 'Administrator', status: 'available' },
@@ -19,7 +20,7 @@ export function createDemoSeed(): DemoStore {
   const daysAhead = (d: number) => new Date(now.getTime() + d * 86400000).toISOString().slice(0, 10);
 
   return {
-    version: 4,
+    version: 5,
     requestCounter: 4,
     portalClientId: 'client-a',
     intake: defaultIntakeAnswers(),
@@ -109,18 +110,16 @@ export function createDemoSeed(): DemoStore {
       },
     ],
     requests: [
-      mkRequest('req-1', 'AIO-DEMO-0001', 'client-a', 'Authority + BOC-3 Assistance', 'permitting', 'new_request', 'staff-2', daysAgo(3), ['doc-1', 'doc-2']),
-      mkRequest('req-2', 'AIO-DEMO-0002', 'client-b', 'IRP / Apportioned Registration', 'permitting', 'documents_needed', 'staff-2', daysAgo(10), ['doc-3']),
+      mkRequest('req-1', 'AIO-DEMO-0001', 'client-a', 'Authority + BOC-3 Assistance', 'permitting', 'new_request', 'staff-2', daysAgo(3), ['vdoc-a1', 'vdoc-a2']),
+      mkRequest('req-2', 'AIO-DEMO-0002', 'client-b', 'IRP / Apportioned Registration', 'permitting', 'documents_needed', 'staff-2', daysAgo(10), ['vdoc-b2']),
       mkRequest('req-3', 'AIO-DEMO-0003', 'client-c', 'Carrier Dispatch Support', 'dispatching', 'in_progress', 'staff-4', daysAgo(5), []),
       mkRequest('req-4', 'AIO-DEMO-0004', 'client-e', 'Freight Quote', 'brokerage', 'under_review', 'staff-7', daysAgo(2), []),
     ],
-    documents: [
-      { id: 'doc-1', name: 'Insurance Certificate', category: 'Insurance', clientId: 'client-a', requestId: 'req-1', status: 'requested', visibility: 'customer', requestedAt: daysAgo(2) },
-      { id: 'doc-2', name: 'Business Formation Documents', category: 'Business Formation', clientId: 'client-a', requestId: 'req-1', status: 'requested', visibility: 'customer', requestedAt: daysAgo(2) },
-      { id: 'doc-3', name: 'Vehicle Registration', category: 'Registration', clientId: 'client-b', requestId: 'req-2', status: 'received', visibility: 'customer', requestedAt: daysAgo(8), receivedAt: daysAgo(1) },
-      { id: 'doc-4', name: 'Rate Confirmation', category: 'Dispatch', clientId: 'client-c', status: 'accepted', visibility: 'customer', receivedAt: daysAgo(4) },
-      { id: 'doc-5', name: 'Invoice', category: 'Factoring', clientId: 'client-d', status: 'requested', visibility: 'customer', requestedAt: daysAgo(1) },
-    ],
+    documents: (() => {
+      const v = createVaultSeedData();
+      return v.documents;
+    })(),
+    renewals: createVaultSeedData().renewals,
     notes: [
       {
         id: 'note-1',
@@ -165,13 +164,9 @@ export function createDemoSeed(): DemoStore {
       { id: 'task-4', title: 'Review factoring invoice', clientId: 'client-d', assignedStaffId: 'staff-6', priority: 'normal', status: 'open', category: 'Factoring', dueDate: daysAhead(3), createdAt: daysAgo(2) },
       { id: 'task-5', title: 'Prepare brokerage quote', clientId: 'client-e', requestId: 'req-4', assignedStaffId: 'staff-7', priority: 'high', status: 'open', category: 'Brokerage', dueDate: daysAhead(1), createdAt: daysAgo(1) },
     ],
-    deadlines: [
-      { id: 'dl-1', label: 'IRP renewal — Heartland Freight', clientId: 'client-b', dueDate: daysAhead(5), severity: 'due_soon', category: 'Registration', complete: false },
-      { id: 'dl-2', label: 'IFTA filing — Heartland Freight', clientId: 'client-b', dueDate: daysAhead(12), severity: 'upcoming', category: 'Tax', complete: false },
-      { id: 'dl-3', label: 'Insurance expiration — Summit Ridge', clientId: 'client-a', dueDate: daysAhead(2), severity: 'due_soon', category: 'Insurance', complete: false },
-      { id: 'dl-4', label: 'Permit expiration — Pioneer Fleet', clientId: 'client-c', dueDate: daysAhead(0), severity: 'due_today', category: 'Permit', complete: false },
-      { id: 'dl-5', label: 'Service request deadline — Authority filing', clientId: 'client-a', requestId: 'req-1', dueDate: daysAhead(7), severity: 'upcoming', category: 'Service Request', complete: false },
-    ],
+    deadlines: createVaultSeedData().deadlines.concat([
+      { id: 'dl-5', label: 'Service request deadline — Authority filing', clientId: 'client-a', dueDate: daysAhead(7), severity: 'upcoming', category: 'Service Request', complete: false, requestId: 'req-1', source: 'service_request' },
+    ]),
     activity: [
       evt('act-1', 'REQUEST_CREATED', 'Service request submitted', 'client-a', 'req-1', daysAgo(3)),
       evt('act-2', 'REQUEST_ASSIGNED', 'Request assigned to Jordan Lee', 'client-a', 'req-1', daysAgo(2)),
@@ -300,11 +295,9 @@ export function createDemoSeed(): DemoStore {
         dueAt: daysAhead(30),
       },
     ],
-    notifications: [
-      { id: 'n-1', title: 'New service request — Summit Ridge Hauling', read: false, createdAt: daysAgo(0), link: '/all-in-one/office/requests/req-1' },
-      { id: 'n-2', title: 'Document received — Heartland Freight', read: false, createdAt: daysAgo(1) },
-      { id: 'n-3', title: 'Deadline approaching — Insurance expiration', read: true, createdAt: daysAgo(2) },
-    ],
+    notifications: createVaultSeedData().notifications,
+    notificationPreferences: defaultNotificationPreferences(),
+    expirationEvaluatorLastRun: new Date().toISOString(),
     ...(() => {
       const rr = createRoadReadySeedData();
       return {

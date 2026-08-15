@@ -243,14 +243,23 @@ export function TeamPage() {
 export function ReportsPage() {
   const store = useDemoStore();
   const metrics = getOfficeMetrics();
+  const docsReview = store.documents.filter((d) => ['uploaded', 'under_review'].includes(d.status)).length;
+  const renewalsMonth = store.renewals.filter((r) => r.status !== 'completed').length;
+  const expired = store.documents.filter((d) => d.isCurrent && d.expiresAt && new Date(d.expiresAt) < new Date()).length;
+  const clientResponse = store.documents.filter((d) => d.status === 'requested' || d.status === 'rejected').length;
+  const renewalsComplete = store.renewals.filter((r) => r.status === 'completed').length;
+
   return (
     <div className="aio-office-page">
-      <header className="aio-office-page__header"><h1>Reports</h1><p>UI prototype · mock metrics</p></header>
+      <header className="aio-office-page__header"><h1>Reports</h1><p>Sprint 06 management preview · demo/staging labels</p></header>
       <div className="aio-office-metrics">
+        <div className="aio-office-metric-card"><span className="aio-office-metric-card__value">{docsReview}</span><span className="aio-office-metric-card__label">Documents Awaiting Review</span></div>
+        <div className="aio-office-metric-card"><span className="aio-office-metric-card__value">{renewalsMonth}</span><span className="aio-office-metric-card__label">Renewals This Month (active)</span></div>
+        <div className="aio-office-metric-card"><span className="aio-office-metric-card__value">{expired}</span><span className="aio-office-metric-card__label">Expired Credentials</span></div>
+        <div className="aio-office-metric-card"><span className="aio-office-metric-card__value">{renewalsComplete}</span><span className="aio-office-metric-card__label">Renewal Completions</span></div>
+        <div className="aio-office-metric-card"><span className="aio-office-metric-card__value">{clientResponse}</span><span className="aio-office-metric-card__label">Client Response Needed</span></div>
         <div className="aio-office-metric-card"><span className="aio-office-metric-card__value">{store.clients.length}</span><span className="aio-office-metric-card__label">Active Clients</span></div>
-        <div className="aio-office-metric-card"><span className="aio-office-metric-card__value">{store.requests.length}</span><span className="aio-office-metric-card__label">Total Requests</span></div>
         <div className="aio-office-metric-card"><span className="aio-office-metric-card__value">{metrics.inProgress}</span><span className="aio-office-metric-card__label">In Progress</span></div>
-        <div className="aio-office-metric-card"><span className="aio-office-metric-card__value">{store.loads.filter((l) => l.status === 'delivered').length}</span><span className="aio-office-metric-card__label">Loads Delivered</span></div>
       </div>
     </div>
   );

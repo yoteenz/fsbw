@@ -35,6 +35,7 @@ const navGroups = [
       { label: 'Tasks', to: aioPaths.officeTasks },
       { label: 'Documents', to: aioPaths.officeDocuments },
       { label: 'Deadlines', to: aioPaths.officeDeadlines },
+      { label: 'Renewals', to: aioPaths.officeRenewals },
       { label: 'Messages', to: aioPaths.officeMessages },
     ],
   },
@@ -70,6 +71,10 @@ export function AIOOfficeLayout() {
     if (req) return navigate(aioPaths.officeRequest(req.id));
     const client = store.clients.find((c) => c.companyName.toLowerCase().includes(q));
     if (client) return navigate(aioPaths.officeClient(client.id));
+    const doc = store.documents.find((d) => d.id === q || (d.title ?? d.name ?? '').toLowerCase().includes(q));
+    if (doc) return navigate(aioPaths.officeDocuments);
+    const renewal = store.renewals.find((r) => r.id.toLowerCase().includes(q) || r.title.toLowerCase().includes(q));
+    if (renewal) return navigate(aioPaths.officeRenewals);
     const load = store.loads.find((l) => l.loadNumber.toLowerCase().includes(q));
     if (load) return navigate(aioPaths.officeLoad(load.id));
   };

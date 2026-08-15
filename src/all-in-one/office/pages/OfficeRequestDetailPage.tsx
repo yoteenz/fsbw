@@ -81,10 +81,10 @@ export function OfficeRequestDetailPage() {
         <ul className="aio-doc-checklist">
           {docs.map((d) => (
             <li key={d.id}>
-              {d.name} — <span className="aio-badge aio-badge--progress">{d.status}</span>
-              {d.status === 'received' && (
+              {d.title ?? d.name} — <span className="aio-badge aio-badge--progress">{d.status.replace(/_/g, ' ')}</span>
+              {['uploaded', 'under_review'].includes(d.status) && (
                 <button type="button" className="aio-btn aio-btn--sm aio-btn--gold" onClick={() => markDocumentAccepted(d.id, 'staff-2')}>
-                  Mark Accepted
+                  Verify Document
                 </button>
               )}
             </li>

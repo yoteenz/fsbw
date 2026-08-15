@@ -1,16 +1,24 @@
 import { Link } from 'react-router-dom';
-import { mockDashboardGreeting, mockExpiringSoon } from '../data/mockDashboard';
+import { useMemo } from 'react';
 import { useDemoStore } from '../demo/useDemoStore';
 import { getPortalRequests } from '../demo/demoActions';
-import { AIOStatusBadge } from '../components/AIOStatusBadge';
+import {
+  getCalendarEvents,
+  getOrganizationId,
+  getPortalNotifications,
+  getRenewals,
+  getVaultDocuments,
+} from '../demo/vaultActions';
 import { RoadReadyRing } from '../components/RoadReadyRing';
 import { RoadReadyAttentionCenter, RoadReadyNextStep } from '../components/RoadReadyAttentionCenter';
 import { useRoadReady } from '../road-ready/useRoadReady';
 import { ROAD_READY_PRODUCT_NAME } from '../road-ready/roadReadyConfig';
+import { formatDaysRemaining } from '../calendar/calendarService';
 import { aioPaths } from '../utils/paths';
 
 export function PortalPage() {
   const store = useDemoStore();
+  const orgId = getOrganizationId(store);
   const requests = getPortalRequests();
   const {
     isShipper,
@@ -21,19 +29,31 @@ export function PortalPage() {
     onboardingProgress,
   } = useRoadReady();
 
-  const portalDocs = store.documents.filter(
-    (d) => d.clientId === store.portalClientId && d.status === 'requested' && d.visibility === 'customer',
+  const portalDocs = useMemo(
+    () => getVaultDocuments(orgId, store).filter((d) => d.status === 'requested'),
+    [orgId, store.documents],
   );
-
-  const portalDeadlines = store.deadlines.filter((d) => d.clientId === store.portalClientId && !d.complete);
-
+  const underReview = useMemo(
+    () => getVaultDocuments(orgId, store).filter((d) => ['uploaded', 'under_review'].includes(d.status)),
+    [orgId, store.documents],
+  );
+  const upcomingDeadlines = useMemo(
+    () => getCalendarEvents(orgId, store).filter((e) => !e.complete).slice(0, 5),
+    [orgId, store.documents, store.renewals, store.deadlines],
+  );
+  const activeRenewals = useMemo(
+    () => getRenewals(orgId, store).filter((r) => !['completed', 'declined', 'not_applicable'].includes(r.status)).slice(0, 3),
+    [orgId, store.renewals],
+  );
+  const unreadNotifs = getPortalNotifications(orgId, store).filter((n) => !n.read).length;
   const attentionCount = summary?.scores.needsAttentionCount ?? 0;
+  const allCaughtUp = attention.length === 0 && portalDocs.length === 0 && !upcomingDeadlines.some((e) => e.state === 'overdue' || e.state === 'due_soon');
 
   return (
     <div className="aio-portal-dashboard">
       <header className="aio-portal-dashboard__header">
-        <h1>{mockDashboardGreeting}</h1>
-        <p>Client command center · {ROAD_READY_PRODUCT_NAME} enabled</p>
+        <h1>Welcome back</h1>
+        <p>Client command center · {ROAD_READY_PRODUCT_NAME} · Vault · Calendar · Renewals</p>
       </header>
 
       {needsOnboarding && !isShipper && (
@@ -48,6 +68,22 @@ export function PortalPage() {
           <Link to={aioPaths.portalOnboarding} className="aio-btn aio-btn--gold aio-btn--sm">
             {onboardingProgress > 0 ? 'Continue Setup' : 'Start Road Ready'}
           </Link>
+        </section>
+      )}
+
+      {!isShipper && portalDocs.length > 0 && (
+        <section className="aio-portal-banner aio-vault-banner--warn">
+          <p><strong>Complete your Vault</strong> — {portalDocs.length} document(s) will help All In One verify your Road Ready profile.</p>
+          <Link to={aioPaths.portalVault} className="aio-btn aio-btn--gold aio-btn--sm">Upload Documents</Link>
+        </section>
+      )}
+
+      {allCaughtUp && !isShipper && (
+        <section className="aio-portal-banner aio-vault-caught-up-banner">
+          <p><strong>You&apos;re all caught up.</strong> Your tracked Road Ready items and documents do not require action right now.</p>
+          {upcomingDeadlines[0] && (
+            <p>Next upcoming: {upcomingDeadlines[0].title} — {formatDaysRemaining(upcomingDeadlines[0].dueDate)}</p>
+          )}
         </section>
       )}
 
@@ -80,6 +116,7 @@ export function PortalPage() {
 
         {!isShipper && attention.length > 0 && (
           <section className="aio-portal-panel aio-portal-panel--wide">
+            <h2 className="aio-portal-panel__title">Needs Your Attention</h2>
             <RoadReadyAttentionCenter items={attention} limit={3} />
           </section>
         )}
@@ -91,6 +128,65 @@ export function PortalPage() {
         )}
 
         <section className="aio-portal-panel">
+          <h2 className="aio-portal-panel__title">
+            Notifications
+            {unreadNotifs > 0 && <span className="aio-badge aio-badge--alert">{unreadNotifs}</span>}
+          </h2>
+          <Link to={aioPaths.portalNotifications} className="aio-portal-panel__link">Open Notification Center →</Link>
+        </section>
+
+        <section className="aio-portal-panel">
+          <h2 className="aio-portal-panel__title">Upcoming</h2>
+          {upcomingDeadlines.length === 0 ? (
+            <p className="aio-empty-state__text">No upcoming deadlines.</p>
+          ) : (
+            upcomingDeadlines.slice(0, 4).map((d) => (
+              <div key={d.id} className="aio-portal-list__item">
+                <span>{d.title}<br /><small>{formatDaysRemaining(d.dueDate)}</small></span>
+                <Link to={aioPaths.portalCalendar} className="aio-badge aio-badge--progress">Calendar</Link>
+              </div>
+            ))
+          )}
+        </section>
+
+        <section className="aio-portal-panel">
+          <h2 className="aio-portal-panel__title">Renewals</h2>
+          {activeRenewals.length === 0 ? (
+            <p className="aio-empty-state__text">No active renewals.</p>
+          ) : (
+            activeRenewals.map((r) => (
+              <div key={r.id} className="aio-portal-list__item">
+                <span>{r.title}<br /><small>{formatDaysRemaining(r.expirationDate)}</small></span>
+                <Link to={aioPaths.portalRenewals} className="aio-btn aio-btn--sm aio-btn--gold">Review</Link>
+              </div>
+            ))
+          )}
+        </section>
+
+        <section className="aio-portal-panel">
+          <h2 className="aio-portal-panel__title">Documents</h2>
+          {portalDocs.length === 0 && underReview.length === 0 ? (
+            <p className="aio-empty-state__text">Vault is up to date.</p>
+          ) : (
+            <>
+              {portalDocs.map((doc) => (
+                <div key={doc.id} className="aio-portal-list__item">
+                  <span>{doc.title}</span>
+                  <span className="aio-badge aio-badge--needed">Needed</span>
+                </div>
+              ))}
+              {underReview.map((doc) => (
+                <div key={doc.id} className="aio-portal-list__item">
+                  <span>{doc.title}</span>
+                  <span className="aio-badge aio-badge--progress">Under review</span>
+                </div>
+              ))}
+            </>
+          )}
+          <Link to={aioPaths.portalVault} className="aio-portal-panel__link">Open Vault →</Link>
+        </section>
+
+        <section className="aio-portal-panel">
           <h2 className="aio-portal-panel__title">Active Requests</h2>
           {requests.length === 0 ? (
             <div className="aio-empty-state">
@@ -98,7 +194,7 @@ export function PortalPage() {
               <Link to={aioPaths.servicePlan}>Submit a service request →</Link>
             </div>
           ) : (
-            requests.filter((r) => r.status !== 'completed').map((req) => (
+            requests.filter((r) => r.status !== 'completed').slice(0, 3).map((req) => (
               <Link key={req.id} to={aioPaths.portalRequest(req.id)} className="aio-portal-request-card">
                 <div>
                   <strong>{req.services.map((s) => s.title).join(' + ')}</strong>
@@ -107,47 +203,8 @@ export function PortalPage() {
                 </div>
                 <div>
                   <span className="aio-badge aio-badge--progress">{req.statusLabel}</span>
-                  <br />
-                  <small>Next: {req.nextStep}</small>
                 </div>
               </Link>
-            ))
-          )}
-        </section>
-
-        <section className="aio-portal-panel">
-          <h2 className="aio-portal-panel__title">Documents Needed</h2>
-          {portalDocs.length === 0 ? (
-            <p className="aio-empty-state__text">No documents needed.</p>
-          ) : (
-            portalDocs.map((doc) => (
-              <div key={doc.id} className="aio-portal-list__item">
-                <span>{doc.name}</span>
-                <span className="aio-badge aio-badge--needed">Needed</span>
-              </div>
-            ))
-          )}
-        </section>
-
-        <section className="aio-portal-panel">
-          <h2 className="aio-portal-panel__title">Upcoming Deadlines</h2>
-          {portalDeadlines.length === 0 ? (
-            mockExpiringSoon.length === 0 ? (
-              <p className="aio-empty-state__text">No upcoming deadlines.</p>
-            ) : (
-              mockExpiringSoon.map((item) => (
-                <div key={item.id} className="aio-portal-list__item">
-                  <span>{item.label}<br /><small>{item.due}</small></span>
-                  <AIOStatusBadge status={item.status === 'Action Required' ? 'needed' : 'in-progress'} />
-                </div>
-              ))
-            )
-          ) : (
-            portalDeadlines.map((d) => (
-              <div key={d.id} className="aio-portal-list__item">
-                <span>{d.label}<br /><small>{d.dueDate}</small></span>
-                <span className="aio-badge aio-badge--progress">{d.severity.replace('_', ' ')}</span>
-              </div>
             ))
           )}
         </section>

@@ -30,6 +30,12 @@ import { RoadReadyOnboardingPage } from '../pages/portal/RoadReadyOnboardingPage
 import { RoadReadyPage } from '../pages/portal/RoadReadyPage';
 import { FleetPage } from '../pages/portal/FleetPage';
 import { VehicleDetailPage } from '../pages/portal/VehicleDetailPage';
+import { VaultPage } from '../pages/portal/VaultPage';
+import { VaultDocumentPage } from '../pages/portal/VaultDocumentPage';
+import { CalendarPage } from '../pages/portal/CalendarPage';
+import { RenewalsPage } from '../pages/portal/RenewalsPage';
+import { NotificationsPage } from '../pages/portal/NotificationsPage';
+import { NotificationSettingsPage } from '../pages/portal/NotificationSettingsPage';
 import { aioAppConfig } from '../config/appConfig';
 
 const OfficeRoutesLazy = lazy(() => import('../office/routes/OfficeRoutes'));
@@ -86,6 +92,12 @@ export default function AllInOneRoutes() {
             <Route path="road-ready" element={<RoadReadyPage />} />
             <Route path="fleet" element={<FleetPage />} />
             <Route path="fleet/vehicles/:vehicleId" element={<VehicleDetailPage />} />
+            <Route path="vault" element={<VaultPage />} />
+            <Route path="vault/:documentId" element={<VaultDocumentPage />} />
+            <Route path="calendar" element={<CalendarPage />} />
+            <Route path="renewals" element={<RenewalsPage />} />
+            <Route path="notifications" element={<NotificationsPage />} />
+            <Route path="settings/notifications" element={<NotificationSettingsPage />} />
             <Route path="factoring" element={<FactoringPortalPage />} />
             <Route path="requests/:requestId" element={<RequestDetailPage />} />
             <Route path="settings" element={<PortalSettingsPage />} />

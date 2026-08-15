@@ -1,6 +1,8 @@
 import { Link, useParams } from 'react-router-dom';
 import { useDemoStore } from '../../demo/useDemoStore';
-import { getOrganizationId, getRoadReadyItems } from '../../demo/roadReadyActions';
+import { getOrganizationId, getRenewals, getVaultDocuments } from '../../demo/vaultActions';
+import { getRoadReadyItems } from '../../demo/roadReadyActions';
+import { formatDaysRemaining } from '../../calendar/calendarService';
 import { RoadReadyStatusBadge } from '../../components/RoadReadyStatusBadge';
 import { maskVin, expirationLabel } from '../../road-ready/roadReadyScoring';
 import { aioPaths } from '../../utils/paths';
@@ -11,8 +13,11 @@ export function VehicleDetailPage() {
   const orgId = getOrganizationId(store);
   const unit = store.powerUnits.find((u) => u.id === vehicleId && u.organizationId === orgId);
   const items = getRoadReadyItems(orgId).filter((i) => i.scopeType === 'vehicle' && i.scopeId === vehicleId);
-  const docs = store.documents.filter((d) => d.relatedVehicle === vehicleId && d.clientId === orgId);
-  const deadlines = store.deadlines.filter((d) => d.clientId === orgId && !d.complete);
+  const docs = getVaultDocuments(orgId, store).filter(
+    (d) => d.relatedEntityId === vehicleId || d.relatedVehicle === vehicleId,
+  );
+  const deadlines = store.deadlines.filter((d) => d.clientId === orgId && d.vehicleId === vehicleId && !d.complete);
+  const renewals = getRenewals(orgId, store).filter((r) => r.vehicleId === vehicleId);
 
   if (!unit) {
     return (
@@ -80,12 +85,27 @@ export function VehicleDetailPage() {
             <p className="aio-empty-state__text">No documents linked to this unit.</p>
           ) : (
             docs.map((d) => (
-              <div key={d.id} className="aio-portal-list__item">
-                <span>{d.name}</span>
-                <span className="aio-badge aio-badge--progress">{d.status.replace('_', ' ')}</span>
+              <Link key={d.id} to={aioPaths.portalVaultDocument(d.id)} className="aio-portal-list__item">
+                <span>{d.title}</span>
+                <span className="aio-badge aio-badge--progress">{d.status.replace(/_/g, ' ')}</span>
+              </Link>
+            ))
+          )}
+        </section>
+
+        <section className="aio-portal-panel">
+          <h2>Renewals</h2>
+          {renewals.length === 0 ? (
+            <p className="aio-empty-state__text">No renewals for this unit.</p>
+          ) : (
+            renewals.map((r) => (
+              <div key={r.id} className="aio-portal-list__item">
+                <span>{r.title}</span>
+                <span>{formatDaysRemaining(r.expirationDate)}</span>
               </div>
             ))
           )}
+          <Link to={aioPaths.portalRenewals} className="aio-portal-panel__link">Renewal Center →</Link>
         </section>
 
         <section className="aio-portal-panel">

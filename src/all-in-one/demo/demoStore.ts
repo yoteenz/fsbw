@@ -13,11 +13,18 @@ const STORE_EVENT = 'aio-demo-store-change';
 export function loadDemoStore(): DemoStore {
   if (typeof window === 'undefined') return createDemoSeed();
 
-  const existing = readStorage<DemoStore | (Omit<DemoStore, 'version'> & { version: 3 }) | null>(DEMO_STORE_KEY, null);
-  if (existing?.version === 4) return existing as DemoStore;
+  const existing = readStorage<DemoStore | (Omit<DemoStore, 'version'> & { version: 3 | 4 }) | null>(DEMO_STORE_KEY, null);
+  if (existing?.version === 5) return existing as DemoStore;
+
+  if (existing?.version === 4) {
+    const upgraded = upgradeStoreV4ToV5(existing as DemoStoreV4);
+    saveDemoStore(upgraded);
+    return upgraded;
+  }
 
   if (existing?.version === 3) {
-    const upgraded = upgradeStoreV3ToV4(existing);
+    const v4 = upgradeStoreV3ToV4(existing as Omit<DemoStore, 'version'> & { version: 3 });
+    const upgraded = upgradeStoreV4ToV5(v4);
     saveDemoStore(upgraded);
     return upgraded;
   }
@@ -34,8 +41,30 @@ export function loadDemoStore(): DemoStore {
 }
 
 import { createRoadReadySeedData } from './roadReadySeed';
+import { createVaultSeedData, defaultNotificationPreferences } from './vaultSeed';
 
-function upgradeStoreV3ToV4(store: Omit<DemoStore, 'version'> & { version: 3 }): DemoStore {
+type DemoStoreV4 = Omit<DemoStore, 'version' | 'renewals' | 'notificationPreferences' | 'expirationEvaluatorLastRun'> & {
+  version: 4;
+  renewals?: DemoStore['renewals'];
+  notificationPreferences?: DemoStore['notificationPreferences'];
+  expirationEvaluatorLastRun?: string;
+};
+
+function upgradeStoreV4ToV5(store: DemoStoreV4): DemoStore {
+  const vault = createVaultSeedData();
+  return {
+    ...store,
+    version: 5,
+    documents: vault.documents,
+    renewals: vault.renewals,
+    deadlines: [...store.deadlines.filter((d) => !d.documentId), ...vault.deadlines],
+    notifications: vault.notifications,
+    notificationPreferences: defaultNotificationPreferences(),
+    expirationEvaluatorLastRun: new Date().toISOString(),
+  };
+}
+
+function upgradeStoreV3ToV4(store: Omit<DemoStore, 'version'> & { version: 3 }): DemoStoreV4 {
   const rr = createRoadReadySeedData();
   return {
     ...store,

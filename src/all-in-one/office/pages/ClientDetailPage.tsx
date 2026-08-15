@@ -16,7 +16,8 @@ export function ClientDetailPage() {
 
   const staff = store.staff.find((s) => s.id === client.assignedStaffId);
   const requests = store.requests.filter((r) => r.clientId === clientId);
-  const docs = store.documents.filter((d) => d.clientId === clientId);
+  const docs = store.documents.filter((d) => (d.organizationId ?? d.clientId) === clientId);
+  const renewals = store.renewals.filter((r) => r.organizationId === clientId);
   const notes = store.notes.filter((n) => n.clientId === clientId);
   const deadlines = store.deadlines.filter((d) => d.clientId === clientId);
   const messages = store.messages.filter((m) => m.clientId === clientId && m.visibility === 'customer');
@@ -58,9 +59,21 @@ export function ClientDetailPage() {
             ))}
           </section>
           <section className="aio-office-panel">
+            <h2>Documents Summary</h2>
+            <p>{docs.filter((d) => d.verificationStatus === 'verified').length} verified · {docs.filter((d) => ['uploaded', 'under_review'].includes(d.status)).length} in review · {docs.filter((d) => d.status === 'requested').length} requested</p>
+            <Link to={aioPaths.officeDocuments} className="aio-office-link">Document Center →</Link>
+          </section>
+          <section className="aio-office-panel">
+            <h2>Renewals</h2>
+            {renewals.filter((r) => r.status !== 'completed').slice(0, 4).map((r) => (
+              <div key={r.id} className="aio-office-list-row">{r.title} — {r.status.replace(/_/g, ' ')}</div>
+            ))}
+            <Link to={aioPaths.officeRenewals} className="aio-office-link">Renewal Center →</Link>
+          </section>
+          <section className="aio-office-panel">
             <h2>Outstanding Documents</h2>
             {docs.filter((d) => d.status === 'requested').map((d) => (
-              <div key={d.id} className="aio-office-list-row">{d.name}</div>
+              <div key={d.id} className="aio-office-list-row">{d.title ?? d.name}</div>
             ))}
           </section>
           <section className="aio-office-panel">
@@ -107,7 +120,8 @@ export function ClientDetailPage() {
         <section className="aio-office-panel">
           <p className="aio-empty-state__text">{tab} tab — prototype shell with seed data where applicable.</p>
           {tab === 'Requests' && requests.map((r) => <Link key={r.id} to={aioPaths.officeRequest(r.id)}>{r.requestNumber}</Link>)}
-          {tab === 'Documents' && docs.map((d) => <div key={d.id}>{d.name} — {d.status}</div>)}
+          {tab === 'Documents' && docs.map((d) => <div key={d.id}>{d.title ?? d.name} — {d.status} · {d.verificationStatus}</div>)}
+          {tab === 'Deadlines' && deadlines.filter((d) => !d.complete).map((d) => <div key={d.id}>{d.label} — {d.dueDate}</div>)}
         </section>
       )}
     </div>

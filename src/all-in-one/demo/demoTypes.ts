@@ -1,6 +1,10 @@
 import type { IntakeAnswers } from '../intake/intakeTypes';
 import type { RoadmapResult } from '../roadmap/roadmapTypes';
 import type { ServicePlanItem } from '../repositories/servicePlanRepository';
+import type { AioNotification, NotificationPreference } from '../notifications/notificationTypes';
+import type { RenewalRecord } from '../renewals/renewalTypes';
+import type { VaultDocument } from '../vault/vaultTypes';
+import type { DeadlineSource, DeadlineType, DeadlineVerification } from '../calendar/calendarTypes';
 import type {
   DriverPlaceholder,
   PowerUnit,
@@ -35,7 +39,14 @@ export type ActivityKind =
   | 'INTAKE_COMPLETED'
   | 'ROAD_READY_UPDATED'
   | 'ROAD_READY_VERIFIED'
-  | 'ROAD_READY_PROFILE_CHANGED';
+  | 'ROAD_READY_PROFILE_CHANGED'
+  | 'DOCUMENT_UPLOADED'
+  | 'DOCUMENT_VERIFIED'
+  | 'DOCUMENT_REJECTED'
+  | 'DOCUMENT_SUPERSEDED'
+  | 'RENEWAL_CREATED'
+  | 'RENEWAL_COMPLETED'
+  | 'NOTIFICATION_GENERATED';
 
 export interface StaffMember {
   id: string;
@@ -107,20 +118,27 @@ export interface ServiceRequest {
   isDemo?: boolean;
 }
 
-export interface DocumentMetadata {
+/** @deprecated use VaultDocument */
+export type DocumentMetadata = VaultDocument;
+
+export interface Deadline {
   id: string;
-  name: string;
-  category: string;
+  label: string;
   clientId: string;
+  organizationId?: string;
   requestId?: string;
-  loadId?: string;
-  status: 'requested' | 'received' | 'under_review' | 'accepted' | 'rejected' | 'expired' | 'expiring_soon';
-  visibility: Visibility;
-  requestedAt?: string;
-  receivedAt?: string;
-  expirationDate?: string;
-  verifiedBy?: string;
-  relatedVehicle?: string;
+  roadReadyItemId?: string;
+  documentId?: string;
+  renewalId?: string;
+  vehicleId?: string;
+  deadlineType?: DeadlineType;
+  source?: DeadlineSource | 'road_ready' | 'manual' | 'service_request';
+  deadlineVerification?: DeadlineVerification;
+  verified?: boolean;
+  dueDate: string;
+  severity: DeadlineSeverity;
+  category: string;
+  complete: boolean;
 }
 
 export interface InternalNote {
@@ -161,20 +179,6 @@ export interface Task {
   createdAt: string;
 }
 
-export interface Deadline {
-  id: string;
-  label: string;
-  clientId: string;
-  requestId?: string;
-  roadReadyItemId?: string;
-  source?: 'road_ready' | 'manual' | 'service_request';
-  verified?: boolean;
-  dueDate: string;
-  severity: DeadlineSeverity;
-  category: string;
-  complete: boolean;
-}
-
 export interface ActivityEvent {
   id: string;
   kind: ActivityKind;
@@ -187,13 +191,8 @@ export interface ActivityEvent {
   visibility: Visibility;
 }
 
-export interface Notification {
-  id: string;
-  title: string;
-  read: boolean;
-  createdAt: string;
-  link?: string;
-}
+/** @deprecated use AioNotification */
+export type Notification = AioNotification;
 
 export type LoadStatus =
   | 'available'
@@ -309,7 +308,7 @@ export interface Invoice {
 }
 
 export interface DemoStore {
-  version: 4;
+  version: 5;
   requestCounter: number;
   portalClientId?: string;
   intake: IntakeAnswers;
@@ -317,7 +316,8 @@ export interface DemoStore {
   servicePlan: ServicePlanItem[];
   clients: Client[];
   requests: ServiceRequest[];
-  documents: DocumentMetadata[];
+  documents: VaultDocument[];
+  renewals: RenewalRecord[];
   notes: InternalNote[];
   messages: Message[];
   tasks: Task[];
@@ -329,7 +329,8 @@ export interface DemoStore {
   brokerageQuotes: BrokerageQuote[];
   shipments: BrokerageShipment[];
   invoices: Invoice[];
-  notifications: Notification[];
+  notifications: AioNotification[];
+  notificationPreferences: NotificationPreference[];
   roadReadyProfiles: RoadReadyProfile[];
   roadReadyItems: RoadReadyItem[];
   roadReadyHistory: RoadReadyHistoryEvent[];
@@ -337,6 +338,7 @@ export interface DemoStore {
   powerUnits: PowerUnit[];
   trailers: Trailer[];
   drivers: DriverPlaceholder[];
+  expirationEvaluatorLastRun?: string;
 }
 
 export interface OfficeMetrics {

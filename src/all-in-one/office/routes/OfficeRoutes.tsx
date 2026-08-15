@@ -20,6 +20,7 @@ import {
 } from '../pages/DivisionOpsPages';
 import { OfficeRoadReadyQueuePage } from '../pages/OfficeRoadReadyQueuePage';
 import { ClientRoadReadyReviewPage } from '../pages/ClientRoadReadyReviewPage';
+import { OfficeRenewalsPage } from '../pages/OfficeRenewalsPage';
 
 export default function OfficeRoutes() {
   return (
@@ -35,6 +36,7 @@ export default function OfficeRoutes() {
         <Route path="tasks" element={<TasksPage />} />
         <Route path="deadlines" element={<DeadlinesPage />} />
         <Route path="documents" element={<DocumentsPage />} />
+        <Route path="renewals" element={<OfficeRenewalsPage />} />
         <Route path="messages" element={<MessagesPage />} />
         <Route path="permitting" element={<DivisionQueuePage division="permitting" title="Permitting & Compliance" />} />
         <Route path="business-formation" element={<DivisionQueuePage division="business-formation" title="Business Formation" />} />

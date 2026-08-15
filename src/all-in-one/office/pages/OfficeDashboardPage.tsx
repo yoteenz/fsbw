@@ -7,32 +7,30 @@ export function OfficeDashboardPage() {
   const store = useDemoStore();
   const metrics = getOfficeMetrics();
 
+  const docsToReview = store.documents.filter((d) => ['uploaded', 'under_review'].includes(d.status)).length;
+  const renewalsDue = store.renewals.filter((r) => r.status !== 'completed' && r.status !== 'declined').length;
+  const expiredItems = store.documents.filter((d) => d.isCurrent && d.expiresAt && new Date(d.expiresAt) < new Date()).length;
+  const clientAction = store.documents.filter((d) => d.status === 'requested' || d.status === 'rejected').length;
+  const todayDeadlines = store.deadlines.filter((d) => !d.complete && d.dueDate === new Date().toISOString().slice(0, 10)).length;
+
   const cards = [
+    { label: 'Documents to Review', value: docsToReview, href: aioPaths.officeDocuments },
+    { label: 'Renewals Due Soon', value: renewalsDue, href: aioPaths.officeRenewals },
+    { label: 'Expired Items', value: expiredItems, href: aioPaths.officeDocuments },
+    { label: 'Client Action Needed', value: clientAction, href: aioPaths.officeDocuments },
+    { label: "Today's Deadlines", value: todayDeadlines, href: aioPaths.officeDeadlines },
     { label: 'New Requests', value: metrics.newRequests, href: aioPaths.officeRequests },
     { label: 'In Progress', value: metrics.inProgress, href: aioPaths.officeRequests },
     { label: 'Waiting on Client', value: metrics.waitingOnClient, href: aioPaths.officeRequests },
-    { label: 'Deadlines This Week', value: metrics.deadlinesThisWeek, href: aioPaths.officeDeadlines },
-    { label: 'Documents Needed', value: metrics.documentsNeeded, href: aioPaths.officeDocuments },
-    { label: 'Active Dispatch Loads', value: metrics.activeDispatchLoads, href: aioPaths.officeDispatch },
-    { label: 'Factoring Reviews', value: metrics.factoringReviews, href: aioPaths.officeFactoring },
-    { label: 'Brokerage Quotes', value: metrics.brokerageQuotes, href: aioPaths.officeBrokerage },
   ];
 
   const myTasks = store.tasks.filter((t) => t.assignedStaffId === 'staff-2' && t.status !== 'complete').slice(0, 5);
-
-  const priorities = [
-    { text: '3 permit requests approaching deadlines', action: 'View', href: aioPaths.officePermitting },
-    { text: '2 clients still need insurance documents', action: 'Follow Up', href: aioPaths.officeDocuments },
-    { text: '4 service requests waiting for staff assignment', action: 'Assign', href: aioPaths.officeRequests },
-    { text: '1 factoring submission needs additional documents', action: 'View', href: aioPaths.officeFactoring },
-    { text: '2 brokerage quote requests awaiting review', action: 'Review', href: aioPaths.officeBrokerage },
-  ];
 
   return (
     <div className="aio-office-page">
       <header className="aio-office-page__header">
         <h1>TODAY AT ALL IN ONE</h1>
-        <p>Operational command center · mock data</p>
+        <p>Vault · Calendar · Renewals · Notifications operational layer</p>
       </header>
 
       <div className="aio-office-metrics">
@@ -46,15 +44,16 @@ export function OfficeDashboardPage() {
 
       <div className="aio-office-two-col">
         <section className="aio-office-panel">
-          <h2>Today&apos;s Priorities</h2>
-          <ul className="aio-office-priority-list">
-            {priorities.map((p) => (
-              <li key={p.text}>
-                <span>{p.text}</span>
-                <Link to={p.href}>{p.action}</Link>
-              </li>
-            ))}
-          </ul>
+          <h2>Documents Awaiting Review</h2>
+          {store.documents.filter((d) => ['uploaded', 'under_review'].includes(d.status)).slice(0, 5).map((d) => {
+            const client = store.clients.find((c) => c.id === d.organizationId);
+            return (
+              <div key={d.id} className="aio-office-list-row">
+                <span>{d.title} — {client?.companyName}</span>
+                <Link to={aioPaths.officeDocuments}>Review</Link>
+              </div>
+            );
+          })}
         </section>
 
         <section className="aio-office-panel">

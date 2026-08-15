@@ -1,7 +1,20 @@
 # All In One — Sprint Status
 
-**Sprint:** 05 — Road Ready Client Onboarding + Compliance Profile  
+**Sprint:** 06 — Document Vault + Renewals + Compliance Calendar + Notification Engine  
 **Last updated:** 2026-08-15
+
+---
+
+## SPRINT 06 COMPLETE (Vault · Calendar · Renewals · Notifications)
+
+- **All In One Vault** — categories, upload, verification, supersession, search (`/portal/vault`)
+- **Compliance Calendar** — derived events from documents, renewals, deadlines (`/portal/calendar`)
+- **Renewal Center** — eligibility, start renewal → service request, self-managed (`/portal/renewals`)
+- **Notification Engine** — event model, dedupe, expiration evaluator, in-app center + preferences
+- **Office upgrades** — Document Center queues + review, Deadline Center filters, Renewal Center + batch view
+- **Integrations** — portal dashboard, Road Ready links, fleet matrix, Client 360, office dashboard/reports
+- **Demo store v5** — relative-date seed clients A–E, migration from v4
+- **Documentation** — `DOCUMENT_VAULT_SYSTEM.md`, `RENEWAL_SYSTEM.md`, `NOTIFICATION_SYSTEM.md`, updated canon docs
 
 ---
 

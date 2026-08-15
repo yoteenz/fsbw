@@ -3401,3 +3401,154 @@
 
 .aio-rr-summary-placeholder { margin-top: 2rem; opacity: 0.6; }
 
+/* Sprint 06 — Vault, Calendar, Renewals, Notifications */
+.aio-vault, .aio-calendar, .aio-renewals, .aio-notifications {
+  padding: 1.25rem;
+  max-width: 960px;
+}
+
+.aio-vault__header, .aio-calendar__header, .aio-renewals__header, .aio-notifications__header {
+  margin-bottom: 1.25rem;
+}
+
+.aio-vault-toolbar, .aio-calendar-toolbar, .aio-renewals-toolbar, .aio-notifications-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  align-items: center;
+}
+
+.aio-vault-grid, .aio-renewals-grid {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: 1fr;
+  list-style: none;
+  padding: 0;
+}
+
+@media (min-width: 640px) {
+  .aio-vault-grid, .aio-renewals-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+.aio-vault-card, .aio-renewal-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: var(--aio-radius-md);
+  background: #fff;
+  color: inherit;
+  text-decoration: none;
+}
+
+.aio-vault-card__cat { font-size: 0.75rem; color: #6b7280; text-transform: uppercase; }
+.aio-vault-card__badges { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+.aio-vault-banner, .aio-vault-banner--warn {
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  border-radius: var(--aio-radius-sm);
+  background: #fffbeb;
+  border: 1px solid #fcd34d;
+}
+
+.aio-vault-caught-up, .aio-vault-caught-up-banner {
+  margin-top: 1rem;
+  padding: 0.75rem 1rem;
+  background: #f0fdf4;
+  border: 1px solid #86efac;
+  border-radius: var(--aio-radius-sm);
+  font-size: 0.875rem;
+}
+
+.aio-vault-preview__img { max-width: 100%; border: 1px solid #e5e7eb; border-radius: var(--aio-radius-sm); }
+.aio-vault-rejection { padding: 1rem; background: #fef2f2; border: 1px solid #fecaca; border-radius: var(--aio-radius-sm); }
+
+.aio-calendar-view-tabs { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+.aio-calendar-view-tabs button {
+  padding: 0.35rem 0.75rem;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+.aio-calendar-view-tabs__active { background: var(--aio-gold, #c9a227) !important; color: #111; border-color: transparent !important; }
+
+.aio-calendar-list { list-style: none; padding: 0; margin: 0; }
+.aio-calendar-event {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid #e5e7eb;
+}
+@media (min-width: 640px) {
+  .aio-calendar-event { flex-direction: row; }
+}
+.aio-calendar-event__date { min-width: 8rem; }
+.aio-calendar-event__actions { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.5rem; }
+
+.aio-renewal-card__actions { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.5rem; }
+
+.aio-notifications-list { list-style: none; padding: 0; }
+.aio-notification-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+@media (min-width: 640px) {
+  .aio-notification-item { flex-direction: row; justify-content: space-between; align-items: flex-start; }
+}
+.aio-notification-item--unread { background: #fefce8; }
+.aio-notification-item__actions { display: flex; gap: 0.35rem; flex-shrink: 0; }
+
+.aio-notification-prefs { list-style: none; padding: 0; }
+.aio-notification-pref-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.aio-portal-notif-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  background: #fef9e7;
+  border-bottom: 1px solid #e5e7eb;
+  font-size: 0.875rem;
+}
+
+.aio-office-doc-queues {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-bottom: 1rem;
+}
+.aio-office-doc-queues button {
+  padding: 0.35rem 0.75rem;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  border-radius: var(--aio-radius-sm);
+  cursor: pointer;
+}
+.aio-office-doc-queues__active { background: #111; color: #fff; }
+.aio-office-doc-review { margin-top: 1.5rem; }
+.aio-office-reject-form { display: flex; flex-wrap: wrap; gap: 0.35rem; align-items: center; }
+.aio-office-toolbar { margin-bottom: 1rem; }
+
+.aio-fleet-matrix--mobile { display: grid; gap: 0.75rem; list-style: none; padding: 0; }
+.aio-fleet-matrix--desktop { display: none; overflow-x: auto; }
+@media (min-width: 768px) {
+  .aio-fleet-matrix--mobile { display: none; }
+  .aio-fleet-matrix--desktop { display: block; }
+}
+
+.aio-badge--complete { background: #dcfce7; color: #166534; }
+
