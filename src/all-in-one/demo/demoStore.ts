@@ -13,18 +13,26 @@ const STORE_EVENT = 'aio-demo-store-change';
 export function loadDemoStore(): DemoStore {
   if (typeof window === 'undefined') return createDemoSeed();
 
-  const existing = readStorage<DemoStore | (Omit<DemoStore, 'version'> & { version: 3 | 4 | 5 | 6 }) | null>(DEMO_STORE_KEY, null);
-  if (existing?.version === 7) return existing as DemoStore;
+  const existing = readStorage<DemoStore | (Omit<DemoStore, 'version'> & { version: 3 | 4 | 5 | 6 | 7 }) | null>(DEMO_STORE_KEY, null);
+  if (existing?.version === 8) return existing as DemoStore;
+
+  if (existing?.version === 7) {
+    const upgraded = upgradeStoreV7ToV8(existing as unknown as DemoStoreV7);
+    saveDemoStore(upgraded);
+    return upgraded;
+  }
 
   if (existing?.version === 6) {
-    const upgraded = upgradeStoreV6ToV7(existing as DemoStoreV6);
+    const v7 = upgradeStoreV6ToV7(existing as DemoStoreV6);
+    const upgraded = upgradeStoreV7ToV8(v7);
     saveDemoStore(upgraded);
     return upgraded;
   }
 
   if (existing?.version === 5) {
     const v6 = upgradeStoreV5ToV6(existing as DemoStoreV5);
-    const upgraded = upgradeStoreV6ToV7(v6);
+    const v7 = upgradeStoreV6ToV7(v6);
+    const upgraded = upgradeStoreV7ToV8(v7);
     saveDemoStore(upgraded);
     return upgraded;
   }
@@ -32,7 +40,8 @@ export function loadDemoStore(): DemoStore {
   if (existing?.version === 4) {
     const v5 = upgradeStoreV4ToV5(existing as DemoStoreV4);
     const v6 = upgradeStoreV5ToV6(v5);
-    const upgraded = upgradeStoreV6ToV7(v6);
+    const v7 = upgradeStoreV6ToV7(v6);
+    const upgraded = upgradeStoreV7ToV8(v7);
     saveDemoStore(upgraded);
     return upgraded;
   }
@@ -41,7 +50,8 @@ export function loadDemoStore(): DemoStore {
     const v4 = upgradeStoreV3ToV4(existing as Omit<DemoStore, 'version'> & { version: 3 });
     const v5 = upgradeStoreV4ToV5(v4);
     const v6 = upgradeStoreV5ToV6(v5);
-    const upgraded = upgradeStoreV6ToV7(v6);
+    const v7 = upgradeStoreV6ToV7(v6);
+    const upgraded = upgradeStoreV7ToV8(v7);
     saveDemoStore(upgraded);
     return upgraded;
   }
@@ -61,6 +71,36 @@ import { createRoadReadySeedData } from './roadReadySeed';
 import { createVaultSeedData, defaultNotificationPreferences } from './vaultSeed';
 import { createBillingSeedData, defaultServicePricingSeed } from './billingSeed';
 import { createDispatchSeedData } from './dispatchSeed';
+import { createFactoringSeedData } from './factoringSeed';
+
+type DemoStoreV7 = Omit<
+  DemoStore,
+  | 'version'
+  | 'factoringProviders'
+  | 'factoringProfiles'
+  | 'debtorAccounts'
+  | 'freightInvoices'
+  | 'factoringIssues'
+  | 'factoringCounters'
+> & {
+  version: 7;
+  factoringSubmissions?: Array<Record<string, unknown>>;
+};
+
+function upgradeStoreV7ToV8(store: DemoStoreV7): DemoStore {
+  const factoring = createFactoringSeedData();
+  return {
+    ...store,
+    version: 8,
+    factoringProviders: factoring.providers,
+    factoringProfiles: factoring.profiles,
+    debtorAccounts: factoring.debtors,
+    freightInvoices: factoring.freightInvoices,
+    factoringSubmissions: factoring.submissions,
+    factoringIssues: factoring.issues,
+    factoringCounters: factoring.counters,
+  } as DemoStore;
+}
 
 type DemoStoreV4 = Omit<DemoStore, 'version' | 'renewals' | 'notificationPreferences' | 'expirationEvaluatorLastRun'> & {
   version: 4;
@@ -104,7 +144,7 @@ type DemoStoreV6 = Omit<
   dispatchCounters?: DemoStore['dispatchCounters'];
 };
 
-function upgradeStoreV6ToV7(store: DemoStoreV6): DemoStore {
+function upgradeStoreV6ToV7(store: DemoStoreV6): DemoStoreV7 {
   const dispatch = createDispatchSeedData();
   return {
     ...store,
@@ -116,7 +156,8 @@ function upgradeStoreV6ToV7(store: DemoStoreV6): DemoStore {
     dispatchBillingConfigs: dispatch.dispatchBillingConfigs,
     dispatchBillingEvents: [],
     dispatchCounters: dispatch.dispatchCounters,
-  } as DemoStore;
+    factoringSubmissions: [],
+  } as DemoStoreV7;
 }
 
 function upgradeStoreV5ToV6(store: DemoStoreV5): DemoStoreV6 {

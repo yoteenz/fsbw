@@ -1,6 +1,6 @@
 # All In One — Load Domain
 
-**Sprint:** 08 · **Last updated:** 2026-08-15
+**Sprint:** 09 · **Last updated:** 2026-08-15
 
 ---
 
@@ -32,7 +32,9 @@ Type: `Load` in `src/all-in-one/dispatch/dispatchTypes.ts`
 | `brokerContactId` / broker fields | Broker directory or inline manual entry |
 | Vault documents | `rateConfirmationDocumentId`, `bolDocumentId`, `podDocumentId` |
 
-Future: brokerage shipment id, factoring submission id — **references**, not copies.
+Future: brokerage shipment id — **reference**, not copy.
+
+Sprint 09: factoring links via `freightInvoices[].loadId` and `factoringSubmissions[].loadId` — not embedded on load row.
 
 ---
 
@@ -89,9 +91,31 @@ Stored in Vault; load holds document id references.
 
 ---
 
-## Factoring handoff
+## Payment & factoring (completed loads)
 
-`factoringHandoffStatus` on load — consumed by Sprint 09+ without duplicating load rows.
+### Handoff status (Sprint 08 → 09)
+
+`factoringHandoffStatus` on load — **readiness signal only**, no funding on load row.
+
+| Status | Meaning |
+|--------|---------|
+| `not_ready` | Incomplete or missing POD / rate confirmation rules |
+| `ready` | `isFactoringHandoffReady()` — eligible for freight invoice + submission |
+| `submitted_future` | Legacy quick-submit flag (prefer submission entity) |
+| `not_factored` | Carrier opted out |
+
+Updated automatically on load completion and document attach (`dispatchActions.ts` → `updateFactoringHandoffStatus`).
+
+### Sprint 09 factoring workflow (same load record)
+
+1. Load reaches `operationalStatus: complete` with handoff `ready`
+2. Carrier or specialist creates **`FreightInvoice`** (`HF-*`) from load — amount defaults to `confirmedGrossMinor`
+3. Specialist creates **`FactoringSubmission`** linking invoice + provider
+4. Manual submit to provider → status timeline + **reported funding** fields (external)
+
+UI: `LoadFactoringSection` on `/portal/dispatch/loads/:id` and `/office/dispatch/loads/:id`.
+
+**Load gross ≠ freight invoice ≠ factoring advance.** See **`FREIGHT_RECEIVABLES_DOMAIN.md`**.
 
 ---
 

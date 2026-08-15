@@ -1,6 +1,6 @@
 # All In One — Financial Boundaries
 
-**Sprint:** 08 · **Last updated:** 2026-08-15
+**Sprint:** 09 · **Last updated:** 2026-08-15
 
 ---
 
@@ -45,9 +45,21 @@ Government money collected for filing is **not** All In One revenue in reporting
 
 ---
 
-## Factoring boundary
+## Factoring boundary (Sprint 09)
 
-Factoring submissions in Office (`/office/factoring`) remain **mock review only**. Do not model advances, reserves, or debtor collections as ordinary invoices.
+See **`FREIGHT_RECEIVABLES_DOMAIN.md`** for the mandatory five-way distinction.
+
+| Concept | Sprint 07 billing? | Notes |
+|---------|-------------------|-------|
+| **Load gross** (`confirmedGrossMinor`) | No | Operational carrier freight pay |
+| **Freight invoice** (`HF-*`) | No | Carrier bills broker/debtor — `FreightInvoice` entity |
+| **Factoring submission** (`submittedAmountMinor`) | No | Workflow case to external provider |
+| **Provider reported funding** (`reportedAdvanceMinor`, etc.) | No | Staff-entered provider report — not AIO payment |
+| **All In One service invoice** | **Yes** | Sprint 07 quotes/invoices/payments only |
+
+Factoring in Office (`/office/factoring`) is **assistance + manual partner handoff**. Do not model advances, reserves, or debtor collections as ordinary service invoices or payment records.
+
+`directFactoringEnabled = false` — no direct funding, no bank account storage.
 
 ---
 
@@ -84,7 +96,7 @@ Settlement belongs to later sprints.
 
 All In One billing:
 
-- Separate demo store (v6)
+- Separate demo store (v8)
 - No Frontal Slayer Supabase
 - No Frontal Slayer Stripe
 - No shared customer accounts or order tables

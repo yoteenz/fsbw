@@ -390,37 +390,60 @@ export function sendLoadToFactoring(loadId: string): void {
   updateDemoStore((s) => {
     const load = s.loads.find((l) => l.id === loadId);
     if (!load || load.factoringHandoffStatus !== 'ready') return s;
-    const client = s.clients.find((c) => c.id === load.organizationId);
-    const sub = {
+    const profile = s.factoringProfiles.find((p) => p.organizationId === load.organizationId);
+    const providerId = profile?.providerId ?? 'fp-demo-partner';
+    let inv = s.freightInvoices.find((f) => f.loadId === loadId && f.status !== 'void');
+    if (!inv) {
+      inv = {
+        id: uid(),
+        organizationId: load.organizationId,
+        loadId,
+        invoiceNumber: `HF-${new Date().getFullYear()}-${String(++s.factoringCounters.freightInvoice).padStart(4, '0')}`,
+        debtorName: load.brokerName,
+        amountMinor: load.confirmedGrossMinor,
+        currency: load.currency,
+        invoiceDate: new Date().toISOString().slice(0, 10),
+        status: 'issued',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        version: 1,
+      };
+      s.freightInvoices.push(inv);
+    }
+    const dup = s.factoringSubmissions.find(
+      (sub) => sub.freightInvoiceId === inv!.id && !['declined', 'cancelled', 'closed'].includes(sub.status),
+    );
+    if (dup) return s;
+    s.factoringSubmissions.unshift({
       id: uid(),
-      clientId: load.organizationId,
+      organizationId: load.organizationId,
       loadId,
-      carrierName: client?.companyName ?? 'Demo Carrier',
-      debtorName: load.brokerName,
-      invoiceAmount: Math.round(load.confirmedGrossMinor / 100),
-      status: 'invoice_review' as const,
-      statusLabel: 'Invoice Review',
-      documentIds: [load.rateConfirmationDocumentId, load.bolDocumentId, load.podDocumentId].filter(Boolean) as string[],
-      eligibilityStatus: 'Eligible for Review',
-      partnerStatus: 'Not Submitted',
-      estimatedFee: Math.round((load.confirmedGrossMinor / 100) * 0.03),
-      estimatedNet: Math.round((load.confirmedGrossMinor / 100) * 0.97),
+      freightInvoiceId: inv.id,
+      providerId,
+      status: 'submitted',
+      submittedAmountMinor: inv.amountMinor,
+      currency: inv.currency,
+      assignedSpecialistStaffId: 'staff-6',
+      packageDocumentIds: [load.rateConfirmationDocumentId, load.bolDocumentId, load.podDocumentId].filter(Boolean) as string[],
+      submittedAt: new Date().toISOString(),
+      timeline: [{ id: uid(), submissionId: '', label: 'Sent to factoring review', status: 'submitted', visibility: 'customer', createdAt: new Date().toISOString() }],
       createdAt: new Date().toISOString(),
-    };
+      updatedAt: new Date().toISOString(),
+      version: 1,
+    });
     load.factoringHandoffStatus = 'submitted_future';
-    s.factoringSubmissions.unshift(sub);
-    logActivity(s, 'FACTORING_STATUS_CHANGED', 'Sent to factoring review', { clientId: load.organizationId, visibility: 'customer' });
+    logActivity(s, 'FACTORING_SUBMITTED', 'Sent to factoring review', { clientId: load.organizationId, visibility: 'customer' });
     return s;
   });
 }
 
-export function updateFactoringStatus(id: string, status: DemoStore['factoringSubmissions'][0]['status']): void {
+export function updateFactoringStatus(id: string, status: import('../factoring/factoringTypes').FactoringSubmissionStatus): void {
   updateDemoStore((s) => {
     const f = s.factoringSubmissions.find((x) => x.id === id);
     if (!f) return s;
     f.status = status;
-    f.statusLabel = status.replace(/_/g, ' ');
-    logActivity(s, 'FACTORING_STATUS_CHANGED', `Factoring → ${f.statusLabel}`, { clientId: f.clientId, visibility: 'customer' });
+    f.updatedAt = new Date().toISOString();
+    logActivity(s, 'FACTORING_STATUS_CHANGED', `Factoring → ${status.replace(/_/g, ' ')}`, { clientId: f.organizationId, visibility: 'customer' });
     return s;
   });
 }
@@ -445,7 +468,7 @@ export function getOfficeMetrics(): import('./demoTypes').OfficeMetrics {
     deadlinesThisWeek: s.deadlines.filter((d) => !d.complete && new Date(d.dueDate).getTime() <= weekEnd).length,
     documentsNeeded: s.documents.filter((d) => d.status === 'requested').length,
     activeDispatchLoads: s.loads.filter((l) => !['complete', 'cancelled'].includes(l.operationalStatus)).length,
-    factoringReviews: s.factoringSubmissions.filter((f) => !['funded', 'closed'].includes(f.status)).length,
+    factoringReviews: s.factoringSubmissions.filter((f) => !['funded', 'closed', 'declined', 'cancelled'].includes(f.status)).length,
     brokerageQuotes: s.brokerageQuotes.filter((q) => !['closed', 'booked'].includes(q.status)).length,
   };
 }

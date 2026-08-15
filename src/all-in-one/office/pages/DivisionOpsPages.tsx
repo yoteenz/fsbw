@@ -1,7 +1,6 @@
 import { Link, useParams } from 'react-router-dom';
 import { useDemoStore } from '../../demo/useDemoStore';
 import {
-  updateFactoringStatus,
   updateBrokerageQuoteStatus,
   getOfficeMetrics,
   getStaffWorkload,
@@ -32,20 +31,7 @@ export function DivisionQueuePage({ division, title }: Props) {
 }
 
 export function FactoringOpsPage() {
-  const store = useDemoStore();
-  return (
-    <div className="aio-office-page">
-      <header className="aio-office-page__header"><h1>Factoring Operations</h1><p>Mock review only — no funding</p></header>
-      {store.factoringSubmissions.map((f) => (
-        <div key={f.id} className="aio-office-panel">
-          <h3>{f.carrierName} · ${f.invoiceAmount.toLocaleString()}</h3>
-          <p>Status: {f.statusLabel} · Eligibility: {f.eligibilityStatus}</p>
-          <p className="aio-prototype-note">Sample fee: ${f.estimatedFee} · Sample net: ${f.estimatedNet}</p>
-          <button type="button" className="aio-btn aio-btn--sm aio-btn--gold" onClick={() => updateFactoringStatus(f.id, 'partner_review')}>Update Demo Status</button>
-        </div>
-      ))}
-    </div>
-  );
+  return null;
 }
 
 export function BrokerageOpsPage() {

@@ -4,6 +4,7 @@ import { createRoadReadySeedData } from './roadReadySeed';
 import { createVaultSeedData, defaultNotificationPreferences } from './vaultSeed';
 import { createBillingSeedData, defaultServicePricingSeed } from './billingSeed';
 import { createDispatchSeedData } from './dispatchSeed';
+import { createFactoringSeedData } from './factoringSeed';
 
 const STAFF: StaffMember[] = [
   { id: 'staff-1', name: 'Taylor Brooks', initials: 'TB', role: 'Administrator', status: 'available' },
@@ -24,6 +25,7 @@ export function createDemoSeed(): DemoStore {
   const billing = createBillingSeedData();
   const vault = createVaultSeedData();
   const dispatch = createDispatchSeedData();
+  const factoring = createFactoringSeedData();
 
   const requests = [
       mkRequest('req-1', 'AIO-DEMO-0001', 'client-a', 'Authority + BOC-3 Assistance', 'permitting', 'new_request', 'staff-2', daysAgo(3), ['vdoc-a1', 'vdoc-a2']),
@@ -37,7 +39,7 @@ export function createDemoSeed(): DemoStore {
     });
 
   return {
-    version: 7,
+    version: 8,
     requestCounter: 4,
     portalClientId: 'client-a',
     intake: defaultIntakeAnswers(),
@@ -125,6 +127,38 @@ export function createDemoSeed(): DemoStore {
         documentsNeededCount: 0,
         lastActivityAt: daysAgo(1),
       },
+      {
+        id: 'client-f',
+        companyName: 'Delta Haul LLC',
+        contactName: 'Chris Delta',
+        contactEmail: 'chris.demo@deltahaul.example',
+        clientType: 'owner_operator',
+        primaryState: 'TN',
+        accountStatus: 'active',
+        assignedStaffId: 'staff-6',
+        roadmapProgress: 80,
+        customerSince: daysAgo(200).slice(0, 10),
+        services: ['Dispatch', 'Factoring Assistance'],
+        activeRequestCount: 0,
+        documentsNeededCount: 0,
+        lastActivityAt: daysAgo(5),
+      },
+      {
+        id: 'client-g',
+        companyName: 'RidgeLine Carriers',
+        contactName: 'Pat Ridge',
+        contactEmail: 'pat.demo@ridgeline.example',
+        clientType: 'carrier',
+        primaryState: 'GA',
+        accountStatus: 'active',
+        assignedStaffId: 'staff-6',
+        roadmapProgress: 90,
+        customerSince: daysAgo(300).slice(0, 10),
+        services: ['Factoring (Existing Provider)'],
+        activeRequestCount: 0,
+        documentsNeededCount: 0,
+        lastActivityAt: daysAgo(10),
+      },
     ],
     requests,
     documents: vault.documents,
@@ -191,24 +225,13 @@ export function createDemoSeed(): DemoStore {
     dispatchBillingConfigs: dispatch.dispatchBillingConfigs,
     dispatchBillingEvents: [],
     dispatchCounters: dispatch.dispatchCounters,
-    factoringSubmissions: [
-      {
-        id: 'fac-1',
-        clientId: 'client-d',
-        loadId: 'load-d-complete',
-        carrierName: 'BlueLine Transport',
-        debtorName: 'Demo Broker LLC',
-        invoiceAmount: 4200,
-        status: 'invoice_review',
-        statusLabel: 'Invoice Review',
-        documentIds: ['doc-5'],
-        eligibilityStatus: 'Under Review',
-        partnerStatus: 'Not Submitted',
-        estimatedFee: 126,
-        estimatedNet: 4074,
-        createdAt: daysAgo(1),
-      },
-    ],
+    factoringProviders: factoring.providers,
+    factoringProfiles: factoring.profiles,
+    debtorAccounts: factoring.debtors,
+    freightInvoices: factoring.freightInvoices,
+    factoringSubmissions: factoring.submissions,
+    factoringIssues: factoring.issues,
+    factoringCounters: factoring.counters,
     brokerageQuotes: [
       {
         id: 'quote-1',

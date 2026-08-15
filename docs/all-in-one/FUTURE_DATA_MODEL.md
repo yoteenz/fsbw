@@ -24,7 +24,13 @@
 | Notification | `aio_notifications` | In-app alerts |
 | Deadline | `aio_deadlines` | Compliance dates (verified flag) |
 | DispatchLoad | `aio_dispatch_loads` | Carrier loads |
-| FactoringCase | `aio_factoring_cases` | Workflow only — no funding |
+| FactoringProfile | `aio_factoring_profiles` | Enrollment + service mode |
+| FactoringProvider | `aio_factoring_providers` | Partner directory (internal) |
+| DebtorAccount | `aio_debtor_accounts` | Broker/debtor per carrier org |
+| FreightInvoice | `aio_freight_invoices` | Carrier invoice to debtor — **not** service billing |
+| FactoringSubmission | `aio_factoring_submissions` | Package workflow + reported funding fields |
+| FactoringIssue | `aio_factoring_issues` | Blockers and customer actions |
+| FactoringCase | `aio_factoring_cases` | **Deprecated name** — use FactoringSubmission |
 | BrokerageQuote/Shipment | `aio_brokerage_quotes`, `aio_brokerage_shipments` | Shipper freight |
 | Invoice | `aio_invoices` | Billing foundation |
 | Quote | `aio_quotes` + `aio_quote_versions` + `aio_quote_line_items` | Service estimates |
@@ -35,7 +41,7 @@
 | Credit / Refund | `aio_credits`, `aio_refunds` | Adjustments |
 | ServicePricing | `aio_service_pricing` | Catalog commercial config |
 
-Demo mode: `DemoStore` v6 fields mirror billing relationships in localStorage.
+Demo mode: `DemoStore` v8 fields mirror billing + factoring relationships in localStorage.
 
 ### Billing domain (Sprint 07)
 
@@ -60,6 +66,37 @@ Demo mode: `DemoStore` v6 fields mirror billing relationships in localStorage.
 | PowerUnit / Trailer / Driver | `aio_power_units`, `aio_trailers`, `aio_drivers` | Fleet profile |
 
 Demo mode: `DemoStore` v4 fields mirror these relationships in localStorage.
+
+---
+
+### Factoring domain (Sprint 09)
+
+| Entity | Table (planned) | Purpose |
+|--------|-----------------|---------|
+| FactoringProfile | `aio_factoring_profiles` | Enrollment, service mode, terms (self-reported) |
+| FactoringProvider | `aio_factoring_providers` | External partner metadata |
+| DebtorAccount | `aio_debtor_accounts` | Broker/debtor directory |
+| FreightInvoice | `aio_freight_invoices` | Carrier receivable document (`HF-*`) |
+| FactoringSubmission | `aio_factoring_submissions` | Review workflow + timeline |
+| FactoringSubmissionEvent | `aio_factoring_submission_events` | Timeline rows (or JSONB on submission) |
+| FactoringIssue | `aio_factoring_issues` | Operational blockers |
+
+Demo store keys: `factoringProfiles`, `factoringProviders`, `debtorAccounts`, `freightInvoices`, `factoringSubmissions`, `factoringIssues`, `factoringCounters`.
+
+Relationships:
+
+```
+Organization 1—1 FactoringProfile (active)
+Organization 1—* FreightInvoice
+Load 1—* FreightInvoice (one non-void typical)
+FreightInvoice 1—* FactoringSubmission (one active)
+FactoringSubmission *—1 FactoringProvider
+Load 1—* FactoringSubmission (via freight invoice)
+FactoringSubmission 1—* FactoringIssue
+DebtorAccount *—* Load (via broker reference)
+```
+
+No funding ledger table in Sprint 09 — `reportedAdvanceMinor` on submission only.
 
 ---
 
@@ -100,7 +137,8 @@ Client 1—* InternalNote (internal only)
 ServiceRequest *—* DocumentRequirement
 ServiceRequest 1—* Message
 ServiceRequest 1—* Task
-DispatchLoad 0—1 FactoringSubmission
+DispatchLoad 0—* FactoringSubmission (via FreightInvoice)
+FreightInvoice 0—* FactoringSubmission
 BrokerageQuote 0—1 Shipment
 StaffMember 1—* ServiceRequest (assigned)
 StaffMember 1—* Task (assigned)
@@ -116,7 +154,8 @@ StaffMember 1—* Task (assigned)
 | Message (customer-visible) | Yes | Yes |
 | DocumentRequirement (requested) | Yes | Yes |
 | Staff assignment | Display name only | Full |
-| Invoice draft | Sent/paid only | Full |
+| Factoring submission (own org) | Status + customer timeline | Full + reported funding entry |
+| Reported funding amounts | Summary when funded | Full + edit until locked |
 | Activity (internal) | Filtered | Full |
 
 Production must enforce visibility **server-side** — not UI-only hiding.
@@ -128,7 +167,7 @@ Production must enforce visibility **server-side** — not UI-only hiding.
 - **Public:** service descriptions, non-identifying status labels
 - **Customer confidential:** business name, contact, documents, messages
 - **Staff confidential:** internal notes, workload, draft invoices
-- **Financial sensitive:** factoring amounts, banking (not collected in prototype)
+- **Financial sensitive:** freight invoice amounts, reported factoring advances/reserves/fees, banking (**not collected** in Sprint 09)
 - **Regulatory:** authority/insurance filings (future integrations)
 
 ---

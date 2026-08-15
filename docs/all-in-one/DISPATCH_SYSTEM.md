@@ -1,6 +1,6 @@
 # All In One — Dispatch System
 
-**Sprint:** 08 · **Last updated:** 2026-08-15
+**Sprint:** 09 · **Last updated:** 2026-08-15
 
 ---
 
@@ -21,7 +21,7 @@ Lifecycle:
 | Road Ready | Compliance, permits, registrations |
 | **Dispatch** | Operational load assistance for enrolled carriers |
 | Brokerage | Shipper–carrier arrangement (future) |
-| Factoring | Receivables funding (future) |
+| Factoring | Receivables assistance — freight invoice + partner submission (Sprint 09) |
 | Billing (Sprint 07) | All In One **service fees** only |
 
 ---
@@ -97,13 +97,42 @@ Manual status updates only — no GPS/ELD implied.
 
 ---
 
-## Factoring handoff (foundation only)
+## Factoring handoff integration (Sprint 08 foundation · Sprint 09 workflow)
+
+### Handoff status on load
 
 `factoringHandoffStatus`: `not_ready`, `ready`, `submitted_future`, `not_factored`
 
-Sprint 08 does **not** fund, advance, or collect. Ready when load complete + required docs (POD, rate confirmation review).
+Set by `updateFactoringHandoffStatus()` when load completes or documents attach. Ready when:
 
----
+- `operationalStatus === 'complete'`
+- POD linked
+- Rate confirmation verified or `rateDetailsReviewed`
+
+Sprint 08 does **not** fund or advance. Sprint 09 adds freight invoices + submissions — still **no direct funding**.
+
+### Dispatch → factoring flow
+
+```
+Load Complete + handoff ready
+  → FreightInvoice (HF-*) created from load
+  → FactoringSubmission package (office specialist)
+  → Manual submit to external provider
+  → Provider-reported status/funding (staff entry)
+```
+
+### Surfaces
+
+| Surface | Integration |
+|---------|-------------|
+| Office load detail | `LoadFactoringSection` — readiness, create invoice, link to factoring review |
+| Portal load detail | Same component — carrier view of handoff + submission status |
+| Office factoring | `/office/factoring/*` — command center, submission review |
+| Portal factoring | `/portal/factoring/*` — enrollment, ready loads, history |
+
+Notifications: `FACTORING_HANDOFF_READY` (dispatch) plus factoring category events on submission changes.
+
+See **`FACTORING_SYSTEM.md`** and **`LOAD_DOMAIN.md`** (payment/factoring section).
 
 ## Dispatch billing (foundation)
 

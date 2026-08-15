@@ -1,7 +1,28 @@
 # All In One — Sprint Status
 
-**Sprint:** 08 — Dispatch Operations + Load Command Center  
+**Sprint:** 09 — Factoring Operations + Receivables Workflow  
 **Last updated:** 2026-08-15
+
+---
+
+## SPRINT 09 COMPLETE (Factoring · Freight Invoices · Partner Handoff)
+
+- **Factoring core module** — types, rules, calculations, config, provider adapter stub (`src/all-in-one/factoring/`)
+- **Service modes** — `factoring_assistance`, `partner_factoring`; `direct_factoring_future` disabled (`directFactoringEnabled = false`)
+- **Enrollment & profiles** — per-organization factoring profile, application flow, provider assignment
+- **Providers directory** — demo partner + carrier-existing provider records
+- **Freight invoices** — `HF-YYYY-####` numbering, load-linked, distinct from Sprint 07 service invoices
+- **Submissions lifecycle** — package review, status machine, timeline, duplicate protection
+- **Reported funding fields** — staff-entered provider reports only; no bank storage, no direct funding
+- **Issues workflow** — amount mismatch, missing docs, provider additional info, customer action flags
+- **Dispatch handoff integration** — consumes Sprint 08 `factoringHandoffStatus`; `LoadFactoringSection` on load detail
+- **Customer portal** — factoring home, application, ready loads, submissions, history, freight invoice print
+- **Office Command Center** — pipeline metrics, submissions queue, client profiles, providers, review checklist
+- **Notifications** — factoring category events (submitted, approved, funded, action needed, etc.)
+- **Vault references** — rate con, BOL, POD linked on freight invoices and submission packages
+- **Demo store v8** — factoring seed (clients A–G scenarios), migration from v7
+- **Unit tests** — readiness rules, duplicate detection, status transitions, estimated calculations
+- **Documentation** — `FACTORING_SYSTEM.md`, `FREIGHT_RECEIVABLES_DOMAIN.md`, `FACTORING_SECURITY.md`, `DIRECT_FACTORING_FUTURE.md`, updated canon docs
 
 ---
 
@@ -79,7 +100,7 @@
 Dedicated All In One Supabase project credentials are **not yet configured**.
 
 - App runs in **Demo Mode** (default)
-- Dispatch + billing backend tables deferred — demo store v7 is source of truth for Sprint 08 review
+- Dispatch + billing + factoring backend tables deferred — demo store v8 is source of truth for Sprint 09 review
 - Payment provider mode: **demo** (no live charges)
 - No Frontal Slayer schema touched
 

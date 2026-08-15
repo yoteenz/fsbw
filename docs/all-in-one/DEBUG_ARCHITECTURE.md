@@ -37,7 +37,10 @@ This is **not** a Frontal Slayer product surface. It must not appear in storefro
 | `/all-in-one/office/*` | Internal Office · INTERNAL PREVIEW (demo) or staff auth (backend) |
 | `/all-in-one/office/road-ready` | Road Ready client queue |
 | `/all-in-one/office/clients/:id/road-ready` | Staff verification review |
-| `/all-in-one/portal/factoring` | Factoring portal (mock) |
+| `/all-in-one/portal/factoring` | Factoring portal (Sprint 09) |
+| `/all-in-one/office/factoring` | Factoring Command Center (Sprint 09) |
+| `/debug/all-in-one/portal/factoring` | Legacy alias → `/all-in-one/portal/factoring` |
+| `/debug/all-in-one/office/factoring` | Legacy alias → `/all-in-one/office/factoring` |
 | `/debug/all-in-one/*` | Legacy redirect → `/all-in-one/*` |
 
 Registered in `src/routes/StudioDebugRoutes.tsx` **before** the catch-all `App` route. Lazy-loaded via `src/all-in-one/routes/AllInOneRouteHost.tsx`.
@@ -49,7 +52,9 @@ Registered in `src/routes/StudioDebugRoutes.tsx` **before** the catch-all `App` 
 ```
 src/all-in-one/
   config/appConfig.ts      # Company, contact, routes, feature flags
-  demo/                    # Sprint 03–05 — demo store v4 + Road Ready seed/actions
+  demo/                    # Sprint 03–09 — demo store v8 + seed/actions
+  factoring/               # Sprint 09 — types, rules, calculations, config
+  dispatch/                # Sprint 08 — load domain, handoff rules
   road-ready/              # Sprint 05 — Road Ready config, rules, scoring, types
   data/                    # Sprint 04 — repositories (demo + supabase), supabase client
   auth/                    # Sprint 04 — AIOAuthProvider, authService, route guards
@@ -66,9 +71,11 @@ src/all-in-one/
   components/              # AIO* design system + intake/roadmap/request UI
   layouts/                 # Public + portal layouts (+ debug banner)
   sections/                # Homepage sections
-  pages/                   # Route pages (intake, marketplace, portal, requests)
-  data/                    # Mock data (mockFactoring.ts, mockServices.ts, …)
-  services/factoring/      # Partner abstraction types + placeholder provider
+  pages/                   # Route pages (intake, marketplace, portal, requests, factoring)
+  components/factoring/    # Sprint 09 — LoadFactoringSection
+  office/pages/FactoringPages.tsx
+  data/                    # Mock data (mockFactoring.ts legacy, mockServices.ts, …)
+  services/factoring/      # Partner abstraction + Sprint 09 adapter stub
   styles/aio.css           # Scoped under .aio-app (+ .aio-office)
   routes/                  # AllInOneRoutes + lazy host
   types/ utils/ hooks/
@@ -119,9 +126,9 @@ Backend migrations: `all-in-one/supabase/migrations/` — **not** Frontal Slayer
 
 ### Sprint 03 — centralized demo store
 
-Single key: `aio_debug_store` (version 3). Legacy Sprint 02 keys migrate on first load.
+Single key: `aio_debug_store`. Current version: **8** (Sprint 09 factoring). Legacy versions migrate on first load (v3→v4→v5→v6→v7→v8).
 
-Entities: clients, requests, tasks, documents, deadlines, notes, messages, activity, staff, loads, factoring, brokerage, invoices, notifications.
+Entities: clients, requests, tasks, documents, deadlines, notes, messages, activity, staff, loads, dispatch enrollments, **factoringProfiles**, **factoringProviders**, **debtorAccounts**, **freightInvoices**, **factoringSubmissions**, **factoringIssues**, **factoringCounters**, brokerage, invoices, notifications, billing, road ready, fleet.
 
 **Cross-portal sync:** Portal and Office read/write the same store. `portalClientId` links customer session to client record.
 
@@ -166,9 +173,25 @@ Entities: clients, requests, tasks, documents, deadlines, notes, messages, activ
 - Status workflow config: new_request → initial review → documents → submission → agency → complete
 - Timeline driven by `serviceRequestRepository` configuration
 
-### Factoring components (Sprint 01 follow-up)
+### Sprint 09 — demo store v8 (factoring)
 
-`AIOFactoringMetricCard`, `AIOFactoringInvoiceRow`, `AIOFactoringStatusBadge`, `AIOFactoringWorkflow`, `AIOFundingEstimate`, `AIODocumentChecklist`, `AIOFactoringHistory`
+| Upgrade | Adds |
+|---------|------|
+| v7 → v8 | `factoringProviders`, `factoringProfiles`, `debtorAccounts`, `freightInvoices`, `factoringSubmissions`, `factoringIssues`, `factoringCounters`; replaces legacy flat `factoring[]` array |
+
+Seed: `factoringSeed.ts` — clients A–G scenarios (interested, in review, action needed, funding pending, funded, existing factor).
+
+Actions: `factoringActions.ts` — enrollment, freight invoice, submission lifecycle, notifications.
+
+**Reset Demo Data** restores v8 seed via `demoSeed.ts`.
+
+Factoring UI banner: `DEMO · Fictional providers, amounts, and funding for review only`
+
+### Factoring components (Sprint 01 + Sprint 09)
+
+Sprint 01: `AIOFactoringMetricCard`, `AIOFactoringInvoiceRow`, `AIOFactoringStatusBadge`, `AIOFactoringWorkflow`, `AIOFundingEstimate`, `AIODocumentChecklist`, `AIOFactoringHistory`
+
+Sprint 09: `LoadFactoringSection`, `FactoringPortalPages`, `FactoringPages` (office), `FreightInvoicePrintPage`, module under `src/all-in-one/factoring/`
 
 ---
 

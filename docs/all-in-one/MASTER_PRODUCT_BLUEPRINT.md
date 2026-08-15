@@ -135,19 +135,96 @@ Factoring is a natural continuation of the carrier workflow — not a disconnect
 | Permitting & Compliance | Carriers — tags, IRP, IFTA, authority, renewals | Shell + homepage messaging |
 | Business Formation | New trucking businesses — LLC, corp, EIN guidance | Shell |
 | Trucking Insurance | Coverage inquiries — liability, cargo, physical damage | Shell (compliant language) |
-| Dispatching | Carriers — load coordination, dispatch support | Preview UI + load→factoring link |
-| **Factoring** | Carriers — invoice funding options, cash flow | Public page + portal prototype (mock) |
+| Dispatching | Carriers — load coordination, dispatch support | Sprint 08 ops + Sprint 09 factoring handoff |
+| **Factoring** | Carriers — receivables assistance, partner submission | Sprint 09 module + portal/office |
 | Brokerage | Shippers — freight quotes, tracking | Preview UI only |
 
 **Language rules:** No legal guarantees. No unverified licensing claims. Factoring = solutions / review / subject to approval — All In One does not directly purchase receivables or advance funds until a real partner structure exists.
 
 ---
 
-## FACTORING DIVISION
+## FACTORING DIVISION (Sprint 09)
 
 ### Purpose
 
-Help eligible carriers turn approved freight invoices into faster access to working capital through a future **embedded factoring partner model**.
+Help eligible carriers organize completed-load documentation, create **freight invoices**, and track **partner factoring submissions** — faster path to working capital through external providers.
+
+All In One does **not** purchase receivables or advance funds in Sprint 09 (`directFactoringEnabled = false`).
+
+### Target users
+
+- Owner-operators and small carriers waiting on broker payment terms
+- Growing fleets managing cash flow between loads
+- Carriers with existing factors (assistance + document organization)
+
+### Partner-first business model (implemented workflow, manual handoff)
+
+```
+Carrier → All In One Portal → Freight Invoice + Document Package
+  → Factoring Specialist Review → External Factoring Provider (manual)
+  → Provider-reported status/funding → Carrier visibility in portal
+```
+
+### Service modes
+
+| Mode | Sprint 09 |
+|------|-----------|
+| `factoring_assistance` | Active |
+| `partner_factoring` | Active (demo partner) |
+| `direct_factoring_future` | Disabled |
+
+### Relationships
+
+| System | Relationship |
+|--------|--------------|
+| Dispatch | Completed load → handoff `ready` → freight invoice |
+| Billing (Sprint 07) | **Separate** — service fees only; see `FREIGHT_RECEIVABLES_DOMAIN.md` |
+| Brokerage | Distinct — brokerage serves shippers; factoring serves carriers |
+| Vault | Rate con, BOL, POD referenced on load + freight invoice + submission package |
+
+### Implemented workflow (Sprint 09)
+
+1. Load complete + POD + rate rules → `factoringHandoffStatus: ready`
+2. Freight invoice created (`HF-*`) from load
+3. Specialist builds submission package → manual provider submit
+4. Status lifecycle through `funded` with **reported** advance/reserve (staff entry)
+5. Issues + notifications for carrier action
+
+### Status model
+
+Centralized in `factoringTypes.ts`: enrollment statuses, submission statuses (`draft` → `funded` → `closed`), issue types.
+
+### Partner abstraction
+
+- `factoringProviderAdapter.ts` — future API interface (Sprint 09 stub)
+- `services/factoring/factoringProvider.ts` — legacy Sprint 01 interface
+
+### Document requirements
+
+Rate Confirmation, POD, BOL (optional), freight invoice, broker/debtor — Vault references, not duplicates.
+
+### Roadmap distinction
+
+**Factoring is optional / Operate & Grow** — does NOT reduce Road Ready compliance %.
+
+### Compliance / security
+
+See **`FACTORING_SECURITY.md`**. No bank accounts, routing numbers, or ACH in Sprint 09.
+
+### Deferred (post Sprint 09)
+
+Live partner API, webhooks, underwriting engine, UCC, direct funding ledger — see **`DIRECT_FACTORING_FUTURE.md`**.
+
+### Canonical docs
+
+- `FACTORING_SYSTEM.md`
+- `FREIGHT_RECEIVABLES_DOMAIN.md`
+- `FACTORING_SECURITY.md`
+- `DIRECT_FACTORING_FUTURE.md`
+
+---
+
+## FACTORING DIVISION (Sprint 01 — historical)
 
 ### Target users
 
@@ -264,6 +341,7 @@ Carrier → Load → Invoice → FactoringSubmission
 | Phase | Scope |
 |-------|--------|
 | Sprint 01 ✅ | Website shell, factoring prototype, mock data, docs |
+| Sprint 09 ✅ | Factoring module, freight invoices, submissions, office command center, demo v8 |
 | Sprint 02+ | Service content, intake forms, lead capture |
 | Future | Factoring partner integration, real eligibility engine |
 | Future | Production auth, customer portal backend |

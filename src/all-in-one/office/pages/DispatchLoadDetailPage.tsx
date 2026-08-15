@@ -20,6 +20,7 @@ import {
 import { LOAD_STATUS_LABELS } from '../../dispatch/dispatchConfig';
 import { formatMoney } from '../../billing/money';
 import { aioPaths } from '../../utils/paths';
+import { LoadFactoringSection } from '../../components/factoring/LoadFactoringSection';
 import type { LoadOperationalStatus } from '../../dispatch/dispatchTypes';
 
 export function OfficeDispatchLoadDetailPage() {
@@ -104,10 +105,12 @@ export function OfficeDispatchLoadDetailPage() {
 
       {load.factoringHandoffStatus === 'ready' && (
         <section className="aio-office-panel aio-office-panel--highlight">
-          <h2>Ready for Payment Processing</h2>
-          <p>Structured handoff only — no funding in Sprint 08.</p>
+          <h2>Factoring Handoff</h2>
+          <p>Load documents complete — ready for factoring specialist review.</p>
         </section>
       )}
+
+      <LoadFactoringSection load={load} orgId={load.organizationId} office />
 
       {load.internalNotes && (
         <section className="aio-office-panel">

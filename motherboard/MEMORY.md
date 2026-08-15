@@ -51103,3 +51103,17 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Spatial Architecture Review:** SKIPPED — isolated AIO billing namespace; no Frontal Slayer or Studio OS surface changes.
 
+---
+
+## 2026-08-15 — All In One Sprint 08: Dispatch Operations + Load Command Center
+
+- **Context:** Founder issued Sprint 08 spec — first full operating division for dispatch: enrollment, onboarding, truck availability, canonical Load domain, load opportunities/offers, carrier approval, booking, active load workflow, documents (Vault), factoring handoff foundation, dispatch billing integration, Office Command Center, customer mobile-first dispatch experience. Not a load board/TMS/factoring/GPS.
+
+- **Topics covered:** Dispatch core (`src/all-in-one/dispatch/` — types, calculations + tests, rules, config); demo store v7 + `dispatchSeed.ts` + `dispatchActions.ts`; portal pages (`/portal/dispatch`, onboarding, loads, load detail, history); office pages (command center, loads list/new/detail, clients, brokers); routes + portal nav; `LoadDisplay` components; CSS `.aio-dispatch*`; demo scenarios carriers A–E; Road Ready fleet additions (units/drivers for client-b/d); docs (`DISPATCH_SYSTEM.md`, `LOAD_DOMAIN.md`, updated `FINANCIAL_BOUNDARIES.md`, `SPRINT_STATUS.md`).
+
+- **Decisions / outcomes:** Sprint 08 COMPLETE in demo mode. Single canonical `Load` entity for future brokerage/factoring. Load gross distinct from All In One dispatch fee. Carrier must accept/decline offers (no silent staff acceptance). Manual status updates only; no GPS. Factoring handoff structured, no funding. Build passes; dispatchCalculations 8/8 vitest; manual QA on portal dispatch home, load offer detail, office command center.
+
+- **Key routes:** `/all-in-one/portal/dispatch`, `/portal/dispatch/loads/:loadId`, `/office/dispatch`, `/office/dispatch/loads/new`, `/office/dispatch/clients/:clientId`.
+
+- **Spatial Architecture Review:** SKIPPED — isolated AIO dispatch namespace; no Frontal Slayer regression.
+

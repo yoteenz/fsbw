@@ -8,7 +8,6 @@ import { OfficeRequestDetailPage } from '../pages/OfficeRequestDetailPage';
 import { TasksPage, DeadlinesPage, DocumentsPage, MessagesPage } from '../pages/OperationsPages';
 import {
   DivisionQueuePage,
-  FactoringOpsPage,
   BrokerageOpsPage,
   ShipmentDetailPage,
   InvoicesPage,
@@ -16,6 +15,14 @@ import {
   TeamPage,
   ReportsPage,
 } from '../pages/DivisionOpsPages';
+import {
+  FactoringCommandCenterPage,
+  FactoringSubmissionsListPage,
+  OfficeFactoringSubmissionDetailPage,
+  FactoringClientsListPage,
+  FactoringClientDetailPage,
+  FactoringProvidersPage,
+} from '../pages/FactoringPages';
 import {
   DispatchCommandCenterPage,
   DispatchLoadsListPage,
@@ -61,7 +68,12 @@ export default function OfficeRoutes() {
         <Route path="dispatch/clients" element={<DispatchClientsListPage />} />
         <Route path="dispatch/clients/:clientId" element={<DispatchClientDetailPage />} />
         <Route path="dispatch/brokers" element={<DispatchBrokersPage />} />
-        <Route path="factoring" element={<FactoringOpsPage />} />
+        <Route path="factoring" element={<FactoringCommandCenterPage />} />
+        <Route path="factoring/submissions" element={<FactoringSubmissionsListPage />} />
+        <Route path="factoring/submissions/:submissionId" element={<OfficeFactoringSubmissionDetailPage />} />
+        <Route path="factoring/clients" element={<FactoringClientsListPage />} />
+        <Route path="factoring/clients/:clientId" element={<FactoringClientDetailPage />} />
+        <Route path="factoring/providers" element={<FactoringProvidersPage />} />
         <Route path="brokerage" element={<BrokerageOpsPage />} />
         <Route path="brokerage/shipments/:shipmentId" element={<ShipmentDetailPage />} />
         <Route path="invoices" element={<InvoicesPage />} />

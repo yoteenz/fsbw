@@ -12,7 +12,13 @@ import { AboutPage } from '../pages/AboutPage';
 import { ContactPage } from '../pages/ContactPage';
 import { RoadmapPage } from '../pages/RoadmapPage';
 import { FactoringPage } from '../pages/FactoringPage';
-import { FactoringPortalPage } from '../pages/FactoringPortalPage';
+import {
+  FactoringHomePage,
+  FactoringApplicationPage,
+  FactoringReadyPage,
+  FactoringSubmissionDetailPage,
+  FactoringHistoryPage,
+} from '../pages/portal/factoring/FactoringPortalPages';
 import { GetStartedPage } from '../pages/GetStartedPage';
 import { RoadmapResultsPage } from '../pages/RoadmapResultsPage';
 import { ServicePlanPage } from '../pages/ServicePlanPage';
@@ -46,7 +52,7 @@ import { DispatchHomePage } from '../pages/portal/dispatch/DispatchHomePage';
 import { DispatchOnboardingPage } from '../pages/portal/dispatch/DispatchOnboardingPage';
 import { DispatchLoadsPage } from '../pages/portal/dispatch/DispatchLoadsPage';
 import { DispatchLoadDetailPage } from '../pages/portal/dispatch/DispatchLoadDetailPage';
-import { DispatchHistoryPage } from '../pages/portal/dispatch/DispatchHistoryPage';
+import { FreightInvoicePrintPage } from '../pages/portal/factoring/FreightInvoicePrintPage';
 import { aioAppConfig } from '../config/appConfig';
 
 const OfficeRoutesLazy = lazy(() => import('../office/routes/OfficeRoutes'));
@@ -120,7 +126,12 @@ export default function AllInOneRoutes() {
             <Route path="dispatch/loads" element={<DispatchLoadsPage />} />
             <Route path="dispatch/loads/:loadId" element={<DispatchLoadDetailPage />} />
             <Route path="dispatch/history" element={<DispatchHistoryPage />} />
-            <Route path="factoring" element={<FactoringPortalPage />} />
+            <Route path="factoring" element={<FactoringHomePage />} />
+            <Route path="factoring/application" element={<FactoringApplicationPage />} />
+            <Route path="factoring/ready" element={<FactoringReadyPage />} />
+            <Route path="factoring/submissions/:submissionId" element={<FactoringSubmissionDetailPage />} />
+            <Route path="factoring/history" element={<FactoringHistoryPage />} />
+            <Route path="factoring/invoices/:invoiceId" element={<FreightInvoicePrintPage />} />
             <Route path="requests/:requestId" element={<RequestDetailPage />} />
             <Route path="settings" element={<PortalSettingsPage />} />
           </Route>

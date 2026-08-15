@@ -12,18 +12,22 @@ Copy entire tree:
 src/all-in-one/          → src/ (or keep src/all-in-one/ in new repo)
   intake/                → Sprint 02 Smart Intake (config-driven)
   roadmap/               → Sprint 02 mock recommendation engine
-  demo/                    → centralized store (Sprint 03)
+  demo/                    # centralized store (Sprint 03–09, v8)
+  factoring/               # Sprint 09 core module
+  dispatch/                # Sprint 08
+  billing/                 # Sprint 07
   data/                    → repository layer + supabase client (Sprint 04)
   auth/                    → authentication (Sprint 04)
   office/                  → internal Office app + workflows
 all-in-one/supabase/migrations/ → dedicated backend schema (Sprint 04)
   storage/demoStorage.ts → localStorage keys + reset
   data/services.ts       → Service catalog + bundles
-  data/mockFactoring.ts
-  services/factoring/
-  pages/GetStartedPage.tsx, RoadmapResultsPage.tsx, ServicePlanPage.tsx, …
-  pages/FactoringPage.tsx, FactoringPortalPage.tsx
-  components/AIOFactoring*.tsx, AIODebugBanner.tsx, IntakeQuestionField.tsx, …
+  data/mockFactoring.ts    # Sprint 01 legacy mock (superseded by factoring/ + demo seed for Sprint 09)
+  factoring/               # Sprint 09 — extract entire module
+  services/factoring/      # Sprint 01 partner abstraction
+  components/factoring/    # Sprint 09 UI
+  office/pages/FactoringPages.tsx
+  pages/portal/factoring/
 docs/all-in-one/         → docs/
 ```
 
@@ -78,6 +82,7 @@ Environment variables:
 |--------------|-------------------------|
 | `/debug/all-in-one` | `/` |
 | `/debug/all-in-one/portal/factoring` | `/portal/factoring` |
+| `/debug/all-in-one/office/factoring` | `/office/factoring` |
 | `/debug/all-in-one/services/factoring` | `/services/factoring` |
 | `/debug/all-in-one/services/...` | `/services/...` |
 
@@ -133,7 +138,24 @@ No dependency on Frontal Slayer `vercel.json` or `[sync-only]` commit flow.
 
 ---
 
-## Extraction checklist
+## Factoring module extractable (Sprint 09)
+
+Self-contained under `src/all-in-one/factoring/` with demo actions in `demo/factoringActions.ts` and `demo/factoringSeed.ts`.
+
+Dependencies to keep with module on extraction:
+
+| Dependency | Reason |
+|------------|--------|
+| `billing/money.ts` | Minor units + `formatMoney` |
+| `dispatch/dispatchTypes.ts` + `dispatchRules.ts` | Load + handoff readiness |
+| `notifications/notificationEngine.ts` | Factoring alerts |
+| `vault/` (reference ids only) | Document links on invoices |
+
+No Frontal Slayer or Sprint 07 invoice tables required for factoring workflow demo.
+
+Docs to copy: `FACTORING_SYSTEM.md`, `FREIGHT_RECEIVABLES_DOMAIN.md`, `FACTORING_SECURITY.md`, `DIRECT_FACTORING_FUTURE.md`.
+
+---
 
 - [ ] New GitHub repository created
 - [ ] `appConfig` routes updated to production paths

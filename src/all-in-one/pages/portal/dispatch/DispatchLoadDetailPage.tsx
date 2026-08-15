@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { useDemoStore } from '../../../demo/useDemoStore';
 import {
   acceptLoadOffer,
@@ -18,7 +18,7 @@ import { LOAD_DECLINE_REASON_LABELS } from '../../../dispatch/dispatchConfig';
 import { nextCustomerAction } from '../../../dispatch/dispatchRules';
 import type { LoadDeclineReason, LoadOperationalStatus } from '../../../dispatch/dispatchTypes';
 import { aioPaths } from '../../../utils/paths';
-import { useParams } from 'react-router-dom';
+import { LoadFactoringSection } from '../../../components/factoring/LoadFactoringSection';
 
 const STATUS_FLOW: Partial<Record<LoadOperationalStatus, LoadOperationalStatus>> = {
   booked: 'en_route_pickup',
@@ -180,6 +180,8 @@ export function DispatchLoadDetailPage() {
               ))}
             </ol>
           </section>
+
+          <LoadFactoringSection load={load} orgId={orgId} />
         </>
       )}
 

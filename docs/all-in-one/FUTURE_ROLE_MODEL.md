@@ -23,7 +23,7 @@
 | Compliance Specialist | Renewals, deadlines, filings | Compliance queue + deadlines |
 | Insurance Specialist | Quote intake, partner coordination | Insurance division only |
 | Dispatcher | Loads, carrier coordination | Dispatch + related clients |
-| Factoring Specialist | Invoice review, partner handoff | Factoring cases only |
+| Factoring Specialist | Invoice package review, provider handoff, reported funding entry, issues | Factoring queue + assigned clients; read dispatch loads for handoff |
 | Brokerage Specialist | Quotes, shipments, shipper accounts | Brokerage division only |
 | Support | Messages, general assistance | Read-most, limited status updates |
 
@@ -54,3 +54,22 @@ Customers never access Office routes or internal notes.
 Sprint 03 Office has no login. Debug entry via banner link `/all-in-one/office`. All staff actions use mock staff ids (e.g. `staff-2`).
 
 Production will require session management, role claims, and row-level security per client.
+
+---
+
+## Factoring specialist role (Sprint 09)
+
+Demo staff id **`staff-6`** owns factoring seed submissions.
+
+| Capability | Factoring Specialist | Dispatcher | Support |
+|------------|---------------------|------------|---------|
+| View factoring command center | ✓ | R (handoff only) | R |
+| Create/edit submissions | ✓ | — | — |
+| Submit to provider (manual) | ✓ | — | — |
+| Record reported funding | ✓ | — | — |
+| Create/resolve issues | ✓ | — | — |
+| Edit enrollment profile | ✓ | — | — |
+| Manage provider directory | ✓ (read); Admin write | — | — |
+| View freight invoices | ✓ | R on assigned loads | R |
+
+Customers: view own profile, submissions, issues requiring action; create freight invoice from ready load; cannot change submission status or reported funding.

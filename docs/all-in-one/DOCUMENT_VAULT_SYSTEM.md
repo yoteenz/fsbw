@@ -1,6 +1,6 @@
 # All In One — Document Vault System
 
-**Sprint:** 06 · **Last updated:** 2026-08-15
+**Sprint:** 09 · **Last updated:** 2026-08-15
 
 ---
 
@@ -106,7 +106,25 @@ Renewals started from Renewal Center create service requests via existing `submi
 
 ---
 
-## Authorization
+## Factoring document references (Sprint 09)
+
+Factoring does **not** duplicate files. Loads and freight invoices hold **Vault document id references**:
+
+| Document | Load field | Freight invoice field |
+|----------|------------|----------------------|
+| Rate Confirmation | `rateConfirmationDocumentId` | `rateConfirmationDocumentId` |
+| BOL | `bolDocumentId` | `bolDocumentId` |
+| POD | `podDocumentId` | `podDocumentId` |
+
+Category **`dispatch`** for load movement docs; category **`factoring`** available for factoring-specific uploads (application, NOA, etc.).
+
+`FactoringSubmission.packageDocumentIds[]` snapshots ids at package creation for review checklist — resolves to Vault metadata in Office submission detail.
+
+Readiness rules (`factoringRules.ts`) require POD + rate confirmation (or reviewed rate details) before submission. Missing docs may create `FactoringIssue` types `missing_pod`, `missing_rate_confirmation`, `document_quality`.
+
+See **`FACTORING_SYSTEM.md`**.
+
+---
 
 | Role | Capabilities |
 |------|----------------|

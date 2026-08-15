@@ -65,6 +65,7 @@ Migrations: `all-in-one/supabase/migrations/` — apply **only** to AIO project.
 | ACCOUNT | Name, email, business name | Profiles, orgs |
 | BUSINESS CONFIDENTIAL | Requests, roadmap, messages | Encrypted at rest (Supabase default) |
 | FINANCIAL SENSITIVE | Banking, funding | **Not collected** |
+| FACTORING SENSITIVE | Freight invoice amounts, reported advances/reserves/fees | **Demo staff entry only** — see `FACTORING_SECURITY.md` |
 | HIGHLY SENSITIVE | SSN, CDL images, bank creds | **Not collected** |
 
 ### Road Ready (Sprint 05)
@@ -76,6 +77,18 @@ Migrations: `all-in-one/supabase/migrations/` — apply **only** to AIO project.
 | USDOT / MC numbers | Optional customer entry; **unverified** until staff confirmation |
 | Road Ready % | **Server-calculated** — never trusted from client submission |
 | Verification audit | Staff actions logged; internal notes not customer-visible |
+
+### Factoring (Sprint 09)
+
+| Data | Handling |
+|------|----------|
+| Bank account / routing | **Not stored** |
+| Reported funding amounts | Staff-entered; org-scoped read for customer |
+| Freight invoice amounts | Org-scoped; linked to load |
+| Provider API credentials | **Not stored** — future server vault |
+| `directFactoringEnabled` | **`false`** — no direct funding surface |
+
+Full boundary spec: **`FACTORING_SECURITY.md`**.
 
 ---
 

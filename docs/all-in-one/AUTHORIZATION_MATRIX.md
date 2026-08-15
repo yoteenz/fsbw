@@ -1,6 +1,6 @@
 # All In One — Authorization Matrix
 
-**Status:** Sprint 07 billing permissions added. Enforced via Supabase RLS when backend mode is active.
+**Status:** Sprint 09 factoring permissions added. Enforced via Supabase RLS when backend mode is active.
 
 ---
 
@@ -76,6 +76,33 @@
 Customers may view/accept quotes and pay invoices for their organization only. Customers cannot edit amounts, apply credits, or mark invoices paid.
 
 Internal pricing notes on quote versions are staff-only (`visibility: internal`).
+
+---
+
+## Factoring permissions (Sprint 09)
+
+| Permission | Super Admin | Administrator | Factoring Specialist | Dispatcher | Support | Customer (org owner/admin) |
+|------------|-------------|---------------|----------------------|------------|---------|----------------------------|
+| `factoring.read` | ✓ | ✓ | ✓ | R | R | ✓ (own org) |
+| `factoring.enrollment.manage` | ✓ | ✓ | ✓ | — | — | ✓ (application only) |
+| `factoring.profiles.manage` | ✓ | ✓ | ✓ | — | — | — |
+| `factoring.freight_invoices.create` | ✓ | ✓ | ✓ | — | — | ✓ (from ready load) |
+| `factoring.submissions.create` | ✓ | ✓ | ✓ | — | — | — |
+| `factoring.submissions.submit` | ✓ | ✓ | ✓ | — | — | — |
+| `factoring.submissions.status` | ✓ | ✓ | ✓ | — | — | — |
+| `factoring.funding.report` | ✓ | ✓ | ✓ | — | — | — |
+| `factoring.issues.manage` | ✓ | ✓ | ✓ | — | — | R (action-required only) |
+| `factoring.providers.manage` | ✓ | ✓ | R | — | — | — |
+| `factoring.providers.read` | ✓ | ✓ | ✓ | R | R | R (assigned provider name) |
+
+Rules:
+
+- All factoring queries scoped by `organizationId`
+- Reported funding fields (`reportedAdvanceMinor`, etc.) — staff write only
+- Submission status transitions after `funded` — financial fields locked
+- `direct_factoring_future` operations — **denied** while `directFactoringEnabled = false`
+
+See **`FACTORING_SECURITY.md`**.
 
 ---
 

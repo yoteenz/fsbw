@@ -1,6 +1,6 @@
 # All In One — Notification System
 
-**Sprint:** 06 · **Last updated:** 2026-08-15
+**Sprint:** 09 · **Last updated:** 2026-08-15
 
 ---
 
@@ -33,9 +33,32 @@ Unified **event-driven** in-app notification engine. Components do **not** emit 
 
 ## Event types (centralized)
 
-Includes: `DOCUMENT_*`, `DEADLINE_*`, `RENEWAL_*`, `QUOTE_*`, `INVOICE_*`, `PAYMENT_*`, `RECEIPT_*`, `ROAD_READY_ATTENTION_REQUIRED`, `SERVICE_REQUEST_STATUS_CHANGED`, `MESSAGE_RECEIVED`, etc. (see `notificationTypes.ts`).
+Includes: `DOCUMENT_*`, `DEADLINE_*`, `RENEWAL_*`, `QUOTE_*`, `INVOICE_*`, `PAYMENT_*`, `RECEIPT_*`, `ROAD_READY_ATTENTION_REQUIRED`, `SERVICE_REQUEST_STATUS_CHANGED`, `MESSAGE_RECEIVED`, dispatch load events, factoring events (see below), etc. (see `notificationTypes.ts`).
 
-Billing events use category **`billing`**.
+Billing events use category **`billing`**. Factoring events use category **`factoring`**.
+
+---
+
+## Factoring notification types (Sprint 09)
+
+| Event type | Typical trigger |
+|------------|-----------------|
+| `FACTORING_HANDOFF_READY` | Load complete + docs — handoff ready (dispatch integration) |
+| `FACTORING_ENROLLMENT_UPDATED` | Profile status change |
+| `FACTORING_DOCUMENT_NEEDED` | Missing package document |
+| `FACTORING_READY` | Package ready for specialist submit |
+| `FACTORING_SUBMITTED` | Submission sent to provider (manual) |
+| `FACTORING_ADDITIONAL_INFO_NEEDED` | Provider or staff requested carrier action |
+| `FACTORING_APPROVED` | Provider approved submission |
+| `FACTORING_DECLINED` | Provider declined |
+| `FACTORING_FUNDING_PENDING` | Approved, awaiting provider funding report |
+| `FACTORING_FUNDED` | Staff recorded provider-reported funding |
+| `FACTORING_ISSUE_CREATED` | New factoring issue |
+| `FACTORING_ISSUE_RESOLVED` | Issue closed |
+
+Demo implementation: `factoringActions.ts` calls `buildNotification()` with `category: 'factoring'` and portal deep links to submission detail.
+
+Preferences: factoring category toggle in notification preferences (in-app only Sprint 09).
 
 ---
 

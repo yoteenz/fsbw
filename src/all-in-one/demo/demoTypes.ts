@@ -15,6 +15,15 @@ import type {
   TruckDispatchProfile,
 } from '../dispatch/dispatchTypes';
 import type {
+  DebtorAccount,
+  FactoringCounters,
+  FactoringIssue,
+  FactoringProfile,
+  FactoringProvider,
+  FactoringSubmission,
+  FreightInvoice,
+} from '../factoring/factoringTypes';
+import type {
   BillingCounters,
   BillingInvoice,
   BillingStatus,
@@ -94,7 +103,21 @@ export type ActivityKind =
   | 'LOAD_DOCUMENT_UPLOADED'
   | 'LOAD_COMPLETED'
   | 'FACTORING_HANDOFF_READY'
-  | 'DISPATCH_BILLING_EVENT_CREATED';
+  | 'DISPATCH_BILLING_EVENT_CREATED'
+  | 'FACTORING_ENROLLMENT_CREATED'
+  | 'FACTORING_PROFILE_UPDATED'
+  | 'FREIGHT_INVOICE_CREATED'
+  | 'FREIGHT_INVOICE_UPDATED'
+  | 'FACTORING_SUBMISSION_CREATED'
+  | 'FACTORING_PACKAGE_COMPLETED'
+  | 'FACTORING_SUBMITTED'
+  | 'FACTORING_STATUS_CHANGED'
+  | 'FACTORING_APPROVED'
+  | 'FACTORING_DECLINED'
+  | 'FACTORING_FUNDING_REPORTED'
+  | 'FACTORING_ISSUE_CREATED'
+  | 'FACTORING_ISSUE_RESOLVED'
+  | 'FACTORING_PROVIDER_CHANGED';
 
 export interface StaffMember {
   id: string;
@@ -244,7 +267,10 @@ export interface ActivityEvent {
 /** @deprecated use AioNotification */
 export type Notification = AioNotification;
 
-export type FactoringStatus =
+export type { FactoringSubmission } from '../factoring/factoringTypes';
+
+/** @deprecated legacy mock status labels */
+export type LegacyFactoringStatus =
   | 'inquiry'
   | 'information_needed'
   | 'invoice_review'
@@ -254,24 +280,6 @@ export type FactoringStatus =
   | 'funding_processing'
   | 'funded'
   | 'closed';
-
-export interface FactoringSubmission {
-  id: string;
-  clientId: string;
-  loadId?: string;
-  requestId?: string;
-  carrierName: string;
-  debtorName: string;
-  invoiceAmount: number;
-  status: FactoringStatus;
-  statusLabel: string;
-  documentIds: string[];
-  eligibilityStatus: string;
-  partnerStatus: string;
-  estimatedFee: number;
-  estimatedNet: number;
-  createdAt: string;
-}
 
 export type BrokerageStatus =
   | 'quote_requested'
@@ -313,7 +321,7 @@ export interface BrokerageShipment extends BrokerageQuote {
 export interface Invoice extends BillingInvoice {}
 
 export interface DemoStore {
-  version: 7;
+  version: 8;
   requestCounter: number;
   portalClientId?: string;
   intake: IntakeAnswers;
@@ -336,7 +344,13 @@ export interface DemoStore {
   dispatchBillingConfigs: DispatchBillingConfig[];
   dispatchBillingEvents: DispatchBillingEvent[];
   dispatchCounters: DispatchCounters;
+  factoringProviders: FactoringProvider[];
+  factoringProfiles: FactoringProfile[];
+  debtorAccounts: DebtorAccount[];
+  freightInvoices: FreightInvoice[];
   factoringSubmissions: FactoringSubmission[];
+  factoringIssues: FactoringIssue[];
+  factoringCounters: FactoringCounters;
   brokerageQuotes: BrokerageQuote[];
   shipments: BrokerageShipment[];
   quotes: Quote[];
