@@ -27,7 +27,7 @@ export function mountLegacyApp(): void {
   bootstrapStudioOsBrowserStorage()
   registerGlobalChunkLoadRecovery()
 
-  if (isStartupStageEnabled('K')) {
+  if (isStartupStageEnabled('K') && !onStudioDebugRoute) {
     markStartupCheckpoint('K', 'post-load-render-guard')
     registerPostLoadRenderGuard()
   }

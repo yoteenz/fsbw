@@ -13,6 +13,21 @@ type CapturedError = {
 let lastCaptured: CapturedError | null = null;
 let overlayShown = false;
 
+function isAllInOnePath(pathname: string): boolean {
+  return (
+    pathname === '/all-in-one' ||
+    pathname.startsWith('/all-in-one/') ||
+    pathname === '/debug/all-in-one' ||
+    pathname.startsWith('/debug/all-in-one/')
+  );
+}
+
+function dismissOverlayIfPresent(): void {
+  if (typeof document === 'undefined') return;
+  document.querySelector('[data-post-load-render-guard]')?.remove();
+  overlayShown = false;
+}
+
 function captureError(source: string, err: unknown): void {
   const message = err instanceof Error ? err.message : String(err ?? source);
   const stack = err instanceof Error ? err.stack : undefined;
@@ -72,13 +87,32 @@ function rootLooksBlank(): boolean {
   if (document.querySelector('[data-platform-error]')) return false;
   if (document.querySelector('[data-root-app-error]')) return false;
   if (document.querySelector('[data-post-load-render-guard]')) return false;
+  if (document.querySelector('[data-route-loading]')) return false;
+  if (document.querySelector('.aio-loading')) return false;
+  if (document.querySelector('.aio-shell, .aio-page, .aio-hero')) return false;
   const text = root.innerText.trim();
   const html = root.innerHTML.trim();
+  if (/loading all in one/i.test(text)) return false;
   return html.length < 120 && text.length < 40;
 }
 
 async function audit(reason: string): Promise<void> {
   if (typeof window === 'undefined') return;
+
+  const pathname = window.location.pathname;
+
+  if (overlayShown && !rootLooksBlank()) {
+    dismissOverlayIfPresent();
+    return;
+  }
+
+  // Isolated lazy routes (All In One marketing shell) — cold mobile cache can exceed 4–8s.
+  if (isAllInOnePath(pathname) && (reason === '4s-post-load' || reason === '8s-post-load' || reason === '12s-post-load')) {
+    if (!rootLooksBlank()) return;
+    if (document.querySelector('.aio-loading, [data-route-loading="all-in-one"]')) return;
+    if (document.querySelector('[data-route-loading="app-shell"]')) return;
+    return;
+  }
 
   const loadingOverlay = document.querySelector('.loading-screen-root');
   const stuckLoadingAttr =
@@ -94,6 +128,9 @@ async function audit(reason: string): Promise<void> {
     // App shell chunk is large — allow bootstrap + lazy import to finish before forced recovery.
     if (reason === '4s-post-load' || reason === '8s-post-load') {
       if (source === 'App.lazy' || source.includes('application')) {
+        return;
+      }
+      if (document.querySelector('[data-route-loading="app-shell"]')) {
         return;
       }
       // Lobby/lounge intentionally shows a ~3s asset splash after route mount (can start after App boot).
