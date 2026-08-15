@@ -71,6 +71,18 @@ Production: dedicated auth, Supabase, server-side RBAC — see `FUTURE_ROLE_MODE
 - Shipper branch bypasses carrier compliance questions
 - No SSN, EIN, or sensitive identifiers collected
 
+### Road Ready architecture (Sprint 05 — core product)
+
+- **Persistent business-readiness profile** — not a signup wizard; continues after onboarding in monitoring mode
+- Module: `src/all-in-one/road-ready/` (config, types, rules, scoring, priority)
+- Customer routes: `/all-in-one/portal/onboarding`, `/portal/road-ready`, `/portal/fleet`
+- Office routes: `/all-in-one/office/road-ready`, `/office/clients/:id/road-ready`
+- Dual progress: **Setup Progress** vs **Verified Progress** (prevents false confidence)
+- Status + verificationStatus + source on every item; staff verification audited
+- Operate & Grow (dispatch, factoring, brokerage) excluded from compliance scoring
+- Shipper accounts use shipper dashboard — not carrier Road Ready %
+- Canon: `docs/all-in-one/ROAD_READY_SYSTEM.md`
+
 ### Roadmap recommendation architecture
 
 - Mock engine at `src/all-in-one/roadmap/` — **not** a regulatory rules engine

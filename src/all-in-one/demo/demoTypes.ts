@@ -1,6 +1,15 @@
 import type { IntakeAnswers } from '../intake/intakeTypes';
 import type { RoadmapResult } from '../roadmap/roadmapTypes';
 import type { ServicePlanItem } from '../repositories/servicePlanRepository';
+import type {
+  DriverPlaceholder,
+  PowerUnit,
+  RoadReadyHistoryEvent,
+  RoadReadyItem,
+  RoadReadyProfile,
+  RoadReadyVerificationEvent,
+  Trailer,
+} from '../road-ready/roadReadyTypes';
 
 export type Visibility = 'internal' | 'customer';
 
@@ -23,7 +32,10 @@ export type ActivityKind =
   | 'BROKERAGE_STATUS_CHANGED'
   | 'NOTE_ADDED'
   | 'ROADMAP_GENERATED'
-  | 'INTAKE_COMPLETED';
+  | 'INTAKE_COMPLETED'
+  | 'ROAD_READY_UPDATED'
+  | 'ROAD_READY_VERIFIED'
+  | 'ROAD_READY_PROFILE_CHANGED';
 
 export interface StaffMember {
   id: string;
@@ -154,6 +166,9 @@ export interface Deadline {
   label: string;
   clientId: string;
   requestId?: string;
+  roadReadyItemId?: string;
+  source?: 'road_ready' | 'manual' | 'service_request';
+  verified?: boolean;
   dueDate: string;
   severity: DeadlineSeverity;
   category: string;
@@ -294,7 +309,7 @@ export interface Invoice {
 }
 
 export interface DemoStore {
-  version: 3;
+  version: 4;
   requestCounter: number;
   portalClientId?: string;
   intake: IntakeAnswers;
@@ -315,6 +330,13 @@ export interface DemoStore {
   shipments: BrokerageShipment[];
   invoices: Invoice[];
   notifications: Notification[];
+  roadReadyProfiles: RoadReadyProfile[];
+  roadReadyItems: RoadReadyItem[];
+  roadReadyHistory: RoadReadyHistoryEvent[];
+  roadReadyVerifications: RoadReadyVerificationEvent[];
+  powerUnits: PowerUnit[];
+  trailers: Trailer[];
+  drivers: DriverPlaceholder[];
 }
 
 export interface OfficeMetrics {

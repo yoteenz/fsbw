@@ -26,6 +26,10 @@ import { ResetPasswordPage } from '../pages/auth/ResetPasswordPage';
 import { VerifyEmailPage } from '../pages/auth/VerifyEmailPage';
 import { OnboardingPage } from '../pages/auth/OnboardingPage';
 import { PortalSettingsPage } from '../pages/portal/PortalSettingsPage';
+import { RoadReadyOnboardingPage } from '../pages/portal/RoadReadyOnboardingPage';
+import { RoadReadyPage } from '../pages/portal/RoadReadyPage';
+import { FleetPage } from '../pages/portal/FleetPage';
+import { VehicleDetailPage } from '../pages/portal/VehicleDetailPage';
 import { aioAppConfig } from '../config/appConfig';
 
 const OfficeRoutesLazy = lazy(() => import('../office/routes/OfficeRoutes'));
@@ -78,6 +82,10 @@ export default function AllInOneRoutes() {
         <Route element={<CustomerRouteGuard />}>
           <Route path="portal" element={<AIOPortalLayout />}>
             <Route index element={<PortalPage />} />
+            <Route path="onboarding" element={<RoadReadyOnboardingPage />} />
+            <Route path="road-ready" element={<RoadReadyPage />} />
+            <Route path="fleet" element={<FleetPage />} />
+            <Route path="fleet/vehicles/:vehicleId" element={<VehicleDetailPage />} />
             <Route path="factoring" element={<FactoringPortalPage />} />
             <Route path="requests/:requestId" element={<RequestDetailPage />} />
             <Route path="settings" element={<PortalSettingsPage />} />

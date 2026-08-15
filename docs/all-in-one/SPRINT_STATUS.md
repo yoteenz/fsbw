@@ -1,68 +1,57 @@
 # All In One — Sprint Status
 
-**Sprint:** 04 — Production Data Foundation + Auth + Permissions  
+**Sprint:** 05 — Road Ready Client Onboarding + Compliance Profile  
 **Last updated:** 2026-08-15
+
+---
+
+## SPRINT 05 COMPLETE (Road Ready)
+
+- **Road Ready core module** — config, types, rules, scoring, priority (`src/all-in-one/road-ready/`)
+- **Demo store v4** — profiles, items, history, verifications, fleet (power units, trailers, drivers)
+- **Demo seed clients A–D** — onboarding incomplete, expiring insurance, fleet attention, monitoring complete
+- **Customer onboarding** — 10-step wizard with autosave, resume, skip (`/portal/onboarding`)
+- **Persistent Road Ready home** — dual progress ring, categories, attention center, next step, history (`/portal/road-ready`)
+- **Fleet profile** — list + vehicle detail with masked VIN (`/portal/fleet`)
+- **Portal dashboard** — Road Ready summary, attention items, operate & grow separation
+- **Office Road Ready queue** — filters, incomplete onboarding visibility (`/office/road-ready`)
+- **Staff verification review** — verify / request info / reject with audit trail (`/office/clients/:id/road-ready`)
+- **Service request linkage** — Get Help With This pre-populates requests
+- **Expiration foundation** — centralized thresholds, deadline sync hook
+- **Documentation** — `ROAD_READY_SYSTEM.md`, updated blueprint, auth matrix, security, data model
 
 ---
 
 ## ARCHITECTURE COMPLETE (Sprint 04)
 
 - **Data mode architecture** — `demo` | `backend` via `VITE_AIO_DATA_MODE`
-- **Isolated env config** — `VITE_AIO_SUPABASE_URL`, `VITE_AIO_SUPABASE_ANON_KEY` (never Frontal Slayer)
-- **Repository layer** — `src/all-in-one/data/repositories/` demo + supabase implementations
-- **Dedicated migrations** — `all-in-one/supabase/migrations/` (identity, business data, RLS)
-- **Auth foundation** — sign-up, login, logout, forgot/reset password, email verification UI
-- **Route protection** — portal + office guards (backend mode)
-- **Identity model** — users, organizations, memberships, internal staff roles
-- **Persistent domains (backend-ready)** — intake, roadmap, requests, tasks, documents, notes, messages, activity, dispatch, factoring, brokerage, invoices
-- **Demo mode retained** — seed data, reset, internal demo entry
-- **Documentation** — `BACKEND_SETUP.md`, `AUTHORIZATION_MATRIX.md`, `SECURITY_FOUNDATION.md`
+- **Isolated env config** — dedicated Supabase (never Frontal Slayer)
+- **Repository layer**, migrations, auth, route guards
+- See Sprint 04 entries in git history
 
 ---
 
 ## BACKEND ACTIVATION PENDING
 
-Dedicated All In One Supabase project credentials are **not yet configured** in the environment.
-
-Until `VITE_AIO_SUPABASE_*` is set:
+Dedicated All In One Supabase project credentials are **not yet configured**.
 
 - App runs in **Demo Mode** (default)
-- Migrations are ready to apply — see `docs/all-in-one/BACKEND_SETUP.md`
-- No tables created in Frontal Slayer Supabase
+- Road Ready backend tables deferred — demo store is source of truth for Sprint 05 review
+- No Frontal Slayer schema touched
 
 ---
 
-## UI PROTOTYPE COMPLETE (Sprint 03)
+## Prior sprints
 
-- All In One Office, CRM, shared demo store, cross-portal sync
-
----
-
-## UI PROTOTYPE COMPLETE (Sprint 02)
-
-- Smart Intake, Roadmap, Service Marketplace, mock requests, portal
+- **Sprint 03** — All In One Office, CRM, shared demo store
+- **Sprint 02** — Smart Intake, Roadmap (extended by Road Ready — not replaced)
+- **Sprint 01** — Isolated architecture, public website, design system
 
 ---
 
-## UI PROTOTYPE COMPLETE (Sprint 01)
+## Production pending
 
-- Isolated architecture, public website, design system, factoring division
-
----
-
-## PRODUCTION BACKEND PENDING
-
-- Apply migrations to dedicated AIO Supabase project
-- End-to-end backend QA with real accounts
-- Document file storage (dedicated bucket)
-- Email/SMS messaging, payments, government/insurance/factoring integrations
-- Full Office UI wired to Supabase operational snapshot (demo store still used in demo mode)
-
----
-
-## Assumptions
-
-1. Default data mode is `demo` — no backend credentials required for review
-2. Frontal Slayer schema/auth/storage remain untouched
-3. Financial figures remain illustrative until payments sprint
-4. Internal notes enforced via separate table + RLS in backend mode
+- Apply Road Ready migrations to dedicated AIO Supabase when backend activated
+- Secure document upload bucket
+- External notifications from Road Ready event hooks
+- Government/insurance API verification (explicitly out of Sprint 05 scope)

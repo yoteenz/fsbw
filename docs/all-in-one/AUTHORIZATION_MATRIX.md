@@ -1,6 +1,6 @@
 # All In One — Authorization Matrix
 
-**Status:** Sprint 04 foundation. Enforced via Supabase RLS when backend mode is active.
+**Status:** Sprint 05 Road Ready permissions added. Enforced via Supabase RLS when backend mode is active.
 
 ---
 
@@ -29,6 +29,7 @@
 | Brokerage | ✓ | ✓ | — | — | — | — | — | ✓ | R |
 | Billing | ✓ | ✓ | R | R | R | R | R | R | — |
 | Reports | ✓ | ✓ | R | R | R | R | R | R | R |
+| **Road Ready verify** | ✓ | ✓ | A | A | A* | — | — | — | — |
 | Staff | ✓ | A | — | — | — | — | — | — | — |
 | Settings | ✓ | ✓ | — | — | — | — | — | — | — |
 | Internal notes | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -43,10 +44,15 @@
 | Own requests | ✓ | ✓ | R | ✓ (brokerage-focused) |
 | Own documents | ✓ | ✓ | R | ✓ |
 | Own roadmap | ✓ | ✓ | R | ✓ |
+| **Road Ready profile** | ✓ | ✓ | R | — (shipper) |
+| **Road Ready self-report** | ✓ | ✓ | ✓ | — |
+| **Road Ready staff verify** | — | — | — | — |
 | Portal messages | ✓ | ✓ | ✓ | ✓ |
 | Office | — | — | — | — |
 | Internal notes | — | — | — | — |
 | Other organizations | — | — | — | — |
+
+*Insurance Specialist may verify insurance-related Road Ready items only.
 
 ---
 

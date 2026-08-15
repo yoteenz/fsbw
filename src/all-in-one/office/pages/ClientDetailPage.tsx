@@ -30,7 +30,8 @@ export function ClientDetailPage() {
         <div className="aio-office-client-meta">
           <span className="aio-badge aio-badge--progress">{client.accountStatus}</span>
           <span>Assigned: {staff?.name ?? 'Unassigned'}</span>
-          <span>Roadmap: {client.roadmapProgress}%</span>
+          <span>Road Ready: {client.roadmapProgress}%</span>
+          <Link to={aioPaths.officeClientRoadReady(client.id)} className="aio-office-link">Road Ready Review →</Link>
           <span>Customer since {client.customerSince}</span>
         </div>
         {staff && (

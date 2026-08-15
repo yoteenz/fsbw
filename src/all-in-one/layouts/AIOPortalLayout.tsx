@@ -6,13 +6,13 @@ import { aioPaths } from '../utils/paths';
 
 const portalNav = [
   { label: 'Dashboard', href: aioPaths.portal },
-  { label: 'My Roadmap', href: aioPaths.roadmapResults },
+  { label: 'Road Ready', href: aioPaths.roadReady },
+  { label: 'Fleet', href: aioPaths.portalFleet },
   { label: 'Service Plan', href: aioPaths.servicePlan },
   { label: 'Permits & Registrations', href: aioPaths.permitting },
   { label: 'Insurance', href: aioPaths.insurance },
   { label: 'Dispatch', href: aioPaths.dispatching },
   { label: 'Factoring', href: aioPaths.portalFactoring },
-  { label: 'Documents', href: aioPaths.portal },
   { label: 'Compliance Calendar', href: aioPaths.roadmap },
   { label: 'Support', href: aioPaths.contact },
 ];

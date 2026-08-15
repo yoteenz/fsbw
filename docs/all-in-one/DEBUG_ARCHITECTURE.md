@@ -23,6 +23,10 @@ This is **not** a Frontal Slayer product surface. It must not appear in storefro
 | `/all-in-one/request/submit` | Mock service request review |
 | `/all-in-one/request/confirmation/:id` | Demo request confirmation |
 | `/all-in-one/portal` | Client dashboard |
+| `/all-in-one/portal/onboarding` | Road Ready onboarding (10-step) |
+| `/all-in-one/portal/road-ready` | Road Ready persistent home |
+| `/all-in-one/portal/fleet` | Fleet profile |
+| `/all-in-one/portal/fleet/vehicles/:id` | Vehicle detail |
 | `/all-in-one/portal/requests/:requestId` | Request detail + timeline |
 | `/all-in-one/login` | Auth — sign in |
 | `/all-in-one/sign-up` | Auth — create account |
@@ -31,6 +35,8 @@ This is **not** a Frontal Slayer product surface. It must not appear in storefro
 | `/all-in-one/onboarding` | First-login setup |
 | `/all-in-one/portal/settings` | Account settings |
 | `/all-in-one/office/*` | Internal Office · INTERNAL PREVIEW (demo) or staff auth (backend) |
+| `/all-in-one/office/road-ready` | Road Ready client queue |
+| `/all-in-one/office/clients/:id/road-ready` | Staff verification review |
 | `/all-in-one/portal/factoring` | Factoring portal (mock) |
 | `/debug/all-in-one/*` | Legacy redirect → `/all-in-one/*` |
 
@@ -43,7 +49,8 @@ Registered in `src/routes/StudioDebugRoutes.tsx` **before** the catch-all `App` 
 ```
 src/all-in-one/
   config/appConfig.ts      # Company, contact, routes, feature flags
-  demo/                    # Sprint 03 — centralized demo store + seed + actions
+  demo/                    # Sprint 03–05 — demo store v4 + Road Ready seed/actions
+  road-ready/              # Sprint 05 — Road Ready config, rules, scoring, types
   data/                    # Sprint 04 — repositories (demo + supabase), supabase client
   auth/                    # Sprint 04 — AIOAuthProvider, authService, route guards
   office/                  # Sprint 03 — internal Office app, workflows, priority engine

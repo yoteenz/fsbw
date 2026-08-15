@@ -25,6 +25,11 @@ export const aioPaths = {
   serviceSlug: (slug: string) => `${BASE}/services/${slug}`,
   portalRequest: (requestId: string) => `${BASE}/portal/requests/${requestId}`,
   requestConfirmation: (requestId: string) => `${BASE}/request/confirmation/${requestId}`,
+  portalOnboarding: `${BASE}/portal/onboarding`,
+  roadReady: `${BASE}/portal/road-ready`,
+  portalFleet: `${BASE}/portal/fleet`,
+  portalVehicle: (id: string) => `${BASE}/portal/fleet/vehicles/${id}`,
+  portalSettings: `${BASE}/portal/settings`,
   office: `${BASE}/office`,
   officeClients: `${BASE}/office/clients`,
   officeClient: (id: string) => `${BASE}/office/clients/${id}`,
@@ -46,13 +51,14 @@ export const aioPaths = {
   officePayments: `${BASE}/office/payments`,
   officeTeam: `${BASE}/office/team`,
   officeReports: `${BASE}/office/reports`,
+  officeRoadReady: `${BASE}/office/road-ready`,
+  officeClientRoadReady: (id: string) => `${BASE}/office/clients/${id}/road-ready`,
   login: `${BASE}/login`,
   signUp: `${BASE}/sign-up`,
   forgotPassword: `${BASE}/forgot-password`,
   resetPassword: `${BASE}/reset-password`,
   verifyEmail: `${BASE}/verify-email`,
   onboarding: `${BASE}/onboarding`,
-  portalSettings: `${BASE}/portal/settings`,
 } as const;
 
 export function aioServicePath(slug: string): string {

@@ -1,5 +1,6 @@
 import { defaultIntakeAnswers } from '../intake/intakeTypes';
 import type { DemoStore, StaffMember } from './demoTypes';
+import { createRoadReadySeedData } from './roadReadySeed';
 
 const STAFF: StaffMember[] = [
   { id: 'staff-1', name: 'Taylor Brooks', initials: 'TB', role: 'Administrator', status: 'available' },
@@ -18,7 +19,7 @@ export function createDemoSeed(): DemoStore {
   const daysAhead = (d: number) => new Date(now.getTime() + d * 86400000).toISOString().slice(0, 10);
 
   return {
-    version: 3,
+    version: 4,
     requestCounter: 4,
     portalClientId: 'client-a',
     intake: defaultIntakeAnswers(),
@@ -304,6 +305,18 @@ export function createDemoSeed(): DemoStore {
       { id: 'n-2', title: 'Document received — Heartland Freight', read: false, createdAt: daysAgo(1) },
       { id: 'n-3', title: 'Deadline approaching — Insurance expiration', read: true, createdAt: daysAgo(2) },
     ],
+    ...(() => {
+      const rr = createRoadReadySeedData();
+      return {
+        roadReadyProfiles: rr.profiles,
+        roadReadyItems: rr.items,
+        roadReadyHistory: rr.history,
+        roadReadyVerifications: rr.verifications,
+        powerUnits: rr.powerUnits,
+        trailers: rr.trailers,
+        drivers: rr.drivers,
+      };
+    })(),
   };
 }
 

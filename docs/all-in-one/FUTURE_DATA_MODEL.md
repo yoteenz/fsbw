@@ -28,6 +28,18 @@
 | BrokerageQuote/Shipment | `aio_brokerage_quotes`, `aio_brokerage_shipments` | Shipper freight |
 | Invoice | `aio_invoices` | Billing foundation |
 
+### Road Ready domain (Sprint 05)
+
+| Entity | Table (planned) | Purpose |
+|--------|-----------------|---------|
+| RoadReadyProfile | `aio_road_ready_profiles` | Org-scoped profile + onboarding state + rule_version |
+| RoadReadyItem | `aio_road_ready_items` | Requirement instances (org/vehicle scope) |
+| RoadReadyVerification | `aio_road_ready_verifications` | Staff verification audit |
+| RoadReadyHistory | `aio_road_ready_history` | Customer-visible event stream |
+| PowerUnit / Trailer / Driver | `aio_power_units`, `aio_trailers`, `aio_drivers` | Fleet profile |
+
+Demo mode: `DemoStore` v4 fields mirror these relationships in localStorage.
+
 ---
 
 ## Core entities (Sprint 03 prototype mapping)

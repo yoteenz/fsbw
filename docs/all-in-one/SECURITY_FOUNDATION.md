@@ -67,6 +67,16 @@ Migrations: `all-in-one/supabase/migrations/` — apply **only** to AIO project.
 | FINANCIAL SENSITIVE | Banking, funding | **Not collected** |
 | HIGHLY SENSITIVE | SSN, CDL images, bank creds | **Not collected** |
 
+### Road Ready (Sprint 05)
+
+| Data | Handling |
+|------|----------|
+| EIN / Tax ID | **Not stored** in Sprint 05 — yes/no/in-progress/not-sure only |
+| VIN | Business-sensitive; masked in UI summaries; avoid logging full VIN |
+| USDOT / MC numbers | Optional customer entry; **unverified** until staff confirmation |
+| Road Ready % | **Server-calculated** — never trusted from client submission |
+| Verification audit | Staff actions logged; internal notes not customer-visible |
+
 ---
 
 ## Storage boundary

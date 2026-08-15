@@ -51061,3 +51061,17 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Next step for founder:** Create dedicated AIO Supabase project → set env vars → apply migrations per `BACKEND_SETUP.md` → say "deploy now" when ready for Vercel.
 
+---
+
+## 2026-08-15 — All In One Sprint 05: Road Ready Client Onboarding + Compliance Profile
+
+- **Context:** Founder issued full Sprint 05 spec — transform Smart Intake/Roadmap concept into **Road Ready**, a persistent authenticated business-readiness profile with onboarding, verification, fleet, office review, and demo seed clients A–D. Extend existing systems; no parallel onboarding; isolated `/all-in-one/*` namespace.
+
+- **Topics covered:** Road Ready core module (`src/all-in-one/road-ready/`), demo store v4 (profiles, items, history, verifications, fleet), 10-step portal onboarding with autosave/resume/skip, persistent `/portal/road-ready` home (dual setup/verified progress, categories, attention center, next step, operate & grow separation), fleet pages, portal dashboard integration, office Road Ready queue + staff verification review, service request linkage (Get Help With This), expiration/deadline sync foundation, scoring fix (verified % cap), docs (`ROAD_READY_SYSTEM.md`, blueprint, auth, security, data model, sprint status).
+
+- **Decisions / outcomes:** Sprint 05 UI + demo persistence COMPLETE. Product name centralized as `Road Ready` (no ™). Shipper accounts excluded from carrier Road Ready scoring. EIN not stored — yes/no/in-progress/not-sure only. VIN masked in summaries. No legal compliance claims. Backend Road Ready tables deferred until AIO Supabase activated. Build passes. Manual QA: portal dashboard, onboarding step 4, fleet, office queue verified.
+
+- **Key routes:** `/all-in-one/portal/onboarding`, `/portal/road-ready`, `/portal/fleet`, `/portal/fleet/vehicles/:id`, `/all-in-one/office/road-ready`, `/office/clients/:id/road-ready`.
+
+- **Spatial Architecture Review:** SKIPPED — isolated All In One debug prototype; no Frontal Slayer or Studio OS surface changes.
+

@@ -13,8 +13,14 @@ const STORE_EVENT = 'aio-demo-store-change';
 export function loadDemoStore(): DemoStore {
   if (typeof window === 'undefined') return createDemoSeed();
 
-  const existing = readStorage<DemoStore | null>(DEMO_STORE_KEY, null);
-  if (existing?.version === 3) return existing;
+  const existing = readStorage<DemoStore | (Omit<DemoStore, 'version'> & { version: 3 }) | null>(DEMO_STORE_KEY, null);
+  if (existing?.version === 4) return existing as DemoStore;
+
+  if (existing?.version === 3) {
+    const upgraded = upgradeStoreV3ToV4(existing);
+    saveDemoStore(upgraded);
+    return upgraded;
+  }
 
   const migrated = migrateLegacyStore();
   if (migrated) {
@@ -25,6 +31,23 @@ export function loadDemoStore(): DemoStore {
   const seed = createDemoSeed();
   saveDemoStore(seed);
   return seed;
+}
+
+import { createRoadReadySeedData } from './roadReadySeed';
+
+function upgradeStoreV3ToV4(store: Omit<DemoStore, 'version'> & { version: 3 }): DemoStore {
+  const rr = createRoadReadySeedData();
+  return {
+    ...store,
+    version: 4,
+    roadReadyProfiles: rr.profiles,
+    roadReadyItems: rr.items,
+    roadReadyHistory: rr.history,
+    roadReadyVerifications: rr.verifications,
+    powerUnits: rr.powerUnits,
+    trailers: rr.trailers,
+    drivers: rr.drivers,
+  };
 }
 
 function migrateLegacyStore(): DemoStore | null {

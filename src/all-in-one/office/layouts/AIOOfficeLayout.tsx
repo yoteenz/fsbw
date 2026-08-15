@@ -14,6 +14,7 @@ const navGroups = [
     label: 'Clients',
     items: [
       { label: 'Clients', to: aioPaths.officeClients },
+      { label: 'Road Ready Queue', to: aioPaths.officeRoadReady },
     ],
   },
   {

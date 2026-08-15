@@ -18,6 +18,8 @@ import {
   TeamPage,
   ReportsPage,
 } from '../pages/DivisionOpsPages';
+import { OfficeRoadReadyQueuePage } from '../pages/OfficeRoadReadyQueuePage';
+import { ClientRoadReadyReviewPage } from '../pages/ClientRoadReadyReviewPage';
 
 export default function OfficeRoutes() {
   return (
@@ -25,7 +27,9 @@ export default function OfficeRoutes() {
       <Route element={<AIOOfficeLayout />}>
         <Route index element={<OfficeDashboardPage />} />
         <Route path="clients" element={<ClientsListPage />} />
+        <Route path="clients/:clientId/road-ready" element={<ClientRoadReadyReviewPage />} />
         <Route path="clients/:clientId" element={<ClientDetailPage />} />
+        <Route path="road-ready" element={<OfficeRoadReadyQueuePage />} />
         <Route path="requests" element={<RequestsListPage />} />
         <Route path="requests/:requestId" element={<OfficeRequestDetailPage />} />
         <Route path="tasks" element={<TasksPage />} />

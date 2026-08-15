@@ -1,20 +1,25 @@
 import { Link } from 'react-router-dom';
-import { useMemo } from 'react';
-import { mockDashboardGreeting, mockExpiringSoon, mockDocuments } from '../data/mockDashboard';
+import { mockDashboardGreeting, mockExpiringSoon } from '../data/mockDashboard';
 import { useDemoStore } from '../demo/useDemoStore';
 import { getPortalRequests } from '../demo/demoActions';
 import { AIOStatusBadge } from '../components/AIOStatusBadge';
+import { RoadReadyRing } from '../components/RoadReadyRing';
+import { RoadReadyAttentionCenter, RoadReadyNextStep } from '../components/RoadReadyAttentionCenter';
+import { useRoadReady } from '../road-ready/useRoadReady';
+import { ROAD_READY_PRODUCT_NAME } from '../road-ready/roadReadyConfig';
 import { aioPaths } from '../utils/paths';
 
 export function PortalPage() {
   const store = useDemoStore();
   const requests = getPortalRequests();
-  const roadmap = store.roadmap;
-
-  const attentionItems = useMemo(
-    () => roadmap?.items.filter((i) => i.status === 'recommended' || i.status === 'needs_review').slice(0, 4) ?? [],
-    [roadmap],
-  );
+  const {
+    isShipper,
+    summary,
+    attention,
+    nextCopy,
+    needsOnboarding,
+    onboardingProgress,
+  } = useRoadReady();
 
   const portalDocs = store.documents.filter(
     (d) => d.clientId === store.portalClientId && d.status === 'requested' && d.visibility === 'customer',
@@ -22,39 +27,68 @@ export function PortalPage() {
 
   const portalDeadlines = store.deadlines.filter((d) => d.clientId === store.portalClientId && !d.complete);
 
-  const factoring = store.factoringSubmissions.filter((f) => f.clientId === store.portalClientId);
+  const attentionCount = summary?.scores.needsAttentionCount ?? 0;
 
   return (
     <div className="aio-portal-dashboard">
       <header className="aio-portal-dashboard__header">
         <h1>{mockDashboardGreeting}</h1>
-        <p>Client command center · synced demo data</p>
+        <p>Client command center · {ROAD_READY_PRODUCT_NAME} enabled</p>
       </header>
 
-      <div className="aio-dashboard-grid">
-        <section className="aio-portal-panel">
-          <h2 className="aio-portal-panel__title">Roadmap</h2>
-          {roadmap ? (
-            <>
-              <p><strong>{roadmap.complianceProgress}%</strong> setup progress</p>
-              {attentionItems.length > 0 ? (
-                <ul className="aio-portal-attention">
-                  {attentionItems.map((item) => (
-                    <li key={item.id}>{item.title} — {item.status.replace('_', ' ')}</li>
-                  ))}
-                </ul>
-              ) : (
-                <p className="aio-empty-state__text">No immediate attention items.</p>
-              )}
-              <Link to={aioPaths.roadmapResults} className="aio-portal-panel__link">View Full Roadmap →</Link>
-            </>
-          ) : (
-            <div className="aio-empty-state">
-              <p className="aio-empty-state__text">Complete Smart Intake to generate your roadmap.</p>
-              <Link to={aioPaths.getStarted}>Start Smart Intake →</Link>
-            </div>
-          )}
+      {needsOnboarding && !isShipper && (
+        <section className="aio-portal-banner aio-portal-banner--rr">
+          <p>
+            <strong>{onboardingProgress > 0 ? 'Welcome back.' : `Let's get your business ${ROAD_READY_PRODUCT_NAME}.`}</strong>
+            {' '}
+            {onboardingProgress > 0
+              ? `You're ${onboardingProgress}% through your setup.`
+              : 'Tell us where your business stands today.'}
+          </p>
+          <Link to={aioPaths.portalOnboarding} className="aio-btn aio-btn--gold aio-btn--sm">
+            {onboardingProgress > 0 ? 'Continue Setup' : 'Start Road Ready'}
+          </Link>
         </section>
+      )}
+
+      <div className="aio-dashboard-grid">
+        {!isShipper && summary ? (
+          <section className="aio-portal-panel aio-portal-panel--road-ready">
+            <h2 className="aio-portal-panel__title">{ROAD_READY_PRODUCT_NAME}</h2>
+            <div className="aio-portal-rr-summary">
+              <RoadReadyRing
+                setupProgress={summary.scores.setupProgress}
+                verifiedProgress={summary.scores.verifiedProgress}
+                dual
+                size="sm"
+              />
+              <div>
+                <p><strong>{summary.scores.setupProgress}%</strong> setup · <strong>{summary.scores.verifiedProgress}%</strong> verified</p>
+                <p>{attentionCount} items need attention</p>
+                {nextCopy && <p className="aio-portal-rr-next"><em>Next:</em> {nextCopy.title}</p>}
+                <Link to={aioPaths.roadReady} className="aio-portal-panel__link">View {ROAD_READY_PRODUCT_NAME} →</Link>
+              </div>
+            </div>
+          </section>
+        ) : isShipper ? (
+          <section className="aio-portal-panel">
+            <h2 className="aio-portal-panel__title">Shipper Dashboard</h2>
+            <p className="aio-empty-state__text">Freight and brokerage tools for your shipper account.</p>
+            <Link to={aioPaths.brokerage}>Brokerage Services →</Link>
+          </section>
+        ) : null}
+
+        {!isShipper && attention.length > 0 && (
+          <section className="aio-portal-panel aio-portal-panel--wide">
+            <RoadReadyAttentionCenter items={attention} limit={3} />
+          </section>
+        )}
+
+        {nextCopy && !isShipper && (
+          <section className="aio-portal-panel">
+            <RoadReadyNextStep title={nextCopy.title} body={nextCopy.body} cta={nextCopy.cta} />
+          </section>
+        )}
 
         <section className="aio-portal-panel">
           <h2 className="aio-portal-panel__title">Active Requests</h2>
@@ -119,42 +153,17 @@ export function PortalPage() {
         </section>
 
         <section className="aio-portal-panel">
-          <h2 className="aio-portal-panel__title">Dispatch</h2>
-          {store.loads.filter((l) => l.clientId === store.portalClientId).length === 0 ? (
-            <>
-              <p className="aio-empty-state__text">No dispatch activity.</p>
-              <Link to={aioPaths.dispatching}>Explore Dispatch →</Link>
-            </>
-          ) : (
-            store.loads.filter((l) => l.clientId === store.portalClientId).map((l) => (
-              <div key={l.id} className="aio-portal-list__item">
-                <span>{l.loadNumber}: {l.origin} → {l.destination}</span>
-                <span>{l.status}</span>
-              </div>
-            ))
-          )}
+          <h2 className="aio-portal-panel__title">Operate &amp; Grow</h2>
+          <div className="aio-portal-operate-cards">
+            <Link to={aioPaths.dispatching} className="aio-portal-operate-card">Dispatch</Link>
+            <Link to={aioPaths.portalFactoring} className="aio-portal-operate-card">Factoring</Link>
+            <Link to={aioPaths.brokerage} className="aio-portal-operate-card">Brokerage</Link>
+          </div>
         </section>
 
         <section className="aio-portal-panel">
-          <h2 className="aio-portal-panel__title">Factoring</h2>
-          {factoring.length === 0 ? (
-            <>
-              <p className="aio-empty-state__text">No factoring activity.</p>
-              <Link to={aioPaths.portalFactoring}>View Factoring Portal →</Link>
-            </>
-          ) : (
-            factoring.map((f) => (
-              <div key={f.id} className="aio-portal-list__item">
-                <span>{f.statusLabel}</span>
-                <small>Sample net ${f.estimatedNet}</small>
-              </div>
-            ))
-          )}
-        </section>
-
-        <section className="aio-portal-panel aio-portal-panel--placeholder">
-          <h2 className="aio-portal-panel__title">Messages</h2>
-          <p className="aio-empty-state__text">View messages on each request detail page.</p>
+          <h2 className="aio-portal-panel__title">Fleet</h2>
+          <Link to={aioPaths.portalFleet} className="aio-portal-panel__link">View Fleet Profile →</Link>
         </section>
 
         <section className="aio-portal-panel">
@@ -167,19 +176,6 @@ export function PortalPage() {
           ))}
         </section>
       </div>
-
-      <div className="aio-portal-panel" style={{ marginTop: '1.5rem' }}>
-        <h2 className="aio-portal-panel__title">Documents</h2>
-        <div className="aio-doc-grid">
-          {mockDocuments.map((doc) => (
-            <div key={doc} className="aio-doc-tile">{doc}</div>
-          ))}
-        </div>
-      </div>
-
-      <p className="aio-prototype-note">
-        Portal syncs with All In One Office via shared demo store (localStorage). Internal staff notes are never shown here.
-      </p>
     </div>
   );
 }
