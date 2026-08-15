@@ -50980,8 +50980,11 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
   - **`isAllInOneDebugPath()`** covers both prefixes.
   - **`App.tsx`:** `UnmatchedRouteFallback` + catch-all `path="*"` prevents blank root on other unknown App paths.
 
-<<<<<<< HEAD
-- **Spatial Architecture Review:** SKIPPED — isolated debug marketing shell; not Studio OS / FS customer surface.
+- **Verified:** `http://localhost:3001/all-in-one` loads All In One homepage (black/gold shell); no post-load render failure.
+
+- **Key paths:** `src/all-in-one/`, `src/routes/StudioDebugRoutes.tsx`, `src/routes/studio-institute-paths.ts`, `src/all-in-one/config/appConfig.ts`
+
+- **Spatial Architecture Review:** SKIPPED — isolated marketing shell route wiring; not Studio OS / FS customer surface.
 
 ---
 
@@ -50991,13 +50994,6 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Topics covered:** Lifecycle GET PAID stage; embedded/partner model; compliant language (no guarantees/direct funding claims); six-division architecture; homepage strip + intent card **Get Paid Faster**; public `/services/factoring`; portal `/portal/factoring`; dispatch→factoring link; roadmap Factoring = Available (optional, not compliance); Operate & Grow pathway; mockFactoring.ts + factoringProvider stub; docs updated.
 
-- **Decisions / outcomes:** No financial backend, no Supabase, no bank/ACH data. Illustrative fees labeled Sample. Invoice workflow demo ends at "Demo Submission Complete."
+- **Decisions / outcomes:** No financial backend, no Supabase, no bank/ACH data. Illustrative fees labeled Sample. Invoice workflow demo ends at "Demo Submission Complete." Canonical routes now **`/all-in-one/*`** with legacy `/debug/all-in-one/*` redirect.
 
 - **Key paths:** `src/all-in-one/data/mockFactoring.ts`, `pages/FactoringPage.tsx`, `pages/FactoringPortalPage.tsx`, `services/factoring/`, factoring AIO* components.
-=======
-- **Verified:** `http://localhost:3001/all-in-one` loads All In One homepage (black/gold shell); no post-load render failure.
-
-- **Key paths:** `src/all-in-one/`, `src/routes/StudioDebugRoutes.tsx`, `src/routes/studio-institute-paths.ts`, `src/all-in-one/config/appConfig.ts`
-
-- **Spatial Architecture Review:** SKIPPED — isolated marketing shell route wiring; not Studio OS / FS customer surface.
->>>>>>> 97ff3699a996ca5fc0a5f3fbd6e0d66b0c89a4f9

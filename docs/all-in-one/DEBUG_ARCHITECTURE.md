@@ -12,14 +12,10 @@ This is **not** a Frontal Slayer product surface. It must not appear in storefro
 
 | Route | Purpose |
 |-------|---------|
-| `/debug/all-in-one` | Homepage |
-| `/debug/all-in-one/services` | Services index |
-| `/debug/all-in-one/services/*` | Service shells |
-| `/debug/all-in-one/about` | About shell |
-| `/debug/all-in-one/contact` | Contact shell |
-| `/debug/all-in-one/roadmap` | Full roadmap page |
-| `/debug/all-in-one/services/factoring` | Factoring public service page |
-| `/debug/all-in-one/portal/factoring` | Factoring portal dashboard (mock) |
+| `/all-in-one` | Homepage (canonical) |
+| `/all-in-one/services/factoring` | Factoring public service page |
+| `/all-in-one/portal/factoring` | Factoring portal dashboard (mock) |
+| `/debug/all-in-one/*` | Legacy redirect → `/all-in-one/*` |
 
 Registered in `src/routes/StudioDebugRoutes.tsx` **before** the catch-all `App` route. Lazy-loaded via `src/all-in-one/routes/AllInOneRouteHost.tsx`.
 
