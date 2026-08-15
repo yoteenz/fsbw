@@ -53,6 +53,11 @@ import { DebugRouteErrorBoundary } from '../pages/debug/DebugRouteErrorBoundary'
 import { RootAppErrorBoundary } from './RootAppErrorBoundary';
 import { lazyWithRetry } from '../utils/lazyWithRetry';
 
+const AllInOneRouteHost = lazyWithRetry(
+  () => import('../all-in-one/routes/AllInOneRouteHost'),
+  'AllInOneRouteHost',
+);
+
 const App = lazyWithRetry(() => import('../App'), 'App');
 
 export const STUDIO_DEBUG_PATHS = [
@@ -155,6 +160,35 @@ export default function StudioDebugRoutes() {
       <Route path="/collaboration-intelligence" element={<CollaborationIntelligenceDownloadPage />} />
       <Route path="/onboarding" element={<OnboardingPackPage />} />
       <Route path="/context-updates" element={<ContextUpdatesPage />} />
+      <Route
+        path="/debug/all-in-one/*"
+        element={
+          <DebugRouteErrorBoundary route="/debug/all-in-one">
+            <Suspense
+              fallback={
+                <div
+                  style={{
+                    minHeight: '100dvh',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    background: '#0a0a0a',
+                    color: '#d4af37',
+                    fontFamily: 'system-ui, sans-serif',
+                    letterSpacing: '0.1em',
+                    textTransform: 'uppercase',
+                    fontSize: '0.875rem',
+                  }}
+                >
+                  Loading All In One…
+                </div>
+              }
+            >
+              <AllInOneRouteHost />
+            </Suspense>
+          </DebugRouteErrorBoundary>
+        }
+      />
       <Route
         path="*"
         element={

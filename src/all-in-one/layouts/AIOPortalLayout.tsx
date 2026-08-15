@@ -1,0 +1,68 @@
+import { Link, Outlet } from 'react-router-dom';
+import { useState } from 'react';
+import { AIOLogo } from '../components/AIOLogo';
+import { aioPaths } from '../utils/paths';
+
+const portalNav = [
+  { label: 'Dashboard', href: aioPaths.portal, active: true },
+  { label: 'My Company', href: aioPaths.portal },
+  { label: 'My Fleet', href: aioPaths.portal },
+  { label: 'Permits & Registrations', href: aioPaths.portal },
+  { label: 'Taxes & Filings', href: aioPaths.portal },
+  { label: 'Insurance', href: aioPaths.insurance },
+  { label: 'Dispatch', href: aioPaths.dispatching },
+  { label: 'Loads', href: aioPaths.portal },
+  { label: 'Documents', href: aioPaths.portal },
+  { label: 'Invoices', href: aioPaths.portal },
+  { label: 'Messages', href: aioPaths.portal },
+  { label: 'Compliance Calendar', href: aioPaths.roadmap },
+  { label: 'Reports', href: aioPaths.portal },
+  { label: 'Account Settings', href: aioPaths.portal },
+  { label: 'Support', href: aioPaths.contact },
+];
+
+export function AIOPortalLayout() {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  return (
+    <div className="aio-app aio-portal">
+      <div className="aio-portal__mobile-bar">
+        <AIOLogo />
+        <button type="button" className="aio-btn aio-btn--gold aio-btn--sm" onClick={() => setSidebarOpen((o) => !o)}>
+          Menu
+        </button>
+      </div>
+
+      <aside
+        className="aio-portal__sidebar"
+        style={sidebarOpen ? { display: 'flex', position: 'fixed', inset: '0 40% 0 0', zIndex: 200 } : undefined}
+        aria-label="Portal navigation"
+      >
+        <div className="aio-portal__sidebar-brand">
+          <AIOLogo />
+        </div>
+        <nav>
+          {portalNav.map((item) => (
+            <Link
+              key={item.label}
+              to={item.href}
+              className={`aio-portal__nav-link ${item.active ? 'aio-portal__nav-link--active' : ''}`}
+              onClick={() => setSidebarOpen(false)}
+            >
+              {item.label}
+            </Link>
+          ))}
+        </nav>
+        <div style={{ marginTop: 'auto', padding: '1rem 1.25rem' }}>
+          <Link to={aioPaths.home} className="aio-portal__nav-link">
+            ← Back to Website
+          </Link>
+        </div>
+      </aside>
+
+      <div className="aio-portal__main">
+        <Outlet />
+      </div>
+    </div>
+  );
+}

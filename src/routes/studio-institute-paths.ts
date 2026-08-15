@@ -1,7 +1,13 @@
 import { isStudioInstitutePath } from '../studio-os-core/expert-capture/invite-system/config';
 
-/** Routes that skip main storefront bootstrap (Expert Capture + Studio Institute). */
+/** All In One Enterprises Inc. debug website — isolated from Frontal Slayer bootstrap. */
+export function isAllInOneDebugPath(pathname: string): boolean {
+  return pathname === '/debug/all-in-one' || pathname.startsWith('/debug/all-in-one/');
+}
+
+/** Routes that skip main storefront bootstrap (Expert Capture + Studio Institute + All In One debug). */
 export function isIsolatedStudioRoute(pathname: string): boolean {
+  if (isAllInOneDebugPath(pathname)) return true;
   if (isStudioInstitutePath(pathname)) return true;
   if (pathname === '/context') return true;
   if (pathname === '/founder-intelligence') return true;
