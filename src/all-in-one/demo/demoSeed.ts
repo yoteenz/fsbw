@@ -1,5 +1,5 @@
 import { defaultIntakeAnswers } from '../intake/intakeTypes';
-import type { DemoStore, StaffMember } from './demoTypes';
+import type { DemoStore } from './demoTypes';
 import { createRoadReadySeedData } from './roadReadySeed';
 import { createVaultSeedData, defaultNotificationPreferences } from './vaultSeed';
 import { createBillingSeedData, defaultServicePricingSeed } from './billingSeed';
@@ -8,17 +8,7 @@ import { createFactoringSeedData } from './factoringSeed';
 import { createBrokerageSeedData } from './brokerageSeed';
 import { createInsuranceSeedData } from './insuranceSeed';
 import { createCommandCenterSeedData } from './commandCenterSeed';
-
-const STAFF: StaffMember[] = [
-  { id: 'staff-1', name: 'Taylor Brooks', initials: 'TB', role: 'Administrator', status: 'available' },
-  { id: 'staff-2', name: 'Jordan Lee', initials: 'JL', role: 'Permitting Specialist', status: 'available' },
-  { id: 'staff-3', name: 'Casey Morgan', initials: 'CM', role: 'Compliance Specialist', status: 'busy' },
-  { id: 'staff-4', name: 'Riley Chen', initials: 'RC', role: 'Dispatcher', status: 'available' },
-  { id: 'staff-5', name: 'Alex Rivera', initials: 'AR', role: 'Insurance Specialist', status: 'available' },
-  { id: 'staff-6', name: 'Sam Patel', initials: 'SP', role: 'Factoring Specialist', status: 'busy' },
-  { id: 'staff-7', name: 'Morgan Hayes', initials: 'MH', role: 'Brokerage Specialist', status: 'available' },
-  { id: 'staff-8', name: 'Jamie Ortiz', initials: 'JO', role: 'Support', status: 'available' },
-];
+import { createOfficeSeedData } from './officeSeed';
 
 export function createDemoSeed(): DemoStore {
   const now = new Date();
@@ -32,6 +22,7 @@ export function createDemoSeed(): DemoStore {
   const brokerage = createBrokerageSeedData();
   const insurance = createInsuranceSeedData();
   const commandCenter = createCommandCenterSeedData();
+  const office = createOfficeSeedData(now);
 
   const requests = [
       mkRequest('req-1', 'AIO-DEMO-0001', 'client-a', 'Authority + BOC-3 Assistance', 'permitting', 'new_request', 'staff-2', daysAgo(3), ['vdoc-a1', 'vdoc-a2']),
@@ -45,17 +36,28 @@ export function createDemoSeed(): DemoStore {
     });
 
   return {
-    version: 12,
+    version: 13,
     requestCounter: 4,
     portalClientId: 'client-a',
     shipperPortalOrgId: 'client-e',
     brokeragePortalClientId: 'client-b',
     portalMemberRole: commandCenter.portalMemberRole,
     organizationMembers: commandCenter.organizationMembers,
+    officeStaffId: office.officeStaffId,
+    officeStaffRole: office.officeStaffRole,
+    officeTeams: office.officeTeams,
+    officeWorkItems: office.officeWorkItems,
+    officeHandoffs: office.officeHandoffs,
+    officeApprovals: office.officeApprovals,
+    officeEscalations: office.officeEscalations,
+    officeAssignmentHistory: office.officeAssignmentHistory,
+    officeWorkComments: office.officeWorkComments,
+    officeSavedViews: office.officeSavedViews,
+    officeDashboardPreferences: office.officeDashboardPreferences,
     intake: defaultIntakeAnswers(),
     roadmap: null,
     servicePlan: [],
-    staff: STAFF,
+    staff: office.staff,
     clients: [
       {
         id: 'client-a',
@@ -195,11 +197,12 @@ export function createDemoSeed(): DemoStore {
         clientId: 'client-a',
         requestId: 'req-1',
         authorId: 'staff-2',
-        authorInitials: 'TB',
+        authorInitials: 'JL',
         body: 'Customer called regarding registration renewal. Waiting for updated insurance card.',
         createdAt: daysAgo(1),
         visibility: 'internal',
       },
+      ...office.extraNotes,
     ],
     messages: [
       {

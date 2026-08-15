@@ -52,6 +52,18 @@ import { OfficeRoadReadyQueuePage } from '../pages/OfficeRoadReadyQueuePage';
 import { ClientRoadReadyReviewPage } from '../pages/ClientRoadReadyReviewPage';
 import { OfficeRenewalsPage } from '../pages/OfficeRenewalsPage';
 import {
+  OfficeMyWorkPage,
+  OfficeQueuesPage,
+  OfficeApprovalsPage,
+  OfficeEscalationsPage,
+  OfficeServicesPage,
+  OfficeDocumentReviewPage,
+  OfficeInboxPage,
+  OfficeWorkloadPage,
+  OfficeActivityPage,
+  OfficeAuditPage,
+} from '../pages/OfficeWorkPages';
+import {
   InsuranceCommandCenterPage,
   InsuranceRequestsListPage,
   InsuranceRequestDetailOfficePage,
@@ -67,6 +79,16 @@ export default function OfficeRoutes() {
     <Routes>
       <Route element={<AIOOfficeLayout />}>
         <Route index element={<OfficeDashboardPage />} />
+        <Route path="work" element={<OfficeMyWorkPage />} />
+        <Route path="queues" element={<OfficeQueuesPage />} />
+        <Route path="approvals" element={<OfficeApprovalsPage />} />
+        <Route path="escalations" element={<OfficeEscalationsPage />} />
+        <Route path="services" element={<OfficeServicesPage />} />
+        <Route path="documents/review" element={<OfficeDocumentReviewPage />} />
+        <Route path="inbox" element={<OfficeInboxPage />} />
+        <Route path="workload" element={<OfficeWorkloadPage />} />
+        <Route path="activity" element={<OfficeActivityPage />} />
+        <Route path="audit" element={<OfficeAuditPage />} />
         <Route path="clients" element={<ClientsListPage />} />
         <Route path="clients/:clientId/road-ready" element={<ClientRoadReadyReviewPage />} />
         <Route path="clients/:clientId" element={<ClientDetailPage />} />

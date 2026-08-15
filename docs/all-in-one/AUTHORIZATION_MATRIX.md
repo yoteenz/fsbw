@@ -1,6 +1,24 @@
 # All In One — Authorization Matrix
 
-**Status:** Sprint 12 portal command center roles added. Enforced via Supabase RLS when backend mode is active.
+**Status:** Sprint 13 Office 2.0 staff permissions added (demo via `officeContext.ts`). Sprint 12 portal command center roles. Enforced via Supabase RLS when backend mode is active.
+
+---
+
+## Office 2.0 permissions (Sprint 13 demo)
+
+| Permission | Manager | Permitting | Dispatcher | Insurance | Factoring | Broker | Billing | Support | Viewer |
+|------------|---------|------------|------------|-----------|-----------|--------|---------|---------|--------|
+| `work.read` / `work.manage` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | R |
+| `work.assign` | ✓ | — | — | — | — | — | — | — | — |
+| `approvals.review` | ✓ | — | — | — | — | — | — | — | — |
+| `escalations.manage` | ✓ | — | — | — | — | — | — | — | — |
+| `billing.read` | ✓ | R | — | — | — | — | ✓ | — | — |
+| `brokerage_finance.read` | ✓ | — | — | — | — | ✓ | — | — | — |
+| `factoring_finance.read` | ✓ | — | — | — | ✓ | — | — | — | — |
+| `audit.read` | ✓ | — | — | — | — | — | — | — | — |
+| `workload.read` | ✓ | — | — | — | — | — | — | — | — |
+
+Internal notes remain staff-only (`visibility: internal`). Customer portal never receives internal notes or office work comments.
 
 ---
 

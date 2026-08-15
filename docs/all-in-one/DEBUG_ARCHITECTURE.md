@@ -95,7 +95,7 @@ Registered in `src/routes/StudioDebugRoutes.tsx` **before** the catch-all `App` 
 ```
 src/all-in-one/
   config/appConfig.ts      # Company, contact, routes, feature flags
-  demo/                    # Sprint 03–12 — demo store v12 + seed/actions
+  demo/                    # Sprint 03–13 — demo store v13 + seed/actions
   portal/                  # Sprint 12 — command center, attention engine, org context
   brokerage/               # Sprint 10 — types, rules, calculations, config
   insurance/               # Sprint 11 — types, rules, calculations, config, partner adapter
@@ -178,7 +178,7 @@ Backend migrations: `all-in-one/supabase/migrations/` — **not** Frontal Slayer
 
 ### Sprint 03 — centralized demo store
 
-Single key: `aio_debug_store`. Current version: **12** (Sprint 12 command center). Legacy versions migrate on first load (v3→…→v11→v12).
+Single key: `aio_debug_store`. Current version: **13** (Sprint 13 Office 2.0). Legacy versions migrate on first load (v3→…→v12→v13).
 
 Entities: clients, requests, tasks, documents, deadlines, notes, messages, activity, staff, loads, dispatch enrollments, factoringProfiles, factoringProviders, debtorAccounts, freightInvoices, factoringSubmissions, factoringIssues, factoringCounters, **brokerageCapability**, **shipperProfiles**, **shipmentRequests**, **brokerageFreightQuotes**, **carrierNetworkProfiles**, **carrierOffers**, **brokerageRateConfirmations**, **brokerageLoadFinancials**, **brokerageAccessorials**, **brokerageShipperInvoices**, **carrierPayables**, **brokerageIssues**, **coverageHistory**, **brokerageCounters**, invoices, notifications, billing, road ready, fleet, **portalMemberRole**, **organizationMembers**.
 

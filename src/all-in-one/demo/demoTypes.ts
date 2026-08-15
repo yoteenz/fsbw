@@ -72,6 +72,19 @@ import type {
   RoadReadyVerificationEvent,
   Trailer,
 } from '../road-ready/roadReadyTypes';
+import type {
+  OfficeApprovalRequest,
+  OfficeAssignmentRecord,
+  OfficeDashboardPreferences,
+  OfficeEscalation,
+  OfficeHandoff,
+  OfficeSavedView,
+  OfficeStaffRole,
+  OfficeTeam,
+  OfficeWorkComment,
+  OfficeWorkItem,
+  InternalNoteType,
+} from '../office-core/officeWorkTypes';
 
 export type Visibility = 'internal' | 'customer';
 
@@ -174,7 +187,9 @@ export interface StaffMember {
   name: string;
   initials: string;
   role: string;
-  status: 'available' | 'busy' | 'away';
+  status: 'available' | 'busy' | 'away' | 'out';
+  officeRole?: OfficeStaffRole;
+  teamIds?: string[];
 }
 
 export interface Client {
@@ -267,11 +282,16 @@ export interface InternalNote {
   id: string;
   clientId: string;
   requestId?: string;
+  loadId?: string;
   authorId: string;
   authorInitials: string;
   body: string;
   createdAt: string;
   visibility: 'internal';
+  noteType?: InternalNoteType;
+  pinned?: boolean;
+  entityType?: string;
+  entityId?: string;
 }
 
 export interface Message {
@@ -381,7 +401,7 @@ export interface OrganizationMember {
 }
 
 export interface DemoStore {
-  version: 12;
+  version: 13;
   requestCounter: number;
   portalClientId?: string;
   shipperPortalOrgId?: string;
@@ -391,6 +411,20 @@ export interface DemoStore {
   portalMemberRole?: 'owner' | 'admin' | 'operations' | 'driver' | 'accounting' | 'viewer';
   /** Organization team members for portal team view. */
   organizationMembers?: OrganizationMember[];
+  /** Current office staff identity for Office 2.0 demo. */
+  officeStaffId?: string;
+  /** Current office staff role override for authorization demo. */
+  officeStaffRole?: OfficeStaffRole;
+  /** Office work items — references canonical domain records. */
+  officeWorkItems?: OfficeWorkItem[];
+  officeTeams?: OfficeTeam[];
+  officeAssignmentHistory?: OfficeAssignmentRecord[];
+  officeHandoffs?: OfficeHandoff[];
+  officeApprovals?: OfficeApprovalRequest[];
+  officeEscalations?: OfficeEscalation[];
+  officeWorkComments?: OfficeWorkComment[];
+  officeSavedViews?: OfficeSavedView[];
+  officeDashboardPreferences?: OfficeDashboardPreferences[];
   intake: IntakeAnswers;
   roadmap: RoadmapResult | null;
   servicePlan: ServicePlanItem[];

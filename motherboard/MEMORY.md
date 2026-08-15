@@ -51229,3 +51229,19 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Spatial Architecture Review:** SKIPPED — unified portal IA under existing `/debug/all-in-one/portal`; no Frontal Slayer regression.
 
+---
+
+## 2026-08-15 — All In One Sprint 13: Office 2.0 + Unified Staff Operations
+
+- **Context:** Founder issued Sprint 13 spec — transform All In One Office into unified internal operating headquarters answering "What does All In One need from us today?" Must not duplicate canonical domain systems; orchestrate staff work above Road Ready, Dispatch, Factoring, Brokerage, Insurance, Billing.
+
+- **Topics covered:** `src/all-in-one/office-core/` module (work types, work engine, attention aggregator, next-action engine, command center service, Client 360 service, staff context/permissions); demo store **v13** (`officeSeed.ts`, work items, handoffs, approvals, escalations, teams, assignment history); upgraded `/office` Command Center with staff greeting, next action, attention, queues, role modules, manager summary; new routes `/office/work`, `/office/queues`, `/office/approvals`, `/office/escalations`, `/office/services`, `/office/documents/review`, `/office/inbox`, `/office/workload`, `/office/activity`, `/office/audit`; Client 360 upgrade at `/office/clients/:id`; Office 2.0 IA nav in `AIOOfficeLayout`; command palette ⌘K; staff switcher in office preview bar; `officeActions.ts` (assign with version conflict, approvals, escalations, handoffs); CSS `.aio-oc-*`; 15 vitest tests; docs `OFFICE_2_SYSTEM.md`, `OFFICE_WORK_MODEL.md`, `CLIENT_360.md`, `OFFICE_HANDOFFS_APPROVALS_ESCALATIONS.md`, `SPRINT_STATUS.md` updated.
+
+- **Decisions / outcomes:** Sprint 13 COMPLETE in demo mode. `OfficeWorkItem` references canonical entities — does not replace them. Waiting-on model explicit (`all_in_one` vs `customer` vs external). Financial domains remain separate; role bundles gate brokerage/factoring finance. Internal notes never in customer API. Unassigned work visible to managers. Insurance attention dedupe key reused from Sprint 12 pattern. Division command centers (Insurance, Dispatch, Factoring, Brokerage) preserved — integrated not rebuilt.
+
+- **Demo scenarios:** Fictional staff (Manager, Permitting, Insurance, Dispatcher, Factoring, Broker, Billing); clients A–H work states (permitting, insurance waiting-on-us, POD, unassigned quote, government filing external wait, billing past due, etc.).
+
+- **Verification:** `npm run build` pass; 70/70 All In One tests pass (15 new office tests).
+
+- **Spatial Architecture Review:** SKIPPED — internal Office IA reorganization under `/debug/all-in-one/office`; no Frontal Slayer regression.
+

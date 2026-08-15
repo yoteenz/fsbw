@@ -1,31 +1,40 @@
 import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { AIOLogo } from '../../components/AIOLogo';
 import { aioPaths } from '../../utils/paths';
 import { useDemoStore } from '../../demo/useDemoStore';
 import { createTask } from '../../demo/demoActions';
 import { searchBilling } from '../../demo/billingActions';
+import { setOfficeStaff } from '../../office-core/officeContext';
 
 const navGroups = [
   {
     label: 'Home',
-    items: [{ label: 'Overview', to: aioPaths.office }],
+    items: [{ label: 'Command Center', to: aioPaths.office }],
+  },
+  {
+    label: 'Work',
+    items: [
+      { label: 'My Work', to: aioPaths.officeWork },
+      { label: 'Queues', to: aioPaths.officeQueues },
+      { label: 'Approvals', to: aioPaths.officeApprovals },
+      { label: 'Escalations', to: aioPaths.officeEscalations },
+    ],
   },
   {
     label: 'Clients',
     items: [
-      { label: 'Clients', to: aioPaths.officeClients },
-      { label: 'Road Ready Queue', to: aioPaths.officeRoadReady },
+      { label: 'Customers', to: aioPaths.officeClients },
+      { label: 'Road Ready', to: aioPaths.officeRoadReady },
     ],
   },
   {
-    label: 'Service Operations',
+    label: 'Services',
     items: [
-      { label: 'Requests', to: aioPaths.officeRequests },
+      { label: 'Service Operations', to: aioPaths.officeServices },
       { label: 'Permitting & Compliance', to: aioPaths.officePermitting },
-      { label: 'Business Formation', to: aioPaths.officeFormation },
       { label: 'Insurance', to: aioPaths.officeInsurance },
-      { label: 'Dispatching', to: aioPaths.officeDispatch },
+      { label: 'Dispatch', to: aioPaths.officeDispatch },
       { label: 'Factoring', to: aioPaths.officeFactoring },
       { label: 'Brokerage', to: aioPaths.officeBrokerage },
     ],
@@ -33,28 +42,38 @@ const navGroups = [
   {
     label: 'Operations',
     items: [
-      { label: 'Tasks', to: aioPaths.officeTasks },
-      { label: 'Documents', to: aioPaths.officeDocuments },
-      { label: 'Deadlines', to: aioPaths.officeDeadlines },
+      { label: 'Loads', to: aioPaths.officeDispatchLoads },
       { label: 'Renewals', to: aioPaths.officeRenewals },
-      { label: 'Messages', to: aioPaths.officeMessages },
+      { label: 'Document Review', to: aioPaths.officeDocumentsReview },
+      { label: 'Compliance Calendar', to: aioPaths.officeDeadlines },
+      { label: 'Legacy Documents', to: aioPaths.officeDocuments },
     ],
   },
   {
-    label: 'Financial',
+    label: 'Finance',
     items: [
-      { label: 'Billing Center', to: aioPaths.officeBilling },
-      { label: 'Quotes', to: aioPaths.officeQuotes },
-      { label: 'Invoices', to: aioPaths.officeInvoices },
+      { label: 'Billing Desk', to: aioPaths.officeBilling },
+      { label: 'Service Quotes', to: aioPaths.officeQuotes },
+      { label: 'Service Invoices', to: aioPaths.officeInvoices },
       { label: 'Payments', to: aioPaths.officePayments },
-      { label: 'Pricing Settings', to: aioPaths.officePricingSettings },
+      { label: 'Brokerage Finance', to: aioPaths.officeBrokerageFinance },
+    ],
+  },
+  {
+    label: 'Communication',
+    items: [
+      { label: 'Inbox', to: aioPaths.officeInbox },
+      { label: 'Notifications', to: aioPaths.officeMessages },
     ],
   },
   {
     label: 'Management',
     items: [
       { label: 'Team', to: aioPaths.officeTeam },
+      { label: 'Workload', to: aioPaths.officeWorkload },
       { label: 'Reports', to: aioPaths.officeReports },
+      { label: 'Activity', to: aioPaths.officeActivity },
+      { label: 'Audit', to: aioPaths.officeAudit },
     ],
   },
 ];
@@ -63,9 +82,23 @@ export function AIOOfficeLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [search, setSearch] = useState('');
   const [quickOpen, setQuickOpen] = useState(false);
+  const [paletteOpen, setPaletteOpen] = useState(false);
   const store = useDemoStore();
   const navigate = useNavigate();
   const unread = store.notifications.filter((n) => !n.read).length;
+  const staffId = store.officeStaffId ?? store.staff[0]?.id ?? 'staff-1';
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        setPaletteOpen((o) => !o);
+      }
+      if (e.key === 'Escape') setPaletteOpen(false);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
 
   const onSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -73,10 +106,10 @@ export function AIOOfficeLayout() {
     if (!q) return;
     const req = store.requests.find((r) => r.requestNumber.toLowerCase().includes(q));
     if (req) return navigate(aioPaths.officeRequest(req.id));
-    const client = store.clients.find((c) => c.companyName.toLowerCase().includes(q));
+    const client = store.clients.find((c) => c.companyName.toLowerCase().includes(q) || c.contactEmail.toLowerCase().includes(q));
     if (client) return navigate(aioPaths.officeClient(client.id));
     const doc = store.documents.find((d) => d.id === q || (d.title ?? d.name ?? '').toLowerCase().includes(q));
-    if (doc) return navigate(aioPaths.officeDocuments);
+    if (doc) return navigate(aioPaths.officeDocumentsReview);
     const renewal = store.renewals.find((r) => r.id.toLowerCase().includes(q) || r.title.toLowerCase().includes(q));
     if (renewal) return navigate(aioPaths.officeRenewals);
     const load = store.loads.find((l) => l.loadNumber.toLowerCase().includes(q));
@@ -91,7 +124,17 @@ export function AIOOfficeLayout() {
   return (
     <div className="aio-app aio-office">
       <div className="aio-office-preview-bar" role="status">
-        <span>INTERNAL PREVIEW · ALL IN ONE OFFICE · DEMO ONLY</span>
+        <span>INTERNAL PREVIEW · ALL IN ONE OFFICE 2.0 · DEMO ONLY</span>
+        <select
+          className="aio-debug-banner__select"
+          aria-label="Office staff identity"
+          value={staffId}
+          onChange={(e) => setOfficeStaff(e.target.value)}
+        >
+          {store.staff.map((s) => (
+            <option key={s.id} value={s.id}>{s.name} — {s.role}</option>
+          ))}
+        </select>
         <Link to={aioPaths.home}>← Public Site</Link>
       </div>
 
@@ -99,7 +142,7 @@ export function AIOOfficeLayout() {
         <aside className={`aio-office__sidebar ${sidebarOpen ? 'aio-office__sidebar--open' : ''}`} aria-label="Office navigation">
           <div className="aio-office__sidebar-brand">
             <AIOLogo />
-            <span className="aio-office__sidebar-title">Office</span>
+            <span className="aio-office__sidebar-title">Office 2.0</span>
           </div>
           <nav>
             {navGroups.map((group) => (
@@ -127,30 +170,27 @@ export function AIOOfficeLayout() {
               Menu
             </button>
             <form className="aio-office__search" onSubmit={onSearch}>
-              <label htmlFor="office-search" className="aio-sr-only">
-                Search
-              </label>
+              <label htmlFor="office-search" className="aio-sr-only">Search</label>
               <input
                 id="office-search"
                 type="search"
-                placeholder="Search clients, requests, quotes, invoices…"
+                placeholder="Search customers, USDOT, requests… (⌘K palette)"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
             </form>
             <div className="aio-office__topbar-actions">
-              <button type="button" className="aio-office__notif-btn" aria-label={`${unread} notifications`}>
-                Notifications {unread > 0 && <span className="aio-office__notif-count">{unread}</span>}
+              <button type="button" className="aio-office__notif-btn" aria-label={`${unread} notifications`} onClick={() => navigate(aioPaths.officeInbox)}>
+                Inbox {unread > 0 && <span className="aio-office__notif-count">{unread}</span>}
               </button>
               <div className="aio-office__quick-create">
-                <button type="button" className="aio-btn aio-btn--gold aio-btn--sm" onClick={() => setQuickOpen((o) => !o)}>
-                  + New
-                </button>
+                <button type="button" className="aio-btn aio-btn--gold aio-btn--sm" onClick={() => setQuickOpen((o) => !o)}>+ New</button>
                 {quickOpen && (
                   <div className="aio-office__quick-menu" role="menu">
-                    <button type="button" onClick={() => { createTask({ title: 'New follow-up task', priority: 'normal', status: 'open', category: 'General' }); setQuickOpen(false); navigate(aioPaths.officeTasks); }}>New Task</button>
-                    <button type="button" onClick={() => { setQuickOpen(false); navigate(aioPaths.officeClients); }}>New Client</button>
-                    <button type="button" onClick={() => { setQuickOpen(false); navigate(aioPaths.getStarted); }}>New Service Request (via intake)</button>
+                    <button type="button" onClick={() => { createTask({ title: 'Internal follow-up', priority: 'normal', status: 'open', category: 'General', assignedStaffId: staffId }); setQuickOpen(false); navigate(aioPaths.officeWork); }}>Internal Task</button>
+                    <button type="button" onClick={() => { setQuickOpen(false); navigate(aioPaths.officeClients); }}>Customer</button>
+                    <button type="button" onClick={() => { setQuickOpen(false); navigate(aioPaths.officeInbox); }}>Message</button>
+                    <button type="button" onClick={() => { setQuickOpen(false); navigate(aioPaths.getStarted); }}>Service Request</button>
                   </div>
                 )}
               </div>
@@ -161,6 +201,21 @@ export function AIOOfficeLayout() {
           </div>
         </div>
       </div>
+
+      {paletteOpen && (
+        <div className="aio-oc-palette" role="dialog" aria-label="Command palette">
+          <div className="aio-oc-palette__backdrop" onClick={() => setPaletteOpen(false)} />
+          <div className="aio-oc-palette__panel">
+            <input autoFocus type="search" placeholder="Jump to…" value={search} onChange={(e) => setSearch(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') { onSearch(e); setPaletteOpen(false); } }} />
+            <nav>
+              <button type="button" onClick={() => { navigate(aioPaths.officeWork); setPaletteOpen(false); }}>My Work</button>
+              <button type="button" onClick={() => { navigate(aioPaths.officeQueues); setPaletteOpen(false); }}>Queues</button>
+              <button type="button" onClick={() => { navigate(aioPaths.officeClients); setPaletteOpen(false); }}>Clients</button>
+              <button type="button" onClick={() => { navigate(aioPaths.officeInbox); setPaletteOpen(false); }}>Inbox</button>
+            </nav>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

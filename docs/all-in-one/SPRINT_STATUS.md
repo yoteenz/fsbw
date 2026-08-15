@@ -1,7 +1,24 @@
 # All In One — Sprint Status
 
-**Sprint:** 12 — Client Command Center · Portal IA · Attention Engine  
+**Sprint:** 13 — Office 2.0 · Unified Staff Operations  
 **Last updated:** 2026-08-15
+
+---
+
+## SPRINT 13 COMPLETE (Office 2.0 · Work Engine · Client 360)
+
+- **Office 2.0 IA** — Home / Work / Clients / Services / Operations / Finance / Communication / Management nav
+- **Office core module** — `src/all-in-one/office-core/` (work types, work engine, attention, next-action, command center, Client 360, context)
+- **Office Command Center** — `/office` upgraded with staff greeting, next action, attention, queues, role modules, manager summary
+- **Work routes** — `/office/work`, `/office/queues`, `/office/approvals`, `/office/escalations`, `/office/services`, `/office/documents/review`, `/office/inbox`, `/office/workload`, `/office/activity`, `/office/audit`
+- **OfficeWorkItem** — references canonical domains; waiting-on model; assignment history; queue membership; overdue/stale detection
+- **Client 360** — `/office/clients/:organizationId` upgraded with operational status, service relationships, pinned notes, role-aware tabs
+- **Handoffs / approvals / escalations** — demo seed + pages + actions
+- **Staff roles & permissions** — role bundles; financial domain separation; audit gate
+- **Command palette** — ⌘/Ctrl+K quick navigation
+- **Demo store v13** — fictional staff, work scenarios A–H, management demo state
+- **Unit tests** — 15 tests (dedupe, next-action, auth, transitions, Client 360, note privacy)
+- **Documentation** — `OFFICE_2_SYSTEM.md`, `OFFICE_WORK_MODEL.md`, `CLIENT_360.md`, `OFFICE_HANDOFFS_APPROVALS_ESCALATIONS.md`
 
 ---
 

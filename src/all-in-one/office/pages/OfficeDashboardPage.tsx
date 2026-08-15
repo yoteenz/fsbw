@@ -1,88 +1,64 @@
-import { getOfficeMetrics } from '../../demo/demoActions';
-import { useDemoStore } from '../../demo/useDemoStore';
+import { useOfficeCommandCenter } from '../../office-core/useOfficeCommandCenter';
+import {
+  OfficeAllCaughtUp,
+  OfficeAttentionList,
+  OfficeCommandCenterHeader,
+  OfficeManagerSummary,
+  OfficeNextActionHero,
+  OfficeQueueGrid,
+  OfficeRoleModules,
+  OfficeWorkList,
+} from '../../components/OfficeCommandCenterComponents';
 import { Link } from 'react-router-dom';
 import { aioPaths } from '../../utils/paths';
+import { useDemoStore } from '../../demo/useDemoStore';
 
 export function OfficeDashboardPage() {
+  const view = useOfficeCommandCenter();
   const store = useDemoStore();
-  const metrics = getOfficeMetrics();
-
-  const docsToReview = store.documents.filter((d) => ['uploaded', 'under_review'].includes(d.status)).length;
-  const renewalsDue = store.renewals.filter((r) => r.status !== 'completed' && r.status !== 'declined').length;
-  const expiredItems = store.documents.filter((d) => d.isCurrent && d.expiresAt && new Date(d.expiresAt) < new Date()).length;
-  const clientAction = store.documents.filter((d) => d.status === 'requested' || d.status === 'rejected').length;
-  const todayDeadlines = store.deadlines.filter((d) => !d.complete && d.dueDate === new Date().toISOString().slice(0, 10)).length;
-
-  const cards = [
-    { label: 'Documents to Review', value: docsToReview, href: aioPaths.officeDocuments },
-    { label: 'Renewals Due Soon', value: renewalsDue, href: aioPaths.officeRenewals },
-    { label: 'Expired Items', value: expiredItems, href: aioPaths.officeDocuments },
-    { label: 'Client Action Needed', value: clientAction, href: aioPaths.officeDocuments },
-    { label: "Today's Deadlines", value: todayDeadlines, href: aioPaths.officeDeadlines },
-    { label: 'New Requests', value: metrics.newRequests, href: aioPaths.officeRequests },
-    { label: 'In Progress', value: metrics.inProgress, href: aioPaths.officeRequests },
-    { label: 'Waiting on Client', value: metrics.waitingOnClient, href: aioPaths.officeRequests },
-  ];
-
-  const myTasks = store.tasks.filter((t) => t.assignedStaffId === 'staff-2' && t.status !== 'complete').slice(0, 5);
 
   return (
-    <div className="aio-office-page">
-      <header className="aio-office-page__header">
-        <h1>TODAY AT ALL IN ONE</h1>
-        <p>Vault · Calendar · Renewals · Notifications operational layer</p>
-      </header>
+    <div className="aio-office-page aio-oc-home">
+      <OfficeCommandCenterHeader view={view} />
 
-      <div className="aio-office-metrics">
-        {cards.map((c) => (
-          <Link key={c.label} to={c.href} className="aio-office-metric-card">
-            <span className="aio-office-metric-card__value">{c.value}</span>
-            <span className="aio-office-metric-card__label">{c.label}</span>
-          </Link>
-        ))}
+      <OfficeNextActionHero action={view.nextAction} />
+
+      {view.allCaughtUp && !view.context.isManager && <OfficeAllCaughtUp />}
+
+      <div className="aio-oc-home-grid">
+        <div className="aio-oc-home-main">
+          <OfficeAttentionList items={view.attentionItems} />
+          <OfficeWorkList title="Due Today" items={view.dueToday} />
+          <OfficeWorkList title="Overdue" items={view.overdue} emptyText="No overdue assigned work." />
+          <OfficeRoleModules modules={view.roleModules} />
+          {view.context.isManager && <OfficeManagerSummary view={view} />}
+        </div>
+        <aside className="aio-oc-home-aside">
+          <OfficeQueueGrid queues={view.queues} />
+          <section className="aio-oc-panel">
+            <h2 className="aio-oc-panel__title">Quick Links</h2>
+            <nav className="aio-oc-quick-links">
+              <Link to={aioPaths.officeWork}>My Work</Link>
+              <Link to={aioPaths.officeQueues}>Queues</Link>
+              <Link to={aioPaths.officeClients}>Clients</Link>
+              <Link to={aioPaths.officeInbox}>Inbox</Link>
+              {view.context.isManager && <Link to={aioPaths.officeWorkload}>Workload</Link>}
+            </nav>
+          </section>
+          <section className="aio-oc-panel">
+            <h2 className="aio-oc-panel__title">Recent Activity</h2>
+            <ul className="aio-office-activity">
+              {store.activity.filter((a) => a.visibility === 'internal').slice(0, 8).map((a) => (
+                <li key={a.id}>
+                  <time>{new Date(a.createdAt).toLocaleString()}</time>
+                  <span>{a.title}</span>
+                </li>
+              ))}
+            </ul>
+            <Link to={aioPaths.officeActivity} className="aio-office-link">Full activity →</Link>
+          </section>
+        </aside>
       </div>
-
-      <div className="aio-office-two-col">
-        <section className="aio-office-panel">
-          <h2>Documents Awaiting Review</h2>
-          {store.documents.filter((d) => ['uploaded', 'under_review'].includes(d.status)).slice(0, 5).map((d) => {
-            const client = store.clients.find((c) => c.id === d.organizationId);
-            return (
-              <div key={d.id} className="aio-office-list-row">
-                <span>{d.title} — {client?.companyName}</span>
-                <Link to={aioPaths.officeDocuments}>Review</Link>
-              </div>
-            );
-          })}
-        </section>
-
-        <section className="aio-office-panel">
-          <h2>My Tasks</h2>
-          {myTasks.length === 0 ? (
-            <p className="aio-empty-state__text">No open tasks assigned.</p>
-          ) : (
-            myTasks.map((t) => (
-              <div key={t.id} className="aio-office-list-row">
-                <span>{t.title}</span>
-                <span className={`aio-badge aio-badge--${t.priority === 'urgent' ? 'alert' : 'progress'}`}>{t.priority}</span>
-              </div>
-            ))
-          )}
-          <Link to={aioPaths.officeTasks} className="aio-office-link">All tasks →</Link>
-        </section>
-      </div>
-
-      <section className="aio-office-panel">
-        <h2>Recent Activity</h2>
-        <ul className="aio-office-activity">
-          {store.activity.slice(0, 12).map((a) => (
-            <li key={a.id}>
-              <time>{new Date(a.createdAt).toLocaleString()}</time>
-              <span>{a.title}</span>
-            </li>
-          ))}
-        </ul>
-      </section>
     </div>
   );
 }
