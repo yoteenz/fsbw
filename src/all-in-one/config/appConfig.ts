@@ -26,9 +26,9 @@ export const aioAppConfig = {
     grayMuted: '#6B7280',
   },
   routes: {
-    base: '/debug/all-in-one',
-    portal: '/debug/all-in-one/portal',
-    clientLogin: '/debug/all-in-one/portal',
+    base: '/all-in-one',
+    portal: '/all-in-one/portal',
+    clientLogin: '/all-in-one/portal',
   },
   assets: {
     /** Hero slot — replace with production asset when available. */

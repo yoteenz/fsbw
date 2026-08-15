@@ -50965,18 +50965,23 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 ---
 
-## 2026-08-15 — All In One Enterprises Inc. Sprint 01 (isolated debug website shell)
+---
 
-- **Context:** Founder sprint to begin **ALL IN ONE ENTERPRISES INC.** — transportation business-services platform (replacing Perfect Choice Permitting). Temporary host inside Frontal Slayer repo for Cloudflare preview review; must extract cleanly later.
+## 2026-08-15 — All In One Enterprises Inc. Sprint 01 + /all-in-one route fix
 
-- **Topics covered:** Sprint 01 website shell only (no dispatch TMS, filings, auth, Supabase, payments). Isolation from Frontal Slayer. Debug route `/debug/all-in-one/*`. Approved black/gold concept. Mock data only. Docs in `docs/all-in-one/`.
+- **Context:** Sprint 01 isolated All In One website shell at `/debug/all-in-one/*`. Founder then hit **`preview.fsbw-dev.com/all-in-one`** → **Post-load render failure** (`blank-root-after-loading`).
 
-- **Decisions / outcomes:**
-  - **`src/all-in-one/`** — config, AIO* components, layouts, sections, pages, mock data, scoped `aio.css`.
-  - Lazy **`AllInOneRouteHost`** in `StudioDebugRoutes.tsx`; **`isAllInOneDebugPath()`** skips storefront bootstrap.
-  - Client Login → portal prototype; no FS auth. No All In One Supabase tables.
-  - Commit **`52ba707e7`** [sync-only].
+- **Root cause:** All In One site registered only at `/debug/all-in-one/*`; bare **`/all-in-one`** had no route → App lazy-loaded with no match → blank `#root` → post-load render guard.
 
-- **Key paths:** `src/all-in-one/`, `docs/all-in-one/`, `src/routes/StudioDebugRoutes.tsx`, `src/routes/studio-institute-paths.ts`
+- **Fix:**
+  - Canonical route **`/all-in-one/*`** → `AllInOneRouteHost` in `StudioDebugRoutes.tsx`.
+  - **`appConfig.routes.base`** → `/all-in-one` (nav/links).
+  - Legacy **`/debug/all-in-one/*`** redirects to `/all-in-one/*` preserving subpath.
+  - **`isAllInOneDebugPath()`** covers both prefixes.
+  - **`App.tsx`:** `UnmatchedRouteFallback` + catch-all `path="*"` prevents blank root on other unknown App paths.
 
-- **Spatial Architecture Review:** SKIPPED — isolated debug marketing shell; not Studio OS / FS customer surface.
+- **Verified:** `http://localhost:3001/all-in-one` loads All In One homepage (black/gold shell); no post-load render failure.
+
+- **Key paths:** `src/all-in-one/`, `src/routes/StudioDebugRoutes.tsx`, `src/routes/studio-institute-paths.ts`, `src/all-in-one/config/appConfig.ts`
+
+- **Spatial Architecture Review:** SKIPPED — isolated marketing shell route wiring; not Studio OS / FS customer surface.

@@ -1013,6 +1013,35 @@ const BuildAWigTryLegacyRedirect = () => {
   );
 };
 
+/** Prevent blank #root when App loads for a path with no matching route. */
+const UnmatchedRouteFallback = () => {
+  const location = useLocation();
+  return (
+    <div
+      style={{
+        minHeight: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 24,
+        fontFamily: 'system-ui, sans-serif',
+        textAlign: 'center',
+        color: '#111',
+        background: '#fafafa',
+      }}
+    >
+      <h1 style={{ fontSize: 18, margin: '0 0 8px' }}>Page not found</h1>
+      <p style={{ margin: '0 0 16px', fontSize: 14, color: '#555' }}>
+        No route matches <code>{location.pathname}</code>.
+      </p>
+      <a href="/home/shop" style={{ fontSize: 14, color: '#eb1c24' }}>
+        Go to shop
+      </a>
+    </div>
+  );
+};
+
 function App() {
   const location = useLocation();
   const isDesktopPreviewShell = isDesktopPreviewWrapperPath(location.pathname);
@@ -3528,6 +3557,7 @@ function App() {
             <CheckoutConfirmPage />
           </Suspense>
         } />
+        <Route path="*" element={<UnmatchedRouteFallback />} />
       </DebugModeShell>
       </TutorialOsProvider>
       </VisionEngineProvider>
