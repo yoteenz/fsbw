@@ -12,6 +12,11 @@ export type DeadlineType =
   | 'customer_action'
   | 'internal_action'
   | 'renewal_window'
+  | 'ucr_renewal'
+  | 'biennial_update'
+  | 'consortium_renewal'
+  | 'subscription_renewal'
+  | 'authority_maintenance'
   | 'other';
 
 export type DeadlineState = 'upcoming' | 'due_soon' | 'due_today' | 'overdue' | 'completed' | 'cancelled' | 'unknown';

@@ -8,6 +8,7 @@ import { AIOAuthLayout } from '../layouts/AIOAuthLayout';
 import { HomePage } from '../pages/HomePage';
 import { PortalPage } from '../pages/PortalPage';
 import { ServicesPage } from '../pages/ServicesPage';
+import { ServiceFindPage } from '../pages/ServiceFindPage';
 import { AboutPage } from '../pages/AboutPage';
 import { ContactPage } from '../pages/ContactPage';
 import { RequestCallbackPage } from '../pages/RequestCallbackPage';
@@ -154,6 +155,7 @@ export default function AllInOneRoutes() {
         <Route element={<AIOPublicLayout />}>
           <Route index element={<HomePage />} />
           <Route path="services" element={<ServicesPage />} />
+          <Route path="services/find" element={<ServiceFindPage />} />
           <Route path="services/factoring" element={<FactoringPage />} />
           <Route path="services/bookkeeping" element={<BookkeepingPage />} />
           <Route path="services/bookkeeping/assessment" element={<BookkeepingAssessmentPage />} />

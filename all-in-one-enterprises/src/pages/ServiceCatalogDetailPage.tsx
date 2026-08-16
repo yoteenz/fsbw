@@ -1,5 +1,6 @@
 import { Link, useParams } from 'react-router-dom';
 import { getServiceBySlug, getServicesByDivision, isDivisionSlug, divisionMeta, type ServiceDivision } from '../data/services';
+import { fulfillmentDisclosure, getCatalogServiceBySlug } from '../services/catalog';
 import { useServicePlan } from '../components/AIOServicePlanBar';
 import { AIOButton } from '../components/AIOButton';
 import { aioPaths } from '../utils/paths';
@@ -53,6 +54,8 @@ export function ServiceCatalogDetailPage({ slug: slugProp }: Props) {
   const inPlan = items.some((i) => i.slug === service.slug);
   const pricing = getServicePricing(service.slug, store.servicePricing);
   const launchCta = getPublicServiceCta(service.slug);
+  const catalogEntry = getCatalogServiceBySlug(service.slug);
+  const disclosure = catalogEntry ? fulfillmentDisclosure(catalogEntry) : null;
 
   const handleAdd = () => {
     add({
@@ -84,6 +87,11 @@ export function ServiceCatalogDetailPage({ slug: slugProp }: Props) {
 
               <h2 className="aio-service-detail__heading">What All In One Assists With</h2>
               <p>{service.shortDescription}</p>
+              {disclosure && (
+                <p className="aio-prototype-note" style={{ marginTop: '0.75rem' }}>
+                  {disclosure}
+                </p>
+              )}
 
               <h2 className="aio-service-detail__heading">General Process</h2>
               <ol>

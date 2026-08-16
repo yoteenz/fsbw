@@ -22,6 +22,7 @@ export const aioPaths = {
   portalTeam: `${BASE}/portal/team`,
   portalSearch: `${BASE}/portal/search`,
   services: `${BASE}/services`,
+  servicesFind: `${BASE}/services/find`,
   permitting: `${BASE}/services/permitting`,
   businessFormation: `${BASE}/services/business-formation`,
   insurance: `${BASE}/services/insurance`,

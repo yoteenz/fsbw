@@ -36,7 +36,7 @@ function stripViteClientForCloudPreview() {
 
 export default defineConfig({
   plugins: [
-    react(cloudMobilePreview ? { fastRefresh: false } : undefined),
+    react(),
     ...(cloudMobilePreview ? [stripViteClientForCloudPreview()] : []),
   ],
   resolve: {

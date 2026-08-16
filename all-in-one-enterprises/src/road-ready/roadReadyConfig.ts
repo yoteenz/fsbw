@@ -39,6 +39,11 @@ export const GLOSSARY: Record<string, string> = {
   'Trip Permit': 'Temporary permit allowing operation in a state where permanent registration may not yet apply.',
   Factoring: 'A business service that converts invoices into faster access to working capital through a partner.',
   Dispatching: 'Operational support matching available trucks with freight opportunities.',
+  UCR: 'Unified Carrier Registration — annual fee program for motor carriers, brokers, and freight forwarders where applicable.',
+  HVUT: 'Heavy Vehicle Use Tax — federal tax that may apply to taxable highway motor vehicles.',
+  'MCS-150': 'Biennial update of motor carrier registration information with FMCSA.',
+  Clearinghouse: 'FMCSA database for drug and alcohol program violations — employers of CDL drivers may need query compliance.',
+  'DQ File': 'Driver Qualification File — collection of records maintained for employed drivers where applicable.',
 };
 
 export const REQUIREMENT_DEFINITIONS: Record<
@@ -63,4 +68,13 @@ export const REQUIREMENT_DEFINITIONS: Record<
   factoring: { title: 'Factoring', category: 'operate', weight: 0, optional: true, serviceSlug: 'factoring-consultation' },
   bookkeeping: { title: 'Bookkeeping', category: 'operate', weight: 0, optional: true, serviceSlug: 'bookkeeping' },
   brokerage: { title: 'Brokerage Services', category: 'operate', weight: 0, optional: true, serviceSlug: 'freight-brokerage' },
+  ucr: { title: 'UCR Registration', category: 'registration', weight: 8, serviceSlug: 'ucr-registration' },
+  hvut: { title: 'HVUT / Form 2290', category: 'tax_fuel', weight: 6, serviceSlug: 'hvut-form-2290', optional: true },
+  mcs150: { title: 'MCS-150 Biennial Update', category: 'authority', weight: 8, serviceSlug: 'mcs-150-biennial-update' },
+  drug_alcohol_consortium: { title: 'Drug & Alcohol Consortium', category: 'fleet', weight: 8, serviceSlug: 'drug-alcohol-consortium', optional: true },
+  clearinghouse: { title: 'FMCSA Clearinghouse', category: 'fleet', weight: 6, serviceSlug: 'fmcsa-clearinghouse-assistance', optional: true },
+  dq_files: { title: 'Driver Qualification Files', category: 'fleet', weight: 6, serviceSlug: 'driver-qualification-files', optional: true },
+  eld: { title: 'ELD Services', category: 'fleet', weight: 4, serviceSlug: 'eld-services', optional: true },
+  title_tags: { title: 'Title / Tag Services', category: 'registration', weight: 4, serviceSlug: 'tag-services', optional: true },
+  new_entrant_audit: { title: 'New Entrant Audit Prep', category: 'ongoing', weight: 4, serviceSlug: 'new-entrant-audit-support', optional: true },
 };

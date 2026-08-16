@@ -8,6 +8,11 @@ export type RenewalType =
   | 'ifta'
   | 'authority'
   | 'tax'
+  | 'ucr'
+  | 'mcs150'
+  | 'hvut'
+  | 'consortium'
+  | 'eld'
   | 'other';
 
 export type RenewalStatus =

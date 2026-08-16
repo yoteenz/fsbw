@@ -1,4 +1,5 @@
 import { REQUIREMENT_DEFINITIONS, ROAD_READY_RULE_VERSION } from './roadReadyConfig';
+import { evaluateRoadReadyApplicability } from '../services/catalog/roadReadyApplicability';
 import type {
   OperatingProfile,
   RoadReadyItem,
@@ -118,6 +119,53 @@ export function buildRoadReadyItems(profile: RoadReadyProfile, units: PowerUnit[
 
   items.push(mkItem(orgId, 'dispatching', { status: 'optional', verificationStatus: 'unverified', applicable: true, requiredForProgress: false }));
   items.push(mkItem(orgId, 'factoring', { status: 'optional', verificationStatus: 'unverified', applicable: true, requiredForProgress: false }));
+  items.push(mkItem(orgId, 'bookkeeping', { status: 'optional', verificationStatus: 'unverified', applicable: true, requiredForProgress: false }));
+
+  const applicabilityInput = {
+    interstate,
+    intrastate: profile.operating.scope === 'intrastate',
+    vehicleCount: units.length || profile.operating.fleetSize,
+    hasCdlDrivers: undefined as boolean | undefined,
+    vehicleWeightOver26000: units.some((u) => {
+      const gvwr = Number.parseInt(u.gvwr ?? '', 10);
+      return Number.isFinite(gvwr) && gvwr > 26000;
+    }),
+    newEntrant: profile.operating.currentlyOperating === 'preparing',
+  };
+  const applicability = evaluateRoadReadyApplicability(applicabilityInput);
+  const applicabilityKeys = ['ucr', 'hvut', 'mcs150', 'drug_alcohol_consortium', 'clearinghouse', 'dq_files', 'eld', 'new_entrant_audit'] as const;
+
+  for (const key of applicabilityKeys) {
+    const def = REQUIREMENT_DEFINITIONS[key];
+    const rule = applicability.find((a) => a.requirementKey === key);
+    if (!def) continue;
+
+    const notApplicable = rule?.result === 'NOT_APPLICABLE';
+    const optional = def.optional || rule?.result === 'OPTIONAL' || rule?.result === 'RECOMMENDED';
+    const needsReview = rule?.result === 'NEEDS_REVIEW';
+
+    items.push(
+      mkItem(orgId, key, {
+        status: notApplicable ? 'not_applicable' : needsReview ? 'needs_review' : optional ? 'optional' : 'not_started',
+        verificationStatus: 'unverified',
+        applicable: !notApplicable,
+        requiredForProgress: !optional && !notApplicable && rule?.result !== 'RECOMMENDED',
+        reason: rule?.reason,
+        serviceSlug: def.serviceSlug,
+      }),
+    );
+  }
+
+  items.push(
+    mkItem(orgId, 'title_tags', {
+      status: 'optional',
+      verificationStatus: 'unverified',
+      applicable: true,
+      requiredForProgress: false,
+      reason: 'Title and tag needs vary by jurisdiction and vehicle status.',
+      serviceSlug: 'tag-services',
+    }),
+  );
 
   return items;
 }

@@ -264,14 +264,22 @@ export function ServiceRequestsCenterPage() {
 
 export function ServicesCenterPage() {
   const view = useClientCommandCenter();
+  const grouped = {
+    'Road Ready': view.activeServices.filter((s) => s.id.includes('road') || s.name.toLowerCase().includes('road')),
+    Compliance: view.activeServices.filter((s) => s.name.toLowerCase().includes('permit') || s.name.toLowerCase().includes('compliance')),
+    Operations: view.activeServices.filter((s) => ['dispatch', 'insurance', 'factoring', 'brokerage'].includes(s.id)),
+    Financial: view.activeServices.filter((s) => s.id === 'bookkeeping' || s.name.toLowerCase().includes('bookkeeping')),
+  };
+  const shown = view.activeServices;
+
   return (
     <div className="aio-cc-page">
       <BackToCommandCenter />
-      <h1>Services</h1>
+      <h1>My Services</h1>
       <section className="aio-cc-panel">
-        <h2>Active &amp; Available</h2>
+        <h2>Active &amp; In Progress</h2>
         <ul className="aio-cc-services-list">
-          {view.activeServices.map((s: ActiveServiceView) => (
+          {shown.map((s: ActiveServiceView) => (
             <li key={s.id}>
               <strong>{s.name}</strong>
               <span className={`aio-badge aio-badge--${s.tone === 'active' ? 'complete' : 'progress'}`}>{s.statusLabel}</span>
@@ -280,7 +288,25 @@ export function ServicesCenterPage() {
           ))}
         </ul>
       </section>
-      <Link to={aioPaths.services} className="aio-btn aio-btn--outline">Browse All Services →</Link>
+      {Object.entries(grouped).map(([label, items]) =>
+        items.length > 0 ? (
+          <section key={label} className="aio-cc-panel">
+            <h2>{label}</h2>
+            <ul className="aio-cc-services-list">
+              {items.map((s) => (
+                <li key={s.id}>
+                  <strong>{s.name}</strong>
+                  <span className={`aio-badge aio-badge--${s.tone === 'active' ? 'complete' : 'progress'}`}>{s.statusLabel}</span>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ) : null,
+      )}
+      <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', marginTop: '1rem' }}>
+        <Link to={aioPaths.services} className="aio-btn aio-btn--outline">Browse All Services →</Link>
+        <Link to={aioPaths.servicesFind} className="aio-btn aio-btn--gold">Find a Service</Link>
+      </div>
     </div>
   );
 }

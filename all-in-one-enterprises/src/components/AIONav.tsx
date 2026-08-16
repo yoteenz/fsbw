@@ -209,17 +209,29 @@ export function AIONav() {
           {mobileExpanded.services ? (
             <div className="aio-mobile-nav__sub">
               {servicesMegaMenu.map((category) => (
-                <div key={category.title} className="aio-mobile-nav__group">
-                  <p className="aio-mobile-nav__group-title">{category.title}</p>
-                  {category.links.map((link) => (
-                    <Link key={link.href + link.label} to={link.href} className="aio-mobile-nav__sublink" onClick={closeAll}>
-                      {link.label}
-                    </Link>
-                  ))}
+                <div key={category.id} className="aio-mobile-nav__group">
+                  <button
+                    type="button"
+                    className="aio-mobile-nav__toggle aio-mobile-nav__group-title"
+                    aria-expanded={mobileExpanded[category.id]}
+                    onClick={() => toggleMobileSection(category.id)}
+                  >
+                    {category.title} <span aria-hidden="true">{mobileExpanded[category.id] ? '−' : '+'}</span>
+                  </button>
+                  {mobileExpanded[category.id]
+                    ? category.links.map((link) => (
+                        <Link key={link.href + link.label} to={link.href} className="aio-mobile-nav__sublink" onClick={closeAll}>
+                          {link.label}
+                        </Link>
+                      ))
+                    : null}
                 </div>
               ))}
               <Link to={aioPaths.services} className="aio-mobile-nav__sublink" onClick={closeAll}>
                 View all services
+              </Link>
+              <Link to={aioPaths.servicesFind} className="aio-mobile-nav__sublink" onClick={closeAll}>
+                Find a service
               </Link>
             </div>
           ) : null}

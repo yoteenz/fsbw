@@ -255,26 +255,60 @@ export function OfficeEscalationsPage() {
   );
 }
 
+import { CANONICAL_SERVICE_CATALOG, SERVICE_DISCOVERY_CATEGORIES } from '../../services/catalog';
+
 export function OfficeServicesPage() {
   const store = useDemoStore();
   const open = store.requests.filter((r) => !['completed', 'cancelled'].includes(r.status));
+  const [serviceFilter, setServiceFilter] = useState('all');
+  const [categoryFilter, setCategoryFilter] = useState('all');
 
-  const sections: Record<string, typeof open> = {
-    NEW: open.filter((r) => r.status === 'new_request'),
-    'IN PROGRESS': open.filter((r) => ['in_progress', 'under_review', 'submitted'].includes(r.status)),
-    'WAITING ON CUSTOMER': open.filter((r) => ['documents_needed', 'information_needed'].includes(r.status)),
-    'WAITING EXTERNALLY': open.filter((r) => r.status === 'awaiting_agency'),
+  const filtered = useMemo(() => {
+    return open.filter((r) => {
+      const slug = r.services[0]?.slug ?? '';
+      if (serviceFilter !== 'all' && slug !== serviceFilter && r.division !== serviceFilter) return false;
+      if (categoryFilter !== 'all') {
+        const catalog = CANONICAL_SERVICE_CATALOG.find((c) => c.slug === slug);
+        if (catalog && catalog.category !== categoryFilter && !catalog.discoveryCategories?.includes(categoryFilter as typeof catalog.category)) {
+          return false;
+        }
+      }
+      return true;
+    });
+  }, [open, serviceFilter, categoryFilter]);
+
+  const sections: Record<string, typeof filtered> = {
+    NEW: filtered.filter((r) => r.status === 'new_request'),
+    'IN PROGRESS': filtered.filter((r) => ['in_progress', 'under_review', 'submitted'].includes(r.status)),
+    'WAITING ON CUSTOMER': filtered.filter((r) => ['documents_needed', 'information_needed'].includes(r.status)),
+    'WAITING EXTERNALLY': filtered.filter((r) => r.status === 'awaiting_agency'),
   };
+
+  const serviceSlugs = [...new Set(CANONICAL_SERVICE_CATALOG.filter((s) => s.officeVisible).map((s) => s.slug))];
 
   return (
     <div className="aio-office-page">
       <header className="aio-office-page__header">
         <h1>Service Operations</h1>
-        <p>Cross-service visibility — canonical requests remain authoritative.</p>
+        <p>Universal service queue — filter by service, category, status, and customer.</p>
       </header>
+      <div className="aio-cc-filters" style={{ marginBottom: '1.5rem' }}>
+        <select className="aio-input" value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)} aria-label="Category filter">
+          <option value="all">All categories</option>
+          {SERVICE_DISCOVERY_CATEGORIES.map((c) => (
+            <option key={c.id} value={c.id}>{c.title}</option>
+          ))}
+        </select>
+        <select className="aio-input" value={serviceFilter} onChange={(e) => setServiceFilter(e.target.value)} aria-label="Service filter" style={{ marginLeft: '0.5rem' }}>
+          <option value="all">All services</option>
+          {serviceSlugs.map((slug) => (
+            <option key={slug} value={slug}>{slug}</option>
+          ))}
+        </select>
+      </div>
       {Object.entries(sections).map(([title, items]) => (
         <section key={title} className="aio-oc-panel">
-          <h2 className="aio-oc-panel__title">{title}</h2>
+          <h2 className="aio-oc-panel__title">{title} ({items.length})</h2>
           {items.map((r) => {
             const client = store.clients.find((c) => c.id === r.clientId);
             const staff = store.staff.find((s) => s.id === r.assignedStaffId);
