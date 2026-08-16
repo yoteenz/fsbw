@@ -51518,3 +51518,19 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Report:** `docs/refinement/POST_BUILD_REFINEMENT_02_REPORT.md`
 
+---
+
+## 2026-08-16 — Post-Build Refinement 03: AIO design elevation (buttons, clarity, UI)
+
+- **Context:** Founder attached Refinement 03 spec (design elevation) after PB-R01 IA + PB-R02 brand messaging. Visual-only — no IA/backend changes.
+
+- **Design tokens:** Primary gold `#D4A017`, surface `#111415`, section padding 32px mobile / 64px desktop, border-radius 8–12px, button min-height 44px.
+
+- **Buttons:** Solid gold primary (no gradient/glow), new `outline-gold` secondary on dark heroes, auto `→` on gold CTAs via `AIOButton.showArrow`, full-width mobile `.aio-cta-row`.
+
+- **Start Your Business:** Option 1 gold-accent hero + `AIOStartupMilestones` icon row (BUILD→ROLL).
+
+- **Surfaces:** Dark sections use `--aio-surface`; improved body line-height/contrast; card hover without lift transform.
+
+- **Report:** `docs/refinement/POST_BUILD_REFINEMENT_03_REPORT.md`
+
