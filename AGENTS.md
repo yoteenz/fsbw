@@ -41,14 +41,22 @@ When you add a migration under `supabase/migrations/` that creates or alters **t
 
 ### Mobile live preview (no Vercel)
 
-Cloud agents auto-start two terminals from **`.cursor/environment.json`**:
+Cloud agents auto-start four terminals from **`.cursor/environment.json`**:
 
-1. **`vite`** — `npm run dev` on port **3001** (UI live; `/api` proxied to production).
-2. **`preview-tunnel`** — **`./scripts/cloud-preview-tunnel.sh`** prints a mobile preview URL. With **`CLOUDFLARE_TUNNEL_TOKEN`** + **`CLOUDFLARE_TUNNEL_HOSTNAME`** secrets, uses a **persistent** hostname (see **`docs/cloud-agent/persistent-preview-tunnel.md`**). Otherwise prints a ephemeral **`https://….trycloudflare.com`** URL.
+| Terminal | App | Port | Tunnel script |
+|----------|-----|------|---------------|
+| **`vite`** | Frontal Slayer | 3001 | **`preview-tunnel`** → `./scripts/cloud-preview-tunnel.sh` |
+| **`aio-vite`** | All In One standalone | 5173 | **`aio-preview-tunnel`** → `./all-in-one-enterprises/scripts/aio-preview-tunnel.sh` |
 
-**Founder workflow:** open the **`preview-tunnel`** terminal (or read **`/tmp/cloud-preview-url.txt`**) and paste the URL on your phone. URL changes each agent session. Production Vercel deploy waits for **"deploy now"** (`--deploy-now`).
+**Frontal Slayer:** **`CLOUDFLARE_TUNNEL_TOKEN`** + **`CLOUDFLARE_TUNNEL_HOSTNAME`** → persistent hostname (see **`docs/cloud-agent/persistent-preview-tunnel.md`**). Else ephemeral **`https://….trycloudflare.com`** → **`/tmp/cloud-preview-url.txt`**.
 
-**Agent duty:** after starting work, share the mobile preview URL from the tunnel terminal in chat if the founder is on mobile.
+**All In One (until production):** **`AIO_CLOUDFLARE_TUNNEL_TOKEN`** + **`AIO_CLOUDFLARE_TUNNEL_HOSTNAME`** (e.g. `https://aio-preview.yourdomain.com`) → see **`all-in-one-enterprises/docs/PREVIEW_TUNNEL.md`**. Else ephemeral trycloudflare → **`/tmp/aio-cloud-preview-url.txt`**. Use a **separate subdomain/tunnel** from Frontal Slayer (port 5173, not 3001).
+
+Optional — FS legacy “All In One has moved” button on mobile: set **`VITE_AIO_STANDALONE_URL`** to the AIO tunnel URL on the Frontal Slayer deploy.
+
+**Founder workflow:** open the relevant tunnel terminal (or read the URL file above) and paste on your phone. Ephemeral URLs change each agent session. Production Vercel deploy waits for **"deploy now"** (`--deploy-now`).
+
+**Agent duty:** after starting work, share the mobile preview URL(s) from the tunnel terminal(s) in chat if the founder is on mobile.
 
 ## Spatial Architecture Review (Studio OS)
 
