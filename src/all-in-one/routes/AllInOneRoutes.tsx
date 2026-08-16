@@ -97,6 +97,7 @@ import {
 } from '../pages/shipper/ShipperPortalPages';
 import { PortalServiceTrackerPage, PortalJourneyRoadmapPage } from '../pages/portal/WorkflowPortalPages';
 import { aioAppConfig } from '../config/appConfig';
+import { useAllInOneRelativeLocation } from '../hooks/useAllInOneRelativeLocation';
 
 const OfficeRoutesLazy = lazy(() => import('../office/routes/OfficeRoutes'));
 
@@ -111,11 +112,11 @@ function RequestConfirmationRoute() {
 }
 
 export default function AllInOneRoutes() {
-  const base = aioAppConfig.routes.base;
+  const location = useAllInOneRelativeLocation();
 
   return (
     <AIOAuthProvider>
-      <Routes>
+      <Routes location={location}>
         <Route element={<AIOAuthLayout />}>
           <Route path="login" element={<LoginPage />} />
           <Route path="sign-up" element={<SignUpPage />} />
@@ -228,7 +229,7 @@ export default function AllInOneRoutes() {
           />
         </Route>
 
-        <Route path="*" element={<Navigate to={base} replace />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </AIOAuthProvider>
   );
