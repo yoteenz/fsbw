@@ -111,6 +111,10 @@ export interface Quote {
   expirationDate?: string;
   preparedByStaffId?: string;
   acceptance?: QuoteAcceptance;
+  /** Sprint 15 — CRM linkage */
+  leadId?: string;
+  opportunityId?: string;
+  secureToken?: string;
   createdAt: string;
   updatedAt: string;
 }

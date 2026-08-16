@@ -3,6 +3,7 @@ import { aioPaths } from '../utils/paths';
 import { aggregateOfficeAttention, collectOfficeAttentionCandidates } from './officeAttentionEngine';
 import { greetingForStaff, hasOfficePermission, resolveOfficeStaffContext } from './officeContext';
 import { selectOfficeNextAction } from './officeNextActionEngine';
+import { getCrmLeads, getCrmMetrics } from '../demo/crmActions';
 import {
   enrichWorkItem,
   filterDueToday,
@@ -36,6 +37,10 @@ const QUEUE_DEFS: Omit<OfficeQueueSummary, 'count'>[] = [
   { id: 'customers_waiting_on_us', label: 'Customers Waiting on Us', href: `${aioPaths.officeWork}?view=waiting-on-us`, scope: 'company' },
   { id: 'waiting_on_customer', label: 'Waiting on Customer', href: `${aioPaths.officeWork}?view=waiting-on-customer`, scope: 'team' },
   { id: 'waiting_externally', label: 'Waiting Externally', href: `${aioPaths.officeWork}?view=waiting-externally`, scope: 'team' },
+  { id: 'crm_new_leads', label: 'New Leads', href: `${aioPaths.officeCrmLeads}?filter=new`, scope: 'company', division: 'customer_support' },
+  { id: 'crm_follow_up', label: 'Follow Up Today', href: aioPaths.officeCrm, scope: 'personal', division: 'customer_support' },
+  { id: 'crm_quote_needed', label: 'Quote Needed', href: aioPaths.officeCrmPipeline, scope: 'team', division: 'customer_support' },
+  { id: 'crm_decision_pending', label: 'Decision Pending', href: aioPaths.officeCrmPipeline, scope: 'team', division: 'customer_support' },
 ];
 
 function countByQueue(store: DemoStore, queueId: string): number {
@@ -55,6 +60,18 @@ function countByQueue(store: DemoStore, queueId: string): number {
   }
   if (queueId === 'customer_replies') {
     return store.messages.filter((m) => m.from === 'customer' && !m.read).length;
+  }
+  if (queueId === 'crm_new_leads') {
+    return getCrmLeads(store).filter((l) => l.status === 'new').length;
+  }
+  if (queueId === 'crm_follow_up') {
+    return getCrmMetrics(store).followUpToday + getCrmMetrics(store).overdueFollowUp;
+  }
+  if (queueId === 'crm_quote_needed') {
+    return (store.crmOpportunities ?? []).filter((o) => o.status === 'open' && o.pipelineStageId === 'cs-solution' && !o.quoteId).length;
+  }
+  if (queueId === 'crm_decision_pending') {
+    return getCrmMetrics(store).decisionPending;
   }
   return (store.officeWorkItems ?? []).filter((w) => w.queueId === queueId && isActiveWorkStatus(w.status)).length;
 }
@@ -138,6 +155,20 @@ function buildRoleModules(ctx: ReturnType<typeof resolveOfficeStaffContext>, sto
       });
       break;
     default:
+      if (hasOfficePermission(ctx, 'crm.read')) {
+        const crm = getCrmMetrics(store);
+        modules.push({
+          id: 'crm',
+          title: 'CRM & Sales',
+          items: [
+            { label: 'New Leads', value: crm.newLeads, href: aioPaths.officeCrmLeads },
+            { label: 'Follow-Up Due', value: crm.followUpToday + crm.overdueFollowUp, href: aioPaths.officeCrm },
+            { label: 'Quotes Out', value: crm.quotesOut, href: aioPaths.officeCrmPipeline },
+            { label: 'Decision Pending', value: crm.decisionPending, href: aioPaths.officeCrmPipeline },
+            { label: 'Recent Conversions', value: crm.converted, href: aioPaths.officeCrmReports },
+          ],
+        });
+      }
       if (ctx.isManager) {
         modules.push({
           id: 'management',
@@ -182,6 +213,7 @@ export function getOfficeCommandCenterView(store: DemoStore): OfficeCommandCente
   const overdue = filterOverdue(store.officeWorkItems ?? [], now).map((w) => enrichWorkItem(w, store, now));
 
   const queues: OfficeQueueSummary[] = QUEUE_DEFS.filter((q) => {
+    if (q.id.startsWith('crm_') && !hasOfficePermission(ctx, 'crm.read')) return false;
     if (q.division === 'factoring' && !hasOfficePermission(ctx, 'factoring_finance.read')) return false;
     if (q.division === 'brokerage' && !hasOfficePermission(ctx, 'brokerage_finance.read')) return false;
     if (q.id === 'approvals' && !hasOfficePermission(ctx, 'approvals.read')) return false;

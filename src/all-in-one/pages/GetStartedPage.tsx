@@ -5,6 +5,7 @@ import { defaultIntakeAnswers, type IntakeAnswers } from '../intake/intakeTypes'
 import { intakeRepository } from '../intake/intakeState';
 import { generateRoadmap } from '../roadmap/roadmapEngine';
 import { roadmapRepository } from '../repositories/roadmapRepository';
+import { createLeadFromIntake } from '../demo/crmActions';
 import { IntakeQuestionField, useIntakeValidation } from '../components/IntakeQuestionField';
 import { AIOButton } from '../components/AIOButton';
 import { aioPaths } from '../utils/paths';
@@ -24,6 +25,8 @@ export function GetStartedPage() {
     }
   }, [searchParams, answers.goal]);
 
+  const serviceParam = searchParams.get('service');
+
   useEffect(() => {
     intakeRepository.save(answers);
   }, [answers]);
@@ -41,9 +44,12 @@ export function GetStartedPage() {
     } else {
       const roadmap = generateRoadmap(answers);
       roadmapRepository.save(roadmap);
+      const serviceSlugs = roadmap.items.map((i) => i.serviceSlug).filter(Boolean) as string[];
+      if (serviceParam && !serviceSlugs.includes(serviceParam)) serviceSlugs.unshift(serviceParam);
+      createLeadFromIntake(answers, serviceSlugs);
       navigate(aioPaths.roadmapResults);
     }
-  }, [answers, navigate, questions, stepIndex, totalSteps, validate]);
+  }, [answers, navigate, questions, stepIndex, totalSteps, validate, serviceParam]);
 
   const goBack = () => {
     if (stepIndex > 0) setStepIndex((i) => i - 1);

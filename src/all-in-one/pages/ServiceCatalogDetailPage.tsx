@@ -106,8 +106,11 @@ export function ServiceCatalogDetailPage({ slug: slugProp }: Props) {
                   Add to My Plan
                 </AIOButton>
               )}
-              <Link to={aioPaths.getStarted} style={{ display: 'block', marginTop: '1rem' }}>
-                <AIOButton variant="outline-dark">Start Smart Intake</AIOButton>
+              <Link to={aioPaths.getStartedForService(service.slug)} style={{ display: 'block', marginTop: '1rem' }}>
+                <AIOButton variant="outline-dark">Get Started — {service.title}</AIOButton>
+              </Link>
+              <Link to={aioPaths.getStarted} style={{ display: 'block', marginTop: '0.5rem' }}>
+                <AIOButton variant="outline-dark" size="sm">Start Smart Intake</AIOButton>
               </Link>
             </aside>
           </div>

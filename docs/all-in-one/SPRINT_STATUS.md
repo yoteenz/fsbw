@@ -1,7 +1,20 @@
 # All In One — Sprint Status
 
-**Sprint:** 14 — Workflow Automation + Service Orchestration  
-**Last updated:** 2026-08-15
+**Sprint:** 15 — CRM + Lead Pipeline + Sales / Quote Conversion  
+**Last updated:** 2026-08-16
+
+---
+
+## SPRINT 15 COMPLETE (CRM · Lead Pipeline · Quote Conversion)
+
+- **CRM core module** — `src/all-in-one/crm/` (types, deduplication, conversion engine)
+- **Demo store v15** — `crmSeed.ts`, `crmActions.ts`, demo leads A–J, pipelines, demo quotes
+- **Office routes** — `/office/crm`, `/office/crm/leads`, `/office/crm/leads/:id`, `/office/crm/pipeline`, `/office/crm/opportunities/:id`, `/office/crm/calendar`, `/office/crm/reports`, `/office/settings/crm`
+- **Public routes** — functional `/contact`, `/request-callback`, secure `/quote/:secureToken`
+- **Integrations** — Smart Intake → lead; service page CTA; canonical Sprint 07 quotes; conversion → service requests + Sprint 14 workflows; CRM follow-ups → Office work items; Office Command Center CRM queues
+- **Permissions** — `crm.*` role bundles in `officeContext.ts`
+- **Unit tests** — `crm/crm.test.ts` (dedupe, conversion idempotency, existing customer link, permissions, quote tokens)
+- **Documentation** — `CRM_SYSTEM.md`, `CRM_CONVERSION_ENGINE.md`, `CRM_PIPELINES.md`, `CRM_LEAD_CAPTURE.md`, `CRM_SECURITY.md`
 
 ---
 

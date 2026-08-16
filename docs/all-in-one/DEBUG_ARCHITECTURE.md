@@ -95,7 +95,8 @@ Registered in `src/routes/StudioDebugRoutes.tsx` **before** the catch-all `App` 
 ```
 src/all-in-one/
   config/appConfig.ts      # Company, contact, routes, feature flags
-  demo/                    # Sprint 03–13 — demo store v13 + seed/actions
+  demo/                    # Sprint 03–15 — demo store v15 + seed/actions
+  crm/                     # Sprint 15 — types, dedupe, conversion engine
   portal/                  # Sprint 12 — command center, attention engine, org context
   brokerage/               # Sprint 10 — types, rules, calculations, config
   insurance/               # Sprint 11 — types, rules, calculations, config, partner adapter

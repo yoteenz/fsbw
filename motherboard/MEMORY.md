@@ -51245,3 +51245,31 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Spatial Architecture Review:** SKIPPED — internal Office IA reorganization under `/debug/all-in-one/office`; no Frontal Slayer regression.
 
+---
+
+## 2026-08-15 — All In One Sprint 14: Workflow Automation + Service Orchestration
+
+- **Context:** Founder issued Sprint 14 spec — build canonical workflow orchestration engine connecting Sprint 12 customer experience and Sprint 13 staff Office. Must coordinate (not replace) service requests, documents, billing, Road Ready, Office work, notifications, handoffs, approvals, escalations, and division domains. No legal/compliance autonomous determinations.
+
+- **Topics covered:** `src/all-in-one/workflow/` (types, validation, engine, orchestrator, domainEvents, businessDays); demo store **v14** (`workflowSeed.ts`, `workflowActions.ts`, migration v13→v14); template versioning (Operating Authority v1/v2); workflow instances/steps with dependency graph, weighted progress, conditional skip, payment gates; automation rules + idempotent event bus; ServiceJourney (New Carrier Startup demo); Office routes `/office/workflows`, `/office/workflows/:id`, `/office/settings/workflows`, `/office/settings/automations`, `/office/automation-exceptions`, `/office/workflow-health`; Portal routes `/portal/services/:serviceRequestId`, `/portal/roadmap`; integrations in `demoActions`, `clientCommandCenterService`, `officeAttentionEngine`; workflow permissions on Office roles; 11 vitest tests; docs `WORKFLOW_ENGINE.md`, `AUTOMATION_ENGINE.md`, `SERVICE_ORCHESTRATION.md`, `SERVICE_JOURNEYS.md`, `WORKFLOW_SOURCE_OF_TRUTH.md`, `SPRINT_STATUS.md` updated.
+
+- **Decisions / outcomes:** Sprint 14 COMPLETE in demo mode. Legacy division request-board workflow (`office/workflows/workflowEngine.ts`) preserved for queue columns; Sprint 14 canonical engine is separate orchestration layer. Published template versions immutable; instances pin to starting version. Protected steps require staff completion. Duplicate domain events suppressed via dedupe keys.
+
+- **Verification:** `npm run build` pass; 34/34 workflow + command center tests pass.
+
+- **Spatial Architecture Review:** SKIPPED — connective orchestration under `/debug/all-in-one`; no new Frontal Slayer surfaces.
+
+---
+
+## 2026-08-16 — All In One Sprint 15: CRM + Lead Pipeline + Sales / Quote Conversion
+
+- **Context:** Founder issued Sprint 15 spec — front-office growth layer from discovery through lead → qualification → opportunity → quote → conversion → customer/service request/workflow without duplicate data entry. Must integrate public site, Smart Intake, canonical quotes (Sprint 07), Office (Sprint 13), workflows (Sprint 14). Remain isolated under `/debug/all-in-one`.
+
+- **Topics covered:** `src/all-in-one/crm/` (crmTypes, leadDeduplication, conversionEngine); demo store **v15** (`crmSeed.ts`, `crmActions.ts`, leads A–J, carrier + shipper pipelines, demo CRM quotes); Office CRM pages (`CrmPages.tsx`) and routes; public functional contact/callback forms; secure public quote view `/quote/:secureToken`; Smart Intake → `createLeadFromIntake`; service page CTA with `?service=`; CRM permissions (`crm.*`); CRM follow-ups → OfficeWorkItem; Office Command Center CRM queues/module; 14 vitest tests; docs `CRM_SYSTEM.md`, `CRM_CONVERSION_ENGINE.md`, `CRM_PIPELINES.md`, `CRM_LEAD_CAPTURE.md`, `CRM_SECURITY.md`, `SPRINT_STATUS.md` updated.
+
+- **Decisions / outcomes:** Sprint 15 COMPLETE in demo mode. Lead ≠ Customer ≠ Opportunity ≠ Service Request ≠ Workflow invariants enforced. Conversion idempotent via `convert:{leadId}:{opportunityId}`. Existing customer conversion reuses organization (demo lead-d). Quotes remain canonical Sprint 07 records with `leadId`, `opportunityId`, `secureToken`. No CRM-specific quote duplicate table.
+
+- **Verification:** `npm run build` pass; 14/14 CRM unit tests pass.
+
+- **Spatial Architecture Review:** SKIPPED — CRM under `/debug/all-in-one/office/crm`; no Frontal Slayer regression.
+

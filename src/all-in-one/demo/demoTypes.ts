@@ -99,6 +99,20 @@ import type {
   WorkflowTemplate,
   WorkflowTemplateVersion,
 } from '../workflow/workflowTypes';
+import type {
+  CrmActivity,
+  CrmConversionRecord,
+  CrmFollowUp,
+  CrmLead,
+  CrmLeadSource,
+  CrmLostReason,
+  CrmOpportunity,
+  CrmPipeline,
+  CrmPipelineStage,
+  CrmReferral,
+  CrmServiceInterest,
+  CrmSettings,
+} from '../crm/crmTypes';
 
 export type Visibility = 'internal' | 'customer';
 
@@ -415,7 +429,7 @@ export interface OrganizationMember {
 }
 
 export interface DemoStore {
-  version: 14;
+  version: 15;
   requestCounter: number;
   portalClientId?: string;
   shipperPortalOrgId?: string;
@@ -527,6 +541,19 @@ export interface DemoStore {
   workflowReminders?: WorkflowReminder[];
   serviceJourneys?: ServiceJourney[];
   workflowKillSwitch?: WorkflowKillSwitch;
+  /** Sprint 15 — CRM */
+  crmLeadSources?: CrmLeadSource[];
+  crmPipelines?: CrmPipeline[];
+  crmPipelineStages?: CrmPipelineStage[];
+  crmLostReasons?: CrmLostReason[];
+  crmLeads?: CrmLead[];
+  crmServiceInterests?: CrmServiceInterest[];
+  crmOpportunities?: CrmOpportunity[];
+  crmActivities?: CrmActivity[];
+  crmFollowUps?: CrmFollowUp[];
+  crmReferrals?: CrmReferral[];
+  crmConversionRecords?: CrmConversionRecord[];
+  crmSettings?: CrmSettings;
 }
 
 export interface OfficeMetrics {

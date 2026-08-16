@@ -10,6 +10,7 @@ import { createInsuranceSeedData } from './insuranceSeed';
 import { createCommandCenterSeedData } from './commandCenterSeed';
 import { createOfficeSeedData } from './officeSeed';
 import { createWorkflowSeedData } from './workflowSeed';
+import { createCrmSeedData } from './crmSeed';
 
 export function createDemoSeed(): DemoStore {
   const now = new Date();
@@ -25,6 +26,7 @@ export function createDemoSeed(): DemoStore {
   const commandCenter = createCommandCenterSeedData();
   const office = createOfficeSeedData(now);
   const workflow = createWorkflowSeedData(now);
+  const crm = createCrmSeedData(now);
 
   const requests = [
       mkRequest('req-1', 'AIO-DEMO-0001', 'client-a', 'Authority + BOC-3 Assistance', 'permitting', 'new_request', 'staff-2', daysAgo(3), ['vdoc-a1', 'vdoc-a2']),
@@ -38,7 +40,7 @@ export function createDemoSeed(): DemoStore {
     });
 
   return {
-    version: 14,
+    version: 15,
     requestCounter: 4,
     portalClientId: 'client-a',
     shipperPortalOrgId: 'client-e',
@@ -291,7 +293,6 @@ export function createDemoSeed(): DemoStore {
     insuranceCounters: insurance.counters,
     brokerageQuotes: [],
     shipments: [],
-    quotes: billing.quotes,
     invoices: billing.invoices,
     payments: billing.payments,
     receipts: billing.receipts,
@@ -326,6 +327,19 @@ export function createDemoSeed(): DemoStore {
     workflowReminders: workflow.workflowReminders,
     serviceJourneys: workflow.serviceJourneys,
     workflowKillSwitch: workflow.workflowKillSwitch,
+    crmLeadSources: crm.crmLeadSources,
+    crmPipelines: crm.crmPipelines,
+    crmPipelineStages: crm.crmPipelineStages,
+    crmLostReasons: crm.crmLostReasons,
+    crmLeads: crm.crmLeads,
+    crmServiceInterests: crm.crmServiceInterests,
+    crmOpportunities: crm.crmOpportunities,
+    crmActivities: crm.crmActivities,
+    crmFollowUps: crm.crmFollowUps,
+    crmReferrals: crm.crmReferrals,
+    crmConversionRecords: crm.crmConversionRecords,
+    crmSettings: crm.crmSettings,
+    quotes: [...crm.demoQuotes, ...billing.quotes],
   };
 }
 

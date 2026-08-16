@@ -82,6 +82,16 @@ import {
   OfficeAutomationExceptionsPage,
   OfficeWorkflowHealthPage,
 } from '../pages/WorkflowPages';
+import {
+  CrmHomePage,
+  CrmLeadsListPage,
+  CrmLeadDetailPage,
+  CrmPipelinePage,
+  CrmOpportunityDetailPage,
+  CrmCalendarPage,
+  CrmReportsPage,
+  CrmSettingsPage,
+} from '../pages/CrmPages';
 
 export default function OfficeRoutes() {
   return (
@@ -105,6 +115,14 @@ export default function OfficeRoutes() {
         <Route path="settings/automations" element={<OfficeAutomationSettingsPage />} />
         <Route path="automation-exceptions" element={<OfficeAutomationExceptionsPage />} />
         <Route path="workflow-health" element={<OfficeWorkflowHealthPage />} />
+        <Route path="crm" element={<CrmHomePage />} />
+        <Route path="crm/leads" element={<CrmLeadsListPage />} />
+        <Route path="crm/leads/:leadId" element={<CrmLeadDetailPage />} />
+        <Route path="crm/pipeline" element={<CrmPipelinePage />} />
+        <Route path="crm/opportunities/:opportunityId" element={<CrmOpportunityDetailPage />} />
+        <Route path="crm/calendar" element={<CrmCalendarPage />} />
+        <Route path="crm/reports" element={<CrmReportsPage />} />
+        <Route path="settings/crm" element={<CrmSettingsPage />} />
         <Route path="clients" element={<ClientsListPage />} />
         <Route path="clients/:clientId/road-ready" element={<ClientRoadReadyReviewPage />} />
         <Route path="clients/:clientId" element={<ClientDetailPage />} />

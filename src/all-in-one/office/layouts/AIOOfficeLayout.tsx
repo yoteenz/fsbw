@@ -5,6 +5,7 @@ import { aioPaths } from '../../utils/paths';
 import { useDemoStore } from '../../demo/useDemoStore';
 import { createTask } from '../../demo/demoActions';
 import { searchBilling } from '../../demo/billingActions';
+import { getCrmLeads } from '../../demo/crmActions';
 import { setOfficeStaff } from '../../office-core/officeContext';
 
 const navGroups = [
@@ -19,6 +20,15 @@ const navGroups = [
       { label: 'Queues', to: aioPaths.officeQueues },
       { label: 'Approvals', to: aioPaths.officeApprovals },
       { label: 'Escalations', to: aioPaths.officeEscalations },
+    ],
+  },
+  {
+    label: 'Growth',
+    items: [
+      { label: 'CRM', to: aioPaths.officeCrm },
+      { label: 'Leads', to: aioPaths.officeCrmLeads },
+      { label: 'Pipeline', to: aioPaths.officeCrmPipeline },
+      { label: 'CRM Calendar', to: aioPaths.officeCrmCalendar },
     ],
   },
   {
@@ -113,6 +123,14 @@ export function AIOOfficeLayout() {
     if (req) return navigate(aioPaths.officeRequest(req.id));
     const client = store.clients.find((c) => c.companyName.toLowerCase().includes(q) || c.contactEmail.toLowerCase().includes(q));
     if (client) return navigate(aioPaths.officeClient(client.id));
+    const lead = getCrmLeads(store).find(
+      (l) =>
+        l.email?.toLowerCase().includes(q) ||
+        l.phone?.includes(q) ||
+        l.businessName?.toLowerCase().includes(q) ||
+        `${l.firstName ?? ''} ${l.lastName ?? ''}`.toLowerCase().includes(q),
+    );
+    if (lead) return navigate(aioPaths.officeCrmLead(lead.id));
     const doc = store.documents.find((d) => d.id === q || (d.title ?? d.name ?? '').toLowerCase().includes(q));
     if (doc) return navigate(aioPaths.officeDocumentsReview);
     const renewal = store.renewals.find((r) => r.id.toLowerCase().includes(q) || r.title.toLowerCase().includes(q));
@@ -192,6 +210,9 @@ export function AIOOfficeLayout() {
                 <button type="button" className="aio-btn aio-btn--gold aio-btn--sm" onClick={() => setQuickOpen((o) => !o)}>+ New</button>
                 {quickOpen && (
                   <div className="aio-office__quick-menu" role="menu">
+                    <button type="button" onClick={() => { setQuickOpen(false); navigate(aioPaths.officeCrmLeads); }}>New Lead</button>
+                    <button type="button" onClick={() => { setQuickOpen(false); navigate(aioPaths.officeCrm); }}>Log Call / Follow-Up</button>
+                    <button type="button" onClick={() => { setQuickOpen(false); navigate(aioPaths.officeQuotes); }}>Prepare Quote</button>
                     <button type="button" onClick={() => { createTask({ title: 'Internal follow-up', priority: 'normal', status: 'open', category: 'General', assignedStaffId: staffId }); setQuickOpen(false); navigate(aioPaths.officeWork); }}>Internal Task</button>
                     <button type="button" onClick={() => { setQuickOpen(false); navigate(aioPaths.officeClients); }}>Customer</button>
                     <button type="button" onClick={() => { setQuickOpen(false); navigate(aioPaths.officeInbox); }}>Message</button>
@@ -213,6 +234,7 @@ export function AIOOfficeLayout() {
           <div className="aio-oc-palette__panel">
             <input autoFocus type="search" placeholder="Jump to…" value={search} onChange={(e) => setSearch(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') { onSearch(e); setPaletteOpen(false); } }} />
             <nav>
+              <button type="button" onClick={() => { navigate(aioPaths.officeCrm); setPaletteOpen(false); }}>CRM</button>
               <button type="button" onClick={() => { navigate(aioPaths.officeWork); setPaletteOpen(false); }}>My Work</button>
               <button type="button" onClick={() => { navigate(aioPaths.officeQueues); setPaletteOpen(false); }}>Queues</button>
               <button type="button" onClick={() => { navigate(aioPaths.officeClients); setPaletteOpen(false); }}>Clients</button>

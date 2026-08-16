@@ -63,6 +63,7 @@ export type OfficeWorkSourceDomain =
   | 'payment'
   | 'message'
   | 'calendar'
+  | 'crm'
   | 'manual';
 
 export type OfficeWorkType =
@@ -94,7 +95,11 @@ export type OfficeQueueId =
   | 'unassigned'
   | 'customers_waiting_on_us'
   | 'waiting_on_customer'
-  | 'waiting_externally';
+  | 'waiting_externally'
+  | 'crm_new_leads'
+  | 'crm_follow_up'
+  | 'crm_quote_needed'
+  | 'crm_decision_pending';
 
 export interface OfficeTeam {
   id: string;
@@ -270,7 +275,22 @@ export type OfficePermission =
   | 'automation_rules.read'
   | 'automation_rules.manage'
   | 'automation_exceptions.read'
-  | 'automation_exceptions.resolve';
+  | 'automation_exceptions.resolve'
+  | 'crm.read'
+  | 'crm.leads.read'
+  | 'crm.leads.manage'
+  | 'crm.leads.merge'
+  | 'crm.opportunities.read'
+  | 'crm.opportunities.manage'
+  | 'crm.activities.read'
+  | 'crm.activities.manage'
+  | 'crm.followups.manage'
+  | 'crm.pipeline.read'
+  | 'crm.pipeline.manage'
+  | 'crm.quotes.prepare'
+  | 'crm.convert'
+  | 'crm.reports.read'
+  | 'crm.settings.manage';
 
 export interface OfficeAttentionItem {
   id: string;

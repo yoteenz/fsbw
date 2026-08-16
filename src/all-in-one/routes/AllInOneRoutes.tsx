@@ -10,6 +10,8 @@ import { PortalPage } from '../pages/PortalPage';
 import { ServicesPage } from '../pages/ServicesPage';
 import { AboutPage } from '../pages/AboutPage';
 import { ContactPage } from '../pages/ContactPage';
+import { RequestCallbackPage } from '../pages/RequestCallbackPage';
+import { PublicQuotePage } from '../pages/PublicQuotePage';
 import { RoadmapPage } from '../pages/RoadmapPage';
 import { FactoringPage } from '../pages/FactoringPage';
 import {
@@ -140,6 +142,8 @@ export default function AllInOneRoutes() {
           <Route path="request/confirmation/:requestId" element={<RequestConfirmationRoute />} />
           <Route path="about" element={<AboutPage />} />
           <Route path="contact" element={<ContactPage />} />
+          <Route path="request-callback" element={<RequestCallbackPage />} />
+          <Route path="quote/:secureToken" element={<PublicQuotePage />} />
           <Route path="roadmap" element={<RoadmapPage />} />
         </Route>
 
