@@ -310,7 +310,7 @@
   top: 0;
   z-index: 100;
   height: var(--aio-header-h);
-  background: rgba(10, 10, 10, 0.92);
+  background: rgba(10, 10, 10, 0.94);
   backdrop-filter: blur(12px);
   border-bottom: 1px solid rgba(212, 160, 23, 0.15);
 }
@@ -479,7 +479,7 @@
   color: rgba(255, 255, 255, 0.65);
 }
 
-/* Hero */
+/* Hero — Refinement 03B: approved branded truck, left copy / right truck */
 .aio-hero {
   position: relative;
   min-height: clamp(520px, 85vh, 720px);
@@ -492,20 +492,50 @@
 .aio-hero__bg {
   position: absolute;
   inset: 0;
+  background-image: var(--aio-hero-bg);
   background-size: cover;
-  background-position: center 40%;
-  opacity: 0.55;
+  background-repeat: no-repeat;
+  background-position: 68% center;
 }
 
 .aio-hero__overlay {
   position: absolute;
   inset: 0;
   background: linear-gradient(
-    105deg,
-    rgba(10, 10, 10, 0.92) 0%,
-    rgba(10, 10, 10, 0.75) 45%,
-    rgba(10, 10, 10, 0.35) 100%
+    90deg,
+    rgba(0, 0, 0, 0.88) 0%,
+    rgba(0, 0, 0, 0.65) 32%,
+    rgba(0, 0, 0, 0.22) 58%,
+    rgba(0, 0, 0, 0.04) 100%
   );
+}
+
+@media (min-width: 768px) {
+  .aio-hero__bg {
+    background-position: 62% center;
+  }
+
+  .aio-hero__overlay {
+    background: linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0.85) 0%,
+      rgba(0, 0, 0, 0.58) 34%,
+      rgba(0, 0, 0, 0.16) 62%,
+      rgba(0, 0, 0, 0.03) 100%
+    );
+  }
+}
+
+@media (min-width: 1024px) {
+  .aio-hero__bg {
+    background-position: 72% center;
+  }
+}
+
+@media (min-width: 1440px) {
+  .aio-hero__bg {
+    background-position: 78% center;
+  }
 }
 
 .aio-hero__content {
@@ -515,6 +545,22 @@
   margin: 0 auto;
   padding: clamp(3rem, 8vw, 6rem) clamp(1.25rem, 4vw, 3rem);
   width: 100%;
+}
+
+.aio-hero__copy {
+  max-width: 36rem;
+}
+
+@media (min-width: 768px) {
+  .aio-hero__copy {
+    max-width: 34rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .aio-hero__copy {
+    max-width: 38rem;
+  }
 }
 
 .aio-hero__eyebrow {

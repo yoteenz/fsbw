@@ -8,33 +8,38 @@ export function HeroSection() {
 
   return (
     <>
-      <section className="aio-hero" aria-labelledby="aio-hero-heading">
-        <div
-          className="aio-hero__bg"
-          style={{ backgroundImage: `url(${aioAppConfig.assets.heroImage})` }}
-          role="img"
-          aria-label="Commercial semi-truck on highway at dusk"
-        />
+      <section
+        className="aio-hero"
+        aria-labelledby="aio-hero-heading"
+        style={
+          {
+            '--aio-hero-bg': `url(${aioAppConfig.assets.heroImage})`,
+          } as React.CSSProperties
+        }
+      >
+        <div className="aio-hero__bg" role="presentation" aria-hidden="true" />
         <div className="aio-hero__overlay" aria-hidden="true" />
         <div className="aio-hero__content">
-          <p className="aio-hero__eyebrow">{aioAppConfig.company.legalName}</p>
-          <h1 id="aio-hero-heading" className="aio-display-xl aio-hero__headline">
-            {taglineLine1}
-            <br />
-            <em>{taglineLine2}</em>
-          </h1>
-          <p className="aio-hero__sub">{aioAppConfig.company.brandDescription}</p>
-          <div className="aio-hero__actions aio-cta-row">
-            <Link to={heroPrimaryCtaHref} className="aio-cta-row__link">
-              <AIOButton variant="gold" className="aio-btn--block">
-                Start My Business
-              </AIOButton>
-            </Link>
-            <Link to={heroSecondaryCtaHref} className="aio-cta-row__link">
-              <AIOButton variant="outline-gold" className="aio-btn--block" showArrow>
-                See How It Works
-              </AIOButton>
-            </Link>
+          <div className="aio-hero__copy">
+            <p className="aio-hero__eyebrow">{aioAppConfig.company.legalName}</p>
+            <h1 id="aio-hero-heading" className="aio-display-xl aio-hero__headline">
+              {taglineLine1}
+              <br />
+              <em>{taglineLine2}</em>
+            </h1>
+            <p className="aio-hero__sub">{aioAppConfig.company.brandDescription}</p>
+            <div className="aio-hero__actions aio-cta-row">
+              <Link to={heroPrimaryCtaHref} className="aio-cta-row__link">
+                <AIOButton variant="gold" className="aio-btn--block">
+                  Start My Business
+                </AIOButton>
+              </Link>
+              <Link to={heroSecondaryCtaHref} className="aio-cta-row__link">
+                <AIOButton variant="outline-gold" className="aio-btn--block" showArrow>
+                  See How It Works
+                </AIOButton>
+              </Link>
+            </div>
           </div>
         </div>
       </section>

@@ -38,9 +38,8 @@ export const aioAppConfig = {
     clientLogin: '/portal',
   },
   assets: {
-    /** Hero slot — replace with production asset when available. */
-    heroImage:
-      'https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?auto=format&fit=crop&w=1920&q=80',
+    /** Homepage hero — approved All In One branded truck (Refinement 03B) */
+    heroImage: '/brand/all-in-one-hero-truck.png',
     /** Approved horizontal lockup — emblem + ALL IN ONE + ENTERPRISES INC. */
     logoLockup: '/brand/aio-logo-lockup.png',
     /** @deprecated use logoLockup */
