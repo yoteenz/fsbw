@@ -3,7 +3,7 @@
  * Software ready ≠ business ready ≠ publicly enabled.
  */
 
-import type { PaymentActivationState, PricingState, ServiceLaunchEntry, ServiceLaunchState } from './types';
+import type { ServiceLaunchEntry, ServiceLaunchState } from './types';
 
 export const SERVICE_LAUNCH_MATRIX: ServiceLaunchEntry[] = [
   {
