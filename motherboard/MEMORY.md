@@ -51704,3 +51704,21 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **QA:** Build OK; manual homepage at 390×844 and 1440×900 — menu opaque, hero text/truck balance, larger logo verified.
 
+---
+
+## 2026-08-16 — POST-BUILD REFINEMENT 03F.1: Icon recrop + safe-canvas normalization + clipping fix
+
+- **Context:** Continuation of 03E/03E.1/03F custom icon library. Homepage + platform icons appeared clipped/tight/optically inconsistent in screenshots — extraction/normalization problem, not artwork redesign.
+
+- **Root cause (multiple):** (1) 03E/03F pipeline used tight cell inset + absolute 8–12px pad then scaled padded crop onto 256×256, double-shrinking artwork to ~50% effective occupancy; (2) CSS `object-position: left center` on pathway cards; (3) 48px wrapper with ~12px icon–title gap; (4) no cache bust on homepage icon paths.
+
+- **Asset fix:** New `scripts/icon_normalize_lib.py` — 512×512 transparent RGBA canvas, bbox + 2% bleed, 68% optical fill (66% detail silhouettes), 5% cell bleed, label-band exclusion on all sheets. Re-extracted all **30** icons via `extract-service-icons.py` + `extract-platform-icon-sheets.py`; `verify-icon-assets.py` confirms 16–18% edge clearance, 63–68% occupancy. Trucking Insurance remains 03E.1 standalone source.
+
+- **Rendering fix:** `AIO_ICON_ASSET_VERSION = '03f1'` in `aioIconRegistry.ts`; `homePathways.ts` uses registry + version; `.aio-icon` class; pathway wrapper 50→54→56px, `object-fit: contain`, `object-position: center`, `overflow: visible`, icon–title gap ~18–24px.
+
+- **Docs:** `docs/refinement/POST_BUILD_REFINEMENT_03F_REPORT.md` — 03F.1 section with audit, root cause, QA.
+
+- **QA:** Programmatic verify PASS (30 icons); manual homepage at 375/768/1280px — all six service icons complete (building, clipboard, truck+shield, dispatch, crane, cash flow), no clipping.
+
+- **Not changed:** Card typography/colors/routes, Trucking Insurance design, black icons + gold titles, no AI regeneration, no object-fit cover.
+

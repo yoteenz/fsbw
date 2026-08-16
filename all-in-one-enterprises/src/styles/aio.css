@@ -5287,3 +5287,118 @@
 .aio-bk-portal-clarification { margin: 0.75rem 0; }
 .aio-bk-portal-clarification__options { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.5rem; }
 .aio-bk-rec-card__review--warn { border-left: 3px solid var(--aio-gold, #d4a017); }
+
+/* Debug — icon library QA (03F.2) */
+.aio-icon-debug {
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: 2rem 1.25rem 4rem;
+}
+
+.aio-icon-debug__header {
+  margin-bottom: 2rem;
+}
+
+.aio-icon-debug__eyebrow {
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--aio-gray-600);
+  margin-bottom: 0.5rem;
+}
+
+.aio-icon-debug__section {
+  margin-bottom: 2.5rem;
+}
+
+.aio-icon-debug__group-title {
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--aio-gold-text);
+  margin-bottom: 1rem;
+}
+
+.aio-icon-debug-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 768px) {
+  .aio-icon-debug-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.aio-icon-debug-card {
+  border: 1px solid var(--aio-gray-200);
+  border-radius: var(--aio-radius-lg);
+  padding: 1rem;
+  background: var(--aio-white);
+}
+
+.aio-icon-debug-card__previews {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.aio-icon-debug-card__cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  min-width: 4.5rem;
+  min-height: 4.5rem;
+  padding: 0.5rem;
+  border-radius: var(--aio-radius);
+  overflow: visible;
+}
+
+.aio-icon-debug-card__cell--light {
+  background: #fff;
+  border: 1px solid var(--aio-gray-200);
+}
+
+.aio-icon-debug-card__cell--dark {
+  background: #0b0b0b;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.aio-icon-debug-card__cell--dark .aio-icon {
+  filter: none;
+}
+
+.aio-icon-debug-card__size {
+  font-size: 0.625rem;
+  color: var(--aio-gray-600);
+}
+
+.aio-icon-debug-card__cell--dark .aio-icon-debug-card__size {
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.aio-icon-debug-card__title {
+  font-size: 0.875rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+
+.aio-icon-debug-card__key,
+.aio-icon-debug-card__path,
+.aio-icon-debug-card__spec {
+  font-size: 0.75rem;
+  color: var(--aio-gray-800);
+  margin: 0.15rem 0;
+  word-break: break-all;
+}
+
+.aio-icon-debug-card__path code,
+.aio-icon-debug-card__key code {
+  font-size: 0.6875rem;
+}
+

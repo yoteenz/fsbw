@@ -13,8 +13,11 @@ ROOT = Path(__file__).resolve().parents[1]
 ICON_ROOT = ROOT / 'public/brand/icons'
 
 SHEETS: dict[str, dict] = {
+    # NOTE 03F.2: Archived filenames are inverted vs visual content.
+    # Compliance artwork lives in platform/_source-master-finance-platform.png
+    # Finance/platform artwork lives in compliance/_source-master-compliance-business.png
     'compliance': {
-        'source': ICON_ROOT / 'compliance' / '_source-master-compliance-business.png',
+        'source': ICON_ROOT / 'platform' / '_source-master-finance-platform.png',
         'out_dir': ICON_ROOT / 'compliance',
         'icons': [
             ('aio-icon-company-formation.png', 'companyFormation'),
@@ -42,7 +45,7 @@ SHEETS: dict[str, dict] = {
         ],
     },
     'platform': {
-        'source': ICON_ROOT / 'platform' / '_source-master-finance-platform.png',
+        'source': ICON_ROOT / 'compliance' / '_source-master-compliance-business.png',
         'out_dir': ICON_ROOT / 'platform',
         'icons': [
             ('aio-icon-factoring.png', 'factoring'),

@@ -112,6 +112,7 @@ import { PortalMessagesListPage, PortalConversationDetailPage } from '../pages/p
 import { PortalAppointmentsListPage, PortalAppointmentDetailPage } from '../pages/portal/PortalAppointmentsPages';
 import { SchedulePage } from '../pages/SchedulePage';
 import { aioAppConfig } from '../config/appConfig';
+import { IconLibraryDebugPage } from '../pages/debug/IconLibraryDebugPage';
 
 const OfficeRoutesLazy = lazy(() => import('../office/routes/OfficeRoutes'));
 
@@ -180,6 +181,7 @@ export default function AllInOneRoutes() {
           <Route path="road-ready" element={<RoadReadyPublicPage />} />
           <Route path="start-your-business" element={<StartYourBusinessPage />} />
           <Route path="client-portal" element={<ClientPortalInfoPage />} />
+          <Route path="debug/icon-library" element={<IconLibraryDebugPage />} />
         </Route>
 
         <Route element={<CustomerRouteGuard />}>

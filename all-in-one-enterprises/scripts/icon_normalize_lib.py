@@ -28,6 +28,13 @@ DETAIL_ICON_KEYS = frozenset(
         'brokerage',
         'routeTracking',
         'route-tracking',
+        'notifications',
+        'calendarScheduling',
+        'calendar-scheduling',
+        'invoiceBilling',
+        'invoice-billing',
+        'messages',
+        'payments',
     }
 )
 
@@ -53,6 +60,42 @@ def make_transparent(img: Image.Image) -> Image.Image:
     return Image.fromarray(arr)
 
 
+def _largest_component_bbox(mask: np.ndarray) -> tuple[int, int, int, int]:
+    """Bounding box of the largest connected stroke cluster — drops neighbor-sheet fragments."""
+    h, w = mask.shape
+    visited = np.zeros_like(mask, dtype=bool)
+    best_size = 0
+    best: tuple[int, int, int, int] | None = None
+
+    for y in range(h):
+        for x in range(w):
+            if not mask[y, x] or visited[y, x]:
+                continue
+            stack = [(y, x)]
+            visited[y, x] = True
+            minx = maxx = x
+            miny = maxy = y
+            count = 0
+            while stack:
+                cy, cx = stack.pop()
+                count += 1
+                minx = min(minx, cx)
+                maxx = max(maxx, cx)
+                miny = min(miny, cy)
+                maxy = max(maxy, cy)
+                for ny, nx in ((cy - 1, cx), (cy + 1, cx), (cy, cx - 1), (cy, cx + 1)):
+                    if 0 <= ny < h and 0 <= nx < w and mask[ny, nx] and not visited[ny, nx]:
+                        visited[ny, nx] = True
+                        stack.append((ny, nx))
+            if count > best_size:
+                best_size = count
+                best = (minx, miny, maxx, maxy)
+
+    if best is None:
+        raise ValueError('no artwork pixels found')
+    return best
+
+
 def bbox_of_artwork(img: Image.Image, *, exclude_label_band: bool = False) -> tuple[int, int, int, int]:
     arr = np.array(img)
     r, g, b, a = arr[:, :, 0], arr[:, :, 1], arr[:, :, 2], arr[:, :, 3]
@@ -63,13 +106,13 @@ def bbox_of_artwork(img: Image.Image, *, exclude_label_band: bool = False) -> tu
     if exclude_label_band:
         label_cut = int(img.height * LABEL_CUT_RATIO)
         artwork[label_cut:, :] = False
-    ys, xs = np.where(artwork)
-    if len(xs) == 0:
+    if not artwork.any():
         artwork = visible & non_white
-        ys, xs = np.where(artwork)
-    if len(xs) == 0:
+        if exclude_label_band:
+            artwork[label_cut:, :] = False
+    if not artwork.any():
         raise ValueError('no artwork pixels found')
-    return int(xs.min()), int(ys.min()), int(xs.max()), int(ys.max())
+    return _largest_component_bbox(artwork)
 
 
 def _target_fill_for(name: str) -> float:

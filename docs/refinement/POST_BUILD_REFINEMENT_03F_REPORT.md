@@ -257,3 +257,104 @@ Card border/glow interaction does not clip or rescale icons (`overflow: visible`
 - Black icons, gold titles, white cards, gold EXPLORE →
 - No generic icon library substitution
 - No card height inflation
+
+---
+
+# 03F.2 — Full Expanded Icon Library Quality Pass
+
+**Date:** 2026-08-16  
+**Status:** Complete
+
+## Summary
+
+All **24 expanded-library icons** individually audited, corrected where necessary, and finalized for production reuse across Portal, Office, Road Ready, Dispatch, Brokerage, Compliance, Fleet, Finance, and Support surfaces.
+
+## Root cause (expanded library)
+
+1. **Swapped master-sheet archives (03F)** — Compliance artwork was archived under `platform/_source-master-finance-platform.png` and finance/platform artwork under `compliance/_source-master-compliance-business.png`. Extraction used folder names, producing **semantically wrong icon-to-file mappings** (e.g. `companyFormation` contained factoring artwork).
+2. **Neighbor contamination** — Grid cell bleed included stray stroke fragments from adjacent master-sheet cells (e.g. route tracking horizontal artifacts). Fixed via **largest connected-component bbox** isolation in `icon_normalize_lib.py`.
+3. **03F.1 pipeline** was otherwise sound (512 canvas, optical fill, edge clearance) once source mapping was corrected.
+
+Freight sheet mapping was already correct.
+
+## 24 icons audited
+
+| Count | Action |
+|-------|--------|
+| 24 | Individually verified |
+| 16 | Re-extracted after source-sheet mapping fix + cluster isolation |
+| 8 | Freight icons re-normalized with cluster isolation (mapping unchanged) |
+| 0 | Skipped or deferred |
+
+## Source canvas standard
+
+**512 × 512 px** transparent RGBA for all 24 expanded icons (consistent with 03F.1).
+
+## Completion table
+
+| ICON | STATUS | CANVAS | EDGE SAFE | CENTERED | TRANSPARENT | REGISTRY OK | MIN SIZE |
+|------|--------|--------|-----------|----------|-------------|-------------|----------|
+| companyFormation | PASS | 512×512 | Y | Y | Y | Y | 32px |
+| operatingAuthority | PASS | 512×512 | Y | Y | Y | Y | 32px |
+| permits | PASS | 512×512 | Y | Y | Y | Y | 32px |
+| boc3 | PASS | 512×512 | Y | Y | Y | Y | 32px |
+| iftaFuelTax | PASS | 512×512 | Y | Y | Y | Y | 32px |
+| irpRoadTax | PASS | 512×512 | Y | Y | Y | Y | 32px |
+| renewals | PASS | 512×512 | Y | Y | Y | Y | 32px |
+| documentVault | PASS | 512×512 | Y | Y | Y | Y | 32px |
+| fleet | PASS | 512×512 | Y | Y | Y | Y | 32px |
+| driver | PASS | 512×512 | Y | Y | Y | Y | 32px |
+| operationsDispatch | PASS | 512×512 | Y | Y | Y | Y | 40px |
+| loadFreight | PASS | 512×512 | Y | Y | Y | Y | 32px |
+| routeTracking | PASS | 512×512 | Y | Y | Y | Y | 40px |
+| bolPod | PASS | 512×512 | Y | Y | Y | Y | 40px |
+| shipper | PASS | 512×512 | Y | Y | Y | Y | 32px |
+| brokerage | PASS | 512×512 | Y | Y | Y | Y | 32px |
+| factoring | PASS | 512×512 | Y | Y | Y | Y | 40px |
+| invoiceBilling | PASS | 512×512 | Y | Y | Y | Y | 40px |
+| payments | PASS | 512×512 | Y | Y | Y | Y | 32px |
+| reportsAnalytics | PASS | 512×512 | Y | Y | Y | Y | 32px |
+| messages | PASS | 512×512 | Y | Y | Y | Y | 32px |
+| notifications | PASS | 512×512 | Y | Y | Y | Y | 40px |
+| calendarScheduling | PASS | 512×512 | Y | Y | Y | Y | 40px |
+| support | PASS | 512×512 | Y | Y | Y | Y | 32px |
+
+## QA dimensions
+
+| Check | Result |
+|-------|--------|
+| Transparency (corner alpha) | PASS — all 24 |
+| Edge safety ≥ 16% | PASS — 16–18% |
+| Neighbor contamination | PASS — cluster isolation |
+| Optical occupancy 63–68% | PASS |
+| Registry 1:1 mapping | PASS — `aioExpandedIconCatalog` |
+| Display sizes 32/48/64 px | PASS — debug preview |
+| Retina / 512 source | PASS |
+
+## Deliverables
+
+| Artifact | Path |
+|----------|------|
+| Icon inventory doc | `docs/design/AIO_ICON_LIBRARY.md` |
+| Audit JSON | `all-in-one-enterprises/docs/design/aio-expanded-icon-audit.json` |
+| Audit script | `all-in-one-enterprises/scripts/audit-expanded-icon-library.py` |
+| Contact sheet | `public/brand/icons/_qa-expanded-icon-contact-sheet.png` |
+| Debug preview | `/debug/icon-library` (non-production only) |
+| Registry catalog | `aioExpandedIconCatalog` in `aioIconRegistry.ts` |
+| Cache version | `AIO_ICON_ASSET_VERSION = '03f2'` |
+
+## Exceptions
+
+| Icon | Note |
+|------|------|
+| `bookkeeping` | Temporary alias to `reportsAnalytics` — pending dedicated artwork |
+| Master sheet filenames | Archived names inverted vs visual content; extraction script documents correct cross-reference |
+
+## Protections preserved
+
+- Homepage 03E/03E.1 service icons unchanged
+- Trucking Insurance standalone preserved
+- `serviceDispatch` ≠ `operationsDispatch`; `serviceGetPaidFaster` ≠ `factoring`
+- No Lucide/Font Awesome/Heroicons substitution
+- No gold/white source duplicates
+
