@@ -220,7 +220,8 @@ export function CommunicationHubPage() {
           ))
         )}
       </section>
-      <Link to={aioPaths.portalNotifications} className="aio-btn aio-btn--outline">All Notifications →</Link>
+      <Link to={aioPaths.portalMessages} className="aio-btn aio-btn--gold">Open Messages</Link>
+      <Link to={aioPaths.portalAppointments} className="aio-btn aio-btn--outline">Appointments</Link>
     </div>
   );
 }

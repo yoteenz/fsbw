@@ -1,7 +1,22 @@
 # All In One — Sprint Status
 
-**Sprint:** 15 — CRM + Lead Pipeline + Sales / Quote Conversion  
+**Sprint:** 16 — Communications Hub + Client Conversations + Appointments  
 **Last updated:** 2026-08-16
+
+---
+
+## SPRINT 16 COMPLETE (Communications · Appointments · Portal Messaging)
+
+- **Communications module** — `src/all-in-one/communications/` (types, engine, providers)
+- **Appointments module** — `src/all-in-one/appointments/` (types, availability engine)
+- **Demo store v16** — `communicationsSeed.ts`, `appointmentsSeed.ts`, conversations A–H, demo appointments
+- **Office routes** — `/office/communications`, `/office/communications/:id`, `/office/communications/outbox`, `/office/appointments`, `/office/appointments/:id`, `/office/settings/communications`, `/office/settings/appointments`
+- **Portal routes** — `/portal/messages`, `/portal/messages/:id`, `/portal/appointments`, `/portal/appointments/:id`
+- **Public route** — `/schedule` (mobile-first consultation booking)
+- **Integrations** — CRM lead → conversation; conversion relinks conversations; Client CC + Office attention + Client 360; CRM calendar shows appointments
+- **Permissions** — `comm.*`, `appointments.*` in `officeContext.ts`
+- **Unit tests** — `communications/communications.test.ts` (11 tests)
+- **Documentation** — `COMMUNICATIONS_SYSTEM.md`, `COMMUNICATION_PREFERENCES_AND_CONSENT.md`, `COMMUNICATION_TEMPLATES.md`, `APPOINTMENTS_SYSTEM.md`, `COMMUNICATION_PROVIDER_ARCHITECTURE.md`, `COMMUNICATION_SECURITY.md`
 
 ---
 

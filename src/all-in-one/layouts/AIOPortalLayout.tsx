@@ -26,7 +26,8 @@ const carrierNav: NavItem[] = [
   { label: 'Factoring', href: aioPaths.portalFactoring, section: 'MONEY' },
   { label: 'Documents', href: aioPaths.portalDocuments, section: 'DOCUMENTS' },
   { label: 'Vault', href: aioPaths.portalVault, section: 'DOCUMENTS' },
-  { label: 'Messages', href: aioPaths.portalCommunication, section: 'COMMUNICATION' },
+  { label: 'Messages', href: aioPaths.portalMessages, section: 'COMMUNICATION' },
+  { label: 'Appointments', href: aioPaths.portalAppointments, section: 'COMMUNICATION' },
   { label: 'Notifications', href: aioPaths.portalNotifications, section: 'COMMUNICATION' },
   { label: 'Service Requests', href: aioPaths.portalRequestsCenter, section: 'ACCOUNT' },
   { label: 'Team', href: aioPaths.portalTeam, section: 'ACCOUNT' },
@@ -38,7 +39,7 @@ const shipperNav: NavItem[] = [
   { label: 'Shipments', href: aioPaths.shipperShipments },
   { label: 'Quotes', href: aioPaths.shipperQuotes },
   { label: 'Billing', href: aioPaths.shipperBilling },
-  { label: 'Messages', href: aioPaths.portalCommunication },
+  { label: 'Messages', href: aioPaths.portalMessages },
   { label: 'Notifications', href: aioPaths.portalNotifications },
 ];
 

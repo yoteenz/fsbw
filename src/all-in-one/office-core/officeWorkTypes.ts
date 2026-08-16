@@ -290,7 +290,16 @@ export type OfficePermission =
   | 'crm.quotes.prepare'
   | 'crm.convert'
   | 'crm.reports.read'
-  | 'crm.settings.manage';
+  | 'crm.settings.manage'
+  | 'comm.read'
+  | 'comm.manage'
+  | 'comm.assign'
+  | 'comm.templates.read'
+  | 'comm.templates.manage'
+  | 'comm.settings.manage'
+  | 'appointments.read'
+  | 'appointments.manage'
+  | 'appointments.settings.manage';
 
 export interface OfficeAttentionItem {
   id: string;
@@ -408,7 +417,9 @@ export interface Client360View {
   upcomingDeadlines: { label: string; dueDate: string }[];
   openDocumentRequests: number;
   billingStatus: string;
-  recentCommunication: { author: string; body: string; createdAt: string }[];
+  openConversations?: number;
+  needsResponseCount?: number;
+  recentCommunication: { author: string; body: string; createdAt: string; href?: string }[];
   pinnedNotes: { body: string; authorInitials: string; noteType: InternalNoteType }[];
   timeline: { title: string; createdAt: string; kind: string }[];
   tabs: Client360Tab[];

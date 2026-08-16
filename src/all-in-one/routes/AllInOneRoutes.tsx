@@ -96,6 +96,9 @@ import {
   ShipperInvoiceDetailPage,
 } from '../pages/shipper/ShipperPortalPages';
 import { PortalServiceTrackerPage, PortalJourneyRoadmapPage } from '../pages/portal/WorkflowPortalPages';
+import { PortalMessagesListPage, PortalConversationDetailPage } from '../pages/portal/PortalMessagesPages';
+import { PortalAppointmentsListPage, PortalAppointmentDetailPage } from '../pages/portal/PortalAppointmentsPages';
+import { SchedulePage } from '../pages/SchedulePage';
 import { aioAppConfig } from '../config/appConfig';
 
 const OfficeRoutesLazy = lazy(() => import('../office/routes/OfficeRoutes'));
@@ -144,6 +147,7 @@ export default function AllInOneRoutes() {
           <Route path="contact" element={<ContactPage />} />
           <Route path="request-callback" element={<RequestCallbackPage />} />
           <Route path="quote/:secureToken" element={<PublicQuotePage />} />
+          <Route path="schedule" element={<SchedulePage />} />
           <Route path="roadmap" element={<RoadmapPage />} />
         </Route>
 
@@ -156,6 +160,10 @@ export default function AllInOneRoutes() {
             <Route path="money" element={<MoneyCenterPage />} />
             <Route path="documents" element={<DocumentCenterPage />} />
             <Route path="communication" element={<CommunicationHubPage />} />
+            <Route path="messages" element={<PortalMessagesListPage />} />
+            <Route path="messages/:conversationId" element={<PortalConversationDetailPage />} />
+            <Route path="appointments" element={<PortalAppointmentsListPage />} />
+            <Route path="appointments/:appointmentId" element={<PortalAppointmentDetailPage />} />
             <Route path="requests" element={<ServiceRequestsCenterPage />} />
             <Route path="services" element={<ServicesCenterPage />} />
             <Route path="activity" element={<ActivityTimelinePage />} />

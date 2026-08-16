@@ -75,8 +75,10 @@ const navGroups = [
   {
     label: 'Communication',
     items: [
-      { label: 'Inbox', to: aioPaths.officeInbox },
-      { label: 'Notifications', to: aioPaths.officeMessages },
+      { label: 'Communications Hub', to: aioPaths.officeCommunications },
+      { label: 'Appointments', to: aioPaths.officeAppointments },
+      { label: 'Outbox', to: aioPaths.officeCommunicationsOutbox },
+      { label: 'Legacy Inbox', to: aioPaths.officeInbox },
     ],
   },
   {
@@ -84,6 +86,8 @@ const navGroups = [
     items: [
       { label: 'Workflow Templates', to: aioPaths.officeWorkflowSettings },
       { label: 'Automation Rules', to: aioPaths.officeAutomationSettings },
+      { label: 'Comm Settings', to: aioPaths.officeCommunicationsSettings },
+      { label: 'Appointment Settings', to: aioPaths.officeAppointmentsSettings },
       { label: 'Team', to: aioPaths.officeTeam },
       { label: 'Workload', to: aioPaths.officeWorkload },
       { label: 'Reports', to: aioPaths.officeReports },

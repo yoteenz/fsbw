@@ -6,6 +6,16 @@ import { resolveOfficeStaffContext, hasOfficePermission } from './officeContext'
 import { enrichWorkItem } from './officeWorkEngine';
 import { selectOfficeNextAction } from './officeNextActionEngine';
 import { collectOfficeAttentionCandidates } from './officeAttentionEngine';
+import {
+  computeNeedsReply,
+  conversationPreview,
+} from '../communications/communicationEngine';
+import {
+  conversationContextLabel,
+  getOrgConversations,
+  getConversationMessages,
+} from '../demo/communicationActions';
+import { aioPaths } from '../utils/paths';
 import type { Client360Tab, Client360View } from './officeWorkTypes';
 
 function operationalStatus(client: { accountStatus: string }, waitingOnUs: number, waitingOnCustomer: number): { tone: string; label: string } {
@@ -62,7 +72,17 @@ export function getClient360View(store: DemoStore, organizationId: string): Clie
 
   const docs = store.documents.filter((d) => (d.organizationId ?? d.clientId) === organizationId);
   const billing = getBillingSummary(organizationId, store);
-  const messages = store.messages.filter((m) => m.clientId === organizationId && m.visibility === 'customer');
+  const commConvs = getOrgConversations(organizationId, store);
+  const needsResponse = commConvs.filter((c) => computeNeedsReply(c)).length;
+  const recentComm = commConvs.slice(0, 5).map((c) => {
+    const msgs = getConversationMessages(c.id, store, true);
+    return {
+      author: conversationContextLabel(c, store),
+      body: conversationPreview(msgs) || c.subject,
+      createdAt: c.lastMessageAt ?? c.createdAt,
+      href: aioPaths.officeCommunication(c.id),
+    };
+  });
   const notes = store.notes.filter((n) => n.clientId === organizationId);
   const pinnedNotes = notes
     .filter((n) => n.pinned)
@@ -107,11 +127,9 @@ export function getClient360View(store: DemoStore, organizationId: string): Clie
       .map((d) => ({ label: d.label, dueDate: d.dueDate })),
     openDocumentRequests: docs.filter((d) => d.status === 'requested').length,
     billingStatus: billing.openInvoices.length > 0 ? `${billing.openInvoices.length} open invoice(s)` : 'Current',
-    recentCommunication: messages.slice(0, 5).map((m) => ({
-      author: m.authorName,
-      body: m.body,
-      createdAt: m.createdAt,
-    })),
+    openConversations: commConvs.filter((c) => !['closed', 'archived', 'resolved'].includes(c.status)).length,
+    needsResponseCount: needsResponse,
+    recentCommunication: recentComm,
     pinnedNotes,
     timeline,
     tabs,

@@ -2,6 +2,8 @@ import type { Priority } from '../demo/demoTypes';
 import type { DemoStore } from '../demo/demoTypes';
 import type { OfficeAttentionItem, OfficeWaitingOn } from './officeWorkTypes';
 import { aioPaths } from '../utils/paths';
+import { computeNeedsReply } from '../communications/communicationEngine';
+import { conversationPartyLabel } from '../demo/communicationActions';
 import { instanceStatusLabel } from '../workflow/workflowEngine';
 
 export interface RawOfficeAttentionCandidate {
@@ -147,6 +149,29 @@ export function collectOfficeAttentionCandidates(store: DemoStore): RawOfficeAtt
       entityId: doc.id,
       waitingOn: 'all_in_one',
       sortScore: 340,
+    });
+  }
+
+  for (const conv of store.commConversations ?? []) {
+    if (!computeNeedsReply(conv)) continue;
+    const client = conv.organizationId ? store.clients.find((c) => c.id === conv.organizationId) : undefined;
+    const label = conversationPartyLabel(conv, store);
+    out.push({
+      dedupeKey: `comm-needs-reply:${conv.id}`,
+      category: 'communication',
+      priority: conv.priority === 'urgent' ? 'urgent' : 'high',
+      title: 'Customer reply needed',
+      explanation: conv.subject,
+      statusLabel: 'NEEDS REPLY',
+      organizationId: conv.organizationId,
+      organizationName: client?.companyName ?? label,
+      ctaLabel: 'OPEN CONVERSATION',
+      ctaHref: aioPaths.officeCommunication(conv.id),
+      affectedAreas: ['Communications'],
+      entityType: 'conversation',
+      entityId: conv.id,
+      waitingOn: 'all_in_one',
+      sortScore: conv.priority === 'urgent' ? 360 : 330,
     });
   }
 

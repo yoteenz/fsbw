@@ -19,6 +19,7 @@ import type {
   CrmServiceInterest,
 } from '../crm/crmTypes';
 import { CARRIER_PIPELINE_ID, SHIPPER_PIPELINE_ID } from '../crm/crmTypes';
+import { createConversation } from './communicationActions';
 
 function uid(): string {
   return crypto.randomUUID();
@@ -117,6 +118,17 @@ export function createLeadFromForm(input: {
     created = lead;
     return s;
   });
+  if (input.message) {
+    createConversation({
+      subject: input.serviceTitle ? `Inquiry — ${input.serviceTitle}` : 'Website inquiry',
+      conversationType: input.serviceSlug?.includes('insurance') ? 'insurance' : input.serviceSlug?.includes('dispatch') ? 'dispatch' : 'sales',
+      leadId: created.id,
+      primaryContextType: 'lead',
+      primaryContextId: created.id,
+      initialMessage: input.message,
+      senderName: `${input.firstName ?? ''} ${input.lastName ?? ''}`.trim() || input.businessName || 'Prospect',
+    });
+  }
   return created;
 }
 

@@ -25,6 +25,7 @@ import {
 import { CRM_LEAD_STATUS_LABELS } from '../../crm/crmTypes';
 import { formatMoney } from '../../billing/money';
 import { getQuote, getQuoteVersion } from '../../demo/billingActions';
+import { getUpcomingAppointments } from '../../demo/appointmentActions';
 import { aioPaths } from '../../utils/paths';
 import { hasOfficePermission, resolveOfficeStaffContext } from '../../office-core/officeContext';
 
@@ -294,19 +295,35 @@ export function CrmCalendarPage() {
   const store = useDemoStore();
   const followUps = store.crmFollowUps ?? [];
   const expiringQuotes = store.quotes.filter((q) => q.expirationDate && q.status === 'sent');
+  const appts = getUpcomingAppointments(store).slice(0, 10);
 
   return (
     <div className="aio-office-page">
-      <header className="aio-office-page__header"><h1>CRM Calendar</h1><p>Sales follow-ups and quote expirations — not compliance calendar.</p></header>
+      <header className="aio-office-page__header"><h1>CRM Calendar</h1><p>Sales follow-ups, consultations, and quote expirations — not compliance calendar.</p></header>
       <div className="aio-two-col">
+        <div className="aio-portal-panel">
+          <h2 className="aio-portal-panel__title">Consultations</h2>
+          <ul className="aio-list">
+            {appts.map((a) => {
+              const type = store.appointmentTypes?.find((t) => t.id === a.appointmentTypeId);
+              return (
+                <li key={a.id}>
+                  <Link to={aioPaths.officeAppointment(a.id)}>{new Date(a.scheduledStart).toLocaleDateString()} — {a.customerName} ({type?.name})</Link>
+                </li>
+              );
+            })}
+            {appts.length === 0 && <li className="aio-muted">No upcoming consultations.</li>}
+          </ul>
+          <Link to={aioPaths.officeAppointments} className="aio-btn aio-btn--sm aio-btn--outline">All Appointments</Link>
+        </div>
         <div className="aio-portal-panel">
           <h2 className="aio-portal-panel__title">Follow-Ups</h2>
           <ul className="aio-list">{followUps.map((f) => <li key={f.id}>{new Date(f.scheduledFor).toLocaleDateString()} — {f.purpose}</li>)}</ul>
         </div>
-        <div className="aio-portal-panel">
-          <h2 className="aio-portal-panel__title">Quote Expirations</h2>
-          <ul className="aio-list">{expiringQuotes.map((q) => <li key={q.id}>{q.quoteNumber} — {q.expirationDate}</li>)}</ul>
-        </div>
+      </div>
+      <div className="aio-portal-panel">
+        <h2 className="aio-portal-panel__title">Quote Expirations</h2>
+        <ul className="aio-list">{expiringQuotes.map((q) => <li key={q.id}>{q.quoteNumber} — {q.expirationDate}</li>)}</ul>
       </div>
     </div>
   );

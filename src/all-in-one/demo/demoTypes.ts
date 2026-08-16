@@ -113,6 +113,31 @@ import type {
   CrmServiceInterest,
   CrmSettings,
 } from '../crm/crmTypes';
+import type {
+  CommAttachment,
+  CommConsentRecord,
+  CommContextLink,
+  CommConversation,
+  CommDelivery,
+  CommMessage,
+  CommParticipant,
+  CommPhoneLog,
+  CommPreference,
+  CommReadState,
+  CommRoutingRule,
+  CommSettings,
+  CommSuppression,
+  CommTemplate,
+} from '../communications/communicationTypes';
+import type {
+  Appointment,
+  AppointmentAvailabilityRule,
+  AppointmentReminder,
+  AppointmentSettings,
+  AppointmentSlotHold,
+  AppointmentStatusHistory,
+  AppointmentType,
+} from '../appointments/appointmentTypes';
 
 export type Visibility = 'internal' | 'customer';
 
@@ -429,7 +454,7 @@ export interface OrganizationMember {
 }
 
 export interface DemoStore {
-  version: 15;
+  version: 16;
   requestCounter: number;
   portalClientId?: string;
   shipperPortalOrgId?: string;
@@ -554,6 +579,29 @@ export interface DemoStore {
   crmReferrals?: CrmReferral[];
   crmConversionRecords?: CrmConversionRecord[];
   crmSettings?: CrmSettings;
+  /** Sprint 16 — Communications */
+  commSettings?: CommSettings;
+  commTemplates?: CommTemplate[];
+  commRoutingRules?: CommRoutingRule[];
+  commConversations?: CommConversation[];
+  commContextLinks?: CommContextLink[];
+  commParticipants?: CommParticipant[];
+  commMessages?: CommMessage[];
+  commDeliveries?: CommDelivery[];
+  commAttachments?: CommAttachment[];
+  commPreferences?: CommPreference[];
+  commConsentRecords?: CommConsentRecord[];
+  commSuppressions?: CommSuppression[];
+  commReadStates?: CommReadState[];
+  commPhoneLogs?: CommPhoneLog[];
+  /** Sprint 16 — Appointments */
+  appointmentSettings?: AppointmentSettings;
+  appointmentTypes?: AppointmentType[];
+  appointmentAvailability?: AppointmentAvailabilityRule[];
+  appointments?: Appointment[];
+  appointmentStatusHistory?: AppointmentStatusHistory[];
+  appointmentReminders?: AppointmentReminder[];
+  appointmentSlotHolds?: AppointmentSlotHold[];
 }
 
 export interface OfficeMetrics {

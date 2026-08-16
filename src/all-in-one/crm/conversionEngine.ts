@@ -3,6 +3,7 @@ import type { CrmLead, CrmOpportunity, CrmConversionRecord } from './crmTypes';
 import { createWorkflowInstanceFromRequest } from '../workflow/workflowOrchestrator';
 import { resolveTemplateIdForService } from '../demo/workflowSeed';
 import type { LineItemInput } from '../billing/billingCalculator';
+import { relinkConversationOnLeadConversion } from '../demo/communicationActions';
 
 export interface ConversionPreview {
   lead: CrmLead;
@@ -189,6 +190,8 @@ export function convertLeadToCustomer(
     wasExistingCustomer: wasExisting,
   };
   store.crmConversionRecords = [...(store.crmConversionRecords ?? []), record];
+
+  store = relinkConversationOnLeadConversion(store, leadId, orgId);
 
   store.activity.unshift({
     id: uid(),

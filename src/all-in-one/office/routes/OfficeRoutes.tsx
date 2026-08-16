@@ -83,6 +83,17 @@ import {
   OfficeWorkflowHealthPage,
 } from '../pages/WorkflowPages';
 import {
+  OfficeCommunicationsHubPage,
+  OfficeConversationDetailPage,
+  OfficeCommunicationsOutboxPage,
+  OfficeCommunicationsSettingsPage,
+} from '../pages/CommunicationsPages';
+import {
+  OfficeAppointmentsPage,
+  OfficeAppointmentDetailPage,
+  OfficeAppointmentsSettingsPage,
+} from '../pages/AppointmentsPages';
+import {
   CrmHomePage,
   CrmLeadsListPage,
   CrmLeadDetailPage,
@@ -115,6 +126,13 @@ export default function OfficeRoutes() {
         <Route path="settings/automations" element={<OfficeAutomationSettingsPage />} />
         <Route path="automation-exceptions" element={<OfficeAutomationExceptionsPage />} />
         <Route path="workflow-health" element={<OfficeWorkflowHealthPage />} />
+        <Route path="communications" element={<OfficeCommunicationsHubPage />} />
+        <Route path="communications/outbox" element={<OfficeCommunicationsOutboxPage />} />
+        <Route path="communications/:conversationId" element={<OfficeConversationDetailPage />} />
+        <Route path="appointments" element={<OfficeAppointmentsPage />} />
+        <Route path="appointments/:appointmentId" element={<OfficeAppointmentDetailPage />} />
+        <Route path="settings/communications" element={<OfficeCommunicationsSettingsPage />} />
+        <Route path="settings/appointments" element={<OfficeAppointmentsSettingsPage />} />
         <Route path="crm" element={<CrmHomePage />} />
         <Route path="crm/leads" element={<CrmLeadsListPage />} />
         <Route path="crm/leads/:leadId" element={<CrmLeadDetailPage />} />

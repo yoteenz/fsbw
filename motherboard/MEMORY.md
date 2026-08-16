@@ -51273,3 +51273,17 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Spatial Architecture Review:** SKIPPED — CRM under `/debug/all-in-one/office/crm`; no Frontal Slayer regression.
 
+---
+
+## 2026-08-16 — All In One Sprint 16: Communications Hub + Appointments
+
+- **Context:** Founder issued Sprint 16 spec — canonical communication layer + appointments connecting CRM, customers, service workflows, divisions, and notifications. Portal messaging must be real; external email/SMS demo/manual only. Remain isolated under `/debug/all-in-one`.
+
+- **Topics covered:** `src/all-in-one/communications/` (types, engine, providers); `src/all-in-one/appointments/` (types, availabilityEngine); demo store **v16** (`communicationsSeed.ts`, `appointmentsSeed.ts`, `communicationActions.ts`, `appointmentActions.ts`); Office routes communications hub + appointments + outbox + settings; Portal messages + appointments; public `/schedule`; CRM lead form → conversation; conversion relinks conversations; Client CC + Office attention + Client 360 integrations; `comm.*` / `appointments.*` permissions; 11 vitest tests; six new comm/appointment docs + `SPRINT_STATUS.md`.
+
+- **Decisions / outcomes:** Sprint 16 COMPLETE in demo mode. Conversation ≠ Message ≠ Notification ≠ Internal Note ≠ Appointment. Internal notes never customer-visible. `recorded_externally` / `demo` for external channels without providers. Double-booking rejected via `tryBookSlot`. Legacy `store.messages` inbox preserved; canonical comm is primary for new UI.
+
+- **Verification:** `npm run build` pass; 11/11 communications unit tests pass.
+
+- **Spatial Architecture Review:** SKIPPED — communication layer under `/debug/all-in-one`; no Frontal Slayer regression.
+

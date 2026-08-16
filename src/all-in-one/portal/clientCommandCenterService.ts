@@ -17,6 +17,11 @@ import {
   getVaultDocuments,
 } from '../demo/vaultActions';
 import { getCarrierPayablesFromStore } from '../demo/brokerageActions';
+import {
+  conversationContextLabel,
+  getCustomerUnreadCount,
+  getOrgConversations,
+} from '../demo/communicationActions';
 import type { DemoStore } from '../demo/demoTypes';
 import { ROAD_READY_PRODUCT_NAME } from '../road-ready/roadReadyConfig';
 import { aioPaths } from '../utils/paths';
@@ -495,20 +500,20 @@ function buildDocumentSummary(orgId: string, store: DemoStore): DocumentSummaryV
 function buildCommunicationSummary(orgId: string, store: DemoStore): CommunicationSummaryView {
   const notifs = getPortalNotifications(orgId, store);
   const unread = notifs.filter((n) => !n.read);
-  const msgs = store.messages.filter((m) => m.clientId === orgId && m.visibility === 'customer' && m.from === 'staff' && !m.read);
+  const unreadMsgs = getCustomerUnreadCount(orgId, store);
 
-  const threads = getPortalRequests(orgId)
-    .filter((r) => r.status !== 'completed')
+  const threads = getOrgConversations(orgId, store)
+    .filter((c) => !['closed', 'archived'].includes(c.status))
     .slice(0, 4)
-    .map((r) => ({
-      id: r.id,
-      title: r.services.map((s) => s.title).join(' + '),
-      context: 'Service Request',
-      href: aioPaths.portalRequest(r.id),
+    .map((c) => ({
+      id: c.id,
+      title: c.subject,
+      context: conversationContextLabel(c, store),
+      href: aioPaths.portalMessage(c.id),
     }));
 
   return {
-    unreadMessages: msgs.length,
+    unreadMessages: unreadMsgs,
     unreadNotifications: unread.length,
     urgentNotifications: unread.filter((n) => n.category === 'documents' || n.eventType.includes('EXPIR')).length,
     documentRequests: unread.filter((n) => n.eventType.includes('DOCUMENT')).length,

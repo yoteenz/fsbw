@@ -43,6 +43,7 @@ export function OfficeDashboardPage() {
               <Link to={aioPaths.officeClients}>Clients</Link>
               <Link to={aioPaths.officeInbox}>Inbox</Link>
               {view.context.permissions.includes('crm.read') && <Link to={aioPaths.officeCrm}>CRM</Link>}
+              {view.context.permissions.includes('comm.read') && <Link to={aioPaths.officeCommunications}>Communications</Link>}
               {view.context.isManager && <Link to={aioPaths.officeWorkload}>Workload</Link>}
             </nav>
           </section>
