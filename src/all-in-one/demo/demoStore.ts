@@ -13,8 +13,14 @@ const STORE_EVENT = 'aio-demo-store-change';
 export function loadDemoStore(): DemoStore {
   if (typeof window === 'undefined') return createDemoSeed();
 
-  const existing = readStorage<DemoStore | (Omit<DemoStore, 'version'> & { version: 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 }) | null>(DEMO_STORE_KEY, null);
-  if (existing?.version === 17) return existing as DemoStore;
+  const existing = readStorage<DemoStore | (Omit<DemoStore, 'version'> & { version: 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 }) | null>(DEMO_STORE_KEY, null);
+  if (existing?.version === 18) return existing as DemoStore;
+
+  if (existing?.version === 17) {
+    const upgraded = upgradeStoreV17ToV18(existing as DemoStoreV17);
+    saveDemoStore(upgraded);
+    return upgraded;
+  }
 
   if (existing?.version === 16) {
     const upgraded = upgradeStoreV16ToV17(existing as DemoStoreV16);
@@ -155,6 +161,8 @@ import { createCrmSeedData } from './crmSeed';
 import { createCommunicationsSeedData } from './communicationsSeed';
 import { createAppointmentsSeedData } from './appointmentsSeed';
 import { createIntegrationsSeedData } from '../integrations/integrationsSeed';
+import { createSecuritySeedData } from '../security/securitySeed';
+import { recordSecurityAudit } from '../security/securityAudit';
 import { syncInsuranceToRoadReady } from './insuranceActions';
 
 type DemoStoreV8 = Omit<
@@ -214,13 +222,23 @@ function upgradeStoreV13ToV14(store: DemoStoreV13): DemoStoreV14 {
   };
 }
 
+function upgradeStoreV17ToV18(store: DemoStoreV17): DemoStore {
+  const security = createSecuritySeedData();
+  return {
+    ...store,
+    version: 18 as const,
+    ...security,
+  };
+}
+
 function upgradeStoreV16ToV17(store: DemoStoreV16): DemoStore {
   const integrations = createIntegrationsSeedData();
-  return {
+  const v17: DemoStoreV17 = {
     ...store,
     version: 17 as const,
     ...integrations,
   };
+  return upgradeStoreV17ToV18(v17);
 }
 
 function upgradeStoreV15ToV16(store: DemoStoreV15): DemoStoreV16 {
@@ -252,6 +270,8 @@ function upgradeStoreV15ToV16(store: DemoStoreV15): DemoStoreV16 {
     appointmentSlotHolds: appts.appointmentSlotHolds,
   };
 }
+
+type DemoStoreV17 = Omit<DemoStore, 'version'> & { version: 17 };
 
 type DemoStoreV16 = Omit<
   DemoStore,
@@ -668,12 +688,31 @@ export function saveDemoStore(store: DemoStore): void {
   }
 }
 
-export function resetDemoStore(): DemoStore {
+export type ResetDemoStoreResult =
+  | { ok: true; store: DemoStore }
+  | { ok: false; error: string };
+
+export function resetDemoStore(): ResetDemoStoreResult {
+  const current = loadDemoStore();
+  const settings = current.securitySettings;
+  if (settings?.environmentLabel === 'PRODUCTION' && !settings.demoModeActive) {
+    updateDemoStore((s) => {
+      recordSecurityAudit(s, {
+        eventType: 'DEMO_RESET_BLOCKED',
+        action: 'Demo reset refused — production environment',
+        result: 'DENIED',
+        metadata: { environment: settings.environmentLabel },
+      });
+      return s;
+    });
+    return { ok: false, error: 'Demo reset is not permitted when simulating production environment.' };
+  }
+
   Object.values(AIO_STORAGE_KEYS).forEach(removeStorage);
   removeStorage(DEMO_STORE_KEY);
   const seed = createDemoSeed();
   saveDemoStore(seed);
-  return seed;
+  return { ok: true, store: seed };
 }
 
 export function subscribeDemoStore(cb: () => void): () => void {

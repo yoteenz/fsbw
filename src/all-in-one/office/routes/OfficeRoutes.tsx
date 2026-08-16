@@ -127,6 +127,14 @@ import {
   IntegrationReconciliationPage,
   IntegrationLoadBoardPage,
 } from '../pages/IntegrationPages';
+import {
+  SecurityCenterPage,
+  SecurityAuditPage,
+  SecurityIncidentsPage,
+  ProductionReadinessPage,
+  PrivacyCenterPage,
+  OfficeSecuritySettingsPage,
+} from '../pages/SecurityPages';
 
 export default function OfficeRoutes() {
   return (
@@ -164,6 +172,12 @@ export default function OfficeRoutes() {
         <Route path="settings/integrations" element={<IntegrationSettingsPage />} />
         <Route path="settings/integrations/providers" element={<IntegrationProvidersPage />} />
         <Route path="settings/integrations/:connectionId" element={<IntegrationConnectionDetailPage />} />
+        <Route path="security" element={<SecurityCenterPage />} />
+        <Route path="security/audit" element={<SecurityAuditPage />} />
+        <Route path="security/incidents" element={<SecurityIncidentsPage />} />
+        <Route path="security/production-readiness" element={<ProductionReadinessPage />} />
+        <Route path="privacy" element={<PrivacyCenterPage />} />
+        <Route path="settings/security" element={<OfficeSecuritySettingsPage />} />
         <Route path="management" element={<ManagementCommandCenterPage />} />
         <Route path="management/financial" element={<ManagementFinancialPage />} />
         <Route path="management/sales" element={<ManagementSalesPage />} />

@@ -1,6 +1,7 @@
 import { updateDemoStore } from '../demo/demoStore';
 import type { DemoStore, StaffMember } from '../demo/demoTypes';
 import type { OfficePermission, OfficeStaffContext, OfficeStaffRole } from './officeWorkTypes';
+import { SECURITY_AUDIT_ONLY, SECURITY_FULL, SECURITY_PRIVACY_REVIEW } from '../security/securityPermissions';
 
 const COMM_FULL: OfficePermission[] = [
   'comm.read', 'comm.manage', 'comm.assign',
@@ -85,6 +86,7 @@ const ROLE_PERMISSIONS: Record<OfficeStaffRole, OfficePermission[]> = {
     ...COMM_FULL,
     ...MANAGEMENT_FULL,
     ...INTEGRATIONS_FULL,
+    ...SECURITY_FULL,
   ],
   admin: [
     'clients.read', 'clients.manage', 'work.read', 'work.manage', 'work.assign',
@@ -100,6 +102,7 @@ const ROLE_PERMISSIONS: Record<OfficeStaffRole, OfficePermission[]> = {
     ...COMM_FULL,
     ...MANAGEMENT_FULL,
     ...INTEGRATIONS_FULL,
+    ...SECURITY_FULL,
   ],
   manager: [
     'clients.read', 'clients.manage', 'work.read', 'work.manage', 'work.assign',
@@ -112,6 +115,7 @@ const ROLE_PERMISSIONS: Record<OfficeStaffRole, OfficePermission[]> = {
     ...COMM_FULL,
     ...MANAGEMENT_MANAGER,
     'integrations.read', 'integrations.reconciliation.read',
+    ...SECURITY_AUDIT_ONLY,
   ],
   permitting_specialist: [
     'clients.read', 'work.read', 'work.manage', 'internal_notes.read', 'internal_notes.create',
@@ -157,6 +161,7 @@ const ROLE_PERMISSIONS: Record<OfficeStaffRole, OfficePermission[]> = {
     'clients.read', 'work.read', 'work.manage', 'internal_notes.read', 'internal_notes.create',
     'crm.read', 'crm.leads.read', 'crm.leads.manage', 'crm.activities.read', 'crm.activities.manage', 'crm.followups.manage',
     ...COMM_READ,
+    ...SECURITY_PRIVACY_REVIEW,
   ],
   viewer: ['clients.read', 'work.read', 'internal_notes.read'],
 };
@@ -168,13 +173,16 @@ export function resolveOfficeStaffContext(store: DemoStore): OfficeStaffContext 
   const staff = store.staff.find((s) => s.id === staffId) ?? store.staff[0];
   const role = (store.officeStaffRole ?? staff?.officeRole ?? 'manager') as OfficeStaffRole;
   const teamIds = staff?.teamIds ?? store.officeTeams?.filter((t) => t.division).map((t) => t.id).slice(0, 1) ?? [];
+  const basePermissions = ROLE_PERMISSIONS[role] ?? ROLE_PERMISSIONS.viewer;
+  const revoked = store.staffPermissionOverrides?.[staff?.id ?? staffId] ?? [];
+  const permissions = basePermissions.filter((p) => !revoked.includes(p));
 
   return {
     staffId: staff?.id ?? staffId,
     staffName: staff?.name ?? 'Staff',
     role,
     teamIds,
-    permissions: ROLE_PERMISSIONS[role] ?? ROLE_PERMISSIONS.viewer,
+    permissions,
     isManager: MANAGER_ROLES.includes(role),
   };
 }

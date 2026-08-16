@@ -334,7 +334,17 @@ export type OfficePermission =
   | 'integrations.loadboard.search'
   | 'integrations.loadboard.import'
   | 'integrations.accounting.export'
-  | 'integrations.external_action.confirm';
+  | 'integrations.external_action.confirm'
+  | 'security.read'
+  | 'security.manage'
+  | 'security.audit.read'
+  | 'security.incidents.read'
+  | 'security.incidents.manage'
+  | 'security.production_readiness.read'
+  | 'security.settings.manage'
+  | 'privacy.read'
+  | 'privacy.manage'
+  | 'privacy.requests.review';
 
 export interface OfficeAttentionItem {
   id: string;

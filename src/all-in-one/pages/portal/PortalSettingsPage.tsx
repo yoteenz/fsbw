@@ -42,7 +42,13 @@ export function PortalSettingsPage() {
 
       <section className="aio-portal-panel">
         <h2>Password & Security</h2>
+        <Link to={aioPaths.portalSettingsSecurity} className="aio-btn aio-btn--outline aio-btn--sm">Security settings</Link>
         <Link to={aioPaths.forgotPassword} className="aio-btn aio-btn--outline aio-btn--sm">Reset password</Link>
+      </section>
+
+      <section className="aio-portal-panel">
+        <h2>Privacy</h2>
+        <Link to={aioPaths.portalSettingsPrivacy} className="aio-btn aio-btn--outline aio-btn--sm">Privacy settings</Link>
       </section>
 
       <section className="aio-portal-panel">

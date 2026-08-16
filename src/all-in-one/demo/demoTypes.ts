@@ -159,6 +159,18 @@ import type {
   LoadBoardCandidate,
   StateCapabilityEntry,
 } from '../integrations/integrationTypes';
+import type {
+  BackupStatusRecord,
+  DataRetentionPolicy,
+  PrivacyRequest,
+  SecurityAuditEvent,
+  SecurityFinding,
+  SecurityIncident,
+  SecuritySession,
+  SecuritySettings,
+  SignedDownloadGrant,
+  VendorSecurityRecord,
+} from '../security/securityTypes';
 
 export type Visibility = 'internal' | 'customer';
 
@@ -475,7 +487,7 @@ export interface OrganizationMember {
 }
 
 export interface DemoStore {
-  version: 17;
+  version: 18;
   requestCounter: number;
   portalClientId?: string;
   shipperPortalOrgId?: string;
@@ -651,6 +663,19 @@ export interface DemoStore {
   loadBoardCandidates?: LoadBoardCandidate[];
   integrationOAuthStates?: IntegrationOAuthState[];
   stateCapabilityMatrix?: StateCapabilityEntry[];
+  /** Sprint 19 — Security, privacy, audit, resilience */
+  securitySettings?: SecuritySettings;
+  securitySessions?: SecuritySession[];
+  securityFindings?: SecurityFinding[];
+  securityAuditEvents?: SecurityAuditEvent[];
+  privacyRequests?: PrivacyRequest[];
+  securityIncidents?: SecurityIncident[];
+  vendorSecurityRecords?: VendorSecurityRecord[];
+  dataRetentionPolicies?: DataRetentionPolicy[];
+  backupStatus?: BackupStatusRecord;
+  signedDownloadGrants?: SignedDownloadGrant[];
+  /** Revoked permissions per staff id (subtracted from role bundle) */
+  staffPermissionOverrides?: Record<string, string[]>;
 }
 
 export interface OfficeMetrics {

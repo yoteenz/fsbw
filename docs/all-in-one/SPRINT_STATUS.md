@@ -1,7 +1,23 @@
 # All In One — Sprint Status
 
-**Sprint:** 18 — Integration Platform + External Provider Architecture  
+**Sprint:** 19 — Security Hardening + Privacy + Audit + Disaster Recovery  
 **Last updated:** 2026-08-16
+
+---
+
+## SPRINT 19 COMPLETE (Security · Privacy · Audit · Resilience)
+
+- **Security module** — `src/all-in-one/security/` (types, control registry, data classification, authorization guard, audit, production gate, file security, rate limits, redaction, FS isolation)
+- **Demo store v18** — `securitySeed.ts`, `securityActions.ts`, findings, audit events, sessions, privacy requests, incidents, vendors, retention, backup status
+- **Office routes** — `/office/security`, `/office/security/audit`, `/office/security/incidents`, `/office/security/production-readiness`, `/office/privacy`, `/office/settings/security`
+- **Portal routes** — `/portal/settings/security`, `/portal/settings/privacy`
+- **Hardening** — object-level authorization, CSV injection protection, upload validation, demo reset production guard, permission revocation overrides
+- **Production gate** — `canLaunchProduction()` returns BLOCKED in debug with explicit reasons
+- **Permissions** — `security.*`, `privacy.*` in `officeWorkTypes.ts` / `officeContext.ts`
+- **Unit tests** — `security/security.test.ts` (16 tests) + Sprint 18 integration tests (25)
+- **Documentation** — `SECURITY_HARDENING.md`, `DATA_CLASSIFICATION.md`, `PRIVACY_MODEL.md`, `AUDIT_SYSTEM.md`, `INCIDENT_RESPONSE.md`, `BACKUP_AND_DISASTER_RECOVERY.md`, `PRODUCTION_SECURITY_CHECKLIST.md`, `SECURITY_TEST_MATRIX.md`, `VENDOR_SECURITY_REGISTRY.md`
+
+**Next:** Sprint 20 — Production Data Architecture + Supabase + Auth + Storage + Database Migration Foundation
 
 ---
 

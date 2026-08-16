@@ -23,7 +23,11 @@ export function AIODebugBanner() {
 
   const handleReset = () => {
     if (window.confirm('Reset all demo data? This restores the canonical seed state.')) {
-      resetDemoStore();
+      const result = resetDemoStore();
+      if (!result.ok) {
+        window.alert(result.error);
+        return;
+      }
       window.location.href = '/all-in-one';
     }
   };

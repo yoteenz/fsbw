@@ -51332,3 +51332,26 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Verified:** `localhost:3001/all-in-one`, `/portal`, `/services` all load without red error or re-render loop.
 
 - **Mobile note:** Hard refresh required — error boundary caches prior crash; `/portal` pathname error indicates old JS bundle before location-override removal.
+
+---
+
+## 2026-08-16 — Sprint 18 Integration Platform (All In One)
+
+- **Context:** Founder sprint spec for Integration Platform + External Provider Architecture + government/transportation data connections (170 deliverables). Continue inside `/debug/all-in-one`; no Frontal Slayer integration credentials; no live unverified APIs.
+
+- **Delivered:**
+  - Canonical integration domain: `src/all-in-one/integrations/` (types, registry, engine, webhook, sync, reconciliation, health, circuit breaker, retry, redaction, audit, permissions, config, 9 demo adapters)
+  - Demo store **v17** with `integrationsSeed.ts`, `integrationActions.ts` (regulatory lookup, payment webhook, load board import, factoring/accounting submission, consent revoke)
+  - Office routes: integrations ops center, reconciliation, settings, providers, connection detail, load board search
+  - Portal: `/portal/settings/connections`
+  - Road Ready: external USDOT lookup on client review (demo 1234567, provenance badges, no overwrite of customer data)
+  - Management attention: integration auth/health/reconciliation items
+  - Permissions: `integrations.*` in officeContext role bundles
+  - Tests: `integrations.test.ts` (25 passing)
+  - Docs: INTEGRATION_PLATFORM, INTEGRATION_SECURITY, INTEGRATION_PROVIDER_CONTRACTS, REGULATORY_INTEGRATION_MODEL, EXTERNAL_DATA_PROVENANCE, INTEGRATION_RECONCILIATION, INTEGRATION_RESEARCH_REGISTRY; SPRINT_STATUS, DEBUG_ARCHITECTURE, AUTHORIZATION_MATRIX updated
+
+- **Design rules:** Provider vs connection separation; DEMO/SANDBOX/PRODUCTION badges; credential references only; FMCSA live API not fabricated; demo adapters make no network calls; reconciliation never auto-fixes financial mismatches.
+
+- **Spatial Architecture Review:** SKIPPED — infrastructure/integration layer; admin settings follow existing Office patterns.
+
+- **Next sprint noted (not implemented):** Sprint 19 security hardening pass.

@@ -140,13 +140,26 @@ See **`CLIENT_COMMAND_CENTER.md`**, **`SECURITY_FOUNDATION.md`**.
 
 ## Audit logging
 
-`aio_activity_events` records:
+**Operational activity:** `store.activity` (demo) / `aio_activity_events` (production target)
 
-- `event_type`, `actor_user_id`, `organization_id`
-- `entity_type`, `entity_id`, `visibility`, `metadata`
-- Server timestamps (`created_at`)
+**Security audit (Sprint 19):** `securityAuditEvents` — distinct append-only trail for privileged actions. See `AUDIT_SYSTEM.md`.
 
 Do not store full sensitive payloads in metadata.
+
+---
+
+## Sprint 19 security controls (debug)
+
+- Object-level authorization: `authorizationGuard.ts`
+- Security Control Registry + Production gate: `productionGate.ts`
+- Data classification: `DATA_CLASSIFICATION.md`
+- Security Center UI: `/office/security`
+- Demo reset blocked when simulating production
+- CSV export formula neutralization
+- Upload validation + quarantine foundation
+- FS isolation regression: `fsIsolation.ts`
+
+Production RLS, private storage, and backup remain **Sprint 20** blockers.
 
 ---
 
