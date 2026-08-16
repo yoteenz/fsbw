@@ -24,9 +24,10 @@ export const aioAppConfig = {
     emailHref: 'mailto:contact@allinoneenterprises.example',
   },
   branding: {
-    primaryGold: '#C9A227',
-    primaryGoldLight: '#D4AF37',
+    primaryGold: '#D4A017',
+    primaryGoldLight: '#D4A017',
     charcoal: '#1A1A1A',
+    surfaceDark: '#111415',
     nearBlack: '#0A0A0A',
     white: '#FFFFFF',
     grayMuted: '#6B7280',

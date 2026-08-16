@@ -18,7 +18,9 @@ export function RoadReadyTeaserSection() {
           />
           <div className="aio-road-ready-teaser__cta">
             <Link to={aioPaths.getStarted}>
-              <AIOButton variant="gold">Get My Roadmap →</AIOButton>
+              <AIOButton variant="gold" showArrow>
+                Get My Roadmap
+              </AIOButton>
             </Link>
           </div>
         </div>

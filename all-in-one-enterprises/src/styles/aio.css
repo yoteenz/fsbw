@@ -5,10 +5,11 @@
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap');
 
 .aio-app {
-  --aio-gold: #c9a227;
-  --aio-gold-light: #d4af37;
-  --aio-gold-dark: #a8861e;
+  --aio-gold: #d4a017;
+  --aio-gold-light: #d4a017;
+  --aio-gold-dark: #b8890f;
   --aio-charcoal: #1a1a1a;
+  --aio-surface: #111415;
   --aio-black: #0a0a0a;
   --aio-white: #ffffff;
   --aio-gray-100: #f5f5f5;
@@ -19,19 +20,27 @@
   --aio-red: #dc2626;
   --aio-font-display: 'Plus Jakarta Sans', system-ui, sans-serif;
   --aio-font-body: 'DM Sans', system-ui, sans-serif;
-  --aio-radius: 4px;
-  --aio-radius-lg: 8px;
+  --aio-radius: 8px;
+  --aio-radius-lg: 12px;
   --aio-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
   --aio-shadow-lg: 0 12px 48px rgba(0, 0, 0, 0.2);
   --aio-transition: 0.2s ease;
   --aio-header-h: 72px;
+  --aio-section-pad-y: 2rem;
+  --aio-btn-min-height: 44px;
 
   font-family: var(--aio-font-body);
   color: var(--aio-charcoal);
   background: var(--aio-white);
   min-height: 100dvh;
-  line-height: 1.5;
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+}
+
+@media (min-width: 768px) {
+  .aio-app {
+    --aio-section-pad-y: 4rem;
+  }
 }
 
 .aio-app *,
@@ -102,11 +111,11 @@
 }
 
 .aio-section {
-  padding: clamp(3rem, 6vw, 5rem) clamp(1.25rem, 4vw, 3rem);
+  padding: var(--aio-section-pad-y) clamp(1.25rem, 4vw, 3rem);
 }
 
 .aio-section--dark {
-  background: var(--aio-black);
+  background: var(--aio-surface);
   color: var(--aio-white);
 }
 
@@ -159,61 +168,83 @@
   outline: 2px solid var(--aio-gold-light, #d4af37);
 }
 
-/* Buttons */
+/* Buttons — Post-Build Refinement 03: solid gold, no glow */
 .aio-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  padding: 0.875rem 1.75rem;
+  gap: 0.375rem;
+  min-height: var(--aio-btn-min-height);
+  padding: 0.75rem 1.75rem;
   font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   border-radius: var(--aio-radius);
-  transition: background var(--aio-transition), color var(--aio-transition), border-color var(--aio-transition),
-    transform var(--aio-transition), box-shadow var(--aio-transition);
+  border: 1.5px solid transparent;
+  transition: background var(--aio-transition), color var(--aio-transition), border-color var(--aio-transition);
 }
 
 .aio-btn:hover {
-  transform: translateY(-1px);
+  transform: none;
 }
 
 .aio-btn--gold {
-  background: linear-gradient(135deg, var(--aio-gold-light), var(--aio-gold));
+  background: var(--aio-gold);
   color: var(--aio-black);
-  box-shadow: 0 2px 12px rgba(201, 162, 39, 0.35);
+  border-color: var(--aio-gold);
 }
 
 .aio-btn--gold:hover {
-  background: linear-gradient(135deg, #e0c04a, var(--aio-gold-light));
-  box-shadow: 0 4px 20px rgba(201, 162, 39, 0.45);
+  background: var(--aio-gold-dark);
+  border-color: var(--aio-gold-dark);
+  color: var(--aio-black);
 }
 
 .aio-btn--outline {
   background: transparent;
   color: var(--aio-white);
-  border: 1.5px solid rgba(255, 255, 255, 0.7);
+  border-color: rgba(255, 255, 255, 0.85);
 }
 
 .aio-btn--outline:hover {
-  border-color: var(--aio-gold-light);
-  color: var(--aio-gold-light);
+  border-color: var(--aio-white);
+  color: var(--aio-white);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.aio-btn--outline-gold {
+  background: transparent;
+  color: var(--aio-gold);
+  border-color: var(--aio-gold);
+}
+
+.aio-btn--outline-gold:hover {
+  background: rgba(212, 160, 23, 0.1);
+  color: var(--aio-gold);
+  border-color: var(--aio-gold);
 }
 
 .aio-btn--outline-dark {
   color: var(--aio-charcoal);
   border-color: var(--aio-charcoal);
+  background: transparent;
 }
 
 .aio-btn--outline-dark:hover {
   border-color: var(--aio-gold);
   color: var(--aio-gold-dark);
+  background: rgba(212, 160, 23, 0.06);
 }
 
 .aio-btn--sm {
-  padding: 0.625rem 1.25rem;
+  min-height: 36px;
+  padding: 0.5rem 1.25rem;
   font-size: 0.6875rem;
+}
+
+.aio-btn__arrow {
+  font-weight: 700;
 }
 
 /* Cards */
@@ -227,7 +258,7 @@
 
 .aio-card:hover {
   box-shadow: var(--aio-shadow);
-  transform: translateY(-2px);
+  border-color: rgba(212, 160, 23, 0.25);
 }
 
 .aio-card--dark {
@@ -281,7 +312,7 @@
   height: var(--aio-header-h);
   background: rgba(10, 10, 10, 0.92);
   backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(201, 162, 39, 0.15);
+  border-bottom: 1px solid rgba(212, 160, 23, 0.15);
 }
 
 .aio-header__inner {
@@ -1156,9 +1187,14 @@
 
 /* Page shells */
 .aio-page-hero {
-  background: linear-gradient(160deg, var(--aio-black), var(--aio-charcoal));
+  background: linear-gradient(160deg, var(--aio-black), var(--aio-surface));
   color: var(--aio-white);
-  padding: clamp(3rem, 8vw, 5rem) clamp(1.25rem, 4vw, 3rem);
+  padding: var(--aio-section-pad-y) clamp(1.25rem, 4vw, 3rem);
+}
+
+.aio-page-hero--elevated,
+.aio-page-hero--dark {
+  background: var(--aio-surface);
 }
 
 .aio-page-hero__breadcrumb {
@@ -1176,8 +1212,8 @@
 
 .aio-page-hero__desc {
   max-width: 40rem;
-  color: rgba(255, 255, 255, 0.75);
-  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.88);
+  line-height: 1.7;
 }
 
 .aio-page-content {
@@ -3965,7 +4001,7 @@
 /* —— Post-Build Refinement 01: homepage & navigation —— */
 
 .aio-section--spacious {
-  padding-block: clamp(4rem, 8vw, 6rem);
+  padding-block: var(--aio-section-pad-y);
 }
 
 .aio-header__nav-item {
@@ -4116,8 +4152,8 @@
 }
 
 .aio-hero-trust {
-  background: var(--aio-charcoal);
-  border-bottom: 1px solid rgba(201, 162, 39, 0.15);
+  background: var(--aio-surface);
+  border-bottom: 1px solid rgba(212, 160, 23, 0.15);
   padding: 1.25rem 0;
 }
 
@@ -4636,9 +4672,127 @@
 }
 
 .aio-page-content--dark {
-  background: var(--aio-charcoal);
+  background: var(--aio-surface);
   color: var(--aio-white);
-  padding-block: 3rem;
+  padding-block: var(--aio-section-pad-y);
+}
+
+.aio-page-section {
+  margin-bottom: var(--aio-section-pad-y);
+}
+
+.aio-page-section:last-child {
+  margin-bottom: 0;
+}
+
+/* CTA rows — full-width buttons on mobile (Refinement 03) */
+.aio-cta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: stretch;
+  margin-top: 1.5rem;
+}
+
+.aio-cta-row__link {
+  display: block;
+  flex: 1 1 12rem;
+}
+
+@media (max-width: 639px) {
+  .aio-cta-row {
+    flex-direction: column;
+  }
+
+  .aio-cta-row__link {
+    width: 100%;
+    flex: 1 1 auto;
+  }
+}
+
+.aio-hero__actions.aio-cta-row {
+  margin-top: 0;
+  max-width: 28rem;
+}
+
+/* Startup milestones — Start Your Business (Option 1 gold accent) */
+.aio-milestones {
+  background: var(--aio-black);
+  color: var(--aio-white);
+  padding: var(--aio-section-pad-y) clamp(1.25rem, 4vw, 3rem);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.aio-milestones__heading {
+  font-family: var(--aio-font-display);
+  font-size: clamp(0.6875rem, 2vw, 0.8125rem);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-align: center;
+  text-transform: uppercase;
+  color: var(--aio-gold);
+  margin-bottom: 1.75rem;
+}
+
+.aio-milestones__grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.25rem 1rem;
+  max-width: 960px;
+  margin-inline: auto;
+}
+
+@media (min-width: 640px) {
+  .aio-milestones__grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 960px) {
+  .aio-milestones__grid {
+    grid-template-columns: repeat(6, 1fr);
+    gap: 1rem;
+  }
+}
+
+.aio-milestones__item {
+  text-align: center;
+}
+
+.aio-milestones__icon {
+  width: 3rem;
+  height: 3rem;
+  margin: 0 auto 0.625rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 1.5px solid var(--aio-gold);
+  color: var(--aio-gold);
+  background: rgba(212, 160, 23, 0.08);
+}
+
+.aio-milestones__icon svg {
+  width: 1.35rem;
+  height: 1.35rem;
+}
+
+.aio-milestones__label {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 0.25rem;
+}
+
+.aio-milestones__desc {
+  font-size: 0.75rem;
+  line-height: 1.45;
+  color: rgba(255, 255, 255, 0.72);
 }
 
 @media (prefers-reduced-motion: reduce) {

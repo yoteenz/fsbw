@@ -24,12 +24,16 @@ export function HeroSection() {
             <em>{taglineLine2}</em>
           </h1>
           <p className="aio-hero__sub">{aioAppConfig.company.brandDescription}</p>
-          <div className="aio-hero__actions">
-            <Link to={heroPrimaryCtaHref}>
-              <AIOButton variant="gold">Start My Business</AIOButton>
+          <div className="aio-hero__actions aio-cta-row">
+            <Link to={heroPrimaryCtaHref} className="aio-cta-row__link">
+              <AIOButton variant="gold" className="aio-btn--block">
+                Start My Business
+              </AIOButton>
             </Link>
-            <Link to={heroSecondaryCtaHref}>
-              <AIOButton variant="outline">See How It Works</AIOButton>
+            <Link to={heroSecondaryCtaHref} className="aio-cta-row__link">
+              <AIOButton variant="outline-gold" className="aio-btn--block" showArrow>
+                See How It Works
+              </AIOButton>
             </Link>
           </div>
         </div>

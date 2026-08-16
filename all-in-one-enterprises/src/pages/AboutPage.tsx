@@ -31,12 +31,16 @@ export function AboutPage() {
             <p style={{ maxWidth: '40rem', lineHeight: 1.65, color: 'var(--aio-gray-800)', marginBottom: '1.5rem' }}>
               Guides, Road Ready™, and service information to help you plan your trucking business journey.
             </p>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem' }}>
+            <div className="aio-cta-row">
               <Link to={aioPaths.roadReadyPublic}>
-                <AIOButton variant="gold">Road Ready™</AIOButton>
+                <AIOButton variant="gold" showArrow>
+                  Road Ready™
+                </AIOButton>
               </Link>
               <Link to={aioPaths.startYourBusiness}>
-                <AIOButton variant="outline">Start Your Business</AIOButton>
+                <AIOButton variant="outline-dark" showArrow>
+                  Start Your Business
+                </AIOButton>
               </Link>
             </div>
           </section>

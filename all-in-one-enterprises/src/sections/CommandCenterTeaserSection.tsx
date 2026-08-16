@@ -16,7 +16,9 @@ export function CommandCenterTeaserSection() {
           />
           <div className="aio-command-section__cta">
             <Link to={aioPaths.clientPortalInfo}>
-              <AIOButton variant="outline">Explore the Client Portal →</AIOButton>
+              <AIOButton variant="outline-gold" showArrow>
+                Explore the Client Portal
+              </AIOButton>
             </Link>
           </div>
         </div>

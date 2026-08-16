@@ -16,7 +16,9 @@ export function CustomerStageSection() {
               From formation to your first load, we&apos;ll help you understand what comes next.
             </p>
             <Link to={aioPaths.startYourBusiness}>
-              <AIOButton variant="gold">Start My Business →</AIOButton>
+              <AIOButton variant="gold" showArrow>
+                Start My Business
+              </AIOButton>
             </Link>
           </article>
           <article className="aio-stage-card aio-stage-card--operate">

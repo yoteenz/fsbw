@@ -3,6 +3,7 @@ import { mockBusinessSteps } from '../data/mockRoadmap';
 import { mockOperateGrowSteps } from '../data/mockFactoring';
 import { AIOSectionHeader } from '../components/AIOSectionHeader';
 import { AIOButton } from '../components/AIOButton';
+import { AIOStartupMilestones } from '../components/AIOStartupMilestones';
 import { usePageMeta } from '../hooks/usePageMeta';
 import { aioAppConfig } from '../config/appConfig';
 import { aioGetStarted, aioPaths } from '../utils/paths';
@@ -16,7 +17,7 @@ export function StartYourBusinessPage() {
 
   return (
     <>
-      <div className="aio-page-hero">
+      <div className="aio-page-hero aio-page-hero--elevated">
         <div className="aio-container">
           <p className="aio-page-hero__breadcrumb">Start Your Business</p>
           <h1 className="aio-page-hero__title">From formation to freight</h1>
@@ -24,24 +25,29 @@ export function StartYourBusinessPage() {
             The full startup journey — build, authorize, protect, register, activate, and roll. Use Road Ready™ for a
             personalized roadmap, or begin with the services you need today.
           </p>
-          <div className="aio-page-hero__actions">
-            <Link to={aioGetStarted('start-business')}>
-              <AIOButton variant="gold">Start My Business</AIOButton>
+          <div className="aio-page-hero__actions aio-cta-row">
+            <Link to={aioGetStarted('start-business')} className="aio-cta-row__link">
+              <AIOButton variant="gold" className="aio-btn--block">
+                Start My Business
+              </AIOButton>
             </Link>
-            <Link to={aioPaths.roadReadyPublic}>
-              <AIOButton variant="outline">Get My Roadmap</AIOButton>
+            <Link to={aioPaths.roadReadyPublic} className="aio-cta-row__link">
+              <AIOButton variant="outline-gold" className="aio-btn--block" showArrow>
+                Get My Roadmap
+              </AIOButton>
             </Link>
           </div>
         </div>
       </div>
+      <AIOStartupMilestones />
       <div className="aio-page-content">
         <div className="aio-container">
-          <section style={{ marginBottom: '3.5rem' }}>
+          <section className="aio-page-section">
             <AIOSectionHeader
               align="center"
               eyebrow="Start Your Business"
-              title="Build → Authorize → Protect → Register → Activate → Roll"
-              subtitle="How All In One may guide new trucking entrepreneurs through each milestone."
+              title="Your milestone path"
+              subtitle="How All In One may guide new trucking entrepreneurs through each stage."
             />
             <div className="aio-steps" style={{ marginTop: '2rem' }}>
               {mockBusinessSteps.map((step) => (
@@ -54,7 +60,7 @@ export function StartYourBusinessPage() {
             </div>
           </section>
 
-          <section style={{ marginBottom: '3.5rem' }}>
+          <section className="aio-page-section">
             <AIOSectionHeader
               align="center"
               eyebrow="Related services"
@@ -77,7 +83,7 @@ export function StartYourBusinessPage() {
             </div>
           </section>
 
-          <section>
+          <section className="aio-page-section">
             <AIOSectionHeader
               align="center"
               eyebrow="Operate & Grow"

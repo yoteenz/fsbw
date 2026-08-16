@@ -15,7 +15,7 @@ export function ClientPortalInfoPage() {
 
   return (
     <>
-      <div className="aio-page-hero">
+      <div className="aio-page-hero aio-page-hero--elevated">
         <div className="aio-container">
           <p className="aio-page-hero__breadcrumb">Client Portal</p>
           <h1 className="aio-page-hero__title">Your business. One command center.</h1>
@@ -23,9 +23,13 @@ export function ClientPortalInfoPage() {
             Track filings, documents, renewals, loads, invoices, and service requests from a single personalized portal
             — not just a marketing website.
           </p>
-          <Link to={aioAppConfig.routes.clientLogin}>
-            <AIOButton variant="gold">Client Login</AIOButton>
-          </Link>
+          <div className="aio-page-hero__actions aio-cta-row">
+            <Link to={aioAppConfig.routes.clientLogin} className="aio-cta-row__link">
+              <AIOButton variant="gold" className="aio-btn--block">
+                Client Login
+              </AIOButton>
+            </Link>
+          </div>
         </div>
       </div>
       <div className="aio-page-content">
@@ -41,12 +45,16 @@ export function ClientPortalInfoPage() {
             Portal modules reflect your active services and account permissions. Some features require enrollment or staff
             coordination.
           </p>
-          <div style={{ marginTop: '2rem', display: 'flex', flexWrap: 'wrap', gap: '1rem' }}>
-            <Link to={aioAppConfig.routes.clientLogin}>
-              <AIOButton variant="gold">Sign In to Portal</AIOButton>
+          <div className="aio-cta-row">
+            <Link to={aioAppConfig.routes.clientLogin} className="aio-cta-row__link">
+              <AIOButton variant="gold" showArrow>
+                Sign In to Portal
+              </AIOButton>
             </Link>
-            <Link to={aioPaths.contact}>
-              <AIOButton variant="outline">Request Access</AIOButton>
+            <Link to={aioPaths.contact} className="aio-cta-row__link">
+              <AIOButton variant="outline-gold" showArrow>
+                Request Access
+              </AIOButton>
             </Link>
           </div>
         </div>

@@ -18,7 +18,7 @@ export function RoadReadyPublicPage() {
 
   return (
     <>
-      <div className="aio-page-hero aio-page-hero--dark">
+      <div className="aio-page-hero aio-page-hero--elevated">
         <div className="aio-container">
           <p className="aio-page-hero__breadcrumb">Road Ready™</p>
           <h1 className="aio-page-hero__title">See what stands between you and the road</h1>
@@ -26,9 +26,13 @@ export function RoadReadyPublicPage() {
             {ROAD_READY_PRODUCT_NAME} helps you understand formation, authority, insurance, registration, and compliance
             steps — then routes you to the right All In One services.
           </p>
-          <Link to={aioPaths.getStarted}>
-            <AIOButton variant="gold">Get My Roadmap →</AIOButton>
-          </Link>
+          <div className="aio-page-hero__actions aio-cta-row">
+            <Link to={aioPaths.getStarted} className="aio-cta-row__link">
+              <AIOButton variant="gold" className="aio-btn--block" showArrow>
+                Get My Roadmap
+              </AIOButton>
+            </Link>
+          </div>
         </div>
       </div>
       <div className="aio-page-content aio-page-content--dark">
@@ -46,7 +50,9 @@ export function RoadReadyPublicPage() {
                 <li>Add recommended services to your plan and submit requests</li>
               </ul>
               <Link to={aioPaths.getStarted}>
-                <AIOButton variant="gold">Start Road Ready Intake</AIOButton>
+                <AIOButton variant="gold" showArrow>
+                  Start Road Ready Intake
+                </AIOButton>
               </Link>
             </div>
             <AIOCard dark>
