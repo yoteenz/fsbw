@@ -51548,3 +51548,19 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Report:** `docs/refinement/POST_BUILD_REFINEMENT_03B_REPORT.md`
 
+---
+
+## 2026-08-16 — Post-Build Refinement 03C: AIO persistent gold CTA + mobile touch fix
+
+- **Context:** Founder reported primary CTAs (START MY BUSINESS, Client Login) appeared gold only during hover/tap on mobile Safari; after scroll they reverted to near-black/invisible against dark hero/nav. Visual-only — no IA, copy, hero imagery, routing, or backend changes.
+
+- **Root cause:** `.aio-app button { background: none }` specificity (0,1,1) beat `.aio-btn--gold` (0,1,0); gold only applied on `:hover` (0,2,0), including sticky mobile touch-hover. Invalid `<Link><button>` nesting on public CTAs.
+
+- **Fix:** Scoped reset to `button:not(.aio-btn)`; raised variant specificity (`.aio-app .aio-btn.aio-btn--gold` + link/button selectors); added `--aio-gold-hover/active/focus-ring`, `:active`, `:focus-visible`, `:disabled`; desktop-only `:hover` via `@media (hover: hover) and (pointer: fine)`.
+
+- **AIOButton:** Added `to` prop (React Router `Link` as single control); converted public Link-wrapped buttons (hero, nav Client Login, homepage sections, start-your-business, road-ready, client-portal, about).
+
+- **QA:** Mobile 390×844 + desktop — gold default on load, after scroll, after tap/release; Client Login visible in header.
+
+- **Report:** `docs/refinement/POST_BUILD_REFINEMENT_03C_REPORT.md`
+

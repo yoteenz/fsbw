@@ -10,6 +10,7 @@
   --aio-gold-dark: #b8890f;
   --aio-gold-hover: #e0b030;
   --aio-gold-active: #a6780d;
+  --aio-gold-text: #a6780d;
   --aio-focus-ring: rgba(212, 160, 23, 0.55);
   --aio-charcoal: #1a1a1a;
   --aio-surface: #111415;
@@ -4349,7 +4350,7 @@
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--aio-charcoal);
+  color: var(--aio-gold-text);
 }
 
 .aio-pathway-card__desc {
@@ -4366,12 +4367,55 @@
   color: var(--aio-gray-muted);
 }
 
-.aio-pathway-card__cta {
+/* Gold text CTA — default gold (not hover-only); arrow inherits link color */
+.aio-app a.aio-pathway-card__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
   font-size: 0.6875rem;
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--aio-gold-dark);
+  color: var(--aio-gold-text);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color var(--aio-transition);
+}
+
+.aio-pathway-card__cta-arrow {
+  display: inline-block;
+  transition: transform var(--aio-transition);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .aio-app a.aio-pathway-card__cta:hover {
+    color: var(--aio-gold-dark);
+  }
+
+  .aio-app a.aio-pathway-card__cta:hover .aio-pathway-card__cta-arrow {
+    transform: translateX(3px);
+  }
+}
+
+.aio-app a.aio-pathway-card__cta:active {
+  color: var(--aio-gold-active);
+}
+
+.aio-app a.aio-pathway-card__cta:focus-visible {
+  color: var(--aio-gold-text);
+  outline: 2px solid var(--aio-gold-text);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aio-pathway-card__cta-arrow {
+    transition: none;
+  }
+
+  .aio-app a.aio-pathway-card__cta:hover .aio-pathway-card__cta-arrow {
+    transform: none;
+  }
 }
 
 .aio-road-ready-teaser__grid {

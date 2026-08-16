@@ -67,7 +67,7 @@ export function AIOServicePathwayCard({ pathway }: Props) {
         <p className="aio-pathway-card__status">{activation.label}</p>
       ) : null}
       <Link to={pathway.href} className="aio-pathway-card__cta">
-        Explore <span aria-hidden="true">→</span>
+        Explore <span className="aio-pathway-card__cta-arrow" aria-hidden="true">→</span>
       </Link>
     </AIOCard>
   );
