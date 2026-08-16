@@ -145,6 +145,12 @@ import {
 } from '../pages/QaPages';
 import { ProductionConfigCenterPage } from '../pages/ProductionInfrastructurePages';
 import { LaunchControlCenterPage, ServiceActivationCenterPage, SopLibraryPage } from '../pages/LaunchPages';
+import {
+  BookkeepingCommandCenterPage,
+  BookkeepingSubscriptionsListPage,
+  BookkeepingRescueListPage,
+  BookkeepingLeadsListPage,
+} from '../pages/BookkeepingPages';
 import { StaffTrainingCenterPage } from '../pages/TrainingPages';
 
 export default function OfficeRoutes() {
@@ -257,6 +263,10 @@ export default function OfficeRoutes() {
         <Route path="factoring/clients" element={<FactoringClientsListPage />} />
         <Route path="factoring/clients/:clientId" element={<FactoringClientDetailPage />} />
         <Route path="factoring/providers" element={<FactoringProvidersPage />} />
+        <Route path="bookkeeping" element={<BookkeepingCommandCenterPage />} />
+        <Route path="bookkeeping/subscriptions" element={<BookkeepingSubscriptionsListPage />} />
+        <Route path="bookkeeping/books-rescue" element={<BookkeepingRescueListPage />} />
+        <Route path="bookkeeping/leads" element={<BookkeepingLeadsListPage />} />
         <Route path="brokerage" element={<BrokerageCommandCenterPage />} />
         <Route path="brokerage/readiness" element={<BrokerageReadinessPage />} />
         <Route path="brokerage/shippers" element={<BrokerageShippersPage />} />

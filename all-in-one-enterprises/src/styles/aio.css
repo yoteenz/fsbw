@@ -5013,3 +5013,70 @@
     transition: none;
   }
 }
+
+/* Refinement 04 — Bookkeeping */
+.aio-bk-hero__eyebrow { color: var(--aio-gold-text, #a6780d); margin-bottom: 0.75rem; }
+.aio-bk-hero__actions { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; }
+.aio-bk-hero__tertiary { margin-top: 1rem; font-size: 0.875rem; }
+.aio-bk-hero__tertiary a { color: var(--aio-gold-text, #a6780d); text-decoration: underline; }
+.aio-bk-chips { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1.5rem; }
+.aio-bk-chip { padding: 0.4rem 0.75rem; border: 1px solid rgba(0,0,0,0.12); border-radius: 999px; font-size: 0.75rem; font-weight: 600; background: #fff; }
+.aio-bk-plans-toolbar { display: flex; justify-content: center; margin: 1.5rem 0 2rem; position: sticky; top: 0; z-index: 2; padding: 0.5rem 0; background: rgba(255,255,255,0.92); backdrop-filter: blur(6px); }
+.aio-bk-billing-toggle { display: inline-flex; border: 1px solid rgba(0,0,0,0.15); border-radius: 999px; overflow: hidden; }
+.aio-bk-billing-toggle__btn { border: none; background: transparent; padding: 0.55rem 1.25rem; font-weight: 700; font-size: 0.75rem; letter-spacing: 0.06em; text-transform: uppercase; cursor: pointer; color: #000; }
+.aio-bk-billing-toggle__btn.is-active { background: #000; color: #fff; }
+.aio-bk-plans { display: grid; gap: 1.25rem; grid-template-columns: 1fr; }
+@media (min-width: 900px) { .aio-bk-plans { grid-template-columns: repeat(3, 1fr); align-items: stretch; } }
+.aio-bk-plan-card { background: #fff; border: 1px solid rgba(0,0,0,0.1); border-radius: 12px; padding: 1.5rem; display: flex; flex-direction: column; gap: 0.75rem; box-shadow: 0 8px 24px rgba(0,0,0,0.04); position: relative; }
+.aio-bk-plan-card--featured { border-color: rgba(166, 120, 13, 0.35); }
+.aio-bk-plan-card--premium { border-top: 3px solid var(--aio-gold, #d4a017); box-shadow: 0 12px 32px rgba(0,0,0,0.08); }
+.aio-bk-plan-card__badge { position: absolute; top: 0.75rem; right: 0.75rem; font-size: 0.625rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--aio-gold-text, #a6780d); }
+.aio-bk-plan-card__name { color: var(--aio-gold-text, #a6780d); font-size: 1.125rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em; margin: 0; }
+.aio-bk-plan-card__best { font-size: 0.8125rem; line-height: 1.5; color: rgba(0,0,0,0.65); min-height: 3rem; }
+.aio-bk-plan-card__starting { display: block; font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.08em; color: rgba(0,0,0,0.55); }
+.aio-bk-plan-card__amount { display: block; font-size: 2rem; font-weight: 800; line-height: 1.1; }
+.aio-bk-plan-card__period { display: block; font-size: 0.75rem; color: rgba(0,0,0,0.6); }
+.aio-bk-plan-card__savings { display: block; font-size: 0.75rem; color: var(--aio-gold-text, #a6780d); font-weight: 700; margin-top: 0.25rem; }
+.aio-bk-plan-card__features { list-style: none; padding: 0; margin: 0.5rem 0 1rem; flex: 1; font-size: 0.8125rem; line-height: 1.45; }
+.aio-bk-plan-card__features li { padding: 0.2rem 0; padding-left: 1rem; position: relative; }
+.aio-bk-plan-card__features li::before { content: '•'; position: absolute; left: 0; color: var(--aio-gold, #d4a017); }
+.aio-bk-matrix__desktop { display: none; }
+.aio-bk-matrix__mobile { display: block; }
+@media (min-width: 900px) { .aio-bk-matrix__desktop { display: block; } .aio-bk-matrix__mobile { display: none; } }
+.aio-bk-matrix__table { width: 100%; border-collapse: collapse; font-size: 0.8125rem; }
+.aio-bk-matrix__table th, .aio-bk-matrix__table td { border-bottom: 1px solid rgba(0,0,0,0.08); padding: 0.65rem 0.5rem; text-align: center; }
+.aio-bk-matrix__table th:first-child, .aio-bk-matrix__table td:first-child { text-align: left; }
+.aio-bk-matrix__mobile-tabs { display: flex; gap: 0.35rem; flex-wrap: wrap; margin-bottom: 1rem; }
+.aio-bk-matrix__mobile-tab { border: 1px solid rgba(0,0,0,0.15); background: #fff; padding: 0.45rem 0.65rem; font-size: 0.6875rem; font-weight: 700; text-transform: uppercase; border-radius: 999px; cursor: pointer; }
+.aio-bk-matrix__mobile-tab.is-active { background: #000; color: #fff; border-color: #000; }
+.aio-bk-matrix__mobile-list { list-style: none; padding: 0; margin: 0; }
+.aio-bk-matrix__mobile-list li { display: flex; justify-content: space-between; gap: 1rem; padding: 0.55rem 0; border-bottom: 1px solid rgba(0,0,0,0.08); font-size: 0.8125rem; }
+.aio-bk-faq { display: grid; gap: 0.75rem; margin-top: 1.5rem; }
+.aio-bk-faq__item { border: 1px solid rgba(0,0,0,0.1); border-radius: 8px; padding: 0.75rem 1rem; background: #fff; }
+.aio-bk-faq__item summary { cursor: pointer; font-weight: 700; }
+.aio-bk-faq__item p { margin: 0.75rem 0 0; font-size: 0.875rem; line-height: 1.55; color: rgba(0,0,0,0.72); }
+.aio-bk-disclosures { border-top: 1px solid rgba(0,0,0,0.1); padding-top: 2rem; }
+.aio-bk-disclosures ul { font-size: 0.8125rem; line-height: 1.55; color: rgba(0,0,0,0.7); }
+.aio-bk-assessment__inner { max-width: 36rem; padding: 2rem 1rem 4rem; }
+.aio-bk-assessment__progress { height: 4px; background: rgba(0,0,0,0.08); border-radius: 999px; overflow: hidden; margin: 1.25rem 0; }
+.aio-bk-assessment__progress-bar { height: 100%; background: var(--aio-gold, #d4a017); transition: width 0.2s ease; }
+.aio-bk-assessment__step-label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: rgba(0,0,0,0.55); }
+.aio-bk-assessment__billing-pref { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; margin: 1rem 0 1.5rem; font-size: 0.8125rem; }
+.aio-bk-assessment__billing-pref button { border: 1px solid rgba(0,0,0,0.15); background: #fff; padding: 0.35rem 0.75rem; border-radius: 999px; cursor: pointer; font-weight: 700; font-size: 0.6875rem; text-transform: uppercase; }
+.aio-bk-assessment__billing-pref button.is-active { background: #000; color: #fff; }
+.aio-bk-field { display: flex; flex-direction: column; gap: 0.35rem; margin-bottom: 1rem; font-size: 0.875rem; }
+.aio-bk-field select { padding: 0.65rem 0.75rem; border: 1px solid rgba(0,0,0,0.15); border-radius: 8px; font-size: 1rem; }
+.aio-bk-field--check { flex-direction: row; align-items: center; gap: 0.65rem; }
+.aio-bk-assessment__nav { display: flex; gap: 0.75rem; margin-top: 2rem; }
+.aio-bk-rec-card, .aio-bk-rescue-callout { border: 1px solid rgba(0,0,0,0.1); border-radius: 12px; padding: 1.5rem; background: #fff; margin: 1.5rem 0; }
+.aio-bk-rescue-callout { border-color: rgba(166, 120, 13, 0.35); background: rgba(212, 160, 23, 0.06); }
+.aio-bk-rec-card__price { font-size: 1.25rem; font-weight: 800; }
+.aio-bk-rec-card__review { background: rgba(0,0,0,0.04); padding: 0.75rem 1rem; border-radius: 8px; font-size: 0.875rem; }
+.aio-bk-portal-metrics, .aio-bk-portal-actions { display: flex; flex-wrap: wrap; gap: 1rem; margin: 1.25rem 0; }
+.aio-bk-portal-metric { min-width: 7rem; }
+.aio-bk-portal-metric span { display: block; font-size: 1.25rem; font-weight: 800; }
+.aio-bk-portal-metric label { font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.06em; color: rgba(0,0,0,0.55); }
+.aio-bk-portal-panel { border: 1px solid rgba(0,0,0,0.1); border-radius: 8px; padding: 1rem 1.25rem; margin-bottom: 1rem; }
+.aio-bk-portal-panel--warn { border-color: rgba(166, 120, 13, 0.4); background: rgba(212, 160, 23, 0.06); }
+.aio-bk-rr-rec__card { border: 1px solid rgba(0,0,0,0.1); border-radius: 8px; padding: 1rem; margin-top: 0.75rem; background: #fff; }
+.aio-card--gold-border { border-top: 3px solid var(--aio-gold, #d4a017); }

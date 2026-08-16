@@ -7,6 +7,10 @@ import { RoadReadyAttentionCenter, RoadReadyNextStep } from '../../components/Ro
 import { RoadReadyStatusBadge } from '../../components/RoadReadyStatusBadge';
 import { requestHelpFromRoadReady } from '../../demo/roadReadyActions';
 import { expirationLabel } from '../../road-ready/roadReadyScoring';
+import { loadRecommendationFromSession } from '../../demo/bookkeepingActions';
+import { planDisplayName } from '../../bookkeeping/bookkeepingRecommendation';
+import { planStartingPriceMinor } from '../../bookkeeping/bookkeepingPlans';
+import { formatMoney } from '../../billing/money';
 import { aioPaths } from '../../utils/paths';
 
 export function RoadReadyPage() {
@@ -25,6 +29,7 @@ export function RoadReadyPage() {
     organizationId,
     needsOnboarding,
   } = useRoadReady();
+  const bkRecommendation = loadRecommendationFromSession();
 
   if (isShipper) {
     return (
@@ -110,6 +115,24 @@ export function RoadReadyPage() {
       <div className="aio-rr-layout">
         <main className="aio-rr-main">
           <RoadReadyAttentionCenter items={attention} />
+
+          {bkRecommendation && (
+            <section className="aio-rr-recommended aio-bk-rr-rec">
+              <h2 className="aio-rr-section-title">Recommended Services</h2>
+              <p className="aio-prototype-note">Business health recommendation — not a legal compliance requirement.</p>
+              <div className="aio-bk-rr-rec__card">
+                <strong>{planDisplayName(bkRecommendation.recommendedPlan)}</strong>
+                <p>
+                  Starting at{' '}
+                  {formatMoney(planStartingPriceMinor(bkRecommendation.recommendedPlan, bkRecommendation.billingInterval))}
+                  {bkRecommendation.billingInterval === 'ANNUAL' ? ' / year' : ' / month'}
+                </p>
+                <Link to={aioPaths.bookkeepingRecommendation} className="aio-btn aio-btn--sm aio-btn--outline">
+                  View recommendation
+                </Link>
+              </div>
+            </section>
+          )}
 
           <section className="aio-rr-categories">
             <h2 className="aio-rr-section-title">Categories</h2>

@@ -22,6 +22,9 @@ export const WORKFLOW_TEMPLATE_SLUGS = {
   insuranceAssistance: 'insurance-assistance',
   dispatchOnboarding: 'dispatch-onboarding',
   factoringOnboarding: 'factoring-onboarding',
+  bookkeepingOnboarding: 'bookkeeping-onboarding',
+  bookkeepingMonthly: 'bookkeeping-monthly-cycle',
+  booksRescue: 'books-rescue-cleanup',
   renewal: 'renewal',
   newCarrierStartup: 'new-carrier-startup',
 } as const;
@@ -125,6 +128,9 @@ export function createWorkflowSeedData(now = new Date()) {
     { id: templateIds.businessFormation, slug: WORKFLOW_TEMPLATE_SLUGS.businessFormation, name: 'Business Formation', serviceType: 'business_formation', division: 'permitting_compliance', isDemo: true },
     { id: templateIds.insurance, slug: WORKFLOW_TEMPLATE_SLUGS.insuranceAssistance, name: 'Insurance Assistance', serviceType: 'insurance_assistance', division: 'insurance', currentPublishedVersionId: 'wtv-insurance-v1', isDemo: true },
     { id: templateIds.renewal, slug: WORKFLOW_TEMPLATE_SLUGS.renewal, name: 'Renewal', serviceType: 'renewal', division: 'permitting_compliance', isDemo: true },
+    { id: 'wtpl-bookkeeping-onboarding', slug: WORKFLOW_TEMPLATE_SLUGS.bookkeepingOnboarding, name: 'Bookkeeping Onboarding', serviceType: 'bookkeeping', division: 'bookkeeping', isDemo: true },
+    { id: 'wtpl-bookkeeping-monthly', slug: WORKFLOW_TEMPLATE_SLUGS.bookkeepingMonthly, name: 'Monthly Bookkeeping Cycle', serviceType: 'bookkeeping', division: 'bookkeeping', isDemo: true },
+    { id: 'wtpl-books-rescue', slug: WORKFLOW_TEMPLATE_SLUGS.booksRescue, name: 'Books Rescue Cleanup', serviceType: 'books_rescue', division: 'bookkeeping', isDemo: true },
     { id: 'wtpl-new-carrier', slug: WORKFLOW_TEMPLATE_SLUGS.newCarrierStartup, name: 'New Carrier Startup Journey', serviceType: 'journey', division: 'permitting_compliance', isDemo: true },
   ];
 
@@ -293,6 +299,11 @@ export function resolveTemplateIdForService(slug: string): string | undefined {
     'boc-3': 'wtpl-operating-authority',
     irp: 'wtpl-operating-authority',
     insurance: 'wtpl-insurance-assistance',
+    bookkeeping: 'wtpl-bookkeeping-onboarding',
+    'bookkeeping-essentials': 'wtpl-bookkeeping-onboarding',
+    'bookkeeping-plus': 'wtpl-bookkeeping-onboarding',
+    'all-in-one-bookkeeping': 'wtpl-bookkeeping-onboarding',
+    'books-rescue': 'wtpl-books-rescue',
     renewal: 'wtpl-renewal',
   };
   return map[slug.toLowerCase()] ?? map[slug];

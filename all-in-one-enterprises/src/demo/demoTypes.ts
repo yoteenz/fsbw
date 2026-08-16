@@ -487,9 +487,17 @@ export interface OrganizationMember {
 }
 
 import type { DataSystemStatus } from '../data/dataHealth';
+import type {
+  BookkeepingCounters,
+  BookkeepingCycle,
+  BookkeepingLead,
+  BookkeepingReport,
+  BookkeepingSubscription,
+  BooksRescueEngagement,
+} from '../bookkeeping/bookkeepingTypes';
 
 export interface DemoStore {
-  version: 20;
+  version: 21;
   requestCounter: number;
   portalClientId?: string;
   shipperPortalOrgId?: string;
@@ -678,6 +686,13 @@ export interface DemoStore {
   signedDownloadGrants?: SignedDownloadGrant[];
   /** Revoked permissions per staff id (subtracted from role bundle) */
   staffPermissionOverrides?: Record<string, string[]>;
+  /** Refinement 04 — Bookkeeping */
+  bookkeepingSubscriptions?: BookkeepingSubscription[];
+  bookkeepingCycles?: BookkeepingCycle[];
+  bookkeepingReports?: BookkeepingReport[];
+  booksRescueEngagements?: BooksRescueEngagement[];
+  bookkeepingLeads?: BookkeepingLead[];
+  bookkeepingCounters?: BookkeepingCounters;
   /** Sprint 20 — data system snapshot for health center */
   dataSystem?: Pick<DataSystemStatus, 'demoSchemaVersion' | 'seedVersion' | 'dataModeLabel'>;
 }

@@ -3,6 +3,7 @@ import { defaultIntakeAnswers } from '../intake/intakeTypes';
 import type { ServicePlanItem } from '../repositories/servicePlanRepository';
 import type { RoadmapResult } from '../roadmap/roadmapTypes';
 import type { IntakeAnswers } from '../intake/intakeTypes';
+import { createBookkeepingSeedData } from './bookkeepingSeed';
 import { createDemoSeed } from './demoSeed';
 import type { DemoStore, ServiceRequest } from './demoTypes';
 import { AIO_DEMO_SCHEMA_VERSION } from '../data/constants';
@@ -16,8 +17,14 @@ const STORE_EVENT = 'aio-demo-store-change';
 export function loadDemoStore(): DemoStore {
   if (typeof window === 'undefined') return createDemoSeed();
 
-  const existing = readStorage<DemoStore | (Omit<DemoStore, 'version'> & { version: 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 }) | null>(DEMO_STORE_KEY, null);
-  if (existing?.version === 20) return existing as DemoStore;
+  const existing = readStorage<DemoStore | (Omit<DemoStore, 'version'> & { version: 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 20 }) | null>(DEMO_STORE_KEY, null);
+  if (existing?.version === 21) return existing as DemoStore;
+
+  if (existing?.version === 20) {
+    const upgraded = upgradeStoreV20ToV21(existing as DemoStoreV20);
+    saveDemoStore(upgraded);
+    return upgraded;
+  }
 
   if (existing?.version === 18) {
     const upgraded = upgradeStoreV18ToV20(existing as DemoStoreV18);
@@ -240,8 +247,22 @@ function upgradeStoreV17ToV18(store: DemoStoreV17): DemoStoreV18 {
   };
 }
 
-function upgradeStoreV18ToV20(store: DemoStoreV18): DemoStore {
+function upgradeStoreV20ToV21(store: DemoStoreV20): DemoStore {
+  const bookkeeping = createBookkeepingSeedData();
   return {
+    ...store,
+    version: 21 as const,
+    bookkeepingSubscriptions: bookkeeping.subscriptions,
+    bookkeepingCycles: bookkeeping.cycles,
+    bookkeepingReports: bookkeeping.reports,
+    booksRescueEngagements: bookkeeping.booksRescue,
+    bookkeepingLeads: bookkeeping.leads,
+    bookkeepingCounters: bookkeeping.counters,
+  };
+}
+
+function upgradeStoreV18ToV20(store: DemoStoreV18): DemoStore {
+  return upgradeStoreV20ToV21({
     ...store,
     version: 20 as const,
     dataSystem: {
@@ -249,7 +270,7 @@ function upgradeStoreV18ToV20(store: DemoStoreV18): DemoStore {
       seedVersion: `demo-v${AIO_DEMO_SCHEMA_VERSION}`,
       dataModeLabel: getDataModeLabel(),
     },
-  };
+  } as DemoStoreV20);
 }
 
 function upgradeStoreV16ToV17(store: DemoStoreV16): DemoStore {
@@ -292,7 +313,8 @@ function upgradeStoreV15ToV16(store: DemoStoreV15): DemoStoreV16 {
   };
 }
 
-type DemoStoreV18 = Omit<DemoStore, 'version' | 'dataSystem'> & { version: 18 };
+type DemoStoreV20 = Omit<DemoStore, 'version' | 'bookkeepingSubscriptions' | 'bookkeepingCycles' | 'bookkeepingReports' | 'booksRescueEngagements' | 'bookkeepingLeads' | 'bookkeepingCounters'> & { version: 20 };
+type DemoStoreV18 = Omit<DemoStoreV20, 'version' | 'dataSystem'> & { version: 18 };
 type DemoStoreV17 = Omit<DemoStoreV18, 'version'> & { version: 17 };
 
 type DemoStoreV16 = Omit<

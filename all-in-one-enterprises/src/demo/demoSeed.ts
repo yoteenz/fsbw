@@ -15,6 +15,7 @@ import { createCommunicationsSeedData } from './communicationsSeed';
 import { createAppointmentsSeedData } from './appointmentsSeed';
 import { createIntegrationsSeedData } from '../integrations/integrationsSeed';
 import { createSecuritySeedData } from '../security/securitySeed';
+import { createBookkeepingSeedData } from './bookkeepingSeed';
 import { AIO_DEMO_SCHEMA_VERSION } from '../data/constants';
 import { getDataModeLabel } from '../config/dataMode';
 
@@ -37,6 +38,7 @@ export function createDemoSeed(): DemoStore {
   const appts = createAppointmentsSeedData(now);
   const integrations = createIntegrationsSeedData();
   const security = createSecuritySeedData(now);
+  const bookkeeping = createBookkeepingSeedData();
 
   const requests = [
       mkRequest('req-1', 'AIO-DEMO-0001', 'client-a', 'Authority + BOC-3 Assistance', 'permitting', 'new_request', 'staff-2', daysAgo(3), ['vdoc-a1', 'vdoc-a2']),
@@ -50,7 +52,7 @@ export function createDemoSeed(): DemoStore {
     });
 
   return {
-    version: 20,
+    version: 21,
     dataSystem: {
       demoSchemaVersion: AIO_DEMO_SCHEMA_VERSION,
       seedVersion: `demo-v${AIO_DEMO_SCHEMA_VERSION}`,
@@ -378,6 +380,12 @@ export function createDemoSeed(): DemoStore {
     appointmentSlotHolds: appts.appointmentSlotHolds,
     ...integrations,
     ...security,
+    bookkeepingSubscriptions: bookkeeping.subscriptions,
+    bookkeepingCycles: bookkeeping.cycles,
+    bookkeepingReports: bookkeeping.reports,
+    booksRescueEngagements: bookkeeping.booksRescue,
+    bookkeepingLeads: bookkeeping.leads,
+    bookkeepingCounters: bookkeeping.counters,
   };
 }
 

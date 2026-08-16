@@ -4,6 +4,7 @@ export type ServiceDivision =
   | 'insurance'
   | 'dispatching'
   | 'factoring'
+  | 'bookkeeping'
   | 'brokerage';
 
 export type ServiceStatus = 'available' | 'coming_soon';
@@ -85,7 +86,7 @@ export const serviceBundles: ServiceBundle[] = [
     title: 'RUN MY TRUCK',
     description: 'Operational support including dispatch and optional factoring.',
     goal: 'dispatch',
-    serviceSlugs: ['carrier-dispatch-support', 'load-coordination', 'document-support', 'factoring-consultation'],
+    serviceSlugs: ['carrier-dispatch-support', 'load-coordination', 'document-support', 'factoring-consultation', 'bookkeeping'],
   },
 ];
 
@@ -588,6 +589,96 @@ export const aioServices: AioService[] = [
     relatedServices: ['factoring-consultation'],
     status: 'available',
   },
+  // Bookkeeping
+  {
+    id: 'bookkeeping',
+    slug: 'bookkeeping',
+    division: 'bookkeeping',
+    title: 'Trucking Bookkeeping',
+    shortDescription: 'Bookkeeping built for trucking — Essentials, Plus, and All In One plans.',
+    description:
+      'Recurring bookkeeping organized around carrier operations — fuel, tolls, factoring, truck payments, load revenue, and more. Starting at pricing; complexity review when needed.',
+    icon: 'bookkeeping',
+    audience: 'Owner-operators, growing carriers, and fleets.',
+    requirements: ['Business information', 'Accounting software in use', 'Bank/credit statements or uploads'],
+    process: ['Choose plan or get recommendation', 'Onboarding & document collection', 'Monthly bookkeeping cycle', 'Report delivery'],
+    documents: ['Bank statements', 'Credit card statements', 'Fuel reports', 'Factoring statements', 'Prior financials'],
+    faq: [
+      { question: 'Does this include tax preparation?', answer: 'No — handoff support for your tax preparer is included on Plus and All In One plans.' },
+      { question: 'What if my books are behind?', answer: 'Books Rescue cleanup may be recommended before recurring service.' },
+    ],
+    cta: 'View Plans',
+    relatedServices: ['books-rescue', 'bookkeeping-essentials', 'bookkeeping-plus'],
+    status: 'available',
+  },
+  {
+    id: 'books-rescue',
+    slug: 'books-rescue',
+    division: 'bookkeeping',
+    title: 'Books Rescue',
+    shortDescription: 'One-time historical cleanup before recurring bookkeeping.',
+    description: 'Cleanup for behind, uncategorized, or unreconciled books — starting at $499; final quote after review.',
+    icon: 'bookkeeping',
+    audience: 'Carriers whose books need remediation before monthly service.',
+    requirements: ['Months behind estimate', 'Account list', 'Available documents'],
+    process: ['Cleanup assessment', 'Staff quote', 'Cleanup work', 'Recommend recurring plan'],
+    documents: ['Historical statements', 'Prior exports', 'Receipts'],
+    faq: [{ question: 'Is $499 unlimited cleanup?', answer: 'No — it is a starting price; final quote depends on complexity.' }],
+    cta: 'Start Assessment',
+    relatedServices: ['bookkeeping'],
+    status: 'available',
+  },
+  {
+    id: 'bk-essentials',
+    slug: 'bookkeeping-essentials',
+    division: 'bookkeeping',
+    title: 'Bookkeeping Essentials',
+    shortDescription: 'Starting at $249/month — foundational monthly bookkeeping.',
+    description: 'Monthly bookkeeping, categorization, reconciliations, trucking chart of accounts, and monthly P&L.',
+    icon: 'bookkeeping',
+    audience: 'Owner-operators and very small carriers.',
+    requirements: ['Monthly statements', 'Receipt uploads as requested'],
+    process: ['Subscribe', 'Onboard', 'Monthly cycle'],
+    documents: ['Bank and card statements'],
+    faq: [],
+    cta: 'Request Essentials',
+    relatedServices: ['bookkeeping', 'bookkeeping-plus'],
+    status: 'available',
+  },
+  {
+    id: 'bk-plus',
+    slug: 'bookkeeping-plus',
+    division: 'bookkeeping',
+    title: 'Bookkeeping Plus',
+    shortDescription: 'Starting at $449/month — deeper reporting and reconciliation.',
+    description: 'Essentials plus balance sheet, cash flow, factoring/load reconciliation, IFTA bookkeeping support, and quarterly review.',
+    icon: 'bookkeeping',
+    audience: 'Growing carriers with factoring, contractors, or multi-account operations.',
+    requirements: ['Same as Essentials', 'Factoring statements if applicable'],
+    process: ['Subscribe', 'Onboard', 'Monthly + quarterly review cycle'],
+    documents: ['Statements', 'Factoring reports', 'Fuel records'],
+    faq: [],
+    cta: 'Request Plus',
+    relatedServices: ['bookkeeping', 'all-in-one-bookkeeping'],
+    status: 'available',
+  },
+  {
+    id: 'bk-all-in-one',
+    slug: 'all-in-one-bookkeeping',
+    division: 'bookkeeping',
+    title: 'All In One Bookkeeping',
+    shortDescription: 'Starting at $749/month — full back-office bookkeeping.',
+    description: 'Everything in lower tiers plus A/R, A/P, driver settlements, payroll reconciliation, fleet and truck profitability, and monthly review.',
+    icon: 'bookkeeping',
+    audience: 'Fleet owners wanting comprehensive bookkeeping support.',
+    requirements: ['Full operational financial profile'],
+    process: ['Subscribe', 'Onboard', 'Monthly cycle with review meetings'],
+    documents: ['All operational financial documents'],
+    faq: [],
+    cta: 'Request All In One Bookkeeping',
+    relatedServices: ['bookkeeping-plus'],
+    status: 'available',
+  },
   // Brokerage
   {
     id: 'freight-quote',
@@ -665,6 +756,7 @@ const DIVISION_SLUGS = new Set([
   'insurance',
   'dispatching',
   'factoring',
+  'bookkeeping',
   'brokerage',
 ]);
 
@@ -705,6 +797,11 @@ export const divisionMeta: Record<ServiceDivision, { title: string; headline: st
     title: 'Factoring Solutions',
     headline: "Don't let completed loads tie up your cash flow.",
     description: 'Invoice factoring consultation and funding review — subject to approval.',
+  },
+  bookkeeping: {
+    title: 'Trucking Bookkeeping',
+    headline: 'Know where your money is going.',
+    description: 'Bookkeeping built for trucking — Essentials, Plus, All In One, and Books Rescue cleanup.',
   },
   brokerage: {
     title: 'Brokerage Services',

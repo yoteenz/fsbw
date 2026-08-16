@@ -39,6 +39,7 @@ export const servicesMegaMenu: PublicNavCategory[] = [
     title: 'Operate',
     links: [
       { label: 'Dispatching', href: aioPaths.dispatching, serviceSlug: 'dispatching' },
+      { label: 'Bookkeeping', href: aioPaths.bookkeeping, serviceSlug: 'bookkeeping' },
       { label: 'Factoring', href: aioPaths.factoring, serviceSlug: 'factoring' },
       { label: 'Trucking Insurance', href: aioPaths.insurance, serviceSlug: 'insurance' },
     ],

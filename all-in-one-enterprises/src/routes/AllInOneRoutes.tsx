@@ -17,6 +17,9 @@ import { StartYourBusinessPage } from '../pages/StartYourBusinessPage';
 import { ClientPortalInfoPage } from '../pages/ClientPortalInfoPage';
 import { RoadReadyPublicPage } from '../pages/RoadReadyPublicPage';
 import { FactoringPage } from '../pages/FactoringPage';
+import { BookkeepingPage } from '../pages/BookkeepingPage';
+import { BookkeepingAssessmentPage } from '../pages/bookkeeping/BookkeepingAssessmentPage';
+import { BookkeepingRecommendationPage } from '../pages/bookkeeping/BookkeepingRecommendationPage';
 import {
   FactoringHomePage,
   FactoringApplicationPage,
@@ -100,6 +103,9 @@ import {
   ShipperBillingPage,
   ShipperInvoiceDetailPage,
 } from '../pages/shipper/ShipperPortalPages';
+import {
+  BookkeepingHomePage,
+} from '../pages/portal/bookkeeping/BookkeepingPortalPages';
 import { PortalServiceTrackerPage, PortalJourneyRoadmapPage } from '../pages/portal/WorkflowPortalPages';
 import { PortalMessagesListPage, PortalConversationDetailPage } from '../pages/portal/PortalMessagesPages';
 import { PortalAppointmentsListPage, PortalAppointmentDetailPage } from '../pages/portal/PortalAppointmentsPages';
@@ -149,6 +155,9 @@ export default function AllInOneRoutes() {
           <Route index element={<HomePage />} />
           <Route path="services" element={<ServicesPage />} />
           <Route path="services/factoring" element={<FactoringPage />} />
+          <Route path="services/bookkeeping" element={<BookkeepingPage />} />
+          <Route path="services/bookkeeping/assessment" element={<BookkeepingAssessmentPage />} />
+          <Route path="services/bookkeeping/recommendation" element={<BookkeepingRecommendationPage />} />
           <Route path="services/permitting" element={<ServiceCatalogDetailPage slug="permitting" />} />
           <Route path="services/business-formation" element={<ServiceCatalogDetailPage slug="business-formation" />} />
           <Route path="services/insurance" element={<ServiceCatalogDetailPage slug="insurance" />} />
@@ -216,6 +225,7 @@ export default function AllInOneRoutes() {
             <Route path="factoring/submissions/:submissionId" element={<FactoringSubmissionDetailPage />} />
             <Route path="factoring/history" element={<FactoringHistoryPage />} />
             <Route path="factoring/invoices/:invoiceId" element={<FreightInvoicePrintPage />} />
+            <Route path="bookkeeping" element={<BookkeepingHomePage />} />
             <Route path="insurance" element={<InsuranceHomePage />} />
             <Route path="insurance/request" element={<InsuranceRequestPage />} />
             <Route path="insurance/requests/:requestId" element={<InsuranceRequestDetailPage />} />

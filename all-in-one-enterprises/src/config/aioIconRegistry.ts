@@ -37,9 +37,11 @@ export const aioFreightIcons = {
   brokerage: '/brand/icons/freight/aio-icon-brokerage.png',
 } as const;
 
-/** Finance + platform (03F Sheet 3) */
+  /** Finance + platform (03F Sheet 3) */
 export const aioPlatformIcons = {
   factoring: '/brand/icons/platform/aio-icon-factoring.png',
+  /** TEMP — replace with public/brand/icons/platform/aio-icon-bookkeeping.png when artwork approved */
+  bookkeeping: '/brand/icons/platform/aio-icon-reports-analytics.png',
   invoiceBilling: '/brand/icons/platform/aio-icon-invoice-billing.png',
   payments: '/brand/icons/platform/aio-icon-payments.png',
   reportsAnalytics: '/brand/icons/platform/aio-icon-reports-analytics.png',
@@ -74,6 +76,7 @@ export const aioRoadmapItemIcons: Record<string, AioIconKey> = {
   permits: 'permits',
   dispatch: 'operationsDispatch',
   factoring: 'factoring',
+  bookkeeping: 'bookkeeping',
 };
 
 /** Client command center health cards → icon */
@@ -84,4 +87,5 @@ export const aioBusinessHealthIcons: Partial<Record<string, AioIconKey>> = {
   insurance: 'serviceTruckingInsurance',
   fleet: 'fleet',
   billing: 'invoiceBilling',
+  bookkeeping: 'bookkeeping',
 };

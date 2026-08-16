@@ -192,6 +192,23 @@ export const SERVICE_LAUNCH_MATRIX: ServiceLaunchEntry[] = [
     publicCta: 'Assistance/referral — no bind without licensing',
     notes: 'REFERRAL/assistance — no coverage promise',
   },
+  {
+    id: 'bookkeeping',
+    label: 'Bookkeeping',
+    softwareStatus: 'READY',
+    workflowStatus: 'READY',
+    pricingStatus: 'DRAFT',
+    staffProcessStatus: 'DEFINED',
+    providerStatus: 'NOT_REQUIRED',
+    businessAuthorizationStatus: 'PENDING',
+    documentsStatus: 'READY',
+    customerDisclosureStatus: 'DRAFT',
+    paymentStatus: 'SANDBOX',
+    supportStatus: 'PARTIAL',
+    activationState: 'LIMITED_PILOT',
+    publicCta: 'Request Bookkeeping / Join the Pilot',
+    notes: 'Not CPA/tax prep/payroll processing — service boundaries required',
+  },
 ];
 
 const SLUG_MAP: Record<string, string> = {
@@ -212,6 +229,8 @@ const SLUG_MAP: Record<string, string> = {
   dispatch: 'dispatch',
   brokerage: 'brokerage',
   factoring: 'factoring',
+  bookkeeping: 'bookkeeping',
+  'books-rescue': 'bookkeeping',
   insurance: 'insurance',
 };
 

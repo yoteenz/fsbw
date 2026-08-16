@@ -24,6 +24,7 @@ const carrierNav: NavItem[] = [
   { label: 'Money', href: aioPaths.portalMoney, section: 'MONEY' },
   { label: 'Billing', href: aioPaths.portalBilling, section: 'MONEY' },
   { label: 'Factoring', href: aioPaths.portalFactoring, section: 'MONEY' },
+  { label: 'Bookkeeping', href: aioPaths.portalBookkeeping, section: 'MONEY' },
   { label: 'Documents', href: aioPaths.portalDocuments, section: 'DOCUMENTS' },
   { label: 'Vault', href: aioPaths.portalVault, section: 'DOCUMENTS' },
   { label: 'Messages', href: aioPaths.portalMessages, section: 'COMMUNICATION' },

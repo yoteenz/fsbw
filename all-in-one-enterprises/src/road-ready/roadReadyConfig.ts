@@ -61,5 +61,6 @@ export const REQUIREMENT_DEFINITIONS: Record<
   state_permits: { title: 'State-Specific Permits', category: 'permits', weight: 4, optional: true },
   dispatching: { title: 'Dispatch Services', category: 'operate', weight: 0, optional: true, serviceSlug: 'dispatch-services' },
   factoring: { title: 'Factoring', category: 'operate', weight: 0, optional: true, serviceSlug: 'factoring-consultation' },
+  bookkeeping: { title: 'Bookkeeping', category: 'operate', weight: 0, optional: true, serviceSlug: 'bookkeeping' },
   brokerage: { title: 'Brokerage Services', category: 'operate', weight: 0, optional: true, serviceSlug: 'freight-brokerage' },
 };
