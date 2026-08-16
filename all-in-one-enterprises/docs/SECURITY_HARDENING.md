@@ -1,7 +1,9 @@
 # All In One — Security Hardening (Sprint 19)
 
-**Status:** Debug architecture implemented · Production enforcement completes in Sprint 20+  
+**Status:** Sprint 23 production hardening — build guards, no demo in production, infrastructure gates in `src/infrastructure/`  
 **Scope:** Platform-wide security, privacy, audit, and resilience controls — not decorative UI.
+
+**Sprint 23 additions:** `canPrepareProduction()` / `canLaunchPublicly()`; production env validation; demo reset blocked in production; service role never client-exposed; RLS gate `RLS_NOT_TESTED` until staging live tests.
 
 ---
 

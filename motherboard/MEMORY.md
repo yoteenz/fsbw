@@ -51418,3 +51418,43 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Next sprint noted (not implemented):** Sprint 22 standalone extraction + repository separation.
 
+---
+
+## 2026-08-16 — Sprint 22 Standalone Extraction (All In One)
+
+- **Context:** Physical separation of All In One from Frontal Slayer host. Canonical app moves to `all-in-one-enterprises/`. No production launch.
+
+- **Delivered:**
+  - Standalone app: independent `package.json`, Vite, `src/main.tsx`, routes at `/` (no `/all-in-one` prefix)
+  - Migrated 368 source files, 8 SQL migrations, docs, 188 vitest + 15 Playwright smoke PASS
+  - Isolation: `scripts/check-isolation.sh`, hard isolation test PASS, no FS runtime imports
+  - FS decoupling: removed `src/all-in-one/`; legacy `/all-in-one` + `/debug/all-in-one` → `LegacyAioMovedNotice`
+  - CI: `.github/workflows/aio-standalone-qa.yml`
+  - Docs: EXTRACTION_COMPLETION_REPORT, STANDALONE_ARCHITECTURE, ROUTE_MIGRATION, FRONTAL_SLAYER_DECOUPLING, STANDALONE_QA_REPORT, etc.
+
+- **Status:** STANDALONE EXTRACTION COMPLETE · PRODUCTION BLOCKED (Sprint 23)
+
+- **Spatial Architecture Review:** SKIPPED — infrastructure extraction sprint.
+
+- **Next sprint noted (not implemented):** Sprint 23 production infrastructure + domain + live auth/database.
+
+---
+
+## 2026-08-16 — Sprint 23 Production Infrastructure (All In One)
+
+- **Context:** Prepare standalone All In One for real production infrastructure without public launch. Maintain separation: APPLICATION COMPLETE / INFRASTRUCTURE READY / PUBLIC LAUNCH READY. Do not use Frontal Slayer Supabase (`hyycomvcaqxxvyrfupes`). Do not fabricate live Supabase/host provisioning.
+
+- **Delivered:**
+  - Infrastructure module: `all-in-one-enterprises/src/infrastructure/` — environment model, `canPrepareProduction()` / `canLaunchPublicly()`, health, logging, correlation IDs, RLS gate, provider registry, service activation, migration state
+  - Production Config Center: `/office/system/production` (`ProductionInfrastructurePages.tsx`)
+  - Hardening: demo banner hidden in production; demo reset blocked; `effectiveDataMode()` throws in production without Supabase (no silent demo fallback); build prevalidate (`scripts/prebuild-validate.mjs`, `validate-production-env.sh`)
+  - Migration guards: `migrate-staging.sh`, `migrate-production.sh` (explicit confirmation), `verify-migration-environment.sh`, `secret-scan.sh`, `rls-staging-test.sh`
+  - Tests: **206 vitest PASS** (+18 infrastructure); standalone **build PASS**
+  - Docs: PRODUCTION_INFRASTRUCTURE, ENVIRONMENT_MATRIX, PRODUCTION_READINESS_REPORT, DEPLOYMENT_RUNBOOK, DATABASE_OPERATIONS, AUTH_OPERATIONS, STORAGE_OPERATIONS, SECRET_MANAGEMENT, MONITORING_AND_ALERTING, BACKUP_AND_RESTORE, DOMAIN_AND_DNS, COMMUNICATION_INFRASTRUCTURE, PROVIDER_PRODUCTION_READINESS, SERVICE_ACTIVATION_MATRIX; updated SPRINT_STATUS, MASTER_PRODUCT_BLUEPRINT, SECURITY_HARDENING, SUPABASE_ARCHITECTURE
+
+- **Honest status:** Infrastructure **architecture READY**; live Supabase staging/production **NOT_CONFIGURED** (owner must provision); `canPrepareProduction()` **BLOCKED**; `canLaunchPublicly()` **BLOCKED** (Sprint 24).
+
+- **Spatial Architecture Review:** SKIPPED — infrastructure sprint; Production Config Center is existing Office system surface.
+
+- **Next sprint noted (not implemented):** Sprint 24 controlled launch + operations + business activation.
+

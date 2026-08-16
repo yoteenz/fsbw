@@ -4,6 +4,7 @@
  */
 
 import { FRONTAL_SLAYER_SUPABASE_PROJECT_ID } from '../data/constants';
+import { isProductionDeployment } from '../infrastructure/environmentModel';
 
 export type AioDataMode = 'demo' | 'local' | 'supabase';
 
@@ -68,7 +69,15 @@ export function validateAioEnvironment(): { ok: boolean; errors: string[] } {
 
 export function effectiveDataMode(): AioDataMode {
   const validation = validateAioEnvironment();
-  if (aioEnv.dataMode === 'supabase' && validation.ok && isSupabaseConfigured()) return 'supabase';
+  if (aioEnv.dataMode === 'supabase') {
+    if (validation.ok && isSupabaseConfigured()) return 'supabase';
+    if (isProductionDeployment()) {
+      throw new Error(
+        validation.errors[0] ??
+          'Production requires configured Supabase — silent demo fallback is disabled',
+      );
+    }
+  }
   if (aioEnv.dataMode === 'local') return 'local';
   return 'demo';
 }

@@ -1,6 +1,8 @@
 # All In One — Supabase Architecture (Sprint 20)
 
-**Status:** Foundation documented — dedicated project NOT provisioned in debug host
+**Status:** Sprint 23 — staging + production project architecture documented; **NOT provisioned** (owner action)
+
+**Sprint 23:** Separate `VITE_AIO_STAGING_PROJECT_REF` and `VITE_AIO_PRODUCTION_PROJECT_REF`; equality blocked at build. Migration scripts require explicit confirmation.
 
 ## Dedicated project requirement
 

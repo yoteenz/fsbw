@@ -143,6 +143,7 @@ import {
   QaDevicesPage,
   QaBrowsersPage,
 } from '../pages/QaPages';
+import { ProductionConfigCenterPage } from '../pages/ProductionInfrastructurePages';
 
 export default function OfficeRoutes() {
   return (
@@ -191,6 +192,7 @@ export default function OfficeRoutes() {
         <Route path="system/qa/performance" element={<QaPerformancePage />} />
         <Route path="system/qa/devices" element={<QaDevicesPage />} />
         <Route path="system/qa/browsers" element={<QaBrowsersPage />} />
+        <Route path="system/production" element={<ProductionConfigCenterPage />} />
         <Route path="privacy" element={<PrivacyCenterPage />} />
         <Route path="settings/security" element={<OfficeSecuritySettingsPage />} />
         <Route path="management" element={<ManagementCommandCenterPage />} />

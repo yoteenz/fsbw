@@ -2,7 +2,15 @@
 
 **Company:** ALL IN ONE ENTERPRISES INC.  
 **Positioning:** The business office behind the truck.  
-**Status:** Sprint 21 — QA hardening complete; extraction **BLOCKED** until Sprint 22 (debug prototype at `/all-in-one`).
+**Status:** Sprint 23 — Production infrastructure architecture READY; live Supabase/host provisioning **NOT_CONFIGURED** (owner action). Public launch **BLOCKED** until Sprint 24. Standalone app: `all-in-one-enterprises/`.
+
+### Sprint 23 — Production environment model
+
+- Explicit `VITE_AIO_ENVIRONMENT`: local | demo | staging | production
+- Separate staging and production Supabase projects (never Frontal Slayer `hyycomvcaqxxvyrfupes`)
+- Gates: `canPrepareProduction()` vs `canLaunchPublicly()`
+- Production Config Center: `/office/system/production`
+- No demo fallback, demo reset, or debug banner in production
 
 ---
 

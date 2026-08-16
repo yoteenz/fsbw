@@ -1,6 +1,14 @@
 import { useDemoStore } from '../demo/useDemoStore';
 import { setPortalMemberRole, setPortalOrganization, setShipperOrganization } from '../portal/organizationContext';
-import { canResetDemoData, getEnvironmentLabel, getDataModeLabel, isDemoMode } from '../config/dataMode';
+import {
+  canResetDemoData,
+  getDataModeLabel,
+  getDeploymentEnvironmentLabel,
+  getEnvironmentLabel,
+  isDemoMode,
+  shouldShowDebugBanner,
+} from '../config/dataMode';
+import { isStagingDeployment } from '../infrastructure/environmentModel';
 import { resetDemoStore } from '../demo/demoStore';
 import { aioPaths } from '../utils/paths';
 import { Link } from 'react-router-dom';
@@ -21,6 +29,10 @@ export function AIODebugBanner() {
   const store = useDemoStore();
   const envLabel = getEnvironmentLabel();
 
+  if (!shouldShowDebugBanner()) {
+    return null;
+  }
+
   const handleReset = () => {
     if (window.confirm('Reset all demo data? This restores the canonical seed state.')) {
       const result = resetDemoStore();
@@ -34,7 +46,9 @@ export function AIODebugBanner() {
 
   return (
     <div className="aio-debug-banner" role="status" aria-label="Environment indicator">
-      <span className="aio-debug-banner__label">STANDALONE PREVIEW · {envLabel ?? 'PREVIEW'} · DATA MODE: {getDataModeLabel()}</span>
+      <span className="aio-debug-banner__label">
+        {isStagingDeployment() ? 'STAGING' : 'STANDALONE PREVIEW'} · {envLabel ?? getDeploymentEnvironmentLabel()} · DATA MODE: {getDataModeLabel()}
+      </span>
       {isDemoMode() && (
         <>
           <select

@@ -7,6 +7,8 @@ import { createTask } from '../../demo/demoActions';
 import { searchBilling } from '../../demo/billingActions';
 import { getCrmLeads } from '../../demo/crmActions';
 import { setOfficeStaff } from '../../office-core/officeContext';
+import { canEnterDemoOffice } from '../../config/dataMode';
+import { isStagingDeployment } from '../../infrastructure/environmentModel';
 
 const navGroups = [
   {
@@ -95,6 +97,7 @@ const navGroups = [
       { label: 'Security Center', to: aioPaths.officeSecurity },
       { label: 'Privacy Center', to: aioPaths.officePrivacy },
       { label: 'Production Readiness', to: aioPaths.officeSecurityProductionReadiness },
+      { label: 'Production Config', to: aioPaths.officeSystemProduction },
       { label: 'Integration Settings', to: aioPaths.officeIntegrationsSettings },
       { label: 'Workflow Templates', to: aioPaths.officeWorkflowSettings },
       { label: 'Automation Rules', to: aioPaths.officeAutomationSettings },
@@ -163,18 +166,25 @@ export function AIOOfficeLayout() {
     <div className="aio-app aio-office">
       <a href="#aio-main-content" className="aio-skip-link">Skip to main content</a>
       <div className="aio-office-preview-bar" role="status">
-        <span>INTERNAL PREVIEW · ALL IN ONE OFFICE 2.0 · DEMO ONLY</span>
-        <select
-          className="aio-debug-banner__select"
-          aria-label="Office staff identity"
-          value={staffId}
-          onChange={(e) => setOfficeStaff(e.target.value)}
-        >
-          {store.staff.map((s) => (
-            <option key={s.id} value={s.id}>{s.name} — {s.role}</option>
-          ))}
-        </select>
-        <Link to={aioPaths.home}>← Public Site</Link>
+        <span>
+          {isStagingDeployment() ? 'STAGING · ' : ''}
+          {canEnterDemoOffice() ? 'INTERNAL PREVIEW · ALL IN ONE OFFICE 2.0 · DEMO ONLY' : 'ALL IN ONE OFFICE · STAFF'}
+        </span>
+        {canEnterDemoOffice() && (
+          <>
+            <select
+              className="aio-debug-banner__select"
+              aria-label="Office staff identity"
+              value={staffId}
+              onChange={(e) => setOfficeStaff(e.target.value)}
+            >
+              {store.staff.map((s) => (
+                <option key={s.id} value={s.id}>{s.name} — {s.role}</option>
+              ))}
+            </select>
+            <Link to={aioPaths.home}>← Public Site</Link>
+          </>
+        )}
       </div>
 
       <div className="aio-office__shell">

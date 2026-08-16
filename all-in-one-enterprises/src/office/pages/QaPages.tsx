@@ -52,6 +52,7 @@ function QaSubnav() {
       <Link to={aioPaths.officeQaDevices}>Devices</Link>
       <Link to={aioPaths.officeQaBrowsers}>Browsers</Link>
       <Link to={aioPaths.officeDataHealth}>Data</Link>
+      <Link to={aioPaths.officeSystemProduction}>Production Config</Link>
       <Link to={aioPaths.officeSecurityProductionReadiness}>Production</Link>
     </nav>
   );

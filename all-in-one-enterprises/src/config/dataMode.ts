@@ -1,4 +1,5 @@
 import { aioEnv, backendSetupMessage, effectiveDataMode, getDataModeLabel, type AioDataMode } from './env';
+import { isProductionDeployment, isStagingDeployment, resolveDeploymentEnvironment } from '../infrastructure/environmentModel';
 
 export type AioEnvironmentLabel = 'DEMO ENVIRONMENT' | 'STAGING' | 'PRODUCTION';
 
@@ -23,19 +24,31 @@ export function isBackendMode(): boolean {
   return isSupabaseMode();
 }
 
-/** Visual banner label for debug/staging builds. */
+/** Visual banner label for debug/staging builds. Production returns null (no demo banner). */
 export function getEnvironmentLabel(): AioEnvironmentLabel | null {
+  if (isProductionDeployment()) return null;
+  if (isStagingDeployment()) return 'STAGING';
   if (isDemoMode()) return 'DEMO ENVIRONMENT';
   if (import.meta.env.DEV) return 'STAGING';
   return null;
 }
 
+export function shouldShowDebugBanner(): boolean {
+  return !isProductionDeployment();
+}
+
 export function canResetDemoData(): boolean {
+  if (isProductionDeployment()) return false;
   return isDemoMode() || isLocalTestMode();
 }
 
 export function canEnterDemoOffice(): boolean {
+  if (isProductionDeployment()) return false;
   return isDemoMode() || isLocalTestMode();
+}
+
+export function getDeploymentEnvironmentLabel(): string {
+  return resolveDeploymentEnvironment().toUpperCase();
 }
 
 export function getBackendSetupWarning(): string | null {

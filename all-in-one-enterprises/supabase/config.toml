@@ -1,0 +1,23 @@
+# All In One Enterprises — Supabase local/staging config
+# Production project is provisioned separately — never use Frontal Slayer project.
+
+project_id = "aio-local-dev"
+
+[api]
+enabled = true
+port = 54321
+
+[db]
+port = 54322
+major_version = 15
+
+[studio]
+enabled = true
+port = 54323
+
+[auth]
+site_url = "http://localhost:5173"
+additional_redirect_urls = ["http://localhost:5173/**"]
+
+[storage]
+file_size_limit = "10MiB"

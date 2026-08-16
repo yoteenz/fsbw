@@ -6,7 +6,8 @@ import type { IntakeAnswers } from '../intake/intakeTypes';
 import { createDemoSeed } from './demoSeed';
 import type { DemoStore, ServiceRequest } from './demoTypes';
 import { AIO_DEMO_SCHEMA_VERSION } from '../data/constants';
-import { getDataModeLabel } from '../config/dataMode';
+import { getDataModeLabel, canResetDemoData } from '../config/dataMode';
+import { isProductionDeployment } from '../infrastructure/environmentModel';
 
 export const DEMO_STORE_KEY = 'aio_debug_store';
 
@@ -714,6 +715,10 @@ export type ResetDemoStoreResult =
   | { ok: false; error: string };
 
 export function resetDemoStore(): ResetDemoStoreResult {
+  if (isProductionDeployment() || !canResetDemoData()) {
+    return { ok: false, error: 'Demo reset is not permitted in production or non-demo environments.' };
+  }
+
   const current = loadDemoStore();
   const settings = current.securitySettings;
   if (settings?.environmentLabel === 'PRODUCTION' && !settings.demoModeActive) {

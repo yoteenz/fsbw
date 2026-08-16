@@ -180,6 +180,7 @@ export const aioPaths = {
   officeQaPerformance: `${BASE}/office/system/qa/performance`,
   officeQaDevices: `${BASE}/office/system/qa/devices`,
   officeQaBrowsers: `${BASE}/office/system/qa/browsers`,
+  officeSystemProduction: `${BASE}/office/system/production`,
   officePrivacy: `${BASE}/office/privacy`,
   officeSettingsSecurity: `${BASE}/office/settings/security`,
   officeWork: `${BASE}/office/work`,
