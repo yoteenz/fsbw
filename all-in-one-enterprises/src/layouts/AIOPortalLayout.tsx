@@ -84,11 +84,12 @@ export function AIOPortalLayout() {
         </button>
       </div>
 
-      <aside
-        className="aio-portal__sidebar"
-        style={sidebarOpen ? { display: 'flex', position: 'fixed', inset: '0 40% 0 0', zIndex: 200 } : undefined}
-        aria-label="Portal navigation"
-      >
+      <div className="aio-portal__shell">
+        <aside
+          className="aio-portal__sidebar"
+          style={sidebarOpen ? { display: 'flex', position: 'fixed', inset: '0 40% 0 0', zIndex: 200 } : undefined}
+          aria-label="Portal navigation"
+        >
         <div className="aio-portal__sidebar-brand">
           <AIOLogo />
         </div>
@@ -115,16 +116,17 @@ export function AIOPortalLayout() {
             ← Back to Website
           </Link>
         </div>
-      </aside>
+        </aside>
 
-      <div className="aio-portal__main">
-        {unread > 0 && (
-          <div className="aio-portal-notif-bar" role="status">
-            <span>{unread} unread notification{unread === 1 ? '' : 's'}</span>
-            <Link to={aioPaths.portalNotifications}>View →</Link>
-          </div>
-        )}
-        <Outlet />
+        <div className="aio-portal__main">
+          {unread > 0 && (
+            <div className="aio-portal-notif-bar" role="status">
+              <span>{unread} unread notification{unread === 1 ? '' : 's'}</span>
+              <Link to={aioPaths.portalNotifications}>View →</Link>
+            </div>
+          )}
+          <Outlet />
+        </div>
       </div>
 
       {portalKind === 'carrier' && (

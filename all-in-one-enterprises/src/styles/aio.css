@@ -4,6 +4,13 @@
  */
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap');
 
+.aio-standalone-root {
+  width: 100%;
+  max-width: 100%;
+  min-height: 100dvh;
+  overflow-x: clip;
+}
+
 .aio-app {
   --aio-gold: #d4a017;
   --aio-gold-light: #e0b030;
@@ -1337,8 +1344,32 @@
 /* Portal layout */
 .aio-portal {
   display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 100%;
   min-height: 100dvh;
   background: var(--aio-gray-100);
+  overflow-x: clip;
+}
+
+.aio-portal > .aio-debug-banner,
+.aio-portal > .aio-portal__mobile-bar {
+  width: 100%;
+  flex-shrink: 0;
+}
+
+.aio-portal__shell {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  width: 100%;
+  min-width: 0;
+}
+
+@media (min-width: 1024px) {
+  .aio-portal__shell {
+    flex-direction: row;
+  }
 }
 
 .aio-portal__sidebar {
@@ -1379,15 +1410,26 @@
 
 .aio-portal__main {
   flex: 1;
+  width: 100%;
+  min-width: 0;
   padding: clamp(1rem, 3vw, 2rem);
+  padding-bottom: calc(3.75rem + env(safe-area-inset-bottom, 0px));
   overflow-x: auto;
+}
+
+@media (min-width: 1024px) {
+  .aio-portal__main {
+    padding-bottom: clamp(1rem, 3vw, 2rem);
+  }
 }
 
 .aio-portal__mobile-bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.75rem 1rem;
+  width: 100%;
+  flex-shrink: 0;
+  padding: 0.75rem max(1rem, env(safe-area-inset-left)) 0.75rem max(1rem, env(safe-area-inset-right));
   background: var(--aio-black);
   color: var(--aio-white);
 }
@@ -3151,16 +3193,21 @@
 /* Auth (Sprint 04) */
 /* -------------------------------------------------------------------------- */
 .aio-auth {
-  min-height: 100vh;
+  width: 100%;
+  max-width: 100%;
+  min-height: 100dvh;
   background: linear-gradient(160deg, var(--aio-charcoal) 0%, var(--aio-near-black) 100%);
 }
 
 .aio-auth__shell {
-  min-height: 100vh;
+  width: 100%;
+  max-width: 100%;
+  min-height: 100dvh;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 2rem 1rem;
+  padding: 2rem max(1rem, env(safe-area-inset-right)) 2rem max(1rem, env(safe-area-inset-left));
+  box-sizing: border-box;
 }
 
 .aio-auth__header {
@@ -3169,8 +3216,11 @@
 
 .aio-auth__main {
   width: 100%;
-  max-width: 440px;
+  max-width: min(440px, 100%);
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .aio-auth__footer {
@@ -3185,6 +3235,8 @@
   border-radius: var(--aio-radius-lg);
   padding: 2rem;
   box-shadow: 0 24px 48px rgba(0, 0, 0, 0.25);
+  width: 100%;
+  margin-inline: auto;
 }
 
 .aio-auth-card h1 {

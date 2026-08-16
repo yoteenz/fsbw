@@ -51762,3 +51762,17 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Follow-ups:** Additional journey configs (bookkeeping, insurance intake, DOT audit) — engine ready; demo persona presets optional.
 
+---
+
+## 2026-08-16 — Client Login viewport layout fix (portal + auth shell)
+
+- **Context:** Client Login (/portal demo, /login backend) malpositioned far right with large empty cream column left; bottom nav correct full width.
+
+- **Root cause:** `.aio-portal` used `display: flex` with default **row** direction at all breakpoints — mobile bar + main content rendered side-by-side (classic empty column 1 / content column 2 bug). Not a login-form or negative-margin issue.
+
+- **Fix:** Restructured `AIOPortalLayout.tsx` with `.aio-portal__shell` wrapper (matches office pattern). CSS: portal column stack mobile; shell row only ≥1024px; `width:100%`, `min-width:0`, `overflow-x:clip` on shell/main. Added `.aio-standalone-root` constraints. Hardened `.aio-auth` centering + safe-area padding.
+
+- **Docs:** `docs/refinement/CLIENT_LOGIN_LAYOUT_FIX.md`
+
+- **QA:** Mobile 390px /portal + /login centered full width PASS; desktop 1280px intentional sidebar + centered auth PASS.
+
