@@ -1,21 +1,27 @@
+import { usePageMeta } from '../hooks/usePageMeta';
 import { HeroSection } from '../sections/HeroSection';
-import { ServiceStripSection } from '../sections/ServiceStripSection';
-import { IntentCardsSection } from '../sections/IntentCardsSection';
-import { RoadmapSection } from '../sections/RoadmapSection';
-import { BusinessProgressionSection } from '../sections/BusinessProgressionSection';
-import { PlatformPreviewSection } from '../sections/PlatformPreviewSection';
-import { TrustSection } from '../sections/TrustSection';
+import { ServicePathwaysSection } from '../sections/ServicePathwaysSection';
+import { RoadReadyTeaserSection } from '../sections/RoadReadyTeaserSection';
+import { CustomerStageSection } from '../sections/CustomerStageSection';
+import { CommandCenterTeaserSection } from '../sections/CommandCenterTeaserSection';
+import { FinalCtaSection } from '../sections/FinalCtaSection';
+import { aioAppConfig } from '../config/appConfig';
 
 export function HomePage() {
+  usePageMeta({
+    title: `${aioAppConfig.company.legalName} — The business office behind the truck`,
+    description:
+      'Start your trucking business, stay compliant, dispatch loads, and manage everything from one platform. Permits, formation, insurance, factoring, and brokerage — All In One.',
+  });
+
   return (
     <>
       <HeroSection />
-      <ServiceStripSection />
-      <IntentCardsSection />
-      <RoadmapSection />
-      <BusinessProgressionSection />
-      <PlatformPreviewSection />
-      <TrustSection />
+      <ServicePathwaysSection />
+      <RoadReadyTeaserSection />
+      <CustomerStageSection />
+      <CommandCenterTeaserSection />
+      <FinalCtaSection />
     </>
   );
 }

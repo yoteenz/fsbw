@@ -32,12 +32,16 @@ export function AboutPage() {
               Resources
             </h2>
             <p style={{ maxWidth: '40rem', lineHeight: 1.65, color: 'var(--aio-gray-800)', marginBottom: '1.5rem' }}>
-              Explore our roadmap prototype and service divisions to understand how All In One may support your
-              transportation business journey.
+              Guides, Road Ready™, and service information to help you plan your trucking business journey.
             </p>
-            <Link to={aioPaths.roadmap}>
-              <AIOButton variant="gold">Explore Roadmap</AIOButton>
-            </Link>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem' }}>
+              <Link to={aioPaths.roadReadyPublic}>
+                <AIOButton variant="gold">Road Ready™</AIOButton>
+              </Link>
+              <Link to={aioPaths.startYourBusiness}>
+                <AIOButton variant="outline">Start Your Business</AIOButton>
+              </Link>
+            </div>
           </section>
         </div>
       </div>

@@ -37,7 +37,7 @@ export const aioAppConfig = {
     logoSlot: null as string | null,
   },
   featureFlags: {
-    showSampleTestimonial: true,
+    showSampleTestimonial: false,
     showVerifiedMetrics: false,
     roadmapPrototype: true,
     portalPrototype: true,

@@ -8,9 +8,9 @@ export function PlatformPreviewSection() {
         <div style={{ marginBottom: '2.5rem' }}>
           <AIOSectionHeader
             light
-            eyebrow="Future Platform"
-            title="More than a marketing site"
-            subtitle="Preview panels for the customer command center, dispatch, brokerage, and shipper experiences — nonfunctional prototypes for Sprint 01."
+            eyebrow="Client Portal"
+            title="Manage your transportation business"
+            subtitle="Preview of portal modules available to enrolled clients — dashboard, dispatch, brokerage, and shipper experiences."
           />
         </div>
         <div id="aio-platform-heading">

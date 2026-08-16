@@ -7,7 +7,8 @@ const footerGroups = [
   {
     heading: 'Services',
     links: [
-      { label: 'Permitting & Compliance', href: aioPaths.permitting },
+      { label: 'Start Your Business', href: aioPaths.startYourBusiness },
+      { label: 'Permits & Compliance', href: aioPaths.permitting },
       { label: 'Business Formation', href: aioPaths.businessFormation },
       { label: 'Trucking Insurance', href: aioPaths.insurance },
       { label: 'Dispatching', href: aioPaths.dispatching },
@@ -18,23 +19,18 @@ const footerGroups = [
   {
     heading: 'Company',
     links: [
-      { label: 'About Us', href: aioPaths.about },
+      { label: 'About', href: aioPaths.about },
       { label: 'Contact', href: aioPaths.contact },
-      { label: 'Roadmap', href: aioPaths.roadmap },
+      { label: 'Client Portal', href: aioPaths.clientPortalInfo },
     ],
   },
   {
     heading: 'Resources',
     links: [
-      { label: 'Start Your Business', href: aioPaths.businessFormation },
+      { label: 'Road Ready™', href: aioPaths.roadReadyPublic },
       { label: 'Compliance Guide', href: aioPaths.roadmap },
-      { label: 'Insurance Assistance', href: aioPaths.insurance },
-      { label: 'Factoring Solutions', href: aioPaths.factoring },
+      { label: 'Get Started', href: aioPaths.getStarted },
     ],
-  },
-  {
-    heading: 'Client Access',
-    links: [{ label: 'Client Portal', href: aioPaths.portal }],
   },
   {
     heading: 'Contact',
@@ -54,6 +50,9 @@ export function AIOFooter() {
           <p style={{ marginTop: '1rem', fontSize: '0.8125rem', color: 'rgba(255,255,255,0.55)' }}>
             {aioAppConfig.company.tagline}
           </p>
+          <Link to={aioAppConfig.routes.clientLogin} className="aio-footer__link" style={{ display: 'inline-block', marginTop: '0.75rem' }}>
+            Client Login
+          </Link>
         </div>
         {footerGroups.map((group) => (
           <div key={group.heading}>
@@ -69,7 +68,7 @@ export function AIOFooter() {
       <div className="aio-footer__disclaimer">
         <p>{aioAppConfig.disclaimer}</p>
         <p className="aio-footer__copy">
-          © {new Date().getFullYear()} {aioAppConfig.company.legalName} · Debug preview environment
+          © {new Date().getFullYear()} {aioAppConfig.company.legalName}
         </p>
       </div>
     </footer>

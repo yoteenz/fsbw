@@ -21,7 +21,7 @@ export function AIOPortalPreview() {
   return (
     <div className="aio-platform-grid">
       <div className="aio-platform-panel">
-        <div className="aio-platform-panel__header">Customer Dashboard</div>
+        <div className="aio-platform-panel__header">Client command center modules</div>
         <div className="aio-platform-panel__body">
           <p style={{ marginBottom: '1rem', fontWeight: 600 }}>{mockDashboardGreeting}</p>
           <div className="aio-dashboard-preview__metrics">

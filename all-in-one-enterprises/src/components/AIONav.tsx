@@ -1,35 +1,140 @@
-import { useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { aioAppConfig } from '../config/appConfig';
+import { resourcesMenuLinks, servicesMegaMenu, navLinkActivationBadge } from '../data/publicNavigation';
 import { aioPaths } from '../utils/paths';
 import { AIOLogo } from './AIOLogo';
 import { AIOButton } from './AIOButton';
 
-const navLinks = [
-  { label: 'Services', href: aioPaths.services },
-  { label: 'Get Started', href: aioPaths.getStarted },
-  { label: 'Industries', href: aioPaths.industries },
-  { label: 'Resources', href: aioPaths.resources },
-  { label: 'About Us', href: aioPaths.about },
+type DropdownId = 'services' | 'resources' | null;
+
+const topNavLinks = [
+  { label: 'Start Your Business', href: aioPaths.startYourBusiness },
+  { label: 'Road Ready™', href: aioPaths.roadReadyPublic },
+  { label: 'About', href: aioPaths.about },
   { label: 'Contact', href: aioPaths.contact },
 ];
 
+function NavDropdownPanel({
+  id,
+  open,
+  onClose,
+  children,
+}: {
+  id: string;
+  open: boolean;
+  onClose: () => void;
+  children: React.ReactNode;
+}) {
+  const panelRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') onClose();
+    };
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, [open, onClose]);
+
+  if (!open) return null;
+
+  return (
+    <div
+      ref={panelRef}
+      id={id}
+      className="aio-nav-dropdown"
+      role="region"
+      aria-label={id.includes('services') ? 'Services menu' : 'Resources menu'}
+    >
+      {children}
+    </div>
+  );
+}
+
 export function AIONav() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [openDropdown, setOpenDropdown] = useState<DropdownId>(null);
+  const [mobileExpanded, setMobileExpanded] = useState<Record<string, boolean>>({});
   const location = useLocation();
+  const navRef = useRef<HTMLElement>(null);
 
   const isActive = (href: string) => {
     if (href.includes('#')) return false;
     return location.pathname === href || location.pathname.startsWith(`${href}/`);
   };
 
+  const closeAll = useCallback(() => {
+    setOpenDropdown(null);
+    setMobileOpen(false);
+  }, []);
+
+  useEffect(() => {
+    closeAll();
+  }, [location.pathname, closeAll]);
+
+  useEffect(() => {
+    const onPointerDown = (event: MouseEvent) => {
+      if (!navRef.current?.contains(event.target as Node)) {
+        setOpenDropdown(null);
+      }
+    };
+    document.addEventListener('mousedown', onPointerDown);
+    return () => document.removeEventListener('mousedown', onPointerDown);
+  }, []);
+
+  const toggleDropdown = (id: DropdownId) => {
+    setOpenDropdown((current) => (current === id ? null : id));
+  };
+
+  const toggleMobileSection = (key: string) => {
+    setMobileExpanded((prev) => ({ ...prev, [key]: !prev[key] }));
+  };
+
   return (
-    <header className="aio-header">
+    <header className="aio-header" ref={navRef}>
       <div className="aio-header__inner">
         <AIOLogo />
 
         <nav className="aio-header__nav" aria-label="Primary">
-          {navLinks.map((link) => (
+          <div className="aio-header__nav-item">
+            <button
+              type="button"
+              className={`aio-header__nav-link aio-header__nav-trigger ${openDropdown === 'services' || isActive(aioPaths.services) ? 'aio-header__nav-link--active' : ''}`}
+              aria-expanded={openDropdown === 'services'}
+              aria-controls="aio-nav-services-panel"
+              onClick={() => toggleDropdown('services')}
+            >
+              Services <span aria-hidden="true">▾</span>
+            </button>
+            <NavDropdownPanel id="aio-nav-services-panel" open={openDropdown === 'services'} onClose={() => setOpenDropdown(null)}>
+              <div className="aio-mega-menu">
+                {servicesMegaMenu.map((category) => (
+                  <div key={category.title} className="aio-mega-menu__col">
+                    <p className="aio-mega-menu__title">{category.title}</p>
+                    <ul className="aio-mega-menu__list">
+                      {category.links.map((link) => {
+                        const badge = navLinkActivationBadge(link.serviceSlug);
+                        return (
+                          <li key={link.href + link.label}>
+                            <Link to={link.href} className="aio-mega-menu__link" onClick={closeAll}>
+                              {link.label}
+                              {badge ? <span className="aio-mega-menu__badge">{badge}</span> : null}
+                            </Link>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+              <Link to={aioPaths.services} className="aio-mega-menu__footer" onClick={closeAll}>
+                View all services →
+              </Link>
+            </NavDropdownPanel>
+          </div>
+
+          {topNavLinks.map((link) => (
             <Link
               key={link.href}
               to={link.href}
@@ -38,6 +143,29 @@ export function AIONav() {
               {link.label}
             </Link>
           ))}
+
+          <div className="aio-header__nav-item">
+            <button
+              type="button"
+              className={`aio-header__nav-link aio-header__nav-trigger ${openDropdown === 'resources' ? 'aio-header__nav-link--active' : ''}`}
+              aria-expanded={openDropdown === 'resources'}
+              aria-controls="aio-nav-resources-panel"
+              onClick={() => toggleDropdown('resources')}
+            >
+              Resources <span aria-hidden="true">▾</span>
+            </button>
+            <NavDropdownPanel id="aio-nav-resources-panel" open={openDropdown === 'resources'} onClose={() => setOpenDropdown(null)}>
+              <ul className="aio-resources-menu">
+                {resourcesMenuLinks.map((link) => (
+                  <li key={link.href + link.label}>
+                    <Link to={link.href} className="aio-resources-menu__link" onClick={closeAll}>
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </NavDropdownPanel>
+          </div>
         </nav>
 
         <div className="aio-header__utilities">
@@ -71,12 +199,68 @@ export function AIONav() {
         aria-label="Mobile"
         aria-hidden={!mobileOpen}
       >
-        {navLinks.map((link) => (
-          <Link key={link.href} to={link.href} className="aio-mobile-nav__link" onClick={() => setMobileOpen(false)}>
-            {link.label}
-          </Link>
-        ))}
-        <Link to={aioAppConfig.routes.clientLogin} className="aio-mobile-nav__link" onClick={() => setMobileOpen(false)}>
+        <div className="aio-mobile-nav__section">
+          <button
+            type="button"
+            className="aio-mobile-nav__toggle"
+            aria-expanded={mobileExpanded.services}
+            onClick={() => toggleMobileSection('services')}
+          >
+            Services <span aria-hidden="true">{mobileExpanded.services ? '−' : '+'}</span>
+          </button>
+          {mobileExpanded.services ? (
+            <div className="aio-mobile-nav__sub">
+              {servicesMegaMenu.map((category) => (
+                <div key={category.title} className="aio-mobile-nav__group">
+                  <p className="aio-mobile-nav__group-title">{category.title}</p>
+                  {category.links.map((link) => (
+                    <Link key={link.href + link.label} to={link.href} className="aio-mobile-nav__sublink" onClick={closeAll}>
+                      {link.label}
+                    </Link>
+                  ))}
+                </div>
+              ))}
+              <Link to={aioPaths.services} className="aio-mobile-nav__sublink" onClick={closeAll}>
+                View all services
+              </Link>
+            </div>
+          ) : null}
+        </div>
+
+        <Link to={aioPaths.startYourBusiness} className="aio-mobile-nav__link" onClick={closeAll}>
+          Start Your Business
+        </Link>
+        <Link to={aioPaths.roadReadyPublic} className="aio-mobile-nav__link" onClick={closeAll}>
+          Road Ready™
+        </Link>
+
+        <div className="aio-mobile-nav__section">
+          <button
+            type="button"
+            className="aio-mobile-nav__toggle"
+            aria-expanded={mobileExpanded.resources}
+            onClick={() => toggleMobileSection('resources')}
+          >
+            Resources <span aria-hidden="true">{mobileExpanded.resources ? '−' : '+'}</span>
+          </button>
+          {mobileExpanded.resources ? (
+            <div className="aio-mobile-nav__sub">
+              {resourcesMenuLinks.map((link) => (
+                <Link key={link.href + link.label} to={link.href} className="aio-mobile-nav__sublink" onClick={closeAll}>
+                  {link.label}
+                </Link>
+              ))}
+            </div>
+          ) : null}
+        </div>
+
+        <Link to={aioPaths.about} className="aio-mobile-nav__link" onClick={closeAll}>
+          About
+        </Link>
+        <Link to={aioPaths.contact} className="aio-mobile-nav__link" onClick={closeAll}>
+          Contact
+        </Link>
+        <Link to={aioAppConfig.routes.clientLogin} className="aio-mobile-nav__link" onClick={closeAll}>
           Client Login
         </Link>
       </nav>

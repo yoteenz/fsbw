@@ -13,6 +13,9 @@ import { ContactPage } from '../pages/ContactPage';
 import { RequestCallbackPage } from '../pages/RequestCallbackPage';
 import { PublicQuotePage } from '../pages/PublicQuotePage';
 import { RoadmapPage } from '../pages/RoadmapPage';
+import { StartYourBusinessPage } from '../pages/StartYourBusinessPage';
+import { ClientPortalInfoPage } from '../pages/ClientPortalInfoPage';
+import { RoadReadyPublicPage } from '../pages/RoadReadyPublicPage';
 import { FactoringPage } from '../pages/FactoringPage';
 import {
   FactoringHomePage,
@@ -163,6 +166,9 @@ export default function AllInOneRoutes() {
           <Route path="quote/:secureToken" element={<PublicQuotePage />} />
           <Route path="schedule" element={<SchedulePage />} />
           <Route path="roadmap" element={<RoadmapPage />} />
+          <Route path="road-ready" element={<RoadReadyPublicPage />} />
+          <Route path="start-your-business" element={<StartYourBusinessPage />} />
+          <Route path="client-portal" element={<ClientPortalInfoPage />} />
         </Route>
 
         <Route element={<CustomerRouteGuard />}>
