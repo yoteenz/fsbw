@@ -52,44 +52,9 @@ import { isStudioInstitutePath } from '../studio-os-core/expert-capture/invite-s
 import { DebugRouteErrorBoundary } from '../pages/debug/DebugRouteErrorBoundary';
 import { RootAppErrorBoundary } from './RootAppErrorBoundary';
 import { lazyWithRetry } from '../utils/lazyWithRetry';
-
-const AllInOneRouteHost = lazyWithRetry(
-  () => import('../all-in-one/routes/AllInOneRouteHost'),
-  'AllInOneRouteHost',
-);
+import LegacyAioMovedNotice from '../pages/debug/LegacyAioMovedNotice';
 
 const App = lazyWithRetry(() => import('../App'), 'App');
-
-function AllInOneRouteLoading() {
-  return (
-    <div
-      data-route-loading="all-in-one"
-      className="aio-loading"
-      style={{
-        minHeight: '100dvh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        background: '#0a0a0a',
-        color: '#d4af37',
-        fontFamily: 'system-ui, sans-serif',
-        letterSpacing: '0.1em',
-        textTransform: 'uppercase',
-        fontSize: '0.875rem',
-      }}
-    >
-      Loading All In One…
-    </div>
-  );
-}
-
-const allInOneRouteElement = (
-  <DebugRouteErrorBoundary route="/all-in-one">
-    <Suspense fallback={<AllInOneRouteLoading />}>
-      <AllInOneRouteHost />
-    </Suspense>
-  </DebugRouteErrorBoundary>
-);
 
 function DebugAllInOneLegacyRedirect() {
   const location = useLocation();
@@ -97,6 +62,12 @@ function DebugAllInOneLegacyRedirect() {
   const target = tail ? `/all-in-one/${tail}` : '/all-in-one';
   return <Navigate to={`${target}${location.search}${location.hash}`} replace />;
 }
+
+const legacyAioElement = (
+  <DebugRouteErrorBoundary route="/all-in-one">
+    <LegacyAioMovedNotice />
+  </DebugRouteErrorBoundary>
+);
 
 export const STUDIO_DEBUG_PATHS = [
   '/__studio-health',
@@ -198,7 +169,8 @@ export default function StudioDebugRoutes() {
       <Route path="/collaboration-intelligence" element={<CollaborationIntelligenceDownloadPage />} />
       <Route path="/onboarding" element={<OnboardingPackPage />} />
       <Route path="/context-updates" element={<ContextUpdatesPage />} />
-      <Route path="/all-in-one/*" element={allInOneRouteElement} />
+      <Route path="/all-in-one/*" element={legacyAioElement} />
+      <Route path="/all-in-one" element={legacyAioElement} />
       <Route path="/debug/all-in-one/*" element={<DebugAllInOneLegacyRedirect />} />
       <Route path="/debug/all-in-one" element={<DebugAllInOneLegacyRedirect />} />
       <Route

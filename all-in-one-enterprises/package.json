@@ -1,0 +1,37 @@
+{
+  "name": "all-in-one-enterprises",
+  "private": true,
+  "version": "0.1.0",
+  "description": "All In One Enterprises Inc. — standalone application",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --port 5173 --host",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview --port 4173 --host",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:unit": "vitest run src/",
+    "test:e2e": "playwright test",
+    "test:security": "vitest run src/security/",
+    "qa": "npm run typecheck && npm run test && npm run check:isolation",
+    "check:isolation": "bash scripts/check-isolation.sh",
+    "migration:status": "ls -1 supabase/migrations 2>/dev/null | wc -l | xargs -I{} echo \"{} migration files\"",
+    "migrate:verify": "bash scripts/verify-migration-environment.sh"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.45.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-router-dom": "^6.8.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.49.1",
+    "@types/node": "^20.0.0",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.3",
+    "typescript": "~5.6.2",
+    "vite": "^5.4.10",
+    "vitest": "^3.2.7"
+  }
+}

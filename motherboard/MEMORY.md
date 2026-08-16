@@ -51396,3 +51396,25 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Spatial Architecture Review:** SKIPPED — infrastructure/migration foundation; no new customer-facing product surfaces.
 
 - **Next sprint noted (not implemented):** Sprint 21 QA + E2E + accessibility + performance hardening.
+
+---
+
+## 2026-08-16 — Sprint 21 QA Hardening + Extraction Readiness (All In One)
+
+- **Context:** Release-quality hardening sprint — prove Sprints 01–20 work together with evidence (TEST → BREAK → FIX → RETEST). No production launch, no extraction, no FS changes. Route namespace: `/all-in-one` (not `/debug/all-in-one`).
+
+- **Delivered:**
+  - QA module: `src/all-in-one/qa/` — status model, severity P0–P4, defect lifecycle, 20 test suites, 14 E2E journeys, extraction gate (`canExtractAllInOne()` → **BLOCKED**), route manifest (35 routes), dependency graph, inventories, known defects QA-001–005
+  - QA Command Center UI: `/all-in-one/office/system/qa` (+ accessibility, performance, devices, browsers subpages)
+  - Accessibility: skip-to-main links on public + office layouts
+  - Tests: **188 vitest PASS**; **15 Playwright smoke PASS** (Chromium); `npm run test:aio`, `npm run test:aio:e2e`, `scripts/aio-qa-check.sh`
+  - Playwright project `aio-demo` in `playwright.config.ts`; E2E helpers for office security staff persona
+  - Docs: QA_RELEASE_REPORT, KNOWN_ISSUES, QA_TEST_PLAN, E2E_JOURNEY_MATRIX, ACCESSIBILITY_AUDIT, PERFORMANCE_AUDIT, CROSS_DEVICE_MATRIX, BROWSER_COMPATIBILITY, EXTRACTION_READINESS_REPORT
+  - Updated: SPRINT_STATUS, DEBUG_ARCHITECTURE, EXTRACTION_PLAN, MASTER_PRODUCT_BLUEPRINT, SECURITY_TEST_MATRIX, PRODUCTION_SECURITY_CHECKLIST
+
+- **Extraction readiness:** BLOCKED — shared Vite host, no standalone package.json, dedicated AIO Supabase not provisioned for live RLS. 0 open P0 defects.
+
+- **Spatial Architecture Review:** SKIPPED — QA/infrastructure sprint; internal QA Command Center only.
+
+- **Next sprint noted (not implemented):** Sprint 22 standalone extraction + repository separation.
+

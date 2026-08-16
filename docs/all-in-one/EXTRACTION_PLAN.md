@@ -235,11 +235,11 @@ Before physical extraction, consume:
 | QA report | `docs/all-in-one/EXTRACTION_READINESS_REPORT.md` |
 | Known blockers | `docs/all-in-one/KNOWN_ISSUES.md` QA-001 |
 
-**Sprint 21 result:** BLOCKED — shared Vite host, no standalone package.json, no dedicated Supabase for live RLS.
+**Sprint 21 result:** Extraction executed in Sprint 22 — see `all-in-one-enterprises/`.
 
 ---
 
-- [ ] New GitHub repository created
+- [ ] New GitHub repository created (optional — folder is extractable as-is)
 - [ ] `appConfig` routes updated to production paths
 - [ ] `lazyWithRetry` decoupled or inlined
 - [ ] Standalone `App.tsx` + router

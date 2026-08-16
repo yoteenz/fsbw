@@ -1,11 +1,27 @@
 # All In One — Sprint Status
 
-**Sprint:** 21 — Quality Assurance + E2E Testing + Accessibility + Performance + Cross-Device Hardening  
-**Last updated:** 2026-08-16
+**Sprint:** 22 — Standalone Extraction + Repository Separation  
+**Last updated:** 2026-08-16  
+**Canonical app:** `all-in-one-enterprises/` (standalone)
 
 ---
 
-## SPRINT 21 COMPLETE (QA Hardening + Extraction Readiness Evidence)
+## SPRINT 22 COMPLETE (Standalone Extraction)
+
+- **Standalone application** — `all-in-one-enterprises/` with independent `package.json`, Vite, entrypoint, routes at `/` (no `/all-in-one` prefix)
+- **Source migrated** — 368 files from legacy `src/all-in-one/`
+- **FS decoupling** — `src/all-in-one/` removed; legacy `/all-in-one` shows moved notice
+- **Tests** — 188 vitest PASS; 15 Playwright smoke PASS (standalone routes)
+- **Isolation** — `scripts/check-isolation.sh`; hard isolation test PASS
+- **Docs** — EXTRACTION_COMPLETION_REPORT, STANDALONE_ARCHITECTURE, ROUTE_MIGRATION, FRONTAL_SLAYER_DECOUPLING, etc.
+
+**Extraction:** COMPLETE · **Production:** BLOCKED (Sprint 23)
+
+**Next:** Sprint 23 — Production infrastructure + domain + live auth/database
+
+---
+
+## SPRINT 21 COMPLETE (QA Hardening)
 
 - **QA module** — `src/all-in-one/qa/` (types, test suites, journey matrix, defects, extraction gate, inventories, dependency graph)
 - **QA Command Center** — `/all-in-one/office/system/qa` (+ accessibility, performance, devices, browsers)

@@ -61,14 +61,6 @@ export default defineConfig({
       dependencies: ['setup-premium'],
       use: { storageState: 'e2e/.auth/premium.json' },
     },
-    {
-      name: 'aio-demo',
-      testMatch: /all-in-one\/.*\.spec\.ts/,
-      use: {
-        ...devices['Desktop Chrome'],
-        baseURL: process.env.E2E_BASE_URL || 'http://localhost:3001',
-      },
-    },
   ],
   webServer:
     process.env.E2E_LOCAL_SERVER === '1'

@@ -1,29 +1,21 @@
 #!/usr/bin/env bash
-# All In One — Sprint 21 QA regression script
+# Frontal Slayer host — delegate All In One QA to standalone app (Sprint 22)
 set -euo pipefail
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+AIO="$ROOT/all-in-one-enterprises"
 
-echo "=== AIO Typecheck (via build tsc) ==="
+if [[ ! -d "$AIO" ]]; then
+  echo "ERROR: all-in-one-enterprises/ not found"
+  exit 1
+fi
+
+echo "=== Frontal Slayer build (regression) ==="
 npm run build
 
 echo ""
-echo "=== AIO Vitest ==="
-npm run test -- src/all-in-one/
+echo "=== Standalone All In One QA ==="
+cd "$AIO"
+npm run qa
 
 echo ""
-echo "=== FS isolation guard ==="
-if rg -l "from '@/lib/supabase'|from '@/utils/adminAuth'" src/all-in-one/ 2>/dev/null; then
-  echo "FAIL: FS import detected in src/all-in-one/"
-  exit 1
-fi
-echo "OK: no forbidden FS imports in AIO src"
-
-echo ""
-echo "=== Migration environment guard ==="
-./all-in-one/scripts/verify-migration-environment.sh || true
-
-echo ""
-echo "=== Optional: Playwright AIO E2E (local server) ==="
-echo "Run: E2E_LOCAL_SERVER=1 E2E_BASE_URL=http://localhost:3001 npm run test:aio:e2e"
-
-echo ""
-echo "QA check complete."
+echo "FS + standalone QA check complete."
