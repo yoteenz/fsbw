@@ -51279,7 +51279,6 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 ---
 
-<<<<<<< HEAD
 ## 2026-08-16 — All In One Sprint 16: Communications Hub + Appointments
 
 - **Context:** Founder issued Sprint 16 spec — canonical communication layer + appointments connecting CRM, customers, service workflows, divisions, and notifications. Portal messaging must be real; external email/SMS demo/manual only. Remain isolated under `/debug/all-in-one`.
@@ -51292,7 +51291,22 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Spatial Architecture Review:** SKIPPED — communication layer under `/debug/all-in-one`; no Frontal Slayer regression.
 
-=======
+---
+
+## 2026-08-16 — All In One Sprint 17: Management Command Center + BI + Reporting
+
+- **Context:** Founder issued Sprint 17 spec — management intelligence read/analysis layer over canonical systems (CRM, billing, workflows, dispatch, brokerage, factoring, insurance, communications). Strict financial boundaries: collected cash ≠ service revenue ≠ pass-through. No GAAP/profit/AI forecasts.
+
+- **Topics covered:** `src/all-in-one/management/` (types, metric registry, query layer, financial allocation, attention engine, data quality, export, permissions, 13 unit tests); `ManagementPages.tsx` command centers; routes `/office/management/*`, `/office/reports`, `/office/settings/management`; `management.*` / `reports.*` permissions; fixed legacy ReportsPage treating full payment as service revenue; removed `useAllInOneRelativeLocation` from `AllInOneRoutes` (nested office routing fix); six new docs + updated `SPRINT_STATUS`, `FINANCIAL_BOUNDARIES`, `MASTER_PRODUCT_BLUEPRINT`.
+
+- **Decisions / outcomes:** Sprint 17 COMPLETE in demo mode. Management consumes canonical data only — no second source of truth. `allocatePayment()` preserves service vs pass-through. Brokerage gross margin ≠ net profit. Management Attention Engine deterministic with dedupe + acknowledge.
+
+- **Verification:** `npm run build` pass; 13/13 `management.test.ts` pass; office management routes load at `/all-in-one/office/management` (permission-gated by role).
+
+- **Spatial Architecture Review:** SKIPPED — read/analysis management layer under `/debug/all-in-one`; no new Frontal Slayer surfaces.
+
+---
+
 ## 2026-08-16 — /all-in-one infinite re-render (Navigate loop)
 
 - **Context:** Founder reported new error on `/all-in-one`: **Debug route failed** · **Too many re-renders.**
@@ -51302,4 +51316,4 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Fix:** `useAllInOneRelativeLocation()` strips `/all-in-one` prefix; catch-all redirects to relative `/`. Applied on expanded Sprint 02–15 route tree.
 
 - **Verified:** `preview.fsbw-dev.com/all-in-one` + `/services` load without error.
->>>>>>> 2160d7daafb6e81ca4ffa71a35c84b2de55cd11b
+

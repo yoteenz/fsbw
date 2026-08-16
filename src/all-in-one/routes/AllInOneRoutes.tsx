@@ -1,5 +1,5 @@
-import { Navigate, Route, Routes, useParams } from 'react-router-dom';
 import { lazy, Suspense } from 'react';
+import { Navigate, Route, Routes, useParams } from 'react-router-dom';
 import { AIOAuthProvider } from '../auth/AIOAuthProvider';
 import { CustomerRouteGuard, OfficeRouteGuard } from '../auth/guards/RouteGuards';
 import { AIOPublicLayout } from '../layouts/AIOPublicLayout';
@@ -100,7 +100,6 @@ import { PortalMessagesListPage, PortalConversationDetailPage } from '../pages/p
 import { PortalAppointmentsListPage, PortalAppointmentDetailPage } from '../pages/portal/PortalAppointmentsPages';
 import { SchedulePage } from '../pages/SchedulePage';
 import { aioAppConfig } from '../config/appConfig';
-import { useAllInOneRelativeLocation } from '../hooks/useAllInOneRelativeLocation';
 
 const OfficeRoutesLazy = lazy(() => import('../office/routes/OfficeRoutes'));
 
@@ -115,11 +114,9 @@ function RequestConfirmationRoute() {
 }
 
 export default function AllInOneRoutes() {
-  const location = useAllInOneRelativeLocation();
-
   return (
     <AIOAuthProvider>
-      <Routes location={location}>
+      <Routes>
         <Route element={<AIOAuthLayout />}>
           <Route path="login" element={<LoginPage />} />
           <Route path="sign-up" element={<SignUpPage />} />

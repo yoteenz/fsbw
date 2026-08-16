@@ -124,6 +124,20 @@ No shipper freight payment or carrier disbursement through Sprint 07 Stripe demo
 
 ---
 
+## Management reporting (Sprint 17)
+
+The Management Command Center (`/office/management`) aggregates canonical billing, CRM, dispatch, brokerage, factoring, and insurance data using **`allocatePayment()`** and explicit metric definitions in `managementMetricRegistry.ts`.
+
+- **Collected Cash** = total succeeded payments
+- **Service Fees Collected** = allocated service fee portion only
+- **Pass-Through Collected** = government/third-party/tax portions
+- Management dashboards must **never** label collected cash as "revenue" without qualification
+- No net profit, EBITDA, or GAAP recognition in management UI
+
+See **`FINANCIAL_REPORTING_MODEL.md`** and **`MANAGEMENT_METRIC_REGISTRY.md`**.
+
+---
+
 ## Frontal Slayer isolation
 
 All In One billing:

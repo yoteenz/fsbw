@@ -13,6 +13,28 @@ const COMM_READ: OfficePermission[] = [
   'appointments.read', 'appointments.manage',
 ];
 
+const MANAGEMENT_FULL: OfficePermission[] = [
+  'management.dashboard.read', 'management.financial.read', 'management.sales.read',
+  'management.services.read', 'management.dispatch.read', 'management.brokerage.read',
+  'management.factoring.read', 'management.insurance.read', 'management.customers.read',
+  'management.communications.read', 'management.team.read', 'management.deadlines.read',
+  'management.data_quality.read', 'reports.read', 'reports.export', 'reports.save', 'management.settings',
+];
+
+const MANAGEMENT_MANAGER: OfficePermission[] = [
+  'management.dashboard.read', 'management.sales.read', 'management.services.read',
+  'management.dispatch.read', 'management.customers.read', 'management.communications.read',
+  'management.team.read', 'management.deadlines.read', 'reports.read',
+];
+
+const MANAGEMENT_FINANCE: OfficePermission[] = [
+  'management.dashboard.read', 'management.financial.read', 'reports.read', 'reports.export',
+];
+
+const MANAGEMENT_DISPATCH: OfficePermission[] = [
+  'management.dashboard.read', 'management.dispatch.read', 'reports.read',
+];
+
 const CRM_FULL: OfficePermission[] = [
   'crm.read', 'crm.leads.read', 'crm.leads.manage', 'crm.leads.merge',
   'crm.opportunities.read', 'crm.opportunities.manage',
@@ -42,6 +64,7 @@ const ROLE_PERMISSIONS: Record<OfficeStaffRole, OfficePermission[]> = {
     'automation_exceptions.read', 'automation_exceptions.resolve',
     ...CRM_FULL,
     ...COMM_FULL,
+    ...MANAGEMENT_FULL,
   ],
   admin: [
     'clients.read', 'clients.manage', 'work.read', 'work.manage', 'work.assign',
@@ -55,6 +78,7 @@ const ROLE_PERMISSIONS: Record<OfficeStaffRole, OfficePermission[]> = {
     'automation_exceptions.read', 'automation_exceptions.resolve',
     ...CRM_FULL,
     ...COMM_FULL,
+    ...MANAGEMENT_FULL,
   ],
   manager: [
     'clients.read', 'clients.manage', 'work.read', 'work.manage', 'work.assign',
@@ -65,6 +89,7 @@ const ROLE_PERMISSIONS: Record<OfficeStaffRole, OfficePermission[]> = {
     'workflow_templates.read', 'automation_rules.read',     'automation_exceptions.read',
     ...CRM_FULL,
     ...COMM_FULL,
+    ...MANAGEMENT_MANAGER,
   ],
   permitting_specialist: [
     'clients.read', 'work.read', 'work.manage', 'internal_notes.read', 'internal_notes.create',
@@ -82,6 +107,7 @@ const ROLE_PERMISSIONS: Record<OfficeStaffRole, OfficePermission[]> = {
   dispatcher: [
     'clients.read', 'work.read', 'work.manage', 'internal_notes.read', 'internal_notes.create',
     ...COMM_READ,
+    ...MANAGEMENT_DISPATCH,
   ],
   factoring_coordinator: [
     'clients.read', 'work.read', 'work.manage', 'internal_notes.read', 'internal_notes.create',
@@ -99,6 +125,7 @@ const ROLE_PERMISSIONS: Record<OfficeStaffRole, OfficePermission[]> = {
     'billing.read', 'billing.manage',
     'crm.read', 'crm.leads.read', 'crm.opportunities.read', 'crm.quotes.prepare',
     ...COMM_READ,
+    ...MANAGEMENT_FINANCE,
   ],
   customer_support: [
     'clients.read', 'work.read', 'work.manage', 'internal_notes.read', 'internal_notes.create',

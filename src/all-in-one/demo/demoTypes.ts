@@ -602,6 +602,14 @@ export interface DemoStore {
   appointmentStatusHistory?: AppointmentStatusHistory[];
   appointmentReminders?: AppointmentReminder[];
   appointmentSlotHolds?: AppointmentSlotHold[];
+  /** Sprint 17 — Management intelligence preferences (demo) */
+  managementPreferences?: {
+    defaultPeriodId: 'today' | 'week' | 'month' | 'quarter' | 'year' | 'custom';
+    pinnedReportIds: string[];
+    financialDateBasis: 'payment_date' | 'invoice_date' | 'service_completion' | 'created_at';
+  };
+  managementSavedReports?: { id: string; name: string; reportId: string; periodId: string; savedAt: string }[];
+  managementAttentionAcks?: string[];
 }
 
 export interface OfficeMetrics {

@@ -1,5 +1,6 @@
 import { Suspense } from 'react';
 import '../styles/aio.css';
+import '../styles/aio-mgmt.css';
 import { AllInOneRoutesLazy, AllInOneLoading } from './index';
 
 /** Host shell — loads isolated styles before lazy route chunk. */

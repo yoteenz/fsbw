@@ -528,7 +528,8 @@ Carrier → Load → Invoice → FactoringSubmission
 | Sprint 09 ✅ | Factoring module, freight invoices, submissions, office command center, demo v8 |
 | Sprint 10 ✅ | Brokerage module, shipper portal, carrier offers, coverage, finance, demo v10 |
 | Sprint 11 ✅ | Insurance module, assistance mode, partner referral, quotes, COI, Road Ready sync, demo v11 |
-| Sprint 12 ✅ | Client Command Center, portal IA hubs, attention/next-action engines, role-aware modules, demo v12 |
+| Sprint 16 ✅ | Communications hub, appointments, portal messaging, demo v16 |
+| Sprint 17 ✅ | Management Command Center, metric registry, financial reporting, attention engine, data quality, reports, demo (computed) |
 | Sprint 02+ | Service content, intake forms, lead capture |
 | Future | Factoring partner integration, real eligibility engine |
 | Future | Production auth, customer portal backend |
@@ -544,6 +545,8 @@ Carrier → Load → Invoice → FactoringSubmission
 4. `docs/all-in-one/CLIENT_ATTENTION_ENGINE.md` — attention + dedupe
 5. `docs/all-in-one/DEBUG_ARCHITECTURE.md`
 6. `docs/all-in-one/EXTRACTION_PLAN.md`
-7. `docs/all-in-one/SPRINT_STATUS.md`
-8. `src/all-in-one/config/appConfig.ts`
-9. `src/all-in-one/portal/clientCommandCenterService.ts`
+7. `docs/all-in-one/MANAGEMENT_COMMAND_CENTER.md` — Sprint 17 management intelligence
+8. `docs/all-in-one/FINANCIAL_REPORTING_MODEL.md` — collected cash vs service revenue
+9. `docs/all-in-one/SPRINT_STATUS.md`
+10. `src/all-in-one/config/appConfig.ts`
+11. `src/all-in-one/portal/clientCommandCenterService.ts`

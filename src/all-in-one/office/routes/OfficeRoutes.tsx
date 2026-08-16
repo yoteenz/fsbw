@@ -11,7 +11,6 @@ import {
   InvoicesPage,
   PaymentsPage,
   TeamPage,
-  ReportsPage,
 } from '../pages/DivisionOpsPages';
 import {
   BrokerageCommandCenterPage,
@@ -94,6 +93,23 @@ import {
   OfficeAppointmentsSettingsPage,
 } from '../pages/AppointmentsPages';
 import {
+  ManagementCommandCenterPage,
+  ManagementFinancialPage,
+  ManagementSalesPage,
+  ManagementServicesPage,
+  ManagementCustomersPage,
+  ManagementDispatchPage,
+  ManagementBrokeragePage,
+  ManagementFactoringPage,
+  ManagementInsurancePage,
+  ManagementCommunicationsPage,
+  ManagementTeamPage,
+  ManagementDeadlinesPage,
+  ManagementDataQualityPage,
+  ManagementReportsCenterPage,
+  ManagementSettingsPage,
+} from '../pages/ManagementPages';
+import {
   CrmHomePage,
   CrmLeadsListPage,
   CrmLeadDetailPage,
@@ -133,6 +149,21 @@ export default function OfficeRoutes() {
         <Route path="appointments/:appointmentId" element={<OfficeAppointmentDetailPage />} />
         <Route path="settings/communications" element={<OfficeCommunicationsSettingsPage />} />
         <Route path="settings/appointments" element={<OfficeAppointmentsSettingsPage />} />
+        <Route path="settings/management" element={<ManagementSettingsPage />} />
+        <Route path="management" element={<ManagementCommandCenterPage />} />
+        <Route path="management/financial" element={<ManagementFinancialPage />} />
+        <Route path="management/sales" element={<ManagementSalesPage />} />
+        <Route path="management/services" element={<ManagementServicesPage />} />
+        <Route path="management/customers" element={<ManagementCustomersPage />} />
+        <Route path="management/dispatch" element={<ManagementDispatchPage />} />
+        <Route path="management/brokerage" element={<ManagementBrokeragePage />} />
+        <Route path="management/factoring" element={<ManagementFactoringPage />} />
+        <Route path="management/insurance" element={<ManagementInsurancePage />} />
+        <Route path="management/communications" element={<ManagementCommunicationsPage />} />
+        <Route path="management/team" element={<ManagementTeamPage />} />
+        <Route path="management/deadlines" element={<ManagementDeadlinesPage />} />
+        <Route path="management/data-quality" element={<ManagementDataQualityPage />} />
+        <Route path="reports" element={<ManagementReportsCenterPage />} />
         <Route path="crm" element={<CrmHomePage />} />
         <Route path="crm/leads" element={<CrmLeadsListPage />} />
         <Route path="crm/leads/:leadId" element={<CrmLeadDetailPage />} />
@@ -193,7 +224,6 @@ export default function OfficeRoutes() {
         <Route path="quotes/:quoteId" element={<OfficeQuoteDetailPage />} />
         <Route path="settings/pricing" element={<OfficePricingSettingsPage />} />
         <Route path="team" element={<TeamPage />} />
-        <Route path="reports" element={<ReportsPage />} />
       </Route>
     </Routes>
   );

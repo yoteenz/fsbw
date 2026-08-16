@@ -2,12 +2,12 @@ import { Link, useParams } from 'react-router-dom';
 import { useDemoStore } from '../../demo/useDemoStore';
 import {
   updateBrokerageQuoteStatus,
-  getOfficeMetrics,
   getStaffWorkload,
 } from '../../demo/demoActions';
 import { getPayments } from '../../demo/billingActions';
 import { formatMoney } from '../../billing/money';
 import { aioPaths } from '../../utils/paths';
+import { ManagementReportsCenterPage } from './ManagementPages';
 
 type Props = { division: string; title: string };
 
@@ -182,44 +182,5 @@ export function TeamPage() {
 }
 
 export function ReportsPage() {
-  const store = useDemoStore();
-  const metrics = getOfficeMetrics();
-  const docsReview = store.documents.filter((d) => ['uploaded', 'under_review'].includes(d.status)).length;
-  const renewalsMonth = store.renewals.filter((r) => r.status !== 'completed').length;
-  const expired = store.documents.filter((d) => d.isCurrent && d.expiresAt && new Date(d.expiresAt) < new Date()).length;
-  const clientResponse = store.documents.filter((d) => d.status === 'requested' || d.status === 'rejected').length;
-  const renewalsComplete = store.renewals.filter((r) => r.status === 'completed').length;
-  const serviceFeesIssued = store.invoices.reduce((s, i) => s + i.subtotalServiceFeesMinor, 0);
-  const serviceFeesCollected = store.payments.filter((p) => p.status === 'succeeded').reduce((s, p) => s + p.amountMinor, 0);
-  const outstandingServiceFees = store.invoices
-    .filter((i) => ['issued', 'partially_paid', 'past_due'].includes(i.status))
-    .reduce((s, i) => s + i.subtotalServiceFeesMinor, 0);
-  const externalFeesTracked = store.invoices.reduce((s, i) => s + i.subtotalExternalFeesMinor, 0);
-
-  return (
-    <div className="aio-office-page">
-      <header className="aio-office-page__header"><h1>Reports</h1><p>Sprint 06 management preview · demo/staging labels</p></header>
-      <div className="aio-office-metrics">
-        <div className="aio-office-metric-card"><span className="aio-office-metric-card__value">{docsReview}</span><span className="aio-office-metric-card__label">Documents Awaiting Review</span></div>
-        <div className="aio-office-metric-card"><span className="aio-office-metric-card__value">{renewalsMonth}</span><span className="aio-office-metric-card__label">Renewals This Month (active)</span></div>
-        <div className="aio-office-metric-card"><span className="aio-office-metric-card__value">{expired}</span><span className="aio-office-metric-card__label">Expired Credentials</span></div>
-        <div className="aio-office-metric-card"><span className="aio-office-metric-card__value">{renewalsComplete}</span><span className="aio-office-metric-card__label">Renewal Completions</span></div>
-        <div className="aio-office-metric-card"><span className="aio-office-metric-card__value">{clientResponse}</span><span className="aio-office-metric-card__label">Client Response Needed</span></div>
-        <div className="aio-office-metric-card"><span className="aio-office-metric-card__value">{store.clients.length}</span><span className="aio-office-metric-card__label">Active Clients</span></div>
-        <div className="aio-office-metric-card"><span className="aio-office-metric-card__value">{metrics.inProgress}</span><span className="aio-office-metric-card__label">In Progress</span></div>
-      </div>
-
-      <section className="aio-office-panel">
-        <h2>Billing Summary (Operations)</h2>
-        <dl className="aio-office-dl">
-          <dt>Service Fees Issued</dt><dd>{formatMoney(serviceFeesIssued)}</dd>
-          <dt>Service Fees Collected</dt><dd>{formatMoney(serviceFeesCollected)}</dd>
-          <dt>Outstanding Service Fees</dt><dd>{formatMoney(outstandingServiceFees)}</dd>
-          <dt>External Fees Tracked</dt><dd>{formatMoney(externalFeesTracked)}</dd>
-          <dt>Credits</dt><dd>{formatMoney(store.credits.reduce((s, c) => s + c.amountMinor, 0))}</dd>
-        </dl>
-        <p className="aio-prototype-note">Not GAAP accounting. Pass-through fees are not All In One revenue.</p>
-      </section>
-    </div>
-  );
+  return <ManagementReportsCenterPage />;
 }

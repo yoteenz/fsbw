@@ -1,7 +1,20 @@
 # All In One — Sprint Status
 
-**Sprint:** 16 — Communications Hub + Client Conversations + Appointments  
+**Sprint:** 17 — Management Command Center + Business Intelligence + Reporting  
 **Last updated:** 2026-08-16
+
+---
+
+## SPRINT 17 COMPLETE (Management Intelligence · Financial Reporting · Attention Engine)
+
+- **Management module** — `src/all-in-one/management/` (types, metric registry, query layer, financial allocation, attention engine, data quality, export, permissions)
+- **Office routes** — `/office/management` (+ financial, sales, services, customers, dispatch, brokerage, factoring, insurance, communications, team, deadlines, data-quality), `/office/reports`, `/office/settings/management`
+- **Strict financial separation** — collected cash ≠ service revenue ≠ pass-through; brokerage gross margin ≠ net profit
+- **Management Attention Engine** — deterministic deduped alerts with drill-down to canonical records
+- **Reporting center** — standard report library, CSV export, saved config foundation
+- **Permissions** — `management.*`, `reports.*` in `officeWorkTypes.ts` / `officeContext.ts`
+- **Unit tests** — `management/management.test.ts` (13 tests — allocation, brokerage margin, funnel, permissions, aging)
+- **Documentation** — `MANAGEMENT_COMMAND_CENTER.md`, `MANAGEMENT_METRIC_REGISTRY.md`, `FINANCIAL_REPORTING_MODEL.md`, `REPORTING_SYSTEM.md`, `DATA_QUALITY_SYSTEM.md`, `MANAGEMENT_SECURITY.md`
 
 ---
 

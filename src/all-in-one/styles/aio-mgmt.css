@@ -1,0 +1,52 @@
+/* Management Command Center — Sprint 17 */
+.aio-mgmt-page { max-width: 72rem; }
+.aio-mgmt-hero { margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid #e5e7eb; }
+.aio-mgmt-hero__today { font-size: 0.75rem; letter-spacing: 0.08em; color: #6b7280; margin: 0 0 0.35rem; }
+.aio-mgmt-hero h1 { font-size: clamp(1.5rem, 3vw, 2rem); letter-spacing: 0.03em; margin: 0 0 0.35rem; }
+.aio-mgmt-hero__sub { color: #4b5563; margin: 0; max-width: 40rem; }
+.aio-mgmt-section-nav { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-bottom: 1rem; }
+.aio-mgmt-section-nav__link { font-size: 0.75rem; padding: 0.3rem 0.55rem; border: 1px solid #e5e7eb; border-radius: 4px; text-decoration: none; color: #374151; }
+.aio-mgmt-section-nav__link:hover { border-color: var(--aio-gold, #c9a227); }
+.aio-mgmt-filters { margin-bottom: 1rem; }
+.aio-mgmt-compare { display: block; font-size: 0.85rem; margin-top: 0.5rem; }
+.aio-mgmt-date-basis { font-size: 0.8rem; margin: 0.35rem 0 0; }
+.aio-mgmt-block { margin: 1.5rem 0; }
+.aio-mgmt-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+.aio-mgmt-today-list { list-style: none; margin: 0; padding: 0; font-size: 0.9rem; }
+.aio-mgmt-today-list li { padding: 0.35rem 0; border-bottom: 1px solid #f3f4f6; }
+.aio-mgmt-today-list a { text-decoration: none; color: inherit; }
+.aio-mgmt-today-list a:hover { color: var(--aio-gold, #c9a227); }
+.aio-metric-card--link { text-decoration: none; color: inherit; display: block; cursor: pointer; }
+.aio-metric-card--link:hover { border-color: var(--aio-gold, #c9a227); }
+.aio-metric-card--active { border-color: var(--aio-gold, #c9a227); background: rgba(201, 162, 39, 0.06); }
+.aio-metric-card__compare { display: block; font-size: 0.7rem; margin-top: 0.25rem; }
+.aio-metric-explainer { display: block; margin-top: 0.35rem; }
+.aio-metric-explainer__text { display: block; font-size: 0.75rem; color: #6b7280; margin-top: 0.25rem; line-height: 1.35; }
+.aio-link-btn { background: none; border: none; padding: 0; color: var(--aio-gold, #c9a227); cursor: pointer; font-size: inherit; text-decoration: underline; }
+.aio-link-btn--sm { font-size: 0.7rem; }
+.aio-mgmt-attention { padding: 1rem; border: 1px solid #e5e7eb; border-radius: 8px; margin-bottom: 0.75rem; background: #fff; }
+.aio-mgmt-attention--urgent { border-left: 4px solid #dc2626; }
+.aio-mgmt-attention--action { border-left: 4px solid #f59e0b; }
+.aio-mgmt-attention--watch { border-left: 4px solid #3b82f6; }
+.aio-mgmt-attention--info { border-left: 4px solid #9ca3af; }
+.aio-mgmt-attention__head { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.35rem; }
+.aio-mgmt-attention__meta { display: flex; flex-wrap: wrap; gap: 0.75rem; font-size: 0.8rem; color: #6b7280; margin: 0.5rem 0; }
+.aio-mgmt-waterfall { max-width: 24rem; border: 1px solid #e5e7eb; border-radius: 8px; padding: 1rem; background: #fafafa; }
+.aio-mgmt-waterfall__row { display: flex; justify-content: space-between; padding: 0.35rem 0; font-size: 0.9rem; }
+.aio-mgmt-waterfall__row--deduct { color: #6b7280; }
+.aio-mgmt-waterfall__row--total { border-top: 2px solid #111; margin-top: 0.35rem; padding-top: 0.5rem; font-weight: 700; }
+.aio-mgmt-health-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr)); gap: 0.5rem; }
+.aio-mgmt-health { padding: 0.65rem; border: 1px solid #e5e7eb; border-radius: 6px; font-size: 0.8rem; }
+.aio-mgmt-health__area { display: block; font-weight: 700; text-transform: uppercase; font-size: 0.65rem; letter-spacing: 0.04em; }
+.aio-mgmt-health__state { display: block; text-transform: capitalize; margin: 0.15rem 0; }
+.aio-mgmt-health--on_track { border-color: #86efac; }
+.aio-mgmt-health--watch { border-color: #fde68a; }
+.aio-mgmt-health--action_needed { border-color: #fca5a5; }
+.aio-mgmt-funnel__stage { display: grid; grid-template-columns: 8rem 1fr 3rem; align-items: center; gap: 0.5rem; margin-bottom: 0.35rem; font-size: 0.85rem; }
+.aio-mgmt-funnel__bar { height: 0.65rem; background: var(--aio-gold, #c9a227); border-radius: 2px; min-width: 4px; }
+.aio-mgmt-report-list { display: flex; flex-direction: column; gap: 0.35rem; }
+@media (max-width: 768px) {
+  .aio-mgmt-grid-2 { grid-template-columns: 1fr; }
+  .aio-mgmt-funnel__stage { grid-template-columns: 1fr; }
+  .aio-office-table-wrap { overflow-x: auto; }
+}

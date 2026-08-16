@@ -299,7 +299,24 @@ export type OfficePermission =
   | 'comm.settings.manage'
   | 'appointments.read'
   | 'appointments.manage'
-  | 'appointments.settings.manage';
+  | 'appointments.settings.manage'
+  | 'management.dashboard.read'
+  | 'management.financial.read'
+  | 'management.sales.read'
+  | 'management.services.read'
+  | 'management.dispatch.read'
+  | 'management.brokerage.read'
+  | 'management.factoring.read'
+  | 'management.insurance.read'
+  | 'management.customers.read'
+  | 'management.communications.read'
+  | 'management.team.read'
+  | 'management.deadlines.read'
+  | 'management.data_quality.read'
+  | 'reports.read'
+  | 'reports.export'
+  | 'reports.save'
+  | 'management.settings';
 
 export interface OfficeAttentionItem {
   id: string;
