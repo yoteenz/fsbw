@@ -42,6 +42,15 @@ export const aioAppConfig = {
     heroImage: '/brand/all-in-one-hero-truck.png',
     /** Approved horizontal lockup — emblem + ALL IN ONE + ENTERPRISES INC. */
     logoLockup: '/brand/aio-logo-lockup.png',
+    /** Homepage service-discovery icons (Refinement 03E) — extracted from approved master sheet */
+    serviceIcons: {
+      startBusiness: '/brand/icons/services/aio-icon-start-business.png',
+      permitsCompliance: '/brand/icons/services/aio-icon-permits-compliance.png',
+      truckingInsurance: '/brand/icons/services/aio-icon-trucking-insurance.png',
+      dispatch: '/brand/icons/services/aio-icon-dispatch.png',
+      moveFreight: '/brand/icons/services/aio-icon-move-freight.png',
+      getPaidFaster: '/brand/icons/services/aio-icon-get-paid-faster.png',
+    },
     /** @deprecated use logoLockup */
     logoSlot: '/brand/aio-logo-lockup.png' as string | null,
   },

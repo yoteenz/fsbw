@@ -51564,3 +51564,19 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Report:** `docs/refinement/POST_BUILD_REFINEMENT_03C_REPORT.md`
 
+---
+
+## 2026-08-16 — Post-Build Refinement 03D: AIO gold service card titles + Explore accents
+
+- **Context:** Founder approved mockup (gold-text variant) for homepage service-discovery cards. Visual-only — no card structure, content, icons, availability, routing, or hero/nav changes.
+
+- **Hierarchy:** Black icon → gold title → neutral body → neutral status → gold EXPLORE + arrow. Section eyebrow gold + black heading preserved.
+
+- **Component:** `AIOServicePathwayCard.tsx` + `.aio-pathway-card*` CSS (homepage only).
+
+- **Tokens:** Added `--aio-gold-text: #a6780d` (same family as `--aio-gold-active`) for AA text on white; titles + EXPLORE default gold.
+
+- **EXPLORE fix:** `.aio-app a { color: inherit }` was overriding CTA color — raised to `.aio-app a.aio-pathway-card__cta`; arrow inherits via `.aio-pathway-card__cta-arrow`; hover arrow nudge with reduced-motion respect.
+
+- **Report:** `docs/refinement/POST_BUILD_REFINEMENT_03D_REPORT.md`
+

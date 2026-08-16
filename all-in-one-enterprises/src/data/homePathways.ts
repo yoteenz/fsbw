@@ -7,6 +7,7 @@ export type HomePathway = {
   description: string;
   href: string;
   icon: AioIntentCard['icon'];
+  iconSrc: string;
   serviceSlug: string;
 };
 
@@ -17,6 +18,7 @@ export const homePathways: HomePathway[] = [
     description: 'Form your LLC or INC and get everything you need to hit the road.',
     href: aioPaths.startYourBusiness,
     icon: 'startup',
+    iconSrc: '/brand/icons/services/aio-icon-start-business.png',
     serviceSlug: 'business-formation',
   },
   {
@@ -25,6 +27,7 @@ export const homePathways: HomePathway[] = [
     description: 'Stay legal and avoid expensive fines. We handle the details.',
     href: aioPaths.permitting,
     icon: 'compliance',
+    iconSrc: '/brand/icons/services/aio-icon-permits-compliance.png',
     serviceSlug: 'permitting',
   },
   {
@@ -33,6 +36,7 @@ export const homePathways: HomePathway[] = [
     description: 'Protect your business with the right coverage at the right price.',
     href: aioPaths.insurance,
     icon: 'insurance',
+    iconSrc: '/brand/icons/services/aio-icon-trucking-insurance.png',
     serviceSlug: 'insurance',
   },
   {
@@ -41,6 +45,7 @@ export const homePathways: HomePathway[] = [
     description: 'Professional dispatch. More loads. Better rates. Less hassle.',
     href: aioPaths.dispatching,
     icon: 'dispatch',
+    iconSrc: '/brand/icons/services/aio-icon-dispatch.png',
     serviceSlug: 'dispatching',
   },
   {
@@ -49,6 +54,7 @@ export const homePathways: HomePathway[] = [
     description: 'Brokerage and shipper solutions to move freight efficiently.',
     href: aioPaths.brokerage,
     icon: 'freight',
+    iconSrc: '/brand/icons/services/aio-icon-move-freight.png',
     serviceSlug: 'brokerage',
   },
   {
@@ -57,6 +63,7 @@ export const homePathways: HomePathway[] = [
     description: 'Factoring solutions designed to help improve cash flow.',
     href: aioPaths.factoring,
     icon: 'factoring',
+    iconSrc: '/brand/icons/services/aio-icon-get-paid-faster.png',
     serviceSlug: 'factoring',
   },
 ];
