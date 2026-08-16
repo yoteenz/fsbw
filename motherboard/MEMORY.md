@@ -51580,3 +51580,17 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Report:** `docs/refinement/POST_BUILD_REFINEMENT_03D_REPORT.md`
 
+---
+
+## 2026-08-16 — Post-Build Refinement 03E: AIO custom service icon pack
+
+- **Context:** Founder supplied master icon sheet (6 custom black service icons). Visual-only — replace generic SVG placeholders on homepage service-discovery cards; no routing, availability, or content changes.
+
+- **Extraction:** Automated from 1536×1024 master (3×2 grid) → six transparent 256×256 PNGs in `public/brand/icons/services/`; labels/grid excluded; optical normalize at 72% fill; reproducible via `scripts/extract-service-icons.py`.
+
+- **Mapping:** start-business, permits-compliance, trucking-insurance, dispatch, move-freight, get-paid-faster → semantic filenames; `iconSrc` on `homePathways`; `AIOServicePathwayCard` uses `<img alt="">`.
+
+- **UI:** Icons black on white cards (48–52px, object-fit contain); gold titles + gold EXPLORE preserved (03D); no icon background tiles.
+
+- **Report:** `docs/refinement/POST_BUILD_REFINEMENT_03E_REPORT.md`
+

@@ -51,7 +51,7 @@ Canonical config mirror: `appConfig.assets.serviceIcons`
 |------|--------------|-------|
 | START MY BUSINESS | Building + tree | `aio-icon-start-business.png` |
 | PERMITS & COMPLIANCE | Checklist document | `aio-icon-permits-compliance.png` |
-| TRUCKING INSURANCE | Shield + truck | `aio-icon-trucking-insurance.png` |
+| TRUCKING INSURANCE | Shield + truck + checkmark (standalone override 03E.1) | `aio-icon-trucking-insurance.png` |
 | DISPATCH MY TRUCKS | Location pin + truck | `aio-icon-dispatch.png` |
 | MOVE FREIGHT | Truck + speed lines | `aio-icon-move-freight.png` |
 | GET PAID FASTER | Bills + coins | `aio-icon-get-paid-faster.png` |
@@ -133,3 +133,61 @@ cd all-in-one-enterprises && python3 scripts/extract-service-icons.py
 ```
 
 Requires `Pillow` and `numpy`.
+
+**Trucking Insurance (03E.1):** use `_source-trucking-insurance-standalone.png` and `scripts/normalize-standalone-service-icon.py` — not the master sheet cell.
+
+---
+
+## 03E.1 — Trucking Insurance Icon Override
+
+**Date:** 2026-08-16  
+**Status:** Complete
+
+### Original icon rejected
+
+The master-sheet Trucking Insurance icon (shield + truck side profile) was too generic and did not clearly communicate commercial trucking insurance / protection.
+
+### New standalone asset received
+
+| Field | Value |
+|-------|--------|
+| Source URL | Supabase live-preview upload |
+| Archived source | `public/brand/icons/services/_source-trucking-insurance-standalone.png` |
+| Original dimensions | 1312 × 1199 px (RGBA) |
+| Artwork | Semi-truck (front) + protective shield + checkmark |
+
+### New asset path
+
+`public/brand/icons/services/aio-icon-trucking-insurance.png` (same filename — replaces master-sheet extraction)
+
+### Old asset replaced
+
+Previous master-sheet extraction overwritten. Master sheet and other five icons unchanged. `extract-service-icons.py` updated to **skip** Trucking Insurance on re-extraction.
+
+### Final dimensions
+
+256 × 256 transparent canvas @ 72% max fill (61% × 70% opaque footprint — optically aligned with sibling icons).
+
+### Transparency verification
+
+PASS — white/near-white pixels removed; no background tile, halo, or crop boundary; black artwork only.
+
+### Optical sizing adjustment
+
+Standalone normalization via `scripts/normalize-standalone-service-icon.py` with same 72% fill target as 03E pack. Detail-heavy shield/truck/checkmark remains legible at 48–52 px UI render.
+
+### Mobile QA
+
+390 × 844 — PASS: truck, shield, and checkmark recognizable; aligned with neighboring cards; gold title + EXPLORE preserved.
+
+### Desktop QA
+
+1366+ — PASS: crisp at 52 px; optically consistent with five sibling icons.
+
+### Cache verification
+
+Same asset path retained (`/brand/icons/services/aio-icon-trucking-insurance.png`). File bytes replaced in repo; Vite/dev serves updated PNG immediately. Production cache clears on next deploy (`deploy now`).
+
+### Issues
+
+None.

@@ -19,7 +19,7 @@ LABEL_CUT = 0.68
 ICONS = [
     ('aio-icon-start-business.png', 0),
     ('aio-icon-permits-compliance.png', 1),
-    ('aio-icon-trucking-insurance.png', 2),
+    # Trucking Insurance: standalone override (03E.1) — see normalize-standalone-service-icon.py
     ('aio-icon-dispatch.png', 3),
     ('aio-icon-move-freight.png', 4),
     ('aio-icon-get-paid-faster.png', 5),
