@@ -74,6 +74,15 @@ export function AIONav() {
   }, [location.pathname, closeAll]);
 
   useEffect(() => {
+    if (!mobileOpen) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [mobileOpen]);
+
+  useEffect(() => {
     const onPointerDown = (event: MouseEvent) => {
       if (!navRef.current?.contains(event.target as Node)) {
         setOpenDropdown(null);
@@ -270,9 +279,11 @@ export function AIONav() {
         <Link to={aioPaths.contact} className="aio-mobile-nav__link" onClick={closeAll}>
           Contact
         </Link>
-        <Link to={aioAppConfig.routes.clientLogin} className="aio-mobile-nav__link" onClick={closeAll}>
-          Client Login
-        </Link>
+        <div className="aio-mobile-nav__login">
+          <AIOButton to={aioAppConfig.routes.clientLogin} variant="gold" size="sm" className="aio-mobile-nav__login-btn" onClick={closeAll}>
+            Client Login
+          </AIOButton>
+        </div>
       </nav>
     </header>
   );

@@ -30,6 +30,7 @@
   --aio-shadow-lg: 0 12px 48px rgba(0, 0, 0, 0.2);
   --aio-transition: 0.2s ease;
   --aio-header-h: 72px;
+  --aio-debug-banner-h: 0px;
   --aio-section-pad-y: 2rem;
   --aio-btn-min-height: 44px;
 
@@ -390,9 +391,12 @@
   top: 0;
   z-index: 100;
   height: var(--aio-header-h);
-  background: rgba(10, 10, 10, 0.94);
-  backdrop-filter: blur(12px);
+  background: #0b0b0b;
   border-bottom: 1px solid rgba(212, 160, 23, 0.15);
+}
+
+.aio-app:has(> .aio-debug-banner) {
+  --aio-debug-banner-h: 2.75rem;
 }
 
 .aio-header__inner {
@@ -476,20 +480,26 @@
 }
 
 .aio-mobile-nav {
-  position: fixed;
-  inset: var(--aio-header-h) 0 0 0;
-  z-index: 99;
-  background: var(--aio-black);
-  padding: 1.5rem;
-  display: flex;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 110;
+  background: #0b0b0b;
+  border-top: 1px solid rgba(212, 160, 23, 0.18);
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.55);
+  padding: 0.75rem clamp(1rem, 4vw, 1.5rem) 1.5rem;
+  display: none;
   flex-direction: column;
-  gap: 0.5rem;
-  transform: translateX(100%);
-  transition: transform 0.3s ease;
+  gap: 0;
+  max-height: calc(100dvh - var(--aio-header-h) - var(--aio-debug-banner-h) - env(safe-area-inset-bottom, 0px));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
 }
 
 .aio-mobile-nav--open {
-  transform: translateX(0);
+  display: flex;
 }
 
 .aio-mobile-nav__link {
@@ -499,7 +509,23 @@
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--aio-white);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid rgba(212, 160, 23, 0.12);
+}
+
+.aio-mobile-nav__toggle span {
+  color: var(--aio-gold-light);
+  font-size: 1.125rem;
+  line-height: 1;
+}
+
+.aio-mobile-nav__login {
+  margin-top: 1rem;
+  padding-top: 0.5rem;
+}
+
+.aio-mobile-nav__login-btn {
+  width: 100%;
+  justify-content: center;
 }
 
 /* Logo */
@@ -508,21 +534,41 @@
   align-items: center;
   flex-shrink: 0;
   color: var(--aio-white);
+  height: calc(var(--aio-header-h) - 14px);
+  min-width: 0;
 }
 
 .aio-logo__lockup {
   display: block;
+  height: 100%;
   width: auto;
-  height: auto;
-  max-height: clamp(36px, 9vw, 52px);
-  max-width: min(260px, 52vw);
+  max-width: min(320px, 68vw);
   object-fit: contain;
   object-position: left center;
+  /* Lockup PNG includes internal canvas padding — scale artwork to fill navbar height */
+  transform: scale(1.55);
+  transform-origin: left center;
+}
+
+.aio-logo--footer {
+  height: auto;
 }
 
 .aio-logo--footer .aio-logo__lockup {
-  max-height: clamp(32px, 8vw, 44px);
-  max-width: min(220px, 70vw);
+  height: clamp(36px, 8vw, 44px);
+  max-width: min(240px, 72vw);
+  transform: scale(1.35);
+}
+
+@media (min-width: 1024px) {
+  .aio-logo {
+    height: calc(var(--aio-header-h) - 12px);
+  }
+
+  .aio-logo__lockup {
+    transform: scale(1.68);
+    max-width: 360px;
+  }
 }
 
 .aio-logo__mark {
@@ -564,7 +610,7 @@
   position: relative;
   min-height: clamp(520px, 85vh, 720px);
   display: flex;
-  align-items: center;
+  align-items: stretch;
   overflow: hidden;
   background: var(--aio-black);
 }
@@ -575,40 +621,56 @@
   background-image: var(--aio-hero-bg);
   background-size: cover;
   background-repeat: no-repeat;
-  background-position: 68% center;
+  background-position: 72% 42%;
 }
 
 .aio-hero__overlay {
   position: absolute;
   inset: 0;
   background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.55) 0%,
+    rgba(0, 0, 0, 0.35) 38%,
+    rgba(0, 0, 0, 0.12) 100%
+  ),
+  linear-gradient(
     90deg,
-    rgba(0, 0, 0, 0.88) 0%,
-    rgba(0, 0, 0, 0.65) 32%,
-    rgba(0, 0, 0, 0.22) 58%,
-    rgba(0, 0, 0, 0.04) 100%
+    rgba(0, 0, 0, 0.82) 0%,
+    rgba(0, 0, 0, 0.58) 28%,
+    rgba(0, 0, 0, 0.18) 52%,
+    rgba(0, 0, 0, 0.02) 100%
   );
 }
 
 @media (min-width: 768px) {
   .aio-hero__bg {
-    background-position: 62% center;
+    background-position: 68% center;
   }
 
   .aio-hero__overlay {
     background: linear-gradient(
       90deg,
-      rgba(0, 0, 0, 0.85) 0%,
-      rgba(0, 0, 0, 0.58) 34%,
-      rgba(0, 0, 0, 0.16) 62%,
-      rgba(0, 0, 0, 0.03) 100%
+      rgba(0, 0, 0, 0.86) 0%,
+      rgba(0, 0, 0, 0.62) 30%,
+      rgba(0, 0, 0, 0.22) 52%,
+      rgba(0, 0, 0, 0.04) 100%
     );
   }
 }
 
 @media (min-width: 1024px) {
   .aio-hero__bg {
-    background-position: 72% center;
+    background-position: 74% center;
+  }
+
+  .aio-hero__overlay {
+    background: linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0.84) 0%,
+      rgba(0, 0, 0, 0.55) 34%,
+      rgba(0, 0, 0, 0.14) 58%,
+      rgba(0, 0, 0, 0.02) 100%
+    );
   }
 }
 
@@ -621,42 +683,86 @@
 .aio-hero__content {
   position: relative;
   z-index: 1;
+  display: flex;
+  align-items: flex-start;
   max-width: 1440px;
   margin: 0 auto;
-  padding: clamp(3rem, 8vw, 6rem) clamp(1.25rem, 4vw, 3rem);
+  padding: clamp(2.25rem, 7vw, 4.5rem) clamp(1.5rem, 6vw, 7vw) clamp(2.5rem, 8vw, 5rem);
   width: 100%;
+  min-height: inherit;
+}
+
+@media (min-width: 768px) {
+  .aio-hero__content {
+    align-items: center;
+  }
 }
 
 .aio-hero__copy {
-  max-width: 36rem;
+  width: 100%;
+  max-width: min(100%, 34rem);
 }
 
 @media (min-width: 768px) {
   .aio-hero__copy {
-    max-width: 34rem;
+    max-width: min(88%, 32rem);
   }
 }
 
-@media (min-width: 1280px) {
+@media (min-width: 1024px) {
   .aio-hero__copy {
-    max-width: 38rem;
+    max-width: min(42vw, 580px);
+    flex: 0 0 auto;
+  }
+}
+
+@media (min-width: 1440px) {
+  .aio-hero__copy {
+    max-width: 580px;
   }
 }
 
 .aio-hero__eyebrow {
-  font-size: 0.6875rem;
+  font-size: clamp(0.75rem, 0.85vw, 1rem);
   font-weight: 600;
-  letter-spacing: 0.14em;
+  letter-spacing: clamp(0.15em, 0.18vw, 0.22em);
   text-transform: uppercase;
   color: var(--aio-gold-light);
-  margin-bottom: 1rem;
+  margin-bottom: 0.875rem;
   max-width: 32rem;
 }
 
 .aio-hero__headline {
+  font-family: var(--aio-font-display);
+  font-size: clamp(2.25rem, 10vw, 3.35rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 0.98;
+  text-transform: uppercase;
   color: var(--aio-white);
-  max-width: 18ch;
-  margin-bottom: 1.25rem;
+  max-width: 11.5ch;
+  margin-bottom: 1rem;
+}
+
+@media (min-width: 768px) {
+  .aio-hero__headline {
+    font-size: clamp(2.35rem, 4.2vw, 3.65rem);
+    max-width: 12ch;
+  }
+}
+
+@media (min-width: 1024px) {
+  .aio-hero__headline {
+    font-size: clamp(2.5rem, 3.6vw, 4.75rem);
+    line-height: 1;
+    max-width: 12ch;
+  }
+}
+
+@media (min-width: 1440px) {
+  .aio-hero__headline {
+    font-size: 4.75rem;
+  }
 }
 
 .aio-hero__headline em {
@@ -665,17 +771,31 @@
 }
 
 .aio-hero__sub {
-  color: rgba(255, 255, 255, 0.8);
-  font-size: clamp(0.9375rem, 1.5vw, 1.0625rem);
-  max-width: 38rem;
-  margin-bottom: 2rem;
-  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.82);
+  font-size: clamp(1rem, 1.15vw, 1.25rem);
+  max-width: min(100%, 34rem);
+  margin-bottom: 1.75rem;
+  line-height: 1.6;
+}
+
+@media (min-width: 768px) {
+  .aio-hero__sub {
+    max-width: min(100%, 520px);
+    line-height: 1.65;
+  }
+}
+
+@media (min-width: 1024px) {
+  .aio-hero__sub {
+    max-width: 540px;
+    line-height: 1.68;
+  }
 }
 
 .aio-hero__actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 1rem;
+  gap: 0.75rem;
 }
 
 /* Service strip */
@@ -4263,7 +4383,7 @@
 }
 
 .aio-mobile-nav__section {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid rgba(212, 160, 23, 0.12);
 }
 
 .aio-mobile-nav__toggle {
@@ -4283,26 +4403,32 @@
 }
 
 .aio-mobile-nav__sub {
-  padding-bottom: 0.75rem;
+  padding: 0 0 0.75rem 0.75rem;
+  border-left: 1px solid rgba(212, 160, 23, 0.18);
+  margin-left: 0.25rem;
+  margin-bottom: 0.25rem;
 }
 
 .aio-mobile-nav__group {
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.5rem;
 }
 
 .aio-mobile-nav__group-title {
-  font-size: 0.625rem;
+  font-size: 0.6875rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--aio-gold-light);
-  margin-bottom: 0.35rem;
+  margin-bottom: 0.25rem;
 }
 
 .aio-mobile-nav__sublink {
   display: block;
-  padding: 0.5rem 0 0.5rem 0.75rem;
+  padding: 0.5rem 0 0.5rem 0.5rem;
   font-size: 0.8125rem;
-  color: rgba(255, 255, 255, 0.75);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: none;
+  color: rgba(255, 255, 255, 0.78);
 }
 
 .aio-hero-trust {
@@ -4924,7 +5050,19 @@
 
 .aio-hero__actions.aio-cta-row {
   margin-top: 0;
-  max-width: 28rem;
+  max-width: 100%;
+}
+
+@media (min-width: 640px) {
+  .aio-hero__actions.aio-cta-row {
+    flex-direction: row;
+    max-width: 36rem;
+  }
+
+  .aio-hero__actions.aio-cta-row .aio-cta-row__link {
+    width: auto;
+    flex: 1 1 12rem;
+  }
 }
 
 /* Startup milestones — Start Your Business (Option 1 gold accent) */

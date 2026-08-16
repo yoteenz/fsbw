@@ -51666,3 +51666,25 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **QA:** Build pass; 5 catalog/applicability tests pass; manual UI on :5173 — hub, find flow, UCR detail, mega menu verified.
 
+---
+
+## 2026-08-16 — Post-Build Refinement 04A: Bookkeeping Autopilot + competitive matrix + Books Rescue $749
+
+- **Context:** Follow-up to Refinement 04 bookkeeping — three objectives: (1) Bookkeeping Autopilot domain + exception-first staff UX, (2) competitive service-model comparison on public page, (3) pricing revision — Books Rescue **$499+ → $749+ one-time**; recurring Essentials/Plus/All In One unchanged ($249/$449/$749).
+
+- **Autopilot domain:** `src/bookkeeping/autopilot/` — types, chart of accounts + merchant rules, `classifyBookkeepingTransaction()`, document matching, reconciliation (account + factoring + transfers), financial/accounting provider stubs (Demo + Plaid/QBO/Xero no silent external calls), exception queue metrics, competitive matrix config, internal competitor benchmark registry.
+
+- **Demo store v22:** `autopilotSeed.ts` — financial connections/accounts, transactions, periods, exceptions, clarifications; upgrade path v21→v22.
+
+- **Public UI:** `/services/bookkeeping` — Autopilot section (CONNECT→REPORT flow), "More Than Bookkeeping" value stack, mobile-friendly service-model comparison matrix, Books Rescue $749 copy.
+
+- **Office:** `/office/bookkeeping/autopilot` — Autopilot Command Center (metrics, exception queue, client health cards).
+
+- **Portal:** `/portal/bookkeeping` — books progress %, connected accounts + reconnect, clarification digest, Books Rescue quote $749.
+
+- **Recommendation engine:** plan escalation (`plan_escalation` kind) when Essentials insufficient (e.g. factoring + multi-truck); expanded complexity thresholds (entity count).
+
+- **Docs:** `docs/bookkeeping/BOOKKEEPING_AUTOPILOT_ARCHITECTURE.md`, `BOOKKEEPING_CLASSIFICATION_ENGINE.md`, `BOOKKEEPING_RECONCILIATION_ENGINE.md`, `FINANCIAL_DATA_INTEGRATIONS.md`, `COMPETITIVE_BENCHMARKS.md`, `BOOKKEEPING_PRICING_V2.md`, `docs/refinement/POST_BUILD_REFINEMENT_04A_REPORT.md`.
+
+- **QA:** 13 unit tests pass; build OK; manual UI on :5173 — comparison matrix, $749 Books Rescue, office autopilot, portal connected accounts verified.
+

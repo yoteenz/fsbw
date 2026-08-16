@@ -21,7 +21,7 @@ export function HeroSection() {
         <div className="aio-hero__content">
           <div className="aio-hero__copy">
             <p className="aio-hero__eyebrow">{aioAppConfig.company.legalName}</p>
-            <h1 id="aio-hero-heading" className="aio-display-xl aio-hero__headline">
+            <h1 id="aio-hero-heading" className="aio-hero__headline">
               {taglineLine1}
               <br />
               <em>{taglineLine2}</em>
