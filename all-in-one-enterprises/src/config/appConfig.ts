@@ -8,7 +8,13 @@ export const aioAppConfig = {
     legalName: 'ALL IN ONE ENTERPRISES INC.',
     displayName: 'ALL IN ONE',
     displaySuffix: 'ENTERPRISES INC.',
-    tagline: 'The business office behind the truck.',
+    /** Canonical brand tagline — customer-facing primary statement */
+    tagline: 'WHERE BUSINESS MEETS THE ROAD.',
+    /** Intentional hero line break (presentation only; full tagline above) */
+    heroTaglineLines: ['WHERE BUSINESS', 'MEETS THE ROAD.'] as const,
+    /** Approved homepage / primary brand supporting paragraph */
+    brandDescription:
+      'Trucking is more than what happens behind the wheel. All In One handles the business that keeps you moving—from formation, permits and compliance to insurance, dispatch, factoring and freight solutions—all in one place.',
   },
   contact: {
     /** Temporary placeholder — replace with verified number before production. */
@@ -34,7 +40,10 @@ export const aioAppConfig = {
     /** Hero slot — replace with production asset when available. */
     heroImage:
       'https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?auto=format&fit=crop&w=1920&q=80',
-    logoSlot: null as string | null,
+    /** Approved horizontal lockup — emblem + ALL IN ONE + ENTERPRISES INC. */
+    logoLockup: '/brand/aio-logo-lockup.png',
+    /** @deprecated use logoLockup */
+    logoSlot: '/brand/aio-logo-lockup.png' as string | null,
   },
   featureFlags: {
     showSampleTestimonial: false,

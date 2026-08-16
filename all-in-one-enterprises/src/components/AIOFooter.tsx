@@ -46,7 +46,7 @@ export function AIOFooter() {
     <footer className="aio-footer">
       <div className="aio-footer__grid">
         <div>
-          <AIOLogo />
+          <AIOLogo variant="footer" />
           <p style={{ marginTop: '1rem', fontSize: '0.8125rem', color: 'rgba(255,255,255,0.55)' }}>
             {aioAppConfig.company.tagline}
           </p>

@@ -51481,3 +51481,40 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Next:** Release + Operations Roadmap driven by pilot evidence — not automatic feature sprint.
 
+---
+
+## 2026-08-16 — Post-Build Refinement 01: AIO public homepage & IA restructure
+
+- **Context:** Founder attached homepage design reference and requested Post-Build Refinement 01 (not Sprint 25). Foundational 24 sprints complete — refine customer-facing public site only: shorter homepage, progressive disclosure, mega menu nav, content relocation without deleting valuable copy or touching backend systems.
+
+- **Topics covered:** Homepage audit; content migration map; new 6-section homepage; Services mega menu + Resources dropdown; mobile expandable nav; `/start-your-business`, `/road-ready`, `/client-portal` routes; service activation respect on cards/mega menu; no fake reviews/metrics; dev language removed from public footer/homepage.
+
+- **Decisions / outcomes:**
+  - Homepage = front door (hero, 6 pathway cards, Road Ready teaser, stage split, command center teaser, final CTA) — removed service strip, 7 intent cards, full roadmap widget, business progression, multi-portal wall, trust testimonial from homepage composition.
+  - Relocated: formation→roll journey → `/start-your-business`; portal panels → `/client-portal`; Road Ready detail → `/road-ready` (intake still `/get-started`).
+  - Nav: Services ▾ · Start Your Business · Road Ready™ · Resources ▾ · About · Contact · Client Login.
+  - Illustrative Road Ready ring labeled Example (72%); no fake social proof.
+
+- **Changes:** `all-in-one-enterprises/src/pages/HomePage.tsx`, new section components, `AIONav.tsx` mega menu, `AIOFooter.tsx`, `publicNavigation.ts`, `homePathways.ts`, three new public pages, `aio.css` refinement styles, `docs/refinement/HOMEPAGE_CONTENT_MIGRATION.md`, `PUBLIC_INFORMATION_ARCHITECTURE.md`, `POST_BUILD_REFINEMENT_01_REPORT.md`. Manual QA on port 5173 passed.
+
+- **Conventions:** Post-build refinements are IA/UX passes on completed platform — do not restart sprints or duplicate service implementations. Map nav labels to existing `/services/*` routes; respect `serviceActivationLaunch.ts`.
+
+---
+
+## 2026-08-16 — Post-Build Refinement 02: AIO brand tagline + approved logo lockup
+
+- **Context:** Founder provided approved logo PNG (Supabase live-preview) and new brand messaging after Refinement 01 homepage IA ship. Targeted branding only — no homepage restructure, no nav IA changes, no backend.
+
+- **Brand updates:**
+  - Tagline: **WHERE BUSINESS MEETS THE ROAD.** (retired *The business office behind the truck* on customer-facing surfaces)
+  - Hero description: approved paragraph about trucking business behind the wheel + formation through freight
+  - Hero hierarchy: legal name eyebrow → tagline H1 (two-line) → description → existing Refinement 01 CTAs
+
+- **Logo:** `public/brand/aio-logo-lockup.png` (1672×941 approved source); `AIOLogo.tsx` renders full horizontal lockup with `max-height` + `width: auto` (header + footer variant); alt `All In One Enterprises Inc.`; shared across nav, auth, portal, office layouts.
+
+- **Canonical config:** `appConfig.ts` — `tagline`, `heroTaglineLines`, `brandDescription`, `assets.logoLockup`
+
+- **Customer-facing replacements:** HeroSection, HomePage/AboutPage metadata, index.html meta, footer tagline via config, AIO README. Internal refinement-01 docs + master blueprints preserved historically.
+
+- **Report:** `docs/refinement/POST_BUILD_REFINEMENT_02_REPORT.md`
+

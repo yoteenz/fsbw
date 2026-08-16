@@ -9,11 +9,8 @@ export function AboutPage() {
       <div className="aio-page-hero">
         <div className="aio-container">
           <p className="aio-page-hero__breadcrumb">About Us</p>
-          <h1 className="aio-page-hero__title">The business office behind the truck</h1>
-          <p className="aio-page-hero__desc">
-            {aioAppConfig.company.legalName} helps trucking entrepreneurs, owner-operators, carriers, fleets, and
-            shippers manage the administrative and operational services surrounding transportation.
-          </p>
+          <h1 className="aio-page-hero__title">{aioAppConfig.company.tagline}</h1>
+          <p className="aio-page-hero__desc">{aioAppConfig.company.brandDescription}</p>
         </div>
       </div>
       <div className="aio-page-content">

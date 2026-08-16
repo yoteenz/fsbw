@@ -9,9 +9,8 @@ import { aioAppConfig } from '../config/appConfig';
 
 export function HomePage() {
   usePageMeta({
-    title: `${aioAppConfig.company.legalName} — The business office behind the truck`,
-    description:
-      'Start your trucking business, stay compliant, dispatch loads, and manage everything from one platform. Permits, formation, insurance, factoring, and brokerage — All In One.',
+    title: `${aioAppConfig.company.legalName} — ${aioAppConfig.company.tagline}`,
+    description: aioAppConfig.company.brandDescription,
   });
 
   return (

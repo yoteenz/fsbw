@@ -4,6 +4,8 @@ import { heroPrimaryCtaHref, heroSecondaryCtaHref, heroTrustItems } from '../dat
 import { AIOButton } from '../components/AIOButton';
 
 export function HeroSection() {
+  const [taglineLine1, taglineLine2] = aioAppConfig.company.heroTaglineLines;
+
   return (
     <>
       <section className="aio-hero" aria-labelledby="aio-hero-heading">
@@ -15,17 +17,13 @@ export function HeroSection() {
         />
         <div className="aio-hero__overlay" aria-hidden="true" />
         <div className="aio-hero__content">
-          <p className="aio-hero__eyebrow">{aioAppConfig.company.tagline.toUpperCase()}</p>
+          <p className="aio-hero__eyebrow">{aioAppConfig.company.legalName}</p>
           <h1 id="aio-hero-heading" className="aio-display-xl aio-hero__headline">
-            THE BUSINESS OFFICE
+            {taglineLine1}
             <br />
-            <em>BEHIND THE TRUCK.</em>
+            <em>{taglineLine2}</em>
           </h1>
-          <p className="aio-hero__sub">
-            Start your trucking business. Stay compliant. Keep your trucks moving. Get paid faster.
-            <br />
-            Everything you need. All in One.
-          </p>
+          <p className="aio-hero__sub">{aioAppConfig.company.brandDescription}</p>
           <div className="aio-hero__actions">
             <Link to={heroPrimaryCtaHref}>
               <AIOButton variant="gold">Start My Business</AIOButton>

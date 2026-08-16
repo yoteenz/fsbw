@@ -395,8 +395,23 @@
 .aio-logo {
   display: flex;
   align-items: center;
-  gap: 0.625rem;
+  flex-shrink: 0;
   color: var(--aio-white);
+}
+
+.aio-logo__lockup {
+  display: block;
+  width: auto;
+  height: auto;
+  max-height: clamp(36px, 9vw, 52px);
+  max-width: min(260px, 52vw);
+  object-fit: contain;
+  object-position: left center;
+}
+
+.aio-logo--footer .aio-logo__lockup {
+  max-height: clamp(32px, 8vw, 44px);
+  max-width: min(220px, 70vw);
 }
 
 .aio-logo__mark {
@@ -483,7 +498,7 @@
 
 .aio-hero__headline {
   color: var(--aio-white);
-  max-width: 14ch;
+  max-width: 18ch;
   margin-bottom: 1.25rem;
 }
 
@@ -495,7 +510,7 @@
 .aio-hero__sub {
   color: rgba(255, 255, 255, 0.8);
   font-size: clamp(0.9375rem, 1.5vw, 1.0625rem);
-  max-width: 36rem;
+  max-width: 38rem;
   margin-bottom: 2rem;
   line-height: 1.65;
 }

@@ -1,6 +1,6 @@
 # All In One Enterprises Inc. — Standalone Application
 
-**ALL IN ONE ENTERPRISES INC.** — The business office behind the truck.
+**ALL IN ONE ENTERPRISES INC.** — Where business meets the road.
 
 This is the **canonical** All In One application (Sprint 22+). It runs independently of the Frontal Slayer repository.
 
