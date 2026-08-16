@@ -29,7 +29,7 @@ export function ForgotPasswordPage() {
       <div className="aio-auth-card">
         <h1>Check your email</h1>
         <p>If an account exists for <strong>{email}</strong>, you will receive a password reset link shortly.</p>
-        <Link to={aioPaths.login} className="aio-btn aio-btn--gold">Back to Sign In</Link>
+        <Link to={aioPaths.login} className="aio-btn aio-btn--gold">Back to Log In</Link>
       </div>
     );
   }
@@ -47,7 +47,7 @@ export function ForgotPasswordPage() {
           {loading ? 'Sending…' : 'Send Reset Link'}
         </button>
       </form>
-      <p className="aio-auth-card__links"><Link to={aioPaths.login}>Back to Sign In</Link></p>
+      <p className="aio-auth-card__links"><Link to={aioPaths.login}>Back to Log In</Link></p>
     </div>
   );
 }

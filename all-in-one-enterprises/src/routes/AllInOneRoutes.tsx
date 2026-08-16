@@ -116,6 +116,7 @@ import { PortalMessagesListPage, PortalConversationDetailPage } from '../pages/p
 import { PortalAppointmentsListPage, PortalAppointmentDetailPage } from '../pages/portal/PortalAppointmentsPages';
 import { SchedulePage } from '../pages/SchedulePage';
 import { aioAppConfig } from '../config/appConfig';
+import { aioPaths } from '../utils/paths';
 import { IconLibraryDebugPage } from '../pages/debug/IconLibraryDebugPage';
 
 const OfficeRoutesLazy = lazy(() => import('../office/routes/OfficeRoutes'));
@@ -150,7 +151,8 @@ export default function AllInOneRoutes() {
       <Routes>
         <Route element={<AIOAuthLayout />}>
           <Route path="login" element={<LoginPage />} />
-          <Route path="sign-up" element={<SignUpPage />} />
+          <Route path="signup" element={<SignUpPage />} />
+          <Route path="sign-up" element={<Navigate to={aioPaths.signUp} replace />} />
           <Route path="forgot-password" element={<ForgotPasswordPage />} />
           <Route path="reset-password" element={<ResetPasswordPage />} />
           <Route path="verify-email" element={<VerifyEmailPage />} />

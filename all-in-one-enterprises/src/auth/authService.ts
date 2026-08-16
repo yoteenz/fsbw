@@ -33,6 +33,9 @@ export interface SignUpPayload {
   password: string;
   businessName: string;
   accountType: SignUpAccountType;
+  phone?: string;
+  gettingStarted?: boolean;
+  marketingOptIn?: boolean;
 }
 
 function mapOrgType(accountType: SignUpAccountType): AioOrgType {
@@ -75,6 +78,7 @@ async function createOrganizationForUser(userId: string, payload: SignUpPayload)
       email: payload.email,
       first_name: payload.firstName || null,
       last_name: payload.lastName || null,
+      phone: payload.phone || null,
     });
   }
 
@@ -94,6 +98,8 @@ export async function signUp(payload: SignUpPayload): Promise<{ user: User | nul
         last_name: payload.lastName,
         business_name: payload.businessName,
         account_type: payload.accountType,
+        getting_started: payload.gettingStarted ?? false,
+        marketing_opt_in: payload.marketingOptIn ?? false,
       },
     },
   });

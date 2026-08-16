@@ -50,8 +50,12 @@ export function AIOFooter() {
           <p style={{ marginTop: '1rem', fontSize: '0.8125rem', color: 'rgba(255,255,255,0.55)' }}>
             {aioAppConfig.company.tagline}
           </p>
-          <Link to={aioAppConfig.routes.clientLogin} className="aio-footer__link" style={{ display: 'inline-block', marginTop: '0.75rem' }}>
-            Client Login
+          <Link to={aioPaths.login} className="aio-footer__link" style={{ display: 'inline-block', marginTop: '0.75rem' }}>
+            Log In
+          </Link>
+          {' · '}
+          <Link to={aioPaths.signUp} className="aio-footer__link">
+            Sign Up
           </Link>
         </div>
         {footerGroups.map((group) => (

@@ -1,8 +1,9 @@
-import { FormEvent, useState } from 'react';
+import { FormEvent, useMemo, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { signIn } from '../../auth/authService';
+import { returnUrlFromSearch, sanitizeReturnUrl } from '../../auth/returnUrl';
 import { useAIOAuth } from '../../auth/AIOAuthProvider';
-import { isBackendMode } from '../../config/dataMode';
+import { isBackendMode, isDemoMode } from '../../config/dataMode';
 import { aioPaths } from '../../utils/paths';
 
 export function LoginPage() {
@@ -14,13 +15,17 @@ export function LoginPage() {
   const location = useLocation();
   const { refresh } = useAIOAuth();
 
-  const from = (location.state as { from?: string; office?: boolean } | null)?.from;
-  const office = (location.state as { office?: boolean } | null)?.office;
+  const state = location.state as { from?: string; office?: boolean; return?: string } | null;
+  const returnUrl = useMemo(
+    () => sanitizeReturnUrl(state?.return ?? state?.from ?? returnUrlFromSearch(location.search), aioPaths.portal),
+    [location.search, state?.from, state?.return],
+  );
+  const office = state?.office;
 
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!isBackendMode()) {
-      setError('Sign in requires backend mode. Use Demo Mode or configure VITE_AIO_SUPABASE_* credentials.');
+      setError('Log in requires backend mode. Use Demo Mode or configure VITE_AIO_SUPABASE_* credentials.');
       return;
     }
     setLoading(true);
@@ -32,18 +37,22 @@ export function LoginPage() {
       return;
     }
     if (!session) {
-      setError('Sign in failed.');
+      setError('Log in failed.');
       return;
     }
     await refresh();
     if (office) navigate(aioPaths.office);
-    else navigate(from ?? aioPaths.portal);
+    else navigate(returnUrl);
   };
+
+  const signUpHref = `${aioPaths.signUp}?return=${encodeURIComponent(returnUrl)}`;
 
   return (
     <div className="aio-auth-card">
-      <h1>Sign In</h1>
-      <p className="aio-auth-card__sub">Access your All In One client portal</p>
+      <h1>Welcome back</h1>
+      <p className="aio-auth-card__sub">
+        Log in to continue managing your business, services, documents, and Road Ready™ progress.
+      </p>
       <form onSubmit={onSubmit} className="aio-auth-form">
         <label>
           Email
@@ -55,19 +64,23 @@ export function LoginPage() {
         </label>
         {error && <p className="aio-auth-form__error" role="alert">{error}</p>}
         <button type="submit" className="aio-btn aio-btn--gold aio-btn--block" disabled={loading}>
-          {loading ? 'Signing in…' : 'Sign In'}
+          {loading ? 'Logging In…' : 'Log In'}
         </button>
       </form>
       <p className="aio-auth-card__links">
-        <Link to={aioPaths.forgotPassword}>Forgot password?</Link>
-        {' · '}
-        <Link to={aioPaths.signUp}>Create account</Link>
+        <Link to={aioPaths.forgotPassword}>Forgot Password?</Link>
       </p>
-      { !isBackendMode() && (
+      <div className="aio-auth-card__divider">
+        <p className="aio-auth-card__divider-label">New to All In One?</p>
+        <Link to={signUpHref} className="aio-btn aio-btn--outline-gold aio-btn--block">
+          Create Account
+        </Link>
+      </div>
+      {isDemoMode() ? (
         <p className="aio-prototype-note">
           <Link to={aioPaths.portal}>Enter Demo Portal →</Link> (no account required in demo mode)
         </p>
-      )}
+      ) : null}
     </div>
   );
 }

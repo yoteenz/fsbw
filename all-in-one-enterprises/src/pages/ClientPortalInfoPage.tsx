@@ -24,11 +24,19 @@ export function ClientPortalInfoPage() {
           </p>
           <div className="aio-page-hero__actions aio-cta-row">
             <AIOButton
-              to={aioAppConfig.routes.clientLogin}
+              to={aioPaths.login}
               variant="gold"
               className="aio-btn--block aio-cta-row__link"
             >
-              Client Login
+              Log In
+            </AIOButton>
+            <AIOButton
+              to={aioPaths.signUp}
+              variant="outline-gold"
+              className="aio-btn--block aio-cta-row__link"
+              showArrow
+            >
+              Sign Up
             </AIOButton>
           </div>
         </div>
@@ -48,12 +56,20 @@ export function ClientPortalInfoPage() {
           </p>
           <div className="aio-cta-row">
             <AIOButton
-              to={aioAppConfig.routes.clientLogin}
+              to={aioPaths.login}
               variant="gold"
               className="aio-cta-row__link"
               showArrow
             >
-              Sign In to Portal
+              Log In
+            </AIOButton>
+            <AIOButton
+              to={aioPaths.signUp}
+              variant="outline-gold"
+              className="aio-cta-row__link"
+              showArrow
+            >
+              Sign Up
             </AIOButton>
             <AIOButton
               to={aioPaths.contact}

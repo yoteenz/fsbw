@@ -4,7 +4,7 @@ import { aioAppConfig } from '../config/appConfig';
 import { resourcesMenuLinks, servicesMegaMenu, navLinkActivationBadge } from '../data/publicNavigation';
 import { aioPaths } from '../utils/paths';
 import { AIOLogo } from './AIOLogo';
-import { AIOButton } from './AIOButton';
+import { PublicAuthNav } from './auth/PublicAuthNav';
 
 type DropdownId = 'services' | 'resources' | null;
 
@@ -184,9 +184,10 @@ export function AIONav() {
             </svg>
             {aioAppConfig.contact.phone}
           </a>
-          <AIOButton to={aioAppConfig.routes.clientLogin} variant="gold" size="sm">
-            Client Login
-          </AIOButton>
+          <PublicAuthNav variant="mobile-header" />
+          <div className="aio-header__auth-desktop">
+            <PublicAuthNav variant="desktop" />
+          </div>
           <button
             type="button"
             className="aio-header__menu-btn"
@@ -280,9 +281,7 @@ export function AIONav() {
           Contact
         </Link>
         <div className="aio-mobile-nav__login">
-          <AIOButton to={aioAppConfig.routes.clientLogin} variant="gold" size="sm" className="aio-mobile-nav__login-btn" onClick={closeAll}>
-            Client Login
-          </AIOButton>
+          <PublicAuthNav variant="mobile-menu" onNavigate={closeAll} />
         </div>
       </nav>
     </header>

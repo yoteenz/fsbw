@@ -35,7 +35,7 @@ export const aioAppConfig = {
   routes: {
     base: '',
     portal: '/portal',
-    clientLogin: '/portal',
+    clientLogin: '/login',
   },
   assets: {
     /** Homepage hero — approved All In One branded truck (Refinement 03B) */
