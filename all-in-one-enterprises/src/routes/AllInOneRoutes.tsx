@@ -15,6 +15,10 @@ import { RequestCallbackPage } from '../pages/RequestCallbackPage';
 import { PublicQuotePage } from '../pages/PublicQuotePage';
 import { RoadmapPage } from '../pages/RoadmapPage';
 import { StartYourBusinessPage } from '../pages/StartYourBusinessPage';
+import { StartBusinessBuildPage } from '../pages/start-business/StartBusinessBuildPage';
+import { StartBusinessRegisterPage } from '../pages/start-business/StartBusinessRegisterPage';
+import { StartBusinessActivatePage } from '../pages/start-business/StartBusinessActivatePage';
+import { StartBusinessRollPage } from '../pages/start-business/StartBusinessRollPage';
 import { ClientPortalInfoPage } from '../pages/ClientPortalInfoPage';
 import { RoadReadyPublicPage } from '../pages/RoadReadyPublicPage';
 import { FactoringPage } from '../pages/FactoringPage';
@@ -180,6 +184,10 @@ export default function AllInOneRoutes() {
           <Route path="roadmap" element={<RoadmapPage />} />
           <Route path="road-ready" element={<RoadReadyPublicPage />} />
           <Route path="start-your-business" element={<StartYourBusinessPage />} />
+          <Route path="start-your-business/build" element={<StartBusinessBuildPage />} />
+          <Route path="start-your-business/register" element={<StartBusinessRegisterPage />} />
+          <Route path="start-your-business/activate" element={<StartBusinessActivatePage />} />
+          <Route path="start-your-business/roll" element={<StartBusinessRollPage />} />
           <Route path="client-portal" element={<ClientPortalInfoPage />} />
           <Route path="debug/icon-library" element={<IconLibraryDebugPage />} />
         </Route>

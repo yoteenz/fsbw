@@ -1,118 +1,82 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { mockBusinessSteps } from '../data/mockRoadmap';
-import { mockOperateGrowSteps } from '../data/mockFactoring';
 import { AIOSectionHeader } from '../components/AIOSectionHeader';
 import { AIOButton } from '../components/AIOButton';
-import { AIOStartupMilestones } from '../components/AIOStartupMilestones';
+import { ServiceJourneyHeader } from '../components/journey/ServiceJourneyHeader';
+import { ServiceJourneyStepper } from '../components/journey/ServiceJourneyStepper';
+import { ServiceJourneyStepDetail } from '../components/journey/ServiceJourneyStepDetail';
 import { usePageMeta } from '../hooks/usePageMeta';
+import { useStartBusinessJourney } from '../journeys/useStartBusinessJourney';
+import type { JourneyStepId } from '../journeys/journeyTypes';
 import { aioAppConfig } from '../config/appConfig';
-import { aioGetStarted, aioPaths } from '../utils/paths';
+import { aioPaths } from '../utils/paths';
 
 export function StartYourBusinessPage() {
+  const [selectedStepId, setSelectedStepId] = useState<JourneyStepId | undefined>();
+  const view = useStartBusinessJourney(selectedStepId);
+  const selectedStep = view.steps.find((s) => s.def.id === view.selectedStepId) ?? view.steps[0];
+
   usePageMeta({
     title: `Start Your Business — ${aioAppConfig.company.legalName}`,
     description:
-      'From formation through your first load — business formation, authority, insurance, registration, compliance, and getting road-ready with All In One.',
+      'Interactive startup journey — build, authorize, protect, register, activate, and roll with real progress tracking.',
   });
 
   return (
     <>
-      <div className="aio-page-hero aio-page-hero--elevated">
+      <div className="aio-page-hero aio-page-hero--elevated aio-page-hero--compact">
         <div className="aio-container">
           <p className="aio-page-hero__breadcrumb">Start Your Business</p>
           <h1 className="aio-page-hero__title">From formation to freight</h1>
           <p className="aio-page-hero__desc">
-            The full startup journey — build, authorize, protect, register, activate, and roll. Use Road Ready™ for a
-            personalized roadmap, or begin with the services you need today.
+            Click any milestone to start or continue. Progress reflects your Road Ready requirements and service
+            statuses — not demo placeholders.
           </p>
           <div className="aio-page-hero__actions aio-cta-row">
             <AIOButton
-              to={aioGetStarted('start-business')}
+              to={view.nextAction?.ctaRoute ?? `${aioPaths.startYourBusiness}/build`}
               variant="gold"
-              className="aio-btn--block aio-cta-row__link"
-            >
-              Start My Business
-            </AIOButton>
-            <AIOButton
-              to={aioPaths.roadReadyPublic}
-              variant="outline-gold"
               className="aio-btn--block aio-cta-row__link"
               showArrow
             >
+              {view.progress.completedCount > 0 ? 'Continue Where I Left Off' : 'Start My Business'}
+            </AIOButton>
+            <AIOButton to={aioPaths.roadReadyPublic} variant="outline-gold" className="aio-btn--block aio-cta-row__link" showArrow>
               Get My Roadmap
             </AIOButton>
           </div>
         </div>
       </div>
-      <AIOStartupMilestones />
+
       <div className="aio-page-content">
         <div className="aio-container">
-          <section className="aio-page-section">
-            <AIOSectionHeader
-              align="center"
-              eyebrow="Start Your Business"
-              title="Your milestone path"
-              subtitle="How All In One may guide new trucking entrepreneurs through each stage."
+          <ServiceJourneyHeader view={view} />
+
+          <section className="aio-journey-workspace" aria-label="Interactive startup milestones">
+            <ServiceJourneyStepper
+              steps={view.steps}
+              selectedStepId={view.selectedStepId}
+              onSelect={(id) => setSelectedStepId(id)}
             />
-            <div className="aio-steps" style={{ marginTop: '2rem' }}>
-              {mockBusinessSteps.map((step) => (
-                <article key={step.step} className="aio-step">
-                  <div className="aio-step__num">{step.step}</div>
-                  <h3 className="aio-step__title">{step.title}</h3>
-                  <p className="aio-step__sub">{step.subtitle}</p>
-                </article>
-              ))}
-            </div>
+            <ServiceJourneyStepDetail step={selectedStep} />
           </section>
 
           <section className="aio-page-section">
             <AIOSectionHeader
               align="center"
-              eyebrow="Related services"
-              title="Explore startup & compliance services"
-              subtitle="Formation, authority, insurance, permits, and registration — each with dedicated service pages."
+              eyebrow="Need something specific?"
+              title="Additional startup services"
+              subtitle="Jump directly to a service not shown in your current milestone path."
             />
             <div className="aio-start-links">
-              <Link to={aioPaths.businessFormation} className="aio-start-links__item">
-                Business Formation
-              </Link>
-              <Link to={aioPaths.serviceSlug('operating-authority-assistance')} className="aio-start-links__item">
-                Operating Authority
-              </Link>
-              <Link to={aioPaths.insurance} className="aio-start-links__item">
-                Trucking Insurance
-              </Link>
               <Link to={aioPaths.permitting} className="aio-start-links__item">
-                Permits & Compliance
+                Permits & Compliance →
               </Link>
-            </div>
-          </section>
-
-          <section className="aio-page-section">
-            <AIOSectionHeader
-              align="center"
-              eyebrow="Operate & Grow"
-              title="After you're rolling"
-              subtitle="Optional operational services — dispatch, factoring, and brokerage support cash flow and growth."
-            />
-            <div className="aio-steps aio-steps--grow" style={{ marginTop: '1.5rem' }}>
-              {mockOperateGrowSteps.map((step) => (
-                <article key={step.step} className="aio-step">
-                  <div className="aio-step__num">{step.step}</div>
-                  <h3 className="aio-step__title">{step.title}</h3>
-                  <p className="aio-step__sub">{step.subtitle}</p>
-                </article>
-              ))}
-            </div>
-            <div className="aio-start-links" style={{ marginTop: '2rem' }}>
-              <Link to={aioPaths.dispatching} className="aio-start-links__item">
-                Dispatching
+              <Link to={aioPaths.portalRenewals} className="aio-start-links__item">
+                Renewals →
               </Link>
-              <Link to={aioPaths.factoring} className="aio-start-links__item">
-                Factoring
-              </Link>
-              <Link to={aioPaths.brokerage} className="aio-start-links__item">
-                Brokerage
+              <Link to={aioPaths.portalCalendar} className="aio-start-links__item">
+                Compliance Calendar →
               </Link>
             </div>
           </section>

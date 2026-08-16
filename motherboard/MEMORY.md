@@ -51722,3 +51722,43 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Not changed:** Card typography/colors/routes, Trucking Insurance design, black icons + gold titles, no AI regeneration, no object-fit cover.
 
+---
+
+## 2026-08-16 — POST-BUILD REFINEMENT 03F.2: Full expanded icon library quality pass (24 icons)
+
+- **Context:** Required complete production audit of all 24 expanded-library icons from three 03F master sheets — not limited to homepage six.
+
+- **Critical fix — swapped source archives:** Compliance artwork was under `platform/_source-master-finance-platform.png` and finance/platform under `compliance/_source-master-compliance-business.png`. Updated `extract-platform-icon-sheets.py` to cross-reference correct visual content. Re-extracted all 24 expanded icons with corrected semantic mapping.
+
+- **Neighbor contamination fix:** Added largest connected-component bbox isolation in `icon_normalize_lib.py` (drops stray master-sheet fragments, e.g. route tracking).
+
+- **Audit tooling:** `scripts/audit-expanded-icon-library.py` — per-icon edge/center/transparency/contamination QA; outputs `docs/design/aio-expanded-icon-audit.json` + contact sheet. **24/24 PASS.**
+
+- **Registry:** `aioExpandedIconCatalog` with min recommended display sizes (32px default, 40px for detail icons); `AIO_ICON_ASSET_VERSION = '03f2'`.
+
+- **Debug QA route:** `/debug/icon-library` (non-production) — 32/48/64px + dark background previews.
+
+- **Docs:** `docs/design/AIO_ICON_LIBRARY.md`; `POST_BUILD_REFINEMENT_03F_REPORT.md` §03F.2 with full completion table.
+
+- **Protections:** Homepage 03E/03E.1 icons + Trucking Insurance standalone unchanged; `serviceDispatch` ≠ `operationsDispatch`.
+
+---
+
+## 2026-08-16 — POST-BUILD REFINEMENT 06: Interactive Service Journeys (Start Your Business)
+
+- **Context:** Transform Start Your Business from static visual storytelling into actionable guided workflows — clickable milestones (BUILD→ROLL), real progress from Road Ready, back navigation, reusable journey engine.
+
+- **Journey engine (`src/journeys/`):** `journeyTypes.ts`, `startBusinessJourneyConfig.ts`, `journeyStatusMap.ts`, `journeyContext.ts` (URL `?journey=start-your-business&step=`), `useStartBusinessJourney.ts`. Progress derives from Road Ready item statuses; non-applicable excluded; ROLL optional. Complements existing `ServiceJourney` in workflowTypes (not duplicate Road Ready engine).
+
+- **UI components (`src/components/journey/`):** `ServiceJourneyHeader` (progress bar, attention banner, next action), `ServiceJourneyStepper` (compact clickable 6-step nav), `ServiceJourneyStepDetail`, `JourneyBackNav`, `StartBusinessCtaButton` (homepage Start vs Continue), `ActiveJourneysPanel` (portal widget).
+
+- **Pages/routes:** Refactored `StartYourBusinessPage.tsx` — removed duplicate `AIOStartupMilestones` + static six-card grid; hero + progress + stepper + detail panel. New sub-routes: `/start-your-business/build|register|activate|roll`. BUILD subflow: LLC / INC / Already Have Business. Service catalog shows `JourneyBackNav` when journey context present.
+
+- **Homepage/portal:** `HeroSection` + `CustomerStageSection` use smart `StartBusinessCtaButton`. `PortalPage` includes `ActiveJourneysPanel` when progress/attention exists.
+
+- **Docs:** `docs/journeys/SERVICE_JOURNEY_ARCHITECTURE.md`, `docs/journeys/START_YOUR_BUSINESS_JOURNEY.md`, `docs/refinement/POST_BUILD_REFINEMENT_06_REPORT.md`.
+
+- **QA:** Build PASS; `journey.test.ts` 4/4 PASS; manual QA 1280px — milestones clickable, BUILD subflow, AUTHORIZE routes to operating authority with journey context, no duplicate sections.
+
+- **Follow-ups:** Additional journey configs (bookkeeping, insurance intake, DOT audit) — engine ready; demo persona presets optional.
+

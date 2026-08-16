@@ -4179,7 +4179,10 @@
 .aio-tracker-phase--current { font-weight: 700; }
 .aio-tracker-phase__icon { width: 1.25rem; text-align: center; color: var(--aio-gold, #c9a227); }
 .aio-journey-workflows { list-style: none; margin: 0.5rem 0 0; padding: 0; }
-.aio-journey-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem 0; border-bottom: 1px solid #f3f4f6; }
+.aio-journey-item { display: flex; align-items: flex-start; justify-content: space-between; gap: 0.75rem; padding: 0.75rem 0; border-bottom: 1px solid #f3f4f6; }
+.aio-journey-item__main { flex: 1; min-width: 0; }
+.aio-journey-item__title { font-weight: 700; text-decoration: none; color: inherit; }
+.aio-journey-item__meta { margin: 0.25rem 0 0.5rem; font-size: 0.8125rem; color: #6b7280; }
 .aio-journey-item.is-locked { opacity: 0.55; }
 .aio-filter-row { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-bottom: 1rem; }
 .aio-chip { padding: 0.35rem 0.65rem; border: 1px solid #d1d5db; border-radius: 999px; background: #fff; font-size: 0.75rem; cursor: pointer; }
@@ -5400,5 +5403,374 @@
 .aio-icon-debug-card__path code,
 .aio-icon-debug-card__key code {
   font-size: 0.6875rem;
+}
+
+/* Service journey — Refinement 06 */
+.aio-page-hero--compact .aio-page-hero__title {
+  font-size: clamp(1.75rem, 4vw, 2.25rem);
+}
+
+.aio-journey-header {
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  border: 1px solid var(--aio-gray-200);
+  border-radius: var(--aio-radius-lg);
+  background: var(--aio-white);
+}
+
+.aio-journey-header__top {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+@media (min-width: 768px) {
+  .aio-journey-header__top {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+}
+
+.aio-journey-header__eyebrow {
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--aio-gold-text);
+  margin-bottom: 0.25rem;
+}
+
+.aio-journey-header__title {
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.aio-journey-header__progress-label {
+  font-size: 0.6875rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--aio-gray-600);
+}
+
+.aio-journey-header__progress-value {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--aio-gold-text);
+}
+
+.aio-journey-header__progress-meta {
+  font-size: 0.8125rem;
+  color: var(--aio-gray-800);
+}
+
+.aio-journey-header__bar {
+  margin-top: 0.5rem;
+  height: 0.375rem;
+  background: var(--aio-gray-200);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.aio-journey-header__bar-fill {
+  display: block;
+  height: 100%;
+  background: var(--aio-gold-text);
+  border-radius: 999px;
+  transition: width 0.3s ease;
+}
+
+.aio-journey-attention {
+  margin-bottom: 1rem;
+  padding: 0.875rem 1rem;
+  border-left: 3px solid var(--aio-gold-text);
+  background: rgba(212, 160, 23, 0.06);
+}
+
+.aio-journey-attention__title {
+  font-weight: 700;
+  font-size: 0.875rem;
+  margin-bottom: 0.35rem;
+}
+
+.aio-journey-attention__list {
+  margin: 0;
+  padding-left: 1.1rem;
+  font-size: 0.875rem;
+}
+
+.aio-journey-next__label {
+  font-size: 0.6875rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--aio-gray-600);
+}
+
+.aio-journey-next__title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  margin: 0.25rem 0;
+}
+
+.aio-journey-next__desc {
+  font-size: 0.875rem;
+  color: var(--aio-gray-800);
+  margin-bottom: 0.75rem;
+}
+
+.aio-journey-workspace {
+  display: grid;
+  gap: 1.25rem;
+  margin-bottom: 2.5rem;
+}
+
+@media (min-width: 1024px) {
+  .aio-journey-workspace {
+    grid-template-columns: minmax(220px, 280px) 1fr;
+    align-items: start;
+  }
+}
+
+.aio-journey-stepper__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
+}
+
+@media (min-width: 640px) {
+  .aio-journey-stepper__list {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .aio-journey-stepper__list {
+    grid-template-columns: 1fr;
+  }
+}
+
+.aio-journey-stepper__btn {
+  width: 100%;
+  text-align: left;
+  padding: 0.75rem;
+  border: 1px solid var(--aio-gray-200);
+  border-radius: var(--aio-radius);
+  background: var(--aio-white);
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.aio-journey-stepper__btn.is-selected,
+.aio-journey-stepper__btn.is-current {
+  border-color: var(--aio-gold-text);
+  box-shadow: 0 0 0 1px rgba(212, 160, 23, 0.25);
+}
+
+.aio-journey-stepper__btn.is-complete {
+  border-color: rgba(26, 127, 55, 0.35);
+}
+
+.aio-journey-stepper__num {
+  display: block;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: var(--aio-gold-text);
+}
+
+.aio-journey-stepper__title {
+  display: block;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.aio-journey-stepper__status {
+  display: block;
+  font-size: 0.625rem;
+  color: var(--aio-gray-600);
+  margin-top: 0.15rem;
+}
+
+.aio-journey-detail {
+  padding: 1.25rem;
+  border: 1px solid var(--aio-gray-200);
+  border-radius: var(--aio-radius-lg);
+  background: var(--aio-white);
+}
+
+.aio-journey-detail.is-current {
+  border-color: rgba(212, 160, 23, 0.45);
+}
+
+.aio-journey-detail__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.aio-journey-detail__num {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--aio-gold-text);
+}
+
+.aio-journey-detail__title {
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.aio-journey-detail__subtitle {
+  font-size: 0.875rem;
+  color: var(--aio-gray-800);
+}
+
+.aio-journey-detail__status {
+  margin-left: auto;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--aio-gold-text);
+}
+
+.aio-journey-detail__desc {
+  font-size: 0.875rem;
+  line-height: 1.55;
+  margin-bottom: 0.75rem;
+}
+
+.aio-journey-detail__subprogress {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+
+.aio-journey-substeps {
+  list-style: none;
+  margin: 0 0 1rem;
+  padding: 0;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.aio-journey-substeps__item {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: center;
+  padding: 0.75rem;
+  border: 1px solid var(--aio-gray-200);
+  border-radius: var(--aio-radius);
+}
+
+.aio-journey-substeps__label {
+  font-weight: 700;
+  font-size: 0.8125rem;
+}
+
+.aio-journey-substeps__desc {
+  font-size: 0.75rem;
+  color: var(--aio-gray-800);
+}
+
+.aio-journey-substeps__status {
+  font-size: 0.625rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--aio-gold-text);
+}
+
+.aio-journey-substeps__cta {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  color: var(--aio-gold-text);
+}
+
+.aio-journey-back__link {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--aio-gold-text);
+}
+
+.aio-journey-choice-grid {
+  display: grid;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .aio-journey-choice-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.aio-journey-choice__title {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.aio-journey-choice__desc {
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+  min-height: 3rem;
+}
+
+.aio-journey-disclaimer {
+  font-size: 0.75rem;
+  color: var(--aio-gray-600);
+}
+
+.aio-journey-roll-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 640px) {
+  .aio-journey-roll-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .aio-journey-roll-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.aio-journey-roll-card__eyebrow {
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--aio-gold-text);
+  margin-bottom: 0.25rem;
+}
+
+.aio-journey-roll-card__title {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 0.35rem;
+}
+
+.aio-journey-roll-card__desc {
+  font-size: 0.875rem;
+  margin-bottom: 0.75rem;
+}
+
+.aio-journey-roll-card__cta {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--aio-gold-text);
 }
 

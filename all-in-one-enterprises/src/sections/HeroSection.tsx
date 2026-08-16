@@ -1,6 +1,7 @@
 import { aioAppConfig } from '../config/appConfig';
-import { heroPrimaryCtaHref, heroSecondaryCtaHref, heroTrustItems } from '../data/homePathways';
+import { heroSecondaryCtaHref, heroTrustItems } from '../data/homePathways';
 import { AIOButton } from '../components/AIOButton';
+import { StartBusinessCtaButton } from '../components/journey/StartBusinessCtaButton';
 
 export function HeroSection() {
   const [taglineLine1, taglineLine2] = aioAppConfig.company.heroTaglineLines;
@@ -28,13 +29,7 @@ export function HeroSection() {
             </h1>
             <p className="aio-hero__sub">{aioAppConfig.company.brandDescription}</p>
             <div className="aio-hero__actions aio-cta-row">
-              <AIOButton
-                to={heroPrimaryCtaHref}
-                variant="gold"
-                className="aio-btn--block aio-cta-row__link"
-              >
-                Start My Business
-              </AIOButton>
+              <StartBusinessCtaButton variant="gold" className="aio-btn--block aio-cta-row__link" />
               <AIOButton
                 to={heroSecondaryCtaHref}
                 variant="outline-gold"

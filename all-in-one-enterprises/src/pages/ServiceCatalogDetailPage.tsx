@@ -1,8 +1,10 @@
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useSearchParams } from 'react-router-dom';
 import { getServiceBySlug, getServicesByDivision, isDivisionSlug, divisionMeta, type ServiceDivision } from '../data/services';
 import { fulfillmentDisclosure, getCatalogServiceBySlug } from '../services/catalog';
 import { useServicePlan } from '../components/AIOServicePlanBar';
 import { AIOButton } from '../components/AIOButton';
+import { JourneyBackNav } from '../components/journey/JourneyBackNav';
+import { isInStartBusinessJourney } from '../journeys/journeyContext';
 import { aioPaths } from '../utils/paths';
 import { servicePageMeta } from '../data/mockServices';
 import { useDemoStore } from '../demo/useDemoStore';
@@ -15,6 +17,8 @@ type Props = {
 
 export function ServiceCatalogDetailPage({ slug: slugProp }: Props) {
   const { serviceSlug } = useParams<{ serviceSlug: string }>();
+  const [searchParams] = useSearchParams();
+  const showJourneyBack = isInStartBusinessJourney(searchParams);
   const slug = slugProp ?? serviceSlug ?? '';
   const { add, items } = useServicePlan();
   const store = useDemoStore();
@@ -68,6 +72,11 @@ export function ServiceCatalogDetailPage({ slug: slugProp }: Props) {
 
   return (
     <>
+      {showJourneyBack ? (
+        <div className="aio-container" style={{ paddingTop: '1rem' }}>
+          <JourneyBackNav />
+        </div>
+      ) : null}
       <div className="aio-page-hero">
         <div className="aio-container">
           <p className="aio-page-hero__breadcrumb">

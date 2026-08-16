@@ -13,6 +13,7 @@ import {
   RoadReadyHero,
   UpcomingList,
 } from '../components/CommandCenterComponents';
+import { ActiveJourneysPanel } from '../components/journey/ActiveJourneysPanel';
 import { aioPaths } from '../utils/paths';
 
 export function PortalPage() {
@@ -43,6 +44,7 @@ export function PortalPage() {
 
       <div className="aio-cc-home-grid">
         <div className="aio-cc-home-main">
+          <ActiveJourneysPanel />
           <RoadReadyHero view={view} />
           <BusinessHealthGrid view={view} />
           <CurrentLoadHero view={view} />

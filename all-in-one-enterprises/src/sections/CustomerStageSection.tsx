@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { aioPaths } from '../utils/paths';
 import { AIOSectionHeader } from '../components/AIOSectionHeader';
-import { AIOButton } from '../components/AIOButton';
+import { StartBusinessCtaButton } from '../components/journey/StartBusinessCtaButton';
 
 export function CustomerStageSection() {
   return (
@@ -15,9 +15,7 @@ export function CustomerStageSection() {
             <p className="aio-stage-card__desc">
               From formation to your first load, we&apos;ll help you understand what comes next.
             </p>
-            <AIOButton to={aioPaths.startYourBusiness} variant="gold" showArrow>
-              Start My Business
-            </AIOButton>
+            <StartBusinessCtaButton variant="gold" showArrow />
           </article>
           <article className="aio-stage-card aio-stage-card--operate">
             <p className="aio-stage-card__eyebrow">Already operating?</p>
