@@ -1,5 +1,8 @@
 import { aioGetStarted, aioPaths } from '../utils/paths';
 import type { AioIntentCard } from '../types';
+import { aioServiceDiscoveryIcons, AIO_ICON_ASSET_VERSION } from '../config/aioIconRegistry';
+
+const v = (path: string) => `${path}?v=${AIO_ICON_ASSET_VERSION}`;
 
 export type HomePathway = {
   id: string;
@@ -18,7 +21,7 @@ export const homePathways: HomePathway[] = [
     description: 'Form your LLC or INC and get everything you need to hit the road.',
     href: aioPaths.startYourBusiness,
     icon: 'startup',
-    iconSrc: '/brand/icons/services/aio-icon-start-business.png',
+    iconSrc: v(aioServiceDiscoveryIcons.serviceStartBusiness),
     serviceSlug: 'business-formation',
   },
   {
@@ -27,7 +30,7 @@ export const homePathways: HomePathway[] = [
     description: 'Stay legal and avoid expensive fines. We handle the details.',
     href: aioPaths.permitting,
     icon: 'compliance',
-    iconSrc: '/brand/icons/services/aio-icon-permits-compliance.png',
+    iconSrc: v(aioServiceDiscoveryIcons.servicePermitsCompliance),
     serviceSlug: 'permitting',
   },
   {
@@ -36,7 +39,7 @@ export const homePathways: HomePathway[] = [
     description: 'Protect your business with the right coverage at the right price.',
     href: aioPaths.insurance,
     icon: 'insurance',
-    iconSrc: '/brand/icons/services/aio-icon-trucking-insurance.png',
+    iconSrc: v(aioServiceDiscoveryIcons.serviceTruckingInsurance),
     serviceSlug: 'insurance',
   },
   {
@@ -45,7 +48,7 @@ export const homePathways: HomePathway[] = [
     description: 'Professional dispatch. More loads. Better rates. Less hassle.',
     href: aioPaths.dispatching,
     icon: 'dispatch',
-    iconSrc: '/brand/icons/services/aio-icon-dispatch.png',
+    iconSrc: v(aioServiceDiscoveryIcons.serviceDispatch),
     serviceSlug: 'dispatching',
   },
   {
@@ -54,7 +57,7 @@ export const homePathways: HomePathway[] = [
     description: 'Brokerage and shipper solutions to move freight efficiently.',
     href: aioPaths.brokerage,
     icon: 'freight',
-    iconSrc: '/brand/icons/services/aio-icon-move-freight.png',
+    iconSrc: v(aioServiceDiscoveryIcons.serviceMoveFreight),
     serviceSlug: 'brokerage',
   },
   {
@@ -63,7 +66,7 @@ export const homePathways: HomePathway[] = [
     description: 'Factoring solutions designed to help improve cash flow.',
     href: aioPaths.factoring,
     icon: 'factoring',
-    iconSrc: '/brand/icons/services/aio-icon-get-paid-faster.png',
+    iconSrc: v(aioServiceDiscoveryIcons.serviceGetPaidFaster),
     serviceSlug: 'factoring',
   },
 ];

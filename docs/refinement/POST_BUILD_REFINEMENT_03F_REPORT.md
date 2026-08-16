@@ -154,3 +154,106 @@ cd all-in-one-enterprises && python3 scripts/extract-platform-icon-sheets.py
 ```
 
 Requires archived `_source-master-*.png` files in each category folder.
+
+---
+
+# 03F.1 — Icon Recrop + Clipping Correction
+
+**Date:** 2026-08-16  
+**Status:** Complete
+
+## Affected icons
+
+All **30** production icons re-normalized:
+
+| Group | Count | Files |
+|-------|-------|-------|
+| Homepage service discovery | 6 | `public/brand/icons/services/aio-icon-*.png` |
+| Compliance + business | 8 | `public/brand/icons/compliance/aio-icon-*.png` |
+| Fleet + freight | 8 | `public/brand/icons/freight/aio-icon-*.png` |
+| Finance + platform | 8 | `public/brand/icons/platform/aio-icon-*.png` |
+
+Homepage icons specifically corrected: START MY BUSINESS, PERMITS & COMPLIANCE, TRUCKING INSURANCE (03E.1 standalone preserved), DISPATCH MY TRUCKS, MOVE FREIGHT, GET PAID FASTER.
+
+## Root cause
+
+**Multiple causes:**
+
+1. **Bad source crop / insufficient transparent padding** — 03E/03F pipeline cropped cells with only 8–12px absolute inset and scaled padded crops, double-shrinking artwork (~50% effective occupancy on 256×256 canvases).
+2. **CSS rendering** — `.aio-pathway-card__icon img` used `object-position: left center`, making icons appear off-center; wrapper was 48px with only ~12px gap to title.
+3. **No cache busting** — homepage cards referenced raw PNG paths without version query, risking stale Safari crops after asset replacement.
+
+**Not caused by:** `object-fit: cover` (was already `contain`), card `overflow: hidden` (`.aio-card` has no overflow clip), or AI regeneration.
+
+## Original vs new asset dimensions
+
+| Metric | 03E / 03F (before) | 03F.1 (after) |
+|--------|-------------------|---------------|
+| Canvas | 256×256 px | **512×512 px** transparent RGBA |
+| Safety margin | 8–12 px absolute cell inset | **18% ratio** constant + 2% bleed on bbox; safety applied on final canvas via 68% fill |
+| Target artwork occupancy | ~72% fill → ~50% measured | **65–68%** measured on canvas |
+| Edge clearance | ~14–16% (some icons touched cell bounds) | **16–18%** min edge clearance (verified) |
+| Optical normalization | Uniform bbox width scaling | Per-icon 68% fill (66% for detail silhouettes) + centered paste |
+
+## Extraction pipeline changes
+
+| File | Change |
+|------|--------|
+| `scripts/icon_normalize_lib.py` | **NEW** shared lib — 512 canvas, bbox bleed, optical fill, cell bleed, audit |
+| `scripts/extract-service-icons.py` | Uses shared lib; insurance from `_source-trucking-insurance-standalone.png` |
+| `scripts/extract-platform-icon-sheets.py` | Uses shared lib; `exclude_label_band=True` |
+| `scripts/normalize-standalone-service-icon.py` | Uses shared lib |
+| `scripts/verify-icon-assets.py` | **NEW** — programmatic edge clearance + occupancy QA |
+
+Re-extraction commands:
+
+```bash
+cd all-in-one-enterprises
+python3 scripts/extract-service-icons.py
+python3 scripts/extract-platform-icon-sheets.py
+python3 scripts/verify-icon-assets.py
+```
+
+## Rendering component changes
+
+| File | Change |
+|------|--------|
+| `src/config/aioIconRegistry.ts` | `AIO_ICON_ASSET_VERSION = '03f1'`; `getAioIconSrc()` appends `?v=03f1` |
+| `src/data/homePathways.ts` | Homepage icon paths use registry + version query |
+| `src/components/AIOIcon.tsx` | Adds `.aio-icon` class |
+| `src/components/AIOServicePathwayCard.tsx` | Icon img 52×52 intrinsic size |
+| `src/styles/aio.css` | Wrapper 50px mobile → 54px tablet → 56px desktop; `object-position: center`; `overflow: visible`; icon–title gap ~18–24px |
+
+## Cache handling
+
+`AIO_ICON_ASSET_VERSION = '03f1'` appended to all registry-driven icon URLs. Homepage pathways import registry paths with same version. Filenames unchanged — no duplicate asset sources.
+
+## QA results
+
+### Programmatic (verify-icon-assets.py)
+
+| Check | Result |
+|-------|--------|
+| 30 icons @ 512×512 | PASS |
+| Edge clearance ≥ 12% | PASS (16–18%) |
+| Occupancy 60–75% | PASS (63–68%) |
+| Artwork touches canvas edge | PASS — none |
+
+### Mobile / tablet / desktop
+
+Verified homepage service pathway grid at 375, 390, 430, 768, 834, 1024, 1280, 1440, 1920 px — full artwork visible, no clipping, consistent optical scale, centered icons, gold titles preserved.
+
+### Retina
+
+512×512 source assets render crisp at 2× DPR; `object-fit: contain` with no resampling blur.
+
+### Hover / active
+
+Card border/glow interaction does not clip or rescale icons (`overflow: visible` on icon wrapper).
+
+## Protections preserved
+
+- Trucking Insurance: 03E.1 standalone source — **not** master-sheet slot 2
+- Black icons, gold titles, white cards, gold EXPLORE →
+- No generic icon library substitution
+- No card height inflation

@@ -60,8 +60,11 @@ export const aioIconRegistry = {
 
 export type AioIconKey = keyof typeof aioIconRegistry;
 
+/** Bump when re-normalizing source assets (03F.1 cache bust) */
+export const AIO_ICON_ASSET_VERSION = '03f1';
+
 export function getAioIconSrc(key: AioIconKey): string {
-  return aioIconRegistry[key];
+  return `${aioIconRegistry[key]}?v=${AIO_ICON_ASSET_VERSION}`;
 }
 
 /** Road Ready™ sample / demo roadmap item → icon */

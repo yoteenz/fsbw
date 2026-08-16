@@ -14,7 +14,7 @@ export function AIOServicePathwayCard({ pathway }: Props) {
   return (
     <AIOCard className="aio-pathway-card">
       <div className="aio-pathway-card__icon">
-        <img src={pathway.iconSrc} alt="" width={48} height={48} decoding="async" />
+        <img src={pathway.iconSrc} alt="" width={52} height={52} decoding="async" />
       </div>
       <h3 className="aio-pathway-card__title">{pathway.title}</h3>
       <p className="aio-pathway-card__desc">{pathway.description}</p>

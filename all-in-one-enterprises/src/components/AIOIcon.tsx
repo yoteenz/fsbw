@@ -15,7 +15,7 @@ export function AIOIcon({ icon, size = 24, className = '', alt = '' }: Props) {
       alt={alt}
       width={size}
       height={size}
-      className={className}
+      className={`aio-icon${className ? ` ${className}` : ''}`}
       decoding="async"
     />
   );

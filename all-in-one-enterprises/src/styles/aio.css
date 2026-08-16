@@ -337,6 +337,15 @@
   transition: box-shadow var(--aio-transition), transform var(--aio-transition), border-color var(--aio-transition);
 }
 
+.aio-icon {
+  display: block;
+  flex-shrink: 0;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  object-position: center;
+}
+
 .aio-card:hover {
   box-shadow: var(--aio-shadow);
   border-color: rgba(212, 160, 23, 0.25);
@@ -4483,30 +4492,41 @@
 .aio-pathway-card {
   display: flex;
   flex-direction: column;
-  gap: 0.625rem;
+  gap: 0.75rem;
   min-height: 100%;
   padding: 1.5rem !important;
 }
 
 .aio-pathway-card__icon {
-  width: 3rem;
-  height: 3rem;
+  width: 3.125rem;
+  height: 3.125rem;
   flex-shrink: 0;
-  margin-bottom: 0.125rem;
+  overflow: visible;
+  margin-bottom: 0.375rem;
 }
 
 .aio-pathway-card__icon img {
   display: block;
   width: 100%;
   height: 100%;
+  max-width: 100%;
+  max-height: 100%;
   object-fit: contain;
-  object-position: left center;
+  object-position: center;
 }
 
 @media (min-width: 768px) {
   .aio-pathway-card__icon {
-    width: 3.25rem;
-    height: 3.25rem;
+    width: 3.375rem;
+    height: 3.375rem;
+    margin-bottom: 0.5rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .aio-pathway-card__icon {
+    width: 3.5rem;
+    height: 3.5rem;
   }
 }
 
