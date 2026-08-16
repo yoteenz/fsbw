@@ -51279,7 +51279,6 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 ---
 
-<<<<<<< HEAD
 ## 2026-08-16 — All In One Sprint 16: Communications Hub + Appointments
 
 - **Context:** Founder issued Sprint 16 spec — canonical communication layer + appointments connecting CRM, customers, service workflows, divisions, and notifications. Portal messaging must be real; external email/SMS demo/manual only. Remain isolated under `/debug/all-in-one`.
@@ -51292,14 +51291,18 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Spatial Architecture Review:** SKIPPED — communication layer under `/debug/all-in-one`; no Frontal Slayer regression.
 
-=======
-## 2026-08-16 — /all-in-one infinite re-render (Navigate loop)
+---
 
-- **Context:** Founder reported new error on `/all-in-one`: **Debug route failed** · **Too many re-renders.**
+## 2026-08-16 — /all-in-one routing crash (location override + splat fix)
 
-- **Root cause:** `AllInOneRoutes` inner `<Routes>` matched full pathname (`/all-in-one`); index never matched → catch-all `<Navigate to="/all-in-one">` re-navigated same URL every render.
+- **Context:** Founder reported persistent mobile/preview error on `/all-in-one` — red **Debug route failed** screen. Prior fix attempt used `useAllInOneRelativeLocation()` + `<Routes location={…}>` which React Router rejects: pathname must retain parent matched base (`/all-in-one`), not stripped `/` or `/services`.
 
-- **Fix:** `useAllInOneRelativeLocation()` strips `/all-in-one` prefix; catch-all redirects to relative `/`. Applied on expanded Sprint 02–15 route tree.
+- **Root cause:** (1) Duplicate parent routes `/all-in-one` + `/all-in-one/*` broke splat-relative nesting. (2) `useAllInOneRelativeLocation()` passed synthetic location without `/all-in-one` prefix → invariant throw. (3) Catch-all `<Navigate to="/">` could bounce to site root.
 
-- **Verified:** `preview.fsbw-dev.com/all-in-one` + `/services` load without error.
->>>>>>> 2160d7daafb6e81ca4ffa71a35c84b2de55cd11b
+- **Fix:** Removed `useAllInOneRelativeLocation` hook entirely. Parent route is **only** `/all-in-one/*` (no duplicate exact route). Inner `AllInOneRoutes` uses native splat-relative `<Routes>`; catch-all is static `AllInOneNotFound` (Link home, no Navigate). Added **Reload page** button on `DebugRouteErrorBoundary`.
+
+- **Files:** `src/routes/StudioDebugRoutes.tsx`, `src/all-in-one/routes/AllInOneRoutes.tsx`, deleted `src/all-in-one/hooks/useAllInOneRelativeLocation.ts`, `src/pages/debug/DebugRouteErrorBoundary.tsx`.
+
+- **Verified:** `localhost:3001/all-in-one` + `/services` load All In One homepage/services (no red error); `npm run build` pass.
+
+- **Spatial Architecture Review:** SKIPPED — isolated All In One debug shell routing fix.
