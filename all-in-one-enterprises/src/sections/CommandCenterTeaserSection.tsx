@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom';
 import { AIOCommandCenterTeaser } from '../components/AIOCommandCenterTeaser';
 import { AIOSectionHeader } from '../components/AIOSectionHeader';
 import { AIOButton } from '../components/AIOButton';
@@ -15,11 +14,9 @@ export function CommandCenterTeaserSection() {
             subtitle="Track filings, documents, renewals, loads, invoices, and more from your personalized client portal."
           />
           <div className="aio-command-section__cta">
-            <Link to={aioPaths.clientPortalInfo}>
-              <AIOButton variant="outline-gold" showArrow>
-                Explore the Client Portal
-              </AIOButton>
-            </Link>
+            <AIOButton to={aioPaths.clientPortalInfo} variant="outline-gold" showArrow>
+              Explore the Client Portal
+            </AIOButton>
           </div>
         </div>
         <div id="aio-command-heading">

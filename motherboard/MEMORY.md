@@ -51534,3 +51534,17 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Report:** `docs/refinement/POST_BUILD_REFINEMENT_03_REPORT.md`
 
+---
+
+## 2026-08-16 — Post-Build Refinement 03B: AIO homepage hero truck image
+
+- **Context:** Founder supplied approved high-quality branded truck PNG for homepage hero only — after PB-R01/02/03A. No copy/IA/nav/backend changes.
+
+- **Asset:** `public/brand/all-in-one-hero-truck.png` (1774×887); replaces Unsplash stock in `appConfig.assets.heroImage`.
+
+- **Composition:** Left copy column (`.aio-hero__copy`); truck/sunset on right via tuned `background-position` (68% mobile → 78% wide desktop); directional left→right overlay (not full black wash); header alpha 0.94; preload + `fetchpriority="high"` in `index.html`.
+
+- **Unchanged:** Tagline, brand paragraph, CTAs, Refinement 03A gold buttons, all other page imagery.
+
+- **Report:** `docs/refinement/POST_BUILD_REFINEMENT_03B_REPORT.md`
+

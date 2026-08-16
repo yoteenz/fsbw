@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom';
 import { aioPaths } from '../utils/paths';
 import { aioAppConfig } from '../config/appConfig';
 import { AIOButton } from '../components/AIOButton';
@@ -32,16 +31,12 @@ export function AboutPage() {
               Guides, Road Ready™, and service information to help you plan your trucking business journey.
             </p>
             <div className="aio-cta-row">
-              <Link to={aioPaths.roadReadyPublic}>
-                <AIOButton variant="gold" showArrow>
-                  Road Ready™
-                </AIOButton>
-              </Link>
-              <Link to={aioPaths.startYourBusiness}>
-                <AIOButton variant="outline-dark" showArrow>
-                  Start Your Business
-                </AIOButton>
-              </Link>
+              <AIOButton to={aioPaths.roadReadyPublic} variant="gold" showArrow>
+                Road Ready™
+              </AIOButton>
+              <AIOButton to={aioPaths.startYourBusiness} variant="outline-dark" showArrow>
+                Start Your Business
+              </AIOButton>
             </div>
           </section>
         </div>

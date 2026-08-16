@@ -6,8 +6,11 @@
 
 .aio-app {
   --aio-gold: #d4a017;
-  --aio-gold-light: #d4a017;
+  --aio-gold-light: #e0b030;
   --aio-gold-dark: #b8890f;
+  --aio-gold-hover: #e0b030;
+  --aio-gold-active: #a6780d;
+  --aio-focus-ring: rgba(212, 160, 23, 0.55);
   --aio-charcoal: #1a1a1a;
   --aio-surface: #111415;
   --aio-black: #0a0a0a;
@@ -64,7 +67,8 @@
   text-decoration: none;
 }
 
-.aio-app button {
+/* Reset only unstyled buttons — .aio-btn variants carry their own fill/border */
+.aio-app button:not(.aio-btn) {
   font-family: inherit;
   cursor: pointer;
   border: none;
@@ -168,7 +172,7 @@
   outline: 2px solid var(--aio-gold-light, #d4af37);
 }
 
-/* Buttons — Post-Build Refinement 03: solid gold, no glow */
+/* Buttons — Refinement 03/03C: persistent gold default, interaction = shade shift */
 .aio-btn {
   display: inline-flex;
   align-items: center;
@@ -182,59 +186,134 @@
   text-transform: uppercase;
   border-radius: var(--aio-radius);
   border: 1.5px solid transparent;
-  transition: background var(--aio-transition), color var(--aio-transition), border-color var(--aio-transition);
+  font-family: inherit;
+  cursor: pointer;
+  text-decoration: none;
+  -webkit-tap-highlight-color: rgba(212, 160, 23, 0.25);
+  transition:
+    background-color var(--aio-transition),
+    color var(--aio-transition),
+    border-color var(--aio-transition),
+    box-shadow var(--aio-transition),
+    transform var(--aio-transition);
+}
+
+.aio-app a.aio-btn {
+  text-decoration: none;
 }
 
 .aio-btn:hover {
   transform: none;
 }
 
-.aio-btn--gold {
-  background: var(--aio-gold);
+/* Primary — gold is the permanent default (not hover-only) */
+.aio-app .aio-btn.aio-btn--gold,
+.aio-app a.aio-btn.aio-btn--gold,
+.aio-app button.aio-btn.aio-btn--gold {
+  background-color: var(--aio-gold);
   color: var(--aio-black);
-  border-color: var(--aio-gold);
+  border-color: var(--aio-gold-dark);
 }
 
-.aio-btn--gold:hover {
-  background: var(--aio-gold-dark);
+@media (hover: hover) and (pointer: fine) {
+  .aio-app .aio-btn.aio-btn--gold:hover,
+  .aio-app a.aio-btn.aio-btn--gold:hover,
+  .aio-app button.aio-btn.aio-btn--gold:hover {
+    background-color: var(--aio-gold-hover);
+    border-color: var(--aio-gold-hover);
+    color: var(--aio-black);
+  }
+}
+
+.aio-app .aio-btn.aio-btn--gold:active,
+.aio-app a.aio-btn.aio-btn--gold:active,
+.aio-app button.aio-btn.aio-btn--gold:active {
+  background-color: var(--aio-gold-active);
+  border-color: var(--aio-gold-active);
+  color: var(--aio-black);
+  transform: translateY(1px);
+}
+
+.aio-app .aio-btn.aio-btn--gold:focus-visible,
+.aio-app a.aio-btn.aio-btn--gold:focus-visible,
+.aio-app button.aio-btn.aio-btn--gold:focus-visible {
+  background-color: var(--aio-gold);
+  color: var(--aio-black);
+  outline: 2px solid var(--aio-black);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px var(--aio-focus-ring);
+}
+
+.aio-app .aio-btn.aio-btn--gold:disabled,
+.aio-app button.aio-btn.aio-btn--gold:disabled {
+  background-color: var(--aio-gold);
   border-color: var(--aio-gold-dark);
   color: var(--aio-black);
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
 }
 
-.aio-btn--outline {
-  background: transparent;
+.aio-app .aio-btn.aio-btn--outline,
+.aio-app a.aio-btn.aio-btn--outline,
+.aio-app button.aio-btn.aio-btn--outline {
+  background-color: transparent;
   color: var(--aio-white);
   border-color: rgba(255, 255, 255, 0.85);
 }
 
-.aio-btn--outline:hover {
-  border-color: var(--aio-white);
-  color: var(--aio-white);
-  background: rgba(255, 255, 255, 0.06);
+@media (hover: hover) and (pointer: fine) {
+  .aio-app .aio-btn.aio-btn--outline:hover,
+  .aio-app a.aio-btn.aio-btn--outline:hover,
+  .aio-app button.aio-btn.aio-btn--outline:hover {
+    border-color: var(--aio-white);
+    color: var(--aio-white);
+    background-color: rgba(255, 255, 255, 0.06);
+  }
 }
 
-.aio-btn--outline-gold {
-  background: transparent;
+.aio-app .aio-btn.aio-btn--outline-gold,
+.aio-app a.aio-btn.aio-btn--outline-gold,
+.aio-app button.aio-btn.aio-btn--outline-gold {
+  background-color: transparent;
   color: var(--aio-gold);
   border-color: var(--aio-gold);
 }
 
-.aio-btn--outline-gold:hover {
-  background: rgba(212, 160, 23, 0.1);
-  color: var(--aio-gold);
-  border-color: var(--aio-gold);
+@media (hover: hover) and (pointer: fine) {
+  .aio-app .aio-btn.aio-btn--outline-gold:hover,
+  .aio-app a.aio-btn.aio-btn--outline-gold:hover,
+  .aio-app button.aio-btn.aio-btn--outline-gold:hover {
+    background-color: rgba(212, 160, 23, 0.1);
+    color: var(--aio-gold-light);
+    border-color: var(--aio-gold-light);
+  }
 }
 
-.aio-btn--outline-dark {
+.aio-app .aio-btn.aio-btn--outline-gold:active,
+.aio-app a.aio-btn.aio-btn--outline-gold:active,
+.aio-app button.aio-btn.aio-btn--outline-gold:active {
+  background-color: rgba(212, 160, 23, 0.16);
+  border-color: var(--aio-gold-dark);
+  color: var(--aio-gold);
+}
+
+.aio-app .aio-btn.aio-btn--outline-dark,
+.aio-app a.aio-btn.aio-btn--outline-dark,
+.aio-app button.aio-btn.aio-btn--outline-dark {
   color: var(--aio-charcoal);
   border-color: var(--aio-charcoal);
-  background: transparent;
+  background-color: transparent;
 }
 
-.aio-btn--outline-dark:hover {
-  border-color: var(--aio-gold);
-  color: var(--aio-gold-dark);
-  background: rgba(212, 160, 23, 0.06);
+@media (hover: hover) and (pointer: fine) {
+  .aio-app .aio-btn.aio-btn--outline-dark:hover,
+  .aio-app a.aio-btn.aio-btn--outline-dark:hover,
+  .aio-app button.aio-btn.aio-btn--outline-dark:hover {
+    border-color: var(--aio-gold);
+    color: var(--aio-gold-dark);
+    background-color: rgba(212, 160, 23, 0.06);
+  }
 }
 
 .aio-btn--sm {
@@ -4743,6 +4822,10 @@
 .aio-cta-row__link {
   display: block;
   flex: 1 1 12rem;
+}
+
+.aio-cta-row__link.aio-btn {
+  width: 100%;
 }
 
 @media (max-width: 639px) {

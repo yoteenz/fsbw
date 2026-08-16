@@ -15,16 +15,21 @@ export function FinalCtaSection() {
           </p>
         </div>
         <div className="aio-final-cta__actions aio-cta-row">
-          <Link to={aioGetStarted('start-business')} className="aio-cta-row__link">
-            <AIOButton variant="gold" className="aio-btn--block">
-              Start My Business
-            </AIOButton>
-          </Link>
-          <Link to={aioPaths.contact} className="aio-cta-row__link">
-            <AIOButton variant="outline-gold" className="aio-btn--block" showArrow>
-              Request a Quote
-            </AIOButton>
-          </Link>
+          <AIOButton
+            to={aioGetStarted('start-business')}
+            variant="gold"
+            className="aio-btn--block aio-cta-row__link"
+          >
+            Start My Business
+          </AIOButton>
+          <AIOButton
+            to={aioPaths.contact}
+            variant="outline-gold"
+            className="aio-btn--block aio-cta-row__link"
+            showArrow
+          >
+            Request a Quote
+          </AIOButton>
           <Link to={aioPaths.requestCallback} className="aio-final-cta__tertiary">
             Talk to an Expert →
           </Link>

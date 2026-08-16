@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom';
 import { AIOSectionHeader } from '../components/AIOSectionHeader';
 import { AIOPortalPreview } from '../components/AIOPortalPreview';
 import { AIOButton } from '../components/AIOButton';
@@ -24,11 +23,13 @@ export function ClientPortalInfoPage() {
             — not just a marketing website.
           </p>
           <div className="aio-page-hero__actions aio-cta-row">
-            <Link to={aioAppConfig.routes.clientLogin} className="aio-cta-row__link">
-              <AIOButton variant="gold" className="aio-btn--block">
-                Client Login
-              </AIOButton>
-            </Link>
+            <AIOButton
+              to={aioAppConfig.routes.clientLogin}
+              variant="gold"
+              className="aio-btn--block aio-cta-row__link"
+            >
+              Client Login
+            </AIOButton>
           </div>
         </div>
       </div>
@@ -46,16 +47,22 @@ export function ClientPortalInfoPage() {
             coordination.
           </p>
           <div className="aio-cta-row">
-            <Link to={aioAppConfig.routes.clientLogin} className="aio-cta-row__link">
-              <AIOButton variant="gold" showArrow>
-                Sign In to Portal
-              </AIOButton>
-            </Link>
-            <Link to={aioPaths.contact} className="aio-cta-row__link">
-              <AIOButton variant="outline-gold" showArrow>
-                Request Access
-              </AIOButton>
-            </Link>
+            <AIOButton
+              to={aioAppConfig.routes.clientLogin}
+              variant="gold"
+              className="aio-cta-row__link"
+              showArrow
+            >
+              Sign In to Portal
+            </AIOButton>
+            <AIOButton
+              to={aioPaths.contact}
+              variant="outline-gold"
+              className="aio-cta-row__link"
+              showArrow
+            >
+              Request Access
+            </AIOButton>
           </div>
         </div>
       </div>

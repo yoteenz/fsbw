@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom';
 import { roadReadyTeaserCategories } from '../data/homePathways';
 import { AIORoadReadyTeaserRing } from '../components/AIORoadReadyTeaserRing';
 import { AIOSectionHeader } from '../components/AIOSectionHeader';
@@ -17,11 +16,9 @@ export function RoadReadyTeaserSection() {
             subtitle="Answer a few questions about your business and Road Ready™ builds your personalized startup and compliance roadmap."
           />
           <div className="aio-road-ready-teaser__cta">
-            <Link to={aioPaths.getStarted}>
-              <AIOButton variant="gold" showArrow>
-                Get My Roadmap
-              </AIOButton>
-            </Link>
+            <AIOButton to={aioPaths.getStarted} variant="gold" showArrow>
+              Get My Roadmap
+            </AIOButton>
           </div>
         </div>
         <div className="aio-road-ready-teaser__visual" id="aio-road-ready-heading">

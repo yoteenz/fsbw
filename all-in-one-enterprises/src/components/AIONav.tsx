@@ -175,11 +175,9 @@ export function AIONav() {
             </svg>
             {aioAppConfig.contact.phone}
           </a>
-          <Link to={aioAppConfig.routes.clientLogin}>
-            <AIOButton variant="gold" size="sm">
-              Client Login
-            </AIOButton>
-          </Link>
+          <AIOButton to={aioAppConfig.routes.clientLogin} variant="gold" size="sm">
+            Client Login
+          </AIOButton>
           <button
             type="button"
             className="aio-header__menu-btn"

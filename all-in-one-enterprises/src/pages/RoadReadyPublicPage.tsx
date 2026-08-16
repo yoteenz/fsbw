@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom';
 import { AIOSectionHeader } from '../components/AIOSectionHeader';
 import { AIORoadmapProgress } from '../components/AIORoadmapProgress';
 import { AIOCard } from '../components/AIOCard';
@@ -27,11 +26,14 @@ export function RoadReadyPublicPage() {
             steps — then routes you to the right All In One services.
           </p>
           <div className="aio-page-hero__actions aio-cta-row">
-            <Link to={aioPaths.getStarted} className="aio-cta-row__link">
-              <AIOButton variant="gold" className="aio-btn--block" showArrow>
-                Get My Roadmap
-              </AIOButton>
-            </Link>
+            <AIOButton
+              to={aioPaths.getStarted}
+              variant="gold"
+              className="aio-btn--block aio-cta-row__link"
+              showArrow
+            >
+              Get My Roadmap
+            </AIOButton>
           </div>
         </div>
       </div>
@@ -49,11 +51,9 @@ export function RoadReadyPublicPage() {
                 <li>See optional services for growth and cash flow</li>
                 <li>Add recommended services to your plan and submit requests</li>
               </ul>
-              <Link to={aioPaths.getStarted}>
-                <AIOButton variant="gold" showArrow>
-                  Start Road Ready Intake
-                </AIOButton>
-              </Link>
+              <AIOButton to={aioPaths.getStarted} variant="gold" showArrow>
+                Start Road Ready Intake
+              </AIOButton>
             </div>
             <AIOCard dark>
               <p className="aio-road-ready-public__sample-label">Sample roadmap preview</p>

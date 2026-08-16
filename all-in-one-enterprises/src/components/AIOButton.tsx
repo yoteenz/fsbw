@@ -1,16 +1,41 @@
-import type { ButtonHTMLAttributes, ReactNode } from 'react';
+import type { AnchorHTMLAttributes, ButtonHTMLAttributes, ReactNode } from 'react';
+import { Link } from 'react-router-dom';
 
 type Variant = 'gold' | 'outline' | 'outline-gold' | 'outline-dark';
 type Size = 'default' | 'sm';
 
-type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
+type BaseProps = {
   variant?: Variant;
   size?: Size;
   children: ReactNode;
+  /** External anchor href */
   href?: string;
+  /** In-app React Router destination — renders a single accessible link control */
+  to?: string;
   /** Append → for primary/marketing CTAs (default: gold buttons, not sm) */
   showArrow?: boolean;
+  className?: string;
 };
+
+type ButtonProps = BaseProps &
+  Omit<ButtonHTMLAttributes<HTMLButtonElement>, keyof BaseProps> & {
+    to?: undefined;
+    href?: undefined;
+  };
+
+type LinkProps = BaseProps &
+  Omit<AnchorHTMLAttributes<HTMLAnchorElement>, keyof BaseProps> & {
+    to: string;
+    href?: undefined;
+  };
+
+type ExternalLinkProps = BaseProps &
+  Omit<AnchorHTMLAttributes<HTMLAnchorElement>, keyof BaseProps> & {
+    href: string;
+    to?: undefined;
+  };
+
+type Props = ButtonProps | LinkProps | ExternalLinkProps;
 
 const variantClass: Record<Variant, string> = {
   gold: 'aio-btn--gold',
@@ -37,11 +62,18 @@ function renderLabel(children: ReactNode, showArrow: boolean) {
   );
 }
 
+function buildClasses(variant: Variant, size: Size, className: string) {
+  return ['aio-btn', variantClass[variant], size === 'sm' ? 'aio-btn--sm' : '', className]
+    .filter(Boolean)
+    .join(' ');
+}
+
 export function AIOButton({
   variant = 'gold',
   size = 'default',
   children,
   href,
+  to,
   className = '',
   showArrow,
   ...rest
@@ -49,22 +81,29 @@ export function AIOButton({
   const arrow =
     showArrow ?? (variant === 'gold' && size !== 'sm' && !hasArrow(children));
 
-  const classes = ['aio-btn', variantClass[variant], size === 'sm' ? 'aio-btn--sm' : '', className]
-    .filter(Boolean)
-    .join(' ');
-
+  const classes = buildClasses(variant, size, className);
   const label = renderLabel(children, arrow);
 
-  if (href) {
+  if (to) {
+    const { type: _type, ...linkRest } = rest as AnchorHTMLAttributes<HTMLAnchorElement>;
     return (
-      <a href={href} className={classes}>
+      <Link to={to} className={classes} {...linkRest}>
+        {label}
+      </Link>
+    );
+  }
+
+  if (href) {
+    const { type: _type, ...anchorRest } = rest as AnchorHTMLAttributes<HTMLAnchorElement>;
+    return (
+      <a href={href} className={classes} {...anchorRest}>
         {label}
       </a>
     );
   }
 
   return (
-    <button type="button" className={classes} {...rest}>
+    <button type="button" className={classes} {...(rest as ButtonHTMLAttributes<HTMLButtonElement>)}>
       {label}
     </button>
   );

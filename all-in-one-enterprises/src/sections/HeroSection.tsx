@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom';
 import { aioAppConfig } from '../config/appConfig';
 import { heroPrimaryCtaHref, heroSecondaryCtaHref, heroTrustItems } from '../data/homePathways';
 import { AIOButton } from '../components/AIOButton';
@@ -29,16 +28,21 @@ export function HeroSection() {
             </h1>
             <p className="aio-hero__sub">{aioAppConfig.company.brandDescription}</p>
             <div className="aio-hero__actions aio-cta-row">
-              <Link to={heroPrimaryCtaHref} className="aio-cta-row__link">
-                <AIOButton variant="gold" className="aio-btn--block">
-                  Start My Business
-                </AIOButton>
-              </Link>
-              <Link to={heroSecondaryCtaHref} className="aio-cta-row__link">
-                <AIOButton variant="outline-gold" className="aio-btn--block" showArrow>
-                  See How It Works
-                </AIOButton>
-              </Link>
+              <AIOButton
+                to={heroPrimaryCtaHref}
+                variant="gold"
+                className="aio-btn--block aio-cta-row__link"
+              >
+                Start My Business
+              </AIOButton>
+              <AIOButton
+                to={heroSecondaryCtaHref}
+                variant="outline-gold"
+                className="aio-btn--block aio-cta-row__link"
+                showArrow
+              >
+                See How It Works
+              </AIOButton>
             </div>
           </div>
         </div>

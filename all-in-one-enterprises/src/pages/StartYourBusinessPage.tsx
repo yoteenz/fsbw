@@ -26,16 +26,21 @@ export function StartYourBusinessPage() {
             personalized roadmap, or begin with the services you need today.
           </p>
           <div className="aio-page-hero__actions aio-cta-row">
-            <Link to={aioGetStarted('start-business')} className="aio-cta-row__link">
-              <AIOButton variant="gold" className="aio-btn--block">
-                Start My Business
-              </AIOButton>
-            </Link>
-            <Link to={aioPaths.roadReadyPublic} className="aio-cta-row__link">
-              <AIOButton variant="outline-gold" className="aio-btn--block" showArrow>
-                Get My Roadmap
-              </AIOButton>
-            </Link>
+            <AIOButton
+              to={aioGetStarted('start-business')}
+              variant="gold"
+              className="aio-btn--block aio-cta-row__link"
+            >
+              Start My Business
+            </AIOButton>
+            <AIOButton
+              to={aioPaths.roadReadyPublic}
+              variant="outline-gold"
+              className="aio-btn--block aio-cta-row__link"
+              showArrow
+            >
+              Get My Roadmap
+            </AIOButton>
           </div>
         </div>
       </div>
