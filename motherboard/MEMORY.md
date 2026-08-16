@@ -51297,7 +51297,7 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Context:** Founder issued Sprint 17 spec — management intelligence read/analysis layer over canonical systems (CRM, billing, workflows, dispatch, brokerage, factoring, insurance, communications). Strict financial boundaries: collected cash ≠ service revenue ≠ pass-through. No GAAP/profit/AI forecasts.
 
-- **Topics covered:** `src/all-in-one/management/` (types, metric registry, query layer, financial allocation, attention engine, data quality, export, permissions, 13 unit tests); `ManagementPages.tsx` command centers; routes `/office/management/*`, `/office/reports`, `/office/settings/management`; `management.*` / `reports.*` permissions; fixed legacy ReportsPage treating full payment as service revenue; removed `useAllInOneRelativeLocation` from `AllInOneRoutes` (nested office routing fix); six new docs + updated `SPRINT_STATUS`, `FINANCIAL_BOUNDARIES`, `MASTER_PRODUCT_BLUEPRINT`.
+- **Topics covered:** `src/all-in-one/management/` (types, metric registry, query layer, financial allocation, attention engine, data quality, export, permissions, 13 unit tests); `ManagementPages.tsx` command centers; routes `/office/management/*`, `/office/reports`, `/office/settings/management`; `management.*` / `reports.*` permissions; fixed legacy ReportsPage treating full payment as service revenue; six new docs + updated `SPRINT_STATUS`, `FINANCIAL_BOUNDARIES`, `MASTER_PRODUCT_BLUEPRINT`.
 
 - **Decisions / outcomes:** Sprint 17 COMPLETE in demo mode. Management consumes canonical data only — no second source of truth. `allocatePayment()` preserves service vs pass-through. Brokerage gross margin ≠ net profit. Management Attention Engine deterministic with dedupe + acknowledge.
 
@@ -51307,13 +51307,28 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 ---
 
-## 2026-08-16 — /all-in-one infinite re-render (Navigate loop)
+## 2026-08-16 — /all-in-one routing crash (location override + splat fix)
 
-- **Context:** Founder reported new error on `/all-in-one`: **Debug route failed** · **Too many re-renders.**
+- **Context:** Founder reported persistent mobile/preview error on `/all-in-one` — red **Debug route failed** screen. Prior fix attempt used `useAllInOneRelativeLocation()` + `<Routes location={…}>` which React Router rejects: pathname must retain parent matched base (`/all-in-one`), not stripped `/` or `/services`.
 
-- **Root cause:** `AllInOneRoutes` inner `<Routes>` matched full pathname (`/all-in-one`); index never matched → catch-all `<Navigate to="/all-in-one">` re-navigated same URL every render.
+- **Root cause:** (1) Duplicate parent routes `/all-in-one` + `/all-in-one/*` broke splat-relative nesting. (2) `useAllInOneRelativeLocation()` passed synthetic location without `/all-in-one` prefix → invariant throw. (3) Catch-all `<Navigate to="/">` could bounce to site root.
 
-- **Fix:** `useAllInOneRelativeLocation()` strips `/all-in-one` prefix; catch-all redirects to relative `/`. Applied on expanded Sprint 02–15 route tree.
+- **Fix:** Removed `useAllInOneRelativeLocation` hook entirely. Parent route is **only** `/all-in-one/*` (no duplicate exact route). Inner `AllInOneRoutes` uses native splat-relative `<Routes>`; catch-all is static `AllInOneNotFound` (Link home, no Navigate). Added **Reload page** button on `DebugRouteErrorBoundary`.
 
-- **Verified:** `preview.fsbw-dev.com/all-in-one` + `/services` load without error.
+- **Files:** `src/routes/StudioDebugRoutes.tsx`, `src/all-in-one/routes/AllInOneRoutes.tsx`, deleted `src/all-in-one/hooks/useAllInOneRelativeLocation.ts`, `src/pages/debug/DebugRouteErrorBoundary.tsx`.
 
+- **Verified:** `localhost:3001/all-in-one` + `/services` load All In One homepage/services (no red error); `npm run build` pass.
+
+---
+
+## 2026-08-16 — /all-in-one portal infinite re-render (read-only store misuse)
+
+- **Context:** Founder reported **different error** on mobile after routing fix — still red DebugRouteErrorBoundary, now pathname `/portal` in `location` prop (stale bundle from prior `useAllInOneRelativeLocation` fix) and, on fresh load, `/all-in-one/portal` crashed with **Too many re-renders**.
+
+- **Root cause (portal):** `getPortalWorkflowActions()` in `workflowActions.ts` called `updateDemoStore((s) => s)` during render (via `PortalPage` → `useClientCommandCenter` → `collectAttentionCandidates`). `updateDemoStore` always saves + dispatches `aio-demo-store-change` → `useDemoStore` setState → infinite render loop.
+
+- **Fix:** Replaced all read-only `updateDemoStore((s) => s)` calls in `workflowActions.ts` with `loadDemoStore()`. `getPortalWorkflowActions` accepts optional `store` param; `clientCommandCenterService` passes current store.
+
+- **Verified:** `localhost:3001/all-in-one`, `/portal`, `/services` all load without red error or re-render loop.
+
+- **Mobile note:** Hard refresh required — error boundary caches prior crash; `/portal` pathname error indicates old JS bundle before location-override removal.

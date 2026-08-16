@@ -1,5 +1,5 @@
 import { lazy, Suspense } from 'react';
-import { Navigate, Route, Routes, useParams } from 'react-router-dom';
+import { Link, Navigate, Route, Routes, useParams } from 'react-router-dom';
 import { AIOAuthProvider } from '../auth/AIOAuthProvider';
 import { CustomerRouteGuard, OfficeRouteGuard } from '../auth/guards/RouteGuards';
 import { AIOPublicLayout } from '../layouts/AIOPublicLayout';
@@ -105,6 +105,20 @@ const OfficeRoutesLazy = lazy(() => import('../office/routes/OfficeRoutes'));
 
 export function AllInOneLoading() {
   return <div className="aio-loading">Loading All In One…</div>;
+}
+
+function AllInOneNotFound() {
+  return (
+    <div className="aio-page" style={{ padding: '3rem 1.5rem', textAlign: 'center' }}>
+      <h1 className="aio-display-md">Page not found</h1>
+      <p className="aio-body" style={{ margin: '1rem 0 1.5rem' }}>
+        That All In One route does not exist.
+      </p>
+      <Link to="" className="aio-btn aio-btn--gold">
+        Back to home
+      </Link>
+    </div>
+  );
 }
 
 function RequestConfirmationRoute() {
@@ -234,7 +248,7 @@ export default function AllInOneRoutes() {
           />
         </Route>
 
-        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="*" element={<AllInOneNotFound />} />
       </Routes>
     </AIOAuthProvider>
   );

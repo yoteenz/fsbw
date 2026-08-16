@@ -73,9 +73,25 @@ export class DebugRouteErrorBoundary extends Component<Props, State> {
           {stack}
         </pre>
         <p style={{ marginTop: '16px', fontSize: '12px' }}>
+          <button
+            type="button"
+            onClick={() => window.location.reload()}
+            style={{
+              padding: '8px 16px',
+              background: '#eb1c24',
+              color: '#fff',
+              border: 'none',
+              borderRadius: '6px',
+              cursor: 'pointer',
+              fontSize: '13px',
+              marginRight: '12px',
+            }}
+          >
+            Reload page
+          </button>
           <a href="/__studio-health">/__studio-health</a>
           {' · '}
-          <a href="/__boot-debug">Reload /__boot-debug</a>
+          <a href="/__boot-debug">/__boot-debug</a>
         </p>
       </div>
     );

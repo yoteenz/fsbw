@@ -1,5 +1,5 @@
 import type { DemoStore } from './demoTypes';
-import { updateDemoStore } from './demoStore';
+import { loadDemoStore, updateDemoStore } from './demoStore';
 import {
   completeWorkflowStep,
   createWorkflowInstanceFromRequest,
@@ -16,22 +16,22 @@ import { validateTemplateVersion } from '../workflow/workflowValidation';
 import type { WorkflowInstanceStatus } from '../workflow/workflowTypes';
 import { resolveTemplateIdForService } from './workflowSeed';
 
-export function getWorkflowInstances(store: DemoStore = updateDemoStore((s) => s)) {
+export function getWorkflowInstances(store: DemoStore = loadDemoStore()) {
   return store.workflowInstances ?? [];
 }
 
 export function getWorkflowForRequest(requestId: string, store?: DemoStore) {
-  const s = store ?? updateDemoStore((x) => x);
+  const s = store ?? loadDemoStore();
   return s.workflowInstances?.find((w) => w.serviceRequestId === requestId);
 }
 
 export function getWorkflowDetail(instanceId: string, store?: DemoStore) {
-  const s = store ?? updateDemoStore((x) => x);
+  const s = store ?? loadDemoStore();
   return getWorkflowSummary(s, instanceId);
 }
 
 export function getJourneyForOrg(organizationId: string, store?: DemoStore) {
-  const s = store ?? updateDemoStore((x) => x);
+  const s = store ?? loadDemoStore();
   return (s.serviceJourneys ?? []).filter((j) => j.organizationId === organizationId);
 }
 
@@ -174,7 +174,7 @@ export function toggleWorkflowKillSwitch(disabled: boolean): void {
 }
 
 export function validateWorkflowTemplate(versionId: string) {
-  const store = updateDemoStore((s) => s);
+  const store = loadDemoStore();
   const version = store.workflowTemplateVersions?.find((v) => v.id === versionId);
   if (!version) return { valid: false, issues: [{ code: 'NOT_FOUND', message: 'Version not found' }] };
   const issues = validateTemplateVersion(version);
@@ -182,19 +182,18 @@ export function validateWorkflowTemplate(versionId: string) {
 }
 
 export function listWorkflowsByStatus(status?: WorkflowInstanceStatus) {
-  const store = updateDemoStore((s) => s);
+  const store = loadDemoStore();
   const instances = store.workflowInstances ?? [];
   if (!status) return instances;
   return instances.filter((w) => w.status === status);
 }
 
 export function getWorkflowHealth() {
-  const store = updateDemoStore((s) => s);
+  const store = loadDemoStore();
   return getWorkflowHealthCounts(store);
 }
 
-export function getPortalWorkflowActions(organizationId: string) {
-  const store = updateDemoStore((s) => s);
+export function getPortalWorkflowActions(organizationId: string, store: DemoStore = loadDemoStore()) {
   return getCustomerWorkflowActions(store, organizationId);
 }
 
@@ -203,7 +202,7 @@ export function onDocumentReceivedForWorkflow(organizationId: string, documentId
 }
 
 export function getServiceTrackerView(requestId: string) {
-  const store = updateDemoStore((s) => s);
+  const store = loadDemoStore();
   const request = store.requests.find((r) => r.id === requestId);
   const workflow = getWorkflowForRequest(requestId, store);
   if (!request) return null;

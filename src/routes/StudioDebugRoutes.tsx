@@ -198,7 +198,6 @@ export default function StudioDebugRoutes() {
       <Route path="/collaboration-intelligence" element={<CollaborationIntelligenceDownloadPage />} />
       <Route path="/onboarding" element={<OnboardingPackPage />} />
       <Route path="/context-updates" element={<ContextUpdatesPage />} />
-      <Route path="/all-in-one" element={allInOneRouteElement} />
       <Route path="/all-in-one/*" element={allInOneRouteElement} />
       <Route path="/debug/all-in-one/*" element={<DebugAllInOneLegacyRedirect />} />
       <Route path="/debug/all-in-one" element={<DebugAllInOneLegacyRedirect />} />
