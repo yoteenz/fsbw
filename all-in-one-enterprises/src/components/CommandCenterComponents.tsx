@@ -5,6 +5,8 @@ import { RoadReadyRing } from './RoadReadyRing';
 import { ROAD_READY_PRODUCT_NAME } from '../road-ready/roadReadyConfig';
 import { formatMoney } from '../billing/money';
 import { aioPaths } from '../utils/paths';
+import { AIOIcon } from './AIOIcon';
+import { aioBusinessHealthIcons, type AioIconKey } from '../config/aioIconRegistry';
 
 export function CommandCenterHeader({ view }: { view: ClientCommandCenterView }) {
   const { context, greeting, businessStatus } = view;
@@ -89,41 +91,59 @@ export function RoadReadyHero({ view }: { view: ClientCommandCenterView }) {
   );
 }
 
+function HealthCard({ icon, label, value }: { icon?: AioIconKey; label: string; value: string }) {
+  return (
+    <div className="aio-cc-health-card">
+      <span className="aio-cc-health-card__label">
+        {icon ? <AIOIcon icon={icon} size={22} className="aio-cc-health-card__icon" /> : null}
+        {label}
+      </span>
+      <strong>{value}</strong>
+    </div>
+  );
+}
+
 export function BusinessHealthGrid({ view }: { view: ClientCommandCenterView }) {
   const h = view.businessHealth;
   return (
     <section className="aio-cc-health-grid">
       {h.roadReady && (
-        <div className="aio-cc-health-card">
-          <span>Road Ready</span>
-          <strong>{h.roadReady.setupProgress}% setup</strong>
-        </div>
+        <HealthCard
+          icon={aioBusinessHealthIcons.roadReady}
+          label="Road Ready"
+          value={`${h.roadReady.setupProgress}% setup`}
+        />
       )}
-      <div className="aio-cc-health-card">
-        <span>Documents</span>
-        <strong>{h.documents.verified} verified · {h.documents.needsAttention} attention</strong>
-      </div>
-      <div className="aio-cc-health-card">
-        <span>Renewals</span>
-        <strong>{h.renewalsUpcoming} upcoming</strong>
-      </div>
+      <HealthCard
+        icon={aioBusinessHealthIcons.documents}
+        label="Documents"
+        value={`${h.documents.verified} verified · ${h.documents.needsAttention} attention`}
+      />
+      <HealthCard
+        icon={aioBusinessHealthIcons.renewals}
+        label="Renewals"
+        value={`${h.renewalsUpcoming} upcoming`}
+      />
       {h.insuranceStatus && (
-        <div className="aio-cc-health-card">
-          <span>Insurance</span>
-          <strong>{h.insuranceStatus.replace('_', ' ')}</strong>
-        </div>
+        <HealthCard
+          icon={aioBusinessHealthIcons.insurance}
+          label="Insurance"
+          value={h.insuranceStatus.replace('_', ' ')}
+        />
       )}
       {h.fleet && (
-        <div className="aio-cc-health-card">
-          <span>Fleet</span>
-          <strong>{h.fleet.active} active · {h.fleet.needsAttention} attention</strong>
-        </div>
+        <HealthCard
+          icon={aioBusinessHealthIcons.fleet}
+          label="Fleet"
+          value={`${h.fleet.active} active · ${h.fleet.needsAttention} attention`}
+        />
       )}
       {h.billing && view.context.canViewBilling && (
-        <div className="aio-cc-health-card">
-          <span>All In One Billing</span>
-          <strong>{formatMoney(h.billing.balanceDueMinor)} due</strong>
-        </div>
+        <HealthCard
+          icon={aioBusinessHealthIcons.billing}
+          label="All In One Billing"
+          value={`${formatMoney(h.billing.balanceDueMinor)} due`}
+        />
       )}
     </section>
   );

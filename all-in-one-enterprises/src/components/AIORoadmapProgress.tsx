@@ -2,6 +2,8 @@ import { Link } from 'react-router-dom';
 import type { AioRoadmapItem } from '../types';
 import { AIOStatusBadge } from './AIOStatusBadge';
 import { AIOButton } from './AIOButton';
+import { AIOIcon } from './AIOIcon';
+import { aioRoadmapItemIcons } from '../config/aioIconRegistry';
 import { aioPaths } from '../utils/paths';
 import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion';
 
@@ -42,12 +44,18 @@ export function AIORoadmapProgress({ progress, items }: Props) {
 
       <div>
         <ul className="aio-roadmap-list">
-          {items.map((item) => (
-            <li key={item.id} className="aio-roadmap-list__item">
-              <span>{item.label}</span>
-              <AIOStatusBadge status={item.status} />
-            </li>
-          ))}
+          {items.map((item) => {
+            const iconKey = aioRoadmapItemIcons[item.id];
+            return (
+              <li key={item.id} className="aio-roadmap-list__item">
+                <span className="aio-roadmap-list__label">
+                  {iconKey ? <AIOIcon icon={iconKey} size={20} className="aio-roadmap-list__icon" /> : null}
+                  {item.label}
+                </span>
+                <AIOStatusBadge status={item.status} />
+              </li>
+            );
+          })}
         </ul>
         <div style={{ marginTop: '1.25rem' }}>
           <Link to={aioPaths.roadmap}>

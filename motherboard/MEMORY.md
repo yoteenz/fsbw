@@ -51594,3 +51594,15 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Report:** `docs/refinement/POST_BUILD_REFINEMENT_03E_REPORT.md`
 
+---
+
+## 2026-08-16 — Post-Build Refinement 03E.1: AIO Trucking Insurance icon override
+
+- **Context:** Founder rejected master-sheet Trucking Insurance icon (too generic); supplied standalone transparent icon (semi-truck front + shield + checkmark). Targeted correction only — other five 03E icons unchanged.
+
+- **Asset:** Replaced `aio-icon-trucking-insurance.png` (same path) from standalone 1312×1199 source; archived `_source-trucking-insurance-standalone.png`; normalized 256×256 @ 72% fill via `scripts/normalize-standalone-service-icon.py`.
+
+- **Safeguard:** `extract-service-icons.py` skips Trucking Insurance on re-extraction to prevent master-sheet overwrite.
+
+- **Report:** Updated `docs/refinement/POST_BUILD_REFINEMENT_03E_REPORT.md` § 03E.1.
+
