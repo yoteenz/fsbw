@@ -51622,3 +51622,25 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Report:** `docs/refinement/POST_BUILD_REFINEMENT_03F_REPORT.md`
 
+---
+
+## 2026-08-16 — Post-Build Refinement 04: Trucking Bookkeeping + Road Ready recommendation
+
+- **Context:** Founder sprint — add trucking-specific bookkeeping (Essentials/Plus/All In One + Books Rescue), assessment + transparent recommendation engine, portal/office, billing integration, without replacing existing platform architecture or treating bookkeeping as Road Ready compliance.
+
+- **Public:** `/services/bookkeeping` (hero, plan cards, monthly/annual toggle, feature matrix, FAQ, disclosures); `/services/bookkeeping/assessment`; `/services/bookkeeping/recommendation`. Nav: Services → Operate → Bookkeeping.
+
+- **Pricing (starting at):** Essentials $249/mo · $2,490/yr; Plus $449 · $4,490; All In One $749 · $7,490; Books Rescue $499 one-time.
+
+- **Domain:** `src/bookkeeping/*` — `recommendBookkeepingPlan()` with configurable thresholds; unit tests pass. Demo store **v21** with subscriptions/cycles/rescue/leads.
+
+- **Portal/Office:** `/portal/bookkeeping`, `/office/bookkeeping` (+ subscriptions, books-rescue, leads). Activation: **LIMITED_PILOT**. Icon slot: temporary `reportsAnalytics` pending `aio-icon-bookkeeping.png`.
+
+- **Road Ready:** optional bookkeeping item (weight 0); recommended services panel when assessment session exists — does not reduce compliance %.
+
+- **Migration:** `supabase/migrations/20260816170000_aio_bookkeeping.sql` — apply to FS Website project failed (`aio_organizations` missing); file retained for dedicated AIO Supabase.
+
+- **Docs:** `docs/services/BOOKKEEPING_*.md`, `docs/operations/BOOKKEEPING_SOP.md`, `docs/refinement/POST_BUILD_REFINEMENT_04_REPORT.md`.
+
+- **QA:** Build OK; recommendation tests pass; manual UI walkthrough on :5173 — plans, assessment, Books Rescue + Plus recommendation verified.
+
