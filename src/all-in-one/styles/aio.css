@@ -141,6 +141,24 @@
   border: 0;
 }
 
+.aio-skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 10000;
+  padding: 0.5rem 1rem;
+  background: var(--aio-charcoal, #1a1a1a);
+  color: var(--aio-gold-light, #d4af37);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.aio-skip-link:focus {
+  left: 0.5rem;
+  top: 0.5rem;
+  outline: 2px solid var(--aio-gold-light, #d4af37);
+}
+
 /* Buttons */
 .aio-btn {
   display: inline-flex;

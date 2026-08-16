@@ -2,7 +2,7 @@
 
 **Company:** ALL IN ONE ENTERPRISES INC.  
 **Positioning:** The business office behind the truck.  
-**Status:** Sprint 04 — Production data foundation + auth (debug prototype; backend activation pending dedicated Supabase project).
+**Status:** Sprint 21 — QA hardening complete; extraction **BLOCKED** until Sprint 22 (debug prototype at `/all-in-one`).
 
 ---
 

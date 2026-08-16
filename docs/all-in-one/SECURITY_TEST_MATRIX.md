@@ -1,7 +1,9 @@
 # All In One — Security Test Matrix
 
-**Sprint 19** · Automated: `src/all-in-one/security/security.test.ts` (16 tests)  
+**Sprint 19** · **Sprint 21 re-run:** PASS — `security.test.ts` (16) + `integrations.test.ts` (25) + `qa/crossDomain.test.ts`  
 Integration security: `src/all-in-one/integrations/integrations.test.ts` (25 tests)
+
+**Live Supabase RLS:** REQUIRES_PRODUCTION_ENVIRONMENT (see QA-002)
 
 ---
 

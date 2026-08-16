@@ -187,6 +187,11 @@ Migration guard: `./all-in-one/scripts/verify-migration-environment.sh` — abor
 **Office data routes (Sprint 20):**
 - `/all-in-one/office/system/data` — Data Health Center
 - `/all-in-one/office/system/data/migration` — Migration Center (dry-run only; production import NOT ENABLED)
+- `/all-in-one/office/system/qa` — QA Command Center (Sprint 21)
+- `/all-in-one/office/system/qa/accessibility` — Accessibility matrix
+- `/all-in-one/office/system/qa/performance` — Performance findings
+- `/all-in-one/office/system/qa/devices` — Cross-device matrix
+- `/all-in-one/office/system/qa/browsers` — Browser compatibility matrix
 
 **Repository layer:** `src/all-in-one/data/repositories/` — Demo vs Supabase via `useAioRepositories()`.
 

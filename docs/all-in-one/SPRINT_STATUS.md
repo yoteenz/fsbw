@@ -1,7 +1,22 @@
 # All In One — Sprint Status
 
-**Sprint:** 20 — Production Data Architecture + Supabase + Auth + Storage + Migration Foundation  
+**Sprint:** 21 — Quality Assurance + E2E Testing + Accessibility + Performance + Cross-Device Hardening  
 **Last updated:** 2026-08-16
+
+---
+
+## SPRINT 21 COMPLETE (QA Hardening + Extraction Readiness Evidence)
+
+- **QA module** — `src/all-in-one/qa/` (types, test suites, journey matrix, defects, extraction gate, inventories, dependency graph)
+- **QA Command Center** — `/all-in-one/office/system/qa` (+ accessibility, performance, devices, browsers)
+- **Skip links** — Public + Office layouts (`#aio-main-content`)
+- **Automated tests** — 188 vitest PASS; 15 Playwright smoke PASS (Chromium)
+- **Scripts** — `npm run test:aio`, `npm run test:aio:e2e`, `scripts/aio-qa-check.sh`
+- **Extraction gate** — `canExtractAllInOne()` → **BLOCKED** (honest blockers documented)
+- **Known defects** — QA-001 through QA-005 (0 open P0)
+- **Documentation** — `QA_RELEASE_REPORT.md`, `KNOWN_ISSUES.md`, `QA_TEST_PLAN.md`, `E2E_JOURNEY_MATRIX.md`, `ACCESSIBILITY_AUDIT.md`, `PERFORMANCE_AUDIT.md`, `CROSS_DEVICE_MATRIX.md`, `BROWSER_COMPATIBILITY.md`, `EXTRACTION_READINESS_REPORT.md`
+
+**Next:** Sprint 22 — Standalone Extraction + Repository Separation
 
 ---
 

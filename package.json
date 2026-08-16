@@ -21,6 +21,8 @@
     "compile-world-graph": "node scripts/compile-world-graph.mjs",
     "build": "tsc --noEmit && vite build",
     "test": "node scripts/build-creative-production-server.mjs && vitest run",
+    "test:aio": "node scripts/build-creative-production-server.mjs && vitest run src/all-in-one/",
+    "test:aio:e2e": "playwright test --project=aio-demo",
     "test:department-package-registry": "vitest run src/studio-os-core/department-package/registry.test.ts",
     "verify:department-package-dist": "node scripts/verify-department-package-in-dist.mjs",
     "export:ai-context-capsule": "node scripts/export-ai-context-capsule.mjs",

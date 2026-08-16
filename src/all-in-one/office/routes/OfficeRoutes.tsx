@@ -136,6 +136,13 @@ import {
   OfficeSecuritySettingsPage,
 } from '../pages/SecurityPages';
 import { DataHealthCenterPage, DataMigrationCenterPage } from '../pages/DataSystemPages';
+import {
+  QaCommandCenterPage,
+  QaAccessibilityPage,
+  QaPerformancePage,
+  QaDevicesPage,
+  QaBrowsersPage,
+} from '../pages/QaPages';
 
 export default function OfficeRoutes() {
   return (
@@ -179,6 +186,11 @@ export default function OfficeRoutes() {
         <Route path="security/production-readiness" element={<ProductionReadinessPage />} />
         <Route path="system/data" element={<DataHealthCenterPage />} />
         <Route path="system/data/migration" element={<DataMigrationCenterPage />} />
+        <Route path="system/qa" element={<QaCommandCenterPage />} />
+        <Route path="system/qa/accessibility" element={<QaAccessibilityPage />} />
+        <Route path="system/qa/performance" element={<QaPerformancePage />} />
+        <Route path="system/qa/devices" element={<QaDevicesPage />} />
+        <Route path="system/qa/browsers" element={<QaBrowsersPage />} />
         <Route path="privacy" element={<PrivacyCenterPage />} />
         <Route path="settings/security" element={<OfficeSecuritySettingsPage />} />
         <Route path="management" element={<ManagementCommandCenterPage />} />

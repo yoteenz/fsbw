@@ -222,6 +222,23 @@ Docs to copy: `CLIENT_COMMAND_CENTER.md`, `CLIENT_INFORMATION_ARCHITECTURE.md`, 
 
 ---
 
+## Sprint 21 — Extraction readiness inputs (use in Sprint 22)
+
+Before physical extraction, consume:
+
+| Artifact | Location |
+|----------|----------|
+| Extraction gate | `src/all-in-one/qa/extractionGate.ts` → `canExtractAllInOne()` |
+| Route manifest | `src/all-in-one/qa/routeManifest.ts` (35 routes) |
+| Dependency graph | `src/all-in-one/qa/dependencyGraph.ts` |
+| Inventories | `src/all-in-one/qa/inventories.ts` |
+| QA report | `docs/all-in-one/EXTRACTION_READINESS_REPORT.md` |
+| Known blockers | `docs/all-in-one/KNOWN_ISSUES.md` QA-001 |
+
+**Sprint 21 result:** BLOCKED — shared Vite host, no standalone package.json, no dedicated Supabase for live RLS.
+
+---
+
 - [ ] New GitHub repository created
 - [ ] `appConfig` routes updated to production paths
 - [ ] `lazyWithRetry` decoupled or inlined

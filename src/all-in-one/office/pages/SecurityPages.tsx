@@ -65,6 +65,7 @@ export function SecurityCenterPage() {
             <Link to={aioPaths.officeSecurityIncidents}>Incidents</Link>
             <Link to={aioPaths.officeSecurityProductionReadiness}>Production Readiness</Link>
             <Link to={aioPaths.officeDataHealth}>Data Health</Link>
+            <Link to={aioPaths.officeQa}>QA Center</Link>
             <Link to={aioPaths.officeSettingsSecurity}>Settings</Link>
           </nav>
         </header>

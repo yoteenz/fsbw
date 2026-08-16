@@ -1,6 +1,7 @@
 # All In One — Production Security Checklist
 
-**Sprint 19** · Enforced by `canLaunchProduction()` — UI cannot override blockers.
+**Sprint 19** · **Sprint 21:** FS isolation guard PASS; extraction gate separate from launch gate  
+Enforced by `canLaunchProduction()` — UI cannot override blockers.
 
 ---
 

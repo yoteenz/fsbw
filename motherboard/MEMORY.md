@@ -51374,3 +51374,25 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Spatial Architecture Review:** SKIPPED — security infrastructure layer; follows existing Office settings patterns.
 
 - **Next sprint noted (not implemented):** Sprint 20 production data architecture + Supabase + auth + storage migration.
+
+---
+
+## 2026-08-16 — Sprint 20 Production Data Foundation (All In One)
+
+- **Context:** Sprint 20 establishes isolated All In One production data architecture (schema, migrations, RLS foundation, repository layer, storage adapters, env contract) without production launch. Must NOT use Frontal Slayer Supabase (`hyycomvcaqxxvyrfupes`). Demo mode remains primary at `/all-in-one`.
+
+- **Delivered:**
+  - Data module: `src/all-in-one/data/` — persistence inventory, data health, constants, storage provider, server permissions, seeds, legacy importer
+  - Environment contract: `VITE_AIO_DATA_MODE` = demo | local | supabase; FS URL rejection; legacy `backend` alias
+  - SQL migrations: 8 files in `all-in-one/supabase/migrations/` (identity, business, roles/contacts, CRM/workflow/billing, integrations/security/audit, outbox/idempotency, RLS extensions, indexes/views)
+  - Migration guard: `all-in-one/scripts/verify-migration-environment.sh`
+  - Demo store **v20** — `dataSystem` snapshot, upgrade v18→v20
+  - Office routes: `/office/system/data`, `/office/system/data/migration`
+  - Production readiness: architecture vs launch separation; DATA controls (NOT CONFIGURED until dedicated AIO Supabase)
+  - Debug banner: DATA MODE indicator
+  - Tests: `data.test.ts` (12) — 172 total All In One tests passing
+  - Docs: DATABASE_ARCHITECTURE, SUPABASE_ARCHITECTURE, DATABASE_SCHEMA_MAP, RLS_POLICY_MODEL, STORAGE_ARCHITECTURE, DATA_MIGRATION_PLAN, DATABASE_MIGRATION_RUNBOOK, SEED_DATA_STRATEGY, DATA_ACCESS_LAYER
+
+- **Spatial Architecture Review:** SKIPPED — infrastructure/migration foundation; no new customer-facing product surfaces.
+
+- **Next sprint noted (not implemented):** Sprint 21 QA + E2E + accessibility + performance hardening.

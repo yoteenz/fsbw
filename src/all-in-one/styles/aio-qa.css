@@ -1,0 +1,17 @@
+.aio-qa-page { max-width: 1100px; }
+.aio-qa-hero { margin-bottom: 1.5rem; }
+.aio-qa-subnav { display: flex; flex-wrap: wrap; gap: 0.75rem 1rem; margin-top: 0.75rem; font-size: 0.9rem; }
+.aio-qa-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+.aio-qa-card { background: var(--aio-panel-bg, #1a1d24); border: 1px solid #2a2f3a; border-radius: 8px; padding: 1rem; }
+.aio-qa-stats { list-style: none; padding: 0; margin: 0; }
+.aio-qa-stats li { margin: 0.35rem 0; }
+.aio-qa-list { line-height: 1.6; }
+.aio-qa-badge { display: inline-block; padding: 0.15rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; }
+.aio-qa-badge--ok { background: #1a3d2e; color: #6ee7a0; }
+.aio-qa-badge--bad { background: #3d1a1a; color: #f87171; }
+.aio-qa-badge--muted { background: #2a2f3a; color: #94a3b8; }
+.aio-qa-muted { color: #94a3b8; font-size: 0.85rem; }
+.aio-qa-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-top: 0.5rem; }
+.aio-qa-table th, .aio-qa-table td { border: 1px solid #2a2f3a; padding: 0.4rem 0.6rem; text-align: left; }
+.aio-qa-checklist { list-style: none; padding: 0; }
+.aio-qa-checklist li { margin: 0.5rem 0; }

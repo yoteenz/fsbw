@@ -161,6 +161,7 @@ export function AIOOfficeLayout() {
 
   return (
     <div className="aio-app aio-office">
+      <a href="#aio-main-content" className="aio-skip-link">Skip to main content</a>
       <div className="aio-office-preview-bar" role="status">
         <span>INTERNAL PREVIEW · ALL IN ONE OFFICE 2.0 · DEMO ONLY</span>
         <select
@@ -202,7 +203,7 @@ export function AIOOfficeLayout() {
           </nav>
         </aside>
 
-        <div className="aio-office__main">
+        <div className="aio-office__main" id="aio-main-content">
           <header className="aio-office__topbar">
             <button type="button" className="aio-office__menu-btn" onClick={() => setSidebarOpen((o) => !o)} aria-label="Toggle menu">
               Menu

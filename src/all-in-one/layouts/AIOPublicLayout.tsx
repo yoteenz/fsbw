@@ -7,6 +7,7 @@ import { AIOServicePlanBar } from '../components/AIOServicePlanBar';
 export function AIOPublicLayout() {
   return (
     <div className="aio-app">
+      <a href="#aio-main-content" className="aio-skip-link">Skip to main content</a>
       <AIODebugBanner />
       <AIONav />
       <AIOServicePlanBar />
