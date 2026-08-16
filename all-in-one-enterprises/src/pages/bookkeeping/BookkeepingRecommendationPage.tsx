@@ -70,6 +70,15 @@ export function BookkeepingRecommendationPage() {
             </p>
           )}
 
+          {result.planMayNotFit && result.planFitMessage && (
+            <p className="aio-bk-rec-card__review aio-bk-rec-card__review--warn">
+              {result.planFitMessage}
+              {result.suggestedAlternatePlan && (
+                <> Recommended: {planDisplayName(result.suggestedAlternatePlan)}.</>
+              )}
+            </p>
+          )}
+
           <div className="aio-bk-rec-card__why">
             <h2>Why we recommend it</h2>
             <ul>

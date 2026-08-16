@@ -16,6 +16,8 @@ function needsCustomReview(answers: BookkeepingAssessmentAnswers): boolean {
   if (answers.bankAccountCount >= t.customReviewBankAccounts) return true;
   if (answers.creditCardCount >= t.customReviewCreditCards) return true;
   if (answers.monthlyTransactionBand === t.customReviewTransactionBand) return true;
+  if ((answers.entityCount ?? 1) >= t.customReviewEntityCount) return true;
+  if (answers.needsDriverSettlements && answers.needsPayrollReconciliation) return true;
   return false;
 }
 
@@ -27,6 +29,7 @@ function scorePlan(answers: BookkeepingAssessmentAnswers): { plan: BookkeepingPl
 
   if (answers.bankAccountCount >= 3) score += 1;
   if (answers.creditCardCount >= 2) score += 1;
+  if ((answers.entityCount ?? 1) >= 2) score += 1;
   if (answers.monthlyTransactionBand === '150_400') score += 1;
   if (answers.monthlyTransactionBand === '400_plus') score += 2;
   if (answers.factoringUsed) score += 2;
@@ -42,6 +45,35 @@ function scorePlan(answers: BookkeepingAssessmentAnswers): { plan: BookkeepingPl
   if (score >= 10) return { plan: 'ALL_IN_ONE', score };
   if (score >= 4) return { plan: 'PLUS', score };
   return { plan: 'ESSENTIALS', score };
+}
+
+function evaluatePlanFit(
+  answers: BookkeepingAssessmentAnswers,
+  recommendedPlan: BookkeepingPlanId,
+  score: number,
+): Pick<BookkeepingRecommendationResult, 'planMayNotFit' | 'planFitMessage' | 'suggestedAlternatePlan'> {
+  const t = BOOKKEEPING_RECOMMENDATION_THRESHOLDS;
+  if (recommendedPlan !== 'ESSENTIALS') {
+    return {};
+  }
+  if (score >= t.essentialsEscalationScore) {
+    const suggested: BookkeepingPlanId = score >= 10 ? 'ALL_IN_ONE' : 'PLUS';
+    return {
+      planMayNotFit: true,
+      suggestedAlternatePlan: suggested,
+      planFitMessage:
+        'This plan may not fit your bookkeeping needs. Your operation suggests Bookkeeping Plus or a custom review.',
+    };
+  }
+  if (answers.factoringUsed && answers.truckCount >= 2) {
+    return {
+      planMayNotFit: true,
+      suggestedAlternatePlan: 'PLUS',
+      planFitMessage:
+        'Essentials may not include the factoring reconciliation and reporting depth your multi-truck operation likely needs.',
+    };
+  }
+  return {};
 }
 
 function buildReasons(answers: BookkeepingAssessmentAnswers, plan: BookkeepingPlanId): string[] {
@@ -61,6 +93,7 @@ function buildReasons(answers: BookkeepingAssessmentAnswers, plan: BookkeepingPl
   if (answers.wantsMonthlyReview) reasons.push('You want monthly financial review meetings');
   if (answers.bankAccountCount >= 2) reasons.push('You use multiple business bank accounts');
   if (answers.monthlyTransactionBand === '400_plus') reasons.push('You have high monthly transaction volume');
+  if ((answers.entityCount ?? 1) >= 2) reasons.push('You operate multiple business entities');
 
   if (!reasons.length) {
     if (plan === 'ESSENTIALS') {
@@ -96,8 +129,9 @@ export function recommendBookkeepingPlan(
 ): BookkeepingRecommendationResult {
   const customReviewRequired = needsCustomReview(answers);
   const booksRescueRequired = booksNeedRescue(answers.booksCurrentness);
-  const { plan } = scorePlan(answers);
+  const { plan, score } = scorePlan(answers);
   const reasons = buildReasons(answers, plan);
+  const planFit = evaluatePlanFit(answers, plan, score);
 
   if (booksRescueRequired) {
     return {
@@ -109,6 +143,7 @@ export function recommendBookkeepingPlan(
       reasons,
       rescueReasons: buildRescueReasons(answers.booksCurrentness),
       afterRescuePlan: plan,
+      ...planFit,
     };
   }
 
@@ -123,6 +158,19 @@ export function recommendBookkeepingPlan(
         ...reasons,
         'Your setup exceeds standard automated pricing thresholds — staff will confirm final pricing',
       ],
+      ...planFit,
+    };
+  }
+
+  if (planFit.planMayNotFit) {
+    return {
+      kind: 'plan_escalation',
+      recommendedPlan: planFit.suggestedAlternatePlan ?? 'PLUS',
+      billingInterval,
+      booksRescueRequired: false,
+      customReviewRequired: false,
+      reasons: [...reasons, planFit.planFitMessage!],
+      ...planFit,
     };
   }
 

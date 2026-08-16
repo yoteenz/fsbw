@@ -7,7 +7,7 @@
 | Bookkeeping Essentials | $249/mo · $2,490/yr |
 | Bookkeeping Plus | $449/mo · $4,490/yr |
 | All In One Bookkeeping | $749/mo · $7,490/yr |
-| Books Rescue | $499 one-time |
+| Books Rescue | $749 one-time |
 
 All customer-facing prices use **`starting_at`** pricing mode in `src/billing/servicePricingConfig.ts`.
 

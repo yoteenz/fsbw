@@ -132,7 +132,7 @@ export function createBookkeepingSeedData(): {
       accountCount: 2,
       transactionComplexity: '50_150',
       accountingSoftware: 'QuickBooks Online',
-      quoteMinor: dollarsToMinor(899),
+      quoteMinor: dollarsToMinor(749),
       recommendedPlanAfter: 'ESSENTIALS',
       assignedStaffId: 'staff-8',
       createdAt: daysAgo(10),

@@ -8,11 +8,22 @@ import {
   getBooksRescue,
   getOrganizationId,
 } from '../../../demo/bookkeepingActions';
+import {
+  getClarificationDigest,
+  getFinancialAccounts,
+  getFinancialConnections,
+  getBookkeepingPeriods,
+  getCustomerClarifications,
+} from '../../../demo/autopilotActions';
 import { DEMO_BOOKKEEPING_LABEL } from '../../../bookkeeping/bookkeepingConfig';
 import { planStartingPriceMinor } from '../../../bookkeeping/bookkeepingPlans';
 import { planDisplayName } from '../../../bookkeeping/bookkeepingRecommendation';
 import { formatMoney } from '../../../billing/money';
 import { aioPaths } from '../../../utils/paths';
+
+function connectionStatusLabel(status: string): string {
+  return status.replace(/_/g, ' ');
+}
 
 export function BookkeepingHomePage() {
   const store = useDemoStore();
@@ -21,6 +32,12 @@ export function BookkeepingHomePage() {
   const cycles = useMemo(() => getBookkeepingCycles(orgId, store), [orgId, store]);
   const reports = useMemo(() => getBookkeepingReports(orgId, store), [orgId, store]);
   const rescue = getBooksRescue(orgId, store);
+  const connections = useMemo(() => getFinancialConnections(orgId, store), [orgId, store]);
+  const accounts = useMemo(() => getFinancialAccounts(orgId, store), [orgId, store]);
+  const periods = useMemo(() => getBookkeepingPeriods(orgId, store), [orgId, store]);
+  const clarifications = useMemo(() => getCustomerClarifications(orgId, store), [orgId, store]);
+  const digest = useMemo(() => getClarificationDigest(orgId, store), [orgId, store]);
+  const currentPeriod = periods[0];
 
   if (!sub) {
     return (
@@ -39,6 +56,7 @@ export function BookkeepingHomePage() {
   }
 
   const price = sub.finalPriceMinor ?? planStartingPriceMinor(sub.plan, sub.billingInterval);
+  const pendingClarifications = clarifications.filter((c) => c.status === 'pending');
 
   return (
     <div className="aio-bk-portal">
@@ -57,14 +75,62 @@ export function BookkeepingHomePage() {
           <label>Starting price</label>
         </div>
         <div className="aio-bk-portal-metric">
-          <span>{sub.currentPeriodLabel ?? '—'}</span>
+          <span>{currentPeriod?.label ?? sub.currentPeriodLabel ?? '—'}</span>
           <label>Current period</label>
         </div>
         <div className="aio-bk-portal-metric">
-          <span>{reports[0]?.generatedAt?.slice(0, 10) ?? '—'}</span>
-          <label>Latest report</label>
+          <span>{currentPeriod ? `${currentPeriod.autopilotCoveragePct ?? 0}%` : '—'}</span>
+          <label>Books progress</label>
         </div>
       </div>
+
+      {digest.count > 0 && (
+        <section className="aio-bk-portal-panel aio-bk-portal-panel--warn">
+          <h2>{digest.count} {digest.count === 1 ? 'item needs' : 'items need'} your help</h2>
+          <p>Complete them in approximately {digest.count * 30} seconds.</p>
+          <ul>
+            {pendingClarifications.map((c) => (
+              <li key={c.id} className="aio-bk-portal-clarification">
+                <strong>{c.merchantLabel}</strong> · {formatMoney(c.amountMinor)} · {c.transactionDate}
+                <p>{c.question}</p>
+                <div className="aio-bk-portal-clarification__options">
+                  {c.options.map((opt) => (
+                    <button key={opt} type="button" className="aio-btn aio-btn--sm aio-btn--outline">{opt}</button>
+                  ))}
+                </div>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {connections.length > 0 && (
+        <section className="aio-bk-portal-panel">
+          <h2>Connected accounts</h2>
+          {connections.map((conn) => (
+            <div key={conn.id} className="aio-bk-portal-connection">
+              <strong>{conn.institutionName}</strong>
+              <span className={`aio-bk-portal-connection__status aio-bk-portal-connection__status--${conn.status.toLowerCase()}`}>
+                {connectionStatusLabel(conn.status)}
+              </span>
+              {conn.lastSuccessfulSyncAt && (
+                <p>Last updated: {conn.lastSuccessfulSyncAt.slice(0, 10)}</p>
+              )}
+              {conn.requiresCustomerAction && (
+                <button type="button" className="aio-btn aio-btn--sm aio-btn--gold">Reconnect account</button>
+              )}
+            </div>
+          ))}
+          <ul className="aio-bk-portal-accounts">
+            {accounts.map((acct) => (
+              <li key={acct.id}>
+                {acct.accountName} · ••••{acct.accountMask}
+              </li>
+            ))}
+          </ul>
+          <p className="aio-bk-portal-note">All In One never stores your online banking password.</p>
+        </section>
+      )}
 
       {rescue && rescue.status !== 'complete' && (
         <section className="aio-bk-portal-panel aio-bk-portal-panel--warn">
@@ -78,6 +144,9 @@ export function BookkeepingHomePage() {
         <section className="aio-bk-portal-panel">
           <h2>Current cycle — {cycles[0].periodLabel}</h2>
           <p>{cycles[0].status.replace(/_/g, ' ')}</p>
+          {currentPeriod && (
+            <p>Autopilot: {currentPeriod.autoClassifiedCount} of {currentPeriod.transactionCount} transactions auto-classified</p>
+          )}
         </section>
       )}
 

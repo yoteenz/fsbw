@@ -1056,7 +1056,7 @@ export const CANONICAL_SERVICE_CATALOG: CatalogServiceEntry[] = [
     slug: 'books-rescue',
     name: 'Books Rescue',
     shortDescription: 'One-time historical cleanup before recurring bookkeeping.',
-    description: 'Cleanup for behind, uncategorized, or unreconciled books — starting at $499; final quote after review.',
+    description: 'Cleanup for behind, uncategorized, or unreconciled books — starting at $749; final quote after review.',
     category: 'manage-my-money',
     legacyDivision: 'bookkeeping',
     fulfillmentType: 'AIO_DIRECT',

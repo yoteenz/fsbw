@@ -36,7 +36,7 @@ export const BOOKKEEPING_FAQ = [
   {
     question: 'What if my books are behind?',
     answer:
-      'Books Rescue is a one-time cleanup service starting at $499 (also "starting at") to get historical books current before recurring bookkeeping begins. Your assessment may recommend Books Rescue first.',
+      'Books Rescue is a one-time cleanup service starting at $749 (also "starting at") to get historical books current before recurring bookkeeping begins. Your assessment may recommend Books Rescue first.',
   },
   {
     question: 'Does bookkeeping include tax preparation?',
@@ -109,8 +109,12 @@ export const BOOKKEEPING_RECOMMENDATION_THRESHOLDS = {
   customReviewBankAccounts: 5,
   customReviewCreditCards: 5,
   customReviewTransactionBand: '400_plus' as const,
+  customReviewEntityCount: 3,
   essentialsMaxTrucks: 2,
   plusMaxTrucks: 5,
+  /** Score at or above this while recommending Essentials triggers plan-fit warning */
+  essentialsEscalationScore: 4,
+  booksRescueBasePriceMinor: 74900,
 };
 
 export const BOOKKEEPING_CUSTOMER_STATUS_LABELS: Record<string, string> = {

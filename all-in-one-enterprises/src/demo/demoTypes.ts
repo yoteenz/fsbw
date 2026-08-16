@@ -495,9 +495,17 @@ import type {
   BookkeepingSubscription,
   BooksRescueEngagement,
 } from '../bookkeeping/bookkeepingTypes';
+import type {
+  BookkeepingException,
+  BookkeepingPeriod,
+  BookkeepingTransaction,
+  CustomerClarification,
+  FinancialAccount,
+  FinancialConnection,
+} from '../bookkeeping/autopilot/autopilotTypes';
 
 export interface DemoStore {
-  version: 21;
+  version: 22;
   requestCounter: number;
   portalClientId?: string;
   shipperPortalOrgId?: string;
@@ -693,6 +701,13 @@ export interface DemoStore {
   booksRescueEngagements?: BooksRescueEngagement[];
   bookkeepingLeads?: BookkeepingLead[];
   bookkeepingCounters?: BookkeepingCounters;
+  /** Refinement 04A — Bookkeeping Autopilot */
+  financialConnections?: FinancialConnection[];
+  financialAccounts?: FinancialAccount[];
+  bookkeepingTransactions?: BookkeepingTransaction[];
+  bookkeepingPeriods?: BookkeepingPeriod[];
+  bookkeepingExceptions?: BookkeepingException[];
+  customerClarifications?: CustomerClarification[];
   /** Sprint 20 — data system snapshot for health center */
   dataSystem?: Pick<DataSystemStatus, 'demoSchemaVersion' | 'seedVersion' | 'dataModeLabel'>;
 }

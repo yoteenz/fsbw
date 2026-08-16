@@ -14,7 +14,7 @@
 ## Books Rescue
 
 1. Assessment → months behind, accounts, software, documents.
-2. Staff quote (starting at $499).
+2. Staff quote (starting at $749).
 3. Payment/approval → cleanup work → mark complete.
 4. Recommend recurring tier for after cleanup.
 

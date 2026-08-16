@@ -38,7 +38,7 @@ export const BOOKKEEPING_TRUCKING_CATEGORIES = [
   'Load Boards',
 ] as const;
 
-export const BOOKS_RESCUE_STARTING_PRICE_MINOR = dollarsToMinor(499);
+export const BOOKS_RESCUE_STARTING_PRICE_MINOR = dollarsToMinor(749);
 
 export const BOOKKEEPING_PLANS: Record<BookkeepingPlanId, BookkeepingPlanConfig> = {
   ESSENTIALS: {

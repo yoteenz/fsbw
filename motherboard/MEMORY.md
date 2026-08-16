@@ -51644,3 +51644,25 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **QA:** Build OK; recommendation tests pass; manual UI walkthrough on :5173 — plans, assessment, Books Rescue + Plus recommendation verified.
 
+---
+
+## 2026-08-16 — Post-Build Refinement 05: Complete service catalog + provider architecture
+
+- **Context:** Founder sprint — expand AIO to full trucking business operating hub (UCR, HVUT/2290, MCS-150, consortium, Clearinghouse, DQ files, DOT compliance/audit, ELD, title/tags, payroll, tax prep) with configurable direct/partner fulfillment; seven discovery categories; Services Hub; Road Ready applicability; renewals; portal/office — without cluttering homepage or breaking Refinement 04 bookkeeping.
+
+- **Canonical catalog:** `all-in-one-enterprises/src/services/catalog/` — `CANONICAL_SERVICE_CATALOG`, fulfillment types (nullable until configured), partner directory placeholders, `roadReadyApplicability`, `serviceNeedRecommendation`, `COMPLIANCE_DISCLAIMER`.
+
+- **Public:** Redesigned `/services` hub (hero, 7 category cards, search/filter); `/services/find` questionnaire; mega menu + mobile nested accordion (7 categories). New service pages in `services.ts` for UCR, HVUT, MCS-150, safety, payroll, tax prep, etc.
+
+- **Road Ready:** Extended `REQUIREMENT_DEFINITIONS` + applicability engine (REQUIRED/LIKELY/RECOMMENDED/OPTIONAL/NOT APPLICABLE/NEEDS REVIEW) — not every item mandatory.
+
+- **Renewals:** UCR, MCS-150, HVUT, consortium, ELD, authority maintenance types added.
+
+- **Office/Portal:** `OfficeServicesPage` universal queue filters; portal `ServicesCenterPage` → My Services grouped view.
+
+- **Activation:** New services default **COMING_SOON** in launch matrix; factoring/insurance/bookkeeping unchanged.
+
+- **Docs:** `docs/services/COMPLETE_SERVICE_CATALOG.md`, `SERVICE_PROVIDER_MODEL.md`, `SAFETY_COMPLIANCE_SERVICES.md`, `TAX_PAYROLL_SERVICES.md`, `docs/refinement/POST_BUILD_REFINEMENT_05_REPORT.md`.
+
+- **QA:** Build pass; 5 catalog/applicability tests pass; manual UI on :5173 — hub, find flow, UCR detail, mega menu verified.
+

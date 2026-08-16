@@ -68,4 +68,13 @@ describe('recommendBookkeepingPlan', () => {
     expect(result.customReviewRequired).toBe(true);
     expect(result.kind).toBe('custom_review');
   });
+
+  it('escalates when Essentials is insufficient for factoring multi-truck operation', () => {
+    const result = recommendBookkeepingPlan(
+      baseAnswers({ truckCount: 2, factoringUsed: true }),
+    );
+    expect(result.planMayNotFit).toBe(true);
+    expect(result.suggestedAlternatePlan).toBe('PLUS');
+    expect(result.kind).toBe('plan_escalation');
+  });
 });

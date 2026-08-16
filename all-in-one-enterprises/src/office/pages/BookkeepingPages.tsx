@@ -31,6 +31,7 @@ export function BookkeepingCommandCenterPage() {
         <h1>Bookkeeping Command Center</h1>
         <p>{DEMO_BOOKKEEPING_LABEL}</p>
         <div className="aio-office-action-bar">
+          <Link to={aioPaths.officeBookkeepingAutopilot} className="aio-btn aio-btn--sm aio-btn--gold">Autopilot Command Center</Link>
           <Link to={aioPaths.officeBookkeepingSubscriptions} className="aio-btn aio-btn--sm">Subscriptions</Link>
           <Link to={aioPaths.officeBookkeepingRescue} className="aio-btn aio-btn--sm">Books Rescue</Link>
           <Link to={aioPaths.officeBookkeepingLeads} className="aio-btn aio-btn--sm">Leads</Link>

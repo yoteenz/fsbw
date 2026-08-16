@@ -14,7 +14,7 @@ All In One is **not** a CPA firm, tax preparer, payroll processor, bank, lender,
 | Bookkeeping Plus | $449 | $4,490 |
 | All In One Bookkeeping | $749 | $7,490 |
 
-**Books Rescue** (one-time): starting at **$499** — not a fourth recurring tier.
+**Books Rescue** (one-time): starting at **$749** — not a fourth recurring tier.
 
 ## Service boundaries
 

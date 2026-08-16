@@ -55,6 +55,7 @@ export interface BookkeepingComplexityProfile {
   truckCount: number;
   bankAccountCount: number;
   creditCardCount: number;
+  entityCount?: number;
   monthlyTransactionBand: MonthlyTransactionBand;
   factoringUsed: boolean;
   driverStructure: DriverStructure;
@@ -73,7 +74,7 @@ export interface BookkeepingAssessmentAnswers extends BookkeepingComplexityProfi
   completedAt?: string;
 }
 
-export type BookkeepingRecommendationKind = 'plan' | 'books_rescue_first' | 'custom_review';
+export type BookkeepingRecommendationKind = 'plan' | 'books_rescue_first' | 'custom_review' | 'plan_escalation';
 
 export interface BookkeepingRecommendationResult {
   kind: BookkeepingRecommendationKind;
@@ -84,6 +85,10 @@ export interface BookkeepingRecommendationResult {
   reasons: string[];
   rescueReasons?: string[];
   afterRescuePlan?: BookkeepingPlanId;
+  /** When Essentials is scored but complexity suggests a higher tier */
+  planMayNotFit?: boolean;
+  planFitMessage?: string;
+  suggestedAlternatePlan?: BookkeepingPlanId;
 }
 
 export interface BookkeepingSubscription {

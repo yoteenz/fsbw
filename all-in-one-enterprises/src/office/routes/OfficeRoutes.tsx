@@ -151,6 +151,7 @@ import {
   BookkeepingRescueListPage,
   BookkeepingLeadsListPage,
 } from '../pages/BookkeepingPages';
+import { BookkeepingAutopilotPage } from '../pages/BookkeepingAutopilotPage';
 import { StaffTrainingCenterPage } from '../pages/TrainingPages';
 
 export default function OfficeRoutes() {
@@ -264,6 +265,7 @@ export default function OfficeRoutes() {
         <Route path="factoring/clients/:clientId" element={<FactoringClientDetailPage />} />
         <Route path="factoring/providers" element={<FactoringProvidersPage />} />
         <Route path="bookkeeping" element={<BookkeepingCommandCenterPage />} />
+        <Route path="bookkeeping/autopilot" element={<BookkeepingAutopilotPage />} />
         <Route path="bookkeeping/subscriptions" element={<BookkeepingSubscriptionsListPage />} />
         <Route path="bookkeeping/books-rescue" element={<BookkeepingRescueListPage />} />
         <Route path="bookkeeping/leads" element={<BookkeepingLeadsListPage />} />

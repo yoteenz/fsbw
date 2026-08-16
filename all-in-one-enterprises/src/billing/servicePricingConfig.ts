@@ -96,7 +96,7 @@ export const DEFAULT_SERVICE_PRICING: ServicePricingConfig[] = [
     title: 'Books Rescue',
     division: 'bookkeeping',
     pricingMode: 'starting_at',
-    baseServiceFeeMinor: dollarsToMinor(499),
+    baseServiceFeeMinor: dollarsToMinor(749),
     active: true,
     paymentTiming: 'manual_billing',
   },

@@ -10,6 +10,15 @@ import {
   BookkeepingFeatureMatrix,
   BookkeepingPlanCards,
 } from '../components/bookkeeping/BookkeepingPlanSection';
+import { BookkeepingComparisonMatrix } from '../components/bookkeeping/BookkeepingComparisonMatrix';
+import {
+  BOOKKEEPING_AUTOPILOT_COPY,
+  BOOKKEEPING_AUTOPILOT_FLOW,
+  BOOKKEEPING_AUTOPILOT_HEADLINE,
+  BOOKKEEPING_VALUE_HEADLINE,
+  BOOKKEEPING_VALUE_STACK,
+  BOOKKEEPING_VALUE_SUBHEAD,
+} from '../bookkeeping/autopilot/competitiveMatrix';
 import { BOOKKEEPING_FAQ, BOOKKEEPING_SERVICE_SLUG, BOOKS_RESCUE_SERVICE_SLUG, DEMO_BOOKKEEPING_LABEL } from '../bookkeeping/bookkeepingConfig';
 import { BOOKS_RESCUE_STARTING_PRICE_MINOR } from '../bookkeeping/bookkeepingPlans';
 import { formatMoney } from '../billing/money';
@@ -66,6 +75,60 @@ export function BookkeepingPage() {
         </div>
       </section>
 
+      <section className="aio-page-content" id="autopilot">
+        <div className="aio-container">
+          <AIOSectionHeader
+            eyebrow="Automation"
+            title={BOOKKEEPING_AUTOPILOT_HEADLINE}
+            subtitle={BOOKKEEPING_AUTOPILOT_COPY}
+          />
+          <div className="aio-bk-autopilot-flow">
+            {BOOKKEEPING_AUTOPILOT_FLOW.map((step, i) => (
+              <span key={step} className="aio-bk-autopilot-flow__step">
+                {step}
+                {i < BOOKKEEPING_AUTOPILOT_FLOW.length - 1 && <span className="aio-bk-autopilot-flow__arrow" aria-hidden>→</span>}
+              </span>
+            ))}
+          </div>
+          <ul className="aio-bk-trust-list">
+            <li>All In One does not store your online banking password</li>
+            <li>Secure account connection through approved providers where enabled</li>
+            <li>Human review for exceptions and material decisions</li>
+            <li>Clear audit trail for automated classifications</li>
+          </ul>
+        </div>
+      </section>
+
+      <section className="aio-section aio-section--dark" id="why-different">
+        <div className="aio-container">
+          <AIOSectionHeader
+            light
+            eyebrow="Why All In One Is Different"
+            title={BOOKKEEPING_VALUE_HEADLINE}
+            subtitle={BOOKKEEPING_VALUE_SUBHEAD}
+          />
+          <p style={{ color: 'rgba(255,255,255,0.75)', maxWidth: '42rem', marginBottom: '2rem' }}>
+            Built for the road. Designed for the whole business. One bookkeeping service with a trucking ecosystem behind it.
+          </p>
+          <div className="aio-bk-value-stack">
+            {BOOKKEEPING_VALUE_STACK.map((item) => (
+              <span key={item} className="aio-bk-value-stack__item">{item}</span>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="aio-page-content" id="compare">
+        <div className="aio-container">
+          <AIOSectionHeader
+            eyebrow="Compare Your Options"
+            title="Service model comparison"
+            subtitle="Compare service types — not aggressive claims against individual competitors."
+          />
+          <BookkeepingComparisonMatrix />
+        </div>
+      </section>
+
       <section className="aio-page-content" id="plans">
         <div className="aio-container">
           <AIOSectionHeader
@@ -91,8 +154,8 @@ export function BookkeepingPage() {
             />
             <p style={{ color: 'rgba(255,255,255,0.75)', maxWidth: '36rem' }}>
               For several months uncategorized, unreconciled accounts, missing categories, or incomplete historical
-              records — Books Rescue is the first step. Starting at {formatMoney(BOOKS_RESCUE_STARTING_PRICE_MINOR)}.
-              Final quote depends on months behind, accounts, and transaction volume.
+              records — Books Rescue is the first step. Starting at {formatMoney(BOOKS_RESCUE_STARTING_PRICE_MINOR)} one-time.
+              Final quote depends on months behind, accounts, and transaction volume — not unlimited cleanup.
             </p>
             <Link to={aioPaths.bookkeepingAssessment}>
               <AIOButton variant="gold" style={{ marginTop: '1.25rem' }}>
@@ -103,7 +166,7 @@ export function BookkeepingPage() {
           <div className="aio-card aio-card--gold-border">
             <AIOIcon icon="reportsAnalytics" size={48} alt="" />
             <h3 className="aio-intent-card__title">Not a fourth tier</h3>
-            <p>Books Rescue is a one-time service — not a recurring subscription plan.</p>
+            <p>Books Rescue is a one-time cleanup service — starting at $749, not a recurring subscription plan.</p>
           </div>
         </div>
       </section>

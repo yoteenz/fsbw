@@ -46,6 +46,7 @@ export const aioPaths = {
   officeFactoringClient: (id: string) => `${BASE}/office/factoring/clients/${id}`,
   officeFactoringProviders: `${BASE}/office/factoring/providers`,
   officeBookkeeping: `${BASE}/office/bookkeeping`,
+  officeBookkeepingAutopilot: `${BASE}/office/bookkeeping/autopilot`,
   officeBookkeepingSubscriptions: `${BASE}/office/bookkeeping/subscriptions`,
   officeBookkeepingRescue: `${BASE}/office/bookkeeping/books-rescue`,
   officeBookkeepingLeads: `${BASE}/office/bookkeeping/leads`,
