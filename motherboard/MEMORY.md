@@ -51606,3 +51606,19 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Report:** Updated `docs/refinement/POST_BUILD_REFINEMENT_03E_REPORT.md` § 03E.1.
 
+---
+
+## 2026-08-16 — Post-Build Refinement 03F: AIO expanded platform icon library
+
+- **Context:** Founder supplied 3 master icon sheets (8 icons each = 24 platform icons). Expand asset system beyond 03E homepage service icons; do not replace 03E/03E.1 homepage or trucking insurance icons.
+
+- **Sheet ID (by content):** 26BB4CA8 = Compliance+Business; 28EE83E3 = Fleet+Freight; 92D00598 = Finance+Platform.
+
+- **Assets:** 24 PNGs in `public/brand/icons/{compliance,freight,platform}/` + archived `_source-master-*.png`; normalized 256×256 @ 72% fill via `scripts/extract-platform-icon-sheets.py`.
+
+- **Registry:** `src/config/aioIconRegistry.ts` + `AIOIcon.tsx`; `operationsDispatch` distinct from homepage `serviceDispatch`.
+
+- **Integration (safe only):** `AIORoadmapProgress` (Road Ready sample), `BusinessHealthGrid` (portal command center). Dark roadmap uses CSS invert for black icons on dark bg.
+
+- **Report:** `docs/refinement/POST_BUILD_REFINEMENT_03F_REPORT.md`
+
