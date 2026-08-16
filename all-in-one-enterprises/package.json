@@ -13,6 +13,7 @@
     "test": "vitest run",
     "test:unit": "vitest run src/",
     "test:infrastructure": "vitest run src/infrastructure/",
+    "test:launch": "vitest run src/launch/",
     "test:e2e": "playwright test",
     "test:security": "vitest run src/security/",
     "qa": "npm run typecheck && npm run test && npm run check:isolation && npm run validate:env",

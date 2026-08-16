@@ -60,6 +60,8 @@ const SECTION_LINKS = [
   { label: 'Team', to: aioPaths.officeManagementTeam },
   { label: 'Deadlines', to: aioPaths.officeManagementDeadlines },
   { label: 'Data Quality', to: aioPaths.officeManagementDataQuality },
+  { label: 'Launch Control', to: aioPaths.officeManagementLaunch },
+  { label: 'Service Activation', to: aioPaths.officeManagementLaunchServices },
   { label: 'Reports', to: aioPaths.officeReports },
 ];
 

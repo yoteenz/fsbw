@@ -98,6 +98,7 @@ const navGroups = [
       { label: 'Privacy Center', to: aioPaths.officePrivacy },
       { label: 'Production Readiness', to: aioPaths.officeSecurityProductionReadiness },
       { label: 'Production Config', to: aioPaths.officeSystemProduction },
+      { label: 'Launch Control', to: aioPaths.officeManagementLaunch },
       { label: 'Integration Settings', to: aioPaths.officeIntegrationsSettings },
       { label: 'Workflow Templates', to: aioPaths.officeWorkflowSettings },
       { label: 'Automation Rules', to: aioPaths.officeAutomationSettings },

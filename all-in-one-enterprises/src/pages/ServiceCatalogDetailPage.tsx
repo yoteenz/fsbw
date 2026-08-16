@@ -6,6 +6,7 @@ import { aioPaths } from '../utils/paths';
 import { servicePageMeta } from '../data/mockServices';
 import { useDemoStore } from '../demo/useDemoStore';
 import { customerPriceLabel, getServicePricing } from '../billing/servicePricingConfig';
+import { getPublicServiceCta } from '../launch';
 
 type Props = {
   slug?: string;
@@ -51,6 +52,7 @@ export function ServiceCatalogDetailPage({ slug: slugProp }: Props) {
 
   const inPlan = items.some((i) => i.slug === service.slug);
   const pricing = getServicePricing(service.slug, store.servicePricing);
+  const launchCta = getPublicServiceCta(service.slug);
 
   const handleAdd = () => {
     add({
@@ -93,22 +95,31 @@ export function ServiceCatalogDetailPage({ slug: slugProp }: Props) {
 
             <aside className="aio-portal-panel">
               <h2 className="aio-portal-panel__title">Get Started</h2>
+              <p className="aio-prototype-note">Service status: {launchCta.state.replace(/_/g, ' ')}</p>
               <p className="aio-service-plan-item__pricing">{customerPriceLabel(pricing)}</p>
               {pricing?.externalFeeLabel && (
                 <p className="aio-prototype-note">+ {pricing.externalFeeLabel}</p>
               )}
-              {inPlan ? (
-                <Link to={aioPaths.servicePlan}>
-                  <AIOButton variant="gold">In My Plan — Review</AIOButton>
-                </Link>
+              {launchCta.allowed ? (
+                <>
+                  {inPlan ? (
+                    <Link to={aioPaths.servicePlan}>
+                      <AIOButton variant="gold">In My Plan — Review</AIOButton>
+                    </Link>
+                  ) : (
+                    <AIOButton variant="gold" onClick={handleAdd}>
+                      Add to My Plan
+                    </AIOButton>
+                  )}
+                  <Link to={aioPaths.getStartedForService(service.slug)} style={{ display: 'block', marginTop: '1rem' }}>
+                    <AIOButton variant="outline-dark">{launchCta.label}</AIOButton>
+                  </Link>
+                </>
               ) : (
-                <AIOButton variant="gold" onClick={handleAdd}>
-                  Add to My Plan
-                </AIOButton>
+                <Link to={aioPaths.contact}>
+                  <AIOButton variant="outline-dark">{launchCta.label}</AIOButton>
+                </Link>
               )}
-              <Link to={aioPaths.getStartedForService(service.slug)} style={{ display: 'block', marginTop: '1rem' }}>
-                <AIOButton variant="outline-dark">Get Started — {service.title}</AIOButton>
-              </Link>
               <Link to={aioPaths.getStarted} style={{ display: 'block', marginTop: '0.5rem' }}>
                 <AIOButton variant="outline-dark" size="sm">Start Smart Intake</AIOButton>
               </Link>

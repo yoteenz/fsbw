@@ -144,6 +144,8 @@ import {
   QaBrowsersPage,
 } from '../pages/QaPages';
 import { ProductionConfigCenterPage } from '../pages/ProductionInfrastructurePages';
+import { LaunchControlCenterPage, ServiceActivationCenterPage, SopLibraryPage } from '../pages/LaunchPages';
+import { StaffTrainingCenterPage } from '../pages/TrainingPages';
 
 export default function OfficeRoutes() {
   return (
@@ -208,6 +210,10 @@ export default function OfficeRoutes() {
         <Route path="management/team" element={<ManagementTeamPage />} />
         <Route path="management/deadlines" element={<ManagementDeadlinesPage />} />
         <Route path="management/data-quality" element={<ManagementDataQualityPage />} />
+        <Route path="management/launch" element={<LaunchControlCenterPage />} />
+        <Route path="management/launch/services" element={<ServiceActivationCenterPage />} />
+        <Route path="training" element={<StaffTrainingCenterPage />} />
+        <Route path="training/sops" element={<SopLibraryPage />} />
         <Route path="reports" element={<ManagementReportsCenterPage />} />
         <Route path="crm" element={<CrmHomePage />} />
         <Route path="crm/leads" element={<CrmLeadsListPage />} />

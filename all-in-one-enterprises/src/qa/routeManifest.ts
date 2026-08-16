@@ -53,6 +53,8 @@ export const AIO_ROUTE_MANIFEST: AioRouteEntry[] = [
   { path: aioPaths.officeQaDevices, category: 'SYSTEM', label: 'QA Devices' },
   { path: aioPaths.officeQaBrowsers, category: 'SYSTEM', label: 'QA Browsers' },
   { path: aioPaths.officeSystemProduction, category: 'SYSTEM', label: 'Production Config Center' },
+  { path: aioPaths.officeManagementLaunch, category: 'MANAGEMENT', label: 'Launch Control Center' },
+  { path: aioPaths.officeTraining, category: 'STAFF', label: 'Staff Training Center' },
   { path: aioPaths.officeSecurityProductionReadiness, category: 'SECURITY', label: 'Production readiness' },
 ];
 

@@ -2,9 +2,17 @@
 
 **Company:** ALL IN ONE ENTERPRISES INC.  
 **Positioning:** The business office behind the truck.  
-**Status:** Sprint 23 — Production infrastructure architecture READY; live Supabase/host provisioning **NOT_CONFIGURED** (owner action). Public launch **BLOCKED** until Sprint 24. Standalone app: `all-in-one-enterprises/`.
+**Status:** Sprint 24 — Launch + Operations architecture COMPLETE. Public launch **BLOCKED**. Original 24-sprint roadmap **COMPLETE**. Standalone app: `all-in-one-enterprises/`.
 
-### Sprint 23 — Production environment model
+### Sprint 24 — Launch and operations
+
+- Launch Control Center: `/office/management/launch`
+- Service activation: GO / LIMITED_PILOT / HOLD / BLOCKED per service
+- Staff Training Center + SOP library (`docs/operations/`)
+- `evaluateLaunchReadiness()` — distinct from infrastructure gates
+- Release roadmap replaces automatic Sprint 25
+
+---
 
 - Explicit `VITE_AIO_ENVIRONMENT`: local | demo | staging | production
 - Separate staging and production Supabase projects (never Frontal Slayer `hyycomvcaqxxvyrfupes`)
