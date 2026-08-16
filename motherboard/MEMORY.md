@@ -51688,3 +51688,19 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **QA:** 13 unit tests pass; build OK; manual UI on :5173 — comparison matrix, $749 Books Rescue, office autopilot, portal connected accounts verified.
 
+---
+
+## 2026-08-16 — Homepage visual refinement: nav menu, hero composition, logo scale
+
+- **Context:** Focused visual correction sprint on AIO homepage — no structure/copy/route changes. Fix transparent mobile menu over hero, oversized hero typography/composition, undersized navbar logo.
+
+- **Mobile menu:** Replaced slide-in panel with opaque `#0b0b0b` dropdown from navbar (`position: absolute; top: 100%`); white labels, gold accordion controls, scrollable panel, body scroll lock; Client Login in menu styled as full-width gold button (navbar button retained).
+
+- **Hero:** Removed `aio-display-xl` from headline; responsive clamps capped at 1440px+; left-aligned copy block (~42vw max on desktop); directional overlay (dark left, clearer right); mobile upper-left composition; desktop side-by-side CTAs from 640px.
+
+- **Logo:** Height fills ~80% navbar via `transform: scale(1.55–1.68)` to compensate for lockup PNG internal padding; desktop scale bump.
+
+- **Files:** `AIONav.tsx`, `HeroSection.tsx`, `aio.css`.
+
+- **QA:** Build OK; manual homepage at 390×844 and 1440×900 — menu opaque, hero text/truck balance, larger logo verified.
+
