@@ -348,7 +348,7 @@ function collectAttentionCandidates(
     });
   }
 
-  for (const action of getPortalWorkflowActions(orgId)) {
+  for (const action of getPortalWorkflowActions(orgId, store)) {
     out.push({
       dedupeKey: action.dedupeKey,
       category: 'services',

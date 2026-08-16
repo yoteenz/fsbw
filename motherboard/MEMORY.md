@@ -51305,4 +51305,16 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Verified:** `localhost:3001/all-in-one` + `/services` load All In One homepage/services (no red error); `npm run build` pass.
 
-- **Spatial Architecture Review:** SKIPPED — isolated All In One debug shell routing fix.
+---
+
+## 2026-08-16 — /all-in-one portal infinite re-render (read-only store misuse)
+
+- **Context:** Founder reported **different error** on mobile after routing fix — still red DebugRouteErrorBoundary, now pathname `/portal` in `location` prop (stale bundle from prior `useAllInOneRelativeLocation` fix) and, on fresh load, `/all-in-one/portal` crashed with **Too many re-renders**.
+
+- **Root cause (portal):** `getPortalWorkflowActions()` in `workflowActions.ts` called `updateDemoStore((s) => s)` during render (via `PortalPage` → `useClientCommandCenter` → `collectAttentionCandidates`). `updateDemoStore` always saves + dispatches `aio-demo-store-change` → `useDemoStore` setState → infinite render loop.
+
+- **Fix:** Replaced all read-only `updateDemoStore((s) => s)` calls in `workflowActions.ts` with `loadDemoStore()`. `getPortalWorkflowActions` accepts optional `store` param; `clientCommandCenterService` passes current store.
+
+- **Verified:** `localhost:3001/all-in-one`, `/portal`, `/services` all load without red error or re-render loop.
+
+- **Mobile note:** Hard refresh required — error boundary caches prior crash; `/portal` pathname error indicates old JS bundle before location-override removal.
