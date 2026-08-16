@@ -15,6 +15,8 @@ import { createCommunicationsSeedData } from './communicationsSeed';
 import { createAppointmentsSeedData } from './appointmentsSeed';
 import { createIntegrationsSeedData } from '../integrations/integrationsSeed';
 import { createSecuritySeedData } from '../security/securitySeed';
+import { AIO_DEMO_SCHEMA_VERSION } from '../data/constants';
+import { getDataModeLabel } from '../config/dataMode';
 
 export function createDemoSeed(): DemoStore {
   const now = new Date();
@@ -48,7 +50,12 @@ export function createDemoSeed(): DemoStore {
     });
 
   return {
-    version: 18,
+    version: 20,
+    dataSystem: {
+      demoSchemaVersion: AIO_DEMO_SCHEMA_VERSION,
+      seedVersion: `demo-v${AIO_DEMO_SCHEMA_VERSION}`,
+      dataModeLabel: getDataModeLabel(),
+    },
     requestCounter: 4,
     portalClientId: 'client-a',
     shipperPortalOrgId: 'client-e',

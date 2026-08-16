@@ -247,7 +247,9 @@ export type ProductionReadinessState =
   | 'IN_PROGRESS'
   | 'BLOCKED'
   | 'READY'
-  | 'NOT_APPLICABLE';
+  | 'NOT_APPLICABLE'
+  | 'NOT_CONFIGURED'
+  | 'NOT_TESTED';
 
 export interface ProductionReadinessItem {
   id: string;

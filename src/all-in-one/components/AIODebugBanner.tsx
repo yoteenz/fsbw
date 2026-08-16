@@ -1,6 +1,6 @@
 import { useDemoStore } from '../demo/useDemoStore';
 import { setPortalMemberRole, setPortalOrganization, setShipperOrganization } from '../portal/organizationContext';
-import { canResetDemoData, getEnvironmentLabel, isDemoMode } from '../config/dataMode';
+import { canResetDemoData, getEnvironmentLabel, getDataModeLabel, isDemoMode } from '../config/dataMode';
 import { resetDemoStore } from '../demo/demoStore';
 import { aioPaths } from '../utils/paths';
 import { Link } from 'react-router-dom';
@@ -34,7 +34,7 @@ export function AIODebugBanner() {
 
   return (
     <div className="aio-debug-banner" role="status" aria-label="Environment indicator">
-      <span className="aio-debug-banner__label">AIO PREVIEW · {envLabel ?? 'STAGING'}</span>
+      <span className="aio-debug-banner__label">AIO PREVIEW · {envLabel ?? 'STAGING'} · DATA MODE: {getDataModeLabel()}</span>
       {isDemoMode() && (
         <>
           <select

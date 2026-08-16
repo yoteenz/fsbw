@@ -486,8 +486,10 @@ export interface OrganizationMember {
   lastActivityAt?: string;
 }
 
+import type { DataSystemStatus } from '../data/dataHealth';
+
 export interface DemoStore {
-  version: 18;
+  version: 20;
   requestCounter: number;
   portalClientId?: string;
   shipperPortalOrgId?: string;
@@ -676,6 +678,8 @@ export interface DemoStore {
   signedDownloadGrants?: SignedDownloadGrant[];
   /** Revoked permissions per staff id (subtracted from role bundle) */
   staffPermissionOverrides?: Record<string, string[]>;
+  /** Sprint 20 — data system snapshot for health center */
+  dataSystem?: Pick<DataSystemStatus, 'demoSchemaVersion' | 'seedVersion' | 'dataModeLabel'>;
 }
 
 export interface OfficeMetrics {

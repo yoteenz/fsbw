@@ -1,10 +1,10 @@
 # All In One — Future Data Model (Conceptual)
 
-**Status:** Planning document from Sprints 01–03 prototypes. Not a locked production schema.
+**Status:** Sprint 20 baseline implemented — see `DATABASE_ARCHITECTURE.md` and `all-in-one/supabase/migrations/`. Demo mode remains primary in debug host until dedicated AIO Supabase is provisioned.
 
 ---
 
-## Core entities (Sprint 04 production schema)
+## Core entities (Sprint 20 production schema)
 
 | Entity | Table | Purpose |
 |--------|-------|---------|

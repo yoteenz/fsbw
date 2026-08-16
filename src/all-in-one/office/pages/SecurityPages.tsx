@@ -10,6 +10,7 @@ import {
   getSecurityControls,
   getSecurityPosture,
 } from '../../demo/securityActions';
+import { DataProductionReadinessSection } from './DataSystemPages';
 import { filterAuditEvents } from '../../security/securityAudit';
 import {
   createSecurityIncident,
@@ -63,6 +64,7 @@ export function SecurityCenterPage() {
             <Link to={aioPaths.officePrivacy}>Privacy</Link>
             <Link to={aioPaths.officeSecurityIncidents}>Incidents</Link>
             <Link to={aioPaths.officeSecurityProductionReadiness}>Production Readiness</Link>
+            <Link to={aioPaths.officeDataHealth}>Data Health</Link>
             <Link to={aioPaths.officeSettingsSecurity}>Settings</Link>
           </nav>
         </header>
@@ -271,6 +273,7 @@ export function ProductionReadinessPage() {
             <ul>{gate.blockers.map((b) => <li key={b}>{b}</li>)}</ul>
           </section>
         )}
+        <DataProductionReadinessSection />
       </div>
     </SecurityGate>
   );

@@ -135,6 +135,7 @@ import {
   PrivacyCenterPage,
   OfficeSecuritySettingsPage,
 } from '../pages/SecurityPages';
+import { DataHealthCenterPage, DataMigrationCenterPage } from '../pages/DataSystemPages';
 
 export default function OfficeRoutes() {
   return (
@@ -176,6 +177,8 @@ export default function OfficeRoutes() {
         <Route path="security/audit" element={<SecurityAuditPage />} />
         <Route path="security/incidents" element={<SecurityIncidentsPage />} />
         <Route path="security/production-readiness" element={<ProductionReadinessPage />} />
+        <Route path="system/data" element={<DataHealthCenterPage />} />
+        <Route path="system/data/migration" element={<DataMigrationCenterPage />} />
         <Route path="privacy" element={<PrivacyCenterPage />} />
         <Route path="settings/security" element={<OfficeSecuritySettingsPage />} />
         <Route path="management" element={<ManagementCommandCenterPage />} />

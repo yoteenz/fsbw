@@ -5,6 +5,8 @@ import type { RoadmapResult } from '../roadmap/roadmapTypes';
 import type { IntakeAnswers } from '../intake/intakeTypes';
 import { createDemoSeed } from './demoSeed';
 import type { DemoStore, ServiceRequest } from './demoTypes';
+import { AIO_DEMO_SCHEMA_VERSION } from '../data/constants';
+import { getDataModeLabel } from '../config/dataMode';
 
 export const DEMO_STORE_KEY = 'aio_debug_store';
 
@@ -13,11 +15,17 @@ const STORE_EVENT = 'aio-demo-store-change';
 export function loadDemoStore(): DemoStore {
   if (typeof window === 'undefined') return createDemoSeed();
 
-  const existing = readStorage<DemoStore | (Omit<DemoStore, 'version'> & { version: 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 }) | null>(DEMO_STORE_KEY, null);
-  if (existing?.version === 18) return existing as DemoStore;
+  const existing = readStorage<DemoStore | (Omit<DemoStore, 'version'> & { version: 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 }) | null>(DEMO_STORE_KEY, null);
+  if (existing?.version === 20) return existing as DemoStore;
+
+  if (existing?.version === 18) {
+    const upgraded = upgradeStoreV18ToV20(existing as DemoStoreV18);
+    saveDemoStore(upgraded);
+    return upgraded;
+  }
 
   if (existing?.version === 17) {
-    const upgraded = upgradeStoreV17ToV18(existing as DemoStoreV17);
+    const upgraded = upgradeStoreV18ToV20(upgradeStoreV17ToV18(existing as DemoStoreV17));
     saveDemoStore(upgraded);
     return upgraded;
   }
@@ -222,12 +230,24 @@ function upgradeStoreV13ToV14(store: DemoStoreV13): DemoStoreV14 {
   };
 }
 
-function upgradeStoreV17ToV18(store: DemoStoreV17): DemoStore {
+function upgradeStoreV17ToV18(store: DemoStoreV17): DemoStoreV18 {
   const security = createSecuritySeedData();
   return {
     ...store,
     version: 18 as const,
     ...security,
+  };
+}
+
+function upgradeStoreV18ToV20(store: DemoStoreV18): DemoStore {
+  return {
+    ...store,
+    version: 20 as const,
+    dataSystem: {
+      demoSchemaVersion: AIO_DEMO_SCHEMA_VERSION,
+      seedVersion: `demo-v${AIO_DEMO_SCHEMA_VERSION}`,
+      dataModeLabel: getDataModeLabel(),
+    },
   };
 }
 
@@ -238,7 +258,7 @@ function upgradeStoreV16ToV17(store: DemoStoreV16): DemoStore {
     version: 17 as const,
     ...integrations,
   };
-  return upgradeStoreV17ToV18(v17);
+  return upgradeStoreV18ToV20(upgradeStoreV17ToV18(v17));
 }
 
 function upgradeStoreV15ToV16(store: DemoStoreV15): DemoStoreV16 {
@@ -271,7 +291,8 @@ function upgradeStoreV15ToV16(store: DemoStoreV15): DemoStoreV16 {
   };
 }
 
-type DemoStoreV17 = Omit<DemoStore, 'version'> & { version: 17 };
+type DemoStoreV18 = Omit<DemoStore, 'version' | 'dataSystem'> & { version: 18 };
+type DemoStoreV17 = Omit<DemoStoreV18, 'version'> & { version: 17 };
 
 type DemoStoreV16 = Omit<
   DemoStore,

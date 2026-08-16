@@ -1,4 +1,4 @@
-import { aioEnv, backendSetupMessage, effectiveDataMode, type AioDataMode } from './env';
+import { aioEnv, backendSetupMessage, effectiveDataMode, getDataModeLabel, type AioDataMode } from './env';
 
 export type AioEnvironmentLabel = 'DEMO ENVIRONMENT' | 'STAGING' | 'PRODUCTION';
 
@@ -10,8 +10,17 @@ export function isDemoMode(): boolean {
   return getDataMode() === 'demo';
 }
 
+export function isLocalTestMode(): boolean {
+  return getDataMode() === 'local';
+}
+
+export function isSupabaseMode(): boolean {
+  return getDataMode() === 'supabase';
+}
+
+/** @deprecated use isSupabaseMode */
 export function isBackendMode(): boolean {
-  return getDataMode() === 'backend';
+  return isSupabaseMode();
 }
 
 /** Visual banner label for debug/staging builds. */
@@ -22,18 +31,21 @@ export function getEnvironmentLabel(): AioEnvironmentLabel | null {
 }
 
 export function canResetDemoData(): boolean {
-  return isDemoMode();
+  return isDemoMode() || isLocalTestMode();
 }
 
 export function canEnterDemoOffice(): boolean {
-  return isDemoMode();
+  return isDemoMode() || isLocalTestMode();
 }
 
 export function getBackendSetupWarning(): string | null {
   return backendSetupMessage();
 }
 
+export { getDataModeLabel };
+
 export const aioDataConfig = {
   mode: getDataMode(),
+  modeLabel: getDataModeLabel(),
   env: aioEnv,
 } as const;

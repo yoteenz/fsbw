@@ -1,7 +1,24 @@
 # All In One — Sprint Status
 
-**Sprint:** 19 — Security Hardening + Privacy + Audit + Disaster Recovery  
+**Sprint:** 20 — Production Data Architecture + Supabase + Auth + Storage + Migration Foundation  
 **Last updated:** 2026-08-16
+
+---
+
+## SPRINT 20 COMPLETE (Production Data Foundation)
+
+- **Data module** — `src/all-in-one/data/` (constants, persistence inventory, data health, storage provider, permissions, seeds, importer)
+- **Demo store v20** — `dataSystem` snapshot, schema version 20, upgrade path from v18
+- **SQL migrations** — 8 baseline files in `all-in-one/supabase/migrations/` (identity → business → CRM/workflow → security/audit → infrastructure → RLS → indexes)
+- **Migration guard** — `all-in-one/scripts/verify-migration-environment.sh` (aborts on FS project)
+- **Environment contract** — `VITE_AIO_DATA_MODE` = demo | local | supabase; FS URL rejection; no FS fallback
+- **Office routes** — `/office/system/data`, `/office/system/data/migration`
+- **Production readiness** — architecture vs launch separation; new DATA controls (NOT CONFIGURED until dedicated Supabase)
+- **Debug banner** — shows `DATA MODE: DEMO | LOCAL/TEST | SUPABASE DEV`
+- **Unit tests** — `data/data.test.ts` (12) + security (16) + integrations (25)
+- **Documentation** — `DATABASE_ARCHITECTURE.md`, `SUPABASE_ARCHITECTURE.md`, `DATABASE_SCHEMA_MAP.md`, `RLS_POLICY_MODEL.md`, `STORAGE_ARCHITECTURE.md`, `DATA_MIGRATION_PLAN.md`, `DATABASE_MIGRATION_RUNBOOK.md`, `SEED_DATA_STRATEGY.md`, `DATA_ACCESS_LAYER.md`
+
+**Next:** Sprint 21 — QA + E2E Testing + Accessibility + Performance + Cross-Device Hardening
 
 ---
 

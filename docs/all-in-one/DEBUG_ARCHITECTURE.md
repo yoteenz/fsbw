@@ -166,20 +166,33 @@ docs/all-in-one/           # Project documentation
 
 **No financial backend.** No Supabase tables. No API routes. No bank/ACH data collected.
 
-### Sprint 04 — data modes
+### Sprint 04 / Sprint 20 — data modes
 
 | Mode | Storage | Auth |
 |------|---------|------|
-| `demo` | `aio_debug_store` localStorage | Optional demo portal/office entry |
-| `backend` | Dedicated AIO Supabase (`aio_*` tables) | Supabase Auth + RLS |
+| `demo` | `aio_debug_store` localStorage v**20** | Demo personas |
+| `local` | Same as demo (test fixtures) | Demo personas |
+| `supabase` | Dedicated AIO Supabase (`aio_*` tables) | Supabase Auth + RLS |
 
-**Reset Demo Data** — only when `VITE_AIO_DATA_MODE=demo`.
+Legacy alias: `backend` → `supabase`.
 
-Backend migrations: `all-in-one/supabase/migrations/` — **not** Frontal Slayer `supabase/migrations/`.
+**DATA MODE** shown in debug banner: `DEMO` | `LOCAL/TEST` | `SUPABASE DEV`.
+
+**Reset Demo Data** — only when demo/local mode. Blocked in production label.
+
+Backend migrations: `all-in-one/supabase/migrations/` (8 files) — **not** Frontal Slayer `supabase/migrations/`.
+
+Migration guard: `./all-in-one/scripts/verify-migration-environment.sh` — aborts if FS project ref detected.
+
+**Office data routes (Sprint 20):**
+- `/all-in-one/office/system/data` — Data Health Center
+- `/all-in-one/office/system/data/migration` — Migration Center (dry-run only; production import NOT ENABLED)
+
+**Repository layer:** `src/all-in-one/data/repositories/` — Demo vs Supabase via `useAioRepositories()`.
 
 ### Sprint 03 — centralized demo store
 
-Single key: `aio_debug_store`. Current version: **13** (Sprint 13 Office 2.0). Legacy versions migrate on first load (v3→…→v12→v13).
+Single key: `aio_debug_store`. Current version: **20** (Sprint 20 data foundation). Legacy versions migrate on first load (v3→…→v18→v20).
 
 Entities: clients, requests, tasks, documents, deadlines, notes, messages, activity, staff, loads, dispatch enrollments, factoringProfiles, factoringProviders, debtorAccounts, freightInvoices, factoringSubmissions, factoringIssues, factoringCounters, **brokerageCapability**, **shipperProfiles**, **shipmentRequests**, **brokerageFreightQuotes**, **carrierNetworkProfiles**, **carrierOffers**, **brokerageRateConfirmations**, **brokerageLoadFinancials**, **brokerageAccessorials**, **brokerageShipperInvoices**, **carrierPayables**, **brokerageIssues**, **coverageHistory**, **brokerageCounters**, invoices, notifications, billing, road ready, fleet, **portalMemberRole**, **organizationMembers**.
 
@@ -355,6 +368,23 @@ Sprint 12: `ClientPortalPages` (hub routes), `CommandCenterComponents`, `portal/
 | `/all-in-one/portal/settings/connections` | Customer-authorized connections |
 
 Demo store version **17** includes integration seed data. No Frontal Slayer integration credentials.
+
+---
+
+## Sprint 19 security routes (Office / Portal)
+
+| Route | Purpose |
+|-------|---------|
+| `/all-in-one/office/security` | Security Center (posture, findings, backup status) |
+| `/all-in-one/office/security/audit` | Security audit search |
+| `/all-in-one/office/security/incidents` | Incident center |
+| `/all-in-one/office/security/production-readiness` | Production launch checklist + gate |
+| `/all-in-one/office/privacy` | Privacy center (requests, retention, vendors) |
+| `/all-in-one/office/settings/security` | Session policy, MFA policy, session revoke |
+| `/all-in-one/portal/settings/security` | Customer session management |
+| `/all-in-one/portal/settings/privacy` | Customer privacy requests |
+
+Demo store version **18** includes security seed data. `canLaunchProduction()` returns **BLOCKED** in debug. Demo reset refused when simulating production environment.
 
 ---
 

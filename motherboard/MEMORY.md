@@ -51355,3 +51355,22 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Spatial Architecture Review:** SKIPPED — infrastructure/integration layer; admin settings follow existing Office patterns.
 
 - **Next sprint noted (not implemented):** Sprint 19 security hardening pass.
+
+---
+
+## 2026-08-16 — Sprint 19 Security Hardening (All In One)
+
+- **Context:** Platform-wide security, privacy, audit, and disaster-recovery hardening pass (217 deliverables). Debug host remains non-production; no FS cross-product dependencies; no formal compliance claims.
+
+- **Delivered:**
+  - Security module: `src/all-in-one/security/` (control registry, data classification, authorization guard, audit, production gate, file security, rate limits, redaction, FS isolation)
+  - Demo store **v18** — findings, audit events, sessions, privacy requests, incidents, vendors, retention policies, backup status (NOT CONFIGURED)
+  - Office routes: security center, audit, incidents, production readiness, privacy, security settings
+  - Portal routes: settings/security, settings/privacy
+  - Hardening: IDOR guards, CSV injection protection, upload validation, permission revocation overrides, demo reset production guard
+  - Tests: `security.test.ts` (16 passing) + integration tests (25)
+  - Docs: SECURITY_HARDENING, DATA_CLASSIFICATION, PRIVACY_MODEL, AUDIT_SYSTEM, INCIDENT_RESPONSE, BACKUP_AND_DISASTER_RECOVERY, PRODUCTION_SECURITY_CHECKLIST, SECURITY_TEST_MATRIX, VENDOR_SECURITY_REGISTRY
+
+- **Spatial Architecture Review:** SKIPPED — security infrastructure layer; follows existing Office settings patterns.
+
+- **Next sprint noted (not implemented):** Sprint 20 production data architecture + Supabase + auth + storage migration.

@@ -173,6 +173,8 @@ export const aioPaths = {
   officeSecurityAudit: `${BASE}/office/security/audit`,
   officeSecurityIncidents: `${BASE}/office/security/incidents`,
   officeSecurityProductionReadiness: `${BASE}/office/security/production-readiness`,
+  officeDataHealth: `${BASE}/office/system/data`,
+  officeDataMigration: `${BASE}/office/system/data/migration`,
   officePrivacy: `${BASE}/office/privacy`,
   officeSettingsSecurity: `${BASE}/office/settings/security`,
   officeWork: `${BASE}/office/work`,
