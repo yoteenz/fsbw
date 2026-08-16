@@ -278,6 +278,56 @@ export function getManagementAttentionItems(store: DemoStore): ManagementAttenti
     }, acks);
   }
 
+  for (const conn of store.integrationConnections ?? []) {
+    if (conn.status === 'AUTHORIZATION_REQUIRED' || conn.status === 'REAUTHORIZATION_REQUIRED') {
+      pushItem(items, seen, {
+        id: `att-int-auth-${conn.id}`,
+        dedupeKey: `integration-auth:${conn.id}`,
+        severity: 'action',
+        title: 'Integration authorization required',
+        explanation: `${conn.name} requires reauthorization before external operations can continue.`,
+        whyItMatters: 'External workflows may be blocked until credentials are restored.',
+        recommendedAction: 'Open integration settings and complete authorization.',
+        entityType: 'integration_connection',
+        entityId: conn.id,
+        ctaLabel: 'Open integration',
+        ctaHref: aioPaths.officeIntegrationConnection(conn.id),
+      }, acks);
+    }
+    if (conn.health === 'OFFLINE' || conn.health === 'DEGRADED') {
+      pushItem(items, seen, {
+        id: `att-int-health-${conn.id}`,
+        dedupeKey: `integration-health:${conn.id}`,
+        severity: conn.health === 'OFFLINE' ? 'urgent' : 'watch',
+        title: `Integration ${conn.health.toLowerCase().replace('_', ' ')}`,
+        explanation: `${conn.name} (${conn.environment}) is reporting degraded provider health.`,
+        whyItMatters: 'Dependent workflows may fail or show stale external data.',
+        recommendedAction: 'Review integration operations center.',
+        entityType: 'integration_connection',
+        entityId: conn.id,
+        ctaLabel: 'Operations center',
+        ctaHref: aioPaths.officeIntegrations,
+      }, acks);
+    }
+  }
+
+  for (const issue of store.integrationReconciliationIssues ?? []) {
+    if (issue.status !== 'open' || issue.severity !== 'critical') continue;
+    pushItem(items, seen, {
+      id: `att-recon-${issue.id}`,
+      dedupeKey: `reconciliation:${issue.id}`,
+      severity: 'urgent',
+      title: 'Integration reconciliation required',
+      explanation: `${issue.issueType.replace(/_/g, ' ')} on ${issue.entityType}.`,
+      whyItMatters: 'Financial mismatch must be resolved by authorized staff.',
+      recommendedAction: 'Open reconciliation center.',
+      entityType: 'reconciliation',
+      entityId: issue.id,
+      ctaLabel: 'Reconciliation',
+      ctaHref: aioPaths.officeIntegrationsReconciliation,
+    }, acks);
+  }
+
   return items.sort((a, b) => SEVERITY_ORDER[a.severity] - SEVERITY_ORDER[b.severity]);
 }
 

@@ -1,7 +1,22 @@
 # All In One — Sprint Status
 
-**Sprint:** 17 — Management Command Center + Business Intelligence + Reporting  
+**Sprint:** 18 — Integration Platform + External Provider Architecture  
 **Last updated:** 2026-08-16
+
+---
+
+## SPRINT 18 COMPLETE (Integration Platform · Provider Architecture · Demo Adapters)
+
+- **Integration module** — `src/all-in-one/integrations/` (types, registry, engine, adapters, webhook, sync, reconciliation, health, redaction, audit, permissions, config)
+- **Demo store v17** — `integrationsSeed.ts`, `integrationActions.ts`, carrier verifications, load board candidates, reconciliation demo
+- **Office routes** — `/office/integrations`, `/office/integrations/reconciliation`, `/office/settings/integrations`, `/office/settings/integrations/providers`, `/office/settings/integrations/:connectionId`, `/office/integrations/load-board`
+- **Portal route** — `/portal/settings/connections`
+- **Road Ready** — external carrier verification lookup on client review (demo USDOT 1234567)
+- **Management** — integration health + reconciliation attention items
+- **Demo adapters** — regulatory, payment, email, SMS, maps, load board, factoring, insurance, accounting (no network calls)
+- **Permissions** — `integrations.*` in `officeWorkTypes.ts` / `officeContext.ts`
+- **Unit tests** — `integrations/integrations.test.ts` (25 tests)
+- **Documentation** — `INTEGRATION_PLATFORM.md`, `INTEGRATION_SECURITY.md`, `INTEGRATION_PROVIDER_CONTRACTS.md`, `REGULATORY_INTEGRATION_MODEL.md`, `EXTERNAL_DATA_PROVENANCE.md`, `INTEGRATION_RECONCILIATION.md`, `INTEGRATION_RESEARCH_REGISTRY.md`
 
 ---
 

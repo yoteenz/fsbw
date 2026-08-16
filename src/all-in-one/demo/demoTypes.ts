@@ -138,6 +138,27 @@ import type {
   AppointmentStatusHistory,
   AppointmentType,
 } from '../appointments/appointmentTypes';
+import type {
+  CarrierExternalVerification,
+  IntegrationAuditEvent,
+  IntegrationConnection,
+  IntegrationConsent,
+  IntegrationCredentialReference,
+  IntegrationExternalIdentifier,
+  IntegrationHealthRecord,
+  IntegrationMapping,
+  IntegrationOAuthState,
+  IntegrationOperation,
+  IntegrationOperationAttempt,
+  IntegrationProvider,
+  IntegrationReconciliationIssue,
+  IntegrationResearchRecord,
+  IntegrationSyncCursor,
+  IntegrationSyncJob,
+  IntegrationWebhookEvent,
+  LoadBoardCandidate,
+  StateCapabilityEntry,
+} from '../integrations/integrationTypes';
 
 export type Visibility = 'internal' | 'customer';
 
@@ -454,7 +475,7 @@ export interface OrganizationMember {
 }
 
 export interface DemoStore {
-  version: 16;
+  version: 17;
   requestCounter: number;
   portalClientId?: string;
   shipperPortalOrgId?: string;
@@ -610,6 +631,26 @@ export interface DemoStore {
   };
   managementSavedReports?: { id: string; name: string; reportId: string; periodId: string; savedAt: string }[];
   managementAttentionAcks?: string[];
+  /** Sprint 18 — Integration platform */
+  integrationProviders?: IntegrationProvider[];
+  integrationConnections?: IntegrationConnection[];
+  integrationCredentialRefs?: IntegrationCredentialReference[];
+  integrationExternalIds?: IntegrationExternalIdentifier[];
+  integrationOperations?: IntegrationOperation[];
+  integrationOperationAttempts?: IntegrationOperationAttempt[];
+  integrationWebhookEvents?: IntegrationWebhookEvent[];
+  integrationSyncJobs?: IntegrationSyncJob[];
+  integrationSyncCursors?: IntegrationSyncCursor[];
+  integrationReconciliationIssues?: IntegrationReconciliationIssue[];
+  integrationConsents?: IntegrationConsent[];
+  integrationHealthRecords?: IntegrationHealthRecord[];
+  integrationAuditEvents?: IntegrationAuditEvent[];
+  integrationMappings?: IntegrationMapping[];
+  integrationResearchRecords?: IntegrationResearchRecord[];
+  carrierExternalVerifications?: CarrierExternalVerification[];
+  loadBoardCandidates?: LoadBoardCandidate[];
+  integrationOAuthStates?: IntegrationOAuthState[];
+  stateCapabilityMatrix?: StateCapabilityEntry[];
 }
 
 export interface OfficeMetrics {

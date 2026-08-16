@@ -13,6 +13,7 @@ import { createWorkflowSeedData } from './workflowSeed';
 import { createCrmSeedData } from './crmSeed';
 import { createCommunicationsSeedData } from './communicationsSeed';
 import { createAppointmentsSeedData } from './appointmentsSeed';
+import { createIntegrationsSeedData } from '../integrations/integrationsSeed';
 
 export function createDemoSeed(): DemoStore {
   const now = new Date();
@@ -31,6 +32,7 @@ export function createDemoSeed(): DemoStore {
   const crm = createCrmSeedData(now);
   const comm = createCommunicationsSeedData(now);
   const appts = createAppointmentsSeedData(now);
+  const integrations = createIntegrationsSeedData();
 
   const requests = [
       mkRequest('req-1', 'AIO-DEMO-0001', 'client-a', 'Authority + BOC-3 Assistance', 'permitting', 'new_request', 'staff-2', daysAgo(3), ['vdoc-a1', 'vdoc-a2']),
@@ -44,7 +46,7 @@ export function createDemoSeed(): DemoStore {
     });
 
   return {
-    version: 16,
+    version: 17,
     requestCounter: 4,
     portalClientId: 'client-a',
     shipperPortalOrgId: 'client-e',
@@ -365,6 +367,7 @@ export function createDemoSeed(): DemoStore {
     appointmentStatusHistory: appts.appointmentStatusHistory,
     appointmentReminders: appts.appointmentReminders,
     appointmentSlotHolds: appts.appointmentSlotHolds,
+    ...integrations,
   };
 }
 

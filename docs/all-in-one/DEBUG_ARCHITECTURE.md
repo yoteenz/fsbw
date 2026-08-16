@@ -343,6 +343,21 @@ Sprint 12: `ClientPortalPages` (hub routes), `CommandCenterComponents`, `portal/
 
 ---
 
+## Sprint 18 integration routes (Office / Portal)
+
+| Route | Purpose |
+|-------|---------|
+| `/all-in-one/office/integrations` | Integration operations center |
+| `/all-in-one/office/integrations/reconciliation` | Reconciliation center |
+| `/all-in-one/office/settings/integrations` | Integrations settings |
+| `/all-in-one/office/settings/integrations/providers` | Provider directory |
+| `/all-in-one/office/settings/integrations/:connectionId` | Connection detail + test |
+| `/all-in-one/portal/settings/connections` | Customer-authorized connections |
+
+Demo store version **17** includes integration seed data. No Frontal Slayer integration credentials.
+
+---
+
 ## What must NOT change in Frontal Slayer
 
 - Existing routes, navigation, global CSS, auth, Supabase behavior

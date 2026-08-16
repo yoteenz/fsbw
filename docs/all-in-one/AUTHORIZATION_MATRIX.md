@@ -1,6 +1,21 @@
 # All In One — Authorization Matrix
 
-**Status:** Sprint 13 Office 2.0 staff permissions added (demo via `officeContext.ts`). Sprint 12 portal command center roles. Enforced via Supabase RLS when backend mode is active.
+**Status:** Sprint 18 integration permissions added. Sprint 13 Office 2.0 staff permissions (demo via `officeContext.ts`).
+
+---
+
+## Integration permissions (Sprint 18 demo)
+
+| Permission | Owner/Admin | Manager | Dispatcher | Finance | Road Ready |
+|------------|-------------|---------|------------|---------|------------|
+| `integrations.read` | ✓ | ✓ | ✓ | ✓ | ✓ |
+| `integrations.manage` | ✓ | — | — | — | — |
+| `integrations.regulatory.verify` | ✓ | — | ✓ | — | ✓ |
+| `integrations.loadboard.search/import` | ✓ | — | ✓ | — | — |
+| `integrations.accounting.export` | ✓ | — | — | ✓ | — |
+| `integrations.reconciliation.resolve` | ✓ | — | — | ✓ | — |
+
+Customer portal: `/portal/settings/connections` shows org-scoped consents only.
 
 ---
 

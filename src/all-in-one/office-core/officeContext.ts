@@ -13,6 +13,25 @@ const COMM_READ: OfficePermission[] = [
   'appointments.read', 'appointments.manage',
 ];
 
+const INTEGRATIONS_FULL: OfficePermission[] = [
+  'integrations.read', 'integrations.manage', 'integrations.credentials.manage', 'integrations.test',
+  'integrations.sync', 'integrations.reconciliation.read', 'integrations.reconciliation.resolve',
+  'integrations.audit.read', 'integrations.regulatory.verify', 'integrations.payment.manage',
+  'integrations.messaging.manage', 'integrations.maps.use', 'integrations.factoring.submit',
+  'integrations.insurance.submit', 'integrations.loadboard.search', 'integrations.loadboard.import',
+  'integrations.accounting.export', 'integrations.external_action.confirm',
+];
+
+const INTEGRATIONS_DISPATCH: OfficePermission[] = [
+  'integrations.read', 'integrations.maps.use', 'integrations.loadboard.search', 'integrations.loadboard.import',
+  'integrations.regulatory.verify',
+];
+
+const INTEGRATIONS_FINANCE: OfficePermission[] = [
+  'integrations.read', 'integrations.reconciliation.read', 'integrations.accounting.export',
+  'integrations.payment.manage',
+];
+
 const MANAGEMENT_FULL: OfficePermission[] = [
   'management.dashboard.read', 'management.financial.read', 'management.sales.read',
   'management.services.read', 'management.dispatch.read', 'management.brokerage.read',
@@ -65,6 +84,7 @@ const ROLE_PERMISSIONS: Record<OfficeStaffRole, OfficePermission[]> = {
     ...CRM_FULL,
     ...COMM_FULL,
     ...MANAGEMENT_FULL,
+    ...INTEGRATIONS_FULL,
   ],
   admin: [
     'clients.read', 'clients.manage', 'work.read', 'work.manage', 'work.assign',
@@ -79,6 +99,7 @@ const ROLE_PERMISSIONS: Record<OfficeStaffRole, OfficePermission[]> = {
     ...CRM_FULL,
     ...COMM_FULL,
     ...MANAGEMENT_FULL,
+    ...INTEGRATIONS_FULL,
   ],
   manager: [
     'clients.read', 'clients.manage', 'work.read', 'work.manage', 'work.assign',
@@ -90,6 +111,7 @@ const ROLE_PERMISSIONS: Record<OfficeStaffRole, OfficePermission[]> = {
     ...CRM_FULL,
     ...COMM_FULL,
     ...MANAGEMENT_MANAGER,
+    'integrations.read', 'integrations.reconciliation.read',
   ],
   permitting_specialist: [
     'clients.read', 'work.read', 'work.manage', 'internal_notes.read', 'internal_notes.create',
@@ -99,6 +121,7 @@ const ROLE_PERMISSIONS: Record<OfficeStaffRole, OfficePermission[]> = {
   road_ready_specialist: [
     'clients.read', 'work.read', 'work.manage', 'internal_notes.read', 'internal_notes.create',
     ...COMM_READ,
+    'integrations.read', 'integrations.regulatory.verify',
   ],
   insurance_coordinator: [
     'clients.read', 'work.read', 'work.manage', 'internal_notes.read', 'internal_notes.create',
@@ -108,11 +131,13 @@ const ROLE_PERMISSIONS: Record<OfficeStaffRole, OfficePermission[]> = {
     'clients.read', 'work.read', 'work.manage', 'internal_notes.read', 'internal_notes.create',
     ...COMM_READ,
     ...MANAGEMENT_DISPATCH,
+    ...INTEGRATIONS_DISPATCH,
   ],
   factoring_coordinator: [
     'clients.read', 'work.read', 'work.manage', 'internal_notes.read', 'internal_notes.create',
     'factoring_finance.read',
     ...COMM_READ,
+    'integrations.read', 'integrations.factoring.submit',
   ],
   broker: [
     'clients.read', 'work.read', 'work.manage', 'internal_notes.read', 'internal_notes.create',
@@ -126,6 +151,7 @@ const ROLE_PERMISSIONS: Record<OfficeStaffRole, OfficePermission[]> = {
     'crm.read', 'crm.leads.read', 'crm.opportunities.read', 'crm.quotes.prepare',
     ...COMM_READ,
     ...MANAGEMENT_FINANCE,
+    ...INTEGRATIONS_FINANCE,
   ],
   customer_support: [
     'clients.read', 'work.read', 'work.manage', 'internal_notes.read', 'internal_notes.create',

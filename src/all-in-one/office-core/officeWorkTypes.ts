@@ -316,7 +316,25 @@ export type OfficePermission =
   | 'reports.read'
   | 'reports.export'
   | 'reports.save'
-  | 'management.settings';
+  | 'management.settings'
+  | 'integrations.read'
+  | 'integrations.manage'
+  | 'integrations.credentials.manage'
+  | 'integrations.test'
+  | 'integrations.sync'
+  | 'integrations.reconciliation.read'
+  | 'integrations.reconciliation.resolve'
+  | 'integrations.audit.read'
+  | 'integrations.regulatory.verify'
+  | 'integrations.payment.manage'
+  | 'integrations.messaging.manage'
+  | 'integrations.maps.use'
+  | 'integrations.factoring.submit'
+  | 'integrations.insurance.submit'
+  | 'integrations.loadboard.search'
+  | 'integrations.loadboard.import'
+  | 'integrations.accounting.export'
+  | 'integrations.external_action.confirm';
 
 export interface OfficeAttentionItem {
   id: string;

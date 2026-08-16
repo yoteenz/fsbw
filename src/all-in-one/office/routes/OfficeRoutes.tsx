@@ -119,6 +119,14 @@ import {
   CrmReportsPage,
   CrmSettingsPage,
 } from '../pages/CrmPages';
+import {
+  IntegrationOperationsCenterPage,
+  IntegrationSettingsPage,
+  IntegrationConnectionDetailPage,
+  IntegrationProvidersPage,
+  IntegrationReconciliationPage,
+  IntegrationLoadBoardPage,
+} from '../pages/IntegrationPages';
 
 export default function OfficeRoutes() {
   return (
@@ -150,6 +158,12 @@ export default function OfficeRoutes() {
         <Route path="settings/communications" element={<OfficeCommunicationsSettingsPage />} />
         <Route path="settings/appointments" element={<OfficeAppointmentsSettingsPage />} />
         <Route path="settings/management" element={<ManagementSettingsPage />} />
+        <Route path="integrations" element={<IntegrationOperationsCenterPage />} />
+        <Route path="integrations/reconciliation" element={<IntegrationReconciliationPage />} />
+        <Route path="integrations/load-board" element={<IntegrationLoadBoardPage />} />
+        <Route path="settings/integrations" element={<IntegrationSettingsPage />} />
+        <Route path="settings/integrations/providers" element={<IntegrationProvidersPage />} />
+        <Route path="settings/integrations/:connectionId" element={<IntegrationConnectionDetailPage />} />
         <Route path="management" element={<ManagementCommandCenterPage />} />
         <Route path="management/financial" element={<ManagementFinancialPage />} />
         <Route path="management/sales" element={<ManagementSalesPage />} />

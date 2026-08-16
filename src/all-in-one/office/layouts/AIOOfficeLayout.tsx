@@ -91,6 +91,8 @@ const navGroups = [
       { label: 'Reports', to: aioPaths.officeReports },
       { label: 'Data Quality', to: aioPaths.officeManagementDataQuality },
       { label: 'Mgmt Settings', to: aioPaths.officeManagementSettings },
+      { label: 'Integrations', to: aioPaths.officeIntegrations },
+      { label: 'Integration Settings', to: aioPaths.officeIntegrationsSettings },
       { label: 'Workflow Templates', to: aioPaths.officeWorkflowSettings },
       { label: 'Automation Rules', to: aioPaths.officeAutomationSettings },
       { label: 'Comm Settings', to: aioPaths.officeCommunicationsSettings },

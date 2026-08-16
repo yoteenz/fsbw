@@ -47,6 +47,7 @@ import {
   PortalSearchPage,
 } from '../pages/portal/ClientPortalPages';
 import { PortalSettingsPage } from '../pages/portal/PortalSettingsPage';
+import { PortalConnectionsPage } from '../pages/portal/PortalConnectionsPage';
 import { RoadReadyOnboardingPage } from '../pages/portal/RoadReadyOnboardingPage';
 import { RoadReadyPage } from '../pages/portal/RoadReadyPage';
 import { FleetPage } from '../pages/portal/FleetPage';
@@ -223,6 +224,7 @@ export default function AllInOneRoutes() {
             <Route path="services/:serviceRequestId" element={<PortalServiceTrackerPage />} />
             <Route path="roadmap" element={<PortalJourneyRoadmapPage />} />
             <Route path="settings" element={<PortalSettingsPage />} />
+            <Route path="settings/connections" element={<PortalConnectionsPage />} />
           </Route>
           <Route path="shipper" element={<AIOPortalLayout />}>
             <Route index element={<ShipperHomePage />} />

@@ -33,37 +33,49 @@ export interface SmsProvider {
   send(request: SmsSendRequest): ProviderSendResult;
 }
 
-/** Demo — never claims external delivery */
+/** Demo email — Sprint 18 integration platform uses DemoEmailAdapter in integrations/adapters */
 export class DemoEmailProvider implements EmailProvider {
-  readonly name = 'demo';
+  readonly name = 'integration-demo-email';
 
   isConfigured(): boolean {
-    return false;
+    return true;
   }
 
-  send(_request: EmailSendRequest): ProviderSendResult {
-    return { ok: false, status: 'demo', manualRequired: true, error: 'No email provider configured — use copy/record externally' };
+  send(request: EmailSendRequest): ProviderSendResult {
+    if (request.body.toLowerCase().includes('fail')) {
+      return { ok: false, status: 'failed', error: 'Demo delivery failed' };
+    }
+    return {
+      ok: true,
+      status: 'sent',
+      providerMessageId: `demo_email_${request.messageId.slice(0, 8)}`,
+    };
   }
 }
 
 export class DemoSmsProvider implements SmsProvider {
-  readonly name = 'demo';
+  readonly name = 'integration-demo-sms';
 
   isConfigured(): boolean {
-    return false;
+    return true;
   }
 
-  send(_request: SmsSendRequest): ProviderSendResult {
-    return { ok: false, status: 'demo', manualRequired: true, error: 'No SMS provider configured — use copy/record externally' };
+  send(request: SmsSendRequest): ProviderSendResult {
+    return {
+      ok: true,
+      status: 'sent',
+      providerMessageId: `demo_sms_${request.messageId.slice(0, 8)}`,
+    };
   }
 }
 
 export function resolveEmailProvider(mode: 'demo' | 'disabled' | 'provider'): EmailProvider {
-  if (mode === 'provider') return new DemoEmailProvider();
+  if (mode === 'disabled') return new DemoEmailProvider();
   return new DemoEmailProvider();
 }
 
-export function resolveSmsProvider(_mode: 'demo' | 'disabled' | 'provider'): SmsProvider {
+export function resolveSmsProvider(mode: 'demo' | 'disabled' | 'provider'): SmsProvider {
+  if (mode === 'disabled') return new DemoSmsProvider();
   return new DemoSmsProvider();
 }
 

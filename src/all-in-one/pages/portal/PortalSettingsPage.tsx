@@ -46,7 +46,11 @@ export function PortalSettingsPage() {
       </section>
 
       <section className="aio-portal-panel">
-        <h2>Notification Preferences</h2>
+        <h2>Connected Services</h2>
+        <Link to={aioPaths.portalConnections} className="aio-btn aio-btn--outline aio-btn--sm">Manage connections</Link>
+      </section>
+
+      <section className="aio-portal-panel">
         <p className="aio-prototype-note">Coming soon — in-app and email notification controls.</p>
       </section>
 
