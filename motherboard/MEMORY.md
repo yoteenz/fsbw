@@ -51002,6 +51002,8 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 ---
 
+---
+
 ## 2026-08-15 — All In One Sprint 02: Smart Intake + Roadmap + Service Marketplace
 
 - **Context:** Founder issued full Sprint 02 spec — first interactive customer journey from goal selection through preliminary roadmap, service marketplace, mock service request, and portal integration. Still debug prototype under `/all-in-one/*`; no production backend.
@@ -51015,6 +51017,8 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Key paths:** `src/all-in-one/intake/`, `roadmap/`, `repositories/`, `storage/demoStorage.ts`, `data/services.ts`, new pages (GetStarted, RoadmapResults, ServicePlan, ServiceCatalogDetail, RequestSubmit, RequestDetail), `docs/all-in-one/SPRINT_STATUS.md` updated.
 
 - **Spatial Architecture Review:** SKIPPED — debug prototype extension; no Studio OS / Frontal Slayer customer surface changes.
+
+---
 
 ---
 
@@ -51275,6 +51279,7 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 ---
 
+<<<<<<< HEAD
 ## 2026-08-16 — All In One Sprint 16: Communications Hub + Appointments
 
 - **Context:** Founder issued Sprint 16 spec — canonical communication layer + appointments connecting CRM, customers, service workflows, divisions, and notifications. Portal messaging must be real; external email/SMS demo/manual only. Remain isolated under `/debug/all-in-one`.
@@ -51287,3 +51292,14 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Spatial Architecture Review:** SKIPPED — communication layer under `/debug/all-in-one`; no Frontal Slayer regression.
 
+=======
+## 2026-08-16 — /all-in-one infinite re-render (Navigate loop)
+
+- **Context:** Founder reported new error on `/all-in-one`: **Debug route failed** · **Too many re-renders.**
+
+- **Root cause:** `AllInOneRoutes` inner `<Routes>` matched full pathname (`/all-in-one`); index never matched → catch-all `<Navigate to="/all-in-one">` re-navigated same URL every render.
+
+- **Fix:** `useAllInOneRelativeLocation()` strips `/all-in-one` prefix; catch-all redirects to relative `/`. Applied on expanded Sprint 02–15 route tree.
+
+- **Verified:** `preview.fsbw-dev.com/all-in-one` + `/services` load without error.
+>>>>>>> 2160d7daafb6e81ca4ffa71a35c84b2de55cd11b
