@@ -51776,3 +51776,19 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **QA:** Mobile 390px /portal + /login centered full width PASS; desktop 1280px intentional sidebar + centered auth PASS.
 
+---
+
+## 2026-08-16 — Auth refinement: Log In + Sign Up nav and registration flow
+
+- **Context:** Public nav only had Client Login; needed clear LOG IN + SIGN UP, multi-step registration, post-signup onboarding, deep-link preservation.
+
+- **Nav:** `PublicAuthNav` — desktop Log In (outline) + Sign Up (gold); mobile header Log In + hamburger; mobile menu Account section with Sign Up CTA. Authenticated: Portal + Log Out.
+
+- **Routes:** Canonical `/signup`; `/sign-up` redirects; `clientLogin` → `/login`.
+
+- **Pages:** Login (Welcome back), SignUp 3-step (account/business/intent), Onboarding intent selector (startup/Road Ready/portal/services/shipper).
+
+- **Infra:** `returnUrl.ts` (safe redirects), `demoSignup.ts` (demo flow), extended `authService` SignUpPayload.
+
+- **Docs:** `docs/auth/AIO_AUTH_EXPERIENCE.md`, `docs/refinement/SIGNUP_REGISTER_REFINEMENT_REPORT.md`.
+
