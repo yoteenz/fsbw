@@ -215,7 +215,7 @@ body:has(.aio-app--auth) {
 
 .aio-auth-login-hero .aio-auth-premium__supporting {
   margin-top: 0.2rem;
-  font-size: clamp(0.6rem, 2.56vw, 0.65rem);
+  font-size: calc(clamp(0.6rem, 2.56vw, 0.65rem) - 3px);
   font-weight: 600;
   line-height: 1.32;
   max-width: min(340px, 88vw);
