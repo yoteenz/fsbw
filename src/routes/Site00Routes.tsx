@@ -11,6 +11,7 @@ import '../site00/styles/site00.css';
 import '../site00/assts/styles/assts.css';
 import '../site00/assts/styles/assts-depth.css';
 import '../site00/assts/styles/assts-composition.css';
+import '../site00/assts/styles/assts-library-home.css';
 
 const Site00OriginPage = lazy(() => import('../site00/pages/OriginPage'));
 const Site00EnterPage = lazy(() => import('../site00/pages/EnterPage'));
@@ -24,6 +25,9 @@ const AsstsBatchPage = lazy(() => import('../site00/assts/pages/BatchPage'));
 const AsstsInspectionPage = lazy(() => import('../site00/assts/pages/InspectionPage'));
 const AsstsLoaderPipelinePage = lazy(() => import('../site00/assts/pages/LoaderPipelinePage'));
 const AsstsCompositionStudioPage = lazy(() => import('../site00/assts/pages/CompositionStudioPage'));
+const AsstsSearchPage = lazy(() => import('../site00/assts/pages/SearchPage'));
+const AsstsNotificationsPage = lazy(() => import('../site00/assts/pages/NotificationsPage'));
+const AsstsProfilePage = lazy(() => import('../site00/assts/pages/ProfilePage'));
 
 function Site00Suspense({ children }: { children: ReactNode }) {
   return <Suspense fallback={<Site00RouteLoadingFallback />}>{children}</Suspense>;
@@ -169,6 +173,30 @@ export function Site00Routes() {
             element={
               <AsstsRouteSuspense>
                 <AsstsLoaderPipelinePage />
+              </AsstsRouteSuspense>
+            }
+          />
+          <Route
+            path="search"
+            element={
+              <AsstsRouteSuspense>
+                <AsstsSearchPage />
+              </AsstsRouteSuspense>
+            }
+          />
+          <Route
+            path="notifications"
+            element={
+              <AsstsRouteSuspense>
+                <AsstsNotificationsPage />
+              </AsstsRouteSuspense>
+            }
+          />
+          <Route
+            path="profile"
+            element={
+              <AsstsRouteSuspense>
+                <AsstsProfilePage />
               </AsstsRouteSuspense>
             }
           />

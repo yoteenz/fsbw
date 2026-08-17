@@ -7,12 +7,14 @@ import { resolveAsstsSlot } from '../services/asstsApi';
 
 type AsstsLibraryShellProps = {
   children: ReactNode;
+  /** Scroll document flow (Library Home) instead of absolute composition zones */
+  scrollLayout?: boolean;
 };
 
 const FALLBACK_CLASS = 'site00-assts-env-fallback--library';
 
 /** Library route — composition-aware environment shell. */
-export function AsstsLibraryShell({ children }: AsstsLibraryShellProps) {
+export function AsstsLibraryShell({ children, scrollLayout = false }: AsstsLibraryShellProps) {
   const [bgUrl, setBgUrl] = useState<string | null>(null);
   const [source, setSource] = useState<'locked' | 'fallback'>('fallback');
   const rootRef = useRef<HTMLDivElement>(null);
@@ -67,7 +69,13 @@ export function AsstsLibraryShell({ children }: AsstsLibraryShellProps) {
   return (
     <div
       ref={rootRef}
-      className={compositionLocked ? 'assts-library-shell assts-library-shell--contract' : 'assts-library-shell'}
+      className={
+        scrollLayout
+          ? 'assts-library-shell assts-library-shell--scroll'
+          : compositionLocked
+            ? 'assts-library-shell assts-library-shell--contract'
+            : 'assts-library-shell'
+      }
     >
       <EnvironmentalStage
         composition={composition}

@@ -52067,8 +52067,6 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **QA:** Build PASS; manual QA login/forgot/signup mobile 375px + desktop split PASS.
 
-<<<<<<< HEAD
-
 ---
 
 ## 2026-08-17 — Frontal Slayer loader + Lounge TV press-to-play regression hotfix
@@ -52124,3 +52122,21 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Fix:** Restored `LOUNGE_TV_PLAY_TAP_LAYOUT` to `{ layoutWidthExtraPx: 10, layoutHeightExtraPx: -36, layoutOffsetX: 12, layoutOffsetY: 46 }`; button `padding: 8`.
 
 - **QA:** Build PASS; iPhone 12 Pro viewport — PRESS TO PLAY centered on TV glass.
+
+---
+
+## 2026-08-17 — ASSTS mobile Library Home reference-locked UI refinement
+
+- **Context:** Composer sprint — refine **only** `/assts` mobile Library Home to match authoritative reference mock (390×844). Preserve working Asset Vault pipeline, generation, approval/locking, batch processing. Do not touch Frontal Slayer, Lounge TV, or unrelated Site 00 routes.
+
+- **Composition:** Replaced absolute `CompositionZoneSlot` contract layout with scroll-based reference-locked document flow. Added composition anchors in `src/site00/assts/composition/library-home-anchors.ts` (`library.header`, `library.stats`, `library.needsReview`, `library.recentBatches`, `library.browseLibrary`, `library.bottomNav`, etc.) + `assts-library-home.css` with clamp/gutter tokens against 390×844 reference.
+
+- **Sections (data-driven):** Header (`SITE 00 · ASSTS` / `THE ASSET VAULT.` / tagline + emblem); 4-up stats row; global status strip; **Needs Your Review** always present (empty state when zero); Recent Batches rows; Browse Library 2+2+1 category grid with live counts.
+
+- **Navigation:** Replaced 3-item dock with five destinations — **Library / Batches / Search / Notifications / Profile** (`AsstsVaultNav`). Removed Exit Site 00 from primary nav; secondary exit on Profile → Origin. Dynamic notification badge from live `needsReview` count (not hardcoded).
+
+- **New routes:** `/assts/search`, `/assts/notifications`, `/assts/profile` (SearchPage, NotificationsPage, ProfilePage + `AsstsVaultSubpageShell`).
+
+- **Preserved:** `AsstsLibraryShell` environment/background system; `AsstsBottomDock` alias → `AsstsVaultNav` on batch/inspection/loader pages. No pipeline/API/generation changes.
+
+- **QA:** `npm run build` PASS; Playwright 390×844 screenshot vs reference — header, stats, sections, browse grid, 5-tab nav aligned; architecture visible when slot resolves.

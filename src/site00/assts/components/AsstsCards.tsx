@@ -203,6 +203,119 @@ type CategoryTileProps = {
   to: string;
 };
 
+export function AsstsLibraryPriorityCard({
+  batchKey,
+  category,
+  displayName,
+  thumbnailUrl,
+  reviewedCount,
+  totalCount,
+  progressPercent,
+  to,
+}: BatchCardProps) {
+  return (
+    <Link to={to} className="assts-library-priority-card">
+      <div className="assts-library-priority-card__thumb">
+        {thumbnailUrl ? (
+          <img src={thumbnailUrl} alt="" loading="lazy" />
+        ) : (
+          <div className="assts-library-priority-card__thumb-empty" aria-hidden="true" />
+        )}
+      </div>
+      <div className="assts-library-priority-card__body">
+        <strong className="assts-library-priority-card__batch">{batchKey}</strong>
+        <p className="assts-library-priority-card__category">{category ?? displayName}</p>
+        <p className="assts-library-priority-card__progress-label">
+          {String(reviewedCount).padStart(2, '0')} / {String(totalCount).padStart(2, '0')} REVIEWED
+        </p>
+        <div className="assts-library-priority-card__progress-row">
+          <AsstsProgress value={progressPercent} max={100} />
+          <span className="assts-progress-bar__pct">{progressPercent}%</span>
+        </div>
+        <span className="assts-library-priority-card__cta">CONTINUE REVIEW →</span>
+      </div>
+    </Link>
+  );
+}
+
+function recentBatchStatusDotClass(statusHint?: string, status?: string): string {
+  const hint = (statusHint ?? status ?? '').toUpperCase();
+  if (hint.includes('REVIEW') || hint.includes('NEED')) return 'assts-library-recent-row__status-dot--review';
+  if (hint.includes('REGENERAT')) return 'assts-library-recent-row__status-dot--regen';
+  if (hint.includes('APPROVED') || hint.includes('LOCK')) return 'assts-library-recent-row__status-dot--approved';
+  return '';
+}
+
+/** Reference-locked recent batch row — horizontal card with status + chevron. */
+export function AsstsLibraryRecentBatchRow({
+  batchKey,
+  category,
+  displayName,
+  thumbnailUrl,
+  status,
+  statusHint,
+  to,
+}: BatchChipProps) {
+  const dotClass = recentBatchStatusDotClass(statusHint, status);
+  const statusLabel = statusHint ?? status ?? 'BATCH';
+  return (
+    <Link to={to} className="assts-library-recent-row">
+      <div className="assts-library-recent-row__thumb">
+        {thumbnailUrl ? (
+          <img src={thumbnailUrl} alt="" loading="lazy" />
+        ) : (
+          <div className="assts-library-recent-row__thumb-empty" aria-hidden="true" />
+        )}
+      </div>
+      <div className="assts-library-recent-row__body">
+        <div className="assts-library-recent-row__key">{batchKey}</div>
+        <div className="assts-library-recent-row__meta">{category ?? displayName ?? 'BATCH'}</div>
+        <div className="assts-library-recent-row__status">
+          <span className={`assts-library-recent-row__status-dot ${dotClass}`.trim()} aria-hidden="true" />
+          {statusLabel}
+        </div>
+      </div>
+      <span className="assts-library-recent-row__chevron" aria-hidden="true">
+        ›
+      </span>
+    </Link>
+  );
+}
+
+const BROWSE_ANCHOR_BY_CATEGORY: Record<string, string> = {
+  environments: 'library.browseLibrary.environment',
+  objects: 'library.browseLibrary.objects',
+  'ui-graphics': 'library.browseLibrary.uiGraphics',
+  'brand-systems': 'library.browseLibrary.brandSystems',
+  'project-assets': 'library.browseLibrary.projectAssets',
+};
+
+/** Reference-locked browse category card — compact horizontal tile. */
+export function AsstsLibraryCategoryCard({ id, label, count, coverUrl, to }: CategoryTileProps) {
+  const parts = label.split(' ');
+  const num = parts[0] ?? '';
+  const name = parts.slice(1).join(' ');
+  const anchor = BROWSE_ANCHOR_BY_CATEGORY[id] ?? 'library.browseLibrary';
+  return (
+    <Link to={to} className="assts-library-category-card" data-anchor={anchor}>
+      <div className="assts-library-category-card__copy">
+        <span className="assts-library-category-card__num">{num}</span>
+        <span className="assts-library-category-card__name">{name}</span>
+        <span className="assts-library-category-card__count">
+          {count} {count === 1 ? 'ASSET' : 'ASSETS'}
+        </span>
+      </div>
+      <div className="assts-library-category-card__preview">
+        {coverUrl ? (
+          <img src={coverUrl} alt="" loading="lazy" />
+        ) : (
+          <div className="assts-library-category-card__preview-empty" aria-hidden="true" />
+        )}
+      </div>
+    </Link>
+  );
+}
+
 export function AsstsCategoryTile({ label, count, coverUrl, to }: CategoryTileProps) {
   const [num, ...nameParts] = label.split(' ');
   const name = nameParts.join(' ');
