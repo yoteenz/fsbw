@@ -1,4 +1,4 @@
-import { useId, useState } from 'react';
+import { useId, useState, type ReactNode } from 'react';
 
 type Props = {
   label: string;
@@ -8,6 +8,7 @@ type Props = {
   required?: boolean;
   minLength?: number;
   id?: string;
+  icon?: ReactNode;
 };
 
 export function AuthPasswordInput({
@@ -18,6 +19,7 @@ export function AuthPasswordInput({
   required,
   minLength,
   id,
+  icon,
 }: Props) {
   const autoId = useId();
   const fieldId = id ?? autoId;
@@ -28,7 +30,8 @@ export function AuthPasswordInput({
       <label className="aio-auth-premium__label" htmlFor={fieldId}>
         {label}
       </label>
-      <div className="aio-auth-premium__password-wrap">
+      <div className="aio-auth-premium__input-wrap aio-auth-premium__input-wrap--icon aio-auth-premium__input-wrap--password">
+        {icon ? <span className="aio-auth-premium__input-icon">{icon}</span> : null}
         <input
           id={fieldId}
           className="aio-auth-premium__input aio-auth-premium__input--password"

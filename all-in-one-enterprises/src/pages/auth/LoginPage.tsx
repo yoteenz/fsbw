@@ -2,6 +2,7 @@ import { FormEvent, useEffect, useMemo, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { AuthBrandIntro } from '../../components/auth/AuthBrandIntro';
 import { AuthCheckbox } from '../../components/auth/AuthCheckbox';
+import { AuthEmailIcon, AuthLockIcon } from '../../components/auth/AuthFieldIcons';
 import { AuthError } from '../../components/auth/AuthError';
 import { AuthInput } from '../../components/auth/AuthInput';
 import { AuthPasswordInput } from '../../components/auth/AuthPasswordInput';
@@ -78,55 +79,63 @@ export function LoginPage() {
   return (
     <>
       <AuthBrandIntro
-        headline={
+        headline="Welcome"
+        headlineGold="back."
+        supporting={
           <>
-            Welcome
+            Your business keeps moving.
             <br />
-            back.
+            Pick up where you left off.
           </>
         }
-        supporting="Your business keeps moving. Pick up where you left off."
         secondary="Manage services, documents, filings, Road Ready™ progress, and your AIO account from one place."
       />
 
-      <form onSubmit={onSubmit} className="aio-auth-premium__form">
-        <AuthInput
-          label="Email"
-          type="email"
-          autoComplete="email"
-          required
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="name@email.com"
-        />
-        <AuthPasswordInput
-          label="Password"
-          value={password}
-          onChange={setPassword}
-          autoComplete="current-password"
-          required
-        />
-        <div className="aio-auth-premium__row aio-auth-premium__row--inline">
-          <AuthCheckbox label="Remember me" checked={rememberMe} onChange={(e) => setRememberMe(e.target.checked)} />
-          <Link to={aioPaths.forgotPassword} className="aio-auth-premium__forgot">
-            Forgot password?
-          </Link>
-        </div>
-        {error ? (
-          <AuthError
-            title="We couldn't log you in"
-            message={errorMessage ?? 'Check your information and try again.'}
+      <div className="aio-auth-premium__form-panel">
+        <form onSubmit={onSubmit} className="aio-auth-premium__form">
+          <AuthInput
+            label="Email"
+            type="email"
+            autoComplete="email"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="name@email.com"
+            icon={<AuthEmailIcon />}
           />
-        ) : null}
-        <AuthPrimaryButton loading={loading} loadingLabel="Logging in…">
-          Log In →
-        </AuthPrimaryButton>
-      </form>
+          <AuthPasswordInput
+            label="Password"
+            value={password}
+            onChange={setPassword}
+            autoComplete="current-password"
+            required
+            icon={<AuthLockIcon />}
+          />
+          <div className="aio-auth-premium__row aio-auth-premium__row--inline">
+            <AuthCheckbox label="Remember me" checked={rememberMe} onChange={(e) => setRememberMe(e.target.checked)} />
+            <Link to={aioPaths.forgotPassword} className="aio-auth-premium__forgot">
+              Forgot password?
+            </Link>
+          </div>
+          {error ? (
+            <AuthError
+              title="We couldn't log you in"
+              message={errorMessage ?? 'Check your email and password and try again.'}
+            />
+          ) : null}
+          <AuthPrimaryButton loading={loading} loadingLabel="Logging in…">
+            Log In →
+          </AuthPrimaryButton>
+        </form>
 
-      <div className="aio-auth-premium__alt">
-        <p className="aio-auth-premium__alt-label">New to All In One?</p>
-        <p className="aio-auth-premium__alt-copy">Create your account and start building your business.</p>
-        <AuthSecondaryButton to={signUpHref}>Create Account →</AuthSecondaryButton>
+        <div className="aio-auth-premium__divider" role="separator" aria-label="Or">
+          <span>Or</span>
+        </div>
+
+        <div className="aio-auth-premium__alt aio-auth-premium__alt--in-panel">
+          <p className="aio-auth-premium__alt-label">New to All In One?</p>
+          <AuthSecondaryButton to={signUpHref}>Create Account →</AuthSecondaryButton>
+        </div>
       </div>
 
       <DemoPortalAccess />

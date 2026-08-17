@@ -76,8 +76,8 @@
   text-decoration: none;
 }
 
-/* Reset only unstyled buttons — .aio-btn variants carry their own fill/border */
-.aio-app button:not(.aio-btn) {
+/* Reset only unstyled buttons — .aio-btn / auth premium variants carry their own fill/border */
+.aio-app button:not(.aio-btn):not(.aio-auth-premium__btn) {
   font-family: inherit;
   cursor: pointer;
   border: none;
