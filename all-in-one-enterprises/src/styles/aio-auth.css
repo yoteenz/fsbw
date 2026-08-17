@@ -195,7 +195,8 @@
 
 .aio-auth-login-hero .aio-auth-premium__supporting {
   margin-top: 0.25rem;
-  font-size: clamp(0.875rem, 3.6vw, 0.9375rem);
+  font-size: clamp(0.75rem, 3.2vw, 0.8125rem);
+  font-weight: 600;
   line-height: 1.32;
   max-width: min(340px, 88vw);
 }
@@ -375,6 +376,8 @@
 
 .aio-auth-premium--login .aio-auth-premium__supporting {
   color: rgba(255, 255, 255, 0.9);
+  font-size: clamp(0.75rem, 3.2vw, 0.8125rem);
+  font-weight: 600;
 }
 
 .aio-auth-premium--login .aio-auth-premium__secondary {
