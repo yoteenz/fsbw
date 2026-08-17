@@ -108,6 +108,8 @@ export default function AsstsBatchPage() {
                   key={asset.id}
                   assetKey={asset.asset_key}
                   displayName={asset.display_name}
+                  environmentRoleLabel={(asset as { environmentRoleLabel?: string | null }).environmentRoleLabel}
+                  environmentRoleSublabel={(asset as { environmentRoleSublabel?: string | null }).environmentRoleSublabel}
                   previewUrl={asset.currentVersion?.previewUrl}
                   status={asset.status}
                   selected={selectedAssetId === asset.id}

@@ -79,6 +79,8 @@ type AssetCardProps = {
   assetKey: string;
   displayName: string;
   variantLabel?: string;
+  environmentRoleLabel?: string | null;
+  environmentRoleSublabel?: string | null;
   previewUrl?: string | null;
   status: string;
   onClick: () => void;
@@ -90,6 +92,8 @@ export function AsstsAssetCard({
   assetKey,
   displayName,
   variantLabel,
+  environmentRoleLabel,
+  environmentRoleSublabel,
   previewUrl,
   status,
   onClick,
@@ -111,6 +115,14 @@ export function AsstsAssetCard({
         <span className="assts-asset-card__status-dot" data-status={status.replace(/_/g, '-').toLowerCase()} aria-hidden="true" />
       </div>
       <div className="assts-wall-frame__meta">
+        {environmentRoleLabel ? (
+          <div className="assts-env-role">
+            <span className="assts-env-role__label">{environmentRoleLabel}</span>
+            {environmentRoleSublabel ? (
+              <span className="assts-env-role__sublabel">{environmentRoleSublabel}</span>
+            ) : null}
+          </div>
+        ) : null}
         <div className="assts-mono assts-asset-card__key">{assetKey}</div>
         <div className="assts-asset-card__name">{displayName}</div>
         {variantLabel ? <div className="assts-asset-card__variant">{variantLabel}</div> : null}

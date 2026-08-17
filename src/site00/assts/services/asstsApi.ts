@@ -222,6 +222,10 @@ export type AsstsAssetDetail = {
   currentVersion: AsstsAssetVersion | null;
   approvedVersion?: AsstsAssetVersion | null;
   versions: AsstsAssetVersion[];
+  environmentRole?: string | null;
+  environmentRoleLabel?: string | null;
+  environmentRoleSublabel?: string | null;
+  canonicalSlotAlias?: string | null;
 };
 
 export type AsstsAssetNavigation = {
@@ -274,11 +278,11 @@ export async function resolveAsstsSlot(slotKey: string): Promise<SlotResolution>
   return asstsFetch('slots', { query: { slotKey } });
 }
 
-export async function bootstrapAsstsBatch(batchKey = 'BATCH-ASSTS-ENV-001') {
+export async function bootstrapAsstsBatch(batchKey = 'BATCH-ASSTS-ENV-002') {
   return asstsPost('bootstrap', { batchKey });
 }
 
-export async function generateAsstsBatch(batchKey = 'BATCH-ASSTS-ENV-001') {
+export async function generateAsstsBatch(batchKey = 'BATCH-ASSTS-ENV-002') {
   return asstsPost('generate', { batchKey });
 }
 

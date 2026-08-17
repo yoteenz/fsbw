@@ -1,15 +1,33 @@
 /**
  * SITE 00 ASSTS production pipeline (server-side, service role).
- * Usage: npx tsx scripts/site00-assts-pipeline.ts [bootstrap|generate|poll|approve-all|lock|status]
+ * Usage: npx tsx scripts/site00-assts-pipeline.ts [bootstrap|generate|poll|status|...]
  */
-import { ensureBootstrapBatch, enrichAsset, enrichBatch, getBatchByKey, listAssetsForBatch, recordReviewEvent, recomputeBatchStatus } from '../api/_lib/site00Assts/service.js';
-import { pollPendingGenerationJobs, runBatchGeneration } from '../api/_lib/site00Assts/generation.js';
+import {
+  ensureBootstrapBatch,
+  enrichAsset,
+  enrichBatch,
+  getBatchByKey,
+  listAssetsForBatch,
+  recordReviewEvent,
+  recomputeBatchStatus,
+} from '../api/_lib/site00Assts/service.js';
+import {
+  pollPendingGenerationJobs,
+  runBatchGeneration,
+  continueVaultLineageGeneration,
+} from '../api/_lib/site00Assts/generation.js';
 import { lockBatchAndPromoteSlots, resolveProductionAsset } from '../api/_lib/site00Assts/slots.js';
-import { BATCH_ASSTS_ENV_001 } from '../api/_lib/site00Assts/manifests.js';
+import {
+  ACTIVE_ASSTS_ENV_BATCH_KEY,
+  BATCH_ASSTS_ENV_001,
+  BATCH_ASSTS_ENV_002,
+  getActiveAsstsEnvBatchKey,
+} from '../api/_lib/site00Assts/manifests.js';
+import { ASSTS_CANONICAL_SLOT_ALIASES } from '../api/_lib/site00Assts/vaultLineage.js';
 import { getSupabaseAdmin } from '../api/_lib/supabase.js';
 
 const cmd = process.argv[2] ?? 'status';
-const BATCH_KEY = 'BATCH-ASSTS-ENV-001';
+const BATCH_KEY = process.argv[3] ?? getActiveAsstsEnvBatchKey();
 
 async function sleep(ms: number) {
   return new Promise((r) => setTimeout(r, ms));
@@ -32,16 +50,33 @@ async function main() {
   }
 
   if (cmd === 'poll') {
-    const maxRounds = Number(process.argv[3] ?? 40);
+    const maxRounds = Number(process.argv[4] ?? 40);
+    const manifest = BATCH_KEY === BATCH_ASSTS_ENV_002.batchKey ? BATCH_ASSTS_ENV_002 : BATCH_ASSTS_ENV_001;
     let total = 0;
     for (let i = 0; i < maxRounds; i += 1) {
       const n = await pollPendingGenerationJobs(10);
       total += n;
+      await continueVaultLineageGeneration(BATCH_KEY);
       const batch = await getBatchByKey(BATCH_KEY);
       const assets = batch ? await listAssetsForBatch(batch.id) : [];
-      console.log(`poll round ${i + 1}: completed=${n} assets=${assets.map((a) => `${a.asset_key}:${a.status}`).join(', ')}`);
-      const pending = assets.some((a) => a.status === 'GENERATING' || a.status === 'QUEUED');
-      if (!pending && assets.length > 0 && assets.every((a) => ['NEEDS_REVIEW', 'APPROVED', 'LOCKED'].includes(a.status))) {
+      console.log(
+        `poll round ${i + 1}: completed=${n} assets=${assets.map((a) => `${a.asset_key}:${a.status}`).join(', ')}`,
+      );
+      const pending = assets.some((a) => a.status === 'GENERATING' || a.status === 'QUEUED' || a.status === 'REGENERATING');
+      let vaultLineageReady = true;
+      if (manifest.useVaultLineage) {
+        for (const asset of assets) {
+          const enriched = await enrichAsset(asset);
+          const hasCurrentPrompt = enriched.versions.some(
+            (v) =>
+              v.prompt_version === manifest.promptVersion &&
+              ['NEEDS_REVIEW', 'APPROVED', 'LOCKED'].includes(v.status) &&
+              Boolean(v.file_path || v.preview_path),
+          );
+          if (!hasCurrentPrompt) vaultLineageReady = false;
+        }
+      }
+      if (!pending && assets.length > 0 && vaultLineageReady) {
         console.log(JSON.stringify({ ok: true, totalCompleted: total, done: true }, null, 2));
         return;
       }
@@ -53,7 +88,7 @@ async function main() {
   }
 
   if (cmd === 'regenerate-test') {
-    const assetKey = process.argv[3] ?? 's00_env_assts_inspection_mobile';
+    const assetKey = process.argv[4] ?? 's00_env_assts_inspection_mobile';
     const { getAssetByKey } = await import('../api/_lib/site00Assts/service.js');
     const { queueRegeneration } = await import('../api/_lib/site00Assts/generation.js');
     const asset = await getAssetByKey(assetKey);
@@ -66,10 +101,10 @@ async function main() {
       await pollPendingGenerationJobs(5);
       const current = await getAssetByKey(assetKey);
       const after = current ? await enrichAsset(current) : null;
-      const v2 = after?.versions.find((v) => v.version_number === 2);
-      console.log(`poll ${i + 1}: asset=${after?.status} v2=${v2?.status ?? 'missing'}`);
-      if (v2?.status === 'NEEDS_REVIEW') {
-        console.log(JSON.stringify({ ok: true, v1Preserved: after!.versions.some((v) => v.version_number === 1), v2Ready: true }, null, 2));
+      const latest = after?.versions[after.versions.length - 1];
+      console.log(`poll ${i + 1}: asset=${after?.status} latest=${latest ? `v${latest.version_number}:${latest.status}` : 'missing'}`);
+      if (latest?.status === 'NEEDS_REVIEW' && (latest.version_number ?? 0) > 1) {
+        console.log(JSON.stringify({ ok: true, v1Preserved: after!.versions.some((v) => v.version_number === 1), latestReady: true }, null, 2));
         return;
       }
       await sleep(8000);
@@ -111,7 +146,7 @@ async function main() {
   if (cmd === 'reset-review') {
     const batch = await getBatchByKey(BATCH_KEY);
     if (!batch) throw new Error('Batch missing');
-    const { resetBatchForReview, recomputeBatchStatus } = await import('../api/_lib/site00Assts/service.js');
+    const { resetBatchForReview } = await import('../api/_lib/site00Assts/service.js');
     await resetBatchForReview(batch.id);
     await recomputeBatchStatus(batch.id);
     console.log(JSON.stringify({ ok: true, batchId: batch.id, status: 'IN_REVIEW' }, null, 2));
@@ -131,16 +166,21 @@ async function main() {
   if (cmd === 'status') {
     const batch = await getBatchByKey(BATCH_KEY);
     const resolved: Record<string, unknown> = {};
-    for (const manifestAsset of BATCH_ASSTS_ENV_001.assets) {
+    for (const manifestAsset of BATCH_ASSTS_ENV_002.assets) {
       resolved[manifestAsset.semanticSlotKey] = await resolveProductionAsset(manifestAsset.semanticSlotKey);
+      if (manifestAsset.canonicalSlotAlias) {
+        resolved[manifestAsset.canonicalSlotAlias] = await resolveProductionAsset(manifestAsset.canonicalSlotAlias);
+      }
     }
     const assets = batch ? await listAssetsForBatch(batch.id) : [];
     console.log(
       JSON.stringify(
         {
           batch: batch ? { id: batch.id, status: batch.status, batch_key: batch.batch_key } : null,
+          legacyBatch: await getBatchByKey(BATCH_ASSTS_ENV_001.batchKey),
           assets: assets.map((a) => ({ key: a.asset_key, status: a.status, approved: a.approved_version_id })),
           slots: resolved,
+          canonicalAliases: ASSTS_CANONICAL_SLOT_ALIASES,
         },
         null,
         2,

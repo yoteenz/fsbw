@@ -530,6 +530,28 @@
   transform: translateZ(4px);
 }
 
+.assts-env-role {
+  margin-bottom: 6px;
+}
+
+.assts-env-role__label {
+  display: block;
+  font-family: var(--site-font-sans);
+  font-size: 8px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--site-red);
+}
+
+.assts-env-role__sublabel {
+  display: block;
+  font-size: 7px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--site-text-muted);
+  margin-top: 2px;
+}
+
 /* Inspection chamber */
 .assts-inspection-chamber {
   position: relative;

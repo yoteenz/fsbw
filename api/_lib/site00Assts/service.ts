@@ -1,6 +1,6 @@
 import { getSupabaseAdmin } from '../supabase.js';
 import type { AssetStatus, BatchStatus } from './types.js';
-import { BATCH_ASSTS_ENV_001, getBatchManifestByKey } from './manifests.js';
+import { ACTIVE_ASSTS_ENV_BATCH_KEY, BATCH_ASSTS_ENV_001, getBatchManifestByKey } from './manifests.js';
 
 export type DbBatch = {
   id: string;
@@ -54,33 +54,37 @@ function supabase() {
   return getSupabaseAdmin();
 }
 
-export async function ensureBootstrapBatch(batchKey = BATCH_ASSTS_ENV_001.batchKey): Promise<DbBatch> {
+export async function ensureBootstrapBatch(batchKey = ACTIVE_ASSTS_ENV_BATCH_KEY): Promise<DbBatch> {
   const manifest = getBatchManifestByKey(batchKey);
   if (!manifest) throw new Error(`Unknown batch manifest: ${batchKey}`);
 
+  let batch: DbBatch | null = null;
   const { data: existing } = await supabase()
     .from('site00_batches')
     .select('*')
     .eq('batch_key', batchKey)
     .maybeSingle();
 
-  if (existing) return existing as DbBatch;
-
-  const { data: batch, error: batchErr } = await supabase()
-    .from('site00_batches')
-    .insert({
-      batch_key: manifest.batchKey,
-      display_name: manifest.displayName,
-      description: manifest.description ?? null,
-      category: manifest.category,
-      status: 'DRAFT',
-      total_assets: manifest.assets.length,
-      required_assets: manifest.assets.filter((a) => a.required).length,
-      manifest,
-    })
-    .select('*')
-    .single();
-  if (batchErr) throw new Error(batchErr.message);
+  if (existing) {
+    batch = existing as DbBatch;
+  } else {
+    const { data: created, error: batchErr } = await supabase()
+      .from('site00_batches')
+      .insert({
+        batch_key: manifest.batchKey,
+        display_name: manifest.displayName,
+        description: manifest.description ?? null,
+        category: manifest.category,
+        status: 'DRAFT',
+        total_assets: manifest.assets.length,
+        required_assets: manifest.assets.filter((a) => a.required).length,
+        manifest,
+      })
+      .select('*')
+      .single();
+    if (batchErr) throw new Error(batchErr.message);
+    batch = created as DbBatch;
+  }
 
   for (const asset of manifest.assets) {
     const { data: existingAsset } = await supabase()
@@ -88,7 +92,21 @@ export async function ensureBootstrapBatch(batchKey = BATCH_ASSTS_ENV_001.batchK
       .select('id')
       .eq('asset_key', asset.assetKey)
       .maybeSingle();
-    if (existingAsset) continue;
+
+    if (existingAsset) {
+      if (manifest.replacementBatch) {
+        await supabase()
+          .from('site00_logical_assets')
+          .update({
+            batch_id: batch.id,
+            semantic_slot_key: asset.semanticSlotKey,
+            display_name: asset.displayName,
+            updated_at: new Date().toISOString(),
+          })
+          .eq('id', existingAsset.id);
+      }
+      continue;
+    }
 
     await supabase().from('site00_logical_assets').insert({
       asset_key: asset.assetKey,
@@ -102,7 +120,7 @@ export async function ensureBootstrapBatch(batchKey = BATCH_ASSTS_ENV_001.batchK
     });
   }
 
-  return batch as DbBatch;
+  return batch;
 }
 
 export async function getBatchByKey(batchKey: string): Promise<DbBatch | null> {
@@ -366,7 +384,7 @@ export async function resetBatchForReview(batchId: string): Promise<void> {
   }
 }
 
-export async function ensureAutoGenerationPipeline(batchKey = BATCH_ASSTS_ENV_001.batchKey): Promise<{ autoQueued: boolean; polled: number }> {
+export async function ensureAutoGenerationPipeline(batchKey = ACTIVE_ASSTS_ENV_BATCH_KEY): Promise<{ autoQueued: boolean; polled: number }> {
   await ensureBootstrapBatch(batchKey);
   const batch = await getBatchByKey(batchKey);
   if (!batch || batch.status === 'LOCKED') return { autoQueued: false, polled: 0 };
@@ -467,10 +485,16 @@ export async function enrichAsset(asset: DbAsset) {
     ? versions.find((v) => v.id === asset.approved_version_id) ?? null
     : null;
   const batch = asset.batch_id ? await getBatchById(asset.batch_id) : null;
+  const manifest = batch ? getBatchManifestByKey(batch.batch_key) : null;
+  const manifestAsset = manifest?.assets.find((a) => a.assetKey === asset.asset_key);
   return {
     ...asset,
     batch_key: batch?.batch_key ?? null,
     batch_display_name: batch?.display_name ?? null,
+    environmentRole: manifestAsset?.environmentRole ?? null,
+    environmentRoleLabel: manifestAsset?.environmentRoleLabel ?? null,
+    environmentRoleSublabel: manifestAsset?.environmentRoleSublabel ?? null,
+    canonicalSlotAlias: manifestAsset?.canonicalSlotAlias ?? null,
     versions: versions.map(mapVersionPublic),
     currentVersion: current ? mapVersionPublic(current) : null,
     approvedVersion: approved ? mapVersionPublic(approved) : null,

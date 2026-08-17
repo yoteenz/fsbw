@@ -51869,3 +51869,33 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **QA:** `npm run build` PASS. Preview `/assts` 200. Background-swap test (temporary architectural image on `.site00-assts-env-layer`) — glass panels remain readable. Full populated UI walkthrough requires admin sign-in + existing batch data.
 
 - **Not done:** Final locked ASSTS environment slot images (intentionally deferred). Say **deploy now** for Vercel production.
+
+---
+
+## 2026-08-17 — ASSTS environment generation sprint + SITE 00 global loader
+
+- **Context:** Sprint Part A: generate 3 ASSTS mobile environments via FAL (BATCH-ASSTS-ENV-001) for human review + lock test. Part B: replace generic Loading GIF/text with reusable SITE 00 construction loader.
+
+- **Part A state:** All 3 FAL jobs **COMPLETE** in production. Assets `NEEDS_REVIEW`: `s00_env_assts_library_mobile_v01.webp`, `s00_env_assts_batch_mobile_v01.webp`, `s00_env_assts_inspection_mobile_v01.webp` (+ inspection v02 from prior regen test). Batch **IN_REVIEW**, 0/3 approved. Semantic slots still **fallback** until founder approves + locks. Manifest prompts upgraded to **v1.1** (shared vault family, zone-specific composition). **Not** auto-approved or locked per sprint stop condition.
+
+- **Part B:** New `Site00Loader` + `Site00LoaderConstruction` (SVG/CSS upward assembly, indeterminate/determinate progress, contextual copy, reduced-motion, 200ms show delay, error state). `LoadingScreen` now portals Site00Loader globally. `AsstsRouteSuspense` uses ASSTS context loader. Contexts: general, site00, enter, assts, idnty, bldr, bluprnt, build.
+
+- **Founder next:** Sign in → `/assts` → review 3 environments → approve each → LOCK BATCH → verify locked backgrounds on Library/Batch/Inspection routes. Say **deploy now** for Vercel.
+
+---
+
+## 2026-08-17 — SITE 00 Asset Vault environment lineage pipeline (BATCH-ASSTS-ENV-002)
+
+- **Context:** Correct FAL environment generation so ASSTS mobile environments are one coherent Asset Vault digital twin (monumental marble arch canon), not three unrelated interiors. Implement parent/child reference conditioning, canonical slot aliases on lock, environment role labels in review UI, regeneration lineage, and production slot consumption — without redesigning ASSTS UI or auto-approving/locking.
+
+- **Pipeline architecture:** `useVaultLineage` manifest flag. Library master generates first via `fal-ai/nano-banana-pro` (T2I). Batch + Inspection use `nano-banana-pro/edit` with library master `image_urls` reference. Optional `SITE00_ASSTS_VAULT_ART_DIRECTION_URL` for founder hero still on library seed. `forceNewVersion` + `promptVersion` gating ensures one v2.0 candidate per asset in replacement batch.
+
+- **Canonicalization:** Lock promotes both primary slots (`assts.*.environment.mobile`) and aliases (`site00.assetVault.environments.library|batchReview|inspection`). Migration `20260817143000_site00_asset_vault_canonical_slots.sql` applied to production.
+
+- **Review UX:** Environment role labels on batch grid/contact sheet cards — LIBRARY / VAULT ENTRANCE, BATCH REVIEW / PRODUCTION GALLERY, ASSET INSPECTION / INSPECTION CHAMBER.
+
+- **Bugs fixed mid-sprint:** Library job 422 when `/edit` used without refs; stuck `GENERATING` blocking child queue; poll exiting early before v2.0 child gens; failure handler now updates asset + version rows.
+
+- **Production state (ENV-002):** Batch **IN_REVIEW**. All 3 assets **NEEDS_REVIEW** with **v2.0** candidates: library v03 (T2I master), batch v02 + inspection v03 (vault reference conditioned). Slots still **fallback** until founder approves + locks. **Not** auto-approved or locked.
+
+- **Founder next:** `/assts` → BATCH-ASSTS-ENV-002 → review coordinated environments → approve/reject/regenerate per role → LOCK BATCH when satisfied. Say **deploy now** for Vercel API on production preview.

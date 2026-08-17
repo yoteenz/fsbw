@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { resolveAdminAuth } from '../_lib/adminAuth.js';
-import { BATCH_ASSTS_ENV_001 } from '../_lib/site00Assts/manifests.js';
+import { getActiveAsstsEnvBatchKey, BATCH_ASSTS_ENV_001 } from '../_lib/site00Assts/manifests.js';
 import {
   ensureBootstrapBatch,
   enrichAsset,
@@ -61,7 +61,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
     if (req.method === 'GET') {
       if (action === 'library') {
-        const pipeline = await ensureAutoGenerationPipeline(BATCH_ASSTS_ENV_001.batchKey);
+        const activeBatchKey = getActiveAsstsEnvBatchKey();
+        const pipeline = await ensureAutoGenerationPipeline(activeBatchKey);
         const summary = await getLibrarySummary();
         const categories = await getLibraryCategoryCounts();
         const status = String(req.query.status ?? '').trim();
@@ -74,7 +75,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             category: category || undefined,
           });
         }
-        const priorityBatch = summary.batchesList.find((b) => b.batch_key === BATCH_ASSTS_ENV_001.batchKey);
+        const priorityBatch = summary.batchesList.find((b) => b.batch_key === activeBatchKey);
         let priority = null;
         if (priorityBatch) {
           const full = await getBatchById(priorityBatch.id);
@@ -136,13 +137,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const postAction = String(body.action ?? action ?? '').trim();
 
       if (postAction === 'bootstrap') {
-        const batchKey = String(body.batchKey ?? BATCH_ASSTS_ENV_001.batchKey);
+        const batchKey = String(body.batchKey ?? getActiveAsstsEnvBatchKey());
         const batch = await ensureBootstrapBatch(batchKey);
         return res.status(200).json({ ok: true, batch });
       }
 
       if (postAction === 'generate') {
-        const batchKey = String(body.batchKey ?? BATCH_ASSTS_ENV_001.batchKey);
+        const batchKey = String(body.batchKey ?? getActiveAsstsEnvBatchKey());
         await ensureBootstrapBatch(batchKey);
         const result = await runBatchGeneration(batchKey);
         return res.status(200).json({ ok: true, ...result });

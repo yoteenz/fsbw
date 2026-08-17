@@ -1,6 +1,7 @@
 import { getSupabaseAdmin } from '../supabase.js';
 import type { ProductionAssetResolution } from './types.js';
 import { publicUrlForStoragePath } from './service.js';
+import { ASSTS_CANONICAL_SLOT_ALIASES, resolvePrimarySlotKey } from './vaultLineage.js';
 
 export const ASSTS_FALLBACK_SLOTS: Record<string, { cssClass: string }> = {
   'assts.library.environment.mobile': { cssClass: 'site00-assts-env-fallback--library' },
@@ -9,8 +10,9 @@ export const ASSTS_FALLBACK_SLOTS: Record<string, { cssClass: string }> = {
 };
 
 export async function resolveProductionAsset(slotKey: string): Promise<ProductionAssetResolution> {
+  const primaryKey = resolvePrimarySlotKey(slotKey);
   const supabase = getSupabaseAdmin();
-  const { data: slot } = await supabase.from('site00_asset_slots').select('*').eq('slot_key', slotKey).maybeSingle();
+  const { data: slot } = await supabase.from('site00_asset_slots').select('*').eq('slot_key', primaryKey).maybeSingle();
 
   if (slot?.current_locked_version_id) {
     const { data: version } = await supabase
@@ -38,6 +40,22 @@ export async function resolveProductionAsset(slotKey: string): Promise<Productio
   };
 }
 
+async function promoteSlot(
+  supabase: ReturnType<typeof getSupabaseAdmin>,
+  slotKey: string,
+  assetId: string,
+  approvedVersionId: string,
+): Promise<void> {
+  await supabase
+    .from('site00_asset_slots')
+    .update({
+      current_locked_asset_id: assetId,
+      current_locked_version_id: approvedVersionId,
+      updated_at: new Date().toISOString(),
+    })
+    .eq('slot_key', slotKey);
+}
+
 export async function lockBatchAndPromoteSlots(batchId: string): Promise<{ ok: boolean; error?: string; slots?: string[] }> {
   const supabase = getSupabaseAdmin();
 
@@ -60,10 +78,7 @@ export async function lockBatchAndPromoteSlots(batchId: string): Promise<{ ok: b
     const slotKey = asset.semantic_slot_key as string | null;
     if (!slotKey) continue;
 
-    await supabase
-      .from('site00_asset_versions')
-      .update({ status: 'LOCKED' })
-      .eq('id', approvedVersionId);
+    await supabase.from('site00_asset_versions').update({ status: 'LOCKED' }).eq('id', approvedVersionId);
 
     await supabase
       .from('site00_logical_assets')
@@ -74,16 +89,14 @@ export async function lockBatchAndPromoteSlots(batchId: string): Promise<{ ok: b
       })
       .eq('id', asset.id);
 
-    await supabase
-      .from('site00_asset_slots')
-      .update({
-        current_locked_asset_id: asset.id,
-        current_locked_version_id: approvedVersionId,
-        updated_at: new Date().toISOString(),
-      })
-      .eq('slot_key', slotKey);
-
+    await promoteSlot(supabase, slotKey, asset.id, approvedVersionId);
     promoted.push(slotKey);
+
+    const aliasEntry = Object.entries(ASSTS_CANONICAL_SLOT_ALIASES).find(([, primary]) => primary === slotKey);
+    if (aliasEntry) {
+      await promoteSlot(supabase, aliasEntry[0], asset.id, approvedVersionId);
+      promoted.push(aliasEntry[0]);
+    }
 
     await supabase.from('site00_review_events').insert({
       asset_id: asset.id,
@@ -103,7 +116,7 @@ export async function lockBatchAndPromoteSlots(batchId: string): Promise<{ ok: b
     batch_id: batchId,
     asset_id: required[0]?.id,
     action: 'BATCH_LOCKED',
-    note: `Batch ${batch.batch_key} locked`,
+    note: `Batch ${batch.batch_key} locked — canonical Asset Vault environments`,
   });
 
   return { ok: true, slots: promoted };

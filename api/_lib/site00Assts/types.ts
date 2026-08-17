@@ -42,6 +42,11 @@ export type Site00BatchManifest = {
   outputFormat: 'webp' | 'png';
   model?: string;
   assets: Site00ManifestAsset[];
+  /** Sequential vault lineage: library master → reference-conditioned children. */
+  useVaultLineage?: boolean;
+  /** Always queue new versions (replacement batch). */
+  forceNewVersion?: boolean;
+  replacementBatch?: boolean;
 };
 
 export type Site00ManifestAsset = {
@@ -52,6 +57,12 @@ export type Site00ManifestAsset = {
   required: boolean;
   variant?: string;
   view?: string;
+  generationOrder?: number;
+  environmentRole?: 'library' | 'batchReview' | 'inspection';
+  environmentRoleLabel?: string;
+  environmentRoleSublabel?: string;
+  canonicalSlotAlias?: string;
+  requiresVaultReference?: boolean;
 };
 
 export type ProductionAssetResolution = {
