@@ -4,7 +4,7 @@ type Site00LoaderEnvironmentProps = {
   ready?: boolean;
 };
 
-/** Full-viewport architectural environment — paints before geometry is revealed. */
+/** Full-stage architectural environment — fills background region (711×1536 map). */
 export function Site00LoaderEnvironment({ backgroundUrl, ready = false }: Site00LoaderEnvironmentProps) {
   return (
     <div className={`site00-loader-env ${ready ? 'site00-loader-env--ready' : ''}`} aria-hidden="true">

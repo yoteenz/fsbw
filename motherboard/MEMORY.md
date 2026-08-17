@@ -52195,6 +52195,7 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 ---
 
+<<<<<<< HEAD
 ## 2026-08-17 — AIO login hero missing on preview (env-dependent URL fix)
 
 - **Context:** Founder reported login page on `preview.fsbw-dev.com` shows solid black background — no approved truck hero image despite prior implementation.
@@ -52220,6 +52221,35 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Fix:** Shorter hero, image nudged up, gold `<` + white BACK, ~2px type reduction on mobile login.
 
 - **QA:** Playwright 375/390/414 — hero 330–340px, email below hero, back symbol gold + label white.
+=======
+---
+
+## 2026-08-17 — AIO login copy + checkbox + CTA height tweak
+
+- **Context:** Founder follow-up on mobile login — remove gray secondary paragraph, smaller white supporting line, gold Remember Me checkbox, shorter Log In / Create Account buttons (−25% height only).
+
+- **Changes:** Removed `secondary` from `LoginPage` brand intro; hero supporting −2px (`clamp(0.875rem…)`); login checkbox gold border; primary/secondary buttons `min-height: 42px` (from 56px) on login mobile.
+
+- **QA:** Playwright 390 — no `.secondary`, supporting ~14px, checkbox border gold, buttons 42px tall.
+
+---
+
+## 2026-08-17 — ASSTS Asset Vault loader exact X/Y coordinate map (711×1536)
+
+- **Context:** Composer sprint — replace estimated loader overlay positioning with approved **711×1536** coordinate blueprint for SITE 00 Asset Vault immersive loader only. Preserve background image, animation asset, typography system, ASSTS app screens, FS/Lounge TV/PSA. Do not redesign.
+
+- **Composition data:** `loader-composition-map.ts` (`assts-loader-mobile-v1`) — background, pedestal (debug), geometry (238×209×220×535), copy regions (eyebrow/title/subtitle/status/progress/tagline/signature), Y landmarks, center axis x=356.
+
+- **Runtime:** `LoaderCompositionProvider` + `LoaderRegion` absolute slots inside `.site00-loader-stage`; uniform scale `min(availW/711, availH/1536)`; stage centered in `100dvh` safe viewport. `LoaderCopyRegions` mounts each copy element in mapped region (status anchor shared for ASSEMBLING… / ASSET VAULT READY). Geometry uses reference box + `object-position: center bottom` (visible base at pedestal).
+
+- **Debug:** `?loaderRefMap=1` or `?loaderDebug=1` → `LoaderReferenceMapDebug` (horizontal guides, center axis, region boxes, expected/actual/delta report).
+
+- **Removed:** Percentage-based `site00LoaderHeroStage` pedestal/copy gap vars for immersive loader (file now debug flags only).
+
+- **Spatial Architecture Review:** SKIPPED — loader overlay composition only; no new product surfaces.
+
+- **QA:** `npm run build` PASS; `scripts/validate-assts-loader-composition.mjs` at **711px stage width** — geometry, copy.eyebrow, copy.title, copy.subtitle, copy.status, copy.progress, copy.tagline, copy.signature all **0px delta**.
+>>>>>>> 9ac9b98e4 (ASSTS loader exact 711×1536 coordinate map — overlay composition [sync-only])
 
 ---
 
@@ -52237,12 +52267,3 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **QA:** `npm run build` PASS. Playwright + screenshots: `/origin` desktop + mobile (technical condensed hierarchy); `/assts` Library Home at 711px with auth/API mock (vault title, red labels, mono batch IDs, compact nav). **`src/index.css` Futura unchanged** — Frontal Slayer isolation preserved.
 
----
-
-## 2026-08-17 — AIO login copy + checkbox + CTA height tweak
-
-- **Context:** Founder follow-up on mobile login — remove gray secondary paragraph, smaller white supporting line, gold Remember Me checkbox, shorter Log In / Create Account buttons (−25% height only).
-
-- **Changes:** Removed `secondary` from `LoginPage` brand intro; hero supporting −2px (`clamp(0.875rem…)`); login checkbox gold border; primary/secondary buttons `min-height: 42px` (from 56px) on login mobile.
-
-- **QA:** Playwright 390 — no `.secondary`, supporting ~14px, checkbox border gold, buttons 42px tall.

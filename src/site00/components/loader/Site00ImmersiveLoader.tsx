@@ -1,8 +1,11 @@
 import { useEffect, useState } from 'react';
 import type { Site00ImmersiveLoaderConfig, Site00LoaderState } from './site00LoaderConfig';
-import { ASSTS_LOADER_HERO_STAGE, isLoaderDebugEnabled, loaderHeroStageCssVars } from './site00LoaderHeroStage';
+import { isLoaderDebugEnabled } from './site00LoaderHeroStage';
 import { teardownSite00AsstsBootShell } from './site00LoaderBoot';
-import { Site00LoaderCopy } from './Site00LoaderCopy';
+import { LoaderCopyRegions } from './LoaderCopyRegions';
+import { LoaderCompositionProvider } from './LoaderCompositionContext';
+import { LoaderReferenceMapDebug } from './LoaderReferenceMapDebug';
+import { LoaderRegion } from './LoaderRegion';
 import { Site00LoaderAnimation } from './Site00LoaderAnimation';
 import { Site00LoaderEnvironment } from './Site00LoaderEnvironment';
 import { preloadSite00LoaderBackground } from './site00LoaderPreload';
@@ -40,8 +43,8 @@ function usePrefersReducedMotion(): boolean {
 export function Site00ImmersiveLoader({
   config,
   progress,
-  statusLabel,
-  loaderState = 'BOOTSTRAP',
+  statusLabel: _statusLabel,
+  loaderState: _loaderState = 'BOOTSTRAP',
   isComplete = false,
   phase = 'loading',
   reducedMotion: reducedMotionProp,
@@ -57,8 +60,6 @@ export function Site00ImmersiveLoader({
     if (typeof document === 'undefined') return false;
     return Boolean(document.getElementById('site00-assts-boot-shell'));
   });
-
-  const heroVars = loaderHeroStageCssVars(ASSTS_LOADER_HERO_STAGE);
 
   useEffect(() => {
     let cancelled = false;
@@ -82,25 +83,8 @@ export function Site00ImmersiveLoader({
     return () => window.clearTimeout(t);
   }, [phase, onExitComplete]);
 
-  const atComplete = isComplete || phase === 'complete-hold' || progress >= 100 || loaderState === 'READY';
-  const displayStatus = atComplete ? config.completionMessage : statusLabel;
-
-  const experienceTitle =
-    loaderState === 'BOOTSTRAP'
-      ? 'INITIALIZING SITE 00'
-      : loaderState === 'CONNECTING'
-        ? 'CONNECTING TO ASSET VAULT'
-        : config.experienceTitle;
-
-  const displaySubtitle =
-    loaderState === 'CONNECTING'
-      ? 'SECURE ADMIN SESSION'
-      : loaderState === 'BOOTSTRAP'
-        ? 'INITIALIZING ENVIRONMENT'
-        : config.experienceSubtitle;
-
-  const progressLabel =
-    atComplete || progress >= 100 ? config.completionMessage : config.assemblingLabel;
+  const atComplete = isComplete || phase === 'complete-hold' || progress >= 100;
+  const progressLabel = atComplete ? config.completionMessage : config.assemblingLabel;
 
   const rootClass = [
     'site00-immersive-loader',
@@ -113,46 +97,36 @@ export function Site00ImmersiveLoader({
     .join(' ');
 
   return (
-    <div
-      className={rootClass}
-      style={heroVars as React.CSSProperties}
-      role="status"
-      aria-live="polite"
-      aria-label={displayStatus}
-    >
-      <div className="site00-loader-hero-stage">
-        <Site00LoaderEnvironment backgroundUrl={config.backgroundUrl} ready={backgroundReady} />
+    <div className={rootClass} role="status" aria-live="polite" aria-label={progressLabel}>
+      <LoaderCompositionProvider>
+        <LoaderRegion id="background" className="site00-loader-background-region">
+          <Site00LoaderEnvironment backgroundUrl={config.backgroundUrl} ready={backgroundReady} />
+        </LoaderRegion>
 
         {debug ? (
-          <>
-            <span className="site00-loader-debug site00-loader-debug--pedestal" aria-hidden="true" />
-            <span className="site00-loader-debug site00-loader-debug--pedestal-center" aria-hidden="true" />
-            <span className="site00-loader-debug site00-loader-debug--geometry-anchor" aria-hidden="true" />
-            <span className="site00-loader-debug site00-loader-debug--copy-anchor" aria-hidden="true" />
-            <span className="site00-loader-debug site00-loader-debug--safe-bottom" aria-hidden="true" />
-          </>
+          <LoaderRegion id="pedestal" className="site00-loader-pedestal-debug" aria-hidden="true" />
         ) : null}
 
         {!error ? (
           <>
-            <Site00LoaderAnimation reducedMotion={reducedMotion} onReady={onAnimationReady} />
+            <LoaderRegion id="geometry" className="site00-loader-geometry-region" allowOverflow>
+              <Site00LoaderAnimation reducedMotion={reducedMotion} onReady={onAnimationReady} />
+            </LoaderRegion>
 
-            <div className="site00-loader-copy-mount">
-              <Site00LoaderCopy
-                siteLabel={config.siteLabel}
-                title={experienceTitle}
-                subtitle={displaySubtitle}
-                tagline={config.tagline}
-                footerMark={config.footerMark}
-                footerLabel={config.footerLabel}
-                progress={progress}
-                progressLabel={progressLabel}
-              />
-            </div>
+            <LoaderCopyRegions
+              siteLabel={config.siteLabel}
+              title={config.experienceTitle}
+              subtitle={config.experienceSubtitle}
+              tagline={config.tagline}
+              footerMark={config.footerMark}
+              footerLabel={config.footerLabel}
+              progress={progress}
+              progressLabel={progressLabel}
+            />
           </>
         ) : (
-          <div className="site00-loader-copy-mount site00-loader-copy-mount--error">
-            <Site00LoaderCopy
+          <div className="site00-loader-error-mount">
+            <LoaderCopyRegions
               siteLabel={config.siteLabel}
               title="BUILD INTERRUPTED"
               subtitle="WE COULDN'T COMPLETE THIS STEP"
@@ -169,7 +143,9 @@ export function Site00ImmersiveLoader({
             ) : null}
           </div>
         )}
-      </div>
+
+        <LoaderReferenceMapDebug />
+      </LoaderCompositionProvider>
     </div>
   );
 }
