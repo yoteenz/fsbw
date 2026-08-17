@@ -51792,3 +51792,19 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Docs:** `docs/auth/AIO_AUTH_EXPERIENCE.md`, `docs/refinement/SIGNUP_REGISTER_REFINEMENT_REPORT.md`.
 
+---
+
+## 2026-08-17 — SITE 00 Foundation V1.1 (Composer foundation sprint)
+
+- **Context:** Founder supplied six approved reference mockups and a full Foundation V1.1 specification to establish SITE 00 production architecture (not a conventional agency site). Sprint scope: six approved experiences + global shell, routing, environment system, reusable UI, state architecture, asset registry, responsive/accessibility foundation, placeholder downstream routes, and SITE 00 Bible documentation. Explicit stop: do not build BLUPRNT, BUILD, CTRL ROOM, LIVE, EVOLVE, or invent unapproved pages.
+
+- **Topics covered:** Repository audit (React 19 + Vite + React Router in existing Build-a-Wig monorepo; no prior SITE 00 code). Implemented module at `src/site00/` with config-driven navigation, directory, IDNTY/BLDR content, pricing tiers, environment registry, asset registry, and lightweight `Site00Context` reducer. `EnvironmentShell` separates locked environments from editable UI. Three environment families: ORIGIN (homepage + expansions), WORKFLOW (IDNTY/BLDR state pages), ENTER_00_WAITING_ROOM. Homepage `homeMode` state transitions preserve ORIGIN environment. Routes via `src/routes/Site00Routes.tsx` wired into `App.tsx`. Canonical paths: `/origin`, `/enter`, `/idnty/state`, `/bldr/state` (+ redirects from `/idnty`, `/bldr`). Default `/` remains Frontal Slayer `HomeLandingRedirect`; `VITE_SITE00_ROOT=1` mounts Origin at `/` for dedicated SITE 00 deploy. CSS fallback environments until production assets; SVG wireframe icon placeholders. Docs at `docs/site00/` (BIBLE, ROUTES, ENVIRONMENTS, COMPONENTS, STATES, ASSETS gap report, DECISIONS).
+
+- **Decisions / outcomes:** Do not bake pricing/nav/status into images. ENTER 00 environment locked when assets arrive; directory content editable via `config/directory.ts`. Global nav items disabled until screen inventory sprint (no false SYSTEM active on Origin). Homepage status strip Origin-only. Creative Selection Protocol + project model types prepared, not implemented. Reserved future routes redirect to `/origin` without "coming soon" pages.
+
+- **Changes:** New `src/site00/**`, `src/routes/Site00Routes.tsx`, `App.tsx` (Site00Routes + conditional HomeLandingRedirect), `docs/site00/**`.
+
+- **QA:** `npm run build` PASS. Manual QA on localhost:3001 — origin collapsed/expanded IDNTY+BLDR, IDNTY state selection, BLDR build class selection, ENTER/EXIT 00 navigation — all PASS.
+
+- **Conventions:** Before changing SITE 00, read `docs/site00/BIBLE.md`. Production environment/object assets still required (see `docs/site00/ASSETS.md`). Mobile compositions need dedicated design sprint.
+

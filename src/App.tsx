@@ -62,6 +62,7 @@ import { isCreativePreviewMode, seedCreativePreviewDemoSession } from './utils/c
 import { isDesktopPreviewWrapperPath } from './utils/desktopPreview';
 import { DesktopTowerNavProvider } from './components/desktop-tower/DesktopTowerNavProvider';
 import { MobileMansionRoutes } from './routes/MobileMansionRoutes';
+import { Site00Routes } from './routes/Site00Routes';
 import { PlatformErrorBoundary } from './platform-stabilization/PlatformErrorBoundary';
 import { BAW_TUTORIAL_ROUTE, normalizeBawViewPathname } from './constants/bawTutorialConfig';
 import { TutorialOsProvider, TutorialOsPsaGate } from './tutorial-os';
@@ -1046,6 +1047,7 @@ function App() {
   const location = useLocation();
   const isDesktopPreviewShell = isDesktopPreviewWrapperPath(location.pathname);
   const hidePreviewChrome = isDesktopPreviewShell;
+  const site00Root = import.meta.env.VITE_SITE00_ROOT === '1';
 
   // Clear test data for signed-in accounts that aren't the founder-privileged admin with admin tag (once per email)
   useEffect(() => {
@@ -1191,8 +1193,8 @@ function App() {
       {!hidePreviewChrome ? <TutorialOsPsaGate /> : null}
       {!hidePreviewChrome ? <BuildWigCustomizeEditAccessGate /> : null}
       <DebugModeShell>
-        <Route index element={<HomeLandingRedirect />} />
-        <Route path="/" element={<HomeLandingRedirect />} />
+        {!site00Root ? <Route index element={<HomeLandingRedirect />} /> : null}
+        {!site00Root ? <Route path="/" element={<HomeLandingRedirect />} /> : null}
         <Route path="/desktop-preview/*" element={
           <Suspense fallback={<LoadingScreen />}>
             <DesktopPreviewPage />
@@ -1283,6 +1285,7 @@ function App() {
             </CommerceRouteGuard>
           } />
         </Route>
+        {Site00Routes()}
         {MobileMansionRoutes()}
         <Route path="/lobby/lounge" element={<LobbyPage />} />
         <Route path="/lounge" element={<Navigate to="/lobby/lounge" replace />} />

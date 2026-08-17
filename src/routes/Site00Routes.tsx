@@ -1,0 +1,125 @@
+import { lazy, Suspense, type ReactNode } from 'react';
+import { Route, Navigate } from 'react-router-dom';
+import LoadingScreen from '../components/base/LoadingScreen';
+import { Site00Provider } from '../site00/state/Site00Context';
+import { SITE00_ROUTES } from '../site00/config/routes';
+
+const Site00OriginPage = lazy(() => import('../site00/pages/OriginPage'));
+const Site00EnterPage = lazy(() => import('../site00/pages/EnterPage'));
+const Site00IdntyPage = lazy(() => import('../site00/pages/IdntyPage'));
+const Site00IdntyStatePage = lazy(() => import('../site00/pages/IdntyStatePage'));
+const Site00BldrPage = lazy(() => import('../site00/pages/BldrPage'));
+const Site00BldrStatePage = lazy(() => import('../site00/pages/BldrStatePage'));
+
+function Site00Suspense({ children }: { children: ReactNode }) {
+  return <Suspense fallback={<LoadingScreen source="Site00" />}>{children}</Suspense>;
+}
+
+function Site00Layout({ children }: { children: ReactNode }) {
+  return <Site00Provider>{children}</Site00Provider>;
+}
+
+/**
+ * SITE 00 Foundation V1.1 routes.
+ * Invoke as `{Site00Routes()}` inside `<Routes>`.
+ *
+ * `/` remains Frontal Slayer HomeLandingRedirect unless VITE_SITE00_ROOT=1.
+ * SITE 00 Origin is always available at `/origin`.
+ */
+export function Site00Routes() {
+  const site00Root = import.meta.env.VITE_SITE00_ROOT === '1';
+
+  return (
+    <>
+      {site00Root ? (
+        <Route
+          index
+          element={
+            <Site00Layout>
+              <Site00Suspense>
+                <Site00OriginPage />
+              </Site00Suspense>
+            </Site00Layout>
+          }
+        />
+      ) : null}
+      {site00Root ? (
+        <Route
+          path="/"
+          element={
+            <Site00Layout>
+              <Site00Suspense>
+                <Site00OriginPage />
+              </Site00Suspense>
+            </Site00Layout>
+          }
+        />
+      ) : null}
+      <Route
+        path={SITE00_ROUTES.originAlias}
+        element={
+          <Site00Layout>
+            <Site00Suspense>
+              <Site00OriginPage />
+            </Site00Suspense>
+          </Site00Layout>
+        }
+      />
+      <Route
+        path={SITE00_ROUTES.enter}
+        element={
+          <Site00Layout>
+            <Site00Suspense>
+              <Site00EnterPage />
+            </Site00Suspense>
+          </Site00Layout>
+        }
+      />
+      <Route
+        path={SITE00_ROUTES.idnty}
+        element={
+          <Site00Layout>
+            <Site00Suspense>
+              <Site00IdntyPage />
+            </Site00Suspense>
+          </Site00Layout>
+        }
+      />
+      <Route
+        path={SITE00_ROUTES.idntyState}
+        element={
+          <Site00Layout>
+            <Site00Suspense>
+              <Site00IdntyStatePage />
+            </Site00Suspense>
+          </Site00Layout>
+        }
+      />
+      <Route
+        path={SITE00_ROUTES.bldr}
+        element={
+          <Site00Layout>
+            <Site00Suspense>
+              <Site00BldrPage />
+            </Site00Suspense>
+          </Site00Layout>
+        }
+      />
+      <Route
+        path={SITE00_ROUTES.bldrState}
+        element={
+          <Site00Layout>
+            <Site00Suspense>
+              <Site00BldrStatePage />
+            </Site00Suspense>
+          </Site00Layout>
+        }
+      />
+      {/* Reserved future namespaces — redirect to origin until implemented */}
+      <Route path="/bluprint/*" element={<Navigate to={SITE00_ROUTES.originAlias} replace />} />
+      <Route path="/build/*" element={<Navigate to={SITE00_ROUTES.originAlias} replace />} />
+      <Route path="/control/*" element={<Navigate to={SITE00_ROUTES.originAlias} replace />} />
+      <Route path="/live/*" element={<Navigate to={SITE00_ROUTES.originAlias} replace />} />
+    </>
+  );
+}
