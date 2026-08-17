@@ -11,16 +11,19 @@
     <link rel="preload" href="/assets/Bohemy.otf" as="font" type="font/otf" crossorigin />
     <link rel="preload" href="/assets/psa-nudge-thought-bubble.png?v=1" as="image" />
     <link rel="stylesheet" href="/site00-assts-loader-boot.css" />
+    <script src="/site00-assts-boot-gate.js"></script>
     <script>
       (function site00AsstsBootClassEarly() {
         var path = window.location.pathname || '';
         if (path.indexOf('/assts') !== 0) return;
-        try {
-          if (sessionStorage.getItem('site00-assts-immersive-complete') === '1') return;
-        } catch (e) {
-          /* ignore */
-        }
+        var shouldBoot =
+          typeof window.site00ShouldBootAsstsImmersiveLoader === 'function'
+            ? window.site00ShouldBootAsstsImmersiveLoader()
+            : true;
+        if (!shouldBoot) return;
         document.documentElement.classList.add('site00-assts-boot');
+        var shell = document.getElementById('site00-assts-boot-shell');
+        if (shell) shell.hidden = false;
       })();
     </script>
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
@@ -29,6 +32,17 @@
     <meta name="description" content="Build your custom wig with our interactive builder">
   </head>
   <body>
+    <div
+      id="site00-assts-boot-shell"
+      class="site00-assts-boot-shell"
+      hidden
+      aria-hidden="true"
+    >
+      <div
+        class="site00-assts-boot-shell__env"
+        style="background-image:url('/site00/loader/v1/assts-loader-background-v1.png')"
+      ></div>
+    </div>
     <div id="root"></div>
     <script src="/site00-assts-loader-boot.js"></script>
     <script src="/pre-main-probe.js"></script>

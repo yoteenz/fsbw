@@ -4,11 +4,11 @@
   var path = window.location.pathname || '';
   if (path.indexOf('/assts') !== 0) return;
 
-  try {
-    if (sessionStorage.getItem('site00-assts-immersive-complete') === '1') return;
-  } catch (e) {
-    /* ignore */
-  }
+  var shouldBoot =
+    typeof window.site00ShouldBootAsstsImmersiveLoader === 'function'
+      ? window.site00ShouldBootAsstsImmersiveLoader()
+      : true;
+  if (!shouldBoot) return;
 
   var base = '/site00/loader/v1/';
   var bg = base + 'assts-loader-background-v1.png';
@@ -31,7 +31,11 @@
     var geometry = base + 'assts-loader-geometry-v1-source.mp4';
     preload(geometry, 'fetch');
 
-    if (document.getElementById('site00-assts-boot-shell')) return;
+    if (document.getElementById('site00-assts-boot-shell')) {
+      var existing = document.getElementById('site00-assts-boot-shell');
+      if (existing) existing.hidden = false;
+      return;
+    }
 
     var shell = document.createElement('div');
     shell.id = 'site00-assts-boot-shell';

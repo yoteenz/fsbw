@@ -52742,3 +52742,17 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Note:** `preview.fsbw-dev.com` needs **deploy now** for Vercel; cloud tunnel has latest on sync-only.
 
+---
+
+## 2026-08-17 — ASSTS "Loading…" flash on hard refresh (session flag mismatch)
+
+- **Context:** Founder reported plain **"Loading…"** still appearing before ASSTS immersive animation on `preview.fsbw-dev.com`, and Origin desktop composition fix (16a5a421a) looked unchanged.
+
+- **Root cause (ASSTS):** Boot shell + `AppShellRouteFallback` only skipped when `sessionStorage site00-assts-immersive-complete !== '1'`. After first loader completion, **hard reload** still runs immersive (`shouldShowAsstsImmersiveLoader` checks `navigation.type === 'reload'`) but boot shell was skipped and fallback showed **"Loading…"** for ~1–3s while App chunk loaded. Playwright reproduced: 48 Loading frames on reload with session=1.
+
+- **Fix:** Shared pre-React gate `public/site00-assts-boot-gate.js` (reload OR session incomplete). Inline static boot shell in `index.html` for instant paint. `AppShellRouteFallback` imports `shouldShowAsstsImmersiveLoader()`. Boot CSS uses `display:none` on `#root` during boot.
+
+- **Origin:** Verified on preview @ 1440px — hero `position:absolute` left≈133px, cards center x=720, stage padding 0. Desktop composition **is live on cloud tunnel**. Mobile (<768px) still uses stacked layout by design; phone testing will look unchanged.
+
+- **QA:** Hard reload with session=1 → boot shell ~104ms, **0 Loading frames**. Screenshots: `assts_reload_no_loading_text.png`, `origin_desktop_1440_layout.png`.
+

@@ -8,7 +8,11 @@ html.site00-assts-boot body {
 }
 
 html.site00-assts-boot #root {
-  visibility: hidden;
+  display: none;
+}
+
+.site00-assts-boot-shell[hidden] {
+  display: none !important;
 }
 
 .site00-assts-boot-shell {
