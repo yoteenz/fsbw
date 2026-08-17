@@ -398,6 +398,7 @@
 .site00-home-hero__tagline {
   margin-top: 16px;
   margin-bottom: 24px;
+  color: var(--site-red);
 }
 
 .site00-home-hero__line {

@@ -52430,7 +52430,6 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 ---
 
-<<<<<<< HEAD
 ## 2026-08-17 — AIO login hero supporting copy +2px
 
 - **Context:** Follow-up login hero polish — white supporting lines (“Your business keeps moving. Pick up where you left off.”) felt slightly small after prior −3px adjustment.
@@ -52460,7 +52459,9 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Spatial Architecture Review:** SKIPPED — public marketing homepage restructure; no Studio OS surfaces.
 
 - **QA:** `npm run build` PASS. Manual QA @ 390px — hero, 4 pathways, scrollable roadmap, connected value, final CTA, footer accordions, no horizontal overflow.
-=======
+
+---
+
 ## 2026-08-17 — SITE 00 Origin desktop environment background
 
 - **Context:** Founder supplied approved Origin desktop environment image (`942898D3-6953-47CD-8987-0697EC1C9F11.png`, 1535×1024) for SITE 00 desktop background.
@@ -52468,5 +52469,14 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Changes:** `environments.ts` — `desktopAssetPath` on `ORIGIN_ENVIRONMENT`; `EnvironmentShell` resolves via `resolveSite00PublicAsset()`; `site00.css` applies production image at `min-width: 768px` only (mobile keeps CSS fallback gradient). `assets.ts` env-origin → production.
 
 - **QA:** `npm run build` PASS. Playwright @ 1440px `/origin` — `--site00-env-desktop-image` + computed `background-image` resolve to approved asset. Screenshot: `site00_origin_desktop_background.png`.
->>>>>>> abe7581d2 (Origin IDNTY/BLDR panels anchored to foreground plaza below central figure [sync-only])
+
+---
+
+## 2026-08-17 — SITE 00 Origin IDNTY/BLDR panel plaza anchor
+
+- **Context:** Founder reported IDNTY + BLDR glass panels malpositioned — floating too high over the twin-zero structures instead of the foreground plaza below the central figure.
+
+- **Fix:** Origin homepage layout refactor — `site00-home-stage` + absolute desktop anchor for `.site00-home-cards` at **58%** from top, horizontally centered (`origin-home-composition.ts`). Hero copy stays upper-left. Removed duplicate detached `BEGIN IDNTY` / `BEGIN BLDR` link row below cards (CTAs remain on each panel).
+
+- **QA:** `npm run build` PASS. Playwright @ 1440×900 — cards centered x=720, top≈513px (below hero block). Screenshot: `site00_origin_panels_repositioned.png`.
 
