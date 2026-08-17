@@ -2,10 +2,9 @@ import { useEffect, useState } from 'react';
 import type { Site00ImmersiveLoaderConfig, Site00LoaderState } from './site00LoaderConfig';
 import { ASSTS_LOADER_GEOMETRY_ANCHOR } from './site00LoaderMedia';
 import { teardownSite00AsstsBootShell } from './site00LoaderBoot';
+import { Site00LoaderCopy } from './Site00LoaderCopy';
 import { Site00LoaderAnimation } from './Site00LoaderAnimation';
 import { Site00LoaderEnvironment } from './Site00LoaderEnvironment';
-import { Site00LoaderProgress } from './Site00LoaderProgress';
-import { Site00LoaderStatus } from './Site00LoaderStatus';
 import { preloadSite00LoaderBackground } from './site00LoaderPreload';
 import '../../styles/site00-loader.css';
 
@@ -97,6 +96,16 @@ export function Site00ImmersiveLoader({
         ? 'SECURE ADMIN SESSION'
         : config.experienceSubtitle;
 
+  const displaySubtitle =
+    loaderState === 'CONNECTING'
+      ? 'SECURE ADMIN SESSION'
+      : loaderState === 'BOOTSTRAP'
+        ? 'INITIALIZING ENVIRONMENT'
+        : experienceSubtitle;
+
+  const progressLabel =
+    atComplete || progress >= 100 ? config.completionMessage : config.assemblingLabel;
+
   const rootClass = [
     'site00-immersive-loader',
     phase === 'exiting' ? 'site00-immersive-loader--exiting' : '',
@@ -122,33 +131,29 @@ export function Site00ImmersiveLoader({
             />
 
             <div className="site00-immersive-loader__ui">
-              <Site00LoaderStatus
+              <Site00LoaderCopy
                 siteLabel={config.siteLabel}
-                experienceTitle={experienceTitle}
-                experienceSubtitle={experienceSubtitle}
-                statusLabel={displayStatus}
+                title={experienceTitle}
+                subtitle={displaySubtitle}
                 tagline={config.tagline}
                 footerMark={config.footerMark}
                 footerLabel={config.footerLabel}
-              />
-              <Site00LoaderProgress
                 progress={progress}
-                assemblingLabel={config.assemblingLabel}
-                completionLabel={config.completionMessage}
-                isComplete={atComplete}
+                progressLabel={progressLabel}
               />
             </div>
           </>
         ) : (
           <div className="site00-immersive-loader__ui site00-immersive-loader__ui--error">
-            <Site00LoaderStatus
+            <Site00LoaderCopy
               siteLabel={config.siteLabel}
-              experienceTitle="BUILD INTERRUPTED"
-              experienceSubtitle="WE COULDN'T COMPLETE THIS STEP"
-              statusLabel="RETRY REQUIRED"
+              title="BUILD INTERRUPTED"
+              subtitle="WE COULDN'T COMPLETE THIS STEP"
               tagline={config.tagline}
               footerMark={config.footerMark}
               footerLabel={config.footerLabel}
+              progress={0}
+              progressLabel="RETRY REQUIRED"
             />
             {onRetry ? (
               <button type="button" className="site00-loader__retry" onClick={onRetry}>

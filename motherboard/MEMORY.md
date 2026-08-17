@@ -51959,4 +51959,14 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **QA:** Build PASS. Browser test `/assts` — boot shell immediate, no plain Loading text, geometry over marble platform, no black box (desktop Chromium WebM alpha). iPhone Safari uses APNG path — verify on device after deploy.
 
-- **Sync:** pending this commit. Say **deploy now** for production Vercel.
+- **Sync:** `a93362789` [sync-only]. Say **deploy now** for production Vercel.
+
+---
+
+## 2026-08-17 — Site 00 ASSTS loader typography + UI composition alignment
+
+- **Context:** Follow-up sprint — loader background/geometry unchanged; fix text/progress/branding composition to match approved reference (centered vertical column, not left-aligned webpage).
+
+- **Implementation:** New `Site00LoaderCopy.tsx` single centered wrapper (eyebrow → title → subtitle → progress group → tagline → signature). Copy stage anchored below platform at `top: calc(58% + clamp(24px, 6vw, 40px))`. CSS typography roles via `--site00-loader-*` vars on `.site00-immersive-loader`. Progress bar ~70vw max 300px centered; % adjacent to bar right edge. Outline `00` mark (`-webkit-text-stroke`). `ASSEMBLING...` label (was ASSEMBLING INTERFACE). Signature `margin-top: auto` above safe-area.
+
+- **QA:** Build PASS. Browser `/assts` cold start — all copy center-aligned, hierarchy matches reference, progress ~70% width.

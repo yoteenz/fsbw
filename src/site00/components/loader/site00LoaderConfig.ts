@@ -51,7 +51,7 @@ export const ASSTS_IMMERSIVE_LOADER_CONFIG: Site00ImmersiveLoaderConfig = {
   siteLabel: 'SITE 00',
   experienceTitle: 'PREPARING THE ASSET VAULT',
   experienceSubtitle: 'RESOLVING PRODUCTION ASSETS',
-  assemblingLabel: 'ASSEMBLING INTERFACE',
+  assemblingLabel: 'ASSEMBLING...',
   tagline: 'EVERYTHING WE BUILD LIVES HERE.',
   footerMark: '00',
   footerLabel: 'SITE 00',

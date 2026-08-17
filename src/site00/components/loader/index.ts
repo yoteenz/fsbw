@@ -1,4 +1,5 @@
 export { Site00Loader, contextFromLoadingSource } from './Site00Loader';
+export { Site00LoaderCopy } from './Site00LoaderCopy';
 export type { Site00LoaderContext, Site00LoaderProps } from './Site00Loader';
 export { Site00ImmersiveLoader } from './Site00ImmersiveLoader';
 export type { Site00ImmersiveLoaderPhase } from './Site00ImmersiveLoader';
