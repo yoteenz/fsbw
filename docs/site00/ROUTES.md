@@ -11,6 +11,16 @@
 | `/bldr` | BLDR entry (redirect) | — |
 | `/bldr/state` | Build State selection | WORKFLOW_ENVIRONMENT |
 
+## ASSTS Asset Vault (admin-only)
+
+| Path | Screen | Environment slot |
+|------|--------|------------------|
+| `/assts` | Library dashboard | `assts.library.environment.mobile` |
+| `/assts/batches/:batchId` | Batch review grid | `assts.batch.environment.mobile` |
+| `/assts/:assetId` | Asset inspection | `assts.inspection.environment.mobile` |
+
+See `docs/site00/ASSTS.md`.
+
 ## Root behavior
 
 | Condition | `/` behavior |

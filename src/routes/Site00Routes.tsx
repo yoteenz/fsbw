@@ -1,6 +1,7 @@
 import { lazy, Suspense, type ReactNode } from 'react';
 import { Route, Navigate } from 'react-router-dom';
 import LoadingScreen from '../components/base/LoadingScreen';
+import AdminGuard from '../components/AdminGuard';
 import { Site00Provider } from '../site00/state/Site00Context';
 import { SITE00_ROUTES } from '../site00/config/routes';
 
@@ -10,6 +11,9 @@ const Site00IdntyPage = lazy(() => import('../site00/pages/IdntyPage'));
 const Site00IdntyStatePage = lazy(() => import('../site00/pages/IdntyStatePage'));
 const Site00BldrPage = lazy(() => import('../site00/pages/BldrPage'));
 const Site00BldrStatePage = lazy(() => import('../site00/pages/BldrStatePage'));
+const AsstsLibraryPage = lazy(() => import('../site00/assts/pages/LibraryPage'));
+const AsstsBatchPage = lazy(() => import('../site00/assts/pages/BatchPage'));
+const AsstsInspectionPage = lazy(() => import('../site00/assts/pages/InspectionPage'));
 
 function Site00Suspense({ children }: { children: ReactNode }) {
   return <Suspense fallback={<LoadingScreen source="Site00" />}>{children}</Suspense>;
@@ -115,6 +119,33 @@ export function Site00Routes() {
           </Site00Layout>
         }
       />
+      {/* ASSTS Asset Vault — admin-only internal review surface */}
+      <Route path="/assts" element={<AdminGuard />}>
+        <Route
+          index
+          element={
+            <Site00Suspense>
+              <AsstsLibraryPage />
+            </Site00Suspense>
+          }
+        />
+        <Route
+          path="batches/:batchId"
+          element={
+            <Site00Suspense>
+              <AsstsBatchPage />
+            </Site00Suspense>
+          }
+        />
+        <Route
+          path=":assetId"
+          element={
+            <Site00Suspense>
+              <AsstsInspectionPage />
+            </Site00Suspense>
+          }
+        />
+      </Route>
       {/* Reserved future namespaces — redirect to origin until implemented */}
       <Route path="/bluprint/*" element={<Navigate to={SITE00_ROUTES.originAlias} replace />} />
       <Route path="/build/*" element={<Navigate to={SITE00_ROUTES.originAlias} replace />} />
