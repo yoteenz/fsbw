@@ -5,6 +5,7 @@ import { AIOButton } from '../components/AIOButton';
 import { ServiceJourneyHeader } from '../components/journey/ServiceJourneyHeader';
 import { ServiceJourneyStepper } from '../components/journey/ServiceJourneyStepper';
 import { ServiceJourneyStepDetail } from '../components/journey/ServiceJourneyStepDetail';
+import { MobileJourneyRoadmap } from '../components/mobile/MobileJourneyRoadmap';
 import { usePageMeta } from '../hooks/usePageMeta';
 import { useStartBusinessJourney } from '../journeys/useStartBusinessJourney';
 import type { JourneyStepId } from '../journeys/journeyTypes';
@@ -53,12 +54,21 @@ export function StartYourBusinessPage() {
           <ServiceJourneyHeader view={view} />
 
           <section className="aio-journey-workspace" aria-label="Interactive startup milestones">
-            <ServiceJourneyStepper
-              steps={view.steps}
-              selectedStepId={view.selectedStepId}
-              onSelect={(id) => setSelectedStepId(id)}
-            />
-            <ServiceJourneyStepDetail step={selectedStep} />
+            <div className="aio-mobile-only">
+              <MobileJourneyRoadmap
+                view={view}
+                selectedStepId={view.selectedStepId}
+                onSelect={(id) => setSelectedStepId(id)}
+              />
+            </div>
+            <div className="aio-desktop-only aio-journey-workspace__desktop">
+              <ServiceJourneyStepper
+                steps={view.steps}
+                selectedStepId={view.selectedStepId}
+                onSelect={(id) => setSelectedStepId(id)}
+              />
+              <ServiceJourneyStepDetail step={selectedStep} />
+            </div>
           </section>
 
           <section className="aio-page-section">

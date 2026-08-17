@@ -24,19 +24,27 @@ export function PublicAuthNav({ variant, onNavigate }: Props) {
   if (isAuthenticated) {
     if (variant === 'mobile-menu') {
       return (
-        <div className="aio-auth-nav-section">
-          <p className="aio-auth-nav-section__label">Account</p>
-          <Link to={aioPaths.portal} className="aio-mobile-nav__link" onClick={onNavigate}>
-            My Portal
-          </Link>
-          <button
-            type="button"
-            className="aio-mobile-nav__link aio-mobile-nav__link--button"
-            onClick={() => void handleSignOut()}
-          >
-            Log Out
-          </button>
-        </div>
+        <section className="aio-mobile-drawer__section aio-mobile-drawer__section--account">
+          <h2 className="aio-mobile-drawer__section-label">Account</h2>
+          <ul className="aio-mobile-drawer__list">
+            <li>
+              <Link to={aioPaths.portal} className="aio-mobile-drawer__row" onClick={onNavigate}>
+                <span className="aio-mobile-drawer__row-label">My Portal</span>
+                <span className="aio-mobile-drawer__chevron" aria-hidden="true">
+                  ›
+                </span>
+              </Link>
+            </li>
+            <li>
+              <button type="button" className="aio-mobile-drawer__row aio-mobile-drawer__row--button" onClick={() => void handleSignOut()}>
+                <span className="aio-mobile-drawer__row-label">Log Out</span>
+                <span className="aio-mobile-drawer__chevron" aria-hidden="true">
+                  ›
+                </span>
+              </button>
+            </li>
+          </ul>
+        </section>
       );
     }
     return (
@@ -53,29 +61,50 @@ export function PublicAuthNav({ variant, onNavigate }: Props) {
 
   if (variant === 'mobile-header') {
     return (
-      <AIOButton to={aioPaths.login} variant="outline-gold" size="sm" className="aio-header__auth-login-mobile">
-        Log In
-      </AIOButton>
+      <div className="aio-header__auth-mobile">
+        <AIOButton to={aioPaths.login} variant="outline-gold" size="sm">
+          Log In
+        </AIOButton>
+        <AIOButton to={aioPaths.signUp} variant="gold" size="sm">
+          Sign Up
+        </AIOButton>
+      </div>
     );
   }
 
   if (variant === 'mobile-menu') {
     return (
-      <div className="aio-auth-nav-section">
-        <p className="aio-auth-nav-section__label">Account</p>
-        <Link to={aioPaths.login} className="aio-mobile-nav__link" onClick={onNavigate}>
-          Log In
-        </Link>
-        <p className="aio-auth-nav-section__eyebrow">New to All In One?</p>
-        <AIOButton to={aioPaths.signUp} variant="gold" size="sm" className="aio-mobile-nav__signup-btn" onClick={onNavigate}>
-          Sign Up
-        </AIOButton>
-        {isDemoMode() ? (
-          <Link to={aioPaths.portal} className="aio-mobile-nav__sublink" onClick={onNavigate}>
-            Enter Demo Portal →
-          </Link>
-        ) : null}
-      </div>
+      <section className="aio-mobile-drawer__section aio-mobile-drawer__section--account">
+        <h2 className="aio-mobile-drawer__section-label">Account</h2>
+        <ul className="aio-mobile-drawer__list">
+          <li>
+            <Link to={aioPaths.login} className="aio-mobile-drawer__row" onClick={onNavigate}>
+              <span className="aio-mobile-drawer__row-label">Log In</span>
+              <span className="aio-mobile-drawer__chevron" aria-hidden="true">
+                ›
+              </span>
+            </Link>
+          </li>
+          <li>
+            <Link to={aioPaths.signUp} className="aio-mobile-drawer__row" onClick={onNavigate}>
+              <span className="aio-mobile-drawer__row-label">Sign Up</span>
+              <span className="aio-mobile-drawer__chevron" aria-hidden="true">
+                ›
+              </span>
+            </Link>
+          </li>
+          {isDemoMode() ? (
+            <li>
+              <Link to={aioPaths.portal} className="aio-mobile-drawer__row" onClick={onNavigate}>
+                <span className="aio-mobile-drawer__row-label">Enter Demo Portal</span>
+                <span className="aio-mobile-drawer__chevron" aria-hidden="true">
+                  ›
+                </span>
+              </Link>
+            </li>
+          ) : null}
+        </ul>
+      </section>
     );
   }
 

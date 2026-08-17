@@ -14,6 +14,7 @@ import {
   UpcomingList,
 } from '../components/CommandCenterComponents';
 import { ActiveJourneysPanel } from '../components/journey/ActiveJourneysPanel';
+import { MobilePortalHome } from '../components/mobile/MobilePortalHome';
 import { aioPaths } from '../utils/paths';
 
 export function PortalPage() {
@@ -36,6 +37,12 @@ export function PortalPage() {
 
   return (
     <div className="aio-cc-home">
+      <div className="aio-mobile-only">
+        <MobilePortalHome view={view} />
+        <NextActionHero action={view.nextAction} />
+        <AttentionCenter items={view.attentionItems.slice(0, 3)} />
+      </div>
+      <div className="aio-desktop-portal-detail">
       <CommandCenterHeader view={view} />
       <NotificationDigest view={view} />
       <NextActionHero action={view.nextAction} />
@@ -98,6 +105,7 @@ export function PortalPage() {
       {view.moduleErrors.factoring && (
         <p className="aio-cc-module-error">Factoring summary temporarily unavailable.</p>
       )}
+      </div>
     </div>
   );
 }

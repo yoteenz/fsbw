@@ -34,7 +34,16 @@ export function getEnvironmentLabel(): AioEnvironmentLabel | null {
 }
 
 export function shouldShowDebugBanner(): boolean {
-  return !isProductionDeployment();
+  if (isProductionDeployment()) return false;
+  if (typeof import.meta !== 'undefined' && import.meta.env.DEV) return true;
+  const flag = typeof import.meta !== 'undefined' ? import.meta.env.VITE_AIO_DEBUG_UI : undefined;
+  if (flag === 'true' || flag === '1') return true;
+  if (flag === 'false' || flag === '0') return false;
+  if (typeof window !== 'undefined') {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('aio_debug') === '1') return true;
+  }
+  return false;
 }
 
 export function canResetDemoData(): boolean {
