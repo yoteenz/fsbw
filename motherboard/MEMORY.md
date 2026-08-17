@@ -51913,3 +51913,21 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **UX:** Removed "Loading Asset Vault…" / "Loading batches…" plain text; skeleton placeholders for repeat fetches. `AsstsRouteSuspense` uses lightweight contextual loader when cinematic already completed. `LoadingScreen` defers to gate on `/assts` cold start.
 
 - **QA:** Build PASS. Manual test on preview `/assts` — full-screen vault background + red geometry overlay + live typography/progress at 25%/80%; video muted. Say **deploy now** for production.
+
+---
+
+## 2026-08-17 — ASSTS canonical reference-conditioned environment pipeline (BATCH-ASSTS-ENV-003)
+
+- **Context:** Founder supplied final canonical Asset Vault PNG as world source of truth. Replace random T2I/vault-lineage interiors with reference-conditioned derivatives of that exact image. ONE vault, ONE architectural language, multiple controlled camera views. Do not auto-approve/lock; validate world consistency first.
+
+- **Canonical master:** `s00_env_assts_canonical_master` — LOCKED, user-supplied, `site00/8574773C-D4F6-49B3-A7BA-C4D4B2C1E6F7.png` in `live-preview`. Slot `site00.assetVault.environments.canonicalMaster`. `worldIdentity = ASSTS_ASSET_VAULT_V1`. NOT a FAL candidate. Registered via `ensureCanonicalMasterRegistered()` on ENV-003 bootstrap.
+
+- **FAL workflow:** `fal-ai/nano-banana-pro/edit` with founder PNG in `image_urls`. `requireReference: true` — throws `REFERENCE CONDITIONING FAILED` if no refs; **no T2I fallback**. Reference strength documented as `high-preservation` (model default). Prompt v3.0 via `canonicalReferencePromptBlock(viewInstruction)`.
+
+- **Batch ENV-003:** Active batch `BATCH-ASSTS-ENV-003`. Three derivatives: `libraryHero`, `batchReview`, `inspectionBay`. Metadata on versions: `canonical_master_version_id`, `generation_parameters` (worldIdentity, viewType, referenceStrength, canonicalReference). Regeneration retains canonical master + viewType + worldIdentity.
+
+- **Review UI:** Inspection page compares derivative vs canonical master (not approved version). Metadata panel shows WORLD IDENTITY, VIEW TYPE, REFERENCE STRENGTH, PROMPT VERSION. Batch enrichment exposes `canonicalMaster` context.
+
+- **Production state:** Migration `20260817160000_site00_canonical_master_slot.sql` applied. ENV-003 **IN_REVIEW** — all 3 assets **NEEDS_REVIEW** v3.0 with canonical ref to founder PNG. 3 FAL jobs queued/completed; no T2I fallback. Canonical master **LOCKED**. ENV-001/002 preserved for history.
+
+- **Founder next:** `/assts` → BATCH-ASSTS-ENV-003 → side-by-side compare each derivative to canonical master → approve only if same vault identity → LOCK BATCH when all three pass. Do **not** generate Objects/UI/Brand until ENV-003 visually approved. Say **deploy now** for Vercel.

@@ -116,7 +116,18 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           ? await getAssetBatchNavigation(assetId, asset.batch_id)
           : { prevAssetId: null, nextAssetId: null, position: 0, total: 0 };
         const canonicalMaster = enriched.canonicalMaster ?? null;
-        return res.status(200).json({ ok: true, asset: enriched, history, navigation, canonicalMaster });
+        return res.status(200).json({
+          ok: true,
+          asset: enriched,
+          history,
+          navigation: {
+            prevAssetId: navigation.prevAssetId ?? null,
+            nextAssetId: navigation.nextAssetId ?? null,
+            position: navigation.position ?? 0,
+            total: navigation.total ?? 0,
+          },
+          canonicalMaster,
+        });
       }
 
       if (action === 'slots') {

@@ -258,6 +258,37 @@ export type AsstsAssetNavigation = {
   total: number;
 };
 
+export const EMPTY_ASSTS_NAVIGATION: AsstsAssetNavigation = {
+  prevAssetId: null,
+  nextAssetId: null,
+  position: 0,
+  total: 0,
+};
+
+function normalizeAssetNavigation(raw: unknown): AsstsAssetNavigation {
+  if (!raw || typeof raw !== 'object') return EMPTY_ASSTS_NAVIGATION;
+  const n = raw as Partial<AsstsAssetNavigation>;
+  return {
+    prevAssetId: n.prevAssetId ?? null,
+    nextAssetId: n.nextAssetId ?? null,
+    position: typeof n.position === 'number' ? n.position : 0,
+    total: typeof n.total === 'number' ? n.total : 0,
+  };
+}
+
+function normalizeAssetDetail(raw: Record<string, unknown>): AsstsAssetDetail {
+  const versions = Array.isArray(raw.versions) ? (raw.versions as AsstsAssetVersion[]) : [];
+  let currentVersion = (raw.currentVersion as AsstsAssetVersion | null | undefined) ?? null;
+  if (!currentVersion && versions.length > 0) {
+    currentVersion = versions[versions.length - 1];
+  }
+  return {
+    ...(raw as unknown as AsstsAssetDetail),
+    versions,
+    currentVersion,
+  };
+}
+
 export type SlotResolution = {
   ok: boolean;
   resolved: { slotKey: string; source: 'locked' | 'fallback'; url: string | null; thumbnailUrl?: string | null };
@@ -310,8 +341,22 @@ export async function fetchAsstsAsset(assetId: string): Promise<{
   asset: AsstsAssetDetail;
   history: unknown[];
   navigation: AsstsAssetNavigation;
+  canonicalMaster?: AsstsCanonicalMasterContext | null;
 }> {
-  return asstsFetch('asset', { query: { assetId } });
+  const data = await asstsFetch<{
+    ok: boolean;
+    asset: AsstsAssetDetail;
+    history?: unknown[];
+    navigation?: AsstsAssetNavigation;
+    canonicalMaster?: AsstsCanonicalMasterContext | null;
+  }>('asset', { query: { assetId } });
+  return {
+    ok: data.ok,
+    asset: normalizeAssetDetail(data.asset as unknown as Record<string, unknown>),
+    history: data.history ?? [],
+    navigation: normalizeAssetNavigation(data.navigation),
+    canonicalMaster: data.canonicalMaster ?? data.asset?.canonicalMaster ?? null,
+  };
 }
 
 export async function resolveAsstsSlot(slotKey: string): Promise<SlotResolution> {

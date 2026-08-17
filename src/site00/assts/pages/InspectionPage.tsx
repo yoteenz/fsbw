@@ -16,6 +16,7 @@ import { ASSTS_ENVIRONMENT_SLOTS, type CorrectionCategory } from '../config/slot
 import {
   addAsstsNote,
   approveAsstsAsset,
+  EMPTY_ASSTS_NAVIGATION,
   fetchAsstsAsset,
   regenerateAsstsAsset,
   rejectAsstsAsset,
@@ -29,7 +30,7 @@ export default function AsstsInspectionPage() {
   const { assetId = '' } = useParams();
   const navigate = useNavigate();
   const [asset, setAsset] = useState<AsstsAssetDetail | null>(null);
-  const [navigation, setNavigation] = useState<AsstsAssetNavigation>({ prevAssetId: null, nextAssetId: null, position: 0, total: 0 });
+  const [navigation, setNavigation] = useState<AsstsAssetNavigation>(EMPTY_ASSTS_NAVIGATION);
   const [selectedVersionId, setSelectedVersionId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -41,20 +42,34 @@ export default function AsstsInspectionPage() {
   const [noteOpen, setNoteOpen] = useState(false);
   const [noteText, setNoteText] = useState('');
   const [approvedFlash, setApprovedFlash] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setAsset(null);
+    setNavigation(EMPTY_ASSTS_NAVIGATION);
+    setSelectedVersionId(null);
+    setError(null);
+  }, [assetId]);
 
   const load = useCallback(async () => {
     if (!assetId) return;
     try {
       setError(null);
+      setLoading(true);
       const res = await fetchAsstsAsset(assetId);
-      setAsset(res.asset);
-      setNavigation(res.navigation);
+      setAsset({
+        ...res.asset,
+        canonicalMaster: res.asset.canonicalMaster ?? res.canonicalMaster ?? null,
+      });
+      setNavigation(res.navigation ?? EMPTY_ASSTS_NAVIGATION);
       setSelectedVersionId((prev) => {
         if (prev && res.asset.versions.some((v) => v.id === prev)) return prev;
         return res.asset.currentVersion?.id ?? null;
       });
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Failed to load asset');
+    } finally {
+      setLoading(false);
     }
   }, [assetId]);
 
@@ -127,7 +142,9 @@ export default function AsstsInspectionPage() {
               {heroUrl ? (
                 <img src={heroUrl} alt={asset?.display_name ?? ''} className="assts-inspection-hero-stage__img" />
               ) : (
-                <div className="assts-inspection-hero-stage__empty">{isGenerating ? 'Generating…' : 'No preview yet'}</div>
+                <div className="assts-inspection-hero-stage__empty">
+                  {loading ? 'Loading asset…' : isGenerating ? 'Generating…' : 'No preview yet'}
+                </div>
               )}
             </div>
           </div>
@@ -295,7 +312,7 @@ export default function AsstsInspectionPage() {
               void rejectAsstsAsset(asset.id, asset.currentVersion.id, note, categories)
                 .then(() => {
                   setRejectOpen(false);
-                  if (navigation.nextAssetId) navigate(`/assts/${navigation.nextAssetId}`);
+                  if (navigation?.nextAssetId) navigate(`/assts/${navigation.nextAssetId}`);
                   else void load();
                 })
                 .catch((e) => setError(e instanceof Error ? e.message : 'Reject failed'))
@@ -338,10 +355,10 @@ export default function AsstsInspectionPage() {
           />
 
           <AsstsInspectorFooter
-            prevAssetId={navigation.prevAssetId}
-            nextAssetId={navigation.nextAssetId}
-            position={navigation.position}
-            total={navigation.total}
+            prevAssetId={navigation?.prevAssetId ?? null}
+            nextAssetId={navigation?.nextAssetId ?? null}
+            position={navigation?.position ?? 0}
+            total={navigation?.total ?? 0}
             onNavigate={(id) => navigate(`/assts/${id}`)}
           />
         </div>
