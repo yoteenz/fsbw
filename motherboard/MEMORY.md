@@ -52134,8 +52134,7 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Runtime (after lock):** Loader auto-switches to alpha when `/site00/loader/v1/assts-loader-geometry-v1-alpha.webm` exists (synced on lock); `?loaderGeometry=screen` debug fallback. Public slot resolver `api/site00/loader-geometry.ts`. Until lock, screen blend remains default.
 
 - **QA:** `npm run build` PASS; CLI inspect/submit/poll PASS; ASSTS UI blocked on admin email confirmation in cloud preview (API/data verified via CLI).
-<<<<<<< HEAD
-=======
+
 ---
 
 ## 2026-08-17 — AIO mobile login polish pass (reference-driven)
@@ -52149,7 +52148,6 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Files:** `aio-auth.css`, `aio.css` (button reset), `AuthHeader`, `AuthShell`, `AuthBrandIntro`, `AuthInput`, `AuthPasswordInput`, `AuthFieldIcons`, `LoginPage`, `DemoPortalAccess`, `AIOAuthLayout`.
 
 - **QA:** Build PASS; 375px manual QA — gold LOG IN always visible, reference hierarchy matched.
->>>>>>> 70f799945 (ASSTS Library Home: 711×1536 exact X/Y composition map + ref map debug [sync-only])
 
 ---
 
@@ -52181,7 +52179,8 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 ---
 
-<<<<<<< HEAD
+---
+
 ## 2026-08-17 — ASSTS Library Home exact X/Y composition map (711×1536)
 
 - **Context:** Follow-up sprint — replace estimated scroll spacing with **approved coordinate map** for `/assts` mobile Library Home only. Reference canvas **711×1536**; scale = renderedWidth/711; vertical positions scale with same factor (scrollable long page). No pipeline/generation/FS/Lounge TV changes.
@@ -52193,7 +52192,9 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Debug:** `?refMap=1` or REF MAP toggle → `LibraryHomeReferenceMapDebug` overlays gutters, y-landmarks, bounding boxes, expected vs actual deltas.
 
 - **QA:** `npm run build` PASS; Playwright at **711px** — primary regions (header.title, stats.assets, needsReview.card, recentBatches.card01, browseLibrary.environments) measured **0px delta** vs map; validation script `scripts/validate-assts-library-composition.mjs`.
-=======
+
+---
+
 ## 2026-08-17 — AIO login hero missing on preview (env-dependent URL fix)
 
 - **Context:** Founder reported login page on `preview.fsbw-dev.com` shows solid black background — no approved truck hero image despite prior implementation.
@@ -52205,7 +52206,6 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Files:** `aioPublicAssets.ts`, `appConfig.ts`, `aio-auth.css`, `.env.example`, `MOBILE_AUTH_EXPERIENCE_REPORT.md`.
 
 - **QA:** Build PASS; local `/login` shows truck hero with fallback URL; dev server serves `/brand/aio-login-hero.png` 200.
-
 
 ---
 
@@ -52220,4 +52220,3 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Files:** `AuthLoginHero.tsx`, `AuthShell.tsx`, `LoginPage.tsx`, `AIOAuthLayout.tsx`, `AuthBrandIntro.tsx`, `aio-auth.css`, `MOBILE_AUTH_EXPERIENCE_REPORT.md`.
 
 - **QA:** Playwright 390×844 — hero height 380px, hero top ~16px (no debug banner), email input below hero, form-stack bg rgb(8,8,8), truck not behind inputs.
->>>>>>> 2567c58ca (fix(aio): finite top login hero — form below on solid dark surface [sync-only])
