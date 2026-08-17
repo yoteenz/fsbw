@@ -1,13 +1,19 @@
-(function site00AsstsLoaderBoot() {
+(function site00ImmersiveLoaderBoot() {
   if (typeof window === 'undefined' || typeof document === 'undefined') return;
 
   var path = window.location.pathname || '';
-  if (path.indexOf('/assts') !== 0) return;
+  var isSite00 =
+    typeof window.site00IsSite00ImmersivePath === 'function'
+      ? window.site00IsSite00ImmersivePath(path)
+      : path.indexOf('/assts') === 0 || path.indexOf('/origin') === 0;
+  if (!isSite00) return;
 
   var shouldBoot =
-    typeof window.site00ShouldBootAsstsImmersiveLoader === 'function'
-      ? window.site00ShouldBootAsstsImmersiveLoader()
-      : true;
+    typeof window.site00ShouldBootSite00ImmersiveLoader === 'function'
+      ? window.site00ShouldBootSite00ImmersiveLoader()
+      : typeof window.site00ShouldBootAsstsImmersiveLoader === 'function'
+        ? window.site00ShouldBootAsstsImmersiveLoader()
+        : true;
   if (!shouldBoot) return;
 
   var base = '/site00/loader/v1/';

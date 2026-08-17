@@ -1,31 +1,20 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
-import { Outlet } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { acquireLoadingScreenDocumentLock } from '../../../platform-stabilization/loadingScreenLock';
-import { ASSTS_IMMERSIVE_LOADER_CONFIG } from '../../components/loader/site00LoaderConfig';
-import { Site00ImmersiveLoader, type Site00ImmersiveLoaderPhase } from '../../components/loader/Site00ImmersiveLoader';
-import { initSite00ImmersiveLoaderBoot, teardownSite00ImmersiveBootShell } from '../../components/loader/site00LoaderBoot';
-import { resolveLoaderGeometryMode } from '../../components/loader/site00LoaderGeometryMode';
-import {
-  site00LoaderPrefersApngGeometry,
-} from '../../components/loader/site00LoaderMedia';
-import {
-  preloadSite00LoaderAnimation,
-  preloadSite00LoaderBackground,
-} from '../../components/loader/site00LoaderPreload';
+import { Site00ImmersiveLoader, type Site00ImmersiveLoaderPhase } from './Site00ImmersiveLoader';
+import { initSite00ImmersiveLoaderBoot, teardownSite00ImmersiveBootShell } from './site00LoaderBoot';
+import { resolveSite00ImmersiveLoaderConfig } from './site00LoaderConfig';
+import { preloadSite00LoaderAnimation, preloadSite00LoaderBackground } from './site00LoaderPreload';
 import {
   markSite00ImmersiveComplete,
   shouldShowSite00ImmersiveLoader,
-} from '../../components/loader/site00LoaderSession';
-import { useSite00LoaderProgress } from '../../components/loader/useSite00LoaderProgress';
-import { Site00TypographyBootstrap } from '../../components/Site00TypographyBootstrap';
-import { ASSTS_ENVIRONMENT_SLOTS } from '../config/slots';
-import { fetchAsstsLibrary, primeAsstsLibraryCache, resolveAsstsSlot } from '../services/asstsApi';
+} from './site00LoaderSession';
+import { useSite00LoaderProgress } from './useSite00LoaderProgress';
+import { site00LoaderGeometrySourceUrl } from './site00LoaderMedia';
 
 const COMPLETE_HOLD_MS = 680;
-/** Minimum time the immersive loader stays visible from cold-start gate mount. */
 const MIN_CINEMATIC_MS = 4200;
-/** After geometry is painted, keep the loop running at least this long. */
 const MIN_GEOMETRY_PLAY_MS = 2800;
 
 initSite00ImmersiveLoaderBoot();
@@ -53,34 +42,19 @@ function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => window.setTimeout(resolve, ms));
 }
 
-async function withTimeout<T>(promise: Promise<T>, ms: number, label: string): Promise<T> {
-  let timeoutId = 0;
-  try {
-    return await Promise.race([
-      promise,
-      new Promise<T>((_, reject) => {
-        timeoutId = window.setTimeout(() => reject(new Error(`${label} timed out`)), ms);
-      }),
-    ]);
-  } finally {
-    window.clearTimeout(timeoutId);
-  }
-}
-
-const BOOTSTRAP_API_TIMEOUT_MS = 10000;
-
 /**
- * Cold-start gate for ASSTS — full immersive Asset Vault loader on first session entry.
- * Loader media is boot-critical (same-origin) and does NOT wait on ASSTS API resolution.
+ * Cinematic cold-start gate for SITE 00 world routes (Origin, Enter, IDNTY, BLDR, …).
+ * ASSTS uses its own gate with vault API bootstrap.
  */
-export function AsstsColdStartGate() {
+export function Site00WorldColdStartGate({ children }: { children: ReactNode }) {
+  const { pathname } = useLocation();
   const immersive = shouldShowSite00ImmersiveLoader();
   const [phase, setPhase] = useState<Site00ImmersiveLoaderPhase>(immersive ? 'loading' : 'exiting');
   const [revealed, setRevealed] = useState(!immersive);
   const startedAt = useRef(Date.now());
   const geometryReadyAt = useRef<number | null>(null);
   const geometryReadyRef = useRef(false);
-  const config = ASSTS_IMMERSIVE_LOADER_CONFIG;
+  const config = resolveSite00ImmersiveLoaderConfig(pathname);
   const { progress, statusLabel, loaderState, isComplete, completeStage, forceComplete } = useSite00LoaderProgress(
     config.stages,
     config.completionMessage,
@@ -109,38 +83,11 @@ export function AsstsColdStartGate() {
     async function bootstrap() {
       try {
         completeStage('bootstrap');
-
-        void import('../pages/LibraryPage');
-
         await preloadSite00LoaderBackground(config.backgroundUrl);
         if (cancelled) return;
         completeStage('preparing');
 
-        const geometryUrl =
-          resolveLoaderGeometryMode() === 'alpha'
-            ? site00LoaderPrefersApngGeometry()
-              ? config.geometryApngUrl
-              : config.geometryWebmUrl
-            : config.geometrySourceUrl;
-        const geometryPromise = preloadSite00LoaderAnimation(geometryUrl);
-
-        completeStage('connect');
-
-        const libraryPromise = withTimeout(fetchAsstsLibrary(), BOOTSTRAP_API_TIMEOUT_MS, 'library').catch(
-          () => null,
-        );
-        const slotPromise = withTimeout(
-          resolveAsstsSlot(ASSTS_ENVIRONMENT_SLOTS.library),
-          BOOTSTRAP_API_TIMEOUT_MS,
-          'slot',
-        ).catch(() => null);
-
-        const [library] = await Promise.all([libraryPromise, slotPromise]);
-        if (cancelled) return;
-        if (library) primeAsstsLibraryCache(library);
-        completeStage('resolve');
-
-        await geometryPromise;
+        await preloadSite00LoaderAnimation(config.geometrySourceUrl ?? site00LoaderGeometrySourceUrl());
         if (cancelled) return;
         completeStage('assemble');
 
@@ -182,7 +129,7 @@ export function AsstsColdStartGate() {
     return () => {
       cancelled = true;
     };
-  }, [immersive, completeStage, forceComplete, config.backgroundUrl, config.geometryApngUrl, config.geometryWebmUrl, config.geometrySourceUrl]);
+  }, [immersive, completeStage, forceComplete, config.backgroundUrl, config.geometrySourceUrl]);
 
   const handleExitComplete = () => {
     markSite00ImmersiveComplete();
@@ -190,29 +137,19 @@ export function AsstsColdStartGate() {
     setRevealed(true);
   };
 
-  if (revealed) {
-    return (
-      <>
-        <Site00TypographyBootstrap />
-        <Outlet />
-      </>
-    );
-  }
+  if (revealed) return <>{children}</>;
 
   const overlay = (
-    <>
-      <Site00TypographyBootstrap />
-      <Site00ImmersiveLoader
-        config={config}
-        progress={progress}
-        statusLabel={statusLabel}
-        loaderState={loaderState}
-        isComplete={isComplete}
-        phase={phase}
-        onAnimationReady={handleAnimationReady}
-        onExitComplete={handleExitComplete}
-      />
-    </>
+    <Site00ImmersiveLoader
+      config={config}
+      progress={progress}
+      statusLabel={statusLabel}
+      loaderState={loaderState}
+      isComplete={isComplete}
+      phase={phase}
+      onAnimationReady={handleAnimationReady}
+      onExitComplete={handleExitComplete}
+    />
   );
 
   if (typeof document === 'undefined') return overlay;

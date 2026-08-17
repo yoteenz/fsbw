@@ -1,14 +1,16 @@
-import { shouldShowAsstsImmersiveLoader } from '../site00/components/loader/site00LoaderSession';
+import { Site00ImmersiveColdStartFallback } from '../site00/components/loader/Site00ImmersiveColdStartFallback';
+import { isSite00ImmersivePath } from '../site00/components/loader/site00LoaderPaths';
+import { shouldShowSite00ImmersiveLoader } from '../site00/components/loader/site00LoaderSession';
 
 /**
- * Lazy App shell fallback — never show plain "Loading…" on ASSTS cold start;
+ * Lazy App shell fallback — never show plain "Loading…" on SITE 00 cold start;
  * the ultra-early boot shell paints the loader background before React hydrates.
  */
 export function AppShellRouteFallback() {
   if (typeof window !== 'undefined') {
     const path = window.location.pathname || '';
-    if (path.startsWith('/assts') && shouldShowAsstsImmersiveLoader()) {
-      return null;
+    if (isSite00ImmersivePath(path) && shouldShowSite00ImmersiveLoader()) {
+      return <Site00ImmersiveColdStartFallback />;
     }
   }
 

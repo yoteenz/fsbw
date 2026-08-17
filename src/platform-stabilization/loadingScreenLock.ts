@@ -1,4 +1,5 @@
 import { acquireLoadingLockDiagnostic, traceSync } from './main-thread-diagnostics';
+import { isSite00ImmersivePath } from '../site00/components/loader/site00LoaderPaths';
 
 let loadingScreenLockCount = 0;
 
@@ -34,7 +35,7 @@ export function acquireLoadingScreenDocumentLock(): () => void {
     html.style.overflow = 'hidden';
     const asstsBoot =
       typeof window !== 'undefined' &&
-      window.location.pathname.startsWith('/assts') &&
+      isSite00ImmersivePath(window.location.pathname) &&
       document.documentElement.classList.contains('site00-assts-boot');
     const bootBg = asstsBoot ? '#f7f7f5' : '#ffffff';
     html.style.backgroundColor = bootBg;

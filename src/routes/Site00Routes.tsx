@@ -6,9 +6,11 @@ import { SITE00_ROUTES } from '../site00/config/routes';
 import { AsstsRouteSuspense } from '../site00/assts/components/AsstsRouteSuspense';
 import { AsstsColdStartGate } from '../site00/assts/components/AsstsColdStartGate';
 import { Site00RouteLoadingFallback } from '../site00/components/loader/Site00RouteLoadingFallback';
+import { Site00WorldColdStartGate } from '../site00/components/loader/Site00WorldColdStartGate';
 import { Site00TypographyBootstrap } from '../site00/components/Site00TypographyBootstrap';
 /* Eager-load SITE 00 + ASSTS styles (lazy route CSS was not applying on mobile preview). */
 import '../site00/styles/site00.css';
+import '../site00/styles/site00-loader.css';
 import '../site00/assts/styles/assts.css';
 import '../site00/assts/styles/assts-depth.css';
 import '../site00/assts/styles/assts-composition.css';
@@ -38,7 +40,7 @@ function Site00Layout({ children }: { children: ReactNode }) {
   return (
     <Site00Provider>
       <Site00TypographyBootstrap />
-      {children}
+      <Site00WorldColdStartGate>{children}</Site00WorldColdStartGate>
     </Site00Provider>
   );
 }
