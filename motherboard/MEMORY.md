@@ -52554,3 +52554,23 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **QA:** `npm run build` PASS. Playwright — @ 900px hero x=32 (unchanged), cards centered x=450; @ 1440px cards centered x=720. Screenshot: `site00_origin_hero_restored_1440.png`.
 
+---
+
+## 2026-08-17 — Origin expanded panels restored as overlay; workflow bg state routes only
+
+- **Context:** Founder clarified workflow desktop background (`3A2AC3AD`) was only for **`/idnty/state`** and **`/bldr/state`** — not Origin homepage expand. Expanded IDNTY/BLDR panels must overlay Origin (right column on desktop), not swap environment or render in plaza anchor.
+
+- **Fix:** `OriginPage.tsx` — always `ORIGIN_ENVIRONMENT`; collapsed cards stay in `.site00-home-cards` (plaza anchor); expanded panels render in `.site00-home-expanded-column` (original `flex: 2 1 400px` right column). Removed erroneous `WORKFLOW_ENVIRONMENT` switch on `homeMode`. `environments.ts` / `assets.ts` notes scoped to state routes.
+
+- **QA:** `npm run build` PASS. Playwright @ 1440px — expand IDNTY keeps Origin bg, expanded column x=424, plaza cards hidden; `/idnty/state` shows workflow bg. Screenshot: `site00_idnty_expanded_overlay_1440.png`.
+
+---
+
+## 2026-08-17 — Enter 00 desktop composition nudge (menu + welcome copy)
+
+- **Context:** Founder requested `/enter` desktop tuning — menu panel up 10px / right 16px; welcome block and accompanying copy left 25px in tandem.
+
+- **Changes:** `DirectoryPanel.tsx` — `site00-enter-wwelcome` + `site00-enter-menu` classes. `site00.css` @ `min-width: 768px` — welcome `translateX(-25px)`, menu `translate(16px, -10px)`.
+
+- **QA:** `npm run build` PASS. Playwright — computed transforms match offsets. Screenshot: `site00_enter_composition_offsets_1440.png`.
+

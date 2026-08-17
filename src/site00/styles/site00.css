@@ -373,6 +373,18 @@
   }
 }
 
+/* ─── Enter 00 — desktop composition offsets (/enter) ─── */
+
+@media (min-width: 768px) {
+  .site00-enter-welcome {
+    transform: translateX(-25px);
+  }
+
+  .site00-enter-menu {
+    transform: translate(16px, -10px);
+  }
+}
+
 /* ─── Origin homepage — hero in original column; IDNTY/BLDR panels on foreground plaza ─── */
 
 .site00-home-stage {

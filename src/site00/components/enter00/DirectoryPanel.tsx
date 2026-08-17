@@ -17,7 +17,7 @@ export function DirectoryPanel() {
       }}
       className="site00-enter-layout"
     >
-      <div>
+      <div className="site00-enter-welcome">
         <span className="site00-label-red">{SITE00_ENTER_COPY.welcomeNumber}</span>
         <h1 className="site00-heading-lg" style={{ margin: '8px 0', display: 'flex', alignItems: 'center', gap: 8 }}>
           {SITE00_ENTER_COPY.welcomeTitle}
@@ -34,7 +34,7 @@ export function DirectoryPanel() {
         </p>
       </div>
 
-      <ArchitecturalPanel>
+      <ArchitecturalPanel className="site00-enter-menu">
         <div style={{ padding: '24px 20px' }}>
           {SITE00_DIRECTORY_SECTIONS.map((section, idx) => (
             <div key={section.id} style={{ marginBottom: idx === 0 ? 24 : 0 }}>
