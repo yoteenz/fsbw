@@ -52312,6 +52312,7 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 ---
 
+<<<<<<< Updated upstream
 ## 2026-08-17 — AIO login hero supporting copy −3px
 
 - **Context:** Follow-up polish on All In One mobile `/login` — hero overlay typography refinements after prior ~20% hero text scale-down.
@@ -52373,4 +52374,21 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Verified:** Playwright @ 390px — hero supporting **6.984px**, desktop-only intro supporting **12.48px** (form stack unchanged).
 
 - **QA:** `npm run build` PASS.
+=======
+## 2026-08-17 — ASSTS loader master reference composition lock (711×1536 v2)
+
+- **Context:** Composer sprint — lock SITE 00 Asset Vault immersive loader to attached approved master reference (711×1536). Not a redesign. Lock background, overlay coordinates, typography proportions (Martian Mono), progress bar geometry, wireframe/platform relationship. Prior drift partly from background `object-fit: cover` on mismatched asset vs overlay coordinate plane.
+
+- **Phase 0 audit (pre-change):** Stack under `src/site00/components/loader/` — `Site00ImmersiveLoader`, `LoaderCompositionProvider` (viewport letterbox + artboard `transform:scale()`), `LoaderRegion` (% positioning), `LoaderCopyRegions`, `loader-composition-map.ts` (v1 coords), `site00LoaderMedia.ts` (local 853×1844 PNG), `site00-loader.css`. Safe-area on viewport only. Debug `?loaderRefMap=1`.
+
+- **Background lock:** Approved Supabase `IMG_0404.png` via `site00LoaderBackgroundUrl()` (`VITE_SUPABASE_URL` + live-preview path; local PNG fallback). Background region 0,0,711,1536 — `object-fit: fill` binds artwork to artboard (no independent crop).
+
+- **Composition map v2 (`assts-loader-mobile-v2`):** Central token object `ASSTS_LOADER_COMPOSITION` + `ASSTS_LOADER_TYPOGRAPHY`. Master centerline x=355.5. Updated regions: wireframe 238×154×222×540; siteLabel 315×837×81×24; headline 85×878×542×43; subtitle 184×940×344×27; status 285×1037×141×26; progressTrack 97×1095×482×8; progressPct 599×1086×40×25; brandStatement 165×1170×380×34; siteMark 312×1265×88×102. Progress split into separate mapped regions (track no longer full-width).
+
+- **Runtime:** Single artboard scaler; overlays use normalized % coords; typography reference px scaled by artboard transform (Martian Mono weights/sizes/tracking tuned to bounding boxes). Tagline uses red `+` flanking marks. Debug shows artboard edge, 0–100 grid, centerline, per-region X/Y/W/H + anchor %. `?loaderRefOverlay=1` overlays reference at 50% opacity.
+
+- **Spatial Architecture Review:** SKIPPED — loader coordinate lock only; no new surfaces.
+
+- **QA:** `npm run build` PASS. `scripts/validate-assts-loader-composition.mjs` @ 711px stage — geometry + all 8 copy/progress regions **0px delta**. Screenshots: `assts_loader_composition_711px_mid.png`, `assts_loader_composition_711px_ready.png`.
+>>>>>>> Stashed changes
 
