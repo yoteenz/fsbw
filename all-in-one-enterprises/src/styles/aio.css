@@ -9,6 +9,14 @@
   max-width: 100%;
   min-height: 100dvh;
   overflow-x: clip;
+  text-transform: uppercase;
+}
+
+/* Password entry must preserve mixed case */
+.aio-standalone-root input[type="password"],
+.aio-standalone-root .aio-auth-premium__input--password,
+.aio-standalone-root .aio-password-field__wrap input {
+  text-transform: none;
 }
 
 .aio-app {

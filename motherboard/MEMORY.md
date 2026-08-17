@@ -52067,8 +52067,6 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **QA:** Build PASS; manual QA login/forgot/signup mobile 375px + desktop split PASS.
 
-<<<<<<< HEAD
-=======
 ---
 
 ## 2026-08-17 — AIO mobile login polish pass (reference-driven)
@@ -52077,7 +52075,7 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Root cause (LOG IN invisible):** Global `.aio-app button:not(.aio-btn)` reset set `background: none` on auth premium buttons. Fixed by excluding `.aio-auth-premium__btn` from reset + explicit gold fill rules.
 
-- **Polish:** Larger centered header logo; gold BACK; layered hero gradients (truck right/lower-right, text left); WELCOME white + back. gold; dark glass form panel; 56px inputs with gold email/lock icons; OR divider; CREATE ACCOUNT in panel; compact demo card; trust microcopy (no unverified claims); BACK uses returnUrl when meaningful.
+- **Polish:** Larger centered header logo; gold BACK; layered hero gradients; WELCOME white + back. gold; dark glass form panel; 56px inputs with gold email/lock icons; OR divider; CREATE ACCOUNT in panel; compact demo card; trust microcopy; BACK uses returnUrl when meaningful.
 
 - **Files:** `aio-auth.css`, `aio.css` (button reset), `AuthHeader`, `AuthShell`, `AuthBrandIntro`, `AuthInput`, `AuthPasswordInput`, `AuthFieldIcons`, `LoginPage`, `DemoPortalAccess`, `AIOAuthLayout`.
 
@@ -52087,15 +52085,14 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 ## 2026-08-17 — AIO login hero asset replacement (Supabase master)
 
-- **Context:** Follow-up — replace wrong homepage truck crop on Login with approved wide master (truck right, dark left, gold sunset). URL: `assets.loginHeroImage` on Supabase `live-preview/AIO/00E0E628-4C00-4257-9DDE-A7DE6B9E3C98.png`.
+- **Context:** Replace wrong homepage truck crop on Login with approved wide master (truck right, dark left, gold sunset). Storage path: `live-preview/AIO/00E0E628-4C00-4257-9DDE-A7DE6B9E3C98.png` via `getAioLoginHeroImageUrl()` (`aioPublicAssets.ts`).
 
-- **Implementation:** `appConfig.assets.loginHeroImage`; `AuthShell` sets `--aio-auth-login-hero-url` + preload on login variant; login-only CSS focal tuning (58–68% by breakpoint); restrained overlays; content moved up; headline `clamp(2.35rem, 9vw, 3.25rem)`; header back-only (logo removed on login); non-login auth pages use dark gradient only (old truck removed from auth bg); desktop login brand panel uses same hero.
+- **Implementation:** Login-only `--aio-auth-login-hero-url`; focal tuning 58–68% by breakpoint; restrained overlays; content moved up; headline `clamp(2.35rem, 9vw, 3.25rem)`; header back-only on login; non-login auth uses dark gradient only; desktop login brand panel uses same hero.
 
 - **Preserved:** Auth logic, form panel, gold CTAs, returnUrl, demo utility.
 
 - **QA:** Build PASS; 375px — truck right, sunset visible, dark left typography zone, no header logo.
 
->>>>>>> b3c5614f3 (AIO login hero — approved Supabase asset, focal crop, back-only header [sync-only])
 ---
 
 ## 2026-08-17 — Frontal Slayer loader + Lounge TV press-to-play regression hotfix
