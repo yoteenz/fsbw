@@ -3,6 +3,8 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { LibraryHomeCompositionProvider } from '../composition/LibraryHomeCompositionContext';
 import { LibraryHomeRegion } from '../composition/LibraryHomeRegion';
 import { LibraryHomeReferenceMapDebug } from '../composition/LibraryHomeReferenceMapDebug';
+import { LibraryHomeHeroZone } from '../composition/LibraryHomeHeroZone';
+import { LibraryHomeHeroRefMapToggle } from '../composition/LibraryHomeHeroRefMapToggle';
 import { AsstsDevPanel, useAsstsAutoRefresh } from '../components/AsstsDevPanel';
 import { AsstsVaultNav } from '../components/AsstsMobileNav';
 import { AsstsPageShell } from '../components/AsstsPageShell';
@@ -131,25 +133,7 @@ function AsstsLibraryPageContent() {
 
   return (
     <AsstsPageShell variant="library">
-      <LibraryHomeRegion id="hero" ariaLabel="Architectural hero" />
-
-      <LibraryHomeRegion id="header.eyebrow">
-        <p className="assts-lib-text assts-lib-text--eyebrow site00-label-red">SITE 00 · ASSTS</p>
-      </LibraryHomeRegion>
-
-      <LibraryHomeRegion id="header.title">
-        <h1 className="assts-lib-text assts-lib-text--title">THE ASSET VAULT.</h1>
-      </LibraryHomeRegion>
-
-      <LibraryHomeRegion id="header.tagline">
-        <p className="assts-lib-text assts-lib-text--tagline">EVERYTHING WE BUILD LIVES HERE.</p>
-      </LibraryHomeRegion>
-
-      <LibraryHomeRegion id="header.control">
-        <div className="assts-lib-emblem" aria-hidden="true">
-          <span className="assts-lib-emblem__mark">✦</span>
-        </div>
-      </LibraryHomeRegion>
+      <LibraryHomeHeroZone />
 
       {summary ? (
         <>
@@ -306,6 +290,7 @@ function AsstsLibraryPageContent() {
           </div>
         ) : null}
         <LibraryHomeReferenceMapDebug />
+        <LibraryHomeHeroRefMapToggle />
       </div>
     </AsstsPageShell>
   );

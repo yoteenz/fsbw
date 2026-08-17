@@ -46,8 +46,172 @@
 
 .assts-lib-region[data-composition-region='hero'] {
   pointer-events: none;
-  overflow: visible;
+  overflow: hidden;
+  z-index: var(--depth-environment, 0);
 }
+
+/* ─── Locked library.hero zone (Phase 01) ─── */
+
+.assts-lib-hero-zone {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.assts-lib-hero-zone__image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: var(--hero-object-position, 50% 48%);
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.assts-lib-hero-sub {
+  position: absolute;
+  z-index: 2;
+  pointer-events: auto;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+.assts-lib-hero-sub[data-hero-zone='hero.topRightControl'] {
+  align-items: center;
+  justify-content: center;
+}
+
+.assts-lib-hero-sub__debug-label {
+  position: absolute;
+  top: 0;
+  left: 0;
+  font-size: calc(7px * var(--ref-scale));
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--site-red);
+  background: rgba(255, 255, 255, 0.88);
+  padding: 1px 3px;
+  pointer-events: none;
+}
+
+/* Hero coordinate debug — ?heroRefMap=1 */
+
+.assts-lib-hero-debug {
+  position: absolute;
+  inset: 0;
+  z-index: 30;
+  pointer-events: none;
+}
+
+.assts-lib-hero-debug__toolbar {
+  position: absolute;
+  top: calc(4px * var(--ref-scale));
+  left: calc(4px * var(--ref-scale));
+  right: calc(4px * var(--ref-scale));
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(6px * var(--ref-scale));
+  padding: calc(4px * var(--ref-scale)) calc(6px * var(--ref-scale));
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(232, 25, 44, 0.45);
+  font-size: calc(8px * var(--ref-scale));
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--site-red);
+}
+
+.assts-lib-hero-debug__bounds {
+  position: absolute;
+  border: 2px solid rgba(232, 25, 44, 0.85);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.6);
+}
+
+.assts-lib-hero-debug__label {
+  position: absolute;
+  top: 2px;
+  left: 4px;
+  font-size: calc(8px * var(--ref-scale));
+  color: var(--site-red);
+  background: rgba(255, 255, 255, 0.9);
+  padding: 0 3px;
+}
+
+.assts-lib-hero-debug__axis {
+  position: absolute;
+  width: 1px;
+  background: rgba(232, 25, 44, 0.65);
+  transform: translateX(-0.5px);
+}
+
+.assts-lib-hero-debug__hline {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 0;
+  border-top: 1px dashed rgba(232, 25, 44, 0.55);
+}
+
+.assts-lib-hero-debug__hline span {
+  position: absolute;
+  right: calc(4px * var(--ref-scale));
+  top: calc(-12px * var(--ref-scale));
+  font-size: calc(7px * var(--ref-scale));
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--site-red);
+  background: rgba(255, 255, 255, 0.9);
+  padding: 0 3px;
+}
+
+.assts-lib-hero-debug__hline--stats {
+  border-top-color: rgba(0, 120, 255, 0.65);
+}
+
+.assts-lib-hero-debug__zone {
+  position: absolute;
+  border: 1px dashed rgba(0, 120, 255, 0.55);
+  background: rgba(0, 120, 255, 0.08);
+  font-size: calc(7px * var(--ref-scale));
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #0369a1;
+  padding: 2px;
+}
+
+.assts-lib-hero-debug__zone--mainArch,
+.assts-lib-hero-debug__zone--centralProtected {
+  border-color: rgba(232, 25, 44, 0.55);
+  background: rgba(232, 25, 44, 0.1);
+  color: var(--site-red);
+}
+
+.assts-lib-hero-debug__coords {
+  display: block;
+  font-size: calc(6px * var(--ref-scale));
+  opacity: 0.85;
+}
+
+.assts-hero-ref-map-toggle {
+  position: fixed;
+  top: calc(48px + env(safe-area-inset-top, 0px));
+  right: calc(8px + env(safe-area-inset-right, 0px));
+  z-index: 2147483646;
+  border: 1px solid rgba(232, 25, 44, 0.5);
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--site-red);
+  font-family: var(--site00-font-mono);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  padding: 6px 8px;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
 
 /* ─── Overlay chrome (dev panel, alerts, ref map toggle) ─── */
 
@@ -1210,6 +1374,14 @@
   overflow-y: auto;
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
+}
+
+.assts-library-shell--scroll .assts-library-stage.environmental-stage .environmental-stage__env {
+  background: linear-gradient(180deg, #f8f8f8 0%, #efefef 45%, #ececec 100%);
+}
+
+.assts-library-shell--scroll .assts-library-stage.environmental-stage .environmental-stage__veil {
+  opacity: 0.35;
 }
 
 .assts-library-shell--scroll .assts-library-composition {

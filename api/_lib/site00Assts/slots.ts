@@ -3,8 +3,18 @@ import type { ProductionAssetResolution } from './types.js';
 import { publicUrlForStoragePath } from './service.js';
 import { ASSTS_CANONICAL_SLOT_ALIASES, resolvePrimarySlotKey } from './vaultLineage.js';
 
+/** Canonical hero asset until slot lock promotion in Supabase. */
+const ASSTS_LIBRARY_HERO_ASSET_PATH = '52D76B9A-8808-4A00-A89D-28767F21E385.png';
+
+function canonicalLibraryHeroUrl(): string | null {
+  const base = process.env.SUPABASE_URL?.replace(/\/$/, '');
+  if (!base) return null;
+  return `${base}/storage/v1/object/public/live-preview/site00/${ASSTS_LIBRARY_HERO_ASSET_PATH}`;
+}
+
 export const ASSTS_FALLBACK_SLOTS: Record<string, { cssClass: string }> = {
   'assts.library.environment.mobile': { cssClass: 'site00-assts-env-fallback--library' },
+  'assts.library.hero.mobile': { cssClass: 'site00-assts-env-fallback--library-hero' },
   'assts.batch.environment.mobile': { cssClass: 'site00-assts-env-fallback--batch' },
   'assts.inspection.environment.mobile': { cssClass: 'site00-assts-env-fallback--inspection' },
 };
@@ -32,11 +42,13 @@ export async function resolveProductionAsset(slotKey: string): Promise<Productio
     }
   }
 
+  const heroUrl = canonicalLibraryHeroUrl();
   return {
     slotKey,
     source: 'fallback',
-    url: null,
-    thumbnailUrl: null,
+    url: primaryKey === 'assts.library.hero.mobile' || slotKey === 'assts.library.hero.mobile' ? heroUrl : null,
+    thumbnailUrl:
+      primaryKey === 'assts.library.hero.mobile' || slotKey === 'assts.library.hero.mobile' ? heroUrl : null,
   };
 }
 

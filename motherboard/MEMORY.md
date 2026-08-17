@@ -52292,3 +52292,21 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Known metric shifts (no position fix yet):** Martian Mono narrows/tightens strings vs Roboto Condensed — loader title/subtitle and Origin hero may appear mis-centered vs old Futura-compensated tracking; coordinate recalibration deferred per sprint rules.
 
+---
+
+## 2026-08-17 — ASSTS Library Home Phase 01 — hero coordinate lock
+
+- **Context:** Composer sprint — lock Asset Vault mobile Library Home **hero only** using new approved Supabase hero (`52D76B9A-8808-4A00-A89D-28767F21E385.png`, 1535×1024). Fix root geometry drift from old vertically oversized full-page environment. **Do not** recalibrate stats row or lower sections.
+
+- **Hero composition:** `library-home-hero-composition-map.ts` (`assts-library-mobile-hero-v1`, status **LOCKED**, zone `library.hero`). Display @ 711px width: height **531px**, `object-fit: cover`, `object-position: 50% 48%`. Anchors: centerAxisX 0.5, heroBottom 531, statsAnchorY 529 (2px overlap). Zones: copySafe, headerCopy (eyebrow/title/subtitle), topRightControl, architectureBand; protected mainArch/centralProtected/alcoves from source image.
+
+- **Runtime:** `LibraryHomeHeroZone` — dedicated hero image (slot `assts.library.hero.mobile` + canonical Supabase fallback), copy + control anchored inside hero coordinate space. `AsstsLibraryShell` scroll layout **no longer** loads old `assts.library.environment.mobile` full-page background.
+
+- **Debug:** `?heroRefMap=1` → hero bounds, center axis, copySafe, architectureBand, mainArch, centralProtected, statsAnchor overlay + `HERO MAP` toggle.
+
+- **Lock safety:** `library-home-hero-lock.ts` — dev warning if locked hero geometry overridden.
+
+- **Spatial Architecture Review:** SKIPPED — coordinate lock on existing ASSTS Library Home surface; no new product surfaces.
+
+- **QA:** `npm run build` PASS. `scripts/validate-assts-library-hero.mjs` @ 711px — hero **711×531, delta 0px**, natural 1535×1024, status LOCKED. Screenshots: `assts_library_hero_clean_711px.png`, `assts_library_hero_debug_711px.png`. Stats row left at y=529 (unchanged).
+

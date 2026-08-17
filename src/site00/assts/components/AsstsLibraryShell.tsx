@@ -20,11 +20,16 @@ export function AsstsLibraryShell({ children, scrollLayout = false }: AsstsLibra
   const rootRef = useRef<HTMLDivElement>(null);
   const [size, setSize] = useState({ w: 0, h: 0 });
 
-  const lockedDoc = getLockedCompositionDocument(ASSTS_LIBRARY_CORRIDOR_COMPOSITION_V1.environmentId);
+  const lockedDoc = scrollLayout ? null : getLockedCompositionDocument(ASSTS_LIBRARY_CORRIDOR_COMPOSITION_V1.environmentId);
   const composition = lockedDoc ? documentToEnvironmentMap(lockedDoc) : ASSTS_LIBRARY_CORRIDOR_COMPOSITION_V1;
   const compositionLocked = Boolean(lockedDoc);
 
   useEffect(() => {
+    if (scrollLayout) {
+      setSource('fallback');
+      setBgUrl(null);
+      return;
+    }
     let cancelled = false;
     resolveAsstsSlot(ASSTS_ENVIRONMENT_SLOTS.library)
       .then((res) => {
@@ -41,7 +46,7 @@ export function AsstsLibraryShell({ children, scrollLayout = false }: AsstsLibra
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [scrollLayout]);
 
   useEffect(() => {
     const el = rootRef.current;

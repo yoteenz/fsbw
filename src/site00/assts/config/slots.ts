@@ -1,5 +1,6 @@
 export const ASSTS_ENVIRONMENT_SLOTS = {
   library: 'assts.library.environment.mobile',
+  libraryHero: 'assts.library.hero.mobile',
   batch: 'assts.batch.environment.mobile',
   inspection: 'assts.inspection.environment.mobile',
 } as const;
