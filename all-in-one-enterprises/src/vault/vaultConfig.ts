@@ -1,31 +1,33 @@
 import type { RejectionReason, VaultCategory } from './vaultTypes';
+import { VAULT_TAXONOMY, documentTypesForCategory, labelForCategory } from './vaultTaxonomy';
 
-export const VAULT_CATEGORIES: { id: VaultCategory; label: string }[] = [
-  { id: 'business', label: 'Business' },
-  { id: 'authority', label: 'Authority' },
-  { id: 'registration', label: 'Registration' },
-  { id: 'tax_fuel', label: 'Tax & Fuel' },
-  { id: 'insurance', label: 'Insurance' },
-  { id: 'permits', label: 'Permits' },
-  { id: 'fleet', label: 'Fleet' },
-  { id: 'dispatch', label: 'Dispatch' },
-  { id: 'factoring', label: 'Factoring' },
-  { id: 'brokerage', label: 'Brokerage' },
-  { id: 'billing', label: 'Billing' },
-];
+/** Unique categories derived from taxonomy */
+export const VAULT_CATEGORY_OPTIONS: { id: VaultCategory; label: string }[] = Array.from(
+  new Map(
+    VAULT_TAXONOMY.flatMap((t) => t.categories.map((id) => [id, { id, label: labelForCategory(id) }] as const)),
+  ).values(),
+);
+
+/** @deprecated prefer VAULT_CATEGORY_OPTIONS */
+export const VAULT_CATEGORIES = VAULT_CATEGORY_OPTIONS;
 
 export const DOCUMENT_TYPES: Record<VaultCategory, string[]> = {
-  business: ['Formation Document', 'Business Registration', 'Operating Agreement', 'Tax Document', 'Other'],
-  authority: ['USDOT Record', 'Operating Authority', 'BOC-3', 'Authority Documentation', 'Other'],
-  registration: ['Vehicle Registration', 'IRP Cab Card', 'Commercial Tags', 'Trailer Registration', 'Other'],
-  tax_fuel: ['IFTA Credential', 'Fuel Tax Document', 'Highway Tax', 'State Tax Document', 'Other'],
-  insurance: ['Certificate of Insurance', 'Policy Document', 'Coverage Summary', 'Other'],
-  permits: ['Trip Permit', 'Temporary Permit', 'State Permit', 'Oversize Permit', 'Other'],
-  fleet: ['Vehicle Document', 'Trailer Document', 'Driver Document', 'Other'],
-  dispatch: ['Rate Confirmation', 'BOL', 'POD', 'Load Document', 'Other'],
-  factoring: ['Invoice', 'Rate Confirmation', 'POD', 'Factoring Case Document', 'Other'],
-  brokerage: ['Quote Document', 'BOL', 'POD', 'Shipment Document', 'Other'],
-  billing: ['Service Invoice', 'Receipt', 'Statement', 'Other'],
+  business: documentTypesForCategory('business'),
+  authority: documentTypesForCategory('authority'),
+  registration: documentTypesForCategory('registration'),
+  tax_fuel: documentTypesForCategory('tax_fuel'),
+  insurance: documentTypesForCategory('insurance'),
+  permits: documentTypesForCategory('permits'),
+  fleet: documentTypesForCategory('fleet'),
+  dispatch: documentTypesForCategory('dispatch'),
+  factoring: documentTypesForCategory('factoring'),
+  brokerage: documentTypesForCategory('brokerage'),
+  billing: documentTypesForCategory('billing'),
+  poa_authorization: documentTypesForCategory('poa_authorization'),
+  contracts: documentTypesForCategory('contracts'),
+  supporting: documentTypesForCategory('supporting'),
+  correspondence: documentTypesForCategory('correspondence'),
+  legacy: documentTypesForCategory('legacy'),
 };
 
 export const FILE_POLICY = {

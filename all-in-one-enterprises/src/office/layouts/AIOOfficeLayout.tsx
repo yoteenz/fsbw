@@ -61,6 +61,8 @@ const navGroups = [
       { label: 'Loads', to: aioPaths.officeDispatchLoads },
       { label: 'Renewals', to: aioPaths.officeRenewals },
       { label: 'Document Review', to: aioPaths.officeDocumentsReview },
+      { label: 'Document Vault', to: aioPaths.officeDocumentVault },
+      { label: 'Archive Migration', to: aioPaths.officeArchiveMigration },
       { label: 'Compliance Calendar', to: aioPaths.officeDeadlines },
       { label: 'Legacy Documents', to: aioPaths.officeDocuments },
     ],

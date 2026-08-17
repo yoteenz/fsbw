@@ -410,8 +410,8 @@ export function runExpirationEvaluation(): void {
 export function searchVaultDocuments(orgId: string, query: string, filters?: {
   status?: string;
   category?: string;
-}): VaultDocument[] {
-  let docs = getVaultDocuments(orgId);
+}, store: DemoStore = loadDemoStore()): VaultDocument[] {
+  let docs = getVaultDocuments(orgId, store);
   const q = query.trim().toLowerCase();
   if (q) {
     docs = docs.filter(

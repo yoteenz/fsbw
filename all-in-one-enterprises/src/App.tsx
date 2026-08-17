@@ -3,6 +3,7 @@ import AllInOneRoutes, { AllInOneLoading } from './routes/AllInOneRoutes';
 import './styles/aio.css';
 import './styles/aio-mobile.css';
 import './styles/aio-auth.css';
+import './styles/aio-document-vault.css';
 import './styles/aio-mgmt.css';
 import { AIODebugBanner } from './components/AIODebugBanner';
 

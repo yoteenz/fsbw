@@ -1,4 +1,5 @@
 import { FILE_POLICY } from './vaultConfig';
+import { hashFileSha256 } from './documentHash';
 import type { VaultUploadInput, VaultUploadResult } from './vaultTypes';
 
 export type StorageMode = 'demo' | 'backend';
@@ -31,6 +32,7 @@ export async function storeVaultFile(input: VaultUploadInput): Promise<VaultUplo
   }
 
   const dataUrl = await readFileAsDataUrl(input.file);
+  const fileHash = await hashFileSha256(input.file);
   return {
     document: {
       id: crypto.randomUUID(),
@@ -43,15 +45,28 @@ export async function storeVaultFile(input: VaultUploadInput): Promise<VaultUplo
       relatedEntityId: input.relatedEntityId,
       serviceRequestId: input.serviceRequestId,
       roadReadyItemId: input.roadReadyItemId,
+      relatedServiceId: input.relatedServiceId,
       status: 'uploaded',
       verificationStatus: 'pending_review',
+      recordLifecycle: 'pending',
+      source: input.source ?? 'client_upload',
       storageReference: dataUrl,
       mimeType: input.file.type || 'application/octet-stream',
       fileName: input.file.name,
       fileSizeBytes: input.file.size,
+      fileHash,
       issuedAt: input.issuedAt,
+      effectiveAt: input.effectiveAt,
       expiresAt: input.expiresAt,
-      visibility: 'customer',
+      renewalDate: input.renewalDate,
+      jurisdiction: input.jurisdiction,
+      issuingAgency: input.issuingAgency,
+      physicalOriginalStatus: input.physicalOriginalStatus,
+      physicalArchiveLocation: input.physicalArchiveLocation,
+      visibility: input.visibility ?? 'customer',
+      metadataExtractionStatus: 'none',
+      reviewStatus: 'pending',
+      version: 1,
       isCurrent: true,
       uploadedAt: new Date().toISOString(),
       createdAt: new Date().toISOString(),

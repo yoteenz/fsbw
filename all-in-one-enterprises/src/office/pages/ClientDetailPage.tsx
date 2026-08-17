@@ -114,9 +114,21 @@ export function ClientDetailPage() {
         </section>
       )}
 
-      {tab === 'documents' && docs.map((d) => (
-        <div key={d.id} className="aio-office-list-row">{d.title ?? d.name} — {d.status}</div>
-      ))}
+      {tab === 'documents' && (
+        <section className="aio-oc-panel">
+          <p className="aio-doc-vault-record__meta">Secure business records, filings, and historical documents.</p>
+          <Link to={aioPaths.officeClientDocuments(client.id)} className="aio-btn aio-btn--gold aio-btn--sm">
+            Open Document Vault →
+          </Link>
+          <ul className="aio-doc-vault-list" style={{ marginTop: '1rem' }}>
+            {docs.slice(0, 5).map((d) => (
+              <li key={d.id} className="aio-doc-vault-record">
+                <span>{d.title ?? d.name} — {d.status}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       {tab === 'operations' && loads.map((l) => (
         <Link key={l.id} to={aioPaths.officeLoad(l.id)} className="aio-office-list-row">{l.loadNumber} — {l.operationalStatus}</Link>

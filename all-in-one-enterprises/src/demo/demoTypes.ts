@@ -3,7 +3,8 @@ import type { RoadmapResult } from '../roadmap/roadmapTypes';
 import type { ServicePlanItem } from '../repositories/servicePlanRepository';
 import type { AioNotification, NotificationPreference } from '../notifications/notificationTypes';
 import type { RenewalRecord } from '../renewals/renewalTypes';
-import type { VaultDocument } from '../vault/vaultTypes';
+import type { VaultDocument, ClientMigrationStatus } from '../vault/vaultTypes';
+import type { ArchiveMigrationBatch, ArchiveMigrationBatchFile } from '../vault/archiveMigrationTypes';
 import type { DeadlineSource, DeadlineType, DeadlineVerification } from '../calendar/calendarTypes';
 import type {
   BrokerContact,
@@ -294,6 +295,8 @@ export interface Client {
   activeRequestCount: number;
   documentsNeededCount: number;
   lastActivityAt: string;
+  /** Physical archive digitization progress */
+  archiveMigrationStatus?: ClientMigrationStatus;
 }
 
 export interface TimelineStep {
@@ -505,7 +508,7 @@ import type {
 } from '../bookkeeping/autopilot/autopilotTypes';
 
 export interface DemoStore {
-  version: 22;
+  version: 23;
   requestCounter: number;
   portalClientId?: string;
   shipperPortalOrgId?: string;
@@ -535,6 +538,8 @@ export interface DemoStore {
   clients: Client[];
   requests: ServiceRequest[];
   documents: VaultDocument[];
+  archiveMigrationBatches?: ArchiveMigrationBatch[];
+  archiveMigrationBatchFiles?: ArchiveMigrationBatchFile[];
   renewals: RenewalRecord[];
   notes: InternalNote[];
   messages: Message[];

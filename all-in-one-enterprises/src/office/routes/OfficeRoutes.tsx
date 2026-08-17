@@ -7,6 +7,13 @@ import { RequestsListPage } from '../pages/RequestsListPage';
 import { OfficeRequestDetailPage } from '../pages/OfficeRequestDetailPage';
 import { TasksPage, DeadlinesPage, DocumentsPage, MessagesPage } from '../pages/OperationsPages';
 import {
+  ArchiveMigrationBatchReviewPage,
+  ArchiveMigrationDashboardPage,
+  ArchiveMigrationDigitizePage,
+  OfficeDocumentVaultPage,
+  OfficeVaultDocumentDetailPage,
+} from '../pages/DocumentVaultPages';
+import {
   DivisionQueuePage,
   InvoicesPage,
   PaymentsPage,
@@ -232,6 +239,7 @@ export default function OfficeRoutes() {
         <Route path="settings/crm" element={<CrmSettingsPage />} />
         <Route path="clients" element={<ClientsListPage />} />
         <Route path="clients/:clientId/road-ready" element={<ClientRoadReadyReviewPage />} />
+        <Route path="clients/:clientId/documents" element={<OfficeDocumentVaultPage />} />
         <Route path="clients/:clientId" element={<ClientDetailPage />} />
         <Route path="road-ready" element={<OfficeRoadReadyQueuePage />} />
         <Route path="requests" element={<RequestsListPage />} />
@@ -239,6 +247,11 @@ export default function OfficeRoutes() {
         <Route path="tasks" element={<TasksPage />} />
         <Route path="deadlines" element={<DeadlinesPage />} />
         <Route path="documents" element={<DocumentsPage />} />
+        <Route path="documents/vault" element={<OfficeDocumentVaultPage />} />
+        <Route path="documents/vault/:documentId" element={<OfficeVaultDocumentDetailPage />} />
+        <Route path="archive-migration" element={<ArchiveMigrationDashboardPage />} />
+        <Route path="archive-migration/digitize" element={<ArchiveMigrationDigitizePage />} />
+        <Route path="archive-migration/batches/:batchId" element={<ArchiveMigrationBatchReviewPage />} />
         <Route path="renewals" element={<OfficeRenewalsPage />} />
         <Route path="messages" element={<MessagesPage />} />
         <Route path="permitting" element={<DivisionQueuePage division="permitting" title="Permitting & Compliance" />} />

@@ -54,7 +54,7 @@ export function createDemoSeed(): DemoStore {
     });
 
   return {
-    version: 22,
+    version: 23,
     dataSystem: {
       demoSchemaVersion: AIO_DEMO_SCHEMA_VERSION,
       seedVersion: `demo-v${AIO_DEMO_SCHEMA_VERSION}`,
@@ -213,6 +213,8 @@ export function createDemoSeed(): DemoStore {
     ],
     requests,
     documents: vault.documents,
+    archiveMigrationBatches: [],
+    archiveMigrationBatchFiles: [],
     renewals: vault.renewals,
     notes: [
       {

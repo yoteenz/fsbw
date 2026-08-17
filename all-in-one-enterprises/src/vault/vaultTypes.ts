@@ -9,7 +9,49 @@ export type VaultCategory =
   | 'dispatch'
   | 'factoring'
   | 'brokerage'
-  | 'billing';
+  | 'billing'
+  | 'poa_authorization'
+  | 'contracts'
+  | 'supporting'
+  | 'correspondence'
+  | 'legacy';
+
+export type DocumentSource =
+  | 'digital_upload'
+  | 'client_upload'
+  | 'employee_upload'
+  | 'legacy_scan'
+  | 'service_generated'
+  | 'system_generated'
+  | 'imported';
+
+export type DocumentRecordLifecycle =
+  | 'current'
+  | 'historical'
+  | 'superseded'
+  | 'expired'
+  | 'pending'
+  | 'needs_review'
+  | 'archived';
+
+export type PhysicalOriginalStatus =
+  | 'digital_only'
+  | 'physical_retained'
+  | 'physical_required'
+  | 'disposition_review'
+  | 'physical_destroyed';
+
+export type ClientMigrationStatus =
+  | 'not_started'
+  | 'in_progress'
+  | 'needs_review'
+  | 'digitized'
+  | 'quality_check'
+  | 'complete';
+
+export type MetadataExtractionStatus = 'none' | 'pending' | 'complete' | 'failed';
+
+export type DocumentReviewStatus = 'pending' | 'approved' | 'needs_attention';
 
 export type DocumentStatus =
   | 'requested'
@@ -76,6 +118,25 @@ export interface VaultDocument {
   createdAt: string;
   updatedAt: string;
   archivedAt?: string;
+  source?: DocumentSource;
+  recordLifecycle?: DocumentRecordLifecycle;
+  jurisdiction?: string;
+  issuingAgency?: string;
+  renewalDate?: string;
+  physicalOriginalStatus?: PhysicalOriginalStatus;
+  /** Internal staff only — never expose in client portal */
+  physicalArchiveLocation?: string;
+  fileHash?: string;
+  batchId?: string;
+  migrationBatchFileId?: string;
+  reviewStatus?: DocumentReviewStatus;
+  classificationConfidence?: number;
+  metadataExtractionStatus?: MetadataExtractionStatus;
+  /** OCR / AI hooks — suggested values for human review */
+  suggestedMetadata?: Record<string, unknown>;
+  internalNotes?: string;
+  relatedServiceId?: string;
+  version?: number;
   /** @deprecated use organizationId */
   clientId?: string;
   /** @deprecated use title */
@@ -99,6 +160,15 @@ export interface VaultUploadInput {
   issuedAt?: string;
   expiresAt?: string;
   notes?: string;
+  source?: DocumentSource;
+  visibility?: 'internal' | 'customer';
+  physicalOriginalStatus?: PhysicalOriginalStatus;
+  physicalArchiveLocation?: string;
+  jurisdiction?: string;
+  issuingAgency?: string;
+  effectiveAt?: string;
+  renewalDate?: string;
+  relatedServiceId?: string;
 }
 
 export interface VaultUploadResult {

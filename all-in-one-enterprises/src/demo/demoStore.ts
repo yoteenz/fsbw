@@ -18,17 +18,23 @@ const STORE_EVENT = 'aio-demo-store-change';
 export function loadDemoStore(): DemoStore {
   if (typeof window === 'undefined') return createDemoSeed();
 
-  const existing = readStorage<DemoStore | (Omit<DemoStore, 'version'> & { version: 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 20 | 21 }) | null>(DEMO_STORE_KEY, null);
-  if (existing?.version === 22) return existing as DemoStore;
+  const existing = readStorage<DemoStore | (Omit<DemoStore, 'version'> & { version: 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 20 | 21 | 22 }) | null>(DEMO_STORE_KEY, null);
+  if (existing?.version === 23) return existing as DemoStore;
+
+  if (existing?.version === 22) {
+    const upgraded = upgradeStoreV22ToV23(existing as DemoStoreV22);
+    saveDemoStore(upgraded);
+    return upgraded;
+  }
 
   if (existing?.version === 21) {
-    const upgraded = upgradeStoreV21ToV22(existing as DemoStoreV21);
+    const upgraded = upgradeStoreV22ToV23(upgradeStoreV21ToV22(existing as DemoStoreV21));
     saveDemoStore(upgraded);
     return upgraded;
   }
 
   if (existing?.version === 20) {
-    const upgraded = upgradeStoreV21ToV22(upgradeStoreV20ToV21(existing as DemoStoreV20));
+    const upgraded = upgradeStoreV22ToV23(upgradeStoreV21ToV22(upgradeStoreV20ToV21(existing as DemoStoreV20)));
     saveDemoStore(upgraded);
     return upgraded;
   }
@@ -254,7 +260,21 @@ function upgradeStoreV17ToV18(store: DemoStoreV17): DemoStoreV18 {
   };
 }
 
-function upgradeStoreV21ToV22(store: DemoStoreV21): DemoStore {
+function upgradeStoreV22ToV23(store: DemoStoreV22): DemoStore {
+  const partial = store as unknown as Partial<DemoStore>;
+  return {
+    ...store,
+    version: 23 as const,
+    archiveMigrationBatches: partial.archiveMigrationBatches ?? [],
+    archiveMigrationBatchFiles: partial.archiveMigrationBatchFiles ?? [],
+    clients: store.clients.map((c) => ({
+      ...c,
+      archiveMigrationStatus: c.archiveMigrationStatus ?? 'not_started',
+    })),
+  };
+}
+
+function upgradeStoreV21ToV22(store: DemoStoreV21): DemoStoreV22 {
   const autopilot = createAutopilotSeedData();
   return {
     ...store,
@@ -283,7 +303,7 @@ function upgradeStoreV20ToV21(store: DemoStoreV20): DemoStoreV21 {
 }
 
 function upgradeStoreV18ToV20(store: DemoStoreV18): DemoStore {
-  return upgradeStoreV21ToV22(upgradeStoreV20ToV21({
+  return upgradeStoreV22ToV23(upgradeStoreV21ToV22(upgradeStoreV20ToV21({
     ...store,
     version: 20 as const,
     dataSystem: {
@@ -291,7 +311,7 @@ function upgradeStoreV18ToV20(store: DemoStoreV18): DemoStore {
       seedVersion: `demo-v${AIO_DEMO_SCHEMA_VERSION}`,
       dataModeLabel: getDataModeLabel(),
     },
-  } as DemoStoreV20));
+  } as DemoStoreV20)));
 }
 
 function upgradeStoreV16ToV17(store: DemoStoreV16): DemoStore {
@@ -334,6 +354,12 @@ function upgradeStoreV15ToV16(store: DemoStoreV15): DemoStoreV16 {
   };
 }
 
+type DemoStoreV22 = Omit<
+  DemoStore,
+  | 'version'
+  | 'archiveMigrationBatches'
+  | 'archiveMigrationBatchFiles'
+> & { version: 22 };
 type DemoStoreV21 = Omit<
   DemoStore,
   | 'version'
