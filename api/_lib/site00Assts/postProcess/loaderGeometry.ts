@@ -11,6 +11,7 @@ import {
   LOADER_GEOMETRY_PRODUCTION_SLOT,
   type LoaderGeometrySourceMetadata,
 } from './types.js';
+import { SITE00_LOADER_GEOMETRY_CANONICAL_PROMPT, SITE00_LOADER_GEOMETRY_GENERATION } from '../../../../src/site00/components/loader/site00LoaderGeometryPrompt.js';
 import { publicUrlForStoragePath, recordReviewEvent } from '../service.js';
 import { uploadSite00AssetBuffer, SITE00_ASSETS_BUCKET } from '../storage.js';
 
@@ -151,10 +152,10 @@ export async function ensureLoaderGeometryAssetsRegistered(): Promise<{
         file_path: storagePath,
         preview_path: storagePath,
         thumbnail_path: storagePath,
-        generation_provider: 'openart',
-        generation_model: LOADER_GEOMETRY_MASTER_REMOTE_FILE,
-        prompt_version: 'master-v1',
-        prompt_snapshot: 'Approved OpenArt loader geometry — luminous red on black',
+        generation_provider: SITE00_LOADER_GEOMETRY_GENERATION.provider,
+        generation_model: `${SITE00_LOADER_GEOMETRY_GENERATION.model} (${SITE00_LOADER_GEOMETRY_GENERATION.openArtHistoryId})`,
+        prompt_version: 'kling-v2-start-end-frame-10s',
+        prompt_snapshot: SITE00_LOADER_GEOMETRY_CANONICAL_PROMPT,
         status: 'APPROVED',
         media_metadata: sourceMetadata,
         derivative_type: null,

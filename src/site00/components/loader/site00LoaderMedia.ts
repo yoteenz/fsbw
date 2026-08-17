@@ -12,7 +12,7 @@ export const SITE00_LOADER_BACKGROUND_REMOTE = 'IMG_0404.png';
 export const SITE00_LOADER_REF_MAP_FILE = 'assts-loader-ref-map-v1.png';
 /** Original OpenArt source — red luminous geometry on black (screen compositing). */
 export const SITE00_LOADER_GEOMETRY_SOURCE_FILE = 'assts-loader-geometry-v1-source.mp4';
-export const SITE00_LOADER_GEOMETRY_SOURCE_REMOTE = 'openart-output_1786943611255_fc655184.mp4';
+export const SITE00_LOADER_GEOMETRY_SOURCE_REMOTE = 'openart-output_kling-v2_aUsaRicK38pEp4ieayl8.mp4';
 export const SITE00_LOADER_GEOMETRY_WEBM_FILE = 'assts-loader-geometry-v1-alpha.webm';
 export const SITE00_LOADER_GEOMETRY_APNG_FILE = 'assts-loader-geometry-v1-alpha.apng';
 

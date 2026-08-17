@@ -52778,3 +52778,15 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Conventions:** Never imply guaranteed availability or SOS approval. Unsupported states allow Continue with manual verification. Production live registry requires provider API key — no fake production results.
 >>>>>>> 31038c549 (AIO Smart Intake: state-aware business name check on Step 3 [sync-only])
 
+---
+
+## 2026-08-17 — SITE 00 loader geometry regen (Kling 3 Omni start/end frame, 10s)
+
+- **Context:** Founder approved locked brief + reference frame `75C5B087-7561-40A4-86A9-939A5EE01AD2.png` for seamless construction loop. Requested GPT2 — **GPT Image 2 is image-only on OpenArt**; switched to **Kling 3 Omni** `image2video` per founder ("use kling instead").
+
+- **Generation:** OpenArt `kling-3-omni:image2video` · 10s · pro · start+end frame = same reference · sound off · historyId `aUsaRicK38pEp4ieayl8` · 350 credits · output 1764×1176 H.264 ~10.04s.
+
+- **Integration:** Replaced `public/site00/loader/v1/assts-loader-geometry-v1-source.mp4` (legacy OpenArt saved as `*-openart-legacy.mp4`). Uploaded to Supabase `live-preview/site00/loader/v1/…` + alias `site00/openart-output_kling-v2_aUsaRicK38pEp4ieayl8.mp4`. Canonical prompt in `src/site00/components/loader/site00LoaderGeometryPrompt.ts`. ASSTS `site00_asset_versions` **v2** APPROVED with full `prompt_snapshot`; master slot locked to v2.
+
+- **Follow-up:** Alpha WebM/APNG derivative still from old master — re-run **`/assts/loader-pipeline`** (Bria v3) when ready to lock transparent production slot.
+
