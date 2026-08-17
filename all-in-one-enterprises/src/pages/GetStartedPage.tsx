@@ -17,8 +17,13 @@ import { SmartIntakeNavigation } from '../components/smart-intake/SmartIntakeNav
 import { SmartIntakeBusinessStep } from '../components/smart-intake/SmartIntakeBusinessStep';
 import { SmartIntakeReviewSummary } from '../components/smart-intake/SmartIntakeReviewSummary';
 import type { JourneyStepItem } from '../components/smart-intake/SmartIntakeJourneyRail';
+import type { SmartIntakeLayoutMode } from '../intake/smartIntakeLayoutMode';
 
-export function GetStartedPage() {
+type GetStartedPageProps = {
+  layoutMode?: SmartIntakeLayoutMode;
+};
+
+export function GetStartedPage({ layoutMode = 'responsive' }: GetStartedPageProps) {
   const { t } = useTranslation('intake');
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -135,6 +140,7 @@ export function GetStartedPage() {
 
   return (
     <SmartIntakeShell
+      layoutMode={layoutMode}
       journeySteps={journeySteps}
       journeyOpen={journeyOpen}
       onOpenJourney={() => setJourneyOpen(true)}

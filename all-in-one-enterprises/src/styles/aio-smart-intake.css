@@ -891,3 +891,171 @@
     box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.04);
   }
 }
+
+/* ——— Preview layout routes (desktop / mobile) ——— */
+.si-preview-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1rem;
+  padding: 0.375rem 1rem;
+  background: #1a1b1c;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.75rem;
+}
+
+.si-preview-bar__label {
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.si-preview-bar__modes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+}
+
+.si-preview-bar__mode {
+  padding: 0.25rem 0.625rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: rgba(255, 255, 255, 0.82);
+  text-decoration: none;
+  font-weight: 600;
+  transition: background 0.18s ease, border-color 0.18s ease;
+}
+
+.si-preview-bar__mode:hover {
+  border-color: rgba(201, 162, 39, 0.55);
+  color: #fff;
+}
+
+.si-preview-bar__mode--active {
+  background: rgba(201, 162, 39, 0.18);
+  border-color: var(--aio-gold, #c9a227);
+  color: #fff;
+}
+
+/* Force desktop layout — ignores narrow viewports (preview / design review) */
+.si-app--layout-desktop {
+  overflow-x: auto;
+}
+
+.si-app--layout-desktop .si-shell__frame {
+  min-width: 1024px;
+}
+
+.si-shell--layout-desktop .si-journey {
+  display: block !important;
+}
+
+.si-shell--layout-desktop .si-mobile-header {
+  display: none !important;
+}
+
+.si-shell--layout-desktop .si-journey-backdrop,
+.si-shell--layout-desktop .si-journey-drawer {
+  display: none !important;
+}
+
+.si-shell--layout-desktop .si-workspace-header__help--desktop {
+  display: inline !important;
+}
+
+.si-shell--layout-desktop .si-nav__actions {
+  grid-template-columns: auto auto 1fr;
+}
+
+.si-shell--layout-desktop .si-btn--save,
+.si-shell--layout-desktop .si-btn--primary {
+  grid-column: auto;
+}
+
+.si-shell--layout-desktop .si-btn--primary {
+  justify-self: end;
+  min-width: 10rem;
+}
+
+.si-shell--layout-desktop .si-choice-grid--goal {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.si-shell--layout-desktop .si-choice-grid--structure {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.si-shell--layout-desktop .si-choice-grid--structure .si-choice-card--span {
+  grid-column: span 1;
+}
+
+.si-shell--layout-desktop .si-choice-grid--compact {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.si-shell--layout-desktop .si-name-check__row {
+  grid-template-columns: 1fr auto;
+}
+
+/* Force mobile layout — ignores wide viewports (preview / design review) */
+.si-app--layout-mobile .si-shell__frame {
+  grid-template-columns: 1fr;
+  max-width: 430px;
+  margin: 0 auto;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06);
+}
+
+.si-shell--layout-mobile > .si-shell__frame > .si-journey:first-child {
+  display: none !important;
+}
+
+.si-shell--layout-mobile .si-mobile-header {
+  display: flex !important;
+}
+
+.si-shell--layout-mobile .si-journey-backdrop {
+  display: block;
+}
+
+.si-shell--layout-mobile .si-journey-drawer {
+  display: block;
+}
+
+.si-shell--layout-mobile .si-workspace-header__help--desktop {
+  display: none !important;
+}
+
+.si-shell--layout-mobile .si-nav__actions {
+  grid-template-columns: 1fr 1fr;
+}
+
+.si-shell--layout-mobile .si-btn--save {
+  grid-column: 1 / -1;
+}
+
+.si-shell--layout-mobile .si-btn--primary {
+  grid-column: 1 / -1;
+  justify-self: stretch;
+  min-width: 0;
+}
+
+.si-shell--layout-mobile .si-choice-grid--goal,
+.si-shell--layout-mobile .si-choice-grid--structure,
+.si-shell--layout-mobile .si-choice-grid--compact,
+.si-shell--layout-mobile .si-choice-grid--multi {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.si-shell--layout-mobile .si-choice-grid--structure .si-choice-card--span {
+  grid-column: 1 / -1;
+}
+
+.si-shell--layout-mobile .si-name-check__row {
+  grid-template-columns: 1fr;
+}
+
+.si-shell--layout-mobile .si-name-check__btn {
+  width: 100%;
+}

@@ -251,6 +251,8 @@ export default function AllInOneRoutes() {
 
         <Route element={<SmartIntakeLayout />}>
           <Route path="get-started" element={<GetStartedPage />} />
+          <Route path="get-started/desktop" element={<GetStartedPage layoutMode="desktop" />} />
+          <Route path="get-started/mobile" element={<GetStartedPage layoutMode="mobile" />} />
         </Route>
 
         <Route element={<CustomerRouteGuard />}>

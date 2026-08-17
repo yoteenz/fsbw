@@ -1,7 +1,10 @@
 import type { ReactNode } from 'react';
+import type { SmartIntakeLayoutMode } from '../../intake/smartIntakeLayoutMode';
+import { smartIntakeShellClass } from '../../intake/smartIntakeLayoutMode';
 import { SmartIntakeJourneyRail, SmartIntakeMobileHeader, type JourneyStepItem } from './SmartIntakeJourneyRail';
 
 type Props = {
+  layoutMode?: SmartIntakeLayoutMode;
   journeySteps: JourneyStepItem[];
   journeyOpen: boolean;
   onCloseJourney: () => void;
@@ -13,6 +16,7 @@ type Props = {
 };
 
 export function SmartIntakeShell({
+  layoutMode = 'responsive',
   journeySteps,
   journeyOpen,
   onCloseJourney,
@@ -23,7 +27,7 @@ export function SmartIntakeShell({
   mainRef,
 }: Props) {
   return (
-    <div className="si-shell">
+    <div className={smartIntakeShellClass(layoutMode)}>
       <div className="si-shell__frame">
         <SmartIntakeJourneyRail steps={journeySteps} />
 

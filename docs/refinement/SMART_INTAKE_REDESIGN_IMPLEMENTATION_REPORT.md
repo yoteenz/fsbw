@@ -68,6 +68,16 @@ Existing workflow truth (dynamic sections from `getVisibleSections`, conditional
 
 CSS uses fluid typography (`clamp`), grid breakpoints at **1024px** (desktop rail), and **max-width: 1280px** shell for ultrawide. Test matrix: 320–3440px.
 
+### Design preview routes (demo/debug)
+
+| Route | Behavior |
+|-------|----------|
+| `/get-started` | Responsive — follows viewport (customer default) |
+| `/get-started/desktop` | Forces desktop split layout even on narrow viewports (horizontal scroll if needed) |
+| `/get-started/mobile` | Forces mobile layout even on wide monitors (430px centered column) |
+
+Preview bar **Layout preview: Responsive | Desktop | Mobile** appears only when `shouldShowDebugBanner()` is true (dev / demo / `VITE_AIO_DEBUG_UI`).
+
 ---
 
 ## Not in scope / follow-ups
