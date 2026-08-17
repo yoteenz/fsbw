@@ -1,5 +1,7 @@
 /** SITE 00 routes that use the immersive geometry loader (boot shell + cinematic gate). */
 
+import { SITE00_ROUTES } from '../../config/routes';
+
 const SITE00_IMMERSIVE_PREFIXES = [
   '/origin',
   '/enter',
@@ -12,7 +14,15 @@ const SITE00_IMMERSIVE_PREFIXES = [
   '/live',
 ] as const;
 
+/** Designated desktop artboard routes — skip mobile loader; force desktop composition. */
+export function isSite00DesktopArtboardPath(pathname: string): boolean {
+  if (!pathname) return false;
+  const desktop = SITE00_ROUTES.originDesktop;
+  return pathname === desktop || pathname.startsWith(`${desktop}/`);
+}
+
 export function isSite00ImmersivePath(pathname: string): boolean {
+  if (isSite00DesktopArtboardPath(pathname)) return false;
   if (!pathname) return false;
   if (pathname === '/' && import.meta.env.VITE_SITE00_ROOT === '1') return true;
   return SITE00_IMMERSIVE_PREFIXES.some(

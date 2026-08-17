@@ -6,6 +6,7 @@ import { IdntyExpandedPanel } from '../components/homepage/IdntyExpandedPanel';
 import { BldrExpandedPanel } from '../components/homepage/BldrExpandedPanel';
 import { SITE00_ORIGIN_COPY } from '../config/status';
 import { SITE00_ORIGIN_DESKTOP_COMPOSITION } from '../config/origin-home-composition';
+import { Site00OriginLayoutSwitch } from '../components/shell/Site00OriginLayoutSwitch';
 import { useSite00 } from '../state/Site00Context';
 
 export default function OriginPage() {
@@ -64,6 +65,7 @@ export default function OriginPage() {
           ) : null}
         </div>
       </Site00AppShell>
+      <Site00OriginLayoutSwitch />
     </EnvironmentShell>
   );
 }

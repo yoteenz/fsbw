@@ -1,0 +1,119 @@
+/**
+ * Force SITE 00 desktop layout inside `.site00-desktop-artboard` regardless of device viewport.
+ * Mirrors `@media (min-width: 768px)` rules from site00.css for phone QA at `/origin/desktop`.
+ */
+
+.site00-desktop-artboard .site00-env-layer--has-desktop-asset {
+  background-image: var(--site00-env-desktop-image);
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+}
+
+.site00-desktop-artboard .site00-safe-ui {
+  padding: var(--site-spacing-md) var(--site-spacing-lg);
+}
+
+.site00-desktop-artboard .site00-status-strip {
+  grid-template-columns: repeat(5, 1fr) auto;
+  grid-template-rows: auto;
+}
+
+.site00-desktop-artboard .site00-status-strip__guidance {
+  grid-column: auto;
+  min-width: 220px;
+}
+
+.site00-desktop-artboard .site00-home-stage {
+  padding: 0 0 140px;
+  min-height: calc(100dvh - 120px);
+}
+
+.site00-desktop-artboard .site00-home-grid {
+  display: block;
+  position: relative;
+  z-index: 2;
+  min-height: 0;
+}
+
+.site00-desktop-artboard .site00-home-hero {
+  position: absolute;
+  left: calc(var(--site00-origin-hero-left) + var(--site00-origin-hero-offset-x));
+  top: var(--site00-origin-hero-top);
+  width: var(--site00-origin-hero-max-w);
+  max-width: var(--site00-origin-hero-max-w);
+  padding-top: 0;
+  transform: none;
+}
+
+.site00-desktop-artboard .site00-home-expanded-column {
+  position: absolute;
+  left: var(--site00-origin-expanded-left);
+  top: var(--site00-origin-expanded-top);
+  width: var(--site00-origin-expanded-max-w);
+  max-width: var(--site00-origin-expanded-max-w);
+  padding-top: 0;
+}
+
+.site00-desktop-artboard .site00-home-grid__spacer {
+  display: none;
+}
+
+.site00-desktop-artboard .site00-home-cards {
+  position: absolute;
+  left: 50%;
+  top: calc(var(--site00-origin-cards-top) + var(--site00-origin-cards-offset-y));
+  transform: translateX(-50%);
+  margin: 0;
+  width: min(var(--site00-origin-cards-max-w), calc(100% - 64px));
+  z-index: 3;
+}
+
+.site00-desktop-artboard .site00-origin-cards__row {
+  transform: scale(var(--site00-origin-card-scale));
+  transform-origin: center top;
+}
+
+.site00-desktop-artboard-shell {
+  position: fixed;
+  inset: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
+  background: #f7f7f5;
+  touch-action: pan-y pinch-zoom;
+}
+
+.site00-origin-layout-switch {
+  position: fixed;
+  z-index: calc(var(--site-z-nav) + 2);
+  bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(20, 20, 20, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+  backdrop-filter: blur(8px);
+}
+
+.site00-origin-layout-switch a {
+  font-family: var(--site00-font-mono, monospace);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: rgba(255, 255, 255, 0.72);
+  padding: 6px 12px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.site00-origin-layout-switch a[aria-current='page'] {
+  background: var(--site-red, #eb1c24);
+  color: #fff;
+}

@@ -6,6 +6,7 @@
 export const SITE00_ROUTES = {
   origin: '/',
   originAlias: '/origin',
+  originDesktop: '/origin/desktop',
   enter: '/enter',
   idnty: '/idnty',
   idntyState: '/idnty/state',

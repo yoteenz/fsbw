@@ -28,6 +28,7 @@
   }
 
   function shouldBootSite00ImmersiveLoader() {
+    if (path === '/origin/desktop' || path.indexOf('/origin/desktop/') === 0) return false;
     try {
       var nav = performance.getEntriesByType('navigation')[0];
       if (nav && nav.type === 'reload') return true;

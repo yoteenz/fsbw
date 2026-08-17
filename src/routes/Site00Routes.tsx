@@ -7,10 +7,12 @@ import { AsstsRouteSuspense } from '../site00/assts/components/AsstsRouteSuspens
 import { AsstsColdStartGate } from '../site00/assts/components/AsstsColdStartGate';
 import { Site00RouteLoadingFallback } from '../site00/components/loader/Site00RouteLoadingFallback';
 import { Site00WorldColdStartGate } from '../site00/components/loader/Site00WorldColdStartGate';
+import { Site00DesktopArtboardShell } from '../site00/components/shell/Site00DesktopArtboardShell';
 import { Site00TypographyBootstrap } from '../site00/components/Site00TypographyBootstrap';
 /* Eager-load SITE 00 + ASSTS styles (lazy route CSS was not applying on mobile preview). */
 import '../site00/styles/site00.css';
 import '../site00/styles/site00-loader.css';
+import '../site00/styles/site00-desktop-artboard.css';
 import '../site00/assts/styles/assts.css';
 import '../site00/assts/styles/assts-depth.css';
 import '../site00/assts/styles/assts-composition.css';
@@ -88,6 +90,18 @@ export function Site00Routes() {
             <Site00Suspense>
               <Site00OriginPage />
             </Site00Suspense>
+          </Site00Layout>
+        }
+      />
+      <Route
+        path={SITE00_ROUTES.originDesktop}
+        element={
+          <Site00Layout>
+            <Site00DesktopArtboardShell>
+              <Site00Suspense>
+                <Site00OriginPage />
+              </Site00Suspense>
+            </Site00DesktopArtboardShell>
           </Site00Layout>
         }
       />

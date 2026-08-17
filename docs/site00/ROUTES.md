@@ -4,7 +4,8 @@
 
 | Path | Screen | Environment |
 |------|--------|-------------|
-| `/origin` | Origin / Homepage | ORIGIN_ENVIRONMENT |
+| `/origin` | Origin / Homepage (mobile-first) | ORIGIN_ENVIRONMENT |
+| `/origin/desktop` | Origin desktop artboard (1440px, scaled) | ORIGIN_ENVIRONMENT |
 | `/enter` | ENTER 00 / Waiting Room | ENTER_00_WAITING_ROOM |
 | `/idnty` | IDNTY entry (redirect) | — |
 | `/idnty/state` | Brand State selection | WORKFLOW_ENVIRONMENT |

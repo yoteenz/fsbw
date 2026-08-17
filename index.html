@@ -20,6 +20,7 @@
             ? window.site00IsSite00ImmersivePath(path)
             : path.indexOf('/assts') === 0 || path.indexOf('/origin') === 0;
         if (!isSite00) return;
+        if (path === '/origin/desktop' || path.indexOf('/origin/desktop/') === 0) return;
         var shouldBoot =
           typeof window.site00ShouldBootSite00ImmersiveLoader === 'function'
             ? window.site00ShouldBootSite00ImmersiveLoader()
