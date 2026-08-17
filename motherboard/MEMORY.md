@@ -52376,8 +52376,6 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 ---
 
-<<<<<<< Updated upstream
-=======
 ## 2026-08-17 — AIO Digital Records Vault + archive migration foundation
 
 - **Context:** Major AIO implementation sprint — structured Document Vault (not generic upload) + Legacy Physical Archive Migration foundation per 50-phase spec. Phase 0 audit found Sprint 11 demo vault already present; gap = schema alignment, repository layer, Office/Portal UI, migration workflow.
@@ -52411,8 +52409,9 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Git:** Rebased vault foundation onto remote `master`; synced with `--sync-only`.
 
 - **QA:** Manual browser QA on `/office/documents/vault`, document detail, `/office/archive-migration`, `/office/archive-migration/digitize` — all functional.
-=======
->>>>>>> Stashed changes
+
+---
+
 ## 2026-08-17 — ASSTS loader master reference composition lock (711×1536 v2)
 
 - **Context:** Composer sprint — lock SITE 00 Asset Vault immersive loader to attached approved master reference (711×1536). Not a redesign. Lock background, overlay coordinates, typography proportions (Martian Mono), progress bar geometry, wireframe/platform relationship. Prior drift partly from background `object-fit: cover` on mismatched asset vs overlay coordinate plane.
