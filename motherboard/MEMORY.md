@@ -52005,6 +52005,18 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 ---
 
+## 2026-08-17 — Composition contract + loader hero compositing correction sprint
+
+- **Context:** Precision correction pass — Asset Vault UI must respect composition zones (not floating webpage panels); loader red geometry must restore original OpenArt luminous character via screen compositing; copy/geometry anchored to pedestal relationships. No environment regeneration, no ASSTS pipeline changes.
+
+- **Part A — Zone contract:** `LibraryPage` refactored to `CompositionZoneSlot` for header/metrics/status/batches/library semantic zones. Recent Batches → single horizontal vault index rail in `left-peripheral` (`AsstsVaultIndexTile`). Browse Library → compact 2-col archive tiles with shallow empty bays + archive veil transition. Batches directory → narrow `assts-batch-directory` column. Batch detail → compact summary panel + smaller view toggle. `assts-composition.css` rewritten for zone-contract layout.
+
+- **Part B/C — Loader hero stage:** Original OpenArt MP4 (`openart-output_1786943611255_fc655184.mp4`) copied to `/public/site00/loader/v1/assts-loader-geometry-v1-source.mp4`. `Site00LoaderAnimation` dual mode: `screen` (default, mix-blend-mode:screen) vs `alpha` (WebM/APNG fallback via `?loaderGeometry=alpha`). `site00LoaderHeroStage.ts` pedestal-relative anchors; `?loaderDebug=1` shows pedestal/geometry/copy/safe-bottom guides. Boot script + cold start preload source MP4.
+
+- **QA:** Build PASS; loader screen compositing verified (luminous glow, no black rectangle); library zone layout blocked from full data test without admin session in cloud browser.
+
+---
+
 ## 2026-08-17 — AIO mobile experience sprint (reference-driven presentation layer)
 
 - **Context:** Founder approved 13-screen mobile design reference. Transform compressed desktop mobile into intentional mobile product connected to real routes, auth, journeys, portal — without rebuilding app or duplicating business logic.
