@@ -52348,3 +52348,15 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **QA:** `npm run build` PASS.
 
+---
+
+## 2026-08-17 — AIO login headline period back to gold
+
+- **Context:** Revert prior white-period split on login hero headline `back.`.
+
+- **Request:** Period beside “back” should be **gold** (same as “back”), not white.
+
+- **Changes:** `LoginPage.tsx` — `headlineGold: 'back.'` single gold span again. Removed unused `.aio-auth-premium__headline-punct` from `aio-auth.css`.
+
+- **QA:** `npm run build` PASS.
+
