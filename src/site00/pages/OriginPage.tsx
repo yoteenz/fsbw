@@ -9,13 +9,9 @@ import { useSite00 } from '../state/Site00Context';
 
 export default function OriginPage() {
   const { state, setHomeMode } = useSite00();
-  const environmentId =
-    state.homeMode === 'idnty-expanded' || state.homeMode === 'bldr-expanded'
-      ? 'WORKFLOW_ENVIRONMENT'
-      : 'ORIGIN_ENVIRONMENT';
 
   return (
-    <EnvironmentShell environmentId={environmentId}>
+    <EnvironmentShell environmentId="ORIGIN_ENVIRONMENT">
       <Site00AppShell locationLabel={SITE00_ORIGIN_COPY.locationLabel} showStatusStrip statusStrip={<StatusStrip />}>
         <div className="site00-home-stage">
           <div className="site00-home-grid">
@@ -28,24 +24,28 @@ export default function OriginPage() {
               <p className="site00-body site00-body--technical site00-home-hero__line">{SITE00_ORIGIN_COPY.description3}</p>
               <p className="site00-coordinate site00-home-hero__coordinate">{SITE00_ORIGIN_COPY.originPoint}</p>
             </aside>
-            {/* Preserves original two-column desktop rhythm; panels anchor separately on the plaza */}
-            <div className="site00-home-grid__spacer" aria-hidden="true" />
+
+            {state.homeMode === 'origin' ? (
+              <div className="site00-home-grid__spacer" aria-hidden="true" />
+            ) : (
+              <div className="site00-home-expanded-column" aria-label="Expanded panel">
+                {state.homeMode === 'idnty-expanded' ? (
+                  <IdntyExpandedPanel onCollapse={() => setHomeMode('origin')} />
+                ) : (
+                  <BldrExpandedPanel onCollapse={() => setHomeMode('origin')} />
+                )}
+              </div>
+            )}
           </div>
 
-          <section className="site00-home-cards" aria-label="Entry selection">
-            {state.homeMode === 'origin' && (
+          {state.homeMode === 'origin' ? (
+            <section className="site00-home-cards" aria-label="Entry selection">
               <OriginCards
                 onExpandIdnty={() => setHomeMode('idnty-expanded')}
                 onExpandBldr={() => setHomeMode('bldr-expanded')}
               />
-            )}
-            {state.homeMode === 'idnty-expanded' && (
-              <IdntyExpandedPanel onCollapse={() => setHomeMode('origin')} />
-            )}
-            {state.homeMode === 'bldr-expanded' && (
-              <BldrExpandedPanel onCollapse={() => setHomeMode('origin')} />
-            )}
-          </section>
+            </section>
+          ) : null}
         </div>
       </Site00AppShell>
     </EnvironmentShell>

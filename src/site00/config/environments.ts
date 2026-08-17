@@ -9,7 +9,7 @@ export const SITE00_ORIGIN_DESKTOP_BACKGROUND_PATH = '942898D3-6953-47CD-8987-06
 /** Approved Enter 00 desktop menu environment (Supabase live-preview/site00/). */
 export const SITE00_ENTER_DESKTOP_BACKGROUND_PATH = '89319E70-D080-4798-9BCA-E53B137F2387.png';
 
-/** Approved IDNTY/BLDR expanded + workflow hall desktop environment (Supabase live-preview/site00/). */
+/** Approved IDNTY/BLDR workflow hall desktop environment — state routes only (Supabase live-preview/site00/). */
 export const SITE00_WORKFLOW_DESKTOP_BACKGROUND_PATH = '3A2AC3AD-7192-45E8-B4B3-B811CB0DD792.png';
 
 export type EnvironmentId = 'ORIGIN_ENVIRONMENT' | 'WORKFLOW_ENVIRONMENT' | 'ENTER_00_WAITING_ROOM';
@@ -59,7 +59,7 @@ export const SITE00_ENVIRONMENTS: Record<EnvironmentId, EnvironmentConfig> = {
     lightingClass: 'site00-env--workflow-lighting',
     fallbackClass: 'site00-env-fallback--workflow',
     routes: ['/idnty/state', '/bldr/state'],
-    notes: 'Approved workflow hall — Origin IDNTY/BLDR expanded + state routes; 3A2AC3AD @ live-preview/site00',
+    notes: 'Approved workflow hall — /idnty/state and /bldr/state only; 3A2AC3AD @ live-preview/site00',
   },
   ENTER_00_WAITING_ROOM: {
     id: 'ENTER_00_WAITING_ROOM',

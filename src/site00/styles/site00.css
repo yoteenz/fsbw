@@ -405,6 +405,20 @@
   pointer-events: none;
 }
 
+.site00-home-expanded-column {
+  position: relative;
+  z-index: 5;
+  flex: 2 1 400px;
+  min-width: 0;
+  padding-top: 24px;
+}
+
+.site00-home-expanded-column .site00-panel-enter {
+  margin: 0;
+  padding: 0 0 100px;
+  max-width: 720px;
+}
+
 .site00-home-hero__eyebrow {
   margin-bottom: 8px;
 }
@@ -480,12 +494,6 @@
     transform: translateX(-50%);
     margin: 0;
     width: min(var(--site00-origin-cards-max-w), calc(100% - 64px));
-  }
-
-  .site00-home-cards .site00-panel-enter {
-    margin: 0;
-    padding: 0 0 24px;
-    max-width: 720px;
   }
 }
 

@@ -52544,3 +52544,13 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **QA:** `npm run build` PASS. Playwright @ 1440px — `/origin` collapsed shows Origin asset; IDNTY expand + `/idnty/state` show workflow asset. Screenshot: `site00_idnty_expanded_desktop_background.png`.
 
+---
+
+## 2026-08-17 — Origin hero text placement restored (panels stay on plaza)
+
+- **Context:** Founder reported panel-reposition sprint incorrectly moved **all** Origin desktop overlay text to the left edge; only IDNTY/BLDR panels should have moved to the foreground plaza.
+
+- **Fix:** Restored original two-column flex rhythm for hero copy — `site00-home-grid` + `site00-home-hero` (`flex: 1 1 280px`, `padding-top: 24px`) + invisible `site00-home-grid__spacer` (`flex: 2 1 400px`). Panels remain absolutely anchored via `.site00-home-cards` at 58% / centered. Lowered desktop panel anchor breakpoint **1024px → 768px** (matches desktop environment image). Removed stage `flex-direction: column` stack that pulled panels under hero on tablet widths.
+
+- **QA:** `npm run build` PASS. Playwright — @ 900px hero x=32 (unchanged), cards centered x=450; @ 1440px cards centered x=720. Screenshot: `site00_origin_hero_restored_1440.png`.
+

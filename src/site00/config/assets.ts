@@ -35,7 +35,7 @@ export const SITE00_ASSET_REGISTRY: Site00Asset[] = [
     environment: 'WORKFLOW_ENVIRONMENT',
     route: '/idnty/state',
     status: 'production',
-    notes: 'Desktop background — live-preview/site00/3A2AC3AD-7192-45E8-B4B3-B811CB0DD792.png (Origin expanded + state routes)',
+    notes: 'Desktop background — live-preview/site00/3A2AC3AD-7192-45E8-B4B3-B811CB0DD792.png (/idnty/state, /bldr/state)',
   },
   {
     id: 'env-enter-00',
