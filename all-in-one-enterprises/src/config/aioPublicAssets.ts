@@ -28,5 +28,7 @@ export function getAioPublicStorageUrl(objectPath: string): string {
 }
 
 export function getAioLoginHeroImageUrl(): string {
-  return getAioPublicStorageUrl(aioAppConfig.assets.loginHeroStoragePath);
+  const remote = getAioPublicStorageUrl(aioAppConfig.assets.loginHeroStoragePath);
+  if (remote) return remote;
+  return aioAppConfig.assets.loginHeroImage;
 }

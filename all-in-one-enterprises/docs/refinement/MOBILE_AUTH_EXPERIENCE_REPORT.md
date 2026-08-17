@@ -69,7 +69,7 @@ Replaced the generic white-card auth layout with a premium dark/gold **Auth Shel
 
 ## Login hero asset (2026-08-17)
 
-- Canonical login hero: `appConfig.assets.loginHeroImage` (Supabase `live-preview/AIO/00E0E628-...png`)
+- Canonical login hero: `appConfig.assets.loginHeroImage` (bundled `/brand/aio-login-hero.png`) with optional Supabase CDN when `VITE_AIO_SUPABASE_URL` is set
 - Login-only: CSS var `--aio-auth-login-hero-url`; responsive `background-position` 58–68% by breakpoint
 - Auth pages (non-login): dark gradient only — old homepage truck removed from auth bg
 - Login header: back-only (no logo); lighter directional overlay preserves sunset/truck

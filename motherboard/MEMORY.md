@@ -52095,6 +52095,16 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 ---
 
+## 2026-08-17 — AIO sitewide uppercase typography
+
+- **Context:** Founder requested all AIO website text uppercase except password input fields (preserve case-sensitive entry).
+
+- **Implementation:** `.aio-standalone-root { text-transform: uppercase; }` in `aio.css`; exclusions for `input[type="password"]`, `.aio-auth-premium__input--password`, `.aio-password-field__wrap input`.
+
+- **QA:** Build PASS.
+
+---
+
 ## 2026-08-17 — Frontal Slayer loader + Lounge TV press-to-play regression hotfix
 
 - **Context:** Hotfix sprint — SITE 00 loader work accidentally replaced global `LoadingScreen` with `Site00Loader` / immersive ASSTS loader for all Frontal Slayer routes. Lounge TV PRESS TO PLAY reported downward drift.
