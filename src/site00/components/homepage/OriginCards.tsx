@@ -1,5 +1,3 @@
-import { useNavigate } from 'react-router-dom';
-import { SITE00_ROUTES } from '../../config/routes';
 import { GeometricIcon } from '../icons/GeometricIcon';
 import { ArrowIconSmall } from '../icons/ArrowAction';
 
@@ -55,73 +53,29 @@ type OriginCardsProps = {
 };
 
 export function OriginCards({ onExpandIdnty, onExpandBldr }: OriginCardsProps) {
-  const navigate = useNavigate();
-
   return (
-    <div style={{ textAlign: 'center', paddingBottom: 80 }}>
-      <p className="site00-label-red" style={{ marginBottom: 8 }}>
-        WHERE DO WE BEGIN?
-      </p>
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'center',
-          gap: 8,
-          marginBottom: 16,
-          opacity: 0.5,
-        }}
-        aria-hidden="true"
-      >
-        <span style={{ width: 40, height: 1, background: 'var(--site-red)' }} />
-        <span style={{ fontSize: 10, color: 'var(--site-red)' }}>▼</span>
-        <span style={{ width: 40, height: 1, background: 'var(--site-red)' }} />
+    <div className="site00-origin-cards">
+      <p className="site00-label-red site00-origin-cards__prompt">WHERE DO WE BEGIN?</p>
+      <div className="site00-origin-cards__pointer" aria-hidden="true">
+        <span />
+        <span>▼</span>
+        <span />
       </div>
-      <div
-        style={{
-          display: 'flex',
-          flexWrap: 'wrap',
-          justifyContent: 'center',
-          gap: 16,
-          maxWidth: 520,
-          margin: '0 auto',
-        }}
-      >
+      <div className="site00-origin-cards__row">
         <CollapsedCard
           number="01"
           title="IDNTY"
           subtitle="DEFINE MY BRAND."
           cta="BEGIN IDNTY"
-          onExpand={() => {
-            onExpandIdnty();
-          }}
+          onExpand={onExpandIdnty}
         />
         <CollapsedCard
           number="02"
           title="BLDR"
           subtitle="START MY BUILD."
           cta="BEGIN BLDR"
-          onExpand={() => {
-            onExpandBldr();
-          }}
+          onExpand={onExpandBldr}
         />
-      </div>
-      <div style={{ display: 'flex', gap: 24, justifyContent: 'center', marginTop: 24, flexWrap: 'wrap' }}>
-        <button
-          type="button"
-          className="site00-action-link site00-action-link--red"
-          onClick={() => navigate(SITE00_ROUTES.idntyState)}
-        >
-          BEGIN IDNTY
-          <ArrowIconSmall />
-        </button>
-        <button
-          type="button"
-          className="site00-action-link site00-action-link--red"
-          onClick={() => navigate(SITE00_ROUTES.bldrState)}
-        >
-          BEGIN BLDR
-          <ArrowIconSmall />
-        </button>
       </div>
     </div>
   );

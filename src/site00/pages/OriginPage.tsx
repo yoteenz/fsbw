@@ -13,44 +13,18 @@ export default function OriginPage() {
   return (
     <EnvironmentShell environmentId="ORIGIN_ENVIRONMENT">
       <Site00AppShell locationLabel={SITE00_ORIGIN_COPY.locationLabel} showStatusStrip statusStrip={<StatusStrip />}>
-        <div
-          className="site00-home-grid"
-          style={{
-            display: 'flex',
-            flexWrap: 'wrap',
-            gap: 32,
-            padding: '24px 32px 120px',
-            minHeight: 'calc(100dvh - 160px)',
-            alignItems: 'flex-start',
-          }}
-        >
-          <aside
-            className="site00-home-hero"
-            style={{ flex: '1 1 280px', maxWidth: 360, paddingTop: 24 }}
-            aria-label="Origin messaging"
-          >
-            <p className="site00-label" style={{ marginBottom: 8 }}>
-              {SITE00_ORIGIN_COPY.headlineLine1}
-            </p>
+        <div className="site00-home-stage">
+          <aside className="site00-home-hero" aria-label="Origin messaging">
+            <p className="site00-label site00-home-hero__eyebrow">{SITE00_ORIGIN_COPY.headlineLine1}</p>
             <h1 className="site00-heading-xl">{SITE00_ORIGIN_COPY.headlineLine2}</h1>
-            <p className="site00-tagline" style={{ marginTop: 16, marginBottom: 24 }}>
-              {SITE00_ORIGIN_COPY.tagline}
-            </p>
-            <p className="site00-body site00-body--technical" style={{ marginBottom: 4 }}>
-              {SITE00_ORIGIN_COPY.description1}
-            </p>
-            <p className="site00-body site00-body--technical" style={{ marginBottom: 4 }}>
-              {SITE00_ORIGIN_COPY.description2}
-            </p>
-            <p className="site00-body site00-body--technical" style={{ marginBottom: 32 }}>
-              {SITE00_ORIGIN_COPY.description3}
-            </p>
-            <p className="site00-coordinate">
-              {SITE00_ORIGIN_COPY.originPoint}
-            </p>
+            <p className="site00-tagline site00-home-hero__tagline">{SITE00_ORIGIN_COPY.tagline}</p>
+            <p className="site00-body site00-body--technical site00-home-hero__line">{SITE00_ORIGIN_COPY.description1}</p>
+            <p className="site00-body site00-body--technical site00-home-hero__line">{SITE00_ORIGIN_COPY.description2}</p>
+            <p className="site00-body site00-body--technical site00-home-hero__line">{SITE00_ORIGIN_COPY.description3}</p>
+            <p className="site00-coordinate site00-home-hero__coordinate">{SITE00_ORIGIN_COPY.originPoint}</p>
           </aside>
 
-          <section style={{ flex: '2 1 400px', minWidth: 0 }} aria-label="Entry selection">
+          <section className="site00-home-cards" aria-label="Entry selection">
             {state.homeMode === 'origin' && (
               <OriginCards
                 onExpandIdnty={() => setHomeMode('idnty-expanded')}
