@@ -733,7 +733,7 @@
 }
 
 .aio-auth-premium--login .aio-auth-premium__alt-label {
-  color: rgba(255, 255, 255, 0.42);
+  color: var(--aio-white);
 }
 
 .aio-auth-premium--login .aio-auth-premium__demo-link {
