@@ -72,6 +72,20 @@
   display: none;
 }
 
+.aio-standalone-root:has(.aio-app--auth),
+.aio-standalone-root:has(.aio-app--auth) .aio-app--auth {
+  margin: 0;
+  padding: 0;
+}
+
+body:has(.aio-app--auth) {
+  margin: 0;
+}
+
+.aio-auth-premium--login {
+  margin: 0;
+}
+
 .aio-auth-premium--login .aio-auth-premium__form-column {
   padding: 0;
   background: #050505;
@@ -89,6 +103,7 @@
   margin-inline: 0;
   display: flex;
   flex-direction: column;
+  position: relative;
 }
 
 .aio-auth-premium__form-stack {
@@ -96,9 +111,9 @@
   z-index: 2;
   flex: 1;
   width: 100%;
-  margin-top: -1.125rem;
+  margin-top: -2.375rem;
   padding:
-    0.125rem
+    0
     max(1.25rem, env(safe-area-inset-right))
     max(1rem, env(safe-area-inset-bottom))
     max(1.25rem, env(safe-area-inset-left));
@@ -117,16 +132,16 @@
   height: 300px;
   overflow: hidden;
   background: #050505;
+  margin-top: 0;
 }
 
 .aio-auth-login-hero__image {
   position: absolute;
-  top: -20px;
-  left: 0;
+  inset: 0;
   width: 100%;
-  height: calc(100% + 20px);
+  height: 100%;
   object-fit: cover;
-  object-position: 68% 44%;
+  object-position: 68% 36%;
   pointer-events: none;
   user-select: none;
 }
@@ -1137,6 +1152,10 @@
   .aio-auth-premium--login .aio-auth-premium__forgot {
     font-size: calc(0.8125rem - 1px);
   }
+
+  .aio-auth-premium--login .aio-auth-premium__input::placeholder {
+    font-size: calc(1rem - 2px);
+  }
 }
 
 @media (max-width: 359px) {
@@ -1149,7 +1168,7 @@
   }
 
   .aio-auth-login-hero__image {
-    object-position: 66% 46%;
+    object-position: 66% 38%;
   }
 }
 
@@ -1159,7 +1178,7 @@
   }
 
   .aio-auth-login-hero__image {
-    object-position: 67% 45%;
+    object-position: 67% 37%;
   }
 }
 
@@ -1169,7 +1188,7 @@
   }
 
   .aio-auth-login-hero__image {
-    object-position: 68% 44%;
+    object-position: 68% 36%;
   }
 }
 
@@ -1179,7 +1198,7 @@
   }
 
   .aio-auth-login-hero__image {
-    object-position: 69% 43%;
+    object-position: 69% 35%;
   }
 }
 
@@ -1189,7 +1208,7 @@
   }
 
   .aio-auth-login-hero__image {
-    object-position: 70% 42%;
+    object-position: 70% 34%;
   }
 }
 
@@ -1199,7 +1218,7 @@
   }
 
   .aio-auth-login-hero__image {
-    object-position: 72% 42%;
+    object-position: 72% 34%;
   }
 }
 
@@ -1209,8 +1228,12 @@
   }
 }
 
-/* Login mobile — ~2px type reduction + tighter form rhythm (structure unchanged) */
+/* Login mobile — form overlaps hero bottom + type/spacing tokens */
 @media (max-width: 1023px) {
+  .aio-auth-premium--login .aio-auth-premium__form-panel {
+    box-shadow: 0 -12px 32px rgba(0, 0, 0, 0.35);
+  }
+
   .aio-auth-premium--login .aio-auth-premium__label {
     font-size: 0.625rem;
   }
