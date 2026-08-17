@@ -52360,3 +52360,17 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **QA:** `npm run build` PASS.
 
+---
+
+## 2026-08-17 — AIO login hero supporting −3px specificity fix
+
+- **Context:** Founder reported hero supporting copy −3px change had **no visible effect**.
+
+- **Root cause:** `.aio-auth-premium--login .aio-auth-premium__supporting` (line ~397) overrode `.aio-auth-login-hero .aio-auth-premium__supporting` — equal specificity, later rule won (`clamp(0.75rem, 3.2vw, 0.8125rem)` ≈ 12.5px @ 390px vs intended hero calc).
+
+- **Fix:** Hero eyebrow/headline/supporting selectors prefixed `.aio-auth-premium--login .aio-auth-login-hero` (specificity 0,3,0). Supporting stays `calc(clamp(0.6rem, 2.56vw, 0.65rem) - 3px)`.
+
+- **Verified:** Playwright @ 390px — hero supporting **6.984px**, desktop-only intro supporting **12.48px** (form stack unchanged).
+
+- **QA:** `npm run build` PASS.
+
