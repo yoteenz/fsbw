@@ -52542,6 +52542,18 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 ---
 
+## 2026-08-17 — AIO Services mega-menu link visibility fix
+
+- **Context:** Founder reported Services dropdown links invisible (dark on dark charcoal) unless hovered — only hover state legible.
+
+- **Root cause:** Global `.aio-app a { color: inherit }` specificity `(0,1,1)` beat `.aio-mega-menu__link { color: white }` `(0,1,0)`, so links inherited dark text from ancestors. Hover pseudo-class had enough specificity to override.
+
+- **Fix:** `aio.css` — explicit `.aio-app a.aio-mega-menu__link`, `.aio-resources-menu__link`, `.aio-mega-menu__footer` color rules with matching hover states.
+
+- **QA:** Playwright @ 1440 — Services menu open, link computed color `rgba(255,255,255,0.88)`.
+
+---
+
 ## 2026-08-17 — SITE 00 Enter 00 desktop environment background
 
 - **Context:** Founder supplied approved Enter 00 desktop menu background (`89319E70-D080-4798-9BCA-E53B137F2387.png`) for `/enter`.
