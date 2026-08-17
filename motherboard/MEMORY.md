@@ -52594,3 +52594,13 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **QA:** Playwright `/enter` — zero `.site00-diamond` inside welcome heading.
 
+---
+
+## 2026-08-17 — Origin desktop: hero -25px, IDNTY/BLDR panels 75% scale +20px down
+
+- **Context:** Founder requested Origin desktop homepage — shrink IDNTY/BLDR plaza panels 25%, move down 20px; hero copy left 25px (was not applied on Origin, only Enter).
+
+- **Changes:** `origin-home-composition.ts` — `heroOffsetXPx: -25`, `topOffsetPx: 20`, `cardScale: 0.75`. `OriginPage.tsx` wires CSS vars on `site00-home-stage`. `site00.css` @ 768px — hero `translateX(var(--site00-origin-hero-offset-x))`, cards `top: calc(58% + 20px)`, row `scale(0.75)`.
+
+- **QA:** Playwright @ 1440px — hero x=7 (32−25), row scale 0.75, card ~165px wide, cards top ≈533 (+20). Screenshot: `site00_origin_panels_scaled_1440.png`.
+
