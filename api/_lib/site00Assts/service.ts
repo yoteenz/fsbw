@@ -1,6 +1,7 @@
 import { getSupabaseAdmin } from '../supabase.js';
 import type { AssetStatus, BatchStatus } from './types.js';
 import { ACTIVE_ASSTS_ENV_BATCH_KEY, BATCH_ASSTS_ENV_001, getBatchManifestByKey } from './manifests.js';
+import { ensureCanonicalMasterRegistered, getCanonicalMasterReviewContext } from './canonicalMaster.js';
 
 export type DbBatch = {
   id: string;
@@ -46,6 +47,8 @@ export type DbVersion = {
   generation_model: string | null;
   prompt_version: string | null;
   prompt_snapshot: string | null;
+  generation_parameters?: Record<string, unknown> | null;
+  canonical_master_version_id?: string | null;
   status: AssetStatus;
   created_at: string;
 };
@@ -57,6 +60,10 @@ function supabase() {
 export async function ensureBootstrapBatch(batchKey = ACTIVE_ASSTS_ENV_BATCH_KEY): Promise<DbBatch> {
   const manifest = getBatchManifestByKey(batchKey);
   if (!manifest) throw new Error(`Unknown batch manifest: ${batchKey}`);
+
+  if (manifest.useCanonicalReference) {
+    await ensureCanonicalMasterRegistered();
+  }
 
   let batch: DbBatch | null = null;
   const { data: existing } = await supabase()
@@ -469,10 +476,16 @@ export function publicUrlForStoragePath(path: string | null | undefined): string
 }
 
 function mapVersionPublic(v: DbVersion) {
+  const params = (v.generation_parameters ?? {}) as Record<string, unknown>;
   return {
     ...v,
     previewUrl: publicUrlForStoragePath(v.preview_path ?? v.thumbnail_path ?? v.file_path),
     fileUrl: publicUrlForStoragePath(v.file_path),
+    generation_parameters: params,
+    worldIdentity: (params.worldIdentity as string | null) ?? null,
+    viewType: (params.viewType as string | null) ?? null,
+    referenceStrength: (params.referenceStrength as string | null) ?? null,
+    canonicalReference: Boolean(params.canonicalReference),
   };
 }
 
@@ -487,6 +500,10 @@ export async function enrichAsset(asset: DbAsset) {
   const batch = asset.batch_id ? await getBatchById(asset.batch_id) : null;
   const manifest = batch ? getBatchManifestByKey(batch.batch_key) : null;
   const manifestAsset = manifest?.assets.find((a) => a.assetKey === asset.asset_key);
+
+  const currentParams = (current?.generation_parameters ?? {}) as Record<string, unknown>;
+  const canonicalMaster = manifest?.useCanonicalReference ? await getCanonicalMasterReviewContext() : null;
+
   return {
     ...asset,
     batch_key: batch?.batch_key ?? null,
@@ -495,6 +512,12 @@ export async function enrichAsset(asset: DbAsset) {
     environmentRoleLabel: manifestAsset?.environmentRoleLabel ?? null,
     environmentRoleSublabel: manifestAsset?.environmentRoleSublabel ?? null,
     canonicalSlotAlias: manifestAsset?.canonicalSlotAlias ?? null,
+    viewType: manifestAsset?.viewType ?? (currentParams.viewType as string | null) ?? null,
+    worldIdentity: manifest?.worldIdentity ?? (currentParams.worldIdentity as string | null) ?? null,
+    canonicalMaster,
+    referenceStrength:
+      (currentParams.referenceStrength as string | null) ??
+      (currentParams.canonicalReference ? 'high-preservation' : null),
     versions: versions.map(mapVersionPublic),
     currentVersion: current ? mapVersionPublic(current) : null,
     approvedVersion: approved ? mapVersionPublic(approved) : null,
@@ -504,6 +527,8 @@ export async function enrichAsset(asset: DbAsset) {
 export async function enrichBatch(batch: DbBatch) {
   const assets = await listAssetsForBatch(batch.id);
   const enrichedAssets = await Promise.all(assets.map((a) => enrichAsset(a)));
+  const manifest = getBatchManifestByKey(batch.batch_key);
+  const canonicalMaster = manifest?.useCanonicalReference ? await getCanonicalMasterReviewContext() : null;
   const approvedCount = enrichedAssets.filter((a) => a.approved_version_id).length;
   const needsReviewCount = enrichedAssets.filter((a) => a.status === 'NEEDS_REVIEW').length;
   const regeneratingCount = enrichedAssets.filter((a) => a.status === 'REGENERATING' || a.status === 'GENERATING').length;
@@ -513,6 +538,9 @@ export async function enrichBatch(batch: DbBatch) {
   return {
     ...batch,
     assets: enrichedAssets,
+    canonicalMaster,
+    worldIdentity: manifest?.worldIdentity ?? null,
+    promptVersion: manifest?.promptVersion ?? null,
     thumbnailUrl: pickRepresentativePreview(enrichedAssets),
     counts: {
       total: enrichedAssets.length,

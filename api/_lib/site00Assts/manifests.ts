@@ -1,8 +1,9 @@
 import type { Site00BatchManifest } from './types.js';
 
-/** Active environment production batch — replacement lineage test. */
-export const ACTIVE_ASSTS_ENV_BATCH_KEY = 'BATCH-ASSTS-ENV-002';
+/** Active environment production batch — canonical reference test. */
+export const ACTIVE_ASSTS_ENV_BATCH_KEY = 'BATCH-ASSTS-ENV-003';
 export const LEGACY_ASSTS_ENV_BATCH_KEY = 'BATCH-ASSTS-ENV-001';
+export const VAULT_LINEAGE_ENV_BATCH_KEY = 'BATCH-ASSTS-ENV-002';
 
 /** Shared REVIEW_ENVIRONMENT / ASSTS master — ONE canonical Asset Vault digital twin. */
 export const ASSTS_MASTER_ENVIRONMENT_PROMPT = `CANONICAL SITE 00 ASSET VAULT — ONE physical virtual facility. Photorealistic luxury architectural visualization.
@@ -73,7 +74,7 @@ export const BATCH_ASSTS_ENV_001: Site00BatchManifest = {
 };
 
 export const BATCH_ASSTS_ENV_002: Site00BatchManifest = {
-  batchKey: ACTIVE_ASSTS_ENV_BATCH_KEY,
+  batchKey: VAULT_LINEAGE_ENV_BATCH_KEY,
   displayName: 'ASSTS / MOBILE ENVIRONMENTS (VAULT LINEAGE v2)',
   description: 'Canonical Asset Vault digital twin — monumental arch lineage with reference-conditioned child zones.',
   category: 'ASSTS / REVIEW ENVIRONMENT',
@@ -144,7 +145,78 @@ High-end futuristic museum inspection chamber — object will be placed by the a
   ],
 };
 
+export const BATCH_ASSTS_ENV_003: Site00BatchManifest = {
+  batchKey: ACTIVE_ASSTS_ENV_BATCH_KEY,
+  displayName: 'ASSTS / MOBILE ENVIRONMENTS (CANONICAL REF v3)',
+  description: 'Canonical-reference-conditioned derivatives — founder master PNG as world source.',
+  category: 'ASSTS / REVIEW ENVIRONMENT',
+  masterPrompt: `CANONICAL REFERENCE ENVIRONMENT DERIVATIVE — controlled camera view of the SAME Asset Vault.`,
+  promptVersion: 'v3.0',
+  aspectRatio: '9:16',
+  outputFormat: 'webp',
+  model: 'fal-ai/nano-banana-pro/edit',
+  useCanonicalReference: true,
+  worldIdentity: 'ASSTS_ASSET_VAULT_V1',
+  forceNewVersion: true,
+  replacementBatch: true,
+  assets: [
+    {
+      assetKey: 's00_env_assts_library_mobile',
+      displayName: 'ASSTS / LIBRARY',
+      semanticSlotKey: 'assts.library.environment.mobile',
+      canonicalSlotAlias: 'site00.assetVault.environments.library',
+      environmentRole: 'library',
+      environmentRoleLabel: 'LIBRARY',
+      environmentRoleSublabel: 'VAULT ENTRANCE',
+      viewType: 'libraryHero',
+      generationOrder: 1,
+      requiresCanonicalReference: true,
+      compositionPrompt: `LIBRARY HERO — preserve the canonical master almost exactly.
+Centered perfect one-point perspective. Eye-level architectural camera. Large foreground central arch. Long sequence of nested illuminated arches toward the bright central vanishing point. Left and right display bays visible. Circular luminous ceiling feature partially visible above. Reflective marble floor extending toward camera.
+Closest match to the canonical master — same composition, not a reinterpretation. UI-safe breathing room in upper regions.`,
+      required: true,
+      variant: 'mobile',
+      view: 'library',
+    },
+    {
+      assetKey: 's00_env_assts_batch_mobile',
+      displayName: 'ASSTS / BATCH REVIEW',
+      semanticSlotKey: 'assts.batch.environment.mobile',
+      canonicalSlotAlias: 'site00.assetVault.environments.batchReview',
+      environmentRole: 'batchReview',
+      environmentRoleLabel: 'BATCH REVIEW',
+      environmentRoleSublabel: 'PRODUCTION GALLERY',
+      viewType: 'batchReview',
+      generationOrder: 2,
+      requiresCanonicalReference: true,
+      compositionPrompt: `BATCH REVIEW — camera moved several steps FORWARD into the SAME corridor on the exact central axis.
+Maintain nested arches, same marble, same lighting, same ceiling system, same niches, same red alignment markers, same proportions. Slightly more immersive foreground — physically deeper inside the Vault. NOT a new room.`,
+      required: true,
+      variant: 'mobile',
+      view: 'batch',
+    },
+    {
+      assetKey: 's00_env_assts_inspection_mobile',
+      displayName: 'ASSTS / ASSET INSPECTION',
+      semanticSlotKey: 'assts.inspection.environment.mobile',
+      canonicalSlotAlias: 'site00.assetVault.environments.inspection',
+      environmentRole: 'inspection',
+      environmentRoleLabel: 'ASSET INSPECTION',
+      environmentRoleSublabel: 'INSPECTION CHAMBER',
+      viewType: 'inspectionBay',
+      generationOrder: 3,
+      requiresCanonicalReference: true,
+      compositionPrompt: `ASSET INSPECTION — remain inside the SAME Asset Vault. Shift camera subtly toward ONE recessed display niche while retaining enough central corridor for spatial orientation.
+"I walked down the Vault and approached one inspection/display bay." Display architecture derives from canonical side niches. NOT a circular room, glass office, or different gallery.`,
+      required: true,
+      variant: 'mobile',
+      view: 'inspection',
+    },
+  ],
+};
+
 export function getBatchManifestByKey(batchKey: string): Site00BatchManifest | null {
+  if (batchKey === BATCH_ASSTS_ENV_003.batchKey) return BATCH_ASSTS_ENV_003;
   if (batchKey === BATCH_ASSTS_ENV_002.batchKey) return BATCH_ASSTS_ENV_002;
   if (batchKey === BATCH_ASSTS_ENV_001.batchKey) return BATCH_ASSTS_ENV_001;
   return null;

@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { resolveAdminAuth } from '../_lib/adminAuth.js';
-import { getActiveAsstsEnvBatchKey, BATCH_ASSTS_ENV_001 } from '../_lib/site00Assts/manifests.js';
+import { getActiveAsstsEnvBatchKey } from '../_lib/site00Assts/manifests.js';
 import {
   ensureBootstrapBatch,
   enrichAsset,
@@ -19,6 +19,7 @@ import {
   recomputeBatchStatus,
   resetBatchForReview,
 } from '../_lib/site00Assts/service.js';
+import { getCanonicalMasterReviewContext } from '../_lib/site00Assts/canonicalMaster.js';
 import { runBatchGeneration, pollPendingGenerationJobs, queueRegeneration } from '../_lib/site00Assts/generation.js';
 import { lockBatchAndPromoteSlots, resolveProductionAsset } from '../_lib/site00Assts/slots.js';
 import { getSupabaseAdmin } from '../_lib/supabase.js';
@@ -114,7 +115,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         const navigation = asset.batch_id
           ? await getAssetBatchNavigation(assetId, asset.batch_id)
           : { prevAssetId: null, nextAssetId: null, position: 0, total: 0 };
-        return res.status(200).json({ ok: true, asset: enriched, history, navigation });
+        const canonicalMaster = enriched.canonicalMaster ?? null;
+        return res.status(200).json({ ok: true, asset: enriched, history, navigation, canonicalMaster });
       }
 
       if (action === 'slots') {
@@ -138,8 +140,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
       if (postAction === 'bootstrap') {
         const batchKey = String(body.batchKey ?? getActiveAsstsEnvBatchKey());
+        const manifest = (await import('../_lib/site00Assts/manifests.js')).getBatchManifestByKey(batchKey);
+        if (manifest?.useCanonicalReference) {
+          await (await import('../_lib/site00Assts/canonicalMaster.js')).ensureCanonicalMasterRegistered();
+        }
         const batch = await ensureBootstrapBatch(batchKey);
-        return res.status(200).json({ ok: true, batch });
+        const canonicalMaster = manifest?.useCanonicalReference ? await getCanonicalMasterReviewContext() : null;
+        return res.status(200).json({ ok: true, batch, canonicalMaster });
       }
 
       if (postAction === 'generate') {

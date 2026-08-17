@@ -18,7 +18,7 @@ export function AsstsVersionStrip({ versions, selectedId, onSelect, approvedVers
         const isCanonical = v.id === approvedVersionId;
         const label =
           v.label ??
-          (isCanonical ? 'CANONICAL MASTER' : v.id === selectedId ? 'CURRENT ASSET' : `V${String(v.version_number).padStart(2, '0')}`);
+          (isCanonical ? 'APPROVED' : v.id === selectedId ? 'CURRENT ASSET' : `V${String(v.version_number).padStart(2, '0')}`);
         return (
           <button
             key={v.id}
@@ -45,6 +45,9 @@ type MetadataPanelProps = {
   status?: string;
   generator?: string | null;
   promptVersion?: string | null;
+  viewType?: string | null;
+  worldIdentity?: string | null;
+  referenceStrength?: string | null;
   expandedContent?: ReactNode;
 };
 
@@ -54,6 +57,9 @@ export function AsstsMetadataPanel({
   status,
   generator,
   promptVersion,
+  viewType,
+  worldIdentity,
+  referenceStrength,
   expandedContent,
 }: MetadataPanelProps) {
   const [open, setOpen] = useState(false);
@@ -90,6 +96,24 @@ export function AsstsMetadataPanel({
           <>
             <dt>PROMPT VERSION</dt>
             <dd>{promptVersion}</dd>
+          </>
+        ) : null}
+        {worldIdentity ? (
+          <>
+            <dt>WORLD IDENTITY</dt>
+            <dd>{worldIdentity}</dd>
+          </>
+        ) : null}
+        {viewType ? (
+          <>
+            <dt>VIEW TYPE</dt>
+            <dd>{viewType}</dd>
+          </>
+        ) : null}
+        {referenceStrength ? (
+          <>
+            <dt>REFERENCE STRENGTH</dt>
+            <dd>{referenceStrength}</dd>
           </>
         ) : null}
       </dl>

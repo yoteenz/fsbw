@@ -194,6 +194,9 @@ export type AsstsBatchDetail = {
   counts: { total: number; approved: number; needsReview: number; regenerating: number; rejected: number };
   thumbnailUrl?: string | null;
   progressPercent?: number;
+  canonicalMaster?: AsstsCanonicalMasterContext | null;
+  worldIdentity?: string | null;
+  promptVersion?: string | null;
 };
 
 export type AsstsAssetVersion = {
@@ -207,6 +210,20 @@ export type AsstsAssetVersion = {
   prompt_version?: string | null;
   prompt_snapshot?: string | null;
   created_at?: string;
+  worldIdentity?: string | null;
+  viewType?: string | null;
+  referenceStrength?: string | null;
+  canonicalReference?: boolean;
+  generation_parameters?: Record<string, unknown>;
+};
+
+export type AsstsCanonicalMasterContext = {
+  assetKey: string;
+  assetId: string | null;
+  previewUrl: string | null;
+  worldIdentity: string;
+  storagePath: string;
+  role: 'CANONICAL_MASTER';
 };
 
 export type AsstsAssetDetail = {
@@ -228,6 +245,10 @@ export type AsstsAssetDetail = {
   environmentRoleLabel?: string | null;
   environmentRoleSublabel?: string | null;
   canonicalSlotAlias?: string | null;
+  viewType?: string | null;
+  worldIdentity?: string | null;
+  canonicalMaster?: AsstsCanonicalMasterContext | null;
+  referenceStrength?: string | null;
 };
 
 export type AsstsAssetNavigation = {
@@ -297,11 +318,11 @@ export async function resolveAsstsSlot(slotKey: string): Promise<SlotResolution>
   return asstsFetch('slots', { query: { slotKey } });
 }
 
-export async function bootstrapAsstsBatch(batchKey = 'BATCH-ASSTS-ENV-002') {
+export async function bootstrapAsstsBatch(batchKey = 'BATCH-ASSTS-ENV-003') {
   return asstsPost('bootstrap', { batchKey });
 }
 
-export async function generateAsstsBatch(batchKey = 'BATCH-ASSTS-ENV-002') {
+export async function generateAsstsBatch(batchKey = 'BATCH-ASSTS-ENV-003') {
   return asstsPost('generate', { batchKey });
 }
 

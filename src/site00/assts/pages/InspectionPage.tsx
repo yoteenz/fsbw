@@ -76,7 +76,7 @@ export default function AsstsInspectionPage() {
       ...v,
       label:
         v.id === asset.approved_version_id
-          ? 'CANONICAL MASTER'
+          ? 'APPROVED'
           : v.id === asset.currentVersion?.id
             ? 'CURRENT ASSET'
             : undefined,
@@ -90,7 +90,8 @@ export default function AsstsInspectionPage() {
   }, [approvedFlash]);
 
   const heroUrl = selectedVersion?.previewUrl ?? asset?.currentVersion?.previewUrl;
-  const masterUrl = asset?.approvedVersion?.previewUrl ?? null;
+  const masterUrl = asset?.canonicalMaster?.previewUrl ?? null;
+  const isCanonicalDerivative = Boolean(asset?.canonicalMaster);
 
   return (
     <AsstsEnvironmentShell slotKey={ASSTS_ENVIRONMENT_SLOTS.inspection}>
@@ -145,6 +146,9 @@ export default function AsstsInspectionPage() {
               status={selectedVersion.status}
               generator={selectedVersion.generation_provider}
               promptVersion={selectedVersion.prompt_version}
+              viewType={asset.viewType ?? selectedVersion.viewType ?? null}
+              worldIdentity={asset.worldIdentity ?? selectedVersion.worldIdentity ?? null}
+              referenceStrength={asset.referenceStrength ?? selectedVersion.referenceStrength ?? null}
               expandedContent={
                 <dl className="assts-metadata-panel__list assts-metadata-panel__list--expanded">
                   {selectedVersion.generation_model ? (
@@ -213,7 +217,7 @@ export default function AsstsInspectionPage() {
               <button
                 type="button"
                 className="assts-btn assts-btn--secondary"
-                disabled={!heroUrl}
+                disabled={!heroUrl || !masterUrl}
                 onClick={() => setCompareOpen(true)}
               >
                 COMPARE TO MASTER
@@ -317,7 +321,13 @@ export default function AsstsInspectionPage() {
           />
 
           {compareOpen && heroUrl ? (
-            <AsstsCompareOverlay currentUrl={heroUrl} masterUrl={masterUrl} onClose={() => setCompareOpen(false)} />
+            <AsstsCompareOverlay
+              currentUrl={heroUrl}
+              masterUrl={masterUrl}
+              currentLabel="GENERATED DERIVATIVE"
+              masterLabel={isCanonicalDerivative ? 'CANONICAL MASTER' : 'REFERENCE'}
+              onClose={() => setCompareOpen(false)}
+            />
           ) : null}
 
           <AsstsFullScreenViewer

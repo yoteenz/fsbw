@@ -21,7 +21,9 @@ import {
   ACTIVE_ASSTS_ENV_BATCH_KEY,
   BATCH_ASSTS_ENV_001,
   BATCH_ASSTS_ENV_002,
+  BATCH_ASSTS_ENV_003,
   getActiveAsstsEnvBatchKey,
+  getBatchManifestByKey,
 } from '../api/_lib/site00Assts/manifests.js';
 import { ASSTS_CANONICAL_SLOT_ALIASES } from '../api/_lib/site00Assts/vaultLineage.js';
 import { getSupabaseAdmin } from '../api/_lib/supabase.js';
@@ -51,20 +53,22 @@ async function main() {
 
   if (cmd === 'poll') {
     const maxRounds = Number(process.argv[4] ?? 40);
-    const manifest = BATCH_KEY === BATCH_ASSTS_ENV_002.batchKey ? BATCH_ASSTS_ENV_002 : BATCH_ASSTS_ENV_001;
+    const manifest = getBatchManifestByKey(BATCH_KEY) ?? BATCH_ASSTS_ENV_003;
     let total = 0;
     for (let i = 0; i < maxRounds; i += 1) {
       const n = await pollPendingGenerationJobs(10);
       total += n;
-      await continueVaultLineageGeneration(BATCH_KEY);
+      if (manifest.useVaultLineage) {
+        await continueVaultLineageGeneration(BATCH_KEY);
+      }
       const batch = await getBatchByKey(BATCH_KEY);
       const assets = batch ? await listAssetsForBatch(batch.id) : [];
       console.log(
         `poll round ${i + 1}: completed=${n} assets=${assets.map((a) => `${a.asset_key}:${a.status}`).join(', ')}`,
       );
       const pending = assets.some((a) => a.status === 'GENERATING' || a.status === 'QUEUED' || a.status === 'REGENERATING');
-      let vaultLineageReady = true;
-      if (manifest.useVaultLineage) {
+      let batchReady = true;
+      if (manifest.useVaultLineage || manifest.useCanonicalReference) {
         for (const asset of assets) {
           const enriched = await enrichAsset(asset);
           const hasCurrentPrompt = enriched.versions.some(
@@ -73,10 +77,10 @@ async function main() {
               ['NEEDS_REVIEW', 'APPROVED', 'LOCKED'].includes(v.status) &&
               Boolean(v.file_path || v.preview_path),
           );
-          if (!hasCurrentPrompt) vaultLineageReady = false;
+          if (!hasCurrentPrompt) batchReady = false;
         }
       }
-      if (!pending && assets.length > 0 && vaultLineageReady) {
+      if (!pending && assets.length > 0 && batchReady) {
         console.log(JSON.stringify({ ok: true, totalCompleted: total, done: true }, null, 2));
         return;
       }
@@ -165,12 +169,17 @@ async function main() {
 
   if (cmd === 'status') {
     const batch = await getBatchByKey(BATCH_KEY);
+    const manifest = getBatchManifestByKey(BATCH_KEY) ?? BATCH_ASSTS_ENV_003;
     const resolved: Record<string, unknown> = {};
-    for (const manifestAsset of BATCH_ASSTS_ENV_002.assets) {
+    for (const manifestAsset of manifest.assets) {
       resolved[manifestAsset.semanticSlotKey] = await resolveProductionAsset(manifestAsset.semanticSlotKey);
       if (manifestAsset.canonicalSlotAlias) {
         resolved[manifestAsset.canonicalSlotAlias] = await resolveProductionAsset(manifestAsset.canonicalSlotAlias);
       }
+    }
+    if (manifest.useCanonicalReference) {
+      const { getCanonicalMasterReviewContext } = await import('../api/_lib/site00Assts/canonicalMaster.js');
+      resolved.canonicalMaster = await getCanonicalMasterReviewContext();
     }
     const assets = batch ? await listAssetsForBatch(batch.id) : [];
     console.log(

@@ -44,6 +44,9 @@ export type Site00BatchManifest = {
   assets: Site00ManifestAsset[];
   /** Sequential vault lineage: library master → reference-conditioned children. */
   useVaultLineage?: boolean;
+  /** All derivatives reference locked founder canonical master PNG — no T2I fallback. */
+  useCanonicalReference?: boolean;
+  worldIdentity?: string;
   /** Always queue new versions (replacement batch). */
   forceNewVersion?: boolean;
   replacementBatch?: boolean;
@@ -63,6 +66,8 @@ export type Site00ManifestAsset = {
   environmentRoleSublabel?: string;
   canonicalSlotAlias?: string;
   requiresVaultReference?: boolean;
+  requiresCanonicalReference?: boolean;
+  viewType?: 'libraryHero' | 'batchReview' | 'inspectionBay' | string;
 };
 
 export type ProductionAssetResolution = {

@@ -29,6 +29,15 @@ import {
   vaultArtDirectionPromptBlock,
   vaultReferencePromptBlock,
 } from './vaultLineage.js';
+import {
+  ASSTS_WORLD_IDENTITY,
+  CANONICAL_MASTER_ASSET_KEY,
+  CANONICAL_REFERENCE_MODEL,
+  CANONICAL_REFERENCE_STRENGTH,
+  canonicalReferencePromptBlock,
+  getCanonicalMasterReferenceUrl,
+  manifestUsesCanonicalReference,
+} from './canonicalMaster.js';
 
 const T2I_MODEL = 'fal-ai/nano-banana-pro';
 const EDIT_MODEL = 'fal-ai/nano-banana-pro/edit';
@@ -74,14 +83,23 @@ async function submitEnvironmentFalJob(
   prompt: string,
   aspectRatio: string,
   outputFormat: 'webp' | 'png',
-  opts: { model?: string; referenceImageUrls?: string[] },
+  opts: { model?: string; referenceImageUrls?: string[]; requireReference?: boolean },
 ): Promise<{ providerRequestId: string; model: string }> {
   const falKey = process.env.FAL_KEY?.trim();
   if (!falKey) throw new Error('FAL_KEY not configured on server');
   const { fal } = await import('@fal-ai/client');
 
   const hasRefs = (opts.referenceImageUrls?.length ?? 0) > 0;
-  const model = resolveEnvironmentModel(opts.referenceImageUrls);
+
+  if (opts.requireReference && !hasRefs) {
+    throw new Error('REFERENCE CONDITIONING FAILED: canonical reference required but not supplied to FAL');
+  }
+
+  const model = hasRefs ? CANONICAL_REFERENCE_MODEL : opts.requireReference ? CANONICAL_REFERENCE_MODEL : T2I_MODEL;
+
+  if (opts.requireReference && model === T2I_MODEL) {
+    throw new Error('REFERENCE CONDITIONING FAILED: text-to-image fallback prohibited for canonical derivatives');
+  }
 
   fal.config({ credentials: falKey });
 
@@ -99,6 +117,8 @@ async function submitEnvironmentFalJob(
       output_format: outputFormat,
       resolution: '2K',
     };
+  } else if (opts.requireReference) {
+    throw new Error('REFERENCE CONDITIONING FAILED: no image_urls for required reference generation');
   } else {
     falInput = {
       prompt,
@@ -149,6 +169,9 @@ export async function createVersionAndQueueGeneration(
     correctionNote?: string;
     correctionCategories?: string[];
     referenceImageUrls?: string[];
+    requireReference?: boolean;
+    generationMetadata?: Record<string, unknown>;
+    canonicalMasterVersionId?: string | null;
   },
 ): Promise<{ versionId: string; jobId: string }> {
   const supabase = getSupabaseAdmin();
@@ -161,18 +184,23 @@ export async function createVersionAndQueueGeneration(
       asset_id: asset.id,
       version_number: nextVersion,
       generation_provider: 'fal',
-      generation_model: resolveEnvironmentModel(opts.referenceImageUrls),
+      generation_model: opts.requireReference || (opts.referenceImageUrls?.length ?? 0) > 0 ? CANONICAL_REFERENCE_MODEL : T2I_MODEL,
       prompt_version: opts.promptVersion,
       prompt_snapshot: opts.prompt,
       status: 'GENERATING',
       parent_version_id: opts.parentVersionId ?? null,
+      canonical_master_version_id: opts.canonicalMasterVersionId ?? null,
       generation_parameters: {
         aspectRatio: opts.aspectRatio,
         outputFormat: opts.outputFormat,
         correctionNote: opts.correctionNote ?? null,
         correctionCategories: opts.correctionCategories ?? null,
         vaultReference: opts.referenceImageUrls?.length ? true : false,
+        canonicalReference: opts.requireReference ?? false,
         referenceCount: opts.referenceImageUrls?.length ?? 0,
+        referenceModel: opts.requireReference ? CANONICAL_REFERENCE_MODEL : null,
+        referenceStrength: opts.requireReference ? CANONICAL_REFERENCE_STRENGTH : null,
+        ...(opts.generationMetadata ?? {}),
       },
     })
     .select('*')
@@ -193,6 +221,7 @@ export async function createVersionAndQueueGeneration(
   const submit = await submitEnvironmentFalJob(opts.prompt, opts.aspectRatio, opts.outputFormat, {
     model: opts.model,
     referenceImageUrls: opts.referenceImageUrls,
+    requireReference: opts.requireReference,
   });
 
   const { data: job, error: jErr } = await supabase
@@ -210,6 +239,9 @@ export async function createVersionAndQueueGeneration(
         prompt: opts.prompt,
         aspectRatio: opts.aspectRatio,
         vaultReference: opts.referenceImageUrls?.length ? true : false,
+        canonicalReference: opts.requireReference ?? false,
+        referenceUrls: opts.referenceImageUrls ?? [],
+        generationMetadata: opts.generationMetadata ?? null,
       },
       started_at: new Date().toISOString(),
     })
@@ -232,18 +264,42 @@ async function queueManifestAsset(
   manifest: NonNullable<ReturnType<typeof getBatchManifestByKey>>,
   asset: DbAsset,
   manifestAsset: (typeof manifest.assets)[number],
-  referenceImageUrls?: string[],
+  opts?: {
+    referenceImageUrls?: string[];
+    requireReference?: boolean;
+    canonicalMasterVersionId?: string | null;
+    generationMetadata?: Record<string, unknown>;
+  },
 ): Promise<string | null> {
   const versions = await getVersionsForAsset(asset.id);
   if (!(await assetNeedsNewGeneration(asset, versions, manifest.forceNewVersion === true, manifest.promptVersion))) return null;
 
-  let fullPrompt = `${manifest.masterPrompt}\n\n${manifestAsset.compositionPrompt}`;
-  if (referenceImageUrls?.length) {
+  const referenceImageUrls = opts?.referenceImageUrls;
+  const requireReference = opts?.requireReference ?? false;
+
+  let fullPrompt: string;
+  if (requireReference || manifestAsset.requiresCanonicalReference) {
+    fullPrompt = canonicalReferencePromptBlock(manifestAsset.compositionPrompt);
+  } else if (referenceImageUrls?.length) {
     const block = isVaultLibraryAsset(manifestAsset, asset.asset_key)
       ? vaultArtDirectionPromptBlock()
       : vaultReferencePromptBlock();
     fullPrompt = `${manifest.masterPrompt}\n\n${block}\n\n${manifestAsset.compositionPrompt}`;
+  } else {
+    fullPrompt = `${manifest.masterPrompt}\n\n${manifestAsset.compositionPrompt}`;
   }
+
+  const generationMetadata = {
+    batchId: batchKey,
+    assetId: manifestAsset.assetKey,
+    viewType: manifestAsset.viewType ?? manifestAsset.environmentRole ?? null,
+    worldIdentity: manifest.worldIdentity ?? ASSTS_WORLD_IDENTITY,
+    canonicalMasterAssetKey: CANONICAL_MASTER_ASSET_KEY,
+    referenceStrength: requireReference ? CANONICAL_REFERENCE_STRENGTH : null,
+    provider: 'fal',
+    model: requireReference ? CANONICAL_REFERENCE_MODEL : manifest.model ?? T2I_MODEL,
+    ...(opts?.generationMetadata ?? {}),
+  };
 
   const { jobId } = await createVersionAndQueueGeneration(asset, {
     batchKey,
@@ -253,15 +309,21 @@ async function queueManifestAsset(
     aspectRatio: manifest.aspectRatio,
     outputFormat: manifest.outputFormat,
     referenceImageUrls,
+    requireReference,
+    canonicalMasterVersionId: opts?.canonicalMasterVersionId ?? null,
+    generationMetadata,
   });
 
   await recordReviewEvent({
     assetId: asset.id,
     batchId: asset.batch_id,
     action: 'GENERATED',
-    note: referenceImageUrls?.length
-      ? `Queued ${manifestAsset.assetKey} with vault master reference`
-      : `Queued ${manifestAsset.assetKey} v${versions.length + 1}`,
+    note: requireReference
+      ? `Queued ${manifestAsset.assetKey} with canonical master reference (${manifestAsset.viewType ?? 'derivative'})`
+      : referenceImageUrls?.length
+        ? `Queued ${manifestAsset.assetKey} with vault master reference`
+        : `Queued ${manifestAsset.assetKey} v${versions.length + 1}`,
+    metadata: requireReference ? { worldIdentity: manifest.worldIdentity, viewType: manifestAsset.viewType } : undefined,
   });
 
   return jobId;
@@ -298,7 +360,7 @@ export async function continueVaultLineageGeneration(batchKey: string): Promise<
     if (!asset) continue;
     if (await assetHasActiveGeneration(asset)) continue;
 
-    const jobId = await queueManifestAsset(batchKey, manifest, asset, manifestAsset, [masterUrl]);
+    const jobId = await queueManifestAsset(batchKey, manifest, asset, manifestAsset, { referenceImageUrls: [masterUrl] });
     if (jobId) {
       jobs.push(jobId);
       queued += 1;
@@ -343,7 +405,9 @@ export async function runVaultLineageBatchGeneration(batchKey: string): Promise<
 
     const artDirectionUrl = getVaultArtDirectionReferenceUrl();
     const libraryRefs = artDirectionUrl ? [artDirectionUrl] : undefined;
-    const jobId = await queueManifestAsset(batchKey, manifest, libraryAsset, libraryManifest, libraryRefs);
+    const jobId = await queueManifestAsset(batchKey, manifest, libraryAsset, libraryManifest, {
+      referenceImageUrls: libraryRefs,
+    });
     if (jobId) {
       jobs.push(jobId);
       queued += 1;
@@ -359,9 +423,59 @@ export async function runVaultLineageBatchGeneration(batchKey: string): Promise<
   return { queued: cont.queued, jobs: cont.jobs };
 }
 
+export async function runCanonicalReferenceBatchGeneration(batchKey: string): Promise<{ queued: number; jobs: string[] }> {
+  const manifest = getBatchManifestByKey(batchKey);
+  if (!manifest?.useCanonicalReference) throw new Error(`Batch ${batchKey} is not canonical-reference configured`);
+
+  const batch = await getBatchByKey(batchKey);
+  if (!batch) throw new Error('Batch not seeded — run bootstrap first');
+
+  const { ensureCanonicalMasterRegistered } = await import('./canonicalMaster.js');
+  const { versionId: canonicalMasterVersionId } = await ensureCanonicalMasterRegistered();
+
+  const masterUrl = await getCanonicalMasterReferenceUrl();
+  if (!masterUrl) {
+    throw new Error('REFERENCE CONDITIONING FAILED: canonical master URL could not be resolved');
+  }
+
+  const assets = await listAssetsForBatch(batch.id);
+  const jobs: string[] = [];
+  let queued = 0;
+
+  await getSupabaseAdmin().from('site00_batches').update({ status: 'GENERATING' }).eq('id', batch.id);
+
+  const sorted = [...manifest.assets].sort((a, b) => (a.generationOrder ?? 99) - (b.generationOrder ?? 99));
+
+  for (const manifestAsset of sorted) {
+    const asset = assets.find((a) => a.asset_key === manifestAsset.assetKey);
+    if (!asset) continue;
+    if (await assetHasActiveGeneration(asset)) continue;
+
+    const jobId = await queueManifestAsset(batchKey, manifest, asset, manifestAsset, {
+      referenceImageUrls: [masterUrl],
+      requireReference: true,
+      canonicalMasterVersionId,
+      generationMetadata: {
+        canonicalMasterUrl: masterUrl,
+        canonicalMasterAssetKey: CANONICAL_MASTER_ASSET_KEY,
+      },
+    });
+    if (jobId) {
+      jobs.push(jobId);
+      queued += 1;
+    }
+  }
+
+  return { queued, jobs };
+}
+
 export async function runBatchGeneration(batchKey: string): Promise<{ queued: number; jobs: string[] }> {
   const manifest = getBatchManifestByKey(batchKey);
   if (!manifest) throw new Error(`Unknown batch: ${batchKey}`);
+
+  if (manifestUsesCanonicalReference(manifest)) {
+    return runCanonicalReferenceBatchGeneration(batchKey);
+  }
 
   if (manifestUsesVaultLineage(manifest)) {
     return runVaultLineageBatchGeneration(batchKey);
@@ -489,7 +603,7 @@ export async function queueRegeneration(
   const batchRow = asset.batch_id
     ? await getSupabaseAdmin().from('site00_batches').select('batch_key, manifest').eq('id', asset.batch_id).single()
     : null;
-  const batchKey = batchRow?.data?.batch_key ?? 'BATCH-ASSTS-ENV-002';
+  const batchKey = batchRow?.data?.batch_key ?? ACTIVE_ASSTS_ENV_BATCH_KEY;
   const manifest = getBatchManifestByKey(batchKey);
   if (!manifest) throw new Error('Manifest missing');
 
@@ -504,7 +618,20 @@ export async function queueRegeneration(
     .join(' ');
 
   let referenceImageUrls: string[] | undefined;
-  if (manifestAsset.requiresVaultReference && asset.batch_id) {
+  let requireReference = false;
+  let canonicalMasterVersionId: string | null = null;
+
+  if (manifestUsesCanonicalReference(manifest) || manifestAsset.requiresCanonicalReference) {
+    const masterUrl = await getCanonicalMasterReferenceUrl();
+    if (!masterUrl) {
+      throw new Error('REFERENCE CONDITIONING FAILED: canonical master must exist before regenerating derivatives');
+    }
+    const { ensureCanonicalMasterRegistered } = await import('./canonicalMaster.js');
+    const reg = await ensureCanonicalMasterRegistered();
+    canonicalMasterVersionId = reg.versionId;
+    referenceImageUrls = [masterUrl];
+    requireReference = true;
+  } else if (manifestAsset.requiresVaultReference && asset.batch_id) {
     const masterUrl = await getVaultMasterReferenceUrl(asset.batch_id);
     if (!masterUrl) {
       throw new Error('Vault master reference (Library environment) must exist before regenerating child zones');
@@ -512,9 +639,13 @@ export async function queueRegeneration(
     referenceImageUrls = [masterUrl];
   }
 
-  let fullPrompt = `${manifest.masterPrompt}\n\n${manifestAsset.compositionPrompt}\n\nREGENERATION CORRECTION:\n${correctionBlock}`;
-  if (referenceImageUrls?.length) {
+  let fullPrompt: string;
+  if (requireReference) {
+    fullPrompt = `${canonicalReferencePromptBlock(manifestAsset.compositionPrompt)}\n\nREGENERATION CORRECTION:\n${correctionBlock}`;
+  } else if (referenceImageUrls?.length) {
     fullPrompt = `${manifest.masterPrompt}\n\n${vaultReferencePromptBlock()}\n\n${manifestAsset.compositionPrompt}\n\nREGENERATION CORRECTION:\n${correctionBlock}`;
+  } else {
+    fullPrompt = `${manifest.masterPrompt}\n\n${manifestAsset.compositionPrompt}\n\nREGENERATION CORRECTION:\n${correctionBlock}`;
   }
 
   await getSupabaseAdmin().from('site00_logical_assets').update({ status: 'REGENERATING' }).eq('id', asset.id);
@@ -530,6 +661,18 @@ export async function queueRegeneration(
     correctionNote: input.note,
     correctionCategories: input.categories,
     referenceImageUrls,
+    requireReference,
+    canonicalMasterVersionId,
+    generationMetadata: requireReference
+      ? {
+          batchId: batchKey,
+          assetId: asset.asset_key,
+          viewType: manifestAsset.viewType ?? manifestAsset.environmentRole ?? null,
+          worldIdentity: manifest.worldIdentity ?? ASSTS_WORLD_IDENTITY,
+          canonicalMasterAssetKey: CANONICAL_MASTER_ASSET_KEY,
+          regeneration: true,
+        }
+      : undefined,
   });
 
   await recordReviewEvent({
