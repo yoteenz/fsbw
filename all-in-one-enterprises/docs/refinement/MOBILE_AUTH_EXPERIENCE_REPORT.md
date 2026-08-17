@@ -28,7 +28,7 @@ Replaced the generic white-card auth layout with a premium dark/gold **Auth Shel
 
 ## Styles
 
-- **`src/styles/aio-auth.css`** — premium auth shell, dark inputs, gold focus, mobile atmospheric background (reuses `/brand/all-in-one-hero-truck.png`), desktop split-screen (brand left / form right ≥1024px)
+- **`src/styles/aio-auth.css`** — premium auth shell, dark inputs, gold focus; login hero from `assets.loginHeroImage` (Supabase CDN), desktop split-screen (brand left / form right ≥1024px)
 - Imported in `src/App.tsx`
 
 ## Pages updated
@@ -66,6 +66,13 @@ Replaced the generic white-card auth layout with a premium dark/gold **Auth Shel
 - Fixed invisible LOG IN: excluded `.aio-auth-premium__btn` from global button reset
 - Login-specific hero composition, glass form panel, input icons, OR divider
 - BACK preserves `returnUrl` when set
+
+## Login hero asset (2026-08-17)
+
+- Canonical login hero: `appConfig.assets.loginHeroImage` (Supabase `live-preview/AIO/00E0E628-...png`)
+- Login-only: CSS var `--aio-auth-login-hero-url`; responsive `background-position` 58–68% by breakpoint
+- Auth pages (non-login): dark gradient only — old homepage truck removed from auth bg
+- Login header: back-only (no logo); lighter directional overlay preserves sunset/truck
 
 ## Mobile preview
 

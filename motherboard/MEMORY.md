@@ -52067,6 +52067,35 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **QA:** Build PASS; manual QA login/forgot/signup mobile 375px + desktop split PASS.
 
+<<<<<<< HEAD
+=======
+---
+
+## 2026-08-17 — AIO mobile login polish pass (reference-driven)
+
+- **Context:** Follow-up after auth shell sprint. Current login improved but didn't match approved reference — tiny logo, invisible LOG IN button, loose hero, form blending into background.
+
+- **Root cause (LOG IN invisible):** Global `.aio-app button:not(.aio-btn)` reset set `background: none` on auth premium buttons. Fixed by excluding `.aio-auth-premium__btn` from reset + explicit gold fill rules.
+
+- **Polish:** Larger centered header logo; gold BACK; layered hero gradients (truck right/lower-right, text left); WELCOME white + back. gold; dark glass form panel; 56px inputs with gold email/lock icons; OR divider; CREATE ACCOUNT in panel; compact demo card; trust microcopy (no unverified claims); BACK uses returnUrl when meaningful.
+
+- **Files:** `aio-auth.css`, `aio.css` (button reset), `AuthHeader`, `AuthShell`, `AuthBrandIntro`, `AuthInput`, `AuthPasswordInput`, `AuthFieldIcons`, `LoginPage`, `DemoPortalAccess`, `AIOAuthLayout`.
+
+- **QA:** Build PASS; 375px manual QA — gold LOG IN always visible, reference hierarchy matched.
+
+---
+
+## 2026-08-17 — AIO login hero asset replacement (Supabase master)
+
+- **Context:** Follow-up — replace wrong homepage truck crop on Login with approved wide master (truck right, dark left, gold sunset). URL: `assets.loginHeroImage` on Supabase `live-preview/AIO/00E0E628-4C00-4257-9DDE-A7DE6B9E3C98.png`.
+
+- **Implementation:** `appConfig.assets.loginHeroImage`; `AuthShell` sets `--aio-auth-login-hero-url` + preload on login variant; login-only CSS focal tuning (58–68% by breakpoint); restrained overlays; content moved up; headline `clamp(2.35rem, 9vw, 3.25rem)`; header back-only (logo removed on login); non-login auth pages use dark gradient only (old truck removed from auth bg); desktop login brand panel uses same hero.
+
+- **Preserved:** Auth logic, form panel, gold CTAs, returnUrl, demo utility.
+
+- **QA:** Build PASS; 375px — truck right, sunset visible, dark left typography zone, no header logo.
+
+>>>>>>> b3c5614f3 (AIO login hero — approved Supabase asset, focal crop, back-only header [sync-only])
 ---
 
 ## 2026-08-17 — Frontal Slayer loader + Lounge TV press-to-play regression hotfix
@@ -52098,6 +52127,7 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Runtime (after lock):** Loader auto-switches to alpha when `/site00/loader/v1/assts-loader-geometry-v1-alpha.webm` exists (synced on lock); `?loaderGeometry=screen` debug fallback. Public slot resolver `api/site00/loader-geometry.ts`. Until lock, screen blend remains default.
 
 - **QA:** `npm run build` PASS; CLI inspect/submit/poll PASS; ASSTS UI blocked on admin email confirmation in cloud preview (API/data verified via CLI).
+<<<<<<< HEAD
 =======
 ---
 
@@ -52140,3 +52170,5 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Preserved:** `AsstsLibraryShell` environment/background system; `AsstsBottomDock` alias → `AsstsVaultNav` on batch/inspection/loader pages. No pipeline/API/generation changes.
 
 - **QA:** `npm run build` PASS; Playwright 390×844 screenshot vs reference — header, stats, sections, browse grid, 5-tab nav aligned; architecture visible when slot resolves.
+=======
+>>>>>>> b3c5614f3 (AIO login hero — approved Supabase asset, focal crop, back-only header [sync-only])

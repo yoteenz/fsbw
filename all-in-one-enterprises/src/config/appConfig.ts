@@ -40,6 +40,8 @@ export const aioAppConfig = {
   assets: {
     /** Homepage hero — approved All In One branded truck (Refinement 03B) */
     heroImage: '/brand/all-in-one-hero-truck.png',
+    /** Login auth hero — approved wide master path (truck right, dark left text zone) */
+    loginHeroStoragePath: 'live-preview/AIO/00E0E628-4C00-4257-9DDE-A7DE6B9E3C98.png',
     /** Approved horizontal lockup — emblem + ALL IN ONE + ENTERPRISES INC. */
     logoLockup: '/brand/aio-logo-lockup.png',
     /** Homepage service-discovery icons (Refinement 03E) — extracted from approved master sheet */

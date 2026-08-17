@@ -1,9 +1,13 @@
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { returnUrlFromSearch, sanitizeReturnUrl } from '../../auth/returnUrl';
-import { aioAppConfig } from '../../config/appConfig';
 import { aioPaths } from '../../utils/paths';
 
-export function AuthHeader() {
+type Props = {
+  /** Login uses back-only header per approved reference */
+  showLogo?: boolean;
+};
+
+export function AuthHeader({ showLogo = true }: Props) {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -24,28 +28,13 @@ export function AuthHeader() {
   };
 
   return (
-    <header className="aio-auth-premium__header">
+    <header className={`aio-auth-premium__header${showLogo ? '' : ' aio-auth-premium__header--back-only'}`}>
       <button type="button" className="aio-auth-premium__back" onClick={onBack}>
         <span className="aio-auth-premium__back-chevron" aria-hidden="true">
           ‹
         </span>
         Back
       </button>
-      <Link to={aioPaths.home} className="aio-auth-premium__logo" aria-label={`${aioAppConfig.company.legalName} home`}>
-        {aioAppConfig.assets.logoLockup ? (
-          <img
-            src={aioAppConfig.assets.logoLockup}
-            alt=""
-            className="aio-auth-premium__logo-img"
-            width={1672}
-            height={941}
-            decoding="async"
-          />
-        ) : (
-          <span className="aio-auth-premium__logo-text">{aioAppConfig.company.displayName}</span>
-        )}
-      </Link>
-      <span className="aio-auth-premium__header-spacer" aria-hidden="true" />
     </header>
   );
 }

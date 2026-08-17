@@ -17,40 +17,48 @@
   inset: 0;
   z-index: 0;
   background-color: var(--aio-near-black, #0a0a0a);
-  background-image:
-    linear-gradient(
-      180deg,
-      rgba(10, 10, 10, 0.92) 0%,
-      rgba(10, 10, 10, 0.55) 28%,
-      rgba(10, 10, 10, 0.45) 52%,
-      rgba(10, 10, 10, 0.88) 100%
-    ),
-    linear-gradient(
-      90deg,
-      rgba(10, 10, 10, 0.94) 0%,
-      rgba(10, 10, 10, 0.72) 42%,
-      rgba(10, 10, 10, 0.18) 72%,
-      rgba(10, 10, 10, 0.35) 100%
-    ),
-    url('/brand/all-in-one-hero-truck.png');
-  background-position: center, center, 88% 72%;
-  background-size: cover, cover, cover;
-  background-repeat: no-repeat;
+  background-image: linear-gradient(
+    180deg,
+    rgba(10, 10, 10, 0.98) 0%,
+    rgba(10, 10, 10, 0.94) 100%
+  );
   pointer-events: none;
 }
 
+/* Login — approved wide hero master (Supabase CDN) */
 .aio-auth-premium--login .aio-auth-premium__bg {
-  background-position: center, center, 92% 68%;
-  background-size: cover, cover, min(140%, auto);
+  background-color: #050505;
+  background-image:
+    linear-gradient(
+      180deg,
+      rgba(5, 5, 5, 0.42) 0%,
+      rgba(5, 5, 5, 0.18) 38%,
+      rgba(5, 5, 5, 0.48) 100%
+    ),
+    linear-gradient(
+      90deg,
+      rgba(5, 5, 5, 0.62) 0%,
+      rgba(5, 5, 5, 0.28) 34%,
+      rgba(5, 5, 5, 0.06) 58%,
+      transparent 100%
+    ),
+    var(--aio-auth-login-hero-url);
+  background-position: center, center, 62% center;
+  background-size: cover, cover, cover;
+  background-repeat: no-repeat;
 }
 
-.aio-auth-premium__bg::after {
+.aio-auth-premium--login .aio-auth-premium__bg::after {
   content: '';
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse 70% 45% at 18% 18%, rgba(212, 160, 23, 0.1) 0%, transparent 55%),
-    radial-gradient(ellipse 50% 40% at 85% 70%, rgba(212, 160, 23, 0.06) 0%, transparent 50%);
+    radial-gradient(ellipse 55% 35% at 12% 22%, rgba(212, 160, 23, 0.05) 0%, transparent 55%),
+    linear-gradient(180deg, transparent 55%, rgba(5, 5, 5, 0.35) 100%);
+}
+
+.aio-auth-premium:not(.aio-auth-premium--login) .aio-auth-premium__bg::after {
+  display: none;
 }
 
 .aio-auth-premium__layout {
@@ -78,6 +86,10 @@
     max(1.25rem, env(safe-area-inset-left));
 }
 
+.aio-auth-premium--login .aio-auth-premium__form-column {
+  padding-top: max(0.2rem, env(safe-area-inset-top));
+}
+
 .aio-auth-premium__header {
   position: relative;
   display: grid;
@@ -85,6 +97,13 @@
   align-items: center;
   min-height: 52px;
   margin-bottom: 0.625rem;
+}
+
+.aio-auth-premium__header--back-only {
+  display: block;
+  grid-template-columns: none;
+  min-height: 36px;
+  margin-bottom: 0.375rem;
 }
 
 .aio-auth-premium__back {
@@ -206,11 +225,25 @@
   font-weight: 500;
 }
 
-.aio-auth-premium__secondary {
-  margin: 0.375rem 0 0;
-  font-size: 0.8125rem;
-  line-height: 1.45;
-  color: rgba(255, 255, 255, 0.48);
+.aio-auth-premium--login .aio-auth-premium__intro {
+  margin-bottom: 0.625rem;
+}
+
+.aio-auth-premium--login .aio-auth-premium__headline {
+  font-size: clamp(2.35rem, 9vw, 3.25rem);
+  line-height: 0.96;
+}
+
+.aio-auth-premium--login .aio-auth-premium__supporting {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.aio-auth-premium--login .aio-auth-premium__secondary {
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.aio-auth-premium--login .aio-auth-premium__form-panel {
+  margin-top: 0.125rem;
 }
 
 /* Form glass panel */
@@ -542,11 +575,19 @@
   text-align: center;
 }
 
-.aio-auth-premium__alt-copy {
-  margin: 0 0 0.875rem;
+.aio-auth-premium__secondary {
+  margin: 0.375rem 0 0;
   font-size: 0.8125rem;
   line-height: 1.45;
-  color: rgba(255, 255, 255, 0.65);
+  color: rgba(255, 255, 255, 0.48);
+}
+
+.aio-auth-premium--login .aio-auth-premium__alt-label {
+  color: rgba(255, 255, 255, 0.42);
+}
+
+.aio-auth-premium--login .aio-auth-premium__demo-link {
+  color: var(--aio-gold-light, #d4a017);
 }
 
 /* Error */
@@ -844,7 +885,14 @@
     inset: 0;
     background:
       linear-gradient(160deg, rgba(10, 10, 10, 0.55) 0%, rgba(10, 10, 10, 0.88) 100%),
-      url('/brand/all-in-one-hero-truck.png') center / cover no-repeat;
+      linear-gradient(180deg, rgba(10, 10, 10, 0.35) 0%, rgba(10, 10, 10, 0.75) 100%);
+  }
+
+  .aio-auth-premium--login .aio-auth-premium__brand-panel-bg {
+    background:
+      linear-gradient(160deg, rgba(5, 5, 5, 0.35) 0%, rgba(5, 5, 5, 0.72) 100%),
+      linear-gradient(90deg, rgba(5, 5, 5, 0.55) 0%, transparent 45%),
+      var(--aio-auth-login-hero-url) 72% center / cover no-repeat;
   }
 
   .aio-auth-premium__brand-panel-bg::after {
@@ -907,5 +955,39 @@
 @media (max-width: 359px) {
   .aio-auth-premium__row {
     grid-template-columns: 1fr;
+  }
+
+  .aio-auth-premium--login .aio-auth-premium__bg {
+    background-position: center, center, 58% center;
+  }
+}
+
+@media (min-width: 360px) and (max-width: 374px) {
+  .aio-auth-premium--login .aio-auth-premium__bg {
+    background-position: center, center, 60% center;
+  }
+}
+
+@media (min-width: 375px) and (max-width: 389px) {
+  .aio-auth-premium--login .aio-auth-premium__bg {
+    background-position: center, center, 62% center;
+  }
+}
+
+@media (min-width: 390px) and (max-width: 413px) {
+  .aio-auth-premium--login .aio-auth-premium__bg {
+    background-position: center, center, 64% center;
+  }
+}
+
+@media (min-width: 414px) and (max-width: 429px) {
+  .aio-auth-premium--login .aio-auth-premium__bg {
+    background-position: center, center, 66% center;
+  }
+}
+
+@media (min-width: 430px) and (max-width: 1023px) {
+  .aio-auth-premium--login .aio-auth-premium__bg {
+    background-position: center, center, 68% center;
   }
 }
