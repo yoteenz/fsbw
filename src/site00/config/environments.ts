@@ -6,6 +6,9 @@
 /** Approved Origin desktop environment (Supabase live-preview/site00/). */
 export const SITE00_ORIGIN_DESKTOP_BACKGROUND_PATH = '942898D3-6953-47CD-8987-0697EC1C9F11.png';
 
+/** Approved Enter 00 desktop menu environment (Supabase live-preview/site00/). */
+export const SITE00_ENTER_DESKTOP_BACKGROUND_PATH = '89319E70-D080-4798-9BCA-E53B137F2387.png';
+
 export type EnvironmentId = 'ORIGIN_ENVIRONMENT' | 'WORKFLOW_ENVIRONMENT' | 'ENTER_00_WAITING_ROOM';
 
 export type FocalPoint = {
@@ -57,7 +60,7 @@ export const SITE00_ENVIRONMENTS: Record<EnvironmentId, EnvironmentConfig> = {
   },
   ENTER_00_WAITING_ROOM: {
     id: 'ENTER_00_WAITING_ROOM',
-    asset: undefined, // Gap: production waiting room environment (locked reference exists)
+    desktopAssetPath: SITE00_ENTER_DESKTOP_BACKGROUND_PATH,
     desktopPosition: 'center center',
     mobilePosition: '55% center',
     desktopScale: 1,
@@ -65,7 +68,7 @@ export const SITE00_ENVIRONMENTS: Record<EnvironmentId, EnvironmentConfig> = {
     lightingClass: 'site00-env--enter-lighting',
     fallbackClass: 'site00-env-fallback--enter',
     routes: ['/enter'],
-    notes: 'Reference 06_ENTER00_WAITING_ROOM_APPROVED — environment LOCKED when asset arrives',
+    notes: 'Approved Enter 00 desktop menu — 89319E70 @ live-preview/site00',
   },
 };
 

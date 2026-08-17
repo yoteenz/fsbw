@@ -52480,3 +52480,13 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **QA:** `npm run build` PASS. Playwright @ 1440×900 — cards centered x=720, top≈513px (below hero block). Screenshot: `site00_origin_panels_repositioned.png`.
 
+---
+
+## 2026-08-17 — SITE 00 logo links to Origin homepage
+
+- **Context:** Founder requested upper-left **SITE 00** text on Origin and all pages that use it route back to the Origin homepage.
+
+- **Implementation:** `Site00LogoBlock.tsx` — **SITE 00** mark wrapped in React Router `<Link to={SITE00_ROUTES.originAlias}>` (`/origin`); `site00-typography.css` — `.site00-logo-mark-link` (inherit color, no underline). Location bracket label below logo unchanged (not linked). Applies to all `Site00AppShell` pages: `/origin`, `/enter`, `/idnty/state`, `/bldr/state`. ASSTS routes use separate chrome (no `Site00LogoBlock`).
+
+- **QA:** `npm run build` PASS. Playwright — logo present on all four shell routes with `href=/origin`; click from `/enter` navigates to `/origin`.
+

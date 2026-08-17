@@ -43,8 +43,8 @@ export const SITE00_ASSET_REGISTRY: Site00Asset[] = [
     alt: 'ENTER 00 waiting room lobby',
     environment: 'ENTER_00_WAITING_ROOM',
     route: '/enter',
-    status: 'reference-only',
-    notes: 'Reference 06 — LOCKED when production asset delivered',
+    status: 'production',
+    notes: 'Desktop background — live-preview/site00/89319E70-D080-4798-9BCA-E53B137F2387.png',
   },
   {
     id: 'obj-idnty-state-00',
