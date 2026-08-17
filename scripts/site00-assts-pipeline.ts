@@ -108,6 +108,16 @@ async function main() {
     return;
   }
 
+  if (cmd === 'reset-review') {
+    const batch = await getBatchByKey(BATCH_KEY);
+    if (!batch) throw new Error('Batch missing');
+    const { resetBatchForReview, recomputeBatchStatus } = await import('../api/_lib/site00Assts/service.js');
+    await resetBatchForReview(batch.id);
+    await recomputeBatchStatus(batch.id);
+    console.log(JSON.stringify({ ok: true, batchId: batch.id, status: 'IN_REVIEW' }, null, 2));
+    return;
+  }
+
   if (cmd === 'lock') {
     const batch = await getBatchByKey(BATCH_KEY);
     if (!batch) throw new Error('Batch missing');

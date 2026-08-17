@@ -6,13 +6,26 @@ export const ASSTS_ENVIRONMENT_SLOTS = {
 
 export type AsstsEnvironmentSlot = (typeof ASSTS_ENVIRONMENT_SLOTS)[keyof typeof ASSTS_ENVIRONMENT_SLOTS];
 
-export const ASSTS_LIBRARY_CATEGORIES = [
-  { id: 'environments', label: '01 ENVIRONMENTS', count: 32 },
-  { id: 'objects', label: '02 OBJECTS', count: 128 },
-  { id: 'ui', label: '03 UI / GRAPHICS', count: 48 },
-  { id: 'brand', label: '04 BRAND SYSTEMS', count: 22 },
-  { id: 'project', label: '05 PROJECT ASSETS', count: 17 },
+/** Category taxonomy — counts come from API, not these placeholders. */
+export const ASSTS_LIBRARY_CATEGORY_DEFS = [
+  { id: 'environments', label: '01 ENVIRONMENTS', assetTypes: ['environment'] },
+  { id: 'objects', label: '02 OBJECTS', assetTypes: ['object'] },
+  { id: 'ui', label: '03 UI / GRAPHICS', assetTypes: ['ui', 'graphic'] },
+  { id: 'brand', label: '04 BRAND SYSTEMS', assetTypes: ['brand'] },
+  { id: 'project', label: '05 PROJECT ASSETS', assetTypes: ['project'] },
 ] as const;
+
+export const CORRECTION_CATEGORIES = [
+  'GEOMETRY',
+  'CAMERA',
+  'LIGHTING',
+  'MATERIAL',
+  'COLOR',
+  'DETAIL',
+  'OTHER',
+] as const;
+
+export type CorrectionCategory = (typeof CORRECTION_CATEGORIES)[number];
 
 export const STATUS_LABELS: Record<string, string> = {
   QUEUED: 'Queued',

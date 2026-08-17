@@ -186,7 +186,7 @@ export async function recordReviewEvent(input: {
 }
 
 export async function getLibrarySummary() {
-  const { data: assets } = await supabase().from('site00_logical_assets').select('id, status, required');
+  const { data: assets } = await supabase().from('site00_logical_assets').select('id, status, required, asset_type');
   const rows = assets ?? [];
   const { data: batches } = await supabase().from('site00_batches').select('*').order('created_at', { ascending: false });
 
@@ -202,6 +202,98 @@ export async function getLibrarySummary() {
     locked,
     batchesList: batches ?? [],
   };
+}
+
+const LIBRARY_CATEGORY_DEFS = [
+  { id: 'environments', label: '01 ENVIRONMENTS', assetTypes: ['environment'] },
+  { id: 'objects', label: '02 OBJECTS', assetTypes: ['object'] },
+  { id: 'ui', label: '03 UI / GRAPHICS', assetTypes: ['ui', 'graphic'] },
+  { id: 'brand', label: '04 BRAND SYSTEMS', assetTypes: ['brand'] },
+  { id: 'project', label: '05 PROJECT ASSETS', assetTypes: ['project'] },
+] as const;
+
+export async function getLibraryCategoryCounts(): Promise<Array<{ id: string; label: string; count: number }>> {
+  const { data: assets } = await supabase().from('site00_logical_assets').select('asset_type');
+  const rows = assets ?? [];
+  return LIBRARY_CATEGORY_DEFS.map((cat) => ({
+    id: cat.id,
+    label: cat.label,
+    count: rows.filter((a) => (cat.assetTypes as readonly string[]).includes(a.asset_type ?? 'environment')).length,
+  }));
+}
+
+export async function resetBatchForReview(batchId: string): Promise<void> {
+  const batch = await getBatchById(batchId);
+  if (!batch) throw new Error('Batch not found');
+
+  const assets = await listAssetsForBatch(batchId);
+  const supabaseClient = supabase();
+
+  for (const asset of assets) {
+    if (asset.semantic_slot_key) {
+      await supabaseClient
+        .from('site00_asset_slots')
+        .update({ current_locked_asset_id: null, current_locked_version_id: null, updated_at: new Date().toISOString() })
+        .eq('slot_key', asset.semantic_slot_key);
+    }
+
+    const versionId = asset.current_version_id ?? asset.approved_version_id;
+    if (versionId) {
+      await supabaseClient.from('site00_asset_versions').update({ status: 'NEEDS_REVIEW' }).eq('id', versionId);
+    }
+
+    await supabaseClient
+      .from('site00_logical_assets')
+      .update({
+        status: 'NEEDS_REVIEW',
+        approved_version_id: null,
+        production_version_id: null,
+        locked_at: null,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', asset.id);
+  }
+
+  await supabaseClient
+    .from('site00_batches')
+    .update({ status: 'IN_REVIEW', locked_at: null, completed_at: null })
+    .eq('id', batchId);
+
+  if (assets[0]) {
+    await recordReviewEvent({
+      assetId: assets[0].id,
+      batchId,
+      action: 'NOTE',
+      note: 'Batch reset for human review (factory)',
+    });
+  }
+}
+
+export async function ensureAutoGenerationPipeline(batchKey = BATCH_ASSTS_ENV_001.batchKey): Promise<{ autoQueued: boolean; polled: number }> {
+  await ensureBootstrapBatch(batchKey);
+  const batch = await getBatchByKey(batchKey);
+  if (!batch || batch.status === 'LOCKED') return { autoQueued: false, polled: 0 };
+
+  const assets = await listAssetsForBatch(batch.id);
+  const manifest = getBatchManifestByKey(batchKey);
+  if (!manifest) return { autoQueued: false, polled: 0 };
+
+  let autoQueued = false;
+  const shouldQueue = assets.some((asset) => {
+    if (asset.status === 'QUEUED' || asset.status === 'FAILED') return true;
+    if (!asset.current_version_id) return true;
+    return false;
+  });
+
+  if (shouldQueue && batch.status !== 'GENERATING') {
+    const { runBatchGeneration } = await import('./generation.js');
+    await runBatchGeneration(batchKey);
+    autoQueued = true;
+  }
+
+  const { pollPendingGenerationJobs } = await import('./generation.js');
+  const polled = await pollPendingGenerationJobs(10);
+  return { autoQueued, polled };
 }
 
 export async function recomputeBatchStatus(batchId: string): Promise<BatchStatus> {

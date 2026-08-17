@@ -1,19 +1,23 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { AsstsEnvironmentShell } from '../components/AsstsEnvironmentShell';
+import { AsstsDevPanel, useAsstsAutoRefresh } from '../components/AsstsDevPanel';
 import { AsstsMobileNav, AsstsStatusBadge } from '../components/AsstsMobileNav';
-import { ASSTS_ENVIRONMENT_SLOTS, ASSTS_LIBRARY_CATEGORIES } from '../config/slots';
-import {
-  bootstrapAsstsBatch,
-  fetchAsstsLibrary,
-  generateAsstsBatch,
-  type AsstsLibraryResponse,
-} from '../services/asstsApi';
+import { ASSTS_ENVIRONMENT_SLOTS } from '../config/slots';
+import { fetchAsstsLibrary, type AsstsLibraryResponse } from '../services/asstsApi';
+
+function batchNeedsAttention(priority: AsstsLibraryResponse['priorityBatch']): boolean {
+  if (!priority) return false;
+  if (priority.status === 'READY_TO_LOCK') return true;
+  if (priority.counts.needsReview > 0) return true;
+  if (priority.counts.regenerating > 0 || priority.status === 'GENERATING') return true;
+  return false;
+}
 
 export default function AsstsLibraryPage() {
   const [data, setData] = useState<AsstsLibraryResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [busy, setBusy] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
   const load = useCallback(async () => {
     try {
@@ -22,58 +26,54 @@ export default function AsstsLibraryPage() {
       setData(res);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Failed to load library');
+    } finally {
+      setLoading(false);
     }
   }, []);
 
-  useEffect(() => {
-    void load();
-    const t = setInterval(() => void load(), 8000);
-    return () => clearInterval(t);
-  }, [load]);
+  const generating =
+    data?.priorityBatch?.status === 'GENERATING' ||
+    (data?.priorityBatch?.counts.regenerating ?? 0) > 0 ||
+    (data?.summary.needsReview === 0 && data?.priorityBatch?.counts.approved === 0 && data?.summary.totalAssets > 0);
+
+  useAsstsAutoRefresh(load, { hasGenerating: generating });
 
   const summary = data?.summary;
   const priority = data?.priorityBatch;
+  const showPriority = priority && batchNeedsAttention(priority);
 
   return (
     <AsstsEnvironmentShell slotKey={ASSTS_ENVIRONMENT_SLOTS.library}>
       <header className="site00-assts-header">
         <p className="site00-label-red">ASSTS</p>
-        <h1 className="site00-heading-lg" style={{ fontSize: '1.5rem', margin: 0 }}>
-          THE ASSET VAULT.
-        </h1>
+        <h1 className="site00-heading-lg site00-assts-title">THE ASSET VAULT.</h1>
       </header>
 
-      <div className="site00-assts-admin-bar">
-        <button type="button" disabled={!!busy} onClick={() => { setBusy('bootstrap'); void bootstrapAsstsBatch().then(load).finally(() => setBusy(null)); }}>
-          Bootstrap Batch
-        </button>
-        <button type="button" disabled={!!busy} onClick={() => { setBusy('generate'); void generateAsstsBatch().then(load).finally(() => setBusy(null)); }}>
-          Run FAL Generation
-        </button>
-        <button type="button" disabled={!!busy} onClick={() => { setBusy('refresh'); void load().finally(() => setBusy(null)); }}>
-          Refresh
-        </button>
-      </div>
+      <AsstsDevPanel batchId={priority?.id ?? null} onRefresh={load} />
 
-      {error ? <p className="site00-assts-empty" role="alert">{error}</p> : null}
+      {error ? (
+        <div className="site00-assts-alert site00-assts-panel" role="alert">
+          {error}
+        </div>
+      ) : null}
+
+      {loading && !summary ? <p className="site00-assts-empty">Loading Asset Vault…</p> : null}
 
       {summary ? (
         <div className="site00-assts-metrics" aria-label="Library metrics">
-          <div className="site00-assts-metric">
+          <div className="site00-assts-metric site00-assts-panel">
             <div className="site00-assts-metric__value">{summary.totalAssets}</div>
             <div className="site00-assts-metric__label">Assets</div>
           </div>
-          <div className="site00-assts-metric">
+          <div className="site00-assts-metric site00-assts-panel">
             <div className="site00-assts-metric__value">{summary.batches}</div>
             <div className="site00-assts-metric__label">Batches</div>
           </div>
-          <div className="site00-assts-metric">
-            <div className="site00-assts-metric__value" style={{ color: 'var(--site-red)' }}>
-              {summary.needsReview}
-            </div>
+          <div className="site00-assts-metric site00-assts-panel">
+            <div className="site00-assts-metric__value site00-assts-metric__value--review">{summary.needsReview}</div>
             <div className="site00-assts-metric__label">Need Review</div>
           </div>
-          <div className="site00-assts-metric">
+          <div className="site00-assts-metric site00-assts-panel">
             <div className="site00-assts-metric__value">{summary.approved}</div>
             <div className="site00-assts-metric__label">Approved</div>
           </div>
@@ -81,39 +81,43 @@ export default function AsstsLibraryPage() {
       ) : null}
 
       <p className="site00-assts-section-title">NEEDS YOUR REVIEW</p>
-      {priority && priority.counts.needsReview > 0 ? (
-        <Link to={`/assts/batches/${priority.id}`} className="site00-assts-priority-card site00-assts-panel">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      {showPriority ? (
+        <Link to={`/assts/batches/${priority!.id}`} className="site00-assts-priority-card site00-assts-panel">
+          <div className="site00-assts-priority-card__top">
             <div>
-              <strong>{priority.batch_key}</strong>
-              <p className="site00-body" style={{ fontSize: 11, margin: '4px 0' }}>
-                {priority.category}
-              </p>
-              <p className="site00-label">
-                {priority.counts.approved} / {priority.counts.total} reviewed
+              <strong className="site00-assts-priority-card__batch">{priority!.batch_key}</strong>
+              <p className="site00-assts-priority-card__category">{priority!.category}</p>
+              <p className="site00-assts-priority-card__progress">
+                {priority!.counts.total} ASSETS · {priority!.counts.approved} / {priority!.counts.total} APPROVED
               </p>
             </div>
-            <AsstsStatusBadge status={priority.status} />
+            <AsstsStatusBadge status={priority!.status} />
           </div>
-          <p className="site00-action-link site00-action-link--red" style={{ marginTop: 12 }}>
-            CONTINUE REVIEW →
-          </p>
+          <p className="site00-assts-priority-card__cta">CONTINUE REVIEW →</p>
         </Link>
+      ) : priority?.status === 'LOCKED' ? (
+        <p className="site00-assts-empty site00-assts-panel site00-assts-empty--inline">
+          {priority.batch_key} is locked — production environments are live.
+        </p>
       ) : (
-        <p className="site00-assts-empty">No items need review right now.</p>
+        <p className="site00-assts-empty site00-assts-panel site00-assts-empty--inline">
+          {generating ? 'Generation in progress — assets will appear here automatically.' : 'No items need review right now.'}
+        </p>
       )}
 
-      <p className="site00-assts-section-title">RECENT BATCHES</p>
+      <p className="site00-assts-section-title" id="batches">
+        RECENT BATCHES
+      </p>
       {summary?.batchesList.map((b) => (
-        <Link key={b.id} to={`/assts/batches/${b.id}`} className="site00-assts-batch-row">
+        <Link key={b.id} to={`/assts/batches/${b.id}`} className="site00-assts-batch-row site00-assts-panel">
           <span>{b.batch_key}</span>
           <AsstsStatusBadge status={b.status} />
         </Link>
       ))}
 
       <p className="site00-assts-section-title">BROWSE LIBRARY</p>
-      {ASSTS_LIBRARY_CATEGORIES.map((cat) => (
-        <div key={cat.id} className="site00-assts-category-row">
+      {(data?.categories ?? []).map((cat) => (
+        <div key={cat.id} className="site00-assts-category-row site00-assts-panel">
           <span>{cat.label}</span>
           <span className="site00-label">{cat.count} assets</span>
         </div>

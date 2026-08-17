@@ -111,6 +111,8 @@ Add manifests to `api/_lib/site00Assts/manifests.ts` and register in `getBatchMa
 
 Workflow: `bootstrap` → `generate` → poll/review in ASSTS UI → approve → `lock`.
 
+Workflow: library load auto-bootstraps + polls (no manual refresh required). Dev/factory controls: triple-tap top-right on ASSTS header or `?factory=1`.
+
 ## Pipeline script (server-side validation)
 
 ```bash

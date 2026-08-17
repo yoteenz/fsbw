@@ -5,14 +5,17 @@ import {
   ensureBootstrapBatch,
   enrichAsset,
   enrichBatch,
+  ensureAutoGenerationPipeline,
   getAssetById,
   getBatchById,
   getBatchByKey,
+  getLibraryCategoryCounts,
   getLibrarySummary,
   getNextNeedsReviewAssetInBatch,
   listReviewEvents,
   recordReviewEvent,
   recomputeBatchStatus,
+  resetBatchForReview,
 } from '../_lib/site00Assts/service.js';
 import { runBatchGeneration, pollPendingGenerationJobs, queueRegeneration } from '../_lib/site00Assts/generation.js';
 import { lockBatchAndPromoteSlots, resolveProductionAsset } from '../_lib/site00Assts/slots.js';
@@ -56,14 +59,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
     if (req.method === 'GET') {
       if (action === 'library') {
-        await pollPendingGenerationJobs(6);
+        const pipeline = await ensureAutoGenerationPipeline(BATCH_ASSTS_ENV_001.batchKey);
         const summary = await getLibrarySummary();
+        const categories = await getLibraryCategoryCounts();
         const priorityBatch = summary.batchesList.find((b) => b.batch_key === BATCH_ASSTS_ENV_001.batchKey);
         let priority = null;
         if (priorityBatch) {
           priority = await enrichBatch(priorityBatch);
         }
-        return res.status(200).json({ ok: true, summary, priorityBatch: priority });
+        return res.status(200).json({ ok: true, summary, categories, priorityBatch: priority, pipeline });
       }
 
       if (action === 'batch') {
@@ -207,6 +211,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         const result = await lockBatchAndPromoteSlots(batchId);
         if (!result.ok) return res.status(400).json(result);
         return res.status(200).json(result);
+      }
+
+      if (postAction === 'reset-review') {
+        const batchId = String(body.batchId ?? '').trim();
+        if (!batchId) return res.status(400).json({ error: 'batchId required' });
+        await resetBatchForReview(batchId);
+        await recomputeBatchStatus(batchId);
+        const batch = await getBatchById(batchId);
+        return res.status(200).json({ ok: true, batch });
       }
 
       return res.status(400).json({ error: 'Unknown POST action' });

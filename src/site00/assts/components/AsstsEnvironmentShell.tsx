@@ -48,7 +48,7 @@ export function AsstsEnvironmentShell({ slotKey, children }: AsstsEnvironmentShe
         style={
           bgUrl
             ? {
-                backgroundImage: `url(${bgUrl})`,
+                backgroundImage: `url("${bgUrl.replace(/"/g, '\\"')}")`,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center top',
               }

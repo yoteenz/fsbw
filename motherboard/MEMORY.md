@@ -51808,3 +51808,19 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Conventions:** Before changing SITE 00, read `docs/site00/BIBLE.md`. Production environment/object assets still required (see `docs/site00/ASSETS.md`). Mobile compositions need dedicated design sprint.
 
+---
+
+## 2026-08-17 — SITE 00 ASSTS + FAL Asset Factory Bootstrap V1.1
+
+- **Context:** Full production sprint for ASSTS (The Asset Vault) and reusable FAL Asset Factory. Prove complete loop: functional shell → FAL batch → human/agent review → lock → semantic slot self-deployment. First real batch only: **BATCH-ASSTS-ENV-001** (3 mobile ASSTS environments). Do not mass-generate other SITE 00 assets.
+
+- **Implemented:** Supabase migration `20260817103000_site00_assts_asset_factory.sql` (applied to production `hyycomvcaqxxvyrfupes`) — `site00_asset_slots`, `site00_batches`, `site00_logical_assets`, `site00_asset_versions`, `site00_review_events`, `site00_generation_jobs`. Backend `api/_lib/site00Assts/` (manifests, service, generation, storage, slots) + `api/admin/site00-assts.ts`. Mobile-first UI `src/site00/assts/` — Library, Batch Review, Inspection; `AsstsEnvironmentShell` resolves slots with CSS fallback until locked. Routes `/assts`, `/assts/batches/:batchId`, `/assts/:assetId` via `AdminGuard`. Pipeline script `scripts/site00-assts-pipeline.ts`. Docs `docs/site00/ASSTS.md`.
+
+- **Production loop validated:** Bootstrap → FAL generate (3 jobs) → poll → all `NEEDS_REVIEW`. Regeneration test on inspection asset: v01 preserved, v02 `NEEDS_REVIEW`. Approve all → lock batch → slots resolve `source: locked` with deterministic paths (`s00_env_assts_*_v##.webp`). Inspection slot promoted v02 (approved regen). Batch status **LOCKED**.
+
+- **Decisions:** Reuse existing FAL poll/result helpers; direct `fal.queue.submit` for environments (no UI in prompts). Idempotency keys per asset version. Lock promotes approved versions to `site00_asset_slots` — no manual URL replacement in code.
+
+- **QA:** `npm run build` PASS. Server pipeline PASS. UI requires admin sign-in at `/assts` (not yet deployed to Vercel until founder says deploy now).
+
+- **Next:** Founder human review in ASSTS UI; say **deploy now** for Vercel production build.
+
