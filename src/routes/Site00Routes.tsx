@@ -8,6 +8,7 @@ import { AsstsRouteSuspense } from '../site00/assts/components/AsstsRouteSuspens
 /* Eager-load SITE 00 + ASSTS styles (lazy route CSS was not applying on mobile preview). */
 import '../site00/styles/site00.css';
 import '../site00/assts/styles/assts.css';
+import '../site00/assts/styles/assts-depth.css';
 
 const Site00OriginPage = lazy(() => import('../site00/pages/OriginPage'));
 const Site00EnterPage = lazy(() => import('../site00/pages/EnterPage'));

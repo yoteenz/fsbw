@@ -211,6 +211,7 @@ export type AsstsAssetDetail = {
   id: string;
   asset_key: string;
   display_name: string;
+  asset_type?: string | null;
   batch_id: string | null;
   batch_key?: string | null;
   batch_display_name?: string | null;

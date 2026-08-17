@@ -2,31 +2,31 @@ import { NavLink, useLocation } from 'react-router-dom';
 
 export function AsstsBottomDock() {
   const location = useLocation();
-  const onLibrary = location.pathname === '/assts' || location.pathname.startsWith('/assts?');
-  const onBatches =
-    location.pathname === '/assts/batches' || location.pathname.startsWith('/assts/batches/');
+  const path = location.pathname;
+  const onLibrary = path === '/assts';
+  const onBatches = path === '/assts/batches' || path.startsWith('/assts/batches/');
 
   return (
-    <nav className="assts-bottom-dock" aria-label="ASSTS navigation">
-      <NavLink to="/assts" end className={`assts-bottom-dock__item ${onLibrary && !onBatches ? 'active' : ''}`}>
-        <span className="assts-bottom-dock__icon" aria-hidden="true">
-          ◫
-        </span>
-        <span>Library</span>
-      </NavLink>
-      <NavLink to="/assts/batches" className={`assts-bottom-dock__item ${onBatches ? 'active' : ''}`}>
-        <span className="assts-bottom-dock__icon" aria-hidden="true">
-          ▤
-        </span>
-        <span>Batches</span>
-      </NavLink>
-      <NavLink to="/origin" className="assts-bottom-dock__item assts-bottom-dock__item--exit">
-        <span className="assts-bottom-dock__icon" aria-hidden="true">
-          ↗
-        </span>
-        <span>Exit SITE 00</span>
-      </NavLink>
-    </nav>
+    <div className="assts-bottom-dock-wrap">
+      <nav className="assts-bottom-dock" aria-label="ASSTS navigation">
+        <NavLink
+          to="/assts"
+          end
+          className={`assts-bottom-dock__item ${onLibrary ? 'active' : ''}`}
+        >
+          <span className="assts-bottom-dock__glyph assts-bottom-dock__glyph--library" aria-hidden="true" />
+          <span className="assts-bottom-dock__label">Library</span>
+        </NavLink>
+        <NavLink to="/assts/batches" className={`assts-bottom-dock__item ${onBatches ? 'active' : ''}`}>
+          <span className="assts-bottom-dock__glyph assts-bottom-dock__glyph--batches" aria-hidden="true" />
+          <span className="assts-bottom-dock__label">Batches</span>
+        </NavLink>
+        <NavLink to="/origin" className="assts-bottom-dock__item assts-bottom-dock__item--exit">
+          <span className="assts-bottom-dock__glyph assts-bottom-dock__glyph--exit" aria-hidden="true" />
+          <span className="assts-bottom-dock__label">Exit SITE 00</span>
+        </NavLink>
+      </nav>
+    </div>
   );
 }
 

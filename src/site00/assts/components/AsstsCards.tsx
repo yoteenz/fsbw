@@ -31,7 +31,7 @@ export function AsstsBatchCard({
 }: BatchCardProps) {
   if (variant === 'row') {
     return (
-      <Link to={to} className="assts-batch-row assts-glass assts-glass--card assts-glass--pressable">
+      <Link to={to} className="assts-batch-row assts-depth-recessed">
         <div className="assts-batch-row__thumb">
           {thumbnailUrl ? (
             <img src={thumbnailUrl} alt="" loading="lazy" />
@@ -50,24 +50,26 @@ export function AsstsBatchCard({
   }
 
   return (
-    <Link to={to} className="assts-priority-card assts-glass assts-glass--card assts-glass--pressable">
-      <div className="assts-priority-card__visual">
+    <Link to={to} className="assts-review-bay">
+      <div className="assts-review-bay__display">
+        <span className="assts-review-bay__locator assts-review-bay__locator--tl" aria-hidden="true" />
+        <span className="assts-review-bay__locator assts-review-bay__locator--tr" aria-hidden="true" />
+        <span className="assts-review-bay__locator assts-review-bay__locator--bl" aria-hidden="true" />
+        <span className="assts-review-bay__locator assts-review-bay__locator--br" aria-hidden="true" />
         {thumbnailUrl ? (
-          <img src={thumbnailUrl} alt="" className="assts-priority-card__img" loading="lazy" />
+          <img src={thumbnailUrl} alt="" className="assts-review-bay__img" loading="lazy" />
         ) : (
-          <div className="assts-priority-card__img assts-priority-card__img--empty" />
+          <div className="assts-review-bay__img assts-review-bay__img--empty" aria-hidden="true" />
         )}
-        <div className="assts-priority-card__overlay">
-          <div className="assts-priority-card__meta">
-            <strong className="assts-priority-card__batch">{batchKey}</strong>
-            <p className="assts-priority-card__category">{category ?? displayName}</p>
-            <p className="assts-priority-card__progress">
-              {String(reviewedCount).padStart(2, '0')} / {String(totalCount).padStart(2, '0')} REVIEWED
-            </p>
-          </div>
-          <AsstsProgress value={progressPercent} max={100} />
-          <span className="assts-priority-card__cta">CONTINUE REVIEW →</span>
-        </div>
+      </div>
+      <div className="assts-review-bay__panel">
+        <strong className="assts-priority-card__batch">{batchKey}</strong>
+        <p className="assts-priority-card__category">{category ?? displayName}</p>
+        <p className="assts-priority-card__progress">
+          {String(reviewedCount).padStart(2, '0')} / {String(totalCount).padStart(2, '0')} REVIEWED
+        </p>
+        <AsstsProgress value={progressPercent} max={100} />
+        <span className="assts-review-bay__cta">CONTINUE REVIEW →</span>
       </div>
     </Link>
   );
@@ -81,6 +83,7 @@ type AssetCardProps = {
   status: string;
   onClick: () => void;
   compact?: boolean;
+  selected?: boolean;
 };
 
 export function AsstsAssetCard({
@@ -91,22 +94,23 @@ export function AsstsAssetCard({
   status,
   onClick,
   compact,
+  selected,
 }: AssetCardProps) {
   return (
     <button
       type="button"
-      className={`assts-asset-card assts-glass assts-glass--card assts-glass--pressable ${compact ? 'assts-asset-card--compact' : ''}`}
+      className={`assts-wall-frame ${selected ? 'assts-wall-frame--active' : ''} ${compact ? 'assts-wall-frame--compact' : ''}`}
       onClick={onClick}
     >
-      <div className="assts-asset-card__media">
+      <div className="assts-wall-frame__mount">
         {previewUrl ? (
-          <img src={previewUrl} alt="" className="assts-asset-card__img" loading="lazy" />
+          <img src={previewUrl} alt="" className="assts-wall-frame__img" loading="lazy" />
         ) : (
-          <div className="assts-asset-card__img assts-asset-card__img--empty" />
+          <div className="assts-wall-frame__img assts-wall-frame__img--empty" aria-hidden="true" />
         )}
         <span className="assts-asset-card__status-dot" data-status={status.replace(/_/g, '-').toLowerCase()} aria-hidden="true" />
       </div>
-      <div className="assts-asset-card__meta">
+      <div className="assts-wall-frame__meta">
         <div className="assts-mono assts-asset-card__key">{assetKey}</div>
         <div className="assts-asset-card__name">{displayName}</div>
         {variantLabel ? <div className="assts-asset-card__variant">{variantLabel}</div> : null}
@@ -128,17 +132,17 @@ export function AsstsCategoryTile({ label, count, coverUrl, to }: CategoryTilePr
   const [num, ...nameParts] = label.split(' ');
   const name = nameParts.join(' ');
   return (
-    <Link to={to} className="assts-category-tile assts-glass assts-glass--card assts-glass--pressable">
-      <div className="assts-category-tile__visual">
+    <Link to={to} className="assts-archive-bay">
+      <div className="assts-archive-bay__inset">
         {coverUrl ? (
           <img src={coverUrl} alt="" loading="lazy" />
         ) : (
-          <div className="assts-category-tile__empty" aria-hidden="true">
-            <span className="assts-category-tile__frame" />
+          <div className="assts-archive-bay__empty" aria-hidden="true">
+            <div className="assts-archive-bay__empty-frame" />
           </div>
         )}
       </div>
-      <div className="assts-category-tile__meta">
+      <div className="assts-archive-bay__band">
         <span className="assts-category-tile__num">{num}</span>
         <span className="assts-category-tile__name">{name}</span>
         <span className="assts-category-tile__count">{count} ASSETS</span>
@@ -178,7 +182,7 @@ export function AsstsBatchSummaryPanel({
   progressPercent: number;
 }) {
   return (
-    <AsstsGlass variant="panel" className="assts-batch-summary">
+    <AsstsGlass variant="panel" className="assts-batch-summary assts-depth-floating">
       <div className="assts-batch-summary__stats">
         <div className="assts-batch-summary__stat">
           <span className="assts-batch-summary__stat-value">{counts.approved}</span>

@@ -754,50 +754,10 @@
   cursor: not-allowed;
 }
 
-/* Bottom dock */
-.assts-bottom-dock {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  display: flex;
-  justify-content: space-around;
-  align-items: stretch;
-  padding: 8px 8px calc(8px + env(safe-area-inset-bottom, 0px));
-  background: rgba(255, 255, 255, 0.72);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-top: 1px solid rgba(255, 255, 255, 0.65);
-  z-index: 20;
-}
+/* Bottom dock — floating spatial dock defined in assts-depth.css */
 
-.assts-bottom-dock__item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
-  font-size: 8px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--site-text-muted);
-  text-decoration: none;
-  padding: 4px 8px;
-  min-height: 44px;
-  justify-content: center;
-}
-
-.assts-bottom-dock__item.active {
-  color: var(--site-red);
-}
-
-.assts-bottom-dock__item--exit {
-  color: var(--site-text);
-  font-weight: 500;
-}
-
-.assts-bottom-dock__icon {
-  font-size: 14px;
-  line-height: 1;
+.assts-bottom-dock-wrap {
+  /* depth.css owns layout */
 }
 
 /* Status badges */

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { AsstsEnvironmentShell } from '../components/AsstsEnvironmentShell';
 import { AsstsDevPanel, useAsstsAutoRefresh } from '../components/AsstsDevPanel';
 import { AsstsBottomDock } from '../components/AsstsMobileNav';
+import { AsstsPageShell } from '../components/AsstsPageShell';
 import { AsstsBatchCard } from '../components/AsstsCards';
 import { AsstsSectionHeader } from '../components/AsstsGlass';
 import { ASSTS_ENVIRONMENT_SLOTS } from '../config/slots';
@@ -30,43 +31,47 @@ export default function AsstsBatchesListPage() {
 
   return (
     <AsstsEnvironmentShell slotKey={ASSTS_ENVIRONMENT_SLOTS.library}>
-      <header className="assts-page-header">
-        <Link to="/assts" className="assts-back-link">
-          ← LIBRARY
-        </Link>
-        <h1 className="assts-page-header__title">BATCHES</h1>
-        <p className="assts-page-header__sub">Production review groups</p>
-      </header>
+      <AsstsPageShell variant="batches">
+        <header className="assts-page-header assts-hero--spatial">
+          <Link to="/assts" className="assts-back-link">
+            ← LIBRARY
+          </Link>
+          <h1 className="assts-page-header__title">BATCHES</h1>
+          <p className="assts-page-header__sub">Production review groups</p>
+        </header>
 
-      <AsstsDevPanel batchId={null} onRefresh={load} />
+        <AsstsDevPanel batchId={null} onRefresh={load} />
 
-      {error ? (
-        <div className="assts-alert assts-glass assts-glass--panel" role="alert">
-          {error}
+        {error ? (
+          <div className="assts-alert assts-glass assts-glass--panel" role="alert">
+            {error}
+          </div>
+        ) : null}
+
+        {loading ? <p className="assts-empty">Loading batches…</p> : null}
+
+        <div className="assts-recess-zone">
+          <AsstsSectionHeader title="ALL BATCHES" />
+          <div className="assts-batch-list">
+            {batches.map((b) => (
+              <AsstsBatchCard
+                key={b.id}
+                batchKey={b.batch_key}
+                category={b.category}
+                displayName={b.display_name}
+                thumbnailUrl={b.thumbnailUrl}
+                reviewedCount={b.counts?.approved ?? 0}
+                totalCount={b.counts?.total ?? 0}
+                progressPercent={batchProgressPercent(b.counts ?? {})}
+                status={b.status}
+                statusHint={batchStatusHint(b)}
+                to={`/assts/batches/${b.id}`}
+                variant="row"
+              />
+            ))}
+          </div>
         </div>
-      ) : null}
-
-      {loading ? <p className="assts-empty">Loading batches…</p> : null}
-
-      <AsstsSectionHeader title="ALL BATCHES" />
-      <div className="assts-batch-list">
-        {batches.map((b) => (
-          <AsstsBatchCard
-            key={b.id}
-            batchKey={b.batch_key}
-            category={b.category}
-            displayName={b.display_name}
-            thumbnailUrl={b.thumbnailUrl}
-            reviewedCount={b.counts?.approved ?? 0}
-            totalCount={b.counts?.total ?? 0}
-            progressPercent={batchProgressPercent(b.counts ?? {})}
-            status={b.status}
-            statusHint={batchStatusHint(b)}
-            to={`/assts/batches/${b.id}`}
-            variant="row"
-          />
-        ))}
-      </div>
+      </AsstsPageShell>
 
       <AsstsBottomDock />
     </AsstsEnvironmentShell>
