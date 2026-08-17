@@ -1,0 +1,304 @@
+/**
+ * AIO large-display responsive layer (additive only).
+ *
+ * Tiers (min-width):
+ * - 1600px — large desktop
+ * - 2200px — ultrawide (+ optional min-aspect-ratio: 21/9 art direction)
+ * - 3000px — super ultrawide caps
+ *
+ * Does NOT alter rules below 1600px. Mobile/tablet/standard desktop unchanged.
+ */
+
+/* -------------------------------------------------------------------------- */
+/* LARGE DESKTOP — 1600px+                                                    */
+/* -------------------------------------------------------------------------- */
+
+@media (min-width: 1600px) {
+  .aio-app {
+    --aio-page-gutter: clamp(1.5rem, 2.5vw, 4rem);
+    --aio-content-max: 1280px;
+    --aio-content-max-wide: 1440px;
+    --aio-content-max-ultrawide: 1560px;
+    --aio-readable-width: 65ch;
+    --aio-hero-copy-max: min(32vw, 680px);
+    --aio-nav-max: 1560px;
+    --aio-nav-gap: clamp(1.25rem, 1.4vw, 2.25rem);
+    --aio-grid-max: 1560px;
+    --aio-dashboard-max: 1680px;
+  }
+
+  .aio-container {
+    max-width: var(--aio-content-max-wide);
+    padding-inline: 0;
+  }
+
+  .aio-container--wide {
+    max-width: var(--aio-content-max-ultrawide);
+  }
+
+  .aio-section {
+    padding-inline: var(--aio-page-gutter);
+  }
+
+  .aio-header__inner {
+    max-width: var(--aio-nav-max);
+    padding-inline: var(--aio-page-gutter);
+    gap: var(--aio-nav-gap);
+  }
+
+  .aio-header__nav {
+    gap: var(--aio-nav-gap);
+  }
+
+  .aio-footer__grid,
+  .aio-footer__disclaimer {
+    max-width: var(--aio-content-max-wide);
+  }
+
+  .aio-hero {
+    min-height: clamp(580px, 48vh, 780px);
+  }
+
+  .aio-hero__content {
+    max-width: var(--aio-content-max-ultrawide);
+    padding-inline: var(--aio-page-gutter);
+  }
+
+  .aio-hero__copy {
+    max-width: var(--aio-hero-copy-max);
+  }
+
+  .aio-hero__headline {
+    font-size: clamp(2.5rem, 3.4vw, 4.85rem);
+  }
+
+  .aio-pathway-grid {
+    max-width: var(--aio-grid-max);
+    margin-inline: auto;
+  }
+
+  .aio-final-cta__inner {
+    max-width: var(--aio-content-max-ultrawide);
+    width: 100%;
+    margin-inline: auto;
+  }
+
+  .aio-road-ready-teaser__grid {
+    max-width: var(--aio-content-max-ultrawide);
+    margin-inline: auto;
+  }
+
+  .aio-portal-dashboard {
+    max-width: var(--aio-dashboard-max);
+    margin-inline: auto;
+    width: 100%;
+  }
+
+  .aio-doc-vault-page {
+    max-width: var(--aio-content-max-ultrawide);
+    margin-inline: auto;
+  }
+
+  .aio-office-page {
+    max-width: var(--aio-dashboard-max);
+    margin-inline: auto;
+  }
+
+  .aio-readable,
+  .aio-page-hero__lead,
+  .aio-service-detail__intro p {
+    max-width: var(--aio-readable-width);
+  }
+}
+
+/* -------------------------------------------------------------------------- */
+/* ULTRAWIDE — 2200px+                                                        */
+/* -------------------------------------------------------------------------- */
+
+@media (min-width: 2200px) {
+  .aio-app {
+    --aio-content-max-wide: 1560px;
+    --aio-content-max-ultrawide: 1680px;
+    --aio-hero-copy-max: min(26vw, 720px);
+    --aio-nav-max: 1680px;
+    --aio-nav-gap: clamp(1.5rem, 1.6vw, 2.75rem);
+    --aio-page-gutter: clamp(2rem, 2.8vw, 5rem);
+    --aio-grid-max: 1680px;
+    --aio-dashboard-max: 1800px;
+  }
+
+  .aio-hero {
+    min-height: clamp(620px, 42vh, 860px);
+  }
+
+  .aio-hero__bg {
+    background-position: 72% center;
+  }
+
+  .aio-hero__overlay {
+    background: linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0.86) 0%,
+      rgba(0, 0, 0, 0.52) 26%,
+      rgba(0, 0, 0, 0.12) 48%,
+      rgba(0, 0, 0, 0.02) 100%
+    );
+  }
+
+  .aio-hero__headline {
+    font-size: clamp(4.25rem, 3vw, 5.5rem);
+    max-width: 12ch;
+  }
+
+  .aio-hero__sub {
+    max-width: min(540px, 36ch);
+    font-size: clamp(1rem, 1vw, 1.25rem);
+  }
+
+  .aio-display-xl {
+    font-size: clamp(2.25rem, 2.8vw, 3.75rem);
+  }
+
+  .aio-display-md {
+    font-size: clamp(1.5rem, 2vw, 2.35rem);
+  }
+
+  .aio-pathway-grid {
+    grid-template-columns: repeat(3, minmax(0, 380px));
+    justify-content: center;
+    gap: 1.35rem;
+  }
+
+  .aio-final-cta__inner {
+    gap: 2.5rem;
+  }
+
+  .aio-final-cta__desc {
+    max-width: 36rem;
+  }
+
+  .aio-final-cta__actions {
+    flex: 0 0 auto;
+    max-width: 28rem;
+  }
+
+  /* Cap auto-fill grids that sprawl on giant monitors */
+  .aio-office-metrics {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    max-width: var(--aio-grid-max);
+  }
+
+  .aio-int-grid,
+  .aio-data-grid,
+  .aio-sec-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    max-width: var(--aio-grid-max);
+  }
+
+  .aio-mgmt-health-grid {
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    max-width: var(--aio-grid-max);
+  }
+
+  /* Auth — form column stays readable; brand panel absorbs extra width */
+  .aio-auth-premium__form-column {
+    flex: 0 0 min(520px, 36vw);
+    max-width: 560px;
+  }
+
+  .aio-auth-premium__brand-panel {
+    flex: 1;
+    width: auto;
+    max-width: none;
+  }
+
+  .aio-auth-premium__main--login,
+  .aio-auth-premium__brand-panel-content {
+    max-width: 480px;
+  }
+
+  .aio-auth-premium--login .aio-auth-premium__brand-panel-bg {
+    background-position: 76% center;
+  }
+}
+
+/* Ultrawide aspect — reveal more environment, keep truck balanced */
+@media (min-width: 2200px) and (min-aspect-ratio: 21/9) {
+  .aio-hero__bg {
+    background-position: 78% 42%;
+  }
+
+  .aio-hero__overlay {
+    background: linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0.88) 0%,
+      rgba(0, 0, 0, 0.45) 22%,
+      rgba(0, 0, 0, 0.08) 42%,
+      rgba(0, 0, 0, 0.02) 100%
+    );
+  }
+
+  .aio-auth-premium--login .aio-auth-premium__brand-panel-bg {
+    background-position: 80% center;
+  }
+}
+
+/* -------------------------------------------------------------------------- */
+/* SUPER ULTRAWIDE — 3000px+                                                  */
+/* -------------------------------------------------------------------------- */
+
+@media (min-width: 3000px) {
+  .aio-app {
+    --aio-content-max-ultrawide: 1840px;
+    --aio-nav-max: 1840px;
+    --aio-grid-max: 1840px;
+    --aio-dashboard-max: 1840px;
+    --aio-nav-gap: 2.75rem;
+    --aio-page-gutter: clamp(2.5rem, 2vw, 5rem);
+  }
+
+  .aio-hero__headline {
+    font-size: 5.5rem;
+  }
+
+  .aio-hero__bg {
+    background-position: 74% center;
+  }
+
+  .aio-pathway-grid {
+    grid-template-columns: repeat(3, minmax(0, 400px));
+    gap: 1.5rem;
+  }
+
+  .aio-header__nav {
+    gap: 2.75rem;
+  }
+}
+
+/* Utility: readable prose blocks (opt-in) */
+.aio-readable {
+  max-width: 65ch;
+}
+
+.aio-content-shell {
+  width: 100%;
+  max-width: var(--aio-content-max-wide, 1440px);
+  margin-inline: auto;
+  padding-inline: clamp(1.25rem, 4vw, 3rem);
+}
+
+.aio-content-shell--wide {
+  max-width: var(--aio-content-max-ultrawide, 1680px);
+}
+
+.aio-content-shell--hero {
+  max-width: var(--aio-content-max-ultrawide, 1680px);
+  margin-inline: auto;
+  width: 100%;
+}
+
+@media (min-width: 1600px) {
+  .aio-content-shell {
+    padding-inline: var(--aio-page-gutter, clamp(1.5rem, 2.5vw, 4rem));
+  }
+}
