@@ -377,10 +377,6 @@ body:has(.aio-app--auth) {
   color: var(--aio-gold-light, #d4a017);
 }
 
-.aio-auth-premium__headline-punct {
-  color: var(--aio-white);
-}
-
 .aio-auth-premium__supporting {
   margin: 0.5rem 0 0;
   font-size: 0.9375rem;

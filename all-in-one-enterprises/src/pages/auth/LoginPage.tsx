@@ -79,11 +79,7 @@ export function LoginPage() {
 
   const brandIntroProps = {
     headline: 'Welcome',
-    headlineGold: (
-      <>
-        back<span className="aio-auth-premium__headline-punct">.</span>
-      </>
-    ),
+    headlineGold: 'back.',
     supporting: (
       <>
         Your business keeps moving.
