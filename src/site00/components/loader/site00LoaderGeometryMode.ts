@@ -2,9 +2,32 @@
 
 export type LoaderGeometryMode = 'screen' | 'alpha';
 
-export function resolveLoaderGeometryMode(): LoaderGeometryMode {
-  if (typeof window === 'undefined') return 'screen';
+let cachedProductionAlphaAvailable: boolean | null = null;
+
+/** Check same-origin locked alpha derivative (synced on production slot lock). */
+export async function probeProductionAlphaAvailable(): Promise<boolean> {
+  if (cachedProductionAlphaAvailable != null) return cachedProductionAlphaAvailable;
+  if (typeof window === 'undefined') return false;
+
+  try {
+    const res = await fetch('/site00/loader/v1/assts-loader-geometry-v1-alpha.webm', { method: 'HEAD' });
+    cachedProductionAlphaAvailable = res.ok;
+    return res.ok;
+  } catch {
+    cachedProductionAlphaAvailable = false;
+    return false;
+  }
+}
+
+export function resolveLoaderGeometryModeFromQuery(): LoaderGeometryMode | null {
+  if (typeof window === 'undefined') return null;
   const forced = new URLSearchParams(window.location.search).get('loaderGeometry');
   if (forced === 'alpha' || forced === 'screen') return forced;
-  return 'screen';
+  return null;
+}
+
+export function resolveLoaderGeometryMode(hasProductionAlpha = false): LoaderGeometryMode {
+  const forced = resolveLoaderGeometryModeFromQuery();
+  if (forced) return forced;
+  return hasProductionAlpha ? 'alpha' : 'screen';
 }

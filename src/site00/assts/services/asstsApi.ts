@@ -400,5 +400,75 @@ export async function resetAsstsBatchReview(batchId: string) {
 }
 
 export async function pollAsstsJobs() {
-  return asstsFetch<{ ok: boolean; completed: number }>('poll');
+  return asstsFetch<{ ok: boolean; completed: number; postProcessCompleted?: number }>('poll');
+}
+
+export type LoaderPipelineSourceMetadata = {
+  assetRole: string;
+  container: string;
+  videoCodec: string;
+  audioCodec: string | null;
+  width: number;
+  height: number;
+  frameRate: number;
+  durationSeconds: number;
+  hasAlpha: boolean;
+  fileSizeBytes: number;
+  publicUrl: string;
+};
+
+export type LoaderPipelineContext = {
+  ok?: boolean;
+  masterAsset: Record<string, unknown> | null;
+  derivativeAsset: Record<string, unknown> | null;
+  masterVersions: Array<{ id: string; status: string; fileUrl?: string | null }>;
+  derivativeVersions: Array<{ id: string; status: string; fileUrl?: string | null; version_number?: number }>;
+  jobs: Array<Record<string, unknown>>;
+  latestJob: Record<string, unknown> | null;
+  sourceMetadata: LoaderPipelineSourceMetadata;
+  processors: unknown[];
+  reviewRoute: string;
+  semanticSlots: { master: string; production: string };
+  comparison: {
+    masterUrl: string | null;
+    derivativeUrl: string | null;
+    masterLabel: string;
+    derivativeLabel: string;
+  };
+  productionResolved?: SlotResolution['resolved'];
+};
+
+export async function fetchLoaderPipeline(): Promise<LoaderPipelineContext> {
+  return asstsFetch<LoaderPipelineContext>('loader-pipeline');
+}
+
+export async function reprocessLoaderGeometry(opts?: {
+  modelId?: string;
+  jobKey?: string;
+  processorSettings?: Record<string, unknown>;
+}) {
+  return asstsPost<{ ok: boolean; jobId: string; context: LoaderPipelineContext }>('reprocess-loader', {
+    modelId: opts?.modelId,
+    jobKey: opts?.jobKey,
+    processorSettings: opts?.processorSettings,
+  });
+}
+
+export async function pollLoaderPostProcess(jobId: string) {
+  return asstsPost<{ ok: boolean; done: boolean; context: LoaderPipelineContext }>('poll-post-process', { jobId });
+}
+
+export async function approveLoaderDerivative(versionId: string) {
+  return asstsPost<{ ok: boolean; context: LoaderPipelineContext }>('approve-loader-derivative', { versionId });
+}
+
+export async function rejectLoaderDerivative(versionId: string, note?: string) {
+  return asstsPost<{ ok: boolean; context: LoaderPipelineContext }>('reject-loader-derivative', { versionId, note });
+}
+
+export async function lockLoaderDerivative(versionId: string) {
+  return asstsPost<{ ok: boolean; promoted: { slotKey: string; publicUrl: string }; context: LoaderPipelineContext }>(
+    'lock-loader-derivative',
+    { versionId },
+  );
 }

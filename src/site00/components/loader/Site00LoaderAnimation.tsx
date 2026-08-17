@@ -6,7 +6,12 @@ import {
   site00LoaderGeometryWebmUrl,
   site00LoaderPrefersApngGeometry,
 } from './site00LoaderMedia';
-import { resolveLoaderGeometryMode, type LoaderGeometryMode } from './site00LoaderGeometryMode';
+import {
+  probeProductionAlphaAvailable,
+  resolveLoaderGeometryMode,
+  resolveLoaderGeometryModeFromQuery,
+  type LoaderGeometryMode,
+} from './site00LoaderGeometryMode';
 
 type Site00LoaderAnimationProps = {
   reducedMotion?: boolean;
@@ -14,15 +19,27 @@ type Site00LoaderAnimationProps = {
 };
 
 /**
- * Loader geometry renderer — dual compositing strategy:
- * A) Original OpenArt MP4 + screen blend (preserves glow)
- * B) True-alpha derivative (WebM/APNG) when explicitly selected
+ * Loader geometry renderer — production alpha when locked derivative exists;
+ * screen blend remains debug fallback via ?loaderGeometry=screen.
  */
 export function Site00LoaderAnimation({ reducedMotion = false, onReady }: Site00LoaderAnimationProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [ready, setReady] = useState(false);
-  const [mode] = useState<LoaderGeometryMode>(() => resolveLoaderGeometryMode());
+  const [mode, setMode] = useState<LoaderGeometryMode>(() => resolveLoaderGeometryModeFromQuery() ?? 'screen');
+  const [alphaUrl, setAlphaUrl] = useState<string | null>(null);
   const [sourceUrl, setSourceUrl] = useState(site00LoaderGeometrySourceUrl());
+
+  useEffect(() => {
+    const forced = resolveLoaderGeometryModeFromQuery();
+    if (forced) {
+      setMode(forced);
+      return;
+    }
+    void probeProductionAlphaAvailable().then((hasAlpha) => {
+      setMode(resolveLoaderGeometryMode(hasAlpha));
+      if (hasAlpha) setAlphaUrl(site00LoaderGeometryWebmUrl());
+    });
+  }, []);
 
   useEffect(() => {
     if (mode !== 'screen') return;
@@ -62,7 +79,7 @@ export function Site00LoaderAnimation({ reducedMotion = false, onReady }: Site00
       video.removeEventListener('volumechange', enforceSilent);
       video.removeEventListener('play', enforceSilent);
     };
-  }, [reducedMotion, mode, sourceUrl]);
+  }, [reducedMotion, mode, sourceUrl, alphaUrl]);
 
   const handleReady = () => {
     if (ready) return;
@@ -72,6 +89,7 @@ export function Site00LoaderAnimation({ reducedMotion = false, onReady }: Site00
 
   const useAlphaMode = mode === 'alpha';
   const useApng = useAlphaMode && site00LoaderPrefersApngGeometry();
+  const webmSrc = alphaUrl ?? site00LoaderGeometryWebmUrl();
 
   return (
     <div className={`site00-loader-geometry-mount ${ready ? 'site00-loader-geometry-mount--ready' : ''}`}>
@@ -101,7 +119,7 @@ export function Site00LoaderAnimation({ reducedMotion = false, onReady }: Site00
             onLoadedData={handleReady}
             onCanPlay={handleReady}
           >
-            <source src={site00LoaderGeometryWebmUrl()} type="video/webm" />
+            <source src={webmSrc} type="video/webm" />
           </video>
         )
       ) : (

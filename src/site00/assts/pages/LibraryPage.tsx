@@ -108,6 +108,9 @@ function AsstsLibraryPageContent() {
                 active={activeMetric === 'approved'}
               />
             </div>
+            <p className="assts-library-pipeline-link">
+              <Link to="/assts/loader-pipeline">Loader geometry post-process pipeline →</Link>
+            </p>
           </CompositionZoneSlot>
         ) : null}
 

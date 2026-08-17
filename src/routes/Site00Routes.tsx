@@ -22,6 +22,7 @@ const AsstsLibraryPage = lazy(() => import('../site00/assts/pages/LibraryPage'))
 const AsstsBatchesListPage = lazy(() => import('../site00/assts/pages/BatchesListPage'));
 const AsstsBatchPage = lazy(() => import('../site00/assts/pages/BatchPage'));
 const AsstsInspectionPage = lazy(() => import('../site00/assts/pages/InspectionPage'));
+const AsstsLoaderPipelinePage = lazy(() => import('../site00/assts/pages/LoaderPipelinePage'));
 const AsstsCompositionStudioPage = lazy(() => import('../site00/assts/pages/CompositionStudioPage'));
 
 function Site00Suspense({ children }: { children: ReactNode }) {
@@ -160,6 +161,14 @@ export function Site00Routes() {
             element={
               <AsstsRouteSuspense>
                 <AsstsBatchPage />
+              </AsstsRouteSuspense>
+            }
+          />
+          <Route
+            path="loader-pipeline"
+            element={
+              <AsstsRouteSuspense>
+                <AsstsLoaderPipelinePage />
               </AsstsRouteSuspense>
             }
           />

@@ -23,6 +23,15 @@ import { getCanonicalMasterReviewContext } from '../_lib/site00Assts/canonicalMa
 import { runBatchGeneration, pollPendingGenerationJobs, queueRegeneration } from '../_lib/site00Assts/generation.js';
 import { lockBatchAndPromoteSlots, resolveProductionAsset } from '../_lib/site00Assts/slots.js';
 import { getSupabaseAdmin } from '../_lib/supabase.js';
+import { getLoaderPipelineContext } from '../_lib/site00Assts/postProcess/loaderGeometry.js';
+import {
+  approveLoaderDerivative,
+  pollLoaderPostProcessJob,
+  pollPendingLoaderPostProcessJobs,
+  promoteLoaderProductionSlot,
+  rejectLoaderDerivative,
+  submitLoaderBackgroundRemoval,
+} from '../_lib/site00Assts/postProcess/pipeline.js';
 
 function parseBody(req: VercelRequest): Record<string, unknown> | null {
   if (typeof req.body === 'object' && req.body !== null && !Array.isArray(req.body)) {
@@ -42,8 +51,8 @@ function parseBody(req: VercelRequest): Record<string, unknown> | null {
 /**
  * SITE 00 ASSTS Asset Vault API (admin-only)
  *
- * GET ?action=library|batch|asset|slots|history|poll
- * POST action=bootstrap|generate|approve|reject|regenerate|variant|note|lock
+ * GET ?action=library|batch|asset|slots|history|poll|loader-pipeline
+ * POST action=bootstrap|generate|approve|reject|regenerate|variant|note|lock|post-process-loader|...
  */
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -138,8 +147,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       }
 
       if (action === 'poll') {
-        const n = await pollPendingGenerationJobs(10);
-        return res.status(200).json({ ok: true, completed: n });
+        const genCompleted = await pollPendingGenerationJobs(10);
+        const postCompleted = await pollPendingLoaderPostProcessJobs(3);
+        return res.status(200).json({ ok: true, completed: genCompleted, postProcessCompleted: postCompleted });
+      }
+
+      if (action === 'loader-pipeline') {
+        await pollPendingLoaderPostProcessJobs(2);
+        const context = await getLoaderPipelineContext();
+        return res.status(200).json({ ok: true, ...context });
       }
 
       return res.status(400).json({ error: 'Unknown GET action' });
@@ -266,6 +282,46 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         await recomputeBatchStatus(batchId);
         const batch = await getBatchById(batchId);
         return res.status(200).json({ ok: true, batch });
+      }
+
+      if (postAction === 'post-process-loader' || postAction === 'reprocess-loader') {
+        const modelId = String(body.modelId ?? 'bria/video/background-removal/v3').trim();
+        const processorSettings =
+          body.processorSettings && typeof body.processorSettings === 'object'
+            ? (body.processorSettings as Record<string, unknown>)
+            : undefined;
+        const jobKey = String(body.jobKey ?? 'POST-ASSET-LOADER-001').trim();
+        const result = await submitLoaderBackgroundRemoval({ modelId, jobKey, processorSettings });
+        return res.status(200).json({ ok: true, ...result, context: await getLoaderPipelineContext() });
+      }
+
+      if (postAction === 'poll-post-process') {
+        const jobId = String(body.jobId ?? '').trim();
+        if (!jobId) return res.status(400).json({ error: 'jobId required' });
+        const result = await pollLoaderPostProcessJob(jobId);
+        return res.status(200).json({ ok: true, ...result, context: await getLoaderPipelineContext() });
+      }
+
+      if (postAction === 'approve-loader-derivative') {
+        const versionId = String(body.versionId ?? '').trim();
+        if (!versionId) return res.status(400).json({ error: 'versionId required' });
+        await approveLoaderDerivative(versionId);
+        return res.status(200).json({ ok: true, context: await getLoaderPipelineContext() });
+      }
+
+      if (postAction === 'reject-loader-derivative') {
+        const versionId = String(body.versionId ?? '').trim();
+        const note = String(body.note ?? '').trim() || undefined;
+        if (!versionId) return res.status(400).json({ error: 'versionId required' });
+        await rejectLoaderDerivative(versionId, note);
+        return res.status(200).json({ ok: true, context: await getLoaderPipelineContext() });
+      }
+
+      if (postAction === 'lock-loader-derivative') {
+        const versionId = String(body.versionId ?? '').trim();
+        if (!versionId) return res.status(400).json({ error: 'versionId required' });
+        const promoted = await promoteLoaderProductionSlot(versionId);
+        return res.status(200).json({ ok: true, promoted, context: await getLoaderPipelineContext() });
       }
 
       return res.status(400).json({ error: 'Unknown POST action' });
