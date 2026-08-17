@@ -52838,3 +52838,31 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Spatial Architecture Review:** SKIPPED — Smart Intake UX refactor, not Studio OS new surfaces.
 >>>>>>> dcf86e578ea27b709d4d34f8732e278b4490d0b1
 
+---
+
+## 2026-08-17 — AIO Desktop Context Rail system (desktop/ultrawide)
+
+- **Context:** Founder sprint — desktop-only contextual left rail across major AIO page families so large monitors don't stretch content edge-to-edge. Rail answers where am I / what sections / what's next; global nav unchanged. Mobile/tablet excluded.
+
+- **System:** `AioContextRail` + `AioDesktopContextShell` + `acr-*` CSS tokens (`--acr-rail-width`, `--acr-workspace-max`, `--acr-shell-max`). Persistent rail ≥1280px; collapsible drawer 1024–1279; hidden mobile. Scroll spy via `useContextRailScrollSpy`.
+
+- **Migrated:** ServiceHub/Detail templates, ServiceCatalogDetailPage, StartYourBusiness + 4 sub-pages, RoadReadyPublic, Bookkeeping, Contact, portal module rails (FleetCare/DriverLink/Vault/Dispatch). i18n `contextRail` en/es.
+
+- **Excluded:** Homepage, auth, Smart Intake keeps `si-*` reference shell, office module rails deferred.
+
+- **Docs:** `docs/design/AIO_DESKTOP_CONTEXT_RAIL_SYSTEM.md`, `docs/refinement/AIO_CONTEXT_RAIL_IMPLEMENTATION_REPORT.md`.
+
+- **Spatial Architecture Review:** SKIPPED — layout enhancement sprint, no new product surfaces.
+
+---
+
+## 2026-08-17 — Smart Intake desktop/mobile preview routes
+
+- **Context:** Founder needed designated routes to view desktop vs mobile Smart Intake designs side-by-side without viewport auto-switching to mobile when selecting desktop in preview tools.
+
+- **Routes:** `/get-started/desktop` (force desktop journey rail + workspace), `/get-started/mobile` (force mobile header + stacked layout, 430px column). Customer default `/get-started` stays responsive.
+
+- **Implementation:** `SmartIntakeLayoutMode` + CSS classes `si-shell--layout-desktop|mobile`, `si-app--layout-desktop|mobile`; `SmartIntakePreviewBar` (demo/debug only) toggles Responsive | Desktop | Mobile; query params preserved on switch.
+
+- **Files:** `smartIntakeLayoutMode.ts`, `SmartIntakePreviewBar.tsx`, `SmartIntakeShell.tsx`, `SmartIntakeLayout.tsx`, `GetStartedPage.tsx`, `AllInOneRoutes.tsx`, `paths.ts`, `aio-smart-intake.css`.
+

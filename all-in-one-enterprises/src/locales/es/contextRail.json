@@ -1,0 +1,118 @@
+{
+  "startBusiness": {
+    "eyebrow": "Inicia Tu Negocio",
+    "title": "Inicia Tu Negocio",
+    "description": "Desde la formación hasta el flete, AIO le guía por los hitos necesarios para lanzar y operar.",
+    "continueRoadmap": "Continuar hoja de ruta →",
+    "getRoadmap": "Obtener mi hoja de ruta →"
+  },
+  "roadReady": {
+    "eyebrow": "Road Ready™",
+    "title": "Sepa dónde está.",
+    "description": "Comprenda requisitos, documentos y su hoja de ruta de cumplimiento personalizada.",
+    "sectionsLabel": "Su camino",
+    "assessment": "Evaluación",
+    "requirements": "Requisitos",
+    "documents": "Documentos",
+    "recommendations": "Recomendaciones",
+    "roadmap": "Hoja de ruta"
+  },
+  "serviceHub": {
+    "sectionsLabel": "En esta sección",
+    "notSure": "¿No está seguro qué necesita?",
+    "getRoadmap": "Obtener mi hoja de ruta →"
+  },
+  "serviceDetail": {
+    "sectionsLabel": "En esta página",
+    "overview": "Resumen",
+    "handles": "Lo que AIO gestiona",
+    "process": "Proceso",
+    "requirements": "Lo que necesita",
+    "related": "Servicios relacionados",
+    "getStarted": "Comenzar →",
+    "serviceStatus": "Estado del servicio",
+    "available": "Disponible"
+  },
+  "bookkeeping": {
+    "eyebrow": "Contabilidad",
+    "title": "Su back office financiero, organizado.",
+    "description": "Paquetes, incorporación y claridad para operadores de transporte.",
+    "overview": "Resumen",
+    "packages": "Paquetes",
+    "included": "Qué incluye",
+    "howItWorks": "Cómo funciona",
+    "onboarding": "Incorporación"
+  },
+  "contact": {
+    "eyebrow": "Contacto",
+    "title": "¿Cómo podemos ayudarle?",
+    "description": "Elija con qué necesita ayuda y enrutaremos su consulta.",
+    "intentsLabel": "Temas de ayuda"
+  },
+  "help": {
+    "title": "¿Necesita ayuda?",
+    "copy": "Hable con AIO",
+    "link": "Contactar soporte →"
+  },
+  "portal": {
+    "myAio": "Mi AIO",
+    "myAioDesc": "Su negocio en un solo lugar.",
+    "overview": "Resumen",
+    "roadReady": "Road Ready",
+    "services": "Servicios",
+    "documents": "Documentos",
+    "fleet": "Flota",
+    "drivers": "Conductores",
+    "maintenance": "Mantenimiento",
+    "money": "Finanzas",
+    "activity": "Actividad"
+  },
+  "fleetCareClient": {
+    "title": "FleetCare",
+    "description": "Mantenga sus camiones en movimiento.",
+    "myFleet": "Mi flota",
+    "maintenance": "Mantenimiento",
+    "openRequests": "Solicitudes abiertas",
+    "history": "Historial de servicio",
+    "documents": "Documentos",
+    "reminders": "Recordatorios"
+  },
+  "driverLinkDriver": {
+    "title": "DriverLink",
+    "description": "Encuentre la oportunidad adecuada.",
+    "profile": "Mi perfil",
+    "credentials": "Credenciales",
+    "findWork": "Buscar trabajo",
+    "matches": "Coincidencias",
+    "applications": "Solicitudes",
+    "messages": "Mensajes",
+    "documents": "Documentos"
+  },
+  "driverLinkCompany": {
+    "title": "Contratación DriverLink",
+    "description": "Encuentre y gestione candidatos conductores.",
+    "positions": "Puestos abiertos",
+    "matches": "Coincidencias",
+    "candidates": "Candidatos",
+    "applications": "Solicitudes",
+    "interviews": "Entrevistas",
+    "hires": "Contrataciones",
+    "compliance": "Cumplimiento de conductores"
+  },
+  "vault": {
+    "title": "Bóveda de documentos",
+    "description": "Sus registros, organizados y preservados.",
+    "all": "Todos los documentos",
+    "current": "Actuales",
+    "historical": "Históricos"
+  },
+  "office": {
+    "title": "AIO Office",
+    "description": "Operaciones internas.",
+    "overview": "Resumen",
+    "clients": "Clientes",
+    "applications": "Solicitudes",
+    "workQueues": "Colas de trabajo",
+    "documents": "Documentos"
+  }
+}

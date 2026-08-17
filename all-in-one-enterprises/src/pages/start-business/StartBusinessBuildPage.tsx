@@ -4,6 +4,7 @@ import { AIOCard } from '../../components/AIOCard';
 import { usePageMeta } from '../../hooks/usePageMeta';
 import { withJourneyContext } from '../../journeys/journeyContext';
 import { aioGetStarted, aioPaths } from '../../utils/paths';
+import { StartBusinessStepShell } from '../../context-rail/StartBusinessStepShell';
 
 export function StartBusinessBuildPage() {
   usePageMeta({
@@ -12,6 +13,7 @@ export function StartBusinessBuildPage() {
   });
 
   return (
+    <StartBusinessStepShell stepId="build">
     <div className="aio-page-content">
       <div className="aio-container aio-container--narrow">
         <JourneyBackNav />
@@ -54,5 +56,6 @@ export function StartBusinessBuildPage() {
         </p>
       </div>
     </div>
+    </StartBusinessStepShell>
   );
 }

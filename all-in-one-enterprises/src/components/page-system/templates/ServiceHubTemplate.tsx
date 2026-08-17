@@ -1,4 +1,6 @@
 import type { ReactNode } from 'react';
+import type { ContextRailConfig } from '../../context-rail/types';
+import { AioDesktopContextShell } from '../../context-rail';
 import { AioPageShell } from '../AioPageShell';
 import { AioCinematicHero } from '../AioCinematicHero';
 import { AioSectionHeading } from '../AioSectionHeading';
@@ -22,6 +24,8 @@ type Props = {
   compactHero?: boolean;
   backgroundImage?: string;
   children?: ReactNode;
+  contextRail?: ContextRailConfig | null;
+  scrollSpy?: boolean;
 };
 
 export function ServiceHubTemplate({
@@ -39,10 +43,13 @@ export function ServiceHubTemplate({
   compactHero = true,
   backgroundImage,
   children,
+  contextRail,
+  scrollSpy,
 }: Props) {
   return (
     <AioPageShell>
-      <AioCinematicHero
+      <AioDesktopContextShell config={contextRail} scrollSpy={scrollSpy}>
+        <AioCinematicHero
         eyebrow={eyebrow}
         title={title}
         description={description}
@@ -61,6 +68,7 @@ export function ServiceHubTemplate({
       {showRoadmapFooter ? (
         <AioRoadmapFooterCta title={roadmapFooterTitle} description={roadmapFooterDescription} />
       ) : null}
+      </AioDesktopContextShell>
     </AioPageShell>
   );
 }

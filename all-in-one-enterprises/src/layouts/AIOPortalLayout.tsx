@@ -8,6 +8,7 @@ import { useDemoStore } from '../demo/useDemoStore';
 import { resolvePortalKind, resolveOrganizationId } from '../portal/organizationContext';
 import { aioPaths } from '../utils/paths';
 import { LanguageSelector } from '../components/i18n/LanguageSelector';
+import { PortalModuleContextRail } from '../context-rail/StartBusinessStepShell';
 
 type NavItem = { label: string; href: string; section?: string };
 
@@ -129,7 +130,12 @@ export function AIOPortalLayout() {
               <Link to={aioPaths.portalNotifications}>View →</Link>
             </div>
           )}
-          <Outlet />
+          <div className="aio-portal__main-inner">
+            <PortalModuleContextRail />
+            <div className="aio-portal__main-content">
+              <Outlet />
+            </div>
+          </div>
         </div>
       </div>
 

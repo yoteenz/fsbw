@@ -4,6 +4,7 @@ import { AIOCard } from '../../components/AIOCard';
 import { usePageMeta } from '../../hooks/usePageMeta';
 import { withJourneyContext } from '../../journeys/journeyContext';
 import { aioPaths } from '../../utils/paths';
+import { StartBusinessStepShell } from '../../context-rail/StartBusinessStepShell';
 
 const OPERATE_OPTIONS = [
   {
@@ -51,6 +52,7 @@ export function StartBusinessRollPage() {
   });
 
   return (
+    <StartBusinessStepShell stepId="roll">
     <div className="aio-page-content">
       <div className="aio-container">
         <JourneyBackNav />
@@ -77,5 +79,6 @@ export function StartBusinessRollPage() {
         </div>
       </div>
     </div>
+    </StartBusinessStepShell>
   );
 }

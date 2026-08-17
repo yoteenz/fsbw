@@ -1,5 +1,7 @@
 import type { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
+import type { ContextRailConfig } from '../../context-rail/types';
+import { AioDesktopContextShell } from '../../context-rail';
 import { AioPageShell } from '../AioPageShell';
 import { AioCinematicHero } from '../AioCinematicHero';
 import { AioSectionHeading } from '../AioSectionHeading';
@@ -29,6 +31,8 @@ type Props = {
   compactHero?: boolean;
   backgroundImage?: string;
   afterProcess?: ReactNode;
+  contextRail?: ContextRailConfig | null;
+  scrollSpy?: boolean;
 };
 
 export function ServiceDetailTemplate({
@@ -49,9 +53,12 @@ export function ServiceDetailTemplate({
   compactHero = true,
   backgroundImage,
   afterProcess,
+  contextRail,
+  scrollSpy = true,
 }: Props) {
   return (
     <AioPageShell>
+      <AioDesktopContextShell config={contextRail} scrollSpy={scrollSpy}>
       {showJourneyBack ? (
         <div className="aio-container aio-ps-journey-back">
           <JourneyBackNav />
@@ -69,19 +76,19 @@ export function ServiceDetailTemplate({
       <div className="aio-ps-body">
         <div className="aio-container aio-ps-detail-grid">
           <div className="aio-ps-detail-main">
-            <section className="aio-ps-block">
+            <section id="acr-svc-handles" className="aio-ps-block">
               <AioSectionHeading eyebrow="What AIO Handles" title="We coordinate the work" light />
               <AioFeatureGrid items={handles} />
             </section>
 
-            <section className="aio-ps-block">
+            <section id="acr-svc-process" className="aio-ps-block">
               <AioSectionHeading eyebrow="The Process" title="How it works" light />
               <AioProcessRail steps={processSteps} />
               {afterProcess}
             </section>
 
             {(requirements.length > 0 || timelineValue) && (
-              <section className="aio-ps-block aio-ps-requirements">
+              <section id="acr-svc-requirements" className="aio-ps-block aio-ps-requirements">
                 {requirements.length > 0 ? (
                   <div className="aio-ps-requirements__col">
                     <AioSectionHeading eyebrow="Preparation" title="What you'll need" light />
@@ -105,7 +112,7 @@ export function ServiceDetailTemplate({
             )}
 
             {relatedServices.length > 0 ? (
-              <section className="aio-ps-block">
+              <section id="acr-svc-related" className="aio-ps-block">
                 <AioSectionHeading eyebrow="Connected services" title="Related services" light />
                 <AioRelatedServices services={relatedServices} />
               </section>
@@ -117,6 +124,7 @@ export function ServiceDetailTemplate({
           <AioActionPanel title="Get Started">{sidebar}</AioActionPanel>
         </div>
       </div>
+      </AioDesktopContextShell>
     </AioPageShell>
   );
 }

@@ -2,6 +2,7 @@ import { JourneyBackNav } from '../../components/journey/JourneyBackNav';
 import { ServiceJourneyStepDetail } from '../../components/journey/ServiceJourneyStepDetail';
 import { usePageMeta } from '../../hooks/usePageMeta';
 import { useStartBusinessJourney } from '../../journeys/useStartBusinessJourney';
+import { StartBusinessStepShell } from '../../context-rail/StartBusinessStepShell';
 
 export function StartBusinessActivatePage() {
   usePageMeta({ title: 'Activate — Compliance & Filings', description: 'Compliance activation sub-journey.' });
@@ -9,6 +10,7 @@ export function StartBusinessActivatePage() {
   const step = view.steps.find((s) => s.def.id === 'activate')!;
 
   return (
+    <StartBusinessStepShell stepId="activate">
     <div className="aio-page-content">
       <div className="aio-container aio-container--narrow">
         <JourneyBackNav />
@@ -20,5 +22,6 @@ export function StartBusinessActivatePage() {
         <ServiceJourneyStepDetail step={step} />
       </div>
     </div>
+    </StartBusinessStepShell>
   );
 }

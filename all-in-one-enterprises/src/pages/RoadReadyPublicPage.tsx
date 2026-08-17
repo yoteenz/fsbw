@@ -1,4 +1,5 @@
 import { AIOButton } from '../components/AIOButton';
+import { useTranslation } from 'react-i18next';
 import { usePageMeta } from '../hooks/usePageMeta';
 import { aioAppConfig } from '../config/appConfig';
 import { aioPaths } from '../utils/paths';
@@ -10,8 +11,11 @@ import {
   AioProgressRing,
   AioRoadmapFooterCta,
 } from '../components/page-system';
+import { AioDesktopContextShell } from '../components/context-rail';
+import { buildRoadReadyRail } from '../context-rail/configs';
 
 export function RoadReadyPublicPage() {
+  const { t } = useTranslation('contextRail');
   usePageMeta({
     title: `${ROAD_READY_PRODUCT_NAME}™ — ${aioAppConfig.company.legalName}`,
     description:
@@ -20,6 +24,7 @@ export function RoadReadyPublicPage() {
 
   return (
     <AioPageShell>
+      <AioDesktopContextShell config={buildRoadReadyRail(t)} scrollSpy>
       <AioCinematicHero
         eyebrow="Road Ready™"
         title={
@@ -44,14 +49,14 @@ export function RoadReadyPublicPage() {
       <div className="aio-ps-body">
         <div className="aio-container">
           <div className="aio-ps-road-ready-hero-grid">
-            <div>
+            <div id="acr-road-ready-requirements">
               <AioSectionHeading
                 eyebrow="Your roadmap"
                 title="A business roadmap dashboard"
                 subtitle="Complete the intake questionnaire to generate a checklist tailored to your business stage, equipment, and operating plans."
                 light
               />
-              <ul className="aio-road-ready-public__bullets">
+              <ul className="aio-road-ready-public__bullets" id="acr-road-ready-recommendations">
                 <li>Understand required filings before you roll</li>
                 <li>See optional services for growth and cash flow</li>
                 <li>Add recommended services to your plan and submit requests</li>
@@ -60,7 +65,7 @@ export function RoadReadyPublicPage() {
                 Continue Assessment
               </AIOButton>
             </div>
-            <div className="aio-road-ready-public__sample" aria-hidden="true">
+            <div className="aio-road-ready-public__sample" id="acr-road-ready-documents" aria-hidden="true">
               <AioProgressRing progress={0} sublabel="Sign in to see your progress" label="Road Ready™" size="lg" />
               <p className="aio-road-ready-public__sample-label">Your personalized roadmap appears after intake</p>
             </div>
@@ -69,6 +74,7 @@ export function RoadReadyPublicPage() {
       </div>
 
       <AioRoadmapFooterCta />
+      </AioDesktopContextShell>
     </AioPageShell>
   );
 }

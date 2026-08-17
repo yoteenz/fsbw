@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { AIOButton } from '../components/AIOButton';
 import { ServiceJourneyHeader } from '../components/journey/ServiceJourneyHeader';
 import { ServiceJourneyStepper } from '../components/journey/ServiceJourneyStepper';
@@ -16,8 +17,11 @@ import {
   AioJourneySection,
   AioRoadmapFooterCta,
 } from '../components/page-system';
+import { AioDesktopContextShell } from '../components/context-rail';
+import { buildStartBusinessRail } from '../context-rail/configs';
 
 export function StartYourBusinessPage() {
+  const { t } = useTranslation('contextRail');
   const [selectedStepId, setSelectedStepId] = useState<JourneyStepId | undefined>();
   const view = useStartBusinessJourney(selectedStepId);
   const selectedStep = view.steps.find((s) => s.def.id === view.selectedStepId) ?? view.steps[0];
@@ -30,6 +34,7 @@ export function StartYourBusinessPage() {
 
   return (
     <AioPageShell>
+      <AioDesktopContextShell config={buildStartBusinessRail(t, view)}>
       <AioCinematicHero
         eyebrow="Start My Business"
         title={
@@ -103,6 +108,7 @@ export function StartYourBusinessPage() {
         title="Not sure where to start?"
         description="Road Ready™ assesses your business and recommends the right services in order."
       />
+      </AioDesktopContextShell>
     </AioPageShell>
   );
 }

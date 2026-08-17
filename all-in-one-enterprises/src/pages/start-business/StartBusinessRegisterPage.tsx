@@ -2,6 +2,7 @@ import { JourneyBackNav } from '../../components/journey/JourneyBackNav';
 import { ServiceJourneyStepDetail } from '../../components/journey/ServiceJourneyStepDetail';
 import { usePageMeta } from '../../hooks/usePageMeta';
 import { useStartBusinessJourney } from '../../journeys/useStartBusinessJourney';
+import { StartBusinessStepShell } from '../../context-rail/StartBusinessStepShell';
 
 export function StartBusinessRegisterPage() {
   usePageMeta({ title: 'Register — Tags, IFTA, IRP & Permits', description: 'Registration sub-journey for your startup.' });
@@ -9,6 +10,7 @@ export function StartBusinessRegisterPage() {
   const step = view.steps.find((s) => s.def.id === 'register')!;
 
   return (
+    <StartBusinessStepShell stepId="register">
     <div className="aio-page-content">
       <div className="aio-container aio-container--narrow">
         <JourneyBackNav label="Back to Startup Journey" />
@@ -20,5 +22,6 @@ export function StartBusinessRegisterPage() {
         <ServiceJourneyStepDetail step={step} />
       </div>
     </div>
+    </StartBusinessStepShell>
   );
 }

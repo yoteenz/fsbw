@@ -1,4 +1,5 @@
 import { Link, useParams, useSearchParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
   getServiceBySlug,
   isDivisionSlug,
@@ -29,12 +30,17 @@ import {
   mobileServiceCategoryLabel,
 } from '../services/mobileServicePageConfig';
 import { buildDivisionServiceRows, getDivisionHubCopy } from './ServicesPage';
+import {
+  buildServiceDetailRail,
+  buildServiceHubRail,
+} from '../context-rail/configs';
 
 type Props = {
   slug?: string;
 };
 
 export function ServiceCatalogDetailPage({ slug: slugProp }: Props) {
+  const { t } = useTranslation('contextRail');
   const { serviceSlug } = useParams<{ serviceSlug: string }>();
   const [searchParams] = useSearchParams();
   const showJourneyBack = isInStartBusinessJourney(searchParams);
@@ -77,6 +83,7 @@ export function ServiceCatalogDetailPage({ slug: slugProp }: Props) {
             ]}
             services={services}
             directoryTitle={`${hubCopy.breadcrumbLabel} services`}
+            contextRail={buildServiceHubRail(t, division)}
           />
         </div>
       </>
@@ -220,6 +227,11 @@ export function ServiceCatalogDetailPage({ slug: slugProp }: Props) {
               ? 'All In One is not the licensed insurer. Quotes subject to carrier review.'
               : 'Service availability may vary. No legal or regulatory guarantees implied.')
           }
+          contextRail={buildServiceDetailRail(
+            t,
+            { slug: service.slug, title: service.title, shortDescription: service.shortDescription },
+            launchCta.allowed ? aioPaths.getStartedForService(service.slug) : aioPaths.contact,
+          )}
         />
       </div>
     </>

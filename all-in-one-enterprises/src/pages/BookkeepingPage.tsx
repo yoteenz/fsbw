@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { AIOButton } from '../components/AIOButton';
 import { AIOIcon } from '../components/AIOIcon';
 import {
@@ -31,8 +32,11 @@ import {
   AioProcessRail,
   OperationalFooterCta,
 } from '../components/page-system';
+import { AioDesktopContextShell } from '../components/context-rail';
+import { buildBookkeepingRail } from '../context-rail/configs';
 
 export function BookkeepingPage() {
+  const { t } = useTranslation('contextRail');
   const [interval, setInterval] = useState<BookkeepingBillingInterval>('MONTHLY');
   const activation = getPublicServiceCta(BOOKKEEPING_SERVICE_SLUG);
   const rescueActivation = getPublicServiceCta(BOOKS_RESCUE_SERVICE_SLUG);
@@ -43,6 +47,7 @@ export function BookkeepingPage() {
 
   return (
     <AioPageShell>
+      <AioDesktopContextShell config={buildBookkeepingRail(t)} scrollSpy>
       <AioCinematicHero
         eyebrow="Bookkeeping Built For Trucking"
         title={
@@ -74,7 +79,7 @@ export function BookkeepingPage() {
 
       <div className="aio-ps-body">
         <div className="aio-container">
-          <section className="aio-ps-block">
+          <section id="acr-bk-how" className="aio-ps-block">
             <AioSectionHeading
               eyebrow="How it works"
               title="Send documents. We do the work. You get clarity."
@@ -90,7 +95,7 @@ export function BookkeepingPage() {
             <BookkeepingCategoryChips />
           </section>
 
-      <section className="aio-ps-block" id="autopilot">
+      <section id="acr-bk-included" className="aio-ps-block">
           <AioSectionHeading eyebrow="Automation" title={BOOKKEEPING_AUTOPILOT_HEADLINE} subtitle={BOOKKEEPING_AUTOPILOT_COPY} light />
           <ul className="aio-bk-trust-list">
             <li>All In One does not store your online banking password</li>
@@ -100,7 +105,7 @@ export function BookkeepingPage() {
           </ul>
       </section>
 
-      <section className="aio-ps-block" id="why-different">
+      <section id="acr-bk-overview" className="aio-ps-block">
           <AioSectionHeading
             light
             eyebrow="Why All In One Is Different"
@@ -119,7 +124,7 @@ export function BookkeepingPage() {
           <BookkeepingComparisonMatrix />
       </section>
 
-      <section className="aio-ps-block" id="plans">
+      <section id="acr-bk-packages" className="aio-ps-block">
           <AioSectionHeading eyebrow="Packages" title="Compare bookkeeping plans" subtitle="All prices shown as starting at — final pricing depends on operational complexity." light />
           <div className="aio-bk-plans-toolbar">
             <BookkeepingBillingToggle interval={interval} onChange={setInterval} />
@@ -127,7 +132,7 @@ export function BookkeepingPage() {
           <BookkeepingPlanCards interval={interval} />
       </section>
 
-      <section className="aio-ps-block" id="books-rescue">
+      <section id="acr-bk-onboarding" className="aio-ps-block">
           <div className="aio-two-col">
             <div>
               <AioSectionHeading
@@ -184,6 +189,7 @@ export function BookkeepingPage() {
           <OperationalFooterCta title="Choose a plan" buttonLabel="View Plans" buttonTo={`${aioPaths.bookkeeping}#plans`} />
         </div>
       </section>
+      </AioDesktopContextShell>
     </AioPageShell>
   );
 }

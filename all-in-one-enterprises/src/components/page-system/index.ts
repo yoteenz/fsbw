@@ -17,4 +17,6 @@ export {
   OperationalFooterCta,
   OperationalTextLink,
 } from './templates/OperationalServiceTemplate';
+export { AioDesktopContextShell, AioContextRail } from '../context-rail';
+export type { ContextRailConfig } from '../context-rail/types';
 export * from './hubConfig';

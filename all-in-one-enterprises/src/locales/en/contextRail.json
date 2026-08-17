@@ -1,0 +1,118 @@
+{
+  "startBusiness": {
+    "eyebrow": "Start Your Business",
+    "title": "Start Your Business",
+    "description": "From formation to freight, AIO guides you through the milestones needed to launch and operate.",
+    "continueRoadmap": "Continue Roadmap →",
+    "getRoadmap": "Get My Roadmap →"
+  },
+  "roadReady": {
+    "eyebrow": "Road Ready™",
+    "title": "Know where you stand.",
+    "description": "Understand requirements, documents, and your personalized compliance roadmap.",
+    "sectionsLabel": "Your path",
+    "assessment": "Assessment",
+    "requirements": "Requirements",
+    "documents": "Documents",
+    "recommendations": "Recommendations",
+    "roadmap": "Roadmap"
+  },
+  "serviceHub": {
+    "sectionsLabel": "In this section",
+    "notSure": "Not sure what you need?",
+    "getRoadmap": "Get My Roadmap →"
+  },
+  "serviceDetail": {
+    "sectionsLabel": "On this page",
+    "overview": "Overview",
+    "handles": "What AIO Handles",
+    "process": "Process",
+    "requirements": "What You Need",
+    "related": "Related Services",
+    "getStarted": "Get Started →",
+    "serviceStatus": "Service Status",
+    "available": "Available"
+  },
+  "bookkeeping": {
+    "eyebrow": "Bookkeeping",
+    "title": "Your financial back office, organized.",
+    "description": "Packages, onboarding, and clarity built for trucking operators.",
+    "overview": "Overview",
+    "packages": "Packages",
+    "included": "What's Included",
+    "howItWorks": "How It Works",
+    "onboarding": "Onboarding"
+  },
+  "contact": {
+    "eyebrow": "Contact",
+    "title": "How can we help?",
+    "description": "Choose what you need help with and we'll route your inquiry.",
+    "intentsLabel": "Help topics"
+  },
+  "help": {
+    "title": "Need help?",
+    "copy": "Talk to AIO",
+    "link": "Contact Support →"
+  },
+  "portal": {
+    "myAio": "My AIO",
+    "myAioDesc": "Your business in one place.",
+    "overview": "Overview",
+    "roadReady": "Road Ready",
+    "services": "Services",
+    "documents": "Documents",
+    "fleet": "Fleet",
+    "drivers": "Drivers",
+    "maintenance": "Maintenance",
+    "money": "Money",
+    "activity": "Activity"
+  },
+  "fleetCareClient": {
+    "title": "FleetCare",
+    "description": "Keep your trucks moving.",
+    "myFleet": "My Fleet",
+    "maintenance": "Maintenance",
+    "openRequests": "Open Requests",
+    "history": "Service History",
+    "documents": "Documents",
+    "reminders": "Reminders"
+  },
+  "driverLinkDriver": {
+    "title": "DriverLink",
+    "description": "Find the right opportunity.",
+    "profile": "My Profile",
+    "credentials": "Credentials",
+    "findWork": "Find Work",
+    "matches": "Matches",
+    "applications": "Applications",
+    "messages": "Messages",
+    "documents": "Documents"
+  },
+  "driverLinkCompany": {
+    "title": "DriverLink Hiring",
+    "description": "Find and manage driver candidates.",
+    "positions": "Open Positions",
+    "matches": "Matches",
+    "candidates": "Candidates",
+    "applications": "Applications",
+    "interviews": "Interviews",
+    "hires": "Hires",
+    "compliance": "Driver Compliance"
+  },
+  "vault": {
+    "title": "Document Vault",
+    "description": "Your records, organized and preserved.",
+    "all": "All Documents",
+    "current": "Current",
+    "historical": "Historical"
+  },
+  "office": {
+    "title": "AIO Office",
+    "description": "Internal operations.",
+    "overview": "Overview",
+    "clients": "Clients",
+    "applications": "Applications",
+    "workQueues": "Work Queues",
+    "documents": "Documents"
+  }
+}

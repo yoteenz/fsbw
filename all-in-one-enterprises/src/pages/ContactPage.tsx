@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { aioAppConfig } from '../config/appConfig';
 import { AIOButton } from '../components/AIOButton';
 import { createLeadFromForm } from '../demo/crmActions';
@@ -10,6 +11,8 @@ import {
   AioCinematicHero,
   AioSectionHeading,
 } from '../components/page-system';
+import { AioDesktopContextShell } from '../components/context-rail';
+import { buildContactRail } from '../context-rail/configs';
 
 const CONTACT_INTENTS = [
   ...servicesMegaMenu.slice(0, 7).map((cat) => ({ id: cat.id, label: cat.title })),
@@ -18,6 +21,7 @@ const CONTACT_INTENTS = [
 ];
 
 export function ContactPage() {
+  const { t } = useTranslation('contextRail');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
@@ -46,6 +50,7 @@ export function ContactPage() {
 
   return (
     <AioPageShell>
+      <AioDesktopContextShell config={buildContactRail(t, CONTACT_INTENTS)}>
       <AioCinematicHero
         eyebrow="Talk to AIO"
         title={
@@ -114,7 +119,7 @@ export function ContactPage() {
                   </p>
                 </div>
 
-                <form className="aio-ps-contact-form aio-form-preview" onSubmit={onSubmit}>
+                <form id="acr-contact-form" className="aio-ps-contact-form aio-form-preview" onSubmit={onSubmit}>
                   <h3 className="aio-intent-card__title">Send a message</h3>
                   <div className="aio-form-preview__field">
                     <label className="aio-form-preview__label" htmlFor="c-first">
@@ -209,6 +214,7 @@ export function ContactPage() {
           )}
         </div>
       </div>
+      </AioDesktopContextShell>
     </AioPageShell>
   );
 }
