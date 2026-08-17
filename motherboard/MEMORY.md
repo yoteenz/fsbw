@@ -51931,3 +51931,32 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Production state:** Migration `20260817160000_site00_canonical_master_slot.sql` applied. ENV-003 **IN_REVIEW** — all 3 assets **NEEDS_REVIEW** v3.0 with canonical ref to founder PNG. 3 FAL jobs queued/completed; no T2I fallback. Canonical master **LOCKED**. ENV-001/002 preserved for history.
 
 - **Founder next:** `/assts` → BATCH-ASSTS-ENV-003 → side-by-side compare each derivative to canonical master → approve only if same vault identity → LOCK BATCH when all three pass. Do **not** generate Objects/UI/Brand until ENV-003 visually approved. Say **deploy now** for Vercel.
+
+---
+
+## 2026-08-17 — ASSTS inspection page navigation crash fix
+
+- **Bug:** Tapping batch asset → inspection crashed: `undefined is not an object (evaluating 'navigation.prevAssetId')`. Caused when API response omitted `navigation` (older deploy) and `setNavigation(undefined)` overwrote safe defaults.
+- **Fix:** `EMPTY_ASSTS_NAVIGATION` fallback in `fetchAsstsAsset` + InspectionPage; optional chaining on footer; reset state on assetId change; loading state; server API always returns explicit navigation object.
+- **Note:** preview.fsbw-dev.com needs **deploy now** for full ENV-003 API (canonical master compare, v3.0 metadata) on production preview host.
+
+---
+
+## 2026-08-17 — Site 00 ASSTS loader boot sequence + transparent compositing correction
+
+- **Context:** Founder correction sprint — custom ASSTS immersive loader existed but had four bugs: plain Loading flash, late background, black rectangle on iPhone Safari (baked-in H.264 yuv420p), geometry positioned too high. Do NOT redesign loader/background/animation — fix pipeline + implementation only.
+
+- **Source video (original OpenArt MP4):** Container MP4/isom · H.264 High yuv420p (no alpha) · 2176×1440 · 24fps · ~10.125s · AAC stereo — transcode required; black baked in.
+
+- **Production media (same-origin `/public/site00/loader/v1/`, versioned, no cache-bust):**
+  - `assts-loader-background-v1.png` (architectural environment)
+  - `assts-loader-geometry-v1-alpha.webm` (VP9 yuva420p, alpha_mode=1, ~360w, silent)
+  - `assts-loader-geometry-v1-alpha.apng` (rgba APNG 360×238 12fps — **iOS Safari primary**; HEVC MOV alpha encode failed on Linux libx265 — strips alpha)
+
+- **Boot / earliest boundary:** `public/site00-assts-loader-boot.js` + `site00-assts-loader-boot.css` in `index.html` before React; paints boot shell + preloads bg/geometry on `/assts` cold start. `AsstsColdStartGate` + `LoadingScreen` + `AsstsRouteSuspense` all use `Site00ImmersiveLoader` (never plain Loading / load-screen.gif on ASSTS). Loader media independent of ASSTS API/Supabase.
+
+- **Geometry:** Platform anchor CSS vars (`xPercent:50`, `yPercent:58`, `widthPercent:38`, bottom-align via `translate(-50%, -100%)`); WebM for Chromium, APNG `<img>` for iOS Safari; hidden until `canplay`/`onLoad`. State machine BOOTSTRAP→READY; at 100% progress label becomes ASSET VAULT READY (not ASSEMBLING).
+
+- **QA:** Build PASS. Browser test `/assts` — boot shell immediate, no plain Loading text, geometry over marble platform, no black box (desktop Chromium WebM alpha). iPhone Safari uses APNG path — verify on device after deploy.
+
+- **Sync:** pending this commit. Say **deploy now** for production Vercel.

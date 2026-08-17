@@ -1,9 +1,12 @@
 type PreloadState = {
-  background?: Promise<void>;
-  animation?: Promise<void>;
+  backgrounds: Map<string, Promise<void>>;
+  animations: Map<string, Promise<void>>;
 };
 
-const cache: PreloadState = {};
+const cache: PreloadState = {
+  backgrounds: new Map(),
+  animations: new Map(),
+};
 
 function preloadImage(url: string): Promise<void> {
   return new Promise((resolve) => {
@@ -30,14 +33,26 @@ function preloadVideo(url: string): Promise<void> {
   });
 }
 
+function preloadApng(url: string): Promise<void> {
+  return preloadImage(url);
+}
+
 export function preloadSite00LoaderBackground(url: string): Promise<void> {
-  if (!cache.background) cache.background = preloadImage(url);
-  return cache.background;
+  let pending = cache.backgrounds.get(url);
+  if (!pending) {
+    pending = preloadImage(url);
+    cache.backgrounds.set(url, pending);
+  }
+  return pending;
 }
 
 export function preloadSite00LoaderAnimation(url: string): Promise<void> {
-  if (!cache.animation) cache.animation = preloadVideo(url);
-  return cache.animation;
+  let pending = cache.animations.get(url);
+  if (!pending) {
+    pending = url.endsWith('.apng') ? preloadApng(url) : preloadVideo(url);
+    cache.animations.set(url, pending);
+  }
+  return pending;
 }
 
 export function preloadSite00LoaderAssets(backgroundUrl: string, animationUrl: string): Promise<void> {

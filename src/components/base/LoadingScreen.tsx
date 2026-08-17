@@ -65,11 +65,8 @@ export default function LoadingScreen({
   const onAsstsPath =
     typeof window !== 'undefined' && window.location.pathname.startsWith('/assts');
 
-  if (onAsstsPath && shouldShowAsstsImmersiveLoader()) {
-    return null;
-  }
-
-  const useImmersiveAssts = loaderContext === 'assts' && shouldShowAsstsImmersiveLoader();
+  const useImmersiveAssts =
+    (onAsstsPath || loaderContext === 'assts') && shouldShowAsstsImmersiveLoader();
 
   const overlay = (
     <div className="loading-screen-root" data-loading-source={source}>
@@ -77,8 +74,9 @@ export default function LoadingScreen({
       {useImmersiveAssts ? (
         <Site00ImmersiveLoader
           config={ASSTS_IMMERSIVE_LOADER_CONFIG}
-          progress={12}
-          statusLabel={ASSTS_IMMERSIVE_LOADER_CONFIG.stages[0]?.label ?? 'BOOTING SITE 00'}
+          progress={ASSTS_IMMERSIVE_LOADER_CONFIG.stages[0]?.progress ?? 8}
+          statusLabel={ASSTS_IMMERSIVE_LOADER_CONFIG.stages[0]?.label ?? 'INITIALIZING SITE 00'}
+          loaderState="BOOTSTRAP"
         />
       ) : (
         <Site00Loader

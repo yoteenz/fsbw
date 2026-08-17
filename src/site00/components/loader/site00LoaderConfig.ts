@@ -1,15 +1,31 @@
 /** Reusable immersive loader configuration for Site 00 production experiences. */
 
-/** Resolve public live-preview asset at runtime (avoids hardcoding Supabase host in source). */
+import {
+  site00LoaderBackgroundUrl,
+  site00LoaderGeometryApngUrl,
+  site00LoaderGeometryWebmUrl,
+} from './site00LoaderMedia';
+
+/** Resolve public live-preview asset at runtime (non-loader production assets). */
 export function resolveSite00PublicAsset(path: string): string {
   const base = (import.meta.env.VITE_SUPABASE_URL as string | undefined)?.replace(/\/$/, '') ?? '';
   return `${base}/storage/v1/object/public/live-preview/site00/${path}`;
 }
 
+export type Site00LoaderState =
+  | 'BOOTSTRAP'
+  | 'PREPARING'
+  | 'CONNECTING'
+  | 'RESOLVING'
+  | 'ASSEMBLING'
+  | 'READY'
+  | 'EXITING';
+
 export type Site00LoaderStage = {
   id: string;
+  state: Site00LoaderState;
   label: string;
-  /** Target progress 0–100 when this stage completes (must be monotonic). */
+  /** Target progress 0–100 when this stage completes (monotonic). */
   progress: number;
 };
 
@@ -23,31 +39,33 @@ export type Site00ImmersiveLoaderConfig = {
   footerMark: string;
   footerLabel: string;
   completionMessage: string;
-  backgroundPath: string;
-  animationPath: string;
+  backgroundUrl: string;
+  geometryWebmUrl: string;
+  geometryApngUrl: string;
   stages: Site00LoaderStage[];
 };
 
-/** Production Asset Vault loader — supplied architectural + OpenArt geometry assets. */
+/** Production Asset Vault loader — boot-critical assets on same-origin /public. */
 export const ASSTS_IMMERSIVE_LOADER_CONFIG: Site00ImmersiveLoaderConfig = {
   id: 'assts',
   siteLabel: 'SITE 00',
   experienceTitle: 'PREPARING THE ASSET VAULT',
   experienceSubtitle: 'RESOLVING PRODUCTION ASSETS',
-  assemblingLabel: 'ASSEMBLING…',
+  assemblingLabel: 'ASSEMBLING INTERFACE',
   tagline: 'EVERYTHING WE BUILD LIVES HERE.',
   footerMark: '00',
   footerLabel: 'SITE 00',
   completionMessage: 'ASSET VAULT READY',
-  backgroundPath: 'E3BCF37B-BFC8-4BDC-8412-496C945C169C.png',
-  animationPath: 'openart-output_1786943611255_fc655184.mp4',
+  backgroundUrl: site00LoaderBackgroundUrl(),
+  geometryWebmUrl: site00LoaderGeometryWebmUrl(),
+  geometryApngUrl: site00LoaderGeometryApngUrl(),
   stages: [
-    { id: 'boot', label: 'BOOTING SITE 00', progress: 10 },
-    { id: 'connect', label: 'CONNECTING TO ASSET VAULT', progress: 25 },
-    { id: 'resolve', label: 'RESOLVING PRODUCTION ASSETS', progress: 45 },
-    { id: 'sync', label: 'SYNCING LIBRARY', progress: 65 },
-    { id: 'visuals', label: 'ASSEMBLING INTERFACE', progress: 80 },
-    { id: 'hydrate', label: 'ASSET VAULT READY', progress: 95 },
+    { id: 'bootstrap', state: 'BOOTSTRAP', label: 'INITIALIZING SITE 00', progress: 8 },
+    { id: 'preparing', state: 'PREPARING', label: 'PREPARING THE ASSET VAULT', progress: 22 },
+    { id: 'connect', state: 'CONNECTING', label: 'CONNECTING TO ASSET VAULT', progress: 38 },
+    { id: 'resolve', state: 'RESOLVING', label: 'RESOLVING PRODUCTION ASSETS', progress: 58 },
+    { id: 'assemble', state: 'ASSEMBLING', label: 'ASSEMBLING INTERFACE', progress: 82 },
+    { id: 'ready', state: 'READY', label: 'ASSET VAULT READY', progress: 100 },
   ],
 };
 

@@ -1,16 +1,23 @@
 import { Suspense, type ReactNode } from 'react';
-import { Site00Loader } from '../../components/loader/Site00Loader';
+import { ASSTS_IMMERSIVE_LOADER_CONFIG } from '../../components/loader/site00LoaderConfig';
+import { Site00ImmersiveLoader } from '../../components/loader/Site00ImmersiveLoader';
 import { shouldShowAsstsImmersiveLoader } from '../../components/loader/site00LoaderSession';
 
-/** Lightweight suspense fallback — cinematic loader handled by AsstsColdStartGate. */
+/** Immersive fallback during lazy route load — never plain LoadingScreen on cold start. */
 function AsstsRouteFallback() {
-  if (shouldShowAsstsImmersiveLoader()) return null;
+  if (shouldShowAsstsImmersiveLoader()) {
+    const config = ASSTS_IMMERSIVE_LOADER_CONFIG;
+    return (
+      <Site00ImmersiveLoader
+        config={config}
+        progress={config.stages[0]?.progress ?? 8}
+        statusLabel={config.stages[0]?.label ?? 'INITIALIZING SITE 00'}
+        loaderState="BOOTSTRAP"
+      />
+    );
+  }
 
-  return (
-    <div className="assts-contextual-loader" role="status" aria-live="polite">
-      <Site00Loader context="assts" size="sm" showDelayMs={120} />
-    </div>
-  );
+  return null;
 }
 
 export function AsstsRouteSuspense({ children }: { children: ReactNode }) {

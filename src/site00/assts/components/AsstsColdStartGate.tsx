@@ -2,9 +2,16 @@ import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Outlet } from 'react-router-dom';
 import { acquireLoadingScreenDocumentLock } from '../../../platform-stabilization/loadingScreenLock';
-import { ASSTS_IMMERSIVE_LOADER_CONFIG, resolveSite00PublicAsset } from '../../components/loader/site00LoaderConfig';
+import { ASSTS_IMMERSIVE_LOADER_CONFIG } from '../../components/loader/site00LoaderConfig';
 import { Site00ImmersiveLoader, type Site00ImmersiveLoaderPhase } from '../../components/loader/Site00ImmersiveLoader';
-import { preloadSite00LoaderAssets } from '../../components/loader/site00LoaderPreload';
+import { initSite00AsstsLoaderBoot, teardownSite00AsstsBootShell } from '../../components/loader/site00LoaderBoot';
+import {
+  site00LoaderPrefersApngGeometry,
+} from '../../components/loader/site00LoaderMedia';
+import {
+  preloadSite00LoaderAnimation,
+  preloadSite00LoaderBackground,
+} from '../../components/loader/site00LoaderPreload';
 import {
   markAsstsImmersiveComplete,
   shouldShowAsstsImmersiveLoader,
@@ -12,14 +19,15 @@ import {
 import { useSite00LoaderProgress } from '../../components/loader/useSite00LoaderProgress';
 import { ASSTS_ENVIRONMENT_SLOTS } from '../config/slots';
 import { fetchAsstsLibrary, primeAsstsLibraryCache, resolveAsstsSlot } from '../services/asstsApi';
-import { isSignedIn } from '../../../utils/adminAuth';
 
 const COMPLETE_HOLD_MS = 680;
-const MIN_CINEMATIC_MS = 2200;
+const MIN_CINEMATIC_MS = 1800;
+
+initSite00AsstsLoaderBoot();
 
 /**
  * Cold-start gate for ASSTS — full immersive Asset Vault loader on first session entry.
- * Ordinary in-session navigation skips the cinematic sequence.
+ * Loader media is boot-critical (same-origin) and does NOT wait on ASSTS API resolution.
  */
 export function AsstsColdStartGate() {
   const immersive = shouldShowAsstsImmersiveLoader();
@@ -27,7 +35,7 @@ export function AsstsColdStartGate() {
   const [revealed, setRevealed] = useState(!immersive);
   const startedAt = useRef(Date.now());
   const config = ASSTS_IMMERSIVE_LOADER_CONFIG;
-  const { progress, statusLabel, completeStage, forceComplete } = useSite00LoaderProgress(
+  const { progress, statusLabel, loaderState, isComplete, completeStage, forceComplete } = useSite00LoaderProgress(
     config.stages,
     config.completionMessage,
   );
@@ -40,6 +48,7 @@ export function AsstsColdStartGate() {
   useEffect(() => {
     if (!immersive) {
       markAsstsImmersiveComplete();
+      teardownSite00AsstsBootShell();
       return;
     }
 
@@ -47,28 +56,30 @@ export function AsstsColdStartGate() {
 
     async function bootstrap() {
       try {
-        completeStage('boot');
+        completeStage('bootstrap');
 
-        if (isSignedIn()) completeStage('connect');
-        else completeStage('connect');
+        await preloadSite00LoaderBackground(config.backgroundUrl);
+        if (cancelled) return;
+        completeStage('preparing');
 
-        const assetsPromise = preloadSite00LoaderAssets(
-          resolveSite00PublicAsset(config.backgroundPath),
-          resolveSite00PublicAsset(config.animationPath),
-        );
+        const geometryUrl = site00LoaderPrefersApngGeometry()
+          ? config.geometryApngUrl
+          : config.geometryWebmUrl;
+        const geometryPromise = preloadSite00LoaderAnimation(geometryUrl);
+
+        completeStage('connect');
+
         const libraryPromise = fetchAsstsLibrary();
         const slotPromise = resolveAsstsSlot(ASSTS_ENVIRONMENT_SLOTS.library);
-
-        await assetsPromise;
-        if (cancelled) return;
-        completeStage('visuals');
 
         const [library] = await Promise.all([libraryPromise, slotPromise]);
         if (cancelled) return;
         primeAsstsLibraryCache(library);
         completeStage('resolve');
-        completeStage('sync');
-        completeStage('hydrate');
+
+        await geometryPromise;
+        if (cancelled) return;
+        completeStage('assemble');
 
         const elapsed = Date.now() - startedAt.current;
         if (elapsed < MIN_CINEMATIC_MS) {
@@ -76,6 +87,7 @@ export function AsstsColdStartGate() {
         }
         if (cancelled) return;
 
+        completeStage('ready');
         forceComplete();
         setPhase('complete-hold');
         await new Promise((r) => window.setTimeout(r, COMPLETE_HOLD_MS));
@@ -84,7 +96,7 @@ export function AsstsColdStartGate() {
         setPhase('exiting');
       } catch {
         if (cancelled) return;
-        completeStage('hydrate');
+        completeStage('ready');
         forceComplete();
         setPhase('complete-hold');
         await new Promise((r) => window.setTimeout(r, COMPLETE_HOLD_MS));
@@ -97,10 +109,11 @@ export function AsstsColdStartGate() {
     return () => {
       cancelled = true;
     };
-  }, [immersive, completeStage, forceComplete, config.backgroundPath, config.animationPath]);
+  }, [immersive, completeStage, forceComplete, config.backgroundUrl, config.geometryApngUrl, config.geometryWebmUrl]);
 
   const handleExitComplete = () => {
     markAsstsImmersiveComplete();
+    teardownSite00AsstsBootShell();
     setRevealed(true);
   };
 
@@ -111,6 +124,8 @@ export function AsstsColdStartGate() {
       config={config}
       progress={progress}
       statusLabel={statusLabel}
+      loaderState={loaderState}
+      isComplete={isComplete}
       phase={phase}
       onExitComplete={handleExitComplete}
     />

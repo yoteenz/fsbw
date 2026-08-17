@@ -1,14 +1,22 @@
 type Site00LoaderEnvironmentProps = {
   backgroundUrl: string;
+  /** Background image decoded and ready to paint. */
+  ready?: boolean;
 };
 
-/** Full-viewport architectural environment — the world behind the loader UI. */
-export function Site00LoaderEnvironment({ backgroundUrl }: Site00LoaderEnvironmentProps) {
+/** Full-viewport architectural environment — paints before geometry is revealed. */
+export function Site00LoaderEnvironment({ backgroundUrl, ready = false }: Site00LoaderEnvironmentProps) {
   return (
-    <div
-      className="site00-loader-env"
-      aria-hidden="true"
-      style={{ backgroundImage: `url("${backgroundUrl.replace(/"/g, '\\"')}")` }}
-    />
+    <div className={`site00-loader-env ${ready ? 'site00-loader-env--ready' : ''}`} aria-hidden="true">
+      <img
+        className="site00-loader-env__img"
+        src={backgroundUrl}
+        alt=""
+        decoding="async"
+        fetchPriority="high"
+        loading="eager"
+        draggable={false}
+      />
+    </div>
   );
 }
