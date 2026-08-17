@@ -52134,6 +52134,22 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Runtime (after lock):** Loader auto-switches to alpha when `/site00/loader/v1/assts-loader-geometry-v1-alpha.webm` exists (synced on lock); `?loaderGeometry=screen` debug fallback. Public slot resolver `api/site00/loader-geometry.ts`. Until lock, screen blend remains default.
 
 - **QA:** `npm run build` PASS; CLI inspect/submit/poll PASS; ASSTS UI blocked on admin email confirmation in cloud preview (API/data verified via CLI).
+<<<<<<< HEAD
+=======
+---
+
+## 2026-08-17 — AIO mobile login polish pass (reference-driven)
+
+- **Context:** Follow-up after auth shell sprint. Current login improved but didn't match approved reference — tiny logo, invisible LOG IN button, loose hero, form blending into background.
+
+- **Root cause (LOG IN invisible):** Global `.aio-app button:not(.aio-btn)` reset set `background: none` on auth premium buttons. Fixed by excluding `.aio-auth-premium__btn` from reset + explicit gold fill rules.
+
+- **Polish:** Larger centered header logo; gold BACK; layered hero gradients (truck right/lower-right, text left); WELCOME white + back. gold; dark glass form panel; 56px inputs with gold email/lock icons; OR divider; CREATE ACCOUNT in panel; compact demo card; trust microcopy (no unverified claims); BACK uses returnUrl when meaningful.
+
+- **Files:** `aio-auth.css`, `aio.css` (button reset), `AuthHeader`, `AuthShell`, `AuthBrandIntro`, `AuthInput`, `AuthPasswordInput`, `AuthFieldIcons`, `LoginPage`, `DemoPortalAccess`, `AIOAuthLayout`.
+
+- **QA:** Build PASS; 375px manual QA — gold LOG IN always visible, reference hierarchy matched.
+>>>>>>> 70f799945 (ASSTS Library Home: 711×1536 exact X/Y composition map + ref map debug [sync-only])
 
 ---
 
@@ -52162,3 +52178,17 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Preserved:** `AsstsLibraryShell` environment/background system; `AsstsBottomDock` alias → `AsstsVaultNav` on batch/inspection/loader pages. No pipeline/API/generation changes.
 
 - **QA:** `npm run build` PASS; Playwright 390×844 screenshot vs reference — header, stats, sections, browse grid, 5-tab nav aligned; architecture visible when slot resolves.
+
+---
+
+## 2026-08-17 — ASSTS Library Home exact X/Y composition map (711×1536)
+
+- **Context:** Follow-up sprint — replace estimated scroll spacing with **approved coordinate map** for `/assts` mobile Library Home only. Reference canvas **711×1536**; scale = renderedWidth/711; vertical positions scale with same factor (scrollable long page). No pipeline/generation/FS/Lounge TV changes.
+
+- **Composition data:** `library-home-composition-map.ts` (`assts-library-home-mobile-v1`) — structured regions for header, hero, stats (4 cells), status strip, needs review (header + 184px card / empty variant), recent batches (3 horizontal tiles 206×104), browse library (2×2 + full-width project assets), navigation proportions.
+
+- **Runtime:** `LibraryHomeCompositionProvider` + `LibraryHomeRegion` absolute slots inside `.assts-library-composition` min-height 1536×scale; internal flex inside each box. Recent batches use new vertical `AsstsLibraryRecentBatchTile` in one row (not stacked full-width rows).
+
+- **Debug:** `?refMap=1` or REF MAP toggle → `LibraryHomeReferenceMapDebug` overlays gutters, y-landmarks, bounding boxes, expected vs actual deltas.
+
+- **QA:** `npm run build` PASS; Playwright at **711px** — primary regions (header.title, stats.assets, needsReview.card, recentBatches.card01, browseLibrary.environments) measured **0px delta** vs map; validation script `scripts/validate-assts-library-composition.mjs`.

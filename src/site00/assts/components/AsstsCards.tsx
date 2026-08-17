@@ -240,9 +240,9 @@ export function AsstsLibraryPriorityCard({
 
 function recentBatchStatusDotClass(statusHint?: string, status?: string): string {
   const hint = (statusHint ?? status ?? '').toUpperCase();
-  if (hint.includes('REVIEW') || hint.includes('NEED')) return 'assts-library-recent-row__status-dot--review';
-  if (hint.includes('REGENERAT')) return 'assts-library-recent-row__status-dot--regen';
-  if (hint.includes('APPROVED') || hint.includes('LOCK')) return 'assts-library-recent-row__status-dot--approved';
+  if (hint.includes('REVIEW') || hint.includes('NEED')) return 'assts-lib-recent-tile__dot--review';
+  if (hint.includes('REGENERAT')) return 'assts-lib-recent-tile__dot--regen';
+  if (hint.includes('APPROVED') || hint.includes('LOCK')) return 'assts-lib-recent-tile__dot--approved';
   return '';
 }
 
@@ -291,13 +291,24 @@ const BROWSE_ANCHOR_BY_CATEGORY: Record<string, string> = {
 };
 
 /** Reference-locked browse category card — compact horizontal tile. */
-export function AsstsLibraryCategoryCard({ id, label, count, coverUrl, to }: CategoryTileProps) {
+export function AsstsLibraryCategoryCard({
+  id,
+  label,
+  count,
+  coverUrl,
+  to,
+  compact,
+}: CategoryTileProps & { compact?: boolean }) {
   const parts = label.split(' ');
   const num = parts[0] ?? '';
   const name = parts.slice(1).join(' ');
   const anchor = BROWSE_ANCHOR_BY_CATEGORY[id] ?? 'library.browseLibrary';
   return (
-    <Link to={to} className="assts-library-category-card" data-anchor={anchor}>
+    <Link
+      to={to}
+      className={`assts-library-category-card ${compact ? 'assts-library-category-card--compact' : ''}`.trim()}
+      data-anchor={anchor}
+    >
       <div className="assts-library-category-card__copy">
         <span className="assts-library-category-card__num">{num}</span>
         <span className="assts-library-category-card__name">{name}</span>
@@ -311,6 +322,42 @@ export function AsstsLibraryCategoryCard({ id, label, count, coverUrl, to }: Cat
         ) : (
           <div className="assts-library-category-card__preview-empty" aria-hidden="true" />
         )}
+      </div>
+    </Link>
+  );
+}
+
+/** Compact vertical recent batch tile — horizontal row at reference breakpoint. */
+export function AsstsLibraryRecentBatchTile({
+  batchKey,
+  category,
+  displayName,
+  thumbnailUrl,
+  status,
+  statusHint,
+  to,
+}: BatchChipProps) {
+  const dotClass = recentBatchStatusDotClass(statusHint, status);
+  const statusLabel = statusHint ?? status ?? 'BATCH';
+  return (
+    <Link to={to} className="assts-lib-recent-tile">
+      <div className="assts-lib-recent-tile__thumb">
+        {thumbnailUrl ? (
+          <img src={thumbnailUrl} alt="" loading="lazy" />
+        ) : (
+          <div className="assts-lib-recent-tile__thumb-empty" aria-hidden="true" />
+        )}
+      </div>
+      <div className="assts-lib-recent-tile__body">
+        <div className="assts-lib-recent-tile__key">{batchKey}</div>
+        <div className="assts-lib-recent-tile__meta">{category ?? displayName ?? 'BATCH'}</div>
+        <div className="assts-lib-recent-tile__status">
+          <span className={`assts-lib-recent-tile__dot ${dotClass}`.trim()} aria-hidden="true" />
+          <span className="assts-lib-recent-tile__status-text">{statusLabel}</span>
+          <span className="assts-lib-recent-tile__chevron" aria-hidden="true">
+            ›
+          </span>
+        </div>
       </div>
     </Link>
   );

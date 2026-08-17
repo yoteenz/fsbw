@@ -1,6 +1,8 @@
 import { useCallback, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { libraryHomeAnchorAttr } from '../composition/library-home-anchors';
+import { LibraryHomeCompositionProvider } from '../composition/LibraryHomeCompositionContext';
+import { LibraryHomeRegion } from '../composition/LibraryHomeRegion';
+import { LibraryHomeReferenceMapDebug } from '../composition/LibraryHomeReferenceMapDebug';
 import { AsstsDevPanel, useAsstsAutoRefresh } from '../components/AsstsDevPanel';
 import { AsstsVaultNav } from '../components/AsstsMobileNav';
 import { AsstsPageShell } from '../components/AsstsPageShell';
@@ -8,11 +10,21 @@ import {
   AsstsAssetListRow,
   AsstsLibraryCategoryCard,
   AsstsLibraryPriorityCard,
-  AsstsLibraryRecentBatchRow,
+  AsstsLibraryRecentBatchTile,
 } from '../components/AsstsCards';
 import { AsstsLibraryShell } from '../components/AsstsLibraryShell';
 import { fetchAsstsLibrary, type AsstsLibraryResponse } from '../services/asstsApi';
 import { batchProgressPercent, batchStatusHint } from '../utils/batchHelpers';
+
+const BROWSE_REGION_BY_CATEGORY: Record<string, 'browseLibrary.environments' | 'browseLibrary.objects' | 'browseLibrary.uiGraphics' | 'browseLibrary.brandSystems' | 'browseLibrary.projectAssets'> = {
+  environments: 'browseLibrary.environments',
+  objects: 'browseLibrary.objects',
+  'ui-graphics': 'browseLibrary.uiGraphics',
+  'brand-systems': 'browseLibrary.brandSystems',
+  'project-assets': 'browseLibrary.projectAssets',
+};
+
+const RECENT_BATCH_SLOTS = ['recentBatches.card01', 'recentBatches.card02', 'recentBatches.card03'] as const;
 
 function batchNeedsAttention(priority: AsstsLibraryResponse['priorityBatch']): boolean {
   if (!priority) return false;
@@ -63,6 +75,7 @@ function AsstsLibraryPageContent() {
   const needsReviewCount = summary?.needsReview ?? 0;
   const batchesList = summary?.batchesList ?? [];
   const categories = data?.categories ?? [];
+  const recentThree = batchesList.slice(0, 3);
 
   const activeMetric = useMemo(() => {
     if (statusFilter === 'needs-review') return 'needs-review';
@@ -76,8 +89,8 @@ function AsstsLibraryPageContent() {
   if (showFiltered && filteredAssets) {
     return (
       <AsstsPageShell variant="library">
-        <div className="assts-library-home">
-          <header className="assts-library-home__header" {...libraryHomeAnchorAttr('library.header')}>
+        <div className="assts-library-home assts-library-home--filtered">
+          <header className="assts-library-home__header">
             <div className="assts-library-home__header-copy">
               <p className="assts-library-home__eyebrow site00-label-red">SITE 00 · ASSTS</p>
               <h1 className="assts-library-home__title">FILTERED LIBRARY</h1>
@@ -118,170 +131,181 @@ function AsstsLibraryPageContent() {
 
   return (
     <AsstsPageShell variant="library">
-      <div className="assts-library-home" data-composition="library-home-v1">
-        <header className="assts-library-home__header" {...libraryHomeAnchorAttr('library.header')}>
-          <div className="assts-library-home__header-copy">
-            <p className="assts-library-home__eyebrow site00-label-red">SITE 00 · ASSTS</p>
-            <h1 className="assts-library-home__title">THE ASSET VAULT.</h1>
-            <p className="assts-library-home__tagline">EVERYTHING WE BUILD LIVES HERE.</p>
-          </div>
-          <div className="assts-library-home__emblem" aria-hidden="true">
-            <span className="assts-library-home__emblem-mark">✦</span>
-          </div>
-        </header>
+      <LibraryHomeRegion id="hero" ariaLabel="Architectural hero" />
 
-        <div {...libraryHomeAnchorAttr('library.hero')} aria-hidden="true" />
+      <LibraryHomeRegion id="header.eyebrow">
+        <p className="assts-lib-text assts-lib-text--eyebrow site00-label-red">SITE 00 · ASSTS</p>
+      </LibraryHomeRegion>
 
-        {summary ? (
-          <section className="assts-library-home__stats" {...libraryHomeAnchorAttr('library.stats')} aria-label="Library metrics">
+      <LibraryHomeRegion id="header.title">
+        <h1 className="assts-lib-text assts-lib-text--title">THE ASSET VAULT.</h1>
+      </LibraryHomeRegion>
+
+      <LibraryHomeRegion id="header.tagline">
+        <p className="assts-lib-text assts-lib-text--tagline">EVERYTHING WE BUILD LIVES HERE.</p>
+      </LibraryHomeRegion>
+
+      <LibraryHomeRegion id="header.control">
+        <div className="assts-lib-emblem" aria-hidden="true">
+          <span className="assts-lib-emblem__mark">✦</span>
+        </div>
+      </LibraryHomeRegion>
+
+      {summary ? (
+        <>
+          <LibraryHomeRegion id="stats.assets">
             <Link
               to="/assts?view=all"
-              className={`assts-library-home__stat ${activeMetric === 'all' ? 'assts-library-home__stat--active' : ''}`}
+              className={`assts-lib-stat ${activeMetric === 'all' ? 'assts-lib-stat--active' : ''}`}
             >
-              <span className="assts-library-home__stat-value">{summary.totalAssets}</span>
-              <span className="assts-library-home__stat-label">ASSETS</span>
+              <span className="assts-lib-stat__value">{summary.totalAssets}</span>
+              <span className="assts-lib-stat__label">ASSETS</span>
             </Link>
-            <Link to="/assts/batches" className="assts-library-home__stat">
-              <span className="assts-library-home__stat-value">{summary.batches}</span>
-              <span className="assts-library-home__stat-label">BATCHES</span>
+          </LibraryHomeRegion>
+          <LibraryHomeRegion id="stats.batches">
+            <Link to="/assts/batches" className="assts-lib-stat">
+              <span className="assts-lib-stat__value">{summary.batches}</span>
+              <span className="assts-lib-stat__label">BATCHES</span>
             </Link>
+          </LibraryHomeRegion>
+          <LibraryHomeRegion id="stats.needReview">
             <Link
               to="/assts?status=needs-review"
-              className={`assts-library-home__stat ${activeMetric === 'needs-review' ? 'assts-library-home__stat--active' : ''}`}
+              className={`assts-lib-stat ${activeMetric === 'needs-review' ? 'assts-lib-stat--active' : ''}`}
             >
-              <span className="assts-library-home__stat-value assts-library-home__stat-value--review">
-                {summary.needsReview}
-              </span>
-              <span className="assts-library-home__stat-label">NEED REVIEW</span>
+              <span className="assts-lib-stat__value assts-lib-stat__value--review">{summary.needsReview}</span>
+              <span className="assts-lib-stat__label">NEED REVIEW</span>
             </Link>
+          </LibraryHomeRegion>
+          <LibraryHomeRegion id="stats.approved">
             <Link
               to="/assts?status=approved"
-              className={`assts-library-home__stat ${activeMetric === 'approved' ? 'assts-library-home__stat--active' : ''}`}
+              className={`assts-lib-stat ${activeMetric === 'approved' ? 'assts-lib-stat--active' : ''}`}
             >
-              <span className="assts-library-home__stat-value">{summary.approved}</span>
-              <span className="assts-library-home__stat-label">APPROVED</span>
+              <span className="assts-lib-stat__value">{summary.approved}</span>
+              <span className="assts-lib-stat__label">APPROVED</span>
             </Link>
-          </section>
-        ) : null}
+          </LibraryHomeRegion>
+        </>
+      ) : loading ? (
+        <>
+          {(['stats.assets', 'stats.batches', 'stats.needReview', 'stats.approved'] as const).map((id) => (
+            <LibraryHomeRegion key={id} id={id}>
+              <div className="assts-lib-stat assts-lib-stat--skeleton" aria-hidden="true" />
+            </LibraryHomeRegion>
+          ))}
+        </>
+      ) : null}
 
-        {loading && !summary ? (
-          <div className="assts-library-loading-skeleton" aria-hidden="true">
-            <div className="assts-skeleton assts-skeleton--metric" />
-            <div className="assts-skeleton assts-skeleton--metric" />
-            <div className="assts-skeleton assts-skeleton--metric" />
-            <div className="assts-skeleton assts-skeleton--metric" />
-          </div>
-        ) : null}
+      <LibraryHomeRegion id="status">
+        {generating ? (
+          <p className="assts-lib-status-strip assts-lib-status-strip--generating">
+            <span className="assts-lib-status-strip__dot" aria-hidden="true" />
+            GENERATION IN PROGRESS
+          </p>
+        ) : needsReviewCount === 0 ? (
+          <p className="assts-lib-status-strip">
+            <span className="assts-lib-status-strip__dot" aria-hidden="true" />
+            ALL CLEAR — NOTHING NEEDS REVIEW
+          </p>
+        ) : (
+          <p className="assts-lib-status-strip assts-lib-status-strip--attention">
+            <span className="assts-lib-status-strip__dot assts-lib-status-strip__dot--review" aria-hidden="true" />
+            {needsReviewCount} ITEM{needsReviewCount === 1 ? '' : 'S'} NEED REVIEW
+          </p>
+        )}
+      </LibraryHomeRegion>
 
-        <div className="assts-library-home__global-status" {...libraryHomeAnchorAttr('library.globalStatus')}>
-          {generating ? (
-            <p className="assts-library-home__status-strip assts-library-home__status-strip--generating">
-              <span className="assts-library-home__status-strip-dot" aria-hidden="true" />
-              GENERATION IN PROGRESS
-            </p>
-          ) : needsReviewCount === 0 ? (
-            <p className="assts-library-home__status-strip">
-              <span className="assts-library-home__status-strip-dot" aria-hidden="true" />
-              ALL CLEAR — NOTHING NEEDS REVIEW
-            </p>
-          ) : (
-            <p className="assts-library-home__status-strip assts-library-home__status-strip--attention">
-              <span className="assts-library-home__status-strip-dot assts-library-home__status-strip-dot--review" aria-hidden="true" />
-              {needsReviewCount} ITEM{needsReviewCount === 1 ? '' : 'S'} NEED REVIEW
-            </p>
-          )}
-        </div>
+      <LibraryHomeRegion id="needsReview.header" className="assts-lib-section-head">
+        <h2 className="assts-lib-section-title">NEEDS YOUR REVIEW</h2>
+        <Link
+          to={priority ? `/assts/batches/${priority.id}` : '/assts?status=needs-review'}
+          className="assts-lib-see-all"
+        >
+          See All
+        </Link>
+      </LibraryHomeRegion>
 
+      {showPriority && priority ? (
+        <LibraryHomeRegion id="needsReview.card">
+          <AsstsLibraryPriorityCard
+            batchKey={priority.batch_key}
+            category={priority.category}
+            displayName={priority.display_name}
+            thumbnailUrl={priority.thumbnailUrl}
+            reviewedCount={priority.counts?.approved ?? 0}
+            totalCount={priority.counts?.total ?? 0}
+            progressPercent={priority.progressPercent ?? priorityProgress}
+            to={`/assts/batches/${priority.id}`}
+          />
+        </LibraryHomeRegion>
+      ) : (
+        <LibraryHomeRegion id="needsReview.cardEmpty">
+          <p className="assts-lib-empty-card">
+            {needsReviewCount > 0
+              ? `${needsReviewCount} asset${needsReviewCount === 1 ? '' : 's'} awaiting review — open See All`
+              : 'No batches awaiting review right now'}
+          </p>
+        </LibraryHomeRegion>
+      )}
+
+      <LibraryHomeRegion id="recentBatches.header" className="assts-lib-section-head">
+        <h2 className="assts-lib-section-title">RECENT BATCHES</h2>
+        <Link to="/assts/batches" className="assts-lib-see-all">
+          See All
+        </Link>
+      </LibraryHomeRegion>
+
+      {RECENT_BATCH_SLOTS.map((slotId, index) => {
+        const batch = recentThree[index];
+        return (
+          <LibraryHomeRegion key={slotId} id={slotId}>
+            {batch ? (
+              <AsstsLibraryRecentBatchTile
+                batchKey={batch.batch_key}
+                category={batch.category}
+                displayName={batch.display_name}
+                thumbnailUrl={batch.thumbnailUrl}
+                status={batch.status}
+                statusHint={batchStatusHint(batch)}
+                to={`/assts/batches/${batch.id}`}
+              />
+            ) : (
+              <div className="assts-lib-recent-tile assts-lib-recent-tile--empty" aria-hidden="true" />
+            )}
+          </LibraryHomeRegion>
+        );
+      })}
+
+      <LibraryHomeRegion id="browseLibrary.header">
+        <h2 className="assts-lib-section-title">BROWSE LIBRARY</h2>
+      </LibraryHomeRegion>
+
+      {categories.map((cat) => {
+        const regionId = BROWSE_REGION_BY_CATEGORY[cat.id];
+        if (!regionId) return null;
+        return (
+          <LibraryHomeRegion key={cat.id} id={regionId}>
+            <AsstsLibraryCategoryCard
+              id={cat.id}
+              label={cat.label}
+              count={cat.count}
+              coverUrl={cat.coverUrl}
+              to={`/assts?category=${cat.id}`}
+              compact
+            />
+          </LibraryHomeRegion>
+        );
+      })}
+
+      <div className="assts-lib-overlay-chrome">
         <AsstsDevPanel batchId={priority?.id ?? null} onRefresh={load} />
-
         {error ? (
           <div className="assts-alert assts-glass assts-glass--panel" role="alert">
             {error}
           </div>
         ) : null}
-
-        <section {...libraryHomeAnchorAttr('library.needsReview')}>
-          <div className="assts-library-home__section-head" {...libraryHomeAnchorAttr('library.needsReview.heading')}>
-            <h2 className="assts-library-home__section-title">NEEDS YOUR REVIEW</h2>
-            <Link
-              to={priority ? `/assts/batches/${priority.id}` : '/assts?status=needs-review'}
-              className="assts-library-home__see-all"
-              {...libraryHomeAnchorAttr('library.needsReview.seeAll')}
-            >
-              SEE ALL
-            </Link>
-          </div>
-          {showPriority && priority ? (
-            <div {...libraryHomeAnchorAttr('library.needsReview.primaryCard')}>
-              <AsstsLibraryPriorityCard
-                batchKey={priority.batch_key}
-                category={priority.category}
-                displayName={priority.display_name}
-                thumbnailUrl={priority.thumbnailUrl}
-                reviewedCount={priority.counts?.approved ?? 0}
-                totalCount={priority.counts?.total ?? 0}
-                progressPercent={priority.progressPercent ?? priorityProgress}
-                to={`/assts/batches/${priority.id}`}
-              />
-            </div>
-          ) : (
-            <p className="assts-library-home__empty-note">
-              {needsReviewCount > 0
-                ? `${needsReviewCount} asset${needsReviewCount === 1 ? '' : 's'} awaiting review — open See All`
-                : 'No batches awaiting review right now'}
-            </p>
-          )}
-        </section>
-
-        <section {...libraryHomeAnchorAttr('library.recentBatches')}>
-          <div className="assts-library-home__section-head" {...libraryHomeAnchorAttr('library.recentBatches.heading')}>
-            <h2 className="assts-library-home__section-title">RECENT BATCHES</h2>
-            <Link to="/assts/batches" className="assts-library-home__see-all">
-              SEE ALL
-            </Link>
-          </div>
-          {batchesList.length > 0 ? (
-            <div className="assts-library-recent-list" {...libraryHomeAnchorAttr('library.recentBatches.list')}>
-              {batchesList.map((b) => (
-                <AsstsLibraryRecentBatchRow
-                  key={b.id}
-                  batchKey={b.batch_key}
-                  category={b.category}
-                  displayName={b.display_name}
-                  thumbnailUrl={b.thumbnailUrl}
-                  status={b.status}
-                  statusHint={batchStatusHint(b)}
-                  to={`/assts/batches/${b.id}`}
-                />
-              ))}
-            </div>
-          ) : (
-            <p className="assts-library-home__empty-note">No batches registered yet</p>
-          )}
-        </section>
-
-        <section {...libraryHomeAnchorAttr('library.browseLibrary')}>
-          <div className="assts-library-home__section-head">
-            <h2 className="assts-library-home__section-title">BROWSE LIBRARY</h2>
-          </div>
-          <div className="assts-library-browse-grid">
-            {categories.map((cat, index) => {
-              const isLast = index === categories.length - 1;
-              const isOddLast = categories.length % 2 === 1 && isLast;
-              return (
-                <div key={cat.id} className={isOddLast ? 'assts-library-browse-grid__full' : undefined}>
-                  <AsstsLibraryCategoryCard
-                    id={cat.id}
-                    label={cat.label}
-                    count={cat.count}
-                    coverUrl={cat.coverUrl}
-                    to={`/assts?category=${cat.id}`}
-                  />
-                </div>
-              );
-            })}
-          </div>
-        </section>
+        <LibraryHomeReferenceMapDebug />
       </div>
     </AsstsPageShell>
   );
@@ -290,8 +314,10 @@ function AsstsLibraryPageContent() {
 export default function AsstsLibraryPage() {
   return (
     <AsstsLibraryShell scrollLayout>
-      <AsstsLibraryPageContent />
-      <AsstsVaultNav />
+      <LibraryHomeCompositionProvider>
+        <AsstsLibraryPageContent />
+        <AsstsVaultNav />
+      </LibraryHomeCompositionProvider>
     </AsstsLibraryShell>
   );
 }
