@@ -175,6 +175,11 @@
   text-transform: uppercase;
 }
 
+.site00-logo-mark-link {
+  color: inherit;
+  text-decoration: none;
+}
+
 /* ─── Tagline (WHERE DIGITAL PLACES BEGIN.) ─── */
 
 .site00-tagline {
