@@ -51855,3 +51855,17 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Hotfix (2026-08-17):** `/assts` false "Loading did not complete" — Site00 Suspense used global LoadingScreen; 4s post-load guard treated lazy chunk load as hang. Fix: `AsstsRouteSuspense` skeleton fallback + guard exemptions for `/assts` and `Site00` source.
 - **Hotfix (2026-08-17):** `/assts` "COMPONENT FAILED TO LOAD" — `b.counts.approved` on legacy API batch rows without enriched `counts`. Fix: `normalizeBatchSummary` in `fetchAsstsLibrary` + defensive optional chaining in Library/Batches pages.
+
+---
+
+## 2026-08-17 — ASSTS Immersive Depth Pass v1.0 (spatial presentation)
+
+- **Context:** After UX convergence sprint, founder requested focused **Immersive Depth Pass** — make ASSTS mobile feel like a digital place / Asset Vault (three depth planes, floating dock, review bay, archive bays, inspection chamber, route transitions). No IA/route/backend changes; no final environment images installed.
+
+- **Implemented:** New `assts-depth.css` depth token system (`--depth-environment` … `--depth-navigation`, glass/lighting variables, safe zones, spatial dev fallback grid). `AsstsPageShell` route enter animations (library/batch/inspection). Floating pill **navigation dock** with SITE 00 exit glyph (portal threshold, not external-link). Library spatial zones: entry hero (unboxed), metric ledge, overlapping review bay (`assts-review-bay` with locator corners + display frame), recessed batch rows, archive bays (inset preview + forward info band). Batch **review wall** (`assts-wall-frame` mounts + perspective grid, tap-forward micro-depth). Inspection **chamber** (corner guides, floor line, pedestal for object assets) + asset-type-aware staging via `getAssetPresentationMode()`. Control console + secondary console surfaces. Version strip as sample tray styling.
+
+- **Files:** `assts-depth.css`, `AsstsPageShell.tsx`, `assetPresentation.ts`, updates to Library/Batch/Inspection/Batches pages, `AsstsCards`, `AsstsMobileNav`, `Site00Routes.tsx` (eager depth CSS), `assts.css` (dock moved to depth layer).
+
+- **QA:** `npm run build` PASS. Preview `/assts` 200. Background-swap test (temporary architectural image on `.site00-assts-env-layer`) — glass panels remain readable. Full populated UI walkthrough requires admin sign-in + existing batch data.
+
+- **Not done:** Final locked ASSTS environment slot images (intentionally deferred). Say **deploy now** for Vercel production.

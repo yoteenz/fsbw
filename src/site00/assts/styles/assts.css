@@ -1363,10 +1363,25 @@
   .assts-skeleton { animation: none; }
 }
 
-/* ASSTS route lazy-load fallback (no global LoadingScreen) */
+/* ASSTS route lazy-load fallback (SITE 00 construction loader) */
 .assts-route-fallback {
+  position: relative;
   min-height: 100dvh;
   padding: calc(16px + env(safe-area-inset-top, 0px)) 16px 80px;
+}
+
+.assts-route-fallback--loader .site00-loader {
+  position: relative;
+  z-index: 2;
+  padding-top: 12vh;
+}
+
+.assts-route-fallback__veil {
+  position: absolute;
+  inset: 0;
+  padding: calc(16px + env(safe-area-inset-top, 0px)) 16px 80px;
+  opacity: 0.35;
+  pointer-events: none;
 }
 
 .assts-route-fallback__hero {
