@@ -420,7 +420,10 @@
 
 .site00-home-stage {
   --site00-origin-cards-top: 58%;
+  --site00-origin-cards-offset-y: 0px;
   --site00-origin-cards-max-w: 520px;
+  --site00-origin-card-scale: 1;
+  --site00-origin-hero-offset-x: 0px;
   position: relative;
   min-height: calc(100dvh - 160px);
   padding: 24px 32px 140px;
@@ -529,14 +532,23 @@
     padding-top: 16px;
   }
 
+  .site00-home-hero {
+    transform: translateX(var(--site00-origin-hero-offset-x));
+  }
+
   /* Anchor panels below the central figure between the twin zeros — desktop env breakpoint */
   .site00-home-cards {
     position: absolute;
     left: 50%;
-    top: var(--site00-origin-cards-top);
+    top: calc(var(--site00-origin-cards-top) + var(--site00-origin-cards-offset-y));
     transform: translateX(-50%);
     margin: 0;
     width: min(var(--site00-origin-cards-max-w), calc(100% - 64px));
+  }
+
+  .site00-origin-cards__row {
+    transform: scale(var(--site00-origin-card-scale));
+    transform-origin: center top;
   }
 }
 

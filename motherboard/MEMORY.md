@@ -52584,3 +52584,13 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **QA:** `npm run build` PASS. Playwright — bullets `rgb(232,25,44)`, text `rgb(10,10,10)` on all three routes. Screenshot: `site00_summary_strip_enter.png`.
 
+---
+
+## 2026-08-17 — Enter welcome heading: remove redundant diamond
+
+- **Context:** Founder requested removal of unnecessary red ♦ to the right of **WELCOME TO 00** on `/enter`.
+
+- **Changes:** `DirectoryPanel.tsx` — removed `site00-diamond` span from welcome `h1`.
+
+- **QA:** Playwright `/enter` — zero `.site00-diamond` inside welcome heading.
+

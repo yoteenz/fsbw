@@ -5,6 +5,7 @@ import { OriginCards } from '../components/homepage/OriginCards';
 import { IdntyExpandedPanel } from '../components/homepage/IdntyExpandedPanel';
 import { BldrExpandedPanel } from '../components/homepage/BldrExpandedPanel';
 import { SITE00_ORIGIN_COPY } from '../config/status';
+import { SITE00_ORIGIN_DESKTOP_CARDS } from '../config/origin-home-composition';
 import { useSite00 } from '../state/Site00Context';
 
 export default function OriginPage() {
@@ -13,7 +14,16 @@ export default function OriginPage() {
   return (
     <EnvironmentShell environmentId="ORIGIN_ENVIRONMENT">
       <Site00AppShell locationLabel={SITE00_ORIGIN_COPY.locationLabel} showStatusStrip statusStrip={<StatusStrip />}>
-        <div className="site00-home-stage">
+        <div
+          className="site00-home-stage"
+          style={{
+            ['--site00-origin-cards-top' as string]: `${SITE00_ORIGIN_DESKTOP_CARDS.topPercent}%`,
+            ['--site00-origin-cards-offset-y' as string]: `${SITE00_ORIGIN_DESKTOP_CARDS.topOffsetPx}px`,
+            ['--site00-origin-cards-max-w' as string]: `${SITE00_ORIGIN_DESKTOP_CARDS.maxWidth}px`,
+            ['--site00-origin-card-scale' as string]: String(SITE00_ORIGIN_DESKTOP_CARDS.cardScale),
+            ['--site00-origin-hero-offset-x' as string]: `${SITE00_ORIGIN_DESKTOP_CARDS.heroOffsetXPx}px`,
+          }}
+        >
           <div className="site00-home-grid">
             <aside className="site00-home-hero" aria-label="Origin messaging">
               <p className="site00-label site00-home-hero__eyebrow">{SITE00_ORIGIN_COPY.headlineLine1}</p>
