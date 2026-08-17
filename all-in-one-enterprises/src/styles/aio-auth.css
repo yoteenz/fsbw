@@ -748,7 +748,7 @@ body:has(.aio-app--auth) {
 }
 
 .aio-auth-premium--login .aio-auth-premium__alt-label {
-  color: var(--aio-white);
+  color: var(--aio-gold-light, #d4a017);
 }
 
 .aio-auth-premium--login .aio-auth-premium__demo-link {
