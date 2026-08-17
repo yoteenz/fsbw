@@ -5,6 +5,9 @@ export const SITE00_LOADER_ASSET_VERSION = 'v1';
 export const SITE00_LOADER_ASSET_BASE = `/site00/loader/${SITE00_LOADER_ASSET_VERSION}`;
 
 export const SITE00_LOADER_BACKGROUND_FILE = 'assts-loader-background-v1.png';
+/** Original OpenArt source — red luminous geometry on black (screen compositing). */
+export const SITE00_LOADER_GEOMETRY_SOURCE_FILE = 'assts-loader-geometry-v1-source.mp4';
+export const SITE00_LOADER_GEOMETRY_SOURCE_REMOTE = 'openart-output_1786943611255_fc655184.mp4';
 export const SITE00_LOADER_GEOMETRY_WEBM_FILE = 'assts-loader-geometry-v1-alpha.webm';
 export const SITE00_LOADER_GEOMETRY_APNG_FILE = 'assts-loader-geometry-v1-alpha.apng';
 
@@ -18,6 +21,16 @@ export function site00LoaderGeometryWebmUrl(): string {
 
 export function site00LoaderGeometryApngUrl(): string {
   return `${SITE00_LOADER_ASSET_BASE}/${SITE00_LOADER_GEOMETRY_APNG_FILE}`;
+}
+
+/** Original OpenArt animation — black background, screen/lighten compositing in browser. */
+export function site00LoaderGeometrySourceUrl(): string {
+  return `${SITE00_LOADER_ASSET_BASE}/${SITE00_LOADER_GEOMETRY_SOURCE_FILE}`;
+}
+
+export function site00LoaderGeometrySourceRemoteUrl(): string {
+  const base = (import.meta.env.VITE_SUPABASE_URL as string | undefined)?.replace(/\/$/, '') ?? '';
+  return `${base}/storage/v1/object/public/live-preview/site00/${SITE00_LOADER_GEOMETRY_SOURCE_REMOTE}`;
 }
 
 /** iOS Safari — WebM alpha is unreliable; use transcoded APNG with true alpha. */

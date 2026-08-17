@@ -3,6 +3,7 @@
 import {
   site00LoaderBackgroundUrl,
   site00LoaderGeometryApngUrl,
+  site00LoaderGeometrySourceUrl,
   site00LoaderGeometryWebmUrl,
 } from './site00LoaderMedia';
 
@@ -42,6 +43,7 @@ export type Site00ImmersiveLoaderConfig = {
   backgroundUrl: string;
   geometryWebmUrl: string;
   geometryApngUrl: string;
+  geometrySourceUrl: string;
   stages: Site00LoaderStage[];
 };
 
@@ -59,6 +61,7 @@ export const ASSTS_IMMERSIVE_LOADER_CONFIG: Site00ImmersiveLoaderConfig = {
   backgroundUrl: site00LoaderBackgroundUrl(),
   geometryWebmUrl: site00LoaderGeometryWebmUrl(),
   geometryApngUrl: site00LoaderGeometryApngUrl(),
+  geometrySourceUrl: site00LoaderGeometrySourceUrl(),
   stages: [
     { id: 'bootstrap', state: 'BOOTSTRAP', label: 'INITIALIZING SITE 00', progress: 8 },
     { id: 'preparing', state: 'PREPARING', label: 'PREPARING THE ASSET VAULT', progress: 22 },

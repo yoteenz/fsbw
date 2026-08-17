@@ -2,9 +2,11 @@ import { shouldShowAsstsImmersiveLoader } from './site00LoaderSession';
 import {
   site00LoaderBackgroundUrl,
   site00LoaderGeometryApngUrl,
+  site00LoaderGeometrySourceUrl,
   site00LoaderGeometryWebmUrl,
   site00LoaderPrefersApngGeometry,
 } from './site00LoaderMedia';
+import { resolveLoaderGeometryMode } from './site00LoaderGeometryMode';
 import { preloadSite00LoaderBackground, preloadSite00LoaderAnimation } from './site00LoaderPreload';
 
 const BOOT_CLASS = 'site00-assts-boot';
@@ -45,9 +47,12 @@ export function initSite00AsstsLoaderBoot(): void {
   injectPreload(bg, 'image');
   void preloadSite00LoaderBackground(bg);
 
-  const geometryUrl = site00LoaderPrefersApngGeometry()
-    ? site00LoaderGeometryApngUrl()
-    : site00LoaderGeometryWebmUrl();
+  const geometryUrl =
+    resolveLoaderGeometryMode() === 'alpha'
+      ? site00LoaderPrefersApngGeometry()
+        ? site00LoaderGeometryApngUrl()
+        : site00LoaderGeometryWebmUrl()
+      : site00LoaderGeometrySourceUrl();
   injectPreload(geometryUrl, 'fetch');
   void preloadSite00LoaderAnimation(geometryUrl);
 }

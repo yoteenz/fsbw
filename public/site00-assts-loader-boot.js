@@ -25,8 +25,7 @@
 
   preload(bg, 'image');
 
-  var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-  var geometry = base + (isIOS ? 'assts-loader-geometry-v1-alpha.apng' : 'assts-loader-geometry-v1-alpha.webm');
+  var geometry = base + 'assts-loader-geometry-v1-source.mp4';
   preload(geometry, 'fetch');
 
   if (!document.getElementById('site00-assts-boot-shell')) {

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import type { Site00ImmersiveLoaderConfig, Site00LoaderState } from './site00LoaderConfig';
-import { ASSTS_LOADER_GEOMETRY_ANCHOR } from './site00LoaderMedia';
+import { ASSTS_LOADER_HERO_STAGE, isLoaderDebugEnabled, loaderHeroStageCssVars } from './site00LoaderHeroStage';
 import { teardownSite00AsstsBootShell } from './site00LoaderBoot';
 import { Site00LoaderCopy } from './Site00LoaderCopy';
 import { Site00LoaderAnimation } from './Site00LoaderAnimation';
@@ -52,10 +52,13 @@ export function Site00ImmersiveLoader({
 }: Site00ImmersiveLoaderProps) {
   const systemReducedMotion = usePrefersReducedMotion();
   const reducedMotion = reducedMotionProp ?? systemReducedMotion;
+  const debug = isLoaderDebugEnabled();
   const [backgroundReady, setBackgroundReady] = useState(() => {
     if (typeof document === 'undefined') return false;
     return Boolean(document.getElementById('site00-assts-boot-shell'));
   });
+
+  const heroVars = loaderHeroStageCssVars(ASSTS_LOADER_HERO_STAGE);
 
   useEffect(() => {
     let cancelled = false;
@@ -89,19 +92,12 @@ export function Site00ImmersiveLoader({
         ? 'CONNECTING TO ASSET VAULT'
         : config.experienceTitle;
 
-  const experienceSubtitle =
-    loaderState === 'RESOLVING' || loaderState === 'ASSEMBLING' || loaderState === 'READY'
-      ? config.experienceSubtitle
-      : loaderState === 'CONNECTING'
-        ? 'SECURE ADMIN SESSION'
-        : config.experienceSubtitle;
-
   const displaySubtitle =
     loaderState === 'CONNECTING'
       ? 'SECURE ADMIN SESSION'
       : loaderState === 'BOOTSTRAP'
         ? 'INITIALIZING ENVIRONMENT'
-        : experienceSubtitle;
+        : config.experienceSubtitle;
 
   const progressLabel =
     atComplete || progress >= 100 ? config.completionMessage : config.assemblingLabel;
@@ -111,26 +107,37 @@ export function Site00ImmersiveLoader({
     phase === 'exiting' ? 'site00-immersive-loader--exiting' : '',
     phase === 'complete-hold' ? 'site00-immersive-loader--complete' : '',
     error ? 'site00-immersive-loader--error' : '',
+    debug ? 'site00-immersive-loader--debug' : '',
   ]
     .filter(Boolean)
     .join(' ');
 
   return (
-    <div className={rootClass} role="status" aria-live="polite" aria-label={displayStatus}>
-      <div className="site00-loader-stage">
+    <div
+      className={rootClass}
+      style={heroVars as React.CSSProperties}
+      role="status"
+      aria-live="polite"
+      aria-label={displayStatus}
+    >
+      <div className="site00-loader-hero-stage">
         <Site00LoaderEnvironment backgroundUrl={config.backgroundUrl} ready={backgroundReady} />
+
+        {debug ? (
+          <>
+            <span className="site00-loader-debug site00-loader-debug--pedestal" aria-hidden="true" />
+            <span className="site00-loader-debug site00-loader-debug--pedestal-center" aria-hidden="true" />
+            <span className="site00-loader-debug site00-loader-debug--geometry-anchor" aria-hidden="true" />
+            <span className="site00-loader-debug site00-loader-debug--copy-anchor" aria-hidden="true" />
+            <span className="site00-loader-debug site00-loader-debug--safe-bottom" aria-hidden="true" />
+          </>
+        ) : null}
 
         {!error ? (
           <>
-            <Site00LoaderAnimation
-              webmUrl={config.geometryWebmUrl}
-              apngUrl={config.geometryApngUrl}
-              anchor={ASSTS_LOADER_GEOMETRY_ANCHOR}
-              reducedMotion={reducedMotion}
-              onReady={onAnimationReady}
-            />
+            <Site00LoaderAnimation reducedMotion={reducedMotion} onReady={onAnimationReady} />
 
-            <div className="site00-immersive-loader__ui">
+            <div className="site00-loader-copy-mount">
               <Site00LoaderCopy
                 siteLabel={config.siteLabel}
                 title={experienceTitle}
@@ -144,7 +151,7 @@ export function Site00ImmersiveLoader({
             </div>
           </>
         ) : (
-          <div className="site00-immersive-loader__ui site00-immersive-loader__ui--error">
+          <div className="site00-loader-copy-mount site00-loader-copy-mount--error">
             <Site00LoaderCopy
               siteLabel={config.siteLabel}
               title="BUILD INTERRUPTED"

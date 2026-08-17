@@ -74,11 +74,12 @@ type ViewModeToggleProps = {
   onChange: (mode: BatchViewMode) => void;
   showContact?: boolean;
   showCompare?: boolean;
+  className?: string;
 };
 
-export function AsstsViewModeToggle({ mode, onChange, showContact, showCompare }: ViewModeToggleProps) {
+export function AsstsViewModeToggle({ mode, onChange, showContact, showCompare, className }: ViewModeToggleProps) {
   return (
-    <div className="assts-view-toggle" role="tablist" aria-label="Batch view mode">
+    <div className={`assts-view-toggle ${className ?? ''}`.trim()} role="tablist" aria-label="Batch view mode">
       <button type="button" role="tab" aria-selected={mode === 'grid'} className={mode === 'grid' ? 'active' : ''} onClick={() => onChange('grid')}>
         GRID
       </button>

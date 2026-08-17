@@ -37,7 +37,7 @@ export default function AsstsBatchesListPage() {
             ← LIBRARY
           </Link>
           <h1 className="assts-page-header__title">BATCHES</h1>
-          <p className="assts-page-header__sub">Production review groups</p>
+          <p className="assts-page-header__sub">Vault directory</p>
         </header>
 
         <AsstsDevPanel batchId={null} onRefresh={load} />
@@ -49,14 +49,13 @@ export default function AsstsBatchesListPage() {
         ) : null}
 
         {loading ? (
-          <div className="assts-batch-list" aria-hidden="true">
-            <div className="assts-skeleton assts-skeleton--batch-row" />
+          <div className="assts-batch-directory" aria-hidden="true">
             <div className="assts-skeleton assts-skeleton--batch-row" />
             <div className="assts-skeleton assts-skeleton--batch-row" />
           </div>
         ) : null}
 
-        <div className="assts-recess-zone">
+        <div className="assts-batch-directory">
           <AsstsSectionHeader title="ALL BATCHES" />
           <div className="assts-batch-list">
             {batches.map((b) => (

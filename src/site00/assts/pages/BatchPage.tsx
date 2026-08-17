@@ -84,9 +84,15 @@ export default function AsstsBatchPage() {
           ) : null}
         </header>
 
-        {batch ? <AsstsBatchSummaryPanel counts={batch.counts} progressPercent={progressPercent} /> : null}
+        {batch ? (
+          <AsstsBatchSummaryPanel
+            counts={batch.counts}
+            progressPercent={progressPercent}
+            compact
+          />
+        ) : null}
 
-        <AsstsViewModeToggle mode={viewMode} onChange={setViewMode} showContact />
+        <AsstsViewModeToggle mode={viewMode} onChange={setViewMode} showContact className="assts-view-mode-toggle--compact" />
 
         <AsstsDevPanel batchId={batchId} onRefresh={load} />
 

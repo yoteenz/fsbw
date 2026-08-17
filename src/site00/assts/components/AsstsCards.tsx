@@ -12,7 +12,31 @@ type BatchChipProps = {
   to: string;
 };
 
-/** Compact peripheral batch module — does not span the central corridor. */
+/** Compact vault index tile — Recent Batches rail (library hero navigation). */
+export function AsstsVaultIndexTile({
+  batchKey,
+  status,
+  statusHint,
+  thumbnailUrl,
+  to,
+}: BatchChipProps) {
+  const shortKey = batchKey.replace(/^BATCH-ASSTS-ENV-/i, 'ENV-').replace(/^BATCH-/i, '');
+  return (
+    <Link to={to} className="assts-vault-index-tile">
+      <div className="assts-vault-index-tile__thumb">
+        {thumbnailUrl ? (
+          <img src={thumbnailUrl} alt="" loading="lazy" />
+        ) : (
+          <span className="assts-vault-index-tile__thumb-empty" aria-hidden="true" />
+        )}
+      </div>
+      <span className="assts-vault-index-tile__id">{shortKey}</span>
+      <span className="assts-vault-index-tile__status">{statusHint ?? status ?? 'BATCH'}</span>
+    </Link>
+  );
+}
+
+/** Compact peripheral batch module — batch directory rows. */
 export function AsstsBatchChip({
   batchKey,
   category,
@@ -182,9 +206,10 @@ type CategoryTileProps = {
 export function AsstsCategoryTile({ label, count, coverUrl, to }: CategoryTileProps) {
   const [num, ...nameParts] = label.split(' ');
   const name = nameParts.join(' ');
+  const hasCover = Boolean(coverUrl);
   return (
-    <Link to={to} className="assts-archive-bay">
-      <div className="assts-archive-bay__inset">
+    <Link to={to} className={`assts-archive-bay assts-archive-bay--compact ${hasCover ? '' : 'assts-archive-bay--empty-cat'}`}>
+      <div className={`assts-archive-bay__inset ${hasCover ? '' : 'assts-archive-bay__inset--shallow'}`}>
         {coverUrl ? (
           <img src={coverUrl} alt="" loading="lazy" />
         ) : (
@@ -193,10 +218,10 @@ export function AsstsCategoryTile({ label, count, coverUrl, to }: CategoryTilePr
           </div>
         )}
       </div>
-      <div className="assts-archive-bay__band">
+      <div className="assts-archive-bay__band assts-archive-bay__band--compact">
         <span className="assts-category-tile__num">{num}</span>
         <span className="assts-category-tile__name">{name}</span>
-        <span className="assts-category-tile__count">{count} ASSETS</span>
+        <span className="assts-category-tile__count">{count}</span>
       </div>
     </Link>
   );
@@ -228,12 +253,17 @@ export function AsstsAssetListRow({ assetKey, displayName, previewUrl, status, t
 export function AsstsBatchSummaryPanel({
   counts,
   progressPercent,
+  compact,
 }: {
   counts: { total: number; approved: number; needsReview: number; regenerating: number; rejected: number };
   progressPercent: number;
+  compact?: boolean;
 }) {
   return (
-    <AsstsGlass variant="panel" className="assts-batch-summary assts-depth-floating">
+    <AsstsGlass
+      variant="panel"
+      className={`assts-batch-summary assts-depth-floating ${compact ? 'assts-batch-summary--compact' : ''}`}
+    >
       <div className="assts-batch-summary__stats">
         <div className="assts-batch-summary__stat">
           <span className="assts-batch-summary__stat-value">{counts.approved}</span>

@@ -6,9 +6,10 @@ type BatchWithCounts = Pick<AsstsBatchSummary, 'status'> & {
 
 export function batchStatusHint(batch: BatchWithCounts): string {
   const counts = batch.counts ?? { total: 0, approved: 0, needsReview: 0 };
-  if ((counts.needsReview ?? 0) > 0) return `${String(counts.needsReview).padStart(2, '0')} NEED REVIEW`;
+  if ((counts.needsReview ?? 0) > 0) return 'IN REVIEW';
   if (batch.status === 'LOCKED') return 'LOCKED';
-  if ((counts.approved ?? 0) === (counts.total ?? 0) && (counts.total ?? 0) > 0) return 'ALL APPROVED';
+  if (batch.status === 'IN_REVIEW' || batch.status === 'REVIEW') return 'IN REVIEW';
+  if ((counts.approved ?? 0) === (counts.total ?? 0) && (counts.total ?? 0) > 0) return 'APPROVED';
   return batch.status.replace(/_/g, ' ');
 }
 

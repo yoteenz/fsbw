@@ -5,6 +5,7 @@ import { acquireLoadingScreenDocumentLock } from '../../../platform-stabilizatio
 import { ASSTS_IMMERSIVE_LOADER_CONFIG } from '../../components/loader/site00LoaderConfig';
 import { Site00ImmersiveLoader, type Site00ImmersiveLoaderPhase } from '../../components/loader/Site00ImmersiveLoader';
 import { initSite00AsstsLoaderBoot, teardownSite00AsstsBootShell } from '../../components/loader/site00LoaderBoot';
+import { resolveLoaderGeometryMode } from '../../components/loader/site00LoaderGeometryMode';
 import {
   site00LoaderPrefersApngGeometry,
 } from '../../components/loader/site00LoaderMedia';
@@ -62,9 +63,12 @@ export function AsstsColdStartGate() {
         if (cancelled) return;
         completeStage('preparing');
 
-        const geometryUrl = site00LoaderPrefersApngGeometry()
-          ? config.geometryApngUrl
-          : config.geometryWebmUrl;
+        const geometryUrl =
+          resolveLoaderGeometryMode() === 'alpha'
+            ? site00LoaderPrefersApngGeometry()
+              ? config.geometryApngUrl
+              : config.geometryWebmUrl
+            : config.geometrySourceUrl;
         const geometryPromise = preloadSite00LoaderAnimation(geometryUrl);
 
         completeStage('connect');
@@ -109,7 +113,7 @@ export function AsstsColdStartGate() {
     return () => {
       cancelled = true;
     };
-  }, [immersive, completeStage, forceComplete, config.backgroundUrl, config.geometryApngUrl, config.geometryWebmUrl]);
+  }, [immersive, completeStage, forceComplete, config.backgroundUrl, config.geometryApngUrl, config.geometryWebmUrl, config.geometrySourceUrl]);
 
   const handleExitComplete = () => {
     markAsstsImmersiveComplete();

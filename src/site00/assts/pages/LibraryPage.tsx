@@ -1,10 +1,15 @@
 import { useCallback, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { useCompositionOverlayRef } from '../../composition';
+import { CompositionZoneSlot } from '../../composition';
 import { AsstsDevPanel, useAsstsAutoRefresh } from '../components/AsstsDevPanel';
 import { AsstsBottomDock } from '../components/AsstsMobileNav';
 import { AsstsPageShell } from '../components/AsstsPageShell';
-import { AsstsBatchCard, AsstsBatchChip, AsstsAssetListRow, AsstsCategoryTile } from '../components/AsstsCards';
+import {
+  AsstsBatchCard,
+  AsstsVaultIndexTile,
+  AsstsAssetListRow,
+  AsstsCategoryTile,
+} from '../components/AsstsCards';
 import { AsstsMetricTile, AsstsSectionHeader } from '../components/AsstsGlass';
 import { AsstsLibraryShell } from '../components/AsstsLibraryShell';
 import { fetchAsstsLibrary, type AsstsLibraryResponse } from '../services/asstsApi';
@@ -19,7 +24,6 @@ function batchNeedsAttention(priority: AsstsLibraryResponse['priorityBatch']): b
   return false;
 }
 
-
 function AsstsLibraryPageContent() {
   const [searchParams] = useSearchParams();
   const statusFilter = searchParams.get('status') ?? '';
@@ -29,8 +33,6 @@ function AsstsLibraryPageContent() {
   const [data, setData] = useState<AsstsLibraryResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-
-  const batchesOverlayRef = useCompositionOverlayRef('RecentBatchesPanel');
 
   const load = useCallback(async () => {
     try {
@@ -70,100 +72,100 @@ function AsstsLibraryPageContent() {
 
   const priorityProgress = priority ? batchProgressPercent(priority.counts ?? {}) : 0;
   const batchesList = summary?.batchesList ?? [];
-  const leftBatches = batchesList.filter((_, i) => i % 2 === 0);
-  const rightBatches = batchesList.filter((_, i) => i % 2 === 1);
-
 
   return (
     <AsstsPageShell variant="library">
-        <div className="assts-library-composed">
-          <div className="assts-composed-header">
-            <header className="assts-hero assts-hero--spatial assts-hero--composed">
-              <p className="assts-hero__eyebrow site00-label-red">SITE 00 · ASSTS</p>
-              <h1 className="assts-hero__title">THE ASSET VAULT.</h1>
-              <p className="assts-hero__tagline">EVERYTHING WE BUILD LIVES HERE.</p>
-            </header>
+      <div className="assts-library-composed assts-library-composed--zone-contract">
+        <CompositionZoneSlot zoneId="upper-identity" overlayId="AssetVaultHeader" className="assts-zone-header">
+          <header className="assts-hero assts-hero--spatial assts-hero--composed">
+            <p className="assts-hero__eyebrow site00-label-red">SITE 00 · ASSTS</p>
+            <h1 className="assts-hero__title">THE ASSET VAULT.</h1>
+            <p className="assts-hero__tagline">EVERYTHING WE BUILD LIVES HERE.</p>
+          </header>
+        </CompositionZoneSlot>
 
-            {summary ? (
-              <div className="assts-metrics assts-metrics--hud" aria-label="Library metrics">
-                <AsstsMetricTile
-                  value={summary.totalAssets}
-                  label="Assets"
-                  to="/assts?view=all"
-                  active={activeMetric === 'all'}
-                />
-                <AsstsMetricTile value={summary.batches} label="Batches" to="/assts/batches" />
-                <AsstsMetricTile
-                  value={summary.needsReview}
-                  label="Need Review"
-                  to="/assts?status=needs-review"
-                  accent="review"
-                  active={activeMetric === 'needs-review'}
-                />
-                <AsstsMetricTile
-                  value={summary.approved}
-                  label="Approved"
-                  to="/assts?status=approved"
-                  active={activeMetric === 'approved'}
-                />
-              </div>
-            ) : null}
-          </div>
-
-          <AsstsDevPanel batchId={priority?.id ?? null} onRefresh={load} />
-
-          {error ? (
-            <div className="assts-alert assts-glass assts-glass--panel" role="alert">
-              {error}
-            </div>
-          ) : null}
-
-          {loading && !summary ? (
-            <div className="assts-library-loading-skeleton" aria-hidden="true">
-              <div className="assts-skeleton assts-skeleton--metric" />
-              <div className="assts-skeleton assts-skeleton--metric" />
-              <div className="assts-skeleton assts-skeleton--metric" />
-              <div className="assts-skeleton assts-skeleton--metric" />
-            </div>
-          ) : null}
-
-          {showFiltered && filteredAssets ? (
-            <>
-              <AsstsSectionHeader
-                title={
-                  statusFilter === 'needs-review'
-                    ? 'NEEDS REVIEW'
-                    : statusFilter === 'approved'
-                      ? 'APPROVED ASSETS'
-                      : categoryFilter
-                        ? 'FILTERED LIBRARY'
-                        : 'ALL ASSETS'
-                }
-                action={
-                  <Link to="/assts" className="assts-link-action">
-                    CLEAR
-                  </Link>
-                }
+        {summary ? (
+          <CompositionZoneSlot zoneId="upper-metrics" overlayId="AssetVaultMetrics" className="assts-zone-metrics">
+            <div className="assts-metrics assts-metrics--hud" aria-label="Library metrics">
+              <AsstsMetricTile
+                value={summary.totalAssets}
+                label="Assets"
+                to="/assts?view=all"
+                active={activeMetric === 'all'}
               />
-              <div className="assts-filtered-list">
-                {filteredAssets.length === 0 ? (
-                  <p className="assts-empty">No assets match this filter.</p>
-                ) : (
-                  filteredAssets.map((a) => (
-                    <AsstsAssetListRow
-                      key={a.id}
-                      assetKey={a.asset_key}
-                      displayName={a.display_name}
-                      previewUrl={a.currentVersion?.previewUrl}
-                      status={a.status}
-                      to={`/assts/${a.id}`}
-                    />
-                  ))
-                )}
-              </div>
-            </>
-          ) : (
-            <>
+              <AsstsMetricTile value={summary.batches} label="Batches" to="/assts/batches" />
+              <AsstsMetricTile
+                value={summary.needsReview}
+                label="Need Review"
+                to="/assts?status=needs-review"
+                accent="review"
+                active={activeMetric === 'needs-review'}
+              />
+              <AsstsMetricTile
+                value={summary.approved}
+                label="Approved"
+                to="/assts?status=approved"
+                active={activeMetric === 'approved'}
+              />
+            </div>
+          </CompositionZoneSlot>
+        ) : null}
+
+        <AsstsDevPanel batchId={priority?.id ?? null} onRefresh={load} />
+
+        {error ? (
+          <div className="assts-alert assts-glass assts-glass--panel" role="alert">
+            {error}
+          </div>
+        ) : null}
+
+        {loading && !summary ? (
+          <div className="assts-library-loading-skeleton" aria-hidden="true">
+            <div className="assts-skeleton assts-skeleton--metric" />
+            <div className="assts-skeleton assts-skeleton--metric" />
+            <div className="assts-skeleton assts-skeleton--metric" />
+            <div className="assts-skeleton assts-skeleton--metric" />
+          </div>
+        ) : null}
+
+        {showFiltered && filteredAssets ? (
+          <div className="assts-library-filtered">
+            <AsstsSectionHeader
+              title={
+                statusFilter === 'needs-review'
+                  ? 'NEEDS REVIEW'
+                  : statusFilter === 'approved'
+                    ? 'APPROVED ASSETS'
+                    : categoryFilter
+                      ? 'FILTERED LIBRARY'
+                      : 'ALL ASSETS'
+              }
+              action={
+                <Link to="/assts" className="assts-link-action">
+                  CLEAR
+                </Link>
+              }
+            />
+            <div className="assts-filtered-list">
+              {filteredAssets.length === 0 ? (
+                <p className="assts-empty">No assets match this filter.</p>
+              ) : (
+                filteredAssets.map((a) => (
+                  <AsstsAssetListRow
+                    key={a.id}
+                    assetKey={a.asset_key}
+                    displayName={a.display_name}
+                    previewUrl={a.currentVersion?.previewUrl}
+                    status={a.status}
+                    to={`/assts/${a.id}`}
+                  />
+                ))
+              )}
+            </div>
+          </div>
+        ) : (
+          <>
+            <CompositionZoneSlot zoneId="status-review" overlayId="ReviewStatus" className="assts-zone-status">
               <div
                 className={`assts-composed-review ${showPriority ? 'assts-composed-review--active' : 'assts-composed-review--collapsed'}`}
               >
@@ -199,53 +201,34 @@ function AsstsLibraryPageContent() {
                     <span className="assts-status-line__dot" aria-hidden="true" />
                     Generation in progress
                   </p>
-                ) : priority?.status === 'LOCKED' ? (
-                  <p className="assts-status-line">
-                    {priority.batch_key} locked — production environments live
-                  </p>
                 ) : null}
               </div>
+            </CompositionZoneSlot>
 
-              {batchesList.length > 0 ? (
-                <div ref={batchesOverlayRef} className="assts-batches-peripheral">
-                  <AsstsSectionHeader title="RECENT BATCHES" />
-                  <div className="assts-batches-peripheral__grid">
-                    <div className="assts-batches-peripheral__col assts-batches-peripheral__col--left">
-                      {leftBatches.map((b) => (
-                        <AsstsBatchChip
-                          key={b.id}
-                          batchKey={b.batch_key}
-                          category={b.category}
-                          displayName={b.display_name}
-                          thumbnailUrl={b.thumbnailUrl}
-                          status={b.status}
-                          statusHint={batchStatusHint(b)}
-                          to={`/assts/batches/${b.id}`}
-                        />
-                      ))}
-                    </div>
-                    <div className="assts-batches-peripheral__corridor" aria-hidden="true" />
-                    <div className="assts-batches-peripheral__col assts-batches-peripheral__col--right">
-                      {rightBatches.map((b) => (
-                        <AsstsBatchChip
-                          key={b.id}
-                          batchKey={b.batch_key}
-                          category={b.category}
-                          displayName={b.display_name}
-                          thumbnailUrl={b.thumbnailUrl}
-                          status={b.status}
-                          statusHint={batchStatusHint(b)}
-                          to={`/assts/batches/${b.id}`}
-                        />
-                      ))}
-                    </div>
-                  </div>
+            {batchesList.length > 0 ? (
+              <CompositionZoneSlot zoneId="left-peripheral" overlayId="RecentBatches" className="assts-zone-batches">
+                <AsstsSectionHeader title="RECENT BATCHES" />
+                <div className="assts-batch-rail" role="list">
+                  {batchesList.map((b) => (
+                    <AsstsVaultIndexTile
+                      key={b.id}
+                      batchKey={b.batch_key}
+                      category={b.category}
+                      displayName={b.display_name}
+                      thumbnailUrl={b.thumbnailUrl}
+                      status={b.status}
+                      statusHint={batchStatusHint(b)}
+                      to={`/assts/batches/${b.id}`}
+                    />
+                  ))}
                 </div>
-              ) : null}
+              </CompositionZoneSlot>
+            ) : null}
 
-              <div className="assts-composed-library">
+            <CompositionZoneSlot zoneId="lower-library" overlayId="BrowseLibrary" className="assts-zone-library">
+              <div className="assts-archive-veil">
                 <AsstsSectionHeader title="BROWSE LIBRARY" />
-                <div className="assts-category-grid assts-category-grid--composed">
+                <div className="assts-category-grid assts-category-grid--compact">
                   {(data?.categories ?? []).map((cat) => (
                     <AsstsCategoryTile
                       key={cat.id}
@@ -258,9 +241,10 @@ function AsstsLibraryPageContent() {
                   ))}
                 </div>
               </div>
-            </>
-          )}
-        </div>
+            </CompositionZoneSlot>
+          </>
+        )}
+      </div>
     </AsstsPageShell>
   );
 }
