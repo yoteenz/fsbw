@@ -30,10 +30,10 @@ export function AuthHeader({ showLogo = true }: Props) {
   return (
     <header className={`aio-auth-premium__header${showLogo ? '' : ' aio-auth-premium__header--back-only'}`}>
       <button type="button" className="aio-auth-premium__back" onClick={onBack}>
-        <span className="aio-auth-premium__back-chevron" aria-hidden="true">
-          ‹
+        <span className="aio-auth-premium__back-symbol" aria-hidden="true">
+          {'<'}
         </span>
-        Back
+        <span className="aio-auth-premium__back-label">Back</span>
       </button>
     </header>
   );
