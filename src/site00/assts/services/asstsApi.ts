@@ -20,6 +20,11 @@ async function parseAsstsJson<T>(res: Response): Promise<T> {
     /application\/json/i.test(contentType) || trimmed.startsWith('{') || trimmed.startsWith('[');
 
   if (!looksJson) {
+    if (/DEPLOYMENT_DISABLED|Payment required/i.test(trimmed)) {
+      throw new Error(
+        'Vercel API is unavailable (deployment disabled on the proxy target). Refresh after the dev server restarts — ASSTS now uses a local API on preview.',
+      );
+    }
     if (/^<!DOCTYPE|^<html/i.test(trimmed)) {
       throw new Error(
         'ASSTS API is not reachable (received HTML instead of JSON). Deploy the latest build so /api/admin/site00-assts exists on the API host.',
@@ -35,6 +40,16 @@ async function parseAsstsJson<T>(res: Response): Promise<T> {
   }
 }
 
+function throwAsstsApiError(res: Response, data: { error?: string; code?: string }) {
+  if (res.status === 401 || data.code === 'MISSING_TOKEN') {
+    throw new Error('Sign in as an admin to access ASSTS.');
+  }
+  if (data.code === 'NOT_ADMIN') {
+    throw new Error('Your account does not have ASSTS admin access.');
+  }
+  throw new Error(data.error ?? `ASSTS API ${res.status}`);
+}
+
 async function asstsFetch<T>(action: string, init?: AsstsFetchInit): Promise<T> {
   const { query, body, ...fetchInit } = init ?? {};
   const q = new URLSearchParams({ action, ...(query ?? {}) });
@@ -42,8 +57,8 @@ async function asstsFetch<T>(action: string, init?: AsstsFetchInit): Promise<T> 
     ...fetchInit,
     ...(body !== undefined ? { body } : {}),
   });
-  const data = await parseAsstsJson<T & { error?: string }>(res);
-  if (!res.ok) throw new Error(data.error ?? `ASSTS API ${res.status}`);
+  const data = await parseAsstsJson<T & { error?: string; code?: string }>(res);
+  if (!res.ok) throwAsstsApiError(res, data);
   return data;
 }
 
@@ -52,8 +67,8 @@ async function asstsPost<T>(action: string, body: Record<string, unknown>): Prom
     method: 'POST',
     body: { action, ...body },
   });
-  const data = await parseAsstsJson<T & { error?: string }>(res);
-  if (!res.ok) throw new Error(data.error ?? `ASSTS API ${res.status}`);
+  const data = await parseAsstsJson<T & { error?: string; code?: string }>(res);
+  if (!res.ok) throwAsstsApiError(res, data);
   return data;
 }
 

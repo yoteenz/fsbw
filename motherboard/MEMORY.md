@@ -51824,3 +51824,15 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Next:** Founder human review in ASSTS UI; say **deploy now** for Vercel production build.
 
+---
+
+## 2026-08-17 — ASSTS bootstrap correction (Foundation sprint completion)
+
+- **Context:** Founder reported `/assts` showed dev controls prominently, fake category counts (32/128/…), empty Needs Your Review, and Safari error **"The string did not match the expected pattern."** Sprint correction: fix error, hide factory controls, auto-bootstrap pipeline, real DB counts, review UI polish, batch reset for human review.
+
+- **Root cause (error):** `fetchAsstsLibrary()` called `Response.json()` on non-JSON API responses. Mobile preview proxies `/api` to Vercel; ASSTS route not deployed (`[sync-only]`) and account returns **402 DEPLOYMENT_DISABLED** HTML/text → WebKit throws that exact pattern error. Secondary bug: POST helpers passed pre-`JSON.stringify` bodies into `apiFetch`, which stringified again.
+
+- **Fixes:** Safe `parseAsstsJson()` in `asstsApi.ts`; POST bodies as objects; local Vite middleware for `/api/admin/site00-assts` (bypasses Vercel 402); `scripts/cloud-vite-dev.sh` exports Supabase env for preview.
+
+- **Batch state:** **BATCH-ASSTS-ENV-001** assets generated (v01 library/batch, v02 inspection from regen test); awaiting founder review in ASSTS UI. Say **deploy now** so `/api/admin/site00-assts` is reachable from preview tunnel.
+
