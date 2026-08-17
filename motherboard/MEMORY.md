@@ -52219,4 +52219,15 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Files:** `AuthLoginHero.tsx`, `AuthShell.tsx`, `LoginPage.tsx`, `AIOAuthLayout.tsx`, `AuthBrandIntro.tsx`, `aio-auth.css`, `MOBILE_AUTH_EXPERIENCE_REPORT.md`.
 
-- **QA:** Playwright 390×844 — hero height 380px, hero top ~16px (no debug banner), email input below hero, form-stack bg rgb(8,8,8), truck not behind inputs.
+
+---
+
+## 2026-08-17 — AIO login hero micro-refinement (crop, back colors, −2px type)
+
+- **Context:** Follow-up after finite hero structure — founder screenshot showed excess road at hero bottom, form too low, full-gold BACK, typography slightly oversized.
+
+- **Fix:** Nudged hero `object-position` upward (~14–18%); shortened hero heights (~50px: 380→330 at 390px, etc.); form-stack overlap −18px; BACK = gold `<` + white `BACK` (`AuthHeader` spans); ~2px font-size reduction across login mobile auth (labels, inputs, CTAs, demo, footer); tightened hero text + form vertical rhythm 4–8px. Touch targets unchanged.
+
+- **Files:** `AuthHeader.tsx`, `aio-auth.css`.
+
+- **QA:** Playwright 375/390/414 — hero 330–340px, email below hero, back symbol gold + label white.
