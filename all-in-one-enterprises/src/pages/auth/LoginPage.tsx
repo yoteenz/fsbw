@@ -87,8 +87,6 @@ export function LoginPage() {
         Pick up where you left off.
       </>
     ),
-    secondary:
-      'Manage services, documents, filings, Road Ready™ progress, and your AIO account from one place.',
   } as const;
 
   return (

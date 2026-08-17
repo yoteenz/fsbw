@@ -194,7 +194,7 @@
 
 .aio-auth-login-hero .aio-auth-premium__supporting {
   margin-top: 0.25rem;
-  font-size: clamp(1rem, 3.9vw, 1.0625rem);
+  font-size: clamp(0.875rem, 3.6vw, 0.9375rem);
   line-height: 1.32;
   max-width: min(340px, 88vw);
 }
@@ -1216,6 +1216,17 @@
 
   .aio-auth-premium--login .aio-auth-premium__checkbox {
     font-size: 0.75rem;
+  }
+
+  .aio-auth-premium--login .aio-auth-premium__checkbox-box {
+    border-color: var(--aio-gold-light, #d4a017);
+  }
+
+  .aio-auth-premium--login .aio-auth-premium__btn--primary,
+  .aio-auth-premium--login .aio-auth-premium__btn--secondary {
+    min-height: 42px;
+    padding-top: 0.5625rem;
+    padding-bottom: 0.5625rem;
   }
 
   .aio-auth-premium--login .aio-auth-premium__forgot {

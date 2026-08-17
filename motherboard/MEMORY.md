@@ -52195,44 +52195,10 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 ---
 
-<<<<<<< HEAD
-## 2026-08-17 — AIO login hero missing on preview (env-dependent URL fix)
-
-- **Context:** Founder reported login page on `preview.fsbw-dev.com` shows solid black background — no approved truck hero image despite prior implementation.
-
-- **Root cause:** Login hero URL was built only from `VITE_AIO_SUPABASE_URL` / `VITE_AIO_LOGIN_HERO_URL` / `VITE_AIO_PUBLIC_STORAGE_URL`. When unset (preview tunnel / Vercel without AIO Supabase env), `getAioLoginHeroImageUrl()` returned `''` → CSS `--aio-auth-login-hero-url: url("")` → gradients only, no truck.
-
-- **Fix:** Bundled approved master PNG at `all-in-one-enterprises/public/brand/aio-login-hero.png` (~1.9MB). `getAioLoginHeroImageUrl()` falls back to `appConfig.assets.loginHeroImage` (`/brand/aio-login-hero.png`) when remote URL unavailable. CSS `var(--aio-auth-login-hero-url, url('/brand/aio-login-hero.png'))` as belt-and-suspenders on mobile + desktop login backgrounds.
-
-- **Files:** `aioPublicAssets.ts`, `appConfig.ts`, `aio-auth.css`, `.env.example`, `MOBILE_AUTH_EXPERIENCE_REPORT.md`.
-
-- **QA:** Build PASS; local `/login` shows truck hero with fallback URL; dev server serves `/brand/aio-login-hero.png` 200.
-
----
-
-## 2026-08-17 — AIO login finite hero structure correction
-
-- **Context:** Follow-up sprint after hero asset fix — founder reported truck image still behaving as full-page background; text/form too low; form overlaid on truck.
-
-- **Root cause:** Login hero applied via fixed full-viewport `.aio-auth-premium__bg` background-image; intro + form lived in same scroll layer over the image.
-
-- **Fix:** New `AuthLoginHero` component — finite top section (~350–400px by breakpoint) with `<img object-fit:cover>`, overlay, Back + intro text top-aligned. Removed login hero from page background. `LoginPage` splits hero vs `form-stack` on solid `#080808`. Slight negative margin overlap (~28px). Typography scaled down in hero; secondary copy max-width ~320px. Debug banner hidden on auth routes (`aio-app--auth`). Desktop split (brand panel hero) unchanged.
-
-- **Files:** `AuthLoginHero.tsx`, `AuthShell.tsx`, `LoginPage.tsx`, `AIOAuthLayout.tsx`, `AuthBrandIntro.tsx`, `aio-auth.css`, `MOBILE_AUTH_EXPERIENCE_REPORT.md`.
-
-
----
-
-## 2026-08-17 — AIO login hero micro-refinement (crop, back colors, −2px type)
-
-- **Context:** Follow-up after finite hero structure — founder screenshot showed excess road at hero bottom, form too low, full-gold BACK, typography slightly oversized.
-
-- **Fix:** Nudged hero `object-position` upward (~14–18%); shortened hero heights (~50px: 380→330 at 390px, etc.); form-stack overlap −18px; BACK = gold `<` + white `BACK` (`AuthHeader` spans); ~2px font-size reduction across login mobile auth (labels, inputs, CTAs, demo, footer); tightened hero text + form vertical rhythm 4–8px. Touch targets unchanged.
-
-- **Files:** `AuthHeader.tsx`, `aio-auth.css`.
-
 - **QA:** Playwright 375/390/414 — hero 330–340px, email below hero, back symbol gold + label white.
-=======
+
+---
+
 ## 2026-08-17 — SITE 00 typography system reset + brand isolation
 
 - **Context:** Composer sprint — remove Frontal Slayer Futura typography inheritance across all SITE 00 routes (Origin desktop/mobile, Enter, IDNTY, BLDR, ASSTS, nav, loader). Match approved SITE 00 reference hierarchy (condensed/technical/architectural uppercase). Do **not** change FS, Lounge TV, PSA Today typography, backgrounds, geometry, or pipeline logic.
@@ -52246,4 +52212,13 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Spatial Architecture Review:** SKIPPED — presentation-layer typography correction only; no new surfaces/nav.
 
 - **QA:** `npm run build` PASS. Playwright + screenshots: `/origin` desktop + mobile (technical condensed hierarchy); `/assts` Library Home at 711px with auth/API mock (vault title, red labels, mono batch IDs, compact nav). **`src/index.css` Futura unchanged** — Frontal Slayer isolation preserved.
->>>>>>> 5c7a05fd4 (SITE 00 typography system reset — isolate from Frontal Slayer Futura [sync-only])
+
+---
+
+## 2026-08-17 — AIO login copy + checkbox + CTA height tweak
+
+- **Context:** Founder follow-up on mobile login — remove gray secondary paragraph, smaller white supporting line, gold Remember Me checkbox, shorter Log In / Create Account buttons (−25% height only).
+
+- **Changes:** Removed `secondary` from `LoginPage` brand intro; hero supporting −2px (`clamp(0.875rem…)`); login checkbox gold border; primary/secondary buttons `min-height: 42px` (from 56px) on login mobile.
+
+- **QA:** Playwright 390 — no `.secondary`, supporting ~14px, checkbox border gold, buttons 42px tall.
