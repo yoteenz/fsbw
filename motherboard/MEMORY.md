@@ -51970,3 +51970,19 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Implementation:** New `Site00LoaderCopy.tsx` single centered wrapper (eyebrow → title → subtitle → progress group → tagline → signature). Copy stage anchored below platform at `top: calc(58% + clamp(24px, 6vw, 40px))`. CSS typography roles via `--site00-loader-*` vars on `.site00-immersive-loader`. Progress bar ~70vw max 300px centered; % adjacent to bar right edge. Outline `00` mark (`-webkit-text-stroke`). `ASSEMBLING...` label (was ASSEMBLING INTERFACE). Signature `margin-top: auto` above safe-area.
 
 - **QA:** Build PASS. Browser `/assts` cold start — all copy center-aligned, hierarchy matches reference, progress ~70% width.
+
+- **Sync:** `0805d1419` [sync-only].
+
+---
+
+## 2026-08-17 — Environmental Composition Intelligence V1 + ASSTS library recomposition
+
+- **Context:** Implementation sprint — THE IMAGE DEFINES THE WORLD; composition map defines UI placement. ASSTS FAL/review/lock pipeline untouched; presentation correction for Asset Vault library against approved corridor environment.
+
+- **Infrastructure:** `src/site00/composition/` — types, engine (cover/object-position coordinate translation), collision warnings, `EnvironmentalStage`, debug overlay (`?composition=1`).
+
+- **Map:** `src/site00/compositions/assts-library-corridor-v1.ts` — 1080×1920 corridor, protected central-corridor zone, peripheral/header/metrics/library/navigation zones.
+
+- **Library UI:** `AsstsLibraryShell`, recomposed `LibraryPage` (Content/ wrapper split), lighter metrics HUD, collapsed zero-review pill, `AsstsBatchChip` left/right peripheral grid (corridor center empty), Browse Library in lower content region.
+
+- **QA:** Build + engine tests PASS; browser corridor unobstructed.
