@@ -5,7 +5,7 @@ import { OriginCards } from '../components/homepage/OriginCards';
 import { IdntyExpandedPanel } from '../components/homepage/IdntyExpandedPanel';
 import { BldrExpandedPanel } from '../components/homepage/BldrExpandedPanel';
 import { SITE00_ORIGIN_COPY } from '../config/status';
-import { SITE00_ORIGIN_DESKTOP_CARDS } from '../config/origin-home-composition';
+import { SITE00_ORIGIN_DESKTOP_COMPOSITION } from '../config/origin-home-composition';
 import { useSite00 } from '../state/Site00Context';
 
 export default function OriginPage() {
@@ -17,11 +17,17 @@ export default function OriginPage() {
         <div
           className="site00-home-stage"
           style={{
-            ['--site00-origin-cards-top' as string]: `${SITE00_ORIGIN_DESKTOP_CARDS.topPercent}%`,
-            ['--site00-origin-cards-offset-y' as string]: `${SITE00_ORIGIN_DESKTOP_CARDS.topOffsetPx}px`,
-            ['--site00-origin-cards-max-w' as string]: `${SITE00_ORIGIN_DESKTOP_CARDS.maxWidth}px`,
-            ['--site00-origin-card-scale' as string]: String(SITE00_ORIGIN_DESKTOP_CARDS.cardScale),
-            ['--site00-origin-hero-offset-x' as string]: `${SITE00_ORIGIN_DESKTOP_CARDS.heroOffsetXPx}px`,
+            ['--site00-origin-hero-left' as string]: `${SITE00_ORIGIN_DESKTOP_COMPOSITION.heroLeftPercent}%`,
+            ['--site00-origin-hero-top' as string]: `${SITE00_ORIGIN_DESKTOP_COMPOSITION.heroTopPx}px`,
+            ['--site00-origin-hero-max-w' as string]: `${SITE00_ORIGIN_DESKTOP_COMPOSITION.heroMaxWidthPx}px`,
+            ['--site00-origin-hero-offset-x' as string]: `${SITE00_ORIGIN_DESKTOP_COMPOSITION.heroOffsetXPx}px`,
+            ['--site00-origin-cards-top' as string]: `${SITE00_ORIGIN_DESKTOP_COMPOSITION.cardsTopPercent}%`,
+            ['--site00-origin-cards-offset-y' as string]: `${SITE00_ORIGIN_DESKTOP_COMPOSITION.cardsTopOffsetPx}px`,
+            ['--site00-origin-cards-max-w' as string]: `${SITE00_ORIGIN_DESKTOP_COMPOSITION.cardsMaxWidthPx}px`,
+            ['--site00-origin-card-scale' as string]: String(SITE00_ORIGIN_DESKTOP_COMPOSITION.cardScale),
+            ['--site00-origin-expanded-left' as string]: `${SITE00_ORIGIN_DESKTOP_COMPOSITION.expandedLeftPercent}%`,
+            ['--site00-origin-expanded-top' as string]: `${SITE00_ORIGIN_DESKTOP_COMPOSITION.expandedTopPx}px`,
+            ['--site00-origin-expanded-max-w' as string]: `${SITE00_ORIGIN_DESKTOP_COMPOSITION.expandedMaxWidthPx}px`,
           }}
         >
           <div className="site00-home-grid">

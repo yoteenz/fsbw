@@ -499,11 +499,17 @@
 /* ─── Origin homepage — hero in original column; IDNTY/BLDR panels on foreground plaza ─── */
 
 .site00-home-stage {
+  --site00-origin-hero-left: 11%;
+  --site00-origin-hero-top: 16px;
+  --site00-origin-hero-max-w: 360px;
+  --site00-origin-hero-offset-x: 0px;
   --site00-origin-cards-top: 58%;
   --site00-origin-cards-offset-y: 0px;
   --site00-origin-cards-max-w: 520px;
   --site00-origin-card-scale: 1;
-  --site00-origin-hero-offset-x: 0px;
+  --site00-origin-expanded-left: 52%;
+  --site00-origin-expanded-top: 12px;
+  --site00-origin-expanded-max-w: 680px;
   position: relative;
   min-height: calc(100dvh - 160px);
   padding: 24px 32px 140px;
@@ -609,11 +615,39 @@
 
 @media (min-width: 768px) {
   .site00-home-stage {
-    padding-top: 16px;
+    padding: 0 0 140px;
+    min-height: calc(100dvh - 120px);
   }
 
+  .site00-home-grid {
+    display: block;
+    position: relative;
+    z-index: 2;
+    min-height: 0;
+  }
+
+  /* Environment-aligned hero — not viewport padding / flex column edge */
   .site00-home-hero {
-    transform: translateX(var(--site00-origin-hero-offset-x));
+    position: absolute;
+    left: calc(var(--site00-origin-hero-left) + var(--site00-origin-hero-offset-x));
+    top: var(--site00-origin-hero-top);
+    width: min(var(--site00-origin-hero-max-w), 38vw);
+    max-width: var(--site00-origin-hero-max-w);
+    padding-top: 0;
+    transform: none;
+  }
+
+  .site00-home-expanded-column {
+    position: absolute;
+    left: var(--site00-origin-expanded-left);
+    top: var(--site00-origin-expanded-top);
+    width: min(var(--site00-origin-expanded-max-w), 44vw);
+    max-width: var(--site00-origin-expanded-max-w);
+    padding-top: 0;
+  }
+
+  .site00-home-grid__spacer {
+    display: none;
   }
 
   /* Anchor panels below the central figure between the twin zeros — desktop env breakpoint */
@@ -624,6 +658,7 @@
     transform: translateX(-50%);
     margin: 0;
     width: min(var(--site00-origin-cards-max-w), calc(100% - 64px));
+    z-index: 3;
   }
 
   .site00-origin-cards__row {

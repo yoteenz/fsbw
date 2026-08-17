@@ -52691,3 +52691,25 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Conventions:** Use "independent FleetCare network provider" language; disclosures configurable; legal gates open pending review.
 >>>>>>> 1f861c0b0 (AIO FleetCare Network: marketplace foundation, provider portal, client workflow, docs [sync-only])
 
+---
+
+## 2026-08-17 — ENTER 00 production SVG line-icon system (YOUR SPACE menu)
+
+- **Context:** Composer sprint — four custom line icons for ENTER 00 YOUR SPACE (BLDR STUDIO, PROJECTS, ACCOUNT, SUPPORT) from approved visual reference; native SVG/code only, no raster crops.
+
+- **Implementation:** New `src/site00/icons/` — `Site00BldrStudioIcon`, `Site00ProjectsIcon`, `Site00AccountIcon`, `Site00SupportIcon`, `Site00ArrowRightIcon`, `Site00CrosshairIcon`, shared `Site00IconFrame` + `site00IconGeometry.ts` (viewBox 48, stroke 1.75, slot 38px, render 28px). `EnterMenuIcon` mapper. Tokens: `--site00-icon-stroke`, `--site00-enter-icon-slot`, color via `currentColor` + `var(--site-red)`.
+
+- **Integration:** `DirectoryRow` + `directory.ts` `enterIcon` ids; fixed icon slot CSS + subtle hover on `.site00-enter-row`; replaced generic `GeometricIcon`/`ArrowIconSmall` in YOUR SPACE rows only. EXPLORE rows unchanged (numbers). Copy updated per sprint. No Enter composition/background/typography changes.
+
+- **QA:** Build PASS. Playwright `/enter` @ 1440px — 4 SVGs viewBox 48, stroke 1.75. Screenshot: `site00_enter_menu_icons_desktop.png`.
+
+---
+
+## 2026-08-17 — Origin desktop hero environment-aligned (not viewport-edge flex)
+
+- **Context:** Founder screenshot on `preview.fsbw-dev.com/origin` — hero text + IDNTY/BLDR still stacked/flushed left (mobile layout or pre-deploy). Desktop hero was flex-column at viewport padding edge, not environment-aligned.
+
+- **Fix:** `origin-home-composition.ts` → `SITE00_ORIGIN_DESKTOP_COMPOSITION` with `heroLeftPercent: 11`, `heroTopPx: 16`, expanded column coords. Desktop `@768px`: hero + expanded panel `position: absolute` over environment; stage horizontal padding removed; plaza cards stay absolute centered at 58%. Verified @ 1440px — hero x≈133, cards center x=720.
+
+- **Note:** `preview.fsbw-dev.com` needs **deploy now** for Vercel; cloud tunnel has latest on sync-only.
+
