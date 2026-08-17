@@ -52338,3 +52338,13 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **QA:** `npm run build` PASS.
 
+---
+
+## 2026-08-17 — AIO login password field placeholder
+
+- **Context:** AIO `/login` form polish — password input should show masked placeholder like email shows `name@email.com`.
+
+- **Changes:** `AuthPasswordInput.tsx` — optional `placeholder` prop. `LoginPage.tsx` — `placeholder="••••••••"` on password field (inherits existing `::placeholder` styling from `aio-auth.css`).
+
+- **QA:** `npm run build` PASS.
+
