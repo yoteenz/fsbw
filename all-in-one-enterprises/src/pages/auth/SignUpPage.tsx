@@ -1,6 +1,7 @@
 import { FormEvent, useMemo, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { AuthStepIndicator } from '../../components/auth/AuthStepIndicator';
+import { PasswordField } from '../../components/mobile/PasswordField';
 import { signUp, type SignUpAccountType, resendVerification } from '../../auth/authService';
 import { completeDemoSignup, saveDemoSignupDraft } from '../../auth/demoSignup';
 import { returnUrlFromSearch, sanitizeReturnUrl } from '../../auth/returnUrl';
@@ -252,28 +253,22 @@ export function SignUpPage() {
               onChange={(e) => setForm({ ...form, phone: e.target.value })}
             />
           </label>
-          <label>
-            Password
-            <input
-              type="password"
-              autoComplete="new-password"
-              required
-              minLength={8}
-              value={form.password}
-              onChange={(e) => setForm({ ...form, password: e.target.value })}
-            />
-          </label>
+          <PasswordField
+            label="Password"
+            value={form.password}
+            onChange={(password) => setForm({ ...form, password })}
+            autoComplete="new-password"
+            required
+            minLength={8}
+          />
           <p className="aio-auth-form__hint">At least 8 characters.</p>
-          <label>
-            Confirm Password
-            <input
-              type="password"
-              autoComplete="new-password"
-              required
-              value={form.confirmPassword}
-              onChange={(e) => setForm({ ...form, confirmPassword: e.target.value })}
-            />
-          </label>
+          <PasswordField
+            label="Confirm Password"
+            value={form.confirmPassword}
+            onChange={(confirmPassword) => setForm({ ...form, confirmPassword })}
+            autoComplete="new-password"
+            required
+          />
           {error ? <p className="aio-auth-form__error" role="alert">{error}</p> : null}
           <button type="submit" className="aio-btn aio-btn--gold aio-btn--block">
             Continue

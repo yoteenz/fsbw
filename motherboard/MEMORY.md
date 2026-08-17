@@ -51971,6 +51971,7 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **QA:** Build PASS. Browser `/assts` cold start — all copy center-aligned, hierarchy matches reference, progress ~70% width.
 
+<<<<<<< HEAD
 - **Sync:** `0805d1419` [sync-only].
 
 ---
@@ -51986,3 +51987,21 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Library UI:** `AsstsLibraryShell`, recomposed `LibraryPage` (Content/ wrapper split), lighter metrics HUD, collapsed zero-review pill, `AsstsBatchChip` left/right peripheral grid (corridor center empty), Browse Library in lower content region.
 
 - **QA:** Build + engine tests PASS; browser corridor unobstructed.
+=======
+---
+
+## 2026-08-17 — AIO mobile experience sprint (reference-driven presentation layer)
+
+- **Context:** Founder approved 13-screen mobile design reference. Transform compressed desktop mobile into intentional mobile product connected to real routes, auth, journeys, portal — without rebuilding app or duplicating business logic.
+
+- **Architecture:** Shared engine + separate presentation. New `src/styles/aio-mobile.css` + `src/components/mobile/*`. Visibility utilities `.aio-mobile-only` / `.aio-desktop-only` at ≤767px.
+
+- **Implemented:** Mobile header (LOG IN + SIGN UP + hamburger); full-height `MobileNavDrawer` (Account, Solutions w/ production icons, Company, Need Help from `appConfig.contact`); mobile homepage (Hero + 4 curated service cards + milestone promo); `MobileJourneyRoadmap` for Start Your Business; `MobilePortalHome` dashboard; password visibility on auth; debug banner gated (`production` off; dev / `VITE_AIO_DEBUG_UI` / `?aio_debug=1`).
+
+- **Unchanged logic:** Journey engine, authService, portal command center, bookkeeping comparison mobile tabs (already existed).
+
+- **Docs:** `docs/refinement/MOBILE_EXPERIENCE_REPORT.md`
+
+- **Conventions:** Mobile reference wins for presentation; canonical AIO business logic wins on conflicts. No `Reviews` route — omitted from drawer.
+
+>>>>>>> 5237bca0a36845809591955857c3c778774a0edf

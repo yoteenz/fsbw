@@ -1,5 +1,6 @@
 import { FormEvent, useMemo, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { PasswordField } from '../../components/mobile/PasswordField';
 import { signIn } from '../../auth/authService';
 import { returnUrlFromSearch, sanitizeReturnUrl } from '../../auth/returnUrl';
 import { useAIOAuth } from '../../auth/AIOAuthProvider';
@@ -9,6 +10,7 @@ import { aioPaths } from '../../utils/paths';
 export function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -58,18 +60,25 @@ export function LoginPage() {
           Email
           <input type="email" autoComplete="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
         </label>
-        <label>
-          Password
-          <input type="password" autoComplete="current-password" required value={password} onChange={(e) => setPassword(e.target.value)} />
-        </label>
+        <PasswordField
+          label="Password"
+          value={password}
+          onChange={setPassword}
+          autoComplete="current-password"
+          required
+        />
+        <div className="aio-auth-form__row aio-auth-form__row--inline">
+          <label className="aio-auth-form__checkbox">
+            <input type="checkbox" checked={rememberMe} onChange={(e) => setRememberMe(e.target.checked)} />
+            Remember me
+          </label>
+          <Link to={aioPaths.forgotPassword}>Forgot password?</Link>
+        </div>
         {error && <p className="aio-auth-form__error" role="alert">{error}</p>}
         <button type="submit" className="aio-btn aio-btn--gold aio-btn--block" disabled={loading}>
           {loading ? 'Logging In…' : 'Log In'}
         </button>
       </form>
-      <p className="aio-auth-card__links">
-        <Link to={aioPaths.forgotPassword}>Forgot Password?</Link>
-      </p>
       <div className="aio-auth-card__divider">
         <p className="aio-auth-card__divider-label">New to All In One?</p>
         <Link to={signUpHref} className="aio-btn aio-btn--outline-gold aio-btn--block">

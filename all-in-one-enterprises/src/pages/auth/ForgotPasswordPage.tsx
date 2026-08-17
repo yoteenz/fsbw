@@ -36,7 +36,7 @@ export function ForgotPasswordPage() {
 
   return (
     <div className="aio-auth-card">
-      <h1>Forgot Password</h1>
+      <h1>Reset your password</h1>
       <form onSubmit={onSubmit} className="aio-auth-form">
         <label>
           Email

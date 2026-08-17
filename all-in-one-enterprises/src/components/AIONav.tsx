@@ -5,6 +5,7 @@ import { resourcesMenuLinks, servicesMegaMenu, navLinkActivationBadge } from '..
 import { aioPaths } from '../utils/paths';
 import { AIOLogo } from './AIOLogo';
 import { PublicAuthNav } from './auth/PublicAuthNav';
+import { MobileNavDrawer } from './mobile/MobileNavDrawer';
 
 type DropdownId = 'services' | 'resources' | null;
 
@@ -55,7 +56,6 @@ function NavDropdownPanel({
 export function AIONav() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<DropdownId>(null);
-  const [mobileExpanded, setMobileExpanded] = useState<Record<string, boolean>>({});
   const location = useLocation();
   const navRef = useRef<HTMLElement>(null);
 
@@ -94,10 +94,6 @@ export function AIONav() {
 
   const toggleDropdown = (id: DropdownId) => {
     setOpenDropdown((current) => (current === id ? null : id));
-  };
-
-  const toggleMobileSection = (key: string) => {
-    setMobileExpanded((prev) => ({ ...prev, [key]: !prev[key] }));
   };
 
   return (
@@ -202,88 +198,7 @@ export function AIONav() {
         </div>
       </div>
 
-      <nav
-        className={`aio-mobile-nav ${mobileOpen ? 'aio-mobile-nav--open' : ''}`}
-        aria-label="Mobile"
-        aria-hidden={!mobileOpen}
-      >
-        <div className="aio-mobile-nav__section">
-          <button
-            type="button"
-            className="aio-mobile-nav__toggle"
-            aria-expanded={mobileExpanded.services}
-            onClick={() => toggleMobileSection('services')}
-          >
-            Services <span aria-hidden="true">{mobileExpanded.services ? '−' : '+'}</span>
-          </button>
-          {mobileExpanded.services ? (
-            <div className="aio-mobile-nav__sub">
-              {servicesMegaMenu.map((category) => (
-                <div key={category.id} className="aio-mobile-nav__group">
-                  <button
-                    type="button"
-                    className="aio-mobile-nav__toggle aio-mobile-nav__group-title"
-                    aria-expanded={mobileExpanded[category.id]}
-                    onClick={() => toggleMobileSection(category.id)}
-                  >
-                    {category.title} <span aria-hidden="true">{mobileExpanded[category.id] ? '−' : '+'}</span>
-                  </button>
-                  {mobileExpanded[category.id]
-                    ? category.links.map((link) => (
-                        <Link key={link.href + link.label} to={link.href} className="aio-mobile-nav__sublink" onClick={closeAll}>
-                          {link.label}
-                        </Link>
-                      ))
-                    : null}
-                </div>
-              ))}
-              <Link to={aioPaths.services} className="aio-mobile-nav__sublink" onClick={closeAll}>
-                View all services
-              </Link>
-              <Link to={aioPaths.servicesFind} className="aio-mobile-nav__sublink" onClick={closeAll}>
-                Find a service
-              </Link>
-            </div>
-          ) : null}
-        </div>
-
-        <Link to={aioPaths.startYourBusiness} className="aio-mobile-nav__link" onClick={closeAll}>
-          Start Your Business
-        </Link>
-        <Link to={aioPaths.roadReadyPublic} className="aio-mobile-nav__link" onClick={closeAll}>
-          Road Ready™
-        </Link>
-
-        <div className="aio-mobile-nav__section">
-          <button
-            type="button"
-            className="aio-mobile-nav__toggle"
-            aria-expanded={mobileExpanded.resources}
-            onClick={() => toggleMobileSection('resources')}
-          >
-            Resources <span aria-hidden="true">{mobileExpanded.resources ? '−' : '+'}</span>
-          </button>
-          {mobileExpanded.resources ? (
-            <div className="aio-mobile-nav__sub">
-              {resourcesMenuLinks.map((link) => (
-                <Link key={link.href + link.label} to={link.href} className="aio-mobile-nav__sublink" onClick={closeAll}>
-                  {link.label}
-                </Link>
-              ))}
-            </div>
-          ) : null}
-        </div>
-
-        <Link to={aioPaths.about} className="aio-mobile-nav__link" onClick={closeAll}>
-          About
-        </Link>
-        <Link to={aioPaths.contact} className="aio-mobile-nav__link" onClick={closeAll}>
-          Contact
-        </Link>
-        <div className="aio-mobile-nav__login">
-          <PublicAuthNav variant="mobile-menu" onNavigate={closeAll} />
-        </div>
-      </nav>
+      <MobileNavDrawer open={mobileOpen} onClose={closeAll} />
     </header>
   );
 }
