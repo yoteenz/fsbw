@@ -8,9 +8,7 @@ export function MobileServiceDiscovery() {
       <div className="aio-container">
         <p className="aio-mobile-services__eyebrow">Solutions for every stage</p>
         <h2 id="aio-mobile-services-heading" className="aio-mobile-services__title">
-          Solutions for every
-          <br />
-          stage of your journey
+          Solutions for every stage of your journey
         </h2>
         <div className="aio-mobile-services__grid">
           {mobileHomeServices.map((pathway) => (

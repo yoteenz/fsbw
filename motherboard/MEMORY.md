@@ -52019,3 +52019,19 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Conventions:** Mobile reference wins for presentation; canonical AIO business logic wins on conflicts. No `Reviews` route — omitted from drawer.
 
+---
+
+## 2026-08-17 — AIO mobile service experience redesign
+
+- **Context:** Follow-up sprint — mobile service pages felt like long white documents. Reference mock establishes dark/gold immersive service pages (Operating Authority first).
+
+- **Template system:** `src/components/mobile/service/*` + `useMobileServicePage` + `mobileServicePageConfig.ts`. Zones: hero, action panel, benefits, progress, journey, requirements (expandable), FAQ accordion, related list, notice.
+
+- **Integration:** `ServiceCatalogDetailPage` mobile/desktop split; all catalog slugs use template. OA overrides: 5-step process, 4 FAQ, benefits grid. Real workflow progress from `getServiceTrackerView` when demo request exists.
+
+- **Nav/discovery:** Six homepage categories (dark), drawer + Bookkeeping link.
+
+- **Docs:** `docs/refinement/MOBILE_SERVICE_EXPERIENCE_REPORT.md`
+
+- **QA:** Build PASS; OA page 375px manual QA PASS.
+
