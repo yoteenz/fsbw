@@ -52294,7 +52294,6 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 ---
 
-<<<<<<< Updated upstream
 ## 2026-08-17 — ASSTS Library Home Phase 01 — hero coordinate lock
 
 - **Context:** Composer sprint — lock Asset Vault mobile Library Home **hero only** using new approved Supabase hero (`52D76B9A-8808-4A00-A89D-28767F21E385.png`, 1535×1024). Fix root geometry drift from old vertically oversized full-page environment. **Do not** recalibrate stats row or lower sections.
@@ -52310,7 +52309,9 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Spatial Architecture Review:** SKIPPED — coordinate lock on existing ASSTS Library Home surface; no new product surfaces.
 
 - **QA:** `npm run build` PASS. `scripts/validate-assts-library-hero.mjs` @ 711px — hero **711×531, delta 0px**, natural 1535×1024, status LOCKED. Screenshots: `assts_library_hero_clean_711px.png`, `assts_library_hero_debug_711px.png`. Stats row left at y=529 (unchanged).
-=======
+
+---
+
 ## 2026-08-17 — AIO login hero supporting copy −3px
 
 - **Context:** Follow-up polish on All In One mobile `/login` — hero overlay typography refinements after prior ~20% hero text scale-down.
@@ -52322,5 +52323,4 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Unchanged:** Form labels/inputs, headline/eyebrow on hero, desktop intro supporting (hidden on mobile).
 
 - **QA:** `npm run build` PASS in `all-in-one-enterprises/`.
->>>>>>> Stashed changes
 
