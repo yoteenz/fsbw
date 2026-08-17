@@ -1,5 +1,6 @@
-import { useEffect, useState, type ReactNode } from 'react';
-import { EnvironmentalStage } from '../../composition';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { EnvironmentalStage, getLockedCompositionDocument, lockedCompositionCssVars } from '../../composition';
+import { documentToEnvironmentMap } from '../../composition/studio/types';
 import { ASSTS_LIBRARY_CORRIDOR_COMPOSITION_V1 } from '../../compositions/assts-library-corridor-v1';
 import { ASSTS_ENVIRONMENT_SLOTS } from '../config/slots';
 import { resolveAsstsSlot } from '../services/asstsApi';
@@ -14,6 +15,12 @@ const FALLBACK_CLASS = 'site00-assts-env-fallback--library';
 export function AsstsLibraryShell({ children }: AsstsLibraryShellProps) {
   const [bgUrl, setBgUrl] = useState<string | null>(null);
   const [source, setSource] = useState<'locked' | 'fallback'>('fallback');
+  const rootRef = useRef<HTMLDivElement>(null);
+  const [size, setSize] = useState({ w: 0, h: 0 });
+
+  const lockedDoc = getLockedCompositionDocument(ASSTS_LIBRARY_CORRIDOR_COMPOSITION_V1.environmentId);
+  const composition = lockedDoc ? documentToEnvironmentMap(lockedDoc) : ASSTS_LIBRARY_CORRIDOR_COMPOSITION_V1;
+  const compositionLocked = Boolean(lockedDoc);
 
   useEffect(() => {
     let cancelled = false;
@@ -34,15 +41,43 @@ export function AsstsLibraryShell({ children }: AsstsLibraryShellProps) {
     };
   }, []);
 
+  useEffect(() => {
+    const el = rootRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver((entries) => {
+      const entry = entries[0];
+      if (!entry) return;
+      setSize({ w: entry.contentRect.width, h: entry.contentRect.height });
+    });
+    ro.observe(el);
+    setSize({ w: el.clientWidth, h: el.clientHeight });
+    return () => ro.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const el = rootRef.current;
+    if (!el || !lockedDoc || size.w <= 0) return;
+    const vars = lockedCompositionCssVars(lockedDoc, size.w, size.h, 'mobile');
+    for (const [key, value] of Object.entries(vars)) {
+      el.style.setProperty(key, value);
+    }
+    el.dataset.compositionContract = 'locked';
+  }, [lockedDoc, size.w, size.h]);
+
   return (
-    <EnvironmentalStage
-      composition={ASSTS_LIBRARY_CORRIDOR_COMPOSITION_V1}
-      backgroundUrl={bgUrl}
-      fallbackClass={FALLBACK_CLASS}
-      source={source}
-      className="site00-assts-shell assts-library-stage"
+    <div
+      ref={rootRef}
+      className={compositionLocked ? 'assts-library-shell assts-library-shell--contract' : 'assts-library-shell'}
     >
-      {children}
-    </EnvironmentalStage>
+      <EnvironmentalStage
+        composition={composition}
+        backgroundUrl={bgUrl}
+        fallbackClass={FALLBACK_CLASS}
+        source={source}
+        className="site00-assts-shell assts-library-stage"
+      >
+        {children}
+      </EnvironmentalStage>
+    </div>
   );
 }

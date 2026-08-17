@@ -37,3 +37,21 @@ export {
 
 export { CompositionZoneSlot } from './CompositionZoneSlot';
 export { useCompositionOverlayRef } from './useCompositionOverlayRef';
+
+export {
+  CompositionStudio,
+  createAsstsLibraryStudioDocument,
+  getLockedCompositionDocument,
+  loadCompositionDocument,
+  saveCompositionDocument,
+  lockedCompositionCssVars,
+  validateCompositionDocument,
+  hasBlockingErrors,
+} from './studio';
+
+export type {
+  CompositionStudioDocument,
+  CompositionStudioObject,
+  CompositionWorkflowStatus,
+  RecompositionRequest,
+} from './studio';

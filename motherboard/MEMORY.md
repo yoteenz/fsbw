@@ -51971,7 +51971,6 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **QA:** Build PASS. Browser `/assts` cold start — all copy center-aligned, hierarchy matches reference, progress ~70% width.
 
-<<<<<<< HEAD
 - **Sync:** `0805d1419` [sync-only].
 
 ---
@@ -51987,7 +51986,23 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Library UI:** `AsstsLibraryShell`, recomposed `LibraryPage` (Content/ wrapper split), lighter metrics HUD, collapsed zero-review pill, `AsstsBatchChip` left/right peripheral grid (corridor center empty), Browse Library in lower content region.
 
 - **QA:** Build + engine tests PASS; browser corridor unobstructed.
-=======
+
+---
+
+## 2026-08-17 — Composition Studio V1 (interactive editor + approval/lock workflow)
+
+- **Context:** Follow-up sprint extending Environmental Composition Intelligence into COMPOSITION STUDIO — human art-direction layer over machine-proposed composition. Shared Studio World infrastructure (not ASSTS-only). ASSTS FAL/generation/review/lock pipeline unchanged.
+
+- **Studio core:** `src/site00/composition/studio/` — extended document model (`CompositionStudioDocument`, `CompositionStudioObject` with `sourceType` ui/overlay-asset/environment-baked/etc.), normalized coordinate helpers, undo/redo history stack, validation with override support, localStorage persistence (`site00-composition-studio:{environmentId}`), recomposition request architecture for baked environment objects.
+
+- **Editor UI:** `CompositionStudio.tsx` + canvas (drag/resize → normalized coords, snap guides, architectural guides), layers panel, properties inspector (position/text), toolbar (Edit/Zones/Preview, mobile/tablet/desktop viewport, undo/redo, Save Draft, Send for Approval, Lock, Create Revision), review panel with validation findings + Approve Override.
+
+- **ASSTS integration:** Route `/assts/composition-studio`; dev panel link "Edit Composition"; `createAsstsLibraryStudioDocument()` seeds Asset Vault UI objects against corridor map; `AsstsLibraryShell` consumes `COMPOSITION_LOCKED` docs via `lockedCompositionCssVars` implementation contract.
+
+- **Workflow statuses:** ORIGINAL_ANALYSIS → DRAFT → COMPOSITION_REVIEW → APPROVED → COMPOSITION_LOCKED; locked compositions require Create Revision to edit.
+
+- **QA:** Build PASS; vitest history/coordinate tests PASS; browser QA — select/drag UI objects, preview mode, save draft verified.
+
 ---
 
 ## 2026-08-17 — AIO mobile experience sprint (reference-driven presentation layer)
@@ -52004,4 +52019,3 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Conventions:** Mobile reference wins for presentation; canonical AIO business logic wins on conflicts. No `Reviews` route — omitted from drawer.
 
->>>>>>> 5237bca0a36845809591955857c3c778774a0edf

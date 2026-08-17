@@ -23,6 +23,7 @@ const AsstsLibraryPage = lazy(() => import('../site00/assts/pages/LibraryPage'))
 const AsstsBatchesListPage = lazy(() => import('../site00/assts/pages/BatchesListPage'));
 const AsstsBatchPage = lazy(() => import('../site00/assts/pages/BatchPage'));
 const AsstsInspectionPage = lazy(() => import('../site00/assts/pages/InspectionPage'));
+const AsstsCompositionStudioPage = lazy(() => import('../site00/assts/pages/CompositionStudioPage'));
 
 function Site00Suspense({ children }: { children: ReactNode }) {
   return <Suspense fallback={<LoadingScreen source="Site00" />}>{children}</Suspense>;
@@ -136,6 +137,14 @@ export function Site00Routes() {
             element={
               <AsstsRouteSuspense>
                 <AsstsLibraryPage />
+              </AsstsRouteSuspense>
+            }
+          />
+          <Route
+            path="composition-studio"
+            element={
+              <AsstsRouteSuspense>
+                <AsstsCompositionStudioPage />
               </AsstsRouteSuspense>
             }
           />

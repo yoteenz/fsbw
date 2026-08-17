@@ -101,6 +101,59 @@
 
 /* ─── ASSTS library — composition-aware layout ─── */
 
+/** Locked composition implementation contract — positions from Composition Studio. */
+.assts-library-shell--contract .assts-composed-header {
+  position: absolute;
+  left: var(--comp-assts-eyebrow-left, 0);
+  top: var(--comp-assts-eyebrow-top, auto);
+  width: var(--comp-assts-title-width, 100%);
+  z-index: var(--depth-surface, 2);
+  pointer-events: auto;
+}
+
+.assts-library-shell--contract .assts-metrics--hud {
+  position: absolute;
+  left: var(--comp-assts-metrics-left, 14px);
+  top: var(--comp-assts-metrics-top, auto);
+  width: var(--comp-assts-metrics-width, calc(100% - 28px));
+  padding: 0;
+  margin: 0;
+}
+
+.assts-library-shell--contract .assts-composed-review {
+  position: absolute;
+  left: var(--comp-assts-review-left, 14px);
+  top: var(--comp-assts-review-top, auto);
+  width: var(--comp-assts-review-width, calc(100% - 28px));
+  margin: 0;
+}
+
+.assts-library-shell--contract .assts-batches-peripheral {
+  position: absolute;
+  left: var(--comp-assts-batches-left, 0);
+  top: var(--comp-assts-batches-top, auto);
+  width: var(--comp-assts-batches-width, 100%);
+  margin: 0;
+  padding: 0 10px;
+}
+
+.assts-library-shell--contract .assts-composed-library {
+  position: absolute;
+  left: var(--comp-assts-library-left, 0);
+  top: var(--comp-assts-library-top, auto);
+  width: var(--comp-assts-library-width, 100%);
+}
+
+.assts-library-shell--contract .assts-library-composed {
+  position: relative;
+  min-height: 100dvh;
+}
+
+.assts-library-shell {
+  position: relative;
+  min-height: 100%;
+}
+
 .assts-library-composed {
   display: flex;
   flex-direction: column;

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import {
   bootstrapAsstsBatch,
   generateAsstsBatch,
@@ -81,6 +81,9 @@ export function AsstsDevPanel({ batchId, onRefresh }: AsstsDevPanelProps) {
                 Reset for Review
               </button>
             ) : null}
+            <Link to="/assts/composition-studio" className="site00-assts-dev-panel__link">
+              Edit Composition
+            </Link>
           </div>
           {message ? <p className="site00-assts-dev-panel__msg">{message}</p> : null}
         </div>
