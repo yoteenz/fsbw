@@ -9,6 +9,7 @@ type Props = {
   minLength?: number;
   id?: string;
   icon?: ReactNode;
+  placeholder?: string;
 };
 
 export function AuthPasswordInput({
@@ -20,6 +21,7 @@ export function AuthPasswordInput({
   minLength,
   id,
   icon,
+  placeholder,
 }: Props) {
   const autoId = useId();
   const fieldId = id ?? autoId;
@@ -41,6 +43,7 @@ export function AuthPasswordInput({
           minLength={minLength}
           value={value}
           onChange={(e) => onChange(e.target.value)}
+          placeholder={placeholder}
         />
         <button
           type="button"

@@ -122,6 +122,7 @@ export function LoginPage() {
             onChange={setPassword}
             autoComplete="current-password"
             required
+            placeholder="••••••••"
             icon={<AuthLockIcon />}
           />
           <div className="aio-auth-premium__row aio-auth-premium__row--inline">
