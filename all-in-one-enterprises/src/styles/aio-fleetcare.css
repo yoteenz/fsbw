@@ -1,0 +1,199 @@
+/* AIO FleetCare Network */
+
+.aio-fc-disclosure {
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  color: rgba(255, 255, 255, 0.72);
+  border-left: 3px solid var(--aio-gold-light, #d4a017);
+  padding: 0.75rem 0 0.75rem 0.875rem;
+  margin: 1rem 0;
+}
+
+.aio-fc-disclosure--muted {
+  color: rgba(255, 255, 255, 0.55);
+  border-left-color: rgba(255, 255, 255, 0.2);
+}
+
+.aio-fc-public__hero {
+  padding-bottom: 2rem;
+}
+
+.aio-fc-steps {
+  margin: 1rem 0;
+  padding-left: 1.25rem;
+  line-height: 1.6;
+}
+
+.aio-fc-plan-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  margin: 1.25rem 0;
+}
+
+.aio-fc-plan-card {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 1rem;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.35);
+}
+
+.aio-fc-plan-card__price {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--aio-gold-light);
+}
+
+.aio-fc-note {
+  font-size: 0.8125rem;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.aio-fc-form label {
+  display: block;
+  margin-bottom: 0.875rem;
+  font-size: 0.8125rem;
+}
+
+.aio-fc-form input,
+.aio-fc-form select,
+.aio-fc-form textarea {
+  display: block;
+  width: 100%;
+  max-width: 32rem;
+  margin-top: 0.35rem;
+  padding: 0.5rem 0.625rem;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 2px;
+  background: rgba(0, 0, 0, 0.4);
+  color: inherit;
+}
+
+.aio-fc-portal__hero {
+  margin-bottom: 1.5rem;
+}
+
+.aio-fc-eyebrow {
+  font-size: 0.6875rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--aio-gold-light);
+}
+
+.aio-fc-ticket-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.aio-fc-ticket-list li {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 0.625rem 0;
+}
+
+.aio-fc-meta {
+  display: grid;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+
+.aio-fc-meta dt {
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.aio-fc-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.625rem;
+  margin: 1rem 0;
+}
+
+.aio-fc-estimate__total {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--aio-gold-light);
+}
+
+.aio-fc-provider-shell {
+  min-height: 100vh;
+  background: var(--aio-black, #0a0a0a);
+  color: var(--aio-white);
+}
+
+.aio-fc-provider-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.aio-fc-provider-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1rem;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.aio-fc-provider-main {
+  padding: 1.25rem;
+  max-width: 960px;
+}
+
+.aio-fc-provider-metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 0.75rem;
+  margin: 1.25rem 0;
+}
+
+.aio-fc-provider-metrics article {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0.875rem;
+  border-radius: 4px;
+}
+
+.aio-fc-provider-metrics h2 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.aio-fc-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8125rem;
+}
+
+.aio-fc-table th,
+.aio-fc-table td {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 0.5rem 0.625rem;
+  text-align: left;
+}
+
+.aio-fc-office-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.aio-fc-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-right: 1rem;
+}
+
+@media (max-width: 767px) {
+  .aio-fc-provider-nav {
+    width: 100%;
+  }
+}

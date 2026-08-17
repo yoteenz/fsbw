@@ -74,6 +74,23 @@ import type {
   Trailer,
 } from '../road-ready/roadReadyTypes';
 import type {
+  CustomerAuthorization,
+  FleetCareCounters,
+  FleetCareDemoContext,
+  MaintenanceTicket,
+  PreexistingCustomerRelationship,
+  ReferralTransaction,
+  RepairEstimate,
+  RepairRecord,
+  ServiceJob,
+  ServiceProvider,
+  ServiceProviderCredential,
+  ServiceProviderInsurance,
+  ServiceProviderUser,
+  TicketEvent,
+  TicketMatch,
+} from '../fleetcare/fleetcareTypes';
+import type {
   OfficeApprovalRequest,
   OfficeAssignmentRecord,
   OfficeDashboardPreferences,
@@ -508,7 +525,7 @@ import type {
 } from '../bookkeeping/autopilot/autopilotTypes';
 
 export interface DemoStore {
-  version: 23;
+  version: 24;
   requestCounter: number;
   portalClientId?: string;
   shipperPortalOrgId?: string;
@@ -715,6 +732,22 @@ export interface DemoStore {
   customerClarifications?: CustomerClarification[];
   /** Sprint 20 — data system snapshot for health center */
   dataSystem?: Pick<DataSystemStatus, 'demoSchemaVersion' | 'seedVersion' | 'dataModeLabel'>;
+  /** FleetCare Network — maintenance marketplace */
+  fleetcareProviders?: ServiceProvider[];
+  fleetcareProviderUsers?: ServiceProviderUser[];
+  fleetcareProviderInsurance?: ServiceProviderInsurance[];
+  fleetcareProviderCredentials?: ServiceProviderCredential[];
+  fleetcarePreexistingRelationships?: PreexistingCustomerRelationship[];
+  fleetcareTickets?: MaintenanceTicket[];
+  fleetcareTicketEvents?: TicketEvent[];
+  fleetcareTicketMatches?: TicketMatch[];
+  fleetcareEstimates?: RepairEstimate[];
+  fleetcareAuthorizations?: CustomerAuthorization[];
+  fleetcareJobs?: ServiceJob[];
+  fleetcareRepairRecords?: RepairRecord[];
+  fleetcareReferrals?: ReferralTransaction[];
+  fleetcareCounters?: FleetCareCounters;
+  fleetcareDemoContext?: FleetCareDemoContext;
 }
 
 export interface OfficeMetrics {

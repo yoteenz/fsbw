@@ -117,6 +117,29 @@ import { PortalAppointmentsListPage, PortalAppointmentDetailPage } from '../page
 import { SchedulePage } from '../pages/SchedulePage';
 import { aioAppConfig } from '../config/appConfig';
 import { aioPaths } from '../utils/paths';
+import {
+  FleetCarePublicPage,
+  FleetCarePlansPage,
+  FleetCareProviderJoinPage,
+  FleetCareProviderApplyPage,
+} from '../pages/fleetcare/FleetCarePublicPages';
+import {
+  FleetCareHomePage,
+  FleetCareRequestPage,
+  FleetCareTicketDetailPage,
+  FleetCareVehicleHistoryPage,
+} from '../pages/portal/fleetcare/FleetCarePortalPages';
+import {
+  FleetCareProviderLayout,
+  FleetCareProviderDashboardPage,
+  FleetCareProviderLeadsPage,
+  FleetCareProviderLeadDetailPage,
+  FleetCareProviderJobsPage,
+  FleetCareProviderJobDetailPage,
+  FleetCareProviderEarningsPage,
+  FleetCareProviderCompliancePage,
+  FleetCareProviderProfilePage,
+} from '../pages/provider/FleetCareProviderPages';
 import { IconLibraryDebugPage } from '../pages/debug/IconLibraryDebugPage';
 
 const OfficeRoutesLazy = lazy(() => import('../office/routes/OfficeRoutes'));
@@ -165,6 +188,10 @@ export default function AllInOneRoutes() {
           <Route path="services/find" element={<ServiceFindPage />} />
           <Route path="services/factoring" element={<FactoringPage />} />
           <Route path="services/bookkeeping" element={<BookkeepingPage />} />
+          <Route path="services/fleetcare" element={<FleetCarePublicPage />} />
+          <Route path="services/fleetcare/plans" element={<FleetCarePlansPage />} />
+          <Route path="fleetcare/providers/join" element={<FleetCareProviderJoinPage />} />
+          <Route path="fleetcare/providers/apply" element={<FleetCareProviderApplyPage />} />
           <Route path="services/bookkeeping/assessment" element={<BookkeepingAssessmentPage />} />
           <Route path="services/bookkeeping/recommendation" element={<BookkeepingRecommendationPage />} />
           <Route path="services/permitting" element={<ServiceCatalogDetailPage slug="permitting" />} />
@@ -240,6 +267,10 @@ export default function AllInOneRoutes() {
             <Route path="factoring/history" element={<FactoringHistoryPage />} />
             <Route path="factoring/invoices/:invoiceId" element={<FreightInvoicePrintPage />} />
             <Route path="bookkeeping" element={<BookkeepingHomePage />} />
+            <Route path="fleetcare" element={<FleetCareHomePage />} />
+            <Route path="fleetcare/request" element={<FleetCareRequestPage />} />
+            <Route path="fleetcare/tickets/:ticketId" element={<FleetCareTicketDetailPage />} />
+            <Route path="fleetcare/vehicles/:vehicleId/history" element={<FleetCareVehicleHistoryPage />} />
             <Route path="insurance" element={<InsuranceHomePage />} />
             <Route path="insurance/request" element={<InsuranceRequestPage />} />
             <Route path="insurance/requests/:requestId" element={<InsuranceRequestDetailPage />} />
@@ -270,6 +301,17 @@ export default function AllInOneRoutes() {
             <Route path="billing" element={<ShipperBillingPage />} />
             <Route path="billing/:invoiceId" element={<ShipperInvoiceDetailPage />} />
           </Route>
+        </Route>
+
+        <Route path="provider/fleetcare" element={<FleetCareProviderLayout />}>
+          <Route index element={<FleetCareProviderDashboardPage />} />
+          <Route path="leads" element={<FleetCareProviderLeadsPage />} />
+          <Route path="leads/:ticketId" element={<FleetCareProviderLeadDetailPage />} />
+          <Route path="jobs" element={<FleetCareProviderJobsPage />} />
+          <Route path="jobs/:ticketId" element={<FleetCareProviderJobDetailPage />} />
+          <Route path="earnings" element={<FleetCareProviderEarningsPage />} />
+          <Route path="compliance" element={<FleetCareProviderCompliancePage />} />
+          <Route path="profile" element={<FleetCareProviderProfilePage />} />
         </Route>
 
         <Route element={<OfficeRouteGuard />}>

@@ -49,6 +49,7 @@ const navGroups = [
       { label: 'Dispatch', to: aioPaths.officeDispatch },
       { label: 'Factoring', to: aioPaths.officeFactoring },
       { label: 'Bookkeeping', to: aioPaths.officeBookkeeping },
+      { label: 'FleetCare Network', to: aioPaths.officeFleetCare },
       { label: 'Brokerage', to: aioPaths.officeBrokerage },
     ],
   },

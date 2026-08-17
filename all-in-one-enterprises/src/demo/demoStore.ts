@@ -5,6 +5,7 @@ import type { RoadmapResult } from '../roadmap/roadmapTypes';
 import type { IntakeAnswers } from '../intake/intakeTypes';
 import { createBookkeepingSeedData } from './bookkeepingSeed';
 import { createAutopilotSeedData } from './autopilotSeed';
+import { createFleetCareSeedData } from './fleetcareSeed';
 import { createDemoSeed } from './demoSeed';
 import type { DemoStore, ServiceRequest } from './demoTypes';
 import { AIO_DEMO_SCHEMA_VERSION } from '../data/constants';
@@ -18,23 +19,31 @@ const STORE_EVENT = 'aio-demo-store-change';
 export function loadDemoStore(): DemoStore {
   if (typeof window === 'undefined') return createDemoSeed();
 
-  const existing = readStorage<DemoStore | (Omit<DemoStore, 'version'> & { version: 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 20 | 21 | 22 }) | null>(DEMO_STORE_KEY, null);
-  if (existing?.version === 23) return existing as DemoStore;
+  const existing = readStorage<DemoStore | (Omit<DemoStore, 'version'> & { version: 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 20 | 21 | 22 | 23 }) | null>(DEMO_STORE_KEY, null);
+  if (existing?.version === 24) return existing as DemoStore;
+
+  if (existing?.version === 23) {
+    const upgraded = upgradeStoreV23ToV24(existing as DemoStoreV23);
+    saveDemoStore(upgraded);
+    return upgraded;
+  }
 
   if (existing?.version === 22) {
-    const upgraded = upgradeStoreV22ToV23(existing as DemoStoreV22);
+    const upgraded = upgradeStoreV23ToV24(upgradeStoreV22ToV23(existing as DemoStoreV22));
     saveDemoStore(upgraded);
     return upgraded;
   }
 
   if (existing?.version === 21) {
-    const upgraded = upgradeStoreV22ToV23(upgradeStoreV21ToV22(existing as DemoStoreV21));
+    const upgraded = upgradeStoreV23ToV24(upgradeStoreV22ToV23(upgradeStoreV21ToV22(existing as DemoStoreV21)));
     saveDemoStore(upgraded);
     return upgraded;
   }
 
   if (existing?.version === 20) {
-    const upgraded = upgradeStoreV22ToV23(upgradeStoreV21ToV22(upgradeStoreV20ToV21(existing as DemoStoreV20)));
+    const upgraded = upgradeStoreV23ToV24(
+      upgradeStoreV22ToV23(upgradeStoreV21ToV22(upgradeStoreV20ToV21(existing as DemoStoreV20))),
+    );
     saveDemoStore(upgraded);
     return upgraded;
   }
@@ -260,7 +269,16 @@ function upgradeStoreV17ToV18(store: DemoStoreV17): DemoStoreV18 {
   };
 }
 
-function upgradeStoreV22ToV23(store: DemoStoreV22): DemoStore {
+function upgradeStoreV23ToV24(store: DemoStoreV23): DemoStore {
+  const fleetcare = createFleetCareSeedData();
+  return {
+    ...store,
+    version: 24 as const,
+    ...fleetcare,
+  };
+}
+
+function upgradeStoreV22ToV23(store: DemoStoreV22): DemoStoreV23 {
   const partial = store as unknown as Partial<DemoStore>;
   return {
     ...store,
@@ -303,15 +321,17 @@ function upgradeStoreV20ToV21(store: DemoStoreV20): DemoStoreV21 {
 }
 
 function upgradeStoreV18ToV20(store: DemoStoreV18): DemoStore {
-  return upgradeStoreV22ToV23(upgradeStoreV21ToV22(upgradeStoreV20ToV21({
-    ...store,
-    version: 20 as const,
-    dataSystem: {
-      demoSchemaVersion: AIO_DEMO_SCHEMA_VERSION,
-      seedVersion: `demo-v${AIO_DEMO_SCHEMA_VERSION}`,
-      dataModeLabel: getDataModeLabel(),
-    },
-  } as DemoStoreV20)));
+  return upgradeStoreV23ToV24(
+    upgradeStoreV22ToV23(upgradeStoreV21ToV22(upgradeStoreV20ToV21({
+      ...store,
+      version: 20 as const,
+      dataSystem: {
+        demoSchemaVersion: AIO_DEMO_SCHEMA_VERSION,
+        seedVersion: `demo-v${AIO_DEMO_SCHEMA_VERSION}`,
+        dataModeLabel: getDataModeLabel(),
+      },
+    } as DemoStoreV20))),
+  );
 }
 
 function upgradeStoreV16ToV17(store: DemoStoreV16): DemoStore {
@@ -354,6 +374,7 @@ function upgradeStoreV15ToV16(store: DemoStoreV15): DemoStoreV16 {
   };
 }
 
+type DemoStoreV23 = Omit<DemoStore, 'version'> & { version: 23 };
 type DemoStoreV22 = Omit<
   DemoStore,
   | 'version'

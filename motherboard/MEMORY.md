@@ -52634,6 +52634,7 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 ---
 
+<<<<<<< HEAD
 ## 2026-08-17 — BLDR state page layout aligned with IDNTY (individual selection panels)
 
 - **Context:** Founder requested `/bldr/state` remove monolithic wrapper panel behind all content; build-class selection options should sit in individual glass cards like `/idnty/state` for flush background blend.
@@ -52660,4 +52661,33 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
   - `loadingScreenLock.ts` — off-white `#f7f7f5` during ASSTS boot (matches loader).
 
 - **QA:** Build PASS. Browser cold reload `/assts` — no plain Loading text; immersive loader visible from first frame (~9s full animation in demo video). Screenshot: `assts_loader_immediate_paint.png`. Video: `assts_cold_start_no_loading_text.mp4`.
+=======
+## 2026-08-17 — AIO FleetCare Network: production architecture sprint
+
+- **Context:** Founder requested full FleetCare domain inside existing AIO app — maintenance/repair marketplace, independent provider portal, referral system, client workflow, Office admin, public pages. AIO is platform/coordinator, not repair provider.
+
+- **Topics covered:** Phase 0 architecture audit; Supabase migration (AIO project only, NOT FS `hyycomvcaqxxvyrfupes`); demo store v24; matching/referral services; client portal request flow; provider portal; Office FleetCare admin; public landing/plans/join; legal review gates; product/data/implementation docs.
+
+- **Decisions / outcomes:**
+  - FleetCare lives in `all-in-one-enterprises/` — no separate app
+  - Configurable pricing/fees in `fleetcareConfig.ts` (not hardcoded 0.10 in UI)
+  - Referral fee only on AIO-originated work; pre-existing customer model
+  - Emergency copy: "Searching for available FleetCare providers" until acceptance
+  - Demo provider: Smith Mobile Diesel LLC; matching uses eligibility pool (works with N=1)
+  - Spatial Architecture Review: SKIPPED (AIO infrastructure, not Studio OS)
+
+- **Changes:**
+  - Migration: `20260817190000_aio_fleetcare_network.sql`
+  - Domain: `src/fleetcare/*`, `src/demo/fleetcareSeed.ts`, `fleetcareActions.ts`
+  - UI: public, portal, provider, office pages + `aio-fleetcare.css`
+  - Routes/nav wired in `AllInOneRoutes`, `OfficeRoutes`, `AIOPortalLayout`, `publicNavigation`
+  - Docs: `docs/fleetcare/*` (audit, legal gates, product architecture, data model, implementation report)
+  - Build fix: demoStore v22→v24 upgrade chain; OfficeRoutes import path
+
+- **QA:** `npm run build` PASS. Manual walkthrough: public landing, portal request, provider dashboard, office overview — all verified in demo mode. Video: `fleetcare_demo_walkthrough.mp4`.
+
+- **Gaps:** Supabase migration not applied (awaiting AIO project link); notifications, vault auto-link, supabase repos, live RLS tests — future work.
+
+- **Conventions:** Use "independent FleetCare network provider" language; disclosures configurable; legal gates open pending review.
+>>>>>>> 1f861c0b0 (AIO FleetCare Network: marketplace foundation, provider portal, client workflow, docs [sync-only])
 

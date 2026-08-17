@@ -20,6 +20,7 @@ const carrierNav: NavItem[] = [
   { label: 'Renewals', href: aioPaths.portalRenewals, section: 'MY BUSINESS' },
   { label: 'Operations', href: aioPaths.portalOperations, section: 'OPERATIONS' },
   { label: 'Dispatch', href: aioPaths.portalDispatch, section: 'OPERATIONS' },
+  { label: 'FleetCare', href: aioPaths.portalFleetCare, section: 'OPERATIONS' },
   { label: 'Brokerage', href: aioPaths.portalBrokerage, section: 'OPERATIONS' },
   { label: 'Money', href: aioPaths.portalMoney, section: 'MONEY' },
   { label: 'Billing', href: aioPaths.portalBilling, section: 'MONEY' },

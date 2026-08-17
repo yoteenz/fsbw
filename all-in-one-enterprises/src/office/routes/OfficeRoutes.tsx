@@ -1,5 +1,11 @@
 import { Route, Routes } from 'react-router-dom';
 import { AIOOfficeLayout } from '../layouts/AIOOfficeLayout';
+import {
+  FleetCareOfficeOverviewPage,
+  FleetCareOfficeTicketsPage,
+  FleetCareOfficeProvidersPage,
+  FleetCareOfficeReferralsPage,
+} from '../../pages/office/FleetCareOfficePages';
 import { OfficeDashboardPage } from '../pages/OfficeDashboardPage';
 import { ClientsListPage } from '../pages/ClientsListPage';
 import { ClientDetailPage } from '../pages/ClientDetailPage';
@@ -282,6 +288,10 @@ export default function OfficeRoutes() {
         <Route path="bookkeeping/subscriptions" element={<BookkeepingSubscriptionsListPage />} />
         <Route path="bookkeeping/books-rescue" element={<BookkeepingRescueListPage />} />
         <Route path="bookkeeping/leads" element={<BookkeepingLeadsListPage />} />
+        <Route path="fleetcare" element={<FleetCareOfficeOverviewPage />} />
+        <Route path="fleetcare/tickets" element={<FleetCareOfficeTicketsPage />} />
+        <Route path="fleetcare/providers" element={<FleetCareOfficeProvidersPage />} />
+        <Route path="fleetcare/referrals" element={<FleetCareOfficeReferralsPage />} />
         <Route path="brokerage" element={<BrokerageCommandCenterPage />} />
         <Route path="brokerage/readiness" element={<BrokerageReadinessPage />} />
         <Route path="brokerage/shippers" element={<BrokerageShippersPage />} />
