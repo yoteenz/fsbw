@@ -1,9 +1,5 @@
 import React from 'react';
 import { createPortal } from 'react-dom';
-import { Site00Loader, contextFromLoadingSource } from '../../site00/components/loader/Site00Loader';
-import { ASSTS_IMMERSIVE_LOADER_CONFIG } from '../../site00/components/loader/site00LoaderConfig';
-import { Site00ImmersiveLoader } from '../../site00/components/loader/Site00ImmersiveLoader';
-import { shouldShowAsstsImmersiveLoader } from '../../site00/components/loader/site00LoaderSession';
 import { acquireLoadingScreenDocumentLock } from '../../platform-stabilization/loadingScreenLock';
 import {
   DEFAULT_MAX_LOADING_MS,
@@ -11,6 +7,22 @@ import {
   getActiveLoadingSources,
   registerLoadingTerminal,
 } from '../../platform-stabilization/loadingTerminalRegistry';
+
+const loadingGifStyle: React.CSSProperties = {
+  width: '405px',
+  height: '405px',
+  maxWidth: 'min(405px, 92vw)',
+  maxHeight: 'min(405px, 70dvh)',
+  objectFit: 'contain',
+  display: 'block',
+  margin: 0,
+  padding: 0,
+  border: 'none',
+  pointerEvents: 'none',
+  userSelect: 'none',
+  position: 'relative',
+  zIndex: 1,
+};
 
 type LoadingScreenProps = {
   autoHideAfterMs?: number;
@@ -26,14 +38,13 @@ function useLockPageScroll(active: boolean) {
   }, [active]);
 }
 
-/** Full-screen SITE 00 construction loader (portaled to document.body). */
+/** Frontal Slayer full-screen loader (portaled to document.body). Uses original load-screen.gif — not SITE 00. */
 export default function LoadingScreen({
   autoHideAfterMs,
   source = 'LoadingScreen',
   maxDurationMs = DEFAULT_MAX_LOADING_MS,
 }: LoadingScreenProps = {}) {
   const [isVisible, setIsVisible] = React.useState(true);
-  const [failed, setFailed] = React.useState(false);
   useLockPageScroll(isVisible);
 
   React.useEffect(() => {
@@ -44,8 +55,7 @@ export default function LoadingScreen({
         stuck.length > 0 ? stuck : [{ id: source, label: source, since: Date.now() - maxDurationMs }],
         `LoadingScreen:${source}`,
       );
-      setFailed(true);
-      window.setTimeout(() => setIsVisible(false), 2400);
+      setIsVisible(false);
     }, maxDurationMs);
     return () => {
       window.clearTimeout(timer);
@@ -61,32 +71,23 @@ export default function LoadingScreen({
 
   if (!isVisible) return null;
 
-  const loaderContext = contextFromLoadingSource(source);
-  const onAsstsPath =
-    typeof window !== 'undefined' && window.location.pathname.startsWith('/assts');
-
-  const useImmersiveAssts =
-    (onAsstsPath || loaderContext === 'assts') && shouldShowAsstsImmersiveLoader();
-
   const overlay = (
-    <div className="loading-screen-root" data-loading-source={source}>
-      {!useImmersiveAssts ? <div className="loading-screen-root__backdrop" aria-hidden /> : null}
-      {useImmersiveAssts ? (
-        <Site00ImmersiveLoader
-          config={ASSTS_IMMERSIVE_LOADER_CONFIG}
-          progress={ASSTS_IMMERSIVE_LOADER_CONFIG.stages[0]?.progress ?? 8}
-          statusLabel={ASSTS_IMMERSIVE_LOADER_CONFIG.stages[0]?.label ?? 'INITIALIZING SITE 00'}
-          loaderState="BOOTSTRAP"
-        />
-      ) : (
-        <Site00Loader
-          context={loaderContext}
-          fullScreen
-          showDelayMs={200}
-          error={failed}
-          onRetry={failed ? () => window.location.reload() : undefined}
-        />
-      )}
+    <div
+      className="loading-screen-root"
+      data-loading-source={source}
+      role="status"
+      aria-live="polite"
+      aria-label="Loading"
+    >
+      <div className="loading-screen-root__backdrop" aria-hidden />
+      <img
+        src="/assets/load-screen.gif"
+        alt=""
+        width={405}
+        height={405}
+        style={loadingGifStyle}
+        draggable={false}
+      />
     </div>
   );
 

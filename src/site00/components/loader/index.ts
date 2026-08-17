@@ -7,3 +7,4 @@ export { ASSTS_IMMERSIVE_LOADER_CONFIG, getSite00ImmersiveLoaderConfig, resolveS
 export type { Site00ImmersiveLoaderConfig, Site00LoaderStage } from './site00LoaderConfig';
 export { shouldShowAsstsImmersiveLoader, markAsstsImmersiveComplete } from './site00LoaderSession';
 export { preloadSite00LoaderAssets } from './site00LoaderPreload';
+export { Site00RouteLoadingFallback } from './Site00RouteLoadingFallback';

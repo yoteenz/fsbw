@@ -1,17 +1,16 @@
 import { lazy, Suspense, type ReactNode } from 'react';
 import { Route, Navigate } from 'react-router-dom';
-import LoadingScreen from '../components/base/LoadingScreen';
 import AdminGuard from '../components/AdminGuard';
 import { Site00Provider } from '../site00/state/Site00Context';
 import { SITE00_ROUTES } from '../site00/config/routes';
 import { AsstsRouteSuspense } from '../site00/assts/components/AsstsRouteSuspense';
 import { AsstsColdStartGate } from '../site00/assts/components/AsstsColdStartGate';
+import { Site00RouteLoadingFallback } from '../site00/components/loader/Site00RouteLoadingFallback';
 /* Eager-load SITE 00 + ASSTS styles (lazy route CSS was not applying on mobile preview). */
 import '../site00/styles/site00.css';
 import '../site00/assts/styles/assts.css';
 import '../site00/assts/styles/assts-depth.css';
 import '../site00/assts/styles/assts-composition.css';
-import '../site00/styles/site00-loader.css';
 
 const Site00OriginPage = lazy(() => import('../site00/pages/OriginPage'));
 const Site00EnterPage = lazy(() => import('../site00/pages/EnterPage'));
@@ -26,7 +25,7 @@ const AsstsInspectionPage = lazy(() => import('../site00/assts/pages/InspectionP
 const AsstsCompositionStudioPage = lazy(() => import('../site00/assts/pages/CompositionStudioPage'));
 
 function Site00Suspense({ children }: { children: ReactNode }) {
-  return <Suspense fallback={<LoadingScreen source="Site00" />}>{children}</Suspense>;
+  return <Suspense fallback={<Site00RouteLoadingFallback />}>{children}</Suspense>;
 }
 
 function Site00Layout({ children }: { children: ReactNode }) {
