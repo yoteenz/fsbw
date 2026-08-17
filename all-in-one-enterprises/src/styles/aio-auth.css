@@ -203,17 +203,17 @@ body:has(.aio-app--auth) {
   max-width: 100%;
 }
 
-.aio-auth-login-hero .aio-auth-premium__eyebrow {
+.aio-auth-premium--login .aio-auth-login-hero .aio-auth-premium__eyebrow {
   margin: 0 0 0.1rem;
   font-size: clamp(0.6rem, 2.56vw, 0.65rem);
 }
 
-.aio-auth-login-hero .aio-auth-premium__headline {
+.aio-auth-premium--login .aio-auth-login-hero .aio-auth-premium__headline {
   font-size: clamp(1.9rem, 8vw, 2.45rem);
   line-height: 0.95;
 }
 
-.aio-auth-login-hero .aio-auth-premium__supporting {
+.aio-auth-premium--login .aio-auth-login-hero .aio-auth-premium__supporting {
   margin-top: 0.2rem;
   font-size: calc(clamp(0.6rem, 2.56vw, 0.65rem) - 3px);
   font-weight: 600;
