@@ -2,23 +2,47 @@ import { useState } from 'react';
 import type { IntakeAnswers, IntakeQuestion } from '../intake/intakeTypes';
 import { getFieldValue, setFieldValue, validateField } from '../intake/intakeRules';
 import { BusinessNameCheckField } from './intake/BusinessNameCheckField';
+import { SmartIntakeChoiceGrid } from './smart-intake/SmartIntakeChoiceGrid';
+import { choiceLayoutForQuestion } from '../intake/smartIntakeMeta';
 
 type Props = {
   question: IntakeQuestion;
   answers: IntakeAnswers;
   onChange: (answers: IntakeAnswers) => void;
   error?: string;
+  variant?: 'legacy' | 'smart';
 };
 
-export function IntakeQuestionField({ question, answers, onChange, error }: Props) {
+export function IntakeQuestionField({ question, answers, onChange, error, variant = 'legacy' }: Props) {
   const value = getFieldValue(answers, question.field);
   const inputId = `intake-${question.id}`;
+  const isSmart = variant === 'smart';
 
   const update = (val: unknown) => {
     onChange(setFieldValue(answers, question.field, val));
   };
 
+  const fieldClass = isSmart ? 'si-field' : 'aio-intake-field';
+  const labelClass = isSmart ? 'si-field__label' : 'aio-intake-label';
+  const inputClass = isSmart ? 'si-input' : 'aio-intake-input';
+  const errorClass = isSmart ? 'si-field-error' : 'aio-intake-error';
+  const descClass = isSmart ? 'si-field__desc' : 'aio-intake-desc';
+
   if (question.type === 'single_select' && question.options) {
+    if (isSmart) {
+      return (
+        <SmartIntakeChoiceGrid
+          name={inputId}
+          legend={question.question}
+          description={question.description}
+          options={question.options}
+          value={value}
+          onChange={update}
+          layout={choiceLayoutForQuestion(question.id, question.field)}
+          error={error}
+        />
+      );
+    }
     return (
       <fieldset className="aio-intake-fieldset">
         <legend className="aio-intake-legend">{question.question}</legend>
@@ -53,15 +77,23 @@ export function IntakeQuestionField({ question, answers, onChange, error }: Prop
 
   if (question.type === 'multi_select' && question.options) {
     const selected = Array.isArray(value) ? (value as string[]) : [];
+    const gridClass = isSmart ? 'si-choice-grid si-choice-grid--multi' : 'aio-intake-checkboxes';
     return (
-      <fieldset className="aio-intake-fieldset">
-        <legend className="aio-intake-legend">{question.question}</legend>
-        {question.description && <p className="aio-intake-desc">{question.description}</p>}
-        <div className="aio-intake-checkboxes">
+      <fieldset className={isSmart ? 'si-fieldset' : 'aio-intake-fieldset'}>
+        <legend className={isSmart ? 'si-fieldset__legend' : 'aio-intake-legend'}>{question.question}</legend>
+        {question.description && <p className={descClass}>{question.description}</p>}
+        <div className={gridClass}>
           {question.options.map((opt) => {
             const checked = selected.includes(opt.value);
             return (
-              <label key={opt.value} className={`aio-intake-checkbox ${checked ? 'aio-intake-checkbox--checked' : ''}`}>
+              <label
+                key={opt.value}
+                className={
+                  isSmart
+                    ? `si-choice-card si-choice-card--checkbox ${checked ? 'si-choice-card--selected' : ''}`
+                    : `aio-intake-checkbox ${checked ? 'aio-intake-checkbox--checked' : ''}`
+                }
+              >
                 <input
                   type="checkbox"
                   checked={checked}
@@ -70,13 +102,13 @@ export function IntakeQuestionField({ question, answers, onChange, error }: Prop
                     update(next);
                   }}
                 />
-                <span>{opt.label}</span>
+                <span className={isSmart ? 'si-choice-card__title' : undefined}>{opt.label}</span>
               </label>
             );
           })}
         </div>
         {error && (
-          <p className="aio-intake-error" role="alert">
+          <p className={errorClass} role="alert">
             {error}
           </p>
         )}
@@ -91,22 +123,23 @@ export function IntakeQuestionField({ question, answers, onChange, error }: Prop
         onChange={onChange}
         field={question.field}
         inputId={inputId}
-        label={question.question}
-        description={question.description}
+        label={isSmart ? '' : question.question}
+        description={isSmart ? question.description : question.description}
         error={error}
+        variant={variant}
       />
     );
   }
 
   if (question.type === 'select' && question.options) {
     return (
-      <div className="aio-intake-field">
-        <label htmlFor={inputId} className="aio-intake-label">
+      <div className={fieldClass}>
+        <label htmlFor={inputId} className={labelClass}>
           {question.question}
         </label>
         <select
           id={inputId}
-          className="aio-intake-input"
+          className={`${inputClass} ${isSmart ? 'si-select' : ''}`}
           value={(value as string) ?? ''}
           onChange={(e) => update(e.target.value || undefined)}
         >
@@ -118,7 +151,7 @@ export function IntakeQuestionField({ question, answers, onChange, error }: Prop
           ))}
         </select>
         {error && (
-          <p className="aio-intake-error" role="alert">
+          <p className={errorClass} role="alert">
             {error}
           </p>
         )}
@@ -128,20 +161,20 @@ export function IntakeQuestionField({ question, answers, onChange, error }: Prop
 
   if (question.type === 'number') {
     return (
-      <div className="aio-intake-field">
-        <label htmlFor={inputId} className="aio-intake-label">
+      <div className={fieldClass}>
+        <label htmlFor={inputId} className={labelClass}>
           {question.question}
         </label>
         <input
           id={inputId}
           type="number"
           min={0}
-          className="aio-intake-input"
+          className={inputClass}
           value={value === undefined || value === null ? '' : String(value)}
           onChange={(e) => update(e.target.value === '' ? undefined : Number(e.target.value))}
         />
         {error && (
-          <p className="aio-intake-error" role="alert">
+          <p className={errorClass} role="alert">
             {error}
           </p>
         )}
@@ -151,19 +184,19 @@ export function IntakeQuestionField({ question, answers, onChange, error }: Prop
 
   if (question.type === 'date') {
     return (
-      <div className="aio-intake-field">
-        <label htmlFor={inputId} className="aio-intake-label">
+      <div className={fieldClass}>
+        <label htmlFor={inputId} className={labelClass}>
           {question.question}
         </label>
         <input
           id={inputId}
           type="date"
-          className="aio-intake-input"
+          className={inputClass}
           value={(value as string) ?? ''}
           onChange={(e) => update(e.target.value || undefined)}
         />
         {error && (
-          <p className="aio-intake-error" role="alert">
+          <p className={errorClass} role="alert">
             {error}
           </p>
         )}
@@ -173,19 +206,19 @@ export function IntakeQuestionField({ question, answers, onChange, error }: Prop
 
   if (question.type === 'textarea') {
     return (
-      <div className="aio-intake-field">
-        <label htmlFor={inputId} className="aio-intake-label">
+      <div className={fieldClass}>
+        <label htmlFor={inputId} className={labelClass}>
           {question.question}
         </label>
         <textarea
           id={inputId}
-          className="aio-intake-input aio-intake-textarea"
+          className={`${inputClass} ${isSmart ? 'si-textarea' : 'aio-intake-textarea'}`}
           rows={4}
           value={(value as string) ?? ''}
           onChange={(e) => update(e.target.value || undefined)}
         />
         {error && (
-          <p className="aio-intake-error" role="alert">
+          <p className={errorClass} role="alert">
             {error}
           </p>
         )}
@@ -193,21 +226,23 @@ export function IntakeQuestionField({ question, answers, onChange, error }: Prop
     );
   }
 
-  // text default
+  const inputType =
+    question.field === 'contact.email' ? 'email' : question.field === 'contact.phone' ? 'tel' : 'text';
+
   return (
-    <div className="aio-intake-field">
-      <label htmlFor={inputId} className="aio-intake-label">
+    <div className={fieldClass}>
+      <label htmlFor={inputId} className={labelClass}>
         {question.question}
       </label>
       <input
         id={inputId}
-        type="text"
-        className="aio-intake-input"
+        type={inputType}
+        className={inputClass}
         value={(value as string) ?? ''}
         onChange={(e) => update(e.target.value || undefined)}
       />
       {error && (
-        <p className="aio-intake-error" role="alert">
+        <p className={errorClass} role="alert">
           {error}
         </p>
       )}
