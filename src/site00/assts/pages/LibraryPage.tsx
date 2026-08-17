@@ -1,12 +1,12 @@
 import { useCallback, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { AsstsEnvironmentShell } from '../components/AsstsEnvironmentShell';
+import { useCompositionOverlayRef } from '../../composition';
 import { AsstsDevPanel, useAsstsAutoRefresh } from '../components/AsstsDevPanel';
 import { AsstsBottomDock } from '../components/AsstsMobileNav';
 import { AsstsPageShell } from '../components/AsstsPageShell';
-import { AsstsBatchCard, AsstsAssetListRow, AsstsCategoryTile } from '../components/AsstsCards';
+import { AsstsBatchCard, AsstsBatchChip, AsstsAssetListRow, AsstsCategoryTile } from '../components/AsstsCards';
 import { AsstsMetricTile, AsstsSectionHeader } from '../components/AsstsGlass';
-import { ASSTS_ENVIRONMENT_SLOTS } from '../config/slots';
+import { AsstsLibraryShell } from '../components/AsstsLibraryShell';
 import { fetchAsstsLibrary, type AsstsLibraryResponse } from '../services/asstsApi';
 import { batchProgressPercent, batchStatusHint } from '../utils/batchHelpers';
 
@@ -19,7 +19,8 @@ function batchNeedsAttention(priority: AsstsLibraryResponse['priorityBatch']): b
   return false;
 }
 
-export default function AsstsLibraryPage() {
+
+function AsstsLibraryPageContent() {
   const [searchParams] = useSearchParams();
   const statusFilter = searchParams.get('status') ?? '';
   const categoryFilter = searchParams.get('category') ?? '';
@@ -28,6 +29,8 @@ export default function AsstsLibraryPage() {
   const [data, setData] = useState<AsstsLibraryResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+
+  const batchesOverlayRef = useCompositionOverlayRef('RecentBatchesPanel');
 
   const load = useCallback(async () => {
     try {
@@ -56,6 +59,7 @@ export default function AsstsLibraryPage() {
   const showPriority = priority && batchNeedsAttention(priority);
   const filteredAssets = data?.filteredAssets;
   const showFiltered = Boolean(statusFilter || categoryFilter || viewAll);
+  const needsReviewCount = summary?.needsReview ?? 0;
 
   const activeMetric = useMemo(() => {
     if (statusFilter === 'needs-review') return 'needs-review';
@@ -65,20 +69,23 @@ export default function AsstsLibraryPage() {
   }, [statusFilter, viewAll]);
 
   const priorityProgress = priority ? batchProgressPercent(priority.counts ?? {}) : 0;
+  const batchesList = summary?.batchesList ?? [];
+  const leftBatches = batchesList.filter((_, i) => i % 2 === 0);
+  const rightBatches = batchesList.filter((_, i) => i % 2 === 1);
+
 
   return (
-    <AsstsEnvironmentShell slotKey={ASSTS_ENVIRONMENT_SLOTS.library}>
-      <AsstsPageShell variant="library">
-        <div className="assts-library-spatial">
-          <div className="assts-entry-zone">
-            <header className="assts-hero assts-hero--spatial">
+    <AsstsPageShell variant="library">
+        <div className="assts-library-composed">
+          <div className="assts-composed-header">
+            <header className="assts-hero assts-hero--spatial assts-hero--composed">
               <p className="assts-hero__eyebrow site00-label-red">SITE 00 · ASSTS</p>
               <h1 className="assts-hero__title">THE ASSET VAULT.</h1>
               <p className="assts-hero__tagline">EVERYTHING WE BUILD LIVES HERE.</p>
             </header>
 
             {summary ? (
-              <div className="assts-metrics assts-metrics--ledge" aria-label="Library metrics">
+              <div className="assts-metrics assts-metrics--hud" aria-label="Library metrics">
                 <AsstsMetricTile
                   value={summary.totalAssets}
                   label="Assets"
@@ -157,67 +164,88 @@ export default function AsstsLibraryPage() {
             </>
           ) : (
             <>
-              <div className="assts-review-zone">
-                <AsstsSectionHeader
-                  title="NEEDS YOUR REVIEW"
-                  action={
-                    priority ? (
-                      <Link to={`/assts/batches/${priority.id}`} className="assts-link-action">
-                        SEE ALL
-                      </Link>
-                    ) : null
-                  }
-                />
+              <div
+                className={`assts-composed-review ${showPriority ? 'assts-composed-review--active' : 'assts-composed-review--collapsed'}`}
+              >
                 {showPriority && priority ? (
-                  <AsstsBatchCard
-                    batchKey={priority.batch_key}
-                    category={priority.category}
-                    displayName={priority.display_name}
-                    thumbnailUrl={priority.thumbnailUrl}
-                    reviewedCount={priority.counts?.approved ?? 0}
-                    totalCount={priority.counts?.total ?? 0}
-                    progressPercent={priority.progressPercent ?? priorityProgress}
-                    to={`/assts/batches/${priority.id}`}
-                    variant="priority"
-                  />
-                ) : priority?.status === 'LOCKED' ? (
-                  <p className="assts-empty assts-empty--inline">
-                    {priority.batch_key} is locked — production environments are live.
-                  </p>
-                ) : (
-                  <p className="assts-empty assts-empty--inline">
-                    {generating
-                      ? 'Generation in progress — assets will appear here automatically.'
-                      : 'No items need review right now.'}
-                  </p>
-                )}
-              </div>
-
-              <div className="assts-recess-zone">
-                <AsstsSectionHeader title="RECENT BATCHES" />
-                <div className="assts-batch-list">
-                  {(summary?.batchesList ?? []).map((b) => (
-                    <AsstsBatchCard
-                      key={b.id}
-                      batchKey={b.batch_key}
-                      category={b.category}
-                      displayName={b.display_name}
-                      thumbnailUrl={b.thumbnailUrl}
-                      reviewedCount={b.counts?.approved ?? 0}
-                      totalCount={b.counts?.total ?? 0}
-                      progressPercent={batchProgressPercent(b.counts ?? {})}
-                      status={b.status}
-                      statusHint={batchStatusHint(b)}
-                      to={`/assts/batches/${b.id}`}
-                      variant="row"
+                  <>
+                    <AsstsSectionHeader
+                      title="NEEDS YOUR REVIEW"
+                      action={
+                        <Link to={`/assts/batches/${priority.id}`} className="assts-link-action">
+                          SEE ALL
+                        </Link>
+                      }
                     />
-                  ))}
-                </div>
+                    <AsstsBatchCard
+                      batchKey={priority.batch_key}
+                      category={priority.category}
+                      displayName={priority.display_name}
+                      thumbnailUrl={priority.thumbnailUrl}
+                      reviewedCount={priority.counts?.approved ?? 0}
+                      totalCount={priority.counts?.total ?? 0}
+                      progressPercent={priority.progressPercent ?? priorityProgress}
+                      to={`/assts/batches/${priority.id}`}
+                      variant="priority"
+                    />
+                  </>
+                ) : needsReviewCount === 0 && !generating ? (
+                  <p className="assts-status-line">
+                    <span className="assts-status-line__dot" aria-hidden="true" />
+                    All clear — nothing needs review
+                  </p>
+                ) : generating ? (
+                  <p className="assts-status-line assts-status-line--generating">
+                    <span className="assts-status-line__dot" aria-hidden="true" />
+                    Generation in progress
+                  </p>
+                ) : priority?.status === 'LOCKED' ? (
+                  <p className="assts-status-line">
+                    {priority.batch_key} locked — production environments live
+                  </p>
+                ) : null}
               </div>
 
-              <div className="assts-archive-zone">
+              {batchesList.length > 0 ? (
+                <div ref={batchesOverlayRef} className="assts-batches-peripheral">
+                  <AsstsSectionHeader title="RECENT BATCHES" />
+                  <div className="assts-batches-peripheral__grid">
+                    <div className="assts-batches-peripheral__col assts-batches-peripheral__col--left">
+                      {leftBatches.map((b) => (
+                        <AsstsBatchChip
+                          key={b.id}
+                          batchKey={b.batch_key}
+                          category={b.category}
+                          displayName={b.display_name}
+                          thumbnailUrl={b.thumbnailUrl}
+                          status={b.status}
+                          statusHint={batchStatusHint(b)}
+                          to={`/assts/batches/${b.id}`}
+                        />
+                      ))}
+                    </div>
+                    <div className="assts-batches-peripheral__corridor" aria-hidden="true" />
+                    <div className="assts-batches-peripheral__col assts-batches-peripheral__col--right">
+                      {rightBatches.map((b) => (
+                        <AsstsBatchChip
+                          key={b.id}
+                          batchKey={b.batch_key}
+                          category={b.category}
+                          displayName={b.display_name}
+                          thumbnailUrl={b.thumbnailUrl}
+                          status={b.status}
+                          statusHint={batchStatusHint(b)}
+                          to={`/assts/batches/${b.id}`}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              ) : null}
+
+              <div className="assts-composed-library">
                 <AsstsSectionHeader title="BROWSE LIBRARY" />
-                <div className="assts-category-grid">
+                <div className="assts-category-grid assts-category-grid--composed">
                   {(data?.categories ?? []).map((cat) => (
                     <AsstsCategoryTile
                       key={cat.id}
@@ -233,9 +261,15 @@ export default function AsstsLibraryPage() {
             </>
           )}
         </div>
-      </AsstsPageShell>
+    </AsstsPageShell>
+  );
+}
 
+export default function AsstsLibraryPage() {
+  return (
+    <AsstsLibraryShell>
+      <AsstsLibraryPageContent />
       <AsstsBottomDock />
-    </AsstsEnvironmentShell>
+    </AsstsLibraryShell>
   );
 }

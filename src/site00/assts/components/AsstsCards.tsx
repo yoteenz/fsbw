@@ -2,6 +2,45 @@ import { Link } from 'react-router-dom';
 import { AsstsGlass, AsstsProgress } from './AsstsGlass';
 import { AsstsStatusBadge } from './AsstsMobileNav';
 
+type BatchChipProps = {
+  batchKey: string;
+  category: string | null;
+  displayName?: string;
+  thumbnailUrl?: string | null;
+  status?: string;
+  statusHint?: string;
+  to: string;
+};
+
+/** Compact peripheral batch module — does not span the central corridor. */
+export function AsstsBatchChip({
+  batchKey,
+  category,
+  displayName,
+  thumbnailUrl,
+  status,
+  statusHint,
+  to,
+}: BatchChipProps) {
+  return (
+    <Link to={to} className="assts-batch-chip">
+      <div className="assts-batch-chip__thumb">
+        {thumbnailUrl ? (
+          <img src={thumbnailUrl} alt="" loading="lazy" />
+        ) : (
+          <div className="assts-batch-chip__thumb--empty" aria-hidden="true" />
+        )}
+      </div>
+      <div className="assts-batch-chip__body">
+        <div className="assts-batch-chip__key">{batchKey}</div>
+        <div className="assts-batch-chip__cat">{category ?? displayName ?? 'BATCH'}</div>
+        {statusHint ? <div className="assts-batch-chip__hint">{statusHint}</div> : null}
+      </div>
+      {status ? <AsstsStatusBadge status={status} compact /> : null}
+    </Link>
+  );
+}
+
 type BatchCardProps = {
   batchKey: string;
   category: string | null;

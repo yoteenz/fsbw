@@ -10,6 +10,7 @@ import { AsstsColdStartGate } from '../site00/assts/components/AsstsColdStartGat
 import '../site00/styles/site00.css';
 import '../site00/assts/styles/assts.css';
 import '../site00/assts/styles/assts-depth.css';
+import '../site00/assts/styles/assts-composition.css';
 import '../site00/styles/site00-loader.css';
 
 const Site00OriginPage = lazy(() => import('../site00/pages/OriginPage'));

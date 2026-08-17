@@ -52,16 +52,17 @@ const STATUS_CLASS: Record<string, string> = {
 type AsstsStatusBadgeProps = {
   status: string;
   variant?: 'default' | 'review' | 'muted';
+  compact?: boolean;
 };
 
-export function AsstsStatusBadge({ status, variant = 'default' }: AsstsStatusBadgeProps) {
+export function AsstsStatusBadge({ status, variant = 'default', compact = false }: AsstsStatusBadgeProps) {
   const normalized = status.toUpperCase().replace(/\s+/g, '_');
   const token = STATUS_CLASS[normalized] ?? (variant === 'review' ? 'needs-review' : variant === 'muted' ? 'queued' : 'queued');
   const label = status.replace(/_/g, ' ');
   return (
-    <span className={`assts-status assts-status--${token}`}>
+    <span className={`assts-status assts-status--${token}${compact ? ' assts-status--compact' : ''}`}>
       <span className="assts-status__dot" aria-hidden="true" />
-      {label}
+      {compact ? label.split(' ')[0] : label}
     </span>
   );
 }

@@ -1,0 +1,384 @@
+/**
+ * Environmental Composition Intelligence — stage shell + ASSTS library layout
+ */
+
+/* ─── Reusable environmental stage (shared with future Studio World surfaces) ─── */
+
+.environmental-stage {
+  position: relative;
+  min-height: 100dvh;
+  min-height: 100lvh;
+  color: var(--site-text);
+  font-family: var(--site-font-book);
+  overflow-x: hidden;
+}
+
+.environmental-stage__env {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background-color: #f5f5f3;
+  background-repeat: no-repeat;
+}
+
+.environmental-stage__veil {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.06) 0%,
+    transparent 28%,
+    rgba(0, 0, 0, 0.03) 100%
+  );
+}
+
+.environmental-stage__ui {
+  position: relative;
+  z-index: 1;
+  min-height: 100dvh;
+  min-height: 100lvh;
+}
+
+.assts-library-stage.environmental-stage .environmental-stage__ui {
+  padding-bottom: calc(var(--assts-dock-h, 76px) + 16px);
+}
+
+/* Composition debug overlay — dev/review only (?composition=1) */
+.composition-debug {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+}
+
+.composition-debug__zone {
+  position: absolute;
+  border: 1px dashed rgba(0, 0, 0, 0.35);
+  box-sizing: border-box;
+}
+
+.composition-debug__zone--protected {
+  border-color: rgba(232, 25, 44, 0.65);
+  border-width: 2px;
+}
+
+.composition-debug__label {
+  position: absolute;
+  top: 2px;
+  left: 4px;
+  font-family: ui-monospace, monospace;
+  font-size: 8px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: rgba(0, 0, 0, 0.65);
+  background: rgba(255, 255, 255, 0.72);
+  padding: 1px 4px;
+  border-radius: 2px;
+  max-width: calc(100% - 8px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.composition-debug__focal {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  margin: -5px 0 0 -5px;
+  border-radius: 50%;
+  border: 2px solid var(--site-red, #e8192c);
+  background: rgba(232, 25, 44, 0.25);
+  box-shadow: 0 0 8px rgba(232, 25, 44, 0.45);
+}
+
+.composition-zone-slot__content {
+  pointer-events: auto;
+  width: 100%;
+  height: 100%;
+}
+
+/* ─── ASSTS library — composition-aware layout ─── */
+
+.assts-library-composed {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  min-height: 100lvh;
+}
+
+.assts-composed-header {
+  position: relative;
+  z-index: var(--depth-surface, 2);
+  flex-shrink: 0;
+}
+
+.assts-hero--composed {
+  padding-top: var(--assts-safe-top, calc(12px + env(safe-area-inset-top, 0px)));
+  padding-bottom: 2px;
+  background: none;
+  border: none;
+  box-shadow: none;
+}
+
+.assts-hero--composed .assts-hero__title {
+  text-shadow: 0 1px 20px rgba(255, 255, 255, 0.8);
+}
+
+.assts-hero--composed .assts-hero__tagline {
+  max-width: none;
+}
+
+/* Lighter metrics HUD — does not overpower architecture */
+.assts-metrics--hud {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 5px;
+  padding: 0 14px 10px;
+  margin-top: 10px;
+}
+
+.assts-metrics--hud .assts-glass--metric {
+  background: rgba(255, 255, 255, 0.28);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.42);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03), inset 0 1px 0 rgba(255, 255, 255, 0.55);
+  padding: 8px 4px;
+}
+
+.assts-metrics--hud .assts-metric__value {
+  font-size: 15px;
+}
+
+.assts-metrics--hud .assts-metric__label {
+  font-size: 7px;
+  letter-spacing: 0.09em;
+  margin-top: 3px;
+}
+
+/* Review zone — collapses when empty */
+.assts-composed-review {
+  position: relative;
+  z-index: var(--depth-floating, 3);
+  margin: 0 14px;
+  transition: margin 0.2s ease, padding 0.2s ease;
+}
+
+.assts-composed-review--collapsed {
+  margin-top: 2px;
+  margin-bottom: 0;
+  padding: 0;
+}
+
+.assts-composed-review--active {
+  margin-top: 6px;
+  margin-bottom: 4px;
+}
+
+.assts-status-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 6px 10px;
+  font-size: 8px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--site-text-muted, #6b6b6b);
+  background: rgba(255, 255, 255, 0.22);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.38);
+  width: fit-content;
+  max-width: 100%;
+}
+
+.assts-status-line--generating .assts-status-line__dot {
+  background: #3b82f6;
+  animation: assts-status-pulse 1.6s ease-in-out infinite;
+}
+
+.assts-status-line__dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--site-success, #22c55e);
+  flex-shrink: 0;
+}
+
+@keyframes assts-status-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}
+
+/* Recent batches — peripheral flanking layout, corridor protected */
+.assts-batches-peripheral {
+  position: relative;
+  z-index: var(--depth-embedded, 1);
+  margin: clamp(8px, 2vh, 14px) 0 clamp(10px, 2.5vh, 16px);
+  padding: 0 10px;
+}
+
+.assts-batches-peripheral .assts-section-header {
+  padding: 8px 6px 6px;
+}
+
+.assts-batches-peripheral__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(36%, 42%) minmax(0, 1fr);
+  gap: 6px;
+  align-items: start;
+}
+
+.assts-batches-peripheral__corridor {
+  min-height: 1px;
+  pointer-events: none;
+}
+
+.assts-batches-peripheral__col {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.assts-batch-chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 8px;
+  text-decoration: none;
+  color: inherit;
+  border-radius: var(--site-radius-sm, 4px);
+  background: rgba(255, 255, 255, 0.32);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.48);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  transition: transform 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.assts-batch-chip:active {
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.44);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+}
+
+.assts-batch-chip__thumb {
+  flex: 0 0 36px;
+  width: 36px;
+  height: 36px;
+  border-radius: 3px;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+}
+
+.assts-batch-chip__thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.assts-batch-chip__thumb--empty {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.35), rgba(210, 210, 210, 0.2));
+}
+
+.assts-batch-chip__body {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.assts-batch-chip__key {
+  font-family: var(--site-font-sans);
+  font-size: 9px;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.assts-batch-chip__cat {
+  font-size: 7px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--site-text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: 1px;
+}
+
+.assts-batch-chip__hint {
+  font-size: 7px;
+  letter-spacing: 0.06em;
+  color: var(--site-red);
+  margin-top: 2px;
+}
+
+.assts-status--compact {
+  font-size: 7px;
+  padding: 2px 5px;
+  flex-shrink: 0;
+}
+
+.assts-status--compact .assts-status__dot {
+  width: 4px;
+  height: 4px;
+}
+
+/* Browse library — primary content region */
+.assts-composed-library {
+  position: relative;
+  z-index: var(--depth-embedded, 1);
+  flex: 1 1 auto;
+  margin-top: auto;
+  padding-top: clamp(8px, 2vh, 16px);
+  padding-bottom: 8px;
+  min-height: 0;
+}
+
+.assts-composed-library .assts-section-header {
+  padding-top: 10px;
+}
+
+.assts-category-grid--composed {
+  padding: 0 12px 12px;
+  gap: 10px;
+}
+
+/* Wider viewports — maintain corridor protection via composition vars */
+@media (min-width: 768px) {
+  .assts-batches-peripheral__grid {
+    grid-template-columns: minmax(0, 1fr) minmax(32%, 38%) minmax(0, 1fr);
+    max-width: 520px;
+    margin-inline: auto;
+  }
+
+  .assts-library-composed {
+    max-width: 520px;
+    margin-inline: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .assts-status-line--generating .assts-status-line__dot {
+    animation: none;
+  }
+
+  .assts-batch-chip:active {
+    transform: none;
+  }
+}
