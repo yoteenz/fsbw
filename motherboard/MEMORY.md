@@ -52438,3 +52438,25 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **QA:** `npm run build` PASS. Mobile screenshot @ 390px.
 
+---
+
+## 2026-08-17 — AIO mobile homepage reference-led restructure
+
+- **Context:** Major UX sprint — redesign mobile homepage (`/`) to match approved reference composition: conversion funnel (establish → pathways → lifecycle → connected value → CTA), not card-heavy catalog.
+
+- **Architecture:** Mobile-only stack in `HomePage.tsx` (`.aio-mobile-only`); desktop sections unchanged (`HeroSection`, pathway grid, teasers). New data: `homepageMobileContent.ts`. Components: `AioHomepageHero`, `AioPathwayRouter` (4 pathways), `AioRoadReadyJourney` (6-stage horizontal timeline + Road Ready prompt), `AioConnectedValue`, `AioHomepageFinalCTA`, `AioMobileFooterAccordion`. CSS: `aio-homepage-mobile.css`.
+
+- **Hero:** 4-line headline WHERE/BUSINESS/MEETS THE/ROAD.; reference supporting copy; START MY BUSINESS (`StartBusinessCtaButton`); CHECK WHAT I NEED → `/get-started`. Cinematic truck bg, compact height (~62vh max).
+
+- **Pathways:** START A BUSINESS, STAY COMPLIANT, RUN MY OPERATION, MOVE & MANAGE MONEY — full-width rows with gold icons + CTAs; VIEW ALL SERVICES.
+
+- **Roadmap:** Six clickable stages from `startBusinessJourneyConfig` routes; personalized block when authenticated + real progress (no fake %).
+
+- **Footer:** Collapsible SERVICES/COMPANY/RESOURCES/CONTACT accordions on mobile; desktop footer grid preserved.
+
+- **Removed from mobile homepage:** `MobileServiceDiscovery` 6-card grid, `MobileMilestonePromo`, shared `HeroSection` (desktop only now).
+
+- **Spatial Architecture Review:** SKIPPED — public marketing homepage restructure; no Studio OS surfaces.
+
+- **QA:** `npm run build` PASS. Manual QA @ 390px — hero, 4 pathways, scrollable roadmap, connected value, final CTA, footer accordions, no horizontal overflow.
+
