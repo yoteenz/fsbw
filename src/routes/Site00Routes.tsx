@@ -6,6 +6,7 @@ import { SITE00_ROUTES } from '../site00/config/routes';
 import { AsstsRouteSuspense } from '../site00/assts/components/AsstsRouteSuspense';
 import { AsstsColdStartGate } from '../site00/assts/components/AsstsColdStartGate';
 import { Site00RouteLoadingFallback } from '../site00/components/loader/Site00RouteLoadingFallback';
+import { Site00TypographyBootstrap } from '../site00/components/Site00TypographyBootstrap';
 /* Eager-load SITE 00 + ASSTS styles (lazy route CSS was not applying on mobile preview). */
 import '../site00/styles/site00.css';
 import '../site00/assts/styles/assts.css';
@@ -34,7 +35,12 @@ function Site00Suspense({ children }: { children: ReactNode }) {
 }
 
 function Site00Layout({ children }: { children: ReactNode }) {
-  return <Site00Provider>{children}</Site00Provider>;
+  return (
+    <Site00Provider>
+      <Site00TypographyBootstrap />
+      {children}
+    </Site00Provider>
+  );
 }
 
 /**

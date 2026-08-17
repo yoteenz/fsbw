@@ -52195,7 +52195,6 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 ---
 
-<<<<<<< HEAD
 ## 2026-08-17 — AIO login hero missing on preview (env-dependent URL fix)
 
 - **Context:** Founder reported login page on `preview.fsbw-dev.com` shows solid black background — no approved truck hero image despite prior implementation.
@@ -52221,7 +52220,7 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Fix:** Shorter hero, image nudged up, gold `<` + white BACK, ~2px type reduction on mobile login.
 
 - **QA:** Playwright 375/390/414 — hero 330–340px, email below hero, back symbol gold + label white.
-=======
+
 ---
 
 ## 2026-08-17 — AIO login copy + checkbox + CTA height tweak
@@ -52249,7 +52248,7 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Spatial Architecture Review:** SKIPPED — loader overlay composition only; no new product surfaces.
 
 - **QA:** `npm run build` PASS; `scripts/validate-assts-loader-composition.mjs` at **711px stage width** — geometry, copy.eyebrow, copy.title, copy.subtitle, copy.status, copy.progress, copy.tagline, copy.signature all **0px delta**.
->>>>>>> 9ac9b98e4 (ASSTS loader exact 711×1536 coordinate map — overlay composition [sync-only])
+
 
 ---
 
@@ -52266,4 +52265,30 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Spatial Architecture Review:** SKIPPED — presentation-layer typography correction only; no new surfaces/nav.
 
 - **QA:** `npm run build` PASS. Playwright + screenshots: `/origin` desktop + mobile (technical condensed hierarchy); `/assts` Library Home at 711px with auth/API mock (vault title, red labels, mono batch IDs, compact nav). **`src/index.css` Futura unchanged** — Frontal Slayer isolation preserved.
+
+---
+
+## 2026-08-17 — SITE 00 Martian Mono typography accuracy test
+
+- **Context:** Composer sprint — temporarily migrate SITE 00 typography to **Martian Mono** (variable axes) for visual comparison against approved ORIGIN SITE 00 reference. Typography only: no coordinate/position refactors, no FS/Lounge/PSA changes, no copy changes.
+
+- **Font loading:** `src/site00/styles/site00-fonts.css` — Google Fonts `Martian+Mono:wdth,wght@75..112.5,100..800` imported via `site00.css` only (not `index.html` / `index.css`).
+
+- **Token system:** `tokens.css` — all `--site00-font-*` roles resolve to `--site00-font-family: 'Martian Mono', …`; width via `font-stretch` tokens (`condensed` display/numeric, `semi-condensed` default / wdth 87.5); weights 400 metadata, 500 body, 600 label/nav, 700 heading, 800 display, 650 numeric; **restrained tracking** (display 0, heading 0.03em, body 0.01em, label 0.06em, nav 0.04em, metadata 0.05em, mono 0.02em).
+
+- **Typography roles:** `site00-typography.css` updated — tabular-nums on shells/numerics; display/heading/body/label/nav/metadata/numeric hierarchy per reference.
+
+- **Loader copy:** `site00-loader.css` — replaced luxury-style hardcoded letter-spacing (0.14–0.28em) with tracking tokens; loader coordinate map **unchanged**.
+
+- **Dev tooling:** `site00FontVerify.ts` (one-time dev log `SITE 00 TYPEFACE: Martian Mono — LOADED/FAILED`); `Site00TypeTestOverlay` + `?site00TypeTest=1` inspector (family, weight, size, line-height, letter-spacing, stretch, rendered box); `Site00TypographyBootstrap` mounted in `Site00Layout` + `AsstsColdStartGate` (not as `<Routes>` child).
+
+- **Capture script:** `scripts/capture-site00-martian-mono-test.mjs` — comparison screenshots + font probes.
+
+- **Routes migrated:** `/origin`, Enter, IDNTY, BLDR (+ states), `/assts/*` (loader, library, batches, inspection, composition studio), loader fallback.
+
+- **Spatial Architecture Review:** SKIPPED — typography test only; no new surfaces.
+
+- **QA:** `npm run build` PASS. Playwright font probes confirm **Martian Mono rendered** on Origin tagline/body, ASSTS loader title/eyebrow/pct, library shell. Screenshots: `site00_origin_desktop_martian_mono.png`, `site00_origin_mobile_martian_mono.png`, `site00_assts_library_martian_mono.png`, `site00_assts_loader_martian_mono.png`. **`src/index.css` Futura untouched.**
+
+- **Known metric shifts (no position fix yet):** Martian Mono narrows/tightens strings vs Roboto Condensed — loader title/subtitle and Origin hero may appear mis-centered vs old Futura-compensated tracking; coordinate recalibration deferred per sprint rules.
 

@@ -18,6 +18,7 @@ import {
   shouldShowAsstsImmersiveLoader,
 } from '../../components/loader/site00LoaderSession';
 import { useSite00LoaderProgress } from '../../components/loader/useSite00LoaderProgress';
+import { Site00TypographyBootstrap } from '../../components/Site00TypographyBootstrap';
 import { ASSTS_ENVIRONMENT_SLOTS } from '../config/slots';
 import { fetchAsstsLibrary, primeAsstsLibraryCache, resolveAsstsSlot } from '../services/asstsApi';
 
@@ -121,10 +122,19 @@ export function AsstsColdStartGate() {
     setRevealed(true);
   };
 
-  if (revealed) return <Outlet />;
+  if (revealed) {
+    return (
+      <>
+        <Site00TypographyBootstrap />
+        <Outlet />
+      </>
+    );
+  }
 
   const overlay = (
-    <Site00ImmersiveLoader
+    <>
+      <Site00TypographyBootstrap />
+      <Site00ImmersiveLoader
       config={config}
       progress={progress}
       statusLabel={statusLabel}
@@ -133,6 +143,7 @@ export function AsstsColdStartGate() {
       phase={phase}
       onExitComplete={handleExitComplete}
     />
+    </>
   );
 
   if (typeof document === 'undefined') return overlay;

@@ -1,5 +1,5 @@
 /**
- * SITE 00 typography system — isolated from Frontal Slayer.
+ * SITE 00 typography system — Martian Mono test (isolated from Frontal Slayer).
  * All SITE 00 surfaces consume these tokens and utility roles.
  * Do not use --site-font-* or Futura PT within SITE 00.
  */
@@ -15,8 +15,10 @@
   font-size: var(--site00-size-body);
   line-height: var(--site00-lh-body);
   letter-spacing: var(--site00-tracking-body);
-  font-weight: var(--site00-weight-regular);
+  font-weight: var(--site00-weight-body);
+  font-stretch: var(--site00-font-stretch-default);
   font-synthesis: none;
+  font-variant-numeric: tabular-nums;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
@@ -32,7 +34,8 @@
 .site00-heading-xl {
   font-family: var(--site00-font-display);
   font-size: var(--site00-size-display-xl);
-  font-weight: var(--site00-weight-bold);
+  font-weight: var(--site00-weight-display);
+  font-stretch: var(--site00-font-stretch-display);
   letter-spacing: var(--site00-tracking-display);
   line-height: var(--site00-lh-display);
   text-transform: uppercase;
@@ -42,7 +45,8 @@
 .site00-heading-lg {
   font-family: var(--site00-font-display);
   font-size: var(--site00-size-display-lg);
-  font-weight: var(--site00-weight-bold);
+  font-weight: var(--site00-weight-display);
+  font-stretch: var(--site00-font-stretch-display);
   letter-spacing: var(--site00-tracking-display);
   line-height: var(--site00-lh-display);
   text-transform: uppercase;
@@ -51,7 +55,8 @@
 .site00-display-md {
   font-family: var(--site00-font-display);
   font-size: var(--site00-size-display-md);
-  font-weight: var(--site00-weight-bold);
+  font-weight: var(--site00-weight-display);
+  font-stretch: var(--site00-font-stretch-display);
   letter-spacing: var(--site00-tracking-display);
   line-height: var(--site00-lh-display);
   text-transform: uppercase;
@@ -63,7 +68,8 @@
 .site00-subheading {
   font-family: var(--site00-font-heading);
   font-size: var(--site00-size-heading);
-  font-weight: var(--site00-weight-medium);
+  font-weight: var(--site00-weight-heading);
+  font-stretch: var(--site00-font-stretch-default);
   letter-spacing: var(--site00-tracking-heading);
   line-height: var(--site00-lh-heading);
   text-transform: uppercase;
@@ -76,9 +82,10 @@
 /* ─── Label / micro ─── */
 
 .site00-label {
-  font-family: var(--site00-font-heading);
+  font-family: var(--site00-font-label);
   font-size: var(--site00-size-label);
-  font-weight: var(--site00-weight-medium);
+  font-weight: var(--site00-weight-label);
+  font-stretch: var(--site00-font-stretch-default);
   letter-spacing: var(--site00-tracking-label);
   line-height: var(--site00-lh-label);
   text-transform: uppercase;
@@ -86,9 +93,10 @@
 }
 
 .site00-label-red {
-  font-family: var(--site00-font-heading);
+  font-family: var(--site00-font-label);
   font-size: var(--site00-size-label);
-  font-weight: var(--site00-weight-medium);
+  font-weight: var(--site00-weight-label);
+  font-stretch: var(--site00-font-stretch-default);
   letter-spacing: var(--site00-tracking-label);
   line-height: var(--site00-lh-label);
   text-transform: uppercase;
@@ -96,10 +104,11 @@
 }
 
 .site00-micro {
-  font-family: var(--site00-font-heading);
+  font-family: var(--site00-font-metadata);
   font-size: var(--site00-size-micro);
-  font-weight: var(--site00-weight-medium);
-  letter-spacing: var(--site00-tracking-label);
+  font-weight: var(--site00-weight-metadata);
+  font-stretch: var(--site00-font-stretch-default);
+  letter-spacing: var(--site00-tracking-metadata);
   line-height: var(--site00-lh-micro);
   text-transform: uppercase;
 }
@@ -109,27 +118,32 @@
 .site00-body {
   font-family: var(--site00-font-body);
   font-size: var(--site00-size-body);
-  font-weight: var(--site00-weight-regular);
+  font-weight: var(--site00-weight-body);
+  font-stretch: var(--site00-font-stretch-default);
   letter-spacing: var(--site00-tracking-body);
   line-height: var(--site00-lh-body);
   text-transform: uppercase;
 }
 
 .site00-body--technical {
-  font-family: var(--site00-font-mono);
+  font-family: var(--site00-font-body);
   font-size: var(--site00-size-body);
-  letter-spacing: var(--site00-tracking-mono);
+  font-weight: var(--site00-weight-body);
+  font-stretch: var(--site00-font-stretch-default);
+  letter-spacing: var(--site00-tracking-body);
   line-height: var(--site00-lh-body);
   text-transform: uppercase;
 }
 
-/* ─── Mono / system IDs ─── */
+/* ─── Mono / system IDs / numerics ─── */
 
 .site00-mono,
-.site00-id {
-  font-family: var(--site00-font-mono);
+.site00-id,
+.site00-numeric {
+  font-family: var(--site00-font-numeric);
   font-size: var(--site00-size-mono);
-  font-weight: var(--site00-weight-medium);
+  font-weight: var(--site00-weight-numeric);
+  font-stretch: var(--site00-font-stretch-numeric);
   letter-spacing: var(--site00-tracking-mono);
   line-height: var(--site00-lh-mono);
   font-variant-numeric: tabular-nums;
@@ -142,7 +156,8 @@
 .site00-global-nav button {
   font-family: var(--site00-font-nav);
   font-size: var(--site00-size-nav);
-  font-weight: var(--site00-weight-regular);
+  font-weight: var(--site00-weight-nav);
+  font-stretch: var(--site00-font-stretch-default);
   letter-spacing: var(--site00-tracking-nav);
   line-height: var(--site00-lh-micro);
   text-transform: uppercase;
@@ -151,9 +166,10 @@
 /* ─── Logo mark (top-left SITE 00) ─── */
 
 .site00-logo-mark {
-  font-family: var(--site00-font-mono);
+  font-family: var(--site00-font-display);
   font-size: var(--site00-size-logo);
-  font-weight: var(--site00-weight-bold);
+  font-weight: var(--site00-weight-display);
+  font-stretch: var(--site00-font-stretch-display);
   letter-spacing: var(--site00-tracking-mono);
   line-height: 1;
   text-transform: uppercase;
@@ -164,7 +180,8 @@
 .site00-tagline {
   font-family: var(--site00-font-heading);
   font-size: var(--site00-size-subheading);
-  font-weight: var(--site00-weight-bold);
+  font-weight: var(--site00-weight-heading);
+  font-stretch: var(--site00-font-stretch-default);
   letter-spacing: var(--site00-tracking-heading);
   line-height: var(--site00-lh-heading);
   text-transform: uppercase;
@@ -173,12 +190,14 @@
 /* ─── Coordinate / location strings ─── */
 
 .site00-coordinate {
-  font-family: var(--site00-font-mono);
+  font-family: var(--site00-font-numeric);
   font-size: var(--site00-size-body);
-  font-weight: var(--site00-weight-regular);
+  font-weight: var(--site00-weight-numeric);
+  font-stretch: var(--site00-font-stretch-numeric);
   letter-spacing: var(--site00-tracking-mono);
   line-height: var(--site00-lh-mono);
   text-transform: uppercase;
+  font-variant-numeric: tabular-nums;
 }
 
 /* ─── Panel titles (IDNTY / BLDR) ─── */
@@ -186,7 +205,8 @@
 .site00-panel-title {
   font-family: var(--site00-font-display);
   font-size: var(--site00-size-display-md);
-  font-weight: var(--site00-weight-bold);
+  font-weight: var(--site00-weight-display);
+  font-stretch: var(--site00-font-stretch-display);
   letter-spacing: var(--site00-tracking-display);
   line-height: var(--site00-lh-display);
   text-transform: uppercase;
@@ -198,7 +218,8 @@
 .site00-action-link {
   font-family: var(--site00-font-nav);
   font-size: var(--site00-size-nav);
-  font-weight: var(--site00-weight-medium);
+  font-weight: var(--site00-weight-nav);
+  font-stretch: var(--site00-font-stretch-default);
   letter-spacing: var(--site00-tracking-nav);
   line-height: var(--site00-lh-micro);
   text-transform: uppercase;
@@ -207,20 +228,24 @@
 /* ─── Status strip values ─── */
 
 .site00-status-value {
-  font-family: var(--site00-font-heading);
+  font-family: var(--site00-font-numeric);
   font-size: var(--site00-size-nav);
-  font-weight: var(--site00-weight-medium);
-  letter-spacing: var(--site00-tracking-heading);
+  font-weight: var(--site00-weight-numeric);
+  font-stretch: var(--site00-font-stretch-numeric);
+  letter-spacing: var(--site00-tracking-mono);
   line-height: var(--site00-lh-micro);
   text-transform: uppercase;
+  font-variant-numeric: tabular-nums;
 }
 
 /* ─── Bracket label (ORIGIN ENVIRONMENT) ─── */
 
 .site00-bracket-label {
-  font-family: var(--site00-font-mono);
+  font-family: var(--site00-font-metadata);
   font-size: var(--site00-size-micro);
-  letter-spacing: var(--site00-tracking-label);
+  font-weight: var(--site00-weight-metadata);
+  font-stretch: var(--site00-font-stretch-default);
+  letter-spacing: var(--site00-tracking-metadata);
   line-height: var(--site00-lh-micro);
   text-transform: uppercase;
 }

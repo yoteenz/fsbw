@@ -29,21 +29,23 @@
   margin: 0;
   font-family: var(--site00-font-heading);
   font-size: 11px;
-  letter-spacing: 0.14em;
+  font-weight: var(--site00-weight-label);
+  letter-spacing: var(--site00-tracking-label);
   text-transform: uppercase;
   color: var(--site-text, #0a0a0a);
 }
 
 .site00-loader--sm .site00-loader__message {
   font-size: 9px;
-  letter-spacing: 0.1em;
+  letter-spacing: var(--site00-tracking-nav);
 }
 
 .site00-loader__secondary {
   margin: -4px 0 0;
   font-family: var(--site00-font-body);
   font-size: 9px;
-  letter-spacing: 0.08em;
+  font-weight: var(--site00-weight-body);
+  letter-spacing: var(--site00-tracking-body);
   text-transform: uppercase;
   color: var(--site-text-muted, #6b6b6b);
 }
@@ -92,7 +94,8 @@
   background: transparent;
   font-family: var(--site00-font-heading);
   font-size: 10px;
-  letter-spacing: 0.12em;
+  font-weight: var(--site00-weight-label);
+  letter-spacing: var(--site00-tracking-label);
   text-transform: uppercase;
   color: var(--site-red, #e8192c);
   cursor: pointer;
@@ -376,10 +379,11 @@
   margin: 0;
   font-family: var(--site00-font-heading);
   font-size: calc(9px * var(--loader-scale));
-  letter-spacing: 0.28em;
+  font-weight: var(--site00-weight-label);
+  letter-spacing: var(--site00-tracking-label);
   text-transform: uppercase;
   color: var(--site-red, #e8192c);
-  line-height: 1.15;
+  line-height: var(--site00-lh-label);
   white-space: nowrap;
 }
 
@@ -387,11 +391,11 @@
   margin: 0;
   font-family: var(--site00-font-heading);
   font-size: calc(14px * var(--loader-scale));
-  letter-spacing: 0.14em;
-  font-weight: 500;
+  letter-spacing: var(--site00-tracking-heading);
+  font-weight: var(--site00-weight-heading);
   text-transform: uppercase;
   color: var(--site-text, #0a0a0a);
-  line-height: 1.08;
+  line-height: var(--site00-lh-heading);
   white-space: nowrap;
   max-width: 100%;
 }
@@ -400,10 +404,11 @@
   margin: 0;
   font-family: var(--site00-font-body);
   font-size: calc(10px * var(--loader-scale));
-  letter-spacing: 0.16em;
+  font-weight: var(--site00-weight-body);
+  letter-spacing: var(--site00-tracking-body);
   text-transform: uppercase;
   color: var(--site-text-muted, #6b6b6b);
-  line-height: 1.15;
+  line-height: var(--site00-lh-body);
   white-space: nowrap;
 }
 
@@ -411,10 +416,11 @@
   margin: 0;
   font-family: var(--site00-font-body);
   font-size: calc(9px * var(--loader-scale));
-  letter-spacing: 0.18em;
+  font-weight: var(--site00-weight-metadata);
+  letter-spacing: var(--site00-tracking-metadata);
   text-transform: uppercase;
   color: rgba(10, 10, 10, 0.55);
-  line-height: 1.15;
+  line-height: var(--site00-lh-label);
   white-space: nowrap;
   width: 100%;
   text-align: center;
@@ -448,14 +454,17 @@
 
 .site00-loader-copy__pct {
   flex: 0 0 auto;
-  font-family: var(--site00-font-heading);
+  font-family: var(--site00-font-numeric);
   font-size: calc(9px * var(--loader-scale));
-  letter-spacing: 0.06em;
+  font-weight: var(--site00-weight-numeric);
+  font-stretch: var(--site00-font-stretch-numeric);
+  letter-spacing: var(--site00-tracking-mono);
   color: var(--site-text, #0a0a0a);
   line-height: 1;
   white-space: nowrap;
   min-width: calc(36 * var(--loader-scale) * 1px);
   text-align: right;
+  font-variant-numeric: tabular-nums;
 }
 
 .site00-loader-copy__tagline-group {
@@ -478,10 +487,11 @@
   margin: 0;
   font-family: var(--site00-font-heading);
   font-size: calc(9px * var(--loader-scale));
-  letter-spacing: 0.2em;
+  font-weight: var(--site00-weight-label);
+  letter-spacing: var(--site00-tracking-label);
   text-transform: uppercase;
   color: var(--site-text, #0a0a0a);
-  line-height: 1.15;
+  line-height: var(--site00-lh-label);
   white-space: nowrap;
 }
 
@@ -496,9 +506,11 @@
 }
 
 .site00-loader-copy__mark {
-  font-family: var(--site00-font-heading);
+  font-family: var(--site00-font-display);
   font-size: calc(24px * var(--loader-scale));
-  letter-spacing: 0.04em;
+  font-weight: var(--site00-weight-display);
+  font-stretch: var(--site00-font-stretch-display);
+  letter-spacing: var(--site00-tracking-display);
   line-height: 1;
   color: transparent;
   -webkit-text-stroke: calc(1.25px * var(--loader-scale)) var(--site-red, #e8192c);
@@ -508,10 +520,11 @@
 .site00-loader-copy__signature-label {
   font-family: var(--site00-font-heading);
   font-size: calc(9px * var(--loader-scale));
-  letter-spacing: 0.22em;
+  font-weight: var(--site00-weight-label);
+  letter-spacing: var(--site00-tracking-label);
   text-transform: uppercase;
   color: var(--site-red, #e8192c);
-  line-height: 1.15;
+  line-height: var(--site00-lh-label);
 }
 
 /* Reference map debug — ?loaderRefMap=1 or ?loaderDebug=1 */
@@ -681,7 +694,8 @@
   margin: 0 0 10px;
   font-family: var(--site00-font-heading);
   font-size: clamp(10px, 2.6vw, 12px);
-  letter-spacing: 0.22em;
+  font-weight: var(--site00-weight-label);
+  letter-spacing: var(--site00-tracking-label);
   text-transform: uppercase;
   color: var(--site-red, #e8192c);
 }
@@ -690,18 +704,19 @@
   margin: 0;
   font-family: var(--site00-font-heading);
   font-size: clamp(13px, 3.4vw, 16px);
-  letter-spacing: 0.16em;
-  font-weight: 500;
+  letter-spacing: var(--site00-tracking-heading);
+  font-weight: var(--site00-weight-heading);
   text-transform: uppercase;
   color: var(--site-text, #0a0a0a);
-  line-height: 1.35;
+  line-height: var(--site00-lh-heading);
 }
 
 .site00-loader-status__subtitle {
   margin: 6px 0 0;
   font-family: var(--site00-font-body);
   font-size: clamp(9px, 2.4vw, 11px);
-  letter-spacing: 0.12em;
+  font-weight: var(--site00-weight-body);
+  letter-spacing: var(--site00-tracking-body);
   text-transform: uppercase;
   color: var(--site-text-muted, #6b6b6b);
 }
@@ -710,7 +725,8 @@
   margin: 14px 0 0;
   font-family: var(--site00-font-body);
   font-size: clamp(8px, 2.2vw, 10px);
-  letter-spacing: 0.14em;
+  font-weight: var(--site00-weight-metadata);
+  letter-spacing: var(--site00-tracking-metadata);
   text-transform: uppercase;
   color: rgba(10, 10, 10, 0.72);
 }
@@ -719,7 +735,8 @@
   margin: 18px 0 0;
   font-family: var(--site00-font-heading);
   font-size: clamp(9px, 2.3vw, 11px);
-  letter-spacing: 0.18em;
+  font-weight: var(--site00-weight-label);
+  letter-spacing: var(--site00-tracking-label);
   text-transform: uppercase;
   color: var(--site-text, #0a0a0a);
 }

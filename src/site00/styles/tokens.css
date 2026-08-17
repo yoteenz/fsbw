@@ -23,31 +23,50 @@
   --site-radius-md: 8px;
   --site-radius-lg: 16px;
   --site-radius-xl: 24px;
-  /* SITE 00 typography — isolated from Frontal Slayer Futura stack */
-  --site00-font-display: 'Roboto Condensed', 'Arial Narrow', 'Helvetica Neue Condensed Bold', 'Franklin Gothic Medium Condensed', sans-serif;
-  --site00-font-heading: 'Roboto Condensed', 'Arial Narrow', 'Helvetica Neue Condensed Bold', sans-serif;
-  --site00-font-body: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  --site00-font-mono: ui-monospace, 'SF Mono', 'Cascadia Code', 'Roboto Mono', Menlo, Monaco, Consolas, monospace;
-  --site00-font-nav: 'Roboto Condensed', 'Arial Narrow', 'Helvetica Neue Condensed Bold', sans-serif;
 
-  --site00-weight-light: 300;
+  /* SITE 00 typography — Martian Mono test (isolated from Frontal Slayer Futura) */
+  --site00-font-family: 'Martian Mono', ui-monospace, 'Cascadia Code', Menlo, Monaco, Consolas, monospace;
+  --site00-font-display: var(--site00-font-family);
+  --site00-font-heading: var(--site00-font-family);
+  --site00-font-body: var(--site00-font-family);
+  --site00-font-label: var(--site00-font-family);
+  --site00-font-metadata: var(--site00-font-family);
+  --site00-font-numeric: var(--site00-font-family);
+  --site00-font-mono: var(--site00-font-family);
+  --site00-font-nav: var(--site00-font-family);
+
+  /* Martian Mono width axis — semi-condensed default; condensed for display/numerics */
+  --site00-font-wdth: 87.5;
+  --site00-font-stretch-default: semi-condensed;
+  --site00-font-stretch-display: condensed;
+  --site00-font-stretch-numeric: condensed;
+
+  --site00-weight-metadata: 400;
   --site00-weight-regular: 400;
+  --site00-weight-body: 500;
+  --site00-weight-label: 600;
+  --site00-weight-nav: 600;
   --site00-weight-medium: 500;
+  --site00-weight-heading: 700;
   --site00-weight-bold: 700;
+  --site00-weight-display: 800;
+  --site00-weight-numeric: 650;
 
-  --site00-tracking-display: -0.02em;
-  --site00-tracking-heading: 0.1em;
-  --site00-tracking-body: 0.04em;
-  --site00-tracking-label: 0.16em;
-  --site00-tracking-nav: 0.14em;
-  --site00-tracking-mono: 0.06em;
+  /* Restrained tracking — Martian Mono native geometry, not luxury wide spacing */
+  --site00-tracking-display: 0em;
+  --site00-tracking-heading: 0.03em;
+  --site00-tracking-body: 0.01em;
+  --site00-tracking-label: 0.06em;
+  --site00-tracking-metadata: 0.05em;
+  --site00-tracking-nav: 0.04em;
+  --site00-tracking-mono: 0.02em;
 
   --site00-lh-display: 0.98;
-  --site00-lh-heading: 1.08;
-  --site00-lh-body: 1.32;
-  --site00-lh-label: 1.15;
-  --site00-lh-mono: 1.2;
-  --site00-lh-micro: 1.1;
+  --site00-lh-heading: 1.1;
+  --site00-lh-body: 1.45;
+  --site00-lh-label: 1.12;
+  --site00-lh-mono: 1.15;
+  --site00-lh-micro: 1.08;
 
   --site00-size-display-xl: clamp(2.75rem, 7.5vw, 4.75rem);
   --site00-size-display-lg: clamp(2rem, 5vw, 3.25rem);
