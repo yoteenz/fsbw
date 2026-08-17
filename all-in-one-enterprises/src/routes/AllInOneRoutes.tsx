@@ -3,6 +3,7 @@ import { Link, Navigate, Route, Routes, useParams } from 'react-router-dom';
 import { AIOAuthProvider } from '../auth/AIOAuthProvider';
 import { CustomerRouteGuard, OfficeRouteGuard } from '../auth/guards/RouteGuards';
 import { AIOPublicLayout } from '../layouts/AIOPublicLayout';
+import { SmartIntakeLayout } from '../layouts/SmartIntakeLayout';
 import { AIOPortalLayout } from '../layouts/AIOPortalLayout';
 import { AIOAuthLayout } from '../layouts/AIOAuthLayout';
 import { HomePage } from '../pages/HomePage';
@@ -228,7 +229,6 @@ export default function AllInOneRoutes() {
           <Route path="services/dispatching" element={<ServiceCatalogDetailPage slug="dispatching" />} />
           <Route path="services/brokerage" element={<ServiceCatalogDetailPage slug="brokerage" />} />
           <Route path="services/:serviceSlug" element={<ServiceCatalogDetailPage />} />
-          <Route path="get-started" element={<GetStartedPage />} />
           <Route path="roadmap/results" element={<RoadmapResultsPage />} />
           <Route path="service-plan" element={<ServicePlanPage />} />
           <Route path="request/submit" element={<RequestSubmitPage />} />
@@ -247,6 +247,12 @@ export default function AllInOneRoutes() {
           <Route path="start-your-business/roll" element={<StartBusinessRollPage />} />
           <Route path="client-portal" element={<ClientPortalInfoPage />} />
           <Route path="debug/icon-library" element={<IconLibraryDebugPage />} />
+        </Route>
+
+        <Route element={<SmartIntakeLayout />}>
+          <Route path="get-started" element={<GetStartedPage />} />
+          <Route path="get-started/desktop" element={<GetStartedPage layoutMode="desktop" />} />
+          <Route path="get-started/mobile" element={<GetStartedPage layoutMode="mobile" />} />
         </Route>
 
         <Route element={<CustomerRouteGuard />}>

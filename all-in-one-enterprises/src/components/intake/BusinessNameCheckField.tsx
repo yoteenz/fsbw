@@ -10,7 +10,6 @@ import {
 import type { BusinessNameCheckStatus } from '../../business-formation/businessNameRegistry/types';
 import { getStateRegistryCapability } from '../../business-formation/businessNameRegistry/stateCapabilities';
 import { createBusinessNameReviewTask } from '../../demo/businessNameCheckActions';
-import { AIOButton } from '../AIOButton';
 import { formatAppDate } from '../../i18n/format';
 
 type Props = {
@@ -21,6 +20,7 @@ type Props = {
   label: string;
   description?: string;
   error?: string;
+  variant?: 'legacy' | 'smart';
 };
 
 export function BusinessNameCheckField({
@@ -31,11 +31,14 @@ export function BusinessNameCheckField({
   label,
   description,
   error,
+  variant = 'legacy',
 }: Props) {
   const { t, i18n } = useTranslation('intake');
   const [checking, setChecking] = useState(false);
   const [localError, setLocalError] = useState<string | null>(null);
+  const [detailsOpen, setDetailsOpen] = useState(false);
   const liveRef = useRef<HTMLDivElement>(null);
+  const isSmart = variant === 'smart';
 
   const businessName = (getFieldValue(answers, field) as string | undefined) ?? '';
   const formationState = answers.business?.formationState ?? '';
@@ -70,6 +73,7 @@ export function BusinessNameCheckField({
       },
     });
     setLocalError(null);
+    setDetailsOpen(false);
   };
 
   const runCheck = useCallback(async () => {
@@ -116,142 +120,125 @@ export function BusinessNameCheckField({
     }
   }, [answers, businessName, entityStructure, formationState, onChange, t]);
 
-  const statusClass = displayStatus !== 'idle' ? `aio-name-check__status--${displayStatus}` : '';
+  const rootClass = isSmart ? 'si-name-check' : 'aio-intake-field aio-name-check';
 
   return (
-    <div className="aio-intake-field aio-name-check">
-      <label htmlFor={inputId} className="aio-intake-label">
-        {label}
-      </label>
-      {description && <p className="aio-intake-desc">{description}</p>}
+    <div className={rootClass}>
+      {label && (
+        <label htmlFor={inputId} className={isSmart ? 'si-field__desc' : 'aio-intake-label'}>
+          {label}
+        </label>
+      )}
+      {description && <p className={isSmart ? 'si-name-check__desc' : 'aio-intake-desc'}>{description}</p>}
 
-      <input
-        id={inputId}
-        type="text"
-        className="aio-intake-input"
-        value={businessName}
-        onChange={(e) => updateName(e.target.value)}
-        autoComplete="organization"
-        aria-describedby={`${inputId}-status`}
-      />
+      <div className={isSmart ? 'si-name-check__row' : undefined}>
+        <input
+          id={inputId}
+          type="text"
+          className={isSmart ? 'si-input si-name-check__input' : 'aio-intake-input'}
+          value={businessName}
+          onChange={(e) => updateName(e.target.value)}
+          autoComplete="organization"
+          aria-describedby={`${inputId}-status`}
+          placeholder={isSmart ? t('business.namePlaceholder') : undefined}
+        />
 
-      <div className="aio-name-check__actions">
-        <AIOButton
+        <button
           type="button"
-          variant="gold"
+          className={isSmart ? 'si-btn si-btn--primary si-name-check__btn' : 'aio-btn aio-btn--gold'}
           onClick={() => void runCheck()}
           disabled={checking}
           aria-busy={checking}
         >
-          {checking ? t('nameCheck.checkingButton') : t('nameCheck.checkButton')}
-        </AIOButton>
+          {checking ? t('nameCheck.checkingButton') : isSmart ? t('nameCheck.checkButtonShort') : t('nameCheck.checkButton')}
+        </button>
       </div>
 
       <div
         id={`${inputId}-status`}
         ref={liveRef}
-        className={`aio-name-check__status ${statusClass}`}
+        className={`${isSmart ? 'si-name-check__result' : 'aio-name-check__status'} si-name-check__result--${displayStatus}`}
         role="status"
         aria-live="polite"
         tabIndex={-1}
       >
         {displayStatus === 'checking' && (
-          <p className="aio-name-check__status-line">
-            {t('nameCheck.checkingRegistry', { state: stateLabel || formationState })}
-          </p>
+          <p className="si-name-check__line">{t('nameCheck.checkingRegistry', { state: stateLabel || formationState })}</p>
         )}
 
         {displayStatus === 'stale_result' && (
-          <p className="aio-name-check__status-line aio-name-check__status-line--warn">
-            {t('nameCheck.stale')}
-          </p>
+          <div className="si-name-check__banner si-name-check__banner--warn">
+            <p>{t('nameCheck.stale')}</p>
+          </div>
         )}
 
         {displayStatus === 'likely_available' && nameCheck && (
-          <>
-            <p className="aio-name-check__status-line aio-name-check__status-line--ok">
-              {t('nameCheck.likelyAvailable')}
+          <div className="si-name-check__banner si-name-check__banner--success">
+            <p className="si-name-check__banner-title">
+              {t('nameCheck.greatNews', { name: businessName, state: stateLabel })}
             </p>
-            <p className="aio-name-check__status-detail">{nameCheck.message}</p>
-            <p className="aio-name-check__disclaimer">{t('nameCheck.disclaimer', { state: stateLabel })}</p>
-          </>
+            <p className="si-name-check__banner-detail">{nameCheck.message}</p>
+            <button type="button" className="si-name-check__details-toggle" onClick={() => setDetailsOpen((o) => !o)}>
+              {detailsOpen ? t('nameCheck.hideDetails') : t('nameCheck.viewDetails')}
+            </button>
+            {detailsOpen && (
+              <p className="si-name-check__legal">{t('nameCheck.legalDisclaimer')}</p>
+            )}
+          </div>
         )}
 
         {displayStatus === 'possible_conflict' && nameCheck && (
-          <>
-            <p className="aio-name-check__status-line aio-name-check__status-line--warn">
-              {t('nameCheck.possibleConflict')}
-            </p>
-            <p className="aio-name-check__status-detail">{nameCheck.message}</p>
+          <div className="si-name-check__banner si-name-check__banner--warn">
+            <p className="si-name-check__banner-title">{t('nameCheck.conflictFound')}</p>
+            <p>{nameCheck.message}</p>
             {nameCheck.topMatches.length > 0 && (
-              <ul className="aio-name-check__matches">
+              <ul className="si-name-check__matches">
                 {nameCheck.topMatches.slice(0, 5).map((m) => (
                   <li key={`${m.name}-${m.controlNumber ?? ''}`}>{m.name}</li>
                 ))}
               </ul>
             )}
-            <div className="aio-name-check__inline-actions">
-              <button type="button" className="aio-name-check__link" onClick={() => document.getElementById(inputId)?.focus()}>
-                {t('nameCheck.editName')}
+            <div className="si-name-check__inline-actions">
+              <button type="button" className="si-link" onClick={() => setDetailsOpen((o) => !o)}>
+                {t('nameCheck.viewMatches')}
               </button>
-              <button type="button" className="aio-name-check__link" onClick={() => void runCheck()} disabled={checking}>
-                {t('nameCheck.checkAgain')}
+              <button type="button" className="si-link" onClick={() => document.getElementById(inputId)?.focus()}>
+                {t('nameCheck.tryAnotherName')}
               </button>
             </div>
-          </>
+          </div>
         )}
 
         {displayStatus === 'unavailable' && nameCheck && (
-          <>
-            <p className="aio-name-check__status-line aio-name-check__status-line--bad">
-              {t('nameCheck.unavailable')}
-            </p>
-            <p className="aio-name-check__status-detail">{nameCheck.message}</p>
-            {nameCheck.topMatches[0] && (
-              <p className="aio-name-check__match-highlight">{nameCheck.topMatches[0].name}</p>
-            )}
-            <div className="aio-name-check__inline-actions">
-              <button type="button" className="aio-name-check__link" onClick={() => document.getElementById(inputId)?.focus()}>
-                {t('nameCheck.editName')}
-              </button>
-              <button type="button" className="aio-name-check__link" onClick={() => void runCheck()} disabled={checking}>
-                {t('nameCheck.checkAnother')}
+          <div className="si-name-check__banner si-name-check__banner--error">
+            <p className="si-name-check__banner-title">{t('nameCheck.unavailable')}</p>
+            <p>{nameCheck.message}</p>
+            <div className="si-name-check__inline-actions">
+              <button type="button" className="si-link" onClick={() => document.getElementById(inputId)?.focus()}>
+                {t('nameCheck.tryAnotherName')}
               </button>
             </div>
-          </>
+          </div>
         )}
 
         {(displayStatus === 'lookup_unavailable' || displayStatus === 'manual_review_required') && nameCheck && (
-          <>
-            <p className="aio-name-check__status-line aio-name-check__status-line--warn">
-              {t('nameCheck.manualRequired')}
-            </p>
-            <p className="aio-name-check__status-detail">
-              {t('nameCheck.manualDetail', { state: stateLabel || formationState })}
-            </p>
-            <div className="aio-name-check__inline-actions">
-              <button type="button" className="aio-name-check__link" onClick={() => void runCheck()} disabled={checking}>
-                {t('nameCheck.tryAgain')}
-              </button>
-            </div>
-          </>
+          <div className="si-name-check__banner si-name-check__banner--warn">
+            <p className="si-name-check__banner-title">{t('nameCheck.unableToVerify')}</p>
+            <p>{t('nameCheck.manualDetail', { state: stateLabel || formationState })}</p>
+          </div>
         )}
 
         {displayStatus === 'error' && nameCheck && (
-          <>
-            <p className="aio-name-check__status-line aio-name-check__status-line--bad">
-              {t('nameCheck.errorTitle')}
-            </p>
-            <p className="aio-name-check__status-detail">{nameCheck.message ?? t('nameCheck.errorBody')}</p>
-            <div className="aio-name-check__inline-actions">
-              <button type="button" className="aio-name-check__link" onClick={() => void runCheck()} disabled={checking}>
-                {t('nameCheck.tryAgain')}
-              </button>
-            </div>
-          </>
+          <div className="si-name-check__banner si-name-check__banner--error">
+            <p className="si-name-check__banner-title">{t('nameCheck.errorTitle')}</p>
+            <p>{nameCheck.message ?? t('nameCheck.errorBody')}</p>
+            <button type="button" className="si-link" onClick={() => void runCheck()} disabled={checking}>
+              {t('nameCheck.tryAgain')}
+            </button>
+          </div>
         )}
 
-        {nameCheck?.checkedAt && displayStatus !== 'idle' && displayStatus !== 'checking' && displayStatus !== 'stale_result' && (
+        {nameCheck?.checkedAt && displayStatus !== 'idle' && displayStatus !== 'checking' && displayStatus !== 'stale_result' && !isSmart && (
           <p className="aio-name-check__checked-at">
             {t('nameCheck.checkedAt', { date: formatAppDate(nameCheck.checkedAt, i18n.language) })}
           </p>
@@ -259,7 +246,7 @@ export function BusinessNameCheckField({
       </div>
 
       {(error || localError) && (
-        <p className="aio-intake-error" role="alert">
+        <p className={isSmart ? 'si-field-error' : 'aio-intake-error'} role="alert">
           {error ?? localError}
         </p>
       )}

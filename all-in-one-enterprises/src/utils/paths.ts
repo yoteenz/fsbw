@@ -119,6 +119,8 @@ export const aioPaths = {
   startYourBusiness: `${BASE}/start-your-business`,
   clientPortalInfo: `${BASE}/client-portal`,
   getStarted: `${BASE}/get-started`,
+  getStartedDesktop: `${BASE}/get-started/desktop`,
+  getStartedMobile: `${BASE}/get-started/mobile`,
   getStartedForService: (serviceSlug: string) => `${BASE}/get-started?service=${encodeURIComponent(serviceSlug)}`,
   roadmapResults: `${BASE}/roadmap/results`,
   servicePlan: `${BASE}/service-plan`,
