@@ -1,8 +1,6 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import { resolveAsstsSlot } from '../services/asstsApi';
 import type { AsstsEnvironmentSlot } from '../config/slots';
-import '../../styles/site00.css';
-import '../styles/assts.css';
 
 type AsstsEnvironmentShellProps = {
   slotKey: AsstsEnvironmentSlot;
