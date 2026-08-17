@@ -12,6 +12,8 @@ import {
   getLibraryCategoryCounts,
   getLibrarySummary,
   getNextNeedsReviewAssetInBatch,
+  getAssetBatchNavigation,
+  listFilteredLibraryAssets,
   listReviewEvents,
   recordReviewEvent,
   recomputeBatchStatus,
@@ -62,12 +64,33 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         const pipeline = await ensureAutoGenerationPipeline(BATCH_ASSTS_ENV_001.batchKey);
         const summary = await getLibrarySummary();
         const categories = await getLibraryCategoryCounts();
+        const status = String(req.query.status ?? '').trim();
+        const category = String(req.query.category ?? '').trim();
+        const view = String(req.query.view ?? '').trim();
+        let filteredAssets: Awaited<ReturnType<typeof listFilteredLibraryAssets>> | null = null;
+        if (status || category || view === 'all') {
+          filteredAssets = await listFilteredLibraryAssets({
+            status: status || undefined,
+            category: category || undefined,
+          });
+        }
         const priorityBatch = summary.batchesList.find((b) => b.batch_key === BATCH_ASSTS_ENV_001.batchKey);
         let priority = null;
         if (priorityBatch) {
-          priority = await enrichBatch(priorityBatch);
+          const full = await getBatchById(priorityBatch.id);
+          if (full) priority = await enrichBatch(full);
         }
-        return res.status(200).json({ ok: true, summary, categories, priorityBatch: priority, pipeline });
+        return res.status(200).json({ ok: true, summary, categories, priorityBatch: priority, pipeline, filteredAssets });
+      }
+
+      if (action === 'assets') {
+        const status = String(req.query.status ?? '').trim();
+        const category = String(req.query.category ?? '').trim();
+        const assets = await listFilteredLibraryAssets({
+          status: status || undefined,
+          category: category || undefined,
+        });
+        return res.status(200).json({ ok: true, assets });
       }
 
       if (action === 'batch') {
@@ -86,7 +109,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         if (!asset) return res.status(404).json({ error: 'Asset not found' });
         await pollPendingGenerationJobs(3);
         const history = await listReviewEvents(assetId);
-        return res.status(200).json({ ok: true, asset: await enrichAsset(asset), history });
+        const enriched = await enrichAsset(asset);
+        const navigation = asset.batch_id
+          ? await getAssetBatchNavigation(assetId, asset.batch_id)
+          : { prevAssetId: null, nextAssetId: null, position: 0, total: 0 };
+        return res.status(200).json({ ok: true, asset: enriched, history, navigation });
       }
 
       if (action === 'slots') {

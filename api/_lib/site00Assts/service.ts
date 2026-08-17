@@ -185,6 +185,50 @@ export async function recordReviewEvent(input: {
   if (error) throw new Error(error.message);
 }
 
+type EnrichedAssetPreview = {
+  status: string;
+  approved_version_id: string | null;
+  currentVersion: { previewUrl: string | null } | null;
+  versions: Array<{ id: string; previewUrl: string | null; status: string }>;
+};
+
+export function pickRepresentativePreview(assets: EnrichedAssetPreview[]): string | null {
+  for (const a of assets) {
+    if (a.approved_version_id) {
+      const v = a.versions.find((ver) => ver.id === a.approved_version_id);
+      if (v?.previewUrl) return v.previewUrl;
+    }
+  }
+  for (const a of assets) {
+    if (a.status === 'NEEDS_REVIEW' && a.currentVersion?.previewUrl) return a.currentVersion.previewUrl;
+  }
+  for (const a of assets) {
+    if (a.currentVersion?.previewUrl) return a.currentVersion.previewUrl;
+  }
+  for (const a of assets) {
+    for (const v of a.versions) {
+      if (v.previewUrl) return v.previewUrl;
+    }
+  }
+  return null;
+}
+
+export async function summarizeBatchForLibrary(batch: DbBatch) {
+  const assets = await listAssetsForBatch(batch.id);
+  const enriched = await Promise.all(assets.map((a) => enrichAsset(a)));
+  const needsReview = assets.filter((a) => a.status === 'NEEDS_REVIEW').length;
+  const approved = assets.filter((a) => a.approved_version_id != null).length;
+  return {
+    id: batch.id,
+    batch_key: batch.batch_key,
+    display_name: batch.display_name,
+    status: batch.status,
+    category: batch.category,
+    counts: { total: assets.length, approved, needsReview },
+    thumbnailUrl: pickRepresentativePreview(enriched),
+  };
+}
+
 export async function getLibrarySummary() {
   const { data: assets } = await supabase().from('site00_logical_assets').select('id, status, required, asset_type');
   const rows = assets ?? [];
@@ -194,13 +238,15 @@ export async function getLibrarySummary() {
   const approved = rows.filter((a) => a.status === 'APPROVED' || a.status === 'LOCKED').length;
   const locked = rows.filter((a) => a.status === 'LOCKED').length;
 
+  const batchesList = await Promise.all((batches ?? []).map((b) => summarizeBatchForLibrary(b as DbBatch)));
+
   return {
     totalAssets: rows.length,
     batches: batches?.length ?? 0,
     needsReview,
     approved,
     locked,
-    batchesList: batches ?? [],
+    batchesList,
   };
 }
 
@@ -212,14 +258,65 @@ const LIBRARY_CATEGORY_DEFS = [
   { id: 'project', label: '05 PROJECT ASSETS', assetTypes: ['project'] },
 ] as const;
 
-export async function getLibraryCategoryCounts(): Promise<Array<{ id: string; label: string; count: number }>> {
-  const { data: assets } = await supabase().from('site00_logical_assets').select('asset_type');
-  const rows = assets ?? [];
-  return LIBRARY_CATEGORY_DEFS.map((cat) => ({
-    id: cat.id,
-    label: cat.label,
-    count: rows.filter((a) => (cat.assetTypes as readonly string[]).includes(a.asset_type ?? 'environment')).length,
-  }));
+export async function getLibraryCategoryCounts(): Promise<
+  Array<{ id: string; label: string; count: number; coverUrl: string | null }>
+> {
+  const { data: assets } = await supabase().from('site00_logical_assets').select('*');
+  const rows = (assets ?? []) as DbAsset[];
+  const results = [];
+  for (const cat of LIBRARY_CATEGORY_DEFS) {
+    const inCat = rows.filter((a) => (cat.assetTypes as readonly string[]).includes(a.asset_type ?? 'environment'));
+    let coverUrl: string | null = null;
+    const approvedFirst = inCat.find((a) => a.approved_version_id || a.status === 'APPROVED' || a.status === 'LOCKED');
+    const pick = approvedFirst ?? inCat.find((a) => a.current_version_id) ?? inCat[0];
+    if (pick) {
+      const enriched = await enrichAsset(pick);
+      coverUrl = pickRepresentativePreview([enriched]);
+    }
+    results.push({
+      id: cat.id,
+      label: cat.label,
+      count: inCat.length,
+      coverUrl,
+    });
+  }
+  return results;
+}
+
+export async function listFilteredLibraryAssets(filters: { status?: string; category?: string }) {
+  let rows: DbAsset[] = [];
+  const { data, error } = await supabase().from('site00_logical_assets').select('*').order('asset_key');
+  if (error) throw new Error(error.message);
+  rows = (data ?? []) as DbAsset[];
+
+  if (filters.status === 'needs-review') {
+    rows = rows.filter((a) => a.status === 'NEEDS_REVIEW');
+  } else if (filters.status === 'approved') {
+    rows = rows.filter((a) => a.status === 'APPROVED' || a.status === 'LOCKED');
+  }
+
+  if (filters.category) {
+    const catDef = LIBRARY_CATEGORY_DEFS.find((c) => c.id === filters.category);
+    if (catDef) {
+      rows = rows.filter((a) => (catDef.assetTypes as readonly string[]).includes(a.asset_type ?? 'environment'));
+    }
+  }
+
+  return Promise.all(rows.map((a) => enrichAsset(a)));
+}
+
+export async function getAssetBatchNavigation(assetId: string, batchId: string) {
+  const assets = await listAssetsForBatch(batchId);
+  const idx = assets.findIndex((a) => a.id === assetId);
+  if (idx < 0) {
+    return { prevAssetId: null, nextAssetId: null, position: 0, total: assets.length };
+  }
+  return {
+    prevAssetId: idx > 0 ? assets[idx - 1].id : null,
+    nextAssetId: idx < assets.length - 1 ? assets[idx + 1].id : null,
+    position: idx + 1,
+    total: assets.length,
+  };
 }
 
 export async function resetBatchForReview(batchId: string): Promise<void> {
@@ -353,6 +450,14 @@ export function publicUrlForStoragePath(path: string | null | undefined): string
   return data.publicUrl;
 }
 
+function mapVersionPublic(v: DbVersion) {
+  return {
+    ...v,
+    previewUrl: publicUrlForStoragePath(v.preview_path ?? v.thumbnail_path ?? v.file_path),
+    fileUrl: publicUrlForStoragePath(v.file_path),
+  };
+}
+
 export async function enrichAsset(asset: DbAsset) {
   const versions = await getVersionsForAsset(asset.id);
   const current = asset.current_version_id
@@ -361,27 +466,14 @@ export async function enrichAsset(asset: DbAsset) {
   const approved = asset.approved_version_id
     ? versions.find((v) => v.id === asset.approved_version_id) ?? null
     : null;
+  const batch = asset.batch_id ? await getBatchById(asset.batch_id) : null;
   return {
     ...asset,
-    versions: versions.map((v) => ({
-      ...v,
-      previewUrl: publicUrlForStoragePath(v.preview_path ?? v.thumbnail_path ?? v.file_path),
-      fileUrl: publicUrlForStoragePath(v.file_path),
-    })),
-    currentVersion: current
-      ? {
-          ...current,
-          previewUrl: publicUrlForStoragePath(current.preview_path ?? current.thumbnail_path ?? current.file_path),
-          fileUrl: publicUrlForStoragePath(current.file_path),
-        }
-      : null,
-    approvedVersion: approved
-      ? {
-          ...approved,
-          previewUrl: publicUrlForStoragePath(approved.preview_path ?? approved.thumbnail_path ?? approved.file_path),
-          fileUrl: publicUrlForStoragePath(approved.file_path),
-        }
-      : null,
+    batch_key: batch?.batch_key ?? null,
+    batch_display_name: batch?.display_name ?? null,
+    versions: versions.map(mapVersionPublic),
+    currentVersion: current ? mapVersionPublic(current) : null,
+    approvedVersion: approved ? mapVersionPublic(approved) : null,
   };
 }
 
@@ -392,9 +484,12 @@ export async function enrichBatch(batch: DbBatch) {
   const needsReviewCount = enrichedAssets.filter((a) => a.status === 'NEEDS_REVIEW').length;
   const regeneratingCount = enrichedAssets.filter((a) => a.status === 'REGENERATING' || a.status === 'GENERATING').length;
   const rejectedCount = enrichedAssets.filter((a) => a.status === 'REJECTED').length;
+  const progressPercent =
+    enrichedAssets.length > 0 ? Math.round((approvedCount / enrichedAssets.length) * 100) : 0;
   return {
     ...batch,
     assets: enrichedAssets,
+    thumbnailUrl: pickRepresentativePreview(enrichedAssets),
     counts: {
       total: enrichedAssets.length,
       approved: approvedCount,
@@ -402,5 +497,6 @@ export async function enrichBatch(batch: DbBatch) {
       regenerating: regeneratingCount,
       rejected: rejectedCount,
     },
+    progressPercent,
   };
 }

@@ -55,6 +55,7 @@ export function AsstsEnvironmentShell({ slotKey, children }: AsstsEnvironmentShe
             : undefined
         }
       />
+      <div className="site00-assts-env-veil" aria-hidden="true" />
       <div className="site00-assts-ui">{children}</div>
     </div>
   );

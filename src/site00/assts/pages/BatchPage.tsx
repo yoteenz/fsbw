@@ -1,8 +1,10 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { AsstsEnvironmentShell } from '../components/AsstsEnvironmentShell';
 import { AsstsDevPanel, useAsstsAutoRefresh } from '../components/AsstsDevPanel';
-import { AsstsMobileNav, AsstsStatusBadge } from '../components/AsstsMobileNav';
+import { AsstsBottomDock, AsstsViewModeToggle, type BatchViewMode } from '../components/AsstsMobileNav';
+import { AsstsAssetCard, AsstsBatchSummaryPanel } from '../components/AsstsCards';
+import { AsstsLockConfirmSheet } from '../components/AsstsSheets';
 import { ASSTS_ENVIRONMENT_SLOTS } from '../config/slots';
 import { fetchAsstsBatch, lockAsstsBatch, type AsstsBatchDetail } from '../services/asstsApi';
 
@@ -12,6 +14,8 @@ export default function AsstsBatchPage() {
   const [batch, setBatch] = useState<AsstsBatchDetail | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [locking, setLocking] = useState(false);
+  const [lockOpen, setLockOpen] = useState(false);
+  const [viewMode, setViewMode] = useState<BatchViewMode>('grid');
 
   const load = useCallback(async () => {
     if (!batchId) return;
@@ -32,85 +36,126 @@ export default function AsstsBatchPage() {
   useAsstsAutoRefresh(load, { hasGenerating: !!hasGenerating });
 
   const readyToLock = batch?.status === 'READY_TO_LOCK';
+  const progressPercent = batch?.progressPercent ?? (batch ? Math.round((batch.counts.approved / Math.max(batch.counts.total, 1)) * 100) : 0);
+
+  const slotKeys = useMemo(
+    () =>
+      batch?.assets
+        .filter((a) => a.approved_version_id)
+        .map((a) => (a as { semantic_slot_key?: string | null }).semantic_slot_key ?? a.asset_key)
+        .filter(Boolean) ?? [],
+    [batch],
+  );
+
+  const handleLock = () => {
+    if (!batch) return;
+    setLocking(true);
+    void lockAsstsBatch(batch.id)
+      .then(() => {
+        setLockOpen(false);
+        return load();
+      })
+      .catch((e) => setError(e instanceof Error ? e.message : 'Lock failed'))
+      .finally(() => setLocking(false));
+  };
 
   return (
     <AsstsEnvironmentShell slotKey={ASSTS_ENVIRONMENT_SLOTS.batch}>
-      <header className="site00-assts-header">
-        <Link to="/assts" className="site00-label">
-          ← LIBRARY
+      <header className="assts-page-header">
+        <Link to="/assts/batches" className="assts-back-link">
+          ← BATCHES
         </Link>
-        <h1 className="site00-heading-lg site00-assts-batch-title">{batch?.batch_key ?? 'BATCH'}</h1>
-        <p className="site00-assts-batch-subtitle">{batch?.display_name ?? batch?.category}</p>
+        <h1 className="assts-page-header__title">{batch?.batch_key ?? 'BATCH'}</h1>
+        <p className="assts-page-header__sub">{batch?.category ?? batch?.display_name}</p>
         {batch ? (
-          <div className="site00-assts-batch-stats">
-            <span className="site00-label">{String(batch.counts.total).padStart(2, '0')} ASSETS</span>
-            <AsstsStatusBadge status={`${batch.counts.approved} APPROVED`} variant="muted" />
-            <AsstsStatusBadge status={`${batch.counts.needsReview} NEED REVIEW`} variant="review" />
-          </div>
+          <p className="assts-page-header__meta">
+            {String(batch.counts.total).padStart(2, '0')} TOTAL ASSETS
+          </p>
         ) : null}
       </header>
+
+      {batch ? <AsstsBatchSummaryPanel counts={batch.counts} progressPercent={progressPercent} /> : null}
+
+      <AsstsViewModeToggle mode={viewMode} onChange={setViewMode} showContact />
 
       <AsstsDevPanel batchId={batchId} onRefresh={load} />
 
       {error ? (
-        <div className="site00-assts-alert site00-assts-panel" role="alert">
+        <div className="assts-alert assts-glass assts-glass--panel" role="alert">
           {error}
         </div>
       ) : null}
 
       {!batch?.assets.length ? (
-        <p className="site00-assts-empty">
+        <p className="assts-empty">
           {hasGenerating ? 'Batch generating — assets will appear automatically.' : 'Batch empty or loading…'}
         </p>
-      ) : (
-        <div className="site00-assts-grid" role="list">
+      ) : viewMode === 'grid' ? (
+        <div className="assts-review-grid" role="list">
+          {batch.assets.map((asset) => (
+            <AsstsAssetCard
+              key={asset.id}
+              assetKey={asset.asset_key}
+              displayName={asset.display_name}
+              previewUrl={asset.currentVersion?.previewUrl}
+              status={asset.status}
+              onClick={() => navigate(`/assts/${asset.id}`)}
+            />
+          ))}
+        </div>
+      ) : viewMode === 'contact' ? (
+        <div className="assts-contact-sheet">
           {batch.assets.map((asset) => (
             <button
               key={asset.id}
               type="button"
-              className="site00-assts-asset-card site00-assts-panel"
+              className="assts-contact-sheet__item"
               onClick={() => navigate(`/assts/${asset.id}`)}
             >
               {asset.currentVersion?.previewUrl ? (
-                <img
-                  src={asset.currentVersion.previewUrl}
-                  alt=""
-                  className="site00-assts-asset-card__img"
-                  loading="lazy"
-                />
+                <img src={asset.currentVersion.previewUrl} alt="" loading="lazy" />
               ) : (
-                <div className="site00-assts-asset-card__img site00-assts-asset-card__img--empty" />
+                <div className="assts-contact-sheet__empty" />
               )}
-              <div className="site00-assts-asset-card__meta">
-                <div className="site00-mono">{asset.asset_key}</div>
-                <div className="site00-assts-asset-card__name">{asset.display_name}</div>
-                <AsstsStatusBadge status={asset.status} />
-              </div>
+              <span className="assts-mono">{asset.asset_key}</span>
             </button>
           ))}
         </div>
-      )}
+      ) : null}
 
-      {batch && readyToLock ? (
-        <div className="site00-assts-lock-bar">
-          <span>BATCH READY TO LOCK</span>
+      {batch ? (
+        <div className="assts-batch-progress-bar">
+          <div className="assts-batch-progress-bar__info">
+            <span className="assts-batch-progress-bar__label">BATCH PROGRESS</span>
+            <span className="assts-batch-progress-bar__count">
+              {String(batch.counts.approved).padStart(2, '0')} / {String(batch.counts.total).padStart(2, '0')} APPROVED
+            </span>
+          </div>
+          <div className="assts-batch-progress-bar__track">
+            <div className="assts-batch-progress-bar__fill" style={{ width: `${progressPercent}%` }} />
+          </div>
           <button
             type="button"
-            disabled={locking}
-            onClick={() => {
-              setLocking(true);
-              void lockAsstsBatch(batch.id)
-                .then(() => load())
-                .catch((e) => setError(e instanceof Error ? e.message : 'Lock failed'))
-                .finally(() => setLocking(false));
-            }}
+            className="assts-batch-progress-bar__lock"
+            disabled={!readyToLock || locking}
+            onClick={() => setLockOpen(true)}
           >
-            LOCK BATCH
+            🔒 LOCK BATCH
           </button>
         </div>
       ) : null}
 
-      <AsstsMobileNav />
+      <AsstsLockConfirmSheet
+        open={lockOpen}
+        busy={locking}
+        batchKey={batch?.batch_key ?? ''}
+        assetCount={batch?.counts.approved ?? 0}
+        slotKeys={slotKeys}
+        onClose={() => setLockOpen(false)}
+        onConfirm={handleLock}
+      />
+
+      <AsstsBottomDock />
     </AsstsEnvironmentShell>
   );
 }

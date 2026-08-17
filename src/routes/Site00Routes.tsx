@@ -12,6 +12,7 @@ const Site00IdntyStatePage = lazy(() => import('../site00/pages/IdntyStatePage')
 const Site00BldrPage = lazy(() => import('../site00/pages/BldrPage'));
 const Site00BldrStatePage = lazy(() => import('../site00/pages/BldrStatePage'));
 const AsstsLibraryPage = lazy(() => import('../site00/assts/pages/LibraryPage'));
+const AsstsBatchesListPage = lazy(() => import('../site00/assts/pages/BatchesListPage'));
 const AsstsBatchPage = lazy(() => import('../site00/assts/pages/BatchPage'));
 const AsstsInspectionPage = lazy(() => import('../site00/assts/pages/InspectionPage'));
 
@@ -126,6 +127,14 @@ export function Site00Routes() {
           element={
             <Site00Suspense>
               <AsstsLibraryPage />
+            </Site00Suspense>
+          }
+        />
+        <Route
+          path="batches"
+          element={
+            <Site00Suspense>
+              <AsstsBatchesListPage />
             </Site00Suspense>
           }
         />

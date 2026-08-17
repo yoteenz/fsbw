@@ -1,9 +1,16 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { AsstsEnvironmentShell } from '../components/AsstsEnvironmentShell';
 import { AsstsDevPanel, useAsstsAutoRefresh } from '../components/AsstsDevPanel';
-import { AsstsRegenerateSheet } from '../components/AsstsRegenerateSheet';
-import { AsstsMobileNav, AsstsStatusBadge } from '../components/AsstsMobileNav';
+import { AsstsBottomDock } from '../components/AsstsMobileNav';
+import {
+  AsstsCompareOverlay,
+  AsstsFullScreenViewer,
+  AsstsInspectorFooter,
+  AsstsMetadataPanel,
+  AsstsVersionStrip,
+} from '../components/AsstsInspectorParts';
+import { AsstsRegenerateSheet, AsstsRejectSheet, AsstsVariantSheet } from '../components/AsstsSheets';
 import { ASSTS_ENVIRONMENT_SLOTS, type CorrectionCategory } from '../config/slots';
 import {
   addAsstsNote,
@@ -13,16 +20,25 @@ import {
   rejectAsstsAsset,
   requestAsstsVariant,
   type AsstsAssetDetail,
+  type AsstsAssetNavigation,
 } from '../services/asstsApi';
 
 export default function AsstsInspectionPage() {
   const { assetId = '' } = useParams();
   const navigate = useNavigate();
   const [asset, setAsset] = useState<AsstsAssetDetail | null>(null);
+  const [navigation, setNavigation] = useState<AsstsAssetNavigation>({ prevAssetId: null, nextAssetId: null, position: 0, total: 0 });
+  const [selectedVersionId, setSelectedVersionId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
-  const [compareMaster, setCompareMaster] = useState(false);
+  const [compareOpen, setCompareOpen] = useState(false);
+  const [fullScreenOpen, setFullScreenOpen] = useState(false);
   const [regenOpen, setRegenOpen] = useState(false);
+  const [rejectOpen, setRejectOpen] = useState(false);
+  const [variantOpen, setVariantOpen] = useState(false);
+  const [noteOpen, setNoteOpen] = useState(false);
+  const [noteText, setNoteText] = useState('');
+  const [approvedFlash, setApprovedFlash] = useState(false);
 
   const load = useCallback(async () => {
     if (!assetId) return;
@@ -30,6 +46,11 @@ export default function AsstsInspectionPage() {
       setError(null);
       const res = await fetchAsstsAsset(assetId);
       setAsset(res.asset);
+      setNavigation(res.navigation);
+      setSelectedVersionId((prev) => {
+        if (prev && res.asset.versions.some((v) => v.id === prev)) return prev;
+        return res.asset.currentVersion?.id ?? null;
+      });
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Failed to load asset');
     }
@@ -38,61 +59,111 @@ export default function AsstsInspectionPage() {
   const isGenerating = asset?.status === 'GENERATING' || asset?.status === 'REGENERATING';
   useAsstsAutoRefresh(load, { hasGenerating: isGenerating });
 
-  const version = asset?.currentVersion;
-  const canReview = version && version.status === 'NEEDS_REVIEW';
+  const selectedVersion = useMemo(() => {
+    if (!asset) return null;
+    return asset.versions.find((v) => v.id === selectedVersionId) ?? asset.currentVersion;
+  }, [asset, selectedVersionId]);
+
+  const canReview = selectedVersion && selectedVersion.id === asset?.currentVersion?.id && selectedVersion.status === 'NEEDS_REVIEW';
+
+  const versionStripItems = useMemo(() => {
+    if (!asset) return [];
+    return asset.versions.map((v) => ({
+      ...v,
+      label:
+        v.id === asset.approved_version_id
+          ? 'CANONICAL MASTER'
+          : v.id === asset.currentVersion?.id
+            ? 'CURRENT ASSET'
+            : undefined,
+    }));
+  }, [asset]);
+
+  useEffect(() => {
+    if (!approvedFlash) return;
+    const t = window.setTimeout(() => setApprovedFlash(false), 600);
+    return () => window.clearTimeout(t);
+  }, [approvedFlash]);
+
+  const heroUrl = selectedVersion?.previewUrl ?? asset?.currentVersion?.previewUrl;
+  const masterUrl = asset?.approvedVersion?.previewUrl ?? null;
 
   return (
     <AsstsEnvironmentShell slotKey={ASSTS_ENVIRONMENT_SLOTS.inspection}>
-      <header className="site00-assts-header site00-assts-inspection-header">
-        <Link to={asset?.batch_id ? `/assts/batches/${asset.batch_id}` : '/assts'} className="site00-label">
+      <div className="assts-inspection-layout">
+      <header className="assts-inspection-header-min">
+        <Link to={asset?.batch_id ? `/assts/batches/${asset.batch_id}` : '/assts'} className="assts-back-link">
           ← BATCH
         </Link>
-        <h1 className="site00-assts-inspection-title">{asset?.display_name ?? 'INSPECTION'}</h1>
-        {asset ? (
-          <div className="site00-assts-inspection-meta">
-            <p className="site00-mono">{asset.asset_key}</p>
-            {version ? (
-              <p className="site00-label">
-                V{String(version.version_number).padStart(2, '0')} · {version.status.replace(/_/g, ' ')}
-              </p>
-            ) : null}
-            <AsstsStatusBadge status={asset.status} />
-          </div>
-        ) : null}
+        <span className="assts-mono assts-inspection-header-min__key">{asset?.asset_key}</span>
       </header>
 
       <AsstsDevPanel batchId={asset?.batch_id ?? null} onRefresh={load} />
 
       {error ? (
-        <div className="site00-assts-alert site00-assts-panel" role="alert">
+        <div className="assts-alert assts-glass assts-glass--panel" role="alert">
           {error}
         </div>
       ) : null}
 
-      <div className="site00-assts-inspection-stage site00-assts-panel">
-        {version?.previewUrl ? (
-          <img src={version.previewUrl} alt="" className="site00-assts-inspection-hero" />
+      <div className={`assts-inspection-hero-stage ${approvedFlash ? 'assts-inspection-hero-stage--flash' : ''}`}>
+        {heroUrl ? (
+          <img src={heroUrl} alt={asset?.display_name ?? ''} className="assts-inspection-hero-stage__img" />
         ) : (
-          <div className="site00-assts-inspection-hero site00-assts-inspection-hero--empty">
-            {isGenerating ? 'Generating…' : 'No preview yet'}
-          </div>
+          <div className="assts-inspection-hero-stage__empty">{isGenerating ? 'Generating…' : 'No preview yet'}</div>
         )}
       </div>
 
-      {compareMaster && version?.previewUrl ? (
-        <p className="site00-assts-compare-hint site00-assts-panel">Compare to Master — toggle between current and approved reference (MVP).</p>
+      <AsstsVersionStrip
+        versions={versionStripItems}
+        selectedId={selectedVersionId}
+        onSelect={setSelectedVersionId}
+        approvedVersionId={asset?.approved_version_id}
+      />
+
+      {asset && selectedVersion ? (
+        <AsstsMetadataPanel
+          batchKey={asset.batch_key}
+          versionNumber={selectedVersion.version_number}
+          status={selectedVersion.status}
+          generator={selectedVersion.generation_provider}
+          promptVersion={selectedVersion.prompt_version}
+          expandedContent={
+            <dl className="assts-metadata-panel__list assts-metadata-panel__list--expanded">
+              {selectedVersion.generation_model ? (
+                <>
+                  <dt>MODEL</dt>
+                  <dd>{selectedVersion.generation_model}</dd>
+                </>
+              ) : null}
+              {selectedVersion.prompt_snapshot ? (
+                <>
+                  <dt>PROMPT</dt>
+                  <dd className="assts-metadata-panel__prompt">{selectedVersion.prompt_snapshot}</dd>
+                </>
+              ) : null}
+              {selectedVersion.created_at ? (
+                <>
+                  <dt>GENERATED</dt>
+                  <dd>{new Date(selectedVersion.created_at).toLocaleString()}</dd>
+                </>
+              ) : null}
+            </dl>
+          }
+        />
       ) : null}
 
-      <div className="site00-assts-actions">
+      <div className="assts-review-actions">
         <button
           type="button"
-          className="site00-assts-btn site00-assts-btn--approve"
+          className="assts-btn assts-btn--approve"
           disabled={!canReview || busy}
           onClick={() => {
-            if (!asset || !version) return;
+            if (!asset || !asset.currentVersion) return;
             setBusy(true);
-            void approveAsstsAsset(asset.id, version.id)
+            void approveAsstsAsset(asset.id, asset.currentVersion.id)
               .then((res) => {
+                setApprovedFlash(true);
                 if (res.nextAssetId) navigate(`/assts/${res.nextAssetId}`);
                 else void load();
               })
@@ -100,77 +171,77 @@ export default function AsstsInspectionPage() {
               .finally(() => setBusy(false));
           }}
         >
-          APPROVE
+          ✓ APPROVE
         </button>
         <button
           type="button"
-          className="site00-assts-btn site00-assts-btn--regen"
+          className="assts-btn assts-btn--regen"
           disabled={!asset || busy || asset.status === 'LOCKED'}
           onClick={() => setRegenOpen(true)}
         >
-          REGENERATE
+          ↻ REGENERATE
         </button>
-        <button
-          type="button"
-          className="site00-assts-btn site00-assts-btn--reject"
-          disabled={!canReview || busy}
-          onClick={() => {
-            if (!asset || !version) return;
-            const note = window.prompt('Rejection reason:') ?? '';
-            setBusy(true);
-            void rejectAsstsAsset(asset.id, version.id, note, ['OTHER'])
-              .then(() => load())
-              .catch((e) => setError(e instanceof Error ? e.message : 'Reject failed'))
-              .finally(() => setBusy(false));
-          }}
-        >
-          REJECT
+        <button type="button" className="assts-btn assts-btn--reject" disabled={!canReview || busy} onClick={() => setRejectOpen(true)}>
+          ✕ REJECT
         </button>
       </div>
 
-      <div className="site00-assts-secondary-actions">
-        <button type="button" className="site00-assts-btn site00-assts-btn--secondary" onClick={() => setCompareMaster((v) => !v)}>
-          COMPARE TO MASTER
-        </button>
-        <button
-          type="button"
-          className="site00-assts-btn site00-assts-btn--secondary"
-          disabled={!asset || busy}
-          onClick={() => {
-            if (!asset) return;
-            const note = window.prompt('Variant request note:') ?? '';
-            if (!note.trim()) return;
-            setBusy(true);
-            void requestAsstsVariant(asset.id, note)
-              .then(() => load())
-              .catch((e) => setError(e instanceof Error ? e.message : 'Variant request failed'))
-              .finally(() => setBusy(false));
-          }}
-        >
+      <div className="assts-secondary-actions">
+        <button type="button" className="assts-btn assts-btn--secondary" disabled={!asset || busy} onClick={() => setVariantOpen(true)}>
           REQUEST VARIANT
         </button>
         <button
           type="button"
-          className="site00-assts-btn site00-assts-btn--secondary"
-          disabled={!asset || busy}
-          onClick={() => {
-            if (!asset) return;
-            const note = window.prompt('Review note:') ?? '';
-            if (!note.trim()) return;
-            setBusy(true);
-            void addAsstsNote(asset.id, note)
-              .catch((e) => setError(e instanceof Error ? e.message : 'Note failed'))
-              .finally(() => setBusy(false));
-          }}
+          className="assts-btn assts-btn--secondary"
+          disabled={!heroUrl}
+          onClick={() => setCompareOpen(true)}
         >
+          COMPARE TO MASTER
+        </button>
+        <button type="button" className="assts-btn assts-btn--secondary" disabled={!asset || busy} onClick={() => setNoteOpen(true)}>
           ADD NOTE
         </button>
-        {version?.previewUrl ? (
-          <a href={version.previewUrl} target="_blank" rel="noreferrer" className="site00-assts-btn site00-assts-btn--secondary">
-            VIEW FULL SIZE
-          </a>
-        ) : null}
+        <button
+          type="button"
+          className="assts-btn assts-btn--secondary"
+          disabled={!heroUrl}
+          onClick={() => setFullScreenOpen(true)}
+        >
+          VIEW FULL SIZE
+        </button>
       </div>
+
+      {noteOpen ? (
+        <div className="site00-assts-sheet-backdrop" role="presentation" onClick={() => setNoteOpen(false)}>
+          <div className="site00-assts-sheet assts-glass assts-glass--panel" onClick={(e) => e.stopPropagation()}>
+            <h2 className="site00-assts-sheet__title">ADD NOTE</h2>
+            <textarea value={noteText} onChange={(e) => setNoteText(e.target.value)} rows={4} placeholder="Review note…" />
+            <div className="site00-assts-sheet__actions">
+              <button type="button" className="assts-btn" onClick={() => setNoteOpen(false)}>
+                CANCEL
+              </button>
+              <button
+                type="button"
+                className="assts-btn assts-btn--regen"
+                disabled={!noteText.trim() || busy}
+                onClick={() => {
+                  if (!asset) return;
+                  setBusy(true);
+                  void addAsstsNote(asset.id, noteText.trim())
+                    .then(() => {
+                      setNoteOpen(false);
+                      setNoteText('');
+                    })
+                    .catch((e) => setError(e instanceof Error ? e.message : 'Note failed'))
+                    .finally(() => setBusy(false));
+                }}
+              >
+                SAVE NOTE
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
 
       <AsstsRegenerateSheet
         open={regenOpen}
@@ -189,7 +260,66 @@ export default function AsstsInspectionPage() {
         }}
       />
 
-      <AsstsMobileNav />
+      <AsstsRejectSheet
+        open={rejectOpen}
+        busy={busy}
+        onClose={() => setRejectOpen(false)}
+        onSubmit={(note, categories) => {
+          if (!asset || !asset.currentVersion) return;
+          setBusy(true);
+          void rejectAsstsAsset(asset.id, asset.currentVersion.id, note, categories)
+            .then(() => {
+              setRejectOpen(false);
+              if (navigation.nextAssetId) navigate(`/assts/${navigation.nextAssetId}`);
+              else void load();
+            })
+            .catch((e) => setError(e instanceof Error ? e.message : 'Reject failed'))
+            .finally(() => setBusy(false));
+        }}
+      />
+
+      <AsstsVariantSheet
+        open={variantOpen}
+        busy={busy}
+        onClose={() => setVariantOpen(false)}
+        onSubmit={(note, kind) => {
+          if (!asset) return;
+          setBusy(true);
+          void requestAsstsVariant(asset.id, `${kind}: ${note}`)
+            .then(() => {
+              setVariantOpen(false);
+              return load();
+            })
+            .catch((e) => setError(e instanceof Error ? e.message : 'Variant request failed'))
+            .finally(() => setBusy(false));
+        }}
+      />
+
+      {compareOpen && heroUrl ? (
+        <AsstsCompareOverlay
+          currentUrl={heroUrl}
+          masterUrl={masterUrl}
+          onClose={() => setCompareOpen(false)}
+        />
+      ) : null}
+
+      <AsstsFullScreenViewer
+        open={fullScreenOpen}
+        url={heroUrl ?? ''}
+        title={asset?.display_name ?? asset?.asset_key ?? 'Asset'}
+        onClose={() => setFullScreenOpen(false)}
+      />
+
+      <AsstsInspectorFooter
+        prevAssetId={navigation.prevAssetId}
+        nextAssetId={navigation.nextAssetId}
+        position={navigation.position}
+        total={navigation.total}
+        onNavigate={(id) => navigate(`/assts/${id}`)}
+      />
+
+      <AsstsBottomDock />
+      </div>
     </AsstsEnvironmentShell>
   );
 }

@@ -72,10 +72,21 @@ async function asstsPost<T>(action: string, body: Record<string, unknown>): Prom
   return data;
 }
 
+export type AsstsBatchSummary = {
+  id: string;
+  batch_key: string;
+  display_name: string;
+  status: string;
+  category: string | null;
+  counts: { total: number; approved: number; needsReview: number };
+  thumbnailUrl: string | null;
+};
+
 export type AsstsLibraryCategory = {
   id: string;
   label: string;
   count: number;
+  coverUrl?: string | null;
 };
 
 export type AsstsLibraryResponse = {
@@ -86,10 +97,11 @@ export type AsstsLibraryResponse = {
     needsReview: number;
     approved: number;
     locked: number;
-    batchesList: Array<{ id: string; batch_key: string; display_name: string; status: string; category: string | null }>;
+    batchesList: AsstsBatchSummary[];
   };
   categories: AsstsLibraryCategory[];
   priorityBatch: AsstsBatchDetail | null;
+  filteredAssets?: AsstsAssetDetail[] | null;
   pipeline?: { autoQueued?: boolean; polled?: number };
 };
 
@@ -101,6 +113,21 @@ export type AsstsBatchDetail = {
   status: string;
   assets: AsstsAssetDetail[];
   counts: { total: number; approved: number; needsReview: number; regenerating: number; rejected: number };
+  thumbnailUrl?: string | null;
+  progressPercent?: number;
+};
+
+export type AsstsAssetVersion = {
+  id: string;
+  version_number: number;
+  previewUrl: string | null;
+  fileUrl?: string | null;
+  status: string;
+  generation_provider?: string | null;
+  generation_model?: string | null;
+  prompt_version?: string | null;
+  prompt_snapshot?: string | null;
+  created_at?: string;
 };
 
 export type AsstsAssetDetail = {
@@ -108,11 +135,22 @@ export type AsstsAssetDetail = {
   asset_key: string;
   display_name: string;
   batch_id: string | null;
+  batch_key?: string | null;
+  batch_display_name?: string | null;
   status: string;
   required: boolean;
   approved_version_id: string | null;
-  currentVersion: { id: string; version_number: number; previewUrl: string | null; status: string } | null;
-  versions: Array<{ id: string; version_number: number; previewUrl: string | null; status: string }>;
+  semantic_slot_key?: string | null;
+  currentVersion: AsstsAssetVersion | null;
+  approvedVersion?: AsstsAssetVersion | null;
+  versions: AsstsAssetVersion[];
+};
+
+export type AsstsAssetNavigation = {
+  prevAssetId: string | null;
+  nextAssetId: string | null;
+  position: number;
+  total: number;
 };
 
 export type SlotResolution = {
@@ -120,15 +158,35 @@ export type SlotResolution = {
   resolved: { slotKey: string; source: 'locked' | 'fallback'; url: string | null; thumbnailUrl?: string | null };
 };
 
-export async function fetchAsstsLibrary(): Promise<AsstsLibraryResponse> {
-  return asstsFetch('library');
+export async function fetchAsstsLibrary(params?: {
+  status?: string;
+  category?: string;
+  view?: string;
+}): Promise<AsstsLibraryResponse> {
+  const query: Record<string, string> = {};
+  if (params?.status) query.status = params.status;
+  if (params?.category) query.category = params.category;
+  if (params?.view) query.view = params.view;
+  return asstsFetch('library', { query });
+}
+
+export async function fetchAsstsAssets(params?: { status?: string; category?: string }) {
+  const query: Record<string, string> = {};
+  if (params?.status) query.status = params.status;
+  if (params?.category) query.category = params.category;
+  return asstsFetch<{ ok: boolean; assets: AsstsAssetDetail[] }>('assets', { query });
 }
 
 export async function fetchAsstsBatch(batchId: string): Promise<{ ok: boolean; batch: AsstsBatchDetail }> {
   return asstsFetch('batch', { query: { batchId } });
 }
 
-export async function fetchAsstsAsset(assetId: string): Promise<{ ok: boolean; asset: AsstsAssetDetail; history: unknown[] }> {
+export async function fetchAsstsAsset(assetId: string): Promise<{
+  ok: boolean;
+  asset: AsstsAssetDetail;
+  history: unknown[];
+  navigation: AsstsAssetNavigation;
+}> {
   return asstsFetch('asset', { query: { assetId } });
 }
 
