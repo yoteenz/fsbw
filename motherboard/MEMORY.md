@@ -52065,6 +52065,7 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **QA:** Build PASS; manual QA login/forgot/signup mobile 375px + desktop split PASS.
 
+<<<<<<< HEAD
 
 ---
 
@@ -52097,3 +52098,19 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Runtime (after lock):** Loader auto-switches to alpha when `/site00/loader/v1/assts-loader-geometry-v1-alpha.webm` exists (synced on lock); `?loaderGeometry=screen` debug fallback. Public slot resolver `api/site00/loader-geometry.ts`. Until lock, screen blend remains default.
 
 - **QA:** `npm run build` PASS; CLI inspect/submit/poll PASS; ASSTS UI blocked on admin email confirmation in cloud preview (API/data verified via CLI).
+=======
+---
+
+## 2026-08-17 — AIO mobile login polish pass (reference-driven)
+
+- **Context:** Follow-up after auth shell sprint. Current login improved but didn't match approved reference — tiny logo, invisible LOG IN button, loose hero, form blending into background.
+
+- **Root cause (LOG IN invisible):** Global `.aio-app button:not(.aio-btn)` reset set `background: none` on auth premium buttons. Fixed by excluding `.aio-auth-premium__btn` from reset + explicit gold fill rules.
+
+- **Polish:** Larger centered header logo; gold BACK; layered hero gradients (truck right/lower-right, text left); WELCOME white + back. gold; dark glass form panel; 56px inputs with gold email/lock icons; OR divider; CREATE ACCOUNT in panel; compact demo card; trust microcopy (no unverified claims); BACK uses returnUrl when meaningful.
+
+- **Files:** `aio-auth.css`, `aio.css` (button reset), `AuthHeader`, `AuthShell`, `AuthBrandIntro`, `AuthInput`, `AuthPasswordInput`, `AuthFieldIcons`, `LoginPage`, `DemoPortalAccess`, `AIOAuthLayout`.
+
+- **QA:** Build PASS; 375px manual QA — gold LOG IN always visible, reference hierarchy matched.
+
+>>>>>>> 55cd6275d (Docs: AIO login polish pass MEMORY and report update [sync-only])

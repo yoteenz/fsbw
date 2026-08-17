@@ -54,11 +54,18 @@ Replaced the generic white-card auth layout with a premium dark/gold **Auth Shel
 | Check | Result |
 |-------|--------|
 | `npm run build` | PASS |
-| Mobile login 375px — no white card | PASS |
+| Mobile login 375px — gold LOG IN always visible | PASS (button reset fix) |
+| Reference hierarchy (logo, headline, form panel) | PASS |
 | Forgot password same shell | PASS |
 | Sign up dark theme + steps | PASS |
 | Desktop split layout 1280px | PASS |
 | Demo portal demoted | PASS (demo mode) |
+
+## Polish pass (2026-08-17)
+
+- Fixed invisible LOG IN: excluded `.aio-auth-premium__btn` from global button reset
+- Login-specific hero composition, glass form panel, input icons, OR divider
+- BACK preserves `returnUrl` when set
 
 ## Mobile preview
 
