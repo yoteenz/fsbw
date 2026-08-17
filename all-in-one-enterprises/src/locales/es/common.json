@@ -1,0 +1,18 @@
+{
+  "language": "Idioma",
+  "selectLanguage": "Seleccionar idioma",
+  "loading": "Cargando…",
+  "save": "Guardar",
+  "cancel": "Cancelar",
+  "continue": "Continuar",
+  "submit": "Enviar",
+  "back": "Atrás",
+  "view": "Ver",
+  "apply": "Solicitar",
+  "search": "Buscar",
+  "close": "Cerrar",
+  "document_one": "{{count}} documento",
+  "document_other": "{{count}} documentos",
+  "ticket_one": "{{count}} ticket",
+  "ticket_other": "{{count}} tickets"
+}

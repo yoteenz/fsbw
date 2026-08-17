@@ -16,6 +16,7 @@ import { returnUrlFromSearch, sanitizeReturnUrl } from '../../auth/returnUrl';
 import { useAIOAuth } from '../../auth/AIOAuthProvider';
 import { isBackendMode } from '../../config/dataMode';
 import { aioPaths } from '../../utils/paths';
+import { useTranslation } from 'react-i18next';
 
 export function LoginPage() {
   const [email, setEmail] = useState('');
@@ -27,6 +28,7 @@ export function LoginPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const { refresh } = useAIOAuth();
+  const { t } = useTranslation('auth');
 
   const state = location.state as { from?: string; office?: boolean; return?: string } | null;
   const returnUrl = useMemo(
@@ -69,12 +71,12 @@ export function LoginPage() {
   }, [transitioning, navigate, office, returnUrl]);
 
   if (transitioning) {
-    return <AuthTransition headline="Welcome back." message="Loading your business…" />;
+    return <AuthTransition headline={t('welcomeBack')} message={t('loadingBusiness')} />;
   }
 
   const errorMessage =
     error === 'Email or password is incorrect.'
-      ? "The email or password entered doesn't match an account. Check your information and try again."
+      ? t('invalidCredentials')
       : error;
 
   const brandIntroProps = {

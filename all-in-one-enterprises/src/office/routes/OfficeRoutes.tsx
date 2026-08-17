@@ -6,6 +6,12 @@ import {
   FleetCareOfficeProvidersPage,
   FleetCareOfficeReferralsPage,
 } from '../../pages/office/FleetCareOfficePages';
+import {
+  DriverLinkOfficeOverviewPage,
+  DriverLinkOfficeDriversPage,
+  DriverLinkOfficeJobsPage,
+  DriverLinkOfficeApplicationsPage,
+} from '../../pages/office/DriverLinkOfficePages';
 import { OfficeDashboardPage } from '../pages/OfficeDashboardPage';
 import { ClientsListPage } from '../pages/ClientsListPage';
 import { ClientDetailPage } from '../pages/ClientDetailPage';
@@ -292,6 +298,10 @@ export default function OfficeRoutes() {
         <Route path="fleetcare/tickets" element={<FleetCareOfficeTicketsPage />} />
         <Route path="fleetcare/providers" element={<FleetCareOfficeProvidersPage />} />
         <Route path="fleetcare/referrals" element={<FleetCareOfficeReferralsPage />} />
+        <Route path="driverlink" element={<DriverLinkOfficeOverviewPage />} />
+        <Route path="driverlink/drivers" element={<DriverLinkOfficeDriversPage />} />
+        <Route path="driverlink/jobs" element={<DriverLinkOfficeJobsPage />} />
+        <Route path="driverlink/applications" element={<DriverLinkOfficeApplicationsPage />} />
         <Route path="brokerage" element={<BrokerageCommandCenterPage />} />
         <Route path="brokerage/readiness" element={<BrokerageReadinessPage />} />
         <Route path="brokerage/shippers" element={<BrokerageShippersPage />} />

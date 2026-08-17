@@ -7,6 +7,7 @@ import { runBillingEvaluation } from '../demo/billingActions';
 import { useDemoStore } from '../demo/useDemoStore';
 import { resolvePortalKind, resolveOrganizationId } from '../portal/organizationContext';
 import { aioPaths } from '../utils/paths';
+import { LanguageSelector } from '../components/i18n/LanguageSelector';
 
 type NavItem = { label: string; href: string; section?: string };
 
@@ -21,6 +22,7 @@ const carrierNav: NavItem[] = [
   { label: 'Operations', href: aioPaths.portalOperations, section: 'OPERATIONS' },
   { label: 'Dispatch', href: aioPaths.portalDispatch, section: 'OPERATIONS' },
   { label: 'FleetCare', href: aioPaths.portalFleetCare, section: 'OPERATIONS' },
+  { label: 'DriverLink', href: aioPaths.portalDriverLink, section: 'OPERATIONS' },
   { label: 'Brokerage', href: aioPaths.portalBrokerage, section: 'OPERATIONS' },
   { label: 'Money', href: aioPaths.portalMoney, section: 'MONEY' },
   { label: 'Billing', href: aioPaths.portalBilling, section: 'MONEY' },
@@ -113,6 +115,7 @@ export function AIOPortalLayout() {
           })}
         </nav>
         <div style={{ marginTop: 'auto', padding: '1rem 1.25rem' }}>
+          <LanguageSelector className="aio-portal-header__lang" />
           <Link to={aioPaths.home} className="aio-portal__nav-link">
             ← Back to Website
           </Link>

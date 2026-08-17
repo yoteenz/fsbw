@@ -1,0 +1,18 @@
+{
+  "productName": "Red AIO FleetCare",
+  "heroTitle1": "MANTENGA SUS CAMIONES",
+  "heroTitle2": "EN MOVIMIENTO.",
+  "heroLead": "Solicite servicio, conéctese con un proveedor FleetCare independiente, siga su reparación y conserve el registro con su camión.",
+  "requestService": "Solicitar servicio",
+  "explorePlans": "Explorar FleetCare+",
+  "independentDisclosure": "Los servicios de reparación son realizados por proveedores independientes de la red FleetCare. AIO coordina emparejamiento, registros y servicios de plataforma — AIO no es el proveedor de reparación.",
+  "searchingProviders": "Buscando proveedores FleetCare disponibles",
+  "providerConfirmed": "Proveedor confirmado",
+  "status": {
+    "searching": "Buscando proveedores FleetCare disponibles",
+    "provider_accepted": "Proveedor confirmado",
+    "estimate_sent": "Presupuesto listo",
+    "awaiting_customer_authorization": "Esperando su autorización",
+    "completed": "Completado"
+  }
+}

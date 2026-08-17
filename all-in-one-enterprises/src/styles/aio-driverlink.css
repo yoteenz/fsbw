@@ -1,0 +1,120 @@
+.aio-dl-public__hero,
+.aio-dl-page,
+.aio-dl-driver-portal__main {
+  padding: 1rem 1.25rem 2rem;
+}
+
+.aio-dl-pathways {
+  display: grid;
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+@media (min-width: 768px) {
+  .aio-dl-pathways {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.aio-dl-pathway-card {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  padding: 1.25rem;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.aio-dl-disclosure {
+  font-size: 0.85rem;
+  opacity: 0.85;
+  margin-top: 1rem;
+  max-width: 42rem;
+}
+
+.aio-dl-metrics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem 2rem;
+  margin: 1rem 0 1.5rem;
+}
+
+.aio-dl-metrics--office {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 1rem;
+}
+
+.aio-dl-match-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+@media (min-width: 768px) {
+  .aio-dl-match-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.aio-dl-match-card {
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.aio-dl-driver-portal__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  background: #0a1628;
+  color: #fff;
+}
+
+.aio-dl-driver-portal__nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  font-size: 0.85rem;
+}
+
+.aio-dl-driver-portal__nav a {
+  color: rgba(255, 255, 255, 0.75);
+  text-decoration: none;
+}
+
+.aio-dl-driver-portal__nav a.is-active {
+  color: #fff;
+  font-weight: 600;
+}
+
+.aio-dl-cred-list li {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.aio-dl-candidate-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  align-items: center;
+  padding: 0.75rem 0;
+}
+
+.aio-dl-office-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.aio-dl-consent {
+  margin: 1.5rem 0;
+  padding: 1rem;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.04);
+}

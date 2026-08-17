@@ -1,0 +1,5 @@
+{
+  "required": "Este campo es obligatorio.",
+  "invalidEmail": "Ingrese un correo electrónico válido.",
+  "networkError": "Error de red. Intente de nuevo."
+}

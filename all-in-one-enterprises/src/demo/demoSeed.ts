@@ -18,6 +18,7 @@ import { createSecuritySeedData } from '../security/securitySeed';
 import { createBookkeepingSeedData } from './bookkeepingSeed';
 import { createAutopilotSeedData } from './autopilotSeed';
 import { createFleetCareSeedData } from './fleetcareSeed';
+import { createDriverLinkSeedData } from './driverlinkSeed';
 import { AIO_DEMO_SCHEMA_VERSION } from '../data/constants';
 import { getDataModeLabel } from '../config/dataMode';
 
@@ -55,9 +56,10 @@ export function createDemoSeed(): DemoStore {
     });
 
   const fleetcare = createFleetCareSeedData();
+  const driverlink = createDriverLinkSeedData();
 
   return {
-    version: 24,
+    version: 25,
     dataSystem: {
       demoSchemaVersion: AIO_DEMO_SCHEMA_VERSION,
       seedVersion: `demo-v${AIO_DEMO_SCHEMA_VERSION}`,
@@ -400,6 +402,7 @@ export function createDemoSeed(): DemoStore {
     bookkeepingExceptions: autopilot.bookkeepingExceptions,
     customerClarifications: autopilot.customerClarifications,
     ...fleetcare,
+    ...driverlink,
   };
 }
 

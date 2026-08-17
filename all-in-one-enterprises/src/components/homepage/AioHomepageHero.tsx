@@ -1,10 +1,12 @@
 import { aioAppConfig } from '../../config/appConfig';
 import { aioPaths } from '../../utils/paths';
-import { homepageHeroSupportingCopy } from '../../data/homepageMobileContent';
 import { AIOButton } from '../AIOButton';
 import { StartBusinessCtaButton } from '../journey/StartBusinessCtaButton';
+import { useTranslation } from 'react-i18next';
 
 export function AioHomepageHero() {
+  const { t } = useTranslation('homepage');
+
   return (
     <section
       className="aio-home-hero"
@@ -19,21 +21,21 @@ export function AioHomepageHero() {
       <div className="aio-home-hero__overlay" aria-hidden="true" />
       <div className="aio-home-hero__inner">
         <div className="aio-home-hero__content">
-          <p className="aio-home-hero__eyebrow">{aioAppConfig.company.legalName}</p>
+          <p className="aio-home-hero__eyebrow">{t('heroEyebrow')}</p>
           <h1 id="aio-home-hero-heading" className="aio-home-hero__headline">
-            WHERE
+            {t('heroHeadline1')}
             <br />
-            BUSINESS
+            {t('heroHeadline2')}
             <br />
-            MEETS THE
+            {t('heroHeadline3')}
             <br />
-            <em>ROAD.</em>
+            <em>{t('heroHeadline4')}</em>
           </h1>
-          <p className="aio-home-hero__sub">{homepageHeroSupportingCopy}</p>
+          <p className="aio-home-hero__sub">{t('heroSub')}</p>
           <div className="aio-home-hero__actions">
             <StartBusinessCtaButton variant="gold" className="aio-btn--block" showArrow />
             <AIOButton to={aioPaths.getStarted} variant="outline-gold" className="aio-btn--block" showArrow>
-              Check What I Need
+              {t('checkWhatINeed')}
             </AIOButton>
           </div>
         </div>

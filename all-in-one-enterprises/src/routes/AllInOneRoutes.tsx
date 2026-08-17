@@ -140,7 +140,33 @@ import {
   FleetCareProviderCompliancePage,
   FleetCareProviderProfilePage,
 } from '../pages/provider/FleetCareProviderPages';
+import {
+  DriverLinkPublicPage,
+  DriverLinkDriverSignupPage,
+} from '../pages/driverlink/DriverLinkPublicPages';
+import {
+  DriverLinkCompanyHomePage,
+  DriverLinkCompanyOpportunitiesPage,
+  DriverLinkCompanyOpportunityDetailPage,
+  DriverLinkCompanyCandidatesPage,
+  DriverLinkCompanyCreateJobPage,
+} from '../pages/portal/driverlink/DriverLinkPortalPages';
+import {
+  DriverLinkDriverLayout,
+  DriverLinkDriverDashboardPage,
+  DriverLinkDriverProfilePage,
+  DriverLinkDriverCredentialsPage,
+  DriverLinkDriverFindWorkPage,
+  DriverLinkDriverMatchesPage,
+  DriverLinkDriverApplicationsPage,
+  DriverLinkDriverOpportunityPage,
+} from '../pages/driver/DriverLinkDriverPages';
 import { IconLibraryDebugPage } from '../pages/debug/IconLibraryDebugPage';
+
+function DriverLinkPortalOpportunityRoute() {
+  const { opportunityId = '' } = useParams();
+  return <DriverLinkCompanyOpportunityDetailPage opportunityId={opportunityId} />;
+}
 
 const OfficeRoutesLazy = lazy(() => import('../office/routes/OfficeRoutes'));
 
@@ -190,6 +216,8 @@ export default function AllInOneRoutes() {
           <Route path="services/bookkeeping" element={<BookkeepingPage />} />
           <Route path="services/fleetcare" element={<FleetCarePublicPage />} />
           <Route path="services/fleetcare/plans" element={<FleetCarePlansPage />} />
+          <Route path="services/driverlink" element={<DriverLinkPublicPage />} />
+          <Route path="driverlink/signup" element={<DriverLinkDriverSignupPage />} />
           <Route path="fleetcare/providers/join" element={<FleetCareProviderJoinPage />} />
           <Route path="fleetcare/providers/apply" element={<FleetCareProviderApplyPage />} />
           <Route path="services/bookkeeping/assessment" element={<BookkeepingAssessmentPage />} />
@@ -271,6 +299,11 @@ export default function AllInOneRoutes() {
             <Route path="fleetcare/request" element={<FleetCareRequestPage />} />
             <Route path="fleetcare/tickets/:ticketId" element={<FleetCareTicketDetailPage />} />
             <Route path="fleetcare/vehicles/:vehicleId/history" element={<FleetCareVehicleHistoryPage />} />
+            <Route path="driverlink" element={<DriverLinkCompanyHomePage />} />
+            <Route path="driverlink/opportunities" element={<DriverLinkCompanyOpportunitiesPage />} />
+            <Route path="driverlink/opportunities/new" element={<DriverLinkCompanyCreateJobPage />} />
+            <Route path="driverlink/opportunities/:opportunityId" element={<DriverLinkPortalOpportunityRoute />} />
+            <Route path="driverlink/candidates" element={<DriverLinkCompanyCandidatesPage />} />
             <Route path="insurance" element={<InsuranceHomePage />} />
             <Route path="insurance/request" element={<InsuranceRequestPage />} />
             <Route path="insurance/requests/:requestId" element={<InsuranceRequestDetailPage />} />
@@ -312,6 +345,16 @@ export default function AllInOneRoutes() {
           <Route path="earnings" element={<FleetCareProviderEarningsPage />} />
           <Route path="compliance" element={<FleetCareProviderCompliancePage />} />
           <Route path="profile" element={<FleetCareProviderProfilePage />} />
+        </Route>
+
+        <Route path="driver/driverlink" element={<DriverLinkDriverLayout />}>
+          <Route index element={<DriverLinkDriverDashboardPage />} />
+          <Route path="profile" element={<DriverLinkDriverProfilePage />} />
+          <Route path="credentials" element={<DriverLinkDriverCredentialsPage />} />
+          <Route path="find-work" element={<DriverLinkDriverFindWorkPage />} />
+          <Route path="matches" element={<DriverLinkDriverMatchesPage />} />
+          <Route path="applications" element={<DriverLinkDriverApplicationsPage />} />
+          <Route path="opportunities/:opportunityId" element={<DriverLinkDriverOpportunityPage />} />
         </Route>
 
         <Route element={<OfficeRouteGuard />}>

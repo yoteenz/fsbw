@@ -91,6 +91,15 @@ import type {
   TicketMatch,
 } from '../fleetcare/fleetcareTypes';
 import type {
+  DriverApplication,
+  DriverCredential,
+  DriverJobMatch,
+  DriverLinkCounters,
+  DriverLinkDemoContext,
+  DriverProfile,
+  JobOpportunity,
+} from '../driverlink/driverlinkTypes';
+import type {
   OfficeApprovalRequest,
   OfficeAssignmentRecord,
   OfficeDashboardPreferences,
@@ -525,7 +534,7 @@ import type {
 } from '../bookkeeping/autopilot/autopilotTypes';
 
 export interface DemoStore {
-  version: 24;
+  version: 25;
   requestCounter: number;
   portalClientId?: string;
   shipperPortalOrgId?: string;
@@ -748,6 +757,14 @@ export interface DemoStore {
   fleetcareReferrals?: ReferralTransaction[];
   fleetcareCounters?: FleetCareCounters;
   fleetcareDemoContext?: FleetCareDemoContext;
+  /** DriverLink — driver hiring marketplace */
+  driverlinkProfiles?: DriverProfile[];
+  driverlinkCredentials?: DriverCredential[];
+  driverlinkOpportunities?: JobOpportunity[];
+  driverlinkMatches?: DriverJobMatch[];
+  driverlinkApplications?: DriverApplication[];
+  driverlinkCounters?: DriverLinkCounters;
+  driverlinkDemoContext?: DriverLinkDemoContext;
 }
 
 export interface OfficeMetrics {

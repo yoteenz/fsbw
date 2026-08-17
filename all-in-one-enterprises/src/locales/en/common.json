@@ -1,0 +1,18 @@
+{
+  "language": "Language",
+  "selectLanguage": "Select language",
+  "loading": "Loading…",
+  "save": "Save",
+  "cancel": "Cancel",
+  "continue": "Continue",
+  "submit": "Submit",
+  "back": "Back",
+  "view": "View",
+  "apply": "Apply",
+  "search": "Search",
+  "close": "Close",
+  "document_one": "{{count}} document",
+  "document_other": "{{count}} documents",
+  "ticket_one": "{{count}} ticket",
+  "ticket_other": "{{count}} tickets"
+}

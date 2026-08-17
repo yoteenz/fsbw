@@ -1,0 +1,18 @@
+{
+  "productName": "AIO FleetCare Network",
+  "heroTitle1": "KEEP YOUR TRUCKS",
+  "heroTitle2": "MOVING.",
+  "heroLead": "Request service, get matched with an independent FleetCare provider, track your repair, and keep the record with your truck.",
+  "requestService": "Request Service",
+  "explorePlans": "Explore FleetCare+",
+  "independentDisclosure": "Repair services are performed by independent FleetCare network providers. AIO coordinates matching, records, and platform services — AIO is not the repair provider.",
+  "searchingProviders": "Searching for available FleetCare providers",
+  "providerConfirmed": "Provider confirmed",
+  "status": {
+    "searching": "Searching for available FleetCare providers",
+    "provider_accepted": "Provider confirmed",
+    "estimate_sent": "Estimate ready",
+    "awaiting_customer_authorization": "Awaiting your authorization",
+    "completed": "Completed"
+  }
+}

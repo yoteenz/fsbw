@@ -52634,7 +52634,8 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 ---
 
-<<<<<<< HEAD
+---
+
 ## 2026-08-17 — BLDR state page layout aligned with IDNTY (individual selection panels)
 
 - **Context:** Founder requested `/bldr/state` remove monolithic wrapper panel behind all content; build-class selection options should sit in individual glass cards like `/idnty/state` for flush background blend.
@@ -52661,7 +52662,9 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
   - `loadingScreenLock.ts` — off-white `#f7f7f5` during ASSTS boot (matches loader).
 
 - **QA:** Build PASS. Browser cold reload `/assts` — no plain Loading text; immersive loader visible from first frame (~9s full animation in demo video). Screenshot: `assts_loader_immediate_paint.png`. Video: `assts_cold_start_no_loading_text.mp4`.
-=======
+
+---
+
 ## 2026-08-17 — AIO FleetCare Network: production architecture sprint
 
 - **Context:** Founder requested full FleetCare domain inside existing AIO app — maintenance/repair marketplace, independent provider portal, referral system, client workflow, Office admin, public pages. AIO is platform/coordinator, not repair provider.
@@ -52689,7 +52692,33 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Gaps:** Supabase migration not applied (awaiting AIO project link); notifications, vault auto-link, supabase repos, live RLS tests — future work.
 
 - **Conventions:** Use "independent FleetCare network provider" language; disclosures configurable; legal gates open pending review.
->>>>>>> 1f861c0b0 (AIO FleetCare Network: marketplace foundation, provider portal, client workflow, docs [sync-only])
+
+---
+
+## 2026-08-17 — AIO DriverLink + Multilingual (i18n) platform foundation
+
+- **Context:** Founder sprint for two connected capabilities inside existing AIO: (1) **AIO DriverLink** — two-sided driver hiring marketplace with credentials, matching, applications, hiring hooks; (2) **Multilingual foundation** — real en-US/es-US i18n (not browser translate, not duplicate site).
+
+- **Topics covered:** Phase 0 audits; react-i18next setup; DriverLink domain (types, config, matching, demo v25); driver portal + company recruiting portal + office admin; Supabase migration; Spanish translations for DriverLink/homepage/auth; language selector on public nav + portal.
+
+- **Decisions / outcomes:**
+  - DriverLink = technology marketplace/recruiting platform — AIO not employer-of-record
+  - Matching on professional criteria only — no protected traits
+  - Consent-scoped credential release to employers
+  - Clearinghouse/DQ hooks — no fake completion
+  - Same DB records when driver uses ES and company uses EN — localized UI labels only
+  - Pricing/placement fees configurable but inactive pending legal review
+  - Demo: María González (es-US) + Heartland Freight regional reefer job
+
+- **Changes:**
+  - i18n: `src/i18n/*`, `src/locales/{en,es}/*`, `LanguageSelector`, homepage hero + login i18n
+  - DriverLink: `src/driverlink/*`, `driverlinkSeed/Actions`, pages (public/driver/portal/office), routes, nav
+  - Migration: `20260817200000_aio_driverlink.sql`
+  - Demo store v25; docs in `docs/driverlink/`, `docs/i18n/`, `docs/refinement/DRIVERLINK_I18N_IMPLEMENTATION_REPORT.md`
+
+- **QA:** `npm run build` PASS. Walkthrough: public dual-path landing, ES toggle, driver portal, company portal, office — video `driverlink_i18n_demo_walkthrough.mp4`.
+
+- **Gaps:** Road Ready/full portal nav i18n migration; Supabase apply; notifications; interview scheduling; email locale templates; live RLS tests.
 
 ---
 
