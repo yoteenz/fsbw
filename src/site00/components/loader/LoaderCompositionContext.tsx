@@ -1,5 +1,5 @@
-import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from 'react';
-import { ASSTS_LOADER_REFERENCE_CANVAS } from './loader-composition-map';
+import { createContext, useContext, useEffect, useRef, useState, type ReactNode, type RefObject } from 'react';
+import { ASSTS_LOADER_REFERENCE_CANVAS, ASSTS_LOADER_TYPOGRAPHY } from './loader-composition-map';
 import { isLoaderDebugEnabled, isLoaderRefMapEnabled } from './site00LoaderHeroStage';
 
 type LoaderCompositionContextValue = {
@@ -10,6 +10,7 @@ type LoaderCompositionContextValue = {
   setRefMapMode: (on: boolean) => void;
   registerRegion: (id: string, el: HTMLElement | null) => void;
   regionElements: Map<string, HTMLElement>;
+  artboardRef: RefObject<HTMLDivElement | null>;
 };
 
 const LoaderCompositionContext = createContext<LoaderCompositionContextValue | null>(null);
@@ -36,8 +37,14 @@ function readRefMapFromUrl(): boolean {
   return params.get('loaderRefMap') === '1' || params.get('loaderDebug') === '1';
 }
 
+/**
+ * Letterbox viewport centers one artboard scaler. The artboard is authored at 711×1536
+ * reference px and receives a single transform:scale() — background, overlays, and type
+ * scale together as one composition (no per-element viewport compensation).
+ */
 export function LoaderCompositionProvider({ children }: ProviderProps) {
   const viewportRef = useRef<HTMLDivElement>(null);
+  const artboardRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(1);
   const [stageWidth, setStageWidth] = useState<number>(ASSTS_LOADER_REFERENCE_CANVAS.width);
   const [stageHeight, setStageHeight] = useState<number>(ASSTS_LOADER_REFERENCE_CANVAS.height);
@@ -109,21 +116,40 @@ export function LoaderCompositionProvider({ children }: ProviderProps) {
         setRefMapMode,
         registerRegion,
         regionElements: regionElementsRef.current,
+        artboardRef,
       }}
     >
-      <div ref={viewportRef} className="site00-loader-stage-viewport">
+      <div ref={viewportRef} className="site00-loader-viewport site00-loader-stage-viewport">
         <div
-          className="site00-loader-stage"
-          data-composition-id="assts-loader-mobile-v1"
+          className="site00-loader-artboard-scaler"
           style={{
-            ['--loader-scale' as string]: String(scale),
-            ['--loader-ref-w' as string]: String(ASSTS_LOADER_REFERENCE_CANVAS.width),
-            ['--loader-ref-h' as string]: String(ASSTS_LOADER_REFERENCE_CANVAS.height),
             width: stageWidth,
             height: stageHeight,
           }}
         >
-          {children}
+          <div
+            ref={artboardRef}
+            className="site00-loader-artboard site00-loader-stage"
+            data-composition-id="assts-loader-mobile-v2"
+            data-artboard-w={ASSTS_LOADER_REFERENCE_CANVAS.width}
+            data-artboard-h={ASSTS_LOADER_REFERENCE_CANVAS.height}
+            style={{
+              width: ASSTS_LOADER_REFERENCE_CANVAS.width,
+              height: ASSTS_LOADER_REFERENCE_CANVAS.height,
+              transform: `scale(${scale})`,
+              ['--loader-type-eyebrow-size' as string]: `${ASSTS_LOADER_TYPOGRAPHY.eyebrow.size}px`,
+              ['--loader-type-title-size' as string]: `${ASSTS_LOADER_TYPOGRAPHY.title.size}px`,
+              ['--loader-type-subtitle-size' as string]: `${ASSTS_LOADER_TYPOGRAPHY.subtitle.size}px`,
+              ['--loader-type-status-size' as string]: `${ASSTS_LOADER_TYPOGRAPHY.status.size}px`,
+              ['--loader-type-pct-size' as string]: `${ASSTS_LOADER_TYPOGRAPHY.progressPct.size}px`,
+              ['--loader-type-tagline-size' as string]: `${ASSTS_LOADER_TYPOGRAPHY.tagline.size}px`,
+              ['--loader-type-tagline-plus-size' as string]: `${ASSTS_LOADER_TYPOGRAPHY.taglinePlus.size}px`,
+              ['--loader-type-mark-size' as string]: `${ASSTS_LOADER_TYPOGRAPHY.mark.size}px`,
+              ['--loader-type-signature-size' as string]: `${ASSTS_LOADER_TYPOGRAPHY.signatureLabel.size}px`,
+            }}
+          >
+            {children}
+          </div>
         </div>
       </div>
     </LoaderCompositionContext.Provider>

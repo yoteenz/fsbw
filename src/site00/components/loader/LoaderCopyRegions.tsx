@@ -1,3 +1,4 @@
+import { ASSTS_LOADER_COMPOSITION } from './loader-composition-map';
 import { LoaderRegion } from './LoaderRegion';
 
 type LoaderCopyRegionsProps = {
@@ -23,6 +24,7 @@ export function LoaderCopyRegions({
   progressLabel,
 }: LoaderCopyRegionsProps) {
   const value = Math.min(100, Math.max(0, Math.round(progress)));
+  const track = ASSTS_LOADER_COMPOSITION.progressTrack;
 
   return (
     <>
@@ -42,27 +44,33 @@ export function LoaderCopyRegions({
         <p className="site00-loader-copy__status">{progressLabel}</p>
       </LoaderRegion>
 
-      <LoaderRegion id="copy.progress" className="site00-loader-copy-region site00-loader-copy-region--progress">
-        <div className="site00-loader-copy__progress-row">
-          <div
-            className="site00-loader-copy__track"
-            role="progressbar"
-            aria-valuemin={0}
-            aria-valuemax={100}
-            aria-valuenow={value}
-            aria-label={`${value}% complete`}
-          >
-            <div className="site00-loader-copy__fill" style={{ width: `${value}%` }} />
-          </div>
-          <span className="site00-loader-copy__pct">{value}%</span>
+      <LoaderRegion id="copy.progressTrack" className="site00-loader-copy-region site00-loader-copy-region--progress-track">
+        <div
+          className="site00-loader-copy__track"
+          style={{ width: track.w, height: track.h }}
+          role="progressbar"
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-valuenow={value}
+          aria-label={`${value}% complete`}
+        >
+          <div className="site00-loader-copy__fill" style={{ width: `${value}%` }} />
         </div>
+      </LoaderRegion>
+
+      <LoaderRegion id="copy.progressPct" className="site00-loader-copy-region site00-loader-copy-region--progress-pct">
+        <span className="site00-loader-copy__pct">{value}%</span>
       </LoaderRegion>
 
       <LoaderRegion id="copy.tagline" className="site00-loader-copy-region site00-loader-copy-region--tagline">
         <div className="site00-loader-copy__tagline-group">
-          <span className="site00-loader-copy__tagline-mark site00-loader-copy__tagline-mark--left" aria-hidden="true" />
+          <span className="site00-loader-copy__tagline-plus" aria-hidden="true">
+            +
+          </span>
           <p className="site00-loader-copy__tagline">{tagline}</p>
-          <span className="site00-loader-copy__tagline-mark site00-loader-copy__tagline-mark--right" aria-hidden="true" />
+          <span className="site00-loader-copy__tagline-plus" aria-hidden="true">
+            +
+          </span>
         </div>
       </LoaderRegion>
 

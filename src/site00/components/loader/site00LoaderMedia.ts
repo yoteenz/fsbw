@@ -1,18 +1,35 @@
-/** Boot-critical loader media — same-origin, versioned, independent of ASSTS API. */
+/** Boot-critical loader media — versioned paths + approved Supabase production assets. */
 
 export const SITE00_LOADER_ASSET_VERSION = 'v1';
 
 export const SITE00_LOADER_ASSET_BASE = `/site00/loader/${SITE00_LOADER_ASSET_VERSION}`;
 
+/** Local fallback when Supabase env is unavailable (dev offline). */
 export const SITE00_LOADER_BACKGROUND_FILE = 'assts-loader-background-v1.png';
+/** Approved master environment — 711×1536 composition reference (Supabase live-preview). */
+export const SITE00_LOADER_BACKGROUND_REMOTE = 'IMG_0404.png';
+/** Dev reference overlay — falls back to background when missing locally. */
+export const SITE00_LOADER_REF_MAP_FILE = 'assts-loader-ref-map-v1.png';
 /** Original OpenArt source — red luminous geometry on black (screen compositing). */
 export const SITE00_LOADER_GEOMETRY_SOURCE_FILE = 'assts-loader-geometry-v1-source.mp4';
 export const SITE00_LOADER_GEOMETRY_SOURCE_REMOTE = 'openart-output_1786943611255_fc655184.mp4';
 export const SITE00_LOADER_GEOMETRY_WEBM_FILE = 'assts-loader-geometry-v1-alpha.webm';
 export const SITE00_LOADER_GEOMETRY_APNG_FILE = 'assts-loader-geometry-v1-alpha.apng';
 
+function supabaseLivePreviewUrl(filename: string): string | null {
+  const base = (import.meta.env.VITE_SUPABASE_URL as string | undefined)?.replace(/\/$/, '') ?? '';
+  if (!base) return null;
+  return `${base}/storage/v1/object/public/live-preview/site00/${filename}`;
+}
+
+/** Approved loader environment — canonical 711×1536 artboard background. */
 export function site00LoaderBackgroundUrl(): string {
-  return `${SITE00_LOADER_ASSET_BASE}/${SITE00_LOADER_BACKGROUND_FILE}`;
+  return supabaseLivePreviewUrl(SITE00_LOADER_BACKGROUND_REMOTE) ?? `${SITE00_LOADER_ASSET_BASE}/${SITE00_LOADER_BACKGROUND_FILE}`;
+}
+
+/** Reference map for artboard overlay test — falls back to approved background. */
+export function site00LoaderRefMapUrl(): string {
+  return `${SITE00_LOADER_ASSET_BASE}/${SITE00_LOADER_REF_MAP_FILE}`;
 }
 
 export function site00LoaderGeometryWebmUrl(): string {
@@ -29,8 +46,7 @@ export function site00LoaderGeometrySourceUrl(): string {
 }
 
 export function site00LoaderGeometrySourceRemoteUrl(): string {
-  const base = (import.meta.env.VITE_SUPABASE_URL as string | undefined)?.replace(/\/$/, '') ?? '';
-  return `${base}/storage/v1/object/public/live-preview/site00/${SITE00_LOADER_GEOMETRY_SOURCE_REMOTE}`;
+  return supabaseLivePreviewUrl(SITE00_LOADER_GEOMETRY_SOURCE_REMOTE) ?? site00LoaderGeometrySourceUrl();
 }
 
 /** iOS Safari — WebM alpha is unreliable; use transcoded APNG with true alpha. */
@@ -43,21 +59,3 @@ export function site00LoaderPrefersApngGeometry(): boolean {
   if (!isIOS) return false;
   return /Safari/i.test(ua) && !/CriOS|FxiOS|EdgiOS|Chrome/i.test(ua);
 }
-
-export type Site00GeometryAnchor = {
-  /** Normalized horizontal center (0–100). */
-  xPercent: number;
-  /** Platform center line from top of stage (0–100). */
-  yPercent: number;
-  /** Geometry width as % of stage width. */
-  widthPercent: number;
-  /** Bottom-align geometry foundation to platform center. */
-  translateYPercent: number;
-};
-
-export const ASSTS_LOADER_GEOMETRY_ANCHOR: Site00GeometryAnchor = {
-  xPercent: 50,
-  yPercent: 58,
-  widthPercent: 38,
-  translateYPercent: 100,
-};

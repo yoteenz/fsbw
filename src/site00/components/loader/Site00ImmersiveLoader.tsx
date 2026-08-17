@@ -5,6 +5,7 @@ import { teardownSite00AsstsBootShell } from './site00LoaderBoot';
 import { LoaderCopyRegions } from './LoaderCopyRegions';
 import { LoaderCompositionProvider } from './LoaderCompositionContext';
 import { LoaderReferenceMapDebug } from './LoaderReferenceMapDebug';
+import { LoaderReferenceOverlay } from './LoaderReferenceOverlay';
 import { LoaderRegion } from './LoaderRegion';
 import { Site00LoaderAnimation } from './Site00LoaderAnimation';
 import { Site00LoaderEnvironment } from './Site00LoaderEnvironment';
@@ -144,6 +145,7 @@ export function Site00ImmersiveLoader({
           </div>
         )}
 
+        <LoaderReferenceOverlay />
         <LoaderReferenceMapDebug />
       </LoaderCompositionProvider>
     </div>

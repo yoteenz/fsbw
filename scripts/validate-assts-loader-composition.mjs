@@ -6,15 +6,15 @@ const url = process.env.LOADER_URL || 'http://127.0.0.1:3001/assts?loaderRefMap=
 const outDir = '/opt/cursor/artifacts';
 
 const REGIONS = {
-  geometry: { x: 238, y: 209, w: 220, h: 535 },
-  pedestal: { x: 122, y: 687, w: 468, h: 121 },
-  'copy.eyebrow': { x: 319, y: 877, w: 74, h: 20 },
-  'copy.title': { x: 75, y: 914, w: 561, h: 43 },
-  'copy.subtitle': { x: 179, y: 982, w: 354, h: 25 },
-  'copy.status': { x: 289, y: 1095, w: 135, h: 22 },
-  'copy.progress': { x: 76, y: 1138, w: 572, h: 23 },
-  'copy.tagline': { x: 76, y: 1216, w: 572, h: 22 },
-  'copy.signature': { x: 317, y: 1300, w: 78, h: 91 },
+  geometry: { x: 238, y: 154, w: 222, h: 540 },
+  'copy.eyebrow': { x: 315, y: 837, w: 81, h: 24 },
+  'copy.title': { x: 85, y: 878, w: 542, h: 43 },
+  'copy.subtitle': { x: 184, y: 940, w: 344, h: 27 },
+  'copy.status': { x: 285, y: 1037, w: 141, h: 26 },
+  'copy.progressTrack': { x: 97, y: 1095, w: 482, h: 8 },
+  'copy.progressPct': { x: 599, y: 1086, w: 40, h: 25 },
+  'copy.tagline': { x: 165, y: 1170, w: 380, h: 34 },
+  'copy.signature': { x: 312, y: 1265, w: 88, h: 102 },
 };
 
 const PRIMARY = Object.keys(REGIONS);
@@ -35,7 +35,7 @@ await page.addInitScript(() => {
 });
 
 await page.route('**/api/admin/site00-assts**', async (route) => {
-  await new Promise((r) => setTimeout(r, 60_000));
+  await new Promise((r) => setTimeout(r, 120_000));
   await route.fulfill({
     status: 200,
     contentType: 'application/json',
@@ -48,12 +48,13 @@ await page.route('**/api/admin/site00-assts**', async (route) => {
   });
 });
 
-await page.goto(url, { waitUntil: 'networkidle', timeout: 90000 });
-await page.waitForSelector('.site00-loader-stage', { timeout: 30000 });
-await page.waitForTimeout(2500);
+await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 90000 });
+await page.waitForSelector('.site00-loader-artboard, .site00-loader-stage', { timeout: 30000 });
+await page.waitForSelector('[data-loader-region="copy.title"]', { timeout: 15000 });
+await page.waitForTimeout(1500);
 
 const measurements = await page.evaluate((ids) => {
-  const stage = document.querySelector('.site00-loader-stage');
+  const stage = document.querySelector('.site00-loader-artboard') ?? document.querySelector('.site00-loader-stage');
   if (!stage) return null;
   const stageRect = stage.getBoundingClientRect();
   const scale = stageRect.width / 711;
@@ -73,7 +74,7 @@ const measurements = await page.evaluate((ids) => {
       },
     });
   }
-  return { stageWidth: stageRect.width, rows };
+  return { stageWidth: stageRect.width, scale, rows };
 }, PRIMARY);
 
 const report = [];
@@ -123,7 +124,13 @@ await page.evaluate(() => {
 
 await page.screenshot({ path: `${outDir}/assts_loader_composition_711px_ready.png`, fullPage: false });
 
-await writeFile(`${outDir}/assts_loader_composition_report.json`, JSON.stringify({ stageWidth: measurements?.stageWidth, report }, null, 2));
-console.log(JSON.stringify({ stageWidth: measurements?.stageWidth, report }, null, 2));
+const payload = {
+  stageWidth: measurements?.stageWidth,
+  scale: measurements?.scale,
+  regionCount: measurements?.rows.length ?? 0,
+  report,
+};
+await writeFile(`${outDir}/assts_loader_composition_report.json`, JSON.stringify(payload, null, 2));
+console.log(JSON.stringify(payload, null, 2));
 
 await browser.close();
