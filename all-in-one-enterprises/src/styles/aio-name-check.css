@@ -1,0 +1,130 @@
+/* Business name availability check — Smart Intake Step 3 */
+
+.aio-name-check {
+  gap: 0.75rem;
+}
+
+.aio-name-check__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.aio-name-check__status {
+  margin-top: 0.5rem;
+  padding: 1rem 1.125rem;
+  border-radius: var(--aio-radius-lg);
+  background: var(--aio-white);
+  border: 1px solid var(--aio-gray-200);
+  max-width: 40rem;
+}
+
+.aio-name-check__status-line {
+  margin: 0 0 0.375rem;
+  font-weight: 700;
+  font-size: 0.875rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.aio-name-check__status-line--ok {
+  color: var(--aio-gold-dark, #9a7b1a);
+}
+
+.aio-name-check__status-line--warn {
+  color: #9a6700;
+}
+
+.aio-name-check__status-line--bad {
+  color: var(--aio-red);
+}
+
+.aio-name-check__status-detail,
+.aio-name-check__disclaimer,
+.aio-name-check__checked-at {
+  margin: 0.375rem 0 0;
+  font-size: 0.875rem;
+  color: var(--aio-gray-600);
+  line-height: 1.5;
+}
+
+.aio-name-check__matches {
+  margin: 0.75rem 0 0;
+  padding-left: 1.125rem;
+  font-size: 0.875rem;
+}
+
+.aio-name-check__match-highlight {
+  margin: 0.5rem 0 0;
+  font-weight: 600;
+}
+
+.aio-name-check__inline-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 0.75rem;
+}
+
+.aio-name-check__link {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  font-weight: 600;
+  color: var(--aio-black);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.aio-name-check__link:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.aio-name-check-review__grid {
+  display: grid;
+  gap: 0.75rem 1.5rem;
+  margin: 0 0 1rem;
+}
+
+@media (min-width: 640px) {
+  .aio-name-check-review__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.aio-name-check-review__grid dt {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--aio-gray-600);
+}
+
+.aio-name-check-review__grid dd {
+  margin: 0.25rem 0 0;
+  font-weight: 600;
+}
+
+.aio-name-check-review__status--likely_available {
+  color: var(--aio-gold-dark, #9a7b1a);
+}
+
+.aio-name-check-review__status--possible_conflict,
+.aio-name-check-review__status--manual_review_required,
+.aio-name-check-review__status--lookup_unavailable,
+.aio-name-check-review__status--stale_result {
+  color: #9a6700;
+}
+
+.aio-name-check-review__status--unavailable,
+.aio-name-check-review__status--error {
+  color: var(--aio-red);
+}
+
+@media (max-width: 480px) {
+  .aio-name-check__actions .aio-btn {
+    width: 100%;
+  }
+}

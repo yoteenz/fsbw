@@ -99,7 +99,8 @@ export type OfficeQueueId =
   | 'crm_new_leads'
   | 'crm_follow_up'
   | 'crm_quote_needed'
-  | 'crm_decision_pending';
+  | 'crm_decision_pending'
+  | 'business_name_review';
 
 export interface OfficeTeam {
   id: string;

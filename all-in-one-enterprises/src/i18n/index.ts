@@ -10,6 +10,7 @@ import enDriverLink from '../locales/en/driverLink.json';
 import enFleetCare from '../locales/en/fleetCare.json';
 import enPortal from '../locales/en/portal.json';
 import enValidation from '../locales/en/validation.json';
+import enIntake from '../locales/en/intake.json';
 
 import esCommon from '../locales/es/common.json';
 import esNav from '../locales/es/nav.json';
@@ -19,6 +20,7 @@ import esDriverLink from '../locales/es/driverLink.json';
 import esFleetCare from '../locales/es/fleetCare.json';
 import esPortal from '../locales/es/portal.json';
 import esValidation from '../locales/es/validation.json';
+import esIntake from '../locales/es/intake.json';
 
 export const SUPPORTED_LOCALES = ['en-US', 'es-US'] as const;
 export type AppLocale = (typeof SUPPORTED_LOCALES)[number];
@@ -38,6 +40,7 @@ const resources = {
     fleetCare: enFleetCare,
     portal: enPortal,
     validation: enValidation,
+    intake: enIntake,
   },
   'es-US': {
     common: esCommon,
@@ -48,6 +51,7 @@ const resources = {
     fleetCare: esFleetCare,
     portal: esPortal,
     validation: esValidation,
+    intake: esIntake,
   },
 };
 
@@ -63,7 +67,7 @@ export function initI18n(): typeof i18n {
     lng,
     fallbackLng: 'en-US',
     defaultNS: 'common',
-    ns: ['common', 'nav', 'auth', 'homepage', 'driverLink', 'fleetCare', 'portal', 'validation'],
+    ns: ['common', 'nav', 'auth', 'homepage', 'driverLink', 'fleetCare', 'portal', 'validation', 'intake'],
     interpolation: { escapeValue: false },
     returnEmptyString: false,
     parseMissingKeyHandler: (key) => {

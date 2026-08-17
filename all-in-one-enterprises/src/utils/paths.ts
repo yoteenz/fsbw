@@ -246,6 +246,7 @@ export const aioPaths = {
   officeSettingsSecurity: `${BASE}/office/settings/security`,
   officeWork: `${BASE}/office/work`,
   officeQueues: `${BASE}/office/queues`,
+  officeBusinessNameReview: `${BASE}/office/business-name-review`,
   officeApprovals: `${BASE}/office/approvals`,
   officeEscalations: `${BASE}/office/escalations`,
   officeServices: `${BASE}/office/services`,

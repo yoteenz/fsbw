@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { IntakeAnswers, IntakeQuestion } from '../intake/intakeTypes';
 import { getFieldValue, setFieldValue, validateField } from '../intake/intakeRules';
+import { BusinessNameCheckField } from './intake/BusinessNameCheckField';
 
 type Props = {
   question: IntakeQuestion;
@@ -80,6 +81,20 @@ export function IntakeQuestionField({ question, answers, onChange, error }: Prop
           </p>
         )}
       </fieldset>
+    );
+  }
+
+  if (question.type === 'business_name_check') {
+    return (
+      <BusinessNameCheckField
+        answers={answers}
+        onChange={onChange}
+        field={question.field}
+        inputId={inputId}
+        label={question.question}
+        description={question.description}
+        error={error}
+      />
     );
   }
 

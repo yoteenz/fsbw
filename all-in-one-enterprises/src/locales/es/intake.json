@@ -1,0 +1,33 @@
+{
+  "smartIntake": "Registro Inteligente",
+  "businessInformation": "Información del Negocio",
+  "businessInformationDesc": "Cuéntenos sobre su negocio.",
+  "nameCheck": {
+    "checkButton": "Verificar Disponibilidad →",
+    "checkingButton": "Verificando…",
+    "checkingRegistry": "Verificando el registro de negocios de {{state}}…",
+    "likelyAvailable": "✓ Probablemente Disponible",
+    "possibleConflict": "Posible Conflicto",
+    "unavailable": "El Nombre Puede No Estar Disponible",
+    "manualRequired": "Verificación Manual Requerida",
+    "manualDetail": "AIO no pudo verificar automáticamente este nombre con el registro de negocios de {{state}}. Puede continuar, pero el nombre debe verificarse antes de la presentación.",
+    "errorTitle": "No Pudimos Completar la Verificación del Nombre",
+    "errorBody": "Su información ha sido guardada. Intente de nuevo o continúe y AIO verificará el nombre antes de la presentación.",
+    "stale": "Nombre cambiado — verifique de nuevo",
+    "disclaimer": "La aprobación final la determina {{state}} cuando se revise su presentación.",
+    "checkedAt": "Verificado {{date}}",
+    "editName": "Editar Nombre",
+    "checkAgain": "Verificar de Nuevo",
+    "checkAnother": "Verificar Otro Nombre",
+    "tryAgain": "Intentar de Nuevo",
+    "recheck": "Verificar Nombre",
+    "reviewSection": "Disponibilidad del Nombre",
+    "finalDisclaimer": "La aprobación final la determina la Secretaría de Estado de {{state}} cuando se revise la presentación.",
+    "rechecking": "Verificando nombre…",
+    "errors": {
+      "emptyName": "Ingrese un nombre comercial antes de verificar.",
+      "missingState": "Seleccione su estado de formación antes de verificar.",
+      "generic": "No se pudo completar la verificación. Intente de nuevo."
+    }
+  }
+}

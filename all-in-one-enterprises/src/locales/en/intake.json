@@ -1,0 +1,33 @@
+{
+  "smartIntake": "Smart Intake",
+  "businessInformation": "Business Information",
+  "businessInformationDesc": "Tell us about your business.",
+  "nameCheck": {
+    "checkButton": "Check Availability →",
+    "checkingButton": "Checking…",
+    "checkingRegistry": "Checking {{state}} business registry…",
+    "likelyAvailable": "✓ Likely Available",
+    "possibleConflict": "Possible Conflict",
+    "unavailable": "Name May Not Be Available",
+    "manualRequired": "Manual Verification Required",
+    "manualDetail": "AIO could not automatically verify this name with the {{state}} business registry. You can continue, but the name must be verified before filing.",
+    "errorTitle": "We Couldn't Complete the Name Check",
+    "errorBody": "Your information has been saved. Try again or continue and AIO will verify the name before filing.",
+    "stale": "Name changed — check again",
+    "disclaimer": "Final approval is determined by {{state}} when your filing is reviewed.",
+    "checkedAt": "Checked {{date}}",
+    "editName": "Edit Name",
+    "checkAgain": "Check Again",
+    "checkAnother": "Check Another Name",
+    "tryAgain": "Try Again",
+    "recheck": "Recheck Name",
+    "reviewSection": "Name Availability",
+    "finalDisclaimer": "Final approval is determined by the {{state}} Secretary of State when the filing is reviewed.",
+    "rechecking": "Rechecking name…",
+    "errors": {
+      "emptyName": "Enter a business name before checking.",
+      "missingState": "Select your state of formation before checking.",
+      "generic": "Could not complete the check. Try again."
+    }
+  }
+}

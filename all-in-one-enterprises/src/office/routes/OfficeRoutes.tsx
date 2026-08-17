@@ -172,6 +172,7 @@ import {
 } from '../pages/BookkeepingPages';
 import { BookkeepingAutopilotPage } from '../pages/BookkeepingAutopilotPage';
 import { StaffTrainingCenterPage } from '../pages/TrainingPages';
+import { OfficeBusinessNameReviewPage } from '../../pages/office/BusinessNameReviewOfficePage';
 
 export default function OfficeRoutes() {
   return (
@@ -180,6 +181,7 @@ export default function OfficeRoutes() {
         <Route index element={<OfficeDashboardPage />} />
         <Route path="work" element={<OfficeMyWorkPage />} />
         <Route path="queues" element={<OfficeQueuesPage />} />
+        <Route path="business-name-review" element={<OfficeBusinessNameReviewPage />} />
         <Route path="approvals" element={<OfficeApprovalsPage />} />
         <Route path="escalations" element={<OfficeEscalationsPage />} />
         <Route path="services" element={<OfficeServicesPage />} />

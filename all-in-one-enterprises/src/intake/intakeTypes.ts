@@ -1,3 +1,5 @@
+import type { BusinessNameCheckResult } from '../business-formation/businessNameRegistry/types';
+
 export type IntakeGoal =
   | 'start_business'
   | 'get_legal'
@@ -28,7 +30,8 @@ export type IntakeQuestionType =
   | 'select'
   | 'date'
   | 'textarea'
-  | 'checklist';
+  | 'checklist'
+  | 'business_name_check';
 
 export interface IntakeOption {
   value: string;
@@ -71,6 +74,7 @@ export interface IntakeAnswers {
     trailers?: number;
     drivers?: number;
     operationType?: OperationType;
+    nameCheck?: BusinessNameCheckResult;
   };
   operating: {
     scope?: 'intrastate' | 'interstate' | 'not_sure';

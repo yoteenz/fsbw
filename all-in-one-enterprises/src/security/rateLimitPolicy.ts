@@ -14,6 +14,7 @@ export const RATE_LIMIT_RULES: RateLimitRule[] = [
   { id: 'login', endpoint: 'auth/login', maxRequests: 20, windowMs: 3600000, dimensions: ['ip', 'account'] },
   { id: 'password_reset', endpoint: 'auth/password-reset', maxRequests: 10, windowMs: 3600000, dimensions: ['ip', 'account'] },
   { id: 'intake', endpoint: 'public/intake', maxRequests: 30, windowMs: 3600000, dimensions: ['ip'] },
+  { id: 'business_name_check', endpoint: 'aio/business-name-check', maxRequests: 30, windowMs: 3600000, dimensions: ['ip'] },
   { id: 'upload', endpoint: 'vault/upload', maxRequests: 50, windowMs: 3600000, dimensions: ['organization'] },
   { id: 'export', endpoint: 'reports/export', maxRequests: 20, windowMs: 3600000, dimensions: ['account', 'operation'] },
   { id: 'search', endpoint: 'search', maxRequests: 120, windowMs: 60000, dimensions: ['account'] },

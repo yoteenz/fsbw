@@ -96,10 +96,19 @@ export const intakeSections: IntakeSection[] = [
   {
     id: 'business',
     title: 'Business Information',
-    description: 'Tell us about your business (demo information only).',
+    description: 'Tell us about your business.',
     condition: isCarrierFlow,
     questions: [
-      { id: 'business_name', section: 'business', question: 'Business Name', type: 'text', field: 'business.name', required: false },
+      { id: 'formation_state', section: 'business', question: 'State of Formation', type: 'select', field: 'business.formationState', required: true, options: US_STATES },
+      {
+        id: 'business_name',
+        section: 'business',
+        question: 'Business Name',
+        description: "Enter the name you'd like to use. We'll check it against the business registry for the state where you're forming your company.",
+        type: 'business_name_check',
+        field: 'business.name',
+        required: false,
+      },
       {
         id: 'business_structure',
         section: 'business',
@@ -115,7 +124,6 @@ export const intakeSections: IntakeSection[] = [
           { value: 'other', label: 'Other' },
         ],
       },
-      { id: 'formation_state', section: 'business', question: 'State of Formation', type: 'select', field: 'business.formationState', options: US_STATES },
       { id: 'operating_state', section: 'business', question: 'Primary Operating State', type: 'select', field: 'business.operatingState', required: true, options: US_STATES },
       { id: 'trucks', section: 'business', question: 'Number of Trucks', type: 'number', field: 'business.trucks', required: true },
       { id: 'trailers', section: 'business', question: 'Number of Trailers', type: 'number', field: 'business.trailers' },

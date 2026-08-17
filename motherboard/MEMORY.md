@@ -52744,6 +52744,7 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 ---
 
+<<<<<<< HEAD
 ## 2026-08-17 — ASSTS "Loading…" flash on hard refresh (session flag mismatch)
 
 - **Context:** Founder reported plain **"Loading…"** still appearing before ASSTS immersive animation on `preview.fsbw-dev.com`, and Origin desktop composition fix (16a5a421a) looked unchanged.
@@ -52755,4 +52756,25 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Origin:** Verified on preview @ 1440px — hero `position:absolute` left≈133px, cards center x=720, stage padding 0. Desktop composition **is live on cloud tunnel**. Mobile (<768px) still uses stacked layout by design; phone testing will look unchanged.
 
 - **QA:** Hard reload with session=1 → boot shell ~104ms, **0 Loading frames**. Screenshots: `assts_reload_no_loading_text.png`, `origin_desktop_1440_layout.png`.
+=======
+## 2026-08-17 — AIO Smart Intake state-aware business name availability check
+
+- **Context:** Composer sprint — upgrade Step 3 of AIO Get Started / Smart Intake so business name is checked against the formation-state registry on entry (explicit Check Availability), with honest statuses, stale invalidation, final review + recheck before submit, i18n (en/es), demo mode, Office manual review queue, server-side lookup endpoint, docs, tests.
+
+- **Flow changes:** `intakeConfig` reordered Business Information step — **State of Formation first**, then **Business Name** (`business_name_check` type), then Business Structure. Section copy: "Tell us about your business."
+
+- **Registry architecture:** `src/business-formation/businessNameRegistry/` — adapter pattern (`checkBusinessNameAvailability`), normalization, state capabilities, stale logic (24h TTL + fingerprint on name/state/structure), demo adapter (deterministic keywords: demo available, perfect choice, demo conflict exact, demo manual, demo error), optional Topograph adapter when `AIO_TOPOGRAPH_API_KEY` set (TN/GA/IL), unsupported → `lookup_unavailable` + manual review. Server: `api/aio/business-name-check.ts`, rate limit 30/hr/IP, 5min cache.
+
+- **UI:** `BusinessNameCheckField` on Step 3; `RequestSubmitPage` name availability review + auto-recheck before submit; `aio-name-check.css`. Intake persists `business.nameCheck` structured result.
+
+- **Office:** Queue `business_name_review` → `/office/business-name-review`; `createBusinessNameReviewTask` on manual/lookup-unavailable.
+
+- **i18n:** `locales/en|es/intake.json` namespace registered in `src/i18n/index.ts`.
+
+- **Docs:** `docs/business-formation/BUSINESS_NAME_CHECK_ARCHITECTURE.md`, `BUSINESS_NAME_REGISTRY_SUPPORT.md`, `docs/refinement/BUSINESS_NAME_CHECK_IMPLEMENTATION_REPORT.md`.
+
+- **QA:** 19 vitest tests PASS; `npm run build` PASS. Manual: TN + "Perfect Choice Inc" → Possible Conflict; "Demo Available Trucking LLC" → Likely Available; ES/EN toggle. Artifacts: `smart_intake_business_name_check_demo.mp4`, screenshots.
+
+- **Conventions:** Never imply guaranteed availability or SOS approval. Unsupported states allow Continue with manual verification. Production live registry requires provider API key — no fake production results.
+>>>>>>> 31038c549 (AIO Smart Intake: state-aware business name check on Step 3 [sync-only])
 

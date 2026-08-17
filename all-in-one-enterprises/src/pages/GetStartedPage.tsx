@@ -9,6 +9,7 @@ import { createLeadFromIntake } from '../demo/crmActions';
 import { IntakeQuestionField, useIntakeValidation } from '../components/IntakeQuestionField';
 import { AIOButton } from '../components/AIOButton';
 import { aioPaths } from '../utils/paths';
+import { invalidateNameCheckOnInputChange } from '../business-formation/businessNameRegistry/staleLogic';
 
 export function GetStartedPage() {
   const [searchParams] = useSearchParams();
@@ -17,6 +18,21 @@ export function GetStartedPage() {
   const [stepIndex, setStepIndex] = useState(0);
   const { errors, validate } = useIntakeValidation();
   const mainRef = useRef<HTMLDivElement>(null);
+
+  const setAnswersWithInvalidation = useCallback((updater: IntakeAnswers | ((prev: IntakeAnswers) => IntakeAnswers)) => {
+    setAnswers((prev) => {
+      const next = typeof updater === 'function' ? updater(prev) : updater;
+      const invalidated = invalidateNameCheckOnInputChange(next.business?.nameCheck, {
+        businessNameRaw: next.business?.name,
+        formationState: next.business?.formationState,
+        entityStructure: next.business?.structure,
+      });
+      if (invalidated !== next.business?.nameCheck) {
+        return { ...next, business: { ...next.business, nameCheck: invalidated } };
+      }
+      return next;
+    });
+  }, []);
 
   useEffect(() => {
     const goalParam = goalFromQueryParam(searchParams.get('goal'));
@@ -98,7 +114,7 @@ export function GetStartedPage() {
                 key={q.id}
                 question={q}
                 answers={answers}
-                onChange={setAnswers}
+                onChange={setAnswersWithInvalidation}
                 error={errors[q.field]}
               />
             ))}

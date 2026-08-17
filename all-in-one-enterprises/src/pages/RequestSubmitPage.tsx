@@ -1,23 +1,137 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { intakeRepository } from '../intake/intakeState';
 import { useAioRepositories } from '../data/repositories/registry';
-import type { ServiceRequest } from '../demo/demoTypes';
 import type { ServicePlanItem } from '../repositories/servicePlanRepository';
 import { AIOButton } from '../components/AIOButton';
 import { aioPaths } from '../utils/paths';
 import { isBackendMode } from '../config/dataMode';
 import { useAIOAuth } from '../auth/AIOAuthProvider';
+import { requestBusinessNameCheck } from '../business-formation/businessNameRegistry/nameCheckClient';
+import { shouldRecheckBeforeSubmit, effectiveDisplayStatus } from '../business-formation/businessNameRegistry/staleLogic';
+import { getStateRegistryCapability } from '../business-formation/businessNameRegistry/stateCapabilities';
+import { createBusinessNameReviewTask } from '../demo/businessNameCheckActions';
+import { formatAppDate } from '../i18n/format';
+import type { IntakeAnswers } from '../intake/intakeTypes';
+
+function NameAvailabilityReview({
+  intake,
+  onIntakeUpdate,
+}: {
+  intake: IntakeAnswers;
+  onIntakeUpdate: (next: IntakeAnswers) => void;
+}) {
+  const { t, i18n } = useTranslation('intake');
+  const [rechecking, setRechecking] = useState(false);
+
+  const businessName = intake.business?.name;
+  const formationState = intake.business?.formationState;
+  const nameCheck = intake.business?.nameCheck;
+
+  if (!businessName?.trim() || !formationState) return null;
+
+  const stateLabel = getStateRegistryCapability(formationState).stateName;
+  const displayStatus = effectiveDisplayStatus(nameCheck, {
+    businessNameRaw: businessName,
+    formationState,
+    entityStructure: intake.business?.structure,
+  });
+
+  const runRecheck = useCallback(async () => {
+    setRechecking(true);
+    try {
+      const result = await requestBusinessNameCheck({
+        state: formationState,
+        businessName,
+        entityType: intake.business?.structure,
+      });
+      const next = {
+        ...intake,
+        business: { ...intake.business, nameCheck: result },
+      };
+      onIntakeUpdate(next);
+      intakeRepository.save(next);
+      if (result.manualReviewRequired) {
+        createBusinessNameReviewTask({
+          businessName: result.businessNameRaw,
+          formationState: result.formationState,
+          entityStructure: result.entityStructure,
+          status: result.status,
+        });
+      }
+    } finally {
+      setRechecking(false);
+    }
+  }, [businessName, formationState, intake, onIntakeUpdate]);
+
+  const statusLabel = (() => {
+    switch (displayStatus) {
+      case 'likely_available':
+        return t('nameCheck.likelyAvailable');
+      case 'possible_conflict':
+        return t('nameCheck.possibleConflict');
+      case 'unavailable':
+        return t('nameCheck.unavailable');
+      case 'manual_review_required':
+      case 'lookup_unavailable':
+        return t('nameCheck.manualRequired');
+      case 'stale_result':
+        return t('nameCheck.stale');
+      case 'error':
+        return t('nameCheck.errorTitle');
+      default:
+        return t('nameCheck.manualRequired');
+    }
+  })();
+
+  return (
+    <section className="aio-portal-panel aio-name-check-review">
+      <h2>{t('nameCheck.reviewSection')}</h2>
+      <dl className="aio-name-check-review__grid">
+        <div>
+          <dt>Business Name</dt>
+          <dd>{businessName}</dd>
+        </div>
+        <div>
+          <dt>Formation State</dt>
+          <dd>{stateLabel}</dd>
+        </div>
+        {intake.business?.structure && (
+          <div>
+            <dt>Business Structure</dt>
+            <dd>{intake.business.structure.replace(/_/g, ' ')}</dd>
+          </div>
+        )}
+        <div>
+          <dt>{t('nameCheck.reviewSection')}</dt>
+          <dd className={`aio-name-check-review__status aio-name-check-review__status--${displayStatus}`}>{statusLabel}</dd>
+        </div>
+        {nameCheck?.checkedAt && displayStatus !== 'stale_result' && (
+          <div>
+            <dt>Last Checked</dt>
+            <dd>{formatAppDate(nameCheck.checkedAt, i18n.language)}</dd>
+          </div>
+        )}
+      </dl>
+      <p className="aio-name-check__disclaimer">{t('nameCheck.finalDisclaimer', { state: stateLabel })}</p>
+      <AIOButton type="button" variant="outline-dark" onClick={() => void runRecheck()} disabled={rechecking}>
+        {rechecking ? t('nameCheck.rechecking') : t('nameCheck.recheck')}
+      </AIOButton>
+    </section>
+  );
+}
 
 export function RequestSubmitPage() {
   const navigate = useNavigate();
   const repos = useAioRepositories();
   const { isAuthenticated } = useAIOAuth();
-  const intake = intakeRepository.load();
+  const [intake, setIntake] = useState(() => intakeRepository.load());
   const roadmap = repos.roadmap.load();
   const plan = repos.servicePlan.load();
   const [notes, setNotes] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [recheckBlocking, setRecheckBlocking] = useState(false);
 
   const handleSubmit = async () => {
     if (plan.length === 0) return;
@@ -25,11 +139,44 @@ export function RequestSubmitPage() {
       navigate(aioPaths.signUp);
       return;
     }
+
+    let intakeToSubmit = intake;
+
+    const needsRecheck = shouldRecheckBeforeSubmit(intake.business?.nameCheck, {
+      businessNameRaw: intake.business?.name,
+      formationState: intake.business?.formationState,
+      entityStructure: intake.business?.structure,
+    });
+
+    if (needsRecheck && intake.business?.name?.trim() && intake.business?.formationState) {
+      setRecheckBlocking(true);
+      try {
+        const result = await requestBusinessNameCheck({
+          state: intake.business.formationState,
+          businessName: intake.business.name,
+          entityType: intake.business.structure,
+        });
+        intakeToSubmit = { ...intake, business: { ...intake.business, nameCheck: result } };
+        setIntake(intakeToSubmit);
+        intakeRepository.save(intakeToSubmit);
+        if (result.manualReviewRequired) {
+          createBusinessNameReviewTask({
+            businessName: result.businessNameRaw,
+            formationState: result.formationState,
+            entityStructure: result.entityStructure,
+            status: result.status,
+          });
+        }
+      } finally {
+        setRecheckBlocking(false);
+      }
+    }
+
     setSubmitting(true);
     try {
       const request = await repos.serviceRequests.create({
         services: plan.map((p: { slug: string; title: string; division: string }) => ({ slug: p.slug, title: p.title, division: p.division })),
-        intake,
+        intake: intakeToSubmit,
         roadmap,
         notes,
       });
@@ -54,8 +201,11 @@ export function RequestSubmitPage() {
           <section className="aio-portal-panel">
             <h2>Business</h2>
             <p>{intake.business?.name || intake.shipper?.companyName || '—'}</p>
+            <p>{intake.business?.formationState ? `Formation: ${intake.business.formationState}` : ''}</p>
             <p>{intake.business?.operatingState ? `Operating: ${intake.business.operatingState}` : ''}</p>
           </section>
+
+          <NameAvailabilityReview intake={intake} onIntakeUpdate={setIntake} />
 
           <section className="aio-portal-panel">
             <h2>Contact</h2>
@@ -108,8 +258,8 @@ export function RequestSubmitPage() {
             <Link to={aioPaths.servicePlan}>
               <AIOButton variant="outline-dark">Back to Plan</AIOButton>
             </Link>
-            <AIOButton variant="gold" onClick={handleSubmit} disabled={plan.length === 0 || submitting}>
-              {submitting ? 'Submitting…' : 'Submit Service Request'}
+            <AIOButton variant="gold" onClick={handleSubmit} disabled={plan.length === 0 || submitting || recheckBlocking}>
+              {recheckBlocking ? 'Rechecking name…' : submitting ? 'Submitting…' : 'Submit Service Request'}
             </AIOButton>
           </div>
         </div>
@@ -120,7 +270,7 @@ export function RequestSubmitPage() {
 
 export function RequestConfirmationPage({ requestId }: { requestId: string }) {
   const repos = useAioRepositories();
-  const [request, setRequest] = useState<ServiceRequest | undefined>();
+  const [request, setRequest] = useState<Awaited<ReturnType<typeof repos.serviceRequests.getById>>>(undefined);
 
   useEffect(() => {
     void Promise.resolve(repos.serviceRequests.getById(requestId)).then(setRequest);

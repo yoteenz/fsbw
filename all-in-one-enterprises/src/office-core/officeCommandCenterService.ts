@@ -41,6 +41,7 @@ const QUEUE_DEFS: Omit<OfficeQueueSummary, 'count'>[] = [
   { id: 'crm_follow_up', label: 'Follow Up Today', href: aioPaths.officeCrm, scope: 'personal', division: 'customer_support' },
   { id: 'crm_quote_needed', label: 'Quote Needed', href: aioPaths.officeCrmPipeline, scope: 'team', division: 'customer_support' },
   { id: 'crm_decision_pending', label: 'Decision Pending', href: aioPaths.officeCrmPipeline, scope: 'team', division: 'customer_support' },
+  { id: 'business_name_review', label: 'Business Name Review', href: aioPaths.officeBusinessNameReview, scope: 'team', division: 'permitting_compliance' },
 ];
 
 function countByQueue(store: DemoStore, queueId: string): number {
@@ -72,6 +73,11 @@ function countByQueue(store: DemoStore, queueId: string): number {
   }
   if (queueId === 'crm_decision_pending') {
     return getCrmMetrics(store).decisionPending;
+  }
+  if (queueId === 'business_name_review') {
+    return (store.officeWorkItems ?? []).filter(
+      (w) => w.queueId === 'business_name_review' && isActiveWorkStatus(w.status),
+    ).length;
   }
   return (store.officeWorkItems ?? []).filter((w) => w.queueId === queueId && isActiveWorkStatus(w.status)).length;
 }
