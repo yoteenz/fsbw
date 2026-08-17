@@ -51836,3 +51836,21 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Batch state:** **BATCH-ASSTS-ENV-001** assets generated (v01 library/batch, v02 inspection from regen test); awaiting founder review in ASSTS UI. Say **deploy now** so `/api/admin/site00-assts` is reachable from preview tunnel.
 
+---
+
+## 2026-08-17 — ASSTS mobile UX/UI convergence (reference-locked presentation sprint)
+
+- **Context:** Transform flat/template ASSTS UI into approved 3-screen mobile reference (Library, Batch Review, Asset Inspection). Preserve all backend/routing/Supabase/FAL/slot infrastructure — presentation-layer only.
+
+- **Implemented:** Reusable glass system (`AsstsGlass`, `AsstsCards`, `AsstsInspectorParts`, `AsstsSheets`, `AsstsBottomDock`). Full CSS overhaul in `assts.css` — translucent panels, environment veil, safe-area dock, image-led cards, sticky batch progress, inspection hero. Library: hero, clickable metrics with query filters (`?view=all`, `?status=needs-review`, `?status=approved`, `?category=`), image-led Needs Your Review card, Recent Batches with real thumbnails, Browse Library 2-col grid. New route `/assts/batches`. Batch: summary panel + progress ring, GRID + CONTACT SHEET view modes, sticky LOCK BATCH with confirmation sheet. Inspection: dominant hero, version strip, collapsible metadata, approve/regen/reject sheets, compare toggle, full-screen viewer, prev/next footer. API extensions: batch/category thumbnails, filtered assets, asset batch navigation, progressPercent on batches.
+
+- **Data state:** BATCH-ASSTS-ENV-001 still **IN_REVIEW** / 3× **NEEDS_REVIEW**; slots on **fallback** backgrounds until founder approves + locks again.
+
+- **QA:** `npm run build` PASS. Dev server `/assts` 200. API returns 401 without admin token (expected). Founder sign-in required for full UI walkthrough on preview.
+
+- **Remaining visual gap:** Final approved environment images in semantic slots (`assts.*.environment.mobile`) — coded UI built to coexist without rebuild when locked.
+
+- **Next:** Founder review on mobile preview; say **deploy now** for production API + Vercel.
+
+
+- **Hotfix (2026-08-17):** `/assts` false "Loading did not complete" — Site00 Suspense used global LoadingScreen; 4s post-load guard treated lazy chunk load as hang. Fix: `AsstsRouteSuspense` skeleton fallback + guard exemptions for `/assts` and `Site00` source.

@@ -22,6 +22,10 @@ function isAllInOnePath(pathname: string): boolean {
   );
 }
 
+function isAsstsPath(pathname: string): boolean {
+  return pathname === '/assts' || pathname.startsWith('/assts/');
+}
+
 function dismissOverlayIfPresent(): void {
   if (typeof document === 'undefined') return;
   document.querySelector('[data-post-load-render-guard]')?.remove();
@@ -89,6 +93,8 @@ function rootLooksBlank(): boolean {
   if (document.querySelector('[data-post-load-render-guard]')) return false;
   if (document.querySelector('[data-route-loading]')) return false;
   if (document.querySelector('.aio-loading')) return false;
+  if (document.querySelector('.assts-route-fallback')) return false;
+  if (document.querySelector('.site00-assts-shell')) return false;
   if (document.querySelector('.aio-shell, .aio-page, .aio-hero')) return false;
   const text = root.innerText.trim();
   const html = root.innerHTML.trim();
@@ -114,6 +120,14 @@ async function audit(reason: string): Promise<void> {
     return;
   }
 
+  // ASSTS Asset Vault — lightweight route fallback; lazy chunk + admin gate can exceed 4s on mobile preview.
+  if (isAsstsPath(pathname) && (reason === '4s-post-load' || reason === '8s-post-load')) {
+    if (!rootLooksBlank()) return;
+    if (document.querySelector('.assts-route-fallback, .site00-assts-shell')) return;
+    if (document.querySelector('[data-route-loading="app-shell"]')) return;
+    return;
+  }
+
   const loadingOverlay = document.querySelector('.loading-screen-root');
   const stuckLoadingAttr =
     document.documentElement.getAttribute('data-loading-screen') === 'true' &&
@@ -135,6 +149,10 @@ async function audit(reason: string): Promise<void> {
       }
       // Lobby/lounge intentionally shows a ~3s asset splash after route mount (can start after App boot).
       if (source === 'LobbyApp.initial') {
+        return;
+      }
+      // SITE 00 lazy pages (Origin, ASSTS legacy Site00Suspense, etc.)
+      if (source === 'Site00') {
         return;
       }
       try {

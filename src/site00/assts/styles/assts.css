@@ -1401,3 +1401,32 @@
 @media (prefers-reduced-motion: reduce) {
   .assts-skeleton { animation: none; }
 }
+
+/* ASSTS route lazy-load fallback (no global LoadingScreen) */
+.assts-route-fallback {
+  min-height: 100dvh;
+  padding: calc(16px + env(safe-area-inset-top, 0px)) 16px 80px;
+}
+
+.assts-route-fallback__hero {
+  height: 88px;
+  margin-bottom: 12px;
+  border-radius: var(--site-radius-sm);
+}
+
+.assts-route-fallback__metrics {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.assts-route-fallback__metrics .assts-skeleton {
+  height: 52px;
+  border-radius: var(--site-radius-sm);
+}
+
+.assts-route-fallback__card {
+  height: 168px;
+  border-radius: var(--site-radius-md);
+}
