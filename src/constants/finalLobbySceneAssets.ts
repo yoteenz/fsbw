@@ -89,15 +89,12 @@ export const LOUNGE_TV_BAKED_HIT_LAYOUT = {
   layoutHeightExtraPx: -80,
 } as const;
 
-/** Production + QA — green play tap wraps PRESS TO PLAY (center-anchored width/height). */
-export const LOUNGE_TV_PLAY_TAP_LAYOUT_WIDTH_EXTRA_PX = 80;
-export const LOUNGE_TV_PLAY_TAP_LAYOUT_HEIGHT_EXTRA_PX = -28;
-
+/** Production + QA — green play tap: nudge box down/right to baked PRESS TO PLAY text. */
 export const LOUNGE_TV_PLAY_TAP_LAYOUT = {
-  layoutWidthExtraPx: LOUNGE_TV_PLAY_TAP_LAYOUT_WIDTH_EXTRA_PX,
-  layoutOffsetX: -LOUNGE_TV_PLAY_TAP_LAYOUT_WIDTH_EXTRA_PX / 2,
-  layoutHeightExtraPx: LOUNGE_TV_PLAY_TAP_LAYOUT_HEIGHT_EXTRA_PX,
-  layoutOffsetY: -LOUNGE_TV_PLAY_TAP_LAYOUT_HEIGHT_EXTRA_PX / 2,
+  layoutWidthExtraPx: 10,
+  layoutHeightExtraPx: -36,
+  layoutOffsetX: 12,
+  layoutOffsetY: 46,
 } as const;
 
 /** In-screen play icon — center of gray triangle on TV glass (`final-lounge.png`, 928×1680). */

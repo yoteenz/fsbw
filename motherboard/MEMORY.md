@@ -13166,7 +13166,9 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 **Context:** User asked to resolve a **git merge conflict** on their branch (vs **`dba3357072f306775467cd85fa9239171b6931ee`**).
 
-**Topics covered:** **`motherboard/MEMORY.md`** had **`<<<<<<< HEAD`** / **`=======`** / **`>>>>>>>`** between two append-only entries: **2026-04-13 fal-first laptop steps** (HEAD) and **2026-04-08 Safari `replaceState` / `usePersistentQueryState`** (incoming).
+**Topics covered:** **`motherboard/MEMORY.md`** had **`** / **`
+
+** / **`>>>>>>>`** between two append-only entries: **2026-04-13 fal-first laptop steps** (HEAD) and **2026-04-08 Safari `replaceState` / `usePersistentQueryState`** (incoming).
 
 **Decisions / outcomes:** Removed conflict markers and **kept both entries**: **2026-04-08** first, **2026-04-13** second (chronological within the conflict block; newest still near file end). **`src/hooks/usePersistentQueryState.ts`** already contained **`canonicalQueryString()`** — no further hook edits in this chat.
 
@@ -52113,4 +52115,12 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **QA:** Build PASS; 375px manual QA — gold LOG IN always visible, reference hierarchy matched.
 
->>>>>>> 55cd6275d (Docs: AIO login polish pass MEMORY and report update [sync-only])
+---
+
+## 2026-08-17 — Lounge TV PRESS TO PLAY position correction (post-hotfix)
+
+- **Context:** Founder reported PRESS TO PLAY still too high on TV after Aug 17 hotfix. Hotfix `c3bffc7ad` wrongly restored stale `68f115e06` centered tap (`layoutOffsetY: +14`) instead of production `ea51d4c59` / `9906b2c4b` (`layoutOffsetY: 46`).
+
+- **Fix:** Restored `LOUNGE_TV_PLAY_TAP_LAYOUT` to `{ layoutWidthExtraPx: 10, layoutHeightExtraPx: -36, layoutOffsetX: 12, layoutOffsetY: 46 }`; button `padding: 8`.
+
+- **QA:** Build PASS; iPhone 12 Pro viewport — PRESS TO PLAY centered on TV glass.
