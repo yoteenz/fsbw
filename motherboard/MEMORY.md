@@ -52324,3 +52324,17 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **QA:** `npm run build` PASS in `all-in-one-enterprises/`.
 
+---
+
+## 2026-08-17 — AIO login headline “back.” punctuation color
+
+- **Context:** AIO mobile `/login` hero headline polish — split gold “back.” treatment.
+
+- **Request:** White period beside gold “back” in hero headline (`WELCOME` / `back.` stack).
+
+- **Changes:** `LoginPage.tsx` — `headlineGold` JSX splits `back` + `.` via `.aio-auth-premium__headline-punct`. `aio-auth.css` — punct span `color: var(--aio-white)` inside gold `.aio-auth-premium__headline-line--gold`.
+
+- **Unchanged:** Nav `<` Back control colors, form typography, supporting copy.
+
+- **QA:** `npm run build` PASS.
+
