@@ -1,4 +1,5 @@
 import { SITE00_DIRECTORY_SECTIONS, SITE00_ENTER_COPY } from '../../config/directory';
+import { Site00SummaryStripText } from '../shell/Site00SummaryStripText';
 import { ArchitecturalPanel } from '../panels/ArchitecturalPanel';
 import { SectionRule } from '../panels/SectionRule';
 import { DirectoryRow } from '../workflow/WorkflowCards';
@@ -82,9 +83,7 @@ export function EnterStatusStrip() {
         zIndex: 'var(--site-z-nav)',
       }}
     >
-      <p className="site00-mono" style={{ margin: 0, textTransform: 'uppercase' }}>
-        {SITE00_ENTER_COPY.statusStrip}
-      </p>
+      <Site00SummaryStripText text={SITE00_ENTER_COPY.statusStrip} />
     </footer>
   );
 }

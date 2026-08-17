@@ -52570,7 +52570,7 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Context:** Founder requested `/enter` desktop tuning — menu panel up 10px / right 16px; welcome block and accompanying copy left 25px in tandem.
 
-- **Changes:** `DirectoryPanel.tsx` — `site00-enter-wwelcome` + `site00-enter-menu` classes. `site00.css` @ `min-width: 768px` — welcome `translateX(-25px)`, menu `translate(16px, -10px)`.
+- **Changes:** `DirectoryPanel.tsx` — `site00-enter-welcome` + `site00-enter-menu` classes. `site00.css` @ `min-width: 768px` — welcome `translateX(-25px)`, menu `translate(16px, -10px)`.
 
 - **QA:** `npm run build` PASS. Playwright — computed transforms match offsets. Screenshot: `site00_enter_composition_offsets_1440.png`.
 

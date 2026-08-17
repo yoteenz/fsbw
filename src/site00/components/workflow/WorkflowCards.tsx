@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import type { IdentityBrandState } from '../../config/identity';
 import { GeometricIcon, identityComplexityIcon } from '../icons/GeometricIcon';
 import { ArrowIconSmall } from '../icons/ArrowAction';
+import { Site00SummaryStripText } from '../shell/Site00SummaryStripText';
 
 type StateCardProps = {
   state: IdentityBrandState;
@@ -119,19 +120,7 @@ type WorkflowSummaryProps = {
 };
 
 export function WorkflowSummary({ text }: WorkflowSummaryProps) {
-  return (
-    <p
-      className="site00-mono"
-      style={{
-        textAlign: 'center',
-        padding: '24px 16px',
-        textTransform: 'uppercase',
-        color: 'var(--site-text-muted)',
-      }}
-    >
-      {text}
-    </p>
-  );
+  return <Site00SummaryStripText text={text} />;
 }
 
 type DirectoryRowProps = {

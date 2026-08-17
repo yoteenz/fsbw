@@ -273,6 +273,37 @@
   box-shadow: 0 0 0 1px var(--site-red-dim);
 }
 
+/* ─── Bottom summary strip (Enter + workflow state routes) ─── */
+
+.site00-summary-strip {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  column-gap: 2.5rem;
+  row-gap: 0.75rem;
+  margin: 0;
+  padding: 28px 32px;
+  text-align: center;
+  text-transform: uppercase;
+  color: var(--site-text);
+}
+
+.site00-summary-strip__group {
+  display: inline-flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.site00-summary-strip__segment {
+  color: var(--site-text);
+}
+
+.site00-summary-strip__bullet {
+  color: var(--site-red);
+  flex-shrink: 0;
+}
+
 /* ─── Status strip (homepage only) ─── */
 
 .site00-status-strip {
