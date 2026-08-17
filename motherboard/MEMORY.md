@@ -52195,6 +52195,30 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 ---
 
+## 2026-08-17 — AIO login hero missing on preview (env-dependent URL fix)
+
+- **Context:** Founder reported login page on `preview.fsbw-dev.com` shows solid black background — no approved truck hero image despite prior implementation.
+
+- **Root cause:** Login hero URL was built only from Supabase env vars; when unset, `getAioLoginHeroImageUrl()` returned empty → no truck.
+
+- **Fix:** Bundled approved master PNG at `public/brand/aio-login-hero.png`; fallback in `getAioLoginHeroImageUrl()`.
+
+---
+
+## 2026-08-17 — AIO login finite hero structure correction
+
+- **Context:** Truck image behaved as full-page background; form overlaid on hero.
+
+- **Fix:** New `AuthLoginHero` finite top section; form-stack on solid `#080808`; debug banner hidden on auth routes.
+
+---
+
+## 2026-08-17 — AIO login hero micro-refinement (crop, back colors, −2px type)
+
+- **Context:** Excess road at hero bottom, form too low, full-gold BACK, typography oversized.
+
+- **Fix:** Shorter hero, image nudged up, gold `<` + white BACK, ~2px type reduction on mobile login.
+
 - **QA:** Playwright 375/390/414 — hero 330–340px, email below hero, back symbol gold + label white.
 
 ---
