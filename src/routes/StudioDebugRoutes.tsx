@@ -53,6 +53,7 @@ import { DebugRouteErrorBoundary } from '../pages/debug/DebugRouteErrorBoundary'
 import { RootAppErrorBoundary } from './RootAppErrorBoundary';
 import { lazyWithRetry } from '../utils/lazyWithRetry';
 import LegacyAioMovedNotice from '../pages/debug/LegacyAioMovedNotice';
+import { AppShellRouteFallback } from '../platform-stabilization/AppShellRouteFallback';
 
 const App = lazyWithRetry(() => import('../App'), 'App');
 
@@ -177,23 +178,7 @@ export default function StudioDebugRoutes() {
         path="*"
         element={
           <RootAppErrorBoundary>
-            <Suspense
-              fallback={
-                <div
-                  data-route-loading="app-shell"
-                  style={{
-                    minHeight: '100dvh',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontFamily: 'system-ui, sans-serif',
-                    color: '#444',
-                  }}
-                >
-                  Loading…
-                </div>
-              }
-            >
+            <Suspense fallback={<AppShellRouteFallback />}>
               <App />
             </Suspense>
           </RootAppErrorBoundary>

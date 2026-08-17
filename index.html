@@ -11,7 +11,18 @@
     <link rel="preload" href="/assets/Bohemy.otf" as="font" type="font/otf" crossorigin />
     <link rel="preload" href="/assets/psa-nudge-thought-bubble.png?v=1" as="image" />
     <link rel="stylesheet" href="/site00-assts-loader-boot.css" />
-    <script src="/site00-assts-loader-boot.js"></script>
+    <script>
+      (function site00AsstsBootClassEarly() {
+        var path = window.location.pathname || '';
+        if (path.indexOf('/assts') !== 0) return;
+        try {
+          if (sessionStorage.getItem('site00-assts-immersive-complete') === '1') return;
+        } catch (e) {
+          /* ignore */
+        }
+        document.documentElement.classList.add('site00-assts-boot');
+      })();
+    </script>
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Build A Wig - Custom Wig Builder</title>
@@ -19,6 +30,7 @@
   </head>
   <body>
     <div id="root"></div>
+    <script src="/site00-assts-loader-boot.js"></script>
     <script src="/pre-main-probe.js"></script>
     <script type="module" src="/src/main.tsx"></script>
   </body>

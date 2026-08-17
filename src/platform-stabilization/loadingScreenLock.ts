@@ -32,10 +32,15 @@ export function acquireLoadingScreenDocumentLock(): () => void {
     };
     html.setAttribute('data-loading-screen', 'true');
     html.style.overflow = 'hidden';
-    html.style.backgroundColor = '#ffffff';
+    const asstsBoot =
+      typeof window !== 'undefined' &&
+      window.location.pathname.startsWith('/assts') &&
+      document.documentElement.classList.contains('site00-assts-boot');
+    const bootBg = asstsBoot ? '#f7f7f5' : '#ffffff';
+    html.style.backgroundColor = bootBg;
     body.style.overflow = 'hidden';
     body.style.touchAction = 'none';
-    body.style.backgroundColor = '#ffffff';
+    body.style.backgroundColor = bootBg;
     if (root) root.style.overflow = 'hidden';
   }
 

@@ -1,14 +1,14 @@
 (function site00AsstsLoaderBoot() {
   if (typeof window === 'undefined' || typeof document === 'undefined') return;
+
   var path = window.location.pathname || '';
   if (path.indexOf('/assts') !== 0) return;
+
   try {
     if (sessionStorage.getItem('site00-assts-immersive-complete') === '1') return;
   } catch (e) {
     /* ignore */
   }
-
-  document.documentElement.classList.add('site00-assts-boot');
 
   var base = '/site00/loader/v1/';
   var bg = base + 'assts-loader-background-v1.png';
@@ -23,18 +23,35 @@
     document.head.appendChild(link);
   }
 
-  preload(bg, 'image');
+  function ensureBootShell() {
+    document.documentElement.classList.add('site00-assts-boot');
 
-  var geometry = base + 'assts-loader-geometry-v1-source.mp4';
-  preload(geometry, 'fetch');
+    preload(bg, 'image');
 
-  if (!document.getElementById('site00-assts-boot-shell')) {
+    var geometry = base + 'assts-loader-geometry-v1-source.mp4';
+    preload(geometry, 'fetch');
+
+    if (document.getElementById('site00-assts-boot-shell')) return;
+
     var shell = document.createElement('div');
     shell.id = 'site00-assts-boot-shell';
     shell.className = 'site00-assts-boot-shell';
     shell.setAttribute('aria-hidden', 'true');
     shell.innerHTML =
       '<div class="site00-assts-boot-shell__env" style="background-image:url(\'' + bg + '\')"></div>';
-    document.body.appendChild(shell);
+
+    var mountTarget = document.body || document.documentElement;
+    mountTarget.appendChild(shell);
   }
+
+  if (document.body) {
+    ensureBootShell();
+    return;
+  }
+
+  document.documentElement.classList.add('site00-assts-boot');
+  preload(bg, 'image');
+  preload(base + 'assts-loader-geometry-v1-source.mp4', 'fetch');
+
+  document.addEventListener('DOMContentLoaded', ensureBootShell, { once: true });
 })();

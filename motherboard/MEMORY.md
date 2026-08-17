@@ -52632,3 +52632,32 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **QA:** Playwright @ 1440px — hero x=7 (32−25), row scale 0.75, card ~165px wide, cards top ≈533 (+20). Screenshot: `site00_origin_panels_scaled_1440.png`.
 
+---
+
+## 2026-08-17 — BLDR state page layout aligned with IDNTY (individual selection panels)
+
+- **Context:** Founder requested `/bldr/state` remove monolithic wrapper panel behind all content; build-class selection options should sit in individual glass cards like `/idnty/state` for flush background blend.
+
+- **Changes:** `BldrStatePage.tsx` — restructured to match `IdntyStatePage`: header + 4× `BuildClassCard` (`site00-state-card`) on environment; only BLDR / Investment Guide in single `ArchitecturalPanel variant="workflow"`; footer `WorkflowSummary` outside panel. Removed outer wrapper panel + `SectionRule`.
+
+- **QA:** `npm run build` PASS. Playwright `/bldr/state` — 4 state cards + 1 investment workflow panel. Screenshot: `site00_bldr_state_individual_panels.png`.
+
+---
+
+## 2026-08-17 — ASSTS cold-start loader: remove "Loading…" flash + extend cinematic hold
+
+- **Context:** Founder reported plain **"Loading…"** text on blank screen before immersive ASSTS loader animation; animation cut short (~1s) instead of staying up while assets load.
+
+- **Root cause:** (1) `site00-assts-loader-boot.js` ran in `<head>` before `document.body` existed — boot shell often never painted until React module import. (2) `StudioDebugRoutes` App lazy Suspense fallback rendered **Loading…** in `#root`. (3) `Site00ImmersiveLoader` tore down boot shell immediately on `phase === 'loading'` before immersive background + geometry painted. (4) `MIN_CINEMATIC_MS` was 1800ms — too short once bootstrap API/preload finished quickly.
+
+- **Fixes:**
+  - `index.html` — inline early `site00-assts-boot` class in head; move boot script to body (after `#root`).
+  - `public/site00-assts-loader-boot.js` — DOMContentLoaded fallback + mount shell when body ready.
+  - `AppShellRouteFallback.tsx` — returns `null` on `/assts` cold start (boot shell covers gap).
+  - `Site00ImmersiveLoader.tsx` — teardown boot shell only after **both** background + geometry ready.
+  - `AsstsColdStartGate.tsx` — `MIN_CINEMATIC_MS` 4200, `MIN_GEOMETRY_PLAY_MS` 2800, wait for `onAnimationReady`, preload `LibraryPage` chunk, API calls with 10s timeout (non-fatal).
+  - `Site00RouteLoadingFallback.tsx` — ASSTS cold start → immersive loader (no 200ms blank delay).
+  - `loadingScreenLock.ts` — off-white `#f7f7f5` during ASSTS boot (matches loader).
+
+- **QA:** Build PASS. Browser cold reload `/assts` — no plain Loading text; immersive loader visible from first frame (~9s full animation in demo video). Screenshot: `assts_loader_immediate_paint.png`. Video: `assts_cold_start_no_loading_text.mp4`.
+

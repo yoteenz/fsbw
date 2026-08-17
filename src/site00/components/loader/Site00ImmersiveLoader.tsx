@@ -61,6 +61,7 @@ export function Site00ImmersiveLoader({
     if (typeof document === 'undefined') return false;
     return Boolean(document.getElementById('site00-assts-boot-shell'));
   });
+  const [geometryReady, setGeometryReady] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -73,10 +74,14 @@ export function Site00ImmersiveLoader({
   }, [config.backgroundUrl]);
 
   useEffect(() => {
-    if (phase === 'loading') {
-      teardownSite00AsstsBootShell();
-    }
-  }, [phase]);
+    if (!backgroundReady || !geometryReady) return;
+    teardownSite00AsstsBootShell();
+  }, [backgroundReady, geometryReady]);
+
+  const handleAnimationReady = () => {
+    setGeometryReady(true);
+    onAnimationReady?.();
+  };
 
   useEffect(() => {
     if (phase !== 'exiting') return;
@@ -111,7 +116,7 @@ export function Site00ImmersiveLoader({
         {!error ? (
           <>
             <LoaderRegion id="geometry" className="site00-loader-geometry-region" allowOverflow>
-              <Site00LoaderAnimation reducedMotion={reducedMotion} onReady={onAnimationReady} />
+              <Site00LoaderAnimation reducedMotion={reducedMotion} onReady={handleAnimationReady} />
             </LoaderRegion>
 
             <LoaderCopyRegions
