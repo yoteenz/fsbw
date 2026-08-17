@@ -2,8 +2,8 @@
   "schemaVersion": 2,
   "packType": "unified-onboarding",
   "currentVersion": "1.2.2",
-  "generatedAt": "2026-08-17T17:28:07.428Z",
-  "gitCommit": "a8f8b8e8209d61948f9c734bbba43886461a0e93",
+  "generatedAt": "2026-08-17T17:30:57.253Z",
+  "gitCommit": "de3f3a5d1012b9f9f9cfba36257797c51f415741",
   "validationStatus": "pass",
   "contentCoverageStatus": "pass",
   "machineReadableValidation": "pass",
@@ -13,7 +13,7 @@
   "totalInventoriedFileCount": 97,
   "actualArchiveFileCount": 97,
   "documentCount": 94,
-  "checksumSha256": "cf394b74d2c2922228268a47e81fa019d8d9c35459d03535537ab64b384ec9f5",
+  "checksumSha256": "6673335e2462871321b6050f9238f6f68b475683c000658fe3d62f461635362b",
   "artifact": "StudioOS_OnboardingPack_v1.2.2.zip",
   "permanentLatestUrl": "/onboarding/latest",
   "latestDownloadPath": "/onboarding/latest",
@@ -45,5 +45,5 @@
   ],
   "packageHealth": 100,
   "readyForAiOnboarding": true,
-  "sizeBytes": 186403
+  "sizeBytes": 186390
 }

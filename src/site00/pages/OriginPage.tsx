@@ -9,9 +9,13 @@ import { useSite00 } from '../state/Site00Context';
 
 export default function OriginPage() {
   const { state, setHomeMode } = useSite00();
+  const environmentId =
+    state.homeMode === 'idnty-expanded' || state.homeMode === 'bldr-expanded'
+      ? 'WORKFLOW_ENVIRONMENT'
+      : 'ORIGIN_ENVIRONMENT';
 
   return (
-    <EnvironmentShell environmentId="ORIGIN_ENVIRONMENT">
+    <EnvironmentShell environmentId={environmentId}>
       <Site00AppShell locationLabel={SITE00_ORIGIN_COPY.locationLabel} showStatusStrip statusStrip={<StatusStrip />}>
         <div className="site00-home-stage">
           <aside className="site00-home-hero" aria-label="Origin messaging">

@@ -4,7 +4,7 @@
   "capsuleVersion": "1.0.0",
   "manifestVersion": "1.0.0",
   "capsuleFolder": "StudioOS_StudioDNACapsule_v1.0",
-  "generatedAt": "2026-08-17T17:28:07.305Z",
+  "generatedAt": "2026-08-17T17:30:57.129Z",
   "companionCapsule": {
     "type": "ai-context",
     "version": "0.3.1"

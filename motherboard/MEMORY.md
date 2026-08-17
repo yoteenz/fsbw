@@ -52524,3 +52524,23 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **QA:** `npm run build` PASS. Viewport validator 10/10 PASS.
 >>>>>>> bbb1db3f5 (AIO page system: shared templates + public page redesign per moodboard [sync-only])
 
+---
+
+## 2026-08-17 — SITE 00 Enter 00 desktop environment background
+
+- **Context:** Founder supplied approved Enter 00 desktop menu background (`89319E70-D080-4798-9BCA-E53B137F2387.png`) for `/enter`.
+
+- **Changes:** `environments.ts` — `SITE00_ENTER_DESKTOP_BACKGROUND_PATH` + `desktopAssetPath` on `ENTER_00_WAITING_ROOM`; resolved via existing `EnvironmentShell` → `resolveSite00PublicAsset()`. `assets.ts` env-enter-00 → production. Desktop only (`min-width: 768px`); mobile keeps CSS fallback gradient.
+
+- **QA:** `npm run build` PASS. Playwright @ 1440px `/enter` — `--site00-env-desktop-image` + `background-image` resolve to approved Supabase asset. Screenshot: `site00_enter_desktop_background.png`.
+
+---
+
+## 2026-08-17 — SITE 00 IDNTY/BLDR expanded workflow desktop background
+
+- **Context:** Founder supplied approved workflow hall desktop background (`3A2AC3AD-7192-45E8-B4B3-B811CB0DD792.png`) for builder/identity **expanded** pages.
+
+- **Changes:** `environments.ts` — `SITE00_WORKFLOW_DESKTOP_BACKGROUND_PATH` + `desktopAssetPath` on `WORKFLOW_ENVIRONMENT`. `OriginPage.tsx` — switches `EnvironmentShell` to `WORKFLOW_ENVIRONMENT` when `homeMode` is `idnty-expanded` or `bldr-expanded` (Origin asset when collapsed). Also applies to `/idnty/state` and `/bldr/state`. `assets.ts` env-workflow → production.
+
+- **QA:** `npm run build` PASS. Playwright @ 1440px — `/origin` collapsed shows Origin asset; IDNTY expand + `/idnty/state` show workflow asset. Screenshot: `site00_idnty_expanded_desktop_background.png`.
+
