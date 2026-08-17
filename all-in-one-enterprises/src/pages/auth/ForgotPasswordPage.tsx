@@ -1,7 +1,12 @@
 import { FormEvent, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { AuthBrandIntro } from '../../components/auth/AuthBrandIntro';
+import { AuthError } from '../../components/auth/AuthError';
+import { AuthInput } from '../../components/auth/AuthInput';
+import { AuthPrimaryButton } from '../../components/auth/AuthPrimaryButton';
 import { sendPasswordReset } from '../../auth/authService';
 import { isBackendMode } from '../../config/dataMode';
+import { maskEmail } from '../../utils/maskEmail';
 import { aioPaths } from '../../utils/paths';
 
 export function ForgotPasswordPage() {
@@ -24,30 +29,72 @@ export function ForgotPasswordPage() {
     else setSent(true);
   };
 
+  const onResend = async () => {
+    setLoading(true);
+    setError(null);
+    const { error: err } = await sendPasswordReset(email);
+    setLoading(false);
+    if (err) setError(err);
+  };
+
   if (sent) {
     return (
-      <div className="aio-auth-card">
-        <h1>Check your email</h1>
-        <p>If an account exists for <strong>{email}</strong>, you will receive a password reset link shortly.</p>
-        <Link to={aioPaths.login} className="aio-btn aio-btn--gold">Back to Log In</Link>
-      </div>
+      <>
+        <AuthBrandIntro
+          headline="Check your email"
+          supporting={
+            <>
+              We&apos;ve sent password recovery instructions to:{' '}
+              <span className="aio-auth-premium__success-email">{maskEmail(email)}</span>
+            </>
+          }
+        />
+        <button
+          type="button"
+          className="aio-auth-premium__btn aio-auth-premium__btn--ghost"
+          disabled={loading}
+          onClick={() => void onResend()}
+        >
+          {loading ? 'Sending…' : 'Resend Email'}
+        </button>
+        {error ? <AuthError title="Could not resend" message={error} /> : null}
+        <Link to={aioPaths.login} className="aio-auth-premium__back-link">
+          ← Back to Log In
+        </Link>
+      </>
     );
   }
 
   return (
-    <div className="aio-auth-card">
-      <h1>Reset your password</h1>
-      <form onSubmit={onSubmit} className="aio-auth-form">
-        <label>
-          Email
-          <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
-        </label>
-        {error && <p className="aio-auth-form__error" role="alert">{error}</p>}
-        <button type="submit" className="aio-btn aio-btn--gold aio-btn--block" disabled={loading}>
-          {loading ? 'Sending…' : 'Send Reset Link'}
-        </button>
+    <>
+      <AuthBrandIntro
+        headline={
+          <>
+            Reset your
+            <br />
+            password.
+          </>
+        }
+        supporting="Enter the email connected to your account and we'll send you recovery instructions."
+      />
+      <form onSubmit={onSubmit} className="aio-auth-premium__form">
+        <AuthInput
+          label="Email"
+          type="email"
+          autoComplete="email"
+          required
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="name@email.com"
+        />
+        {error ? <AuthError title="Could not send reset link" message={error} /> : null}
+        <AuthPrimaryButton loading={loading} loadingLabel="Sending link…">
+          Send Reset Link →
+        </AuthPrimaryButton>
       </form>
-      <p className="aio-auth-card__links"><Link to={aioPaths.login}>Back to Log In</Link></p>
-    </div>
+      <Link to={aioPaths.login} className="aio-auth-premium__back-link">
+        ← Back to Log In
+      </Link>
+    </>
   );
 }

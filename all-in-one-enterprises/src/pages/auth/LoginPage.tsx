@@ -1,10 +1,18 @@
-import { FormEvent, useMemo, useState } from 'react';
+import { FormEvent, useEffect, useMemo, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { PasswordField } from '../../components/mobile/PasswordField';
+import { AuthBrandIntro } from '../../components/auth/AuthBrandIntro';
+import { AuthCheckbox } from '../../components/auth/AuthCheckbox';
+import { AuthError } from '../../components/auth/AuthError';
+import { AuthInput } from '../../components/auth/AuthInput';
+import { AuthPasswordInput } from '../../components/auth/AuthPasswordInput';
+import { AuthPrimaryButton } from '../../components/auth/AuthPrimaryButton';
+import { AuthSecondaryButton } from '../../components/auth/AuthSecondaryButton';
+import { AuthTransition } from '../../components/auth/AuthTransition';
+import { DemoPortalAccess } from '../../components/auth/DemoPortalAccess';
 import { signIn } from '../../auth/authService';
 import { returnUrlFromSearch, sanitizeReturnUrl } from '../../auth/returnUrl';
 import { useAIOAuth } from '../../auth/AIOAuthProvider';
-import { isBackendMode, isDemoMode } from '../../config/dataMode';
+import { isBackendMode } from '../../config/dataMode';
 import { aioPaths } from '../../utils/paths';
 
 export function LoginPage() {
@@ -13,6 +21,7 @@ export function LoginPage() {
   const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [transitioning, setTransitioning] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const { refresh } = useAIOAuth();
@@ -23,6 +32,8 @@ export function LoginPage() {
     [location.search, state?.from, state?.return],
   );
   const office = state?.office;
+
+  const signUpHref = `${aioPaths.signUp}?return=${encodeURIComponent(returnUrl)}`;
 
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -43,53 +54,82 @@ export function LoginPage() {
       return;
     }
     await refresh();
-    if (office) navigate(aioPaths.office);
-    else navigate(returnUrl);
+    setTransitioning(true);
   };
 
-  const signUpHref = `${aioPaths.signUp}?return=${encodeURIComponent(returnUrl)}`;
+  useEffect(() => {
+    if (!transitioning) return;
+    const destination = office ? aioPaths.office : returnUrl;
+    const timer = window.setTimeout(() => {
+      navigate(destination);
+    }, 600);
+    return () => window.clearTimeout(timer);
+  }, [transitioning, navigate, office, returnUrl]);
+
+  if (transitioning) {
+    return <AuthTransition headline="Welcome back." message="Loading your business…" />;
+  }
+
+  const errorMessage =
+    error === 'Email or password is incorrect.'
+      ? "The email or password entered doesn't match an account. Check your information and try again."
+      : error;
 
   return (
-    <div className="aio-auth-card">
-      <h1>Welcome back</h1>
-      <p className="aio-auth-card__sub">
-        Log in to continue managing your business, services, documents, and Road Ready™ progress.
-      </p>
-      <form onSubmit={onSubmit} className="aio-auth-form">
-        <label>
-          Email
-          <input type="email" autoComplete="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
-        </label>
-        <PasswordField
+    <>
+      <AuthBrandIntro
+        headline={
+          <>
+            Welcome
+            <br />
+            back.
+          </>
+        }
+        supporting="Your business keeps moving. Pick up where you left off."
+        secondary="Manage services, documents, filings, Road Ready™ progress, and your AIO account from one place."
+      />
+
+      <form onSubmit={onSubmit} className="aio-auth-premium__form">
+        <AuthInput
+          label="Email"
+          type="email"
+          autoComplete="email"
+          required
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="name@email.com"
+        />
+        <AuthPasswordInput
           label="Password"
           value={password}
           onChange={setPassword}
           autoComplete="current-password"
           required
         />
-        <div className="aio-auth-form__row aio-auth-form__row--inline">
-          <label className="aio-auth-form__checkbox">
-            <input type="checkbox" checked={rememberMe} onChange={(e) => setRememberMe(e.target.checked)} />
-            Remember me
-          </label>
-          <Link to={aioPaths.forgotPassword}>Forgot password?</Link>
+        <div className="aio-auth-premium__row aio-auth-premium__row--inline">
+          <AuthCheckbox label="Remember me" checked={rememberMe} onChange={(e) => setRememberMe(e.target.checked)} />
+          <Link to={aioPaths.forgotPassword} className="aio-auth-premium__forgot">
+            Forgot password?
+          </Link>
         </div>
-        {error && <p className="aio-auth-form__error" role="alert">{error}</p>}
-        <button type="submit" className="aio-btn aio-btn--gold aio-btn--block" disabled={loading}>
-          {loading ? 'Logging In…' : 'Log In'}
-        </button>
+        {error ? (
+          <AuthError
+            title="We couldn't log you in"
+            message={errorMessage ?? 'Check your information and try again.'}
+          />
+        ) : null}
+        <AuthPrimaryButton loading={loading} loadingLabel="Logging in…">
+          Log In →
+        </AuthPrimaryButton>
       </form>
-      <div className="aio-auth-card__divider">
-        <p className="aio-auth-card__divider-label">New to All In One?</p>
-        <Link to={signUpHref} className="aio-btn aio-btn--outline-gold aio-btn--block">
-          Create Account
-        </Link>
+
+      <div className="aio-auth-premium__alt">
+        <p className="aio-auth-premium__alt-label">New to All In One?</p>
+        <p className="aio-auth-premium__alt-copy">Create your account and start building your business.</p>
+        <AuthSecondaryButton to={signUpHref}>Create Account →</AuthSecondaryButton>
       </div>
-      {isDemoMode() ? (
-        <p className="aio-prototype-note">
-          <Link to={aioPaths.portal}>Enter Demo Portal →</Link> (no account required in demo mode)
-        </p>
-      ) : null}
-    </div>
+
+      <DemoPortalAccess />
+    </>
   );
 }

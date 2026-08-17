@@ -1,11 +1,19 @@
 import { FormEvent, useMemo, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { AuthStepIndicator } from '../../components/auth/AuthStepIndicator';
-import { PasswordField } from '../../components/mobile/PasswordField';
+import { AuthBrandIntro } from '../../components/auth/AuthBrandIntro';
+import { AuthCheckbox } from '../../components/auth/AuthCheckbox';
+import { AuthError } from '../../components/auth/AuthError';
+import { AuthInput } from '../../components/auth/AuthInput';
+import { AuthPasswordInput } from '../../components/auth/AuthPasswordInput';
+import { AuthPrimaryButton } from '../../components/auth/AuthPrimaryButton';
+import { AuthSecondaryButton } from '../../components/auth/AuthSecondaryButton';
+import { PasswordRequirements } from '../../components/auth/PasswordRequirements';
 import { signUp, type SignUpAccountType, resendVerification } from '../../auth/authService';
 import { completeDemoSignup, saveDemoSignupDraft } from '../../auth/demoSignup';
 import { returnUrlFromSearch, sanitizeReturnUrl } from '../../auth/returnUrl';
 import { isBackendMode, isDemoMode } from '../../config/dataMode';
+import { maskEmail } from '../../utils/maskEmail';
 import { aioPaths } from '../../utils/paths';
 
 type Step = 1 | 2 | 3;
@@ -25,6 +33,7 @@ export function SignUpPage() {
     () => sanitizeReturnUrl(returnUrlFromSearch(searchParams.toString()), aioPaths.onboarding),
     [searchParams],
   );
+  const loginHref = `${aioPaths.login}?return=${encodeURIComponent(returnUrl)}`;
 
   const [step, setStep] = useState<Step>(1);
   const [form, setForm] = useState({
@@ -68,7 +77,7 @@ export function SignUpPage() {
 
   const validateStep2 = (): boolean => {
     if (!form.gettingStarted && !form.businessName.trim()) {
-      setError('Enter your business name or select “I’m just getting started”.');
+      setError('Enter your business name or select "I\'m just getting started".');
       return false;
     }
     if (!form.termsAccepted) {
@@ -163,97 +172,106 @@ export function SignUpPage() {
 
   if (verifySent) {
     return (
-      <div className="aio-auth-card">
-        <h1>Check your email</h1>
-        <p className="aio-auth-card__sub">
-          We sent a verification link to <strong>{form.email}</strong>.
-          {isDemoMode() ? ' (Demo — no email was sent.)' : ''}
-        </p>
+      <>
+        <AuthBrandIntro
+          headline="Check your email"
+          supporting={
+            <>
+              We sent a verification link to{' '}
+              <span className="aio-auth-premium__success-email">{maskEmail(form.email)}</span>.
+              {isDemoMode() ? ' (Demo — no email was sent.)' : ''}
+            </>
+          }
+        />
         {!isDemoMode() ? (
-          <button type="button" className="aio-btn aio-btn--outline aio-btn--block" disabled={loading} onClick={() => void onResend()}>
-            Resend Email
+          <button
+            type="button"
+            className="aio-auth-premium__btn aio-auth-premium__btn--ghost"
+            disabled={loading}
+            onClick={() => void onResend()}
+          >
+            {loading ? 'Sending…' : 'Resend Email'}
           </button>
         ) : null}
         <Link
           to={`${aioPaths.onboarding}?return=${encodeURIComponent(returnUrl)}`}
-          className="aio-btn aio-btn--gold aio-btn--block"
+          className="aio-auth-premium__btn aio-auth-premium__btn--primary"
           style={{ marginTop: '0.75rem' }}
         >
-          Continue (Demo)
+          Continue (Demo) →
         </Link>
-        <p className="aio-auth-card__links">
-          <Link to={aioPaths.login}>Log In</Link>
-        </p>
-      </div>
+        <Link to={loginHref} className="aio-auth-premium__back-link">
+          ← Back to Log In
+        </Link>
+      </>
     );
   }
 
   if (existingEmail) {
     return (
-      <div className="aio-auth-card">
-        <h1>An account already exists for this email</h1>
-        <p className="aio-auth-card__sub">Log in or reset your password to continue.</p>
-        <Link to={aioPaths.login} className="aio-btn aio-btn--gold aio-btn--block">
-          Log In
+      <>
+        <AuthBrandIntro
+          headline="Account already exists"
+          supporting="Log in or reset your password to continue."
+        />
+        <AuthSecondaryButton to={loginHref}>Log In →</AuthSecondaryButton>
+        <Link to={aioPaths.forgotPassword} className="aio-auth-premium__back-link">
+          Forgot password?
         </Link>
-        <p className="aio-auth-card__links">
-          <Link to={aioPaths.forgotPassword}>Forgot Password?</Link>
-        </p>
-      </div>
+      </>
     );
   }
 
   return (
-    <div className="aio-auth-card aio-auth-card--wide">
+    <>
       <AuthStepIndicator current={step} />
-      <h1>Create your All In One account</h1>
-      <p className="aio-auth-card__sub">
-        Start your Road Ready™ roadmap, request services, track compliance, and manage your trucking business from one place.
-      </p>
+      <AuthBrandIntro
+        headline={
+          <>
+            Let&apos;s get your
+            <br />
+            business moving.
+          </>
+        }
+        supporting="Create your account to build your plan, manage services, upload documents, and track your progress."
+      />
 
       {step === 1 ? (
-        <form onSubmit={onContinueStep1} className="aio-auth-form">
+        <form onSubmit={onContinueStep1} className="aio-auth-premium__form aio-auth-form">
           <p className="aio-auth-form__step-title">Step 1 — Your Account</p>
-          <div className="aio-auth-form__row">
-            <label>
-              First Name
-              <input
-                required
-                autoComplete="given-name"
-                value={form.firstName}
-                onChange={(e) => setForm({ ...form, firstName: e.target.value })}
-              />
-            </label>
-            <label>
-              Last Name
-              <input
-                required
-                autoComplete="family-name"
-                value={form.lastName}
-                onChange={(e) => setForm({ ...form, lastName: e.target.value })}
-              />
-            </label>
-          </div>
-          <label>
-            Email
-            <input
-              type="email"
-              autoComplete="email"
+          <div className="aio-auth-premium__row">
+            <AuthInput
+              label="First Name"
               required
-              value={form.email}
-              onChange={(e) => setForm({ ...form, email: e.target.value })}
+              autoComplete="given-name"
+              value={form.firstName}
+              onChange={(e) => setForm({ ...form, firstName: e.target.value })}
             />
-          </label>
-          <label>
-            Phone <span className="aio-auth-form__optional">(optional)</span>
-            <input
-              type="tel"
-              autoComplete="tel"
-              value={form.phone}
-              onChange={(e) => setForm({ ...form, phone: e.target.value })}
+            <AuthInput
+              label="Last Name"
+              required
+              autoComplete="family-name"
+              value={form.lastName}
+              onChange={(e) => setForm({ ...form, lastName: e.target.value })}
             />
-          </label>
-          <PasswordField
+          </div>
+          <AuthInput
+            label="Email"
+            type="email"
+            autoComplete="email"
+            required
+            value={form.email}
+            onChange={(e) => setForm({ ...form, email: e.target.value })}
+          />
+          <AuthInput
+            label="Phone"
+            type="tel"
+            autoComplete="tel"
+            optional
+            value={form.phone}
+            onChange={(e) => setForm({ ...form, phone: e.target.value })}
+          />
+          <AuthPasswordInput
             label="Password"
             value={form.password}
             onChange={(password) => setForm({ ...form, password })}
@@ -261,23 +279,21 @@ export function SignUpPage() {
             required
             minLength={8}
           />
-          <p className="aio-auth-form__hint">At least 8 characters.</p>
-          <PasswordField
+          <AuthPasswordInput
             label="Confirm Password"
             value={form.confirmPassword}
             onChange={(confirmPassword) => setForm({ ...form, confirmPassword })}
             autoComplete="new-password"
             required
           />
-          {error ? <p className="aio-auth-form__error" role="alert">{error}</p> : null}
-          <button type="submit" className="aio-btn aio-btn--gold aio-btn--block">
-            Continue
-          </button>
+          <PasswordRequirements password={form.password} confirmPassword={form.confirmPassword} />
+          {error ? <AuthError title="Please check your information" message={error} /> : null}
+          <AuthPrimaryButton loading={false}>Continue →</AuthPrimaryButton>
         </form>
       ) : null}
 
       {step === 2 ? (
-        <form onSubmit={onContinueStep2} className="aio-auth-form">
+        <form onSubmit={onContinueStep2} className="aio-auth-premium__form aio-auth-form">
           <p className="aio-auth-form__step-title">Step 2 — Your Business</p>
           <fieldset className="aio-auth-form__fieldset">
             <legend>Do you already have a trucking business?</legend>
@@ -300,61 +316,67 @@ export function SignUpPage() {
               No — I&apos;m just getting started
             </label>
           </fieldset>
-          <label>
-            Business Name {!form.gettingStarted ? null : <span className="aio-auth-form__optional">(optional for now)</span>}
-            <input
-              autoComplete="organization"
-              required={!form.gettingStarted}
-              value={form.businessName}
-              onChange={(e) => setForm({ ...form, businessName: e.target.value })}
-              placeholder={form.gettingStarted ? 'We will help you name it later' : ''}
-            />
-          </label>
-          <label>
-            Business structure <span className="aio-auth-form__optional">(optional)</span>
-            <select value={form.businessStructure} onChange={(e) => setForm({ ...form, businessStructure: e.target.value })}>
+          <AuthInput
+            label="Business Name"
+            optional={form.gettingStarted}
+            required={!form.gettingStarted}
+            autoComplete="organization"
+            value={form.businessName}
+            onChange={(e) => setForm({ ...form, businessName: e.target.value })}
+            placeholder={form.gettingStarted ? 'We will help you name it later' : undefined}
+          />
+          <div className="aio-auth-premium__field">
+            <label className="aio-auth-premium__label" htmlFor="business-structure">
+              Business structure <span className="aio-auth-premium__optional">(optional)</span>
+            </label>
+            <select
+              id="business-structure"
+              value={form.businessStructure}
+              onChange={(e) => setForm({ ...form, businessStructure: e.target.value })}
+            >
               {structureOptions.map((o) => (
-                <option key={o} value={o}>{o}</option>
+                <option key={o} value={o}>
+                  {o}
+                </option>
               ))}
             </select>
-          </label>
+          </div>
           <p className="aio-auth-form__disclaimer">General information only — not legal advice.</p>
-          <label className="aio-auth-form__checkbox">
-            <input
-              type="checkbox"
-              required
-              checked={form.termsAccepted}
-              onChange={(e) => setForm({ ...form, termsAccepted: e.target.checked })}
-            />
-            <span>
-              I agree to the{' '}
-              <Link to={aioPaths.contact} target="_blank" rel="noreferrer">Terms of Service</Link>
-              {' '}and{' '}
-              <Link to={aioPaths.contact} target="_blank" rel="noreferrer">Privacy Policy</Link>.
-            </span>
-          </label>
-          <label className="aio-auth-form__checkbox">
-            <input
-              type="checkbox"
-              checked={form.marketingOptIn}
-              onChange={(e) => setForm({ ...form, marketingOptIn: e.target.checked })}
-            />
-            <span>Send me helpful AIO updates and service reminders. (optional)</span>
-          </label>
-          {error ? <p className="aio-auth-form__error" role="alert">{error}</p> : null}
+          <AuthCheckbox
+            label={
+              <span>
+                I agree to the{' '}
+                <Link to={aioPaths.contact} target="_blank" rel="noreferrer">
+                  Terms of Service
+                </Link>{' '}
+                and{' '}
+                <Link to={aioPaths.contact} target="_blank" rel="noreferrer">
+                  Privacy Policy
+                </Link>
+                .
+              </span>
+            }
+            required
+            checked={form.termsAccepted}
+            onChange={(e) => setForm({ ...form, termsAccepted: e.target.checked })}
+          />
+          <AuthCheckbox
+            label="Send me helpful AIO updates and service reminders. (optional)"
+            checked={form.marketingOptIn}
+            onChange={(e) => setForm({ ...form, marketingOptIn: e.target.checked })}
+          />
+          {error ? <AuthError title="Please check your information" message={error} /> : null}
           <div className="aio-auth-form__nav-row">
-            <button type="button" className="aio-btn aio-btn--outline" onClick={() => setStep(1)}>
+            <button type="button" className="aio-auth-premium__btn aio-auth-premium__btn--ghost" onClick={() => setStep(1)}>
               Back
             </button>
-            <button type="submit" className="aio-btn aio-btn--gold">
-              Continue
-            </button>
+            <AuthPrimaryButton loading={false}>Continue →</AuthPrimaryButton>
           </div>
         </form>
       ) : null}
 
       {step === 3 ? (
-        <form onSubmit={onSubmit} className="aio-auth-form">
+        <form onSubmit={onSubmit} className="aio-auth-premium__form aio-auth-form">
           <p className="aio-auth-form__step-title">Step 3 — Get Started</p>
           <fieldset className="aio-auth-form__fieldset">
             <legend>How will you use All In One?</legend>
@@ -373,21 +395,22 @@ export function SignUpPage() {
               </label>
             ))}
           </fieldset>
-          {error && !existingEmail ? <p className="aio-auth-form__error" role="alert">{error}</p> : null}
+          {error && !existingEmail ? <AuthError title="Something went wrong" message={error} /> : null}
           <div className="aio-auth-form__nav-row">
-            <button type="button" className="aio-btn aio-btn--outline" onClick={() => setStep(2)}>
+            <button type="button" className="aio-auth-premium__btn aio-auth-premium__btn--ghost" onClick={() => setStep(2)}>
               Back
             </button>
-            <button type="submit" className="aio-btn aio-btn--gold" disabled={loading}>
-              {loading ? 'Creating Account…' : 'Create Account'}
-            </button>
+            <AuthPrimaryButton loading={loading} loadingLabel="Creating account…">
+              Create Account →
+            </AuthPrimaryButton>
           </div>
         </form>
       ) : null}
 
-      <p className="aio-auth-card__links">
-        Already have an account? <Link to={aioPaths.login}>Log In</Link>
-      </p>
-    </div>
+      <div className="aio-auth-premium__alt">
+        <p className="aio-auth-premium__alt-label">Already have an account?</p>
+        <AuthSecondaryButton to={loginHref}>Log In →</AuthSecondaryButton>
+      </div>
+    </>
   );
 }

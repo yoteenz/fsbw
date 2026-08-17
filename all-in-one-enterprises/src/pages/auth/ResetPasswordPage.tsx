@@ -1,5 +1,10 @@
 import { FormEvent, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { AuthBrandIntro } from '../../components/auth/AuthBrandIntro';
+import { AuthError } from '../../components/auth/AuthError';
+import { AuthPasswordInput } from '../../components/auth/AuthPasswordInput';
+import { AuthPrimaryButton } from '../../components/auth/AuthPrimaryButton';
+import { PasswordRequirements } from '../../components/auth/PasswordRequirements';
 import { updatePassword } from '../../auth/authService';
 import { isBackendMode } from '../../config/dataMode';
 import { aioPaths } from '../../utils/paths';
@@ -17,6 +22,10 @@ export function ResetPasswordPage() {
       setError('Passwords do not match.');
       return;
     }
+    if (password.length < 8) {
+      setError('Password must be at least 8 characters.');
+      return;
+    }
     if (!isBackendMode()) {
       setError('Password reset requires backend mode.');
       return;
@@ -29,23 +38,43 @@ export function ResetPasswordPage() {
   };
 
   return (
-    <div className="aio-auth-card">
-      <h1>Set New Password</h1>
-      <form onSubmit={onSubmit} className="aio-auth-form">
-        <label>
-          New Password
-          <input type="password" required minLength={8} value={password} onChange={(e) => setPassword(e.target.value)} />
-        </label>
-        <label>
-          Confirm Password
-          <input type="password" required minLength={8} value={confirm} onChange={(e) => setConfirm(e.target.value)} />
-        </label>
-        {error && <p className="aio-auth-form__error" role="alert">{error}</p>}
-        <button type="submit" className="aio-btn aio-btn--gold aio-btn--block" disabled={loading}>
-          {loading ? 'Updating…' : 'Update Password'}
-        </button>
+    <>
+      <AuthBrandIntro
+        headline={
+          <>
+            Set new
+            <br />
+            password.
+          </>
+        }
+        supporting="Choose a strong password for your AIO account."
+      />
+      <form onSubmit={onSubmit} className="aio-auth-premium__form">
+        <AuthPasswordInput
+          label="New Password"
+          value={password}
+          onChange={setPassword}
+          autoComplete="new-password"
+          required
+          minLength={8}
+        />
+        <AuthPasswordInput
+          label="Confirm Password"
+          value={confirm}
+          onChange={setConfirm}
+          autoComplete="new-password"
+          required
+          minLength={8}
+        />
+        <PasswordRequirements password={password} confirmPassword={confirm} />
+        {error ? <AuthError title="Could not update password" message={error} /> : null}
+        <AuthPrimaryButton loading={loading} loadingLabel="Updating…">
+          Update Password →
+        </AuthPrimaryButton>
       </form>
-      <p className="aio-auth-card__links"><Link to={aioPaths.login}>Sign In</Link></p>
-    </div>
+      <Link to={aioPaths.login} className="aio-auth-premium__back-link">
+        ← Back to Log In
+      </Link>
+    </>
   );
 }

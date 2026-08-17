@@ -1,0 +1,753 @@
+/* -------------------------------------------------------------------------- */
+/* Premium authentication experience (mobile + desktop)                        */
+/* -------------------------------------------------------------------------- */
+
+.aio-auth-premium {
+  position: relative;
+  min-height: 100dvh;
+  min-height: 100svh;
+  width: 100%;
+  color: var(--aio-white);
+  background: var(--aio-near-black);
+  overflow-x: hidden;
+}
+
+.aio-auth-premium__bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background:
+    linear-gradient(180deg, rgba(10, 10, 10, 0.72) 0%, rgba(10, 10, 10, 0.92) 45%, rgba(10, 10, 10, 0.98) 100%),
+    url('/brand/all-in-one-hero-truck.png') center 20% / cover no-repeat;
+  pointer-events: none;
+}
+
+.aio-auth-premium__bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 50% at 50% 0%, rgba(212, 160, 23, 0.08) 0%, transparent 55%),
+    linear-gradient(90deg, transparent 0%, rgba(212, 160, 23, 0.03) 50%, transparent 100%);
+}
+
+.aio-auth-premium__layout {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  min-height: 100dvh;
+  min-height: 100svh;
+}
+
+.aio-auth-premium__brand-panel {
+  display: none;
+}
+
+.aio-auth-premium__form-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background: var(--aio-near-black);
+  padding:
+    max(0.75rem, env(safe-area-inset-top))
+    max(1rem, env(safe-area-inset-right))
+    max(1.25rem, env(safe-area-inset-bottom))
+    max(1rem, env(safe-area-inset-left));
+}
+
+.aio-auth-premium__header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 44px;
+  margin-bottom: 1rem;
+}
+
+.aio-auth-premium__back {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0;
+  border: none;
+  background: none;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.aio-auth-premium__back:hover,
+.aio-auth-premium__back:focus-visible {
+  color: var(--aio-gold-light);
+}
+
+.aio-auth-premium__logo {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  z-index: 0;
+}
+
+.aio-auth-premium__logo-img {
+  display: block;
+  height: 2rem;
+  width: auto;
+  max-width: min(180px, 52vw);
+  object-fit: contain;
+}
+
+.aio-auth-premium__logo-text {
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--aio-white);
+}
+
+.aio-auth-premium__header-spacer {
+  width: 3.5rem;
+  flex-shrink: 0;
+}
+
+.aio-auth-premium__main {
+  flex: 1;
+  width: 100%;
+  max-width: 420px;
+  margin-inline: auto;
+}
+
+.aio-auth-premium__footer {
+  margin-top: 1.5rem;
+  text-align: center;
+  font-size: 0.6875rem;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.aio-auth-premium__footer p {
+  margin: 0;
+}
+
+/* Brand intro */
+.aio-auth-premium__intro {
+  margin-bottom: 1.25rem;
+}
+
+.aio-auth-premium__eyebrow {
+  margin: 0 0 0.5rem;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--aio-gold-light);
+}
+
+.aio-auth-premium__headline {
+  margin: 0;
+  font-size: clamp(1.625rem, 6vw, 2rem);
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  line-height: 1.1;
+  text-transform: uppercase;
+}
+
+.aio-auth-premium__supporting {
+  margin: 0.625rem 0 0;
+  font-size: 0.9375rem;
+  line-height: 1.45;
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.aio-auth-premium__secondary {
+  margin: 0.5rem 0 0;
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+/* Form */
+.aio-auth-premium__form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+}
+
+.aio-auth-premium__field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.aio-auth-premium__label {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.aio-auth-premium__optional {
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.aio-auth-premium__input {
+  width: 100%;
+  min-height: 48px;
+  padding: 0.65rem 0.875rem;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: var(--aio-radius-sm);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--aio-white);
+  font: inherit;
+  font-size: 1rem;
+  box-sizing: border-box;
+  transition: border-color 0.15s ease;
+}
+
+.aio-auth-premium__input::placeholder {
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.aio-auth-premium__input:focus {
+  outline: none;
+  border-color: var(--aio-gold-light);
+}
+
+.aio-auth-premium__input:focus-visible {
+  outline: 2px solid rgba(212, 160, 23, 0.35);
+  outline-offset: 2px;
+}
+
+.aio-auth-premium__password-wrap {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+}
+
+.aio-auth-premium__input--password {
+  padding-right: 4.5rem;
+}
+
+.aio-auth-premium__password-toggle {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  padding: 0 0.875rem;
+  border: none;
+  background: transparent;
+  color: var(--aio-gold-light);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.aio-auth-premium__password-toggle:hover,
+.aio-auth-premium__password-toggle:focus-visible {
+  color: var(--aio-gold);
+}
+
+.aio-auth-premium__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.aio-auth-premium__row--inline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.aio-auth-premium__forgot {
+  font-size: 0.8125rem;
+  color: rgba(255, 255, 255, 0.6);
+  text-decoration: none;
+}
+
+.aio-auth-premium__forgot:hover,
+.aio-auth-premium__forgot:focus-visible {
+  color: var(--aio-gold-light);
+}
+
+/* Checkbox */
+.aio-auth-premium__checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  min-height: 44px;
+  font-size: 0.8125rem;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.aio-auth-premium__checkbox-input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.aio-auth-premium__checkbox-box {
+  flex-shrink: 0;
+  width: 1rem;
+  height: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 3px;
+  background: transparent;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.aio-auth-premium__checkbox-input:checked + .aio-auth-premium__checkbox-box {
+  background: var(--aio-gold-light);
+  border-color: var(--aio-gold-light);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath fill='%23000' d='M4.5 8.5L2 6l1-1 1.5 1.5L9 2l1 1z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 0.65rem;
+}
+
+.aio-auth-premium__checkbox-input:focus-visible + .aio-auth-premium__checkbox-box {
+  outline: 2px solid rgba(212, 160, 23, 0.45);
+  outline-offset: 2px;
+}
+
+/* Buttons */
+.aio-auth-premium__btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 48px;
+  padding: 0.75rem 1rem;
+  border-radius: var(--aio-radius-sm);
+  font-size: 0.8125rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  text-align: center;
+  cursor: pointer;
+  box-sizing: border-box;
+  transition: background 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
+}
+
+.aio-auth-premium__btn--primary {
+  border: none;
+  background: var(--aio-gold-light);
+  color: #000;
+  flex-direction: row;
+  gap: 0;
+}
+
+.aio-auth-premium__btn--primary:hover:not(:disabled) {
+  background: #c49214;
+}
+
+.aio-auth-premium__btn--primary:disabled {
+  opacity: 0.85;
+  cursor: not-allowed;
+}
+
+.aio-auth-premium__btn-spinner {
+  width: 1rem;
+  height: 1rem;
+  margin-right: 0.5rem;
+  border: 2px solid rgba(0, 0, 0, 0.15);
+  border-top-color: #000;
+  border-radius: 50%;
+  animation: aio-auth-spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+
+.aio-auth-premium__btn--secondary {
+  border: 1px solid rgba(212, 160, 23, 0.55);
+  background: transparent;
+  color: var(--aio-gold-light);
+}
+
+.aio-auth-premium__btn--secondary:hover {
+  background: rgba(212, 160, 23, 0.08);
+}
+
+.aio-auth-premium__btn--ghost {
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: transparent;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.aio-auth-premium__btn--ghost:hover {
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Alt account section */
+.aio-auth-premium__alt {
+  margin-top: 1.25rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.aio-auth-premium__alt-label {
+  margin: 0 0 0.35rem;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.aio-auth-premium__alt-copy {
+  margin: 0 0 0.875rem;
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  color: rgba(255, 255, 255, 0.65);
+}
+
+/* Error */
+.aio-auth-premium__error {
+  padding: 0.875rem 1rem;
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  border-radius: var(--aio-radius-sm);
+  background: rgba(239, 68, 68, 0.08);
+}
+
+.aio-auth-premium__error-title {
+  margin: 0 0 0.25rem;
+  font-size: 0.6875rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #fca5a5;
+}
+
+.aio-auth-premium__error-message {
+  margin: 0;
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* Password requirements */
+.aio-auth-premium__requirements {
+  padding: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--aio-radius-sm);
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.aio-auth-premium__requirements-title {
+  margin: 0 0 0.5rem;
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.aio-auth-premium__requirements-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.8125rem;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.aio-auth-premium__requirements-list li.is-met {
+  color: var(--aio-gold-light);
+}
+
+.aio-auth-premium__requirements-list span {
+  display: inline-block;
+  width: 1rem;
+}
+
+/* Demo access */
+.aio-auth-premium__demo {
+  margin-top: 1.5rem;
+  padding: 0.875rem 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--aio-radius-sm);
+  background: rgba(0, 0, 0, 0.25);
+}
+
+.aio-auth-premium__demo-label {
+  margin: 0 0 0.25rem;
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.aio-auth-premium__demo-copy {
+  margin: 0 0 0.625rem;
+  font-size: 0.75rem;
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.aio-auth-premium__demo-link {
+  display: inline-block;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+  text-decoration: none;
+}
+
+.aio-auth-premium__demo-link:hover {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+/* Transition state */
+.aio-auth-premium__transition {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 40vh;
+  text-align: center;
+  gap: 0.75rem;
+}
+
+.aio-auth-premium__transition-logo {
+  height: 2.5rem;
+  width: auto;
+  object-fit: contain;
+}
+
+.aio-auth-premium__transition-headline {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.aio-auth-premium__transition-message {
+  margin: 0;
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.aio-auth-premium__transition-spinner {
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 2px solid rgba(212, 160, 23, 0.25);
+  border-top-color: var(--aio-gold-light);
+  border-radius: 50%;
+  animation: aio-auth-spin 0.7s linear infinite;
+}
+
+@keyframes aio-auth-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Sign-up step indicator (dark theme) */
+.aio-auth-premium .aio-auth-steps {
+  margin-bottom: 1rem;
+}
+
+.aio-auth-premium .aio-auth-steps__item {
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.aio-auth-premium .aio-auth-steps__item--current {
+  color: var(--aio-white);
+}
+
+.aio-auth-premium .aio-auth-steps__item--complete {
+  color: var(--aio-gold-light);
+}
+
+.aio-auth-premium .aio-auth-steps__num {
+  border-color: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.aio-auth-premium .aio-auth-steps__item--current .aio-auth-steps__num {
+  background: var(--aio-gold-light);
+  color: #000;
+  border-color: var(--aio-gold-light);
+}
+
+.aio-auth-premium .aio-auth-form__step-title {
+  color: var(--aio-gold-light);
+}
+
+.aio-auth-premium .aio-auth-form__fieldset {
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.aio-auth-premium .aio-auth-form__fieldset legend {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.aio-auth-premium .aio-auth-form__radio,
+.aio-auth-premium .aio-auth-form__radio--card {
+  color: rgba(255, 255, 255, 0.85);
+  border-color: rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.aio-auth-premium .aio-auth-form__radio--card strong {
+  color: var(--aio-white);
+}
+
+.aio-auth-premium .aio-auth-form__radio--card small {
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.aio-auth-premium .aio-auth-form__disclaimer,
+.aio-auth-premium .aio-auth-form__hint {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.aio-auth-premium select {
+  width: 100%;
+  min-height: 48px;
+  padding: 0.65rem 0.875rem;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: var(--aio-radius-sm);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--aio-white);
+  font: inherit;
+}
+
+.aio-auth-premium .aio-auth-form__nav-row {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.aio-auth-premium .aio-auth-form__nav-row .aio-auth-premium__btn {
+  flex: 1;
+}
+
+.aio-auth-premium__back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 1rem;
+  font-size: 0.8125rem;
+  color: rgba(255, 255, 255, 0.6);
+  text-decoration: none;
+}
+
+.aio-auth-premium__back-link:hover {
+  color: var(--aio-gold-light);
+}
+
+.aio-auth-premium__success-email {
+  font-weight: 700;
+  color: var(--aio-gold-light);
+}
+
+/* Desktop split layout */
+@media (min-width: 1024px) {
+  .aio-auth-premium__bg {
+    display: none;
+  }
+
+  .aio-auth-premium__brand-panel {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    width: min(48%, 560px);
+    min-height: 100dvh;
+    padding: 3rem;
+    box-sizing: border-box;
+    overflow: hidden;
+  }
+
+  .aio-auth-premium__brand-panel-bg {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(160deg, rgba(10, 10, 10, 0.55) 0%, rgba(10, 10, 10, 0.88) 100%),
+      url('/brand/all-in-one-hero-truck.png') center / cover no-repeat;
+  }
+
+  .aio-auth-premium__brand-panel-bg::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(212, 160, 23, 0.12) 0%, transparent 50%);
+  }
+
+  .aio-auth-premium__brand-panel-content {
+    position: relative;
+    z-index: 1;
+    max-width: 420px;
+  }
+
+  .aio-auth-premium__brand-logo {
+    display: block;
+    height: 3rem;
+    width: auto;
+    margin-bottom: 2rem;
+    object-fit: contain;
+  }
+
+  .aio-auth-premium__brand-headline {
+    margin: 0 0 1rem;
+    font-size: clamp(1.75rem, 3vw, 2.25rem);
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    line-height: 1.15;
+    text-transform: uppercase;
+  }
+
+  .aio-auth-premium__brand-copy {
+    margin: 0;
+    font-size: 0.9375rem;
+    line-height: 1.55;
+    color: rgba(255, 255, 255, 0.75);
+  }
+
+  .aio-auth-premium__form-column {
+    justify-content: center;
+    padding: 2.5rem 3rem;
+  }
+
+  .aio-auth-premium__main {
+    max-width: 400px;
+  }
+
+  .aio-auth-premium__intro {
+    margin-bottom: 1.5rem;
+  }
+
+  .aio-auth-premium__headline {
+    font-size: 1.75rem;
+  }
+}
+
+@media (max-width: 359px) {
+  .aio-auth-premium__row {
+    grid-template-columns: 1fr;
+  }
+}

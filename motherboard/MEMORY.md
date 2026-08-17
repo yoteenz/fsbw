@@ -52047,3 +52047,21 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **QA:** Build PASS; OA page 375px manual QA PASS.
 
+---
+
+## 2026-08-17 — AIO mobile authentication experience redesign
+
+- **Context:** Follow-up sprint after mobile service redesign. Redesign Login, Sign Up, Forgot/Reset Password as premium dark/gold auth entry — remove giant white card, simplified auth header, demoted demo portal, desktop split-screen. **Do not rebuild auth logic.**
+
+- **Auth shell:** New `src/components/auth/*` (AuthShell, AuthHeader, AuthBrandPanel, AuthBrandIntro, AuthInput, AuthPasswordInput, AuthPrimaryButton, AuthSecondaryButton, AuthCheckbox, AuthError, AuthTransition, DemoPortalAccess, PasswordRequirements). Styles in `src/styles/aio-auth.css` (imported App.tsx). Reuses `/brand/all-in-one-hero-truck.png` atmospheric background.
+
+- **Layout:** `AIOAuthLayout` → AuthShell only (← BACK + centered logo; no hamburger, no duplicate Log In/Sign Up). Mobile: brand intro + integrated dark form in first viewport. Desktop ≥1024px: split brand panel left / form right.
+
+- **Pages:** Login (branded errors, post-login AuthTransition ~600ms, returnUrl preserved), Sign Up (3-step flow + password requirements UI), Forgot/Reset/Verify aligned to shell. Demo portal via `DemoPortalAccess` — demo mode only.
+
+- **Preserved:** authService, returnUrl sanitize, remember-me UI (no new persistence), signUp payload, demo signup, protected routes.
+
+- **Docs:** `docs/refinement/MOBILE_AUTH_EXPERIENCE_REPORT.md`
+
+- **QA:** Build PASS; manual QA login/forgot/signup mobile 375px + desktop split PASS.
+
