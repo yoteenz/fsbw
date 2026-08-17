@@ -1219,6 +1219,10 @@
     font-size: 0.9375rem;
   }
 
+  .aio-auth-premium--login .aio-auth-premium__input::placeholder {
+    font-size: calc(0.9375rem - 2px);
+  }
+
   .aio-auth-premium--login .aio-auth-premium__password-toggle {
     font-size: 0.625rem;
   }
