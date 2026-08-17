@@ -373,7 +373,7 @@
   }
 }
 
-/* ─── Origin homepage — hero left, IDNTY/BLDR panels in foreground plaza ─── */
+/* ─── Origin homepage — hero in original column; IDNTY/BLDR panels on foreground plaza ─── */
 
 .site00-home-stage {
   --site00-origin-cards-top: 58%;
@@ -384,11 +384,25 @@
   box-sizing: border-box;
 }
 
+.site00-home-grid {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 32px;
+}
+
 .site00-home-hero {
   position: relative;
   z-index: 2;
+  flex: 1 1 280px;
   max-width: 360px;
-  padding-top: 8px;
+  padding-top: 24px;
+}
+
+.site00-home-grid__spacer {
+  flex: 2 1 400px;
+  min-width: 0;
+  pointer-events: none;
 }
 
 .site00-home-hero__eyebrow {
@@ -453,12 +467,12 @@
   gap: 16px;
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 768px) {
   .site00-home-stage {
     padding-top: 16px;
   }
 
-  /* Anchor panels below the central figure between the twin zeros */
+  /* Anchor panels below the central figure between the twin zeros — desktop env breakpoint */
   .site00-home-cards {
     position: absolute;
     left: 50%;
@@ -475,10 +489,8 @@
   }
 }
 
-@media (max-width: 1023px) {
-  .site00-home-stage {
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
+@media (max-width: 767px) {
+  .site00-home-grid__spacer {
+    display: none;
   }
 }

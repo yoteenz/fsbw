@@ -18,15 +18,19 @@ export default function OriginPage() {
     <EnvironmentShell environmentId={environmentId}>
       <Site00AppShell locationLabel={SITE00_ORIGIN_COPY.locationLabel} showStatusStrip statusStrip={<StatusStrip />}>
         <div className="site00-home-stage">
-          <aside className="site00-home-hero" aria-label="Origin messaging">
-            <p className="site00-label site00-home-hero__eyebrow">{SITE00_ORIGIN_COPY.headlineLine1}</p>
-            <h1 className="site00-heading-xl">{SITE00_ORIGIN_COPY.headlineLine2}</h1>
-            <p className="site00-tagline site00-home-hero__tagline">{SITE00_ORIGIN_COPY.tagline}</p>
-            <p className="site00-body site00-body--technical site00-home-hero__line">{SITE00_ORIGIN_COPY.description1}</p>
-            <p className="site00-body site00-body--technical site00-home-hero__line">{SITE00_ORIGIN_COPY.description2}</p>
-            <p className="site00-body site00-body--technical site00-home-hero__line">{SITE00_ORIGIN_COPY.description3}</p>
-            <p className="site00-coordinate site00-home-hero__coordinate">{SITE00_ORIGIN_COPY.originPoint}</p>
-          </aside>
+          <div className="site00-home-grid">
+            <aside className="site00-home-hero" aria-label="Origin messaging">
+              <p className="site00-label site00-home-hero__eyebrow">{SITE00_ORIGIN_COPY.headlineLine1}</p>
+              <h1 className="site00-heading-xl">{SITE00_ORIGIN_COPY.headlineLine2}</h1>
+              <p className="site00-tagline site00-home-hero__tagline">{SITE00_ORIGIN_COPY.tagline}</p>
+              <p className="site00-body site00-body--technical site00-home-hero__line">{SITE00_ORIGIN_COPY.description1}</p>
+              <p className="site00-body site00-body--technical site00-home-hero__line">{SITE00_ORIGIN_COPY.description2}</p>
+              <p className="site00-body site00-body--technical site00-home-hero__line">{SITE00_ORIGIN_COPY.description3}</p>
+              <p className="site00-coordinate site00-home-hero__coordinate">{SITE00_ORIGIN_COPY.originPoint}</p>
+            </aside>
+            {/* Preserves original two-column desktop rhythm; panels anchor separately on the plaza */}
+            <div className="site00-home-grid__spacer" aria-hidden="true" />
+          </div>
 
           <section className="site00-home-cards" aria-label="Entry selection">
             {state.homeMode === 'origin' && (
