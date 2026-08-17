@@ -18,14 +18,7 @@ export function StatusStrip() {
           <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
             {item.id === 'status' ? <span className="site00-diamond" aria-hidden="true" /> : null}
             <GeometricIcon variant={ICON_MAP[item.icon]} size="sm" />
-            <span
-              style={{
-                fontFamily: 'var(--site-font-sans)',
-                fontSize: 11,
-                letterSpacing: '0.06em',
-                textTransform: 'uppercase',
-              }}
-            >
+            <span className="site00-status-value">
               {item.value}
             </span>
             {item.id === 'system' ? (
@@ -58,7 +51,7 @@ export function StatusStrip() {
           <div className="site00-label" style={{ color: 'rgba(255,255,255,0.6)' }}>
             {SITE00_ORIGIN_COPY.guidance.label}
           </div>
-          <div style={{ fontSize: 11, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+          <div className="site00-status-value" style={{ color: '#fff' }}>
             {SITE00_ORIGIN_COPY.guidance.title}
           </div>
         </div>

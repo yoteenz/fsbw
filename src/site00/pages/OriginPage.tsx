@@ -33,34 +33,19 @@ export default function OriginPage() {
               {SITE00_ORIGIN_COPY.headlineLine1}
             </p>
             <h1 className="site00-heading-xl">{SITE00_ORIGIN_COPY.headlineLine2}</h1>
-            <p
-              style={{
-                fontFamily: 'var(--site-font-sans)',
-                fontSize: 14,
-                letterSpacing: '0.1em',
-                textTransform: 'uppercase',
-                marginTop: 16,
-                marginBottom: 24,
-              }}
-            >
+            <p className="site00-tagline" style={{ marginTop: 16, marginBottom: 24 }}>
               {SITE00_ORIGIN_COPY.tagline}
             </p>
-            <p className="site00-body" style={{ marginBottom: 4 }}>
+            <p className="site00-body site00-body--technical" style={{ marginBottom: 4 }}>
               {SITE00_ORIGIN_COPY.description1}
             </p>
-            <p className="site00-body" style={{ marginBottom: 4 }}>
+            <p className="site00-body site00-body--technical" style={{ marginBottom: 4 }}>
               {SITE00_ORIGIN_COPY.description2}
             </p>
-            <p className="site00-body" style={{ marginBottom: 32 }}>
+            <p className="site00-body site00-body--technical" style={{ marginBottom: 32 }}>
               {SITE00_ORIGIN_COPY.description3}
             </p>
-            <p
-              style={{
-                fontFamily: 'var(--site-font-sans)',
-                fontSize: 12,
-                letterSpacing: '0.08em',
-              }}
-            >
+            <p className="site00-coordinate">
               {SITE00_ORIGIN_COPY.originPoint}
             </p>
           </aside>

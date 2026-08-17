@@ -86,14 +86,7 @@ export function IdntyExpandedPanel({ onCollapse }: IdntyExpandedPanelProps) {
           {IDNTY_FRAMEWORK_PILLARS.map((pillar) => (
             <div key={pillar.id} style={{ textAlign: 'center' }}>
               <GeometricIcon variant={pillar.icon} size="sm" />
-              <p
-                style={{
-                  fontFamily: 'var(--site-font-sans)',
-                  fontSize: 10,
-                  letterSpacing: '0.1em',
-                  margin: '8px 0 4px',
-                }}
-              >
+              <p className="site00-micro" style={{ margin: '8px 0 4px' }}>
                 {pillar.title}
               </p>
               <p className="site00-body" style={{ fontSize: 10 }}>

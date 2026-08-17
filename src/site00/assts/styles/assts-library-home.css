@@ -20,7 +20,7 @@
   margin: 0 auto;
   min-height: calc(var(--ref-h) * var(--ref-scale) * 1px);
   color: var(--site-text);
-  font-family: var(--site-font-book);
+  font-family: var(--site00-font-body);
   pointer-events: none;
 }
 
@@ -76,7 +76,7 @@
 }
 
 .assts-lib-text--title {
-  font-family: var(--site-font-sans);
+  font-family: var(--site00-font-display);
   font-size: calc(34px * var(--ref-scale));
   letter-spacing: 0.02em;
   line-height: calc(43px * var(--ref-scale));
@@ -136,7 +136,7 @@
 }
 
 .assts-lib-stat__value {
-  font-family: var(--site-font-sans);
+  font-family: var(--site00-font-heading);
   font-size: calc(22px * var(--ref-scale));
   line-height: 1.1;
   font-weight: 500;
@@ -231,7 +231,7 @@
 
 .assts-lib-section-title {
   margin: 0;
-  font-family: var(--site-font-sans);
+  font-family: var(--site00-font-heading);
   font-size: calc(11px * var(--ref-scale));
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -328,7 +328,7 @@
 }
 
 .assts-library-priority-card__batch {
-  font-family: var(--site-font-sans);
+  font-family: var(--site00-font-heading);
   font-size: calc(11px * var(--ref-scale));
   letter-spacing: 0.04em;
   color: var(--site-red);
@@ -440,7 +440,7 @@
 }
 
 .assts-lib-recent-tile__key {
-  font-family: var(--site-font-sans);
+  font-family: var(--site00-font-mono);
   font-size: calc(9px * var(--ref-scale));
   letter-spacing: 0.03em;
   line-height: 1.2;
@@ -550,7 +550,7 @@
 .assts-library-category-card__name {
   display: block;
   margin-top: calc(2px * var(--ref-scale));
-  font-family: var(--site-font-sans);
+  font-family: var(--site00-font-heading);
   font-size: calc(9px * var(--ref-scale));
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -736,8 +736,10 @@
   padding: 4px 2px;
   text-decoration: none;
   color: #5a5a5a;
+  font-family: var(--site00-font-nav);
   font-size: clamp(6px, 1.85vw, 7px);
-  letter-spacing: 0.08em;
+  letter-spacing: var(--site00-tracking-nav);
+  line-height: var(--site00-lh-micro);
   text-transform: uppercase;
   position: relative;
 }
@@ -977,7 +979,7 @@
 
 .assts-library-home__title {
   margin: 0;
-  font-family: var(--site-font-sans);
+  font-family: var(--site00-font-heading);
   font-size: clamp(1.28rem, 5.6vw, 1.5rem);
   letter-spacing: 0.02em;
   line-height: 1.05;
@@ -1023,7 +1025,7 @@
 
 .assts-library-home__section-title {
   margin: 0;
-  font-family: var(--site-font-sans);
+  font-family: var(--site00-font-heading);
   font-size: clamp(9px, 2.6vw, 10px);
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -1089,7 +1091,7 @@
   background: rgba(255, 255, 255, 0.42);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  font-family: var(--site-font-book);
+  font-family: var(--site00-font-body);
   font-size: 14px;
   color: var(--site-text);
 }

@@ -32,14 +32,7 @@ export function CollapsedCard({ number, title, subtitle, cta, onExpand }: Collap
       aria-label={`Expand ${title}`}
     >
       <span className="site00-label-red">{number}</span>
-      <span
-        style={{
-          fontFamily: 'var(--site-font-sans)',
-          fontSize: 22,
-          letterSpacing: '0.08em',
-          marginTop: 8,
-        }}
-      >
+      <span className="site00-panel-title" style={{ marginTop: 8 }}>
         {title}
       </span>
       <span className="site00-label" style={{ marginTop: 4 }}>

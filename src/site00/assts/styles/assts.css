@@ -4,7 +4,7 @@
   position: relative;
   min-height: 100dvh;
   color: var(--site-text);
-  font-family: var(--site-font-book);
+  font-family: var(--site00-font-body);
   --assts-glass-bg: rgba(255, 255, 255, 0.42);
   --assts-glass-border: rgba(255, 255, 255, 0.62);
   --assts-glass-blur: 18px;
@@ -99,7 +99,7 @@
 }
 
 .assts-metric__value {
-  font-family: var(--site-font-sans);
+  font-family: var(--site00-font-heading);
   font-size: 17px;
   line-height: 1.1;
 }
@@ -128,7 +128,7 @@
 }
 
 .assts-hero__title {
-  font-family: var(--site-font-sans);
+  font-family: var(--site00-font-heading);
   font-size: clamp(1.35rem, 5vw, 1.65rem);
   margin: 0;
   letter-spacing: 0.02em;
@@ -157,7 +157,7 @@
 }
 
 .assts-page-header__title {
-  font-family: var(--site-font-sans);
+  font-family: var(--site00-font-heading);
   font-size: 1.15rem;
   margin: 8px 0 0;
   letter-spacing: 0.04em;
@@ -196,7 +196,7 @@
 }
 
 .assts-section-header__title {
-  font-family: var(--site-font-sans);
+  font-family: var(--site00-font-heading);
   font-size: 10px;
   letter-spacing: 0.12em;
   color: var(--site-red);
@@ -317,8 +317,8 @@
 
 .assts-batch-row__key {
   font-size: 11px;
-  letter-spacing: 0.04em;
-  font-family: var(--site-font-sans);
+  letter-spacing: var(--site00-tracking-mono);
+  font-family: var(--site00-font-mono);
 }
 
 .assts-batch-row__cat {
@@ -393,7 +393,7 @@
 .assts-category-tile__name {
   font-size: 10px;
   letter-spacing: 0.06em;
-  font-family: var(--site-font-sans);
+  font-family: var(--site00-font-heading);
   text-transform: uppercase;
 }
 
@@ -470,7 +470,7 @@
 }
 
 .assts-batch-summary__stat-value {
-  font-family: var(--site-font-sans);
+  font-family: var(--site00-font-heading);
   font-size: 16px;
   display: block;
 }
@@ -570,11 +570,13 @@
 }
 
 .assts-asset-card__key {
+  font-family: var(--site00-font-mono);
   font-size: 9px;
+  letter-spacing: var(--site00-tracking-mono);
 }
 
 .assts-asset-card__name {
-  font-family: var(--site-font-sans);
+  font-family: var(--site00-font-heading);
   font-size: 9px;
   letter-spacing: 0.05em;
   text-transform: uppercase;
@@ -686,7 +688,7 @@
   align-items: center;
   justify-content: center;
   font-size: 10px;
-  font-family: var(--site-font-sans);
+  font-family: var(--site00-font-heading);
 }
 
 /* Sticky batch progress */
@@ -720,7 +722,7 @@
 .assts-batch-progress-bar__count {
   font-size: 10px;
   letter-spacing: 0.06em;
-  font-family: var(--site-font-sans);
+  font-family: var(--site00-font-heading);
 }
 
 .assts-batch-progress-bar__track {
@@ -800,7 +802,9 @@
 }
 
 .assts-inspection-header-min__key {
+  font-family: var(--site00-font-mono);
   font-size: 10px;
+  letter-spacing: var(--site00-tracking-mono);
 }
 
 .assts-inspection-hero-stage {
@@ -960,7 +964,7 @@
 }
 
 .assts-btn {
-  font-family: var(--site-font-sans);
+  font-family: var(--site00-font-heading);
   font-size: 11px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -1036,7 +1040,7 @@
 .assts-inspector-footer__pos {
   font-size: 10px;
   letter-spacing: 0.08em;
-  font-family: var(--site-font-sans);
+  font-family: var(--site00-font-heading);
 }
 
 /* Fullscreen viewer */
@@ -1179,7 +1183,7 @@
 /* Legacy aliases (dev panel, sheets) */
 
 .site00-assts-btn {
-  font-family: var(--site-font-sans);
+  font-family: var(--site00-font-heading);
   font-size: 11px;
   letter-spacing: 0.1em;
   text-transform: uppercase;

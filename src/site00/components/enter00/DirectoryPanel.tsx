@@ -26,15 +26,7 @@ export function DirectoryPanel() {
         <div style={{ margin: '16px 0', maxWidth: 200 }}>
           <SectionRule />
         </div>
-        <p
-          style={{
-            fontFamily: 'var(--site-font-sans)',
-            fontSize: 13,
-            letterSpacing: '0.08em',
-            textTransform: 'uppercase',
-            marginBottom: 8,
-          }}
-        >
+        <p className="site00-tagline" style={{ marginBottom: 8 }}>
           {SITE00_ENTER_COPY.welcomeSubtitle}
         </p>
         <p className="site00-body" style={{ color: 'var(--site-text-muted)' }}>

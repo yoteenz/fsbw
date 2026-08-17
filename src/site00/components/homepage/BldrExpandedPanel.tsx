@@ -53,14 +53,7 @@ export function BldrExpandedPanel({ onCollapse }: BldrExpandedPanelProps) {
             </p>
             {copy.offerings.map((offering) => (
               <div key={offering.code} style={{ marginBottom: 16 }}>
-                <p
-                  style={{
-                    fontFamily: 'var(--site-font-sans)',
-                    fontSize: 11,
-                    letterSpacing: '0.08em',
-                    marginBottom: 4,
-                  }}
-                >
+                <p className="site00-heading" style={{ marginBottom: 4 }}>
                   {offering.code} {offering.title}
                 </p>
                 <p className="site00-body" style={{ fontSize: 11, marginBottom: 4 }}>
@@ -88,14 +81,7 @@ export function BldrExpandedPanel({ onCollapse }: BldrExpandedPanelProps) {
           {BLDR_FRAMEWORK_PILLARS.map((pillar) => (
             <div key={pillar.id} style={{ textAlign: 'center' }}>
               <GeometricIcon variant={pillar.icon} size="sm" />
-              <p
-                style={{
-                  fontFamily: 'var(--site-font-sans)',
-                  fontSize: 10,
-                  letterSpacing: '0.1em',
-                  margin: '8px 0 4px',
-                }}
-              >
+              <p className="site00-micro" style={{ margin: '8px 0 4px' }}>
                 {pillar.title}
               </p>
               <p className="site00-body" style={{ fontSize: 10 }}>

@@ -1,0 +1,226 @@
+/**
+ * SITE 00 typography system — isolated from Frontal Slayer.
+ * All SITE 00 surfaces consume these tokens and utility roles.
+ * Do not use --site-font-* or Futura PT within SITE 00.
+ */
+
+@import './tokens.css';
+
+/* ─── Shell isolation ─── */
+
+.site00-shell,
+.site00-assts-shell,
+.site00-loader {
+  font-family: var(--site00-font-body);
+  font-size: var(--site00-size-body);
+  line-height: var(--site00-lh-body);
+  letter-spacing: var(--site00-tracking-body);
+  font-weight: var(--site00-weight-regular);
+  font-synthesis: none;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Block global heading/body defaults from leaking into SITE 00 */
+.site00-shell :is(h1, h2, h3, h4, h5, h6, p, button, nav, a, span, li) {
+  font-family: inherit;
+}
+
+/* ─── Display ─── */
+
+.site00-display-xl,
+.site00-heading-xl {
+  font-family: var(--site00-font-display);
+  font-size: var(--site00-size-display-xl);
+  font-weight: var(--site00-weight-bold);
+  letter-spacing: var(--site00-tracking-display);
+  line-height: var(--site00-lh-display);
+  text-transform: uppercase;
+}
+
+.site00-display-lg,
+.site00-heading-lg {
+  font-family: var(--site00-font-display);
+  font-size: var(--site00-size-display-lg);
+  font-weight: var(--site00-weight-bold);
+  letter-spacing: var(--site00-tracking-display);
+  line-height: var(--site00-lh-display);
+  text-transform: uppercase;
+}
+
+.site00-display-md {
+  font-family: var(--site00-font-display);
+  font-size: var(--site00-size-display-md);
+  font-weight: var(--site00-weight-bold);
+  letter-spacing: var(--site00-tracking-display);
+  line-height: var(--site00-lh-display);
+  text-transform: uppercase;
+}
+
+/* ─── Heading / subheading ─── */
+
+.site00-heading,
+.site00-subheading {
+  font-family: var(--site00-font-heading);
+  font-size: var(--site00-size-heading);
+  font-weight: var(--site00-weight-medium);
+  letter-spacing: var(--site00-tracking-heading);
+  line-height: var(--site00-lh-heading);
+  text-transform: uppercase;
+}
+
+.site00-subheading {
+  font-size: var(--site00-size-subheading);
+}
+
+/* ─── Label / micro ─── */
+
+.site00-label {
+  font-family: var(--site00-font-heading);
+  font-size: var(--site00-size-label);
+  font-weight: var(--site00-weight-medium);
+  letter-spacing: var(--site00-tracking-label);
+  line-height: var(--site00-lh-label);
+  text-transform: uppercase;
+  color: var(--site-text-muted);
+}
+
+.site00-label-red {
+  font-family: var(--site00-font-heading);
+  font-size: var(--site00-size-label);
+  font-weight: var(--site00-weight-medium);
+  letter-spacing: var(--site00-tracking-label);
+  line-height: var(--site00-lh-label);
+  text-transform: uppercase;
+  color: var(--site-red);
+}
+
+.site00-micro {
+  font-family: var(--site00-font-heading);
+  font-size: var(--site00-size-micro);
+  font-weight: var(--site00-weight-medium);
+  letter-spacing: var(--site00-tracking-label);
+  line-height: var(--site00-lh-micro);
+  text-transform: uppercase;
+}
+
+/* ─── Body (technical compact) ─── */
+
+.site00-body {
+  font-family: var(--site00-font-body);
+  font-size: var(--site00-size-body);
+  font-weight: var(--site00-weight-regular);
+  letter-spacing: var(--site00-tracking-body);
+  line-height: var(--site00-lh-body);
+  text-transform: uppercase;
+}
+
+.site00-body--technical {
+  font-family: var(--site00-font-mono);
+  font-size: var(--site00-size-body);
+  letter-spacing: var(--site00-tracking-mono);
+  line-height: var(--site00-lh-body);
+  text-transform: uppercase;
+}
+
+/* ─── Mono / system IDs ─── */
+
+.site00-mono,
+.site00-id {
+  font-family: var(--site00-font-mono);
+  font-size: var(--site00-size-mono);
+  font-weight: var(--site00-weight-medium);
+  letter-spacing: var(--site00-tracking-mono);
+  line-height: var(--site00-lh-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ─── Nav ─── */
+
+.site00-nav,
+.site00-global-nav a,
+.site00-global-nav button {
+  font-family: var(--site00-font-nav);
+  font-size: var(--site00-size-nav);
+  font-weight: var(--site00-weight-regular);
+  letter-spacing: var(--site00-tracking-nav);
+  line-height: var(--site00-lh-micro);
+  text-transform: uppercase;
+}
+
+/* ─── Logo mark (top-left SITE 00) ─── */
+
+.site00-logo-mark {
+  font-family: var(--site00-font-mono);
+  font-size: var(--site00-size-logo);
+  font-weight: var(--site00-weight-bold);
+  letter-spacing: var(--site00-tracking-mono);
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+/* ─── Tagline (WHERE DIGITAL PLACES BEGIN.) ─── */
+
+.site00-tagline {
+  font-family: var(--site00-font-heading);
+  font-size: var(--site00-size-subheading);
+  font-weight: var(--site00-weight-bold);
+  letter-spacing: var(--site00-tracking-heading);
+  line-height: var(--site00-lh-heading);
+  text-transform: uppercase;
+}
+
+/* ─── Coordinate / location strings ─── */
+
+.site00-coordinate {
+  font-family: var(--site00-font-mono);
+  font-size: var(--site00-size-body);
+  font-weight: var(--site00-weight-regular);
+  letter-spacing: var(--site00-tracking-mono);
+  line-height: var(--site00-lh-mono);
+  text-transform: uppercase;
+}
+
+/* ─── Panel titles (IDNTY / BLDR) ─── */
+
+.site00-panel-title {
+  font-family: var(--site00-font-display);
+  font-size: var(--site00-size-display-md);
+  font-weight: var(--site00-weight-bold);
+  letter-spacing: var(--site00-tracking-display);
+  line-height: var(--site00-lh-display);
+  text-transform: uppercase;
+}
+
+/* ─── Buttons / actions (system commands) ─── */
+
+.site00-btn-ghost,
+.site00-action-link {
+  font-family: var(--site00-font-nav);
+  font-size: var(--site00-size-nav);
+  font-weight: var(--site00-weight-medium);
+  letter-spacing: var(--site00-tracking-nav);
+  line-height: var(--site00-lh-micro);
+  text-transform: uppercase;
+}
+
+/* ─── Status strip values ─── */
+
+.site00-status-value {
+  font-family: var(--site00-font-heading);
+  font-size: var(--site00-size-nav);
+  font-weight: var(--site00-weight-medium);
+  letter-spacing: var(--site00-tracking-heading);
+  line-height: var(--site00-lh-micro);
+  text-transform: uppercase;
+}
+
+/* ─── Bracket label (ORIGIN ENVIRONMENT) ─── */
+
+.site00-bracket-label {
+  font-family: var(--site00-font-mono);
+  font-size: var(--site00-size-micro);
+  letter-spacing: var(--site00-tracking-label);
+  line-height: var(--site00-lh-micro);
+  text-transform: uppercase;
+}

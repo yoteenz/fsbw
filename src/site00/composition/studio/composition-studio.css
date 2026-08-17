@@ -11,7 +11,7 @@
   flex-direction: column;
   background: #f8f8f6;
   color: #111;
-  font-family: var(--site-font-book, 'Helvetica Neue', sans-serif);
+  font-family: var(--site00-font-body);
 }
 
 .composition-studio--manipulating,
@@ -192,7 +192,7 @@ body.composition-studio--manipulating {
 }
 
 .composition-studio__object-text {
-  font-family: var(--site-font-display, 'Helvetica Neue', sans-serif);
+  font-family: var(--site00-font-display);
   font-size: 11px;
   letter-spacing: 0.06em;
   text-transform: uppercase;

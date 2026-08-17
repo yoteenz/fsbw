@@ -9,7 +9,7 @@
   min-height: 100dvh;
   min-height: 100lvh;
   color: var(--site-text);
-  font-family: var(--site-font-book);
+  font-family: var(--site00-font-body);
   overflow-x: hidden;
 }
 
@@ -189,9 +189,9 @@
 }
 
 .assts-vault-index-tile__id {
-  font-family: var(--site-font-sans);
+  font-family: var(--site00-font-mono);
   font-size: 7px;
-  letter-spacing: 0.04em;
+  letter-spacing: var(--site00-tracking-mono);
   text-align: center;
   line-height: 1.2;
   max-width: 100%;

@@ -1,4 +1,5 @@
 /* SITE 00 loaders — compact construction + immersive Asset Vault experience */
+@import './tokens.css';
 
 /* ── Compact loader (contextual / repeat navigation) ── */
 
@@ -26,7 +27,7 @@
 
 .site00-loader__message {
   margin: 0;
-  font-family: var(--site-font-sans, 'Futura PT Medium', sans-serif);
+  font-family: var(--site00-font-heading);
   font-size: 11px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -40,7 +41,7 @@
 
 .site00-loader__secondary {
   margin: -4px 0 0;
-  font-family: var(--site-font-book, 'Futura PT Book', sans-serif);
+  font-family: var(--site00-font-body);
   font-size: 9px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -89,7 +90,7 @@
   margin-top: 8px;
   border: none;
   background: transparent;
-  font-family: var(--site-font-sans, 'Futura PT Medium', sans-serif);
+  font-family: var(--site00-font-heading);
   font-size: 10px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -460,7 +461,7 @@
 
 .site00-loader-copy__eyebrow {
   margin: 0 0 clamp(8px, 2.2vw, 12px);
-  font-family: var(--site-font-sans, 'Futura PT Medium', sans-serif);
+  font-family: var(--site00-font-heading);
   font-size: var(--site00-loader-eyebrow-size);
   letter-spacing: 0.28em;
   text-transform: uppercase;
@@ -470,7 +471,7 @@
 
 .site00-loader-copy__title {
   margin: 0 0 clamp(12px, 3.2vw, 18px);
-  font-family: var(--site-font-sans, 'Futura PT Medium', sans-serif);
+  font-family: var(--site00-font-heading);
   font-size: var(--site00-loader-title-size);
   letter-spacing: 0.14em;
   font-weight: 500;
@@ -482,7 +483,7 @@
 
 .site00-loader-copy__subtitle {
   margin: 0 0 clamp(20px, 5vw, 32px);
-  font-family: var(--site-font-book, 'Futura PT Book', sans-serif);
+  font-family: var(--site00-font-body);
   font-size: var(--site00-loader-subtitle-size);
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -498,7 +499,7 @@
 
 .site00-loader-copy__status {
   margin: 0 0 clamp(10px, 2.6vw, 14px);
-  font-family: var(--site-font-book, 'Futura PT Book', sans-serif);
+  font-family: var(--site00-font-body);
   font-size: var(--site00-loader-status-size);
   letter-spacing: 0.18em;
   text-transform: uppercase;
@@ -532,7 +533,7 @@
 
 .site00-loader-copy__pct {
   flex: 0 0 auto;
-  font-family: var(--site-font-sans, 'Futura PT Medium', sans-serif);
+  font-family: var(--site00-font-heading);
   font-size: var(--site00-loader-pct-size);
   letter-spacing: 0.06em;
   color: var(--site-text, #0a0a0a);
@@ -542,7 +543,7 @@
 
 .site00-loader-copy__tagline {
   margin: 0 0 clamp(20px, 5.5vw, 36px);
-  font-family: var(--site-font-sans, 'Futura PT Medium', sans-serif);
+  font-family: var(--site00-font-heading);
   font-size: var(--site00-loader-tagline-size);
   letter-spacing: 0.2em;
   text-transform: uppercase;
@@ -562,7 +563,7 @@
 }
 
 .site00-loader-copy__mark {
-  font-family: var(--site-font-sans, 'Futura PT Medium', sans-serif);
+  font-family: var(--site00-font-heading);
   font-size: var(--site00-loader-mark-size);
   letter-spacing: 0.04em;
   line-height: 1;
@@ -572,7 +573,7 @@
 }
 
 .site00-loader-copy__signature-label {
-  font-family: var(--site-font-sans, 'Futura PT Medium', sans-serif);
+  font-family: var(--site00-font-heading);
   font-size: var(--site00-loader-signature-size);
   letter-spacing: 0.22em;
   text-transform: uppercase;
@@ -602,7 +603,7 @@
 
 .site00-loader-status__site {
   margin: 0 0 10px;
-  font-family: var(--site-font-sans, 'Futura PT Medium', sans-serif);
+  font-family: var(--site00-font-heading);
   font-size: clamp(10px, 2.6vw, 12px);
   letter-spacing: 0.22em;
   text-transform: uppercase;
@@ -611,7 +612,7 @@
 
 .site00-loader-status__title {
   margin: 0;
-  font-family: var(--site-font-sans, 'Futura PT Medium', sans-serif);
+  font-family: var(--site00-font-heading);
   font-size: clamp(13px, 3.4vw, 16px);
   letter-spacing: 0.16em;
   font-weight: 500;
@@ -622,7 +623,7 @@
 
 .site00-loader-status__subtitle {
   margin: 6px 0 0;
-  font-family: var(--site-font-book, 'Futura PT Book', sans-serif);
+  font-family: var(--site00-font-body);
   font-size: clamp(9px, 2.4vw, 11px);
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -631,7 +632,7 @@
 
 .site00-loader-status__stage {
   margin: 14px 0 0;
-  font-family: var(--site-font-book, 'Futura PT Book', sans-serif);
+  font-family: var(--site00-font-body);
   font-size: clamp(8px, 2.2vw, 10px);
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -640,7 +641,7 @@
 
 .site00-loader-status__tagline {
   margin: 18px 0 0;
-  font-family: var(--site-font-sans, 'Futura PT Medium', sans-serif);
+  font-family: var(--site00-font-heading);
   font-size: clamp(9px, 2.3vw, 11px);
   letter-spacing: 0.18em;
   text-transform: uppercase;
@@ -655,7 +656,7 @@
 }
 
 .site00-loader-status__mark {
-  font-family: var(--site-font-sans, 'Futura PT Medium', sans-serif);
+  font-family: var(--site00-font-heading);
   font-size: clamp(28px, 8vw, 40px);
   letter-spacing: 0.04em;
   line-height: 1;
@@ -663,7 +664,7 @@
 }
 
 .site00-loader-status__footer-label {
-  font-family: var(--site-font-sans, 'Futura PT Medium', sans-serif);
+  font-family: var(--site00-font-heading);
   font-size: clamp(10px, 2.6vw, 12px);
   letter-spacing: 0.2em;
   text-transform: uppercase;
@@ -677,7 +678,7 @@
 
 .site00-loader-progress-block__label {
   margin: 0 0 8px;
-  font-family: var(--site-font-book, 'Futura PT Book', sans-serif);
+  font-family: var(--site00-font-body);
   font-size: clamp(8px, 2.2vw, 10px);
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -708,7 +709,7 @@
 
 .site00-loader-progress-block__pct {
   min-width: 2.5em;
-  font-family: var(--site-font-sans, 'Futura PT Medium', sans-serif);
+  font-family: var(--site00-font-heading);
   font-size: clamp(9px, 2.3vw, 11px);
   letter-spacing: 0.08em;
   color: var(--site-text, #0a0a0a);

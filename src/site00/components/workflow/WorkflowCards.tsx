@@ -21,14 +21,7 @@ export function StateCard({ state, selected, onSelect }: StateCardProps) {
       <div style={{ margin: '16px 0', flex: 1, display: 'flex', alignItems: 'center' }}>
         <GeometricIcon variant={identityComplexityIcon(state.iconComplexity)} size="md" />
       </div>
-      <p
-        style={{
-          fontFamily: 'var(--site-font-sans)',
-          fontSize: 12,
-          letterSpacing: '0.06em',
-          marginBottom: 8,
-        }}
-      >
+      <p className="site00-heading" style={{ marginBottom: 8 }}>
         {state.title}
       </p>
       <p className="site00-body" style={{ fontSize: 11, whiteSpace: 'pre-line', marginBottom: 16 }}>
@@ -75,14 +68,7 @@ export function BuildClassCard({
       <div style={{ margin: '12px 0', flex: 1, display: 'flex', alignItems: 'center' }}>
         <GeometricIcon variant={icon} size="md" />
       </div>
-      <p
-        style={{
-          fontFamily: 'var(--site-font-sans)',
-          fontSize: 14,
-          letterSpacing: '0.08em',
-          marginBottom: 4,
-        }}
-      >
+      <p className="site00-panel-title" style={{ marginBottom: 4 }}>
         {title}
       </p>
       <p className="site00-label" style={{ marginBottom: 8 }}>
@@ -114,14 +100,7 @@ export function InvestmentColumn({ label, priceLabel, items, iconVariant }: Inve
       <p className="site00-label-red" style={{ marginBottom: 4 }}>
         {label}
       </p>
-      <p
-        style={{
-          fontFamily: 'var(--site-font-sans)',
-          fontSize: 12,
-          letterSpacing: '0.06em',
-          marginBottom: 8,
-        }}
-      >
+      <p className="site00-heading" style={{ marginBottom: 8 }}>
         {priceLabel}
       </p>
       <ul style={{ listStyle: 'none', margin: 0, padding: 0 }}>
@@ -175,14 +154,7 @@ export function DirectoryRow({ number, title, description, href, enabled }: Dire
           <GeometricIcon variant="cube" size="sm" />
         )}
         <div style={{ minWidth: 0 }}>
-          <p
-            style={{
-              fontFamily: 'var(--site-font-sans)',
-              fontSize: 12,
-              letterSpacing: '0.08em',
-              margin: 0,
-            }}
-          >
+          <p className="site00-heading" style={{ margin: 0 }}>
             {title}
           </p>
           <p className="site00-body" style={{ fontSize: 11, color: 'var(--site-text-muted)', margin: '2px 0 0' }}>

@@ -52195,6 +52195,7 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 ---
 
+<<<<<<< HEAD
 ## 2026-08-17 — AIO login hero missing on preview (env-dependent URL fix)
 
 - **Context:** Founder reported login page on `preview.fsbw-dev.com` shows solid black background — no approved truck hero image despite prior implementation.
@@ -52231,3 +52232,18 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Files:** `AuthHeader.tsx`, `aio-auth.css`.
 
 - **QA:** Playwright 375/390/414 — hero 330–340px, email below hero, back symbol gold + label white.
+=======
+## 2026-08-17 — SITE 00 typography system reset + brand isolation
+
+- **Context:** Composer sprint — remove Frontal Slayer Futura typography inheritance across all SITE 00 routes (Origin desktop/mobile, Enter, IDNTY, BLDR, ASSTS, nav, loader). Match approved SITE 00 reference hierarchy (condensed/technical/architectural uppercase). Do **not** change FS, Lounge TV, PSA Today typography, backgrounds, geometry, or pipeline logic.
+
+- **Audit (contamination):** `src/site00/styles/tokens.css` mapped `--site-font-sans/book/mono` to **Futura PT Medium/Book** (same as Frontal Slayer). Consumed across `site00.css`, all ASSTS CSS, loader CSS, composition studio, and inline TSX `var(--site-font-sans)`.
+
+- **Fix:** New **`src/site00/styles/site00-typography.css`** + expanded tokens in **`tokens.css`** (`--site00-font-display/heading/body/mono/nav`, tracking, weights, line-heights, clamp type scale). Shell isolation on `.site00-shell`, `.site00-assts-shell`, `.site00-loader`. Role classes: display, heading, label, body, mono, nav, logo-mark, tagline, coordinate, panel-title, status-value. Replaced all `--site-font-*` in `src/site00/**` with `--site00-font-*`. Updated Origin/Enter/workflow/homepage TSX to use role classes instead of inline Futura refs. ASSTS: display font on vault title; mono on batch IDs (`BATCH-*`, asset keys, inspection header). Vault bottom nav uses `--site00-font-nav`.
+
+- **Font stack (no new deps):** Condensed system sans (Roboto Condensed / Arial Narrow) for display/heading/nav; Helvetica Neue for body; ui-monospace stack for IDs/coordinates.
+
+- **Spatial Architecture Review:** SKIPPED — presentation-layer typography correction only; no new surfaces/nav.
+
+- **QA:** `npm run build` PASS. Playwright + screenshots: `/origin` desktop + mobile (technical condensed hierarchy); `/assts` Library Home at 711px with auth/API mock (vault title, red labels, mono batch IDs, compact nav). **`src/index.css` Futura unchanged** — Frontal Slayer isolation preserved.
+>>>>>>> 5c7a05fd4 (SITE 00 typography system reset — isolate from Frontal Slayer Futura [sync-only])

@@ -1,4 +1,5 @@
 @import './tokens.css';
+@import './site00-typography.css';
 
 /* ─── Environment fallbacks (temporary until production assets) ─── */
 
@@ -50,7 +51,6 @@
   position: relative;
   min-height: 100dvh;
   color: var(--site-text);
-  font-family: var(--site-font-book);
   overflow-x: hidden;
 }
 
@@ -60,53 +60,7 @@
   box-sizing: border-box;
 }
 
-/* ─── Typography utilities ─── */
-
-.site00-label {
-  font-family: var(--site-font-sans);
-  font-size: 10px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--site-text-muted);
-}
-
-.site00-label-red {
-  color: var(--site-red);
-  font-family: var(--site-font-sans);
-  font-size: 11px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  font-weight: 500;
-}
-
-.site00-heading-xl {
-  font-family: var(--site-font-sans);
-  font-size: clamp(2rem, 5vw, 3.5rem);
-  font-weight: 500;
-  letter-spacing: 0.02em;
-  line-height: 1.05;
-  text-transform: uppercase;
-}
-
-.site00-heading-lg {
-  font-family: var(--site-font-sans);
-  font-size: clamp(1.5rem, 3vw, 2.25rem);
-  font-weight: 500;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-
-.site00-body {
-  font-size: 13px;
-  line-height: 1.6;
-  letter-spacing: 0.02em;
-}
-
-.site00-mono {
-  font-family: var(--site-font-mono);
-  font-size: 10px;
-  letter-spacing: 0.08em;
-}
+/* Typography roles → site00-typography.css */
 
 /* ─── Glass panel ─── */
 
@@ -131,10 +85,6 @@
   position: relative;
   display: inline-block;
   padding: 6px 12px;
-  font-family: var(--site-font-mono);
-  font-size: 9px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
 }
 
 .site00-bracket-label::before,
@@ -195,10 +145,6 @@
   background: rgba(255, 255, 255, 0.6);
   border: 1px solid var(--site-border);
   border-radius: var(--site-radius-sm);
-  font-family: var(--site-font-sans);
-  font-size: 11px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
   color: var(--site-text);
   cursor: pointer;
   transition: background var(--site-motion-fast) var(--site-ease), border-color var(--site-motion-fast);
@@ -226,10 +172,6 @@
   background: none;
   border: none;
   padding: 0;
-  font-family: var(--site-font-sans);
-  font-size: 11px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
   color: var(--site-text);
   cursor: pointer;
   transition: color var(--site-motion-fast);
@@ -261,10 +203,6 @@
 
 .site00-global-nav a,
 .site00-global-nav button {
-  font-family: var(--site-font-sans);
-  font-size: 10px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
   color: var(--site-text);
   text-decoration: none;
   background: none;
