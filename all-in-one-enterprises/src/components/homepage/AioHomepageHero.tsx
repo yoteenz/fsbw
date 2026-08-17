@@ -17,24 +17,27 @@ export function AioHomepageHero() {
     >
       <div className="aio-home-hero__bg" role="presentation" aria-hidden="true" />
       <div className="aio-home-hero__overlay" aria-hidden="true" />
-      <div className="aio-home-hero__content">
-        <p className="aio-home-hero__eyebrow">{aioAppConfig.company.legalName}</p>
-        <h1 id="aio-home-hero-heading" className="aio-home-hero__headline">
-          WHERE
-          <br />
-          BUSINESS
-          <br />
-          MEETS THE
-          <br />
-          <em>ROAD.</em>
-        </h1>
-        <p className="aio-home-hero__sub">{homepageHeroSupportingCopy}</p>
-        <div className="aio-home-hero__actions">
-          <StartBusinessCtaButton variant="gold" className="aio-btn--block" showArrow />
-          <AIOButton to={aioPaths.getStarted} variant="outline-gold" className="aio-btn--block" showArrow>
-            Check What I Need
-          </AIOButton>
+      <div className="aio-home-hero__inner">
+        <div className="aio-home-hero__content">
+          <p className="aio-home-hero__eyebrow">{aioAppConfig.company.legalName}</p>
+          <h1 id="aio-home-hero-heading" className="aio-home-hero__headline">
+            WHERE
+            <br />
+            BUSINESS
+            <br />
+            MEETS THE
+            <br />
+            <em>ROAD.</em>
+          </h1>
+          <p className="aio-home-hero__sub">{homepageHeroSupportingCopy}</p>
+          <div className="aio-home-hero__actions">
+            <StartBusinessCtaButton variant="gold" className="aio-btn--block" showArrow />
+            <AIOButton to={aioPaths.getStarted} variant="outline-gold" className="aio-btn--block" showArrow>
+              Check What I Need
+            </AIOButton>
+          </div>
         </div>
+        <div className="aio-home-hero__visual" aria-hidden="true" />
       </div>
     </section>
   );

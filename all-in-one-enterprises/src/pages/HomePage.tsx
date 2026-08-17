@@ -1,10 +1,5 @@
+import { useEffect } from 'react';
 import { usePageMeta } from '../hooks/usePageMeta';
-import { HeroSection } from '../sections/HeroSection';
-import { ServicePathwaysSection } from '../sections/ServicePathwaysSection';
-import { RoadReadyTeaserSection } from '../sections/RoadReadyTeaserSection';
-import { CustomerStageSection } from '../sections/CustomerStageSection';
-import { CommandCenterTeaserSection } from '../sections/CommandCenterTeaserSection';
-import { FinalCtaSection } from '../sections/FinalCtaSection';
 import { AioHomepageHero } from '../components/homepage/AioHomepageHero';
 import { AioPathwayRouter } from '../components/homepage/AioPathwayRouter';
 import { AioRoadReadyJourney } from '../components/homepage/AioRoadReadyJourney';
@@ -18,23 +13,19 @@ export function HomePage() {
     description: aioAppConfig.company.brandDescription,
   });
 
+  useEffect(() => {
+    const root = document.querySelector('.aio-app');
+    root?.classList.add('aio-homepage-active');
+    return () => root?.classList.remove('aio-homepage-active');
+  }, []);
+
   return (
-    <>
-      <div className="aio-mobile-only aio-home-mobile">
-        <AioHomepageHero />
-        <AioPathwayRouter />
-        <AioRoadReadyJourney />
-        <AioConnectedValue />
-        <AioHomepageFinalCTA />
-      </div>
-      <div className="aio-desktop-only">
-        <HeroSection />
-        <ServicePathwaysSection />
-        <RoadReadyTeaserSection />
-        <CustomerStageSection />
-        <CommandCenterTeaserSection />
-        <FinalCtaSection />
-      </div>
-    </>
+    <div className="aio-homepage">
+      <AioHomepageHero />
+      <AioPathwayRouter />
+      <AioRoadReadyJourney />
+      <AioConnectedValue />
+      <AioHomepageFinalCTA />
+    </div>
   );
 }

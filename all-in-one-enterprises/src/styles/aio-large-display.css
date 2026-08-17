@@ -72,6 +72,43 @@
     font-size: clamp(2.5rem, 3.4vw, 4.85rem);
   }
 
+  /* Unified homepage (AioHomepageHero stack) */
+  .aio-homepage {
+    --aio-home-container-wide: min(100% - 2 * var(--aio-page-gutter), var(--aio-content-max-ultrawide));
+  }
+
+  .aio-home-hero {
+    min-height: clamp(600px, 50vh, 800px);
+  }
+
+  .aio-home-hero__inner {
+    max-width: var(--aio-content-max-ultrawide);
+    padding-inline: var(--aio-page-gutter);
+  }
+
+  .aio-home-hero__content {
+    max-width: var(--aio-hero-copy-max);
+  }
+
+  .aio-home-hero__headline {
+    font-size: clamp(2.75rem, 3.2vw, 4rem);
+  }
+
+  .aio-home-section {
+    max-width: var(--aio-content-max-ultrawide);
+  }
+
+  .aio-home-pathways__list {
+    max-width: var(--aio-grid-max);
+    margin-inline: auto;
+  }
+
+  .aio-home-final-cta__layout {
+    max-width: var(--aio-content-max-ultrawide);
+    margin-inline: auto;
+    width: 100%;
+  }
+
   .aio-pathway-grid {
     max-width: var(--aio-grid-max);
     margin-inline: auto;
@@ -153,6 +190,42 @@
   .aio-hero__sub {
     max-width: min(540px, 36ch);
     font-size: clamp(1rem, 1vw, 1.25rem);
+  }
+
+  .aio-home-hero {
+    min-height: clamp(640px, 44vh, 860px);
+  }
+
+  .aio-home-hero__bg {
+    background-position: 76% center;
+  }
+
+  .aio-home-hero__overlay {
+    background: linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0.88) 0%,
+      rgba(0, 0, 0, 0.55) 28%,
+      rgba(0, 0, 0, 0.14) 52%,
+      rgba(0, 0, 0, 0.04) 100%
+    );
+  }
+
+  .aio-home-hero__headline {
+    font-size: clamp(3.25rem, 2.8vw, 4.25rem);
+    max-width: 11ch;
+  }
+
+  .aio-home-hero__sub {
+    max-width: min(520px, 38ch);
+    font-size: clamp(0.9375rem, 0.95vw, 1.125rem);
+  }
+
+  .aio-home-final-cta__layout {
+    gap: 2.5rem;
+  }
+
+  .aio-home-final-cta__sub {
+    max-width: 36rem;
   }
 
   .aio-display-xl {
@@ -238,6 +311,20 @@
     );
   }
 
+  .aio-home-hero__bg {
+    background-position: 80% 42%;
+  }
+
+  .aio-home-hero__overlay {
+    background: linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0.9) 0%,
+      rgba(0, 0, 0, 0.48) 24%,
+      rgba(0, 0, 0, 0.1) 44%,
+      rgba(0, 0, 0, 0.02) 100%
+    );
+  }
+
   .aio-auth-premium--login .aio-auth-premium__brand-panel-bg {
     background-position: 80% center;
   }
@@ -263,6 +350,14 @@
 
   .aio-hero__bg {
     background-position: 74% center;
+  }
+
+  .aio-home-hero__headline {
+    font-size: 4.25rem;
+  }
+
+  .aio-home-hero__bg {
+    background-position: 78% center;
   }
 
   .aio-pathway-grid {

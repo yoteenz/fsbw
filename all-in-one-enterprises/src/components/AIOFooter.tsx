@@ -48,9 +48,7 @@ function AIOFooterDesktop() {
       <div className="aio-footer__grid">
         <div>
           <AIOLogo variant="footer" />
-          <p style={{ marginTop: '1rem', fontSize: '0.8125rem', color: 'rgba(255,255,255,0.55)' }}>
-            {aioAppConfig.company.tagline}
-          </p>
+          <p className="aio-footer__tagline">{aioAppConfig.company.tagline}</p>
           <Link to={aioPaths.login} className="aio-footer__link" style={{ display: 'inline-block', marginTop: '0.75rem' }}>
             Log In
           </Link>

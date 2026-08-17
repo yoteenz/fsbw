@@ -52482,7 +52482,6 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 ---
 
-<<<<<<< HEAD
 ## 2026-08-17 — SITE 00 logo links to Origin homepage
 
 - **Context:** Founder requested upper-left **SITE 00** text on Origin and all pages that use it route back to the Origin homepage.
@@ -52490,7 +52489,9 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Implementation:** `Site00LogoBlock.tsx` — **SITE 00** mark wrapped in React Router `<Link to={SITE00_ROUTES.originAlias}>` (`/origin`); `site00-typography.css` — `.site00-logo-mark-link` (inherit color, no underline). Location bracket label below logo unchanged (not linked). Applies to all `Site00AppShell` pages: `/origin`, `/enter`, `/idnty/state`, `/bldr/state`. ASSTS routes use separate chrome (no `Site00LogoBlock`).
 
 - **QA:** `npm run build` PASS. Playwright — logo present on all four shell routes with `href=/origin`; click from `/enter` navigates to `/origin`.
-=======
+
+---
+
 ## 2026-08-17 — AIO ultrawide / large-display responsive layer
 
 - **Context:** Follow-up sprint — site stretched on 3440×1440+ monitors; hero/bg expanded while content floated. Additive large-display CSS without regressing mobile/tablet/standard desktop (&lt;1600px unchanged).
@@ -52522,7 +52523,22 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Spatial Architecture Review:** SKIPPED — presentation/information-architecture sprint; no new Studio OS nav.
 
 - **QA:** `npm run build` PASS. Viewport validator 10/10 PASS.
->>>>>>> bbb1db3f5 (AIO page system: shared templates + public page redesign per moodboard [sync-only])
+
+---
+
+## 2026-08-17 — AIO homepage desktop responsive parity correction
+
+- **Context:** Follow-up to approved mobile homepage redesign. Desktop still rendered legacy fork (`HeroSection`, `ServicePathwaysSection`, etc.) — narrow right-aligned hero column, undersized typography, old section architecture. Goal: one unified responsive homepage matching approved reference on all viewports.
+
+- **Root cause:** `HomePage.tsx` dual fork (`.aio-mobile-only` new components vs `.aio-desktop-only` legacy sections); redesigned CSS scoped to `aio-homepage-mobile.css` ≤767px only; `aio-large-display.css` targeted legacy `.aio-hero` not `.aio-home-hero`.
+
+- **Fix:** Removed desktop legacy fork. Single stack: `AioHomepageHero`, `AioPathwayRouter`, `AioRoadReadyJourney`, `AioConnectedValue`, `AioHomepageFinalCTA`. New `aio-homepage.css` (≥768px) for hero left-content/right-truck grid, 4-col pathways, roadmap split+rail, 3-col connected value, split final CTA, header/footer polish via `.aio-homepage-active`. Extended `aio-large-display.css` for `.aio-home-*` ultrawide. Mobile regression guards: `__visual` hidden, intro CTA hidden on mobile.
+
+- **Docs:** `docs/redesign/AIO_HOMEPAGE_RESPONSIVE_PARITY_REPORT.md`.
+
+- **Spatial Architecture Review:** SKIPPED — responsive parity correction; no new surfaces.
+
+- **QA:** Build PASS. Viewport validator 10/10 PASS (375–5120). Manual walkthrough @ 1440/1920 — left-aligned hero, full section scroll, no layout bugs. Video: `aio_homepage_desktop_parity_walkthrough.mp4`.
 
 ---
 
