@@ -52428,3 +52428,13 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **QA:** `npm run build` PASS. `scripts/validate-assts-loader-composition.mjs` @ 711px stage — geometry + all 8 copy/progress regions **0px delta**. Screenshots: `assts_loader_composition_711px_mid.png`, `assts_loader_composition_711px_ready.png`.
 
+---
+
+## 2026-08-17 — AIO login hero supporting copy +2px
+
+- **Context:** Follow-up login hero polish — white supporting lines (“Your business keeps moving. Pick up where you left off.”) felt slightly small after prior −3px adjustment.
+
+- **Change:** `aio-auth.css` — `.aio-auth-premium--login .aio-auth-login-hero .aio-auth-premium__supporting` font-size from `calc(... - 3px)` to `calc(... - 1px)` (+2px). Hero overlay only; form/desktop intro unchanged.
+
+- **QA:** `npm run build` PASS. Mobile screenshot @ 390px.
+

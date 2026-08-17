@@ -5,8 +5,11 @@ import { RoadReadyTeaserSection } from '../sections/RoadReadyTeaserSection';
 import { CustomerStageSection } from '../sections/CustomerStageSection';
 import { CommandCenterTeaserSection } from '../sections/CommandCenterTeaserSection';
 import { FinalCtaSection } from '../sections/FinalCtaSection';
-import { MobileServiceDiscovery } from '../components/mobile/MobileServiceDiscovery';
-import { MobileMilestonePromo } from '../components/mobile/MobileMilestonePromo';
+import { AioHomepageHero } from '../components/homepage/AioHomepageHero';
+import { AioPathwayRouter } from '../components/homepage/AioPathwayRouter';
+import { AioRoadReadyJourney } from '../components/homepage/AioRoadReadyJourney';
+import { AioConnectedValue } from '../components/homepage/AioConnectedValue';
+import { AioHomepageFinalCTA } from '../components/homepage/AioHomepageFinalCTA';
 import { aioAppConfig } from '../config/appConfig';
 
 export function HomePage() {
@@ -17,13 +20,15 @@ export function HomePage() {
 
   return (
     <>
-      <HeroSection />
-      <div className="aio-mobile-only">
-        <MobileServiceDiscovery />
-        <MobileMilestonePromo />
-        <FinalCtaSection />
+      <div className="aio-mobile-only aio-home-mobile">
+        <AioHomepageHero />
+        <AioPathwayRouter />
+        <AioRoadReadyJourney />
+        <AioConnectedValue />
+        <AioHomepageFinalCTA />
       </div>
       <div className="aio-desktop-only">
+        <HeroSection />
         <ServicePathwaysSection />
         <RoadReadyTeaserSection />
         <CustomerStageSection />

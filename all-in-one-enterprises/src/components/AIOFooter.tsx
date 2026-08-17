@@ -1,3 +1,4 @@
+import { AioMobileFooterAccordion } from './homepage/AioMobileFooterAccordion';
 import { Link } from 'react-router-dom';
 import { aioAppConfig } from '../config/appConfig';
 import { aioPaths } from '../utils/paths';
@@ -41,9 +42,9 @@ const footerGroups = [
   },
 ];
 
-export function AIOFooter() {
+function AIOFooterDesktop() {
   return (
-    <footer className="aio-footer">
+    <footer className="aio-footer aio-footer--desktop">
       <div className="aio-footer__grid">
         <div>
           <AIOLogo variant="footer" />
@@ -76,5 +77,18 @@ export function AIOFooter() {
         </p>
       </div>
     </footer>
+  );
+}
+
+export function AIOFooter() {
+  return (
+    <>
+      <div className="aio-mobile-only">
+        <AioMobileFooterAccordion />
+      </div>
+      <div className="aio-desktop-only">
+        <AIOFooterDesktop />
+      </div>
+    </>
   );
 }
