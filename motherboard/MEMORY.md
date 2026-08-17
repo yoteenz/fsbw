@@ -51854,3 +51854,4 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 
 - **Hotfix (2026-08-17):** `/assts` false "Loading did not complete" — Site00 Suspense used global LoadingScreen; 4s post-load guard treated lazy chunk load as hang. Fix: `AsstsRouteSuspense` skeleton fallback + guard exemptions for `/assts` and `Site00` source.
+- **Hotfix (2026-08-17):** `/assts` "COMPONENT FAILED TO LOAD" — `b.counts.approved` on legacy API batch rows without enriched `counts`. Fix: `normalizeBatchSummary` in `fetchAsstsLibrary` + defensive optional chaining in Library/Batches pages.
