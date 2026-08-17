@@ -1,4 +1,6 @@
-/* SITE 00 global loader — geometric construction assembly */
+/* SITE 00 loaders — compact construction + immersive Asset Vault experience */
+
+/* ── Compact loader (contextual / repeat navigation) ── */
 
 .site00-loader {
   display: flex;
@@ -100,7 +102,6 @@
   opacity: 0.45;
 }
 
-/* Construction assembly animation */
 .site00-loader-construction {
   color: var(--site-red, #e8192c);
   display: block;
@@ -225,6 +226,261 @@
   animation: none;
 }
 
+/* ── Immersive Asset Vault loader ── */
+
+.site00-immersive-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483647;
+  overflow: hidden;
+  touch-action: none;
+  overscroll-behavior: none;
+  background: #f7f7f5;
+  opacity: 1;
+  transition: opacity 0.72s ease;
+}
+
+.site00-immersive-loader--exiting {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.site00-immersive-loader--exiting .site00-loader-animation-wrap,
+.site00-immersive-loader--exiting .site00-immersive-loader__ui {
+  opacity: 0;
+  transition: opacity 0.52s ease;
+}
+
+.site00-immersive-loader--complete .site00-loader-progress-block__fill {
+  transition: width 0.35s ease;
+}
+
+/* Full-viewport environment world */
+.site00-loader-env {
+  position: absolute;
+  inset: 0;
+  background-color: #f5f5f3;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center 42%;
+  transform: scale(1.02);
+}
+
+@media (min-width: 768px) {
+  .site00-loader-env {
+    background-position: center 38%;
+  }
+}
+
+@media (min-width: 1200px) {
+  .site00-loader-env {
+    background-position: center 36%;
+  }
+}
+
+/* OpenArt geometry — no player chrome, no black box */
+.site00-loader-animation-wrap {
+  position: absolute;
+  left: 50%;
+  top: clamp(8%, 12vh, 16%);
+  transform: translateX(-50%);
+  width: min(92vw, 420px);
+  max-height: 52vh;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.45s ease;
+  z-index: 2;
+}
+
+@media (min-width: 768px) {
+  .site00-loader-animation-wrap {
+    width: min(56vw, 520px);
+    top: clamp(6%, 10vh, 14%);
+  }
+}
+
+@media (min-width: 1200px) {
+  .site00-loader-animation-wrap {
+    width: min(44vw, 580px);
+  }
+}
+
+.site00-loader-animation-wrap--ready {
+  opacity: 1;
+}
+
+.site00-loader-animation {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 52vh;
+  object-fit: contain;
+  object-position: center top;
+  background: transparent;
+  border: none;
+  outline: none;
+  box-shadow: none;
+  vertical-align: top;
+}
+
+.site00-loader-animation--static {
+  animation: none;
+}
+
+.site00-immersive-loader__ui {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding:
+    calc(16px + env(safe-area-inset-top, 0px))
+    max(20px, env(safe-area-inset-right, 0px))
+    calc(28px + env(safe-area-inset-bottom, 0px))
+    max(20px, env(safe-area-inset-left, 0px));
+  pointer-events: none;
+  transition: opacity 0.52s ease;
+}
+
+.site00-immersive-loader__ui--error {
+  justify-content: center;
+  align-items: center;
+  pointer-events: auto;
+}
+
+.site00-loader-status {
+  max-width: min(520px, 100%);
+  margin-bottom: clamp(16px, 4vh, 28px);
+}
+
+.site00-loader-status__site {
+  margin: 0 0 10px;
+  font-family: var(--site-font-sans, 'Futura PT Medium', sans-serif);
+  font-size: clamp(10px, 2.6vw, 12px);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--site-red, #e8192c);
+}
+
+.site00-loader-status__title {
+  margin: 0;
+  font-family: var(--site-font-sans, 'Futura PT Medium', sans-serif);
+  font-size: clamp(13px, 3.4vw, 16px);
+  letter-spacing: 0.16em;
+  font-weight: 500;
+  text-transform: uppercase;
+  color: var(--site-text, #0a0a0a);
+  line-height: 1.35;
+}
+
+.site00-loader-status__subtitle {
+  margin: 6px 0 0;
+  font-family: var(--site-font-book, 'Futura PT Book', sans-serif);
+  font-size: clamp(9px, 2.4vw, 11px);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--site-text-muted, #6b6b6b);
+}
+
+.site00-loader-status__stage {
+  margin: 14px 0 0;
+  font-family: var(--site-font-book, 'Futura PT Book', sans-serif);
+  font-size: clamp(8px, 2.2vw, 10px);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(10, 10, 10, 0.72);
+}
+
+.site00-loader-status__tagline {
+  margin: 18px 0 0;
+  font-family: var(--site-font-sans, 'Futura PT Medium', sans-serif);
+  font-size: clamp(9px, 2.3vw, 11px);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--site-text, #0a0a0a);
+}
+
+.site00-loader-status__footer {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-top: clamp(20px, 5vh, 36px);
+}
+
+.site00-loader-status__mark {
+  font-family: var(--site-font-sans, 'Futura PT Medium', sans-serif);
+  font-size: clamp(28px, 8vw, 40px);
+  letter-spacing: 0.04em;
+  line-height: 1;
+  color: var(--site-red, #e8192c);
+}
+
+.site00-loader-status__footer-label {
+  font-family: var(--site-font-sans, 'Futura PT Medium', sans-serif);
+  font-size: clamp(10px, 2.6vw, 12px);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--site-text, #0a0a0a);
+}
+
+.site00-loader-progress-block {
+  max-width: min(520px, 100%);
+  pointer-events: none;
+}
+
+.site00-loader-progress-block__label {
+  margin: 0 0 8px;
+  font-family: var(--site-font-book, 'Futura PT Book', sans-serif);
+  font-size: clamp(8px, 2.2vw, 10px);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(10, 10, 10, 0.65);
+}
+
+.site00-loader-progress-block__row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.site00-loader-progress-block__track {
+  flex: 1;
+  height: 2px;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 1px;
+  overflow: hidden;
+}
+
+.site00-loader-progress-block__fill {
+  height: 100%;
+  background: var(--site-red, #e8192c);
+  border-radius: 1px;
+  transition: width 0.38s ease;
+  transform-origin: left center;
+}
+
+.site00-loader-progress-block__pct {
+  min-width: 2.5em;
+  font-family: var(--site-font-sans, 'Futura PT Medium', sans-serif);
+  font-size: clamp(9px, 2.3vw, 11px);
+  letter-spacing: 0.08em;
+  color: var(--site-text, #0a0a0a);
+  text-align: right;
+}
+
+/* Contextual ASSTS inline loading (repeat navigation) */
+.assts-contextual-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 120;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.42);
+  backdrop-filter: blur(6px);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .site00-loader-construction line,
   .site00-loader-construction circle {
@@ -242,5 +498,13 @@
     width: 55%;
     transform: none;
     margin: 0 auto;
+  }
+
+  .site00-immersive-loader--exiting {
+    transition-duration: 0.2s;
+  }
+
+  .site00-loader-animation-wrap--ready {
+    opacity: 0.92;
   }
 }

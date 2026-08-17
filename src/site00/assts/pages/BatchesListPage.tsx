@@ -48,7 +48,13 @@ export default function AsstsBatchesListPage() {
           </div>
         ) : null}
 
-        {loading ? <p className="assts-empty">Loading batches…</p> : null}
+        {loading ? (
+          <div className="assts-batch-list" aria-hidden="true">
+            <div className="assts-skeleton assts-skeleton--batch-row" />
+            <div className="assts-skeleton assts-skeleton--batch-row" />
+            <div className="assts-skeleton assts-skeleton--batch-row" />
+          </div>
+        ) : null}
 
         <div className="assts-recess-zone">
           <AsstsSectionHeader title="ALL BATCHES" />

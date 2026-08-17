@@ -51899,3 +51899,17 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Production state (ENV-002):** Batch **IN_REVIEW**. All 3 assets **NEEDS_REVIEW** with **v2.0** candidates: library v03 (T2I master), batch v02 + inspection v03 (vault reference conditioned). Slots still **fallback** until founder approves + locks. **Not** auto-approved or locked.
 
 - **Founder next:** `/assts` → BATCH-ASSTS-ENV-002 → review coordinated environments → approve/reject/regenerate per role → LOCK BATCH when satisfied. Say **deploy now** for Vercel API on production preview.
+
+---
+
+## 2026-08-17 — ASSTS immersive Asset Vault production loader
+
+- **Context:** Replace plain Loading / SVG construction loader with final immersive Site 00 loading experience using supplied production assets: architectural PNG background + OpenArt MP4 red geometry loop. No regeneration, no chroma-key, no CSS substitute for video. ASSTS first consumer; architecture reusable for future Site 00 experiences.
+
+- **Implementation:** Modular loader stack under `src/site00/components/loader/` — `Site00ImmersiveLoader`, `Site00LoaderEnvironment`, `Site00LoaderAnimation`, `Site00LoaderStatus`, `Site00LoaderProgress`, `site00LoaderConfig.ts` (ASSTS preset with Supabase asset URLs), `useSite00LoaderProgress`, `site00LoaderPreload.ts`, `site00LoaderSession.ts`. `AsstsColdStartGate` wraps `/assts` routes: cold-start/hard-refresh only; sessionStorage `site00-assts-immersive-complete` skips replay on in-session navigation. Staged progress tied to boot → connect → resolve library API → sync slot → assemble UI (weighted 10–100%). Exit: hold at ASSET VAULT READY → fade geometry/UI → reveal route.
+
+- **Video silence:** `muted` + `playsInline` + `loop` + `volume=0` enforced on mount and on every `play`/`volumechange`/`loadeddata` event. No controls. Animation hidden until `canplay`/`loadeddata`.
+
+- **UX:** Removed "Loading Asset Vault…" / "Loading batches…" plain text; skeleton placeholders for repeat fetches. `AsstsRouteSuspense` uses lightweight contextual loader when cinematic already completed. `LoadingScreen` defers to gate on `/assts` cold start.
+
+- **QA:** Build PASS. Manual test on preview `/assts` — full-screen vault background + red geometry overlay + live typography/progress at 25%/80%; video muted. Say **deploy now** for production.

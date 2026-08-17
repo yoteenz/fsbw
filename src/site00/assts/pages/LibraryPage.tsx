@@ -111,7 +111,14 @@ export default function AsstsLibraryPage() {
             </div>
           ) : null}
 
-          {loading && !summary ? <p className="assts-empty">Loading Asset Vault…</p> : null}
+          {loading && !summary ? (
+            <div className="assts-library-loading-skeleton" aria-hidden="true">
+              <div className="assts-skeleton assts-skeleton--metric" />
+              <div className="assts-skeleton assts-skeleton--metric" />
+              <div className="assts-skeleton assts-skeleton--metric" />
+              <div className="assts-skeleton assts-skeleton--metric" />
+            </div>
+          ) : null}
 
           {showFiltered && filteredAssets ? (
             <>

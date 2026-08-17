@@ -182,6 +182,8 @@ export type AsstsLibraryResponse = {
   pipeline?: { autoQueued?: boolean; polled?: number };
 };
 
+let asstsLibraryBootstrapCache: AsstsLibraryResponse | null = null;
+
 export type AsstsBatchDetail = {
   id: string;
   batch_key: string;
@@ -245,12 +247,29 @@ export async function fetchAsstsLibrary(params?: {
   category?: string;
   view?: string;
 }): Promise<AsstsLibraryResponse> {
+  const isDefaultLibrary =
+    !params?.status && !params?.category && !params?.view && asstsLibraryBootstrapCache != null;
+  if (isDefaultLibrary) return asstsLibraryBootstrapCache as AsstsLibraryResponse;
+
   const query: Record<string, string> = {};
   if (params?.status) query.status = params.status;
   if (params?.category) query.category = params.category;
   if (params?.view) query.view = params.view;
   const data = await asstsFetch<AsstsLibraryResponse>('library', { query });
-  return normalizeLibraryResponse(data);
+  const normalized = normalizeLibraryResponse(data);
+  if (!params?.status && !params?.category && !params?.view) {
+    asstsLibraryBootstrapCache = normalized;
+  }
+  return normalized;
+}
+
+/** Prime library cache after cold-start bootstrap prefetch. */
+export function primeAsstsLibraryCache(data: AsstsLibraryResponse): void {
+  asstsLibraryBootstrapCache = normalizeLibraryResponse(data);
+}
+
+export function clearAsstsLibraryBootstrapCache(): void {
+  asstsLibraryBootstrapCache = null;
 }
 
 export async function fetchAsstsAssets(params?: { status?: string; category?: string }) {

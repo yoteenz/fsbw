@@ -5,10 +5,12 @@ import AdminGuard from '../components/AdminGuard';
 import { Site00Provider } from '../site00/state/Site00Context';
 import { SITE00_ROUTES } from '../site00/config/routes';
 import { AsstsRouteSuspense } from '../site00/assts/components/AsstsRouteSuspense';
+import { AsstsColdStartGate } from '../site00/assts/components/AsstsColdStartGate';
 /* Eager-load SITE 00 + ASSTS styles (lazy route CSS was not applying on mobile preview). */
 import '../site00/styles/site00.css';
 import '../site00/assts/styles/assts.css';
 import '../site00/assts/styles/assts-depth.css';
+import '../site00/styles/site00-loader.css';
 
 const Site00OriginPage = lazy(() => import('../site00/pages/OriginPage'));
 const Site00EnterPage = lazy(() => import('../site00/pages/EnterPage'));
@@ -127,38 +129,40 @@ export function Site00Routes() {
       />
       {/* ASSTS Asset Vault — admin-only internal review surface */}
       <Route path="/assts" element={<AdminGuard />}>
-        <Route
-          index
-          element={
-            <AsstsRouteSuspense>
-              <AsstsLibraryPage />
-            </AsstsRouteSuspense>
-          }
-        />
-        <Route
-          path="batches"
-          element={
-            <AsstsRouteSuspense>
-              <AsstsBatchesListPage />
-            </AsstsRouteSuspense>
-          }
-        />
-        <Route
-          path="batches/:batchId"
-          element={
-            <AsstsRouteSuspense>
-              <AsstsBatchPage />
-            </AsstsRouteSuspense>
-          }
-        />
-        <Route
-          path=":assetId"
-          element={
-            <AsstsRouteSuspense>
-              <AsstsInspectionPage />
-            </AsstsRouteSuspense>
-          }
-        />
+        <Route element={<AsstsColdStartGate />}>
+          <Route
+            index
+            element={
+              <AsstsRouteSuspense>
+                <AsstsLibraryPage />
+              </AsstsRouteSuspense>
+            }
+          />
+          <Route
+            path="batches"
+            element={
+              <AsstsRouteSuspense>
+                <AsstsBatchesListPage />
+              </AsstsRouteSuspense>
+            }
+          />
+          <Route
+            path="batches/:batchId"
+            element={
+              <AsstsRouteSuspense>
+                <AsstsBatchPage />
+              </AsstsRouteSuspense>
+            }
+          />
+          <Route
+            path=":assetId"
+            element={
+              <AsstsRouteSuspense>
+                <AsstsInspectionPage />
+              </AsstsRouteSuspense>
+            }
+          />
+        </Route>
       </Route>
       {/* Reserved future namespaces — redirect to origin until implemented */}
       <Route path="/bluprint/*" element={<Navigate to={SITE00_ROUTES.originAlias} replace />} />
