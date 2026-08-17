@@ -78,6 +78,8 @@ Automated overflow check via `scripts/validate-aio-viewports.mjs`:
 
 Pass criteria: `document.documentElement.scrollWidth <= clientWidth` (no horizontal scroll).
 
+**2026-08-17 run:** 10/10 PASS. @ 3440×1440: `headerMax=1840px`, `heroCopyMax=720px`. Screenshots: `aio_homepage_1920.png`, `aio_homepage_3440.png`.
+
 ---
 
 ## Regression expectations
