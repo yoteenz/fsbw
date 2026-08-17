@@ -52806,7 +52806,6 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 ---
 
-<<<<<<< HEAD
 ## 2026-08-17 — SITE 00 Origin designated desktop route (`/origin/desktop`)
 
 - **Context:** Founder wanted a dedicated desktop route to view approved Origin desktop composition alongside mobile, without the site auto-falling back to mobile layout when choosing desktop on phone preview.
@@ -52814,7 +52813,9 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Fix:** New route **`/origin/desktop`** — **`Site00DesktopArtboardShell`** scales fixed **1440px** artboard edge-to-edge; **`site00-desktop-artboard.css`** applies desktop composition without `@media (min-width: 768px)` (no `vw` leakage to phone viewport). Skips immersive loader/boot on desktop artboard paths. **`Site00OriginLayoutSwitch`** (Mobile | Desktop pill, portaled to `document.body`) on both `/origin` and `/origin/desktop`. Constants: `SITE00_ROUTES.originDesktop`, `desktop-artboard.ts`.
 
 - **QA:** @ 390px `/origin/desktop` → production env bg, hero upper-left, IDNTY/BLDR side-by-side, Desktop pill active, no loader. `/origin` → Mobile pill active. Artifacts: `origin_desktop_route_phone.png`. `npm run build` PASS.
-=======
+
+---
+
 ## 2026-08-17 — AIO Smart Intake complete responsive redesign sprint
 
 - **Context:** Founder approved design reference (desktop split journey rail + light workspace, mobile restructured layout). Transform existing `/get-started` Smart Intake from plain form-like UI into premium guided business-setup console. Preserve routes, validation, persistence, demo mode, business-name check, Supabase/auth, and dynamic section logic — no second intake system.
@@ -52836,7 +52837,6 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Docs:** `docs/refinement/SMART_INTAKE_REDESIGN_IMPLEMENTATION_REPORT.md`.
 
 - **Spatial Architecture Review:** SKIPPED — Smart Intake UX refactor, not Studio OS new surfaces.
->>>>>>> dcf86e578ea27b709d4d34f8732e278b4490d0b1
 
 ---
 

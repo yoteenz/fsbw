@@ -17,13 +17,10 @@ import { SmartIntakeNavigation } from '../components/smart-intake/SmartIntakeNav
 import { SmartIntakeBusinessStep } from '../components/smart-intake/SmartIntakeBusinessStep';
 import { SmartIntakeReviewSummary } from '../components/smart-intake/SmartIntakeReviewSummary';
 import type { JourneyStepItem } from '../components/smart-intake/SmartIntakeJourneyRail';
-import type { SmartIntakeLayoutMode } from '../intake/smartIntakeLayoutMode';
+import { useLayoutPreviewMode } from '../layout-preview/LayoutPreviewContext';
 
-type GetStartedPageProps = {
-  layoutMode?: SmartIntakeLayoutMode;
-};
-
-export function GetStartedPage({ layoutMode = 'responsive' }: GetStartedPageProps) {
+export function GetStartedPage() {
+  const layoutMode = useLayoutPreviewMode();
   const { t } = useTranslation('intake');
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();

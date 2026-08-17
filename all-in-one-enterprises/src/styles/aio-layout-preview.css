@@ -1,0 +1,231 @@
+/**
+ * AIO global layout preview — /desktop/* and /mobile/* route mirrors.
+ * Forces fixed presentation for design review regardless of viewport width.
+ */
+
+.aio-layout-preview-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1rem;
+  padding: 0.375rem 1rem;
+  background: #1a1b1c;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.75rem;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.aio-layout-preview-bar__label {
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.aio-layout-preview-bar__modes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+}
+
+.aio-layout-preview-bar__mode {
+  padding: 0.25rem 0.625rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: rgba(255, 255, 255, 0.82);
+  text-decoration: none;
+  font-weight: 600;
+  transition: background 0.18s ease, border-color 0.18s ease;
+}
+
+.aio-layout-preview-bar__mode:hover {
+  border-color: rgba(201, 162, 39, 0.55);
+  color: #fff;
+}
+
+.aio-layout-preview-bar__mode--active {
+  background: rgba(201, 162, 39, 0.18);
+  border-color: var(--aio-gold, #c9a227);
+  color: #fff;
+}
+
+/* ——— Forced desktop layout ——— */
+.aio-layout-preview--desktop {
+  overflow-x: auto;
+  min-width: 1280px;
+}
+
+.aio-layout-preview--desktop .aio-desktop-only {
+  display: block !important;
+}
+
+.aio-layout-preview--desktop .aio-mobile-only {
+  display: none !important;
+}
+
+.aio-layout-preview--desktop .aio-header__nav {
+  display: flex !important;
+}
+
+.aio-layout-preview--desktop .aio-header__menu-btn {
+  display: none !important;
+}
+
+.aio-layout-preview--desktop .aio-mobile-nav {
+  display: none !important;
+}
+
+.aio-layout-preview--desktop .aio-header__auth-desktop {
+  display: block !important;
+}
+
+.aio-layout-preview--desktop .aio-header__auth-login-mobile {
+  display: none !important;
+}
+
+.aio-layout-preview--desktop .aio-header__phone {
+  display: flex !important;
+}
+
+.aio-layout-preview--desktop .aio-portal__sidebar {
+  display: flex !important;
+}
+
+.aio-layout-preview--desktop .aio-portal__mobile-bar {
+  display: none !important;
+}
+
+.aio-layout-preview--desktop .aio-portal-bottom-nav {
+  display: none !important;
+}
+
+.aio-layout-preview--desktop .aio-portal__main {
+  padding-bottom: clamp(1rem, 3vw, 2rem);
+}
+
+.aio-layout-preview--desktop .aio-mobile-portal-dash {
+  display: none !important;
+}
+
+.aio-layout-preview--desktop .aio-desktop-portal-detail {
+  display: block !important;
+}
+
+.aio-layout-preview--desktop .acr-shell__frame {
+  display: grid !important;
+  grid-template-columns: var(--acr-rail-width) minmax(0, 1fr);
+  gap: 0;
+  align-items: start;
+}
+
+.aio-layout-preview--desktop .acr-rail {
+  display: block !important;
+  position: sticky;
+  top: var(--aio-header-h, 72px);
+  align-self: start;
+  max-height: calc(100dvh - var(--aio-header-h, 72px));
+  overflow-y: auto;
+}
+
+.aio-layout-preview--desktop .acr-workspace__mobile-bar {
+  display: none !important;
+}
+
+.aio-layout-preview--desktop .acr-drawer-backdrop,
+.aio-layout-preview--desktop .acr-drawer {
+  display: none !important;
+}
+
+.aio-layout-preview--desktop .aio-bk-matrix__desktop,
+.aio-layout-preview--desktop .aio-bk-compare__desktop,
+.aio-layout-preview--desktop .aio-fleet-matrix--desktop,
+.aio-layout-preview--desktop .aio-factoring-table--desktop {
+  display: block !important;
+}
+
+.aio-layout-preview--desktop .aio-bk-matrix__mobile,
+.aio-layout-preview--desktop .aio-bk-compare__mobile,
+.aio-layout-preview--desktop .aio-bk-comparison-accordion,
+.aio-layout-preview--desktop .aio-mobile-portal-dash {
+  display: none !important;
+}
+
+/* ——— Forced mobile layout ——— */
+.aio-layout-preview--mobile .aio-desktop-only {
+  display: none !important;
+}
+
+.aio-layout-preview--mobile .aio-mobile-only {
+  display: block !important;
+}
+
+.aio-layout-preview--mobile .aio-header__nav {
+  display: none !important;
+}
+
+.aio-layout-preview--mobile .aio-header__menu-btn {
+  display: flex !important;
+}
+
+.aio-layout-preview--mobile .aio-header__auth-desktop {
+  display: none !important;
+}
+
+.aio-layout-preview--mobile .aio-header__auth-login-mobile {
+  display: inline-flex !important;
+}
+
+.aio-layout-preview--mobile .aio-portal__sidebar {
+  display: none !important;
+}
+
+.aio-layout-preview--mobile .aio-portal__mobile-bar {
+  display: flex !important;
+}
+
+.aio-layout-preview--mobile .aio-portal-bottom-nav {
+  display: flex !important;
+}
+
+.aio-layout-preview--mobile .aio-portal__main {
+  padding-bottom: calc(3.75rem + env(safe-area-inset-bottom, 0px));
+}
+
+.aio-layout-preview--mobile .aio-mobile-portal-dash {
+  display: block !important;
+}
+
+.aio-layout-preview--mobile .aio-desktop-portal-detail {
+  display: none !important;
+}
+
+.aio-layout-preview--mobile .acr-rail {
+  display: none !important;
+}
+
+.aio-layout-preview--mobile .acr-shell__frame {
+  display: block !important;
+}
+
+.aio-layout-preview--mobile .acr-workspace__mobile-bar {
+  display: flex !important;
+}
+
+.aio-layout-preview--mobile .aio-bk-matrix__desktop,
+.aio-layout-preview--mobile .aio-bk-compare__desktop,
+.aio-layout-preview--mobile .aio-fleet-matrix--desktop,
+.aio-layout-preview--mobile .aio-factoring-table--desktop {
+  display: none !important;
+}
+
+.aio-layout-preview--mobile .aio-bk-matrix__mobile,
+.aio-layout-preview--mobile .aio-bk-compare__mobile {
+  display: block !important;
+}
+
+.aio-layout-preview--mobile .aio-bk-comparison-accordion {
+  display: block !important;
+}

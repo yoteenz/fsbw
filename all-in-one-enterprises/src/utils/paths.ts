@@ -1,4 +1,5 @@
 import { aioAppConfig } from '../config/appConfig';
+import { layoutPreviewPaths } from './layoutPreviewPaths';
 
 const BASE = aioAppConfig.routes.base;
 
@@ -119,8 +120,10 @@ export const aioPaths = {
   startYourBusiness: `${BASE}/start-your-business`,
   clientPortalInfo: `${BASE}/client-portal`,
   getStarted: `${BASE}/get-started`,
-  getStartedDesktop: `${BASE}/get-started/desktop`,
-  getStartedMobile: `${BASE}/get-started/mobile`,
+  getStartedDesktop: layoutPreviewPaths.desktopGetStarted,
+  getStartedMobile: layoutPreviewPaths.mobileGetStarted,
+  desktopRoot: layoutPreviewPaths.desktopRoot,
+  mobileRoot: layoutPreviewPaths.mobileRoot,
   getStartedForService: (serviceSlug: string) => `${BASE}/get-started?service=${encodeURIComponent(serviceSlug)}`,
   roadmapResults: `${BASE}/roadmap/results`,
   servicePlan: `${BASE}/service-plan`,
