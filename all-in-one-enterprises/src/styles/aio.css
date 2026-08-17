@@ -4689,13 +4689,25 @@
   justify-content: space-between;
   gap: 0.5rem;
   font-size: 0.8125rem;
-  color: rgba(255, 255, 255, 0.88);
   padding: 0.35rem 0;
   transition: color var(--aio-transition);
 }
 
-.aio-mega-menu__link:hover {
+/* Beat .aio-app a { color: inherit } — links must stay legible on charcoal dropdown */
+.aio-app a.aio-mega-menu__link {
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.aio-app a.aio-mega-menu__link:hover {
   color: var(--aio-gold-light);
+}
+
+.aio-app a.aio-mega-menu__footer {
+  color: var(--aio-gold-light);
+}
+
+.aio-app a.aio-mega-menu__footer:hover {
+  color: var(--aio-white);
 }
 
 .aio-mega-menu__badge {
@@ -4713,7 +4725,6 @@
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--aio-gold-light);
 }
 
 .aio-resources-menu {
@@ -4730,10 +4741,13 @@
   display: block;
   padding: 0.5rem 0.25rem;
   font-size: 0.8125rem;
+}
+
+.aio-app a.aio-resources-menu__link {
   color: rgba(255, 255, 255, 0.88);
 }
 
-.aio-resources-menu__link:hover {
+.aio-app a.aio-resources-menu__link:hover {
   color: var(--aio-gold-light);
 }
 
