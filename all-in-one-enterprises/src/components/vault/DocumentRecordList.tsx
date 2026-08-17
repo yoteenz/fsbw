@@ -2,12 +2,14 @@ import { Link } from 'react-router-dom';
 import type { VaultDocument } from '../../vault/vaultTypes';
 import { labelForCategory } from '../../vault/vaultTaxonomy';
 import { formatDaysRemaining } from '../../calendar/calendarService';
+import { usePaginatedList } from '../../vault/usePaginatedList';
 
 type Props = {
   documents: VaultDocument[];
   detailHref: (id: string) => string;
   showInternalFields?: boolean;
   onReview?: (id: string) => void;
+  pageSize?: number;
 };
 
 function lifecycleLabel(doc: VaultDocument): string {
@@ -17,7 +19,9 @@ function lifecycleLabel(doc: VaultDocument): string {
   return doc.status.replace(/_/g, ' ');
 }
 
-export function DocumentRecordList({ documents, detailHref, showInternalFields, onReview }: Props) {
+export function DocumentRecordList({ documents, detailHref, showInternalFields, onReview, pageSize = 25 }: Props) {
+  const pagination = usePaginatedList(documents, pageSize);
+
   if (documents.length === 0) {
     return (
       <div className="aio-doc-vault-empty">
@@ -28,8 +32,9 @@ export function DocumentRecordList({ documents, detailHref, showInternalFields, 
   }
 
   return (
+    <>
     <ul className="aio-doc-vault-list">
-      {documents.map((doc) => (
+      {pagination.items.map((doc) => (
         <li key={doc.id} className="aio-doc-vault-record">
           <div className="aio-doc-vault-record__main">
             <div className="aio-doc-vault-record__title-row">
@@ -65,5 +70,19 @@ export function DocumentRecordList({ documents, detailHref, showInternalFields, 
         </li>
       ))}
     </ul>
+    {pagination.pageCount > 1 && (
+      <nav className="aio-doc-vault-pagination" aria-label="Document list pages">
+        <button type="button" className="aio-btn aio-btn--sm aio-btn--outline-dark" disabled={!pagination.hasPrev} onClick={pagination.goPrev}>
+          Previous
+        </button>
+        <span className="aio-doc-vault-pagination__label">
+          Page {pagination.page + 1} of {pagination.pageCount} · {pagination.total} records
+        </span>
+        <button type="button" className="aio-btn aio-btn--sm aio-btn--outline-dark" disabled={!pagination.hasNext} onClick={pagination.goNext}>
+          Next
+        </button>
+      </nav>
+    )}
+    </>
   );
 }

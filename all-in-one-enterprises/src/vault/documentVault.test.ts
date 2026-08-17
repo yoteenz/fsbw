@@ -60,3 +60,16 @@ describe('document visibility', () => {
     expect(portalDocs.every((d) => d.visibility === 'customer')).toBe(true);
   });
 });
+
+describe('paginateItems', () => {
+  it('slices items by page size', async () => {
+    const { paginateItems } = await import('./usePaginatedList');
+    const items = Array.from({ length: 30 }, (_, i) => i);
+    const page0 = paginateItems(items, 0, 25);
+    expect(page0.items).toHaveLength(25);
+    expect(page0.items[0]).toBe(0);
+    expect(page0.pageCount).toBe(2);
+    const page1 = paginateItems(items, 1, 25);
+    expect(page1.items).toHaveLength(5);
+  });
+});

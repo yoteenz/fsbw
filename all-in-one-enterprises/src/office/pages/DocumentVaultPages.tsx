@@ -8,6 +8,7 @@ import { VAULT_CATEGORY_OPTIONS, DOCUMENT_TYPES } from '../../vault/vaultConfig'
 import { DocumentVaultMetricsBar } from '../../components/vault/DocumentVaultMetricsBar';
 import { DocumentCategoryNav } from '../../components/vault/DocumentCategoryNav';
 import { DocumentRecordList } from '../../components/vault/DocumentRecordList';
+import { DocumentRecordDetailPanel } from '../../components/vault/DocumentRecordDetailPanel';
 import { SecureDocumentUploader } from '../../components/vault/SecureDocumentUploader';
 import {
   addFilesToMigrationBatch,
@@ -22,7 +23,7 @@ import {
 import { CLIENT_MIGRATION_STATUS_LABELS, MIGRATION_BATCH_STATE_LABELS } from '../../vault/archiveMigrationTypes';
 import { resolveOfficeStaffContext } from '../../office-core/officeContext';
 import { aioPaths } from '../../utils/paths';
-import type { VaultDocument } from '../../vault/vaultTypes';
+import type { RejectionReason, VaultDocument } from '../../vault/vaultTypes';
 
 export function OfficeDocumentVaultPage() {
   const store = useDemoStore();
@@ -383,6 +384,7 @@ export function ArchiveMigrationBatchReviewPage() {
 export function OfficeVaultDocumentDetailPage() {
   const { documentId } = useParams<{ documentId: string }>();
   const store = useDemoStore();
+  const ctx = resolveOfficeStaffContext(store);
   const doc = documentId ? documentRepository.getById(documentId, store) : undefined;
   const client = doc ? store.clients.find((c) => c.id === doc.organizationId) : undefined;
   const previous = doc?.supersedesDocumentId ? documentRepository.getById(doc.supersedesDocumentId, store) : undefined;
@@ -392,15 +394,14 @@ export function OfficeVaultDocumentDetailPage() {
   return (
     <div className="aio-office-page aio-doc-vault-page">
       <Link to={client ? aioPaths.officeClientDocuments(client.id) : aioPaths.officeDocumentVault} className="aio-office-link">← Document Vault</Link>
-      <h1>{doc.title}</h1>
-      <div className="aio-doc-vault-detail-grid">
-        <section className="aio-oc-panel"><h2>Status</h2><p>{doc.status} · {doc.recordLifecycle ?? '—'}</p></section>
-        <section className="aio-oc-panel"><h2>Category</h2><p>{doc.category} · {doc.documentType}</p></section>
-        <section className="aio-oc-panel"><h2>Source</h2><p>{doc.source ?? 'digital_upload'}</p></section>
-        <section className="aio-oc-panel"><h2>Visibility</h2><p>{doc.visibility === 'customer' ? 'Client visible' : 'Internal only'}</p></section>
-        {doc.physicalOriginalStatus && <section className="aio-oc-panel"><h2>Physical Record</h2><p>{doc.physicalOriginalStatus.replace(/_/g, ' ')}{doc.physicalArchiveLocation ? ` · ${doc.physicalArchiveLocation}` : ''}</p></section>}
-        {previous && <section className="aio-oc-panel"><h2>Previous Version</h2><Link to={aioPaths.officeVaultDocument(previous.id)}>{previous.title}</Link></section>}
-      </div>
+      <DocumentRecordDetailPanel
+        doc={doc}
+        clientName={client?.companyName}
+        previous={previous}
+        showInternalFields
+        onVerify={() => documentRepository.verify(doc.id, ctx.staffId, ctx.staffName)}
+        onReject={(reason: RejectionReason, message: string) => documentRepository.reject(doc.id, ctx.staffId, reason, message)}
+      />
     </div>
   );
 }

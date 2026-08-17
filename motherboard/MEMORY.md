@@ -52376,6 +52376,43 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 ---
 
+<<<<<<< Updated upstream
+=======
+## 2026-08-17 — AIO Digital Records Vault + archive migration foundation
+
+- **Context:** Major AIO implementation sprint — structured Document Vault (not generic upload) + Legacy Physical Archive Migration foundation per 50-phase spec. Phase 0 audit found Sprint 11 demo vault already present; gap = schema alignment, repository layer, Office/Portal UI, migration workflow.
+
+- **Audit:** `all-in-one-enterprises/docs/DIGITAL_RECORDS_VAULT_ARCHITECTURE_AUDIT.md`. Dedicated AIO Supabase **not provisioned** — migration `supabase/migrations/20260817180000_aio_digital_records_vault.sql` committed but **do not apply** to Frontal Slayer project `hyycomvcaqxxvyrfupes`.
+
+- **Domain:** Extended `vaultTypes.ts` (categories, source, lifecycle, physical original, hash, OCR hooks). New `vaultTaxonomy.ts`, `archiveMigrationTypes.ts`, `documentHash.ts`, `documentVaultMetrics.ts`, `repositories/documentRepository.ts`, `demo/archiveMigrationActions.ts`. Demo store **v23** (`archiveMigrationBatches`, batch files, `Client.archiveMigrationStatus`). Audit events in `securityTypes.ts`.
+
+- **Office UI:** `DocumentVaultPages.tsx` — global/client vault, archive migration dashboard, digitize workflow, batch review, document detail. Components: metrics bar, category nav, record list, secure uploader. CSS `aio-document-vault.css`. Nav + routes in `OfficeRoutes.tsx`, `paths.ts`, `AIOOfficeLayout.tsx`. Client 360 Documents tab links to full vault.
+
+- **Portal:** Enhanced `VaultPage.tsx` — Document Vault header, metrics, taxonomy nav, client-visible filter.
+
+- **Routes:** `/office/documents/vault`, `/office/clients/:clientId/documents`, `/office/documents/vault/:documentId`, `/office/archive-migration`, `/office/archive-migration/digitize`, `/office/archive-migration/batches/:batchId`. Portal unchanged at `/portal/vault`.
+
+- **Tests:** `documentVault.test.ts` — 6 tests PASS. `npm run build` PASS.
+
+- **Not shipped (explicit):** OCR/AI classification, PDF page splitting, Supabase storage provider implementation, apply migration until dedicated AIO Supabase, backend repository mode, Road Ready doc sync, signed URL preview/download, full RLS integration tests.
+
+- **Spatial Architecture Review:** SKIPPED — extends existing Office/Portal surfaces; infrastructure foundation.
+
+- **QA:** `npm run build` PASS; vitest 6/6 on vault domain.
+
+---
+
+## 2026-08-17 — AIO vault sprint follow-up (detail panel, pagination, sync)
+
+- **Context:** Continuation of Digital Records Vault sprint after rebase/push; enhanced office document detail and list UX.
+
+- **Changes:** `DocumentRecordDetailPanel.tsx` — metadata grids, preview, verify/reject, Road Ready / migration batch links. `usePaginatedList.ts` + pagination on `DocumentRecordList`. `OfficeVaultDocumentDetailPage` wired to panel. CSS in `aio-document-vault.css`. Test for `paginateItems` (7 vitest total).
+
+- **Git:** Rebased vault foundation onto remote `master`; synced with `--sync-only`.
+
+- **QA:** Manual browser QA on `/office/documents/vault`, document detail, `/office/archive-migration`, `/office/archive-migration/digitize` — all functional.
+=======
+>>>>>>> Stashed changes
 ## 2026-08-17 — ASSTS loader master reference composition lock (711×1536 v2)
 
 - **Context:** Composer sprint — lock SITE 00 Asset Vault immersive loader to attached approved master reference (711×1536). Not a redesign. Lock background, overlay coordinates, typography proportions (Martian Mono), progress bar geometry, wireframe/platform relationship. Prior drift partly from background `object-fit: cover` on mismatched asset vs overlay coordinate plane.
