@@ -52181,6 +52181,7 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 ---
 
+<<<<<<< HEAD
 ## 2026-08-17 — ASSTS Library Home exact X/Y composition map (711×1536)
 
 - **Context:** Follow-up sprint — replace estimated scroll spacing with **approved coordinate map** for `/assts` mobile Library Home only. Reference canvas **711×1536**; scale = renderedWidth/711; vertical positions scale with same factor (scrollable long page). No pipeline/generation/FS/Lounge TV changes.
@@ -52192,3 +52193,31 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Debug:** `?refMap=1` or REF MAP toggle → `LibraryHomeReferenceMapDebug` overlays gutters, y-landmarks, bounding boxes, expected vs actual deltas.
 
 - **QA:** `npm run build` PASS; Playwright at **711px** — primary regions (header.title, stats.assets, needsReview.card, recentBatches.card01, browseLibrary.environments) measured **0px delta** vs map; validation script `scripts/validate-assts-library-composition.mjs`.
+=======
+## 2026-08-17 — AIO login hero missing on preview (env-dependent URL fix)
+
+- **Context:** Founder reported login page on `preview.fsbw-dev.com` shows solid black background — no approved truck hero image despite prior implementation.
+
+- **Root cause:** Login hero URL was built only from `VITE_AIO_SUPABASE_URL` / `VITE_AIO_LOGIN_HERO_URL` / `VITE_AIO_PUBLIC_STORAGE_URL`. When unset (preview tunnel / Vercel without AIO Supabase env), `getAioLoginHeroImageUrl()` returned `''` → CSS `--aio-auth-login-hero-url: url("")` → gradients only, no truck.
+
+- **Fix:** Bundled approved master PNG at `all-in-one-enterprises/public/brand/aio-login-hero.png` (~1.9MB). `getAioLoginHeroImageUrl()` falls back to `appConfig.assets.loginHeroImage` (`/brand/aio-login-hero.png`) when remote URL unavailable. CSS `var(--aio-auth-login-hero-url, url('/brand/aio-login-hero.png'))` as belt-and-suspenders on mobile + desktop login backgrounds.
+
+- **Files:** `aioPublicAssets.ts`, `appConfig.ts`, `aio-auth.css`, `.env.example`, `MOBILE_AUTH_EXPERIENCE_REPORT.md`.
+
+- **QA:** Build PASS; local `/login` shows truck hero with fallback URL; dev server serves `/brand/aio-login-hero.png` 200.
+
+
+---
+
+## 2026-08-17 — AIO login finite hero structure correction
+
+- **Context:** Follow-up sprint after hero asset fix — founder reported truck image still behaving as full-page background; text/form too low; form overlaid on truck.
+
+- **Root cause:** Login hero applied via fixed full-viewport `.aio-auth-premium__bg` background-image; intro + form lived in same scroll layer over the image.
+
+- **Fix:** New `AuthLoginHero` component — finite top section (~350–400px by breakpoint) with `<img object-fit:cover>`, overlay, Back + intro text top-aligned. Removed login hero from page background. `LoginPage` splits hero vs `form-stack` on solid `#080808`. Slight negative margin overlap (~28px). Typography scaled down in hero; secondary copy max-width ~320px. Debug banner hidden on auth routes (`aio-app--auth`). Desktop split (brand panel hero) unchanged.
+
+- **Files:** `AuthLoginHero.tsx`, `AuthShell.tsx`, `LoginPage.tsx`, `AIOAuthLayout.tsx`, `AuthBrandIntro.tsx`, `aio-auth.css`, `MOBILE_AUTH_EXPERIENCE_REPORT.md`.
+
+- **QA:** Playwright 390×844 — hero height 380px, hero top ~16px (no debug banner), email input below hero, form-stack bg rgb(8,8,8), truck not behind inputs.
+>>>>>>> 2567c58ca (fix(aio): finite top login hero — form below on solid dark surface [sync-only])

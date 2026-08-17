@@ -25,36 +25,14 @@
   pointer-events: none;
 }
 
-/* Login — approved wide hero master (Supabase CDN) */
-.aio-auth-premium--login .aio-auth-premium__bg {
+/* Login — solid page background only (hero image lives in finite top section) */
+.aio-auth-premium__bg--login-solid {
   background-color: #050505;
-  background-image:
-    linear-gradient(
-      180deg,
-      rgba(5, 5, 5, 0.42) 0%,
-      rgba(5, 5, 5, 0.18) 38%,
-      rgba(5, 5, 5, 0.48) 100%
-    ),
-    linear-gradient(
-      90deg,
-      rgba(5, 5, 5, 0.62) 0%,
-      rgba(5, 5, 5, 0.28) 34%,
-      rgba(5, 5, 5, 0.06) 58%,
-      transparent 100%
-    ),
-    var(--aio-auth-login-hero-url, url('/brand/aio-login-hero.png'));
-  background-position: center, center, 62% center;
-  background-size: cover, cover, cover;
-  background-repeat: no-repeat;
+  background-image: none;
 }
 
-.aio-auth-premium--login .aio-auth-premium__bg::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(ellipse 55% 35% at 12% 22%, rgba(212, 160, 23, 0.05) 0%, transparent 55%),
-    linear-gradient(180deg, transparent 55%, rgba(5, 5, 5, 0.35) 100%);
+.aio-auth-premium__bg--login-solid::after {
+  display: none;
 }
 
 .aio-auth-premium:not(.aio-auth-premium--login) .aio-auth-premium__bg::after {
@@ -67,6 +45,10 @@
   display: flex;
   min-height: 100dvh;
   min-height: 100svh;
+}
+
+.aio-auth-premium__layout--login {
+  flex-direction: column;
 }
 
 .aio-auth-premium__brand-panel {
@@ -86,8 +68,141 @@
     max(1.25rem, env(safe-area-inset-left));
 }
 
+.aio-standalone-root:has(.aio-app--auth) > .aio-debug-banner {
+  display: none;
+}
+
 .aio-auth-premium--login .aio-auth-premium__form-column {
-  padding-top: max(0.2rem, env(safe-area-inset-top));
+  justify-content: flex-start;
+}
+
+.aio-auth-premium__login-desktop-header {
+  display: none;
+}
+
+.aio-auth-premium__main--login {
+  flex: 0 1 auto;
+  max-width: none;
+  width: 100%;
+  margin-inline: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.aio-auth-premium__form-stack {
+  position: relative;
+  z-index: 2;
+  flex: 1;
+  width: 100%;
+  margin-top: -1.75rem;
+  padding:
+    0.25rem
+    max(1.25rem, env(safe-area-inset-right))
+    max(1rem, env(safe-area-inset-bottom))
+    max(1.25rem, env(safe-area-inset-left));
+  background: #080808;
+}
+
+.aio-auth-premium__intro--desktop-only {
+  display: none;
+}
+
+/* Finite mobile login hero */
+.aio-auth-login-hero {
+  position: relative;
+  flex-shrink: 0;
+  width: 100%;
+  height: 350px;
+  overflow: hidden;
+  background: #050505;
+}
+
+.aio-auth-login-hero__image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 68% 58%;
+  pointer-events: none;
+  user-select: none;
+}
+
+.aio-auth-login-hero__overlay {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(5, 5, 5, 0.38) 0%,
+      rgba(5, 5, 5, 0.12) 42%,
+      rgba(5, 5, 5, 0.72) 100%
+    ),
+    linear-gradient(
+      90deg,
+      rgba(5, 5, 5, 0.72) 0%,
+      rgba(5, 5, 5, 0.34) 38%,
+      rgba(5, 5, 5, 0.08) 58%,
+      transparent 100%
+    );
+  pointer-events: none;
+}
+
+.aio-auth-login-hero__content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  height: 100%;
+  padding:
+    max(1.125rem, env(safe-area-inset-top))
+    max(1.5rem, env(safe-area-inset-right))
+    1.25rem
+    max(1.5rem, env(safe-area-inset-left));
+  box-sizing: border-box;
+}
+
+.aio-auth-login-hero .aio-auth-premium__header {
+  display: block;
+  min-height: auto;
+  margin-bottom: 0.5rem;
+}
+
+.aio-auth-login-hero .aio-auth-premium__back {
+  min-height: 44px;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.aio-auth-login-hero .aio-auth-premium__intro {
+  margin: 0;
+  max-width: 100%;
+}
+
+.aio-auth-login-hero .aio-auth-premium__eyebrow {
+  margin: 0 0 0.25rem;
+  font-size: clamp(0.8125rem, 3.4vw, 0.875rem);
+}
+
+.aio-auth-login-hero .aio-auth-premium__headline {
+  font-size: clamp(2.5rem, 10.5vw, 3.25rem);
+  line-height: 0.95;
+}
+
+.aio-auth-login-hero .aio-auth-premium__supporting {
+  margin-top: 0.375rem;
+  font-size: clamp(1.0625rem, 4.2vw, 1.125rem);
+  line-height: 1.35;
+  max-width: min(340px, 88vw);
+}
+
+.aio-auth-login-hero .aio-auth-premium__secondary {
+  margin-top: 0.375rem;
+  font-size: clamp(0.875rem, 3.6vw, 1rem);
+  line-height: 1.4;
+  max-width: min(320px, 82vw);
+  color: rgba(255, 255, 255, 0.5);
 }
 
 .aio-auth-premium__header {
@@ -185,6 +300,16 @@
   padding-bottom: env(safe-area-inset-bottom);
 }
 
+.aio-auth-premium--login .aio-auth-premium__footer {
+  margin-top: 0;
+  padding:
+    0.75rem
+    max(1.25rem, env(safe-area-inset-right))
+    max(1rem, env(safe-area-inset-bottom))
+    max(1.25rem, env(safe-area-inset-left));
+  background: #080808;
+}
+
 .aio-auth-premium__footer p {
   margin: 0;
 }
@@ -243,7 +368,15 @@
 }
 
 .aio-auth-premium--login .aio-auth-premium__form-panel {
-  margin-top: 0.125rem;
+  margin-top: 0;
+}
+
+.aio-auth-premium--login .aio-auth-premium__form-stack .aio-auth-premium__form-panel {
+  background: #121212;
+  border-color: rgba(255, 255, 255, 0.08);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
 }
 
 /* Form glass panel */
@@ -868,6 +1001,38 @@
     display: none;
   }
 
+  .aio-auth-premium__layout--login {
+    flex-direction: row;
+  }
+
+  .aio-auth-login-hero {
+    display: none;
+  }
+
+  .aio-auth-premium__login-desktop-header {
+    display: block;
+  }
+
+  .aio-auth-premium__intro--desktop-only {
+    display: block;
+  }
+
+  .aio-auth-premium--login .aio-auth-premium__form-column {
+    padding: 2.5rem 3rem;
+    background: var(--aio-near-black, #0a0a0a);
+  }
+
+  .aio-auth-premium__form-stack {
+    margin-top: 0;
+    padding: 0;
+    background: transparent;
+  }
+
+  .aio-auth-premium__main--login {
+    max-width: 420px;
+    margin-inline: auto;
+  }
+
   .aio-auth-premium__brand-panel {
     display: flex;
     flex-direction: column;
@@ -892,7 +1057,7 @@
     background:
       linear-gradient(160deg, rgba(5, 5, 5, 0.35) 0%, rgba(5, 5, 5, 0.72) 100%),
       linear-gradient(90deg, rgba(5, 5, 5, 0.55) 0%, transparent 45%),
-      var(--aio-auth-login-hero-url, url('/brand/aio-login-hero.png')) 72% center / cover no-repeat;
+      url('/brand/aio-login-hero.png') 72% center / cover no-repeat;
   }
 
   .aio-auth-premium__brand-panel-bg::after {
@@ -957,37 +1122,67 @@
     grid-template-columns: 1fr;
   }
 
-  .aio-auth-premium--login .aio-auth-premium__bg {
-    background-position: center, center, 58% center;
+  .aio-auth-login-hero {
+    height: 350px;
+  }
+
+  .aio-auth-login-hero__image {
+    object-position: 66% 60%;
   }
 }
 
 @media (min-width: 360px) and (max-width: 374px) {
-  .aio-auth-premium--login .aio-auth-premium__bg {
-    background-position: center, center, 60% center;
+  .aio-auth-login-hero {
+    height: 350px;
+  }
+
+  .aio-auth-login-hero__image {
+    object-position: 67% 59%;
   }
 }
 
 @media (min-width: 375px) and (max-width: 389px) {
-  .aio-auth-premium--login .aio-auth-premium__bg {
-    background-position: center, center, 62% center;
+  .aio-auth-login-hero {
+    height: 380px;
+  }
+
+  .aio-auth-login-hero__image {
+    object-position: 68% 58%;
   }
 }
 
 @media (min-width: 390px) and (max-width: 413px) {
-  .aio-auth-premium--login .aio-auth-premium__bg {
-    background-position: center, center, 64% center;
+  .aio-auth-login-hero {
+    height: 380px;
+  }
+
+  .aio-auth-login-hero__image {
+    object-position: 69% 58%;
   }
 }
 
 @media (min-width: 414px) and (max-width: 429px) {
-  .aio-auth-premium--login .aio-auth-premium__bg {
-    background-position: center, center, 66% center;
+  .aio-auth-login-hero {
+    height: 400px;
+  }
+
+  .aio-auth-login-hero__image {
+    object-position: 70% 57%;
   }
 }
 
 @media (min-width: 430px) and (max-width: 1023px) {
-  .aio-auth-premium--login .aio-auth-premium__bg {
-    background-position: center, center, 68% center;
+  .aio-auth-login-hero {
+    height: 400px;
+  }
+
+  .aio-auth-login-hero__image {
+    object-position: 72% 56%;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .aio-auth-login-hero {
+    height: 460px;
   }
 }

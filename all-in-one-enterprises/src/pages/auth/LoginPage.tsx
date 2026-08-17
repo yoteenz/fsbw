@@ -1,6 +1,7 @@
 import { FormEvent, useEffect, useMemo, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { AuthBrandIntro } from '../../components/auth/AuthBrandIntro';
+import { AuthLoginHero } from '../../components/auth/AuthLoginHero';
 import { AuthCheckbox } from '../../components/auth/AuthCheckbox';
 import { AuthEmailIcon, AuthLockIcon } from '../../components/auth/AuthFieldIcons';
 import { AuthError } from '../../components/auth/AuthError';
@@ -76,23 +77,33 @@ export function LoginPage() {
       ? "The email or password entered doesn't match an account. Check your information and try again."
       : error;
 
+  const brandIntroProps = {
+    headline: 'Welcome',
+    headlineGold: 'back.',
+    supporting: (
+      <>
+        Your business keeps moving.
+        <br />
+        Pick up where you left off.
+      </>
+    ),
+    secondary:
+      'Manage services, documents, filings, Road Ready™ progress, and your AIO account from one place.',
+  } as const;
+
   return (
     <>
-      <AuthBrandIntro
-        headline="Welcome"
-        headlineGold="back."
-        supporting={
-          <>
-            Your business keeps moving.
-            <br />
-            Pick up where you left off.
-          </>
-        }
-        secondary="Manage services, documents, filings, Road Ready™ progress, and your AIO account from one place."
-      />
+      <AuthLoginHero>
+        <AuthBrandIntro {...brandIntroProps} />
+      </AuthLoginHero>
 
-      <div className="aio-auth-premium__form-panel">
-        <form onSubmit={onSubmit} className="aio-auth-premium__form">
+      <div className="aio-auth-premium__form-stack">
+        <div className="aio-auth-premium__intro aio-auth-premium__intro--desktop-only">
+          <AuthBrandIntro {...brandIntroProps} />
+        </div>
+
+        <div className="aio-auth-premium__form-panel">
+          <form onSubmit={onSubmit} className="aio-auth-premium__form">
           <AuthInput
             label="Email"
             type="email"
@@ -136,9 +147,10 @@ export function LoginPage() {
           <p className="aio-auth-premium__alt-label">New to All In One?</p>
           <AuthSecondaryButton to={signUpHref}>Create Account →</AuthSecondaryButton>
         </div>
-      </div>
+        </div>
 
-      <DemoPortalAccess />
+        <DemoPortalAccess />
+      </div>
     </>
   );
 }

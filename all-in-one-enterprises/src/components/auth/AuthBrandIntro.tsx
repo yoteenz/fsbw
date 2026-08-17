@@ -6,6 +6,7 @@ type Props = {
   headlineGold?: ReactNode;
   supporting?: ReactNode;
   secondary?: ReactNode;
+  className?: string;
 };
 
 export function AuthBrandIntro({
@@ -14,9 +15,10 @@ export function AuthBrandIntro({
   headlineGold,
   supporting,
   secondary,
+  className,
 }: Props) {
   return (
-    <div className="aio-auth-premium__intro">
+    <div className={`aio-auth-premium__intro${className ? ` ${className}` : ''}`}>
       <p className="aio-auth-premium__eyebrow">{eyebrow}</p>
       <h1 className="aio-auth-premium__headline">
         {headline}

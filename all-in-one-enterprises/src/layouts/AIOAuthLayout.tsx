@@ -6,7 +6,7 @@ export function AIOAuthLayout() {
   const isLogin = location.pathname.endsWith('/login');
 
   return (
-    <div className="aio-app">
+    <div className="aio-app aio-app--auth">
       <AuthShell variant={isLogin ? 'login' : 'default'}>
         <Outlet />
       </AuthShell>
