@@ -52574,3 +52574,13 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **QA:** `npm run build` PASS. Playwright — computed transforms match offsets. Screenshot: `site00_enter_composition_offsets_1440.png`.
 
+---
+
+## 2026-08-17 — SITE 00 bottom summary strip: red ♦ bullets + relaxed spacing
+
+- **Context:** Founder requested bottom-panel summary sentences (`/enter`, `/idnty/state`, `/bldr/state`) — ♦ separators red, sentence text black, more space between phrases.
+
+- **Changes:** `Site00SummaryStripText.tsx` — splits copy on `♦`, renders red `.site00-summary-strip__bullet` + black `.site00-summary-strip__segment`. Wired via `EnterStatusStrip` + `WorkflowSummary`. `site00.css` — flex layout, `column-gap: 2.5rem`, bullet/segment internal gap `1.25rem`.
+
+- **QA:** `npm run build` PASS. Playwright — bullets `rgb(232,25,44)`, text `rgb(10,10,10)` on all three routes. Screenshot: `site00_summary_strip_enter.png`.
+

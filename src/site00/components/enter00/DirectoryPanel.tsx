@@ -20,9 +20,8 @@ export function DirectoryPanel() {
     >
       <div className="site00-enter-welcome">
         <span className="site00-label-red">{SITE00_ENTER_COPY.welcomeNumber}</span>
-        <h1 className="site00-heading-lg" style={{ margin: '8px 0', display: 'flex', alignItems: 'center', gap: 8 }}>
+        <h1 className="site00-heading-lg" style={{ margin: '8px 0' }}>
           {SITE00_ENTER_COPY.welcomeTitle}
-          <span className="site00-diamond" aria-hidden="true" />
         </h1>
         <div style={{ margin: '16px 0', maxWidth: 200 }}>
           <SectionRule />
