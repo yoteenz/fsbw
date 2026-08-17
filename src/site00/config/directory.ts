@@ -3,6 +3,8 @@
  * Environment is locked; this data drives the directory panel only.
  */
 
+export type EnterMenuIconId = 'bldr-studio' | 'projects' | 'account' | 'support';
+
 export type DirectoryRow = {
   id: string;
   number?: string;
@@ -10,7 +12,8 @@ export type DirectoryRow = {
   description: string;
   href: string;
   enabled: boolean;
-  icon?: 'cube' | 'folder' | 'user' | 'gear' | 'sites' | 'services' | 'system' | 'about' | 'journal';
+  /** YOUR SPACE — production line-icon slot */
+  enterIcon?: EnterMenuIconId;
 };
 
 export type DirectorySection = {
@@ -31,7 +34,6 @@ export const SITE00_DIRECTORY_SECTIONS: DirectorySection[] = [
         description: 'Explore digital places',
         href: '/sites',
         enabled: false,
-        icon: 'sites',
       },
       {
         id: 'explore-services',
@@ -40,7 +42,6 @@ export const SITE00_DIRECTORY_SECTIONS: DirectorySection[] = [
         description: 'What SITE 00 does',
         href: '/services',
         enabled: false,
-        icon: 'services',
       },
       {
         id: 'explore-system',
@@ -49,7 +50,6 @@ export const SITE00_DIRECTORY_SECTIONS: DirectorySection[] = [
         description: 'How the system works',
         href: '/system',
         enabled: false,
-        icon: 'system',
       },
       {
         id: 'explore-about',
@@ -58,7 +58,6 @@ export const SITE00_DIRECTORY_SECTIONS: DirectorySection[] = [
         description: 'Studio and methodology',
         href: '/about',
         enabled: false,
-        icon: 'about',
       },
       {
         id: 'explore-journal',
@@ -67,7 +66,6 @@ export const SITE00_DIRECTORY_SECTIONS: DirectorySection[] = [
         description: 'Notes from the field',
         href: '/journal',
         enabled: false,
-        icon: 'journal',
       },
     ],
   },
@@ -78,10 +76,10 @@ export const SITE00_DIRECTORY_SECTIONS: DirectorySection[] = [
       {
         id: 'bldr-studio',
         title: 'BLDR STUDIO',
-        description: 'Production workspace',
+        description: 'Create & deploy',
         href: '/bldr',
         enabled: true,
-        icon: 'cube',
+        enterIcon: 'bldr-studio',
       },
       {
         id: 'projects',
@@ -89,23 +87,23 @@ export const SITE00_DIRECTORY_SECTIONS: DirectorySection[] = [
         description: 'Your active builds',
         href: '/projects',
         enabled: false,
-        icon: 'folder',
+        enterIcon: 'projects',
       },
       {
         id: 'account',
         title: 'ACCOUNT',
-        description: 'Profile and settings',
+        description: 'Profile & preferences',
         href: '/account',
         enabled: false,
-        icon: 'user',
+        enterIcon: 'account',
       },
       {
         id: 'support',
         title: 'SUPPORT',
-        description: 'Guidance and help',
+        description: 'Help & resources',
         href: '/support',
         enabled: false,
-        icon: 'gear',
+        enterIcon: 'support',
       },
     ],
   },

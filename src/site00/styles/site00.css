@@ -416,6 +416,86 @@
   }
 }
 
+/* ─── ENTER 00 menu — production line-icon slots (YOUR SPACE) ─── */
+
+.site00-enter-icon-slot {
+  width: var(--site00-enter-icon-slot);
+  height: var(--site00-enter-icon-slot);
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  color: var(--site-red);
+}
+
+.site00-enter-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 0;
+  width: 100%;
+  text-align: left;
+  text-decoration: none;
+  color: inherit;
+  border: none;
+  border-bottom: 1px solid var(--site-border);
+  background: none;
+  cursor: pointer;
+  transition: background-color 0.18s ease;
+}
+
+.site00-enter-row__main {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  flex: 1;
+}
+
+.site00-enter-row__number {
+  flex-shrink: 0;
+  color: var(--site-text-muted);
+}
+
+.site00-enter-row__copy {
+  min-width: 0;
+}
+
+.site00-enter-row__title {
+  margin: 0;
+  color: var(--site-text);
+}
+
+.site00-enter-row__description {
+  font-size: 11px;
+  color: var(--site-text-muted);
+  margin: 2px 0 0;
+}
+
+.site00-enter-row__arrow {
+  flex-shrink: 0;
+  color: var(--site-red);
+  transition: transform 0.18s ease, color 0.18s ease;
+}
+
+.site00-enter-row--disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.site00-enter-row:not(.site00-enter-row--disabled):hover {
+  background: rgba(255, 255, 255, 0.35);
+}
+
+.site00-enter-row:not(.site00-enter-row--disabled):hover .site00-enter-icon-slot,
+.site00-enter-row:not(.site00-enter-row--disabled):hover .site00-enter-row__arrow {
+  color: #d01424;
+}
+
+.site00-enter-row:not(.site00-enter-row--disabled):hover .site00-enter-row__arrow {
+  transform: translateX(2px);
+}
+
 /* ─── Origin homepage — hero in original column; IDNTY/BLDR panels on foreground plaza ─── */
 
 .site00-home-stage {

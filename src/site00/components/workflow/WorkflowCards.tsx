@@ -1,7 +1,9 @@
 import { Link } from 'react-router-dom';
 import type { IdentityBrandState } from '../../config/identity';
+import type { EnterMenuIconId } from '../../config/directory';
 import { GeometricIcon, identityComplexityIcon } from '../icons/GeometricIcon';
 import { ArrowIconSmall } from '../icons/ArrowAction';
+import { EnterMenuIcon, Site00ArrowRightIcon } from '../../icons';
 import { Site00SummaryStripText } from '../shell/Site00SummaryStripText';
 
 type StateCardProps = {
@@ -129,60 +131,41 @@ type DirectoryRowProps = {
   description: string;
   href: string;
   enabled: boolean;
+  enterIcon?: EnterMenuIconId;
 };
 
-export function DirectoryRow({ number, title, description, href, enabled }: DirectoryRowProps) {
+export function DirectoryRow({ number, title, description, href, enabled, enterIcon }: DirectoryRowProps) {
   const content = (
     <>
-      <div style={{ display: 'flex', alignItems: 'baseline', gap: 12, minWidth: 0, flex: 1 }}>
-        {number ? (
-          <span className="site00-mono" style={{ color: 'var(--site-text-muted)', flexShrink: 0 }}>
-            {number}
+      <div className="site00-enter-row__main">
+        {enterIcon ? (
+          <span className="site00-enter-icon-slot">
+            <EnterMenuIcon id={enterIcon} />
           </span>
-        ) : (
-          <GeometricIcon variant="cube" size="sm" />
-        )}
-        <div style={{ minWidth: 0 }}>
-          <p className="site00-heading" style={{ margin: 0 }}>
-            {title}
-          </p>
-          <p className="site00-body" style={{ fontSize: 11, color: 'var(--site-text-muted)', margin: '2px 0 0' }}>
-            {description}
-          </p>
+        ) : number ? (
+          <span className="site00-mono site00-enter-row__number">{number}</span>
+        ) : null}
+        <div className="site00-enter-row__copy">
+          <p className="site00-heading site00-enter-row__title">{title}</p>
+          <p className="site00-body site00-enter-row__description">{description}</p>
         </div>
       </div>
-      <ArrowIconSmall />
+      <span className="site00-enter-row__arrow">
+        <Site00ArrowRightIcon size={18} />
+      </span>
     </>
   );
 
-  const rowStyle: React.CSSProperties = {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: 16,
-    padding: '12px 0',
-    borderBottom: '1px solid var(--site-border)',
-    width: '100%',
-    textAlign: 'left',
-    background: 'none',
-    border: 'none',
-    borderBottomWidth: 1,
-    borderBottomStyle: 'solid',
-    borderBottomColor: 'var(--site-border)',
-    cursor: enabled ? 'pointer' : 'not-allowed',
-    opacity: enabled ? 1 : 0.45,
-  };
-
   if (enabled) {
     return (
-      <Link to={href} style={{ ...rowStyle, textDecoration: 'none', color: 'inherit' }}>
+      <Link to={href} className="site00-enter-row">
         {content}
       </Link>
     );
   }
 
   return (
-    <div style={rowStyle} aria-disabled="true">
+    <div className="site00-enter-row site00-enter-row--disabled" aria-disabled="true">
       {content}
     </div>
   );

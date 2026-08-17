@@ -50,6 +50,7 @@ export function DirectoryPanel() {
                     description={row.description}
                     href={row.href}
                     enabled={row.enabled}
+                    enterIcon={row.enterIcon}
                   />
                 ))}
               </nav>
