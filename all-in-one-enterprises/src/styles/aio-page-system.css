@@ -1,0 +1,887 @@
+/**
+ * AIO Page System — shared premium dark/gold page experience (redesign sprint).
+ * Additive layer; integrates with aio-large-display.css ultrawide caps.
+ */
+
+.aio-ps-shell {
+  background: var(--aio-black);
+  color: var(--aio-white);
+}
+
+.aio-ps-shell--light {
+  background: var(--aio-white);
+  color: var(--aio-charcoal);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Cinematic hero                                                             */
+/* -------------------------------------------------------------------------- */
+
+.aio-ps-hero {
+  position: relative;
+  isolation: isolate;
+  min-height: clamp(320px, 42vh, 520px);
+  padding: clamp(2.5rem, 6vw, 4.5rem) clamp(1.25rem, 4vw, 3rem);
+  overflow: hidden;
+  background: linear-gradient(155deg, #050505 0%, var(--aio-surface) 55%, #121416 100%);
+}
+
+.aio-ps-hero--compact {
+  min-height: clamp(280px, 36vh, 440px);
+}
+
+.aio-ps-hero__bg {
+  position: absolute;
+  inset: 0;
+  background-image: var(--aio-ps-hero-bg, none);
+  background-size: cover;
+  background-position: center right;
+  opacity: 0.42;
+  z-index: 0;
+}
+
+.aio-ps-hero__overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    rgba(5, 5, 5, 0.92) 0%,
+    rgba(5, 5, 5, 0.78) 42%,
+    rgba(5, 5, 5, 0.35) 100%
+  );
+  z-index: 1;
+}
+
+.aio-ps-hero__inner {
+  position: relative;
+  z-index: 2;
+  max-width: var(--aio-content-max-wide, 1280px);
+}
+
+.aio-ps-hero__breadcrumb {
+  font-size: 0.6875rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--aio-gold-light);
+  margin: 0 0 1rem;
+}
+
+.aio-ps-hero__breadcrumb a:hover {
+  color: var(--aio-white);
+}
+
+.aio-ps-hero__breadcrumb-sep {
+  opacity: 0.5;
+}
+
+.aio-ps-eyebrow {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--aio-gold);
+  margin: 0 0 0.75rem;
+}
+
+.aio-ps-hero__title {
+  font-family: var(--aio-font-display);
+  font-size: clamp(1.875rem, 4.5vw, 3rem);
+  font-weight: 800;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  max-width: 14ch;
+  margin: 0 0 1rem;
+}
+
+.aio-ps-hero__desc {
+  max-width: 42rem;
+  color: rgba(255, 255, 255, 0.82);
+  line-height: 1.65;
+  text-transform: none;
+  font-size: clamp(0.9375rem, 1.5vw, 1.0625rem);
+  margin: 0;
+}
+
+.aio-ps-hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.aio-ps-hero-actions-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Body sections                                                              */
+/* -------------------------------------------------------------------------- */
+
+.aio-ps-body {
+  padding: clamp(2rem, 5vw, 3.25rem) clamp(1.25rem, 4vw, 3rem) clamp(2.5rem, 6vw, 4rem);
+}
+
+.aio-ps-block {
+  margin-bottom: clamp(2rem, 4vw, 3rem);
+}
+
+.aio-ps-block:last-child {
+  margin-bottom: 0;
+}
+
+.aio-ps-heading {
+  margin-bottom: 1.25rem;
+}
+
+.aio-ps-heading--center {
+  text-align: center;
+}
+
+.aio-ps-heading--light .aio-ps-heading__title,
+.aio-ps-heading--light .aio-ps-heading__subtitle {
+  color: var(--aio-white);
+}
+
+.aio-ps-heading__title {
+  font-family: var(--aio-font-display);
+  font-size: clamp(1.25rem, 2.5vw, 1.75rem);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  margin: 0.35rem 0 0;
+}
+
+.aio-ps-heading__subtitle {
+  margin: 0.5rem 0 0;
+  color: rgba(255, 255, 255, 0.68);
+  text-transform: none;
+  max-width: 52ch;
+  line-height: 1.6;
+  font-size: 0.9375rem;
+}
+
+.aio-ps-heading--center .aio-ps-heading__subtitle {
+  margin-inline: auto;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Service rows                                                               */
+/* -------------------------------------------------------------------------- */
+
+.aio-ps-service-rows {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.aio-ps-service-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.125rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--aio-radius);
+  background: rgba(255, 255, 255, 0.03);
+  text-decoration: none;
+  color: inherit;
+  transition: border-color var(--aio-transition), background var(--aio-transition);
+}
+
+.aio-ps-service-row:hover {
+  border-color: rgba(212, 160, 23, 0.45);
+  background: rgba(212, 160, 23, 0.06);
+}
+
+.aio-ps-service-row__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: var(--aio-radius);
+  background: rgba(212, 160, 23, 0.1);
+}
+
+.aio-ps-service-row__icon--placeholder {
+  border: 1px solid rgba(212, 160, 23, 0.25);
+}
+
+.aio-ps-service-row__copy {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+  text-transform: none;
+}
+
+.aio-ps-service-row__title {
+  font-family: var(--aio-font-display);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.aio-ps-service-row__desc {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.65);
+  line-height: 1.45;
+}
+
+.aio-ps-service-row__chevron {
+  color: var(--aio-gold);
+  font-size: 1.125rem;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Feature grid (What AIO Handles)                                            */
+/* -------------------------------------------------------------------------- */
+
+.aio-ps-features {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 11rem), 1fr));
+  gap: 0.75rem;
+}
+
+.aio-ps-features__item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.65rem;
+  padding: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: var(--aio-radius);
+  background: rgba(0, 0, 0, 0.25);
+  text-transform: none;
+}
+
+.aio-ps-features__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.aio-ps-features__dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: var(--aio-gold);
+}
+
+.aio-ps-features__label {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  line-height: 1.35;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Process rail                                                               */
+/* -------------------------------------------------------------------------- */
+
+.aio-ps-process {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr));
+  gap: 1rem;
+}
+
+.aio-ps-process__step {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  padding: 1rem;
+  border-top: 2px solid rgba(212, 160, 23, 0.35);
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 0 0 var(--aio-radius) var(--aio-radius);
+  text-transform: none;
+}
+
+.aio-ps-process__num {
+  font-family: var(--aio-font-display);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--aio-gold);
+}
+
+.aio-ps-process__title {
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.aio-ps-process__desc {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: rgba(255, 255, 255, 0.65);
+  line-height: 1.5;
+}
+
+@media (max-width: 767px) {
+  .aio-ps-process {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* -------------------------------------------------------------------------- */
+/* Service detail grid                                                        */
+/* -------------------------------------------------------------------------- */
+
+.aio-ps-detail-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  align-items: start;
+}
+
+@media (min-width: 1024px) {
+  .aio-ps-detail-grid {
+    grid-template-columns: minmax(0, 1fr) min(22rem, 32vw);
+    gap: 2.5rem;
+  }
+}
+
+.aio-ps-journey-back {
+  padding-top: 1rem;
+}
+
+.aio-ps-action-panel {
+  padding: 1.25rem;
+  border: 1px solid rgba(212, 160, 23, 0.22);
+  border-radius: var(--aio-radius-lg);
+  background: rgba(255, 255, 255, 0.04);
+  text-transform: none;
+}
+
+.aio-ps-action-panel__title {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--aio-gold);
+  margin: 0 0 1rem;
+}
+
+.aio-ps-action-panel__body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.aio-ps-action-panel__footer {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.aio-ps-requirements {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .aio-ps-requirements {
+    grid-template-columns: 1fr auto;
+    align-items: start;
+  }
+}
+
+.aio-ps-requirements__list {
+  margin: 0;
+  padding-left: 1.15rem;
+  text-transform: none;
+  color: rgba(255, 255, 255, 0.82);
+  line-height: 1.65;
+  font-size: 0.9375rem;
+}
+
+.aio-ps-requirements__timeline {
+  padding: 1rem 1.25rem;
+  border: 1px solid rgba(212, 160, 23, 0.25);
+  border-radius: var(--aio-radius);
+  background: rgba(212, 160, 23, 0.06);
+  text-transform: none;
+  min-width: min(100%, 14rem);
+}
+
+.aio-ps-requirements__timeline-label {
+  display: block;
+  font-size: 0.6875rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.65);
+  margin-bottom: 0.35rem;
+}
+
+.aio-ps-requirements__timeline-value {
+  display: block;
+  font-family: var(--aio-font-display);
+  font-size: 1.5rem;
+  color: var(--aio-gold-light);
+}
+
+.aio-ps-requirements__timeline-note {
+  margin: 0.5rem 0 0;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.aio-ps-related__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 12rem), 1fr));
+  gap: 0.65rem;
+}
+
+.aio-ps-related__card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 0.875rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--aio-radius);
+  text-decoration: none;
+  color: inherit;
+  text-transform: none;
+  transition: border-color var(--aio-transition);
+}
+
+.aio-ps-related__card:hover {
+  border-color: rgba(212, 160, 23, 0.4);
+}
+
+.aio-ps-related__card strong {
+  font-size: 0.8125rem;
+  text-transform: uppercase;
+}
+
+.aio-ps-related__card span {
+  font-size: 0.8125rem;
+  color: rgba(255, 255, 255, 0.62);
+  line-height: 1.4;
+}
+
+.aio-ps-disclaimer {
+  margin: 1.5rem 0 0;
+  padding: 0.875rem 1rem;
+  border-left: 2px solid rgba(212, 160, 23, 0.45);
+  font-size: 0.8125rem;
+  color: rgba(255, 255, 255, 0.62);
+  text-transform: none;
+  line-height: 1.55;
+}
+
+.aio-ps-text-action {
+  display: inline-block;
+  margin-top: 0.75rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--aio-gold-light);
+  text-decoration: none;
+}
+
+.aio-ps-text-action:hover {
+  color: var(--aio-white);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Journey milestones                                                         */
+/* -------------------------------------------------------------------------- */
+
+.aio-ps-journey {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border-left: 1px solid rgba(212, 160, 23, 0.25);
+  margin-left: 1.25rem;
+}
+
+.aio-ps-journey__item {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 1rem;
+  padding: 1.25rem 0 1.25rem 1.25rem;
+  text-transform: none;
+}
+
+.aio-ps-journey__marker {
+  position: absolute;
+  left: -1.625rem;
+  top: 1.35rem;
+  width: 2.25rem;
+  height: 2.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--aio-black);
+  border: 1px solid rgba(212, 160, 23, 0.45);
+}
+
+.aio-ps-journey__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5rem 0.75rem;
+  margin-bottom: 0.35rem;
+}
+
+.aio-ps-journey__num {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: var(--aio-gold);
+  letter-spacing: 0.08em;
+}
+
+.aio-ps-journey__title {
+  font-family: var(--aio-font-display);
+  font-size: 1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.aio-ps-journey__status {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.aio-ps-journey__status--complete {
+  border-color: rgba(34, 197, 94, 0.45);
+  color: #86efac;
+}
+
+.aio-ps-journey__status--in_progress {
+  border-color: rgba(212, 160, 23, 0.45);
+  color: var(--aio-gold-light);
+}
+
+.aio-ps-journey__desc {
+  margin: 0 0 0.65rem;
+  color: rgba(255, 255, 255, 0.68);
+  line-height: 1.55;
+  font-size: 0.9375rem;
+}
+
+.aio-ps-journey__cta {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--aio-gold);
+  text-decoration: none;
+}
+
+.aio-ps-journey__cta:hover {
+  color: var(--aio-white);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Progress ring                                                              */
+/* -------------------------------------------------------------------------- */
+
+.aio-ps-progress-ring {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.aio-ps-progress-ring__label {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.aio-ps-progress-ring__pct {
+  font-family: var(--aio-font-display);
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--aio-white);
+  line-height: 1;
+}
+
+.aio-ps-progress-ring--lg .aio-ps-progress-ring__pct {
+  font-size: 2.125rem;
+}
+
+.aio-ps-progress-ring__sub {
+  font-size: 0.5625rem;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.65);
+  max-width: 8rem;
+  margin-top: 0.25rem;
+  line-height: 1.3;
+}
+
+.aio-ps-progress-ring__product {
+  font-size: 0.5625rem;
+  letter-spacing: 0.1em;
+  color: var(--aio-gold);
+  margin-top: 0.15rem;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Roadmap footer CTA                                                         */
+/* -------------------------------------------------------------------------- */
+
+.aio-ps-roadmap-footer {
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding: clamp(1.75rem, 4vw, 2.5rem) clamp(1.25rem, 4vw, 3rem);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.aio-ps-roadmap-footer__inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+}
+
+.aio-ps-roadmap-footer__title {
+  font-family: var(--aio-font-display);
+  font-size: clamp(1.125rem, 2vw, 1.375rem);
+  font-weight: 700;
+  text-transform: uppercase;
+  margin: 0 0 0.35rem;
+}
+
+.aio-ps-roadmap-footer__desc {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.68);
+  text-transform: none;
+  font-size: 0.9375rem;
+  max-width: 36rem;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Operational / audience / important                                         */
+/* -------------------------------------------------------------------------- */
+
+.aio-ps-audience {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 12rem), 1fr));
+  gap: 0.75rem;
+}
+
+.aio-ps-audience__item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--aio-radius);
+  text-transform: none;
+}
+
+.aio-ps-audience__item strong {
+  font-size: 0.875rem;
+  text-transform: uppercase;
+}
+
+.aio-ps-audience__item span {
+  font-size: 0.8125rem;
+  color: rgba(255, 255, 255, 0.62);
+}
+
+.aio-ps-important {
+  margin-bottom: 2rem;
+  padding: 1rem 1.125rem;
+  border: 1px solid rgba(212, 160, 23, 0.3);
+  border-radius: var(--aio-radius);
+  background: rgba(212, 160, 23, 0.08);
+  font-size: 0.875rem;
+  line-height: 1.55;
+  text-transform: none;
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.aio-ps-footer-cta {
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding: clamp(2rem, 4vw, 2.75rem) clamp(1.25rem, 4vw, 3rem);
+}
+
+.aio-ps-footer-cta__inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.aio-ps-footer-cta__title {
+  font-family: var(--aio-font-display);
+  font-size: clamp(1.125rem, 2vw, 1.5rem);
+  text-transform: uppercase;
+  margin: 0;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Contact intent grid                                                        */
+/* -------------------------------------------------------------------------- */
+
+.aio-ps-intent-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 10rem), 1fr));
+  gap: 0.65rem;
+  margin-bottom: 2rem;
+}
+
+.aio-ps-intent-btn {
+  padding: 0.875rem 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--aio-radius);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--aio-white);
+  font-family: inherit;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: border-color var(--aio-transition), background var(--aio-transition);
+}
+
+.aio-ps-intent-btn:hover,
+.aio-ps-intent-btn--active {
+  border-color: rgba(212, 160, 23, 0.5);
+  background: rgba(212, 160, 23, 0.1);
+}
+
+.aio-ps-contact-panel {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  text-transform: none;
+}
+
+@media (min-width: 900px) {
+  .aio-ps-contact-panel {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+  }
+}
+
+.aio-ps-contact-meta {
+  color: rgba(255, 255, 255, 0.82);
+  line-height: 1.65;
+}
+
+.aio-ps-contact-meta a {
+  color: var(--aio-gold-light);
+}
+
+.aio-ps-contact-form {
+  padding: 1.25rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--aio-radius-lg);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+/* Hub category chips on master services page */
+.aio-ps-hub-categories {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 1fr));
+  gap: 0.65rem;
+  margin-bottom: 2rem;
+}
+
+.aio-ps-hub-category {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--aio-radius);
+  text-decoration: none;
+  color: inherit;
+  text-transform: none;
+  transition: border-color var(--aio-transition);
+}
+
+.aio-ps-hub-category:hover {
+  border-color: rgba(212, 160, 23, 0.4);
+}
+
+.aio-ps-hub-category strong {
+  font-size: 0.8125rem;
+  text-transform: uppercase;
+}
+
+.aio-ps-hub-category span {
+  font-size: 0.8125rem;
+  color: rgba(255, 255, 255, 0.62);
+}
+
+/* Road Ready public layout */
+.aio-ps-road-ready-hero-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  align-items: center;
+}
+
+@media (min-width: 900px) {
+  .aio-ps-road-ready-hero-grid {
+    grid-template-columns: 1fr auto;
+  }
+}
+
+/* Portal command center restyle hooks */
+.aio-ps-portal-shell .aio-cc-home {
+  background: transparent;
+}
+
+.aio-ps-portal-shell .aio-cc-panel,
+.aio-ps-portal-shell .aio-portal-panel {
+  border-color: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+/* Large display — page system inherits container caps from aio-large-display.css */
+@media (min-width: 1600px) {
+  .aio-ps-hero__inner,
+  .aio-ps-body .aio-container,
+  .aio-ps-roadmap-footer__inner,
+  .aio-ps-footer-cta__inner {
+    max-width: var(--aio-content-max-wide, 1440px);
+  }
+}

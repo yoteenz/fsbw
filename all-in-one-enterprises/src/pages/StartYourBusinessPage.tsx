@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { AIOSectionHeader } from '../components/AIOSectionHeader';
 import { AIOButton } from '../components/AIOButton';
 import { ServiceJourneyHeader } from '../components/journey/ServiceJourneyHeader';
 import { ServiceJourneyStepper } from '../components/journey/ServiceJourneyStepper';
@@ -11,6 +10,12 @@ import { useStartBusinessJourney } from '../journeys/useStartBusinessJourney';
 import type { JourneyStepId } from '../journeys/journeyTypes';
 import { aioAppConfig } from '../config/appConfig';
 import { aioPaths } from '../utils/paths';
+import {
+  AioPageShell,
+  AioCinematicHero,
+  AioJourneySection,
+  AioRoadmapFooterCta,
+} from '../components/page-system';
 
 export function StartYourBusinessPage() {
   const [selectedStepId, setSelectedStepId] = useState<JourneyStepId | undefined>();
@@ -24,32 +29,38 @@ export function StartYourBusinessPage() {
   });
 
   return (
-    <>
-      <div className="aio-page-hero aio-page-hero--elevated aio-page-hero--compact">
-        <div className="aio-container">
-          <p className="aio-page-hero__breadcrumb">Start Your Business</p>
-          <h1 className="aio-page-hero__title">From formation to freight</h1>
-          <p className="aio-page-hero__desc">
-            Click any milestone to start or continue. Progress reflects your Road Ready requirements and service
-            statuses — not demo placeholders.
-          </p>
-          <div className="aio-page-hero__actions aio-cta-row">
+    <AioPageShell>
+      <AioCinematicHero
+        eyebrow="Start My Business"
+        title={
+          <>
+            From idea to
+            <br />
+            running your
+            <br />
+            trucking business.
+          </>
+        }
+        description="Click any milestone to start or continue. Progress reflects your Road Ready requirements and service statuses when you're signed in."
+        breadcrumbs={[{ label: 'Start Your Business' }]}
+        actions={
+          <>
             <AIOButton
               to={view.nextAction?.ctaRoute ?? `${aioPaths.startYourBusiness}/build`}
               variant="gold"
-              className="aio-btn--block aio-cta-row__link"
               showArrow
             >
-              {view.progress.completedCount > 0 ? 'Continue Where I Left Off' : 'Start My Business'}
+              {view.progress.completedCount > 0 ? 'Continue My Journey' : 'Start My Business'}
             </AIOButton>
-            <AIOButton to={aioPaths.roadReadyPublic} variant="outline-gold" className="aio-btn--block aio-cta-row__link" showArrow>
+            <AIOButton to={aioPaths.roadReadyPublic} variant="outline-gold" showArrow>
               Get My Roadmap
             </AIOButton>
-          </div>
-        </div>
-      </div>
+          </>
+        }
+        compact
+      />
 
-      <div className="aio-page-content">
+      <div className="aio-ps-body">
         <div className="aio-container">
           <ServiceJourneyHeader view={view} />
 
@@ -62,6 +73,7 @@ export function StartYourBusinessPage() {
               />
             </div>
             <div className="aio-desktop-only aio-journey-workspace__desktop">
+              <AioJourneySection steps={view.steps} />
               <ServiceJourneyStepper
                 steps={view.steps}
                 selectedStepId={view.selectedStepId}
@@ -71,13 +83,7 @@ export function StartYourBusinessPage() {
             </div>
           </section>
 
-          <section className="aio-page-section">
-            <AIOSectionHeader
-              align="center"
-              eyebrow="Need something specific?"
-              title="Additional startup services"
-              subtitle="Jump directly to a service not shown in your current milestone path."
-            />
+          <section className="aio-ps-block">
             <div className="aio-start-links">
               <Link to={aioPaths.permitting} className="aio-start-links__item">
                 Permits & Compliance →
@@ -92,6 +98,11 @@ export function StartYourBusinessPage() {
           </section>
         </div>
       </div>
-    </>
+
+      <AioRoadmapFooterCta
+        title="Not sure where to start?"
+        description="Road Ready™ assesses your business and recommends the right services in order."
+      />
+    </AioPageShell>
   );
 }

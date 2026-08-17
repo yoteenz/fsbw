@@ -22,7 +22,7 @@ export function PortalPage() {
 
   if (view.context.isShipper) {
     return (
-      <div className="aio-cc-home">
+      <div className="aio-cc-home aio-ps-portal-shell">
         <CommandCenterHeader view={view} />
         <NextActionHero action={view.nextAction} />
         <AttentionCenter items={view.attentionItems} />
@@ -36,7 +36,7 @@ export function PortalPage() {
   }
 
   return (
-    <div className="aio-cc-home">
+    <div className="aio-cc-home aio-ps-portal-shell">
       <div className="aio-mobile-only">
         <MobilePortalHome view={view} />
         <NextActionHero action={view.nextAction} />

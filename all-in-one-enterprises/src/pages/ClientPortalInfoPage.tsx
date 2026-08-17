@@ -1,9 +1,21 @@
-import { AIOSectionHeader } from '../components/AIOSectionHeader';
 import { AIOPortalPreview } from '../components/AIOPortalPreview';
 import { AIOButton } from '../components/AIOButton';
 import { usePageMeta } from '../hooks/usePageMeta';
 import { aioAppConfig } from '../config/appConfig';
 import { aioPaths } from '../utils/paths';
+import {
+  AioPageShell,
+  AioCinematicHero,
+  AioSectionHeading,
+  AioFeatureGrid,
+  type FeatureItem,
+} from '../components/page-system';
+import { VAULT_TAXONOMY } from '../vault/vaultTaxonomy';
+
+const VAULT_FEATURES: FeatureItem[] = VAULT_TAXONOMY.slice(0, 6).map((entry) => ({
+  label: entry.label,
+  icon: 'documentVault' as const,
+}));
 
 export function ClientPortalInfoPage() {
   usePageMeta({
@@ -13,75 +25,69 @@ export function ClientPortalInfoPage() {
   });
 
   return (
-    <>
-      <div className="aio-page-hero aio-page-hero--elevated">
-        <div className="aio-container">
-          <p className="aio-page-hero__breadcrumb">Client Portal</p>
-          <h1 className="aio-page-hero__title">Your business. One command center.</h1>
-          <p className="aio-page-hero__desc">
-            Track filings, documents, renewals, loads, invoices, and service requests from a single personalized portal
-            — not just a marketing website.
-          </p>
-          <div className="aio-page-hero__actions aio-cta-row">
-            <AIOButton
-              to={aioPaths.login}
-              variant="gold"
-              className="aio-btn--block aio-cta-row__link"
-            >
+    <AioPageShell>
+      <AioCinematicHero
+        eyebrow="Client Portal"
+        title={
+          <>
+            Your business.
+            <br />
+            One command center.
+          </>
+        }
+        description="Track filings, documents, renewals, loads, invoices, and service requests from a single personalized portal — not just a marketing website."
+        breadcrumbs={[{ label: 'Client Portal' }]}
+        actions={
+          <>
+            <AIOButton to={aioPaths.login} variant="gold">
               Log In
             </AIOButton>
-            <AIOButton
-              to={aioPaths.signUp}
-              variant="outline-gold"
-              className="aio-btn--block aio-cta-row__link"
-              showArrow
-            >
+            <AIOButton to={aioPaths.signUp} variant="outline-gold" showArrow>
               Sign Up
             </AIOButton>
-          </div>
-        </div>
-      </div>
-      <div className="aio-page-content">
+          </>
+        }
+        compact
+      />
+
+      <div className="aio-ps-body">
         <div className="aio-container aio-container--wide">
-          <section style={{ marginBottom: '3rem' }}>
-            <AIOSectionHeader
-              title="What you can manage"
-              subtitle="Road Ready™, service requests, documents, dispatch, factoring, insurance, and billing — organized for carriers and shippers."
-            />
-          </section>
+          <AioSectionHeading
+            title="What you can manage"
+            subtitle="Road Ready™, service requests, documents, dispatch, factoring, insurance, and billing — organized for carriers and shippers."
+            light
+          />
           <AIOPortalPreview />
-          <p className="aio-portal-info-note">
+
+          <section className="aio-ps-block" style={{ marginTop: '2.5rem' }}>
+            <AioSectionHeading
+              eyebrow="Digital Records Vault"
+              title="Your documents. Organized. Secure."
+              subtitle="Everything you need in one secure place — formation, authority, permits, insurance, tax, and historical records."
+              light
+            />
+            <AioFeatureGrid items={VAULT_FEATURES} />
+            <div style={{ marginTop: '1.25rem' }}>
+              <AIOButton to={aioPaths.login} variant="gold" showArrow>
+                View My Documents
+              </AIOButton>
+            </div>
+          </section>
+
+          <p className="aio-ps-disclaimer">
             Portal modules reflect your active services and account permissions. Some features require enrollment or staff
             coordination.
           </p>
-          <div className="aio-cta-row">
-            <AIOButton
-              to={aioPaths.login}
-              variant="gold"
-              className="aio-cta-row__link"
-              showArrow
-            >
+          <div className="aio-ps-hero-actions-row" style={{ marginTop: '1.5rem' }}>
+            <AIOButton to={aioPaths.login} variant="gold" showArrow>
               Log In
             </AIOButton>
-            <AIOButton
-              to={aioPaths.signUp}
-              variant="outline-gold"
-              className="aio-cta-row__link"
-              showArrow
-            >
-              Sign Up
-            </AIOButton>
-            <AIOButton
-              to={aioPaths.contact}
-              variant="outline-gold"
-              className="aio-cta-row__link"
-              showArrow
-            >
+            <AIOButton to={aioPaths.contact} variant="outline-gold" showArrow>
               Request Access
             </AIOButton>
           </div>
         </div>
       </div>
-    </>
+    </AioPageShell>
   );
 }

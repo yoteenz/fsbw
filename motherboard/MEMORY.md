@@ -52482,6 +52482,7 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 ---
 
+<<<<<<< HEAD
 ## 2026-08-17 — SITE 00 logo links to Origin homepage
 
 - **Context:** Founder requested upper-left **SITE 00** text on Origin and all pages that use it route back to the Origin homepage.
@@ -52489,4 +52490,37 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Implementation:** `Site00LogoBlock.tsx` — **SITE 00** mark wrapped in React Router `<Link to={SITE00_ROUTES.originAlias}>` (`/origin`); `site00-typography.css` — `.site00-logo-mark-link` (inherit color, no underline). Location bracket label below logo unchanged (not linked). Applies to all `Site00AppShell` pages: `/origin`, `/enter`, `/idnty/state`, `/bldr/state`. ASSTS routes use separate chrome (no `Site00LogoBlock`).
 
 - **QA:** `npm run build` PASS. Playwright — logo present on all four shell routes with `href=/origin`; click from `/enter` navigates to `/origin`.
+=======
+## 2026-08-17 — AIO ultrawide / large-display responsive layer
+
+- **Context:** Follow-up sprint — site stretched on 3440×1440+ monitors; hero/bg expanded while content floated. Additive large-display CSS without regressing mobile/tablet/standard desktop (&lt;1600px unchanged).
+
+- **Implementation:** `src/styles/aio-large-display.css` in `App.tsx`. Tiers: 1600 large desktop, 2200 ultrawide (+ 21:9 aspect), 3000 super ultrawide caps. Tokens: content max widths, hero copy max, nav max/gap, page gutter, dashboard max. Full-bleed backgrounds + capped inner composition.
+
+- **Rules:** Hero headline/copy caps; bg position 72–78%; pathway grid centered 3-col; auth form max 560px; portal/office/vault max-width; auto-fill grid column caps.
+
+- **Docs:** `docs/responsive/AIO_LARGE_DISPLAY_ARCHITECTURE.md`, `docs/refinement/ULTRAWIDE_RESPONSIVE_REPORT.md`. Validator: `scripts/validate-aio-viewports.mjs`.
+
+- **QA:** Build PASS. Viewport validator 10/10 no horizontal overflow (375–5120). Screenshots @ 1920 and 3440.
+
+---
+
+## 2026-08-17 — AIO full page experience redesign sprint (page system)
+
+- **Context:** Founder sprint — reference-driven redesign of entire AIO public/authenticated marketing experience per approved **Page Story & Moodboard** (14 page families). Homepage mobile restructure **frozen** — not redesigned again. Preserve all routes, business logic, Supabase, Road Ready, auth, pricing, portal/office functionality.
+
+- **Phase 0:** `docs/redesign/AIO_PAGE_EXPERIENCE_AUDIT.md` — route matrix, layouts, data deps, proposed templates.
+
+- **Phase 1 — Page system:** `all-in-one-enterprises/src/components/page-system/` (primitives + `ServiceHubTemplate`, `ServiceDetailTemplate`, `OperationalServiceTemplate`), `src/styles/aio-page-system.css`, `hubConfig.ts`. Docs: `docs/redesign/AIO_PAGE_SYSTEM.md`, `docs/redesign/AIO_PAGE_REDESIGN_REPORT.md`.
+
+- **Pages redesigned (public):** Services hub, division hubs + individual service detail (desktop), Start My Business, Road Ready public, Bookkeeping, Factoring, Contact (intent-first), Client Portal info (+ vault categories), About/Resources. Mobile service views unchanged.
+
+- **Preserved:** `MobileServiceDetailView`, command center logic, office dashboard logic, pricing/launch gating, journey/Road Ready data hooks. Road Ready public ring uses 0% + sign-in prompt (no hardcoded moodboard %).
+
+- **Portal hook:** `aio-ps-portal-shell` on `PortalPage` for panel styling alignment.
+
+- **Spatial Architecture Review:** SKIPPED — presentation/information-architecture sprint; no new Studio OS nav.
+
+- **QA:** `npm run build` PASS. Viewport validator 10/10 PASS.
+>>>>>>> bbb1db3f5 (AIO page system: shared templates + public page redesign per moodboard [sync-only])
 

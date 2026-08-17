@@ -1,9 +1,12 @@
 import { Link, useParams, useSearchParams } from 'react-router-dom';
-import { getServiceBySlug, getServicesByDivision, isDivisionSlug, divisionMeta, type ServiceDivision } from '../data/services';
+import {
+  getServiceBySlug,
+  isDivisionSlug,
+  type ServiceDivision,
+} from '../data/services';
 import { fulfillmentDisclosure, getCatalogServiceBySlug } from '../services/catalog';
 import { useServicePlan } from '../components/AIOServicePlanBar';
 import { AIOButton } from '../components/AIOButton';
-import { JourneyBackNav } from '../components/journey/JourneyBackNav';
 import { MobileServiceDetailView } from '../components/mobile/service/MobileServiceDetailView';
 import { MobileDivisionServicesView } from '../components/mobile/service/MobileDivisionServicesView';
 import { isInStartBusinessJourney } from '../journeys/journeyContext';
@@ -12,6 +15,20 @@ import { servicePageMeta } from '../data/mockServices';
 import { useDemoStore } from '../demo/useDemoStore';
 import { customerPriceLabel, getServicePricing } from '../billing/servicePricingConfig';
 import { getPublicServiceCta } from '../launch';
+import {
+  ServiceHubTemplate,
+  ServiceDetailTemplate,
+  AioTextAction,
+  type ProcessStep,
+  type FeatureItem,
+  type RelatedServiceItem,
+} from '../components/page-system';
+import {
+  resolveMobileServiceBenefits,
+  resolveMobileServiceProcess,
+  mobileServiceCategoryLabel,
+} from '../services/mobileServicePageConfig';
+import { buildDivisionServiceRows, getDivisionHubCopy } from './ServicesPage';
 
 type Props = {
   slug?: string;
@@ -36,23 +53,31 @@ export function ServiceCatalogDetailPage({ slug: slugProp }: Props) {
 
   if (isDivisionSlug(slug)) {
     const division = slug as ServiceDivision;
-    const meta = divisionMeta[division] ?? servicePageMeta[slug];
+    const pageMeta = servicePageMeta[slug];
+    const hubCopy = getDivisionHubCopy(division);
+    const services = buildDivisionServiceRows(division);
+
     return (
       <>
         <div className="aio-mobile-only">
-          <MobileDivisionServicesView division={division} headline={meta?.headline ?? meta?.title} description={meta?.description ?? ''} />
+          <MobileDivisionServicesView
+            division={division}
+            headline={pageMeta?.headline ?? hubCopy.title}
+            description={pageMeta?.description ?? hubCopy.description}
+          />
         </div>
         <div className="aio-desktop-only">
-          <div className="aio-page-hero">
-            <div className="aio-container">
-              <p className="aio-page-hero__breadcrumb">
-                <Link to={aioPaths.services}>Services</Link> / {meta?.title}
-              </p>
-              <h1 className="aio-page-hero__title">{meta?.headline}</h1>
-              <p className="aio-page-hero__desc">{meta?.description}</p>
-            </div>
-          </div>
-          <DivisionServicesList division={division} />
+          <ServiceHubTemplate
+            eyebrow={hubCopy.eyebrow}
+            title={hubCopy.title}
+            description={hubCopy.description}
+            breadcrumbs={[
+              { label: 'Services', href: aioPaths.services },
+              { label: hubCopy.breadcrumbLabel },
+            ]}
+            services={services}
+            directoryTitle={`${hubCopy.breadcrumbLabel} services`}
+          />
         </div>
       </>
     );
@@ -62,7 +87,7 @@ export function ServiceCatalogDetailPage({ slug: slugProp }: Props) {
 
   if (!service) {
     return (
-      <div className="aio-page-content">
+      <div className="aio-ps-body">
         <div className="aio-container">
           <h1>Service Not Found</h1>
           <Link to={aioPaths.services}>← All Services</Link>
@@ -77,6 +102,92 @@ export function ServiceCatalogDetailPage({ slug: slugProp }: Props) {
   const catalogEntry = getCatalogServiceBySlug(service.slug);
   const disclosure = catalogEntry ? fulfillmentDisclosure(catalogEntry) : null;
 
+  const handles: FeatureItem[] = resolveMobileServiceBenefits(service.slug).map((b) => ({
+    label: b.label,
+    iconSrc: b.iconSrc,
+  }));
+
+  const processSteps: ProcessStep[] = resolveMobileServiceProcess(
+    service.slug,
+    service.process,
+    service.shortDescription,
+  ).map((step, index) => ({
+    number: String(index + 1).padStart(2, '0'),
+    title: step.title,
+    description: step.description,
+  }));
+
+  const relatedServices: RelatedServiceItem[] = service.relatedServices.flatMap((relSlug) => {
+    const rel = getServiceBySlug(relSlug);
+    if (!rel) return [];
+    return [
+      {
+        slug: relSlug,
+        title: rel.title,
+        description: rel.shortDescription,
+        href: aioPaths.serviceSlug(relSlug),
+      },
+    ];
+  });
+
+  const sidebar = (
+    <>
+      <p className="aio-prototype-note" style={{ margin: 0, color: 'rgba(255,255,255,0.65)' }}>
+        Service status: {launchCta.state.replace(/_/g, ' ')}
+      </p>
+      <p className="aio-service-plan-item__pricing">{customerPriceLabel(pricing)}</p>
+      {pricing?.externalFeeLabel ? (
+        <p className="aio-prototype-note" style={{ margin: 0 }}>
+          + {pricing.externalFeeLabel}
+        </p>
+      ) : null}
+      {launchCta.allowed ? (
+        <>
+          {inPlan ? (
+            <Link to={aioPaths.servicePlan}>
+              <AIOButton variant="gold">In My Plan — Review</AIOButton>
+            </Link>
+          ) : (
+            <AIOButton variant="gold" onClick={() => handleAdd(service)}>
+              Add to My Plan
+            </AIOButton>
+          )}
+          <Link to={aioPaths.getStartedForService(service.slug)}>
+            <AIOButton variant="outline-gold">{launchCta.label}</AIOButton>
+          </Link>
+        </>
+      ) : (
+        <Link to={aioPaths.contact}>
+          <AIOButton variant="outline-gold">{launchCta.label}</AIOButton>
+        </Link>
+      )}
+      <Link to={aioPaths.getStarted}>
+        <AIOButton variant="outline-gold" size="sm">
+          Start Smart Intake
+        </AIOButton>
+      </Link>
+    </>
+  );
+
+  const heroActions = launchCta.allowed ? (
+    <>
+      {inPlan ? (
+        <AIOButton to={aioPaths.servicePlan} variant="gold" showArrow>
+          Review My Plan
+        </AIOButton>
+      ) : (
+        <AIOButton variant="gold" onClick={() => handleAdd(service)} showArrow>
+          {launchCta.label}
+        </AIOButton>
+      )}
+      <AioTextAction to={aioPaths.login}>Check My Status →</AioTextAction>
+    </>
+  ) : (
+    <AIOButton to={aioPaths.contact} variant="gold" showArrow>
+      {launchCta.label}
+    </AIOButton>
+  );
+
   return (
     <>
       <div className="aio-mobile-only">
@@ -88,179 +199,29 @@ export function ServiceCatalogDetailPage({ slug: slugProp }: Props) {
       </div>
 
       <div className="aio-desktop-only">
-        {showJourneyBack ? (
-          <div className="aio-container" style={{ paddingTop: '1rem' }}>
-            <JourneyBackNav />
-          </div>
-        ) : null}
-        <div className="aio-page-hero">
-          <div className="aio-container">
-            <p className="aio-page-hero__breadcrumb">
-              <Link to={aioPaths.services}>Services</Link> / {service.title}
-            </p>
-            <h1 className="aio-page-hero__title">{service.title}</h1>
-            <p className="aio-page-hero__desc">{service.description}</p>
-          </div>
-        </div>
-
-        <div className="aio-page-content">
-          <div className="aio-container aio-service-detail">
-            <div className="aio-two-col">
-              <section>
-                <h2 className="aio-service-detail__heading">Who It&apos;s For</h2>
-                <p>{service.audience}</p>
-
-                <h2 className="aio-service-detail__heading">What All In One Assists With</h2>
-                <p>{service.shortDescription}</p>
-                {disclosure && (
-                  <p className="aio-prototype-note" style={{ marginTop: '0.75rem' }}>
-                    {disclosure}
-                  </p>
-                )}
-
-                <h2 className="aio-service-detail__heading">General Process</h2>
-                <ol>
-                  {service.process.map((step) => (
-                    <li key={step}>{step}</li>
-                  ))}
-                </ol>
-              </section>
-
-              <aside className="aio-portal-panel">
-                <h2 className="aio-portal-panel__title">Get Started</h2>
-                <p className="aio-prototype-note">Service status: {launchCta.state.replace(/_/g, ' ')}</p>
-                <p className="aio-service-plan-item__pricing">{customerPriceLabel(pricing)}</p>
-                {pricing?.externalFeeLabel && <p className="aio-prototype-note">+ {pricing.externalFeeLabel}</p>}
-                {launchCta.allowed ? (
-                  <>
-                    {inPlan ? (
-                      <Link to={aioPaths.servicePlan}>
-                        <AIOButton variant="gold">In My Plan — Review</AIOButton>
-                      </Link>
-                    ) : (
-                      <AIOButton variant="gold" onClick={() => handleAdd(service)}>
-                        Add to My Plan
-                      </AIOButton>
-                    )}
-                    <Link to={aioPaths.getStartedForService(service.slug)} style={{ display: 'block', marginTop: '1rem' }}>
-                      <AIOButton variant="outline-dark">{launchCta.label}</AIOButton>
-                    </Link>
-                  </>
-                ) : (
-                  <Link to={aioPaths.contact}>
-                    <AIOButton variant="outline-dark">{launchCta.label}</AIOButton>
-                  </Link>
-                )}
-                <Link to={aioPaths.getStarted} style={{ display: 'block', marginTop: '0.5rem' }}>
-                  <AIOButton variant="outline-dark" size="sm">
-                    Start Smart Intake
-                  </AIOButton>
-                </Link>
-              </aside>
-            </div>
-
-            {service.requirements.length > 0 && (
-              <section className="aio-portal-panel" style={{ marginTop: '2rem' }}>
-                <h2 className="aio-portal-panel__title">Information You May Need</h2>
-                <ul>
-                  {service.requirements.map((r) => (
-                    <li key={r}>{r}</li>
-                  ))}
-                </ul>
-              </section>
-            )}
-
-            {service.documents.length > 0 && (
-              <section className="aio-portal-panel">
-                <h2 className="aio-portal-panel__title">Preliminary Document Checklist</h2>
-                <ul className="aio-doc-checklist">
-                  {service.documents.map((doc) => (
-                    <li key={doc}>
-                      {doc}
-                      <span className="aio-badge aio-badge--optional">Upload — Future Sprint</span>
-                    </li>
-                  ))}
-                </ul>
-              </section>
-            )}
-
-            {service.faq.length > 0 && (
-              <section className="aio-portal-panel">
-                <h2 className="aio-portal-panel__title">FAQs</h2>
-                {service.faq.map((f) => (
-                  <details key={f.question} className="aio-faq-item">
-                    <summary>{f.question}</summary>
-                    <p>{f.answer}</p>
-                  </details>
-                ))}
-              </section>
-            )}
-
-            {service.relatedServices.length > 0 && (
-              <section>
-                <h2 className="aio-service-detail__heading">Related Services</h2>
-                <div className="aio-intent-grid">
-                  {service.relatedServices.map((relSlug) => {
-                    const rel = getServiceBySlug(relSlug);
-                    if (!rel) return null;
-                    return (
-                      <Link key={relSlug} to={aioPaths.serviceSlug(relSlug)} className="aio-card">
-                        <h3 className="aio-intent-card__title">{rel.title}</h3>
-                        <p className="aio-intent-card__desc">{rel.shortDescription}</p>
-                      </Link>
-                    );
-                  })}
-                </div>
-              </section>
-            )}
-
-            <p className="aio-prototype-note">
-              {service.division === 'insurance'
-                ? 'All In One is not the licensed insurer. Quotes subject to carrier review.'
-                : 'Service availability may vary. No legal or regulatory guarantees implied.'}
-            </p>
-          </div>
-        </div>
+        <ServiceDetailTemplate
+          eyebrow={mobileServiceCategoryLabel[service.division] ?? 'Services'}
+          title={service.title}
+          description={service.description}
+          breadcrumbs={[
+            { label: 'Services', href: aioPaths.services },
+            { label: service.title },
+          ]}
+          heroActions={heroActions}
+          showJourneyBack={showJourneyBack}
+          handles={handles}
+          processSteps={processSteps}
+          requirements={service.requirements}
+          sidebar={sidebar}
+          relatedServices={relatedServices}
+          disclaimer={
+            disclosure ??
+            (service.division === 'insurance'
+              ? 'All In One is not the licensed insurer. Quotes subject to carrier review.'
+              : 'Service availability may vary. No legal or regulatory guarantees implied.')
+          }
+        />
       </div>
     </>
-  );
-}
-
-function DivisionServicesList({ division }: { division: ServiceDivision }) {
-  const services = getServicesByDivision(division);
-  const { add } = useServicePlan();
-
-  return (
-    <div className="aio-page-content">
-      <div className="aio-container">
-        <div className="aio-marketplace-grid">
-          {services.map((service) => (
-            <article key={service.id} className="aio-marketplace-card">
-              <h2 className="aio-marketplace-card__title">{service.title}</h2>
-              <p className="aio-marketplace-card__desc">{service.shortDescription}</p>
-              <div className="aio-marketplace-card__actions">
-                <Link to={aioPaths.serviceSlug(service.slug)} className="aio-intent-card__cta">
-                  Learn More →
-                </Link>
-                <button
-                  type="button"
-                  className="aio-btn aio-btn--gold aio-btn--sm"
-                  onClick={() =>
-                    add({
-                      slug: service.slug,
-                      title: service.title,
-                      division: service.division,
-                      addedAt: new Date().toISOString(),
-                    })
-                  }
-                >
-                  Add to My Plan
-                </button>
-              </div>
-            </article>
-          ))}
-        </div>
-      </div>
-    </div>
   );
 }
