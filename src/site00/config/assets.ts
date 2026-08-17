@@ -25,8 +25,8 @@ export const SITE00_ASSET_REGISTRY: Site00Asset[] = [
     alt: 'SITE 00 Origin architectural environment',
     environment: 'ORIGIN_ENVIRONMENT',
     route: '/',
-    status: 'reference-only',
-    notes: 'Reference 01 exists; clean production environment still required',
+    status: 'production',
+    notes: 'Desktop background — live-preview/site00/942898D3-6953-47CD-8987-0697EC1C9F11.png (1535×1024)',
   },
   {
     id: 'env-workflow',

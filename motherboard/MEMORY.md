@@ -52312,7 +52312,6 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 ---
 
-<<<<<<< Updated upstream
 ## 2026-08-17 — AIO login hero supporting copy −3px
 
 - **Context:** Follow-up polish on All In One mobile `/login` — hero overlay typography refinements after prior ~20% hero text scale-down.
@@ -52374,7 +52373,9 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Verified:** Playwright @ 390px — hero supporting **6.984px**, desktop-only intro supporting **12.48px** (form stack unchanged).
 
 - **QA:** `npm run build` PASS.
-=======
+
+---
+
 ## 2026-08-17 — ASSTS loader master reference composition lock (711×1536 v2)
 
 - **Context:** Composer sprint — lock SITE 00 Asset Vault immersive loader to attached approved master reference (711×1536). Not a redesign. Lock background, overlay coordinates, typography proportions (Martian Mono), progress bar geometry, wireframe/platform relationship. Prior drift partly from background `object-fit: cover` on mismatched asset vs overlay coordinate plane.
@@ -52390,5 +52391,4 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Spatial Architecture Review:** SKIPPED — loader coordinate lock only; no new surfaces.
 
 - **QA:** `npm run build` PASS. `scripts/validate-assts-loader-composition.mjs` @ 711px stage — geometry + all 8 copy/progress regions **0px delta**. Screenshots: `assts_loader_composition_711px_mid.png`, `assts_loader_composition_711px_ready.png`.
->>>>>>> Stashed changes
 

@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { resolveSite00PublicAsset } from '../loader/site00LoaderConfig';
 import { SITE00_ENVIRONMENTS, type EnvironmentId } from '../../config/environments';
 import '../../styles/site00.css';
 
@@ -8,6 +9,11 @@ type EnvironmentShellProps = {
   className?: string;
 };
 
+function resolveEnvironmentDesktopAsset(config: (typeof SITE00_ENVIRONMENTS)[EnvironmentId]): string | undefined {
+  if (config.desktopAssetPath) return resolveSite00PublicAsset(config.desktopAssetPath);
+  return config.asset;
+}
+
 /**
  * Reusable environmental rendering shell.
  * Separates ENVIRONMENT from INTERFACE — background does not reload on UI state changes
@@ -15,11 +21,12 @@ type EnvironmentShellProps = {
  */
 export function EnvironmentShell({ environmentId, children, className = '' }: EnvironmentShellProps) {
   const config = SITE00_ENVIRONMENTS[environmentId];
+  const desktopAsset = resolveEnvironmentDesktopAsset(config);
 
   return (
     <div className={`site00-shell ${className}`.trim()} data-environment={environmentId}>
       <div
-        className={`site00-env-layer ${config.fallbackClass} ${config.lightingClass}`}
+        className={`site00-env-layer ${config.fallbackClass} ${config.lightingClass} ${desktopAsset ? 'site00-env-layer--has-desktop-asset' : ''}`.trim()}
         aria-hidden="true"
         style={{
           position: 'fixed',
@@ -29,7 +36,12 @@ export function EnvironmentShell({ environmentId, children, className = '' }: En
           backgroundPosition: config.desktopPosition,
           transform: `scale(${config.desktopScale})`,
           transformOrigin: 'center center',
-          ...(config.asset
+          ...(desktopAsset
+            ? {
+                ['--site00-env-desktop-image' as string]: `url("${desktopAsset.replace(/"/g, '\\"')}")`,
+              }
+            : {}),
+          ...(config.asset && !config.desktopAssetPath
             ? {
                 backgroundImage: `url(${config.asset})`,
               }

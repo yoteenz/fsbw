@@ -30,6 +30,16 @@
   pointer-events: none;
 }
 
+/* Approved production environment — desktop viewport only; mobile keeps CSS fallback */
+@media (min-width: 768px) {
+  .site00-env-layer--has-desktop-asset {
+    background-image: var(--site00-env-desktop-image);
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+  }
+}
+
 .site00-env--workflow-lighting::after {
   content: '';
   position: absolute;

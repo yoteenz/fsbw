@@ -3,6 +3,9 @@
  * Production assets referenced here; temporary CSS fallbacks when unavailable.
  */
 
+/** Approved Origin desktop environment (Supabase live-preview/site00/). */
+export const SITE00_ORIGIN_DESKTOP_BACKGROUND_PATH = '942898D3-6953-47CD-8987-0697EC1C9F11.png';
+
 export type EnvironmentId = 'ORIGIN_ENVIRONMENT' | 'WORKFLOW_ENVIRONMENT' | 'ENTER_00_WAITING_ROOM';
 
 export type FocalPoint = {
@@ -13,6 +16,8 @@ export type FocalPoint = {
 export type EnvironmentConfig = {
   id: EnvironmentId;
   asset?: string;
+  /** Supabase live-preview path — resolved at runtime; desktop viewport only. */
+  desktopAssetPath?: string;
   desktopPosition: string;
   mobilePosition: string;
   desktopScale: number;
@@ -28,7 +33,7 @@ export type EnvironmentConfig = {
 export const SITE00_ENVIRONMENTS: Record<EnvironmentId, EnvironmentConfig> = {
   ORIGIN_ENVIRONMENT: {
     id: 'ORIGIN_ENVIRONMENT',
-    asset: undefined, // Gap: production origin environment image required
+    desktopAssetPath: SITE00_ORIGIN_DESKTOP_BACKGROUND_PATH,
     desktopPosition: 'center center',
     mobilePosition: '60% center',
     desktopScale: 1,
@@ -36,7 +41,7 @@ export const SITE00_ENVIRONMENTS: Record<EnvironmentId, EnvironmentConfig> = {
     lightingClass: 'site00-env--origin-lighting',
     fallbackClass: 'site00-env-fallback--origin',
     routes: ['/', '/origin'],
-    notes: 'Reference 01_ORIGIN_APPROVED — locked geometry pending production asset',
+    notes: 'Approved Origin desktop environment — 942898D3 @ live-preview/site00',
   },
   WORKFLOW_ENVIRONMENT: {
     id: 'WORKFLOW_ENVIRONMENT',
