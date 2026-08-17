@@ -82,6 +82,83 @@ export type AsstsBatchSummary = {
   thumbnailUrl: string | null;
 };
 
+/** Tolerate legacy API rows (raw site00_batches) missing enriched `counts`. */
+export function normalizeBatchSummary(raw: Record<string, unknown>): AsstsBatchSummary {
+  const countsRaw = raw.counts as Partial<AsstsBatchSummary['counts']> | undefined;
+  const totalFromRow = typeof raw.total_assets === 'number' ? raw.total_assets : undefined;
+  return {
+    id: String(raw.id ?? ''),
+    batch_key: String(raw.batch_key ?? 'BATCH'),
+    display_name: String(raw.display_name ?? raw.batch_key ?? 'Batch'),
+    status: String(raw.status ?? 'DRAFT'),
+    category: (raw.category as string | null) ?? null,
+    counts: {
+      total: countsRaw?.total ?? totalFromRow ?? 0,
+      approved: countsRaw?.approved ?? 0,
+      needsReview: countsRaw?.needsReview ?? 0,
+    },
+    thumbnailUrl: (raw.thumbnailUrl as string | null) ?? null,
+  };
+}
+
+function normalizeBatchDetail(raw: Record<string, unknown>): AsstsBatchDetail {
+  const countsRaw = raw.counts as Partial<AsstsBatchDetail['counts']> | undefined;
+  const assets = Array.isArray(raw.assets) ? (raw.assets as AsstsAssetDetail[]) : [];
+  const totalFallback = typeof raw.total_assets === 'number' ? raw.total_assets : assets.length;
+  const counts = {
+    total: countsRaw?.total ?? totalFallback,
+    approved: countsRaw?.approved ?? 0,
+    needsReview: countsRaw?.needsReview ?? 0,
+    regenerating: countsRaw?.regenerating ?? 0,
+    rejected: countsRaw?.rejected ?? 0,
+  };
+  const progressPercent =
+    typeof raw.progressPercent === 'number'
+      ? raw.progressPercent
+      : counts.total > 0
+        ? Math.round((counts.approved / counts.total) * 100)
+        : 0;
+  return {
+    id: String(raw.id ?? ''),
+    batch_key: String(raw.batch_key ?? 'BATCH'),
+    display_name: String(raw.display_name ?? raw.batch_key ?? 'Batch'),
+    category: (raw.category as string | null) ?? null,
+    status: String(raw.status ?? 'DRAFT'),
+    assets,
+    counts,
+    thumbnailUrl: (raw.thumbnailUrl as string | null) ?? null,
+    progressPercent,
+  };
+}
+
+function normalizeLibraryResponse(data: AsstsLibraryResponse): AsstsLibraryResponse {
+  const summary = data.summary ?? {
+    totalAssets: 0,
+    batches: 0,
+    needsReview: 0,
+    approved: 0,
+    locked: 0,
+    batchesList: [],
+  };
+  return {
+    ...data,
+    summary: {
+      ...summary,
+      batchesList: (summary.batchesList ?? []).map((b) =>
+        normalizeBatchSummary(b as unknown as Record<string, unknown>),
+      ),
+    },
+    categories: (data.categories ?? []).map((c) => ({
+      ...c,
+      count: c.count ?? 0,
+      coverUrl: c.coverUrl ?? null,
+    })),
+    priorityBatch: data.priorityBatch
+      ? normalizeBatchDetail(data.priorityBatch as unknown as Record<string, unknown>)
+      : null,
+  };
+}
+
 export type AsstsLibraryCategory = {
   id: string;
   label: string;
@@ -167,7 +244,8 @@ export async function fetchAsstsLibrary(params?: {
   if (params?.status) query.status = params.status;
   if (params?.category) query.category = params.category;
   if (params?.view) query.view = params.view;
-  return asstsFetch('library', { query });
+  const data = await asstsFetch<AsstsLibraryResponse>('library', { query });
+  return normalizeLibraryResponse(data);
 }
 
 export async function fetchAsstsAssets(params?: { status?: string; category?: string }) {
@@ -178,7 +256,8 @@ export async function fetchAsstsAssets(params?: { status?: string; category?: st
 }
 
 export async function fetchAsstsBatch(batchId: string): Promise<{ ok: boolean; batch: AsstsBatchDetail }> {
-  return asstsFetch('batch', { query: { batchId } });
+  const data = await asstsFetch<{ ok: boolean; batch: AsstsBatchDetail }>('batch', { query: { batchId } });
+  return { ok: data.ok, batch: normalizeBatchDetail(data.batch as unknown as Record<string, unknown>) };
 }
 
 export async function fetchAsstsAsset(assetId: string): Promise<{

@@ -7,20 +7,15 @@ import { AsstsBatchCard, AsstsAssetListRow, AsstsCategoryTile } from '../compone
 import { AsstsMetricTile, AsstsSectionHeader } from '../components/AsstsGlass';
 import { ASSTS_ENVIRONMENT_SLOTS } from '../config/slots';
 import { fetchAsstsLibrary, type AsstsLibraryResponse } from '../services/asstsApi';
+import { batchProgressPercent, batchStatusHint } from '../utils/batchHelpers';
 
 function batchNeedsAttention(priority: AsstsLibraryResponse['priorityBatch']): boolean {
   if (!priority) return false;
+  const counts = priority.counts ?? { needsReview: 0, regenerating: 0 };
   if (priority.status === 'READY_TO_LOCK') return true;
-  if (priority.counts.needsReview > 0) return true;
-  if (priority.counts.regenerating > 0 || priority.status === 'GENERATING') return true;
+  if ((counts.needsReview ?? 0) > 0) return true;
+  if ((counts.regenerating ?? 0) > 0 || priority.status === 'GENERATING') return true;
   return false;
-}
-
-function batchStatusHint(batch: { counts: { needsReview: number; approved: number; total: number }; status: string }) {
-  if (batch.counts.needsReview > 0) return `${String(batch.counts.needsReview).padStart(2, '0')} NEED REVIEW`;
-  if (batch.status === 'LOCKED') return 'LOCKED';
-  if (batch.counts.approved === batch.counts.total && batch.counts.total > 0) return 'ALL APPROVED';
-  return batch.status.replace(/_/g, ' ');
 }
 
 export default function AsstsLibraryPage() {
@@ -51,7 +46,7 @@ export default function AsstsLibraryPage() {
 
   const generating =
     data?.priorityBatch?.status === 'GENERATING' ||
-    (data?.priorityBatch?.counts.regenerating ?? 0) > 0;
+    (data?.priorityBatch?.counts?.regenerating ?? 0) > 0;
 
   useAsstsAutoRefresh(load, { hasGenerating: generating });
 
@@ -68,9 +63,7 @@ export default function AsstsLibraryPage() {
     return null;
   }, [statusFilter, viewAll]);
 
-  const priorityProgress = priority
-    ? Math.round((priority.counts.approved / Math.max(priority.counts.total, 1)) * 100)
-    : 0;
+  const priorityProgress = priority ? batchProgressPercent(priority.counts ?? {}) : 0;
 
   return (
     <AsstsEnvironmentShell slotKey={ASSTS_ENVIRONMENT_SLOTS.library}>
@@ -168,8 +161,8 @@ export default function AsstsLibraryPage() {
               category={priority.category}
               displayName={priority.display_name}
               thumbnailUrl={priority.thumbnailUrl}
-              reviewedCount={priority.counts.approved}
-              totalCount={priority.counts.total}
+              reviewedCount={priority.counts?.approved ?? 0}
+              totalCount={priority.counts?.total ?? 0}
               progressPercent={priority.progressPercent ?? priorityProgress}
               to={`/assts/batches/${priority.id}`}
               variant="priority"
@@ -193,9 +186,9 @@ export default function AsstsLibraryPage() {
                 category={b.category}
                 displayName={b.display_name}
                 thumbnailUrl={b.thumbnailUrl}
-                reviewedCount={b.counts.approved}
-                totalCount={b.counts.total}
-                progressPercent={Math.round((b.counts.approved / Math.max(b.counts.total, 1)) * 100)}
+                reviewedCount={b.counts?.approved ?? 0}
+                totalCount={b.counts?.total ?? 0}
+                progressPercent={batchProgressPercent(b.counts ?? {})}
                 status={b.status}
                 statusHint={batchStatusHint(b)}
                 to={`/assts/batches/${b.id}`}

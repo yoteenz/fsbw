@@ -7,13 +7,7 @@ import { AsstsBatchCard } from '../components/AsstsCards';
 import { AsstsSectionHeader } from '../components/AsstsGlass';
 import { ASSTS_ENVIRONMENT_SLOTS } from '../config/slots';
 import { fetchAsstsLibrary } from '../services/asstsApi';
-
-function batchStatusHint(batch: { counts: { needsReview: number; approved: number; total: number }; status: string }) {
-  if (batch.counts.needsReview > 0) return `${String(batch.counts.needsReview).padStart(2, '0')} NEED REVIEW`;
-  if (batch.status === 'LOCKED') return 'LOCKED';
-  if (batch.counts.approved === batch.counts.total && batch.counts.total > 0) return 'ALL APPROVED';
-  return batch.status.replace(/_/g, ' ');
-}
+import { batchProgressPercent, batchStatusHint } from '../utils/batchHelpers';
 
 export default function AsstsBatchesListPage() {
   const [batches, setBatches] = useState<Awaited<ReturnType<typeof fetchAsstsLibrary>>['summary']['batchesList']>([]);
@@ -63,9 +57,9 @@ export default function AsstsBatchesListPage() {
             category={b.category}
             displayName={b.display_name}
             thumbnailUrl={b.thumbnailUrl}
-            reviewedCount={b.counts.approved}
-            totalCount={b.counts.total}
-            progressPercent={Math.round((b.counts.approved / Math.max(b.counts.total, 1)) * 100)}
+            reviewedCount={b.counts?.approved ?? 0}
+            totalCount={b.counts?.total ?? 0}
+            progressPercent={batchProgressPercent(b.counts ?? {})}
             status={b.status}
             statusHint={batchStatusHint(b)}
             to={`/assts/batches/${b.id}`}
