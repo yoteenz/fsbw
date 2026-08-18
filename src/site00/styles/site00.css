@@ -957,6 +957,27 @@
     gap: 10px;
   }
 
+  .site00-enter-menu .site00-enter-row__description {
+    font-size: 10px;
+    line-height: 1.25;
+  }
+
+  .site00-enter-fast-travel__grid {
+    gap: 6px;
+  }
+
+  .site00-enter-fast-travel__tile {
+    padding: 7px 8px;
+  }
+
+  .site00-enter-fast-travel__tile-label {
+    font-size: 8px;
+  }
+
+  .site00-enter-fast-travel__tile-desc {
+    font-size: 7px;
+  }
+
   .site00-enter-menu .site00-enter-row__main {
     gap: 10px;
   }
@@ -990,6 +1011,14 @@
 
     .site00-enter-menu .site00-enter-row {
       padding: 6px 0;
+    }
+
+    .site00-enter-fast-travel__grid {
+      gap: 5px;
+    }
+
+    .site00-enter-fast-travel__tile {
+      padding: 6px 7px;
     }
 
     .site00-enter-menu__section {
@@ -1076,6 +1105,76 @@
 
 .site00-enter-row:not(.site00-enter-row--disabled):hover .site00-enter-row__arrow {
   transform: translateX(2px);
+}
+
+.site00-enter-row--locked {
+  opacity: 0.92;
+}
+
+.site00-enter-row__auth {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  color: var(--site-text-muted);
+  text-transform: uppercase;
+}
+
+.site00-enter-menu__heading--secondary {
+  margin-bottom: 8px;
+  font-size: 10px;
+}
+
+.site00-enter-menu__section--fast-travel {
+  margin-bottom: 0;
+}
+
+.site00-enter-fast-travel__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.site00-enter-fast-travel__tile {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 4px;
+  min-height: 0;
+  padding: 8px 10px;
+  text-decoration: none;
+  color: inherit;
+  background: rgba(255, 255, 255, 0.28);
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 2px;
+  transition: background-color 0.18s ease, border-color 0.18s ease;
+}
+
+.site00-enter-fast-travel__tile-label {
+  font-family: var(--site-font-mono, monospace);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  line-height: 1.2;
+  color: var(--site-text);
+}
+
+.site00-enter-fast-travel__tile-desc {
+  font-size: 8px;
+  line-height: 1.25;
+  letter-spacing: 0.04em;
+  color: var(--site-text-muted);
+  text-transform: uppercase;
+}
+
+.site00-enter-fast-travel__tile:hover {
+  background: rgba(255, 255, 255, 0.42);
+  border-color: rgba(208, 20, 36, 0.35);
+}
+
+.site00-enter-fast-travel__tile:active {
+  background: rgba(255, 255, 255, 0.5);
 }
 
 /* ─── Origin homepage — hero in original column; IDNTY/BLDR panels on foreground plaza ─── */
