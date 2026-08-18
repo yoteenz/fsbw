@@ -6,12 +6,12 @@ import { Site00ImmersiveLoader, type Site00ImmersiveLoaderPhase } from './Site00
 import { initSite00ImmersiveLoaderBoot, teardownSite00ImmersiveBootShell } from './site00LoaderBoot';
 import { resolveSite00ImmersiveLoaderConfig } from './site00LoaderConfig';
 import { preloadSite00LoaderAnimation, preloadSite00LoaderBackground } from './site00LoaderPreload';
+import { resolveSite00LoaderGeometryPreloadUrl } from './site00LoaderBootstrap';
 import {
   markSite00ImmersiveComplete,
   shouldShowSite00ImmersiveLoader,
 } from './site00LoaderSession';
 import { useSite00LoaderProgress } from './useSite00LoaderProgress';
-import { site00LoaderGeometrySourceUrl } from './site00LoaderMedia';
 
 const COMPLETE_HOLD_MS = 680;
 const MIN_CINEMATIC_MS = 4200;
@@ -87,7 +87,8 @@ export function Site00WorldColdStartGate({ children }: { children: ReactNode }) 
         if (cancelled) return;
         completeStage('preparing');
 
-        await preloadSite00LoaderAnimation(config.geometrySourceUrl ?? site00LoaderGeometrySourceUrl());
+        const geometryUrl = await resolveSite00LoaderGeometryPreloadUrl();
+        await preloadSite00LoaderAnimation(geometryUrl);
         if (cancelled) return;
         completeStage('assemble');
 
@@ -129,7 +130,7 @@ export function Site00WorldColdStartGate({ children }: { children: ReactNode }) 
     return () => {
       cancelled = true;
     };
-  }, [immersive, completeStage, forceComplete, config.backgroundUrl, config.geometrySourceUrl]);
+  }, [immersive, completeStage, forceComplete, config.backgroundUrl]);
 
   const handleExitComplete = () => {
     markSite00ImmersiveComplete();

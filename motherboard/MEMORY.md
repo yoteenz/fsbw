@@ -52881,6 +52881,32 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Spatial Architecture Review:** SKIPPED — loader layout bugfix, no new surfaces.
 
+---
+
+## 2026-08-17 — Site 00 loader geometry: FAL transparent alpha + 3× scale
+
+- **Context:** Founder reported black background on loading animation geometry; wanted true transparent background via FAL video background removal, and geometry **3× larger** (height/size).
+
+- **FAL pipeline:** Ran **Bria VRMBG 3.0** (`bria/video/background-removal/v3`) on Kling master `assts-loader-geometry-v1-source.mp4` via `scripts/site00-loader-post-process.ts submit` → poll → approve → lock. Output locked to `public/site00/loader/v1/assts-loader-geometry-v1-alpha.webm` (+ regenerated `assts-loader-geometry-v1-alpha.apng` for iOS Safari @ 12fps 720w).
+
+- **Runtime:** `resolveLoaderGeometryMode()` now defaults to **`alpha`** when production WebM exists (screen blend only via `?loaderGeometry=screen` debug). Boot preload switched to alpha WebM. CSS `.site00-loader-animation--alpha` → `object-fit: contain`, `object-position: center bottom`, normal blend.
+
+- **Composition:** `loader-composition-map.ts` wireframe region scaled **3×** from bottom-center anchor (666×1620 ref px, y=-926 with overflow).
+
+- **Spatial Architecture Review:** SKIPPED — loader media/compositing fix, no new surfaces.
+
+---
+
+## 2026-08-17 — Site 00 loader hang + distorted geometry (mobile preview)
+
+- **Context:** Founder reported loader **stuck at 10%** and **distorted** black-box geometry on `preview.fsbw-dev.com/origin` (iPhone).
+
+- **Root cause:** (1) `Site00WorldColdStartGate` preloaded **6MB source MP4** via `canplaythrough` with **no timeout** — mobile Safari never resolved → bootstrap hung at 10%. (2) Geometry slot scaled **3× portrait** (666×1620) but Kling master is **1764×1176 landscape** → tiny/black letterboxed video in tall box. (3) iOS used **28MB APNG** with no error fallback.
+
+- **Fix:** Preload **alpha WebM/APNG** via shared `resolveSite00LoaderGeometryPreloadUrl()` + **8s preload timeouts**. Wireframe region → **666×444** (3× width, landscape aspect, bottom-anchored). `Site00LoaderAnimation` alpha error → screen fallback + 6s ready timeout. iOS APNG re-encoded **480w @ 10fps** (~13MB).
+
+- **Spatial Architecture Review:** SKIPPED — loader bootstrap/compositing hotfix.
+
 
 ---
 

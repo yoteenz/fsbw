@@ -49,6 +49,14 @@ export function site00LoaderGeometrySourceRemoteUrl(): string {
   return supabaseLivePreviewUrl(SITE00_LOADER_GEOMETRY_SOURCE_REMOTE) ?? site00LoaderGeometrySourceUrl();
 }
 
+/** Boot/cold-start preload — alpha derivative when available, not the heavy black-background master. */
+export function site00LoaderGeometryPreloadUrl(mode: 'alpha' | 'screen' = 'alpha'): string {
+  if (mode === 'screen') return site00LoaderGeometrySourceUrl();
+  return site00LoaderPrefersApngGeometry()
+    ? site00LoaderGeometryApngUrl()
+    : site00LoaderGeometryWebmUrl();
+}
+
 /** iOS Safari — WebM alpha is unreliable; use transcoded APNG with true alpha. */
 export function site00LoaderPrefersApngGeometry(): boolean {
   if (typeof navigator === 'undefined') return false;

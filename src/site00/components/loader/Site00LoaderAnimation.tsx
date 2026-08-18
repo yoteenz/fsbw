@@ -25,8 +25,15 @@ type Site00LoaderAnimationProps = {
 export function Site00LoaderAnimation({ reducedMotion = false, onReady }: Site00LoaderAnimationProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [ready, setReady] = useState(false);
-  const [mode, setMode] = useState<LoaderGeometryMode>(() => resolveLoaderGeometryModeFromQuery() ?? 'alpha');
-  const [alphaUrl, setAlphaUrl] = useState<string | null>(null);
+  const forcedMode = resolveLoaderGeometryModeFromQuery();
+  const [mode, setMode] = useState<LoaderGeometryMode>(() => forcedMode ?? 'alpha');
+  const [alphaUrl, setAlphaUrl] = useState<string | null>(() =>
+    (forcedMode ?? 'alpha') === 'alpha'
+      ? site00LoaderPrefersApngGeometry()
+        ? site00LoaderGeometryApngUrl()
+        : site00LoaderGeometryWebmUrl()
+      : null,
+  );
   const [sourceUrl, setSourceUrl] = useState(site00LoaderGeometrySourceUrl());
 
   useEffect(() => {
@@ -36,10 +43,24 @@ export function Site00LoaderAnimation({ reducedMotion = false, onReady }: Site00
       return;
     }
     void probeProductionAlphaAvailable().then((hasAlpha) => {
-      setMode(resolveLoaderGeometryMode(hasAlpha));
-      if (hasAlpha) setAlphaUrl(site00LoaderGeometryWebmUrl());
+      const nextMode = resolveLoaderGeometryMode(hasAlpha);
+      setMode(nextMode);
+      if (nextMode === 'alpha') {
+        setAlphaUrl(
+          site00LoaderPrefersApngGeometry() ? site00LoaderGeometryApngUrl() : site00LoaderGeometryWebmUrl(),
+        );
+      }
     });
   }, []);
+
+  useEffect(() => {
+    if (ready) return;
+    const t = window.setTimeout(() => {
+      setReady(true);
+      onReady?.();
+    }, 6000);
+    return () => window.clearTimeout(t);
+  }, [ready, onReady]);
 
   useEffect(() => {
     if (mode !== 'screen') return;
@@ -87,6 +108,15 @@ export function Site00LoaderAnimation({ reducedMotion = false, onReady }: Site00
     onReady?.();
   };
 
+  const handleAlphaMediaError = () => {
+    setMode('screen');
+    setAlphaUrl(null);
+  };
+
+  const handleScreenMediaError = () => {
+    handleReady();
+  };
+
   const useAlphaMode = mode === 'alpha';
   const useApng = useAlphaMode && site00LoaderPrefersApngGeometry();
   const webmSrc = alphaUrl ?? site00LoaderGeometryWebmUrl();
@@ -103,6 +133,7 @@ export function Site00LoaderAnimation({ reducedMotion = false, onReady }: Site00
             draggable={false}
             aria-hidden="true"
             onLoad={handleReady}
+            onError={handleAlphaMediaError}
           />
         ) : (
           <video
@@ -118,6 +149,7 @@ export function Site00LoaderAnimation({ reducedMotion = false, onReady }: Site00
             tabIndex={-1}
             onLoadedData={handleReady}
             onCanPlay={handleReady}
+            onError={handleAlphaMediaError}
           >
             <source src={webmSrc} type="video/webm" />
           </video>
@@ -137,6 +169,7 @@ export function Site00LoaderAnimation({ reducedMotion = false, onReady }: Site00
           tabIndex={-1}
           onLoadedData={handleReady}
           onCanPlay={handleReady}
+          onError={handleScreenMediaError}
         />
       )}
     </div>
