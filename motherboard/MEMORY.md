@@ -53209,3 +53209,19 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Spatial Architecture Review:** SKIPPED — composition nudge.
 
 - **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — Origin mobile swipe-up: callout area + directory navigation fix
+
+- **Context:** Founder reported mobile Origin **swipe up** does not work and does not navigate to the **Locations Directory** (`/origin/locations`).
+
+- **Root causes:** (1) Prior fix added full-screen `.site00-origin-swipe-surface` but excluded bottom callout zone (`bottom: 168px`) where users naturally swipe on **SWIPE UP** copy; (2) callout section had `data-swipe-ignore` blocking all touch/pointer swipe detection in that region.
+
+- **Fix:** Removed `data-swipe-ignore` from `OriginMobileSwipeUp`; spread `swipeHandlers` onto callout `<section>` (buttons/links still excluded via `isInteractiveSwipeTarget`); extended swipe surface to `bottom: 88px` (above status strip); `touch-action: manipulation` on ENTER/SWIPE UP controls.
+
+- **Files:** `OriginMobileSwipeUp.tsx`, `site00.css` (+ prior `useSwipeUp.ts`, `useOriginLocationsTransition.ts`, `OriginPage.tsx`).
+
+- **Verification:** Playwright mobile 390×844 — SWIPE UP button tap → `/origin/locations`; swipe gesture starting on callout eyebrow text → locations with 5 directory cards. Manual browser: button tap confirmed.
+
+- **Deploy:** Sync-only on `master`; production still needs founder **deploy now** for Vercel rebuild.

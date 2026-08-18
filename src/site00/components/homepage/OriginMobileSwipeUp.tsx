@@ -25,14 +25,14 @@ function ArrowUpIcon() {
 /** Origin homepage mobile — lower-center enter / swipe-up callout (approved reference). */
 export function OriginMobileSwipeUp({ transition }: OriginMobileSwipeUpProps) {
   const copy = SITE00_ORIGIN_COPY.mobileSwipeUp;
-  const { goToLocations, transitioning, locationsBg } = transition;
+  const { goToLocations, transitioning, locationsBg, swipeHandlers } = transition;
 
   return (
     <>
       <section
         className="site00-origin-mobile-swipe"
         aria-label="Swipe up to open SITE 00 locations directory"
-        data-swipe-ignore="true"
+        {...swipeHandlers}
       >
         <p className="site00-label site00-origin-mobile-swipe__eyebrow">{copy.eyebrow}</p>
         <p className="site00-label site00-origin-mobile-swipe__suffix">{copy.suffix}</p>

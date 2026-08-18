@@ -524,13 +524,13 @@
     pointer-events: auto;
   }
 
-  /* Full-screen swipe target — environment area between header and status strip. */
+  /* Full-screen swipe target — environment + callout (buttons/links stay interactive). */
   .site00-origin-page--mobile-layout .site00-origin-swipe-surface {
     position: fixed;
     top: calc(72px + env(safe-area-inset-top, 0px));
     left: 0;
     right: 0;
-    bottom: calc(168px + env(safe-area-inset-bottom, 0px));
+    bottom: calc(88px + env(safe-area-inset-bottom, 0px));
     z-index: calc(var(--site-z-ui) + 1);
     touch-action: none;
     pointer-events: auto;
@@ -556,6 +556,11 @@
     cursor: pointer;
     padding: 8px 12px;
     min-height: 44px;
+    touch-action: manipulation;
+  }
+
+  .site00-origin-page--mobile-layout .site00-origin-mobile-swipe__enter {
+    touch-action: manipulation;
   }
 
   .site00-origin-page--mobile-layout .site00-origin-mobile-swipe__suffix {
