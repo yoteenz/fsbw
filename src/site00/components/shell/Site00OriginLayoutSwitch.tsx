@@ -1,12 +1,16 @@
 import { createPortal } from 'react-dom';
 import { Link, useLocation } from 'react-router-dom';
 import {
+  isSite00BldrAssessmentDesktopPath,
+  isSite00BldrAssessmentPath,
   isSite00BldrStateDesktopPath,
   isSite00IdntyAssessmentDesktopPath,
   isSite00IdntyAssessmentPath,
   isSite00IdntyStateDesktopPath,
   isSite00OriginDesktopPath,
   SITE00_ROUTES,
+  site00BldrAssessmentDesktopPath,
+  site00BldrAssessmentMobilePath,
   site00IdntyAssessmentDesktopPath,
   site00IdntyAssessmentMobilePath,
 } from '../../config/routes';
@@ -77,6 +81,15 @@ export function Site00OriginLayoutSwitch() {
       desktopHref: site00IdntyAssessmentDesktopPath(mobileBase),
       onMobile: !isSite00IdntyAssessmentDesktopPath(pathname),
       onDesktop: isSite00IdntyAssessmentDesktopPath(pathname),
+    };
+  } else if (isSite00BldrAssessmentPath(pathname)) {
+    const mobileBase = site00BldrAssessmentMobilePath(pathname);
+    config = {
+      ariaLabel: 'BLDR assessment layout preview',
+      mobileHref: mobileBase,
+      desktopHref: site00BldrAssessmentDesktopPath(mobileBase),
+      onMobile: !isSite00BldrAssessmentDesktopPath(pathname),
+      onDesktop: isSite00BldrAssessmentDesktopPath(pathname),
     };
   }
 

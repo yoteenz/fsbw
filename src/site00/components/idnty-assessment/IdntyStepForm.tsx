@@ -46,7 +46,7 @@ type IdntyStepFormProps = {
   value: StepFormValue;
   onChange: (value: StepFormValue) => void;
   error?: string;
-  gridColumns?: 2 | 3;
+  gridColumns?: 2 | 3 | 4;
   showExplore?: boolean;
 };
 

@@ -1,3 +1,4 @@
+import { Link, useNavigate } from 'react-router-dom';
 import { EnvironmentShell } from '../components/environment/EnvironmentShell';
 import { Site00AppShell } from '../components/shell/Site00AppShell';
 import { Site00OriginLayoutSwitch } from '../components/shell/Site00OriginLayoutSwitch';
@@ -5,9 +6,25 @@ import { BLDR_BUILD_CLASSES, BLDR_INVESTMENT_TIERS, BLDR_STATE_COPY } from '../c
 import { BuildClassCard, InvestmentColumn, WorkflowSummary } from '../components/workflow/WorkflowCards';
 import { useSite00 } from '../state/Site00Context';
 import { ArchitecturalPanel } from '../components/panels/ArchitecturalPanel';
+import { useBldrAssessment } from '../hooks/useBldrAssessment';
+import { buildClassToAssessmentSlug } from '../config/bldr-assessment-brand-map';
+import { bldrAssessmentPath } from '../config/bldr-assessment';
+import { useSite00DesktopArtboardPreview } from '../components/shell/Site00DesktopArtboardContext';
+import { site00BldrAssessmentDesktopPath } from '../config/routes';
 
 export default function BldrStatePage() {
   const { state, selectBuildClass } = useSite00();
+  const navigate = useNavigate();
+  const isDesktop = useSite00DesktopArtboardPreview();
+  const { hasResume, resumeTarget, record } = useBldrAssessment();
+
+  const handleSelectClass = (classId: string) => {
+    selectBuildClass(classId);
+    const slug = buildClassToAssessmentSlug(classId);
+    if (!slug) return;
+    const path = bldrAssessmentPath(slug);
+    navigate(isDesktop ? site00BldrAssessmentDesktopPath(path) : path);
+  };
 
   return (
     <EnvironmentShell environmentId="WORKFLOW_ENVIRONMENT" className="site00-state-page site00-state-page--bldr">
@@ -24,6 +41,17 @@ export default function BldrStatePage() {
               {BLDR_STATE_COPY.helper}
             </p>
           </header>
+
+          {hasResume && resumeTarget ? (
+            <div className="site00-idnty-state-resume">
+              <p className="site00-idnty-state-resume__label">
+                RESUME YOUR BUILD — {record.buildClass?.replace(/-/g, ' ').toUpperCase()}
+              </p>
+              <Link to={isDesktop ? site00BldrAssessmentDesktopPath(resumeTarget) : resumeTarget} className="site00-idnty-state-resume__link">
+                CONTINUE →
+              </Link>
+            </div>
+          ) : null}
 
           <div
             style={{
@@ -45,7 +73,7 @@ export default function BldrStatePage() {
                 description={buildClass.description}
                 cta={buildClass.cta}
                 selected={state.selectedBuildClassId === buildClass.id}
-                onSelect={() => selectBuildClass(buildClass.id)}
+                onSelect={() => handleSelectClass(buildClass.id)}
               />
             ))}
           </div>

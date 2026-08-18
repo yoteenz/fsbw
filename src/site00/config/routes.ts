@@ -93,6 +93,32 @@ export function site00IdntyAssessmentMobilePath(pathname: string): string {
   return pathname.replace(/\/desktop(\/|$)/, (_, slash) => slash || '');
 }
 
+export const BLDR_ASSESSMENT_STATE_SLUGS = ['site', 'world', 'enterprise', 'not-sure'] as const;
+
+export type BldrAssessmentRouteSlug = (typeof BLDR_ASSESSMENT_STATE_SLUGS)[number];
+
+export function isSite00BldrAssessmentPath(pathname: string): boolean {
+  const normalized = pathname.replace(/\/desktop(\/|$)/, '/');
+  return BLDR_ASSESSMENT_STATE_SLUGS.some(
+    (slug) => normalized === `/bldr/${slug}` || normalized.startsWith(`/bldr/${slug}/`),
+  );
+}
+
+export function isSite00BldrAssessmentDesktopPath(pathname: string): boolean {
+  return BLDR_ASSESSMENT_STATE_SLUGS.some(
+    (slug) => pathname === `/bldr/${slug}/desktop` || pathname.startsWith(`/bldr/${slug}/desktop/`),
+  );
+}
+
+export function site00BldrAssessmentDesktopPath(mobilePath: string): string {
+  if (mobilePath.endsWith('/desktop')) return mobilePath;
+  return `${mobilePath.replace(/\/$/, '')}/desktop`;
+}
+
+export function site00BldrAssessmentMobilePath(pathname: string): string {
+  return pathname.replace(/\/desktop(\/|$)/, (_, slash) => slash || '');
+}
+
 export function isSite00OriginDesktopPath(pathname: string): boolean {
   const desktop = SITE00_ROUTES.originDesktop;
   return pathname === desktop || pathname.startsWith(`${desktop}/`);
@@ -117,6 +143,9 @@ export function site00MobileBuildNavHref(pathname: string): string {
   }
   if (pathname.startsWith(SITE00_ROUTES.bldrState)) {
     return SITE00_ROUTES.bldrState;
+  }
+  if (isSite00BldrAssessmentPath(pathname)) {
+    return site00BldrAssessmentMobilePath(pathname);
   }
   return SITE00_ROUTES.bldr;
 }

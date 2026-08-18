@@ -115,7 +115,11 @@ export function getEnvironmentForPath(pathname: string): EnvironmentId | null {
     pathname.startsWith('/idnty/some-pieces-exist') ||
     pathname.startsWith('/idnty/needs-cohesion') ||
     pathname.startsWith('/idnty/ready-for-evolution') ||
-    pathname.startsWith('/idnty/build-ready')
+    pathname.startsWith('/idnty/build-ready') ||
+    pathname.startsWith('/bldr/site') ||
+    pathname.startsWith('/bldr/world') ||
+    pathname.startsWith('/bldr/enterprise') ||
+    pathname.startsWith('/bldr/not-sure')
   ) {
     return 'IDNTY_ASSESSMENT_ENVIRONMENT';
   }

@@ -53857,3 +53857,55 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Deploy:** Sync-only; say **deploy now** for Vercel.
 
+---
+
+## 2026-08-18 — SITE 00 IDNTY onboarding assessment engine (5 states, desktop + mobile)
+
+- **Context:** Founder sprint — implement full **IDNTY onboarding/assessment** for five identity states with approved desktop/mobile references and production Supabase backgrounds (desktop `3D3D5A0F…`, mobile `F17CDD7D…`). One shared engine; save/resume; nested routes; no dead CTAs.
+
+- **Architecture:**
+  - **`idnty-assessment.ts`** — branch configs for all 5 states: `starting-at-zero`, `some-pieces-exist`, `needs-cohesion` (stage [02/05] — placeholder title pending founder confirmation against attachment), `ready-for-evolution`, `build-ready`.
+  - **`useIdntyAssessment`** — localStorage persistence (`site00_idnty_assessment_v1`): identity state, steps, answers, submission status, resume target.
+  - **`IDNTY_ASSESSMENT_ENVIRONMENT`** — new environment in `environments.ts` with approved desktop/mobile backgrounds.
+  - **Shared UI:** `IdntyAssessmentShell`, panels (question list, option grid/rows, process strip, step form), `site00-idnty-assessment.css`.
+  - **Pages:** landing, step, review, complete via `IdntyAssessmentRouterPage`.
+
+- **Routes:**
+  - State selection remains **`/idnty/state`** (+ `/desktop`).
+  - Assessment branches: **`/idnty/:stateSlug`**, **`/idnty/:stateSlug/:step`**, **`/review`**, **`/complete`** (+ `/desktop` variants).
+  - **`IdntyStatePage`** — selecting a card navigates into assessment + resume banner when draft exists.
+
+- **Flows:** Starting at Zero = 5-question discovery; Some Pieces Exist = asset inventory grid; Needs Cohesion = gap alignment; Ready for Evolution = pathway grid + evolution goals; Build Ready = service grid + scope. All branches → review → complete with BLDR/support handoff CTAs.
+
+- **QA:** Build passes; desktop @ 1440 + mobile @ 375 verified — state selection, all 5 landing pages, step navigation, save/resume banner. Video: `idnty_assessment_desktop_mobile_walkthrough.mp4`.
+
+- **Open decisions:** Stage [02/05] exact title/copy if not `NEEDS COHESION`; fifth brand-state PNG icon; production intake DB (localStorage only for now); discovery call → `/support` until real scheduling wired.
+
+- **Deploy:** Sync-only commit; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — SITE 00 BLDR onboarding assessment engine (4 classes + NOT SURE, desktop + mobile)
+
+- **Context:** Founder sprint — implement full **BLDR onboarding** for SITE, WORLD, ENTERPRISE, NOT SURE? using approved references; reuse same IDNTY assessment backgrounds (`3D3D5A0F` desktop · `F17CDD7D` mobile); one branching engine; save/resume; IDNTY prefill.
+
+- **Architecture:**
+  - **`bldr-assessment.ts`** — branch configs: `site`, `world`, `enterprise`, `not-sure` with stage markers `[ 01 / 04 ]` … `[ 04 / 04 ]`.
+  - **`bldr-assessment-recommendation.ts`** — scoring engine for NOT SURE → SITE/WORLD/ENTERPRISE recommendation + reasons.
+  - **`useBldrAssessment`** — localStorage (`site00_bldr_assessment_v1`); IDNTY prefill (project type, timeline, budget, audience notes).
+  - **`BldrAssessmentShell`** — reuses IDNTY assessment CSS/environment; `BldrBuildClassIcon` editorial panel.
+  - Reused from IDNTY: `IdntyAssessmentPanels`, `IdntyStepForm`, `IdntyProcessStripPanel`, `site00-idnty-assessment.css`.
+
+- **Routes:**
+  - Class selection unchanged at **`/bldr/state`** (+ `/desktop`).
+  - Branches: **`/bldr/site`**, **`/bldr/world`**, **`/bldr/enterprise`**, **`/bldr/not-sure`** (+ steps, `/review`, `/complete`, `/not-sure/recommendation`).
+  - **`BldrStatePage`** — card select navigates into branch + resume banner.
+
+- **Flows:** SITE/WORLD/ENTERPRISE landing = type/need + audience on one screen; subsequent steps per branch; NOT SURE = 5-question discovery → recommendation page with continue/view alternatives.
+
+- **Handoff:** Complete → CREATE PROJECT (`/projects`), BOOK DISCOVERY (`/support`); no premature Site record creation.
+
+- **QA:** Build passes; desktop/mobile verified for all 4 class landings, step navigation, NOT SURE progress dots.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+

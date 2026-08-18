@@ -110,7 +110,7 @@ type IdntyOptionGridProps = {
   selected: string[];
   onToggle: (id: string) => void;
   mode: 'multi' | 'single';
-  columns?: 2 | 3;
+  columns?: 2 | 3 | 4;
   showExplore?: boolean;
 };
 
@@ -122,8 +122,10 @@ export function IdntyOptionGrid({
   columns = 2,
   showExplore = false,
 }: IdntyOptionGridProps) {
+  const colClass =
+    columns === 4 ? 'site00-idnty-option-grid--cols-4' : columns === 3 ? 'site00-idnty-option-grid--cols-3' : 'site00-idnty-option-grid--cols-2';
   return (
-    <div className={`site00-idnty-option-grid site00-idnty-option-grid--cols-${columns}`} role={mode === 'single' ? 'radiogroup' : 'group'}>
+    <div className={`site00-idnty-option-grid ${colClass}`} role={mode === 'single' ? 'radiogroup' : 'group'}>
       {options.map((option) => {
         const isSelected = selected.includes(option.id);
         return (

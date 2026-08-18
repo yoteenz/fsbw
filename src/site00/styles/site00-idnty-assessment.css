@@ -291,8 +291,8 @@
   grid-template-columns: repeat(2, 1fr);
 }
 
-.site00-idnty-option-grid--cols-3 {
-  grid-template-columns: repeat(3, 1fr);
+.site00-idnty-option-grid--cols-4 {
+  grid-template-columns: repeat(4, 1fr);
 }
 
 .site00-idnty-option-grid__card {
@@ -633,4 +633,67 @@
   .site00-idnty-option-grid__card {
     transition: none;
   }
+}
+
+/* BLDR assessment — extends shared onboarding shell */
+.site00-bldr-context-label {
+  font-family: var(--site-font-mono, 'Martian Mono', monospace);
+  font-size: 10px;
+  color: var(--site-red, #e60000);
+  letter-spacing: 0.06em;
+  margin: 0 0 8px;
+}
+
+.site00-bldr-scope-fields__block + .site00-bldr-scope-fields__block {
+  margin-top: 24px;
+}
+
+.site00-bldr-discovery-progress {
+  display: flex;
+  gap: 8px;
+  margin: 16px 0 20px;
+  align-items: center;
+}
+
+.site00-bldr-discovery-progress__dot {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--site-font-mono, 'Martian Mono', monospace);
+  font-size: 10px;
+  color: rgba(0, 0, 0, 0.4);
+}
+
+.site00-bldr-discovery-progress__dot--active {
+  border-color: var(--site-red, #e60000);
+  color: var(--site-red, #e60000);
+  font-weight: 700;
+}
+
+.site00-bldr-discovery-progress__dot--done {
+  background: rgba(230, 0, 0, 0.08);
+  border-color: var(--site-red, #e60000);
+}
+
+.site00-bldr-recommendation-reasons {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-family: var(--site-font-mono, 'Martian Mono', monospace);
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.site00-bldr-recommendation-reasons li {
+  padding: 6px 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.site00-bldr-recommendation-reasons li::before {
+  content: '♦ ';
+  color: var(--site-red, #e60000);
 }

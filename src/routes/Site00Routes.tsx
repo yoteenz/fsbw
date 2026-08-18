@@ -61,6 +61,7 @@ const AsstsNotificationsPage = lazy(() => import('../site00/assts/pages/Notifica
 const AsstsProfilePage = lazy(() => import('../site00/assts/pages/ProfilePage'));
 const ProjectProvisioningPage = lazy(() => import('../site00/pages/provisioning/ProjectProvisioningPage'));
 const IdntyAssessmentRouterPage = lazy(() => import('../site00/pages/idnty/assessment/IdntyAssessmentRouterPage'));
+const BldrAssessmentRouterPage = lazy(() => import('../site00/pages/bldr/assessment/BldrAssessmentRouterPage'));
 
 function Site00Suspense({ children }: { children: ReactNode }) {
   return <Suspense fallback={<Site00RouteLoadingFallback />}>{children}</Suspense>;
@@ -404,6 +405,28 @@ export function Site00Routes() {
         }
       />
       {Site00PublicPageRoutes(SITE00_ROUTES.bldrStart, BldrStartPage)}
+      <Route
+        path="/bldr/:classSlug/*"
+        element={
+          <Site00Layout>
+            <Site00Suspense>
+              <BldrAssessmentRouterPage />
+            </Site00Suspense>
+          </Site00Layout>
+        }
+      />
+      <Route
+        path="/bldr/:classSlug/desktop/*"
+        element={
+          <Site00Layout>
+            <Site00DesktopArtboardShell>
+              <Site00Suspense>
+                <BldrAssessmentRouterPage />
+              </Site00Suspense>
+            </Site00DesktopArtboardShell>
+          </Site00Layout>
+        }
+      />
       <Route
         path={SITE00_ROUTES.projectProvisioning}
         element={
