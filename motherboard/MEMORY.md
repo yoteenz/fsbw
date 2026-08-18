@@ -54011,3 +54011,13 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Context:** Founder requested SITE build-class starting price update from **$3.5K** to **$4K+** (plus indicates sliding-scale pricing).
 - **Changes:** `builder.ts` (`$4K+`, `FROM ~$4K+`), `bldr-entry.ts` (`FROM $4K+`), `seedDemo.ts` budget range, `test-site00-bldr-entry.mjs` assertion.
 
+---
+
+## 2026-08-18 — SITE 00 Admin Operations Pages (18 files)
+
+- **Context:** Create full React operations page set under `src/site00/admin/pages/operations/` wired to `site00ProductionApi` — identities, BLDR intakes, leads, discovery, sites, ctrl room, finance, team, reports, activity, settings.
+
+- **Changes:** Added 18 default-export page components with `Site00AdminShell`, `AdminTable`/`AdminStatusBadge`/`AdminKpiCard`, real API calls, loading/empty/error states, uppercase labels. Detail pages link related entities via `SITE00_ADMIN_ROUTES`. BLDR intake detail supports MARK REVIEWED + CONVERT TO PROJECT.
+
+- **Dependency note:** Pages expect operations API methods, `types/operations.ts`, `components/operations/*`, and extended route helpers — wire routes separately (not modified in this task).
+
