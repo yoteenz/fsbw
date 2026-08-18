@@ -19,6 +19,7 @@ import { formatMoney } from '../../billing/money';
 import { aioPaths } from '../../utils/paths';
 import { getBrokerageCarrierInsurance } from '../../demo/insuranceActions';
 import { computeGrossMarginPercent } from '../../brokerage/brokerageCalculations';
+import { publishLoadToBoard, holdLoadOnBoard, getPublication } from '../../freight/loadBoardActions';
 
 export function BrokerageCommandCenterPage() {
   const store = useDemoStore();
@@ -207,6 +208,8 @@ export function BrokerageLoadDetailPage() {
   if (!load) return <p>Not found.</p>;
   const fin = getLoadFinancials(load.id, store);
   const marginPct = fin ? computeGrossMarginPercent(fin.confirmedShipperChargeMinor, fin.grossMarginMinor) : null;
+  const pub = getPublication(load.id, store);
+  const staffId = store.officeStaffId ?? 'staff-7';
 
   return (
     <div className="aio-office-page">
@@ -221,9 +224,20 @@ export function BrokerageLoadDetailPage() {
             <dt>Carrier Pay</dt><dd>{formatMoney(fin.confirmedCarrierPayMinor)}</dd>
             <dt>Brokerage Gross Margin</dt><dd>{formatMoney(fin.grossMarginMinor)}{marginPct != null ? ` (${marginPct.toFixed(1)}%)` : ''}</dd>
           </dl>
-          <p className="aio-prototype-note">Gross margin — not net profit.</p>
+          <p className="aio-prototype-note">Internal only — never shown on carrier Load Board.</p>
         </section>
       )}
+      <section className="aio-office-panel">
+        <h2>AIO Load Board</h2>
+        <p>Status: {pub?.visibility ?? 'not published'}</p>
+        {pub?.publishedAt && <p>Published: {new Date(pub.publishedAt).toLocaleString()}</p>}
+        <div className="aio-office-actions">
+          <button type="button" className="aio-btn aio-btn--gold" onClick={() => publishLoadToBoard(load.id, staffId)}>Publish to AIO Load Board</button>
+          {pub?.visibility === 'published' && (
+            <button type="button" className="aio-btn aio-btn--outline-dark" onClick={() => holdLoadOnBoard(load.id)}>Hold / Private</button>
+          )}
+        </div>
+      </section>
       <button type="button" className="aio-btn aio-btn--gold" onClick={() => createShipperInvoiceFromLoad(load.id, 'staff-7')}>Create Shipper Invoice</button>
     </div>
   );

@@ -121,6 +121,7 @@ export function OperationsCenterPage() {
             <div className="aio-cc-health-card"><span>Factoring Ready</span><strong>{ops.factoringHandoffReady}</strong></div>
           </div>
           <Link to={aioPaths.portalDispatch} className="aio-btn aio-btn--outline">Dispatch Home →</Link>
+          <Link to={aioPaths.portalLoadBoard} className="aio-btn aio-btn--outline">AIO Load Board →</Link>
           <Link to={aioPaths.portalBrokerage} className="aio-btn aio-btn--outline">Brokerage →</Link>
         </>
       )}

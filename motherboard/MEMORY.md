@@ -52868,7 +52868,8 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 ---
 
-<<<<<<< HEAD
+---
+
 ## 2026-08-17 — Site 00 immersive loader: remove white letterboxing (edge-to-edge background)
 
 - **Context:** Founder reported repeated white letterboxing around the loading animation; background image should fill edge-to-edge with no white CSS gutters.
@@ -52903,7 +52904,9 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Changes:** `src/site00/config/builder.ts` — `BLDR_INVESTMENT_TIERS` site tier `priceLabel` → `$3.5K`; `BLDR_HOMEPAGE_EXPANDED` SITE offering `price` → `FROM ~$3.5K`. Surfaces on BLDR state investment guide + Origin homepage BLDR expanded panel.
 
 - **Deploy:** Sync-only; say **deploy now** for Vercel.
-=======
+
+---
+
 ## 2026-08-17 — AIO global `/desktop/*` and `/mobile/*` layout preview routes
 
 - **Context:** Founder rejected Smart-Intake-only preview paths (`/get-started/desktop`); wanted a **site-wide** designated desktop route mirror for **all AIO pages** so design review on phone/narrow viewports forces desktop layout without viewport auto-switching.
@@ -52929,5 +52932,30 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Fix:** Export route tree as JSX fragment `aioCoreRoutes` and spread `{aioCoreRoutes}` in `AllInOneRoutes`. Parent preview paths use `desktop/*` and `mobile/*` for nested matching.
 
 - **QA:** Playwright local — `/desktop`, `/desktop/`, `/`, `/desktop/get-started` all render with content; build PASS.
->>>>>>> 8d9439020 (Fix AIO /desktop blank page — export aioCoreRoutes fragment for React Router [sync-only])
+
+---
+
+## 2026-08-18 — AIO Load Board audit + brokerage intelligence upgrade (Phase 0–12 foundation)
+
+- **Context:** Large sprint to audit existing Load Board / brokerage stack before rebuilding; AIO is **the broker** (not a third-party broker marketplace). Carrier Load Board = distribution layer; office = internal brokerage control center.
+
+- **Phase 0 audit:** Demo TMS + brokerage ops exist (`dispatch`, `brokerage`, office integrations stub). No carrier-facing load board product existed. Supabase AIO migrations are stubs — demo store v25 is runtime source of truth. Gap matrix: `all-in-one-enterprises/docs/refinement/LOAD_BOARD_AUDIT_AND_GAP_MATRIX.md`.
+
+- **New `src/freight/` module:** Types, lifecycle state machine, true RPM vs loaded RPM, explainable Load Match Score (INSUFFICIENT DATA when sparse), carrier-safe DTO projection (strips shipper rate/margin), search service, load board actions (publish/hold/saved/recent/offers), demo seed publications.
+
+- **Carrier portal UI:** `/portal/load-board/*` — search (New/Recent/Saved), results cards, load detail (match reasons, profit ESTIMATE, submit offer), My Loads, Fleet, Map (honest not-connected), Saved. CSS: `aio-load-board.css`. Mobile nav: Loads | My Loads | Fleet | Map | More.
+
+- **Office:** Brokerage load detail — Publish to AIO Load Board / Hold / Private + internal financials panel (never carrier-visible).
+
+- **Integrations:** Portal nav + Operations hub link; desktop context rail for load board; demo store v25 patch merges load board fields for existing localStorage.
+
+- **Security model:** `carrierLoadProjection.ts` + `getInternalLoadEconomics()` — carrier views never receive shipper_rate / AIO margin; server-side pattern ready for Supabase RLS sprint.
+
+- **Tests:** `src/freight/freight.test.ts` (8) — true RPM, carrier projection leak check, match score, internal margin.
+
+- **Deferred:** Map provider, FleetCare maintenance warnings on match, DriverLink assign UI, notification delivery, Supabase schema migration, duplicate detection UI, full lifecycle audit trail UI, external freight provider adapters (interface only).
+
+- **Spatial Architecture Review:** SKIPPED — extending existing portal/office surfaces; carrier distribution layer, not new Studio OS departments.
+
+- **QA:** Build PASS; manual QA on `/portal/load-board` — search, 2 results, detail with offer form; screen recording saved.
 

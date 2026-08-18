@@ -238,5 +238,20 @@ export function resolvePortalModuleRail(t: TFunction, pathname: string): Context
       ],
     };
   }
+  if (pathname.includes('/portal/load-board')) {
+    return {
+      variant: 'service',
+      title: 'AIO Load Board',
+      description: 'Carrier-facing freight distributed by AIO Brokerage.',
+      showLogo: false,
+      items: [
+        { id: 'search', label: 'Search', href: aioPaths.portalLoadBoard },
+        { id: 'results', label: 'Results', href: aioPaths.portalLoadBoardResults },
+        { id: 'my-loads', label: 'My Loads', href: aioPaths.portalLoadBoardMyLoads },
+        { id: 'fleet', label: 'Fleet', href: aioPaths.portalLoadBoardFleet },
+        { id: 'saved', label: 'Saved', href: aioPaths.portalLoadBoardSaved },
+      ],
+    };
+  }
   return null;
 }

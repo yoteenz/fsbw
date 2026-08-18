@@ -19,6 +19,7 @@ import { createBookkeepingSeedData } from './bookkeepingSeed';
 import { createAutopilotSeedData } from './autopilotSeed';
 import { createFleetCareSeedData } from './fleetcareSeed';
 import { createDriverLinkSeedData } from './driverlinkSeed';
+import { createLoadBoardSeedPublications, DEMO_LOAD_BOARD_LOAD_IDS } from '../freight/loadBoardSeed';
 import { AIO_DEMO_SCHEMA_VERSION } from '../data/constants';
 import { getDataModeLabel } from '../config/dataMode';
 
@@ -401,6 +402,10 @@ export function createDemoSeed(): DemoStore {
     bookkeepingPeriods: autopilot.bookkeepingPeriods,
     bookkeepingExceptions: autopilot.bookkeepingExceptions,
     customerClarifications: autopilot.customerClarifications,
+    loadBoardPublications: createLoadBoardSeedPublications(DEMO_LOAD_BOARD_LOAD_IDS),
+    loadBoardSavedSearches: [],
+    loadBoardRecentSearches: [],
+    carrierLoadBoardOffers: [],
     ...fleetcare,
     ...driverlink,
   };

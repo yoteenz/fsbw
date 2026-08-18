@@ -495,8 +495,8 @@ export function createBrokerageSeedData(): {
     string,
     { shipper: number; carrier: number; confirmedShipper: number; confirmedCarrier: number }
   > = {
-    'br-load-a': { shipper: 3000, carrier: 0, confirmedShipper: 3000, confirmedCarrier: 0 },
-    'br-load-b': { shipper: 2800, carrier: 0, confirmedShipper: 2800, confirmedCarrier: 0 },
+    'br-load-a': { shipper: 3000, carrier: 2200, confirmedShipper: 3000, confirmedCarrier: 2200 },
+    'br-load-b': { shipper: 2800, carrier: 2400, confirmedShipper: 2800, confirmedCarrier: 2400 },
     'br-load-c': { shipper: 2800, carrier: 1950, confirmedShipper: 2800, confirmedCarrier: 1950 },
     'br-load-d': { shipper: 2800, carrier: 2400, confirmedShipper: 2800, confirmedCarrier: 2400 },
     'br-load-e': { shipper: 2800, carrier: 2400, confirmedShipper: 2800, confirmedCarrier: 2400 },

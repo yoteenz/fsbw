@@ -765,6 +765,11 @@ export interface DemoStore {
   driverlinkApplications?: DriverApplication[];
   driverlinkCounters?: DriverLinkCounters;
   driverlinkDemoContext?: DriverLinkDemoContext;
+  /** AIO Load Board — carrier-facing distribution layer */
+  loadBoardPublications?: import('../freight/freightTypes').LoadBoardPublication[];
+  loadBoardSavedSearches?: import('../freight/freightTypes').SavedLoadSearch[];
+  loadBoardRecentSearches?: import('../freight/freightTypes').RecentLoadSearch[];
+  carrierLoadBoardOffers?: import('../freight/freightTypes').CarrierLoadBoardOffer[];
 }
 
 export interface OfficeMetrics {

@@ -160,6 +160,16 @@ import {
   DriverLinkDriverOpportunityPage,
 } from '../pages/driver/DriverLinkDriverPages';
 import { IconLibraryDebugPage } from '../pages/debug/IconLibraryDebugPage';
+import {
+  LoadBoardLayout,
+  LoadBoardSearchPage,
+  LoadBoardResultsPage,
+  LoadBoardDetailPage,
+  LoadBoardMyLoadsPage,
+  LoadBoardFleetPage,
+  LoadBoardMapPage,
+  LoadBoardSavedPage,
+} from '../pages/portal/loadboard/LoadBoardPages';
 function AioRouteLoading() {
   return <div className="aio-loading">Loading All In One…</div>;
 }
@@ -273,6 +283,15 @@ export const aioCoreRoutes = (
           <Route path="dispatch/loads" element={<DispatchLoadsPage />} />
           <Route path="dispatch/loads/:loadId" element={<DispatchLoadDetailPage />} />
           <Route path="dispatch/history" element={<DispatchHistoryPage />} />
+          <Route path="load-board" element={<LoadBoardLayout />}>
+            <Route index element={<LoadBoardSearchPage />} />
+            <Route path="results" element={<LoadBoardResultsPage />} />
+            <Route path="loads/:loadId" element={<LoadBoardDetailPage />} />
+            <Route path="my-loads" element={<LoadBoardMyLoadsPage />} />
+            <Route path="fleet" element={<LoadBoardFleetPage />} />
+            <Route path="map" element={<LoadBoardMapPage />} />
+            <Route path="saved" element={<LoadBoardSavedPage />} />
+          </Route>
           <Route path="factoring" element={<FactoringHomePage />} />
           <Route path="factoring/application" element={<FactoringApplicationPage />} />
           <Route path="factoring/ready" element={<FactoringReadyPage />} />

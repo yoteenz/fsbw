@@ -12,16 +12,40 @@ import type { DemoStore, ServiceRequest } from './demoTypes';
 import { AIO_DEMO_SCHEMA_VERSION } from '../data/constants';
 import { getDataModeLabel, canResetDemoData } from '../config/dataMode';
 import { isProductionDeployment } from '../infrastructure/environmentModel';
+import { createLoadBoardSeedPublications, DEMO_LOAD_BOARD_LOAD_IDS } from '../freight/loadBoardSeed';
 
 export const DEMO_STORE_KEY = 'aio_debug_store';
 
 const STORE_EVENT = 'aio-demo-store-change';
 
+function ensureLoadBoardFields(store: DemoStore): DemoStore {
+  const needsPublications = !store.loadBoardPublications?.length;
+  const needsSaved = store.loadBoardSavedSearches == null;
+  const needsRecent = store.loadBoardRecentSearches == null;
+  const needsOffers = store.carrierLoadBoardOffers == null;
+  if (!needsPublications && !needsSaved && !needsRecent && !needsOffers) return store;
+  return {
+    ...store,
+    loadBoardPublications: needsPublications
+      ? createLoadBoardSeedPublications(DEMO_LOAD_BOARD_LOAD_IDS)
+      : store.loadBoardPublications,
+    loadBoardSavedSearches: store.loadBoardSavedSearches ?? [],
+    loadBoardRecentSearches: store.loadBoardRecentSearches ?? [],
+    carrierLoadBoardOffers: store.carrierLoadBoardOffers ?? [],
+  };
+}
+
 export function loadDemoStore(): DemoStore {
   if (typeof window === 'undefined') return createDemoSeed();
 
   const existing = readStorage<DemoStore | (Omit<DemoStore, 'version'> & { version: 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 20 | 21 | 22 | 23 | 24 }) | null>(DEMO_STORE_KEY, null);
-  if (existing?.version === 25) return existing as DemoStore;
+  if (existing?.version === 25) {
+    const patched = ensureLoadBoardFields(existing as DemoStore);
+    if (patched !== existing) {
+      saveDemoStore(patched);
+    }
+    return patched;
+  }
 
   if (existing?.version === 24) {
     const upgraded = upgradeStoreV24ToV25(existing as DemoStoreV24);
@@ -282,11 +306,15 @@ function upgradeStoreV17ToV18(store: DemoStoreV17): DemoStoreV18 {
 
 function upgradeStoreV24ToV25(store: DemoStoreV24): DemoStore {
   const driverlink = createDriverLinkSeedData();
-  return {
+  return ensureLoadBoardFields({
     ...store,
     version: 25 as const,
     ...driverlink,
-  };
+    loadBoardPublications: createLoadBoardSeedPublications(DEMO_LOAD_BOARD_LOAD_IDS),
+    loadBoardSavedSearches: [],
+    loadBoardRecentSearches: [],
+    carrierLoadBoardOffers: [],
+  });
 }
 
 function upgradeStoreV23ToV24(store: DemoStoreV23): DemoStoreV24 {
