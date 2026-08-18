@@ -52900,23 +52900,13 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Context:** Founder reported loader **stuck at 10%** and **distorted** black-box geometry on `preview.fsbw-dev.com/origin` (iPhone).
 
-- **Root cause:** (1) `Site00WorldColdStartGate` preloaded **6MB source MP4** via `canplaythrough` with **no timeout** — mobile Safari never resolved → bootstrap hung at 10%. (2) Geometry slot scaled **3× portrait** (666×1620) but Kling master is **1764×1176 landscape** → tiny/black letterboxed video in tall box. (3) iOS used **28MB APNG** with no error fallback.
+- **Root cause:** (1) `Site00WorldColdStartGate` preloaded **6MB source MP4** via `canplaythrough` with **no timeout** — mobile Safari never resolved → bootstrap hung at 10%. (2) Geometry slot scaled **3× portrait** (666×1620) but Kling master is **1764×1176 landscape** → tiny/black letterboxed video in tall box. (3) iOS used **28MB APNG** with no error fallback. (4) Static `site00-assts-loader-boot.js` still `<link rel=preload>` the **source MP4**, saturating mobile bandwidth.
 
-- **Fix:** Preload **alpha WebM/APNG** via shared `resolveSite00LoaderGeometryPreloadUrl()` + **8s preload timeouts**. Wireframe region → **666×444** (3× width, landscape aspect, bottom-anchored). `Site00LoaderAnimation` alpha error → screen fallback + 6s ready timeout. iOS APNG re-encoded **480w @ 10fps** (~13MB).
+- **Fix:** Preload **alpha WebM/APNG** via shared `resolveSite00LoaderGeometryPreloadUrl()` + **8s preload timeouts**. Wireframe region → **666×444** (3× width, landscape aspect, bottom-anchored). `Site00LoaderAnimation` alpha error → screen fallback + 6s ready timeout. iOS APNG re-encoded **480w @ 10fps** (~13MB). Boot JS + `site00LoaderBoot.ts` preload alpha assets (not source MP4). FAL alpha encode is **yuv420p black-matte** (not true alpha) → `.site00-loader-animation--alpha` uses **`mix-blend-mode: screen`** until true alpha ships.
 
 - **Spatial Architecture Review:** SKIPPED — loader bootstrap/compositing hotfix.
 
 ---
-
-## 2026-08-18 — SITE 00 Origin mobile homepage environment background
-
-- **Context:** Founder supplied approved Origin **mobile** environment image (`C63192EC-00BE-46DB-8D3A-952173F6F5D1.png`) for SITE 00 Origin homepage mobile design only; desktop keeps existing `942898D3` asset.
-
-- **Changes:** `environments.ts` — `SITE00_ORIGIN_MOBILE_BACKGROUND_PATH` + `mobileAssetPath` on `ORIGIN_ENVIRONMENT`; `EnvironmentShell.tsx` — resolves mobile asset, sets `--site00-env-mobile-image` + position/scale CSS vars, adds `site00-env-layer--has-mobile-asset`; `site00.css` — production mobile background at `max-width: 767px`, desktop unchanged at `min-width: 768px`. `assets.ts` registry notes updated.
-
-- **QA:** `npm run build` PASS. Playwright @ 390×844 `/origin` — computed `background-image` resolves to `C63192EC…png`; @ 1440×900 still `942898D3…png`. Screenshot: `site00_origin_mobile_background.png`.
-
-- **Deploy:** Sync-only; say **deploy now** for Vercel.
 
 ---
 
@@ -52945,6 +52935,18 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Fix:** Export route tree as JSX fragment `aioCoreRoutes` and spread `{aioCoreRoutes}` in `AllInOneRoutes`. Parent preview paths use `desktop/*` and `mobile/*` for nested matching.
 
 - **QA:** Playwright local — `/desktop`, `/desktop/`, `/`, `/desktop/get-started` all render with content; build PASS.
+
+---
+
+## 2026-08-18 — SITE 00 Origin mobile homepage environment background
+
+- **Context:** Founder supplied approved Origin **mobile** environment image (`C63192EC-00BE-46DB-8D3A-952173F6F5D1.png`) for SITE 00 Origin homepage mobile design only; desktop keeps existing `942898D3` asset.
+
+- **Changes:** `environments.ts` — `SITE00_ORIGIN_MOBILE_BACKGROUND_PATH` + `mobileAssetPath` on `ORIGIN_ENVIRONMENT`; `EnvironmentShell.tsx` — resolves mobile asset, sets `--site00-env-mobile-image` + position/scale CSS vars, adds `site00-env-layer--has-mobile-asset`; `site00.css` — production mobile background at `max-width: 767px`, desktop unchanged at `min-width: 768px`. `assets.ts` registry notes updated.
+
+- **QA:** `npm run build` PASS. Playwright @ 390×844 `/origin` — computed `background-image` resolves to `C63192EC…png`; @ 1440×900 still `942898D3…png`. Screenshot: `site00_origin_mobile_background.png`.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
 
 ---
 

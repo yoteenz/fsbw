@@ -34,7 +34,15 @@
 
     preload(bg, 'image');
 
-    var geometry = base + 'assts-loader-geometry-v1-source.mp4';
+    var ua = navigator.userAgent || '';
+    var isIOSSafari =
+      (/iPad|iPhone|iPod/.test(ua) ||
+        (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)) &&
+      /Safari/i.test(ua) &&
+      !/CriOS|FxiOS|EdgiOS|Chrome/i.test(ua);
+    var geometry = isIOSSafari
+      ? base + 'assts-loader-geometry-v1-alpha.apng'
+      : base + 'assts-loader-geometry-v1-alpha.webm';
     preload(geometry, 'fetch');
 
     if (document.getElementById('site00-assts-boot-shell')) {
@@ -61,7 +69,18 @@
 
   document.documentElement.classList.add('site00-assts-boot');
   preload(bg, 'image');
-  preload(base + 'assts-loader-geometry-v1-source.mp4', 'fetch');
+  var uaEarly = navigator.userAgent || '';
+  var isIOSSafariEarly =
+    (/iPad|iPhone|iPod/.test(uaEarly) ||
+      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)) &&
+    /Safari/i.test(uaEarly) &&
+    !/CriOS|FxiOS|EdgiOS|Chrome/i.test(uaEarly);
+  preload(
+    isIOSSafariEarly
+      ? base + 'assts-loader-geometry-v1-alpha.apng'
+      : base + 'assts-loader-geometry-v1-alpha.webm',
+    'fetch',
+  );
 
   document.addEventListener('DOMContentLoaded', ensureBootShell, { once: true });
 })();

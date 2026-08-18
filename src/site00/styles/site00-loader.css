@@ -402,7 +402,8 @@
 }
 
 .site00-loader-animation--alpha {
-  mix-blend-mode: normal;
+  /* FAL matte is black (yuv420p) until true alpha encode ships — screen removes the matte. */
+  mix-blend-mode: screen;
   object-fit: contain;
   object-position: center bottom;
 }
