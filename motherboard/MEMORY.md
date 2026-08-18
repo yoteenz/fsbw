@@ -53060,3 +53060,13 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Deploy:** Sync-only; say **deploy now** for Vercel.
 
+---
+
+## 2026-08-18 — Origin desktop hero +10px: CSS offset fix (beats token-only override)
+
+- **Context:** Founder reported desktop hero (“WELCOME TO SITE 00…”) **+10px down** still not visible — prior fix only changed `heroTopPx` TS token (16→26) while **`site00.css` fallback stayed `16px`**, so stale bundles / cascade could ignore the nudge.
+
+- **Fix:** Split base vs desktop nudge — `heroTopPx: 16` (base anchor) + new `--site00-origin-hero-offset-y: 10px` set only at `@media (min-width: 768px)`, `.site00-desktop-artboard`, and `.site00-origin-page--desktop-artboard`. Hero `top: calc(var(--site00-origin-hero-top) + var(--site00-origin-hero-offset-y))`. Hero element also binds `--site00-origin-hero-top` inline. Mobile offset stays **0** (hero remains relative + `padding-top: 24px`).
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
