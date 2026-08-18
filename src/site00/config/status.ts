@@ -26,8 +26,8 @@ export const SITE00_ORIGIN_COPY = {
   headlineLine2: 'SITE 00',
   tagline: 'WHERE DIGITAL PLACES BEGIN.',
   description1: 'THIS IS THE ORIGIN ENVIRONMENT.',
-  description2: 'EVERY SITE THAT EXISTS',
-  description3: 'ONLINE STARTS HERE.',
+  description2: 'EVERY SITE THAT EXISTS ONLINE',
+  description3: 'STARTS HERE.',
   originPoint: 'YOU ARE AT 00.00 ORIGIN POINT',
   /** Desktop hero — split so coordinate can be styled independently. */
   originPointLine: {

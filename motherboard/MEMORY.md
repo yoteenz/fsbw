@@ -53788,7 +53788,6 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 ---
 
-<<<<<<< HEAD
 ## 2026-08-18 — IDNTY/BLDR state desktop: summary strip panel (match Enter)
 
 - **Context:** Founder requested bottom summary text on desktop **IDNTY/BLDR state** pages sit in a white panel bar (not floating on workflow background), like `/enter`.
@@ -53798,7 +53797,9 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Verification:** Playwright @ `/bldr/state/desktop` + `/idnty/state/desktop` — fixed panel ~34px with bg/shadow applied.
 
 - **Deploy:** Sync-only commit `4866b2f23`; say **deploy now** for Vercel.
-=======
+
+---
+
 ## 2026-08-18 — SITE 00 brand uppercase typography (mandatory)
 
 - **Context:** Founder — ALL text on SITE 00 must be UPPERCASE; only password input fields may stay lowercase. Reference-image design sprints kept introducing sentence case; brand uppercase must override.
@@ -53816,6 +53817,5 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Verification:** Build OK; `/services/desktop`, `/about/desktop`, `/system/desktop`, `/support/desktop` @ 1440 — all visible text uppercase; password fields exempt on sign-in.
 
-- **Deploy:** Sync-only; say **deploy now** for Vercel.
->>>>>>> b4537b8b3 (SITE 00: enforce brand uppercase typography (password fields exempt) [sync-only])
+- **Deploy:** Sync-only commit `b4537b8b3`; say **deploy now** for Vercel.
 
