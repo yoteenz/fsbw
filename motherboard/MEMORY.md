@@ -53385,3 +53385,13 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Verification:** Playwright `/origin/desktop` — scale 0.875, panel center delta 0px vs stage center on X and Y.
 
 - **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — IDNTY/BLDR state pages: heavier subhead font weight
+
+- **Context:** Founder requested increased font weight for black subhead copy under red headlines on **BLDR** (`CHOOSE THE TYPE OF DIGITAL PLACE YOU NEED.`) and **IDNTY** (`CHOOSE THE STATE THAT BEST DESCRIBES YOUR FOUNDATION.`) state pages.
+
+- **Change:** `.site00-state-page__subhead` → `font-weight: var(--site00-weight-heading)` (700, was body 500); applied on `BldrStatePage.tsx` + `IdntyStatePage.tsx`.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
