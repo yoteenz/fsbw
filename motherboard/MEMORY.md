@@ -53580,7 +53580,17 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Fix:** New **`Site00OriginRouteShell`** — wraps `/origin` (and site00 root) with artboard when viewport **≥768px**; `/origin/desktop` keeps **`forceArtboard`**. **`OriginPage`** uses **`useSite00DesktopArtboardPreview()`** (context) instead of pathname-only for desktop vs mobile layout class, status strip, swipe callout.
 
-- **Verification:** Playwright @ 1920×1080 — `/origin` and `/origin/desktop` both `artboard: true`, same icon-in-card ratio **0.413**.
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — Origin coordinate line: dedicated slot container + 6px down
+
+- **Context:** Founder asked to decouple “YOU ARE AT 00.00 ORIGIN POINT” from the description copy above — own container, then nudge down 6px (margin/gap on the `<p>` and translateY were not giving reliable visual separation).
+
+- **Change:** Wrapped coordinate in **`.site00-home-hero__coordinate-slot`** (`OriginPage.tsx`). Desktop + artboard CSS apply **`margin-top: var(--site00-origin-coordinate-offset-y, 6px)`** on the slot; inner `<p>` has no offset. Removed inline `translateY` on coordinate. Mobile layout hides the slot.
+
+- **Verification:** Playwright `/origin/desktop` — `slotMarginTop: 6px`, line-to-slot gap **6.00px**.
 
 - **Deploy:** Sync-only; say **deploy now** for Vercel.
 
