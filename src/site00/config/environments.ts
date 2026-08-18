@@ -6,6 +6,9 @@
 /** Approved Origin desktop environment (Supabase live-preview/site00/). */
 export const SITE00_ORIGIN_DESKTOP_BACKGROUND_PATH = '942898D3-6953-47CD-8987-0697EC1C9F11.png';
 
+/** Approved Origin mobile homepage environment (Supabase live-preview/site00/). */
+export const SITE00_ORIGIN_MOBILE_BACKGROUND_PATH = 'C63192EC-00BE-46DB-8D3A-952173F6F5D1.png';
+
 /** Approved Enter 00 desktop menu environment (Supabase live-preview/site00/). */
 export const SITE00_ENTER_DESKTOP_BACKGROUND_PATH = '89319E70-D080-4798-9BCA-E53B137F2387.png';
 
@@ -24,6 +27,8 @@ export type EnvironmentConfig = {
   asset?: string;
   /** Supabase live-preview path — resolved at runtime; desktop viewport only. */
   desktopAssetPath?: string;
+  /** Supabase live-preview path — resolved at runtime; mobile viewport only (<768px). */
+  mobileAssetPath?: string;
   desktopPosition: string;
   mobilePosition: string;
   desktopScale: number;
@@ -40,14 +45,15 @@ export const SITE00_ENVIRONMENTS: Record<EnvironmentId, EnvironmentConfig> = {
   ORIGIN_ENVIRONMENT: {
     id: 'ORIGIN_ENVIRONMENT',
     desktopAssetPath: SITE00_ORIGIN_DESKTOP_BACKGROUND_PATH,
+    mobileAssetPath: SITE00_ORIGIN_MOBILE_BACKGROUND_PATH,
     desktopPosition: 'center center',
-    mobilePosition: '60% center',
+    mobilePosition: 'center center',
     desktopScale: 1,
-    mobileScale: 1.15,
+    mobileScale: 1,
     lightingClass: 'site00-env--origin-lighting',
     fallbackClass: 'site00-env-fallback--origin',
     routes: ['/', '/origin'],
-    notes: 'Approved Origin desktop environment — 942898D3 @ live-preview/site00',
+    notes: 'Approved Origin environment — desktop 942898D3 · mobile C63192EC @ live-preview/site00',
   },
   WORKFLOW_ENVIRONMENT: {
     id: 'WORKFLOW_ENVIRONMENT',

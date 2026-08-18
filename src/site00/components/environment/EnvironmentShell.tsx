@@ -22,23 +22,29 @@ function resolveEnvironmentDesktopAsset(config: (typeof SITE00_ENVIRONMENTS)[Env
 export function EnvironmentShell({ environmentId, children, className = '' }: EnvironmentShellProps) {
   const config = SITE00_ENVIRONMENTS[environmentId];
   const desktopAsset = resolveEnvironmentDesktopAsset(config);
+  const mobileAsset = config.mobileAssetPath ? resolveSite00PublicAsset(config.mobileAssetPath) : undefined;
 
   return (
     <div className={`site00-shell ${className}`.trim()} data-environment={environmentId}>
       <div
-        className={`site00-env-layer ${config.fallbackClass} ${config.lightingClass} ${desktopAsset ? 'site00-env-layer--has-desktop-asset' : ''}`.trim()}
+        className={`site00-env-layer ${config.fallbackClass} ${config.lightingClass} ${desktopAsset ? 'site00-env-layer--has-desktop-asset' : ''} ${mobileAsset ? 'site00-env-layer--has-mobile-asset' : ''}`.trim()}
         aria-hidden="true"
         style={{
           position: 'fixed',
           inset: 0,
           zIndex: 'var(--site-z-env)',
-          backgroundSize: 'cover',
-          backgroundPosition: config.desktopPosition,
-          transform: `scale(${config.desktopScale})`,
-          transformOrigin: 'center center',
+          ['--site00-env-desktop-position' as string]: config.desktopPosition,
+          ['--site00-env-mobile-position' as string]: config.mobilePosition,
+          ['--site00-env-desktop-scale' as string]: String(config.desktopScale),
+          ['--site00-env-mobile-scale' as string]: String(config.mobileScale),
           ...(desktopAsset
             ? {
                 ['--site00-env-desktop-image' as string]: `url("${desktopAsset.replace(/"/g, '\\"')}")`,
+              }
+            : {}),
+          ...(mobileAsset
+            ? {
+                ['--site00-env-mobile-image' as string]: `url("${mobileAsset.replace(/"/g, '\\"')}")`,
               }
             : {}),
           ...(config.asset && !config.desktopAssetPath

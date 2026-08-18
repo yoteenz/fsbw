@@ -52872,3 +52872,15 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 =======
 >>>>>>> fb03ab2c3 (fix(site00): edge-to-edge immersive loader background — no white letterbox [sync-only])
 
+---
+
+## 2026-08-18 — SITE 00 Origin mobile homepage environment background
+
+- **Context:** Founder supplied approved Origin **mobile** environment image (`C63192EC-00BE-46DB-8D3A-952173F6F5D1.png`) for SITE 00 Origin homepage mobile design only; desktop keeps existing `942898D3` asset.
+
+- **Changes:** `environments.ts` — `SITE00_ORIGIN_MOBILE_BACKGROUND_PATH` + `mobileAssetPath` on `ORIGIN_ENVIRONMENT`; `EnvironmentShell.tsx` — resolves mobile asset, sets `--site00-env-mobile-image` + position/scale CSS vars, adds `site00-env-layer--has-mobile-asset`; `site00.css` — production mobile background at `max-width: 767px`, desktop unchanged at `min-width: 768px`. `assets.ts` registry notes updated.
+
+- **QA:** `npm run build` PASS. Playwright @ 390×844 `/origin` — computed `background-image` resolves to `C63192EC…png`; @ 1440×900 still `942898D3…png`. Screenshot: `site00_origin_mobile_background.png`.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+

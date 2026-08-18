@@ -26,7 +26,7 @@ export const SITE00_ASSET_REGISTRY: Site00Asset[] = [
     environment: 'ORIGIN_ENVIRONMENT',
     route: '/',
     status: 'production',
-    notes: 'Desktop background — live-preview/site00/942898D3-6953-47CD-8987-0697EC1C9F11.png (1535×1024)',
+    notes: 'Desktop 942898D3-6953-47CD-8987-0697EC1C9F11.png · mobile C63192EC-00BE-46DB-8D3A-952173F6F5D1.png @ live-preview/site00',
   },
   {
     id: 'env-workflow',
