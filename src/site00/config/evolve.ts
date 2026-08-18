@@ -90,8 +90,7 @@ export const EVOLVE_HOMEPAGE_EXPANDED = {
 export const EVOLVE_ORIGIN_CARD = {
   number: '03',
   title: 'EVOLVE',
-  subtitle: "ALREADY BUILT DOESN'T MEAN FINISHED.",
-  body: 'BRING US WHAT EXISTS. WE\'LL TAKE IT FURTHER.',
+  subtitle: 'BUILD ALREADY EXISTS.',
   cta: 'EXPLORE EVOLVE →',
 } as const;
 

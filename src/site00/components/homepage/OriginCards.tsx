@@ -100,7 +100,6 @@ export function OriginCards({ onExpandIdnty, onExpandBldr, onExpandEvolve }: Ori
           number={EVOLVE_ORIGIN_CARD.number}
           title={EVOLVE_ORIGIN_CARD.title}
           subtitle={EVOLVE_ORIGIN_CARD.subtitle}
-          body={EVOLVE_ORIGIN_CARD.body}
           cta={EVOLVE_ORIGIN_CARD.cta}
           panel="evolve"
           onExpand={onExpandEvolve}

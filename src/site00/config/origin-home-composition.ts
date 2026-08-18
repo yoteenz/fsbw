@@ -27,10 +27,10 @@ export const SITE00_ORIGIN_DESKTOP_COMPOSITION = {
   panelIconOffsetYPx: 11,
   /** @deprecated Use panelIconSizePx — kept for reference: 48.51/80 ≈ 0.606 */
   panelIconScale: 0.606,
-  /** Expanded IDNTY/BLDR panel — centered over plaza (same anchor as collapsed cards). */
+  /** Expanded IDNTY/BLDR/EVOLVE panel — centered over plaza (same anchor as collapsed cards). */
   expandedMaxWidthPx: 680,
-  /** Expanded panel visual scale (1 = full; 0.875 = prior 0.7 × 1.25). Desktop only via CSS. */
-  expandedPanelScale: 0.875,
+  /** Expanded panel visual scale — 0.875 prior × 0.85 (−15%) = 0.74375. Desktop only via CSS. */
+  expandedPanelScale: 0.74375,
   /** Framework pillar PNG size on expanded panels (32px base × 1.2). */
   frameworkIconSizePx: 38.4,
   /** "YOU ARE AT 00.00 ORIGIN POINT" — independent desktop anchor (px from stage top). */
