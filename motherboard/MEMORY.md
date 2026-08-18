@@ -54045,21 +54045,34 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 ---
 
-## 2026-08-18 — SITE 00 mobile navigation architecture (Directory + Fast Travel)
+## 2026-08-18 — ENTER 00 desktop background position + no-scroll viewport
 
-- **Context:** Founder sprint — restructure **mobile-only** SITE 00 navigation per approved moodboard: **ORIGIN**, **DIRECTORY/LOCATIONS**, **DESTINATION/Fast Travel** as separate concepts. Remove duplicate hamburger; preserve desktop nav.
+- **Context:** Founder sprint — desktop `/enter` had background positioned too low (empty upper architecture), pushing YOUR SPACE panel below fold and forcing scroll.
+- **Decisions / outcomes:**
+  - Shift desktop ENTER background upward via `background-position` (34% base, 38% @900px+, 41% @1080px+) — desktop-only `.site00-enter-page` rules; mobile `55% center` unchanged.
+  - `ENTER_00_WAITING_ROOM.desktopPosition` → `center 34%` (CSS overrides refine per height).
+  - Enter env layer `position: fixed` inside artboard so background fills full viewport while UI scales.
+  - Enter artboard uses **contain scaling** (`min(scaleW, scaleH)`) in `Site00DesktopArtboardShell` so 900×1440 composition fits 768–1080px heights without shell scroll.
+  - Artboard shell `overflow: hidden` for enter; short-height spacing tighten @max-height 800px only if needed.
+- **Changes:** `environments.ts`, `site00.css`, `site00-desktop-artboard.css`, `Site00DesktopArtboardShell.tsx`.
+- **Verification:** Playwright QA — no scroll, bottom strip visible at 1366×768, 1440×900, 1600×900, 1920×1080; background-position 34–41% applied.
 
-- **Directory (`/origin/locations`):** EXIT 00 × header (→ Origin); LOCATIONS hero; PUBLIC WORLD 01–06 + YOUR SPACE 07–10; auth-locked cards (CTRL ROOM, PROJECTS, MY SITES) show lock + SIGN IN TO ENTER when signed out.
+---
 
-- **Fast Travel:** Config `src/site00/config/fast-travel.ts`; PNG trigger `89815B1A-ACFF-474B-8AA3-E7B97E7B40F2.png`; contextual panel with CURRENT LOCATION, UP NEXT, QUICK JUMP, MY SPACE, RETURN; overlay preserves page state; browser back closes panel.
+## 2026-08-18 — EVOLVE third primary SITE 00 service (architectural + implementation sprint)
 
-- **Components/shells:** `FastTravelTrigger`, `FastTravelPanel`, directory header/exit; hamburger removed from mobile/ecosystem/auth shells.
-
-- **Styles:** `site00-fast-travel.css` + directory section updates.
-
-- **QA (375px):** Directory + EXIT 00 pass; Services Fast Travel CURRENT LOCATION pass; fixed link navigation (`replaceState` vs `history.back()`).
-
-- **Spatial Architecture Review:** SKIPPED — navigation infrastructure sprint.
-
-- **Deploy:** Sync-only; say **deploy now** for Vercel.
+- **Context:** Founder sprint — implement **EVOLVE** as third first-class SITE 00 service alongside **IDNTY** and **BLDR** (transform existing digital properties). Must reuse IDNTY/BLDR visual system — no new design system. Visual board = content hierarchy only.
+- **Topics covered:** Origin 03 panel, expanded state, `/evolve` hub, path selection (REFINE/INSTALL/TRANSFORM), 6-step onboarding (PROPERTY→DIAGNOSE→SYSTEMS→ACCESS→SCOPE→ENTER STUDIO), data-driven capability registry, secure access (no plaintext secrets), mobile Locations + menu, Services seed, Projects service filter, Supabase evolve intakes + `service_line` on projects.
+- **Decisions / outcomes:**
+  - **EVOLVE = sibling service** — not nested under BLDR; `HomeMode` adds `evolve-expanded`; Origin shows three equal cards (01 IDNTY, 02 BLDR, 03 EVOLVE).
+  - **Routes promoted:** `SITE00_ROUTES.evolve`, `evolveState`, `evolveStateDesktop`; assessment at `/evolve/:pathSlug/{property|diagnose|systems|access|scope|enter-studio|complete}` (+ desktop artboard).
+  - **Icon placeholders:** `/public/assets/evolve/evolve-{master,refine,install,transform}.svg` — swap files without component restructure.
+  - **Capability registry:** `src/site00/config/capability-registry.ts` — data-driven SITE 00 installable systems for EVOLVE onboarding + future Studio/Services.
+  - **Scope engine:** `evolve-assessment-scope.ts` — structured assessment with `PENDING_ASSESSMENT`; no fabricated audit results.
+  - **Persistence:** `useEvolveAssessment` → localStorage `site00_evolve_assessment_v1`.
+  - **Production migration applied:** `20260818190000_site00_evolve_service.sql` → `site00_evolve_intakes` + `site00_projects.service_line` on project `hyycomvcaqxxvyrfupes`.
+- **Key paths:** `config/evolve.ts`, `config/evolve-assessment.ts`, `components/homepage/EvolveExpandedPanel.tsx`, `pages/evolve/EvolveHubPage.tsx`, `pages/EvolveStatePage.tsx`, `pages/evolve/assessment/*`, `hooks/useEvolveAssessment.ts`.
+- **Navigation:** Mobile directory + Locations entry 06 EVOLVE; Services seed third card; Projects page IDNTY/BLDR/EVOLVE filter + +EVOLVE CTA; contextual `site00MobileEvolveNavHref`.
+- **Verification:** `npm run build` pass; Supabase MCP `apply_migration` success; `site00_evolve_intakes` columns verified via `execute_sql`.
+- **Spatial Architecture Review:** SKIPPED — SITE 00 public service extension mirroring IDNTY/BLDR patterns, not new Studio OS surfaces.
 

@@ -18,6 +18,7 @@ type Site00ContextValue = {
   setHomeMode: (mode: HomeMode) => void;
   selectIdentityState: (stateId: string) => void;
   selectBuildClass: (classId: string) => void;
+  selectEvolvePath: (pathId: string) => void;
   clearSelections: () => void;
   setPreviewDeviceMode: (mode: Site00PreviewDeviceMode) => void;
   /** True when public/Origin routes should render desktop presentation. */
@@ -67,6 +68,7 @@ export function Site00Provider({ children }: { children: ReactNode }) {
     setHomeMode: (mode) => dispatch({ type: 'SET_HOME_MODE', mode }),
     selectIdentityState: (stateId) => dispatch({ type: 'SELECT_IDENTITY_STATE', stateId }),
     selectBuildClass: (classId) => dispatch({ type: 'SELECT_BUILD_CLASS', classId }),
+    selectEvolvePath: (pathId) => dispatch({ type: 'SELECT_EVOLVE_PATH', pathId }),
     clearSelections: () => dispatch({ type: 'CLEAR_SELECTIONS' }),
     setPreviewDeviceMode: (mode) => dispatch({ type: 'SET_PREVIEW_DEVICE_MODE', mode }),
     isPreviewDesktop,

@@ -18,7 +18,6 @@ import { site00PublicDesktopPath } from '../site00/config/site00-public-pages';
 /* Eager-load SITE 00 + ASSTS styles (lazy route CSS was not applying on mobile preview). */
 import '../site00/styles/site00.css';
 import '../site00/styles/site00-locations.css';
-import '../site00/styles/site00-fast-travel.css';
 import '../site00/styles/site00-bldr-entry.css';
 import '../site00/styles/site00-loader.css';
 import '../site00/styles/site00-desktop-artboard.css';
@@ -39,6 +38,8 @@ const Site00IdntyPage = lazy(() => import('../site00/pages/IdntyPage'));
 const Site00IdntyStatePage = lazy(() => import('../site00/pages/IdntyStatePage'));
 const Site00BldrPage = lazy(() => import('../site00/pages/BldrPage'));
 const Site00BldrStatePage = lazy(() => import('../site00/pages/BldrStatePage'));
+const Site00EvolvePage = lazy(() => import('../site00/pages/EvolvePage'));
+const Site00EvolveStatePage = lazy(() => import('../site00/pages/EvolveStatePage'));
 const Site00SignInPage = lazy(() => import('../site00/pages/Site00SignInPage'));
 const ControlOverviewPage = lazy(() => import('../site00/pages/control/ControlOverviewPage'));
 const ControlSectionPage = lazy(() => import('../site00/pages/control/ControlSectionPage'));
@@ -65,6 +66,7 @@ const AsstsProfilePage = lazy(() => import('../site00/assts/pages/ProfilePage'))
 const ProjectProvisioningPage = lazy(() => import('../site00/pages/provisioning/ProjectProvisioningPage'));
 const IdntyAssessmentRouterPage = lazy(() => import('../site00/pages/idnty/assessment/IdntyAssessmentRouterPage'));
 const BldrAssessmentRouterPage = lazy(() => import('../site00/pages/bldr/assessment/BldrAssessmentRouterPage'));
+const EvolveAssessmentRouterPage = lazy(() => import('../site00/pages/evolve/assessment/EvolveAssessmentRouterPage'));
 
 function Site00Suspense({ children }: { children: ReactNode }) {
   return <Suspense fallback={<Site00RouteLoadingFallback />}>{children}</Suspense>;
@@ -276,6 +278,29 @@ export function Site00Routes() {
           </Site00Layout>
         }
       />
+      {Site00PublicPageRoutes(SITE00_ROUTES.evolve, Site00EvolvePage)}
+      <Route
+        path={SITE00_ROUTES.evolveState}
+        element={
+          <Site00Layout>
+            <Site00Suspense>
+              <Site00EvolveStatePage />
+            </Site00Suspense>
+          </Site00Layout>
+        }
+      />
+      <Route
+        path={SITE00_ROUTES.evolveStateDesktop}
+        element={
+          <Site00Layout>
+            <Site00DesktopArtboardShell>
+              <Site00Suspense>
+                <Site00EvolveStatePage />
+              </Site00Suspense>
+            </Site00DesktopArtboardShell>
+          </Site00Layout>
+        }
+      />
       {/* ASSTS Asset Vault — admin-only internal review surface */}
       <Route path="/assts" element={<AdminGuard />}>
         <Route element={<AsstsColdStartGate />}>
@@ -413,6 +438,28 @@ export function Site00Routes() {
             <Site00DesktopArtboardShell>
               <Site00Suspense>
                 <BldrAssessmentRouterPage />
+              </Site00Suspense>
+            </Site00DesktopArtboardShell>
+          </Site00Layout>
+        }
+      />
+      <Route
+        path="/evolve/:pathSlug/*"
+        element={
+          <Site00Layout>
+            <Site00Suspense>
+              <EvolveAssessmentRouterPage />
+            </Site00Suspense>
+          </Site00Layout>
+        }
+      />
+      <Route
+        path="/evolve/:pathSlug/desktop/*"
+        element={
+          <Site00Layout>
+            <Site00DesktopArtboardShell>
+              <Site00Suspense>
+                <EvolveAssessmentRouterPage />
               </Site00Suspense>
             </Site00DesktopArtboardShell>
           </Site00Layout>

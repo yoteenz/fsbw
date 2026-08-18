@@ -18,6 +18,10 @@ export const SITE00_ROUTES = {
   bldrStart: '/bldr/start',
   bldrState: '/bldr/state',
   bldrStateDesktop: '/bldr/state/desktop',
+  evolve: '/evolve',
+  evolveState: '/evolve/state',
+  evolveStateDesktop: '/evolve/state/desktop',
+  evolveStart: '/evolve/start',
   assts: '/assts',
   asstsBatch: '/assts/batches/:batchId',
   asstsAsset: '/assts/:assetId',
@@ -45,7 +49,6 @@ export const SITE00_FUTURE_ROUTES = {
   bluprint: '/bluprint',
   build: '/build',
   live: '/live',
-  evolve: '/evolve',
   account: '/account',
 } as const;
 
@@ -53,6 +56,11 @@ export type Site00RouteKey = keyof typeof SITE00_ROUTES;
 
 export function isSite00BldrStateDesktopPath(pathname: string): boolean {
   const desktop = SITE00_ROUTES.bldrStateDesktop;
+  return pathname === desktop || pathname.startsWith(`${desktop}/`);
+}
+
+export function isSite00EvolveStateDesktopPath(pathname: string): boolean {
+  const desktop = SITE00_ROUTES.evolveStateDesktop;
   return pathname === desktop || pathname.startsWith(`${desktop}/`);
 }
 
@@ -119,6 +127,32 @@ export function site00BldrAssessmentMobilePath(pathname: string): string {
   return pathname.replace(/\/desktop(\/|$)/, (_, slash) => slash || '');
 }
 
+export const EVOLVE_ASSESSMENT_PATH_SLUGS = ['refine', 'install', 'transform'] as const;
+
+export type EvolveAssessmentRouteSlug = (typeof EVOLVE_ASSESSMENT_PATH_SLUGS)[number];
+
+export function isSite00EvolveAssessmentPath(pathname: string): boolean {
+  const normalized = pathname.replace(/\/desktop(\/|$)/, '/');
+  return EVOLVE_ASSESSMENT_PATH_SLUGS.some(
+    (slug) => normalized === `/evolve/${slug}` || normalized.startsWith(`/evolve/${slug}/`),
+  );
+}
+
+export function isSite00EvolveAssessmentDesktopPath(pathname: string): boolean {
+  return EVOLVE_ASSESSMENT_PATH_SLUGS.some(
+    (slug) => pathname === `/evolve/${slug}/desktop` || pathname.startsWith(`/evolve/${slug}/desktop/`),
+  );
+}
+
+export function site00EvolveAssessmentDesktopPath(mobilePath: string): string {
+  if (mobilePath.endsWith('/desktop')) return mobilePath;
+  return `${mobilePath.replace(/\/$/, '')}/desktop`;
+}
+
+export function site00EvolveAssessmentMobilePath(pathname: string): string {
+  return pathname.replace(/\/desktop(\/|$)/, (_, slash) => slash || '');
+}
+
 export function isSite00OriginDesktopPath(pathname: string): boolean {
   const desktop = SITE00_ROUTES.originDesktop;
   return pathname === desktop || pathname.startsWith(`${desktop}/`);
@@ -148,4 +182,18 @@ export function site00MobileBuildNavHref(pathname: string): string {
     return site00BldrAssessmentMobilePath(pathname);
   }
   return SITE00_ROUTES.bldr;
+}
+
+/** Mobile bottom nav — contextual EVOLVE workflow on state/assessment routes. */
+export function site00MobileEvolveNavHref(pathname: string): string {
+  if (isSite00EvolveStateDesktopPath(pathname)) {
+    return SITE00_ROUTES.evolveStateDesktop;
+  }
+  if (pathname.startsWith(SITE00_ROUTES.evolveState)) {
+    return SITE00_ROUTES.evolveState;
+  }
+  if (isSite00EvolveAssessmentPath(pathname)) {
+    return site00EvolveAssessmentMobilePath(pathname);
+  }
+  return SITE00_ROUTES.evolve;
 }

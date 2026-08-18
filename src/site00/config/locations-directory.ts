@@ -4,7 +4,7 @@
  */
 
 import { SITE00_CTRL_ROOM_PATH, site00SignInHrefWithReturnTo } from './mobile-directory-nav';
-import { SITE00_ROUTES, site00MobileBuildNavHref } from './routes';
+import { SITE00_ROUTES, site00MobileBuildNavHref, site00MobileEvolveNavHref } from './routes';
 
 export type LocationsDirectoryEntry = {
   id: string;
@@ -37,8 +37,16 @@ const PUBLIC_WORLD: LocationsDirectoryEntry[] = [
     enabled: true,
   },
   {
-    id: 'sites',
+    id: 'evolve',
     index: '02',
+    title: 'EVOLVE',
+    descriptionLines: ['TRANSFORM WHAT', 'ALREADY EXISTS.'],
+    href: SITE00_ROUTES.evolve,
+    enabled: true,
+  },
+  {
+    id: 'sites',
+    index: '03',
     title: 'SITES',
     descriptionLines: ["EXPLORE WHAT'S", 'ALREADY BUILT.'],
     href: SITE00_ROUTES.sites,
@@ -46,7 +54,7 @@ const PUBLIC_WORLD: LocationsDirectoryEntry[] = [
   },
   {
     id: 'services',
-    index: '03',
+    index: '04',
     title: 'SERVICES',
     descriptionLines: ['WHAT WE', 'BUILD.'],
     href: SITE00_ROUTES.services,
@@ -54,7 +62,7 @@ const PUBLIC_WORLD: LocationsDirectoryEntry[] = [
   },
   {
     id: 'system',
-    index: '04',
+    index: '05',
     title: 'SYSTEM',
     descriptionLines: ['HOW SITE 00', 'WORKS.'],
     href: SITE00_ROUTES.system,
@@ -62,7 +70,7 @@ const PUBLIC_WORLD: LocationsDirectoryEntry[] = [
   },
   {
     id: 'about',
-    index: '05',
+    index: '06',
     title: 'ABOUT',
     descriptionLines: ['WHO WE ARE', '& WHY WE BUILD.'],
     href: SITE00_ROUTES.about,
@@ -70,7 +78,7 @@ const PUBLIC_WORLD: LocationsDirectoryEntry[] = [
   },
   {
     id: 'journal',
-    index: '06',
+    index: '07',
     title: 'JOURNAL',
     descriptionLines: ['INSIGHTS &', 'UPDATES.'],
     href: SITE00_ROUTES.journal,
@@ -81,7 +89,7 @@ const PUBLIC_WORLD: LocationsDirectoryEntry[] = [
 const YOUR_SPACE: LocationsDirectoryEntry[] = [
   {
     id: 'idnty',
-    index: '07',
+    index: '08',
     title: 'IDNTY',
     descriptionLines: ['YOUR ACCESS', 'STARTS HERE.'],
     href: SITE00_ROUTES.idnty,
@@ -89,7 +97,7 @@ const YOUR_SPACE: LocationsDirectoryEntry[] = [
   },
   {
     id: 'ctrl-room',
-    index: '08',
+    index: '09',
     title: 'CTRL ROOM',
     descriptionLines: ['WHAT NEEDS YOUR', 'ATTENTION.'],
     href: SITE00_CTRL_ROOM_PATH,
@@ -98,7 +106,7 @@ const YOUR_SPACE: LocationsDirectoryEntry[] = [
   },
   {
     id: 'projects',
-    index: '09',
+    index: '10',
     title: 'PROJECTS',
     descriptionLines: ['WHAT ARE WE', 'BUILDING?'],
     href: SITE00_ROUTES.projects,
@@ -107,7 +115,7 @@ const YOUR_SPACE: LocationsDirectoryEntry[] = [
   },
   {
     id: 'my-sites',
-    index: '10',
+    index: '11',
     title: 'MY SITES',
     descriptionLines: ['WHAT HAS BEEN', 'BUILT?'],
     href: SITE00_ROUTES.controlSites,
@@ -134,6 +142,9 @@ export function resolveDirectoryEntryHref(
 ): string {
   if (entry.id === 'bldr') {
     return site00MobileBuildNavHref(pathname);
+  }
+  if (entry.id === 'evolve') {
+    return site00MobileEvolveNavHref(pathname);
   }
   if (entry.requiresAuth && !isSignedIn) {
     return site00SignInHrefWithReturnTo({ pathname: entry.href, search: '' });

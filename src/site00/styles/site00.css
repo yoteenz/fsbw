@@ -1209,6 +1209,11 @@
   gap: 16px;
 }
 
+.site00-origin-cards__row--three {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
 .site00-origin-card__icon-wrap {
   display: flex;
   align-items: center;

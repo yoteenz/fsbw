@@ -1,21 +1,28 @@
 import {
   site00OriginBldrPanelIconUrl,
+  site00OriginEvolvePanelIconUrl,
   site00OriginIdntyPanelIconUrl,
 } from '../../config/origin-panel-icons';
 
 type OriginPanelIconProps = {
-  panel: 'idnty' | 'bldr';
+  panel: 'idnty' | 'bldr' | 'evolve';
   size?: 'md' | 'lg';
   className?: string;
 };
 
 const SIZE_PX = { md: 80, lg: 88 } as const;
 
-/** Approved production panel icon — Origin desktop IDNTY/BLDR panels (black-bg PNG, screen blend). */
+/** Approved production panel icon — Origin desktop IDNTY/BLDR/EVOLVE panels. */
 export function OriginPanelIcon({ panel, size = 'md', className = '' }: OriginPanelIconProps) {
   const dim = SIZE_PX[size];
-  const src = panel === 'idnty' ? site00OriginIdntyPanelIconUrl() : site00OriginBldrPanelIconUrl();
-  const alt = panel === 'idnty' ? 'IDNTY panel icon' : 'BLDR panel icon';
+  const src =
+    panel === 'idnty'
+      ? site00OriginIdntyPanelIconUrl()
+      : panel === 'bldr'
+        ? site00OriginBldrPanelIconUrl()
+        : site00OriginEvolvePanelIconUrl();
+  const alt =
+    panel === 'idnty' ? 'IDNTY panel icon' : panel === 'bldr' ? 'BLDR panel icon' : 'EVOLVE panel icon';
 
   return (
     <img

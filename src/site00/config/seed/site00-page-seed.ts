@@ -17,6 +17,7 @@ export const SITE00_PORTFOLIO_SEED: PortfolioProjectSeed[] = [];
 export const SITE00_SERVICES_SEED = [
   { id: 'branding', title: 'BRANDING & IDENTITY', description: 'VISUAL SYSTEMS, IDENTITY ARCHITECTURE, AND BRAND FOUNDATIONS.', cta: 'EXPLORE →', href: '/idnty' },
   { id: 'web', title: 'WEB DESIGN & DEVELOPMENT', description: 'SPATIAL DIGITAL PLACES DESIGNED AND BUILT TO LAUNCH.', cta: 'START BUILD →', href: '/bldr' },
+  { id: 'evolve', title: 'EVOLVE', description: 'IMPROVE, EXTEND, AND TRANSFORM EXISTING DIGITAL PROPERTIES.', cta: 'EXPLORE EVOLVE →', href: '/evolve' },
   { id: 'ai', title: 'AI & AUTOMATION', description: 'INTELLIGENT SYSTEMS INTEGRATED INTO YOUR BUILD WORKFLOW.', cta: 'VIEW →', href: '/services#integrations' },
   { id: 'content', title: 'CONTENT & CREATIVE', description: 'EDITORIAL ASSETS, CREATIVE DIRECTION, AND PRODUCTION SUPPORT.', cta: 'VIEW →', href: '/services#forms' },
   { id: 'systems', title: 'SYSTEMS & INFRASTRUCTURE', description: 'THE OPERATING ARCHITECTURE THAT POWERS SITE 00 BUILDS.', cta: 'VIEW SYSTEM →', href: '/system' },
