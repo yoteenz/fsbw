@@ -53478,7 +53478,17 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Changes:** `site00.css` — desktop `.site00-home-hero__line + .site00-home-hero__coordinate { margin-top: 6px }` (adjacent-sibling selector; avoids `:last-of-type` mismatch because coordinate is last `<p>`); mobile `--mobile-layout` shows `.site00-home-hero` fixed top-right (`text-align: right`) with eyebrow/title/tagline only — hides description lines + coordinate. `site00-desktop-artboard.css` — same 6px adjacent-sibling rule for artboard route.
 
-- **Verification:** Playwright — mobile 390×844 hero `position: fixed; right: 16px`, description lines `display: none`; desktop `/origin/desktop` measured **6px** gap between last description and coordinate, red `00.00`.
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — Origin desktop coordinate gap: padding-top fix (overwrite)
+
+- **Context:** Founder reported **6px above** “YOU ARE AT 00.00 ORIGIN POINT” still not visible on desktop — margin-top rule appeared in CSS but had no effect (margin collapse + broken `:last-of-type` on lines because coordinate is the last `<p>`).
+
+- **Fix:** `coordinateGapPx: 6` in `origin-home-composition.ts`; `--site00-origin-coordinate-gap` on `OriginPage` stage. Desktop + artboard use **`padding-top: var(--site00-origin-coordinate-gap, 6px)`** on `.site00-home-hero__coordinate` (not margin-top); last description line `.site00-home-hero__line:nth-last-child(2) { margin-bottom: 0 }`. Removed dead `.site00-home-hero__line:last-of-type { margin-bottom: 32px }` (never matched).
+
+- **Verification:** Playwright `/origin/desktop` — `paddingTop: 6px`, text-to-text gap **6px**.
 
 - **Deploy:** Sync-only; say **deploy now** for Vercel.
 
