@@ -6,7 +6,7 @@ import { Site00AuthIntro } from './Site00AuthIntro';
 import { Site00OrbitalMark } from './Site00OrbitalMark';
 import { Site00SignInForm } from './Site00SignInForm';
 import { Site00MobileHeader } from '../mobile/Site00MobileHeader';
-import { Site00MobileMenuDrawer } from '../mobile/Site00MobileMenuDrawer';
+import { FastTravelPanel } from '../fast-travel/FastTravelPanel';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 
 type Site00AuthShellProps = {
@@ -16,17 +16,17 @@ type Site00AuthShellProps = {
 const signInBgUrl = resolveSite00PublicAsset(SITE00_SIGNIN_DESKTOP_BG_FILE);
 
 export function Site00AuthShell({ children }: Site00AuthShellProps) {
-  const [menuOpen, setMenuOpen] = useState(false);
-  const menuTriggerRef = useRef<HTMLButtonElement>(null);
+  const [fastTravelOpen, setFastTravelOpen] = useState(false);
+  const fastTravelTriggerRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
-    if (!menuOpen) return;
+    if (!fastTravelOpen) return;
     const onKey = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setMenuOpen(false);
+      if (event.key === 'Escape') setFastTravelOpen(false);
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [menuOpen]);
+  }, [fastTravelOpen]);
 
   useEffect(() => {
     if (!signInBgUrl) return;
@@ -72,15 +72,19 @@ export function Site00AuthShell({ children }: Site00AuthShellProps) {
 
       <div className="site00-auth-shell__mobile">
         <Site00MobileHeader
-          onMenuOpen={() => setMenuOpen(true)}
-          menuExpanded={menuOpen}
-          menuButtonRef={menuTriggerRef}
+          onFastTravelOpen={() => setFastTravelOpen(true)}
+          fastTravelExpanded={fastTravelOpen}
+          fastTravelTriggerRef={fastTravelTriggerRef}
         />
         <main className="site00-auth-shell__mobile-main">
           <Site00AuthIntro variant="mobile" />
           {children ?? <Site00SignInForm layout="mobile" />}
         </main>
-        <Site00MobileMenuDrawer open={menuOpen} onClose={() => setMenuOpen(false)} returnFocusRef={menuTriggerRef} />
+        <FastTravelPanel
+          open={fastTravelOpen}
+          onClose={() => setFastTravelOpen(false)}
+          returnFocusRef={fastTravelTriggerRef}
+        />
       </div>
     </div>
   );

@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { useLocation } from 'react-router-dom';
 import { MobileEnvironmentBackground } from './MobileEnvironmentBackground';
-import { Site00MobileHeader } from './Site00MobileHeader';
+import { Site00MobileHeader, type Site00MobileHeaderVariant } from './Site00MobileHeader';
 import { Site00MobileNav } from './Site00MobileNav';
-import { Site00MobileMenuDrawer } from './Site00MobileMenuDrawer';
+import { FastTravelPanel } from '../fast-travel/FastTravelPanel';
 import type { Site00MobileNavId } from '../../config/locations-directory';
 import { isLocationsCompositionDebugEnabled } from '../../config/locations-composition-map';
 import { isBldrCompositionDebugEnabled } from '../../config/bldr-composition-map';
@@ -17,10 +17,11 @@ type Site00MobileShellProps = {
   /** When false, page supplies its own pale shell background (Screen 02 BLDR entry). */
   showEnvironmentBackground?: boolean;
   shellClassName?: string;
+  headerVariant?: Site00MobileHeaderVariant;
 };
 
 /**
- * Mobile-only SITE 00 shell — Screen 01 Locations, Screen 02 BLDR entry, and related surfaces.
+ * Mobile-only SITE 00 shell — Locations directory, BLDR entry, and related surfaces.
  * Desktop routes must not use this component.
  */
 export function Site00MobileShell({
@@ -29,39 +30,46 @@ export function Site00MobileShell({
   enterClassName = '',
   showEnvironmentBackground = true,
   shellClassName = '',
+  headerVariant = 'default',
 }: Site00MobileShellProps) {
   const { search, pathname } = useLocation();
-  const [menuOpen, setMenuOpen] = useState(false);
-  const menuTriggerRef = useRef<HTMLButtonElement>(null);
+  const [fastTravelOpen, setFastTravelOpen] = useState(false);
+  const fastTravelTriggerRef = useRef<HTMLButtonElement>(null);
   const locationsDebug = isLocationsCompositionDebugEnabled(search) && pathname.startsWith('/origin/locations');
   const bldrDebug = isBldrCompositionDebugEnabled(search) && pathname.startsWith('/bldr');
 
   useEffect(() => {
-    if (!menuOpen) return;
+    if (!fastTravelOpen) return;
     const onKey = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setMenuOpen(false);
+      if (event.key === 'Escape') setFastTravelOpen(false);
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [menuOpen]);
+  }, [fastTravelOpen]);
 
-  const closeMenu = () => {
-    setMenuOpen(false);
-  };
+  const resolvedHeaderVariant =
+    headerVariant === 'directory' || pathname.startsWith('/origin/locations') ? 'directory' : 'default';
 
   return (
     <div className={`site00-mobile-shell ${shellClassName} ${enterClassName}`.trim()}>
       {showEnvironmentBackground ? <MobileEnvironmentBackground /> : null}
       <div className="site00-mobile-shell__content">
         <Site00MobileHeader
-          onMenuOpen={() => setMenuOpen(true)}
-          menuExpanded={menuOpen}
-          menuButtonRef={menuTriggerRef}
+          variant={resolvedHeaderVariant}
+          onFastTravelOpen={() => setFastTravelOpen(true)}
+          fastTravelExpanded={fastTravelOpen}
+          fastTravelTriggerRef={fastTravelTriggerRef}
         />
         <main className="site00-mobile-shell__main">{children}</main>
         <Site00MobileNav active={activeNav} />
       </div>
-      <Site00MobileMenuDrawer open={menuOpen} onClose={closeMenu} returnFocusRef={menuTriggerRef} />
+      {resolvedHeaderVariant === 'default' ? (
+        <FastTravelPanel
+          open={fastTravelOpen}
+          onClose={() => setFastTravelOpen(false)}
+          returnFocusRef={fastTravelTriggerRef}
+        />
+      ) : null}
       {locationsDebug ? <LocationsCompositionDebug /> : null}
       {bldrDebug ? <BldrCompositionDebug /> : null}
     </div>

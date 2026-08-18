@@ -70,6 +70,16 @@ export function Site00BuildDirectionArrowIcon({ size = 16, className }: Site00Li
   );
 }
 
+export function Site00LockIcon({ size = 12, className }: Site00LineIconProps) {
+  const s = { ...site00IconStrokeProps(), strokeWidth: 1.25, stroke: 'var(--site-red)' };
+  return (
+    <svg className={className} width={size} height={size} viewBox="0 0 12 12" fill="none" aria-hidden="true">
+      <rect x={2.5} y={5} width={7} height={5.5} rx={1} {...s} />
+      <path d="M4 5 V3.75 C4 2.23 5.12 1 6.5 1 C7.88 1 9 2.23 9 3.75 V5" {...s} />
+    </svg>
+  );
+}
+
 /** Decorative vertical interchange marker between SITE and WORLD cards. */
 export function Site00DirectionInterchangeIcon({ size = 14, className }: Site00LineIconProps) {
   const s = { ...site00IconStrokeProps(), strokeWidth: 1.25 };

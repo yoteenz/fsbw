@@ -1,29 +1,36 @@
 import { Site00LogoBlock } from '../shell/Site00LogoBlock';
-import { Site00HamburgerIcon } from './Site00MobileIcons';
+import { FastTravelTrigger } from '../fast-travel/FastTravelTrigger';
+import { DirectoryExitButton } from '../locations/DirectoryExitButton';
 import type { RefObject } from 'react';
 
+export type Site00MobileHeaderVariant = 'default' | 'directory';
+
 type Site00MobileHeaderProps = {
-  onMenuOpen: () => void;
-  menuExpanded?: boolean;
-  menuButtonRef?: RefObject<HTMLButtonElement>;
+  variant?: Site00MobileHeaderVariant;
+  onFastTravelOpen?: () => void;
+  fastTravelExpanded?: boolean;
+  fastTravelTriggerRef?: RefObject<HTMLButtonElement>;
 };
 
-/** Screen 01 mobile header — SITE 00 mark + hamburger (no location bracket). */
-export function Site00MobileHeader({ onMenuOpen, menuExpanded = false, menuButtonRef }: Site00MobileHeaderProps) {
+/** Mobile header — SITE 00 mark + Fast Travel trigger, or EXIT 00 on the directory page. */
+export function Site00MobileHeader({
+  variant = 'default',
+  onFastTravelOpen,
+  fastTravelExpanded = false,
+  fastTravelTriggerRef,
+}: Site00MobileHeaderProps) {
   return (
     <header className="site00-mobile-header">
       <Site00LogoBlock showBracket={false} />
-      <button
-        ref={menuButtonRef}
-        type="button"
-        className="site00-mobile-header__menu"
-        aria-label="Open SITE 00 navigation menu"
-        aria-expanded={menuExpanded}
-        aria-controls="site00-mobile-menu"
-        onClick={onMenuOpen}
-      >
-        <Site00HamburgerIcon size={20} />
-      </button>
+      {variant === 'directory' ? (
+        <DirectoryExitButton />
+      ) : (
+        <FastTravelTrigger
+          onOpen={() => onFastTravelOpen?.()}
+          expanded={fastTravelExpanded}
+          buttonRef={fastTravelTriggerRef}
+        />
+      )}
     </header>
   );
 }
