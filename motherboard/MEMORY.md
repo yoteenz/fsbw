@@ -53337,3 +53337,13 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Verification:** Playwright `/origin/desktop` — expand IDNTY, click hero → cards return; expand BLDR, click status strip → collapsed.
 
 - **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — Origin expanded panels: framework icons +20%
+
+- **Context:** Founder requested **20% larger** framework pillar icons on IDNTY/BLDR expanded panels (desktop Origin).
+
+- **Change:** `frameworkIconSizePx: 38.4` (32 × 1.2) in `origin-home-composition.ts`; `--site00-origin-framework-icon-size` on home stage; CSS + `BldrFrameworkIcon` / `IdntyFrameworkIcon` width/height updated.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
