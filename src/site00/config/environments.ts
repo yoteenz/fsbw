@@ -64,8 +64,8 @@ export const SITE00_ENVIRONMENTS: Record<EnvironmentId, EnvironmentConfig> = {
     mobileScale: 1.2,
     lightingClass: 'site00-env--workflow-lighting',
     fallbackClass: 'site00-env-fallback--workflow',
-    routes: ['/idnty/state', '/bldr/state', '/bldr/state/desktop'],
-    notes: 'Approved workflow hall — /idnty/state and /bldr/state only; 3A2AC3AD @ live-preview/site00',
+    routes: ['/idnty/state', '/idnty/state/desktop', '/bldr/state', '/bldr/state/desktop'],
+    notes: 'Approved workflow hall — /idnty/state and /bldr/state (+ desktop artboard routes); 3A2AC3AD @ live-preview/site00',
   },
   ENTER_00_WAITING_ROOM: {
     id: 'ENTER_00_WAITING_ROOM',

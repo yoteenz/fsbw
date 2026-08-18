@@ -1,6 +1,6 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { IDNTY_HOMEPAGE_EXPANDED, IDNTY_FRAMEWORK_PILLARS } from '../../config/identity';
-import { SITE00_ROUTES } from '../../config/routes';
+import { isSite00OriginDesktopPath, SITE00_ROUTES } from '../../config/routes';
 import { ArchitecturalPanel } from '../panels/ArchitecturalPanel';
 import { SectionRule } from '../panels/SectionRule';
 import { OriginPanelIcon } from './OriginPanelIcon';
@@ -13,6 +13,7 @@ type IdntyExpandedPanelProps = {
 
 export function IdntyExpandedPanel({ onCollapse }: IdntyExpandedPanelProps) {
   const navigate = useNavigate();
+  const { pathname } = useLocation();
   const copy = IDNTY_HOMEPAGE_EXPANDED;
 
   return (
@@ -99,7 +100,11 @@ export function IdntyExpandedPanel({ onCollapse }: IdntyExpandedPanelProps) {
           <ArrowAction
             label={copy.cta}
             variant="red"
-            onClick={() => navigate(SITE00_ROUTES.idntyState)}
+            onClick={() =>
+              navigate(
+                isSite00OriginDesktopPath(pathname) ? SITE00_ROUTES.idntyStateDesktop : SITE00_ROUTES.idntyState,
+              )
+            }
           />
           <button type="button" className="site00-btn-ghost" onClick={onCollapse}>
             BACK

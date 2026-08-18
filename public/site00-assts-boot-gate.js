@@ -30,6 +30,7 @@
   function shouldBootSite00ImmersiveLoader() {
     var path = (typeof window !== 'undefined' && window.location) ? window.location.pathname : '';
     if (path === '/origin/desktop' || path.indexOf('/origin/desktop/') === 0) return false;
+    if (path === '/idnty/state/desktop' || path.indexOf('/idnty/state/desktop/') === 0) return false;
     if (path === '/bldr/state/desktop' || path.indexOf('/bldr/state/desktop/') === 0) return false;
     try {
       var nav = performance.getEntriesByType('navigation')[0];

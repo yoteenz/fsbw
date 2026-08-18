@@ -1,5 +1,6 @@
 import { EnvironmentShell } from '../components/environment/EnvironmentShell';
 import { Site00AppShell } from '../components/shell/Site00AppShell';
+import { Site00OriginLayoutSwitch } from '../components/shell/Site00OriginLayoutSwitch';
 import {
   IDNTY_BRAND_STATES,
   IDNTY_INVESTMENT_TIERS,
@@ -74,6 +75,7 @@ export default function IdntyStatePage() {
           <WorkflowSummary text={IDNTY_STATE_COPY.footer} />
         </div>
       </Site00AppShell>
+      <Site00OriginLayoutSwitch />
     </EnvironmentShell>
   );
 }

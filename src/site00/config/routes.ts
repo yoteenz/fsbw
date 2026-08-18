@@ -11,6 +11,7 @@ export const SITE00_ROUTES = {
   enter: '/enter',
   idnty: '/idnty',
   idntyState: '/idnty/state',
+  idntyStateDesktop: '/idnty/state/desktop',
   bldr: '/bldr',
   bldrState: '/bldr/state',
   bldrStateDesktop: '/bldr/state/desktop',
@@ -40,6 +41,11 @@ export type Site00RouteKey = keyof typeof SITE00_ROUTES;
 
 export function isSite00BldrStateDesktopPath(pathname: string): boolean {
   const desktop = SITE00_ROUTES.bldrStateDesktop;
+  return pathname === desktop || pathname.startsWith(`${desktop}/`);
+}
+
+export function isSite00IdntyStateDesktopPath(pathname: string): boolean {
+  const desktop = SITE00_ROUTES.idntyStateDesktop;
   return pathname === desktop || pathname.startsWith(`${desktop}/`);
 }
 

@@ -149,6 +149,18 @@ export function Site00Routes() {
         }
       />
       <Route
+        path={SITE00_ROUTES.idntyStateDesktop}
+        element={
+          <Site00Layout>
+            <Site00DesktopArtboardShell>
+              <Site00Suspense>
+                <Site00IdntyStatePage />
+              </Site00Suspense>
+            </Site00DesktopArtboardShell>
+          </Site00Layout>
+        }
+      />
+      <Route
         path={SITE00_ROUTES.bldr}
         element={
           <Site00Layout>
