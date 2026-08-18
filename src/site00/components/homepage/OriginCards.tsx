@@ -1,4 +1,4 @@
-import { GeometricIcon } from '../icons/GeometricIcon';
+import { OriginPanelIcon } from './OriginPanelIcon';
 import { ArrowIconSmall } from '../icons/ArrowAction';
 
 type CollapsedCardProps = {
@@ -6,10 +6,11 @@ type CollapsedCardProps = {
   title: string;
   subtitle: string;
   cta: string;
+  panel: 'idnty' | 'bldr';
   onExpand: () => void;
 };
 
-export function CollapsedCard({ number, title, subtitle, cta, onExpand }: CollapsedCardProps) {
+export function CollapsedCard({ number, title, subtitle, cta, panel, onExpand }: CollapsedCardProps) {
   return (
     <button
       type="button"
@@ -41,8 +42,8 @@ export function CollapsedCard({ number, title, subtitle, cta, onExpand }: Collap
       <span className="site00-label" style={{ marginTop: 4 }}>
         {subtitle}
       </span>
-      <div style={{ margin: '16px 0' }}>
-        <GeometricIcon variant={number === '01' ? 'idnty-header' : 'bldr-header'} size="md" />
+      <div className="site00-origin-card__icon-wrap">
+        <OriginPanelIcon panel={panel} />
       </div>
       <span className="site00-action-link" style={{ marginTop: 'auto' }}>
         {cta}
@@ -72,6 +73,7 @@ export function OriginCards({ onExpandIdnty, onExpandBldr }: OriginCardsProps) {
           title="IDNTY"
           subtitle="DEFINE MY BRAND."
           cta="BEGIN IDNTY"
+          panel="idnty"
           onExpand={onExpandIdnty}
         />
         <CollapsedCard
@@ -79,6 +81,7 @@ export function OriginCards({ onExpandIdnty, onExpandBldr }: OriginCardsProps) {
           title="BLDR"
           subtitle="START MY BUILD."
           cta="BEGIN BLDR"
+          panel="bldr"
           onExpand={onExpandBldr}
         />
       </div>

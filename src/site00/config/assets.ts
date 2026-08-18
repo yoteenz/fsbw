@@ -102,6 +102,22 @@ export const SITE00_ASSET_REGISTRY: Site00Asset[] = [
     status: 'temporary',
     notes: 'CSS/SVG wireframe placeholders until production icon set',
   },
+  {
+    id: 'icon-origin-idnty-panel',
+    type: 'icon',
+    alt: 'IDNTY collapsed panel icon',
+    route: '/origin',
+    status: 'production',
+    notes: 'Desktop Origin panel — live-preview/site00/A97879A2-FFEA-4BD5-AC0A-74359620A851.png',
+  },
+  {
+    id: 'icon-origin-bldr-panel',
+    type: 'icon',
+    alt: 'BLDR collapsed panel icon',
+    route: '/origin',
+    status: 'production',
+    notes: 'Desktop Origin panel — live-preview/site00/0C81A5FC-35AD-4C8B-A292-5BF88E14193E.png',
+  },
 ];
 
 export function getAsset(id: string): Site00Asset | undefined {

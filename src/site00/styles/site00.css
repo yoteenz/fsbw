@@ -815,6 +815,20 @@
   gap: 16px;
 }
 
+.site00-origin-card__icon-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 16px 0;
+}
+
+.site00-origin-card__icon {
+  display: block;
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+}
+
 @media (min-width: 768px) {
   .site00-home-stage {
     --site00-origin-card-number-color: var(--site-red);

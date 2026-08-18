@@ -53098,6 +53098,7 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 ---
 
+<<<<<<< Updated upstream
 ## 2026-08-18 — SITE 00 mobile loader critical recovery (architecture rebuild)
 
 - **Context:** Founder sprint — loader regressed to **Broken State A** (narrow centered column, black side bars, animation in black box, wrong position) and **Broken State B** (blank gray/white page). Required full architecture recovery, not symptom patches.
@@ -53119,4 +53120,15 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Spatial Architecture Review:** SKIPPED — forensic recovery sprint, no new surfaces.
 
 - **Deploy:** Sync-only; say **deploy now** for Vercel preview.
+=======
+## 2026-08-18 — Origin desktop IDNTY/BLDR panel icons (approved PNGs)
+
+- **Context:** Founder supplied approved Supabase PNG icons for desktop Origin collapsed panels — **IDNTY** (`A97879A2-FFEA-4BD5-AC0A-74359620A851.png`) and **BLDR** (`0C81A5FC-35AD-4C8B-A292-5BF88E14193E.png`) from `live-preview/site00/`. Same chat also covered mobile Locations Directory, duplicated status-panel fix, and desktop artboard status-strip placement.
+
+- **Change:** Replaced wireframe `GeometricIcon` placeholders in collapsed `OriginCards` with production PNGs via `OriginPanelIcon` + `origin-panel-icons.ts` (`resolveSite00PublicAsset`). Asset registry entries `icon-origin-idnty-panel` / `icon-origin-bldr-panel`. CSS: `.site00-origin-card__icon-wrap` + `.site00-origin-card__icon` (64×64, object-fit contain). Expanded panels still use wireframe icons (not in scope).
+
+- **QA:** Playwright @1440 — `/origin` and `/origin/desktop` each render 2 icons with correct Supabase URLs; images load (natural dimensions ~1235×1274 / 1278×1230).
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+>>>>>>> Stashed changes
 
