@@ -1,5 +1,5 @@
 import { useEffect, useRef, type CSSProperties, type ReactNode } from 'react';
-import { type LoaderRegionId, loaderRegionStyleVars } from './loader-composition-map';
+import { type LoaderRegionId } from './loader-composition-map';
 import { useLoaderCompositionOptional } from './LoaderCompositionContext';
 
 type LoaderRegionProps = {
@@ -21,9 +21,9 @@ export function LoaderRegion({ id, children, className, allowOverflow, ariaLabel
     return () => ctx.registerRegion(id, null);
   }, [ctx, id]);
 
-  const style: CSSProperties = {
-    ...loaderRegionStyleVars(id),
-  };
+  const style: CSSProperties = ctx
+    ? ctx.composition.regionStyleVars(id)
+    : {};
 
   return (
     <div

@@ -3,6 +3,8 @@ import { createPortal } from 'react-dom';
 import { Outlet } from 'react-router-dom';
 import { acquireLoadingScreenDocumentLock } from '../../../platform-stabilization/loadingScreenLock';
 import { ASSTS_IMMERSIVE_LOADER_CONFIG } from '../../components/loader/site00LoaderConfig';
+import { isSite00OriginWideViewport } from '../../components/shell/site00OriginViewport';
+import { resolveSite00LoaderBackgroundUrl } from '../../components/loader/site00LoaderMedia';
 import { Site00ImmersiveLoader, type Site00ImmersiveLoaderPhase } from '../../components/loader/Site00ImmersiveLoader';
 import { initSite00ImmersiveLoaderBoot, teardownSite00ImmersiveBootShell } from '../../components/loader/site00LoaderBoot';
 import { resolveSite00LoaderGeometryPreloadUrl } from '../../components/loader/site00LoaderBootstrap';
@@ -109,7 +111,9 @@ export function AsstsColdStartGate() {
 
         void import('../pages/LibraryPage');
 
-        await preloadSite00LoaderBackground(config.backgroundUrl);
+        await preloadSite00LoaderBackground(
+          resolveSite00LoaderBackgroundUrl(isSite00OriginWideViewport() ? 'desktop' : 'mobile'),
+        );
         if (cancelled) return;
         completeStage('preparing');
 
@@ -174,7 +178,7 @@ export function AsstsColdStartGate() {
     return () => {
       cancelled = true;
     };
-  }, [immersive, completeStage, forceComplete, config.backgroundUrl]);
+  }, [immersive, completeStage, forceComplete]);
 
   const handleExitComplete = () => {
     markSite00ImmersiveComplete();

@@ -9,7 +9,12 @@ import {
   type ReactNode,
   type RefObject,
 } from 'react';
-import { ASSTS_LOADER_REFERENCE_CANVAS, ASSTS_LOADER_TYPOGRAPHY } from './loader-composition-map';
+import { ASSTS_LOADER_COMPOSITION_ID, ASSTS_LOADER_REFERENCE_CANVAS, ASSTS_LOADER_TYPOGRAPHY } from './loader-composition-map';
+import {
+  resolveLoaderComposition,
+  type LoaderCompositionBundle,
+  type LoaderPresentation,
+} from './loader-composition-resolver';
 import { isLoaderDebugEnabled, isLoaderRefMapEnabled } from './site00LoaderHeroStage';
 
 type LoaderCompositionContextValue = {
@@ -21,6 +26,8 @@ type LoaderCompositionContextValue = {
   registerRegion: (id: string, el: HTMLElement | null) => void;
   regionElements: Map<string, HTMLElement>;
   artboardRef: RefObject<HTMLDivElement | null>;
+  presentation: LoaderPresentation;
+  composition: LoaderCompositionBundle;
 };
 
 const LoaderCompositionContext = createContext<LoaderCompositionContextValue | null>(null);
@@ -39,6 +46,8 @@ export function useLoaderCompositionOptional() {
 
 type ProviderProps = {
   children: ReactNode;
+  /** Mobile (711×1536) or desktop (1672×941) artboard — Asset Vault only. */
+  presentation?: LoaderPresentation;
 };
 
 function readRefMapFromUrl(): boolean {
@@ -48,16 +57,19 @@ function readRefMapFromUrl(): boolean {
 }
 
 /**
- * Hybrid composition plane — aspect-preserving 711×1536 artboard for overlays only.
+ * Hybrid composition plane — aspect-preserving artboard for overlays only.
+ * Mobile: 711×1536. Desktop Asset Vault: 1672×941 landscape master.
  * Background renders full-bleed outside this provider (see Site00ImmersiveLoader).
- * Preserves geometry bounding-box aspect so animation does not letterbox.
  */
-export function LoaderCompositionProvider({ children }: ProviderProps) {
+export function LoaderCompositionProvider({ children, presentation = 'mobile' }: ProviderProps) {
+  const composition = useMemo(() => resolveLoaderComposition(presentation), [presentation]);
+  const canvas = composition.canvas;
+
   const viewportRef = useRef<HTMLDivElement>(null);
   const artboardRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(1);
-  const [stageWidth, setStageWidth] = useState<number>(ASSTS_LOADER_REFERENCE_CANVAS.width);
-  const [stageHeight, setStageHeight] = useState<number>(ASSTS_LOADER_REFERENCE_CANVAS.height);
+  const [stageWidth, setStageWidth] = useState<number>(canvas.width);
+  const [stageHeight, setStageHeight] = useState<number>(canvas.height);
   const [refMapMode, setRefMapModeState] = useState(readRefMapFromUrl);
   const regionElementsRef = useRef(new Map<string, HTMLElement>());
   const [, bump] = useState(0);
@@ -92,12 +104,12 @@ export function LoaderCompositionProvider({ children }: ProviderProps) {
       const safeRight = parseFloat(styles.paddingRight) || 0;
       const availW = Math.max(1, rect.width - safeLeft - safeRight);
       const availH = Math.max(1, rect.height - safeTop - safeBottom);
-      const scaleW = availW / ASSTS_LOADER_REFERENCE_CANVAS.width;
-      const scaleH = availH / ASSTS_LOADER_REFERENCE_CANVAS.height;
+      const scaleW = availW / canvas.width;
+      const scaleH = availH / canvas.height;
       const nextScale = Math.min(scaleW, scaleH);
       setScale(nextScale);
-      setStageWidth(ASSTS_LOADER_REFERENCE_CANVAS.width * nextScale);
-      setStageHeight(ASSTS_LOADER_REFERENCE_CANVAS.height * nextScale);
+      setStageWidth(canvas.width * nextScale);
+      setStageHeight(canvas.height * nextScale);
       el.style.setProperty('--loader-scale', String(nextScale));
     };
 
@@ -109,7 +121,7 @@ export function LoaderCompositionProvider({ children }: ProviderProps) {
       ro.disconnect();
       window.removeEventListener('resize', update);
     };
-  }, []);
+  }, [canvas.width, canvas.height]);
 
   const registerRegion = useCallback((id: string, node: HTMLElement | null) => {
     if (node) {
@@ -132,15 +144,27 @@ export function LoaderCompositionProvider({ children }: ProviderProps) {
       registerRegion,
       regionElements: regionElementsRef.current,
       artboardRef,
+      presentation,
+      composition,
     }),
-    [scale, stageWidth, stageHeight, refMapMode, setRefMapMode, registerRegion],
+    [scale, stageWidth, stageHeight, refMapMode, setRefMapMode, registerRegion, presentation, composition],
   );
 
-  const t = ASSTS_LOADER_TYPOGRAPHY;
+  const t = composition.typography;
+
+  const viewportClass =
+    presentation === 'desktop'
+      ? 'site00-loader-viewport site00-loader-stage-viewport site00-loader-stage-viewport--desktop'
+      : 'site00-loader-viewport site00-loader-stage-viewport site00-loader-stage-viewport--mobile';
+
+  const artboardClass =
+    presentation === 'desktop'
+      ? 'site00-loader-artboard site00-loader-stage site00-loader-stage--desktop'
+      : 'site00-loader-artboard site00-loader-stage site00-loader-stage--mobile';
 
   return (
     <LoaderCompositionContext.Provider value={contextValue}>
-      <div ref={viewportRef} className="site00-loader-viewport site00-loader-stage-viewport">
+      <div ref={viewportRef} className={viewportClass}>
         <div
           className="site00-loader-artboard-scaler"
           style={{
@@ -150,13 +174,13 @@ export function LoaderCompositionProvider({ children }: ProviderProps) {
         >
           <div
             ref={artboardRef}
-            className="site00-loader-artboard site00-loader-stage"
-            data-composition-id="assts-loader-mobile-v2"
-            data-artboard-w={ASSTS_LOADER_REFERENCE_CANVAS.width}
-            data-artboard-h={ASSTS_LOADER_REFERENCE_CANVAS.height}
+            className={artboardClass}
+            data-composition-id={composition.compositionId}
+            data-artboard-w={canvas.width}
+            data-artboard-h={canvas.height}
             style={{
-              width: ASSTS_LOADER_REFERENCE_CANVAS.width,
-              height: ASSTS_LOADER_REFERENCE_CANVAS.height,
+              width: canvas.width,
+              height: canvas.height,
               transform: `scale(${scale})`,
               ['--loader-type-eyebrow-size' as string]: `${t.eyebrow.size}px`,
               ['--loader-type-title-size' as string]: `${t.title.size}px`,
@@ -177,3 +201,6 @@ export function LoaderCompositionProvider({ children }: ProviderProps) {
     </LoaderCompositionContext.Provider>
   );
 }
+
+/** @deprecated Use LoaderCompositionProvider with presentation="mobile" */
+export { ASSTS_LOADER_REFERENCE_CANVAS, ASSTS_LOADER_COMPOSITION_ID, ASSTS_LOADER_TYPOGRAPHY };

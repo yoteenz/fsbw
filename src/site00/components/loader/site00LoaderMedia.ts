@@ -8,6 +8,8 @@ export const SITE00_LOADER_ASSET_BASE = `/site00/loader/${SITE00_LOADER_ASSET_VE
 export const SITE00_LOADER_BACKGROUND_FILE = 'assts-loader-background-v1.png';
 /** Approved master environment — 711×1536 composition reference (Supabase live-preview). */
 export const SITE00_LOADER_BACKGROUND_REMOTE = 'IMG_0404.png';
+/** Approved desktop landscape environment — 1672×941 (Supabase live-preview). */
+export const SITE00_LOADER_BACKGROUND_DESKTOP_REMOTE = '4EEB4F70-BF07-4EFE-B324-10C94AE018B5.png';
 /** Dev reference overlay — falls back to background when missing locally. */
 export const SITE00_LOADER_REF_MAP_FILE = 'assts-loader-ref-map-v1.png';
 /** Original OpenArt source — red luminous geometry on black (screen compositing). */
@@ -25,6 +27,18 @@ function supabaseLivePreviewUrl(filename: string): string | null {
 /** Approved loader environment — canonical 711×1536 artboard background. */
 export function site00LoaderBackgroundUrl(): string {
   return supabaseLivePreviewUrl(SITE00_LOADER_BACKGROUND_REMOTE) ?? `${SITE00_LOADER_ASSET_BASE}/${SITE00_LOADER_BACKGROUND_FILE}`;
+}
+
+/** Approved Asset Vault desktop loader environment — landscape 1672×941 master. */
+export function site00LoaderDesktopBackgroundUrl(): string {
+  return (
+    supabaseLivePreviewUrl(SITE00_LOADER_BACKGROUND_DESKTOP_REMOTE) ??
+    `${SITE00_LOADER_ASSET_BASE}/${SITE00_LOADER_BACKGROUND_FILE}`
+  );
+}
+
+export function resolveSite00LoaderBackgroundUrl(presentation: 'mobile' | 'desktop'): string {
+  return presentation === 'desktop' ? site00LoaderDesktopBackgroundUrl() : site00LoaderBackgroundUrl();
 }
 
 /** Reference map for artboard overlay test — falls back to approved background. */

@@ -54023,27 +54023,23 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 ---
 
-## 2026-08-18 — SITE 00 Admin Operations System (dashboard + 12 modules, desktop + mobile)
+## 2026-08-18 — Asset Vault loader desktop/mobile responsive split
 
-- **Context:** Founder sprint — implement complete SITE 00 **Admin Operations System** using approved admin dashboard reference: operational layer connecting IDNTY → BLDR → Projects → Sites → CTRL ROOM → Leads/Discovery → Finance → Team/Reports. Desktop + mobile shells; real data; no fake KPIs.
-
-- **Schema:** Migration **`20260818180000_site00_admin_operations.sql`** applied to production — `site00_identities`, `site00_idnty_submissions`, `site00_bldr_intakes`, `site00_leads`, `site00_discovery_bookings`, `site00_sites`, `site00_invoices`, `site00_admin_activity`, `site00_admin_notes` (service_role RLS).
-
-- **Backend:** **`adminOperations.ts`** — `ensureAdminOpsSeeded()`, operational dashboard KPIs/pipeline/signals/activity, list/detail for all entities, global search, intake review + convert-to-project, admin notes. Extended **`api/admin/site00-production.ts`** with operations GET/POST actions.
-
-- **Admin UI:**
-  - Redesigned **`DashboardPage`** — welcome header, period filter, KPI row (Identities/Intakes/Projects/Sites/Revenue), ecosystem map, recent activity, CTRL ROOM signals (linked), pipeline flow, top projects table.
-  - **18 operations pages** under **`pages/operations/`** — Identities, BLDR Intakes, Leads, Discovery, Sites, CTRL ROOM, Finance, Team, Reports, Settings + detail routes.
-  - Shared: **`AdminKpiCard`**, **`AdminTable`**, **`AdminStatusBadge`**, **`EcosystemMap`**, **`AdminSearchModal`** (⌘K).
-  - Shell: approved background (`SITE00_ADMIN_DESKTOP_BG_FILE` = CTRL ROOM asset), sidebar icons, profile footer, mobile bottom nav (Dashboard/Identities/Projects/CTRL ROOM/More). Studio + Approvals kept under PRODUCTION section.
-
-- **Routes:** **`/admin/site00/*`** — all list + detail routes wired in **`Site00AdminRoutes.tsx`**. CTRL ROOM admin at **`/admin/site00/ctrl-room`** (separate from client `/control`).
-
-- **Data:** KPIs/counts from Supabase; period deltas only when comparable data exists; demo seed on first dashboard load (NORTHQUARTER client chain). No fabricated revenue trends.
-
-- **QA:** `npm run build` pass; production tables verified via Supabase MCP.
-
-- **Open:** IDNTY/BLDR client localStorage not yet synced to Supabase on completion; team roster from ADMIN_EMAILS env only; settings integrations read-only until backend config UI; historical trend charts omitted until time-series data exists.
-
-- **Deploy:** Sync-only; say **deploy now** for Vercel.
+- **Context:** Founder sprint — fix desktop Asset Vault loading experience clipping mobile 9:16 background; one loading state, two purpose-built presentations (mobile portrait + desktop landscape).
+- **Root cause:** Single mobile artboard (711×1536) + `object-fit: cover` on portrait background when scaled on desktop caused architectural clipping.
+- **Decisions / outcomes:**
+  - **Shared controller unchanged:** `useSite00LoaderProgress` — one progress/phase/timing for both presentations; viewport switch does not restart timers.
+  - **Breakpoint:** ≥768px → desktop presentation for `assts` loader only; world loader stays mobile composition.
+  - **Separate assets:** mobile `IMG_0404.png`; desktop `4EEB4F70-BF07-4EFE-B324-10C94AE018B5.png` (1672×941 landscape master).
+  - **Desktop composition map:** `loader-composition-map-desktop.ts` + `loader-composition-resolver.ts`; `LoaderCompositionProvider` accepts `presentation` prop.
+  - Mobile composition **unchanged** (711×1536 artboard, same animation/copy/choreography).
+- **Changes:**
+  - `site00LoaderMedia.ts` — `site00LoaderDesktopBackgroundUrl()`, `resolveSite00LoaderBackgroundUrl()`.
+  - `Site00ImmersiveLoader.tsx` — `useLoaderPresentation`, presentation-aware background + `--desktop`/`--mobile` root classes.
+  - `Site00LoaderEnvironment.tsx` — `fit` prop (`cover` vs `cover-landscape`).
+  - `site00-loader.css` — desktop progress `clamp(360px, 36vw, 720px)`, stage max-width, short viewport padding.
+  - `site00LoaderBoot.ts`, `AsstsColdStartGate.tsx` — viewport-aware background preload.
+  - `LoaderRegion.tsx` — reads regions from composition context bundle.
+- **Verification:** Playwright QA at 1440×900 (wide marble, centered pedestal, no portrait crop) and 390×844 (mobile unchanged). `npm run build` pass.
+- **Conventions:** Do not stretch/crop mobile loader background for desktop; add landscape master + desktop composition map for ASSTS immersive loader.
 
