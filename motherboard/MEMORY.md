@@ -53560,3 +53560,13 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Deploy:** Sync-only; say **deploy now** for Vercel.
 
+---
+
+## 2026-08-18 — Origin coordinate line: translateY 6px (not margin gap)
+
+- **Context:** Founder asked to stop margin/gap above “YOU ARE AT 00.00 ORIGIN POINT” (not working on preview) and **manually move the line down 6px**.
+
+- **Change:** Replaced `coordinateGapPx` with `coordinateOffsetYPx: 6`. Coordinate `<p>` gets **inline `transform: translateY(6px)`** + desktop/artboard CSS `translateY(var(--site00-origin-coordinate-offset-y))`. Removed margin-top gap rules and `--before-coordinate` class.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
