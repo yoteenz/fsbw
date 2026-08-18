@@ -54078,13 +54078,16 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 ---
 
-<<<<<<< HEAD
+---
+
 ## 2026-08-18 — Fix composer Desktop tab switch (preview mode)
 
 - **Issue:** Mobile/Desktop composer pill updated session state but did not switch presentation when viewport was ≤767px — `isPreviewDesktop` was gated on `isSite00OriginWideViewport()`.
 - **Fix:** Honor `previewDeviceMode === 'desktop'` on all viewports (artboard scales on phones); raise `.site00-origin-layout-switch` z-index above Fast Travel overlay; add `/enter` to Origin layout switch routes; scope `body.site00-fast-travel-open` to mobile media query only.
 - **Sync:** `9f1e8cfa8`
-=======
+
+---
+
 ## 2026-08-18 — ENTER 00 desktop YOUR SPACE + Fast Travel restructure
 
 - **Context:** Founder follow-up sprint — desktop `/enter` duplicated public nav (EXPLORE: SITES/SERVICES/SYSTEM/ABOUT/JOURNAL) already in top nav. ENTER 00 should be a personalized gateway: **YOUR SPACE** (dominant) + **FAST TRAVEL** (secondary 2×2 contextual tiles). Preserve existing visual identity, viewport-fit, mobile Locations/Fast Travel unchanged.
@@ -54097,7 +54100,7 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Changes:** `config/directory.ts`, `config/fast-travel-actions.ts` (+ unit tests), `components/enter00/DirectoryPanel.tsx`, `EnterFastTravelGrid.tsx`, `WorkflowCards.tsx` (locked rows), `EnterMenuIcon.tsx`, `styles/site00.css`.
 - **Verification:** `npm run build` pass; vitest 6/6 on resolver; manual desktop QA signed-out + signed-in at 1440×900 — no EXPLORE, YOUR SPACE + FAST TRAVEL visible, tile navigation works, viewport fit OK.
 - **Spatial Architecture Review:** SKIPPED — ENTER 00 content restructure, no new Studio OS surfaces.
->>>>>>> 663fc57c0 (ENTER 00 desktop: YOUR SPACE + contextual Fast Travel restructure [sync-only])
+
 
 ---
 

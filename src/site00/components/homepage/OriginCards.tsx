@@ -51,7 +51,9 @@ export function CollapsedCard({ number, title, subtitle, body, cta, panel, onExp
           {body}
         </span>
       ) : null}
-      <div className="site00-origin-card__icon-wrap">
+      <div
+        className={`site00-origin-card__icon-wrap ${panel === 'evolve' ? 'site00-origin-card__icon-wrap--evolve' : ''}`.trim()}
+      >
         <OriginPanelIcon panel={panel} />
       </div>
       <span className="site00-action-link" style={{ marginTop: 'auto' }}>
