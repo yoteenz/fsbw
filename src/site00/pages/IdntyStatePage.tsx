@@ -6,11 +6,8 @@ import {
   IDNTY_STATE_COPY,
 } from '../config/identity';
 import { StateCard, InvestmentColumn, WorkflowSummary } from '../components/workflow/WorkflowCards';
-import { identityComplexityIcon } from '../components/icons/GeometricIcon';
 import { useSite00 } from '../state/Site00Context';
 import { ArchitecturalPanel } from '../components/panels/ArchitecturalPanel';
-
-const COMPLEXITY_MAP = [0, 1, 2, 3] as const;
 
 export default function IdntyStatePage() {
   const { state, selectIdentityState } = useSite00();
@@ -61,13 +58,13 @@ export default function IdntyStatePage() {
                   gap: 8,
                 }}
               >
-                {IDNTY_INVESTMENT_TIERS.map((tier, idx) => (
+                {IDNTY_INVESTMENT_TIERS.map((tier) => (
                   <InvestmentColumn
                     key={tier.id}
                     label={tier.label}
                     priceLabel={tier.priceLabel}
                     items={tier.services}
-                    iconVariant={identityComplexityIcon(COMPLEXITY_MAP[idx] ?? 0)}
+                    brandStateId={tier.stateId}
                   />
                 ))}
               </div>

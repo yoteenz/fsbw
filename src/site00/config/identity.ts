@@ -3,8 +3,10 @@
  * Pricing is editable data, never baked into imagery.
  */
 
+import type { IdntyBrandStateIconId } from './idnty-brand-state-icons';
+
 export type IdentityBrandState = {
-  id: string;
+  id: IdntyBrandStateIconId;
   code: string;
   title: string;
   description: string;
@@ -87,7 +89,7 @@ export type InvestmentTier = {
   label: string;
   priceLabel: string;
   services: string[];
-  stateId?: string;
+  stateId: IdntyBrandStateIconId;
 };
 
 export const IDNTY_INVESTMENT_TIERS: InvestmentTier[] = [

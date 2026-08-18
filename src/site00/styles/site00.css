@@ -422,6 +422,22 @@
   height: 32px;
 }
 
+.site00-brand-state-icon {
+  justify-content: center;
+}
+
+.site00-idnty-brand-state-icon {
+  display: block;
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+}
+
+.site00-idnty-brand-state-icon--sm {
+  width: 32px;
+  height: 32px;
+}
+
 /* Origin expanded panels — framework pillars stay on one row (desktop). */
 .site00-origin-framework-pillars {
   display: grid;

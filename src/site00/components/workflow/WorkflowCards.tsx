@@ -1,9 +1,11 @@
 import { Link } from 'react-router-dom';
 import type { IdentityBrandState } from '../../config/identity';
 import type { EnterMenuIconId } from '../../config/directory';
-import { GeometricIcon, identityComplexityIcon } from '../icons/GeometricIcon';
+import { GeometricIcon } from '../icons/GeometricIcon';
 import { BldrBuildClassIcon } from '../bldr/BldrBuildClassIcon';
 import type { BldrBuildClassIconId } from '../../config/bldr-build-class-icons';
+import { IdntyBrandStateIcon } from '../idnty/IdntyBrandStateIcon';
+import type { IdntyBrandStateIconId } from '../../config/idnty-brand-state-icons';
 import { ArrowIconSmall } from '../icons/ArrowAction';
 import { EnterMenuIcon, Site00ArrowRightIcon } from '../../icons';
 import { Site00SummaryStripText } from '../shell/Site00SummaryStripText';
@@ -23,8 +25,8 @@ export function StateCard({ state, selected, onSelect }: StateCardProps) {
       aria-pressed={selected}
     >
       <span className="site00-label-red">{state.code}</span>
-      <div style={{ margin: '16px 0', flex: 1, display: 'flex', alignItems: 'center' }}>
-        <GeometricIcon variant={identityComplexityIcon(state.iconComplexity)} size="md" />
+      <div className="site00-brand-state-icon" style={{ margin: '16px 0', flex: 1, display: 'flex', alignItems: 'center' }}>
+        <IdntyBrandStateIcon id={state.id} title={state.title} />
       </div>
       <p className="site00-heading" style={{ marginBottom: 8 }}>
         {state.title}
@@ -93,14 +95,19 @@ type InvestmentColumnProps = {
   items: string[];
   iconVariant?: 'cube-simple' | 'cube-medium' | 'cube-complex' | 'cube-solid' | undefined;
   buildClassId?: BldrBuildClassIconId;
+  brandStateId?: IdntyBrandStateIconId;
 };
 
-export function InvestmentColumn({ label, priceLabel, items, iconVariant, buildClassId }: InvestmentColumnProps) {
+export function InvestmentColumn({ label, priceLabel, items, iconVariant, buildClassId, brandStateId }: InvestmentColumnProps) {
   return (
     <div style={{ padding: '12px 8px' }}>
       {buildClassId ? (
         <div style={{ marginBottom: 8 }}>
           <BldrBuildClassIcon id={buildClassId} title={label} className="site00-bldr-build-class-icon--sm" />
+        </div>
+      ) : brandStateId ? (
+        <div style={{ marginBottom: 8 }}>
+          <IdntyBrandStateIcon id={brandStateId} title={label} className="site00-idnty-brand-state-icon--sm" />
         </div>
       ) : iconVariant ? (
         <div style={{ marginBottom: 8 }}>

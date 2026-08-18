@@ -53438,3 +53438,19 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Deploy:** Sync-only; say **deploy now** for Vercel.
 
+---
+
+## 2026-08-18 — IDNTY state page brand state PNG icons (desktop + mobile)
+
+- **Context:** Founder supplied four approved Supabase PNGs for IDNTY brand state cards on **`/idnty/state`** (Starting at Zero, Some Pieces Exist, Ready for Evolution, Build Ready) and requested wireframe replacement on desktop and mobile.
+
+- **Changes:** `idnty-brand-state-icons.ts`, `IdntyBrandStateIcon.tsx`. `StateCard` uses PNG via brand state id. `InvestmentColumn` accepts `brandStateId`; `IdntyStatePage` investment tiers wired to same icons (32px sm variant). Asset registry IDNTY state objects → `production`. CSS `.site00-idnty-brand-state-icon` 64×64 + `--sm` 32×32.
+
+- **Assets:** `D4E43816…` (00), `D95E546E…` (01), `D6A87CF3…` (02), `275DBF51…` (03) under `live-preview/site00/IDNTY/`.
+
+- **Verification:** `npm run build` PASS. Playwright `/idnty/state` @ 390px + 1440px — 4 card PNGs + 4 investment PNGs, 0 wireframes; correct filenames on all eight images.
+
+- **Spatial Architecture Review:** SKIPPED — approved asset swap.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
