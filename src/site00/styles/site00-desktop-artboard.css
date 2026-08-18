@@ -1,6 +1,12 @@
 /**
- * Force SITE 00 desktop layout inside `.site00-desktop-artboard` regardless of device viewport.
- * Mirrors `@media (min-width: 768px)` rules from site00.css for phone QA at `/origin/desktop`.
+ * SITE 00 Origin — canonical desktop composition (1440×900 artboard).
+ *
+ * **Single source of truth** for desktop Origin layout. Wide viewports render inside
+ * `Site00DesktopArtboardShell` (see `Site00OriginRouteShell`) — laptop, preview, and
+ * `/origin/desktop` all use this file. Do **not** duplicate these rules in `site00.css`
+ * `@media (min-width: 768px)` or composition will drift.
+ *
+ * Numeric tokens: `origin-home-composition.ts` → CSS vars on `.site00-home-stage` (OriginPage).
  */
 
 .site00-desktop-artboard .site00-env-layer--has-desktop-asset {
@@ -194,12 +200,6 @@
 .site00-desktop-artboard .site00-origin-card__icon {
   width: var(--site00-origin-panel-icon-size-px, 80px);
   height: var(--site00-origin-panel-icon-size-px, 80px);
-}
-
-/* /origin/desktop page class — mirrors artboard shell when nested selectors differ */
-.site00-origin-page--desktop-artboard .site00-home-stage {
-  --site00-origin-card-number-color: var(--site-red);
-  --site00-origin-hero-offset-y: 10px;
 }
 
 .site00-desktop-artboard .site00-origin-mobile-swipe {

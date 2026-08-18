@@ -10,8 +10,8 @@ type Site00OriginRouteShellProps = {
 };
 
 /**
- * Origin responsive shell — one desktop composition everywhere wide viewports render.
- * Mobile (<768px): native phone layout. Desktop (≥768px): fixed 1440px artboard scaled to width.
+ * Origin responsive shell — canonical desktop = 1440px artboard everywhere (≥768px).
+ * Mobile (<768px): phone layout. There is no separate “native desktop” Origin CSS path.
  */
 export function Site00OriginRouteShell({ children, forceArtboard = false }: Site00OriginRouteShellProps) {
   const [wideViewport, setWideViewport] = useState(() =>

@@ -1,6 +1,9 @@
 /**
- * SITE 00 Origin homepage — desktop composition (approved environment).
+ * SITE 00 Origin homepage — desktop composition (approved environment @ 1440px).
  * Hero anchors over the left arch; panels sit on the plaza below the central figure.
+ *
+ * Layout CSS: `site00-desktop-artboard.css` (artboard shell only — no native @media duplicate).
+ * Wide `/origin` and `/origin/desktop` both render via `Site00OriginRouteShell`.
  */
 
 export const SITE00_ORIGIN_DESKTOP_COMPOSITION = {

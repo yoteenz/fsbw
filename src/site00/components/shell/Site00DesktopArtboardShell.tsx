@@ -5,7 +5,7 @@ import {
 } from '../../config/desktop-artboard';
 import { installDesktopPreviewShellViewportLock } from '../../../utils/desktopPreview';
 import { Site00DesktopArtboardProvider } from './Site00DesktopArtboardContext';
-import '../../styles/site00-desktop-artboard.css?v=20260818-coord-slot';
+import '../../styles/site00-desktop-artboard.css';
 
 type Site00DesktopArtboardShellProps = {
   children: ReactNode;

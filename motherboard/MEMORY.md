@@ -53594,3 +53594,17 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Deploy:** Sync-only; say **deploy now** for Vercel.
 
+---
+
+## 2026-08-18 — Origin desktop: single CSS source (artboard = native desktop)
+
+- **Context:** Founder wanted artboard and “native desktop” in sync — one true design translation; edits should not diverge between laptop `/origin` and mobile `/origin/desktop`.
+
+- **Root cause:** Duplicate layout paths — `@media (min-width: 768px)` rules in `site00.css` (fluid `38vw`, `100dvh`) **and** `.site00-desktop-artboard` rules in `site00-desktop-artboard.css`. Same tokens, two stylesheets.
+
+- **Fix:** Removed entire Origin desktop `@media` block from `site00.css`. **`site00-desktop-artboard.css` is now the single source of truth** for desktop Origin (documented in file header + `origin-home-composition.ts`). Wide `/origin` already uses `Site00OriginRouteShell` → artboard shell. Removed redundant `.site00-origin-page--desktop-artboard` stage mirror. Stable artboard CSS import (no cache-bust query).
+
+- **Verification:** Playwright @ 1920×1080 — `/origin` and `/origin/desktop` identical (`heroWidth: 360px`, `iconRatio: 0.413`).
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
