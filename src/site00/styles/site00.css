@@ -398,12 +398,31 @@
 }
 
 .site00-bldr-framework-icon,
-.site00-idnty-framework-icon {
+.site00-idnty-framework-icon,
+.site00-evolve-methodology-icon {
   display: block;
   width: var(--site00-origin-framework-icon-size, 32px);
   height: var(--site00-origin-framework-icon-size, 32px);
   margin: 0 auto;
   object-fit: contain;
+}
+
+.site00-evolve-methodology-icon-slot {
+  display: block;
+  width: var(--site00-origin-framework-icon-size, 32px);
+  height: var(--site00-origin-framework-icon-size, 32px);
+  margin: 0 auto;
+  border: 1px dashed rgba(0, 0, 0, 0.14);
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.28);
+  box-sizing: border-box;
+}
+
+.site00-origin-framework-pillar__code {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 10px;
+  letter-spacing: 0.12em;
 }
 
 .site00-build-class-icon {
@@ -457,7 +476,8 @@
 }
 
 /* BLDR expanded panel — pillar detail copy under titles (DIRECTION, STRUCTURE, …). */
-.site00-bldr-framework-pillars .site00-origin-framework-pillar .site00-body {
+.site00-bldr-framework-pillars .site00-origin-framework-pillar .site00-body,
+.site00-evolve-methodology-pillars .site00-origin-framework-pillar .site00-body {
   color: var(--site-text-muted);
 }
 
@@ -465,6 +485,10 @@
   border-top: 1px solid var(--site-border);
   padding-top: 24px;
   margin: 0 0 16px;
+}
+
+.site00-evolve-methodology-pillars {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 /* ─── Responsive safe area ─── */
@@ -1187,7 +1211,7 @@
   --site00-origin-hero-offset-x: 0px;
   --site00-origin-cards-top: 58%;
   --site00-origin-cards-offset-y: 0px;
-  --site00-origin-cards-max-w: 520px;
+  --site00-origin-cards-max-w: 720px;
   --site00-origin-card-scale: 1;
   --site00-origin-panel-icon-scale: 1;
   --site00-origin-card-number-color: var(--site-text);
@@ -1311,6 +1335,7 @@
 .site00-origin-cards__row--three {
   max-width: 720px;
   margin: 0 auto;
+  flex-wrap: nowrap;
 }
 
 .site00-origin-card__icon-wrap {

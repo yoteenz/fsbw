@@ -54101,7 +54101,10 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Verification:** `npm run build` pass; vitest 6/6 on resolver; manual desktop QA signed-out + signed-in at 1440×900 — no EXPLORE, YOUR SPACE + FAST TRAVEL visible, tile navigation works, viewport fit OK.
 - **Spatial Architecture Review:** SKIPPED — ENTER 00 content restructure, no new Studio OS surfaces.
 
+<<<<<<< HEAD
 ---
+=======
+>>>>>>> 5e4899f8f59ec3aedab0454d650ac5b559fd31b8
 
 ---
 
@@ -54146,4 +54149,43 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
   - **MEMORY.md:** Resolved conflict markers between composer Desktop tab fix + ENTER 00 Fast Travel entries (kept both).
   - **FS monorepo:** Added repeatable extraction script; updated `docs/site00/STANDALONE_EXTRACTION_STATUS.md` checklist.
 - **Conventions:** Re-run `node scripts/extract-site00-standalone.mjs` after major SITE 00 changes in FS; push from `/home/ubuntu/site-00` with `SITE00_GITHUB_TOKEN`. Phase 23 FS cleanup still not started.
+
+---
+
+## 2026-08-18 — Origin EVOLVE collapsed copy + expanded panels −15%
+
+- **Context:** Founder copy tweak on Origin desktop EVOLVE collapsed card; shrink expanded IDNTY/BLDR/EVOLVE panels 15%.
+- **Changes:** `EVOLVE_ORIGIN_CARD.subtitle` → `BUILD ALREADY EXISTS.`; removed `body` from collapsed EVOLVE card; `expandedPanelScale` 0.875 → 0.74375 in `origin-home-composition.ts`.
+- **Sync:** `2aba9be60`
+
+---
+
+## 2026-08-18 — Origin EVOLVE expanded panel CTA + centered paths
+
+- **Context:** Founder polish on Origin desktop EVOLVE expanded panel.
+- **Changes:** CTA `BEGIN EVOLUTION` (single arrow via `ArrowAction`); removed HOW IT WORKS link; centered CHOOSE YOUR PATH block + 3-column evolve pillars CSS.
+
+---
+
+## 2026-08-18 — Origin EVOLVE production panel icon
+
+- **Context:** Founder supplied Supabase PNG for Origin desktop EVOLVE collapsed + expanded panel icon.
+- **Asset:** `live-preview/site00/EVOLVE/9E87E14E-63A7-4ED5-9054-5435136E1768.png` via `origin-panel-icons.ts` (replaces SVG fallback); `OriginPanelIcon` md/lg sizing unchanged — matches IDNTY/BLDR.
+
+---
+
+## 2026-08-18 — Origin EVOLVE expanded panel methodology restructure
+
+- **Context:** IA correction — CHOOSE YOUR PATH (REFINE/INSTALL/TRANSFORM) belongs on dedicated `/evolve/state` only; Origin expanded panel shows **EVOLVE FRAMEWORK** methodology (01 AUDIT · 02 INTERVENE · 03 ADVANCE). **BEGIN EVOLUTION** CTA locked unchanged.
+- **Changes:** `EVOLVE_METHODOLOGY_PILLARS` + `evolve-methodology-icons.ts` empty asset slots; `EvolveMethodologyIcon`; `EvolveExpandedPanel` matches IDNTY/BLDR framework grid; restored HOW IT WORKS → `/evolve`. Dedicated route unchanged.
+
+---
+
+## 2026-08-18 — SITE 00 standalone persisted in fsbw (site00-standalone/)
+
+- **Context:** Founder on mobile; push to `yoteenz/SITE00` blocked (cursor[bot] 403; PAT secret UI confusing). Ephemeral `/home/ubuntu/site-00` missing on fresh cloud agents defeated token-based push workflow.
+- **Decision:** Canonical standalone SITE 00 source lives **inside fsbw** at **`site00-standalone/`** (445 files, git-tracked). Any cloud agent cloning fsbw has the full tree without re-extraction.
+- **Shipped:** `site00-standalone/` copy; `scripts/site00-resolve-root.sh` prefers workspace path; `scripts/site00-push-to-github.sh` publishes to SITE00 via `SITE00_GITHUB_TOKEN`; docs/AGENTS.md updated.
+- **Publish:** `./scripts/site00-push-to-github.sh` when secret set. **Product repo:** https://github.com/yoteenz/SITE00 (public, empty until publish).
+- **Convention:** Do not rely on `/home/ubuntu/site-00` on cloud agents; use `site00-standalone/` or clone SITE00 after first publish.
 

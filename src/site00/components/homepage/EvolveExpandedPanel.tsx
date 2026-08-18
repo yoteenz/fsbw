@@ -1,9 +1,9 @@
-import { EVOLVE_HOMEPAGE_EXPANDED, EVOLVE_FRAMEWORK_PILLARS } from '../../config/evolve';
+import { EVOLVE_HOMEPAGE_EXPANDED, EVOLVE_METHODOLOGY_PILLARS } from '../../config/evolve';
 import { isSite00OriginDesktopPath, SITE00_ROUTES } from '../../config/routes';
 import { ArchitecturalPanel } from '../panels/ArchitecturalPanel';
 import { SectionRule } from '../panels/SectionRule';
 import { OriginPanelIcon } from './OriginPanelIcon';
-import { EvolveFrameworkIcon } from './EvolveFrameworkIcon';
+import { EvolveMethodologyIcon } from './EvolveMethodologyIcon';
 import { ArrowAction } from '../icons/ArrowAction';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 
@@ -44,22 +44,23 @@ export function EvolveExpandedPanel({ onCollapse }: EvolveExpandedPanelProps) {
             {copy.overview}
           </p>
 
-          <p className="site00-label-red site00-origin-framework-heading">CHOOSE YOUR PATH</p>
-          <div className="site00-origin-framework-pillars site00-evolve-framework-pillars">
-            {EVOLVE_FRAMEWORK_PILLARS.map((pillar) => (
+          <p className="site00-label-red site00-origin-framework-heading">{copy.frameworkHeading}</p>
+          <div className="site00-origin-framework-pillars site00-evolve-methodology-pillars">
+            {EVOLVE_METHODOLOGY_PILLARS.map((pillar) => (
               <div key={pillar.id} className="site00-origin-framework-pillar">
-                <EvolveFrameworkIcon id={pillar.icon} title={pillar.title} />
+                <span className="site00-label-red site00-origin-framework-pillar__code">{pillar.code}</span>
+                <EvolveMethodologyIcon id={pillar.icon} title={pillar.title} />
                 <p className="site00-micro" style={{ margin: '8px 0 4px' }}>
                   {pillar.title}
                 </p>
                 <p className="site00-body" style={{ fontSize: 10 }}>
-                  {pillar.description}
+                  {pillar.statement}
                 </p>
               </div>
             ))}
           </div>
 
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 24 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div style={{ display: 'flex', gap: 16, alignItems: 'center', flexWrap: 'wrap' }}>
               <ArrowAction
                 label={copy.cta}

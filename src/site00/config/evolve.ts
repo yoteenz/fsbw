@@ -77,21 +77,54 @@ export const EVOLVE_FRAMEWORK_PILLARS: EvolveFrameworkPillar[] = [
   },
 ];
 
+export type EvolveMethodologyPillar = {
+  id: 'audit' | 'intervene' | 'advance';
+  code: string;
+  title: string;
+  statement: string;
+  icon: 'audit' | 'intervene' | 'advance';
+};
+
+/** Origin expanded panel — SITE 00 methodology (not service-path selection). */
+export const EVOLVE_METHODOLOGY_PILLARS: EvolveMethodologyPillar[] = [
+  {
+    id: 'audit',
+    code: '01',
+    title: 'AUDIT',
+    statement: 'UNDERSTAND WHAT EXISTS.',
+    icon: 'audit',
+  },
+  {
+    id: 'intervene',
+    code: '02',
+    title: 'INTERVENE',
+    statement: 'CHANGE WHAT MATTERS.',
+    icon: 'intervene',
+  },
+  {
+    id: 'advance',
+    code: '03',
+    title: 'ADVANCE',
+    statement: 'LEAVE IT BETTER BUILT.',
+    icon: 'advance',
+  },
+];
+
 export const EVOLVE_HOMEPAGE_EXPANDED = {
   number: '03',
   title: 'EVOLVE',
   subtitle: 'ENHANCE. INTEGRATE. TRANSFORM WHAT EXISTS.',
   overview:
     'YOUR DIGITAL PROPERTY ALREADY EXISTS. SITE 00 WORKS WITH ITS EXISTING FOUNDATION TO IMPROVE THE EXPERIENCE, INTRODUCE NEW CAPABILITIES, MODERNIZE THE UNDERLYING SYSTEM, OR TRANSFORM THE PRODUCT WITHOUT AUTOMATICALLY STARTING FROM ZERO.',
-  cta: 'START EVOLVE →',
+  frameworkHeading: 'EVOLVE FRAMEWORK',
+  cta: 'BEGIN EVOLUTION',
   secondaryCta: 'HOW IT WORKS',
 } as const;
 
 export const EVOLVE_ORIGIN_CARD = {
   number: '03',
   title: 'EVOLVE',
-  subtitle: "ALREADY BUILT DOESN'T MEAN FINISHED.",
-  body: 'BRING US WHAT EXISTS. WE\'LL TAKE IT FURTHER.',
+  subtitle: 'BUILD ALREADY EXISTS.',
   cta: 'EXPLORE EVOLVE →',
 } as const;
 
