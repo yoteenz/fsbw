@@ -32,12 +32,19 @@ export function Site00DesktopArtboardShell({ children }: Site00DesktopArtboardSh
       const stage = stageRef.current;
       if (!shell || !scaler || !stage) return;
 
-      const scale = shell.clientWidth / SITE00_DESKTOP_ARTBOARD_WIDTH;
+      const isEnterPage =
+        stage.querySelector('.site00-enter-page') != null ||
+        (typeof window !== 'undefined' && window.location.pathname === '/enter');
+      const scaleW = shell.clientWidth / SITE00_DESKTOP_ARTBOARD_WIDTH;
+      const scaleH = shell.clientHeight / SITE00_DESKTOP_ARTBOARD_MIN_HEIGHT;
+      const scale = isEnterPage ? Math.min(scaleW, scaleH) : scaleW;
       const scaledWidth = SITE00_DESKTOP_ARTBOARD_WIDTH * scale;
-      const viewportArtboardHeight = Math.max(
-        SITE00_DESKTOP_ARTBOARD_MIN_HEIGHT,
-        Math.ceil(shell.clientHeight / Math.max(scale, 0.01)),
-      );
+      const viewportArtboardHeight = isEnterPage
+        ? SITE00_DESKTOP_ARTBOARD_MIN_HEIGHT
+        : Math.max(
+            SITE00_DESKTOP_ARTBOARD_MIN_HEIGHT,
+            Math.ceil(shell.clientHeight / Math.max(scale, 0.01)),
+          );
       const contentHeight = viewportArtboardHeight;
 
       stage.style.width = `${SITE00_DESKTOP_ARTBOARD_WIDTH}px`;
@@ -49,8 +56,14 @@ export function Site00DesktopArtboardShell({ children }: Site00DesktopArtboardSh
 
       scaler.style.width = `${scaledWidth}px`;
       scaler.style.height = `${contentHeight * scale}px`;
-      scaler.style.marginLeft = '0';
-      scaler.style.marginTop = '0';
+      scaler.style.marginLeft = isEnterPage ? `${Math.max(0, (shell.clientWidth - scaledWidth) / 2)}px` : '0';
+      scaler.style.marginTop = isEnterPage ? `${Math.max(0, (shell.clientHeight - contentHeight * scale) / 2)}px` : '0';
+
+      if (isEnterPage) {
+        shell.classList.add('site00-desktop-artboard-shell--enter');
+      } else {
+        shell.classList.remove('site00-desktop-artboard-shell--enter');
+      }
     };
 
     layoutStage();
@@ -70,10 +83,19 @@ export function Site00DesktopArtboardShell({ children }: Site00DesktopArtboardSh
     if (shellEl) resizeObserver?.observe(shellEl);
     if (stageEl) resizeObserver?.observe(stageEl);
 
+    const mutationObserver =
+      typeof MutationObserver !== 'undefined' && stageEl
+        ? new MutationObserver(() => layoutStage())
+        : undefined;
+    if (stageEl) {
+      mutationObserver?.observe(stageEl, { childList: true, subtree: true });
+    }
+
     return () => {
       window.removeEventListener('orientationchange', onOrientation);
       window.removeEventListener('resize', layoutStage);
       resizeObserver?.disconnect();
+      mutationObserver?.disconnect();
     };
   }, []);
 

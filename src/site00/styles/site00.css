@@ -826,6 +826,46 @@
     --site00-enter-status-strip-height: 36px;
     --site00-summary-strip-height: 36px;
     height: 100dvh;
+    max-height: 100dvh;
+    overflow: hidden;
+  }
+
+  /* Desktop ENTER 00 — shift background upward to use empty upper architecture; crop from top first */
+  .site00-enter-page .site00-env-layer {
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  /* Full-viewport background — UI artboard may scale/contain separately */
+  .site00-desktop-artboard .site00-enter-page .site00-env-layer {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: var(--site-z-env);
+  }
+
+  .site00-enter-page .site00-env-layer--has-desktop-asset {
+    background-position: center 34%;
+  }
+
+  @media (min-height: 900px) {
+    .site00-enter-page .site00-env-layer--has-desktop-asset {
+      background-position: center 38%;
+    }
+  }
+
+  @media (min-height: 1080px) {
+    .site00-enter-page .site00-env-layer--has-desktop-asset {
+      background-position: center 41%;
+    }
+  }
+
+  .site00-enter-page.site00-shell {
+    height: 100dvh;
+    max-height: 100dvh;
     overflow: hidden;
   }
 
@@ -834,18 +874,20 @@
     flex-direction: column;
     height: 100%;
     min-height: 100%;
+    max-height: 100%;
   }
 
   .site00-desktop-artboard .site00-enter-page > .site00-ui-layer {
     flex: 1;
-    min-height: 0;
+    min-height: 0 !important;
+    height: 100%;
   }
 
   .site00-enter-page .site00-ui-layer {
     display: flex;
     flex-direction: column;
     height: 100%;
-    min-height: 0;
+    min-height: 0 !important;
     overflow: hidden;
   }
 
@@ -925,6 +967,34 @@
 
   .site00-enter-menu__divider {
     margin: 14px 0;
+  }
+
+  @media (max-height: 800px) {
+    .site00-enter-layout {
+      gap: 16px;
+      padding-top: 8px;
+      padding-bottom: calc(var(--site00-enter-status-strip-height) + 12px);
+    }
+
+    .site00-enter-welcome__title {
+      margin: 4px 0;
+    }
+
+    .site00-enter-welcome__rule {
+      margin: 10px 0;
+    }
+
+    .site00-enter-menu__scroll {
+      padding: 12px 12px;
+    }
+
+    .site00-enter-menu .site00-enter-row {
+      padding: 6px 0;
+    }
+
+    .site00-enter-menu__section {
+      margin-bottom: 12px;
+    }
   }
 }
 
