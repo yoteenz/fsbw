@@ -91,6 +91,7 @@
 }
 
 .site00-desktop-artboard .site00-home-stage {
+  --site00-origin-card-number-color: var(--site-red);
   padding: 0;
   min-height: 0;
   height: 100%;
@@ -141,8 +142,9 @@
   transform-origin: center top;
 }
 
-.site00-desktop-artboard .site00-origin-cards__row .site00-origin-card__number {
-  color: var(--site-red);
+/* /origin/desktop page class — mirrors artboard shell when nested selectors differ */
+.site00-origin-page--desktop-artboard .site00-home-stage {
+  --site00-origin-card-number-color: var(--site-red);
 }
 
 .site00-desktop-artboard .site00-origin-mobile-swipe {

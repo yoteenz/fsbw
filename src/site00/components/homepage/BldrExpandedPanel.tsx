@@ -20,7 +20,12 @@ export function BldrExpandedPanel({ onCollapse }: BldrExpandedPanelProps) {
         <div style={{ padding: '32px 28px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
           <div>
-            <span className="site00-label-red">{copy.number}</span>
+            <span
+              className="site00-label-red site00-origin-panel__number"
+              style={{ color: 'var(--site00-origin-card-number-color, var(--site-red))' }}
+            >
+              {copy.number}
+            </span>
             <h2 className="site00-heading-lg" style={{ margin: '8px 0 4px' }}>
               {copy.title}
             </h2>

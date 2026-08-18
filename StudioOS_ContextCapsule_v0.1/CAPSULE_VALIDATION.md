@@ -8,8 +8,8 @@
 |-------|-------|
 | **Capsule Version** | 0.3.2 |
 | **Manifest Version** | 0.3.2 |
-| **Generation Date (UTC)** | 2026-08-18T01:14:48.278Z |
-| **Repository Commit SHA** | bf4170c1b748a4563eb501f588a8fd9da35391f2 |
+| **Generation Date (UTC)** | 2026-08-18T01:28:25.993Z |
+| **Repository Commit SHA** | c2066e112bc1e1a7b0c7aa8193be6f1581930451 |
 | **Validation Status** | pass |
 | **Documents Included** | README_FIRST.md, MANIFEST.md, ONBOARDING_REPORT.md, FOUNDER_PROFILE.md, CHATGPT_OPERATING_MANUAL.md, AI_STYLE_GUIDE.md, AI_CONTEXT.md, CURRENT_HANDOFF.md, AI_GLOSSARY.md, PROJECT_DNA.md, PROJECT_CHANGELOG.md, PROMPT_LIBRARY.md, ROADMAP.md, KNOWN_BLOCKERS.md, OPEN_QUESTIONS.md |
 | **Manifest Hash (reading order SHA-256)** | 7b10d8a919668fc98dd4f47c7383353032cd3d69e8f39f73ff026a55b12e9b30 |
@@ -75,7 +75,7 @@ B0, B1, B1, B1, B1, B1, B1, B1, B1, B1, B2, B1
 |-------|-------|
 | **Capsule Version** | 0.3.2 |
 | **Manifest Version** | 0.3.2 |
-| **Generated** | 2026-08-18T01:14:48.278Z |
+| **Generated** | 2026-08-18T01:28:25.993Z |
 | **Validation Passed** | YES |
 | **Operational Source of Truth** | CURRENT_HANDOFF.md · KNOWN_BLOCKERS.md · PROJECT_CHANGELOG.md |
 | **Current Handoff Document** | CURRENT_HANDOFF.md |
