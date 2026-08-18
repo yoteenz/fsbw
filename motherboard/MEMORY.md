@@ -54189,3 +54189,13 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Publish:** `./scripts/site00-push-to-github.sh` when secret set. **Product repo:** https://github.com/yoteenz/SITE00 (public, empty until publish).
 - **Convention:** Do not rely on `/home/ubuntu/site-00` on cloud agents; use `site00-standalone/` or clone SITE00 after first publish.
 
+---
+
+## 2026-08-18 — SITE 00 published to yoteenz/SITE00 (main)
+
+- **Context:** Founder requested push of `site00-standalone/` to https://github.com/yoteenz/SITE00 on `main` (publish only — no edits to fsbw `src/site00/`).
+- **Confirmed:** `site00-standalone/package.json` exists; `SITE00_GITHUB_TOKEN` present in cloud secrets.
+- **Push:** `./scripts/site00-push-to-github.sh` — initial run failed (git pull missing `--no-rebase`; silent merge failure → non-fast-forward). Script patched: `--no-rebase` on pull + `--force-with-lease` publish fallback. Re-run succeeded.
+- **Remote verified @ `ccc5714`:** `src/`, `package.json`, `vite.config.ts`, `public/site00/`, `api/` all present on `main`.
+- **Convention:** Publish from `site00-standalone/` only; token is `SITE00_GITHUB_TOKEN` (do not re-extract from `/home/ubuntu/site-00`).
+
