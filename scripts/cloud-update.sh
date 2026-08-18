@@ -13,3 +13,8 @@ npm ci
 if [[ -f "${REPO_ROOT}/all-in-one-enterprises/package-lock.json" ]]; then
   (cd "${REPO_ROOT}/all-in-one-enterprises" && npm ci)
 fi
+
+# SITE 00 product repo (preview tunnel serves github.com/yoteenz/SITE00).
+if [[ -x "${REPO_ROOT}/scripts/site00-clone-github.sh" ]]; then
+  "${REPO_ROOT}/scripts/site00-clone-github.sh" || echo "[cloud-update] WARN: SITE00 clone skipped (will retry in site00-vite)." >&2
+fi

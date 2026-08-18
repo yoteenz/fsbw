@@ -54187,7 +54187,16 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Decision:** Canonical standalone SITE 00 source lives **inside fsbw** at **`site00-standalone/`** (445 files, git-tracked). Any cloud agent cloning fsbw has the full tree without re-extraction.
 - **Shipped:** `site00-standalone/` copy; `scripts/site00-resolve-root.sh` prefers workspace path; `scripts/site00-push-to-github.sh` publishes to SITE00 via `SITE00_GITHUB_TOKEN`; docs/AGENTS.md updated.
 - **Publish:** `./scripts/site00-push-to-github.sh` when secret set. **Product repo:** https://github.com/yoteenz/SITE00 (public, empty until publish).
-- **Convention:** Do not rely on `/home/ubuntu/site-00` on cloud agents; use `site00-standalone/` or clone SITE00 after first publish.
+- **Convention:** Do not rely on `/home/ubuntu/site-00` on cloud agents; preview clones **`yoteenz/SITE00`** to `/home/ubuntu/SITE00`; fallback **`site00-standalone/`** in fsbw.
+
+---
+
+## 2026-08-18 — SITE 00 preview tunnel → GitHub SITE00 clone
+
+- **Context:** Founder confirmed GoDaddy **cPanel** (static `dist/` prod). Wants dedicated Cloudflare tunnel serving **SITE00 repo** before Phase 23 detach from fsbw.
+- **Shipped:** `scripts/site00-clone-github.sh`; `site00-resolve-root.sh` prefers `/home/ubuntu/SITE00`; `cloud-update.sh` + `site00-cloud-vite-dev.sh` auto-clone/pull; `docs/cloud-agent/site00-preview-tunnel.md` architecture + GoDaddy note.
+- **Secrets:** `SITE00_CLOUDFLARE_TUNNEL_TOKEN` + `SITE00_CLOUDFLARE_TUNNEL_HOSTNAME` (separate from FS). Restart agent after adding.
+- **Workflow:** Edit/push **SITE00** → preview via tunnel; fsbw `src/site00/` unchanged until Phase 23.
 
 ---
 

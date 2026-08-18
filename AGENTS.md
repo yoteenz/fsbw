@@ -51,7 +51,7 @@ Cloud agents auto-start six terminals from **`.cursor/environment.json`**:
 
 **Frontal Slayer:** **`CLOUDFLARE_TUNNEL_TOKEN`** + **`CLOUDFLARE_TUNNEL_HOSTNAME`** → persistent hostname (see **`docs/cloud-agent/persistent-preview-tunnel.md`**). Else ephemeral **`https://….trycloudflare.com`** → **`/tmp/cloud-preview-url.txt`**.
 
-**SITE 00 (standalone repo):** **`SITE00_CLOUDFLARE_TUNNEL_TOKEN`** + **`SITE00_CLOUDFLARE_TUNNEL_HOSTNAME`** → see **`docs/cloud-agent/site00-preview-tunnel.md`**. Else ephemeral trycloudflare → **`/tmp/site00-cloud-preview-url.txt`**. Uses a **separate tunnel** from Frontal Slayer (port **5174**, not 3001). Canonical source in fsbw: **`site00-standalone/`**; publish with **`./scripts/site00-push-to-github.sh`** when **`SITE00_GITHUB_TOKEN`** is set.
+**SITE 00 (standalone repo):** Clone **`yoteenz/SITE00`** on agent boot (`scripts/site00-clone-github.sh`); preview at **`/home/ubuntu/SITE00`**. Terminals **`site00-vite`** (5174) + **`site00-preview-tunnel`**. Secrets: **`SITE00_CLOUDFLARE_TUNNEL_TOKEN`** + **`SITE00_CLOUDFLARE_TUNNEL_HOSTNAME`** (separate from FS). Guide: **`docs/cloud-agent/site00-preview-tunnel.md`**. Fallback copy in fsbw: **`site00-standalone/`**. Production: GoDaddy **cPanel** static **`dist/`** → site00.com.
 
 **All In One (until production):** **`AIO_CLOUDFLARE_TUNNEL_TOKEN`** + **`AIO_CLOUDFLARE_TUNNEL_HOSTNAME`** (e.g. `https://aio-preview.yourdomain.com`) → see **`all-in-one-enterprises/docs/PREVIEW_TUNNEL.md`**. Else ephemeral trycloudflare → **`/tmp/aio-cloud-preview-url.txt`**. Use a **separate subdomain/tunnel** from Frontal Slayer (port 5173, not 3001).
 

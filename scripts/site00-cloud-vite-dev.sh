@@ -3,6 +3,11 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+if [[ "${SITE00_SKIP_GITHUB_PULL:-}" != "1" ]]; then
+  "${SCRIPT_DIR}/site00-clone-github.sh" 2>/dev/null || true
+fi
+
 SITE00_ROOT="$("${SCRIPT_DIR}/site00-resolve-root.sh")"
 cd "$SITE00_ROOT"
 
