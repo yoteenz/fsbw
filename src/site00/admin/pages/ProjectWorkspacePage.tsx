@@ -114,15 +114,27 @@ export default function Site00AdminProjectWorkspacePage() {
       {apiSection === 'access' && (
         <section className="site00-admin-panel">
           <h2 className="site00-admin-panel__title">[ ACCESS ] INFRASTRUCTURE & PERMISSIONS</h2>
-          <p className="site00-admin-page-subtitle">ENVIRONMENT READINESS: {String(project?.environment_readiness_pct ?? 0)}%</p>
+          <p className="site00-admin-page-subtitle">
+            CURRENT PHASE READINESS: {data?.environmentReadiness?.current_phase_readiness_pct ?? String(project?.environment_readiness_pct ?? 0)}%
+            · {data?.environmentReadiness?.current_phase_ready_count ?? 0} OF{' '}
+            {data?.environmentReadiness?.current_phase_required_count ?? 0} REQUIRED NOW
+          </p>
           {(data?.access ?? [])?.map((row, i) => {
             const svc = row.site00_service_catalog;
+            const name = row.display_name ?? svc?.display_name ?? 'SERVICE';
             return (
-              <div key={i} className="site00-admin-action-row">
+              <div key={i} className="site00-admin-action-row site00-admin-access-row">
                 <div>
-                  <p className="site00-admin-action-row__title">{svc?.display_name ?? 'SERVICE'}</p>
+                  <p className="site00-admin-action-row__title">{name}</p>
                   <p className="site00-admin-action-row__reason">
-                    {String(row.connection_state)} · PHASE: {String(row.required_phase)} · {String(row.owner_type)} OWNED
+                    {String(row.effective_state ?? '—').replace(/_/g, ' ')} · PHASE:{' '}
+                    {String(row.required_phase)} · {String(row.owner_type)} OWNED
+                  </p>
+                  <p className="site00-admin-action-row__reason">
+                    CURRENTLY REQUIRED: {row.currently_required ? 'YES' : 'NO'}
+                  </p>
+                  <p className="site00-admin-action-row__reason">
+                    BLOCKS: {row.blocks_label ?? (row.blocks?.length ? row.blocks.join(', ') : 'NOTHING YET')}
                   </p>
                 </div>
               </div>

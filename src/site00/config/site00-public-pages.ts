@@ -1,6 +1,6 @@
 /**
- * SITE 00 Composer public pages — mobile base paths + `/desktop` artboard routes.
- * Wide viewports redirect base → `/desktop` (see Site00PublicWideDesktopRedirect).
+ * SITE 00 Composer public pages — semantic base paths + legacy `/desktop` redirects.
+ * Preview device mode is global state (Site00Context), not a separate route tree.
  */
 
 export const SITE00_PUBLIC_PAGE_BASES = [
@@ -49,12 +49,7 @@ export function site00PublicPageDesktopRedirectTarget(pathname: string): string 
   return site00PublicDesktopPath(pathname);
 }
 
-/** Preserve /desktop suffix when navigating between public pages. */
-export function site00PublicNavHref(targetHref: string, currentPathname: string): string {
-  if (!isSite00PublicDesktopPath(currentPathname)) return targetHref;
-  const base = targetHref.replace(/\/$/, '');
-  if (SITE00_PUBLIC_PAGE_BASES.includes(base as Site00PublicPageBase)) {
-    return site00PublicDesktopPath(base);
-  }
-  return targetHref;
+/** Preserve desktop preview when navigating — uses shared preview mode, not URL suffix. */
+export function site00PublicNavHref(targetHref: string, _currentPathname: string): string {
+  return targetHref.replace(/\/$/, '').replace(/\/desktop$/, '') || '/';
 }

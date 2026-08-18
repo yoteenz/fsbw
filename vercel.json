@@ -119,6 +119,10 @@
       "maxDuration": 120,
       "includeFiles": "api/_lib/studioBuilderGeneration.ts,api/_lib/site00Assts/**"
     },
+    "api/site00/client-production.ts": {
+      "maxDuration": 60,
+      "includeFiles": "api/_lib/site00Production/**"
+    },
     "api/site00/loader-geometry.ts": {
       "maxDuration": 30,
       "includeFiles": "api/_lib/site00Assts/**"

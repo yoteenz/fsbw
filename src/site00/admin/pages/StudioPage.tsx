@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { Site00AdminShell } from '../components/shell/Site00AdminShell';
 import { StudioPipelineBar } from '../components/StudioPipelineBar';
+import { ReadinessPanel } from '../components/ReadinessPanel';
 import { SITE00_ADMIN_ROUTES } from '../config/routes';
 import { site00ProductionApi } from '../services/productionApi';
 import type { Site00StudioPayload } from '../types/production';
@@ -59,6 +60,7 @@ export default function Site00AdminStudioPage() {
           PROJECT HEALTH: {project?.project_health ?? '—'}
         </div>
         <div>PRODUCTION READINESS: {project?.production_readiness_pct ?? 0}%</div>
+        <div>ENVIRONMENT (CURRENT PHASE): {data?.environmentReadiness?.current_phase_readiness_pct ?? project?.environment_readiness_pct ?? 0}%</div>
       </div>
 
       <StudioPipelineBar pipeline={data?.pipeline ?? undefined} />
@@ -91,14 +93,31 @@ export default function Site00AdminStudioPage() {
           ))}
         </section>
 
-        <section className="site00-admin-panel">
-          <h2 className="site00-admin-panel__title">PRODUCTION QUEUE</h2>
+        <section className="site00-admin-panel site00-admin-panel--wide">
+          <h2 className="site00-admin-panel__title">PRODUCTION QUEUE · READINESS</h2>
           {(data?.deliverables ?? [])
-            ?.filter((d) => ['QUEUED', 'GENERATING', 'READY', 'BRIEF_GENERATED'].includes(d.status))
+            .filter((d) =>
+              ['QUEUED', 'GENERATING', 'READY', 'BRIEF_GENERATED', 'NOT_READY', 'BLOCKED'].includes(d.status) ||
+              d.readiness?.overall === 'blocked' ||
+              d.readiness?.overall === 'ready',
+            )
+            .slice(0, 6)
             .map((d) => (
-              <p key={d.title}>
-                {d.title} · {d.status} · {d.variants_requested} VARIANTS
-              </p>
+              <ReadinessPanel
+                key={d.id ?? d.title}
+                title={d.title}
+                readiness={d.readiness ?? null}
+                actionHref={
+                  project && d.readiness?.overall === 'ready'
+                    ? SITE00_ADMIN_ROUTES.projectStudio(project.id)
+                    : project && d.readiness?.blockers[0]?.action_route
+                      ? d.readiness.blockers[0].action_route
+                      : undefined
+                }
+                actionLabel={
+                  d.readiness?.blockers[0]?.action_type === 'REQUEST_ACCESS' ? 'REQUEST ACCESS →' : 'GENERATE BRIEF →'
+                }
+              />
             ))}
         </section>
 

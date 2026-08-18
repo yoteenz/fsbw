@@ -53909,3 +53909,50 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Deploy:** Sync-only; say **deploy now** for Vercel.
 
+---
+
+## 2026-08-18 — SITE 00 Admin Production Operating System (Phase 1 foundation)
+
+- **Context:** Founder sprint to continue SITE 00 Admin from audit into operational production OS — STUDIO, AI Production Director, Approvals, Project Intelligence, Provisioning, Access, Next Best Actions, Deliverable Map, dependency/readiness engines. Rules: extend existing architecture; no fake prototypes; no password collection; `/admin/site00/*` not `/admin/studio/*` (Studio OS collision).
+
+- **Topics covered:** Phase 0 audit (prior entry); full 55-section spec; attached STUDIO reference; uppercase brand law applies to all new admin surfaces.
+
+- **Decisions / outcomes:**
+  - Route namespace **`/admin/site00/*`** mounted under existing **`AdminGuard`** in **`App.tsx`** via **`Site00AdminRoutes.tsx`**.
+  - Supabase migration **`20260818143000_site00_production_os.sql`** applied to production (`hyycomvcaqxxvyrfupes`) — 21 tables + service catalog seeds + `site_ecommerce` recipe + automation rules.
+  - Backend layer **`api/_lib/site00Production/`**: types, dependency engine, readiness engine, next-action engine (rule-based), AI director dev adapter, demo seed (NORTHQUARTER REBUILD), service orchestration.
+  - API **`api/admin/site00-production.ts`**: GET dashboard/studio/approvals/projects/project; POST bootstrap-demo, approve-brief, decide-approval, generate-brief.
+  - Admin UI **`src/site00/admin/`**: shell, nav (desktop sidebar + mobile bottom tabs), CSS, Dashboard, Studio, Approvals, Projects, Project workspace tabs, placeholder sections for identities/leads/finance/etc.
+  - Client provisioning scaffold **`/project/:projectSlug/provisioning`** with account guard.
+  - Demo data seeds on first API load via **`ensureDemoProjectSeeded()`** (not hardcoded in UI).
+
+- **Changes:**
+  - Migration + API + admin pages + routes wiring + **`vercel.json`** API config.
+  - Frontend types **`src/site00/admin/types/production.ts`**; **`productionApi.ts`** typed client.
+  - **`motherboard/CORE.md`** — Production OS bullet added.
+
+- **Still scaffold / next increment:** Identities, BLDR intakes, leads, discovery, finance, team, recipes UI, generated options versioning UI, client feedback interpretation UI, automation settings UI, notifications integration, FILES tab, full client provisioning API, role-enforced client auth on provisioning mutations.
+
+- **Verification:** `npm run build` pass; routes `/admin/site00` and `/project/northquarter-rebuild/provisioning` resolve (auth-guarded); production tables exist in Supabase (demo seed populates on first admin API call).
+
+- **Conventions:** AI mutations only through controlled service functions; external integrations use dev adapters until credentials configured; phase-aware access blocking; Creative Constitution + versioning persisted in DB; default automation level 2 in schema.
+
+---
+
+## 2026-08-18 — SITE 00 Production Readiness + Access Dependency Hardening
+
+- **Context:** Follow-up sprint to formalize Provisioning ↔ Service Access ↔ Dependencies ↔ STUDIO Readiness ↔ CTRL ROOM ↔ Next Best Actions ↔ AI Director — without redesigning Admin/STUDIO UI.
+
+- **Decisions / outcomes:**
+  - **Single readiness graph** in **`api/_lib/site00Production/readinessEvaluator.ts`** — dimensions (creative, assets, access, dependencies, approval, payment), structured blockers, phase-aware environment readiness, deliverable `overall` status.
+  - **Access source of truth:** `site00_service_connections` + `site00_project_service_requirements` — AI reads only; never invents connection state.
+  - **Recipe service deps:** `required_services` JSON on `site00_recipe_deliverables` + BUILD/LAUNCH deliverables (frontend_build, backend_build, preview_deployment, etc.).
+  - **Persisted blockers:** `site00_production_blockers` with auto sync/resolve via **`blockerSync.ts`** on `refreshProjectDerivedState`.
+  - **Consumers unified:** STUDIO queue shows **`ReadinessPanel`**; Access center shows currently required + blocks; Dashboard next actions from readiness; CTRL ROOM **`CtrlRoomSignalsPanel`**; client provisioning buckets (Needed Now / Coming Up / Later / Complete).
+  - **APIs:** Admin POST `update-service-connection`, `set-project-phase`; client **`/api/site00/client-production`** (provisioning, ctrl-room, connect-service dev adapter).
+  - **Migration applied:** `20260818153000_site00_readiness_blockers.sql` to production.
+
+- **Tests:** `readinessEvaluator.test.ts` — Cases A–E, G pass (design-phase homepage ready with Supabase disconnected; build-phase backend blocked; auto-unblock logic via connection update).
+
+- **Verification:** `npm run build` pass; vitest 6/6 pass.
+

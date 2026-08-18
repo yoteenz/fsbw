@@ -46,13 +46,3 @@ export function buildDependencyMapFromRecipe(
   }
   return map;
 }
-
-/** Access keys required for downstream deliverable categories */
-export const ACCESS_DEPENDENCY_RULES: Record<string, string[]> = {
-  frontend_build: ['github'],
-  backend_build: ['supabase'],
-  preview_deployment: ['vercel'],
-  production_domain: ['godaddy'],
-  payment_integration: ['stripe'],
-  transactional_email: ['resend'],
-};

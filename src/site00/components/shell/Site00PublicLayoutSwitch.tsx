@@ -1,45 +1,38 @@
 import { createPortal } from 'react-dom';
-import { Link, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import {
   isSite00PublicDesktopPath,
   isSite00PublicPageBasePath,
-  site00PublicDesktopPath,
   site00PublicMobilePath,
 } from '../../config/site00-public-pages';
-import {
-  SITE00_ORIGIN_MOBILE_LAYOUT_QUERY,
-  isSite00OriginWideViewport,
-  site00OriginMobileLayoutPreviewActive,
-} from './site00OriginViewport';
+import { useSite00 } from '../../state/Site00Context';
 
-/** Mobile ↔ desktop artboard toggle for Composer public routes. */
+/** Mobile ↔ desktop preview toggle — updates shared preview mode (same semantic route). */
 export function Site00PublicLayoutSwitch() {
-  const { pathname, search } = useLocation();
+  const { pathname } = useLocation();
+  const { isPreviewDesktop, setPreviewDeviceMode } = useSite00();
 
   const basePath = site00PublicMobilePath(pathname);
   if (!isSite00PublicPageBasePath(basePath) && !isSite00PublicDesktopPath(pathname)) {
     return null;
   }
 
-  const mobileHref =
-    isSite00OriginWideViewport() && isSite00PublicDesktopPath(pathname)
-      ? `${basePath}?${SITE00_ORIGIN_MOBILE_LAYOUT_QUERY}=1`
-      : basePath;
-
-  const desktopHref = site00PublicDesktopPath(basePath);
-  const onMobile =
-    isSite00PublicPageBasePath(pathname) &&
-    (!isSite00OriginWideViewport() || site00OriginMobileLayoutPreviewActive(search));
-  const onDesktop = isSite00PublicDesktopPath(pathname);
-
   const nav = (
     <nav className="site00-origin-layout-switch" aria-label="Public page layout preview">
-      <Link to={mobileHref} aria-current={onMobile ? 'page' : undefined}>
+      <button
+        type="button"
+        aria-current={!isPreviewDesktop ? 'page' : undefined}
+        onClick={() => setPreviewDeviceMode('mobile')}
+      >
         Mobile
-      </Link>
-      <Link to={desktopHref} aria-current={onDesktop ? 'page' : undefined}>
+      </button>
+      <button
+        type="button"
+        aria-current={isPreviewDesktop ? 'page' : undefined}
+        onClick={() => setPreviewDeviceMode('desktop')}
+      >
         Desktop
-      </Link>
+      </button>
     </nav>
   );
 

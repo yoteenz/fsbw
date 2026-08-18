@@ -2,35 +2,24 @@
   "schemaVersion": 1,
   "exports": [
     {
-      "id": "prebuild-2026-08-18T14-40-51-426Z",
+      "id": "prebuild-2026-08-18T14-54-24-269Z",
       "version": "0.3.2",
       "zipFileName": "StudioOS_ContextCapsule_v0.3.2.zip",
-      "generatedAt": "2026-08-18T14:40:51.426Z",
+      "generatedAt": "2026-08-18T14:54:24.269Z",
       "projectVersion": "build-a-wig@0.0.0` (see git SHA at export)",
-      "studioOsVersion": "9c1f875",
-      "checksumSha256": "df6094ab924eb66c2c815944e4f75f429f7f0600c7bc5eaa9ac29cf859590fc4",
+      "studioOsVersion": "2792208",
+      "checksumSha256": "05889cc872d1568e81dc1af00d4e5db66fb7835e1d84f2b7c0dc15e2d548bb64",
       "sizeBytes": 54075,
       "downloadPath": "/downloads/context-capsules/archive/StudioOS_ContextCapsule_v0.3.2.zip"
     },
     {
-      "id": "prebuild-2026-08-18T14-38-57-971Z",
+      "id": "prebuild-2026-08-18T14-53-08-352Z",
       "version": "0.3.2",
       "zipFileName": "StudioOS_ContextCapsule_v0.3.2.zip",
-      "generatedAt": "2026-08-18T14:38:57.971Z",
+      "generatedAt": "2026-08-18T14:53:08.352Z",
       "projectVersion": "build-a-wig@0.0.0` (see git SHA at export)",
-      "studioOsVersion": "9c1f875",
-      "checksumSha256": "d2fa105f0ec81496021f64c0bda313c08c1bbf9e418bfb2b2e2decac8f81587e",
-      "sizeBytes": 54075,
-      "downloadPath": "/downloads/context-capsules/archive/StudioOS_ContextCapsule_v0.3.2.zip"
-    },
-    {
-      "id": "prebuild-2026-08-18T14-37-09-022Z",
-      "version": "0.3.2",
-      "zipFileName": "StudioOS_ContextCapsule_v0.3.2.zip",
-      "generatedAt": "2026-08-18T14:37:09.022Z",
-      "projectVersion": "build-a-wig@0.0.0` (see git SHA at export)",
-      "studioOsVersion": "9c1f875",
-      "checksumSha256": "554a61458f60a140621c1078ba290089d9dbef5ac08af39dc0e75f7c89409fc6",
+      "studioOsVersion": "2792208",
+      "checksumSha256": "46690001476b33766d1b635c80c3371ceccc8beb59ac46361af824810f534b92",
       "sizeBytes": 54075,
       "downloadPath": "/downloads/context-capsules/archive/StudioOS_ContextCapsule_v0.3.2.zip"
     },
