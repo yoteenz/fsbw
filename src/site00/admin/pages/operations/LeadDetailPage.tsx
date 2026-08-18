@@ -77,7 +77,7 @@ export default function LeadDetailPage() {
               <dt>BUDGET</dt>
               <dd>{lead.budget_range ?? '—'}</dd>
               <dt>EST. VALUE</dt>
-              <dd>{formatCurrency(lead.estimated_value)}</dd>
+              <dd>{formatCurrency(lead.estimated_value ?? undefined)}</dd>
               <dt>CREATED</dt>
               <dd>{formatDate(lead.created_at)}</dd>
               {lead.last_contact_at ? (

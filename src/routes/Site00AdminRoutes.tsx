@@ -8,7 +8,25 @@ const Site00AdminStudioPage = lazy(() => import('../site00/admin/pages/StudioPag
 const Site00AdminApprovalsPage = lazy(() => import('../site00/admin/pages/ApprovalsPage'));
 const Site00AdminProjectsPage = lazy(() => import('../site00/admin/pages/ProjectsPage'));
 const Site00AdminProjectWorkspacePage = lazy(() => import('../site00/admin/pages/ProjectWorkspacePage'));
-const Site00AdminPlaceholderPage = lazy(() => import('../site00/admin/pages/PlaceholderSectionPage'));
+
+const IdentitiesPage = lazy(() => import('../site00/admin/pages/operations/IdentitiesPage'));
+const IdentityDetailPage = lazy(() => import('../site00/admin/pages/operations/IdentityDetailPage'));
+const BldrIntakesPage = lazy(() => import('../site00/admin/pages/operations/BldrIntakesPage'));
+const BldrIntakeDetailPage = lazy(() => import('../site00/admin/pages/operations/BldrIntakeDetailPage'));
+const LeadsPage = lazy(() => import('../site00/admin/pages/operations/LeadsPage'));
+const LeadDetailPage = lazy(() => import('../site00/admin/pages/operations/LeadDetailPage'));
+const DiscoveryPage = lazy(() => import('../site00/admin/pages/operations/DiscoveryPage'));
+const DiscoveryDetailPage = lazy(() => import('../site00/admin/pages/operations/DiscoveryDetailPage'));
+const SitesPage = lazy(() => import('../site00/admin/pages/operations/SitesPage'));
+const SiteDetailPage = lazy(() => import('../site00/admin/pages/operations/SiteDetailPage'));
+const CtrlRoomPage = lazy(() => import('../site00/admin/pages/operations/CtrlRoomPage'));
+const FinancePage = lazy(() => import('../site00/admin/pages/operations/FinancePage'));
+const InvoiceDetailPage = lazy(() => import('../site00/admin/pages/operations/InvoiceDetailPage'));
+const TeamPage = lazy(() => import('../site00/admin/pages/operations/TeamPage'));
+const ReportsPage = lazy(() => import('../site00/admin/pages/operations/ReportsPage'));
+const ReportsPipelinePage = lazy(() => import('../site00/admin/pages/operations/ReportsPipelinePage'));
+const ActivityPage = lazy(() => import('../site00/admin/pages/operations/ActivityPage'));
+const SettingsPage = lazy(() => import('../site00/admin/pages/operations/SettingsPage'));
 
 function AdminSuspense({ children }: { children: React.ReactNode }) {
   return <Suspense fallback={<LoadingScreen />}>{children}</Suspense>;
@@ -78,7 +96,15 @@ export function Site00AdminRoutes() {
         path="site00/identities"
         element={
           <AdminSuspense>
-            <Site00AdminPlaceholderPage />
+            <IdentitiesPage />
+          </AdminSuspense>
+        }
+      />
+      <Route
+        path="site00/identities/:id"
+        element={
+          <AdminSuspense>
+            <IdentityDetailPage />
           </AdminSuspense>
         }
       />
@@ -86,7 +112,15 @@ export function Site00AdminRoutes() {
         path="site00/bldr-intakes"
         element={
           <AdminSuspense>
-            <Site00AdminPlaceholderPage />
+            <BldrIntakesPage />
+          </AdminSuspense>
+        }
+      />
+      <Route
+        path="site00/bldr-intakes/:id"
+        element={
+          <AdminSuspense>
+            <BldrIntakeDetailPage />
           </AdminSuspense>
         }
       />
@@ -94,7 +128,15 @@ export function Site00AdminRoutes() {
         path="site00/leads"
         element={
           <AdminSuspense>
-            <Site00AdminPlaceholderPage />
+            <LeadsPage />
+          </AdminSuspense>
+        }
+      />
+      <Route
+        path="site00/leads/:id"
+        element={
+          <AdminSuspense>
+            <LeadDetailPage />
           </AdminSuspense>
         }
       />
@@ -102,7 +144,15 @@ export function Site00AdminRoutes() {
         path="site00/discovery"
         element={
           <AdminSuspense>
-            <Site00AdminPlaceholderPage />
+            <DiscoveryPage />
+          </AdminSuspense>
+        }
+      />
+      <Route
+        path="site00/discovery/:id"
+        element={
+          <AdminSuspense>
+            <DiscoveryDetailPage />
           </AdminSuspense>
         }
       />
@@ -110,7 +160,23 @@ export function Site00AdminRoutes() {
         path="site00/sites"
         element={
           <AdminSuspense>
-            <Site00AdminPlaceholderPage />
+            <SitesPage />
+          </AdminSuspense>
+        }
+      />
+      <Route
+        path="site00/sites/:id"
+        element={
+          <AdminSuspense>
+            <SiteDetailPage />
+          </AdminSuspense>
+        }
+      />
+      <Route
+        path="site00/ctrl-room"
+        element={
+          <AdminSuspense>
+            <CtrlRoomPage />
           </AdminSuspense>
         }
       />
@@ -118,7 +184,15 @@ export function Site00AdminRoutes() {
         path="site00/finance"
         element={
           <AdminSuspense>
-            <Site00AdminPlaceholderPage />
+            <FinancePage />
+          </AdminSuspense>
+        }
+      />
+      <Route
+        path="site00/finance/invoices/:id"
+        element={
+          <AdminSuspense>
+            <InvoiceDetailPage />
           </AdminSuspense>
         }
       />
@@ -126,7 +200,7 @@ export function Site00AdminRoutes() {
         path="site00/team"
         element={
           <AdminSuspense>
-            <Site00AdminPlaceholderPage />
+            <TeamPage />
           </AdminSuspense>
         }
       />
@@ -134,7 +208,23 @@ export function Site00AdminRoutes() {
         path="site00/reports"
         element={
           <AdminSuspense>
-            <Site00AdminPlaceholderPage />
+            <ReportsPage />
+          </AdminSuspense>
+        }
+      />
+      <Route
+        path="site00/reports/pipeline"
+        element={
+          <AdminSuspense>
+            <ReportsPipelinePage />
+          </AdminSuspense>
+        }
+      />
+      <Route
+        path="site00/activity"
+        element={
+          <AdminSuspense>
+            <ActivityPage />
           </AdminSuspense>
         }
       />
@@ -142,7 +232,7 @@ export function Site00AdminRoutes() {
         path="site00/settings"
         element={
           <AdminSuspense>
-            <Site00AdminPlaceholderPage />
+            <SettingsPage />
           </AdminSuspense>
         }
       />
@@ -150,7 +240,7 @@ export function Site00AdminRoutes() {
         path="site00/settings/studio/automation"
         element={
           <AdminSuspense>
-            <Site00AdminPlaceholderPage />
+            <SettingsPage />
           </AdminSuspense>
         }
       />

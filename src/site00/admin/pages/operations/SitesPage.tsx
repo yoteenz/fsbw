@@ -88,7 +88,7 @@ export default function SitesPage() {
               {
                 key: 'deploy',
                 header: 'LAST DEPLOY',
-                render: (row) => formatDate(row.last_deploy_at),
+                render: (row) => formatDate(row.last_deploy_at ?? undefined),
                 hideMobile: true,
               },
             ]}

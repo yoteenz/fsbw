@@ -80,7 +80,7 @@ export default function BldrIntakesPage() {
               {
                 key: 'submitted',
                 header: 'SUBMITTED',
-                render: (row) => formatDate(row.submitted_at),
+                render: (row) => formatDate(row.submitted_at ?? undefined),
                 hideMobile: true,
               },
             ]}

@@ -76,7 +76,7 @@ export default function LeadsPage() {
                 render: (row) => <AdminStatusBadge status={row.status} />,
               },
               { key: 'build', header: 'BUILD CLASS', render: (row) => row.build_class ?? '—', hideMobile: true },
-              { key: 'value', header: 'EST. VALUE', render: (row) => formatCurrency(row.estimated_value), hideMobile: true },
+              { key: 'value', header: 'EST. VALUE', render: (row) => formatCurrency(row.estimated_value ?? undefined), hideMobile: true },
               { key: 'created', header: 'CREATED', render: (row) => formatDate(row.created_at), hideMobile: true },
             ]}
           />

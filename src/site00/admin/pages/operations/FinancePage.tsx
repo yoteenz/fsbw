@@ -80,7 +80,7 @@ export default function FinancePage() {
                   header: 'STATUS',
                   render: (row) => <AdminStatusBadge status={row.status} />,
                 },
-                { key: 'due', header: 'DUE', render: (row) => formatDate(row.due_date), hideMobile: true },
+                { key: 'due', header: 'DUE', render: (row) => formatDate(row.due_date ?? undefined), hideMobile: true },
               ]}
             />
           </section>
