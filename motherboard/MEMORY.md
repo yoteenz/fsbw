@@ -53242,6 +53242,22 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 ---
 
+## 2026-08-18 — BLDR state page build class PNG icons (desktop)
+
+- **Context:** Replace wireframe icons on **`/bldr/state`** build class cards (Site, World, Enterprise, Not Sure?) with approved Supabase PNGs — **desktop only**; mobile keeps `GeometricIcon`.
+
+- **Change:** `bldr-build-class-icons.ts`, `BldrBuildClassIcon.tsx`, `BuildClassCard` dual icon slot (PNG @ ≥768px, wireframe below). CSS `.site00-bldr-build-class-icon` 64×64.
+
+- **Assets:** `33910244…` (Site), `D5F4496A…` (World), `5144412A…` (Enterprise), `CA16B9A4…` (Not Sure).
+
+- **Verification:** Playwright `/bldr/state` — 4 PNGs @ 64px desktop; mobile PNG hidden, wireframe visible.
+
+- **Spatial Architecture Review:** SKIPPED — approved asset swap.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
 ## 2026-08-18 — Origin mobile swipe-up: callout area + directory navigation fix
 
 - **Context:** Founder reported mobile Origin **swipe up** does not work and does not navigate to the **Locations Directory** (`/origin/locations`).
