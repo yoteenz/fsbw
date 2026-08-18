@@ -73,7 +73,7 @@ export function BldrExpandedPanel({ onCollapse }: BldrExpandedPanelProps) {
           </div>
         </div>
 
-        <p className="site00-label-red" style={{ marginBottom: 16 }}>
+        <p className="site00-label-red site00-origin-framework-heading">
           THE BLDR FRAMEWORK
         </p>
         <div className="site00-origin-framework-pillars">

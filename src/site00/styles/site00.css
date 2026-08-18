@@ -424,6 +424,12 @@
   overflow-wrap: anywhere;
 }
 
+.site00-origin-framework-heading {
+  border-top: 1px solid var(--site-border);
+  padding-top: 24px;
+  margin: 0 0 16px;
+}
+
 /* ─── Responsive safe area ─── */
 
 .site00-safe-ui {

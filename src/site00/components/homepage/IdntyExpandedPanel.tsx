@@ -78,7 +78,7 @@ export function IdntyExpandedPanel({ onCollapse }: IdntyExpandedPanelProps) {
           </div>
         </div>
 
-        <p className="site00-label-red" style={{ marginBottom: 16 }}>
+        <p className="site00-label-red site00-origin-framework-heading">
           THE IDENTITY FRAMEWORK
         </p>
         <div className="site00-origin-framework-pillars">
