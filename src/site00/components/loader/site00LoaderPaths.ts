@@ -1,6 +1,7 @@
 /** SITE 00 routes that use the immersive geometry loader (boot shell + cinematic gate). */
 
 import { SITE00_ROUTES } from '../../config/routes';
+import { isSite00PublicDesktopPath, site00PublicMobilePath } from '../../config/site00-public-pages';
 
 const SITE00_IMMERSIVE_PREFIXES = [
   '/origin',
@@ -33,6 +34,7 @@ const SITE00_PUBLIC_SKIP_LOADER_PATHS = [
 /** Designated desktop artboard routes — skip mobile loader; force desktop composition. */
 export function isSite00DesktopArtboardPath(pathname: string): boolean {
   if (!pathname) return false;
+  if (isSite00PublicDesktopPath(pathname)) return true;
   const prefixes = [SITE00_ROUTES.originDesktop, SITE00_ROUTES.idntyStateDesktop, SITE00_ROUTES.bldrStateDesktop] as const;
   return prefixes.some((base) => pathname === base || pathname.startsWith(`${base}/`));
 }
@@ -45,7 +47,10 @@ export function isSite00SignInPath(pathname: string): boolean {
 
 export function isSite00PublicHubPath(pathname: string): boolean {
   if (!pathname) return false;
-  return SITE00_PUBLIC_SKIP_LOADER_PATHS.some((base) => pathname === base || pathname.startsWith(`${base}/`));
+  const mobilePath = site00PublicMobilePath(pathname);
+  return SITE00_PUBLIC_SKIP_LOADER_PATHS.some(
+    (base) => mobilePath === base || mobilePath.startsWith(`${base}/`),
+  );
 }
 
 export function isSite00ImmersivePath(pathname: string): boolean {

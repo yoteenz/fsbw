@@ -10,7 +10,9 @@ import { Site00WorldColdStartGate } from '../site00/components/loader/Site00Worl
 import { Site00OriginRouteShell } from '../site00/components/shell/Site00OriginRouteShell';
 import { Site00AccountRouteGuard } from '../site00/components/guards/Site00AccountRouteGuard';
 import { Site00DesktopArtboardShell } from '../site00/components/shell/Site00DesktopArtboardShell';
+import { Site00PublicRouteShell } from '../site00/components/shell/Site00PublicRouteShell';
 import { Site00TypographyBootstrap } from '../site00/components/Site00TypographyBootstrap';
+import { site00PublicDesktopPath } from '../site00/config/site00-public-pages';
 /* Eager-load SITE 00 + ASSTS styles (lazy route CSS was not applying on mobile preview). */
 import '../site00/styles/site00.css';
 import '../site00/styles/site00-locations.css';
@@ -58,6 +60,37 @@ const AsstsProfilePage = lazy(() => import('../site00/assts/pages/ProfilePage'))
 
 function Site00Suspense({ children }: { children: ReactNode }) {
   return <Suspense fallback={<Site00RouteLoadingFallback />}>{children}</Suspense>;
+}
+
+function Site00PublicPageRoutes(path: string, Page: React.LazyExoticComponent<() => JSX.Element>, auth = false) {
+  const page = (
+    <Site00Suspense>
+      <Page />
+    </Site00Suspense>
+  );
+  const body = auth ? <Site00AccountRouteGuard>{page}</Site00AccountRouteGuard> : page;
+  const desktopPath = site00PublicDesktopPath(path);
+
+  return (
+    <>
+      <Route
+        path={path}
+        element={
+          <Site00Layout>
+            <Site00PublicRouteShell>{body}</Site00PublicRouteShell>
+          </Site00Layout>
+        }
+      />
+      <Route
+        path={desktopPath}
+        element={
+          <Site00Layout>
+            <Site00PublicRouteShell forceArtboard>{body}</Site00PublicRouteShell>
+          </Site00Layout>
+        }
+      />
+    </>
+  );
 }
 
 function Site00Layout({ children }: { children: ReactNode }) {
@@ -159,9 +192,23 @@ export function Site00Routes() {
         path={SITE00_ROUTES.idnty}
         element={
           <Site00Layout>
-            <Site00Suspense>
-              <Site00IdntyPage />
-            </Site00Suspense>
+            <Site00PublicRouteShell>
+              <Site00Suspense>
+                <Site00IdntyPage />
+              </Site00Suspense>
+            </Site00PublicRouteShell>
+          </Site00Layout>
+        }
+      />
+      <Route
+        path={site00PublicDesktopPath(SITE00_ROUTES.idnty)}
+        element={
+          <Site00Layout>
+            <Site00PublicRouteShell forceArtboard>
+              <Site00Suspense>
+                <Site00IdntyPage />
+              </Site00Suspense>
+            </Site00PublicRouteShell>
           </Site00Layout>
         }
       />
@@ -191,9 +238,23 @@ export function Site00Routes() {
         path={SITE00_ROUTES.bldr}
         element={
           <Site00Layout>
-            <Site00Suspense>
-              <Site00BldrPage />
-            </Site00Suspense>
+            <Site00PublicRouteShell>
+              <Site00Suspense>
+                <Site00BldrPage />
+              </Site00Suspense>
+            </Site00PublicRouteShell>
+          </Site00Layout>
+        }
+      />
+      <Route
+        path={site00PublicDesktopPath(SITE00_ROUTES.bldr)}
+        element={
+          <Site00Layout>
+            <Site00PublicRouteShell forceArtboard>
+              <Site00Suspense>
+                <Site00BldrPage />
+              </Site00Suspense>
+            </Site00PublicRouteShell>
           </Site00Layout>
         }
       />
@@ -296,108 +357,16 @@ export function Site00Routes() {
           />
         </Route>
       </Route>
-      <Route
-        path={SITE00_ROUTES.sites}
-        element={
-          <Site00Layout>
-            <Site00Suspense>
-              <SitesPortfolioPage />
-            </Site00Suspense>
-          </Site00Layout>
-        }
-      />
-      <Route
-        path={SITE00_ROUTES.services}
-        element={
-          <Site00Layout>
-            <Site00Suspense>
-              <ServicesPage />
-            </Site00Suspense>
-          </Site00Layout>
-        }
-      />
-      <Route
-        path={SITE00_ROUTES.system}
-        element={
-          <Site00Layout>
-            <Site00Suspense>
-              <SystemPage />
-            </Site00Suspense>
-          </Site00Layout>
-        }
-      />
-      <Route
-        path={SITE00_ROUTES.about}
-        element={
-          <Site00Layout>
-            <Site00Suspense>
-              <AboutPage />
-            </Site00Suspense>
-          </Site00Layout>
-        }
-      />
-      <Route
-        path={SITE00_ROUTES.journal}
-        element={
-          <Site00Layout>
-            <Site00Suspense>
-              <JournalPage />
-            </Site00Suspense>
-          </Site00Layout>
-        }
-      />
-      <Route
-        path={SITE00_ROUTES.support}
-        element={
-          <Site00Layout>
-            <Site00Suspense>
-              <SupportPage />
-            </Site00Suspense>
-          </Site00Layout>
-        }
-      />
-      <Route
-        path={SITE00_ROUTES.idntySignInSecurity}
-        element={
-          <Site00Layout>
-            <Site00Suspense>
-              <IdntySignInSecurityPage />
-            </Site00Suspense>
-          </Site00Layout>
-        }
-      />
-      <Route
-        path={SITE00_ROUTES.bldrTemplates}
-        element={
-          <Site00Layout>
-            <Site00Suspense>
-              <BldrTemplatesPage />
-            </Site00Suspense>
-          </Site00Layout>
-        }
-      />
-      <Route
-        path={SITE00_ROUTES.bldrStart}
-        element={
-          <Site00Layout>
-            <Site00Suspense>
-              <BldrStartPage />
-            </Site00Suspense>
-          </Site00Layout>
-        }
-      />
-      <Route
-        path={SITE00_ROUTES.projects}
-        element={
-          <Site00Layout>
-            <Site00AccountRouteGuard>
-              <Site00Suspense>
-                <ProjectsPage />
-              </Site00Suspense>
-            </Site00AccountRouteGuard>
-          </Site00Layout>
-        }
-      />
+      {Site00PublicPageRoutes(SITE00_ROUTES.sites, SitesPortfolioPage)}
+      {Site00PublicPageRoutes(SITE00_ROUTES.services, ServicesPage)}
+      {Site00PublicPageRoutes(SITE00_ROUTES.system, SystemPage)}
+      {Site00PublicPageRoutes(SITE00_ROUTES.about, AboutPage)}
+      {Site00PublicPageRoutes(SITE00_ROUTES.journal, JournalPage)}
+      {Site00PublicPageRoutes(SITE00_ROUTES.support, SupportPage)}
+      {Site00PublicPageRoutes(SITE00_ROUTES.idntySignInSecurity, IdntySignInSecurityPage)}
+      {Site00PublicPageRoutes(SITE00_ROUTES.bldrTemplates, BldrTemplatesPage)}
+      {Site00PublicPageRoutes(SITE00_ROUTES.projects, ProjectsPage, true)}
+      {Site00PublicPageRoutes(SITE00_ROUTES.bldrStart, BldrStartPage)}
       <Route
         path={SITE00_ROUTES.signIn}
         element={

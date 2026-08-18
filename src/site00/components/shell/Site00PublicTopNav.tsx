@@ -2,6 +2,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { SITE00_GLOBAL_NAV } from '../../config/navigation';
 import { SITE00_CTRL_ROOM_PATH, site00SignInHrefWithReturnTo } from '../../config/mobile-directory-nav';
 import { SITE00_ROUTES, site00NavPathIsActive } from '../../config/routes';
+import { site00PublicMobilePath, site00PublicNavHref } from '../../config/site00-public-pages';
 import { useSignedInFromStorage } from '../../../hooks/useSignedInFromStorage';
 import { isSite00CtrlRoomActive } from '../../config/mobile-directory-nav';
 
@@ -26,11 +27,15 @@ export function Site00PublicTopNav() {
     <nav className="site00-public-topnav" aria-label="Top navigation">
       <ul>
         {items.map((item) => {
-          const href = isSignedIn && item.id === 'sites' ? SITE00_ROUTES.controlSites : item.href;
+          const href =
+            isSignedIn && item.id === 'sites'
+              ? SITE00_ROUTES.controlSites
+              : site00PublicNavHref(item.href, pathname);
           const active =
             item.id === 'sites' && isSignedIn
               ? pathname.startsWith(SITE00_ROUTES.controlSites)
-              : site00NavPathIsActive(pathname, item.href) || pathname.startsWith(`${item.href}/`);
+              : site00NavPathIsActive(site00PublicMobilePath(pathname), item.href) ||
+                site00PublicMobilePath(pathname).startsWith(`${item.href}/`);
           return (
             <li key={item.id}>
               <Link to={href} aria-current={active ? 'page' : undefined}>

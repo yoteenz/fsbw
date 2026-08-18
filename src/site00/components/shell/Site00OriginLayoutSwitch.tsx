@@ -44,19 +44,17 @@ export function Site00OriginLayoutSwitch() {
       onDesktop: isSite00OriginDesktopPath(pathname),
     };
   } else if (
-    pathname === SITE00_ROUTES.bldr ||
     pathname === SITE00_ROUTES.bldrState ||
     isSite00BldrStateDesktopPath(pathname)
   ) {
     config = {
       ariaLabel: 'BLDR layout preview',
-      mobileHref: SITE00_ROUTES.bldr,
+      mobileHref: SITE00_ROUTES.bldrState,
       desktopHref: SITE00_ROUTES.bldrStateDesktop,
-      onMobile: pathname === SITE00_ROUTES.bldr,
+      onMobile: pathname === SITE00_ROUTES.bldrState,
       onDesktop: isSite00BldrStateDesktopPath(pathname),
     };
   } else if (
-    pathname === SITE00_ROUTES.idnty ||
     pathname === SITE00_ROUTES.idntyState ||
     isSite00IdntyStateDesktopPath(pathname)
   ) {
@@ -64,7 +62,7 @@ export function Site00OriginLayoutSwitch() {
       ariaLabel: 'IDNTY layout preview',
       mobileHref: SITE00_ROUTES.idntyState,
       desktopHref: SITE00_ROUTES.idntyStateDesktop,
-      onMobile: pathname === SITE00_ROUTES.idntyState || pathname === SITE00_ROUTES.idnty,
+      onMobile: pathname === SITE00_ROUTES.idntyState,
       onDesktop: isSite00IdntyStateDesktopPath(pathname),
     };
   }

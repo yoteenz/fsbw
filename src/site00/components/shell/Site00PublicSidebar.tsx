@@ -1,6 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
 import { SITE00_PUBLIC_RAIL_NAV, isSite00PublicRailActive } from '../../config/site00-public-rail-nav';
 import { SITE00_ROUTES } from '../../config/routes';
+import { site00PublicNavHref } from '../../config/site00-public-pages';
 import { SITE00_CTRL_ROOM_PATH, site00SignInHrefWithReturnTo } from '../../config/mobile-directory-nav';
 import { useSignedInFromStorage } from '../../../hooks/useSignedInFromStorage';
 import { signOutAppAndSupabaseSession } from '../../../utils/adminAuth';
@@ -21,7 +22,10 @@ export function Site00PublicSidebar() {
       <nav className="site00-public-sidebar__nav">
         <ul>
           {SITE00_PUBLIC_RAIL_NAV.map((item) => {
-            const linkHref = isSignedIn && item.id === 'sites' ? SITE00_ROUTES.controlSites : item.href;
+            const linkHref =
+              isSignedIn && item.id === 'sites'
+                ? SITE00_ROUTES.controlSites
+                : site00PublicNavHref(item.href, pathname);
             const active =
               item.id === 'sites' && isSignedIn
                 ? pathname.startsWith(SITE00_ROUTES.controlSites)
