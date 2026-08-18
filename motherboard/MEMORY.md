@@ -53666,3 +53666,38 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Deploy:** Sync-only; say **deploy now** for production/preview Vercel host.
 
+---
+
+## 2026-08-18 — BLDR investment guide: remove duplicated build-class icons
+
+- **Context:** Founder asked to remove duplicate icons from the builder investment guide section — same pattern as IDNTY investment tiers (icons already shown in build-class cards above).
+
+- **Fix:** Removed `buildClassId` from `InvestmentColumn` on `BldrStatePage.tsx`. Removed unused `buildClassId` from `BldrInvestmentTier` type and tier data in `builder.ts`. Build-class row icons unchanged.
+
+- **Verification:** Playwright `/bldr/state` — investment panel **0** build-class icons; build-class cards retain **4** icons.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — SITE 00 Composer route sprint: public + authenticated route family (12 routes)
+
+- **Context:** Founder sprint to implement complete SITE 00 route family from six approved storyboards — desktop + mobile, using approved Supabase background assets (`C948EBEF…` desktop, `D8D7E6B9…` mobile). Covers SITES (public portfolio + authenticated management), SERVICES, SYSTEM, ABOUT, JOURNAL, PROJECTS, SUPPORT, IDNTY hub, SIGN IN & SECURITY, BLDR hub, TEMPLATES.
+
+- **Architecture:**
+  - **`Site00PublicShell`** — desktop left rail + top nav + `Site00PageEnvironment` (approved bg assets); mobile uses `Site00MobileShell` + same env.
+  - **`Site00PagePrimitives`** — BracketHeading, MetricCard, HubActionCard, FilterTabs, EmptyState, etc.
+  - **`site00-page-seed.ts`** — isolated mock/empty seed (portfolio, journal, templates empty; system shows unavailable not fake uptime).
+  - Public hub routes skip immersive loader (`isSite00PublicHubPath` in `site00LoaderPaths.ts`).
+  - **Auth-aware SITES:** `/sites` = public portfolio; signed-in users redirect to `/control/sites`; sidebar/top nav SITES link → `/control/sites` when signed in.
+  - **Protected:** `/projects`, `/control/sites` via `Site00AccountRouteGuard` + `CtrlRoomShell`.
+  - IDNTY workflow remains `/idnty/state`; hub at `/idnty`. BLDR workflow `/bldr/state`; hub at `/bldr`; templates `/bldr/templates`.
+
+- **Routes added/updated:** `/sites`, `/services`, `/system`, `/about`, `/journal`, `/support`, `/projects`, `/idnty`, `/idnty/sign-in-security`, `/bldr`, `/bldr/templates`, `/bldr/start`, `/control/sites` (ControlSitesPage replaces placeholder).
+
+- **Verification:** `npm run build` green; curl 200 on all routes; visual QA desktop (services, system, about, journal, support, idnty, sign-in-security, bldr, templates) + mobile services — bracket headings, shell, backgrounds, no horizontal overflow.
+
+- **TODOs (intentional):** Portfolio/journal/templates seed empty until CMS/API; SYSTEM health adapter not connected; some IDNTY modules link to `/control/settings` placeholders.
+
+- **Deploy:** Sync-only commit `203bb4955`; say **deploy now** for Vercel.
+

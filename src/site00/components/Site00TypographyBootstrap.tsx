@@ -3,7 +3,24 @@ import { useLocation } from 'react-router-dom';
 import { Site00TypeTestOverlay } from './Site00TypeTestOverlay';
 import { isSite00TypeTestEnabled, logSite00TypefaceStatusOnce } from '../utils/site00FontVerify';
 
-const SITE00_PATH_PREFIXES = ['/origin', '/enter', '/idnty', '/bldr', '/assts', '/bluprint', '/build', '/control', '/live'];
+const SITE00_PATH_PREFIXES = [
+  '/origin',
+  '/enter',
+  '/idnty',
+  '/bldr',
+  '/assts',
+  '/bluprint',
+  '/build',
+  '/control',
+  '/live',
+  '/sites',
+  '/services',
+  '/system',
+  '/about',
+  '/journal',
+  '/support',
+  '/projects',
+];
 
 function isSite00Path(pathname: string): boolean {
   if (pathname === '/' && import.meta.env.VITE_SITE00_ROOT === '1') return true;

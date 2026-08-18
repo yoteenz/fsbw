@@ -23,7 +23,7 @@ export const SITE00_MOBILE_DIRECTORY_PRIMARY: Site00MobileDirectoryItem[] = [
   {
     id: 'idnty',
     label: 'IDNTY',
-    href: SITE00_ROUTES.idntyState,
+    href: SITE00_ROUTES.idnty,
     enabled: true,
     ariaLabel: 'Identity',
   },

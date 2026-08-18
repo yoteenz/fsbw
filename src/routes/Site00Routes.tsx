@@ -19,6 +19,7 @@ import '../site00/styles/site00-loader.css';
 import '../site00/styles/site00-desktop-artboard.css';
 import '../site00/styles/site00-auth.css';
 import '../site00/styles/site00-ctrl-room.css';
+import '../site00/styles/site00-pages.css';
 import '../site00/assts/styles/assts.css';
 import '../site00/assts/styles/assts-depth.css';
 import '../site00/assts/styles/assts-composition.css';
@@ -34,6 +35,17 @@ const Site00BldrStatePage = lazy(() => import('../site00/pages/BldrStatePage'));
 const Site00SignInPage = lazy(() => import('../site00/pages/Site00SignInPage'));
 const ControlOverviewPage = lazy(() => import('../site00/pages/control/ControlOverviewPage'));
 const ControlSectionPage = lazy(() => import('../site00/pages/control/ControlSectionPage'));
+const ControlSitesPage = lazy(() => import('../site00/pages/control/ControlSitesPage'));
+const SitesPortfolioPage = lazy(() => import('../site00/pages/SitesPortfolioPage'));
+const ServicesPage = lazy(() => import('../site00/pages/ServicesPage'));
+const SystemPage = lazy(() => import('../site00/pages/SystemPage'));
+const AboutPage = lazy(() => import('../site00/pages/AboutPage'));
+const JournalPage = lazy(() => import('../site00/pages/JournalPage'));
+const ProjectsPage = lazy(() => import('../site00/pages/ProjectsPage'));
+const SupportPage = lazy(() => import('../site00/pages/SupportPage'));
+const IdntySignInSecurityPage = lazy(() => import('../site00/pages/idnty/IdntySignInSecurityPage'));
+const BldrTemplatesPage = lazy(() => import('../site00/pages/bldr/BldrTemplatesPage'));
+const BldrStartPage = lazy(() => import('../site00/pages/bldr/BldrStartPage'));
 const AsstsLibraryPage = lazy(() => import('../site00/assts/pages/LibraryPage'));
 const AsstsBatchesListPage = lazy(() => import('../site00/assts/pages/BatchesListPage'));
 const AsstsBatchPage = lazy(() => import('../site00/assts/pages/BatchPage'));
@@ -283,6 +295,108 @@ export function Site00Routes() {
         </Route>
       </Route>
       <Route
+        path={SITE00_ROUTES.sites}
+        element={
+          <Site00Layout>
+            <Site00Suspense>
+              <SitesPortfolioPage />
+            </Site00Suspense>
+          </Site00Layout>
+        }
+      />
+      <Route
+        path={SITE00_ROUTES.services}
+        element={
+          <Site00Layout>
+            <Site00Suspense>
+              <ServicesPage />
+            </Site00Suspense>
+          </Site00Layout>
+        }
+      />
+      <Route
+        path={SITE00_ROUTES.system}
+        element={
+          <Site00Layout>
+            <Site00Suspense>
+              <SystemPage />
+            </Site00Suspense>
+          </Site00Layout>
+        }
+      />
+      <Route
+        path={SITE00_ROUTES.about}
+        element={
+          <Site00Layout>
+            <Site00Suspense>
+              <AboutPage />
+            </Site00Suspense>
+          </Site00Layout>
+        }
+      />
+      <Route
+        path={SITE00_ROUTES.journal}
+        element={
+          <Site00Layout>
+            <Site00Suspense>
+              <JournalPage />
+            </Site00Suspense>
+          </Site00Layout>
+        }
+      />
+      <Route
+        path={SITE00_ROUTES.support}
+        element={
+          <Site00Layout>
+            <Site00Suspense>
+              <SupportPage />
+            </Site00Suspense>
+          </Site00Layout>
+        }
+      />
+      <Route
+        path={SITE00_ROUTES.idntySignInSecurity}
+        element={
+          <Site00Layout>
+            <Site00Suspense>
+              <IdntySignInSecurityPage />
+            </Site00Suspense>
+          </Site00Layout>
+        }
+      />
+      <Route
+        path={SITE00_ROUTES.bldrTemplates}
+        element={
+          <Site00Layout>
+            <Site00Suspense>
+              <BldrTemplatesPage />
+            </Site00Suspense>
+          </Site00Layout>
+        }
+      />
+      <Route
+        path={SITE00_ROUTES.bldrStart}
+        element={
+          <Site00Layout>
+            <Site00Suspense>
+              <BldrStartPage />
+            </Site00Suspense>
+          </Site00Layout>
+        }
+      />
+      <Route
+        path={SITE00_ROUTES.projects}
+        element={
+          <Site00Layout>
+            <Site00AccountRouteGuard>
+              <Site00Suspense>
+                <ProjectsPage />
+              </Site00Suspense>
+            </Site00AccountRouteGuard>
+          </Site00Layout>
+        }
+      />
+      <Route
         path={SITE00_ROUTES.signIn}
         element={
           <Site00Layout>
@@ -310,7 +424,7 @@ export function Site00Routes() {
           <Site00Layout>
             <Site00AccountRouteGuard>
               <Site00Suspense>
-                <ControlSectionPage />
+                <ControlSitesPage />
               </Site00Suspense>
             </Site00AccountRouteGuard>
           </Site00Layout>

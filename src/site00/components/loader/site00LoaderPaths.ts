@@ -14,6 +14,22 @@ const SITE00_IMMERSIVE_PREFIXES = [
   '/live',
 ] as const;
 
+/** Public hub/marketing routes — skip cinematic cold-start loader. */
+const SITE00_PUBLIC_SKIP_LOADER_PATHS = [
+  SITE00_ROUTES.sites,
+  SITE00_ROUTES.services,
+  SITE00_ROUTES.system,
+  SITE00_ROUTES.about,
+  SITE00_ROUTES.journal,
+  SITE00_ROUTES.support,
+  SITE00_ROUTES.projects,
+  SITE00_ROUTES.idnty,
+  SITE00_ROUTES.idntySignInSecurity,
+  SITE00_ROUTES.bldr,
+  SITE00_ROUTES.bldrTemplates,
+  SITE00_ROUTES.bldrStart,
+] as const;
+
 /** Designated desktop artboard routes — skip mobile loader; force desktop composition. */
 export function isSite00DesktopArtboardPath(pathname: string): boolean {
   if (!pathname) return false;
@@ -27,9 +43,15 @@ export function isSite00SignInPath(pathname: string): boolean {
   return pathname === SITE00_ROUTES.signIn || pathname.startsWith(`${SITE00_ROUTES.signIn}/`);
 }
 
+export function isSite00PublicHubPath(pathname: string): boolean {
+  if (!pathname) return false;
+  return SITE00_PUBLIC_SKIP_LOADER_PATHS.some((base) => pathname === base || pathname.startsWith(`${base}/`));
+}
+
 export function isSite00ImmersivePath(pathname: string): boolean {
   if (isSite00DesktopArtboardPath(pathname)) return false;
   if (isSite00SignInPath(pathname)) return false;
+  if (isSite00PublicHubPath(pathname)) return false;
   if (!pathname) return false;
   if (pathname === '/' && import.meta.env.VITE_SITE00_ROOT === '1') return true;
   return SITE00_IMMERSIVE_PREFIXES.some(

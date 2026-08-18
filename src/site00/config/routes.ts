@@ -10,9 +10,12 @@ export const SITE00_ROUTES = {
   locations: '/origin/locations',
   enter: '/enter',
   idnty: '/idnty',
+  idntySignInSecurity: '/idnty/sign-in-security',
   idntyState: '/idnty/state',
   idntyStateDesktop: '/idnty/state/desktop',
   bldr: '/bldr',
+  bldrTemplates: '/bldr/templates',
+  bldrStart: '/bldr/start',
   bldrState: '/bldr/state',
   bldrStateDesktop: '/bldr/state/desktop',
   assts: '/assts',
@@ -31,17 +34,17 @@ export const SITE00_ROUTES = {
   controlTeam: '/control/team',
   controlSettings: '/control/settings',
   controlSecurity: '/control/security',
+  projects: '/projects',
+  support: '/support',
 } as const;
 
-/** Future reserved stage namespaces (placeholder routes — not populated this sprint) */
+/** Future reserved stage namespaces — not yet populated */
 export const SITE00_FUTURE_ROUTES = {
   bluprint: '/bluprint',
   build: '/build',
   live: '/live',
   evolve: '/evolve',
-  projects: '/projects',
   account: '/account',
-  support: '/support',
 } as const;
 
 export type Site00RouteKey = keyof typeof SITE00_ROUTES;
