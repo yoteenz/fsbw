@@ -101,7 +101,6 @@ export type BldrInvestmentTier = {
   label: string;
   priceLabel: string;
   keywords: string[];
-  buildClassId: BldrBuildClassIconId;
 };
 
 export const BLDR_INVESTMENT_TIERS: BldrInvestmentTier[] = [
@@ -109,28 +108,24 @@ export const BLDR_INVESTMENT_TIERS: BldrInvestmentTier[] = [
     id: 'site-tier',
     label: 'SITE',
     priceLabel: '$3.5K',
-    buildClassId: 'site',
     keywords: ['WEBSITES', 'COMMERCE', 'PORTFOLIOS', 'BOOKINGS', 'MEMBERSHIPS', 'MORE'],
   },
   {
     id: 'world-tier',
     label: 'WORLD',
     priceLabel: '$10K+',
-    buildClassId: 'world',
     keywords: ['IMMERSIVE', 'CONFIGURATORS', 'PLATFORMS', 'CUSTOM SYSTEMS', 'INTERACTION', 'MORE'],
   },
   {
     id: 'enterprise-tier',
     label: 'ENTERPRISE',
     priceLabel: '$25K+',
-    buildClassId: 'enterprise',
     keywords: ['MULTI-SYSTEM', 'CUSTOM', 'INTEGRATIONS', 'SECURITY', 'ADVANCED', 'MORE'],
   },
   {
     id: 'discovery-tier',
     label: 'NOT SURE?',
     priceLabel: '—',
-    buildClassId: 'not-sure',
     keywords: ['QUESTIONNAIRE', 'RECOMMENDATION', 'EXPERT REVIEW', 'CLARITY'],
   },
 ];

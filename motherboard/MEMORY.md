@@ -53610,7 +53610,6 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 ---
 
-<<<<<<< HEAD
 ## 2026-08-18 — SITE 00 Sign In + CTRL ROOM (desktop + mobile)
 
 - **Context:** Composer sprint — implement approved master design for SITE 00 **SIGN IN** and **CTRL ROOM** (desktop split-screen auth, mobile single-column auth, desktop/mobile account command center). Production backgrounds: `C948EBEF-45AC-476C-AD91-735CE2026157.png` (sign-in left panel), `D8D7E6B9-2CAD-4C63-BD82-F77E810851A2.png` (CTRL ROOM environment). Terminology: SIGN IN, CTRL ROOM, IDNTY, BLDR — not Dashboard/Identity/Builder.
@@ -53626,7 +53625,9 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Files:** New `site00-auth.css`, `site00-ctrl-room.css`, auth/control components + pages under `src/site00/`. Drawer adds LOG OUT when signed in.
 
 - **Deploy:** Sync-only; say **deploy now** for Vercel.
-=======
+
+---
+
 ## 2026-08-18 — IDNTY investment section: remove duplicated brand-state icons
 
 - **Context:** Founder asked to remove the row of icons from the identity investment section only — icons were duplicated with no reason (same brand-state icons already appear in the StateCard row above).
@@ -53656,5 +53657,4 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Verification:** Playwright @ 1920×1080 — `/origin` redirects to `/origin/desktop`; identical hero position (`absolute`, offset `10px`, norm left `133px`), artboard + env `absolute`.
 
 - **Deploy:** Sync-only; say **deploy now** for production/preview Vercel host.
->>>>>>> 03d0d1271 (Origin: redirect wide /origin to /origin/desktop for laptop-phone parity [sync-only])
 
