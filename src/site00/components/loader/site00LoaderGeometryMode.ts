@@ -29,7 +29,5 @@ export function resolveLoaderGeometryModeFromQuery(): LoaderGeometryMode | null 
 export function resolveLoaderGeometryMode(hasProductionAlpha = false): LoaderGeometryMode {
   const forced = resolveLoaderGeometryModeFromQuery();
   if (forced) return forced;
-  // Alpha derivative must be regenerated after each geometry master swap — screen blend until locked.
-  void hasProductionAlpha;
-  return 'screen';
+  return hasProductionAlpha ? 'alpha' : 'screen';
 }

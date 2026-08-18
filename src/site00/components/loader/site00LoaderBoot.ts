@@ -1,6 +1,6 @@
 import { shouldShowSite00ImmersiveLoader } from './site00LoaderSession';
 import { isSite00ImmersivePath } from './site00LoaderPaths';
-import { site00LoaderBackgroundUrl, site00LoaderGeometrySourceUrl } from './site00LoaderMedia';
+import { site00LoaderBackgroundUrl, site00LoaderGeometryWebmUrl } from './site00LoaderMedia';
 import { preloadSite00LoaderAnimation, preloadSite00LoaderBackground } from './site00LoaderPreload';
 
 const BOOT_CLASS = 'site00-assts-boot';
@@ -45,7 +45,7 @@ export function initSite00ImmersiveLoaderBoot(): void {
   injectPreload(bg, 'image');
   void preloadSite00LoaderBackground(bg);
 
-  const geometryUrl = site00LoaderGeometrySourceUrl();
+  const geometryUrl = site00LoaderGeometryWebmUrl();
   injectPreload(geometryUrl, 'fetch');
   void preloadSite00LoaderAnimation(geometryUrl);
 }

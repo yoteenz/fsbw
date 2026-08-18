@@ -25,7 +25,7 @@ type Site00LoaderAnimationProps = {
 export function Site00LoaderAnimation({ reducedMotion = false, onReady }: Site00LoaderAnimationProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [ready, setReady] = useState(false);
-  const [mode, setMode] = useState<LoaderGeometryMode>(() => resolveLoaderGeometryModeFromQuery() ?? 'screen');
+  const [mode, setMode] = useState<LoaderGeometryMode>(() => resolveLoaderGeometryModeFromQuery() ?? 'alpha');
   const [alphaUrl, setAlphaUrl] = useState<string | null>(null);
   const [sourceUrl, setSourceUrl] = useState(site00LoaderGeometrySourceUrl());
 

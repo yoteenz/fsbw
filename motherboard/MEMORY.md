@@ -52814,11 +52814,8 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **QA:** @ 390px `/origin/desktop` → production env bg, hero upper-left, IDNTY/BLDR side-by-side, Desktop pill active, no loader. `/origin` → Mobile pill active. Artifacts: `origin_desktop_route_phone.png`. `npm run build` PASS.
 
-<<<<<<< HEAD
 ---
 
-=======
->>>>>>> fb03ab2c3 (fix(site00): edge-to-edge immersive loader background — no white letterbox [sync-only])
 ## 2026-08-17 — AIO Smart Intake complete responsive redesign sprint
 
 - **Context:** Founder approved design reference (desktop split journey rail + light workspace, mobile restructured layout). Transform existing `/get-started` Smart Intake from plain form-like UI into premium guided business-setup console. Preserve routes, validation, persistence, demo mode, business-name check, Supabase/auth, and dynamic section logic — no second intake system.
@@ -52841,7 +52838,6 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Spatial Architecture Review:** SKIPPED — Smart Intake UX refactor, not Studio OS new surfaces.
 
-<<<<<<< HEAD
 ---
 
 ## 2026-08-17 — AIO Desktop Context Rail system (desktop/ultrawide)
@@ -52869,8 +52865,21 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Implementation:** `SmartIntakeLayoutMode` + CSS classes `si-shell--layout-desktop|mobile`, `si-app--layout-desktop|mobile`; `SmartIntakePreviewBar` (demo/debug only) toggles Responsive | Desktop | Mobile; query params preserved on switch.
 
 - **Files:** `smartIntakeLayoutMode.ts`, `SmartIntakePreviewBar.tsx`, `SmartIntakeShell.tsx`, `SmartIntakeLayout.tsx`, `GetStartedPage.tsx`, `AllInOneRoutes.tsx`, `paths.ts`, `aio-smart-intake.css`.
-=======
->>>>>>> fb03ab2c3 (fix(site00): edge-to-edge immersive loader background — no white letterbox [sync-only])
+
+---
+
+## 2026-08-17 — Site 00 immersive loader: remove white letterboxing (edge-to-edge background)
+
+- **Context:** Founder reported repeated white letterboxing around the loading animation; background image should fill edge-to-edge with no white CSS gutters.
+
+- **Root cause:** (1) Background PNG lived inside the 711×1536 artboard scaled with `Math.min(scaleW, scaleH)` — on wide viewports the artboard became a narrow centered column with `#f7f7f5` / `#f5f5f3` fallback showing as white side gutters. (2) Boot shell + loader root used light off-white backgrounds. (3) Kling geometry `mix-blend-mode: screen` made black video bars transparent, revealing those light fallbacks. (4) `LoaderCompositionContext.registerRegion` re-render loop (`Maximum update depth exceeded`) from unstable context value.
+
+- **Fix:** Background moved to viewport-level `.site00-immersive-loader__backdrop` `<img>` sharing the artboard's **width-fill** scale (`scaleW`, not contain). Boot CSS + loader root fallback → `#0a0a0a`. Boot env uses `background-size: 100% auto` (top-aligned). Geometry screen mode → `object-fit: cover`. Memoized loader composition context + guarded `registerRegion` to stop infinite updates.
+
+- **Files:** `LoaderCompositionContext.tsx`, `Site00ImmersiveLoader.tsx`, `site00-loader.css`, `site00-assts-loader-boot.css`, `loadingScreenLock.ts`, `Site00LoaderEnvironment.tsx`.
+
+- **Spatial Architecture Review:** SKIPPED — loader layout bugfix, no new surfaces.
+
 
 ---
 

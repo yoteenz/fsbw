@@ -403,6 +403,8 @@
 
 .site00-loader-animation--alpha {
   mix-blend-mode: normal;
+  object-fit: contain;
+  object-position: center bottom;
 }
 
 /* Copy regions — center-aligned on x ≈ 356 axis */
