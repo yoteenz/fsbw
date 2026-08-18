@@ -1,15 +1,17 @@
 import type { EnterMenuIconId } from '../config/directory';
 import { Site00AccountIcon } from './Site00AccountIcon';
 import { Site00BldrStudioIcon } from './Site00BldrStudioIcon';
+import { Site00CrosshairIcon } from './Site00CrosshairIcon';
 import { SITE00_ICON_DEFAULT_SIZE } from './site00IconGeometry';
 import { Site00ProjectsIcon } from './Site00ProjectsIcon';
-import { Site00SupportIcon } from './Site00SupportIcon';
 
 const ENTER_MENU_ICONS: Record<EnterMenuIconId, typeof Site00BldrStudioIcon> = {
   'bldr-studio': Site00BldrStudioIcon,
   projects: Site00ProjectsIcon,
   account: Site00AccountIcon,
-  support: Site00SupportIcon,
+  idnty: Site00AccountIcon,
+  'ctrl-room': Site00CrosshairIcon,
+  'my-sites': Site00ProjectsIcon,
 };
 
 type EnterMenuIconProps = {

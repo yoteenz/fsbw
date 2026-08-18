@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import type { IdentityBrandState } from '../../config/identity';
 import type { EnterMenuIconId } from '../../config/directory';
+import { Site00LockIcon } from '../mobile/Site00MobileIcons';
 import { GeometricIcon } from '../icons/GeometricIcon';
 import { BldrBuildClassIcon } from '../bldr/BldrBuildClassIcon';
 import type { BldrBuildClassIconId } from '../../config/bldr-build-class-icons';
@@ -150,9 +151,18 @@ type DirectoryRowProps = {
   href: string;
   enabled: boolean;
   enterIcon?: EnterMenuIconId;
+  locked?: boolean;
 };
 
-export function DirectoryRow({ number, title, description, href, enabled, enterIcon }: DirectoryRowProps) {
+export function DirectoryRow({
+  number,
+  title,
+  description,
+  href,
+  enabled,
+  enterIcon,
+  locked = false,
+}: DirectoryRowProps) {
   const content = (
     <>
       <div className="site00-enter-row__main">
@@ -166,6 +176,12 @@ export function DirectoryRow({ number, title, description, href, enabled, enterI
         <div className="site00-enter-row__copy">
           <p className="site00-heading site00-enter-row__title">{title}</p>
           <p className="site00-body site00-enter-row__description">{description}</p>
+          {locked ? (
+            <span className="site00-enter-row__auth">
+              <Site00LockIcon size={12} />
+              <span>SIGN IN TO ENTER</span>
+            </span>
+          ) : null}
         </div>
       </div>
       <span className="site00-enter-row__arrow">
@@ -176,7 +192,11 @@ export function DirectoryRow({ number, title, description, href, enabled, enterI
 
   if (enabled) {
     return (
-      <Link to={href} className="site00-enter-row">
+      <Link
+        to={href}
+        className={`site00-enter-row ${locked ? 'site00-enter-row--locked' : ''}`.trim()}
+        aria-label={locked ? `${title} — sign in to enter` : title}
+      >
         {content}
       </Link>
     );
