@@ -53518,7 +53518,19 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Context:** Founder requested gray **LOG IN →** / **ENTER →** sublabel on mobile hamburger CTRL ROOM row changed to red.
 
-- **Change:** `.site00-mobile-menu__ctrl-room-state` → `color: var(--site-red)` in `site00-locations.css`.
-
 - **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — Origin coordinate 6px gap: culprit + inline margin fix
+
+- **Context:** Founder reported **6px above** “YOU ARE AT 00.00 ORIGIN POINT” still not visible despite repeated CSS changes (blue arrow gap on desktop hero).
+
+- **Culprits:** (1) Base `.site00-home-hero__coordinate { margin-top: 0; padding-top: 0 }` always reset stylesheet spacing. (2) **`padding-top: 6px`** added space *inside* the coordinate `<p>` only — **box gap stayed 0px** (blocks touching), so visually looked unchanged. (3) Broken `:last-of-type` / `:nth-last-child(2)` selectors unreliable. (4) All fixes pushed **`[sync-only]`** — **`scripts/vercel-should-build.sh` skips Vercel** when commit message contains `[sync-only]`, so **production/preview on Vercel never rebuilt**.
+
+- **Fix:** `marginTop: coordinateGapPx` **inline** on coordinate `<p>` in `OriginPage.tsx` (wins over CSS resets). `site00-home-hero__line--before-coordinate` class on last description line with `margin-bottom: 0`. Removed padding-top coordinate rules from desktop + artboard CSS.
+
+- **Verification:** Playwright `/origin/desktop` — `computedMarginTop: 6px`, **boxGap: 6px** (was 0 with padding-only approach).
+
+- **Deploy:** Founder must say **deploy now** (`--deploy-now`) for Vercel production to pick up any Origin CSS/TSX change.
 
