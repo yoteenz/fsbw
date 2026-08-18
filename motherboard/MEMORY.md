@@ -54076,3 +54076,11 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Verification:** `npm run build` pass; Supabase MCP `apply_migration` success; `site00_evolve_intakes` columns verified via `execute_sql`.
 - **Spatial Architecture Review:** SKIPPED — SITE 00 public service extension mirroring IDNTY/BLDR patterns, not new Studio OS surfaces.
 
+---
+
+## 2026-08-18 — Fix composer Desktop tab switch (preview mode)
+
+- **Issue:** Mobile/Desktop composer pill updated session state but did not switch presentation when viewport was ≤767px — `isPreviewDesktop` was gated on `isSite00OriginWideViewport()`.
+- **Fix:** Honor `previewDeviceMode === 'desktop'` on all viewports (artboard scales on phones); raise `.site00-origin-layout-switch` z-index above Fast Travel overlay; add `/enter` to Origin layout switch routes; scope `body.site00-fast-travel-open` to mobile media query only.
+- **Sync:** `9f1e8cfa8`
+
