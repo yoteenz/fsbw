@@ -6,41 +6,22 @@ import { DirectoryRow } from '../workflow/WorkflowCards';
 
 export function DirectoryPanel() {
   return (
-    <div
-      style={{
-        display: 'grid',
-        gridTemplateColumns: 'minmax(200px, 1fr) minmax(280px, 380px)',
-        gap: 32,
-        alignItems: 'start',
-        maxWidth: 900,
-        margin: '0 auto',
-        padding: '40px 24px 80px',
-      }}
-      className="site00-enter-layout"
-    >
+    <div className="site00-enter-layout">
       <div className="site00-enter-welcome">
         <span className="site00-label-red">{SITE00_ENTER_COPY.welcomeNumber}</span>
-        <h1 className="site00-heading-lg" style={{ margin: '8px 0' }}>
-          {SITE00_ENTER_COPY.welcomeTitle}
-        </h1>
-        <div style={{ margin: '16px 0', maxWidth: 200 }}>
+        <h1 className="site00-heading-lg site00-enter-welcome__title">{SITE00_ENTER_COPY.welcomeTitle}</h1>
+        <div className="site00-enter-welcome__rule">
           <SectionRule />
         </div>
-        <p className="site00-tagline" style={{ marginBottom: 8 }}>
-          {SITE00_ENTER_COPY.welcomeSubtitle}
-        </p>
-        <p className="site00-body" style={{ color: 'var(--site-text-muted)' }}>
-          {SITE00_ENTER_COPY.welcomeBody}
-        </p>
+        <p className="site00-tagline site00-enter-welcome__subtitle">{SITE00_ENTER_COPY.welcomeSubtitle}</p>
+        <p className="site00-body site00-enter-welcome__body">{SITE00_ENTER_COPY.welcomeBody}</p>
       </div>
 
       <ArchitecturalPanel className="site00-enter-menu">
-        <div style={{ padding: '24px 20px' }}>
+        <div className="site00-enter-menu__scroll">
           {SITE00_DIRECTORY_SECTIONS.map((section, idx) => (
-            <div key={section.id} style={{ marginBottom: idx === 0 ? 24 : 0 }}>
-              <p className="site00-label-red" style={{ marginBottom: 12 }}>
-                {section.heading}
-              </p>
+            <div key={section.id} className={idx === 0 ? 'site00-enter-menu__section' : undefined}>
+              <p className="site00-label-red site00-enter-menu__heading">{section.heading}</p>
               <nav aria-label={section.heading}>
                 {section.rows.map((row) => (
                   <DirectoryRow
@@ -55,7 +36,7 @@ export function DirectoryPanel() {
                 ))}
               </nav>
               {idx === 0 ? (
-                <div style={{ margin: '20px 0' }}>
+                <div className="site00-enter-menu__divider">
                   <SectionRule />
                 </div>
               ) : null}
@@ -69,20 +50,7 @@ export function DirectoryPanel() {
 
 export function EnterStatusStrip() {
   return (
-    <footer
-      style={{
-        position: 'fixed',
-        bottom: 0,
-        left: 0,
-        right: 0,
-        textAlign: 'center',
-        padding: '12px 16px',
-        background: 'rgba(255,255,255,0.85)',
-        backdropFilter: 'blur(8px)',
-        borderTop: '1px solid var(--site-border)',
-        zIndex: 'var(--site-z-nav)',
-      }}
-    >
+    <footer className="site00-enter-status-strip">
       <Site00SummaryStripText text={SITE00_ENTER_COPY.statusStrip} />
     </footer>
   );

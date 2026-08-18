@@ -5,7 +5,7 @@ import { SITE00_ENTER_COPY } from '../config/directory';
 
 export default function EnterPage() {
   return (
-    <EnvironmentShell environmentId="ENTER_00_WAITING_ROOM">
+    <EnvironmentShell environmentId="ENTER_00_WAITING_ROOM" className="site00-enter-page">
       <Site00AppShell locationLabel={SITE00_ENTER_COPY.locationLabel}>
         <DirectoryPanel />
         <EnterStatusStrip />

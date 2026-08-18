@@ -53650,7 +53650,20 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 ---
 
-## 2026-08-18 — Origin laptop/phone parity: canonical `/origin/desktop` redirect + env artboard lock
+## 2026-08-18 — ENTER directory panel: fit viewport + internal scroll
+
+- **Context:** Founder reported `/enter` directory panel too tall/wide — page scrolled when welcome copy should stay static; panel contents should scroll inside a smaller frame that fits desktop viewport.
+
+- **Fix:**
+  - **`site00-enter-page`** on `EnterPage` — desktop `100dvh` shell with `overflow: hidden`; main flex-centers layout without document scroll.
+  - **`DirectoryPanel`** — moved inline layout to CSS; added **`.site00-enter-menu__scroll`** inner wrapper with `overflow-y: auto` + thin scrollbar.
+  - **Desktop sizing:** grid max-width **640px** (was 900); menu column **220–268px** (was 280–380); menu **max-height** `calc(100dvh - header - status strip - padding)`; slightly tighter row padding inside panel only.
+  - **`EnterStatusStrip`** — class-based styles (`.site00-enter-status-strip`).
+
+- **Verification:** Build OK; Playwright/computer-use @ 1440×900 — no page scroll, compact panel fits; @ 1280×720 — `window.scrollY` stays 0; wheel over panel scrolls interior only (YOUR SPACE section), welcome text fixed.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
 
 - **Context:** Founder reported laptop `/origin` still does not match phone `/origin/desktop` (correct reference). Prior artboard shell on wide viewports was in repo but all parity commits were `[sync-only]` (Vercel preview may lag). Needed belt-and-suspenders so laptop always hits the same route/shell as phone desktop preview.
 
