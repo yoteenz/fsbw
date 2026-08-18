@@ -53536,3 +53536,17 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Deploy:** Founder must say **deploy now** (`--deploy-now`) for Vercel production to pick up any Origin CSS/TSX change.
 
+---
+
+## 2026-08-18 — Origin coordinate 6px: preview cache + CSS-variable fix
+
+- **Context:** Founder repeated “nothing changed… still” on **`preview.fsbw-dev.com/origin/desktop`** for 6px gap above “YOU ARE AT 00.00 ORIGIN POINT” despite inline `marginTop` fix in repo.
+
+- **Root cause:** (1) **Cloudflare Tunnel cached Vite module URLs** (`max-age=14400`) — preview served **stale `site00-desktop-artboard.css`** with old `padding-top: 6px` (box gap **0px**, visually unchanged) while local Vite had new rules. (2) Inline React margin alone did not help when cached JS/CSS bundles lagged. (3) **`padding-top` ≠ margin gap** between blocks.
+
+- **Fix:** Coordinate gap now **`margin-top: var(--site00-origin-coordinate-gap, 6px)`** on `.site00-home-hero__coordinate` in `site00.css` (base + desktop `@media`) and `.site00-desktop-artboard` in `site00-desktop-artboard.css`; default `--site00-origin-coordinate-gap: 6px` on `.site00-home-stage`. Removed inline margin from `OriginPage.tsx`. **`vite.config.ts`** — `cloudPreviewNoCachePlugin` sends `Cache-Control: no-store` when `FSBW_CLOUD_MOBILE_PREVIEW=1`. **Cache-bust** artboard import `?v=20260818-coord-gap` in `Site00Routes.tsx` + `Site00DesktopArtboardShell.tsx`. Restarted Vite + named tunnel on cloud agent.
+
+- **Verification:** Playwright local + preview — `marginTop: 6px`, **boxGap: 6.00px** (preview was `0px` before fix).
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel production.
+
