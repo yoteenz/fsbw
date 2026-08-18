@@ -53550,3 +53550,13 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Deploy:** Sync-only; say **deploy now** for Vercel production.
 
+---
+
+## 2026-08-18 — Origin desktop IDNTY/BLDR icons +5% size, +6px down
+
+- **Context:** Founder refined collapsed IDNTY/BLDR panel icons on desktop Origin after prior 10px down nudge at 42px.
+
+- **Change:** `origin-home-composition.ts` — `panelIconSizePx` **42 → 44.1** (+5%); `panelIconOffsetYPx` **10 → 16** (+6px down). CSS vars on stage unchanged pattern (`--site00-origin-panel-icon-size-px`, `--site00-origin-panel-icon-offset-y`); desktop + artboard rules already consume them.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+

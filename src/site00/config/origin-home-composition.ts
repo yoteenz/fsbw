@@ -15,12 +15,12 @@ export const SITE00_ORIGIN_DESKTOP_COMPOSITION = {
   cardsTopOffsetPx: 120,
   cardsMaxWidthPx: 520,
   cardScale: 0.45,
-  /** Collapsed IDNTY/BLDR icon render size on desktop (px). 80 base × 0.75 (−25%) × 0.7 (−30%) = 42. */
-  panelIconSizePx: 42,
-  /** Collapsed panel icon nudge down inside IDNTY/BLDR cards (artboard px). */
-  panelIconOffsetYPx: 10,
-  /** @deprecated Use panelIconSizePx — kept for reference: 42/80 = 0.525 */
-  panelIconScale: 0.525,
+  /** Collapsed IDNTY/BLDR icon render size on desktop (px). Prior 42px × 1.05 (+5%) = 44.1. */
+  panelIconSizePx: 44.1,
+  /** Collapsed panel icon nudge down inside IDNTY/BLDR cards (artboard px). Prior 10px + 6px. */
+  panelIconOffsetYPx: 16,
+  /** @deprecated Use panelIconSizePx — kept for reference: 44.1/80 ≈ 0.551 */
+  panelIconScale: 0.551,
   /** Expanded IDNTY/BLDR panel — centered over plaza (same anchor as collapsed cards). */
   expandedMaxWidthPx: 680,
   /** Expanded panel visual scale (1 = full; 0.875 = prior 0.7 × 1.25). Desktop only via CSS. */
