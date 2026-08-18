@@ -1,5 +1,5 @@
 /**
- * SITE 00 BLDR state page — build class card icons (desktop).
+ * SITE 00 BLDR state page — build class card + investment guide icons.
  * Supabase live-preview/site00/BLDR/
  */
 

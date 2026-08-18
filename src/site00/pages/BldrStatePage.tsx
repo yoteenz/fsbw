@@ -69,6 +69,7 @@ export default function BldrStatePage() {
                     label={tier.label}
                     priceLabel={tier.priceLabel}
                     items={tier.keywords}
+                    buildClassId={tier.buildClassId}
                   />
                 ))}
               </div>

@@ -92,12 +92,17 @@ type InvestmentColumnProps = {
   priceLabel: string;
   items: string[];
   iconVariant?: 'cube-simple' | 'cube-medium' | 'cube-complex' | 'cube-solid' | undefined;
+  buildClassId?: BldrBuildClassIconId;
 };
 
-export function InvestmentColumn({ label, priceLabel, items, iconVariant }: InvestmentColumnProps) {
+export function InvestmentColumn({ label, priceLabel, items, iconVariant, buildClassId }: InvestmentColumnProps) {
   return (
     <div style={{ padding: '12px 8px' }}>
-      {iconVariant ? (
+      {buildClassId ? (
+        <div style={{ marginBottom: 8 }}>
+          <BldrBuildClassIcon id={buildClassId} title={label} className="site00-bldr-build-class-icon--sm" />
+        </div>
+      ) : iconVariant ? (
         <div style={{ marginBottom: 8 }}>
           <GeometricIcon variant={iconVariant} size="sm" />
         </div>

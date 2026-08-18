@@ -101,7 +101,7 @@ export type BldrInvestmentTier = {
   label: string;
   priceLabel: string;
   keywords: string[];
-  buildClassId?: string;
+  buildClassId: BldrBuildClassIconId;
 };
 
 export const BLDR_INVESTMENT_TIERS: BldrInvestmentTier[] = [

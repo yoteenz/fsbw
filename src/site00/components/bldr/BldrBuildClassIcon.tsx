@@ -9,7 +9,7 @@ type BldrBuildClassIconProps = {
   className?: string;
 };
 
-/** Approved production PNG — BLDR build class cards on /bldr/state (desktop). */
+/** Approved production PNG — BLDR build class cards and investment guide on /bldr/state. */
 export function BldrBuildClassIcon({ id, title, className = '' }: BldrBuildClassIconProps) {
   return (
     <img
