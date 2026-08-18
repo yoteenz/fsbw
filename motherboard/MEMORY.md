@@ -53426,6 +53426,8 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 ---
 
+---
+
 ## 2026-08-18 — BLDR mobile icon parity with desktop (build class PNGs)
 
 - **Context:** Founder requested mobile SITE 00 icons match desktop **where necessary**. Prior BLDR state work shipped production PNGs for build class cards on desktop only (wireframe fallback on mobile); a follow-up commit removed duplicate wireframe+PNG on cards but left investment guide without icons and outdated asset registry entries.
@@ -53465,6 +53467,18 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Verification:** Playwright @ 390px — `/idnty/state/desktop` shows artboard shell + layout switch Desktop active; BEGIN IDENTITY from `/origin/desktop` lands on `/idnty/state/desktop`.
 
 - **Spatial Architecture Review:** SKIPPED — routing/artboard parity fix.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — Origin desktop coordinate spacing + mobile welcome restore
+
+- **Context:** Founder requested **6px spacing above** the black “YOU ARE AT 00.00 ORIGIN POINT” coordinate line on **desktop**; restore **WELCOME TO** welcome paragraph on **top-right of mobile** (removed when full hero was hidden in duplicated-status fix).
+
+- **Changes:** `site00.css` — desktop `.site00-home-hero__line + .site00-home-hero__coordinate { margin-top: 6px }` (adjacent-sibling selector; avoids `:last-of-type` mismatch because coordinate is last `<p>`); mobile `--mobile-layout` shows `.site00-home-hero` fixed top-right (`text-align: right`) with eyebrow/title/tagline only — hides description lines + coordinate. `site00-desktop-artboard.css` — same 6px adjacent-sibling rule for artboard route.
+
+- **Verification:** Playwright — mobile 390×844 hero `position: fixed; right: 16px`, description lines `display: none`; desktop `/origin/desktop` measured **6px** gap between last description and coordinate, red `00.00`.
 
 - **Deploy:** Sync-only; say **deploy now** for Vercel.
 

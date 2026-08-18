@@ -51,7 +51,7 @@
   min-width: 220px;
 }
 
-.site00-desktop-artboard .site00-home-hero__coordinate {
+.site00-desktop-artboard .site00-home-hero__line + .site00-home-hero__coordinate {
   margin-top: 6px;
 }
 
