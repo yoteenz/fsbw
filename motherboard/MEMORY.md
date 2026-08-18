@@ -53206,7 +53206,21 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Verification:** Playwright gap **ONLINE STARTS HERE.** → coordinate line **12px** (was 6px).
 
-- **Spatial Architecture Review:** SKIPPED — composition nudge.
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — Origin desktop BLDR expanded framework PNG icons
+
+- **Context:** Replace wireframe placeholders in **BLDR expanded panel → THE BLDR FRAMEWORK** with approved Supabase PNGs (Direction, Structure, Function, Experience, Scope).
+
+- **Change:** `bldr-framework-icons.ts` (paths under `live-preview/site00/BLDR/`), `BldrFrameworkIcon.tsx`, `BldrExpandedPanel` uses PNGs instead of `GeometricIcon`. CSS `.site00-bldr-framework-icon` 32×32.
+
+- **Assets:** `3BAA4AA4…` (Direction), `02A0815E…` (Structure), `9A58E6FC…` (Function), `95F5DCB3…` (Experience), `748C57FF…` (Scope).
+
+- **Verification:** Playwright `/origin/desktop` expand BLDR — 5 icons load correct URLs @ 32px.
+
+- **Spatial Architecture Review:** SKIPPED — approved asset swap.
 
 - **Deploy:** Sync-only; say **deploy now** for Vercel.
 
