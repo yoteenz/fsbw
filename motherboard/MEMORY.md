@@ -53727,7 +53727,10 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Deploy:** Sync-only; say **deploy now** for Vercel.
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> 31248ef85 (ENTER: match Origin header size via desktop artboard shell [sync-only])
 ---
 
 ## 2026-08-18 — Origin desktop IDNTY/BLDR panels: +20px gap, +10% icons
@@ -53738,4 +53741,21 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Deploy:** Sync-only commit `1a0d54bf9`; say **deploy now** for Vercel.
 
+<<<<<<< HEAD
 >>>>>>> 828a80cc3 (Origin desktop: +20px IDNTY/BLDR panel gap, +10% panel icons [sync-only])
+=======
+---
+
+## 2026-08-18 — ENTER header parity: artboard shell matches Origin logo/bracket size
+
+- **Context:** Founder reported `/enter` top-left **SITE 00** + **LOCATION / ENTER 00** text larger than desktop Origin — should be symmetrical.
+
+- **Root cause:** Origin desktop renders inside **`Site00DesktopArtboardShell`** (1440px artboard scaled to viewport); Enter was full-viewport fluid typography with no artboard scale.
+
+- **Fix:** Wrap **`/enter`** in **`Site00OriginRouteShell`** (same as Origin). Enter layout CSS updated for artboard: `.site00-desktop-artboard .site00-enter-page` flex column + menu **`max-height`** uses **`--site00-desktop-artboard-height`** instead of **`100dvh`**.
+
+- **Verification:** Playwright bounding-box compare @ 1200/1440/1920 — logo + bracket visual height delta **0px** vs `/origin/desktop`; computer-use side-by-side @ 1200×900 confirms match.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+>>>>>>> 31248ef85 (ENTER: match Origin header size via desktop artboard shell [sync-only])

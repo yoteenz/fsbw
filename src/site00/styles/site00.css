@@ -784,6 +784,18 @@
     overflow: hidden;
   }
 
+  .site00-desktop-artboard .site00-enter-page {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 100%;
+  }
+
+  .site00-desktop-artboard .site00-enter-page > .site00-ui-layer {
+    flex: 1;
+    min-height: 0;
+  }
+
   .site00-enter-page .site00-ui-layer {
     display: flex;
     flex-direction: column;
@@ -824,6 +836,13 @@
     );
     overflow: hidden;
     transform: translate(12px, -8px);
+  }
+
+  .site00-desktop-artboard .site00-enter-menu {
+    max-height: calc(
+      var(--site00-desktop-artboard-height, 900px) - var(--site00-enter-header-offset) -
+        var(--site00-enter-status-strip-height) - 48px
+    );
   }
 
   .site00-enter-menu__scroll {

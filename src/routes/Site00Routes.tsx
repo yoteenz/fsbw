@@ -147,9 +147,11 @@ export function Site00Routes() {
         path={SITE00_ROUTES.enter}
         element={
           <Site00Layout>
-            <Site00Suspense>
-              <Site00EnterPage />
-            </Site00Suspense>
+            <Site00OriginRouteShell>
+              <Site00Suspense>
+                <Site00EnterPage />
+              </Site00Suspense>
+            </Site00OriginRouteShell>
           </Site00Layout>
         }
       />
