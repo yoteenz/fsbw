@@ -53726,3 +53726,16 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Deploy:** Sync-only; say **deploy now** for Vercel.
 
+<<<<<<< HEAD
+=======
+---
+
+## 2026-08-18 — Origin desktop IDNTY/BLDR panels: +20px gap, +10% icons
+
+- **Context:** Founder — collapsed IDNTY/BLDR panels on Origin desktop too close; icons too small.
+
+- **Fix:** `origin-home-composition.ts` — `cardsRowGapPx` 16→36 (+20); `panelIconSizePx` 44.1→48.51 (+10%). Wired `--site00-origin-cards-row-gap` on artboard; desktop-only via `site00-desktop-artboard.css`.
+
+- **Deploy:** Sync-only commit `1a0d54bf9`; say **deploy now** for Vercel.
+
+>>>>>>> 828a80cc3 (Origin desktop: +20px IDNTY/BLDR panel gap, +10% panel icons [sync-only])
