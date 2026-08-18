@@ -61,6 +61,38 @@ export function isSite00IdntyStateDesktopPath(pathname: string): boolean {
   return pathname === desktop || pathname.startsWith(`${desktop}/`);
 }
 
+export const IDNTY_ASSESSMENT_STATE_SLUGS = [
+  'starting-at-zero',
+  'some-pieces-exist',
+  'needs-cohesion',
+  'ready-for-evolution',
+  'build-ready',
+] as const;
+
+export type IdntyAssessmentRouteSlug = (typeof IDNTY_ASSESSMENT_STATE_SLUGS)[number];
+
+export function isSite00IdntyAssessmentPath(pathname: string): boolean {
+  const normalized = pathname.replace(/\/desktop(\/|$)/, '/');
+  return IDNTY_ASSESSMENT_STATE_SLUGS.some(
+    (slug) => normalized === `/idnty/${slug}` || normalized.startsWith(`/idnty/${slug}/`),
+  );
+}
+
+export function isSite00IdntyAssessmentDesktopPath(pathname: string): boolean {
+  return IDNTY_ASSESSMENT_STATE_SLUGS.some(
+    (slug) => pathname === `/idnty/${slug}/desktop` || pathname.startsWith(`/idnty/${slug}/desktop/`),
+  );
+}
+
+export function site00IdntyAssessmentDesktopPath(mobilePath: string): string {
+  if (mobilePath.endsWith('/desktop')) return mobilePath;
+  return `${mobilePath.replace(/\/$/, '')}/desktop`;
+}
+
+export function site00IdntyAssessmentMobilePath(pathname: string): string {
+  return pathname.replace(/\/desktop(\/|$)/, (_, slash) => slash || '');
+}
+
 export function isSite00OriginDesktopPath(pathname: string): boolean {
   const desktop = SITE00_ROUTES.originDesktop;
   return pathname === desktop || pathname.startsWith(`${desktop}/`);

@@ -1,3 +1,4 @@
+import { Link, useNavigate } from 'react-router-dom';
 import { EnvironmentShell } from '../components/environment/EnvironmentShell';
 import { Site00AppShell } from '../components/shell/Site00AppShell';
 import { Site00OriginLayoutSwitch } from '../components/shell/Site00OriginLayoutSwitch';
@@ -9,9 +10,25 @@ import {
 import { StateCard, InvestmentColumn, WorkflowSummary } from '../components/workflow/WorkflowCards';
 import { useSite00 } from '../state/Site00Context';
 import { ArchitecturalPanel } from '../components/panels/ArchitecturalPanel';
+import { useIdntyAssessment } from '../hooks/useIdntyAssessment';
+import { brandStateToAssessmentSlug } from '../config/idnty-assessment-brand-map';
+import { idntyAssessmentPath } from '../config/idnty-assessment';
+import { useSite00DesktopArtboardPreview } from '../components/shell/Site00DesktopArtboardContext';
+import { site00IdntyAssessmentDesktopPath } from '../config/routes';
 
 export default function IdntyStatePage() {
   const { state, selectIdentityState } = useSite00();
+  const navigate = useNavigate();
+  const isDesktop = useSite00DesktopArtboardPreview();
+  const { hasResume, resumeTarget, record } = useIdntyAssessment();
+
+  const handleSelectState = (stateId: string) => {
+    selectIdentityState(stateId);
+    const slug = brandStateToAssessmentSlug(stateId);
+    if (!slug) return;
+    const path = idntyAssessmentPath(slug);
+    navigate(isDesktop ? site00IdntyAssessmentDesktopPath(path) : path);
+  };
 
   return (
     <EnvironmentShell environmentId="WORKFLOW_ENVIRONMENT" className="site00-state-page site00-state-page--idnty">
@@ -25,6 +42,17 @@ export default function IdntyStatePage() {
               {IDNTY_STATE_COPY.subhead}
             </p>
           </header>
+
+          {hasResume && resumeTarget ? (
+            <div className="site00-idnty-state-resume">
+              <p className="site00-idnty-state-resume__label">
+                RESUME IDNTY ASSESSMENT — {record.identityState?.replace(/-/g, ' ').toUpperCase()}
+              </p>
+              <Link to={isDesktop ? site00IdntyAssessmentDesktopPath(resumeTarget) : resumeTarget} className="site00-idnty-state-resume__link">
+                CONTINUE →
+              </Link>
+            </div>
+          ) : null}
 
           <div
             style={{
@@ -41,7 +69,7 @@ export default function IdntyStatePage() {
                 key={brandState.id}
                 state={brandState}
                 selected={state.selectedIdentityStateId === brandState.id}
-                onSelect={selectIdentityState}
+                onSelect={handleSelectState}
               />
             ))}
           </div>

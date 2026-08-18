@@ -22,6 +22,7 @@ import '../site00/styles/site00-desktop-artboard.css';
 import '../site00/styles/site00-auth.css';
 import '../site00/styles/site00-ctrl-room.css';
 import '../site00/styles/site00-ecosystem.css';
+import '../site00/styles/site00-idnty-assessment.css';
 import '../site00/styles/site00-pages.css';
 import '../site00/assts/styles/assts.css';
 import '../site00/assts/styles/assts-depth.css';
@@ -59,6 +60,7 @@ const AsstsSearchPage = lazy(() => import('../site00/assts/pages/SearchPage'));
 const AsstsNotificationsPage = lazy(() => import('../site00/assts/pages/NotificationsPage'));
 const AsstsProfilePage = lazy(() => import('../site00/assts/pages/ProfilePage'));
 const ProjectProvisioningPage = lazy(() => import('../site00/pages/provisioning/ProjectProvisioningPage'));
+const IdntyAssessmentRouterPage = lazy(() => import('../site00/pages/idnty/assessment/IdntyAssessmentRouterPage'));
 
 function Site00Suspense({ children }: { children: ReactNode }) {
   return <Suspense fallback={<Site00RouteLoadingFallback />}>{children}</Suspense>;
@@ -367,6 +369,28 @@ export function Site00Routes() {
       {Site00PublicPageRoutes(SITE00_ROUTES.support, SupportPage)}
       {Site00PublicPageRoutes(SITE00_ROUTES.idntySignInSecurity, IdntySignInSecurityPage)}
       {Site00PublicPageRoutes(SITE00_ROUTES.bldrTemplates, BldrTemplatesPage)}
+      <Route
+        path="/idnty/:stateSlug/*"
+        element={
+          <Site00Layout>
+            <Site00Suspense>
+              <IdntyAssessmentRouterPage />
+            </Site00Suspense>
+          </Site00Layout>
+        }
+      />
+      <Route
+        path="/idnty/:stateSlug/desktop/*"
+        element={
+          <Site00Layout>
+            <Site00DesktopArtboardShell>
+              <Site00Suspense>
+                <IdntyAssessmentRouterPage />
+              </Site00Suspense>
+            </Site00DesktopArtboardShell>
+          </Site00Layout>
+        }
+      />
       <Route
         path={SITE00_ROUTES.projects}
         element={

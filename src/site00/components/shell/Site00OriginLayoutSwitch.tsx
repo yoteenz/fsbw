@@ -2,9 +2,13 @@ import { createPortal } from 'react-dom';
 import { Link, useLocation } from 'react-router-dom';
 import {
   isSite00BldrStateDesktopPath,
+  isSite00IdntyAssessmentDesktopPath,
+  isSite00IdntyAssessmentPath,
   isSite00IdntyStateDesktopPath,
   isSite00OriginDesktopPath,
   SITE00_ROUTES,
+  site00IdntyAssessmentDesktopPath,
+  site00IdntyAssessmentMobilePath,
 } from '../../config/routes';
 import {
   SITE00_ORIGIN_MOBILE_LAYOUT_QUERY,
@@ -64,6 +68,15 @@ export function Site00OriginLayoutSwitch() {
       desktopHref: SITE00_ROUTES.idntyStateDesktop,
       onMobile: pathname === SITE00_ROUTES.idntyState,
       onDesktop: isSite00IdntyStateDesktopPath(pathname),
+    };
+  } else if (isSite00IdntyAssessmentPath(pathname)) {
+    const mobileBase = site00IdntyAssessmentMobilePath(pathname);
+    config = {
+      ariaLabel: 'IDNTY assessment layout preview',
+      mobileHref: mobileBase,
+      desktopHref: site00IdntyAssessmentDesktopPath(mobileBase),
+      onMobile: !isSite00IdntyAssessmentDesktopPath(pathname),
+      onDesktop: isSite00IdntyAssessmentDesktopPath(pathname),
     };
   }
 

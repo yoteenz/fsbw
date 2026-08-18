@@ -53800,7 +53800,6 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 ---
 
-<<<<<<< HEAD
 ## 2026-08-18 — SITE 00 brand uppercase typography (mandatory)
 
 - **Context:** Founder — ALL text on SITE 00 must be UPPERCASE; only password input fields may stay lowercase. Reference-image design sprints kept introducing sentence case; brand uppercase must override.
@@ -53831,7 +53830,9 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Changes:** Audit/report only.
 
 - **Conventions:** Add distinct `/admin/site00/*` namespace; persist onboarding → projects; extend `useCtrlRoomData` when projects table exists; do not conflate with Studio OS `/admin/studio/*` or FS `/admin/clients`.
-=======
+
+---
+
 ## 2026-08-18 — SITE 00 core ecosystem separation + responsive redesign (IDNTY / CTRL ROOM / PROJECTS / SITES)
 
 - **Context:** Founder sprint — approved desktop + mobile story/mood boards; four pages must have distinct jobs: **IDNTY** = who am I; **CTRL ROOM** = what needs attention; **PROJECTS** = what are we working on; **SITES** = what has been built. Phase 0 audit first, then implementation.
@@ -53855,5 +53856,4 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **QA:** Desktop @ 1440 — IDNTY gateway, public `/sites`, CTRL ROOM, PROJECTS, `/control/sites` verified via browser QA; build passes.
 
 - **Deploy:** Sync-only; say **deploy now** for Vercel.
->>>>>>> 4391cadca (SITE 00 ecosystem redesign: IDNTY gateway, CTRL ROOM command center, PROJECTS, SITES [sync-only])
 
