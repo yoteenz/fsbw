@@ -53734,31 +53734,15 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Fix:** `origin-home-composition.ts` — `cardsRowGapPx` 16→36 (+20); `panelIconSizePx` 44.1→48.51 (+10%). Wired `--site00-origin-cards-row-gap` on artboard; desktop-only via `site00-desktop-artboard.css`.
 
-- **Deploy:** Sync-only commit `1a0d54bf9`; say **deploy now** for Vercel.
+- **Deploy:** Sync-only commit `3898cab2d`; say **deploy now** for Vercel.
 
 ---
 
-## 2026-08-18 — ENTER header parity: artboard shell matches Origin logo/bracket size
+## 2026-08-18 — Origin desktop: separate coordinate line from hero copy
 
-- **Context:** Founder reported `/enter` top-left **SITE 00** + **LOCATION / ENTER 00** text larger than desktop Origin — should be symmetrical.
+- **Context:** Founder — "YOU ARE AT 00.00 ORIGIN POINT" would not shift when nested in hero; wanted it removed from hero and placed further down, separated from "THIS IS THE ORIGIN ENVIRONMENT…" block.
 
-- **Root cause:** Origin desktop renders inside **`Site00DesktopArtboardShell`** (1440px artboard scaled to viewport); Enter was full-viewport fluid typography with no artboard scale.
-
-- **Fix:** Wrap **`/enter`** in **`Site00OriginRouteShell`** (same as Origin). Enter layout CSS updated for artboard: `.site00-desktop-artboard .site00-enter-page` flex column + menu **`max-height`** uses **`--site00-desktop-artboard-height`** instead of **`100dvh`**.
-
-- **Verification:** Playwright bounding-box compare @ 1200/1440/1920 — logo + bracket visual height delta **0px** vs `/origin/desktop`; computer-use side-by-side @ 1200×900 confirms match.
+- **Fix:** Removed coordinate from `.site00-home-hero` on desktop. New `.site00-origin-coordinate-anchor` on `.site00-home-stage` with independent absolute position (`coordinateAnchorTopPx: 300`, hero-aligned left). Mobile unchanged (swipe callout).
 
 - **Deploy:** Sync-only; say **deploy now** for Vercel.
-
----
-
-## 2026-08-18 — ENTER bottom summary strip: ~70% shorter
-
-- **Context:** Founder reported `/enter` bottom white summary panel ("YOU'VE ENTERED SITE 00…") too tall — needs ~70% shorter.
-
-- **Fix:** Scoped **`.site00-enter-status-strip`** overrides — footer padding **12→4px**; inner **`.site00-summary-strip`** padding **28→6px**, tighter gaps/line-height. Layout token **`--site00-enter-status-strip-height`** **52→36px** (measured ~34px @ 1440).
-
-- **Verification:** Playwright height ~34px; computer-use @ 1440×900 — compact single-line bar.
-
-- **Deploy:** Sync-only commit `3898cab2d`; say **deploy now** for Vercel.
 

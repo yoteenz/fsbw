@@ -32,8 +32,11 @@ export const SITE00_ORIGIN_DESKTOP_COMPOSITION = {
   expandedPanelScale: 0.875,
   /** Framework pillar PNG size on expanded panels (32px base × 1.2). */
   frameworkIconSizePx: 38.4,
-  /** Offset for `.site00-home-hero__coordinate-slot` below hero copy (px). */
-  coordinateOffsetYPx: 6,
+  /** "YOU ARE AT 00.00 ORIGIN POINT" — independent desktop anchor (px from stage top). */
+  coordinateAnchorTopPx: 300,
+  /** Horizontal alignment — matches hero column. */
+  coordinateAnchorLeftPercent: 11,
+  coordinateAnchorOffsetXPx: -25,
 } as const;
 
 /** @deprecated Use SITE00_ORIGIN_DESKTOP_COMPOSITION */
