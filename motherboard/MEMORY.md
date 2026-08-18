@@ -53412,7 +53412,6 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 ---
 
-<<<<<<< HEAD
 ## 2026-08-18 — Origin expanded panels: fix vertical centering + bottom clip
 
 - **Context:** Founder reported expanded IDNTY/BLDR panels on `/origin/desktop` **not centered** — positioned near bottom with **half clipped** (preview screenshot).
@@ -53422,7 +53421,11 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Fix:** Flexbox centering when expanded (`:has(.site00-home-expanded-column)`); artboard home-stage `position: absolute; inset: 0`; expanded column `position: relative` + `scale()` only; shell `overflow: visible` + artboard shell scroll when expanded; `padding-bottom: 0` on expanded stage.
 
 - **Verification:** Playwright `/origin/desktop` 1440×900 — panel center delta **<1px** vs stage center; no bottom viewport clip.
-=======
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
 ## 2026-08-18 — BLDR mobile icon parity with desktop (build class PNGs)
 
 - **Context:** Founder requested mobile SITE 00 icons match desktop **where necessary**. Prior BLDR state work shipped production PNGs for build class cards on desktop only (wireframe fallback on mobile); a follow-up commit removed duplicate wireframe+PNG on cards but left investment guide without icons and outdated asset registry entries.
@@ -53432,6 +53435,6 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Verification:** `npm run build` PASS. Playwright `/bldr/state` @ 390px + 1440px — 4 card PNGs + 4 investment PNGs, 0 wireframes on both.
 
 - **Spatial Architecture Review:** SKIPPED — approved asset parity, no new surfaces.
->>>>>>> 4cf2115fd (BLDR mobile: build class PNG icons on investment guide + full viewport parity [sync-only])
 
 - **Deploy:** Sync-only; say **deploy now** for Vercel.
+
