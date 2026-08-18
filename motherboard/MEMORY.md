@@ -53786,3 +53786,15 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Deploy:** Sync-only commit `bcd221712`; say **deploy now** for Vercel.
 
+---
+
+## 2026-08-18 — IDNTY/BLDR state desktop: summary strip panel (match Enter)
+
+- **Context:** Founder requested bottom summary text on desktop **IDNTY/BLDR state** pages sit in a white panel bar (not floating on workflow background), like `/enter`.
+
+- **Fix:** Shared **`.site00-summary-strip-panel`**; **`WorkflowSummary`** fixed bottom footer on desktop (inline rounded panel on mobile); state pages use **`site00-state-page-layout`** + summary outside scroll column. Workflow strip uses stronger off-white + shadow for contrast on light hall bg.
+
+- **Verification:** Playwright @ `/bldr/state/desktop` + `/idnty/state/desktop` — fixed panel ~34px with bg/shadow applied.
+
+- **Deploy:** Sync-only commit `4866b2f23`; say **deploy now** for Vercel.
+
