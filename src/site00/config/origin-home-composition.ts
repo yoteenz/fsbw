@@ -17,6 +17,8 @@ export const SITE00_ORIGIN_DESKTOP_COMPOSITION = {
   cardScale: 0.45,
   /** Collapsed IDNTY/BLDR icon render size on desktop (px). 80 base × 0.75 (−25%) × 0.7 (−30%) = 42. */
   panelIconSizePx: 42,
+  /** Collapsed panel icon nudge down inside IDNTY/BLDR cards (artboard px). */
+  panelIconOffsetYPx: 10,
   /** @deprecated Use panelIconSizePx — kept for reference: 42/80 = 0.525 */
   panelIconScale: 0.525,
   /** Expanded IDNTY/BLDR panel — centered over plaza (same anchor as collapsed cards). */
