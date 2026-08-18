@@ -53454,3 +53454,17 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Deploy:** Sync-only; say **deploy now** for Vercel.
 
+---
+
+## 2026-08-18 — IDNTY state desktop artboard route (`/idnty/state/desktop`)
+
+- **Context:** Founder reported designated identity page **`/idnty/state`** still routed to mobile when Desktop preview selected (no artboard route like BLDR).
+
+- **Changes:** Added **`/idnty/state/desktop`** with `Site00DesktopArtboardShell` (mirrors `/bldr/state/desktop`). `Site00OriginLayoutSwitch` IDNTY preview toggle (Mobile → `/idnty/state`, Desktop → `/idnty/state/desktop`). `BEGIN IDENTITY` from `/origin/desktop` → `idntyStateDesktop`. Loader/boot gate skip for desktop artboard path. `IdntyStatePage` includes layout switch.
+
+- **Verification:** Playwright @ 390px — `/idnty/state/desktop` shows artboard shell + layout switch Desktop active; BEGIN IDENTITY from `/origin/desktop` lands on `/idnty/state/desktop`.
+
+- **Spatial Architecture Review:** SKIPPED — routing/artboard parity fix.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
