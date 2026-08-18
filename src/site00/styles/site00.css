@@ -769,6 +769,14 @@
   margin-bottom: 32px;
 }
 
+.site00-home-hero__coordinate {
+  margin-top: 0;
+}
+
+.site00-origin-hero__coordinate-value {
+  color: inherit;
+}
+
 .site00-home-cards {
   position: relative;
   z-index: 3;
@@ -863,6 +871,14 @@
     max-width: var(--site00-origin-hero-max-w);
     padding-top: 0;
     transform: none;
+  }
+
+  .site00-home-hero__coordinate {
+    margin-top: 6px;
+  }
+
+  .site00-origin-hero__coordinate-value {
+    color: var(--site-red);
   }
 
   .site00-home-expanded-column {

@@ -29,6 +29,12 @@ export const SITE00_ORIGIN_COPY = {
   description2: 'EVERY SITE THAT EXISTS',
   description3: 'ONLINE STARTS HERE.',
   originPoint: 'YOU ARE AT 00.00 ORIGIN POINT',
+  /** Desktop hero — split so coordinate can be styled independently. */
+  originPointLine: {
+    prefix: 'YOU ARE AT',
+    coordinate: '00.00',
+    suffix: 'ORIGIN POINT',
+  },
   prompt: 'WHERE DO WE BEGIN?',
   mobileSwipeUp: {
     eyebrow: 'YOU ARE AT',
