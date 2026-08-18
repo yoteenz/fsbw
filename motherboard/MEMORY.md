@@ -53022,3 +53022,13 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Deploy:** Sync-only; say **deploy now** for Vercel.
 
+---
+
+## 2026-08-18 — Origin desktop hero copy +10px (mobile unchanged)
+
+- **Context:** Founder requested the Origin left hero text block (“WELCOME TO SITE 00…”) move down **10px** on **desktop design only** — do not touch mobile.
+
+- **Change:** `origin-home-composition.ts` — `heroTopPx` **16 → 26** (desktop absolute anchor via `--site00-origin-hero-top`). Mobile layout uses flex + `padding-top: 24px`; unaffected.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
