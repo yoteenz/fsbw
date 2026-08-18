@@ -440,9 +440,7 @@
   }
 
   .site00-origin-page--mobile-layout .site00-safe-ui > div:nth-child(3) {
-    position: absolute;
-    top: 20px;
-    right: var(--site-spacing-md);
+    display: none;
   }
 
   .site00-origin-page--mobile-layout .site00-global-nav {
