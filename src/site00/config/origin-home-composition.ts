@@ -19,6 +19,8 @@ export const SITE00_ORIGIN_DESKTOP_COMPOSITION = {
   panelIconScale: 0.75,
   /** Expanded IDNTY/BLDR panel — centered over plaza (same anchor as collapsed cards). */
   expandedMaxWidthPx: 680,
+  /** Expanded panel visual scale (1 = full; 0.7 = −30%). Desktop only via CSS. */
+  expandedPanelScale: 0.7,
 } as const;
 
 /** @deprecated Use SITE00_ORIGIN_DESKTOP_COMPOSITION */
