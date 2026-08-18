@@ -10,14 +10,14 @@ type Site00PublicShellProps = {
   children: ReactNode;
   /** Mobile bottom nav active tab */
   mobileActiveNav?: Site00MobileNavId;
-  /** Skip mobile environment — page shell provides approved mobile bg */
+  /** Skip mobile environment — public pages use solid mobile surface, desktop bg via Site00PageEnvironment */
   className?: string;
 };
 
 /**
  * Shared responsive shell for SITE 00 public/marketing routes.
  * Desktop: left rail + top nav + approved background.
- * Mobile: header + bottom nav + approved mobile background.
+ * Mobile: header + bottom nav + clean solid surface (no background image).
  */
 export function Site00PublicShell({
   children,
