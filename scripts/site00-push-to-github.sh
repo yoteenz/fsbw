@@ -34,8 +34,11 @@ git remote add origin "$AUTH_REMOTE"
 
 if git ls-remote --heads origin main 2>/dev/null | grep -q main; then
   echo "[site00-push] Remote has main — merging unrelated histories if needed…"
-  git pull origin main --allow-unrelated-histories --no-edit 2>/dev/null || true
+  git pull origin main --allow-unrelated-histories --no-rebase --no-edit 2>/dev/null || true
 fi
 
-git push -u origin main
+if ! git push -u origin main 2>/dev/null; then
+  echo "[site00-push] Non-fast-forward — force-with-lease publish…"
+  git push --force-with-lease -u origin main
+fi
 echo "[site00-push] Done → ${REMOTE}"
