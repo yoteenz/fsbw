@@ -34,10 +34,12 @@ export function Site00DesktopArtboardShell({ children }: Site00DesktopArtboardSh
 
       const scale = shell.clientWidth / SITE00_DESKTOP_ARTBOARD_WIDTH;
       const scaledWidth = SITE00_DESKTOP_ARTBOARD_WIDTH * scale;
-      const contentHeight = Math.max(stage.scrollHeight, SITE00_DESKTOP_ARTBOARD_MIN_HEIGHT);
+      const contentHeight = SITE00_DESKTOP_ARTBOARD_MIN_HEIGHT;
 
       stage.style.width = `${SITE00_DESKTOP_ARTBOARD_WIDTH}px`;
+      stage.style.height = `${SITE00_DESKTOP_ARTBOARD_MIN_HEIGHT}px`;
       stage.style.minHeight = `${SITE00_DESKTOP_ARTBOARD_MIN_HEIGHT}px`;
+      stage.style.setProperty('--site00-desktop-artboard-height', `${SITE00_DESKTOP_ARTBOARD_MIN_HEIGHT}px`);
       stage.style.transformOrigin = 'top left';
       stage.style.transform = `scale(${scale})`;
 

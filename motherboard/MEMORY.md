@@ -53010,6 +53010,7 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 ---
 
+<<<<<<< Updated upstream
 ## 2026-08-18 — SITE 00 mobile loader emergency composition repair
 
 - **Context:** Founder emergency sprint — mobile loading screen severely degraded on `preview.fsbw-dev.com`: giant black regions, fragmented duplicate environment blocks, oversized animation rectangle detached from platform, document-flow stacking, wrong scaling.
@@ -53037,6 +53038,15 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Context:** Founder requested “WHERE DO WE BEGIN?” + IDNTY/BLDR panels move down **60px** in tandem on **desktop only**, and desktop panels **decreased by 40%**. Mobile unchanged.
 
 - **Change:** `origin-home-composition.ts` — `cardsTopOffsetPx` **20 → 80**; `cardScale` **0.75 → 0.45** (40% reduction from prior desktop scale). Whole `.site00-home-cards` block moves together; scale applies only `@media (min-width: 768px)` / artboard.
+=======
+## 2026-08-18 — SITE 00 desktop artboard: status strip at composition bottom
+
+- **Context:** Founder reported `/origin/desktop` phone preview pinned status panel to viewport bottom with large gray gap below background image. Request: attach bottom panel to bottom of background/composition, not viewport.
+
+- **Fix:** Removed `createPortal` + `position: fixed` viewport host for desktop artboard preview in `Site00AppShell`. Status strip now in artboard document flow (`site00-status-strip-host--artboard`, flex column on `.site00-origin-page`). `site00-desktop-artboard.css` — shell/env/ui layer fixed to `--site00-desktop-artboard-height` (900px); env layer `absolute` inside artboard (not viewport-fixed); removed `.site00-status-strip-host--viewport` rules. `Site00DesktopArtboardShell` — fixed stage height to artboard min height.
+
+- **Scope:** `/origin/desktop` artboard preview only. Real desktop `/origin` ≥768px keeps viewport-fixed status strip.
+>>>>>>> Stashed changes
 
 - **Deploy:** Sync-only; say **deploy now** for Vercel.
 
