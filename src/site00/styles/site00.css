@@ -397,7 +397,8 @@
   height: 32px;
 }
 
-.site00-bldr-framework-icon {
+.site00-bldr-framework-icon,
+.site00-idnty-framework-icon {
   display: block;
   width: 32px;
   height: 32px;

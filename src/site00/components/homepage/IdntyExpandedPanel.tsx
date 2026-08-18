@@ -4,7 +4,7 @@ import { SITE00_ROUTES } from '../../config/routes';
 import { ArchitecturalPanel } from '../panels/ArchitecturalPanel';
 import { SectionRule } from '../panels/SectionRule';
 import { OriginPanelIcon } from './OriginPanelIcon';
-import { GeometricIcon } from '../icons/GeometricIcon';
+import { IdntyFrameworkIcon } from './IdntyFrameworkIcon';
 import { ArrowAction } from '../icons/ArrowAction';
 
 type IdntyExpandedPanelProps = {
@@ -84,7 +84,7 @@ export function IdntyExpandedPanel({ onCollapse }: IdntyExpandedPanelProps) {
         <div className="site00-origin-framework-pillars">
           {IDNTY_FRAMEWORK_PILLARS.map((pillar) => (
             <div key={pillar.id} className="site00-origin-framework-pillar">
-              <GeometricIcon variant={pillar.icon} size="sm" />
+              <IdntyFrameworkIcon id={pillar.icon} title={pillar.title} />
               <p className="site00-micro" style={{ margin: '8px 0 4px' }}>
                 {pillar.title}
               </p>
