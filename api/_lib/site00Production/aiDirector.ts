@@ -1,4 +1,7 @@
 import type { ProductionPlanResponse } from './types.js';
+import { readinessSummaryForAi, type ProjectReadinessGraph } from './readinessEvaluator.js';
+
+type ReadinessContext = ReturnType<typeof readinessSummaryForAi> | null;
 
 /** Development adapter — swap for OpenAI/FAL-backed provider in production. */
 export const aiProductionDirector = {
@@ -66,26 +69,58 @@ export const aiProductionDirector = {
     };
   },
 
-  async recommendInsights(project: { name: string; deliverables: Array<{ title: string; status: string }> }) {
+  async recommendInsights(input: { name: string; readiness?: ReadinessContext; graph?: ProjectReadinessGraph }) {
+    const ctx = input.readiness ?? (input.graph ? readinessSummaryForAi(input.graph) : null);
     const insights = [];
-    const homepage = project.deliverables.find((d) => d.title.includes('HOMEPAGE'));
-    if (homepage && homepage.status === 'READY') {
-      insights.push({
-        priority: 'HIGH',
-        what: 'HOMEPAGE ART DIRECTION READY TO GENERATE',
-        why: 'SITEMAP AND STRATEGY DEPENDENCIES ARE COMPLETE.',
-        impact: 'UNBLOCKS COLLECTION AND PRODUCT PAGE DIRECTION.',
-        action: 'GENERATE BRIEF',
-        destination: 'STUDIO',
-      });
+
+    if (ctx) {
+      for (const b of ctx.blockers) {
+        if (b.type === 'access') {
+          insights.push({
+            priority: 'HIGH',
+            what: `${String(b.service ?? 'SERVICE').toUpperCase()} ACCESS BLOCKS PRODUCTION`,
+            why: b.reason,
+            impact: 'DOWNSTREAM BUILD WORK CANNOT PROCEED UNTIL ACCESS IS VERIFIED.',
+            action: 'REQUEST ACCESS',
+            destination: 'ACCESS',
+          });
+        }
+      }
+
+      for (const key of ctx.readyDeliverables) {
+        if (key === 'homepage_visual_direction') {
+          insights.push({
+            priority: 'HIGH',
+            what: 'HOMEPAGE ART DIRECTION READY TO GENERATE',
+            why: 'STRUCTURED READINESS CONFIRMS ALL CURRENT DIMENSIONS ARE SATISFIED.',
+            impact: 'UNBLOCKS COLLECTION AND PRODUCT PAGE DIRECTION.',
+            action: 'GENERATE BRIEF',
+            destination: 'STUDIO',
+          });
+        }
+      }
+
+      if (ctx.blockers.length === 0 && ctx.readyDeliverables.length === 0) {
+        insights.push({
+          priority: 'LOW',
+          what: 'NO ACTION REQUIRED RIGHT NOW',
+          why: 'CURRENT PHASE READINESS IS STABLE.',
+          impact: 'CONTINUE IN-PROGRESS PRODUCTION WORK.',
+          action: 'VIEW STUDIO',
+          destination: 'STUDIO',
+        });
+      }
+
+      return insights;
     }
+
     insights.push({
       priority: 'MEDIUM',
-      what: 'SITEMAP APPROVED — CONTINUE TO WIREFRAMES',
-      why: 'INFORMATION ARCHITECTURE IS LOCKED.',
-      impact: 'ENABLES VISUAL PRODUCTION STAGE.',
-      action: 'VIEW DELIVERABLES',
-      destination: 'DELIVERABLES',
+      what: 'AWAITING STRUCTURED READINESS CONTEXT',
+      why: 'AI DIRECTOR REQUIRES APPLICATION READINESS STATE — NOT INFERENCE.',
+      impact: 'INSIGHTS LIMITED UNTIL READINESS GRAPH LOADS.',
+      action: 'REFRESH STUDIO',
+      destination: 'STUDIO',
     });
     return insights;
   },

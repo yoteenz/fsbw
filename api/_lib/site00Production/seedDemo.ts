@@ -1,8 +1,15 @@
 import { getSupabaseAdmin } from '../supabase.js';
 import { aiProductionDirector } from './aiDirector.js';
+import { syncProductionBlockers } from './blockerSync.js';
 import { buildDependencyMapFromRecipe, recomputeDeliverableReadiness } from './dependencyEngine.js';
-import { computeNextActions } from './nextActionEngine.js';
-import { computeReadiness } from './readinessEngine.js';
+import { computeNextActionsFromReadiness } from './nextActionEngine.js';
+import {
+  computeDeliverablesBlockedByService,
+  evaluateProjectReadinessGraph,
+  readinessSummaryForAi,
+  type RecipeDeliverableInput,
+} from './readinessEvaluator.js';
+import type { ServiceInput } from './readinessEvaluator.js';
 
 const DEMO_SLUG = 'northquarter-rebuild';
 
@@ -32,7 +39,7 @@ export async function ensureDemoProjectSeeded(): Promise<{ projectId: string; cr
       payment_state: 'CONFIRMED',
       provisioning_state: 'IN_PROGRESS',
       production_readiness_pct: 50,
-      environment_readiness_pct: 60,
+      environment_readiness_pct: 100,
       recipe_id: recipe.id,
     })
     .select('id')
@@ -88,6 +95,12 @@ export async function ensureDemoProjectSeeded(): Promise<{ projectId: string; cr
     mobile_adaptation: 'BLOCKED',
     design_system: 'QUEUED',
     developer_handoff: 'NOT_READY',
+    frontend_build: 'NOT_READY',
+    backend_build: 'NOT_READY',
+    preview_deployment: 'NOT_READY',
+    payment_integration: 'NOT_READY',
+    production_domain: 'NOT_READY',
+    transactional_email: 'NOT_READY',
   };
 
   for (const rd of recipeDeliverables ?? []) {
@@ -162,18 +175,25 @@ export async function ensureDemoProjectSeeded(): Promise<{ projectId: string; cr
   }
 
   const { data: services } = await supabase.from('site00_service_catalog').select('id, provider_key');
+  const phaseByKey: Record<string, string> = {
+    github: 'BUILD',
+    vercel: 'BUILD',
+    supabase: 'BUILD',
+    stripe: 'INTEGRATION',
+    resend: 'INTEGRATION',
+    godaddy: 'LAUNCH',
+    shopify: 'INTEGRATION',
+  };
+
   for (const svc of services ?? []) {
     let state = 'NOT_REQUIRED';
-    let phase = 'LAUNCH';
-    if (svc.provider_key === 'godaddy' || svc.provider_key === 'github' || svc.provider_key === 'vercel') {
+    const phase = phaseByKey[svc.provider_key] ?? 'LAUNCH';
+    if (svc.provider_key === 'github' || svc.provider_key === 'vercel') {
       state = 'CONNECTED';
-      phase = 'BUILD';
     } else if (svc.provider_key === 'supabase') {
       state = 'CLIENT_ACTION_REQUIRED';
-      phase = 'BUILD';
-    } else if (svc.provider_key === 'stripe' || svc.provider_key === 'resend') {
+    } else if (svc.provider_key === 'stripe' || svc.provider_key === 'resend' || svc.provider_key === 'godaddy') {
       state = 'REQUIRED_LATER';
-      phase = 'LAUNCH';
     }
     await supabase.from('site00_project_service_requirements').insert({
       project_id: projectId,
@@ -198,7 +218,7 @@ export async function ensureDemoProjectSeeded(): Promise<{ projectId: string; cr
     project_id: projectId,
     status: 'OPEN',
     current_step: 'CONNECT_ACCESS',
-    readiness_pct: 60,
+    readiness_pct: 100,
   });
 
   await supabase.from('site00_approval_requests').insert([
@@ -229,73 +249,158 @@ export async function ensureDemoProjectSeeded(): Promise<{ projectId: string; cr
   return { projectId, created: true };
 }
 
+async function loadServiceInputs(projectId: string, currentPhase: string): Promise<ServiceInput[]> {
+  const supabase = getSupabaseAdmin();
+  const { data: requirements } = await supabase
+    .from('site00_project_service_requirements')
+    .select('service_id, required_phase, connection_state, owner_type, site00_service_catalog(id, provider_key, display_name)')
+    .eq('project_id', projectId);
+
+  const { data: connections } = await supabase
+    .from('site00_service_connections')
+    .select('service_id, connection_state, permission_level, owner_type')
+    .eq('project_id', projectId);
+
+  const connByService = new Map((connections ?? []).map((c) => [c.service_id, c]));
+
+  return (requirements ?? []).map((r) => {
+    const cat = r.site00_service_catalog as { id: string; provider_key: string; display_name: string } | null;
+    const conn = connByService.get(r.service_id);
+    return {
+      service_id: r.service_id,
+      provider_key: cat?.provider_key ?? '',
+      display_name: cat?.display_name ?? '',
+      required_phase: r.required_phase,
+      requirement_state: r.connection_state,
+      connection_state: conn?.connection_state ?? null,
+      owner_type: r.owner_type,
+    };
+  });
+}
+
+async function loadRecipeByKey(recipeId: string | null): Promise<Map<string, RecipeDeliverableInput>> {
+  const supabase = getSupabaseAdmin();
+  if (!recipeId) return new Map();
+  const { data } = await supabase
+    .from('site00_recipe_deliverables')
+    .select('deliverable_key, depends_on, required_services, required_assets, required_approvals')
+    .eq('recipe_id', recipeId);
+
+  const map = new Map<string, RecipeDeliverableInput>();
+  for (const row of data ?? []) {
+    map.set(row.deliverable_key, {
+      deliverable_key: row.deliverable_key,
+      depends_on: Array.isArray(row.depends_on) ? row.depends_on.map(String) : [],
+      required_services: Array.isArray(row.required_services) ? row.required_services : [],
+      required_assets: Array.isArray(row.required_assets) ? row.required_assets.map(String) : [],
+      required_approvals: Array.isArray(row.required_approvals) ? row.required_approvals.map(String) : [],
+    });
+  }
+  return map;
+}
+
 export async function refreshProjectDerivedState(projectId: string) {
   const supabase = getSupabaseAdmin();
-
-  const { data: deliverables } = await supabase
-    .from('site00_project_deliverables')
-    .select('id, deliverable_key, status, blocked_by')
-    .eq('project_id', projectId);
-
-  const { data: recipeDeliverables } = await supabase
-    .from('site00_recipe_deliverables')
-    .select('deliverable_key, depends_on');
-
-  const depMap = buildDependencyMapFromRecipe(recipeDeliverables ?? []);
-  const recomputed = recomputeDeliverableReadiness(deliverables ?? [], depMap);
-
-  for (const d of recomputed) {
-    await supabase
-      .from('site00_project_deliverables')
-      .update({ status: d.status, blocked_by: d.blocked_by })
-      .eq('id', d.id);
-  }
-
-  const complete = recomputed.filter((d) =>
-    ['APPROVED', 'CLIENT_APPROVED', 'DELIVERED'].includes(String(d.status)),
-  ).length;
-
-  const { data: accessReqs } = await supabase
-    .from('site00_project_service_requirements')
-    .select('connection_state, required_phase')
-    .eq('project_id', projectId);
-
-  const connected = (accessReqs ?? []).filter((a) => a.connection_state === 'CONNECTED').length;
-  const accessTotal = (accessReqs ?? []).filter((a) => a.connection_state !== 'NOT_REQUIRED').length;
-
-  const readiness = computeReadiness({
-    deliverablesComplete: complete,
-    deliverablesTotal: recomputed.length,
-    assetsPresent: 2,
-    assetsRequired: 4,
-    accessConnected: connected,
-    accessRequired: accessTotal || 1,
-    dependenciesClear: recomputed.filter((d) => d.status !== 'BLOCKED').length,
-    dependenciesTotal: recomputed.length,
-    approvalsClear: complete,
-    approvalsTotal: recomputed.length,
-  });
-
-  await supabase
-    .from('site00_projects')
-    .update({
-      production_readiness_pct: readiness.productionReadiness,
-      environment_readiness_pct: readiness.accessReadiness,
-      updated_at: new Date().toISOString(),
-    })
-    .eq('id', projectId);
 
   const { data: project } = await supabase.from('site00_projects').select('*').eq('id', projectId).single();
   if (!project) return;
 
-  const { data: accessRows } = await supabase
-    .from('site00_project_service_requirements')
-    .select('connection_state, site00_service_catalog(provider_key, display_name), required_phase')
+  await syncMissingRecipeDeliverables(projectId, project.recipe_id);
+
+  const { data: deliverables } = await supabase
+    .from('site00_project_deliverables')
+    .select('id, deliverable_key, title, status, blocked_by, approval_required')
     .eq('project_id', projectId);
+
+  const recipeByKey = await loadRecipeByKey(project.recipe_id);
+  const depMap = buildDependencyMapFromRecipe(
+    [...recipeByKey.values()].map((r) => ({ deliverable_key: r.deliverable_key, depends_on: r.depends_on })),
+  );
+
+  const recomputed = recomputeDeliverableReadiness(
+    (deliverables ?? []).map((d) => ({
+      id: d.id,
+      deliverable_key: d.deliverable_key,
+      status: d.status,
+      blocked_by: d.blocked_by ?? [],
+    })),
+    depMap,
+  );
+
+  for (const d of recomputed) {
+    const prev = deliverables?.find((x) => x.id === d.id);
+    const keepGenerating = ['GENERATING', 'PROCESSING', 'QUEUED', 'AI_DRAFT', 'ADMIN_REVIEW'].includes(
+      String(prev?.status),
+    );
+    const nextStatus =
+      d.status === 'BLOCKED' && keepGenerating ? String(prev?.status) : d.status;
+    await supabase
+      .from('site00_project_deliverables')
+      .update({ status: nextStatus, blocked_by: d.blocked_by })
+      .eq('id', d.id);
+  }
+
+  const { data: intelligence } = await supabase
+    .from('site00_project_intelligence')
+    .select('existing_assets')
+    .eq('project_id', projectId)
+    .maybeSingle();
+
+  const services = await loadServiceInputs(projectId, project.current_phase);
+  const readiness = evaluateProjectReadinessGraph({
+    project: {
+      id: project.id,
+      slug: project.slug,
+      name: project.name,
+      current_phase: project.current_phase,
+      payment_state: project.payment_state,
+    },
+    deliverables: (deliverables ?? []).map((d) => ({
+      id: d.id,
+      deliverable_key: d.deliverable_key,
+      title: d.title,
+      status: String(d.status),
+      blocked_by: d.blocked_by ?? [],
+      approval_required: d.approval_required ?? false,
+    })),
+    recipeByKey,
+    services,
+    existingAssets: Array.isArray(intelligence?.existing_assets) ? intelligence.existing_assets.map(String) : [],
+  });
+
+  await syncProductionBlockers(supabase, projectId, readiness.blockers);
+
+  const blockedByService = computeDeliverablesBlockedByService(readiness.deliverables);
+  for (const svc of services) {
+    const blocks = blockedByService.get(svc.provider_key) ?? [];
+    await supabase
+      .from('site00_project_service_requirements')
+      .update({ dependency_impact: blocks })
+      .eq('project_id', projectId)
+      .eq('service_id', svc.service_id);
+  }
+
+  const complete = readiness.deliverables.filter((d) =>
+    ['APPROVED', 'CLIENT_APPROVED', 'DELIVERED'].includes(d.workflow_status),
+  ).length;
+
+  await supabase
+    .from('site00_projects')
+    .update({
+      production_readiness_pct: Math.round(
+        (readiness.deliverables.filter((d) => d.overall === 'ready').length /
+          Math.max(readiness.deliverables.length, 1)) *
+          100,
+      ),
+      environment_readiness_pct: readiness.environment.current_phase_readiness_pct,
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', projectId);
 
   const { count: pendingApprovals } = await supabase
     .from('site00_approval_requests')
     .select('*', { count: 'exact', head: true })
+    .eq('project_id', projectId)
     .in('status', ['AI_DRAFT', 'ADMIN_REVIEW']);
 
   const { data: feedback } = await supabase
@@ -304,23 +409,9 @@ export async function refreshProjectDerivedState(projectId: string) {
     .eq('project_id', projectId)
     .eq('status', 'RECEIVED');
 
-  const actions = computeNextActions({
+  const actions = computeNextActionsFromReadiness({
     project,
-    deliverables: recomputed.map((d) => ({
-      deliverable_key: d.deliverable_key,
-      title: d.deliverable_key,
-      status: String(d.status),
-      blocked_by: d.blocked_by ?? [],
-    })),
-    access: (accessRows ?? []).map((r) => {
-      const cat = r.site00_service_catalog as { provider_key: string; display_name: string } | null;
-      return {
-        provider_key: cat?.provider_key ?? '',
-        display_name: cat?.display_name ?? '',
-        connection_state: r.connection_state,
-        required_phase: r.required_phase,
-      };
-    }),
+    readiness,
     pendingApprovals: pendingApprovals ?? 0,
     feedback: feedback ?? [],
   });
@@ -329,4 +420,98 @@ export async function refreshProjectDerivedState(projectId: string) {
   if (actions.length) {
     await supabase.from('site00_next_actions').insert(actions);
   }
+
+  return readiness;
+}
+
+async function syncMissingRecipeDeliverables(projectId: string, recipeId: string | null) {
+  if (!recipeId) return;
+  const supabase = getSupabaseAdmin();
+  const { data: recipeDeliverables } = await supabase
+    .from('site00_recipe_deliverables')
+    .select('*')
+    .eq('recipe_id', recipeId);
+  const { data: existing } = await supabase
+    .from('site00_project_deliverables')
+    .select('deliverable_key')
+    .eq('project_id', projectId);
+  const existingKeys = new Set((existing ?? []).map((e) => e.deliverable_key));
+
+  for (const rd of recipeDeliverables ?? []) {
+    if (existingKeys.has(rd.deliverable_key)) continue;
+    await supabase.from('site00_project_deliverables').insert({
+      project_id: projectId,
+      recipe_deliverable_id: rd.id,
+      deliverable_key: rd.deliverable_key,
+      category: rd.category,
+      title: rd.title,
+      description: rd.description,
+      status: 'NOT_READY',
+      recipe_id: recipeId,
+      variants_requested: rd.default_variants,
+      blocked_by: [],
+    });
+  }
+}
+
+export async function updateServiceConnectionState(
+  projectId: string,
+  providerKey: string,
+  connectionState: string,
+  actorType: 'CLIENT' | 'ADMIN' | 'SYSTEM' = 'SYSTEM',
+) {
+  const supabase = getSupabaseAdmin();
+  const { data: svc } = await supabase.from('site00_service_catalog').select('id, display_name').eq('provider_key', providerKey).single();
+  if (!svc) throw new Error('SERVICE NOT FOUND');
+
+  await supabase
+    .from('site00_project_service_requirements')
+    .update({ connection_state: connectionState, last_verified_at: new Date().toISOString() })
+    .eq('project_id', projectId)
+    .eq('service_id', svc.id);
+
+  if (['CONNECTED', 'ACCESS_LIMITED'].includes(connectionState)) {
+    await supabase.from('site00_service_connections').upsert(
+      {
+        project_id: projectId,
+        service_id: svc.id,
+        connection_state: connectionState,
+        owner_type: 'CLIENT',
+        last_verified_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      },
+      { onConflict: 'project_id,service_id' },
+    );
+  } else {
+    await supabase
+      .from('site00_service_connections')
+      .update({ connection_state: connectionState, updated_at: new Date().toISOString() })
+      .eq('project_id', projectId)
+      .eq('service_id', svc.id);
+  }
+
+  await supabase.from('site00_project_activity').insert({
+    project_id: projectId,
+    event_type: 'SERVICE_CONNECTION_CHANGED',
+    actor_type: actorType,
+    summary: `${svc.display_name.toUpperCase()} ACCESS ${connectionState.replace(/_/g, ' ')}.`,
+    metadata: { providerKey, connectionState },
+  });
+
+  const readiness = await refreshProjectDerivedState(projectId);
+
+  const unblocked = readiness?.deliverables.filter(
+    (d) => d.deliverable_key === 'backend_build' && d.overall === 'ready',
+  );
+  if (unblocked?.length && connectionState === 'CONNECTED' && providerKey === 'supabase') {
+    await supabase.from('site00_project_activity').insert({
+      project_id: projectId,
+      event_type: 'DELIVERABLE_UNBLOCKED',
+      actor_type: 'SYSTEM',
+      summary: 'BACKEND BUILD IS NOW READY.',
+      metadata: { deliverableKey: 'backend_build' },
+    });
+  }
+
+  return readiness;
 }

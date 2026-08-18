@@ -10,6 +10,7 @@ import {
   getProjectsPayload,
   getStudioPayload,
   ensureDemoProjectSeeded,
+  updateServiceConnectionState,
 } from '../_lib/site00Production/service.js';
 
 function parseBody(req: VercelRequest): Record<string, unknown> | null {
@@ -29,7 +30,7 @@ function parseBody(req: VercelRequest): Record<string, unknown> | null {
 /**
  * SITE 00 Admin Production OS API (admin-only)
  * GET ?action=dashboard|studio|approvals|projects|project
- * POST action=bootstrap-demo|approve-brief|decide-approval|generate-brief
+ * POST action=bootstrap-demo|approve-brief|decide-approval|generate-brief|update-service-connection|set-project-phase
  */
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -88,6 +89,25 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           const deliverableKey = String(body.deliverableKey ?? 'homepage_visual_direction');
           if (!projectId) return res.status(400).json({ error: 'projectId required' });
           return res.status(200).json(await generateBriefForDeliverable(projectId, deliverableKey));
+        }
+        case 'update-service-connection': {
+          const projectId = String(body.projectId ?? '');
+          const providerKey = String(body.providerKey ?? '');
+          const connectionState = String(body.connectionState ?? 'CONNECTED');
+          if (!projectId || !providerKey) {
+            return res.status(400).json({ error: 'projectId and providerKey required' });
+          }
+          return res.status(200).json(await updateServiceConnectionState(projectId, providerKey, connectionState, 'ADMIN'));
+        }
+        case 'set-project-phase': {
+          const projectId = String(body.projectId ?? '');
+          const phase = String(body.phase ?? '');
+          if (!projectId || !phase) return res.status(400).json({ error: 'projectId and phase required' });
+          const { getSupabaseAdmin } = await import('../_lib/supabase.js');
+          const { refreshProjectDerivedState } = await import('../_lib/site00Production/seedDemo.js');
+          const supabase = getSupabaseAdmin();
+          await supabase.from('site00_projects').update({ current_phase: phase }).eq('id', projectId);
+          return res.status(200).json(await refreshProjectDerivedState(projectId));
         }
         default:
           return res.status(400).json({ error: 'Unknown action' });

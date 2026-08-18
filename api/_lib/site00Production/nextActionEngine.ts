@@ -1,52 +1,74 @@
 import type { ActionPriority, NextActionRow } from './types.js';
-
-type ProjectContext = {
-  id: string;
-  slug: string;
-  name: string;
-  current_phase: string;
-  payment_state: string;
-  provisioning_state: string;
-};
-
-type DeliverableCtx = {
-  deliverable_key: string;
-  title: string;
-  status: string;
-  blocked_by: string[];
-};
-
-type AccessCtx = {
-  provider_key: string;
-  display_name: string;
-  connection_state: string;
-  required_phase: string;
-};
+import type { DeliverableReadinessResult, ProjectReadinessGraph, StructuredBlocker } from './readinessTypes.js';
 
 type FeedbackCtx = { id: string; body: string };
 
-export function computeNextActions(input: {
-  project: ProjectContext;
-  deliverables: DeliverableCtx[];
-  access: AccessCtx[];
+export function computeNextActionsFromReadiness(input: {
+  project: { id: string; slug: string; name: string; payment_state: string; provisioning_state: string };
+  readiness: ProjectReadinessGraph;
   pendingApprovals: number;
   feedback: FeedbackCtx[];
 }): Omit<NextActionRow, 'id' | 'created_at' | 'resolved_at'>[] {
   const actions: Omit<NextActionRow, 'id' | 'created_at' | 'resolved_at'>[] = [];
   const base = `/admin/site00/projects/${input.project.id}`;
 
-  const homepage = input.deliverables.find((d) => d.deliverable_key === 'homepage_visual_direction');
-  if (homepage && (homepage.status === 'READY' || homepage.status === 'NOT_READY') && homepage.blocked_by.length === 0) {
-    actions.push({
-      project_id: input.project.id,
-      action_type: 'GENERATE_BRIEF',
-      priority: 'HIGH',
-      title: 'HOMEPAGE ART DIRECTION CAN NOW BE GENERATED.',
-      reason: 'DEPENDENCIES FOR HOMEPAGE ART DIRECTION ARE SATISFIED.',
-      dependency: 'SITEMAP APPROVED',
-      destination: `${base}/studio`,
-      metadata: { deliverableKey: 'homepage_visual_direction' },
-    });
+  for (const d of input.readiness.deliverables) {
+    if (d.overall === 'ready' && d.deliverable_key === 'homepage_visual_direction') {
+      actions.push({
+        project_id: input.project.id,
+        action_type: 'GENERATE_BRIEF',
+        priority: 'HIGH',
+        title: 'HOMEPAGE ART DIRECTION CAN NOW BE GENERATED.',
+        reason: 'ALL READINESS DIMENSIONS SATISFIED FOR HOMEPAGE ART DIRECTION.',
+        dependency: null,
+        destination: `${base}/studio`,
+        metadata: { deliverableKey: d.deliverable_key },
+      });
+    }
+
+    if (d.overall === 'ready' && d.deliverable_key === 'backend_build') {
+      actions.push({
+        project_id: input.project.id,
+        action_type: 'OPEN_STUDIO',
+        priority: 'HIGH',
+        title: 'BACKEND IMPLEMENTATION IS NOW READY TO BEGIN.',
+        reason: 'SUPABASE ACCESS AND DEPENDENCIES ARE SATISFIED.',
+        dependency: null,
+        destination: `${base}/studio`,
+        metadata: { deliverableKey: d.deliverable_key },
+      });
+    }
+  }
+
+  for (const b of input.readiness.blockers) {
+    if (b.type === 'access' && b.owner === 'client') {
+      actions.push({
+        project_id: input.project.id,
+        action_type: b.action_type ?? 'REQUEST_ACCESS',
+        priority: mapSeverity(b.severity),
+        title: b.reason.toUpperCase(),
+        reason: `SERVICE ACCESS BLOCKS PRODUCTION: ${b.service_key?.toUpperCase() ?? 'SERVICE'}.`,
+        dependency: b.service_key?.toUpperCase() ?? null,
+        destination: b.action_route ?? `${base}/access`,
+        metadata: { serviceKey: b.service_key, blockerId: b.id },
+      });
+    }
+
+    if (b.type === 'dependency') {
+      const mobile = input.readiness.deliverables.find((x) => x.deliverable_key === 'mobile_adaptation');
+      if (mobile && b.dependency_id === 'homepage_visual_direction') {
+        actions.push({
+          project_id: input.project.id,
+          action_type: 'REVIEW_DESKTOP',
+          priority: 'MEDIUM',
+          title: 'MOBILE ADAPTATION BLOCKED BY DESKTOP APPROVAL.',
+          reason: b.reason.toUpperCase(),
+          dependency: 'HOMEPAGE VISUAL DIRECTION',
+          destination: `${base}/approvals`,
+          metadata: { deliverableKey: 'mobile_adaptation' },
+        });
+      }
+    }
   }
 
   for (const fb of input.feedback) {
@@ -59,35 +81,6 @@ export function computeNextActions(input: {
       dependency: null,
       destination: `${base}/approvals`,
       metadata: { feedbackId: fb.id },
-    });
-  }
-
-  const mobile = input.deliverables.find((d) => d.deliverable_key === 'mobile_adaptation');
-  const desktopApproved = homepage?.status === 'APPROVED' || homepage?.status === 'CLIENT_APPROVED';
-  if (mobile?.status === 'BLOCKED' && !desktopApproved) {
-    actions.push({
-      project_id: input.project.id,
-      action_type: 'REVIEW_DESKTOP',
-      priority: 'MEDIUM',
-      title: 'MOBILE ADAPTATION BLOCKED BY DESKTOP APPROVAL.',
-      reason: 'DESKTOP HOMEPAGE DIRECTION MUST BE APPROVED FIRST.',
-      dependency: 'HOMEPAGE VISUAL DIRECTION',
-      destination: `${base}/approvals`,
-      metadata: { deliverableKey: 'mobile_adaptation' },
-    });
-  }
-
-  const supabase = input.access.find((a) => a.provider_key === 'supabase');
-  if (supabase && supabase.connection_state === 'CLIENT_ACTION_REQUIRED') {
-    actions.push({
-      project_id: input.project.id,
-      action_type: 'VIEW_ACCESS',
-      priority: 'HIGH',
-      title: 'BACKEND IMPLEMENTATION BLOCKED — SUPABASE ACCESS REQUIRED.',
-      reason: 'CLIENT-OWNED SUPABASE CONNECTION IS REQUIRED FOR BACKEND BUILD.',
-      dependency: 'SUPABASE ACCESS',
-      destination: `${base}/access`,
-      metadata: { serviceKey: 'supabase' },
     });
   }
 
@@ -117,7 +110,29 @@ export function computeNextActions(input: {
     });
   }
 
-  return sortByPriority(actions);
+  return sortByPriority(dedupeActions(actions));
+}
+
+function mapSeverity(s: StructuredBlocker['severity']): ActionPriority {
+  const map: Record<string, ActionPriority> = {
+    critical: 'CRITICAL',
+    high: 'HIGH',
+    medium: 'MEDIUM',
+    low: 'LOW',
+  };
+  return map[s] ?? 'MEDIUM';
+}
+
+function dedupeActions(
+  actions: Omit<NextActionRow, 'id' | 'created_at' | 'resolved_at'>[],
+): Omit<NextActionRow, 'id' | 'created_at' | 'resolved_at'>[] {
+  const seen = new Set<string>();
+  return actions.filter((a) => {
+    const key = `${a.action_type}:${a.title}`;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
 }
 
 function sortByPriority(
@@ -126,3 +141,6 @@ function sortByPriority(
   const order: Record<ActionPriority, number> = { CRITICAL: 0, HIGH: 1, MEDIUM: 2, LOW: 3 };
   return [...actions].sort((a, b) => order[a.priority] - order[b.priority]);
 }
+
+/** @deprecated Use computeNextActionsFromReadiness */
+export { computeNextActionsFromReadiness as computeNextActions };
