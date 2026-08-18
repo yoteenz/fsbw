@@ -53514,11 +53514,11 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 ---
 
-## 2026-08-18 — Origin desktop panel icons: nudge down 10px inside cards
+## 2026-08-18 — Mobile menu CTRL ROOM login sublabel red
 
-- **Context:** Founder requested IDNTY/BLDR collapsed panel icons move **down 10px** inside their glass panels on desktop Origin homepage.
+- **Context:** Founder requested gray **LOG IN →** / **ENTER →** sublabel on mobile hamburger CTRL ROOM row changed to red.
 
-- **Fix:** `panelIconOffsetYPx: 10` + `--site00-origin-panel-icon-offset-y` on stage. Desktop + artboard `.site00-origin-card__icon-wrap` → `margin-top: calc(12px + var(--offset) / var(--card-scale))` so **10 artboard px** survive the card row `scale(0.45)`.
+- **Change:** `.site00-mobile-menu__ctrl-room-state` → `color: var(--site-red)` in `site00-locations.css`.
 
 - **Deploy:** Sync-only; say **deploy now** for Vercel.
 
