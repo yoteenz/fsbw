@@ -144,7 +144,7 @@ export const BLDR_HOMEPAGE_EXPANDED = {
       code: '01',
       title: 'SITE',
       description:
-        'STRUCTURED DIGITAL BUILD. Websites, ecommerce, portfolios, landing pages, bookings, memberships, brochures, and more.',
+        'STRUCTURED DIGITAL BUILD. Websites, ecommerce, portfolios, landing pages, bookings, memberships, and more.',
       price: 'FROM ~$3.5K',
     },
     {

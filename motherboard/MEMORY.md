@@ -53277,3 +53277,13 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Verification:** Playwright `/origin/desktop` — 5 pillars, `rowCount: 1` on both IDNTY and BLDR expanded panels.
 
 - **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — BLDR expanded panel: remove brochures from SITE copy
+
+- **Context:** Founder requested remove **brochures** from SITE offering paragraph on Origin BLDR expanded panel.
+
+- **Change:** `BLDR_HOMEPAGE_EXPANDED.offerings[0].description` in `builder.ts` — dropped “, brochures” from list.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
