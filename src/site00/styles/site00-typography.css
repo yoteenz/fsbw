@@ -135,6 +135,12 @@
   text-transform: uppercase;
 }
 
+/* IDNTY / BLDR state pages — primary subhead under red headline */
+.site00-state-page__subhead {
+  font-weight: var(--site00-weight-heading);
+  color: var(--site-text);
+}
+
 /* ─── Mono / system IDs / numerics ─── */
 
 .site00-mono,

@@ -16,7 +16,7 @@ export default function BldrStatePage() {
             <p className="site00-label-red" style={{ marginBottom: 8 }}>
               {BLDR_STATE_COPY.headline}
             </p>
-            <p className="site00-body" style={{ maxWidth: 560, margin: '0 auto' }}>
+            <p className="site00-body site00-state-page__subhead" style={{ maxWidth: 560, margin: '0 auto' }}>
               {BLDR_STATE_COPY.subhead}
             </p>
             <p className="site00-label" style={{ marginTop: 8 }}>
