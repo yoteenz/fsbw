@@ -54146,3 +54146,10 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Context:** Founder polish on Origin desktop EVOLVE expanded panel.
 - **Changes:** CTA `BEGIN EVOLUTION` (single arrow via `ArrowAction`); removed HOW IT WORKS link; centered CHOOSE YOUR PATH block + 3-column evolve pillars CSS.
 
+---
+
+## 2026-08-18 — Origin EVOLVE production panel icon
+
+- **Context:** Founder supplied Supabase PNG for Origin desktop EVOLVE collapsed + expanded panel icon.
+- **Asset:** `live-preview/site00/EVOLVE/9E87E14E-63A7-4ED5-9054-5435136E1768.png` via `origin-panel-icons.ts` (replaces SVG fallback); `OriginPanelIcon` md/lg sizing unchanged — matches IDNTY/BLDR.
+
