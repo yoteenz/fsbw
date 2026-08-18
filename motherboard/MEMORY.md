@@ -53258,6 +53258,20 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 ---
 
+## 2026-08-18 — BLDR state desktop artboard + remove duplicate build class icons
+
+- **Context:** On mobile with **Desktop** selected, `/bldr/state` bounced to mobile BLDR entry; build class cards showed **duplicate** wireframe + PNG icons.
+
+- **Routing fix:** Added **`/bldr/state/desktop`** with `Site00DesktopArtboardShell` (mirrors `/origin/desktop`). `BEGIN BLDR` from `/origin/desktop` → `bldrStateDesktop`. Extended layout switch for BLDR preview (Mobile → `/bldr`, Desktop → `/bldr/state/desktop`). Mobile nav START BUILD keeps `/bldr/state` or `/bldr/state/desktop` when already on workflow routes.
+
+- **Icons fix:** Removed `GeometricIcon` wireframes from `BuildClassCard` — PNG only via `BldrBuildClassIcon`.
+
+- **Verification:** Playwright — `/bldr/state/desktop` @ 390px artboard, 4 PNGs / 0 wireframes; origin desktop BEGIN BLDR lands on `/bldr/state/desktop`.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
 ## 2026-08-18 — Origin mobile swipe-up: callout area + directory navigation fix
 
 - **Context:** Founder reported mobile Origin **swipe up** does not work and does not navigate to the **Locations Directory** (`/origin/locations`).
