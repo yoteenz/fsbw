@@ -53325,3 +53325,15 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Verification:** Playwright `/origin/desktop` expanded IDNTY — panel visual width ~476px (70% of ~680px column), transform matrix 0.7.
 
 - **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — Origin desktop expanded panel: click outside to collapse
+
+- **Context:** Founder requested clicking/tapping **outside** the desktop expanded IDNTY/BLDR panel collapses it back to collapsed cards.
+
+- **Change:** `useOriginExpandedDismiss` hook — on desktop (`min-width: 768px`), `pointerdown` on document outside `.site00-home-expanded-column` calls `setHomeMode('origin')`. Wired in `OriginPage.tsx`.
+
+- **Verification:** Playwright `/origin/desktop` — expand IDNTY, click hero → cards return; expand BLDR, click status strip → collapsed.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
