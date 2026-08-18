@@ -52868,7 +52868,6 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 ---
 
-<<<<<<< HEAD
 ## 2026-08-17 — Site 00 immersive loader: remove white letterboxing (edge-to-edge background)
 
 - **Context:** Founder reported repeated white letterboxing around the loading animation; background image should fill edge-to-edge with no white CSS gutters.
@@ -52907,7 +52906,6 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Spatial Architecture Review:** SKIPPED — loader bootstrap/compositing hotfix.
 
-
 ---
 
 ## 2026-08-18 — SITE 00 Origin mobile homepage environment background
@@ -52922,14 +52920,6 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 ---
 
-## 2026-08-18 — SITE package starting price $3.5K
-
-- **Context:** Founder requested SITE build-class starting price move from **$3K** to **$3.5K**.
-
-- **Changes:** `src/site00/config/builder.ts` — `BLDR_INVESTMENT_TIERS` site tier `priceLabel` → `$3.5K`; `BLDR_HOMEPAGE_EXPANDED` SITE offering `price` → `FROM ~$3.5K`. Surfaces on BLDR state investment guide + Origin homepage BLDR expanded panel.
-
-- **Deploy:** Sync-only; say **deploy now** for Vercel.
-=======
 ## 2026-08-17 — AIO global `/desktop/*` and `/mobile/*` layout preview routes
 
 - **Context:** Founder rejected Smart-Intake-only preview paths (`/get-started/desktop`); wanted a **site-wide** designated desktop route mirror for **all AIO pages** so design review on phone/narrow viewports forces desktop layout without viewport auto-switching.
@@ -52955,7 +52945,6 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Fix:** Export route tree as JSX fragment `aioCoreRoutes` and spread `{aioCoreRoutes}` in `AllInOneRoutes`. Parent preview paths use `desktop/*` and `mobile/*` for nested matching.
 
 - **QA:** Playwright local — `/desktop`, `/desktop/`, `/`, `/desktop/get-started` all render with content; build PASS.
->>>>>>> 8d9439020 (Fix AIO /desktop blank page — export aioCoreRoutes fragment for React Router [sync-only])
 
 ---
 
@@ -52964,6 +52953,18 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Context:** Founder requested SITE build-class starting price move from **$3K** to **$3.5K**.
 
 - **Changes:** `src/site00/config/builder.ts` — `BLDR_INVESTMENT_TIERS` site tier `priceLabel` → `$3.5K`; `BLDR_HOMEPAGE_EXPANDED` SITE offering `price` → `FROM ~$3.5K`. Surfaces on BLDR state investment guide + Origin homepage BLDR expanded panel.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — SITE 00 Origin mobile status strip horizontal scroll
+
+- **Context:** Founder reported Origin homepage mobile status panels (STATUS, ACTIVE SITES, SYSTEM STATUS, etc.) stacked in two columns consumed too much viewport; requested single horizontal row above guidance bar with scroll (~2.5–3 visible).
+
+- **Changes:** `StatusStrip.tsx` — wrap metric cells in `.site00-status-strip__metrics`; `site00.css` mobile — flex column strip, metrics row `overflow-x: auto` + `scroll-snap`, cell width `calc(100vw / 2.6)` (~2.5 visible), guidance full-width below; desktop grid unchanged via nested metrics grid. `site00-desktop-artboard.css` updated for new structure.
+
+- **QA:** Playwright @ 390×844 `/origin` — all cells same row, 3 visible, guidance below metrics, overflow-x auto. Screenshot: `site00_origin_status_strip_mobile_row.png`.
 
 - **Deploy:** Sync-only; say **deploy now** for Vercel.
 
