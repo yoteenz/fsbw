@@ -11,7 +11,6 @@ import {
 import { INITIAL_SITE00_STATE, site00Reducer, type HomeMode, type Site00State } from './types';
 import {
   site00OriginMobileLayoutPreviewActive,
-  isSite00OriginWideViewport,
 } from '../components/shell/site00OriginViewport';
 
 type Site00ContextValue = {
@@ -57,8 +56,8 @@ export function Site00Provider({ children }: { children: ReactNode }) {
     writeStoredPreviewDeviceMode(state.previewDeviceMode);
   }, [state.previewDeviceMode]);
 
+  /** Honor composer Mobile/Desktop selection on all viewports (artboard scales on phones). */
   const isPreviewDesktop = useMemo(() => {
-    if (!isSite00OriginWideViewport()) return false;
     if (site00OriginMobileLayoutPreviewActive(search)) return false;
     return state.previewDeviceMode === 'desktop';
   }, [state.previewDeviceMode, search]);

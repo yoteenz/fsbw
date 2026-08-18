@@ -15,8 +15,10 @@
   border: 0;
 }
 
-body.site00-fast-travel-open {
-  overflow: hidden;
+@media (max-width: 767px) {
+  body.site00-fast-travel-open {
+    overflow: hidden;
+  }
 }
 
 @media (max-width: 767px) {

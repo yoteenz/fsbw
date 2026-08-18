@@ -305,7 +305,8 @@
 
 .site00-origin-layout-switch {
   position: fixed;
-  z-index: calc(var(--site-z-nav) + 2);
+  z-index: calc(var(--site-z-overlay) + 20);
+  pointer-events: auto;
   bottom: calc(72px + env(safe-area-inset-bottom, 0px));
   left: 50%;
   transform: translateX(-50%);

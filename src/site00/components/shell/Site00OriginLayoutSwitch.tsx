@@ -26,6 +26,7 @@ export function Site00OriginLayoutSwitch() {
   if (
     pathname === SITE00_ROUTES.originAlias ||
     pathname === SITE00_ROUTES.origin ||
+    pathname === SITE00_ROUTES.enter ||
     isSite00OriginDesktopPath(pathname)
   ) {
     nav = (
