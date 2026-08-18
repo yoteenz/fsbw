@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useRef, useState, type ReactNode, type RefObject } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode, type RefObject } from 'react';
 import { ASSTS_LOADER_REFERENCE_CANVAS, ASSTS_LOADER_TYPOGRAPHY } from './loader-composition-map';
 import { isLoaderDebugEnabled, isLoaderRefMapEnabled } from './site00LoaderHeroStage';
 
@@ -29,6 +29,8 @@ export function useLoaderCompositionOptional() {
 
 type ProviderProps = {
   children: ReactNode;
+  /** Edge-to-edge environment — scales in lockstep with the overlay artboard (fill width). */
+  backgroundUrl?: string;
 };
 
 function readRefMapFromUrl(): boolean {
@@ -38,11 +40,10 @@ function readRefMapFromUrl(): boolean {
 }
 
 /**
- * Letterbox viewport centers one artboard scaler. The artboard is authored at 711×1536
- * reference px and receives a single transform:scale() — background, overlays, and type
- * scale together as one composition (no per-element viewport compensation).
+ * Fill viewport width with one artboard scaler (geometry + copy). Vertical overflow clips.
+ * Background uses the same scale transform so overlays stay registered — no side gutters.
  */
-export function LoaderCompositionProvider({ children }: ProviderProps) {
+export function LoaderCompositionProvider({ children, backgroundUrl }: ProviderProps) {
   const viewportRef = useRef<HTMLDivElement>(null);
   const artboardRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(1);
@@ -52,7 +53,7 @@ export function LoaderCompositionProvider({ children }: ProviderProps) {
   const regionElementsRef = useRef(new Map<string, HTMLElement>());
   const [, bump] = useState(0);
 
-  const setRefMapMode = (on: boolean) => {
+  const setRefMapMode = useCallback((on: boolean) => {
     setRefMapModeState(on);
     if (typeof window === 'undefined') return;
     const next = new URLSearchParams(window.location.search);
@@ -63,7 +64,7 @@ export function LoaderCompositionProvider({ children }: ProviderProps) {
     }
     const qs = next.toString();
     window.history.replaceState(null, '', qs ? `${window.location.pathname}?${qs}` : window.location.pathname);
-  };
+  }, []);
 
   useEffect(() => {
     setRefMapModeState(isLoaderRefMapEnabled() || isLoaderDebugEnabled());
@@ -75,15 +76,11 @@ export function LoaderCompositionProvider({ children }: ProviderProps) {
 
     const update = () => {
       const rect = el.getBoundingClientRect();
-      const safeTop = parseFloat(getComputedStyle(el).paddingTop) || 0;
-      const safeBottom = parseFloat(getComputedStyle(el).paddingBottom) || 0;
       const safeLeft = parseFloat(getComputedStyle(el).paddingLeft) || 0;
       const safeRight = parseFloat(getComputedStyle(el).paddingRight) || 0;
       const availW = Math.max(1, rect.width - safeLeft - safeRight);
-      const availH = Math.max(1, rect.height - safeTop - safeBottom);
       const scaleW = availW / ASSTS_LOADER_REFERENCE_CANVAS.width;
-      const scaleH = availH / ASSTS_LOADER_REFERENCE_CANVAS.height;
-      const nextScale = Math.min(scaleW, scaleH);
+      const nextScale = scaleW;
       setScale(nextScale);
       setStageWidth(ASSTS_LOADER_REFERENCE_CANVAS.width * nextScale);
       setStageHeight(ASSTS_LOADER_REFERENCE_CANVAS.height * nextScale);
@@ -100,25 +97,50 @@ export function LoaderCompositionProvider({ children }: ProviderProps) {
     };
   }, []);
 
-  const registerRegion = (id: string, node: HTMLElement | null) => {
-    if (node) regionElementsRef.current.set(id, node);
-    else regionElementsRef.current.delete(id);
+  const registerRegion = useCallback((id: string, node: HTMLElement | null) => {
+    if (node) {
+      if (regionElementsRef.current.get(id) === node) return;
+      regionElementsRef.current.set(id, node);
+    } else {
+      if (!regionElementsRef.current.has(id)) return;
+      regionElementsRef.current.delete(id);
+    }
     bump((n) => n + 1);
-  };
+  }, []);
+
+  const contextValue = useMemo(
+    () => ({
+      scale,
+      stageWidth,
+      stageHeight,
+      refMapMode,
+      setRefMapMode,
+      registerRegion,
+      regionElements: regionElementsRef.current,
+      artboardRef,
+    }),
+    [scale, stageWidth, stageHeight, refMapMode, setRefMapMode, registerRegion],
+  );
 
   return (
-    <LoaderCompositionContext.Provider
-      value={{
-        scale,
-        stageWidth,
-        stageHeight,
-        refMapMode,
-        setRefMapMode,
-        registerRegion,
-        regionElements: regionElementsRef.current,
-        artboardRef,
-      }}
-    >
+    <LoaderCompositionContext.Provider value={contextValue}>
+      {backgroundUrl ? (
+        <div className="site00-immersive-loader__backdrop" aria-hidden="true">
+          <img
+            className="site00-immersive-loader__backdrop-img"
+            src={backgroundUrl}
+            alt=""
+            decoding="async"
+            fetchPriority="high"
+            draggable={false}
+            style={{
+              width: ASSTS_LOADER_REFERENCE_CANVAS.width,
+              height: ASSTS_LOADER_REFERENCE_CANVAS.height,
+              transform: `scale(${scale})`,
+            }}
+          />
+        </div>
+      ) : null}
       <div ref={viewportRef} className="site00-loader-viewport site00-loader-stage-viewport">
         <div
           className="site00-loader-artboard-scaler"

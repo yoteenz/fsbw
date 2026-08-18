@@ -52814,8 +52814,11 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **QA:** @ 390px `/origin/desktop` → production env bg, hero upper-left, IDNTY/BLDR side-by-side, Desktop pill active, no loader. `/origin` → Mobile pill active. Artifacts: `origin_desktop_route_phone.png`. `npm run build` PASS.
 
+<<<<<<< HEAD
 ---
 
+=======
+>>>>>>> fb03ab2c3 (fix(site00): edge-to-edge immersive loader background — no white letterbox [sync-only])
 ## 2026-08-17 — AIO Smart Intake complete responsive redesign sprint
 
 - **Context:** Founder approved design reference (desktop split journey rail + light workspace, mobile restructured layout). Transform existing `/get-started` Smart Intake from plain form-like UI into premium guided business-setup console. Preserve routes, validation, persistence, demo mode, business-name check, Supabase/auth, and dynamic section logic — no second intake system.
@@ -52838,6 +52841,7 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Spatial Architecture Review:** SKIPPED — Smart Intake UX refactor, not Studio OS new surfaces.
 
+<<<<<<< HEAD
 ---
 
 ## 2026-08-17 — AIO Desktop Context Rail system (desktop/ultrawide)
@@ -52865,4 +52869,6 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Implementation:** `SmartIntakeLayoutMode` + CSS classes `si-shell--layout-desktop|mobile`, `si-app--layout-desktop|mobile`; `SmartIntakePreviewBar` (demo/debug only) toggles Responsive | Desktop | Mobile; query params preserved on switch.
 
 - **Files:** `smartIntakeLayoutMode.ts`, `SmartIntakePreviewBar.tsx`, `SmartIntakeShell.tsx`, `SmartIntakeLayout.tsx`, `GetStartedPage.tsx`, `AllInOneRoutes.tsx`, `paths.ts`, `aio-smart-intake.css`.
+=======
+>>>>>>> fb03ab2c3 (fix(site00): edge-to-edge immersive loader background — no white letterbox [sync-only])
 
