@@ -1,5 +1,6 @@
 import { EnvironmentShell } from '../components/environment/EnvironmentShell';
 import { Site00AppShell } from '../components/shell/Site00AppShell';
+import { Site00OriginLayoutSwitch } from '../components/shell/Site00OriginLayoutSwitch';
 import { BLDR_BUILD_CLASSES, BLDR_INVESTMENT_TIERS, BLDR_STATE_COPY } from '../config/builder';
 import { BuildClassCard, InvestmentColumn, WorkflowSummary } from '../components/workflow/WorkflowCards';
 import { useSite00 } from '../state/Site00Context';
@@ -42,7 +43,6 @@ export default function BldrStatePage() {
                 title={buildClass.title}
                 subtitle={buildClass.subtitle}
                 description={buildClass.description}
-                icon={buildClass.icon}
                 cta={buildClass.cta}
                 selected={state.selectedBuildClassId === buildClass.id}
                 onSelect={() => selectBuildClass(buildClass.id)}
@@ -78,6 +78,7 @@ export default function BldrStatePage() {
           <WorkflowSummary text={BLDR_STATE_COPY.footer} />
         </div>
       </Site00AppShell>
+      <Site00OriginLayoutSwitch />
     </EnvironmentShell>
   );
 }

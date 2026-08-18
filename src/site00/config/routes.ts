@@ -13,6 +13,7 @@ export const SITE00_ROUTES = {
   idntyState: '/idnty/state',
   bldr: '/bldr',
   bldrState: '/bldr/state',
+  bldrStateDesktop: '/bldr/state/desktop',
   assts: '/assts',
   asstsBatch: '/assts/batches/:batchId',
   asstsAsset: '/assts/:assetId',
@@ -37,6 +38,16 @@ export const SITE00_FUTURE_ROUTES = {
 
 export type Site00RouteKey = keyof typeof SITE00_ROUTES;
 
+export function isSite00BldrStateDesktopPath(pathname: string): boolean {
+  const desktop = SITE00_ROUTES.bldrStateDesktop;
+  return pathname === desktop || pathname.startsWith(`${desktop}/`);
+}
+
+export function isSite00OriginDesktopPath(pathname: string): boolean {
+  const desktop = SITE00_ROUTES.originDesktop;
+  return pathname === desktop || pathname.startsWith(`${desktop}/`);
+}
+
 export function isSite00Route(pathname: string): boolean {
   const paths = Object.values(SITE00_ROUTES);
   return paths.some((p) => (p === '/' ? pathname === '/' : pathname === p || pathname.startsWith(`${p}/`)));
@@ -47,4 +58,15 @@ export function site00NavPathIsActive(pathname: string, href: string): boolean {
     return pathname === '/' || pathname === SITE00_ROUTES.originAlias;
   }
   return pathname === href || pathname.startsWith(`${href}/`);
+}
+
+/** Mobile bottom nav — keep BLDR workflow on state routes instead of bouncing to mobile entry. */
+export function site00MobileBuildNavHref(pathname: string): string {
+  if (isSite00BldrStateDesktopPath(pathname)) {
+    return SITE00_ROUTES.bldrStateDesktop;
+  }
+  if (pathname.startsWith(SITE00_ROUTES.bldrState)) {
+    return SITE00_ROUTES.bldrState;
+  }
+  return SITE00_ROUTES.bldr;
 }

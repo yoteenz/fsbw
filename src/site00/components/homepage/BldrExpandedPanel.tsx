@@ -1,6 +1,6 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { BLDR_HOMEPAGE_EXPANDED, BLDR_FRAMEWORK_PILLARS } from '../../config/builder';
-import { SITE00_ROUTES } from '../../config/routes';
+import { isSite00OriginDesktopPath, SITE00_ROUTES } from '../../config/routes';
 import { ArchitecturalPanel } from '../panels/ArchitecturalPanel';
 import { SectionRule } from '../panels/SectionRule';
 import { OriginPanelIcon } from './OriginPanelIcon';
@@ -13,6 +13,7 @@ type BldrExpandedPanelProps = {
 
 export function BldrExpandedPanel({ onCollapse }: BldrExpandedPanelProps) {
   const navigate = useNavigate();
+  const { pathname } = useLocation();
   const copy = BLDR_HOMEPAGE_EXPANDED;
 
   return (
@@ -91,7 +92,15 @@ export function BldrExpandedPanel({ onCollapse }: BldrExpandedPanelProps) {
         </div>
 
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <ArrowAction label={copy.cta} variant="red" onClick={() => navigate(SITE00_ROUTES.bldrState)} />
+          <ArrowAction
+            label={copy.cta}
+            variant="red"
+            onClick={() =>
+              navigate(
+                isSite00OriginDesktopPath(pathname) ? SITE00_ROUTES.bldrStateDesktop : SITE00_ROUTES.bldrState,
+              )
+            }
+          />
           <button type="button" className="site00-btn-ghost" onClick={onCollapse}>
             BACK
           </button>

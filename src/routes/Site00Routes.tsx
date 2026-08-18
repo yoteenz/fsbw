@@ -168,6 +168,18 @@ export function Site00Routes() {
           </Site00Layout>
         }
       />
+      <Route
+        path={SITE00_ROUTES.bldrStateDesktop}
+        element={
+          <Site00Layout>
+            <Site00DesktopArtboardShell>
+              <Site00Suspense>
+                <Site00BldrStatePage />
+              </Site00Suspense>
+            </Site00DesktopArtboardShell>
+          </Site00Layout>
+        }
+      />
       {/* ASSTS Asset Vault — admin-only internal review surface */}
       <Route path="/assts" element={<AdminGuard />}>
         <Route element={<AsstsColdStartGate />}>

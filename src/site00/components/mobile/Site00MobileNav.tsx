@@ -1,5 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import { SITE00_MOBILE_NAV, type Site00MobileNavId } from '../../config/locations-directory';
+import { site00MobileBuildNavHref } from '../../config/routes';
 import { Site00LocationsTargetIcon } from './Site00MobileIcons';
 
 type Site00MobileNavProps = {
@@ -8,10 +9,12 @@ type Site00MobileNavProps = {
 
 export function Site00MobileNav({ active }: Site00MobileNavProps) {
   const { pathname } = useLocation();
+  const buildHref = site00MobileBuildNavHref(pathname);
 
   return (
     <nav className="site00-mobile-nav" aria-label="SITE 00 mobile navigation">
       {SITE00_MOBILE_NAV.map((item, index) => {
+        const href = item.id === 'build' ? buildHref : item.href;
         const isActive =
           item.id === active ||
           (item.id === 'origin' && (pathname === '/' || pathname === '/origin')) ||
@@ -21,7 +24,7 @@ export function Site00MobileNav({ active }: Site00MobileNavProps) {
         return (
           <Link
             key={item.id}
-            to={item.href}
+            to={href}
             className={`site00-mobile-nav__item ${isActive ? 'site00-mobile-nav__item--active' : ''}`.trim()}
             aria-current={isActive ? 'page' : undefined}
             data-nav-id={item.id}

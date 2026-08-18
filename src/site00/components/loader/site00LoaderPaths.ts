@@ -17,8 +17,8 @@ const SITE00_IMMERSIVE_PREFIXES = [
 /** Designated desktop artboard routes — skip mobile loader; force desktop composition. */
 export function isSite00DesktopArtboardPath(pathname: string): boolean {
   if (!pathname) return false;
-  const desktop = SITE00_ROUTES.originDesktop;
-  return pathname === desktop || pathname.startsWith(`${desktop}/`);
+  const prefixes = [SITE00_ROUTES.originDesktop, SITE00_ROUTES.bldrStateDesktop] as const;
+  return prefixes.some((base) => pathname === base || pathname.startsWith(`${base}/`));
 }
 
 export function isSite00ImmersivePath(pathname: string): boolean {

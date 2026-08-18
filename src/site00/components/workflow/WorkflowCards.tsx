@@ -46,7 +46,6 @@ type BuildClassCardProps = {
   title: string;
   subtitle: string;
   description: string;
-  icon: 'site' | 'world' | 'enterprise' | 'discovery';
   cta: string;
   selected?: boolean;
   onSelect: () => void;
@@ -58,7 +57,6 @@ export function BuildClassCard({
   title,
   subtitle,
   description,
-  icon,
   cta,
   selected,
   onSelect,
@@ -73,7 +71,6 @@ export function BuildClassCard({
     >
       <span className="site00-label-red">{code}</span>
       <div className="site00-build-class-icon" style={{ margin: '12px 0', flex: 1, display: 'flex', alignItems: 'center' }}>
-        <GeometricIcon variant={icon} size="md" className="site00-build-class-icon__wireframe" />
         <BldrBuildClassIcon id={buildClassId} title={title} />
       </div>
       <p className="site00-panel-title" style={{ marginBottom: 4 }}>

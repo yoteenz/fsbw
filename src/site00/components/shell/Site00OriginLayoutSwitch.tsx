@@ -1,24 +1,61 @@
 import { createPortal } from 'react-dom';
 import { Link, useLocation } from 'react-router-dom';
-import { SITE00_ROUTES } from '../../config/routes';
+import {
+  isSite00BldrStateDesktopPath,
+  isSite00OriginDesktopPath,
+  SITE00_ROUTES,
+} from '../../config/routes';
 
-/** Toggle between mobile-first `/origin` and fixed desktop artboard `/origin/desktop`. */
+type PreviewSwitchConfig = {
+  ariaLabel: string;
+  mobileHref: string;
+  desktopHref: string;
+  onMobile: boolean;
+  onDesktop: boolean;
+};
+
+/** Toggle mobile-first vs fixed desktop artboard on Origin + BLDR workflow preview routes. */
 export function Site00OriginLayoutSwitch() {
   const { pathname } = useLocation();
-  const onDesktopRoute =
-    pathname === SITE00_ROUTES.originDesktop || pathname.startsWith(`${SITE00_ROUTES.originDesktop}/`);
-  const onMobileRoute = pathname === SITE00_ROUTES.originAlias || pathname === SITE00_ROUTES.origin;
 
-  if (!onDesktopRoute && !onMobileRoute) {
+  let config: PreviewSwitchConfig | null = null;
+
+  if (
+    pathname === SITE00_ROUTES.originAlias ||
+    pathname === SITE00_ROUTES.origin ||
+    isSite00OriginDesktopPath(pathname)
+  ) {
+    config = {
+      ariaLabel: 'Origin layout preview',
+      mobileHref: SITE00_ROUTES.originAlias,
+      desktopHref: SITE00_ROUTES.originDesktop,
+      onMobile: pathname === SITE00_ROUTES.originAlias || pathname === SITE00_ROUTES.origin,
+      onDesktop: isSite00OriginDesktopPath(pathname),
+    };
+  } else if (
+    pathname === SITE00_ROUTES.bldr ||
+    pathname === SITE00_ROUTES.bldrState ||
+    isSite00BldrStateDesktopPath(pathname)
+  ) {
+    config = {
+      ariaLabel: 'BLDR layout preview',
+      mobileHref: SITE00_ROUTES.bldr,
+      desktopHref: SITE00_ROUTES.bldrStateDesktop,
+      onMobile: pathname === SITE00_ROUTES.bldr,
+      onDesktop: isSite00BldrStateDesktopPath(pathname),
+    };
+  }
+
+  if (!config) {
     return null;
   }
 
   const nav = (
-    <nav className="site00-origin-layout-switch" aria-label="Origin layout preview">
-      <Link to={SITE00_ROUTES.originAlias} aria-current={onMobileRoute ? 'page' : undefined}>
+    <nav className="site00-origin-layout-switch" aria-label={config.ariaLabel}>
+      <Link to={config.mobileHref} aria-current={config.onMobile ? 'page' : undefined}>
         Mobile
       </Link>
-      <Link to={SITE00_ROUTES.originDesktop} aria-current={onDesktopRoute ? 'page' : undefined}>
+      <Link to={config.desktopHref} aria-current={config.onDesktop ? 'page' : undefined}>
         Desktop
       </Link>
     </nav>
