@@ -10,6 +10,10 @@ import { LoadLane, LoadStatusBadge, TruckAvailabilityBadge } from '../../compone
 import { BOARD_COLUMN_STATUSES, DEMO_DISPATCH_LABEL } from '../../dispatch/dispatchConfig';
 import { formatMoney } from '../../billing/money';
 import { aioPaths } from '../../utils/paths';
+import {
+  DISPATCH_EXTERNAL_BROKER_CONTACTS_LABEL,
+  DISPATCH_EXTERNAL_BROKER_CONTACTS_NOTE,
+} from '../../freight/freightArchitecture';
 
 export function DispatchCommandCenterPage() {
   const store = useDemoStore();
@@ -179,7 +183,10 @@ export function DispatchBrokersPage() {
   const brokers = getBrokerContacts(store);
   return (
     <div className="aio-office-page">
-      <header className="aio-office-page__header"><h1>Broker Directory</h1><p>Manually entered — not verified safe.</p></header>
+      <header className="aio-office-page__header">
+        <h1>{DISPATCH_EXTERNAL_BROKER_CONTACTS_LABEL}</h1>
+        <p>{DISPATCH_EXTERNAL_BROKER_CONTACTS_NOTE}</p>
+      </header>
       {brokers.map((b) => (
         <div key={b.id} className="aio-office-panel">
           <h3>{b.companyName}</h3>

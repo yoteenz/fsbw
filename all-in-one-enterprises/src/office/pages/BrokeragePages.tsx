@@ -18,8 +18,9 @@ import {
 import { formatMoney } from '../../billing/money';
 import { aioPaths } from '../../utils/paths';
 import { getBrokerageCarrierInsurance } from '../../demo/insuranceActions';
-import { computeGrossMarginPercent } from '../../brokerage/brokerageCalculations';
-import { publishLoadToBoard, holdLoadOnBoard, getPublication } from '../../freight/loadBoardActions';
+import { publishLoadToBoard, holdLoadOnBoard } from '../../freight/loadBoardActions';
+import { buildStaffLoadWorkspace } from '../../freight/freightRoleViews';
+import { AIO_BROKERAGE_OPERATING_MODEL } from '../../freight/freightArchitecture';
 
 export function BrokerageCommandCenterPage() {
   const store = useDemoStore();
@@ -29,23 +30,31 @@ export function BrokerageCommandCenterPage() {
   return (
     <div className="aio-brokerage-office">
       <header className="aio-office-page__header">
-        <h1>Brokerage Command Center</h1>
+        <h1>AIO Brokerage Control Center</h1>
         <p>{DEMO_BROKERAGE_LABEL}</p>
+        <p className="aio-prototype-note">{AIO_BROKERAGE_OPERATING_MODEL}</p>
         <div className="aio-office-action-bar">
-          <Link to={aioPaths.officeBrokerageCoverage} className="aio-btn aio-btn--sm">Coverage</Link>
+          <Link to={aioPaths.officeBrokerageLoads} className="aio-btn aio-btn--sm">All Loads</Link>
+          <Link to={aioPaths.officeBrokerageCoverage} className="aio-btn aio-btn--sm">Need Carrier</Link>
           <Link to={aioPaths.officeBrokerageFinance} className="aio-btn aio-btn--sm">Finance</Link>
           <Link to={aioPaths.officeBrokerageShippers} className="aio-btn aio-btn--sm">Shippers</Link>
-          <Link to={aioPaths.officeBrokerageCarriers} className="aio-btn aio-btn--sm">Carriers</Link>
+          <Link to={aioPaths.officeBrokerageCarriers} className="aio-btn aio-btn--sm">Carrier Network</Link>
           <Link to={aioPaths.officeBrokerageReadiness} className="aio-btn aio-btn--sm">Activation</Link>
         </div>
       </header>
-      <div className="aio-brokerage-office-metrics">
-        <div className="aio-office-metric-card"><span>{metrics.needsCoverage}</span><label>Needs Coverage</label></div>
-        <div className="aio-office-metric-card"><span>{metrics.quotesPending}</span><label>Quotes Pending</label></div>
-        <div className="aio-office-metric-card"><span>{metrics.inTransit}</span><label>In Transit</label></div>
-        <div className="aio-office-metric-card"><span>{metrics.podNeeded}</span><label>POD Needed</label></div>
-        <div className="aio-office-metric-card"><span>{metrics.readyToBill}</span><label>Ready to Bill</label></div>
-        <div className="aio-office-metric-card"><span>{metrics.issues}</span><label>Issues</label></div>
+      <div className="aio-brokerage-office-metrics aio-brokerage-office-metrics--wide">
+        <div className="aio-office-metric-card"><span>{metrics.activeLoads}</span><label>Active Loads</label></div>
+        <div className="aio-office-metric-card"><span>{metrics.availableOnBoard}</span><label>On Load Board</label></div>
+        <div className="aio-office-metric-card"><span>{metrics.needCarrier}</span><label>Need Carrier</label></div>
+        <div className="aio-office-metric-card"><span>{metrics.carrierOffersPending}</span><label>Pending Offers</label></div>
+        <div className="aio-office-metric-card"><span>{metrics.pickupsToday}</span><label>Pickups Today</label></div>
+        <div className="aio-office-metric-card"><span>{metrics.deliveriesToday}</span><label>Deliveries Today</label></div>
+        <div className="aio-office-metric-card"><span>{metrics.podMissing}</span><label>POD Missing</label></div>
+        <div className="aio-office-metric-card"><span>{metrics.readyToInvoice}</span><label>Ready to Invoice</label></div>
+        <div className="aio-office-metric-card"><span>{formatMoney(metrics.shipperArMinor)}</span><label>Shipper A/R (demo)</label></div>
+        <div className="aio-office-metric-card"><span>{formatMoney(metrics.carrierPayablesMinor)}</span><label>Carrier Payables (demo)</label></div>
+        <div className="aio-office-metric-card"><span>{formatMoney(metrics.brokerageRevenueMinor)}</span><label>Revenue (complete)</label></div>
+        <div className="aio-office-metric-card"><span>{formatMoney(metrics.grossMarginMinor)}</span><label>Gross Margin (complete)</label></div>
       </div>
       <section className="aio-office-panel">
         <h2>Active Brokerage Loads</h2>
@@ -206,39 +215,122 @@ export function BrokerageLoadDetailPage() {
   const store = useDemoStore();
   const load = store.loads.find((l) => l.id === loadId && l.sourceType === 'brokerage');
   if (!load) return <p>Not found.</p>;
-  const fin = getLoadFinancials(load.id, store);
-  const marginPct = fin ? computeGrossMarginPercent(fin.confirmedShipperChargeMinor, fin.grossMarginMinor) : null;
-  const pub = getPublication(load.id, store);
+  const workspace = useMemo(() => buildStaffLoadWorkspace(load, store), [load, store]);
   const staffId = store.officeStaffId ?? 'staff-7';
 
   return (
-    <div className="aio-office-page">
-      <Link to={aioPaths.officeBrokerage} className="aio-office-link">← Command Center</Link>
-      <h1>{load.loadNumber}</h1>
-      <p>Coverage: {load.brokerageCoverageStatus?.replace(/_/g, ' ')} · Ops: {load.operationalStatus.replace(/_/g, ' ')}</p>
-      {fin && (
+    <div className="aio-office-page aio-brokerage-load-workspace">
+      <Link to={aioPaths.officeBrokerage} className="aio-office-link">← Control Center</Link>
+      <header className="aio-office-page__header">
+        <h1>{workspace.loadNumber}</h1>
+        <p>Lifecycle: {workspace.lifecycleStatus.replace(/_/g, ' ')} · Coverage: {workspace.route.coverageStatus?.replace(/_/g, ' ') ?? '—'}</p>
+      </header>
+
+      <section className="aio-office-panel">
+        <h2>Load</h2>
+        <dl className="aio-office-dl">
+          <dt>Route</dt><dd>{workspace.route.originCity}, {workspace.route.originState} → {workspace.route.destinationCity}, {workspace.route.destinationState}</dd>
+          <dt>Pickup</dt><dd>{workspace.route.pickupDate}</dd>
+          <dt>Delivery</dt><dd>{workspace.route.deliveryDate}</dd>
+          <dt>Equipment</dt><dd>{workspace.route.equipmentType}{workspace.publication?.trailerLengthFt ? ` · ${workspace.publication.trailerLengthFt}'` : ''}</dd>
+          <dt>Commodity / Weight</dt><dd>{workspace.route.commodity ?? '—'} · {workspace.route.weight ?? '—'}</dd>
+          <dt>Miles</dt><dd>{workspace.route.loadedMiles} loaded · {workspace.route.deadheadMiles} DH</dd>
+          <dt>Status</dt><dd>{workspace.route.operationalStatus.replace(/_/g, ' ')}</dd>
+        </dl>
+      </section>
+
+      {workspace.shipper && (
         <section className="aio-office-panel">
-          <h2>Brokerage Financials (Internal)</h2>
+          <h2>Shipper</h2>
           <dl className="aio-office-dl">
-            <dt>Shipper Charge</dt><dd>{formatMoney(fin.confirmedShipperChargeMinor)}</dd>
-            <dt>Carrier Pay</dt><dd>{formatMoney(fin.confirmedCarrierPayMinor)}</dd>
-            <dt>Brokerage Gross Margin</dt><dd>{formatMoney(fin.grossMarginMinor)}{marginPct != null ? ` (${marginPct.toFixed(1)}%)` : ''}</dd>
+            <dt>Shipper</dt><dd>{workspace.shipper.legalName ?? workspace.shipper.organizationId}</dd>
+            <dt>Contact</dt><dd>{workspace.shipper.contactName ?? '—'}</dd>
+            <dt>Email / Phone</dt><dd>{workspace.shipper.email ?? '—'} · {workspace.shipper.phone ?? '—'}</dd>
           </dl>
-          <p className="aio-prototype-note">Internal only — never shown on carrier Load Board.</p>
         </section>
       )}
+
+      {workspace.pricing && (
+        <section className="aio-office-panel">
+          <h2>Pricing (Internal — AIO Office only)</h2>
+          <dl className="aio-office-dl">
+            <dt>Shipper Rate</dt><dd>{formatMoney(workspace.pricing.shipperRateMinor)}</dd>
+            <dt>Carrier Offer</dt><dd>{formatMoney(workspace.pricing.carrierOfferMinor)}</dd>
+            <dt>Final Carrier Rate</dt><dd>{formatMoney(workspace.pricing.finalCarrierRateMinor)}</dd>
+            <dt>AIO Gross Margin</dt>
+            <dd>
+              {formatMoney(workspace.pricing.aioGrossMarginMinor)}
+              {workspace.pricing.aioGrossMarginPercent != null ? ` (${workspace.pricing.aioGrossMarginPercent.toFixed(1)}%)` : ''}
+            </dd>
+            <dt>Loaded RPM</dt><dd>{formatMoney(workspace.pricing.loadedRpmMinor)}/mi</dd>
+            <dt>True RPM</dt><dd>{formatMoney(workspace.pricing.trueRpmMinor)}/mi</dd>
+          </dl>
+          <p className="aio-prototype-note">Never exposed on carrier Load Board — enforced via carrier projection layer.</p>
+        </section>
+      )}
+
       <section className="aio-office-panel">
-        <h2>AIO Load Board</h2>
-        <p>Status: {pub?.visibility ?? 'not published'}</p>
-        {pub?.publishedAt && <p>Published: {new Date(pub.publishedAt).toLocaleString()}</p>}
+        <h2>Carrier</h2>
+        {workspace.carrier ? (
+          <dl className="aio-office-dl">
+            <dt>Assigned Carrier</dt><dd>{workspace.carrier.legalName}</dd>
+            <dt>MC / USDOT</dt><dd>{workspace.carrier.mcNumber ?? '—'} · {workspace.carrier.usdot ?? '—'}</dd>
+            <dt>Qualification</dt><dd>Authority: {workspace.carrier.authorityVerification?.replace(/_/g, ' ')} · Insurance: {workspace.carrier.insuranceVerification?.replace(/_/g, ' ')}</dd>
+          </dl>
+        ) : (
+          <p>No carrier assigned · {workspace.pendingCarrierOffers} staff offer(s) · {workspace.pendingBoardOffers} load board offer(s)</p>
+        )}
+      </section>
+
+      <section className="aio-office-panel">
+        <h2>Driver / Equipment</h2>
+        <dl className="aio-office-dl">
+          <dt>Driver</dt><dd>{workspace.equipment.primaryDriverId ?? '—'}</dd>
+          <dt>Power Unit</dt><dd>{workspace.equipment.powerUnitId ?? '—'}</dd>
+          <dt>Trailer</dt><dd>{workspace.equipment.trailerId ?? '—'}</dd>
+          <dt>Dispatcher</dt><dd>{workspace.equipment.assignedDispatcherStaffId ?? '—'}</dd>
+        </dl>
+      </section>
+
+      <section className="aio-office-panel">
+        <h2>Documents</h2>
+        <dl className="aio-office-dl">
+          <dt>Rate Confirmation</dt><dd>{workspace.documents.rateConfirmationStatus.replace(/_/g, ' ')}{workspace.documents.rateConfirmationDocumentId ? ` · ${workspace.documents.rateConfirmationDocumentId}` : ''}</dd>
+          <dt>BOL</dt><dd>{workspace.documents.bolDocumentId ?? '—'}</dd>
+          <dt>POD</dt><dd>{workspace.documents.podDocumentId ?? '—'}</dd>
+        </dl>
+      </section>
+
+      <section className="aio-office-panel">
+        <h2>AIO Load Board Distribution</h2>
+        <p>Status: {workspace.publication?.visibility ?? 'not published'}</p>
+        {workspace.publication?.publishedAt && <p>Published: {new Date(workspace.publication.publishedAt).toLocaleString()}</p>}
         <div className="aio-office-actions">
           <button type="button" className="aio-btn aio-btn--gold" onClick={() => publishLoadToBoard(load.id, staffId)}>Publish to AIO Load Board</button>
-          {pub?.visibility === 'published' && (
+          {workspace.publication?.visibility === 'published' && (
             <button type="button" className="aio-btn aio-btn--outline-dark" onClick={() => holdLoadOnBoard(load.id)}>Hold / Private</button>
           )}
         </div>
       </section>
-      <button type="button" className="aio-btn aio-btn--gold" onClick={() => createShipperInvoiceFromLoad(load.id, 'staff-7')}>Create Shipper Invoice</button>
+
+      <section className="aio-office-panel">
+        <h2>Timeline</h2>
+        {workspace.timeline.length === 0 ? (
+          <p className="aio-prototype-note">No timeline events recorded.</p>
+        ) : (
+          <ul className="aio-office-timeline">
+            {workspace.timeline.map((e) => (
+              <li key={e.id}>
+                <time>{new Date(e.createdAt).toLocaleString()}</time>
+                <span>{e.operationalStatus?.replace(/_/g, ' ') ?? e.note ?? 'Update'}</span>
+                {e.actorLabel && <span> — {e.actorLabel}</span>}
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+
+      <button type="button" className="aio-btn aio-btn--gold" onClick={() => createShipperInvoiceFromLoad(load.id, staffId)}>Create Shipper Invoice</button>
     </div>
   );
 }

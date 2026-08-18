@@ -15,6 +15,7 @@ import {
 import { INTEGRATION_CATEGORIES, getProviderById } from '../../integrations/integrationRegistry';
 import { evaluateConnectionHealth } from '../../integrations/integrationHealth';
 import type { IntegrationConnection, IntegrationEnvironment } from '../../integrations/integrationTypes';
+import { FREIGHT_SOURCE_IMPORT_DISCLOSURE } from '../../freight/freightArchitecture';
 import '../../styles/aio-integrations.css';
 
 function IntegrationGate({ children, perm = 'integrations.read' as const }: { children: React.ReactNode; perm?: Parameters<typeof hasIntegrationPermission>[1] }) {
@@ -391,8 +392,9 @@ export function IntegrationLoadBoardPage() {
   return (
     <IntegrationGate perm="integrations.loadboard.search">
       <div className="aio-office-page aio-int-page">
-        <h1>Demo Load Board Search</h1>
-        <p>Results are external candidates — not canonical loads until imported.</p>
+        <h1>Authorized Freight Source Import (Demo)</h1>
+        <p>{FREIGHT_SOURCE_IMPORT_DISCLOSURE}</p>
+        <p className="aio-prototype-note">External candidates normalize into AIO-owned loads after staff review — not third-party broker storefronts.</p>
         <div className="aio-int-search-row">
           <input className="aio-intake-input" placeholder="Origin" value={origin} onChange={(e) => setOrigin(e.target.value)} />
           <input className="aio-intake-input" placeholder="Destination" value={destination} onChange={(e) => setDestination(e.target.value)} />

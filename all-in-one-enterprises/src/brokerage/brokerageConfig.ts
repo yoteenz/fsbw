@@ -7,7 +7,7 @@ import type {
 } from './brokerageTypes';
 
 export const DEMO_BROKERAGE_LABEL =
-  'Demo brokerage environment — fictional companies and amounts. All In One is not acting as a licensed broker in production unless separately activated.';
+  'AIO Brokerage (demo) — All In One is the broker. Carriers receive AIO-distributed freight; this is not a third-party broker marketplace.';
 
 export const DEFAULT_BROKERAGE_CAPABILITY: BrokerageCapability = 'demo';
 

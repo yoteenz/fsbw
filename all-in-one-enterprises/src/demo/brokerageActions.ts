@@ -40,15 +40,52 @@ export function getCarrierPortalOrganizationId(store: DemoStore = loadDemoStore(
 
 export function getBrokerageMetrics(store: DemoStore = loadDemoStore()) {
   const loads = store.loads.filter((l) => l.sourceType === 'brokerage');
+  const pubs = store.loadBoardPublications ?? [];
+  const today = new Date().toISOString().slice(0, 10);
+
+  const completeLoads = loads.filter((l) => l.operationalStatus === 'complete');
+  let brokerageRevenueMinor = 0;
+  let grossMarginMinor = 0;
+  for (const l of completeLoads) {
+    const fin = getLoadFinancials(l.id, store);
+    if (fin) {
+      brokerageRevenueMinor += fin.confirmedShipperChargeMinor;
+      grossMarginMinor += fin.grossMarginMinor;
+    }
+  }
+
+  const shipperArMinor = store.brokerageShipperInvoices
+    .filter((i) => !['paid', 'void'].includes(i.status))
+    .reduce((s, i) => s + i.totalMinor, 0);
+
+  const carrierPayablesMinor = store.carrierPayables
+    .filter((p) => p.status !== 'paid_future')
+    .reduce((s, p) => s + p.totalPayableMinor, 0);
+
   return {
+    activeLoads: loads.filter((l) => !['complete', 'cancelled'].includes(l.operationalStatus)).length,
+    availableOnBoard: pubs.filter((p) => p.visibility === 'published').length,
     needsCoverage: loads.filter((l) => l.brokerageCoverageStatus === 'needs_coverage').length,
+    needCarrier: loads.filter((l) => l.brokerageCoverageStatus === 'needs_coverage').length,
+    draftLoads: pubs.filter((p) => p.visibility === 'draft').length,
+    privateLoads: pubs.filter((p) => p.visibility === 'private' || p.visibility === 'hold').length,
+    carrierOffersPending:
+      store.carrierOffers.filter((o) => ['sent', 'viewed'].includes(o.status)).length
+      + (store.carrierLoadBoardOffers ?? []).filter((o) => o.status === 'pending').length,
+    bookedLoads: loads.filter((l) => l.brokerageCoverageStatus === 'booked' || l.operationalStatus === 'booked').length,
     quotesPending: store.shipmentRequests.filter((r) => ['submitted', 'under_review', 'quote_pending'].includes(r.status)).length,
-    pickupsToday: loads.filter((l) => l.pickupDate === new Date().toISOString().slice(0, 10)).length,
-    deliveriesToday: loads.filter((l) => l.deliveryDate === new Date().toISOString().slice(0, 10)).length,
+    pickupsToday: loads.filter((l) => l.pickupDate === today).length,
+    deliveriesToday: loads.filter((l) => l.deliveryDate === today).length,
     inTransit: loads.filter((l) => l.operationalStatus === 'in_transit').length,
     podNeeded: loads.filter((l) => l.operationalStatus === 'pod_needed' && !l.podDocumentId).length,
+    podMissing: loads.filter((l) => l.operationalStatus === 'pod_needed' && !l.podDocumentId).length,
     readyToBill: loads.filter((l) => isReadyToBill(l, { coverageStatus: l.brokerageCoverageStatus ?? 'not_applicable' } as never)).length,
+    readyToInvoice: loads.filter((l) => isReadyToBill(l, { coverageStatus: l.brokerageCoverageStatus ?? 'not_applicable' } as never)).length,
     issues: store.brokerageIssues.filter((i) => i.status === 'open').length,
+    shipperArMinor,
+    carrierPayablesMinor,
+    brokerageRevenueMinor,
+    grossMarginMinor,
   };
 }
 

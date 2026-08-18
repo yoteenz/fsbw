@@ -4364,6 +4364,13 @@
 .aio-brokerage-warn { color: #b45309; font-size: 0.85rem; }
 .aio-brokerage-office-metrics { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; margin-bottom: 1.5rem; }
 @media (min-width: 900px) { .aio-brokerage-office-metrics { grid-template-columns: repeat(6, 1fr); } }
+.aio-brokerage-office-metrics--wide { grid-template-columns: repeat(2, 1fr); }
+@media (min-width: 768px) { .aio-brokerage-office-metrics--wide { grid-template-columns: repeat(4, 1fr); } }
+@media (min-width: 1200px) { .aio-brokerage-office-metrics--wide { grid-template-columns: repeat(6, 1fr); } }
+.aio-brokerage-load-workspace .aio-office-panel { margin-bottom: 1rem; }
+.aio-office-timeline { list-style: none; padding: 0; margin: 0; }
+.aio-office-timeline li { padding: 0.35rem 0; border-bottom: 1px solid rgba(255,255,255,0.08); font-size: 0.85rem; }
+.aio-office-timeline time { opacity: 0.6; margin-right: 0.5rem; }
 
 .aio-insurance { padding: 1rem 1.25rem; max-width: 42rem; margin: 0 auto; }
 .aio-insurance-office { max-width: none; }

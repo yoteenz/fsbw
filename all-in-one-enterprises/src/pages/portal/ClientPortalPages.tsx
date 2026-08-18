@@ -122,7 +122,7 @@ export function OperationsCenterPage() {
           </div>
           <Link to={aioPaths.portalDispatch} className="aio-btn aio-btn--outline">Dispatch Home →</Link>
           <Link to={aioPaths.portalLoadBoard} className="aio-btn aio-btn--outline">AIO Load Board →</Link>
-          <Link to={aioPaths.portalBrokerage} className="aio-btn aio-btn--outline">Brokerage →</Link>
+          <Link to={aioPaths.portalBrokerage} className="aio-btn aio-btn--outline">AIO Freight →</Link>
         </>
       )}
     </div>

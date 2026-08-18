@@ -107,15 +107,41 @@
 ## Business model (locked)
 
 ```
-SHIPPER → AIO BROKERAGE → AIO LOAD BOARD → APPROVED MOTOR CARRIERS
+SHIPPER → AIO BROKERAGE → AIO OFFICE → AIO LOAD BOARD → APPROVED MOTOR CARRIERS
 ```
 
 - No public broker profiles or competing broker storefronts.
-- `shipper_rate` / margin = **internal only** — `carrierLoadProjection.ts` strips for carrier API/views.
+- `shipper_rate` / margin = **internal only** — `carrierLoadProjection.ts` + `freightRoleViews.ts` enforce authorized views.
+- Dispatch **External Freight Broker Contacts** = contact rolodex for dispatch clients (not platform broker accounts).
+- Portal **AIO Freight** = staff-sent offers + assigned loads; **Load Board** = search published AIO freight.
+- Office **Authorized Freight Source Import** = future provider adapter — normalize into AIO-owned loads, not a broker marketplace.
 
 ---
 
-## Implementation priority (this sprint batch)
+## Architecture addendum (2026-08-18)
+
+**Authoritative rule:** Build AIO's brokerage operating system and private carrier distribution network — not "a marketplace where brokers find carriers."
+
+| Concept | Implementation |
+|---------|----------------|
+| Single Load entity | `dispatch/dispatchTypes.ts` → `Load` |
+| Role-specific views | `freight/freightRoleViews.ts` (staff / shipper / carrier) |
+| Architecture canon | `freight/freightArchitecture.ts` |
+| Financial separation | Shipper rate · Carrier rate · AIO gross margin — never interchangeable |
+| Office control center | `/office/brokerage` — operational KPI dashboard + structured load workspace |
+| Carrier distribution | `/portal/load-board` — carrier-safe projection only |
+
+**Audit — no third-party broker marketplace found.** Existing "broker" naming mapped as:
+
+| Found | Resolution |
+|-------|------------|
+| `carrierNetworkProfiles` | Approved **motor carriers** — KEEP |
+| `shipperProfiles` | AIO shipper CRM — KEEP |
+| Portal `/portal/brokerage` | Renamed **AIO Freight** — staff offers to carriers |
+| Dispatch `brokerContacts` | Renamed **External Freight Broker Contacts** — dispatch rolodex, not AIO brokers |
+| Office integrations load board | Clarified as **freight source import** adapter |
+| `officeStaff` role `Broker` | AIO internal brokerage staff — KEEP |
+
 
 1. ✅ Audit + gap matrix (this document)
 2. ✅ `src/freight/*` — domain extensions, search, score, carrier projection
@@ -131,7 +157,8 @@ SHIPPER → AIO BROKERAGE → AIO LOAD BOARD → APPROVED MOTOR CARRIERS
 | Path | Role |
 |------|------|
 | `src/freight/freightTypes.ts` | Publication, search, saved search, lifecycle types |
-| `src/freight/carrierLoadProjection.ts` | Carrier-safe DTO — no shipper rate / margin |
+| `src/freight/freightRoleViews.ts` | Staff / shipper / carrier authorized views from one Load |
+| `src/freight/freightArchitecture.ts` | Operating model constants and disclosures |
 | `src/freight/loadScoreEngine.ts` | Explainable 0–100 score |
 | `src/freight/freightSearchService.ts` | Search, recent, saved |
 | `src/freight/loadBoardActions.ts` | Publish, offer, save search |

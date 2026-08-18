@@ -3,6 +3,8 @@ import { computeTrueImmediateMiles, computeTrueRpm } from './freightCalculations
 import { projectCarrierLoadResult, resolveCarrierRateMinor } from './carrierLoadProjection';
 import { computeLoadMatchScore } from './loadScoreEngine';
 import { getInternalLoadEconomics } from './freightSearchService';
+import { buildStaffLoadWorkspace, buildCarrierFreightView, filterFinancialsByRole } from './freightRoleViews';
+import { getLoadFinancials } from '../demo/brokerageActions';
 import type { Load } from '../dispatch/dispatchTypes';
 import type { BrokerageLoadFinancials } from '../brokerage/brokerageTypes';
 import type { LoadBoardPublication } from './freightTypes';
@@ -100,6 +102,36 @@ describe('loadScoreEngine', () => {
     expect(score.score).toBeGreaterThan(0);
     expect(score.reasons.length).toBeGreaterThan(0);
     expect(score.label).not.toBe('INSUFFICIENT DATA');
+  });
+});
+
+describe('freightRoleViews', () => {
+  it('staff workspace includes shipper rate and margin', () => {
+    const store = createDemoSeed();
+    const load = store.loads.find((l) => l.id === 'br-load-a')!;
+    const ws = buildStaffLoadWorkspace(load, store);
+    expect(ws.pricing).not.toBeNull();
+    expect(ws.pricing!.shipperRateMinor).toBeGreaterThan(ws.pricing!.finalCarrierRateMinor);
+    expect(ws.pricing!.aioGrossMarginMinor).toBe(ws.pricing!.shipperRateMinor - ws.pricing!.finalCarrierRateMinor);
+  });
+
+  it('carrier view excludes shipper rate', () => {
+    const store = createDemoSeed();
+    const load = store.loads.find((l) => l.id === 'br-load-b')!;
+    const view = buildCarrierFreightView(load, store, 'client-b');
+    expect(view).not.toBeNull();
+    const serialized = JSON.stringify(view);
+    expect(serialized).not.toContain('shipper');
+    expect(serialized).not.toContain('margin');
+  });
+
+  it('filterFinancialsByRole hides margin from carrier', () => {
+    const store = createDemoSeed();
+    const fin = getLoadFinancials('br-load-a', store)!;
+    const carrierFin = filterFinancialsByRole(fin, 'carrier');
+    expect(carrierFin.confirmedShipperChargeMinor).toBeUndefined();
+    expect(carrierFin.grossMarginMinor).toBeUndefined();
+    expect(carrierFin.confirmedCarrierPayMinor).toBeDefined();
   });
 });
 
