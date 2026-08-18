@@ -53819,3 +53819,13 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Deploy:** Sync-only commit `b4537b8b3`; say **deploy now** for Vercel.
 
+---
+
+## 2026-08-18 — Origin hero copy line break after ONLINE
+
+- **Context:** Founder — hero description lines should break after **ONLINE** not **EXISTS**.
+
+- **Change:** `SITE00_ORIGIN_COPY` in `status.ts`: line 2 → `EVERY SITE THAT EXISTS ONLINE`; line 3 → `STARTS HERE.`
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
