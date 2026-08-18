@@ -62,7 +62,7 @@ export default function OriginPage() {
               ['--site00-origin-expanded-max-w' as string]: `${SITE00_ORIGIN_DESKTOP_COMPOSITION.expandedMaxWidthPx}px`,
               ['--site00-origin-expanded-panel-scale' as string]: String(SITE00_ORIGIN_DESKTOP_COMPOSITION.expandedPanelScale),
               ['--site00-origin-framework-icon-size' as string]: `${SITE00_ORIGIN_DESKTOP_COMPOSITION.frameworkIconSizePx}px`,
-              ['--site00-origin-coordinate-gap' as string]: `${SITE00_ORIGIN_DESKTOP_COMPOSITION.coordinateGapPx}px`,
+              ['--site00-origin-coordinate-offset-y' as string]: `${SITE00_ORIGIN_DESKTOP_COMPOSITION.coordinateOffsetYPx}px`,
             }}
           >
             <div className="site00-home-grid">
@@ -78,10 +78,15 @@ export default function OriginPage() {
                 <p className="site00-tagline site00-home-hero__tagline">{SITE00_ORIGIN_COPY.tagline}</p>
                 <p className="site00-body site00-body--technical site00-home-hero__line">{SITE00_ORIGIN_COPY.description1}</p>
                 <p className="site00-body site00-body--technical site00-home-hero__line">{SITE00_ORIGIN_COPY.description2}</p>
-                <p className="site00-body site00-body--technical site00-home-hero__line site00-home-hero__line--before-coordinate">
+                <p className="site00-body site00-body--technical site00-home-hero__line">
                   {SITE00_ORIGIN_COPY.description3}
                 </p>
-                <p className="site00-coordinate site00-home-hero__coordinate">
+                <p
+                  className="site00-coordinate site00-home-hero__coordinate"
+                  style={{
+                    transform: `translateY(${SITE00_ORIGIN_DESKTOP_COMPOSITION.coordinateOffsetYPx}px)`,
+                  }}
+                >
                   {SITE00_ORIGIN_COPY.originPointLine.prefix}{' '}
                   <span className="site00-origin-hero__coordinate-value">{SITE00_ORIGIN_COPY.originPointLine.coordinate}</span>{' '}
                   {SITE00_ORIGIN_COPY.originPointLine.suffix}

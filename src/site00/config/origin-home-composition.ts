@@ -27,8 +27,8 @@ export const SITE00_ORIGIN_DESKTOP_COMPOSITION = {
   expandedPanelScale: 0.875,
   /** Framework pillar PNG size on expanded panels (32px base × 1.2). */
   frameworkIconSizePx: 38.4,
-  /** Gap above “YOU ARE AT 00.00 ORIGIN POINT” on desktop hero (px). */
-  coordinateGapPx: 6,
+  /** Nudge “YOU ARE AT 00.00 ORIGIN POINT” down on desktop hero (px) — translateY, not margin gap. */
+  coordinateOffsetYPx: 6,
 } as const;
 
 /** @deprecated Use SITE00_ORIGIN_DESKTOP_COMPOSITION */

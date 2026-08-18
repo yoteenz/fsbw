@@ -51,12 +51,8 @@
   min-width: 220px;
 }
 
-.site00-desktop-artboard .site00-home-hero__line--before-coordinate {
-  margin-bottom: 0;
-}
-
 .site00-desktop-artboard .site00-home-hero__coordinate {
-  margin-top: var(--site00-origin-coordinate-gap, 6px);
+  transform: translateY(var(--site00-origin-coordinate-offset-y, 6px));
 }
 
 .site00-desktop-artboard .site00-origin-hero__coordinate-value {
