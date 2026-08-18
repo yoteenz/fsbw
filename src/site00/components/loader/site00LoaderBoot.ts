@@ -1,6 +1,7 @@
 import { shouldShowSite00ImmersiveLoader } from './site00LoaderSession';
 import { isSite00ImmersivePath } from './site00LoaderPaths';
-import { site00LoaderBackgroundUrl, site00LoaderGeometryPreloadUrl } from './site00LoaderMedia';
+import { isSite00OriginWideViewport } from '../shell/site00OriginViewport';
+import { resolveSite00LoaderBackgroundUrl, site00LoaderGeometryPreloadUrl } from './site00LoaderMedia';
 import { preloadSite00LoaderAnimation, preloadSite00LoaderBackground } from './site00LoaderPreload';
 
 const BOOT_CLASS = 'site00-assts-boot';
@@ -28,7 +29,8 @@ function ensureBootShell(): void {
   shell.id = SHELL_ID;
   shell.className = 'site00-assts-boot-shell';
   shell.setAttribute('aria-hidden', 'true');
-  shell.innerHTML = `<div class="site00-assts-boot-shell__env" style="background-image:url('${site00LoaderBackgroundUrl()}')"></div>`;
+  const bootBg = resolveSite00LoaderBackgroundUrl(isSite00OriginWideViewport() ? 'desktop' : 'mobile');
+  shell.innerHTML = `<div class="site00-assts-boot-shell__env" style="background-image:url('${bootBg}')"></div>`;
   document.body.appendChild(shell);
 }
 
@@ -41,7 +43,7 @@ export function initSite00ImmersiveLoaderBoot(): void {
   document.documentElement.classList.add(BOOT_CLASS);
   ensureBootShell();
 
-  const bg = site00LoaderBackgroundUrl();
+  const bg = resolveSite00LoaderBackgroundUrl(isSite00OriginWideViewport() ? 'desktop' : 'mobile');
   injectPreload(bg, 'image');
   void preloadSite00LoaderBackground(bg);
 

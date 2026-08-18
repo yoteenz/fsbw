@@ -337,6 +337,12 @@
   background: transparent;
 }
 
+/* Desktop landscape master — wide 16:9 asset; center axis preserved on ultrawide */
+.site00-loader-env--cover-landscape .site00-loader-env__img {
+  object-fit: cover;
+  object-position: center center;
+}
+
 /* Pedestal debug overlay region */
 .site00-loader-pedestal-debug {
   z-index: 4;
@@ -908,8 +914,26 @@
 }
 
 @media (min-width: 768px) {
-  .site00-loader-copy__title {
-    font-size: 14px;
+  .site00-immersive-loader--desktop .site00-loader-copy__title {
+    font-size: var(--loader-type-title-size, 14px);
+  }
+}
+
+/* ── Desktop Asset Vault loader (≥768px) — landscape composition ── */
+
+.site00-immersive-loader--desktop .site00-loader-stage-viewport--desktop {
+  width: min(96vw, 1400px);
+  margin-inline: auto;
+}
+
+.site00-immersive-loader--desktop .site00-loader-copy-region--progress-track .site00-loader-copy__track {
+  width: min(100%, clamp(360px, 36vw, 720px));
+  margin-inline: auto;
+}
+
+@media (max-height: 720px) {
+  .site00-immersive-loader--desktop .site00-loader-stage-viewport--desktop {
+    padding-block: 4px;
   }
 }
 

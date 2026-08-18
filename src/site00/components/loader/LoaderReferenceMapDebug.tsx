@@ -39,7 +39,7 @@ const REGION_DEBUG_LABELS: Partial<Record<LoaderRegionId, string>> = {
 /** Composition debug — only when ?loaderDebug=1 or ?loaderRefMap=1. Never visible in production. */
 export function LoaderReferenceMapDebug() {
   const debugEnabled = isLoaderDebugEnabled() || isLoaderRefMapEnabled();
-  const { refMapMode, setRefMapMode, scale, regionElements, artboardRef } = useLoaderComposition();
+  const { refMapMode, setRefMapMode, scale, regionElements, artboardRef, composition } = useLoaderComposition();
   const [measurements, setMeasurements] = useState<RegionMeasurement[]>([]);
   const refOverlayOn = isLoaderRefOverlayEnabled();
 
@@ -55,7 +55,7 @@ export function LoaderReferenceMapDebug() {
       for (const id of ASSTS_LOADER_PRIMARY_REGIONS) {
         const el = regionElements.get(id);
         if (!el) continue;
-        const ref = ASSTS_LOADER_REGIONS[id];
+        const ref = composition.regions[id];
         const expected = scaleLoaderRect(ref, scale);
         const r = el.getBoundingClientRect();
         const actual = {

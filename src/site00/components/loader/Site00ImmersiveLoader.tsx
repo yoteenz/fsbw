@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { Site00ImmersiveLoaderConfig, Site00LoaderState } from './site00LoaderConfig';
 import {
   isLoaderAnimationEnabled,
@@ -14,7 +14,10 @@ import { LoaderRegion } from './LoaderRegion';
 import { loaderLifecycleLog } from './loaderLifecycleLog';
 import { Site00LoaderAnimation } from './Site00LoaderAnimation';
 import { Site00LoaderEnvironment } from './Site00LoaderEnvironment';
+import type { LoaderPresentation } from './loader-composition-resolver';
+import { resolveSite00LoaderBackgroundUrl } from './site00LoaderMedia';
 import { preloadSite00LoaderBackground } from './site00LoaderPreload';
+import { useLoaderPresentation } from './useLoaderPresentation';
 import '../../styles/site00-loader.css';
 
 export type Site00ImmersiveLoaderPhase = 'loading' | 'complete-hold' | 'exiting';
@@ -45,8 +48,13 @@ function usePrefersReducedMotion(): boolean {
   }, []);
   return reduced;
 }
+type ImmersiveLoaderBodyProps = Site00ImmersiveLoaderProps & {
+  presentation: LoaderPresentation;
+  backgroundUrl: string;
+};
 
-export function Site00ImmersiveLoader({
+/** Shared loader body — one progress state, presentation-specific composition + background. */
+function ImmersiveLoaderBody({
   config,
   progress,
   statusLabel: _statusLabel,
@@ -58,7 +66,9 @@ export function Site00ImmersiveLoader({
   onExitComplete,
   error = false,
   onRetry,
-}: Site00ImmersiveLoaderProps) {
+  presentation,
+  backgroundUrl,
+}: ImmersiveLoaderBodyProps) {
   const systemReducedMotion = usePrefersReducedMotion();
   const reducedMotion = reducedMotionProp ?? systemReducedMotion;
   const debug = isLoaderDebugEnabled();
@@ -66,12 +76,12 @@ export function Site00ImmersiveLoader({
   const mediaDebug = isLoaderMediaDebugEnabled();
 
   useEffect(() => {
-    loaderLifecycleLog('LOADER_MOUNTED', { path: window.location.pathname });
-    loaderLifecycleLog('BACKGROUND_SOURCE_RESOLVED', { url: config.backgroundUrl });
+    loaderLifecycleLog('LOADER_MOUNTED', { path: window.location.pathname, presentation });
+    loaderLifecycleLog('BACKGROUND_SOURCE_RESOLVED', { url: backgroundUrl, presentation });
     return () => {
       loaderLifecycleLog('LOADER_UNMOUNTED');
     };
-  }, [config.backgroundUrl]);
+  }, [backgroundUrl, presentation]);
 
   const handleBootHandoff = useCallback(() => {
     loaderLifecycleLog('BACKGROUND_LOADED');
@@ -84,13 +94,13 @@ export function Site00ImmersiveLoader({
 
   useEffect(() => {
     let cancelled = false;
-    void preloadSite00LoaderBackground(config.backgroundUrl).then(() => {
-      if (!cancelled) loaderLifecycleLog('BACKGROUND_PRELOADED');
+    void preloadSite00LoaderBackground(backgroundUrl).then(() => {
+      if (!cancelled) loaderLifecycleLog('BACKGROUND_PRELOADED', { presentation });
     });
     return () => {
       cancelled = true;
     };
-  }, [config.backgroundUrl]);
+  }, [backgroundUrl, presentation]);
 
   const handleAnimationReady = () => {
     loaderLifecycleLog('ANIMATION_CANPLAY');
@@ -112,6 +122,7 @@ export function Site00ImmersiveLoader({
 
   const rootClass = [
     'site00-immersive-loader',
+    presentation === 'desktop' ? 'site00-immersive-loader--desktop' : 'site00-immersive-loader--mobile',
     phase === 'exiting' ? 'site00-immersive-loader--exiting' : '',
     phase === 'complete-hold' ? 'site00-immersive-loader--complete' : '',
     error ? 'site00-immersive-loader--error' : '',
@@ -122,15 +133,18 @@ export function Site00ImmersiveLoader({
     .filter(Boolean)
     .join(' ');
 
+  const envFit = presentation === 'desktop' ? 'cover-landscape' : 'cover';
+
   return (
     <div className={rootClass} role="status" aria-live="polite" aria-label={progressLabel}>
       <Site00LoaderEnvironment
-        backgroundUrl={config.backgroundUrl}
+        backgroundUrl={backgroundUrl}
         viewport
+        fit={envFit}
         onBackgroundLoad={handleBootHandoff}
       />
 
-      <LoaderCompositionProvider>
+      <LoaderCompositionProvider presentation={presentation}>
         {debug ? (
           <LoaderRegion id="pedestal" className="site00-loader-pedestal-debug" aria-hidden="true" />
         ) : null}
@@ -173,4 +187,21 @@ export function Site00ImmersiveLoader({
       </LoaderCompositionProvider>
     </div>
   );
+}
+
+/**
+ * Asset Vault + world immersive loader.
+ * Asset Vault (assts): mobile <768px uses portrait master; desktop ≥768px uses landscape master.
+ * World loader: always mobile composition (unchanged).
+ */
+export function Site00ImmersiveLoader(props: Site00ImmersiveLoaderProps) {
+  const presentation = useLoaderPresentation(props.config.id);
+  const backgroundUrl = useMemo(() => {
+    if (props.config.id === 'assts') {
+      return resolveSite00LoaderBackgroundUrl(presentation);
+    }
+    return props.config.backgroundUrl;
+  }, [props.config.id, props.config.backgroundUrl, presentation]);
+
+  return <ImmersiveLoaderBody {...props} presentation={presentation} backgroundUrl={backgroundUrl} />;
 }
