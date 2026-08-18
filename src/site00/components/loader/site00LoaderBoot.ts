@@ -53,9 +53,21 @@ export function initSite00ImmersiveLoaderBoot(): void {
 /** @deprecated Use initSite00ImmersiveLoaderBoot */
 export const initSite00AsstsLoaderBoot = initSite00ImmersiveLoaderBoot;
 
+/** Fade out boot shell, then release #root — only after React loader has painted. */
 export function teardownSite00ImmersiveBootShell(): void {
+  if (typeof document === 'undefined') return;
+
+  const shell = document.getElementById(SHELL_ID);
+  if (shell) {
+    shell.classList.add('site00-assts-boot-shell--handoff');
+    window.setTimeout(() => {
+      shell.remove();
+      document.documentElement.classList.remove(BOOT_CLASS);
+    }, 220);
+    return;
+  }
+
   document.documentElement.classList.remove(BOOT_CLASS);
-  document.getElementById(SHELL_ID)?.remove();
 }
 
 /** @deprecated Use teardownSite00ImmersiveBootShell */

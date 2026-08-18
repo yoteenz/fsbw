@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import type { Site00ImmersiveLoaderConfig, Site00LoaderState } from './site00LoaderConfig';
 import {
   isLoaderAnimationEnabled,
@@ -67,17 +67,25 @@ export function Site00ImmersiveLoader({
 
   useEffect(() => {
     loaderLifecycleLog('LOADER_MOUNTED', { path: window.location.pathname });
-    teardownSite00AsstsBootShell();
     loaderLifecycleLog('BACKGROUND_SOURCE_RESOLVED', { url: config.backgroundUrl });
     return () => {
       loaderLifecycleLog('LOADER_UNMOUNTED');
     };
   }, [config.backgroundUrl]);
 
+  const handleBootHandoff = useCallback(() => {
+    loaderLifecycleLog('BACKGROUND_LOADED');
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        teardownSite00AsstsBootShell();
+      });
+    });
+  }, []);
+
   useEffect(() => {
     let cancelled = false;
     void preloadSite00LoaderBackground(config.backgroundUrl).then(() => {
-      if (!cancelled) loaderLifecycleLog('BACKGROUND_LOADED');
+      if (!cancelled) loaderLifecycleLog('BACKGROUND_PRELOADED');
     });
     return () => {
       cancelled = true;
@@ -116,9 +124,13 @@ export function Site00ImmersiveLoader({
 
   return (
     <div className={rootClass} role="status" aria-live="polite" aria-label={progressLabel}>
-      <LoaderCompositionProvider>
-        <Site00LoaderEnvironment backgroundUrl={config.backgroundUrl} />
+      <Site00LoaderEnvironment
+        backgroundUrl={config.backgroundUrl}
+        viewport
+        onBackgroundLoad={handleBootHandoff}
+      />
 
+      <LoaderCompositionProvider>
         {debug ? (
           <LoaderRegion id="pedestal" className="site00-loader-pedestal-debug" aria-hidden="true" />
         ) : null}

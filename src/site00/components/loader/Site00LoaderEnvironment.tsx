@@ -1,19 +1,44 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { loaderLifecycleLog } from './loaderLifecycleLog';
 
 type Site00LoaderEnvironmentProps = {
   backgroundUrl: string;
+  /** Full-bleed viewport layer (outside artboard). Default true. */
+  viewport?: boolean;
+  onBackgroundLoad?: () => void;
 };
 
 /** Approved environment — full viewport cover, always paints immediately (never render-gated). */
-export function Site00LoaderEnvironment({ backgroundUrl }: Site00LoaderEnvironmentProps) {
+export function Site00LoaderEnvironment({
+  backgroundUrl,
+  viewport = false,
+  onBackgroundLoad,
+}: Site00LoaderEnvironmentProps) {
+  const imgRef = useRef<HTMLImageElement>(null);
+
   useEffect(() => {
     loaderLifecycleLog('BACKGROUND_SOURCE_RESOLVED', { url: backgroundUrl });
   }, [backgroundUrl]);
 
+  useEffect(() => {
+    const img = imgRef.current;
+    if (!img || !onBackgroundLoad) return;
+    if (img.complete && img.naturalWidth > 0) {
+      onBackgroundLoad();
+    }
+  }, [backgroundUrl, onBackgroundLoad]);
+
+  const envClass = viewport ? 'site00-loader-env site00-loader-env--viewport' : 'site00-loader-env';
+
+  const handleLoad = () => {
+    loaderLifecycleLog('BACKGROUND_LOADED');
+    onBackgroundLoad?.();
+  };
+
   return (
-    <div className="site00-loader-env" aria-hidden="true">
+    <div className={envClass} aria-hidden="true">
       <img
+        ref={imgRef}
         className="site00-loader-env__img"
         src={backgroundUrl}
         alt=""
@@ -21,8 +46,11 @@ export function Site00LoaderEnvironment({ backgroundUrl }: Site00LoaderEnvironme
         fetchPriority="high"
         loading="eager"
         draggable={false}
-        onLoad={() => loaderLifecycleLog('BACKGROUND_LOADED')}
-        onError={() => loaderLifecycleLog('BACKGROUND_ERROR', { url: backgroundUrl })}
+        onLoad={handleLoad}
+        onError={() => {
+          loaderLifecycleLog('BACKGROUND_ERROR', { url: backgroundUrl });
+          onBackgroundLoad?.();
+        }}
       />
     </div>
   );

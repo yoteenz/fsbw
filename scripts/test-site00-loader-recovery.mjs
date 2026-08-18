@@ -109,14 +109,18 @@ for (const width of widths) {
   });
   await page.goto(`${baseUrl}/assts`, { waitUntil: 'domcontentloaded', timeout: 90000 });
   await page.waitForSelector('.site00-immersive-loader', { timeout: 30000 });
+  await page.waitForSelector('.site00-loader-artboard-scaler', { timeout: 15000 });
   await page.waitForTimeout(2500);
-  const animMetrics = await page.evaluate(() => {
+
+  const metrics = await page.evaluate(() => {
     const geo = document.querySelector('.site00-loader-geometry-region');
     const video = document.querySelector('.site00-loader-animation');
     const gr = geo?.getBoundingClientRect();
     const vr = video?.getBoundingClientRect();
     const ready = video?.classList.contains('site00-loader-animation--ready');
-    const bg = getComputedStyle(video ?? document.body).backgroundColor;
+    const bg = video ? getComputedStyle(video).backgroundColor : '';
+    const aspect = gr && gr.height > 0 ? gr.width / gr.height : 0;
+    const refAspect = 222 / 540;
     return {
       geometryPresent: !!geo,
       videoPresent: !!video,
@@ -124,10 +128,13 @@ for (const width of widths) {
       geometryBox: gr ? { w: gr.width, h: gr.height, top: gr.top } : null,
       videoBox: vr ? { w: vr.width, h: vr.height } : null,
       videoBg: bg,
+      geometryAspect: aspect,
+      refAspect,
+      aspectMatch: Math.abs(aspect - refAspect) < 0.02,
     };
   });
   await page.screenshot({ path: `${outDir}/loader_recovery_390px_animation_on.png`, fullPage: false });
-  results.push({ width: 390, animationOn: true, metrics: animMetrics });
+  results.push({ width: 390, animationOn: true, metrics });
   await context.close();
 }
 
@@ -135,7 +142,7 @@ await browser.close();
 
 const report = {
   pass: results.every((r) => {
-    if (r.animationOn) return r.metrics.geometryPresent;
+    if (r.animationOn) return r.metrics.geometryPresent && r.metrics.aspectMatch !== false;
     return (
       r.metrics.loaderVisible &&
       r.metrics.fillsWidth &&

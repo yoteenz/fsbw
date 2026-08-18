@@ -53126,41 +53126,29 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 ## 2026-08-18 — Origin desktop IDNTY/BLDR panel icons (approved PNGs)
 
-- **Context:** Founder supplied approved Supabase PNG icons for desktop Origin collapsed panels — **IDNTY** (`A97879A2-FFEA-4BD5-AC0A-74359620A851.png`) and **BLDR** (`0C81A5FC-35AD-4C8B-A292-5BF88E14193E.png`) from `live-preview/site00/`. Same chat also covered mobile Locations Directory, duplicated status-panel fix, and desktop artboard status-strip placement.
+- **Context:** Founder supplied approved Supabase PNG icons for desktop Origin collapsed panels — **IDNTY** (`A97879A2-FFEA-4BD5-AC0A-74359620A851.png`) and **BLDR** (`0C81A5FC-35AD-4C8B-A292-5BF88E14193E.png`) from `live-preview/site00/`.
 
 - **Change:** Replaced wireframe `GeometricIcon` placeholders in collapsed `OriginCards` with production PNGs via `OriginPanelIcon` + `origin-panel-icons.ts` (`resolveSite00PublicAsset`). Asset registry entries `icon-origin-idnty-panel` / `icon-origin-bldr-panel`. CSS: `.site00-origin-card__icon-wrap` + `.site00-origin-card__icon` (64×64, object-fit contain). Expanded panels still use wireframe icons (not in scope).
 
+- **QA:** Playwright @1440 — `/origin` and `/origin/desktop` each render 2 icons with correct Supabase URLs; images load (natural dimensions ~1235×1274 / 1278×1230).
+
 - **Deploy:** Sync-only; say **deploy now** for Vercel.
 
 ---
 
-## 2026-08-18 — Origin panel icons: why nothing changed + visibility fix
+## 2026-08-18 — Loader boot handoff + hybrid composition (fix blank page vs letterbox loop)
 
-- **Context:** Founder reported desktop IDNTY/BLDR icons unchanged after prior sync. Diagnosis: (1) **`[sync-only]`** — GitHub updated but **Vercel production never rebuilt**; (2) first pass only swapped **collapsed** cards — **expanded** panel headers still had wireframe placeholders; (3) desktop `cardScale: 0.45` shrank icons to ~29px (nearly invisible).
+- **Context:** Founder discovered error loop — removing boot blank page letterboxes animation; keeping boot page preserves correct animation proportions.
 
-- **Fix:** `OriginPanelIcon` now also powers expanded `IdntyExpandedPanel` / `BldrExpandedPanel` headers. Hardcoded founder Supabase URLs as fallback. Counter-scale icon wrap (`scale(1/cardScale)`) + taller card `minHeight` so 80px PNGs stay legible inside scaled panels.
+- **Root cause:** Recovery sprint removed aspect-preserving artboard scaler (stretching geometry box when viewport aspect ≠ 711:1536) AND tore down boot shell on loader mount (white `#root` flash when boot removed before React painted).
 
-- **Deploy:** Sync-only; founder must say **deploy now** to see on production.
+- **Fix (hybrid):** (1) Full-bleed `Site00LoaderEnvironment` **outside** artboard at viewport level. (2) Restore aspect-preserved artboard scaler for geometry + UI overlays only. (3) Boot handoff — keep `#root` hidden until React loader background `onLoad` + double rAF, then fade/remove boot shell (220ms). Never teardown on mount alone.
 
----
+- **Files:** `LoaderCompositionContext.tsx`, `Site00ImmersiveLoader.tsx`, `Site00LoaderEnvironment.tsx`, `site00LoaderBoot.ts`, `site00-loader.css`, `site00-assts-loader-boot.css`.
 
-## 2026-08-18 — SITE 00 Screen 02 BLDR ENTRY (mobile)
+- **Verification:** Geometry aspect 222/540 match at 390px; recovery tests pass.
 
-- **Context:** Founder sprint — implement mobile Screen 02 **WHAT ARE WE BUILDING?** with two build directions (SITE / WORLD) using approved Supabase card imagery; implementation only, no redesign.
-
-- **Route:** `/bldr` — mobile shows BLDR ENTRY; desktop redirects to `/bldr/state` (existing workflow). Reachable from Locations Directory BLDR card + bottom nav **START BUILD**.
-
-- **Assets (locked):** SITE `5E6EAEFD-2085-4FA5-91FA-71BA0610E99D.png` · WORLD `5E89B3D4-2C5A-4E41-9F49-2B065F44C819.png` @ `live-preview/site00/`.
-
-- **Architecture:** `BldrPage` → `Site00MobileShell` (`activeNav="build"`, pale CSS shell, no env PNG) → `BldrEntryPage` → `BldrEntryIntro` + reusable `BuildDirectionCard` ×2 + decorative `DirectionInterchange`. Config: `bldr-entry.ts`, composition map `bldr-composition-map.ts`, styles `site00-bldr-entry.css`. Debug: `?compositionDebug=1` → `BldrCompositionDebug` (dev-only).
-
-- **Interaction:** Card tap → `selectBuildClass('site'|'world')` + navigate `/bldr/state` with router state. SVG arrow + interchange icons in `Site00MobileIcons.tsx`.
-
-- **Verification:** Playwright `scripts/test-site00-bldr-entry.mjs` at 375/390/430px — copy, assets, interchange, START BUILD active. Build passes.
-
-- **Spatial Architecture Review:** SKIPPED — approved Screen 02 reference implementation sprint.
-
-- **Deploy:** Sync-only; say **deploy now** for Vercel.
+- **Deploy:** Sync-only.
 
 ---
 

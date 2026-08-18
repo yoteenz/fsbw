@@ -35,6 +35,12 @@ html.site00-assts-boot #root {
   background-position: center center;
 }
 
+.site00-assts-boot-shell--handoff {
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+}
+
 @media (min-width: 768px) {
   .site00-assts-boot-shell__env {
     background-size: cover;
