@@ -524,6 +524,19 @@
     pointer-events: auto;
   }
 
+  /* Full-screen swipe target — environment area between header and status strip. */
+  .site00-origin-page--mobile-layout .site00-origin-swipe-surface {
+    position: fixed;
+    top: calc(72px + env(safe-area-inset-top, 0px));
+    left: 0;
+    right: 0;
+    bottom: calc(168px + env(safe-area-inset-bottom, 0px));
+    z-index: calc(var(--site-z-ui) + 1);
+    touch-action: none;
+    pointer-events: auto;
+    background: transparent;
+  }
+
   .site00-origin-page--mobile-layout .site00-origin-mobile-swipe__eyebrow,
   .site00-origin-page--mobile-layout .site00-origin-mobile-swipe__suffix,
   .site00-origin-page--mobile-layout .site00-origin-mobile-swipe__swipe-btn {

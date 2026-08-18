@@ -12,6 +12,7 @@ import { SITE00_ROUTES } from '../config/routes';
 import { Site00OriginLayoutSwitch } from '../components/shell/Site00OriginLayoutSwitch';
 import { useSite00 } from '../state/Site00Context';
 import { useOriginStatusStripLayout } from '../hooks/useOriginStatusStripLayout';
+import { useOriginLocationsTransition } from '../hooks/useOriginLocationsTransition';
 
 export default function OriginPage() {
   const { state, setHomeMode } = useSite00();
@@ -19,6 +20,8 @@ export default function OriginPage() {
   const isDesktopArtboardRoute =
     pathname === SITE00_ROUTES.originDesktop || pathname.startsWith(`${SITE00_ROUTES.originDesktop}/`);
   const statusStripLayout = useOriginStatusStripLayout(isDesktopArtboardRoute);
+  const locationsTransition = useOriginLocationsTransition();
+  const isMobileOrigin = !isDesktopArtboardRoute;
 
   return (
     <EnvironmentShell environmentId="ORIGIN_ENVIRONMENT">
@@ -30,6 +33,13 @@ export default function OriginPage() {
           showStatusStrip
           statusStrip={<StatusStrip layout={statusStripLayout} />}
         >
+          {isMobileOrigin ? (
+            <div
+              className="site00-origin-swipe-surface"
+              aria-hidden="true"
+              {...locationsTransition.swipeHandlers}
+            />
+          ) : null}
           <div
             className="site00-home-stage"
             style={{
@@ -87,7 +97,7 @@ export default function OriginPage() {
               </section>
             ) : null}
 
-            {!isDesktopArtboardRoute ? <OriginMobileSwipeUp /> : null}
+            {!isDesktopArtboardRoute ? <OriginMobileSwipeUp transition={locationsTransition} /> : null}
           </div>
         </Site00AppShell>
         <Site00OriginLayoutSwitch />

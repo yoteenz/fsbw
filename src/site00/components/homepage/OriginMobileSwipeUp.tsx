@@ -1,9 +1,11 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { SITE00_ORIGIN_COPY } from '../../config/status';
 import { SITE00_ROUTES } from '../../config/routes';
-import { useSwipeUp, prefersReducedSite00Motion } from '../../hooks/useSwipeUp';
-import { useCallback, useState } from 'react';
-import { useLocationsBackgroundUrl } from '../mobile/MobileEnvironmentBackground';
+import type { useOriginLocationsTransition } from '../../hooks/useOriginLocationsTransition';
+
+type OriginMobileSwipeUpProps = {
+  transition: ReturnType<typeof useOriginLocationsTransition>;
+};
 
 function ArrowUpIcon() {
   return (
@@ -21,34 +23,16 @@ function ArrowUpIcon() {
 }
 
 /** Origin homepage mobile — lower-center enter / swipe-up callout (approved reference). */
-export function OriginMobileSwipeUp() {
+export function OriginMobileSwipeUp({ transition }: OriginMobileSwipeUpProps) {
   const copy = SITE00_ORIGIN_COPY.mobileSwipeUp;
-  const navigate = useNavigate();
-  const locationsBg = useLocationsBackgroundUrl();
-  const [transitioning, setTransitioning] = useState(false);
-
-  const goToLocations = useCallback(() => {
-    if (transitioning) return;
-    const reduced = prefersReducedSite00Motion();
-    if (reduced) {
-      navigate(SITE00_ROUTES.locations, { state: { fromSwipe: true } });
-      return;
-    }
-    setTransitioning(true);
-    window.setTimeout(() => {
-      navigate(SITE00_ROUTES.locations, { state: { fromSwipe: true } });
-      setTransitioning(false);
-    }, 720);
-  }, [navigate, transitioning]);
-
-  const swipeHandlers = useSwipeUp({ onSwipeUp: goToLocations, disabled: transitioning });
+  const { goToLocations, transitioning, locationsBg } = transition;
 
   return (
     <>
       <section
         className="site00-origin-mobile-swipe"
         aria-label="Swipe up to open SITE 00 locations directory"
-        {...swipeHandlers}
+        data-swipe-ignore="true"
       >
         <p className="site00-label site00-origin-mobile-swipe__eyebrow">{copy.eyebrow}</p>
         <p className="site00-label site00-origin-mobile-swipe__suffix">{copy.suffix}</p>
