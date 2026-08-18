@@ -53772,3 +53772,17 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Deploy:** Sync-only; say **deploy now** for Vercel.
 
+---
+
+## 2026-08-18 — Composer public pages: /desktop artboard routes + layout switch
+
+- **Context:** Founder — new public routes (services, sites, system, etc.) showed mobile layout on desktop; no designated desktop routes like Origin (`/origin/desktop`).
+
+- **Fix:** `Site00PublicRouteShell` (1440px artboard @ ≥768px, same as Origin). Each public page gets base + `/desktop` route pair. Wide viewports auto-redirect base → `/desktop`. `Site00PublicLayoutSwitch` Mobile/Desktop toggle. `Site00PublicShell` uses artboard context (not 1024px CSS media query). Nav preserves `/desktop` suffix when browsing artboard routes.
+
+- **Desktop routes:** `/sites/desktop`, `/services/desktop`, `/system/desktop`, `/about/desktop`, `/journal/desktop`, `/support/desktop`, `/idnty/desktop`, `/idnty/sign-in-security/desktop`, `/bldr/desktop`, `/bldr/templates/desktop`, `/projects/desktop`, etc.
+
+- **Verification:** `/services/desktop` @ 1440 — left rail, top nav, 4×2 service grid, no mobile bottom nav; `/services` redirects to desktop on wide viewport.
+
+- **Deploy:** Sync-only commit `bcd221712`; say **deploy now** for Vercel.
+
