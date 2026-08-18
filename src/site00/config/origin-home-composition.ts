@@ -12,7 +12,7 @@ export const SITE00_ORIGIN_DESKTOP_COMPOSITION = {
   heroOffsetXPx: -25,
   /** Collapsed IDNTY/BLDR plaza anchor — % from top of home stage. */
   cardsTopPercent: 58,
-  cardsTopOffsetPx: 80,
+  cardsTopOffsetPx: 140,
   cardsMaxWidthPx: 520,
   cardScale: 0.45,
   /** Expanded IDNTY/BLDR panel — centered over plaza (same anchor as collapsed cards). */

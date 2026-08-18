@@ -53161,3 +53161,17 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Fix:** `.site00-home-expanded-column` → `left: 50%`, `transform: translateX(-50%)`, vertical anchor matches collapsed cards. Removed `expandedLeftPercent` / `expandedTopPx`. Desktop artboard CSS mirrored. Fixed `origin-panel-icons.ts` import path for build.
 
 - **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — Origin desktop cards block +60px (WHERE DO WE BEGIN + IDNTY/BLDR)
+
+- **Context:** Move red **"WHERE DO WE BEGIN?"** prompt and collapsed **IDNTY + BLDR** panels down **60px in tandem**, **desktop only**.
+
+- **Change:** `SITE00_ORIGIN_DESKTOP_COMPOSITION.cardsTopOffsetPx` **80 → 140** (`origin-home-composition.ts`). Prompt + panels share `.site00-home-cards`; desktop CSS `top: calc(… + var(--site00-origin-cards-offset-y))`; mobile unchanged.
+
+- **Verification:** Playwright `--site00-origin-cards-offset-y: 140px` on `/origin/desktop` @ 1440×900.
+
+- **Spatial Architecture Review:** SKIPPED — approved composition nudge.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
