@@ -878,6 +878,10 @@
   margin-bottom: 4px;
 }
 
+.site00-home-hero__line--before-coordinate {
+  margin-bottom: 0;
+}
+
 .site00-home-hero__coordinate {
   margin-top: 0;
   padding-top: 0;
@@ -983,14 +987,11 @@
     transform: none;
   }
 
-  .site00-home-hero__line:nth-last-child(2) {
+  .site00-home-hero__line--before-coordinate {
     margin-bottom: 0;
   }
 
-  .site00-home-hero__coordinate {
-    margin-top: 0;
-    padding-top: var(--site00-origin-coordinate-gap, 6px);
-  }
+  /* margin-top set inline on OriginPage coordinate (composition); do not reset here. */
 
   .site00-origin-hero__coordinate-value {
     color: var(--site-red);

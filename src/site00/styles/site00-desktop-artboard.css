@@ -51,14 +51,11 @@
   min-width: 220px;
 }
 
-.site00-desktop-artboard .site00-home-hero__line:nth-last-child(2) {
+.site00-desktop-artboard .site00-home-hero__line--before-coordinate {
   margin-bottom: 0;
 }
 
-.site00-desktop-artboard .site00-home-hero__coordinate {
-  margin-top: 0;
-  padding-top: var(--site00-origin-coordinate-gap, 6px);
-}
+/* margin-top: inline on OriginPage .site00-home-hero__coordinate — wins over stylesheet resets */
 
 .site00-desktop-artboard .site00-origin-hero__coordinate-value {
   color: var(--site-red);
