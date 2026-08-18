@@ -795,6 +795,11 @@
   gap: 16px;
 }
 
+/* Collapsed IDNTY/BLDR panel numbers — black by default; red on desktop only */
+.site00-origin-card__number {
+  color: var(--site-text);
+}
+
 @media (min-width: 768px) {
   .site00-home-stage {
     padding: 0 0 140px;
@@ -846,6 +851,10 @@
   .site00-origin-cards__row {
     transform: scale(var(--site00-origin-card-scale));
     transform-origin: center top;
+  }
+
+  .site00-origin-cards__row .site00-origin-card__number {
+    color: var(--site-red);
   }
 }
 

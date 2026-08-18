@@ -141,6 +141,10 @@
   transform-origin: center top;
 }
 
+.site00-desktop-artboard .site00-origin-cards__row .site00-origin-card__number {
+  color: var(--site-red);
+}
+
 .site00-desktop-artboard .site00-origin-mobile-swipe {
   display: none !important;
 }
