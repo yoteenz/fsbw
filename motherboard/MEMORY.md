@@ -54043,3 +54043,23 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Verification:** Playwright QA at 1440×900 (wide marble, centered pedestal, no portrait crop) and 390×844 (mobile unchanged). `npm run build` pass.
 - **Conventions:** Do not stretch/crop mobile loader background for desktop; add landscape master + desktop composition map for ASSTS immersive loader.
 
+---
+
+## 2026-08-18 — SITE 00 mobile navigation architecture (Directory + Fast Travel)
+
+- **Context:** Founder sprint — restructure **mobile-only** SITE 00 navigation per approved moodboard: **ORIGIN**, **DIRECTORY/LOCATIONS**, **DESTINATION/Fast Travel** as separate concepts. Remove duplicate hamburger; preserve desktop nav.
+
+- **Directory (`/origin/locations`):** EXIT 00 × header (→ Origin); LOCATIONS hero; PUBLIC WORLD 01–06 + YOUR SPACE 07–10; auth-locked cards (CTRL ROOM, PROJECTS, MY SITES) show lock + SIGN IN TO ENTER when signed out.
+
+- **Fast Travel:** Config `src/site00/config/fast-travel.ts`; PNG trigger `89815B1A-ACFF-474B-8AA3-E7B97E7B40F2.png`; contextual panel with CURRENT LOCATION, UP NEXT, QUICK JUMP, MY SPACE, RETURN; overlay preserves page state; browser back closes panel.
+
+- **Components/shells:** `FastTravelTrigger`, `FastTravelPanel`, directory header/exit; hamburger removed from mobile/ecosystem/auth shells.
+
+- **Styles:** `site00-fast-travel.css` + directory section updates.
+
+- **QA (375px):** Directory + EXIT 00 pass; Services Fast Travel CURRENT LOCATION pass; fixed link navigation (`replaceState` vs `history.back()`).
+
+- **Spatial Architecture Review:** SKIPPED — navigation infrastructure sprint.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
