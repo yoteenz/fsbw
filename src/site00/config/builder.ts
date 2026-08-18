@@ -2,8 +2,10 @@
  * BLDR configuration — build classes, framework pillars, investment guide.
  */
 
+import type { BldrBuildClassIconId } from './bldr-build-class-icons';
+
 export type BuildClass = {
-  id: string;
+  id: BldrBuildClassIconId;
   code: string;
   title: string;
   subtitle: string;

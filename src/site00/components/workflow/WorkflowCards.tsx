@@ -2,6 +2,8 @@ import { Link } from 'react-router-dom';
 import type { IdentityBrandState } from '../../config/identity';
 import type { EnterMenuIconId } from '../../config/directory';
 import { GeometricIcon, identityComplexityIcon } from '../icons/GeometricIcon';
+import { BldrBuildClassIcon } from '../bldr/BldrBuildClassIcon';
+import type { BldrBuildClassIconId } from '../../config/bldr-build-class-icons';
 import { ArrowIconSmall } from '../icons/ArrowAction';
 import { EnterMenuIcon, Site00ArrowRightIcon } from '../../icons';
 import { Site00SummaryStripText } from '../shell/Site00SummaryStripText';
@@ -39,6 +41,7 @@ export function StateCard({ state, selected, onSelect }: StateCardProps) {
 }
 
 type BuildClassCardProps = {
+  buildClassId: BldrBuildClassIconId;
   code: string;
   title: string;
   subtitle: string;
@@ -50,6 +53,7 @@ type BuildClassCardProps = {
 };
 
 export function BuildClassCard({
+  buildClassId,
   code,
   title,
   subtitle,
@@ -68,8 +72,9 @@ export function BuildClassCard({
       style={{ minHeight: 320 }}
     >
       <span className="site00-label-red">{code}</span>
-      <div style={{ margin: '12px 0', flex: 1, display: 'flex', alignItems: 'center' }}>
-        <GeometricIcon variant={icon} size="md" />
+      <div className="site00-build-class-icon" style={{ margin: '12px 0', flex: 1, display: 'flex', alignItems: 'center' }}>
+        <GeometricIcon variant={icon} size="md" className="site00-build-class-icon__wireframe" />
+        <BldrBuildClassIcon id={buildClassId} title={title} />
       </div>
       <p className="site00-panel-title" style={{ marginBottom: 4 }}>
         {title}

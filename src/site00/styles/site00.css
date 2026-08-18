@@ -406,6 +406,27 @@
   object-fit: contain;
 }
 
+.site00-build-class-icon {
+  justify-content: center;
+}
+
+.site00-bldr-build-class-icon {
+  display: none;
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+}
+
+@media (min-width: 768px) {
+  .site00-bldr-build-class-icon {
+    display: block;
+  }
+
+  .site00-build-class-icon__wireframe {
+    display: none;
+  }
+}
+
 /* Origin expanded panels — framework pillars stay on one row (desktop). */
 .site00-origin-framework-pillars {
   display: grid;

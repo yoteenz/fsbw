@@ -37,6 +37,7 @@ export default function BldrStatePage() {
             {BLDR_BUILD_CLASSES.map((buildClass) => (
               <BuildClassCard
                 key={buildClass.id}
+                buildClassId={buildClass.id}
                 code={buildClass.code}
                 title={buildClass.title}
                 subtitle={buildClass.subtitle}
