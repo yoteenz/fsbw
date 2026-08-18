@@ -53409,3 +53409,17 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Change:** `.site00-state-page__subhead` → `font-weight: var(--site00-weight-heading)` (700, was body 500); applied on `BldrStatePage.tsx` + `IdntyStatePage.tsx`.
 
 - **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — Origin expanded panels: fix vertical centering + bottom clip
+
+- **Context:** Founder reported expanded IDNTY/BLDR panels on `/origin/desktop` **not centered** — positioned near bottom with **half clipped** (preview screenshot).
+
+- **Cause:** `top: 50%` + `translate(-50%, -50%)` failed when artboard `.site00-home-stage` collapsed or had wrong height; `.site00-shell { overflow: hidden }` clipped overflow.
+
+- **Fix:** Flexbox centering when expanded (`:has(.site00-home-expanded-column)`); artboard home-stage `position: absolute; inset: 0`; expanded column `position: relative` + `scale()` only; shell `overflow: visible` + artboard shell scroll when expanded; `padding-bottom: 0` on expanded stage.
+
+- **Verification:** Playwright `/origin/desktop` 1440×900 — panel center delta **<1px** vs stage center; no bottom viewport clip.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
