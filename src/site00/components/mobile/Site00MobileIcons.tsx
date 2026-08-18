@@ -59,3 +59,23 @@ export function Site00DirectorySpineNodeIcon({ size = 10, className }: Site00Lin
     </svg>
   );
 }
+
+/** Build direction card — circular white action with right arrow. */
+export function Site00BuildDirectionArrowIcon({ size = 16, className }: Site00LineIconProps) {
+  const s = { ...site00IconStrokeProps(), strokeWidth: 1.35 };
+  return (
+    <svg className={className} width={size} height={size} viewBox="0 0 16 16" fill="none" aria-hidden="true">
+      <path d="M4 8 H11 M11 8 L8 5 M11 8 L8 11" {...s} />
+    </svg>
+  );
+}
+
+/** Decorative vertical interchange marker between SITE and WORLD cards. */
+export function Site00DirectionInterchangeIcon({ size = 14, className }: Site00LineIconProps) {
+  const s = { ...site00IconStrokeProps(), strokeWidth: 1.25 };
+  return (
+    <svg className={className} width={size} height={size} viewBox="0 0 14 14" fill="none" aria-hidden="true">
+      <path d="M7 2 V12 M7 2 L4.5 4.5 M7 2 L9.5 4.5 M7 12 L4.5 9.5 M7 12 L9.5 9.5" {...s} />
+    </svg>
+  );
+}

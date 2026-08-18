@@ -53132,3 +53132,43 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Deploy:** Sync-only; say **deploy now** for Vercel.
 >>>>>>> Stashed changes
 
+---
+
+## 2026-08-18 — SITE 00 Screen 02 BLDR ENTRY (mobile)
+
+- **Context:** Founder sprint — implement mobile Screen 02 **WHAT ARE WE BUILDING?** with two build directions (SITE / WORLD) using approved Supabase card imagery; implementation only, no redesign.
+
+- **Route:** `/bldr` — mobile shows BLDR ENTRY; desktop redirects to `/bldr/state` (existing workflow). Reachable from Locations Directory BLDR card + bottom nav **START BUILD**.
+
+- **Assets (locked):** SITE `5E6EAEFD-2085-4FA5-91FA-71BA0610E99D.png` · WORLD `5E89B3D4-2C5A-4E41-9F49-2B065F44C819.png` @ `live-preview/site00/`.
+
+- **Architecture:** `BldrPage` → `Site00MobileShell` (`activeNav="build"`, pale CSS shell, no env PNG) → `BldrEntryPage` → `BldrEntryIntro` + reusable `BuildDirectionCard` ×2 + decorative `DirectionInterchange`. Config: `bldr-entry.ts`, composition map `bldr-composition-map.ts`, styles `site00-bldr-entry.css`. Debug: `?compositionDebug=1` → `BldrCompositionDebug` (dev-only).
+
+- **Interaction:** Card tap → `selectBuildClass('site'|'world')` + navigate `/bldr/state` with router state. SVG arrow + interchange icons in `Site00MobileIcons.tsx`.
+
+- **Verification:** Playwright `scripts/test-site00-bldr-entry.mjs` at 375/390/430px — copy, assets, interchange, START BUILD active. Build passes.
+
+- **Spatial Architecture Review:** SKIPPED — approved Screen 02 reference implementation sprint.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — SITE 00 Screen 02 BLDR ENTRY (mobile)
+
+- **Context:** Founder sprint — implement mobile Screen 02 **WHAT ARE WE BUILDING?** with two build directions (SITE / WORLD) using approved Supabase card imagery; implementation only, no redesign.
+
+- **Route:** `/bldr` — mobile shows BLDR ENTRY; desktop redirects to `/bldr/state` (existing workflow). Reachable from Locations Directory BLDR card + bottom nav **START BUILD**.
+
+- **Assets (locked):** SITE `5E6EAEFD-2085-4FA5-91FA-71BA0610E99D.png` · WORLD `5E89B3D4-2C5A-4E41-9F49-2B065F44C819.png` @ `live-preview/site00/`.
+
+- **Architecture:** `BldrPage` → `Site00MobileShell` (`activeNav="build"`, pale CSS shell, no env PNG) → `BldrEntryPage` → `BldrEntryIntro` + reusable `BuildDirectionCard` ×2 + decorative `DirectionInterchange`. Config: `bldr-entry.ts`, composition map `bldr-composition-map.ts`, styles `site00-bldr-entry.css`. Debug: `?compositionDebug=1` → `BldrCompositionDebug` (dev-only).
+
+- **Interaction:** Card tap → `selectBuildClass('site'|'world')` + navigate `/bldr/state` with router state. SVG arrow + interchange icons in `Site00MobileIcons.tsx`.
+
+- **Verification:** Playwright `scripts/test-site00-bldr-entry.mjs` at 375/390/430px — copy, assets, interchange, START BUILD active. Build passes.
+
+- **Spatial Architecture Review:** SKIPPED — approved Screen 02 reference implementation sprint.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+

@@ -6,22 +6,34 @@ import { Site00MobileNav } from './Site00MobileNav';
 import { Site00MobileMenuDrawer } from './Site00MobileMenuDrawer';
 import type { Site00MobileNavId } from '../../config/locations-directory';
 import { isLocationsCompositionDebugEnabled } from '../../config/locations-composition-map';
+import { isBldrCompositionDebugEnabled } from '../../config/bldr-composition-map';
 import { LocationsCompositionDebug } from '../locations/LocationsCompositionDebug';
+import { BldrCompositionDebug } from '../bldr/BldrCompositionDebug';
 
 type Site00MobileShellProps = {
   activeNav: Site00MobileNavId;
   children: ReactNode;
   enterClassName?: string;
+  /** When false, page supplies its own pale shell background (Screen 02 BLDR entry). */
+  showEnvironmentBackground?: boolean;
+  shellClassName?: string;
 };
 
 /**
- * Mobile-only SITE 00 shell — Screen 01 Locations and related surfaces.
+ * Mobile-only SITE 00 shell — Screen 01 Locations, Screen 02 BLDR entry, and related surfaces.
  * Desktop routes must not use this component.
  */
-export function Site00MobileShell({ activeNav, children, enterClassName = '' }: Site00MobileShellProps) {
-  const { search } = useLocation();
+export function Site00MobileShell({
+  activeNav,
+  children,
+  enterClassName = '',
+  showEnvironmentBackground = true,
+  shellClassName = '',
+}: Site00MobileShellProps) {
+  const { search, pathname } = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
-  const debug = isLocationsCompositionDebugEnabled(search);
+  const locationsDebug = isLocationsCompositionDebugEnabled(search) && pathname.startsWith('/origin/locations');
+  const bldrDebug = isBldrCompositionDebugEnabled(search) && pathname.startsWith('/bldr');
 
   useEffect(() => {
     if (!menuOpen) return;
@@ -33,15 +45,16 @@ export function Site00MobileShell({ activeNav, children, enterClassName = '' }: 
   }, [menuOpen]);
 
   return (
-    <div className={`site00-mobile-shell ${enterClassName}`.trim()}>
-      <MobileEnvironmentBackground />
+    <div className={`site00-mobile-shell ${shellClassName} ${enterClassName}`.trim()}>
+      {showEnvironmentBackground ? <MobileEnvironmentBackground /> : null}
       <div className="site00-mobile-shell__content">
         <Site00MobileHeader onMenuOpen={() => setMenuOpen(true)} menuExpanded={menuOpen} />
         <main className="site00-mobile-shell__main">{children}</main>
         <Site00MobileNav active={activeNav} />
       </div>
       <Site00MobileMenuDrawer open={menuOpen} onClose={() => setMenuOpen(false)} />
-      {debug ? <LocationsCompositionDebug /> : null}
+      {locationsDebug ? <LocationsCompositionDebug /> : null}
+      {bldrDebug ? <BldrCompositionDebug /> : null}
     </div>
   );
 }
