@@ -53750,3 +53750,15 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Deploy:** Sync-only; say **deploy now** for Vercel.
 
+---
+
+## 2026-08-18 — ENTER bottom summary strip: ~70% shorter
+
+- **Context:** Founder reported `/enter` bottom white summary panel ("YOU'VE ENTERED SITE 00…") too tall — needs ~70% shorter.
+
+- **Fix:** Scoped **`.site00-enter-status-strip`** overrides — footer padding **12→4px**; inner **`.site00-summary-strip`** padding **28→6px**, tighter gaps/line-height. Layout token **`--site00-enter-status-strip-height`** **52→36px** (measured ~34px @ 1440).
+
+- **Verification:** Playwright height ~34px; computer-use @ 1440×900 — compact single-line bar.
+
+- **Deploy:** Sync-only commit `3898cab2d`; say **deploy now** for Vercel.
+
