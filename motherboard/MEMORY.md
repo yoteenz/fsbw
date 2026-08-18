@@ -53226,6 +53226,22 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 ---
 
+## 2026-08-18 — Origin desktop IDNTY expanded framework PNG icons
+
+- **Context:** Replace wireframe placeholders in **IDNTY expanded panel → THE IDENTITY FRAMEWORK** with approved Supabase PNGs (Strategy, Visual, Voice, Values, Experience).
+
+- **Change:** `idnty-framework-icons.ts` (paths under `live-preview/site00/IDNTY/`), `IdntyFrameworkIcon.tsx`, `IdntyExpandedPanel` uses PNGs instead of `GeometricIcon`. CSS `.site00-idnty-framework-icon` shared sizing with BLDR framework icons.
+
+- **Assets:** `E8AC966E…` (Strategy), `BFA612F0…` (Visual), `F37252D9…` (Voice), `1FE1C0A1…` (Values), `B7ACDA18…` (Experience).
+
+- **Verification:** Playwright `/origin/desktop` expand IDNTY — 5 icons load correct URLs @ 32px.
+
+- **Spatial Architecture Review:** SKIPPED — approved asset swap.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
 ## 2026-08-18 — Origin mobile swipe-up: callout area + directory navigation fix
 
 - **Context:** Founder reported mobile Origin **swipe up** does not work and does not navigate to the **Locations Directory** (`/origin/locations`).
