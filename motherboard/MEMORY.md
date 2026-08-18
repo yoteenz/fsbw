@@ -54134,9 +54134,7 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Verification:** `npm run build` pass; vitest 6/6 on resolver; manual desktop QA signed-out + signed-in at 1440×900 — no EXPLORE, YOUR SPACE + FAST TRAVEL visible, tile navigation works, viewport fit OK.
 - **Spatial Architecture Review:** SKIPPED — ENTER 00 content restructure, no new Studio OS surfaces.
 
-<<<<<<< HEAD
 ---
-=======
 
 ---
 
@@ -54239,5 +54237,4 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Push:** `./scripts/site00-push-to-github.sh` — initial run failed (git pull missing `--no-rebase`; silent merge failure → non-fast-forward). Script patched: `--no-rebase` on pull + `--force-with-lease` publish fallback. Re-run succeeded.
 - **Remote verified @ `ccc5714`:** `src/`, `package.json`, `vite.config.ts`, `public/site00/`, `api/` all present on `main`.
 - **Convention:** Publish from `site00-standalone/` only; token is `SITE00_GITHUB_TOKEN` (do not re-extract from `/home/ubuntu/site-00`).
->>>>>>> origin/master
 
