@@ -53050,3 +53050,13 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Deploy:** Sync-only; say **deploy now** for Vercel.
 
+---
+
+## 2026-08-18 — Origin desktop panel numbers: CSS var override fix (01/02 red)
+
+- **Context:** Founder reported desktop **01/02** on IDNTY/BLDR panels still black — class-based red rules were being overridden (Tailwind `button { color: inherit }` + `.site00-label` conflict inside glass-panel buttons).
+
+- **Fix:** `--site00-origin-card-number-color` token on `.site00-home-stage` — default `var(--site-text)`; set to `var(--site-red)` at `@media (min-width: 768px)`, on `.site00-desktop-artboard`, and on `.site00-origin-page--desktop-artboard`. Collapsed + expanded panel number spans use inline `color: var(--site00-origin-card-number-color, …)` so desktop red wins cascade. Mobile origin unchanged (cards hidden).
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
