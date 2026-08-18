@@ -15,8 +15,14 @@
 }
 
 .site00-desktop-artboard .site00-status-strip {
-  grid-template-columns: repeat(5, 1fr) auto;
+  display: grid;
+  grid-template-columns: 1fr auto;
   grid-template-rows: auto;
+}
+
+.site00-desktop-artboard .site00-status-strip__metrics {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
 }
 
 .site00-desktop-artboard .site00-status-strip__guidance {

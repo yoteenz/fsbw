@@ -12,30 +12,32 @@ const ICON_MAP = {
 export function StatusStrip() {
   return (
     <div className="site00-status-strip" role="region" aria-label="System status">
-      {SITE00_STATUS_STRIP.map((item) => (
-        <div key={item.id} className="site00-status-strip__cell">
-          <span className="site00-label">{item.label}</span>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            {item.id === 'status' ? <span className="site00-diamond" aria-hidden="true" /> : null}
-            <GeometricIcon variant={ICON_MAP[item.icon]} size="sm" />
-            <span className="site00-status-value">
-              {item.value}
-            </span>
-            {item.id === 'system' ? (
-              <span
-                style={{
-                  width: 6,
-                  height: 6,
-                  borderRadius: '50%',
-                  background: 'var(--site-success)',
-                  marginLeft: 4,
-                }}
-                aria-label="Operational"
-              />
-            ) : null}
+      <div className="site00-status-strip__metrics" role="group" aria-label="System metrics">
+        {SITE00_STATUS_STRIP.map((item) => (
+          <div key={item.id} className="site00-status-strip__cell">
+            <span className="site00-label">{item.label}</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              {item.id === 'status' ? <span className="site00-diamond" aria-hidden="true" /> : null}
+              <GeometricIcon variant={ICON_MAP[item.icon]} size="sm" />
+              <span className="site00-status-value">
+                {item.value}
+              </span>
+              {item.id === 'system' ? (
+                <span
+                  style={{
+                    width: 6,
+                    height: 6,
+                    borderRadius: '50%',
+                    background: 'var(--site-success)',
+                    marginLeft: 4,
+                  }}
+                  aria-label="Operational"
+                />
+              ) : null}
+            </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
       <button type="button" className="site00-status-strip__guidance" aria-label={SITE00_ORIGIN_COPY.guidance.title}>
         <span
           style={{

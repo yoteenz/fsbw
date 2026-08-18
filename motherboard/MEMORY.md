@@ -52957,3 +52957,13 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **QA:** Playwright local — `/desktop`, `/desktop/`, `/`, `/desktop/get-started` all render with content; build PASS.
 >>>>>>> 8d9439020 (Fix AIO /desktop blank page — export aioCoreRoutes fragment for React Router [sync-only])
 
+---
+
+## 2026-08-18 — SITE package starting price $3.5K
+
+- **Context:** Founder requested SITE build-class starting price move from **$3K** to **$3.5K**.
+
+- **Changes:** `src/site00/config/builder.ts` — `BLDR_INVESTMENT_TIERS` site tier `priceLabel` → `$3.5K`; `BLDR_HOMEPAGE_EXPANDED` SITE offering `price` → `FROM ~$3.5K`. Surfaces on BLDR state investment guide + Origin homepage BLDR expanded panel.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
