@@ -34,6 +34,20 @@ export default function Site00AdminDashboardPage() {
   const [data, setData] = useState<AdminDashboardPayload | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [adminName, setAdminName] = useState('ADMIN');
+
+  useEffect(() => {
+    import('../../../utils/supabase').then(({ getSupabase }) => {
+      const supabase = getSupabase();
+      if (!supabase) return;
+      void supabase.auth.getUser().then(({ data: authData }) => {
+        const u = authData.user;
+        if (!u?.email) return;
+        const local = u.user_metadata?.full_name as string | undefined;
+        setAdminName((local ?? u.email.split('@')[0]?.replace(/\./g, ' ')).toUpperCase());
+      });
+    });
+  }, []);
 
   useEffect(() => {
     setLoading(true);
@@ -51,8 +65,8 @@ export default function Site00AdminDashboardPage() {
     <Site00AdminShell approvalBadge={approvalBadge}>
       <header className="site00-admin-dashboard-head">
         <div>
-          <h1 className="site00-admin-page-title">[ DASHBOARD ]</h1>
-          <p className="site00-admin-page-subtitle">SITE 00 OPERATIONS — ECOSYSTEM HEALTH AND PIPELINE.</p>
+          <h1 className="site00-admin-page-title">WELCOME BACK, {adminName}.</h1>
+          <p className="site00-admin-page-subtitle">HERE&apos;S WHAT&apos;S HAPPENING ACROSS YOUR ECOSYSTEM.</p>
         </div>
         <div className="site00-admin-period" role="tablist" aria-label="Dashboard period">
           {PERIODS.map((p) => (

@@ -54021,3 +54021,29 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Dependency note:** Pages expect operations API methods, `types/operations.ts`, `components/operations/*`, and extended route helpers — wire routes separately (not modified in this task).
 
+---
+
+## 2026-08-18 — SITE 00 Admin Operations System (dashboard + 12 modules, desktop + mobile)
+
+- **Context:** Founder sprint — implement complete SITE 00 **Admin Operations System** using approved admin dashboard reference: operational layer connecting IDNTY → BLDR → Projects → Sites → CTRL ROOM → Leads/Discovery → Finance → Team/Reports. Desktop + mobile shells; real data; no fake KPIs.
+
+- **Schema:** Migration **`20260818180000_site00_admin_operations.sql`** applied to production — `site00_identities`, `site00_idnty_submissions`, `site00_bldr_intakes`, `site00_leads`, `site00_discovery_bookings`, `site00_sites`, `site00_invoices`, `site00_admin_activity`, `site00_admin_notes` (service_role RLS).
+
+- **Backend:** **`adminOperations.ts`** — `ensureAdminOpsSeeded()`, operational dashboard KPIs/pipeline/signals/activity, list/detail for all entities, global search, intake review + convert-to-project, admin notes. Extended **`api/admin/site00-production.ts`** with operations GET/POST actions.
+
+- **Admin UI:**
+  - Redesigned **`DashboardPage`** — welcome header, period filter, KPI row (Identities/Intakes/Projects/Sites/Revenue), ecosystem map, recent activity, CTRL ROOM signals (linked), pipeline flow, top projects table.
+  - **18 operations pages** under **`pages/operations/`** — Identities, BLDR Intakes, Leads, Discovery, Sites, CTRL ROOM, Finance, Team, Reports, Settings + detail routes.
+  - Shared: **`AdminKpiCard`**, **`AdminTable`**, **`AdminStatusBadge`**, **`EcosystemMap`**, **`AdminSearchModal`** (⌘K).
+  - Shell: approved background (`SITE00_ADMIN_DESKTOP_BG_FILE` = CTRL ROOM asset), sidebar icons, profile footer, mobile bottom nav (Dashboard/Identities/Projects/CTRL ROOM/More). Studio + Approvals kept under PRODUCTION section.
+
+- **Routes:** **`/admin/site00/*`** — all list + detail routes wired in **`Site00AdminRoutes.tsx`**. CTRL ROOM admin at **`/admin/site00/ctrl-room`** (separate from client `/control`).
+
+- **Data:** KPIs/counts from Supabase; period deltas only when comparable data exists; demo seed on first dashboard load (NORTHQUARTER client chain). No fabricated revenue trends.
+
+- **QA:** `npm run build` pass; production tables verified via Supabase MCP.
+
+- **Open:** IDNTY/BLDR client localStorage not yet synced to Supabase on completion; team roster from ADMIN_EMAILS env only; settings integrations read-only until backend config UI; historical trend charts omitted until time-series data exists.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
