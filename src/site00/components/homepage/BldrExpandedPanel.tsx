@@ -4,7 +4,7 @@ import { SITE00_ROUTES } from '../../config/routes';
 import { ArchitecturalPanel } from '../panels/ArchitecturalPanel';
 import { SectionRule } from '../panels/SectionRule';
 import { OriginPanelIcon } from './OriginPanelIcon';
-import { GeometricIcon } from '../icons/GeometricIcon';
+import { BldrFrameworkIcon } from './BldrFrameworkIcon';
 import { ArrowAction } from '../icons/ArrowAction';
 
 type BldrExpandedPanelProps = {
@@ -86,7 +86,7 @@ export function BldrExpandedPanel({ onCollapse }: BldrExpandedPanelProps) {
         >
           {BLDR_FRAMEWORK_PILLARS.map((pillar) => (
             <div key={pillar.id} style={{ textAlign: 'center' }}>
-              <GeometricIcon variant={pillar.icon} size="sm" />
+              <BldrFrameworkIcon id={pillar.icon} title={pillar.title} />
               <p className="site00-micro" style={{ margin: '8px 0 4px' }}>
                 {pillar.title}
               </p>
