@@ -81,10 +81,7 @@ export default function OriginPage() {
                 <p className="site00-body site00-body--technical site00-home-hero__line site00-home-hero__line--before-coordinate">
                   {SITE00_ORIGIN_COPY.description3}
                 </p>
-                <p
-                  className="site00-coordinate site00-home-hero__coordinate"
-                  style={{ marginTop: SITE00_ORIGIN_DESKTOP_COMPOSITION.coordinateGapPx }}
-                >
+                <p className="site00-coordinate site00-home-hero__coordinate">
                   {SITE00_ORIGIN_COPY.originPointLine.prefix}{' '}
                   <span className="site00-origin-hero__coordinate-value">{SITE00_ORIGIN_COPY.originPointLine.coordinate}</span>{' '}
                   {SITE00_ORIGIN_COPY.originPointLine.suffix}
