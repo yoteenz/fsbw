@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
 import { EnvironmentShell } from '../components/environment/EnvironmentShell';
 import { Site00AppShell } from '../components/shell/Site00AppShell';
@@ -13,6 +14,7 @@ import { Site00OriginLayoutSwitch } from '../components/shell/Site00OriginLayout
 import { useSite00 } from '../state/Site00Context';
 import { useOriginStatusStripLayout } from '../hooks/useOriginStatusStripLayout';
 import { useOriginLocationsTransition } from '../hooks/useOriginLocationsTransition';
+import { useOriginExpandedDismiss } from '../hooks/useOriginExpandedDismiss';
 
 export default function OriginPage() {
   const { state, setHomeMode } = useSite00();
@@ -22,6 +24,9 @@ export default function OriginPage() {
   const statusStripLayout = useOriginStatusStripLayout(isDesktopArtboardRoute);
   const locationsTransition = useOriginLocationsTransition();
   const isMobileOrigin = !isDesktopArtboardRoute;
+  const collapseExpandedPanel = useCallback(() => setHomeMode('origin'), [setHomeMode]);
+
+  useOriginExpandedDismiss(state.homeMode, collapseExpandedPanel);
 
   return (
     <EnvironmentShell environmentId="ORIGIN_ENVIRONMENT">
@@ -82,9 +87,9 @@ export default function OriginPage() {
               ) : (
                 <div className="site00-home-expanded-column" aria-label="Expanded panel">
                   {state.homeMode === 'idnty-expanded' ? (
-                    <IdntyExpandedPanel onCollapse={() => setHomeMode('origin')} />
+                    <IdntyExpandedPanel onCollapse={collapseExpandedPanel} />
                   ) : (
-                    <BldrExpandedPanel onCollapse={() => setHomeMode('origin')} />
+                    <BldrExpandedPanel onCollapse={collapseExpandedPanel} />
                   )}
                 </div>
               )}
