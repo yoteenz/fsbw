@@ -424,6 +424,11 @@
   overflow-wrap: anywhere;
 }
 
+/* BLDR expanded panel — pillar detail copy under titles (DIRECTION, STRUCTURE, …). */
+.site00-bldr-framework-pillars .site00-origin-framework-pillar .site00-body {
+  color: var(--site-text-muted);
+}
+
 .site00-origin-framework-heading {
   border-top: 1px solid var(--site-border);
   padding-top: 24px;

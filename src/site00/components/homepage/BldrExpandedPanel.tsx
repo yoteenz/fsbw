@@ -76,7 +76,7 @@ export function BldrExpandedPanel({ onCollapse }: BldrExpandedPanelProps) {
         <p className="site00-label-red site00-origin-framework-heading">
           THE BLDR FRAMEWORK
         </p>
-        <div className="site00-origin-framework-pillars">
+        <div className="site00-origin-framework-pillars site00-bldr-framework-pillars">
           {BLDR_FRAMEWORK_PILLARS.map((pillar) => (
             <div key={pillar.id} className="site00-origin-framework-pillar">
               <BldrFrameworkIcon id={pillar.icon} title={pillar.title} />
