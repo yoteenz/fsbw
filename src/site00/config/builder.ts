@@ -106,7 +106,7 @@ export const BLDR_INVESTMENT_TIERS: BldrInvestmentTier[] = [
   {
     id: 'site-tier',
     label: 'SITE',
-    priceLabel: '$3K',
+    priceLabel: '$3.5K',
     buildClassId: 'site',
     keywords: ['WEBSITES', 'COMMERCE', 'PORTFOLIOS', 'BOOKINGS', 'MEMBERSHIPS', 'MORE'],
   },
@@ -145,7 +145,7 @@ export const BLDR_HOMEPAGE_EXPANDED = {
       title: 'SITE',
       description:
         'STRUCTURED DIGITAL BUILD. Websites, ecommerce, portfolios, landing pages, bookings, memberships, brochures, and more.',
-      price: 'FROM ~$3K',
+      price: 'FROM ~$3.5K',
     },
     {
       code: '02',
