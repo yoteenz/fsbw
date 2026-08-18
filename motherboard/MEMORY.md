@@ -53028,7 +53028,15 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Context:** Founder requested the Origin left hero text block (“WELCOME TO SITE 00…”) move down **10px** on **desktop design only** — do not touch mobile.
 
-- **Change:** `origin-home-composition.ts` — `heroTopPx` **16 → 26** (desktop absolute anchor via `--site00-origin-hero-top`). Mobile layout uses flex + `padding-top: 24px`; unaffected.
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — Origin desktop cards: down 60px + 40% smaller panels
+
+- **Context:** Founder requested “WHERE DO WE BEGIN?” + IDNTY/BLDR panels move down **60px** in tandem on **desktop only**, and desktop panels **decreased by 40%**. Mobile unchanged.
+
+- **Change:** `origin-home-composition.ts` — `cardsTopOffsetPx` **20 → 80**; `cardScale` **0.75 → 0.45** (40% reduction from prior desktop scale). Whole `.site00-home-cards` block moves together; scale applies only `@media (min-width: 768px)` / artboard.
 
 - **Deploy:** Sync-only; say **deploy now** for Vercel.
 
