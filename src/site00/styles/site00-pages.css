@@ -10,6 +10,90 @@
   position: relative;
 }
 
+/* ─── Desktop canon (ORIGIN-aligned — no sidebar) ─── */
+
+.site00-public-shell--desktop-canon {
+  min-height: var(--site00-desktop-artboard-height, 900px);
+  height: 100%;
+}
+
+.site00-public-shell--mobile-layout .site00-public-shell__desktop-canon {
+  display: none;
+}
+
+.site00-public-shell--mobile-layout .site00-public-shell__mobile {
+  display: block;
+}
+
+.site00-public-shell--desktop-canon .site00-public-shell__mobile {
+  display: none;
+}
+
+.site00-public-shell__desktop-canon.site00-shell {
+  position: relative;
+  min-height: var(--site00-desktop-artboard-height, 900px);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.site00-public-shell__env {
+  position: absolute !important;
+  inset: 0;
+}
+
+.site00-public-shell--desktop-canon .site00-page-env {
+  position: absolute;
+  inset: 0;
+  background-image: var(--site00-page-desktop-bg);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.site00-public-shell__ui {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: var(--site00-desktop-artboard-height, 900px);
+}
+
+.site00-public-shell--desktop-canon .site00-public-shell__content {
+  flex: 1;
+  padding: 8px 48px 32px;
+  max-width: min(1280px, calc(100% - 96px));
+  width: 100%;
+  margin: 0 auto;
+}
+
+.site00-desktop-artboard .site00-public-shell--desktop-canon {
+  min-height: var(--site00-desktop-artboard-height, 900px);
+  height: 100%;
+}
+
+.site00-desktop-artboard .site00-public-shell__ui {
+  min-height: var(--site00-desktop-artboard-height, 900px);
+}
+
+.site00-desktop-artboard .site00-public-shell__desktop-canon.site00-shell {
+  min-height: var(--site00-desktop-artboard-height, 900px);
+  height: 100%;
+}
+
+.site00-desktop-artboard .site00-public-shell--desktop-canon .site00-page-footer {
+  flex-shrink: 0;
+  margin-top: auto;
+}
+
+.site00-public-shell--desktop-canon main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
 .site00-page-env {
   position: fixed;
   inset: 0;
@@ -35,16 +119,8 @@
   display: block;
 }
 
+/* Legacy sidebar layout — deprecated, kept for reference during migration */
 .site00-public-shell--desktop-artboard .site00-public-shell__desktop {
-  display: grid;
-  grid-template-columns: 220px minmax(0, 1fr);
-  min-height: var(--site00-desktop-artboard-height, 900px);
-  height: 100%;
-  position: relative;
-  z-index: 1;
-}
-
-.site00-public-shell--desktop-artboard .site00-public-shell__mobile {
   display: none;
 }
 

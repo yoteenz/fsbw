@@ -10,90 +10,80 @@ import {
   site00IdntyAssessmentDesktopPath,
   site00IdntyAssessmentMobilePath,
 } from '../../config/routes';
-import {
-  SITE00_ORIGIN_MOBILE_LAYOUT_QUERY,
-  isSite00OriginWideViewport,
-  site00OriginMobileLayoutPreviewActive,
-} from './site00OriginViewport';
+import { useSite00 } from '../../state/Site00Context';
 
-type PreviewSwitchConfig = {
-  ariaLabel: string;
-  mobileHref: string;
-  desktopHref: string;
-  onMobile: boolean;
-  onDesktop: boolean;
-};
-
-/** Toggle mobile-first vs fixed desktop artboard on Origin + BLDR workflow preview routes. */
+/** Toggle mobile vs desktop preview on Origin + workflow assessment routes. */
 export function Site00OriginLayoutSwitch() {
-  const { pathname, search } = useLocation();
+  const { pathname } = useLocation();
+  const { isPreviewDesktop, setPreviewDeviceMode } = useSite00();
 
-  let config: PreviewSwitchConfig | null = null;
+  let nav: React.ReactNode = null;
 
   if (
     pathname === SITE00_ROUTES.originAlias ||
     pathname === SITE00_ROUTES.origin ||
     isSite00OriginDesktopPath(pathname)
   ) {
-    const mobileHref = isSite00OriginWideViewport()
-      ? `${SITE00_ROUTES.originAlias}?${SITE00_ORIGIN_MOBILE_LAYOUT_QUERY}=1`
-      : SITE00_ROUTES.originAlias;
-    config = {
-      ariaLabel: 'Origin layout preview',
-      mobileHref,
-      desktopHref: SITE00_ROUTES.originDesktop,
-      onMobile:
-        (pathname === SITE00_ROUTES.originAlias || pathname === SITE00_ROUTES.origin) &&
-        (!isSite00OriginWideViewport() || site00OriginMobileLayoutPreviewActive(search)),
-      onDesktop: isSite00OriginDesktopPath(pathname),
-    };
-  } else if (
-    pathname === SITE00_ROUTES.bldrState ||
-    isSite00BldrStateDesktopPath(pathname)
-  ) {
-    config = {
-      ariaLabel: 'BLDR layout preview',
-      mobileHref: SITE00_ROUTES.bldrState,
-      desktopHref: SITE00_ROUTES.bldrStateDesktop,
-      onMobile: pathname === SITE00_ROUTES.bldrState,
-      onDesktop: isSite00BldrStateDesktopPath(pathname),
-    };
-  } else if (
-    pathname === SITE00_ROUTES.idntyState ||
-    isSite00IdntyStateDesktopPath(pathname)
-  ) {
-    config = {
-      ariaLabel: 'IDNTY layout preview',
-      mobileHref: SITE00_ROUTES.idntyState,
-      desktopHref: SITE00_ROUTES.idntyStateDesktop,
-      onMobile: pathname === SITE00_ROUTES.idntyState,
-      onDesktop: isSite00IdntyStateDesktopPath(pathname),
-    };
+    nav = (
+      <nav className="site00-origin-layout-switch" aria-label="Origin layout preview">
+        <button
+          type="button"
+          aria-current={!isPreviewDesktop ? 'page' : undefined}
+          onClick={() => setPreviewDeviceMode('mobile')}
+        >
+          Mobile
+        </button>
+        <button
+          type="button"
+          aria-current={isPreviewDesktop ? 'page' : undefined}
+          onClick={() => setPreviewDeviceMode('desktop')}
+        >
+          Desktop
+        </button>
+      </nav>
+    );
+  } else if (pathname === SITE00_ROUTES.bldrState || isSite00BldrStateDesktopPath(pathname)) {
+    nav = (
+      <nav className="site00-origin-layout-switch" aria-label="BLDR layout preview">
+        <Link to={SITE00_ROUTES.bldrState} aria-current={pathname === SITE00_ROUTES.bldrState ? 'page' : undefined}>
+          Mobile
+        </Link>
+        <Link to={SITE00_ROUTES.bldrStateDesktop} aria-current={isSite00BldrStateDesktopPath(pathname) ? 'page' : undefined}>
+          Desktop
+        </Link>
+      </nav>
+    );
+  } else if (pathname === SITE00_ROUTES.idntyState || isSite00IdntyStateDesktopPath(pathname)) {
+    nav = (
+      <nav className="site00-origin-layout-switch" aria-label="IDNTY layout preview">
+        <Link to={SITE00_ROUTES.idntyState} aria-current={pathname === SITE00_ROUTES.idntyState ? 'page' : undefined}>
+          Mobile
+        </Link>
+        <Link to={SITE00_ROUTES.idntyStateDesktop} aria-current={isSite00IdntyStateDesktopPath(pathname) ? 'page' : undefined}>
+          Desktop
+        </Link>
+      </nav>
+    );
   } else if (isSite00IdntyAssessmentPath(pathname)) {
     const mobileBase = site00IdntyAssessmentMobilePath(pathname);
-    config = {
-      ariaLabel: 'IDNTY assessment layout preview',
-      mobileHref: mobileBase,
-      desktopHref: site00IdntyAssessmentDesktopPath(mobileBase),
-      onMobile: !isSite00IdntyAssessmentDesktopPath(pathname),
-      onDesktop: isSite00IdntyAssessmentDesktopPath(pathname),
-    };
+    nav = (
+      <nav className="site00-origin-layout-switch" aria-label="IDNTY assessment layout preview">
+        <Link to={mobileBase} aria-current={!isSite00IdntyAssessmentDesktopPath(pathname) ? 'page' : undefined}>
+          Mobile
+        </Link>
+        <Link
+          to={site00IdntyAssessmentDesktopPath(mobileBase)}
+          aria-current={isSite00IdntyAssessmentDesktopPath(pathname) ? 'page' : undefined}
+        >
+          Desktop
+        </Link>
+      </nav>
+    );
   }
 
-  if (!config) {
+  if (!nav) {
     return null;
   }
-
-  const nav = (
-    <nav className="site00-origin-layout-switch" aria-label={config.ariaLabel}>
-      <Link to={config.mobileHref} aria-current={config.onMobile ? 'page' : undefined}>
-        Mobile
-      </Link>
-      <Link to={config.desktopHref} aria-current={config.onDesktop ? 'page' : undefined}>
-        Desktop
-      </Link>
-    </nav>
-  );
 
   if (typeof document === 'undefined') {
     return nav;

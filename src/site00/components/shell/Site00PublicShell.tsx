@@ -1,49 +1,53 @@
 import type { ReactNode } from 'react';
 import type { Site00MobileNavId } from '../../config/locations-directory';
 import { useLocation } from 'react-router-dom';
+import { site00PublicPageMeta } from '../../config/site00-public-page-meta';
 import { Site00PageEnvironment } from './Site00PageEnvironment';
-import { Site00PublicSidebar } from './Site00PublicSidebar';
-import { Site00PublicTopNav } from './Site00PublicTopNav';
+import { Site00AppShell } from './Site00AppShell';
 import { Site00PageFooter } from './Site00PageFooter';
 import { Site00MobileShell } from '../mobile/Site00MobileShell';
+import { useSite00 } from '../../state/Site00Context';
 import { useSite00DesktopArtboardPreview } from './Site00DesktopArtboardContext';
 
 type Site00PublicShellProps = {
   children: ReactNode;
   /** Mobile bottom nav active tab */
   mobileActiveNav?: Site00MobileNavId;
+  /** Override auto-detected location label for desktop header */
+  locationLabel?: string;
   className?: string;
 };
 
 /**
- * Shared responsive shell for SITE 00 public/marketing routes.
- * Desktop artboard (≥768px or /desktop routes): left rail + top nav + approved desktop background.
+ * Canonical public shell — desktop matches ORIGIN (top nav, no sidebar).
  * Mobile: header + bottom nav + solid surface.
  */
 export function Site00PublicShell({
   children,
   mobileActiveNav = 'origin',
+  locationLabel,
   className = '',
 }: Site00PublicShellProps) {
-  const isDesktopArtboard = useSite00DesktopArtboardPreview();
+  const { isPreviewDesktop } = useSite00();
+  const inArtboard = useSite00DesktopArtboardPreview();
   const { pathname } = useLocation();
+  const meta = site00PublicPageMeta(pathname);
+  const resolvedLocation = locationLabel ?? meta.locationLabel;
+  const showDesktopCanon = isPreviewDesktop && inArtboard;
 
   return (
     <div
-      className={`site00-public-shell ${isDesktopArtboard ? 'site00-public-shell--desktop-artboard' : 'site00-public-shell--mobile-layout'} ${className}`.trim()}
+      className={`site00-public-shell ${showDesktopCanon ? 'site00-public-shell--desktop-canon' : 'site00-public-shell--mobile-layout'} ${className}`.trim()}
       data-site00-path={pathname}
     >
-      <Site00PageEnvironment />
-
-      {isDesktopArtboard ? (
-        <div className="site00-public-shell__desktop">
-          <Site00PublicSidebar />
-          <div className="site00-public-shell__workspace">
-            <header className="site00-public-shell__top">
-              <Site00PublicTopNav />
-            </header>
-            <main className="site00-public-shell__main">{children}</main>
-            <Site00PageFooter />
+      {showDesktopCanon ? (
+        <div className="site00-shell site00-public-shell__desktop-canon">
+          <Site00PageEnvironment className="site00-public-shell__env" />
+          <div className="site00-ui-layer site00-public-shell__ui">
+            <Site00AppShell locationLabel={resolvedLocation}>
+              <div className="site00-public-shell__content">{children}</div>
+              <Site00PageFooter />
+            </Site00AppShell>
           </div>
         </div>
       ) : (
@@ -58,4 +62,9 @@ export function Site00PublicShell({
       )}
     </div>
   );
+}
+
+/** @deprecated Sidebar removed from public desktop — kept as no-op export for gradual migration. */
+export function Site00PublicSidebar() {
+  return null;
 }

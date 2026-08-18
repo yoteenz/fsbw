@@ -260,6 +260,41 @@
   flex-shrink: 0;
 }
 
+.site00-desktop-artboard .site00-public-shell--desktop-canon {
+  --site00-size-label: 0.6875rem;
+  --site00-size-body: 0.8125rem;
+  --site00-size-heading: 1rem;
+}
+
+.site00-desktop-artboard .site00-bracket-heading {
+  font-size: clamp(1.75rem, 2.5vw, 2.25rem);
+}
+
+.site00-desktop-artboard .site00-page-intro__subtitle {
+  font-size: 0.8125rem;
+  letter-spacing: 0.1em;
+}
+
+.site00-desktop-artboard .site00-hub-card,
+.site00-desktop-artboard .site00-service-card,
+.site00-desktop-artboard .site00-portfolio-card,
+.site00-desktop-artboard .site00-principle-card,
+.site00-desktop-artboard .site00-system-status-card {
+  padding: 20px;
+  min-height: 160px;
+}
+
+.site00-desktop-artboard .site00-filter-tabs__tab {
+  font-size: 0.6875rem;
+  padding: 12px 0;
+}
+
+.site00-desktop-artboard .site00-global-nav a,
+.site00-desktop-artboard .site00-global-nav button {
+  font-size: 0.6875rem;
+  letter-spacing: 0.06em;
+}
+
 .site00-origin-layout-switch {
   position: fixed;
   z-index: calc(var(--site-z-nav) + 2);
@@ -276,7 +311,8 @@
   backdrop-filter: blur(8px);
 }
 
-.site00-origin-layout-switch a {
+.site00-origin-layout-switch a,
+.site00-origin-layout-switch button {
   font-family: var(--site00-font-mono, monospace);
   font-size: 10px;
   letter-spacing: 0.08em;
@@ -286,9 +322,13 @@
   padding: 6px 12px;
   border-radius: 999px;
   white-space: nowrap;
+  border: none;
+  background: transparent;
+  cursor: pointer;
 }
 
-.site00-origin-layout-switch a[aria-current='page'] {
+.site00-origin-layout-switch a[aria-current='page'],
+.site00-origin-layout-switch button[aria-current='page'] {
   background: var(--site-red, #eb1c24);
   color: #fff;
 }

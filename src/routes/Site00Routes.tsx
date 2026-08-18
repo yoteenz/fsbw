@@ -11,6 +11,8 @@ import { Site00OriginRouteShell } from '../site00/components/shell/Site00OriginR
 import { Site00AccountRouteGuard } from '../site00/components/guards/Site00AccountRouteGuard';
 import { Site00DesktopArtboardShell } from '../site00/components/shell/Site00DesktopArtboardShell';
 import { Site00PublicRouteShell } from '../site00/components/shell/Site00PublicRouteShell';
+import { Site00PublicDesktopLegacyRedirect } from '../site00/components/shell/Site00PublicWideDesktopRedirect';
+import { Site00OriginDesktopLegacyRedirect } from '../site00/components/shell/Site00OriginDesktopLegacyRedirect';
 import { Site00TypographyBootstrap } from '../site00/components/Site00TypographyBootstrap';
 import { site00PublicDesktopPath } from '../site00/config/site00-public-pages';
 /* Eager-load SITE 00 + ASSTS styles (lazy route CSS was not applying on mobile preview). */
@@ -89,7 +91,7 @@ function Site00PublicPageRoutes(path: string, Page: React.LazyExoticComponent<()
         path={desktopPath}
         element={
           <Site00Layout>
-            <Site00PublicRouteShell forceArtboard>{body}</Site00PublicRouteShell>
+            <Site00PublicDesktopLegacyRedirect />
           </Site00Layout>
         }
       />
@@ -172,11 +174,7 @@ export function Site00Routes() {
         path={SITE00_ROUTES.originDesktop}
         element={
           <Site00Layout>
-            <Site00OriginRouteShell forceArtboard>
-              <Site00Suspense>
-                <Site00OriginPage />
-              </Site00Suspense>
-            </Site00OriginRouteShell>
+            <Site00OriginDesktopLegacyRedirect />
           </Site00Layout>
         }
       />
@@ -208,11 +206,7 @@ export function Site00Routes() {
         path={site00PublicDesktopPath(SITE00_ROUTES.idnty)}
         element={
           <Site00Layout>
-            <Site00PublicRouteShell forceArtboard>
-              <Site00Suspense>
-                <Site00IdntyPage />
-              </Site00Suspense>
-            </Site00PublicRouteShell>
+            <Site00PublicDesktopLegacyRedirect />
           </Site00Layout>
         }
       />
@@ -254,11 +248,7 @@ export function Site00Routes() {
         path={site00PublicDesktopPath(SITE00_ROUTES.bldr)}
         element={
           <Site00Layout>
-            <Site00PublicRouteShell forceArtboard>
-              <Site00Suspense>
-                <Site00BldrPage />
-              </Site00Suspense>
-            </Site00PublicRouteShell>
+            <Site00PublicDesktopLegacyRedirect />
           </Site00Layout>
         }
       />
