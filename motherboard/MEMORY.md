@@ -53239,3 +53239,27 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Verification:** Playwright mobile 390×844 — SWIPE UP button tap → `/origin/locations`; swipe gesture starting on callout eyebrow text → locations with 5 directory cards. Manual browser: button tap confirmed.
 
 - **Deploy:** Sync-only on `master`; production still needs founder **deploy now** for Vercel rebuild.
+
+---
+
+## 2026-08-18 — Origin desktop coordinate margin-top regression fix (6px)
+
+- **Context:** Founder asked why **+6px above** “YOU ARE AT 00.00 ORIGIN POINT” (`.site00-home-hero__coordinate { margin-top: 6px }`) was not implemented on desktop.
+
+- **Cause:** `42dedcfa9` correctly set **6px**; **`ffe8f0fae`** (“spacing below hero description paragraph”) mistakenly changed coordinate `margin-top` **6px → 12px** instead of adjusting description line spacing.
+
+- **Fix:** Restored **6px** in `site00.css` (`@media min-width: 768px`) and `site00-desktop-artboard.css`.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — Origin desktop coordinate margin-top regression fix (6px)
+
+- **Context:** Founder asked why **+6px above** “YOU ARE AT 00.00 ORIGIN POINT” (`.site00-home-hero__coordinate { margin-top: 6px }`) was not implemented on desktop.
+
+- **Cause:** `42dedcfa9` correctly set **6px**; **`ffe8f0fae`** (“spacing below hero description paragraph”) mistakenly changed coordinate `margin-top` **6px → 12px** instead of adjusting description line spacing.
+
+- **Fix:** Restored **6px** in `site00.css` (`@media min-width: 768px`) and `site00-desktop-artboard.css`.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
