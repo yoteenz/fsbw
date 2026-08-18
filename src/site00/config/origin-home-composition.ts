@@ -6,7 +6,7 @@
 export const SITE00_ORIGIN_DESKTOP_COMPOSITION = {
   /** Hero block — % from left edge of stage (environment-aligned, not viewport padding). */
   heroLeftPercent: 11,
-  heroTopPx: 16,
+  heroTopPx: 26,
   heroMaxWidthPx: 360,
   /** Fine nudge after anchor (px; negative = left). */
   heroOffsetXPx: -25,
