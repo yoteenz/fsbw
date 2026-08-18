@@ -51,13 +51,13 @@ export default function ControlSitesPage() {
           />
         </div>
         <div className="site00-page-toolbar">
-          <SearchField value={query} onChange={setQuery} placeholder="Search sites…" id="sites-search" />
+          <SearchField value={query} onChange={setQuery} placeholder="SEARCH SITES…" id="sites-search" />
           <Link to={SITE00_ROUTES.bldr} className="site00-btn-outline">
             + NEW SITE
           </Link>
         </div>
         {filtered.length === 0 ? (
-          <EmptyState title="NO SITES YET" body="Start a build from BLDR to create your first site." />
+          <EmptyState title="NO SITES YET" body="START A BUILD FROM BLDR TO CREATE YOUR FIRST SITE." />
         ) : (
           <ul className="site00-sites-table">
             {filtered.map((site) => (

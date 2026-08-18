@@ -259,6 +259,10 @@
   outline-offset: 1px;
 }
 
+.site00-signin-form__input:not(.site00-signin-form__input--password) {
+  text-transform: uppercase;
+}
+
 .site00-signin-form__password-wrap {
   position: relative;
   margin-bottom: 8px;
@@ -267,6 +271,7 @@
 .site00-signin-form__input--password {
   padding-right: 64px;
   margin-bottom: 0;
+  text-transform: none;
 }
 
 .site00-signin-form__show {

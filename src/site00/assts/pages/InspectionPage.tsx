@@ -143,7 +143,7 @@ export default function AsstsInspectionPage() {
                 <img src={heroUrl} alt={asset?.display_name ?? ''} className="assts-inspection-hero-stage__img" />
               ) : (
                 <div className="assts-inspection-hero-stage__empty">
-                  {loading ? 'Loading asset…' : isGenerating ? 'Generating…' : 'No preview yet'}
+                  {loading ? 'LOADING ASSET…' : isGenerating ? 'GENERATING…' : 'NO PREVIEW YET'}
                 </div>
               )}
             </div>
@@ -257,7 +257,7 @@ export default function AsstsInspectionPage() {
             <div className="site00-assts-sheet-backdrop" role="presentation" onClick={() => setNoteOpen(false)}>
               <div className="site00-assts-sheet assts-glass assts-glass--panel" onClick={(e) => e.stopPropagation()}>
                 <h2 className="site00-assts-sheet__title">ADD NOTE</h2>
-                <textarea value={noteText} onChange={(e) => setNoteText(e.target.value)} rows={4} placeholder="Review note…" />
+                <textarea value={noteText} onChange={(e) => setNoteText(e.target.value)} rows={4} placeholder="REVIEW NOTE…" />
                 <div className="site00-assts-sheet__actions">
                   <button type="button" className="assts-btn" onClick={() => setNoteOpen(false)}>
                     CANCEL

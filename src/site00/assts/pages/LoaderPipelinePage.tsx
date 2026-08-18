@@ -135,7 +135,7 @@ export default function LoaderPipelinePage() {
         {error ? <div className="assts-loader-pipeline__error">{error}</div> : null}
 
         {loading && !context ? (
-          <p className="assts-loader-pipeline__loading">Loading pipeline…</p>
+          <p className="assts-loader-pipeline__loading">LOADING PIPELINE…</p>
         ) : null}
 
         {context ? (
@@ -289,7 +289,7 @@ export default function LoaderPipelinePage() {
               {canReview ? (
                 <textarea
                   className="assts-loader-pipeline__reject-note"
-                  placeholder="Rejection note (optional) — use Reprocess with alternate model after reject"
+                  placeholder="REJECTION NOTE (OPTIONAL) — USE REPROCESS WITH ALTERNATE MODEL AFTER REJECT"
                   value={rejectNote}
                   onChange={(e) => setRejectNote(e.target.value)}
                   rows={2}

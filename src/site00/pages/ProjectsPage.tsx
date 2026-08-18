@@ -35,14 +35,14 @@ export default function ProjectsPage() {
           </article>
         </div>
         <div className="site00-page-toolbar">
-          <SearchField value={query} onChange={setQuery} placeholder="Search projects…" id="projects-search" />
+          <SearchField value={query} onChange={setQuery} placeholder="SEARCH PROJECTS…" id="projects-search" />
           <Link to={SITE00_ROUTES.bldr} className="site00-btn-outline">
             + NEW PROJECT
           </Link>
         </div>
         <EmptyState
           title="NO PROJECTS YET"
-          body="Start a build from BLDR to create your first SITE 00 project."
+          body="START A BUILD FROM BLDR TO CREATE YOUR FIRST SITE 00 PROJECT."
         />
       </div>
     </CtrlRoomShell>

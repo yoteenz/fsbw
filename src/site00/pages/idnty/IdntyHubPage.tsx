@@ -30,7 +30,7 @@ export default function IdntyHubPage() {
         <PageIntro
           title={<BracketHeading>IDNTY</BracketHeading>}
           subtitle="CONTROL YOUR ACCESS. PROTECT WHAT MATTERS."
-          body="Secure access to SITE 00 and manage your authentication, sessions, and connected accounts."
+          body="SECURE ACCESS TO SITE 00 AND MANAGE YOUR AUTHENTICATION, SESSIONS, AND CONNECTED ACCOUNTS."
         />
         <div className="site00-hub-grid site00-hub-grid--2x4">
           {SITE00_IDNTY_HUB_MODULES.map((mod) => {

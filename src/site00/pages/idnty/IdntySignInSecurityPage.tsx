@@ -26,20 +26,20 @@ export default function IdntySignInSecurityPage() {
           <h2 className="site00-label-red">ACCOUNT SECURITY</h2>
           <dl className="site00-detail-list">
             <div>
-              <dt>Password</dt>
+              <dt>PASSWORD</dt>
               <dd>••••••••</dd>
             </div>
             <div>
-              <dt>Two-Factor Authentication</dt>
-              <dd>Not available</dd>
+              <dt>TWO-FACTOR AUTHENTICATION</dt>
+              <dd>NOT AVAILABLE</dd>
             </div>
             <div>
-              <dt>Sign In Sessions</dt>
-              <dd id="sessions">Current session only</dd>
+              <dt>SIGN IN SESSIONS</dt>
+              <dd id="sessions">CURRENT SESSION ONLY</dd>
             </div>
             <div>
-              <dt>Trusted Devices</dt>
-              <dd>Not available</dd>
+              <dt>TRUSTED DEVICES</dt>
+              <dd>NOT AVAILABLE</dd>
             </div>
           </dl>
         </section>
@@ -48,29 +48,29 @@ export default function IdntySignInSecurityPage() {
           <h2 className="site00-label-red">SIGN IN PREFERENCES</h2>
           <dl className="site00-detail-list">
             <div>
-              <dt>Sign in Email</dt>
+              <dt>SIGN IN EMAIL</dt>
               <dd>{user?.email ?? '—'}</dd>
             </div>
             <div>
-              <dt>Magic Link</dt>
-              <dd>Available at sign-in</dd>
+              <dt>MAGIC LINK</dt>
+              <dd>AVAILABLE AT SIGN-IN</dd>
             </div>
             <div>
-              <dt>Session Timeout</dt>
-              <dd>Managed by Supabase session</dd>
+              <dt>SESSION TIMEOUT</dt>
+              <dd>MANAGED BY SUPABASE SESSION</dd>
             </div>
           </dl>
         </section>
 
         <section className="site00-detail-section">
           <h2 className="site00-label-red">RECENT ACTIVITY</h2>
-          <EmptyState title="NO ACTIVITY LOG" body="Detailed sign-in activity is not yet exposed in SITE 00." />
+          <EmptyState title="NO ACTIVITY LOG" body="DETAILED SIGN-IN ACTIVITY IS NOT YET EXPOSED IN SITE 00." />
         </section>
 
         <p className="site00-detail-help">
           NEED HELP?{' '}
           <Link to={SITE00_ROUTES.support} className="site00-link-red">
-            Visit Support →
+            VISIT SUPPORT →
           </Link>
         </p>
       </div>

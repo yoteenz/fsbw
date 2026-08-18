@@ -42,7 +42,7 @@ export default function AsstsSearchPage() {
           type="search"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Asset key, name, status…"
+          placeholder="ASSET KEY, NAME, STATUS…"
           className="assts-vault-subpage__search-input"
           autoComplete="off"
         />
@@ -54,7 +54,7 @@ export default function AsstsSearchPage() {
         </div>
       ) : null}
 
-      {loading ? <p className="assts-library-home__empty-note">Loading vault index…</p> : null}
+      {loading ? <p className="assts-library-home__empty-note">LOADING VAULT INDEX…</p> : null}
 
       {!loading && query.trim() && results.length === 0 ? (
         <p className="assts-library-home__empty-note">No assets match &ldquo;{query.trim()}&rdquo;</p>

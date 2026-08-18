@@ -31,7 +31,7 @@ export default function SitesPortfolioPage() {
         <PageIntro
           title={<BracketHeading>SITES</BracketHeading>}
           subtitle="WE DESIGN. WE BUILD. WE LAUNCH."
-          body="A curated view of SITE 00 work — published projects and in-progress builds available for public showcase."
+            body="A CURATED VIEW OF SITE 00 WORK — PUBLISHED PROJECTS AND IN-PROGRESS BUILDS AVAILABLE FOR PUBLIC SHOWCASE."
         />
 
         <FilterTabs tabs={FILTERS} active={filter} onChange={setFilter} />
@@ -39,7 +39,7 @@ export default function SitesPortfolioPage() {
         {projects.length === 0 ? (
           <EmptyState
             title="NO PUBLISHED PROJECTS YET"
-            body="When projects are approved for public showcase, they will appear here."
+            body="WHEN PROJECTS ARE APPROVED FOR PUBLIC SHOWCASE, THEY WILL APPEAR HERE."
           />
         ) : (
           <div className="site00-portfolio-grid">
@@ -69,7 +69,7 @@ export default function SitesPortfolioPage() {
         <section className="site00-page-cta">
           <div>
             <p className="site00-label-red">HAVE A PROJECT IN MIND?</p>
-            <p className="site00-body">Let&apos;s build something exceptional.</p>
+            <p className="site00-body">LET&apos;S BUILD SOMETHING EXCEPTIONAL.</p>
           </div>
           <Link to={SITE00_ROUTES.bldr} className="site00-link-red">
             START A PROJECT →

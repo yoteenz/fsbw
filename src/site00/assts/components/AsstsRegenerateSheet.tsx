@@ -48,7 +48,7 @@ export function AsstsRegenerateSheet({ open, onClose, onSubmit, busy }: AsstsReg
             value={note}
             onChange={(e) => setNote(e.target.value)}
             rows={3}
-            placeholder="Describe what should change…"
+            placeholder="DESCRIBE WHAT SHOULD CHANGE…"
           />
         </label>
         <div className="site00-assts-sheet__actions">

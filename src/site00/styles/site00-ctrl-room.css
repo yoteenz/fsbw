@@ -280,7 +280,7 @@
   font-family: var(--site00-font-label);
   font-size: var(--site00-size-micro);
   letter-spacing: 0.06em;
-  text-transform: none;
+  text-transform: uppercase;
   color: var(--site-red);
   text-decoration: none;
 }

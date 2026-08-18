@@ -59,7 +59,7 @@ export function AsstsRejectSheet({
       </div>
       <label className="site00-assts-sheet__label">
         Reason
-        <textarea value={note} onChange={(e) => setNote(e.target.value)} rows={3} placeholder="What must change?" />
+        <textarea value={note} onChange={(e) => setNote(e.target.value)} rows={3} placeholder="WHAT MUST CHANGE?" />
       </label>
       <div className="site00-assts-sheet__actions">
         <button type="button" className="site00-assts-btn" onClick={onClose} disabled={busy}>
@@ -110,7 +110,7 @@ export function AsstsVariantSheet({
       </div>
       <label className="site00-assts-sheet__label">
         Instructions
-        <textarea value={note} onChange={(e) => setNote(e.target.value)} rows={3} placeholder="Describe the variant…" />
+        <textarea value={note} onChange={(e) => setNote(e.target.value)} rows={3} placeholder="DESCRIBE THE VARIANT…" />
       </label>
       <div className="site00-assts-sheet__actions">
         <button type="button" className="site00-assts-btn" onClick={onClose} disabled={busy}>

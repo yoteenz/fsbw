@@ -53788,6 +53788,7 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 ---
 
+<<<<<<< HEAD
 ## 2026-08-18 — IDNTY/BLDR state desktop: summary strip panel (match Enter)
 
 - **Context:** Founder requested bottom summary text on desktop **IDNTY/BLDR state** pages sit in a white panel bar (not floating on workflow background), like `/enter`.
@@ -53797,4 +53798,24 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Verification:** Playwright @ `/bldr/state/desktop` + `/idnty/state/desktop` — fixed panel ~34px with bg/shadow applied.
 
 - **Deploy:** Sync-only commit `4866b2f23`; say **deploy now** for Vercel.
+=======
+## 2026-08-18 — SITE 00 brand uppercase typography (mandatory)
+
+- **Context:** Founder — ALL text on SITE 00 must be UPPERCASE; only password input fields may stay lowercase. Reference-image design sprints kept introducing sentence case; brand uppercase must override.
+
+- **Enforcement:**
+  - Global CSS on all SITE 00 shells (`.site00-shell`, `.site00-public-shell`, `.site00-ctrl-room-shell`, `.site00-mobile-shell`, `.site00-assts-shell`, etc.) — `text-transform: uppercase`.
+  - **Only exception:** `input[type="password"]` and `.site00-signin-form__input--password` → `text-transform: none`.
+  - Placeholder uppercase on non-password inputs/textareas.
+  - Removed `text-transform: none` on `.site00-ctrl-metric__action`.
+  - Added uppercase to `.site00-mono`, search fields, empty states, card descriptions, page intro body, detail-list `dd`.
+
+- **Source copy:** Uppercased seed/config (`site00-page-seed.ts`, `directory.ts`, `builder.ts`, `identity.ts`) and Composer page TSX (System, Support, About, IDNTY sign-in-security, placeholders, empty states, ASSTS admin strings).
+
+- **Agent rule:** `.cursor/rules/site00-uppercase-brand.mdc` — reference mocks never override uppercase. Documented in `motherboard/CORE.md` SITE 00 section.
+
+- **Verification:** Build OK; `/services/desktop`, `/about/desktop`, `/system/desktop`, `/support/desktop` @ 1440 — all visible text uppercase; password fields exempt on sign-in.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+>>>>>>> b4537b8b3 (SITE 00: enforce brand uppercase typography (password fields exempt) [sync-only])
 

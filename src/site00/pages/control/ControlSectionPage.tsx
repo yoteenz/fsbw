@@ -12,7 +12,7 @@ export default function ControlSectionPage() {
         <p className="site00-ctrl-section__lead">
           {section} MODULES WILL APPEAR HERE AS SITE 00 ACCOUNT SERVICES EXPAND.
         </p>
-        <p className="site00-ctrl-section__hint">Your session and profile remain connected to the existing account system.</p>
+        <p className="site00-ctrl-section__hint">YOUR SESSION AND PROFILE REMAIN CONNECTED TO THE EXISTING ACCOUNT SYSTEM.</p>
       </section>
     </CtrlRoomShell>
   );

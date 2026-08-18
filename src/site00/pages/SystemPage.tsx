@@ -14,18 +14,18 @@ export default function SystemPage() {
           {SITE00_SYSTEM_STATUS_SEED.map((item) => (
             <article key={item.id} className="site00-system-status-card">
               <p className="site00-system-status-card__label">{item.label}</p>
-              <p className="site00-system-status-card__state">Status unavailable</p>
-              <p className="site00-system-status-card__meta">Health monitoring not connected</p>
+              <p className="site00-system-status-card__state">STATUS UNAVAILABLE</p>
+              <p className="site00-system-status-card__meta">HEALTH MONITORING NOT CONNECTED</p>
             </article>
           ))}
         </div>
         <section className="site00-system-panel">
           <h2 className="site00-label-red">SYSTEM HEALTH</h2>
-          <EmptyState title="HEALTH DATA NOT AVAILABLE" body="Connect operational monitoring to display uptime and incident history." />
+          <EmptyState title="HEALTH DATA NOT AVAILABLE" body="CONNECT OPERATIONAL MONITORING TO DISPLAY UPTIME AND INCIDENT HISTORY." />
         </section>
         <section className="site00-system-panel">
           <h2 className="site00-label-red">RECENT INCIDENTS</h2>
-          <EmptyState title="NO INCIDENT DATA" body="Incident history will appear when monitoring is enabled." />
+          <EmptyState title="NO INCIDENT DATA" body="INCIDENT HISTORY WILL APPEAR WHEN MONITORING IS ENABLED." />
         </section>
       </div>
     </Site00PublicShell>

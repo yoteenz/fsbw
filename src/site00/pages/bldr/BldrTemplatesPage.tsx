@@ -38,11 +38,11 @@ export default function BldrTemplatesPage() {
           />
         </header>
         <div className="site00-page-toolbar">
-          <SearchField value={query} onChange={setQuery} placeholder="Search templates…" id="templates-search" />
+          <SearchField value={query} onChange={setQuery} placeholder="SEARCH TEMPLATES…" id="templates-search" />
           <FilterTabs tabs={TABS} active={category} onChange={setCategory} />
         </div>
         {templates.length === 0 ? (
-          <EmptyState title="NO TEMPLATES YET" body="Template library will populate as blueprints are approved." />
+          <EmptyState title="NO TEMPLATES YET" body="TEMPLATE LIBRARY WILL POPULATE AS BLUEPRINTS ARE APPROVED." />
         ) : (
           <div className="site00-templates-list">
             {templates.map((tpl) => (

@@ -96,25 +96,25 @@ export const IDNTY_INVESTMENT_TIERS: InvestmentTier[] = [
     id: 'foundation',
     label: 'FOUNDATION',
     priceLabel: 'FROM $2,500',
-    services: ['Logo', 'Visual Identity', 'Brand Guidelines'],
+    services: ['LOGO', 'VISUAL IDENTITY', 'BRAND GUIDELINES'],
   },
   {
     id: 'refine',
     label: 'REFINE',
     priceLabel: 'FROM $1,750',
-    services: ['Logo Enhancement', 'Guidelines', 'Visual System'],
+    services: ['LOGO ENHANCEMENT', 'GUIDELINES', 'VISUAL SYSTEM'],
   },
   {
     id: 'evolve',
     label: 'EVOLVE',
     priceLabel: 'FROM $3,500',
-    services: ['Rebranding', 'Strategy', 'Visual Evolution'],
+    services: ['REBRANDING', 'STRATEGY', 'VISUAL EVOLUTION'],
   },
   {
     id: 'build-ready-tier',
     label: 'BUILD READY',
     priceLabel: 'NO IDNTY PURCHASE REQUIRED',
-    services: ['Asset verification', 'Proceed to BLDR'],
+    services: ['ASSET VERIFICATION', 'PROCEED TO BLDR'],
   },
 ];
 
@@ -123,7 +123,7 @@ export const IDNTY_HOMEPAGE_EXPANDED = {
   title: 'IDENTITY',
   subtitle: 'DEFINE MY BRAND.',
   overview:
-    'Identity is the foundation of everything we build. It defines who you are and how you show up in the digital world — before a single page is designed or a line of code is written.',
+    'IDENTITY IS THE FOUNDATION OF EVERYTHING WE BUILD. IT DEFINES WHO YOU ARE AND HOW YOU SHOW UP IN THE DIGITAL WORLD — BEFORE A SINGLE PAGE IS DESIGNED OR A LINE OF CODE IS WRITTEN.',
   defineItems: [
     'BRAND STRATEGY',
     'VISUAL IDENTITY',

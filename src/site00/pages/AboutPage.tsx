@@ -4,9 +4,9 @@ import { Link } from 'react-router-dom';
 import { SITE00_ROUTES } from '../config/routes';
 
 const PRINCIPLES = [
-  { title: 'BUILT FOR BUILDERS', description: 'Tools and infrastructure designed for creators who ship.' },
-  { title: 'PRIVACY FIRST', description: 'Your data and projects remain under your control.' },
-  { title: 'DESIGNED TO SCALE', description: 'From first launch to enterprise-grade systems.' },
+  { title: 'BUILT FOR BUILDERS', description: 'TOOLS AND INFRASTRUCTURE DESIGNED FOR CREATORS WHO SHIP.' },
+  { title: 'PRIVACY FIRST', description: 'YOUR DATA AND PROJECTS REMAIN UNDER YOUR CONTROL.' },
+  { title: 'DESIGNED TO SCALE', description: 'FROM FIRST LAUNCH TO ENTERPRISE-GRADE SYSTEMS.' },
 ];
 
 export default function AboutPage() {
@@ -21,8 +21,8 @@ export default function AboutPage() {
           <div>
             <p className="site00-label-red">OUR MISSION</p>
             <p className="site00-body">
-              SITE 00 is a spatial operating environment for designing, building, and launching digital places —
-              identity, infrastructure, and experience in one connected system.
+              SITE 00 IS A SPATIAL OPERATING ENVIRONMENT FOR DESIGNING, BUILDING, AND LAUNCHING DIGITAL PLACES —
+              IDENTITY, INFRASTRUCTURE, AND EXPERIENCE IN ONE CONNECTED SYSTEM.
             </p>
             <Link to={SITE00_ROUTES.journal} className="site00-link-red">
               LEARN MORE →

@@ -21,7 +21,7 @@ export const BLDR_BUILD_CLASSES: BuildClass[] = [
     title: 'SITE',
     subtitle: 'STRUCTURED DIGITAL BUILD.',
     description:
-      'Websites, online stores, portfolios, booking systems, memberships, brochures, and more.',
+      'WEBSITES, ONLINE STORES, PORTFOLIOS, BOOKING SYSTEMS, MEMBERSHIPS, BROCHURES, AND MORE.',
     icon: 'site',
     cta: 'SELECT SITE →',
   },
@@ -31,7 +31,7 @@ export const BLDR_BUILD_CLASSES: BuildClass[] = [
     title: 'WORLD',
     subtitle: 'BESPOKE DIGITAL EXPERIENCE.',
     description:
-      'Immersive experiences, platforms, custom systems, configurators, advanced interaction, and more.',
+      'IMMERSIVE EXPERIENCES, PLATFORMS, CUSTOM SYSTEMS, CONFIGURATORS, ADVANCED INTERACTION, AND MORE.',
     icon: 'world',
     cta: 'SELECT WORLD →',
   },
@@ -41,7 +41,7 @@ export const BLDR_BUILD_CLASSES: BuildClass[] = [
     title: 'ENTERPRISE',
     subtitle: 'COMPLEX DIGITAL SYSTEMS.',
     description:
-      'Large-scale systems, multi-user platforms, custom infrastructure, integrations, and advanced security.',
+      'LARGE-SCALE SYSTEMS, MULTI-USER PLATFORMS, CUSTOM INFRASTRUCTURE, INTEGRATIONS, AND ADVANCED SECURITY.',
     icon: 'enterprise',
     cta: 'SELECT ENTERPRISE →',
   },
@@ -50,7 +50,7 @@ export const BLDR_BUILD_CLASSES: BuildClass[] = [
     code: '04',
     title: 'NOT SURE?',
     subtitle: 'LET BLDR DETERMINE.',
-    description: "Answer a few questions and we'll recommend the right build class for you.",
+    description: "ANSWER A FEW QUESTIONS AND WE'LL RECOMMEND THE RIGHT BUILD CLASS FOR YOU.",
     icon: 'discovery',
     cta: 'START DISCOVERY →',
   },
@@ -67,31 +67,31 @@ export const BLDR_FRAMEWORK_PILLARS: BldrFrameworkPillar[] = [
   {
     id: 'direction',
     title: 'DIRECTION',
-    description: 'Clarify purpose, goals, target audience, and success metrics.',
+    description: 'CLARIFY PURPOSE, GOALS, TARGET AUDIENCE, AND SUCCESS METRICS.',
     icon: 'direction',
   },
   {
     id: 'structure',
     title: 'STRUCTURE',
-    description: 'Define content architecture, page hierarchy, user flows, and navigational logic.',
+    description: 'DEFINE CONTENT ARCHITECTURE, PAGE HIERARCHY, USER FLOWS, AND NAVIGATIONAL LOGIC.',
     icon: 'structure',
   },
   {
     id: 'function',
     title: 'FUNCTION',
-    description: 'Identify features, integrations, and system requirements.',
+    description: 'IDENTIFY FEATURES, INTEGRATIONS, AND SYSTEM REQUIREMENTS.',
     icon: 'function',
   },
   {
     id: 'experience',
     title: 'EXPERIENCE',
-    description: 'Shape the user experience, interactions, mood, and overall vibe.',
+    description: 'SHAPE THE USER EXPERIENCE, INTERACTIONS, MOOD, AND OVERALL VIBE.',
     icon: 'experience',
   },
   {
     id: 'scope',
     title: 'SCOPE',
-    description: 'Define timeline, budget range, priorities, and project scale.',
+    description: 'DEFINE TIMELINE, BUDGET RANGE, PRIORITIES, AND PROJECT SCALE.',
     icon: 'scope',
   },
 ];
@@ -141,14 +141,14 @@ export const BLDR_HOMEPAGE_EXPANDED = {
       code: '01',
       title: 'SITE',
       description:
-        'STRUCTURED DIGITAL BUILD. Websites, ecommerce, portfolios, landing pages, bookings, memberships, and more.',
+        'STRUCTURED DIGITAL BUILD. WEBSITES, ECOMMERCE, PORTFOLIOS, LANDING PAGES, BOOKINGS, MEMBERSHIPS, AND MORE.',
       price: 'FROM ~$3.5K',
     },
     {
       code: '02',
       title: 'WORLD',
       description:
-        'BESPOKE DIGITAL EXPERIENCE. Immersive experiences, platforms, custom systems, configurators, advanced interaction, and more.',
+        'BESPOKE DIGITAL EXPERIENCE. IMMERSIVE EXPERIENCES, PLATFORMS, CUSTOM SYSTEMS, CONFIGURATORS, ADVANCED INTERACTION, AND MORE.',
       price: 'FROM ~$10K+',
     },
   ],

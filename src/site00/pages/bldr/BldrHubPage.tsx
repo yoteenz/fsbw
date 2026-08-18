@@ -19,7 +19,7 @@ export default function BldrHubPage() {
         <PageIntro
           title={<BracketHeading>BLDR / START BUILD</BracketHeading>}
           subtitle="TOOLS, TEMPLATES, AND INFRASTRUCTURE TO BUILD WITHOUT LIMITS."
-          body="Start from scratch or use our intelligent builder to launch your next project faster."
+          body="START FROM SCRATCH OR USE OUR INTELLIGENT BUILDER TO LAUNCH YOUR NEXT PROJECT FASTER."
         />
         <div className="site00-hub-grid site00-hub-grid--2x2">
           {SITE00_BLDR_HUB_ACTIONS.map((action) => {

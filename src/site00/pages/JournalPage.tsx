@@ -33,10 +33,10 @@ export default function JournalPage() {
         <PageIntro title={<BracketHeading>JOURNAL</BracketHeading>} subtitle="INSIGHTS, UPDATES, AND STORIES FROM SITE 00." />
         <div className="site00-page-toolbar">
           <FilterTabs tabs={TABS} active={category} onChange={setCategory} />
-          <SearchField value={query} onChange={setQuery} placeholder="Search articles…" id="journal-search" />
+          <SearchField value={query} onChange={setQuery} placeholder="SEARCH ARTICLES…" id="journal-search" />
         </div>
         {articles.length === 0 ? (
-          <EmptyState title="NO ARTICLES YET" body="Journal entries will appear here when published." />
+          <EmptyState title="NO ARTICLES YET" body="JOURNAL ENTRIES WILL APPEAR HERE WHEN PUBLISHED." />
         ) : (
           <div className="site00-journal-grid">
             {articles.map((article) => (

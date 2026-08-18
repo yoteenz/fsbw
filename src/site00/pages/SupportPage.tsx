@@ -24,11 +24,11 @@ export default function SupportPage() {
         <div className="site00-support-hero">
           <div>
             <p className="site00-label-red">HOW CAN WE HELP?</p>
-            <SearchField value={query} onChange={setQuery} placeholder="Search for help articles…" id="support-search" />
+            <SearchField value={query} onChange={setQuery} placeholder="SEARCH FOR HELP ARTICLES…" id="support-search" />
           </div>
           <aside className="site00-support-contact">
             <p className="site00-label-red">CONTACT SUPPORT</p>
-            <p className="site00-body">Need more help? Our team is here for you.</p>
+            <p className="site00-body">NEED MORE HELP? OUR TEAM IS HERE FOR YOU.</p>
             <a href="mailto:support@site00.com" className="site00-link-red">
               CONTACT US →
             </a>
@@ -48,7 +48,7 @@ export default function SupportPage() {
         {isSignedIn ? (
           <section className="site00-system-panel">
             <h2 className="site00-label-red">RECENT SUPPORT ACTIVITY</h2>
-            <EmptyState title="NO RECENT ACTIVITY" body="Your support tickets will appear here." />
+            <EmptyState title="NO RECENT ACTIVITY" body="YOUR SUPPORT TICKETS WILL APPEAR HERE." />
           </section>
         ) : null}
       </div>
