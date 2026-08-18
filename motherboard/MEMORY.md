@@ -52964,7 +52964,17 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Changes:** `StatusStrip.tsx` — wrap metric cells in `.site00-status-strip__metrics`; `site00.css` mobile — flex column strip, metrics row `overflow-x: auto` + `scroll-snap`, cell width `calc(100vw / 2.6)` (~2.5 visible), guidance full-width below; desktop grid unchanged via nested metrics grid. `site00-desktop-artboard.css` updated for new structure.
 
-- **QA:** Playwright @ 390×844 `/origin` — all cells same row, 3 visible, guidance below metrics, overflow-x auto. Screenshot: `site00_origin_status_strip_mobile_row.png`.
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — SITE 00 Origin mobile header: hide logo, center nav
+
+- **Context:** Founder requested Origin homepage **mobile design only** — remove top-left **SITE 00** + **ORIGIN ENVIRONMENT** branding; center gray global nav (SITES, SERVICES, SYSTEM, ABOUT, JOURNAL) at top.
+
+- **Changes:** `Site00AppShell` — `mobileOriginHeader` prop + header BEM slots; `OriginPage` enables it; `site00.css` mobile — hide logo block, center `.site00-global-nav` with muted gray links, keep ENTER 00 top-right absolute; `site00-desktop-artboard.css` restores full 3-column header on `/origin/desktop`.
+
+- **QA:** Playwright @ 390×844 `/origin` — logo hidden, nav centered (delta 0px), nav color `#6b6b6b`. Screenshot: `site00_origin_mobile_header_centered.png`.
 
 - **Deploy:** Sync-only; say **deploy now** for Vercel.
 
