@@ -189,6 +189,16 @@
   transform-origin: center top;
 }
 
+.site00-desktop-artboard .site00-origin-card__icon-wrap {
+  transform: scale(calc(1 / var(--site00-origin-card-scale, 1)));
+  transform-origin: center center;
+}
+
+.site00-desktop-artboard .site00-origin-card__icon {
+  width: var(--site00-origin-panel-icon-size-px, 80px);
+  height: var(--site00-origin-panel-icon-size-px, 80px);
+}
+
 /* /origin/desktop page class — mirrors artboard shell when nested selectors differ */
 .site00-origin-page--desktop-artboard .site00-home-stage {
   --site00-origin-card-number-color: var(--site-red);

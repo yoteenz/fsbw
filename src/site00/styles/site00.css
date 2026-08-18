@@ -1048,7 +1048,12 @@
   }
 
   .site00-origin-card__icon-wrap {
-    transform: scale(calc(var(--site00-origin-panel-icon-scale, 1) / var(--site00-origin-card-scale, 1)));
+    transform: scale(calc(1 / var(--site00-origin-card-scale, 1)));
+  }
+
+  .site00-origin-card__icon {
+    width: var(--site00-origin-panel-icon-size-px, 80px);
+    height: var(--site00-origin-panel-icon-size-px, 80px);
   }
 }
 
