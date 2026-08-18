@@ -53070,3 +53070,19 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Deploy:** Sync-only; say **deploy now** for Vercel.
 
+---
+
+## 2026-08-18 — SITE 00 Screen 01: Locations Directory (mobile)
+
+- **Context:** Founder sprint — implement production mobile Screen 01 LOCATIONS DIRECTORY reached by swipe up from Screen 00 Origin. Approved background `0E226A0B-7533-433F-A9D0-7DD5109D77AC.png` @ live-preview/site00. Reference composition: 5 stacked directory cards, spine + red node, Martian Mono hierarchy, bottom nav (ORIGIN / LOCATIONS / START BUILD).
+
+- **Route:** `/origin/locations` (`SITE00_ROUTES.locations`). Desktop redirects to `/origin`.
+
+- **Architecture:** `Site00MobileShell` + `MobileEnvironmentBackground` + `Site00MobileHeader` (SITE 00 + hamburger menu) + `LocationsDirectory` (`DirectorySpine`, reusable `DirectoryCard`) + `Site00MobileNav`. Config: `locations-directory.ts`, composition map `locations-composition-map.ts`. Debug: `?compositionDebug=1`.
+
+- **Transition:** `OriginMobileSwipeUp` — swipe-up gesture + SWIPE UP button → navigate to locations with 720ms transition; `prefers-reduced-motion` instant. ENTER SITE 00 tap still → `/enter`.
+
+- **Scope:** Mobile-only `@media (max-width: 767px)`. Desktop SITE 00 unchanged.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+

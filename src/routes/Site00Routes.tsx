@@ -11,6 +11,7 @@ import { Site00DesktopArtboardShell } from '../site00/components/shell/Site00Des
 import { Site00TypographyBootstrap } from '../site00/components/Site00TypographyBootstrap';
 /* Eager-load SITE 00 + ASSTS styles (lazy route CSS was not applying on mobile preview). */
 import '../site00/styles/site00.css';
+import '../site00/styles/site00-locations.css';
 import '../site00/styles/site00-loader.css';
 import '../site00/styles/site00-desktop-artboard.css';
 import '../site00/assts/styles/assts.css';
@@ -19,6 +20,7 @@ import '../site00/assts/styles/assts-composition.css';
 import '../site00/assts/styles/assts-library-home.css';
 
 const Site00OriginPage = lazy(() => import('../site00/pages/OriginPage'));
+const Site00LocationsPage = lazy(() => import('../site00/pages/LocationsPage'));
 const Site00EnterPage = lazy(() => import('../site00/pages/EnterPage'));
 const Site00IdntyPage = lazy(() => import('../site00/pages/IdntyPage'));
 const Site00IdntyStatePage = lazy(() => import('../site00/pages/IdntyStatePage'));
@@ -83,6 +85,16 @@ export function Site00Routes() {
           }
         />
       ) : null}
+      <Route
+        path={SITE00_ROUTES.locations}
+        element={
+          <Site00Layout>
+            <Site00Suspense>
+              <Site00LocationsPage />
+            </Site00Suspense>
+          </Site00Layout>
+        }
+      />
       <Route
         path={SITE00_ROUTES.originAlias}
         element={

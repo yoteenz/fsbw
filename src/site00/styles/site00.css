@@ -521,9 +521,23 @@
 
   .site00-origin-page--mobile-layout .site00-origin-mobile-swipe__eyebrow,
   .site00-origin-page--mobile-layout .site00-origin-mobile-swipe__suffix,
-  .site00-origin-page--mobile-layout .site00-origin-mobile-swipe__swipe {
+  .site00-origin-page--mobile-layout .site00-origin-mobile-swipe__swipe-btn {
     color: var(--site-text-muted);
     margin: 0;
+  }
+
+  .site00-origin-page--mobile-layout .site00-origin-mobile-swipe__swipe-btn {
+    border: none;
+    background: transparent;
+    font-family: var(--site00-font-label);
+    font-size: var(--site00-size-label);
+    font-weight: var(--site00-weight-label);
+    letter-spacing: var(--site00-tracking-label);
+    line-height: var(--site00-lh-label);
+    text-transform: uppercase;
+    cursor: pointer;
+    padding: 8px 12px;
+    min-height: 44px;
   }
 
   .site00-origin-page--mobile-layout .site00-origin-mobile-swipe__coordinate {
@@ -573,7 +587,7 @@
     color: var(--site-red);
   }
 
-  .site00-origin-page--mobile-layout .site00-origin-mobile-swipe__swipe {
+  .site00-origin-page--mobile-layout .site00-origin-mobile-swipe__swipe-btn {
     margin-bottom: 8px;
   }
 
