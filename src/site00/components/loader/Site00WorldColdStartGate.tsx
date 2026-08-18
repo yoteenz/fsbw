@@ -7,6 +7,7 @@ import { initSite00ImmersiveLoaderBoot, teardownSite00ImmersiveBootShell } from 
 import { resolveSite00ImmersiveLoaderConfig } from './site00LoaderConfig';
 import { preloadSite00LoaderAnimation, preloadSite00LoaderBackground } from './site00LoaderPreload';
 import { resolveSite00LoaderGeometryPreloadUrl } from './site00LoaderBootstrap';
+import { loaderLifecycleLog } from './loaderLifecycleLog';
 import {
   markSite00ImmersiveComplete,
   shouldShowSite00ImmersiveLoader,
@@ -19,32 +20,9 @@ const MIN_GEOMETRY_PLAY_MS = 2800;
 
 initSite00ImmersiveLoaderBoot();
 
-function waitForGeometryReady(getReady: () => boolean, timeoutMs = 8000): Promise<void> {
-  if (getReady()) return Promise.resolve();
-  return new Promise((resolve) => {
-    const started = Date.now();
-    const tick = () => {
-      if (getReady()) {
-        resolve();
-        return;
-      }
-      if (Date.now() - started >= timeoutMs) {
-        resolve();
-        return;
-      }
-      window.requestAnimationFrame(tick);
-    };
-    window.requestAnimationFrame(tick);
-  });
-}
-
-function sleep(ms: number): Promise<void> {
-  return new Promise((resolve) => window.setTimeout(resolve, ms));
-}
-
 /**
  * Cinematic cold-start gate for SITE 00 world routes (Origin, Enter, IDNTY, BLDR, …).
- * ASSTS uses its own gate with vault API bootstrap.
+ * Loader ALWAYS mounts immediately — animation readiness never blocks the shell.
  */
 export function Site00WorldColdStartGate({ children }: { children: ReactNode }) {
   const { pathname } = useLocation();
@@ -73,6 +51,7 @@ export function Site00WorldColdStartGate({ children }: { children: ReactNode }) 
 
   useEffect(() => {
     if (!immersive) {
+      loaderLifecycleLog('ROUTE_COMPLETE', { skipped: true });
       markSite00ImmersiveComplete();
       teardownSite00ImmersiveBootShell();
       return;
@@ -83,17 +62,20 @@ export function Site00WorldColdStartGate({ children }: { children: ReactNode }) 
     async function bootstrap() {
       try {
         completeStage('bootstrap');
-        await preloadSite00LoaderBackground(config.backgroundUrl);
+        void preloadSite00LoaderBackground(config.backgroundUrl);
         if (cancelled) return;
         completeStage('preparing');
 
         const geometryUrl = await resolveSite00LoaderGeometryPreloadUrl();
-        await preloadSite00LoaderAnimation(geometryUrl);
+        void preloadSite00LoaderAnimation(geometryUrl);
         if (cancelled) return;
         completeStage('assemble');
 
-        await waitForGeometryReady(() => geometryReadyRef.current);
-        if (cancelled) return;
+        const geometryWaitStart = Date.now();
+        while (!geometryReadyRef.current && Date.now() - geometryWaitStart < 8000) {
+          if (cancelled) return;
+          await sleep(50);
+        }
 
         const geometryStartedAt = geometryReadyAt.current ?? Date.now();
         const geometryElapsed = Date.now() - geometryStartedAt;
@@ -111,11 +93,13 @@ export function Site00WorldColdStartGate({ children }: { children: ReactNode }) 
         completeStage('ready');
         forceComplete();
         setPhase('complete-hold');
+        loaderLifecycleLog('ROUTE_COMPLETE');
         await sleep(COMPLETE_HOLD_MS);
         if (cancelled) return;
 
         setPhase('exiting');
-      } catch {
+      } catch (err) {
+        loaderLifecycleLog('ROUTE_COMPLETE', { error: err });
         if (cancelled) return;
         completeStage('ready');
         forceComplete();
@@ -155,4 +139,8 @@ export function Site00WorldColdStartGate({ children }: { children: ReactNode }) 
 
   if (typeof document === 'undefined') return overlay;
   return createPortal(overlay, document.body);
+}
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => window.setTimeout(resolve, ms));
 }

@@ -1,13 +1,18 @@
+import { useEffect } from 'react';
+import { loaderLifecycleLog } from './loaderLifecycleLog';
+
 type Site00LoaderEnvironmentProps = {
   backgroundUrl: string;
-  /** Background image decoded and ready to paint. */
-  ready?: boolean;
 };
 
-/** Approved environment layer — absolute inset 0 inside the 711×1536 artboard. */
-export function Site00LoaderEnvironment({ backgroundUrl, ready = false }: Site00LoaderEnvironmentProps) {
+/** Approved environment — full viewport cover, always paints immediately (never render-gated). */
+export function Site00LoaderEnvironment({ backgroundUrl }: Site00LoaderEnvironmentProps) {
+  useEffect(() => {
+    loaderLifecycleLog('BACKGROUND_SOURCE_RESOLVED', { url: backgroundUrl });
+  }, [backgroundUrl]);
+
   return (
-    <div className={`site00-loader-env ${ready ? 'site00-loader-env--ready' : ''}`.trim()} aria-hidden="true">
+    <div className="site00-loader-env" aria-hidden="true">
       <img
         className="site00-loader-env__img"
         src={backgroundUrl}
@@ -16,6 +21,8 @@ export function Site00LoaderEnvironment({ backgroundUrl, ready = false }: Site00
         fetchPriority="high"
         loading="eager"
         draggable={false}
+        onLoad={() => loaderLifecycleLog('BACKGROUND_LOADED')}
+        onError={() => loaderLifecycleLog('BACKGROUND_ERROR', { url: backgroundUrl })}
       />
     </div>
   );

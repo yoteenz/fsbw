@@ -6,25 +6,32 @@ import {
   site00LoaderGeometryWebmUrl,
   site00LoaderPrefersApngGeometry,
 } from './site00LoaderMedia';
+import { loaderLifecycleLog } from './loaderLifecycleLog';
 import {
   probeProductionAlphaAvailable,
   resolveLoaderGeometryMode,
   resolveLoaderGeometryModeFromQuery,
   type LoaderGeometryMode,
 } from './site00LoaderGeometryMode';
+import { isLoaderMediaDebugEnabled } from './site00LoaderHeroStage';
 
 type Site00LoaderAnimationProps = {
   reducedMotion?: boolean;
   onReady?: () => void;
+  onError?: (detail: unknown) => void;
 };
 
 /**
- * Loader geometry renderer — production alpha when locked derivative exists;
- * screen blend remains debug fallback via ?loaderGeometry=screen.
+ * Transparent geometry overlay — bounding box always visible; media fades in independently.
+ * Parent loader never waits for this layer.
  */
-export function Site00LoaderAnimation({ reducedMotion = false, onReady }: Site00LoaderAnimationProps) {
+export function Site00LoaderAnimation({ reducedMotion = false, onReady, onError }: Site00LoaderAnimationProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [ready, setReady] = useState(false);
+  const mountRef = useRef<HTMLDivElement>(null);
+  const [mediaReady, setMediaReady] = useState(false);
+  const [mediaError, setMediaError] = useState(false);
+  const [mediaDebugSize, setMediaDebugSize] = useState('');
+  const mediaDebug = isLoaderMediaDebugEnabled();
   const forcedMode = resolveLoaderGeometryModeFromQuery();
   const [mode, setMode] = useState<LoaderGeometryMode>(() => forcedMode ?? 'screen');
   const [alphaUrl, setAlphaUrl] = useState<string | null>(() =>
@@ -35,6 +42,10 @@ export function Site00LoaderAnimation({ reducedMotion = false, onReady }: Site00
       : null,
   );
   const [sourceUrl, setSourceUrl] = useState(site00LoaderGeometrySourceUrl());
+
+  useEffect(() => {
+    loaderLifecycleLog('ANIMATION_SOURCE_RESOLVED', { mode, sourceUrl, alphaUrl });
+  }, [mode, sourceUrl, alphaUrl]);
 
   useEffect(() => {
     const forced = resolveLoaderGeometryModeFromQuery();
@@ -52,15 +63,6 @@ export function Site00LoaderAnimation({ reducedMotion = false, onReady }: Site00
       }
     });
   }, []);
-
-  useEffect(() => {
-    if (ready) return;
-    const t = window.setTimeout(() => {
-      setReady(true);
-      onReady?.();
-    }, 6000);
-    return () => window.clearTimeout(t);
-  }, [ready, onReady]);
 
   useEffect(() => {
     if (mode !== 'screen') return;
@@ -102,31 +104,77 @@ export function Site00LoaderAnimation({ reducedMotion = false, onReady }: Site00
     };
   }, [reducedMotion, mode, sourceUrl, alphaUrl]);
 
+  useEffect(() => {
+    if (!mediaDebug) return;
+    const mount = mountRef.current;
+    const media = mount?.querySelector('.site00-loader-animation');
+    if (!mount || !media) return;
+
+    const update = () => {
+      const mr = mount.getBoundingClientRect();
+      const vr = media.getBoundingClientRect();
+      setMediaDebugSize(
+        `wrap ${Math.round(mr.width)}×${Math.round(mr.height)} · media ${Math.round(vr.width)}×${Math.round(vr.height)}`,
+      );
+    };
+
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(mount);
+    ro.observe(media);
+    window.addEventListener('resize', update);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener('resize', update);
+    };
+  }, [mediaDebug, mode, sourceUrl, alphaUrl, mediaReady]);
+
   const handleReady = () => {
-    if (ready) return;
-    setReady(true);
+    if (mediaReady) return;
+    setMediaReady(true);
+    loaderLifecycleLog('ANIMATION_CANPLAY');
     onReady?.();
   };
 
-  const handleAlphaMediaError = () => {
+  const handleAlphaMediaError = (event: unknown) => {
+    loaderLifecycleLog('ANIMATION_ERROR', { mode: 'alpha', event });
+    onError?.(event);
     setMode('screen');
     setAlphaUrl(null);
+    setMediaError(true);
   };
 
-  const handleScreenMediaError = () => {
+  const handleScreenMediaError = (event: unknown) => {
+    loaderLifecycleLog('ANIMATION_ERROR', { mode: 'screen', event });
+    onError?.(event);
+    setMediaError(true);
     handleReady();
   };
 
   const useAlphaMode = mode === 'alpha';
   const useApng = useAlphaMode && site00LoaderPrefersApngGeometry();
   const webmSrc = alphaUrl ?? site00LoaderGeometryWebmUrl();
+  const mediaClass = [
+    'site00-loader-animation',
+    useAlphaMode ? 'site00-loader-animation--alpha' : 'site00-loader-animation--screen',
+    reducedMotion ? 'site00-loader-animation--static' : '',
+    mediaReady ? 'site00-loader-animation--ready' : '',
+    mediaError ? 'site00-loader-animation--error' : '',
+  ]
+    .filter(Boolean)
+    .join(' ');
 
   return (
-    <div className={`site00-loader-geometry-mount ${ready ? 'site00-loader-geometry-mount--ready' : ''}`}>
+    <div ref={mountRef} className="site00-loader-geometry-mount" data-media-ready={mediaReady ? '1' : '0'}>
+      {mediaDebug && mediaDebugSize ? (
+        <span className="site00-loader-media-debug-label" aria-hidden="true">
+          {mediaDebugSize}
+        </span>
+      ) : null}
       {useAlphaMode ? (
         useApng ? (
           <img
-            className={`site00-loader-animation site00-loader-animation--alpha ${reducedMotion ? 'site00-loader-animation--static' : ''}`}
+            className={mediaClass}
             src={site00LoaderGeometryApngUrl()}
             alt=""
             decoding="async"
@@ -138,7 +186,7 @@ export function Site00LoaderAnimation({ reducedMotion = false, onReady }: Site00
         ) : (
           <video
             ref={videoRef}
-            className={`site00-loader-animation site00-loader-animation--alpha ${reducedMotion ? 'site00-loader-animation--static' : ''}`}
+            className={mediaClass}
             muted
             playsInline
             autoPlay={!reducedMotion}
@@ -157,7 +205,7 @@ export function Site00LoaderAnimation({ reducedMotion = false, onReady }: Site00
       ) : (
         <video
           ref={videoRef}
-          className={`site00-loader-animation site00-loader-animation--screen ${reducedMotion ? 'site00-loader-animation--static' : ''}`}
+          className={mediaClass}
           src={sourceUrl}
           muted
           playsInline

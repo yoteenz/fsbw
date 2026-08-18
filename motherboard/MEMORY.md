@@ -53096,3 +53096,27 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Deploy:** Sync-only; say **deploy now** for Vercel.
 
+---
+
+## 2026-08-18 — SITE 00 mobile loader critical recovery (architecture rebuild)
+
+- **Context:** Founder sprint — loader regressed to **Broken State A** (narrow centered column, black side bars, animation in black box, wrong position) and **Broken State B** (blank gray/white page). Required full architecture recovery, not symptom patches.
+
+- **Root causes:**
+  - **Narrow column + black bars:** Prior `LoaderCompositionContext` used `scale = min(w/711, h/1536)` with flex-centered artboard scaler — rendered a letterboxed 711×1536 box inside the viewport, exposing `#f5f5f3`/black gutters.
+  - **Blank page:** Boot shell (`html.site00-assts-boot`) hides `#root`; teardown waited on `backgroundReady && geometryReady`. Geometry mount used `opacity: 0` until media ready — if animation failed/slow, user saw empty boot shell or blank route.
+  - **Black media box:** Screen-mode MP4 letterboxing inside geometry bounding box (not asset alpha); `mix-blend-mode: screen` used for browser-compatible transparency.
+  - **LOADER COORDS visible:** `LoaderReferenceMapDebug` toggle rendered without debug flag gate.
+
+- **Architecture rebuild:** ONE full-viewport stage (`100vw × 100dvh`). 711×1536 = normalized % coordinate system only. Layers: `Site00LoaderEnvironment` (always paints) + optional `Site00LoaderAnimation` overlay + `LoaderCopyRegions` UI. Background/UI never render-gated; animation fades in independently; errors fall back without hiding parent.
+
+- **Files:** `LoaderCompositionContext.tsx`, `Site00ImmersiveLoader.tsx`, `Site00LoaderEnvironment.tsx`, `Site00LoaderAnimation.tsx`, `Site00WorldColdStartGate.tsx`, `LoaderReferenceMapDebug.tsx`, `LoaderCopyRegions.tsx`, `site00LoaderHeroStage.ts`, `loaderLifecycleLog.ts` (new), `site00-loader.css`, `scripts/test-site00-loader-recovery.mjs` (new).
+
+- **Dev flags:** `?loaderAnimation=0` disables animation layer; `?loaderMediaDebug=1` outlines wrapper/media + W/H label; `?loaderDebug=1` / `?loaderRefMap=1` for coordinate overlay (hidden by default).
+
+- **Verification:** Playwright recovery script at 375/390/430px — loader fills viewport, env covers stage, UI renders with animation off, no LOADER COORDS; animation-on at 390px shows transparent video bg + ready state. Build passes.
+
+- **Spatial Architecture Review:** SKIPPED — forensic recovery sprint, no new surfaces.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel preview.
+

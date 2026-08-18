@@ -10,7 +10,7 @@ import {
   type LoaderRegionId,
 } from './loader-composition-map';
 import { useLoaderComposition } from './LoaderCompositionContext';
-import { isLoaderRefOverlayEnabled } from './site00LoaderHeroStage';
+import { isLoaderDebugEnabled, isLoaderRefMapEnabled, isLoaderRefOverlayEnabled } from './site00LoaderHeroStage';
 
 type RegionMeasurement = {
   id: LoaderRegionId;
@@ -36,14 +36,16 @@ const REGION_DEBUG_LABELS: Partial<Record<LoaderRegionId, string>> = {
   background: 'BACKGROUND',
 };
 
+/** Composition debug — only when ?loaderDebug=1 or ?loaderRefMap=1. Never visible in production. */
 export function LoaderReferenceMapDebug() {
+  const debugEnabled = isLoaderDebugEnabled() || isLoaderRefMapEnabled();
   const { refMapMode, setRefMapMode, scale, regionElements, artboardRef } = useLoaderComposition();
   const [measurements, setMeasurements] = useState<RegionMeasurement[]>([]);
   const refOverlayOn = isLoaderRefOverlayEnabled();
 
   useEffect(() => {
     if (!refMapMode) return;
-    const stage = artboardRef.current ?? document.querySelector('.site00-loader-artboard');
+    const stage = artboardRef.current ?? document.querySelector('.site00-loader-stage');
     if (!stage) return;
 
     const measure = () => {
@@ -87,6 +89,8 @@ export function LoaderReferenceMapDebug() {
     };
   }, [refMapMode, scale, regionElements, artboardRef]);
 
+  if (!debugEnabled) return null;
+
   if (!refMapMode) {
     return (
       <button
@@ -113,10 +117,8 @@ export function LoaderReferenceMapDebug() {
       </button>
 
       <div className="site00-loader-refmap" aria-hidden="true">
-        {/* Artboard boundary */}
         <div className="site00-loader-refmap__artboard-edge" />
 
-        {/* Normalized 0–100 grid */}
         {GRID_STEPS.map((pct) => (
           <div key={`v-${pct}`} className="site00-loader-refmap__grid-v" style={{ left: `${pct}%` }}>
             {pct % 20 === 0 ? <span className="site00-loader-refmap__grid-label">{pct}</span> : null}
@@ -128,7 +130,6 @@ export function LoaderReferenceMapDebug() {
           </div>
         ))}
 
-        {/* Artboard center axes */}
         <div className="site00-loader-refmap__axis-v site00-loader-refmap__axis-v--center" style={{ left: `${centerXPct}%` }}>
           <span className="site00-loader-refmap__axis-label">CENTER X · {ASSTS_LOADER_CENTER_X}</span>
         </div>
@@ -179,11 +180,11 @@ export function LoaderReferenceMapDebug() {
 
         <div className="site00-loader-refmap__report">
           <div className="site00-loader-refmap__report-head">
-            ARTBOARD {ASSTS_LOADER_REFERENCE_CANVAS.width}×{ASSTS_LOADER_REFERENCE_CANVAS.height} · scale {scale.toFixed(4)}
+            STAGE {ASSTS_LOADER_REFERENCE_CANVAS.width}×{ASSTS_LOADER_REFERENCE_CANVAS.height} ref · scale {scale.toFixed(4)}
             {refOverlayOn ? ' · REF OVERLAY ON' : ''}
           </div>
           <div className="site00-loader-refmap__report-note">
-            Coordinates resolve against <strong>.site00-loader-artboard</strong> (0–100% normalized). Letterbox gutters excluded.
+            Coordinates resolve against <strong>.site00-loader-stage</strong> (0–100% normalized).
           </div>
           {measurements.map((m) => {
             const label = REGION_DEBUG_LABELS[m.id] ?? m.id;

@@ -1,4 +1,3 @@
-import { ASSTS_LOADER_COMPOSITION } from './loader-composition-map';
 import { LoaderRegion } from './LoaderRegion';
 
 type LoaderCopyRegionsProps = {
@@ -24,7 +23,6 @@ export function LoaderCopyRegions({
   progressLabel,
 }: LoaderCopyRegionsProps) {
   const value = Math.min(100, Math.max(0, Math.round(progress)));
-  const track = ASSTS_LOADER_COMPOSITION.progressTrack;
 
   return (
     <>
@@ -47,7 +45,6 @@ export function LoaderCopyRegions({
       <LoaderRegion id="copy.progressTrack" className="site00-loader-copy-region site00-loader-copy-region--progress-track">
         <div
           className="site00-loader-copy__track"
-          style={{ width: track.w, height: track.h }}
           role="progressbar"
           aria-valuemin={0}
           aria-valuemax={100}

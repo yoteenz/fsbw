@@ -1,8 +1,19 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode, type RefObject } from 'react';
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ReactNode,
+  type RefObject,
+} from 'react';
 import { ASSTS_LOADER_REFERENCE_CANVAS, ASSTS_LOADER_TYPOGRAPHY } from './loader-composition-map';
 import { isLoaderDebugEnabled, isLoaderRefMapEnabled } from './site00LoaderHeroStage';
 
 type LoaderCompositionContextValue = {
+  /** Viewport width / reference width — for debug measurements only. */
   scale: number;
   stageWidth: number;
   stageHeight: number;
@@ -37,16 +48,29 @@ function readRefMapFromUrl(): boolean {
   return params.get('loaderRefMap') === '1' || params.get('loaderDebug') === '1';
 }
 
+function applyViewportTypography(stage: HTMLElement, scaleX: number, scaleY: number): void {
+  const t = ASSTS_LOADER_TYPOGRAPHY;
+  stage.style.setProperty('--loader-type-eyebrow-size', `${t.eyebrow.size * scaleX}px`);
+  stage.style.setProperty('--loader-type-title-size', `${t.title.size * scaleX}px`);
+  stage.style.setProperty('--loader-type-subtitle-size', `${t.subtitle.size * scaleX}px`);
+  stage.style.setProperty('--loader-type-status-size', `${t.status.size * scaleX}px`);
+  stage.style.setProperty('--loader-type-pct-size', `${t.progressPct.size * scaleX}px`);
+  stage.style.setProperty('--loader-type-tagline-size', `${t.tagline.size * scaleX}px`);
+  stage.style.setProperty('--loader-type-tagline-plus-size', `${t.taglinePlus.size * scaleX}px`);
+  stage.style.setProperty('--loader-type-mark-size', `${t.mark.size * scaleX}px`);
+  stage.style.setProperty('--loader-type-signature-size', `${t.signatureLabel.size * scaleX}px`);
+  stage.style.setProperty('--loader-progress-track-h', `${8 * scaleY}px`);
+}
+
 /**
- * ONE canonical 711×1536 stage — environment, animation, and UI share one transform scale.
- * Aspect-preserving: scale = min(viewportW/refW, viewportH/refH).
+ * ONE full-viewport stage — 711×1536 is the coordinate system only (normalized %).
+ * Background, animation overlay, and UI share the same 100vw × 100dvh plane.
  */
 export function LoaderCompositionProvider({ children }: ProviderProps) {
-  const viewportRef = useRef<HTMLDivElement>(null);
-  const artboardRef = useRef<HTMLDivElement>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(1);
-  const [stageWidth, setStageWidth] = useState<number>(ASSTS_LOADER_REFERENCE_CANVAS.width);
-  const [stageHeight, setStageHeight] = useState<number>(ASSTS_LOADER_REFERENCE_CANVAS.height);
+  const [stageWidth, setStageWidth] = useState(0);
+  const [stageHeight, setStageHeight] = useState(0);
   const [refMapMode, setRefMapModeState] = useState(readRefMapFromUrl);
   const regionElementsRef = useRef(new Map<string, HTMLElement>());
   const [, bump] = useState(0);
@@ -69,25 +93,21 @@ export function LoaderCompositionProvider({ children }: ProviderProps) {
   }, []);
 
   useEffect(() => {
-    const el = viewportRef.current;
+    const el = stageRef.current;
     if (!el) return;
 
     const update = () => {
       const rect = el.getBoundingClientRect();
-      const styles = getComputedStyle(el);
-      const safeTop = parseFloat(styles.paddingTop) || 0;
-      const safeBottom = parseFloat(styles.paddingBottom) || 0;
-      const safeLeft = parseFloat(styles.paddingLeft) || 0;
-      const safeRight = parseFloat(styles.paddingRight) || 0;
-      const availW = Math.max(1, rect.width - safeLeft - safeRight);
-      const availH = Math.max(1, rect.height - safeTop - safeBottom);
-      const scaleW = availW / ASSTS_LOADER_REFERENCE_CANVAS.width;
-      const scaleH = availH / ASSTS_LOADER_REFERENCE_CANVAS.height;
-      const nextScale = Math.min(scaleW, scaleH);
-      setScale(nextScale);
-      setStageWidth(ASSTS_LOADER_REFERENCE_CANVAS.width * nextScale);
-      setStageHeight(ASSTS_LOADER_REFERENCE_CANVAS.height * nextScale);
-      el.style.setProperty('--loader-scale', String(nextScale));
+      const w = Math.max(1, rect.width);
+      const h = Math.max(1, rect.height);
+      const scaleX = w / ASSTS_LOADER_REFERENCE_CANVAS.width;
+      const scaleY = h / ASSTS_LOADER_REFERENCE_CANVAS.height;
+      setScale(scaleX);
+      setStageWidth(w);
+      setStageHeight(h);
+      el.style.setProperty('--loader-vw-scale', String(scaleX));
+      el.style.setProperty('--loader-vh-scale', String(scaleY));
+      applyViewportTypography(el, scaleX, scaleY);
     };
 
     update();
@@ -120,44 +140,22 @@ export function LoaderCompositionProvider({ children }: ProviderProps) {
       setRefMapMode,
       registerRegion,
       regionElements: regionElementsRef.current,
-      artboardRef,
+      artboardRef: stageRef,
     }),
     [scale, stageWidth, stageHeight, refMapMode, setRefMapMode, registerRegion],
   );
 
   return (
     <LoaderCompositionContext.Provider value={contextValue}>
-      <div ref={viewportRef} className="site00-loader-viewport site00-loader-stage-viewport">
+      <div className="site00-loader-viewport site00-loader-stage-viewport">
         <div
-          className="site00-loader-artboard-scaler"
-          style={{
-            width: stageWidth,
-            height: stageHeight,
-          }}
+          ref={stageRef}
+          className="site00-loader-stage"
+          data-composition-id="assts-loader-mobile-v2"
+          data-artboard-w={ASSTS_LOADER_REFERENCE_CANVAS.width}
+          data-artboard-h={ASSTS_LOADER_REFERENCE_CANVAS.height}
         >
-          <div
-            ref={artboardRef}
-            className="site00-loader-artboard site00-loader-stage"
-            data-composition-id="assts-loader-mobile-v2"
-            data-artboard-w={ASSTS_LOADER_REFERENCE_CANVAS.width}
-            data-artboard-h={ASSTS_LOADER_REFERENCE_CANVAS.height}
-            style={{
-              width: ASSTS_LOADER_REFERENCE_CANVAS.width,
-              height: ASSTS_LOADER_REFERENCE_CANVAS.height,
-              transform: `scale(${scale})`,
-              ['--loader-type-eyebrow-size' as string]: `${ASSTS_LOADER_TYPOGRAPHY.eyebrow.size}px`,
-              ['--loader-type-title-size' as string]: `${ASSTS_LOADER_TYPOGRAPHY.title.size}px`,
-              ['--loader-type-subtitle-size' as string]: `${ASSTS_LOADER_TYPOGRAPHY.subtitle.size}px`,
-              ['--loader-type-status-size' as string]: `${ASSTS_LOADER_TYPOGRAPHY.status.size}px`,
-              ['--loader-type-pct-size' as string]: `${ASSTS_LOADER_TYPOGRAPHY.progressPct.size}px`,
-              ['--loader-type-tagline-size' as string]: `${ASSTS_LOADER_TYPOGRAPHY.tagline.size}px`,
-              ['--loader-type-tagline-plus-size' as string]: `${ASSTS_LOADER_TYPOGRAPHY.taglinePlus.size}px`,
-              ['--loader-type-mark-size' as string]: `${ASSTS_LOADER_TYPOGRAPHY.mark.size}px`,
-              ['--loader-type-signature-size' as string]: `${ASSTS_LOADER_TYPOGRAPHY.signatureLabel.size}px`,
-            }}
-          >
-            {children}
-          </div>
+          {children}
         </div>
       </div>
     </LoaderCompositionContext.Provider>

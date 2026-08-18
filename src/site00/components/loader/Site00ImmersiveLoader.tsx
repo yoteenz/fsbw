@@ -1,12 +1,17 @@
 import { useEffect, useState } from 'react';
 import type { Site00ImmersiveLoaderConfig, Site00LoaderState } from './site00LoaderConfig';
-import { isLoaderDebugEnabled } from './site00LoaderHeroStage';
+import {
+  isLoaderAnimationEnabled,
+  isLoaderDebugEnabled,
+  isLoaderMediaDebugEnabled,
+} from './site00LoaderHeroStage';
 import { teardownSite00AsstsBootShell } from './site00LoaderBoot';
 import { LoaderCopyRegions } from './LoaderCopyRegions';
 import { LoaderCompositionProvider } from './LoaderCompositionContext';
 import { LoaderReferenceMapDebug } from './LoaderReferenceMapDebug';
 import { LoaderReferenceOverlay } from './LoaderReferenceOverlay';
 import { LoaderRegion } from './LoaderRegion';
+import { loaderLifecycleLog } from './loaderLifecycleLog';
 import { Site00LoaderAnimation } from './Site00LoaderAnimation';
 import { Site00LoaderEnvironment } from './Site00LoaderEnvironment';
 import { preloadSite00LoaderBackground } from './site00LoaderPreload';
@@ -57,30 +62,35 @@ export function Site00ImmersiveLoader({
   const systemReducedMotion = usePrefersReducedMotion();
   const reducedMotion = reducedMotionProp ?? systemReducedMotion;
   const debug = isLoaderDebugEnabled();
-  const [backgroundReady, setBackgroundReady] = useState(() => {
-    if (typeof document === 'undefined') return false;
-    return Boolean(document.getElementById('site00-assts-boot-shell'));
-  });
-  const [geometryReady, setGeometryReady] = useState(false);
+  const animationEnabled = isLoaderAnimationEnabled();
+  const mediaDebug = isLoaderMediaDebugEnabled();
+
+  useEffect(() => {
+    loaderLifecycleLog('LOADER_MOUNTED', { path: window.location.pathname });
+    teardownSite00AsstsBootShell();
+    loaderLifecycleLog('BACKGROUND_SOURCE_RESOLVED', { url: config.backgroundUrl });
+    return () => {
+      loaderLifecycleLog('LOADER_UNMOUNTED');
+    };
+  }, [config.backgroundUrl]);
 
   useEffect(() => {
     let cancelled = false;
     void preloadSite00LoaderBackground(config.backgroundUrl).then(() => {
-      if (!cancelled) setBackgroundReady(true);
+      if (!cancelled) loaderLifecycleLog('BACKGROUND_LOADED');
     });
     return () => {
       cancelled = true;
     };
   }, [config.backgroundUrl]);
 
-  useEffect(() => {
-    if (!backgroundReady || !geometryReady) return;
-    teardownSite00AsstsBootShell();
-  }, [backgroundReady, geometryReady]);
-
   const handleAnimationReady = () => {
-    setGeometryReady(true);
+    loaderLifecycleLog('ANIMATION_CANPLAY');
     onAnimationReady?.();
+  };
+
+  const handleAnimationError = (detail: unknown) => {
+    loaderLifecycleLog('ANIMATION_ERROR', detail);
   };
 
   useEffect(() => {
@@ -90,7 +100,7 @@ export function Site00ImmersiveLoader({
   }, [phase, onExitComplete]);
 
   const atComplete = isComplete || phase === 'complete-hold' || progress >= 100;
-  const progressLabel = atComplete ? config.completionMessage : config.assemblingLabel;
+  const progressLabel = error ? 'RETRY REQUIRED' : atComplete ? config.completionMessage : config.assemblingLabel;
 
   const rootClass = [
     'site00-immersive-loader',
@@ -98,6 +108,8 @@ export function Site00ImmersiveLoader({
     phase === 'complete-hold' ? 'site00-immersive-loader--complete' : '',
     error ? 'site00-immersive-loader--error' : '',
     debug ? 'site00-immersive-loader--debug' : '',
+    mediaDebug ? 'site00-immersive-loader--media-debug' : '',
+    animationEnabled ? '' : 'site00-immersive-loader--animation-off',
   ]
     .filter(Boolean)
     .join(' ');
@@ -105,53 +117,47 @@ export function Site00ImmersiveLoader({
   return (
     <div className={rootClass} role="status" aria-live="polite" aria-label={progressLabel}>
       <LoaderCompositionProvider>
-        <LoaderRegion id="background" className="site00-loader-background-region">
-          <Site00LoaderEnvironment backgroundUrl={config.backgroundUrl} ready={backgroundReady} />
-        </LoaderRegion>
+        <Site00LoaderEnvironment backgroundUrl={config.backgroundUrl} />
 
         {debug ? (
           <LoaderRegion id="pedestal" className="site00-loader-pedestal-debug" aria-hidden="true" />
         ) : null}
 
-        {!error ? (
-          <>
-            <LoaderRegion id="geometry" className="site00-loader-geometry-region">
-              <Site00LoaderAnimation reducedMotion={reducedMotion} onReady={handleAnimationReady} />
-            </LoaderRegion>
+        {animationEnabled ? (
+          <LoaderRegion id="geometry" className="site00-loader-geometry-region">
+            <Site00LoaderAnimation
+              reducedMotion={reducedMotion}
+              onReady={handleAnimationReady}
+              onError={handleAnimationError}
+            />
+          </LoaderRegion>
+        ) : null}
 
-            <LoaderCopyRegions
-              siteLabel={config.siteLabel}
-              title={config.experienceTitle}
-              subtitle={config.experienceSubtitle}
-              tagline={config.tagline}
-              footerMark={config.footerMark}
-              footerLabel={config.footerLabel}
-              progress={progress}
-              progressLabel={progressLabel}
-            />
-          </>
-        ) : (
-          <div className="site00-loader-error-mount">
-            <LoaderCopyRegions
-              siteLabel={config.siteLabel}
-              title="BUILD INTERRUPTED"
-              subtitle="WE COULDN'T COMPLETE THIS STEP"
-              tagline={config.tagline}
-              footerMark={config.footerMark}
-              footerLabel={config.footerLabel}
-              progress={0}
-              progressLabel="RETRY REQUIRED"
-            />
-            {onRetry ? (
-              <button type="button" className="site00-loader__retry" onClick={onRetry}>
-                TRY AGAIN →
-              </button>
-            ) : null}
+        <LoaderCopyRegions
+          siteLabel={config.siteLabel}
+          title={error ? 'BUILD INTERRUPTED' : config.experienceTitle}
+          subtitle={error ? "WE COULDN'T COMPLETE THIS STEP" : config.experienceSubtitle}
+          tagline={config.tagline}
+          footerMark={config.footerMark}
+          footerLabel={config.footerLabel}
+          progress={error ? 0 : progress}
+          progressLabel={progressLabel}
+        />
+
+        {error && onRetry ? (
+          <div className="site00-loader-error-actions">
+            <button type="button" className="site00-loader__retry" onClick={onRetry}>
+              TRY AGAIN →
+            </button>
           </div>
-        )}
+        ) : null}
 
-        <LoaderReferenceOverlay />
-        <LoaderReferenceMapDebug />
+        {debug ? (
+          <>
+            <LoaderReferenceOverlay />
+            <LoaderReferenceMapDebug />
+          </>
+        ) : null}
       </LoaderCompositionProvider>
     </div>
   );
