@@ -65,7 +65,6 @@ export default function IdntyStatePage() {
                     label={tier.label}
                     priceLabel={tier.priceLabel}
                     items={tier.services}
-                    brandStateId={tier.stateId}
                   />
                 ))}
               </div>
