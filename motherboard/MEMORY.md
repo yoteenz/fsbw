@@ -54131,3 +54131,11 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Push:** **Blocked** — cloud agent token (`cursor` bot) returns `Repository not found` for `yoteenz/SITE00` (private repo not visible to agent). Founder must push from local machine with yoteenz credentials.
 - **Manual push:** `cd site-00 && git push -u origin main` (or clone from VM copy).
 
+---
+
+## 2026-08-18 — Origin EVOLVE collapsed copy + expanded panels −15%
+
+- **Context:** Founder copy tweak on Origin desktop EVOLVE collapsed card; shrink expanded IDNTY/BLDR/EVOLVE panels 15%.
+- **Changes:** `EVOLVE_ORIGIN_CARD.subtitle` → `BUILD ALREADY EXISTS.`; removed `body` from collapsed EVOLVE card; `expandedPanelScale` 0.875 → 0.74375 in `origin-home-composition.ts`.
+- **Sync:** `2aba9be60`
+
