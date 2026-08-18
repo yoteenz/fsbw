@@ -51,7 +51,6 @@ export function OriginMobileSwipeUp() {
         {...swipeHandlers}
       >
         <p className="site00-label site00-origin-mobile-swipe__eyebrow">{copy.eyebrow}</p>
-        <p className="site00-heading-xl site00-origin-mobile-swipe__coordinate">{copy.coordinate}</p>
         <p className="site00-label site00-origin-mobile-swipe__suffix">{copy.suffix}</p>
         <div className="site00-origin-mobile-swipe__connector" aria-hidden="true">
           <span className="site00-origin-mobile-swipe__connector-line" />

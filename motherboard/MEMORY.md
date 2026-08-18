@@ -53086,3 +53086,13 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Deploy:** Sync-only; say **deploy now** for Vercel.
 
+---
+
+## 2026-08-18 — SITE 00 Origin: fix duplicated status panels + remove enlarged 00.00
+
+- **Context:** Founder reported duplicated bottom panels (status + guidance stacked twice) on mobile and desktop artboard Origin; enlarged **00.00** text overlapping composition.
+
+- **Fix:** `StatusStrip` now renders a single layout variant via `layout` prop + `useOriginStatusStripLayout` (no dual desktop/mobile DOM). Removed large `site00-heading-xl` coordinate from `OriginMobileSwipeUp`; swipe block not mounted on `/origin/desktop`. Mobile `/origin` hides full hero block (not just coordinate). CSS backup hide for swipe on `--desktop-artboard`.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+

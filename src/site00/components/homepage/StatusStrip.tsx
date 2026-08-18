@@ -9,6 +9,12 @@ const ICON_MAP = {
   shield: 'shield',
 } as const;
 
+export type StatusStripLayout = 'desktop' | 'mobile';
+
+type StatusStripProps = {
+  layout: StatusStripLayout;
+};
+
 function StatusStripCells() {
   return SITE00_STATUS_STRIP.map((item) => (
     <div key={item.id} className="site00-status-strip__cell">
@@ -62,18 +68,10 @@ function StatusStripGuidance() {
   );
 }
 
-/** Desktop + default layout — flat 5-column grid (unchanged from approved desktop). */
-export function StatusStrip() {
-  return (
-    <>
-      <div
-        className="site00-status-strip site00-status-strip--layout-desktop"
-        role="region"
-        aria-label="System status"
-      >
-        <StatusStripCells />
-        <StatusStripGuidance />
-      </div>
+/** Origin homepage status strip — single layout variant (no duplicate DOM). */
+export function StatusStrip({ layout }: StatusStripProps) {
+  if (layout === 'mobile') {
+    return (
       <div
         className="site00-status-strip site00-status-strip--layout-mobile"
         role="region"
@@ -84,6 +82,17 @@ export function StatusStrip() {
         </div>
         <StatusStripGuidance />
       </div>
-    </>
+    );
+  }
+
+  return (
+    <div
+      className="site00-status-strip site00-status-strip--layout-desktop"
+      role="region"
+      aria-label="System status"
+    >
+      <StatusStripCells />
+      <StatusStripGuidance />
+    </div>
   );
 }

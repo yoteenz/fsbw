@@ -11,12 +11,14 @@ import { SITE00_ORIGIN_DESKTOP_COMPOSITION } from '../config/origin-home-composi
 import { SITE00_ROUTES } from '../config/routes';
 import { Site00OriginLayoutSwitch } from '../components/shell/Site00OriginLayoutSwitch';
 import { useSite00 } from '../state/Site00Context';
+import { useOriginStatusStripLayout } from '../hooks/useOriginStatusStripLayout';
 
 export default function OriginPage() {
   const { state, setHomeMode } = useSite00();
   const { pathname } = useLocation();
   const isDesktopArtboardRoute =
     pathname === SITE00_ROUTES.originDesktop || pathname.startsWith(`${SITE00_ROUTES.originDesktop}/`);
+  const statusStripLayout = useOriginStatusStripLayout(isDesktopArtboardRoute);
 
   return (
     <EnvironmentShell environmentId="ORIGIN_ENVIRONMENT">
@@ -26,7 +28,7 @@ export default function OriginPage() {
         <Site00AppShell
           locationLabel={SITE00_ORIGIN_COPY.locationLabel}
           showStatusStrip
-          statusStrip={<StatusStrip />}
+          statusStrip={<StatusStrip layout={statusStripLayout} />}
         >
           <div
             className="site00-home-stage"
@@ -83,7 +85,7 @@ export default function OriginPage() {
               </section>
             ) : null}
 
-            <OriginMobileSwipeUp />
+            {!isDesktopArtboardRoute ? <OriginMobileSwipeUp /> : null}
           </div>
         </Site00AppShell>
         <Site00OriginLayoutSwitch />
