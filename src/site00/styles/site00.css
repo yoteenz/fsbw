@@ -398,12 +398,31 @@
 }
 
 .site00-bldr-framework-icon,
-.site00-idnty-framework-icon {
+.site00-idnty-framework-icon,
+.site00-evolve-methodology-icon {
   display: block;
   width: var(--site00-origin-framework-icon-size, 32px);
   height: var(--site00-origin-framework-icon-size, 32px);
   margin: 0 auto;
   object-fit: contain;
+}
+
+.site00-evolve-methodology-icon-slot {
+  display: block;
+  width: var(--site00-origin-framework-icon-size, 32px);
+  height: var(--site00-origin-framework-icon-size, 32px);
+  margin: 0 auto;
+  border: 1px dashed rgba(0, 0, 0, 0.14);
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.28);
+  box-sizing: border-box;
+}
+
+.site00-origin-framework-pillar__code {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 10px;
+  letter-spacing: 0.12em;
 }
 
 .site00-build-class-icon {
@@ -457,7 +476,8 @@
 }
 
 /* BLDR expanded panel — pillar detail copy under titles (DIRECTION, STRUCTURE, …). */
-.site00-bldr-framework-pillars .site00-origin-framework-pillar .site00-body {
+.site00-bldr-framework-pillars .site00-origin-framework-pillar .site00-body,
+.site00-evolve-methodology-pillars .site00-origin-framework-pillar .site00-body {
   color: var(--site-text-muted);
 }
 
@@ -467,19 +487,8 @@
   margin: 0 0 16px;
 }
 
-.site00-evolve-path-block {
-  text-align: center;
-}
-
-.site00-evolve-path-block__heading {
-  text-align: center;
-}
-
-.site00-evolve-framework-pillars {
+.site00-evolve-methodology-pillars {
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  justify-items: center;
-  margin-left: auto;
-  margin-right: auto;
 }
 
 /* ─── Responsive safe area ─── */
