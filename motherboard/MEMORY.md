@@ -53042,13 +53042,11 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 ---
 
-## 2026-08-18 — SITE 00 desktop artboard: status strip at composition bottom
+## 2026-08-18 — Origin desktop IDNTY/BLDR panel numbers red (01/02)
 
-- **Context:** Founder reported `/origin/desktop` phone preview pinned status panel to viewport bottom with large gray gap below background image. Request: attach bottom panel to bottom of background/composition, not viewport.
+- **Context:** Founder requested the black **01** and **02** text on Origin identity/builder collapsed panels change to **red** on **desktop design only**; mobile unchanged.
 
-- **Fix:** Removed `createPortal` + `position: fixed` viewport host for desktop artboard preview in `Site00AppShell`. Status strip now in artboard document flow (`site00-status-strip-host--artboard`, flex column on `.site00-origin-page`). `site00-desktop-artboard.css` — shell/env/ui layer fixed to `--site00-desktop-artboard-height` (900px); env layer `absolute` inside artboard (not viewport-fixed); removed `.site00-status-strip-host--viewport` rules. `Site00DesktopArtboardShell` — fixed stage height to artboard min height.
-
-- **Scope:** `/origin/desktop` artboard preview only. Real desktop `/origin` ≥768px keeps viewport-fixed status strip.
+- **Change:** `OriginCards.tsx` — number span uses `site00-origin-card__number` (black default via `site00-text`). `site00.css` `@media (min-width: 768px)` + `site00-desktop-artboard.css` — desktop-only `color: var(--site-red)` on panel numbers. Mobile cards remain hidden via existing `--mobile-layout` rules.
 
 - **Deploy:** Sync-only; say **deploy now** for Vercel.
 
