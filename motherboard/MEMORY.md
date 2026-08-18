@@ -52882,22 +52882,35 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Spatial Architecture Review:** SKIPPED — loader layout bugfix, no new surfaces.
 
+---
+
+## 2026-08-17 — Site 00 loader geometry: FAL transparent alpha + 3× scale
+
+- **Context:** Founder reported black background on loading animation geometry; wanted true transparent background via FAL video background removal, and geometry **3× larger** (height/size).
+
+- **FAL pipeline:** Ran **Bria VRMBG 3.0** (`bria/video/background-removal/v3`) on Kling master `assts-loader-geometry-v1-source.mp4` via `scripts/site00-loader-post-process.ts submit` → poll → approve → lock. Output locked to `public/site00/loader/v1/assts-loader-geometry-v1-alpha.webm` (+ regenerated `assts-loader-geometry-v1-alpha.apng` for iOS Safari @ 12fps 720w).
+
+- **Runtime:** `resolveLoaderGeometryMode()` now defaults to **`alpha`** when production WebM exists (screen blend only via `?loaderGeometry=screen` debug). Boot preload switched to alpha WebM. CSS `.site00-loader-animation--alpha` → `object-fit: contain`, `object-position: center bottom`, normal blend.
+
+- **Composition:** `loader-composition-map.ts` wireframe region scaled **3×** from bottom-center anchor (666×1620 ref px, y=-926 with overflow).
+
+- **Spatial Architecture Review:** SKIPPED — loader media/compositing fix, no new surfaces.
 
 ---
 
-## 2026-08-18 — SITE 00 Origin mobile homepage environment background
+## 2026-08-17 — Site 00 loader hang + distorted geometry (mobile preview)
 
-- **Context:** Founder supplied approved Origin **mobile** environment image (`C63192EC-00BE-46DB-8D3A-952173F6F5D1.png`) for SITE 00 Origin homepage mobile design only; desktop keeps existing `942898D3` asset.
+- **Context:** Founder reported loader **stuck at 10%** and **distorted** black-box geometry on `preview.fsbw-dev.com/origin` (iPhone).
 
-- **Changes:** `environments.ts` — `SITE00_ORIGIN_MOBILE_BACKGROUND_PATH` + `mobileAssetPath` on `ORIGIN_ENVIRONMENT`; `EnvironmentShell.tsx` — resolves mobile asset, sets `--site00-env-mobile-image` + position/scale CSS vars, adds `site00-env-layer--has-mobile-asset`; `site00.css` — production mobile background at `max-width: 767px`, desktop unchanged at `min-width: 768px`. `assets.ts` registry notes updated.
+- **Root cause:** (1) `Site00WorldColdStartGate` preloaded **6MB source MP4** via `canplaythrough` with **no timeout** — mobile Safari never resolved → bootstrap hung at 10%. (2) Geometry slot scaled **3× portrait** (666×1620) but Kling master is **1764×1176 landscape** → tiny/black letterboxed video in tall box. (3) iOS used **28MB APNG** with no error fallback. (4) Static `site00-assts-loader-boot.js` still `<link rel=preload>` the **source MP4**, saturating mobile bandwidth.
 
-- **QA:** `npm run build` PASS. Playwright @ 390×844 `/origin` — computed `background-image` resolves to `C63192EC…png`; @ 1440×900 still `942898D3…png`. Screenshot: `site00_origin_mobile_background.png`.
+- **Fix:** Preload **alpha WebM/APNG** via shared `resolveSite00LoaderGeometryPreloadUrl()` + **8s preload timeouts**. Wireframe region → **666×444** (3× width, landscape aspect, bottom-anchored). `Site00LoaderAnimation` alpha error → screen fallback + 6s ready timeout. iOS APNG re-encoded **480w @ 10fps** (~13MB). Boot JS + `site00LoaderBoot.ts` preload alpha assets (not source MP4). FAL alpha encode is **yuv420p black-matte** (not true alpha) → `.site00-loader-animation--alpha` uses **`mix-blend-mode: screen`** until true alpha ships.
 
-- **Deploy:** Sync-only; say **deploy now** for Vercel.
+- **Spatial Architecture Review:** SKIPPED — loader bootstrap/compositing hotfix.
 
 ---
 
-## 2026-08-18 — SITE package starting price $3.5K
+---
 
 - **Context:** Founder requested SITE build-class starting price move from **$3K** to **$3.5K**.
 
@@ -52958,4 +52971,1273 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Spatial Architecture Review:** SKIPPED — extending existing portal/office surfaces; carrier distribution layer, not new Studio OS departments.
 
 - **QA:** Build PASS; manual QA on `/portal/load-board` — search, 2 results, detail with offer form; screen recording saved.
+## 2026-08-18 — SITE 00 Origin mobile homepage environment background
+
+- **Context:** Founder supplied approved Origin **mobile** environment image (`C63192EC-00BE-46DB-8D3A-952173F6F5D1.png`) for SITE 00 Origin homepage mobile design only; desktop keeps existing `942898D3` asset.
+
+- **Changes:** `environments.ts` — `SITE00_ORIGIN_MOBILE_BACKGROUND_PATH` + `mobileAssetPath` on `ORIGIN_ENVIRONMENT`; `EnvironmentShell.tsx` — resolves mobile asset, sets `--site00-env-mobile-image` + position/scale CSS vars, adds `site00-env-layer--has-mobile-asset`; `site00.css` — production mobile background at `max-width: 767px`, desktop unchanged at `min-width: 768px`. `assets.ts` registry notes updated.
+
+- **QA:** `npm run build` PASS. Playwright @ 390×844 `/origin` — computed `background-image` resolves to `C63192EC…png`; @ 1440×900 still `942898D3…png`. Screenshot: `site00_origin_mobile_background.png`.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — SITE package starting price $3.5K
+
+- **Context:** Founder requested SITE build-class starting price move from **$3K** to **$3.5K**.
+
+- **Changes:** `src/site00/config/builder.ts` — `BLDR_INVESTMENT_TIERS` site tier `priceLabel` → `$3.5K`; `BLDR_HOMEPAGE_EXPANDED` SITE offering `price` → `FROM ~$3.5K`. Surfaces on BLDR state investment guide + Origin homepage BLDR expanded panel.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — SITE 00 Origin mobile status strip horizontal scroll
+
+- **Context:** Founder reported Origin homepage mobile status panels (STATUS, ACTIVE SITES, SYSTEM STATUS, etc.) stacked in two columns consumed too much viewport; requested single horizontal row above guidance bar with scroll (~2.5–3 visible).
+
+- **Changes:** `StatusStrip.tsx` — wrap metric cells in `.site00-status-strip__metrics`; `site00.css` mobile — flex column strip, metrics row `overflow-x: auto` + `scroll-snap`, cell width `calc(100vw / 2.6)` (~2.5 visible), guidance full-width below; desktop grid unchanged via nested metrics grid. `site00-desktop-artboard.css` updated for new structure.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — SITE 00 Origin mobile header: hide logo, center nav
+
+- **Context:** Founder requested Origin homepage **mobile design only** — remove top-left **SITE 00** + **ORIGIN ENVIRONMENT** branding; center gray global nav (SITES, SERVICES, SYSTEM, ABOUT, JOURNAL) at top.
+
+- **Changes:** `Site00AppShell` — `mobileOriginHeader` prop + header BEM slots; `OriginPage` enables it; `site00.css` mobile — hide logo block, center `.site00-global-nav` with muted gray links, keep ENTER 00 top-right absolute; `site00-desktop-artboard.css` restores full 3-column header on `/origin/desktop`.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — SITE 00 Origin mobile swipe-up enter callout
+
+- **Context:** Founder requested Origin homepage **mobile only** — remove hero **YOU ARE AT 00.00 ORIGIN POINT**, **WHERE DO WE BEGIN?**, and IDNTY/BLDR card panels; replace with approved lower-center swipe-up enter callout (YOU ARE AT / 00.00 / ORIGIN POINT / connector / ENTER SITE 00 / SWIPE UP / red arrow).
+
+- **Changes:** `OriginMobileSwipeUp.tsx` + `status.ts` `mobileSwipeUp` copy; `OriginPage` mounts swipe section; `site00.css` mobile hides coordinate + desktop cards/expanded panels, fixed centered swipe block above status strip; `/origin/desktop` artboard restores desktop cards via `site00-desktop-artboard.css`.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — SITE 00 Origin: strict mobile-only scoping (desktop restore)
+
+- **Context:** Founder reported desktop Origin was changing despite explicit mobile-only requests. Root cause: global CSS/DOM changes (status strip metrics wrapper, AppShell header refactor, unscoped mobile rules) affected desktop ≥768px and `/origin/desktop`.
+
+- **Fix:** Reverted `Site00AppShell` to original inline header (removed `mobileOriginHeader` prop). Restored desktop status strip flat `repeat(5, 1fr) auto` grid via dual `StatusStrip` layouts (desktop + mobile strips; mobile strip only on `.site00-origin-page--mobile-layout`). Wrapped Origin in `site00-origin-page` with route class `--mobile-layout` vs `--desktop-artboard`; all mobile CSS scoped to `--mobile-layout` @ `max-width: 767px` only. Desktop + `/origin/desktop` unchanged.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — SITE 00 Origin mobile: hide top-right ENTER 00
+
+- **Context:** Founder requested removal of top-right **ENTER 00** on Origin **mobile design only** — swipe-up callout links to `/enter` navigational directory instead.
+
+- **Changes:** `site00.css` — `.site00-origin-page--mobile-layout` @ `max-width: 767px` hides header entry toggle (`display: none` on third header slot). Desktop `/origin` and `/origin/desktop` unchanged.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — SITE 00 mobile loader emergency composition repair
+
+- **Context:** Founder emergency sprint — mobile loading screen severely degraded on `preview.fsbw-dev.com`: giant black regions, fragmented duplicate environment blocks, oversized animation rectangle detached from platform, document-flow stacking, wrong scaling.
+
+- **Root cause:** (1) Prior letterboxing fix split environment into viewport-level `.site00-immersive-loader__backdrop` **outside** the 711×1536 artboard while geometry/UI stayed inside — two independent scales created stacked marble/black/marble bands. (2) `#0a0a0a` black fallbacks on loader root, backdrop, boot shell, `loadingScreenLock`, `.site00-loader-env`. (3) Width-only scale (`scaleW`) without height constraint. (4) Geometry slot wrongly enlarged to 666×444 (3× width) vs approved **222×540**. (5) Alpha WebM/APNG path (black matte, no true alpha) defaulting over approved source MP4 + screen compositing.
+
+- **Fix:** Restored **ONE STAGE** architecture — `Site00LoaderEnvironment` inside `LoaderRegion background` on shared artboard; removed separate backdrop. Scale = `min(viewportW/711, viewportH/1536)`, centered in safe viewport. Reverted wireframe to **222×540 @ (238,154)**. Default geometry = **screen** mode (approved source MP4, `mix-blend-mode: screen`, `object-fit: contain` in mapped box). All loader/boot/lock backgrounds → `#f5f5f3`. Boot env `background-size: cover`.
+
+- **QA:** Playwright 375/390/430 — no backdrop split, env in artboard, no scroll, geometry ~122×296px @390, screen VIDEO. `validate-assts-loader-composition.mjs` all regions delta 0. Screenshot: `site00_loader_repair_390w.png`. Video: `site00_loader_composition_repair_demo.mp4`.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — Origin desktop hero copy +10px (mobile unchanged)
+
+- **Context:** Founder requested the Origin left hero text block (“WELCOME TO SITE 00…”) move down **10px** on **desktop design only** — do not touch mobile.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — Origin desktop cards: down 60px + 40% smaller panels
+
+- **Context:** Founder requested “WHERE DO WE BEGIN?” + IDNTY/BLDR panels move down **60px** in tandem on **desktop only**, and desktop panels **decreased by 40%**. Mobile unchanged.
+
+- **Change:** `origin-home-composition.ts` — `cardsTopOffsetPx` **20 → 80**; `cardScale` **0.75 → 0.45** (40% reduction from prior desktop scale). Whole `.site00-home-cards` block moves together; scale applies only `@media (min-width: 768px)` / artboard.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — Origin desktop IDNTY/BLDR panel numbers red (01/02)
+
+- **Context:** Founder requested the black **01** and **02** text on Origin identity/builder collapsed panels change to **red** on **desktop design only**; mobile unchanged.
+
+- **Change:** `OriginCards.tsx` — number span uses `site00-origin-card__number` (black default via `site00-text`). `site00.css` `@media (min-width: 768px)` + `site00-desktop-artboard.css` — desktop-only `color: var(--site-red)` on panel numbers. Mobile cards remain hidden via existing `--mobile-layout` rules.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — Origin desktop panel numbers: CSS var override fix (01/02 red)
+
+- **Context:** Founder reported desktop **01/02** on IDNTY/BLDR panels still black — class-based red rules were being overridden (Tailwind `button { color: inherit }` + `.site00-label` conflict inside glass-panel buttons).
+
+- **Fix:** `--site00-origin-card-number-color` token on `.site00-home-stage` — default `var(--site-text)`; set to `var(--site-red)` at `@media (min-width: 768px)`, on `.site00-desktop-artboard`, and on `.site00-origin-page--desktop-artboard`. Collapsed + expanded panel number spans use inline `color: var(--site00-origin-card-number-color, …)` so desktop red wins cascade. Mobile origin unchanged (cards hidden).
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — Origin desktop hero +10px: CSS offset fix (beats token-only override)
+
+- **Context:** Founder reported desktop hero (“WELCOME TO SITE 00…”) **+10px down** still not visible — prior fix only changed `heroTopPx` TS token (16→26) while **`site00.css` fallback stayed `16px`**, so stale bundles / cascade could ignore the nudge.
+
+- **Fix:** Split base vs desktop nudge — `heroTopPx: 16` (base anchor) + new `--site00-origin-hero-offset-y: 10px` set only at `@media (min-width: 768px)`, `.site00-desktop-artboard`, and `.site00-origin-page--desktop-artboard`. Hero `top: calc(var(--site00-origin-hero-top) + var(--site00-origin-hero-offset-y))`. Hero element also binds `--site00-origin-hero-top` inline. Mobile offset stays **0** (hero remains relative + `padding-top: 24px`).
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — SITE 00 Screen 01: Locations Directory (mobile)
+
+- **Context:** Founder sprint — implement production mobile Screen 01 LOCATIONS DIRECTORY reached by swipe up from Screen 00 Origin. Approved background `0E226A0B-7533-433F-A9D0-7DD5109D77AC.png` @ live-preview/site00. Reference composition: 5 stacked directory cards, spine + red node, Martian Mono hierarchy, bottom nav (ORIGIN / LOCATIONS / START BUILD).
+
+- **Route:** `/origin/locations` (`SITE00_ROUTES.locations`). Desktop redirects to `/origin`.
+
+- **Architecture:** `Site00MobileShell` + `MobileEnvironmentBackground` + `Site00MobileHeader` (SITE 00 + hamburger menu) + `LocationsDirectory` (`DirectorySpine`, reusable `DirectoryCard`) + `Site00MobileNav`. Config: `locations-directory.ts`, composition map `locations-composition-map.ts`. Debug: `?compositionDebug=1`.
+
+- **Transition:** `OriginMobileSwipeUp` — swipe-up gesture + SWIPE UP button → navigate to locations with 720ms transition; `prefers-reduced-motion` instant. ENTER SITE 00 tap still → `/enter`.
+
+- **Scope:** Mobile-only `@media (max-width: 767px)`. Desktop SITE 00 unchanged.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — SITE 00 Origin: fix duplicated status panels + remove enlarged 00.00
+
+- **Context:** Founder reported duplicated bottom panels (status + guidance stacked twice) on mobile and desktop artboard Origin; enlarged **00.00** text overlapping composition.
+
+- **Fix:** `StatusStrip` now renders a single layout variant via `layout` prop + `useOriginStatusStripLayout` (no dual desktop/mobile DOM). Removed large `site00-heading-xl` coordinate from `OriginMobileSwipeUp`; swipe block not mounted on `/origin/desktop`. Mobile `/origin` hides full hero block (not just coordinate). CSS backup hide for swipe on `--desktop-artboard`.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+---
+
+## 2026-08-18 — SITE 00 mobile loader critical recovery (architecture rebuild)
+
+- **Context:** Founder sprint — loader regressed to **Broken State A** (narrow centered column, black side bars, animation in black box, wrong position) and **Broken State B** (blank gray/white page). Required full architecture recovery, not symptom patches.
+
+- **Root causes:**
+  - **Narrow column + black bars:** Prior `LoaderCompositionContext` used `scale = min(w/711, h/1536)` with flex-centered artboard scaler — rendered a letterboxed 711×1536 box inside the viewport, exposing `#f5f5f3`/black gutters.
+  - **Blank page:** Boot shell (`html.site00-assts-boot`) hides `#root`; teardown waited on `backgroundReady && geometryReady`. Geometry mount used `opacity: 0` until media ready — if animation failed/slow, user saw empty boot shell or blank route.
+  - **Black media box:** Screen-mode MP4 letterboxing inside geometry bounding box (not asset alpha); `mix-blend-mode: screen` used for browser-compatible transparency.
+  - **LOADER COORDS visible:** `LoaderReferenceMapDebug` toggle rendered without debug flag gate.
+
+- **Architecture rebuild:** ONE full-viewport stage (`100vw × 100dvh`). 711×1536 = normalized % coordinate system only. Layers: `Site00LoaderEnvironment` (always paints) + optional `Site00LoaderAnimation` overlay + `LoaderCopyRegions` UI. Background/UI never render-gated; animation fades in independently; errors fall back without hiding parent.
+
+- **Files:** `LoaderCompositionContext.tsx`, `Site00ImmersiveLoader.tsx`, `Site00LoaderEnvironment.tsx`, `Site00LoaderAnimation.tsx`, `Site00WorldColdStartGate.tsx`, `LoaderReferenceMapDebug.tsx`, `LoaderCopyRegions.tsx`, `site00LoaderHeroStage.ts`, `loaderLifecycleLog.ts` (new), `site00-loader.css`, `scripts/test-site00-loader-recovery.mjs` (new).
+
+- **Dev flags:** `?loaderAnimation=0` disables animation layer; `?loaderMediaDebug=1` outlines wrapper/media + W/H label; `?loaderDebug=1` / `?loaderRefMap=1` for coordinate overlay (hidden by default).
+
+- **Verification:** Playwright recovery script at 375/390/430px — loader fills viewport, env covers stage, UI renders with animation off, no LOADER COORDS; animation-on at 390px shows transparent video bg + ready state. Build passes.
+
+- **Spatial Architecture Review:** SKIPPED — forensic recovery sprint, no new surfaces.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel preview.
+
+---
+
+## 2026-08-18 — Origin desktop IDNTY/BLDR panel icons (approved PNGs)
+
+- **Context:** Founder supplied approved Supabase PNG icons for desktop Origin collapsed panels — **IDNTY** (`A97879A2-FFEA-4BD5-AC0A-74359620A851.png`) and **BLDR** (`0C81A5FC-35AD-4C8B-A292-5BF88E14193E.png`) from `live-preview/site00/`.
+
+- **Change:** Replaced wireframe `GeometricIcon` placeholders in collapsed `OriginCards` with production PNGs via `OriginPanelIcon` + `origin-panel-icons.ts` (`resolveSite00PublicAsset`). Asset registry entries `icon-origin-idnty-panel` / `icon-origin-bldr-panel`. CSS: `.site00-origin-card__icon-wrap` + `.site00-origin-card__icon` (64×64, object-fit contain). Expanded panels still use wireframe icons (not in scope).
+
+- **QA:** Playwright @1440 — `/origin` and `/origin/desktop` each render 2 icons with correct Supabase URLs; images load (natural dimensions ~1235×1274 / 1278×1230).
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — Loader boot handoff + hybrid composition (fix blank page vs letterbox loop)
+
+- **Context:** Founder discovered error loop — removing boot blank page letterboxes animation; keeping boot page preserves correct animation proportions.
+
+- **Root cause:** Recovery sprint removed aspect-preserving artboard scaler (stretching geometry box when viewport aspect ≠ 711:1536) AND tore down boot shell on loader mount (white `#root` flash when boot removed before React painted).
+
+- **Fix (hybrid):** (1) Full-bleed `Site00LoaderEnvironment` **outside** artboard at viewport level. (2) Restore aspect-preserved artboard scaler for geometry + UI overlays only. (3) Boot handoff — keep `#root` hidden until React loader background `onLoad` + double rAF, then fade/remove boot shell (220ms). Never teardown on mount alone.
+
+- **Files:** `LoaderCompositionContext.tsx`, `Site00ImmersiveLoader.tsx`, `Site00LoaderEnvironment.tsx`, `site00LoaderBoot.ts`, `site00-loader.css`, `site00-assts-loader-boot.css`.
+
+- **Verification:** Geometry aspect 222/540 match at 390px; recovery tests pass.
+
+- **Deploy:** Sync-only.
+
+---
+
+## 2026-08-18 — Origin desktop expanded panels: center on plaza (not right column)
+
+- **Context:** Founder reported IDNTY/BLDR expanded panels on Origin desktop opening on the **right side** instead of **center** (fsbw-dev.com desktop preview).
+
+- **Cause:** `expandedLeftPercent: 52` anchored expanded overlay as a right column; collapsed cards were already centered on plaza.
+
+- **Fix:** `.site00-home-expanded-column` → `left: 50%`, `transform: translateX(-50%)`, vertical anchor matches collapsed cards. Removed `expandedLeftPercent` / `expandedTopPx`. Desktop artboard CSS mirrored. Fixed `origin-panel-icons.ts` import path for build.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — Origin desktop cards block +60px (WHERE DO WE BEGIN + IDNTY/BLDR)
+
+- **Context:** Move red **"WHERE DO WE BEGIN?"** prompt and collapsed **IDNTY + BLDR** panels down **60px in tandem**, **desktop only**.
+
+- **Change:** `SITE00_ORIGIN_DESKTOP_COMPOSITION.cardsTopOffsetPx` **80 → 140** (`origin-home-composition.ts`). Prompt + panels share `.site00-home-cards`; desktop CSS `top: calc(… + var(--site00-origin-cards-offset-y))`; mobile unchanged.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — Origin desktop cards block −20px (WHERE DO WE BEGIN + IDNTY/BLDR)
+
+- **Context:** Nudge red **"WHERE DO WE BEGIN?"** + collapsed **IDNTY/BLDR** panels **up 20px in tandem**, desktop only.
+
+- **Change:** `cardsTopOffsetPx` **140 → 120** in `origin-home-composition.ts`.
+
+- **Verification:** Playwright `--site00-origin-cards-offset-y: 120px`; computed `top` 556.7px (−20 vs prior 576.7px) @ 1440×900 `/origin/desktop`.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — Origin desktop IDNTY/BLDR panel icons −25%
+
+- **Context:** Shrink collapsed **IDNTY + BLDR** panel PNG icons by **25%**, desktop only.
+
+- **Change:** `panelIconScale: 0.75` in `origin-home-composition.ts`; wired as `--site00-origin-panel-icon-scale` on `OriginPage`. Desktop `@media (min-width: 768px)` updates `.site00-origin-card__icon-wrap` transform to `scale(calc(var(--site00-origin-panel-icon-scale) / var(--site00-origin-card-scale)))`. Mobile default remains `1`.
+
+- **Verification:** Playwright `/origin/desktop` — both icons **60×60px** rendered (was ~80px); CSS var `0.75`.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — Origin desktop hero description +6px spacing
+
+- **Context:** Add **6px** below the three-line Origin description block (*THIS IS THE ORIGIN ENVIRONMENT… / EVERY SITE… / ONLINE STARTS HERE.*), desktop only.
+
+- **Change:** `.site00-home-hero__coordinate` `margin-top` **6px → 12px** in desktop `@media (min-width: 768px)` + `.site00-desktop-artboard` mirror.
+
+- **Verification:** Playwright gap **ONLINE STARTS HERE.** → coordinate line **12px** (was 6px).
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — Origin desktop BLDR expanded framework PNG icons
+
+- **Context:** Replace wireframe placeholders in **BLDR expanded panel → THE BLDR FRAMEWORK** with approved Supabase PNGs (Direction, Structure, Function, Experience, Scope).
+
+- **Change:** `bldr-framework-icons.ts` (paths under `live-preview/site00/BLDR/`), `BldrFrameworkIcon.tsx`, `BldrExpandedPanel` uses PNGs instead of `GeometricIcon`. CSS `.site00-bldr-framework-icon` 32×32.
+
+- **Assets:** `3BAA4AA4…` (Direction), `02A0815E…` (Structure), `9A58E6FC…` (Function), `95F5DCB3…` (Experience), `748C57FF…` (Scope).
+
+- **Verification:** Playwright `/origin/desktop` expand BLDR — 5 icons load correct URLs @ 32px.
+
+- **Spatial Architecture Review:** SKIPPED — approved asset swap.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — Origin desktop IDNTY expanded framework PNG icons
+
+- **Context:** Replace wireframe placeholders in **IDNTY expanded panel → THE IDENTITY FRAMEWORK** with approved Supabase PNGs (Strategy, Visual, Voice, Values, Experience).
+
+- **Change:** `idnty-framework-icons.ts` (paths under `live-preview/site00/IDNTY/`), `IdntyFrameworkIcon.tsx`, `IdntyExpandedPanel` uses PNGs instead of `GeometricIcon`. CSS `.site00-idnty-framework-icon` shared sizing with BLDR framework icons.
+
+- **Assets:** `E8AC966E…` (Strategy), `BFA612F0…` (Visual), `F37252D9…` (Voice), `1FE1C0A1…` (Values), `B7ACDA18…` (Experience).
+
+- **Verification:** Playwright `/origin/desktop` expand IDNTY — 5 icons load correct URLs @ 32px.
+
+- **Spatial Architecture Review:** SKIPPED — approved asset swap.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — BLDR state page build class PNG icons (desktop)
+
+- **Context:** Replace wireframe icons on **`/bldr/state`** build class cards (Site, World, Enterprise, Not Sure?) with approved Supabase PNGs — **desktop only**; mobile keeps `GeometricIcon`.
+
+- **Change:** `bldr-build-class-icons.ts`, `BldrBuildClassIcon.tsx`, `BuildClassCard` dual icon slot (PNG @ ≥768px, wireframe below). CSS `.site00-bldr-build-class-icon` 64×64.
+
+- **Assets:** `33910244…` (Site), `D5F4496A…` (World), `5144412A…` (Enterprise), `CA16B9A4…` (Not Sure).
+
+- **Verification:** Playwright `/bldr/state` — 4 PNGs @ 64px desktop; mobile PNG hidden, wireframe visible.
+
+- **Spatial Architecture Review:** SKIPPED — approved asset swap.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — BLDR state desktop artboard + remove duplicate build class icons
+
+- **Context:** On mobile with **Desktop** selected, `/bldr/state` bounced to mobile BLDR entry; build class cards showed **duplicate** wireframe + PNG icons.
+
+- **Routing fix:** Added **`/bldr/state/desktop`** with `Site00DesktopArtboardShell` (mirrors `/origin/desktop`). `BEGIN BLDR` from `/origin/desktop` → `bldrStateDesktop`. Extended layout switch for BLDR preview (Mobile → `/bldr`, Desktop → `/bldr/state/desktop`). Mobile nav START BUILD keeps `/bldr/state` or `/bldr/state/desktop` when already on workflow routes.
+
+- **Icons fix:** Removed `GeometricIcon` wireframes from `BuildClassCard` — PNG only via `BldrBuildClassIcon`.
+
+- **Verification:** Playwright — `/bldr/state/desktop` @ 390px artboard, 4 PNGs / 0 wireframes; origin desktop BEGIN BLDR lands on `/bldr/state/desktop`.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — Origin mobile swipe-up: callout area + directory navigation fix
+
+- **Context:** Founder reported mobile Origin **swipe up** does not work and does not navigate to the **Locations Directory** (`/origin/locations`).
+
+- **Root causes:** (1) Prior fix added full-screen `.site00-origin-swipe-surface` but excluded bottom callout zone (`bottom: 168px`) where users naturally swipe on **SWIPE UP** copy; (2) callout section had `data-swipe-ignore` blocking all touch/pointer swipe detection in that region.
+
+- **Fix:** Removed `data-swipe-ignore` from `OriginMobileSwipeUp`; spread `swipeHandlers` onto callout `<section>` (buttons/links still excluded via `isInteractiveSwipeTarget`); extended swipe surface to `bottom: 88px` (above status strip); `touch-action: manipulation` on ENTER/SWIPE UP controls.
+
+- **Files:** `OriginMobileSwipeUp.tsx`, `site00.css` (+ prior `useSwipeUp.ts`, `useOriginLocationsTransition.ts`, `OriginPage.tsx`).
+
+- **Verification:** Playwright mobile 390×844 — SWIPE UP button tap → `/origin/locations`; swipe gesture starting on callout eyebrow text → locations with 5 directory cards. Manual browser: button tap confirmed.
+
+- **Deploy:** Sync-only on `master`; production still needs founder **deploy now** for Vercel rebuild.
+
+---
+
+## 2026-08-18 — Origin desktop coordinate margin-top regression fix (6px)
+
+- **Context:** Founder asked why **+6px above** “YOU ARE AT 00.00 ORIGIN POINT” (`.site00-home-hero__coordinate { margin-top: 6px }`) was not implemented on desktop.
+
+- **Cause:** `42dedcfa9` correctly set **6px**; **`ffe8f0fae`** (“spacing below hero description paragraph”) mistakenly changed coordinate `margin-top` **6px → 12px** instead of adjusting description line spacing.
+
+- **Fix:** Restored **6px** in `site00.css` (`@media min-width: 768px`) and `site00-desktop-artboard.css`.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — Origin desktop coordinate margin-top regression fix (6px)
+
+- **Context:** Founder asked why **+6px above** “YOU ARE AT 00.00 ORIGIN POINT” (`.site00-home-hero__coordinate { margin-top: 6px }`) was not implemented on desktop.
+
+- **Cause:** `42dedcfa9` correctly set **6px**; **`ffe8f0fae`** (“spacing below hero description paragraph”) mistakenly changed coordinate `margin-top` **6px → 12px** instead of adjusting description line spacing.
+
+- **Fix:** Restored **6px** in `site00.css` (`@media min-width: 768px`) and `site00-desktop-artboard.css`.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — Origin expanded panels: framework pillars single row
+
+- **Context:** Founder reported IDNTY/BLDR expanded panel **framework sections** wrapping the 5th pillar to a second row on Origin desktop.
+
+- **Cause:** Inline grid used `repeat(auto-fit, minmax(120px, 1fr))` — at ~664px content width, only 4 columns fit before wrap.
+
+- **Fix:** Shared `.site00-origin-framework-pillars` → `grid-template-columns: repeat(5, minmax(0, 1fr))` in `site00.css`; applied in `IdntyExpandedPanel.tsx` + `BldrExpandedPanel.tsx`.
+
+- **Verification:** Playwright `/origin/desktop` — 5 pillars, `rowCount: 1` on both IDNTY and BLDR expanded panels.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — BLDR expanded panel: remove brochures from SITE copy
+
+- **Context:** Founder requested remove **brochures** from SITE offering paragraph on Origin BLDR expanded panel.
+
+- **Change:** `BLDR_HOMEPAGE_EXPANDED.offerings[0].description` in `builder.ts` — dropped “, brochures” from list.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — Origin expanded panels: gray rule above framework heading
+
+- **Context:** Founder requested gray border line above **THE BLDR FRAMEWORK** / **THE IDENTITY FRAMEWORK** on Origin expanded panels.
+
+- **Change:** `.site00-origin-framework-heading` — `border-top: 1px solid var(--site-border)` + `padding-top: 24px`; applied in `BldrExpandedPanel.tsx` + `IdntyExpandedPanel.tsx`.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — Origin desktop expanded panels −30% scale
+
+- **Context:** Founder requested expanded **IDNTY/BLDR** panels on Origin desktop homepage **30% smaller**.
+
+- **Change:** `expandedPanelScale: 0.7` in `origin-home-composition.ts`; `--site00-origin-expanded-panel-scale` on `OriginPage`; `.site00-home-expanded-column` → `transform: translateX(-50%) scale(0.7)` + `transform-origin: center top` (desktop + artboard CSS).
+
+- **Verification:** Playwright `/origin/desktop` expanded IDNTY — panel visual width ~476px (70% of ~680px column), transform matrix 0.7.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — Origin desktop expanded panel: click outside to collapse
+
+- **Context:** Founder requested clicking/tapping **outside** the desktop expanded IDNTY/BLDR panel collapses it back to collapsed cards.
+
+- **Change:** `useOriginExpandedDismiss` hook — on desktop (`min-width: 768px`), `pointerdown` on document outside `.site00-home-expanded-column` calls `setHomeMode('origin')`. Wired in `OriginPage.tsx`.
+
+- **Verification:** Playwright `/origin/desktop` — expand IDNTY, click hero → cards return; expand BLDR, click status strip → collapsed.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — Origin expanded panels: framework icons +20%
+
+- **Context:** Founder requested **20% larger** framework pillar icons on IDNTY/BLDR expanded panels (desktop Origin).
+
+- **Change:** `frameworkIconSizePx: 38.4` (32 × 1.2) in `origin-home-composition.ts`; `--site00-origin-framework-icon-size` on home stage; CSS + `BldrFrameworkIcon` / `IdntyFrameworkIcon` width/height updated.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — BLDR framework pillar detail text → gray (desktop Origin)
+
+- **Context:** Founder requested **gray** (not black) for detailed copy under pillar titles (DIRECTION, STRUCTURE, FUNCTION, …) in **BLDR framework section only** on Origin desktop expanded panel.
+
+- **Change:** `.site00-bldr-framework-pillars` modifier on BLDR pillars grid; `.site00-body` descriptions → `color: var(--site-text-muted)`. Titles (`.site00-micro`) stay black. IDNTY unchanged.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — Origin desktop expanded panels +25% scale, H+V centered
+
+- **Context:** Founder requested expanded IDNTY/BLDR panels **25% larger** on desktop Origin, **centered horizontally and vertically**.
+
+- **Change:** `expandedPanelScale` **0.7 → 0.875**; `.site00-home-expanded-column` → `left/top: 50%`, `transform: translate(-50%, -50%) scale(...)`; moved expanded column to direct child of `.site00-home-stage` (not inside grid) so centering anchors to full stage.
+
+- **Verification:** Playwright `/origin/desktop` — scale 0.875, panel center delta 0px vs stage center on X and Y.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — IDNTY/BLDR state pages: heavier subhead font weight
+
+- **Context:** Founder requested increased font weight for black subhead copy under red headlines on **BLDR** (`CHOOSE THE TYPE OF DIGITAL PLACE YOU NEED.`) and **IDNTY** (`CHOOSE THE STATE THAT BEST DESCRIBES YOUR FOUNDATION.`) state pages.
+
+- **Change:** `.site00-state-page__subhead` → `font-weight: var(--site00-weight-heading)` (700, was body 500); applied on `BldrStatePage.tsx` + `IdntyStatePage.tsx`.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — Origin expanded panels: fix vertical centering + bottom clip
+
+- **Context:** Founder reported expanded IDNTY/BLDR panels on `/origin/desktop` **not centered** — positioned near bottom with **half clipped** (preview screenshot).
+
+- **Cause:** `top: 50%` + `translate(-50%, -50%)` failed when artboard `.site00-home-stage` collapsed or had wrong height; `.site00-shell { overflow: hidden }` clipped overflow.
+
+- **Fix:** Flexbox centering when expanded (`:has(.site00-home-expanded-column)`); artboard home-stage `position: absolute; inset: 0`; expanded column `position: relative` + `scale()` only; shell `overflow: visible` + artboard shell scroll when expanded; `padding-bottom: 0` on expanded stage.
+
+- **Verification:** Playwright `/origin/desktop` 1440×900 — panel center delta **<1px** vs stage center; no bottom viewport clip.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+---
+
+## 2026-08-18 — BLDR mobile icon parity with desktop (build class PNGs)
+
+- **Context:** Founder requested mobile SITE 00 icons match desktop **where necessary**. Prior BLDR state work shipped production PNGs for build class cards on desktop only (wireframe fallback on mobile); a follow-up commit removed duplicate wireframe+PNG on cards but left investment guide without icons and outdated asset registry entries.
+
+- **Changes:** `InvestmentColumn` accepts optional `buildClassId` → renders `BldrBuildClassIcon` at 32px (`.site00-bldr-build-class-icon--sm`). `BldrStatePage` passes `tier.buildClassId` for all four BLDR investment tiers. `BldrBuildClassIcon` + `bldr-build-class-icons.ts` comments updated (all viewports, not desktop-only). Asset registry BLDR build class objects → `production` with Supabase paths. IDNTY brand-state cards still use wireframe `GeometricIcon` (no approved PNG assets).
+
+- **Verification:** `npm run build` PASS. Playwright `/bldr/state` @ 390px + 1440px — 4 card PNGs + 4 investment PNGs, 0 wireframes on both.
+
+- **Spatial Architecture Review:** SKIPPED — approved asset parity, no new surfaces.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — IDNTY state page brand state PNG icons (desktop + mobile)
+
+- **Context:** Founder supplied four approved Supabase PNGs for IDNTY brand state cards on **`/idnty/state`** (Starting at Zero, Some Pieces Exist, Ready for Evolution, Build Ready) and requested wireframe replacement on desktop and mobile.
+
+- **Changes:** `idnty-brand-state-icons.ts`, `IdntyBrandStateIcon.tsx`. `StateCard` uses PNG via brand state id. `InvestmentColumn` accepts `brandStateId`; `IdntyStatePage` investment tiers wired to same icons (32px sm variant). Asset registry IDNTY state objects → `production`. CSS `.site00-idnty-brand-state-icon` 64×64 + `--sm` 32×32.
+
+- **Assets:** `D4E43816…` (00), `D95E546E…` (01), `D6A87CF3…` (02), `275DBF51…` (03) under `live-preview/site00/IDNTY/`.
+
+- **Verification:** `npm run build` PASS. Playwright `/idnty/state` @ 390px + 1440px — 4 card PNGs + 4 investment PNGs, 0 wireframes; correct filenames on all eight images.
+
+- **Spatial Architecture Review:** SKIPPED — approved asset swap.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — IDNTY state desktop artboard route (`/idnty/state/desktop`)
+
+- **Context:** Founder reported designated identity page **`/idnty/state`** still routed to mobile when Desktop preview selected (no artboard route like BLDR).
+
+- **Changes:** Added **`/idnty/state/desktop`** with `Site00DesktopArtboardShell` (mirrors `/bldr/state/desktop`). `Site00OriginLayoutSwitch` IDNTY preview toggle (Mobile → `/idnty/state`, Desktop → `/idnty/state/desktop`). `BEGIN IDENTITY` from `/origin/desktop` → `idntyStateDesktop`. Loader/boot gate skip for desktop artboard path. `IdntyStatePage` includes layout switch.
+
+- **Verification:** Playwright @ 390px — `/idnty/state/desktop` shows artboard shell + layout switch Desktop active; BEGIN IDENTITY from `/origin/desktop` lands on `/idnty/state/desktop`.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — SITE 00 mobile directory / hamburger IA finalization
+
+- **Context:** Founder sprint — finalize mobile hamburger directory architecture (approved drawer visuals unchanged). Remove redundant ORIGIN/LOCATIONS/SITES from drawer; add IDNTY + CTRL ROOM; keep BLDR / START BUILD as intentional secondary entry; bottom nav unchanged.
+
+- **Changes:** New `mobile-directory-nav.ts` (mobile-only IA). `Site00MobileMenuDrawer` restructured: primary group SERVICES → SYSTEM → ABOUT → JOURNAL → IDNTY → BLDR / START BUILD; utility group CTRL ROOM (border-top separation, LOG IN → / ENTER → sublabel). CTRL ROOM → `/account` when signed in, `signInHrefWithReturnTo(/account)` when logged out. Focus trap + return focus to hamburger on close. Desktop `GlobalNav` + `SITE00_GLOBAL_NAV` untouched.
+
+- **Verification:** Playwright @ 390px `/origin/locations` — drawer lists 6 primary links (no ORIGIN/LOCATIONS/SITES); IDNTY → `/idnty/state`; CTRL ROOM + LOG IN → → `/sign-in?returnTo=%2Faccount`; bottom nav still ORIGIN / LOCATIONS / BUILD.
+
+- **Spatial Architecture Review:** SKIPPED — mobile IA cleanup, no visual redesign.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — Origin desktop coordinate spacing + mobile welcome restore
+
+- **Context:** Founder requested **6px spacing above** the black “YOU ARE AT 00.00 ORIGIN POINT” coordinate line on **desktop**; restore **WELCOME TO** welcome paragraph on **top-right of mobile** (removed when full hero was hidden in duplicated-status fix).
+
+- **Changes:** `site00.css` — desktop `.site00-home-hero__line + .site00-home-hero__coordinate { margin-top: 6px }` (adjacent-sibling selector; avoids `:last-of-type` mismatch because coordinate is last `<p>`); mobile `--mobile-layout` shows `.site00-home-hero` fixed top-right (`text-align: right`) with eyebrow/title/tagline only — hides description lines + coordinate. `site00-desktop-artboard.css` — same 6px adjacent-sibling rule for artboard route.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — Origin desktop coordinate gap: padding-top fix (overwrite)
+
+- **Context:** Founder reported **6px above** “YOU ARE AT 00.00 ORIGIN POINT” still not visible on desktop — margin-top rule appeared in CSS but had no effect (margin collapse + broken `:last-of-type` on lines because coordinate is the last `<p>`).
+
+- **Fix:** `coordinateGapPx: 6` in `origin-home-composition.ts`; `--site00-origin-coordinate-gap` on `OriginPage` stage. Desktop + artboard use **`padding-top: var(--site00-origin-coordinate-gap, 6px)`** on `.site00-home-hero__coordinate` (not margin-top); last description line `.site00-home-hero__line:nth-last-child(2) { margin-bottom: 0 }`. Removed dead `.site00-home-hero__line:last-of-type { margin-bottom: 32px }` (never matched).
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — Origin desktop IDNTY/BLDR panel icons −30% (explicit px)
+
+- **Context:** Founder requested collapsed **IDNTY + BLDR** red wireframe PNG icons **30% smaller** on desktop Origin homepage; prior `panelIconScale: 0.75` transform was skipped on `/origin/desktop` phone preview (<768px viewport) because rule lived only in `@media (min-width: 768px)`.
+
+- **Fix:** `panelIconSizePx: 42` (80px base × 0.75 × 0.7) in `origin-home-composition.ts`; `--site00-origin-panel-icon-size-px` on stage. Desktop `@media (min-width: 768px)` + `.site00-desktop-artboard` set explicit `width`/`height` on `.site00-origin-card__icon`; icon-wrap only counters card row scale (`1 / cardScale`). Mobile collapsed cards unchanged (hidden on `/origin` mobile layout anyway).
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — Mobile menu CTRL ROOM login sublabel red
+
+- **Context:** Founder requested gray **LOG IN →** / **ENTER →** sublabel on mobile hamburger CTRL ROOM row changed to red.
+
+- **Change:** `.site00-mobile-menu__ctrl-room-state` → `color: var(--site-red)` in `site00-locations.css`.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — Origin coordinate 6px gap: culprit + inline margin fix
+
+- **Context:** Founder reported **6px above** “YOU ARE AT 00.00 ORIGIN POINT” still not visible despite repeated CSS changes (blue arrow gap on desktop hero).
+
+- **Culprits:** (1) Base `.site00-home-hero__coordinate { margin-top: 0; padding-top: 0 }` always reset stylesheet spacing. (2) **`padding-top: 6px`** added space *inside* the coordinate `<p>` only — **box gap stayed 0px** (blocks touching), so visually looked unchanged. (3) Broken `:last-of-type` / `:nth-last-child(2)` selectors unreliable. (4) All fixes pushed **`[sync-only]`** — **`scripts/vercel-should-build.sh` skips Vercel** when commit message contains `[sync-only]`, so **production/preview on Vercel never rebuilt**.
+
+- **Fix:** `marginTop: coordinateGapPx` **inline** on coordinate `<p>` in `OriginPage.tsx` (wins over CSS resets). `site00-home-hero__line--before-coordinate` class on last description line with `margin-bottom: 0`. Removed padding-top coordinate rules from desktop + artboard CSS.
+
+- **Verification:** Playwright `/origin/desktop` — `computedMarginTop: 6px`, **boxGap: 6px** (was 0 with padding-only approach).
+
+- **Deploy:** Founder must say **deploy now** (`--deploy-now`) for Vercel production to pick up any Origin CSS/TSX change.
+
+---
+
+## 2026-08-18 — Origin coordinate 6px: preview cache + CSS-variable fix
+
+- **Context:** Founder repeated “nothing changed… still” on **`preview.fsbw-dev.com/origin/desktop`** for 6px gap above “YOU ARE AT 00.00 ORIGIN POINT” despite inline `marginTop` fix in repo.
+
+- **Root cause:** (1) **Cloudflare Tunnel cached Vite module URLs** (`max-age=14400`) — preview served **stale `site00-desktop-artboard.css`** with old `padding-top: 6px` (box gap **0px**, visually unchanged) while local Vite had new rules. (2) Inline React margin alone did not help when cached JS/CSS bundles lagged. (3) **`padding-top` ≠ margin gap** between blocks.
+
+- **Fix:** Coordinate gap now **`margin-top: var(--site00-origin-coordinate-gap, 6px)`** on `.site00-home-hero__coordinate` in `site00.css` (base + desktop `@media`) and `.site00-desktop-artboard` in `site00-desktop-artboard.css`; default `--site00-origin-coordinate-gap: 6px` on `.site00-home-stage`. Removed inline margin from `OriginPage.tsx`. **`vite.config.ts`** — `cloudPreviewNoCachePlugin` sends `Cache-Control: no-store` when `FSBW_CLOUD_MOBILE_PREVIEW=1`. **Cache-bust** artboard import `?v=20260818-coord-gap` in `Site00Routes.tsx` + `Site00DesktopArtboardShell.tsx`. Restarted Vite + named tunnel on cloud agent.
+
+- **Verification:** Playwright local + preview — `marginTop: 6px`, **boxGap: 6.00px** (preview was `0px` before fix).
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel production.
+
+---
+
+## 2026-08-18 — Origin desktop IDNTY/BLDR icons +5% size, +6px down
+
+- **Context:** Founder refined collapsed IDNTY/BLDR panel icons on desktop Origin after prior 10px down nudge at 42px.
+
+- **Change:** `origin-home-composition.ts` — `panelIconSizePx` **42 → 44.1** (+5%); `panelIconOffsetYPx` **10 → 16** (+6px down). CSS vars on stage unchanged pattern (`--site00-origin-panel-icon-size-px`, `--site00-origin-panel-icon-offset-y`); desktop + artboard rules already consume them.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — Origin coordinate line: translateY 6px (not margin gap)
+
+- **Context:** Founder asked to stop margin/gap above “YOU ARE AT 00.00 ORIGIN POINT” (not working on preview) and **manually move the line down 6px**.
+
+- **Change:** Replaced `coordinateGapPx` with `coordinateOffsetYPx: 6`. Coordinate `<p>` gets **inline `transform: translateY(6px)`** + desktop/artboard CSS `translateY(var(--site00-origin-coordinate-offset-y))`. Removed margin-top gap rules and `--before-coordinate` class.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — Origin desktop parity: artboard shell on all wide viewports
+
+- **Context:** Founder reported desktop Origin looked different on laptop vs mobile-browser “desktop” view — IDNTY/BLDR panel icons higher on laptop, correct on phone at `/origin/desktop`. Wanted one responsive composition with no misalignment across resolutions.
+
+- **Root cause:** **Two desktop render paths.** `/origin/desktop` used fixed **1440×900 artboard** (`Site00DesktopArtboardShell` + `site00-desktop-artboard.css`). Laptop `/origin` at ≥768px used fluid **`@media (min-width: 768px)`** rules (`38vw`, `100dvh`, `clamp()` typography) — same composition tokens but layout drifted with viewport.
+
+- **Fix:** New **`Site00OriginRouteShell`** — wraps `/origin` (and site00 root) with artboard when viewport **≥768px**; `/origin/desktop` keeps **`forceArtboard`**. **`OriginPage`** uses **`useSite00DesktopArtboardPreview()`** (context) instead of pathname-only for desktop vs mobile layout class, status strip, swipe callout.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — Origin coordinate line: dedicated slot container + 6px down
+
+- **Context:** Founder asked to decouple “YOU ARE AT 00.00 ORIGIN POINT” from the description copy above — own container, then nudge down 6px (margin/gap on the `<p>` and translateY were not giving reliable visual separation).
+
+- **Change:** Wrapped coordinate in **`.site00-home-hero__coordinate-slot`** (`OriginPage.tsx`). Desktop + artboard CSS apply **`margin-top: var(--site00-origin-coordinate-offset-y, 6px)`** on the slot; inner `<p>` has no offset. Removed inline `translateY` on coordinate. Mobile layout hides the slot.
+
+- **Verification:** Playwright `/origin/desktop` — `slotMarginTop: 6px`, line-to-slot gap **6.00px**.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — Origin desktop: single CSS source (artboard = native desktop)
+
+- **Context:** Founder wanted artboard and “native desktop” in sync — one true design translation; edits should not diverge between laptop `/origin` and mobile `/origin/desktop`.
+
+- **Root cause:** Duplicate layout paths — `@media (min-width: 768px)` rules in `site00.css` (fluid `38vw`, `100dvh`) **and** `.site00-desktop-artboard` rules in `site00-desktop-artboard.css`. Same tokens, two stylesheets.
+
+- **Fix:** Removed entire Origin desktop `@media` block from `site00.css`. **`site00-desktop-artboard.css` is now the single source of truth** for desktop Origin (documented in file header + `origin-home-composition.ts`). Wide `/origin` already uses `Site00OriginRouteShell` → artboard shell. Removed redundant `.site00-origin-page--desktop-artboard` stage mirror. Stable artboard CSS import (no cache-bust query).
+
+- **Verification:** Playwright @ 1920×1080 — `/origin` and `/origin/desktop` identical (`heroWidth: 360px`, `iconRatio: 0.413`).
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — SITE 00 Sign In + CTRL ROOM (desktop + mobile)
+
+- **Context:** Composer sprint — implement approved master design for SITE 00 **SIGN IN** and **CTRL ROOM** (desktop split-screen auth, mobile single-column auth, desktop/mobile account command center). Production backgrounds: `C948EBEF-45AC-476C-AD91-735CE2026157.png` (sign-in left panel), `D8D7E6B9-2CAD-4C63-BD82-F77E810851A2.png` (CTRL ROOM environment). Terminology: SIGN IN, CTRL ROOM, IDNTY, BLDR — not Dashboard/Identity/Builder.
+
+- **Routes:** `/origin/sign-in` (SITE 00 auth shell); `/control` + `/control/sites|domains|billing|team|settings|security` (overview + section placeholders). `SITE00_CTRL_ROOM_PATH` → `/control`. Mobile drawer CTRL ROOM links to `/control` signed-in or `/origin/sign-in?returnTo=%2Fcontrol` signed-out.
+
+- **Auth:** Reuses Supabase session pipeline (`site00SignInActions.ts`) — password, magic link OTP, password reset. `Site00AccountRouteGuard` redirects unsigned users to SITE 00 sign-in. Create account links to existing `/sign-in?returnTo=…`. Orbital graphic reuses loader geometry (`Site00OrbitalMark`).
+
+- **CTRL ROOM data:** Real user from `currentUser`; membership plan when available; local activity backup for Recent Activity; empty states for sites/domains/billing (no fake demo counts).
+
+- **Loader skip:** Sign-in + `/control/*` skip immersive cold-start gate; `/origin/sign-in` in boot gate skip list.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — Origin desktop expanded panel outside-click dismiss
+
+- **Context:** Founder requested IDNTY/BLDR expanded panels on Origin desktop collapse when tapping outside the panel (not only BACK).
+
+- **Fix:** Transparent full-stage `.site00-home-expanded-backdrop` on desktop artboard; dismiss hit target tightened to `.site00-glass-panel` (not whole column padding); `useOriginExpandedDismiss` enabled for all desktop artboard routes (including `/origin/desktop` on narrow viewports), not only `min-width: 768px`. Column uses `pointer-events: none` so backdrop receives outside clicks.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — IDNTY investment section: remove duplicated brand-state icons
+
+- **Context:** Founder asked to remove the row of icons from the identity investment section only — icons were duplicated with no reason (same brand-state icons already appear in the StateCard row above).
+
+- **Root cause:** `IdntyStatePage` passed `brandStateId={tier.stateId}` into each `InvestmentColumn`, which rendered `IdntyBrandStateIcon` again per tier. BLDR investment columns use `buildClassId` separately and were left unchanged.
+
+- **Fix:** Removed `brandStateId` prop from IDNTY `InvestmentColumn` usage in `IdntyStatePage.tsx`. Removed unused `stateId` field from `InvestmentTier` type and tier data in `identity.ts`.
+
+- **Verification:** Playwright `/idnty/state` — investment panel has **0** brand-state icons; state cards row retains icons.
+
+- **Deploy:** Sync-only commit `b06517013`; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — ENTER directory panel: fit viewport + internal scroll
+
+- **Context:** Founder reported `/enter` directory panel too tall/wide — page scrolled when welcome copy should stay static; panel contents should scroll inside a smaller frame that fits desktop viewport.
+
+- **Fix:**
+  - **`site00-enter-page`** on `EnterPage` — desktop `100dvh` shell with `overflow: hidden`; main flex-centers layout without document scroll.
+  - **`DirectoryPanel`** — moved inline layout to CSS; added **`.site00-enter-menu__scroll`** inner wrapper with `overflow-y: auto` + thin scrollbar.
+  - **Desktop sizing:** grid max-width **640px** (was 900); menu column **220–268px** (was 280–380); menu **max-height** `calc(100dvh - header - status strip - padding)`; slightly tighter row padding inside panel only.
+  - **`EnterStatusStrip`** — class-based styles (`.site00-enter-status-strip`).
+
+- **Verification:** Build OK; Playwright/computer-use @ 1440×900 — no page scroll, compact panel fits; @ 1280×720 — `window.scrollY` stays 0; wheel over panel scrolls interior only (YOUR SPACE section), welcome text fixed.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+
+- **Context:** Founder reported laptop `/origin` still does not match phone `/origin/desktop` (correct reference). Prior artboard shell on wide viewports was in repo but all parity commits were `[sync-only]` (Vercel preview may lag). Needed belt-and-suspenders so laptop always hits the same route/shell as phone desktop preview.
+
+- **Root cause:** Two entry URLs (`/origin` vs `/origin/desktop`) on wide viewports; stale deploys could leave `/origin` on old fluid `@media` CSS while `/origin/desktop` used `forceArtboard`. Environment layer also used inline `position: fixed`, fighting artboard scale on some viewports.
+
+- **Fix:**
+  - **`Site00OriginWideDesktopRedirect`** — wide viewports visiting `/origin` → **`/origin/desktop`** (replace). QA mobile layout on desktop: **`?site00MobileLayout=1`** (layout switch Mobile link adds this).
+  - **`Site00OriginRouteShell`** — `useSyncExternalStore` for reliable ≥768px breakpoint (no stale `useState`).
+  - **`EnvironmentShell`** — `position: absolute` when inside artboard context (not fixed).
+  - **`site00-desktop-artboard.css`** — artboard env layer always uses desktop asset/scale (overrides viewport `@media` mobile env on phone `/origin/desktop`).
+
+- **Verification:** Playwright @ 1920×1080 — `/origin` redirects to `/origin/desktop`; identical hero position (`absolute`, offset `10px`, norm left `133px`), artboard + env `absolute`.
+
+- **Deploy:** Sync-only; say **deploy now** for production/preview Vercel host.
+
+---
+
+## 2026-08-18 — BLDR investment guide: remove duplicated build-class icons
+
+- **Context:** Founder asked to remove duplicate icons from the builder investment guide section — same pattern as IDNTY investment tiers (icons already shown in build-class cards above).
+
+- **Fix:** Removed `buildClassId` from `InvestmentColumn` on `BldrStatePage.tsx`. Removed unused `buildClassId` from `BldrInvestmentTier` type and tier data in `builder.ts`. Build-class row icons unchanged.
+
+- **Verification:** Playwright `/bldr/state` — investment panel **0** build-class icons; build-class cards retain **4** icons.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — SITE 00 Composer route sprint: public + authenticated route family (12 routes)
+
+- **Context:** Founder sprint to implement complete SITE 00 route family from six approved storyboards — desktop + mobile, using approved Supabase background assets (`C948EBEF…` desktop, `D8D7E6B9…` mobile). Covers SITES (public portfolio + authenticated management), SERVICES, SYSTEM, ABOUT, JOURNAL, PROJECTS, SUPPORT, IDNTY hub, SIGN IN & SECURITY, BLDR hub, TEMPLATES.
+
+- **Architecture:**
+  - **`Site00PublicShell`** — desktop left rail + top nav + `Site00PageEnvironment` (approved bg assets); mobile uses `Site00MobileShell` + same env.
+  - **`Site00PagePrimitives`** — BracketHeading, MetricCard, HubActionCard, FilterTabs, EmptyState, etc.
+  - **`site00-page-seed.ts`** — isolated mock/empty seed (portfolio, journal, templates empty; system shows unavailable not fake uptime).
+  - Public hub routes skip immersive loader (`isSite00PublicHubPath` in `site00LoaderPaths.ts`).
+  - **Auth-aware SITES:** `/sites` = public portfolio; signed-in users redirect to `/control/sites`; sidebar/top nav SITES link → `/control/sites` when signed in.
+  - **Protected:** `/projects`, `/control/sites` via `Site00AccountRouteGuard` + `CtrlRoomShell`.
+  - IDNTY workflow remains `/idnty/state`; hub at `/idnty`. BLDR workflow `/bldr/state`; hub at `/bldr`; templates `/bldr/templates`.
+
+- **Routes added/updated:** `/sites`, `/services`, `/system`, `/about`, `/journal`, `/support`, `/projects`, `/idnty`, `/idnty/sign-in-security`, `/bldr`, `/bldr/templates`, `/bldr/start`, `/control/sites` (ControlSitesPage replaces placeholder).
+
+- **Verification:** `npm run build` green; curl 200 on all routes; visual QA desktop (services, system, about, journal, support, idnty, sign-in-security, bldr, templates) + mobile services — bracket headings, shell, backgrounds, no horizontal overflow.
+
+- **TODOs (intentional):** Portfolio/journal/templates seed empty until CMS/API; SYSTEM health adapter not connected; some IDNTY modules link to `/control/settings` placeholders.
+
+- **Deploy:** Sync-only commit `203bb4955`; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — Public route pages: remove mobile background image (desktop only)
+
+- **Context:** Founder correction — mobile storyboards for the new SITE 00 public routes (services, system, about, journal, support, idnty, bldr, sites portfolio, etc.) do **not** use a background image; desktop does.
+
+- **Fix:** `Site00PageEnvironment` + `site00-pages.css` — mobile uses solid `#f4f4f2` only; desktop `@media (min-width: 1024px)` keeps approved architectural asset. Removed mobile bg from `.site00-public-mobile-shell`. Dropped unused `SITE00_PAGE_MOBILE_BG_FILE` export.
+
+- **Unchanged:** CTRL ROOM / Projects mobile (already solid); Origin and other immersive routes unaffected.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — Origin desktop IDNTY/BLDR panels: +20px gap, +10% icons
+
+- **Context:** Founder — collapsed IDNTY/BLDR panels on Origin desktop too close; icons too small.
+
+- **Fix:** `origin-home-composition.ts` — `cardsRowGapPx` 16→36 (+20); `panelIconSizePx` 44.1→48.51 (+10%). Wired `--site00-origin-cards-row-gap` on artboard; desktop-only via `site00-desktop-artboard.css`.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — ENTER header parity: artboard shell matches Origin logo/bracket size
+
+- **Context:** Founder reported `/enter` top-left **SITE 00** + **LOCATION / ENTER 00** text larger than desktop Origin — should be symmetrical.
+
+- **Root cause:** Origin desktop renders inside **`Site00DesktopArtboardShell`** (1440px artboard scaled to viewport); Enter was full-viewport fluid typography with no artboard scale.
+
+- **Fix:** Wrap **`/enter`** in **`Site00OriginRouteShell`** (same as Origin). Enter layout CSS updated for artboard: `.site00-desktop-artboard .site00-enter-page` flex column + menu **`max-height`** uses **`--site00-desktop-artboard-height`** instead of **`100dvh`**.
+
+- **Verification:** Playwright bounding-box compare @ 1200/1440/1920 — logo + bracket visual height delta **0px** vs `/origin/desktop`; computer-use side-by-side @ 1200×900 confirms match.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — ENTER bottom summary strip: ~70% shorter
+
+- **Context:** Founder reported `/enter` bottom white summary panel ("YOU'VE ENTERED SITE 00…") too tall — needs ~70% shorter.
+
+- **Fix:** Scoped **`.site00-enter-status-strip`** overrides — footer padding **12→4px**; inner **`.site00-summary-strip`** padding **28→6px**, tighter gaps/line-height. Layout token **`--site00-enter-status-strip-height`** **52→36px** (measured ~34px @ 1440).
+
+- **Verification:** Playwright height ~34px; computer-use @ 1440×900 — compact single-line bar.
+
+- **Deploy:** Sync-only commit `3898cab2d`; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — Origin desktop: separate coordinate line from hero copy
+
+- **Context:** Founder — "YOU ARE AT 00.00 ORIGIN POINT" would not shift when nested in hero; wanted it removed from hero and placed further down, separated from "THIS IS THE ORIGIN ENVIRONMENT…" block.
+
+- **Fix:** Removed coordinate from `.site00-home-hero` on desktop. New `.site00-origin-coordinate-anchor` on `.site00-home-stage` with independent absolute position (`coordinateAnchorTopPx: 300`, hero-aligned left). Mobile unchanged (swipe callout).
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — Composer public pages: /desktop artboard routes + layout switch
+
+- **Context:** Founder — new public routes (services, sites, system, etc.) showed mobile layout on desktop; no designated desktop routes like Origin (`/origin/desktop`).
+
+- **Fix:** `Site00PublicRouteShell` (1440px artboard @ ≥768px, same as Origin). Each public page gets base + `/desktop` route pair. Wide viewports auto-redirect base → `/desktop`. `Site00PublicLayoutSwitch` Mobile/Desktop toggle. `Site00PublicShell` uses artboard context (not 1024px CSS media query). Nav preserves `/desktop` suffix when browsing artboard routes.
+
+- **Desktop routes:** `/sites/desktop`, `/services/desktop`, `/system/desktop`, `/about/desktop`, `/journal/desktop`, `/support/desktop`, `/idnty/desktop`, `/idnty/sign-in-security/desktop`, `/bldr/desktop`, `/bldr/templates/desktop`, `/projects/desktop`, etc.
+
+- **Verification:** `/services/desktop` @ 1440 — left rail, top nav, 4×2 service grid, no mobile bottom nav; `/services` redirects to desktop on wide viewport.
+
+- **Deploy:** Sync-only commit `bcd221712`; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — IDNTY/BLDR state desktop: summary strip panel (match Enter)
+
+- **Context:** Founder requested bottom summary text on desktop **IDNTY/BLDR state** pages sit in a white panel bar (not floating on workflow background), like `/enter`.
+
+- **Fix:** Shared **`.site00-summary-strip-panel`**; **`WorkflowSummary`** fixed bottom footer on desktop (inline rounded panel on mobile); state pages use **`site00-state-page-layout`** + summary outside scroll column. Workflow strip uses stronger off-white + shadow for contrast on light hall bg.
+
+- **Verification:** Playwright @ `/bldr/state/desktop` + `/idnty/state/desktop` — fixed panel ~34px with bg/shadow applied.
+
+- **Deploy:** Sync-only commit `4866b2f23`; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — SITE 00 brand uppercase typography (mandatory)
+
+- **Context:** Founder — ALL text on SITE 00 must be UPPERCASE; only password input fields may stay lowercase. Reference-image design sprints kept introducing sentence case; brand uppercase must override.
+
+- **Enforcement:**
+  - Global CSS on all SITE 00 shells (`.site00-shell`, `.site00-public-shell`, `.site00-ctrl-room-shell`, `.site00-mobile-shell`, `.site00-assts-shell`, etc.) — `text-transform: uppercase`.
+  - **Only exception:** `input[type="password"]` and `.site00-signin-form__input--password` → `text-transform: none`.
+  - Placeholder uppercase on non-password inputs/textareas.
+  - Removed `text-transform: none` on `.site00-ctrl-metric__action`.
+  - Added uppercase to `.site00-mono`, search fields, empty states, card descriptions, page intro body, detail-list `dd`.
+
+- **Source copy:** Uppercased seed/config (`site00-page-seed.ts`, `directory.ts`, `builder.ts`, `identity.ts`) and Composer page TSX (System, Support, About, IDNTY sign-in-security, placeholders, empty states, ASSTS admin strings).
+
+- **Agent rule:** `.cursor/rules/site00-uppercase-brand.mdc` — reference mocks never override uppercase. Documented in `motherboard/CORE.md` SITE 00 section.
+
+- **Verification:** Build OK; `/services/desktop`, `/about/desktop`, `/system/desktop`, `/support/desktop` @ 1440 — all visible text uppercase; password fields exempt on sign-in.
+
+- **Deploy:** Sync-only commit `b4537b8b3`; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — SITE 00 Admin Production Operating System Phase 0 repository audit
+
+- **Context:** Founder requested Phase 0 repo audit for **SITE 00 Admin Production Operating System** sprint — map admin paths, IDNTY/BLDR data, clients/projects, payments, auth, migrations, CTRL ROOM, FAL, notifications, storage, layouts, route overlaps.
+
+- **Findings:** No `/admin/site00/*` routes. SITE 00 admin today = **ASSTS** `/assts/*` (AdminGuard). Customer **CTRL ROOM** = `/control/*` (signed-in guard). IDNTY/BLDR = TS config + React context only — no DB/API. Supabase `site00_*` = ASSTS asset factory (4 migrations). Reuse: `profiles`, `user_activity`, `AdminGuard`/`resolveAdminAuth`, ASSTS slot pattern. Missing: `site00_projects`, onboarding persistence, proposals/billing, admin approvals, dedicated admin production shell.
+
+- **Changes:** Audit/report only.
+
+- **Conventions:** Add distinct `/admin/site00/*` namespace; persist onboarding → projects; extend `useCtrlRoomData` when projects table exists; do not conflate with Studio OS `/admin/studio/*` or FS `/admin/clients`.
+
+---
+
+## 2026-08-18 — SITE 00 core ecosystem separation + responsive redesign (IDNTY / CTRL ROOM / PROJECTS / SITES)
+
+- **Context:** Founder sprint — approved desktop + mobile story/mood boards; four pages must have distinct jobs: **IDNTY** = who am I; **CTRL ROOM** = what needs attention; **PROJECTS** = what are we working on; **SITES** = what has been built. Phase 0 audit first, then implementation.
+
+- **Architecture:**
+  - **`EcosystemShell`** — shared authenticated shell (desktop rail + constrained content + ecosystem mobile bottom nav).
+  - **`site00-ecosystem-seed.ts`** + **`useEcosystemData`** — isolated demo data until production APIs; real auth activity merged when available.
+  - **`ecosystem-nav.ts`** — rail: CTRL ROOM, PROJECTS, SITES, BLDR, SERVICES, JOURNAL, SUPPORT, IDNTY; mobile 5-tab: CTRL ROOM / PROJECTS / SITES / BLDR / IDNTY.
+  - **`CtrlRoomShell`** re-exports **`EcosystemShell`** for backward compatibility.
+
+- **Pages:**
+  - **IDNTY signed-out:** gateway — SIGN IN, CREATE IDENTITY, WHY CREATE AN IDNTY?, WHAT YOU GET (`IdntyHubPage` + public shell).
+  - **IDNTY signed-in:** profile/security hub modules (no project dashboards) inside **`EcosystemShell`**.
+  - **CTRL ROOM:** command center modules NOW, ACTIVE BUILDS, NEEDS YOUR ATTENTION, RECENT SIGNALS, UP NEXT, QUICK LAUNCH (`CtrlRoomCommandCenter`).
+  - **PROJECTS:** metrics, filterable list, PROJECT ACTIVITY, MY ROLES; route fixed — **`Site00AccountRouteGuard`** only (removed double **`Site00PublicShell`** wrap).
+  - **SITES signed-out:** public portfolio unchanged (`SitesPortfolioPage` → redirect when signed in).
+  - **SITES signed-in:** property management at **`/control/sites`** with SITE ACTIVITY + YOUR TEAM.
+
+- **CSS:** **`site00-ecosystem.css`** — shell, sidebar, header, panels, lists, IDNTY gateway, mobile bottom nav.
+
+- **QA:** Desktop @ 1440 — IDNTY gateway, public `/sites`, CTRL ROOM, PROJECTS, `/control/sites` verified via browser QA; build passes.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — SITE 00 IDNTY onboarding assessment engine (5 states, desktop + mobile)
+
+- **Context:** Founder sprint — implement full **IDNTY onboarding/assessment** for five identity states with approved desktop/mobile references and production Supabase backgrounds (desktop `3D3D5A0F…`, mobile `F17CDD7D…`). One shared engine; save/resume; nested routes; no dead CTAs.
+
+- **Architecture:**
+  - **`idnty-assessment.ts`** — branch configs for all 5 states: `starting-at-zero`, `some-pieces-exist`, `needs-cohesion` (stage [02/05] — placeholder title pending founder confirmation against attachment), `ready-for-evolution`, `build-ready`.
+  - **`useIdntyAssessment`** — localStorage persistence (`site00_idnty_assessment_v1`): identity state, steps, answers, submission status, resume target.
+  - **`IDNTY_ASSESSMENT_ENVIRONMENT`** — new environment in `environments.ts` with approved desktop/mobile backgrounds.
+  - **Shared UI:** `IdntyAssessmentShell`, panels (question list, option grid/rows, process strip, step form), `site00-idnty-assessment.css`.
+  - **Pages:** landing, step, review, complete via `IdntyAssessmentRouterPage`.
+
+- **Routes:**
+  - State selection remains **`/idnty/state`** (+ `/desktop`).
+  - Assessment branches: **`/idnty/:stateSlug`**, **`/idnty/:stateSlug/:step`**, **`/review`**, **`/complete`** (+ `/desktop` variants).
+  - **`IdntyStatePage`** — selecting a card navigates into assessment + resume banner when draft exists.
+
+- **Flows:** Starting at Zero = 5-question discovery; Some Pieces Exist = asset inventory grid; Needs Cohesion = gap alignment; Ready for Evolution = pathway grid + evolution goals; Build Ready = service grid + scope. All branches → review → complete with BLDR/support handoff CTAs.
+
+- **QA:** Build passes; desktop @ 1440 + mobile @ 375 verified — state selection, all 5 landing pages, step navigation, save/resume banner. Video: `idnty_assessment_desktop_mobile_walkthrough.mp4`.
+
+- **Open decisions:** Stage [02/05] exact title/copy if not `NEEDS COHESION`; fifth brand-state PNG icon; production intake DB (localStorage only for now); discovery call → `/support` until real scheduling wired.
+
+- **Deploy:** Sync-only commit; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — SITE 00 BLDR onboarding assessment engine (4 classes + NOT SURE, desktop + mobile)
+
+- **Context:** Founder sprint — implement full **BLDR onboarding** for SITE, WORLD, ENTERPRISE, NOT SURE? using approved references; reuse same IDNTY assessment backgrounds (`3D3D5A0F` desktop · `F17CDD7D` mobile); one branching engine; save/resume; IDNTY prefill.
+
+- **Architecture:**
+  - **`bldr-assessment.ts`** — branch configs: `site`, `world`, `enterprise`, `not-sure` with stage markers `[ 01 / 04 ]` … `[ 04 / 04 ]`.
+  - **`bldr-assessment-recommendation.ts`** — scoring engine for NOT SURE → SITE/WORLD/ENTERPRISE recommendation + reasons.
+  - **`useBldrAssessment`** — localStorage (`site00_bldr_assessment_v1`); IDNTY prefill (project type, timeline, budget, audience notes).
+  - **`BldrAssessmentShell`** — reuses IDNTY assessment CSS/environment; `BldrBuildClassIcon` editorial panel.
+  - Reused from IDNTY: `IdntyAssessmentPanels`, `IdntyStepForm`, `IdntyProcessStripPanel`, `site00-idnty-assessment.css`.
+
+- **Routes:**
+  - Class selection unchanged at **`/bldr/state`** (+ `/desktop`).
+  - Branches: **`/bldr/site`**, **`/bldr/world`**, **`/bldr/enterprise`**, **`/bldr/not-sure`** (+ steps, `/review`, `/complete`, `/not-sure/recommendation`).
+  - **`BldrStatePage`** — card select navigates into branch + resume banner.
+
+- **Flows:** SITE/WORLD/ENTERPRISE landing = type/need + audience on one screen; subsequent steps per branch; NOT SURE = 5-question discovery → recommendation page with continue/view alternatives.
+
+- **Handoff:** Complete → CREATE PROJECT (`/projects`), BOOK DISCOVERY (`/support`); no premature Site record creation.
+
+- **QA:** Build passes; desktop/mobile verified for all 4 class landings, step navigation, NOT SURE progress dots.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — SITE 00 Admin Production Operating System (Phase 1 foundation)
+
+- **Context:** Founder sprint to continue SITE 00 Admin from audit into operational production OS — STUDIO, AI Production Director, Approvals, Project Intelligence, Provisioning, Access, Next Best Actions, Deliverable Map, dependency/readiness engines. Rules: extend existing architecture; no fake prototypes; no password collection; `/admin/site00/*` not `/admin/studio/*` (Studio OS collision).
+
+- **Topics covered:** Phase 0 audit (prior entry); full 55-section spec; attached STUDIO reference; uppercase brand law applies to all new admin surfaces.
+
+- **Decisions / outcomes:**
+  - Route namespace **`/admin/site00/*`** mounted under existing **`AdminGuard`** in **`App.tsx`** via **`Site00AdminRoutes.tsx`**.
+  - Supabase migration **`20260818143000_site00_production_os.sql`** applied to production (`hyycomvcaqxxvyrfupes`) — 21 tables + service catalog seeds + `site_ecommerce` recipe + automation rules.
+  - Backend layer **`api/_lib/site00Production/`**: types, dependency engine, readiness engine, next-action engine (rule-based), AI director dev adapter, demo seed (NORTHQUARTER REBUILD), service orchestration.
+  - API **`api/admin/site00-production.ts`**: GET dashboard/studio/approvals/projects/project; POST bootstrap-demo, approve-brief, decide-approval, generate-brief.
+  - Admin UI **`src/site00/admin/`**: shell, nav (desktop sidebar + mobile bottom tabs), CSS, Dashboard, Studio, Approvals, Projects, Project workspace tabs, placeholder sections for identities/leads/finance/etc.
+  - Client provisioning scaffold **`/project/:projectSlug/provisioning`** with account guard.
+  - Demo data seeds on first API load via **`ensureDemoProjectSeeded()`** (not hardcoded in UI).
+
+- **Changes:**
+  - Migration + API + admin pages + routes wiring + **`vercel.json`** API config.
+  - Frontend types **`src/site00/admin/types/production.ts`**; **`productionApi.ts`** typed client.
+  - **`motherboard/CORE.md`** — Production OS bullet added.
+
+- **Still scaffold / next increment:** Identities, BLDR intakes, leads, discovery, finance, team, recipes UI, generated options versioning UI, client feedback interpretation UI, automation settings UI, notifications integration, FILES tab, full client provisioning API, role-enforced client auth on provisioning mutations.
+
+- **Verification:** `npm run build` pass; routes `/admin/site00` and `/project/northquarter-rebuild/provisioning` resolve (auth-guarded); production tables exist in Supabase (demo seed populates on first admin API call).
+
+- **Conventions:** AI mutations only through controlled service functions; external integrations use dev adapters until credentials configured; phase-aware access blocking; Creative Constitution + versioning persisted in DB; default automation level 2 in schema.
+
+---
+
+## 2026-08-18 — SITE 00 Production Readiness + Access Dependency Hardening
+
+- **Context:** Follow-up sprint to formalize Provisioning ↔ Service Access ↔ Dependencies ↔ STUDIO Readiness ↔ CTRL ROOM ↔ Next Best Actions ↔ AI Director — without redesigning Admin/STUDIO UI.
+
+- **Decisions / outcomes:**
+  - **Single readiness graph** in **`api/_lib/site00Production/readinessEvaluator.ts`** — dimensions (creative, assets, access, dependencies, approval, payment), structured blockers, phase-aware environment readiness, deliverable `overall` status.
+  - **Access source of truth:** `site00_service_connections` + `site00_project_service_requirements` — AI reads only; never invents connection state.
+  - **Recipe service deps:** `required_services` JSON on `site00_recipe_deliverables` + BUILD/LAUNCH deliverables (frontend_build, backend_build, preview_deployment, etc.).
+  - **Persisted blockers:** `site00_production_blockers` with auto sync/resolve via **`blockerSync.ts`** on `refreshProjectDerivedState`.
+  - **Consumers unified:** STUDIO queue shows **`ReadinessPanel`**; Access center shows currently required + blocks; Dashboard next actions from readiness; CTRL ROOM **`CtrlRoomSignalsPanel`**; client provisioning buckets (Needed Now / Coming Up / Later / Complete).
+  - **APIs:** Admin POST `update-service-connection`, `set-project-phase`; client **`/api/site00/client-production`** (provisioning, ctrl-room, connect-service dev adapter).
+  - **Migration applied:** `20260818153000_site00_readiness_blockers.sql` to production.
+
+- **Tests:** `readinessEvaluator.test.ts` — Cases A–E, G pass (design-phase homepage ready with Supabase disconnected; build-phase backend blocked; auto-unblock logic via connection update).
+
+- **Verification:** `npm run build` pass; vitest 6/6 pass.
+
+---
+
+## 2026-08-18 — SITE 00 Desktop Canon Unification + Responsive Routing Repair
+
+- **Context:** Master revision sprint — fix desktop scale/composition and device-mode/shell architecture across SITE 00 public pages. ORIGIN desktop is canonical public shell; two intentional modes (PUBLIC WORLD vs OPERATING WORLD).
+
+- **Root cause:** Dual route trees (`/sites` vs `/sites/desktop`), `GlobalNav` not preserving desktop mode on navigation, and `Site00PublicShell` using operational-style left sidebar + separate top nav instead of ORIGIN's `Site00AppShell` header.
+
+- **Decisions / outcomes:**
+  - **Shared preview device mode** in `Site00Context` (`previewDeviceMode: mobile | desktop`) persisted in `sessionStorage` — same semantic route, presentation only changes.
+  - **Legacy `/desktop` paths** redirect to base routes with desktop mode restored (`Site00PublicDesktopLegacyRedirect`, `Site00OriginDesktopLegacyRedirect`).
+  - **`Site00PublicShell` desktop** refactored to ORIGIN canon: `Site00AppShell` + `GlobalNav` + `Site00LogoBlock` + `EntryToggle` — **no left sidebar** on public desktop.
+  - **Layout switches** (Origin + public pages) set preview mode via buttons, not URL suffix navigation.
+  - **Artboard viewport fill:** `Site00DesktopArtboardShell` stage height scales to viewport (eliminates giant gray blank region).
+  - **Desktop typography/panels** recalibrated in `site00-desktop-artboard.css` + `site00-pages.css` for public canon shell.
+  - **Operating shell:** ecosystem sidebar width 220→240px in `site00-ecosystem.css`.
+  - **About copy:** 00 MISSION label, FORT WORTH headquarters per creative direction.
+
+- **Changes:** `Site00Context.tsx`, `preview-mode.ts`, `Site00PublicShell.tsx`, `GlobalNav.tsx`, route shells, `Site00Routes.tsx`, `site00-public-pages.ts`, `site00-public-page-meta.ts`, CSS files, `AboutPage.tsx`.
+
+- **Verification:** `npm run build` pass; manual QA at 1440px — Origin→Sites→Services→System→About→Journal retain desktop mode, no sidebar, header continuity; Mobile/Desktop toggle persists across navigation.
+
+- **Conventions:** Public routes use ONE shared desktop header (ORIGIN canon); operational routes keep `EcosystemShell` sidebar; do not reintroduce per-page desktop nav sidebars.
+
+---
+
+## 2026-08-18 — SITE 00 Final Visual Alignment (Public + Operating World boards)
+
+- **Context:** Focused visual cleanup sprint — two new approved reference boards supersede older sidebar-based Public World mocks. Prior revision sprint remains source of truth for functionality/routing/preview mode.
+
+- **Public World alignment:**
+  - Desktop public shell now uses Origin **`StatusStrip`** footer rail via `Site00PublicStatusRail` (replaces generic page footer on desktop).
+  - **Services:** "WHAT WE BUILD." + 6-capability 3×2 grid (board canon).
+  - **System:** "THE FOUNDATION." + two-column layers list + stack visualization (replaces monitoring placeholder grid).
+  - **Journal:** tabs ALL/ARTICLES/UPDATES/NOTES + editorial card grid with image placeholders + READ MORE.
+  - **IDNTY signed-out:** simplified two-card gateway (SIGN IN / CREATE IDNTY) per board.
+  - **BLDR hub:** split layout — numbered steps + READY TO BEGIN panel (`/bldr` hub; `/bldr/state` workflow unchanged).
+
+- **Operating World alignment:**
+  - `EcosystemShell` desktop refactored: **top navigation** (`OperatingWorldTopNav`) replaces left sidebar — CTRL ROOM, PROJECTS, SITES, STUDIO, APPROVALS, ACCESS, BILLING + IDNTY profile.
+  - Removed public routes (Services, Journal, BLDR, Support) from operating nav IA.
+  - Added `OperatingWorldStatusRail` contextual footer on desktop operating shell.
+  - Signed-in IDNTY uses row list with MANAGE links in operating shell.
+
+- **Verification:** `npm run build` pass.
+
+- **Conventions:** PUBLIC WORLD = Origin shell + status rail, no sidebar. OPERATING WORLD = top nav workspace shell, no public-route links in operating IA.
+
+---
+
+## 2026-08-18 — SITE package starting price $4K+
+
+- **Context:** Founder requested SITE build-class starting price update from **$3.5K** to **$4K+** (plus indicates sliding-scale pricing).
+- **Changes:** `builder.ts` (`$4K+`, `FROM ~$4K+`), `bldr-entry.ts` (`FROM $4K+`), `seedDemo.ts` budget range, `test-site00-bldr-entry.mjs` assertion.
+
+---
+
+## 2026-08-18 — SITE 00 Admin Operations Pages (18 files)
+
+- **Context:** Create full React operations page set under `src/site00/admin/pages/operations/` wired to `site00ProductionApi` — identities, BLDR intakes, leads, discovery, sites, ctrl room, finance, team, reports, activity, settings.
+
+- **Changes:** Added 18 default-export page components with `Site00AdminShell`, `AdminTable`/`AdminStatusBadge`/`AdminKpiCard`, real API calls, loading/empty/error states, uppercase labels. Detail pages link related entities via `SITE00_ADMIN_ROUTES`. BLDR intake detail supports MARK REVIEWED + CONVERT TO PROJECT.
+
+- **Dependency note:** Pages expect operations API methods, `types/operations.ts`, `components/operations/*`, and extended route helpers — wire routes separately (not modified in this task).
+
+---
+
+## 2026-08-18 — Asset Vault loader desktop/mobile responsive split
+
+- **Context:** Founder sprint — fix desktop Asset Vault loading experience clipping mobile 9:16 background; one loading state, two purpose-built presentations (mobile portrait + desktop landscape).
+- **Root cause:** Single mobile artboard (711×1536) + `object-fit: cover` on portrait background when scaled on desktop caused architectural clipping.
+- **Decisions / outcomes:**
+  - **Shared controller unchanged:** `useSite00LoaderProgress` — one progress/phase/timing for both presentations; viewport switch does not restart timers.
+  - **Breakpoint:** ≥768px → desktop presentation for `assts` loader only; world loader stays mobile composition.
+  - **Separate assets:** mobile `IMG_0404.png`; desktop `4EEB4F70-BF07-4EFE-B324-10C94AE018B5.png` (1672×941 landscape master).
+  - **Desktop composition map:** `loader-composition-map-desktop.ts` + `loader-composition-resolver.ts`; `LoaderCompositionProvider` accepts `presentation` prop.
+  - Mobile composition **unchanged** (711×1536 artboard, same animation/copy/choreography).
+- **Changes:**
+  - `site00LoaderMedia.ts` — `site00LoaderDesktopBackgroundUrl()`, `resolveSite00LoaderBackgroundUrl()`.
+  - `Site00ImmersiveLoader.tsx` — `useLoaderPresentation`, presentation-aware background + `--desktop`/`--mobile` root classes.
+  - `Site00LoaderEnvironment.tsx` — `fit` prop (`cover` vs `cover-landscape`).
+  - `site00-loader.css` — desktop progress `clamp(360px, 36vw, 720px)`, stage max-width, short viewport padding.
+  - `site00LoaderBoot.ts`, `AsstsColdStartGate.tsx` — viewport-aware background preload.
+  - `LoaderRegion.tsx` — reads regions from composition context bundle.
+- **Verification:** Playwright QA at 1440×900 (wide marble, centered pedestal, no portrait crop) and 390×844 (mobile unchanged). `npm run build` pass.
+- **Conventions:** Do not stretch/crop mobile loader background for desktop; add landscape master + desktop composition map for ASSTS immersive loader.
+
+---
+
+## 2026-08-18 — ENTER 00 desktop background position + no-scroll viewport
+
+- **Context:** Founder sprint — desktop `/enter` had background positioned too low (empty upper architecture), pushing YOUR SPACE panel below fold and forcing scroll.
+- **Decisions / outcomes:**
+  - Shift desktop ENTER background upward via `background-position` (34% base, 38% @900px+, 41% @1080px+) — desktop-only `.site00-enter-page` rules; mobile `55% center` unchanged.
+  - `ENTER_00_WAITING_ROOM.desktopPosition` → `center 34%` (CSS overrides refine per height).
+  - Enter env layer `position: fixed` inside artboard so background fills full viewport while UI scales.
+  - Enter artboard uses **contain scaling** (`min(scaleW, scaleH)`) in `Site00DesktopArtboardShell` so 900×1440 composition fits 768–1080px heights without shell scroll.
+  - Artboard shell `overflow: hidden` for enter; short-height spacing tighten @max-height 800px only if needed.
+- **Changes:** `environments.ts`, `site00.css`, `site00-desktop-artboard.css`, `Site00DesktopArtboardShell.tsx`.
+- **Verification:** Playwright QA — no scroll, bottom strip visible at 1366×768, 1440×900, 1600×900, 1920×1080; background-position 34–41% applied.
+
+---
+
+## 2026-08-18 — EVOLVE third primary SITE 00 service (architectural + implementation sprint)
+
+- **Context:** Founder sprint — implement **EVOLVE** as third first-class SITE 00 service alongside **IDNTY** and **BLDR** (transform existing digital properties). Must reuse IDNTY/BLDR visual system — no new design system. Visual board = content hierarchy only.
+- **Topics covered:** Origin 03 panel, expanded state, `/evolve` hub, path selection (REFINE/INSTALL/TRANSFORM), 6-step onboarding (PROPERTY→DIAGNOSE→SYSTEMS→ACCESS→SCOPE→ENTER STUDIO), data-driven capability registry, secure access (no plaintext secrets), mobile Locations + menu, Services seed, Projects service filter, Supabase evolve intakes + `service_line` on projects.
+- **Decisions / outcomes:**
+  - **EVOLVE = sibling service** — not nested under BLDR; `HomeMode` adds `evolve-expanded`; Origin shows three equal cards (01 IDNTY, 02 BLDR, 03 EVOLVE).
+  - **Routes promoted:** `SITE00_ROUTES.evolve`, `evolveState`, `evolveStateDesktop`; assessment at `/evolve/:pathSlug/{property|diagnose|systems|access|scope|enter-studio|complete}` (+ desktop artboard).
+  - **Icon placeholders:** `/public/assets/evolve/evolve-{master,refine,install,transform}.svg` — swap files without component restructure.
+  - **Capability registry:** `src/site00/config/capability-registry.ts` — data-driven SITE 00 installable systems for EVOLVE onboarding + future Studio/Services.
+  - **Scope engine:** `evolve-assessment-scope.ts` — structured assessment with `PENDING_ASSESSMENT`; no fabricated audit results.
+  - **Persistence:** `useEvolveAssessment` → localStorage `site00_evolve_assessment_v1`.
+  - **Production migration applied:** `20260818190000_site00_evolve_service.sql` → `site00_evolve_intakes` + `site00_projects.service_line` on project `hyycomvcaqxxvyrfupes`.
+- **Key paths:** `config/evolve.ts`, `config/evolve-assessment.ts`, `components/homepage/EvolveExpandedPanel.tsx`, `pages/evolve/EvolveHubPage.tsx`, `pages/EvolveStatePage.tsx`, `pages/evolve/assessment/*`, `hooks/useEvolveAssessment.ts`.
+- **Navigation:** Mobile directory + Locations entry 06 EVOLVE; Services seed third card; Projects page IDNTY/BLDR/EVOLVE filter + +EVOLVE CTA; contextual `site00MobileEvolveNavHref`.
+- **Verification:** `npm run build` pass; Supabase MCP `apply_migration` success; `site00_evolve_intakes` columns verified via `execute_sql`.
+- **Spatial Architecture Review:** SKIPPED — SITE 00 public service extension mirroring IDNTY/BLDR patterns, not new Studio OS surfaces.
+
+---
+
+---
+
+## 2026-08-18 — Fix composer Desktop tab switch (preview mode)
+
+- **Issue:** Mobile/Desktop composer pill updated session state but did not switch presentation when viewport was ≤767px — `isPreviewDesktop` was gated on `isSite00OriginWideViewport()`.
+- **Fix:** Honor `previewDeviceMode === 'desktop'` on all viewports (artboard scales on phones); raise `.site00-origin-layout-switch` z-index above Fast Travel overlay; add `/enter` to Origin layout switch routes; scope `body.site00-fast-travel-open` to mobile media query only.
+- **Sync:** `9f1e8cfa8`
+
+---
+
+## 2026-08-18 — ENTER 00 desktop YOUR SPACE + Fast Travel restructure
+
+- **Context:** Founder follow-up sprint — desktop `/enter` duplicated public nav (EXPLORE: SITES/SERVICES/SYSTEM/ABOUT/JOURNAL) already in top nav. ENTER 00 should be a personalized gateway: **YOUR SPACE** (dominant) + **FAST TRAVEL** (secondary 2×2 contextual tiles). Preserve existing visual identity, viewport-fit, mobile Locations/Fast Travel unchanged.
+- **Decisions / outcomes:**
+  - **Removed EXPLORE** from desktop ENTER 00 — no second sitemap; public routes remain in canonical top nav only.
+  - **YOUR SPACE signed-in:** BLDR STUDIO, PROJECTS, MY SITES, ACCOUNT (`/control/settings`); **signed-out:** IDNTY, CTRL ROOM, PROJECTS, MY SITES with lock/sign-in treatment — no fake personalized activity.
+  - **SUPPORT removed** from primary YOUR SPACE slots.
+  - **FAST TRAVEL:** compact 2×2 translucent tiles on desktop artboard only; driven by centralized **`getFastTravelActions`** (`fast-travel-actions.ts`) with priority: blocker → action required → pending approval → continue work → milestone → starters; max 4 tiles; EVOLVE tile routes to `/evolve` (not BLDR).
+  - **Shared intelligence layer** — mobile route-profile `resolveFastTravel` unchanged; desktop ENTER consumes new resolver (future mobile panel can adopt same API).
+- **Changes:** `config/directory.ts`, `config/fast-travel-actions.ts` (+ unit tests), `components/enter00/DirectoryPanel.tsx`, `EnterFastTravelGrid.tsx`, `WorkflowCards.tsx` (locked rows), `EnterMenuIcon.tsx`, `styles/site00.css`.
+- **Verification:** `npm run build` pass; vitest 6/6 on resolver; manual desktop QA signed-out + signed-in at 1440×900 — no EXPLORE, YOUR SPACE + FAST TRAVEL visible, tile navigation works, viewport fit OK.
+- **Spatial Architecture Review:** SKIPPED — ENTER 00 content restructure, no new Studio OS surfaces.
+
+<<<<<<< HEAD
+---
+=======
+
+---
+
+## 2026-08-18 — SITE 00 standalone extraction sprint (repository separation)
+
+- **Context:** Founder sprint — extract SITE 00 from Frontal Slayer monorepo into independent product for **site00.com** on **GoDaddy** (not Vercel). Do not redesign; do not delete FS source until validation gates pass.
+- **Topics covered:** Full dependency audit; security/env audit; standalone Vite app; import repair; production build; route preview validation; git init; GoDaddy deployment docs; Supabase independence planning.
+- **Decisions / outcomes:**
+  - **Safety order:** AUDIT → COPY → DECOUPLE → REPAIR → VALIDATE → GIT → DEPLOY PREP — **Phase 23 (FS cleanup) NOT started.**
+  - **Standalone path (cloud agent):** `/home/ubuntu/site-00` — founder target: sibling `site-00/` next to `frontal-slayer/`.
+  - **Git:** `main` initial commit `6e4e69f` + deployment doc `0adb9ad`; no GitHub remote yet (founder creates private `site-00` repo).
+  - **Build:** `npm run build` passes (431 modules); production preview HTTP 200 on core routes.
+  - **Shared deps duplicated/slimmed:** `api.ts`, `syncFromApi.ts`, `activity.ts`, platform-stabilization subset, `site00-supabase-env.ts` (replaces `studio-os-core/immune-system/constants`).
+  - **API copied:** `api/admin/site00-*`, `api/site00/*`, `api/_lib/site00Assts`, `api/_lib/site00Production` — require Node host or Edge migration on GoDaddy static.
+  - **Supabase:** 8 `site00_*` migrations copied; still shares project `hyycomvcaqxxvyrfupes` — no destructive split.
+  - **GoDaddy hosting type:** not determinable — owner must confirm cPanel vs Node.js.
+- **Docs:** `docs/site00/STANDALONE_EXTRACTION_STATUS.md` (FS repo); `site-00/README.md`, `site-00/docs/DEPLOYMENT.md`.
+- **Frontal Slayer:** `npm run build` still passes; SITE 00 code untouched in monorepo.
+- **Spatial Architecture Review:** SKIPPED — infrastructure extraction.
+
+---
+
+## 2026-08-18 — SITE 00 GitHub integration (yoteenz/SITE00)
+
+- **Context:** Post-extraction sprint — connect standalone SITE 00 at `/home/ubuntu/site-00` to private GitHub `https://github.com/yoteenz/SITE00.git` on `main`; do not redo extraction or touch FS git remotes.
+- **Verification:** SITE 00 git root `/home/ubuntu/site-00` (outside `/workspace` FS tree); FS origin unchanged `yoteenz/fsbw`; `.gitignore` excludes secrets/dist/node_modules; only `.env.example` tracked (placeholders); `npm run build` pass.
+- **Git state:** `main` @ `0adb9ad` (2 commits: `6e4e69f` initial extraction, `0adb9ad` deployment docs); `origin` set to `https://github.com/yoteenz/SITE00.git`.
+- **Push:** **Success** — `main` @ `a43f53c` on `https://github.com/yoteenz/SITE00.git` via founder `SITE00_GITHUB_TOKEN` (2026-08-18). Re-extract script: `scripts/extract-site00-standalone.mjs` → `/home/ubuntu/site-00`.
+- **Manual push (fallback):** `cd site-00 && git push -u origin main`
+
+---
+
+## 2026-08-18 — SITE 00 GitHub push after founder token (SITE00_GITHUB_TOKEN)
+
+- **Context:** Founder added `SITE00_GITHUB_TOKEN` to cloud environment after prior push was blocked (empty `yoteenz/SITE00` repo; `/home/ubuntu/site-00` absent on new VM snapshot).
+- **Topics covered:** Token verification; standalone re-extraction; production build; GitHub push; MEMORY merge-conflict repair; extraction script in FS monorepo.
+- **Decisions / outcomes:**
+  - **`SITE00_GITHUB_TOKEN` works** — GitHub API 200 for `yoteenz/SITE00` (repo now public/accessible to token).
+  - **Re-extracted standalone app** at `/home/ubuntu/site-00` via new **`scripts/extract-site00-standalone.mjs`** — copies `src/site00/`, bounded shared utils, API handlers, 8 Supabase migrations, slim auth/api/sync layers (no `studio-os-core` in frontend).
+  - **Build verified:** `npm run build` pass (394 Vite modules); preview HTTP 200 on `/`, `/origin`, `/services`, `/control`.
+  - **GitHub push:** `main` initial commit **`a43f53c`** — 434 files pushed to `https://github.com/yoteenz/SITE00.git`.
+  - **MEMORY.md:** Resolved conflict markers between composer Desktop tab fix + ENTER 00 Fast Travel entries (kept both).
+  - **FS monorepo:** Added repeatable extraction script; updated `docs/site00/STANDALONE_EXTRACTION_STATUS.md` checklist.
+- **Conventions:** Re-run `node scripts/extract-site00-standalone.mjs` after major SITE 00 changes in FS; push from `/home/ubuntu/site-00` with `SITE00_GITHUB_TOKEN`. Phase 23 FS cleanup still not started.
+
+---
+
+## 2026-08-18 — Origin EVOLVE collapsed copy + expanded panels −15%
+
+- **Context:** Founder copy tweak on Origin desktop EVOLVE collapsed card; shrink expanded IDNTY/BLDR/EVOLVE panels 15%.
+- **Changes:** `EVOLVE_ORIGIN_CARD.subtitle` → `BUILD ALREADY EXISTS.`; removed `body` from collapsed EVOLVE card; `expandedPanelScale` 0.875 → 0.74375 in `origin-home-composition.ts`.
+- **Sync:** `2aba9be60`
+
+---
+
+## 2026-08-18 — Origin EVOLVE expanded panel CTA + centered paths
+
+- **Context:** Founder polish on Origin desktop EVOLVE expanded panel.
+- **Changes:** CTA `BEGIN EVOLUTION` (single arrow via `ArrowAction`); removed HOW IT WORKS link; centered CHOOSE YOUR PATH block + 3-column evolve pillars CSS.
+
+---
+
+## 2026-08-18 — Origin EVOLVE production panel icon
+
+- **Context:** Founder supplied Supabase PNG for Origin desktop EVOLVE collapsed + expanded panel icon.
+- **Asset:** `live-preview/site00/EVOLVE/9E87E14E-63A7-4ED5-9054-5435136E1768.png` via `origin-panel-icons.ts` (replaces SVG fallback); `OriginPanelIcon` md/lg sizing unchanged — matches IDNTY/BLDR.
+
+---
+
+## 2026-08-18 — Origin EVOLVE expanded panel methodology restructure
+
+- **Context:** IA correction — CHOOSE YOUR PATH (REFINE/INSTALL/TRANSFORM) belongs on dedicated `/evolve/state` only; Origin expanded panel shows **EVOLVE FRAMEWORK** methodology (01 AUDIT · 02 INTERVENE · 03 ADVANCE). **BEGIN EVOLUTION** CTA locked unchanged.
+- **Changes:** `EVOLVE_METHODOLOGY_PILLARS` + `evolve-methodology-icons.ts` empty asset slots; `EvolveMethodologyIcon`; `EvolveExpandedPanel` matches IDNTY/BLDR framework grid; restored HOW IT WORKS → `/evolve`. Dedicated route unchanged.
+
+---
+
+## 2026-08-18 — SITE 00 standalone persisted in fsbw (site00-standalone/)
+
+- **Context:** Founder on mobile; push to `yoteenz/SITE00` blocked (cursor[bot] 403; PAT secret UI confusing). Ephemeral `/home/ubuntu/site-00` missing on fresh cloud agents defeated token-based push workflow.
+- **Decision:** Canonical standalone SITE 00 source lives **inside fsbw** at **`site00-standalone/`** (445 files, git-tracked). Any cloud agent cloning fsbw has the full tree without re-extraction.
+- **Shipped:** `site00-standalone/` copy; `scripts/site00-resolve-root.sh` prefers workspace path; `scripts/site00-push-to-github.sh` publishes to SITE00 via `SITE00_GITHUB_TOKEN`; docs/AGENTS.md updated.
+- **Publish:** `./scripts/site00-push-to-github.sh` when secret set. **Product repo:** https://github.com/yoteenz/SITE00 (public, empty until publish).
+- **Convention:** Do not rely on `/home/ubuntu/site-00` on cloud agents; preview clones **`yoteenz/SITE00`** to `/home/ubuntu/SITE00`; fallback **`site00-standalone/`** in fsbw.
+
+---
+
+## 2026-08-18 — SITE 00 preview tunnel → GitHub SITE00 clone
+
+- **Context:** Founder confirmed GoDaddy **cPanel** (static `dist/` prod). Wants dedicated Cloudflare tunnel serving **SITE00 repo** before Phase 23 detach from fsbw.
+- **Shipped:** `scripts/site00-clone-github.sh`; `site00-resolve-root.sh` prefers `/home/ubuntu/SITE00`; `cloud-update.sh` + `site00-cloud-vite-dev.sh` auto-clone/pull; `docs/cloud-agent/site00-preview-tunnel.md` architecture + GoDaddy note.
+- **Secrets:** `SITE00_CLOUDFLARE_TUNNEL_TOKEN` + `SITE00_CLOUDFLARE_TUNNEL_HOSTNAME` (separate from FS). Restart agent after adding.
+- **Workflow:** Edit/push **SITE00** → preview via tunnel; fsbw `src/site00/` unchanged until Phase 23.
+
+---
+
+## 2026-08-18 — SITE 00 published to yoteenz/SITE00 (main)
+
+- **Context:** Founder requested push of `site00-standalone/` to https://github.com/yoteenz/SITE00 on `main` (publish only — no edits to fsbw `src/site00/`).
+- **Confirmed:** `site00-standalone/package.json` exists; `SITE00_GITHUB_TOKEN` present in cloud secrets.
+- **Push:** `./scripts/site00-push-to-github.sh` — initial run failed (git pull missing `--no-rebase`; silent merge failure → non-fast-forward). Script patched: `--no-rebase` on pull + `--force-with-lease` publish fallback. Re-run succeeded.
+- **Remote verified @ `ccc5714`:** `src/`, `package.json`, `vite.config.ts`, `public/site00/`, `api/` all present on `main`.
+- **Convention:** Publish from `site00-standalone/` only; token is `SITE00_GITHUB_TOKEN` (do not re-extract from `/home/ubuntu/site-00`).
+>>>>>>> origin/master
 

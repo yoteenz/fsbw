@@ -63,6 +63,7 @@ import { isDesktopPreviewWrapperPath } from './utils/desktopPreview';
 import { DesktopTowerNavProvider } from './components/desktop-tower/DesktopTowerNavProvider';
 import { MobileMansionRoutes } from './routes/MobileMansionRoutes';
 import { Site00Routes } from './routes/Site00Routes';
+import { Site00AdminRoutes } from './routes/Site00AdminRoutes';
 import { PlatformErrorBoundary } from './platform-stabilization/PlatformErrorBoundary';
 import { BAW_TUTORIAL_ROUTE, normalizeBawViewPathname } from './constants/bawTutorialConfig';
 import { TutorialOsProvider, TutorialOsPsaGate } from './tutorial-os';
@@ -3021,6 +3022,7 @@ function App() {
               <AdminAudit />
             </Suspense>
           } />
+          {Site00AdminRoutes()}
         </Route>
         {/* Unit page routes - placed early to ensure proper matching */}
         <Route path="/curly/soft-curl" element={

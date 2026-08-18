@@ -91,3 +91,22 @@ export function resolveReturnToAfterSignIn(
 
   return '/account';
 }
+
+/** Default post-auth destination for SITE 00 CTRL ROOM sign-in. */
+export const SITE00_CTRL_ROOM_DEFAULT_PATH = '/control';
+
+export function resolveSite00ReturnToAfterSignIn(
+  returnToParam: string | null | undefined,
+  state: { from?: string } | null | undefined,
+): string {
+  const fromQuery = normalizeReturnToParam(returnToParam);
+  if (fromQuery) return fromQuery;
+
+  const from = state?.from;
+  if (typeof from === 'string') {
+    const t = from.trim().slice(0, MAX_RETURN_LEN);
+    if (isSafeInternalPath(t)) return t;
+  }
+
+  return SITE00_CTRL_ROOM_DEFAULT_PATH;
+}

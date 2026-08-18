@@ -1,0 +1,30 @@
+# SITE 00 uppercase brand typography (mandatory)
+
+Applies to **all SITE 00 surfaces** (`src/site00/**`, routes under `/origin`, `/sites`, `/services`, `/enter`, `/assts`, `/control`, `/idnty`, `/bldr`, etc.).
+
+## Rule
+
+**ALL visible text must be UPPERCASE.**
+
+**Only exception:** password `<input>` fields (including when toggled to visible text via show/hide — keep `.site00-signin-form__input--password`).
+
+## Overrides design references
+
+When implementing pages from reference images, storyboards, or Figma exports:
+
+- **Do not** preserve sentence case or title case from the reference.
+- **Always** convert user-visible copy to uppercase in source strings **and** rely on the global CSS safety net in `site00-typography.css` (`.site00-shell`, `.site00-public-shell`, `.site00-ctrl-room-shell`, `.site00-mobile-shell`, `.site00-assts-shell`, etc.).
+
+## Implementation checklist
+
+1. Seed/config copy (`site00-page-seed.ts`, `directory.ts`, `builder.ts`, `identity.ts`, page TSX) — uppercase literals.
+2. Search placeholders — uppercase (e.g. `SEARCH TEMPLATES…`).
+3. Never add `text-transform: none` on SITE 00 text except password inputs.
+4. Email addresses, URLs in copy, and dynamic user email display — uppercase is correct for SITE 00 brand.
+
+## Do not
+
+- Lowercase labels, body copy, empty states, or nav items to match a reference mock.
+- Use Frontal Slayer typography rules inside SITE 00.
+
+Canon: `motherboard/CORE.md` (SITE 00 section) · `docs/site00/BIBLE.md`

@@ -116,6 +116,20 @@ export default defineConfig(({ mode, command }) => {
     }
   }
 
+  /** Cloudflare Tunnel caches Vite module responses by default — force revalidation every request. */
+  function cloudPreviewNoCachePlugin() {
+    return {
+      name: 'cloud-preview-no-cache',
+      configureServer(server: { middlewares: { use: (fn: (req: any, res: any, next: () => void) => void) => void } }) {
+        server.middlewares.use((_req: unknown, res: { setHeader: (k: string, v: string) => void }, next: () => void) => {
+          res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate')
+          res.setHeader('Pragma', 'no-cache')
+          next()
+        })
+      },
+    }
+  }
+
   return {
   define: {
     /** Bust admin globe iframe cache on every production deploy (inlined at build time). */
@@ -126,7 +140,7 @@ export default defineConfig(({ mode, command }) => {
   plugins: [
     injectAppBuildIdPlugin(),
     ...(command === 'serve' ? [logDevApiProxyPlugin(apiTarget), site00AsstsLocalApiPlugin()] : []),
-    ...(cloudMobilePreview ? [logCloudMobilePreviewPlugin(), stripViteClientForCloudPreviewPlugin()] : []),
+    ...(cloudMobilePreview ? [logCloudMobilePreviewPlugin(), stripViteClientForCloudPreviewPlugin(), cloudPreviewNoCachePlugin()] : []),
     apiDevNoProxyGuard(apiTarget),
     react(cloudMobilePreview ? { fastRefresh: false } : undefined),
   ],

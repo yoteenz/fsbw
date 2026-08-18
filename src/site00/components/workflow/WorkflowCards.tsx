@@ -1,7 +1,12 @@
 import { Link } from 'react-router-dom';
 import type { IdentityBrandState } from '../../config/identity';
 import type { EnterMenuIconId } from '../../config/directory';
-import { GeometricIcon, identityComplexityIcon } from '../icons/GeometricIcon';
+import { Site00LockIcon } from '../mobile/Site00MobileIcons';
+import { GeometricIcon } from '../icons/GeometricIcon';
+import { BldrBuildClassIcon } from '../bldr/BldrBuildClassIcon';
+import type { BldrBuildClassIconId } from '../../config/bldr-build-class-icons';
+import { IdntyBrandStateIcon } from '../idnty/IdntyBrandStateIcon';
+import type { IdntyBrandStateIconId } from '../../config/idnty-brand-state-icons';
 import { ArrowIconSmall } from '../icons/ArrowAction';
 import { EnterMenuIcon, Site00ArrowRightIcon } from '../../icons';
 import { Site00SummaryStripText } from '../shell/Site00SummaryStripText';
@@ -21,8 +26,8 @@ export function StateCard({ state, selected, onSelect }: StateCardProps) {
       aria-pressed={selected}
     >
       <span className="site00-label-red">{state.code}</span>
-      <div style={{ margin: '16px 0', flex: 1, display: 'flex', alignItems: 'center' }}>
-        <GeometricIcon variant={identityComplexityIcon(state.iconComplexity)} size="md" />
+      <div className="site00-brand-state-icon" style={{ margin: '16px 0', flex: 1, display: 'flex', alignItems: 'center' }}>
+        <IdntyBrandStateIcon id={state.id} title={state.title} />
       </div>
       <p className="site00-heading" style={{ marginBottom: 8 }}>
         {state.title}
@@ -39,22 +44,22 @@ export function StateCard({ state, selected, onSelect }: StateCardProps) {
 }
 
 type BuildClassCardProps = {
+  buildClassId: BldrBuildClassIconId;
   code: string;
   title: string;
   subtitle: string;
   description: string;
-  icon: 'site' | 'world' | 'enterprise' | 'discovery';
   cta: string;
   selected?: boolean;
   onSelect: () => void;
 };
 
 export function BuildClassCard({
+  buildClassId,
   code,
   title,
   subtitle,
   description,
-  icon,
   cta,
   selected,
   onSelect,
@@ -68,8 +73,8 @@ export function BuildClassCard({
       style={{ minHeight: 320 }}
     >
       <span className="site00-label-red">{code}</span>
-      <div style={{ margin: '12px 0', flex: 1, display: 'flex', alignItems: 'center' }}>
-        <GeometricIcon variant={icon} size="md" />
+      <div className="site00-build-class-icon" style={{ margin: '12px 0', flex: 1, display: 'flex', alignItems: 'center' }}>
+        <BldrBuildClassIcon id={buildClassId} title={title} />
       </div>
       <p className="site00-panel-title" style={{ marginBottom: 4 }}>
         {title}
@@ -90,12 +95,22 @@ type InvestmentColumnProps = {
   priceLabel: string;
   items: string[];
   iconVariant?: 'cube-simple' | 'cube-medium' | 'cube-complex' | 'cube-solid' | undefined;
+  buildClassId?: BldrBuildClassIconId;
+  brandStateId?: IdntyBrandStateIconId;
 };
 
-export function InvestmentColumn({ label, priceLabel, items, iconVariant }: InvestmentColumnProps) {
+export function InvestmentColumn({ label, priceLabel, items, iconVariant, buildClassId, brandStateId }: InvestmentColumnProps) {
   return (
     <div style={{ padding: '12px 8px' }}>
-      {iconVariant ? (
+      {buildClassId ? (
+        <div style={{ marginBottom: 8 }}>
+          <BldrBuildClassIcon id={buildClassId} title={label} className="site00-bldr-build-class-icon--sm" />
+        </div>
+      ) : brandStateId ? (
+        <div style={{ marginBottom: 8 }}>
+          <IdntyBrandStateIcon id={brandStateId} title={label} className="site00-idnty-brand-state-icon--sm" />
+        </div>
+      ) : iconVariant ? (
         <div style={{ marginBottom: 8 }}>
           <GeometricIcon variant={iconVariant} size="sm" />
         </div>
@@ -122,7 +137,11 @@ type WorkflowSummaryProps = {
 };
 
 export function WorkflowSummary({ text }: WorkflowSummaryProps) {
-  return <Site00SummaryStripText text={text} />;
+  return (
+    <footer className="site00-summary-strip-panel site00-workflow-summary-strip">
+      <Site00SummaryStripText text={text} />
+    </footer>
+  );
 }
 
 type DirectoryRowProps = {
@@ -132,9 +151,18 @@ type DirectoryRowProps = {
   href: string;
   enabled: boolean;
   enterIcon?: EnterMenuIconId;
+  locked?: boolean;
 };
 
-export function DirectoryRow({ number, title, description, href, enabled, enterIcon }: DirectoryRowProps) {
+export function DirectoryRow({
+  number,
+  title,
+  description,
+  href,
+  enabled,
+  enterIcon,
+  locked = false,
+}: DirectoryRowProps) {
   const content = (
     <>
       <div className="site00-enter-row__main">
@@ -148,6 +176,12 @@ export function DirectoryRow({ number, title, description, href, enabled, enterI
         <div className="site00-enter-row__copy">
           <p className="site00-heading site00-enter-row__title">{title}</p>
           <p className="site00-body site00-enter-row__description">{description}</p>
+          {locked ? (
+            <span className="site00-enter-row__auth">
+              <Site00LockIcon size={12} />
+              <span>SIGN IN TO ENTER</span>
+            </span>
+          ) : null}
         </div>
       </div>
       <span className="site00-enter-row__arrow">
@@ -158,7 +192,11 @@ export function DirectoryRow({ number, title, description, href, enabled, enterI
 
   if (enabled) {
     return (
-      <Link to={href} className="site00-enter-row">
+      <Link
+        to={href}
+        className={`site00-enter-row ${locked ? 'site00-enter-row--locked' : ''}`.trim()}
+        aria-label={locked ? `${title} — sign in to enter` : title}
+      >
         {content}
       </Link>
     );

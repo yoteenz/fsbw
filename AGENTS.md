@@ -41,14 +41,17 @@ When you add a migration under `supabase/migrations/` that creates or alters **t
 
 ### Mobile live preview (no Vercel)
 
-Cloud agents auto-start four terminals from **`.cursor/environment.json`**:
+Cloud agents auto-start six terminals from **`.cursor/environment.json`**:
 
 | Terminal | App | Port | Tunnel script |
 |----------|-----|------|---------------|
 | **`vite`** | Frontal Slayer | 3001 | **`preview-tunnel`** → `./scripts/cloud-preview-tunnel.sh` |
+| **`site00-vite`** | SITE 00 standalone | 5174 | **`site00-preview-tunnel`** → `./scripts/site00-preview-tunnel.sh` |
 | **`aio-vite`** | All In One standalone | 5173 | **`aio-preview-tunnel`** → `./all-in-one-enterprises/scripts/aio-preview-tunnel.sh` |
 
 **Frontal Slayer:** **`CLOUDFLARE_TUNNEL_TOKEN`** + **`CLOUDFLARE_TUNNEL_HOSTNAME`** → persistent hostname (see **`docs/cloud-agent/persistent-preview-tunnel.md`**). Else ephemeral **`https://….trycloudflare.com`** → **`/tmp/cloud-preview-url.txt`**.
+
+**SITE 00 (standalone repo):** Clone **`yoteenz/SITE00`** on agent boot (`scripts/site00-clone-github.sh`); preview at **`/home/ubuntu/SITE00`**. Terminals **`site00-vite`** (5174) + **`site00-preview-tunnel`**. Secrets: **`SITE00_CLOUDFLARE_TUNNEL_TOKEN`** + **`SITE00_CLOUDFLARE_TUNNEL_HOSTNAME`** (separate from FS). Guide: **`docs/cloud-agent/site00-preview-tunnel.md`**. Fallback copy in fsbw: **`site00-standalone/`**. Production: GoDaddy **cPanel** static **`dist/`** → site00.com.
 
 **All In One (until production):** **`AIO_CLOUDFLARE_TUNNEL_TOKEN`** + **`AIO_CLOUDFLARE_TUNNEL_HOSTNAME`** (e.g. `https://aio-preview.yourdomain.com`) → see **`all-in-one-enterprises/docs/PREVIEW_TUNNEL.md`**. Else ephemeral trycloudflare → **`/tmp/aio-cloud-preview-url.txt`**. Use a **separate subdomain/tunnel** from Frontal Slayer (port 5173, not 3001).
 

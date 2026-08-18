@@ -111,9 +111,17 @@
       "includeFiles": "StudioOS_ContextCapsule_v0.1/**,api/_lib/context-capsule-build-manifest.json,api/_lib/context-capsule-release.json",
       "excludeFiles": "public/assets/**,dist/**"
     },
+    "api/admin/site00-production.ts": {
+      "maxDuration": 60,
+      "includeFiles": "api/_lib/site00Production/**"
+    },
     "api/admin/site00-assts.ts": {
       "maxDuration": 120,
       "includeFiles": "api/_lib/studioBuilderGeneration.ts,api/_lib/site00Assts/**"
+    },
+    "api/site00/client-production.ts": {
+      "maxDuration": 60,
+      "includeFiles": "api/_lib/site00Production/**"
     },
     "api/site00/loader-geometry.ts": {
       "maxDuration": 30,
