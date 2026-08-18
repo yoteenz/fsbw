@@ -4,6 +4,7 @@ import {
   SITE00_DESKTOP_ARTBOARD_WIDTH,
 } from '../../config/desktop-artboard';
 import { installDesktopPreviewShellViewportLock } from '../../../utils/desktopPreview';
+import { Site00DesktopArtboardProvider } from './Site00DesktopArtboardContext';
 import '../../styles/site00-desktop-artboard.css';
 
 type Site00DesktopArtboardShellProps = {
@@ -71,12 +72,14 @@ export function Site00DesktopArtboardShell({ children }: Site00DesktopArtboardSh
   }, []);
 
   return (
-    <div ref={shellRef} className="site00-desktop-artboard-shell">
-      <div ref={scalerRef} style={{ position: 'relative' }}>
-        <div ref={stageRef} className="site00-desktop-artboard">
-          {children}
+    <Site00DesktopArtboardProvider>
+      <div ref={shellRef} className="site00-desktop-artboard-shell">
+        <div ref={scalerRef} style={{ position: 'relative' }}>
+          <div ref={stageRef} className="site00-desktop-artboard">
+            {children}
+          </div>
         </div>
       </div>
-    </div>
+    </Site00DesktopArtboardProvider>
   );
 }

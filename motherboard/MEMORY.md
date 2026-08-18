@@ -52990,3 +52990,19 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Deploy:** Sync-only; say **deploy now** for Vercel.
 
+---
+
+## 2026-08-18 — SITE 00 Origin desktop preview: bottom status panels invisible on phone
+
+- **Context:** Founder on `preview.fsbw-dev.com` toggled **Desktop** on `/origin/desktop` and could not see the bottom status/guidance panels from the desktop design — large white void below the scaled artboard.
+
+- **Root cause:** `/origin/desktop` scales the 1440×900 artboard to ~27% width on phone (~244px tall). The status strip lived **inside** the transformed stage with `position: fixed`, so it scaled to ~15px tall and sat mid-viewport; ~600px of shell background filled the rest. `/origin` (Mobile route) was unaffected — strip already pinned to device viewport at full size.
+
+- **Fix:** `Site00DesktopArtboardContext` + portal status strip footer to `document.body` at full viewport size when inside `Site00DesktopArtboardShell`. CSS `.site00-status-strip-host--viewport` restores desktop grid; narrow phones get horizontal scroll on metrics + full-width guidance below. Shell fallback background → `#e8e8e8`.
+
+- **Also (same session):** Loader hang/distortion follow-up — boot JS preloads alpha WebM/APNG (not 6MB source MP4); alpha matte uses `mix-blend-mode: screen`; alpha probe 4s timeout (commit `612539d68`).
+
+- **QA:** Playwright @ 390×844 — `/origin/desktop` strip host `viewport`, strip bottom flush to 844px viewport, 5 metrics + guidance visible. `/origin` mobile strip unchanged.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+

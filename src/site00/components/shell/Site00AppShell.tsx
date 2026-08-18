@@ -1,7 +1,9 @@
 import type { ReactNode } from 'react';
+import { createPortal } from 'react-dom';
 import { Site00LogoBlock } from './Site00LogoBlock';
 import { GlobalNav } from './GlobalNav';
 import { EntryToggle } from './EntryToggle';
+import { useSite00DesktopArtboardPreview } from './Site00DesktopArtboardContext';
 
 type Site00AppShellProps = {
   children: ReactNode;
@@ -19,6 +21,24 @@ export function Site00AppShell({
   statusStrip,
   mobileOriginHeader = false,
 }: Site00AppShellProps) {
+  const desktopArtboardPreview = useSite00DesktopArtboardPreview();
+
+  const statusFooter =
+    showStatusStrip && statusStrip ? (
+      <footer
+        className={desktopArtboardPreview ? 'site00-status-strip-host--viewport' : undefined}
+        style={{
+          position: 'fixed',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          zIndex: 'var(--site-z-nav)',
+        }}
+      >
+        {statusStrip}
+      </footer>
+    ) : null;
+
   return (
     <>
       <header
@@ -35,19 +55,9 @@ export function Site00AppShell({
         </div>
       </header>
       <main>{children}</main>
-      {showStatusStrip && statusStrip ? (
-        <footer
-          style={{
-            position: 'fixed',
-            bottom: 0,
-            left: 0,
-            right: 0,
-            zIndex: 'var(--site-z-nav)',
-          }}
-        >
-          {statusStrip}
-        </footer>
-      ) : null}
+      {desktopArtboardPreview && statusFooter && typeof document !== 'undefined'
+        ? createPortal(statusFooter, document.body)
+        : statusFooter}
     </>
   );
 }
