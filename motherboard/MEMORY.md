@@ -53726,11 +53726,6 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Deploy:** Sync-only; say **deploy now** for Vercel.
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-=======
->>>>>>> 31248ef85 (ENTER: match Origin header size via desktop artboard shell [sync-only])
 ---
 
 ## 2026-08-18 — Origin desktop IDNTY/BLDR panels: +20px gap, +10% icons
@@ -53741,9 +53736,6 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Deploy:** Sync-only commit `1a0d54bf9`; say **deploy now** for Vercel.
 
-<<<<<<< HEAD
->>>>>>> 828a80cc3 (Origin desktop: +20px IDNTY/BLDR panel gap, +10% panel icons [sync-only])
-=======
 ---
 
 ## 2026-08-18 — ENTER header parity: artboard shell matches Origin logo/bracket size
@@ -53758,4 +53750,3 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Deploy:** Sync-only; say **deploy now** for Vercel.
 
->>>>>>> 31248ef85 (ENTER: match Origin header size via desktop artboard shell [sync-only])

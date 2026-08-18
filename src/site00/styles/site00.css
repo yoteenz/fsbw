@@ -768,7 +768,7 @@
   left: 0;
   right: 0;
   text-align: center;
-  padding: 12px 16px;
+  padding: 4px 12px;
   background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
@@ -776,10 +776,21 @@
   z-index: var(--site-z-nav);
 }
 
+.site00-enter-status-strip .site00-summary-strip {
+  padding: 6px 16px;
+  column-gap: 1.25rem;
+  row-gap: 0.25rem;
+  line-height: 1.1;
+}
+
+.site00-enter-status-strip .site00-summary-strip__group {
+  gap: 0.5rem;
+}
+
 @media (min-width: 768px) {
   .site00-enter-page {
     --site00-enter-header-offset: 96px;
-    --site00-enter-status-strip-height: 52px;
+    --site00-enter-status-strip-height: 36px;
     height: 100dvh;
     overflow: hidden;
   }
