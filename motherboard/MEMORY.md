@@ -53182,6 +53182,18 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Verification:** Playwright `--site00-origin-cards-offset-y: 120px`; computed `top` 556.7px (−20 vs prior 576.7px) @ 1440×900 `/origin/desktop`.
 
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — Origin desktop IDNTY/BLDR panel icons −25%
+
+- **Context:** Shrink collapsed **IDNTY + BLDR** panel PNG icons by **25%**, desktop only.
+
+- **Change:** `panelIconScale: 0.75` in `origin-home-composition.ts`; wired as `--site00-origin-panel-icon-scale` on `OriginPage`. Desktop `@media (min-width: 768px)` updates `.site00-origin-card__icon-wrap` transform to `scale(calc(var(--site00-origin-panel-icon-scale) / var(--site00-origin-card-scale)))`. Mobile default remains `1`.
+
+- **Verification:** Playwright `/origin/desktop` — both icons **60×60px** rendered (was ~80px); CSS var `0.75`.
+
 - **Spatial Architecture Review:** SKIPPED — composition nudge.
 
 - **Deploy:** Sync-only; say **deploy now** for Vercel.
