@@ -8,6 +8,8 @@ type Site00AppShellProps = {
   locationLabel?: string;
   showStatusStrip?: boolean;
   statusStrip?: ReactNode;
+  /** Origin homepage mobile — hide logo/location, center global nav */
+  mobileOriginHeader?: boolean;
 };
 
 export function Site00AppShell({
@@ -15,26 +17,20 @@ export function Site00AppShell({
   locationLabel,
   showStatusStrip = false,
   statusStrip,
+  mobileOriginHeader = false,
 }: Site00AppShellProps) {
   return (
     <>
       <header
-        className="site00-safe-ui"
-        style={{
-          position: 'relative',
-          zIndex: 'var(--site-z-nav)',
-          display: 'grid',
-          gridTemplateColumns: '1fr auto 1fr',
-          alignItems: 'start',
-          gap: 16,
-          paddingTop: 20,
-        }}
+        className={`site00-safe-ui site00-app-shell-header ${mobileOriginHeader ? 'site00-app-shell-header--origin-mobile' : ''}`.trim()}
       >
-        <Site00LogoBlock locationLabel={locationLabel} />
-        <div style={{ justifySelf: 'center', paddingTop: 4 }}>
+        <div className="site00-app-shell-header__logo">
+          <Site00LogoBlock locationLabel={locationLabel} />
+        </div>
+        <div className="site00-app-shell-header__nav">
           <GlobalNav />
         </div>
-        <div style={{ justifySelf: 'end' }}>
+        <div className="site00-app-shell-header__entry">
           <EntryToggle />
         </div>
       </header>

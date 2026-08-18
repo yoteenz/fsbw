@@ -14,7 +14,12 @@ export default function OriginPage() {
 
   return (
     <EnvironmentShell environmentId="ORIGIN_ENVIRONMENT">
-      <Site00AppShell locationLabel={SITE00_ORIGIN_COPY.locationLabel} showStatusStrip statusStrip={<StatusStrip />}>
+      <Site00AppShell
+        locationLabel={SITE00_ORIGIN_COPY.locationLabel}
+        mobileOriginHeader
+        showStatusStrip
+        statusStrip={<StatusStrip />}
+      >
         <div
           className="site00-home-stage"
           style={{
