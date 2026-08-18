@@ -26,7 +26,7 @@
 - [x] no `studio-os-core` imports in frontend
 - [x] `.env.example` only (no secrets committed)
 - [x] Git initialized on `main`
-- [ ] GitHub remote `site-00` (owner must create under founder org)
+- [x] GitHub remote `https://github.com/yoteenz/SITE00.git` on `main` @ `a43f53c` (pushed via `SITE00_GITHUB_TOKEN`)
 - [ ] Full auth E2E (requires Supabase env + API host)
 - [ ] ASSTS generation E2E (requires `FAL_KEY`, service role, API runtime)
 - [ ] GoDaddy hosting product confirmed

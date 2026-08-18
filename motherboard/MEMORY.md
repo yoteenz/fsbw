@@ -54078,13 +54078,16 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 ---
 
-<<<<<<< HEAD
+---
+
 ## 2026-08-18 — Fix composer Desktop tab switch (preview mode)
 
 - **Issue:** Mobile/Desktop composer pill updated session state but did not switch presentation when viewport was ≤767px — `isPreviewDesktop` was gated on `isSite00OriginWideViewport()`.
 - **Fix:** Honor `previewDeviceMode === 'desktop'` on all viewports (artboard scales on phones); raise `.site00-origin-layout-switch` z-index above Fast Travel overlay; add `/enter` to Origin layout switch routes; scope `body.site00-fast-travel-open` to mobile media query only.
 - **Sync:** `9f1e8cfa8`
-=======
+
+---
+
 ## 2026-08-18 — ENTER 00 desktop YOUR SPACE + Fast Travel restructure
 
 - **Context:** Founder follow-up sprint — desktop `/enter` duplicated public nav (EXPLORE: SITES/SERVICES/SYSTEM/ABOUT/JOURNAL) already in top nav. ENTER 00 should be a personalized gateway: **YOUR SPACE** (dominant) + **FAST TRAVEL** (secondary 2×2 contextual tiles). Preserve existing visual identity, viewport-fit, mobile Locations/Fast Travel unchanged.
@@ -54097,7 +54100,8 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Changes:** `config/directory.ts`, `config/fast-travel-actions.ts` (+ unit tests), `components/enter00/DirectoryPanel.tsx`, `EnterFastTravelGrid.tsx`, `WorkflowCards.tsx` (locked rows), `EnterMenuIcon.tsx`, `styles/site00.css`.
 - **Verification:** `npm run build` pass; vitest 6/6 on resolver; manual desktop QA signed-out + signed-in at 1440×900 — no EXPLORE, YOUR SPACE + FAST TRAVEL visible, tile navigation works, viewport fit OK.
 - **Spatial Architecture Review:** SKIPPED — ENTER 00 content restructure, no new Studio OS surfaces.
->>>>>>> 663fc57c0 (ENTER 00 desktop: YOUR SPACE + contextual Fast Travel restructure [sync-only])
+
+---
 
 ---
 
@@ -54125,6 +54129,21 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Context:** Post-extraction sprint — connect standalone SITE 00 at `/home/ubuntu/site-00` to private GitHub `https://github.com/yoteenz/SITE00.git` on `main`; do not redo extraction or touch FS git remotes.
 - **Verification:** SITE 00 git root `/home/ubuntu/site-00` (outside `/workspace` FS tree); FS origin unchanged `yoteenz/fsbw`; `.gitignore` excludes secrets/dist/node_modules; only `.env.example` tracked (placeholders); `npm run build` pass.
 - **Git state:** `main` @ `0adb9ad` (2 commits: `6e4e69f` initial extraction, `0adb9ad` deployment docs); `origin` set to `https://github.com/yoteenz/SITE00.git`.
-- **Push:** **Blocked** — cloud agent token (`cursor` bot) returns `Repository not found` for `yoteenz/SITE00` (private repo not visible to agent). Founder must push from local machine with yoteenz credentials.
-- **Manual push:** `cd site-00 && git push -u origin main` (or clone from VM copy).
+- **Push:** **Success** — `main` @ `a43f53c` on `https://github.com/yoteenz/SITE00.git` via founder `SITE00_GITHUB_TOKEN` (2026-08-18). Re-extract script: `scripts/extract-site00-standalone.mjs` → `/home/ubuntu/site-00`.
+- **Manual push (fallback):** `cd site-00 && git push -u origin main`
+
+---
+
+## 2026-08-18 — SITE 00 GitHub push after founder token (SITE00_GITHUB_TOKEN)
+
+- **Context:** Founder added `SITE00_GITHUB_TOKEN` to cloud environment after prior push was blocked (empty `yoteenz/SITE00` repo; `/home/ubuntu/site-00` absent on new VM snapshot).
+- **Topics covered:** Token verification; standalone re-extraction; production build; GitHub push; MEMORY merge-conflict repair; extraction script in FS monorepo.
+- **Decisions / outcomes:**
+  - **`SITE00_GITHUB_TOKEN` works** — GitHub API 200 for `yoteenz/SITE00` (repo now public/accessible to token).
+  - **Re-extracted standalone app** at `/home/ubuntu/site-00` via new **`scripts/extract-site00-standalone.mjs`** — copies `src/site00/`, bounded shared utils, API handlers, 8 Supabase migrations, slim auth/api/sync layers (no `studio-os-core` in frontend).
+  - **Build verified:** `npm run build` pass (394 Vite modules); preview HTTP 200 on `/`, `/origin`, `/services`, `/control`.
+  - **GitHub push:** `main` initial commit **`a43f53c`** — 434 files pushed to `https://github.com/yoteenz/SITE00.git`.
+  - **MEMORY.md:** Resolved conflict markers between composer Desktop tab fix + ENTER 00 Fast Travel entries (kept both).
+  - **FS monorepo:** Added repeatable extraction script; updated `docs/site00/STANDALONE_EXTRACTION_STATUS.md` checklist.
+- **Conventions:** Re-run `node scripts/extract-site00-standalone.mjs` after major SITE 00 changes in FS; push from `/home/ubuntu/site-00` with `SITE00_GITHUB_TOKEN`. Phase 23 FS cleanup still not started.
 
