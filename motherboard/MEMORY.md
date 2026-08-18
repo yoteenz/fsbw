@@ -53313,3 +53313,15 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Change:** `.site00-origin-framework-heading` — `border-top: 1px solid var(--site-border)` + `padding-top: 24px`; applied in `BldrExpandedPanel.tsx` + `IdntyExpandedPanel.tsx`.
 
 - **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — Origin desktop expanded panels −30% scale
+
+- **Context:** Founder requested expanded **IDNTY/BLDR** panels on Origin desktop homepage **30% smaller**.
+
+- **Change:** `expandedPanelScale: 0.7` in `origin-home-composition.ts`; `--site00-origin-expanded-panel-scale` on `OriginPage`; `.site00-home-expanded-column` → `transform: translateX(-50%) scale(0.7)` + `transform-origin: center top` (desktop + artboard CSS).
+
+- **Verification:** Playwright `/origin/desktop` expanded IDNTY — panel visual width ~476px (70% of ~680px column), transform matrix 0.7.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
