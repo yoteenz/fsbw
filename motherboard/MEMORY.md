@@ -54084,3 +54084,32 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Fix:** Honor `previewDeviceMode === 'desktop'` on all viewports (artboard scales on phones); raise `.site00-origin-layout-switch` z-index above Fast Travel overlay; add `/enter` to Origin layout switch routes; scope `body.site00-fast-travel-open` to mobile media query only.
 - **Sync:** `9f1e8cfa8`
 
+---
+
+## 2026-08-18 — SITE 00 standalone extraction sprint (repository separation)
+
+- **Context:** Founder sprint — extract SITE 00 from Frontal Slayer monorepo into independent product for **site00.com** on **GoDaddy** (not Vercel). Do not redesign; do not delete FS source until validation gates pass.
+- **Topics covered:** Full dependency audit; security/env audit; standalone Vite app; import repair; production build; route preview validation; git init; GoDaddy deployment docs; Supabase independence planning.
+- **Decisions / outcomes:**
+  - **Safety order:** AUDIT → COPY → DECOUPLE → REPAIR → VALIDATE → GIT → DEPLOY PREP — **Phase 23 (FS cleanup) NOT started.**
+  - **Standalone path (cloud agent):** `/home/ubuntu/site-00` — founder target: sibling `site-00/` next to `frontal-slayer/`.
+  - **Git:** `main` initial commit `6e4e69f` + deployment doc `0adb9ad`; no GitHub remote yet (founder creates private `site-00` repo).
+  - **Build:** `npm run build` passes (431 modules); production preview HTTP 200 on core routes.
+  - **Shared deps duplicated/slimmed:** `api.ts`, `syncFromApi.ts`, `activity.ts`, platform-stabilization subset, `site00-supabase-env.ts` (replaces `studio-os-core/immune-system/constants`).
+  - **API copied:** `api/admin/site00-*`, `api/site00/*`, `api/_lib/site00Assts`, `api/_lib/site00Production` — require Node host or Edge migration on GoDaddy static.
+  - **Supabase:** 8 `site00_*` migrations copied; still shares project `hyycomvcaqxxvyrfupes` — no destructive split.
+  - **GoDaddy hosting type:** not determinable — owner must confirm cPanel vs Node.js.
+- **Docs:** `docs/site00/STANDALONE_EXTRACTION_STATUS.md` (FS repo); `site-00/README.md`, `site-00/docs/DEPLOYMENT.md`.
+- **Frontal Slayer:** `npm run build` still passes; SITE 00 code untouched in monorepo.
+- **Spatial Architecture Review:** SKIPPED — infrastructure extraction.
+
+---
+
+## 2026-08-18 — SITE 00 GitHub integration (yoteenz/SITE00)
+
+- **Context:** Post-extraction sprint — connect standalone SITE 00 at `/home/ubuntu/site-00` to private GitHub `https://github.com/yoteenz/SITE00.git` on `main`; do not redo extraction or touch FS git remotes.
+- **Verification:** SITE 00 git root `/home/ubuntu/site-00` (outside `/workspace` FS tree); FS origin unchanged `yoteenz/fsbw`; `.gitignore` excludes secrets/dist/node_modules; only `.env.example` tracked (placeholders); `npm run build` pass.
+- **Git state:** `main` @ `0adb9ad` (2 commits: `6e4e69f` initial extraction, `0adb9ad` deployment docs); `origin` set to `https://github.com/yoteenz/SITE00.git`.
+- **Push:** **Blocked** — cloud agent token (`cursor` bot) returns `Repository not found` for `yoteenz/SITE00` (private repo not visible to agent). Founder must push from local machine with yoteenz credentials.
+- **Manual push:** `cd site-00 && git push -u origin main` (or clone from VM copy).
+
