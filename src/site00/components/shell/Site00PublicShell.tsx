@@ -5,6 +5,7 @@ import { site00PublicPageMeta } from '../../config/site00-public-page-meta';
 import { Site00PageEnvironment } from './Site00PageEnvironment';
 import { Site00AppShell } from './Site00AppShell';
 import { Site00PageFooter } from './Site00PageFooter';
+import { Site00PublicStatusRail } from './Site00PublicStatusRail';
 import { Site00MobileShell } from '../mobile/Site00MobileShell';
 import { useSite00 } from '../../state/Site00Context';
 import { useSite00DesktopArtboardPreview } from './Site00DesktopArtboardContext';
@@ -46,7 +47,7 @@ export function Site00PublicShell({
           <div className="site00-ui-layer site00-public-shell__ui">
             <Site00AppShell locationLabel={resolvedLocation}>
               <div className="site00-public-shell__content">{children}</div>
-              <Site00PageFooter />
+              <Site00PublicStatusRail />
             </Site00AppShell>
           </div>
         </div>

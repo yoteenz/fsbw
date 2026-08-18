@@ -15,14 +15,19 @@ export type PortfolioProjectSeed = {
 export const SITE00_PORTFOLIO_SEED: PortfolioProjectSeed[] = [];
 
 export const SITE00_SERVICES_SEED = [
-  { id: 'bldr', title: 'BLDR', description: 'START BUILDING WITH THE SITE 00 BUILDER.', cta: 'LAUNCH →', href: '/bldr' },
-  { id: 'domains', title: 'DOMAINS', description: 'SEARCH, CONNECT, AND MANAGE YOUR DOMAINS.', cta: 'MANAGE →', href: '/control/domains' },
-  { id: 'forms', title: 'FORMS', description: 'CREATE AND MANAGE POWERFUL FORMS.', cta: 'VIEW →', href: '/services#forms' },
-  { id: 'analytics', title: 'ANALYTICS', description: 'TRACK PERFORMANCE ACROSS YOUR SITES.', cta: 'VIEW →', href: '/services#analytics' },
-  { id: 'seo', title: 'SEO', description: 'OPTIMIZE YOUR SITES FOR SEARCH ENGINES.', cta: 'VIEW →', href: '/services#seo' },
-  { id: 'backups', title: 'BACKUPS', description: 'AUTOMATIC BACKUPS AND RESTORE POINTS.', cta: 'VIEW →', href: '/services#backups' },
-  { id: 'integrations', title: 'INTEGRATIONS', description: 'CONNECT THIRD-PARTY SERVICES AND TOOLS.', cta: 'VIEW →', href: '/services#integrations' },
-  { id: 'api', title: 'API', description: 'ACCESS THE SITE 00 DEVELOPER API.', cta: 'DOCUMENTATION →', href: '/services#api' },
+  { id: 'branding', title: 'BRANDING & IDENTITY', description: 'VISUAL SYSTEMS, IDENTITY ARCHITECTURE, AND BRAND FOUNDATIONS.', cta: 'EXPLORE →', href: '/idnty' },
+  { id: 'web', title: 'WEB DESIGN & DEVELOPMENT', description: 'SPATIAL DIGITAL PLACES DESIGNED AND BUILT TO LAUNCH.', cta: 'START BUILD →', href: '/bldr' },
+  { id: 'ai', title: 'AI & AUTOMATION', description: 'INTELLIGENT SYSTEMS INTEGRATED INTO YOUR BUILD WORKFLOW.', cta: 'VIEW →', href: '/services#integrations' },
+  { id: 'content', title: 'CONTENT & CREATIVE', description: 'EDITORIAL ASSETS, CREATIVE DIRECTION, AND PRODUCTION SUPPORT.', cta: 'VIEW →', href: '/services#forms' },
+  { id: 'systems', title: 'SYSTEMS & INFRASTRUCTURE', description: 'THE OPERATING ARCHITECTURE THAT POWERS SITE 00 BUILDS.', cta: 'VIEW SYSTEM →', href: '/system' },
+  { id: 'support', title: 'ONGOING SUPPORT', description: 'CONTINUITY, MAINTENANCE, AND EVOLUTION AFTER LAUNCH.', cta: 'CONTACT →', href: '/support' },
+] as const;
+
+export const SITE00_SYSTEM_LAYERS = [
+  { id: 'idnty', num: '01', title: 'IDNTY LAYER', description: 'IDENTITY, ACCESS, AND ACCOUNT FOUNDATIONS FOR EVERY BUILD.' },
+  { id: 'build', num: '02', title: 'BUILD LAYER', description: 'DESIGN, DEVELOPMENT, AND CREATIVE PRODUCTION SYSTEMS.' },
+  { id: 'deploy', num: '03', title: 'DEPLOY LAYER', description: 'DOMAINS, HOSTING, LAUNCH, AND LIVE ENVIRONMENT CONTROL.' },
+  { id: 'insight', num: '04', title: 'INSIGHT LAYER', description: 'ANALYTICS, SIGNALS, AND OPERATIONAL INTELLIGENCE.' },
 ] as const;
 
 export const SITE00_SYSTEM_STATUS_SEED = [
@@ -33,7 +38,7 @@ export const SITE00_SYSTEM_STATUS_SEED = [
   { id: 'auth', label: 'AUTH', state: 'unavailable' as const },
 ];
 
-export const SITE00_JOURNAL_CATEGORIES = ['ALL', 'PRODUCT', 'ENGINEERING', 'COMPANY', 'RESOURCES'] as const;
+export const SITE00_JOURNAL_CATEGORIES = ['ALL', 'ARTICLES', 'UPDATES', 'NOTES'] as const;
 
 export type JournalArticleSeed = {
   id: string;

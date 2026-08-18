@@ -53956,3 +53956,51 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Verification:** `npm run build` pass; vitest 6/6 pass.
 
+---
+
+## 2026-08-18 — SITE 00 Desktop Canon Unification + Responsive Routing Repair
+
+- **Context:** Master revision sprint — fix desktop scale/composition and device-mode/shell architecture across SITE 00 public pages. ORIGIN desktop is canonical public shell; two intentional modes (PUBLIC WORLD vs OPERATING WORLD).
+
+- **Root cause:** Dual route trees (`/sites` vs `/sites/desktop`), `GlobalNav` not preserving desktop mode on navigation, and `Site00PublicShell` using operational-style left sidebar + separate top nav instead of ORIGIN's `Site00AppShell` header.
+
+- **Decisions / outcomes:**
+  - **Shared preview device mode** in `Site00Context` (`previewDeviceMode: mobile | desktop`) persisted in `sessionStorage` — same semantic route, presentation only changes.
+  - **Legacy `/desktop` paths** redirect to base routes with desktop mode restored (`Site00PublicDesktopLegacyRedirect`, `Site00OriginDesktopLegacyRedirect`).
+  - **`Site00PublicShell` desktop** refactored to ORIGIN canon: `Site00AppShell` + `GlobalNav` + `Site00LogoBlock` + `EntryToggle` — **no left sidebar** on public desktop.
+  - **Layout switches** (Origin + public pages) set preview mode via buttons, not URL suffix navigation.
+  - **Artboard viewport fill:** `Site00DesktopArtboardShell` stage height scales to viewport (eliminates giant gray blank region).
+  - **Desktop typography/panels** recalibrated in `site00-desktop-artboard.css` + `site00-pages.css` for public canon shell.
+  - **Operating shell:** ecosystem sidebar width 220→240px in `site00-ecosystem.css`.
+  - **About copy:** 00 MISSION label, FORT WORTH headquarters per creative direction.
+
+- **Changes:** `Site00Context.tsx`, `preview-mode.ts`, `Site00PublicShell.tsx`, `GlobalNav.tsx`, route shells, `Site00Routes.tsx`, `site00-public-pages.ts`, `site00-public-page-meta.ts`, CSS files, `AboutPage.tsx`.
+
+- **Verification:** `npm run build` pass; manual QA at 1440px — Origin→Sites→Services→System→About→Journal retain desktop mode, no sidebar, header continuity; Mobile/Desktop toggle persists across navigation.
+
+- **Conventions:** Public routes use ONE shared desktop header (ORIGIN canon); operational routes keep `EcosystemShell` sidebar; do not reintroduce per-page desktop nav sidebars.
+
+---
+
+## 2026-08-18 — SITE 00 Final Visual Alignment (Public + Operating World boards)
+
+- **Context:** Focused visual cleanup sprint — two new approved reference boards supersede older sidebar-based Public World mocks. Prior revision sprint remains source of truth for functionality/routing/preview mode.
+
+- **Public World alignment:**
+  - Desktop public shell now uses Origin **`StatusStrip`** footer rail via `Site00PublicStatusRail` (replaces generic page footer on desktop).
+  - **Services:** "WHAT WE BUILD." + 6-capability 3×2 grid (board canon).
+  - **System:** "THE FOUNDATION." + two-column layers list + stack visualization (replaces monitoring placeholder grid).
+  - **Journal:** tabs ALL/ARTICLES/UPDATES/NOTES + editorial card grid with image placeholders + READ MORE.
+  - **IDNTY signed-out:** simplified two-card gateway (SIGN IN / CREATE IDNTY) per board.
+  - **BLDR hub:** split layout — numbered steps + READY TO BEGIN panel (`/bldr` hub; `/bldr/state` workflow unchanged).
+
+- **Operating World alignment:**
+  - `EcosystemShell` desktop refactored: **top navigation** (`OperatingWorldTopNav`) replaces left sidebar — CTRL ROOM, PROJECTS, SITES, STUDIO, APPROVALS, ACCESS, BILLING + IDNTY profile.
+  - Removed public routes (Services, Journal, BLDR, Support) from operating nav IA.
+  - Added `OperatingWorldStatusRail` contextual footer on desktop operating shell.
+  - Signed-in IDNTY uses row list with MANAGE links in operating shell.
+
+- **Verification:** `npm run build` pass.
+
+- **Conventions:** PUBLIC WORLD = Origin shell + status rail, no sidebar. OPERATING WORLD = top nav workspace shell, no public-route links in operating IA.
+

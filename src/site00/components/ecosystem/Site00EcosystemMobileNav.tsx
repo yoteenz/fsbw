@@ -4,7 +4,6 @@ import {
   isEcosystemMobileNavActive,
   type EcosystemNavId,
 } from '../../config/ecosystem-nav';
-import { site00MobileBuildNavHref } from '../../config/routes';
 
 type Site00EcosystemMobileNavProps = {
   active?: EcosystemNavId;
@@ -16,13 +15,12 @@ export function Site00EcosystemMobileNav({ active }: Site00EcosystemMobileNavPro
   return (
     <nav className="site00-ecosystem-mobile-nav" aria-label="SITE 00 ecosystem navigation">
       {ECOSYSTEM_MOBILE_NAV.map((item, index) => {
-        const href = item.id === 'bldr' ? site00MobileBuildNavHref(pathname) : item.href;
         const isActive = active ? item.id === active : isEcosystemMobileNavActive(pathname, item.id);
 
         return (
           <Link
             key={item.id}
-            to={href}
+            to={item.href}
             className={`site00-ecosystem-mobile-nav__item ${isActive ? 'site00-ecosystem-mobile-nav__item--active' : ''}`.trim()}
             aria-current={isActive ? 'page' : undefined}
           >

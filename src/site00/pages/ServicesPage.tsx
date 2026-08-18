@@ -8,13 +8,10 @@ export default function ServicesPage() {
   return (
     <Site00PublicShell>
       <div className="site00-page site00-page--services">
-        <PageIntro
-          title={<BracketHeading>SERVICES</BracketHeading>}
-          subtitle="POWERFUL TOOLS. INTEGRATED INTO SITE 00."
-        />
-        <div className="site00-services-grid">
+        <PageIntro title={<BracketHeading>SERVICES</BracketHeading>} subtitle="WHAT WE BUILD." />
+        <div className="site00-services-grid site00-services-grid--capabilities">
           {SITE00_SERVICES_SEED.map((service) => (
-            <article key={service.id} id={service.id} className="site00-service-card">
+            <article key={service.id} id={service.id} className="site00-service-card site00-service-card--capability">
               <h2 className="site00-service-card__title">{service.title}</h2>
               <p className="site00-service-card__desc">{service.description}</p>
               <Link to={service.href} className="site00-link-red">

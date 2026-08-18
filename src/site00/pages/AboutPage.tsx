@@ -20,7 +20,7 @@ export default function AboutPage() {
         <section className="site00-about-mission">
           <div>
             <p className="site00-label-red">00 MISSION</p>
-            <p className="site00-body">
+            <p className="site00-body site00-about-mission__statement">
               SITE 00 IS A SPATIAL OPERATING ENVIRONMENT FOR DESIGNING, BUILDING, AND LAUNCHING DIGITAL PLACES —
               IDENTITY, INFRASTRUCTURE, AND EXPERIENCE IN ONE CONNECTED SYSTEM.
             </p>

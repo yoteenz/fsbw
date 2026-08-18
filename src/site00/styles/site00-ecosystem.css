@@ -20,8 +20,8 @@
 
 @media (min-width: 1024px) {
   .site00-ecosystem-shell__desktop {
-    display: grid;
-    grid-template-columns: 240px minmax(0, 1fr);
+    display: flex;
+    flex-direction: column;
     min-height: 100dvh;
     background-image: var(--site00-ecosystem-bg);
     background-size: cover;
@@ -43,8 +43,8 @@
 
 .site00-ecosystem-shell__content-wrap {
   flex: 1;
-  padding: 24px 28px 40px;
-  max-width: 1200px;
+  padding: 24px 40px 32px;
+  max-width: 1440px;
   width: 100%;
   margin: 0 auto;
 }
@@ -65,7 +65,174 @@
   padding: 0 20px 16px;
 }
 
-/* ─── Sidebar ─── */
+/* ─── Operating World top navigation ─── */
+
+.site00-operating-topnav {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .site00-operating-topnav {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 24px;
+    padding: 18px 40px;
+    border-bottom: 1px solid var(--site-line);
+    background: rgba(255, 255, 255, 0.82);
+    backdrop-filter: blur(12px);
+    position: relative;
+    z-index: 2;
+  }
+}
+
+.site00-operating-topnav__brand {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.site00-operating-topnav__logo {
+  font-family: var(--site00-font-heading);
+  font-size: 0.8125rem;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  color: var(--site-text);
+}
+
+.site00-operating-topnav__env {
+  font-family: var(--site00-font-label);
+  font-size: 0.5625rem;
+  letter-spacing: 0.12em;
+  color: var(--site-text-muted);
+}
+
+.site00-operating-topnav__links ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+}
+
+.site00-operating-topnav__links a {
+  font-family: var(--site00-font-nav);
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--site-text-muted);
+}
+
+.site00-operating-topnav__links a[aria-current='page'] {
+  color: var(--site-red);
+}
+
+.site00-operating-topnav__profile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: inherit;
+}
+
+.site00-operating-topnav__profile-label {
+  font-family: var(--site00-font-label);
+  font-size: 0.625rem;
+  letter-spacing: 0.1em;
+  color: var(--site-text-muted);
+}
+
+.site00-operating-topnav__profile-name {
+  font-family: var(--site00-font-label);
+  font-size: 0.625rem;
+  letter-spacing: 0.06em;
+  color: var(--site-text);
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.site00-operating-topnav__avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--site-line);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--site00-font-label);
+  font-size: 0.625rem;
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.site00-operating-status-rail {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .site00-operating-status-rail {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 10px 40px calc(10px + env(safe-area-inset-bottom, 0px));
+    background: rgba(20, 20, 20, 0.92);
+    color: rgba(255, 255, 255, 0.85);
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+  }
+}
+
+.site00-operating-status-rail__cells {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.site00-operating-status-rail__cell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.site00-operating-status-rail__label {
+  font-family: var(--site00-font-label);
+  font-size: 0.5rem;
+  letter-spacing: 0.1em;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.site00-operating-status-rail__value {
+  font-family: var(--site00-font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.04em;
+}
+
+.site00-operating-status-rail__hint {
+  margin: 0;
+  font-family: var(--site00-font-label);
+  font-size: 0.5625rem;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.site00-ecosystem-shell__desktop .site00-ecosystem-header__profile {
+  display: none;
+}
+
+.site00-idnty-hub__rows {
+  display: grid;
+  gap: 10px;
+}
+
+.site00-idnty-hub__rows .site00-hub-card {
+  min-height: 72px;
+}
+
+/* ─── Sidebar (deprecated — mobile fallback only if needed) ─── */
 
 .site00-ecosystem-sidebar {
   display: flex;

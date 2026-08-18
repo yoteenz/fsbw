@@ -2,14 +2,14 @@ import { type ReactNode, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { resolveSite00PublicAsset } from '../loader/site00LoaderConfig';
 import { SITE00_CTRL_ROOM_DESKTOP_BG_FILE } from '../../config/site00-auth-assets';
-import { EcosystemSidebar } from './EcosystemSidebar';
 import { EcosystemPageHeader } from './EcosystemPageHeader';
 import { Site00EcosystemMobileShell } from '../mobile/Site00EcosystemMobileShell';
+import { OperatingWorldTopNav } from './OperatingWorldTopNav';
+import { OperatingWorldStatusRail } from './OperatingWorldStatusRail';
 import { ecosystemNavIdFromPath, ecosystemPageMeta } from '../../config/ecosystem-nav';
 
 type EcosystemShellProps = {
   children: ReactNode;
-  /** Override auto-detected page meta */
   title?: string;
   subtitle?: string;
   headerActions?: React.ReactNode;
@@ -17,6 +17,10 @@ type EcosystemShellProps = {
 
 const ecosystemBgUrl = resolveSite00PublicAsset(SITE00_CTRL_ROOM_DESKTOP_BG_FILE);
 
+/**
+ * Operating World shell — authenticated workspace.
+ * Desktop: top navigation + architectural environment (no public-world sidebar).
+ */
 export function EcosystemShell({ children, title, subtitle, headerActions }: EcosystemShellProps) {
   const { pathname } = useLocation();
   const meta = ecosystemPageMeta(pathname);
@@ -42,13 +46,14 @@ export function EcosystemShell({ children, title, subtitle, headerActions }: Eco
         className="site00-ecosystem-shell__desktop"
         style={{ ['--site00-ecosystem-bg' as string]: `url(${ecosystemBgUrl})` }}
       >
-        <EcosystemSidebar />
+        <OperatingWorldTopNav />
         <div className="site00-ecosystem-shell__main">
           <div className="site00-ecosystem-shell__content-wrap">
             <EcosystemPageHeader title={pageTitle} subtitle={pageSubtitle} actions={headerActions} />
             <div className="site00-ecosystem-shell__content">{children}</div>
           </div>
         </div>
+        <OperatingWorldStatusRail />
       </div>
 
       <div className="site00-ecosystem-shell__mobile">
@@ -61,7 +66,7 @@ export function EcosystemShell({ children, title, subtitle, headerActions }: Eco
   );
 }
 
-/** @deprecated Use EcosystemShell — kept for gradual migration */
+/** @deprecated Use EcosystemShell */
 export function CtrlRoomShell({ children }: { children: ReactNode }) {
   return <EcosystemShell>{children}</EcosystemShell>;
 }
