@@ -683,6 +683,7 @@
 .site00-home-stage {
   --site00-origin-hero-left: 11%;
   --site00-origin-hero-top: 16px;
+  --site00-origin-hero-offset-y: 0px;
   --site00-origin-hero-max-w: 360px;
   --site00-origin-hero-offset-x: 0px;
   --site00-origin-cards-top: 58%;
@@ -799,6 +800,7 @@
 @media (min-width: 768px) {
   .site00-home-stage {
     --site00-origin-card-number-color: var(--site-red);
+    --site00-origin-hero-offset-y: 10px;
     padding: 0 0 140px;
     min-height: calc(100dvh - 120px);
   }
@@ -814,7 +816,7 @@
   .site00-home-hero {
     position: absolute;
     left: calc(var(--site00-origin-hero-left) + var(--site00-origin-hero-offset-x));
-    top: var(--site00-origin-hero-top);
+    top: calc(var(--site00-origin-hero-top) + var(--site00-origin-hero-offset-y));
     width: min(var(--site00-origin-hero-max-w), 38vw);
     max-width: var(--site00-origin-hero-max-w);
     padding-top: 0;

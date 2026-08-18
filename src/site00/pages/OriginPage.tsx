@@ -45,7 +45,13 @@ export default function OriginPage() {
             }}
           >
             <div className="site00-home-grid">
-              <aside className="site00-home-hero" aria-label="Origin messaging">
+              <aside
+                className="site00-home-hero"
+                style={{
+                  ['--site00-origin-hero-top' as string]: `${SITE00_ORIGIN_DESKTOP_COMPOSITION.heroTopPx}px`,
+                }}
+                aria-label="Origin messaging"
+              >
                 <p className="site00-label site00-home-hero__eyebrow">{SITE00_ORIGIN_COPY.headlineLine1}</p>
                 <h1 className="site00-heading-xl">{SITE00_ORIGIN_COPY.headlineLine2}</h1>
                 <p className="site00-tagline site00-home-hero__tagline">{SITE00_ORIGIN_COPY.tagline}</p>

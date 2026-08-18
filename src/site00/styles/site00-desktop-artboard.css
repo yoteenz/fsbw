@@ -92,6 +92,7 @@
 
 .site00-desktop-artboard .site00-home-stage {
   --site00-origin-card-number-color: var(--site-red);
+  --site00-origin-hero-offset-y: 10px;
   padding: 0;
   min-height: 0;
   height: 100%;
@@ -107,7 +108,7 @@
 .site00-desktop-artboard .site00-home-hero {
   position: absolute;
   left: calc(var(--site00-origin-hero-left) + var(--site00-origin-hero-offset-x));
-  top: var(--site00-origin-hero-top);
+  top: calc(var(--site00-origin-hero-top) + var(--site00-origin-hero-offset-y));
   width: var(--site00-origin-hero-max-w);
   max-width: var(--site00-origin-hero-max-w);
   padding-top: 0;
@@ -145,6 +146,7 @@
 /* /origin/desktop page class — mirrors artboard shell when nested selectors differ */
 .site00-origin-page--desktop-artboard .site00-home-stage {
   --site00-origin-card-number-color: var(--site-red);
+  --site00-origin-hero-offset-y: 10px;
 }
 
 .site00-desktop-artboard .site00-origin-mobile-swipe {
