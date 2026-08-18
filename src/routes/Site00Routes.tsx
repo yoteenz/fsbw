@@ -8,6 +8,7 @@ import { AsstsColdStartGate } from '../site00/assts/components/AsstsColdStartGat
 import { Site00RouteLoadingFallback } from '../site00/components/loader/Site00RouteLoadingFallback';
 import { Site00WorldColdStartGate } from '../site00/components/loader/Site00WorldColdStartGate';
 import { Site00OriginRouteShell } from '../site00/components/shell/Site00OriginRouteShell';
+import { Site00AccountRouteGuard } from '../site00/components/guards/Site00AccountRouteGuard';
 import { Site00DesktopArtboardShell } from '../site00/components/shell/Site00DesktopArtboardShell';
 import { Site00TypographyBootstrap } from '../site00/components/Site00TypographyBootstrap';
 /* Eager-load SITE 00 + ASSTS styles (lazy route CSS was not applying on mobile preview). */
@@ -16,6 +17,8 @@ import '../site00/styles/site00-locations.css';
 import '../site00/styles/site00-bldr-entry.css';
 import '../site00/styles/site00-loader.css';
 import '../site00/styles/site00-desktop-artboard.css';
+import '../site00/styles/site00-auth.css';
+import '../site00/styles/site00-ctrl-room.css';
 import '../site00/assts/styles/assts.css';
 import '../site00/assts/styles/assts-depth.css';
 import '../site00/assts/styles/assts-composition.css';
@@ -28,6 +31,9 @@ const Site00IdntyPage = lazy(() => import('../site00/pages/IdntyPage'));
 const Site00IdntyStatePage = lazy(() => import('../site00/pages/IdntyStatePage'));
 const Site00BldrPage = lazy(() => import('../site00/pages/BldrPage'));
 const Site00BldrStatePage = lazy(() => import('../site00/pages/BldrStatePage'));
+const Site00SignInPage = lazy(() => import('../site00/pages/Site00SignInPage'));
+const ControlOverviewPage = lazy(() => import('../site00/pages/control/ControlOverviewPage'));
+const ControlSectionPage = lazy(() => import('../site00/pages/control/ControlSectionPage'));
 const AsstsLibraryPage = lazy(() => import('../site00/assts/pages/LibraryPage'));
 const AsstsBatchesListPage = lazy(() => import('../site00/assts/pages/BatchesListPage'));
 const AsstsBatchPage = lazy(() => import('../site00/assts/pages/BatchPage'));
@@ -276,10 +282,103 @@ export function Site00Routes() {
           />
         </Route>
       </Route>
+      <Route
+        path={SITE00_ROUTES.signIn}
+        element={
+          <Site00Layout>
+            <Site00Suspense>
+              <Site00SignInPage />
+            </Site00Suspense>
+          </Site00Layout>
+        }
+      />
+      <Route
+        path={SITE00_ROUTES.control}
+        element={
+          <Site00Layout>
+            <Site00AccountRouteGuard>
+              <Site00Suspense>
+                <ControlOverviewPage />
+              </Site00Suspense>
+            </Site00AccountRouteGuard>
+          </Site00Layout>
+        }
+      />
+      <Route
+        path={`${SITE00_ROUTES.controlSites}`}
+        element={
+          <Site00Layout>
+            <Site00AccountRouteGuard>
+              <Site00Suspense>
+                <ControlSectionPage />
+              </Site00Suspense>
+            </Site00AccountRouteGuard>
+          </Site00Layout>
+        }
+      />
+      <Route
+        path={`${SITE00_ROUTES.controlDomains}`}
+        element={
+          <Site00Layout>
+            <Site00AccountRouteGuard>
+              <Site00Suspense>
+                <ControlSectionPage />
+              </Site00Suspense>
+            </Site00AccountRouteGuard>
+          </Site00Layout>
+        }
+      />
+      <Route
+        path={`${SITE00_ROUTES.controlBilling}`}
+        element={
+          <Site00Layout>
+            <Site00AccountRouteGuard>
+              <Site00Suspense>
+                <ControlSectionPage />
+              </Site00Suspense>
+            </Site00AccountRouteGuard>
+          </Site00Layout>
+        }
+      />
+      <Route
+        path={`${SITE00_ROUTES.controlTeam}`}
+        element={
+          <Site00Layout>
+            <Site00AccountRouteGuard>
+              <Site00Suspense>
+                <ControlSectionPage />
+              </Site00Suspense>
+            </Site00AccountRouteGuard>
+          </Site00Layout>
+        }
+      />
+      <Route
+        path={`${SITE00_ROUTES.controlSettings}`}
+        element={
+          <Site00Layout>
+            <Site00AccountRouteGuard>
+              <Site00Suspense>
+                <ControlSectionPage />
+              </Site00Suspense>
+            </Site00AccountRouteGuard>
+          </Site00Layout>
+        }
+      />
+      <Route
+        path={`${SITE00_ROUTES.controlSecurity}`}
+        element={
+          <Site00Layout>
+            <Site00AccountRouteGuard>
+              <Site00Suspense>
+                <ControlSectionPage />
+              </Site00Suspense>
+            </Site00AccountRouteGuard>
+          </Site00Layout>
+        }
+      />
       {/* Reserved future namespaces — redirect to origin until implemented */}
       <Route path="/bluprint/*" element={<Navigate to={SITE00_ROUTES.originAlias} replace />} />
       <Route path="/build/*" element={<Navigate to={SITE00_ROUTES.originAlias} replace />} />
-      <Route path="/control/*" element={<Navigate to={SITE00_ROUTES.originAlias} replace />} />
       <Route path="/live/*" element={<Navigate to={SITE00_ROUTES.originAlias} replace />} />
     </>
   );

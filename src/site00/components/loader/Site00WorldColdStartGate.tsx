@@ -12,6 +12,7 @@ import {
   markSite00ImmersiveComplete,
   shouldShowSite00ImmersiveLoader,
 } from './site00LoaderSession';
+import { isSite00SignInPath } from './site00LoaderPaths';
 import { useSite00LoaderProgress } from './useSite00LoaderProgress';
 
 const COMPLETE_HOLD_MS = 680;
@@ -26,7 +27,9 @@ initSite00ImmersiveLoaderBoot();
  */
 export function Site00WorldColdStartGate({ children }: { children: ReactNode }) {
   const { pathname } = useLocation();
-  const immersive = shouldShowSite00ImmersiveLoader();
+  const skipForRoute =
+    isSite00SignInPath(pathname) || pathname === '/control' || pathname.startsWith('/control/');
+  const immersive = !skipForRoute && shouldShowSite00ImmersiveLoader();
   const [phase, setPhase] = useState<Site00ImmersiveLoaderPhase>(immersive ? 'loading' : 'exiting');
   const [revealed, setRevealed] = useState(!immersive);
   const startedAt = useRef(Date.now());

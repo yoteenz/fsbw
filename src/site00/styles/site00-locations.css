@@ -415,6 +415,27 @@
     white-space: nowrap;
   }
 
+  .site00-mobile-menu__logout {
+    display: block;
+    width: 100%;
+    margin-top: 14px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    text-align: left;
+    font-family: var(--site00-font-nav);
+    font-size: 0.8125rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--site-text-muted);
+    cursor: pointer;
+  }
+
+  .site00-mobile-menu__logout:hover,
+  .site00-mobile-menu__logout:focus-visible {
+    color: var(--site-red);
+  }
+
   /* ─── Screen enter transition ─── */
 
   .site00-mobile-shell.site00-locations-page--enter {

@@ -1,14 +1,16 @@
 import { useEffect, useRef, type RefObject } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
   isSite00CtrlRoomActive,
   isSite00MobileDirectoryItemActive,
   SITE00_CTRL_ROOM_PATH,
   SITE00_MOBILE_DIRECTORY_PRIMARY,
 } from '../../config/mobile-directory-nav';
-import { site00MobileBuildNavHref } from '../../config/routes';
+import { site00MobileBuildNavHref, SITE00_ROUTES } from '../../config/routes';
 import { useSignedInFromStorage } from '../../../hooks/useSignedInFromStorage';
-import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
+import { site00SignInHrefWithReturnTo } from '../../config/mobile-directory-nav';
+import { signOutAppAndSupabaseSession } from '../../../utils/adminAuth';
+import { trackActivity } from '../../../utils/activity';
 
 type Site00MobileMenuDrawerProps = {
   open: boolean;
@@ -27,12 +29,20 @@ function focusableElements(root: HTMLElement): HTMLElement[] {
 /** Global SITE 00 mobile navigation — opened from header hamburger. */
 export function Site00MobileMenuDrawer({ open, onClose, returnFocusRef }: Site00MobileMenuDrawerProps) {
   const { pathname } = useLocation();
+  const navigate = useNavigate();
   const [isSignedIn] = useSignedInFromStorage();
   const drawerRef = useRef<HTMLElement>(null);
   const bldrHref = site00MobileBuildNavHref(pathname);
   const ctrlRoomHref = isSignedIn
     ? SITE00_CTRL_ROOM_PATH
-    : signInHrefWithReturnTo({ pathname: SITE00_CTRL_ROOM_PATH, search: '' });
+    : site00SignInHrefWithReturnTo({ pathname: SITE00_CTRL_ROOM_PATH, search: '' });
+
+  const onLogout = async () => {
+    onClose();
+    trackActivity('sign_out');
+    await signOutAppAndSupabaseSession();
+    navigate(SITE00_ROUTES.originAlias, { replace: true });
+  };
 
   useEffect(() => {
     if (!open) return;
@@ -128,6 +138,11 @@ export function Site00MobileMenuDrawer({ open, onClose, returnFocusRef }: Site00
                 {isSignedIn ? 'ENTER →' : 'LOG IN →'}
               </span>
             </Link>
+            {isSignedIn ? (
+              <button type="button" className="site00-mobile-menu__logout" onClick={() => void onLogout()}>
+                LOG OUT
+              </button>
+            ) : null}
           </div>
         </nav>
       </aside>

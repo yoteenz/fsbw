@@ -23,13 +23,20 @@ export const SITE00_ROUTES = {
   system: '/system',
   about: '/about',
   journal: '/journal',
+  signIn: '/origin/sign-in',
+  control: '/control',
+  controlSites: '/control/sites',
+  controlDomains: '/control/domains',
+  controlBilling: '/control/billing',
+  controlTeam: '/control/team',
+  controlSettings: '/control/settings',
+  controlSecurity: '/control/security',
 } as const;
 
 /** Future reserved stage namespaces (placeholder routes — not populated this sprint) */
 export const SITE00_FUTURE_ROUTES = {
   bluprint: '/bluprint',
   build: '/build',
-  control: '/control',
   live: '/live',
   evolve: '/evolve',
   projects: '/projects',

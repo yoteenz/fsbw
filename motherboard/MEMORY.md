@@ -53608,3 +53608,21 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Deploy:** Sync-only; say **deploy now** for Vercel.
 
+---
+
+## 2026-08-18 — SITE 00 Sign In + CTRL ROOM (desktop + mobile)
+
+- **Context:** Composer sprint — implement approved master design for SITE 00 **SIGN IN** and **CTRL ROOM** (desktop split-screen auth, mobile single-column auth, desktop/mobile account command center). Production backgrounds: `C948EBEF-45AC-476C-AD91-735CE2026157.png` (sign-in left panel), `D8D7E6B9-2CAD-4C63-BD82-F77E810851A2.png` (CTRL ROOM environment). Terminology: SIGN IN, CTRL ROOM, IDNTY, BLDR — not Dashboard/Identity/Builder.
+
+- **Routes:** `/origin/sign-in` (SITE 00 auth shell); `/control` + `/control/sites|domains|billing|team|settings|security` (overview + section placeholders). `SITE00_CTRL_ROOM_PATH` → `/control`. Mobile drawer CTRL ROOM links to `/control` signed-in or `/origin/sign-in?returnTo=%2Fcontrol` signed-out.
+
+- **Auth:** Reuses Supabase session pipeline (`site00SignInActions.ts`) — password, magic link OTP, password reset. `Site00AccountRouteGuard` redirects unsigned users to SITE 00 sign-in. Create account links to existing `/sign-in?returnTo=…`. Orbital graphic reuses loader geometry (`Site00OrbitalMark`).
+
+- **CTRL ROOM data:** Real user from `currentUser`; membership plan when available; local activity backup for Recent Activity; empty states for sites/domains/billing (no fake demo counts).
+
+- **Loader skip:** Sign-in + `/control/*` skip immersive cold-start gate; `/origin/sign-in` in boot gate skip list.
+
+- **Files:** New `site00-auth.css`, `site00-ctrl-room.css`, auth/control components + pages under `src/site00/`. Drawer adds LOG OUT when signed in.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+

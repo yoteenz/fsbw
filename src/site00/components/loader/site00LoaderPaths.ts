@@ -21,8 +21,15 @@ export function isSite00DesktopArtboardPath(pathname: string): boolean {
   return prefixes.some((base) => pathname === base || pathname.startsWith(`${base}/`));
 }
 
+/** Sign-in is a focused auth surface — skip cinematic cold-start loader. */
+export function isSite00SignInPath(pathname: string): boolean {
+  if (!pathname) return false;
+  return pathname === SITE00_ROUTES.signIn || pathname.startsWith(`${SITE00_ROUTES.signIn}/`);
+}
+
 export function isSite00ImmersivePath(pathname: string): boolean {
   if (isSite00DesktopArtboardPath(pathname)) return false;
+  if (isSite00SignInPath(pathname)) return false;
   if (!pathname) return false;
   if (pathname === '/' && import.meta.env.VITE_SITE00_ROOT === '1') return true;
   return SITE00_IMMERSIVE_PREFIXES.some(
