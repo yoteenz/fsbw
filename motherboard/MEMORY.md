@@ -53194,6 +53194,18 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Verification:** Playwright `/origin/desktop` — both icons **60×60px** rendered (was ~80px); CSS var `0.75`.
 
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — Origin desktop hero description +6px spacing
+
+- **Context:** Add **6px** below the three-line Origin description block (*THIS IS THE ORIGIN ENVIRONMENT… / EVERY SITE… / ONLINE STARTS HERE.*), desktop only.
+
+- **Change:** `.site00-home-hero__coordinate` `margin-top` **6px → 12px** in desktop `@media (min-width: 768px)` + `.site00-desktop-artboard` mirror.
+
+- **Verification:** Playwright gap **ONLINE STARTS HERE.** → coordinate line **12px** (was 6px).
+
 - **Spatial Architecture Review:** SKIPPED — composition nudge.
 
 - **Deploy:** Sync-only; say **deploy now** for Vercel.
