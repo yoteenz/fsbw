@@ -53357,3 +53357,15 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Change:** `.site00-bldr-framework-pillars` modifier on BLDR pillars grid; `.site00-body` descriptions → `color: var(--site-text-muted)`. Titles (`.site00-micro`) stay black. IDNTY unchanged.
 
 - **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — Origin desktop expanded panels +25% scale, H+V centered
+
+- **Context:** Founder requested expanded IDNTY/BLDR panels **25% larger** on desktop Origin, **centered horizontally and vertically**.
+
+- **Change:** `expandedPanelScale` **0.7 → 0.875**; `.site00-home-expanded-column` → `left/top: 50%`, `transform: translate(-50%, -50%) scale(...)`; moved expanded column to direct child of `.site00-home-stage` (not inside grid) so centering anchors to full stage.
+
+- **Verification:** Playwright `/origin/desktop` — scale 0.875, panel center delta 0px vs stage center on X and Y.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
