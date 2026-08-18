@@ -3,6 +3,7 @@ import { BLDR_HOMEPAGE_EXPANDED, BLDR_FRAMEWORK_PILLARS } from '../../config/bui
 import { SITE00_ROUTES } from '../../config/routes';
 import { ArchitecturalPanel } from '../panels/ArchitecturalPanel';
 import { SectionRule } from '../panels/SectionRule';
+import { OriginPanelIcon } from './OriginPanelIcon';
 import { GeometricIcon } from '../icons/GeometricIcon';
 import { ArrowAction } from '../icons/ArrowAction';
 
@@ -31,7 +32,7 @@ export function BldrExpandedPanel({ onCollapse }: BldrExpandedPanelProps) {
             </h2>
             <p className="site00-label">{copy.subtitle}</p>
           </div>
-          <GeometricIcon variant="bldr-header" size="lg" />
+          <OriginPanelIcon panel="bldr" size="lg" />
         </div>
 
         <div style={{ margin: '24px 0' }}>

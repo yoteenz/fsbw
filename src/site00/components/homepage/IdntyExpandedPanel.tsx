@@ -3,6 +3,7 @@ import { IDNTY_HOMEPAGE_EXPANDED, IDNTY_FRAMEWORK_PILLARS } from '../../config/i
 import { SITE00_ROUTES } from '../../config/routes';
 import { ArchitecturalPanel } from '../panels/ArchitecturalPanel';
 import { SectionRule } from '../panels/SectionRule';
+import { OriginPanelIcon } from './OriginPanelIcon';
 import { GeometricIcon } from '../icons/GeometricIcon';
 import { ArrowAction } from '../icons/ArrowAction';
 
@@ -31,7 +32,7 @@ export function IdntyExpandedPanel({ onCollapse }: IdntyExpandedPanelProps) {
             </h2>
             <p className="site00-label">{copy.subtitle}</p>
           </div>
-          <GeometricIcon variant="idnty-header" size="lg" />
+          <OriginPanelIcon panel="idnty" size="lg" />
         </div>
 
         <div style={{ margin: '24px 0' }}>

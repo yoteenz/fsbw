@@ -23,10 +23,12 @@ export function CollapsedCard({ number, title, subtitle, cta, panel, onExpand }:
         padding: '24px 20px',
         minWidth: 180,
         maxWidth: 220,
+        minHeight: 260,
         flex: '1 1 180px',
         cursor: 'pointer',
         border: '1px solid rgba(255,255,255,0.8)',
         background: 'var(--site-surface-glass)',
+        overflow: 'visible',
       }}
       aria-label={`Expand ${title}`}
     >
