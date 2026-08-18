@@ -53347,3 +53347,13 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Change:** `frameworkIconSizePx: 38.4` (32 × 1.2) in `origin-home-composition.ts`; `--site00-origin-framework-icon-size` on home stage; CSS + `BldrFrameworkIcon` / `IdntyFrameworkIcon` width/height updated.
 
 - **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — BLDR framework pillar detail text → gray (desktop Origin)
+
+- **Context:** Founder requested **gray** (not black) for detailed copy under pillar titles (DIRECTION, STRUCTURE, FUNCTION, …) in **BLDR framework section only** on Origin desktop expanded panel.
+
+- **Change:** `.site00-bldr-framework-pillars` modifier on BLDR pillars grid; `.site00-body` descriptions → `color: var(--site-text-muted)`. Titles (`.site00-micro`) stay black. IDNTY unchanged.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
