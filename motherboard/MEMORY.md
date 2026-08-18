@@ -54153,3 +54153,10 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Context:** Founder supplied Supabase PNG for Origin desktop EVOLVE collapsed + expanded panel icon.
 - **Asset:** `live-preview/site00/EVOLVE/9E87E14E-63A7-4ED5-9054-5435136E1768.png` via `origin-panel-icons.ts` (replaces SVG fallback); `OriginPanelIcon` md/lg sizing unchanged — matches IDNTY/BLDR.
 
+---
+
+## 2026-08-18 — Origin EVOLVE expanded panel methodology restructure
+
+- **Context:** IA correction — CHOOSE YOUR PATH (REFINE/INSTALL/TRANSFORM) belongs on dedicated `/evolve/state` only; Origin expanded panel shows **EVOLVE FRAMEWORK** methodology (01 AUDIT · 02 INTERVENE · 03 ADVANCE). **BEGIN EVOLUTION** CTA locked unchanged.
+- **Changes:** `EVOLVE_METHODOLOGY_PILLARS` + `evolve-methodology-icons.ts` empty asset slots; `EvolveMethodologyIcon`; `EvolveExpandedPanel` matches IDNTY/BLDR framework grid; restored HOW IT WORKS → `/evolve`. Dedicated route unchanged.
+
