@@ -54004,3 +54004,10 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Conventions:** PUBLIC WORLD = Origin shell + status rail, no sidebar. OPERATING WORLD = top nav workspace shell, no public-route links in operating IA.
 
+---
+
+## 2026-08-18 — SITE package starting price $4K+
+
+- **Context:** Founder requested SITE build-class starting price update from **$3.5K** to **$4K+** (plus indicates sliding-scale pricing).
+- **Changes:** `builder.ts` (`$4K+`, `FROM ~$4K+`), `bldr-entry.ts` (`FROM $4K+`), `seedDemo.ts` budget range, `test-site00-bldr-entry.mjs` assertion.
+

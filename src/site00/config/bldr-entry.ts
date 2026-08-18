@@ -32,7 +32,7 @@ export const SITE00_BLDR_BUILD_DIRECTIONS: BldrBuildDirection[] = [
     id: 'site',
     title: 'SITE',
     descriptionLines: ['WEBSITES + COMMERCE'],
-    price: 'FROM $3K',
+    price: 'FROM $4K+',
     imagePath: SITE00_BLDR_ENTRY_SITE_IMAGE,
     imageObjectPosition: 'center 42%',
     buildClassId: 'site',

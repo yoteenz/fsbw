@@ -64,7 +64,7 @@ const pass = results.every(
     r.metrics.title?.includes('BUILDING') &&
     r.metrics.subtitle === 'CHOOSE A DIRECTION' &&
     r.metrics.siteTitle === 'SITE' &&
-    r.metrics.sitePrice === 'FROM $3K' &&
+    r.metrics.sitePrice === 'FROM $4K+' &&
     r.metrics.worldTitle === 'WORLD' &&
     r.metrics.worldPrice === 'FROM $10K+' &&
     r.metrics.siteImgLoaded &&

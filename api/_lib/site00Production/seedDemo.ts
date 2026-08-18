@@ -62,7 +62,7 @@ export async function ensureDemoProjectSeeded(): Promise<{ projectId: string; cr
     missing_assets: ['TYPOGRAPHY SYSTEM', 'HOMEPAGE DIRECTION'],
     required_features: ['COLLECTION PAGES', 'CHECKOUT', 'MEMBER AREA'],
     timeline: 'Q4 LAUNCH',
-    budget_range: '$3.5K–$10K',
+    budget_range: '$4K+–$10K',
     current_phase: 'DESIGN_DIRECTION',
     confidence: 0.84,
     provenance: { build_class: 'CLIENT_PROVIDED', goals: 'AI_SUGGESTED' },
