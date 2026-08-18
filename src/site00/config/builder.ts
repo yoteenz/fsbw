@@ -142,14 +142,14 @@ export const BLDR_HOMEPAGE_EXPANDED = {
       title: 'SITE',
       description:
         'STRUCTURED DIGITAL BUILD. WEBSITES, ECOMMERCE, PORTFOLIOS, LANDING PAGES, BOOKINGS, MEMBERSHIPS, AND MORE.',
-      price: 'FROM ~$4K+',
+      price: 'FROM $4K+',
     },
     {
       code: '02',
       title: 'WORLD',
       description:
         'BESPOKE DIGITAL EXPERIENCE. IMMERSIVE EXPERIENCES, PLATFORMS, CUSTOM SYSTEMS, CONFIGURATORS, ADVANCED INTERACTION, AND MORE.',
-      price: 'FROM ~$10K+',
+      price: 'FROM $10K+',
     },
   ],
   cta: 'BEGIN BLDR',
