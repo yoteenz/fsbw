@@ -4,7 +4,7 @@
  */
 
 import { resolveSite00PublicAsset } from '../components/loader/site00LoaderConfig';
-import { IMMUNE_PRODUCTION_PROJECT_REF } from '../../../studio-os-core/immune-system/constants';
+import { IMMUNE_PRODUCTION_PROJECT_REF } from '../../studio-os-core/immune-system/constants';
 
 export const SITE00_ORIGIN_IDNTY_PANEL_ICON_PATH = 'A97879A2-FFEA-4BD5-AC0A-74359620A851.png';
 

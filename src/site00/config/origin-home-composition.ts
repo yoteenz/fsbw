@@ -15,9 +15,7 @@ export const SITE00_ORIGIN_DESKTOP_COMPOSITION = {
   cardsTopOffsetPx: 80,
   cardsMaxWidthPx: 520,
   cardScale: 0.45,
-  /** Expanded IDNTY/BLDR panel — right column overlay. */
-  expandedLeftPercent: 52,
-  expandedTopPx: 12,
+  /** Expanded IDNTY/BLDR panel — centered over plaza (same anchor as collapsed cards). */
   expandedMaxWidthPx: 680,
 } as const;
 

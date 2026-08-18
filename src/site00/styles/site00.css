@@ -709,8 +709,6 @@
   --site00-origin-cards-max-w: 520px;
   --site00-origin-card-scale: 1;
   --site00-origin-card-number-color: var(--site-text);
-  --site00-origin-expanded-left: 52%;
-  --site00-origin-expanded-top: 12px;
   --site00-origin-expanded-max-w: 680px;
   position: relative;
   min-height: calc(100dvh - 160px);
@@ -869,11 +867,13 @@
 
   .site00-home-expanded-column {
     position: absolute;
-    left: var(--site00-origin-expanded-left);
-    top: var(--site00-origin-expanded-top);
-    width: min(var(--site00-origin-expanded-max-w), 44vw);
+    left: 50%;
+    top: calc(var(--site00-origin-cards-top) + var(--site00-origin-cards-offset-y));
+    transform: translateX(-50%);
+    width: min(var(--site00-origin-expanded-max-w), calc(100% - 64px));
     max-width: var(--site00-origin-expanded-max-w);
     padding-top: 0;
+    z-index: 4;
   }
 
   .site00-home-grid__spacer {

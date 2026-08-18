@@ -117,11 +117,13 @@
 
 .site00-desktop-artboard .site00-home-expanded-column {
   position: absolute;
-  left: var(--site00-origin-expanded-left);
-  top: var(--site00-origin-expanded-top);
-  width: var(--site00-origin-expanded-max-w);
+  left: 50%;
+  top: calc(var(--site00-origin-cards-top) + var(--site00-origin-cards-offset-y));
+  transform: translateX(-50%);
+  width: min(var(--site00-origin-expanded-max-w), calc(100% - 64px));
   max-width: var(--site00-origin-expanded-max-w);
   padding-top: 0;
+  z-index: 4;
 }
 
 .site00-desktop-artboard .site00-home-grid__spacer {
