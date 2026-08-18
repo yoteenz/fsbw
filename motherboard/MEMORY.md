@@ -52976,7 +52976,17 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Changes:** `Site00AppShell` — `mobileOriginHeader` prop + header BEM slots; `OriginPage` enables it; `site00.css` mobile — hide logo block, center `.site00-global-nav` with muted gray links, keep ENTER 00 top-right absolute; `site00-desktop-artboard.css` restores full 3-column header on `/origin/desktop`.
 
-- **QA:** Playwright @ 390×844 `/origin` — logo hidden, nav centered (delta 0px), nav color `#6b6b6b`. Screenshot: `site00_origin_mobile_header_centered.png`.
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — SITE 00 Origin mobile swipe-up enter callout
+
+- **Context:** Founder requested Origin homepage **mobile only** — remove hero **YOU ARE AT 00.00 ORIGIN POINT**, **WHERE DO WE BEGIN?**, and IDNTY/BLDR card panels; replace with approved lower-center swipe-up enter callout (YOU ARE AT / 00.00 / ORIGIN POINT / connector / ENTER SITE 00 / SWIPE UP / red arrow).
+
+- **Changes:** `OriginMobileSwipeUp.tsx` + `status.ts` `mobileSwipeUp` copy; `OriginPage` mounts swipe section; `site00.css` mobile hides coordinate + desktop cards/expanded panels, fixed centered swipe block above status strip; `/origin/desktop` artboard restores desktop cards via `site00-desktop-artboard.css`.
+
+- **QA:** Playwright @ 390×844 `/origin` — swipe `display:flex`, coordinate/cards hidden. Screenshot: `site00_origin_mobile_swipe_up.png`.
 
 - **Deploy:** Sync-only; say **deploy now** for Vercel.
 
