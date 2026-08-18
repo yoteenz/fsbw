@@ -14,9 +14,9 @@ export default function IdntyStatePage() {
   const { state, selectIdentityState } = useSite00();
 
   return (
-    <EnvironmentShell environmentId="WORKFLOW_ENVIRONMENT">
+    <EnvironmentShell environmentId="WORKFLOW_ENVIRONMENT" className="site00-state-page site00-state-page--idnty">
       <Site00AppShell locationLabel={IDNTY_STATE_COPY.locationLabel}>
-        <div style={{ maxWidth: 1100, margin: '0 auto', padding: '32px 24px 80px' }}>
+        <div className="site00-state-page-layout">
           <header style={{ textAlign: 'center', marginBottom: 32 }}>
             <p className="site00-label-red" style={{ marginBottom: 8 }}>
               {IDNTY_STATE_COPY.headline}
@@ -70,9 +70,9 @@ export default function IdntyStatePage() {
               </div>
             </div>
           </ArchitecturalPanel>
-
-          <WorkflowSummary text={IDNTY_STATE_COPY.footer} />
         </div>
+
+        <WorkflowSummary text={IDNTY_STATE_COPY.footer} />
       </Site00AppShell>
       <Site00OriginLayoutSwitch />
     </EnvironmentShell>

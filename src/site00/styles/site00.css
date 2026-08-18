@@ -762,11 +762,9 @@
   margin: 20px 0;
 }
 
-.site00-enter-status-strip {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
+/* ─── Bottom summary strip panel (Enter + IDNTY/BLDR state desktop) ─── */
+
+.site00-summary-strip-panel {
   text-align: center;
   padding: 4px 12px;
   background: rgba(255, 255, 255, 0.85);
@@ -776,21 +774,57 @@
   z-index: var(--site-z-nav);
 }
 
-.site00-enter-status-strip .site00-summary-strip {
+.site00-summary-strip-panel .site00-summary-strip {
   padding: 6px 16px;
   column-gap: 1.25rem;
   row-gap: 0.25rem;
   line-height: 1.1;
 }
 
-.site00-enter-status-strip .site00-summary-strip__group {
+.site00-summary-strip-panel .site00-summary-strip__group {
   gap: 0.5rem;
+}
+
+.site00-enter-status-strip,
+.site00-workflow-summary-strip {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+.site00-workflow-summary-strip {
+  background: rgba(245, 245, 243, 0.98);
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 -12px 36px rgba(0, 0, 0, 0.1);
+}
+
+.site00-state-page-layout {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 32px 24px 80px;
+  box-sizing: border-box;
+}
+
+@media (min-width: 768px) {
+  .site00-state-page-layout {
+    padding-bottom: calc(var(--site00-summary-strip-height, 36px) + 48px);
+  }
+}
+
+@media (max-width: 767px) {
+  .site00-workflow-summary-strip {
+    position: static;
+    margin-top: 24px;
+    border-radius: var(--site-radius-lg);
+  }
 }
 
 @media (min-width: 768px) {
   .site00-enter-page {
     --site00-enter-header-offset: 96px;
     --site00-enter-status-strip-height: 36px;
+    --site00-summary-strip-height: 36px;
     height: 100dvh;
     overflow: hidden;
   }

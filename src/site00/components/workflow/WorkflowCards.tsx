@@ -136,7 +136,11 @@ type WorkflowSummaryProps = {
 };
 
 export function WorkflowSummary({ text }: WorkflowSummaryProps) {
-  return <Site00SummaryStripText text={text} />;
+  return (
+    <footer className="site00-summary-strip-panel site00-workflow-summary-strip">
+      <Site00SummaryStripText text={text} />
+    </footer>
+  );
 }
 
 type DirectoryRowProps = {

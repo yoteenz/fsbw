@@ -50,7 +50,7 @@ export function DirectoryPanel() {
 
 export function EnterStatusStrip() {
   return (
-    <footer className="site00-enter-status-strip">
+    <footer className="site00-summary-strip-panel site00-enter-status-strip">
       <Site00SummaryStripText text={SITE00_ENTER_COPY.statusStrip} />
     </footer>
   );

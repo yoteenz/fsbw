@@ -10,9 +10,9 @@ export default function BldrStatePage() {
   const { state, selectBuildClass } = useSite00();
 
   return (
-    <EnvironmentShell environmentId="WORKFLOW_ENVIRONMENT">
+    <EnvironmentShell environmentId="WORKFLOW_ENVIRONMENT" className="site00-state-page site00-state-page--bldr">
       <Site00AppShell locationLabel={BLDR_STATE_COPY.locationLabel}>
-        <div style={{ maxWidth: 1100, margin: '0 auto', padding: '32px 24px 80px' }}>
+        <div className="site00-state-page-layout">
           <header style={{ textAlign: 'center', marginBottom: 32 }}>
             <p className="site00-label-red" style={{ marginBottom: 8 }}>
               {BLDR_STATE_COPY.headline}
@@ -74,9 +74,9 @@ export default function BldrStatePage() {
               </div>
             </div>
           </ArchitecturalPanel>
-
-          <WorkflowSummary text={BLDR_STATE_COPY.footer} />
         </div>
+
+        <WorkflowSummary text={BLDR_STATE_COPY.footer} />
       </Site00AppShell>
       <Site00OriginLayoutSwitch />
     </EnvironmentShell>
