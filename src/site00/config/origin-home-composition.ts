@@ -15,6 +15,8 @@ export const SITE00_ORIGIN_DESKTOP_COMPOSITION = {
   cardsTopOffsetPx: 120,
   cardsMaxWidthPx: 520,
   cardScale: 0.45,
+  /** Collapsed panel PNG scale (1 = full; 0.75 = −25%). Desktop only via CSS. */
+  panelIconScale: 0.75,
   /** Expanded IDNTY/BLDR panel — centered over plaza (same anchor as collapsed cards). */
   expandedMaxWidthPx: 680,
 } as const;

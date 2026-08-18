@@ -721,6 +721,7 @@
   --site00-origin-cards-offset-y: 0px;
   --site00-origin-cards-max-w: 520px;
   --site00-origin-card-scale: 1;
+  --site00-origin-panel-icon-scale: 1;
   --site00-origin-card-number-color: var(--site-text);
   --site00-origin-expanded-max-w: 680px;
   position: relative;
@@ -923,6 +924,10 @@
   .site00-origin-cards__row {
     transform: scale(var(--site00-origin-card-scale));
     transform-origin: center top;
+  }
+
+  .site00-origin-card__icon-wrap {
+    transform: scale(calc(var(--site00-origin-panel-icon-scale, 1) / var(--site00-origin-card-scale, 1)));
   }
 }
 
