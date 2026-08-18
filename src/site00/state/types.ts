@@ -4,7 +4,7 @@
 
 import type { Site00PreviewDeviceMode } from './preview-mode';
 
-export type HomeMode = 'origin' | 'idnty-expanded' | 'bldr-expanded';
+export type HomeMode = 'origin' | 'idnty-expanded' | 'bldr-expanded' | 'evolve-expanded';
 
 export type AuthMode = 'anonymous' | 'authenticated' | 'admin';
 
@@ -12,6 +12,7 @@ export type Site00State = {
   homeMode: HomeMode;
   selectedIdentityStateId: string | null;
   selectedBuildClassId: string | null;
+  selectedEvolvePathId: string | null;
   authMode: AuthMode;
   /** Future: linked project */
   activeProjectId: string | null;
@@ -23,6 +24,7 @@ export const INITIAL_SITE00_STATE: Site00State = {
   homeMode: 'origin',
   selectedIdentityStateId: null,
   selectedBuildClassId: null,
+  selectedEvolvePathId: null,
   authMode: 'anonymous',
   activeProjectId: null,
   previewDeviceMode: 'desktop',
@@ -32,6 +34,7 @@ export type Site00Action =
   | { type: 'SET_HOME_MODE'; mode: HomeMode }
   | { type: 'SELECT_IDENTITY_STATE'; stateId: string }
   | { type: 'SELECT_BUILD_CLASS'; classId: string }
+  | { type: 'SELECT_EVOLVE_PATH'; pathId: string }
   | { type: 'CLEAR_SELECTIONS' }
   | { type: 'SET_AUTH_MODE'; mode: AuthMode }
   | { type: 'SET_PREVIEW_DEVICE_MODE'; mode: Site00PreviewDeviceMode };
@@ -44,8 +47,15 @@ export function site00Reducer(state: Site00State, action: Site00Action): Site00S
       return { ...state, selectedIdentityStateId: action.stateId };
     case 'SELECT_BUILD_CLASS':
       return { ...state, selectedBuildClassId: action.classId };
+    case 'SELECT_EVOLVE_PATH':
+      return { ...state, selectedEvolvePathId: action.pathId };
     case 'CLEAR_SELECTIONS':
-      return { ...state, selectedIdentityStateId: null, selectedBuildClassId: null };
+      return {
+        ...state,
+        selectedIdentityStateId: null,
+        selectedBuildClassId: null,
+        selectedEvolvePathId: null,
+      };
     case 'SET_AUTH_MODE':
       return { ...state, authMode: action.mode };
     case 'SET_PREVIEW_DEVICE_MODE':

@@ -15,27 +15,45 @@ const STATUS_FILTERS: { id: string; label: string; match?: ProjectStatus | 'ALL'
   { id: 'archived', label: 'ARCHIVED', match: 'ARCHIVED' },
 ];
 
+const SERVICE_FILTERS: { id: string; label: string; match?: 'IDNTY' | 'BLDR' | 'EVOLVE' | 'ALL' }[] = [
+  { id: 'service-all', label: 'ALL', match: 'ALL' },
+  { id: 'service-idnty', label: 'IDNTY', match: 'IDNTY' },
+  { id: 'service-bldr', label: 'BLDR', match: 'BLDR' },
+  { id: 'service-evolve', label: 'EVOLVE', match: 'EVOLVE' },
+];
+
 export default function ProjectsPage() {
   const { projects, projectMetrics, projectActivity, myRoles } = useEcosystemData();
   const [query, setQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [serviceFilter, setServiceFilter] = useState('service-all');
 
   const filtered = useMemo(() => {
     const filterDef = STATUS_FILTERS.find((f) => f.id === statusFilter);
+    const serviceDef = SERVICE_FILTERS.find((f) => f.id === serviceFilter);
     return projects.filter((p) => {
       const matchesQuery =
         !query.trim() ||
         p.name.toLowerCase().includes(query.toLowerCase()) ||
         p.description.toLowerCase().includes(query.toLowerCase());
       const matchesStatus = !filterDef?.match || filterDef.match === 'ALL' || p.status === filterDef.match;
-      return matchesQuery && matchesStatus;
+      const matchesService =
+        !serviceDef?.match ||
+        serviceDef.match === 'ALL' ||
+        p.serviceLine === serviceDef.match;
+      return matchesQuery && matchesStatus && matchesService;
     });
-  }, [projects, query, statusFilter]);
+  }, [projects, query, statusFilter, serviceFilter]);
 
   const headerActions = (
-    <Link to={SITE00_ROUTES.bldr} className="site00-btn-outline site00-ecosystem-header__cta">
-      + NEW PROJECT
-    </Link>
+    <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+      <Link to={SITE00_ROUTES.evolveState} className="site00-btn-outline site00-ecosystem-header__cta">
+        + EVOLVE
+      </Link>
+      <Link to={SITE00_ROUTES.bldr} className="site00-btn-outline site00-ecosystem-header__cta">
+        + NEW BUILD
+      </Link>
+    </div>
   );
 
   return (
@@ -62,12 +80,24 @@ export default function ProjectsPage() {
               </button>
             ))}
           </div>
+          <div className="site00-eco-filters" role="group" aria-label="Filter by service">
+            {SERVICE_FILTERS.map((f) => (
+              <button
+                key={f.id}
+                type="button"
+                className={`site00-eco-filters__btn ${serviceFilter === f.id ? 'site00-eco-filters__btn--active' : ''}`.trim()}
+                onClick={() => setServiceFilter(f.id)}
+              >
+                {f.label}
+              </button>
+            ))}
+          </div>
         </div>
 
         {filtered.length === 0 ? (
           <EmptyState
             title="NO PROJECTS YET"
-            body="Start a build from BLDR to create your first SITE 00 project."
+            body="Start from IDNTY, BLDR, or EVOLVE to create your first SITE 00 project."
           />
         ) : (
           <ul className="site00-project-list">

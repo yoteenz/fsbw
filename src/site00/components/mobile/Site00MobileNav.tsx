@@ -19,7 +19,8 @@ export function Site00MobileNav({ active }: Site00MobileNavProps) {
           item.id === active ||
           (item.id === 'origin' && (pathname === '/' || pathname === '/origin')) ||
           (item.id === 'locations' && pathname.startsWith('/origin/locations')) ||
-          (item.id === 'build' && pathname.startsWith('/bldr'));
+          (item.id === 'build' && pathname.startsWith('/bldr')) ||
+          (item.id === 'origin' && pathname.startsWith('/evolve'));
 
         return (
           <Link

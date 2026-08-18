@@ -34,6 +34,13 @@ export const SITE00_MOBILE_DIRECTORY_PRIMARY: Site00MobileDirectoryItem[] = [
     enabled: true,
     ariaLabel: 'Builder — Start Build',
   },
+  {
+    id: 'evolve',
+    label: 'EVOLVE',
+    href: SITE00_ROUTES.evolve,
+    enabled: true,
+    ariaLabel: 'Evolve — Transform what exists',
+  },
 ];
 
 /** Canonical customer account environment (CTRL ROOM). */
@@ -51,6 +58,9 @@ export function isSite00MobileDirectoryItemActive(pathname: string, item: Site00
   }
   if (item.id === 'bldr') {
     return pathname.startsWith(SITE00_ROUTES.bldr);
+  }
+  if (item.id === 'evolve') {
+    return pathname.startsWith(SITE00_ROUTES.evolve);
   }
   return pathname === item.href || pathname.startsWith(`${item.href}/`);
 }

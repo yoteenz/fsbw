@@ -6,6 +6,7 @@ import { OriginCards } from '../components/homepage/OriginCards';
 import { OriginMobileSwipeUp } from '../components/homepage/OriginMobileSwipeUp';
 import { IdntyExpandedPanel } from '../components/homepage/IdntyExpandedPanel';
 import { BldrExpandedPanel } from '../components/homepage/BldrExpandedPanel';
+import { EvolveExpandedPanel } from '../components/homepage/EvolveExpandedPanel';
 import { SITE00_ORIGIN_COPY } from '../config/status';
 import { SITE00_ORIGIN_DESKTOP_COMPOSITION } from '../config/origin-home-composition';
 import { useSite00DesktopArtboardPreview } from '../components/shell/Site00DesktopArtboardContext';
@@ -110,8 +111,10 @@ export default function OriginPage() {
               <div className="site00-home-expanded-column" aria-label="Expanded panel">
                 {state.homeMode === 'idnty-expanded' ? (
                   <IdntyExpandedPanel onCollapse={collapseExpandedPanel} />
-                ) : (
+                ) : state.homeMode === 'bldr-expanded' ? (
                   <BldrExpandedPanel onCollapse={collapseExpandedPanel} />
+                ) : (
+                  <EvolveExpandedPanel onCollapse={collapseExpandedPanel} />
                 )}
               </div>
             ) : null}
@@ -121,6 +124,7 @@ export default function OriginPage() {
                 <OriginCards
                   onExpandIdnty={() => setHomeMode('idnty-expanded')}
                   onExpandBldr={() => setHomeMode('bldr-expanded')}
+                  onExpandEvolve={() => setHomeMode('evolve-expanded')}
                 />
               </section>
             ) : null}

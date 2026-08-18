@@ -6,7 +6,7 @@ import {
   SITE00_CTRL_ROOM_PATH,
   SITE00_MOBILE_DIRECTORY_PRIMARY,
 } from '../../config/mobile-directory-nav';
-import { site00MobileBuildNavHref, SITE00_ROUTES } from '../../config/routes';
+import { site00MobileBuildNavHref, SITE00_ROUTES, site00MobileEvolveNavHref } from '../../config/routes';
 import { useSignedInFromStorage } from '../../../hooks/useSignedInFromStorage';
 import { site00SignInHrefWithReturnTo } from '../../config/mobile-directory-nav';
 import { signOutAppAndSupabaseSession } from '../../../utils/adminAuth';
@@ -33,6 +33,7 @@ export function Site00MobileMenuDrawer({ open, onClose, returnFocusRef }: Site00
   const [isSignedIn] = useSignedInFromStorage();
   const drawerRef = useRef<HTMLElement>(null);
   const bldrHref = site00MobileBuildNavHref(pathname);
+  const evolveHref = site00MobileEvolveNavHref(pathname);
   const ctrlRoomHref = isSignedIn
     ? SITE00_CTRL_ROOM_PATH
     : site00SignInHrefWithReturnTo({ pathname: SITE00_CTRL_ROOM_PATH, search: '' });
@@ -101,7 +102,8 @@ export function Site00MobileMenuDrawer({ open, onClose, returnFocusRef }: Site00
         <nav aria-label="Global SITE 00 links">
           <ul className="site00-mobile-menu__list">
             {SITE00_MOBILE_DIRECTORY_PRIMARY.map((item) => {
-              const href = item.id === 'bldr' ? bldrHref : item.href;
+              const href =
+                item.id === 'bldr' ? bldrHref : item.id === 'evolve' ? evolveHref : item.href;
               const active = isSite00MobileDirectoryItemActive(pathname, item);
 
               if (!item.enabled) {

@@ -15,6 +15,7 @@ export type EcosystemProject = {
   lastUpdated: string;
   teamInitials: string[];
   href: string;
+  serviceLine?: 'IDNTY' | 'BLDR' | 'EVOLVE';
 };
 
 export type EcosystemSite = {
@@ -107,6 +108,7 @@ export const ECOSYSTEM_PROJECTS_SEED: EcosystemProject[] = [
     lastUpdated: '2025-08-16T14:30:00Z',
     teamInitials: ['JC', 'TM', 'AR'],
     href: '/projects/northquarter',
+    serviceLine: 'BLDR',
   },
   {
     id: 'future-archives',
@@ -118,6 +120,7 @@ export const ECOSYSTEM_PROJECTS_SEED: EcosystemProject[] = [
     lastUpdated: '2025-08-14T09:15:00Z',
     teamInitials: ['JC', 'JL'],
     href: '/projects/future-archives',
+    serviceLine: 'IDNTY',
   },
   {
     id: 'jordan-cole-studio',
@@ -140,6 +143,7 @@ export const ECOSYSTEM_PROJECTS_SEED: EcosystemProject[] = [
     lastUpdated: '2025-08-10T16:45:00Z',
     teamInitials: ['JC', 'TM'],
     href: '/projects/product-research',
+    serviceLine: 'EVOLVE',
   },
   {
     id: 'internal-tools',

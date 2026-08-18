@@ -1,10 +1,9 @@
 /**
- * SITE 00 Screen 01 — Locations Directory (mobile-only).
- * Full PUBLIC WORLD + YOUR SPACE map per approved moodboard.
+ * SITE 00 Screen 01 — Locations Directory content.
+ * Mobile-only composition; desktop unchanged.
  */
 
-import { SITE00_CTRL_ROOM_PATH, site00SignInHrefWithReturnTo } from './mobile-directory-nav';
-import { SITE00_ROUTES, site00MobileBuildNavHref } from './routes';
+import { SITE00_ROUTES } from './routes';
 
 export type LocationsDirectoryEntry = {
   id: string;
@@ -13,21 +12,11 @@ export type LocationsDirectoryEntry = {
   descriptionLines: [string, string];
   href: string;
   enabled: boolean;
-  /** When true, signed-out users see lock + sign-in treatment */
-  requiresAuth?: boolean;
-};
-
-export type LocationsDirectorySection = {
-  id: string;
-  title: string;
-  entries: LocationsDirectoryEntry[];
 };
 
 export const SITE00_LOCATIONS_BACKGROUND_PATH = '0E226A0B-7533-433F-A9D0-7DD5109D77AC.png';
 
-export const SITE00_FAST_TRAVEL_ICON_PATH = '89815B1A-ACFF-474B-8AA3-E7B97E7B40F2.png';
-
-const PUBLIC_WORLD: LocationsDirectoryEntry[] = [
+export const SITE00_LOCATIONS_DIRECTORY: LocationsDirectoryEntry[] = [
   {
     id: 'bldr',
     index: '01',
@@ -45,16 +34,8 @@ const PUBLIC_WORLD: LocationsDirectoryEntry[] = [
     enabled: true,
   },
   {
-    id: 'services',
-    index: '03',
-    title: 'SERVICES',
-    descriptionLines: ['WHAT WE', 'BUILD.'],
-    href: SITE00_ROUTES.services,
-    enabled: true,
-  },
-  {
     id: 'system',
-    index: '04',
+    index: '03',
     title: 'SYSTEM',
     descriptionLines: ['HOW SITE 00', 'WORKS.'],
     href: SITE00_ROUTES.system,
@@ -62,7 +43,7 @@ const PUBLIC_WORLD: LocationsDirectoryEntry[] = [
   },
   {
     id: 'about',
-    index: '05',
+    index: '04',
     title: 'ABOUT',
     descriptionLines: ['WHO WE ARE', '& WHY WE BUILD.'],
     href: SITE00_ROUTES.about,
@@ -70,76 +51,21 @@ const PUBLIC_WORLD: LocationsDirectoryEntry[] = [
   },
   {
     id: 'journal',
-    index: '06',
+    index: '05',
     title: 'JOURNAL',
     descriptionLines: ['INSIGHTS &', 'UPDATES.'],
     href: SITE00_ROUTES.journal,
     enabled: true,
   },
-];
-
-const YOUR_SPACE: LocationsDirectoryEntry[] = [
   {
-    id: 'idnty',
-    index: '07',
-    title: 'IDNTY',
-    descriptionLines: ['YOUR ACCESS', 'STARTS HERE.'],
-    href: SITE00_ROUTES.idnty,
+    id: 'evolve',
+    index: '06',
+    title: 'EVOLVE',
+    descriptionLines: ['TRANSFORM WHAT', 'ALREADY EXISTS.'],
+    href: SITE00_ROUTES.evolve,
     enabled: true,
   },
-  {
-    id: 'ctrl-room',
-    index: '08',
-    title: 'CTRL ROOM',
-    descriptionLines: ['WHAT NEEDS YOUR', 'ATTENTION.'],
-    href: SITE00_CTRL_ROOM_PATH,
-    enabled: true,
-    requiresAuth: true,
-  },
-  {
-    id: 'projects',
-    index: '09',
-    title: 'PROJECTS',
-    descriptionLines: ['WHAT ARE WE', 'BUILDING?'],
-    href: SITE00_ROUTES.projects,
-    enabled: true,
-    requiresAuth: true,
-  },
-  {
-    id: 'my-sites',
-    index: '10',
-    title: 'MY SITES',
-    descriptionLines: ['WHAT HAS BEEN', 'BUILT?'],
-    href: SITE00_ROUTES.controlSites,
-    enabled: true,
-    requiresAuth: true,
-  },
 ];
-
-export const SITE00_LOCATIONS_SECTIONS: LocationsDirectorySection[] = [
-  { id: 'public-world', title: 'PUBLIC WORLD', entries: PUBLIC_WORLD },
-  { id: 'your-space', title: 'YOUR SPACE', entries: YOUR_SPACE },
-];
-
-/** Flat list for spine/card count helpers */
-export const SITE00_LOCATIONS_DIRECTORY: LocationsDirectoryEntry[] = [
-  ...PUBLIC_WORLD,
-  ...YOUR_SPACE,
-];
-
-export function resolveDirectoryEntryHref(
-  entry: LocationsDirectoryEntry,
-  pathname: string,
-  isSignedIn: boolean,
-): string {
-  if (entry.id === 'bldr') {
-    return site00MobileBuildNavHref(pathname);
-  }
-  if (entry.requiresAuth && !isSignedIn) {
-    return site00SignInHrefWithReturnTo({ pathname: entry.href, search: '' });
-  }
-  return entry.href;
-}
 
 export type Site00MobileNavId = 'origin' | 'locations' | 'build';
 
