@@ -29,8 +29,6 @@ export function useLoaderCompositionOptional() {
 
 type ProviderProps = {
   children: ReactNode;
-  /** Edge-to-edge environment — scales in lockstep with the overlay artboard (fill width). */
-  backgroundUrl?: string;
 };
 
 function readRefMapFromUrl(): boolean {
@@ -40,10 +38,10 @@ function readRefMapFromUrl(): boolean {
 }
 
 /**
- * Fill viewport width with one artboard scaler (geometry + copy). Vertical overflow clips.
- * Background uses the same scale transform so overlays stay registered — no side gutters.
+ * ONE canonical 711×1536 stage — environment, animation, and UI share one transform scale.
+ * Aspect-preserving: scale = min(viewportW/refW, viewportH/refH).
  */
-export function LoaderCompositionProvider({ children, backgroundUrl }: ProviderProps) {
+export function LoaderCompositionProvider({ children }: ProviderProps) {
   const viewportRef = useRef<HTMLDivElement>(null);
   const artboardRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(1);
@@ -76,11 +74,16 @@ export function LoaderCompositionProvider({ children, backgroundUrl }: ProviderP
 
     const update = () => {
       const rect = el.getBoundingClientRect();
-      const safeLeft = parseFloat(getComputedStyle(el).paddingLeft) || 0;
-      const safeRight = parseFloat(getComputedStyle(el).paddingRight) || 0;
+      const styles = getComputedStyle(el);
+      const safeTop = parseFloat(styles.paddingTop) || 0;
+      const safeBottom = parseFloat(styles.paddingBottom) || 0;
+      const safeLeft = parseFloat(styles.paddingLeft) || 0;
+      const safeRight = parseFloat(styles.paddingRight) || 0;
       const availW = Math.max(1, rect.width - safeLeft - safeRight);
+      const availH = Math.max(1, rect.height - safeTop - safeBottom);
       const scaleW = availW / ASSTS_LOADER_REFERENCE_CANVAS.width;
-      const nextScale = scaleW;
+      const scaleH = availH / ASSTS_LOADER_REFERENCE_CANVAS.height;
+      const nextScale = Math.min(scaleW, scaleH);
       setScale(nextScale);
       setStageWidth(ASSTS_LOADER_REFERENCE_CANVAS.width * nextScale);
       setStageHeight(ASSTS_LOADER_REFERENCE_CANVAS.height * nextScale);
@@ -124,23 +127,6 @@ export function LoaderCompositionProvider({ children, backgroundUrl }: ProviderP
 
   return (
     <LoaderCompositionContext.Provider value={contextValue}>
-      {backgroundUrl ? (
-        <div className="site00-immersive-loader__backdrop" aria-hidden="true">
-          <img
-            className="site00-immersive-loader__backdrop-img"
-            src={backgroundUrl}
-            alt=""
-            decoding="async"
-            fetchPriority="high"
-            draggable={false}
-            style={{
-              width: ASSTS_LOADER_REFERENCE_CANVAS.width,
-              height: ASSTS_LOADER_REFERENCE_CANVAS.height,
-              transform: `scale(${scale})`,
-            }}
-          />
-        </div>
-      ) : null}
       <div ref={viewportRef} className="site00-loader-viewport site00-loader-stage-viewport">
         <div
           className="site00-loader-artboard-scaler"

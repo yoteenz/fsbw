@@ -37,7 +37,7 @@ export function acquireLoadingScreenDocumentLock(): () => void {
       typeof window !== 'undefined' &&
       isSite00ImmersivePath(window.location.pathname) &&
       document.documentElement.classList.contains('site00-assts-boot');
-    const bootBg = asstsBoot ? '#0a0a0a' : '#ffffff';
+    const bootBg = asstsBoot ? '#f5f5f3' : '#ffffff';
     html.style.backgroundColor = bootBg;
     body.style.overflow = 'hidden';
     body.style.touchAction = 'none';

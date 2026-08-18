@@ -45,7 +45,7 @@ export function initSite00ImmersiveLoaderBoot(): void {
   injectPreload(bg, 'image');
   void preloadSite00LoaderBackground(bg);
 
-  const geometryUrl = site00LoaderGeometryPreloadUrl('alpha');
+  const geometryUrl = site00LoaderGeometryPreloadUrl('screen');
   injectPreload(geometryUrl, 'fetch');
   void preloadSite00LoaderAnimation(geometryUrl);
 }

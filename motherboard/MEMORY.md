@@ -53008,3 +53008,17 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Deploy:** Sync-only; say **deploy now** for Vercel.
 
+---
+
+## 2026-08-18 — SITE 00 mobile loader emergency composition repair
+
+- **Context:** Founder emergency sprint — mobile loading screen severely degraded on `preview.fsbw-dev.com`: giant black regions, fragmented duplicate environment blocks, oversized animation rectangle detached from platform, document-flow stacking, wrong scaling.
+
+- **Root cause:** (1) Prior letterboxing fix split environment into viewport-level `.site00-immersive-loader__backdrop` **outside** the 711×1536 artboard while geometry/UI stayed inside — two independent scales created stacked marble/black/marble bands. (2) `#0a0a0a` black fallbacks on loader root, backdrop, boot shell, `loadingScreenLock`, `.site00-loader-env`. (3) Width-only scale (`scaleW`) without height constraint. (4) Geometry slot wrongly enlarged to 666×444 (3× width) vs approved **222×540**. (5) Alpha WebM/APNG path (black matte, no true alpha) defaulting over approved source MP4 + screen compositing.
+
+- **Fix:** Restored **ONE STAGE** architecture — `Site00LoaderEnvironment` inside `LoaderRegion background` on shared artboard; removed separate backdrop. Scale = `min(viewportW/711, viewportH/1536)`, centered in safe viewport. Reverted wireframe to **222×540 @ (238,154)**. Default geometry = **screen** mode (approved source MP4, `mix-blend-mode: screen`, `object-fit: contain` in mapped box). All loader/boot/lock backgrounds → `#f5f5f3`. Boot env `background-size: cover`.
+
+- **QA:** Playwright 375/390/430 — no backdrop split, env in artboard, no scroll, geometry ~122×296px @390, screen VIDEO. `validate-assts-loader-composition.mjs` all regions delta 0. Screenshot: `site00_loader_repair_390w.png`. Video: `site00_loader_composition_repair_demo.mp4`.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+

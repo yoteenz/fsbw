@@ -26,9 +26,9 @@ export function Site00LoaderAnimation({ reducedMotion = false, onReady }: Site00
   const videoRef = useRef<HTMLVideoElement>(null);
   const [ready, setReady] = useState(false);
   const forcedMode = resolveLoaderGeometryModeFromQuery();
-  const [mode, setMode] = useState<LoaderGeometryMode>(() => forcedMode ?? 'alpha');
+  const [mode, setMode] = useState<LoaderGeometryMode>(() => forcedMode ?? 'screen');
   const [alphaUrl, setAlphaUrl] = useState<string | null>(() =>
-    (forcedMode ?? 'alpha') === 'alpha'
+    (forcedMode ?? 'screen') === 'alpha'
       ? site00LoaderPrefersApngGeometry()
         ? site00LoaderGeometryApngUrl()
         : site00LoaderGeometryWebmUrl()

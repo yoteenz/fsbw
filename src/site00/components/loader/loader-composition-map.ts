@@ -54,26 +54,10 @@ function rect(x: number, y: number, w: number, h: number): LoaderRegionRect {
   };
 }
 
-/**
- * Kling master is 1764×1176 (3:2 landscape). Scale width 3× from legacy 222px slot;
- * height follows video aspect — not 3× the old portrait 540px (that caused letterboxing/distortion).
- */
-const LOADER_GEOMETRY_BASE = { x: 238, y: 154, w: 222, h: 540 } as const;
-const LOADER_GEOMETRY_WIDTH_SCALE = 3;
-const LOADER_GEOMETRY_MASTER_ASPECT = 1764 / 1176;
-const LOADER_GEOMETRY_W = LOADER_GEOMETRY_BASE.w * LOADER_GEOMETRY_WIDTH_SCALE;
-const LOADER_GEOMETRY_H = Math.round(LOADER_GEOMETRY_W / LOADER_GEOMETRY_MASTER_ASPECT);
-const LOADER_GEOMETRY_BOTTOM = LOADER_GEOMETRY_BASE.y + LOADER_GEOMETRY_BASE.h;
-
 /** Centralized composition token map — master reference blueprint. */
 export const ASSTS_LOADER_COMPOSITION = {
   reference: { width: 711, height: 1536, centerX: 355.5 },
-  wireframe: {
-    x: Math.round(ASSTS_LOADER_CENTER_X - LOADER_GEOMETRY_W / 2),
-    y: LOADER_GEOMETRY_BOTTOM - LOADER_GEOMETRY_H,
-    w: LOADER_GEOMETRY_W,
-    h: LOADER_GEOMETRY_H,
-  },
+  wireframe: { x: 238, y: 154, w: 222, h: 540 },
   platform: { x: 120, y: 630, w: 470, h: 160 },
   siteLabel: { x: 315, y: 837, w: 81, h: 24, centerX: 355.5 },
   headline: { x: 85, y: 878, w: 542, h: 43, centerX: 355.5 },

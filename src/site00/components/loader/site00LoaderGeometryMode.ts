@@ -33,8 +33,8 @@ export function resolveLoaderGeometryModeFromQuery(): LoaderGeometryMode | null 
   return null;
 }
 
-export function resolveLoaderGeometryMode(hasProductionAlpha = false): LoaderGeometryMode {
+export function resolveLoaderGeometryMode(_hasProductionAlpha = false): LoaderGeometryMode {
   const forced = resolveLoaderGeometryModeFromQuery();
   if (forced) return forced;
-  return hasProductionAlpha ? 'alpha' : 'screen';
+  return 'screen';
 }

@@ -8,6 +8,7 @@ import { LoaderReferenceMapDebug } from './LoaderReferenceMapDebug';
 import { LoaderReferenceOverlay } from './LoaderReferenceOverlay';
 import { LoaderRegion } from './LoaderRegion';
 import { Site00LoaderAnimation } from './Site00LoaderAnimation';
+import { Site00LoaderEnvironment } from './Site00LoaderEnvironment';
 import { preloadSite00LoaderBackground } from './site00LoaderPreload';
 import '../../styles/site00-loader.css';
 
@@ -103,14 +104,18 @@ export function Site00ImmersiveLoader({
 
   return (
     <div className={rootClass} role="status" aria-live="polite" aria-label={progressLabel}>
-      <LoaderCompositionProvider backgroundUrl={config.backgroundUrl}>
+      <LoaderCompositionProvider>
+        <LoaderRegion id="background" className="site00-loader-background-region">
+          <Site00LoaderEnvironment backgroundUrl={config.backgroundUrl} ready={backgroundReady} />
+        </LoaderRegion>
+
         {debug ? (
           <LoaderRegion id="pedestal" className="site00-loader-pedestal-debug" aria-hidden="true" />
         ) : null}
 
         {!error ? (
           <>
-            <LoaderRegion id="geometry" className="site00-loader-geometry-region" allowOverflow>
+            <LoaderRegion id="geometry" className="site00-loader-geometry-region">
               <Site00LoaderAnimation reducedMotion={reducedMotion} onReady={handleAnimationReady} />
             </LoaderRegion>
 
