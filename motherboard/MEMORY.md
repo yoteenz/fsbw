@@ -53622,7 +53622,15 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Loader skip:** Sign-in + `/control/*` skip immersive cold-start gate; `/origin/sign-in` in boot gate skip list.
 
-- **Files:** New `site00-auth.css`, `site00-ctrl-room.css`, auth/control components + pages under `src/site00/`. Drawer adds LOG OUT when signed in.
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — Origin desktop expanded panel outside-click dismiss
+
+- **Context:** Founder requested IDNTY/BLDR expanded panels on Origin desktop collapse when tapping outside the panel (not only BACK).
+
+- **Fix:** Transparent full-stage `.site00-home-expanded-backdrop` on desktop artboard; dismiss hit target tightened to `.site00-glass-panel` (not whole column padding); `useOriginExpandedDismiss` enabled for all desktop artboard routes (including `/origin/desktop` on narrow viewports), not only `min-width: 768px`. Column uses `pointer-events: none` so backdrop receives outside clicks.
 
 - **Deploy:** Sync-only; say **deploy now** for Vercel.
 

@@ -24,7 +24,7 @@ export default function OriginPage() {
   const isMobileOrigin = !isDesktopArtboardLayout;
   const collapseExpandedPanel = useCallback(() => setHomeMode('origin'), [setHomeMode]);
 
-  useOriginExpandedDismiss(state.homeMode, collapseExpandedPanel);
+  useOriginExpandedDismiss(state.homeMode, collapseExpandedPanel, !isMobileOrigin);
 
   return (
     <EnvironmentShell environmentId="ORIGIN_ENVIRONMENT">
@@ -92,6 +92,15 @@ export default function OriginPage() {
                 <div className="site00-home-grid__spacer" aria-hidden="true" />
               ) : null}
             </div>
+
+            {state.homeMode !== 'origin' && !isMobileOrigin ? (
+              <button
+                type="button"
+                className="site00-home-expanded-backdrop"
+                aria-label="Close panel"
+                onClick={collapseExpandedPanel}
+              />
+            ) : null}
 
             {state.homeMode !== 'origin' ? (
               <div className="site00-home-expanded-column" aria-label="Expanded panel">

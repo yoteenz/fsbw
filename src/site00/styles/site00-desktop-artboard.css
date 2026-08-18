@@ -151,6 +151,17 @@
   padding-bottom: 0;
 }
 
+.site00-origin-page--desktop-artboard .site00-home-expanded-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: default;
+}
+
 .site00-desktop-artboard .site00-home-stage:has(.site00-home-expanded-column) .site00-home-grid {
   position: absolute;
   inset: 0;
@@ -173,6 +184,11 @@
   padding-top: 0;
   z-index: 4;
   flex-shrink: 0;
+  pointer-events: none;
+}
+
+.site00-desktop-artboard .site00-home-expanded-column .site00-glass-panel {
+  pointer-events: auto;
 }
 
 .site00-desktop-artboard:has(.site00-home-expanded-column) .site00-shell {
