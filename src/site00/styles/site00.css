@@ -592,6 +592,7 @@
   }
 
   .site00-origin-page--mobile-layout .site00-home-hero__line,
+  .site00-origin-page--mobile-layout .site00-home-hero__coordinate-slot,
   .site00-origin-page--mobile-layout .site00-home-hero__coordinate,
   .site00-origin-page--mobile-layout .site00-home-cards,
   .site00-origin-page--mobile-layout .site00-home-expanded-column {
@@ -879,9 +880,15 @@
   margin-bottom: 4px;
 }
 
+.site00-home-hero__coordinate-slot {
+  display: block;
+  margin: 0;
+  padding: 0;
+}
+
 .site00-home-hero__coordinate {
-  margin-top: 0;
-  padding-top: 0;
+  margin: 0;
+  padding: 0;
 }
 
 .site00-origin-hero__coordinate-value {
@@ -984,8 +991,8 @@
     transform: none;
   }
 
-  .site00-home-hero__coordinate {
-    transform: translateY(var(--site00-origin-coordinate-offset-y, 6px));
+  .site00-home-hero__coordinate-slot {
+    margin-top: var(--site00-origin-coordinate-offset-y, 6px);
   }
 
   .site00-origin-hero__coordinate-value {

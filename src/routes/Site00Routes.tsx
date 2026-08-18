@@ -15,7 +15,7 @@ import '../site00/styles/site00.css';
 import '../site00/styles/site00-locations.css';
 import '../site00/styles/site00-bldr-entry.css';
 import '../site00/styles/site00-loader.css';
-import '../site00/styles/site00-desktop-artboard.css?v=20260818-coord-translate';
+import '../site00/styles/site00-desktop-artboard.css?v=20260818-coord-slot';
 import '../site00/assts/styles/assts.css';
 import '../site00/assts/styles/assts-depth.css';
 import '../site00/assts/styles/assts-composition.css';
