@@ -53466,7 +53466,19 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Verification:** Playwright @ 390px — `/idnty/state/desktop` shows artboard shell + layout switch Desktop active; BEGIN IDENTITY from `/origin/desktop` lands on `/idnty/state/desktop`.
 
-- **Spatial Architecture Review:** SKIPPED — routing/artboard parity fix.
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — SITE 00 mobile directory / hamburger IA finalization
+
+- **Context:** Founder sprint — finalize mobile hamburger directory architecture (approved drawer visuals unchanged). Remove redundant ORIGIN/LOCATIONS/SITES from drawer; add IDNTY + CTRL ROOM; keep BLDR / START BUILD as intentional secondary entry; bottom nav unchanged.
+
+- **Changes:** New `mobile-directory-nav.ts` (mobile-only IA). `Site00MobileMenuDrawer` restructured: primary group SERVICES → SYSTEM → ABOUT → JOURNAL → IDNTY → BLDR / START BUILD; utility group CTRL ROOM (border-top separation, LOG IN → / ENTER → sublabel). CTRL ROOM → `/account` when signed in, `signInHrefWithReturnTo(/account)` when logged out. Focus trap + return focus to hamburger on close. Desktop `GlobalNav` + `SITE00_GLOBAL_NAV` untouched.
+
+- **Verification:** Playwright @ 390px `/origin/locations` — drawer lists 6 primary links (no ORIGIN/LOCATIONS/SITES); IDNTY → `/idnty/state`; CTRL ROOM + LOG IN → → `/sign-in?returnTo=%2Faccount`; bottom nav still ORIGIN / LOCATIONS / BUILD.
+
+- **Spatial Architecture Review:** SKIPPED — mobile IA cleanup, no visual redesign.
 
 - **Deploy:** Sync-only; say **deploy now** for Vercel.
 

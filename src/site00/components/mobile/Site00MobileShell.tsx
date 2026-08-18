@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { useLocation } from 'react-router-dom';
 import { MobileEnvironmentBackground } from './MobileEnvironmentBackground';
 import { Site00MobileHeader } from './Site00MobileHeader';
@@ -32,6 +32,7 @@ export function Site00MobileShell({
 }: Site00MobileShellProps) {
   const { search, pathname } = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
+  const menuTriggerRef = useRef<HTMLButtonElement>(null);
   const locationsDebug = isLocationsCompositionDebugEnabled(search) && pathname.startsWith('/origin/locations');
   const bldrDebug = isBldrCompositionDebugEnabled(search) && pathname.startsWith('/bldr');
 
@@ -44,15 +45,23 @@ export function Site00MobileShell({
     return () => window.removeEventListener('keydown', onKey);
   }, [menuOpen]);
 
+  const closeMenu = () => {
+    setMenuOpen(false);
+  };
+
   return (
     <div className={`site00-mobile-shell ${shellClassName} ${enterClassName}`.trim()}>
       {showEnvironmentBackground ? <MobileEnvironmentBackground /> : null}
       <div className="site00-mobile-shell__content">
-        <Site00MobileHeader onMenuOpen={() => setMenuOpen(true)} menuExpanded={menuOpen} />
+        <Site00MobileHeader
+          onMenuOpen={() => setMenuOpen(true)}
+          menuExpanded={menuOpen}
+          menuButtonRef={menuTriggerRef}
+        />
         <main className="site00-mobile-shell__main">{children}</main>
         <Site00MobileNav active={activeNav} />
       </div>
-      <Site00MobileMenuDrawer open={menuOpen} onClose={() => setMenuOpen(false)} />
+      <Site00MobileMenuDrawer open={menuOpen} onClose={closeMenu} returnFocusRef={menuTriggerRef} />
       {locationsDebug ? <LocationsCompositionDebug /> : null}
       {bldrDebug ? <BldrCompositionDebug /> : null}
     </div>
