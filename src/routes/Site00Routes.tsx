@@ -57,6 +57,7 @@ const AsstsCompositionStudioPage = lazy(() => import('../site00/assts/pages/Comp
 const AsstsSearchPage = lazy(() => import('../site00/assts/pages/SearchPage'));
 const AsstsNotificationsPage = lazy(() => import('../site00/assts/pages/NotificationsPage'));
 const AsstsProfilePage = lazy(() => import('../site00/assts/pages/ProfilePage'));
+const ProjectProvisioningPage = lazy(() => import('../site00/pages/provisioning/ProjectProvisioningPage'));
 
 function Site00Suspense({ children }: { children: ReactNode }) {
   return <Suspense fallback={<Site00RouteLoadingFallback />}>{children}</Suspense>;
@@ -367,6 +368,18 @@ export function Site00Routes() {
       {Site00PublicPageRoutes(SITE00_ROUTES.bldrTemplates, BldrTemplatesPage)}
       {Site00PublicPageRoutes(SITE00_ROUTES.projects, ProjectsPage, true)}
       {Site00PublicPageRoutes(SITE00_ROUTES.bldrStart, BldrStartPage)}
+      <Route
+        path={SITE00_ROUTES.projectProvisioning}
+        element={
+          <Site00Layout>
+            <Site00AccountRouteGuard>
+              <Site00Suspense>
+                <ProjectProvisioningPage />
+              </Site00Suspense>
+            </Site00AccountRouteGuard>
+          </Site00Layout>
+        }
+      />
       <Route
         path={SITE00_ROUTES.signIn}
         element={

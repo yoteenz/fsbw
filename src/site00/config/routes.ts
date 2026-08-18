@@ -36,6 +36,8 @@ export const SITE00_ROUTES = {
   controlSecurity: '/control/security',
   projects: '/projects',
   support: '/support',
+  /** Client post-payment provisioning — project slug in path */
+  projectProvisioning: '/project/:projectSlug/provisioning',
 } as const;
 
 /** Future reserved stage namespaces — not yet populated */

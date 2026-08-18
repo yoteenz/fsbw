@@ -53821,11 +53821,13 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 ---
 
-## 2026-08-18 — Origin hero copy line break after ONLINE
+## 2026-08-18 — SITE 00 Admin Production Operating System Phase 0 repository audit
 
-- **Context:** Founder — hero description lines should break after **ONLINE** not **EXISTS**.
+- **Context:** Founder requested Phase 0 repo audit for **SITE 00 Admin Production Operating System** sprint — map admin paths, IDNTY/BLDR data, clients/projects, payments, auth, migrations, CTRL ROOM, FAL, notifications, storage, layouts, route overlaps.
 
-- **Change:** `SITE00_ORIGIN_COPY` in `status.ts`: line 2 → `EVERY SITE THAT EXISTS ONLINE`; line 3 → `STARTS HERE.`
+- **Findings:** No `/admin/site00/*` routes. SITE 00 admin today = **ASSTS** `/assts/*` (AdminGuard). Customer **CTRL ROOM** = `/control/*` (signed-in guard). IDNTY/BLDR = TS config + React context only — no DB/API. Supabase `site00_*` = ASSTS asset factory (4 migrations). Reuse: `profiles`, `user_activity`, `AdminGuard`/`resolveAdminAuth`, ASSTS slot pattern. Missing: `site00_projects`, onboarding persistence, proposals/billing, admin approvals, dedicated admin production shell.
 
-- **Deploy:** Sync-only; say **deploy now** for Vercel.
+- **Changes:** Audit/report only.
+
+- **Conventions:** Add distinct `/admin/site00/*` namespace; persist onboarding → projects; extend `useCtrlRoomData` when projects table exists; do not conflate with Studio OS `/admin/studio/*` or FS `/admin/clients`.
 
