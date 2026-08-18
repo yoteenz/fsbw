@@ -52986,23 +52986,17 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Changes:** `OriginMobileSwipeUp.tsx` + `status.ts` `mobileSwipeUp` copy; `OriginPage` mounts swipe section; `site00.css` mobile hides coordinate + desktop cards/expanded panels, fixed centered swipe block above status strip; `/origin/desktop` artboard restores desktop cards via `site00-desktop-artboard.css`.
 
-- **QA:** Playwright @ 390×844 `/origin` — swipe `display:flex`, coordinate/cards hidden. Screenshot: `site00_origin_mobile_swipe_up.png`.
-
 - **Deploy:** Sync-only; say **deploy now** for Vercel.
 
 ---
 
-## 2026-08-18 — SITE 00 Origin desktop preview: bottom status panels invisible on phone
+## 2026-08-18 — SITE 00 Origin: strict mobile-only scoping (desktop restore)
 
-- **Context:** Founder on `preview.fsbw-dev.com` toggled **Desktop** on `/origin/desktop` and could not see the bottom status/guidance panels from the desktop design — large white void below the scaled artboard.
+- **Context:** Founder reported desktop Origin was changing despite explicit mobile-only requests. Root cause: global CSS/DOM changes (status strip metrics wrapper, AppShell header refactor, unscoped mobile rules) affected desktop ≥768px and `/origin/desktop`.
 
-- **Root cause:** `/origin/desktop` scales the 1440×900 artboard to ~27% width on phone (~244px tall). The status strip lived **inside** the transformed stage with `position: fixed`, so it scaled to ~15px tall and sat mid-viewport; ~600px of shell background filled the rest. `/origin` (Mobile route) was unaffected — strip already pinned to device viewport at full size.
+- **Fix:** Reverted `Site00AppShell` to original inline header (removed `mobileOriginHeader` prop). Restored desktop status strip flat `repeat(5, 1fr) auto` grid via dual `StatusStrip` layouts (desktop + mobile strips; mobile strip only on `.site00-origin-page--mobile-layout`). Wrapped Origin in `site00-origin-page` with route class `--mobile-layout` vs `--desktop-artboard`; all mobile CSS scoped to `--mobile-layout` @ `max-width: 767px` only. Desktop + `/origin/desktop` unchanged.
 
-- **Fix:** `Site00DesktopArtboardContext` + portal status strip footer to `document.body` at full viewport size when inside `Site00DesktopArtboardShell`. CSS `.site00-status-strip-host--viewport` restores desktop grid; narrow phones get horizontal scroll on metrics + full-width guidance below. Shell fallback background → `#e8e8e8`.
-
-- **Also (same session):** Loader hang/distortion follow-up — boot JS preloads alpha WebM/APNG (not 6MB source MP4); alpha matte uses `mix-blend-mode: screen`; alpha probe 4s timeout (commit `612539d68`).
-
-- **QA:** Playwright @ 390×844 — `/origin/desktop` strip host `viewport`, strip bottom flush to 844px viewport, 5 metrics + guidance visible. `/origin` mobile strip unchanged.
+- **QA:** Playwright — @1440 `/origin` cards absolute + desktop strip grid; @390 `/origin` mobile strip/swipe only; @390 `/origin/desktop` desktop strip + cards + logo.
 
 - **Deploy:** Sync-only; say **deploy now** for Vercel.
 
