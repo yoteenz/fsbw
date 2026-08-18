@@ -85,16 +85,18 @@ export default function OriginPage() {
 
               {state.homeMode === 'origin' ? (
                 <div className="site00-home-grid__spacer" aria-hidden="true" />
-              ) : (
-                <div className="site00-home-expanded-column" aria-label="Expanded panel">
-                  {state.homeMode === 'idnty-expanded' ? (
-                    <IdntyExpandedPanel onCollapse={collapseExpandedPanel} />
-                  ) : (
-                    <BldrExpandedPanel onCollapse={collapseExpandedPanel} />
-                  )}
-                </div>
-              )}
+              ) : null}
             </div>
+
+            {state.homeMode !== 'origin' ? (
+              <div className="site00-home-expanded-column" aria-label="Expanded panel">
+                {state.homeMode === 'idnty-expanded' ? (
+                  <IdntyExpandedPanel onCollapse={collapseExpandedPanel} />
+                ) : (
+                  <BldrExpandedPanel onCollapse={collapseExpandedPanel} />
+                )}
+              </div>
+            ) : null}
 
             {state.homeMode === 'origin' ? (
               <section className="site00-home-cards" aria-label="Entry selection">

@@ -942,9 +942,9 @@
   .site00-home-expanded-column {
     position: absolute;
     left: 50%;
-    top: calc(var(--site00-origin-cards-top) + var(--site00-origin-cards-offset-y));
-    transform: translateX(-50%) scale(var(--site00-origin-expanded-panel-scale, 1));
-    transform-origin: center top;
+    top: 50%;
+    transform: translate(-50%, -50%) scale(var(--site00-origin-expanded-panel-scale, 1));
+    transform-origin: center center;
     width: min(var(--site00-origin-expanded-max-w), calc(100% - 64px));
     max-width: var(--site00-origin-expanded-max-w);
     padding-top: 0;
