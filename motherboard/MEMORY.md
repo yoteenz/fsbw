@@ -52996,7 +52996,15 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Fix:** Reverted `Site00AppShell` to original inline header (removed `mobileOriginHeader` prop). Restored desktop status strip flat `repeat(5, 1fr) auto` grid via dual `StatusStrip` layouts (desktop + mobile strips; mobile strip only on `.site00-origin-page--mobile-layout`). Wrapped Origin in `site00-origin-page` with route class `--mobile-layout` vs `--desktop-artboard`; all mobile CSS scoped to `--mobile-layout` @ `max-width: 767px` only. Desktop + `/origin/desktop` unchanged.
 
-- **QA:** Playwright — @1440 `/origin` cards absolute + desktop strip grid; @390 `/origin` mobile strip/swipe only; @390 `/origin/desktop` desktop strip + cards + logo.
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — SITE 00 Origin mobile: hide top-right ENTER 00
+
+- **Context:** Founder requested removal of top-right **ENTER 00** on Origin **mobile design only** — swipe-up callout links to `/enter` navigational directory instead.
+
+- **Changes:** `site00.css` — `.site00-origin-page--mobile-layout` @ `max-width: 767px` hides header entry toggle (`display: none` on third header slot). Desktop `/origin` and `/origin/desktop` unchanged.
 
 - **Deploy:** Sync-only; say **deploy now** for Vercel.
 
