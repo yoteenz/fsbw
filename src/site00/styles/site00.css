@@ -400,8 +400,8 @@
 .site00-bldr-framework-icon,
 .site00-idnty-framework-icon {
   display: block;
-  width: 32px;
-  height: 32px;
+  width: var(--site00-origin-framework-icon-size, 32px);
+  height: var(--site00-origin-framework-icon-size, 32px);
   margin: 0 auto;
   object-fit: contain;
 }

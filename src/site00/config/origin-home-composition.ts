@@ -21,6 +21,8 @@ export const SITE00_ORIGIN_DESKTOP_COMPOSITION = {
   expandedMaxWidthPx: 680,
   /** Expanded panel visual scale (1 = full; 0.7 = −30%). Desktop only via CSS. */
   expandedPanelScale: 0.7,
+  /** Framework pillar PNG size on expanded panels (32px base × 1.2). */
+  frameworkIconSizePx: 38.4,
 } as const;
 
 /** @deprecated Use SITE00_ORIGIN_DESKTOP_COMPOSITION */
