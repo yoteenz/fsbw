@@ -2,6 +2,7 @@ import { EnvironmentShell } from '../components/environment/EnvironmentShell';
 import { Site00AppShell } from '../components/shell/Site00AppShell';
 import { StatusStrip } from '../components/homepage/StatusStrip';
 import { OriginCards } from '../components/homepage/OriginCards';
+import { OriginMobileSwipeUp } from '../components/homepage/OriginMobileSwipeUp';
 import { IdntyExpandedPanel } from '../components/homepage/IdntyExpandedPanel';
 import { BldrExpandedPanel } from '../components/homepage/BldrExpandedPanel';
 import { SITE00_ORIGIN_COPY } from '../config/status';
@@ -61,13 +62,15 @@ export default function OriginPage() {
           </div>
 
           {state.homeMode === 'origin' ? (
-            <section className="site00-home-cards" aria-label="Entry selection">
+            <section className="site00-home-cards site00-home-cards--desktop" aria-label="Entry selection">
               <OriginCards
                 onExpandIdnty={() => setHomeMode('idnty-expanded')}
                 onExpandBldr={() => setHomeMode('bldr-expanded')}
               />
             </section>
           ) : null}
+
+          <OriginMobileSwipeUp />
         </div>
       </Site00AppShell>
       <Site00OriginLayoutSwitch />

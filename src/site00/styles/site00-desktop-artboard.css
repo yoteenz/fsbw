@@ -116,6 +116,20 @@
   transform-origin: center top;
 }
 
+.site00-desktop-artboard .site00-home-hero__coordinate,
+.site00-desktop-artboard .site00-home-cards--desktop,
+.site00-desktop-artboard .site00-home-expanded-column {
+  display: block !important;
+}
+
+.site00-desktop-artboard .site00-home-cards--desktop {
+  display: block;
+}
+
+.site00-desktop-artboard .site00-origin-mobile-swipe {
+  display: none !important;
+}
+
 .site00-desktop-artboard-shell {
   position: fixed;
   inset: 0;
