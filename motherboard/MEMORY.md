@@ -53714,3 +53714,15 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Deploy:** Sync-only commit `203bb4955`; say **deploy now** for Vercel.
 
+---
+
+## 2026-08-18 — Public route pages: remove mobile background image (desktop only)
+
+- **Context:** Founder correction — mobile storyboards for the new SITE 00 public routes (services, system, about, journal, support, idnty, bldr, sites portfolio, etc.) do **not** use a background image; desktop does.
+
+- **Fix:** `Site00PageEnvironment` + `site00-pages.css` — mobile uses solid `#f4f4f2` only; desktop `@media (min-width: 1024px)` keeps approved architectural asset. Removed mobile bg from `.site00-public-mobile-shell`. Dropped unused `SITE00_PAGE_MOBILE_BG_FILE` export.
+
+- **Unchanged:** CTRL ROOM / Projects mobile (already solid); Origin and other immersive routes unaffected.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+

@@ -214,6 +214,7 @@
 }
 
 .site00-desktop-artboard .site00-origin-cards__row {
+  gap: var(--site00-origin-cards-row-gap, 16px);
   transform: scale(var(--site00-origin-card-scale));
   transform-origin: center top;
 }

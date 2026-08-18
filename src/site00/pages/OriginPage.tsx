@@ -53,6 +53,7 @@ export default function OriginPage() {
               ['--site00-origin-cards-top' as string]: `${SITE00_ORIGIN_DESKTOP_COMPOSITION.cardsTopPercent}%`,
               ['--site00-origin-cards-offset-y' as string]: `${SITE00_ORIGIN_DESKTOP_COMPOSITION.cardsTopOffsetPx}px`,
               ['--site00-origin-cards-max-w' as string]: `${SITE00_ORIGIN_DESKTOP_COMPOSITION.cardsMaxWidthPx}px`,
+              ['--site00-origin-cards-row-gap' as string]: `${SITE00_ORIGIN_DESKTOP_COMPOSITION.cardsRowGapPx}px`,
               ['--site00-origin-card-scale' as string]: String(SITE00_ORIGIN_DESKTOP_COMPOSITION.cardScale),
               ['--site00-origin-panel-icon-size-px' as string]: `${SITE00_ORIGIN_DESKTOP_COMPOSITION.panelIconSizePx}px`,
               ['--site00-origin-panel-icon-offset-y' as string]: `${SITE00_ORIGIN_DESKTOP_COMPOSITION.panelIconOffsetYPx}px`,
