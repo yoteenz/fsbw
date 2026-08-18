@@ -53170,8 +53170,18 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Change:** `SITE00_ORIGIN_DESKTOP_COMPOSITION.cardsTopOffsetPx` **80 → 140** (`origin-home-composition.ts`). Prompt + panels share `.site00-home-cards`; desktop CSS `top: calc(… + var(--site00-origin-cards-offset-y))`; mobile unchanged.
 
-- **Verification:** Playwright `--site00-origin-cards-offset-y: 140px` on `/origin/desktop` @ 1440×900.
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
 
-- **Spatial Architecture Review:** SKIPPED — approved composition nudge.
+---
+
+## 2026-08-18 — Origin desktop cards block −20px (WHERE DO WE BEGIN + IDNTY/BLDR)
+
+- **Context:** Nudge red **"WHERE DO WE BEGIN?"** + collapsed **IDNTY/BLDR** panels **up 20px in tandem**, desktop only.
+
+- **Change:** `cardsTopOffsetPx` **140 → 120** in `origin-home-composition.ts`.
+
+- **Verification:** Playwright `--site00-origin-cards-offset-y: 120px`; computed `top` 556.7px (−20 vs prior 576.7px) @ 1440×900 `/origin/desktop`.
+
+- **Spatial Architecture Review:** SKIPPED — composition nudge.
 
 - **Deploy:** Sync-only; say **deploy now** for Vercel.
