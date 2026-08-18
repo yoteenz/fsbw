@@ -411,7 +411,7 @@
     font-size: 0.625rem;
     font-weight: 500;
     letter-spacing: 0.08em;
-    color: var(--site-text-muted);
+    color: var(--site-red);
     white-space: nowrap;
   }
 
