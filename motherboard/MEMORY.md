@@ -53570,3 +53570,17 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Deploy:** Sync-only; say **deploy now** for Vercel.
 
+---
+
+## 2026-08-18 — Origin desktop parity: artboard shell on all wide viewports
+
+- **Context:** Founder reported desktop Origin looked different on laptop vs mobile-browser “desktop” view — IDNTY/BLDR panel icons higher on laptop, correct on phone at `/origin/desktop`. Wanted one responsive composition with no misalignment across resolutions.
+
+- **Root cause:** **Two desktop render paths.** `/origin/desktop` used fixed **1440×900 artboard** (`Site00DesktopArtboardShell` + `site00-desktop-artboard.css`). Laptop `/origin` at ≥768px used fluid **`@media (min-width: 768px)`** rules (`38vw`, `100dvh`, `clamp()` typography) — same composition tokens but layout drifted with viewport.
+
+- **Fix:** New **`Site00OriginRouteShell`** — wraps `/origin` (and site00 root) with artboard when viewport **≥768px**; `/origin/desktop` keeps **`forceArtboard`**. **`OriginPage`** uses **`useSite00DesktopArtboardPreview()`** (context) instead of pathname-only for desktop vs mobile layout class, status strip, swipe callout.
+
+- **Verification:** Playwright @ 1920×1080 — `/origin` and `/origin/desktop` both `artboard: true`, same icon-in-card ratio **0.413**.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
