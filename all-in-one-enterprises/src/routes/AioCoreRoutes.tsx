@@ -178,9 +178,8 @@ function RequestConfirmationRoute() {
 }
 
 /** Shared AIO route tree — mounted at root and under /desktop/* + /mobile/* mirrors. */
-export function AioCoreRoutes() {
-  return (
-    <>
+export const aioCoreRoutes = (
+  <>
       <Route element={<AIOAuthLayout />}>
         <Route path="login" element={<LoginPage />} />
         <Route path="signup" element={<SignUpPage />} />
@@ -353,6 +352,5 @@ export function AioCoreRoutes() {
           }
         />
       </Route>
-    </>
-  );
-}
+  </>
+);

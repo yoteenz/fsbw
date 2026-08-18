@@ -2,7 +2,7 @@ import { Link, Navigate, Route, Routes } from 'react-router-dom';
 import { AIOAuthProvider } from '../auth/AIOAuthProvider';
 import { LayoutPreviewRootLayout } from '../layout-preview/LayoutPreviewRootLayout';
 import { layoutPreviewPaths } from '../utils/layoutPreviewPaths';
-import { AioCoreRoutes } from './AioCoreRoutes';
+import { aioCoreRoutes } from './AioCoreRoutes';
 
 export function AllInOneLoading() {
   return <div className="aio-loading">Loading All In One…</div>;
@@ -26,14 +26,14 @@ export default function AllInOneRoutes() {
   return (
     <AIOAuthProvider>
       <Routes>
-        <AioCoreRoutes />
+        {aioCoreRoutes}
 
-        <Route path="desktop" element={<LayoutPreviewRootLayout mode="desktop" />}>
-          <AioCoreRoutes />
+        <Route path="desktop/*" element={<LayoutPreviewRootLayout mode="desktop" />}>
+          {aioCoreRoutes}
         </Route>
 
-        <Route path="mobile" element={<LayoutPreviewRootLayout mode="mobile" />}>
-          <AioCoreRoutes />
+        <Route path="mobile/*" element={<LayoutPreviewRootLayout mode="mobile" />}>
+          {aioCoreRoutes}
         </Route>
 
         <Route path="get-started/desktop" element={<Navigate to={layoutPreviewPaths.desktopGetStarted} replace />} />

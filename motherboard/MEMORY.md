@@ -52868,6 +52868,7 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 ---
 
+<<<<<<< HEAD
 ## 2026-08-17 — Site 00 immersive loader: remove white letterboxing (edge-to-edge background)
 
 - **Context:** Founder reported repeated white letterboxing around the loading animation; background image should fill edge-to-edge with no white CSS gutters.
@@ -52902,4 +52903,31 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Changes:** `src/site00/config/builder.ts` — `BLDR_INVESTMENT_TIERS` site tier `priceLabel` → `$3.5K`; `BLDR_HOMEPAGE_EXPANDED` SITE offering `price` → `FROM ~$3.5K`. Surfaces on BLDR state investment guide + Origin homepage BLDR expanded panel.
 
 - **Deploy:** Sync-only; say **deploy now** for Vercel.
+=======
+## 2026-08-17 — AIO global `/desktop/*` and `/mobile/*` layout preview routes
+
+- **Context:** Founder rejected Smart-Intake-only preview paths (`/get-started/desktop`); wanted a **site-wide** designated desktop route mirror for **all AIO pages** so design review on phone/narrow viewports forces desktop layout without viewport auto-switching.
+
+- **Architecture:** Extracted shared `AioCoreRoutes` route tree; mounted under root (responsive) and under `<Route path="desktop">` / `<Route path="mobile">` wrapped in `LayoutPreviewRootLayout` + `LayoutPreviewProvider`. Global `AioLayoutPreviewBar` (demo/debug) toggles Responsive | Desktop | Mobile preserving query params. `aio-layout-preview.css` forces desktop/mobile presentation (header nav, portal sidebar, context rail, visibility utilities) regardless of viewport.
+
+- **Routes:** `/desktop/get-started`, `/desktop/start-your-business`, `/desktop/portal`, etc. Legacy `/get-started/desktop` → redirect `/desktop/get-started`; `/get-started/mobile` → `/mobile/get-started`. `aioPaths.getStartedDesktop` updated to `/desktop/get-started`; added `desktopRoot`, `mobileRoot`.
+
+- **Smart Intake:** `SmartIntakeLayout` + `GetStartedPage` read `useLayoutPreviewMode()` instead of path suffix; per-page `SmartIntakePreviewBar` removed (global bar on preview routes).
+
+- **QA:** `npm run build` PASS; dev server 200 on `/desktop/get-started`.
+
+- **Spatial Architecture Review:** SKIPPED — layout preview infrastructure, no new product surfaces.
+
+---
+
+## 2026-08-18 — Fix AIO `/desktop` blank page (React Router route fragment)
+
+- **Context:** Founder reported the AIO preview `/desktop` route not loading (blank page).
+
+- **Root cause:** `AioCoreRoutes` was rendered as `<AioCoreRoutes />` inside `<Routes>`. React Router v6 requires direct `<Route>` or `<Fragment>` children — custom wrapper components throw `[AioCoreRoutes] is not a <Route> component`, breaking all routing including `/desktop`.
+
+- **Fix:** Export route tree as JSX fragment `aioCoreRoutes` and spread `{aioCoreRoutes}` in `AllInOneRoutes`. Parent preview paths use `desktop/*` and `mobile/*` for nested matching.
+
+- **QA:** Playwright local — `/desktop`, `/desktop/`, `/`, `/desktop/get-started` all render with content; build PASS.
+>>>>>>> 8d9439020 (Fix AIO /desktop blank page — export aioCoreRoutes fragment for React Router [sync-only])
 
