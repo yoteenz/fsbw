@@ -53518,6 +53518,8 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Context:** Founder requested gray **LOG IN →** / **ENTER →** sublabel on mobile hamburger CTRL ROOM row changed to red.
 
+- **Change:** `.site00-mobile-menu__ctrl-room-state` → `color: var(--site-red)` in `site00-locations.css`.
+
 - **Deploy:** Sync-only; say **deploy now** for Vercel.
 
 ---
