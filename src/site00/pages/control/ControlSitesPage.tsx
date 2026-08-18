@@ -1,79 +1,121 @@
-import { CtrlRoomShell } from '../../components/control/CtrlRoomShell';
-import { BracketHeading, EmptyState, PageIntro, SearchField } from '../../components/pages/Site00PagePrimitives';
-import { CtrlRoomMetricCard } from '../../components/control/CtrlRoomMetricCard';
-import { useCtrlRoomData } from '../../hooks/useCtrlRoomData';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { EcosystemShell } from '../../components/ecosystem/EcosystemShell';
+import { SiteRow } from '../../components/ecosystem/SiteRow';
+import { EmptyState, MetricCard, SearchField } from '../../components/pages/Site00PagePrimitives';
+import { useEcosystemData } from '../../hooks/useEcosystemData';
 import { SITE00_ROUTES } from '../../config/routes';
-import { StatusBadge } from '../../components/pages/Site00PagePrimitives';
+
+const STATUS_FILTERS = [
+  { id: 'all', label: 'ALL' },
+  { id: 'published', label: 'PUBLISHED' },
+  { id: 'draft', label: 'DRAFT' },
+];
 
 export default function ControlSitesPage() {
-  const { metrics, sites } = useCtrlRoomData();
+  const { sites, siteMetrics, siteActivity, siteTeam } = useEcosystemData();
   const [query, setQuery] = useState('');
-  const filtered = sites.filter((s) => !query.trim() || s.name.toLowerCase().includes(query.toLowerCase()));
+  const [statusFilter, setStatusFilter] = useState('all');
+
+  const filtered = useMemo(() => {
+    return sites.filter((s) => {
+      const matchesQuery =
+        !query.trim() ||
+        s.domain.toLowerCase().includes(query.toLowerCase()) ||
+        s.name.toLowerCase().includes(query.toLowerCase());
+      const matchesStatus =
+        statusFilter === 'all' ||
+        (statusFilter === 'published' && s.status === 'Published') ||
+        (statusFilter === 'draft' && s.status !== 'Published');
+      return matchesQuery && matchesStatus;
+    });
+  }, [sites, query, statusFilter]);
+
+  const headerActions = (
+    <Link to={SITE00_ROUTES.bldr} className="site00-btn-outline site00-ecosystem-header__cta">
+      + NEW SITE
+    </Link>
+  );
 
   return (
-    <CtrlRoomShell>
+    <EcosystemShell headerActions={headerActions}>
       <div className="site00-page site00-page--control-sites">
-        <PageIntro title={<BracketHeading>SITES</BracketHeading>} subtitle="MANAGE ALL OF YOUR SITE 00 PROJECTS." />
-        <div className="site00-ctrl-metrics site00-ctrl-metrics--4">
-          <CtrlRoomMetricCard
-            label="ACTIVE SITES"
-            value={metrics.activeSites.value}
-            state={metrics.activeSites.state}
-            actionLabel="View all active →"
-            actionHref={SITE00_ROUTES.controlSites}
-            icon="globe"
-          />
-          <CtrlRoomMetricCard
-            label="DRAFT SITES"
-            value="—"
-            state="empty"
-            actionLabel="View all drafts →"
-            actionHref={SITE00_ROUTES.controlSites}
-            icon="cube"
-          />
-          <CtrlRoomMetricCard
-            label="TOTAL SITES"
-            value="—"
-            state="empty"
-            actionLabel="All time →"
-            actionHref={SITE00_ROUTES.controlSites}
-            icon="calendar"
-          />
-          <CtrlRoomMetricCard
-            label="TEAM SITES"
-            value="—"
-            state="empty"
-            actionLabel="Manage team →"
-            actionHref={SITE00_ROUTES.controlTeam}
-            icon="target"
-          />
+        <div className="site00-eco-metrics site00-eco-metrics--4">
+          <MetricCard label="ACTIVE SITES" value={String(siteMetrics.active)} />
+          <MetricCard label="DRAFT SITES" value={String(siteMetrics.draft)} />
+          <MetricCard label="TOTAL SITES" value={String(siteMetrics.total)} />
+          <MetricCard label="TEAM SITES" value={String(siteMetrics.team)} />
         </div>
+
         <div className="site00-page-toolbar">
-          <SearchField value={query} onChange={setQuery} placeholder="SEARCH SITES…" id="sites-search" />
-          <Link to={SITE00_ROUTES.bldr} className="site00-btn-outline">
-            + NEW SITE
-          </Link>
+          <SearchField value={query} onChange={setQuery} placeholder="Search sites…" id="sites-search" />
+          <div className="site00-eco-filters" role="group" aria-label="Filter by status">
+            {STATUS_FILTERS.map((f) => (
+              <button
+                key={f.id}
+                type="button"
+                className={`site00-eco-filters__btn ${statusFilter === f.id ? 'site00-eco-filters__btn--active' : ''}`.trim()}
+                onClick={() => setStatusFilter(f.id)}
+              >
+                {f.label}
+              </button>
+            ))}
+          </div>
         </div>
+
         {filtered.length === 0 ? (
-          <EmptyState title="NO SITES YET" body="START A BUILD FROM BLDR TO CREATE YOUR FIRST SITE." />
+          <EmptyState
+            title="NO SITES YET"
+            body="Sites appear here when you create and publish digital properties from BLDR."
+          />
         ) : (
-          <ul className="site00-sites-table">
+          <ul className="site00-site-list">
             {filtered.map((site) => (
-              <li key={site.id} className="site00-sites-table__row">
-                <div>
-                  <p className="site00-sites-table__name">{site.name}</p>
-                </div>
-                <StatusBadge status={site.status} tone={site.status === 'Published' ? 'published' : 'draft'} />
-                <Link to={SITE00_ROUTES.controlSites} className="site00-btn-ghost-sm">
-                  MANAGE
-                </Link>
-              </li>
+              <SiteRow key={site.id} site={site} />
             ))}
           </ul>
         )}
+
+        <div className="site00-eco-continuation">
+          <section className="site00-eco-panel" aria-labelledby="site-activity-heading">
+            <h2 id="site-activity-heading" className="site00-eco-panel__title">
+              SITE ACTIVITY
+            </h2>
+            <ul className="site00-eco-activity-feed">
+              {siteActivity.map((item) => (
+                <li key={item.id} className="site00-eco-activity-feed__row">
+                  <span className="site00-eco-activity-feed__entity">{item.entity}</span>
+                  <span className="site00-eco-activity-feed__action">— {item.action}</span>
+                  <span className="site00-eco-activity-feed__time">{item.timeAgo}</span>
+                </li>
+              ))}
+            </ul>
+          </section>
+
+          <section className="site00-eco-panel" aria-labelledby="site-team-heading">
+            <h2 id="site-team-heading" className="site00-eco-panel__title">
+              YOUR TEAM
+            </h2>
+            <ul className="site00-eco-team">
+              {siteTeam.map((member) => (
+                <li key={member.id} className="site00-eco-team__row">
+                  <span className="site00-eco-team__avatar">{member.initials}</span>
+                  <div>
+                    <p className="site00-eco-team__name">{member.name}</p>
+                    <p className="site00-eco-team__role">{member.role}</p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </section>
+        </div>
+
+        <div className="site00-eco-mobile-cta">
+          <Link to={SITE00_ROUTES.bldr} className="site00-btn-outline site00-btn-outline--block">
+            + NEW SITE
+          </Link>
+        </div>
       </div>
-    </CtrlRoomShell>
+    </EcosystemShell>
   );
 }

@@ -21,6 +21,7 @@ import '../site00/styles/site00-loader.css';
 import '../site00/styles/site00-desktop-artboard.css';
 import '../site00/styles/site00-auth.css';
 import '../site00/styles/site00-ctrl-room.css';
+import '../site00/styles/site00-ecosystem.css';
 import '../site00/styles/site00-pages.css';
 import '../site00/assts/styles/assts.css';
 import '../site00/assts/styles/assts-depth.css';
@@ -366,7 +367,18 @@ export function Site00Routes() {
       {Site00PublicPageRoutes(SITE00_ROUTES.support, SupportPage)}
       {Site00PublicPageRoutes(SITE00_ROUTES.idntySignInSecurity, IdntySignInSecurityPage)}
       {Site00PublicPageRoutes(SITE00_ROUTES.bldrTemplates, BldrTemplatesPage)}
-      {Site00PublicPageRoutes(SITE00_ROUTES.projects, ProjectsPage, true)}
+      <Route
+        path={SITE00_ROUTES.projects}
+        element={
+          <Site00Layout>
+            <Site00AccountRouteGuard>
+              <Site00Suspense>
+                <ProjectsPage />
+              </Site00Suspense>
+            </Site00AccountRouteGuard>
+          </Site00Layout>
+        }
+      />
       {Site00PublicPageRoutes(SITE00_ROUTES.bldrStart, BldrStartPage)}
       <Route
         path={SITE00_ROUTES.projectProvisioning}
