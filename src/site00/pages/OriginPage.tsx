@@ -1,5 +1,4 @@
 import { useCallback } from 'react';
-import { useLocation } from 'react-router-dom';
 import { EnvironmentShell } from '../components/environment/EnvironmentShell';
 import { Site00AppShell } from '../components/shell/Site00AppShell';
 import { StatusStrip } from '../components/homepage/StatusStrip';
@@ -9,8 +8,8 @@ import { IdntyExpandedPanel } from '../components/homepage/IdntyExpandedPanel';
 import { BldrExpandedPanel } from '../components/homepage/BldrExpandedPanel';
 import { SITE00_ORIGIN_COPY } from '../config/status';
 import { SITE00_ORIGIN_DESKTOP_COMPOSITION } from '../config/origin-home-composition';
-import { SITE00_ROUTES } from '../config/routes';
 import { Site00OriginLayoutSwitch } from '../components/shell/Site00OriginLayoutSwitch';
+import { useSite00DesktopArtboardPreview } from '../components/shell/Site00DesktopArtboardContext';
 import { useSite00 } from '../state/Site00Context';
 import { useOriginStatusStripLayout } from '../hooks/useOriginStatusStripLayout';
 import { useOriginLocationsTransition } from '../hooks/useOriginLocationsTransition';
@@ -18,12 +17,10 @@ import { useOriginExpandedDismiss } from '../hooks/useOriginExpandedDismiss';
 
 export default function OriginPage() {
   const { state, setHomeMode } = useSite00();
-  const { pathname } = useLocation();
-  const isDesktopArtboardRoute =
-    pathname === SITE00_ROUTES.originDesktop || pathname.startsWith(`${SITE00_ROUTES.originDesktop}/`);
-  const statusStripLayout = useOriginStatusStripLayout(isDesktopArtboardRoute);
+  const isDesktopArtboardLayout = useSite00DesktopArtboardPreview();
+  const statusStripLayout = useOriginStatusStripLayout(isDesktopArtboardLayout);
   const locationsTransition = useOriginLocationsTransition();
-  const isMobileOrigin = !isDesktopArtboardRoute;
+  const isMobileOrigin = !isDesktopArtboardLayout;
   const collapseExpandedPanel = useCallback(() => setHomeMode('origin'), [setHomeMode]);
 
   useOriginExpandedDismiss(state.homeMode, collapseExpandedPanel);
@@ -31,7 +28,7 @@ export default function OriginPage() {
   return (
     <EnvironmentShell environmentId="ORIGIN_ENVIRONMENT">
       <div
-        className={`site00-origin-page ${isDesktopArtboardRoute ? 'site00-origin-page--desktop-artboard' : 'site00-origin-page--mobile-layout'}`.trim()}
+        className={`site00-origin-page ${isDesktopArtboardLayout ? 'site00-origin-page--desktop-artboard' : 'site00-origin-page--mobile-layout'}`.trim()}
       >
         <Site00AppShell
           locationLabel={SITE00_ORIGIN_COPY.locationLabel}
@@ -117,7 +114,7 @@ export default function OriginPage() {
               </section>
             ) : null}
 
-            {!isDesktopArtboardRoute ? <OriginMobileSwipeUp transition={locationsTransition} /> : null}
+            {!isDesktopArtboardLayout ? <OriginMobileSwipeUp transition={locationsTransition} /> : null}
           </div>
         </Site00AppShell>
         <Site00OriginLayoutSwitch />

@@ -7,6 +7,7 @@ import { AsstsRouteSuspense } from '../site00/assts/components/AsstsRouteSuspens
 import { AsstsColdStartGate } from '../site00/assts/components/AsstsColdStartGate';
 import { Site00RouteLoadingFallback } from '../site00/components/loader/Site00RouteLoadingFallback';
 import { Site00WorldColdStartGate } from '../site00/components/loader/Site00WorldColdStartGate';
+import { Site00OriginRouteShell } from '../site00/components/shell/Site00OriginRouteShell';
 import { Site00DesktopArtboardShell } from '../site00/components/shell/Site00DesktopArtboardShell';
 import { Site00TypographyBootstrap } from '../site00/components/Site00TypographyBootstrap';
 /* Eager-load SITE 00 + ASSTS styles (lazy route CSS was not applying on mobile preview). */
@@ -67,9 +68,11 @@ export function Site00Routes() {
           index
           element={
             <Site00Layout>
-              <Site00Suspense>
-                <Site00OriginPage />
-              </Site00Suspense>
+              <Site00OriginRouteShell>
+                <Site00Suspense>
+                  <Site00OriginPage />
+                </Site00Suspense>
+              </Site00OriginRouteShell>
             </Site00Layout>
           }
         />
@@ -79,9 +82,11 @@ export function Site00Routes() {
           path="/"
           element={
             <Site00Layout>
-              <Site00Suspense>
-                <Site00OriginPage />
-              </Site00Suspense>
+              <Site00OriginRouteShell>
+                <Site00Suspense>
+                  <Site00OriginPage />
+                </Site00Suspense>
+              </Site00OriginRouteShell>
             </Site00Layout>
           }
         />
@@ -100,9 +105,11 @@ export function Site00Routes() {
         path={SITE00_ROUTES.originAlias}
         element={
           <Site00Layout>
-            <Site00Suspense>
-              <Site00OriginPage />
-            </Site00Suspense>
+            <Site00OriginRouteShell>
+              <Site00Suspense>
+                <Site00OriginPage />
+              </Site00Suspense>
+            </Site00OriginRouteShell>
           </Site00Layout>
         }
       />
@@ -110,11 +117,11 @@ export function Site00Routes() {
         path={SITE00_ROUTES.originDesktop}
         element={
           <Site00Layout>
-            <Site00DesktopArtboardShell>
+            <Site00OriginRouteShell forceArtboard>
               <Site00Suspense>
                 <Site00OriginPage />
               </Site00Suspense>
-            </Site00DesktopArtboardShell>
+            </Site00OriginRouteShell>
           </Site00Layout>
         }
       />
