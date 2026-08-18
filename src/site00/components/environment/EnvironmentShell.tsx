@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { resolveSite00PublicAsset } from '../loader/site00LoaderConfig';
 import { SITE00_ENVIRONMENTS, type EnvironmentId } from '../../config/environments';
+import { useSite00DesktopArtboardPreview } from '../shell/Site00DesktopArtboardContext';
 import '../../styles/site00.css';
 
 type EnvironmentShellProps = {
@@ -23,6 +24,7 @@ export function EnvironmentShell({ environmentId, children, className = '' }: En
   const config = SITE00_ENVIRONMENTS[environmentId];
   const desktopAsset = resolveEnvironmentDesktopAsset(config);
   const mobileAsset = config.mobileAssetPath ? resolveSite00PublicAsset(config.mobileAssetPath) : undefined;
+  const inDesktopArtboard = useSite00DesktopArtboardPreview();
 
   return (
     <div className={`site00-shell ${className}`.trim()} data-environment={environmentId}>
@@ -30,7 +32,7 @@ export function EnvironmentShell({ environmentId, children, className = '' }: En
         className={`site00-env-layer ${config.fallbackClass} ${config.lightingClass} ${desktopAsset ? 'site00-env-layer--has-desktop-asset' : ''} ${mobileAsset ? 'site00-env-layer--has-mobile-asset' : ''}`.trim()}
         aria-hidden="true"
         style={{
-          position: 'fixed',
+          position: inDesktopArtboard ? 'absolute' : 'fixed',
           inset: 0,
           zIndex: 'var(--site-z-env)',
           ['--site00-env-desktop-position' as string]: config.desktopPosition,

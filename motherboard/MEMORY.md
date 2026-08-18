@@ -53610,6 +53610,7 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 ---
 
+<<<<<<< HEAD
 ## 2026-08-18 — SITE 00 Sign In + CTRL ROOM (desktop + mobile)
 
 - **Context:** Composer sprint — implement approved master design for SITE 00 **SIGN IN** and **CTRL ROOM** (desktop split-screen auth, mobile single-column auth, desktop/mobile account command center). Production backgrounds: `C948EBEF-45AC-476C-AD91-735CE2026157.png` (sign-in left panel), `D8D7E6B9-2CAD-4C63-BD82-F77E810851A2.png` (CTRL ROOM environment). Terminology: SIGN IN, CTRL ROOM, IDNTY, BLDR — not Dashboard/Identity/Builder.
@@ -53625,4 +53626,35 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Files:** New `site00-auth.css`, `site00-ctrl-room.css`, auth/control components + pages under `src/site00/`. Drawer adds LOG OUT when signed in.
 
 - **Deploy:** Sync-only; say **deploy now** for Vercel.
+=======
+## 2026-08-18 — IDNTY investment section: remove duplicated brand-state icons
+
+- **Context:** Founder asked to remove the row of icons from the identity investment section only — icons were duplicated with no reason (same brand-state icons already appear in the StateCard row above).
+
+- **Root cause:** `IdntyStatePage` passed `brandStateId={tier.stateId}` into each `InvestmentColumn`, which rendered `IdntyBrandStateIcon` again per tier. BLDR investment columns use `buildClassId` separately and were left unchanged.
+
+- **Fix:** Removed `brandStateId` prop from IDNTY `InvestmentColumn` usage in `IdntyStatePage.tsx`. Removed unused `stateId` field from `InvestmentTier` type and tier data in `identity.ts`.
+
+- **Verification:** Playwright `/idnty/state` — investment panel has **0** brand-state icons; state cards row retains icons.
+
+- **Deploy:** Sync-only commit `b06517013`; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — Origin laptop/phone parity: canonical `/origin/desktop` redirect + env artboard lock
+
+- **Context:** Founder reported laptop `/origin` still does not match phone `/origin/desktop` (correct reference). Prior artboard shell on wide viewports was in repo but all parity commits were `[sync-only]` (Vercel preview may lag). Needed belt-and-suspenders so laptop always hits the same route/shell as phone desktop preview.
+
+- **Root cause:** Two entry URLs (`/origin` vs `/origin/desktop`) on wide viewports; stale deploys could leave `/origin` on old fluid `@media` CSS while `/origin/desktop` used `forceArtboard`. Environment layer also used inline `position: fixed`, fighting artboard scale on some viewports.
+
+- **Fix:**
+  - **`Site00OriginWideDesktopRedirect`** — wide viewports visiting `/origin` → **`/origin/desktop`** (replace). QA mobile layout on desktop: **`?site00MobileLayout=1`** (layout switch Mobile link adds this).
+  - **`Site00OriginRouteShell`** — `useSyncExternalStore` for reliable ≥768px breakpoint (no stale `useState`).
+  - **`EnvironmentShell`** — `position: absolute` when inside artboard context (not fixed).
+  - **`site00-desktop-artboard.css`** — artboard env layer always uses desktop asset/scale (overrides viewport `@media` mobile env on phone `/origin/desktop`).
+
+- **Verification:** Playwright @ 1920×1080 — `/origin` redirects to `/origin/desktop`; identical hero position (`absolute`, offset `10px`, norm left `133px`), artboard + env `absolute`.
+
+- **Deploy:** Sync-only; say **deploy now** for production/preview Vercel host.
+>>>>>>> 03d0d1271 (Origin: redirect wide /origin to /origin/desktop for laptop-phone parity [sync-only])
 

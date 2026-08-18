@@ -1,7 +1,10 @@
-import { useEffect, useState, type ReactNode } from 'react';
+import { useSyncExternalStore, type ReactNode } from 'react';
 import { Site00DesktopArtboardShell } from './Site00DesktopArtboardShell';
-
-const SITE00_ORIGIN_DESKTOP_BREAKPOINT_PX = 768;
+import {
+  getSite00OriginWideViewportSnapshot,
+  SITE00_ORIGIN_DESKTOP_BREAKPOINT_PX,
+  subscribeSite00OriginWideViewport,
+} from './site00OriginViewport';
 
 type Site00OriginRouteShellProps = {
   children: ReactNode;
@@ -14,19 +17,11 @@ type Site00OriginRouteShellProps = {
  * Mobile (<768px): phone layout. There is no separate “native desktop” Origin CSS path.
  */
 export function Site00OriginRouteShell({ children, forceArtboard = false }: Site00OriginRouteShellProps) {
-  const [wideViewport, setWideViewport] = useState(() =>
-    typeof window !== 'undefined'
-      ? window.matchMedia(`(min-width: ${SITE00_ORIGIN_DESKTOP_BREAKPOINT_PX}px)`).matches
-      : false,
+  const wideViewport = useSyncExternalStore(
+    subscribeSite00OriginWideViewport,
+    getSite00OriginWideViewportSnapshot,
+    () => false,
   );
-
-  useEffect(() => {
-    if (forceArtboard) return;
-    const mq = window.matchMedia(`(min-width: ${SITE00_ORIGIN_DESKTOP_BREAKPOINT_PX}px)`);
-    const onChange = () => setWideViewport(mq.matches);
-    mq.addEventListener('change', onChange);
-    return () => mq.removeEventListener('change', onChange);
-  }, [forceArtboard]);
 
   const useArtboard = forceArtboard || wideViewport;
 
@@ -36,3 +31,5 @@ export function Site00OriginRouteShell({ children, forceArtboard = false }: Site
 
   return <>{children}</>;
 }
+
+export { SITE00_ORIGIN_DESKTOP_BREAKPOINT_PX };

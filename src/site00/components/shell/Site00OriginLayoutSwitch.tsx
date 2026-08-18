@@ -6,6 +6,11 @@ import {
   isSite00OriginDesktopPath,
   SITE00_ROUTES,
 } from '../../config/routes';
+import {
+  SITE00_ORIGIN_MOBILE_LAYOUT_QUERY,
+  isSite00OriginWideViewport,
+  site00OriginMobileLayoutPreviewActive,
+} from './site00OriginViewport';
 
 type PreviewSwitchConfig = {
   ariaLabel: string;
@@ -17,7 +22,7 @@ type PreviewSwitchConfig = {
 
 /** Toggle mobile-first vs fixed desktop artboard on Origin + BLDR workflow preview routes. */
 export function Site00OriginLayoutSwitch() {
-  const { pathname } = useLocation();
+  const { pathname, search } = useLocation();
 
   let config: PreviewSwitchConfig | null = null;
 
@@ -26,11 +31,16 @@ export function Site00OriginLayoutSwitch() {
     pathname === SITE00_ROUTES.origin ||
     isSite00OriginDesktopPath(pathname)
   ) {
+    const mobileHref = isSite00OriginWideViewport()
+      ? `${SITE00_ROUTES.originAlias}?${SITE00_ORIGIN_MOBILE_LAYOUT_QUERY}=1`
+      : SITE00_ROUTES.originAlias;
     config = {
       ariaLabel: 'Origin layout preview',
-      mobileHref: SITE00_ROUTES.originAlias,
+      mobileHref,
       desktopHref: SITE00_ROUTES.originDesktop,
-      onMobile: pathname === SITE00_ROUTES.originAlias || pathname === SITE00_ROUTES.origin,
+      onMobile:
+        (pathname === SITE00_ROUTES.originAlias || pathname === SITE00_ROUTES.origin) &&
+        (!isSite00OriginWideViewport() || site00OriginMobileLayoutPreviewActive(search)),
       onDesktop: isSite00OriginDesktopPath(pathname),
     };
   } else if (

@@ -12,8 +12,19 @@
 .site00-desktop-artboard .site00-env-layer--has-desktop-asset {
   background-image: var(--site00-env-desktop-image);
   background-size: cover;
-  background-position: center center;
+  background-position: var(--site00-env-desktop-position, center center);
   background-repeat: no-repeat;
+  transform: scale(var(--site00-env-desktop-scale, 1));
+  transform-origin: center center;
+}
+
+.site00-desktop-artboard .site00-env-layer--has-mobile-asset {
+  background-image: var(--site00-env-desktop-image);
+  background-size: cover;
+  background-position: var(--site00-env-desktop-position, center center);
+  background-repeat: no-repeat;
+  transform: scale(var(--site00-env-desktop-scale, 1));
+  transform-origin: center center;
 }
 
 .site00-desktop-artboard .site00-safe-ui {
