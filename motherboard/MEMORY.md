@@ -53510,7 +53510,15 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Fix:** `panelIconSizePx: 42` (80px base × 0.75 × 0.7) in `origin-home-composition.ts`; `--site00-origin-panel-icon-size-px` on stage. Desktop `@media (min-width: 768px)` + `.site00-desktop-artboard` set explicit `width`/`height` on `.site00-origin-card__icon`; icon-wrap only counters card row scale (`1 / cardScale`). Mobile collapsed cards unchanged (hidden on `/origin` mobile layout anyway).
 
-- **Verification:** Playwright `/origin/desktop` 1440×900 — both icons **42×42px** rendered (was 60px).
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — Origin desktop panel icons: nudge down 10px inside cards
+
+- **Context:** Founder requested IDNTY/BLDR collapsed panel icons move **down 10px** inside their glass panels on desktop Origin homepage.
+
+- **Fix:** `panelIconOffsetYPx: 10` + `--site00-origin-panel-icon-offset-y` on stage. Desktop + artboard `.site00-origin-card__icon-wrap` → `margin-top: calc(12px + var(--offset) / var(--card-scale))` so **10 artboard px** survive the card row `scale(0.45)`.
 
 - **Deploy:** Sync-only; say **deploy now** for Vercel.
 
