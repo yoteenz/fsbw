@@ -405,6 +405,24 @@
   object-fit: contain;
 }
 
+/* Origin expanded panels — framework pillars stay on one row (desktop). */
+.site00-origin-framework-pillars {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.site00-origin-framework-pillar {
+  text-align: center;
+  min-width: 0;
+}
+
+.site00-origin-framework-pillar .site00-body {
+  hyphens: auto;
+  overflow-wrap: anywhere;
+}
+
 /* ─── Responsive safe area ─── */
 
 .site00-safe-ui {

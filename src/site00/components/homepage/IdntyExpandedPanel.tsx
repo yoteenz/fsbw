@@ -81,16 +81,9 @@ export function IdntyExpandedPanel({ onCollapse }: IdntyExpandedPanelProps) {
         <p className="site00-label-red" style={{ marginBottom: 16 }}>
           THE IDENTITY FRAMEWORK
         </p>
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
-            gap: 16,
-            marginBottom: 24,
-          }}
-        >
+        <div className="site00-origin-framework-pillars">
           {IDNTY_FRAMEWORK_PILLARS.map((pillar) => (
-            <div key={pillar.id} style={{ textAlign: 'center' }}>
+            <div key={pillar.id} className="site00-origin-framework-pillar">
               <GeometricIcon variant={pillar.icon} size="sm" />
               <p className="site00-micro" style={{ margin: '8px 0 4px' }}>
                 {pillar.title}

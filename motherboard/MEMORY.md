@@ -53263,3 +53263,17 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Fix:** Restored **6px** in `site00.css` (`@media min-width: 768px`) and `site00-desktop-artboard.css`.
 
 - **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — Origin expanded panels: framework pillars single row
+
+- **Context:** Founder reported IDNTY/BLDR expanded panel **framework sections** wrapping the 5th pillar to a second row on Origin desktop.
+
+- **Cause:** Inline grid used `repeat(auto-fit, minmax(120px, 1fr))` — at ~664px content width, only 4 columns fit before wrap.
+
+- **Fix:** Shared `.site00-origin-framework-pillars` → `grid-template-columns: repeat(5, minmax(0, 1fr))` in `site00.css`; applied in `IdntyExpandedPanel.tsx` + `BldrExpandedPanel.tsx`.
+
+- **Verification:** Playwright `/origin/desktop` — 5 pillars, `rowCount: 1` on both IDNTY and BLDR expanded panels.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
