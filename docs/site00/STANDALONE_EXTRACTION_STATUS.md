@@ -6,8 +6,12 @@
 
 | Environment | Path |
 |-------------|------|
-| Cloud agent VM | `/home/ubuntu/site-00` |
+| **Cloud agent (canonical)** | **`/workspace/site00-standalone/`** inside fsbw repo (git-tracked) |
+| Ephemeral VM copy | `/home/ubuntu/site-00` (optional; may not exist on fresh agents) |
 | Founder machine (target) | Sibling to `frontal-slayer/`, e.g. `Development/site-00/` |
+| GitHub product repo | https://github.com/yoteenz/SITE00 |
+
+**Publish to SITE00:** `./scripts/site00-push-to-github.sh` (needs `SITE00_GITHUB_TOKEN` secret).
 
 ## Git
 

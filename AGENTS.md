@@ -41,14 +41,17 @@ When you add a migration under `supabase/migrations/` that creates or alters **t
 
 ### Mobile live preview (no Vercel)
 
-Cloud agents auto-start four terminals from **`.cursor/environment.json`**:
+Cloud agents auto-start six terminals from **`.cursor/environment.json`**:
 
 | Terminal | App | Port | Tunnel script |
 |----------|-----|------|---------------|
 | **`vite`** | Frontal Slayer | 3001 | **`preview-tunnel`** → `./scripts/cloud-preview-tunnel.sh` |
+| **`site00-vite`** | SITE 00 standalone | 5174 | **`site00-preview-tunnel`** → `./scripts/site00-preview-tunnel.sh` |
 | **`aio-vite`** | All In One standalone | 5173 | **`aio-preview-tunnel`** → `./all-in-one-enterprises/scripts/aio-preview-tunnel.sh` |
 
 **Frontal Slayer:** **`CLOUDFLARE_TUNNEL_TOKEN`** + **`CLOUDFLARE_TUNNEL_HOSTNAME`** → persistent hostname (see **`docs/cloud-agent/persistent-preview-tunnel.md`**). Else ephemeral **`https://….trycloudflare.com`** → **`/tmp/cloud-preview-url.txt`**.
+
+**SITE 00 (standalone repo):** **`SITE00_CLOUDFLARE_TUNNEL_TOKEN`** + **`SITE00_CLOUDFLARE_TUNNEL_HOSTNAME`** → see **`docs/cloud-agent/site00-preview-tunnel.md`**. Else ephemeral trycloudflare → **`/tmp/site00-cloud-preview-url.txt`**. Uses a **separate tunnel** from Frontal Slayer (port **5174**, not 3001). Canonical source in fsbw: **`site00-standalone/`**; publish with **`./scripts/site00-push-to-github.sh`** when **`SITE00_GITHUB_TOKEN`** is set.
 
 **All In One (until production):** **`AIO_CLOUDFLARE_TUNNEL_TOKEN`** + **`AIO_CLOUDFLARE_TUNNEL_HOSTNAME`** (e.g. `https://aio-preview.yourdomain.com`) → see **`all-in-one-enterprises/docs/PREVIEW_TUNNEL.md`**. Else ephemeral trycloudflare → **`/tmp/aio-cloud-preview-url.txt`**. Use a **separate subdomain/tunnel** from Frontal Slayer (port 5173, not 3001).
 

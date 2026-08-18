@@ -13,6 +13,16 @@
       "description": "Frontal Slayer Cloudflare tunnel — CLOUDFLARE_TUNNEL_TOKEN or trycloudflare.com"
     },
     {
+      "name": "site00-vite",
+      "command": "./scripts/site00-cloud-vite-dev.sh",
+      "description": "SITE 00 standalone Vite on port 5174 — edit yoteenz/SITE00 workspace"
+    },
+    {
+      "name": "site00-preview-tunnel",
+      "command": "./scripts/site00-preview-tunnel.sh",
+      "description": "SITE 00 Cloudflare tunnel — SITE00_CLOUDFLARE_TUNNEL_TOKEN or trycloudflare.com"
+    },
+    {
       "name": "aio-vite",
       "command": "cd all-in-one-enterprises && AIO_CLOUD_MOBILE_PREVIEW=1 npm run dev",
       "description": "All In One standalone Vite on port 5173"
@@ -27,6 +37,10 @@
     {
       "name": "vite",
       "port": 3001
+    },
+    {
+      "name": "site00-vite",
+      "port": 5174
     },
     {
       "name": "aio-vite",

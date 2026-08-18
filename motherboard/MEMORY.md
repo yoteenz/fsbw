@@ -54160,3 +54160,13 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Context:** IA correction — CHOOSE YOUR PATH (REFINE/INSTALL/TRANSFORM) belongs on dedicated `/evolve/state` only; Origin expanded panel shows **EVOLVE FRAMEWORK** methodology (01 AUDIT · 02 INTERVENE · 03 ADVANCE). **BEGIN EVOLUTION** CTA locked unchanged.
 - **Changes:** `EVOLVE_METHODOLOGY_PILLARS` + `evolve-methodology-icons.ts` empty asset slots; `EvolveMethodologyIcon`; `EvolveExpandedPanel` matches IDNTY/BLDR framework grid; restored HOW IT WORKS → `/evolve`. Dedicated route unchanged.
 
+---
+
+## 2026-08-18 — SITE 00 standalone persisted in fsbw (site00-standalone/)
+
+- **Context:** Founder on mobile; push to `yoteenz/SITE00` blocked (cursor[bot] 403; PAT secret UI confusing). Ephemeral `/home/ubuntu/site-00` missing on fresh cloud agents defeated token-based push workflow.
+- **Decision:** Canonical standalone SITE 00 source lives **inside fsbw** at **`site00-standalone/`** (445 files, git-tracked). Any cloud agent cloning fsbw has the full tree without re-extraction.
+- **Shipped:** `site00-standalone/` copy; `scripts/site00-resolve-root.sh` prefers workspace path; `scripts/site00-push-to-github.sh` publishes to SITE00 via `SITE00_GITHUB_TOKEN`; docs/AGENTS.md updated.
+- **Publish:** `./scripts/site00-push-to-github.sh` when secret set. **Product repo:** https://github.com/yoteenz/SITE00 (public, empty until publish).
+- **Convention:** Do not rely on `/home/ubuntu/site-00` on cloud agents; use `site00-standalone/` or clone SITE00 after first publish.
+
