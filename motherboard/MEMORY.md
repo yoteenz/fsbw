@@ -53303,3 +53303,13 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Change:** `BLDR_HOMEPAGE_EXPANDED.offerings[0].description` in `builder.ts` — dropped “, brochures” from list.
 
 - **Deploy:** Sync-only; say **deploy now** for Vercel.
+
+---
+
+## 2026-08-18 — Origin expanded panels: gray rule above framework heading
+
+- **Context:** Founder requested gray border line above **THE BLDR FRAMEWORK** / **THE IDENTITY FRAMEWORK** on Origin expanded panels.
+
+- **Change:** `.site00-origin-framework-heading` — `border-top: 1px solid var(--site-border)` + `padding-top: 24px`; applied in `BldrExpandedPanel.tsx` + `IdntyExpandedPanel.tsx`.
+
+- **Deploy:** Sync-only; say **deploy now** for Vercel.
