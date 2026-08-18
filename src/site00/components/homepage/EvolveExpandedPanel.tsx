@@ -5,7 +5,7 @@ import { SectionRule } from '../panels/SectionRule';
 import { OriginPanelIcon } from './OriginPanelIcon';
 import { EvolveFrameworkIcon } from './EvolveFrameworkIcon';
 import { ArrowAction } from '../icons/ArrowAction';
-import { useNavigate, useLocation, Link } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 type EvolveExpandedPanelProps = {
   onCollapse: () => void;
@@ -44,36 +44,35 @@ export function EvolveExpandedPanel({ onCollapse }: EvolveExpandedPanelProps) {
             {copy.overview}
           </p>
 
-          <p className="site00-label-red site00-origin-framework-heading">CHOOSE YOUR PATH</p>
-          <div className="site00-origin-framework-pillars site00-evolve-framework-pillars">
-            {EVOLVE_FRAMEWORK_PILLARS.map((pillar) => (
-              <div key={pillar.id} className="site00-origin-framework-pillar">
-                <EvolveFrameworkIcon id={pillar.icon} title={pillar.title} />
-                <p className="site00-micro" style={{ margin: '8px 0 4px' }}>
-                  {pillar.title}
-                </p>
-                <p className="site00-body" style={{ fontSize: 10 }}>
-                  {pillar.description}
-                </p>
-              </div>
-            ))}
+          <div className="site00-evolve-path-block">
+            <p className="site00-label-red site00-origin-framework-heading site00-evolve-path-block__heading">
+              CHOOSE YOUR PATH
+            </p>
+            <div className="site00-origin-framework-pillars site00-evolve-framework-pillars">
+              {EVOLVE_FRAMEWORK_PILLARS.map((pillar) => (
+                <div key={pillar.id} className="site00-origin-framework-pillar">
+                  <EvolveFrameworkIcon id={pillar.icon} title={pillar.title} />
+                  <p className="site00-micro" style={{ margin: '8px 0 4px' }}>
+                    {pillar.title}
+                  </p>
+                  <p className="site00-body" style={{ fontSize: 10 }}>
+                    {pillar.description}
+                  </p>
+                </div>
+              ))}
+            </div>
           </div>
 
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 24 }}>
-            <div style={{ display: 'flex', gap: 16, alignItems: 'center', flexWrap: 'wrap' }}>
-              <ArrowAction
-                label={copy.cta}
-                variant="red"
-                onClick={() =>
-                  navigate(
-                    isSite00OriginDesktopPath(pathname) ? SITE00_ROUTES.evolveStateDesktop : SITE00_ROUTES.evolveState,
-                  )
-                }
-              />
-              <Link to={SITE00_ROUTES.evolve} className="site00-btn-ghost">
-                {copy.secondaryCta}
-              </Link>
-            </div>
+            <ArrowAction
+              label={copy.cta}
+              variant="red"
+              onClick={() =>
+                navigate(
+                  isSite00OriginDesktopPath(pathname) ? SITE00_ROUTES.evolveStateDesktop : SITE00_ROUTES.evolveState,
+                )
+              }
+            />
             <button type="button" className="site00-btn-ghost" onClick={onCollapse}>
               BACK
             </button>

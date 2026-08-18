@@ -54139,3 +54139,10 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Changes:** `EVOLVE_ORIGIN_CARD.subtitle` → `BUILD ALREADY EXISTS.`; removed `body` from collapsed EVOLVE card; `expandedPanelScale` 0.875 → 0.74375 in `origin-home-composition.ts`.
 - **Sync:** `2aba9be60`
 
+---
+
+## 2026-08-18 — Origin EVOLVE expanded panel CTA + centered paths
+
+- **Context:** Founder polish on Origin desktop EVOLVE expanded panel.
+- **Changes:** CTA `BEGIN EVOLUTION` (single arrow via `ArrowAction`); removed HOW IT WORKS link; centered CHOOSE YOUR PATH block + 3-column evolve pillars CSS.
+

@@ -467,6 +467,21 @@
   margin: 0 0 16px;
 }
 
+.site00-evolve-path-block {
+  text-align: center;
+}
+
+.site00-evolve-path-block__heading {
+  text-align: center;
+}
+
+.site00-evolve-framework-pillars {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  justify-items: center;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 /* ─── Responsive safe area ─── */
 
 .site00-safe-ui {
