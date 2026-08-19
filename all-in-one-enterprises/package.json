@@ -26,7 +26,8 @@
     "migrate:staging": "bash scripts/migrate-staging.sh",
     "migrate:production": "bash scripts/migrate-production.sh",
     "test:rls-staging": "bash scripts/rls-staging-test.sh",
-    "test:supabase-connection": "node scripts/aio-supabase-connection-smoke.mjs"
+    "test:supabase-connection": "node scripts/aio-supabase-connection-smoke.mjs",
+    "validate:supabase-production": "bash scripts/ci/aio-project-guard.sh local && bash scripts/ci/aio-migration-preflight.sh"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.0",

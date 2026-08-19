@@ -164,6 +164,17 @@ Sort UI, counteroffer UI, freight i18n, GPS/ELD, external market rates, instant 
 
 **NOT READY TO DEPLOY — BLOCKERS REMAIN**
 
+### GitHub Actions validation (2026-08-19)
+
+Added phone-triggerable workflow `.github/workflows/aio-supabase-production-validate.yml`:
+
+- Uses `aio-production` environment; guards project `nnnljnhtmseagotvgxxt`; rejects `hyycomvcaqxxvyrfupes`
+- Applies migrations, verifies schema/RLS, runs live test suite, builds AIO — **does not deploy**
+- CI scripts under `all-in-one-enterprises/scripts/ci/`
+- Live vitest: `freightRlsIntegration`, `freightStorageSecurity`, `freightLiveGoldenPath`, `shipperFreightRepositoryLive`, `brokerageBookkeepingHandoffLive`, `demoProductionIsolation`
+
+Run results: GitHub Actions job summary + artifact `.ci/aio-validation-results.json`
+
 After founder provides AIO Supabase staging access:
 
 1. Apply migrations 20260819120000 → 20260819150000

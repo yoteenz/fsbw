@@ -112,6 +112,13 @@ Optional role JWTs: `AIO_RLS_TEST_SHIPPER_A_JWT`, `AIO_RLS_TEST_SHIPPER_B_JWT`, 
 
 **Current:** `NOT READY TO DEPLOY — BLOCKERS REMAIN`
 
+**Manual validation workflow (GitHub Actions):**
+
+- Workflow: `.github/workflows/aio-supabase-production-validate.yml`
+- Environment: `aio-production` (secrets: `SUPABASE_ACCESS_TOKEN`, `SUPABASE_PROJECT_ID`, `SUPABASE_DB_PASSWORD`)
+- Trigger: Actions → **AIO Supabase Production Validate** → Run workflow
+- Optional role JWT secrets documented in root `docs/freight/AIO_FREIGHT_PRODUCTION_CONFIGURATION_CHECKLIST.md`
+
 **Blockers (production):**
 1. AIO Supabase project credentials not configured in this environment
 2. Migrations not applied / verified on live AIO project

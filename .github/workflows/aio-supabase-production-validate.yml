@@ -1,0 +1,280 @@
+name: AIO Supabase Production Validate
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: aio-supabase-production-validate
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    name: AIO Supabase production validate
+    runs-on: ubuntu-latest
+    environment: aio-production
+    defaults:
+      run:
+        working-directory: all-in-one-enterprises
+    env:
+      AIO_CI_RESULTS_PATH: .ci/aio-validation-results.json
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
+      SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+      AIO_RLS_TEST_SHIPPER_A_JWT: ${{ secrets.AIO_RLS_TEST_SHIPPER_A_JWT }}
+      AIO_RLS_TEST_SHIPPER_B_JWT: ${{ secrets.AIO_RLS_TEST_SHIPPER_B_JWT }}
+      AIO_RLS_TEST_CARRIER_A_JWT: ${{ secrets.AIO_RLS_TEST_CARRIER_A_JWT }}
+      AIO_RLS_TEST_CARRIER_B_JWT: ${{ secrets.AIO_RLS_TEST_CARRIER_B_JWT }}
+      AIO_RLS_TEST_STAFF_JWT: ${{ secrets.AIO_RLS_TEST_STAFF_JWT }}
+      AIO_RLS_TEST_SHIPPER_A_ORG: ${{ secrets.AIO_RLS_TEST_SHIPPER_A_ORG }}
+      AIO_SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.AIO_SUPABASE_SERVICE_ROLE_KEY }}
+      VITE_AIO_DATA_MODE: supabase
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: all-in-one-enterprises/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Initialize results
+        run: |
+          mkdir -p .ci
+          echo '{"project":"nnnljnhtmseagotvgxxt"}' > "$AIO_CI_RESULTS_PATH"
+
+      - name: Project guard (pre-link)
+        shell: bash
+        run: |
+          set +x
+          bash scripts/ci/aio-project-guard.sh pre-link
+          bash scripts/ci/aio-record-result.sh projectGuard PASS
+
+      - name: Install PostgreSQL client
+        run: sudo apt-get update && sudo apt-get install -y postgresql-client
+
+      - name: Migration preflight
+        shell: bash
+        run: |
+          set +x
+          bash scripts/ci/aio-migration-preflight.sh
+
+      - name: Link AIO Supabase project
+        shell: bash
+        run: |
+          set +x
+          source scripts/ci/aio-constants.sh
+          if [[ "$SUPABASE_PROJECT_ID" != "$AIO_CANONICAL_PROJECT_REF" ]]; then
+            echo "FAIL: SUPABASE_PROJECT_ID must be $AIO_CANONICAL_PROJECT_REF"
+            exit 1
+          fi
+          if [[ "$SUPABASE_PROJECT_ID" == "$FS_FORBIDDEN_PROJECT_REF" ]]; then
+            echo "FAIL: forbidden Frontal Slayer project"
+            exit 1
+          fi
+          npx --yes "supabase@${SUPABASE_CLI_VERSION}" link \
+            --project-ref "$AIO_CANONICAL_PROJECT_REF" \
+            --password "$SUPABASE_DB_PASSWORD" \
+            --yes
+
+      - name: Project guard (post-link)
+        shell: bash
+        run: bash scripts/ci/aio-project-guard.sh post-link
+
+      - name: Apply migrations
+        id: migrate
+        shell: bash
+        run: |
+          set +x
+          source scripts/ci/aio-constants.sh
+          bash scripts/ci/aio-project-guard.sh pre-push
+          if ! npx --yes "supabase@${SUPABASE_CLI_VERSION}" db push --linked; then
+            bash scripts/ci/aio-record-result.sh migrations FAIL "db push failed — manual intervention may be required"
+            exit 1
+          fi
+          bash scripts/ci/aio-record-result.sh migrations PASS
+
+      - name: Verify schema and RLS enablement
+        id: schema
+        if: success()
+        shell: bash
+        run: |
+          set +x
+          bash scripts/ci/aio-project-guard.sh pre-schema
+          bash scripts/ci/aio-verify-schema.sh
+          bash scripts/ci/aio-record-result.sh schema PASS
+          bash scripts/ci/aio-record-result.sh rlsEnablement PASS
+
+      - name: Fetch API keys (Management API)
+        if: success()
+        shell: bash
+        run: |
+          set +x
+          node scripts/ci/aio-fetch-api-keys.mjs
+
+      - name: Live RLS integration tests
+        id: rls
+        if: success()
+        continue-on-error: true
+        shell: bash
+        run: |
+          set +x
+          export AIO_STAGING_SUPABASE_URL="${AIO_STAGING_SUPABASE_URL:-https://nnnljnhtmseagotvgxxt.supabase.co}"
+          if [[ -z "${AIO_STAGING_SUPABASE_ANON_KEY:-}" ]]; then
+            bash scripts/ci/aio-record-result.sh rls BLOCKED "missing anon key"
+            bash scripts/ci/aio-record-result.sh rlsBlockedReason "AIO_STAGING_SUPABASE_ANON_KEY not available"
+            exit 0
+          fi
+          set +e
+          npm run test -- src/freight/freightRlsIntegration.test.ts 2>&1 | tee /tmp/aio-rls.log
+          rls_exit=$?
+          set -e
+          if [[ $rls_exit -ne 0 ]]; then
+            bash scripts/ci/aio-record-result.sh rls FAIL
+            exit 0
+          fi
+          if [[ -z "${AIO_RLS_TEST_SHIPPER_A_JWT:-}" || -z "${AIO_RLS_TEST_CARRIER_A_JWT:-}" || -z "${AIO_RLS_TEST_STAFF_JWT:-}" ]]; then
+            bash scripts/ci/aio-record-result.sh rls BLOCKED "role matrix requires AIO_RLS_TEST_SHIPPER_A_JWT, AIO_RLS_TEST_CARRIER_A_JWT, AIO_RLS_TEST_STAFF_JWT"
+            bash scripts/ci/aio-record-result.sh rlsBlockedReason "LIVE RLS — BLOCKED BY ADDITIONAL TEST CREDENTIAL (role JWT secrets)"
+            exit 0
+          fi
+          bash scripts/ci/aio-record-result.sh rls PASS
+
+      - name: Storage security tests
+        id: storage
+        if: success()
+        continue-on-error: true
+        shell: bash
+        run: |
+          set +x
+          if [[ -z "${AIO_SUPABASE_SERVICE_ROLE_KEY:-}" ]]; then
+            npm run test -- src/freight/freightStorageSecurity.test.ts || true
+            bash scripts/ci/aio-record-result.sh storage BLOCKED "AIO_SUPABASE_SERVICE_ROLE_KEY optional — partial unauthenticated checks only"
+            exit 0
+          fi
+          if npm run test -- src/freight/freightStorageSecurity.test.ts; then
+            bash scripts/ci/aio-record-result.sh storage PASS
+          else
+            bash scripts/ci/aio-record-result.sh storage FAIL
+          fi
+
+      - name: Shipper repository live validation
+        id: shipper
+        if: success()
+        continue-on-error: true
+        shell: bash
+        env:
+          VITE_AIO_SUPABASE_URL: ${{ env.AIO_STAGING_SUPABASE_URL }}
+          VITE_AIO_SUPABASE_ANON_KEY: ${{ env.AIO_STAGING_SUPABASE_ANON_KEY }}
+        run: |
+          set +x
+          if [[ -z "${AIO_SUPABASE_SERVICE_ROLE_KEY:-}" ]]; then
+            bash scripts/ci/aio-record-result.sh shipperRepository BLOCKED "AIO_SUPABASE_SERVICE_ROLE_KEY"
+            exit 0
+          fi
+          if npm run test -- src/shipper/shipperFreightRepositoryLive.test.ts; then
+            bash scripts/ci/aio-record-result.sh shipperRepository PASS
+          else
+            bash scripts/ci/aio-record-result.sh shipperRepository FAIL
+          fi
+
+      - name: Bookkeeping handoff live validation
+        id: handoff
+        if: success()
+        continue-on-error: true
+        shell: bash
+        run: |
+          set +x
+          if [[ -z "${AIO_SUPABASE_SERVICE_ROLE_KEY:-}" ]]; then
+            bash scripts/ci/aio-record-result.sh bookkeepingHandoff BLOCKED "AIO_SUPABASE_SERVICE_ROLE_KEY"
+            exit 0
+          fi
+          if npm run test -- src/brokerage/brokerageBookkeepingHandoffLive.test.ts; then
+            bash scripts/ci/aio-record-result.sh bookkeepingHandoff PASS
+          else
+            bash scripts/ci/aio-record-result.sh bookkeepingHandoff FAIL
+          fi
+
+      - name: Staging golden path (live Supabase)
+        id: golden
+        if: success()
+        continue-on-error: true
+        shell: bash
+        run: |
+          set +x
+          if [[ -z "${AIO_SUPABASE_SERVICE_ROLE_KEY:-}" ]]; then
+            bash scripts/ci/aio-record-result.sh goldenPath BLOCKED "AIO_SUPABASE_SERVICE_ROLE_KEY"
+            bash scripts/ci/aio-record-result.sh financialPrivacy BLOCKED "depends on golden path"
+            exit 0
+          fi
+          if npm run test -- src/freight/freightLiveGoldenPath.test.ts; then
+            bash scripts/ci/aio-record-result.sh goldenPath PASS
+            bash scripts/ci/aio-record-result.sh financialPrivacy PASS
+          else
+            bash scripts/ci/aio-record-result.sh goldenPath FAIL
+            bash scripts/ci/aio-record-result.sh financialPrivacy FAIL
+          fi
+
+      - name: Demo production isolation
+        if: success()
+        shell: bash
+        env:
+          VITE_AIO_SUPABASE_URL: ${{ env.AIO_STAGING_SUPABASE_URL }}
+          VITE_AIO_SUPABASE_ANON_KEY: ${{ env.AIO_STAGING_SUPABASE_ANON_KEY }}
+        run: |
+          set +x
+          npm run test -- src/freight/demoProductionIsolation.test.ts
+          bash scripts/check-isolation.sh
+          bash scripts/ci/aio-record-result.sh demoIsolation PASS
+
+      - name: Freight unit tests
+        if: success()
+        shell: bash
+        run: |
+          set +x
+          npm run test -- \
+            src/freight/freightGoldenPath.test.ts \
+            src/freight/freightProduction.test.ts \
+            src/brokerage/brokerageBookkeepingHandoff.test.ts \
+            src/freight/freight.test.ts
+
+      - name: Production build
+        id: build
+        if: success()
+        shell: bash
+        env:
+          VITE_AIO_SUPABASE_URL: https://nnnljnhtmseagotvgxxt.supabase.co
+          VITE_AIO_SUPABASE_ANON_KEY: placeholder-build-only
+          VITE_AIO_DATA_MODE: supabase
+        run: |
+          set +x
+          npm run build
+          bash scripts/ci/aio-record-result.sh productionBuild PASS
+
+      - name: Write job summary
+        if: always()
+        run: node scripts/ci/aio-write-summary.mjs
+
+      - name: Upload validation report artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: aio-supabase-validation-results
+          path: all-in-one-enterprises/.ci/aio-validation-results.json
+          retention-days: 30
+
+      - name: Fail job if blockers remain
+        if: always()
+        shell: bash
+        run: |
+          set +x
+          status="$(node -pe "JSON.parse(require('fs').readFileSync('.ci/aio-validation-results.json','utf8')).finalStatus || 'NOT READY TO DEPLOY — BLOCKERS REMAIN'")"
+          echo "Final status: $status"
+          if [[ "$status" != "READY TO DEPLOY" && "$status" != "READY TO DEPLOY WITH NON-BLOCKING DEFERRED ENHANCEMENTS" ]]; then
+            exit 1
+          fi

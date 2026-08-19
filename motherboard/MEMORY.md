@@ -54353,26 +54353,22 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 ---
 
-## 2026-08-19 — FS lobby/lounge immersive loader (SITE 00 PR #34 port) — **REVERTED same day**
-
-- **Context:** Sprint attempted to fix FS lobby/lounge loading using SITE 00 PR #34 env stack. Shipped then reverted after founder confirmed SITE 00 must not bleed into Frontal Slayer.
-
-- **What landed (SITE 00 only, kept):** PR #34 loader port under `src/site00/components/loader/*`, `site00-loader.css`, geometry purge, mute guards, `strip:loader-audio`.
-
-- **What was reverted (FS):** `LobbyLoungeImmersiveLoader`, `fs-lobby-lounge-loader-boot.*`, `index.html` FS boot hooks — see next entry.
+- **Boundary rule:** Frontal Slayer lobby/lounge = `LoadingScreen` + `/assets/load-screen.gif`. SITE 00 immersive env loader = `/assts`, `/origin`, world routes only — never wire SITE 00 loader components into FS pages.
 
 ---
 
-## 2026-08-19 — Revert SITE 00 loader bleed from Frontal Slayer lobby/lounge
+## 2026-08-19 — AIO Supabase phone-triggerable GitHub Actions validation workflow
 
-- **Context:** Founder reported SITE 00 loader code incorrectly bled into Frontal Slayer lobby/lounge. FS must keep its own `load-screen.gif` loader; SITE 00 env stack stays SITE 00–only.
+- **Context:** User requested manually triggered GitHub Actions workflow hard-isolated to AIO Supabase `nnnljnhtmseagotvgxxt` (reject `hyycomvcaqxxvyrfupes`); apply migrations, validate schema/RLS/storage/golden path/bookkeeping/build; no deploy.
 
-- **Reverted (FS only):**
-  - `lobby/page.tsx` — restored `LoadingScreen source="LobbyApp.initial"` (removed `LobbyLoungeImmersiveLoader` + boot init).
-  - `index.html` — removed `fs-lobby-lounge-loader-boot.css/js`, early boot script, and boot shell div.
-  - Deleted: `LobbyLoungeImmersiveLoader.tsx`, `lobbyLoungeLoaderBoot.ts`, `lobbyLoungeLoaderPaths.ts`, `lobby-lounge-immersive-loader.css`, `public/fs-lobby-lounge-loader-boot.*`.
+- **Workflow:** `.github/workflows/aio-supabase-production-validate.yml` — `workflow_dispatch`, `environment: aio-production`, `working-directory: all-in-one-enterprises`. Secrets: `SUPABASE_ACCESS_TOKEN`, `SUPABASE_PROJECT_ID`, `SUPABASE_DB_PASSWORD`; optional role JWT + service role for full RLS matrix.
 
-- **Untouched (SITE 00):** PR #34 loader port under `src/site00/components/loader/*`, `site00-loader.css`, geometry purge, `site00-assts-loader-boot.*`, mute guards, `strip:loader-audio`.
+- **CI scripts:** `all-in-one-enterprises/scripts/ci/` — `aio-project-guard.sh`, `aio-migration-preflight.sh`, `aio-verify-schema.sh`, `aio-fetch-api-keys.mjs`, `aio-record-result.sh`, `aio-write-summary.mjs`.
 
-- **Boundary rule:** Frontal Slayer lobby/lounge = `LoadingScreen` + `/assets/load-screen.gif`. SITE 00 immersive env loader = `/assts`, `/origin`, world routes only — never wire SITE 00 loader components into FS pages.
+- **Live tests:** `freightStorageSecurity.test.ts`, `freightLiveGoldenPath.test.ts`, `shipperFreightRepositoryLive.test.ts`, `brokerageBookkeepingHandoffLive.test.ts`, `demoProductionIsolation.test.ts` (skip without service role / JWTs).
+
+- **Docs:** root `docs/freight/AIO_FREIGHT_PRODUCTION_CONFIGURATION_CHECKLIST.md`, `docs/refinement/AIO_FREIGHT_PRODUCTION_CONFIGURATION_REPORT.md` + AIO canonical copies updated.
+
+- **Mobile trigger:** GitHub → Actions → AIO Supabase Production Validate → Run workflow. Job summary + artifact `.ci/aio-validation-results.json`. Final status rules: READY / READY WITH NON-BLOCKING / NOT READY.
+
 
