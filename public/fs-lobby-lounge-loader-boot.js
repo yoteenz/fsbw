@@ -1,19 +1,17 @@
-(function site00ImmersiveLoaderBoot() {
+(function fsLobbyLoungeImmersiveLoaderBoot() {
   if (typeof window === 'undefined' || typeof document === 'undefined') return;
 
   var path = window.location.pathname || '';
-  var isSite00 =
-    typeof window.site00IsSite00ImmersivePath === 'function'
-      ? window.site00IsSite00ImmersivePath(path)
-      : path.indexOf('/assts') === 0 || path.indexOf('/origin') === 0 || path === '/';
-  if (!isSite00) return;
+  var isLobby =
+    typeof window.fsIsLobbyLoungeImmersivePath === 'function'
+      ? window.fsIsLobbyLoungeImmersivePath(path)
+      : path === '/lobby' || path === '/lobby/lounge' || path === '/lounge';
+  if (!isLobby) return;
 
   var shouldBoot =
-    typeof window.site00ShouldBootSite00ImmersiveLoader === 'function'
-      ? window.site00ShouldBootSite00ImmersiveLoader()
-      : typeof window.site00ShouldBootAsstsImmersiveLoader === 'function'
-        ? window.site00ShouldBootAsstsImmersiveLoader()
-        : true;
+    typeof window.fsShouldBootLobbyLoungeImmersiveLoader === 'function'
+      ? window.fsShouldBootLobbyLoungeImmersiveLoader()
+      : true;
   if (!shouldBoot) return;
 
   var projectRef = 'hyycomvcaqxxvyrfupes';
@@ -32,7 +30,7 @@
     if (!env) return;
     env.style.backgroundImage = "url('" + bg + "')";
     env.style.backgroundPosition = bgFocal;
-    env.style.setProperty('--site00-loader-bg-focal', bgFocal);
+    env.style.setProperty('--fs-lobby-lounge-loader-bg-focal', bgFocal);
   }
 
   function preload(href, as) {
@@ -46,25 +44,25 @@
   }
 
   function ensureBootShell() {
-    document.documentElement.classList.add('site00-assts-boot');
+    document.documentElement.classList.add('fs-lobby-lounge-boot');
     preload(bg, 'image');
     preload(animation, 'fetch');
 
-    var shell = document.getElementById('site00-assts-boot-shell');
+    var shell = document.getElementById('fs-lobby-lounge-boot-shell');
     if (shell) {
       shell.hidden = false;
-      var env = shell.querySelector('.site00-assts-boot-shell__env');
+      var env = shell.querySelector('.fs-lobby-lounge-boot-shell__env');
       applyBootEnvStyle(env);
       return;
     }
 
     var nextShell = document.createElement('div');
-    nextShell.id = 'site00-assts-boot-shell';
-    nextShell.className = 'site00-assts-boot-shell';
+    nextShell.id = 'fs-lobby-lounge-boot-shell';
+    nextShell.className = 'fs-lobby-lounge-boot-shell';
     nextShell.setAttribute('aria-hidden', 'true');
-    nextShell.style.setProperty('--site00-loader-bg-focal', bgFocal);
+    nextShell.style.setProperty('--fs-lobby-lounge-loader-bg-focal', bgFocal);
     nextShell.innerHTML =
-      '<div class="site00-assts-boot-shell__env" style="background-image:url(\'' +
+      '<div class="fs-lobby-lounge-boot-shell__env" style="background-image:url(\'' +
       bg +
       "');background-position:" +
       bgFocal +
@@ -79,8 +77,5 @@
     return;
   }
 
-  document.documentElement.classList.add('site00-assts-boot');
-  preload(bg, 'image');
-  preload(animation, 'fetch');
   document.addEventListener('DOMContentLoaded', ensureBootShell, { once: true });
 })();

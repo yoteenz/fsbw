@@ -11,6 +11,7 @@
     <link rel="preload" href="/assets/Bohemy.otf" as="font" type="font/otf" crossorigin />
     <link rel="preload" href="/assets/psa-nudge-thought-bubble.png?v=1" as="image" />
     <link rel="stylesheet" href="/site00-assts-loader-boot.css" />
+    <link rel="stylesheet" href="/fs-lobby-lounge-loader-boot.css" />
     <script src="/site00-assts-boot-gate.js"></script>
     <script>
       (function site00AsstsBootClassEarly() {
@@ -33,6 +34,24 @@
         if (shell) shell.hidden = false;
       })();
     </script>
+    <script>
+      (function fsLobbyLoungeBootClassEarly() {
+        var path = window.location.pathname || '';
+        var isLobby =
+          typeof window.fsIsLobbyLoungeImmersivePath === 'function'
+            ? window.fsIsLobbyLoungeImmersivePath(path)
+            : path === '/lobby' || path === '/lobby/lounge' || path === '/lounge';
+        if (!isLobby) return;
+        var shouldBoot =
+          typeof window.fsShouldBootLobbyLoungeImmersiveLoader === 'function'
+            ? window.fsShouldBootLobbyLoungeImmersiveLoader()
+            : true;
+        if (!shouldBoot) return;
+        document.documentElement.classList.add('fs-lobby-lounge-boot');
+        var shell = document.getElementById('fs-lobby-lounge-boot-shell');
+        if (shell) shell.hidden = false;
+      })();
+    </script>
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Build A Wig - Custom Wig Builder</title>
@@ -50,8 +69,17 @@
         style="background-image:url('/site00/loader/v1/assts-loader-background-v1.png')"
       ></div>
     </div>
+    <div
+      id="fs-lobby-lounge-boot-shell"
+      class="fs-lobby-lounge-boot-shell"
+      hidden
+      aria-hidden="true"
+    >
+      <div class="fs-lobby-lounge-boot-shell__env"></div>
+    </div>
     <div id="root"></div>
     <script src="/site00-assts-loader-boot.js"></script>
+    <script src="/fs-lobby-lounge-loader-boot.js"></script>
     <script src="/pre-main-probe.js"></script>
     <script type="module" src="/src/main.tsx"></script>
   </body>

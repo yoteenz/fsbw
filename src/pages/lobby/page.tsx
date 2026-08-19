@@ -4,7 +4,8 @@ import {
   lobbyCarouselIndexFromPath,
   lobbyCarouselPathFromIndex,
 } from '../../utils/lobbyCarouselRoutes';
-import LoadingScreen from '../../components/base/LoadingScreen';
+import { LobbyLoungeImmersiveLoader } from '../../components/lobby/LobbyLoungeImmersiveLoader';
+import { initLobbyLoungeImmersiveLoaderBoot } from '../../components/lobby/lobbyLoungeLoaderBoot';
 import { usePageLoadGate } from '../../hooks/usePageLoadGate';
 import { onSignInSuccess } from '../../utils/adminAuth';
 import { getSupabase, isSupabaseConfigured, signOutIfSessionEmailUnconfirmed } from '../../utils/supabase';
@@ -38,6 +39,8 @@ import { SceneHitLayoutEditorProvider } from '../../components/lobby/SceneHitLay
 import { SceneHitLayoutEditorPanel } from '../../components/lobby/SceneHitLayoutEditorPanel';
 
 const LOBBY_INITIAL_PRELOAD_IMAGES = [FINAL_LOBBY_BACKGROUND_SRC, FINAL_LOUNGE_BACKGROUND_SRC] as const;
+
+initLobbyLoungeImmersiveLoaderBoot();
 
 /** Lobby page → lounge nav (arrow + label) — brand red shadow (#EB1C24). */
 const LOBBY_PAGE_LOUNGE_NAV_SHADOW_FILTER =
@@ -533,7 +536,7 @@ const LobbyApp: React.FC = () => {
 
   return (
     <>
-      {showLoading && <LoadingScreen source="LobbyApp.initial" />}
+      {showLoading ? <LobbyLoungeImmersiveLoader source="LobbyApp.initial" /> : null}
       <SceneHitLayoutEditorProvider>
       <div
         ref={lobbyScrollRef}
@@ -548,7 +551,7 @@ const LobbyApp: React.FC = () => {
           scrollBehavior: 'auto',
         }}
       >
-        {/* Slide Container — white LoadingScreen overlay blocks peek-through while assets load underneath */}
+        {/* Slide Container — immersive loader overlay blocks peek-through while assets load underneath */}
         <div
           style={{
             display: 'flex',
