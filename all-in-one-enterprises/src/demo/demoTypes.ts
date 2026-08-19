@@ -43,6 +43,7 @@ import type {
   BrokerageLoadFinancials,
   BrokerageRateConfirmation,
   BrokerageShipperInvoice,
+  BrokerageBookkeepingHandoff,
   CarrierNetworkProfile,
   CarrierOffer,
   CarrierPayable,
@@ -601,6 +602,7 @@ export interface DemoStore {
   brokerageLoadFinancials: BrokerageLoadFinancials[];
   brokerageAccessorials: BrokerageAccessorial[];
   brokerageShipperInvoices: BrokerageShipperInvoice[];
+  brokerageBookkeepingHandoffs?: BrokerageBookkeepingHandoff[];
   carrierPayables: CarrierPayable[];
   brokerageIssues: BrokerageIssue[];
   coverageHistory: CoverageHistoryEvent[];

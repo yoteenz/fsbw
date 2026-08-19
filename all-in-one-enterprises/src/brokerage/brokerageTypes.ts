@@ -457,6 +457,34 @@ export interface BrokerageCounters {
   shipperInvoice: number;
 }
 
+export interface BrokerageBookkeepingHandoff {
+  id: string;
+  sourceType: 'BROKERAGE_LOAD';
+  sourceId: string;
+  idempotencyKey: string;
+  revisionNumber: number;
+  loadNumber: string;
+  aioBrokerageOrgId: string;
+  shipperOrganizationId?: string;
+  carrierOrganizationId?: string;
+  shipperInvoiceAmountMinor: number;
+  carrierPayableAmountMinor: number;
+  shipperAccessorialRevenueMinor: number;
+  carrierAccessorialExpenseMinor: number;
+  grossMarginMinor: number;
+  grossMarginPercent: number | null;
+  shipperPaymentStatus: string;
+  carrierPaymentStatus: string;
+  deliveryDate?: string;
+  closeDate?: string;
+  invoiceDate?: string;
+  referenceIds: Record<string, unknown>;
+  adjustmentNote?: string;
+  status: 'handed_off' | 'adjusted';
+  createdAt: string;
+  updatedAt: string;
+}
+
 /** Metadata on canonical Load — stored separately for clarity */
 export interface BrokerageLoadLink {
   loadId: string;

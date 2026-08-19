@@ -200,17 +200,37 @@ Docs: `docs/freight/FREIGHT_SUPABASE_PRODUCTION_MODEL.md`, `docs/freight/LOAD_BO
 | Exceptions / accessorials UI | **DEFERRED — FUTURE ENHANCEMENT** |
 | POD/vault on brokerage detail | **DEFERRED — FUTURE ENHANCEMENT** |
 | Factoring on brokerage detail | **COMPLETE — CONFIGURATION REQUIRED** (dispatch path intact) |
-| Bookkeeping handoff from freight | **DEFERRED — FUTURE ENHANCEMENT** |
-| Supabase shipper/brokerage workflow | **DEFERRED — CONFIGURATION REQUIRED** |
-| Live RLS tests | **DEFERRED — CONFIGURATION REQUIRED** |
+| Bookkeeping handoff from freight | **IMPLEMENTED — CONFIGURATION REQUIRED** (idempotent handoff; live apply blocked) |
+| Supabase shipper/brokerage workflow | **IMPLEMENTED — CONFIGURATION REQUIRED** (shipper repo live; staff office demo; migrations not applied live) |
+| Live RLS tests | **IMPLEMENTED — CONFIGURATION REQUIRED** (suite skips without AIO creds) |
 | Freight i18n (en/es) | **DEFERRED — FUTURE ENHANCEMENT** |
 | Ultrawide polish | **COMPLETE — CONFIGURATION REQUIRED** (acceptable baseline) |
 
-**Production readiness:** **READY FOR PRODUCTION CONFIGURATION** (see `AIO_FREIGHT_FEATURE_CLOSURE_REPORT.md`).
+**Production readiness (Phase 3 closure):** **READY FOR PRODUCTION CONFIGURATION** (see `AIO_FREIGHT_FEATURE_CLOSURE_REPORT.md`).
 
 **Bugs fixed in final QA:** matched_carriers mis-publish; saved-search alert toggle.
 
 Docs: `AIO_FREIGHT_FINAL_QA_MATRIX.md`, `AIO_FREIGHT_FEATURE_CLOSURE_REPORT.md`, `freightGoldenPath.test.ts`.
+
+---
+
+## Phase 4 — Production configuration (2026-08-19)
+
+| Item | Status |
+|------|--------|
+| Shipper Supabase repository + UI wiring | **COMPLETE** (code) |
+| RLS policies + shipper-safe views migration | **COMPLETE** (SQL file; live apply blocked) |
+| Bookkeeping handoff (idempotent) | **COMPLETE** (code + demo tests) |
+| Live RLS integration tests | **BLOCKED** — no AIO Supabase credentials |
+| Staging golden path (real persistence) | **BLOCKED** |
+| Production build | **PASS** |
+| Demo isolation regression | **PASS** |
+
+**Production readiness (Phase 4):** **NOT READY TO DEPLOY — BLOCKERS REMAIN** until AIO Supabase is connected, migrations applied, RLS verified, and staging golden path passes. See `AIO_FREIGHT_PRODUCTION_CONFIGURATION_REPORT.md`.
+
+**Core feature connectivity:** Code path is **PRODUCTION-CONNECTED** in supabase mode; **live validation pending**.
+
+Docs: `AIO_FREIGHT_PRODUCTION_CONFIGURATION_CHECKLIST.md`, `AIO_FREIGHT_PRODUCTION_CONFIGURATION_REPORT.md`, `src/shipper/*`, `20260819150000_aio_shipper_rls_bookkeeping_handoff.sql`.
 
 ---
 
@@ -229,4 +249,6 @@ Docs: `AIO_FREIGHT_FINAL_QA_MATRIX.md`, `AIO_FREIGHT_FEATURE_CLOSURE_REPORT.md`,
 | `src/freight/fleetcareLoadIntelligence.ts` | Maintenance warnings (real data only) |
 | `src/freight/freightNotifications.ts` | In-app freight event delivery |
 | `src/pages/portal/loadboard/*` | Carrier UI |
+| `src/shipper/*` | Shipper Supabase/demo repository + portal hooks |
+| `src/brokerage/brokerageBookkeepingHandoff.ts` | Idempotent freight → AIO internal books |
 | `src/styles/aio-load-board.css` | Load board presentation |

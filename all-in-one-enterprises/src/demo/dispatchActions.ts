@@ -19,6 +19,10 @@ import type {
   LoadTimelineActor,
 } from '../dispatch/dispatchTypes';
 import { buildNotification } from '../notifications/notificationEngine';
+import {
+  AIO_BROKERAGE_ORG_DEMO,
+  handoffBrokerageLoadToBookkeeping,
+} from '../brokerage/brokerageBookkeepingHandoff';
 import { loadDemoStore, updateDemoStore } from './demoStore';
 import type { DemoStore } from './demoTypes';
 import { aioPaths } from '../utils/paths';
@@ -407,6 +411,16 @@ export function completeLoad(loadId: string, _staffId: string): void {
     createDispatchBillingEventForLoad(s, load);
     return s;
   });
+
+  const store = loadDemoStore();
+  const load = store.loads.find((l) => l.id === loadId);
+  if (load?.sourceType === 'brokerage') {
+    void handoffBrokerageLoadToBookkeeping({
+      load,
+      aioBrokerageOrgId: AIO_BROKERAGE_ORG_DEMO,
+      staffId: _staffId,
+    });
+  }
 }
 
 function createDispatchBillingEventForLoad(s: DemoStore, load: Load): void {

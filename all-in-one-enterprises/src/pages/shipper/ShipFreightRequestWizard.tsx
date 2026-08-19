@@ -1,14 +1,11 @@
-import { FormEvent, useMemo, useState } from 'react';
+import { FormEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import type { ShipmentRequestInput } from '../../brokerage/brokerageWorkflow';
-import {
-  duplicateRequestFromTemplate,
-  saveShipmentRequestDraft,
-  saveShipmentTemplate,
-  submitShipmentRequest,
-} from '../../brokerage/brokerageWorkflow';
-import { getShipperOrganizationId } from '../../demo/brokerageActions';
+import type { ShipmentRequest, ShipmentRequestTemplate } from '../../brokerage/brokerageTypes';
 import { useDemoStore } from '../../demo/useDemoStore';
+import { ShipperFreightError } from '../../shipper/ShipperFreightError';
+import { useShipperFreightRepository } from '../../shipper/useShipperFreightRepository';
+import { isShipperFreightDemoMode } from '../../shipper/shipperFreightRepository';
 import { aioPaths } from '../../utils/paths';
 
 const STEPS = ['Route', 'Freight', 'Schedule', 'Requirements', 'Review'] as const;
@@ -24,47 +21,100 @@ const emptyForm = (): Partial<ShipmentRequestInput> => ({
 export function ShipFreightRequestWizard() {
   const { requestId: editId } = useParams();
   const store = useDemoStore();
-  const orgId = getShipperOrganizationId(store);
+  const { repository, orgId, loading, error: repoError, isDemo } = useShipperFreightRepository();
   const navigate = useNavigate();
-  const existing = editId ? store.shipmentRequests.find((r) => r.id === editId && r.shipperOrganizationId === orgId) : undefined;
+
+  const [existing, setExisting] = useState<ShipmentRequest | undefined>();
+  const [remoteTemplates, setRemoteTemplates] = useState<ShipmentRequestTemplate[]>([]);
+  const [fetchError, setFetchError] = useState<string | null>(null);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const [step, setStep] = useState(0);
-  const [draftId, setDraftId] = useState(existing?.id ?? '');
-  const [form, setForm] = useState<Partial<ShipmentRequestInput>>(() =>
-    existing ? { ...existing } : emptyForm(),
-  );
+  const [draftId, setDraftId] = useState('');
+  const [form, setForm] = useState<Partial<ShipmentRequestInput>>(emptyForm);
   const [templateLabel, setTemplateLabel] = useState('');
 
-  const templates = useMemo(
-    () => (store.shipmentRequestTemplates ?? []).filter((t) => t.shipperOrganizationId === orgId),
-    [store.shipmentRequestTemplates, orgId],
-  );
+  const loadContext = useCallback(async () => {
+    if (repoError) return;
+    if (editId) {
+      const result = await repository.getRequest(orgId, editId);
+      if (!result.ok) {
+        setFetchError(result.error.message);
+        return;
+      }
+      if (result.data) {
+        setExisting(result.data);
+        setDraftId(result.data.id);
+        setForm({ ...result.data });
+      }
+    }
+    const templatesResult = await repository.listTemplates(orgId);
+    if (templatesResult.ok) setRemoteTemplates(templatesResult.data);
+  }, [editId, orgId, repoError, repository]);
+
+  useEffect(() => {
+    if (loading) return;
+    if (!isDemo && !editId) return;
+    if (isDemo && editId) {
+      const req = store.shipmentRequests.find((r) => r.id === editId && r.shipperOrganizationId === orgId);
+      if (req) {
+        setExisting(req);
+        setDraftId(req.id);
+        setForm({ ...req });
+      }
+      return;
+    }
+    void loadContext();
+  }, [loading, isDemo, editId, orgId, store.shipmentRequests, loadContext]);
+
+  const templates = useMemo(() => {
+    if (isDemo) {
+      return (store.shipmentRequestTemplates ?? []).filter((t) => t.shipperOrganizationId === orgId);
+    }
+    return remoteTemplates;
+  }, [isDemo, orgId, remoteTemplates, store.shipmentRequestTemplates]);
 
   const patch = (partial: Partial<ShipmentRequestInput>) => setForm((f) => ({ ...f, ...partial }));
 
-  const persistDraft = () => {
-    const id = saveShipmentRequestDraft(orgId, form, draftId || undefined);
-    setDraftId(id);
-    return id;
+  const persistDraft = async () => {
+    const result = await repository.saveDraft(orgId, form, draftId || undefined);
+    if (!result.ok) {
+      setSubmitError(result.error.message);
+      return null;
+    }
+    setDraftId(result.data);
+    setSubmitError(null);
+    return result.data;
   };
 
   const onSaveDraft = () => {
-    persistDraft();
+    void persistDraft();
   };
 
-  const onSubmit = (e: FormEvent) => {
+  const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    const id = persistDraft();
-    if (submitShipmentRequest(orgId, id)) {
-      navigate(aioPaths.shipperRequest(id));
+    const id = await persistDraft();
+    if (!id) return;
+    const result = await repository.submitRequest(orgId, id);
+    if (!result.ok) {
+      setSubmitError(result.error.message);
+      return;
     }
+    navigate(aioPaths.shipperRequest(id));
   };
 
-  const onSaveTemplate = () => {
+  const onSaveTemplate = async () => {
     if (!templateLabel.trim()) return;
-    saveShipmentTemplate(orgId, templateLabel.trim(), form);
+    await repository.saveTemplate(orgId, templateLabel.trim(), form);
     setTemplateLabel('');
+    const templatesResult = await repository.listTemplates(orgId);
+    if (templatesResult.ok) setRemoteTemplates(templatesResult.data);
   };
+
+  if (loading) return <p className="aio-prototype-note">Loading freight workspace…</p>;
+  if (repoError || fetchError) {
+    return <ShipperFreightError message={repoError ?? fetchError ?? undefined} onRetry={() => void loadContext()} />;
+  }
 
   return (
     <div className="aio-shipper-request">
@@ -73,6 +123,8 @@ export function ShipFreightRequestWizard() {
         <h1>Ship with AIO</h1>
         <p>Request a freight quote — AIO is your broker. One submission flows to office pricing and load board distribution.</p>
       </header>
+
+      {submitError && <ShipperFreightError message={submitError} />}
 
       <div className="aio-shipper-request__shell">
         <nav className="aio-shipper-request__steps aio-desktop-only" aria-label="Wizard steps">
@@ -96,8 +148,9 @@ export function ShipFreightRequestWizard() {
                   onChange={(e) => {
                     const id = e.target.value;
                     if (!id) return;
-                    const newId = duplicateRequestFromTemplate(orgId, id);
-                    if (newId) navigate(aioPaths.shipperRequest(newId));
+                    void repository.duplicateFromTemplate(orgId, id).then((result) => {
+                      if (result.ok && result.data) navigate(aioPaths.shipperRequest(result.data));
+                    });
                   }}
                 >
                   <option value="">Select…</option>
@@ -187,6 +240,7 @@ export function ShipFreightRequestWizard() {
                   <dt>Equipment</dt><dd>{form.equipmentType} · {form.trailerLengthFt}' · {form.fullPartial}</dd>
                   <dt>Freight</dt><dd>{form.commodity ?? '—'} · {form.weight ?? '—'}</dd>
                 </dl>
+                {existing && <p className="aio-prototype-note">Editing {existing.requestNumber}</p>}
                 <p className="aio-prototype-note">Carrier rates and AIO margin are never shown to shippers.</p>
               </>
             )}
@@ -196,7 +250,7 @@ export function ShipFreightRequestWizard() {
                 <button type="button" className="aio-btn aio-btn--outline" onClick={() => setStep((s) => s - 1)}>Back</button>
               )}
               {step < STEPS.length - 1 && (
-                <button type="button" className="aio-btn aio-btn--gold" onClick={() => { persistDraft(); setStep((s) => s + 1); }}>Continue</button>
+                <button type="button" className="aio-btn aio-btn--gold" onClick={() => { void persistDraft(); setStep((s) => s + 1); }}>Continue</button>
               )}
               <button type="button" className="aio-btn aio-btn--outline" onClick={onSaveDraft}>Save draft</button>
               {step === STEPS.length - 1 && (
@@ -209,8 +263,8 @@ export function ShipFreightRequestWizard() {
         <aside className="aio-shipper-request__rail aio-desktop-only">
           <h3>Templates</h3>
           <label>Save as template<input value={templateLabel} onChange={(e) => setTemplateLabel(e.target.value)} placeholder="Lane nickname" /></label>
-          <button type="button" className="aio-btn aio-btn--outline aio-btn--sm" onClick={onSaveTemplate}>Save template</button>
-          {draftId && <p className="aio-prototype-note">Draft {draftId.slice(0, 8)}… saved locally.</p>}
+          <button type="button" className="aio-btn aio-btn--outline aio-btn--sm" onClick={() => void onSaveTemplate()}>Save template</button>
+          {draftId && <p className="aio-prototype-note">Draft {draftId.slice(0, 8)}… saved{isShipperFreightDemoMode() ? ' locally' : ''}.</p>}
         </aside>
       </div>
     </div>
@@ -220,12 +274,37 @@ export function ShipFreightRequestWizard() {
 export function ShipperRequestDetailPage() {
   const { requestId = '' } = useParams();
   const store = useDemoStore();
-  const orgId = getShipperOrganizationId(store);
-  const req = store.shipmentRequests.find((r) => r.id === requestId && r.shipperOrganizationId === orgId);
+  const { repository, orgId, loading, error: repoError, isDemo } = useShipperFreightRepository();
+  const [req, setReq] = useState<ShipmentRequest | null>(null);
+  const [fetchError, setFetchError] = useState<string | null>(null);
+
+  const load = useCallback(async () => {
+    if (isDemo) {
+      const found = store.shipmentRequests.find((r) => r.id === requestId && r.shipperOrganizationId === orgId);
+      setReq(found ?? null);
+      return;
+    }
+    const result = await repository.getRequest(orgId, requestId);
+    if (!result.ok) {
+      setFetchError(result.error.message);
+      return;
+    }
+    setReq(result.data);
+  }, [isDemo, orgId, repository, requestId, store.shipmentRequests]);
+
+  useEffect(() => {
+    if (loading || repoError) return;
+    void load();
+  }, [loading, repoError, load]);
+
   const info = req?.openInfoRequestId
     ? store.brokerageInfoRequests?.find((i) => i.id === req.openInfoRequestId)
     : undefined;
 
+  if (loading) return <p className="aio-prototype-note">Loading request…</p>;
+  if (repoError || fetchError) {
+    return <ShipperFreightError message={repoError ?? fetchError ?? undefined} onRetry={() => void load()} />;
+  }
   if (!req) return <p>Request not found.</p>;
 
   return (
