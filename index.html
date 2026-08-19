@@ -13,6 +13,14 @@
     <link rel="stylesheet" href="/site00-assts-loader-boot.css" />
     <script src="/site00-assts-boot-gate.js"></script>
     <script>
+      (function cleanupFsLobbyBootBleed() {
+        /* Revert safety — old fs-lobby-lounge-boot hid #root via cached CSS after SITE 00 bleed. */
+        document.documentElement.classList.remove('fs-lobby-lounge-boot');
+        var staleShell = document.getElementById('fs-lobby-lounge-boot-shell');
+        if (staleShell) staleShell.remove();
+      })();
+    </script>
+    <script>
       (function site00AsstsBootClassEarly() {
         var path = window.location.pathname || '';
         var isSite00 =
