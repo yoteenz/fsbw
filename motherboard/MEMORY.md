@@ -54321,6 +54321,7 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 ---
 
+<<<<<<< HEAD
 ## 2026-08-19 — AIO Load Board + Brokerage production configuration sprint
 
 - **Context:** Post-closure sprint to connect live Supabase plumbing: shipper repository, RLS, bookkeeping handoff, staging validation. No Load Board redesign.
@@ -54350,4 +54351,41 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Smoke test:** CONNECTION SUCCESSFUL — SCHEMA NOT MIGRATED (`aio_organizations` missing). Migrations ready (14 SQL files); apply via Supabase MCP/CLI with `project_id`/`project-ref` `nnnljnhtmseagotvgxxt` only.
 
 - **Privileged access for next step:** `AIO_SUPABASE_SERVICE_ROLE_KEY` or Supabase access token (server/CI only) for migrations, RLS live tests, storage policies — NOT in VITE_ vars.
+=======
+## 2026-08-19 — FS lobby/lounge immersive loader (SITE 00 PR #34 port)
+
+- **Context:** Sprint to fix Frontal Slayer lobby + lounge loading animation using SITE 00 PR #34 as reference. Problems: static bg shifted vs MP4 on play; MP4 audio hijacked iOS session; legacy geometry black-box regression from screen-blend path.
+
+- **Architecture shipped:** Viewport Layer0 static PNG → Layer1 full-frame env MP4 → Layer2 UI. Split focal: animation `center center`; static bg mobile `center 45%`, desktop `center center`. Inline `objectPosition` / `backgroundPosition`; boot shell uses bg focal only.
+
+- **SITE 00 loader port (PR #32+#34):**
+  - Added `site00LoaderVideoSilent.ts`, `useLoaderMediaPresentation.ts`, focal helpers on `site00LoaderMedia.ts` (`resolveSite00LoaderBackgroundFocal`, `resolveSite00LoaderAnimationFocal`) from `SITE00_LOADER_MEDIA_FOCAL`.
+  - Updated `site00-loader.css`: `__media` stack, env animation cover (no `mix-blend-mode: screen`), CSS vars `--site00-loader-bg-focal` / `--site00-loader-animation-focal`.
+  - Purged `public/site00/loader/v1/assts-loader-geometry-v1-*` (6 files).
+  - `scripts/stripLoaderAnimationAudio.ts` + `npm run strip:loader-audio` (ffmpeg `-an`).
+
+- **FS lobby/lounge:**
+  - New `LobbyLoungeImmersiveLoader.tsx` reuses `Site00LoaderEnvironment` + `Site00LoaderAnimation`.
+  - Boot: `public/fs-lobby-lounge-loader-boot.js/css`, `lobbyLoungeLoaderBoot.ts`, `lobbyLoungeLoaderPaths.ts` for `/lobby`, `/lobby/lounge`, `/lounge`.
+  - `index.html` early boot class + shell; `lobby/page.tsx` replaces `LoadingScreen` gif with immersive loader (`source="LobbyApp.initial"` preserved for post-load guard).
+
+- **Verification:** `npm run build` PASS. `ffprobe` mobile + desktop env MP4s → video-only (no AAC). Manual 390×844: env loader (not gif), no bg shift on play, no black geometry box. Artifacts: `lobby_immersive_loader_390x844.mp4`, `lobby_loader_mobile_playing.webp`.
+
+- **Spatial Architecture Review:** SKIPPED — loader/focal infrastructure; no new FS product surfaces.
+
+---
+
+## 2026-08-19 — Revert SITE 00 loader bleed from Frontal Slayer lobby/lounge
+
+- **Context:** Founder reported SITE 00 loader code incorrectly bled into Frontal Slayer lobby/lounge. FS must keep its own `load-screen.gif` loader; SITE 00 env stack stays SITE 00–only.
+
+- **Reverted (FS only):**
+  - `lobby/page.tsx` — restored `LoadingScreen source="LobbyApp.initial"` (removed `LobbyLoungeImmersiveLoader` + boot init).
+  - `index.html` — removed `fs-lobby-lounge-loader-boot.css/js`, early boot script, and boot shell div.
+  - Deleted: `LobbyLoungeImmersiveLoader.tsx`, `lobbyLoungeLoaderBoot.ts`, `lobbyLoungeLoaderPaths.ts`, `lobby-lounge-immersive-loader.css`, `public/fs-lobby-lounge-loader-boot.*`.
+
+- **Untouched (SITE 00):** PR #34 loader port under `src/site00/components/loader/*`, `site00-loader.css`, geometry purge, `site00-assts-loader-boot.*`, mute guards, `strip:loader-audio`.
+
+- **Boundary rule:** Frontal Slayer lobby/lounge = `LoadingScreen` + `/assets/load-screen.gif`. SITE 00 immersive env loader = `/assts`, `/origin`, world routes only — never wire SITE 00 loader components into FS pages.
+>>>>>>> f07af0e15 (Revert SITE 00 loader bleed — restore FS lobby LoadingScreen gif [sync-only])
 
