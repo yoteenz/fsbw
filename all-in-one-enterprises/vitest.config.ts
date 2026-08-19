@@ -11,7 +11,7 @@ export default defineConfig({
   },
   test: {
     environment: 'node',
-    include: ['src/**/*.test.ts', 'src/**/*.test.tsx'],
+    include: ['src/**/*.test.ts', 'src/**/*.test.tsx', 'tests/readiness/**/*.test.ts'],
     env: {
       VITE_AIO_DATA_MODE: process.env.VITE_AIO_DATA_MODE ?? 'demo',
       VITE_AIO_SUPABASE_URL: process.env.VITE_AIO_SUPABASE_URL ?? process.env.AIO_STAGING_SUPABASE_URL ?? '',

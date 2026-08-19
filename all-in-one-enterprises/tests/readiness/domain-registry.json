@@ -1,0 +1,198 @@
+{
+  "domains": {
+    "smart-intake": {
+      "label": "SMART INTAKE",
+      "readinessTests": ["tests/readiness/domains/smart-intake.readiness.test.ts"],
+      "reuseTests": ["src/business-formation/businessNameRegistry/businessNameCheck.test.ts"],
+      "scopeGroups": ["full-platform", "core-operations", "domain-select"]
+    },
+    "road-ready": {
+      "label": "ROAD READY",
+      "readinessTests": ["tests/readiness/domains/road-ready.readiness.test.ts"],
+      "reuseTests": ["src/journeys/journey.test.ts"],
+      "scopeGroups": ["full-platform", "core-operations", "domain-select"]
+    },
+    "business-formation": {
+      "label": "BUSINESS FORMATION",
+      "readinessTests": ["tests/readiness/domains/business-formation.readiness.test.ts"],
+      "reuseTests": ["src/business-formation/businessNameRegistry/businessNameCheck.test.ts"],
+      "scopeGroups": ["full-platform", "core-operations", "domain-select"]
+    },
+    "authorities": {
+      "label": "AUTHORITIES",
+      "readinessTests": ["tests/readiness/domains/authorities-permits.readiness.test.ts"],
+      "reuseTests": ["src/workflow/workflow.test.ts", "src/services/catalog/serviceCatalog.test.ts"],
+      "scopeGroups": ["full-platform", "core-operations", "domain-select"]
+    },
+    "permits-compliance": {
+      "label": "PERMITS & COMPLIANCE",
+      "readinessTests": ["tests/readiness/domains/authorities-permits.readiness.test.ts"],
+      "reuseTests": ["src/workflow/workflow.test.ts"],
+      "scopeGroups": ["full-platform", "core-operations", "domain-select"]
+    },
+    "document-vault": {
+      "label": "DOCUMENT VAULT",
+      "readinessTests": ["tests/readiness/domains/vault.readiness.test.ts"],
+      "reuseTests": ["src/vault/documentVault.test.ts"],
+      "scopeGroups": ["full-platform", "core-operations", "domain-select"]
+    },
+    "fleetcare": {
+      "label": "FLEETCARE",
+      "readinessTests": ["tests/readiness/domains/fleetcare.readiness.test.ts"],
+      "reuseTests": [],
+      "scopeGroups": ["full-platform", "core-operations", "domain-select"]
+    },
+    "mechanic-network": {
+      "label": "MECHANIC NETWORK",
+      "readinessTests": ["tests/readiness/domains/fleetcare.readiness.test.ts"],
+      "reuseTests": [],
+      "scopeGroups": ["full-platform", "domain-select"]
+    },
+    "driverlink": {
+      "label": "DRIVERLINK",
+      "readinessTests": ["tests/readiness/domains/driverlink.readiness.test.ts"],
+      "reuseTests": [],
+      "scopeGroups": ["full-platform", "core-operations", "domain-select"]
+    },
+    "load-board": {
+      "label": "LOAD BOARD",
+      "readinessTests": ["tests/readiness/domains/freight.readiness.test.ts"],
+      "reuseTests": [
+        "src/freight/freight.test.ts",
+        "src/freight/freightProduction.test.ts",
+        "src/freight/freightGoldenPath.test.ts"
+      ],
+      "scopeGroups": ["full-platform", "core-operations", "domain-select"],
+      "deepLiveWorkflow": ".github/workflows/aio-supabase-production-validate.yml"
+    },
+    "brokerage": {
+      "label": "BROKERAGE",
+      "readinessTests": ["tests/readiness/domains/freight.readiness.test.ts"],
+      "reuseTests": [
+        "src/brokerage/brokerageWorkflow.test.ts",
+        "src/brokerage/brokerageRules.test.ts",
+        "src/brokerage/brokerageCalculations.test.ts"
+      ],
+      "scopeGroups": ["full-platform", "core-operations", "domain-select"]
+    },
+    "dispatch": {
+      "label": "DISPATCH",
+      "readinessTests": ["tests/readiness/domains/dispatch.readiness.test.ts"],
+      "reuseTests": ["src/dispatch/dispatchCalculations.test.ts"],
+      "scopeGroups": ["full-platform", "core-operations", "domain-select"]
+    },
+    "bookkeeping": {
+      "label": "BOOKKEEPING",
+      "readinessTests": ["tests/readiness/domains/bookkeeping.readiness.test.ts"],
+      "reuseTests": [
+        "src/bookkeeping/autopilot/autopilot.test.ts",
+        "src/bookkeeping/bookkeepingRecommendation.test.ts",
+        "src/brokerage/brokerageBookkeepingHandoff.test.ts"
+      ],
+      "scopeGroups": ["full-platform", "core-operations", "domain-select"]
+    },
+    "factoring": {
+      "label": "FACTORING",
+      "readinessTests": ["tests/readiness/domains/factoring-insurance.readiness.test.ts"],
+      "reuseTests": ["src/factoring/factoringRules.test.ts", "src/factoring/factoringCalculations.test.ts"],
+      "scopeGroups": ["full-platform", "domain-select"]
+    },
+    "insurance": {
+      "label": "INSURANCE",
+      "readinessTests": ["tests/readiness/domains/factoring-insurance.readiness.test.ts"],
+      "reuseTests": ["src/insurance/insuranceCalculations.test.ts"],
+      "scopeGroups": ["full-platform", "domain-select"]
+    },
+    "client-portal": {
+      "label": "CLIENT PORTAL",
+      "readinessTests": ["tests/readiness/domains/portal-office.readiness.test.ts"],
+      "reuseTests": ["src/portal/clientCommandCenter.test.ts"],
+      "scopeGroups": ["full-platform", "core-operations", "domain-select"]
+    },
+    "aio-office": {
+      "label": "AIO OFFICE",
+      "readinessTests": ["tests/readiness/domains/portal-office.readiness.test.ts"],
+      "reuseTests": ["src/office-core/officeCommandCenter.test.ts", "src/crm/crm.test.ts", "src/management/management.test.ts"],
+      "scopeGroups": ["full-platform", "core-operations", "domain-select"]
+    },
+    "authentication": {
+      "label": "AUTHENTICATION",
+      "readinessTests": ["tests/readiness/domains/auth-notifications.readiness.test.ts"],
+      "reuseTests": ["src/security/security.test.ts"],
+      "scopeGroups": ["full-platform", "security-only", "domain-select"]
+    },
+    "notifications": {
+      "label": "NOTIFICATIONS",
+      "readinessTests": ["tests/readiness/domains/auth-notifications.readiness.test.ts"],
+      "reuseTests": ["src/communications/communications.test.ts"],
+      "scopeGroups": ["full-platform", "domain-select"]
+    },
+    "security": {
+      "label": "SECURITY",
+      "readinessTests": ["tests/readiness/domains/security.readiness.test.ts"],
+      "reuseTests": ["src/security/security.test.ts", "src/data/data.test.ts", "src/qa/crossDomain.test.ts"],
+      "scopeGroups": ["full-platform", "security-only", "core-operations"]
+    },
+    "rls": {
+      "label": "RLS",
+      "readinessTests": ["tests/readiness/domains/security.readiness.test.ts"],
+      "reuseTests": ["src/freight/freightRlsIntegration.test.ts"],
+      "scopeGroups": ["full-platform", "security-only"],
+      "requiresLiveCreds": true
+    },
+    "storage": {
+      "label": "STORAGE",
+      "readinessTests": ["tests/readiness/domains/security.readiness.test.ts"],
+      "reuseTests": ["src/freight/freightStorageSecurity.test.ts"],
+      "scopeGroups": ["full-platform", "security-only"],
+      "requiresLiveCreds": true
+    },
+    "demo-isolation": {
+      "label": "DEMO ISOLATION",
+      "readinessTests": ["tests/readiness/domains/security.readiness.test.ts"],
+      "reuseTests": ["src/freight/demoProductionIsolation.test.ts"],
+      "scopeGroups": ["full-platform", "security-only", "core-operations"]
+    },
+    "multilingual": {
+      "label": "MULTILINGUAL",
+      "readinessTests": ["tests/readiness/domains/i18n.readiness.test.ts"],
+      "reuseTests": [],
+      "scopeGroups": ["full-platform", "responsive-only", "domain-select"]
+    },
+    "responsive-mobile": {
+      "label": "MOBILE",
+      "script": "scripts/readiness/run-responsive-qa.mjs",
+      "viewportGroup": "mobile",
+      "scopeGroups": ["full-platform", "responsive-only"]
+    },
+    "responsive-tablet": {
+      "label": "TABLET",
+      "script": "scripts/readiness/run-responsive-qa.mjs",
+      "viewportGroup": "tablet",
+      "scopeGroups": ["full-platform", "responsive-only"]
+    },
+    "responsive-desktop": {
+      "label": "DESKTOP",
+      "script": "scripts/readiness/run-responsive-qa.mjs",
+      "viewportGroup": "desktop",
+      "scopeGroups": ["full-platform", "responsive-only"]
+    },
+    "responsive-ultrawide": {
+      "label": "ULTRAWIDE",
+      "script": "scripts/readiness/run-responsive-qa.mjs",
+      "viewportGroup": "ultrawide",
+      "scopeGroups": ["full-platform", "responsive-only"]
+    },
+    "integration": {
+      "label": "CROSS-DOMAIN INTEGRATION",
+      "readinessTests": ["tests/readiness/domains/integration.readiness.test.ts"],
+      "reuseTests": ["src/qa/crossDomain.test.ts", "src/integrations/integrations.test.ts"],
+      "scopeGroups": ["full-platform", "core-operations"]
+    },
+    "production-build": {
+      "label": "PRODUCTION BUILD",
+      "command": "npm run build",
+      "scopeGroups": ["full-platform", "core-operations"]
+    }
+  }
+}

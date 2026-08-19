@@ -27,7 +27,9 @@
     "migrate:production": "bash scripts/migrate-production.sh",
     "test:rls-staging": "bash scripts/rls-staging-test.sh",
     "test:supabase-connection": "node scripts/aio-supabase-connection-smoke.mjs",
-    "validate:supabase-production": "bash scripts/ci/aio-project-guard.sh local && bash scripts/ci/aio-migration-preflight.sh"
+    "validate:supabase-production": "bash scripts/ci/aio-project-guard.sh local && bash scripts/ci/aio-migration-preflight.sh",
+    "readiness:local": "node scripts/readiness/run-production-readiness.mjs",
+    "readiness:domain": "TEST_SCOPE=domain-select DOMAIN_SELECT=${DOMAIN:-smart-intake} node scripts/readiness/run-production-readiness.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.0",

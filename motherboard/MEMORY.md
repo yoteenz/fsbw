@@ -54353,6 +54353,27 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 ---
 
+## 2026-08-19 — FS lobby/lounge immersive loader (SITE 00 PR #34 port) — **REVERTED same day**
+
+- **Context:** Sprint attempted to fix FS lobby/lounge loading using SITE 00 PR #34 env stack. Shipped then reverted after founder confirmed SITE 00 must not bleed into Frontal Slayer.
+
+- **What landed (SITE 00 only, kept):** PR #34 loader port under `src/site00/components/loader/*`, `site00-loader.css`, geometry purge, mute guards, `strip:loader-audio`.
+
+- **What was reverted (FS):** `LobbyLoungeImmersiveLoader`, `fs-lobby-lounge-loader-boot.*`, `index.html` FS boot hooks — see next entry.
+
+---
+
+## 2026-08-19 — Revert SITE 00 loader bleed from Frontal Slayer lobby/lounge
+
+- **Context:** Founder reported SITE 00 loader code incorrectly bled into Frontal Slayer lobby/lounge. FS must keep its own `load-screen.gif` loader; SITE 00 env stack stays SITE 00–only.
+
+- **Reverted (FS only):**
+  - `lobby/page.tsx` — restored `LoadingScreen source="LobbyApp.initial"` (removed `LobbyLoungeImmersiveLoader` + boot init).
+  - `index.html` — removed `fs-lobby-lounge-loader-boot.css/js`, early boot script, and boot shell div.
+  - Deleted: `LobbyLoungeImmersiveLoader.tsx`, `lobbyLoungeLoaderBoot.ts`, `lobbyLoungeLoaderPaths.ts`, `lobby-lounge-immersive-loader.css`, `public/fs-lobby-lounge-loader-boot.*`.
+
+- **Untouched (SITE 00):** PR #34 loader port under `src/site00/components/loader/*`, `site00-loader.css`, geometry purge, `site00-assts-loader-boot.*`, mute guards, `strip:loader-audio`.
+
 - **Boundary rule:** Frontal Slayer lobby/lounge = `LoadingScreen` + `/assets/load-screen.gif`. SITE 00 immersive env loader = `/assts`, `/origin`, world routes only — never wire SITE 00 loader components into FS pages.
 
 ---

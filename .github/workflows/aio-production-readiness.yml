@@ -1,0 +1,123 @@
+name: AIO Production Readiness Suite
+
+on:
+  workflow_dispatch:
+    inputs:
+      test_scope:
+        description: Test scope
+        required: true
+        default: full-platform
+        type: choice
+        options:
+          - full-platform
+          - core-operations
+          - security-only
+          - responsive-only
+          - domain-select
+      domain_select:
+        description: Domain (when scope = domain-select)
+        required: false
+        default: all
+        type: choice
+        options:
+          - all
+          - smart-intake
+          - road-ready
+          - business-formation
+          - document-vault
+          - fleetcare
+          - driverlink
+          - load-board
+          - brokerage
+          - dispatch
+          - bookkeeping
+          - client-portal
+          - security
+          - rls
+          - mobile
+          - tablet
+          - desktop
+          - ultrawide
+      validation_env:
+        description: Environment mode
+        required: true
+        default: qa-staging
+        type: choice
+        options:
+          - qa-staging
+          - production-safe-validation
+
+concurrency:
+  group: aio-production-readiness-${{ github.run_id }}
+  cancel-in-progress: false
+
+jobs:
+  readiness:
+    name: AIO platform readiness
+    runs-on: ubuntu-latest
+    environment: aio-production
+    defaults:
+      run:
+        working-directory: all-in-one-enterprises
+    env:
+      TEST_SCOPE: ${{ inputs.test_scope }}
+      DOMAIN_SELECT: ${{ inputs.domain_select }}
+      VALIDATION_ENV: ${{ inputs.validation_env }}
+      QA_RUN_ID: qa-${{ github.run_id }}
+      AIO_READINESS_RESULTS_PATH: .ci/aio-production-readiness.json
+      SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
+      AIO_STAGING_SUPABASE_URL: https://nnnljnhtmseagotvgxxt.supabase.co
+      AIO_RLS_TEST_SHIPPER_A_JWT: ${{ secrets.AIO_RLS_TEST_SHIPPER_A_JWT }}
+      AIO_RLS_TEST_SHIPPER_B_JWT: ${{ secrets.AIO_RLS_TEST_SHIPPER_B_JWT }}
+      AIO_RLS_TEST_CARRIER_A_JWT: ${{ secrets.AIO_RLS_TEST_CARRIER_A_JWT }}
+      AIO_RLS_TEST_CARRIER_B_JWT: ${{ secrets.AIO_RLS_TEST_CARRIER_B_JWT }}
+      AIO_RLS_TEST_STAFF_JWT: ${{ secrets.AIO_RLS_TEST_STAFF_JWT }}
+      AIO_SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.AIO_SUPABASE_SERVICE_ROLE_KEY }}
+      VITE_AIO_DATA_MODE: demo
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: all-in-one-enterprises/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright Chromium
+        run: npx playwright install chromium --with-deps
+
+      - name: Project guard (read-only)
+        shell: bash
+        run: |
+          set +x
+          if [[ -n "${SUPABASE_PROJECT_ID:-}" ]]; then
+            bash scripts/ci/aio-project-guard.sh pre-link
+          fi
+
+      - name: Run production readiness orchestrator
+        continue-on-error: true
+        run: node scripts/readiness/run-production-readiness.mjs
+
+      - name: Write job summary
+        if: always()
+        run: node scripts/readiness/write-readiness-summary.mjs
+
+      - name: Upload readiness artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: aio-production-readiness-${{ github.run_id }}
+          path: all-in-one-enterprises/.ci/aio-production-readiness.json
+          retention-days: 30
+
+      - name: Fail if blockers remain
+        if: always()
+        run: |
+          node -e "
+          const r=require('./.ci/aio-production-readiness.json');
+          if (r.finalReadiness.includes('NOT READY')) process.exit(1);
+          "

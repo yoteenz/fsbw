@@ -1,0 +1,87 @@
+{
+  "runId": "qa-1787139362145",
+  "timestamp": "2026-08-19T11:36:02.145Z",
+  "commit": "local",
+  "testScope": "domain-select",
+  "domainSelect": "smart-intake",
+  "validationEnv": "qa-staging",
+  "projectRef": "nnnljnhtmseagotvgxxt",
+  "projectGuard": "PASS",
+  "domains": {
+    "smart-intake": {
+      "id": "smart-intake",
+      "label": "SMART INTAKE",
+      "status": "PASS",
+      "detail": null,
+      "blocker": null
+    },
+    "production-build": {
+      "id": "production-build",
+      "label": "PRODUCTION BUILD",
+      "status": "PASS",
+      "detail": null,
+      "blocker": null
+    }
+  },
+  "crossCutting": {
+    "fs-isolation": {
+      "id": "fs-isolation",
+      "label": "FRONTAL SLAYER ISOLATION",
+      "status": "PASS",
+      "detail": null,
+      "blocker": null
+    }
+  },
+  "blockers": {
+    "P0": 0,
+    "P1": 0,
+    "P2": 0,
+    "P3": 0
+  },
+  "finalReadiness": "READY TO DEPLOY",
+  "externalDependencies": [
+    {
+      "domain": "business-formation",
+      "label": "BUSINESS FORMATION",
+      "status": "IMPLEMENTED",
+      "notes": "LLC/INC flows; state filing manual/partner unless integrated"
+    },
+    {
+      "domain": "document-digitization",
+      "label": "DOCUMENT DIGITIZATION",
+      "status": "PARTIAL",
+      "notes": "Archive migration batch model; OCR not connected"
+    },
+    {
+      "domain": "factoring",
+      "label": "FACTORING",
+      "status": "IMPLEMENTED",
+      "notes": "Partner referral language; no money movement"
+    },
+    {
+      "domain": "multilingual",
+      "label": "MULTILINGUAL",
+      "status": "PARTIAL",
+      "notes": "en/es for major surfaces; freight UI hardcoded English"
+    },
+    {
+      "domain": "rls",
+      "label": "RLS",
+      "status": "PARTIAL",
+      "notes": "freightRlsIntegration.test.ts; use aio-supabase-production-validate for migrations"
+    },
+    {
+      "domain": "storage",
+      "label": "STORAGE",
+      "status": "PARTIAL",
+      "notes": "freightStorageSecurity.test.ts"
+    },
+    {
+      "domain": "integrations",
+      "label": "EXTERNAL INTEGRATIONS",
+      "status": "PARTIAL",
+      "notes": "Demo adapters only; Topograph name check optional"
+    }
+  ],
+  "placeholderAudit": null
+}
