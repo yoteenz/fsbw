@@ -54392,4 +54392,20 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Mobile trigger:** GitHub → Actions → AIO Supabase Production Validate → Run workflow. Job summary + artifact `.ci/aio-validation-results.json`. Final status rules: READY / READY WITH NON-BLOCKING / NOT READY.
 
+---
+
+## 2026-08-19 — AIO Master Production Readiness Suite (whole-platform QA)
+
+- **Context:** User requested phone-triggerable whole-platform QA orchestrator — audit/test/simulate/verify all AIO domains without replacing `aio-supabase-production-validate.yml` or deploying.
+
+- **Workflow:** `.github/workflows/aio-production-readiness.yml` — `AIO Production Readiness Suite`, `workflow_dispatch`, scopes: full-platform / core-operations / security-only / responsive-only / domain-select; `environment: aio-production`; working dir `all-in-one-enterprises/`.
+
+- **Architecture:** `tests/readiness/` — `platform-inventory.json`, `domain-registry.json`, `lib/qa-run-context.ts`, `lib/synthetic-data-factory.ts`, 16 domain `*.readiness.test.ts` files; orchestrator `scripts/readiness/run-production-readiness.mjs`; summary `write-readiness-summary.mjs`; responsive `run-responsive-qa.mjs`; placeholder audit.
+
+- **Reuses:** Existing vitest (freight, brokerage, security, portal, office, etc.), Playwright smoke, `check-isolation.sh`, production build. Deep Supabase migrations remain in separate freight workflow.
+
+- **Docs:** `AIO_FEATURE_READINESS_MATRIX.md`, `AIO_MASTER_PRODUCTION_READINESS_REPORT.md` (+ root pointer).
+
+- **Note:** First FULL PLATFORM live run determines readiness; infrastructure creation ≠ READY TO DEPLOY.
+
 
