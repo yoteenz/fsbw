@@ -6,7 +6,10 @@
 /** Frontal Slayer / Build-a-Wig Supabase — forbidden target for AIO migrations */
 export const FRONTAL_SLAYER_SUPABASE_PROJECT_ID = 'hyycomvcaqxxvyrfupes';
 
-/** Placeholder until dedicated AIO Supabase is provisioned — migrations abort if URL matches FS */
+/** Dedicated All In One Enterprises Supabase project (authoritative) */
+export const AIO_DEDICATED_SUPABASE_PROJECT_REF = 'nnnljnhtmseagotvgxxt';
+
+/** Env var for migration scripts — must match {@link AIO_DEDICATED_SUPABASE_PROJECT_REF} */
 export const AIO_EXPECTED_PROJECT_REF_ENV = 'AIO_SUPABASE_PROJECT_REF';
 
 /** Canonical demo schema version (Sprint 20) */

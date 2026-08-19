@@ -54319,3 +54319,35 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Docs:** `AIO_FREIGHT_FINAL_QA_MATRIX.md`, gap matrix Phase 3 updated.
 
+---
+
+## 2026-08-19 — AIO Load Board + Brokerage production configuration sprint
+
+- **Context:** Post-closure sprint to connect live Supabase plumbing: shipper repository, RLS, bookkeeping handoff, staging validation. No Load Board redesign.
+
+- **Shipper repository:** `src/shipper/` — `ShipperFreightRepository`, demo + Supabase adapters, `useShipperFreightRepository`, wired to `ShipFreightRequestWizard` + `ShipperPortalPages`. No silent demo fallback in supabase mode (`ShipperFreightError`).
+
+- **Migration:** `20260819150000_aio_shipper_rls_bookkeeping_handoff.sql` — shipper RLS, `aio_user_org_id_texts()`, safe views, templates, shipper invoices, idempotent `aio_brokerage_bookkeeping_handoffs`. Prior intake migration unchanged.
+
+- **Bookkeeping handoff:** `brokerageBookkeepingHandoff.ts` — idempotent `BROKERAGE_LOAD` + revision; separate AIO internal books; triggered on brokerage `completeLoad()` in demo; financial revision creates new row.
+
+- **RLS tests:** `freightRlsIntegration.test.ts` + `scripts/rls-staging-test.sh` — **7 skipped** (no `AIO_STAGING_SUPABASE_*` in environment; only FS Website vars present).
+
+- **Build/tests:** `npm run build` PASS; bookkeeping + golden path tests PASS.
+
+- **Production readiness:** **NOT READY TO DEPLOY — BLOCKERS REMAIN** (live AIO Supabase connect, migration apply, RLS matrix, staging golden path). Docs: `AIO_FREIGHT_PRODUCTION_CONFIGURATION_CHECKLIST.md`, `AIO_FREIGHT_PRODUCTION_CONFIGURATION_REPORT.md`; gap matrix Phase 4.
+
+---
+
+## 2026-08-19 — AIO dedicated Supabase project connected (nnnljnhtmseagotvgxxt)
+
+- **Authoritative project:** `nnnljnhtmseagotvgxxt` (AIO Enterprises) — separate from FS Website `hyycomvcaqxxvyrfupes`.
+
+- **Canonical env names (not VITE_SUPABASE_*):** `VITE_AIO_SUPABASE_URL`, `VITE_AIO_SUPABASE_ANON_KEY`, server `AIO_SUPABASE_PROJECT_REF`. Founder-provided `VITE_SUPABASE_URL` / `VITE_SUPABASE_PUBLISHABLE_KEY` map to canonical names in `.env.local` only (gitignored).
+
+- **Code:** `AIO_DEDICATED_SUPABASE_PROJECT_REF` in `constants.ts`; URL ref validation + dev log label in `env.ts` / `getAioSupabase()`; smoke script `scripts/aio-supabase-connection-smoke.mjs`.
+
+- **Smoke test:** CONNECTION SUCCESSFUL — SCHEMA NOT MIGRATED (`aio_organizations` missing). Migrations ready (14 SQL files); apply via Supabase MCP/CLI with `project_id`/`project-ref` `nnnljnhtmseagotvgxxt` only.
+
+- **Privileged access for next step:** `AIO_SUPABASE_SERVICE_ROLE_KEY` or Supabase access token (server/CI only) for migrations, RLS live tests, storage policies — NOT in VITE_ vars.
+

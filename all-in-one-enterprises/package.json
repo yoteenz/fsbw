@@ -25,7 +25,8 @@
     "migrate:verify": "bash scripts/verify-migration-environment.sh",
     "migrate:staging": "bash scripts/migrate-staging.sh",
     "migrate:production": "bash scripts/migrate-production.sh",
-    "test:rls-staging": "bash scripts/rls-staging-test.sh"
+    "test:rls-staging": "bash scripts/rls-staging-test.sh",
+    "test:supabase-connection": "node scripts/aio-supabase-connection-smoke.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.0",

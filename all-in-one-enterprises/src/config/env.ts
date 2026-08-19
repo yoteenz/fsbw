@@ -3,7 +3,10 @@
  * NEVER use Frontal Slayer Supabase URL/keys here.
  */
 
-import { FRONTAL_SLAYER_SUPABASE_PROJECT_ID } from '../data/constants';
+import {
+  AIO_DEDICATED_SUPABASE_PROJECT_REF,
+  FRONTAL_SLAYER_SUPABASE_PROJECT_ID,
+} from '../data/constants';
 import { isProductionDeployment } from '../infrastructure/environmentModel';
 
 export type AioDataMode = 'demo' | 'local' | 'supabase';
@@ -53,6 +56,23 @@ export function isFrontalSlayerSupabaseUrl(url: string | undefined): boolean {
   return lower.includes(FRONTAL_SLAYER_SUPABASE_PROJECT_ID) || lower.includes('hyycomvcaqxxvyrfupes');
 }
 
+/** Extract project ref from a Supabase project URL (no secrets). */
+export function getAioSupabaseProjectRefFromUrl(url: string | undefined): string | null {
+  if (!url) return null;
+  const match = url.trim().match(/https:\/\/([a-z0-9]+)\.supabase\.co/i);
+  return match?.[1]?.toLowerCase() ?? null;
+}
+
+/** Safe identity string for dev logs — project ref only, never keys. */
+export function getAioSupabaseConnectionLabel(): string | null {
+  if (!aioEnv.supabaseUrl) return null;
+  const ref = getAioSupabaseProjectRefFromUrl(aioEnv.supabaseUrl);
+  if (!ref) return 'supabase-url-unrecognized';
+  if (ref === FRONTAL_SLAYER_SUPABASE_PROJECT_ID) return 'BLOCKED-frontal-slayer';
+  if (ref === AIO_DEDICATED_SUPABASE_PROJECT_REF) return `aio-${ref}`;
+  return `aio-other-${ref}`;
+}
+
 export function validateAioEnvironment(): { ok: boolean; errors: string[] } {
   const errors: string[] = [];
 
@@ -61,6 +81,12 @@ export function validateAioEnvironment(): { ok: boolean; errors: string[] } {
     if (!aioEnv.supabaseAnonKey) errors.push('AIO_DATA_MODE=supabase but VITE_AIO_SUPABASE_ANON_KEY is missing');
     if (isFrontalSlayerSupabaseUrl(aioEnv.supabaseUrl)) {
       errors.push('VITE_AIO_SUPABASE_URL points to Frontal Slayer project — use dedicated All In One Supabase');
+    }
+    const projectRef = getAioSupabaseProjectRefFromUrl(aioEnv.supabaseUrl);
+    if (projectRef && projectRef !== AIO_DEDICATED_SUPABASE_PROJECT_REF) {
+      errors.push(
+        `VITE_AIO_SUPABASE_URL must target AIO project ${AIO_DEDICATED_SUPABASE_PROJECT_REF}, not ${projectRef}`,
+      );
     }
   }
 
