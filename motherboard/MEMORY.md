@@ -54259,3 +54259,23 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Docs:** `LOAD_BOARD_AUDIT_AND_GAP_MATRIX.md` architecture addendum section.
 
+---
+
+## 2026-08-19 — AIO Load Board Phase 2 production hardening
+
+- **Context:** Post-audit sprint to move load-board state from Demo Store to Supabase-backed persistence, financial split, offers/publications/saved searches, Map Mode (real geo), FleetCare maintenance warnings, in-app notifications — without rebuilding freight domain.
+
+- **Migration:** `all-in-one-enterprises/supabase/migrations/20260819120000_aio_freight_load_board_production.sql` — financials, offers, publications, saved/recent searches, alert dedupe, carrier-safe view, RLS. **Committed to repo; apply to AIO dedicated Supabase only** (`AIO_SUPABASE_PROJECT_REF`) — not FS Website.
+
+- **Repository:** `FreightRepository` + `DemoFreightRepository` + `SupabaseFreightRepository` + `useFreightRepository()`. Production path shows controlled error on failure — **no silent demo fallback**.
+
+- **UI:** Load Board pages wired to repository; Map panel (`LoadMapPanel.tsx`) with city/stored coordinates and LAST KNOWN LOCATION truck labels; FleetCare maintenance warnings when odometer/ticket data exists; ultrawide context rail + card max-width.
+
+- **Notifications:** Extended load-board event types; `freightNotifications.ts` in-app delivery with dedupe; saved-search alerts on publish.
+
+- **Tests:** `freightProduction.test.ts` added; typecheck + build pass.
+
+- **Docs:** `docs/freight/FREIGHT_SUPABASE_PRODUCTION_MODEL.md`, `docs/freight/LOAD_BOARD_PRODUCTION_HARDENING_REPORT.md`; gap matrix Phase 2 section updated.
+
+- **Remaining:** Apply migration when AIO project ref available; RLS live tests; office publish → supabase repository in backend mode.
+

@@ -53,7 +53,6 @@ export async function evaluateSavedSearchAlertsSupabase(
   let count = 0;
   for (const search of savedRows) {
     const filters = (search.filters_json ?? {}) as LoadBoardSearchFilters;
-    const { mapCarrierRowToResult } = await import('./supabaseFreightMappers');
     const result = mapCarrierRowToResult(loadRow, filters);
     if (!matchesLoadBoardFilters(result, filters)) continue;
 

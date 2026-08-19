@@ -22,7 +22,18 @@ export function LoadMapPanel({ mapData, loading, error, onSearchThisArea }: Load
     ];
   }, [mapData]);
 
-  const bounds = useMemo(() => computeMapBounds(allMarkers), [allMarkers]);
+  const bounds = useMemo(
+    () =>
+      computeMapBounds(allMarkers) ?? (allMarkers[0]
+        ? {
+            minLat: allMarkers[0].lat - 1,
+            maxLat: allMarkers[0].lat + 1,
+            minLng: allMarkers[0].lng - 1,
+            maxLng: allMarkers[0].lng + 1,
+          }
+        : null),
+    [allMarkers],
+  );
 
   if (loading) {
     return <p className="aio-load-board__empty">Loading map data…</p>;
@@ -37,7 +48,7 @@ export function LoadMapPanel({ mapData, loading, error, onSearchThisArea }: Load
     );
   }
 
-  if (!mapData || !bounds || allMarkers.length === 0) {
+  if (!mapData || allMarkers.length === 0 || !bounds) {
     return (
       <div className="aio-load-board-map__empty">
         <p>No geographic data available for published loads.</p>
@@ -50,6 +61,7 @@ export function LoadMapPanel({ mapData, loading, error, onSearchThisArea }: Load
 
   return (
     <div className="aio-load-board-map__panel">
+      <p className="aio-load-board-map__summary">{pickupMarkers.length} pickup locations · {mapData.trucks.length} truck(s) with last-known position</p>
       <div className="aio-load-board-map__canvas" aria-label="Load board map">
         {allMarkers.map((marker) => {
           const pos = projectToMapPercent(marker.lat, marker.lng, bounds);

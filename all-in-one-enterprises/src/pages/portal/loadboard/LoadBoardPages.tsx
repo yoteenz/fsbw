@@ -446,7 +446,6 @@ export function LoadBoardFleetPage() {
 
 export function LoadBoardMapPage() {
   const { repository, orgId } = useFreightRepository();
-  const filters = useActiveFilters();
   const [mapData, setMapData] = useState<LoadMapData | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -454,21 +453,23 @@ export function LoadBoardMapPage() {
 
   const loadMap = useCallback(() => {
     setLoading(true);
-    const fn = repository.getLoadMapData ?? (async () => repository.searchPublishedLoads(orgId, { originDeadheadMiles: 500 }).then((r) => {
-      if (!r.ok) return r;
-      return { ok: true as const, data: { loads: [], trucks: [] } };
-    }));
-    void fn(orgId, filters.truckProfileId).then((r) => {
-      if (r.ok) {
-        setMapData(r.data);
+    void (repository.getLoadMapData
+      ? repository.getLoadMapData(orgId)
+      : repository.searchPublishedLoads(orgId, { originDeadheadMiles: 500 })
+    ).then((r) => {
+      if (r.ok && 'loads' in r.data) {
+        setMapData(r.data as LoadMapData);
         setError(null);
-      } else {
+      } else if (r.ok && 'results' in r.data) {
+        setMapData({ loads: [], trucks: [] });
+        setError(null);
+      } else if (!r.ok) {
         setMapData(null);
         setError(r.error.message);
       }
       setLoading(false);
     });
-  }, [repository, orgId, filters.truckProfileId]);
+  }, [repository, orgId]);
 
   useEffect(() => {
     loadMap();

@@ -23,9 +23,27 @@ function ensureLoadBoardFields(store: DemoStore): DemoStore {
   const needsSaved = store.loadBoardSavedSearches == null;
   const needsRecent = store.loadBoardRecentSearches == null;
   const needsOffers = store.carrierLoadBoardOffers == null;
-  if (!needsPublications && !needsSaved && !needsRecent && !needsOffers) return store;
+  const needsTruckPatch = store.truckProfiles.some((t) => t.id === 'tdp-a1' && t.currentOdometerMiles == null);
+  if (!needsPublications && !needsSaved && !needsRecent && !needsOffers && !needsTruckPatch) return store;
+
+  const truckProfiles = needsTruckPatch
+    ? store.truckProfiles.map((t) =>
+        t.id === 'tdp-a1'
+          ? {
+              ...t,
+              lastKnownLat: 30.2672,
+              lastKnownLng: -97.7431,
+              lastKnownLocationAt: new Date().toISOString(),
+              currentOdometerMiles: 428000,
+              nextPmOdometerMiles: 429000,
+            }
+          : t,
+      )
+    : store.truckProfiles;
+
   return {
     ...store,
+    truckProfiles,
     loadBoardPublications: needsPublications
       ? createLoadBoardSeedPublications(DEMO_LOAD_BOARD_LOAD_IDS)
       : store.loadBoardPublications,
