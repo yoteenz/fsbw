@@ -1,13 +1,15 @@
 import type { Load } from '../dispatch/dispatchTypes';
-import type { LoadBoardPublication, LoadMatchScore, LoadMatchScoreBand } from './freightTypes';
+import type { LoadBoardPublication, LoadMatchScore, LoadMatchScoreBand, MaintenanceAttention } from './freightTypes';
 import type { TruckDispatchProfile } from '../dispatch/dispatchTypes';
 import { computeLoadedRpm, computeTrueRpm } from './freightCalculations';
+import { maintenanceScoreAdjustment } from './fleetcareLoadIntelligence';
 
 export interface LoadScoreContext {
   publication: LoadBoardPublication;
   carrierRateMinor: number;
   pickupDeadheadMiles: number;
   truck?: TruckDispatchProfile;
+  maintenanceWarning?: MaintenanceAttention | null;
   preferences?: {
     minPreferredRpmMinor?: number;
     preferredEquipment?: string;
@@ -79,6 +81,20 @@ export function computeLoadMatchScore(load: Load, ctx: LoadScoreContext): LoadMa
     if (loadedRpm >= ctx.preferences.minPreferredRpmMinor) {
       points += 10;
       reasons.push('Meets your minimum RPM preference');
+    }
+  }
+
+  if (ctx.maintenanceWarning) {
+    const adj = maintenanceScoreAdjustment(ctx.maintenanceWarning);
+    if (adj !== 0) {
+      points = Math.max(0, points + adj);
+      if (ctx.maintenanceWarning.severity === 'blocked') {
+        reasons.push('Maintenance status may block this assignment');
+      } else if (ctx.maintenanceWarning.severity === 'warning') {
+        reasons.push('Maintenance attention — review FleetCare before booking');
+      } else {
+        reasons.push('Upcoming maintenance noted — plan accordingly');
+      }
     }
   }
 

@@ -140,6 +140,16 @@ export interface TruckDispatchProfile {
   trailerId?: string;
   trailerType?: string;
   currentLoadId?: string;
+  /** Last manually reported location — not live GPS unless ELD connected */
+  lastKnownLat?: number;
+  lastKnownLng?: number;
+  lastKnownLocationAt?: string;
+  lastKnownLocationLabel?: string;
+  currentOdometerMiles?: number;
+  nextPmOdometerMiles?: number;
+  nextPmDate?: string;
+  outOfService?: boolean;
+  maintenanceHold?: boolean;
   updatedAt: string;
 }
 

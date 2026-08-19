@@ -134,6 +134,12 @@ export function createDispatchSeedData(): {
       nextAvailableCity: 'Austin',
       nextAvailableState: 'TX',
       trailerType: 'Dry Van',
+      lastKnownLat: 30.2672,
+      lastKnownLng: -97.7431,
+      lastKnownLocationAt: isoNow(),
+      lastKnownLocationLabel: 'Austin, TX',
+      currentOdometerMiles: 428000,
+      nextPmOdometerMiles: 429000,
       updatedAt: isoNow(),
     },
     {

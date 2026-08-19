@@ -54238,3 +54238,24 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Remote verified @ `ccc5714`:** `src/`, `package.json`, `vite.config.ts`, `public/site00/`, `api/` all present on `main`.
 - **Convention:** Publish from `site00-standalone/` only; token is `SITE00_GITHUB_TOKEN` (do not re-extract from `/home/ubuntu/site-00`).
 
+---
+
+## 2026-08-18 — AIO Load Board architecture clarification addendum
+
+- **Context:** Founder required authoritative rule: AIO IS THE BROKER — Load Board is private carrier distribution, not a multi-broker marketplace. One canonical Load with role-specific authorized views.
+
+- **Audit outcome:** No third-party broker marketplace architecture found. Renamed/clarified confusing "broker" surfaces:
+  - Portal **Brokerage** → **AIO Freight** (staff-sent offers + assigned loads; links to Load Board)
+  - Dispatch **Broker Directory** → **External Freight Broker Contacts** (dispatch client rolodex — not platform brokers)
+  - Office integrations load board → **Authorized Freight Source Import** (future provider adapter into AIO-owned loads)
+
+- **New modules:** `freightArchitecture.ts` (operating model canon), `freightRoleViews.ts` (`buildStaffLoadWorkspace`, `buildCarrierFreightView`, `filterFinancialsByRole`).
+
+- **Office:** `/office/brokerage` renamed **AIO Brokerage Control Center** — 12 KPI metrics (active, on board, need carrier, A/R, payables, revenue, margin demo values); load detail restructured into Load / Shipper / Pricing / Carrier / Driver / Documents / Timeline / Load Board distribution sections.
+
+- **Financial separation enforced:** Shipper rate · Carrier rate · AIO gross margin % — staff workspace only; carrier portal uses `resolveCarrierRateMinor` not `confirmedGrossMinor`.
+
+- **Tests:** `freight.test.ts` 11/11 including role view separation.
+
+- **Docs:** `LOAD_BOARD_AUDIT_AND_GAP_MATRIX.md` architecture addendum section.
+

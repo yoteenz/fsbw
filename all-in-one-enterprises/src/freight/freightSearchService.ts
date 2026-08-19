@@ -8,6 +8,7 @@ import type {
   LoadBoardPublication,
 } from './freightTypes';
 import { matchesLoadBoardFilters, projectCarrierLoadResult, resolveCarrierRateMinor } from './carrierLoadProjection';
+import { evaluateFleetCareLoadWarning } from './fleetcareLoadIntelligence';
 
 const AVAILABLE_COVERAGE = new Set(['needs_coverage', 'carrier_contacted', 'rate_negotiation']);
 
@@ -42,9 +43,13 @@ export function searchPublishedLoads(
       if (!pub || !isPublishedForCarrier(pub, carrierOrgId)) return null;
       const fin = getLoadFinancials(load.id, store);
       const truck = resolveTruck(store, carrierOrgId, filters.truckProfileId);
+      const maintenanceWarning = truck
+        ? evaluateFleetCareLoadWarning(store, truck, load.loadedMiles + (filters.originDeadheadMiles ?? pickupDeadhead))
+        : null;
       return projectCarrierLoadResult(load, pub, fin, {
         pickupDeadheadMiles: pickupDeadhead,
         truck,
+        maintenanceWarning,
       });
     })
     .filter((r): r is NonNullable<typeof r> => r != null)

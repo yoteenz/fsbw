@@ -1,4 +1,4 @@
-import { updateDemoStore } from '../demo/demoStore';
+import { loadDemoStore, updateDemoStore } from '../demo/demoStore';
 import type { DemoStore } from '../demo/demoTypes';
 import { isoNow } from '../demo/dateHelpers';
 import type {
@@ -9,6 +9,9 @@ import type {
   SavedLoadSearch,
 } from './freightTypes';
 import { searchPublishedLoads } from './freightSearchService';
+import { notifyCarrierOfferSubmittedDemo } from './freightNotifications';
+import { evaluateSavedSearchAlertsDemo } from './freightSavedSearchAlerts';
+import { setActiveLoadBoardFilters } from './loadBoardSessionFilters';
 
 export function getPublication(loadId: string, store: { loadBoardPublications?: LoadBoardPublication[] }): LoadBoardPublication | undefined {
   return store.loadBoardPublications?.find((p) => p.loadId === loadId);
@@ -44,6 +47,7 @@ export function publishLoadToBoard(
     }
     return { ...s, loadBoardPublications: [...pubs, pub] };
   });
+  void evaluateSavedSearchAlertsDemo(loadId, loadDemoStore());
 }
 
 export function holdLoadOnBoard(loadId: string): void {
@@ -81,6 +85,7 @@ export function deleteSavedSearch(searchId: string): void {
 }
 
 export function recordRecentSearch(orgId: string, filters: LoadBoardSearchFilters): void {
+  setActiveLoadBoardFilters(filters);
   const entry: RecentLoadSearch = {
     id: `recent-${Date.now()}`,
     organizationId: orgId,
@@ -102,12 +107,12 @@ export function submitCarrierLoadBoardOffer(
   offerAmountMinor: number,
   note?: string,
 ): CarrierLoadBoardOffer | null {
-  let created: CarrierLoadBoardOffer | null = null;
+  let offerId: string | null = null;
   updateDemoStore((s: DemoStore) => {
     const pub = s.loadBoardPublications?.find((p) => p.loadId === loadId && p.visibility === 'published');
     if (!pub || pub.bookingMode === 'request_only') return s;
     const now = isoNow();
-    created = {
+    const offer: CarrierLoadBoardOffer = {
       id: `lb-offer-${Date.now()}`,
       loadId,
       carrierOrganizationId: carrierOrgId,
@@ -118,16 +123,31 @@ export function submitCarrierLoadBoardOffer(
       createdAt: now,
       updatedAt: now,
     };
+    offerId = offer.id;
     const load = s.loads.find((l) => l.id === loadId);
     if (load?.brokerageCoverageStatus === 'needs_coverage') {
       load.brokerageCoverageStatus = 'rate_negotiation';
     }
     return {
       ...s,
-      carrierLoadBoardOffers: [...(s.carrierLoadBoardOffers ?? []), created],
+      carrierLoadBoardOffers: [...(s.carrierLoadBoardOffers ?? []), offer],
     };
   });
-  return created;
+  if (offerId) {
+    notifyCarrierOfferSubmittedDemo(carrierOrgId, loadId, offerId);
+    return {
+      id: offerId,
+      loadId,
+      carrierOrganizationId: carrierOrgId,
+      offerAmountMinor,
+      currency: 'USD',
+      note,
+      status: 'pending',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+  }
+  return null;
 }
 
 export function runLoadBoardSearch(

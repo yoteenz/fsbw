@@ -1,11 +1,6 @@
 import type { Load } from '../dispatch/dispatchTypes';
 import type { BrokerageLoadFinancials } from '../brokerage/brokerageTypes';
-import type {
-  CarrierLoadBoardResult,
-  CarrierProfitEstimate,
-  LoadBoardPublication,
-  LoadBoardSearchFilters,
-} from './freightTypes';
+import type { MaintenanceAttention, CarrierLoadBoardResult, CarrierProfitEstimate, LoadBoardPublication, LoadBoardSearchFilters } from './freightTypes';
 import type { TruckDispatchProfile } from '../dispatch/dispatchTypes';
 import {
   computeLoadedRpm,
@@ -39,6 +34,7 @@ export function projectCarrierLoadResult(
     pickupDeadheadMiles?: number;
     truck?: TruckDispatchProfile;
     minPreferredRpmMinor?: number;
+    maintenanceWarning?: MaintenanceAttention | null;
   } = {},
 ): CarrierLoadBoardResult {
   const carrierRateMinor = resolveCarrierRateMinor(load, financials);
@@ -53,6 +49,7 @@ export function projectCarrierLoadResult(
     pickupDeadheadMiles: pickupDeadhead,
     truck: options.truck,
     preferences: { minPreferredRpmMinor: options.minPreferredRpmMinor },
+    maintenanceWarning: options.maintenanceWarning,
   });
 
   let profitEstimate: CarrierProfitEstimate | null = null;
@@ -99,7 +96,7 @@ export function projectCarrierLoadResult(
     bookingMode: publication.bookingMode,
     matchScore,
     profitEstimate,
-    maintenanceWarning: null,
+    maintenanceWarning: options.maintenanceWarning ?? null,
     publishedAt: publication.publishedAt,
   };
 }

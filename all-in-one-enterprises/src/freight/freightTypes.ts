@@ -171,10 +171,14 @@ export interface CarrierProfitEstimate {
   assumptionsNote: string;
 }
 
+export type MaintenanceAttentionSeverity = 'information' | 'warning' | 'blocked';
+
 export interface MaintenanceAttention {
   truckNickname: string;
+  severity: MaintenanceAttentionSeverity;
   serviceDueInMiles?: number;
   message: string;
+  actions: string[];
 }
 
 export type LoadBoardSortField = 'match_score' | 'carrier_rate' | 'true_rpm' | 'pickup_date' | 'posting_age';

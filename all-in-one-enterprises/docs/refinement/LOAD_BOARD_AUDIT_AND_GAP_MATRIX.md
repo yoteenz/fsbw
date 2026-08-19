@@ -147,8 +147,35 @@ SHIPPER → AIO BROKERAGE → AIO OFFICE → AIO LOAD BOARD → APPROVED MOTOR C
 2. ✅ `src/freight/*` — domain extensions, search, score, carrier projection
 3. ✅ Carrier routes `/portal/load-board/*`
 4. ✅ Office **Publish to AIO Load Board** on brokerage loads
-5. ⏳ Supabase migration for financial split (deferred — demo store first)
-6. ⏳ Map / profit intelligence / FleetCare warnings (honest placeholders)
+5. ✅ Supabase migration for financial split (`20260819120000_aio_freight_load_board_production.sql`) — **committed; apply to AIO project when ref configured**
+6. ✅ Map mode (real geo / city cache — no fake GPS)
+7. ✅ FleetCare maintenance warnings (real odometer/ticket data only)
+8. ✅ FreightRepository demo/supabase abstraction
+9. ✅ In-app freight notifications + saved-search alert dedupe
+10. ⏳ RLS live integration tests (requires AIO Supabase staging)
+11. ⏳ Office publish wired to Supabase repository in backend mode
+
+---
+
+## Phase 2 — Production hardening (2026-08-19)
+
+| Feature | Status |
+|---------|--------|
+| Financial split persistence | **MIGRATION READY** — `aio_brokerage_load_financials` + legacy status |
+| Carrier offers persistence | **MIGRATION READY** — `aio_carrier_offers` + RLS |
+| Publication persistence | **MIGRATION READY** — `aio_load_board_publications` |
+| Saved / recent searches | **MIGRATION READY** + demo + supabase repository |
+| Status history | **MIGRATION READY** — extended `aio_load_status_history` |
+| FreightRepository | **COMPLETE** — demo + supabase adapters |
+| Map mode | **COMPLETE** — stored/cached coordinates, last-known truck labels |
+| FleetCare warnings | **COMPLETE** — threshold + ticket signals |
+| In-app notifications | **COMPLETE** — dedupe + load-board event types |
+| Saved-search alerts | **COMPLETE** — server match on publish (demo + supabase) |
+| Carrier-safe projection | **COMPLETE** — unchanged contract |
+| Demo isolation | **COMPLETE** — no production fallback on query failure |
+| Mobile / desktop / ultrawide | **COMPLETE** — nav, context rail, card caps |
+
+Docs: `docs/freight/FREIGHT_SUPABASE_PRODUCTION_MODEL.md`, `docs/freight/LOAD_BOARD_PRODUCTION_HARDENING_REPORT.md`
 
 ---
 
@@ -162,5 +189,9 @@ SHIPPER → AIO BROKERAGE → AIO OFFICE → AIO LOAD BOARD → APPROVED MOTOR C
 | `src/freight/loadScoreEngine.ts` | Explainable 0–100 score |
 | `src/freight/freightSearchService.ts` | Search, recent, saved |
 | `src/freight/loadBoardActions.ts` | Publish, offer, save search |
+| `src/freight/demoFreightRepository.ts` | Demo Store adapter |
+| `src/freight/supabaseFreightRepository.ts` | Supabase production adapter |
+| `src/freight/fleetcareLoadIntelligence.ts` | Maintenance warnings (real data only) |
+| `src/freight/freightNotifications.ts` | In-app freight event delivery |
 | `src/pages/portal/loadboard/*` | Carrier UI |
 | `src/styles/aio-load-board.css` | Load board presentation |
