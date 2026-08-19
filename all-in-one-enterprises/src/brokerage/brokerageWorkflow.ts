@@ -533,6 +533,25 @@ export function applyLoadDistributionStrategy(
     return;
   }
 
+  if (strategy === 'matched_carriers') {
+    const store = loadDemoStore();
+    const load = store.loads.find((l) => l.id === loadId);
+    if (load) {
+      for (const carrier of store.carrierNetworkProfiles.filter((c) => c.status === 'active' && c.organizationId)) {
+        deliverFreightNotificationDemo({
+          eventType: 'NEW_MATCHING_LOAD',
+          organizationId: carrier.organizationId!,
+          loadId,
+          title: 'Matched AIO load',
+          body: 'AIO matched this load to your carrier profile.',
+          dedupeKey: `matched-carrier:${loadId}:${carrier.organizationId}`,
+          link: aioPaths.portalLoadBoardLoad(loadId),
+        });
+      }
+    }
+    return;
+  }
+
   publishLoadToBoard(loadId, staffId, {
     ...partial,
     visibility: 'published',

@@ -186,6 +186,7 @@ export function LoadBoardResultsPage() {
   const [response, setResponse] = useState<{ results: CarrierLoadBoardResult[]; totalCount: number } | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [saveWithAlerts, setSaveWithAlerts] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -205,7 +206,13 @@ export function LoadBoardResultsPage() {
   }, [repository, orgId, filters]);
 
   const saveSearch = async () => {
-    await repository.saveSearch(orgId, userId, `${filters.originCity ?? 'Any'} → ${filters.destinationCity ?? 'Any'}`, filters);
+    await repository.saveSearch(
+      orgId,
+      userId,
+      `${filters.originCity ?? 'Any'} → ${filters.destinationCity ?? 'Any'}`,
+      filters,
+      saveWithAlerts,
+    );
   };
 
   if (loading) return <p className="aio-load-board__empty">Searching AIO loads…</p>;
@@ -232,6 +239,10 @@ export function LoadBoardResultsPage() {
         <button type="button" className="aio-btn aio-btn--outline-dark aio-btn--sm" onClick={() => void saveSearch()}>
           Save search
         </button>
+        <label className="aio-check aio-load-board__save-alert">
+          <input type="checkbox" checked={saveWithAlerts} onChange={(e) => setSaveWithAlerts(e.target.checked)} />
+          Alert me when new loads match
+        </label>
         <div className="aio-load-board__cards">
           {results.map((r) => (
             <LoadBoardCard key={r.loadId} result={r} />

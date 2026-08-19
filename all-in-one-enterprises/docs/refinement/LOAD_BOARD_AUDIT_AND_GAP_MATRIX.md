@@ -179,6 +179,41 @@ Docs: `docs/freight/FREIGHT_SUPABASE_PRODUCTION_MODEL.md`, `docs/freight/LOAD_BO
 
 ---
 
+## Phase 3 — Final QA & feature closure (2026-08-19)
+
+| Feature | Final status |
+|---------|----------------|
+| Shipper request → quote → load (demo) | **COMPLETE** |
+| Office New Shipper Requests queue | **COMPLETE** |
+| Financial separation / carrier privacy | **COMPLETE** — 35 automated tests |
+| Load board search/filters/cards | **COMPLETE** |
+| Recent + saved searches | **COMPLETE** |
+| Saved search alerts | **COMPLETE** — alert toggle fixed in final QA |
+| Load score + RPM math | **COMPLETE** |
+| Map mode (city cache) | **COMPLETE** — DEFERRED external: live GPS |
+| FleetCare warnings | **COMPLETE** |
+| Carrier offers (submit) | **COMPLETE** |
+| Counteroffer (load board office) | **DEFERRED — FUTURE ENHANCEMENT** |
+| Instant book / duplicate booking | **DEFERRED — CONFIGURATION REQUIRED** |
+| Sort UI | **DEFERRED — FUTURE ENHANCEMENT** (engine exists) |
+| Full lifecycle UI on brokerage page | **DEFERRED — FUTURE ENHANCEMENT** |
+| Exceptions / accessorials UI | **DEFERRED — FUTURE ENHANCEMENT** |
+| POD/vault on brokerage detail | **DEFERRED — FUTURE ENHANCEMENT** |
+| Factoring on brokerage detail | **COMPLETE — CONFIGURATION REQUIRED** (dispatch path intact) |
+| Bookkeeping handoff from freight | **DEFERRED — FUTURE ENHANCEMENT** |
+| Supabase shipper/brokerage workflow | **DEFERRED — CONFIGURATION REQUIRED** |
+| Live RLS tests | **DEFERRED — CONFIGURATION REQUIRED** |
+| Freight i18n (en/es) | **DEFERRED — FUTURE ENHANCEMENT** |
+| Ultrawide polish | **COMPLETE — CONFIGURATION REQUIRED** (acceptable baseline) |
+
+**Production readiness:** **READY FOR PRODUCTION CONFIGURATION** (see `AIO_FREIGHT_FEATURE_CLOSURE_REPORT.md`).
+
+**Bugs fixed in final QA:** matched_carriers mis-publish; saved-search alert toggle.
+
+Docs: `AIO_FREIGHT_FINAL_QA_MATRIX.md`, `AIO_FREIGHT_FEATURE_CLOSURE_REPORT.md`, `freightGoldenPath.test.ts`.
+
+---
+
 ## Key file map (post-sprint)
 
 | Path | Role |
