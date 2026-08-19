@@ -54279,3 +54279,27 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Remaining:** Apply migration when AIO project ref available; RLS live tests; office publish → supabase repository in backend mode.
 
+---
+
+## 2026-08-19 — AIO Direct Shipper → Brokerage → Load Board automation sprint
+
+- **Context:** Founder milestone — one connected freight lifecycle: shipper submits freight → AIO Office reviews/prices → quote → acceptance → canonical brokered Load → load board distribution → existing offers/booking/documents/invoicing/margin. **No duplicate Load entities; no Load Board rebuild.**
+
+- **Phase 0 audit:** `docs/freight/SHIPPER_TO_LOAD_WORKFLOW_AUDIT.md` — mapped existing demo brokerage domain (ShipmentRequest, BrokerageFreightQuote, Load, financials, publications) to target workflow; extended rather than replaced.
+
+- **Workflow engine:** `src/brokerage/brokerageWorkflow.ts` — draft/submit, info requests, versioned quotes, accept → `convertRequestToLoad`, carrier rate, distribution strategy, templates, audit events.
+
+- **Shipper UI:** `ShipFreightRequestWizard.tsx` — 5-step mobile-friendly wizard (Route/Freight/Schedule/Requirements/Review), save draft, templates; routes `/shipper/ship-with-aio`, `/shipper/requests/:id`. Shipper home primary CTA **Ship with AIO**.
+
+- **Office UI:** `BrokerageRequestPages.tsx` — **New Shipper Requests** queue + review/pricing workspace at `/office/brokerage/requests`; command center link added.
+
+- **Types/rules:** Expanded `ShipmentRequest` fields/statuses; `ShipmentRequestTemplate`, `BrokerageInfoRequest`, `BrokerageAuditEvent`, `LoadDistributionStrategy`, pricing draft records.
+
+- **Migration (additive, not applied):** `20260819140000_aio_shipper_brokerage_intake.sql` for future Supabase repository — AIO project only.
+
+- **Tests:** `brokerageWorkflow.test.ts` 2/2; typecheck pass; manual QA verified wizard → office queue data flow without re-entry (SR-2026-0111 Chicago→Atlanta).
+
+- **Docs:** `AIO_SHIPPER_TO_BROKERAGE_ARCHITECTURE.md`, `AIO_FREIGHT_LIFECYCLE.md`, `SHIPPER_BROKERAGE_AUTOMATION_REPORT.md`.
+
+- **Remaining:** Supabase repository adapter for workflow; document upload in wizard; Playwright E2E; RLS policies on new intake tables; full exception/accessorial UI.
+

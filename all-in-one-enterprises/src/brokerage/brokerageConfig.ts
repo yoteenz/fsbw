@@ -30,13 +30,19 @@ export const BROKERAGE_READINESS_CHECKLIST: { key: string; label: string }[] = [
 export const SHIPMENT_REQUEST_STATUS_LABELS: Record<ShipmentRequestStatus, string> = {
   draft: 'Draft',
   submitted: 'Submitted',
-  under_review: 'Under Review',
-  quote_pending: 'Quote Pending',
-  quoted: 'Quoted',
+  info_required: 'Action Required',
+  under_review: 'Under AIO Review',
+  quote_pending: 'Quote in Preparation',
+  quote_preparation: 'Quote in Preparation',
+  quoted: 'Quote Sent',
+  quote_sent: 'Quote Sent',
+  awaiting_shipper_approval: 'Awaiting Your Approval',
   accepted: 'Accepted',
+  approved: 'Approved',
   declined: 'Declined',
+  expired: 'Expired',
   cancelled: 'Cancelled',
-  converted_to_load: 'Converted to Load',
+  converted_to_load: 'Brokerage Load Created',
 };
 
 export const BROKERAGE_QUOTE_STATUS_LABELS: Record<BrokerageQuoteStatus, string> = {

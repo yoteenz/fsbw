@@ -44,6 +44,10 @@ import {
   BrokerageLoadsListPage,
 } from '../pages/BrokeragePages';
 import {
+  BrokerageRequestsQueuePage,
+  BrokerageRequestDetailPage,
+} from '../pages/BrokerageRequestPages';
+import {
   FactoringCommandCenterPage,
   FactoringSubmissionsListPage,
   OfficeFactoringSubmissionDetailPage,
@@ -306,6 +310,8 @@ export default function OfficeRoutes() {
         <Route path="driverlink/applications" element={<DriverLinkOfficeApplicationsPage />} />
         <Route path="brokerage" element={<BrokerageCommandCenterPage />} />
         <Route path="brokerage/readiness" element={<BrokerageReadinessPage />} />
+        <Route path="brokerage/requests" element={<BrokerageRequestsQueuePage />} />
+        <Route path="brokerage/requests/:requestId" element={<BrokerageRequestDetailPage />} />
         <Route path="brokerage/shippers" element={<BrokerageShippersPage />} />
         <Route path="brokerage/shippers/:shipperId" element={<BrokerageShipperDetailPage />} />
         <Route path="brokerage/loads" element={<BrokerageLoadsListPage />} />

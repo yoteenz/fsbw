@@ -107,7 +107,12 @@ import {
   ShipperQuoteDetailPage,
   ShipperBillingPage,
   ShipperInvoiceDetailPage,
+  ShipperRequestsListPage,
 } from '../pages/shipper/ShipperPortalPages';
+import {
+  ShipFreightRequestWizard,
+  ShipperRequestDetailPage,
+} from '../pages/shipper/ShipFreightRequestWizard';
 import { BookkeepingHomePage } from '../pages/portal/bookkeeping/BookkeepingPortalPages';
 import { PortalServiceTrackerPage, PortalJourneyRoadmapPage } from '../pages/portal/WorkflowPortalPages';
 import { PortalMessagesListPage, PortalConversationDetailPage } from '../pages/portal/PortalMessagesPages';
@@ -330,6 +335,10 @@ export const aioCoreRoutes = (
         <Route path="shipper" element={<AIOPortalLayout />}>
           <Route index element={<ShipperHomePage />} />
           <Route path="onboarding" element={<ShipperOnboardingPage />} />
+          <Route path="ship-with-aio" element={<ShipFreightRequestWizard />} />
+          <Route path="ship-with-aio/:requestId" element={<ShipFreightRequestWizard />} />
+          <Route path="requests" element={<ShipperRequestsListPage />} />
+          <Route path="requests/:requestId" element={<ShipperRequestDetailPage />} />
           <Route path="shipments" element={<ShipperShipmentsPage />} />
           <Route path="shipments/new" element={<ShipperNewShipmentPage />} />
           <Route path="shipments/:loadId" element={<ShipperShipmentDetailPage />} />

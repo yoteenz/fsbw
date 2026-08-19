@@ -4368,6 +4368,45 @@
 @media (min-width: 768px) { .aio-brokerage-office-metrics--wide { grid-template-columns: repeat(4, 1fr); } }
 @media (min-width: 1200px) { .aio-brokerage-office-metrics--wide { grid-template-columns: repeat(6, 1fr); } }
 .aio-brokerage-load-workspace .aio-office-panel { margin-bottom: 1rem; }
+
+/* Shipper freight request wizard */
+.aio-shipper-request { padding: 1rem 1.25rem; max-width: 56rem; margin: 0 auto; }
+.aio-shipper-request__header { margin-bottom: 1.25rem; }
+.aio-shipper-request__shell { display: flex; flex-direction: column; gap: 1rem; }
+@media (min-width: 960px) {
+  .aio-shipper-request__shell { flex-direction: row; align-items: flex-start; }
+  .aio-shipper-request__steps { flex: 0 0 10rem; display: flex; flex-direction: column; gap: 0.35rem; }
+  .aio-shipper-request__steps button { text-align: left; padding: 0.5rem 0.65rem; border: 1px solid #e5e7eb; border-radius: 6px; background: #fff; cursor: pointer; font-size: 0.85rem; }
+  .aio-shipper-request__steps button.is-active { border-color: var(--aio-gold); background: rgba(212, 175, 55, 0.08); font-weight: 600; }
+  .aio-shipper-request__workspace { flex: 1; min-width: 0; }
+  .aio-shipper-request__rail { flex: 0 0 14rem; padding: 1rem; border: 1px solid #e5e7eb; border-radius: 8px; }
+}
+.aio-shipper-request__form fieldset { border: 1px solid #e5e7eb; border-radius: 8px; padding: 0.75rem; margin-bottom: 1rem; }
+.aio-shipper-request__form label { display: block; margin-bottom: 0.65rem; font-size: 0.85rem; }
+.aio-shipper-request__form input, .aio-shipper-request__form select, .aio-shipper-request__form textarea { width: 100%; margin-top: 0.25rem; padding: 0.45rem 0.5rem; border: 1px solid #d1d5db; border-radius: 6px; }
+.aio-shipper-request__actions { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem; }
+.aio-shipper-request__review dt { font-weight: 600; margin-top: 0.5rem; }
+.aio-shipper-request__review dd { margin: 0.15rem 0 0; }
+.aio-shipper-request__alert { padding: 1rem; border: 1px solid #f59e0b; border-radius: 8px; background: #fffbeb; margin: 1rem 0; }
+.aio-shipper-request__mobile-step { font-size: 0.85rem; opacity: 0.75; margin-bottom: 0.75rem; }
+
+/* Office brokerage request workspace */
+.aio-brokerage-request-workspace__shell { display: flex; flex-direction: column; gap: 1rem; }
+@media (min-width: 1100px) {
+  .aio-brokerage-request-workspace__shell { flex-direction: row; align-items: flex-start; }
+  .aio-brokerage-request-workspace__rail { flex: 0 0 11rem; }
+  .aio-brokerage-request-workspace__center { flex: 1; min-width: 0; }
+  .aio-brokerage-request-workspace__intel { flex: 0 0 18rem; }
+}
+.aio-brokerage-request-workspace__lifecycle { list-style: none; padding: 0; margin: 0; font-size: 0.85rem; }
+.aio-brokerage-request-workspace__lifecycle li { padding: 0.35rem 0; opacity: 0.55; }
+.aio-brokerage-request-workspace__lifecycle li.is-active { opacity: 1; font-weight: 600; color: var(--aio-gold-dark, #8a6f1a); }
+.aio-brokerage-request-workspace__lifecycle li.is-done { opacity: 0.85; }
+.aio-brokerage-requests__row { flex-direction: column; align-items: flex-start; gap: 0.35rem; }
+.aio-brokerage-request-workspace__info-form label { display: block; margin-bottom: 0.65rem; }
+.aio-brokerage-request-workspace__info-form input, .aio-brokerage-request-workspace__info-form textarea { width: 100%; margin-top: 0.25rem; }
+.aio-office-dl--compact dt, .aio-office-dl--compact dd { display: inline; }
+.aio-status-pill { display: inline-block; padding: 0.15rem 0.5rem; border-radius: 999px; font-size: 0.75rem; background: rgba(255,255,255,0.1); }
 .aio-office-timeline { list-style: none; padding: 0; margin: 0; }
 .aio-office-timeline li { padding: 0.35rem 0; border-bottom: 1px solid rgba(255,255,255,0.08); font-size: 0.85rem; }
 .aio-office-timeline time { opacity: 0.6; margin-right: 0.5rem; }

@@ -9,6 +9,7 @@ import {
   canTransitionQuoteStatus,
   isReadyToBill,
 } from '../brokerage/brokerageRules';
+import { acceptBrokerageQuoteWorkflow } from '../brokerage/brokerageWorkflow';
 import type {
   BrokerageFreightQuote,
   BrokerageShipperInvoice,
@@ -16,7 +17,6 @@ import type {
   ShipmentRequest,
 } from '../brokerage/brokerageTypes';
 import { computeGrossMinor } from '../dispatch/dispatchCalculations';
-import type { Load } from '../dispatch/dispatchTypes';
 import { loadDemoStore, updateDemoStore } from './demoStore';
 import type { DemoStore } from './demoTypes';
 import { aioPaths } from '../utils/paths';
@@ -192,82 +192,7 @@ export function sendBrokerageQuote(quoteId: string): void {
 }
 
 export function acceptBrokerageQuote(quoteId: string, shipperOrgId: string): string | undefined {
-  let loadId: string | undefined;
-  updateDemoStore((s) => {
-    const q = s.brokerageFreightQuotes.find((x) => x.id === quoteId && x.shipperOrganizationId === shipperOrgId);
-    if (!q || !canTransitionQuoteStatus(q.status, 'accepted')) return s;
-    q.status = 'accepted';
-    q.acceptedRevisionId = q.revisions[q.revisions.length - 1]?.id;
-    q.updatedAt = new Date().toISOString();
-    const req = s.shipmentRequests.find((r) => r.id === q.shipmentRequestId);
-    if (!req) return s;
-    loadId = convertQuoteToLoad(s, q, req);
-    q.status = 'converted';
-    q.convertedLoadId = loadId;
-    req.status = 'converted_to_load';
-    req.convertedLoadId = loadId;
-    return s;
-  });
-  return loadId;
-}
-
-function convertQuoteToLoad(s: DemoStore, quote: BrokerageFreightQuote, req: ShipmentRequest): string {
-  s.dispatchCounters.load += 1;
-  const id = uid();
-  const carrierPayEstimate = Math.round(quote.freightChargeMinor * 0.85);
-  const load: Load = {
-    id,
-    loadNumber: `BR-LD-2026-${String(s.dispatchCounters.load).padStart(4, '0')}`,
-    organizationId: s.carrierNetworkProfiles.find((c) => c.status === 'active')?.organizationId ?? 'client-b',
-    sourceType: 'brokerage',
-    shipperOrganizationId: req.shipperOrganizationId,
-    brokerageShipmentRequestId: req.id,
-    brokerageQuoteId: quote.id,
-    brokerageCoverageStatus: 'needs_coverage',
-    assignedBrokerStaffId: req.assignedBrokerStaffId ?? 'staff-7',
-    brokerName: 'All In One Brokerage (Demo)',
-    equipmentType: req.equipmentType,
-    originCity: req.pickupCity,
-    originState: req.pickupState,
-    destinationCity: req.deliveryCity,
-    destinationState: req.deliveryState,
-    pickupDate: req.pickupDate,
-    deliveryDate: req.deliveryDate,
-    loadedMiles: 500,
-    deadheadMiles: 0,
-    linehaulMinor: carrierPayEstimate,
-    fuelSurchargeMinor: 0,
-    accessorialMinor: 0,
-    grossMinor: carrierPayEstimate,
-    confirmedGrossMinor: carrierPayEstimate,
-    currency: 'USD',
-    offerStatus: 'draft',
-    operationalStatus: 'opportunity',
-    rateConfirmationStatus: 'missing',
-    rateDetailsReviewed: false,
-    factoringHandoffStatus: 'not_ready',
-    accessorials: [],
-    rateRevisions: [],
-    timeline: [],
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-    version: 1,
-  };
-  s.loads.push(load);
-  s.brokerageLoadFinancials.push({
-    loadId: id,
-    shipperChargeMinor: quote.freightChargeMinor,
-    carrierLinehaulMinor: carrierPayEstimate,
-    carrierFuelSurchargeMinor: 0,
-    carrierAccessorialMinor: 0,
-    totalCarrierPayMinor: carrierPayEstimate,
-    confirmedShipperChargeMinor: quote.freightChargeMinor,
-    confirmedCarrierPayMinor: 0,
-    currency: 'USD',
-    version: 1,
-    updatedAt: new Date().toISOString(),
-  });
-  return id;
+  return acceptBrokerageQuoteWorkflow(quoteId, shipperOrgId);
 }
 
 export function sendCarrierOffer(

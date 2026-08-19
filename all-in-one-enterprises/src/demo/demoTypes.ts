@@ -590,6 +590,10 @@ export interface DemoStore {
   brokerageCapability: BrokerageCapabilityState;
   shipperProfiles: ShipperProfile[];
   shipmentRequests: ShipmentRequest[];
+  shipmentRequestTemplates?: import('../brokerage/brokerageTypes').ShipmentRequestTemplate[];
+  brokerageInfoRequests?: import('../brokerage/brokerageTypes').BrokerageInfoRequest[];
+  brokerageAuditEvents?: import('../brokerage/brokerageTypes').BrokerageAuditEvent[];
+  brokerageQuotePricingDrafts?: import('../brokerage/brokerageTypes').BrokerageQuotePricingDraftRecord[];
   brokerageFreightQuotes: BrokerageFreightQuote[];
   carrierNetworkProfiles: CarrierNetworkProfile[];
   carrierOffers: CarrierOffer[];

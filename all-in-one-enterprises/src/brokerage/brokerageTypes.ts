@@ -49,13 +49,21 @@ export interface ShipperProfile {
 export type ShipmentRequestStatus =
   | 'draft'
   | 'submitted'
+  | 'info_required'
   | 'under_review'
   | 'quote_pending'
+  | 'quote_preparation'
   | 'quoted'
+  | 'quote_sent'
+  | 'awaiting_shipper_approval'
   | 'accepted'
+  | 'approved'
   | 'declined'
+  | 'expired'
   | 'cancelled'
   | 'converted_to_load';
+
+export type LoadFullPartial = 'full' | 'partial';
 
 export interface ShipmentRequest {
   id: string;
@@ -63,34 +71,107 @@ export interface ShipmentRequest {
   shipperOrganizationId: string;
   status: ShipmentRequestStatus;
   pickupCompany?: string;
+  pickupAddress?: string;
   pickupCity: string;
   pickupState: string;
+  pickupZip?: string;
   pickupDate: string;
   pickupTimeStart?: string;
   pickupTimeEnd?: string;
+  pickupAppointmentType?: 'fcfs' | 'appointment' | 'unknown';
+  pickupContactName?: string;
+  pickupContactPhone?: string;
   deliveryCompany?: string;
+  deliveryAddress?: string;
   deliveryCity: string;
   deliveryState: string;
+  deliveryZip?: string;
   deliveryDate: string;
   deliveryTimeStart?: string;
   deliveryTimeEnd?: string;
+  deliveryAppointmentType?: 'fcfs' | 'appointment' | 'unknown';
+  deliveryContactName?: string;
+  deliveryContactPhone?: string;
   equipmentType: string;
+  trailerLengthFt?: number;
+  fullPartial?: LoadFullPartial;
   commodity?: string;
   weight?: string;
   pieces?: string;
+  palletCount?: number;
   temperatureRequirements?: string;
   hazmatSelfReported?: boolean;
+  specialHandling?: string;
   specialInstructions?: string;
   referenceNumbers?: string;
+  shipperReference?: string;
+  poNumber?: string;
   contactName?: string;
   contactPhone?: string;
   contactEmail?: string;
   documentIds: string[];
   assignedBrokerStaffId?: string;
   convertedLoadId?: string;
+  templateId?: string;
+  openInfoRequestId?: string;
+  priority?: 'normal' | 'high' | 'urgent';
   createdAt: string;
   updatedAt: string;
   version: number;
+}
+
+export interface ShipmentRequestTemplate {
+  id: string;
+  shipperOrganizationId: string;
+  label: string;
+  snapshot: Partial<Omit<ShipmentRequest, 'id' | 'requestNumber' | 'status' | 'createdAt' | 'updatedAt' | 'version'>>;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface BrokerageInfoRequest {
+  id: string;
+  shipmentRequestId: string;
+  missingFields: string[];
+  message: string;
+  status: 'open' | 'resolved';
+  createdByStaffId: string;
+  createdAt: string;
+  resolvedAt?: string;
+}
+
+export type BrokerageAuditEntityType = 'shipment_request' | 'quote' | 'load';
+
+export interface BrokerageAuditEvent {
+  id: string;
+  entityType: BrokerageAuditEntityType;
+  entityId: string;
+  action: string;
+  actorType: 'shipper' | 'staff' | 'system';
+  actorId?: string;
+  note?: string;
+  payload?: Record<string, unknown>;
+  createdAt: string;
+}
+
+export type LoadDistributionStrategy =
+  | 'hold'
+  | 'publish_load_board'
+  | 'private_invite'
+  | 'matched_carriers';
+
+export interface BrokerageQuotePricingDraft {
+  shipperRateMinor: number;
+  targetCarrierRateMinor: number;
+  estimatedMarginMinor: number;
+  estimatedMarginPercent: number | null;
+  termsNote?: string;
+  validUntil?: string;
+}
+
+export interface BrokerageQuotePricingDraftRecord extends BrokerageQuotePricingDraft {
+  quoteId: string;
+  requestId: string;
 }
 
 export type BrokerageQuoteStatus =

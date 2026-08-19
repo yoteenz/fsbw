@@ -24,7 +24,12 @@ function ensureLoadBoardFields(store: DemoStore): DemoStore {
   const needsRecent = store.loadBoardRecentSearches == null;
   const needsOffers = store.carrierLoadBoardOffers == null;
   const needsTruckPatch = store.truckProfiles.some((t) => t.id === 'tdp-a1' && t.currentOdometerMiles == null);
-  if (!needsPublications && !needsSaved && !needsRecent && !needsOffers && !needsTruckPatch) return store;
+  const needsBrokerageWorkflow =
+    store.shipmentRequestTemplates == null
+    || store.brokerageInfoRequests == null
+    || store.brokerageAuditEvents == null
+    || store.brokerageQuotePricingDrafts == null;
+  if (!needsPublications && !needsSaved && !needsRecent && !needsOffers && !needsTruckPatch && !needsBrokerageWorkflow) return store;
 
   const truckProfiles = needsTruckPatch
     ? store.truckProfiles.map((t) =>
@@ -50,6 +55,10 @@ function ensureLoadBoardFields(store: DemoStore): DemoStore {
     loadBoardSavedSearches: store.loadBoardSavedSearches ?? [],
     loadBoardRecentSearches: store.loadBoardRecentSearches ?? [],
     carrierLoadBoardOffers: store.carrierLoadBoardOffers ?? [],
+    shipmentRequestTemplates: store.shipmentRequestTemplates ?? [],
+    brokerageInfoRequests: store.brokerageInfoRequests ?? [],
+    brokerageAuditEvents: store.brokerageAuditEvents ?? [],
+    brokerageQuotePricingDrafts: store.brokerageQuotePricingDrafts ?? [],
   };
 }
 

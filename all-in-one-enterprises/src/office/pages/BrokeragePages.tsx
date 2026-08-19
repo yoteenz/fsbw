@@ -1,13 +1,10 @@
 import { Link, useParams } from 'react-router-dom';
 import { useMemo } from 'react';
 import { useDemoStore } from '../../demo/useDemoStore';
-import { dollarsToMinor } from '../../billing/money';
 import {
-  createBrokerageQuote,
   createShipperInvoiceFromLoad,
   getBrokerageMetrics,
   getLoadFinancials,
-  sendBrokerageQuote,
   sendCarrierOffer,
 } from '../../demo/brokerageActions';
 import {
@@ -34,6 +31,7 @@ export function BrokerageCommandCenterPage() {
         <p>{DEMO_BROKERAGE_LABEL}</p>
         <p className="aio-prototype-note">{AIO_BROKERAGE_OPERATING_MODEL}</p>
         <div className="aio-office-action-bar">
+          <Link to={aioPaths.officeBrokerageRequests} className="aio-btn aio-btn--sm aio-btn--gold">New Shipper Requests</Link>
           <Link to={aioPaths.officeBrokerageLoads} className="aio-btn aio-btn--sm">All Loads</Link>
           <Link to={aioPaths.officeBrokerageCoverage} className="aio-btn aio-btn--sm">Need Carrier</Link>
           <Link to={aioPaths.officeBrokerageFinance} className="aio-btn aio-btn--sm">Finance</Link>
@@ -124,22 +122,10 @@ export function BrokerageShipperDetailPage() {
       <section className="aio-office-panel">
         <h2>Shipment Requests</h2>
         {requests.map((r) => (
-          <div key={r.id} className="aio-office-list-row">
+          <Link key={r.id} to={aioPaths.officeBrokerageRequest(r.id)} className="aio-office-list-row">
             <span>{r.requestNumber}</span>
             <span>{SHIPMENT_REQUEST_STATUS_LABELS[r.status]}</span>
-            {r.status === 'under_review' && (
-              <button
-                type="button"
-                className="aio-btn aio-btn--sm"
-                onClick={() => {
-                  const q = createBrokerageQuote(r.id, dollarsToMinor(2850), 'staff-7');
-                  if (q) sendBrokerageQuote(q.id);
-                }}
-              >
-                Create &amp; Send Quote
-              </button>
-            )}
-          </div>
+          </Link>
         ))}
       </section>
     </div>

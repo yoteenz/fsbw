@@ -84,12 +84,18 @@ export function canTransitionShipmentRequest(from: ShipmentRequestStatus, to: Sh
   if (from === 'converted_to_load') return false;
   const allowed: Partial<Record<ShipmentRequestStatus, ShipmentRequestStatus[]>> = {
     draft: ['submitted', 'cancelled'],
-    submitted: ['under_review', 'cancelled'],
-    under_review: ['quote_pending', 'declined', 'cancelled'],
-    quote_pending: ['quoted', 'cancelled'],
-    quoted: ['accepted', 'declined', 'cancelled'],
-    accepted: ['converted_to_load'],
+    submitted: ['under_review', 'info_required', 'cancelled'],
+    info_required: ['submitted', 'under_review', 'cancelled'],
+    under_review: ['quote_pending', 'quote_preparation', 'info_required', 'declined', 'cancelled'],
+    quote_pending: ['quoted', 'quote_sent', 'cancelled'],
+    quote_preparation: ['quote_sent', 'cancelled'],
+    quoted: ['awaiting_shipper_approval', 'accepted', 'approved', 'declined', 'expired', 'cancelled'],
+    quote_sent: ['awaiting_shipper_approval', 'accepted', 'approved', 'declined', 'expired', 'cancelled'],
+    awaiting_shipper_approval: ['accepted', 'approved', 'declined', 'expired', 'cancelled'],
+    accepted: ['converted_to_load', 'approved'],
+    approved: ['converted_to_load'],
     declined: [],
+    expired: [],
     cancelled: [],
     converted_to_load: [],
   };

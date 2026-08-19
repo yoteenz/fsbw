@@ -1,8 +1,7 @@
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useDemoStore } from '../../demo/useDemoStore';
 import {
   acceptBrokerageQuote,
-  createAndSubmitShipmentRequest,
   getShipperOrganizationId,
   getShipperQuotes,
   getShipperRequests,
@@ -34,7 +33,9 @@ export function ShipperHomePage() {
         <div className="aio-brokerage-metric"><span>{quotes.length}</span><label>Quotes to Review</label></div>
       </div>
       <div className="aio-brokerage-actions">
-        <Link to={aioPaths.shipperShipmentNew} className="aio-btn aio-btn--gold">New Shipment</Link>
+        <Link to={aioPaths.shipperShipWithAio} className="aio-btn aio-btn--gold">Ship with AIO</Link>
+        <Link to={aioPaths.shipperRequests} className="aio-btn aio-btn--outline">Requests</Link>
+        <Link to={aioPaths.shipperShipments} className="aio-btn aio-btn--outline">Shipments</Link>
         <Link to={aioPaths.shipperQuotes} className="aio-btn aio-btn--outline">Quotes</Link>
         <Link to={aioPaths.shipperBilling} className="aio-btn aio-btn--outline">Billing</Link>
       </div>
@@ -54,27 +55,15 @@ export function ShipperOnboardingPage() {
 }
 
 export function ShipperNewShipmentPage() {
-  const orgId = getShipperOrganizationId(useDemoStore());
-
-  const onSubmit = () => {
-    createAndSubmitShipmentRequest(orgId, {
-      pickupCity: 'Chicago',
-      pickupState: 'IL',
-      deliveryCity: 'Atlanta',
-      deliveryState: 'GA',
-      pickupDate: new Date(Date.now() + 5 * 86400000).toISOString().slice(0, 10),
-      deliveryDate: new Date(Date.now() + 7 * 86400000).toISOString().slice(0, 10),
-      equipmentType: 'Dry Van',
-      commodity: 'General Freight',
-    });
-  };
-
+  const navigate = useNavigate();
   return (
     <div className="aio-brokerage">
       <Link to={aioPaths.shipper} className="aio-rr-link">← Shipper</Link>
       <h1>New Shipment Request</h1>
-      <p>Demo form — pickup/delivery, equipment, commodity. Full conditional fields in production configuration.</p>
-      <button type="button" className="aio-btn aio-btn--gold" onClick={onSubmit}>Submit Request</button>
+      <p>Use the structured freight wizard to submit lane, freight, and schedule details once — AIO Office receives it as a brokerage opportunity.</p>
+      <button type="button" className="aio-btn aio-btn--gold" onClick={() => navigate(aioPaths.shipperShipWithAio)}>
+        Open Ship with AIO Wizard
+      </button>
     </div>
   );
 }
@@ -211,14 +200,22 @@ export function ShipperRequestsListPage() {
 
   return (
     <div className="aio-brokerage">
-      <h1>Shipment Requests</h1>
-      {requests.map((r) => (
-        <div key={r.id} className="aio-brokerage-card">
-          <strong>{r.requestNumber}</strong>
-          <p>{r.pickupCity}, {r.pickupState} → {r.deliveryCity}, {r.deliveryState}</p>
-          <p>{SHIPMENT_REQUEST_STATUS_LABELS[r.status]}</p>
-        </div>
-      ))}
+      <Link to={aioPaths.shipper} className="aio-rr-link">← Shipper</Link>
+      <header className="aio-brokerage-hero aio-brokerage-hero--compact">
+        <h1>Freight Requests</h1>
+      </header>
+      <Link to={aioPaths.shipperShipWithAio} className="aio-btn aio-btn--gold aio-btn--sm">Ship with AIO</Link>
+      {requests.length === 0 ? (
+        <p className="aio-prototype-note">No requests yet.</p>
+      ) : (
+        requests.map((r) => (
+          <Link key={r.id} to={aioPaths.shipperRequest(r.id)} className="aio-brokerage-row">
+            <strong>{r.requestNumber}</strong>
+            <span>{r.pickupCity}, {r.pickupState} → {r.deliveryCity}, {r.deliveryState}</span>
+            <span>{SHIPMENT_REQUEST_STATUS_LABELS[r.status]}</span>
+          </Link>
+        ))
+      )}
     </div>
   );
 }
