@@ -54491,3 +54491,11 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Changes:** See sprint final report files list. Canon seed sets identity gate blocked + pack metadata on seed.
 - **Conventions:** Stage 2 (live Campaign 001 video) requires explicit operator authorization after V1 lock. MANUAL IDENTITY QC — no fabricated confidence percentages.
 
+---
+
+## 2026-08-20 — Reference Pack direct upload operator UI
+
+- **Context:** Founder found API/DevTools workflow too heavy; asked to wire direct asset upload in CANON board instead of Supabase links + manual API.
+- **Changes:** `reference_pack_upload_and_assign` API + `reference-pack-upload.ts` (Storage `live-preview` / `studio-vp/reference-packs/`); `useReferencePackBoard` hook; per-slot UPLOAD / APPROVE / REJECT / SET ANCHOR; anchor shortcut **UPLOAD FRONT + APPROVE**; wired LOCK button; docs updated in `NIA_IDENTITY_LOCK_STAGE1.md`.
+- **Operator path:** Admin → Virtual Production → Initialize FS Canon → CANON tab → upload images per slot → lock when all 13 approved.
+

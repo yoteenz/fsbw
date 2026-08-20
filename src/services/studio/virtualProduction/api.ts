@@ -2,21 +2,65 @@
  * Virtual Production OS — client API
  */
 
+import { apiFetch } from '../../../utils/api';
 import { PRODUCTION_PROVIDERS } from '../../../studio-os-core/virtual-production';
 
-const API_BASE = import.meta.env.VITE_API_BASE ?? '';
+/** Safari/WebKit throws "The string did not match the expected pattern." on Response.json() when body is HTML. */
+async function parseVpJson<T>(res: Response): Promise<T> {
+  const contentType = res.headers.get('content-type') ?? '';
+  const raw = await res.text();
+  const trimmed = raw.trim();
 
-async function vpFetch<T>(path: string, init?: RequestInit): Promise<T> {
-  const res = await fetch(`${API_BASE}${path}`, {
-    ...init,
-    headers: {
-      'Content-Type': 'application/json',
-      ...(init?.headers ?? {}),
-    },
-    credentials: 'include',
+  if (!trimmed) {
+    if (!res.ok) throw new Error(`Virtual Production API ${res.status}`);
+    return {} as T;
+  }
+
+  const looksJson =
+    /application\/json/i.test(contentType) || trimmed.startsWith('{') || trimmed.startsWith('[');
+
+  if (!looksJson) {
+    if (/DEPLOYMENT_DISABLED|Payment required/i.test(trimmed)) {
+      throw new Error(
+        'Vercel API is unavailable (deployment disabled). Refresh after the dev server restarts — VP now uses a local API on preview.',
+      );
+    }
+    if (/^<!DOCTYPE|^<html/i.test(trimmed)) {
+      throw new Error(
+        'Virtual Production API is not reachable (received HTML instead of JSON). Sign in as admin and refresh.',
+      );
+    }
+    throw new Error(trimmed.slice(0, 160) || `Virtual Production API ${res.status}`);
+  }
+
+  try {
+    return JSON.parse(trimmed) as T;
+  } catch {
+    throw new Error('Virtual Production API returned invalid JSON');
+  }
+}
+
+function throwVpApiError(res: Response, data: { error?: string; code?: string }) {
+  if (res.status === 401 || data.code === 'MISSING_TOKEN') {
+    throw new Error('Sign in as an admin to use Virtual Production.');
+  }
+  if (data.code === 'NOT_ADMIN') {
+    throw new Error('Your account does not have Virtual Production admin access.');
+  }
+  throw new Error(data.error ?? `Virtual Production API ${res.status}`);
+}
+
+async function vpFetch<T>(
+  path: string,
+  init?: Omit<RequestInit, 'body'> & { body?: Record<string, unknown> }
+): Promise<T> {
+  const { body, ...fetchInit } = init ?? {};
+  const res = await apiFetch(path, {
+    ...fetchInit,
+    ...(body !== undefined ? { body } : {}),
   });
-  const json = (await res.json()) as T & { error?: string };
-  if (!res.ok) throw new Error(json.error ?? `Request failed (${res.status})`);
+  const json = await parseVpJson<T & { error?: string; code?: string }>(res);
+  if (!res.ok) throwVpApiError(res, json);
   return json;
 }
 
@@ -48,7 +92,7 @@ export type ShotRow = {
 export async function seedReferenceTenant(orgId = 'frontal-slayer') {
   return vpFetch<{ ok: boolean; brandId: string; campaignId: string }>(
     '/api/admin/studio-virtual-production',
-    { method: 'POST', body: JSON.stringify({ action: 'seed_reference', org_id: orgId }) }
+    { method: 'POST', body: { action: 'seed_reference', org_id: orgId } }
   );
 }
 
@@ -62,7 +106,7 @@ export async function seedFsCanonCampaign001(orgId = 'frontal-slayer') {
     shotIds: string[];
   }>('/api/admin/studio-virtual-production', {
     method: 'POST',
-    body: JSON.stringify({ action: 'seed_fs_canon_campaign001', org_id: orgId }),
+    body: { action: 'seed_fs_canon_campaign001', org_id: orgId },
   });
 }
 
@@ -89,14 +133,14 @@ export async function createCampaign(input: {
     '/api/admin/studio-virtual-production',
     {
       method: 'POST',
-      body: JSON.stringify({
+      body: {
         action: 'create_campaign',
         org_id: input.orgId ?? 'frontal-slayer',
         brand_id: input.brandId,
         name: input.name,
         production_mode: input.productionMode,
         objective: input.objective,
-      }),
+      },
     }
   );
 }
@@ -106,11 +150,11 @@ export async function exportDirectorPackage(orgId: string, campaignId: string) {
     '/api/admin/studio-virtual-production',
     {
       method: 'POST',
-      body: JSON.stringify({
+      body: {
         action: 'export_director_package',
         org_id: orgId,
         campaign_id: campaignId,
-      }),
+      },
     }
   );
 }
@@ -167,14 +211,14 @@ export async function uploadReferencePackSlot(input: {
     asset: { id: string };
   }>('/api/admin/studio-virtual-production', {
     method: 'POST',
-    body: JSON.stringify({
+    body: {
       action: 'reference_pack_upload_and_assign',
       org_id: input.orgId ?? 'frontal-slayer',
       pack_id: input.packId,
       slot: input.slot,
       image_data_url: input.imageDataUrl,
       auto_approve: input.autoApprove ?? false,
-    }),
+    },
   });
 }
 
@@ -187,7 +231,7 @@ export async function approveReferencePackSlotClient(input: {
 }) {
   return vpFetch<{ ok: boolean }>('/api/admin/studio-virtual-production', {
     method: 'POST',
-    body: JSON.stringify({
+    body: {
       action: 'reference_pack_approve_slot',
       org_id: input.orgId ?? 'frontal-slayer',
       pack_id: input.packId,
@@ -198,7 +242,7 @@ export async function approveReferencePackSlotClient(input: {
         { category: 'identity', status: 'pass', notes: 'MANUAL IDENTITY QC — operator approved' },
         { category: 'overall', status: 'pass' },
       ],
-    }),
+    },
   });
 }
 
@@ -211,7 +255,7 @@ export async function rejectReferencePackSlotClient(input: {
 }) {
   return vpFetch<{ ok: boolean }>('/api/admin/studio-virtual-production', {
     method: 'POST',
-    body: JSON.stringify({
+    body: {
       action: 'reference_pack_reject_slot',
       org_id: input.orgId ?? 'frontal-slayer',
       pack_id: input.packId,
@@ -219,7 +263,7 @@ export async function rejectReferencePackSlotClient(input: {
       candidate_asset_id: input.candidateAssetId,
       reason: input.reason ?? 'Identity QC — rejected by operator',
       qc: [{ category: 'identity', status: 'fail', notes: 'MANUAL IDENTITY QC' }],
-    }),
+    },
   });
 }
 
@@ -231,7 +275,7 @@ export async function setReferencePackAnchorClient(input: {
 }) {
   return vpFetch<{ ok: boolean }>('/api/admin/studio-virtual-production', {
     method: 'POST',
-    body: JSON.stringify({
+    body: {
       action: 'reference_pack_set_anchor',
       org_id: input.orgId ?? 'frontal-slayer',
       pack_id: input.packId,
@@ -239,18 +283,17 @@ export async function setReferencePackAnchorClient(input: {
       media_url: input.mediaUrl,
       source: 'operator_designated',
       provider_id: 'upload',
-    }),
+    },
   });
 }
 
 export async function lockReferencePackV1Client(input: { orgId?: string; packId: string }) {
   return vpFetch<{ ok: boolean }>('/api/admin/studio-virtual-production', {
     method: 'POST',
-    body: JSON.stringify({
+    body: {
       action: 'reference_pack_lock_v1',
       org_id: input.orgId ?? 'frontal-slayer',
       pack_id: input.packId,
-    }),
+    },
   });
 }
-

@@ -5,6 +5,7 @@
 import { defineConfig, loadEnv } from 'vite'
 import react from '@vitejs/plugin-react'
 import { site00AsstsLocalApiPlugin } from './scripts/vite-site00-assts-local-api.mjs'
+import { studioVpLocalApiPlugin } from './scripts/vite-studio-vp-local-api.mjs'
 
 /** Default deployed API origin when env is missing — matches `npm run dev:proxy` so /api/session-* works locally. */
 const DEFAULT_DEV_API_TARGET = 'https://fsbw.vercel.app'
@@ -139,7 +140,9 @@ export default defineConfig(({ mode, command }) => {
   },
   plugins: [
     injectAppBuildIdPlugin(),
-    ...(command === 'serve' ? [logDevApiProxyPlugin(apiTarget), site00AsstsLocalApiPlugin()] : []),
+    ...(command === 'serve'
+      ? [logDevApiProxyPlugin(apiTarget), site00AsstsLocalApiPlugin(), studioVpLocalApiPlugin()]
+      : []),
     ...(cloudMobilePreview ? [logCloudMobilePreviewPlugin(), stripViteClientForCloudPreviewPlugin(), cloudPreviewNoCachePlugin()] : []),
     apiDevNoProxyGuard(apiTarget),
     react(cloudMobilePreview ? { fastRefresh: false } : undefined),

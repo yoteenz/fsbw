@@ -78,6 +78,9 @@ export function useReferencePackBoard(orgId = 'frontal-slayer', enabled = true) 
           autoApprove,
         });
         await refresh();
+      } catch (e) {
+        setError(e instanceof Error ? e.message : 'Upload failed');
+        throw e;
       } finally {
         setBusySlot(null);
       }
