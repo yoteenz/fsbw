@@ -54551,3 +54551,17 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Ready gate:** Fixture-based dual-context billing separation proven in unit tests + `simulate_dual_context` API; live authenticated E2E pilot left to founder via debug route before first real partner email invite.
 
+---
+
+## 2026-08-20 — NDXbook legacy intelligence recovery + SITE 00 handoff (forensic sprint)
+
+- **Context:** Founder requested forensic recovery of NDXbook intelligence already in fsbw/Studio World before SITE 00 EVOLVE marketing assessment. NDXbook registered in EVOLVE as slug `ndxbook`, UUID `7681ab75-bddc-43e5-b594-79fcf8168205`. No SITE 00 modification, no deploy, no DB writes, no publishing.
+
+- **Discovery:** 368 files reference NDXbook across repo. Primary canon: `src/studio-os-core/ndxbook/constants.ts` (brand, taxonomy, 5 volumes, programming, voice), Page 001 pipeline (`pagePipeline.ts`, `docs/NDXBOOK_PAGE_001_PIPELINE.md`), Founder Pilot Mode (zero demo history). Demo/obsolete: Mission Control M37 pages 019–042, distribution demo packs. Production DB read-only: Instagram connected (pageName Ndxbook) in `studio_social_accounts`; no ndxbook row in `studio_world_organizations`.
+
+- **Deliverables:** `docs/studio-world/ndxbook/NDXBOOK_SITE00_HANDOFF.md` + `.json` (portable, secrets excluded); `docs/studio-world/LEGACY_BRAND_INTELLIGENCE_RECOVERY.md` methodology; `src/studio-os-core/ndxbook-recovery/` builder + 12 tests (classification, provenance, secret exclusion, gap analysis).
+
+- **Founder question reduction:** 20 EVOLVE domains assessed → 10 RECOVERED_CANONICAL, 7 NEEDS_CONFIRMATION, 8 minimum founder questions (audience, objectives, monetization, visual approval, Instagram account, name styling, demo history, Page 001 approval).
+
+- **Import contract:** `NdxbookLegacyIntelligencePackage` stages defined; SITE 00 importer NOT implemented in fsbw. READY FOR SITE 00 import sprint after founder review.
+

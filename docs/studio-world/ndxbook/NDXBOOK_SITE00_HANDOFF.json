@@ -1,10 +1,10 @@
 {
   "meta": {
     "packageId": "ndxbook-legacy-intelligence-v1",
-    "generatedAt": "2026-08-20T20:47:51.511Z",
+    "generatedAt": "2026-08-20T20:47:59.393Z",
     "sourceRepository": "yoteenz/fsbw",
     "sourceBranch": "master",
-    "sourceCommit": "66a578b67b034cdca96b6185b7d9ef7499042379",
+    "sourceCommit": "565bda6d538354c687be2f16647c003a9a9bdc92",
     "targetEvolveSlug": "ndxbook",
     "targetEvolveOrganizationUuid": "7681ab75-bddc-43e5-b594-79fcf8168205",
     "boundary": "READ_ONLY_RECOVERY — no runtime coupling to fsbw"
