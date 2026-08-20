@@ -17,6 +17,7 @@ import {
   rejectReferencePackSlot,
   setPrimaryIdentityAnchor,
 } from '../_lib/virtualProduction/identity-service.js';
+import { uploadReferencePackImageDataUrl } from '../_lib/virtualProduction/reference-pack-upload.js';
 import { PRODUCTION_PROVIDERS } from '../../src/studio-os-core/virtual-production/providers.js';
 import type { ReferencePackSlot } from '../../src/studio-os-core/virtual-production/canon/frontal-slayer-canon.js';
 
@@ -282,6 +283,57 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           operator: auth.ok ? auth.user.email ?? 'operator' : 'operator',
         });
         return res.status(201).json({ ok: true, pack: v2 });
+      }
+
+      if (action === 'reference_pack_upload_and_assign') {
+        const packId = str(body.pack_id);
+        const slot = str(body.slot) as ReferencePackSlot;
+        const imageDataUrl = str(body.image_data_url);
+        const autoApprove = body.auto_approve === true;
+        if (!packId || !slot || !imageDataUrl) {
+          return res.status(400).json({ error: 'pack_id, slot, image_data_url required' });
+        }
+        const upload = await uploadReferencePackImageDataUrl({
+          orgId,
+          packId,
+          slot,
+          imageDataUrl,
+        });
+        if (!upload.ok || !upload.publicUrl) {
+          return res.status(400).json({ ok: false, error: upload.error ?? 'Upload failed' });
+        }
+        const assignResult = await assignReferencePackCandidate(supabase, {
+          orgId,
+          packId,
+          slot,
+          mediaUrl: upload.publicUrl,
+          providerId: 'upload',
+          referenceLineage: [{ type: 'storage_upload', storagePath: upload.storagePath }],
+          operator: auth.ok ? auth.user.email : undefined,
+          billingOwnerOrgId: orgId,
+        });
+        let approveResult = null;
+        if (autoApprove && assignResult.asset?.id) {
+          approveResult = await approveReferencePackSlot(supabase, {
+            orgId,
+            packId,
+            slot,
+            assetId: assignResult.asset.id as string,
+            mediaUrl: upload.publicUrl,
+            qc: [
+              { category: 'identity', status: 'pass', notes: 'MANUAL IDENTITY QC — operator upload' },
+              { category: 'overall', status: 'pass' },
+            ],
+            operator: auth.ok ? auth.user.email : undefined,
+          });
+        }
+        return res.status(201).json({
+          ok: true,
+          publicUrl: upload.publicUrl,
+          storagePath: upload.storagePath,
+          ...assignResult,
+          approve: approveResult,
+        });
       }
 
       if (action === 'import_asset') {

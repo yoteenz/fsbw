@@ -77,9 +77,20 @@ Preview/configuration work remains allowed when blocked.
 ## UI
 
 **Admin:** `/admin/studio/virtual-production` → **CANON** tab → Reference Pack identity board  
-**Debug:** `/__virtual-production/board` (same workspace component)
+**Debug:** `/__virtual-production/campaign` (same workspace component)
 
-Features: primary anchor, 13-slot grid, compare-to-anchor, mobile swipe, lock control (disabled until ready).
+Features: primary anchor, 13-slot grid, **direct UPLOAD per slot**, APPROVE / REJECT / SET ANCHOR, compare-to-anchor, mobile swipe, lock control.
+
+### Operator workflow (no Supabase links required)
+
+1. Sign in as admin → open Virtual Production → **Initialize FS Canon + Campaign 001** (header button, once).
+2. Open **CANON** tab.
+3. **Primary anchor shortcut:** tap **UPLOAD FRONT + APPROVE** in the anchor panel — uploads, approves FRONT, and sets anchor in one step.
+4. For each remaining slot: **UPLOAD** → review preview → **APPROVE** (or **REJECT**).
+5. Use **COMPARE TO ANCHOR →** on profile/3/4 slots before approving.
+6. When all 13 slots are approved and anchor is set → **LOCK REFERENCE PACK V1**.
+
+Images upload to Supabase Storage automatically (`live-preview` / `studio-vp/reference-packs/...`). PNG, JPEG, or WebP, max 8MB.
 
 ## Database
 

@@ -1,6 +1,10 @@
 import type { ShotRow } from '../../../../services/studio/virtualProduction/api';
 import type { VirtualProductionMode } from '../../../../studio-os-core/virtual-production';
-import { ReferencePackIdentityBoard } from './ReferencePackIdentityBoard';
+import {
+  ReferencePackIdentityBoard,
+  type ReferencePackBoardData,
+  type ReferencePackIdentityActions,
+} from './ReferencePackIdentityBoard';
 import './virtual-production.css';
 
 const OPERATOR_TABS = [
@@ -104,6 +108,10 @@ export type VirtualProductionWorkspaceProps = {
   onSeedCanon?: () => void;
   seedLabel?: string;
   identityGateStatus?: 'blocked' | 'pass';
+  referencePackBoard?: ReferencePackBoardData | null;
+  referencePackLoading?: boolean;
+  referencePackError?: string | null;
+  referencePackActions?: ReferencePackIdentityActions;
 };
 
 export function VirtualProductionWorkspace({
@@ -116,6 +124,10 @@ export function VirtualProductionWorkspace({
   onSeedCanon,
   seedLabel = 'Initialize FS Canon + Campaign 001',
   identityGateStatus = 'blocked',
+  referencePackBoard,
+  referencePackLoading,
+  referencePackError,
+  referencePackActions,
 }: VirtualProductionWorkspaceProps) {
   const productionMode = (campaign?.production_mode as VirtualProductionMode) ?? 'hybrid';
   const brandName =
@@ -196,7 +208,13 @@ export function VirtualProductionWorkspace({
       {tab === 'canon' && (
         <section className="vp-panel">
           <h2>Nia — Reference Pack V1 · Identity Lock</h2>
-          <ReferencePackIdentityBoard loading={loading} identityGateStatus={identityGateStatus} />
+          <ReferencePackIdentityBoard
+            board={referencePackBoard}
+            loading={referencePackLoading}
+            error={referencePackError}
+            identityGateStatus={identityGateStatus}
+            actions={referencePackActions}
+          />
           <details className="vp-json-details">
             <summary>Canon snapshot (JSON)</summary>
             <pre className="vp-json">{JSON.stringify(campaign?.canon_snapshot ?? {}, null, 2)}</pre>

@@ -54471,3 +54471,23 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Remaining gateway bypass routes:** founder-render, product-photography, live try-on, commerce FAL paths, VP jobs (documented in STUDIO_WORLD_PRODUCTION_GOVERNANCE.md).
 
+---
+
+## 2026-08-20 — Nia Identity Lock Campaign 001 Stage 1 (Reference Pack V1 architecture)
+
+- **Context:** Full sprint spec (28 sections) to create/populate/review/LOCK canonical Nia identity Reference Pack V1 for Studio World Virtual Production — separate from Campaign 001 video production. Frontal Slayer repo only; SITE 00 out of scope; do NOT deploy; STOP after lock (no Stage 2 auto-proceed).
+- **Topics covered:** Repo audit for existing Nia imagery; 13-slot reference pack lifecycle (MISSING/CANDIDATE/QC_REQUIRED/APPROVED/REJECTED/LOCKED); primary identity anchor; identity invariants from film-trilogy text canon; OpenArt character audit (EXTERNAL); Campaign 001 identity gate; identity review board UI; API/service layer; Supabase migration; tests/docs.
+- **Decisions / outcomes:**
+  - **Repo audit honest result:** No approved Nia portrait/reference images in repo (`FS_CHARACTER_NIA.referenceUrls` empty). Text canon locked in brand-bible + `frontal-slayer-canon.ts`. **Did NOT fabricate 13 AI women or run paid reference generation.**
+  - **REFERENCE PACK V1: NOT LOCKED** — architecture shipped; operator must upload/approve real assets before lock.
+  - **OpenArt:** persistent character **NOT programmatic** via MCP — `OPENART CHARACTER SETUP / EXTERNAL`; image2image + uploads supported.
+  - **Campaign 001 identity gate:** `blocked` / `IDENTITY FOUNDATION REQUIRED` until V1 locked; precision motion blocked; preview work allowed. **No Campaign 001 paid motion jobs executed.**
+  - Migration `20260820200000_studio_vp_nia_identity_lock.sql` applied to production `hyycomvcaqxxvyrfupes` — `studio_vp_reference_pack_candidates`, pack lock columns, campaign `identity_gate_*`.
+  - Core: `src/studio-os-core/virtual-production/identity/` (types, reference-pack-v1, invariants, gate, lifecycle, openart audit, repo audit).
+  - Server: `api/_lib/virtualProduction/identity-service.ts`; API actions on `studio-virtual-production.ts`.
+  - UI: `ReferencePackIdentityBoard.tsx` in CANON tab — anchor + 13 slots, compare-to-anchor, mobile swipe, lock control (disabled until ready).
+  - Docs: `docs/studio-os/NIA_IDENTITY_LOCK_STAGE1.md`.
+  - Tests: 35/35 VP+identity PASS; build PASS.
+- **Changes:** See sprint final report files list. Canon seed sets identity gate blocked + pack metadata on seed.
+- **Conventions:** Stage 2 (live Campaign 001 video) requires explicit operator authorization after V1 lock. MANUAL IDENTITY QC — no fabricated confidence percentages.
+

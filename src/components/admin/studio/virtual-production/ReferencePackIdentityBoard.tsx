@@ -1,8 +1,8 @@
 /**
- * Reference Pack V1 — Identity review board (anchor + 13 slots).
+ * Reference Pack V1 — Identity review board with direct upload + approve workflow.
  */
 
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useRef, useState, type ChangeEvent } from 'react';
 import {
   REFERENCE_PACK_V1_SLOT_LABELS,
   PROFILE_STRESS_TEST_SLOTS,
@@ -11,7 +11,6 @@ import type { ReferencePackSlotLifecycleState } from '../../../../studio-os-core
 import type { ReferencePackSlot } from '../../../../studio-os-core/virtual-production/canon/frontal-slayer-canon';
 import { buildNiaReferencePackV1SlotStates } from '../../../../studio-os-core/virtual-production/canon/frontal-slayer-canon';
 import { OPENART_CHARACTER_AUDIT } from '../../../../studio-os-core/virtual-production/identity/openart-character-audit';
-import { NIA_IDENTITY_REPO_AUDIT } from '../../../../studio-os-core/virtual-production/identity/identity-audit';
 import { IDENTITY_FOUNDATION_BLOCKER } from '../../../../studio-os-core/virtual-production/identity/identity-gate';
 
 export type ReferencePackSlotView = {
@@ -19,7 +18,9 @@ export type ReferencePackSlotView = {
   label: string;
   record: {
     state: ReferencePackSlotLifecycleState;
+    approvedAssetId?: string;
     approvedMediaUrl?: string;
+    candidateAssetId?: string;
     candidateMediaUrl?: string;
     notes?: string;
   };
@@ -37,6 +38,18 @@ export type ReferencePackBoardData = {
   slots: ReferencePackSlotView[];
   identityGateStatus?: 'blocked' | 'pass';
   rejectedCount?: number;
+};
+
+export type ReferencePackIdentityActions = {
+  packReady?: boolean;
+  busySlot?: ReferencePackSlot | null;
+  onUpload: (slot: ReferencePackSlot, file: File, autoApprove?: boolean) => Promise<void>;
+  onApprove: (slot: ReferencePackSlot, assetId: string, mediaUrl?: string) => Promise<void>;
+  onReject: (slot: ReferencePackSlot, candidateAssetId: string) => Promise<void>;
+  onSetAnchor: (assetId: string, mediaUrl?: string) => Promise<void>;
+  onLock: () => Promise<void>;
+  onUploadFrontAsAnchor?: (file: File) => Promise<void>;
+  readyToLock?: boolean;
 };
 
 function slotStateClass(state: ReferencePackSlotLifecycleState): string {
@@ -69,43 +82,154 @@ function buildDemoBoard(): ReferencePackBoardData {
   };
 }
 
+function ReferencePackSlotCard({
+  slotView,
+  locked,
+  busy,
+  hasAnchor,
+  packReady,
+  onUpload,
+  onApprove,
+  onReject,
+  onSetAnchor,
+  onCompare,
+}: {
+  slotView: ReferencePackSlotView;
+  locked: boolean;
+  busy: boolean;
+  hasAnchor: boolean;
+  packReady: boolean;
+  onUpload: (file: File, autoApprove?: boolean) => void;
+  onApprove: () => void;
+  onReject: () => void;
+  onSetAnchor: () => void;
+  onCompare?: () => void;
+}) {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const { slot, label, record } = slotView;
+  const preview = record.approvedMediaUrl ?? record.candidateMediaUrl;
+  const canApprove = !locked && record.candidateAssetId && record.state !== 'approved' && record.state !== 'locked';
+  const canReject = !locked && record.candidateAssetId && record.state !== 'approved';
+  const canSetAnchor =
+    !locked &&
+    record.approvedAssetId &&
+    (record.state === 'approved' || record.state === 'locked');
+
+  const handleFile = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) onUpload(file, false);
+    e.target.value = '';
+  };
+
+  return (
+    <article className={`vp-ref-slot ${slotStateClass(record.state)}`} data-slot={slot}>
+      <header>
+        <span className="vp-ref-label">{label}</span>
+        <span className="vp-ref-state">{record.state.replace(/_/g, ' ').toUpperCase()}</span>
+      </header>
+      <div className="vp-ref-thumb">
+        {preview ? <img src={preview} alt={label} /> : <div className="vp-ref-placeholder">MISSING</div>}
+      </div>
+      {PROFILE_STRESS_TEST_SLOTS.includes(slot) && (
+        <p className="vp-ref-note">Profile stress test</p>
+      )}
+      {!packReady && (
+        <p className="vp-ref-note vp-ref-hint">Tap Initialize FS Canon first (header)</p>
+      )}
+      {packReady && !locked && (
+        <div className="vp-ref-actions">
+          <input
+            ref={inputRef}
+            type="file"
+            accept="image/png,image/jpeg,image/webp"
+            className="vp-ref-file-input"
+            onChange={handleFile}
+            disabled={busy}
+          />
+          <button
+            type="button"
+            className="vp-action-btn"
+            disabled={busy}
+            onClick={() => inputRef.current?.click()}
+          >
+            {busy ? 'UPLOADING…' : 'UPLOAD'}
+          </button>
+          {canApprove && (
+            <button type="button" className="vp-action-btn vp-action-approve" disabled={busy} onClick={onApprove}>
+              APPROVE
+            </button>
+          )}
+          {canReject && (
+            <button type="button" className="vp-action-btn vp-action-reject" disabled={busy} onClick={onReject}>
+              REJECT
+            </button>
+          )}
+          {canSetAnchor && (
+            <button type="button" className="vp-action-btn" disabled={busy} onClick={onSetAnchor}>
+              SET ANCHOR
+            </button>
+          )}
+        </div>
+      )}
+      {hasAnchor && slot !== 'front' && preview && (
+        <button type="button" className="vp-action-btn" onClick={onCompare}>
+          COMPARE TO ANCHOR →
+        </button>
+      )}
+    </article>
+  );
+}
+
 export type ReferencePackIdentityBoardProps = {
   board?: ReferencePackBoardData | null;
   loading?: boolean;
+  error?: string | null;
   identityGateStatus?: 'blocked' | 'pass';
-  onCompareSlot?: (slot: ReferencePackSlot) => void;
+  actions?: ReferencePackIdentityActions;
 };
 
 export function ReferencePackIdentityBoard({
   board: boardProp,
   loading,
+  error,
   identityGateStatus = 'blocked',
-  onCompareSlot,
+  actions,
 }: ReferencePackIdentityBoardProps) {
+  const demoMode = !actions?.packReady;
   const board = useMemo(() => {
-    const base = boardProp ?? buildDemoBoard();
-    if (!base.slots?.length) {
-      return { ...buildDemoBoard(), ...base, identityGateStatus };
+    if (boardProp?.slots?.length) {
+      return {
+        ...boardProp,
+        identityGateStatus: boardProp.identityGateStatus ?? identityGateStatus,
+      };
     }
-    return { ...base, identityGateStatus: base.identityGateStatus ?? identityGateStatus };
+    return { ...buildDemoBoard(), identityGateStatus };
   }, [boardProp, identityGateStatus]);
+
   const [compareSlot, setCompareSlot] = useState<ReferencePackSlot | null>(null);
   const [mobileIndex, setMobileIndex] = useState(0);
+  const anchorInputRef = useRef<HTMLInputElement>(null);
 
   const compareTarget = useMemo(() => {
     if (!compareSlot) return null;
     return board.slots.find((s) => s.slot === compareSlot) ?? null;
   }, [board.slots, compareSlot]);
 
-  const handleCompare = useCallback(
-    (slot: ReferencePackSlot) => {
-      setCompareSlot(slot);
-      onCompareSlot?.(slot);
+  const handleAnchorUpload = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (file && actions?.onUploadFrontAsAnchor) {
+        void actions.onUploadFrontAsAnchor(file);
+      } else if (file && actions) {
+        void actions.onUpload('front', file, true);
+      }
+      e.target.value = '';
     },
-    [onCompareSlot]
+    [actions]
   );
 
   const mobileSlot = board.slots[mobileIndex];
+  const locked = board.locked ?? false;
 
   return (
     <section className="vp-identity-board" aria-label="Nia Reference Pack V1 identity board">
@@ -118,19 +242,20 @@ export function ReferencePackIdentityBoard({
         </span>
       </div>
 
+      {demoMode && (
+        <p className="vp-note vp-operator-hint">
+          <strong>Operator:</strong> Click <em>Initialize FS Canon + Campaign 001</em> in the header, then upload
+          images directly to each slot — no Supabase links required.
+        </p>
+      )}
+
+      {error && <p className="vp-error">{error}</p>}
+
       <div className="vp-identity-meta">
         <p>
           <strong>OpenArt character:</strong> {OPENART_CHARACTER_AUDIT.status.toUpperCase()} —{' '}
           {OPENART_CHARACTER_AUDIT.operatorPackage}
         </p>
-        <p>
-          <strong>Repo audit:</strong> {NIA_IDENTITY_REPO_AUDIT.summary}
-        </p>
-        {board.rejectedCount != null && board.rejectedCount > 0 && (
-          <p>
-            <strong>Rejected candidates:</strong> {board.rejectedCount} (provenance preserved)
-          </p>
-        )}
       </div>
 
       <div className="vp-anchor-row">
@@ -141,7 +266,25 @@ export function ReferencePackIdentityBoard({
           ) : (
             <div className="vp-ref-placeholder">
               <span>NOT DESIGNATED</span>
-              <small>Upload / approve FRONT slot first</small>
+              <small>Upload + approve 01 FRONT, then SET ANCHOR</small>
+              {actions?.packReady && !locked && (
+                <>
+                  <input
+                    ref={anchorInputRef}
+                    type="file"
+                    accept="image/png,image/jpeg,image/webp"
+                    className="vp-ref-file-input"
+                    onChange={handleAnchorUpload}
+                  />
+                  <button
+                    type="button"
+                    className="vp-seed-btn vp-anchor-upload-btn"
+                    onClick={() => anchorInputRef.current?.click()}
+                  >
+                    UPLOAD FRONT + APPROVE
+                  </button>
+                </>
+              )}
             </div>
           )}
           {board.primaryAnchor && (
@@ -150,68 +293,78 @@ export function ReferencePackIdentityBoard({
               <dd>{board.primaryAnchor.assetId.slice(0, 8)}…</dd>
               <dt>Provider</dt>
               <dd>{board.primaryAnchor.providerId ?? '—'}</dd>
-              <dt>Source</dt>
-              <dd>{board.primaryAnchor.source ?? '—'}</dd>
             </dl>
           )}
         </div>
       </div>
 
-      {/* Desktop grid */}
       <div className="vp-ref-grid vp-ref-grid-desktop">
         {board.slots.map((s) => (
-          <article
+          <ReferencePackSlotCard
             key={s.slot}
-            className={`vp-ref-slot ${slotStateClass(s.record.state)}`}
-            data-slot={s.slot}
-          >
-            <header>
-              <span className="vp-ref-label">{s.label}</span>
-              <span className="vp-ref-state">{s.record.state.replace(/_/g, ' ').toUpperCase()}</span>
-            </header>
-            <div className="vp-ref-thumb">
-              {s.record.approvedMediaUrl || s.record.candidateMediaUrl ? (
-                <img
-                  src={s.record.approvedMediaUrl ?? s.record.candidateMediaUrl}
-                  alt={s.label}
-                />
-              ) : (
-                <div className="vp-ref-placeholder">MISSING</div>
-              )}
-            </div>
-            {PROFILE_STRESS_TEST_SLOTS.includes(s.slot) && (
-              <p className="vp-ref-note">Profile stress test</p>
-            )}
-            {board.primaryAnchor && s.slot !== 'front' && (
-              <button type="button" className="vp-action-btn" onClick={() => handleCompare(s.slot)}>
-                COMPARE TO ANCHOR →
-              </button>
-            )}
-          </article>
+            slotView={s}
+            locked={locked}
+            busy={actions?.busySlot === s.slot}
+            hasAnchor={Boolean(board.primaryAnchor?.mediaUrl)}
+            packReady={Boolean(actions?.packReady)}
+            onUpload={(file, autoApprove) => {
+              if (actions) void actions.onUpload(s.slot, file, autoApprove);
+            }}
+            onApprove={() => {
+              if (actions && s.record.candidateAssetId) {
+                void actions.onApprove(s.slot, s.record.candidateAssetId, s.record.candidateMediaUrl);
+              }
+            }}
+            onReject={() => {
+              if (actions && s.record.candidateAssetId) {
+                void actions.onReject(s.slot, s.record.candidateAssetId);
+              }
+            }}
+            onSetAnchor={() => {
+              if (actions && s.record.approvedAssetId) {
+                void actions.onSetAnchor(s.record.approvedAssetId, s.record.approvedMediaUrl);
+              }
+            }}
+            onCompare={() => setCompareSlot(s.slot)}
+          />
         ))}
       </div>
 
-      {/* Mobile swipe */}
       <div className="vp-ref-mobile">
         {mobileSlot && (
-          <article className={`vp-ref-slot ${slotStateClass(mobileSlot.record.state)}`}>
-            <header>
-              <span className="vp-ref-label">{mobileSlot.label}</span>
-              <span className="vp-ref-state">
-                {mobileSlot.record.state.replace(/_/g, ' ').toUpperCase()}
-              </span>
-            </header>
-            <div className="vp-ref-thumb vp-ref-thumb-large">
-              {mobileSlot.record.approvedMediaUrl || mobileSlot.record.candidateMediaUrl ? (
-                <img
-                  src={mobileSlot.record.approvedMediaUrl ?? mobileSlot.record.candidateMediaUrl}
-                  alt={mobileSlot.label}
-                />
-              ) : (
-                <div className="vp-ref-placeholder">MISSING</div>
-              )}
-            </div>
-          </article>
+          <ReferencePackSlotCard
+            slotView={mobileSlot}
+            locked={locked}
+            busy={actions?.busySlot === mobileSlot.slot}
+            hasAnchor={Boolean(board.primaryAnchor?.mediaUrl)}
+            packReady={Boolean(actions?.packReady)}
+            onUpload={(file, autoApprove) => {
+              if (actions) void actions.onUpload(mobileSlot.slot, file, autoApprove);
+            }}
+            onApprove={() => {
+              if (actions && mobileSlot.record.candidateAssetId) {
+                void actions.onApprove(
+                  mobileSlot.slot,
+                  mobileSlot.record.candidateAssetId,
+                  mobileSlot.record.candidateMediaUrl
+                );
+              }
+            }}
+            onReject={() => {
+              if (actions && mobileSlot.record.candidateAssetId) {
+                void actions.onReject(mobileSlot.slot, mobileSlot.record.candidateAssetId);
+              }
+            }}
+            onSetAnchor={() => {
+              if (actions && mobileSlot.record.approvedAssetId) {
+                void actions.onSetAnchor(
+                  mobileSlot.record.approvedAssetId,
+                  mobileSlot.record.approvedMediaUrl
+                );
+              }
+            }}
+            onCompare={() => setCompareSlot(mobileSlot.slot)}
+          />
         )}
         <div className="vp-ref-mobile-nav">
           <button
@@ -244,7 +397,7 @@ export function ReferencePackIdentityBoard({
             </figure>
             <figure>
               <figcaption>{compareTarget.label}</figcaption>
-              {compareTarget.record.approvedMediaUrl || compareTarget.record.candidateMediaUrl ? (
+              {(compareTarget.record.approvedMediaUrl ?? compareTarget.record.candidateMediaUrl) ? (
                 <img
                   src={
                     compareTarget.record.approvedMediaUrl ?? compareTarget.record.candidateMediaUrl
@@ -263,14 +416,21 @@ export function ReferencePackIdentityBoard({
       )}
 
       <div className="vp-identity-lock-row">
-        <button type="button" className="vp-seed-btn" disabled={!board.packId || board.locked || loading}>
+        <button
+          type="button"
+          className="vp-seed-btn"
+          disabled={!actions?.readyToLock || locked || loading}
+          onClick={() => actions && void actions.onLock()}
+        >
           LOCK REFERENCE PACK V1
         </button>
-        {board.locked && (
+        {locked && (
           <p className="vp-note">V1 immutable — create Reference Pack V2 for future changes</p>
         )}
-        {!board.locked && (
-          <p className="vp-note">Requires primary anchor + all 13 slots APPROVED · MANUAL IDENTITY QC</p>
+        {!locked && (
+          <p className="vp-note">
+            Upload → Approve all 13 slots → Set anchor → Lock · MANUAL IDENTITY QC
+          </p>
         )}
       </div>
 

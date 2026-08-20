@@ -118,3 +118,139 @@ export async function exportDirectorPackage(orgId: string, campaignId: string) {
 export function getLocalProviders() {
   return PRODUCTION_PROVIDERS;
 }
+
+// ─── Reference Pack V1 operator API ─────────────────────────────────────────
+
+export type ReferencePackBoardResponse = {
+  ok: boolean;
+  pack: { id: string; locked?: boolean; locked_at?: string | null } | null;
+  slots: Array<{
+    slot: string;
+    label: string;
+    record: {
+      state: string;
+      approvedAssetId?: string;
+      approvedMediaUrl?: string;
+      candidateAssetId?: string;
+      candidateMediaUrl?: string;
+      notes?: string;
+    };
+  }>;
+  primaryAnchor: {
+    assetId: string;
+    mediaUrl?: string;
+    source?: string;
+    providerId?: string;
+  } | null;
+  rejectedCount?: number;
+  campaignIdentityGate?: {
+    evaluated?: { status: 'blocked' | 'pass' };
+  };
+};
+
+export async function getReferencePackBoard(orgId = 'frontal-slayer') {
+  return vpFetch<ReferencePackBoardResponse>(
+    `/api/admin/studio-virtual-production?action=reference_pack_board&org_id=${encodeURIComponent(orgId)}`
+  );
+}
+
+export async function uploadReferencePackSlot(input: {
+  orgId?: string;
+  packId: string;
+  slot: string;
+  imageDataUrl: string;
+  autoApprove?: boolean;
+}) {
+  return vpFetch<{
+    ok: boolean;
+    publicUrl: string;
+    asset: { id: string };
+  }>('/api/admin/studio-virtual-production', {
+    method: 'POST',
+    body: JSON.stringify({
+      action: 'reference_pack_upload_and_assign',
+      org_id: input.orgId ?? 'frontal-slayer',
+      pack_id: input.packId,
+      slot: input.slot,
+      image_data_url: input.imageDataUrl,
+      auto_approve: input.autoApprove ?? false,
+    }),
+  });
+}
+
+export async function approveReferencePackSlotClient(input: {
+  orgId?: string;
+  packId: string;
+  slot: string;
+  assetId: string;
+  mediaUrl?: string;
+}) {
+  return vpFetch<{ ok: boolean }>('/api/admin/studio-virtual-production', {
+    method: 'POST',
+    body: JSON.stringify({
+      action: 'reference_pack_approve_slot',
+      org_id: input.orgId ?? 'frontal-slayer',
+      pack_id: input.packId,
+      slot: input.slot,
+      asset_id: input.assetId,
+      media_url: input.mediaUrl,
+      qc: [
+        { category: 'identity', status: 'pass', notes: 'MANUAL IDENTITY QC — operator approved' },
+        { category: 'overall', status: 'pass' },
+      ],
+    }),
+  });
+}
+
+export async function rejectReferencePackSlotClient(input: {
+  orgId?: string;
+  packId: string;
+  slot: string;
+  candidateAssetId: string;
+  reason?: string;
+}) {
+  return vpFetch<{ ok: boolean }>('/api/admin/studio-virtual-production', {
+    method: 'POST',
+    body: JSON.stringify({
+      action: 'reference_pack_reject_slot',
+      org_id: input.orgId ?? 'frontal-slayer',
+      pack_id: input.packId,
+      slot: input.slot,
+      candidate_asset_id: input.candidateAssetId,
+      reason: input.reason ?? 'Identity QC — rejected by operator',
+      qc: [{ category: 'identity', status: 'fail', notes: 'MANUAL IDENTITY QC' }],
+    }),
+  });
+}
+
+export async function setReferencePackAnchorClient(input: {
+  orgId?: string;
+  packId: string;
+  assetId: string;
+  mediaUrl?: string;
+}) {
+  return vpFetch<{ ok: boolean }>('/api/admin/studio-virtual-production', {
+    method: 'POST',
+    body: JSON.stringify({
+      action: 'reference_pack_set_anchor',
+      org_id: input.orgId ?? 'frontal-slayer',
+      pack_id: input.packId,
+      asset_id: input.assetId,
+      media_url: input.mediaUrl,
+      source: 'operator_designated',
+      provider_id: 'upload',
+    }),
+  });
+}
+
+export async function lockReferencePackV1Client(input: { orgId?: string; packId: string }) {
+  return vpFetch<{ ok: boolean }>('/api/admin/studio-virtual-production', {
+    method: 'POST',
+    body: JSON.stringify({
+      action: 'reference_pack_lock_v1',
+      org_id: input.orgId ?? 'frontal-slayer',
+      pack_id: input.packId,
+    }),
+  });
+}
+

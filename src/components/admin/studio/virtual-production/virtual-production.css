@@ -412,6 +412,52 @@
   margin: 0.25rem 0 0;
 }
 
+.vp-ref-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  margin-top: 0.35rem;
+}
+
+.vp-ref-actions .vp-action-btn {
+  flex: 1 1 auto;
+  min-width: 4.5rem;
+}
+
+.vp-ref-file-input {
+  position: absolute;
+  width: 0;
+  height: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.vp-action-approve {
+  border-color: var(--vp-pass) !important;
+  color: var(--vp-pass) !important;
+}
+
+.vp-action-reject {
+  border-color: var(--vp-fail) !important;
+  color: var(--vp-fail) !important;
+}
+
+.vp-operator-hint {
+  padding: 0.5rem 0.65rem;
+  border: 1px solid var(--vp-accent);
+  background: rgba(201, 169, 98, 0.06);
+  margin-bottom: 0.75rem;
+}
+
+.vp-ref-hint {
+  color: var(--vp-warn);
+}
+
+.vp-anchor-upload-btn {
+  margin-top: 0.5rem;
+  font-size: 0.6rem;
+}
+
 .vp-ref-mobile {
   display: none;
 }
