@@ -54408,4 +54408,24 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Note:** First FULL PLATFORM live run determines readiness; infrastructure creation ≠ READY TO DEPLOY.
 
+---
+
+## 2026-08-20 — Studio World Virtual Production OS foundation sprint
+
+- **Context:** Large sprint to transform Studio World from asset-generation into a provider-agnostic Virtual Production OS — campaign continuity, canon, shots, QC, repair, assembly foundation, multi-provider orchestration (Director / Precision / Hybrid). Frontal Slayer as first reference tenant only — not architectural owner.
+
+- **Topics covered:** Full sprint spec (42 sections): brand production bible, character reference packs, environment/product/wardrobe/prop canon, campaign/scene/shot architecture, continuity state, invisible-cut metadata, QC categories, repair workflow, generation provenance, OpenArt Director external/manual package, assembly/deliverables foundation, production board UI, debug routes, tests, documentation, Supabase migration with RLS.
+
+- **Decisions / outcomes:**
+  - New isolated module `src/studio-os-core/virtual-production/` — types, `ProductionProvider` abstraction, workflows, repair, continuity, director package builder, observability, reference seed.
+  - 22 Supabase tables `studio_vp_*` applied to production (`hyycomvcaqxxvyrfupes`) via MCP `apply_migration` name `studio_virtual_production_os`.
+  - API `POST/GET /api/admin/studio-virtual-production` — seed_reference, create_campaign, board, create_repair, export_director_package, import_asset.
+  - Admin route `/admin/studio/virtual-production` + debug hub `/__virtual-production/*`.
+  - OpenArt Director: **no programmatic API** — external/manual markdown production package only. FAL reused via existing governed gateway path (not rewired in UI this sprint).
+  - FRONTAL SLAYER brand + CAMPAIGN 001 reference shell — setup_required placeholders, no invented canon.
+  - Debug routes use client demo fallback when API proxy unavailable (Campaign 001 placeholder shots with QC demo states).
+
+- **Changes:** Migration `20260820140000_studio_virtual_production_os.sql`; core module + 19 tests PASS; Production Board workspace; docs `docs/studio-os/STUDIO_WORLD_VIRTUAL_PRODUCTION_OS.md`. Sync commit `814281440` on master `[sync-only]`.
+
+- **Conventions:** All VP code stays in `virtual-production` module + `studio_vp_*` tables; tenant via `org_id`; provider secrets server-side only; do not couple to Frontal Slayer commerce paths; existing FAL/OpenArt infra preserved.
 
