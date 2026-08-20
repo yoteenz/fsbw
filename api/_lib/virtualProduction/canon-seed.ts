@@ -22,6 +22,12 @@ import {
 } from '../../../src/studio-os-core/virtual-production/pilot/campaign-001';
 import { exportDirectorPackage } from './service.js';
 import { logVirtualProductionEvent } from '../../../src/studio-os-core/virtual-production/observability';
+import { buildIdentityInvariantsDocument } from '../../../src/studio-os-core/virtual-production/identity/identity-invariants';
+import {
+  defaultNiaProviderMappings,
+  OPENART_CHARACTER_AUDIT,
+} from '../../../src/studio-os-core/virtual-production/identity/openart-character-audit';
+import { IDENTITY_FOUNDATION_BLOCKER } from '../../../src/studio-os-core/virtual-production/identity/identity-gate';
 
 function now(): string {
   return new Date().toISOString();
@@ -119,7 +125,13 @@ export async function seedFrontalSlayerCanonAndCampaign001(
         slot_states: slotStates,
         version: 1,
         status: 'draft',
-        metadata: { allSlotsMissing: true },
+        identity_invariants: buildIdentityInvariantsDocument(),
+        openart_character_status: OPENART_CHARACTER_AUDIT.status,
+        provider_mappings: defaultNiaProviderMappings(),
+        metadata: {
+          allSlotsMissing: true,
+          auditSummary: 'No approved Nia imagery in repo — SETUP REQUIRED',
+        },
         updated_at: now(),
       },
       { onConflict: 'org_id,character_id,pack_key,version' }
@@ -254,6 +266,9 @@ export async function seedFrontalSlayerCanonAndCampaign001(
         audio_plan: CAMPAIGN_001_META.audioPlan,
         director_external_status: 'ready_for_director',
         reference_pack_version: { nia: 'reference-pack-v1', version: 1 },
+        identity_gate_status: 'blocked',
+        identity_source_pack_id: referencePackId ?? null,
+        identity_blocker_reason: IDENTITY_FOUNDATION_BLOCKER,
         canon_snapshot: {
           character: 'nia',
           environment: 'set-001-flagship',

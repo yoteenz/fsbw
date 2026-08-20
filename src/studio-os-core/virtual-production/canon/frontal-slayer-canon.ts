@@ -90,12 +90,17 @@ export const REFERENCE_PACK_V1_SLOTS = [
 ] as const;
 
 export type ReferencePackSlot = (typeof REFERENCE_PACK_V1_SLOTS)[number];
+
+/** @deprecated use ReferencePackSlotLifecycleState from identity module */
 export type ReferencePackSlotState = 'approved' | 'missing' | 'replace' | 'archived';
 
-export function buildNiaReferencePackV1SlotStates(): Record<ReferencePackSlot, ReferencePackSlotState> {
-  const states = {} as Record<ReferencePackSlot, ReferencePackSlotState>;
+export type { ReferencePackSlotLifecycleState, ReferencePackSlotRecord } from '../identity/types';
+import type { ReferencePackSlotRecord } from '../identity/types';
+
+export function buildNiaReferencePackV1SlotStates(): Record<ReferencePackSlot, ReferencePackSlotRecord> {
+  const states = {} as Record<ReferencePackSlot, ReferencePackSlotRecord>;
   for (const slot of REFERENCE_PACK_V1_SLOTS) {
-    states[slot] = 'missing';
+    states[slot] = { state: 'missing' };
   }
   return states;
 }

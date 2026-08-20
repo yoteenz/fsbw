@@ -1,5 +1,6 @@
 import type { ShotRow } from '../../../../services/studio/virtualProduction/api';
 import type { VirtualProductionMode } from '../../../../studio-os-core/virtual-production';
+import { ReferencePackIdentityBoard } from './ReferencePackIdentityBoard';
 import './virtual-production.css';
 
 const OPERATOR_TABS = [
@@ -102,6 +103,7 @@ export type VirtualProductionWorkspaceProps = {
   error?: string | null;
   onSeedCanon?: () => void;
   seedLabel?: string;
+  identityGateStatus?: 'blocked' | 'pass';
 };
 
 export function VirtualProductionWorkspace({
@@ -113,6 +115,7 @@ export function VirtualProductionWorkspace({
   error,
   onSeedCanon,
   seedLabel = 'Initialize FS Canon + Campaign 001',
+  identityGateStatus = 'blocked',
 }: VirtualProductionWorkspaceProps) {
   const productionMode = (campaign?.production_mode as VirtualProductionMode) ?? 'hybrid';
   const brandName =
@@ -192,9 +195,12 @@ export function VirtualProductionWorkspace({
 
       {tab === 'canon' && (
         <section className="vp-panel">
-          <h2>Canon Attachment</h2>
-          <pre className="vp-json">{JSON.stringify(campaign?.canon_snapshot ?? {}, null, 2)}</pre>
-          <p className="vp-note">Reference Pack V1 — all Nia image slots: SETUP REQUIRED (text canon locked)</p>
+          <h2>Nia — Reference Pack V1 · Identity Lock</h2>
+          <ReferencePackIdentityBoard loading={loading} identityGateStatus={identityGateStatus} />
+          <details className="vp-json-details">
+            <summary>Canon snapshot (JSON)</summary>
+            <pre className="vp-json">{JSON.stringify(campaign?.canon_snapshot ?? {}, null, 2)}</pre>
+          </details>
         </section>
       )}
 

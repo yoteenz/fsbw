@@ -12,6 +12,7 @@ export default function AdminStudioVirtualProductionPage() {
       onTabChange={board.setTab}
       loading={board.loading}
       error={board.error}
+      identityGateStatus="blocked"
       onSeedCanon={() => void board.seedCanonCampaign001()}
     />
   );

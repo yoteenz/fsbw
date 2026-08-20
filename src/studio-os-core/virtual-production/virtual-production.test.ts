@@ -292,7 +292,7 @@ describe('Frontal Slayer canon — Campaign 001 pilot', () => {
   it('Nia reference pack V1 has all required slots missing (SETUP REQUIRED)', () => {
     expect(REFERENCE_PACK_V1_SLOTS).toHaveLength(13);
     const states = buildNiaReferencePackV1SlotStates();
-    expect(Object.values(states).every((s) => s === 'missing')).toBe(true);
+    expect(Object.values(states).every((s) => s.state === 'missing')).toBe(true);
   });
 
   it('Campaign 001 has 9 real shots with required types', () => {

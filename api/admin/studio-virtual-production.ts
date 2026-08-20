@@ -8,7 +8,17 @@ import {
   getCampaignBoard,
 } from '../_lib/virtualProduction/service.js';
 import { seedFrontalSlayerCanonAndCampaign001 } from '../_lib/virtualProduction/canon-seed.js';
+import {
+  approveReferencePackSlot,
+  assignReferencePackCandidate,
+  createReferencePackV2Draft,
+  getNiaReferencePackBoard,
+  lockNiaReferencePackV1,
+  rejectReferencePackSlot,
+  setPrimaryIdentityAnchor,
+} from '../_lib/virtualProduction/identity-service.js';
 import { PRODUCTION_PROVIDERS } from '../../src/studio-os-core/virtual-production/providers.js';
+import type { ReferencePackSlot } from '../../src/studio-os-core/virtual-production/canon/frontal-slayer-canon.js';
 
 function parseBody(req: VercelRequest): Record<string, unknown> | null {
   if (typeof req.body === 'object' && req.body !== null && !Array.isArray(req.body)) {
@@ -86,6 +96,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         return res.status(200).json({ ok: true, providers: PRODUCTION_PROVIDERS });
       }
 
+      if (action === 'reference_pack_board') {
+        const board = await getNiaReferencePackBoard(supabase, orgId);
+        return res.status(200).json({ ok: true, ...board });
+      }
+
       return res.status(400).json({ error: 'Unknown action' });
     }
 
@@ -159,6 +174,114 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         if (!campaignId) return res.status(400).json({ error: 'campaign_id required' });
         const exported = await exportDirectorPackage(supabase, orgId, campaignId);
         return res.status(200).json({ ok: true, ...exported });
+      }
+
+      if (action === 'reference_pack_assign_candidate') {
+        const packId = str(body.pack_id);
+        const slot = str(body.slot) as ReferencePackSlot;
+        const mediaUrl = str(body.media_url);
+        if (!packId || !slot || !mediaUrl) {
+          return res.status(400).json({ error: 'pack_id, slot, media_url required' });
+        }
+        const result = await assignReferencePackCandidate(supabase, {
+          orgId,
+          packId,
+          slot,
+          mediaUrl,
+          providerId: str(body.provider_id) || 'upload',
+          modelId: str(body.model_id) || undefined,
+          referenceLineage: Array.isArray(body.reference_lineage) ? body.reference_lineage : [],
+          operator: auth.ok ? auth.user.email : undefined,
+          billingOwnerOrgId: str(body.billing_owner_org_id) || orgId,
+          estimatedCostUsd: typeof body.estimated_cost_usd === 'number' ? body.estimated_cost_usd : undefined,
+        });
+        return res.status(201).json({ ok: true, ...result });
+      }
+
+      if (action === 'reference_pack_approve_slot') {
+        const packId = str(body.pack_id);
+        const slot = str(body.slot) as ReferencePackSlot;
+        const assetId = str(body.asset_id);
+        if (!packId || !slot || !assetId) {
+          return res.status(400).json({ error: 'pack_id, slot, asset_id required' });
+        }
+        const qc = Array.isArray(body.qc) ? body.qc : [];
+        const result = await approveReferencePackSlot(supabase, {
+          orgId,
+          packId,
+          slot,
+          assetId,
+          mediaUrl: str(body.media_url) || undefined,
+          qc,
+          operator: auth.ok ? auth.user.email : undefined,
+        });
+        return res.status(200).json({ ok: true, ...result });
+      }
+
+      if (action === 'reference_pack_reject_slot') {
+        const packId = str(body.pack_id);
+        const slot = str(body.slot) as ReferencePackSlot;
+        const candidateAssetId = str(body.candidate_asset_id);
+        const reason = str(body.reason) || 'identity_qc_fail';
+        if (!packId || !slot || !candidateAssetId) {
+          return res.status(400).json({ error: 'pack_id, slot, candidate_asset_id required' });
+        }
+        const qc = Array.isArray(body.qc) ? body.qc : [];
+        const result = await rejectReferencePackSlot(supabase, {
+          orgId,
+          packId,
+          slot,
+          candidateAssetId,
+          reason,
+          qc,
+          operator: auth.ok ? auth.user.email : undefined,
+        });
+        return res.status(200).json({ ok: true, ...result });
+      }
+
+      if (action === 'reference_pack_set_anchor') {
+        const packId = str(body.pack_id);
+        const assetId = str(body.asset_id);
+        if (!packId || !assetId) {
+          return res.status(400).json({ error: 'pack_id, asset_id required' });
+        }
+        const result = await setPrimaryIdentityAnchor(supabase, {
+          orgId,
+          packId,
+          assetId,
+          mediaUrl: str(body.media_url) || undefined,
+          source: str(body.source) || undefined,
+          providerId: str(body.provider_id) || undefined,
+          modelId: str(body.model_id) || undefined,
+          operator: auth.ok ? auth.user.email : undefined,
+        });
+        return res.status(200).json({ ok: true, ...result });
+      }
+
+      if (action === 'reference_pack_lock_v1') {
+        const packId = str(body.pack_id);
+        if (!packId) return res.status(400).json({ error: 'pack_id required' });
+        const result = await lockNiaReferencePackV1(supabase, {
+          orgId,
+          packId,
+          operator: auth.ok ? auth.user.email ?? 'operator' : 'operator',
+        });
+        return res.status(200).json({ ok: true, ...result });
+      }
+
+      if (action === 'reference_pack_create_v2') {
+        const characterId = str(body.character_id);
+        const fromPackId = str(body.from_pack_id);
+        if (!characterId || !fromPackId) {
+          return res.status(400).json({ error: 'character_id, from_pack_id required' });
+        }
+        const v2 = await createReferencePackV2Draft(supabase, {
+          orgId,
+          characterId,
+          fromPackId,
+          operator: auth.ok ? auth.user.email ?? 'operator' : 'operator',
+        });
+        return res.status(201).json({ ok: true, pack: v2 });
       }
 
       if (action === 'import_asset') {

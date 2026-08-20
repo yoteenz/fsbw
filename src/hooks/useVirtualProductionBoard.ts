@@ -84,6 +84,7 @@ function buildCampaign001DemoBoard(): { campaign: Record<string, unknown>; shots
           slots: buildNiaReferencePackV1SlotStates(),
           note: 'All image slots SETUP REQUIRED',
         },
+        identityGate: 'blocked',
       },
       metadata: { demoFallback: true, pilot: true },
     },

@@ -54450,3 +54450,24 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Conventions:** External contract generic (not SITE 00-named); idempotency key = externalSystem + externalEngagementId; client-safe responses strip internal data; webhooks architected only (polling); SITE 00 must implement consumer independently.
 
+---
+
+## 2026-08-20 — Studio World multi-tenant org, entitlement & production cost architecture
+
+- **Context:** Foundational sprint — organization-scoped access, licensing, entitlements, production metering, cost attribution, budgets, future commercial billing foundation. SITE 00 out of scope. Extend existing VP OS + governed gateway; do not break Frontal Slayer pipeline.
+
+- **Topics covered:** Tenancy hierarchy, org memberships, billing owner primitive, entitlements vs roles, append-only usage ledger, cost reservations, budget enforcement, gateway opt-in hook, debug production governance UI, 6 canonical collaborator scenario tests.
+
+- **Decisions / outcomes:**
+  - Core module `src/studio-os-core/production-governance/` — types, authorization helpers, billing owner resolver, entitlement/budget evaluation, fixtures.
+  - 11 new tables `studio_world_*` (organizations, memberships, clients, projects, entitlements, budgets, usage_events, reservations, adjustments, policies, audit_events) — RLS service_role only.
+  - Server `api/_lib/productionGovernance/` — DB services, simulate (no paid providers), seed fixtures, gateway pre-flight hook (opt-in via `productionGovernance.enabled` on governed requests).
+  - API `/api/admin/studio-production-governance` — dashboard, seed_fixtures, simulate, evaluate.
+  - Debug route **`/__studio-world/production-governance`** — org switcher proves SAME OPERATOR ≠ SAME BILLING OWNER.
+  - Migration applied to production `hyycomvcaqxxvyrfupes`.
+  - Tests 8/8 PASS; build PASS. No Stripe, no SITE 00 changes.
+
+- **Canonical rules documented:** Operator ≠ billing owner; complimentary platform ≠ complimentary compute.
+
+- **Remaining gateway bypass routes:** founder-render, product-photography, live try-on, commerce FAL paths, VP jobs (documented in STUDIO_WORLD_PRODUCTION_GOVERNANCE.md).
+
