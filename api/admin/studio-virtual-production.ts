@@ -19,6 +19,11 @@ import {
 } from '../_lib/virtualProduction/identity-service.js';
 import { uploadReferencePackImageDataUrl } from '../_lib/virtualProduction/reference-pack-upload.js';
 import { PRODUCTION_PROVIDERS } from '../../src/studio-os-core/virtual-production/providers.js';
+import {
+  executeGovernedProduction,
+  finalizeGovernedProduction,
+  releaseGovernedProductionReservation,
+} from '../_lib/productionGovernance/executeGovernedProduction.js';
 import type { ReferencePackSlot } from '../../src/studio-os-core/virtual-production/canon/frontal-slayer-canon.js';
 
 function parseBody(req: VercelRequest): Record<string, unknown> | null {
@@ -157,6 +162,26 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         if (!campaignId || !shotId || !originalAssetId) {
           return res.status(400).json({ error: 'campaign_id, shot_id, original_asset_id required' });
         }
+
+        const operatorEmail = auth.user.email ?? '';
+        const governance = await executeGovernedProduction(supabase, {
+          routeKey: 'studio-virtual-production',
+          operatorEmail,
+          operatorUserId: auth.user.id,
+          organizationSlug: orgId,
+          operationType: 'PRECISION_REPAIR',
+          provider: str(body.provider_id) || 'fal',
+          model: str(body.model_id) || undefined,
+          estimatedCost: 4,
+          campaignId,
+          shotId,
+          clientGovernanceEnabled: body.productionGovernance === false,
+        });
+
+        if (!governance.ok) {
+          return res.status(403).json({ ok: false, error: governance.error, code: governance.code });
+        }
+
         const result = await createRepairJob(supabase, {
           orgId,
           campaignId,
@@ -165,8 +190,31 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           reason,
           providerId: str(body.provider_id) || undefined,
           modelId: str(body.model_id) || undefined,
-          actorId: auth.ok ? auth.user.email : undefined,
+          actorId: operatorEmail,
         });
+
+        if (governance.reservationId) {
+          try {
+            await finalizeGovernedProduction(supabase, {
+              reservationId: governance.reservationId,
+              operatorUserId: auth.user.id,
+              organizationId: governance.governance.billingOwner.billingOwnerId,
+              billingOwnerId: governance.governance.billingOwner.billingOwnerId,
+              operationType: 'PRECISION_REPAIR',
+              provider: str(body.provider_id) || 'fal',
+              model: str(body.model_id) || undefined,
+              estimatedCost: 4,
+              outcome: 'completed',
+              campaignId,
+              shotId,
+              metadata: { repairJobId: result.job.id, reason },
+            });
+          } catch (finalizeErr) {
+            await releaseGovernedProductionReservation(supabase, governance.reservationId);
+            throw finalizeErr;
+          }
+        }
+
         return res.status(201).json({ ok: true, ...result });
       }
 

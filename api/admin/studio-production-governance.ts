@@ -56,7 +56,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const supabase = getSupabaseAdmin();
     const body = parseBody(req) ?? {};
     const query = req.query ?? {};
-    const operatorEmail = str(body.operatorEmail) || str(query.operatorEmail) || auth.adminEmail || '';
+    const operatorEmail = str(body.operatorEmail) || str(query.operatorEmail) || auth.user.email || '';
     const organizationSlug =
       str(body.organizationSlug) || str(query.organizationSlug) || 'frontal-slayer';
 
@@ -176,6 +176,34 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           failProvider: body.failProvider === true,
         });
         return res.status(200).json({ ok: true, ...sim });
+      }
+
+      if (action === 'switch_organization') {
+        const targetSlug = str(body.organizationSlug);
+        if (!targetSlug) {
+          return res.status(400).json({ error: 'organizationSlug required' });
+        }
+        const org = await getOrganizationBySlug(supabase, targetSlug);
+        if (!org) return res.status(404).json({ error: 'Organization not found' });
+        const membership = await supabase
+          .from('studio_world_organization_memberships')
+          .select('id')
+          .eq('organization_id', org.id)
+          .eq('user_email', operatorEmail.toLowerCase())
+          .eq('status', 'active')
+          .maybeSingle();
+        if (!membership.data) {
+          return res.status(403).json({ error: 'Operator is not a member of target organization' });
+        }
+        await supabase.from('studio_world_operator_preferences').upsert(
+          {
+            user_email: operatorEmail.toLowerCase(),
+            active_organization_slug: targetSlug,
+            updated_at: new Date().toISOString(),
+          },
+          { onConflict: 'user_email' }
+        );
+        return res.status(200).json({ ok: true, activeOrganizationSlug: targetSlug });
       }
 
       return res.status(400).json({ error: 'Unknown action' });

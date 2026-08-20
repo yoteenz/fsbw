@@ -4,6 +4,7 @@
  */
 
 import type { GovernedGenerationRequest, GovernedGenerationResult, GovernedGenerationAudit } from '../../../src/studio-os-core/creative-production/types.js';
+import type { ProductionOperationType } from '../../../src/studio-os-core/production-governance/types.js';
 import {
   representGovernedGenerationRequest,
   createDemoCreativeInitiative,
@@ -28,7 +29,14 @@ import {
   publicMessageFromDiagnostic,
   type GenerationErrorDiagnostic,
 } from './generation-error-diagnostics.js';
-import { runProductionGovernancePreflight } from '../productionGovernance/gateway-hook.js';
+import {
+  runProductionGovernancePreflight,
+  runProductionGovernanceReservation,
+} from '../productionGovernance/gateway-hook.js';
+import {
+  finalizeGovernedProduction,
+  releaseGovernedProductionReservation,
+} from '../productionGovernance/executeGovernedProduction.js';
 
 export type GatewayContext = {
   sourceRoute: string;
@@ -340,6 +348,14 @@ export async function executeGovernedGeneration(
   const governanceBlock = await runProductionGovernancePreflight(supabase, request);
   if (governanceBlock) return governanceBlock;
 
+  const reservation = await runProductionGovernanceReservation(supabase, request);
+  if (!reservation.ok) return reservation.result;
+
+  const gov = request.productionGovernance;
+  const estimatedCost =
+    gov?.estimatedCostUsd != null && Number.isFinite(gov.estimatedCostUsd) ? gov.estimatedCostUsd : 2.5;
+  const operationType = (gov?.operationType ?? 'IMAGE_GENERATION') as ProductionOperationType;
+
   let execResult: { ok?: boolean; publicUrl?: string; storagePath?: string; model?: string; error?: string; diagnostic?: GenerationErrorDiagnostic };
   switch (request.sourceSystem) {
     case 'studio-builder':
@@ -356,6 +372,9 @@ export async function executeGovernedGeneration(
   }
 
   if (execResult.error || !execResult.publicUrl) {
+    if (reservation.reservationId) {
+      await releaseGovernedProductionReservation(supabase, reservation.reservationId);
+    }
     return {
       ok: false,
       code: 'GENERATION_FAILED',
@@ -364,6 +383,25 @@ export async function executeGovernedGeneration(
       diagnostic: execResult.diagnostic ? { ...execResult.diagnostic } : undefined,
       traceId,
     };
+  }
+
+  if (reservation.reservationId) {
+    await finalizeGovernedProduction(supabase, {
+      reservationId: reservation.reservationId,
+      operatorUserId: gov?.operatorEmail ?? request.orgId,
+      organizationId: reservation.organizationId,
+      billingOwnerId: reservation.billingOwnerId,
+      operationType,
+      provider: gov?.provider ?? 'fal',
+      model: execResult.model ?? gov?.model,
+      estimatedCost,
+      idempotencyKey: gov?.idempotencyKey,
+      outcome: 'completed',
+      projectId: typeof request.execution.projectId === 'string' ? request.execution.projectId : gov?.projectId,
+      campaignId: gov?.campaignId,
+      shotId: gov?.shotId,
+      metadata: { sourceRoute: ctx.sourceRoute, sourceSystem: request.sourceSystem },
+    });
   }
 
   const job = {

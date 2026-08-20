@@ -4,6 +4,12 @@ export const config = {
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { resolveAdminAuth } from '../_lib/adminAuth.js';
+import { getSupabaseAdmin } from '../_lib/supabase.js';
+import {
+  executeGovernedProduction,
+  finalizeGovernedProduction,
+  releaseGovernedProductionReservation,
+} from '../_lib/productionGovernance/executeGovernedProduction.js';
 import type { ConstructionPlan } from '../../src/studio-os-core/blueprint-author/construction-plan-schema.js';
 
 function parseBody(req: VercelRequest): Record<string, unknown> | null {
@@ -48,6 +54,28 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const revisionNote = typeof body?.revisionNote === 'string' ? body.revisionNote : null;
 
   try {
+    const supabase = getSupabaseAdmin();
+    const orgSlug = plan.metadata.organizationId;
+    const governance = await executeGovernedProduction(supabase, {
+      routeKey: 'founder-render-generate',
+      operatorEmail: auth.user.email ?? '',
+      operatorUserId: auth.user.id,
+      organizationSlug: orgSlug,
+      operationType: 'IMAGE_GENERATION',
+      provider: 'fal',
+      estimatedCost: 8,
+      projectId: plan.planId,
+      clientGovernanceEnabled: body?.productionGovernance === false,
+    });
+
+    if (!governance.ok) {
+      return res.status(403).json({
+        ok: false,
+        error: governance.error,
+        code: governance.code,
+      });
+    }
+
     const [{ prepareFounderRenderDispatch }, { insertFounderRenderJob }, { FOUNDER_RENDER_ROUTE_ID }] =
       await Promise.all([
         import('../_lib/founderRenderGeneration.js'),
@@ -91,7 +119,26 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     });
 
     if (!inserted.ok) {
+      if (governance.reservationId) {
+        await releaseGovernedProductionReservation(supabase, governance.reservationId);
+      }
       return res.status(500).json({ ok: false, error: inserted.error, code: 'PERSISTENCE_FAILED' });
+    }
+
+    if (governance.reservationId) {
+      await finalizeGovernedProduction(supabase, {
+        reservationId: governance.reservationId,
+        operatorUserId: auth.user.id,
+        organizationId: governance.governance.billingOwner.billingOwnerId,
+        billingOwnerId: governance.governance.billingOwner.billingOwnerId,
+        operationType: 'IMAGE_GENERATION',
+        provider: 'fal',
+        model: dispatch.model,
+        estimatedCost: 8,
+        outcome: 'completed',
+        projectId: plan.planId,
+        metadata: { route: 'founder-render-generate', jobId: inserted.jobId },
+      });
     }
 
     return res.status(202).json({
