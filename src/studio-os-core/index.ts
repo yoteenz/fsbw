@@ -167,6 +167,7 @@ export * from './innovation-lineage';
 export * from './innovation-constellations';
 export * from './innovation-expeditions';
 export * from './design-principles';
+export * from './virtual-production';
 export * from './mission-control';
 export * from './world-physics';
 export * from './implementation-standards';

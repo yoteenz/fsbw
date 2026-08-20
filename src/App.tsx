@@ -629,6 +629,7 @@ const AdminStudioOrganizationalApprenticeship = lazyWithRetry(() => import('./pa
 const AdminStudioConciergeLayer = lazyWithRetry(() => import('./pages/admin/studio/concierge-layer/page'), 'AdminStudioConciergeLayer');
 const AdminStudioProductionStudio = lazyWithRetry(() => import('./pages/admin/studio/production-studio/page'), 'AdminStudioProductionStudio');
 const AdminStudioProductionOrchestrator = lazyWithRetry(() => import('./pages/admin/studio/production-orchestrator/page'), 'AdminStudioProductionOrchestrator');
+const AdminStudioVirtualProduction = lazyWithRetry(() => import('./pages/admin/studio/virtual-production/page'), 'AdminStudioVirtualProduction');
 const AdminStudioRenderQueue = lazyWithRetry(() => import('./pages/admin/studio/render-queue/page'), 'AdminStudioRenderQueue');
 const AdminStudioScreeningRoom = lazyWithRetry(() => import('./pages/admin/studio/screening-room/page'), 'AdminStudioScreeningRoom');
 const AdminStudioConciergeApprovalFlow = lazyWithRetry(() => import('./pages/admin/studio/concierge-approval-flow/page'), 'AdminStudioConciergeApprovalFlow');
@@ -2891,6 +2892,11 @@ function App() {
           <Route path="studio/production-orchestrator" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminStudioProductionOrchestrator />
+            </Suspense>
+          } />
+          <Route path="studio/virtual-production" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioVirtualProduction />
             </Suspense>
           } />
           <Route path="studio/render-queue" element={
