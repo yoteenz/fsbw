@@ -54499,3 +54499,18 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Changes:** `reference_pack_upload_and_assign` API + `reference-pack-upload.ts` (Storage `live-preview` / `studio-vp/reference-packs/`); `useReferencePackBoard` hook; per-slot UPLOAD / APPROVE / REJECT / SET ANCHOR; anchor shortcut **UPLOAD FRONT + APPROVE**; wired LOCK button; docs updated in `NIA_IDENTITY_LOCK_STAGE1.md`.
 - **Operator path:** Admin → Virtual Production → Initialize FS Canon → CANON tab → upload images per slot → lock when all 13 approved.
 
+---
+
+## 2026-08-20 — Supabase migration drift audit + auto-apply (full conversation)
+
+- **Context:** Founder asked whether any repo migrations had not been run on production FS Website (`hyycomvcaqxxvyrfupes`); suspected at least 12 pending.
+- **Topics covered:** Compared 78 local files under `supabase/migrations/` vs `supabase_migrations.schema_migrations` on production; distinguished schema drift (objects missing) from history drift (objects live but untracked).
+- **Decisions / outcomes:**
+  - **Documented Fact:** Production had **52** tracked migration rows before this task; **40** repo migrations had no matching history entry (many were applied manually before tracking — core app tables already existed).
+  - **6 migrations needed real DDL** (tables/columns missing): `004_deleted_accounts`, `20260527120000_brand_contact_inquiries`, `20260713160000_studio_industry_packs`, `20260713170000_master_founder_render_composition`, `20260713180000_canonical_studio_world`, `20260713190000_architecture_law_001` — all applied via Supabase MCP `apply_migration`.
+  - **History reconcile:** One idempotent backfill (`migration_history_reconcile_20260820`) inserted repo-canonical version/name rows for all 78 local migration files where not already recorded (skip on version OR name collision).
+  - **After apply:** **96** rows in `schema_migrations`; **0** repo migration files remain unmatched by name; verified new tables (`deleted_accounts`, `brand_contact_inquiries`, `studio_business_archetypes`, `studio_master_founder_renders`, `studio_canonical_departments`, `studio_department_ui_sockets`, `studio_industry_packs`, etc.) exist in `public`.
+  - Production also retains a few **non-repo** migration names from prior ops (`site00_production_orchestration` parts, duplicate timestamp rows for prod-only applies) — expected; not removed.
+- **Changes:** Production Supabase only (no repo SQL file added). MCP applies only.
+- **Conventions:** When auditing migrations, check **both** `schema_migrations` history **and** `information_schema` object existence — history drift ≠ missing schema. Use idempotent `IF NOT EXISTS` applies for missing objects; backfill history without re-running destructive DDL when objects are already live.
+
