@@ -54429,3 +54429,24 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Conventions:** All VP code stays in `virtual-production` module + `studio_vp_*` tables; tenant via `org_id`; provider secrets server-side only; do not couple to Frontal Slayer commerce paths; existing FAL/OpenArt infra preserved.
 
+---
+
+## 2026-08-20 — Frontal Slayer Canon + Campaign 001 Pilot + External Integration Contract v1
+
+- **Context:** Follow-on sprint from VP OS foundation — populate real FS canon, execute Campaign 001 as first production pilot (Hybrid 9:16 social), validate Director/Precision/Hybrid workflows, expose secure external integration contract v1 for future consumers (SITE 00 in separate repo — **not modified or connected**).
+
+- **Topics covered:** 52-section sprint: FS brand/character/product/environment/wardrobe/prop/camera/behavior canon; Nia Reference Pack V1 (13 slots all MISSING); 9-shot Campaign 001 with editorial invisible-cut strategy; keyframe workflow; Director external package; Precision jobs queued; Hybrid repair on shot-08; QC/continuity/repair/assembly/deliverable; Campaign Operator UI tabs; external provision idempotency; client-safe status/reviews/deliverables/activity; HMAC auth; contract docs + test harness.
+
+- **Decisions / outcomes:**
+  - Real FS canon from repo sources only (`frontal-slayer-canon.ts` — #EB1C24, 6 signature units, Nia text canon, SET-001). No invented reference images.
+  - Campaign 001 pilot: 9 shots, hybrid mode, shot-08 hybrid repair candidate, assembly V1 without final render, deliverable INCOMPLETE (not DELIVERED).
+  - Migration `20260820160000_studio_vp_campaign_pilot_external.sql` applied to production — takes, external_engagements, client_reviews, client_activity, production_events + shot/campaign extensions.
+  - Seed API `seed_fs_canon_campaign001` via `canon-seed.ts`; external API `/api/studio-world/v1/campaigns` contract v1 with HMAC (`STUDIO_WORLD_EXTERNAL_API_SECRET`).
+  - OpenArt Director remains external/manual — no fake API. Precision FAL jobs queued in DB only (no live generation this sprint).
+  - Operator UI: tabs BRIEF/CANON/STORYBOARD/SHOTS/PRODUCTION/QC/ASSEMBLY/DELIVERABLES/HISTORY; demo fallback uses real Campaign 001 shot defs.
+  - Tests: 36 PASS (24 VP core + 12 external contract). Build PASS.
+
+- **Changes:** `canon/frontal-slayer-canon.ts`, `pilot/campaign-001.ts`, `external/contract-v1.ts`, `api/_lib/virtualProduction/canon-seed.ts`, `external-auth.ts`, `external-service.ts`, `api/studio-world/v1/campaigns.ts`, hook/API client updates, docs `FRONTAL_SLAYER_CAMPAIGN_001_PILOT.md`, `STUDIO_WORLD_EXTERNAL_INTEGRATION_CONTRACT.md`, updated `STUDIO_WORLD_VIRTUAL_PRODUCTION_OS.md`.
+
+- **Conventions:** External contract generic (not SITE 00-named); idempotency key = externalSystem + externalEngagementId; client-safe responses strip internal data; webhooks architected only (polling); SITE 00 must implement consumer independently.
+

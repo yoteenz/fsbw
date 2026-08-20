@@ -253,6 +253,22 @@ export type GovernedGenerationRequest = {
   cieDecisionId?: string;
   /** Provider execution payload — route-specific. */
   execution: Record<string, unknown>;
+  /** Optional production governance pre-flight (org entitlements + budget). */
+  productionGovernance?: {
+    enabled: boolean;
+    operatorEmail: string;
+    organizationSlug: string;
+    operationType?: string;
+    estimatedCostUsd: number;
+    provider?: string;
+    model?: string;
+    workspaceId?: string;
+    clientId?: string;
+    projectId?: string;
+    campaignId?: string;
+    shotId?: string;
+    idempotencyKey?: string;
+  };
 };
 
 export type GovernedGenerationResult =

@@ -28,6 +28,7 @@ import {
   publicMessageFromDiagnostic,
   type GenerationErrorDiagnostic,
 } from './generation-error-diagnostics.js';
+import { runProductionGovernancePreflight } from '../productionGovernance/gateway-hook.js';
 
 export type GatewayContext = {
   sourceRoute: string;
@@ -278,6 +279,10 @@ export async function validateGovernedGenerationForExecution(
   const cieBlock = await runCieIfRequired(request);
   if (cieBlock) return { ok: false, result: cieBlock };
 
+  const supabase = getSupabaseAdmin();
+  const governanceBlock = await runProductionGovernancePreflight(supabase, request);
+  if (governanceBlock) return { ok: false, result: governanceBlock };
+
   return { ok: true, request, audit: graphResult.audit };
 }
 
@@ -330,6 +335,10 @@ export async function executeGovernedGeneration(
 
   const cieBlock = await runCieIfRequired(request);
   if (cieBlock) return cieBlock;
+
+  const supabase = getSupabaseAdmin();
+  const governanceBlock = await runProductionGovernancePreflight(supabase, request);
+  if (governanceBlock) return governanceBlock;
 
   let execResult: { ok?: boolean; publicUrl?: string; storagePath?: string; model?: string; error?: string; diagnostic?: GenerationErrorDiagnostic };
   switch (request.sourceSystem) {

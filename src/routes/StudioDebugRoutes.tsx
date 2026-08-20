@@ -54,6 +54,7 @@ import { RootAppErrorBoundary } from './RootAppErrorBoundary';
 import { lazyWithRetry } from '../utils/lazyWithRetry';
 import LegacyAioMovedNotice from '../pages/debug/LegacyAioMovedNotice';
 import VirtualProductionDebugRoutes from '../pages/debug/virtual-production/routes';
+import ProductionGovernanceDebugPage from '../pages/debug/studio-world/production-governance/page';
 import { AppShellRouteFallback } from '../platform-stabilization/AppShellRouteFallback';
 
 const App = lazyWithRetry(() => import('../App'), 'App');
@@ -84,6 +85,7 @@ export const STUDIO_DEBUG_PATHS = [
   '/__studio-os-live-runtime',
   '/__world-compiler-investigation',
   '/__virtual-production',
+  '/__studio-world/production-governance',
   '/expert-capture',
   '/expert-capture/all-in-one-permitting',
   '/expert-capture/tax-preparation',
@@ -116,6 +118,7 @@ export function isStudioDebugPath(pathname: string): boolean {
   if (pathname === '/onboarding') return true;
   if (pathname === '/context-updates') return true;
   if (pathname.startsWith('/__virtual-production')) return true;
+  if (pathname.startsWith('/__studio-world/production-governance')) return true;
   return (STUDIO_DEBUG_PATHS as readonly string[]).includes(pathname);
 }
 
@@ -145,6 +148,14 @@ export default function StudioDebugRoutes() {
           <VirtualProductionDebugRoutes />
         </DebugRouteErrorBoundary>
       } />
+      <Route
+        path="/__studio-world/production-governance"
+        element={
+          <DebugRouteErrorBoundary route="/__studio-world/production-governance">
+            <ProductionGovernanceDebugPage />
+          </DebugRouteErrorBoundary>
+        }
+      />
       <Route path="/expert-capture" element={<ExpertCapturePage />} />
       <Route path="/expert-capture/all-in-one-permitting" element={<AllInOnePermittingCapturePage />} />
       <Route path="/expert-capture/tax-preparation" element={<TaxPreparationCapturePage />} />

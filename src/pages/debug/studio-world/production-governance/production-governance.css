@@ -1,0 +1,128 @@
+.pg-debug {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 1.5rem;
+  font-family: system-ui, sans-serif;
+  color: #111;
+}
+
+.pg-header h1 {
+  font-size: 1.5rem;
+  margin: 0.25rem 0;
+}
+
+.pg-kicker {
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  color: #666;
+  margin: 0;
+}
+
+.pg-rule {
+  font-size: 0.75rem;
+  color: #c00;
+  font-weight: 600;
+  margin: 0.5rem 0 1rem;
+}
+
+.pg-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: flex-end;
+  margin-bottom: 1rem;
+}
+
+.pg-controls label {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.75rem;
+  gap: 0.25rem;
+}
+
+.pg-controls input,
+.pg-controls select {
+  padding: 0.35rem 0.5rem;
+  min-width: 220px;
+}
+
+.pg-controls button {
+  padding: 0.45rem 0.75rem;
+  cursor: pointer;
+}
+
+.pg-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.pg-card {
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 1rem;
+  background: #fafafa;
+}
+
+.pg-card h2 {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin: 0 0 0.75rem;
+}
+
+.pg-card dl {
+  margin: 0;
+  font-size: 0.85rem;
+}
+
+.pg-card dt {
+  font-weight: 600;
+  margin-top: 0.35rem;
+}
+
+.pg-card dd {
+  margin: 0.1rem 0 0;
+}
+
+.pg-card ul {
+  margin: 0;
+  padding-left: 1.2rem;
+  font-size: 0.85rem;
+}
+
+.pg-card pre {
+  font-size: 0.7rem;
+  overflow: auto;
+  max-height: 280px;
+}
+
+.pg-sim {
+  margin-bottom: 1rem;
+}
+
+.pg-sim-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.pg-error {
+  color: #b00020;
+}
+
+.pg-ok {
+  color: #0a6;
+}
+
+.pg-loading {
+  color: #666;
+}
+
+@media (max-width: 640px) {
+  .pg-controls input,
+  .pg-controls select {
+    min-width: 100%;
+  }
+}
