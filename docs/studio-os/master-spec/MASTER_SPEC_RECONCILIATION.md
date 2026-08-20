@@ -1,6 +1,6 @@
 # Master Specification Reconciliation Report
 
-Generated: 2026-08-20T17:53:45.682Z
+Generated: 2026-08-20T18:31:38.370Z
 
 ## Coverage
 

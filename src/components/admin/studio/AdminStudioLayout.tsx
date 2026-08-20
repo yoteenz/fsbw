@@ -25,6 +25,9 @@ import { canSwitchOrganizations } from '../../../studio-os-core/application/port
 import { STUDIO_ADMINISTRATION_ROUTES } from '../../../studio-os-core/application/routes';
 import { resolveOrganizationMissionControlPath } from '../../../studio-os-core/workspace/routes';
 import { WorkspaceSwitcher } from '../studio-os/WorkspaceSwitcher';
+import { StudioWorldOrganizationSwitcher } from './StudioWorldOrganizationSwitcher';
+import { StudioWorldOrgContextBar } from './StudioWorldOrgContextBar';
+import { useStudioWorldOperatorContext } from '../../../hooks/useStudioWorldOperatorContext';
 import { shouldShowCommandDock } from './command-dock/CommandDock';
 import { StudioOrbMount, StudioOrbProvider, useStudioOrbEnvironmentActive } from './studio-orb/StudioOrbShell';
 import { GlobalAtlasProvider } from './global-atlas';
@@ -156,6 +159,7 @@ export function AdminStudioLayout({
     resolvedModule?.purpose;
 
   const portfolioMode = canSwitchOrganizations();
+  const studioWorldContext = useStudioWorldOperatorContext({ enabled: workspace.studioEnabled });
   const headquartersOverviewPath = useMemo(
     () => resolveOrganizationMissionControlPath(workspaceId),
     [workspaceId]
@@ -304,6 +308,16 @@ export function AdminStudioLayout({
                 ) : null}
 
                 <WorkspaceSwitcher />
+
+                {workspace.studioEnabled ? (
+                  <>
+                    <StudioWorldOrganizationSwitcher />
+                    <StudioWorldOrgContextBar
+                      context={studioWorldContext.context}
+                      loading={studioWorldContext.loading}
+                    />
+                  </>
+                ) : null}
 
                 <StudioImmersionShell />
                 <KnowledgeContextualHint />

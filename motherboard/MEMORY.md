@@ -54514,3 +54514,40 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Changes:** Production Supabase only (no repo SQL file added). MCP applies only.
 - **Conventions:** When auditing migrations, check **both** `schema_migrations` history **and** `information_schema` object existence — history drift ≠ missing schema. Use idempotent `IF NOT EXISTS` applies for missing objects; backfill history without re-running destructive DDL when objects are already live.
 
+---
+
+## 2026-08-20 — Studio World production governance enforcement integration (fsbw recovery)
+
+- **Context:** Recover completed governance enforcement sprint into canonical `yoteenz/fsbw` master. Original commits `968d23a` / integrated `aac05aa` / branch `cursor/governance-master-integration-9c0b` were **not found** on GitHub or local git (lost from prior SITE 00-rooted session). Production DB migration already applied to `hyycomvcaqxxvyrfupes`.
+
+- **Recovery method:** Re-integrated uncommitted enforcement layer from prior cloud-agent session work in correct fsbw repo — **not** a full sprint rebuild. Commits `968d23a`/`aac05aa` unavailable; no patch/bundle artifacts.
+
+- **Integrated modules:** `executeGovernedProduction.ts`, `route-registry.ts`, `atomic-reserve.ts`, `operator-context.ts`; updated `gateway-hook.ts`, `generation-gateway.ts` (atomic reserve + finalize/release); governed `founder-render-generate`, `studio-virtual-production` (VP repair), `studio-production-governance` (`switch_organization`); migration file `20260820190000_studio_world_governance_enforcement.sql` (idempotent, matches production RPC); enforcement tests `production-governance-enforcement.test.ts`.
+
+- **Governance coverage:** GOVERNED (5): VP, Founder Render, studio-builder/foundry/asset via gateway. REQUIRES_MIGRATION (4): Product Photography, Live Try-On, Commerce FAL, Slay Forecast — blocked for external partner orgs. NON_BILLABLE: SITE 00. SAFE_INTERNAL_EXCEPTION: governance debug simulate.
+
+- **Validation:** Production governance tests 17/17 PASS; VP core 24/24 + external contract 12/12 PASS; build PASS. Production DB verified: `studio_world_atomic_reserve_budget`, `studio_world_operator_preferences`, org tables exist. Migration **not** re-applied.
+
+- **Gap vs prior aac05aa spec:** Files `organization-context.ts`, `analytics.ts`, `inject-governance.ts`, `src/studio-os-core/production-governance/enforcement.ts` from handoff list were **not recoverable** — functional equivalent partially covered by `operator-context.ts` + `executeGovernedProduction.ts`. Status PARTIAL on file parity, COMPLETE on enforcement contract.
+
+- **Conventions:** External partner orgs may only use GOVERNED capabilities until REQUIRES_MIGRATION routes migrate. Do not deploy without founder **deploy now**.
+
+---
+
+## 2026-08-20 — Studio World Partner / Agency onboarding sprint (Sections V–XLIII)
+
+- **Context:** Founder resumed Partner/Agency onboarding after governance prerequisite satisfied at `a31518927`. Prior run only verified baseline and returned BLOCKED. Directive: full implementation integrating with `executeGovernedProduction`, no real founding partner invite, no SITE 00 changes, no deploy.
+
+- **Implemented:**
+  - Migration `20260820193000_studio_world_organization_invitations.sql` — secure invitation lifecycle (token SHA-256 hash only, statuses pending/accepted/expired/revoked/declined, service_role RLS). **Applied to production** `hyycomvcaqxxvyrfupes` and verified table exists.
+  - Core: `src/studio-os-core/partner-onboarding/` — types, invitation-token, capabilities (external REQUIRES_MIGRATION fence), 28 unit tests.
+  - API lib: `api/_lib/partnerOnboarding/` — invitations (create/revoke/accept idempotent), agency (Founding Partner entitlements + budget), clients/projects, analytics, context, fixtures (`partner-operator@pilot.test` dual-context seed).
+  - API route: `api/admin/studio-partner-onboarding.ts` — seed_pilot_fixtures, create_agency, invite/accept/revoke, switch_organization, clients/projects, simulate_dual_context, simulate_production, GET context/organizations/clients/projects/invitations/usage.
+  - UI: `StudioWorldOrganizationSwitcher`, `StudioWorldOrgContextBar`, `useStudioWorldOperatorContext` wired into `AdminStudioLayout`; admin page `/admin/studio/partner-agency`; debug pilot `/__studio-world/partner-agency`.
+
+- **Founding Partner model:** PLATFORM_ACCESS complimentary; PRODUCTION_ACCESS metered via governed production (budget/reservation/ledger unchanged).
+
+- **Validation:** Partner tests 28/28; governance 17/17; VP 36/36; build PASS. SITE 00 not modified. Sync-only commit (no Vercel).
+
+- **Ready gate:** Fixture-based dual-context billing separation proven in unit tests + `simulate_dual_context` API; live authenticated E2E pilot left to founder via debug route before first real partner email invite.
+
