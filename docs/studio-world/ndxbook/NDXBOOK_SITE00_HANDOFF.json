@@ -1,0 +1,1196 @@
+{
+  "meta": {
+    "packageId": "ndxbook-legacy-intelligence-v1",
+    "generatedAt": "2026-08-20T20:47:51.511Z",
+    "sourceRepository": "yoteenz/fsbw",
+    "sourceBranch": "master",
+    "sourceCommit": "66a578b67b034cdca96b6185b7d9ef7499042379",
+    "targetEvolveSlug": "ndxbook",
+    "targetEvolveOrganizationUuid": "7681ab75-bddc-43e5-b594-79fcf8168205",
+    "boundary": "READ_ONLY_RECOVERY — no runtime coupling to fsbw"
+  },
+  "brand": {
+    "publicName": {
+      "value": "ndxbook",
+      "classification": "CANONICAL",
+      "confidence": "HIGH",
+      "provenance": [
+        {
+          "repository": "yoteenz/fsbw",
+          "file": "src/studio-os-core/ndxbook/constants.ts",
+          "note": "NDXBook v1.0 brand constants"
+        }
+      ],
+      "notes": "Lowercase styling in DEFAULT_BRAND"
+    },
+    "internalName": {
+      "value": "index book",
+      "classification": "CANONICAL",
+      "confidence": "HIGH",
+      "provenance": [
+        {
+          "repository": "yoteenz/fsbw",
+          "file": "src/studio-os-core/ndxbook/constants.ts",
+          "note": "NDXBook v1.0 brand constants"
+        }
+      ]
+    },
+    "positioning": {
+      "value": "the index for everyday knowledge.",
+      "classification": "CANONICAL",
+      "confidence": "HIGH",
+      "provenance": [
+        {
+          "repository": "yoteenz/fsbw",
+          "file": "src/studio-os-core/ndxbook/constants.ts",
+          "note": "NDXBook v1.0 brand constants"
+        }
+      ]
+    },
+    "promise": {
+      "value": "every page makes you smarter.",
+      "classification": "CANONICAL",
+      "confidence": "HIGH",
+      "provenance": [
+        {
+          "repository": "yoteenz/fsbw",
+          "file": "src/studio-os-core/ndxbook/constants.ts",
+          "note": "NDXBook v1.0 brand constants"
+        }
+      ]
+    },
+    "description": {
+      "value": "ndxbook is an educational media brand built as the index for everyday knowledge. it publishes highly engaging short-form content that helps people understand money, health, psychology, ai, technology, consumer intelligence, & modern life.",
+      "classification": "CANONICAL",
+      "confidence": "HIGH",
+      "provenance": [
+        {
+          "repository": "yoteenz/fsbw",
+          "file": "src/studio-os-core/ndxbook/constants.ts",
+          "note": "NDXBook v1.0 brand constants"
+        }
+      ]
+    },
+    "internalMeaning": {
+      "value": "ndxbook = index book",
+      "classification": "CANONICAL",
+      "confidence": "HIGH",
+      "provenance": [
+        {
+          "repository": "yoteenz/fsbw",
+          "file": "src/studio-os-core/ndxbook/constants.ts",
+          "note": "NDXBook v1.0 brand constants"
+        }
+      ]
+    },
+    "architecture": {
+      "value": {
+        "internalWorkspace": "AI Media",
+        "publicBrand": "ndxbook",
+        "experimentationLayer": "Studio OS Labs",
+        "productionNote": "Content produced under ndxbook; performance tracked through AI Media."
+      },
+      "classification": "REFERENCE",
+      "confidence": "HIGH",
+      "provenance": [
+        {
+          "repository": "yoteenz/fsbw",
+          "file": "src/studio-os-core/ndxbook/constants.ts",
+          "note": "NDXBook v1.0 brand constants"
+        }
+      ],
+      "notes": "Studio World internal layering"
+    },
+    "taxonomy": {
+      "value": {
+        "videoTerm": "pages",
+        "pillarTerm": "volumes",
+        "categoryTerm": "chapters",
+        "seriesTerm": "collections",
+        "audienceTerm": "readers",
+        "internalNote": "Every video is a page, every topic category is a chapter, every content pillar is a volume. Series = collections. Audience = readers."
+      },
+      "classification": "CANONICAL",
+      "confidence": "HIGH",
+      "provenance": [
+        {
+          "repository": "yoteenz/fsbw",
+          "file": "src/studio-os-core/ndxbook/constants.ts",
+          "note": "NDXBook v1.0 brand constants"
+        }
+      ]
+    },
+    "slug": {
+      "value": "ndxbook",
+      "classification": "DUPLICATE",
+      "confidence": "HIGH",
+      "provenance": [
+        {
+          "repository": "yoteenz/fsbw",
+          "file": "src/studio-os-core/ndxbook/constants.ts"
+        },
+        {
+          "repository": "SITE00/EVOLVE",
+          "note": "Organization already registered — do not re-create"
+        }
+      ]
+    }
+  },
+  "business": {
+    "concept": {
+      "value": "Educational indexed media brand — short-form knowledge pages across money, health, psychology, AI, tech, consumer life.",
+      "classification": "CANONICAL",
+      "confidence": "HIGH",
+      "provenance": [
+        {
+          "repository": "yoteenz/fsbw",
+          "file": "src/studio-os-core/ndxbook/constants.ts",
+          "note": "NDXBook v1.0 brand constants"
+        }
+      ]
+    },
+    "productService": {
+      "value": "Short-form educational video pages (called “pages”) organized into volumes and chapters; multi-platform distribution.",
+      "classification": "CANONICAL",
+      "confidence": "MEDIUM",
+      "provenance": [
+        {
+          "repository": "yoteenz/fsbw",
+          "file": "src/studio-os-core/ndxbook/constants.ts",
+          "note": "NDXBook v1.0 brand constants"
+        },
+        {
+          "repository": "yoteenz/fsbw",
+          "file": "src/studio-os-core/ndxbook/types.ts"
+        }
+      ]
+    },
+    "valueProposition": {
+      "value": "the index for everyday knowledge.",
+      "classification": "CANONICAL",
+      "confidence": "HIGH",
+      "provenance": [
+        {
+          "repository": "yoteenz/fsbw",
+          "file": "src/studio-os-core/ndxbook/constants.ts",
+          "note": "NDXBook v1.0 brand constants"
+        }
+      ]
+    },
+    "monetization": {
+      "value": "Media · sponsorship · premium · affiliate (strategy engine seed)",
+      "classification": "OWNER_CONFIRMATION_REQUIRED",
+      "confidence": "LOW",
+      "provenance": [
+        {
+          "repository": "yoteenz/fsbw",
+          "file": "src/studio-os-core/strategy-engine/bootstrap.ts",
+          "note": "Demo seed — not founder-locked"
+        }
+      ],
+      "notes": "Existence in demo seed ≠ approved business model"
+    },
+    "businessModel": {
+      "value": "Educational media / publishing pilot inside Studio World AI Media workspace",
+      "classification": "REFERENCE",
+      "confidence": "MEDIUM",
+      "provenance": [
+        {
+          "repository": "yoteenz/fsbw",
+          "file": "motherboard/MEMORY.md",
+          "note": "Milestone 29.5 creation context"
+        },
+        {
+          "repository": "yoteenz/fsbw",
+          "file": "founder-intelligence/COMPANIES.md"
+        }
+      ]
+    }
+  },
+  "audience": {
+    "targetAudience": {
+      "value": "Curious adults 25–45 seeking practical knowledge (strategy engine seed)",
+      "classification": "OWNER_CONFIRMATION_REQUIRED",
+      "confidence": "MEDIUM",
+      "provenance": [
+        {
+          "repository": "yoteenz/fsbw",
+          "file": "src/studio-os-core/strategy-engine/bootstrap.ts"
+        }
+      ],
+      "notes": "Useful hypothesis — requires founder confirmation for EVOLVE canon"
+    },
+    "audienceTerm": {
+      "value": "readers",
+      "classification": "CANONICAL",
+      "confidence": "HIGH",
+      "provenance": [
+        {
+          "repository": "yoteenz/fsbw",
+          "file": "src/studio-os-core/ndxbook/constants.ts",
+          "note": "NDXBook v1.0 brand constants"
+        }
+      ]
+    },
+    "communities": {
+      "value": [
+        "money",
+        "health",
+        "psychology",
+        "AI",
+        "technology",
+        "consumer intelligence"
+      ],
+      "classification": "REFERENCE",
+      "confidence": "MEDIUM",
+      "provenance": [
+        {
+          "repository": "yoteenz/fsbw",
+          "file": "src/studio-os-core/ndxbook/constants.ts",
+          "note": "NDXBook v1.0 brand constants"
+        }
+      ],
+      "notes": "Topic communities implied by volume/chapter taxonomy"
+    }
+  },
+  "voice": {
+    "voiceTraits": {
+      "value": [
+        "clear",
+        "curious",
+        "sharp",
+        "useful",
+        "slightly mysterious"
+      ],
+      "classification": "CANONICAL",
+      "confidence": "HIGH",
+      "provenance": [
+        {
+          "repository": "yoteenz/fsbw",
+          "file": "src/studio-os-core/ndxbook/constants.ts",
+          "note": "NDXBook v1.0 brand constants"
+        }
+      ]
+    },
+    "avoid": {
+      "value": [
+        "preachy",
+        "childish",
+        "overly academic",
+        "fearmongering"
+      ],
+      "classification": "CANONICAL",
+      "confidence": "HIGH",
+      "provenance": [
+        {
+          "repository": "yoteenz/fsbw",
+          "file": "src/studio-os-core/ndxbook/constants.ts",
+          "note": "NDXBook v1.0 brand constants"
+        }
+      ]
+    },
+    "copyStyle": {
+      "value": [
+        "short hooks",
+        "fast explanations",
+        "simple language",
+        "specific examples",
+        "no filler"
+      ],
+      "classification": "CANONICAL",
+      "confidence": "HIGH",
+      "provenance": [
+        {
+          "repository": "yoteenz/fsbw",
+          "file": "src/studio-os-core/ndxbook/constants.ts",
+          "note": "NDXBook v1.0 brand constants"
+        }
+      ]
+    },
+    "pageQuestions": {
+      "value": [
+        "what is this?",
+        "why does it matter?",
+        "what should the reader do or remember?"
+      ],
+      "classification": "CANONICAL",
+      "confidence": "HIGH",
+      "provenance": [
+        {
+          "repository": "yoteenz/fsbw",
+          "file": "src/studio-os-core/ndxbook/constants.ts",
+          "note": "NDXBook v1.0 brand constants"
+        }
+      ]
+    }
+  },
+  "visualIdentity": {
+    "creativeDnaStatus": {
+      "value": "placeholder",
+      "classification": "OWNER_CONFIRMATION_REQUIRED",
+      "confidence": "HIGH",
+      "provenance": [
+        {
+          "repository": "yoteenz/fsbw",
+          "file": "src/studio-os-core/ndxbook/constants.ts",
+          "note": "NDXBook v1.0 brand constants"
+        }
+      ],
+      "notes": "Explicitly placeholder — not approved"
+    },
+    "styleDirection": {
+      "value": [
+        "editorial",
+        "minimal",
+        "clean",
+        "high contrast",
+        "modern",
+        "slightly futuristic",
+        "trustworthy"
+      ],
+      "classification": "REFERENCE",
+      "confidence": "MEDIUM",
+      "provenance": [
+        {
+          "repository": "yoteenz/fsbw",
+          "file": "src/studio-os-core/ndxbook/constants.ts",
+          "note": "NDXBook v1.0 brand constants"
+        }
+      ]
+    },
+    "visualSystem": {
+      "value": [
+        "page number",
+        "volume label",
+        "chapter label",
+        "strong hook text",
+        "host / talent",
+        "simple visual metaphor",
+        "clear thumbnail hierarchy"
+      ],
+      "classification": "REFERENCE",
+      "confidence": "MEDIUM",
+      "provenance": [
+        {
+          "repository": "yoteenz/fsbw",
+          "file": "src/studio-os-core/ndxbook/constants.ts",
+          "note": "NDXBook v1.0 brand constants"
+        }
+      ]
+    },
+    "accentColor": {
+      "value": "#6366F1",
+      "classification": "REFERENCE",
+      "confidence": "MEDIUM",
+      "provenance": [
+        {
+          "repository": "yoteenz/fsbw",
+          "file": "src/utils/adminStudioDistributionNetworkOrgDefaults.ts",
+          "note": "NDXBOOK distribution accent"
+        }
+      ]
+    },
+    "thumbnailPalette": {
+      "value": {
+        "background": "#0F172A",
+        "accent": "#6366F1",
+        "text": "#F8FAFC"
+      },
+      "classification": "REFERENCE",
+      "confidence": "MEDIUM",
+      "provenance": [
+        {
+          "repository": "yoteenz/fsbw",
+          "file": "src/studio-os-core/ndxbook/pagePipeline.ts",
+          "note": "Page 001 SVG thumbnail generator"
+        }
+      ]
+    },
+    "designGenomeHero": {
+      "value": "Knowledge Page Hero — editorial benchmark (founder phrase in seed)",
+      "classification": "REFERENCE",
+      "confidence": "MEDIUM",
+      "provenance": [
+        {
+          "repository": "yoteenz/fsbw",
+          "file": "src/studio-os-core/design-genome/bootstrap.ts",
+          "note": "dg-ndx-article-hero — verify route attribution"
+        }
+      ],
+      "notes": "Capture route references lace-mastery — possible mis-attribution vs money/credit Page 001"
+    }
+  },
+  "strategy": {
+    "originalPurpose": {
+      "value": "Studio World test/guinea-pig brand inside AI Media workspace (Milestone 29.5) — validates Master Content Pipeline, Mission Control, Newsroom, Page 001 pilot, social OAuth wiring.",
+      "classification": "CANONICAL",
+      "confidence": "HIGH",
+      "provenance": [
+        {
+          "repository": "yoteenz/fsbw",
+          "file": "motherboard/MEMORY.md",
+          "note": "Milestone 29.5 creation context"
+        }
+      ]
+    },
+    "companyObjective": {
+      "value": "Reach 100,000 readers (strategy demo seed)",
+      "classification": "OWNER_CONFIRMATION_REQUIRED",
+      "confidence": "LOW",
+      "provenance": [
+        {
+          "repository": "yoteenz/fsbw",
+          "file": "src/studio-os-core/strategy-engine/bootstrap.ts"
+        }
+      ]
+    },
+    "contentStrategy": {
+      "value": "Daily indexed pages · volume cadence · Money Monday through Future Friday programming",
+      "classification": "CANONICAL",
+      "confidence": "HIGH",
+      "provenance": [
+        {
+          "repository": "yoteenz/fsbw",
+          "file": "src/studio-os-core/ndxbook/constants.ts",
+          "note": "NDXBook v1.0 brand constants"
+        },
+        [
+          {
+            "repository": "yoteenz/fsbw",
+            "file": "src/studio-os-core/strategy-engine/bootstrap.ts"
+          }
+        ]
+      ]
+    },
+    "northStarMetric": {
+      "value": "Returning readers (demo seed)",
+      "classification": "OWNER_CONFIRMATION_REQUIRED",
+      "confidence": "LOW",
+      "provenance": [
+        {
+          "repository": "yoteenz/fsbw",
+          "file": "src/studio-os-core/strategy-engine/bootstrap.ts"
+        }
+      ]
+    }
+  },
+  "marketing": {
+    "primaryObjective": {
+      "value": "Build returning reader habit (demo seed)",
+      "classification": "OWNER_CONFIRMATION_REQUIRED",
+      "confidence": "LOW",
+      "provenance": [
+        {
+          "repository": "yoteenz/fsbw",
+          "file": "src/studio-os-core/strategy-engine/bootstrap.ts"
+        }
+      ]
+    },
+    "channelPriorities": {
+      "value": [
+        "INSTAGRAM",
+        "TIKTOK",
+        "YOUTUBE SHORTS",
+        "FACEBOOK",
+        "THREADS",
+        "X",
+        "PINTEREST"
+      ],
+      "classification": "REFERENCE",
+      "confidence": "MEDIUM",
+      "provenance": [
+        {
+          "repository": "yoteenz/fsbw",
+          "file": "src/studio-os-core/ndxbook/constants.ts",
+          "note": "NDXBook v1.0 brand constants"
+        }
+      ],
+      "notes": "Pilot mode locks to Instagram-first — see founder-pilot seeds"
+    },
+    "instagramRole": {
+      "value": "First controlled publishing destination for Page 001 pilot",
+      "classification": "CANONICAL",
+      "confidence": "HIGH",
+      "provenance": [
+        [
+          {
+            "repository": "yoteenz/fsbw",
+            "file": "docs/NDXBOOK_PAGE_001_PIPELINE.md"
+          }
+        ],
+        [
+          {
+            "repository": "yoteenz/fsbw",
+            "file": "src/studio-os-core/founder-pilot-mode/seeds/ndxbook-pilot.ts"
+          }
+        ]
+      ]
+    },
+    "publishingCadence": {
+      "value": [
+        {
+          "id": "money-monday",
+          "weekday": "Monday",
+          "seriesTitle": "Money Monday",
+          "primaryVolumeId": "money",
+          "secondaryVolumeIds": [],
+          "description": "Volume: money"
+        },
+        {
+          "id": "truth-tuesday",
+          "weekday": "Tuesday",
+          "seriesTitle": "Truth Tuesday",
+          "primaryVolumeId": "body",
+          "secondaryVolumeIds": [
+            "mind"
+          ],
+          "description": "Volume: body / mind"
+        },
+        {
+          "id": "workflow-wednesday",
+          "weekday": "Wednesday",
+          "seriesTitle": "Workflow Wednesday",
+          "primaryVolumeId": "tech",
+          "secondaryVolumeIds": [],
+          "description": "Volume: tech"
+        },
+        {
+          "id": "smart-living-thursday",
+          "weekday": "Thursday",
+          "seriesTitle": "Smart Living Thursday",
+          "primaryVolumeId": "consumer",
+          "secondaryVolumeIds": [],
+          "description": "Volume: consumer"
+        },
+        {
+          "id": "future-friday",
+          "weekday": "Friday",
+          "seriesTitle": "Future Friday",
+          "primaryVolumeId": "tech",
+          "secondaryVolumeIds": [],
+          "description": "Volume: tech / business / innovation"
+        }
+      ],
+      "classification": "CANONICAL",
+      "confidence": "HIGH",
+      "provenance": [
+        {
+          "repository": "yoteenz/fsbw",
+          "file": "src/studio-os-core/ndxbook/constants.ts",
+          "note": "NDXBook v1.0 brand constants"
+        }
+      ]
+    },
+    "ctaStrategy": {
+      "value": "INDIGO CTA · READ PAGE · SUBSCRIBE",
+      "classification": "REFERENCE",
+      "confidence": "MEDIUM",
+      "provenance": [
+        {
+          "repository": "yoteenz/fsbw",
+          "file": "src/utils/adminStudioDistributionNetworkOrgDefaults.ts"
+        }
+      ]
+    },
+    "launchState": {
+      "value": "Pre-launch pilot — Founder Pilot Mode starts at Page 001 with zero demo history",
+      "classification": "CANONICAL",
+      "confidence": "HIGH",
+      "provenance": [
+        [
+          {
+            "repository": "yoteenz/fsbw",
+            "file": "src/studio-os-core/founder-pilot-mode/seeds/ndxbook-pilot.ts"
+          }
+        ],
+        [
+          {
+            "repository": "yoteenz/fsbw",
+            "file": "motherboard/MEMORY.md",
+            "note": "Milestone 87 Founder Pilot Mode"
+          }
+        ]
+      ]
+    },
+    "automationPreference": {
+      "value": null,
+      "classification": "REFERENCE",
+      "confidence": "LOW",
+      "provenance": [
+        {
+          "repository": "yoteenz/fsbw",
+          "file": "docs/studio-world/ndxbook/NDXBOOK_SITE00_HANDOFF.json"
+        }
+      ],
+      "notes": "No explicit automation preference documented in fsbw — EVOLVE assessment must ask"
+    }
+  },
+  "content": {
+    "contentPillars": {
+      "value": [
+        {
+          "id": "money",
+          "label": "VOLUME 001 — MONEY",
+          "chapters": [
+            "budgeting",
+            "credit",
+            "banking",
+            "investing",
+            "taxes",
+            "retirement",
+            "side hustles",
+            "passive income",
+            "financial scams"
+          ]
+        },
+        {
+          "id": "body",
+          "label": "VOLUME 002 — BODY",
+          "chapters": [
+            "health myths",
+            "nutrition",
+            "fitness",
+            "sleep",
+            "mental wellness",
+            "supplements",
+            "healthy habits",
+            "medical misconceptions"
+          ]
+        },
+        {
+          "id": "mind",
+          "label": "VOLUME 003 — MIND",
+          "chapters": [
+            "habits",
+            "psychology",
+            "body language",
+            "relationships",
+            "communication",
+            "decision making",
+            "productivity",
+            "cognitive biases",
+            "human behavior"
+          ]
+        },
+        {
+          "id": "tech",
+          "label": "VOLUME 004 — TECH",
+          "chapters": [
+            "ai tools",
+            "automation",
+            "software",
+            "cybersecurity",
+            "gadgets",
+            "digital productivity",
+            "future technology"
+          ]
+        },
+        {
+          "id": "consumer",
+          "label": "VOLUME 005 — CONSUMER",
+          "chapters": [
+            "consumer rights",
+            "shopping strategies",
+            "travel",
+            "subscriptions",
+            "insurance",
+            "warranties",
+            "hidden fees",
+            "online safety",
+            "everyday money-saving strategies"
+          ]
+        }
+      ],
+      "classification": "CANONICAL",
+      "confidence": "HIGH",
+      "provenance": [
+        {
+          "repository": "yoteenz/fsbw",
+          "file": "src/studio-os-core/ndxbook/constants.ts",
+          "note": "NDXBook v1.0 brand constants"
+        }
+      ]
+    },
+    "page001Pilot": {
+      "value": {
+        "title": "Truth Tuesday · Credit Education",
+        "hook": "Why paying off debt can still affect your credit score",
+        "volumeId": "money",
+        "chapter": "credit",
+        "platforms": [
+          "instagram"
+        ],
+        "hashtags": [
+          "#ndxbook",
+          "#creditscore",
+          "#personalfinance",
+          "#money",
+          "#financialeducation"
+        ]
+      },
+      "classification": "REFERENCE",
+      "confidence": "HIGH",
+      "provenance": [
+        {
+          "repository": "yoteenz/fsbw",
+          "file": "src/studio-os-core/ndxbook/pagePipeline.ts",
+          "note": "PAGE_001_CONTENT — pilot seed, not published canon"
+        }
+      ],
+      "notes": "Approved for pipeline testing only until founder publishes"
+    },
+    "distributionPackPilot": {
+      "value": "dist-ndx-page-001",
+      "classification": "STUDIO_WORLD_ONLY",
+      "confidence": "HIGH",
+      "provenance": [
+        {
+          "repository": "yoteenz/fsbw",
+          "file": "src/studio-os-core/ndxbook/distributionBridge.ts"
+        }
+      ]
+    }
+  },
+  "channels": {
+    "platformRegistry": {
+      "value": [
+        {
+          "platform": "instagram",
+          "status": "not-connected",
+          "handle": "pending"
+        },
+        {
+          "platform": "tiktok",
+          "status": "not-connected",
+          "handle": "pending"
+        },
+        {
+          "platform": "youtube-shorts",
+          "status": "not-connected",
+          "handle": "pending"
+        },
+        {
+          "platform": "facebook",
+          "status": "not-connected",
+          "handle": "pending"
+        },
+        {
+          "platform": "threads",
+          "status": "not-connected",
+          "handle": "pending"
+        },
+        {
+          "platform": "x",
+          "status": "not-connected",
+          "handle": "pending"
+        },
+        {
+          "platform": "pinterest",
+          "status": "not-connected",
+          "handle": "pending"
+        }
+      ],
+      "classification": "REFERENCE",
+      "confidence": "HIGH",
+      "provenance": [
+        {
+          "repository": "yoteenz/fsbw",
+          "file": "src/studio-os-core/ndxbook/constants.ts",
+          "note": "NDXBook v1.0 brand constants"
+        }
+      ],
+      "notes": "Code defaults are placeholders — production may differ"
+    },
+    "productionInstagramConnected": {
+      "value": {
+        "platform": "instagram",
+        "accountLabel": "Ndxbook (Meta page connected)",
+        "status": "connected"
+      },
+      "classification": "OWNER_CONFIRMATION_REQUIRED",
+      "confidence": "HIGH",
+      "provenance": [
+        {
+          "repository": "yoteenz/fsbw",
+          "databaseTable": "studio_social_accounts",
+          "note": "Read-only inspection — no tokens exported"
+        }
+      ],
+      "notes": "Confirm this is the canonical EVOLVE pilot account; tokens remain in Supabase only"
+    }
+  },
+  "assets": [
+    {
+      "value": {
+        "assetId": "ndxbook-page-001-thumbnail",
+        "type": "image/svg+xml",
+        "path": "generated inline — pagePipeline.buildNdxbookThumbnailDataUrl",
+        "status": "EXPERIMENTAL",
+        "intendedUse": "Page 001 Instagram pilot thumbnail"
+      },
+      "classification": "REFERENCE",
+      "confidence": "HIGH",
+      "provenance": [
+        {
+          "repository": "yoteenz/fsbw",
+          "file": "src/studio-os-core/ndxbook/pagePipeline.ts"
+        }
+      ]
+    }
+  ],
+  "studioWorldHistory": {
+    "workspaceId": {
+      "value": "ai-media",
+      "classification": "STUDIO_WORLD_ONLY",
+      "confidence": "HIGH",
+      "provenance": [
+        {
+          "repository": "yoteenz/fsbw",
+          "file": "src/studio-os-core/ndxbook/constants.ts",
+          "note": "NDXBook v1.0 brand constants"
+        }
+      ]
+    },
+    "adminRoutes": {
+      "value": [
+        "/admin/studio/ndxbook",
+        "/admin/studio/ndxbook/mission-control",
+        "/admin/studio/ndxbook/newsroom",
+        "/admin/studio/ndxbook/creative-direction",
+        "/admin/studio/companies/ndxbook/*"
+      ],
+      "classification": "STUDIO_WORLD_ONLY",
+      "confidence": "HIGH",
+      "provenance": [
+        {
+          "repository": "yoteenz/fsbw",
+          "file": "src/App.tsx"
+        }
+      ]
+    },
+    "pagePipeline": {
+      "value": "create → review → approve → schedule → publish (Master Content Pipeline gates)",
+      "classification": "STUDIO_WORLD_ONLY",
+      "confidence": "HIGH",
+      "provenance": [
+        {
+          "repository": "yoteenz/fsbw",
+          "file": "docs/NDXBOOK_PAGE_001_PIPELINE.md"
+        }
+      ]
+    },
+    "demoMissionControlHistory": {
+      "value": "Pages 019–042 demo metrics (M37 seed)",
+      "classification": "OBSOLETE",
+      "confidence": "HIGH",
+      "provenance": [
+        {
+          "repository": "yoteenz/fsbw",
+          "file": "src/studio-os-core/ndxbook/mission-control/bootstrap.ts",
+          "note": "Superseded by Founder Pilot zero-history seed"
+        }
+      ]
+    },
+    "productionGovernanceOrg": {
+      "value": "No ndxbook row in studio_world_organizations (production DB read-only)",
+      "classification": "NOT_FOUND",
+      "confidence": "HIGH",
+      "provenance": [
+        {
+          "repository": "yoteenz/fsbw",
+          "databaseTable": "studio_world_organizations",
+          "note": "Queried production — empty for ndx slug"
+        }
+      ]
+    }
+  },
+  "evolveGapAnalysis": [
+    {
+      "domain": "organization identity",
+      "status": "NOT_APPLICABLE",
+      "summary": "slug ndxbook + UUID 7681ab75-bddc-43e5-b594-79fcf8168205 already registered in SITE 00 EVOLVE — do not duplicate"
+    },
+    {
+      "domain": "business description",
+      "status": "RECOVERED_CANONICAL",
+      "summary": "ndxbook is an educational media brand built as the index for everyday knowledge. it publishes highly engaging short-form content that helps people understand money, health, psychology, ai, technology, consumer intelligence, & modern life.",
+      "sourceField": "brand.description"
+    },
+    {
+      "domain": "product/service",
+      "status": "RECOVERED_CANONICAL",
+      "summary": "Indexed educational short-form pages (volumes/chapters/pages)",
+      "sourceField": "business.productService"
+    },
+    {
+      "domain": "value proposition",
+      "status": "RECOVERED_CANONICAL",
+      "summary": "the index for everyday knowledge.",
+      "sourceField": "brand.positioning"
+    },
+    {
+      "domain": "target audience",
+      "status": "RECOVERED_NEEDS_CONFIRMATION",
+      "summary": "Curious adults 25–45 (demo seed only)",
+      "sourceField": "audience.targetAudience"
+    },
+    {
+      "domain": "primary marketing objective",
+      "status": "RECOVERED_NEEDS_CONFIRMATION",
+      "summary": "Build returning reader habit (demo seed)",
+      "sourceField": "marketing.primaryObjective"
+    },
+    {
+      "domain": "secondary objectives",
+      "status": "RECOVERED_NEEDS_CONFIRMATION",
+      "summary": "Newsletter, reader graph, cross-platform distribution (demo seed)",
+      "sourceField": "strategy"
+    },
+    {
+      "domain": "brand voice",
+      "status": "RECOVERED_CANONICAL",
+      "summary": "clear, curious, sharp, useful, slightly mysterious",
+      "sourceField": "voice.voiceTraits"
+    },
+    {
+      "domain": "visual identity",
+      "status": "RECOVERED_NEEDS_CONFIRMATION",
+      "summary": "Creative DNA placeholder — editorial/minimal/indigo accent reference",
+      "sourceField": "visualIdentity"
+    },
+    {
+      "domain": "content goals",
+      "status": "RECOVERED_CANONICAL",
+      "summary": "5 volumes · daily programming cadence · page taxonomy",
+      "sourceField": "content.contentPillars"
+    },
+    {
+      "domain": "channel priorities",
+      "status": "RECOVERED_NEEDS_CONFIRMATION",
+      "summary": "Instagram-first pilot; full platform list in registry",
+      "sourceField": "channels"
+    },
+    {
+      "domain": "Instagram role",
+      "status": "RECOVERED_CANONICAL",
+      "summary": "First publishing destination for Page 001 controlled pilot",
+      "sourceField": "marketing.instagramRole"
+    },
+    {
+      "domain": "content pillars",
+      "status": "RECOVERED_CANONICAL",
+      "summary": "money, body, mind, tech, consumer volumes",
+      "sourceField": "content.contentPillars"
+    },
+    {
+      "domain": "CTA strategy",
+      "status": "RECOVERED_NEEDS_CONFIRMATION",
+      "summary": "READ PAGE · SUBSCRIBE (distribution defaults)",
+      "sourceField": "marketing.ctaStrategy"
+    },
+    {
+      "domain": "launch state",
+      "status": "RECOVERED_CANONICAL",
+      "summary": "Pre-launch pilot — Page 001 pipeline ready, not mass-published",
+      "sourceField": "marketing.launchState"
+    },
+    {
+      "domain": "current offers",
+      "status": "NOT_FOUND",
+      "summary": "No locked product/offer catalog in fsbw canon"
+    },
+    {
+      "domain": "measurement goals",
+      "status": "RECOVERED_NEEDS_CONFIRMATION",
+      "summary": "Returning readers north star (demo seed)",
+      "sourceField": "strategy.northStarMetric"
+    },
+    {
+      "domain": "publishing cadence",
+      "status": "RECOVERED_CANONICAL",
+      "summary": "Money Monday … Future Friday weekly programming",
+      "sourceField": "marketing.publishingCadence"
+    },
+    {
+      "domain": "automation preference",
+      "status": "NOT_APPLICABLE",
+      "summary": "Not documented in recovered fsbw sources"
+    }
+  ],
+  "founderQuestions": [
+    {
+      "id": "fq-audience",
+      "question": "Is “curious adults 25–45 seeking practical knowledge” still the canonical NDXbook target audience for EVOLVE?",
+      "reason": "approval",
+      "relatedDomains": [
+        "target audience"
+      ]
+    },
+    {
+      "id": "fq-objective",
+      "question": "What is the current primary marketing objective for the EVOLVE pilot — reader habit, launch awareness, or something else?",
+      "reason": "time_sensitive",
+      "relatedDomains": [
+        "primary marketing objective",
+        "secondary objectives"
+      ]
+    },
+    {
+      "id": "fq-monetization",
+      "question": "Which monetization paths are in scope now: sponsorship, affiliate, premium volumes, or none during pilot?",
+      "reason": "gap",
+      "relatedDomains": [
+        "current offers",
+        "business model"
+      ]
+    },
+    {
+      "id": "fq-visual",
+      "question": "Has NDXbook visual DNA moved beyond placeholder status — is the indigo/slate editorial direction approved?",
+      "reason": "approval",
+      "relatedDomains": [
+        "visual identity"
+      ]
+    },
+    {
+      "id": "fq-instagram",
+      "question": "Is the connected Meta/Instagram “Ndxbook” account in production Supabase the canonical EVOLVE publishing account?",
+      "reason": "approval",
+      "relatedDomains": [
+        "Instagram role",
+        "channel priorities"
+      ]
+    },
+    {
+      "id": "fq-name-style",
+      "question": "Confirm public name styling: lowercase “ndxbook” vs “NDXbook” vs “NDXBOOK” for external copy.",
+      "reason": "conflict",
+      "relatedDomains": [
+        "organization identity"
+      ]
+    },
+    {
+      "id": "fq-demo-history",
+      "question": "Should any Mission Control demo pages (019–042) be treated as archived concepts, or discarded entirely for EVOLVE?",
+      "reason": "conflict",
+      "relatedDomains": [
+        "content goals",
+        "launch state"
+      ]
+    },
+    {
+      "id": "fq-page001",
+      "question": "Is Page 001 (credit score / debt payoff) approved as the first live post concept, or should EVOLVE start fresh?",
+      "reason": "approval",
+      "relatedDomains": [
+        "content pillars",
+        "Instagram role"
+      ]
+    }
+  ],
+  "provenance": [
+    {
+      "repository": "yoteenz/fsbw",
+      "file": "src/studio-os-core/ndxbook/constants.ts",
+      "note": "Primary brand canon source"
+    },
+    {
+      "repository": "yoteenz/fsbw",
+      "file": "docs/NDXBOOK_PAGE_001_PIPELINE.md",
+      "note": "Page 001 operational runbook"
+    },
+    {
+      "repository": "yoteenz/fsbw",
+      "file": "motherboard/MEMORY.md",
+      "note": "Milestone history and decisions"
+    }
+  ],
+  "conflicts": [
+    {
+      "value": {
+        "topic": "Demo publishing history vs Founder Pilot zero-history",
+        "values": [
+          "Mission Control M37 demo (pages 019–042)",
+          "Founder Pilot Mode (pages: [])"
+        ]
+      },
+      "classification": "CONFLICT",
+      "confidence": "HIGH",
+      "provenance": [
+        [
+          {
+            "repository": "yoteenz/fsbw",
+            "file": "src/studio-os-core/ndxbook/mission-control/bootstrap.ts"
+          }
+        ],
+        [
+          {
+            "repository": "yoteenz/fsbw",
+            "file": "src/studio-os-core/founder-pilot-mode/seeds/ndxbook-pilot.ts"
+          }
+        ]
+      ],
+      "notes": "EVOLVE must not import demo page counts as live truth"
+    },
+    {
+      "value": {
+        "topic": "Design Genome hero capture route",
+        "values": [
+          "/ndxbook/lace-mastery/cutting-your-lace",
+          "Page 001 money/credit Instagram pilot"
+        ]
+      },
+      "classification": "CONFLICT",
+      "confidence": "MEDIUM",
+      "provenance": [
+        {
+          "repository": "yoteenz/fsbw",
+          "file": "src/studio-os-core/design-genome/bootstrap.ts"
+        }
+      ],
+      "notes": "Possible mis-attributed capture — founder review required"
+    }
+  ],
+  "obsolete": [
+    {
+      "value": "Distribution demo packs dist-ndx-page-042, dist-ndx-money-monday-12, dist-ndx-social-cuts",
+      "classification": "OBSOLETE",
+      "confidence": "HIGH",
+      "provenance": [
+        {
+          "repository": "yoteenz/fsbw",
+          "file": "src/utils/adminStudioDistributionNetworkOrgDefaults.ts"
+        }
+      ],
+      "notes": "Demo scheduling data — not active under Founder Pilot"
+    }
+  ],
+  "importContract": {
+    "packageName": "NdxbookLegacyIntelligencePackage",
+    "stages": [
+      "DISCOVERED",
+      "REVIEWED",
+      "OWNER_CONFIRMED",
+      "IMPORT_APPROVED",
+      "IMPORTED"
+    ],
+    "mappingRecommendations": {
+      "CANONICAL_HIGH": "SITE 00 Content Brain + marketing profile direct import candidate",
+      "OWNER_CONFIRMATION_REQUIRED": "EVOLVE assessment prompt — block auto-canon",
+      "REFERENCE": "Content Brain reference layer / campaign archives",
+      "STUDIO_WORLD_ONLY": "Do not import — retain link to Studio World production systems only",
+      "CONFLICT": "Founder resolution queue before import",
+      "OBSOLETE": "Archive metadata only",
+      "DUPLICATE": "Skip — SITE 00 already holds org identity UUID"
+    },
+    "rules": [
+      "CANONICAL + HIGH may be recommended for direct import after REVIEWED",
+      "OWNER_CONFIRMATION_REQUIRED must never become canon without founder confirmation",
+      "REFERENCE remains reference intelligence",
+      "STUDIO_WORLD_ONLY must never copy into EVOLVE brand canon",
+      "CONFLICT remains unresolved until founder decision",
+      "OBSOLETE must not import as active truth",
+      "No runtime fetch from fsbw — portable JSON/MD handoff only"
+    ]
+  }
+}
