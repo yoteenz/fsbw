@@ -38,6 +38,10 @@ export type ShotRow = {
   qc_summary: Record<string, unknown>;
   production_mode?: string;
   provider_id?: string;
+  duration_seconds?: number;
+  identity_criticality?: string;
+  product_criticality?: string;
+  environment_criticality?: string;
   metadata?: Record<string, unknown>;
 };
 
@@ -46,6 +50,20 @@ export async function seedReferenceTenant(orgId = 'frontal-slayer') {
     '/api/admin/studio-virtual-production',
     { method: 'POST', body: JSON.stringify({ action: 'seed_reference', org_id: orgId }) }
   );
+}
+
+export async function seedFsCanonCampaign001(orgId = 'frontal-slayer') {
+  return vpFetch<{
+    ok: boolean;
+    brandId: string;
+    campaignId: string;
+    characterId: string;
+    referencePackId: string;
+    shotIds: string[];
+  }>('/api/admin/studio-virtual-production', {
+    method: 'POST',
+    body: JSON.stringify({ action: 'seed_fs_canon_campaign001', org_id: orgId }),
+  });
 }
 
 export async function listCampaigns(orgId = 'frontal-slayer') {

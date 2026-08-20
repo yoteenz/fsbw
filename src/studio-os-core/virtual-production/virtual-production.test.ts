@@ -11,6 +11,18 @@ import {
   FRONTAL_SLAYER_ORG_ID,
 } from './reference-seed';
 import {
+  FS_BRAND_CANON,
+  FS_CHARACTER_NIA,
+  FS_PRODUCTS,
+  REFERENCE_PACK_V1_SLOTS,
+  buildNiaReferencePackV1SlotStates,
+} from './canon/frontal-slayer-canon';
+import { CAMPAIGN_001_META, CAMPAIGN_001_SHOTS } from './pilot/campaign-001';
+import {
+  validateProvisionRequest,
+  validateReviewSubmission,
+} from './external/contract-v1';
+import {
   applyRepairSupersession,
   createRepairRecord,
   preserveOriginalOnRepair,
@@ -268,5 +280,47 @@ describe('Virtual Production OS — tenant isolation', () => {
     });
     expect(repair.orgId).toBe('other-tenant');
     expect(repair.orgId).not.toBe(FRONTAL_SLAYER_ORG_ID);
+  });
+});
+
+describe('Frontal Slayer canon — Campaign 001 pilot', () => {
+  it('brand canon uses approved primary red and six signature units only', () => {
+    expect(FS_BRAND_CANON.visualRules.primaryColor).toBe('#EB1C24');
+    expect(FS_PRODUCTS).toHaveLength(6);
+  });
+
+  it('Nia reference pack V1 has all required slots missing (SETUP REQUIRED)', () => {
+    expect(REFERENCE_PACK_V1_SLOTS).toHaveLength(13);
+    const states = buildNiaReferencePackV1SlotStates();
+    expect(Object.values(states).every((s) => s === 'missing')).toBe(true);
+  });
+
+  it('Campaign 001 has 9 real shots with required types', () => {
+    expect(CAMPAIGN_001_SHOTS).toHaveLength(9);
+    expect(CAMPAIGN_001_META.productionMode).toBe('hybrid');
+    expect(CAMPAIGN_001_META.format.aspectRatio).toBe('9:16');
+    const hybrid = CAMPAIGN_001_SHOTS.find((s) => s.hybridRepairCandidate);
+    expect(hybrid?.shotKey).toBe('shot-08');
+    const productCritical = CAMPAIGN_001_SHOTS.filter((s) => s.productCriticality === 'high');
+    expect(productCritical.some((s) => s.shotKey === 'shot-05')).toBe(true);
+  });
+
+  it('character canon does not fabricate image references', () => {
+    expect(FS_CHARACTER_NIA.status).toBe('setup_required');
+    expect(Object.keys(FS_CHARACTER_NIA.referenceUrls)).toHaveLength(0);
+  });
+});
+
+describe('External integration contract v1 — core validation', () => {
+  it('validates provision and review payloads', () => {
+    expect(
+      validateProvisionRequest({
+        externalSystem: 'studio-world-test',
+        externalEngagementId: 'eng-001',
+      })
+    ).not.toBeNull();
+    expect(
+      validateReviewSubmission({ reviewId: 'r1', action: 'approve' })
+    ).not.toBeNull();
   });
 });

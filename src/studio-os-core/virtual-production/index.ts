@@ -6,3 +6,6 @@ export * from './continuity';
 export * from './director-package';
 export * from './observability';
 export * from './reference-seed';
+export * from './canon/frontal-slayer-canon';
+export * from './pilot/campaign-001';
+export * from './external/contract-v1';

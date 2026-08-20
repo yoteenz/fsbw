@@ -1,9 +1,10 @@
 # Studio World Virtual Production OS
 
-**Status:** Foundation sprint — campaign continuity + multi-provider orchestration  
+**Status:** Foundation + Campaign 001 pilot + External contract v1  
 **Domain module:** `src/studio-os-core/virtual-production/`  
 **Admin workspace:** `/admin/studio/virtual-production`  
-**Debug hub:** `/__virtual-production`
+**Debug hub:** `/__virtual-production`  
+**External API:** `/api/studio-world/v1/campaigns` (contract v1)
 
 ---
 
@@ -61,6 +62,11 @@ Studio World owns brand memory, canon, continuity, QC, approvals, provenance. Pr
 | Deliverable | `studio_vp_deliverables` | Platform export metadata |
 | Director Package | `studio_vp_director_packages` | External Director export payload |
 | Provider Config | `studio_vp_provider_configs` | Capability metadata (no secrets) |
+| Take | `studio_vp_takes` | Candidate generations per shot |
+| External Engagement | `studio_vp_external_engagements` | Idempotent external provisioning |
+| Client Review | `studio_vp_client_reviews` | Client-visible review items |
+| Client Activity | `studio_vp_client_activity` | Sanitized activity feed |
+| Production Event | `studio_vp_production_events` | Webhook readiness (recorded only) |
 
 All tables use **`org_id`** tenant scoping + RLS (service-role API access).
 
@@ -206,7 +212,8 @@ Automatic continuity solving is **out of scope** for this sprint — architectur
 | GET | `brands` | List brand bibles |
 | GET | `board` | Campaign + shots for production board |
 | GET | `providers` | Provider registry |
-| POST | `seed_reference` | Frontal Slayer brand + Campaign 001 shell |
+| POST | `seed_reference` | Legacy brand + placeholder shell |
+| POST | `seed_fs_canon_campaign001` | Real FS canon + Campaign 001 pilot seed |
 | POST | `create_campaign` | New campaign |
 | POST | `create_repair` | Open repair job |
 | POST | `export_director_package` | OpenArt Director markdown package |
@@ -236,14 +243,33 @@ Auth: admin session via `resolveAdminAuth`. Provider secrets remain server-side.
 
 ---
 
-## Reference Tenant
+## Reference Tenant — Frontal Slayer Campaign 001
 
-**Brand:** FRONTAL SLAYER (`brand_key: frontal-slayer`, status `setup_required`)  
-**Campaign:** FRONTAL SLAYER / CAMPAIGN 001 (`campaign-001`, hybrid mode, placeholder shots with demo QC states)
+**Brand:** FRONTAL SLAYER (`brand_key: frontal-slayer`, status `approved` — real canon from repo sources)  
+**Campaign:** FRONTAL SLAYER / CAMPAIGN 001 — 9-shot hybrid social pilot (9:16, Reels/TikTok)  
+**Character:** Nia — text canon locked; reference pack V1 all slots **SETUP REQUIRED**  
+**Products:** Six signature units from SignatureCollectionRegistry (no invented SKUs)
 
-No fictional characters or products invented — canon categories documented as setup-required.
+Seed via API: `{ "action": "seed_fs_canon_campaign001", "org_id": "frontal-slayer" }`
 
-Seed via API: `{ "action": "seed_reference", "org_id": "frontal-slayer" }`
+See: `docs/studio-os/FRONTAL_SLAYER_CAMPAIGN_001_PILOT.md`
+
+---
+
+## External Integration Contract v1
+
+**Route:** `/api/studio-world/v1/campaigns`  
+**Auth:** HMAC-SHA256 (`STUDIO_WORLD_EXTERNAL_API_SECRET`)  
+**Docs:** `docs/studio-os/STUDIO_WORLD_EXTERNAL_INTEGRATION_CONTRACT.md`
+
+Supports: provision (idempotent), client-safe status, reviews, deliverables, activity.  
+**SITE 00 not connected** — contract documented for independent consumer implementation.
+
+---
+
+## Reference Tenant (legacy shell)
+
+Legacy placeholder seed still available: `{ "action": "seed_reference", "org_id": "frontal-slayer" }`
 
 ---
 
@@ -262,20 +288,23 @@ Seed via API: `{ "action": "seed_reference", "org_id": "frontal-slayer" }`
 
 ## Known Limitations (this sprint)
 
-- No automatic identity scoring or facial recognition
+- No automatic identity scoring or facial recognition (manual QC only)
 - No full nonlinear editor
-- No OpenArt Director API automation
-- No autonomous creative decisions
-- Canon/storyboard/edit/deliverables tabs are architectural placeholders in UI
-- Precision job dispatch to FAL gateway wired at schema level; full shot-level dispatch UI next sprint
+- No OpenArt Director API automation (external/manual package only)
+- Precision FAL jobs queued in DB — live generation execution next sprint
+- Final social master render not produced — deliverable marked incomplete
+- Continuity side-by-side comparison UI partial
+- Outbound webhooks not implemented — polling documented
+- SITE 00 integration architected only — not connected
 
 ---
 
 ## Recommended Next Sprint
 
-1. Wire Precision-mode shot generation to governed gateway with shot-level canon injection
-2. Full QC review UI with per-category forms
-3. Repair candidate comparison UI
-4. Storyboard keyframe linking to shot production
-5. Assembly timeline editor (read-only preview first)
-6. Production memory queries (provider reliability analytics)
+1. Upload Nia reference pack images → approve slots
+2. Wire Precision-mode shot generation to governed gateway with shot-level canon injection
+3. Import Director external results; complete hybrid repair on shot-08
+4. Full QC review UI with per-category forms + candidate comparison
+5. Assembly render when selected takes approved
+6. External consumer (SITE 00 repo) implements contract v1 client
+7. Optional outbound webhooks from `studio_vp_production_events`

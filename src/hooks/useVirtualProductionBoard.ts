@@ -1,46 +1,93 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { VirtualProductionMode } from '../studio-os-core/virtual-production';
 import {
-  buildCampaign001PlaceholderShots,
-  CAMPAIGN_001_SHELL,
-  FRONTAL_SLAYER_BRAND_SHELL,
-} from '../studio-os-core/virtual-production/reference-seed';
+  CAMPAIGN_001_META,
+  CAMPAIGN_001_SHOTS,
+} from '../studio-os-core/virtual-production/pilot/campaign-001';
+import {
+  FS_BRAND_CANON,
+  FS_CHARACTER_NIA,
+  buildNiaReferencePackV1SlotStates,
+} from '../studio-os-core/virtual-production/canon/frontal-slayer-canon';
 import {
   createCampaign,
   getProductionBoard,
   listCampaigns,
-  seedReferenceTenant,
+  seedFsCanonCampaign001,
   type CampaignSummary,
   type ShotRow,
 } from '../services/studio/virtualProduction/api';
 
-function buildDemoBoard(): { campaign: Record<string, unknown>; shots: ShotRow[] } {
+function buildCampaign001DemoBoard(): { campaign: Record<string, unknown>; shots: ShotRow[] } {
   const campaignId = 'demo-campaign-001';
-  const sceneId = 'demo-scene-01';
-  const placeholders = buildCampaign001PlaceholderShots(campaignId, sceneId);
+
+  const approvalByShot: Record<string, string> = {
+    'shot-01': 'approved',
+    'shot-02': 'keyframe_approved',
+    'shot-03': 'keyframe_approved',
+    'shot-04': 'planned',
+    'shot-05': 'generating',
+    'shot-06': 'planned',
+    'shot-07': 'planned',
+    'shot-08': 'repair_required',
+    'shot-09': 'planned',
+  };
+
+  const qcByShot: Record<string, string> = {
+    'shot-01': 'pass',
+    'shot-02': 'not_reviewed',
+    'shot-05': 'not_reviewed',
+    'shot-08': 'identity_warning',
+  };
+
+  const shots: ShotRow[] = CAMPAIGN_001_SHOTS.map((s) => ({
+    id: `${campaignId}-${s.shotKey}`,
+    shot_key: s.shotKey,
+    sort_order: s.sortOrder,
+    description: `${s.title} — ${s.purpose}`,
+    approval_state: approvalByShot[s.shotKey] ?? 'planned',
+    qc_summary: { overall: qcByShot[s.shotKey] ?? 'not_reviewed' },
+    production_mode: s.productionMode,
+    provider_id: s.providerId,
+    duration_seconds: s.durationSeconds,
+    identity_criticality: s.identityCriticality,
+    product_criticality: s.productCriticality,
+    environment_criticality: s.environmentCriticality,
+    metadata: {
+      editorialNote: s.editorialNote,
+      hybridRepairCandidate: s.hybridRepairCandidate ?? false,
+      capabilityRequired: s.capabilityRequired,
+    },
+  }));
+
   return {
     campaign: {
       id: campaignId,
-      name: CAMPAIGN_001_SHELL.name,
-      objective: CAMPAIGN_001_SHELL.objective,
-      production_mode: CAMPAIGN_001_SHELL.productionMode,
-      lifecycle_status: CAMPAIGN_001_SHELL.lifecycleStatus,
-      approval_state: CAMPAIGN_001_SHELL.approvalState,
-      creative_brief: CAMPAIGN_001_SHELL.creativeBrief,
-      studio_vp_brands: { display_name: FRONTAL_SLAYER_BRAND_SHELL.displayName },
-      metadata: { demoFallback: true },
+      name: CAMPAIGN_001_META.name,
+      objective: CAMPAIGN_001_META.objective,
+      platform: CAMPAIGN_001_META.platform,
+      production_mode: CAMPAIGN_001_META.productionMode,
+      lifecycle_status: CAMPAIGN_001_META.lifecycleStatus,
+      current_phase: CAMPAIGN_001_META.currentPhase,
+      director_external_status: 'ready_for_director',
+      creative_brief: CAMPAIGN_001_META.creativeBrief,
+      narrative_concept: CAMPAIGN_001_META.narrativeConcept,
+      treatment: CAMPAIGN_001_META.treatment,
+      format: CAMPAIGN_001_META.format,
+      audio_plan: CAMPAIGN_001_META.audioPlan,
+      studio_vp_brands: { display_name: FS_BRAND_CANON.displayName },
+      canon_snapshot: {
+        brand: FS_BRAND_CANON,
+        character: FS_CHARACTER_NIA,
+        referencePackV1: {
+          version: 1,
+          slots: buildNiaReferencePackV1SlotStates(),
+          note: 'All image slots SETUP REQUIRED',
+        },
+      },
+      metadata: { demoFallback: true, pilot: true },
     },
-    shots: placeholders.map((s, i) => ({
-      id: `demo-shot-${i + 1}`,
-      shot_key: s.shotKey,
-      sort_order: s.sortOrder,
-      description: s.description,
-      approval_state: s.approvalState,
-      qc_summary: s.qcSummary,
-      production_mode: s.productionMode,
-      provider_id: s.providerId,
-      metadata: s.metadata,
-    })),
+    shots,
   };
 }
 
@@ -52,12 +99,20 @@ export function useVirtualProductionBoard(orgId = 'frontal-slayer', demoFallback
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [tab, setTab] = useState<
-    'overview' | 'canon' | 'story' | 'storyboard' | 'shots' | 'production' | 'qc' | 'edit' | 'deliverables' | 'history'
+    | 'brief'
+    | 'canon'
+    | 'storyboard'
+    | 'shots'
+    | 'production'
+    | 'qc'
+    | 'assembly'
+    | 'deliverables'
+    | 'history'
   >('production');
 
   const [demoActive, setDemoActive] = useState(demoFallback);
 
-  const demoBoard = useMemo(() => buildDemoBoard(), []);
+  const demoBoard = useMemo(() => buildCampaign001DemoBoard(), []);
 
   const refreshCampaigns = useCallback(async () => {
     if (demoActive) {
@@ -68,7 +123,7 @@ export function useVirtualProductionBoard(orgId = 'frontal-slayer', demoFallback
           name: demoBoard.campaign.name as string,
           production_mode: demoBoard.campaign.production_mode as string,
           lifecycle_status: demoBoard.campaign.lifecycle_status as string,
-          approval_state: demoBoard.campaign.approval_state as string,
+          approval_state: 'draft',
         },
       ]);
       setActiveCampaignId(demoBoard.campaign.id as string);
@@ -127,10 +182,10 @@ export function useVirtualProductionBoard(orgId = 'frontal-slayer', demoFallback
     void refreshBoard();
   }, [refreshBoard]);
 
-  const seedReference = useCallback(async () => {
+  const seedCanonCampaign001 = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await seedReferenceTenant(orgId);
+      const res = await seedFsCanonCampaign001(orgId);
       setActiveCampaignId(res.campaignId);
       setDemoActive(false);
       await refreshCampaigns();
@@ -148,6 +203,9 @@ export function useVirtualProductionBoard(orgId = 'frontal-slayer', demoFallback
       setLoading(false);
     }
   }, [orgId, refreshCampaigns, refreshBoard, demoFallback, demoBoard]);
+
+  /** @deprecated use seedCanonCampaign001 */
+  const seedReference = seedCanonCampaign001;
 
   const createNewCampaign = useCallback(
     async (brandId: string, name: string, productionMode: VirtualProductionMode) => {
@@ -167,6 +225,7 @@ export function useVirtualProductionBoard(orgId = 'frontal-slayer', demoFallback
     error,
     tab,
     setTab,
+    seedCanonCampaign001,
     seedReference,
     createNewCampaign,
     refreshBoard,

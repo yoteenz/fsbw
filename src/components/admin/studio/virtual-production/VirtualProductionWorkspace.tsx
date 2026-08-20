@@ -2,20 +2,19 @@ import type { ShotRow } from '../../../../services/studio/virtualProduction/api'
 import type { VirtualProductionMode } from '../../../../studio-os-core/virtual-production';
 import './virtual-production.css';
 
-const TABS = [
-  'overview',
+const OPERATOR_TABS = [
+  'brief',
   'canon',
-  'story',
   'storyboard',
   'shots',
   'production',
   'qc',
-  'edit',
+  'assembly',
   'deliverables',
   'history',
 ] as const;
 
-type Tab = (typeof TABS)[number];
+type Tab = (typeof OPERATOR_TABS)[number];
 
 function qcLabel(qcSummary: Record<string, unknown>): string {
   const overall = String(qcSummary.overall ?? 'not_reviewed');
@@ -31,10 +30,7 @@ function qcClass(qcSummary: Record<string, unknown>): string {
 }
 
 function ShotCard({ shot }: { shot: ShotRow }) {
-  const needsRepair =
-    shot.approval_state === 'repair_required' ||
-    String(shot.qc_summary?.overall ?? '').includes('fail') ||
-    String(shot.qc_summary?.overall ?? '').includes('warning');
+  const needsRepair = shot.approval_state === 'repair_required';
 
   return (
     <article className="vp-shot-card" data-shot={shot.shot_key}>
@@ -46,58 +42,51 @@ function ShotCard({ shot }: { shot: ShotRow }) {
         <p className="vp-shot-desc">{shot.description ?? 'No description'}</p>
         <div className="vp-shot-meta">
           <span className={`vp-qc-badge ${qcClass(shot.qc_summary)}`}>{qcLabel(shot.qc_summary)}</span>
-          <span className="vp-mode-badge">{shot.production_mode ?? '—'}</span>
+          <span className="vp-mode-badge">{(shot.production_mode ?? '—').toUpperCase()}</span>
+          {shot.duration_seconds != null && (
+            <span className="vp-mode-badge">{shot.duration_seconds}s</span>
+          )}
         </div>
-        {needsRepair && (
-          <button type="button" className="vp-repair-btn">
-            REPAIR →
-          </button>
-        )}
+        <div className="vp-shot-criticality">
+          {shot.identity_criticality && <span>ID {shot.identity_criticality.toUpperCase()}</span>}
+          {shot.product_criticality && shot.product_criticality !== 'low' && (
+            <span>PR {shot.product_criticality.toUpperCase()}</span>
+          )}
+        </div>
+        <p className="vp-shot-provider">{shot.provider_id ?? '—'}</p>
+        <div className="vp-shot-actions">
+          <button type="button" className="vp-action-btn">OPEN</button>
+          {needsRepair && (
+            <button type="button" className="vp-repair-btn">
+              REPAIR →
+            </button>
+          )}
+        </div>
       </div>
     </article>
   );
 }
 
-function ProductionModeSelector({
-  value,
-  onChange,
-}: {
-  value: VirtualProductionMode;
-  onChange: (mode: VirtualProductionMode) => void;
-}) {
-  const modes: Array<{ id: VirtualProductionMode; title: string; desc: string }> = [
-    {
-      id: 'director',
-      title: 'DIRECTOR',
-      desc: 'Fast multi-scene production. Best for social, lifestyle, narrative and high-volume campaigns.',
-    },
-    {
-      id: 'precision',
-      title: 'PRECISION',
-      desc: 'Shot-by-shot control. Best for exact products, exact characters and hero production.',
-    },
-    {
-      id: 'hybrid',
-      title: 'HYBRID',
-      desc: 'Direct fast. Repair precisely. Director production with Precision replacement for weak shots.',
-    },
-  ];
+function CampaignSummary({ shots }: { shots: ShotRow[] }) {
+  const approved = shots.filter((s) => s.approval_state === 'approved').length;
+  const repair = shots.filter((s) => s.approval_state === 'repair_required').length;
+  const notReviewed = shots.filter(
+    (s) => String(s.qc_summary?.overall ?? 'not_reviewed') === 'not_reviewed'
+  ).length;
 
   return (
-    <div className="vp-mode-selector">
-      <p className="vp-mode-heading">HOW SHOULD STUDIO WORLD PRODUCE THIS?</p>
-      <div className="vp-mode-grid">
-        {modes.map((m) => (
-          <button
-            key={m.id}
-            type="button"
-            className={`vp-mode-card ${value === m.id ? 'vp-mode-active' : ''}`}
-            onClick={() => onChange(m.id)}
-          >
-            <strong>{m.title}</strong>
-            <span>{m.desc}</span>
-          </button>
-        ))}
+    <div className="vp-summary-row">
+      <div className="vp-summary-chip">
+        <strong>{shots.length}</strong> SHOTS
+      </div>
+      <div className="vp-summary-chip vp-qc-pass">
+        <strong>{approved}</strong> APPROVED
+      </div>
+      <div className="vp-summary-chip vp-qc-fail">
+        <strong>{repair}</strong> REPAIR
+      </div>
+      <div className="vp-summary-chip">
+        <strong>{notReviewed}</strong> NOT REVIEWED
       </div>
     </div>
   );
@@ -111,7 +100,8 @@ export type VirtualProductionWorkspaceProps = {
   onTabChange: (tab: Tab) => void;
   loading?: boolean;
   error?: string | null;
-  onSeedReference?: () => void;
+  onSeedCanon?: () => void;
+  seedLabel?: string;
 };
 
 export function VirtualProductionWorkspace({
@@ -121,34 +111,41 @@ export function VirtualProductionWorkspace({
   onTabChange,
   loading,
   error,
-  onSeedReference,
+  onSeedCanon,
+  seedLabel = 'Initialize FS Canon + Campaign 001',
 }: VirtualProductionWorkspaceProps) {
   const productionMode = (campaign?.production_mode as VirtualProductionMode) ?? 'hybrid';
   const brandName =
     (campaign?.studio_vp_brands as { display_name?: string } | undefined)?.display_name ??
-    'Brand';
+    'FRONTAL SLAYER';
+  const currentPhase = String(campaign?.current_phase ?? campaign?.lifecycle_status ?? '—')
+    .replace(/_/g, ' ')
+    .toUpperCase();
 
   return (
     <div className="vp-workspace">
       <header className="vp-header">
         <div>
-          <p className="vp-kicker">STUDIO WORLD · VIRTUAL PRODUCTION OS</p>
-          <h1>{String(campaign?.name ?? 'Production Board')}</h1>
+          <p className="vp-kicker">STUDIO WORLD · CAMPAIGN OPERATOR</p>
+          <h1>{String(campaign?.name ?? 'CAMPAIGN 001')}</h1>
           <div className="vp-header-meta">
             <span>{brandName}</span>
-            <span>{String(productionMode).toUpperCase()} MODE</span>
-            <span>{String(campaign?.lifecycle_status ?? '—').replace(/_/g, ' ').toUpperCase()}</span>
+            <span>{String(productionMode).toUpperCase()}</span>
+            <span>{currentPhase}</span>
+            <span>{String(campaign?.director_external_status ?? '').replace(/_/g, ' ')}</span>
           </div>
         </div>
-        {onSeedReference && (
-          <button type="button" className="vp-seed-btn" onClick={onSeedReference} disabled={loading}>
-            Seed Reference Campaign
+        {onSeedCanon && (
+          <button type="button" className="vp-seed-btn" onClick={onSeedCanon} disabled={loading}>
+            {seedLabel}
           </button>
         )}
       </header>
 
+      <CampaignSummary shots={shots} />
+
       <nav className="vp-tabs" aria-label="Campaign workspace">
-        {TABS.map((t) => (
+        {OPERATOR_TABS.map((t) => (
           <button
             key={t}
             type="button"
@@ -163,9 +160,8 @@ export function VirtualProductionWorkspace({
       {error && <p className="vp-error">{error}</p>}
       {loading && <p className="vp-loading">Loading production state…</p>}
 
-      {tab === 'production' && (
+      {(tab === 'production' || tab === 'shots' || tab === 'qc') && (
         <section className="vp-production-view">
-          <ProductionModeSelector value={productionMode} onChange={() => undefined} />
           <div className="vp-shot-grid">
             {shots.map((shot) => (
               <ShotCard key={shot.id} shot={shot} />
@@ -174,39 +170,71 @@ export function VirtualProductionWorkspace({
         </section>
       )}
 
-      {tab === 'overview' && (
+      {tab === 'brief' && (
         <section className="vp-panel">
-          <h2>Campaign Overview</h2>
-          <p>{String(campaign?.objective ?? '[Setup required]')}</p>
+          <h2>Campaign Brief</h2>
           <dl className="vp-dl">
+            <dt>Objective</dt>
+            <dd>{String(campaign?.objective ?? '—')}</dd>
+            <dt>Platform</dt>
+            <dd>{String(campaign?.platform ?? '—')}</dd>
             <dt>Creative Brief</dt>
-            <dd>{String(campaign?.creative_brief ?? '[Setup required]')}</dd>
-            <dt>Approval</dt>
-            <dd>{String(campaign?.approval_state ?? 'draft').replace(/_/g, ' ')}</dd>
+            <dd>{String(campaign?.creative_brief ?? '—')}</dd>
+            <dt>Narrative</dt>
+            <dd>{String(campaign?.narrative_concept ?? '—')}</dd>
+            <dt>Treatment</dt>
+            <dd>{String(campaign?.treatment ?? '—')}</dd>
+            <dt>Format</dt>
+            <dd>{JSON.stringify(campaign?.format ?? {})}</dd>
           </dl>
         </section>
       )}
 
-      {tab === 'qc' && (
+      {tab === 'canon' && (
         <section className="vp-panel">
-          <h2>Quality Control</h2>
-          <p>Structured QC categories: identity, product, environment, wardrobe, prop, anatomy, motion, camera, lighting, continuity, text/logo, audio, brand, overall.</p>
-          <div className="vp-shot-grid vp-qc-grid">
-            {shots.map((shot) => (
-              <ShotCard key={shot.id} shot={shot} />
-            ))}
-          </div>
+          <h2>Canon Attachment</h2>
+          <pre className="vp-json">{JSON.stringify(campaign?.canon_snapshot ?? {}, null, 2)}</pre>
+          <p className="vp-note">Reference Pack V1 — all Nia image slots: SETUP REQUIRED (text canon locked)</p>
         </section>
       )}
 
-      {!['production', 'overview', 'qc'].includes(tab) && (
-        <section className="vp-panel vp-placeholder">
-          <h2>{tab.charAt(0).toUpperCase() + tab.slice(1)}</h2>
-          <p>Foundation architecture ready — {tab} surface ships in next sprint increment.</p>
+      {tab === 'storyboard' && (
+        <section className="vp-panel">
+          <h2>Storyboard / Keyframes</h2>
+          <p>9 shots · keyframe state per shot in database. Workflow: SHOT → KEYFRAME → QC → APPROVAL → MOTION</p>
+          <ul className="vp-shot-list">
+            {shots.map((s) => (
+              <li key={s.id}>
+                {s.shot_key.toUpperCase()} — {s.description} ({s.approval_state})
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {tab === 'assembly' && (
+        <section className="vp-panel">
+          <h2>Assembly V1</h2>
+          <p>Timeline architecture ready — ordered shots with transitions. Final render: NOT READY (accurate state).</p>
+        </section>
+      )}
+
+      {tab === 'deliverables' && (
+        <section className="vp-panel">
+          <h2>Deliverables</h2>
+          <p>SOCIAL MASTER — 9:16 — Instagram Reels / TikTok</p>
+          <p className="vp-note">Status: INCOMPLETE — awaiting approved assembly and QC pass. Not marked DELIVERED.</p>
+        </section>
+      )}
+
+      {tab === 'history' && (
+        <section className="vp-panel">
+          <h2>Production History</h2>
+          <p>Provider, model, reference-pack version, attempts, QC, repair count captured in production_jobs and generation_assets.</p>
         </section>
       )}
     </div>
   );
 }
 
-export { ProductionModeSelector };
+export type { Tab as VirtualProductionTab };

@@ -7,6 +7,7 @@ import {
   exportDirectorPackage,
   getCampaignBoard,
 } from '../_lib/virtualProduction/service.js';
+import { seedFrontalSlayerCanonAndCampaign001 } from '../_lib/virtualProduction/canon-seed.js';
 import { PRODUCTION_PROVIDERS } from '../../src/studio-os-core/virtual-production/providers.js';
 
 function parseBody(req: VercelRequest): Record<string, unknown> | null {
@@ -93,6 +94,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
       if (action === 'seed_reference') {
         const seed = await ensureReferenceTenantSeed(supabase, orgId);
+        return res.status(200).json({ ok: true, ...seed });
+      }
+
+      if (action === 'seed_fs_canon_campaign001') {
+        const seed = await seedFrontalSlayerCanonAndCampaign001(supabase, orgId);
         return res.status(200).json({ ok: true, ...seed });
       }
 

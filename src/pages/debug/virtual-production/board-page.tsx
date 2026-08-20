@@ -13,7 +13,7 @@ export default function VirtualProductionDebugBoardPage() {
       onTabChange={board.setTab}
       loading={board.loading}
       error={board.error}
-      onSeedReference={() => void board.seedReference()}
+      onSeedCanon={() => void board.seedCanonCampaign001()}
     />
   );
 }
