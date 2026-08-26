@@ -66,7 +66,7 @@ export {
   countNeedsFunctionalReview,
 } from './fsbw-missing-route-completion/review-queue';
 
-export { captureAllRequiresLockedCuration } from './experience-curation/curation-plans';
+export { captureAllRequiresLockedCuration, isFsbwCurationProject } from './experience-curation/curation-plans';
 
 export { isProductionNavBlocked, composerPreviewRoutePath } from './fsbw-missing-route-completion/draft-guard';
 

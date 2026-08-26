@@ -9,6 +9,7 @@ import type {
   ProjectWebsitePageSet,
   StudioWorldDesignRouteManifest,
 } from '../types';
+import { EXTERNAL_REPO_OWNED_PROJECT_IDS } from '../constants';
 import { FS_INTERNAL_WORKSPACE_SECTION } from './constants';
 import {
   auditFrontalSlayerPrimaryExperience,
@@ -28,9 +29,16 @@ import {
   upsertOverride,
 } from './override-store';
 import {
-  buildDesignReferenceGenerationPlan,
-  buildImplementationSnapshotCapturePlan,
+  buildFsbwCaptureScopeSummary,
+  buildNormalizedCapturePlan,
+  buildNormalizedReferencePlan,
+  isFsbwCurationProject,
 } from './curation-plans';
+import { buildFrontalSlayerReviewGroups, buildAioReviewGroups } from './review-groups';
+import { auditBawMaterialScreens } from './fs-baw-material-audit';
+import { auditStudioWorldSurfaces } from './studio-world-audit';
+import { captureSourceSnapshot, diffCurationSource, shouldMarkStale } from './stale-detection';
+import { evaluateCurationGates } from './curation-gates';
 
 function ensureInternalSection(sections: ExperienceSectionRecord[], projectId: string): ExperienceSectionRecord[] {
   const sectionId =
@@ -90,6 +98,10 @@ export function applyAutoCuration(
   };
   const autoOverrides: ExperiencePageOverrideRecordV2[] = [];
 
+  if ((EXTERNAL_REPO_OWNED_PROJECT_IDS as readonly string[]).includes(projectId)) {
+    return { pages, instances, autoOverrides, changes };
+  }
+
   if (projectId === 'frontal-slayer') {
     const compiledByScreen = buildCompiledByScreen(pageSet.compiledPages, manifest.designScreens.filter((s) => s.projectId === projectId));
     const audit = auditFrontalSlayerPrimaryExperience(pages.filter((p) => p.founderPrimary), compiledByScreen);
@@ -138,10 +150,6 @@ export function applyAutoCuration(
     }
   }
 
-  if (projectId === 'site00' || projectId === 'ndxbook') {
-    // Preserve P0.VR.3G curation — no auto demotion/merge
-  }
-
   return { pages, instances, autoOverrides, changes };
 }
 
@@ -151,6 +159,7 @@ export function applyExperienceCurationToPageSet(
   store: ExperienceCurationStore,
 ): { pageSet: ProjectWebsitePageSet; store: ExperienceCurationStore; bundle: ProjectExperienceCurationBundle } {
   const projectId = pageSet.projectId;
+  const isExternal = (EXTERNAL_REPO_OWNED_PROJECT_IDS as readonly string[]).includes(projectId);
   const compilerPages = [...(pageSet.experiencePages ?? [])];
   const compilerProposed = compilerPages.filter((p) => p.founderPrimary);
 
@@ -163,11 +172,13 @@ export function applyExperienceCurationToPageSet(
     store,
   );
 
-  for (const ov of autoOverrides) {
-    storeNext = upsertOverride(storeNext, ov);
+  if (!isExternal) {
+    for (const ov of autoOverrides) {
+      storeNext = upsertOverride(storeNext, ov);
+    }
   }
 
-  const founderOverrides = activeOverridesForProject(storeNext, projectId);
+  const founderOverrides = isExternal ? [] : activeOverridesForProject(storeNext, projectId);
   const overrideResult = applyExperiencePageOverrides(
     autoCurated,
     pageSet.experienceSections ?? [],
@@ -177,14 +188,36 @@ export function applyExperienceCurationToPageSet(
   );
 
   let activePages = overrideResult.pages;
+  let activeMaterial = overrideResult.materialScreens;
   let activeSections = ensureInternalSection(rebuildSections(pageSet.experienceSections ?? [], activePages), projectId);
 
-  const curationState = getProjectCurationState(storeNext, projectId);
+  let curationState = getProjectCurationState(storeNext, projectId);
+  const prevSnapshot = storeNext.sourceSnapshots?.[projectId];
+  const sourceDiff = isExternal ? undefined : diffCurationSource(prevSnapshot, manifest, pageSet);
+  if (!isExternal && !prevSnapshot) {
+    storeNext = {
+      ...storeNext,
+      sourceSnapshots: {
+        ...storeNext.sourceSnapshots,
+        [projectId]: captureSourceSnapshot(manifest, pageSet),
+      },
+    };
+  }
+  if (shouldMarkStale(curationState.lockedForCapture, sourceDiff)) {
+    curationState = {
+      ...curationState,
+      universeStatus: 'STALE',
+      curationUpdateAvailable: true,
+    };
+  } else if (sourceDiff && !curationState.lockedForCapture) {
+    curationState = { ...curationState, curationUpdateAvailable: true };
+  }
+
   const primaryCount = activePages.filter((p) => p.founderPrimary).length;
   const internalCount = activePages.filter((p) => !p.founderPrimary && p.experienceType === 'WORKSPACE_PAGE').length;
 
   const internalLeakAudit =
-    projectId === 'frontal-slayer'
+    projectId === 'frontal-slayer' && !isExternal
       ? auditFrontalSlayerPrimaryExperience(
           activePages.filter((p) => p.founderPrimary),
           buildCompiledByScreen(pageSet.compiledPages, manifest.designScreens.filter((s) => s.projectId === projectId)),
@@ -202,70 +235,110 @@ export function applyExperienceCurationToPageSet(
       : [];
 
   const reviewQueue: CurationReviewQueueItem[] = [];
-  for (const p of activePages.filter((p) => p.abstractionConfidence === 'LOW' || p.abstractionConfidence === 'MEDIUM')) {
-    reviewQueue.push({
-      category: 'LOW_CONFIDENCE',
-      experiencePageId: p.experiencePageId,
-      displayName: p.displayName,
-      detail: `Abstraction confidence ${p.abstractionConfidence}`,
-      severity: p.abstractionConfidence === 'LOW' ? 'WARNING' : 'INFO',
-    });
-  }
-  for (const leak of internalLeakAudit) {
-    reviewQueue.push({
-      category: 'POSSIBLE_INTERNAL_LEAK',
-      experiencePageId: leak.experiencePageId,
-      displayName: leak.displayName,
-      detail: leak.signals.join(', '),
-      severity: leak.confidence === 'HIGH' ? 'CRITICAL' : 'WARNING',
-    });
-  }
-  for (const conflict of overrideResult.conflicts) {
-    reviewQueue.push({
-      category: 'OVERRIDE_CONFLICT',
-      experiencePageId: conflict.targetId,
-      displayName: conflict.targetId,
-      detail: `Override ${conflict.overrideType} could not apply`,
-      severity: 'CRITICAL',
-    });
+  if (!isExternal) {
+    for (const p of activePages.filter((p) => p.abstractionConfidence === 'LOW' || p.abstractionConfidence === 'MEDIUM')) {
+      reviewQueue.push({
+        category: 'LOW_CONFIDENCE',
+        experiencePageId: p.experiencePageId,
+        displayName: p.displayName,
+        detail: `Abstraction confidence ${p.abstractionConfidence}`,
+        severity: p.abstractionConfidence === 'LOW' ? 'WARNING' : 'INFO',
+      });
+    }
+    for (const leak of internalLeakAudit) {
+      reviewQueue.push({
+        category: 'POSSIBLE_INTERNAL_LEAK',
+        experiencePageId: leak.experiencePageId,
+        displayName: leak.displayName,
+        detail: leak.signals.join(', '),
+        severity: leak.confidence === 'HIGH' ? 'CRITICAL' : 'WARNING',
+      });
+    }
+    for (const conflict of overrideResult.conflicts) {
+      reviewQueue.push({
+        category: 'OVERRIDE_CONFLICT',
+        experiencePageId: conflict.targetId,
+        displayName: conflict.targetId,
+        detail: `Override ${conflict.overrideType} could not apply`,
+        severity: 'CRITICAL',
+      });
+    }
   }
 
+  const reviewGroups =
+    projectId === 'frontal-slayer' && !isExternal
+      ? buildFrontalSlayerReviewGroups(reviewQueue, activePages)
+      : projectId === 'all-in-one-enterprise' && !isExternal
+        ? buildAioReviewGroups(reviewQueue, activePages)
+        : undefined;
+
+  const bawPage = activePages.find((p) => p.displayName.includes('Build-A-Wig'));
+  const bawMaterialScreenAudit =
+    projectId === 'frontal-slayer' && bawPage
+      ? auditBawMaterialScreens(activeMaterial, bawPage.experiencePageId)
+      : undefined;
+
   const aioServiceConsolidation =
-    projectId === 'all-in-one-enterprise'
+    projectId === 'all-in-one-enterprise' && !isExternal
       ? auditAioServiceConsolidation(activePages, manifest.designFamilies.filter((f) => f.projectId === projectId))
       : undefined;
 
-  const capturePlan = buildImplementationSnapshotCapturePlan(projectId, curationState, activePages, pageSet.materialScreens ?? []);
-  const referencePlan = buildDesignReferenceGenerationPlan(projectId, curationState, activePages, pageSet.materialScreens ?? []);
+  const normalizedCapturePlan = isFsbwCurationProject(projectId)
+    ? buildNormalizedCapturePlan(projectId, curationState, activePages, activeMaterial)
+    : undefined;
+  const normalizedReferencePlan = isFsbwCurationProject(projectId)
+    ? buildNormalizedReferencePlan(projectId, curationState, activePages, activeMaterial)
+    : undefined;
 
-  const bundle: ProjectExperienceCurationBundle = {
+  const capturePlan = normalizedCapturePlan ?? buildNormalizedCapturePlan(projectId, curationState, activePages, activeMaterial);
+  const referencePlan = normalizedReferencePlan ?? buildNormalizedReferencePlan(projectId, curationState, activePages, activeMaterial);
+
+  const bundleDraft: ProjectExperienceCurationBundle = {
     projectId,
     curationVersion: curationState.curationVersion,
-    universeStatus:
-      curationState.lockedForCapture ? 'LOCKED_FOR_CAPTURE' : reviewQueue.length ? 'REVIEWING' : 'CURATED',
+    universeStatus: isExternal
+      ? 'CURATED'
+      : curationState.lockedForCapture
+        ? 'LOCKED_FOR_CAPTURE'
+        : curationState.universeStatus === 'STALE'
+          ? 'STALE'
+          : reviewQueue.some((q) => q.severity === 'CRITICAL')
+            ? 'REVIEWING'
+            : 'CURATED',
     compilerProposedPrimaryCount: compilerProposed.length,
     activePrimaryCount: primaryCount,
     internalWorkspaceCount: internalCount,
     supportingCount: activePages.filter((p) => !p.founderPrimary && p.experienceType !== 'WORKSPACE_PAGE').length,
     reviewQueue,
+    reviewGroups,
     internalLeakAudit,
     duplicateAudit: [],
     aioServiceConsolidation,
+    bawMaterialScreenAudit,
     capturePlan,
+    normalizedCapturePlan,
     referencePlan,
+    normalizedReferencePlan,
     overrideConflicts: overrideResult.conflicts,
+    sourceDiff,
+    externalRepoAuthority: isExternal,
     changes,
+    lockBlockers: [],
   };
+
+  const gates = evaluateCurationGates(activePages, activeMaterial, bundleDraft, curationState);
+  bundleDraft.lockBlockers = gates.blockers;
 
   const updatedPageSet: ProjectWebsitePageSet = {
     ...pageSet,
     experiencePages: activePages,
     experienceSections: activeSections,
-    pageInstances: instances,
+    materialScreens: activeMaterial,
+    pageInstances: overrideResult.instances,
     compilerProposedPages: compilerPages,
     founderCuratedPages: autoCurated,
     activeExperiencePages: activePages.filter((p) => p.founderPrimary),
-    experienceCuration: bundle,
+    experienceCuration: bundleDraft,
     experienceMetrics: pageSet.experienceMetrics
       ? {
           ...pageSet.experienceMetrics,
@@ -280,19 +353,33 @@ export function applyExperienceCurationToPageSet(
     },
   };
 
-  storeNext = {
-    ...storeNext,
-    projectCuration: {
-      ...storeNext.projectCuration,
-      [projectId]: {
-        ...curationState,
-        universeStatus: bundle.universeStatus,
-        lastCompiledAt: new Date().toISOString(),
+  if (isExternal) {
+    storeNext = {
+      ...storeNext,
+      externalRepoAuthority: {
+        ...storeNext.externalRepoAuthority,
+        [projectId]: {
+          projectId,
+          authority: 'EXTERNAL_REPO',
+          note: 'Owned by SITE00 repository — not active FSBW curation authority',
+        },
       },
-    },
-  };
+    };
+  } else {
+    storeNext = {
+      ...storeNext,
+      projectCuration: {
+        ...storeNext.projectCuration,
+        [projectId]: {
+          ...curationState,
+          universeStatus: bundleDraft.universeStatus,
+          lastCompiledAt: new Date().toISOString(),
+        },
+      },
+    };
+  }
 
-  return { pageSet: updatedPageSet, store: storeNext, bundle };
+  return { pageSet: updatedPageSet, store: storeNext, bundle: bundleDraft };
 }
 
 export function attachExperienceCurationToManifest(
@@ -300,11 +387,29 @@ export function attachExperienceCurationToManifest(
   store: ExperienceCurationStore,
 ): { manifest: StudioWorldDesignRouteManifest; store: ExperienceCurationStore } {
   let storeNext = { ...store, sourceCommit: manifest.sourceCommit };
+  const fsbwPlans: Array<{ projectId: string; plan: import('../types').NormalizedCapturePlan }> = [];
+
   const projectPageSets = manifest.projectPageSets.map((ps) => {
-    const { pageSet, store: s } = applyExperienceCurationToPageSet(manifest, ps, storeNext);
+    const { pageSet, store: s, bundle } = applyExperienceCurationToPageSet(manifest, ps, storeNext);
     storeNext = s;
+    if (bundle.normalizedCapturePlan && isFsbwCurationProject(ps.projectId)) {
+      fsbwPlans.push({ projectId: ps.projectId, plan: bundle.normalizedCapturePlan });
+    }
     return pageSet;
   });
+
+  const fsPageSet = manifest.projectPageSets.find((p) => p.projectId === 'frontal-slayer');
+  if (fsPageSet) {
+    storeNext = {
+      ...storeNext,
+      studioWorldAudit: auditStudioWorldSurfaces(
+        fsPageSet.compiledPages,
+        manifest.designScreens ?? [],
+        manifest.designFamilies ?? [],
+        fsPageSet.experiencePages ?? [],
+      ),
+    };
+  }
 
   return {
     manifest: {
@@ -317,6 +422,7 @@ export function attachExperienceCurationToManifest(
         generatedAt: new Date().toISOString(),
         sourceManifestVersion: '3.3.0',
         sourceCommit: manifest.sourceCommit,
+        fsbwCaptureScope: buildFsbwCaptureScopeSummary(fsbwPlans),
       },
     },
     store: storeNext,

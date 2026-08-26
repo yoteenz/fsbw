@@ -16,6 +16,13 @@ export function emptyCurationStore(sourceCommit = ''): ExperienceCurationStore {
     overrides: [],
     reviews: [],
     projectCuration: {},
+    reviewSessions: [],
+    actionReceipts: [],
+    reviewReceipts: [],
+    lockReceipts: [],
+    sourceSnapshots: {},
+    externalRepoAuthority: {},
+    lastActionByProject: {},
   };
 }
 

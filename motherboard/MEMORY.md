@@ -54677,3 +54677,25 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Tests:** 81 pass (5 new P0.VR.3H). Build green. Sync `[sync-only]`.
 
+---
+
+## 2026-08-26 — P0.VR.3I Page abstraction review + persistent overrides + FS workspace demotion + AIO service consolidation + curated page-universe lock
+
+- **Context:** Finalize founder-facing Experience Page universe before P0.VR.3E screenshot backfill. P0.VR.3G left FS with ~53 primary (admin/dashboard leaks) and AIO with 104 primary (service-family consolidation incomplete). Override merge on recompile was PARTIAL.
+
+- **Manifest v3.3:** `studio-world-design-route-manifest@3.3` / `3.3.0`; new curation schema `studio-world-experience-curation@1`. Compiler emits `compilerProposedPages`, `founderCuratedPages`, `activeExperiencePages`, `experienceCuration` bundle per project.
+
+- **Curation pipeline:** `src/studio-os-core/route-intelligence/experience-curation/` — durable store (`public/studio-world/experience-curation-store.json`), `applyExperiencePageOverrides()`, FS internal leak audit + auto-demote (SYSTEM_PROPOSED_AUTO_APPLIED), AIO service marketing → Service Detail + SERVICE instances, capture/reference plans, review queue, lock-for-capture gate.
+
+- **Compile workflow:** `npm run compile:design-pages` → experience abstraction → load overrides → apply curation → save store. `npm run audit:experience-curation` for leak/duplicate/conflict inspection.
+
+- **Active primary after curation:** FS 53→**29** (25 internal/workspace), AIO 104→**94** (11 service instances under Service Detail; office demoted), SITE 00 **22** stable, NDXBOOK **11** stable. Overrides survive recompile (24 active persisted).
+
+- **BLUPRINT UI:** CURATION · PAGE ABSTRACTION REVIEW section (proposed vs active counts, review queue, capture lock notice; action buttons disabled pending founder API wiring).
+
+- **Screenshot/reference scope:** `ImplementationSnapshotCapturePlan` + `DesignReferenceGenerationPlan` use active curated set; CAPTURE ALL requires `LOCKED_FOR_CAPTURE`. Totals: FS 258, AIO 345, SITE 00 117, NDXBOOK 27 screenshots (3 viewports).
+
+- **Tests:** 91 pass (10 new P0.VR.3I). Build green. Sync `[sync-only]`.
+
+- **Follow-up:** Wire founder review actions (KEEP/MOVE TO WORKSPACE/LOCK FOR CAPTURE) to persist overrides via API; further AIO singleton consolidation beyond service marketing family; founder LOCK FOR CAPTURE before backfill.
+

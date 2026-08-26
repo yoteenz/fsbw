@@ -61,7 +61,14 @@ import {
   buildCompiledByScreen,
   auditAioServiceConsolidation,
   applyExperiencePageOverrides,
+  executeCurationAction,
+  auditStudioWorldSurfaces,
+  auditBawMaterialScreens,
+  isFsbwCurationProject,
+  diffCurationSource,
+  evaluateCurationGates,
 } from './index';
+import { captureSourceSnapshot, shouldMarkStale } from './experience-curation/stale-detection';
 
 const REPO_ROOT = join(import.meta.dirname, '../../..');
 
@@ -931,6 +938,323 @@ describe('P0.VR.3I experience page curation', () => {
     const store = loadExperienceCurationStore(REPO_ROOT);
     expect(store.schemaVersion).toBe('studio-world-experience-curation@1');
     expect(Object.keys(store.projectCuration).length).toBeGreaterThanOrEqual(4);
+  });
+});
+
+describe('P0.VR.3K founder curation actions + governance', () => {
+  it('executes MOVE_TO_WORKSPACE and persists across recompile', () => {
+    const { manifest, store: _store } = compileWithExperienceCuration(emptyCurationStore());
+    const fs = manifest.projectPageSets!.find((p) => p.projectId === 'frontal-slayer')!;
+    const target = fs.experiencePages!.find((p) => p.founderPrimary && p.displayName === 'Tools');
+    expect(target).toBeDefined();
+
+    const result = executeCurationAction(REPO_ROOT, {
+      projectId: 'frontal-slayer',
+      action: 'MOVE_TO_WORKSPACE',
+      targetId: target!.experiencePageId,
+      reviewer: 'TEST',
+      persist: false,
+    });
+    expect(result.ok).toBe(true);
+    expect(result.reviewReceipt?.actions.length).toBeGreaterThan(0);
+    expect(result.bundle?.internalWorkspaceCount).toBeGreaterThan(fs.experienceCuration!.internalWorkspaceCount);
+
+    const reloaded = compileWithExperienceCuration(result.store);
+    const fs2 = reloaded.manifest.projectPageSets!.find((p) => p.projectId === 'frontal-slayer')!;
+    const pageAfter = fs2.experiencePages!.find((p) => p.experiencePageId === target!.experiencePageId);
+    expect(pageAfter?.founderPrimary).toBe(false);
+  });
+
+  it('KEEP_AS_PAGE emits review receipt without override', () => {
+    const { manifest } = compileWithExperienceCuration(emptyCurationStore());
+    const fs = manifest.projectPageSets!.find((p) => p.projectId === 'frontal-slayer')!;
+    const target = fs.experiencePages!.find((p) => p.displayName === 'Home');
+    const result = executeCurationAction(REPO_ROOT, {
+      projectId: 'frontal-slayer',
+      action: 'KEEP_AS_PAGE',
+      targetId: target!.experiencePageId,
+      reviewer: 'TEST',
+      persist: false,
+    });
+    expect(result.ok).toBe(true);
+    expect(result.reviewReceipt?.actions[0]?.actionType).toBe('KEEP_AS_PAGE');
+  });
+
+  it('blocks merge across incompatible reference policies', () => {
+    const pages = [
+      {
+        experiencePageId: 'aio:xp:a',
+        projectId: 'all-in-one-enterprise',
+        displayName: 'A',
+        representativeRoute: '/a',
+        representativeScreenId: 's1',
+        founderPrimary: true,
+        captureEligible: true,
+        sectionId: 'sec',
+        experienceType: 'PUBLIC_PAGE' as const,
+        memberDesignScreenIds: ['s1'],
+        memberRouteIds: [],
+        designFamilyIds: [],
+        instanceIds: [],
+        materialScreenIds: [],
+        visualStateIds: [],
+        routeNodeCount: 1,
+        abstractionConfidence: 'HIGH' as const,
+        referencePolicy: 'UNIQUE_REFERENCE_REQUIRED' as const,
+        referenceStatus: 'REFERENCE_MISSING' as const,
+        implementationStatus: 'IMPLEMENTATION_PRESENT' as const,
+        priority: 'PRIMARY' as const,
+        viewportRequirements: { mobile: true, tablet: true, desktop: true },
+        journeyStage: 'DISCOVERY' as const,
+        founderDesignable: true,
+      },
+      {
+        experiencePageId: 'aio:xp:b',
+        projectId: 'all-in-one-enterprise',
+        displayName: 'B',
+        representativeRoute: '/b',
+        representativeScreenId: 's2',
+        founderPrimary: true,
+        captureEligible: true,
+        sectionId: 'sec',
+        experienceType: 'PUBLIC_PAGE' as const,
+        memberDesignScreenIds: ['s2'],
+        memberRouteIds: [],
+        designFamilyIds: [],
+        instanceIds: [],
+        materialScreenIds: [],
+        visualStateIds: [],
+        routeNodeCount: 1,
+        abstractionConfidence: 'HIGH' as const,
+        referencePolicy: 'SHARED_FAMILY_REFERENCE' as const,
+        referenceStatus: 'INHERITS_FAMILY_REFERENCE' as const,
+        implementationStatus: 'IMPLEMENTATION_PRESENT' as const,
+        priority: 'PRIMARY' as const,
+        viewportRequirements: { mobile: true, tablet: true, desktop: true },
+        journeyStage: 'DISCOVERY' as const,
+        founderDesignable: true,
+      },
+    ];
+    const merged = applyExperiencePageOverrides(pages, [], [], [], [
+      {
+        overrideId: 'merge-test',
+        projectId: 'all-in-one-enterprise',
+        targetType: 'EXPERIENCE_PAGE',
+        targetId: 'aio:xp:a',
+        overrideType: 'FORCE_MERGE',
+        value: JSON.stringify({ memberPageIds: ['aio:xp:b'] }),
+        reason: 'test',
+        createdBy: 'TEST',
+        createdAt: new Date().toISOString(),
+        active: true,
+      },
+    ]);
+    expect(merged.conflicts.length).toBe(1);
+    expect(merged.pages.filter((p) => p.founderPrimary).length).toBe(2);
+  });
+
+  it('applies FORCE_SPLIT creating valid lineage', () => {
+    const { manifest } = compileWithExperienceCuration(emptyCurationStore());
+    const fs = manifest.projectPageSets!.find((p) => p.projectId === 'frontal-slayer')!;
+    const baw = fs.experiencePages!.find((p) => p.displayName.includes('Build-A-Wig'));
+    expect(baw).toBeDefined();
+    const screenId = baw!.memberDesignScreenIds[0];
+    const result = executeCurationAction(REPO_ROOT, {
+      projectId: 'frontal-slayer',
+      action: 'SPLIT_PAGE',
+      targetId: baw!.experiencePageId,
+      reviewer: 'TEST',
+      payload: {
+        newPageId: `${baw!.experiencePageId}:split-test`,
+        displayName: 'BAW Split Test',
+        sectionId: baw!.sectionId,
+        memberScreenIds: [screenId],
+      },
+    });
+    expect(result.ok).toBe(true);
+    const fs2 = result.manifest!.projectPageSets!.find((p) => p.projectId === 'frontal-slayer')!;
+    expect(fs2.experiencePages!.some((p) => p.experiencePageId === `${baw!.experiencePageId}:split-test`)).toBe(true);
+  });
+
+  it('groups AIO review candidates into batches not flat queue', () => {
+    const { manifest } = compileWithExperienceCuration();
+    const aio = manifest.projectPageSets!.find((p) => p.projectId === 'all-in-one-enterprise')!;
+    const groups = aio.experienceCuration!.reviewGroups ?? [];
+    expect(groups.length).toBeGreaterThan(3);
+    const totalCandidates = groups.reduce((n, g) => n + g.items.length, 0);
+    expect(totalCandidates).toBeGreaterThan(0);
+    expect(groups.some((g) => g.label.includes('SERVICE') || g.groupId.includes('SERVICE'))).toBe(true);
+  });
+
+  it('groups Frontal Slayer review into customer/internal categories', () => {
+    const { manifest } = compileWithExperienceCuration();
+    const fs = manifest.projectPageSets!.find((p) => p.projectId === 'frontal-slayer')!;
+    const groups = fs.experienceCuration!.reviewGroups ?? [];
+    expect(groups.length).toBeGreaterThan(2);
+    const labels = groups.map((g) => g.groupId);
+    expect(labels.some((l) => l.includes('commerce') || l.includes('customer') || l.includes('internal'))).toBe(true);
+  });
+
+  it('audits BAW material screens with classification buckets', () => {
+    const { manifest } = compileWithExperienceCuration();
+    const fs = manifest.projectPageSets!.find((p) => p.projectId === 'frontal-slayer')!;
+    const baw = fs.experiencePages!.find((p) => p.displayName.includes('Build-A-Wig'));
+    const audit = auditBawMaterialScreens(fs.materialScreens ?? [], baw!.experiencePageId);
+    expect(audit.inputCount).toBeGreaterThan(10);
+    expect(audit.entries.length).toBe(audit.inputCount);
+    expect(fs.experienceCuration!.bawMaterialScreenAudit?.inputCount).toBe(audit.inputCount);
+  });
+
+  it('performs dedicated Studio World curation audit', () => {
+    const { manifest, store } = compileWithExperienceCuration();
+    const fs = manifest.projectPageSets!.find((p) => p.projectId === 'frontal-slayer')!;
+    expect(store.studioWorldAudit).toBeDefined();
+    expect(store.studioWorldAudit!.rawRoutes).toBeGreaterThan(0);
+    expect(store.studioWorldAudit!.primaryWorkspace).toBeGreaterThan(0);
+    const audit = auditStudioWorldSurfaces(
+      fs.compiledPages,
+      manifest.designScreens ?? [],
+      manifest.designFamilies ?? [],
+      fs.experiencePages ?? [],
+    );
+    expect(audit.experiencePagesProposed).toBeGreaterThan(0);
+    expect(audit.internalSystem).toBeGreaterThanOrEqual(0);
+  });
+
+  it('excludes SITE00 and NDXBOOK from FSBW capture scope', () => {
+    const { manifest } = compileWithExperienceCuration();
+    const scope = manifest.experienceCurationCompilation?.fsbwCaptureScope;
+    expect(scope).toBeDefined();
+    expect(scope!.perProject.site00).toBeUndefined();
+    expect(scope!.perProject.ndxbook).toBeUndefined();
+    expect(scope!.perProject['frontal-slayer']).toBeDefined();
+    expect(scope!.perProject['all-in-one-enterprise']).toBeDefined();
+    expect(isFsbwCurationProject('site00')).toBe(false);
+    expect(isFsbwCurationProject('frontal-slayer')).toBe(true);
+  });
+
+  it('marks external repo projects with authority flag', () => {
+    const { manifest } = compileWithExperienceCuration();
+    const site = manifest.projectPageSets!.find((p) => p.projectId === 'site00')!;
+    const ndx = manifest.projectPageSets!.find((p) => p.projectId === 'ndxbook')!;
+    expect(site.experienceCuration!.externalRepoAuthority).toBe(true);
+    expect(ndx.experienceCuration!.externalRepoAuthority).toBe(true);
+    expect(executeCurationAction(REPO_ROOT, {
+      projectId: 'site00',
+      action: 'KEEP_AS_PAGE',
+      targetId: 'x',
+      reviewer: 'TEST',
+    }).ok).toBe(false);
+  });
+
+  it('blocks LOCK_FOR_CAPTURE when unresolved blockers exist', () => {
+    const { manifest } = compileWithExperienceCuration();
+    const fs = manifest.projectPageSets!.find((p) => p.projectId === 'frontal-slayer')!;
+    if ((fs.experienceCuration!.lockBlockers?.length ?? 0) === 0) {
+      expect(fs.experienceCuration!.universeStatus).not.toBe('LOCKED_FOR_CAPTURE');
+      return;
+    }
+    const result = executeCurationAction(REPO_ROOT, {
+      projectId: 'frontal-slayer',
+      action: 'LOCK_FOR_CAPTURE',
+      reviewer: 'TEST',
+      persist: false,
+    });
+    expect(result.ok).toBe(false);
+  });
+
+  it('detects stale locked project on source manifest change', () => {
+    const pageSet = {
+      projectId: 'frontal-slayer',
+      compiledPages: [{ representativeRoute: '/old', designScreenId: 's1' }],
+    } as import('./types').ProjectWebsitePageSet;
+    const manifest = { sourceCommit: 'abc', designScreens: [] } as unknown as import('./types').StudioWorldDesignRouteManifest;
+    const prev = captureSourceSnapshot(manifest, pageSet);
+    const nextPageSet = {
+      ...pageSet,
+      compiledPages: [
+        { representativeRoute: '/old', designScreenId: 's1' },
+        { representativeRoute: '/new-route', designScreenId: 's2' },
+      ],
+    } as import('./types').ProjectWebsitePageSet;
+    const diff = diffCurationSource(prev, manifest, nextPageSet);
+    expect(diff?.newRoutes.length).toBeGreaterThan(0);
+    expect(shouldMarkStale(true, diff)).toBe(true);
+    expect(shouldMarkStale(false, diff)).toBe(false);
+  });
+
+  it('increments curation version on material override', () => {
+    const first = compileWithExperienceCuration(emptyCurationStore());
+    const fs = first.manifest.projectPageSets!.find((p) => p.projectId === 'frontal-slayer')!;
+    const beforeVersion = fs.experienceCuration!.curationVersion;
+    const target = fs.experiencePages!.find((p) => p.founderPrimary && p.displayName === 'Tools');
+    const result = executeCurationAction(REPO_ROOT, {
+      projectId: 'frontal-slayer',
+      action: 'MOVE_TO_SUPPORTING',
+      targetId: target!.experiencePageId,
+      reviewer: 'TEST',
+      persist: false,
+    });
+    expect(result.ok).toBe(true);
+    const after = result.manifest!.projectPageSets!.find((p) => p.projectId === 'frontal-slayer')!;
+    expect(after.experienceCuration!.curationVersion).not.toBe(beforeVersion);
+  });
+
+  it('supports UNDO_LAST_ACTION by superseding override', () => {
+    const { manifest, store: baseStore } = compileWithExperienceCuration(emptyCurationStore());
+    const fs = manifest.projectPageSets!.find((p) => p.projectId === 'frontal-slayer')!;
+    const target = fs.experiencePages!.find(
+      (p) => p.founderPrimary && !['Home', 'Product Detail', 'Cart & Checkout'].includes(p.displayName) && !p.displayName.includes('Build-A-Wig'),
+    );
+    expect(target).toBeDefined();
+    let workingStore = upsertOverride(baseStore, {
+      overrideId: 'test:undo:workspace',
+      projectId: 'frontal-slayer',
+      targetType: 'EXPERIENCE_PAGE',
+      targetId: target!.experiencePageId,
+      overrideType: 'FORCE_INTERNAL',
+      value: 'frontal-slayer:section:internal-workspace',
+      reason: 'undo test',
+      createdBy: 'TEST',
+      createdAt: new Date().toISOString(),
+      active: true,
+    });
+    workingStore = {
+      ...workingStore,
+      lastActionByProject: { ...workingStore.lastActionByProject, 'frontal-slayer': 'test:undo:workspace' },
+    };
+    const undo = executeCurationAction(REPO_ROOT, {
+      projectId: 'frontal-slayer',
+      action: 'UNDO_LAST_ACTION',
+      reviewer: 'TEST',
+      persist: false,
+      storeOverride: workingStore,
+    });
+    expect(undo.ok).toBe(true);
+    expect(undo.receipt?.actionType).toBe('UNDO_LAST_ACTION');
+  });
+
+  it('normalized capture plan uses curated primary not compiler proposal', () => {
+    const { manifest } = compileWithExperienceCuration();
+    const fs = manifest.projectPageSets!.find((p) => p.projectId === 'frontal-slayer')!;
+    const plan = fs.experienceCuration!.normalizedCapturePlan!;
+    expect(plan.experiencePageTargets.length).toBe(fs.experienceCuration!.activePrimaryCount);
+    expect(plan.theoreticalPageViewportTargets).toBeGreaterThan(0);
+    expect(plan.actualCaptureTargets).toBeGreaterThan(0);
+    expect(plan.actualCaptureTargets).toBeLessThanOrEqual(plan.captureEligibleTargets);
+  });
+
+  it('evaluates CURATED gate from review queue severity', () => {
+    const { manifest } = compileWithExperienceCuration();
+    const fs = manifest.projectPageSets!.find((p) => p.projectId === 'frontal-slayer')!;
+    const gates = evaluateCurationGates(
+      fs.experiencePages ?? [],
+      fs.materialScreens ?? [],
+      fs.experienceCuration!,
+      { projectId: 'frontal-slayer', curationVersion: 'v1', universeStatus: 'REVIEWING', lockedForCapture: false },
+    );
+    expect(typeof gates.canTransitionToCurated).toBe('boolean');
+    expect(Array.isArray(gates.blockers)).toBe(true);
   });
 });
 

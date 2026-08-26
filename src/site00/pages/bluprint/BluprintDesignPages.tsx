@@ -21,6 +21,7 @@ import {
   buildComposerCreatedPagesReviewQueue,
   buildCurationReviewQueueForProject,
   captureAllRequiresLockedCuration,
+  isFsbwCurationProject,
   countNeedsCreativeDirection,
   countNeedsFunctionalReview,
   countReadyForApproval,
@@ -276,7 +277,10 @@ export default function BluprintDesignHubPage() {
 export function BluprintProjectDesignPage() {
   const { projectId = '' } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
-  const { manifest } = useDesignRouteManifest();
+  const { manifest, reload } = useDesignRouteManifest();
+  const [curationBusy, setCurationBusy] = useState(false);
+  const [curationMsg, setCurationMsg] = useState<string | null>(null);
+  const fsbwCuration = isFsbwCurationProject(projectId);
   const initialVp = (searchParams.get('viewport')?.toUpperCase() ?? 'MOBILE') as ViewportClass;
   const [viewport, setViewportClass] = useState<ViewportClass>(
     VIEWPORTS.includes(initialVp) ? initialVp : 'MOBILE',
@@ -330,6 +334,45 @@ export function BluprintProjectDesignPage() {
 
   const selectedXp = pageSet?.experiencePages?.find((p) => p.experiencePageId === selectedXpId);
   const selectedMaterial = pageSet?.materialScreens?.find((m) => m.materialScreenId === selectedMaterialId);
+
+  async function runCurationAction(action: string, extra?: Record<string, unknown>) {
+    const xpTarget = searchParams.get('xp') ?? searchParams.get('page') ?? defaultXpId;
+    if (!xpTarget && !['LOCK_FOR_CAPTURE', 'UNLOCK_FOR_REVIEW', 'UNDO_LAST_ACTION'].includes(action)) return;
+    if (!fsbwCuration) return;
+    setCurationBusy(true);
+    setCurationMsg(null);
+    try {
+      const token = localStorage.getItem('access_token') ?? localStorage.getItem('supabase.auth.token');
+      const res = await fetch('/api/admin/studio-world-experience-curation', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({
+          projectId,
+          action,
+          targetId: xpTarget || undefined,
+          startSession: true,
+          ...extra,
+        }),
+      });
+      const data = (await res.json()) as {
+        ok?: boolean;
+        error?: string;
+        bundle?: { activePrimaryCount?: number; internalWorkspaceCount?: number; supportingCount?: number };
+      };
+      if (!res.ok || data.error) throw new Error(data.error ?? `HTTP ${res.status}`);
+      setCurationMsg(
+        `Applied ${action.replace(/_/g, ' ')} · primary ${data.bundle?.activePrimaryCount ?? '?'} · internal ${data.bundle?.internalWorkspaceCount ?? '?'} · supporting ${data.bundle?.supportingCount ?? '?'}`,
+      );
+      await reload();
+    } catch (e) {
+      setCurationMsg(e instanceof Error ? e.message : 'Curation action failed');
+    } finally {
+      setCurationBusy(false);
+    }
+  }
   const selectedScreenId = selectedMaterial?.memberDesignScreenIds[0] ?? selectedXp?.representativeScreenId ?? selectedXpId;
   const selectedScreen = designScreens.find((s) => s.designScreenId === selectedScreenId);
   const selectedFamily = designFamilies.find((f) => f.designFamilyId === selectedFamilyId);
@@ -771,17 +814,74 @@ export function BluprintProjectDesignPage() {
             ) : (
               <p className="site00-body">No curation review items.</p>
             )}
+            {curation.reviewGroups?.length ? (
+              <div style={{ marginBottom: 12 }}>
+                <p className="site00-body" style={{ marginBottom: 6 }}>
+                  Review groups ({curation.reviewGroups.length}) — not a flat queue
+                </p>
+                <ul className="site00-bluprint__queue">
+                  {curation.reviewGroups.slice(0, 10).map((g) => (
+                    <li key={g.groupId}>
+                      {g.label} · {g.items.length} candidates · {g.recommendedAction?.replace(/_/g, ' ') ?? 'review'}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
+            {curation.bawMaterialScreenAudit ? (
+              <p className="site00-body">
+                BAW material audit: {curation.bawMaterialScreenAudit.inputCount} in · keep{' '}
+                {curation.bawMaterialScreenAudit.keep} · state{' '}
+                {curation.bawMaterialScreenAudit.stateCandidates} · instance{' '}
+                {curation.bawMaterialScreenAudit.instanceCandidates} · dup{' '}
+                {curation.bawMaterialScreenAudit.duplicateCandidates}
+              </p>
+            ) : null}
+            {curation.normalizedCapturePlan ? (
+              <p className="site00-body">
+                Capture plan: {curation.normalizedCapturePlan.actualCaptureTargets} actual /{' '}
+                {curation.normalizedCapturePlan.theoreticalPageViewportTargets} theoretical · mobile{' '}
+                {curation.normalizedCapturePlan.mobileTargets} · tablet {curation.normalizedCapturePlan.tabletTargets} · desktop{' '}
+                {curation.normalizedCapturePlan.desktopTargets} · blocked {curation.normalizedCapturePlan.blockedTargets.length}
+              </p>
+            ) : null}
+            {curation.lockBlockers?.length ? (
+              <p className="site00-body" style={{ color: 'rgba(255,180,120,0.95)' }}>
+                Lock blockers: {curation.lockBlockers.join(', ')}
+              </p>
+            ) : null}
+            {curationMsg ? (
+              <p className="site00-body" style={{ color: 'rgba(120,220,160,0.95)' }}>
+                {curationMsg}
+              </p>
+            ) : null}
             <div className="site00-bluprint__page-actions">
-              <button type="button" className="site00-bluprint__btn" disabled title="Persists to experience-curation-store.json via compile">
-                KEEP AS PAGE
-              </button>
-              <button type="button" className="site00-bluprint__btn" disabled title="Persists override on compile">
-                MOVE TO WORKSPACE
-              </button>
-              <button type="button" className="site00-bluprint__btn" disabled title="Requires LOCKED_FOR_CAPTURE">
-                LOCK FOR CAPTURE
-              </button>
+              {(
+                [
+                  ['KEEP AS PAGE', 'KEEP_AS_PAGE', !!selectedXp],
+                  ['MOVE TO WORKSPACE', 'MOVE_TO_WORKSPACE', !!selectedXp],
+                  ['MOVE TO SUPPORTING', 'MOVE_TO_SUPPORTING', !!selectedXp],
+                  ['PROMOTE TO PRIMARY', 'PROMOTE_TO_PRIMARY', !!selectedXp],
+                  ['LOCK FOR CAPTURE', 'LOCK_FOR_CAPTURE', true],
+                  ['UNLOCK FOR REVIEW', 'UNLOCK_FOR_REVIEW', true],
+                  ['UNDO LAST', 'UNDO_LAST_ACTION', true],
+                ] as const
+              ).map(([label, action, enabled]) => (
+                <button
+                  key={action}
+                  type="button"
+                  className="site00-bluprint__btn"
+                  disabled={!fsbwCuration || curationBusy || !enabled}
+                  onClick={() => void runCurationAction(action)}
+                  title={fsbwCuration ? 'Persists to experience-curation-store.json and recompiles manifest' : 'External repo authority'}
+                >
+                  {label}
+                </button>
+              ))}
             </div>
+            {!fsbwCuration ? (
+              <p className="site00-body">External repo authority — SITE 00 / NDXBOOK not curated from FSBW.</p>
+            ) : null}
             {selectedXp ? (
               <div className="site00-bluprint__page-row">
                 <div>

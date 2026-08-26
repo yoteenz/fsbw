@@ -33,7 +33,11 @@ export { applyExperiencePageOverrides } from './override-applier';
 export {
   buildImplementationSnapshotCapturePlan,
   buildDesignReferenceGenerationPlan,
+  buildNormalizedCapturePlan,
+  buildNormalizedReferencePlan,
+  buildFsbwCaptureScopeSummary,
   captureAllRequiresLockedCuration,
+  isFsbwCurationProject,
 } from './curation-plans';
 
 export {
@@ -42,4 +46,10 @@ export {
   applyAutoCuration,
 } from './pipeline';
 
-export { buildCurationReviewQueueForProject } from './review-queue';
+export { buildCurationReviewQueueForProject, filterReviewByConfidence } from './review-queue';
+export { buildFrontalSlayerReviewGroups, buildAioReviewGroups } from './review-groups';
+export { auditBawMaterialScreens } from './fs-baw-material-audit';
+export { auditStudioWorldSurfaces, extractStudioWorldExperiencePages } from './studio-world-audit';
+export { executeCurationAction, startCurationReviewSession } from './curation-actions';
+export { evaluateCurationGates, bumpCurationVersion } from './curation-gates';
+export { diffCurationSource, captureSourceSnapshot, shouldMarkStale } from './stale-detection';

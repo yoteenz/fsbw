@@ -160,7 +160,18 @@ export {
   auditAioServiceConsolidation,
   captureAllRequiresLockedCuration,
   buildImplementationSnapshotCapturePlan,
+  buildNormalizedCapturePlan,
+  buildFsbwCaptureScopeSummary,
+  isFsbwCurationProject,
   buildCurationReviewQueueForProject,
+  buildFrontalSlayerReviewGroups,
+  buildAioReviewGroups,
+  auditBawMaterialScreens,
+  auditStudioWorldSurfaces,
+  executeCurationAction,
+  startCurationReviewSession,
+  evaluateCurationGates,
+  diffCurationSource,
   EXPERIENCE_CURATION_STORE_RELATIVE_PATH,
 } from './experience-curation';
 

@@ -1176,6 +1176,15 @@ export type ExperienceCurationStore = {
   overrides: ExperiencePageOverrideRecordV2[];
   reviews: PageAbstractionReviewRecord[];
   projectCuration: Record<string, ProjectCurationState>;
+  /** P0.VR.3K */
+  reviewSessions?: CurationReviewSession[];
+  actionReceipts?: CurationActionReceipt[];
+  reviewReceipts?: PageAbstractionReviewReceiptV2[];
+  lockReceipts?: ProjectCaptureLockReceipt[];
+  sourceSnapshots?: Record<string, CurationSourceSnapshot>;
+  externalRepoAuthority?: Record<string, ExternalRepoAuthorityMark>;
+  studioWorldAudit?: StudioWorldCurationAudit;
+  lastActionByProject?: Record<string, string>;
 };
 
 export type CurationReviewQueueItem = {
@@ -1265,12 +1274,19 @@ export type ProjectExperienceCurationBundle = {
   internalWorkspaceCount: number;
   supportingCount: number;
   reviewQueue: CurationReviewQueueItem[];
+  reviewGroups?: CurationReviewGroup[];
   internalLeakAudit: PrimaryExperienceInternalLeakAudit[];
   duplicateAudit: ExperiencePageDuplicateAudit[];
   aioServiceConsolidation?: AioServiceConsolidationCandidate[];
+  bawMaterialScreenAudit?: BawMaterialScreenAudit;
   capturePlan: ImplementationSnapshotCapturePlan;
+  normalizedCapturePlan?: NormalizedCapturePlan;
   referencePlan: DesignReferenceGenerationPlan;
+  normalizedReferencePlan?: NormalizedReferencePlan;
   overrideConflicts: ExperiencePageOverrideRecordV2[];
+  sourceDiff?: CurationSourceDiff;
+  lockBlockers?: string[];
+  externalRepoAuthority?: boolean;
   changes: {
     demoted: string[];
     promoted: string[];
@@ -1286,4 +1302,202 @@ export type ExperienceCurationCompilationMeta = {
   generatedAt: string;
   sourceManifestVersion: string;
   sourceCommit: string;
+  /** P0.VR.3K — FSBW-only capture scope summary */
+  fsbwCaptureScope?: FsbwCaptureScopeSummary;
+};
+
+/** P0.VR.3K — Founder curation actions + review governance */
+export type CurationActionType =
+  | 'KEEP_AS_PAGE'
+  | 'MOVE_TO_WORKSPACE'
+  | 'MOVE_TO_SUPPORTING'
+  | 'PROMOTE_TO_PRIMARY'
+  | 'DEMOTE_TO_MATERIAL_SCREEN'
+  | 'DEMOTE_TO_STATE'
+  | 'DEMOTE_TO_INSTANCE'
+  | 'CHANGE_SECTION'
+  | 'CHANGE_REPRESENTATIVE'
+  | 'SPLIT_PAGE'
+  | 'MERGE_PAGES'
+  | 'LOCK_FOR_CAPTURE'
+  | 'UNLOCK_FOR_REVIEW'
+  | 'UNDO_LAST_ACTION'
+  | 'BATCH_KEEP'
+  | 'BATCH_MOVE_TO_WORKSPACE'
+  | 'BATCH_MOVE_TO_SUPPORTING'
+  | 'BATCH_MAKE_INSTANCES';
+
+export type CurationActionReceipt = {
+  receiptId: string;
+  projectId: string;
+  sessionId?: string;
+  actionType: CurationActionType;
+  targetId: string;
+  targetIds?: string[];
+  before: Record<string, unknown>;
+  after: Record<string, unknown>;
+  reason?: string;
+  sourceEvidence?: string[];
+  result: 'APPLIED' | 'BLOCKED' | 'CONFLICT';
+  overrideId?: string;
+  reviewer: string;
+  timestamp: string;
+};
+
+export type CurationReviewSession = {
+  sessionId: string;
+  projectId: string;
+  reviewer: string;
+  startedAt: string;
+  endedAt?: string;
+  actionReceiptIds: string[];
+  notes?: string;
+};
+
+export type PageAbstractionReviewReceiptV2 = {
+  receiptId: string;
+  projectId: string;
+  curationVersion: string;
+  reviewSessionId?: string;
+  reviewer: string;
+  timestamp: string;
+  actions: CurationActionReceipt[];
+  beforeSummary: { primary: number; internal: number; supporting: number; materialScreens: number };
+  afterSummary: { primary: number; internal: number; supporting: number; materialScreens: number };
+  affectedPageIds: string[];
+  overrideIds: string[];
+  conflicts: string[];
+  notes?: string;
+};
+
+export type ProjectCaptureLockReceipt = {
+  receiptId: string;
+  projectId: string;
+  curationVersion: string;
+  lockedBy: string;
+  lockedAt: string;
+  activePageCount: number;
+  materialScreenCount: number;
+  captureTargetCount: number;
+  manifestVersion: string;
+  sourceCommit: string;
+};
+
+export type CurationSourceDiff = {
+  projectId: string;
+  newRoutes: string[];
+  removedRoutes: string[];
+  screenChanges: string[];
+  familyChanges: string[];
+  pageCandidates: string[];
+  materialScreenChanges: string[];
+  authChanges: string[];
+};
+
+export type CurationSourceSnapshot = {
+  projectId: string;
+  sourceCommit: string;
+  routeFingerprints: string[];
+  screenFingerprints: string[];
+  capturedAt: string;
+};
+
+export type CurationReviewGroup = {
+  groupId: string;
+  projectId: string;
+  label: string;
+  category: string;
+  items: CurationReviewQueueItem[];
+  recommendedAction?: CurationActionType;
+  confidence?: 'HIGH' | 'MEDIUM' | 'LOW';
+};
+
+export type BawMaterialScreenAuditEntry = {
+  materialScreenId: string;
+  displayName: string;
+  representativeRoute: string;
+  classification: 'MATERIAL_SCREEN_KEEP' | 'STATE_CANDIDATE' | 'INSTANCE_CANDIDATE' | 'DUPLICATE_CANDIDATE';
+  detail: string;
+  confidence: 'HIGH' | 'MEDIUM' | 'LOW';
+};
+
+export type BawMaterialScreenAudit = {
+  projectId: string;
+  inputCount: number;
+  keep: number;
+  stateCandidates: number;
+  instanceCandidates: number;
+  duplicateCandidates: number;
+  finalMaterialScreenCount: number;
+  entries: BawMaterialScreenAuditEntry[];
+};
+
+export type StudioWorldCurationAudit = {
+  projectId: 'studio-world';
+  rawRoutes: number;
+  designScreens: number;
+  designFamilies: number;
+  experiencePagesProposed: number;
+  primaryWorkspace: number;
+  supporting: number;
+  internalSystem: number;
+  materialScreens: number;
+  states: number;
+  instances: number;
+  reviewRequired: number;
+  sections: Array<{ sectionId: string; displayName: string; pageCount: number }>;
+  universeStatus: ExperiencePageUniverseStatus;
+  pages: Array<{
+    experiencePageId: string;
+    displayName: string;
+    route: string;
+    classification: 'PRODUCTION_WORKSPACE' | 'DESIGN' | 'CAMPAIGN_CONTENT' | 'CHARACTER_CREATIVE' | 'ASSET_GENERATION' | 'SYSTEM_ADMIN' | 'OTHER';
+  }>;
+};
+
+export type FsbwCaptureScopeSummary = {
+  projects: string[];
+  theoreticalPageViewportTargets: number;
+  captureEligibleTargets: number;
+  blockedTargets: number;
+  actualCaptureTargets: number;
+  perProject: Record<
+    string,
+    {
+      experiencePages: number;
+      materialScreens: number;
+      mobile: number;
+      tablet: number;
+      desktop: number;
+      blocked: number;
+      actualTargets: number;
+    }
+  >;
+};
+
+export type NormalizedCapturePlan = ImplementationSnapshotCapturePlan & {
+  experiencePageTargets: string[];
+  materialScreenTargets: string[];
+  viewportTargets: ViewportClass[];
+  mobileTargets: number;
+  tabletTargets: number;
+  desktopTargets: number;
+  blockedTargets: string[];
+  theoreticalPageViewportTargets: number;
+  captureEligibleTargets: number;
+  actualCaptureTargets: number;
+};
+
+export type NormalizedReferencePlan = DesignReferenceGenerationPlan & {
+  theoreticalPageViewportReferenceNeeds: number;
+  referenceEligibleRequirements: number;
+  uniqueReferencesRequired: number;
+  inheritedReferenceAssignments: number;
+  noNewReferenceAssignments: number;
+};
+
+export type ExternalRepoAuthorityMark = {
+  projectId: string;
+  authority: 'EXTERNAL_REPO';
+  note: string;
 };
