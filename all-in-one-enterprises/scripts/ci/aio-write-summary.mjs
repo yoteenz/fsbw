@@ -54,6 +54,20 @@ if (
   blockers.push(`migrationHistory: ${migrationHistoryStatus}`);
 }
 
+const dbConnectivity = norm(r.databaseConnectivity?.status);
+if (dbConnectivity === 'FAIL') {
+  blockers.push(`databaseConnectivity: FAIL`);
+}
+
+const schemaStatus = norm(r.schema);
+if (schemaStatus === 'UNKNOWN') {
+  blockers.push('schema: UNKNOWN');
+}
+const rlsEnableStatus = norm(r.rlsEnablement);
+if (rlsEnableStatus === 'UNKNOWN') {
+  blockers.push('rlsEnablement: UNKNOWN');
+}
+
 for (const [name, status] of checks) {
   const s = norm(status);
   if (s === 'FAIL' || s === 'BLOCKED') {
@@ -91,6 +105,7 @@ const lines = [
   '| Gate | Status |',
   '|------|--------|',
   `| PROJECT GUARD | ${norm(r.projectGuard)} |`,
+  `| DATABASE CONNECTIVITY | ${norm(r.databaseConnectivity?.status)} |`,
   `| MIGRATIONS | ${norm(r.migrations)} |`,
   `| SCHEMA | ${norm(r.schema)} |`,
   `| RLS (policies enabled) | ${norm(r.rlsEnablement)} |`,

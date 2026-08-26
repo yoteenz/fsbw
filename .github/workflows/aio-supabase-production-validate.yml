@@ -91,6 +91,12 @@ jobs:
           set +x
           bash scripts/ci/aio-migration-history-check.sh
 
+      - name: Database connectivity preflight (pooler)
+        shell: bash
+        run: |
+          set +x
+          bash scripts/ci/aio-db-connectivity-preflight.sh
+
       - name: Apply migrations
         id: migrate
         shell: bash
@@ -110,10 +116,7 @@ jobs:
         shell: bash
         run: |
           set +x
-          bash scripts/ci/aio-project-guard.sh pre-schema
           bash scripts/ci/aio-verify-schema.sh
-          bash scripts/ci/aio-record-result.sh schema PASS
-          bash scripts/ci/aio-record-result.sh rlsEnablement PASS
 
       - name: Fetch API keys (Management API)
         if: success()
