@@ -11,7 +11,9 @@ import {
   buildReferencePolicyReviewQueue,
   groupDesignFamiliesForDropdown,
   groupDesignScreensForDropdown,
-  groupCompiledPagesForSelector,
+  groupExperiencePagesForSelector,
+  listCaptureAllTargets,
+  isDesignScreenCaptureScope,
   necessityBadge,
   pageStatusBadge,
   resolveEffectiveDesignReference,
@@ -21,8 +23,9 @@ import type {
   ViewportClass,
   ProjectPageRouteRecord,
   ProjectRouteDependencyGraph,
-  CompiledWebsitePageRecord,
-  RequiredWebsitePageRecord,
+  ExperiencePageRecord,
+  MaterialScreenRecord,
+  ExperiencePageInstanceRecord,
   StudioWorldDesignRouteManifest,
 } from '../../../studio-os-core/route-intelligence/types';
 import '../../styles/site00-bluprint.css';
@@ -108,7 +111,7 @@ export default function BluprintDesignHubPage() {
           <span>v{manifest.manifestVersion}</span>
           <span>{manifest.schemaVersion}</span>
           <span>{designScreens.length} screens · {totalFamilies} families</span>
-          <span>{manifest.projectPageSets?.reduce((n, ps) => n + ps.summary.totalPrimaryPages, 0) ?? 0} primary pages</span>
+          <span>{manifest.projectPageSets?.reduce((n, ps) => n + (ps.experienceMetrics?.afterExperiencePages ?? ps.summary.totalPrimaryPages), 0) ?? 0} experience pages</span>
           <span>{totalSavings} generation jobs avoided</span>
           <span>{manifest.sourceCommit.slice(0, 7)}</span>
         </div>
@@ -119,7 +122,8 @@ export default function BluprintDesignHubPage() {
             <thead>
               <tr>
                 <th>PROJECT</th>
-                <th>PRIMARY PAGES</th>
+                <th>EXPERIENCE PAGES</th>
+                <th>VR3F→3G</th>
                 <th>MISSING</th>
                 <th>SCREENS</th>
                 <th>FAMILIES</th>
@@ -140,7 +144,12 @@ export default function BluprintDesignHubPage() {
                         {project?.displayName ?? s.projectId}
                       </Link>
                     </td>
-                    <td>{pageSet?.summary.totalPrimaryPages ?? '—'}</td>
+                    <td>{pageSet?.experienceMetrics?.afterExperiencePages ?? pageSet?.summary.totalPrimaryPages ?? '—'}</td>
+                    <td>
+                      {pageSet?.experienceMetrics
+                        ? `${pageSet.experienceMetrics.beforeVr3fPrimary}→${pageSet.experienceMetrics.afterExperiencePages} (-${pageSet.experienceMetrics.reductionPercent}%)`
+                        : '—'}
+                    </td>
                     <td>{pageSet?.summary.missing ?? '—'}</td>
                     <td>{s.totalDesignableScreens}</td>
                     <td>{s.designFamilies ?? '—'}</td>
@@ -222,7 +231,12 @@ export function BluprintProjectDesignPage() {
   const summary = manifest.coverageSummaries.find((s) => s.projectId === projectId);
   const matrix = buildCoverageMatrix(projectId, designScreens, manifest.coverage, manifest.referenceNecessityAudits);
 
-  const experienceMode = searchParams.get('mode') === 'all' ? 'ALL_DESIGNABLE' : 'PRIMARY';
+  const experienceMode =
+    searchParams.get('mode') === 'workspace'
+      ? 'WORKSPACE'
+      : searchParams.get('mode') === 'all'
+        ? 'ALL_DESIGNABLE'
+        : 'PRIMARY';
   const viewMode =
     searchParams.get('view') === 'journey'
       ? 'journey'
@@ -230,23 +244,26 @@ export function BluprintProjectDesignPage() {
         ? 'families'
         : searchParams.get('view') === 'screens'
           ? 'screens'
-          : 'pages';
+          : 'experience';
 
-  const pageGroups = pageSet
-    ? groupCompiledPagesForSelector(pageSet, experienceMode === 'PRIMARY' ? 'PRIMARY' : 'ALL_DESIGNABLE')
+  const experienceGroups = pageSet
+    ? groupExperiencePagesForSelector(
+        pageSet,
+        experienceMode === 'PRIMARY' ? 'PRIMARY' : experienceMode === 'WORKSPACE' ? 'WORKSPACE' : 'ALL_DESIGNABLE',
+      )
     : {};
-  const flatPages = Object.values(pageGroups).flat();
-  const defaultPageId = flatPages[0]?.pageId ?? designScreens[0]?.designScreenId ?? '';
+  const flatExperience = Object.values(experienceGroups).flat();
+  const defaultXpId = flatExperience[0]?.experiencePageId ?? designScreens[0]?.designScreenId ?? '';
 
-  const selectedPageId = searchParams.get('page') ?? searchParams.get('screen') ?? defaultPageId;
+  const selectedXpId = searchParams.get('xp') ?? searchParams.get('page') ?? defaultXpId;
   const selectedFamilyId = searchParams.get('family') ?? designFamilies[0]?.designFamilyId ?? '';
+  const selectedMaterialId = searchParams.get('material') ?? '';
 
-  const selectedPage = pageSet?.compiledPages.find((p) => p.pageId === selectedPageId);
-  const selectedScreen =
-    designScreens.find((s) => s.designScreenId === (selectedPage?.designScreenId ?? selectedPageId)) ??
-    designScreens.find((s) => s.designScreenId === selectedPageId);
+  const selectedXp = pageSet?.experiencePages?.find((p) => p.experiencePageId === selectedXpId);
+  const selectedMaterial = pageSet?.materialScreens?.find((m) => m.materialScreenId === selectedMaterialId);
+  const selectedScreenId = selectedMaterial?.memberDesignScreenIds[0] ?? selectedXp?.representativeScreenId ?? selectedXpId;
+  const selectedScreen = designScreens.find((s) => s.designScreenId === selectedScreenId);
   const selectedFamily = designFamilies.find((f) => f.designFamilyId === selectedFamilyId);
-  const selectedScreenId = selectedPage?.designScreenId ?? selectedScreen?.designScreenId ?? selectedPageId;
   const coverage = manifest.coverage.find((c) => c.routeId === selectedScreenId);
   const vpKey = viewport.toLowerCase() as 'mobile' | 'tablet' | 'desktop';
   const vpAuth = coverage?.[vpKey];
@@ -267,45 +284,58 @@ export function BluprintProjectDesignPage() {
         })
       : null;
 
+  const captureScope = pageSet
+    ? listCaptureAllTargets({
+        projectId,
+        experiencePageIds: (pageSet.experiencePages ?? []).filter((p) => p.captureEligible).map((p) => p.experiencePageId),
+        materialScreenIds: (pageSet.materialScreens ?? []).filter((m) => m.captureEligible).map((m) => m.materialScreenId),
+        instancesExcludedByDefault: true,
+        statesExcludedByDefault: true,
+        advancedActions: ['CAPTURE_ALL_INSTANCES', 'CAPTURE_ALL_STATES', 'CAPTURE_RAW_DESIGN_SCREENS'],
+      })
+    : [];
+
   const batchPreview = buildReferenceBatchPreview(
     projectId,
     viewport,
-    designScreens.map((s) => s.designScreenId),
+    captureScope.length > 0 ? captureScope : designScreens.map((s) => s.designScreenId).slice(0, 20),
     undefined,
     {
       necessityAudits: manifest.referenceNecessityAudits,
       designFamilies: manifest.designFamilies,
-      designScreensCovered: designScreens.length,
+      designScreensCovered: captureScope.length || flatExperience.length,
     },
   );
 
-  function setExperienceMode(mode: 'PRIMARY' | 'ALL_DESIGNABLE') {
+  function setExperienceMode(mode: 'PRIMARY' | 'ALL_DESIGNABLE' | 'WORKSPACE') {
     setSearchParams((prev) => {
-      prev.set('mode', mode === 'ALL_DESIGNABLE' ? 'all' : 'primary');
+      prev.set('mode', mode === 'ALL_DESIGNABLE' ? 'all' : mode === 'WORKSPACE' ? 'workspace' : 'primary');
       return prev;
     });
   }
 
-  function setViewMode(mode: 'pages' | 'journey' | 'screens' | 'families') {
+  function setViewMode(mode: 'experience' | 'journey' | 'screens' | 'families') {
     setSearchParams((prev) => {
       prev.set('view', mode);
       return prev;
     });
   }
 
-  function selectFamily(designFamilyId: string) {
+  function selectExperiencePage(experiencePageId: string) {
     setSearchParams((prev) => {
-      prev.set('family', designFamilyId);
-      prev.set('view', 'families');
+      prev.set('xp', experiencePageId);
+      prev.delete('page');
+      prev.delete('screen');
+      prev.delete('material');
+      prev.set('view', 'experience');
       return prev;
     });
   }
 
-  function selectPage(pageId: string) {
+  function selectMaterial(materialScreenId: string) {
     setSearchParams((prev) => {
-      prev.set('page', pageId);
-      prev.delete('screen');
-      prev.set('view', 'pages');
+      prev.set('material', materialScreenId);
+      prev.set('view', 'experience');
       return prev;
     });
   }
@@ -327,18 +357,35 @@ export function BluprintProjectDesignPage() {
     });
   }
 
-  const vpStatusKey = `${viewport.toLowerCase()}Status` as 'mobileStatus' | 'tabletStatus' | 'desktopStatus';
-  const pageVpStatus = selectedPage?.[vpStatusKey];
+  function selectFamily(designFamilyId: string) {
+    setSearchParams((prev) => {
+      prev.set('family', designFamilyId);
+      prev.set('view', 'families');
+      return prev;
+    });
+  }
+
+  const xpInstances = (pageSet?.pageInstances ?? []).filter((i) => i.experiencePageId === selectedXpId);
+  const xpMaterials = (pageSet?.materialScreens ?? []).filter((m) => m.experiencePageId === selectedXpId);
 
   return (
     <Site00PublicShell mobileActiveNav="build">
       <div className="site00-page site00-bluprint">
         <PageIntro
           title={<BracketHeading>{project?.displayName ?? projectId}</BracketHeading>}
-          subtitle="Compiled website experience — page sets, not raw routes."
+          subtitle="Experience pages — curated visual experiences, not raw routes."
         />
 
-        {pageSet ? (
+        {pageSet?.experienceMetrics ? (
+          <div className="site00-bluprint__coverage-bar">
+            <span>{pageSet.experienceMetrics.afterExperiencePages} EXPERIENCE PAGES</span>
+            <span>VR3F {pageSet.experienceMetrics.beforeVr3fPrimary} → 3G {pageSet.experienceMetrics.afterExperiencePages} (-{pageSet.experienceMetrics.reductionPercent}%)</span>
+            <span>{pageSet.experienceMetrics.materialScreens} MATERIAL SCREENS</span>
+            <span>{pageSet.experienceMetrics.instances} INSTANCES</span>
+            <span>{pageSet.experienceMetrics.workspacePages} WORKSPACE</span>
+            <span>{pageSet.status}</span>
+          </div>
+        ) : pageSet ? (
           <div className="site00-bluprint__coverage-bar">
             <span>{pageSet.summary.totalPrimaryPages} PRIMARY PAGES</span>
             <span>{pageSet.supportingPageIds.length} SUPPORTING</span>
@@ -369,15 +416,22 @@ export function BluprintProjectDesignPage() {
           >
             ALL DESIGNABLE
           </button>
+          <button
+            type="button"
+            className={`site00-bluprint__viewport-tab${experienceMode === 'WORKSPACE' ? ' is-active' : ''}`}
+            onClick={() => setExperienceMode('WORKSPACE')}
+          >
+            INTERNAL / WORKSPACE
+          </button>
         </div>
 
         <div className="site00-bluprint__viewport-tabs">
           <button
             type="button"
-            className={`site00-bluprint__viewport-tab${viewMode === 'pages' ? ' is-active' : ''}`}
-            onClick={() => setViewMode('pages')}
+            className={`site00-bluprint__viewport-tab${viewMode === 'experience' ? ' is-active' : ''}`}
+            onClick={() => setViewMode('experience')}
           >
-            WEBSITE PAGES
+            EXPERIENCE PAGES
           </button>
           <button
             type="button"
@@ -403,35 +457,44 @@ export function BluprintProjectDesignPage() {
         </div>
 
         <div className="site00-bluprint__selectors">
-          {viewMode === 'pages' && pageSet ? (
+          {viewMode === 'experience' && pageSet ? (
             <label>
-              PAGE / SCREEN
+              SECTION → PAGE
               <select
-                value={selectedPageId}
-                onChange={(e) => selectPage(e.target.value)}
+                value={selectedXpId}
+                onChange={(e) => selectExperiencePage(e.target.value)}
                 className="site00-bluprint__select"
               >
-                {Object.entries(pageGroups).map(([group, pages]) => (
-                  <optgroup key={group} label={group}>
+                {Object.entries(experienceGroups).map(([section, pages]) => (
+                  <optgroup key={section} label={section}>
                     {pages.map((p) => (
-                      <option key={p.pageId} value={p.pageId}>
+                      <option key={p.experiencePageId} value={p.experiencePageId}>
                         {p.displayName}
-                        {p.instanceCount > 1 ? ` (${p.instanceCount} instances)` : ''}
+                        {p.routeNodeCount > 1 ? ` (${p.routeNodeCount} routes)` : ''}
                         {' — '}
-                        {pageStatusBadge(p.compiledStatus)}
+                        {pageStatusBadge(p.referenceStatus)}
                       </option>
                     ))}
                   </optgroup>
                 ))}
-                {pageSet.missingPages.length > 0 ? (
-                  <optgroup label="MISSING REQUIRED">
-                    {pageSet.missingPages.map((m) => (
-                      <option key={m.pageId} value={m.pageId} disabled>
-                        {m.displayName} — IMPLEMENTATION MISSING
-                      </option>
-                    ))}
-                  </optgroup>
-                ) : null}
+              </select>
+            </label>
+          ) : null}
+
+          {viewMode === 'experience' && xpMaterials.length > 0 ? (
+            <label>
+              MATERIAL SCREEN
+              <select
+                value={selectedMaterialId}
+                onChange={(e) => selectMaterial(e.target.value)}
+                className="site00-bluprint__select"
+              >
+                <option value="">— page representative —</option>
+                {xpMaterials.map((m) => (
+                  <option key={m.materialScreenId} value={m.materialScreenId}>
+                    {m.displayName} ({m.stepType})
+                  </option>
+                ))}
               </select>
             </label>
           ) : null}
@@ -506,7 +569,7 @@ export function BluprintProjectDesignPage() {
                   <strong>{stage.stage}</strong>
                   <span>
                     {stage.pageIds
-                      .map((id) => pageSet.compiledPages.find((p) => p.pageId === id)?.displayName ?? id)
+                      .map((id) => pageSet.experiencePages?.find((p) => p.experiencePageId === id)?.displayName ?? id)
                       .join(' → ')}
                   </span>
                 </div>
@@ -527,14 +590,15 @@ export function BluprintProjectDesignPage() {
           </section>
         ) : null}
 
-        {selectedPage && viewMode === 'pages' ? (
-          <CompiledPageCard
-            page={selectedPage}
+        {selectedXp && viewMode === 'experience' ? (
+          <ExperiencePageCard
+            page={selectedXp}
+            material={selectedMaterial}
+            instances={xpInstances}
             viewport={viewport}
             vpAuth={vpAuth}
             screenNecessity={screenNecessity}
             effectiveRef={effectiveRef}
-            pageVpStatus={pageVpStatus}
             projectId={projectId}
           />
         ) : null}
@@ -590,50 +654,43 @@ export function BluprintProjectDesignPage() {
           </div>
         ) : null}
 
-        {viewMode === 'pages' && pageSet && pageSet.missingPages.length > 0 ? (
+        {viewMode === 'experience' && pageSet ? (
           <section className="site00-bluprint__matrix">
-            <h3 className="site00-bluprint__section-title">MISSING PAGES ({pageSet.missingPages.length})</h3>
-            <div className="site00-bluprint__missing-grid">
-              {pageSet.missingPages.map((m) => (
-                <MissingPageCard key={m.pageId} page={m} />
+            <h3 className="site00-bluprint__section-title">EXPERIENCE INDEX</h3>
+            <p className="site00-body">
+              CAPTURE ALL targets {captureScope.length} experience pages/material screens
+              {isDesignScreenCaptureScope({ projectId, experiencePageIds: captureScope, materialScreenIds: [], instancesExcludedByDefault: true, statesExcludedByDefault: true, advancedActions: [] }) ? '' : ' (not all design screens)'}
+            </p>
+            <div className="site00-bluprint__page-grid">
+              {flatExperience.slice(0, 32).map((p) => (
+                <button
+                  key={p.experiencePageId}
+                  type="button"
+                  className={`site00-bluprint__page-card${p.experiencePageId === selectedXpId ? ' is-selected' : ''}`}
+                  onClick={() => selectExperiencePage(p.experiencePageId)}
+                >
+                  <strong>{p.displayName}</strong>
+                  <span>{p.experienceType.replace(/_/g, ' ')}</span>
+                  <span>{p.representativeRoute}</span>
+                  <span>{pageStatusBadge(p.referenceStatus)} · {necessityBadge(p.referencePolicy)}</span>
+                  {p.instanceIds.length > 0 ? <span>{p.instanceIds.length} INSTANCES</span> : null}
+                  {p.materialScreenIds.length > 0 ? <span>{p.materialScreenIds.length} MATERIAL SCREENS</span> : null}
+                  {p.routeNodeCount > 1 ? <span>{p.routeNodeCount} ROUTE NODES</span> : null}
+                  {p.captureEligible ? <span className="site00-bluprint__capture-badge">CAPTURE ELIGIBLE</span> : null}
+                </button>
               ))}
             </div>
           </section>
         ) : null}
 
-        {viewMode === 'pages' && pageSet ? (
-          <section className="site00-bluprint__matrix">
-            <h3 className="site00-bluprint__section-title">PAGE CARDS</h3>
-            <div className="site00-bluprint__page-grid">
-              {(experienceMode === 'PRIMARY'
-                ? pageSet.compiledPages.filter((p) => p.isPrimaryExperience)
-                : pageSet.compiledPages
-              )
-                .slice(0, 24)
-                .map((p) => (
-                  <button
-                    key={p.pageId}
-                    type="button"
-                    className={`site00-bluprint__page-card${p.pageId === selectedPageId ? ' is-selected' : ''}`}
-                    onClick={() => selectPage(p.pageId)}
-                  >
-                    <strong>{p.displayName}</strong>
-                    <span>{p.experienceGroup}</span>
-                    <span>{p.representativeRoute}</span>
-                    <span>{pageStatusBadge(p.compiledStatus)}</span>
-                    <span>M:{pageStatusBadge(p.mobileStatus)} T:{pageStatusBadge(p.tabletStatus)} D:{pageStatusBadge(p.desktopStatus)}</span>
-                    {p.captureEligible ? <span className="site00-bluprint__capture-badge">CAPTURE ELIGIBLE</span> : null}
-                  </button>
-                ))}
-            </div>
-          </section>
-        ) : null}
-
         <section className="site00-bluprint__matrix">
-          <h3 className="site00-bluprint__section-title">BATCH GENERATION PREVIEW</h3>
+          <h3 className="site00-bluprint__section-title">BATCH GENERATION PREVIEW (EXPERIENCE SCOPE)</h3>
           <p className="site00-body">
-            DESIGN SCREENS COVERED: {batchPreview.designScreensCovered} · REFERENCES TO GENERATE:{' '}
+            EXPERIENCE TARGETS: {batchPreview.designScreensCovered} · REFERENCES TO GENERATE:{' '}
             {batchPreview.requestCount} · AVOIDED: {batchPreview.generationRequestsAvoided}
+          </p>
+          <p className="site00-body">
+            Advanced: CAPTURE ALL INSTANCES · CAPTURE ALL STATES · CAPTURE RAW DESIGN SCREENS (Inspect)
           </p>
         </section>
 
@@ -681,33 +738,41 @@ export function BluprintProjectDesignPage() {
   );
 }
 
-function CompiledPageCard({
+function ExperiencePageCard({
   page,
+  material,
+  instances,
   viewport,
   vpAuth,
   screenNecessity,
   effectiveRef,
-  pageVpStatus,
   projectId,
 }: {
-  page: CompiledWebsitePageRecord;
+  page: ExperiencePageRecord;
+  material?: MaterialScreenRecord;
+  instances: ExperiencePageInstanceRecord[];
   viewport: ViewportClass;
   vpAuth?: { designStatus: string; referencePath?: string };
   screenNecessity?: { classification: string };
   effectiveRef?: { authorityLevel: string } | null;
-  pageVpStatus?: string;
   projectId: string;
 }) {
   return (
     <div className="site00-bluprint__page-row">
       <div>
         <h3 className="site00-bluprint__route-name">{page.displayName.toUpperCase()}</h3>
-        <p className="site00-body">{page.representativeRoute}</p>
+        <p className="site00-body">{material?.representativeRoute ?? page.representativeRoute}</p>
         <p className="site00-body">
-          {page.experienceGroup} · {page.experienceClassification.replace(/_/g, ' ')} · {page.priority}
+          {page.experienceType.replace(/_/g, ' ')} · {page.priority} · confidence {page.abstractionConfidence}
         </p>
-        {page.instanceCount > 1 ? (
-          <p className="site00-body">Instances: {page.instanceCount} shared shell</p>
+        {page.materialScreenIds.length > 0 ? (
+          <p className="site00-body">{page.materialScreenIds.length} material screens · {page.routeNodeCount} route nodes</p>
+        ) : null}
+        {instances.length > 0 ? (
+          <p className="site00-body">{instances.length} instances (drill-down in Inspect)</p>
+        ) : null}
+        {page.visualStateIds.length > 0 ? (
+          <p className="site00-body">States: {page.visualStateIds.join(', ')}</p>
         ) : null}
         {screenNecessity ? (
           <p className="site00-bluprint__status">
@@ -716,7 +781,7 @@ function CompiledPageCard({
           </p>
         ) : null}
         <p className="site00-bluprint__status">
-          STATUS · {pageStatusBadge(page.compiledStatus)} · {viewport}: {pageVpStatus ? pageStatusBadge(pageVpStatus as import('../../../studio-os-core/route-intelligence/types').CompiledPageStatus) : '—'}
+          STATUS · {pageStatusBadge(page.referenceStatus)} · {page.implementationStatus.replace(/_/g, ' ')}
         </p>
         {vpAuth ? (
           <p className="site00-bluprint__status">
@@ -725,38 +790,19 @@ function CompiledPageCard({
           </p>
         ) : null}
         {page.captureEligible ? (
-          <p className="site00-body">Screenshot capture eligible · auth: {page.authContext ?? 'anonymous'}</p>
+          <p className="site00-body">P0.VR.3E capture eligible · auth: {page.authContext ?? 'anonymous'}</p>
         ) : null}
       </div>
       <div className="site00-bluprint__page-actions">
-        {page.compiledStatus === 'REFERENCE_MISSING' || vpAuth?.designStatus === 'MISSING_REFERENCE' ? (
-          <>
-            <button type="button" className="site00-bluprint__btn" disabled title="Founder upload">
-              CREATE REFERENCE
-            </button>
-            <button type="button" className="site00-bluprint__btn site00-bluprint__btn--primary" disabled title="Founder-triggered FAL">
-              GENERATE
-            </button>
-          </>
+        {page.referenceStatus === 'REFERENCE_MISSING' || page.implementationStatus === 'IMPLEMENTATION_MISSING' ? (
+          <button type="button" className="site00-bluprint__btn" disabled title="Design before implementation">
+            CREATE REFERENCE
+          </button>
         ) : null}
         <Link to={`/bluprint/inspect?project=${projectId}`} className="site00-link-red">
-          INSPECT
+          INSPECT ROUTES
         </Link>
       </div>
-    </div>
-  );
-}
-
-function MissingPageCard({ page }: { page: RequiredWebsitePageRecord }) {
-  return (
-    <div className="site00-bluprint__missing-card">
-      <strong>{page.displayName}</strong>
-      <span>WHY: {page.parentFlow}</span>
-      <span>ROUTE: {page.suggestedRoute}</span>
-      <span>{page.priority} · {page.experienceClassification.replace(/_/g, ' ')}</span>
-      <button type="button" className="site00-bluprint__btn" disabled title="Design before implementation">
-        CREATE REFERENCE
-      </button>
     </div>
   );
 }

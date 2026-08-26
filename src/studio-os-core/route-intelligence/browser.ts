@@ -49,6 +49,10 @@ export {
   pageStatusBadge,
 } from './website-page-compiler';
 
+export { groupExperiencePagesForSelector } from './experience-page-abstraction';
+
+export { listCaptureAllTargets, isDesignScreenCaptureScope } from './experience-capture-scope';
+
 export { isPrimaryExperience, isExcludedFromPrimary } from './experience-classifier';
 
 export function groupDesignFamiliesForDropdown(

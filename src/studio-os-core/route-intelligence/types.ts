@@ -15,6 +15,9 @@ import type {
   COMPILED_PAGE_STATUSES,
   PAGE_COMPILATION_CONFIDENCE_LEVELS,
   CUSTOMER_JOURNEY_STAGES,
+  EXPERIENCE_PAGE_ABSTRACTION_CONFIDENCE_LEVELS,
+  EXPERIENCE_PAGE_TYPES,
+  MATERIAL_SCREEN_STEP_TYPES,
   VIEWPORT_CLASSES,
 } from './constants';
 
@@ -35,6 +38,9 @@ export type ProjectWebsiteExperienceClassification = (typeof PROJECT_WEBSITE_EXP
 export type CompiledPageStatus = (typeof COMPILED_PAGE_STATUSES)[number];
 export type PageCompilationConfidence = (typeof PAGE_COMPILATION_CONFIDENCE_LEVELS)[number];
 export type CustomerJourneyStage = (typeof CUSTOMER_JOURNEY_STAGES)[number];
+export type ExperiencePageAbstractionConfidence = (typeof EXPERIENCE_PAGE_ABSTRACTION_CONFIDENCE_LEVELS)[number];
+export type ExperiencePageType = (typeof EXPERIENCE_PAGE_TYPES)[number];
+export type MaterialScreenStepType = (typeof MATERIAL_SCREEN_STEP_TYPES)[number];
 
 export type RouteType =
   | 'PAGE'
@@ -514,6 +520,12 @@ export type StudioWorldDesignRouteManifest = {
   projectPageSets: ProjectWebsitePageSet[];
   pageSetCompilation?: ProjectPageSetCompilationMeta;
   pageSetOverrides?: PageSetOverrideRecord[];
+  experienceSections?: ExperienceSectionRecord[];
+  experiencePages?: ExperiencePageRecord[];
+  materialScreens?: MaterialScreenRecord[];
+  pageInstances?: ExperiencePageInstanceRecord[];
+  experiencePageOverrides?: ExperiencePageOverrideRecord[];
+  experiencePageCompilation?: ExperiencePageCompilationMeta;
 };
 
 export type CrossProjectRouteForensicReport = {
@@ -742,7 +754,21 @@ export type ProjectWebsitePageSet = {
     inheritsFamily: number;
     assetOnly: number;
     internalExcluded: number;
+    /** P0.VR.3G — curated experience page counts */
+    vr3fPrimaryPages?: number;
+    experiencePages?: number;
+    materialScreens?: number;
+    visualStates?: number;
+    instances?: number;
+    workspacePages?: number;
   };
+  /** P0.VR.3G experience abstraction layer */
+  experienceSections?: ExperienceSectionRecord[];
+  experiencePages?: ExperiencePageRecord[];
+  materialScreens?: MaterialScreenRecord[];
+  pageInstances?: ExperiencePageInstanceRecord[];
+  experiencePageQa?: ExperiencePageAbstractionQa[];
+  experienceMetrics?: ExperiencePageMetrics;
 };
 
 export type PageSetOverrideRecord = {
@@ -785,4 +811,129 @@ export type ProjectPageSetCompilationMeta = {
   generatedAt: string;
   sourceManifestVersion: string;
   sourceCommit: string;
+};
+
+export type ExperienceSectionRecord = {
+  sectionId: string;
+  projectId: string;
+  displayName: string;
+  order: number;
+  experiencePageIds: string[];
+};
+
+export type ExperiencePageRecord = {
+  experiencePageId: string;
+  projectId: string;
+  displayName: string;
+  sectionId: string;
+  experienceType: ExperiencePageType;
+  memberDesignScreenIds: string[];
+  memberRouteIds: string[];
+  materialScreenIds: string[];
+  visualStateIds: string[];
+  instanceIds: string[];
+  representativeScreenId: string;
+  representativeRoute: string;
+  designFamilyIds: string[];
+  referencePolicy: ReferenceNecessityClassification;
+  viewportRequirements: { mobile: boolean; tablet: boolean; desktop: boolean };
+  implementationStatus: ImplementationCoverageStatus | 'IMPLEMENTATION_MISSING';
+  referenceStatus: CompiledPageStatus;
+  priority: DesignRoutePriority;
+  journeyStage: CustomerJourneyStage;
+  founderDesignable: boolean;
+  founderPrimary: boolean;
+  abstractionConfidence: ExperiencePageAbstractionConfidence;
+  captureEligible: boolean;
+  routeNodeCount: number;
+  authContext?: 'anonymous' | 'authenticated' | 'admin';
+};
+
+export type MaterialScreenRecord = {
+  materialScreenId: string;
+  projectId: string;
+  experiencePageId: string;
+  displayName: string;
+  stepType: MaterialScreenStepType;
+  memberDesignScreenIds: string[];
+  memberRouteIds: string[];
+  representativeRoute: string;
+  referencePolicy: ReferenceNecessityClassification;
+  captureEligible: boolean;
+  order: number;
+};
+
+export type ExperiencePageInstanceRecord = {
+  instanceId: string;
+  projectId: string;
+  experiencePageId: string;
+  displayName: string;
+  slugOrId: string;
+  memberDesignScreenIds: string[];
+  memberRouteIds: string[];
+  representativeRoute: string;
+  instanceKind: 'PRODUCT' | 'CONTENT' | 'RECORD' | 'EPISODE' | 'SERVICE' | 'ASSESSMENT' | 'ROOM' | 'OTHER';
+  captureEligible: boolean;
+};
+
+export type ExperiencePageOverrideRecord = {
+  experiencePageId: string;
+  projectId: string;
+  overrideType: 'APPROVE_GROUP' | 'SPLIT' | 'MAKE_SCREEN_A_PAGE' | 'DEMOTE_TO_STATE' | 'DEMOTE_TO_INSTANCE' | 'CHANGE_SECTION';
+  value: string;
+  createdAt: string;
+};
+
+export type ExperiencePageAbstractionQaIssue = {
+  code:
+    | 'SAME_EXPERIENCE_SPLIT'
+    | 'DIFFERENT_EXPERIENCES_MERGED'
+    | 'INSTANCE_PROMOTED_TO_PAGE'
+    | 'STATE_PROMOTED_TO_PAGE'
+    | 'WORKFLOW_NODE_PROMOTED'
+    | 'INTERNAL_ROUTE_LEAKED'
+    | 'MATERIAL_SCREEN_MISSING'
+    | 'SITE00_SCOPE_REGRESSION';
+  severity: 'CRITICAL' | 'WARNING';
+  detail: string;
+  experiencePageId?: string;
+  designScreenId?: string;
+};
+
+export type ExperiencePageAbstractionQa = {
+  projectId: string;
+  issues: ExperiencePageAbstractionQaIssue[];
+  reviewRequired: boolean;
+};
+
+export type ExperiencePageMetrics = {
+  projectId: string;
+  beforeVr3fPrimary: number;
+  afterExperiencePages: number;
+  reductionCount: number;
+  reductionPercent: number;
+  rawRoutes: number;
+  designScreens: number;
+  materialScreens: number;
+  visualStates: number;
+  instances: number;
+  missingPages: number;
+  workspacePages: number;
+};
+
+export type ExperiencePageCompilationMeta = {
+  experiencePageSetSchemaVersion: string;
+  generatedAt: string;
+  sourceManifestVersion: string;
+  sourceCommit: string;
+  captureScope: 'EXPERIENCE_PAGES_AND_MATERIAL_SCREENS';
+};
+
+export type ExperienceCaptureScope = {
+  projectId: string;
+  experiencePageIds: string[];
+  materialScreenIds: string[];
+  instancesExcludedByDefault: boolean;
+  statesExcludedByDefault: boolean;
+  advancedActions: Array<'CAPTURE_ALL_INSTANCES' | 'CAPTURE_ALL_STATES' | 'CAPTURE_RAW_DESIGN_SCREENS'>;
 };

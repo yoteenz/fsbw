@@ -54621,3 +54621,21 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Tests:** 52 pass (9 new P0.VR.3C). Build green.
 
+---
+
+## 2026-08-26 — P0.VR.3F Cross-project website page compiler + customer-experience page sets + Design workspace registration
+
+- **Context:** Follow-up after P0.VR.3B/3C route intelligence — compile founder-facing **website/customer experience page sets** from existing manifest (not another raw route audit). Register into SITE 00 Design (`/bluprint`) so founder designs **pages**, not 1,131 raw routes.
+
+- **Manifest v3.1:** `3.1.0` / `studio-world-design-route-manifest@3.1` + `projectPageSets[]`, `pageSetCompilation`, `pageSetOverrides`. Page set schema `studio-world-project-page-set@1`.
+
+- **New modules:** `experience-classifier.ts` (ProjectWebsiteExperienceClassification per project; SITE 00 `/bluprint` host → ADMIN_INTERNAL excluded from primary), `website-page-compiler.ts` (`compileProjectWebsitePageSet`, journey index, dead-end audit, missing pages from dependency graph with implied-route evidence gate), `page-set-diff.ts`.
+
+- **Pipeline:** `forensic-audit.ts` + `generate-design-route-manifest.ts` call `attachPageSetsToManifest` after family/necessity audit. **`npm run compile:design-pages`** (`scripts/compile-design-pages.ts`) — audit → normalize → families → compile page sets; optional `--diff`.
+
+- **Compiled totals (1131 raw / 939 screens / 811 families):** FS primary **483** (commerce 15, personalization/BAW 35, account 18, immersive 7, content 25, public 385) · 4 internal excluded · AIO primary **299** (public 286, portal 12, auth 1) · SITE 00 primary **96** + 35 supporting + 3 missing · 2 design-host excluded · NDXBOOK primary **9** + 2 missing · 2 supporting workspace screens.
+
+- **BLUPRINT UI:** PRIMARY EXPERIENCE vs ALL DESIGNABLE; WEBSITE PAGES / CUSTOMER JOURNEY / DESIGN FAMILIES / RAW SCREENS views; experience-group page selector; missing page cards; page cards with M/T/D status + capture-eligible badge; hub table shows primary/missing per project. Raw routes remain in Inspect.
+
+- **Tests:** 68 pass (16 new P0.VR.3F). Build green. Sync `[sync-only]`.
+

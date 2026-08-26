@@ -1,11 +1,35 @@
-/** P0.VR.3F — Website page compiler integrated with design manifest */
-export const DESIGN_ROUTE_MANIFEST_VERSION = '3.1.0';
-export const DESIGN_ROUTE_MANIFEST_SCHEMA_VERSION = 'studio-world-design-route-manifest@3.1';
+/** P0.VR.3G — Experience page abstraction on design manifest */
+export const DESIGN_ROUTE_MANIFEST_VERSION = '3.2.0';
+export const DESIGN_ROUTE_MANIFEST_SCHEMA_VERSION = 'studio-world-design-route-manifest@3.2';
 /** Prior schemas */
+export const DESIGN_ROUTE_MANIFEST_SCHEMA_V3_1 = 'studio-world-design-route-manifest@3.1';
 export const DESIGN_ROUTE_MANIFEST_SCHEMA_V3 = 'studio-world-design-route-manifest@3';
 export const DESIGN_ROUTE_MANIFEST_SCHEMA_V2 = 'studio-world-design-route-manifest@2';
 export const DESIGN_ROUTE_MANIFEST_SCHEMA_V1 = 'studio-world-design-route-manifest@1';
-export const PROJECT_PAGE_SET_SCHEMA_VERSION = 'studio-world-project-page-set@1';
+export const PROJECT_PAGE_SET_SCHEMA_VERSION = 'studio-world-project-page-set@2';
+export const EXPERIENCE_PAGE_SET_SCHEMA_VERSION = 'studio-world-experience-page-set@1';
+
+export const EXPERIENCE_PAGE_ABSTRACTION_CONFIDENCE_LEVELS = ['HIGH', 'MEDIUM', 'LOW'] as const;
+
+export const EXPERIENCE_PAGE_TYPES = [
+  'PUBLIC_PAGE',
+  'WORKFLOW_PAGE',
+  'PORTAL_PAGE',
+  'WORKSPACE_PAGE',
+  'IMMERSIVE_PAGE',
+  'DETAIL_PAGE',
+  'MISSING_PAGE',
+] as const;
+
+export const MATERIAL_SCREEN_STEP_TYPES = [
+  'ENTRY',
+  'SELECTION',
+  'CONFIGURATION',
+  'REVIEW',
+  'COMPLETION',
+  'DETAIL',
+  'OTHER',
+] as const;
 
 export const PROJECT_WEBSITE_EXPERIENCE_CLASSES = [
   'PUBLIC_WEBSITE',
@@ -219,4 +243,14 @@ export const FAILURE_TAXONOMY = [
   'FAIL_REFERENCE_FAMILY_CONFLICT_AUTO_RESOLVED',
   'FAIL_SCREEN_OVERRIDE_IGNORED',
   'FAIL_PAF_ASSET_VARIANT_CAUSES_PAGE_REFERENCE_DUPLICATION',
+  'FAIL_DESIGN_SCREEN_PROMOTED_TO_PAGE_BY_DEFAULT',
+  'FAIL_ROUTE_INSTANCE_PROMOTED_TO_PRIMARY_PAGE',
+  'FAIL_STATE_PROMOTED_TO_PRIMARY_PAGE',
+  'FAIL_WORKFLOW_NODE_PROMOTED_TO_PRIMARY_PAGE',
+  'FAIL_INTERNAL_ROUTE_LEAKED_TO_PRIMARY_EXPERIENCE',
+  'FAIL_MATERIAL_SCREEN_COLLAPSED_INCORRECTLY',
+  'FAIL_DISTINCT_EXPERIENCES_OVER_MERGED',
+  'FAIL_SITE00_P0_VR_3D_PRIMARY_SCOPE_REGRESSION',
+  'FAIL_SCREENSHOT_BACKFILL_USES_RAW_SCREEN_SET',
+  'FAIL_REFERENCE_BATCH_USES_RAW_SCREEN_SET',
 ] as const;

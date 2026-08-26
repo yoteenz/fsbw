@@ -18,6 +18,7 @@ import { discoverAllReferences } from './reference-discovery';
 import { buildAllCoverage } from './viewport-coverage';
 import { buildDesignRouteManifest } from './manifest';
 import { attachPageSetsToManifest } from './website-page-compiler';
+import { attachExperiencePagesToManifest } from './experience-page-abstraction';
 import { collectForensicFailuresV2 } from './manifest-diff';
 import { buildAllDesignFamilies } from './design-family-consolidator';
 import {
@@ -269,7 +270,8 @@ export function runCrossProjectRouteForensicAudit(options: AuditOptions): {
     referenceMigration: buildReferenceMigrationMap(allRoutes, allDesignScreens),
   });
 
-  const manifest = attachPageSetsToManifest(baseManifest);
+  const manifestWithPageSets = attachPageSetsToManifest(baseManifest);
+  const manifest = attachExperiencePagesToManifest(manifestWithPageSets);
 
   report.coverageSummaries = manifest.coverageSummaries;
 

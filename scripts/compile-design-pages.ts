@@ -1,7 +1,7 @@
 #!/usr/bin/env npx tsx
 /**
- * P0.VR.3F — Compile founder-facing website page sets from design route manifest.
- * Workflow: audit routes (if stale) → normalize → family consolidation → compile page sets
+ * P0.VR.3G — Compile experience page abstraction from design route manifest.
+ * Workflow: audit → normalize → families → page sets → experience pages
  * Usage: npx tsx scripts/compile-design-pages.ts [--stdout] [--diff]
  */
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
@@ -11,6 +11,7 @@ import {
   runCrossProjectRouteForensicAudit,
   registerMissingRoutesAsDesignable,
   attachPageSetsToManifest,
+  attachExperiencePagesToManifest,
   diffProjectWebsitePageSets,
   MANIFEST_ARTIFACT_RELATIVE_PATH,
 } from '../src/studio-os-core/route-intelligence/index.ts';
@@ -40,7 +41,8 @@ function main() {
     baseManifest.dependencyGraphs,
   );
   const withRoutes = { ...baseManifest, rawImplementationRoutes: routesWithMissing, routes: routesWithMissing };
-  const manifest = attachPageSetsToManifest(withRoutes);
+  const withPageSets = attachPageSetsToManifest(withRoutes);
+  const manifest = attachExperiencePagesToManifest(withPageSets);
 
   const json = JSON.stringify(manifest, null, 2);
 
@@ -53,7 +55,7 @@ function main() {
   if (!existsSync(outDir)) mkdirSync(outDir, { recursive: true });
   writeFileSync(outPath, json, 'utf8');
 
-  console.log('P0.VR.3F Website Page Compiler');
+  console.log('P0.VR.3G Experience Page Compiler');
   console.log(`  path: ${MANIFEST_ARTIFACT_RELATIVE_PATH}`);
   console.log(`  commit: ${manifest.sourceCommit}`);
   console.log(`  schema: ${manifest.schemaVersion}`);
@@ -63,8 +65,9 @@ function main() {
   console.log('');
 
   for (const ps of manifest.projectPageSets ?? []) {
+    const m = ps.experienceMetrics;
     console.log(
-      `  ${ps.projectId}: primary=${ps.summary.totalPrimaryPages} supporting=${ps.supportingPageIds.length} missing=${ps.summary.missing} internalExcluded=${ps.summary.internalExcluded} status=${ps.status}`,
+      `  ${ps.projectId}: vr3f=${m?.beforeVr3fPrimary ?? ps.summary.totalPrimaryPages} experience=${m?.afterExperiencePages ?? '?'} (-${m?.reductionPercent ?? 0}%) material=${m?.materialScreens ?? 0} workspace=${m?.workspacePages ?? 0} status=${ps.status}`,
     );
   }
 

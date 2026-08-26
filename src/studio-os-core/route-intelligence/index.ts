@@ -110,6 +110,22 @@ export {
   pageStatusBadge,
 } from './website-page-compiler';
 
+export {
+  compilePrimaryExperiencePages,
+  attachExperiencePagesToPageSet,
+  attachExperiencePagesToManifest,
+  groupExperiencePagesForSelector,
+  SITE00_P0_VR_3D_BASELINE_COUNT,
+} from './experience-page-abstraction';
+
+export {
+  buildExperienceCaptureScope,
+  listCaptureAllTargets,
+  isDesignScreenCaptureScope,
+} from './experience-capture-scope';
+
+export { runExperiencePageAbstractionQa } from './experience-page-qa';
+
 export { diffProjectWebsitePageSets } from './page-set-diff';
 
 export { scanRouteFile } from './discovery/source-scanner';

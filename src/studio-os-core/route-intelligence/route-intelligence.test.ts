@@ -35,6 +35,9 @@ import {
   isPrimaryExperience,
   isExcludedFromPrimary,
   pageStatusBadge,
+  buildExperienceCaptureScope,
+  listCaptureAllTargets,
+  isDesignScreenCaptureScope,
   RECONSTRUCTION_PIPELINE_ID,
   PRODUCT_ASSET_PIPELINE_ID,
 } from './index';
@@ -128,7 +131,7 @@ describe('P0.VR.3 route intelligence', () => {
   it('generates versioned manifest with source commit', () => {
     const { manifest } = runCrossProjectRouteForensicAudit({ repoRoot: REPO_ROOT });
     expect(manifest.manifestVersion).toBe(DESIGN_ROUTE_MANIFEST_VERSION);
-    expect(manifest.manifestVersion).toBe('3.1.0');
+    expect(manifest.manifestVersion).toBe('3.2.0');
     expect(manifest.sourceCommit.length).toBeGreaterThan(5);
     expect(manifest.projects.length).toBeGreaterThan(0);
     expect(manifest.rawImplementationRoutes.length).toBeGreaterThan(100);
@@ -271,7 +274,7 @@ describe('P0.VR.3 route intelligence', () => {
 describe('P0.VR.3B reachability normalization', () => {
   it('bumps manifest schema to v3 with design families', () => {
     const { manifest } = runCrossProjectRouteForensicAudit({ repoRoot: REPO_ROOT });
-    expect(manifest.manifestVersion).toBe('3.1.0');
+    expect(manifest.manifestVersion).toBe('3.2.0');
     expect(manifest.schemaVersion).toBe(DESIGN_ROUTE_MANIFEST_SCHEMA_VERSION);
     expect(manifest.schemaVersion).toContain('@3');
     expect(manifest.rawImplementationRoutes.length).toBeGreaterThan(0);
@@ -496,7 +499,7 @@ describe('P0.VR.3C design family consolidation', () => {
 describe('P0.VR.3F website page compiler', () => {
   it('consumes current manifest and compiles all active projects', () => {
     const { manifest } = runCrossProjectRouteForensicAudit({ repoRoot: REPO_ROOT });
-    expect(manifest.manifestVersion).toBe('3.1.0');
+    expect(manifest.manifestVersion).toBe('3.2.0');
     expect(manifest.projectPageSets?.length).toBeGreaterThanOrEqual(4);
     expect(manifest.pageSetCompilation?.pageSetSchemaVersion).toBe(PROJECT_PAGE_SET_SCHEMA_VERSION);
     const ids = manifest.projectPageSets!.map((p) => p.projectId);
@@ -654,5 +657,74 @@ describe('P0.VR.3F website page compiler', () => {
     const first = runCrossProjectRouteForensicAudit({ repoRoot: REPO_ROOT });
     const second = runCrossProjectRouteForensicAudit({ repoRoot: REPO_ROOT });
     expect(first.manifest.rawImplementationRoutes.length).toBe(second.manifest.rawImplementationRoutes.length);
+  });
+});
+
+describe('P0.VR.3G experience page abstraction', () => {
+  it('bumps manifest to v3.2 with experience page layer', () => {
+    const { manifest } = runCrossProjectRouteForensicAudit({ repoRoot: REPO_ROOT });
+    expect(manifest.manifestVersion).toBe('3.2.0');
+    expect(manifest.schemaVersion).toContain('@3.2');
+    expect(manifest.experiencePages?.length).toBeGreaterThan(0);
+    expect(manifest.experiencePageCompilation?.captureScope).toBe('EXPERIENCE_PAGES_AND_MATERIAL_SCREENS');
+  });
+
+  it('reduces Frontal Slayer primary over-expansion substantially', () => {
+    const { manifest } = runCrossProjectRouteForensicAudit({ repoRoot: REPO_ROOT });
+    const fs = manifest.projectPageSets!.find((p) => p.projectId === 'frontal-slayer')!;
+    expect(fs.experienceMetrics!.beforeVr3fPrimary).toBeGreaterThan(400);
+    expect(fs.experienceMetrics!.afterExperiencePages).toBeLessThan(100);
+    expect(fs.experienceMetrics!.reductionPercent).toBeGreaterThan(50);
+  });
+
+  it('preserves Product Detail as one page with product instances', () => {
+    const { manifest } = runCrossProjectRouteForensicAudit({ repoRoot: REPO_ROOT });
+    const fs = manifest.projectPageSets!.find((p) => p.projectId === 'frontal-slayer')!;
+    const pdp = fs.experiencePages!.find((p) => p.displayName === 'Product Detail');
+    expect(pdp).toBeDefined();
+    expect(fs.pageInstances!.some((i) => i.instanceKind === 'PRODUCT')).toBe(true);
+  });
+
+  it('collapses Build-A-Wig to material screens not hundreds of pages', () => {
+    const { manifest } = runCrossProjectRouteForensicAudit({ repoRoot: REPO_ROOT });
+    const fs = manifest.projectPageSets!.find((p) => p.projectId === 'frontal-slayer')!;
+    const baw = fs.experiencePages!.find((p) => p.displayName.includes('Build-A-Wig'));
+    expect(baw).toBeDefined();
+    expect(baw!.materialScreenIds.length).toBeGreaterThan(0);
+  });
+
+  it('reconciles SITE 00 toward P0.VR.3D baseline not 96 rows', () => {
+    const { manifest } = runCrossProjectRouteForensicAudit({ repoRoot: REPO_ROOT });
+    const site = manifest.projectPageSets!.find((p) => p.projectId === 'site00')!;
+    expect(site.experienceMetrics!.beforeVr3fPrimary).toBeGreaterThan(90);
+    expect(site.experienceMetrics!.afterExperiencePages).toBeLessThan(50);
+    expect(site.experiencePages!.filter((p) => p.implementationStatus === 'IMPLEMENTATION_PRESENT').every((p) => !p.representativeRoute.startsWith('/bluprint'))).toBe(true);
+  });
+
+  it('reduces AIO primary pages substantially', () => {
+    const { manifest } = runCrossProjectRouteForensicAudit({ repoRoot: REPO_ROOT });
+    const aio = manifest.projectPageSets!.find((p) => p.projectId === 'all-in-one-enterprise')!;
+    expect(aio.experienceMetrics!.afterExperiencePages).toBeLessThan(aio.experienceMetrics!.beforeVr3fPrimary);
+    expect(aio.experienceMetrics!.reductionPercent).toBeGreaterThan(40);
+  });
+
+  it('preserves NDXBOOK intentional workspace screens', () => {
+    const { manifest } = runCrossProjectRouteForensicAudit({ repoRoot: REPO_ROOT });
+    const ndx = manifest.projectPageSets!.find((p) => p.projectId === 'ndxbook')!;
+    expect(ndx.experienceMetrics!.afterExperiencePages).toBeGreaterThanOrEqual(9);
+  });
+
+  it('locks capture scope to experience pages not all design screens', () => {
+    const { manifest } = runCrossProjectRouteForensicAudit({ repoRoot: REPO_ROOT });
+    const fs = manifest.projectPageSets!.find((p) => p.projectId === 'frontal-slayer')!;
+    const scope = buildExperienceCaptureScope(
+      'frontal-slayer',
+      fs.experiencePages!.filter((p) => p.founderPrimary),
+      fs.materialScreens ?? [],
+    );
+    expect(isDesignScreenCaptureScope(scope)).toBe(false);
+    expect(listCaptureAllTargets(scope).length).toBeLessThan(
+      manifest.designScreens!.filter((s) => s.projectId === 'frontal-slayer').length,
+    );
   });
 });

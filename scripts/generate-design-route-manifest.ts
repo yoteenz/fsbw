@@ -10,6 +10,7 @@ import {
   runCrossProjectRouteForensicAudit,
   registerMissingRoutesAsDesignable,
   attachPageSetsToManifest,
+  attachExperiencePagesToManifest,
   MANIFEST_ARTIFACT_RELATIVE_PATH,
 } from '../src/studio-os-core/route-intelligence/index.ts';
 
@@ -23,7 +24,9 @@ function main() {
     baseManifest.rawImplementationRoutes,
     baseManifest.dependencyGraphs,
   );
-  const manifest = attachPageSetsToManifest({ ...baseManifest, rawImplementationRoutes: routesWithMissing, routes: routesWithMissing });
+  const manifest = attachExperiencePagesToManifest(
+    attachPageSetsToManifest({ ...baseManifest, rawImplementationRoutes: routesWithMissing, routes: routesWithMissing }),
+  );
 
   const json = JSON.stringify(manifest, null, 2);
 
