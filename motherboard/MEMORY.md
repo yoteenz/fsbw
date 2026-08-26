@@ -54939,3 +54939,15 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Next:** Founder manually starts NEW AIO Supabase Production Validate on master.
 
+---
+
+## 2026-08-26 — AIO toolchain boundary guard false-negative (rg on GHA)
+
+- **Context:** After PostCSS fix (32e125697), GHA ran Demo production isolation successfully (Vitest 3/3, isolation check PASS) but failed on `check-toolchain-boundary.sh`: "FAIL: vite.config.ts or vitest.config.ts must pin css.postcss..."
+
+- **Root cause:** FALSE-NEGATIVE GUARD. Vite/Vitest configs correctly pin PostCSS via `path.resolve(__dirname, 'postcss.config.js')`. Guard used `rg -q` but ripgrep is not on GHA ubuntu-latest — command not found → false FAIL.
+
+- **Fix:** Semantic verification in `verify-toolchain-postcss.mjs` (Vite `loadConfigFromFile`). Forbidden-FS check uses POSIX grep. Unit test confirms PASS without rg.
+
+- **Next:** Founder manually starts NEW AIO Supabase Production Validate on master.
+
