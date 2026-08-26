@@ -211,6 +211,10 @@ jobs:
             bash scripts/ci/aio-record-result.sh freightAutopilotPersistence BLOCKED "AIO_SUPABASE_SERVICE_ROLE_KEY"
             bash scripts/ci/aio-record-result.sh freightAutopilotIdempotency BLOCKED "AIO_SUPABASE_SERVICE_ROLE_KEY"
             bash scripts/ci/aio-record-result.sh freightAutopilotMultiSession BLOCKED "AIO_SUPABASE_SERVICE_ROLE_KEY"
+            bash scripts/ci/aio-record-result.sh autopilotLiveRead BLOCKED "AIO_SUPABASE_SERVICE_ROLE_KEY"
+            bash scripts/ci/aio-record-result.sh pretripPersistence BLOCKED "AIO_SUPABASE_SERVICE_ROLE_KEY"
+            bash scripts/ci/aio-record-result.sh dispatchSnapshotPersistence BLOCKED "AIO_SUPABASE_SERVICE_ROLE_KEY"
+            bash scripts/ci/aio-record-result.sh brokenPathRecovery BLOCKED "AIO_SUPABASE_SERVICE_ROLE_KEY"
             exit 0
           fi
           if npm run test -- \
@@ -219,10 +223,18 @@ jobs:
             bash scripts/ci/aio-record-result.sh freightAutopilotPersistence PASS
             bash scripts/ci/aio-record-result.sh freightAutopilotIdempotency PASS
             bash scripts/ci/aio-record-result.sh freightAutopilotMultiSession PASS
+            bash scripts/ci/aio-record-result.sh autopilotLiveRead PASS
+            bash scripts/ci/aio-record-result.sh pretripPersistence PASS
+            bash scripts/ci/aio-record-result.sh dispatchSnapshotPersistence PASS
+            bash scripts/ci/aio-record-result.sh brokenPathRecovery PASS
           else
             bash scripts/ci/aio-record-result.sh freightAutopilotPersistence FAIL
             bash scripts/ci/aio-record-result.sh freightAutopilotIdempotency FAIL
             bash scripts/ci/aio-record-result.sh freightAutopilotMultiSession FAIL
+            bash scripts/ci/aio-record-result.sh autopilotLiveRead FAIL
+            bash scripts/ci/aio-record-result.sh pretripPersistence FAIL
+            bash scripts/ci/aio-record-result.sh dispatchSnapshotPersistence FAIL
+            bash scripts/ci/aio-record-result.sh brokenPathRecovery FAIL
           fi
 
       - name: Staging golden path (live Supabase)

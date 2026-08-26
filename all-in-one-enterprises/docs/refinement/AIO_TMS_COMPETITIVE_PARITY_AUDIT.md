@@ -208,7 +208,7 @@ This sprint added **Freight Autopilot** — an auditable, idempotent orchestrati
 
 ## Production Readiness (Platform TMS function)
 
-**READY WITH DEFERRED EXTERNAL INTEGRATIONS** for native AIO TMS document-to-payment when supabase mode + migrations applied.
+**PRODUCTION READY WITH DEFERRED EXTERNAL INTEGRATIONS** for native AIO TMS document-to-payment when supabase mode + migrations applied (16/16 on `nnnljnhtmseagotvgxxt`).
 
 **DEFERRED_EXTERNAL:** live GPS/ELD, OCR, ACH payouts, external factor API — not falsely represented as native.
 

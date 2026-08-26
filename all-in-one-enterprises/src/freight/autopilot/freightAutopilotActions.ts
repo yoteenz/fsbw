@@ -130,6 +130,7 @@ export function runFreightAutopilot(
   let bookkeepingLoad: Load | undefined;
   let persistLoad: Load | undefined;
   let persistActions: string[] = [];
+  let dispatchBuildInput: import('./dispatchPackage').BuildDispatchPackageInput | undefined;
 
   updateDemoStore((s) => {
     ensureAutopilotStoreFields(s);
@@ -138,6 +139,22 @@ export function runFreightAutopilot(
 
     const result = processFreightAutopilotEvent(s, { load, event, staffId, documentKind });
     persistActions = result.actionsTaken;
+
+    if (result.actionsTaken.includes('dispatch_package_generated')) {
+      const truck = s.truckProfiles.find((t) => t.id === load.powerUnitId || t.powerUnitId === load.powerUnitId);
+      const driver = s.drivers.find((d) => d.id === load.primaryDriverId);
+      const trailer = s.trailers.find((t) => t.id === load.trailerId);
+      const dispatcher = load.assignedDispatcherStaffId
+        ? s.staff.find((st) => st.id === load.assignedDispatcherStaffId)
+        : undefined;
+      dispatchBuildInput = {
+        load,
+        truckProfile: truck,
+        driver,
+        trailer,
+        dispatcherName: dispatcher?.name,
+      };
+    }
 
     if (event === 'DELIVERY_CONFIRMED' || load.operationalStatus === 'complete') {
       tryAutoInvoiceInStore(s, load, staffId);
@@ -160,7 +177,7 @@ export function runFreightAutopilot(
   }
 
   if (isSupabaseMode() && persistLoad && isUuid(persistLoad.id)) {
-    void persistAutopilotOutcomeToSupabase(persistLoad, event, persistActions);
+    void persistAutopilotOutcomeToSupabase(persistLoad, event, persistActions, dispatchBuildInput);
   }
 }
 
@@ -209,9 +226,10 @@ export function getFreightAutopilotPanelData(loadId: string) {
   const load = store.loads.find((l) => l.id === loadId);
   if (!load) return undefined;
   const state = getAutopilotStateForLoad(store, loadId);
+  if (!state) return undefined;
   const exceptions = (store.freightExceptions ?? []).filter((e) => e.loadId === loadId && e.status === 'open');
-  const doc = evaluateDocumentCompleteness(load);
-  return { load, state, exceptions, documentCompleteness: doc };
+  const documentCompleteness = evaluateDocumentCompleteness(load);
+  return { load, state, exceptions, documentCompleteness };
 }
 
 export { mapDocumentUploadToEvent };

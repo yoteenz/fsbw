@@ -284,7 +284,7 @@
 | Demo orchestration | `freightAutopilotService.ts`, `freightAutopilotActions.ts` | DEMO |
 | Supabase writes | `supabaseFreightAutopilotPersistence.ts` | LIVE (service role) |
 | Production bridge | `freightAutopilotPersistence.ts` | LIVE when supabase mode + UUID load |
-| UI panel read | `getFreightAutopilotPanelData` | DEMO (supabase read path deferred — panel uses demo store) |
+| UI panel read | `useFreightAutopilotPanel` + `supabaseFreightAutopilotRepository` | **LIVE** (supabase mode) / DEMO (demo mode) |
 
 ---
 

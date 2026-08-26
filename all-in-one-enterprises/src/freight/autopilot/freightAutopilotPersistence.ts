@@ -12,17 +12,20 @@ import {
   ensureCarrierSettlementRow,
   ensureDriverSettlementRow,
   ensureShipperInvoiceRow,
+  persistDispatchPackageSnapshotFromInput,
   recordAutopilotEvent,
   resolveFreightException,
   upsertDocumentCompleteness,
   upsertFreightException,
   eventIdempotencyKey,
 } from './supabaseFreightAutopilotPersistence';
+import type { BuildDispatchPackageInput } from './dispatchPackage';
 
 export async function persistAutopilotOutcomeToSupabase(
   load: Load,
   event: FreightAutopilotEventType,
   actionsTaken: string[],
+  dispatchBuildInput?: BuildDispatchPackageInput,
 ): Promise<void> {
   if (!isSupabaseMode()) return;
   const client = createFreightAutopilotAdminClient();
@@ -38,6 +41,13 @@ export async function persistAutopilotOutcomeToSupabase(
     idempotencyKey: `${loadUuid}:${event}:${actionsTaken.join(',') || 'noop'}`,
     payload: { actionsTaken },
   });
+
+  if (
+    dispatchBuildInput &&
+    (event === 'DRIVER_ASSIGNED' || event === 'CARRIER_BOOKED' || actionsTaken.includes('dispatch_package_generated'))
+  ) {
+    await persistDispatchPackageSnapshotFromInput(client, dispatchBuildInput);
+  }
 
   const doc = evaluateDocumentCompleteness(load);
   await upsertDocumentCompleteness(client, orgId, loadUuid, doc);

@@ -10,6 +10,8 @@ import { billingPackageIdempotencyKey } from './billingPackageTypes';
 import { settlementIdempotencyKey } from '../../settlements/driverSettlementEngine';
 import { autopilotAuditIdempotencyKey } from './freightAutopilotAudit';
 import type { FreightAutopilotEventType } from './freightAutopilotTypes';
+import type { DispatchPackage } from './dispatchPackage';
+import { buildDispatchPackage, type BuildDispatchPackageInput } from './dispatchPackage';
 
 export function createFreightAutopilotAdminClient(): SupabaseClient | null {
   const url = process.env.AIO_STAGING_SUPABASE_URL ?? process.env.VITE_AIO_SUPABASE_URL;
@@ -276,6 +278,88 @@ export async function ensureCarrierSettlementRow(
 
   if (error) throw error;
   return { id: data!.id as string, created: true };
+}
+
+export function dispatchSnapshotIdempotencyKey(loadId: string, version: number): string {
+  return `dispatch-snapshot:${loadId}:v${version}`;
+}
+
+export async function ensureDispatchPackageSnapshot(
+  client: SupabaseClient,
+  input: {
+    organizationId: string;
+    loadId: string;
+    packageJson: DispatchPackage;
+    generatedBy?: string;
+    contentHash: string;
+  },
+): Promise<{ id: string; created: boolean; versionNumber: number }> {
+  const { data: latest } = await client
+    .from('aio_dispatch_package_snapshots')
+    .select('id, version_number, package_json')
+    .eq('load_id', input.loadId)
+    .order('version_number', { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (latest) {
+    const prevHash = (latest.package_json as { contentHash?: string })?.contentHash;
+    if (prevHash === input.contentHash) {
+      return {
+        id: latest.id as string,
+        created: false,
+        versionNumber: latest.version_number as number,
+      };
+    }
+  }
+
+  const versionNumber = latest ? (latest.version_number as number) + 1 : 1;
+  const payload = { ...input.packageJson, contentHash: input.contentHash };
+
+  const { data, error } = await client
+    .from('aio_dispatch_package_snapshots')
+    .insert({
+      load_id: input.loadId,
+      organization_id: input.organizationId,
+      version_number: versionNumber,
+      package_json: payload,
+      generated_by: input.generatedBy ?? null,
+    })
+    .select('id, version_number')
+    .single();
+
+  if (error) throw error;
+  return { id: data!.id as string, created: true, versionNumber: data!.version_number as number };
+}
+
+export function hashDispatchPackage(pkg: DispatchPackage): string {
+  return JSON.stringify({
+    loadId: pkg.loadId,
+    driver: pkg.driver?.id,
+    truck: pkg.truck?.id,
+    trailer: pkg.trailer?.id,
+    origin: pkg.origin,
+    destination: pkg.destination,
+    references: pkg.referenceNumbers,
+    instructions: pkg.handlingInstructions,
+  });
+}
+
+export async function persistDispatchPackageSnapshotFromInput(
+  client: SupabaseClient,
+  buildInput: BuildDispatchPackageInput,
+  generatedBy?: string,
+): Promise<{ id: string; created: boolean } | null> {
+  const pkg = buildDispatchPackage(buildInput);
+  const contentHash = hashDispatchPackage(pkg);
+  const result = await ensureDispatchPackageSnapshot(client, {
+    organizationId: pkg.organizationId,
+    loadId: pkg.loadId,
+    packageJson: pkg,
+    generatedBy,
+    contentHash,
+  });
+  return { id: result.id, created: result.created };
 }
 
 export function eventIdempotencyKey(loadId: string, event: FreightAutopilotEventType, action: string): string {

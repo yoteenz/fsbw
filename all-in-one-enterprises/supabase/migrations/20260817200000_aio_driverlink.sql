@@ -162,7 +162,7 @@ create table if not exists public.aio_driverlink_company_subscriptions (
 );
 
 -- User locale preference extension (if not on profiles elsewhere)
-alter table public.aio_user_profiles add column if not exists preferred_language text default 'en-US';
+alter table public.aio_profiles add column if not exists preferred_language text default 'en-US';
 
 -- RLS
 alter table public.aio_driverlink_network_settings enable row level security;

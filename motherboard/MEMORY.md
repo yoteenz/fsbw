@@ -54815,3 +54815,43 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Tests:** 28/28 in `site00DesignBridge.test.ts`. Bridge TS clean.
 
+---
+
+## 2026-08-26 — AIO TMS Production Persistence + Live Freight Autopilot
+
+- **Context:** Productionization sprint (NOT feature expansion) after commit `4b8032958`. Move Freight Autopilot document-to-payment stack from demo/local orchestration to durable AIO Supabase (`nnnljnhtmseagotvgxxt` only — never FS `hyycomvcaqxxvyrfupes`). No TMS rebuild, no duplicate invoice/settlement/exception systems.
+
+- **Migration:** `all-in-one-enterprises/supabase/migrations/20260826200000_aio_tms_freight_autopilot_production.sql` — extends `aio_dispatch_loads` doc refs; creates `aio_freight_autopilot_events`, `aio_freight_document_completeness`, `aio_freight_billing_packages`, `aio_freight_exceptions`, `aio_driver_settlements` + adjustments, `aio_carrier_settlements`, `aio_dispatch_package_snapshots`, `aio_pretrip_inspections`, `aio_freight_locations`; RLS staff + org/carrier/shipper policies; idempotency via unique keys/constraints.
+
+- **Persistence layer:** `supabaseFreightAutopilotPersistence.ts`, `freightAutopilotPersistence.ts`; wired from `freightAutopilotActions.ts` when `isSupabaseMode()` + UUID load ID. Reuses `aio_brokerage_shipper_invoices` and existing bookkeeping handoff.
+
+- **Tests:** `freightAutopilot.test.ts` 9/9 PASS; `freightAutopilotPersistenceLive.test.ts` — multi-session, broken POD path, duplicate torture, failure recovery, carrier isolation (CI with service role).
+
+- **CI:** Extended `aio-supabase-production-validate.yml` + `aio-verify-schema.sh` (10 new tables) + `aio-write-summary.mjs` gates.
+
+- **Docs:** `AIO_TMS_PRODUCTION_PERSISTENCE_MATRIX.md`, `AIO_TMS_PRODUCTION_READINESS_REPORT.md`; updated `AIO_TMS_COMPETITIVE_PARITY_AUDIT.md`.
+
+- **Migration apply:** Full chain via workflow `db push` (project may be empty until CI runs); isolated MCP apply requires prior freight schema.
+
+- **Readiness:** PRODUCTION READY WITH DEFERRED EXTERNAL INTEGRATIONS (ELD/GPS, OCR, ACH, factor API). DO NOT DEPLOY — sync-only.
+
+---
+
+## 2026-08-26 — AIO TMS Final Core Closure (live migration + autopilot read + pre-trip/dispatch)
+
+- **Context:** Close final 3 native TMS blockers after commit `2ded7fcdc`: (1) apply full migration chain to `nnnljnhtmseagotvgxxt`, (2) FreightAutopilotPanel live Supabase read path, (3) pre-trip + dispatch snapshot write mirrors.
+
+- **Migrations:** All 16 AIO migrations applied to production Supabase via MCP (including `20260826200000`). Fixed `20260817200000_aio_driverlink.sql` (`aio_profiles` not `aio_user_profiles`). Schema verified: TMS tables + load doc columns exist.
+
+- **Autopilot read:** `supabaseFreightAutopilotRead.ts`, `supabaseFreightAutopilotRepository.ts`, `useFreightAutopilotPanel` hook wired to `DispatchLoadDetailPage` with refreshKey for multi-session refetch.
+
+- **Pre-trip:** `supabasePretripPersistence.ts` — idempotent `aio_pretrip_inspections` + FleetCare ticket linkage; demo `pretripService.ts` mirrors in supabase mode.
+
+- **Dispatch snapshot:** `ensureDispatchPackageSnapshot` with content-hash versioning; wired from `persistAutopilotOutcomeToSupabase` on driver assign/book events.
+
+- **CI:** Extended workflow summary gates: AUTOPILOT LIVE READ, PRE-TRIP PERSISTENCE, DISPATCH SNAPSHOT, BROKEN PATH RECOVERY.
+
+- **Tests:** 9/9 unit PASS; 7 live tests (CI with service role). Build PASS.
+
+- **Status:** PRODUCTION READY WITH DEFERRED EXTERNAL INTEGRATIONS. DO NOT DEPLOY.
+

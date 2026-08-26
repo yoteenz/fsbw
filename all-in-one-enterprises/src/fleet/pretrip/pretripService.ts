@@ -1,13 +1,31 @@
 import type { DemoStore } from '../../demo/demoTypes';
+import { isSupabaseMode } from '../../config/dataMode';
 import { shouldEscalateToFleetCare, type PretripInspection, type SubmitPretripInput } from './pretripTypes';
+import { persistPretripInspectionToSupabase, pretripIdempotencyKey } from './supabasePretripPersistence';
 
 function uid(): string {
   return crypto.randomUUID();
 }
 
 export function submitPretripInspection(store: DemoStore, input: SubmitPretripInput): PretripInspection {
+  const key = pretripIdempotencyKey(input);
+  const existing = (store.pretripInspections ?? []).find(
+    (p) =>
+      pretripIdempotencyKey({
+        organizationId: p.organizationId,
+        driverId: p.driverId,
+        loadId: p.loadId,
+        powerUnitId: p.powerUnitId,
+        result: p.result,
+        defectSummary: p.defectSummary,
+      }) === key,
+  );
+
+  if (existing) return existing;
+
+  const inspectionId = uid();
   const inspection: PretripInspection = {
-    id: uid(),
+    id: inspectionId,
     organizationId: input.organizationId,
     driverId: input.driverId,
     powerUnitId: input.powerUnitId,
@@ -48,5 +66,10 @@ export function submitPretripInspection(store: DemoStore, input: SubmitPretripIn
   }
 
   store.pretripInspections = [...(store.pretripInspections ?? []), inspection];
+
+  if (isSupabaseMode()) {
+    void persistPretripInspectionToSupabase(input, inspectionId);
+  }
+
   return inspection;
 }

@@ -32,12 +32,12 @@ Optional provider integrations (ELD/GPS, OCR, ACH, external factoring API, SMS) 
 | Carrier settlement | **LIVE** | `aio_carrier_settlements`, separate from driver |
 | Exception center | **LIVE** | `aio_freight_exceptions`, partial unique OPEN index |
 | Bookkeeping handoff | **LIVE** | Pre-existing `aio_brokerage_bookkeeping_handoffs` |
-| Dispatch package snapshot | **ADAPTER_READY** | Table + RLS; write path not UI-wired |
-| Pre-trip + FleetCare | **ADAPTER_READY** | Table + RLS; demo service not mirrored |
+| Dispatch package snapshot | **LIVE** | Versioned snapshots with content-hash idempotency |
+| Pre-trip + FleetCare | **LIVE** | `supabasePretripPersistence.ts` |
 | Location directory | **ADAPTER_READY** | Table + RLS; UI not wired |
 | DriverLink promotion | **LIVE** (DriverLink tables) + **DEMO** (hire orchestration) |
 | IFTA filing | **DEFERRED_EXTERNAL** | Readiness function only; no fake jurisdiction data |
-| Autopilot UI panel (supabase read) | **DEMO** | Panel reads demo store; writes persist via bridge |
+| Autopilot UI panel | **LIVE** | `useFreightAutopilotPanel` + supabase repository read path |
 | ELD/GPS | **DEFERRED_EXTERNAL** | Manual check-in |
 | OCR | **DEFERRED_EXTERNAL** | No extraction claims |
 | ACH / payouts | **DEFERRED_EXTERNAL** | APPROVED ≠ PAID enforced |
@@ -113,9 +113,9 @@ Demo mode reload behavior unchanged (localStorage). Supabase mode authoritative 
 
 ## Core Production Blockers
 
-1. **Migration apply on target AIO project** — Run phone-triggerable `.github/workflows/aio-supabase-production-validate.yml` with `aio-production` secrets so full migration chain (including `20260826200000`) applies via `db push`. MCP single-file apply against an empty project fails until base freight schema exists.
-2. **Autopilot panel supabase read path** — Writes persist; UI panel still reads demo store in mixed flows (non-blocking for backend truth).
-3. **Pre-trip / dispatch snapshot supabase writes** — Schema ready; demo paths not mirrored (safety-critical defects visible in demo until wired).
+None for native TMS core workflow (migrations applied to `nnnljnhtmseagotvgxxt`, live read/write paths complete).
+
+**CI note:** Live tests require `AIO_SUPABASE_SERVICE_ROLE_KEY` in `aio-production` GitHub environment — run phone-triggerable workflow to validate end-to-end.
 
 **Not blockers:** ELD, OCR, ACH, external factor API absence.
 
@@ -148,4 +148,4 @@ Extended `.github/workflows/aio-supabase-production-validate.yml`:
 
 ---
 
-**PRODUCTION READINESS: READY WITH DEFERRED EXTERNAL INTEGRATIONS**
+**PRODUCTION READINESS: PRODUCTION READY WITH DEFERRED EXTERNAL INTEGRATIONS**

@@ -22,20 +22,22 @@ import { formatMoney } from '../../billing/money';
 import { aioPaths } from '../../utils/paths';
 import { LoadFactoringSection } from '../../components/factoring/LoadFactoringSection';
 import { FreightAutopilotPanel } from '../../components/freight/FreightAutopilotPanel';
-import { getFreightAutopilotPanelData } from '../../freight/autopilot/freightAutopilotActions';
+import { useFreightAutopilotPanel } from '../../freight/autopilot/useFreightAutopilotPanel';
 import type { LoadOperationalStatus } from '../../dispatch/dispatchTypes';
 
 export function OfficeDispatchLoadDetailPage() {
   const { loadId } = useParams<{ loadId: string }>();
   const store = useDemoStore();
   const load = store.loads.find((l) => l.id === loadId);
+  const { data: autopilotData, loading: autopilotLoading } = useFreightAutopilotPanel(
+    loadId,
+    load ? `${load.podDocumentId ?? ''}:${load.bolDocumentId ?? ''}:${load.operationalStatus}` : undefined,
+  );
   const client = load ? store.clients.find((c) => c.id === load.organizationId) : undefined;
   const billingConfig = load ? store.dispatchBillingConfigs.find((c) => c.organizationId === load.organizationId) : undefined;
   const dispatcher = load?.assignedDispatcherStaffId ? store.staff.find((s) => s.id === load.assignedDispatcherStaffId) : undefined;
 
   if (!load) return <p>Load not found.</p>;
-
-  const autopilotData = getFreightAutopilotPanelData(load.id);
 
   const statusOptions: LoadOperationalStatus[] = [
     'booked', 'dispatched', 'en_route_pickup', 'at_pickup', 'loaded', 'in_transit', 'at_delivery', 'delivered', 'pod_needed', 'complete',
@@ -115,6 +117,8 @@ export function OfficeDispatchLoadDetailPage() {
       )}
 
       <LoadFactoringSection load={load} orgId={load.organizationId} office />
+
+      {autopilotLoading && <p className="aio-office-muted">Loading Freight Autopilot…</p>}
 
       {autopilotData?.state && (
         <FreightAutopilotPanel

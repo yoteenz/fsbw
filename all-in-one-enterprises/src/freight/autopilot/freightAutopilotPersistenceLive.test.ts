@@ -7,12 +7,17 @@ import { evaluateDocumentCompleteness } from './documentCompleteness';
 import {
   createFreightAutopilotAdminClient,
   ensureBillingPackageRow,
+  ensureDispatchPackageSnapshot,
   ensureShipperInvoiceRow,
+  hashDispatchPackage,
   recordAutopilotEvent,
   resolveFreightException,
   upsertDocumentCompleteness,
   upsertFreightException,
 } from './supabaseFreightAutopilotPersistence';
+import { buildDispatchPackage } from './dispatchPackage';
+import { createSupabaseFreightAutopilotRepository } from './supabaseFreightAutopilotRepository';
+import { persistPretripInspectionToSupabase, pretripIdempotencyKey } from '../../fleet/pretrip/supabasePretripPersistence';
 import { processDuplicateEventTorture } from './freightAutopilotPersistence';
 
 const url = process.env.AIO_STAGING_SUPABASE_URL ?? process.env.VITE_AIO_SUPABASE_URL;
@@ -192,6 +197,97 @@ describe.skipIf(!hasLive)('Freight Autopilot — live Supabase persistence', () 
     expect(counts.invoiceCount).toBe(1);
   });
 
+  it('pre-trip + dispatch snapshot persist with idempotency', async () => {
+    const admin = createFreightAutopilotAdminClient()!;
+
+    const pretripInput = {
+      organizationId: orgId,
+      driverId: 'driver-qa-1',
+      powerUnitId: 'unit-qa-1',
+      loadId,
+      result: 'DEFECT_REPORTED' as const,
+      defectSummary: 'Brake light out',
+    };
+    const key = pretripIdempotencyKey(pretripInput);
+
+    const p1 = await persistPretripInspectionToSupabase(pretripInput);
+    const p2 = await persistPretripInspectionToSupabase(pretripInput);
+    expect(p1!.id).toBe(p2!.id);
+    expect(p2!.escalatedToFleetCare).toBe(true);
+
+    const pkg = buildDispatchPackage({
+      load: {
+        id: loadId,
+        loadNumber,
+        organizationId: orgId,
+        sourceType: 'brokerage',
+        brokerName: 'AIO',
+        equipmentType: 'Dry Van',
+        originCity: 'Austin',
+        originState: 'TX',
+        destinationCity: 'Houston',
+        destinationState: 'TX',
+        pickupDate: '2026-08-01',
+        deliveryDate: '2026-08-02',
+        loadedMiles: 160,
+        deadheadMiles: 0,
+        linehaulMinor: 100_000,
+        fuelSurchargeMinor: 0,
+        accessorialMinor: 0,
+        grossMinor: 100_000,
+        confirmedGrossMinor: 100_000,
+        currency: 'USD',
+        offerStatus: 'accepted',
+        operationalStatus: 'dispatched',
+        rateConfirmationStatus: 'uploaded',
+        primaryDriverId: 'driver-qa-1',
+        rateDetailsReviewed: true,
+        factoringHandoffStatus: 'not_ready',
+        accessorials: [],
+        rateRevisions: [],
+        timeline: [],
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        version: 1,
+      },
+    });
+
+    const hash = hashDispatchPackage(pkg);
+    const s1 = await ensureDispatchPackageSnapshot(admin, {
+      organizationId: orgId,
+      loadId,
+      packageJson: pkg,
+      contentHash: hash,
+    });
+    const s2 = await ensureDispatchPackageSnapshot(admin, {
+      organizationId: orgId,
+      loadId,
+      packageJson: pkg,
+      contentHash: hash,
+    });
+    expect(s1.id).toBe(s2.id);
+    expect(s2.created).toBe(false);
+
+    const { count: pretripCount } = await admin
+      .from('aio_pretrip_inspections')
+      .select('*', { count: 'exact', head: true })
+      .eq('idempotency_key', key);
+    expect(pretripCount).toBe(1);
+
+    void p1;
+  });
+
+  it('live read path: panel repository reflects persisted multi-session state', async () => {
+    const repo = createSupabaseFreightAutopilotRepository();
+    const sessionA = await repo.getPanelData(loadId);
+    expect(sessionA).toBeDefined();
+    expect(sessionA!.documentCompleteness.readyForBilling).toBe(true);
+    expect(sessionA!.exceptions.filter((e) => e.status === 'open')).toHaveLength(0);
+
+    const sessionB = await repo.getPanelData(loadId);
+    expect(sessionB!.state.steps.some((s) => s.key === 'invoice_ready' && s.status === 'complete')).toBe(true);
+  });
+
   it('failure recovery: invoice survives partial autopilot failure; retry does not duplicate', async () => {
     const admin = createFreightAutopilotAdminClient()!;
 
@@ -293,6 +389,8 @@ describe.skipIf(!hasLive)('Freight Autopilot — live Supabase persistence', () 
   afterAll(async () => {
     if (!hasLive || !loadId) return;
     const admin = createFreightAutopilotAdminClient()!;
+    await admin.from('aio_dispatch_package_snapshots').delete().eq('load_id', loadId);
+    await admin.from('aio_pretrip_inspections').delete().eq('load_id', loadId);
     await admin.from('aio_freight_autopilot_events').delete().eq('load_id', loadId);
     await admin.from('aio_freight_billing_packages').delete().eq('load_id', loadId);
     await admin.from('aio_brokerage_shipper_invoices').delete().eq('load_id', loadId);
