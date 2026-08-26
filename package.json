@@ -89,6 +89,7 @@
     "audit:launch": "node scripts/launch-integrity-auditor.mjs",
     "audit:design-routes": "tsx scripts/generate-design-route-manifest.ts",
     "compile:design-pages": "tsx scripts/compile-design-pages.ts",
+    "audit:experience-curation": "tsx scripts/audit-experience-curation.ts",
     "compile:fsbw-missing-routes": "tsx scripts/run-fsbw-missing-route-completion.ts",
     "schema:deployment-readiness": "node scripts/schema-deployment-readiness.mjs",
     "strip:loader-audio": "tsx scripts/stripLoaderAnimationAudio.ts"

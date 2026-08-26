@@ -12,6 +12,9 @@ import {
   registerMissingRoutesAsDesignable,
   attachPageSetsToManifest,
   attachExperiencePagesToManifest,
+  attachExperienceCurationToManifest,
+  loadExperienceCurationStore,
+  saveExperienceCurationStore,
   diffProjectWebsitePageSets,
   MANIFEST_ARTIFACT_RELATIVE_PATH,
 } from '../src/studio-os-core/route-intelligence/index.ts';
@@ -42,7 +45,10 @@ function main() {
   );
   const withRoutes = { ...baseManifest, rawImplementationRoutes: routesWithMissing, routes: routesWithMissing };
   const withPageSets = attachPageSetsToManifest(withRoutes);
-  const manifest = attachExperiencePagesToManifest(withPageSets);
+  const withExperience = attachExperiencePagesToManifest(withPageSets);
+  const store = loadExperienceCurationStore(repoRoot);
+  const { manifest, store: storeNext } = attachExperienceCurationToManifest(withExperience, store);
+  saveExperienceCurationStore(repoRoot, storeNext);
 
   const json = JSON.stringify(manifest, null, 2);
 
@@ -55,7 +61,7 @@ function main() {
   if (!existsSync(outDir)) mkdirSync(outDir, { recursive: true });
   writeFileSync(outPath, json, 'utf8');
 
-  console.log('P0.VR.3G Experience Page Compiler');
+  console.log('P0.VR.3I Experience Page Compiler + Curation');
   console.log(`  path: ${MANIFEST_ARTIFACT_RELATIVE_PATH}`);
   console.log(`  commit: ${manifest.sourceCommit}`);
   console.log(`  schema: ${manifest.schemaVersion}`);
@@ -66,8 +72,9 @@ function main() {
 
   for (const ps of manifest.projectPageSets ?? []) {
     const m = ps.experienceMetrics;
+    const cur = ps.experienceCuration;
     console.log(
-      `  ${ps.projectId}: vr3f=${m?.beforeVr3fPrimary ?? ps.summary.totalPrimaryPages} experience=${m?.afterExperiencePages ?? '?'} (-${m?.reductionPercent ?? 0}%) material=${m?.materialScreens ?? 0} workspace=${m?.workspacePages ?? 0} status=${ps.status}`,
+      `  ${ps.projectId}: proposed=${cur?.compilerProposedPrimaryCount ?? m?.afterExperiencePages ?? '?'} active=${cur?.activePrimaryCount ?? '?'} internal=${cur?.internalWorkspaceCount ?? 0} status=${cur?.universeStatus ?? ps.status}`,
     );
   }
 

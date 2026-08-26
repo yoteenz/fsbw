@@ -51,6 +51,16 @@ import {
   buildPageReviewSets,
   isProductionNavBlocked,
   planComposerDraftSnapshots,
+  attachExperiencePagesToManifest,
+  attachExperienceCurationToManifest,
+  loadExperienceCurationStore,
+  emptyCurationStore,
+  upsertOverride,
+  captureAllRequiresLockedCuration,
+  auditFrontalSlayerPrimaryExperience,
+  buildCompiledByScreen,
+  auditAioServiceConsolidation,
+  applyExperiencePageOverrides,
 } from './index';
 
 const REPO_ROOT = join(import.meta.dirname, '../../..');
@@ -142,7 +152,7 @@ describe('P0.VR.3 route intelligence', () => {
   it('generates versioned manifest with source commit', () => {
     const { manifest } = runCrossProjectRouteForensicAudit({ repoRoot: REPO_ROOT });
     expect(manifest.manifestVersion).toBe(DESIGN_ROUTE_MANIFEST_VERSION);
-    expect(manifest.manifestVersion).toBe('3.2.0');
+    expect(manifest.manifestVersion).toBe('3.3.0');
     expect(manifest.sourceCommit.length).toBeGreaterThan(5);
     expect(manifest.projects.length).toBeGreaterThan(0);
     expect(manifest.rawImplementationRoutes.length).toBeGreaterThan(100);
@@ -285,7 +295,7 @@ describe('P0.VR.3 route intelligence', () => {
 describe('P0.VR.3B reachability normalization', () => {
   it('bumps manifest schema to v3 with design families', () => {
     const { manifest } = runCrossProjectRouteForensicAudit({ repoRoot: REPO_ROOT });
-    expect(manifest.manifestVersion).toBe('3.2.0');
+    expect(manifest.manifestVersion).toBe('3.3.0');
     expect(manifest.schemaVersion).toBe(DESIGN_ROUTE_MANIFEST_SCHEMA_VERSION);
     expect(manifest.schemaVersion).toContain('@3');
     expect(manifest.rawImplementationRoutes.length).toBeGreaterThan(0);
@@ -510,7 +520,7 @@ describe('P0.VR.3C design family consolidation', () => {
 describe('P0.VR.3F website page compiler', () => {
   it('consumes current manifest and compiles all active projects', () => {
     const { manifest } = runCrossProjectRouteForensicAudit({ repoRoot: REPO_ROOT });
-    expect(manifest.manifestVersion).toBe('3.2.0');
+    expect(manifest.manifestVersion).toBe('3.3.0');
     expect(manifest.projectPageSets?.length).toBeGreaterThanOrEqual(4);
     expect(manifest.pageSetCompilation?.pageSetSchemaVersion).toBe(PROJECT_PAGE_SET_SCHEMA_VERSION);
     const ids = manifest.projectPageSets!.map((p) => p.projectId);
@@ -672,10 +682,10 @@ describe('P0.VR.3F website page compiler', () => {
 });
 
 describe('P0.VR.3G experience page abstraction', () => {
-  it('bumps manifest to v3.2 with experience page layer', () => {
+  it('bumps manifest to v3.3 with experience page layer', () => {
     const { manifest } = runCrossProjectRouteForensicAudit({ repoRoot: REPO_ROOT });
-    expect(manifest.manifestVersion).toBe('3.2.0');
-    expect(manifest.schemaVersion).toContain('@3.2');
+    expect(manifest.manifestVersion).toBe('3.3.0');
+    expect(manifest.schemaVersion).toContain('@3.3');
     expect(manifest.experiencePages?.length).toBeGreaterThan(0);
     expect(manifest.experiencePageCompilation?.captureScope).toBe('EXPERIENCE_PAGES_AND_MATERIAL_SCREENS');
   });
@@ -737,6 +747,190 @@ describe('P0.VR.3G experience page abstraction', () => {
     expect(listCaptureAllTargets(scope).length).toBeLessThan(
       manifest.designScreens!.filter((s) => s.projectId === 'frontal-slayer').length,
     );
+  });
+});
+
+function compileWithExperienceCuration(store = emptyCurationStore()) {
+  const { manifest: base } = runCrossProjectRouteForensicAudit({ repoRoot: REPO_ROOT });
+  const withRoutes = registerMissingRoutesAsDesignable(
+    base.rawImplementationRoutes,
+    base.dependencyGraphs,
+  );
+  const withPageSets = attachPageSetsToManifest({ ...base, rawImplementationRoutes: withRoutes, routes: withRoutes });
+  const withExperience = attachExperiencePagesToManifest(withPageSets);
+  const { manifest, store: storeNext } = attachExperienceCurationToManifest(withExperience, store);
+  return { manifest, store: storeNext };
+}
+
+describe('P0.VR.3I experience page curation', () => {
+  it('bumps manifest to v3.3 with curation layer and three page sets', () => {
+    const { manifest } = compileWithExperienceCuration();
+    expect(manifest.manifestVersion).toBe('3.3.0');
+    expect(manifest.schemaVersion).toContain('@3.3');
+    expect(manifest.experienceCurationCompilation?.curationSchemaVersion).toBe('studio-world-experience-curation@1');
+    for (const ps of manifest.projectPageSets ?? []) {
+      expect(ps.compilerProposedPages?.length).toBeGreaterThan(0);
+      expect(ps.activeExperiencePages).toBeDefined();
+      expect(ps.experienceCuration).toBeDefined();
+    }
+  });
+
+  it('demotes Frontal Slayer admin/dashboard leaks from primary experience', () => {
+    const { manifest } = compileWithExperienceCuration();
+    const fs = manifest.projectPageSets!.find((p) => p.projectId === 'frontal-slayer')!;
+    expect(fs.experienceCuration!.compilerProposedPrimaryCount).toBeGreaterThan(40);
+    expect(fs.experienceCuration!.activePrimaryCount).toBeLessThan(35);
+    expect(fs.experienceCuration!.internalWorkspaceCount).toBeGreaterThan(20);
+    const compiledByScreen = buildCompiledByScreen(
+      fs.compiledPages,
+      manifest.designScreens!.filter((s) => s.projectId === 'frontal-slayer'),
+    );
+    const leaks = auditFrontalSlayerPrimaryExperience(
+      fs.experiencePages!.filter((p) => p.founderPrimary),
+      compiledByScreen,
+    ).filter((e) => e.classification === 'INTERNAL_WORKSPACE' && e.confidence === 'HIGH');
+    expect(leaks.length).toBeLessThan(10);
+  });
+
+  it('preserves Frontal Slayer PDP, BAW, and customer pages', () => {
+    const { manifest } = compileWithExperienceCuration();
+    const fs = manifest.projectPageSets!.find((p) => p.projectId === 'frontal-slayer')!;
+    const pdp = fs.experiencePages!.find((p) => p.displayName === 'Product Detail');
+    const baw = fs.experiencePages!.find((p) => p.displayName.includes('Build-A-Wig'));
+    expect(pdp?.founderPrimary).toBe(true);
+    expect(baw?.founderPrimary).toBe(true);
+    expect(fs.pageInstances!.some((i) => i.instanceKind === 'PRODUCT')).toBe(true);
+    expect(baw!.materialScreenIds.length).toBeGreaterThan(0);
+  });
+
+  it('consolidates AIO service marketing pages into Service Detail instances', () => {
+    const { manifest } = compileWithExperienceCuration();
+    const aio = manifest.projectPageSets!.find((p) => p.projectId === 'all-in-one-enterprise')!;
+    expect(aio.experienceCuration!.compilerProposedPrimaryCount).toBeGreaterThan(90);
+    expect(aio.experienceCuration!.activePrimaryCount).toBeLessThan(
+      aio.experienceCuration!.compilerProposedPrimaryCount,
+    );
+    const serviceDetail = aio.experiencePages!.find((p) => p.displayName === 'Service Detail');
+    expect(serviceDetail).toBeDefined();
+    expect(aio.pageInstances!.filter((i) => i.instanceKind === 'SERVICE').length).toBeGreaterThan(5);
+    const families = auditAioServiceConsolidation(
+      aio.experiencePages!.filter((p) => p.founderPrimary),
+      manifest.designFamilies!.filter((f) => f.projectId === 'all-in-one-enterprise'),
+    );
+    expect(families.length).toBeLessThanOrEqual(1);
+  });
+
+  it('preserves SITE 00 and NDXBOOK P0.VR.3G primary sets', () => {
+    const { manifest } = compileWithExperienceCuration();
+    const site = manifest.projectPageSets!.find((p) => p.projectId === 'site00')!;
+    const ndx = manifest.projectPageSets!.find((p) => p.projectId === 'ndxbook')!;
+    expect(site.experienceCuration!.activePrimaryCount).toBe(22);
+    expect(ndx.experienceCuration!.activePrimaryCount).toBe(11);
+  });
+
+  it('persists founder overrides across recompilation', () => {
+    const first = compileWithExperienceCuration(emptyCurationStore());
+    const fs = first.manifest.projectPageSets!.find((p) => p.projectId === 'frontal-slayer')!;
+    const target = fs.experiencePages!.find((p) => p.displayName === 'Home');
+    expect(target).toBeDefined();
+    let store = upsertOverride(first.store, {
+      overrideId: 'test:home:internal',
+      projectId: 'frontal-slayer',
+      targetType: 'EXPERIENCE_PAGE',
+      targetId: target!.experiencePageId,
+      overrideType: 'FORCE_INTERNAL',
+      value: 'frontal-slayer:section:internal-workspace',
+      reason: 'test demotion',
+      createdBy: 'TEST',
+      createdAt: new Date().toISOString(),
+      active: true,
+    });
+    const second = compileWithExperienceCuration(store);
+    const fs2 = second.manifest.projectPageSets!.find((p) => p.projectId === 'frontal-slayer')!;
+    const homeAfter = fs2.experiencePages!.find((p) => p.experiencePageId === target!.experiencePageId);
+    expect(homeAfter?.founderPrimary).toBe(false);
+    expect(homeAfter?.experienceType).toBe('WORKSPACE_PAGE');
+  });
+
+  it('surfaces override conflicts instead of silently dropping', () => {
+    const pages = [
+      {
+        experiencePageId: 'test:xp:1',
+        projectId: 'frontal-slayer',
+        displayName: 'Test',
+        representativeRoute: '/test',
+        representativeScreenId: 's1',
+        founderPrimary: true,
+        captureEligible: true,
+        sectionId: 'sec',
+        experienceType: 'PUBLIC_PAGE' as const,
+        memberDesignScreenIds: [],
+        memberRouteIds: [],
+        designFamilyIds: [],
+        instanceIds: [],
+        materialScreenIds: [],
+        visualStateIds: [],
+        routeNodeCount: 1,
+        abstractionConfidence: 'HIGH' as const,
+        referencePolicy: 'SHARED_FAMILY_REFERENCE' as const,
+        referenceStatus: 'INHERITS_FAMILY_REFERENCE' as const,
+        implementationStatus: 'IMPLEMENTATION_PRESENT' as const,
+        priority: 'PRIMARY' as const,
+        viewportRequirements: { mobile: true, tablet: true, desktop: true },
+        journeyStage: 'DISCOVERY' as const,
+        founderDesignable: true,
+      },
+    ];
+    const result = applyExperiencePageOverrides(pages, [], [], [], [
+      {
+        overrideId: 'missing',
+        projectId: 'frontal-slayer',
+        targetType: 'EXPERIENCE_PAGE',
+        targetId: 'does-not-exist',
+        overrideType: 'FORCE_INTERNAL',
+        value: 'internal',
+        reason: 'test',
+        createdBy: 'TEST',
+        createdAt: new Date().toISOString(),
+        active: true,
+      },
+    ]);
+    expect(result.conflicts.length).toBe(1);
+    expect(result.conflicts[0]?.status).toBe('OVERRIDE_CONFLICT');
+  });
+
+  it('uses active curated set for capture plan not compiler proposal', () => {
+    const { manifest } = compileWithExperienceCuration();
+    const fs = manifest.projectPageSets!.find((p) => p.projectId === 'frontal-slayer')!;
+    const plan = fs.experienceCuration!.capturePlan!;
+    expect(plan.experiencePageIds.length).toBe(fs.experienceCuration!.activePrimaryCount);
+    expect(plan.experiencePageIds.length).toBeLessThan(fs.experienceCuration!.compilerProposedPrimaryCount);
+    expect(plan.requiresLockedCuration).toBe(true);
+  });
+
+  it('blocks CAPTURE ALL until LOCKED_FOR_CAPTURE', () => {
+    expect(
+      captureAllRequiresLockedCuration({
+        projectId: 'frontal-slayer',
+        curationVersion: 'v1',
+        universeStatus: 'CURATED',
+        lockedForCapture: false,
+      }),
+    ).toBe(false);
+    expect(
+      captureAllRequiresLockedCuration({
+        projectId: 'frontal-slayer',
+        curationVersion: 'v1',
+        universeStatus: 'LOCKED_FOR_CAPTURE',
+        lockedForCapture: true,
+      }),
+    ).toBe(true);
+  });
+
+  it('loads durable curation store from repo artifact', () => {
+    const store = loadExperienceCurationStore(REPO_ROOT);
+    expect(store.schemaVersion).toBe('studio-world-experience-curation@1');
+    expect(Object.keys(store.projectCuration).length).toBeGreaterThanOrEqual(4);
   });
 });
 

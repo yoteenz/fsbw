@@ -54,12 +54,19 @@ export { groupExperiencePagesForSelector } from './experience-page-abstraction';
 export { listCaptureAllTargets, isDesignScreenCaptureScope } from './experience-capture-scope';
 
 export {
+  buildCurationReviewQueueForProject,
+  filterReviewByConfidence,
+} from './experience-curation/review-queue';
+
+export {
   buildComposerCreatedPagesReviewQueue,
   filterComposerReviewQueueByProject,
   countReadyForApproval,
   countNeedsCreativeDirection,
   countNeedsFunctionalReview,
 } from './fsbw-missing-route-completion/review-queue';
+
+export { captureAllRequiresLockedCuration } from './experience-curation/curation-plans';
 
 export { isProductionNavBlocked, composerPreviewRoutePath } from './fsbw-missing-route-completion/draft-guard';
 

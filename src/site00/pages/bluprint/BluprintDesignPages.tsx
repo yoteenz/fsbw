@@ -19,6 +19,8 @@ import {
   resolveEffectiveDesignReference,
   buildReferenceBatchPreview,
   buildComposerCreatedPagesReviewQueue,
+  buildCurationReviewQueueForProject,
+  captureAllRequiresLockedCuration,
   countNeedsCreativeDirection,
   countNeedsFunctionalReview,
   countReadyForApproval,
@@ -294,6 +296,9 @@ export function BluprintProjectDesignPage() {
   const composerProjectQueue = composerRegistry
     ? buildComposerCreatedPagesReviewQueue(composerRegistry).filter((c) => c.authorship.projectId === projectId)
     : [];
+  const curation = pageSet?.experienceCuration;
+  const curationReviewQueue = buildCurationReviewQueueForProject(curation);
+  const captureLocked = curation ? !captureAllRequiresLockedCuration({ lockedForCapture: false, universeStatus: curation.universeStatus, projectId, curationVersion: curation.curationVersion }) : true;
 
   const experienceMode =
     searchParams.get('mode') === 'workspace'
@@ -744,6 +749,54 @@ export function BluprintProjectDesignPage() {
                 </button>
               ))}
             </div>
+          </section>
+        ) : null}
+
+        {curation ? (
+          <section className="site00-bluprint__matrix">
+            <h3 className="site00-bluprint__section-title">CURATION · PAGE ABSTRACTION REVIEW</h3>
+            <p className="site00-body">
+              Proposed {curation.compilerProposedPrimaryCount} → Active {curation.activePrimaryCount} · Internal{' '}
+              {curation.internalWorkspaceCount} · {curation.universeStatus.replace(/_/g, ' ')}
+              {captureLocked ? ' · CAPTURE ALL blocked until LOCKED_FOR_CAPTURE' : ''}
+            </p>
+            {curationReviewQueue.length > 0 ? (
+              <ul className="site00-bluprint__queue">
+                {curationReviewQueue.slice(0, 12).map((item) => (
+                  <li key={`${item.category}-${item.experiencePageId}`}>
+                    {item.displayName} · {item.category.replace(/_/g, ' ')} · {item.detail}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="site00-body">No curation review items.</p>
+            )}
+            <div className="site00-bluprint__page-actions">
+              <button type="button" className="site00-bluprint__btn" disabled title="Persists to experience-curation-store.json via compile">
+                KEEP AS PAGE
+              </button>
+              <button type="button" className="site00-bluprint__btn" disabled title="Persists override on compile">
+                MOVE TO WORKSPACE
+              </button>
+              <button type="button" className="site00-bluprint__btn" disabled title="Requires LOCKED_FOR_CAPTURE">
+                LOCK FOR CAPTURE
+              </button>
+            </div>
+            {selectedXp ? (
+              <div className="site00-bluprint__page-row">
+                <div>
+                  <h3 className="site00-bluprint__route-name">{selectedXp.displayName.toUpperCase()}</h3>
+                  <p className="site00-body">{selectedXp.representativeRoute}</p>
+                  <p className="site00-body">
+                    {selectedXp.memberDesignScreenIds.length} screens · {selectedXp.routeNodeCount} routes ·{' '}
+                    {selectedXp.abstractionConfidence} confidence
+                  </p>
+                  <p className="site00-body">
+                    Family · {selectedXp.designFamilyIds.join(', ') || '—'} · {necessityBadge(selectedXp.referencePolicy)}
+                  </p>
+                </div>
+              </div>
+            ) : null}
           </section>
         ) : null}
 

@@ -1,10 +1,12 @@
-import type { ExperienceCaptureScope, ExperiencePageRecord, MaterialScreenRecord } from './types';
+import type { ExperienceCaptureScope, ExperiencePageRecord, MaterialScreenRecord, ProjectCurationState } from './types';
+import { captureAllRequiresLockedCuration } from './experience-curation/curation-plans';
 
-/** P0.VR.3G — Screenshot backfill scope lock for P0.VR.3E */
+/** P0.VR.3G/3I — Screenshot backfill scope lock for P0.VR.3E (uses curated active set) */
 export function buildExperienceCaptureScope(
   projectId: string,
   pages: ExperiencePageRecord[],
   materialScreens: MaterialScreenRecord[],
+  curation?: ProjectCurationState,
 ): ExperienceCaptureScope {
   const primaryPages = pages.filter((p) => p.founderPrimary && p.captureEligible);
   const captureMaterial = materialScreens.filter((m) => m.captureEligible);
@@ -16,6 +18,7 @@ export function buildExperienceCaptureScope(
     instancesExcludedByDefault: true,
     statesExcludedByDefault: true,
     advancedActions: ['CAPTURE_ALL_INSTANCES', 'CAPTURE_ALL_STATES', 'CAPTURE_RAW_DESIGN_SCREENS'],
+    requiresLockedCuration: curation ? captureAllRequiresLockedCuration(curation) === false : true,
   };
 }
 

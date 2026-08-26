@@ -527,6 +527,7 @@ export type StudioWorldDesignRouteManifest = {
   experiencePageOverrides?: ExperiencePageOverrideRecord[];
   experiencePageCompilation?: ExperiencePageCompilationMeta;
   fsbwMissingRouteCompletion?: FsbwMissingRouteCompletionReport;
+  experienceCurationCompilation?: ExperienceCurationCompilationMeta;
 };
 
 export type MissingPageCompletionMode =
@@ -919,6 +920,11 @@ export type ProjectWebsitePageSet = {
   pageInstances?: ExperiencePageInstanceRecord[];
   experiencePageQa?: ExperiencePageAbstractionQa[];
   experienceMetrics?: ExperiencePageMetrics;
+  /** P0.VR.3I — curation layers */
+  compilerProposedPages?: ExperiencePageRecord[];
+  founderCuratedPages?: ExperiencePageRecord[];
+  activeExperiencePages?: ExperiencePageRecord[];
+  experienceCuration?: ProjectExperienceCurationBundle;
 };
 
 export type PageSetOverrideRecord = {
@@ -1086,4 +1092,198 @@ export type ExperienceCaptureScope = {
   instancesExcludedByDefault: boolean;
   statesExcludedByDefault: boolean;
   advancedActions: Array<'CAPTURE_ALL_INSTANCES' | 'CAPTURE_ALL_STATES' | 'CAPTURE_RAW_DESIGN_SCREENS'>;
+  /** P0.VR.3I — true when capture blocked until LOCKED_FOR_CAPTURE */
+  requiresLockedCuration?: boolean;
+};
+
+/** P0.VR.3I — Experience page curation governance */
+export type ExperiencePageUniverseStatus =
+  | 'DRAFT'
+  | 'REVIEWING'
+  | 'CURATED'
+  | 'LOCKED_FOR_CAPTURE'
+  | 'STALE';
+
+export type PageAbstractionReviewDecision =
+  | 'APPROVE_AS_PAGE'
+  | 'SPLIT_PAGE'
+  | 'MERGE_WITH_PAGE'
+  | 'DEMOTE_TO_MATERIAL_SCREEN'
+  | 'DEMOTE_TO_STATE'
+  | 'DEMOTE_TO_INSTANCE'
+  | 'MOVE_TO_INTERNAL_WORKSPACE'
+  | 'MOVE_TO_SUPPORTING'
+  | 'PROMOTE_TO_PRIMARY'
+  | 'CHANGE_SECTION'
+  | 'CHANGE_REPRESENTATIVE'
+  | 'REVIEW_LATER';
+
+export type PageAbstractionReviewRecord = {
+  reviewId: string;
+  projectId: string;
+  experiencePageId: string;
+  decision: PageAbstractionReviewDecision;
+  reason?: string;
+  reviewedBy: string;
+  reviewedAt: string;
+  sourceManifestVersion: string;
+  active: boolean;
+};
+
+export type ExperiencePageOverrideTypeV2 =
+  | 'FORCE_PRIMARY'
+  | 'FORCE_SUPPORTING'
+  | 'FORCE_INTERNAL'
+  | 'FORCE_PAGE'
+  | 'FORCE_MATERIAL_SCREEN'
+  | 'FORCE_STATE'
+  | 'FORCE_INSTANCE'
+  | 'FORCE_SECTION'
+  | 'FORCE_SPLIT'
+  | 'FORCE_MERGE'
+  | 'FORCE_REPRESENTATIVE';
+
+export type ExperiencePageOverrideRecordV2 = {
+  overrideId: string;
+  projectId: string;
+  targetType: 'EXPERIENCE_PAGE' | 'MATERIAL_SCREEN' | 'INSTANCE';
+  targetId: string;
+  overrideType: ExperiencePageOverrideTypeV2;
+  value: string;
+  reason: string;
+  createdBy: string;
+  createdAt: string;
+  active: boolean;
+  supersedesOverrideId?: string;
+  status?: 'ACTIVE' | 'OVERRIDE_CONFLICT' | 'RETIRED';
+  systemProposed?: boolean;
+};
+
+export type ProjectCurationState = {
+  projectId: string;
+  curationVersion: string;
+  universeStatus: ExperiencePageUniverseStatus;
+  lockedForCapture: boolean;
+  curationUpdateAvailable?: boolean;
+  lastCompiledAt?: string;
+  lastReviewedAt?: string;
+};
+
+export type ExperienceCurationStore = {
+  schemaVersion: string;
+  updatedAt: string;
+  sourceCommit: string;
+  overrides: ExperiencePageOverrideRecordV2[];
+  reviews: PageAbstractionReviewRecord[];
+  projectCuration: Record<string, ProjectCurationState>;
+};
+
+export type CurationReviewQueueItem = {
+  category:
+    | 'LOW_CONFIDENCE'
+    | 'POSSIBLE_INTERNAL_LEAK'
+    | 'POSSIBLE_DUPLICATE_PAGE'
+    | 'POSSIBLE_SERVICE_INSTANCE'
+    | 'OVERRIDE_CONFLICT'
+    | 'NEW_SOURCE_PAGE';
+  experiencePageId: string;
+  displayName: string;
+  detail: string;
+  severity: 'CRITICAL' | 'WARNING' | 'INFO';
+};
+
+export type PrimaryExperienceInternalLeakAudit = {
+  projectId: string;
+  experiencePageId: string;
+  displayName: string;
+  route: string;
+  signals: string[];
+  recommendedAction: 'DEMOTE_TO_INTERNAL' | 'REVIEW';
+  confidence: 'HIGH' | 'MEDIUM' | 'LOW';
+};
+
+export type ExperiencePageDuplicateAudit = {
+  projectId: string;
+  experiencePageIds: string[];
+  displayNames: string[];
+  sharedDesignFamilyId?: string;
+  confidence: 'HIGH' | 'MEDIUM' | 'LOW';
+  recommendedAction: 'MERGE' | 'REVIEW';
+};
+
+export type AioServiceConsolidationCandidate = {
+  projectId: string;
+  servicePageIds: string[];
+  displayNames: string[];
+  sharedShell: boolean;
+  confidence: 'HIGH' | 'MEDIUM' | 'LOW';
+};
+
+export type ImplementationSnapshotCapturePlan = {
+  projectId: string;
+  curationVersion: string;
+  experiencePageIds: string[];
+  materialScreenIds: string[];
+  viewports: ViewportClass[];
+  representativeRoutes: Record<string, string>;
+  authContexts: Record<string, string>;
+  estimatedCaptureCount: number;
+  requiresLockedCuration: boolean;
+};
+
+export type DesignReferenceGenerationPlan = {
+  projectId: string;
+  curationVersion: string;
+  uniqueReferenceRequirements: number;
+  familyInherited: number;
+  assetOnly: number;
+  stateDerived: number;
+  experiencePageIds: string[];
+  materialScreenIds: string[];
+};
+
+export type PageAbstractionReviewReceipt = {
+  projectId: string;
+  manifestVersion: string;
+  curationVersion: string;
+  decisions: number;
+  pagesPromoted: number;
+  pagesDemoted: number;
+  pagesMerged: number;
+  pagesSplit: number;
+  sectionsChanged: number;
+  reviewer: string;
+  date: string;
+};
+
+export type ProjectExperienceCurationBundle = {
+  projectId: string;
+  curationVersion: string;
+  universeStatus: ExperiencePageUniverseStatus;
+  compilerProposedPrimaryCount: number;
+  activePrimaryCount: number;
+  internalWorkspaceCount: number;
+  supportingCount: number;
+  reviewQueue: CurationReviewQueueItem[];
+  internalLeakAudit: PrimaryExperienceInternalLeakAudit[];
+  duplicateAudit: ExperiencePageDuplicateAudit[];
+  aioServiceConsolidation?: AioServiceConsolidationCandidate[];
+  capturePlan: ImplementationSnapshotCapturePlan;
+  referencePlan: DesignReferenceGenerationPlan;
+  overrideConflicts: ExperiencePageOverrideRecordV2[];
+  changes: {
+    demoted: string[];
+    promoted: string[];
+    merged: string[];
+    split: string[];
+    instanceConversions: string[];
+    sectionChanges: string[];
+  };
+};
+
+export type ExperienceCurationCompilationMeta = {
+  curationSchemaVersion: string;
+  generatedAt: string;
+  sourceManifestVersion: string;
+  sourceCommit: string;
 };

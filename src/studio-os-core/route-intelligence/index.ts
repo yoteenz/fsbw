@@ -147,6 +147,23 @@ export {
   FSBW_MISSING_ROUTE_COMPLETION_SPRINT,
 } from './fsbw-missing-route-completion';
 
+export {
+  attachExperienceCurationToManifest,
+  applyExperienceCurationToPageSet,
+  applyExperiencePageOverrides,
+  loadExperienceCurationStore,
+  saveExperienceCurationStore,
+  emptyCurationStore,
+  upsertOverride,
+  auditFrontalSlayerPrimaryExperience,
+  buildCompiledByScreen,
+  auditAioServiceConsolidation,
+  captureAllRequiresLockedCuration,
+  buildImplementationSnapshotCapturePlan,
+  buildCurationReviewQueueForProject,
+  EXPERIENCE_CURATION_STORE_RELATIVE_PATH,
+} from './experience-curation';
+
 export { diffProjectWebsitePageSets } from './page-set-diff';
 
 export { scanRouteFile } from './discovery/source-scanner';
