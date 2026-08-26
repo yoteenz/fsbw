@@ -61,7 +61,7 @@ export function validateFamilyFidelity(
 export function defaultPreservedProperties(targetType: MissingDesignTargetType): string[] {
   const base = ['shared shell', 'header', 'navigation', 'spacing', 'typography', 'workspace chrome'];
   if (targetType === 'TAB_STATE') {
-    return [...base, 'tab dimensions', 'tab rail', 'panel alignment', 'breakpoints'];
+    return [...base, 'tab dimensions', 'tab rail', 'panel alignment', 'breakpoints', 'responsive hierarchy'];
   }
   if (targetType === 'MATERIAL_SCREEN') {
     return [...base, 'panel alignment', 'responsive hierarchy'];

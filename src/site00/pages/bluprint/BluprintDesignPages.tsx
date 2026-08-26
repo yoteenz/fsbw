@@ -259,6 +259,7 @@ export default function BluprintDesignHubPage() {
               <p className="site00-body">Run compile:design-pages to scan missing targets (P0.VR.3L-FSBW).</p>
             )}
           </div>
+          <VoiceLabDerivedReviewPanel familyDerivation={familyDerivation} registry={familyDerivation?.registry} />
         </section>
 
         <section className="site00-bluprint__queues">
@@ -1219,6 +1220,75 @@ export function BluprintInspectPage() {
         </Link>
       </div>
     </Site00PublicShell>
+  );
+}
+
+function VoiceLabDerivedReviewPanel({
+  familyDerivation,
+  registry,
+}: {
+  familyDerivation?: import('../../../studio-os-core/route-intelligence/types').FamilyDerivedMissingTargetReport;
+  registry?: import('../../../studio-os-core/route-intelligence/types').FsbwComposerPageRegistry;
+}) {
+  const voiceTarget = familyDerivation?.targets.find(
+    (t) => t.targetId.includes('voice-lab') || t.displayName === 'Voice Lab',
+  );
+  const queueItem = familyDerivation?.queue.find((q) => q.target.targetId === voiceTarget?.targetId);
+  const authorship = registry?.authorship.find((a) => a.route.includes('/character-lab/voice-lab'));
+  const sourceSnapshots = (registry?.snapshots ?? []).filter((s) => s.isSourceSibling);
+  const targetSnapshots = (registry?.snapshots ?? []).filter(
+    (s) => s.route.includes('/voice-lab') && !s.isSourceSibling,
+  );
+
+  if (!voiceTarget) return null;
+
+  return (
+    <div>
+      <h3 className="site00-bluprint__section-title">COMPOSER-DERIVED TARGETS · VOICE LAB</h3>
+      <p className="site00-body">
+        CHARACTER LAB → VOICE LAB · {voiceTarget.targetType.replace(/_/g, ' ')} ·{' '}
+        {voiceTarget.reviewStatus.replace(/_/g, ' ')}
+      </p>
+      <p className="site00-body">
+        Source: {voiceTarget.sourceRoute ?? queueItem?.sibling?.route ?? '—'} · Confidence:{' '}
+        {voiceTarget.derivationConfidence} · {authorship?.createdBySprint ?? voiceTarget.createdBy}
+      </p>
+      <p className="site00-body">
+        SOURCE M/T/D:{' '}
+        {['MOBILE', 'TABLET', 'DESKTOP']
+          .map((vp) => sourceSnapshots.find((s) => s.viewport === vp)?.status ?? 'PENDING')
+          .join(' / ')}{' '}
+        · TARGET M/T/D:{' '}
+        {['MOBILE', 'TABLET', 'DESKTOP']
+          .map((vp) => targetSnapshots.find((s) => s.viewport === vp)?.status ?? 'PENDING')
+          .join(' / ')}
+      </p>
+      <p className="site00-body">
+        EXPECTED DIFF: active tab · content · controls · data/state
+      </p>
+      <fieldset className="site00-bluprint__page-actions" style={{ border: 'none', padding: 0 }}>
+        <legend className="site00-body">SHELL CHANGE SCOPE (default · not applied)</legend>
+        <label className="site00-body">
+          <input type="radio" name="voice-lab-propagation" defaultChecked disabled /> APPLY TO VOICE LAB ONLY
+        </label>
+        <label className="site00-body">
+          <input type="radio" name="voice-lab-propagation" disabled /> UPDATE CHARACTER LAB FAMILY
+        </label>
+        <label className="site00-body">
+          <input type="radio" name="voice-lab-propagation" disabled /> UPDATE EVERY PAGE USING THIS SHELL
+        </label>
+      </fieldset>
+      {voiceTarget.reviewStatus === 'READY_FOR_REVIEW' ? (
+        <p className="site00-bluprint__status">READY FOR FOUNDER REVIEW</p>
+      ) : null}
+      <Link
+        to="/admin/studio/character-lab/voice-lab"
+        className="site00-link-red"
+        style={{ display: 'inline-block', marginTop: 8 }}
+      >
+        OPEN VOICE LAB PREVIEW →
+      </Link>
+    </div>
   );
 }
 

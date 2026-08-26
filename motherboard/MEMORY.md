@@ -54757,3 +54757,25 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Follow-up:** Wire BLUPRINT DERIVE/CAPTURE to API; shell propagation review UI (blast-radius preview); real Character Lab routes when Studio World pages land; execute browser capture for on-demand snapshots (planning only — no mass 3E backfill).
 
+---
+
+## 2026-08-26 — P0.VR.3L.1-FSBW Voice Lab execution + Character Lab sibling resolution + founder review readiness
+
+- **Context:** Complete the single incomplete P0.VR.3L missing target: Studio World Character Lab → Voice Lab (TAB_STATE). No mass capture, FAL, production deploy, or cross-project mutation. P0.VR.3E is canonical screenshot storage (Supabase + repo mirror paths).
+
+- **Character Lab implementation:** `src/components/admin/studio/character-lab/` — `CharacterLabShell`, `CharacterLabTabs`, `CharacterLabPanel`, `CharacterLabTabContent`, `VoiceLabContent`, `characterLabConfig.ts`. Routes in `App.tsx`: `/admin/studio/character-lab/{character,visual,wardrobe,voice-lab}`. Voice Lab reuses exact shell geometry; only active tab + voice controls differ.
+
+- **Sibling resolution:** `character-lab-registry.ts` — code-authority siblings (Character/Visual/Wardrobe); default source **Visual** tab (`HIGH` confidence). `sibling-selector.ts` merges code siblings for Voice Lab targets. LOW confidence blocks execution without founder override.
+
+- **P0.VR.3E storage:** `implementation-snapshots/storage.ts` — paths `studio-world/implementation-snapshots/{project}/{route}/{family-source|composer-derived}/{viewport}.webp`; Supabase table `studio_world_implementation_snapshots` (migration applied production). `on-demand-capture.ts` normalized off `composer-drafts/`.
+
+- **Execution pipeline:** `voice-lab-execution.ts` — `executeVoiceLabDerivation()`, `persistVoiceLabExecution()`; sprint `P0.VR.3L.1-FSBW`; `family-derived-visual-qa.ts` for Source vs Derived QA; review status `READY_FOR_REVIEW` when M/T/D captured + QA pass.
+
+- **API/CLI:** `POST .../studio-world-family-derivation` action `execute-voice-lab`; `npm run execute:voice-lab`, `npm run capture:voice-lab-snapshots`.
+
+- **BLUPRINT UI:** COMPOSER-DERIVED TARGETS · VOICE LAB panel with source/target snapshot status, expected diffs, shell propagation scope radios (default TARGET_ONLY, disabled until founder acts).
+
+- **Outcome:** Source sibling Visual · HIGH · `/admin/studio/character-lab/visual`; Voice Lab `READY_FOR_REVIEW`; 3/3 source + 3/3 target snapshots (P0.VR.3E paths); visual QA pass; no unexplained drift; shell propagation not auto-applied.
+
+- **Tests:** 126 route-intelligence pass (8 new P0.VR.3L.1). Build green. Sync `[sync-only]`.
+

@@ -7,6 +7,8 @@ import type {
   SiblingConfidence,
   StudioWorldDesignRouteManifest,
 } from '../types';
+import { VOICE_LAB_TARGET_ID } from '../constants';
+import { listCharacterLabCodeSiblings } from './character-lab-registry';
 
 function shellIdFromFamily(family: DesignFamilyRecord): string | undefined {
   if (!family.shellAuthority) return undefined;
@@ -67,7 +69,13 @@ export function listFamilySiblingCandidates(
       .find(Boolean) ??
     families.find((f) => f.projectId === candidate.projectId && f.memberDesignScreenIds.length > 1);
 
-  if (!resolvedFamily) return [];
+  const codeSiblings =
+    candidate.candidateId === VOICE_LAB_TARGET_ID ||
+    candidate.representativeRoute.includes('/character-lab/voice-lab')
+      ? listCharacterLabCodeSiblings()
+      : [];
+
+  if (!resolvedFamily) return codeSiblings.sort((a, b) => b.score - a.score);
 
   const screens = (manifest.designScreens ?? []).filter(
     (s) =>
@@ -78,7 +86,7 @@ export function listFamilySiblingCandidates(
 
   const registrySnapshots = existingSnapshots;
 
-  return screens
+  const manifestCandidates = screens
     .map((screen) => {
       const { score, explanation } = scoreSibling(candidate, screen, resolvedFamily, targetType);
       const snap = registrySnapshots.find(
@@ -98,8 +106,16 @@ export function listFamilySiblingCandidates(
         snapshotStale: false,
         captureRequired: !snap && score >= 45,
       } satisfies FamilySiblingCandidate;
-    })
-    .sort((a, b) => b.score - a.score);
+    });
+
+  const merged = [...codeSiblings, ...manifestCandidates];
+  const byId = new Map<string, FamilySiblingCandidate>();
+  for (const c of merged) {
+    const existing = byId.get(c.siblingId);
+    if (!existing || c.score > existing.score) byId.set(c.siblingId, c);
+  }
+
+  return [...byId.values()].sort((a, b) => b.score - a.score);
 }
 
 export function selectBestFamilySibling(

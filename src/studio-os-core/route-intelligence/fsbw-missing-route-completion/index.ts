@@ -91,9 +91,28 @@ export {
 } from './family-derivation-pipeline';
 
 export {
+  resolveCharacterLabParent,
+  listCharacterLabCodeSiblings,
+  selectCharacterLabSourceSibling,
+  voiceLabMissingTargetCandidate,
+} from './character-lab-registry';
+
+export {
+  executeVoiceLabDerivation,
+  persistVoiceLabExecution,
+} from './voice-lab-execution';
+
+export {
+  runFamilyDerivedTargetVisualQa,
+  snapshotsReadyForReview,
+} from './family-derived-visual-qa';
+
+export {
   FSBW_COMPOSER_PAGE_REGISTRY_RELATIVE_PATH,
   FSBW_MISSING_ROUTE_COMPLETION_SPRINT,
   FSBW_FAMILY_DERIVATION_SPRINT,
+  FSBW_VOICE_LAB_EXECUTION_SPRINT,
   FAMILY_SOURCE_SNAPSHOT_LABEL,
   COMPOSER_DERIVED_DRAFT_LABEL,
+  P0_VR_3E_SNAPSHOT_AUTHORITY,
 } from '../constants';

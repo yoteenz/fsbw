@@ -91,6 +91,8 @@
     "compile:design-pages": "tsx scripts/compile-design-pages.ts",
     "apply:curation-action": "tsx scripts/apply-curation-action.ts",
     "compile:family-derivation": "tsx scripts/run-family-derived-missing-targets.ts",
+    "execute:voice-lab": "tsx scripts/run-voice-lab-execution.ts",
+    "capture:voice-lab-snapshots": "node scripts/capture-voice-lab-family-snapshots.mjs",
     "audit:experience-curation": "tsx scripts/audit-experience-curation.ts",
     "compile:fsbw-missing-routes": "tsx scripts/run-fsbw-missing-route-completion.ts",
     "schema:deployment-readiness": "node scripts/schema-deployment-readiness.mjs",

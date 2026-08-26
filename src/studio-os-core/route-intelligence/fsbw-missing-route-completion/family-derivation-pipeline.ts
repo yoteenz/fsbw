@@ -13,6 +13,7 @@ import {
   deriveMissingTargetFromFamily,
   characterLabVoiceLabFixture,
 } from './family-derivation';
+import { voiceLabMissingTargetCandidate } from './character-lab-registry';
 import { buildSharedShellDependencyGraph } from './shell-graph';
 import { classifyMissingDesignTarget } from './target-classifier';
 
@@ -65,6 +66,10 @@ export function runFamilyDerivedMissingTargetPipeline(
   );
 
   let candidates = filterFsbwBuildCandidates(collectMissingPageCandidates(manifest));
+  const voiceLabCandidate = voiceLabMissingTargetCandidate();
+  if (!candidates.some((c) => c.candidateId === voiceLabCandidate.candidateId)) {
+    candidates = [...candidates, voiceLabCandidate];
+  }
 
   if (!candidates.length && options.includeFixtures !== false) {
     candidates = [characterLabVoiceLabFixture()];

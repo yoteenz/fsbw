@@ -12,6 +12,8 @@ import {
   loadComposerPageRegistry,
   saveComposerPageRegistry,
   FSBW_COMPOSER_PAGE_REGISTRY_RELATIVE_PATH,
+  executeVoiceLabDerivation,
+  persistVoiceLabExecution,
 } from '../../src/studio-os-core/route-intelligence/fsbw-missing-route-completion/index.ts';
 import { runCrossProjectRouteForensicAudit, registerMissingRoutesAsDesignable, attachPageSetsToManifest, attachExperiencePagesToManifest } from '../../src/studio-os-core/route-intelligence/index.ts';
 import type { ShellPropagationScope } from '../../src/studio-os-core/route-intelligence/types.ts';
@@ -76,6 +78,40 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     });
 
     return res.status(200).json({ ok: true, result });
+  }
+
+  if (action === 'execute-voice-lab') {
+    const { manifest: base } = runCrossProjectRouteForensicAudit({ repoRoot });
+    const routes = registerMissingRoutesAsDesignable(base.rawImplementationRoutes, base.dependencyGraphs);
+    const withPageSets = attachPageSetsToManifest({ ...base, rawImplementationRoutes: routes, routes: routes });
+    const withExperience = attachExperiencePagesToManifest(withPageSets);
+    const registryPath = join(repoRoot, FSBW_COMPOSER_PAGE_REGISTRY_RELATIVE_PATH);
+    const registry = loadComposerPageRegistry(registryPath);
+
+    const result = executeVoiceLabDerivation({
+      repoRoot,
+      sourceCommit: withExperience.sourceCommit,
+      manifest: withExperience,
+      founderOverrideSiblingId: typeof body.siblingId === 'string' ? body.siblingId : undefined,
+      markSnapshotsCaptured: body.markSnapshotsCaptured === true,
+      existingSnapshots: registry?.snapshots ?? [],
+    });
+
+    persistVoiceLabExecution(repoRoot, result, withExperience.sourceCommit);
+
+    const shell = {
+      shellId: result.parent.sharedShellId,
+      projectId: 'studio-world',
+      displayName: 'Character Lab Workspace Shell',
+      componentPaths: result.parent.sharedComponentPaths,
+      consumerPageIds: [result.parent.experiencePageId],
+      consumerFamilyIds: [result.parent.designFamilyId],
+      responsiveAuthority: 'CharacterLabShell',
+      version: 'character-lab-shell@v1',
+    };
+    const blastRadius = analyzeShellPropagationImpact('studio-world', shell, 'DESIGN_FAMILY', withExperience).blastRadius;
+
+    return res.status(200).json({ ok: true, result, blastRadius, propagationDefault: 'TARGET_ONLY' });
   }
 
   if (action === 'propagate') {

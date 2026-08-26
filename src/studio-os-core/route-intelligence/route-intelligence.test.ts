@@ -80,7 +80,13 @@ import {
   defaultPropagationScope,
   validateFamilyFidelity,
   targetTypePromotesToPage,
+  executeVoiceLabDerivation,
+  resolveCharacterLabParent,
+  selectCharacterLabSourceSibling,
+  P0_VR_3E_SNAPSHOT_AUTHORITY,
+  FSBW_VOICE_LAB_EXECUTION_SPRINT,
 } from './index';
+import { buildSupabaseStoragePath } from './implementation-snapshots/storage';
 import { captureSourceSnapshot, shouldMarkStale } from './experience-curation/stale-detection';
 
 const REPO_ROOT = join(import.meta.dirname, '../../..');
@@ -1330,6 +1336,7 @@ describe('P0.VR.3L-FSBW family-derived missing targets', () => {
       label: 'FAMILY SOURCE · EXISTING IMPLEMENTATION' as const,
       status: 'CAPTURED' as const,
       isSourceSibling: true,
+      storageAuthority: 'P0.VR.3E' as const,
     }));
     const result = captureFamilySiblingOnDemand(
       { sibling, projectId: 'studio-world', authorshipId: 'auth' },
@@ -1436,6 +1443,92 @@ describe('P0.VR.3L-FSBW family-derived missing targets', () => {
     const report = runFamilyDerivedMissingTargetPipeline({ repoRoot: REPO_ROOT, manifest, executeBuild: false });
     expect(report.executeBuild).toBe(false);
     expect(report.targets.length).toBeGreaterThanOrEqual(0);
+  });
+});
+
+describe('P0.VR.3L.1-FSBW Voice Lab execution', () => {
+  it('resolves Character Lab parent experience', () => {
+    const parent = resolveCharacterLabParent();
+    expect(parent.experiencePageId).toContain('character-lab');
+    expect(parent.memberRoutes.length).toBeGreaterThanOrEqual(4);
+    expect(parent.sharedComponentPaths.length).toBeGreaterThan(0);
+  });
+
+  it('classifies Voice Lab as TAB_STATE subordinate target', () => {
+    const { manifest } = compileWithExperienceCuration();
+    const fixture = characterLabVoiceLabFixture();
+    const targetType = classifyMissingDesignTarget({ candidate: fixture, manifest });
+    expect(targetType).toBe('TAB_STATE');
+    expect(targetTypePromotesToPage(targetType)).toBe(false);
+  });
+
+  it('discovers Character Lab code siblings with HIGH confidence', () => {
+    const { sibling, candidates } = selectCharacterLabSourceSibling();
+    expect(candidates.length).toBeGreaterThanOrEqual(3);
+    expect(sibling.confidence).toBe('HIGH');
+    expect(sibling.route).toContain('/character-lab/');
+  });
+
+  it('uses P0.VR.3E storage paths not composer-drafts', () => {
+    const path = buildSupabaseStoragePath(
+      'studio-world',
+      '/admin/studio/character-lab/visual',
+      'MOBILE',
+      'SOURCE_SIBLING',
+    );
+    expect(path).toContain('studio-world/implementation-snapshots/');
+    expect(path).not.toContain('composer-drafts');
+    expect(P0_VR_3E_SNAPSHOT_AUTHORITY).toBe('P0.VR.3E');
+  });
+
+  it('executes Voice Lab derivation with lineage and Composer authorship', () => {
+    const { manifest } = compileWithExperienceCuration();
+    const result = executeVoiceLabDerivation({
+      repoRoot: REPO_ROOT,
+      sourceCommit: manifest.sourceCommit,
+      manifest,
+      markSnapshotsCaptured: true,
+    });
+    expect(result.sprintId).toBe(FSBW_VOICE_LAB_EXECUTION_SPRINT);
+    expect(result.authorship.authorType).toBe('COMPOSER');
+    expect(result.authorship.publishStatus).toBe('PREVIEW_ONLY');
+    expect(result.target.lineage.derivedFromSibling).toBeDefined();
+    expect(result.target.lineage.derivedFromShell).toBeDefined();
+    expect(result.sourceSnapshots.every((s) => s.storageAuthority === 'P0.VR.3E')).toBe(true);
+    expect(result.targetSnapshots.every((s) => s.label?.includes('COMPOSER DERIVED'))).toBe(true);
+  });
+
+  it('passes family visual QA without unexplained drift', () => {
+    const { manifest } = compileWithExperienceCuration();
+    const result = executeVoiceLabDerivation({
+      repoRoot: REPO_ROOT,
+      sourceCommit: manifest.sourceCommit,
+      manifest,
+      markSnapshotsCaptured: true,
+    });
+    expect(result.visualQa.passed).toBe(true);
+    expect(result.visualQa.unexplainedDrift).toBe(false);
+    expect(result.readyForFounderReview).toBe(true);
+    expect(result.target.reviewStatus).toBe('READY_FOR_REVIEW');
+  });
+
+  it('supports founder sibling override selection', () => {
+    const { candidates } = selectCharacterLabSourceSibling();
+    const wardrobe = candidates.find((c) => c.route.includes('/wardrobe'));
+    expect(wardrobe).toBeDefined();
+    const { sibling } = selectCharacterLabSourceSibling(wardrobe!.siblingId);
+    expect(sibling.siblingId).toBe(wardrobe!.siblingId);
+  });
+
+  it('default shell propagation scope is TARGET_ONLY', () => {
+    const { manifest } = compileWithExperienceCuration();
+    const result = executeVoiceLabDerivation({
+      repoRoot: REPO_ROOT,
+      sourceCommit: manifest.sourceCommit,
+      manifest,
+      markSnapshotsCaptured: true,
+    });
+    expect(result.propagationDefaultScope).toBe('TARGET_ONLY');
   });
 });
 

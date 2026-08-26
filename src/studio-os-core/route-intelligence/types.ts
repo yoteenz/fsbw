@@ -628,12 +628,23 @@ export type ComposerDraftSnapshotRecord = {
   projectId: string;
   route: string;
   viewport: ViewportClass;
-  label: 'CURRENT · COMPOSER DRAFT' | 'FAMILY SOURCE · EXISTING IMPLEMENTATION';
+  label:
+    | 'CURRENT · COMPOSER DRAFT'
+    | 'FAMILY SOURCE · EXISTING IMPLEMENTATION'
+    | 'CURRENT · COMPOSER DERIVED DRAFT';
   capturePath?: string;
   capturedAt?: string;
   status: 'CAPTURED' | 'FAILED' | 'PENDING';
   sourceSiblingId?: string;
   isSourceSibling?: boolean;
+  /** P0.VR.3E persistent snapshot authority */
+  storageAuthority?: 'P0.VR.3E';
+  snapshotKind?: 'SOURCE_SIBLING' | 'DERIVED_DRAFT';
+  supabaseStoragePath?: string;
+  localMirrorPath?: string;
+  sourceCommit?: string;
+  targetId?: string;
+  qaPassed?: boolean;
 };
 
 export type PageReviewSetRecord = {
@@ -923,6 +934,60 @@ export type FamilyDerivedMissingTargetReport = {
   shellGraph: SharedShellDependencyGraph[];
   registry: FsbwComposerPageRegistry;
   executeBuild: boolean;
+};
+
+export type FamilyDerivedTargetVisualQaResult = {
+  passed: boolean;
+  unexplainedDrift: boolean;
+  expectedDifferences: string[];
+  unexpectedDifferences: string[];
+  dimensions: {
+    shellGeometry: boolean;
+    tabs: boolean;
+    spacing: boolean;
+    typography: boolean;
+    responsive: boolean;
+  };
+  blockingIssues: string[];
+};
+
+export type FamilyDerivedTargetReviewReceipt = {
+  receiptId: string;
+  targetId: string;
+  projectId: string;
+  action: 'APPROVE_TARGET' | 'REQUEST_REVISION' | 'APPROVE_SHELL_PROPAGATION';
+  propagationScope?: ShellPropagationScope;
+  createdAt: string;
+  createdBy: string;
+};
+
+export type CharacterLabParentRecord = {
+  experiencePageId: string;
+  sectionId: string;
+  designFamilyId: string;
+  sharedShellId: string;
+  displayName: string;
+  representativeRoute: string;
+  memberRoutes: string[];
+  materialScreens: string[];
+  tabStates: string[];
+  sharedComponentPaths: string[];
+  shellGeometry: Record<string, unknown>;
+};
+
+export type VoiceLabExecutionResult = {
+  sprintId: string;
+  target: FamilyDerivedMissingTargetRecord;
+  parent: CharacterLabParentRecord;
+  sourceSibling: FamilySiblingCandidate;
+  siblingCandidates: FamilySiblingCandidate[];
+  sourceSnapshots: ComposerDraftSnapshotRecord[];
+  targetSnapshots: ComposerDraftSnapshotRecord[];
+  visualQa: FamilyDerivedTargetVisualQaResult;
+  authorship: PageAuthorshipRecord;
+  derivationReceipt: FamilyDerivationReceipt;
+  readyForFounderReview: boolean;
+  propagationDefaultScope: ShellPropagationScope;
 };
 
 export type CrossProjectRouteForensicReport = {

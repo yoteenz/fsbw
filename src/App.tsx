@@ -123,6 +123,11 @@ const AdminStudioLot = lazyWithRetry(() => import('./pages/admin/studio/studio-l
 const AdminStudioLotDetail = lazyWithRetry(() => import('./pages/admin/studio/studio-lot/detail/page'), 'AdminStudioLotDetail');
 const AdminStudioTalentAgency = lazyWithRetry(() => import('./pages/admin/studio/talent-agency/page'), 'AdminStudioTalentAgency');
 const AdminStudioTalentAgencyDetail = lazyWithRetry(() => import('./pages/admin/studio/talent-agency/detail/page'), 'AdminStudioTalentAgencyDetail');
+const AdminStudioCharacterLab = lazyWithRetry(() => import('./pages/admin/studio/character-lab/page'), 'AdminStudioCharacterLab');
+const AdminStudioCharacterLabCharacter = lazyWithRetry(() => import('./pages/admin/studio/character-lab/character/page'), 'AdminStudioCharacterLabCharacter');
+const AdminStudioCharacterLabVisual = lazyWithRetry(() => import('./pages/admin/studio/character-lab/visual/page'), 'AdminStudioCharacterLabVisual');
+const AdminStudioCharacterLabWardrobe = lazyWithRetry(() => import('./pages/admin/studio/character-lab/wardrobe/page'), 'AdminStudioCharacterLabWardrobe');
+const AdminStudioCharacterLabVoiceLab = lazyWithRetry(() => import('./pages/admin/studio/character-lab/voice-lab/page'), 'AdminStudioCharacterLabVoiceLab');
 const AdminStudioCasting = lazyWithRetry(() => import('./pages/admin/studio/casting/page'), 'AdminStudioCasting');
 const AdminStudioCastingProduction = lazyWithRetry(() => import('./pages/admin/studio/casting/detail/page'), 'AdminStudioCastingProduction');
 const AdminStudioCastingTalent = lazyWithRetry(() => import('./pages/admin/studio/casting/talent/page'), 'AdminStudioCastingTalent');
@@ -1661,6 +1666,31 @@ function App() {
           <Route path="studio/talent-agency" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminStudioTalentAgency />
+            </Suspense>
+          } />
+          <Route path="studio/character-lab/voice-lab" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioCharacterLabVoiceLab />
+            </Suspense>
+          } />
+          <Route path="studio/character-lab/visual" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioCharacterLabVisual />
+            </Suspense>
+          } />
+          <Route path="studio/character-lab/wardrobe" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioCharacterLabWardrobe />
+            </Suspense>
+          } />
+          <Route path="studio/character-lab/character" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioCharacterLabCharacter />
+            </Suspense>
+          } />
+          <Route path="studio/character-lab" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioCharacterLab />
             </Suspense>
           } />
           <Route path="studio/casting/talent/:talentId" element={

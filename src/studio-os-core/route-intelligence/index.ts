@@ -161,6 +161,13 @@ export {
   characterLabVoiceLabFixture,
   defaultPropagationScope,
   targetTypePromotesToPage,
+  executeVoiceLabDerivation,
+  persistVoiceLabExecution,
+  resolveCharacterLabParent,
+  selectCharacterLabSourceSibling,
+  runFamilyDerivedTargetVisualQa,
+  FSBW_VOICE_LAB_EXECUTION_SPRINT,
+  P0_VR_3E_SNAPSHOT_AUTHORITY,
 } from './fsbw-missing-route-completion';
 
 export {

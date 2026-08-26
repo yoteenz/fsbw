@@ -321,8 +321,14 @@ export const COMPOSER_DRAFT_SNAPSHOT_LABEL = 'CURRENT · COMPOSER DRAFT';
 export const FAMILY_SOURCE_SNAPSHOT_LABEL = 'FAMILY SOURCE · EXISTING IMPLEMENTATION';
 export const COMPOSER_DERIVED_DRAFT_LABEL = 'CURRENT · COMPOSER DERIVED DRAFT';
 
+/** P0.VR.3E — persistent implementation snapshot storage authority */
+export const P0_VR_3E_SNAPSHOT_AUTHORITY = 'P0.VR.3E';
+
 /** P0.VR.3L-FSBW — Family-derived missing target workflow */
 export const FSBW_FAMILY_DERIVATION_SPRINT = 'P0.VR.3L-FSBW';
+/** P0.VR.3L.1-FSBW — Voice Lab execution + founder review readiness */
+export const FSBW_VOICE_LAB_EXECUTION_SPRINT = 'P0.VR.3L.1-FSBW';
+export const VOICE_LAB_TARGET_ID = 'studio-world:missing:character-lab:voice-lab';
 export const DEFAULT_SHELL_PROPAGATION_SCOPE = 'TARGET_ONLY' as const;
 
 export const FAMILY_DERIVATION_FAILURES = [
