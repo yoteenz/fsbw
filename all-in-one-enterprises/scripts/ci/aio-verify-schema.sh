@@ -38,6 +38,16 @@ REQUIRED_TABLES=(
   aio_brokerage_shipper_invoices
   aio_brokerage_bookkeeping_handoffs
   aio_documents
+  aio_freight_document_completeness
+  aio_freight_autopilot_events
+  aio_freight_billing_packages
+  aio_freight_exceptions
+  aio_driver_settlements
+  aio_driver_settlement_adjustments
+  aio_carrier_settlements
+  aio_dispatch_package_snapshots
+  aio_pretrip_inspections
+  aio_freight_locations
 )
 
 RLS_TABLES=(
@@ -48,6 +58,16 @@ RLS_TABLES=(
   aio_carrier_offers
   aio_brokerage_bookkeeping_handoffs
   aio_dispatch_loads
+  aio_freight_document_completeness
+  aio_freight_autopilot_events
+  aio_freight_billing_packages
+  aio_freight_exceptions
+  aio_driver_settlements
+  aio_driver_settlement_adjustments
+  aio_carrier_settlements
+  aio_dispatch_package_snapshots
+  aio_pretrip_inspections
+  aio_freight_locations
 )
 
 echo "=== Schema verification ==="

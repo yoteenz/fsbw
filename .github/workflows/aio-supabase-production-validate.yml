@@ -200,6 +200,31 @@ jobs:
             bash scripts/ci/aio-record-result.sh bookkeepingHandoff FAIL
           fi
 
+      - name: Freight Autopilot persistence live validation
+        id: autopilot
+        if: success()
+        continue-on-error: true
+        shell: bash
+        run: |
+          set +x
+          if [[ -z "${AIO_SUPABASE_SERVICE_ROLE_KEY:-}" ]]; then
+            bash scripts/ci/aio-record-result.sh freightAutopilotPersistence BLOCKED "AIO_SUPABASE_SERVICE_ROLE_KEY"
+            bash scripts/ci/aio-record-result.sh freightAutopilotIdempotency BLOCKED "AIO_SUPABASE_SERVICE_ROLE_KEY"
+            bash scripts/ci/aio-record-result.sh freightAutopilotMultiSession BLOCKED "AIO_SUPABASE_SERVICE_ROLE_KEY"
+            exit 0
+          fi
+          if npm run test -- \
+            src/freight/autopilot/freightAutopilotPersistenceLive.test.ts \
+            src/freight/autopilot/freightAutopilot.test.ts; then
+            bash scripts/ci/aio-record-result.sh freightAutopilotPersistence PASS
+            bash scripts/ci/aio-record-result.sh freightAutopilotIdempotency PASS
+            bash scripts/ci/aio-record-result.sh freightAutopilotMultiSession PASS
+          else
+            bash scripts/ci/aio-record-result.sh freightAutopilotPersistence FAIL
+            bash scripts/ci/aio-record-result.sh freightAutopilotIdempotency FAIL
+            bash scripts/ci/aio-record-result.sh freightAutopilotMultiSession FAIL
+          fi
+
       - name: Staging golden path (live Supabase)
         id: golden
         if: success()

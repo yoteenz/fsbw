@@ -184,7 +184,7 @@ This sprint added **Freight Autopilot** — an auditable, idempotent orchestrati
 | OCR / document extraction | P2 | No fake OCR |
 | External factoring API | P2 | Manual submission states |
 | ACH / carrier payout execution | P1 for full TMS parity | Statuses `_future` |
-| Supabase persistence for autopilot | P2 | Demo-first this sprint |
+| Supabase persistence for autopilot | ~~P2~~ **ADDRESSED** | Live tables + bridge in supabase mode; panel read path partial |
 | Full settlements office UI | P2 | Engine complete |
 | Authoritative IFTA quarterly filing | P2 | Requires verified ELD/fuel feeds |
 
@@ -201,16 +201,21 @@ This sprint added **Freight Autopilot** — an auditable, idempotent orchestrati
 ## Test Evidence
 
 - `src/freight/autopilot/freightAutopilot.test.ts` — 9 passing tests
+- `src/freight/autopilot/freightAutopilotPersistenceLive.test.ts` — live Supabase multi-session, broken path, idempotency, failure recovery (CI)
 - Covers: document completeness, billing idempotency, blocked billing without POD, driver settlement idempotency, IFTA honesty, pre-trip → FleetCare, carrier financial privacy, DriverLink promotion
 
 ---
 
 ## Production Readiness (Platform TMS function)
 
-**NOT READY** for claiming full TMS parity with live GPS, payments, and Supabase-backed autopilot persistence.
+**READY WITH DEFERRED EXTERNAL INTEGRATIONS** for native AIO TMS document-to-payment when supabase mode + migrations applied.
 
-**READY** for demo/prototype validation of document-to-payment automation and competitive workflow architecture.
+**DEFERRED_EXTERNAL:** live GPS/ELD, OCR, ACH payouts, external factor API — not falsely represented as native.
+
+**ADAPTER_READY:** dispatch package snapshots, pre-trip Supabase writes, location directory UI.
+
+**DEMO** remains available for sales/training with deterministic local state.
 
 ---
 
-*This document is updated at sprint completion. Re-run forensic audit after live Supabase wiring and ELD integration sprints.*
+*Updated after production persistence sprint. See `AIO_TMS_PRODUCTION_READINESS_REPORT.md`.*

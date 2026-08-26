@@ -22,6 +22,12 @@ import type { FreightAutopilotEventType } from './freightAutopilotTypes';
 import { evaluateDocumentCompleteness, type DocumentCompletenessOverride } from './documentCompleteness';
 import { billingPackageIdempotencyKey } from './billingPackageTypes';
 import { ensureDriverSettlementForLoad } from '../../settlements/driverSettlementEngine';
+import { isSupabaseMode } from '../../config/dataMode';
+import { persistAutopilotOutcomeToSupabase } from './freightAutopilotPersistence';
+
+function isUuid(value: string): boolean {
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
+}
 
 function uid(): string {
   return crypto.randomUUID();
@@ -122,12 +128,16 @@ export function runFreightAutopilot(
   documentKind?: 'rate_confirmation' | 'bol' | 'pod',
 ): void {
   let bookkeepingLoad: Load | undefined;
+  let persistLoad: Load | undefined;
+  let persistActions: string[] = [];
+
   updateDemoStore((s) => {
     ensureAutopilotStoreFields(s);
     const load = s.loads.find((l) => l.id === loadId);
     if (!load) return s;
 
-    processFreightAutopilotEvent(s, { load, event, staffId, documentKind });
+    const result = processFreightAutopilotEvent(s, { load, event, staffId, documentKind });
+    persistActions = result.actionsTaken;
 
     if (event === 'DELIVERY_CONFIRMED' || load.operationalStatus === 'complete') {
       tryAutoInvoiceInStore(s, load, staffId);
@@ -137,6 +147,7 @@ export function runFreightAutopilot(
       bookkeepingLoad = { ...load };
     }
 
+    persistLoad = { ...load };
     return s;
   });
 
@@ -146,6 +157,10 @@ export function runFreightAutopilot(
       aioBrokerageOrgId: AIO_BROKERAGE_ORG_DEMO,
       staffId: staffId ?? 'system-autopilot',
     });
+  }
+
+  if (isSupabaseMode() && persistLoad && isUuid(persistLoad.id)) {
+    void persistAutopilotOutcomeToSupabase(persistLoad, event, persistActions);
   }
 }
 
