@@ -1,4 +1,4 @@
-import { FAMILY_SOURCE_SNAPSHOT_LABEL } from '../constants';
+import { COMPOSER_DERIVED_DRAFT_LABEL, FAMILY_SOURCE_SNAPSHOT_LABEL } from '../constants';
 import type {
   ComposerDraftSnapshotRecord,
   FamilySiblingCandidate,
@@ -75,7 +75,7 @@ export function planDerivedTargetDraftSnapshots(
     projectId: authorship.projectId,
     route: authorship.route,
     viewport,
-    label: 'CURRENT · COMPOSER DRAFT',
+    label: COMPOSER_DERIVED_DRAFT_LABEL,
     capturePath: `public/studio-world/composer-drafts/${authorship.projectId}${authorship.route.replace(/\//g, '_')}/derived-${viewport.toLowerCase()}.webp`,
     status: 'PENDING' as const,
   }));

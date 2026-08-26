@@ -1,7 +1,7 @@
 {
   "schemaVersion": "fsbw-composer-page-registry@2",
-  "generatedAt": "2026-08-26T06:04:45.596Z",
-  "sourceCommit": "87ae1929cdabc38f94df3ebc30ea9e939120ed87",
+  "generatedAt": "2026-08-26T06:05:38.792Z",
+  "sourceCommit": "79b5b98693b395d54e3490784cf07b0fa531574d",
   "authorship": [
     {
       "authorshipId": "studio-world:auth:studio-world:missing:character-lab:voice-lab",
@@ -247,6 +247,69 @@
       "completionMode": "FAMILY_DERIVED_SIMPLE",
       "createdAt": "2026-08-26T06:04:45.592Z",
       "sourceCommit": "87ae1929cdabc38f94df3ebc30ea9e939120ed87",
+      "reviewDimensions": {
+        "VISUAL": "UNREVIEWED",
+        "CONTENT": "UNREVIEWED",
+        "FUNCTION": "UNREVIEWED"
+      },
+      "creativeDirectionRequired": false,
+      "functionalReviewRequired": false
+    },
+    {
+      "authorshipId": "studio-world:auth:studio-world:missing:character-lab:voice-lab",
+      "projectId": "studio-world",
+      "experiencePageId": "studio-world:missing:character-lab:voice-lab",
+      "route": "/admin/studio/character-lab/voice-lab",
+      "displayName": "Voice Lab",
+      "authorType": "COMPOSER",
+      "createdBySprint": "P0.VR.3L-FSBW",
+      "reviewStatus": "UNREVIEWED",
+      "publishStatus": "PREVIEW_ONLY",
+      "completionMode": "FAMILY_DERIVED_SIMPLE",
+      "createdAt": "2026-08-26T06:05:37.171Z",
+      "sourceCommit": "79b5b98693b395d54e3490784cf07b0fa531574d",
+      "reviewDimensions": {
+        "VISUAL": "UNREVIEWED",
+        "CONTENT": "UNREVIEWED",
+        "FUNCTION": "UNREVIEWED"
+      },
+      "creativeDirectionRequired": false,
+      "functionalReviewRequired": false
+    },
+    {
+      "authorshipId": "studio-world:auth:studio-world:missing:character-lab:voice-lab",
+      "projectId": "studio-world",
+      "experiencePageId": "studio-world:missing:character-lab:voice-lab",
+      "route": "/admin/studio/character-lab/voice-lab",
+      "displayName": "Voice Lab",
+      "authorType": "COMPOSER",
+      "createdBySprint": "P0.VR.3L-FSBW",
+      "reviewStatus": "UNREVIEWED",
+      "publishStatus": "PREVIEW_ONLY",
+      "completionMode": "FAMILY_DERIVED_SIMPLE",
+      "createdAt": "2026-08-26T06:05:37.617Z",
+      "sourceCommit": "79b5b98693b395d54e3490784cf07b0fa531574d",
+      "reviewDimensions": {
+        "VISUAL": "UNREVIEWED",
+        "CONTENT": "UNREVIEWED",
+        "FUNCTION": "UNREVIEWED"
+      },
+      "creativeDirectionRequired": false,
+      "functionalReviewRequired": false
+    },
+    {
+      "authorshipId": "studio-world:auth:studio-world:missing:character-lab:voice-lab",
+      "projectId": "studio-world",
+      "experiencePageId": "studio-world:missing:character-lab:voice-lab",
+      "route": "/admin/studio/character-lab/voice-lab",
+      "displayName": "Voice Lab",
+      "authorType": "COMPOSER",
+      "createdBySprint": "P0.VR.3L-FSBW",
+      "reviewStatus": "UNREVIEWED",
+      "publishStatus": "PREVIEW_ONLY",
+      "completionMode": "FAMILY_DERIVED_SIMPLE",
+      "createdAt": "2026-08-26T06:05:38.788Z",
+      "sourceCommit": "79b5b98693b395d54e3490784cf07b0fa531574d",
       "reviewDimensions": {
         "VISUAL": "UNREVIEWED",
         "CONTENT": "UNREVIEWED",
@@ -615,6 +678,96 @@
       "route": "/admin/studio/character-lab/voice-lab",
       "viewport": "DESKTOP",
       "label": "CURRENT · COMPOSER DRAFT",
+      "capturePath": "public/studio-world/composer-drafts/studio-world_admin_studio_character-lab_voice-lab/derived-desktop.webp",
+      "status": "PENDING"
+    },
+    {
+      "snapshotId": "studio-world:auth:studio-world:missing:character-lab:voice-lab:derived:mobile",
+      "authorshipId": "studio-world:auth:studio-world:missing:character-lab:voice-lab",
+      "projectId": "studio-world",
+      "route": "/admin/studio/character-lab/voice-lab",
+      "viewport": "MOBILE",
+      "label": "CURRENT · COMPOSER DERIVED DRAFT",
+      "capturePath": "public/studio-world/composer-drafts/studio-world_admin_studio_character-lab_voice-lab/derived-mobile.webp",
+      "status": "PENDING"
+    },
+    {
+      "snapshotId": "studio-world:auth:studio-world:missing:character-lab:voice-lab:derived:tablet",
+      "authorshipId": "studio-world:auth:studio-world:missing:character-lab:voice-lab",
+      "projectId": "studio-world",
+      "route": "/admin/studio/character-lab/voice-lab",
+      "viewport": "TABLET",
+      "label": "CURRENT · COMPOSER DERIVED DRAFT",
+      "capturePath": "public/studio-world/composer-drafts/studio-world_admin_studio_character-lab_voice-lab/derived-tablet.webp",
+      "status": "PENDING"
+    },
+    {
+      "snapshotId": "studio-world:auth:studio-world:missing:character-lab:voice-lab:derived:desktop",
+      "authorshipId": "studio-world:auth:studio-world:missing:character-lab:voice-lab",
+      "projectId": "studio-world",
+      "route": "/admin/studio/character-lab/voice-lab",
+      "viewport": "DESKTOP",
+      "label": "CURRENT · COMPOSER DERIVED DRAFT",
+      "capturePath": "public/studio-world/composer-drafts/studio-world_admin_studio_character-lab_voice-lab/derived-desktop.webp",
+      "status": "PENDING"
+    },
+    {
+      "snapshotId": "studio-world:auth:studio-world:missing:character-lab:voice-lab:derived:mobile",
+      "authorshipId": "studio-world:auth:studio-world:missing:character-lab:voice-lab",
+      "projectId": "studio-world",
+      "route": "/admin/studio/character-lab/voice-lab",
+      "viewport": "MOBILE",
+      "label": "CURRENT · COMPOSER DERIVED DRAFT",
+      "capturePath": "public/studio-world/composer-drafts/studio-world_admin_studio_character-lab_voice-lab/derived-mobile.webp",
+      "status": "PENDING"
+    },
+    {
+      "snapshotId": "studio-world:auth:studio-world:missing:character-lab:voice-lab:derived:tablet",
+      "authorshipId": "studio-world:auth:studio-world:missing:character-lab:voice-lab",
+      "projectId": "studio-world",
+      "route": "/admin/studio/character-lab/voice-lab",
+      "viewport": "TABLET",
+      "label": "CURRENT · COMPOSER DERIVED DRAFT",
+      "capturePath": "public/studio-world/composer-drafts/studio-world_admin_studio_character-lab_voice-lab/derived-tablet.webp",
+      "status": "PENDING"
+    },
+    {
+      "snapshotId": "studio-world:auth:studio-world:missing:character-lab:voice-lab:derived:desktop",
+      "authorshipId": "studio-world:auth:studio-world:missing:character-lab:voice-lab",
+      "projectId": "studio-world",
+      "route": "/admin/studio/character-lab/voice-lab",
+      "viewport": "DESKTOP",
+      "label": "CURRENT · COMPOSER DERIVED DRAFT",
+      "capturePath": "public/studio-world/composer-drafts/studio-world_admin_studio_character-lab_voice-lab/derived-desktop.webp",
+      "status": "PENDING"
+    },
+    {
+      "snapshotId": "studio-world:auth:studio-world:missing:character-lab:voice-lab:derived:mobile",
+      "authorshipId": "studio-world:auth:studio-world:missing:character-lab:voice-lab",
+      "projectId": "studio-world",
+      "route": "/admin/studio/character-lab/voice-lab",
+      "viewport": "MOBILE",
+      "label": "CURRENT · COMPOSER DERIVED DRAFT",
+      "capturePath": "public/studio-world/composer-drafts/studio-world_admin_studio_character-lab_voice-lab/derived-mobile.webp",
+      "status": "PENDING"
+    },
+    {
+      "snapshotId": "studio-world:auth:studio-world:missing:character-lab:voice-lab:derived:tablet",
+      "authorshipId": "studio-world:auth:studio-world:missing:character-lab:voice-lab",
+      "projectId": "studio-world",
+      "route": "/admin/studio/character-lab/voice-lab",
+      "viewport": "TABLET",
+      "label": "CURRENT · COMPOSER DERIVED DRAFT",
+      "capturePath": "public/studio-world/composer-drafts/studio-world_admin_studio_character-lab_voice-lab/derived-tablet.webp",
+      "status": "PENDING"
+    },
+    {
+      "snapshotId": "studio-world:auth:studio-world:missing:character-lab:voice-lab:derived:desktop",
+      "authorshipId": "studio-world:auth:studio-world:missing:character-lab:voice-lab",
+      "projectId": "studio-world",
+      "route": "/admin/studio/character-lab/voice-lab",
+      "viewport": "DESKTOP",
+      "label": "CURRENT · COMPOSER DERIVED DRAFT",
       "capturePath": "public/studio-world/composer-drafts/studio-world_admin_studio_character-lab_voice-lab/derived-desktop.webp",
       "status": "PENDING"
     }
@@ -8615,6 +8768,57 @@
       ],
       "unexplainedDrift": false,
       "createdAt": "2026-08-26T06:04:45.592Z",
+      "createdBy": "P0.VR.3L-FSBW"
+    },
+    {
+      "receiptId": "studio-world:missing:character-lab:voice-lab:derivation:1787724337171",
+      "targetId": "studio-world:missing:character-lab:voice-lab",
+      "projectId": "studio-world",
+      "targetType": "TAB_STATE",
+      "draftSnapshotIds": [
+        "studio-world:auth:studio-world:missing:character-lab:voice-lab:derived:mobile",
+        "studio-world:auth:studio-world:missing:character-lab:voice-lab:derived:tablet",
+        "studio-world:auth:studio-world:missing:character-lab:voice-lab:derived:desktop"
+      ],
+      "fidelityIssues": [
+        "missing preserved property declaration: responsive hierarchy"
+      ],
+      "unexplainedDrift": false,
+      "createdAt": "2026-08-26T06:05:37.171Z",
+      "createdBy": "P0.VR.3L-FSBW"
+    },
+    {
+      "receiptId": "studio-world:missing:character-lab:voice-lab:derivation:1787724337617",
+      "targetId": "studio-world:missing:character-lab:voice-lab",
+      "projectId": "studio-world",
+      "targetType": "TAB_STATE",
+      "draftSnapshotIds": [
+        "studio-world:auth:studio-world:missing:character-lab:voice-lab:derived:mobile",
+        "studio-world:auth:studio-world:missing:character-lab:voice-lab:derived:tablet",
+        "studio-world:auth:studio-world:missing:character-lab:voice-lab:derived:desktop"
+      ],
+      "fidelityIssues": [
+        "missing preserved property declaration: responsive hierarchy"
+      ],
+      "unexplainedDrift": false,
+      "createdAt": "2026-08-26T06:05:37.617Z",
+      "createdBy": "P0.VR.3L-FSBW"
+    },
+    {
+      "receiptId": "studio-world:missing:character-lab:voice-lab:derivation:1787724338788",
+      "targetId": "studio-world:missing:character-lab:voice-lab",
+      "projectId": "studio-world",
+      "targetType": "TAB_STATE",
+      "draftSnapshotIds": [
+        "studio-world:auth:studio-world:missing:character-lab:voice-lab:derived:mobile",
+        "studio-world:auth:studio-world:missing:character-lab:voice-lab:derived:tablet",
+        "studio-world:auth:studio-world:missing:character-lab:voice-lab:derived:desktop"
+      ],
+      "fidelityIssues": [
+        "missing preserved property declaration: responsive hierarchy"
+      ],
+      "unexplainedDrift": false,
+      "createdAt": "2026-08-26T06:05:38.788Z",
       "createdBy": "P0.VR.3L-FSBW"
     }
   ]

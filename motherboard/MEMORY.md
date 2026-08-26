@@ -54731,3 +54731,29 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Follow-up:** Founder batch review in UI (BATCH_MAKE_INSTANCES); Studio World needs fuller `/admin/studio` experience-page expansion beyond single workspace XP; founder LOCK FOR CAPTURE per project before P0.VR.3E backfill.
 
+---
+
+## 2026-08-26 — P0.VR.3L-FSBW Missing-target family derivation + on-demand sibling capture + shell propagation governance
+
+- **Context:** Replace mass screenshot-first reconstruction with need-driven family derivation for missing design targets across FSBW-owned projects (Frontal Slayer, Studio World, All In One Enterprises). SITE 00 / NDXBOOK remain EXTERNAL_REPO_AUTHORITY. No mass capture backfill, FAL spend, auto-publish, or cross-project shell propagation.
+
+- **Core workflow:** MISSING TARGET → classify → find family → select sibling → reuse code → capture sibling on-demand only → derive target → capture draft → founder review → optional shell propagation (TARGET_ONLY default).
+
+- **Types (`route-intelligence/types.ts`):** `MissingDesignTargetType` (UNIQUE_EXPERIENCE, FAMILY_DERIVED_PAGE, MATERIAL_SCREEN, TAB_STATE, VISUAL_STATE, CONTENT_INSTANCE, DATA_INSTANCE, ASSET_VARIANT, UNKNOWN_REVIEW_REQUIRED); `FamilyDerivedMissingTargetRecord`; `FamilySiblingCandidate`; `SharedShellRecord`; `SharedShellDependencyGraph`; `ShellPropagationScope` (TARGET_ONLY / DESIGN_FAMILY / SHARED_SHELL_GLOBAL); impact analysis, change records, receipts, recapture plans, queue items.
+
+- **Modules (`fsbw-missing-route-completion/`):** `target-classifier.ts` (`classifyMissingDesignTarget`); `sibling-selector.ts` (`selectBestFamilySibling`); `on-demand-capture.ts` (`captureFamilySiblingOnDemand`, draft snapshot planning); `family-fidelity-qa.ts` (drift detection); `shell-graph.ts` (dependency graph + duplicated implementation detection); `shell-propagation.ts` (impact analysis, propose/apply/rollback, recapture plan); `family-derivation.ts` (`deriveMissingTargetFromFamily`, queue builder, `characterLabVoiceLabFixture`); `family-derivation-pipeline.ts` (`runFamilyDerivedMissingTargetPipeline`).
+
+- **Registry:** `fsbw-composer-page-registry@2` with `familyDerivedTargets`, `sharedShells`, `shellChanges`, `shellPropagations`, `derivationReceipts`, `recapturePlans`. Labels: `FAMILY SOURCE · EXISTING IMPLEMENTATION`, `CURRENT · COMPOSER DERIVED DRAFT`.
+
+- **Integration:** `compile-design-pages.ts` runs family derivation after curation attach; manifest field `fsbwFamilyDerivedMissingTargets`. CLI: `npm run compile:family-derivation`. API: `POST /api/admin/studio-world-family-derivation` (scan/derive/propagate).
+
+- **BLUPRINT UI:** MISSING TARGETS · FAMILY DERIVATION hub section with queue preview; DERIVE/CAPTURE buttons disabled pending founder wiring to API.
+
+- **Character Lab → Voice Lab:** Synthetic fixture when no FSBW missing candidates — classified `TAB_STATE`, derives Composer draft tab component reusing Character Lab shell geometry (not new page); `CONTENT_REQUIRED` for Voice controls until canon exists.
+
+- **Current scan:** 1 target (Studio World Voice Lab TAB_STATE); 0 FSBW true missing routes; 492 shell graph nodes across projects; default propagation TARGET_ONLY; family/global require founder approval.
+
+- **Tests:** 118 route-intelligence pass (11 new P0.VR.3L). Build green. Sync `[sync-only]`.
+
+- **Follow-up:** Wire BLUPRINT DERIVE/CAPTURE to API; shell propagation review UI (blast-radius preview); real Character Lab routes when Studio World pages land; execute browser capture for on-demand snapshots (planning only — no mass 3E backfill).
+
