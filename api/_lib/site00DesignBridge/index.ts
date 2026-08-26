@@ -31,3 +31,9 @@ export {
   validateRuntimeBindingRow,
   clearRuntimeBindingCache,
 } from './runtimeBindings.js';
+export type { BridgeRoundTripValidationReceipt, RepoHealthValidationReceipt } from './validationReceipts.js';
+export {
+  BRIDGE_ROUNDTRIP_CHANGE_REQUEST_ID,
+  BRIDGE_ROUNDTRIP_FIXTURE_PATH,
+  BRIDGE_ROUNDTRIP_VALIDATION_ID,
+} from './validationReceipts.js';

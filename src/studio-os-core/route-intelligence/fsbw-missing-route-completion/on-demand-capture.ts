@@ -70,7 +70,7 @@ export function captureFamilySiblingOnDemand(
   });
 
   return {
-    snapshots,
+    snapshots: snapshots as ComposerDraftSnapshotRecord[],
     reusedExisting: snapshots.every((s) => s.status === 'CAPTURED'),
     captureRequired: snapshots.some((s) => s.status === 'PENDING'),
   };

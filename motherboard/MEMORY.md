@@ -54779,3 +54779,19 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Tests:** 126 route-intelligence pass (8 new P0.VR.3L.1). Build green. Sync `[sync-only]`.
 
+---
+
+## 2026-08-26 — P0.BRIDGE.1-FSBW SITE 00 design bridge consumer (FSBW side)
+
+- **Context:** FSBW consumer for shared SITE 00 ↔ FSBW design control plane. SITE 00 supplies approved structured design intent only; FSBW validates, materializes source, tests, records receipts. No arbitrary code execution from Supabase.
+
+- **Supabase:** `20260826123000_site00_design_bridge.sql` — `site00_design_change_requests`, `site00_change_receipts`, `site00_runtime_bindings`, `site00_design_change_applications`; RLS on, server service-role only. Applied production `hyycomvcaqxxvyrfupes` via MCP `apply_migration` (`site00_design_bridge`).
+
+- **Service:** `api/_lib/site00DesignBridge/` — `Site00DesignBridge` (READY_FOR_REPO + `yoteenz/fsbw`, base commit divergence blocking, 14 structured op types, idempotency, receipts, tests/build gate). Adapters: Frontal Slayer, AIO, Studio World website only. P0.PAF + Studio World native path denylist.
+
+- **Runtime:** `runtimeBindings.ts` + `src/site00DesignBridge/clientRuntimeBindings.ts` — schema validation, cache, outage fallback (no service role client-side).
+
+- **CLI:** `npm run apply:site00-design-changes` with `--change-id`, `--project`, `--dry-run`. Does not auto-apply all pending.
+
+- **Tests:** 28/28 in `site00DesignBridge.test.ts`. Bridge TS clean.
+

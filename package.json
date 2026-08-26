@@ -95,7 +95,8 @@
     "compile:fsbw-missing-routes": "tsx scripts/run-fsbw-missing-route-completion.ts",
     "schema:deployment-readiness": "node scripts/schema-deployment-readiness.mjs",
     "strip:loader-audio": "tsx scripts/stripLoaderAnimationAudio.ts",
-    "apply:site00-design-changes": "tsx scripts/apply-site00-design-changes.ts"
+    "apply:site00-design-changes": "tsx scripts/apply-site00-design-changes.ts",
+    "validate:site00-bridge-roundtrip": "tsx scripts/run-site00-bridge-roundtrip-validation.ts"
   },
   "dependencies": {
     "@fal-ai/client": "^1.4.0",

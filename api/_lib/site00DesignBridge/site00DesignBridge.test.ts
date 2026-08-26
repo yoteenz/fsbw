@@ -527,3 +527,44 @@ describe('Site00DesignBridge — adapters registered', () => {
     expect(new StudioWorldWebsiteSite00Materializer().projectId).toBe('STUDIO_WORLD_WEBSITE');
   });
 });
+
+describe('Site00DesignBridge — P0.BRIDGE.1A round-trip fixtures', () => {
+  it('allows dedicated bridge validation fixture path', () => {
+    const path = 'src/features/studio-world/website/bridge-validation/site00BridgeRoundtripFixture.ts';
+    expect(isPathAllowedForProject('STUDIO_WORLD_WEBSITE', path)).toBe(true);
+    expect(isPathAllowedForProject('STUDIO_WORLD_WEBSITE', 'src/studio-os-core/genesis/x.ts')).toBe(false);
+  });
+
+  it('validates round-trip fixture operation as VALID dry-run plan', () => {
+    const bridge = new Site00DesignBridge({
+      repoRoot: process.cwd(),
+      getCurrentCommit: () => 'abc123',
+    });
+    const plan = bridge.compileMaterializationPlan(
+      makeChange({
+        change_request_id: 'cr-bridge-roundtrip-fixture',
+        project_id: 'STUDIO_WORLD_WEBSITE',
+        base_source_commit: 'abc123',
+        operations: [
+          {
+            type: 'UPDATE_PAGE_METADATA',
+            targetPath: 'src/features/studio-world/website/bridge-validation/site00BridgeRoundtripFixture.ts',
+            value: { bridgeValidation: true, customerImpact: 'NONE' },
+          },
+        ],
+      }),
+    );
+    expect(plan.status).toBe('VALID');
+  });
+
+  it('blocks stale base commit with BLOCKED_SOURCE_DIVERGENCE', () => {
+    const bridge = new Site00DesignBridge({
+      repoRoot: process.cwd(),
+      getCurrentCommit: () => 'deadbeef9999',
+    });
+    const plan = bridge.compileMaterializationPlan(
+      makeChange({ base_source_commit: 'abc123only' }),
+    );
+    expect(plan.status).toBe('BLOCKED_SOURCE_DIVERGENCE');
+  });
+});
