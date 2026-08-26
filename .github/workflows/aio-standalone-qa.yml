@@ -18,9 +18,10 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
           cache: 'npm'
           cache-dependency-path: all-in-one-enterprises/package-lock.json
+      - run: bash scripts/ci/aio-node-runtime-guard.sh
       - run: npm ci
       - run: npm run build
       - run: npm test

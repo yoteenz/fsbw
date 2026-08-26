@@ -36,9 +36,12 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
           cache: npm
           cache-dependency-path: all-in-one-enterprises/package-lock.json
+
+      - name: AIO Node runtime guard
+        run: bash scripts/ci/aio-node-runtime-guard.sh
 
       - name: Install dependencies
         run: npm ci
@@ -281,6 +284,10 @@ jobs:
       - name: Freight unit tests
         if: success()
         shell: bash
+        env:
+          VITE_AIO_DATA_MODE: demo
+          VITE_AIO_SUPABASE_URL: ''
+          VITE_AIO_SUPABASE_ANON_KEY: ''
         run: |
           set +x
           npm run test -- \

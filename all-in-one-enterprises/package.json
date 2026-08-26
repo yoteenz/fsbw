@@ -39,6 +39,9 @@
     "react-i18next": "^17.0.11",
     "react-router-dom": "^6.8.0"
   },
+  "engines": {
+    "node": ">=22"
+  },
   "devDependencies": {
     "@playwright/test": "^1.49.1",
     "@types/node": "^20.0.0",
