@@ -54879,3 +54879,17 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Next:** Founder manually re-runs AIO Supabase Production Validate on master.
 
+---
+
+## 2026-08-26 — AIO Supabase migration history reconciliation
+
+- **Context:** Workflow reached Apply migrations; project guard PASS; `db push` failed: "Remote migration versions not found in local migrations".
+
+- **Root cause:** HISTORY ONLY — all 16 migrations applied via MCP `apply_migration` with ad-hoc version timestamps (`20260826211xxx`) while repo uses canonical filename timestamps (`20260815100000`…). Same migration names; schema fully present.
+
+- **Repair:** Deleted 16 remote-only history rows; inserted 16 canonical local version rows in `supabase_migrations.schema_migrations` (no DDL, no reset).
+
+- **CI:** Added `aio-migration-history-check.sh` (post-link, before db push); improved preflight local inventory; workflow + summary updated. Doc: `AIO_SUPABASE_MIGRATION_HISTORY_RECONCILIATION.md`.
+
+- **Next:** Founder re-runs validation workflow on master. No db push from this task. No deploy.
+
