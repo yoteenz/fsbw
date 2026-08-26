@@ -54410,6 +54410,26 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 ---
 
+## 2026-08-26 — AIO TMS Competitive Parity + Freight Autopilot sprint
+
+- **Context:** User compared CoreVynix/FreightFlow TMS marketing to actual AIO codebase; implement missing high-value native automation (not copy competitor UI/branding).
+
+- **Audit:** `all-in-one-enterprises/docs/refinement/AIO_TMS_COMPETITIVE_PARITY_AUDIT.md` — forensic matrix EXISTS/PARTIAL/MISSING/SUPERIOR/DEFERRED per competitive capability.
+
+- **Freight Autopilot:** `src/freight/autopilot/*` — events, document completeness, billing packages, dispatch package (driver-safe), exceptions, audit log; wired into `dispatchActions` (upload, book, complete); UI `FreightAutopilotPanel` on office dispatch load detail.
+
+- **Document-to-payment:** Idempotent billing package + auto invoice when RC/BOL/POD complete; blocks billing/factoring without POD; staff override with audit.
+
+- **Settlements:** `src/settlements/driverSettlementEngine.ts` (PER_MILE etc.), `carrierSettlementEngine.ts` (carrier payable lifecycle); separate from driver compensation.
+
+- **Ops:** IFTA readiness (`fleet/ifta/`), pre-trip → FleetCare escalation (`fleet/pretrip/`), location directory types, freight document templates, DriverLink `promoteApplicantToDriverProfile`.
+
+- **Tests:** `src/freight/autopilot/freightAutopilot.test.ts` (9 tests PASS).
+
+- **Production TMS parity:** NOT READY — live GPS/ELD, ACH, OCR, Supabase autopilot persistence still deferred honestly.
+
+---
+
 ## 2026-08-20 — Studio World Virtual Production OS foundation sprint
 
 - **Context:** Large sprint to transform Studio World from asset-generation into a provider-agnostic Virtual Production OS — campaign continuity, canon, shots, QC, repair, assembly foundation, multi-provider orchestration (Director / Precision / Hybrid). Frontal Slayer as first reference tenant only — not architectural owner.

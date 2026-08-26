@@ -21,6 +21,8 @@ import { LOAD_STATUS_LABELS } from '../../dispatch/dispatchConfig';
 import { formatMoney } from '../../billing/money';
 import { aioPaths } from '../../utils/paths';
 import { LoadFactoringSection } from '../../components/factoring/LoadFactoringSection';
+import { FreightAutopilotPanel } from '../../components/freight/FreightAutopilotPanel';
+import { getFreightAutopilotPanelData } from '../../freight/autopilot/freightAutopilotActions';
 import type { LoadOperationalStatus } from '../../dispatch/dispatchTypes';
 
 export function OfficeDispatchLoadDetailPage() {
@@ -32,6 +34,8 @@ export function OfficeDispatchLoadDetailPage() {
   const dispatcher = load?.assignedDispatcherStaffId ? store.staff.find((s) => s.id === load.assignedDispatcherStaffId) : undefined;
 
   if (!load) return <p>Load not found.</p>;
+
+  const autopilotData = getFreightAutopilotPanelData(load.id);
 
   const statusOptions: LoadOperationalStatus[] = [
     'booked', 'dispatched', 'en_route_pickup', 'at_pickup', 'loaded', 'in_transit', 'at_delivery', 'delivered', 'pod_needed', 'complete',
@@ -111,6 +115,14 @@ export function OfficeDispatchLoadDetailPage() {
       )}
 
       <LoadFactoringSection load={load} orgId={load.organizationId} office />
+
+      {autopilotData?.state && (
+        <FreightAutopilotPanel
+          state={autopilotData.state}
+          exceptions={autopilotData.exceptions}
+          documentCompleteness={autopilotData.documentCompleteness}
+        />
+      )}
 
       {load.internalNotes && (
         <section className="aio-office-panel">

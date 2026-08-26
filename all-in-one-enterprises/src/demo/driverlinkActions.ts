@@ -6,6 +6,7 @@ import type { DemoStore } from './demoTypes';
 import { loadDemoStore, saveDemoStore } from './demoStore';
 import { matchOpportunitiesToDriver, toDriverJobMatch } from '../driverlink/matchingService';
 import type { DriverApplication, DriverApplicationStatus, JobOpportunity } from '../driverlink/driverlinkTypes';
+import type { DriverPlaceholder } from '../road-ready/roadReadyTypes';
 
 function nowIso() {
   return new Date().toISOString();
@@ -120,7 +121,63 @@ export function publishOpportunity(opportunity: Omit<JobOpportunity, 'id' | 'cre
   return job;
 }
 
-export function markDriverHired(applicationId: string): void {
+/**
+ * Controlled applicant → approved driver → fleet assignment.
+ * Never auto-approves without explicit hire action.
+ */
+export function promoteApplicantToDriverProfile(
+  applicationId: string,
+  staffId: string,
+  storeIn?: DemoStore,
+): DriverPlaceholder | undefined {
+  const store = storeIn ?? loadDemoStore();
+  const app = store.driverlinkApplications?.find((a) => a.id === applicationId);
+  if (!app || app.status !== 'hired') return undefined;
+
+  const profile = store.driverlinkProfiles?.find((p) => p.id === app.driverProfileId);
+  if (!profile) return undefined;
+
+  const fullName = `${profile.firstName} ${profile.lastName}`.trim();
+  const existing = store.drivers.find((d) => d.organizationId === app.organizationId && d.name === fullName);
+  if (existing) return existing;
+
+  const driver: DriverPlaceholder = {
+    id: `driver-${app.driverProfileId}`,
+    organizationId: app.organizationId,
+    name: fullName,
+    phone: profile.phone,
+    email: profile.email,
+    status: 'active',
+  };
+
+  const nextStore = {
+    ...store,
+    drivers: [...store.drivers, driver],
+    activity: [
+      {
+        id: `act-${Date.now()}`,
+        kind: 'LOAD_STATUS_CHANGED' as const,
+        title: 'Driver profile created from DriverLink application',
+        clientId: app.organizationId,
+        createdAt: nowIso(),
+        visibility: 'internal' as const,
+      },
+      ...store.activity,
+    ],
+  };
+
+  if (storeIn) {
+    storeIn.drivers = nextStore.drivers;
+    storeIn.activity = nextStore.activity;
+  } else {
+    saveDemoStore(nextStore);
+  }
+
+  void staffId;
+  return driver;
+}
+
+export function markDriverHired(applicationId: string, staffId?: string): void {
   const store = loadDemoStore();
   const app = store.driverlinkApplications?.find((a) => a.id === applicationId);
   if (!app) return;
@@ -140,4 +197,6 @@ export function markDriverHired(applicationId: string): void {
     driverlinkApplications: updatedApps,
     driverlinkProfiles: updatedProfiles,
   });
+
+  promoteApplicantToDriverProfile(applicationId, staffId ?? 'system');
 }

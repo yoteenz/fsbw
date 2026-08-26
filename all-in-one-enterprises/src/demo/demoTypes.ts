@@ -776,6 +776,14 @@ export interface DemoStore {
   loadBoardSavedSearches?: import('../freight/freightTypes').SavedLoadSearch[];
   loadBoardRecentSearches?: import('../freight/freightTypes').RecentLoadSearch[];
   carrierLoadBoardOffers?: import('../freight/freightTypes').CarrierLoadBoardOffer[];
+  /** Freight Autopilot — workflow automation state */
+  freightAutopilotStates?: import('../freight/autopilot/freightAutopilotTypes').FreightAutopilotState[];
+  freightAutopilotAuditLog?: import('../freight/autopilot/freightAutopilotAudit').FreightAutopilotAuditEntry[];
+  billingPackages?: import('../freight/autopilot/billingPackageTypes').BillingPackage[];
+  freightExceptions?: import('../freight/autopilot/freightExceptionTypes').FreightException[];
+  driverSettlements?: import('../settlements/settlementTypes').DriverSettlement[];
+  pretripInspections?: import('../fleet/pretrip/pretripTypes').PretripInspection[];
+  freightLocations?: import('../freight/locations/freightLocationDirectory').FreightLocation[];
 }
 
 export interface OfficeMetrics {

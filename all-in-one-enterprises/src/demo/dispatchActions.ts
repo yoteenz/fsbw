@@ -26,6 +26,7 @@ import {
 import { loadDemoStore, updateDemoStore } from './demoStore';
 import type { DemoStore } from './demoTypes';
 import { aioPaths } from '../utils/paths';
+import { runFreightAutopilot, mapDocumentUploadToEvent } from '../freight/autopilot/freightAutopilotActions';
 
 function uid(): string {
   return crypto.randomUUID();
@@ -329,6 +330,7 @@ export function bookLoad(loadId: string, _staffId: string): void {
     );
     return s;
   });
+  runFreightAutopilot(loadId, 'CARRIER_BOOKED', _staffId);
 }
 
 export function updateLoadOperationalStatus(
@@ -397,6 +399,7 @@ export function uploadLoadDocument(loadId: string, orgId: string, kind: 'rate_co
     appendTimeline(load, { label: `${labels[kind]} uploaded`, actor: 'driver', visibility: 'customer', createdAt: load.updatedAt });
     return s;
   });
+  runFreightAutopilot(loadId, mapDocumentUploadToEvent(kind));
 }
 
 export function completeLoad(loadId: string, _staffId: string): void {
@@ -411,6 +414,8 @@ export function completeLoad(loadId: string, _staffId: string): void {
     createDispatchBillingEventForLoad(s, load);
     return s;
   });
+
+  runFreightAutopilot(loadId, 'DELIVERY_CONFIRMED', _staffId);
 
   const store = loadDemoStore();
   const load = store.loads.find((l) => l.id === loadId);
