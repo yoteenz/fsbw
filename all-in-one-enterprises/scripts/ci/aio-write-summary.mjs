@@ -45,6 +45,15 @@ const checks = [
   ['migrationHistory', r.migrationHistory?.historyStatus ?? r.migrationHistory],
 ];
 
+const migrationHistoryStatus = norm(r.migrationHistory?.historyStatus ?? r.migrationHistory);
+if (
+  migrationHistoryStatus === 'MISMATCH' ||
+  migrationHistoryStatus === 'UNKNOWN' ||
+  r.migrationHistory?.remoteQueryStatus === 'FAIL'
+) {
+  blockers.push(`migrationHistory: ${migrationHistoryStatus}`);
+}
+
 for (const [name, status] of checks) {
   const s = norm(status);
   if (s === 'FAIL' || s === 'BLOCKED') {
@@ -101,6 +110,9 @@ const lines = [
   `| DEMO ISOLATION | ${norm(r.demoIsolation)} |`,
   `| PRODUCTION BUILD | ${norm(r.productionBuild)} |`,
   `| MIGRATION HISTORY | ${norm(r.migrationHistory?.historyStatus ?? r.migrationHistory)} |`,
+  r.migrationHistory?.remoteQueryStatus
+    ? `| REMOTE HISTORY QUERY | ${norm(r.migrationHistory.remoteQueryStatus)} |`
+    : '',
   '',
   `## FINAL STATUS`,
   '',
