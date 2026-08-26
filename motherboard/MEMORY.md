@@ -54909,3 +54909,17 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Next:** Founder manually starts NEW AIO Supabase Production Validate on master.
 
+---
+
+## 2026-08-26 — AIO CI eliminate direct Postgres + pooler standardization
+
+- **Context:** Validation workflow passed migration history check but failed at "Verify schema and RLS enablement" — same root cause as prior history bug: raw `psql` to direct `db.nnnljnhtmseagotvgxxt.supabase.co` from GitHub Actions (IPv6/direct endpoint incompatibility). Not schema/RLS/credential failure — verifier never connected.
+
+- **Forensic audit:** Traced full `.github/workflows/aio-supabase-production-validate.yml` + all `scripts/ci/*` helpers. **1 incompatible direct Postgres CI path** found: `aio-verify-schema.sh`. Live tests (RLS, storage, shipper, bookkeeping, autopilot, golden path) use Supabase JS HTTPS only. Migration history already CLI+pooler from prior fix. Link/db push use Supabase CLI (not raw psql).
+
+- **Repair:** Created canonical `aio-ci-db.mjs` (pooler URI resolution from `supabase/.temp/pooler-url`, project guards, fail-closed SQL, secret redaction). Added `aio-db-connectivity-preflight` workflow step post-history/pre-migrations. Rewrote schema/RLS verification as `aio-verify-schema.mjs` using pooler + `pg_class.relrowsecurity`. Refactored migration pooler query to shared module. Fail-closed UNKNOWN for query failures. Unit tests in `aio-ci-db.test.mjs`.
+
+- **Not done:** No migration history/schema/RLS/data changes, no deploy, no workflow trigger.
+
+- **Next:** Founder manually starts NEW AIO Supabase Production Validate on master.
+
