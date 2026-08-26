@@ -54951,3 +54951,15 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Next:** Founder manually starts NEW AIO Supabase Production Validate on master.
 
+---
+
+## 2026-08-26 — AIO freight unit test WebSocket / adapter boundary repair
+
+- **Context:** Production validate reached Freight unit tests; `brokerageBookkeepingHandoff.test.ts` failed 2/5 with "native WebSocket not available" + downstream assertion failures. Vitest 26/28 pass otherwise.
+
+- **Root cause:** Workflow job env `VITE_AIO_DATA_MODE=supabase` + fetched API keys leaked into unit tests via vitest.config env passthrough. Unit tests called `handoffBrokerageLoadToBookkeeping` → supabase adapter → `getAioSupabase()` → `createClient()` Realtime init. Node 20 GHA lacks native WebSocket. Second assertion downstream of failed handoff. AIO does not use Supabase Realtime channels.
+
+- **Fix:** Vitest hardcoded demo mode + empty creds; `vitest.setup.ts` resets client; workflow freight unit step explicit demo env; Node 22 for AIO CI (native WebSocket for live createClient tests); `aio-node-runtime-guard.sh`; `aioUnitTestBoundary.test.ts` regression.
+
+- **Next:** Founder manually starts NEW AIO Supabase Production Validate on master.
+
