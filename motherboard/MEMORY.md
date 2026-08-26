@@ -54867,3 +54867,15 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Commit:** sync-only; founder re-runs workflow manually.
 
+---
+
+## 2026-08-26 — AIO Supabase validation workflow supabase link --yes fix
+
+- **Context:** Workflow failed at "Link AIO Supabase project" with `unknown flag: --yes` on `supabase link`. Project guard PASS; result recorder fix already shipped (`478065ec3`).
+
+- **Root cause:** `supabase link` invoked with unsupported `--yes` flag. Pinned CLI `2.23.4` only supports `--project-ref` and `--password` for link. (`npx --yes` is correct — npx flag, not supabase.)
+
+- **Fix:** Removed `--yes` from link command in `.github/workflows/aio-supabase-production-validate.yml`. Verified `db push --linked` valid for 2.23.4. Project guards unchanged.
+
+- **Next:** Founder manually re-runs AIO Supabase Production Validate on master.
+
