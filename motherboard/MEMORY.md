@@ -54893,3 +54893,19 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Next:** Founder re-runs validation workflow on master. No db push from this task. No deploy.
 
+---
+
+## 2026-08-26 — AIO migration history check connectivity + fail-closed fix
+
+- **Context:** After migration history reconciliation, a new AIO Supabase Production Validate run passed link but failed migration history check. Checker reported `REMOTE MIGRATIONS: 0` and `HISTORY STATUS: MISMATCH` despite 16/16 canonical history already repaired.
+
+- **Root cause:** `aio-migration-history-check.sh` preferred raw `psql` to direct `db.<ref>.supabase.co:5432` when `SUPABASE_DB_PASSWORD` was set. GitHub-hosted runners often cannot reach Supabase direct DB endpoints (IPv6-only host behavior vs runner IPv4 routing). `psql` failed silently (no exit-code check); empty output was treated as zero remote migrations → false MISMATCH.
+
+- **Fix:** Rewrote checker to use **Supabase CLI `migration list --linked`** as primary authority (same pgxv5 connection stack as link/db push). Added **pooler SQL fallback** via `supabase/.temp/pooler-url` written at link time. **Fail-closed:** remote query failure → `REMOTE HISTORY QUERY: FAIL`, `HISTORY STATUS: UNKNOWN`, `REMOTE MIGRATIONS: (not retrieved)` — never infer mismatch from failed query. New lib + pooler query + unit tests (match, mismatch, connection fail, malformed).
+
+- **Files:** `aio-migration-history-check.sh`, `aio-migration-history-check.mjs`, `aio-migration-history-lib.mjs`, `aio-migration-history-pooler-query.mjs`, `aio-migration-history-check.test.mjs`, `aio-write-summary.mjs`.
+
+- **Not done:** No migration history modification, no db push, no deploy, no workflow trigger.
+
+- **Next:** Founder manually starts NEW AIO Supabase Production Validate on master.
+
