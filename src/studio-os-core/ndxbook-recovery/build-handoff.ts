@@ -165,7 +165,7 @@ export function buildNdxbookLegacyHandoff(input: {
         'Daily indexed pages · volume cadence · Money Monday through Future Friday programming',
         'CANONICAL',
         'HIGH',
-        [...brandConstantsProv, prov('src/studio-os-core/strategy-engine/bootstrap.ts')]
+        [...brandConstantsProv, ...prov('src/studio-os-core/strategy-engine/bootstrap.ts')]
       ),
       northStarMetric: field('Returning readers (demo seed)', 'OWNER_CONFIRMATION_REQUIRED', 'LOW', prov('src/studio-os-core/strategy-engine/bootstrap.ts')),
     },
@@ -188,8 +188,8 @@ export function buildNdxbookLegacyHandoff(input: {
         'CANONICAL',
         'HIGH',
         [
-          prov('docs/NDXBOOK_PAGE_001_PIPELINE.md'),
-          prov('src/studio-os-core/founder-pilot-mode/seeds/ndxbook-pilot.ts'),
+          ...prov('docs/NDXBOOK_PAGE_001_PIPELINE.md'),
+          ...prov('src/studio-os-core/founder-pilot-mode/seeds/ndxbook-pilot.ts'),
         ]
       ),
       publishingCadence: field(DEFAULT_PROGRAMMING, 'CANONICAL', 'HIGH', brandConstantsProv),
@@ -199,8 +199,8 @@ export function buildNdxbookLegacyHandoff(input: {
         'CANONICAL',
         'HIGH',
         [
-          prov('src/studio-os-core/founder-pilot-mode/seeds/ndxbook-pilot.ts'),
-          prov('motherboard/MEMORY.md', 'Milestone 87 Founder Pilot Mode'),
+          ...prov('src/studio-os-core/founder-pilot-mode/seeds/ndxbook-pilot.ts'),
+          ...prov('motherboard/MEMORY.md', 'Milestone 87 Founder Pilot Mode'),
         ]
       ),
       automationPreference: field(
@@ -280,12 +280,13 @@ export function buildNdxbookLegacyHandoff(input: {
       ),
       pagePipeline: field('create → review → approve → schedule → publish (Master Content Pipeline gates)', 'STUDIO_WORLD_ONLY', 'HIGH', prov('docs/NDXBOOK_PAGE_001_PIPELINE.md')),
       demoMissionControlHistory: field('Pages 019–042 demo metrics (M37 seed)', 'OBSOLETE', 'HIGH', prov('src/studio-os-core/ndxbook/mission-control/bootstrap.ts', 'Superseded by Founder Pilot zero-history seed')),
-      productionGovernanceOrg: field('No ndxbook row in studio_world_organizations (production DB read-only)', 'NOT_FOUND', 'HIGH', [{ repository: REPO, databaseTable: 'studio_world_organizations', note: 'Queried production — empty for ndx slug' }]),
+      productionGovernanceOrg: field('No ndxbook row in studio_world_organizations (production DB read-only)', 'OBSOLETE', 'HIGH', [{ repository: REPO, databaseTable: 'studio_world_organizations', note: 'Queried production — empty for ndx slug' }]),
     },
     evolveGapAnalysis: buildEvolveGapAnalysis(),
     founderQuestions: buildFounderQuestions(),
     provenance: [
-      { repository: REPO, file: 'src/studio-os-core/ndxbook/constants.ts', note: 'Primary brand canon source' },
+      ...brandConstantsProv,
+      ...typesProv,
       { repository: REPO, file: 'docs/NDXBOOK_PAGE_001_PIPELINE.md', note: 'Page 001 operational runbook' },
       { repository: REPO, file: 'motherboard/MEMORY.md', note: 'Milestone history and decisions' },
     ],
@@ -298,8 +299,8 @@ export function buildNdxbookLegacyHandoff(input: {
         'CONFLICT',
         'HIGH',
         [
-          prov('src/studio-os-core/ndxbook/mission-control/bootstrap.ts'),
-          prov('src/studio-os-core/founder-pilot-mode/seeds/ndxbook-pilot.ts'),
+          ...prov('src/studio-os-core/ndxbook/mission-control/bootstrap.ts'),
+          ...prov('src/studio-os-core/founder-pilot-mode/seeds/ndxbook-pilot.ts'),
         ],
         'EVOLVE must not import demo page counts as live truth'
       ),

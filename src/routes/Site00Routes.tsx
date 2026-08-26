@@ -67,6 +67,9 @@ const ProjectProvisioningPage = lazy(() => import('../site00/pages/provisioning/
 const IdntyAssessmentRouterPage = lazy(() => import('../site00/pages/idnty/assessment/IdntyAssessmentRouterPage'));
 const BldrAssessmentRouterPage = lazy(() => import('../site00/pages/bldr/assessment/BldrAssessmentRouterPage'));
 const EvolveAssessmentRouterPage = lazy(() => import('../site00/pages/evolve/assessment/EvolveAssessmentRouterPage'));
+const BluprintDesignRoutes = lazy(() =>
+  import('../site00/pages/bluprint/BluprintDesignPages').then((m) => ({ default: m.BluprintDesignRoutes })),
+);
 
 function Site00Suspense({ children }: { children: ReactNode }) {
   return <Suspense fallback={<Site00RouteLoadingFallback />}>{children}</Suspense>;
@@ -571,8 +574,17 @@ export function Site00Routes() {
           </Site00Layout>
         }
       />
+      <Route
+        path="/bluprint/*"
+        element={
+          <Site00Layout>
+            <Site00Suspense>
+              <BluprintDesignRoutes />
+            </Site00Suspense>
+          </Site00Layout>
+        }
+      />
       {/* Reserved future namespaces — redirect to origin until implemented */}
-      <Route path="/bluprint/*" element={<Navigate to={SITE00_ROUTES.originAlias} replace />} />
       <Route path="/build/*" element={<Navigate to={SITE00_ROUTES.originAlias} replace />} />
       <Route path="/live/*" element={<Navigate to={SITE00_ROUTES.originAlias} replace />} />
     </>

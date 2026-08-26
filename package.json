@@ -87,6 +87,7 @@
     "bcf:cf-photos:sync": "node scripts/bcf/sync-bcf-cf-photo-manifest.mjs",
     "bcf:cf-photos:batch": "node scripts/bcf/batch-bcf-cf-photos.mjs",
     "audit:launch": "node scripts/launch-integrity-auditor.mjs",
+    "audit:design-routes": "tsx scripts/generate-design-route-manifest.ts",
     "schema:deployment-readiness": "node scripts/schema-deployment-readiness.mjs",
     "strip:loader-audio": "tsx scripts/stripLoaderAnimationAudio.ts"
   },

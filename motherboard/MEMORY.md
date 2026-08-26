@@ -54565,3 +54565,21 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Import contract:** `NdxbookLegacyIntelligencePackage` stages defined; SITE 00 importer NOT implemented in fsbw. READY FOR SITE 00 import sprint after founder review.
 
+---
+
+## 2026-08-26 — P0.VR.3 Cross-project route forensics + design route manifest + SITE 00 BLUPRINT Design workspace
+
+- **Context:** Founder sprint P0.VR.3 — stop manually registering pages in SITE 00 Design one-by-one. Discover complete page/screen universe from source repos (router → nav → links → dependencies), track mobile/tablet/desktop independently, produce machine-readable `studio-world-design-route-manifest.json`, sync to SITE 00 Design workspace at `/bluprint`.
+
+- **Implementation:** New module `src/studio-os-core/route-intelligence/` — types (`ProjectPageRouteRecord`, `ProjectVisualStateRecord`, `ViewportVisualAuthority`, `PageVisualCoverageRecord`, `DesignRouteSyncContract`, `StudioWorldDesignRouteManifest`), `discoverStudioWorldProjects()` wrapping workspace registry + SITE 00 + AIO, source scanners (`discovery/source-scanner.ts`, `discovery/project-adapters.ts` for FS/NDXBOOK/SITE00/AIO), dependency graph + flow closures, reference discovery (filesystem + design-dna-canon + Supabase registry JSON), viewport coverage, manifest builder, manifest diff, Needs Reference/Improvement queues, `PageDesignReferencePromptCompiler` (founder-triggered, no auto FAL spend). Browser-safe split: `route-intelligence/browser.ts` for UI.
+
+- **Manifest artifact:** `public/studio-world/studio-world-design-route-manifest.json` via `npm run audit:design-routes` (`scripts/generate-design-route-manifest.ts`). First generation: commit `7f426b766f854891301cab7060b07e720faf7c5d`, 4 projects, 1131 routes, 1108 designable, 57 visual states. Per project: FS 665/646 designable, NDXBOOK 11/11, SITE 00 151/151, AIO 301/300.
+
+- **SITE 00 Design UI:** `/bluprint/*` replaces redirect stub in `Site00Routes.tsx` — hub (global coverage), `/bluprint/projects/:projectId` (project dropdown data from manifest, grouped screen selector, MOBILE|TABLET|DESKTOP tabs, coverage matrix, UPLOAD/GENERATE/REPLACE buttons founder-gated), `/bluprint/inspect` (route tree + raw manifest). Styles: `site00-bluprint.css`.
+
+- **Tests:** `route-intelligence.test.ts` — 28 tests pass (project discovery, router/nav/deep-link scan, dependency graph, viewport independence, manifest versioning, sync contract, queues, founder-triggered generation gate, NDX/FS/AIO pilots). Build green (`tsc --noEmit && vite build`).
+
+- **Fix collateral:** `ndxbook-recovery/build-handoff.ts` TS provenance spread fixes (unblocked build).
+
+- **Conventions:** Route existence authority = source repo forensic audit; visual design authority = SITE 00 Design. Regenerate manifest after route changes; Design shows SYNCED/UPDATE AVAILABLE from manifest commit. Reference generation requires founder trigger; audit never triggers provider spend.
+

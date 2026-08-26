@@ -1,0 +1,203 @@
+/** SITE 00 BLUPRINT Design workspace — P0.VR.3 cross-project design coverage */
+
+.site00-bluprint {
+  padding: 1.5rem 1rem 4rem;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.site00-bluprint__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  opacity: 0.7;
+  margin-bottom: 1.5rem;
+}
+
+.site00-bluprint__section-title {
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin: 0 0 0.75rem;
+}
+
+.site00-bluprint__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.site00-bluprint__table th,
+.site00-bluprint__table td {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 0.5rem 0.35rem;
+  text-align: left;
+}
+
+.site00-bluprint__table th {
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  opacity: 0.65;
+}
+
+.site00-bluprint__queues {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .site00-bluprint__queues {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.site00-bluprint__queue {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-size: 0.75rem;
+}
+
+.site00-bluprint__queue li {
+  padding: 0.35rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.site00-bluprint__coverage-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 1.25rem;
+  padding: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.site00-bluprint__selectors {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.site00-bluprint__select {
+  display: block;
+  width: 100%;
+  margin-top: 0.35rem;
+  padding: 0.5rem;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: inherit;
+  font-size: 0.75rem;
+}
+
+.site00-bluprint__viewport-tabs {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.site00-bluprint__viewport-tab {
+  flex: 1;
+  padding: 0.5rem;
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
+.site00-bluprint__viewport-tab.is-active {
+  border-color: var(--site-accent-red, #c41e3a);
+  color: var(--site-accent-red, #c41e3a);
+}
+
+.site00-bluprint__page-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  margin-bottom: 1.5rem;
+}
+
+.site00-bluprint__route-name {
+  font-size: 0.85rem;
+  letter-spacing: 0.12em;
+  margin: 0 0 0.35rem;
+}
+
+.site00-bluprint__status {
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  opacity: 0.85;
+}
+
+.site00-bluprint__page-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.site00-bluprint__btn {
+  padding: 0.45rem 0.75rem;
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
+.site00-bluprint__btn--primary {
+  border-color: var(--site-accent-red, #c41e3a);
+  color: var(--site-accent-red, #c41e3a);
+}
+
+.site00-bluprint__btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.site00-bluprint__link-btn {
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  text-align: left;
+  padding: 0;
+  font: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.site00-bluprint__table--matrix {
+  font-size: 0.65rem;
+}
+
+.site00-bluprint__pre {
+  font-size: 0.65rem;
+  overflow: auto;
+  max-height: 320px;
+  padding: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.35);
+}
+
+.site00-bluprint--inspect .site00-bluprint__pre {
+  max-height: 240px;
+}
+
+.site00-bluprint__actions {
+  margin-top: 1rem;
+}
