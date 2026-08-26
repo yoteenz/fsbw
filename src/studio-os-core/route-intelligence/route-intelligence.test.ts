@@ -18,14 +18,17 @@ import {
   groupDesignScreensForDropdown,
   groupRoutesForScreenDropdown,
   scanProgrammaticNavigation,
+  resolveEffectiveDesignReference,
+  necessityBadge,
+  buildReferenceBatchPreview,
   compilePageDesignReferencePrompt,
   validateReferenceGenerationRequest,
-  buildReferenceBatchPreview,
   scanRouteFile,
   displayNameFromRoute,
   DESIGN_ROUTE_MANIFEST_VERSION,
   DESIGN_ROUTE_MANIFEST_SCHEMA_VERSION,
   RECONSTRUCTION_PIPELINE_ID,
+  PRODUCT_ASSET_PIPELINE_ID,
 } from './index';
 
 const REPO_ROOT = join(import.meta.dirname, '../../..');
@@ -117,9 +120,11 @@ describe('P0.VR.3 route intelligence', () => {
   it('generates versioned manifest with source commit', () => {
     const { manifest } = runCrossProjectRouteForensicAudit({ repoRoot: REPO_ROOT });
     expect(manifest.manifestVersion).toBe(DESIGN_ROUTE_MANIFEST_VERSION);
+    expect(manifest.manifestVersion).toBe('3.0.0');
     expect(manifest.sourceCommit.length).toBeGreaterThan(5);
     expect(manifest.projects.length).toBeGreaterThan(0);
-    expect(manifest.routes.length).toBeGreaterThan(100);
+    expect(manifest.rawImplementationRoutes.length).toBeGreaterThan(100);
+    expect(manifest.designFamilies?.length).toBeGreaterThan(0);
   });
 
   it('generates sync contracts for design workspace', () => {
@@ -143,13 +148,21 @@ describe('P0.VR.3 route intelligence', () => {
   it('builds coverage matrix and queues', () => {
     const { manifest } = runCrossProjectRouteForensicAudit({ repoRoot: REPO_ROOT });
     const screens = manifest.designScreens ?? [];
-    const matrix = buildCoverageMatrix('frontal-slayer', screens, manifest.coverage);
+    const matrix = buildCoverageMatrix('frontal-slayer', screens, manifest.coverage, manifest.referenceNecessityAudits);
     expect(matrix.length).toBeGreaterThan(0);
     expect(matrix[0]?.mobile).toBeDefined();
-    const needsRef = buildNeedsReferenceQueue(screens, manifest.coverage);
+    const needsRef = buildNeedsReferenceQueue(
+      screens,
+      manifest.coverage,
+      manifest.referenceNecessityAudits,
+      manifest.designFamilies,
+      manifest.screenReferenceInheritances,
+      manifest.familyReferenceAuthorities,
+    );
     const needsImp = buildNeedsImprovementQueue(screens, manifest.coverage);
     expect(Array.isArray(needsRef)).toBe(true);
     expect(Array.isArray(needsImp)).toBe(true);
+    expect(needsRef.length).toBeLessThan(screens.length * 3);
   });
 
   it('requires founder trigger for reference generation', () => {
@@ -248,14 +261,15 @@ describe('P0.VR.3 route intelligence', () => {
 });
 
 describe('P0.VR.3B reachability normalization', () => {
-  it('bumps manifest schema to v2', () => {
+  it('bumps manifest schema to v3 with design families', () => {
     const { manifest } = runCrossProjectRouteForensicAudit({ repoRoot: REPO_ROOT });
-    expect(manifest.manifestVersion).toBe('2.0.0');
+    expect(manifest.manifestVersion).toBe('3.0.0');
     expect(manifest.schemaVersion).toBe(DESIGN_ROUTE_MANIFEST_SCHEMA_VERSION);
-    expect(manifest.schemaVersion).toContain('@2');
+    expect(manifest.schemaVersion).toContain('@3');
     expect(manifest.rawImplementationRoutes.length).toBeGreaterThan(0);
     expect(manifest.designScreens?.length).toBeGreaterThan(0);
-    expect(manifest.routeTemplates?.length).toBeGreaterThan(0);
+    expect(manifest.designFamilies?.length).toBeGreaterThan(0);
+    expect(manifest.referenceNecessityAudits?.length).toBeGreaterThan(0);
   });
 
   it('discovers programmatic navigation targets', () => {
@@ -371,5 +385,102 @@ describe('P0.VR.3B reachability normalization', () => {
     expect(fs.navReachable).toBeGreaterThan(0);
     expect(fs.programmaticReachable).toBeGreaterThan(0);
     expect(fs.workflowReachable).toBeGreaterThan(0);
+  });
+});
+
+describe('P0.VR.3C design family consolidation', () => {
+  it('builds design families with representative screens', () => {
+    const { manifest } = runCrossProjectRouteForensicAudit({ repoRoot: REPO_ROOT });
+    const fsFamilies = manifest.designFamilies!.filter((f) => f.projectId === 'frontal-slayer');
+    expect(fsFamilies.length).toBeLessThan(
+      manifest.designScreens!.filter((s) => s.projectId === 'frontal-slayer').length,
+    );
+    expect(fsFamilies.every((f) => f.representativeScreenId && f.memberDesignScreenIds.length > 0)).toBe(true);
+  });
+
+  it('classifies product pages as asset-only variants', () => {
+    const { manifest } = runCrossProjectRouteForensicAudit({ repoRoot: REPO_ROOT });
+    const pdpAudits = manifest.referenceNecessityAudits!.filter(
+      (a) =>
+        a.projectId === 'frontal-slayer' &&
+        manifest.designFamilies!.find((f) => f.designFamilyId === a.designFamilyId)?.displayName === 'Product Page',
+    );
+    expect(pdpAudits.length).toBeGreaterThan(0);
+    expect(pdpAudits.some((a) => a.classification === 'ASSET_ONLY_VARIANT')).toBe(true);
+  });
+
+  it('reduces unique reference requirements vs screen×viewport', () => {
+    const { manifest } = runCrossProjectRouteForensicAudit({ repoRoot: REPO_ROOT });
+    const fsSavings = manifest.referenceGenerationSavings!.find((s) => s.projectId === 'frontal-slayer')!;
+    expect(fsSavings.potentialScreenViewportJobs).toBe(fsSavings.designScreensBefore * 3);
+    expect(fsSavings.uniqueReferencesRequired).toBeLessThan(fsSavings.potentialScreenViewportJobs);
+    expect(fsSavings.generationRequestsAvoided).toBeGreaterThan(0);
+  });
+
+  it('deduplicates needs reference queue for family members', () => {
+    const { manifest } = runCrossProjectRouteForensicAudit({ repoRoot: REPO_ROOT });
+    const screens = manifest.designScreens!.filter((s) => s.projectId === 'frontal-slayer');
+    const queue = buildNeedsReferenceQueue(
+      screens,
+      manifest.coverage,
+      manifest.referenceNecessityAudits,
+      manifest.designFamilies,
+      manifest.screenReferenceInheritances,
+      manifest.familyReferenceAuthorities,
+    );
+    expect(queue.length).toBeLessThan(screens.length * 3);
+  });
+
+  it('resolves effective design reference with inheritance path', () => {
+    const { manifest } = runCrossProjectRouteForensicAudit({ repoRoot: REPO_ROOT });
+    const screen = manifest.designScreens!.find((s) => s.projectId === 'frontal-slayer' && s.instanceCount > 1);
+    if (!screen) return;
+    const effective = resolveEffectiveDesignReference({
+      projectId: 'frontal-slayer',
+      designScreenId: screen.designScreenId,
+      viewportClass: 'MOBILE',
+      necessityAudits: manifest.referenceNecessityAudits!,
+      inheritances: manifest.screenReferenceInheritances!,
+      familyAuthorities: manifest.familyReferenceAuthorities!,
+      families: manifest.designFamilies!,
+    });
+    expect(effective.inheritancePath.length).toBeGreaterThan(0);
+    expect(effective.necessityClassification).toBeDefined();
+  });
+
+  it('batch preview reports screens covered vs references required', () => {
+    const { manifest } = runCrossProjectRouteForensicAudit({ repoRoot: REPO_ROOT });
+    const screens = manifest.designScreens!.filter((s) => s.projectId === 'frontal-slayer');
+    const preview = buildReferenceBatchPreview('frontal-slayer', 'MOBILE', screens.map((s) => s.designScreenId), undefined, {
+      necessityAudits: manifest.referenceNecessityAudits,
+      designFamilies: manifest.designFamilies,
+      designScreensCovered: screens.length,
+    });
+    expect(preview.designScreensCovered).toBe(screens.length);
+    expect(preview.requestCount).toBeLessThanOrEqual(screens.length);
+    expect(preview.generationRequestsAvoided).toBeGreaterThan(0);
+  });
+
+  it('keeps UNKNOWN distinct from UNIQUE for low confidence', () => {
+    const { manifest } = runCrossProjectRouteForensicAudit({ repoRoot: REPO_ROOT });
+    const unknown = manifest.referenceNecessityAudits!.filter((a) => a.classification === 'UNKNOWN_REVIEW_REQUIRED');
+    const unique = manifest.referenceNecessityAudits!.filter((a) => a.classification === 'UNIQUE_REFERENCE_REQUIRED');
+    expect(unique.length).toBeGreaterThan(0);
+    expect(unknown.every((a) => a.classification !== 'UNIQUE_REFERENCE_REQUIRED')).toBe(true);
+  });
+
+  it('validates NDXBOOK does not over-collapse', () => {
+    const { manifest } = runCrossProjectRouteForensicAudit({ repoRoot: REPO_ROOT });
+    const ndxScreens = manifest.designScreens!.filter((s) => s.projectId === 'ndxbook');
+    const ndxFamilies = manifest.designFamilies!.filter((f) => f.projectId === 'ndxbook');
+    expect(ndxFamilies.length).toBeGreaterThan(0);
+    expect(ndxFamilies.length).toBeLessThanOrEqual(ndxScreens.length);
+  });
+
+  it('provides P0.VR.2 effective reference handoff fields', () => {
+    expect(RECONSTRUCTION_PIPELINE_ID).toBe('P0.VR.2');
+    expect(PRODUCT_ASSET_PIPELINE_ID).toBe('P0.PAF');
+    const assetAudit = necessityBadge('ASSET_ONLY_VARIANT');
+    expect(assetAudit).toBe('ASSET ONLY');
   });
 });

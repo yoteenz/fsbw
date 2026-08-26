@@ -1,10 +1,13 @@
 import { getStudioWorldProject } from './project-registry';
 import type {
+  DesignFamilyRecord,
   PageDesignReferencePromptInput,
   PageDesignReferencePromptOutput,
   ReferenceBatchPreview,
   ReferenceGenerationStatus,
+  ReferenceNecessityAuditRecord,
 } from './types';
+import { isGenerationRequired } from './effective-reference-resolver';
 
 /** Compiles founder-inspectable FAL prompts — does NOT dispatch generation */
 export function compilePageDesignReferencePrompt(
@@ -71,14 +74,33 @@ export function buildReferenceBatchPreview(
   viewportClass: PageDesignReferencePromptInput['viewportClass'],
   routeIds: string[],
   model = 'fal-ai/nano-banana-pro/edit',
+  options?: {
+    necessityAudits?: ReferenceNecessityAuditRecord[];
+    designFamilies?: DesignFamilyRecord[];
+    designScreensCovered?: number;
+  },
 ): ReferenceBatchPreview {
+  const audits = options?.necessityAudits?.filter((a) => a.projectId === projectId && a.viewportClass === viewportClass);
+  const requiredIds = audits
+    ? [...new Set(audits.filter((a) => isGenerationRequired(a.classification)).map((a) => a.designScreenId))]
+    : routeIds;
+  const familyIds = options?.designFamilies
+    ?.filter((f) => f.projectId === projectId && requiredIds.includes(f.representativeScreenId))
+    .map((f) => f.designFamilyId) ?? [];
+
+  const screensCovered = options?.designScreensCovered ?? routeIds.length;
+  const avoided = audits?.filter((a) => a.estimatedGenerationAvoided).length ?? 0;
+
   return {
     projectId,
     viewportClass,
-    routeIds,
-    requestCount: routeIds.length,
+    routeIds: requiredIds,
+    designFamilyIds: familyIds,
+    requestCount: requiredIds.length,
+    designScreensCovered: screensCovered,
     model,
-    estimatedCostUsd: Math.round(routeIds.length * 0.08 * 100) / 100,
+    estimatedCostUsd: model ? Math.round(requiredIds.length * 0.08 * 100) / 100 : undefined,
+    generationRequestsAvoided: avoided,
   };
 }
 

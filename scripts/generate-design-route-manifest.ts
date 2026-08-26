@@ -1,6 +1,6 @@
 #!/usr/bin/env npx tsx
 /**
- * P0.VR.3B — Generate studio-world-design-route-manifest.json from forensic route audit.
+ * P0.VR.3C — Generate studio-world-design-route-manifest.json (design families + reference necessity).
  * Usage: npx tsx scripts/generate-design-route-manifest.ts [--stdout]
  */
 import { writeFileSync, mkdirSync, existsSync } from 'node:fs';
@@ -36,21 +36,19 @@ function main() {
   if (!existsSync(outDir)) mkdirSync(outDir, { recursive: true });
   writeFileSync(outPath, json, 'utf8');
 
-  console.log('P0.VR.3B Design Route Manifest generated');
+  console.log('P0.VR.3C Design Route Manifest generated');
   console.log(`  path: ${MANIFEST_ARTIFACT_RELATIVE_PATH}`);
   console.log(`  commit: ${manifest.sourceCommit}`);
   console.log(`  schema: ${manifest.schemaVersion}`);
-  console.log(`  projects: ${manifest.projects.length}`);
-  console.log(`  raw implementation routes: ${manifest.rawImplementationRoutes.length}`);
-  console.log(`  route templates: ${manifest.routeTemplates?.length ?? 0}`);
   console.log(`  design screens: ${manifest.designScreens?.length ?? 0}`);
-  console.log(`  visual states: ${manifest.visualStates.length}`);
-  console.log(`  designable: ${report.designableRoutes}`);
+  console.log(`  design families: ${manifest.designFamilies?.length ?? 0}`);
+  console.log(`  raw implementation routes: ${manifest.rawImplementationRoutes.length}`);
   console.log(`  true orphans: ${report.orphanedCount}`);
   console.log('');
   for (const p of report.perProject) {
+    const savings = manifest.referenceGenerationSavings?.find((s) => s.projectId === p.projectId);
     console.log(
-      `  ${p.projectId}: raw=${p.rawImplementationRoutes} templates=${p.normalizedRouteTemplates} screens=${p.designScreens} trueOrphans=${p.trueOrphans} missing=${p.missingDependencies}`,
+      `  ${p.projectId}: screens=${p.designScreens} families=${p.designFamilies} uniqueRefs=${p.uniqueReferencesRequired} avoided=${savings?.generationRequestsAvoided ?? 0}`,
     );
   }
 }

@@ -1,4 +1,5 @@
 import type {
+  DesignFamilyRecord,
   DesignRoutePriority,
   DesignScreenRecord,
   NeedsImprovementQueueItem,
@@ -6,31 +7,97 @@ import type {
   PageVisualCoverageRecord,
   PossibleDeadRouteQueueItem,
   ProjectPageRouteRecord,
+  ReferenceNecessityAuditRecord,
+  ReferenceNecessityClassification,
 } from './types';
+import { resolveEffectiveDesignReference } from './effective-reference-resolver';
+import { isGenerationRequired } from './effective-reference-resolver';
 
 export function buildNeedsReferenceQueue(
   designScreens: DesignScreenRecord[],
   coverage: PageVisualCoverageRecord[],
+  necessityAudits?: ReferenceNecessityAuditRecord[],
+  designFamilies?: DesignFamilyRecord[],
+  inheritances?: Parameters<typeof resolveEffectiveDesignReference>[0]['inheritances'],
+  familyAuthorities?: Parameters<typeof resolveEffectiveDesignReference>[0]['familyAuthorities'],
 ): NeedsReferenceQueueItem[] {
   const screenMap = new Map(designScreens.map((s) => [s.designScreenId, s]));
+  const familyMap = new Map((designFamilies ?? []).map((f) => [f.designFamilyId, f]));
+  const queued = new Set<string>();
   const queue: NeedsReferenceQueueItem[] = [];
 
-  for (const c of coverage) {
-    const screen = screenMap.get(c.routeId);
+  const audits =
+    necessityAudits ??
+    designScreens.flatMap((s) =>
+      (['MOBILE', 'TABLET', 'DESKTOP'] as const).map((vp) => ({
+        designScreenId: s.designScreenId,
+        projectId: s.projectId,
+        viewportClass: vp,
+        classification: 'UNIQUE_REFERENCE_REQUIRED' as ReferenceNecessityClassification,
+        designFamilyId: s.designFamilyId ?? s.designScreenId,
+        confidence: 'HIGH' as const,
+        reason: 'legacy queue',
+        estimatedGenerationAvoided: false,
+      })),
+    );
+
+  for (const audit of audits) {
+    if (!isGenerationRequired(audit.classification)) continue;
+
+    const screen = screenMap.get(audit.designScreenId);
     if (!screen) continue;
-    for (const vp of ['mobile', 'tablet', 'desktop'] as const) {
-      if (c[vp].designStatus === 'MISSING_REFERENCE') {
-        queue.push({
-          projectId: c.projectId,
-          routeId: screen.representativeRouteId,
-          designScreenId: screen.designScreenId,
-          displayName: screen.displayName,
-          viewportClass: vp.toUpperCase() as NeedsReferenceQueueItem['viewportClass'],
-          priority: screen.priority,
-          routeFamily: screen.routeFamily,
-        });
-      }
+
+    const vpKey = audit.viewportClass.toLowerCase() as 'mobile' | 'tablet' | 'desktop';
+    const cov = coverage.find((c) => c.routeId === audit.designScreenId);
+    if (cov?.[vpKey]?.referenceId && audit.classification !== 'UNKNOWN_REVIEW_REQUIRED') continue;
+
+    const family = familyMap.get(audit.designFamilyId);
+    const isFamilyRep = family?.representativeScreenId === audit.designScreenId;
+    const queueKind =
+      audit.classification === 'UNKNOWN_REVIEW_REQUIRED'
+        ? 'REVIEW_REQUIRED'
+        : isFamilyRep && family && family.memberDesignScreenIds.length > 1
+          ? 'FAMILY_REPRESENTATIVE'
+          : 'UNIQUE_SCREEN';
+
+    const dedupeKey =
+      queueKind === 'FAMILY_REPRESENTATIVE'
+        ? `family:${audit.designFamilyId}:${audit.viewportClass}`
+        : `${audit.designScreenId}:${audit.viewportClass}`;
+
+    if (queued.has(dedupeKey)) continue;
+
+    if (inheritances && familyAuthorities && designFamilies) {
+      const effective = resolveEffectiveDesignReference({
+        projectId: audit.projectId,
+        designScreenId: audit.designScreenId,
+        viewportClass: audit.viewportClass,
+        necessityAudits: audits,
+        inheritances,
+        familyAuthorities,
+        families: designFamilies,
+      });
+      if (effective.referenceId && audit.classification !== 'UNKNOWN_REVIEW_REQUIRED') continue;
     }
+
+    if (cov?.[vpKey]?.designStatus !== 'MISSING_REFERENCE' && cov?.[vpKey]?.referenceId) continue;
+
+    queued.add(dedupeKey);
+    queue.push({
+      projectId: audit.projectId,
+      routeId: screen.representativeRouteId,
+      designScreenId: screen.designScreenId,
+      designFamilyId: audit.designFamilyId,
+      displayName:
+        queueKind === 'FAMILY_REPRESENTATIVE' && family
+          ? `${family.displayName} Family`
+          : screen.displayName,
+      viewportClass: audit.viewportClass,
+      priority: screen.priority,
+      routeFamily: screen.routeFamily,
+      queueKind,
+      necessityClassification: audit.classification,
+    });
   }
 
   const priorityOrder: Record<DesignRoutePriority, number> = {
@@ -100,6 +167,7 @@ export type CoverageMatrixRow = {
   mobile: string;
   tablet: string;
   desktop: string;
+  referencePolicy?: string;
 };
 
 function statusSymbol(designStatus: string): string {
@@ -124,12 +192,16 @@ export function buildCoverageMatrix(
   projectId: string,
   designScreens: DesignScreenRecord[],
   coverage: PageVisualCoverageRecord[],
+  necessityAudits?: ReferenceNecessityAuditRecord[],
 ): CoverageMatrixRow[] {
   const screens = designScreens.filter((s) => s.projectId === projectId);
   const covMap = new Map(coverage.map((c) => [c.routeId, c]));
 
   return screens.map((screen) => {
     const c = covMap.get(screen.designScreenId);
+    const mobileAudit = necessityAudits?.find(
+      (a) => a.designScreenId === screen.designScreenId && a.viewportClass === 'MOBILE',
+    );
     return {
       designScreenId: screen.designScreenId,
       displayName: screen.displayName,
@@ -138,6 +210,7 @@ export function buildCoverageMatrix(
       mobile: statusSymbol(c?.mobile.designStatus ?? 'MISSING_REFERENCE'),
       tablet: statusSymbol(c?.tablet.designStatus ?? 'MISSING_REFERENCE'),
       desktop: statusSymbol(c?.desktop.designStatus ?? 'MISSING_REFERENCE'),
+      referencePolicy: mobileAudit?.classification,
     };
   });
 }
@@ -157,4 +230,12 @@ export function groupRoutesForScreenDropdown(
     groups[r.routeFamily] = list;
   }
   return groups;
+}
+
+export function buildReferencePolicyReviewQueue(
+  necessityAudits: ReferenceNecessityAuditRecord[],
+): ReferenceNecessityAuditRecord[] {
+  return necessityAudits.filter(
+    (a) => a.classification === 'UNKNOWN_REVIEW_REQUIRED' || a.confidence === 'LOW',
+  );
 }

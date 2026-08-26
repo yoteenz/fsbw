@@ -3,10 +3,12 @@ export type * from './types';
 export {
   DESIGN_ROUTE_MANIFEST_VERSION,
   DESIGN_ROUTE_MANIFEST_SCHEMA_VERSION,
+  DESIGN_ROUTE_MANIFEST_SCHEMA_V2,
   DESIGN_ROUTE_MANIFEST_SCHEMA_V1,
   MANIFEST_ARTIFACT_FILENAME,
   VIEWPORT_CLASSES,
   DEFAULT_VIEWPORT_DIMENSIONS,
+  REFERENCE_NECESSITY_CLASSES,
 } from './constants';
 
 export {
@@ -14,6 +16,7 @@ export {
   buildNeedsImprovementQueue,
   buildPossibleDeadRouteQueue,
   buildCoverageMatrix,
+  buildReferencePolicyReviewQueue,
   groupRoutesForScreenDropdown,
 } from './queues';
 
@@ -33,3 +36,24 @@ export { diffDesignRouteManifests } from './manifest-diff';
 export { buildCoverageSummary } from './manifest';
 
 export { displayNameFromRoute } from './route-labels';
+
+export { necessityBadge } from './reference-necessity-auditor';
+
+export { resolveEffectiveDesignReference, isGenerationRequired } from './effective-reference-resolver';
+
+export function groupDesignFamiliesForDropdown(
+  families: import('./types').DesignFamilyRecord[],
+  projectId: string,
+): Record<string, import('./types').DesignFamilyRecord[]> {
+  const projectFamilies = families.filter((f) => f.projectId === projectId);
+  const groups: Record<string, import('./types').DesignFamilyRecord[]> = {};
+  for (const f of projectFamilies) {
+    const list = groups[f.routeFamily] ?? [];
+    list.push(f);
+    groups[f.routeFamily] = list;
+  }
+  for (const key of Object.keys(groups)) {
+    groups[key]!.sort((a, b) => a.displayName.localeCompare(b.displayName));
+  }
+  return groups;
+}

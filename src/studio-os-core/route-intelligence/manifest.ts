@@ -1,5 +1,6 @@
 import type {
   DesignCoverageSummary,
+  DesignFamilyRecord,
   DesignRouteSyncContract,
   DesignScreenRecord,
   DynamicRouteTemplateGroup,
@@ -9,6 +10,10 @@ import type {
   ProjectRouteDependencyGraph,
   ProjectVisualStateRecord,
   ReachabilitySummary,
+  ReferenceGenerationSavings,
+  ReferenceNecessityAuditRecord,
+  DesignFamilyReferenceAuthority,
+  DesignScreenReferenceInheritance,
   StudioWorldDesignRouteManifest,
   StudioWorldProjectRecord,
 } from './types';
@@ -19,6 +24,9 @@ export function buildCoverageSummary(
   routes: ProjectPageRouteRecord[],
   designScreens: DesignScreenRecord[],
   coverage: PageVisualCoverageRecord[],
+  necessityAudits?: ReferenceNecessityAuditRecord[],
+  savings?: ReferenceGenerationSavings,
+  designFamilies?: DesignFamilyRecord[],
 ): DesignCoverageSummary {
   const rawRoutes = routes.filter((r) => r.projectId === projectId);
   const screens = designScreens.filter((s) => s.projectId === projectId);
@@ -39,12 +47,23 @@ export function buildCoverageSummary(
     return { canonical, missing, stale, matched };
   };
 
-  const needsReference = screenCoverage.reduce((acc, c) => {
-    return (
-      acc +
-      (['mobile', 'tablet', 'desktop'] as const).filter((vp) => c[vp].designStatus === 'MISSING_REFERENCE').length
-    );
-  }, 0);
+  const needsReference = necessityAudits
+    ? necessityAudits.filter(
+        (a) =>
+          a.projectId === projectId &&
+          (a.classification === 'UNIQUE_REFERENCE_REQUIRED' ||
+            a.classification === 'VIEWPORT_SPECIFIC_REFERENCE_REQUIRED' ||
+            a.classification === 'UNKNOWN_REVIEW_REQUIRED') &&
+          !coverage.find((c) => c.routeId === a.designScreenId)?.[
+            a.viewportClass.toLowerCase() as 'mobile' | 'tablet' | 'desktop'
+          ]?.referenceId,
+      ).length
+    : screenCoverage.reduce((acc, c) => {
+        return (
+          acc +
+          (['mobile', 'tablet', 'desktop'] as const).filter((vp) => c[vp].designStatus === 'MISSING_REFERENCE').length
+        );
+      }, 0);
 
   const needsImprovement = screenCoverage.reduce((acc, c) => {
     return (
@@ -73,6 +92,9 @@ export function buildCoverageSummary(
     needsImprovement,
     brokenRoutes: rawRoutes.filter((r) => r.status === 'REQUIRED_MISSING_ROUTE').length,
     possibleDeadRoutes: trueOrphans.length,
+    designFamilies: designFamilies?.filter((f) => f.projectId === projectId).length ?? 0,
+    uniqueReferencesRequired: savings?.uniqueReferencesRequired ?? 0,
+    generationRequestsAvoided: savings?.generationRequestsAvoided ?? 0,
   };
 }
 
@@ -161,6 +183,11 @@ export function buildDesignRouteManifest(input: {
   rawImplementationRoutes: ProjectPageRouteRecord[];
   routeTemplates: DynamicRouteTemplateGroup[];
   designScreens: DesignScreenRecord[];
+  designFamilies: DesignFamilyRecord[];
+  referenceNecessityAudits: ReferenceNecessityAuditRecord[];
+  familyReferenceAuthorities: DesignFamilyReferenceAuthority[];
+  screenReferenceInheritances: DesignScreenReferenceInheritance[];
+  referenceGenerationSavings: ReferenceGenerationSavings[];
   visualStates: ProjectVisualStateRecord[];
   graphs: ProjectRouteDependencyGraph[];
   coverage: PageVisualCoverageRecord[];
@@ -172,7 +199,15 @@ export function buildDesignRouteManifest(input: {
   referenceMigration?: StudioWorldDesignRouteManifest['referenceMigration'];
 }): StudioWorldDesignRouteManifest {
   const coverageSummaries = input.projects.map((p) =>
-    buildCoverageSummary(p.projectId, input.rawImplementationRoutes, input.designScreens, input.coverage),
+    buildCoverageSummary(
+      p.projectId,
+      input.rawImplementationRoutes,
+      input.designScreens,
+      input.coverage,
+      input.referenceNecessityAudits,
+      input.referenceGenerationSavings.find((s) => s.projectId === p.projectId),
+      input.designFamilies,
+    ),
   );
   const completenessScores = input.projects.map((p) => {
     const graph = input.graphs.find((g) => g.projectId === p.projectId)!;
@@ -196,6 +231,11 @@ export function buildDesignRouteManifest(input: {
     routes: input.rawImplementationRoutes,
     routeTemplates: input.routeTemplates,
     designScreens: input.designScreens,
+    designFamilies: input.designFamilies,
+    referenceNecessityAudits: input.referenceNecessityAudits,
+    familyReferenceAuthorities: input.familyReferenceAuthorities,
+    screenReferenceInheritances: input.screenReferenceInheritances,
+    referenceGenerationSavings: input.referenceGenerationSavings,
     visualStates: input.visualStates,
     dependencyGraphs: input.graphs,
     coverage: input.coverage,

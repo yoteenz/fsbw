@@ -54583,3 +54583,23 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Conventions:** Route existence authority = source repo forensic audit; visual design authority = SITE 00 Design. Regenerate manifest after route changes; Design shows SYNCED/UPDATE AVAILABLE from manifest commit. Reference generation requires founder trigger; audit never triggers provider spend.
 
+---
+
+## 2026-08-26 — P0.VR.3B Route reachability normalization + false-orphan reduction + design screen registry
+
+- **Context:** Follow-up forensic correction after P0.VR.3 shipped implausibly high Frontal Slayer orphan ratio (665 routes / 647 orphaned). Goal: ORPHANED must mean no valid application entry path — not merely missing static `<Link>`. Separate IMPLEMENTATION_ROUTE from DESIGN_SCREEN; collapse dynamic instances; keep raw forensics in Inspect.
+
+- **Reachability model:** `RouteReachabilityClassification` (NAV/PROGRAMMATIC/WORKFLOW/AUTH/DEEP_LINK/DYNAMIC_INSTANCE/LEGACY/TRUE_ORPHAN/UNKNOWN etc.) + `entryEvidence[]` per route. New `discovery/programmatic-navigation-scanner.ts` scans navigate/useNavigate/router.push/Link/CTA/redirect/notification patterns. `reachability-classifier.ts` applies multi-signal classification; TRUE_ORPHAN only when zero evidence.
+
+- **Design screen normalization:** `design-screen-normalizer.ts` — `DynamicRouteTemplateGroup` + `DesignScreenRecord`; template collapse rules for product PDP, BAW steps/hub, desktop rooms, SITE 00 assessments, AIO portal/office. `design-screen-dropdown.ts` browser-safe dropdown grouping (avoids pulling Node fs into Vite bundle).
+
+- **Manifest v2:** `constants.ts` → `2.0.0` / `studio-world-design-route-manifest@2`. Extended schema: `rawImplementationRoutes`, `routeTemplates`, `designScreens`, `reachabilitySummaries`, `referenceMigration`; v1 `routes` alias preserved. `collectForensicFailuresV2` fails if FS true orphans > max(50, 15% raw).
+
+- **Re-audit results:** FS raw 665 → 492 design screens, 4 templates, **true orphans 0** (was 647 false orphans). SITE 00: 153 raw → 136 screens. AIO: 301 raw → 300 screens. NDXBOOK: 12 raw → 11 screens (no over-collapse). Global: 1131 raw, 7 templates, 939 design screens, 57 visual states, 0 true orphans.
+
+- **BLUPRINT UI:** Project summary shows DESIGN SCREENS; screen selector uses collapsed families with instance counts; Inspect shows raw routes + reachability + Possible Dead Routes queue (`buildPossibleDeadRouteQueue`).
+
+- **Tests:** `route-intelligence.test.ts` — 43 tests pass (15 new P0.VR.3B cases: programmatic nav, template collapse, auth/workflow/deep-link vs orphan, UNKNOWN≠orphan, FS false-orphan reduction, reference migration, per-instance override support, all pilots). Build green.
+
+- **Commands:** Regenerate `npm run audit:design-routes`; sync `./scripts/agent-commit.sh --sync-only`.
+

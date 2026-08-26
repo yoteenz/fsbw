@@ -1,7 +1,12 @@
 import type {
   DESIGNABLE_SURFACE_CLASSES,
+  DESIGN_FAMILY_CONFIDENCE_LEVELS,
+  DESIGN_FAMILY_STATUSES,
   DESIGN_ROUTE_PRIORITIES,
   FAILURE_TAXONOMY,
+  INHERITANCE_STATUSES,
+  REFERENCE_AUTHORITY_LEVELS,
+  REFERENCE_NECESSITY_CLASSES,
   ROUTE_ALIAS_CLASSES,
   ROUTE_ENTRY_EVIDENCE_TYPES,
   ROUTE_FAMILIES,
@@ -17,6 +22,11 @@ export type FailureTaxonomy = (typeof FAILURE_TAXONOMY)[number];
 export type RouteReachabilityClassification = (typeof ROUTE_REACHABILITY_CLASSES)[number];
 export type RouteEntryEvidenceType = (typeof ROUTE_ENTRY_EVIDENCE_TYPES)[number];
 export type RouteAliasClass = (typeof ROUTE_ALIAS_CLASSES)[number];
+export type ReferenceNecessityClassification = (typeof REFERENCE_NECESSITY_CLASSES)[number];
+export type DesignFamilyConfidence = (typeof DESIGN_FAMILY_CONFIDENCE_LEVELS)[number];
+export type DesignFamilyStatus = (typeof DESIGN_FAMILY_STATUSES)[number];
+export type InheritanceStatus = (typeof INHERITANCE_STATUSES)[number];
+export type ReferenceAuthorityLevel = (typeof REFERENCE_AUTHORITY_LEVELS)[number];
 
 export type RouteType =
   | 'PAGE'
@@ -304,6 +314,106 @@ export type DesignScreenRecord = {
   referenceCoverage?: PageVisualCoverageRecord;
   reachabilitySummary: Partial<Record<RouteReachabilityClassification, number>>;
   referenceFamilyConflict: boolean;
+  /** P0.VR.3C — design family assignment */
+  designFamilyId?: string;
+};
+
+export type DesignFamilyDifferenceDimension =
+  | 'SHELL'
+  | 'LAYOUT'
+  | 'TYPOGRAPHY'
+  | 'NAVIGATION'
+  | 'CONTENT_DENSITY'
+  | 'ARTWORK'
+  | 'COLOR'
+  | 'INTERACTION'
+  | 'STATE'
+  | 'RESPONSIVE_BEHAVIOR'
+  | 'PAGE_PURPOSE';
+
+export type DesignFamilyDifferenceProfile = {
+  dimensionsDiffering: DesignFamilyDifferenceDimension[];
+  dimensionsShared: DesignFamilyDifferenceDimension[];
+  notes: string[];
+};
+
+export type DesignFamilyRecord = {
+  designFamilyId: string;
+  projectId: string;
+  displayName: string;
+  routeFamily: RouteFamily;
+  memberDesignScreenIds: string[];
+  representativeScreenId: string;
+  representativeRoute: string;
+  shellAuthority: string;
+  layoutAuthority: string;
+  visualDifferenceDimensions: DesignFamilyDifferenceProfile;
+  referencePolicy: ReferenceNecessityClassification;
+  inheritancePolicy: 'AUTO_INHERIT_HIGH_CONFIDENCE' | 'FOUNDER_REVIEW_REQUIRED';
+  confidence: DesignFamilyConfidence;
+  status: DesignFamilyStatus;
+  groupingReason: string;
+  referenceFamilyConflict: boolean;
+  version: number;
+  history?: Array<{ version: number; memberDesignScreenIds: string[]; splitFrom?: string; mergedFrom?: string[] }>;
+};
+
+export type DesignFamilyReferenceAuthority = {
+  designFamilyId: string;
+  viewportClass: ViewportClass;
+  canonicalReferenceId?: string;
+  representativeScreenId: string;
+  referenceVersion: number;
+  status: DesignStatus;
+};
+
+export type DesignScreenReferenceInheritance = {
+  designScreenId: string;
+  designFamilyId: string;
+  viewportClass: ViewportClass;
+  inheritFromFamily: boolean;
+  overrideReferenceId?: string;
+  inheritanceStatus: InheritanceStatus;
+  reason: string;
+};
+
+export type ReferenceNecessityAuditRecord = {
+  designScreenId: string;
+  projectId: string;
+  viewportClass: ViewportClass;
+  classification: ReferenceNecessityClassification;
+  designFamilyId: string;
+  confidence: DesignFamilyConfidence;
+  currentReferenceId?: string;
+  recommendedReferenceId?: string;
+  reason: string;
+  estimatedGenerationAvoided: boolean;
+};
+
+export type EffectiveDesignReference = {
+  referenceId?: string;
+  authorityLevel: ReferenceAuthorityLevel;
+  designFamilyId?: string;
+  designScreenId: string;
+  viewportClass: ViewportClass;
+  inheritancePath: string[];
+  necessityClassification: ReferenceNecessityClassification;
+};
+
+export type ReferenceGenerationSavings = {
+  projectId: string;
+  designScreensBefore: number;
+  designFamiliesAfter: number;
+  potentialScreenViewportJobs: number;
+  uniqueReferencesRequired: number;
+  familyReferencesReused: number;
+  generationRequestsAvoided: number;
+  byNecessity: Partial<Record<ReferenceNecessityClassification, number>>;
+  byViewport: {
+    MOBILE: { unique: number; family: number; other: number };
+    TABLET: { unique: number; family: number; other: number };
+    DESKTOP: { unique: number; family: number; other: number };
+  };
 };
 
 export type ReachabilitySummary = {
@@ -335,6 +445,10 @@ export type DesignCoverageSummary = {
   needsImprovement: number;
   brokenRoutes: number;
   possibleDeadRoutes: number;
+  /** P0.VR.3C */
+  designFamilies?: number;
+  uniqueReferencesRequired?: number;
+  generationRequestsAvoided?: number;
 };
 
 export type DesignRouteSyncContract = {
@@ -369,6 +483,11 @@ export type StudioWorldDesignRouteManifest = {
   routes: ProjectPageRouteRecord[];
   routeTemplates: DynamicRouteTemplateGroup[];
   designScreens: DesignScreenRecord[];
+  designFamilies: DesignFamilyRecord[];
+  referenceNecessityAudits: ReferenceNecessityAuditRecord[];
+  familyReferenceAuthorities: DesignFamilyReferenceAuthority[];
+  screenReferenceInheritances: DesignScreenReferenceInheritance[];
+  referenceGenerationSavings: ReferenceGenerationSavings[];
   visualStates: ProjectVisualStateRecord[];
   dependencyGraphs: ProjectRouteDependencyGraph[];
   coverage: PageVisualCoverageRecord[];
@@ -428,6 +547,10 @@ export type CrossProjectRouteForensicReport = {
     legacy: number;
     unknown: number;
     previousOrphanCount?: number;
+    /** P0.VR.3C */
+    designFamilies?: number;
+    uniqueReferencesRequired?: number;
+    generationRequestsAvoided?: number;
   }>;
 };
 
@@ -469,10 +592,13 @@ export type NeedsReferenceQueueItem = {
   projectId: string;
   routeId: string;
   designScreenId?: string;
+  designFamilyId?: string;
   displayName: string;
   viewportClass: ViewportClass;
   priority: DesignRoutePriority;
   routeFamily: RouteFamily;
+  queueKind: 'UNIQUE_SCREEN' | 'FAMILY_REPRESENTATIVE' | 'REVIEW_REQUIRED';
+  necessityClassification: ReferenceNecessityClassification;
 };
 
 export type NeedsImprovementQueueItem = {
@@ -508,7 +634,10 @@ export type ReferenceBatchPreview = {
   projectId: string;
   viewportClass: ViewportClass;
   routeIds: string[];
+  designFamilyIds: string[];
   requestCount: number;
+  designScreensCovered: number;
   model: string;
-  estimatedCostUsd: number;
+  estimatedCostUsd?: number;
+  generationRequestsAvoided: number;
 };

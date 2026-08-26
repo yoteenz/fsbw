@@ -8,7 +8,12 @@ import {
   buildNeedsImprovementQueue,
   buildNeedsReferenceQueue,
   buildPossibleDeadRouteQueue,
+  buildReferencePolicyReviewQueue,
+  groupDesignFamiliesForDropdown,
   groupDesignScreensForDropdown,
+  necessityBadge,
+  resolveEffectiveDesignReference,
+  buildReferenceBatchPreview,
 } from '../../../studio-os-core/route-intelligence/browser';
 import type {
   ViewportClass,
@@ -70,21 +75,36 @@ export default function BluprintDesignHubPage() {
   }
 
   const designScreens = manifest.designScreens ?? [];
-  const needsRef = buildNeedsReferenceQueue(designScreens, manifest.coverage);
+  const needsRef = buildNeedsReferenceQueue(
+    designScreens,
+    manifest.coverage,
+    manifest.referenceNecessityAudits,
+    manifest.designFamilies,
+    manifest.screenReferenceInheritances,
+    manifest.familyReferenceAuthorities,
+  );
   const needsImprove = buildNeedsImprovementQueue(designScreens, manifest.coverage);
+  const policyReview = buildReferencePolicyReviewQueue(manifest.referenceNecessityAudits ?? []);
+  const totalFamilies = manifest.designFamilies?.length ?? 0;
+  const totalSavings = (manifest.referenceGenerationSavings ?? []).reduce(
+    (acc, s) => acc + s.generationRequestsAvoided,
+    0,
+  );
 
   return (
     <Site00PublicShell mobileActiveNav="build">
       <div className="site00-page site00-bluprint">
         <PageIntro
           title={<BracketHeading>DESIGN</BracketHeading>}
-          subtitle="Design screens — normalized from source repo routes (raw routes in Inspect)."
+          subtitle="Design families — reference necessity audit (raw routes in Inspect)."
         />
 
         <div className="site00-bluprint__meta">
           <span>MANIFEST {syncStatus === 'SYNCED' ? 'SYNCED' : syncStatus}</span>
           <span>v{manifest.manifestVersion}</span>
           <span>{manifest.schemaVersion}</span>
+          <span>{designScreens.length} screens · {totalFamilies} families</span>
+          <span>{totalSavings} generation jobs avoided</span>
           <span>{manifest.sourceCommit.slice(0, 7)}</span>
         </div>
 
@@ -95,6 +115,8 @@ export default function BluprintDesignHubPage() {
               <tr>
                 <th>PROJECT</th>
                 <th>SCREENS</th>
+                <th>FAMILIES</th>
+                <th>UNIQUE REFS</th>
                 <th>M</th>
                 <th>T</th>
                 <th>D</th>
@@ -112,6 +134,8 @@ export default function BluprintDesignHubPage() {
                       </Link>
                     </td>
                     <td>{s.totalDesignableScreens}</td>
+                    <td>{s.designFamilies ?? '—'}</td>
+                    <td>{s.uniqueReferencesRequired ?? '—'}</td>
                     <td>{s.mobile.matched}/{s.totalDesignableScreens}</td>
                     <td>{s.tablet.matched}/{s.totalDesignableScreens}</td>
                     <td>{s.desktop.matched}/{s.totalDesignableScreens}</td>
@@ -150,6 +174,16 @@ export default function BluprintDesignHubPage() {
               ))}
             </ul>
           </div>
+          <div>
+            <h3 className="site00-bluprint__section-title">REFERENCE POLICY REVIEW ({policyReview.length})</h3>
+            <ul className="site00-bluprint__queue">
+              {policyReview.slice(0, 6).map((item) => (
+                <li key={`${item.designScreenId}-${item.viewportClass}-review`}>
+                  {item.reason.slice(0, 60)}…
+                </li>
+              ))}
+            </ul>
+          </div>
         </section>
 
         <div className="site00-bluprint__actions">
@@ -175,20 +209,70 @@ export function BluprintProjectDesignPage() {
 
   const project = manifest.projects.find((p) => p.projectId === projectId);
   const designScreens = (manifest.designScreens ?? []).filter((s) => s.projectId === projectId);
+  const designFamilies = (manifest.designFamilies ?? []).filter((f) => f.projectId === projectId);
+  const familyGroups = groupDesignFamiliesForDropdown(manifest.designFamilies ?? [], projectId);
   const groups = groupDesignScreensForDropdown(manifest.designScreens ?? [], projectId);
   const summary = manifest.coverageSummaries.find((s) => s.projectId === projectId);
-  const matrix = buildCoverageMatrix(projectId, designScreens, manifest.coverage);
+  const savings = manifest.referenceGenerationSavings?.find((s) => s.projectId === projectId);
+  const matrix = buildCoverageMatrix(projectId, designScreens, manifest.coverage, manifest.referenceNecessityAudits);
+  const viewMode = searchParams.get('view') === 'families' ? 'families' : 'screens';
 
   const selectedScreenId =
     searchParams.get('screen') ?? designScreens[0]?.designScreenId ?? '';
+  const selectedFamilyId =
+    searchParams.get('family') ?? designFamilies[0]?.designFamilyId ?? '';
   const selectedScreen = designScreens.find((s) => s.designScreenId === selectedScreenId);
+  const selectedFamily = designFamilies.find((f) => f.designFamilyId === selectedFamilyId);
   const coverage = manifest.coverage.find((c) => c.routeId === selectedScreenId);
   const vpKey = viewport.toLowerCase() as 'mobile' | 'tablet' | 'desktop';
   const vpAuth = coverage?.[vpKey];
 
+  const screenNecessity = manifest.referenceNecessityAudits?.find(
+    (a) => a.designScreenId === selectedScreenId && a.viewportClass === viewport,
+  );
+  const effectiveRef =
+    selectedScreen && manifest.referenceNecessityAudits
+      ? resolveEffectiveDesignReference({
+          projectId,
+          designScreenId: selectedScreenId,
+          viewportClass: viewport,
+          necessityAudits: manifest.referenceNecessityAudits,
+          inheritances: manifest.screenReferenceInheritances ?? [],
+          familyAuthorities: manifest.familyReferenceAuthorities ?? [],
+          families: manifest.designFamilies ?? [],
+        })
+      : null;
+
+  const batchPreview = buildReferenceBatchPreview(
+    projectId,
+    viewport,
+    designScreens.map((s) => s.designScreenId),
+    undefined,
+    {
+      necessityAudits: manifest.referenceNecessityAudits,
+      designFamilies: manifest.designFamilies,
+      designScreensCovered: designScreens.length,
+    },
+  );
+
+  function selectFamily(designFamilyId: string) {
+    setSearchParams((prev) => {
+      prev.set('family', designFamilyId);
+      prev.set('view', 'families');
+      return prev;
+    });
+  }
+
+  function setViewMode(mode: 'screens' | 'families') {
+    setSearchParams((prev) => {
+      prev.set('view', mode);
+      return prev;
+    });
+  }
   function selectScreen(designScreenId: string) {
     setSearchParams((prev) => {
       prev.set('screen', designScreenId);
+      prev.set('view', 'screens');
       return prev;
     });
   }
@@ -206,43 +290,79 @@ export function BluprintProjectDesignPage() {
       <div className="site00-page site00-bluprint">
         <PageIntro
           title={<BracketHeading>{project?.displayName ?? projectId}</BracketHeading>}
-          subtitle="Design screens — grouped shared visual routes."
+          subtitle="Design families & reference necessity — shared shell authority."
         />
 
         {summary ? (
           <div className="site00-bluprint__coverage-bar">
             <span>{summary.totalDesignableScreens} DESIGN SCREENS</span>
+            <span>{summary.designFamilies ?? designFamilies.length} DESIGN FAMILIES</span>
+            <span>{summary.uniqueReferencesRequired ?? savings?.uniqueReferencesRequired ?? 0} UNIQUE REFS REQUIRED</span>
+            <span>{savings?.generationRequestsAvoided ?? 0} GENERATIONS AVOIDED</span>
             <span>{summary.rawImplementationRoutes} raw routes</span>
-            <span>{summary.normalizedRouteTemplates} templates</span>
-            <span>{summary.trueOrphanCount} true orphans</span>
-            <span>MOBILE {summary.mobile.canonical} canonical · {summary.mobile.missing} missing</span>
-            <span>TABLET {summary.tablet.canonical} canonical · {summary.tablet.missing} missing</span>
-            <span>DESKTOP {summary.desktop.canonical} canonical · {summary.desktop.missing} missing</span>
           </div>
         ) : null}
 
+        <div className="site00-bluprint__viewport-tabs">
+          <button
+            type="button"
+            className={`site00-bluprint__viewport-tab${viewMode === 'screens' ? ' is-active' : ''}`}
+            onClick={() => setViewMode('screens')}
+          >
+            SCREENS
+          </button>
+          <button
+            type="button"
+            className={`site00-bluprint__viewport-tab${viewMode === 'families' ? ' is-active' : ''}`}
+            onClick={() => setViewMode('families')}
+          >
+            DESIGN FAMILIES
+          </button>
+        </div>
+
         <div className="site00-bluprint__selectors">
-          <label>
-            SCREEN
-            <select
-              value={selectedScreenId}
-              onChange={(e) => selectScreen(e.target.value)}
-              className="site00-bluprint__select"
-            >
-              {Object.entries(groups).map(([family, screens]) => (
-                <optgroup key={family} label={family}>
-                  {screens.map((s) => (
-                    <option key={s.designScreenId} value={s.designScreenId}>
-                      {s.displayName}
-                      {s.instanceCount > 1 ? ` (${s.instanceCount} instances)` : ''}
-                      {' — '}
-                      {s.representativeRoute}
-                    </option>
-                  ))}
-                </optgroup>
-              ))}
-            </select>
-          </label>
+          {viewMode === 'families' ? (
+            <label>
+              FAMILY
+              <select
+                value={selectedFamilyId}
+                onChange={(e) => selectFamily(e.target.value)}
+                className="site00-bluprint__select"
+              >
+                {Object.entries(familyGroups).map(([family, fams]) => (
+                  <optgroup key={family} label={family}>
+                    {fams.map((f) => (
+                      <option key={f.designFamilyId} value={f.designFamilyId}>
+                        {f.displayName} ({f.memberDesignScreenIds.length} screens)
+                      </option>
+                    ))}
+                  </optgroup>
+                ))}
+              </select>
+            </label>
+          ) : (
+            <label>
+              SCREEN
+              <select
+                value={selectedScreenId}
+                onChange={(e) => selectScreen(e.target.value)}
+                className="site00-bluprint__select"
+              >
+                {Object.entries(groups).map(([family, screens]) => (
+                  <optgroup key={family} label={family}>
+                    {screens.map((s) => (
+                      <option key={s.designScreenId} value={s.designScreenId}>
+                        {s.displayName}
+                        {s.instanceCount > 1 ? ` (${s.instanceCount} instances)` : ''}
+                        {' — '}
+                        {s.representativeRoute}
+                      </option>
+                    ))}
+                  </optgroup>
+                ))}
+              </select>
+            </label>
+          )}
 
           <div className="site00-bluprint__viewport-tabs">
             {VIEWPORTS.map((v) => (
@@ -258,13 +378,33 @@ export function BluprintProjectDesignPage() {
           </div>
         </div>
 
-        {selectedScreen && vpAuth ? (
+        {selectedFamily && viewMode === 'families' ? (
+          <div className="site00-bluprint__page-row">
+            <div>
+              <h3 className="site00-bluprint__route-name">{selectedFamily.displayName.toUpperCase()}</h3>
+              <p className="site00-body">{selectedFamily.memberDesignScreenIds.length} member screens</p>
+              <p className="site00-body">Rep: {selectedFamily.representativeRoute}</p>
+              <p className="site00-body">Confidence: {selectedFamily.confidence}</p>
+              <p className="site00-bluprint__status">Policy: {selectedFamily.referencePolicy.replace(/_/g, ' ')}</p>
+            </div>
+          </div>
+        ) : null}
+
+        {selectedScreen && vpAuth && viewMode === 'screens' ? (
           <div className="site00-bluprint__page-row">
             <div>
               <h3 className="site00-bluprint__route-name">{selectedScreen.displayName.toUpperCase()}</h3>
               <p className="site00-body">{selectedScreen.representativeRoute}</p>
               {selectedScreen.instanceCount > 1 ? (
                 <p className="site00-body">Instances: {selectedScreen.instanceCount} shared shell</p>
+              ) : null}
+              {screenNecessity ? (
+                <p className="site00-bluprint__status">
+                  REFERENCE POLICY · {necessityBadge(screenNecessity.classification)} · {viewport}
+                  {effectiveRef?.authorityLevel === 'FAMILY_REFERENCE'
+                    ? ` · INHERITS: ${selectedScreen.designFamilyId?.split(':').pop()}`
+                    : ''}
+                </p>
               ) : null}
               <p className="site00-bluprint__status">
                 {viewport}: {statusLabel(vpAuth.designStatus)}
@@ -293,6 +433,14 @@ export function BluprintProjectDesignPage() {
             </div>
           </div>
         ) : null}
+
+        <section className="site00-bluprint__matrix">
+          <h3 className="site00-bluprint__section-title">BATCH GENERATION PREVIEW</h3>
+          <p className="site00-body">
+            DESIGN SCREENS COVERED: {batchPreview.designScreensCovered} · REFERENCES TO GENERATE:{' '}
+            {batchPreview.requestCount} · AVOIDED: {batchPreview.generationRequestsAvoided}
+          </p>
+        </section>
 
         <section className="site00-bluprint__matrix">
           <h3 className="site00-bluprint__section-title">COVERAGE MATRIX</h3>
@@ -365,6 +513,21 @@ export function BluprintInspectPage() {
           <section>
             <h3 className="site00-bluprint__section-title">REACHABILITY — {projectFilter}</h3>
             <pre className="site00-bluprint__pre">{JSON.stringify(reachSummary, null, 2)}</pre>
+          </section>
+        ) : null}
+        {projectFilter && manifest.designFamilies ? (
+          <section>
+            <h3 className="site00-bluprint__section-title">DESIGN FAMILIES — {projectFilter}</h3>
+            <pre className="site00-bluprint__pre">
+              {manifest.designFamilies
+                .filter((f) => f.projectId === projectFilter)
+                .slice(0, 15)
+                .map(
+                  (f) =>
+                    `${f.displayName} [${f.confidence}] ${f.memberDesignScreenIds.length} screens — ${f.groupingReason}`,
+                )
+                .join('\n')}
+            </pre>
           </section>
         ) : null}
         {graph ? (

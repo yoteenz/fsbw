@@ -18,14 +18,23 @@ import { discoverAllReferences } from './reference-discovery';
 import { buildAllCoverage } from './viewport-coverage';
 import { buildDesignRouteManifest } from './manifest';
 import { collectForensicFailuresV2 } from './manifest-diff';
+import { buildAllDesignFamilies } from './design-family-consolidator';
+import {
+  auditReferenceNecessity,
+  computeReferenceGenerationSavings,
+} from './reference-necessity-auditor';
 import type {
   CrossProjectRouteForensicReport,
+  DesignFamilyReferenceAuthority,
   DesignScreenRecord,
+  DesignScreenReferenceInheritance,
   DynamicRouteTemplateGroup,
   FailureTaxonomy,
   ProjectPageRouteRecord,
   ProjectRouteDependencyGraph,
   ReachabilitySummary,
+  ReferenceGenerationSavings,
+  ReferenceNecessityAuditRecord,
   RouteEntryEvidence,
   StudioWorldDesignRouteManifest,
 } from './types';
@@ -152,6 +161,29 @@ export function runCrossProjectRouteForensicAudit(options: AuditOptions): {
   const routeCoverage = buildAllCoverage(allRoutes, refs);
   const coverage = [...screenCoverage, ...routeCoverage.filter((c) => !screenCoverage.some((s) => s.routeId === c.routeId))];
 
+  const allDesignFamilies = buildAllDesignFamilies(allDesignScreens, allRoutes, visualStates, pilotIds);
+  const allNecessityAudits: ReferenceNecessityAuditRecord[] = [];
+  const allInheritances: DesignScreenReferenceInheritance[] = [];
+  const allFamilyAuthorities: DesignFamilyReferenceAuthority[] = [];
+  const allSavings: ReferenceGenerationSavings[] = [];
+
+  for (const projectId of pilotIds) {
+    const { audits, inheritances, familyAuthorities } = auditReferenceNecessity(
+      allDesignScreens,
+      allDesignFamilies,
+      allRoutes,
+      visualStates,
+      coverage,
+      projectId,
+    );
+    allNecessityAudits.push(...audits);
+    allInheritances.push(...inheritances);
+    allFamilyAuthorities.push(...familyAuthorities);
+    allSavings.push(
+      computeReferenceGenerationSavings(projectId, allDesignScreens, allDesignFamilies, audits),
+    );
+  }
+
   const designableRoutes = allRoutes.filter((r) => r.designableSurface === 'FOUNDER_DESIGNABLE');
   const trueOrphans = allRoutes.filter((r) => r.reachabilityClassification === 'TRUE_ORPHAN');
   const legacyOrphans = allRoutes.filter((r) => r.reachabilityClassification === 'LEGACY');
@@ -161,11 +193,15 @@ export function runCrossProjectRouteForensicAudit(options: AuditOptions): {
     const screens = allDesignScreens.filter((s) => s.projectId === projectId);
     const templates = allTemplates.filter((t) => t.projectId === projectId);
     const reach = reachabilitySummaries.find((r) => r.projectId === projectId)!;
+    const savings = allSavings.find((s) => s.projectId === projectId);
     return {
       projectId,
       rawImplementationRoutes: pr.length,
       normalizedRouteTemplates: templates.length,
       designScreens: screens.length,
+      designFamilies: allDesignFamilies.filter((f) => f.projectId === projectId).length,
+      uniqueReferencesRequired: savings?.uniqueReferencesRequired ?? 0,
+      generationRequestsAvoided: savings?.generationRequestsAvoided ?? 0,
       routesDiscovered: pr.length,
       designableRoutes: pr.filter((r) => r.designableSurface === 'FOUNDER_DESIGNABLE').length,
       visualStates: visualStates.filter((s) => s.projectId === projectId).length,
@@ -216,6 +252,11 @@ export function runCrossProjectRouteForensicAudit(options: AuditOptions): {
     rawImplementationRoutes: allRoutes,
     routeTemplates: allTemplates,
     designScreens: allDesignScreens,
+    designFamilies: allDesignFamilies,
+    referenceNecessityAudits: allNecessityAudits,
+    familyReferenceAuthorities: allFamilyAuthorities,
+    screenReferenceInheritances: allInheritances,
+    referenceGenerationSavings: allSavings,
     visualStates,
     graphs,
     coverage,
