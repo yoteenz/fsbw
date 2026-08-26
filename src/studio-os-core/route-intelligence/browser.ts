@@ -53,6 +53,16 @@ export { groupExperiencePagesForSelector } from './experience-page-abstraction';
 
 export { listCaptureAllTargets, isDesignScreenCaptureScope } from './experience-capture-scope';
 
+export {
+  buildComposerCreatedPagesReviewQueue,
+  filterComposerReviewQueueByProject,
+  countReadyForApproval,
+  countNeedsCreativeDirection,
+  countNeedsFunctionalReview,
+} from './fsbw-missing-route-completion/review-queue';
+
+export { isProductionNavBlocked, composerPreviewRoutePath } from './fsbw-missing-route-completion/draft-guard';
+
 export { isPrimaryExperience, isExcludedFromPrimary } from './experience-classifier';
 
 export function groupDesignFamiliesForDropdown(

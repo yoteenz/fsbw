@@ -4,8 +4,8 @@
 |-------|-------|
 | **Capsule Version** | 1.0.0 |
 | **Capsule Type** | Founder Intelligence Capsule™ |
-| **Generated (UTC)** | 2026-08-26T04:34:30.117Z |
-| **Git Commit** | f02bbfeb7b1c90543e279adf5ce4123ad6a70415 |
+| **Generated (UTC)** | 2026-08-26T04:49:25.200Z |
+| **Git Commit** | 436cb0f53fd3c8a9e4de5d81825d9a1e1382e5f4 |
 | **Validation** | pass |
 | **Required documents** | 29 |
 | **Reading order hash** | 5fa6a1a01e516c301cba914655222a4b8cd458de0581031468b9f87151531ca5 |

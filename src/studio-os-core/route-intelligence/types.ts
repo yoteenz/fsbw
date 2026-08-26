@@ -526,6 +526,156 @@ export type StudioWorldDesignRouteManifest = {
   pageInstances?: ExperiencePageInstanceRecord[];
   experiencePageOverrides?: ExperiencePageOverrideRecord[];
   experiencePageCompilation?: ExperiencePageCompilationMeta;
+  fsbwMissingRouteCompletion?: FsbwMissingRouteCompletionReport;
+};
+
+export type MissingPageCompletionMode =
+  | 'FAMILY_DERIVED_SIMPLE'
+  | 'STRUCTURAL_COMPLEX'
+  | 'CREATIVE_COMPLEX'
+  | 'FUNCTIONAL_COMPLEX'
+  | 'UNKNOWN_REVIEW_REQUIRED';
+
+export type ContentProvenanceSource =
+  | 'SOURCE_CANON'
+  | 'SOURCE_EXISTING_ROUTE'
+  | 'SOURCE_DATABASE'
+  | 'SOURCE_PROJECT_DOC'
+  | 'COMPOSER_INFERRED'
+  | 'CONTENT_REQUIRED';
+
+export type PageAuthorType = 'COMPOSER' | 'MIXED' | 'FOUNDER';
+export type PageReviewStatus = 'UNREVIEWED' | 'IN_REVIEW' | 'CHANGES_REQUESTED' | 'APPROVED_FOR_RELEASE';
+export type PagePublishStatus = 'PREVIEW_ONLY' | 'LIVE';
+export type ReviewDimension = 'VISUAL' | 'CONTENT' | 'FUNCTION';
+
+export type MissingPageCandidateRecord = {
+  candidateId: string;
+  projectId: string;
+  experiencePageId?: string;
+  displayName: string;
+  representativeRoute: string;
+  sectionId?: string;
+  designFamilyIds: string[];
+  sourceKind: 'EXPERIENCE_PAGE' | 'MISSING_PAGE_RECORD';
+  ownership: 'FSBW' | 'EXTERNAL_REPO_OWNED';
+  implementationStatus: 'IMPLEMENTATION_MISSING';
+};
+
+export type MissingPageRequirementsBrief = {
+  candidateId: string;
+  projectId: string;
+  displayName: string;
+  route: string;
+  purpose: string;
+  entryPoints: string[];
+  exitPoints: string[];
+  requiredContent: string[];
+  requiredActions: string[];
+  requiredData: string[];
+  requiredStates: string[];
+  designFamilyIds: string[];
+  completionMode: MissingPageCompletionMode;
+  creativeDirectionRequired: boolean;
+  functionalReviewRequired: boolean;
+  dependencies: string[];
+  contentBlocks: Array<{ label: string; provenance: ContentProvenanceSource; detail?: string }>;
+};
+
+export type PageAuthorshipRecord = {
+  authorshipId: string;
+  projectId: string;
+  experiencePageId: string;
+  route: string;
+  displayName: string;
+  authorType: PageAuthorType;
+  createdBySprint: string;
+  reviewStatus: PageReviewStatus;
+  publishStatus: PagePublishStatus;
+  completionMode: MissingPageCompletionMode;
+  createdAt: string;
+  sourceCommit: string;
+  reviewDimensions: Record<ReviewDimension, PageReviewStatus>;
+  creativeDirectionRequired: boolean;
+  functionalReviewRequired: boolean;
+};
+
+export type PageCreationReceipt = {
+  receiptId: string;
+  projectId: string;
+  experiencePageId: string;
+  displayName: string;
+  route: string;
+  completionMode: MissingPageCompletionMode;
+  filesCreated: string[];
+  filesModified: string[];
+  familyUsed?: string;
+  contentSources: ContentProvenanceSource[];
+  inferredContent: string[];
+  dependenciesResolved: string[];
+  createdBy: string;
+  sourceCommit: string;
+  createdAt: string;
+  previewOnly: boolean;
+  productionNavBlocked: boolean;
+};
+
+export type ComposerDraftSnapshotRecord = {
+  snapshotId: string;
+  authorshipId: string;
+  projectId: string;
+  route: string;
+  viewport: ViewportClass;
+  label: 'CURRENT · COMPOSER DRAFT';
+  capturePath?: string;
+  capturedAt?: string;
+  status: 'CAPTURED' | 'FAILED' | 'PENDING';
+};
+
+export type PageReviewSetRecord = {
+  reviewSetId: string;
+  projectId: string;
+  displayName: string;
+  completionMode: MissingPageCompletionMode;
+  authorshipIds: string[];
+  bulkApprovalAllowed: boolean;
+  reviewDimensions: ReviewDimension[];
+};
+
+export type FsbwComposerPageRegistry = {
+  schemaVersion: 'fsbw-composer-page-registry@1';
+  generatedAt: string;
+  sourceCommit: string;
+  authorship: PageAuthorshipRecord[];
+  receipts: PageCreationReceipt[];
+  snapshots: ComposerDraftSnapshotRecord[];
+  reviewSets: PageReviewSetRecord[];
+};
+
+export type FsbwMissingRouteCompletionProjectSummary = {
+  projectId: string;
+  missing: number;
+  simple: number;
+  complex: number;
+  built: number;
+  shellOnly: number;
+  blocked: number;
+  externalSkipped: number;
+};
+
+export type FsbwMissingRouteCompletionReport = {
+  sprintId: string;
+  generatedAt: string;
+  sourceCommit: string;
+  sourceManifestVersion: string;
+  repo: string;
+  ownedProjects: string[];
+  projectSummaries: FsbwMissingRouteCompletionProjectSummary[];
+  externalRepoOwned: Array<{ projectId: string; count: number; pageIds: string[] }>;
+  candidates: MissingPageCandidateRecord[];
+  briefs: MissingPageRequirementsBrief[];
+  registry: FsbwComposerPageRegistry;
+  executeBuild: boolean;
 };
 
 export type CrossProjectRouteForensicReport = {

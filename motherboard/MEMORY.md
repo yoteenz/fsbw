@@ -54639,3 +54639,25 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Tests:** 68 pass (16 new P0.VR.3F). Build green. Sync `[sync-only]`.
 
+---
+
+## 2026-08-26 — P0.VR.3G Experience page abstraction + primary page curation + screenshot backfill scope lock
+
+- **Context:** Corrective compilation sprint after P0.VR.3F still produced near 1:1 design-screen→primary-page mapping (FS 483, AIO 299, SITE 00 96). Founder Design workspace must expose **experiences**, not every implementation route/screen/instance.
+
+- **Abstraction hierarchy:** IMPLEMENTATION ROUTE → DESIGN SCREEN → **EXPERIENCE PAGE** → MATERIAL SCREEN → VISUAL STATE → INSTANCE. Founder-facing primary selector: PROJECT → EXPERIENCE SECTION → PAGE → MATERIAL SCREEN; states/instances/routes drill down or Inspect only.
+
+- **Manifest v3.2:** `studio-world-design-route-manifest@3.2` / `3.2.0`; page set schema `studio-world-project-page-set@2`. New arrays: `experienceSections[]`, `experiencePages[]`, `materialScreens[]`, `pageInstances[]`, `experiencePageQa[]`, `experienceMetrics`, `experienceCaptureScope`.
+
+- **New modules:** `site00-p0-vr-3d-scope.ts` (P0.VR.3D semantic authority — 42 baseline, canonical sections/pages, 5 visual states, 9 missing), `experience-page-abstraction.ts` (`compilePrimaryExperiencePages`, family grouping, workflow material screens, instance demotion, SITE 00 canonical mapping, NDXBOOK per-screen preservation), `experience-page-qa.ts`, `experience-capture-scope.ts` (P0.VR.3E CAPTURE ALL locked to experience pages + material screens).
+
+- **Compiled reductions (vr3f primary → experience primary):** FS 483→53 (-89%), AIO 299→104 (-65%), SITE 00 96→22 (-77%), NDXBOOK 9→11 (9 screens + 2 missing preserved). Raw routes/screens/families preserved; no route deletion.
+
+- **SITE 00 reconciliation:** 22 founder-primary pages = 13 implemented canonical experiences + 9 missing dependencies; 6 visual states subordinate; Asset Vault / Control Room / Production OS → workspace/supporting (not primary rows). Explains gap vs P0.VR.3D count of 42 (workflow routes collapse into pages with material screens; states demoted).
+
+- **BLUPRINT UI:** PRIMARY / ALL DESIGNABLE / INTERNAL·WORKSPACE modes; EXPERIENCE PAGES view with section grouping, `ExperiencePageCard`, material screen drilldown, capture scope batch preview (not all design screens).
+
+- **Tests:** 76 pass (8 new P0.VR.3G). Build green. Regenerate: `npm run compile:design-pages`. Sync `[sync-only]`.
+
+- **Not in this sprint:** Founder PAGE ABSTRACTION REVIEW UI (approve/split/demote actions) — types/overrides scaffolded; full review UI deferred. FS admin dashboard routes still need further workspace demotion in follow-up (generic family grouping left some admin pages in primary at 53).
+

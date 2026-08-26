@@ -1,5 +1,5 @@
 import { Link, Route, Routes, useParams, useSearchParams } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Site00PublicShell } from '../../components/shell/Site00PublicShell';
 import { BracketHeading, PageIntro } from '../../components/pages/Site00PagePrimitives';
 import { useDesignRouteManifest } from '../../hooks/useDesignRouteManifest';
@@ -18,6 +18,11 @@ import {
   pageStatusBadge,
   resolveEffectiveDesignReference,
   buildReferenceBatchPreview,
+  buildComposerCreatedPagesReviewQueue,
+  countNeedsCreativeDirection,
+  countNeedsFunctionalReview,
+  countReadyForApproval,
+  composerPreviewRoutePath,
 } from '../../../studio-os-core/route-intelligence/browser';
 import type {
   ViewportClass,
@@ -26,6 +31,7 @@ import type {
   ExperiencePageRecord,
   MaterialScreenRecord,
   ExperiencePageInstanceRecord,
+  FsbwComposerPageRegistry,
   StudioWorldDesignRouteManifest,
 } from '../../../studio-os-core/route-intelligence/types';
 import '../../styles/site00-bluprint.css';
@@ -52,6 +58,25 @@ function statusLabel(designStatus: string): string {
     default:
       return designStatus.replace(/_/g, ' ');
   }
+}
+
+function useComposerPageRegistry(manifest: StudioWorldDesignRouteManifest | null) {
+  const [registry, setRegistry] = useState<FsbwComposerPageRegistry | null>(
+    manifest?.fsbwMissingRouteCompletion?.registry ?? null,
+  );
+
+  useEffect(() => {
+    if (manifest?.fsbwMissingRouteCompletion?.registry) {
+      setRegistry(manifest.fsbwMissingRouteCompletion.registry);
+      return;
+    }
+    void fetch('/studio-world/fsbw-composer-page-registry.json', { cache: 'no-store' })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => setRegistry(data as FsbwComposerPageRegistry | null))
+      .catch(() => setRegistry(null));
+  }, [manifest]);
+
+  return registry;
 }
 
 export default function BluprintDesignHubPage() {
@@ -97,6 +122,10 @@ export default function BluprintDesignHubPage() {
     (acc, s) => acc + s.generationRequestsAvoided,
     0,
   );
+  const composerRegistry = useComposerPageRegistry(manifest);
+  const composerQueue = composerRegistry ? buildComposerCreatedPagesReviewQueue(composerRegistry) : [];
+  const fsbwCompletion = manifest.fsbwMissingRouteCompletion;
+  const externalMissing = fsbwCompletion?.externalRepoOwned ?? [];
 
   return (
     <Site00PublicShell mobileActiveNav="build">
@@ -166,6 +195,37 @@ export default function BluprintDesignHubPage() {
 
         <section className="site00-bluprint__queues">
           <div>
+            <h3 className="site00-bluprint__section-title">
+              COMPOSER-CREATED PAGES ({composerQueue.length})
+            </h3>
+            {composerQueue.length === 0 ? (
+              <p className="site00-body">
+                No FSBW composer drafts yet.
+                {fsbwCompletion
+                  ? ` FSBW missing scan: ${fsbwCompletion.projectSummaries.reduce((n, p) => n + p.missing, 0)} owned · ${externalMissing.reduce((n, e) => n + e.count, 0)} external.`
+                  : ' Run P0.VR.3H-FSBW pipeline to classify missing pages.'}
+              </p>
+            ) : (
+              <ul className="site00-bluprint__queue">
+                {composerQueue.slice(0, 6).map((card) => (
+                  <li key={card.authorship.authorshipId}>
+                    {card.authorship.displayName} · {card.authorship.projectId} · {card.authorship.completionMode.replace(/_/g, ' ')}
+                    {card.authorship.creativeDirectionRequired ? ' · NEEDS CREATIVE DIRECTION' : ''}
+                  </li>
+                ))}
+              </ul>
+            )}
+            {externalMissing.length > 0 ? (
+              <p className="site00-body">
+                EXTERNAL REPO OWNED:{' '}
+                {externalMissing.map((e) => `${e.projectId} (${e.count})`).join(', ')} — not built in FSBW.
+              </p>
+            ) : null}
+          </div>
+        </section>
+
+        <section className="site00-bluprint__queues">
+          <div>
             <h3 className="site00-bluprint__section-title">NEEDS REFERENCE ({needsRef.length})</h3>
             <ul className="site00-bluprint__queue">
               {needsRef.slice(0, 8).map((item) => (
@@ -230,6 +290,10 @@ export function BluprintProjectDesignPage() {
   const screenGroups = groupDesignScreensForDropdown(manifest.designScreens ?? [], projectId);
   const summary = manifest.coverageSummaries.find((s) => s.projectId === projectId);
   const matrix = buildCoverageMatrix(projectId, designScreens, manifest.coverage, manifest.referenceNecessityAudits);
+  const composerRegistry = useComposerPageRegistry(manifest);
+  const composerProjectQueue = composerRegistry
+    ? buildComposerCreatedPagesReviewQueue(composerRegistry).filter((c) => c.authorship.projectId === projectId)
+    : [];
 
   const experienceMode =
     searchParams.get('mode') === 'workspace'
@@ -683,6 +747,33 @@ export function BluprintProjectDesignPage() {
           </section>
         ) : null}
 
+        {composerProjectQueue.length > 0 ? (
+          <section className="site00-bluprint__matrix">
+            <h3 className="site00-bluprint__section-title">COMPOSER-CREATED PAGES ({composerProjectQueue.length})</h3>
+            <div className="site00-bluprint__page-grid">
+              {composerProjectQueue.map((card) => (
+                <ComposerCreatedPageCard key={card.authorship.authorshipId} card={card} />
+              ))}
+            </div>
+            <p className="site00-body">
+              Ready for approval: {countReadyForApproval(composerProjectQueue)} · Creative direction:{' '}
+              {countNeedsCreativeDirection(composerProjectQueue)} · Functional review:{' '}
+              {countNeedsFunctionalReview(composerProjectQueue)}
+            </p>
+            <div className="site00-bluprint__page-actions">
+              <button type="button" className="site00-bluprint__btn" disabled title="Founder-triggered">
+                BUILD ALL READY SIMPLE PAGES
+              </button>
+              <button type="button" className="site00-bluprint__btn" disabled title="Founder-triggered">
+                CREATE COMPLEX PAGE SHELLS
+              </button>
+              <button type="button" className="site00-bluprint__btn" disabled title="Founder-triggered">
+                REVIEW SET · APPROVE SELECTED
+              </button>
+            </div>
+          </section>
+        ) : null}
+
         <section className="site00-bluprint__matrix">
           <h3 className="site00-bluprint__section-title">BATCH GENERATION PREVIEW (EXPERIENCE SCOPE)</h3>
           <p className="site00-body">
@@ -735,6 +826,52 @@ export function BluprintProjectDesignPage() {
         </Link>
       </div>
     </Site00PublicShell>
+  );
+}
+
+function ComposerCreatedPageCard({ card }: { card: import('../../../studio-os-core/route-intelligence/fsbw-missing-route-completion/review-queue').ComposerCreatedPageReviewCard }) {
+  const { authorship, snapshots, familyUsed, reviewSet } = card;
+  const previewPath = composerPreviewRoutePath(authorship.projectId, authorship.route);
+  const mobile = snapshots.find((s) => s.viewport === 'MOBILE');
+  const tablet = snapshots.find((s) => s.viewport === 'TABLET');
+  const desktop = snapshots.find((s) => s.viewport === 'DESKTOP');
+
+  return (
+    <div className="site00-bluprint__page-row">
+      <div>
+        <h3 className="site00-bluprint__route-name">{authorship.displayName.toUpperCase()}</h3>
+        <p className="site00-body">{authorship.route}</p>
+        <p className="site00-body">
+          {authorship.completionMode.replace(/_/g, ' ')} · {authorship.authorType} · {authorship.reviewStatus.replace(/_/g, ' ')}
+        </p>
+        {familyUsed ? <p className="site00-body">FAMILY · {familyUsed}</p> : null}
+        {authorship.creativeDirectionRequired ? (
+          <p className="site00-bluprint__status">NEEDS CREATIVE DIRECTION</p>
+        ) : null}
+        {authorship.functionalReviewRequired ? (
+          <p className="site00-bluprint__status">NEEDS FUNCTIONAL REVIEW</p>
+        ) : null}
+        <p className="site00-bluprint__status">
+          M: {mobile?.status ?? '—'} · T: {tablet?.status ?? '—'} · D: {desktop?.status ?? '—'}
+          {mobile?.label ? ` · ${mobile.label}` : ''}
+        </p>
+        {reviewSet ? (
+          <p className="site00-body">
+            REVIEW SET · {reviewSet.displayName}
+            {reviewSet.bulkApprovalAllowed ? ' · BULK OK' : ' · NO BULK APPROVAL'}
+          </p>
+        ) : null}
+        <p className="site00-body">PREVIEW · {previewPath}</p>
+      </div>
+      <div className="site00-bluprint__page-actions">
+        <button type="button" className="site00-bluprint__btn" disabled title="Founder review">
+          APPROVE
+        </button>
+        <button type="button" className="site00-bluprint__btn" disabled title="Founder review">
+          REQUEST CHANGES
+        </button>
+      </div>
+    </div>
   );
 }
 

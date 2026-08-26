@@ -40,6 +40,17 @@ import {
   isDesignScreenCaptureScope,
   RECONSTRUCTION_PIPELINE_ID,
   PRODUCT_ASSET_PIPELINE_ID,
+  collectMissingPageCandidates,
+  filterFsbwBuildCandidates,
+  isExternalRepoOwnedProject,
+  isFsbwOwnedProject,
+  classifyMissingPageCompletionMode,
+  runFsbwMissingRouteCompletion,
+  createPageAuthorshipRecord,
+  canBulkApproveReviewSet,
+  buildPageReviewSets,
+  isProductionNavBlocked,
+  planComposerDraftSnapshots,
 } from './index';
 
 const REPO_ROOT = join(import.meta.dirname, '../../..');
@@ -726,5 +737,93 @@ describe('P0.VR.3G experience page abstraction', () => {
     expect(listCaptureAllTargets(scope).length).toBeLessThan(
       manifest.designScreens!.filter((s) => s.projectId === 'frontal-slayer').length,
     );
+  });
+});
+
+describe('P0.VR.3H-FSBW missing route completion', () => {
+  it('enforces FSBW ownership scope and marks external repo pages', () => {
+    const { manifest } = runCrossProjectRouteForensicAudit({ repoRoot: REPO_ROOT });
+    const candidates = collectMissingPageCandidates(manifest);
+    const fsbw = filterFsbwBuildCandidates(candidates);
+    const external = candidates.filter((c) => c.ownership === 'EXTERNAL_REPO_OWNED');
+    expect(isExternalRepoOwnedProject('site00')).toBe(true);
+    expect(isExternalRepoOwnedProject('ndxbook')).toBe(true);
+    expect(isFsbwOwnedProject('frontal-slayer')).toBe(true);
+    expect(isFsbwOwnedProject('all-in-one-enterprise')).toBe(true);
+    expect(external.every((c) => ['site00', 'ndxbook'].includes(c.projectId))).toBe(true);
+    expect(fsbw.every((c) => !['site00', 'ndxbook'].includes(c.projectId))).toBe(true);
+  });
+
+  it('classifies simple vs complex completion modes from evidence', () => {
+    const candidate = {
+      candidateId: 'frontal-slayer:missing:test',
+      projectId: 'frontal-slayer',
+      displayName: 'Forgot Password',
+      representativeRoute: '/account/forgot-password',
+      designFamilyIds: ['frontal-slayer:dfamily:account-page'],
+      sourceKind: 'EXPERIENCE_PAGE' as const,
+      ownership: 'FSBW' as const,
+      implementationStatus: 'IMPLEMENTATION_MISSING' as const,
+    };
+    const complexCandidate = {
+      ...candidate,
+      displayName: 'Build-A-Wig Hub',
+      representativeRoute: '/build-a-wig/hub',
+    };
+    const { manifest } = runCrossProjectRouteForensicAudit({ repoRoot: REPO_ROOT });
+    const simpleMode = classifyMissingPageCompletionMode(candidate, manifest);
+    const complexMode = classifyMissingPageCompletionMode(complexCandidate, manifest);
+    expect(simpleMode === 'FAMILY_DERIVED_SIMPLE' || simpleMode === 'UNKNOWN_REVIEW_REQUIRED').toBe(true);
+    expect(complexMode).toBe('CREATIVE_COMPLEX');
+  });
+
+  it('blocks complex pages from bulk approval sets', () => {
+    const authorship = createPageAuthorshipRecord({
+      projectId: 'frontal-slayer',
+      experiencePageId: 'test',
+      route: '/build-a-wig/hub',
+      displayName: 'Build-A-Wig',
+      completionMode: 'CREATIVE_COMPLEX',
+      sourceCommit: 'abc',
+      creativeDirectionRequired: true,
+      functionalReviewRequired: false,
+    });
+    expect(canBulkApproveReviewSet([authorship])).toBe(false);
+    const sets = buildPageReviewSets([authorship], [
+      {
+        authorshipId: authorship.authorshipId,
+        completionMode: authorship.completionMode,
+        projectId: authorship.projectId,
+      },
+    ]);
+    expect(sets[0]?.bulkApprovalAllowed).toBe(false);
+  });
+
+  it('runs pipeline without auto-build and preserves preview-only guard', () => {
+    const { manifest } = runCrossProjectRouteForensicAudit({ repoRoot: REPO_ROOT });
+    const report = runFsbwMissingRouteCompletion({ repoRoot: REPO_ROOT, manifest, executeBuild: false });
+    expect(report.sprintId).toContain('P0.VR.3H-FSBW');
+    expect(report.executeBuild).toBe(false);
+    for (const auth of report.registry.authorship) {
+      expect(auth.publishStatus).toBe('PREVIEW_ONLY');
+      expect(isProductionNavBlocked(auth)).toBe(true);
+    }
+  });
+
+  it('plans composer draft snapshots for M/T/D without live label', () => {
+    const authorship = createPageAuthorshipRecord({
+      projectId: 'frontal-slayer',
+      experiencePageId: 'test',
+      route: '/account/help',
+      displayName: 'Help',
+      completionMode: 'FAMILY_DERIVED_SIMPLE',
+      sourceCommit: 'abc',
+      creativeDirectionRequired: false,
+      functionalReviewRequired: false,
+    });
+    const snaps = planComposerDraftSnapshots(authorship);
+    expect(snaps).toHaveLength(3);
+    expect(snaps.every((s) => s.label === 'CURRENT · COMPOSER DRAFT')).toBe(true);
+    expect(snaps.some((s) => (s.label as string) === 'CURRENT LIVE')).toBe(false);
   });
 });

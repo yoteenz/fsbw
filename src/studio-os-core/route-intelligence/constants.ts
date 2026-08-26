@@ -254,3 +254,38 @@ export const FAILURE_TAXONOMY = [
   'FAIL_SCREENSHOT_BACKFILL_USES_RAW_SCREEN_SET',
   'FAIL_REFERENCE_BATCH_USES_RAW_SCREEN_SET',
 ] as const;
+
+/** P0.VR.3H-FSBW — Missing route completion */
+export const FSBW_MISSING_ROUTE_COMPLETION_SPRINT = 'P0.VR.3H-FSBW';
+export const FSBW_COMPOSER_PAGE_REGISTRY_RELATIVE_PATH = 'public/studio-world/fsbw-composer-page-registry.json';
+
+export const FSBW_OWNED_PROJECT_IDS = [
+  'frontal-slayer',
+  'studio-world',
+  'all-in-one-enterprise',
+] as const;
+
+export const EXTERNAL_REPO_OWNED_PROJECT_IDS = ['site00', 'ndxbook'] as const;
+
+export const MISSING_PAGE_COMPLETION_MODES = [
+  'FAMILY_DERIVED_SIMPLE',
+  'STRUCTURAL_COMPLEX',
+  'CREATIVE_COMPLEX',
+  'FUNCTIONAL_COMPLEX',
+  'UNKNOWN_REVIEW_REQUIRED',
+] as const;
+
+export const CONTENT_PROVENANCE_SOURCES = [
+  'SOURCE_CANON',
+  'SOURCE_EXISTING_ROUTE',
+  'SOURCE_DATABASE',
+  'SOURCE_PROJECT_DOC',
+  'COMPOSER_INFERRED',
+  'CONTENT_REQUIRED',
+] as const;
+
+export const PAGE_AUTHOR_TYPES = ['COMPOSER', 'MIXED', 'FOUNDER'] as const;
+export const PAGE_REVIEW_STATUSES = ['UNREVIEWED', 'IN_REVIEW', 'CHANGES_REQUESTED', 'APPROVED_FOR_RELEASE'] as const;
+export const PAGE_PUBLISH_STATUSES = ['PREVIEW_ONLY', 'LIVE'] as const;
+export const REVIEW_DIMENSIONS = ['VISUAL', 'CONTENT', 'FUNCTION'] as const;
+export const COMPOSER_DRAFT_SNAPSHOT_LABEL = 'CURRENT · COMPOSER DRAFT';

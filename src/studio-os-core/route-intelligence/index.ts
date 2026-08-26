@@ -126,6 +126,27 @@ export {
 
 export { runExperiencePageAbstractionQa } from './experience-page-qa';
 
+export {
+  runFsbwMissingRouteCompletion,
+  attachFsbwMissingRouteCompletionToManifest,
+  loadComposerPageRegistry,
+  saveComposerPageRegistry,
+  collectMissingPageCandidates,
+  filterFsbwBuildCandidates,
+  classifyMissingPageCompletionMode,
+  buildMissingPageRequirementsBrief,
+  buildComposerCreatedPagesReviewQueue,
+  isFsbwOwnedProject,
+  isExternalRepoOwnedProject,
+  canBulkApproveReviewSet,
+  isProductionNavBlocked,
+  createPageAuthorshipRecord,
+  buildPageReviewSets,
+  planComposerDraftSnapshots,
+  FSBW_COMPOSER_PAGE_REGISTRY_RELATIVE_PATH,
+  FSBW_MISSING_ROUTE_COMPLETION_SPRINT,
+} from './fsbw-missing-route-completion';
+
 export { diffProjectWebsitePageSets } from './page-set-diff';
 
 export { scanRouteFile } from './discovery/source-scanner';
