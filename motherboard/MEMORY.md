@@ -54911,6 +54911,22 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 ---
 
+## 2026-08-26 — AIO Vitest/PostCSS CI toolchain boundary repair
+
+- **Context:** AIO Supabase Production Validate reached Demo production isolation; Vitest failed before assertions: `Failed to load PostCSS config` → `Cannot find module 'tailwindcss'` from `/workspace/postcss.config.js`. Workflow correctly fail-closed NOT READY TO DEPLOY.
+
+- **Root cause:** GHA runs `npm ci` only in `all-in-one-enterprises/` (no repo-root node_modules). Vite/Vitest walks up from AIO cwd and loads repository-root `postcss.config.js` (Frontal Slayer Tailwind + autoprefixer). `tailwindcss`/`autoprefixer` live in root `package.json` devDependencies only — not installed in AIO-only CI. Accidental shared-repo config inheritance, not intentional AIO dependency. AIO uses plain CSS, not Tailwind.
+
+- **Fix:** Added AIO-owned `postcss.config.js` (empty plugins). Pinned `css.postcss` in `vite.config.ts` and `vitest.config.ts` to AIO config. Added `check-toolchain-boundary.sh` + `aio-toolchain-boundary.test.sh` (simulates GHA: parent postcss + AIO-only npm ci). Workflow demo step runs toolchain boundary check.
+
+- **Verified:** demoProductionIsolation (3 assertions), freight unit tests (28), AIO production build — all PASS under simulated clean GHA layout without root node_modules.
+
+- **Not done:** No deploy, no workflow trigger, no app behavior change, no FS runtime changes.
+
+- **Next:** Founder manually starts NEW AIO Supabase Production Validate on master.
+
+---
+
 ## 2026-08-26 — AIO CI eliminate direct Postgres + pooler standardization
 
 - **Context:** Validation workflow passed migration history check but failed at "Verify schema and RLS enablement" — same root cause as prior history bug: raw `psql` to direct `db.nnnljnhtmseagotvgxxt.supabase.co` from GitHub Actions (IPv6/direct endpoint incompatibility). Not schema/RLS/credential failure — verifier never connected.
@@ -54920,6 +54936,22 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Repair:** Created canonical `aio-ci-db.mjs` (pooler URI resolution from `supabase/.temp/pooler-url`, project guards, fail-closed SQL, secret redaction). Added `aio-db-connectivity-preflight` workflow step post-history/pre-migrations. Rewrote schema/RLS verification as `aio-verify-schema.mjs` using pooler + `pg_class.relrowsecurity`. Refactored migration pooler query to shared module. Fail-closed UNKNOWN for query failures. Unit tests in `aio-ci-db.test.mjs`.
 
 - **Not done:** No migration history/schema/RLS/data changes, no deploy, no workflow trigger.
+
+- **Next:** Founder manually starts NEW AIO Supabase Production Validate on master.
+
+---
+
+## 2026-08-26 — AIO Vitest/PostCSS CI toolchain boundary repair
+
+- **Context:** AIO Supabase Production Validate reached Demo production isolation; Vitest failed before assertions: `Failed to load PostCSS config` → `Cannot find module 'tailwindcss'` from `/workspace/postcss.config.js`. Workflow correctly fail-closed NOT READY TO DEPLOY.
+
+- **Root cause:** GHA runs `npm ci` only in `all-in-one-enterprises/` (no repo-root node_modules). Vite/Vitest walks up from AIO cwd and loads repository-root `postcss.config.js` (Frontal Slayer Tailwind + autoprefixer). `tailwindcss`/`autoprefixer` live in root `package.json` devDependencies only — not installed in AIO-only CI. Accidental shared-repo config inheritance, not intentional AIO dependency. AIO uses plain CSS, not Tailwind.
+
+- **Fix:** Added AIO-owned `postcss.config.js` (empty plugins). Pinned `css.postcss` in `vite.config.ts` and `vitest.config.ts` to AIO config. Added `check-toolchain-boundary.sh` + `aio-toolchain-boundary.test.sh` (simulates GHA: parent postcss + AIO-only npm ci). Workflow demo step runs toolchain boundary check.
+
+- **Verified:** demoProductionIsolation (3 assertions), freight unit tests (28), AIO production build — all PASS under simulated clean GHA layout without root node_modules.
+
+- **Not done:** No deploy, no workflow trigger, no app behavior change, no FS runtime changes.
 
 - **Next:** Founder manually starts NEW AIO Supabase Production Validate on master.
 

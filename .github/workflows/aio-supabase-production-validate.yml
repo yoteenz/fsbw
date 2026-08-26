@@ -275,6 +275,7 @@ jobs:
           set +x
           npm run test -- src/freight/demoProductionIsolation.test.ts
           bash scripts/check-isolation.sh
+          bash scripts/check-toolchain-boundary.sh
           bash scripts/ci/aio-record-result.sh demoIsolation PASS
 
       - name: Freight unit tests

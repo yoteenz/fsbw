@@ -39,6 +39,9 @@ export default defineConfig({
     react(),
     ...(cloudMobilePreview ? [stripViteClientForCloudPreview()] : []),
   ],
+  css: {
+    postcss: path.resolve(__dirname, 'postcss.config.js'),
+  },
   resolve: {
     alias: {
       '@': path.resolve(__dirname, 'src'),
