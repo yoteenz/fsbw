@@ -79,8 +79,7 @@ jobs:
           fi
           npx --yes "supabase@${SUPABASE_CLI_VERSION}" link \
             --project-ref "$AIO_CANONICAL_PROJECT_REF" \
-            --password "$SUPABASE_DB_PASSWORD" \
-            --yes
+            --password "$SUPABASE_DB_PASSWORD"
 
       - name: Project guard (post-link)
         shell: bash

@@ -54855,3 +54855,15 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Status:** PRODUCTION READY WITH DEFERRED EXTERNAL INTEGRATIONS. DO NOT DEPLOY.
 
+---
+
+## 2026-08-26 — AIO Supabase validation workflow result recorder fix
+
+- **Context:** First live run of `aio-supabase-production-validate.yml` failed after project guard PASS — `aio-record-result.sh` line 13 generated invalid JS `data[] = detail` (SyntaxError). Project guard unchanged.
+
+- **Root cause:** Unquoted bash heredoc (`<<NODE`) caused backticks in JS template literal `` data[`${key}Detail`] `` to be interpreted as shell command substitution; `${key}` was empty/unbound in shell → malformed JavaScript.
+
+- **Fix:** Moved recording logic to `scripts/ci/aio-record-result.mjs` (JSON-safe); shell wrapper passes argv only. Added `aio-record-result.test.sh` smoke tests. Workflow call sites unchanged (already correct KEY STATUS [detail]).
+
+- **Commit:** sync-only; founder re-runs workflow manually.
+
