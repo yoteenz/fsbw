@@ -42,6 +42,7 @@ const checks = [
   ['financialPrivacy', r.financialPrivacy],
   ['demoIsolation', r.demoIsolation],
   ['productionBuild', r.productionBuild],
+  ['migrationHistory', r.migrationHistory?.historyStatus ?? r.migrationHistory],
 ];
 
 for (const [name, status] of checks) {
@@ -99,6 +100,7 @@ const lines = [
   `| FINANCIAL PRIVACY | ${norm(r.financialPrivacy)} |`,
   `| DEMO ISOLATION | ${norm(r.demoIsolation)} |`,
   `| PRODUCTION BUILD | ${norm(r.productionBuild)} |`,
+  `| MIGRATION HISTORY | ${norm(r.migrationHistory?.historyStatus ?? r.migrationHistory)} |`,
   '',
   `## FINAL STATUS`,
   '',

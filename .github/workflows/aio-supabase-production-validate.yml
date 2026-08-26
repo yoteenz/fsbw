@@ -85,6 +85,12 @@ jobs:
         shell: bash
         run: bash scripts/ci/aio-project-guard.sh post-link
 
+      - name: Migration history check (fail before db push)
+        shell: bash
+        run: |
+          set +x
+          bash scripts/ci/aio-migration-history-check.sh
+
       - name: Apply migrations
         id: migrate
         shell: bash
