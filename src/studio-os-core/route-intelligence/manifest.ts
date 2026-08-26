@@ -197,6 +197,9 @@ export function buildDesignRouteManifest(input: {
   failures: StudioWorldDesignRouteManifest['failures'];
   reachabilitySummaries: ReachabilitySummary[];
   referenceMigration?: StudioWorldDesignRouteManifest['referenceMigration'];
+  projectPageSets?: StudioWorldDesignRouteManifest['projectPageSets'];
+  pageSetCompilation?: StudioWorldDesignRouteManifest['pageSetCompilation'];
+  pageSetOverrides?: StudioWorldDesignRouteManifest['pageSetOverrides'];
 }): StudioWorldDesignRouteManifest {
   const coverageSummaries = input.projects.map((p) =>
     buildCoverageSummary(
@@ -246,5 +249,8 @@ export function buildDesignRouteManifest(input: {
     failures: input.failures,
     forensicReportId: input.forensicReportId,
     referenceMigration: input.referenceMigration,
+    projectPageSets: input.projectPageSets ?? [],
+    pageSetCompilation: input.pageSetCompilation,
+    pageSetOverrides: input.pageSetOverrides ?? [],
   };
 }

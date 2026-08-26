@@ -1,9 +1,72 @@
-/** P0.VR.3C — Design family consolidation + reference necessity audit */
-export const DESIGN_ROUTE_MANIFEST_VERSION = '3.0.0';
-export const DESIGN_ROUTE_MANIFEST_SCHEMA_VERSION = 'studio-world-design-route-manifest@3';
-/** Prior schemas for diff/migration */
+/** P0.VR.3F — Website page compiler integrated with design manifest */
+export const DESIGN_ROUTE_MANIFEST_VERSION = '3.1.0';
+export const DESIGN_ROUTE_MANIFEST_SCHEMA_VERSION = 'studio-world-design-route-manifest@3.1';
+/** Prior schemas */
+export const DESIGN_ROUTE_MANIFEST_SCHEMA_V3 = 'studio-world-design-route-manifest@3';
 export const DESIGN_ROUTE_MANIFEST_SCHEMA_V2 = 'studio-world-design-route-manifest@2';
 export const DESIGN_ROUTE_MANIFEST_SCHEMA_V1 = 'studio-world-design-route-manifest@1';
+export const PROJECT_PAGE_SET_SCHEMA_VERSION = 'studio-world-project-page-set@1';
+
+export const PROJECT_WEBSITE_EXPERIENCE_CLASSES = [
+  'PUBLIC_WEBSITE',
+  'CUSTOMER_FLOW',
+  'COMMERCE_FLOW',
+  'ACCOUNT_FLOW',
+  'AUTH_FLOW',
+  'MEMBERSHIP_FLOW',
+  'PORTAL_FLOW',
+  'CLIENT_WORKFLOW',
+  'CONTENT_EXPERIENCE',
+  'IMMERSIVE_EXPERIENCE',
+  'SUPPORT_FLOW',
+  'FOUNDER_WORKSPACE',
+  'ADMIN_INTERNAL',
+  'SYSTEM_INTERNAL',
+  'DEV_ONLY',
+  'HISTORICAL',
+] as const;
+
+export const PRIMARY_EXPERIENCE_CLASSES = [
+  'PUBLIC_WEBSITE',
+  'CUSTOMER_FLOW',
+  'COMMERCE_FLOW',
+  'ACCOUNT_FLOW',
+  'AUTH_FLOW',
+  'MEMBERSHIP_FLOW',
+  'PORTAL_FLOW',
+  'CLIENT_WORKFLOW',
+  'CONTENT_EXPERIENCE',
+  'IMMERSIVE_EXPERIENCE',
+  'SUPPORT_FLOW',
+] as const;
+
+export const COMPILED_PAGE_STATUSES = [
+  'IMPLEMENTED',
+  'IMPLEMENTED_PARTIAL',
+  'IMPLEMENTATION_MISSING',
+  'REFERENCE_MISSING',
+  'REFERENCE_CANONICAL',
+  'NEEDS_REBUILD',
+  'INHERITS_FAMILY_REFERENCE',
+  'ASSET_ONLY',
+  'STATE_DERIVED',
+  'CONTENT_ONLY',
+  'DATA_ONLY',
+  'BLOCKED',
+] as const;
+
+export const PAGE_COMPILATION_CONFIDENCE_LEVELS = ['HIGH', 'MEDIUM', 'LOW'] as const;
+
+export const CUSTOMER_JOURNEY_STAGES = [
+  'ENTRY',
+  'DISCOVERY',
+  'CONSIDERATION',
+  'CONFIGURATION',
+  'CONVERSION',
+  'ACCOUNT',
+  'RETENTION',
+  'SUPPORT',
+] as const;
 
 export const MANIFEST_ARTIFACT_FILENAME = 'studio-world-design-route-manifest.json';
 export const MANIFEST_ARTIFACT_RELATIVE_PATH = `public/studio-world/${MANIFEST_ARTIFACT_FILENAME}`;

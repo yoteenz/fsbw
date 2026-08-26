@@ -1,8 +1,15 @@
 export {
   DESIGN_ROUTE_MANIFEST_VERSION,
   DESIGN_ROUTE_MANIFEST_SCHEMA_VERSION,
+  DESIGN_ROUTE_MANIFEST_SCHEMA_V3,
   DESIGN_ROUTE_MANIFEST_SCHEMA_V2,
   DESIGN_ROUTE_MANIFEST_SCHEMA_V1,
+  PROJECT_PAGE_SET_SCHEMA_VERSION,
+  PROJECT_WEBSITE_EXPERIENCE_CLASSES,
+  PRIMARY_EXPERIENCE_CLASSES,
+  COMPILED_PAGE_STATUSES,
+  PAGE_COMPILATION_CONFIDENCE_LEVELS,
+  CUSTOMER_JOURNEY_STAGES,
   MANIFEST_ARTIFACT_FILENAME,
   MANIFEST_ARTIFACT_RELATIVE_PATH,
   VIEWPORT_CLASSES,
@@ -88,6 +95,22 @@ export { buildAllCoverage, buildViewportCoverage } from './viewport-coverage';
 export { discoverProjectRoutes, discoverAllProjectRoutes } from './discovery/project-adapters';
 
 export { buildDependencyGraph, buildVisualStates } from './dependency-graph';
+
+export {
+  classifyWebsiteExperience,
+  isPrimaryExperience,
+  isExcludedFromPrimary,
+} from './experience-classifier';
+
+export {
+  compileProjectWebsitePageSet,
+  compileAllProjectWebsitePageSets,
+  attachPageSetsToManifest,
+  groupCompiledPagesForSelector,
+  pageStatusBadge,
+} from './website-page-compiler';
+
+export { diffProjectWebsitePageSets } from './page-set-diff';
 
 export { scanRouteFile } from './discovery/source-scanner';
 export { displayNameFromRoute } from './route-labels';

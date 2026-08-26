@@ -27,6 +27,14 @@ import {
   displayNameFromRoute,
   DESIGN_ROUTE_MANIFEST_VERSION,
   DESIGN_ROUTE_MANIFEST_SCHEMA_VERSION,
+  PROJECT_PAGE_SET_SCHEMA_VERSION,
+  PRIMARY_EXPERIENCE_CLASSES,
+  attachPageSetsToManifest,
+  groupCompiledPagesForSelector,
+  diffProjectWebsitePageSets,
+  isPrimaryExperience,
+  isExcludedFromPrimary,
+  pageStatusBadge,
   RECONSTRUCTION_PIPELINE_ID,
   PRODUCT_ASSET_PIPELINE_ID,
 } from './index';
@@ -120,7 +128,7 @@ describe('P0.VR.3 route intelligence', () => {
   it('generates versioned manifest with source commit', () => {
     const { manifest } = runCrossProjectRouteForensicAudit({ repoRoot: REPO_ROOT });
     expect(manifest.manifestVersion).toBe(DESIGN_ROUTE_MANIFEST_VERSION);
-    expect(manifest.manifestVersion).toBe('3.0.0');
+    expect(manifest.manifestVersion).toBe('3.1.0');
     expect(manifest.sourceCommit.length).toBeGreaterThan(5);
     expect(manifest.projects.length).toBeGreaterThan(0);
     expect(manifest.rawImplementationRoutes.length).toBeGreaterThan(100);
@@ -263,7 +271,7 @@ describe('P0.VR.3 route intelligence', () => {
 describe('P0.VR.3B reachability normalization', () => {
   it('bumps manifest schema to v3 with design families', () => {
     const { manifest } = runCrossProjectRouteForensicAudit({ repoRoot: REPO_ROOT });
-    expect(manifest.manifestVersion).toBe('3.0.0');
+    expect(manifest.manifestVersion).toBe('3.1.0');
     expect(manifest.schemaVersion).toBe(DESIGN_ROUTE_MANIFEST_SCHEMA_VERSION);
     expect(manifest.schemaVersion).toContain('@3');
     expect(manifest.rawImplementationRoutes.length).toBeGreaterThan(0);
@@ -482,5 +490,169 @@ describe('P0.VR.3C design family consolidation', () => {
     expect(PRODUCT_ASSET_PIPELINE_ID).toBe('P0.PAF');
     const assetAudit = necessityBadge('ASSET_ONLY_VARIANT');
     expect(assetAudit).toBe('ASSET ONLY');
+  });
+});
+
+describe('P0.VR.3F website page compiler', () => {
+  it('consumes current manifest and compiles all active projects', () => {
+    const { manifest } = runCrossProjectRouteForensicAudit({ repoRoot: REPO_ROOT });
+    expect(manifest.manifestVersion).toBe('3.1.0');
+    expect(manifest.projectPageSets?.length).toBeGreaterThanOrEqual(4);
+    expect(manifest.pageSetCompilation?.pageSetSchemaVersion).toBe(PROJECT_PAGE_SET_SCHEMA_VERSION);
+    const ids = manifest.projectPageSets!.map((p) => p.projectId);
+    expect(ids).toContain('frontal-slayer');
+    expect(ids).toContain('site00');
+    expect(ids).toContain('all-in-one-enterprise');
+    expect(ids).toContain('ndxbook');
+  });
+
+  it('excludes internal routes from primary page set', () => {
+    const { manifest } = runCrossProjectRouteForensicAudit({ repoRoot: REPO_ROOT });
+    const fs = manifest.projectPageSets!.find((p) => p.projectId === 'frontal-slayer')!;
+    const primary = fs.compiledPages.filter((p) => p.isPrimaryExperience);
+    expect(primary.every((p) => !isExcludedFromPrimary(p.experienceClassification))).toBe(true);
+    expect(primary.some((p) => p.experienceClassification === 'ADMIN_INTERNAL')).toBe(false);
+    expect(fs.excludedInternalIds.length).toBeGreaterThan(0);
+  });
+
+  it('includes missing required pages with evidence gate for implied routes', () => {
+    const { manifest } = runCrossProjectRouteForensicAudit({ repoRoot: REPO_ROOT });
+    for (const ps of manifest.projectPageSets ?? []) {
+      for (const m of ps.missingPages) {
+        expect(m.implementationStatus).toBe('IMPLEMENTATION_MISSING');
+        if (m.pageId.includes('implied-page')) {
+          expect(m.dependencyEvidence.length).toBeGreaterThan(0);
+        }
+      }
+    }
+  });
+
+  it('preserves mobile tablet desktop on compiled pages', () => {
+    const { manifest } = runCrossProjectRouteForensicAudit({ repoRoot: REPO_ROOT });
+    const page = manifest.projectPageSets![0]!.compiledPages[0];
+    expect(page?.mobileStatus).toBeDefined();
+    expect(page?.tabletStatus).toBeDefined();
+    expect(page?.desktopStatus).toBeDefined();
+  });
+
+  it('keeps Frontal Slayer PDPs asset-only and prevents BAW route explosion in primary set', () => {
+    const { manifest } = runCrossProjectRouteForensicAudit({ repoRoot: REPO_ROOT });
+    const fs = manifest.projectPageSets!.find((p) => p.projectId === 'frontal-slayer')!;
+    const primary = fs.compiledPages.filter((p) => p.isPrimaryExperience);
+    const pdpPrimary = primary.filter((p) => p.displayName === 'Product Page');
+    expect(pdpPrimary.length).toBeLessThanOrEqual(1);
+    if (pdpPrimary[0]) {
+      expect(['ASSET_ONLY', 'INHERITS_FAMILY_REFERENCE', 'CONTENT_ONLY']).toContain(pdpPrimary[0].mobileStatus);
+    }
+    const bawPrimary = primary.filter((p) => /build-a-wig/i.test(p.displayName));
+    expect(bawPrimary.length).toBeLessThan(20);
+    expect(primary.length).toBeLessThan(
+      manifest.designScreens!.filter((s) => s.projectId === 'frontal-slayer').length,
+    );
+  });
+
+  it('separates AIO public from portal and classifies office as founder workspace', () => {
+    const { manifest } = runCrossProjectRouteForensicAudit({ repoRoot: REPO_ROOT });
+    const aio = manifest.projectPageSets!.find((p) => p.projectId === 'all-in-one-enterprise')!;
+    const primary = aio.compiledPages.filter((p) => p.isPrimaryExperience);
+    const portals = primary.filter((p) => p.experienceClassification === 'PORTAL_FLOW');
+    const office = aio.compiledPages.filter((p) => p.experienceClassification === 'FOUNDER_WORKSPACE');
+    expect(portals.length).toBeGreaterThan(0);
+    expect(office.length).toBeGreaterThan(0);
+    expect(primary.some((p) => p.experienceGroup === 'OFFICE')).toBe(false);
+  });
+
+  it('excludes SITE 00 design host from primary website set', () => {
+    const { manifest } = runCrossProjectRouteForensicAudit({ repoRoot: REPO_ROOT });
+    const site = manifest.projectPageSets!.find((p) => p.projectId === 'site00')!;
+    const primary = site.compiledPages.filter((p) => p.isPrimaryExperience);
+    expect(primary.every((p) => !p.representativeRoute.startsWith('/bluprint'))).toBe(true);
+    expect(site.excludedInternalIds.length).toBeGreaterThan(0);
+  });
+
+  it('classifies NDXBOOK workspace vs content', () => {
+    const { manifest } = runCrossProjectRouteForensicAudit({ repoRoot: REPO_ROOT });
+    const ndx = manifest.projectPageSets!.find((p) => p.projectId === 'ndxbook')!;
+    expect(ndx.compiledPages.length).toBeGreaterThan(0);
+    expect(
+      ndx.compiledPages.some(
+        (p) =>
+          p.experienceClassification === 'FOUNDER_WORKSPACE' ||
+          p.experienceClassification === 'CONTENT_EXPERIENCE',
+      ),
+    ).toBe(true);
+  });
+
+  it('supports primary and all designable selector modes', () => {
+    const { manifest } = runCrossProjectRouteForensicAudit({ repoRoot: REPO_ROOT });
+    const fs = manifest.projectPageSets!.find((p) => p.projectId === 'frontal-slayer')!;
+    const primaryGroups = groupCompiledPagesForSelector(fs, 'PRIMARY');
+    const allGroups = groupCompiledPagesForSelector(fs, 'ALL_DESIGNABLE');
+    const primaryFlat = Object.values(primaryGroups).flat();
+    const allFlat = Object.values(allGroups).flat();
+    expect(new Set(primaryFlat.map((p) => p.pageId)).size).toBe(fs.primaryPageIds.length);
+    expect(allFlat.length).toBeGreaterThanOrEqual(new Set(allFlat.map((p) => p.pageId)).size);
+    const site = manifest.projectPageSets!.find((p) => p.projectId === 'site00')!;
+    expect(site.supportingPageIds.length).toBeGreaterThan(0);
+  });
+
+  it('orders pages by journey not alphabetically', () => {
+    const { manifest } = runCrossProjectRouteForensicAudit({ repoRoot: REPO_ROOT });
+    const fs = manifest.projectPageSets!.find((p) => p.projectId === 'frontal-slayer')!;
+    const orders = fs.compiledPages.filter((p) => p.isPrimaryExperience).map((p) => p.journeyOrder);
+    const sorted = [...orders].sort((a, b) => a - b);
+    expect(orders).toEqual(sorted);
+  });
+
+  it('detects dead-end flows and exposes screenshot capture metadata', () => {
+    const { manifest } = runCrossProjectRouteForensicAudit({ repoRoot: REPO_ROOT });
+    const fs = manifest.projectPageSets!.find((p) => p.projectId === 'frontal-slayer')!;
+    expect(Array.isArray(fs.deadEndAudits)).toBe(true);
+    const capture = fs.compiledPages.filter((p) => p.captureEligible && p.isPrimaryExperience);
+    expect(capture.length).toBeGreaterThan(0);
+    expect(capture[0]?.representativeRoute).toBeTruthy();
+  });
+
+  it('versioned page set diff detects changes', () => {
+    const { manifest } = runCrossProjectRouteForensicAudit({ repoRoot: REPO_ROOT });
+    const empty: typeof manifest.projectPageSets = [];
+    const diff = diffProjectWebsitePageSets(empty, manifest.projectPageSets ?? [], {
+      previousGeneratedAt: '2020-01-01',
+      currentGeneratedAt: manifest.pageSetCompilation!.generatedAt,
+      sourceManifestVersion: manifest.manifestVersion,
+    });
+    expect(diff.pageSetSchemaVersion).toBe(PROJECT_PAGE_SET_SCHEMA_VERSION);
+    expect(diff.entries.some((e) => e.type === 'PAGE_ADDED')).toBe(true);
+  });
+
+  it('primary experience classes match founder-facing rule', () => {
+    expect(PRIMARY_EXPERIENCE_CLASSES).not.toContain('ADMIN_INTERNAL');
+    expect(PRIMARY_EXPERIENCE_CLASSES).toContain('COMMERCE_FLOW');
+    expect(isPrimaryExperience('PUBLIC_WEBSITE')).toBe(true);
+    expect(isExcludedFromPrimary('DEV_ONLY')).toBe(true);
+  });
+
+  it('attachPageSetsToManifest preserves raw routes and project isolation', () => {
+    const { manifest } = runCrossProjectRouteForensicAudit({ repoRoot: REPO_ROOT });
+    const attached = attachPageSetsToManifest(manifest);
+    expect(attached.rawImplementationRoutes.length).toBe(manifest.rawImplementationRoutes.length);
+    const fsPages = attached.projectPageSets!.find((p) => p.projectId === 'frontal-slayer')!;
+    expect(fsPages.compiledPages.every((p) => p.projectId === 'frontal-slayer')).toBe(true);
+  });
+
+  it('family inherited pages use FAMILY badge not unique ref requirement', () => {
+    const { manifest } = runCrossProjectRouteForensicAudit({ repoRoot: REPO_ROOT });
+    const inherited = manifest
+      .projectPageSets!.flatMap((p) => p.compiledPages)
+      .filter((p) => p.compiledStatus === 'INHERITS_FAMILY_REFERENCE');
+    if (inherited.length > 0) {
+      expect(pageStatusBadge(inherited[0]!.compiledStatus)).toBe('FAMILY');
+    }
+  });
+
+  it('does not delete source routes when compiling page sets', () => {
+    const first = runCrossProjectRouteForensicAudit({ repoRoot: REPO_ROOT });
+    const second = runCrossProjectRouteForensicAudit({ repoRoot: REPO_ROOT });
+    expect(first.manifest.rawImplementationRoutes.length).toBe(second.manifest.rawImplementationRoutes.length);
   });
 });

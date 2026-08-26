@@ -3,8 +3,11 @@ export type * from './types';
 export {
   DESIGN_ROUTE_MANIFEST_VERSION,
   DESIGN_ROUTE_MANIFEST_SCHEMA_VERSION,
+  DESIGN_ROUTE_MANIFEST_SCHEMA_V3,
   DESIGN_ROUTE_MANIFEST_SCHEMA_V2,
   DESIGN_ROUTE_MANIFEST_SCHEMA_V1,
+  PROJECT_PAGE_SET_SCHEMA_VERSION,
+  PRIMARY_EXPERIENCE_CLASSES,
   MANIFEST_ARTIFACT_FILENAME,
   VIEWPORT_CLASSES,
   DEFAULT_VIEWPORT_DIMENSIONS,
@@ -40,6 +43,13 @@ export { displayNameFromRoute } from './route-labels';
 export { necessityBadge } from './reference-necessity-auditor';
 
 export { resolveEffectiveDesignReference, isGenerationRequired } from './effective-reference-resolver';
+
+export {
+  groupCompiledPagesForSelector,
+  pageStatusBadge,
+} from './website-page-compiler';
+
+export { isPrimaryExperience, isExcludedFromPrimary } from './experience-classifier';
 
 export function groupDesignFamiliesForDropdown(
   families: import('./types').DesignFamilyRecord[],

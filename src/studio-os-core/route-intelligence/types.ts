@@ -11,6 +11,10 @@ import type {
   ROUTE_ENTRY_EVIDENCE_TYPES,
   ROUTE_FAMILIES,
   ROUTE_REACHABILITY_CLASSES,
+  PROJECT_WEBSITE_EXPERIENCE_CLASSES,
+  COMPILED_PAGE_STATUSES,
+  PAGE_COMPILATION_CONFIDENCE_LEVELS,
+  CUSTOMER_JOURNEY_STAGES,
   VIEWPORT_CLASSES,
 } from './constants';
 
@@ -27,6 +31,10 @@ export type DesignFamilyConfidence = (typeof DESIGN_FAMILY_CONFIDENCE_LEVELS)[nu
 export type DesignFamilyStatus = (typeof DESIGN_FAMILY_STATUSES)[number];
 export type InheritanceStatus = (typeof INHERITANCE_STATUSES)[number];
 export type ReferenceAuthorityLevel = (typeof REFERENCE_AUTHORITY_LEVELS)[number];
+export type ProjectWebsiteExperienceClassification = (typeof PROJECT_WEBSITE_EXPERIENCE_CLASSES)[number];
+export type CompiledPageStatus = (typeof COMPILED_PAGE_STATUSES)[number];
+export type PageCompilationConfidence = (typeof PAGE_COMPILATION_CONFIDENCE_LEVELS)[number];
+export type CustomerJourneyStage = (typeof CUSTOMER_JOURNEY_STAGES)[number];
 
 export type RouteType =
   | 'PAGE'
@@ -503,6 +511,9 @@ export type StudioWorldDesignRouteManifest = {
     conflicts: string[];
     deleted: string[];
   };
+  projectPageSets: ProjectWebsitePageSet[];
+  pageSetCompilation?: ProjectPageSetCompilationMeta;
+  pageSetOverrides?: PageSetOverrideRecord[];
 };
 
 export type CrossProjectRouteForensicReport = {
@@ -640,4 +651,138 @@ export type ReferenceBatchPreview = {
   model: string;
   estimatedCostUsd?: number;
   generationRequestsAvoided: number;
+};
+
+export type CompiledWebsitePageRecord = {
+  pageId: string;
+  projectId: string;
+  designScreenId: string;
+  displayName: string;
+  experienceGroup: string;
+  experienceClassification: ProjectWebsiteExperienceClassification;
+  representativeRoute: string;
+  designFamilyId?: string;
+  instanceCount: number;
+  priority: DesignRoutePriority;
+  journeyStage: CustomerJourneyStage;
+  journeyOrder: number;
+  compiledStatus: CompiledPageStatus;
+  referencePolicy: ReferenceNecessityClassification;
+  implementationStatus: ImplementationCoverageStatus;
+  mobileStatus: CompiledPageStatus;
+  tabletStatus: CompiledPageStatus;
+  desktopStatus: CompiledPageStatus;
+  visualStateIds: string[];
+  isPrimaryExperience: boolean;
+  isMissingPage: boolean;
+  confidence: PageCompilationConfidence;
+  captureEligible: boolean;
+  authContext?: 'anonymous' | 'authenticated' | 'admin';
+  effectiveReferenceHandoff: boolean;
+};
+
+export type RequiredWebsitePageRecord = {
+  pageId: string;
+  projectId: string;
+  displayName: string;
+  suggestedRoute: string;
+  experienceClassification: ProjectWebsiteExperienceClassification;
+  parentFlow: string;
+  requiredByPageIds: string[];
+  dependencyEvidence: RouteEvidence[];
+  designFamilyCandidate?: string;
+  referenceStatus: CompiledPageStatus;
+  implementationStatus: 'IMPLEMENTATION_MISSING';
+  priority: DesignRoutePriority;
+  journeyStage: CustomerJourneyStage;
+};
+
+export type CustomerFlowDeadEndAudit = {
+  projectId: string;
+  flowId: string;
+  flowLabel: string;
+  deadEndRoute: string;
+  missingTerminal?: string;
+  severity: 'CRITICAL' | 'WARNING';
+};
+
+export type ProjectCustomerJourneyIndex = {
+  projectId: string;
+  stages: Array<{
+    stage: CustomerJourneyStage;
+    pageIds: string[];
+    order: number;
+  }>;
+};
+
+export type ProjectWebsitePageSet = {
+  projectId: string;
+  displayName: string;
+  primaryPageIds: string[];
+  supportingPageIds: string[];
+  missingRequiredPageIds: string[];
+  visualStateIds: string[];
+  excludedInternalIds: string[];
+  designFamilyIds: string[];
+  compiledPages: CompiledWebsitePageRecord[];
+  missingPages: RequiredWebsitePageRecord[];
+  journeyIndex: ProjectCustomerJourneyIndex;
+  deadEndAudits: CustomerFlowDeadEndAudit[];
+  viewportCoverage: {
+    mobile: { primary: number; missingRef: number };
+    tablet: { primary: number; missingRef: number };
+    desktop: { primary: number; missingRef: number };
+  };
+  status: 'COMPLETE' | 'HAS_MISSING' | 'HAS_DEAD_ENDS' | 'REVIEW_REQUIRED';
+  summary: {
+    totalPrimaryPages: number;
+    implemented: number;
+    missing: number;
+    referenceMissing: number;
+    inheritsFamily: number;
+    assetOnly: number;
+    internalExcluded: number;
+  };
+};
+
+export type PageSetOverrideRecord = {
+  pageId: string;
+  projectId: string;
+  overrideType: 'MARK_PRIMARY' | 'MARK_SUPPORTING' | 'MARK_INTERNAL' | 'MARK_MISSING_REQUIRED' | 'CHANGE_FAMILY' | 'CHANGE_ORDER';
+  value: string;
+  createdAt: string;
+};
+
+export type ProjectWebsitePageSetDiffType =
+  | 'PAGE_ADDED'
+  | 'PAGE_REMOVED'
+  | 'PAGE_RECLASSIFIED'
+  | 'MISSING_PAGE_ADDED'
+  | 'MISSING_PAGE_RESOLVED'
+  | 'STATE_ADDED'
+  | 'FAMILY_CHANGED'
+  | 'VIEWPORT_REQUIREMENT_CHANGED';
+
+export type ProjectWebsitePageSetDiffEntry = {
+  type: ProjectWebsitePageSetDiffType;
+  projectId: string;
+  pageId?: string;
+  previous?: string;
+  current?: string;
+  detail: string;
+};
+
+export type ProjectWebsitePageSetDiff = {
+  pageSetSchemaVersion: string;
+  previousGeneratedAt: string;
+  currentGeneratedAt: string;
+  sourceManifestVersion: string;
+  entries: ProjectWebsitePageSetDiffEntry[];
+};
+
+export type ProjectPageSetCompilationMeta = {
+  pageSetSchemaVersion: string;
+  generatedAt: string;
+  sourceManifestVersion: string;
+  sourceCommit: string;
 };

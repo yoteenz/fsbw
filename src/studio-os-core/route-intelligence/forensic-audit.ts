@@ -17,6 +17,7 @@ import { buildDependencyGraph, buildVisualStates, linkParentChildRoutes } from '
 import { discoverAllReferences } from './reference-discovery';
 import { buildAllCoverage } from './viewport-coverage';
 import { buildDesignRouteManifest } from './manifest';
+import { attachPageSetsToManifest } from './website-page-compiler';
 import { collectForensicFailuresV2 } from './manifest-diff';
 import { buildAllDesignFamilies } from './design-family-consolidator';
 import {
@@ -247,7 +248,7 @@ export function runCrossProjectRouteForensicAudit(options: AuditOptions): {
 
   report.failures = collectForensicFailuresV2(report, allRoutes);
 
-  const manifest = buildDesignRouteManifest({
+  const baseManifest = buildDesignRouteManifest({
     projects: listDesignableProjects(),
     rawImplementationRoutes: allRoutes,
     routeTemplates: allTemplates,
@@ -267,6 +268,8 @@ export function runCrossProjectRouteForensicAudit(options: AuditOptions): {
     reachabilitySummaries,
     referenceMigration: buildReferenceMigrationMap(allRoutes, allDesignScreens),
   });
+
+  const manifest = attachPageSetsToManifest(baseManifest);
 
   report.coverageSummaries = manifest.coverageSummaries;
 

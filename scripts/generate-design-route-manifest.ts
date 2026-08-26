@@ -1,6 +1,6 @@
 #!/usr/bin/env npx tsx
 /**
- * P0.VR.3C — Generate studio-world-design-route-manifest.json (design families + reference necessity).
+ * P0.VR.3F — Generate studio-world-design-route-manifest.json (design families + page sets).
  * Usage: npx tsx scripts/generate-design-route-manifest.ts [--stdout]
  */
 import { writeFileSync, mkdirSync, existsSync } from 'node:fs';
@@ -9,6 +9,7 @@ import { fileURLToPath } from 'node:url';
 import {
   runCrossProjectRouteForensicAudit,
   registerMissingRoutesAsDesignable,
+  attachPageSetsToManifest,
   MANIFEST_ARTIFACT_RELATIVE_PATH,
 } from '../src/studio-os-core/route-intelligence/index.ts';
 
@@ -22,7 +23,7 @@ function main() {
     baseManifest.rawImplementationRoutes,
     baseManifest.dependencyGraphs,
   );
-  const manifest = { ...baseManifest, rawImplementationRoutes: routesWithMissing, routes: routesWithMissing };
+  const manifest = attachPageSetsToManifest({ ...baseManifest, rawImplementationRoutes: routesWithMissing, routes: routesWithMissing });
 
   const json = JSON.stringify(manifest, null, 2);
 
@@ -36,19 +37,21 @@ function main() {
   if (!existsSync(outDir)) mkdirSync(outDir, { recursive: true });
   writeFileSync(outPath, json, 'utf8');
 
-  console.log('P0.VR.3C Design Route Manifest generated');
+  console.log('P0.VR.3F Design Route Manifest generated');
   console.log(`  path: ${MANIFEST_ARTIFACT_RELATIVE_PATH}`);
   console.log(`  commit: ${manifest.sourceCommit}`);
   console.log(`  schema: ${manifest.schemaVersion}`);
   console.log(`  design screens: ${manifest.designScreens?.length ?? 0}`);
   console.log(`  design families: ${manifest.designFamilies?.length ?? 0}`);
+  console.log(`  project page sets: ${manifest.projectPageSets?.length ?? 0}`);
   console.log(`  raw implementation routes: ${manifest.rawImplementationRoutes.length}`);
   console.log(`  true orphans: ${report.orphanedCount}`);
   console.log('');
   for (const p of report.perProject) {
     const savings = manifest.referenceGenerationSavings?.find((s) => s.projectId === p.projectId);
+    const pageSet = manifest.projectPageSets?.find((ps) => ps.projectId === p.projectId);
     console.log(
-      `  ${p.projectId}: screens=${p.designScreens} families=${p.designFamilies} uniqueRefs=${p.uniqueReferencesRequired} avoided=${savings?.generationRequestsAvoided ?? 0}`,
+      `  ${p.projectId}: screens=${p.designScreens} families=${p.designFamilies} uniqueRefs=${p.uniqueReferencesRequired} avoided=${savings?.generationRequestsAvoided ?? 0} primaryPages=${pageSet?.summary.totalPrimaryPages ?? 0} missing=${pageSet?.summary.missing ?? 0}`,
     );
   }
 }

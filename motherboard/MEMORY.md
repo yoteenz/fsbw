@@ -54603,3 +54603,21 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Commands:** Regenerate `npm run audit:design-routes`; sync `./scripts/agent-commit.sh --sync-only`.
 
+---
+
+## 2026-08-26 — P0.VR.3C Design family consolidation + reference necessity audit + generation scope reduction
+
+- **Context:** Follow-up after P0.VR.3B normalized 939 design screens — still too granular to treat each as independent MOBILE+TABLET+DESKTOP reference job. Second normalization layer: DESIGN SCREEN → DESIGN FAMILY → REFERENCE NECESSITY. Distinguish "new screen exists" from "new visual design required."
+
+- **Models:** `DesignFamilyRecord`, `DesignFamilyDifferenceProfile`, `DesignFamilyReferenceAuthority`, `DesignScreenReferenceInheritance`, `ReferenceNecessityAuditRecord`, `ReferenceNecessityClassification` (UNIQUE/SHARED_FAMILY/VIEWPORT_SPECIFIC/STATE_DERIVED/CONTENT_ONLY/ASSET_ONLY/DATA_ONLY/NO_NEW_REF/UNKNOWN_REVIEW). `resolveEffectiveDesignReference()` + P0.VR.2 handoff via `buildEffectiveReferenceAuthorityHandoff`.
+
+- **Modules:** `design-family-consolidator.ts` (project adapter rules: PDP, BAW, checkout, account, mansion, SITE 00 assessment/info, AIO portal/office, NDXBOOK workspace; route-family singleton batch merge), `reference-necessity-auditor.ts` (per-viewport classification + generation savings), `effective-reference-resolver.ts`.
+
+- **Manifest v3:** `3.0.0` / `studio-world-design-route-manifest@3` — adds `designFamilies`, `referenceNecessityAudits`, `familyReferenceAuthorities`, `screenReferenceInheritances`, `referenceGenerationSavings`. Needs Reference queue deduplicates inherited screens; batch preview shows DESIGN SCREENS COVERED vs REFERENCES TO GENERATE.
+
+- **Re-audit:** 939 screens → **811 design families**. FS: 492 screens / 402 families — potential 1476 viewport jobs → **113 unique refs required**, 258 generation requests avoided (1071 content-only, 236 family-inherited). Product PDP → ASSET_ONLY (P0.PAF). BAW merged into 1 family. NDXBOOK: 11 screens / 3 families / 2 unique refs (no over-collapse).
+
+- **BLUPRINT UI:** DESIGN FAMILIES view toggle, reference policy badges (UNIQUE/FAMILY/ASSET ONLY/etc.), batch generation preview, Reference Policy Review queue; family forensics in Inspect.
+
+- **Tests:** 52 pass (9 new P0.VR.3C). Build green.
+
