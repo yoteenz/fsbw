@@ -128,6 +128,7 @@ export default function BluprintDesignHubPage() {
   const composerRegistry = useComposerPageRegistry(manifest);
   const composerQueue = composerRegistry ? buildComposerCreatedPagesReviewQueue(composerRegistry) : [];
   const fsbwCompletion = manifest.fsbwMissingRouteCompletion;
+  const familyDerivation = manifest.fsbwFamilyDerivedMissingTargets;
   const externalMissing = fsbwCompletion?.externalRepoOwned ?? [];
 
   return (
@@ -224,6 +225,39 @@ export default function BluprintDesignHubPage() {
                 {externalMissing.map((e) => `${e.projectId} (${e.count})`).join(', ')} — not built in FSBW.
               </p>
             ) : null}
+          </div>
+          <div>
+            <h3 className="site00-bluprint__section-title">
+              MISSING TARGETS · FAMILY DERIVATION ({familyDerivation?.targets.length ?? 0})
+            </h3>
+            {familyDerivation ? (
+              <>
+                <p className="site00-body">
+                  Ready:{' '}
+                  {familyDerivation.queue.filter((q) => q.group === 'READY_FOR_FAMILY_DERIVATION').length} · Needs
+                  sibling: {familyDerivation.queue.filter((q) => q.group === 'NEEDS_SIBLING_SELECTION').length} ·
+                  Shells: {familyDerivation.registry.sharedShells?.length ?? 0}
+                </p>
+                <ul className="site00-bluprint__queue">
+                  {familyDerivation.queue.slice(0, 8).map((item) => (
+                    <li key={item.target.targetId}>
+                      {item.target.displayName} · {item.target.projectId} · {item.target.targetType.replace(/_/g, ' ')} ·{' '}
+                      {item.group.replace(/_/g, ' ')}
+                    </li>
+                  ))}
+                </ul>
+                <div className="site00-bluprint__page-actions">
+                  <button type="button" className="site00-bluprint__btn" disabled title="Founder-triggered via API">
+                    DERIVE SELECTED TARGET
+                  </button>
+                  <button type="button" className="site00-bluprint__btn" disabled title="On-demand sibling capture">
+                    CAPTURE SOURCE SIBLING
+                  </button>
+                </div>
+              </>
+            ) : (
+              <p className="site00-body">Run compile:design-pages to scan missing targets (P0.VR.3L-FSBW).</p>
+            )}
           </div>
         </section>
 

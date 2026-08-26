@@ -54699,3 +54699,35 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Follow-up:** Wire founder review actions (KEEP/MOVE TO WORKSPACE/LOCK FOR CAPTURE) to persist overrides via API; further AIO singleton consolidation beyond service marketing family; founder LOCK FOR CAPTURE before backfill.
 
+---
+
+## 2026-08-26 — P0.VR.3K Founder curation actions + review governance + AIO batch review + Studio World audit + lock-for-capture + capture-plan normalization
+
+- **Context:** Complete P0.VR.3I partials — curation UI was read-only; split/merge appliers incomplete; no Studio World dedicated audit; flat AIO review queue (~92 items); no lock/stale/receipt governance. FSBW scope only: Frontal Slayer, Studio World, All In One Enterprises. SITE 00 / NDXBOOK = EXTERNAL_REPO_AUTHORITY (not curated from FSBW). No screenshot backfill, FAL, missing-page builds, or production deploy.
+
+- **Curation action service:** `experience-curation/curation-actions.ts` — `executeCurationAction()` + `startCurationReviewSession()`; actions KEEP/MOVE TO WORKSPACE/SUPPORTING/PROMOTE/DEMOTE (material/state/instance)/CHANGE SECTION/REPRESENTATIVE/SPLIT/MERGE/BATCH_*/LOCK/UNLOCK/UNDO; persists to `experience-curation-store.json`, recompiles manifest, emits `CurationActionReceipt` + `PageAbstractionReviewReceiptV2` + `ProjectCaptureLockReceipt`; `persist:false` + `storeOverride` for tests.
+
+- **Override appliers:** `override-applier.ts` — FORCE_MERGE/SPLIT/MATERIAL/INSTANCE/STATE complete; blocks cross-policy merges; merged pages superseded not deleted.
+
+- **Review groups:** `review-groups.ts` — FS buckets (customer/commerce/account/immersive/possible internal/low confidence); AIO buckets (public/services/auth/portals/load board/record detail/support/office/other) — not flat 92-item queue.
+
+- **Audits:** `fs-baw-material-audit.ts` (57 BAW material screens classified keep/state/instance/dup); `studio-world-audit.ts` (308 raw `/admin/studio*` routes → workspace vs system classification in store.studioWorldAudit).
+
+- **Gates + stale:** `curation-gates.ts` CURATED/LOCK gates; `stale-detection.ts` CurationSourceDiff + STALE on locked source change.
+
+- **Normalized plans:** `curation-plans.ts` — `NormalizedCapturePlan` + `NormalizedReferencePlan` + `buildFsbwCaptureScopeSummary()` (FSBW-owned only; excludes site00/ndxbook).
+
+- **API + CLI:** `POST /api/admin/studio-world-experience-curation`; `npm run apply:curation-action`.
+
+- **BLUPRINT UI:** Founder action buttons enabled on FSBW projects (KEEP/MOVE/LOCK/UNDO); review groups, BAW audit, capture plan preview, lock blockers; external-repo notice for SITE 00/NDXBOOK.
+
+- **Active curation (post-compile):** FS proposed 53 → active **29** (25 internal), 57 material screens, status CURATED, curation-v4. AIO proposed 104 → active **94** (11 service instances), 21 material screens, status CURATED. Studio World audit: 308 raw routes, 1 primary workspace XP proposed (asset generation), status CURATED in audit artifact.
+
+- **FSBW capture scope (normalized):** FS 258 actual targets (29 XP + 57 material × viewports policy); AIO 345 actual (94 XP + 21 material); FSBW total **603** actual / 369 theoretical page-viewport. SITE 00/NDXBOOK excluded.
+
+- **Lock:** Founder LOCK FOR CAPTURE wired; blockers empty when CURATED; no project locked yet (await founder).
+
+- **Tests:** 107 route-intelligence pass (16 new P0.VR.3K). Build green. Sync `[sync-only]`.
+
+- **Follow-up:** Founder batch review in UI (BATCH_MAKE_INSTANCES); Studio World needs fuller `/admin/studio` experience-page expansion beyond single workspace XP; founder LOCK FOR CAPTURE per project before P0.VR.3E backfill.
+

@@ -145,6 +145,22 @@ export {
   planComposerDraftSnapshots,
   FSBW_COMPOSER_PAGE_REGISTRY_RELATIVE_PATH,
   FSBW_MISSING_ROUTE_COMPLETION_SPRINT,
+  FSBW_FAMILY_DERIVATION_SPRINT,
+  runFamilyDerivedMissingTargetPipeline,
+  attachFamilyDerivedMissingTargetsToManifest,
+  classifyMissingDesignTarget,
+  deriveMissingTargetFromFamily,
+  selectBestFamilySibling,
+  captureFamilySiblingOnDemand,
+  analyzeShellPropagationImpact,
+  applyShellPropagation,
+  proposeShellChange,
+  buildSharedShellDependencyGraph,
+  validateCrossProjectPropagation,
+  validateFamilyFidelity,
+  characterLabVoiceLabFixture,
+  defaultPropagationScope,
+  targetTypePromotesToPage,
 } from './fsbw-missing-route-completion';
 
 export {

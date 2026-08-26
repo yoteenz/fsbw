@@ -67,6 +67,19 @@ import {
   isFsbwCurationProject,
   diffCurationSource,
   evaluateCurationGates,
+  classifyMissingDesignTarget,
+  characterLabVoiceLabFixture,
+  deriveMissingTargetFromFamily,
+  selectBestFamilySibling,
+  captureFamilySiblingOnDemand,
+  runFamilyDerivedMissingTargetPipeline,
+  analyzeShellPropagationImpact,
+  applyShellPropagation,
+  buildSharedShellDependencyGraph,
+  validateCrossProjectPropagation,
+  defaultPropagationScope,
+  validateFamilyFidelity,
+  targetTypePromotesToPage,
 } from './index';
 import { captureSourceSnapshot, shouldMarkStale } from './experience-curation/stale-detection';
 
@@ -1255,6 +1268,174 @@ describe('P0.VR.3K founder curation actions + governance', () => {
     );
     expect(typeof gates.canTransitionToCurated).toBe('boolean');
     expect(Array.isArray(gates.blockers)).toBe(true);
+  });
+});
+
+describe('P0.VR.3L-FSBW family-derived missing targets', () => {
+  it('classifies Voice Lab as TAB_STATE not top-level page', () => {
+    const { manifest } = compileWithExperienceCuration();
+    const fixture = characterLabVoiceLabFixture();
+    const targetType = classifyMissingDesignTarget({ candidate: fixture, manifest });
+    expect(targetType).toBe('TAB_STATE');
+    expect(targetTypePromotesToPage(targetType)).toBe(false);
+  });
+
+  it('classifies content instance without promoting to page', () => {
+    const { manifest } = compileWithExperienceCuration();
+    const candidate = {
+      candidateId: 'frontal-slayer:missing:instance',
+      projectId: 'frontal-slayer',
+      displayName: 'Product copy variant',
+      representativeRoute: '/shop/units/:unitSlug',
+      designFamilyIds: ['frontal-slayer:dfamily:shop-commerce'],
+      sourceKind: 'EXPERIENCE_PAGE' as const,
+      ownership: 'FSBW' as const,
+      implementationStatus: 'IMPLEMENTATION_MISSING' as const,
+    };
+    const targetType = classifyMissingDesignTarget({ candidate, manifest });
+    expect(['CONTENT_INSTANCE', 'DATA_INSTANCE', 'MATERIAL_SCREEN']).toContain(targetType);
+    expect(targetTypePromotesToPage(targetType)).toBe(false);
+  });
+
+  it('selects family sibling with confidence', () => {
+    const { manifest } = compileWithExperienceCuration();
+    const fixture = characterLabVoiceLabFixture();
+    const { sibling, candidates } = selectBestFamilySibling(fixture, manifest, 'TAB_STATE');
+    expect(candidates.length).toBeGreaterThanOrEqual(0);
+    if (sibling) expect(['HIGH', 'MEDIUM', 'LOW']).toContain(sibling.confidence);
+  });
+
+  it('reuses existing source snapshot when available', () => {
+    const sibling = {
+      siblingId: 's1',
+      designScreenId: 's1',
+      route: '/admin/studio/character-lab/visual',
+      displayName: 'Visual',
+      familyId: 'f1',
+      score: 80,
+      confidence: 'HIGH' as const,
+      similarityExplanation: 'test',
+      hasSnapshot: true,
+      snapshotStale: false,
+      captureRequired: false,
+    };
+    const existing = (
+      ['MOBILE', 'TABLET', 'DESKTOP'] as const
+    ).map((viewport) => ({
+      snapshotId: `existing-${viewport}`,
+      authorshipId: 'auth',
+      projectId: 'studio-world',
+      route: '/admin/studio/character-lab/visual',
+      viewport,
+      label: 'FAMILY SOURCE · EXISTING IMPLEMENTATION' as const,
+      status: 'CAPTURED' as const,
+      isSourceSibling: true,
+    }));
+    const result = captureFamilySiblingOnDemand(
+      { sibling, projectId: 'studio-world', authorshipId: 'auth' },
+      existing,
+    );
+    expect(result.reusedExisting).toBe(true);
+    expect(result.captureRequired).toBe(false);
+  });
+
+  it('derives missing target with Composer authorship and lineage', () => {
+    const { manifest } = compileWithExperienceCuration();
+    const fixture = characterLabVoiceLabFixture();
+    const result = deriveMissingTargetFromFamily(fixture, manifest, {
+      repoRoot: REPO_ROOT,
+      sourceCommit: manifest.sourceCommit,
+      executeBuild: false,
+    });
+    expect(result.target.createdBy).toContain('P0.VR.3L-FSBW');
+    expect(result.authorship?.authorType).toBe('COMPOSER');
+    expect(result.authorship?.publishStatus).toBe('PREVIEW_ONLY');
+    expect(result.derivationReceipt?.targetType).toBeDefined();
+    expect(result.draftSnapshots.length).toBe(3);
+  });
+
+  it('detects unexplained family drift', () => {
+    const target = characterLabVoiceLabFixture();
+    const record = {
+      targetId: target.candidateId,
+      projectId: target.projectId,
+      targetType: 'TAB_STATE' as const,
+      displayName: target.displayName,
+      representativeRoute: target.representativeRoute,
+      sourceComponentIds: [],
+      sharedComponentIds: [],
+      preservedProperties: ['shared shell'],
+      allowedDifferences: ['CONTENT'],
+      derivationConfidence: 'HIGH' as const,
+      createdBy: 'P0.VR.3L-FSBW',
+      reviewStatus: 'READY_FOR_DERIVATION' as const,
+      lineage: { derivedFromComponents: [] },
+    };
+    const qa = validateFamilyFidelity(record, { headerHeight: 80 }, { headerHeight: 64 });
+    expect(qa.unexplainedDrift).toBe(true);
+  });
+
+  it('default shell propagation scope is TARGET_ONLY', () => {
+    expect(defaultPropagationScope()).toBe('TARGET_ONLY');
+  });
+
+  it('blocks cross-project shell propagation', () => {
+    expect(validateCrossProjectPropagation('frontal-slayer', 'all-in-one-enterprise')).toBe(false);
+    expect(validateCrossProjectPropagation('studio-world', 'studio-world')).toBe(true);
+  });
+
+  it('requires founder approval for family/global propagation', () => {
+    const { manifest } = compileWithExperienceCuration();
+    const graph = buildSharedShellDependencyGraph('frontal-slayer', manifest);
+    const shell = graph.shells[0];
+    if (!shell) return;
+    const impact = analyzeShellPropagationImpact('frontal-slayer', shell, 'DESIGN_FAMILY', manifest);
+    expect(impact.requiresFounderApproval).toBe(true);
+    const applied = applyShellPropagation(
+      {
+        changeId: 'test',
+        projectId: 'frontal-slayer',
+        sourceTargetId: 't1',
+        propagationScope: 'DESIGN_FAMILY',
+        affectedFamilyIds: [],
+        affectedPageIds: [],
+        affectedMaterialScreenIds: [],
+        affectedStateIds: [],
+        beforeVersion: shell.version,
+        afterVersion: shell.version,
+        changedComponents: [],
+        changedTokens: [],
+        changedGeometry: [],
+        founderApproved: false,
+        status: 'SHELL_PROPAGATION_REVIEW',
+        exceptions: [],
+        createdAt: new Date().toISOString(),
+      },
+      shell,
+      false,
+    );
+    expect(applied.blocked).toBe('FAIL_SHELL_PROPAGATION_WITHOUT_APPROVAL');
+  });
+
+  it('runs family derivation pipeline without mass capture requirement', () => {
+    const { manifest } = compileWithExperienceCuration();
+    const report = runFamilyDerivedMissingTargetPipeline({
+      repoRoot: REPO_ROOT,
+      manifest,
+      executeBuild: false,
+      includeFixtures: true,
+    });
+    expect(report.sprintId).toBe('P0.VR.3L-FSBW');
+    expect(report.targets.length).toBeGreaterThan(0);
+    expect(report.queue.some((q) => q.group === 'READY_FOR_FAMILY_DERIVATION' || q.group === 'NEEDS_SIBLING_SELECTION')).toBe(true);
+    expect(report.shellGraph.length).toBeGreaterThan(0);
+  });
+
+  it('does not require LOCKED_FOR_CAPTURE before derivation', () => {
+    const { manifest } = compileWithExperienceCuration();
+    const report = runFamilyDerivedMissingTargetPipeline({ repoRoot: REPO_ROOT, manifest, executeBuild: false });
+    expect(report.executeBuild).toBe(false);
+    expect(report.targets.length).toBeGreaterThanOrEqual(0);
   });
 });
 

@@ -90,6 +90,7 @@
     "audit:design-routes": "tsx scripts/generate-design-route-manifest.ts",
     "compile:design-pages": "tsx scripts/compile-design-pages.ts",
     "apply:curation-action": "tsx scripts/apply-curation-action.ts",
+    "compile:family-derivation": "tsx scripts/run-family-derived-missing-targets.ts",
     "audit:experience-curation": "tsx scripts/audit-experience-curation.ts",
     "compile:fsbw-missing-routes": "tsx scripts/run-fsbw-missing-route-completion.ts",
     "schema:deployment-readiness": "node scripts/schema-deployment-readiness.mjs",

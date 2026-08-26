@@ -527,6 +527,7 @@ export type StudioWorldDesignRouteManifest = {
   experiencePageOverrides?: ExperiencePageOverrideRecord[];
   experiencePageCompilation?: ExperiencePageCompilationMeta;
   fsbwMissingRouteCompletion?: FsbwMissingRouteCompletionReport;
+  fsbwFamilyDerivedMissingTargets?: FamilyDerivedMissingTargetReport;
   experienceCurationCompilation?: ExperienceCurationCompilationMeta;
 };
 
@@ -627,10 +628,12 @@ export type ComposerDraftSnapshotRecord = {
   projectId: string;
   route: string;
   viewport: ViewportClass;
-  label: 'CURRENT · COMPOSER DRAFT';
+  label: 'CURRENT · COMPOSER DRAFT' | 'FAMILY SOURCE · EXISTING IMPLEMENTATION';
   capturePath?: string;
   capturedAt?: string;
   status: 'CAPTURED' | 'FAILED' | 'PENDING';
+  sourceSiblingId?: string;
+  isSourceSibling?: boolean;
 };
 
 export type PageReviewSetRecord = {
@@ -644,13 +647,20 @@ export type PageReviewSetRecord = {
 };
 
 export type FsbwComposerPageRegistry = {
-  schemaVersion: 'fsbw-composer-page-registry@1';
+  schemaVersion: 'fsbw-composer-page-registry@2';
   generatedAt: string;
   sourceCommit: string;
   authorship: PageAuthorshipRecord[];
   receipts: PageCreationReceipt[];
   snapshots: ComposerDraftSnapshotRecord[];
   reviewSets: PageReviewSetRecord[];
+  /** P0.VR.3L-FSBW */
+  familyDerivedTargets?: FamilyDerivedMissingTargetRecord[];
+  sharedShells?: SharedShellRecord[];
+  shellChanges?: FamilyShellChangeRecord[];
+  shellPropagations?: ShellPropagationReceipt[];
+  derivationReceipts?: FamilyDerivationReceipt[];
+  recapturePlans?: ShellPropagationRecapturePlan[];
 };
 
 export type FsbwMissingRouteCompletionProjectSummary = {
@@ -675,6 +685,242 @@ export type FsbwMissingRouteCompletionReport = {
   externalRepoOwned: Array<{ projectId: string; count: number; pageIds: string[] }>;
   candidates: MissingPageCandidateRecord[];
   briefs: MissingPageRequirementsBrief[];
+  registry: FsbwComposerPageRegistry;
+  executeBuild: boolean;
+};
+
+/** P0.VR.3L-FSBW — Missing-target family derivation + shell propagation */
+
+export type MissingDesignTargetType =
+  | 'UNIQUE_EXPERIENCE'
+  | 'FAMILY_DERIVED_PAGE'
+  | 'MATERIAL_SCREEN'
+  | 'TAB_STATE'
+  | 'VISUAL_STATE'
+  | 'CONTENT_INSTANCE'
+  | 'DATA_INSTANCE'
+  | 'ASSET_VARIANT'
+  | 'UNKNOWN_REVIEW_REQUIRED';
+
+export type MissingTargetReviewStatus =
+  | 'UNCLASSIFIED'
+  | 'READY_FOR_DERIVATION'
+  | 'SOURCE_CAPTURE_REQUIRED'
+  | 'DERIVING'
+  | 'COMPOSER_DRAFT'
+  | 'READY_FOR_REVIEW'
+  | 'NEEDS_REVISION'
+  | 'FOUNDER_APPROVED'
+  | 'APPROVED_FOR_RELEASE';
+
+export type ShellChangeStatus =
+  | 'SHELL_CHANGE_PROPOSED'
+  | 'SHELL_PROPAGATION_REVIEW'
+  | 'SHELL_PROPAGATION_APPROVED'
+  | 'SHELL_PROPAGATED'
+  | 'SHELL_RECAPTURE_REQUIRED';
+
+export type ShellPropagationScope = 'TARGET_ONLY' | 'DESIGN_FAMILY' | 'SHARED_SHELL_GLOBAL';
+
+export type SiblingConfidence = 'HIGH' | 'MEDIUM' | 'LOW';
+
+export type FamilyDerivedMissingTargetRecord = {
+  targetId: string;
+  projectId: string;
+  targetType: MissingDesignTargetType;
+  displayName: string;
+  representativeRoute: string;
+  experiencePageId?: string;
+  materialScreenId?: string;
+  visualStateId?: string;
+  parentExperiencePageId?: string;
+  sourceFamilyId?: string;
+  sourceSiblingId?: string;
+  sourceRoute?: string;
+  sourceComponentIds: string[];
+  sourceSnapshotId?: string;
+  shellId?: string;
+  sharedComponentIds: string[];
+  preservedProperties: string[];
+  allowedDifferences: string[];
+  derivationConfidence: SiblingConfidence;
+  createdBy: string;
+  reviewStatus: MissingTargetReviewStatus;
+  lineage: {
+    derivedFromFamily?: string;
+    derivedFromSibling?: string;
+    derivedFromShell?: string;
+    derivedFromSnapshot?: string;
+    derivedFromComponents: string[];
+  };
+  trueMissingRoute?: boolean;
+  handoffSprint?: 'P0.VR.3H-FSBW';
+};
+
+export type FamilySiblingCandidate = {
+  siblingId: string;
+  designScreenId: string;
+  route: string;
+  displayName: string;
+  familyId: string;
+  shellId?: string;
+  score: number;
+  confidence: SiblingConfidence;
+  similarityExplanation: string;
+  hasSnapshot: boolean;
+  snapshotStale: boolean;
+  captureRequired: boolean;
+};
+
+export type SharedShellRecord = {
+  shellId: string;
+  projectId: string;
+  displayName: string;
+  componentPaths: string[];
+  consumerPageIds: string[];
+  consumerFamilyIds: string[];
+  responsiveAuthority: string;
+  version: string;
+};
+
+export type SharedShellDependencyGraph = {
+  projectId: string;
+  shells: SharedShellRecord[];
+  edges: Array<{
+    shellId: string;
+    componentPath: string;
+    familyId?: string;
+    experiencePageId?: string;
+    materialScreenId?: string;
+    route?: string;
+  }>;
+};
+
+export type ShellPropagationImpactAnalysis = {
+  scope: ShellPropagationScope;
+  shellId: string;
+  projectId: string;
+  affectedFamilyIds: string[];
+  affectedPageIds: string[];
+  affectedMaterialScreenIds: string[];
+  affectedStateIds: string[];
+  affectedRoutes: string[];
+  viewportsAffected: ViewportClass[];
+  referencesPossiblyStale: string[];
+  snapshotsPossiblyStale: string[];
+  knownExceptions: string[];
+  risk: 'LOW' | 'MEDIUM' | 'HIGH';
+  duplicatedFamilyImplementation: boolean;
+  crossProjectBlocked: boolean;
+  blastRadius: {
+    pages: number;
+    materialScreens: number;
+    states: number;
+    viewportImplementations: number;
+  };
+  requiresFounderApproval: boolean;
+};
+
+export type ShellPropagationExceptionRecord = {
+  exceptionId: string;
+  shellChangeId: string;
+  pageId: string;
+  reason: string;
+  createdAt: string;
+};
+
+export type FamilyShellChangeRecord = {
+  changeId: string;
+  projectId: string;
+  sourceTargetId: string;
+  sourceFamilyId?: string;
+  sourceShellId?: string;
+  propagationScope: ShellPropagationScope;
+  affectedFamilyIds: string[];
+  affectedPageIds: string[];
+  affectedMaterialScreenIds: string[];
+  affectedStateIds: string[];
+  beforeVersion: string;
+  afterVersion: string;
+  changedComponents: string[];
+  changedTokens: string[];
+  changedGeometry: string[];
+  founderApproved: boolean;
+  status: ShellChangeStatus;
+  exceptions: ShellPropagationExceptionRecord[];
+  createdAt: string;
+};
+
+export type ShellPropagationRecapturePlan = {
+  planId: string;
+  shellChangeId: string;
+  projectId: string;
+  targets: Array<{ targetId: string; route: string; viewports: ViewportClass[] }>;
+  fullProjectRecapture: false;
+};
+
+export type FamilyDerivationReceipt = {
+  receiptId: string;
+  targetId: string;
+  projectId: string;
+  targetType: MissingDesignTargetType;
+  sourceSiblingId?: string;
+  sourceSnapshotId?: string;
+  draftSnapshotIds: string[];
+  fidelityIssues: string[];
+  unexplainedDrift: boolean;
+  createdAt: string;
+  createdBy: string;
+};
+
+export type ShellPropagationReceipt = {
+  receiptId: string;
+  changeId: string;
+  projectId: string;
+  scope: ShellPropagationScope;
+  affectedPages: number;
+  affectedRoutes: string[];
+  beforeShellVersion: string;
+  afterShellVersion: string;
+  codeChanges: string[];
+  exceptions: string[];
+  referencesInvalidated: string[];
+  snapshotsInvalidated: string[];
+  recapturePlanId?: string;
+  createdAt: string;
+};
+
+export type MissingTargetQueueGroup =
+  | 'READY_FOR_FAMILY_DERIVATION'
+  | 'NEEDS_SIBLING_SELECTION'
+  | 'NEEDS_CREATIVE_DIRECTION'
+  | 'NEEDS_FUNCTIONAL_DIRECTION'
+  | 'TRUE_MISSING_ROUTE'
+  | 'INSTANCE_STATE_ONLY';
+
+export type MissingTargetQueueItem = {
+  group: MissingTargetQueueGroup;
+  target: FamilyDerivedMissingTargetRecord;
+  sibling?: FamilySiblingCandidate;
+  siblingCandidates?: FamilySiblingCandidate[];
+};
+
+export type FamilyDerivedMissingTargetReport = {
+  sprintId: string;
+  generatedAt: string;
+  sourceCommit: string;
+  projectSummaries: Array<{
+    projectId: string;
+    total: number;
+    byType: Partial<Record<MissingDesignTargetType, number>>;
+    readyForDerivation: number;
+    sourceCaptureRequired: number;
+    derived: number;
+    trueMissingRoutes: number;
+  }>;
+  targets: FamilyDerivedMissingTargetRecord[];
+  queue: MissingTargetQueueItem[];
+  shellGraph: SharedShellDependencyGraph[];
   registry: FsbwComposerPageRegistry;
   executeBuild: boolean;
 };

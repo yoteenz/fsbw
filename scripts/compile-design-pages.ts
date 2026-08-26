@@ -15,6 +15,8 @@ import {
   attachExperienceCurationToManifest,
   loadExperienceCurationStore,
   saveExperienceCurationStore,
+  runFamilyDerivedMissingTargetPipeline,
+  attachFamilyDerivedMissingTargetsToManifest,
   diffProjectWebsitePageSets,
   MANIFEST_ARTIFACT_RELATIVE_PATH,
 } from '../src/studio-os-core/route-intelligence/index.ts';
@@ -50,7 +52,15 @@ function main() {
   const { manifest, store: storeNext } = attachExperienceCurationToManifest(withExperience, store);
   saveExperienceCurationStore(repoRoot, storeNext);
 
-  const json = JSON.stringify(manifest, null, 2);
+  const familyDerivation = runFamilyDerivedMissingTargetPipeline({
+    repoRoot,
+    manifest,
+    executeBuild: false,
+    includeFixtures: true,
+  });
+  const manifestWithFamily = attachFamilyDerivedMissingTargetsToManifest(manifest, familyDerivation);
+
+  const json = JSON.stringify(manifestWithFamily, null, 2);
 
   if (stdoutOnly) {
     console.log(json);

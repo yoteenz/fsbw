@@ -36,13 +36,19 @@ export type RunFsbwMissingRouteCompletionOptions = {
 
 function emptyRegistry(sourceCommit: string): FsbwComposerPageRegistry {
   return {
-    schemaVersion: 'fsbw-composer-page-registry@1',
+    schemaVersion: 'fsbw-composer-page-registry@2',
     generatedAt: new Date().toISOString(),
     sourceCommit,
     authorship: [],
     receipts: [],
     snapshots: [],
     reviewSets: [],
+    familyDerivedTargets: [],
+    sharedShells: [],
+    shellChanges: [],
+    shellPropagations: [],
+    derivationReceipts: [],
+    recapturePlans: [],
   };
 }
 
@@ -136,7 +142,7 @@ export function runFsbwMissingRouteCompletion(
   );
 
   const registry: FsbwComposerPageRegistry = {
-    schemaVersion: 'fsbw-composer-page-registry@1',
+    schemaVersion: 'fsbw-composer-page-registry@2',
     generatedAt: new Date().toISOString(),
     sourceCommit: manifest.sourceCommit,
     authorship: mergedAuthorship,
