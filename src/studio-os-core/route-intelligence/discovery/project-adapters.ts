@@ -99,6 +99,9 @@ function scannedToRecord(
     status: classifyStatus(scanned, routerRoutes.has(scanned.routePattern)),
     evidence: scanned.evidence,
     responsiveLayout: scanned.route.includes('/desktop') ? 'DEDICATED_DESKTOP_LAYOUT' : 'RESPONSIVE_INTERPOLATION',
+    reachabilityClassification: 'UNKNOWN',
+    entryEvidence: [],
+    implementationRouteKind: 'IMPLEMENTATION_ROUTE',
   };
 }
 
@@ -132,7 +135,6 @@ export function discoverFrontalSlayerRoutes(ctx: ProjectDiscoveryContext): {
   );
 
   for (const r of routes) {
-    if (r.deepLinkOnly && !r.redirect) r.status = 'ORPHANED';
     if (r.status === 'LEGACY') r.designableSurface = 'DEPRECATED';
   }
 

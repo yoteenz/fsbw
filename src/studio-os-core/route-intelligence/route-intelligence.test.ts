@@ -14,13 +14,17 @@ import {
   buildNeedsReferenceQueue,
   buildNeedsImprovementQueue,
   buildCoverageMatrix,
+  buildPossibleDeadRouteQueue,
+  groupDesignScreensForDropdown,
   groupRoutesForScreenDropdown,
+  scanProgrammaticNavigation,
   compilePageDesignReferencePrompt,
   validateReferenceGenerationRequest,
   buildReferenceBatchPreview,
   scanRouteFile,
   displayNameFromRoute,
   DESIGN_ROUTE_MANIFEST_VERSION,
+  DESIGN_ROUTE_MANIFEST_SCHEMA_VERSION,
   RECONSTRUCTION_PIPELINE_ID,
 } from './index';
 
@@ -138,11 +142,12 @@ describe('P0.VR.3 route intelligence', () => {
 
   it('builds coverage matrix and queues', () => {
     const { manifest } = runCrossProjectRouteForensicAudit({ repoRoot: REPO_ROOT });
-    const matrix = buildCoverageMatrix('frontal-slayer', manifest.routes, manifest.coverage);
+    const screens = manifest.designScreens ?? [];
+    const matrix = buildCoverageMatrix('frontal-slayer', screens, manifest.coverage);
     expect(matrix.length).toBeGreaterThan(0);
     expect(matrix[0]?.mobile).toBeDefined();
-    const needsRef = buildNeedsReferenceQueue(manifest.routes, manifest.coverage);
-    const needsImp = buildNeedsImprovementQueue(manifest.routes, manifest.coverage);
+    const needsRef = buildNeedsReferenceQueue(screens, manifest.coverage);
+    const needsImp = buildNeedsImprovementQueue(screens, manifest.coverage);
     expect(Array.isArray(needsRef)).toBe(true);
     expect(Array.isArray(needsImp)).toBe(true);
   });
@@ -190,7 +195,11 @@ describe('P0.VR.3 route intelligence', () => {
 
   it('manifest diff detects new routes', () => {
     const { manifest } = runCrossProjectRouteForensicAudit({ repoRoot: REPO_ROOT });
-    const prev = { ...manifest, routes: manifest.routes.slice(0, 10) };
+    const prev = {
+      ...manifest,
+      rawImplementationRoutes: manifest.rawImplementationRoutes.slice(0, 10),
+      routes: manifest.rawImplementationRoutes.slice(0, 10),
+    };
     const diff = diffDesignRouteManifests(prev, manifest);
     expect(diff.entries.some((e) => e.type === 'ROUTE_ADDED')).toBe(true);
   });
@@ -231,9 +240,136 @@ describe('P0.VR.3 route intelligence', () => {
 
   it('buildDesignRouteManifest preserves project isolation', () => {
     const { manifest } = runCrossProjectRouteForensicAudit({ repoRoot: REPO_ROOT });
-    const fsRoutes = manifest.routes.filter((r) => r.projectId === 'frontal-slayer');
-    const aioRoutes = manifest.routes.filter((r) => r.projectId === 'all-in-one-enterprise');
+    const fsRoutes = manifest.rawImplementationRoutes.filter((r) => r.projectId === 'frontal-slayer');
+    const aioRoutes = manifest.rawImplementationRoutes.filter((r) => r.projectId === 'all-in-one-enterprise');
     expect(fsRoutes.every((r) => r.projectId === 'frontal-slayer')).toBe(true);
     expect(aioRoutes.every((r) => r.projectId === 'all-in-one-enterprise')).toBe(true);
+  });
+});
+
+describe('P0.VR.3B reachability normalization', () => {
+  it('bumps manifest schema to v2', () => {
+    const { manifest } = runCrossProjectRouteForensicAudit({ repoRoot: REPO_ROOT });
+    expect(manifest.manifestVersion).toBe('2.0.0');
+    expect(manifest.schemaVersion).toBe(DESIGN_ROUTE_MANIFEST_SCHEMA_VERSION);
+    expect(manifest.schemaVersion).toContain('@2');
+    expect(manifest.rawImplementationRoutes.length).toBeGreaterThan(0);
+    expect(manifest.designScreens?.length).toBeGreaterThan(0);
+    expect(manifest.routeTemplates?.length).toBeGreaterThan(0);
+  });
+
+  it('discovers programmatic navigation targets', () => {
+    const scan = scanProgrammaticNavigation(REPO_ROOT, 'frontal-slayer');
+    expect(scan.allTargets.length).toBeGreaterThan(20);
+    expect(scan.allTargets.some((t) => t.type === 'NAVIGATE_CALL' || t.type === 'STATIC_LINK')).toBe(true);
+  });
+
+  it('normalizes dynamic product routes into templates', () => {
+    const { routes } = discoverProjectRoutes({ repoRoot: REPO_ROOT, projectId: 'frontal-slayer' });
+    const { manifest } = runCrossProjectRouteForensicAudit({ repoRoot: REPO_ROOT });
+    const templates = manifest.routeTemplates!.filter((t) => t.projectId === 'frontal-slayer');
+    expect(templates.some((t) => t.routePattern.includes(':unit') || t.displayName.includes('Product'))).toBe(true);
+    expect(routes.length).toBeGreaterThan(templates[0]?.instanceRouteIds.length ?? 0);
+  });
+
+  it('classifies auth-gated routes separately from orphans', () => {
+    const { manifest } = runCrossProjectRouteForensicAudit({ repoRoot: REPO_ROOT });
+    const authRoutes = manifest.rawImplementationRoutes.filter(
+      (r) => r.reachabilityClassification === 'AUTH_GATED_REACHABLE' || r.reachabilityClassification === 'ADMIN_REACHABLE',
+    );
+    expect(authRoutes.length).toBeGreaterThan(0);
+    expect(authRoutes.every((r) => r.reachabilityClassification !== 'TRUE_ORPHAN')).toBe(true);
+  });
+
+  it('classifies deep-link and workflow routes separately from orphans', () => {
+    const { manifest } = runCrossProjectRouteForensicAudit({ repoRoot: REPO_ROOT });
+    const fs = manifest.rawImplementationRoutes.filter((r) => r.projectId === 'frontal-slayer');
+    const workflow = fs.filter((r) => r.reachabilityClassification === 'WORKFLOW_REACHABLE');
+    const deepLink = fs.filter((r) => r.reachabilityClassification === 'DEEP_LINK_SUPPORTED');
+    expect(workflow.length).toBeGreaterThan(50);
+    expect(deepLink.length).toBeGreaterThan(0);
+    expect(workflow.every((r) => r.reachabilityClassification !== 'TRUE_ORPHAN')).toBe(true);
+  });
+
+  it('separates legacy from true orphan', () => {
+    const { manifest } = runCrossProjectRouteForensicAudit({ repoRoot: REPO_ROOT });
+    const legacy = manifest.rawImplementationRoutes.filter((r) => r.reachabilityClassification === 'LEGACY');
+    if (legacy.length > 0) {
+      expect(legacy.every((r) => r.reachabilityClassification !== 'TRUE_ORPHAN')).toBe(true);
+    }
+  });
+
+  it('keeps UNKNOWN distinct from TRUE_ORPHAN', () => {
+    const { manifest } = runCrossProjectRouteForensicAudit({ repoRoot: REPO_ROOT });
+    const unknown = manifest.rawImplementationRoutes.filter((r) => r.reachabilityClassification === 'UNKNOWN');
+    const orphans = manifest.rawImplementationRoutes.filter((r) => r.reachabilityClassification === 'TRUE_ORPHAN');
+    expect(unknown.length).toBeGreaterThan(0);
+    expect(unknown.every((r) => r.reachabilityClassification !== 'TRUE_ORPHAN')).toBe(true);
+    expect(orphans.every((r) => (r.entryEvidence?.length ?? 0) === 0)).toBe(true);
+  });
+
+  it('substantially reduces Frontal Slayer false orphan count', () => {
+    const { report } = runCrossProjectRouteForensicAudit({ repoRoot: REPO_ROOT });
+    const fs = report.perProject.find((p) => p.projectId === 'frontal-slayer')!;
+    expect(fs.previousOrphanCount).toBe(647);
+    expect(fs.trueOrphans).toBeLessThan(Math.max(50, fs.rawImplementationRoutes * 0.15));
+    expect(fs.trueOrphans).toBeLessThan(100);
+  });
+
+  it('maps raw routes to design screens with reference migration', () => {
+    const { manifest } = runCrossProjectRouteForensicAudit({ repoRoot: REPO_ROOT });
+    const migration = manifest.referenceMigration!;
+    expect(migration.preservedRouteIds.length).toBe(manifest.rawImplementationRoutes.length);
+    expect(Object.keys(migration.mappedToDesignScreens).length).toBeGreaterThan(0);
+    expect(migration.deleted).toEqual([]);
+  });
+
+  it('does not auto-merge reference family conflicts', () => {
+    const { manifest } = runCrossProjectRouteForensicAudit({ repoRoot: REPO_ROOT });
+    const conflictScreens = (manifest.designScreens ?? []).filter((s) => s.referenceFamilyConflict);
+    expect(manifest.referenceMigration!.conflicts).toEqual(conflictScreens.map((s) => s.designScreenId));
+  });
+
+  it('supports per-instance override on collapsed screens', () => {
+    const { manifest } = runCrossProjectRouteForensicAudit({ repoRoot: REPO_ROOT });
+    const collapsed = (manifest.designScreens ?? []).filter((s) => s.instanceCount > 1);
+    expect(collapsed.length).toBeGreaterThan(0);
+    expect(collapsed.every((s) => s.perInstanceOverrideRouteIds !== undefined)).toBe(true);
+  });
+
+  it('groups design screens for dropdown (not raw routes)', () => {
+    const { manifest } = runCrossProjectRouteForensicAudit({ repoRoot: REPO_ROOT });
+    const screenGroups = groupDesignScreensForDropdown(manifest.designScreens ?? [], 'frontal-slayer');
+    const routeGroups = groupRoutesForScreenDropdown(manifest.rawImplementationRoutes, 'frontal-slayer');
+    const screenCount = Object.values(screenGroups).flat().length;
+    const routeCount = Object.values(routeGroups).flat().length;
+    expect(screenCount).toBeLessThan(routeCount);
+    expect(screenCount).toBeGreaterThan(10);
+  });
+
+  it('builds possible dead route queue from TRUE_ORPHAN only', () => {
+    const { manifest } = runCrossProjectRouteForensicAudit({ repoRoot: REPO_ROOT });
+    const dead = buildPossibleDeadRouteQueue(manifest.rawImplementationRoutes);
+    expect(dead.every((d) => d.reachabilityClassification === 'TRUE_ORPHAN')).toBe(true);
+  });
+
+  it('normalizes SITE 00, AIO, and NDXBOOK', () => {
+    const { report } = runCrossProjectRouteForensicAudit({ repoRoot: REPO_ROOT });
+    for (const id of ['site00', 'all-in-one-enterprise', 'ndxbook'] as const) {
+      const p = report.perProject.find((x) => x.projectId === id)!;
+      expect(p.rawImplementationRoutes).toBeGreaterThan(0);
+      expect(p.designScreens).toBeGreaterThan(0);
+      expect(p.trueOrphans).toBeLessThan(p.rawImplementationRoutes * 0.5);
+    }
+  });
+
+  it('reports separate counts in per-project summary', () => {
+    const { report } = runCrossProjectRouteForensicAudit({ repoRoot: REPO_ROOT });
+    const fs = report.perProject.find((p) => p.projectId === 'frontal-slayer')!;
+    expect(fs.rawImplementationRoutes).toBeGreaterThan(fs.designScreens);
+    expect(fs.normalizedRouteTemplates).toBeGreaterThan(0);
+    expect(fs.navReachable).toBeGreaterThan(0);
+    expect(fs.programmaticReachable).toBeGreaterThan(0);
+    expect(fs.workflowReachable).toBeGreaterThan(0);
   });
 });

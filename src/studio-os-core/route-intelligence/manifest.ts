@@ -1,11 +1,14 @@
 import type {
   DesignCoverageSummary,
   DesignRouteSyncContract,
+  DesignScreenRecord,
+  DynamicRouteTemplateGroup,
   PageVisualCoverageRecord,
   ProjectCompletenessScores,
   ProjectPageRouteRecord,
   ProjectRouteDependencyGraph,
   ProjectVisualStateRecord,
+  ReachabilitySummary,
   StudioWorldDesignRouteManifest,
   StudioWorldProjectRecord,
 } from './types';
@@ -14,19 +17,19 @@ import { DESIGN_ROUTE_MANIFEST_SCHEMA_VERSION, DESIGN_ROUTE_MANIFEST_VERSION } f
 export function buildCoverageSummary(
   projectId: string,
   routes: ProjectPageRouteRecord[],
+  designScreens: DesignScreenRecord[],
   coverage: PageVisualCoverageRecord[],
 ): DesignCoverageSummary {
-  const designable = routes.filter(
-    (r) => r.projectId === projectId && r.designableSurface === 'FOUNDER_DESIGNABLE',
-  );
-  const projectCoverage = coverage.filter((c) => c.projectId === projectId);
+  const rawRoutes = routes.filter((r) => r.projectId === projectId);
+  const screens = designScreens.filter((s) => s.projectId === projectId);
+  const screenCoverage = coverage.filter((c) => screens.some((s) => s.designScreenId === c.routeId));
 
   const countViewport = (vp: 'mobile' | 'tablet' | 'desktop') => {
     let canonical = 0;
     let missing = 0;
     let stale = 0;
     let matched = 0;
-    for (const c of projectCoverage) {
+    for (const c of screenCoverage) {
       const auth = c[vp];
       if (auth.designStatus === 'REFERENCE_CANONICAL' || auth.designStatus === 'MATCHED') canonical++;
       if (auth.designStatus === 'MISSING_REFERENCE') missing++;
@@ -36,14 +39,14 @@ export function buildCoverageSummary(
     return { canonical, missing, stale, matched };
   };
 
-  const needsReference = projectCoverage.reduce((acc, c) => {
+  const needsReference = screenCoverage.reduce((acc, c) => {
     return (
       acc +
       (['mobile', 'tablet', 'desktop'] as const).filter((vp) => c[vp].designStatus === 'MISSING_REFERENCE').length
     );
   }, 0);
 
-  const needsImprovement = projectCoverage.reduce((acc, c) => {
+  const needsImprovement = screenCoverage.reduce((acc, c) => {
     return (
       acc +
       (['mobile', 'tablet', 'desktop'] as const).filter(
@@ -55,31 +58,32 @@ export function buildCoverageSummary(
     );
   }, 0);
 
-  const brokenRoutes = designable.filter(
-    (r) => r.status === 'ORPHANED' || r.status === 'REQUIRED_MISSING_ROUTE',
-  ).length;
+  const trueOrphans = rawRoutes.filter((r) => r.reachabilityClassification === 'TRUE_ORPHAN');
 
   return {
     projectId,
-    totalDesignableScreens: designable.length,
+    totalDesignableScreens: screens.length,
+    rawImplementationRoutes: rawRoutes.filter((r) => r.designableSurface === 'FOUNDER_DESIGNABLE').length,
+    normalizedRouteTemplates: new Set(screens.filter((s) => s.routeTemplateId).map((s) => s.routeTemplateId)).size,
+    trueOrphanCount: trueOrphans.length,
     mobile: countViewport('mobile'),
     tablet: countViewport('tablet'),
     desktop: countViewport('desktop'),
     needsReference,
     needsImprovement,
-    brokenRoutes,
+    brokenRoutes: rawRoutes.filter((r) => r.status === 'REQUIRED_MISSING_ROUTE').length,
+    possibleDeadRoutes: trueOrphans.length,
   };
 }
 
 export function buildCompletenessScores(
   projectId: string,
-  routes: ProjectPageRouteRecord[],
+  designScreens: DesignScreenRecord[],
   coverage: PageVisualCoverageRecord[],
   graph: ProjectRouteDependencyGraph,
 ): ProjectCompletenessScores {
-  const projectRoutes = routes.filter((r) => r.projectId === projectId);
-  const designable = projectRoutes.filter((r) => r.designableSurface === 'FOUNDER_DESIGNABLE');
-  const projectCoverage = coverage.filter((c) => c.projectId === projectId);
+  const screens = designScreens.filter((s) => s.projectId === projectId);
+  const projectCoverage = coverage.filter((c) => screens.some((s) => s.designScreenId === c.routeId));
 
   const completeFlows = graph.closures.filter((c) => c.status === 'COMPLETE').length;
   const totalFlows = Math.max(graph.closures.length, 1);
@@ -108,64 +112,55 @@ export function buildCompletenessScores(
     visualReferenceCoverageScore: refTotal ? Math.round((refMatched / refTotal) * 100) : 0,
     implementationCoverageScore: refTotal ? Math.round((implPresent / refTotal) * 100) : 0,
     viewportCoverageScore: viewportTotal ? Math.round((viewportFilled / viewportTotal) * 100) : 0,
-    designableRouteCount: designable.length,
-    totalRouteCount: projectRoutes.length,
+    designableRouteCount: screens.length,
+    totalRouteCount: graph.nodes.length,
   };
 }
 
 export function buildSyncContracts(
-  routes: ProjectPageRouteRecord[],
+  designScreens: DesignScreenRecord[],
   coverage: PageVisualCoverageRecord[],
   visualStates: ProjectVisualStateRecord[],
-  graphs: ProjectRouteDependencyGraph[],
+  _graphs: ProjectRouteDependencyGraph[],
 ): DesignRouteSyncContract[] {
-  const coverageByRoute = new Map(coverage.map((c) => [c.routeId, c]));
-  const statesByRoute = new Map<string, ProjectVisualStateRecord[]>();
-  for (const s of visualStates) {
-    const list = statesByRoute.get(s.routeId) ?? [];
-    list.push(s);
-    statesByRoute.set(s.routeId, list);
-  }
-  const graphByProject = new Map(graphs.map((g) => [g.projectId, g]));
+  const coverageByScreen = new Map(coverage.map((c) => [c.routeId, c]));
 
-  return routes
-    .filter((r) => r.designableSurface === 'FOUNDER_DESIGNABLE' || r.status === 'REQUIRED_MISSING_ROUTE')
-    .map((route) => {
-      const cov = coverageByRoute.get(route.routeId);
-      const graph = graphByProject.get(route.projectId);
-      const deps =
-        graph?.edges.filter((e) => e.fromRouteId === route.routeId).map((e) => e.toRouteId) ?? [];
+  return designScreens.map((screen) => {
+    const cov = coverageByScreen.get(screen.designScreenId) ?? screen.viewportCoverage;
+    const states = visualStates.filter((s) => screen.visualStateIds.includes(s.visualStateId));
 
-      let recommendedAction = 'REVIEW';
-      if (route.status === 'REQUIRED_MISSING_ROUTE') recommendedAction = 'IMPLEMENTATION_MISSING';
-      else if (cov?.mobile.designStatus === 'MISSING_REFERENCE') recommendedAction = 'CREATE_REFERENCE';
-      else if (cov?.mobile.designStatus === 'NEEDS_REBUILD') recommendedAction = 'REPLACE_REFERENCE';
-      else if (cov?.mobile.designStatus === 'IMPLEMENTED_UNMATCHED') recommendedAction = 'MATCH_IMPLEMENTATION';
+    let recommendedAction = 'REVIEW';
+    if (cov?.mobile.designStatus === 'MISSING_REFERENCE') recommendedAction = 'CREATE_REFERENCE';
+    else if (cov?.mobile.designStatus === 'NEEDS_REBUILD') recommendedAction = 'REPLACE_REFERENCE';
+    else if (cov?.mobile.designStatus === 'IMPLEMENTED_UNMATCHED') recommendedAction = 'MATCH_IMPLEMENTATION';
+    if (screen.referenceFamilyConflict) recommendedAction = 'REFERENCE_FAMILY_CONFLICT';
 
-      return {
-        schemaVersion: DESIGN_ROUTE_MANIFEST_SCHEMA_VERSION,
-        projectId: route.projectId,
-        routeId: route.routeId,
-        route: route.route,
-        displayName: route.displayName,
-        routeFamily: route.routeFamily,
-        priority: route.priority,
-        dependencies: deps,
-        visualStates: statesByRoute.get(route.routeId) ?? [],
-        viewportCoverage: cov!,
-        referenceCoverage: cov!,
-        implementationCoverage: cov!,
-        recommendedAction,
-        sourceAuthority: 'fsbw',
-        designableSurface: route.designableSurface,
-        status: route.status,
-      };
-    });
+    return {
+      schemaVersion: DESIGN_ROUTE_MANIFEST_SCHEMA_VERSION,
+      projectId: screen.projectId,
+      routeId: screen.designScreenId,
+      route: screen.representativeRoute,
+      displayName: screen.displayName,
+      routeFamily: screen.routeFamily,
+      priority: screen.priority,
+      dependencies: screen.implementationRouteIds,
+      visualStates: states,
+      viewportCoverage: cov!,
+      referenceCoverage: cov!,
+      implementationCoverage: cov!,
+      recommendedAction,
+      sourceAuthority: 'fsbw',
+      designableSurface: 'FOUNDER_DESIGNABLE',
+      status: 'ACTIVE',
+    };
+  });
 }
 
 export function buildDesignRouteManifest(input: {
   projects: StudioWorldProjectRecord[];
-  routes: ProjectPageRouteRecord[];
+  rawImplementationRoutes: ProjectPageRouteRecord[];
+  routeTemplates: DynamicRouteTemplateGroup[];
+  designScreens: DesignScreenRecord[];
   visualStates: ProjectVisualStateRecord[];
   graphs: ProjectRouteDependencyGraph[];
   coverage: PageVisualCoverageRecord[];
@@ -173,16 +168,18 @@ export function buildDesignRouteManifest(input: {
   sourceRepo: string;
   forensicReportId: string;
   failures: StudioWorldDesignRouteManifest['failures'];
+  reachabilitySummaries: ReachabilitySummary[];
+  referenceMigration?: StudioWorldDesignRouteManifest['referenceMigration'];
 }): StudioWorldDesignRouteManifest {
   const coverageSummaries = input.projects.map((p) =>
-    buildCoverageSummary(p.projectId, input.routes, input.coverage),
+    buildCoverageSummary(p.projectId, input.rawImplementationRoutes, input.designScreens, input.coverage),
   );
   const completenessScores = input.projects.map((p) => {
     const graph = input.graphs.find((g) => g.projectId === p.projectId)!;
-    return buildCompletenessScores(p.projectId, input.routes, input.coverage, graph);
+    return buildCompletenessScores(p.projectId, input.designScreens, input.coverage, graph);
   });
   const syncContracts = buildSyncContracts(
-    input.routes,
+    input.designScreens,
     input.coverage,
     input.visualStates,
     input.graphs,
@@ -195,14 +192,19 @@ export function buildDesignRouteManifest(input: {
     sourceCommit: input.sourceCommit,
     sourceRepo: input.sourceRepo,
     projects: input.projects,
-    routes: input.routes,
+    rawImplementationRoutes: input.rawImplementationRoutes,
+    routes: input.rawImplementationRoutes,
+    routeTemplates: input.routeTemplates,
+    designScreens: input.designScreens,
     visualStates: input.visualStates,
     dependencyGraphs: input.graphs,
     coverage: input.coverage,
     syncContracts,
     coverageSummaries,
     completenessScores,
+    reachabilitySummaries: input.reachabilitySummaries,
     failures: input.failures,
     forensicReportId: input.forensicReportId,
+    referenceMigration: input.referenceMigration,
   };
 }

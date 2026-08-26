@@ -1,16 +1,32 @@
 import { execSync } from 'node:child_process';
 import { discoverStudioWorldProjects, listDesignableProjects } from './project-registry';
 import { discoverProjectRoutes } from './discovery/project-adapters';
+import { scanProgrammaticNavigation, findEntryEvidenceForRoute } from './discovery/programmatic-navigation-scanner';
+import {
+  applyReachabilityToRoutes,
+  buildReachabilityContext,
+  summarizeReachability,
+} from './reachability-classifier';
+import {
+  buildDesignScreens,
+  buildReferenceMigrationMap,
+  buildRouteTemplates,
+  buildScreenCoverageFromDesignScreens,
+} from './design-screen-normalizer';
 import { buildDependencyGraph, buildVisualStates, linkParentChildRoutes } from './dependency-graph';
 import { discoverAllReferences } from './reference-discovery';
 import { buildAllCoverage } from './viewport-coverage';
 import { buildDesignRouteManifest } from './manifest';
-import { collectForensicFailures } from './manifest-diff';
+import { collectForensicFailuresV2 } from './manifest-diff';
 import type {
   CrossProjectRouteForensicReport,
+  DesignScreenRecord,
+  DynamicRouteTemplateGroup,
   FailureTaxonomy,
   ProjectPageRouteRecord,
   ProjectRouteDependencyGraph,
+  ReachabilitySummary,
+  RouteEntryEvidence,
   StudioWorldDesignRouteManifest,
 } from './types';
 
@@ -28,6 +44,72 @@ export function resolveSourceCommit(repoRoot: string): string {
   }
 }
 
+function toPattern(route: string): string {
+  return route.replace(/:[^/]+/g, ':param');
+}
+
+function collectRedirectTargets(routes: ProjectPageRouteRecord[]): Map<string, string> {
+  const map = new Map<string, string>();
+  for (const r of routes) {
+    if (r.redirect) map.set(r.routePattern, toPattern(r.redirect));
+  }
+  return map;
+}
+
+function enrichRoutesWithReachability(
+  repoRoot: string,
+  projectId: string,
+  routes: ProjectPageRouteRecord[],
+  navTargets: string[],
+): ProjectPageRouteRecord[] {
+  const navPatterns = new Set(navTargets.map(toPattern));
+  const programmatic = scanProgrammaticNavigation(repoRoot, projectId);
+  const programmaticPatterns = new Set(programmatic.targetsByPattern.keys());
+  const redirectTargets = collectRedirectTargets(routes);
+
+  for (const t of [...navTargets, ...e2eAndLaunchTargets(repoRoot, projectId)]) {
+    navPatterns.add(toPattern(t));
+  }
+
+  const evidenceByRouteId = new Map<string, RouteEntryEvidence[]>();
+  for (const route of routes) {
+    const evidence = findEntryEvidenceForRoute(
+      route.routePattern,
+      navPatterns,
+      programmatic,
+      redirectTargets,
+    );
+    if (route.parentRouteId) {
+      evidence.push({ type: 'PARENT_ROUTE', detail: route.parentRouteId });
+    }
+    if (route.evidence.some((e) => e.source === 'test')) {
+      evidence.push({ type: 'TEST_FIXTURE', detail: 'route evidence test source' });
+    }
+    evidenceByRouteId.set(route.routeId, evidence);
+  }
+
+  const ctx = buildReachabilityContext(routes, navPatterns, programmaticPatterns, redirectTargets);
+  return applyReachabilityToRoutes(routes, ctx, evidenceByRouteId);
+}
+
+function e2eAndLaunchTargets(_repoRoot: string, projectId: string): string[] {
+  if (projectId !== 'frontal-slayer') return [];
+  return [
+    '/home/shop',
+    '/bag',
+    '/checkout',
+    '/sign-in',
+    '/straight/noir',
+    '/build-a-wig',
+    '/tools',
+    '/brand',
+    '/booking/consultation',
+    '/account',
+    '/account/orders',
+    '/lobby',
+  ];
+}
+
 export function runCrossProjectRouteForensicAudit(options: AuditOptions): {
   report: CrossProjectRouteForensicReport;
   manifest: StudioWorldDesignRouteManifest;
@@ -40,43 +122,68 @@ export function runCrossProjectRouteForensicAudit(options: AuditOptions): {
   const projects = discoverStudioWorldProjects();
   const pilotIds = options.projectIds ?? ['frontal-slayer', 'ndxbook', 'site00', 'all-in-one-enterprise'];
 
-  const allRoutes: ProjectPageRouteRecord[] = [];
-  const allNavTargets: string[] = [];
+  let allRoutes: ProjectPageRouteRecord[] = [];
   const graphs: ProjectRouteDependencyGraph[] = [];
+  const allTemplates: DynamicRouteTemplateGroup[] = [];
+  const allDesignScreens: DesignScreenRecord[] = [];
+  const reachabilitySummaries: ReachabilitySummary[] = [];
 
   for (const projectId of pilotIds) {
     const { routes, navTargets } = discoverProjectRoutes({ repoRoot, projectId });
-    const linked = linkParentChildRoutes(routes);
+    let linked = linkParentChildRoutes(routes);
+    linked = enrichRoutesWithReachability(repoRoot, projectId, linked, navTargets);
     allRoutes.push(...linked);
-    allNavTargets.push(...navTargets);
     graphs.push(buildDependencyGraph(projectId, linked, navTargets));
+
+    const templates = buildRouteTemplates(linked, projectId);
+    allTemplates.push(...templates);
+    reachabilitySummaries.push(summarizeReachability(projectId, linked));
   }
 
   const refs = discoverAllReferences(repoRoot);
   const visualStates = buildVisualStates(allRoutes);
-  const coverage = buildAllCoverage(allRoutes, refs);
+
+  for (const projectId of pilotIds) {
+    const templates = allTemplates.filter((t) => t.projectId === projectId);
+    allDesignScreens.push(...buildDesignScreens(allRoutes, templates, visualStates, refs, projectId));
+  }
+
+  const screenCoverage = buildScreenCoverageFromDesignScreens(allDesignScreens);
+  const routeCoverage = buildAllCoverage(allRoutes, refs);
+  const coverage = [...screenCoverage, ...routeCoverage.filter((c) => !screenCoverage.some((s) => s.routeId === c.routeId))];
 
   const designableRoutes = allRoutes.filter((r) => r.designableSurface === 'FOUNDER_DESIGNABLE');
-  const dynamicTemplates = allRoutes.filter((r) => r.isTemplate);
-  const authenticatedRoutes = allRoutes.filter((r) => r.authRequired);
-  const orphaned = allRoutes.filter((r) => r.status === 'ORPHANED');
-  const deprecated = allRoutes.filter((r) => r.deprecated || r.status === 'LEGACY');
-  const missingDeps = graphs.flatMap((g) => g.missingRequired);
-  const impliedRoutes = graphs.flatMap((g) => g.impliedRequired);
+  const trueOrphans = allRoutes.filter((r) => r.reachabilityClassification === 'TRUE_ORPHAN');
+  const legacyOrphans = allRoutes.filter((r) => r.reachabilityClassification === 'LEGACY');
 
   const perProject = pilotIds.map((projectId) => {
     const pr = allRoutes.filter((r) => r.projectId === projectId);
+    const screens = allDesignScreens.filter((s) => s.projectId === projectId);
+    const templates = allTemplates.filter((t) => t.projectId === projectId);
+    const reach = reachabilitySummaries.find((r) => r.projectId === projectId)!;
     return {
       projectId,
+      rawImplementationRoutes: pr.length,
+      normalizedRouteTemplates: templates.length,
+      designScreens: screens.length,
       routesDiscovered: pr.length,
       designableRoutes: pr.filter((r) => r.designableSurface === 'FOUNDER_DESIGNABLE').length,
       visualStates: visualStates.filter((s) => s.projectId === projectId).length,
-      dynamicTemplates: pr.filter((r) => r.isTemplate).length,
+      dynamicTemplates: templates.length,
       authenticatedRoutes: pr.filter((r) => r.authRequired).length,
-      orphaned: pr.filter((r) => r.status === 'ORPHANED').length,
-      deprecated: pr.filter((r) => r.deprecated).length,
+      orphaned: trueOrphans.filter((r) => r.projectId === projectId).length,
+      trueOrphans: trueOrphans.filter((r) => r.projectId === projectId).length,
+      deprecated: pr.filter((r) => r.deprecated || r.status === 'LEGACY').length,
       missingDependencies: graphs.find((g) => g.projectId === projectId)?.missingRequired.length ?? 0,
       impliedRoutes: graphs.find((g) => g.projectId === projectId)?.impliedRequired.length ?? 0,
+      navReachable: reach.navReachable,
+      programmaticReachable: reach.programmaticReachable,
+      workflowReachable: reach.workflowReachable,
+      authGated: reach.authGated,
+      deepLinkSupported: reach.deepLinkSupported,
+      legacy: reach.legacy,
+      unknown: reach.unknown,
+      previousOrphanCount: projectId === 'frontal-slayer' ? 647 : undefined,
     };
   });
 
@@ -89,12 +196,12 @@ export function runCrossProjectRouteForensicAudit(options: AuditOptions): {
     routesDiscovered: allRoutes.length,
     designableRoutes: designableRoutes.length,
     visualStateCount: visualStates.length,
-    dynamicTemplateCount: dynamicTemplates.length,
-    authenticatedRouteCount: authenticatedRoutes.length,
-    orphanedCount: orphaned.length,
-    deprecatedCount: deprecated.length,
-    missingDependencyCount: missingDeps.length,
-    impliedRouteCount: impliedRoutes.length,
+    dynamicTemplateCount: allTemplates.length,
+    authenticatedRouteCount: allRoutes.filter((r) => r.authRequired).length,
+    orphanedCount: trueOrphans.length,
+    deprecatedCount: legacyOrphans.length,
+    missingDependencyCount: graphs.flatMap((g) => g.missingRequired).length,
+    impliedRouteCount: graphs.flatMap((g) => g.impliedRequired).length,
     dependencyGraphs: graphs,
     coverageSummaries: [],
     referenceQuality: [],
@@ -102,11 +209,13 @@ export function runCrossProjectRouteForensicAudit(options: AuditOptions): {
     perProject,
   };
 
-  report.failures = collectForensicFailures(report);
+  report.failures = collectForensicFailuresV2(report, allRoutes);
 
   const manifest = buildDesignRouteManifest({
     projects: listDesignableProjects(),
-    routes: allRoutes,
+    rawImplementationRoutes: allRoutes,
+    routeTemplates: allTemplates,
+    designScreens: allDesignScreens,
     visualStates,
     graphs,
     coverage,
@@ -114,6 +223,8 @@ export function runCrossProjectRouteForensicAudit(options: AuditOptions): {
     sourceRepo,
     forensicReportId: reportId,
     failures: report.failures,
+    reachabilitySummaries,
+    referenceMigration: buildReferenceMigrationMap(allRoutes, allDesignScreens),
   });
 
   report.coverageSummaries = manifest.coverageSummaries;
@@ -122,9 +233,9 @@ export function runCrossProjectRouteForensicAudit(options: AuditOptions): {
 }
 
 export function registerMissingRoutesAsDesignable(
-  routes: StudioWorldDesignRouteManifest['routes'],
+  routes: StudioWorldDesignRouteManifest['rawImplementationRoutes'],
   graphs: StudioWorldDesignRouteManifest['dependencyGraphs'],
-): StudioWorldDesignRouteManifest['routes'] {
+): StudioWorldDesignRouteManifest['rawImplementationRoutes'] {
   const updated = [...routes];
   for (const graph of graphs) {
     for (const missing of graph.missingRequired) {
@@ -151,6 +262,9 @@ export function registerMissingRoutesAsDesignable(
         status: 'REQUIRED_MISSING_ROUTE',
         evidence: missing.evidence,
         responsiveLayout: 'UNKNOWN',
+        reachabilityClassification: 'UNKNOWN',
+        entryEvidence: [],
+        implementationRouteKind: 'IMPLEMENTATION_ROUTE',
       });
     }
   }
@@ -159,20 +273,13 @@ export function registerMissingRoutesAsDesignable(
 
 export function auditFailureTaxonomy(): FailureTaxonomy[] {
   return [
-    'FAIL_PROJECT_DISCOVERY_INCOMPLETE',
-    'FAIL_ROUTER_ROUTE_OMITTED',
-    'FAIL_LINK_TARGET_NOT_AUDITED',
-    'FAIL_DEPENDENCY_ROUTE_MISSING',
+    'FAIL_FALSE_ORPHAN_CLASSIFICATION',
+    'FAIL_STATIC_LINK_ONLY_REACHABILITY',
+    'FAIL_PROGRAMMATIC_NAVIGATION_NOT_SCANNED',
+    'FAIL_DYNAMIC_ROUTE_NOT_NORMALIZED',
+    'FAIL_AUTH_ROUTE_MARKED_ORPHAN',
+    'FAIL_WORKFLOW_CHILD_MARKED_ORPHAN',
+    'FAIL_DEEP_LINK_MARKED_ORPHAN',
     'FAIL_ROUTE_ORPHANED',
-    'FAIL_ROUTE_DUPLICATE_UNKNOWN_AUTHORITY',
-    'FAIL_VIEWPORT_COVERAGE_UNKNOWN',
-    'FAIL_REFERENCE_COVERAGE_UNKNOWN',
-    'FAIL_IMPLEMENTATION_COVERAGE_UNKNOWN',
-    'FAIL_MOBILE_DESKTOP_CONFLATED',
-    'FAIL_TABLET_CONFLATED_WITH_MOBILE',
-    'FAIL_OUTDATED_REFERENCE_ACTIVE',
-    'FAIL_ROUTE_MANIFEST_STALE',
-    'FAIL_CROSS_PROJECT_ROUTE_LEAK',
-    'FAIL_DESIGNABLE_ROUTE_NOT_VISIBLE_IN_DESIGN',
   ];
 }

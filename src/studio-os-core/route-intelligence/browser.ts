@@ -3,6 +3,7 @@ export type * from './types';
 export {
   DESIGN_ROUTE_MANIFEST_VERSION,
   DESIGN_ROUTE_MANIFEST_SCHEMA_VERSION,
+  DESIGN_ROUTE_MANIFEST_SCHEMA_V1,
   MANIFEST_ARTIFACT_FILENAME,
   VIEWPORT_CLASSES,
   DEFAULT_VIEWPORT_DIMENSIONS,
@@ -11,9 +12,12 @@ export {
 export {
   buildNeedsReferenceQueue,
   buildNeedsImprovementQueue,
+  buildPossibleDeadRouteQueue,
   buildCoverageMatrix,
   groupRoutesForScreenDropdown,
 } from './queues';
+
+export { groupDesignScreensForDropdown } from './design-screen-dropdown';
 
 export {
   compilePageDesignReferencePrompt,

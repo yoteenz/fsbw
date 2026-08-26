@@ -1,10 +1,12 @@
 export {
   DESIGN_ROUTE_MANIFEST_VERSION,
   DESIGN_ROUTE_MANIFEST_SCHEMA_VERSION,
+  DESIGN_ROUTE_MANIFEST_SCHEMA_V1,
   MANIFEST_ARTIFACT_FILENAME,
   MANIFEST_ARTIFACT_RELATIVE_PATH,
   VIEWPORT_CLASSES,
   DEFAULT_VIEWPORT_DIMENSIONS,
+  ROUTE_REACHABILITY_CLASSES,
 } from './constants';
 
 export type * from './types';
@@ -24,14 +26,30 @@ export {
 
 export { buildDesignRouteManifest, buildCoverageSummary, buildSyncContracts } from './manifest';
 
-export { diffDesignRouteManifests, collectForensicFailures } from './manifest-diff';
+export { diffDesignRouteManifests, collectForensicFailures, collectForensicFailuresV2 } from './manifest-diff';
 
 export {
   buildNeedsReferenceQueue,
   buildNeedsImprovementQueue,
+  buildPossibleDeadRouteQueue,
   buildCoverageMatrix,
   groupRoutesForScreenDropdown,
 } from './queues';
+
+export {
+  buildDesignScreens,
+  buildRouteTemplates,
+  groupDesignScreensForDropdown,
+  buildReferenceMigrationMap,
+} from './design-screen-normalizer';
+
+export {
+  classifyRouteReachability,
+  applyReachabilityToRoutes,
+  summarizeReachability,
+} from './reachability-classifier';
+
+export { scanProgrammaticNavigation } from './discovery/programmatic-navigation-scanner';
 
 export {
   compilePageDesignReferencePrompt,

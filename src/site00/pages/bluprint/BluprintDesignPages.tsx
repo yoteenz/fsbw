@@ -7,16 +7,22 @@ import {
   buildCoverageMatrix,
   buildNeedsImprovementQueue,
   buildNeedsReferenceQueue,
-  groupRoutesForScreenDropdown,
+  buildPossibleDeadRouteQueue,
+  groupDesignScreensForDropdown,
 } from '../../../studio-os-core/route-intelligence/browser';
 import type {
   ViewportClass,
   ProjectPageRouteRecord,
   ProjectRouteDependencyGraph,
+  StudioWorldDesignRouteManifest,
 } from '../../../studio-os-core/route-intelligence/types';
 import '../../styles/site00-bluprint.css';
 
 const VIEWPORTS: ViewportClass[] = ['MOBILE', 'TABLET', 'DESKTOP'];
+
+function rawRoutes(manifest: StudioWorldDesignRouteManifest): ProjectPageRouteRecord[] {
+  return manifest.rawImplementationRoutes ?? manifest.routes;
+}
 
 function statusLabel(designStatus: string): string {
   switch (designStatus) {
@@ -63,20 +69,22 @@ export default function BluprintDesignHubPage() {
     );
   }
 
-  const needsRef = buildNeedsReferenceQueue(manifest.routes, manifest.coverage);
-  const needsImprove = buildNeedsImprovementQueue(manifest.routes, manifest.coverage);
+  const designScreens = manifest.designScreens ?? [];
+  const needsRef = buildNeedsReferenceQueue(designScreens, manifest.coverage);
+  const needsImprove = buildNeedsImprovementQueue(designScreens, manifest.coverage);
 
   return (
     <Site00PublicShell mobileActiveNav="build">
       <div className="site00-page site00-bluprint">
         <PageIntro
           title={<BracketHeading>DESIGN</BracketHeading>}
-          subtitle="Cross-project design coverage — discovered from source repo routes."
+          subtitle="Design screens — normalized from source repo routes (raw routes in Inspect)."
         />
 
         <div className="site00-bluprint__meta">
           <span>MANIFEST {syncStatus === 'SYNCED' ? 'SYNCED' : syncStatus}</span>
           <span>v{manifest.manifestVersion}</span>
+          <span>{manifest.schemaVersion}</span>
           <span>{manifest.sourceCommit.slice(0, 7)}</span>
         </div>
 
@@ -86,6 +94,7 @@ export default function BluprintDesignHubPage() {
             <thead>
               <tr>
                 <th>PROJECT</th>
+                <th>SCREENS</th>
                 <th>M</th>
                 <th>T</th>
                 <th>D</th>
@@ -102,11 +111,12 @@ export default function BluprintDesignHubPage() {
                         {project?.displayName ?? s.projectId}
                       </Link>
                     </td>
+                    <td>{s.totalDesignableScreens}</td>
                     <td>{s.mobile.matched}/{s.totalDesignableScreens}</td>
                     <td>{s.tablet.matched}/{s.totalDesignableScreens}</td>
                     <td>{s.desktop.matched}/{s.totalDesignableScreens}</td>
                     <td>
-                      {s.needsReference} ref · {s.needsImprovement} stale · {s.brokenRoutes} broken
+                      {s.needsReference} ref · {s.possibleDeadRoutes} dead · {s.brokenRoutes} missing impl
                     </td>
                   </tr>
                 );
@@ -120,8 +130,10 @@ export default function BluprintDesignHubPage() {
             <h3 className="site00-bluprint__section-title">NEEDS REFERENCE ({needsRef.length})</h3>
             <ul className="site00-bluprint__queue">
               {needsRef.slice(0, 8).map((item) => (
-                <li key={`${item.routeId}-${item.viewportClass}`}>
-                  <Link to={`/bluprint/projects/${item.projectId}?route=${encodeURIComponent(item.routeId)}`}>
+                <li key={`${item.designScreenId ?? item.routeId}-${item.viewportClass}`}>
+                  <Link
+                    to={`/bluprint/projects/${item.projectId}?screen=${encodeURIComponent(item.designScreenId ?? item.routeId)}`}
+                  >
                     {item.displayName} · {item.viewportClass}
                   </Link>
                 </li>
@@ -142,7 +154,7 @@ export default function BluprintDesignHubPage() {
 
         <div className="site00-bluprint__actions">
           <Link to="/bluprint/inspect" className="site00-link-red">
-            INSPECT FORENSIC DATA →
+            INSPECT ROUTE FORENSICS →
           </Link>
         </div>
       </div>
@@ -162,19 +174,21 @@ export function BluprintProjectDesignPage() {
   if (!manifest) return null;
 
   const project = manifest.projects.find((p) => p.projectId === projectId);
-  const groups = groupRoutesForScreenDropdown(manifest.routes, projectId);
+  const designScreens = (manifest.designScreens ?? []).filter((s) => s.projectId === projectId);
+  const groups = groupDesignScreensForDropdown(manifest.designScreens ?? [], projectId);
   const summary = manifest.coverageSummaries.find((s) => s.projectId === projectId);
-  const matrix = buildCoverageMatrix(projectId, manifest.routes, manifest.coverage);
+  const matrix = buildCoverageMatrix(projectId, designScreens, manifest.coverage);
 
-  const selectedRouteId = searchParams.get('route') ?? Object.values(groups)[0]?.[0]?.routeId ?? '';
-  const selectedRoute = manifest.routes.find((r) => r.routeId === selectedRouteId);
-  const coverage = manifest.coverage.find((c) => c.routeId === selectedRouteId);
+  const selectedScreenId =
+    searchParams.get('screen') ?? designScreens[0]?.designScreenId ?? '';
+  const selectedScreen = designScreens.find((s) => s.designScreenId === selectedScreenId);
+  const coverage = manifest.coverage.find((c) => c.routeId === selectedScreenId);
   const vpKey = viewport.toLowerCase() as 'mobile' | 'tablet' | 'desktop';
   const vpAuth = coverage?.[vpKey];
 
-  function selectRoute(routeId: string) {
+  function selectScreen(designScreenId: string) {
     setSearchParams((prev) => {
-      prev.set('route', routeId);
+      prev.set('screen', designScreenId);
       return prev;
     });
   }
@@ -192,12 +206,15 @@ export function BluprintProjectDesignPage() {
       <div className="site00-page site00-bluprint">
         <PageIntro
           title={<BracketHeading>{project?.displayName ?? projectId}</BracketHeading>}
-          subtitle="Project design coverage — routes discovered from source repo."
+          subtitle="Design screens — grouped shared visual routes."
         />
 
         {summary ? (
           <div className="site00-bluprint__coverage-bar">
-            <span>{summary.totalDesignableScreens} DESIGNABLE SCREENS</span>
+            <span>{summary.totalDesignableScreens} DESIGN SCREENS</span>
+            <span>{summary.rawImplementationRoutes} raw routes</span>
+            <span>{summary.normalizedRouteTemplates} templates</span>
+            <span>{summary.trueOrphanCount} true orphans</span>
             <span>MOBILE {summary.mobile.canonical} canonical · {summary.mobile.missing} missing</span>
             <span>TABLET {summary.tablet.canonical} canonical · {summary.tablet.missing} missing</span>
             <span>DESKTOP {summary.desktop.canonical} canonical · {summary.desktop.missing} missing</span>
@@ -206,17 +223,20 @@ export function BluprintProjectDesignPage() {
 
         <div className="site00-bluprint__selectors">
           <label>
-            SCREEN / ROUTE
+            SCREEN
             <select
-              value={selectedRouteId}
-              onChange={(e) => selectRoute(e.target.value)}
+              value={selectedScreenId}
+              onChange={(e) => selectScreen(e.target.value)}
               className="site00-bluprint__select"
             >
-              {Object.entries(groups).map(([family, routes]) => (
+              {Object.entries(groups).map(([family, screens]) => (
                 <optgroup key={family} label={family}>
-                  {routes.map((r) => (
-                    <option key={r.routeId} value={r.routeId}>
-                      {r.displayName} — {r.route}
+                  {screens.map((s) => (
+                    <option key={s.designScreenId} value={s.designScreenId}>
+                      {s.displayName}
+                      {s.instanceCount > 1 ? ` (${s.instanceCount} instances)` : ''}
+                      {' — '}
+                      {s.representativeRoute}
                     </option>
                   ))}
                 </optgroup>
@@ -238,11 +258,14 @@ export function BluprintProjectDesignPage() {
           </div>
         </div>
 
-        {selectedRoute && vpAuth ? (
+        {selectedScreen && vpAuth ? (
           <div className="site00-bluprint__page-row">
             <div>
-              <h3 className="site00-bluprint__route-name">{selectedRoute.displayName.toUpperCase()}</h3>
-              <p className="site00-body">{selectedRoute.route}</p>
+              <h3 className="site00-bluprint__route-name">{selectedScreen.displayName.toUpperCase()}</h3>
+              <p className="site00-body">{selectedScreen.representativeRoute}</p>
+              {selectedScreen.instanceCount > 1 ? (
+                <p className="site00-body">Instances: {selectedScreen.instanceCount} shared shell</p>
+              ) : null}
               <p className="site00-bluprint__status">
                 {viewport}: {statusLabel(vpAuth.designStatus)}
                 {vpAuth.referencePath ? ` · ${vpAuth.referencePath}` : ' · REFERENCE MISSING'}
@@ -251,10 +274,10 @@ export function BluprintProjectDesignPage() {
             <div className="site00-bluprint__page-actions">
               {vpAuth.designStatus === 'MISSING_REFERENCE' ? (
                 <>
-                  <button type="button" className="site00-bluprint__btn" disabled title="Founder upload — wire in production">
+                  <button type="button" className="site00-bluprint__btn" disabled title="Founder upload">
                     UPLOAD
                   </button>
-                  <button type="button" className="site00-bluprint__btn site00-bluprint__btn--primary" disabled title="Founder-triggered FAL generation">
+                  <button type="button" className="site00-bluprint__btn site00-bluprint__btn--primary" disabled title="Founder-triggered FAL">
                     GENERATE
                   </button>
                 </>
@@ -276,7 +299,7 @@ export function BluprintProjectDesignPage() {
           <table className="site00-bluprint__table site00-bluprint__table--matrix">
             <thead>
               <tr>
-                <th>PAGE</th>
+                <th>SCREEN</th>
                 <th>MOBILE</th>
                 <th>TABLET</th>
                 <th>DESKTOP</th>
@@ -284,10 +307,15 @@ export function BluprintProjectDesignPage() {
             </thead>
             <tbody>
               {matrix.slice(0, 40).map((row) => (
-                <tr key={row.routeId}>
+                <tr key={row.designScreenId}>
                   <td>
-                    <button type="button" className="site00-bluprint__link-btn" onClick={() => selectRoute(row.routeId)}>
+                    <button
+                      type="button"
+                      className="site00-bluprint__link-btn"
+                      onClick={() => selectScreen(row.designScreenId)}
+                    >
                       {row.displayName}
+                      {row.instanceCount > 1 ? ` (${row.instanceCount})` : ''}
                     </button>
                   </td>
                   <td>{row.mobile}</td>
@@ -308,7 +336,6 @@ export function BluprintProjectDesignPage() {
   );
 }
 
-
 export function BluprintInspectPage() {
   const { manifest } = useDesignRouteManifest();
   const [searchParams] = useSearchParams();
@@ -316,35 +343,66 @@ export function BluprintInspectPage() {
 
   if (!manifest) return null;
 
+  const routes = projectFilter
+    ? rawRoutes(manifest).filter((r) => r.projectId === projectFilter)
+    : rawRoutes(manifest);
+  const deadQueue = buildPossibleDeadRouteQueue(routes);
   const graph: ProjectRouteDependencyGraph | undefined = manifest.dependencyGraphs.find(
     (g) => g.projectId === projectFilter,
   );
+  const reachSummary = projectFilter
+    ? manifest.reachabilitySummaries?.find((r) => r.projectId === projectFilter)
+    : null;
 
   return (
     <Site00PublicShell mobileActiveNav="build">
       <div className="site00-page site00-bluprint site00-bluprint--inspect">
-        <PageIntro title={<BracketHeading>INSPECT</BracketHeading>} subtitle="Raw forensic audit — route graph, evidence, manifest." />
+        <PageIntro
+          title={<BracketHeading>INSPECT</BracketHeading>}
+          subtitle="Raw implementation routes, reachability evidence, route map."
+        />
+        {reachSummary ? (
+          <section>
+            <h3 className="site00-bluprint__section-title">REACHABILITY — {projectFilter}</h3>
+            <pre className="site00-bluprint__pre">{JSON.stringify(reachSummary, null, 2)}</pre>
+          </section>
+        ) : null}
         {graph ? (
           <section>
             <h3 className="site00-bluprint__section-title">ROUTE MAP — {projectFilter}</h3>
             <pre className="site00-bluprint__pre">
               {graph.nodes
                 .filter((n) => !n.parentRouteId)
-                .slice(0, 30)
+                .slice(0, 20)
                 .map((n) => renderRouteTree(n, graph.nodes, 0))
                 .join('\n')}
             </pre>
           </section>
         ) : null}
         <section>
+          <h3 className="site00-bluprint__section-title">POSSIBLE DEAD ROUTES ({deadQueue.length})</h3>
+          <pre className="site00-bluprint__pre">
+            {deadQueue.slice(0, 30).map((d) => `${d.route} — ${d.reachabilityClassification}`).join('\n') || 'None'}
+          </pre>
+        </section>
+        <section>
           <h3 className="site00-bluprint__section-title">MANIFEST META</h3>
-          <pre className="site00-bluprint__pre">{JSON.stringify({
-            manifestVersion: manifest.manifestVersion,
-            sourceCommit: manifest.sourceCommit,
-            routes: manifest.routes.length,
-            visualStates: manifest.visualStates.length,
-            failures: manifest.failures,
-          }, null, 2)}</pre>
+          <pre className="site00-bluprint__pre">
+            {JSON.stringify(
+              {
+                manifestVersion: manifest.manifestVersion,
+                schemaVersion: manifest.schemaVersion,
+                sourceCommit: manifest.sourceCommit,
+                rawImplementationRoutes: rawRoutes(manifest).length,
+                designScreens: manifest.designScreens?.length ?? 0,
+                routeTemplates: manifest.routeTemplates?.length ?? 0,
+                visualStates: manifest.visualStates.length,
+                failures: manifest.failures,
+              },
+              null,
+              2,
+            )}
+          </pre>
         </section>
         <Link to="/bluprint" className="site00-link-red">
           ← DESIGN HUB
@@ -360,7 +418,8 @@ function renderRouteTree(
   depth: number,
 ): string {
   const indent = '  '.repeat(depth);
-  const line = `${indent}${node.displayName} (${node.routeId})`;
+  const reach = node.reachabilityClassification ?? 'UNKNOWN';
+  const line = `${indent}${node.displayName} [${reach}] (${node.route})`;
   const children = node.childRouteIds
     .map((id) => all.find((n) => n.routeId === id))
     .filter(Boolean)

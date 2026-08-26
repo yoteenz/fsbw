@@ -2,7 +2,10 @@ import type {
   DESIGNABLE_SURFACE_CLASSES,
   DESIGN_ROUTE_PRIORITIES,
   FAILURE_TAXONOMY,
+  ROUTE_ALIAS_CLASSES,
+  ROUTE_ENTRY_EVIDENCE_TYPES,
   ROUTE_FAMILIES,
+  ROUTE_REACHABILITY_CLASSES,
   VIEWPORT_CLASSES,
 } from './constants';
 
@@ -11,6 +14,9 @@ export type RouteFamily = (typeof ROUTE_FAMILIES)[number];
 export type DesignRoutePriority = (typeof DESIGN_ROUTE_PRIORITIES)[number];
 export type DesignableSurfaceClass = (typeof DESIGNABLE_SURFACE_CLASSES)[number];
 export type FailureTaxonomy = (typeof FAILURE_TAXONOMY)[number];
+export type RouteReachabilityClassification = (typeof ROUTE_REACHABILITY_CLASSES)[number];
+export type RouteEntryEvidenceType = (typeof ROUTE_ENTRY_EVIDENCE_TYPES)[number];
+export type RouteAliasClass = (typeof ROUTE_ALIAS_CLASSES)[number];
 
 export type RouteType =
   | 'PAGE'
@@ -119,6 +125,14 @@ export type StudioWorldProjectRecord = {
   routerSystems: string[];
 };
 
+export type RouteEntryEvidence = {
+  type: RouteEntryEvidenceType;
+  file?: string;
+  line?: number;
+  detail?: string;
+  targetRoute?: string;
+};
+
 export type RouteEvidence = {
   source: RouteEvidenceSource;
   file?: string;
@@ -151,6 +165,14 @@ export type ProjectPageRouteRecord = {
   status: RouteStatus;
   evidence: RouteEvidence[];
   responsiveLayout: ResponsiveLayoutMode;
+  /** P0.VR.3B — multi-signal reachability (not static-link-only) */
+  reachabilityClassification: RouteReachabilityClassification;
+  entryEvidence: RouteEntryEvidence[];
+  /** Maps to a design screen when normalized */
+  designScreenId?: string;
+  routeTemplateId?: string;
+  aliasClass?: RouteAliasClass;
+  implementationRouteKind: 'IMPLEMENTATION_ROUTE' | 'DESIGN_SCREEN';
 };
 
 export type ProjectVisualStateRecord = {
@@ -251,15 +273,68 @@ export type ProjectCompletenessScores = {
   totalRouteCount: number;
 };
 
+export type DynamicRouteTemplateGroup = {
+  templateId: string;
+  projectId: string;
+  routePattern: string;
+  displayName: string;
+  routeFamily: RouteFamily;
+  instanceRouteIds: string[];
+  representativeRouteId: string;
+  representativeRoute: string;
+  sharedVisualShell: boolean;
+  perInstanceOverrideAllowed: boolean;
+};
+
+export type DesignScreenRecord = {
+  designScreenId: string;
+  projectId: string;
+  displayName: string;
+  routeFamily: RouteFamily;
+  priority: DesignRoutePriority;
+  implementationRouteIds: string[];
+  routeTemplateId?: string;
+  representativeRoute: string;
+  representativeRouteId: string;
+  instanceCount: number;
+  instanceRoutes: string[];
+  perInstanceOverrideRouteIds: string[];
+  visualStateIds: string[];
+  viewportCoverage?: PageVisualCoverageRecord;
+  referenceCoverage?: PageVisualCoverageRecord;
+  reachabilitySummary: Partial<Record<RouteReachabilityClassification, number>>;
+  referenceFamilyConflict: boolean;
+};
+
+export type ReachabilitySummary = {
+  projectId: string;
+  navReachable: number;
+  programmaticReachable: number;
+  workflowReachable: number;
+  authGated: number;
+  deepLinkSupported: number;
+  legacy: number;
+  unknown: number;
+  trueOrphan: number;
+  dynamicInstance: number;
+  adminReachable: number;
+  testOnly: number;
+};
+
 export type DesignCoverageSummary = {
   projectId: string;
+  /** Primary founder-facing count — design screens, not raw routes */
   totalDesignableScreens: number;
+  rawImplementationRoutes: number;
+  normalizedRouteTemplates: number;
+  trueOrphanCount: number;
   mobile: { canonical: number; missing: number; stale: number; matched: number };
   tablet: { canonical: number; missing: number; stale: number; matched: number };
   desktop: { canonical: number; missing: number; stale: number; matched: number };
   needsReference: number;
   needsImprovement: number;
   brokenRoutes: number;
+  possibleDeadRoutes: number;
 };
 
 export type DesignRouteSyncContract = {
@@ -288,15 +363,27 @@ export type StudioWorldDesignRouteManifest = {
   sourceCommit: string;
   sourceRepo: string;
   projects: StudioWorldProjectRecord[];
+  /** All discovered implementation routes (Inspect authority) */
+  rawImplementationRoutes: ProjectPageRouteRecord[];
+  /** @deprecated use rawImplementationRoutes — v1 compat alias */
   routes: ProjectPageRouteRecord[];
+  routeTemplates: DynamicRouteTemplateGroup[];
+  designScreens: DesignScreenRecord[];
   visualStates: ProjectVisualStateRecord[];
   dependencyGraphs: ProjectRouteDependencyGraph[];
   coverage: PageVisualCoverageRecord[];
   syncContracts: DesignRouteSyncContract[];
   coverageSummaries: DesignCoverageSummary[];
   completenessScores: ProjectCompletenessScores[];
+  reachabilitySummaries: ReachabilitySummary[];
   failures: FailureTaxonomy[];
   forensicReportId: string;
+  referenceMigration?: {
+    preservedRouteIds: string[];
+    mappedToDesignScreens: Record<string, string>;
+    conflicts: string[];
+    deleted: string[];
+  };
 };
 
 export type CrossProjectRouteForensicReport = {
@@ -320,15 +407,27 @@ export type CrossProjectRouteForensicReport = {
   failures: FailureTaxonomy[];
   perProject: Array<{
     projectId: string;
+    rawImplementationRoutes: number;
+    normalizedRouteTemplates: number;
+    designScreens: number;
     routesDiscovered: number;
     designableRoutes: number;
     visualStates: number;
     dynamicTemplates: number;
     authenticatedRoutes: number;
     orphaned: number;
+    trueOrphans: number;
     deprecated: number;
     missingDependencies: number;
     impliedRoutes: number;
+    navReachable: number;
+    programmaticReachable: number;
+    workflowReachable: number;
+    authGated: number;
+    deepLinkSupported: number;
+    legacy: number;
+    unknown: number;
+    previousOrphanCount?: number;
   }>;
 };
 
@@ -358,9 +457,18 @@ export type DesignRouteManifestDiff = {
   entries: DesignRouteManifestDiffEntry[];
 };
 
+export type PossibleDeadRouteQueueItem = {
+  projectId: string;
+  routeId: string;
+  route: string;
+  displayName: string;
+  reachabilityClassification: RouteReachabilityClassification;
+};
+
 export type NeedsReferenceQueueItem = {
   projectId: string;
   routeId: string;
+  designScreenId?: string;
   displayName: string;
   viewportClass: ViewportClass;
   priority: DesignRoutePriority;

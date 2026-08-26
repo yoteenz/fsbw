@@ -184,7 +184,9 @@ export function buildDependencyGraph(
     }
   }
 
-  const orphanedRouteIds = projectRoutes.filter((r) => r.status === 'ORPHANED').map((r) => r.routeId);
+  const orphanedRouteIds = projectRoutes
+    .filter((r) => r.reachabilityClassification === 'TRUE_ORPHAN')
+    .map((r) => r.routeId);
 
   const duplicateGroups: ProjectRouteDependencyGraph['duplicateGroups'] = [];
   const byDisplay = new Map<string, ProjectPageRouteRecord[]>();
