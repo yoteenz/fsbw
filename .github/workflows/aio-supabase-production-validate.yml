@@ -128,11 +128,20 @@ jobs:
           set +x
           node scripts/ci/aio-fetch-api-keys.mjs
 
+      - name: Provision RLS test sessions (Auth sign-in)
+        if: success()
+        shell: bash
+        run: |
+          set +x
+          node scripts/ci/aio-provision-rls-test-sessions.mjs
+
       - name: Live RLS integration tests
         id: rls
         if: success()
         continue-on-error: true
         shell: bash
+        env:
+          AIO_LIVE_SUPABASE_TEST: '1'
         run: |
           set +x
           export AIO_STAGING_SUPABASE_URL="${AIO_STAGING_SUPABASE_URL:-https://nnnljnhtmseagotvgxxt.supabase.co}"
@@ -149,8 +158,8 @@ jobs:
             bash scripts/ci/aio-record-result.sh rls FAIL
             exit 0
           fi
-          if [[ -z "${AIO_RLS_TEST_SHIPPER_A_JWT:-}" || -z "${AIO_RLS_TEST_CARRIER_A_JWT:-}" || -z "${AIO_RLS_TEST_STAFF_JWT:-}" ]]; then
-            bash scripts/ci/aio-record-result.sh rls BLOCKED "role matrix requires AIO_RLS_TEST_SHIPPER_A_JWT, AIO_RLS_TEST_CARRIER_A_JWT, AIO_RLS_TEST_STAFF_JWT"
+          if [[ -z "${AIO_RLS_TEST_SHIPPER_A_JWT:-}" || -z "${AIO_RLS_TEST_SHIPPER_B_JWT:-}" || -z "${AIO_RLS_TEST_CARRIER_A_JWT:-}" || -z "${AIO_RLS_TEST_STAFF_JWT:-}" ]]; then
+            bash scripts/ci/aio-record-result.sh rls BLOCKED "role matrix requires AIO_RLS_TEST_SHIPPER_A_JWT, AIO_RLS_TEST_SHIPPER_B_JWT, AIO_RLS_TEST_CARRIER_A_JWT, AIO_RLS_TEST_STAFF_JWT (or matching *_EMAIL/*_PASSWORD secrets for Auth sign-in)"
             bash scripts/ci/aio-record-result.sh rlsBlockedReason "LIVE RLS — BLOCKED BY ADDITIONAL TEST CREDENTIAL (role JWT secrets)"
             exit 0
           fi
@@ -161,6 +170,8 @@ jobs:
         if: success()
         continue-on-error: true
         shell: bash
+        env:
+          AIO_LIVE_SUPABASE_TEST: '1'
         run: |
           set +x
           if [[ -z "${AIO_SUPABASE_SERVICE_ROLE_KEY:-}" ]]; then
@@ -180,6 +191,7 @@ jobs:
         continue-on-error: true
         shell: bash
         env:
+          AIO_LIVE_SUPABASE_TEST: '1'
           VITE_AIO_SUPABASE_URL: ${{ env.AIO_STAGING_SUPABASE_URL }}
           VITE_AIO_SUPABASE_ANON_KEY: ${{ env.AIO_STAGING_SUPABASE_ANON_KEY }}
         run: |
@@ -199,6 +211,8 @@ jobs:
         if: success()
         continue-on-error: true
         shell: bash
+        env:
+          AIO_LIVE_SUPABASE_TEST: '1'
         run: |
           set +x
           if [[ -z "${AIO_SUPABASE_SERVICE_ROLE_KEY:-}" ]]; then
@@ -216,6 +230,8 @@ jobs:
         if: success()
         continue-on-error: true
         shell: bash
+        env:
+          AIO_LIVE_SUPABASE_TEST: '1'
         run: |
           set +x
           if [[ -z "${AIO_SUPABASE_SERVICE_ROLE_KEY:-}" ]]; then
@@ -234,7 +250,6 @@ jobs:
             bash scripts/ci/aio-record-result.sh freightAutopilotPersistence PASS
             bash scripts/ci/aio-record-result.sh freightAutopilotIdempotency PASS
             bash scripts/ci/aio-record-result.sh freightAutopilotMultiSession PASS
-            bash scripts/ci/aio-record-result.sh autopilotLiveRead PASS
             bash scripts/ci/aio-record-result.sh pretripPersistence PASS
             bash scripts/ci/aio-record-result.sh dispatchSnapshotPersistence PASS
             bash scripts/ci/aio-record-result.sh brokenPathRecovery PASS
@@ -242,10 +257,16 @@ jobs:
             bash scripts/ci/aio-record-result.sh freightAutopilotPersistence FAIL
             bash scripts/ci/aio-record-result.sh freightAutopilotIdempotency FAIL
             bash scripts/ci/aio-record-result.sh freightAutopilotMultiSession FAIL
-            bash scripts/ci/aio-record-result.sh autopilotLiveRead FAIL
             bash scripts/ci/aio-record-result.sh pretripPersistence FAIL
             bash scripts/ci/aio-record-result.sh dispatchSnapshotPersistence FAIL
             bash scripts/ci/aio-record-result.sh brokenPathRecovery FAIL
+          fi
+          if [[ -z "${AIO_RLS_TEST_STAFF_JWT:-}" ]]; then
+            bash scripts/ci/aio-record-result.sh autopilotLiveRead BLOCKED "AIO_RLS_TEST_STAFF_JWT (staff Auth session required for RLS read path)"
+          elif npm run test -- src/freight/autopilot/freightAutopilotLiveRead.test.ts; then
+            bash scripts/ci/aio-record-result.sh autopilotLiveRead PASS
+          else
+            bash scripts/ci/aio-record-result.sh autopilotLiveRead FAIL
           fi
 
       - name: Staging golden path (live Supabase)
@@ -253,6 +274,8 @@ jobs:
         if: success()
         continue-on-error: true
         shell: bash
+        env:
+          AIO_LIVE_SUPABASE_TEST: '1'
         run: |
           set +x
           if [[ -z "${AIO_SUPABASE_SERVICE_ROLE_KEY:-}" ]]; then

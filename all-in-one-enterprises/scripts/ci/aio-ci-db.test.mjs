@@ -15,7 +15,7 @@ import {
   AIO_CANONICAL_PROJECT_REF,
   FS_FORBIDDEN_PROJECT_REF,
 } from './aio-ci-db.mjs';
-import { verifySchemaAndRls, REQUIRED_TABLES, RLS_TABLES } from './aio-verify-schema.mjs';
+import { verifySchemaAndRls, REQUIRED_TABLES, RLS_TABLES, SERVICE_ROLE_GRANT_TABLES } from './aio-verify-schema.mjs';
 
 const POOLER_TEMPLATE = `postgresql://postgres.${AIO_CANONICAL_PROJECT_REF}:[YOUR-PASSWORD]@aws-0-us-east-1.pooler.supabase.com:6543/postgres`;
 
@@ -112,6 +112,12 @@ function testSchemaPresentPass() {
       { queryOk: true, stdout: 't\n' },
     );
   }
+  for (const t of SERVICE_ROLE_GRANT_TABLES) {
+    sqlResponses.set(
+      `select case when has_table_privilege('service_role', 'public.${t}', 'INSERT') then 't' else 'f' end;`,
+      { queryOk: true, stdout: 't\n' },
+    );
+  }
 
   const runSql = (q) => sqlResponses.get(q) ?? { queryOk: false, stdout: '', stderr: 'missing mock' };
   const result = verifySchemaAndRls({ runSql });
@@ -125,6 +131,7 @@ function testSchemaMissingFail() {
   const runSql = (q) => {
     if (q.includes('information_schema')) return { queryOk: true, stdout: '0\n' };
     if (q.includes('relrowsecurity')) return { queryOk: true, stdout: 't\n' };
+    if (q.includes('has_table_privilege')) return { queryOk: true, stdout: 't\n' };
     return { queryOk: false, stdout: '', stderr: 'unexpected' };
   };
   const result = verifySchemaAndRls({ runSql });
@@ -137,12 +144,26 @@ function testRlsDisabledFail() {
   const runSql = (q) => {
     if (q.includes('information_schema')) return { queryOk: true, stdout: '1\n' };
     if (q.includes('relrowsecurity')) return { queryOk: true, stdout: 'f\n' };
+    if (q.includes('has_table_privilege')) return { queryOk: true, stdout: 't\n' };
     return { queryOk: false, stdout: '', stderr: 'unexpected' };
   };
   const result = verifySchemaAndRls({ runSql });
   assert.equal(result.rlsStatus, 'FAIL');
   assert.ok(result.rlsOff.length > 0);
   console.log('OK: required RLS disabled => RLS FAIL');
+}
+
+function testServiceRoleGrantMissingFail() {
+  const runSql = (q) => {
+    if (q.includes('information_schema')) return { queryOk: true, stdout: '1\n' };
+    if (q.includes('relrowsecurity')) return { queryOk: true, stdout: 't\n' };
+    if (q.includes('has_table_privilege')) return { queryOk: true, stdout: 'f\n' };
+    return { queryOk: false, stdout: '', stderr: 'unexpected' };
+  };
+  const result = verifySchemaAndRls({ runSql });
+  assert.equal(result.schemaStatus, 'FAIL');
+  assert.ok(result.grantMissing.length > 0);
+  console.log('OK: missing service_role INSERT grant => SCHEMA FAIL');
 }
 
 function testSqlQueryFailureUnknown() {
@@ -170,6 +191,7 @@ testConnectivityFailure();
 testSchemaPresentPass();
 testSchemaMissingFail();
 testRlsDisabledFail();
+testServiceRoleGrantMissingFail();
 testSqlQueryFailureUnknown();
 testRunPoolerSqlResolutionFail();
 

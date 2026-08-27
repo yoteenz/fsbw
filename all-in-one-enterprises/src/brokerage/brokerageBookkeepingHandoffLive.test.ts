@@ -17,11 +17,12 @@ describe.skipIf(!hasLive)('brokerage bookkeeping handoff — live idempotency', 
   it('creates exactly one handoff row (second run does not duplicate)', async () => {
     const admin = createClient(url!, serviceKey!, { auth: { persistSession: false } });
 
-    const { data: brokerOrg } = await admin
+    const { data: brokerOrg, error: brokerOrgErr } = await admin
       .from('aio_organizations')
       .insert({ name: 'AIO QA Bookkeeping Org', organization_type: 'aio_internal' })
       .select('id')
       .single();
+    expect(brokerOrgErr).toBeNull();
     brokerOrgId = brokerOrg!.id;
 
     const { data: load } = await admin

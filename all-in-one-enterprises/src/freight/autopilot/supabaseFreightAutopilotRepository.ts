@@ -8,11 +8,14 @@ import {
   fetchOpenExceptions,
   fetchPersistedAutopilotContext,
 } from './supabaseFreightAutopilotRead';
+import type { SupabaseClient } from '@supabase/supabase-js';
 
-export function createSupabaseFreightAutopilotRepository(): FreightAutopilotRepository {
+export function createSupabaseFreightAutopilotRepository(
+  clientOverride?: SupabaseClient,
+): FreightAutopilotRepository {
   return {
     async getPanelData(loadId: string) {
-      const client = getAioSupabase();
+      const client = clientOverride ?? getAioSupabase();
       if (!client) return undefined;
 
       const load = await fetchLoadForAutopilot(client, loadId);

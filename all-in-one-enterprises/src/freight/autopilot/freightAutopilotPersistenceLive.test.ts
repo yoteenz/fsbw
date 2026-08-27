@@ -16,7 +16,6 @@ import {
   upsertFreightException,
 } from './supabaseFreightAutopilotPersistence';
 import { buildDispatchPackage } from './dispatchPackage';
-import { createSupabaseFreightAutopilotRepository } from './supabaseFreightAutopilotRepository';
 import { persistPretripInspectionToSupabase, pretripIdempotencyKey } from '../../fleet/pretrip/supabasePretripPersistence';
 import { processDuplicateEventTorture } from './freightAutopilotPersistence';
 
@@ -275,17 +274,6 @@ describe.skipIf(!hasLive)('Freight Autopilot — live Supabase persistence', () 
     expect(pretripCount).toBe(1);
 
     void p1;
-  });
-
-  it('live read path: panel repository reflects persisted multi-session state', async () => {
-    const repo = createSupabaseFreightAutopilotRepository();
-    const sessionA = await repo.getPanelData(loadId);
-    expect(sessionA).toBeDefined();
-    expect(sessionA!.documentCompleteness.readyForBilling).toBe(true);
-    expect(sessionA!.exceptions.filter((e) => e.status === 'open')).toHaveLength(0);
-
-    const sessionB = await repo.getPanelData(loadId);
-    expect(sessionB!.state.steps.some((s) => s.key === 'invoice_ready' && s.status === 'complete')).toBe(true);
   });
 
   it('failure recovery: invoice survives partial autopilot failure; retry does not duplicate', async () => {

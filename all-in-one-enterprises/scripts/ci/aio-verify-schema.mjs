@@ -57,6 +57,19 @@ export const RLS_TABLES = [
   'aio_load_stops',
 ];
 
+/** Tables that must grant INSERT to service_role (PostgREST admin / CI fixtures). */
+export const SERVICE_ROLE_GRANT_TABLES = [
+  'aio_organizations',
+  'aio_dispatch_loads',
+  'aio_shipment_requests',
+  'aio_freight_document_completeness',
+  'aio_brokerage_bookkeeping_handoffs',
+];
+
+function serviceRoleInsertGrantQuery(tableName) {
+  return `select case when has_table_privilege('service_role', 'public.${tableName}', 'INSERT') then 't' else 'f' end;`;
+}
+
 function tableExistsQuery(tableName) {
   return `select count(*)::text from information_schema.tables where table_schema='public' and table_name='${tableName}';`;
 }
@@ -68,10 +81,13 @@ function rlsEnabledQuery(tableName) {
 export function verifySchemaAndRls({ runSql = runPoolerSql } = {}) {
   const missing = [];
   const rlsOff = [];
+  const grantMissing = [];
   let schemaQueryOk = true;
   let rlsQueryOk = true;
+  let grantQueryOk = true;
   const schemaErrors = [];
   const rlsErrors = [];
+  const grantErrors = [];
 
   for (const table of REQUIRED_TABLES) {
     const result = runSql(tableExistsQuery(table));
@@ -99,13 +115,28 @@ export function verifySchemaAndRls({ runSql = runPoolerSql } = {}) {
     }
   }
 
+  for (const table of SERVICE_ROLE_GRANT_TABLES) {
+    const result = runSql(serviceRoleInsertGrantQuery(table));
+    if (!result.queryOk) {
+      grantQueryOk = false;
+      grantErrors.push(`${table}: ${redactSecrets(result.stderr || 'query failed')}`);
+      continue;
+    }
+    if (result.stdout.trim() !== 't') {
+      grantMissing.push(table);
+    }
+  }
+
   let schemaStatus;
   let rlsStatus;
+  let grantStatus;
 
   if (!schemaQueryOk) {
     schemaStatus = 'UNKNOWN';
-  } else if (missing.length > 0) {
+  } else if (missing.length > 0 || grantMissing.length > 0) {
     schemaStatus = 'FAIL';
+  } else if (!grantQueryOk) {
+    schemaStatus = 'UNKNOWN';
   } else {
     schemaStatus = 'PASS';
   }
@@ -118,17 +149,29 @@ export function verifySchemaAndRls({ runSql = runPoolerSql } = {}) {
     rlsStatus = 'PASS';
   }
 
-  const exitCode = schemaStatus === 'PASS' && rlsStatus === 'PASS' ? 0 : 1;
+  if (!grantQueryOk) {
+    grantStatus = 'UNKNOWN';
+  } else if (grantMissing.length > 0) {
+    grantStatus = 'FAIL';
+  } else {
+    grantStatus = 'PASS';
+  }
+
+  const exitCode = schemaStatus === 'PASS' && rlsStatus === 'PASS' && grantStatus !== 'FAIL' ? 0 : 1;
 
   return {
     schemaStatus,
     rlsStatus,
+    grantStatus,
     schemaQueryOk,
     rlsQueryOk,
+    grantQueryOk,
     missing,
     rlsOff,
+    grantMissing,
     schemaErrors,
     rlsErrors,
+    grantErrors,
     connectionMethod: 'POOLER',
     exitCode,
   };
@@ -144,10 +187,13 @@ function writeResults(result) {
   data.schemaDetail = {
     missing: result.missing,
     rlsOff: result.rlsOff,
+    grantMissing: result.grantMissing,
     schemaQueryOk: result.schemaQueryOk,
     rlsQueryOk: result.rlsQueryOk,
+    grantQueryOk: result.grantQueryOk,
     schemaErrors: result.schemaErrors,
     rlsErrors: result.rlsErrors,
+    grantErrors: result.grantErrors,
     connectionMethod: result.connectionMethod,
   };
   writeFileSync(RESULTS_PATH, `${JSON.stringify(data, null, 2)}\n`);
@@ -186,8 +232,22 @@ function printReport(result) {
   }
 
   console.log('');
+  console.log('=== service_role INSERT grants ===');
+  if (!result.grantQueryOk) {
+    console.log('GRANT QUERY: FAIL');
+    for (const e of result.grantErrors.slice(0, 5)) console.log(`  ${e}`);
+  } else {
+    console.log('GRANT QUERY: PASS');
+    for (const t of SERVICE_ROLE_GRANT_TABLES) {
+      if (result.grantMissing.includes(t)) console.log(`GRANT MISSING: ${t}`);
+      else console.log(`GRANT OK: ${t}`);
+    }
+  }
+
+  console.log('');
   console.log(`SCHEMA STATUS: ${result.schemaStatus}`);
   console.log(`RLS STATUS: ${result.rlsStatus}`);
+  console.log(`GRANT STATUS: ${result.grantStatus ?? 'PASS'}`);
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
