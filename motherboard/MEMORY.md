@@ -54963,3 +54963,23 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Next:** Founder manually starts NEW AIO Supabase Production Validate on master.
 
+---
+
+## 2026-08-27 — AIO live Supabase validation forensic repair (service_role GRANTs + live harness)
+
+- **Context:** Founder sprint to eliminate live-production validation blockers without weakening gates or deploying. GHA infrastructure gates all PASS; live layer had RLS BLOCKED (4 skipped role-matrix tests) + 11 FAIL statuses (shipper, bookkeeping, autopilot suite, golden path, financial privacy).
+
+- **Forensic root cause (shared):** Missing PostgreSQL table-level GRANTs for `service_role` (and default privileges for `authenticated`/`anon`) on AIO `public` tables. Migrations enabled RLS but never granted PostgREST role privileges. Service-role inserts failed with `42501 permission denied` (e.g. `aio_organizations`) — cascading all live fixture/persistence failures. NOT independent app defects.
+
+- **RLS BLOCKED root cause:** GitHub `aio-production` environment had empty `AIO_RLS_TEST_*_JWT` secrets. Anon unauthenticated tests (3) passed; 4 role-matrix tests correctly skipped. Workflow correctly recorded BLOCKED not PASS.
+
+- **Secondary harness issue:** `vitest.config.ts` + `vitest.setup.ts` forced demo mode even during live CI steps, breaking `getAioSupabase()` read path. Fixed with `AIO_LIVE_SUPABASE_TEST=1` boundary on live workflow steps only.
+
+- **Fixes:** Forward migration `20260827120000_aio_api_role_grants.sql` (applied to `nnnljnhtmseagotvgxxt` via Supabase MCP); schema CI now verifies `service_role` INSERT grants; `aio-provision-rls-test-sessions.mjs` obtains short-lived JWTs via Auth email/password secrets (legacy JWT secrets still supported); workflow provisions sessions before RLS tests; autopilot live read split to `freightAutopilotLiveRead.test.ts` with staff JWT (BLOCKED separately from persistence PASS); repository accepts optional Supabase client for authenticated reads.
+
+- **RLS credential strategy after:** Configure `AIO_RLS_TEST_*_EMAIL` + `*_PASSWORD` in GitHub environment (preferred) OR legacy `*_JWT` secrets. CI signs in per run — no long-lived JWT maintenance.
+
+- **Not done:** No deploy, no workflow trigger, no gate weakening, no FS project touch. RLS role matrix remains BLOCKED until founder adds test-user Auth secrets.
+
+- **Next:** Founder adds RLS test user email/password secrets to `aio-production` GitHub environment, then manually starts NEW AIO Supabase Production Validate on master.
+
