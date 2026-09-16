@@ -54983,3 +54983,17 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Next:** Founder adds RLS test user email/password secrets to `aio-production` GitHub environment, then manually starts NEW AIO Supabase Production Validate on master.
 
+---
+
+## 2026-09-16 — FSBW.ASTRA-CONTEXT1: Astral World Astra Test 01 context pack
+
+- **Context:** Founder sprint to compile compact, high-authority context for first GPT **Astra** benchmark (Astral World **world-entry / title screen** only). Research + documentation only — no code/design mutation, no image/video generation, no Astra/Opus invocation.
+
+- **Forensics:** FSBW `/workspace/src` contains **no** Astral World implementation at audit time. Canonical product code, docs, tests, and assets live in **SITE 00 standalone** (`yoteenz/SITE00`, cloud clone `/home/ubuntu/SITE00`): `src/site00/astral-world/`, `shared/site00-astral-world/`, `docs/projects/astral-world/`.
+
+- **Recovered truth:** Landing = `/projects/astral-world/experience/home` → `MobileArrivalScene` → **AW_D_01** / **AW_M_01** layered world-entry screens; Astréa district + Tarot Suite / Astral Mall / Coffee Shop; entry verbs Take Me Somewhere, Who's Here, Find My Reader; Meet My Friends via overlay/nav; Join Her Table at Coffee Shop; presence/social **prototype** (local React fixtures). Visual authority = REFERENCE A/B PNGs + screen-master compositions; doctrine KEEP FUNCTION · REBUILD LOOK. Governance: CREATIVE_EXPLORATION, WORLD NOT FORMED, identity canon gate unsatisfied.
+
+- **Deliverable:** `astra-context/` at FSBW repo root — compact pack (`00`–`13`), `manifest.json`, symlinked references, `deep-appendix/` (project map, evidence receipt, first-20-seconds constraints, environmental life, host firewall, creative freedom/prohibitions). Test brief in `13_ASTRA_TEST_BRIEF.md` with cost-controlled start message.
+
+- **Next:** Founder uploads compact pack + reference PNGs/JPGs to ChatGPT Work → Astra Test 01 world-entry screen benchmark.
+

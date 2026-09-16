@@ -1,0 +1,64 @@
+{
+  "sprint": "FSBW.ASTRA-CONTEXT1",
+  "version": "1.0.0",
+  "created": "2026-09-16",
+  "benchmark": "Astral World world-entry / title screen (Astréa threshold)",
+  "canonical_repo": "yoteenz/SITE00",
+  "canonical_repo_path_cloud": "/home/ubuntu/SITE00",
+  "fsbw_workspace_note": "Astral World code not present under FSBW /workspace/src at audit; context sourced from SITE00 clone.",
+  "landing_route_experience": "/projects/astral-world/experience/home",
+  "landing_route_fast_track": "/projects/astral-world/debug/world/home",
+  "landing_components": [
+    "AstralWorldHomePage",
+    "MobileArrivalScene",
+    "AwD01WorldEntryScreen",
+    "AwM01WorldEntryScreen"
+  ],
+  "reference_files": [
+    "references/astral-world-desktop-reference.png",
+    "references/astral-world-mobile-reference.png",
+    "references/AW_D_01_final-composition-reference-v1.jpg",
+    "references/AW_M_01_final-composition-reference-v1.jpg"
+  ],
+  "compact_docs": [
+    "00_READ_ME_FIRST.md",
+    "01_ASTRAL_WORLD_CANON.md",
+    "02_PRODUCT_ARCHITECTURE.md",
+    "03_WORLD_AND_DESTINATIONS.md",
+    "04_ENTRY_ACTIONS.md",
+    "05_PRESENCE_SOCIAL.md",
+    "06_USER_JOURNEYS.md",
+    "07_CURRENT_LANDING.md",
+    "08_VISUAL_AUTHORITY.md",
+    "09_SPATIAL_EVIDENCE.md",
+    "10_FUNCTIONAL_PRESERVATION.md",
+    "11_CREATIVE_TARGET.md",
+    "12_FAILURE_MODES.md",
+    "13_ASTRA_TEST_BRIEF.md"
+  ],
+  "deep_appendix": [
+    "deep-appendix/ASTRAL_WORLD_PROJECT_MAP.md",
+    "deep-appendix/ASTRA_CONTEXT_EVIDENCE_RECEIPT.md",
+    "deep-appendix/FIRST_20_SECONDS_CONSTRAINTS.md",
+    "deep-appendix/ENVIRONMENTAL_LIFE.md",
+    "deep-appendix/HOST_VS_WORLD_FIREWALL.md",
+    "deep-appendix/ASTRA_CREATIVE_FREEDOM.md",
+    "deep-appendix/ASTRA_PROHIBITIONS.md"
+  ],
+  "destinations": ["Tarot Suite", "Astral Mall", "Coffee Shop"],
+  "entry_actions": [
+    "Take Me Somewhere",
+    "Find My Reader",
+    "Who's Here",
+    "Meet My Friends",
+    "Join Her Table"
+  ],
+  "systems": {
+    "presence": "PARTIAL",
+    "friends": "PARTIAL",
+    "readers": "PARTIAL",
+    "journal": "PARTIAL",
+    "favorites": "PARTIAL",
+    "notifications": "PARTIAL"
+  }
+}
