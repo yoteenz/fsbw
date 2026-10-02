@@ -55034,3 +55034,15 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Branch / PR:** `cursor/studio-world-resident-life-os-foundation2` pushed; draft PR separate from #32. **Not merged, not deployed.** Vercel account blocked remains infra-only.
 
 - **Deferred:** Full simulation tick, offline reflection runtime, 3D movement, public Resident Workspace UI, Postgres-backed service reads (in-memory store for Foundation2).
+
+---
+
+## 2026-10-02 — P0 Studio World World Architecture Forensic Audit1
+
+- **Context:** Sprint `P0.STUDIOWORLD.WORLD-ARCHITECTURE.FORENSIC-AUDIT1` — comprehensive discovery/classification audit across repo history (branches, docs, routes, migrations, marketing/tenancy/residents) for founder creative-direction before OpenArt. **No redesign, no new world, no deploy, no merge.**
+
+- **Deliverables:** `docs/studio-world/STUDIO_WORLD_WORLD_ARCHITECTURE_FORENSIC_AUDIT.md`, `studio-world-concept-registry.json` (35 sample concepts), place inventory, business/marketing audit (incl. cross-company matrix), SITE00/Studio OS firewall audit, spatial requirement matrix, orphaned concepts report, founder decision queue (12 items). Updated `docs/studio-world/README.md` index. Optional debug counters: `/__studio-world/world-audit`.
+
+- **Findings (evidence):** ~319 `studio/*` admin routes, **89** route→place mappings in `route-registry.ts`, multi-tenant `studio_world_*` governance + resident migrations on feature branches, substantial marketing/distribution/marketplace modules often under-represented vs resident work; SITE 00 separate creation layer; FS `/lobby/lounge` not SW HQ; `repo-audit/studio-world/` (23 files) as prior inventory.
+
+- **Branch:** `cursor/studio-world-world-architecture-forensic-audit1` (includes resident runtime commit base). **Docs + debug route only.**
