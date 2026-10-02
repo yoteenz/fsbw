@@ -1,0 +1,12 @@
+{
+  "_comment": "Copy to .cursor/mcp.json locally. Adjust command/args for your Unreal MCP build. Do not commit secrets.",
+  "mcpServers": {
+    "unreal": {
+      "command": "FILL_PATH_TO_UNREAL_MCP_SERVER",
+      "args": [],
+      "env": {
+        "UE_PROJECT_PATH": "FILL_ABSOLUTE_PATH_TO/fsbw/Unreal/StudioWorld/StudioWorld.uproject"
+      }
+    }
+  }
+}
