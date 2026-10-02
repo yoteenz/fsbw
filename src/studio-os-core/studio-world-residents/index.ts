@@ -25,3 +25,4 @@ export {
   getSeason1ResidentRegistry,
   listSeason1Residents,
 } from './registry';
+export * from './life-os';

@@ -1,8 +1,8 @@
 # Studio World Resident System — Season 1 Foundation
 
-**Status:** Foundation sprint (canon + domain — no UE fabrication, no social posts, no billing)  
-**Module:** `src/studio-os-core/studio-world-residents/`  
-**QA surface:** `/__studio-world/residents` (debug route only)
+**Status:** Season 1 foundation + **Resident Life OS Foundation2** (canon, domain, in-memory simulation services, PG schema — no UE, no public storefront)  
+**Module:** `src/studio-os-core/studio-world-residents/` (+ `life-os/`)  
+**QA surface:** `/__studio-world/residents` (registry + Life OS inspector — debug only)
 
 ## Terminology lock
 
@@ -58,7 +58,12 @@ Postgres tables (Season 1 IDs seeded; full canon JSON remains source-controlled 
 - `studio_world_resident_documentary_profiles`
 - `studio_world_resident_fabrication_requirements`
 
-Migration: `supabase/migrations/20261002143000_studio_world_resident_system_season1.sql`
+Migrations:
+
+- `supabase/migrations/20261002143000_studio_world_resident_system_season1.sql` (Foundation1)
+- `supabase/migrations/20261002180000_studio_world_resident_life_os_foundation2.sql` (Life OS)
+
+Life OS architecture: `docs/studio-world/RESIDENT_LIFE_OS_ARCHITECTURE.md`
 
 ## Related systems (not duplicated)
 
