@@ -55009,3 +55009,12 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Verification:** 13 resident vitest tests PASS; production-governance tests PASS; `npm run build` PASS; manual QA page shows 8 residents, Etta CANON_APPROVED, UE NOT_STARTED.
 
 - **Branch:** `cursor/studio-world-residents-season1-2885` — draft PR for founder QA, not merged.
+
+---
+
+## 2026-10-02 — PR #32 CI: Vercel account blocked + FSBW PR Verify
+
+- **Context:** User asked to fix 3 failing CI checks on Studio World resident PR #32.
+- **Root cause:** All three failures are **Vercel** commit statuses (`fsbw`, `fsbaw`, `admin-globe-embed`) with description **"Account is blocked."** — not test/build failures. Cannot unblock from repo.
+- **Fixes shipped:** Added `.github/workflows/fsbw-pr-verify.yml` (vitest resident + production-governance + `npm run build`) — **passing**. `vercel.json` + `embed/admin-globe/vercel.json` `git.deploymentEnabled` master-only + `scripts/vercel-should-build.sh` skip non-master. Reverted touching `all-in-one-enterprises/vercel.json` to avoid unrelated AIO QA on PR.
+- **Founder:** Unblock Vercel account or disable GitHub deployment status on blocked projects until billing resolved.
