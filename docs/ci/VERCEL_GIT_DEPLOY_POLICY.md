@@ -5,7 +5,7 @@
 - **Code CI for pull requests:** `.github/workflows/fsbw-pr-verify.yml` (`FSBW PR Verify`).
 - **Vercel commit statuses** (`Vercel – fsbw`, `fsbaw`, `admin-globe-embed`) reflect the **Vercel Git integration**, not GitHub Actions test results.
 
-When Vercel shows **Account is blocked**, unblock or unpause the team in the [Vercel dashboard](https://vercel.com/knowledge/why-is-my-account-deployment-blocked) (Spend Management, billing, plan limits). No git change can renew a blocked account.
+When Vercel shows **Account is blocked**, unblock or unpause the team in the [Vercel dashboard](https://vercel.com/knowledge/why-is-my-account-deployment-blocked) (Spend Management, billing, plan limits). **No `vercel.json` change clears this** — verified on PR #32: even `"git": { "deploymentEnabled": false }` on all three project configs still posts the same three failing commit statuses while the account is blocked.
 
 ## `git.deploymentEnabled` in `vercel.json`
 
