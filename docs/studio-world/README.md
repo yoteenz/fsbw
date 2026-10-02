@@ -6,6 +6,17 @@
 
 ---
 
+## UE Composer operator (Bootstrap1)
+
+| Deliverable | Path |
+|-------------|------|
+| Etta UE migration audit | [ETTA_UE_MIGRATION_AUDIT.md](./ETTA_UE_MIGRATION_AUDIT.md) |
+| Composer operator guide | [STUDIO_WORLD_UE_COMPOSER_OPERATOR.md](./STUDIO_WORLD_UE_COMPOSER_OPERATOR.md) |
+| Canonical UE project | `Unreal/StudioWorld/StudioWorld.uproject` |
+| Proof matrix | `artifacts/ue-composer-operator-migration-bootstrap1/PROOF_MATRIX.md` |
+
+---
+
 ## Purpose
 
 Every idea, interaction, department, workflow, AI role, meeting, and design philosophy exists here as a **governed document** before any implementation.

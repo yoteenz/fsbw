@@ -11,6 +11,8 @@ node_modules
 dist
 dist-ssr
 *.local
+.cursor/mcp.json
+Unreal/StudioWorld/site00-external-control-manifest.local.json
 
 # Editor directories and files
 .vscode/*
