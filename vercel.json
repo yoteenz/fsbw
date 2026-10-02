@@ -2,8 +2,9 @@
   "git": {
     "deploymentEnabled": {
       "master": true,
-      "cursor-*": false,
-      "feature-*": false
+      "cursor/**": false,
+      "feature/**": false,
+      "*": false
     }
   },
   "ignoreCommand": "bash scripts/vercel-should-build.sh",
