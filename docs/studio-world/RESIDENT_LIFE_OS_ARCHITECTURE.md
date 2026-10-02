@@ -5,6 +5,8 @@
 **Version:** `foundation2-v1`  
 **QA:** `/__studio-world/residents` (Life OS inspector sections)
 
+**Runtime (Simulation1):** See `RESIDENT_LIFE_RUNTIME.md` — persistence repositories, manual debug tick, return brief. Prod apply **pending verification**.
+
 ## North star
 
 Residents are persistent digital coworkers with lives, work, memory, relationships, and autonomy bounded by founder-gated real-world actions. The simulation supports organizational operating value — not a game skin, chatbot collection, or HR dashboard.

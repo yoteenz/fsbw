@@ -18,7 +18,11 @@ export type ResidentLifeEventType =
   | 'MEMORY_FORMED'
   | 'REFLECTION_WINDOW'
   | 'TRAINING_SESSION'
-  | 'ORG_MEMORY_RECORDED';
+  | 'ORG_MEMORY_RECORDED'
+  | 'WORK_PROGRESS'
+  | 'INTERNAL_MESSAGE'
+  | 'RELATIONSHIP_EVENT'
+  | 'FOUNDER_ESCALATION';
 
 export type ResidentLifeEventEnvelope = {
   eventId: ResidentEventId;

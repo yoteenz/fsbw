@@ -7,6 +7,10 @@ import type { ResidentLifeEventEnvelope } from './event-envelope';
 import { classifyMemoryStability, scoreMemoryRetention } from './memory-utils';
 import { propagateRumor } from './rumor-engine';
 import { getLifeOsStore, resetLifeOsStoreForTests } from './life-os-store';
+import { persistLifeOsStore, rehydrateLifeOsFromRepository } from './persistence/repository-context';
+import { buildReturnBrief } from './runtime/return-brief-service';
+import { getSimulationNowIso } from './runtime/simulation-clock';
+import type { CareerRequestKind } from './runtime/career-requests';
 import type {
   ResidentLifeTwin,
   ResidentMemoryRecord,
@@ -24,7 +28,7 @@ import {
   type TrainingSessionState,
 } from './training-domain';
 
-export { resetLifeOsStoreForTests, evaluateFounderGate, propagateRumor };
+export { resetLifeOsStoreForTests, evaluateFounderGate, propagateRumor, rehydrateLifeOsFromRepository, persistLifeOsStore };
 
 export function getResidentLifeTwin(residentId: ResidentId): ResidentLifeTwin {
   const store = getLifeOsStore();
@@ -121,11 +125,13 @@ export function recordResidentEvent(
 ): ResidentLifeEventEnvelope {
   const store = getLifeOsStore();
   const event: ResidentLifeEventEnvelope = {
-    eventId: partial.eventId ?? `evt-${store.events.length + 1}-${Date.now()}`,
-    canonVersion: RESIDENT_LIFE_OS_VERSION,
     ...partial,
+    eventId: partial.eventId ?? `evt-${store.events.length + 1}-${getSimulationNowIso()}`,
+    canonVersion: RESIDENT_LIFE_OS_VERSION,
+    timestamp: partial.timestamp ?? getSimulationNowIso(),
   };
   store.events.push(event);
+  void persistLifeOsStore();
   return event;
 }
 
@@ -275,12 +281,81 @@ export function recordCareerEvent(residentId: ResidentId, eventType: string, pay
 
 export function createResidentRequest(input: Omit<import('./life-os-domain-records').ResidentRequestRecord, 'requestId' | 'at' | 'status'>): void {
   const store = getLifeOsStore();
-  store.residentRequests.push({
+  const rec = {
     ...input,
     requestId: `req-${store.residentRequests.length + 1}`,
-    status: 'OPEN',
-    at: new Date().toISOString(),
+    status: 'OPEN' as const,
+    at: getSimulationNowIso(),
+  };
+  store.residentRequests.push(rec);
+  void persistLifeOsStore();
+}
+
+export function resolveResidentRequest(requestId: string, resolution: { summary: string; withoutFounder?: boolean }): boolean {
+  const store = getLifeOsStore();
+  const req = store.residentRequests.find((r) => r.requestId === requestId);
+  if (!req || req.status !== 'OPEN') return false;
+  const gate = evaluateFounderGate('INTERNAL_CREATIVE_REVIEW', getResidentAutonomy(req.toResidentId).level);
+  if (!resolution.withoutFounder && !gate.allowed) return false;
+  req.status = 'RESOLVED';
+  recordResidentEvent({
+    eventType: 'INTERNAL_MESSAGE',
+    timestamp: getSimulationNowIso(),
+    worldId: store.worldId,
+    organizationId: store.organizationId,
+    residentIds: [req.fromResidentId, req.toResidentId],
+    visibility: 'TEAM_ONLY',
+    source: 'simulation',
+    payload: {
+      summary: resolution.summary,
+      requestId,
+      significance: 0.72,
+      founderRelevance: 0.3,
+    },
+    truthStatus: 'AUTHORITATIVE',
   });
+  void persistLifeOsStore();
+  return true;
+}
+
+export function createCareerRequest(input: {
+  residentId: ResidentId;
+  requestKind: CareerRequestKind;
+  summary: string;
+  founderApprovalRequired?: boolean;
+  payload?: Record<string, unknown>;
+}): string {
+  const store = getLifeOsStore();
+  const id = `cr-${store.careerRequests.length + 1}`;
+  store.careerRequests.push({
+    careerRequestId: id,
+    residentId: input.residentId,
+    requestKind: input.requestKind,
+    summary: input.summary,
+    status: 'OPEN',
+    founderApprovalRequired: input.founderApprovalRequired ?? true,
+    at: getSimulationNowIso(),
+    payload: input.payload ?? {},
+  });
+  recordResidentEvent({
+    eventType: 'CAREER_EVENT',
+    timestamp: getSimulationNowIso(),
+    worldId: store.worldId,
+    organizationId: store.organizationId,
+    residentIds: [input.residentId],
+    visibility: 'FOUNDER_PRIVILEGED',
+    source: 'simulation',
+    payload: {
+      summary: input.summary,
+      requestKind: input.requestKind,
+      significance: 0.8,
+      founderRelevance: 0.85,
+      founderActionRequired: input.founderApprovalRequired ?? true,
+    },
+    truthStatus: 'AUTHORITATIVE',
+  });
+  void persistLifeOsStore();
+  return id;
 }
 
 export function createResidentProposal(residentId: ResidentId, summary: string): string {
@@ -323,22 +398,8 @@ export function createWorldStory(input: Omit<WorldStoryRecord, 'storyId'>): Worl
   return story;
 }
 
-export function getReturnBrief(fromIso: string, toIso: string): ReturnBrief {
-  const store = getLifeOsStore();
-  const items = store.events
-    .filter((e) => e.timestamp >= fromIso && e.timestamp <= toIso && e.truthStatus === 'AUTHORITATIVE')
-    .map((e) => ({
-      summary: String(e.payload.summary ?? e.eventType),
-      groundedEventId: e.eventId,
-      residentIds: e.residentIds,
-      at: e.timestamp,
-    }));
-  return {
-    organizationId: store.organizationId,
-    fromIso,
-    toIso,
-    items,
-  };
+export function getReturnBrief(fromIso: string, toIso: string, access?: { isFounderPrivileged: boolean }): ReturnBrief {
+  return buildReturnBrief(fromIso, toIso, access ?? { isFounderPrivileged: true });
 }
 
 export function getOrganizationalMemory() {

@@ -263,11 +263,25 @@ export type OrganizationalMemoryRecord = {
   supersededBy?: string;
 };
 
+export type ReturnBriefCategory =
+  | 'WORK'
+  | 'PEOPLE'
+  | 'DECISIONS'
+  | 'SOCIAL'
+  | 'CAREER'
+  | 'BLOCKERS'
+  | 'NEEDS_FOUNDER';
+
 export type ReturnBriefItem = {
   summary: string;
   groundedEventId: string;
   residentIds: ResidentId[];
   at: string;
+  category: ReturnBriefCategory;
+  whyItMatters: string;
+  founderActionNeeded: boolean;
+  relatedProjectId?: string;
+  significance: number;
 };
 
 export type ReturnBrief = {
@@ -275,4 +289,5 @@ export type ReturnBrief = {
   fromIso: string;
   toIso: string;
   items: ReturnBriefItem[];
+  grouped?: Record<ReturnBriefCategory, ReturnBriefItem[]>;
 };

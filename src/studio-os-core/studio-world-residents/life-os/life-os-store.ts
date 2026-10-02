@@ -22,6 +22,8 @@ import type {
   TrainingCanonDocument,
   TrainingEscalationRecord,
 } from './training-domain';
+import type { CareerRequestRecord } from './runtime/career-requests';
+import type { ResidentRelationshipLifeDimensions } from './life-twin-model';
 
 export type LifeOsSeedBundle = ReturnType<typeof buildSeason1LifeOsSeed>['bundles'] extends Map<infer _K, infer V>
   ? V
@@ -49,6 +51,9 @@ export type InMemoryLifeOsStore = {
   proposedCorrections: ProposedCanonCorrection[];
   trainingEscalations: TrainingEscalationRecord[];
   alumni: Set<ResidentId>;
+  relationshipLife: ResidentRelationshipLifeDimensions[];
+  careerRequests: CareerRequestRecord[];
+  completedTickWindows: string[];
 };
 
 let store: InMemoryLifeOsStore | null = null;
@@ -110,6 +115,9 @@ export function getLifeOsStore(): InMemoryLifeOsStore {
       proposedCorrections: [],
       trainingEscalations: [],
       alumni: new Set(),
+      relationshipLife: [],
+      careerRequests: [],
+      completedTickWindows: [],
     };
   }
   return store;
