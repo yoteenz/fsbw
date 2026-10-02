@@ -24,3 +24,14 @@ export function classifyMemoryStability(memoryClass: MemoryClass, retentionScore
   if (retentionScore >= 0.65) return 'MEDIUM';
   return 'LOW';
 }
+
+/** First safe retention — low-significance episodic may be archived, not hard-deleted. */
+export function memoryRetentionAction(
+  memoryClass: MemoryClass,
+  retentionScore: number,
+): 'RETAIN' | 'ARCHIVE_ELIGIBLE' {
+  const stability = classifyMemoryStability(memoryClass, retentionScore);
+  if (stability === 'HIGH') return 'RETAIN';
+  if (memoryClass === 'EPISODIC_MEMORY' && retentionScore < 0.35) return 'ARCHIVE_ELIGIBLE';
+  return 'RETAIN';
+}
