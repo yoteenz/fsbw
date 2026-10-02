@@ -54997,3 +54997,15 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 - **Next:** Founder uploads compact pack + reference PNGs/JPGs to ChatGPT Work → Astra Test 01 world-entry screen benchmark.
 
+
+## 2026-10-02 — P0 Studio World Resident System Season 1 foundation
+
+- **Context:** Founder sprint `P0.STUDIOWORLD.RESIDENT-SYSTEM.SEASON1-FOUNDATION1` to establish first-class Studio World resident/cast canon (8 Season 1 residents, Etta as SW-RESIDENT-001), relationships, documentary profiles, cast-role separation, access/unlock schema, fabrication requirements — no UE/social/billing, no SITE 00 changes, QA branch (no merge before founder QA).
+
+- **Forensics:** No prior `studio_world_resident*` domain. Related: `studio_world_organizations` / entitlements (production governance), `studio_vp_characters` (brand-scoped VP e.g. Nia — separate from world residents). No Etta UE artifact paths in repo; embodiment honestly `NOT_STARTED`.
+
+- **Implementation:** New module `src/studio-os-core/studio-world-residents/` (types, season1 seeds, relationship graph, casting canon isolation, access, social story schema, fabrication checklist, tests). Debug QA `/__studio-world/residents`. Doc `docs/studio-world/STUDIO_WORLD_RESIDENT_SYSTEM.md`. Migration `20261002143000_studio_world_resident_system_season1.sql` (Supabase MCP apply timed out twice — SQL in repo for dashboard fallback).
+
+- **Verification:** 13 resident vitest tests PASS; production-governance tests PASS; `npm run build` PASS; manual QA page shows 8 residents, Etta CANON_APPROVED, UE NOT_STARTED.
+
+- **Branch:** `cursor/studio-world-residents-season1-2885` — draft PR for founder QA, not merged.
