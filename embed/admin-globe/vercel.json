@@ -1,4 +1,11 @@
 {
+  "git": {
+    "deploymentEnabled": {
+      "master": true,
+      "cursor-*": false,
+      "feature-*": false
+    }
+  },
   "headers": [
     {
       "source": "/ne_110m_land.geojson",

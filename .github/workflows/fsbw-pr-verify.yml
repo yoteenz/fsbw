@@ -1,0 +1,37 @@
+name: FSBW PR Verify
+
+on:
+  pull_request:
+    branches: [master]
+    paths-ignore:
+      - 'all-in-one-enterprises/**'
+
+concurrency:
+  group: fsbw-pr-verify-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build creative production server bundle
+        run: node scripts/build-creative-production-server.mjs
+
+      - name: Studio World resident system tests
+        run: npx vitest run src/studio-os-core/studio-world-residents/studio-world-residents.test.ts
+
+      - name: Studio World production governance tests
+        run: npx vitest run src/studio-os-core/production-governance/production-governance.test.ts
+
+      - name: Typecheck and production build
+        run: npm run build

@@ -7,6 +7,13 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
 
+# Preview / side branches: skip Vercel builds (master-only deploy policy; avoids PR check noise).
+BRANCH="${VERCEL_GIT_COMMIT_REF:-}"
+if [[ -n "$BRANCH" && "$BRANCH" != "master" ]]; then
+  echo "Skip build: non-master branch ${BRANCH} (master-only Vercel deploy policy)"
+  exit 0
+fi
+
 # Paths that never require a production build when they are the *only* changes.
 is_doc_or_memory_skip_path() {
   local f="$1"
