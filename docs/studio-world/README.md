@@ -57,6 +57,26 @@ Studio World → Digital operational world
 
 ---
 
+## Forensic audit (2026-10-02)
+
+**Sprint:** `P0.STUDIOWORLD.WORLD-ARCHITECTURE.FORENSIC-AUDIT1` — discovery only, no redesign.
+
+| Deliverable | Path |
+|-------------|------|
+| Master forensic report | [STUDIO_WORLD_WORLD_ARCHITECTURE_FORENSIC_AUDIT.md](./STUDIO_WORLD_WORLD_ARCHITECTURE_FORENSIC_AUDIT.md) |
+| Concept registry (JSON) | [studio-world-concept-registry.json](./studio-world-concept-registry.json) |
+| Place inventory | [STUDIO_WORLD_PLACE_INVENTORY.md](./STUDIO_WORLD_PLACE_INVENTORY.md) |
+| Business / marketing | [STUDIO_WORLD_BUSINESS_MARKETING_AUDIT.md](./STUDIO_WORLD_BUSINESS_MARKETING_AUDIT.md) |
+| SITE00 / Studio OS firewall | [STUDIO_WORLD_SITE00_STUDIOOS_FIREWALL_AUDIT.md](./STUDIO_WORLD_SITE00_STUDIOOS_FIREWALL_AUDIT.md) |
+| Spatial requirement matrix | [STUDIO_WORLD_SPATIAL_REQUIREMENT_MATRIX.md](./STUDIO_WORLD_SPATIAL_REQUIREMENT_MATRIX.md) |
+| Orphaned concepts | [STUDIO_WORLD_ORPHANED_CONCEPTS.md](./STUDIO_WORLD_ORPHANED_CONCEPTS.md) |
+| Founder decision queue | [STUDIO_WORLD_WORLD_ARCHITECTURE_FOUNDER_DECISIONS.md](./STUDIO_WORLD_WORLD_ARCHITECTURE_FOUNDER_DECISIONS.md) |
+| Debug counters (optional) | `/__studio-world/world-audit` |
+
+Appendix: [repo-audit/studio-world/](../../repo-audit/studio-world/) (Sep 2026 separation inventory).
+
+---
+
 ## Document Index
 
 | # | Document | Contents |
