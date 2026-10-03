@@ -4,7 +4,8 @@
 **Sprint:** `P0.STUDIOWORLD.SEASON1.CORE-ENSEMBLE-CANON1`  
 **Status:** FOUNDER_APPROVED (identity, roles, natural wardrobe, anti-flattening)  
 **Runtime source:** `src/studio-os-core/studio-world-residents/season1-ensemble/`  
-**JSON export:** `docs/studio-world/residents/season-1/season1-ensemble-canonical.json`
+**JSON export:** `docs/studio-world/residents/season-1/season1-ensemble-canonical.json`  
+**Visual authority:** `src/studio-os-core/studio-world-residents/visual-authority/` · `docs/studio-world/residents/season-1/VISUAL_AUTHORITY_REGISTRY.md`
 
 ---
 

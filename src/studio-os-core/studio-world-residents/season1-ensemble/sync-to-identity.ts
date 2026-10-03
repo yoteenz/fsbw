@@ -1,9 +1,11 @@
 import type { ResidentCanonicalIdentity } from '../types';
+import { getVisualAuthorityBundle } from '../visual-authority';
 import type { Season1ResidentCanonRecord } from './types';
 
 const SYNC_TS = '2026-10-03T00:00:00.000Z';
 
 export function ensembleRecordToIdentity(record: Season1ResidentCanonRecord): ResidentCanonicalIdentity {
+  const visualBundle = getVisualAuthorityBundle(record.id);
   return {
     residentId: record.id,
     season: 1,
@@ -54,9 +56,15 @@ export function ensembleRecordToIdentity(record: Season1ResidentCanonRecord): Re
         notes: 'UE / MetaHuman is embodiment target — identity canon in season1-ensemble.',
       },
     ],
-    continuityRules: record.antiFlattening,
+    continuityRules: [
+      ...record.antiFlattening,
+      'Consult season1 visual-authority records before any visual generation or embodiment.',
+    ],
     memoryPolicy: `Protected open fields must remain unresolved: ${record.protectedOpenFields.join(', ')}`,
     castingRangeNotes: record.clientValue,
+    visualAuthorityRefs: visualBundle?.visualAuthorityRefs,
+    primaryNaturalHabitatAuthorityId: visualBundle?.primaryNaturalHabitatAuthorityId,
+    visualFabricationReadiness: visualBundle?.fabricationReadiness,
     updatedAt: SYNC_TS,
   };
 }
