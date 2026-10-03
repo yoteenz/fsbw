@@ -55046,3 +55046,15 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Shipped:** `Unreal/StudioWorld/`, migration audit + operator docs, `studio-world-ue` location/anchor contracts, proof matrix, MCP template. PR #36.
 
 - **Blocked on cloud:** No Unreal Editor — MCP/PIE/parity proofs require founder UE machine + manifest local path.
+
+---
+
+## 2026-10-03 — P0 Studio World Season 1 Core Ensemble Canon1
+
+- **Context:** Sprint `P0.STUDIOWORLD.SEASON1.CORE-ENSEMBLE-CANON1` — founder-approved Season 1 eight-resident bible ingested into fsbw as durable source (not chat-only).
+
+- **Shipped:** `season1-ensemble/` (8 resident canon modules, uniform system, superseded canon, validation), `season1-residents.ts` now derives identities from ensemble; Zuri **Xu** (Hale superseded); Marlowe 54 larger-bodied; Caspian fluid; EV sexuality OPEN; Noa Okinawan heritage + wife/two daughters; Iona glamour arc not makeover endpoint; work uniform CONCEPT_LOCKED_VISUAL_PENDING; Jules/Iona support edge; docs bible + `season1-ensemble-canonical.json`.
+
+- **Tests:** 73 resident vitest tests PASS including `studio-world-residents-ensemble-canon.test.ts`.
+
+- **Branch:** `cursor/studio-world-season1-core-ensemble-canon1-21dc`. Not merged/deployed.
