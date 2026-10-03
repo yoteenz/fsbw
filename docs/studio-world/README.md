@@ -6,6 +6,15 @@
 
 ---
 
+## Season 1 core ensemble canon (v1.0)
+
+| Deliverable | Path |
+|-------------|------|
+| Canon bible | [STUDIO_WORLD_SEASON1_CORE_ENSEMBLE_CANON_BIBLE.md](./STUDIO_WORLD_SEASON1_CORE_ENSEMBLE_CANON_BIBLE.md) |
+| JSON + index | [residents/season-1/](./residents/season-1/) |
+
+---
+
 ## UE Composer operator (Bootstrap1)
 
 | Deliverable | Path |

@@ -4,6 +4,7 @@
  */
 
 export * from './types';
+export * from './season1-ensemble';
 export * from './fabrication';
 export * from './casting';
 export * from './access';

@@ -3,7 +3,7 @@
  * Canon lives above embodiment (UE / MetaHuman are runtime targets only).
  */
 
-export const STUDIO_WORLD_RESIDENT_SYSTEM_VERSION = 'season1-foundation-v1';
+export const STUDIO_WORLD_RESIDENT_SYSTEM_VERSION = 'season1-ensemble-v1';
 
 export type ResidentId = `SW-RESIDENT-${string}`;
 

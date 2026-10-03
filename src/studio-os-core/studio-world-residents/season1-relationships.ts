@@ -113,6 +113,23 @@ const CORE_EDGES: ResidentRelationshipEdge[] = [
     documentarySocialValue: 'Craft banter',
     canonNotes: 'Body / persona complement',
   }),
+  edge('rel-jules-iona', JULES, IONA, {
+    relationshipType: 'social_glue',
+    label: 'Jules ↔ Iona — tender non-romantic support',
+    mutual: true,
+    trustLevel: 5,
+    frictionLevel: 1,
+    chemistryLevel: 4,
+    loyaltyLevel: 5,
+    publicDynamic: 'Jules restores Iona’s footing when someone makes her feel small or ugly',
+    privateDynamic:
+      'Specific compliment, pull into photo, redirect social energy — not romantic rescue. “If somebody makes Iona feel ugly, Jules will find out.”',
+    currentArc: 'Foundational kindness',
+    historicalEvents: [],
+    unresolvedTension: [],
+    documentarySocialValue: 'Humanizing fabrication lead',
+    canonNotes: 'Founder-approved Jules/Iona dynamic',
+  }),
   edge('rel-zuri-elio', ZURI, ELIO, {
     relationshipType: 'strategic_rivalry',
     label: 'Strategic rivalry',
@@ -122,7 +139,8 @@ const CORE_EDGES: ResidentRelationshipEdge[] = [
     chemistryLevel: 4,
     loyaltyLevel: 3,
     publicDynamic: 'Both understand value differently',
-    privateDynamic: 'Professional sparring with mutual admiration',
+    privateDynamic:
+      'Zuri asks what is the smartest decision; EV asks who needs to say yes, what they value, and when to ask.',
     currentArc: 'Tenancy philosophy clash',
     historicalEvents: [],
     unresolvedTension: ['What should be complimentary vs paid'],

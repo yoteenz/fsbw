@@ -1,7 +1,7 @@
 import type { DocumentaryCameraAwareness, ResidentDocumentaryProfile, ResidentId } from './types';
 import { SEASON1_RESIDENT_IDS } from './season1-residents';
 
-const V = 'v1.0.0';
+const V = 'season1-v1';
 
 function profile(
   residentId: ResidentId,
@@ -68,7 +68,7 @@ export const SEASON1_DOCUMENTARY_PROFILES: ResidentDocumentaryProfile[] = [
     pretendsNotToCareAbout: ['SW-RESIDENT-003'],
   }),
   profile('SW-RESIDENT-002', CAMERA_SEED['SW-RESIDENT-002'], {
-    ...defaultDocumentaryFields('SW-RESIDENT-002', 'Zuri Hale'),
+    ...defaultDocumentaryFields('SW-RESIDENT-002', 'Zuri Xu'),
     confessionalStyle: 'Only speaks when she has something worth saying',
     signatureLookToCamera: 'Direct, calm — no wasted frames',
     talksAboutMost: ['SW-RESIDENT-001', 'SW-RESIDENT-008'],
