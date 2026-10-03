@@ -1,11 +1,12 @@
 import type { ResidentCanonicalIdentity } from '../types';
-import { getVisualAuthorityBundle } from '../visual-authority';
+import { getPrimaryNaturalHabitatAuthority, getVisualAuthorityBundle } from '../visual-authority';
 import type { Season1ResidentCanonRecord } from './types';
 
 const SYNC_TS = '2026-10-03T00:00:00.000Z';
 
 export function ensembleRecordToIdentity(record: Season1ResidentCanonRecord): ResidentCanonicalIdentity {
   const visualBundle = getVisualAuthorityBundle(record.id);
+  const primaryVisual = getPrimaryNaturalHabitatAuthority(record.id);
   return {
     residentId: record.id,
     season: 1,
@@ -52,7 +53,15 @@ export function ensembleRecordToIdentity(record: Season1ResidentCanonRecord): Re
       {
         kind: 'ue_metahuman',
         status: 'NOT_STARTED',
-        referenceLinks: [],
+        referenceLinks: primaryVisual?.assetUrl
+          ? [
+              {
+                label: 'Season 1 natural-habitat visual authority (ingested)',
+                pathOrUrl: primaryVisual.assetUrl,
+                note: primaryVisual.assetId,
+              },
+            ]
+          : [],
         notes: 'UE / MetaHuman is embodiment target — identity canon in season1-ensemble.',
       },
     ],

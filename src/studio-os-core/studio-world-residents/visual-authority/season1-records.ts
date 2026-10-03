@@ -2,6 +2,13 @@ import { SEASON1_ENSEMBLE_RESIDENTS } from '../season1-ensemble/residents';
 import { SEASON1_SUPERSEDED_CANON } from '../season1-ensemble/superseded-canon';
 import { SEASON1_WORK_UNIFORM_SYSTEM } from '../season1-ensemble/uniform-system';
 import type { ResidentId } from '../types';
+import {
+  INGEST2_IMPORTED_AT,
+  INGEST2_SOURCE,
+  bindAssetFields,
+  listIngestedAssetsForResident,
+  mapPackageStatusToAuthorityStatus,
+} from './season1-ingest-bindings';
 import type {
   ResidentVisualAuthorityBundle,
   ResidentVisualAuthorityRecord,
@@ -9,22 +16,12 @@ import type {
   VisualFabricationReadiness,
 } from './types';
 
-const IMPORTED_AT = '2026-10-03T17:00:00.000Z';
-const SOURCE = 'P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1';
+const IMPORTED_AT = INGEST2_IMPORTED_AT;
+const SOURCE = INGEST2_SOURCE;
 
 function vaId(residentId: ResidentId, type: VisualAuthorityType): string {
   return `va:${residentId}:${type}`;
 }
-
-const DEFAULT_FABRICATION_READINESS: VisualFabricationReadiness = {
-  portraitLocked: false,
-  bodyLocked: false,
-  anglesPartial: false,
-  anglesComplete: false,
-  uePending: true,
-  metahumanPending: true,
-  ueReconstructed: false,
-};
 
 /** Founder-approved visual continuity extensions (not duplicated personality canon). */
 const VISUAL_EXTENSIONS: Record<
@@ -114,7 +111,7 @@ function buildNaturalHabitat(
   record: (typeof SEASON1_ENSEMBLE_RESIDENTS)[number]
 ): ResidentVisualAuthorityRecord {
   const ext = VISUAL_EXTENSIONS[record.id];
-  return {
+  const base: ResidentVisualAuthorityRecord = {
     id: vaId(record.id, 'NATURAL_HABITAT_FULL_BODY'),
     residentId: record.id,
     authorityType: 'NATURAL_HABITAT_FULL_BODY',
@@ -133,6 +130,8 @@ function buildNaturalHabitat(
     founderApproved: true,
     importedAt: IMPORTED_AT,
   };
+  const [asset] = listIngestedAssetsForResident(record.id, 'natural-authority');
+  return asset ? bindAssetFields(base, asset) : base;
 }
 
 function buildSignedPortrait(record: (typeof SEASON1_ENSEMBLE_RESIDENTS)[number]): ResidentVisualAuthorityRecord {
@@ -173,17 +172,46 @@ function buildRoleCompetency(record: (typeof SEASON1_ENSEMBLE_RESIDENTS)[number]
   };
 }
 
+function buildCloseups(record: (typeof SEASON1_ENSEMBLE_RESIDENTS)[number]): ResidentVisualAuthorityRecord[] {
+  const assets = listIngestedAssetsForResident(record.id, 'closeups');
+  return assets.map((asset, index) => {
+    const suffix = String(index + 1).padStart(2, '0');
+    const base: ResidentVisualAuthorityRecord = {
+      id: `va:${record.id}:IDENTITY_CLOSEUP:${suffix}`,
+      residentId: record.id,
+      authorityType: 'IDENTITY_CLOSEUP',
+      status: mapPackageStatusToAuthorityStatus(asset.packageStatus, 'IDENTITY_CLOSEUP'),
+      canonVersion: 'season1-v1',
+      isPrimaryIdentityAuthority: false,
+      identityLocked: asset.packageStatus === 'FOUNDER_APPROVED_REFERENCE',
+      faceAuthority: 'Identity continuity close-up — not a complete MetaHuman angle pack',
+      prohibitedDrift: record.antiFlattening,
+      source: SOURCE,
+      founderApproved:
+        asset.packageStatus === 'FOUNDER_APPROVED_REFERENCE' || asset.packageStatus === 'FOUNDER_APPROVED',
+      importedAt: IMPORTED_AT,
+      notes:
+        asset.packageStatus === 'REFERENCE_ONLY'
+          ? 'Retained reference; manifest does not promote a single sole face authority over siblings.'
+          : undefined,
+    };
+    return bindAssetFields(base, asset);
+  });
+}
+
 function buildAnglePack(record: (typeof SEASON1_ENSEMBLE_RESIDENTS)[number]): ResidentVisualAuthorityRecord {
+  const closeups = listIngestedAssetsForResident(record.id, 'closeups');
   return {
     id: vaId(record.id, 'IDENTITY_ANGLE_PACK'),
     residentId: record.id,
     authorityType: 'IDENTITY_ANGLE_PACK',
-    status: 'PROVISIONAL',
+    status: closeups.length > 0 ? 'PROVISIONAL' : 'PROVISIONAL',
     canonVersion: 'season1-v1',
     isPrimaryIdentityAuthority: false,
     identityLocked: false,
-    notes:
-      'Angle pack slot reserved for facial/body continuity (MetaHuman/UE). No repo-verified approved angle pack at ingest — do not treat exploratory generations as canon.',
+    notes: closeups.length
+      ? `Partial identity references ingested (${closeups.length} close-up(s)). Full angle pack NOT complete — do not mark anglesComplete.`
+      : 'Angle pack slot reserved for facial/body continuity (MetaHuman/UE).',
     prohibitedDrift: record.antiFlattening,
     source: SOURCE,
     founderApproved: false,
@@ -193,7 +221,7 @@ function buildAnglePack(record: (typeof SEASON1_ENSEMBLE_RESIDENTS)[number]): Re
 
 function buildWorkUniformRef(record: (typeof SEASON1_ENSEMBLE_RESIDENTS)[number]): ResidentVisualAuthorityRecord {
   const customization = SEASON1_WORK_UNIFORM_SYSTEM.customizationExamples[record.id];
-  return {
+  const base: ResidentVisualAuthorityRecord = {
     id: vaId(record.id, 'WORK_UNIFORM_REFERENCE'),
     residentId: record.id,
     authorityType: 'WORK_UNIFORM_REFERENCE',
@@ -202,30 +230,41 @@ function buildWorkUniformRef(record: (typeof SEASON1_ENSEMBLE_RESIDENTS)[number]
     isPrimaryIdentityAuthority: false,
     identityLocked: false,
     wardrobeAuthority: `Shared SW uniform system — personalize only: ${customization}`,
-    notes: `${SEASON1_WORK_UNIFORM_SYSTEM.summary}. Final uniform visual NOT founder-approved; generated uniform candidates must not be marked FOUNDER_APPROVED.`,
+    notes: `${SEASON1_WORK_UNIFORM_SYSTEM.summary}. Final uniform visual NOT founder-approved; candidate imagery is CONCEPT_REFERENCE_ONLY.`,
     prohibitedDrift: ['Eight unrelated outfits with SW badge only', 'Replacing natural habitat as default identity'],
     source: SOURCE,
     founderApproved: false,
     importedAt: IMPORTED_AT,
   };
+  const [asset] = listIngestedAssetsForResident(record.id, 'work-uniform-candidates');
+  return asset ? bindAssetFields(base, asset) : base;
 }
 
-function buildGlamourAlternate(record: (typeof SEASON1_ENSEMBLE_RESIDENTS)[number]): ResidentVisualAuthorityRecord | null {
-  if (!record.glamourArc) return null;
-  return {
-    id: vaId(record.id, 'GLAMOUR_OR_ALTERNATE_MODE'),
-    residentId: record.id,
-    authorityType: 'GLAMOUR_OR_ALTERNATE_MODE',
-    status: 'FOUNDER_APPROVED',
-    canonVersion: 'season1-v1',
-    isPrimaryIdentityAuthority: false,
-    identityLocked: false,
-    notes: `${record.glamourArc.principle} Contexts: ${record.glamourArc.contexts.join(', ')}. MUST NOT replace natural Precision Utilitarian authority.`,
-    prohibitedDrift: ['Permanent glam makeover endpoint', 'Ugly-duckling reveal', ...record.antiFlattening],
-    source: SOURCE,
-    founderApproved: true,
-    importedAt: IMPORTED_AT,
-  };
+function buildAlternateModes(record: (typeof SEASON1_ENSEMBLE_RESIDENTS)[number]): ResidentVisualAuthorityRecord[] {
+  const assets = listIngestedAssetsForResident(record.id, 'alternate-modes');
+  return assets.map((asset, index) => {
+    const isIonaGlam = record.id === 'SW-RESIDENT-006';
+    const authorityType: VisualAuthorityType = isIonaGlam ? 'GLAMOUR_OR_ALTERNATE_MODE' : 'ALTERNATE_MODE';
+    const base: ResidentVisualAuthorityRecord = {
+      id: `va:${record.id}:${authorityType}:${String(index + 1).padStart(2, '0')}`,
+      residentId: record.id,
+      authorityType,
+      status: mapPackageStatusToAuthorityStatus(asset.packageStatus, authorityType),
+      canonVersion: 'season1-v1',
+      isPrimaryIdentityAuthority: false,
+      identityLocked: false,
+      notes: isIonaGlam
+        ? `${record.glamourArc?.principle ?? ''} MUST NOT replace natural Precision Utilitarian authority.`
+        : 'Alternate mode reference — not primary identity.',
+      prohibitedDrift: isIonaGlam
+        ? ['Permanent glam makeover endpoint', 'Ugly-duckling reveal', ...record.antiFlattening]
+        : ['Replacing natural-habitat primary authority', ...record.antiFlattening],
+      source: SOURCE,
+      founderApproved: asset.packageStatus === 'ALTERNATE_MODE_REFERENCE',
+      importedAt: IMPORTED_AT,
+    };
+    return bindAssetFields(base, asset);
+  });
 }
 
 function buildSupersededRefs(residentId: ResidentId, refIds: string[] | undefined): ResidentVisualAuthorityRecord[] {
@@ -254,16 +293,30 @@ function buildSupersededRefs(residentId: ResidentId, refIds: string[] | undefine
   });
 }
 
+function fabricationReadinessFor(record: (typeof SEASON1_ENSEMBLE_RESIDENTS)[number]): VisualFabricationReadiness {
+  const hasNatural = listIngestedAssetsForResident(record.id, 'natural-authority').length > 0;
+  const closeups = listIngestedAssetsForResident(record.id, 'closeups');
+  return {
+    portraitLocked: closeups.some((c) => c.packageStatus === 'FOUNDER_APPROVED_REFERENCE'),
+    bodyLocked: hasNatural,
+    anglesPartial: closeups.length > 0,
+    anglesComplete: false,
+    uePending: true,
+    metahumanPending: true,
+    ueReconstructed: false,
+  };
+}
+
 function buildAllForResident(record: (typeof SEASON1_ENSEMBLE_RESIDENTS)[number]): ResidentVisualAuthorityRecord[] {
   const ext = VISUAL_EXTENSIONS[record.id];
-  const glam = buildGlamourAlternate(record);
   return [
     buildNaturalHabitat(record),
     buildSignedPortrait(record),
     buildRoleCompetency(record),
     buildAnglePack(record),
+    ...buildCloseups(record),
     buildWorkUniformRef(record),
-    ...(glam ? [glam] : []),
+    ...buildAlternateModes(record),
     ...buildSupersededRefs(record.id, ext.supersededRefIds),
   ];
 }
@@ -284,7 +337,7 @@ export const SEASON1_VISUAL_AUTHORITY_BUNDLES: ResidentVisualAuthorityBundle[] =
       residentId: record.id,
       visualAuthorityRefs: records.map((r) => r.id),
       primaryNaturalHabitatAuthorityId: primary.id,
-      fabricationReadiness: { ...DEFAULT_FABRICATION_READINESS },
+      fabricationReadiness: fabricationReadinessFor(record),
     };
   });
 

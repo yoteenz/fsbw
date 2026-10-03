@@ -1,7 +1,334 @@
 {
   "canonVersion": "season1-v1",
-  "sprint": "P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1",
+  "sprint": "P0.STUDIOWORLD.SEASON1.VISUAL-AUTHORITY.INGEST2",
   "workUniformStatus": "CONCEPT_LOCKED_VISUAL_PENDING",
+  "ingestedAssetCount": 27,
+  "assets": [
+    {
+      "assetId": "swa:SW-RESIDENT-001:natural-authority:sw-resident-001-etta-vale-natural-fullbody-01.jpg",
+      "residentId": "SW-RESIDENT-001",
+      "residentName": "Etta Vale",
+      "publicPath": "/studio-world/residents/season-1/sw-resident-001-etta-vale/natural-authority/sw-resident-001-etta-vale-natural-fullbody-01.jpg",
+      "repoPath": "public/studio-world/residents/season-1/sw-resident-001-etta-vale/natural-authority/sw-resident-001-etta-vale-natural-fullbody-01.jpg",
+      "sourceFilename": "D3BE948B-1E6B-480B-8253-337AA7BAB250.png",
+      "organizedPath": "SW-RESIDENT-001__etta-vale/01-natural-authority/etta-vale__natural-full-body__sophisticated-fashionista.jpg",
+      "packageStatus": "FOUNDER_APPROVED",
+      "category": "natural-authority",
+      "sourcePackage": "STUDIO_WORLD_SEASON1_VISUAL_AUTHORITY_CURSOR_LIGHT_v1"
+    },
+    {
+      "assetId": "swa:SW-RESIDENT-001:closeups:sw-resident-001-etta-vale-closeup-01.jpg",
+      "residentId": "SW-RESIDENT-001",
+      "residentName": "Etta Vale",
+      "publicPath": "/studio-world/residents/season-1/sw-resident-001-etta-vale/closeups/sw-resident-001-etta-vale-closeup-01.jpg",
+      "repoPath": "public/studio-world/residents/season-1/sw-resident-001-etta-vale/closeups/sw-resident-001-etta-vale-closeup-01.jpg",
+      "sourceFilename": "2796CA93-AB24-43D1-90A3-1C3D7C81B016.png",
+      "organizedPath": "SW-RESIDENT-001__etta-vale/02-closeups/etta-vale__closeup__sophisticated-fashionista.jpg",
+      "packageStatus": "FOUNDER_APPROVED_REFERENCE",
+      "category": "closeups",
+      "sourcePackage": "STUDIO_WORLD_SEASON1_VISUAL_AUTHORITY_CURSOR_LIGHT_v1"
+    },
+    {
+      "assetId": "swa:SW-RESIDENT-001:work-uniform-candidates:sw-resident-001-etta-vale-work-uniform-candidate-01.jpg",
+      "residentId": "SW-RESIDENT-001",
+      "residentName": "Etta Vale",
+      "publicPath": "/studio-world/residents/season-1/sw-resident-001-etta-vale/work-uniform-candidates/sw-resident-001-etta-vale-work-uniform-candidate-01.jpg",
+      "repoPath": "public/studio-world/residents/season-1/sw-resident-001-etta-vale/work-uniform-candidates/sw-resident-001-etta-vale-work-uniform-candidate-01.jpg",
+      "sourceFilename": "EBFEDC59-7936-4687-9A39-0CA88A848116.png",
+      "organizedPath": "SW-RESIDENT-001__etta-vale/03-work-uniform-candidates/etta-vale__shared-uniform-candidate__v1.jpg",
+      "packageStatus": "CONCEPT_REFERENCE_ONLY",
+      "category": "work-uniform-candidates",
+      "sourcePackage": "STUDIO_WORLD_SEASON1_VISUAL_AUTHORITY_CURSOR_LIGHT_v1"
+    },
+    {
+      "assetId": "swa:SW-RESIDENT-002:natural-authority:sw-resident-002-zuri-xu-natural-fullbody-01.jpg",
+      "residentId": "SW-RESIDENT-002",
+      "residentName": "Zuri Xu",
+      "publicPath": "/studio-world/residents/season-1/sw-resident-002-zuri-xu/natural-authority/sw-resident-002-zuri-xu-natural-fullbody-01.jpg",
+      "repoPath": "public/studio-world/residents/season-1/sw-resident-002-zuri-xu/natural-authority/sw-resident-002-zuri-xu-natural-fullbody-01.jpg",
+      "sourceFilename": "9A349F3E-2D87-4AA9-A066-8884AC5F411F.png",
+      "organizedPath": "SW-RESIDENT-002__zuri-xu/01-natural-authority/zuri-xu__natural-full-body__architectural-fashion-strategist.jpg",
+      "packageStatus": "FOUNDER_APPROVED",
+      "category": "natural-authority",
+      "sourcePackage": "STUDIO_WORLD_SEASON1_VISUAL_AUTHORITY_CURSOR_LIGHT_v1"
+    },
+    {
+      "assetId": "swa:SW-RESIDENT-002:closeups:sw-resident-002-zuri-xu-closeup-01.jpg",
+      "residentId": "SW-RESIDENT-002",
+      "residentName": "Zuri Xu",
+      "publicPath": "/studio-world/residents/season-1/sw-resident-002-zuri-xu/closeups/sw-resident-002-zuri-xu-closeup-01.jpg",
+      "repoPath": "public/studio-world/residents/season-1/sw-resident-002-zuri-xu/closeups/sw-resident-002-zuri-xu-closeup-01.jpg",
+      "sourceFilename": "C541BDC8-F93F-4B0B-AAF7-FF4E0AEDB57B.png",
+      "organizedPath": "SW-RESIDENT-002__zuri-xu/02-closeups/zuri-xu__closeup__architectural-fashion-strategist.jpg",
+      "packageStatus": "FOUNDER_APPROVED_REFERENCE",
+      "category": "closeups",
+      "sourcePackage": "STUDIO_WORLD_SEASON1_VISUAL_AUTHORITY_CURSOR_LIGHT_v1"
+    },
+    {
+      "assetId": "swa:SW-RESIDENT-002:work-uniform-candidates:sw-resident-002-zuri-xu-work-uniform-candidate-01.jpg",
+      "residentId": "SW-RESIDENT-002",
+      "residentName": "Zuri Xu",
+      "publicPath": "/studio-world/residents/season-1/sw-resident-002-zuri-xu/work-uniform-candidates/sw-resident-002-zuri-xu-work-uniform-candidate-01.jpg",
+      "repoPath": "public/studio-world/residents/season-1/sw-resident-002-zuri-xu/work-uniform-candidates/sw-resident-002-zuri-xu-work-uniform-candidate-01.jpg",
+      "sourceFilename": "14182919-EC3B-4EC6-A192-0B55E6E25FE7.png",
+      "organizedPath": "SW-RESIDENT-002__zuri-xu/03-work-uniform-candidates/zuri-xu__shared-uniform-candidate__v1.jpg",
+      "packageStatus": "CONCEPT_REFERENCE_ONLY",
+      "category": "work-uniform-candidates",
+      "sourcePackage": "STUDIO_WORLD_SEASON1_VISUAL_AUTHORITY_CURSOR_LIGHT_v1"
+    },
+    {
+      "assetId": "swa:SW-RESIDENT-003:natural-authority:sw-resident-003-jules-mercer-natural-fullbody-01.jpg",
+      "residentId": "SW-RESIDENT-003",
+      "residentName": "Jules Mercer",
+      "publicPath": "/studio-world/residents/season-1/sw-resident-003-jules-mercer/natural-authority/sw-resident-003-jules-mercer-natural-fullbody-01.jpg",
+      "repoPath": "public/studio-world/residents/season-1/sw-resident-003-jules-mercer/natural-authority/sw-resident-003-jules-mercer-natural-fullbody-01.jpg",
+      "sourceFilename": "IMG_6238.png",
+      "organizedPath": "SW-RESIDENT-003__jules-mercer/01-natural-authority/jules-mercer__natural-full-body__relaxed-romantic.jpg",
+      "packageStatus": "FOUNDER_APPROVED",
+      "category": "natural-authority",
+      "sourcePackage": "STUDIO_WORLD_SEASON1_VISUAL_AUTHORITY_CURSOR_LIGHT_v1"
+    },
+    {
+      "assetId": "swa:SW-RESIDENT-003:closeups:sw-resident-003-jules-mercer-closeup-01.jpg",
+      "residentId": "SW-RESIDENT-003",
+      "residentName": "Jules Mercer",
+      "publicPath": "/studio-world/residents/season-1/sw-resident-003-jules-mercer/closeups/sw-resident-003-jules-mercer-closeup-01.jpg",
+      "repoPath": "public/studio-world/residents/season-1/sw-resident-003-jules-mercer/closeups/sw-resident-003-jules-mercer-closeup-01.jpg",
+      "sourceFilename": "827885CF-0224-4B87-843B-9F4D3D4DC682.png",
+      "organizedPath": "SW-RESIDENT-003__jules-mercer/02-closeups/jules-mercer__closeup__relaxed-romantic.jpg",
+      "packageStatus": "FOUNDER_APPROVED_REFERENCE",
+      "category": "closeups",
+      "sourcePackage": "STUDIO_WORLD_SEASON1_VISUAL_AUTHORITY_CURSOR_LIGHT_v1"
+    },
+    {
+      "assetId": "swa:SW-RESIDENT-003:work-uniform-candidates:sw-resident-003-jules-mercer-work-uniform-candidate-01.jpg",
+      "residentId": "SW-RESIDENT-003",
+      "residentName": "Jules Mercer",
+      "publicPath": "/studio-world/residents/season-1/sw-resident-003-jules-mercer/work-uniform-candidates/sw-resident-003-jules-mercer-work-uniform-candidate-01.jpg",
+      "repoPath": "public/studio-world/residents/season-1/sw-resident-003-jules-mercer/work-uniform-candidates/sw-resident-003-jules-mercer-work-uniform-candidate-01.jpg",
+      "sourceFilename": "39279AB8-B958-4DB6-B89A-8D3248C2326C.png",
+      "organizedPath": "SW-RESIDENT-003__jules-mercer/03-work-uniform-candidates/jules-mercer__shared-uniform-candidate__v1.jpg",
+      "packageStatus": "CONCEPT_REFERENCE_ONLY",
+      "category": "work-uniform-candidates",
+      "sourcePackage": "STUDIO_WORLD_SEASON1_VISUAL_AUTHORITY_CURSOR_LIGHT_v1"
+    },
+    {
+      "assetId": "swa:SW-RESIDENT-004:natural-authority:sw-resident-004-noa-kline-natural-fullbody-01.jpg",
+      "residentId": "SW-RESIDENT-004",
+      "residentName": "Noa Kline",
+      "publicPath": "/studio-world/residents/season-1/sw-resident-004-noa-kline/natural-authority/sw-resident-004-noa-kline-natural-fullbody-01.jpg",
+      "repoPath": "public/studio-world/residents/season-1/sw-resident-004-noa-kline/natural-authority/sw-resident-004-noa-kline-natural-fullbody-01.jpg",
+      "sourceFilename": "8141BEAD-0ABA-401D-8F71-26D1BF1978A4.png",
+      "organizedPath": "SW-RESIDENT-004__noa-kline/01-natural-authority/noa-kline__natural-full-body__understated-systems-dad.jpg",
+      "packageStatus": "FOUNDER_APPROVED",
+      "category": "natural-authority",
+      "sourcePackage": "STUDIO_WORLD_SEASON1_VISUAL_AUTHORITY_CURSOR_LIGHT_v1"
+    },
+    {
+      "assetId": "swa:SW-RESIDENT-004:closeups:sw-resident-004-noa-kline-closeup-01.jpg",
+      "residentId": "SW-RESIDENT-004",
+      "residentName": "Noa Kline",
+      "publicPath": "/studio-world/residents/season-1/sw-resident-004-noa-kline/closeups/sw-resident-004-noa-kline-closeup-01.jpg",
+      "repoPath": "public/studio-world/residents/season-1/sw-resident-004-noa-kline/closeups/sw-resident-004-noa-kline-closeup-01.jpg",
+      "sourceFilename": "41E61B95-7D10-4D20-BD4D-9C23322157A8.png",
+      "organizedPath": "SW-RESIDENT-004__noa-kline/02-closeups/noa-kline__closeup-reference__01.jpg",
+      "packageStatus": "REFERENCE_ONLY",
+      "category": "closeups",
+      "sourcePackage": "STUDIO_WORLD_SEASON1_VISUAL_AUTHORITY_CURSOR_LIGHT_v1"
+    },
+    {
+      "assetId": "swa:SW-RESIDENT-004:closeups:sw-resident-004-noa-kline-closeup-02.jpg",
+      "residentId": "SW-RESIDENT-004",
+      "residentName": "Noa Kline",
+      "publicPath": "/studio-world/residents/season-1/sw-resident-004-noa-kline/closeups/sw-resident-004-noa-kline-closeup-02.jpg",
+      "repoPath": "public/studio-world/residents/season-1/sw-resident-004-noa-kline/closeups/sw-resident-004-noa-kline-closeup-02.jpg",
+      "sourceFilename": "D1E1D42D-D145-4737-AE90-E386CAB8696F.png",
+      "organizedPath": "SW-RESIDENT-004__noa-kline/02-closeups/noa-kline__closeup-reference__02.jpg",
+      "packageStatus": "REFERENCE_ONLY",
+      "category": "closeups",
+      "sourcePackage": "STUDIO_WORLD_SEASON1_VISUAL_AUTHORITY_CURSOR_LIGHT_v1"
+    },
+    {
+      "assetId": "swa:SW-RESIDENT-004:closeups:sw-resident-004-noa-kline-closeup-03.jpg",
+      "residentId": "SW-RESIDENT-004",
+      "residentName": "Noa Kline",
+      "publicPath": "/studio-world/residents/season-1/sw-resident-004-noa-kline/closeups/sw-resident-004-noa-kline-closeup-03.jpg",
+      "repoPath": "public/studio-world/residents/season-1/sw-resident-004-noa-kline/closeups/sw-resident-004-noa-kline-closeup-03.jpg",
+      "sourceFilename": "FEBF8B3E-E978-49CF-BB5D-D92441188E2C.png",
+      "organizedPath": "SW-RESIDENT-004__noa-kline/02-closeups/noa-kline__closeup-reference__03.jpg",
+      "packageStatus": "REFERENCE_ONLY",
+      "category": "closeups",
+      "sourcePackage": "STUDIO_WORLD_SEASON1_VISUAL_AUTHORITY_CURSOR_LIGHT_v1"
+    },
+    {
+      "assetId": "swa:SW-RESIDENT-004:work-uniform-candidates:sw-resident-004-noa-kline-work-uniform-candidate-01.jpg",
+      "residentId": "SW-RESIDENT-004",
+      "residentName": "Noa Kline",
+      "publicPath": "/studio-world/residents/season-1/sw-resident-004-noa-kline/work-uniform-candidates/sw-resident-004-noa-kline-work-uniform-candidate-01.jpg",
+      "repoPath": "public/studio-world/residents/season-1/sw-resident-004-noa-kline/work-uniform-candidates/sw-resident-004-noa-kline-work-uniform-candidate-01.jpg",
+      "sourceFilename": "0202633E-1841-450A-891A-1FF48C69DFB8.png",
+      "organizedPath": "SW-RESIDENT-004__noa-kline/03-work-uniform-candidates/noa-kline__shared-uniform-candidate__v1.jpg",
+      "packageStatus": "CONCEPT_REFERENCE_ONLY",
+      "category": "work-uniform-candidates",
+      "sourcePackage": "STUDIO_WORLD_SEASON1_VISUAL_AUTHORITY_CURSOR_LIGHT_v1"
+    },
+    {
+      "assetId": "swa:SW-RESIDENT-005:natural-authority:sw-resident-005-caspian-reed-natural-fullbody-01.jpg",
+      "residentId": "SW-RESIDENT-005",
+      "residentName": "Caspian Reed",
+      "publicPath": "/studio-world/residents/season-1/sw-resident-005-caspian-reed/natural-authority/sw-resident-005-caspian-reed-natural-fullbody-01.jpg",
+      "repoPath": "public/studio-world/residents/season-1/sw-resident-005-caspian-reed/natural-authority/sw-resident-005-caspian-reed-natural-fullbody-01.jpg",
+      "sourceFilename": "BBCAD99B-F64E-4101-8237-6A30E2A3DF43.png",
+      "organizedPath": "SW-RESIDENT-005__caspian-reed/01-natural-authority/caspian-reed__natural-full-body__decadent-bohemian-aristocrat.jpg",
+      "packageStatus": "FOUNDER_APPROVED",
+      "category": "natural-authority",
+      "sourcePackage": "STUDIO_WORLD_SEASON1_VISUAL_AUTHORITY_CURSOR_LIGHT_v1"
+    },
+    {
+      "assetId": "swa:SW-RESIDENT-005:closeups:sw-resident-005-caspian-reed-closeup-01.jpg",
+      "residentId": "SW-RESIDENT-005",
+      "residentName": "Caspian Reed",
+      "publicPath": "/studio-world/residents/season-1/sw-resident-005-caspian-reed/closeups/sw-resident-005-caspian-reed-closeup-01.jpg",
+      "repoPath": "public/studio-world/residents/season-1/sw-resident-005-caspian-reed/closeups/sw-resident-005-caspian-reed-closeup-01.jpg",
+      "sourceFilename": "E2D5E22F-6F71-4D17-A3E5-8FA28D8F93F5.png",
+      "organizedPath": "SW-RESIDENT-005__caspian-reed/02-closeups/caspian-reed__closeup__decadent-bohemian-aristocrat.jpg",
+      "packageStatus": "FOUNDER_APPROVED_REFERENCE",
+      "category": "closeups",
+      "sourcePackage": "STUDIO_WORLD_SEASON1_VISUAL_AUTHORITY_CURSOR_LIGHT_v1"
+    },
+    {
+      "assetId": "swa:SW-RESIDENT-005:work-uniform-candidates:sw-resident-005-caspian-reed-work-uniform-candidate-01.jpg",
+      "residentId": "SW-RESIDENT-005",
+      "residentName": "Caspian Reed",
+      "publicPath": "/studio-world/residents/season-1/sw-resident-005-caspian-reed/work-uniform-candidates/sw-resident-005-caspian-reed-work-uniform-candidate-01.jpg",
+      "repoPath": "public/studio-world/residents/season-1/sw-resident-005-caspian-reed/work-uniform-candidates/sw-resident-005-caspian-reed-work-uniform-candidate-01.jpg",
+      "sourceFilename": "9F733CC5-3B6D-4A84-9240-E849214B5920.png",
+      "organizedPath": "SW-RESIDENT-005__caspian-reed/03-work-uniform-candidates/caspian-reed__shared-uniform-candidate__v1.jpg",
+      "packageStatus": "CONCEPT_REFERENCE_ONLY",
+      "category": "work-uniform-candidates",
+      "sourcePackage": "STUDIO_WORLD_SEASON1_VISUAL_AUTHORITY_CURSOR_LIGHT_v1"
+    },
+    {
+      "assetId": "swa:SW-RESIDENT-006:natural-authority:sw-resident-006-iona-wells-natural-fullbody-01.jpg",
+      "residentId": "SW-RESIDENT-006",
+      "residentName": "Iona Wells",
+      "publicPath": "/studio-world/residents/season-1/sw-resident-006-iona-wells/natural-authority/sw-resident-006-iona-wells-natural-fullbody-01.jpg",
+      "repoPath": "public/studio-world/residents/season-1/sw-resident-006-iona-wells/natural-authority/sw-resident-006-iona-wells-natural-fullbody-01.jpg",
+      "sourceFilename": "IMG_6276.png",
+      "organizedPath": "SW-RESIDENT-006__iona-wells/01-natural-authority/iona-wells__natural-full-body__precision-utilitarian.jpg",
+      "packageStatus": "FOUNDER_APPROVED",
+      "category": "natural-authority",
+      "sourcePackage": "STUDIO_WORLD_SEASON1_VISUAL_AUTHORITY_CURSOR_LIGHT_v1"
+    },
+    {
+      "assetId": "swa:SW-RESIDENT-006:closeups:sw-resident-006-iona-wells-closeup-01.jpg",
+      "residentId": "SW-RESIDENT-006",
+      "residentName": "Iona Wells",
+      "publicPath": "/studio-world/residents/season-1/sw-resident-006-iona-wells/closeups/sw-resident-006-iona-wells-closeup-01.jpg",
+      "repoPath": "public/studio-world/residents/season-1/sw-resident-006-iona-wells/closeups/sw-resident-006-iona-wells-closeup-01.jpg",
+      "sourceFilename": "F46A6DF3-48E7-4FD9-A0AB-22F7BAF3E4E8.png",
+      "organizedPath": "SW-RESIDENT-006__iona-wells/02-closeups/iona-wells__closeup__precision-utilitarian.jpg",
+      "packageStatus": "FOUNDER_APPROVED_REFERENCE",
+      "category": "closeups",
+      "sourcePackage": "STUDIO_WORLD_SEASON1_VISUAL_AUTHORITY_CURSOR_LIGHT_v1"
+    },
+    {
+      "assetId": "swa:SW-RESIDENT-006:work-uniform-candidates:sw-resident-006-iona-wells-work-uniform-candidate-01.jpg",
+      "residentId": "SW-RESIDENT-006",
+      "residentName": "Iona Wells",
+      "publicPath": "/studio-world/residents/season-1/sw-resident-006-iona-wells/work-uniform-candidates/sw-resident-006-iona-wells-work-uniform-candidate-01.jpg",
+      "repoPath": "public/studio-world/residents/season-1/sw-resident-006-iona-wells/work-uniform-candidates/sw-resident-006-iona-wells-work-uniform-candidate-01.jpg",
+      "sourceFilename": "37BF712F-0553-4863-ACBA-DB7E13610995.png",
+      "organizedPath": "SW-RESIDENT-006__iona-wells/03-work-uniform-candidates/iona-wells__shared-uniform-candidate__v1.jpg",
+      "packageStatus": "CONCEPT_REFERENCE_ONLY",
+      "category": "work-uniform-candidates",
+      "sourcePackage": "STUDIO_WORLD_SEASON1_VISUAL_AUTHORITY_CURSOR_LIGHT_v1"
+    },
+    {
+      "assetId": "swa:SW-RESIDENT-006:alternate-modes:sw-resident-006-iona-wells-alternate-mode-01.jpg",
+      "residentId": "SW-RESIDENT-006",
+      "residentName": "Iona Wells",
+      "publicPath": "/studio-world/residents/season-1/sw-resident-006-iona-wells/alternate-modes/sw-resident-006-iona-wells-alternate-mode-01.jpg",
+      "repoPath": "public/studio-world/residents/season-1/sw-resident-006-iona-wells/alternate-modes/sw-resident-006-iona-wells-alternate-mode-01.jpg",
+      "sourceFilename": "07607EEC-49A1-44D6-A532-FD0D7AF41B52.png",
+      "organizedPath": "SW-RESIDENT-006__iona-wells/04-alternate-modes/iona-wells__full-glam__alternate-mode.jpg",
+      "packageStatus": "ALTERNATE_MODE_REFERENCE",
+      "category": "alternate-modes",
+      "sourcePackage": "STUDIO_WORLD_SEASON1_VISUAL_AUTHORITY_CURSOR_LIGHT_v1"
+    },
+    {
+      "assetId": "swa:SW-RESIDENT-007:natural-authority:sw-resident-007-marlowe-saint-natural-fullbody-01.jpg",
+      "residentId": "SW-RESIDENT-007",
+      "residentName": "Marlowe Saint",
+      "publicPath": "/studio-world/residents/season-1/sw-resident-007-marlowe-saint/natural-authority/sw-resident-007-marlowe-saint-natural-fullbody-01.jpg",
+      "repoPath": "public/studio-world/residents/season-1/sw-resident-007-marlowe-saint/natural-authority/sw-resident-007-marlowe-saint-natural-fullbody-01.jpg",
+      "sourceFilename": "653088E8-4A41-4618-B869-9C6E96BF6B9B.png",
+      "organizedPath": "SW-RESIDENT-007__marlowe-saint/01-natural-authority/marlowe-saint__natural-full-body__off-duty-cultural-icon.jpg",
+      "packageStatus": "FOUNDER_APPROVED",
+      "category": "natural-authority",
+      "sourcePackage": "STUDIO_WORLD_SEASON1_VISUAL_AUTHORITY_CURSOR_LIGHT_v1"
+    },
+    {
+      "assetId": "swa:SW-RESIDENT-007:alternate-modes:sw-resident-007-marlowe-saint-alternate-mode-01.jpg",
+      "residentId": "SW-RESIDENT-007",
+      "residentName": "Marlowe Saint",
+      "publicPath": "/studio-world/residents/season-1/sw-resident-007-marlowe-saint/alternate-modes/sw-resident-007-marlowe-saint-alternate-mode-01.jpg",
+      "repoPath": "public/studio-world/residents/season-1/sw-resident-007-marlowe-saint/alternate-modes/sw-resident-007-marlowe-saint-alternate-mode-01.jpg",
+      "sourceFilename": "0D841DDD-094C-45C2-B4A1-E3A5FAF006F5.png",
+      "organizedPath": "SW-RESIDENT-007__marlowe-saint/04-alternate-modes/marlowe-saint__grand-cultural-icon__alternate-reference.jpg",
+      "packageStatus": "REFERENCE_ONLY",
+      "category": "alternate-modes",
+      "sourcePackage": "STUDIO_WORLD_SEASON1_VISUAL_AUTHORITY_CURSOR_LIGHT_v1"
+    },
+    {
+      "assetId": "swa:SW-RESIDENT-007:work-uniform-candidates:sw-resident-007-marlowe-saint-work-uniform-candidate-01.jpg",
+      "residentId": "SW-RESIDENT-007",
+      "residentName": "Marlowe Saint",
+      "publicPath": "/studio-world/residents/season-1/sw-resident-007-marlowe-saint/work-uniform-candidates/sw-resident-007-marlowe-saint-work-uniform-candidate-01.jpg",
+      "repoPath": "public/studio-world/residents/season-1/sw-resident-007-marlowe-saint/work-uniform-candidates/sw-resident-007-marlowe-saint-work-uniform-candidate-01.jpg",
+      "sourceFilename": "1D701D29-55D5-4C14-9CC3-2011161E2623.png",
+      "organizedPath": "SW-RESIDENT-007__marlowe-saint/03-work-uniform-candidates/marlowe-saint__shared-uniform-candidate__corrected-larger-body-v1.jpg",
+      "packageStatus": "CONCEPT_REFERENCE_ONLY",
+      "category": "work-uniform-candidates",
+      "sourcePackage": "STUDIO_WORLD_SEASON1_VISUAL_AUTHORITY_CURSOR_LIGHT_v1"
+    },
+    {
+      "assetId": "swa:SW-RESIDENT-008:natural-authority:sw-resident-008-elio-vahn-natural-fullbody-01.jpg",
+      "residentId": "SW-RESIDENT-008",
+      "residentName": "Elio Vahn",
+      "publicPath": "/studio-world/residents/season-1/sw-resident-008-elio-vahn/natural-authority/sw-resident-008-elio-vahn-natural-fullbody-01.jpg",
+      "repoPath": "public/studio-world/residents/season-1/sw-resident-008-elio-vahn/natural-authority/sw-resident-008-elio-vahn-natural-fullbody-01.jpg",
+      "sourceFilename": "589F06FC-8AE7-432C-8663-47FFDB1B400D.png",
+      "organizedPath": "SW-RESIDENT-008__elio-vahn/01-natural-authority/elio-vahn__natural-full-body__private-club-strategist.jpg",
+      "packageStatus": "FOUNDER_APPROVED",
+      "category": "natural-authority",
+      "sourcePackage": "STUDIO_WORLD_SEASON1_VISUAL_AUTHORITY_CURSOR_LIGHT_v1"
+    },
+    {
+      "assetId": "swa:SW-RESIDENT-008:closeups:sw-resident-008-elio-vahn-closeup-01.jpg",
+      "residentId": "SW-RESIDENT-008",
+      "residentName": "Elio Vahn",
+      "publicPath": "/studio-world/residents/season-1/sw-resident-008-elio-vahn/closeups/sw-resident-008-elio-vahn-closeup-01.jpg",
+      "repoPath": "public/studio-world/residents/season-1/sw-resident-008-elio-vahn/closeups/sw-resident-008-elio-vahn-closeup-01.jpg",
+      "sourceFilename": "53E548C2-37F2-4A95-A150-24FBC3A80337.png",
+      "organizedPath": "SW-RESIDENT-008__elio-vahn/02-closeups/elio-vahn__closeup__private-club-strategist.jpg",
+      "packageStatus": "FOUNDER_APPROVED_REFERENCE",
+      "category": "closeups",
+      "sourcePackage": "STUDIO_WORLD_SEASON1_VISUAL_AUTHORITY_CURSOR_LIGHT_v1"
+    },
+    {
+      "assetId": "swa:SW-RESIDENT-008:work-uniform-candidates:sw-resident-008-elio-vahn-work-uniform-candidate-01.jpg",
+      "residentId": "SW-RESIDENT-008",
+      "residentName": "Elio Vahn",
+      "publicPath": "/studio-world/residents/season-1/sw-resident-008-elio-vahn/work-uniform-candidates/sw-resident-008-elio-vahn-work-uniform-candidate-01.jpg",
+      "repoPath": "public/studio-world/residents/season-1/sw-resident-008-elio-vahn/work-uniform-candidates/sw-resident-008-elio-vahn-work-uniform-candidate-01.jpg",
+      "sourceFilename": "DE6539F4-DAFA-4062-9F5E-E6DE2C453A80.png",
+      "organizedPath": "SW-RESIDENT-008__elio-vahn/03-work-uniform-candidates/elio-vahn__shared-uniform-candidate__v1.jpg",
+      "packageStatus": "CONCEPT_REFERENCE_ONLY",
+      "category": "work-uniform-candidates",
+      "sourcePackage": "STUDIO_WORLD_SEASON1_VISUAL_AUTHORITY_CURSOR_LIGHT_v1"
+    }
+  ],
   "bundles": [
     {
       "residentId": "SW-RESIDENT-001",
@@ -10,13 +337,14 @@
         "va:SW-RESIDENT-001:SIGNED_WALL_PORTRAIT",
         "va:SW-RESIDENT-001:ROLE_COMPETENCY_FULL_BODY",
         "va:SW-RESIDENT-001:IDENTITY_ANGLE_PACK",
+        "va:SW-RESIDENT-001:IDENTITY_CLOSEUP:01",
         "va:SW-RESIDENT-001:WORK_UNIFORM_REFERENCE"
       ],
       "primaryNaturalHabitatAuthorityId": "va:SW-RESIDENT-001:NATURAL_HABITAT_FULL_BODY",
       "fabricationReadiness": {
-        "portraitLocked": false,
-        "bodyLocked": false,
-        "anglesPartial": false,
+        "portraitLocked": true,
+        "bodyLocked": true,
+        "anglesPartial": true,
         "anglesComplete": false,
         "uePending": true,
         "metahumanPending": true,
@@ -30,14 +358,15 @@
         "va:SW-RESIDENT-002:SIGNED_WALL_PORTRAIT",
         "va:SW-RESIDENT-002:ROLE_COMPETENCY_FULL_BODY",
         "va:SW-RESIDENT-002:IDENTITY_ANGLE_PACK",
+        "va:SW-RESIDENT-002:IDENTITY_CLOSEUP:01",
         "va:SW-RESIDENT-002:WORK_UNIFORM_REFERENCE",
         "va:SW-RESIDENT-002:SUPERSEDED:zuri-hale-surname"
       ],
       "primaryNaturalHabitatAuthorityId": "va:SW-RESIDENT-002:NATURAL_HABITAT_FULL_BODY",
       "fabricationReadiness": {
-        "portraitLocked": false,
-        "bodyLocked": false,
-        "anglesPartial": false,
+        "portraitLocked": true,
+        "bodyLocked": true,
+        "anglesPartial": true,
         "anglesComplete": false,
         "uePending": true,
         "metahumanPending": true,
@@ -51,13 +380,14 @@
         "va:SW-RESIDENT-003:SIGNED_WALL_PORTRAIT",
         "va:SW-RESIDENT-003:ROLE_COMPETENCY_FULL_BODY",
         "va:SW-RESIDENT-003:IDENTITY_ANGLE_PACK",
+        "va:SW-RESIDENT-003:IDENTITY_CLOSEUP:01",
         "va:SW-RESIDENT-003:WORK_UNIFORM_REFERENCE"
       ],
       "primaryNaturalHabitatAuthorityId": "va:SW-RESIDENT-003:NATURAL_HABITAT_FULL_BODY",
       "fabricationReadiness": {
-        "portraitLocked": false,
-        "bodyLocked": false,
-        "anglesPartial": false,
+        "portraitLocked": true,
+        "bodyLocked": true,
+        "anglesPartial": true,
         "anglesComplete": false,
         "uePending": true,
         "metahumanPending": true,
@@ -71,13 +401,16 @@
         "va:SW-RESIDENT-004:SIGNED_WALL_PORTRAIT",
         "va:SW-RESIDENT-004:ROLE_COMPETENCY_FULL_BODY",
         "va:SW-RESIDENT-004:IDENTITY_ANGLE_PACK",
+        "va:SW-RESIDENT-004:IDENTITY_CLOSEUP:01",
+        "va:SW-RESIDENT-004:IDENTITY_CLOSEUP:02",
+        "va:SW-RESIDENT-004:IDENTITY_CLOSEUP:03",
         "va:SW-RESIDENT-004:WORK_UNIFORM_REFERENCE"
       ],
       "primaryNaturalHabitatAuthorityId": "va:SW-RESIDENT-004:NATURAL_HABITAT_FULL_BODY",
       "fabricationReadiness": {
         "portraitLocked": false,
-        "bodyLocked": false,
-        "anglesPartial": false,
+        "bodyLocked": true,
+        "anglesPartial": true,
         "anglesComplete": false,
         "uePending": true,
         "metahumanPending": true,
@@ -91,13 +424,14 @@
         "va:SW-RESIDENT-005:SIGNED_WALL_PORTRAIT",
         "va:SW-RESIDENT-005:ROLE_COMPETENCY_FULL_BODY",
         "va:SW-RESIDENT-005:IDENTITY_ANGLE_PACK",
+        "va:SW-RESIDENT-005:IDENTITY_CLOSEUP:01",
         "va:SW-RESIDENT-005:WORK_UNIFORM_REFERENCE"
       ],
       "primaryNaturalHabitatAuthorityId": "va:SW-RESIDENT-005:NATURAL_HABITAT_FULL_BODY",
       "fabricationReadiness": {
-        "portraitLocked": false,
-        "bodyLocked": false,
-        "anglesPartial": false,
+        "portraitLocked": true,
+        "bodyLocked": true,
+        "anglesPartial": true,
         "anglesComplete": false,
         "uePending": true,
         "metahumanPending": true,
@@ -111,14 +445,15 @@
         "va:SW-RESIDENT-006:SIGNED_WALL_PORTRAIT",
         "va:SW-RESIDENT-006:ROLE_COMPETENCY_FULL_BODY",
         "va:SW-RESIDENT-006:IDENTITY_ANGLE_PACK",
+        "va:SW-RESIDENT-006:IDENTITY_CLOSEUP:01",
         "va:SW-RESIDENT-006:WORK_UNIFORM_REFERENCE",
-        "va:SW-RESIDENT-006:GLAMOUR_OR_ALTERNATE_MODE"
+        "va:SW-RESIDENT-006:GLAMOUR_OR_ALTERNATE_MODE:01"
       ],
       "primaryNaturalHabitatAuthorityId": "va:SW-RESIDENT-006:NATURAL_HABITAT_FULL_BODY",
       "fabricationReadiness": {
-        "portraitLocked": false,
-        "bodyLocked": false,
-        "anglesPartial": false,
+        "portraitLocked": true,
+        "bodyLocked": true,
+        "anglesPartial": true,
         "anglesComplete": false,
         "uePending": true,
         "metahumanPending": true,
@@ -133,12 +468,13 @@
         "va:SW-RESIDENT-007:ROLE_COMPETENCY_FULL_BODY",
         "va:SW-RESIDENT-007:IDENTITY_ANGLE_PACK",
         "va:SW-RESIDENT-007:WORK_UNIFORM_REFERENCE",
+        "va:SW-RESIDENT-007:ALTERNATE_MODE:01",
         "va:SW-RESIDENT-007:SUPERSEDED:marlowe-slender-young"
       ],
       "primaryNaturalHabitatAuthorityId": "va:SW-RESIDENT-007:NATURAL_HABITAT_FULL_BODY",
       "fabricationReadiness": {
         "portraitLocked": false,
-        "bodyLocked": false,
+        "bodyLocked": true,
         "anglesPartial": false,
         "anglesComplete": false,
         "uePending": true,
@@ -153,13 +489,14 @@
         "va:SW-RESIDENT-008:SIGNED_WALL_PORTRAIT",
         "va:SW-RESIDENT-008:ROLE_COMPETENCY_FULL_BODY",
         "va:SW-RESIDENT-008:IDENTITY_ANGLE_PACK",
+        "va:SW-RESIDENT-008:IDENTITY_CLOSEUP:01",
         "va:SW-RESIDENT-008:WORK_UNIFORM_REFERENCE"
       ],
       "primaryNaturalHabitatAuthorityId": "va:SW-RESIDENT-008:NATURAL_HABITAT_FULL_BODY",
       "fabricationReadiness": {
-        "portraitLocked": false,
-        "bodyLocked": false,
-        "anglesPartial": false,
+        "portraitLocked": true,
+        "bodyLocked": true,
+        "anglesPartial": true,
         "anglesComplete": false,
         "uePending": true,
         "metahumanPending": true,
@@ -187,10 +524,15 @@
       "prohibitedDrift": [
         "not generic luxury Black woman / CEO stock image"
       ],
-      "notes": "ivory / cream sculptural tailoring corseted or sharply feminine structure wide-leg trouser long coat heels feminine power without corporate blandness",
-      "source": "P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1",
+      "notes": "ivory / cream sculptural tailoring corseted or sharply feminine structure wide-leg trouser long coat heels feminine power without corporate blandness Ingested from SW-RESIDENT-001__etta-vale/01-natural-authority/etta-vale__natural-full-body__sophisticated-fashionista.jpg",
+      "source": "P0.STUDIOWORLD.SEASON1.VISUAL-AUTHORITY.INGEST2",
       "founderApproved": true,
-      "importedAt": "2026-10-03T17:00:00.000Z"
+      "importedAt": "2026-10-03T17:54:00.000Z",
+      "assetId": "swa:SW-RESIDENT-001:natural-authority:sw-resident-001-etta-vale-natural-fullbody-01.jpg",
+      "assetPath": "public/studio-world/residents/season-1/sw-resident-001-etta-vale/natural-authority/sw-resident-001-etta-vale-natural-fullbody-01.jpg",
+      "assetUrl": "/studio-world/residents/season-1/sw-resident-001-etta-vale/natural-authority/sw-resident-001-etta-vale-natural-fullbody-01.jpg",
+      "sourcePackage": "STUDIO_WORLD_SEASON1_VISUAL_AUTHORITY_CURSOR_LIGHT_v1",
+      "sourceFilename": "D3BE948B-1E6B-480B-8253-337AA7BAB250.png"
     },
     {
       "id": "va:SW-RESIDENT-001:SIGNED_WALL_PORTRAIT",
@@ -205,9 +547,9 @@
       "prohibitedDrift": [
         "not generic luxury Black woman / CEO stock image"
       ],
-      "source": "P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1",
+      "source": "P0.STUDIOWORLD.SEASON1.VISUAL-AUTHORITY.INGEST2",
       "founderApproved": true,
-      "importedAt": "2026-10-03T17:00:00.000Z"
+      "importedAt": "2026-10-03T17:54:00.000Z"
     },
     {
       "id": "va:SW-RESIDENT-001:ROLE_COMPETENCY_FULL_BODY",
@@ -222,9 +564,9 @@
       "prohibitedDrift": [
         "not generic luxury Black woman / CEO stock image"
       ],
-      "source": "P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1",
+      "source": "P0.STUDIOWORLD.SEASON1.VISUAL-AUTHORITY.INGEST2",
       "founderApproved": true,
-      "importedAt": "2026-10-03T17:00:00.000Z"
+      "importedAt": "2026-10-03T17:54:00.000Z"
     },
     {
       "id": "va:SW-RESIDENT-001:IDENTITY_ANGLE_PACK",
@@ -234,13 +576,35 @@
       "canonVersion": "season1-v1",
       "isPrimaryIdentityAuthority": false,
       "identityLocked": false,
-      "notes": "Angle pack slot reserved for facial/body continuity (MetaHuman/UE). No repo-verified approved angle pack at ingest — do not treat exploratory generations as canon.",
+      "notes": "Partial identity references ingested (1 close-up(s)). Full angle pack NOT complete — do not mark anglesComplete.",
       "prohibitedDrift": [
         "not generic luxury Black woman / CEO stock image"
       ],
-      "source": "P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1",
+      "source": "P0.STUDIOWORLD.SEASON1.VISUAL-AUTHORITY.INGEST2",
       "founderApproved": false,
-      "importedAt": "2026-10-03T17:00:00.000Z"
+      "importedAt": "2026-10-03T17:54:00.000Z"
+    },
+    {
+      "id": "va:SW-RESIDENT-001:IDENTITY_CLOSEUP:01",
+      "residentId": "SW-RESIDENT-001",
+      "authorityType": "IDENTITY_CLOSEUP",
+      "status": "FOUNDER_APPROVED",
+      "canonVersion": "season1-v1",
+      "isPrimaryIdentityAuthority": false,
+      "identityLocked": true,
+      "faceAuthority": "Identity continuity close-up — not a complete MetaHuman angle pack",
+      "prohibitedDrift": [
+        "not generic luxury Black woman / CEO stock image"
+      ],
+      "source": "P0.STUDIOWORLD.SEASON1.VISUAL-AUTHORITY.INGEST2",
+      "founderApproved": true,
+      "importedAt": "2026-10-03T17:54:00.000Z",
+      "notes": "Ingested from SW-RESIDENT-001__etta-vale/02-closeups/etta-vale__closeup__sophisticated-fashionista.jpg",
+      "assetId": "swa:SW-RESIDENT-001:closeups:sw-resident-001-etta-vale-closeup-01.jpg",
+      "assetPath": "public/studio-world/residents/season-1/sw-resident-001-etta-vale/closeups/sw-resident-001-etta-vale-closeup-01.jpg",
+      "assetUrl": "/studio-world/residents/season-1/sw-resident-001-etta-vale/closeups/sw-resident-001-etta-vale-closeup-01.jpg",
+      "sourcePackage": "STUDIO_WORLD_SEASON1_VISUAL_AUTHORITY_CURSOR_LIGHT_v1",
+      "sourceFilename": "2796CA93-AB24-43D1-90A3-1C3D7C81B016.png"
     },
     {
       "id": "va:SW-RESIDENT-001:WORK_UNIFORM_REFERENCE",
@@ -251,14 +615,19 @@
       "isPrimaryIdentityAuthority": false,
       "identityLocked": false,
       "wardrobeAuthority": "Shared SW uniform system — personalize only: Sharper fit, controlled waist, minimal elegant styling",
-      "notes": "ONE shared Studio World uniform system — instantly recognizable guild/atelier hospitality, not generic corporate or cosplay.. Final uniform visual NOT founder-approved; generated uniform candidates must not be marked FOUNDER_APPROVED.",
+      "notes": "ONE shared Studio World uniform system — instantly recognizable guild/atelier hospitality, not generic corporate or cosplay.. Final uniform visual NOT founder-approved; candidate imagery is CONCEPT_REFERENCE_ONLY. Ingested from SW-RESIDENT-001__etta-vale/03-work-uniform-candidates/etta-vale__shared-uniform-candidate__v1.jpg",
       "prohibitedDrift": [
         "Eight unrelated outfits with SW badge only",
         "Replacing natural habitat as default identity"
       ],
-      "source": "P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1",
+      "source": "P0.STUDIOWORLD.SEASON1.VISUAL-AUTHORITY.INGEST2",
       "founderApproved": false,
-      "importedAt": "2026-10-03T17:00:00.000Z"
+      "importedAt": "2026-10-03T17:54:00.000Z",
+      "assetId": "swa:SW-RESIDENT-001:work-uniform-candidates:sw-resident-001-etta-vale-work-uniform-candidate-01.jpg",
+      "assetPath": "public/studio-world/residents/season-1/sw-resident-001-etta-vale/work-uniform-candidates/sw-resident-001-etta-vale-work-uniform-candidate-01.jpg",
+      "assetUrl": "/studio-world/residents/season-1/sw-resident-001-etta-vale/work-uniform-candidates/sw-resident-001-etta-vale-work-uniform-candidate-01.jpg",
+      "sourcePackage": "STUDIO_WORLD_SEASON1_VISUAL_AUTHORITY_CURSOR_LIGHT_v1",
+      "sourceFilename": "EBFEDC59-7936-4687-9A39-0CA88A848116.png"
     },
     {
       "id": "va:SW-RESIDENT-002:NATURAL_HABITAT_FULL_BODY",
@@ -284,10 +653,15 @@
         "not “Asian businesswoman” stock imagery",
         "not “mysterious = black”"
       ],
-      "notes": "modern fashion, geometry, strong lapels, asymmetric construction, layered tailoring taupe / stone / chocolate / burgundy / oxblood / restrained neutrals wide-leg trouser, modern pointed footwear occasional statement tie/scarf/bag — fashion-forward without costume",
-      "source": "P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1",
+      "notes": "modern fashion, geometry, strong lapels, asymmetric construction, layered tailoring taupe / stone / chocolate / burgundy / oxblood / restrained neutrals wide-leg trouser, modern pointed footwear occasional statement tie/scarf/bag — fashion-forward without costume Ingested from SW-RESIDENT-002__zuri-xu/01-natural-authority/zuri-xu__natural-full-body__architectural-fashion-strategist.jpg",
+      "source": "P0.STUDIOWORLD.SEASON1.VISUAL-AUTHORITY.INGEST2",
       "founderApproved": true,
-      "importedAt": "2026-10-03T17:00:00.000Z"
+      "importedAt": "2026-10-03T17:54:00.000Z",
+      "assetId": "swa:SW-RESIDENT-002:natural-authority:sw-resident-002-zuri-xu-natural-fullbody-01.jpg",
+      "assetPath": "public/studio-world/residents/season-1/sw-resident-002-zuri-xu/natural-authority/sw-resident-002-zuri-xu-natural-fullbody-01.jpg",
+      "assetUrl": "/studio-world/residents/season-1/sw-resident-002-zuri-xu/natural-authority/sw-resident-002-zuri-xu-natural-fullbody-01.jpg",
+      "sourcePackage": "STUDIO_WORLD_SEASON1_VISUAL_AUTHORITY_CURSOR_LIGHT_v1",
+      "sourceFilename": "9A349F3E-2D87-4AA9-A066-8884AC5F411F.png"
     },
     {
       "id": "va:SW-RESIDENT-002:SIGNED_WALL_PORTRAIT",
@@ -307,9 +681,9 @@
         "not “Asian businesswoman” stock imagery",
         "not “mysterious = black”"
       ],
-      "source": "P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1",
+      "source": "P0.STUDIOWORLD.SEASON1.VISUAL-AUTHORITY.INGEST2",
       "founderApproved": true,
-      "importedAt": "2026-10-03T17:00:00.000Z"
+      "importedAt": "2026-10-03T17:54:00.000Z"
     },
     {
       "id": "va:SW-RESIDENT-002:ROLE_COMPETENCY_FULL_BODY",
@@ -329,9 +703,9 @@
         "not “Asian businesswoman” stock imagery",
         "not “mysterious = black”"
       ],
-      "source": "P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1",
+      "source": "P0.STUDIOWORLD.SEASON1.VISUAL-AUTHORITY.INGEST2",
       "founderApproved": true,
-      "importedAt": "2026-10-03T17:00:00.000Z"
+      "importedAt": "2026-10-03T17:54:00.000Z"
     },
     {
       "id": "va:SW-RESIDENT-002:IDENTITY_ANGLE_PACK",
@@ -341,7 +715,7 @@
       "canonVersion": "season1-v1",
       "isPrimaryIdentityAuthority": false,
       "identityLocked": false,
-      "notes": "Angle pack slot reserved for facial/body continuity (MetaHuman/UE). No repo-verified approved angle pack at ingest — do not treat exploratory generations as canon.",
+      "notes": "Partial identity references ingested (1 close-up(s)). Full angle pack NOT complete — do not mark anglesComplete.",
       "prohibitedDrift": [
         "not corporate Asian mom",
         "not goth",
@@ -350,9 +724,36 @@
         "not “Asian businesswoman” stock imagery",
         "not “mysterious = black”"
       ],
-      "source": "P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1",
+      "source": "P0.STUDIOWORLD.SEASON1.VISUAL-AUTHORITY.INGEST2",
       "founderApproved": false,
-      "importedAt": "2026-10-03T17:00:00.000Z"
+      "importedAt": "2026-10-03T17:54:00.000Z"
+    },
+    {
+      "id": "va:SW-RESIDENT-002:IDENTITY_CLOSEUP:01",
+      "residentId": "SW-RESIDENT-002",
+      "authorityType": "IDENTITY_CLOSEUP",
+      "status": "FOUNDER_APPROVED",
+      "canonVersion": "season1-v1",
+      "isPrimaryIdentityAuthority": false,
+      "identityLocked": true,
+      "faceAuthority": "Identity continuity close-up — not a complete MetaHuman angle pack",
+      "prohibitedDrift": [
+        "not corporate Asian mom",
+        "not goth",
+        "not plain suit",
+        "not medieval / RPG",
+        "not “Asian businesswoman” stock imagery",
+        "not “mysterious = black”"
+      ],
+      "source": "P0.STUDIOWORLD.SEASON1.VISUAL-AUTHORITY.INGEST2",
+      "founderApproved": true,
+      "importedAt": "2026-10-03T17:54:00.000Z",
+      "notes": "Ingested from SW-RESIDENT-002__zuri-xu/02-closeups/zuri-xu__closeup__architectural-fashion-strategist.jpg",
+      "assetId": "swa:SW-RESIDENT-002:closeups:sw-resident-002-zuri-xu-closeup-01.jpg",
+      "assetPath": "public/studio-world/residents/season-1/sw-resident-002-zuri-xu/closeups/sw-resident-002-zuri-xu-closeup-01.jpg",
+      "assetUrl": "/studio-world/residents/season-1/sw-resident-002-zuri-xu/closeups/sw-resident-002-zuri-xu-closeup-01.jpg",
+      "sourcePackage": "STUDIO_WORLD_SEASON1_VISUAL_AUTHORITY_CURSOR_LIGHT_v1",
+      "sourceFilename": "C541BDC8-F93F-4B0B-AAF7-FF4E0AEDB57B.png"
     },
     {
       "id": "va:SW-RESIDENT-002:WORK_UNIFORM_REFERENCE",
@@ -363,14 +764,19 @@
       "isPrimaryIdentityAuthority": false,
       "identityLocked": false,
       "wardrobeAuthority": "Shared SW uniform system — personalize only: Scarf / flower / asymmetric wrap / fashion detail",
-      "notes": "ONE shared Studio World uniform system — instantly recognizable guild/atelier hospitality, not generic corporate or cosplay.. Final uniform visual NOT founder-approved; generated uniform candidates must not be marked FOUNDER_APPROVED.",
+      "notes": "ONE shared Studio World uniform system — instantly recognizable guild/atelier hospitality, not generic corporate or cosplay.. Final uniform visual NOT founder-approved; candidate imagery is CONCEPT_REFERENCE_ONLY. Ingested from SW-RESIDENT-002__zuri-xu/03-work-uniform-candidates/zuri-xu__shared-uniform-candidate__v1.jpg",
       "prohibitedDrift": [
         "Eight unrelated outfits with SW badge only",
         "Replacing natural habitat as default identity"
       ],
-      "source": "P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1",
+      "source": "P0.STUDIOWORLD.SEASON1.VISUAL-AUTHORITY.INGEST2",
       "founderApproved": false,
-      "importedAt": "2026-10-03T17:00:00.000Z"
+      "importedAt": "2026-10-03T17:54:00.000Z",
+      "assetId": "swa:SW-RESIDENT-002:work-uniform-candidates:sw-resident-002-zuri-xu-work-uniform-candidate-01.jpg",
+      "assetPath": "public/studio-world/residents/season-1/sw-resident-002-zuri-xu/work-uniform-candidates/sw-resident-002-zuri-xu-work-uniform-candidate-01.jpg",
+      "assetUrl": "/studio-world/residents/season-1/sw-resident-002-zuri-xu/work-uniform-candidates/sw-resident-002-zuri-xu-work-uniform-candidate-01.jpg",
+      "sourcePackage": "STUDIO_WORLD_SEASON1_VISUAL_AUTHORITY_CURSOR_LIGHT_v1",
+      "sourceFilename": "14182919-EC3B-4EC6-A192-0B55E6E25FE7.png"
     },
     {
       "id": "va:SW-RESIDENT-002:SUPERSEDED:zuri-hale-surname",
@@ -388,9 +794,9 @@
       "prohibitedDrift": [
         "Using Zuri Hale as default visual authority"
       ],
-      "source": "P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1",
+      "source": "P0.STUDIOWORLD.SEASON1.VISUAL-AUTHORITY.INGEST2",
       "founderApproved": false,
-      "importedAt": "2026-10-03T17:00:00.000Z"
+      "importedAt": "2026-10-03T17:54:00.000Z"
     },
     {
       "id": "va:SW-RESIDENT-003:NATURAL_HABITAT_FULL_BODY",
@@ -414,10 +820,15 @@
         "not hypersexual influencer gym-bro",
         "not generic attractive Black male model"
       ],
-      "notes": "loose ivory linen shirt burgundy / wine relaxed tailored trousers brown boots subtle jewelry tactile, warm, relaxed — handsome without over-styling",
-      "source": "P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1",
+      "notes": "loose ivory linen shirt burgundy / wine relaxed tailored trousers brown boots subtle jewelry tactile, warm, relaxed — handsome without over-styling Ingested from SW-RESIDENT-003__jules-mercer/01-natural-authority/jules-mercer__natural-full-body__relaxed-romantic.jpg",
+      "source": "P0.STUDIOWORLD.SEASON1.VISUAL-AUTHORITY.INGEST2",
       "founderApproved": true,
-      "importedAt": "2026-10-03T17:00:00.000Z"
+      "importedAt": "2026-10-03T17:54:00.000Z",
+      "assetId": "swa:SW-RESIDENT-003:natural-authority:sw-resident-003-jules-mercer-natural-fullbody-01.jpg",
+      "assetPath": "public/studio-world/residents/season-1/sw-resident-003-jules-mercer/natural-authority/sw-resident-003-jules-mercer-natural-fullbody-01.jpg",
+      "assetUrl": "/studio-world/residents/season-1/sw-resident-003-jules-mercer/natural-authority/sw-resident-003-jules-mercer-natural-fullbody-01.jpg",
+      "sourcePackage": "STUDIO_WORLD_SEASON1_VISUAL_AUTHORITY_CURSOR_LIGHT_v1",
+      "sourceFilename": "IMG_6238.png"
     },
     {
       "id": "va:SW-RESIDENT-003:SIGNED_WALL_PORTRAIT",
@@ -435,9 +846,9 @@
         "not hypersexual influencer gym-bro",
         "not generic attractive Black male model"
       ],
-      "source": "P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1",
+      "source": "P0.STUDIOWORLD.SEASON1.VISUAL-AUTHORITY.INGEST2",
       "founderApproved": true,
-      "importedAt": "2026-10-03T17:00:00.000Z"
+      "importedAt": "2026-10-03T17:54:00.000Z"
     },
     {
       "id": "va:SW-RESIDENT-003:ROLE_COMPETENCY_FULL_BODY",
@@ -455,9 +866,9 @@
         "not hypersexual influencer gym-bro",
         "not generic attractive Black male model"
       ],
-      "source": "P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1",
+      "source": "P0.STUDIOWORLD.SEASON1.VISUAL-AUTHORITY.INGEST2",
       "founderApproved": true,
-      "importedAt": "2026-10-03T17:00:00.000Z"
+      "importedAt": "2026-10-03T17:54:00.000Z"
     },
     {
       "id": "va:SW-RESIDENT-003:IDENTITY_ANGLE_PACK",
@@ -467,16 +878,41 @@
       "canonVersion": "season1-v1",
       "isPrimaryIdentityAuthority": false,
       "identityLocked": false,
-      "notes": "Angle pack slot reserved for facial/body continuity (MetaHuman/UE). No repo-verified approved angle pack at ingest — do not treat exploratory generations as canon.",
+      "notes": "Partial identity references ingested (1 close-up(s)). Full angle pack NOT complete — do not mark anglesComplete.",
       "prohibitedDrift": [
         "not predatory or sex-obsessed",
         "not manipulative or misogynistic",
         "not hypersexual influencer gym-bro",
         "not generic attractive Black male model"
       ],
-      "source": "P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1",
+      "source": "P0.STUDIOWORLD.SEASON1.VISUAL-AUTHORITY.INGEST2",
       "founderApproved": false,
-      "importedAt": "2026-10-03T17:00:00.000Z"
+      "importedAt": "2026-10-03T17:54:00.000Z"
+    },
+    {
+      "id": "va:SW-RESIDENT-003:IDENTITY_CLOSEUP:01",
+      "residentId": "SW-RESIDENT-003",
+      "authorityType": "IDENTITY_CLOSEUP",
+      "status": "FOUNDER_APPROVED",
+      "canonVersion": "season1-v1",
+      "isPrimaryIdentityAuthority": false,
+      "identityLocked": true,
+      "faceAuthority": "Identity continuity close-up — not a complete MetaHuman angle pack",
+      "prohibitedDrift": [
+        "not predatory or sex-obsessed",
+        "not manipulative or misogynistic",
+        "not hypersexual influencer gym-bro",
+        "not generic attractive Black male model"
+      ],
+      "source": "P0.STUDIOWORLD.SEASON1.VISUAL-AUTHORITY.INGEST2",
+      "founderApproved": true,
+      "importedAt": "2026-10-03T17:54:00.000Z",
+      "notes": "Ingested from SW-RESIDENT-003__jules-mercer/02-closeups/jules-mercer__closeup__relaxed-romantic.jpg",
+      "assetId": "swa:SW-RESIDENT-003:closeups:sw-resident-003-jules-mercer-closeup-01.jpg",
+      "assetPath": "public/studio-world/residents/season-1/sw-resident-003-jules-mercer/closeups/sw-resident-003-jules-mercer-closeup-01.jpg",
+      "assetUrl": "/studio-world/residents/season-1/sw-resident-003-jules-mercer/closeups/sw-resident-003-jules-mercer-closeup-01.jpg",
+      "sourcePackage": "STUDIO_WORLD_SEASON1_VISUAL_AUTHORITY_CURSOR_LIGHT_v1",
+      "sourceFilename": "827885CF-0224-4B87-843B-9F4D3D4DC682.png"
     },
     {
       "id": "va:SW-RESIDENT-003:WORK_UNIFORM_REFERENCE",
@@ -487,14 +923,19 @@
       "isPrimaryIdentityAuthority": false,
       "identityLocked": false,
       "wardrobeAuthority": "Shared SW uniform system — personalize only: Open collar, relaxed sleeves, personal necklace",
-      "notes": "ONE shared Studio World uniform system — instantly recognizable guild/atelier hospitality, not generic corporate or cosplay.. Final uniform visual NOT founder-approved; generated uniform candidates must not be marked FOUNDER_APPROVED.",
+      "notes": "ONE shared Studio World uniform system — instantly recognizable guild/atelier hospitality, not generic corporate or cosplay.. Final uniform visual NOT founder-approved; candidate imagery is CONCEPT_REFERENCE_ONLY. Ingested from SW-RESIDENT-003__jules-mercer/03-work-uniform-candidates/jules-mercer__shared-uniform-candidate__v1.jpg",
       "prohibitedDrift": [
         "Eight unrelated outfits with SW badge only",
         "Replacing natural habitat as default identity"
       ],
-      "source": "P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1",
+      "source": "P0.STUDIOWORLD.SEASON1.VISUAL-AUTHORITY.INGEST2",
       "founderApproved": false,
-      "importedAt": "2026-10-03T17:00:00.000Z"
+      "importedAt": "2026-10-03T17:54:00.000Z",
+      "assetId": "swa:SW-RESIDENT-003:work-uniform-candidates:sw-resident-003-jules-mercer-work-uniform-candidate-01.jpg",
+      "assetPath": "public/studio-world/residents/season-1/sw-resident-003-jules-mercer/work-uniform-candidates/sw-resident-003-jules-mercer-work-uniform-candidate-01.jpg",
+      "assetUrl": "/studio-world/residents/season-1/sw-resident-003-jules-mercer/work-uniform-candidates/sw-resident-003-jules-mercer-work-uniform-candidate-01.jpg",
+      "sourcePackage": "STUDIO_WORLD_SEASON1_VISUAL_AUTHORITY_CURSOR_LIGHT_v1",
+      "sourceFilename": "39279AB8-B958-4DB6-B89A-8D3248C2326C.png"
     },
     {
       "id": "va:SW-RESIDENT-004:NATURAL_HABITAT_FULL_BODY",
@@ -517,10 +958,15 @@
         "not culturally costumed for heritage signaling",
         "not cold robot with no family interior"
       ],
-      "notes": "muted brown / charcoal jacket dark knit pleated gray-brown trousers simple dark shoes minimal, refined, repetitive, intentionally “boring”",
-      "source": "P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1",
+      "notes": "muted brown / charcoal jacket dark knit pleated gray-brown trousers simple dark shoes minimal, refined, repetitive, intentionally “boring” Ingested from SW-RESIDENT-004__noa-kline/01-natural-authority/noa-kline__natural-full-body__understated-systems-dad.jpg",
+      "source": "P0.STUDIOWORLD.SEASON1.VISUAL-AUTHORITY.INGEST2",
       "founderApproved": true,
-      "importedAt": "2026-10-03T17:00:00.000Z"
+      "importedAt": "2026-10-03T17:54:00.000Z",
+      "assetId": "swa:SW-RESIDENT-004:natural-authority:sw-resident-004-noa-kline-natural-fullbody-01.jpg",
+      "assetPath": "public/studio-world/residents/season-1/sw-resident-004-noa-kline/natural-authority/sw-resident-004-noa-kline-natural-fullbody-01.jpg",
+      "assetUrl": "/studio-world/residents/season-1/sw-resident-004-noa-kline/natural-authority/sw-resident-004-noa-kline-natural-fullbody-01.jpg",
+      "sourcePackage": "STUDIO_WORLD_SEASON1_VISUAL_AUTHORITY_CURSOR_LIGHT_v1",
+      "sourceFilename": "8141BEAD-0ABA-401D-8F71-26D1BF1978A4.png"
     },
     {
       "id": "va:SW-RESIDENT-004:SIGNED_WALL_PORTRAIT",
@@ -537,9 +983,9 @@
         "not culturally costumed for heritage signaling",
         "not cold robot with no family interior"
       ],
-      "source": "P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1",
+      "source": "P0.STUDIOWORLD.SEASON1.VISUAL-AUTHORITY.INGEST2",
       "founderApproved": true,
-      "importedAt": "2026-10-03T17:00:00.000Z"
+      "importedAt": "2026-10-03T17:54:00.000Z"
     },
     {
       "id": "va:SW-RESIDENT-004:ROLE_COMPETENCY_FULL_BODY",
@@ -556,9 +1002,9 @@
         "not culturally costumed for heritage signaling",
         "not cold robot with no family interior"
       ],
-      "source": "P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1",
+      "source": "P0.STUDIOWORLD.SEASON1.VISUAL-AUTHORITY.INGEST2",
       "founderApproved": true,
-      "importedAt": "2026-10-03T17:00:00.000Z"
+      "importedAt": "2026-10-03T17:54:00.000Z"
     },
     {
       "id": "va:SW-RESIDENT-004:IDENTITY_ANGLE_PACK",
@@ -568,15 +1014,87 @@
       "canonVersion": "season1-v1",
       "isPrimaryIdentityAuthority": false,
       "identityLocked": false,
-      "notes": "Angle pack slot reserved for facial/body continuity (MetaHuman/UE). No repo-verified approved angle pack at ingest — do not treat exploratory generations as canon.",
+      "notes": "Partial identity references ingested (3 close-up(s)). Full angle pack NOT complete — do not mark anglesComplete.",
       "prohibitedDrift": [
         "not generic East Asian tech guy",
         "not culturally costumed for heritage signaling",
         "not cold robot with no family interior"
       ],
-      "source": "P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1",
+      "source": "P0.STUDIOWORLD.SEASON1.VISUAL-AUTHORITY.INGEST2",
       "founderApproved": false,
-      "importedAt": "2026-10-03T17:00:00.000Z"
+      "importedAt": "2026-10-03T17:54:00.000Z"
+    },
+    {
+      "id": "va:SW-RESIDENT-004:IDENTITY_CLOSEUP:01",
+      "residentId": "SW-RESIDENT-004",
+      "authorityType": "IDENTITY_CLOSEUP",
+      "status": "REFERENCE_ONLY",
+      "canonVersion": "season1-v1",
+      "isPrimaryIdentityAuthority": false,
+      "identityLocked": false,
+      "faceAuthority": "Identity continuity close-up — not a complete MetaHuman angle pack",
+      "prohibitedDrift": [
+        "not generic East Asian tech guy",
+        "not culturally costumed for heritage signaling",
+        "not cold robot with no family interior"
+      ],
+      "source": "P0.STUDIOWORLD.SEASON1.VISUAL-AUTHORITY.INGEST2",
+      "founderApproved": false,
+      "importedAt": "2026-10-03T17:54:00.000Z",
+      "notes": "Retained reference; manifest does not promote a single sole face authority over siblings. Ingested from SW-RESIDENT-004__noa-kline/02-closeups/noa-kline__closeup-reference__01.jpg",
+      "assetId": "swa:SW-RESIDENT-004:closeups:sw-resident-004-noa-kline-closeup-01.jpg",
+      "assetPath": "public/studio-world/residents/season-1/sw-resident-004-noa-kline/closeups/sw-resident-004-noa-kline-closeup-01.jpg",
+      "assetUrl": "/studio-world/residents/season-1/sw-resident-004-noa-kline/closeups/sw-resident-004-noa-kline-closeup-01.jpg",
+      "sourcePackage": "STUDIO_WORLD_SEASON1_VISUAL_AUTHORITY_CURSOR_LIGHT_v1",
+      "sourceFilename": "41E61B95-7D10-4D20-BD4D-9C23322157A8.png"
+    },
+    {
+      "id": "va:SW-RESIDENT-004:IDENTITY_CLOSEUP:02",
+      "residentId": "SW-RESIDENT-004",
+      "authorityType": "IDENTITY_CLOSEUP",
+      "status": "REFERENCE_ONLY",
+      "canonVersion": "season1-v1",
+      "isPrimaryIdentityAuthority": false,
+      "identityLocked": false,
+      "faceAuthority": "Identity continuity close-up — not a complete MetaHuman angle pack",
+      "prohibitedDrift": [
+        "not generic East Asian tech guy",
+        "not culturally costumed for heritage signaling",
+        "not cold robot with no family interior"
+      ],
+      "source": "P0.STUDIOWORLD.SEASON1.VISUAL-AUTHORITY.INGEST2",
+      "founderApproved": false,
+      "importedAt": "2026-10-03T17:54:00.000Z",
+      "notes": "Retained reference; manifest does not promote a single sole face authority over siblings. Ingested from SW-RESIDENT-004__noa-kline/02-closeups/noa-kline__closeup-reference__02.jpg",
+      "assetId": "swa:SW-RESIDENT-004:closeups:sw-resident-004-noa-kline-closeup-02.jpg",
+      "assetPath": "public/studio-world/residents/season-1/sw-resident-004-noa-kline/closeups/sw-resident-004-noa-kline-closeup-02.jpg",
+      "assetUrl": "/studio-world/residents/season-1/sw-resident-004-noa-kline/closeups/sw-resident-004-noa-kline-closeup-02.jpg",
+      "sourcePackage": "STUDIO_WORLD_SEASON1_VISUAL_AUTHORITY_CURSOR_LIGHT_v1",
+      "sourceFilename": "D1E1D42D-D145-4737-AE90-E386CAB8696F.png"
+    },
+    {
+      "id": "va:SW-RESIDENT-004:IDENTITY_CLOSEUP:03",
+      "residentId": "SW-RESIDENT-004",
+      "authorityType": "IDENTITY_CLOSEUP",
+      "status": "REFERENCE_ONLY",
+      "canonVersion": "season1-v1",
+      "isPrimaryIdentityAuthority": false,
+      "identityLocked": false,
+      "faceAuthority": "Identity continuity close-up — not a complete MetaHuman angle pack",
+      "prohibitedDrift": [
+        "not generic East Asian tech guy",
+        "not culturally costumed for heritage signaling",
+        "not cold robot with no family interior"
+      ],
+      "source": "P0.STUDIOWORLD.SEASON1.VISUAL-AUTHORITY.INGEST2",
+      "founderApproved": false,
+      "importedAt": "2026-10-03T17:54:00.000Z",
+      "notes": "Retained reference; manifest does not promote a single sole face authority over siblings. Ingested from SW-RESIDENT-004__noa-kline/02-closeups/noa-kline__closeup-reference__03.jpg",
+      "assetId": "swa:SW-RESIDENT-004:closeups:sw-resident-004-noa-kline-closeup-03.jpg",
+      "assetPath": "public/studio-world/residents/season-1/sw-resident-004-noa-kline/closeups/sw-resident-004-noa-kline-closeup-03.jpg",
+      "assetUrl": "/studio-world/residents/season-1/sw-resident-004-noa-kline/closeups/sw-resident-004-noa-kline-closeup-03.jpg",
+      "sourcePackage": "STUDIO_WORLD_SEASON1_VISUAL_AUTHORITY_CURSOR_LIGHT_v1",
+      "sourceFilename": "FEBF8B3E-E978-49CF-BB5D-D92441188E2C.png"
     },
     {
       "id": "va:SW-RESIDENT-004:WORK_UNIFORM_REFERENCE",
@@ -587,14 +1105,19 @@
       "isPrimaryIdentityAuthority": false,
       "identityLocked": false,
       "wardrobeAuthority": "Shared SW uniform system — personalize only: Most stripped-down, minimal, closed/practical",
-      "notes": "ONE shared Studio World uniform system — instantly recognizable guild/atelier hospitality, not generic corporate or cosplay.. Final uniform visual NOT founder-approved; generated uniform candidates must not be marked FOUNDER_APPROVED.",
+      "notes": "ONE shared Studio World uniform system — instantly recognizable guild/atelier hospitality, not generic corporate or cosplay.. Final uniform visual NOT founder-approved; candidate imagery is CONCEPT_REFERENCE_ONLY. Ingested from SW-RESIDENT-004__noa-kline/03-work-uniform-candidates/noa-kline__shared-uniform-candidate__v1.jpg",
       "prohibitedDrift": [
         "Eight unrelated outfits with SW badge only",
         "Replacing natural habitat as default identity"
       ],
-      "source": "P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1",
+      "source": "P0.STUDIOWORLD.SEASON1.VISUAL-AUTHORITY.INGEST2",
       "founderApproved": false,
-      "importedAt": "2026-10-03T17:00:00.000Z"
+      "importedAt": "2026-10-03T17:54:00.000Z",
+      "assetId": "swa:SW-RESIDENT-004:work-uniform-candidates:sw-resident-004-noa-kline-work-uniform-candidate-01.jpg",
+      "assetPath": "public/studio-world/residents/season-1/sw-resident-004-noa-kline/work-uniform-candidates/sw-resident-004-noa-kline-work-uniform-candidate-01.jpg",
+      "assetUrl": "/studio-world/residents/season-1/sw-resident-004-noa-kline/work-uniform-candidates/sw-resident-004-noa-kline-work-uniform-candidate-01.jpg",
+      "sourcePackage": "STUDIO_WORLD_SEASON1_VISUAL_AUTHORITY_CURSOR_LIGHT_v1",
+      "sourceFilename": "0202633E-1841-450A-891A-1FF48C69DFB8.png"
     },
     {
       "id": "va:SW-RESIDENT-005:NATURAL_HABITAT_FULL_BODY",
@@ -618,10 +1141,15 @@
         "not gay-fashion stereotype",
         "not fantasy prince"
       ],
-      "notes": "deep burgundy / oxblood / tobacco / espresso velvet, jacquard, silk, long coat, high-waisted tailored trousers, boots, rings longer romantic wavy hair — tactile, worldly, masculine, sensual storybook editorial energy without costume",
-      "source": "P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1",
+      "notes": "deep burgundy / oxblood / tobacco / espresso velvet, jacquard, silk, long coat, high-waisted tailored trousers, boots, rings longer romantic wavy hair — tactile, worldly, masculine, sensual storybook editorial energy without costume Ingested from SW-RESIDENT-005__caspian-reed/01-natural-authority/caspian-reed__natural-full-body__decadent-bohemian-aristocrat.jpg",
+      "source": "P0.STUDIOWORLD.SEASON1.VISUAL-AUTHORITY.INGEST2",
       "founderApproved": true,
-      "importedAt": "2026-10-03T17:00:00.000Z"
+      "importedAt": "2026-10-03T17:54:00.000Z",
+      "assetId": "swa:SW-RESIDENT-005:natural-authority:sw-resident-005-caspian-reed-natural-fullbody-01.jpg",
+      "assetPath": "public/studio-world/residents/season-1/sw-resident-005-caspian-reed/natural-authority/sw-resident-005-caspian-reed-natural-fullbody-01.jpg",
+      "assetUrl": "/studio-world/residents/season-1/sw-resident-005-caspian-reed/natural-authority/sw-resident-005-caspian-reed-natural-fullbody-01.jpg",
+      "sourcePackage": "STUDIO_WORLD_SEASON1_VISUAL_AUTHORITY_CURSOR_LIGHT_v1",
+      "sourceFilename": "BBCAD99B-F64E-4101-8237-6A30E2A3DF43.png"
     },
     {
       "id": "va:SW-RESIDENT-005:SIGNED_WALL_PORTRAIT",
@@ -639,9 +1167,9 @@
         "not gay-fashion stereotype",
         "not fantasy prince"
       ],
-      "source": "P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1",
+      "source": "P0.STUDIOWORLD.SEASON1.VISUAL-AUTHORITY.INGEST2",
       "founderApproved": true,
-      "importedAt": "2026-10-03T17:00:00.000Z"
+      "importedAt": "2026-10-03T17:54:00.000Z"
     },
     {
       "id": "va:SW-RESIDENT-005:ROLE_COMPETENCY_FULL_BODY",
@@ -659,9 +1187,9 @@
         "not gay-fashion stereotype",
         "not fantasy prince"
       ],
-      "source": "P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1",
+      "source": "P0.STUDIOWORLD.SEASON1.VISUAL-AUTHORITY.INGEST2",
       "founderApproved": true,
-      "importedAt": "2026-10-03T17:00:00.000Z"
+      "importedAt": "2026-10-03T17:54:00.000Z"
     },
     {
       "id": "va:SW-RESIDENT-005:IDENTITY_ANGLE_PACK",
@@ -671,16 +1199,41 @@
       "canonVersion": "season1-v1",
       "isPrimaryIdentityAuthority": false,
       "identityLocked": false,
-      "notes": "Angle pack slot reserved for facial/body continuity (MetaHuman/UE). No repo-verified approved angle pack at ingest — do not treat exploratory generations as canon.",
+      "notes": "Partial identity references ingested (1 close-up(s)). Full angle pack NOT complete — do not mark anglesComplete.",
       "prohibitedDrift": [
         "not generic European cologne model",
         "not vampire",
         "not gay-fashion stereotype",
         "not fantasy prince"
       ],
-      "source": "P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1",
+      "source": "P0.STUDIOWORLD.SEASON1.VISUAL-AUTHORITY.INGEST2",
       "founderApproved": false,
-      "importedAt": "2026-10-03T17:00:00.000Z"
+      "importedAt": "2026-10-03T17:54:00.000Z"
+    },
+    {
+      "id": "va:SW-RESIDENT-005:IDENTITY_CLOSEUP:01",
+      "residentId": "SW-RESIDENT-005",
+      "authorityType": "IDENTITY_CLOSEUP",
+      "status": "FOUNDER_APPROVED",
+      "canonVersion": "season1-v1",
+      "isPrimaryIdentityAuthority": false,
+      "identityLocked": true,
+      "faceAuthority": "Identity continuity close-up — not a complete MetaHuman angle pack",
+      "prohibitedDrift": [
+        "not generic European cologne model",
+        "not vampire",
+        "not gay-fashion stereotype",
+        "not fantasy prince"
+      ],
+      "source": "P0.STUDIOWORLD.SEASON1.VISUAL-AUTHORITY.INGEST2",
+      "founderApproved": true,
+      "importedAt": "2026-10-03T17:54:00.000Z",
+      "notes": "Ingested from SW-RESIDENT-005__caspian-reed/02-closeups/caspian-reed__closeup__decadent-bohemian-aristocrat.jpg",
+      "assetId": "swa:SW-RESIDENT-005:closeups:sw-resident-005-caspian-reed-closeup-01.jpg",
+      "assetPath": "public/studio-world/residents/season-1/sw-resident-005-caspian-reed/closeups/sw-resident-005-caspian-reed-closeup-01.jpg",
+      "assetUrl": "/studio-world/residents/season-1/sw-resident-005-caspian-reed/closeups/sw-resident-005-caspian-reed-closeup-01.jpg",
+      "sourcePackage": "STUDIO_WORLD_SEASON1_VISUAL_AUTHORITY_CURSOR_LIGHT_v1",
+      "sourceFilename": "E2D5E22F-6F71-4D17-A3E5-8FA28D8F93F5.png"
     },
     {
       "id": "va:SW-RESIDENT-005:WORK_UNIFORM_REFERENCE",
@@ -691,14 +1244,19 @@
       "isPrimaryIdentityAuthority": false,
       "identityLocked": false,
       "wardrobeAuthority": "Shared SW uniform system — personalize only: Textured scarf, collar treatment, romantic layering",
-      "notes": "ONE shared Studio World uniform system — instantly recognizable guild/atelier hospitality, not generic corporate or cosplay.. Final uniform visual NOT founder-approved; generated uniform candidates must not be marked FOUNDER_APPROVED.",
+      "notes": "ONE shared Studio World uniform system — instantly recognizable guild/atelier hospitality, not generic corporate or cosplay.. Final uniform visual NOT founder-approved; candidate imagery is CONCEPT_REFERENCE_ONLY. Ingested from SW-RESIDENT-005__caspian-reed/03-work-uniform-candidates/caspian-reed__shared-uniform-candidate__v1.jpg",
       "prohibitedDrift": [
         "Eight unrelated outfits with SW badge only",
         "Replacing natural habitat as default identity"
       ],
-      "source": "P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1",
+      "source": "P0.STUDIOWORLD.SEASON1.VISUAL-AUTHORITY.INGEST2",
       "founderApproved": false,
-      "importedAt": "2026-10-03T17:00:00.000Z"
+      "importedAt": "2026-10-03T17:54:00.000Z",
+      "assetId": "swa:SW-RESIDENT-005:work-uniform-candidates:sw-resident-005-caspian-reed-work-uniform-candidate-01.jpg",
+      "assetPath": "public/studio-world/residents/season-1/sw-resident-005-caspian-reed/work-uniform-candidates/sw-resident-005-caspian-reed-work-uniform-candidate-01.jpg",
+      "assetUrl": "/studio-world/residents/season-1/sw-resident-005-caspian-reed/work-uniform-candidates/sw-resident-005-caspian-reed-work-uniform-candidate-01.jpg",
+      "sourcePackage": "STUDIO_WORLD_SEASON1_VISUAL_AUTHORITY_CURSOR_LIGHT_v1",
+      "sourceFilename": "9F733CC5-3B6D-4A84-9240-E849214B5920.png"
     },
     {
       "id": "va:SW-RESIDENT-006:NATURAL_HABITAT_FULL_BODY",
@@ -722,10 +1280,15 @@
         "not manic pixie",
         "not glam makeover endpoint"
       ],
-      "notes": "white collared shirt refined olive / graphite / stone utility jacket high-waisted technical work trousers functional pockets, durable luxury materials, refined work boots hair pinned / clipped / practical — glasses remain important",
-      "source": "P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1",
+      "notes": "white collared shirt refined olive / graphite / stone utility jacket high-waisted technical work trousers functional pockets, durable luxury materials, refined work boots hair pinned / clipped / practical — glasses remain important Ingested from SW-RESIDENT-006__iona-wells/01-natural-authority/iona-wells__natural-full-body__precision-utilitarian.jpg",
+      "source": "P0.STUDIOWORLD.SEASON1.VISUAL-AUTHORITY.INGEST2",
       "founderApproved": true,
-      "importedAt": "2026-10-03T17:00:00.000Z"
+      "importedAt": "2026-10-03T17:54:00.000Z",
+      "assetId": "swa:SW-RESIDENT-006:natural-authority:sw-resident-006-iona-wells-natural-fullbody-01.jpg",
+      "assetPath": "public/studio-world/residents/season-1/sw-resident-006-iona-wells/natural-authority/sw-resident-006-iona-wells-natural-fullbody-01.jpg",
+      "assetUrl": "/studio-world/residents/season-1/sw-resident-006-iona-wells/natural-authority/sw-resident-006-iona-wells-natural-fullbody-01.jpg",
+      "sourcePackage": "STUDIO_WORLD_SEASON1_VISUAL_AUTHORITY_CURSOR_LIGHT_v1",
+      "sourceFilename": "IMG_6276.png"
     },
     {
       "id": "va:SW-RESIDENT-006:SIGNED_WALL_PORTRAIT",
@@ -743,9 +1306,9 @@
         "not manic pixie",
         "not glam makeover endpoint"
       ],
-      "source": "P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1",
+      "source": "P0.STUDIOWORLD.SEASON1.VISUAL-AUTHORITY.INGEST2",
       "founderApproved": true,
-      "importedAt": "2026-10-03T17:00:00.000Z"
+      "importedAt": "2026-10-03T17:54:00.000Z"
     },
     {
       "id": "va:SW-RESIDENT-006:ROLE_COMPETENCY_FULL_BODY",
@@ -763,9 +1326,9 @@
         "not manic pixie",
         "not glam makeover endpoint"
       ],
-      "source": "P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1",
+      "source": "P0.STUDIOWORLD.SEASON1.VISUAL-AUTHORITY.INGEST2",
       "founderApproved": true,
-      "importedAt": "2026-10-03T17:00:00.000Z"
+      "importedAt": "2026-10-03T17:54:00.000Z"
     },
     {
       "id": "va:SW-RESIDENT-006:IDENTITY_ANGLE_PACK",
@@ -775,16 +1338,41 @@
       "canonVersion": "season1-v1",
       "isPrimaryIdentityAuthority": false,
       "identityLocked": false,
-      "notes": "Angle pack slot reserved for facial/body continuity (MetaHuman/UE). No repo-verified approved angle pack at ingest — do not treat exploratory generations as canon.",
+      "notes": "Partial identity references ingested (1 close-up(s)). Full angle pack NOT complete — do not mark anglesComplete.",
       "prohibitedDrift": [
         "not frumpy nerd or ugly duckling",
         "not cottagecore or librarian cosplay",
         "not manic pixie",
         "not glam makeover endpoint"
       ],
-      "source": "P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1",
+      "source": "P0.STUDIOWORLD.SEASON1.VISUAL-AUTHORITY.INGEST2",
       "founderApproved": false,
-      "importedAt": "2026-10-03T17:00:00.000Z"
+      "importedAt": "2026-10-03T17:54:00.000Z"
+    },
+    {
+      "id": "va:SW-RESIDENT-006:IDENTITY_CLOSEUP:01",
+      "residentId": "SW-RESIDENT-006",
+      "authorityType": "IDENTITY_CLOSEUP",
+      "status": "FOUNDER_APPROVED",
+      "canonVersion": "season1-v1",
+      "isPrimaryIdentityAuthority": false,
+      "identityLocked": true,
+      "faceAuthority": "Identity continuity close-up — not a complete MetaHuman angle pack",
+      "prohibitedDrift": [
+        "not frumpy nerd or ugly duckling",
+        "not cottagecore or librarian cosplay",
+        "not manic pixie",
+        "not glam makeover endpoint"
+      ],
+      "source": "P0.STUDIOWORLD.SEASON1.VISUAL-AUTHORITY.INGEST2",
+      "founderApproved": true,
+      "importedAt": "2026-10-03T17:54:00.000Z",
+      "notes": "Ingested from SW-RESIDENT-006__iona-wells/02-closeups/iona-wells__closeup__precision-utilitarian.jpg",
+      "assetId": "swa:SW-RESIDENT-006:closeups:sw-resident-006-iona-wells-closeup-01.jpg",
+      "assetPath": "public/studio-world/residents/season-1/sw-resident-006-iona-wells/closeups/sw-resident-006-iona-wells-closeup-01.jpg",
+      "assetUrl": "/studio-world/residents/season-1/sw-resident-006-iona-wells/closeups/sw-resident-006-iona-wells-closeup-01.jpg",
+      "sourcePackage": "STUDIO_WORLD_SEASON1_VISUAL_AUTHORITY_CURSOR_LIGHT_v1",
+      "sourceFilename": "F46A6DF3-48E7-4FD9-A0AB-22F7BAF3E4E8.png"
     },
     {
       "id": "va:SW-RESIDENT-006:WORK_UNIFORM_REFERENCE",
@@ -795,24 +1383,29 @@
       "isPrimaryIdentityAuthority": false,
       "identityLocked": false,
       "wardrobeAuthority": "Shared SW uniform system — personalize only: Tool loop, utility clip, rolled sleeves",
-      "notes": "ONE shared Studio World uniform system — instantly recognizable guild/atelier hospitality, not generic corporate or cosplay.. Final uniform visual NOT founder-approved; generated uniform candidates must not be marked FOUNDER_APPROVED.",
+      "notes": "ONE shared Studio World uniform system — instantly recognizable guild/atelier hospitality, not generic corporate or cosplay.. Final uniform visual NOT founder-approved; candidate imagery is CONCEPT_REFERENCE_ONLY. Ingested from SW-RESIDENT-006__iona-wells/03-work-uniform-candidates/iona-wells__shared-uniform-candidate__v1.jpg",
       "prohibitedDrift": [
         "Eight unrelated outfits with SW badge only",
         "Replacing natural habitat as default identity"
       ],
-      "source": "P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1",
+      "source": "P0.STUDIOWORLD.SEASON1.VISUAL-AUTHORITY.INGEST2",
       "founderApproved": false,
-      "importedAt": "2026-10-03T17:00:00.000Z"
+      "importedAt": "2026-10-03T17:54:00.000Z",
+      "assetId": "swa:SW-RESIDENT-006:work-uniform-candidates:sw-resident-006-iona-wells-work-uniform-candidate-01.jpg",
+      "assetPath": "public/studio-world/residents/season-1/sw-resident-006-iona-wells/work-uniform-candidates/sw-resident-006-iona-wells-work-uniform-candidate-01.jpg",
+      "assetUrl": "/studio-world/residents/season-1/sw-resident-006-iona-wells/work-uniform-candidates/sw-resident-006-iona-wells-work-uniform-candidate-01.jpg",
+      "sourcePackage": "STUDIO_WORLD_SEASON1_VISUAL_AUTHORITY_CURSOR_LIGHT_v1",
+      "sourceFilename": "37BF712F-0553-4863-ACBA-DB7E13610995.png"
     },
     {
-      "id": "va:SW-RESIDENT-006:GLAMOUR_OR_ALTERNATE_MODE",
+      "id": "va:SW-RESIDENT-006:GLAMOUR_OR_ALTERNATE_MODE:01",
       "residentId": "SW-RESIDENT-006",
       "authorityType": "GLAMOUR_OR_ALTERNATE_MODE",
       "status": "FOUNDER_APPROVED",
       "canonVersion": "season1-v1",
       "isPrimaryIdentityAuthority": false,
       "identityLocked": false,
-      "notes": "Iona was already beautiful. Arc is discovering deliberate control of perception — glamour rare, contextual, surprising, not permanent. NOT makeover-final-state. Contexts: formal event, date, client presentation, fabrication experiment, social event, Jules dragging her into a photo, wearing something she made. MUST NOT replace natural Precision Utilitarian authority.",
+      "notes": "Iona was already beautiful. Arc is discovering deliberate control of perception — glamour rare, contextual, surprising, not permanent. NOT makeover-final-state. MUST NOT replace natural Precision Utilitarian authority. Ingested from SW-RESIDENT-006__iona-wells/04-alternate-modes/iona-wells__full-glam__alternate-mode.jpg",
       "prohibitedDrift": [
         "Permanent glam makeover endpoint",
         "Ugly-duckling reveal",
@@ -821,9 +1414,14 @@
         "not manic pixie",
         "not glam makeover endpoint"
       ],
-      "source": "P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1",
+      "source": "P0.STUDIOWORLD.SEASON1.VISUAL-AUTHORITY.INGEST2",
       "founderApproved": true,
-      "importedAt": "2026-10-03T17:00:00.000Z"
+      "importedAt": "2026-10-03T17:54:00.000Z",
+      "assetId": "swa:SW-RESIDENT-006:alternate-modes:sw-resident-006-iona-wells-alternate-mode-01.jpg",
+      "assetPath": "public/studio-world/residents/season-1/sw-resident-006-iona-wells/alternate-modes/sw-resident-006-iona-wells-alternate-mode-01.jpg",
+      "assetUrl": "/studio-world/residents/season-1/sw-resident-006-iona-wells/alternate-modes/sw-resident-006-iona-wells-alternate-mode-01.jpg",
+      "sourcePackage": "STUDIO_WORLD_SEASON1_VISUAL_AUTHORITY_CURSOR_LIGHT_v1",
+      "sourceFilename": "07607EEC-49A1-44D6-A532-FD0D7AF41B52.png"
     },
     {
       "id": "va:SW-RESIDENT-007:NATURAL_HABITAT_FULL_BODY",
@@ -847,10 +1445,15 @@
         "not comic relief because of size",
         "not “older flamboyant man = robe only”"
       ],
-      "notes": "Direction 04 primary + Direction 03 cultural knowledge + occasional Direction 01 grandeur burgundy, black, antique gold, richly patterned scarf, tactile fabrics mature salt-and-pepper curls — comfortable but unmistakably Marlowe Can wear a T-shirt and still be Marlowe Saint",
-      "source": "P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1",
+      "notes": "Direction 04 primary + Direction 03 cultural knowledge + occasional Direction 01 grandeur burgundy, black, antique gold, richly patterned scarf, tactile fabrics mature salt-and-pepper curls — comfortable but unmistakably Marlowe Can wear a T-shirt and still be Marlowe Saint Ingested from SW-RESIDENT-007__marlowe-saint/01-natural-authority/marlowe-saint__natural-full-body__off-duty-cultural-icon.jpg",
+      "source": "P0.STUDIOWORLD.SEASON1.VISUAL-AUTHORITY.INGEST2",
       "founderApproved": true,
-      "importedAt": "2026-10-03T17:00:00.000Z"
+      "importedAt": "2026-10-03T17:54:00.000Z",
+      "assetId": "swa:SW-RESIDENT-007:natural-authority:sw-resident-007-marlowe-saint-natural-fullbody-01.jpg",
+      "assetPath": "public/studio-world/residents/season-1/sw-resident-007-marlowe-saint/natural-authority/sw-resident-007-marlowe-saint-natural-fullbody-01.jpg",
+      "assetUrl": "/studio-world/residents/season-1/sw-resident-007-marlowe-saint/natural-authority/sw-resident-007-marlowe-saint-natural-fullbody-01.jpg",
+      "sourcePackage": "STUDIO_WORLD_SEASON1_VISUAL_AUTHORITY_CURSOR_LIGHT_v1",
+      "sourceFilename": "653088E8-4A41-4618-B869-9C6E96BF6B9B.png"
     },
     {
       "id": "va:SW-RESIDENT-007:SIGNED_WALL_PORTRAIT",
@@ -868,9 +1471,9 @@
         "not comic relief because of size",
         "not “older flamboyant man = robe only”"
       ],
-      "source": "P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1",
+      "source": "P0.STUDIOWORLD.SEASON1.VISUAL-AUTHORITY.INGEST2",
       "founderApproved": true,
-      "importedAt": "2026-10-03T17:00:00.000Z"
+      "importedAt": "2026-10-03T17:54:00.000Z"
     },
     {
       "id": "va:SW-RESIDENT-007:ROLE_COMPETENCY_FULL_BODY",
@@ -888,9 +1491,9 @@
         "not comic relief because of size",
         "not “older flamboyant man = robe only”"
       ],
-      "source": "P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1",
+      "source": "P0.STUDIOWORLD.SEASON1.VISUAL-AUTHORITY.INGEST2",
       "founderApproved": true,
-      "importedAt": "2026-10-03T17:00:00.000Z"
+      "importedAt": "2026-10-03T17:54:00.000Z"
     },
     {
       "id": "va:SW-RESIDENT-007:IDENTITY_ANGLE_PACK",
@@ -900,16 +1503,16 @@
       "canonVersion": "season1-v1",
       "isPrimaryIdentityAuthority": false,
       "identityLocked": false,
-      "notes": "Angle pack slot reserved for facial/body continuity (MetaHuman/UE). No repo-verified approved angle pack at ingest — do not treat exploratory generations as canon.",
+      "notes": "Angle pack slot reserved for facial/body continuity (MetaHuman/UE).",
       "prohibitedDrift": [
         "not young or slim",
         "not frail",
         "not comic relief because of size",
         "not “older flamboyant man = robe only”"
       ],
-      "source": "P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1",
+      "source": "P0.STUDIOWORLD.SEASON1.VISUAL-AUTHORITY.INGEST2",
       "founderApproved": false,
-      "importedAt": "2026-10-03T17:00:00.000Z"
+      "importedAt": "2026-10-03T17:54:00.000Z"
     },
     {
       "id": "va:SW-RESIDENT-007:WORK_UNIFORM_REFERENCE",
@@ -920,14 +1523,44 @@
       "isPrimaryIdentityAuthority": false,
       "identityLocked": false,
       "wardrobeAuthority": "Shared SW uniform system — personalize only: Brooch, scarf, flower, jewelry, ornate cuff — on base uniform",
-      "notes": "ONE shared Studio World uniform system — instantly recognizable guild/atelier hospitality, not generic corporate or cosplay.. Final uniform visual NOT founder-approved; generated uniform candidates must not be marked FOUNDER_APPROVED.",
+      "notes": "ONE shared Studio World uniform system — instantly recognizable guild/atelier hospitality, not generic corporate or cosplay.. Final uniform visual NOT founder-approved; candidate imagery is CONCEPT_REFERENCE_ONLY. Ingested from SW-RESIDENT-007__marlowe-saint/03-work-uniform-candidates/marlowe-saint__shared-uniform-candidate__corrected-larger-body-v1.jpg",
       "prohibitedDrift": [
         "Eight unrelated outfits with SW badge only",
         "Replacing natural habitat as default identity"
       ],
-      "source": "P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1",
+      "source": "P0.STUDIOWORLD.SEASON1.VISUAL-AUTHORITY.INGEST2",
       "founderApproved": false,
-      "importedAt": "2026-10-03T17:00:00.000Z"
+      "importedAt": "2026-10-03T17:54:00.000Z",
+      "assetId": "swa:SW-RESIDENT-007:work-uniform-candidates:sw-resident-007-marlowe-saint-work-uniform-candidate-01.jpg",
+      "assetPath": "public/studio-world/residents/season-1/sw-resident-007-marlowe-saint/work-uniform-candidates/sw-resident-007-marlowe-saint-work-uniform-candidate-01.jpg",
+      "assetUrl": "/studio-world/residents/season-1/sw-resident-007-marlowe-saint/work-uniform-candidates/sw-resident-007-marlowe-saint-work-uniform-candidate-01.jpg",
+      "sourcePackage": "STUDIO_WORLD_SEASON1_VISUAL_AUTHORITY_CURSOR_LIGHT_v1",
+      "sourceFilename": "1D701D29-55D5-4C14-9CC3-2011161E2623.png"
+    },
+    {
+      "id": "va:SW-RESIDENT-007:ALTERNATE_MODE:01",
+      "residentId": "SW-RESIDENT-007",
+      "authorityType": "ALTERNATE_MODE",
+      "status": "REFERENCE_ONLY",
+      "canonVersion": "season1-v1",
+      "isPrimaryIdentityAuthority": false,
+      "identityLocked": false,
+      "notes": "Alternate mode reference — not primary identity. Ingested from SW-RESIDENT-007__marlowe-saint/04-alternate-modes/marlowe-saint__grand-cultural-icon__alternate-reference.jpg",
+      "prohibitedDrift": [
+        "Replacing natural-habitat primary authority",
+        "not young or slim",
+        "not frail",
+        "not comic relief because of size",
+        "not “older flamboyant man = robe only”"
+      ],
+      "source": "P0.STUDIOWORLD.SEASON1.VISUAL-AUTHORITY.INGEST2",
+      "founderApproved": false,
+      "importedAt": "2026-10-03T17:54:00.000Z",
+      "assetId": "swa:SW-RESIDENT-007:alternate-modes:sw-resident-007-marlowe-saint-alternate-mode-01.jpg",
+      "assetPath": "public/studio-world/residents/season-1/sw-resident-007-marlowe-saint/alternate-modes/sw-resident-007-marlowe-saint-alternate-mode-01.jpg",
+      "assetUrl": "/studio-world/residents/season-1/sw-resident-007-marlowe-saint/alternate-modes/sw-resident-007-marlowe-saint-alternate-mode-01.jpg",
+      "sourcePackage": "STUDIO_WORLD_SEASON1_VISUAL_AUTHORITY_CURSOR_LIGHT_v1",
+      "sourceFilename": "0D841DDD-094C-45C2-B4A1-E3A5FAF006F5.png"
     },
     {
       "id": "va:SW-RESIDENT-007:SUPERSEDED:marlowe-slender-young",
@@ -945,9 +1578,9 @@
       "prohibitedDrift": [
         "Using Slender / younger Marlowe body as default visual authority"
       ],
-      "source": "P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1",
+      "source": "P0.STUDIOWORLD.SEASON1.VISUAL-AUTHORITY.INGEST2",
       "founderApproved": false,
-      "importedAt": "2026-10-03T17:00:00.000Z"
+      "importedAt": "2026-10-03T17:54:00.000Z"
     },
     {
       "id": "va:SW-RESIDENT-008:NATURAL_HABITAT_FULL_BODY",
@@ -972,10 +1605,15 @@
         "not Caspian-lite",
         "not black-suit stock photo"
       ],
-      "notes": "deep burgundy velvet jacket black silk / dark shirt black tailored trousers polished loafers understated signet / ring mature Mediterranean grooming — controlled, luxurious, unreadable",
-      "source": "P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1",
+      "notes": "deep burgundy velvet jacket black silk / dark shirt black tailored trousers polished loafers understated signet / ring mature Mediterranean grooming — controlled, luxurious, unreadable Ingested from SW-RESIDENT-008__elio-vahn/01-natural-authority/elio-vahn__natural-full-body__private-club-strategist.jpg",
+      "source": "P0.STUDIOWORLD.SEASON1.VISUAL-AUTHORITY.INGEST2",
       "founderApproved": true,
-      "importedAt": "2026-10-03T17:00:00.000Z"
+      "importedAt": "2026-10-03T17:54:00.000Z",
+      "assetId": "swa:SW-RESIDENT-008:natural-authority:sw-resident-008-elio-vahn-natural-fullbody-01.jpg",
+      "assetPath": "public/studio-world/residents/season-1/sw-resident-008-elio-vahn/natural-authority/sw-resident-008-elio-vahn-natural-fullbody-01.jpg",
+      "assetUrl": "/studio-world/residents/season-1/sw-resident-008-elio-vahn/natural-authority/sw-resident-008-elio-vahn-natural-fullbody-01.jpg",
+      "sourcePackage": "STUDIO_WORLD_SEASON1_VISUAL_AUTHORITY_CURSOR_LIGHT_v1",
+      "sourceFilename": "589F06FC-8AE7-432C-8663-47FFDB1B400D.png"
     },
     {
       "id": "va:SW-RESIDENT-008:SIGNED_WALL_PORTRAIT",
@@ -994,9 +1632,9 @@
         "not Caspian-lite",
         "not black-suit stock photo"
       ],
-      "source": "P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1",
+      "source": "P0.STUDIOWORLD.SEASON1.VISUAL-AUTHORITY.INGEST2",
       "founderApproved": true,
-      "importedAt": "2026-10-03T17:00:00.000Z"
+      "importedAt": "2026-10-03T17:54:00.000Z"
     },
     {
       "id": "va:SW-RESIDENT-008:ROLE_COMPETENCY_FULL_BODY",
@@ -1015,9 +1653,9 @@
         "not Caspian-lite",
         "not black-suit stock photo"
       ],
-      "source": "P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1",
+      "source": "P0.STUDIOWORLD.SEASON1.VISUAL-AUTHORITY.INGEST2",
       "founderApproved": true,
-      "importedAt": "2026-10-03T17:00:00.000Z"
+      "importedAt": "2026-10-03T17:54:00.000Z"
     },
     {
       "id": "va:SW-RESIDENT-008:IDENTITY_ANGLE_PACK",
@@ -1027,7 +1665,7 @@
       "canonVersion": "season1-v1",
       "isPrimaryIdentityAuthority": false,
       "identityLocked": false,
-      "notes": "Angle pack slot reserved for facial/body continuity (MetaHuman/UE). No repo-verified approved angle pack at ingest — do not treat exploratory generations as canon.",
+      "notes": "Partial identity references ingested (1 close-up(s)). Full angle pack NOT complete — do not mark anglesComplete.",
       "prohibitedDrift": [
         "not mafia",
         "not billionaire TikTok cliché",
@@ -1035,9 +1673,35 @@
         "not Caspian-lite",
         "not black-suit stock photo"
       ],
-      "source": "P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1",
+      "source": "P0.STUDIOWORLD.SEASON1.VISUAL-AUTHORITY.INGEST2",
       "founderApproved": false,
-      "importedAt": "2026-10-03T17:00:00.000Z"
+      "importedAt": "2026-10-03T17:54:00.000Z"
+    },
+    {
+      "id": "va:SW-RESIDENT-008:IDENTITY_CLOSEUP:01",
+      "residentId": "SW-RESIDENT-008",
+      "authorityType": "IDENTITY_CLOSEUP",
+      "status": "FOUNDER_APPROVED",
+      "canonVersion": "season1-v1",
+      "isPrimaryIdentityAuthority": false,
+      "identityLocked": true,
+      "faceAuthority": "Identity continuity close-up — not a complete MetaHuman angle pack",
+      "prohibitedDrift": [
+        "not mafia",
+        "not billionaire TikTok cliché",
+        "not generic Italian businessman",
+        "not Caspian-lite",
+        "not black-suit stock photo"
+      ],
+      "source": "P0.STUDIOWORLD.SEASON1.VISUAL-AUTHORITY.INGEST2",
+      "founderApproved": true,
+      "importedAt": "2026-10-03T17:54:00.000Z",
+      "notes": "Ingested from SW-RESIDENT-008__elio-vahn/02-closeups/elio-vahn__closeup__private-club-strategist.jpg",
+      "assetId": "swa:SW-RESIDENT-008:closeups:sw-resident-008-elio-vahn-closeup-01.jpg",
+      "assetPath": "public/studio-world/residents/season-1/sw-resident-008-elio-vahn/closeups/sw-resident-008-elio-vahn-closeup-01.jpg",
+      "assetUrl": "/studio-world/residents/season-1/sw-resident-008-elio-vahn/closeups/sw-resident-008-elio-vahn-closeup-01.jpg",
+      "sourcePackage": "STUDIO_WORLD_SEASON1_VISUAL_AUTHORITY_CURSOR_LIGHT_v1",
+      "sourceFilename": "53E548C2-37F2-4A95-A150-24FBC3A80337.png"
     },
     {
       "id": "va:SW-RESIDENT-008:WORK_UNIFORM_REFERENCE",
@@ -1048,14 +1712,19 @@
       "isPrimaryIdentityAuthority": false,
       "identityLocked": false,
       "wardrobeAuthority": "Shared SW uniform system — personalize only: Tie, pocket square, signet, formal buttoning — on base uniform",
-      "notes": "ONE shared Studio World uniform system — instantly recognizable guild/atelier hospitality, not generic corporate or cosplay.. Final uniform visual NOT founder-approved; generated uniform candidates must not be marked FOUNDER_APPROVED.",
+      "notes": "ONE shared Studio World uniform system — instantly recognizable guild/atelier hospitality, not generic corporate or cosplay.. Final uniform visual NOT founder-approved; candidate imagery is CONCEPT_REFERENCE_ONLY. Ingested from SW-RESIDENT-008__elio-vahn/03-work-uniform-candidates/elio-vahn__shared-uniform-candidate__v1.jpg",
       "prohibitedDrift": [
         "Eight unrelated outfits with SW badge only",
         "Replacing natural habitat as default identity"
       ],
-      "source": "P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1",
+      "source": "P0.STUDIOWORLD.SEASON1.VISUAL-AUTHORITY.INGEST2",
       "founderApproved": false,
-      "importedAt": "2026-10-03T17:00:00.000Z"
+      "importedAt": "2026-10-03T17:54:00.000Z",
+      "assetId": "swa:SW-RESIDENT-008:work-uniform-candidates:sw-resident-008-elio-vahn-work-uniform-candidate-01.jpg",
+      "assetPath": "public/studio-world/residents/season-1/sw-resident-008-elio-vahn/work-uniform-candidates/sw-resident-008-elio-vahn-work-uniform-candidate-01.jpg",
+      "assetUrl": "/studio-world/residents/season-1/sw-resident-008-elio-vahn/work-uniform-candidates/sw-resident-008-elio-vahn-work-uniform-candidate-01.jpg",
+      "sourcePackage": "STUDIO_WORLD_SEASON1_VISUAL_AUTHORITY_CURSOR_LIGHT_v1",
+      "sourceFilename": "DE6539F4-DAFA-4062-9F5E-E6DE2C453A80.png"
     }
   ]
 }

@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { SEASON1_ENSEMBLE_RESIDENTS } from './season1-ensemble';
 import { listSeason1Residents } from './registry';
 import {
+  SEASON1_INGESTED_VISUAL_ASSETS,
   SEASON1_VISUAL_AUTHORITY_RECORDS,
   getPrimaryNaturalHabitatAuthority,
   getVisualAuthorityBundle,
@@ -43,6 +44,33 @@ describe('Season 1 Resident Visual Authority', () => {
   it('Marlowe body protection on natural authority', () => {
     const marlowe = getPrimaryNaturalHabitatAuthority('SW-RESIDENT-007');
     expect(marlowe?.bodyAuthority?.toLowerCase()).toContain('larger');
+  });
+
+  it('ingested assets resolve on disk for all manifest rows', () => {
+    expect(SEASON1_INGESTED_VISUAL_ASSETS).toHaveLength(27);
+  });
+
+  it('primary natural authorities link public asset paths', () => {
+    for (const id of [
+      'SW-RESIDENT-001',
+      'SW-RESIDENT-002',
+      'SW-RESIDENT-003',
+      'SW-RESIDENT-004',
+      'SW-RESIDENT-005',
+      'SW-RESIDENT-006',
+      'SW-RESIDENT-007',
+      'SW-RESIDENT-008',
+    ] as const) {
+      const natural = getPrimaryNaturalHabitatAuthority(id);
+      expect(natural?.assetUrl).toMatch(/^\/studio-world\/residents\/season-1\//);
+    }
+  });
+
+  it('Noa retains three close-up identity references', () => {
+    const closeups = SEASON1_VISUAL_AUTHORITY_RECORDS.filter(
+      (r) => r.residentId === 'SW-RESIDENT-004' && r.authorityType === 'IDENTITY_CLOSEUP'
+    );
+    expect(closeups).toHaveLength(3);
   });
 
   it('work uniform remains concept locked visual pending', () => {
