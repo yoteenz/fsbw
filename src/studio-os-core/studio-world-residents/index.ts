@@ -5,6 +5,7 @@
 
 export * from './types';
 export * from './season1-ensemble';
+export * from './visual-authority';
 export * from './fabrication';
 export * from './casting';
 export * from './access';

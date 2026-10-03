@@ -88,6 +88,10 @@ export type ResidentCanonicalIdentity = {
   continuityRules?: string[];
   memoryPolicy?: string;
   castingRangeNotes?: string;
+  /** Links to `visual-authority/` records — not embedded asset payloads. */
+  visualAuthorityRefs?: string[];
+  primaryNaturalHabitatAuthorityId?: string;
+  visualFabricationReadiness?: import('./visual-authority/types').VisualFabricationReadiness;
   updatedAt: string;
 };
 

@@ -26,7 +26,7 @@ Residents are **Studio World** cast, not Studio OS UI labels.
 | ID | Name | Core world role |
 |----|------|-----------------|
 | SW-RESIDENT-001 | Etta Vale | Founding presence / creative director |
-| SW-RESIDENT-002 | Zuri Hale | Strategy / client intelligence |
+| SW-RESIDENT-002 | Zuri Xu | Strategy / client intelligence |
 | SW-RESIDENT-003 | Jules Mercer | Front office / concierge |
 | SW-RESIDENT-004 | Noa Kline | Systems architect / Studio OS liaison |
 | SW-RESIDENT-005 | Caspian Reed | World director |

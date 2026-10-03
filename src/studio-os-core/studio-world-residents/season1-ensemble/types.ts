@@ -78,6 +78,9 @@ export type Season1ResidentCanonRecord = {
   protectedOpenFields: string[];
   antiFlattening: string[];
   glamourArc?: GlamourArcCanon;
+  /** Populated at runtime via visual-authority bundle — not duplicated in resident modules. */
+  visualAuthorityRefs?: string[];
+  primaryNaturalHabitatAuthorityId?: string;
   canonVersion: 'season1-v1';
   status: 'FOUNDER_APPROVED';
 };

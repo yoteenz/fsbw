@@ -1,0 +1,1061 @@
+{
+  "canonVersion": "season1-v1",
+  "sprint": "P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1",
+  "workUniformStatus": "CONCEPT_LOCKED_VISUAL_PENDING",
+  "bundles": [
+    {
+      "residentId": "SW-RESIDENT-001",
+      "visualAuthorityRefs": [
+        "va:SW-RESIDENT-001:NATURAL_HABITAT_FULL_BODY",
+        "va:SW-RESIDENT-001:SIGNED_WALL_PORTRAIT",
+        "va:SW-RESIDENT-001:ROLE_COMPETENCY_FULL_BODY",
+        "va:SW-RESIDENT-001:IDENTITY_ANGLE_PACK",
+        "va:SW-RESIDENT-001:WORK_UNIFORM_REFERENCE"
+      ],
+      "primaryNaturalHabitatAuthorityId": "va:SW-RESIDENT-001:NATURAL_HABITAT_FULL_BODY",
+      "fabricationReadiness": {
+        "portraitLocked": false,
+        "bodyLocked": false,
+        "anglesPartial": false,
+        "anglesComplete": false,
+        "uePending": true,
+        "metahumanPending": true,
+        "ueReconstructed": false
+      }
+    },
+    {
+      "residentId": "SW-RESIDENT-002",
+      "visualAuthorityRefs": [
+        "va:SW-RESIDENT-002:NATURAL_HABITAT_FULL_BODY",
+        "va:SW-RESIDENT-002:SIGNED_WALL_PORTRAIT",
+        "va:SW-RESIDENT-002:ROLE_COMPETENCY_FULL_BODY",
+        "va:SW-RESIDENT-002:IDENTITY_ANGLE_PACK",
+        "va:SW-RESIDENT-002:WORK_UNIFORM_REFERENCE",
+        "va:SW-RESIDENT-002:SUPERSEDED:zuri-hale-surname"
+      ],
+      "primaryNaturalHabitatAuthorityId": "va:SW-RESIDENT-002:NATURAL_HABITAT_FULL_BODY",
+      "fabricationReadiness": {
+        "portraitLocked": false,
+        "bodyLocked": false,
+        "anglesPartial": false,
+        "anglesComplete": false,
+        "uePending": true,
+        "metahumanPending": true,
+        "ueReconstructed": false
+      }
+    },
+    {
+      "residentId": "SW-RESIDENT-003",
+      "visualAuthorityRefs": [
+        "va:SW-RESIDENT-003:NATURAL_HABITAT_FULL_BODY",
+        "va:SW-RESIDENT-003:SIGNED_WALL_PORTRAIT",
+        "va:SW-RESIDENT-003:ROLE_COMPETENCY_FULL_BODY",
+        "va:SW-RESIDENT-003:IDENTITY_ANGLE_PACK",
+        "va:SW-RESIDENT-003:WORK_UNIFORM_REFERENCE"
+      ],
+      "primaryNaturalHabitatAuthorityId": "va:SW-RESIDENT-003:NATURAL_HABITAT_FULL_BODY",
+      "fabricationReadiness": {
+        "portraitLocked": false,
+        "bodyLocked": false,
+        "anglesPartial": false,
+        "anglesComplete": false,
+        "uePending": true,
+        "metahumanPending": true,
+        "ueReconstructed": false
+      }
+    },
+    {
+      "residentId": "SW-RESIDENT-004",
+      "visualAuthorityRefs": [
+        "va:SW-RESIDENT-004:NATURAL_HABITAT_FULL_BODY",
+        "va:SW-RESIDENT-004:SIGNED_WALL_PORTRAIT",
+        "va:SW-RESIDENT-004:ROLE_COMPETENCY_FULL_BODY",
+        "va:SW-RESIDENT-004:IDENTITY_ANGLE_PACK",
+        "va:SW-RESIDENT-004:WORK_UNIFORM_REFERENCE"
+      ],
+      "primaryNaturalHabitatAuthorityId": "va:SW-RESIDENT-004:NATURAL_HABITAT_FULL_BODY",
+      "fabricationReadiness": {
+        "portraitLocked": false,
+        "bodyLocked": false,
+        "anglesPartial": false,
+        "anglesComplete": false,
+        "uePending": true,
+        "metahumanPending": true,
+        "ueReconstructed": false
+      }
+    },
+    {
+      "residentId": "SW-RESIDENT-005",
+      "visualAuthorityRefs": [
+        "va:SW-RESIDENT-005:NATURAL_HABITAT_FULL_BODY",
+        "va:SW-RESIDENT-005:SIGNED_WALL_PORTRAIT",
+        "va:SW-RESIDENT-005:ROLE_COMPETENCY_FULL_BODY",
+        "va:SW-RESIDENT-005:IDENTITY_ANGLE_PACK",
+        "va:SW-RESIDENT-005:WORK_UNIFORM_REFERENCE"
+      ],
+      "primaryNaturalHabitatAuthorityId": "va:SW-RESIDENT-005:NATURAL_HABITAT_FULL_BODY",
+      "fabricationReadiness": {
+        "portraitLocked": false,
+        "bodyLocked": false,
+        "anglesPartial": false,
+        "anglesComplete": false,
+        "uePending": true,
+        "metahumanPending": true,
+        "ueReconstructed": false
+      }
+    },
+    {
+      "residentId": "SW-RESIDENT-006",
+      "visualAuthorityRefs": [
+        "va:SW-RESIDENT-006:NATURAL_HABITAT_FULL_BODY",
+        "va:SW-RESIDENT-006:SIGNED_WALL_PORTRAIT",
+        "va:SW-RESIDENT-006:ROLE_COMPETENCY_FULL_BODY",
+        "va:SW-RESIDENT-006:IDENTITY_ANGLE_PACK",
+        "va:SW-RESIDENT-006:WORK_UNIFORM_REFERENCE",
+        "va:SW-RESIDENT-006:GLAMOUR_OR_ALTERNATE_MODE"
+      ],
+      "primaryNaturalHabitatAuthorityId": "va:SW-RESIDENT-006:NATURAL_HABITAT_FULL_BODY",
+      "fabricationReadiness": {
+        "portraitLocked": false,
+        "bodyLocked": false,
+        "anglesPartial": false,
+        "anglesComplete": false,
+        "uePending": true,
+        "metahumanPending": true,
+        "ueReconstructed": false
+      }
+    },
+    {
+      "residentId": "SW-RESIDENT-007",
+      "visualAuthorityRefs": [
+        "va:SW-RESIDENT-007:NATURAL_HABITAT_FULL_BODY",
+        "va:SW-RESIDENT-007:SIGNED_WALL_PORTRAIT",
+        "va:SW-RESIDENT-007:ROLE_COMPETENCY_FULL_BODY",
+        "va:SW-RESIDENT-007:IDENTITY_ANGLE_PACK",
+        "va:SW-RESIDENT-007:WORK_UNIFORM_REFERENCE",
+        "va:SW-RESIDENT-007:SUPERSEDED:marlowe-slender-young"
+      ],
+      "primaryNaturalHabitatAuthorityId": "va:SW-RESIDENT-007:NATURAL_HABITAT_FULL_BODY",
+      "fabricationReadiness": {
+        "portraitLocked": false,
+        "bodyLocked": false,
+        "anglesPartial": false,
+        "anglesComplete": false,
+        "uePending": true,
+        "metahumanPending": true,
+        "ueReconstructed": false
+      }
+    },
+    {
+      "residentId": "SW-RESIDENT-008",
+      "visualAuthorityRefs": [
+        "va:SW-RESIDENT-008:NATURAL_HABITAT_FULL_BODY",
+        "va:SW-RESIDENT-008:SIGNED_WALL_PORTRAIT",
+        "va:SW-RESIDENT-008:ROLE_COMPETENCY_FULL_BODY",
+        "va:SW-RESIDENT-008:IDENTITY_ANGLE_PACK",
+        "va:SW-RESIDENT-008:WORK_UNIFORM_REFERENCE"
+      ],
+      "primaryNaturalHabitatAuthorityId": "va:SW-RESIDENT-008:NATURAL_HABITAT_FULL_BODY",
+      "fabricationReadiness": {
+        "portraitLocked": false,
+        "bodyLocked": false,
+        "anglesPartial": false,
+        "anglesComplete": false,
+        "uePending": true,
+        "metahumanPending": true,
+        "ueReconstructed": false
+      }
+    }
+  ],
+  "records": [
+    {
+      "id": "va:SW-RESIDENT-001:NATURAL_HABITAT_FULL_BODY",
+      "residentId": "SW-RESIDENT-001",
+      "authorityType": "NATURAL_HABITAT_FULL_BODY",
+      "status": "FOUNDER_APPROVED",
+      "canonVersion": "season1-v1",
+      "isPrimaryIdentityAuthority": true,
+      "identityLocked": true,
+      "faceAuthority": "poised, expensive, striking, controlled, quietly magnetic; Black woman",
+      "bodyAuthority": "5'9\"; ~142 lb; long / lean / soft-athletic; Black woman",
+      "hairAuthority": "Polished dark updo / sophisticated feminine treatment",
+      "wardrobeAuthority": "Sophisticated Fashionista: Ivory sculptural tailoring; corset-like structured bodice; wide-leg trouser; long ivory outer layer; heels; feminine power — not Zuri-style avant-garde tailoring",
+      "allowedVariation": [
+        "Scene-specific wardrobe swaps off-duty",
+        "Documentary lighting only — not identity change"
+      ],
+      "prohibitedDrift": [
+        "not generic luxury Black woman / CEO stock image"
+      ],
+      "notes": "ivory / cream sculptural tailoring corseted or sharply feminine structure wide-leg trouser long coat heels feminine power without corporate blandness",
+      "source": "P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1",
+      "founderApproved": true,
+      "importedAt": "2026-10-03T17:00:00.000Z"
+    },
+    {
+      "id": "va:SW-RESIDENT-001:SIGNED_WALL_PORTRAIT",
+      "residentId": "SW-RESIDENT-001",
+      "authorityType": "SIGNED_WALL_PORTRAIT",
+      "status": "FOUNDER_APPROVED",
+      "canonVersion": "season1-v1",
+      "isPrimaryIdentityAuthority": false,
+      "identityLocked": true,
+      "faceAuthority": "Direct-camera essence — separate from full-body natural habitat or competency portrait",
+      "notes": "Elegant restrained signature: “Etta Vale”. Possible dry aside: “Satisfied?”. Elegant restrained signature “Etta Vale”; possible dry aside “Satisfied?”",
+      "prohibitedDrift": [
+        "not generic luxury Black woman / CEO stock image"
+      ],
+      "source": "P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1",
+      "founderApproved": true,
+      "importedAt": "2026-10-03T17:00:00.000Z"
+    },
+    {
+      "id": "va:SW-RESIDENT-001:ROLE_COMPETENCY_FULL_BODY",
+      "residentId": "SW-RESIDENT-001",
+      "authorityType": "ROLE_COMPETENCY_FULL_BODY",
+      "status": "FOUNDER_APPROVED",
+      "canonVersion": "season1-v1",
+      "isPrimaryIdentityAuthority": false,
+      "identityLocked": false,
+      "wardrobeAuthority": "Role-aligned presentation for Founding Presence / Creative Director / Studio World face / primary creative authority — may echo natural lane but demonstrates competency context",
+      "notes": "Creative director presence — final visual judgment, poised authority in studio context. Question: “Why are you here, and how do you operate?”",
+      "prohibitedDrift": [
+        "not generic luxury Black woman / CEO stock image"
+      ],
+      "source": "P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1",
+      "founderApproved": true,
+      "importedAt": "2026-10-03T17:00:00.000Z"
+    },
+    {
+      "id": "va:SW-RESIDENT-001:IDENTITY_ANGLE_PACK",
+      "residentId": "SW-RESIDENT-001",
+      "authorityType": "IDENTITY_ANGLE_PACK",
+      "status": "PROVISIONAL",
+      "canonVersion": "season1-v1",
+      "isPrimaryIdentityAuthority": false,
+      "identityLocked": false,
+      "notes": "Angle pack slot reserved for facial/body continuity (MetaHuman/UE). No repo-verified approved angle pack at ingest — do not treat exploratory generations as canon.",
+      "prohibitedDrift": [
+        "not generic luxury Black woman / CEO stock image"
+      ],
+      "source": "P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1",
+      "founderApproved": false,
+      "importedAt": "2026-10-03T17:00:00.000Z"
+    },
+    {
+      "id": "va:SW-RESIDENT-001:WORK_UNIFORM_REFERENCE",
+      "residentId": "SW-RESIDENT-001",
+      "authorityType": "WORK_UNIFORM_REFERENCE",
+      "status": "CONCEPT_LOCKED_VISUAL_PENDING",
+      "canonVersion": "season1-v1",
+      "isPrimaryIdentityAuthority": false,
+      "identityLocked": false,
+      "wardrobeAuthority": "Shared SW uniform system — personalize only: Sharper fit, controlled waist, minimal elegant styling",
+      "notes": "ONE shared Studio World uniform system — instantly recognizable guild/atelier hospitality, not generic corporate or cosplay.. Final uniform visual NOT founder-approved; generated uniform candidates must not be marked FOUNDER_APPROVED.",
+      "prohibitedDrift": [
+        "Eight unrelated outfits with SW badge only",
+        "Replacing natural habitat as default identity"
+      ],
+      "source": "P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1",
+      "founderApproved": false,
+      "importedAt": "2026-10-03T17:00:00.000Z"
+    },
+    {
+      "id": "va:SW-RESIDENT-002:NATURAL_HABITAT_FULL_BODY",
+      "residentId": "SW-RESIDENT-002",
+      "authorityType": "NATURAL_HABITAT_FULL_BODY",
+      "status": "FOUNDER_APPROVED",
+      "canonVersion": "season1-v1",
+      "isPrimaryIdentityAuthority": true,
+      "identityLocked": true,
+      "faceAuthority": "short, sharp, self-possessed, controlled, young-chic, reserved, avant-garde, fashion-literate; Chinese / Chinese-diaspora woman",
+      "bodyAuthority": "5'4\"; ~128 lb; compact / elegant / controlled; Chinese / Chinese-diaspora woman",
+      "hairAuthority": "Short edgy black cut; directional; youthful; not generic corporate bob",
+      "wardrobeAuthority": "Architectural Fashion Strategist: Taupe/stone/chocolate asymmetric tailoring; sculpted lapels; wide trouser; modern pointed footwear; editorial wearable fashion strategist lane",
+      "allowedVariation": [
+        "Scene-specific wardrobe swaps off-duty",
+        "Documentary lighting only — not identity change"
+      ],
+      "prohibitedDrift": [
+        "not corporate Asian mom",
+        "not goth",
+        "not plain suit",
+        "not medieval / RPG",
+        "not “Asian businesswoman” stock imagery",
+        "not “mysterious = black”"
+      ],
+      "notes": "modern fashion, geometry, strong lapels, asymmetric construction, layered tailoring taupe / stone / chocolate / burgundy / oxblood / restrained neutrals wide-leg trouser, modern pointed footwear occasional statement tie/scarf/bag — fashion-forward without costume",
+      "source": "P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1",
+      "founderApproved": true,
+      "importedAt": "2026-10-03T17:00:00.000Z"
+    },
+    {
+      "id": "va:SW-RESIDENT-002:SIGNED_WALL_PORTRAIT",
+      "residentId": "SW-RESIDENT-002",
+      "authorityType": "SIGNED_WALL_PORTRAIT",
+      "status": "FOUNDER_APPROVED",
+      "canonVersion": "season1-v1",
+      "isPrimaryIdentityAuthority": false,
+      "identityLocked": true,
+      "faceAuthority": "Direct-camera essence — separate from full-body natural habitat or competency portrait",
+      "notes": "Small, neat, efficient — corner or margin: “Zuri Xu”. Possible: “Done.” / “Approved.”. Small neat “Zuri Xu”; possible “Done.” / “Approved.”",
+      "prohibitedDrift": [
+        "not corporate Asian mom",
+        "not goth",
+        "not plain suit",
+        "not medieval / RPG",
+        "not “Asian businesswoman” stock imagery",
+        "not “mysterious = black”"
+      ],
+      "source": "P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1",
+      "founderApproved": true,
+      "importedAt": "2026-10-03T17:00:00.000Z"
+    },
+    {
+      "id": "va:SW-RESIDENT-002:ROLE_COMPETENCY_FULL_BODY",
+      "residentId": "SW-RESIDENT-002",
+      "authorityType": "ROLE_COMPETENCY_FULL_BODY",
+      "status": "FOUNDER_APPROVED",
+      "canonVersion": "season1-v1",
+      "isPrimaryIdentityAuthority": false,
+      "identityLocked": false,
+      "wardrobeAuthority": "Role-aligned presentation for Strategy Director / Client Intelligence / Office Guide — may echo natural lane but demonstrates competency context",
+      "notes": "Strategy director — client intelligence, office guide, directional but professional. Question: “Why are you here, and how do you operate?”",
+      "prohibitedDrift": [
+        "not corporate Asian mom",
+        "not goth",
+        "not plain suit",
+        "not medieval / RPG",
+        "not “Asian businesswoman” stock imagery",
+        "not “mysterious = black”"
+      ],
+      "source": "P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1",
+      "founderApproved": true,
+      "importedAt": "2026-10-03T17:00:00.000Z"
+    },
+    {
+      "id": "va:SW-RESIDENT-002:IDENTITY_ANGLE_PACK",
+      "residentId": "SW-RESIDENT-002",
+      "authorityType": "IDENTITY_ANGLE_PACK",
+      "status": "PROVISIONAL",
+      "canonVersion": "season1-v1",
+      "isPrimaryIdentityAuthority": false,
+      "identityLocked": false,
+      "notes": "Angle pack slot reserved for facial/body continuity (MetaHuman/UE). No repo-verified approved angle pack at ingest — do not treat exploratory generations as canon.",
+      "prohibitedDrift": [
+        "not corporate Asian mom",
+        "not goth",
+        "not plain suit",
+        "not medieval / RPG",
+        "not “Asian businesswoman” stock imagery",
+        "not “mysterious = black”"
+      ],
+      "source": "P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1",
+      "founderApproved": false,
+      "importedAt": "2026-10-03T17:00:00.000Z"
+    },
+    {
+      "id": "va:SW-RESIDENT-002:WORK_UNIFORM_REFERENCE",
+      "residentId": "SW-RESIDENT-002",
+      "authorityType": "WORK_UNIFORM_REFERENCE",
+      "status": "CONCEPT_LOCKED_VISUAL_PENDING",
+      "canonVersion": "season1-v1",
+      "isPrimaryIdentityAuthority": false,
+      "identityLocked": false,
+      "wardrobeAuthority": "Shared SW uniform system — personalize only: Scarf / flower / asymmetric wrap / fashion detail",
+      "notes": "ONE shared Studio World uniform system — instantly recognizable guild/atelier hospitality, not generic corporate or cosplay.. Final uniform visual NOT founder-approved; generated uniform candidates must not be marked FOUNDER_APPROVED.",
+      "prohibitedDrift": [
+        "Eight unrelated outfits with SW badge only",
+        "Replacing natural habitat as default identity"
+      ],
+      "source": "P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1",
+      "founderApproved": false,
+      "importedAt": "2026-10-03T17:00:00.000Z"
+    },
+    {
+      "id": "va:SW-RESIDENT-002:SUPERSEDED:zuri-hale-surname",
+      "residentId": "SW-RESIDENT-002",
+      "authorityType": "SUPERSEDED_REFERENCE",
+      "status": "REFERENCE_ONLY",
+      "canonVersion": "season1-v1",
+      "isPrimaryIdentityAuthority": false,
+      "identityLocked": false,
+      "notes": "Superseded: Zuri Hale → active: Zuri Xu",
+      "supersedes": [
+        "Zuri Hale"
+      ],
+      "supersededBy": "Zuri Xu",
+      "prohibitedDrift": [
+        "Using Zuri Hale as default visual authority"
+      ],
+      "source": "P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1",
+      "founderApproved": false,
+      "importedAt": "2026-10-03T17:00:00.000Z"
+    },
+    {
+      "id": "va:SW-RESIDENT-003:NATURAL_HABITAT_FULL_BODY",
+      "residentId": "SW-RESIDENT-003",
+      "authorityType": "NATURAL_HABITAT_FULL_BODY",
+      "status": "FOUNDER_APPROVED",
+      "canonVersion": "season1-v1",
+      "isPrimaryIdentityAuthority": true,
+      "identityLocked": true,
+      "faceAuthority": "warm, charismatic, expressive, socially agile; Black man",
+      "bodyAuthority": "5'10\"; ~168 lb; lean, naturally athletic; Black man",
+      "hairAuthority": "Extremely long locs — canonical natural-habitat direction; do not shorten unless explicit scene continuity",
+      "wardrobeAuthority": "Relaxed Romantic / Earth-Toned Modern Bohemian: Loose ivory linen shirt; burgundy/wine relaxed tailored trousers; brown boots; subtle jewelry; warm relaxed romantic bohemian",
+      "allowedVariation": [
+        "Scene-specific wardrobe swaps off-duty",
+        "Documentary lighting only — not identity change"
+      ],
+      "prohibitedDrift": [
+        "not predatory or sex-obsessed",
+        "not manipulative or misogynistic",
+        "not hypersexual influencer gym-bro",
+        "not generic attractive Black male model"
+      ],
+      "notes": "loose ivory linen shirt burgundy / wine relaxed tailored trousers brown boots subtle jewelry tactile, warm, relaxed — handsome without over-styling",
+      "source": "P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1",
+      "founderApproved": true,
+      "importedAt": "2026-10-03T17:00:00.000Z"
+    },
+    {
+      "id": "va:SW-RESIDENT-003:SIGNED_WALL_PORTRAIT",
+      "residentId": "SW-RESIDENT-003",
+      "authorityType": "SIGNED_WALL_PORTRAIT",
+      "status": "FOUNDER_APPROVED",
+      "canonVersion": "season1-v1",
+      "isPrimaryIdentityAuthority": false,
+      "identityLocked": true,
+      "faceAuthority": "Direct-camera essence — separate from full-body natural habitat or competency portrait",
+      "notes": "Loose, warm, casual: “Jules Mercer :)”. Possible: “Call me ♡”, playful fake number 901-555-0142. Loose warm “Jules Mercer :)”; possible playful contact beat — not predatory framing",
+      "prohibitedDrift": [
+        "not predatory or sex-obsessed",
+        "not manipulative or misogynistic",
+        "not hypersexual influencer gym-bro",
+        "not generic attractive Black male model"
+      ],
+      "source": "P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1",
+      "founderApproved": true,
+      "importedAt": "2026-10-03T17:00:00.000Z"
+    },
+    {
+      "id": "va:SW-RESIDENT-003:ROLE_COMPETENCY_FULL_BODY",
+      "residentId": "SW-RESIDENT-003",
+      "authorityType": "ROLE_COMPETENCY_FULL_BODY",
+      "status": "FOUNDER_APPROVED",
+      "canonVersion": "season1-v1",
+      "isPrimaryIdentityAuthority": false,
+      "identityLocked": false,
+      "wardrobeAuthority": "Role-aligned presentation for Front Office / Concierge / Tenant Relations — may echo natural lane but demonstrates competency context",
+      "notes": "Front office / concierge — hospitality, warmth, tenant relations body language. Question: “Why are you here, and how do you operate?”",
+      "prohibitedDrift": [
+        "not predatory or sex-obsessed",
+        "not manipulative or misogynistic",
+        "not hypersexual influencer gym-bro",
+        "not generic attractive Black male model"
+      ],
+      "source": "P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1",
+      "founderApproved": true,
+      "importedAt": "2026-10-03T17:00:00.000Z"
+    },
+    {
+      "id": "va:SW-RESIDENT-003:IDENTITY_ANGLE_PACK",
+      "residentId": "SW-RESIDENT-003",
+      "authorityType": "IDENTITY_ANGLE_PACK",
+      "status": "PROVISIONAL",
+      "canonVersion": "season1-v1",
+      "isPrimaryIdentityAuthority": false,
+      "identityLocked": false,
+      "notes": "Angle pack slot reserved for facial/body continuity (MetaHuman/UE). No repo-verified approved angle pack at ingest — do not treat exploratory generations as canon.",
+      "prohibitedDrift": [
+        "not predatory or sex-obsessed",
+        "not manipulative or misogynistic",
+        "not hypersexual influencer gym-bro",
+        "not generic attractive Black male model"
+      ],
+      "source": "P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1",
+      "founderApproved": false,
+      "importedAt": "2026-10-03T17:00:00.000Z"
+    },
+    {
+      "id": "va:SW-RESIDENT-003:WORK_UNIFORM_REFERENCE",
+      "residentId": "SW-RESIDENT-003",
+      "authorityType": "WORK_UNIFORM_REFERENCE",
+      "status": "CONCEPT_LOCKED_VISUAL_PENDING",
+      "canonVersion": "season1-v1",
+      "isPrimaryIdentityAuthority": false,
+      "identityLocked": false,
+      "wardrobeAuthority": "Shared SW uniform system — personalize only: Open collar, relaxed sleeves, personal necklace",
+      "notes": "ONE shared Studio World uniform system — instantly recognizable guild/atelier hospitality, not generic corporate or cosplay.. Final uniform visual NOT founder-approved; generated uniform candidates must not be marked FOUNDER_APPROVED.",
+      "prohibitedDrift": [
+        "Eight unrelated outfits with SW badge only",
+        "Replacing natural habitat as default identity"
+      ],
+      "source": "P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1",
+      "founderApproved": false,
+      "importedAt": "2026-10-03T17:00:00.000Z"
+    },
+    {
+      "id": "va:SW-RESIDENT-004:NATURAL_HABITAT_FULL_BODY",
+      "residentId": "SW-RESIDENT-004",
+      "authorityType": "NATURAL_HABITAT_FULL_BODY",
+      "status": "FOUNDER_APPROVED",
+      "canonVersion": "season1-v1",
+      "isPrimaryIdentityAuthority": true,
+      "identityLocked": true,
+      "faceAuthority": "cool, minimal, cerebral, surgical, low-drama; East Asian man",
+      "bodyAuthority": "6'0\"; ~174 lb; lean, narrow, precise; East Asian man; Heritage Japanese with Okinawan/Ryukyuan roots — culture via life not costume wardrobe",
+      "hairAuthority": "Neat, minimal grooming consistent with understated systems dad lane",
+      "wardrobeAuthority": "Understated Domestic Systems Dad: Muted brown/charcoal jacket; dark knit; pleated gray-brown trousers; dark minimal shoes; intentionally plain repetitive wardrobe",
+      "allowedVariation": [
+        "Scene-specific wardrobe swaps off-duty",
+        "Documentary lighting only — not identity change"
+      ],
+      "prohibitedDrift": [
+        "not generic East Asian tech guy",
+        "not culturally costumed for heritage signaling",
+        "not cold robot with no family interior"
+      ],
+      "notes": "muted brown / charcoal jacket dark knit pleated gray-brown trousers simple dark shoes minimal, refined, repetitive, intentionally “boring”",
+      "source": "P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1",
+      "founderApproved": true,
+      "importedAt": "2026-10-03T17:00:00.000Z"
+    },
+    {
+      "id": "va:SW-RESIDENT-004:SIGNED_WALL_PORTRAIT",
+      "residentId": "SW-RESIDENT-004",
+      "authorityType": "SIGNED_WALL_PORTRAIT",
+      "status": "FOUNDER_APPROVED",
+      "canonVersion": "season1-v1",
+      "isPrimaryIdentityAuthority": false,
+      "identityLocked": true,
+      "faceAuthority": "Direct-camera essence — separate from full-body natural habitat or competency portrait",
+      "notes": "Plain, clean, minimal: “Noa Kline”. Possible: “Done.” / “Is this necessary?”. Plain minimal “Noa Kline”; possible “Done.” / “Is this necessary?”",
+      "prohibitedDrift": [
+        "not generic East Asian tech guy",
+        "not culturally costumed for heritage signaling",
+        "not cold robot with no family interior"
+      ],
+      "source": "P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1",
+      "founderApproved": true,
+      "importedAt": "2026-10-03T17:00:00.000Z"
+    },
+    {
+      "id": "va:SW-RESIDENT-004:ROLE_COMPETENCY_FULL_BODY",
+      "residentId": "SW-RESIDENT-004",
+      "authorityType": "ROLE_COMPETENCY_FULL_BODY",
+      "status": "FOUNDER_APPROVED",
+      "canonVersion": "season1-v1",
+      "isPrimaryIdentityAuthority": false,
+      "identityLocked": false,
+      "wardrobeAuthority": "Role-aligned presentation for Systems Architect / Studio OS Liaison — may echo natural lane but demonstrates competency context",
+      "notes": "Systems architect — Studio OS liaison; surgical minimal presence at work. Question: “Why are you here, and how do you operate?”",
+      "prohibitedDrift": [
+        "not generic East Asian tech guy",
+        "not culturally costumed for heritage signaling",
+        "not cold robot with no family interior"
+      ],
+      "source": "P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1",
+      "founderApproved": true,
+      "importedAt": "2026-10-03T17:00:00.000Z"
+    },
+    {
+      "id": "va:SW-RESIDENT-004:IDENTITY_ANGLE_PACK",
+      "residentId": "SW-RESIDENT-004",
+      "authorityType": "IDENTITY_ANGLE_PACK",
+      "status": "PROVISIONAL",
+      "canonVersion": "season1-v1",
+      "isPrimaryIdentityAuthority": false,
+      "identityLocked": false,
+      "notes": "Angle pack slot reserved for facial/body continuity (MetaHuman/UE). No repo-verified approved angle pack at ingest — do not treat exploratory generations as canon.",
+      "prohibitedDrift": [
+        "not generic East Asian tech guy",
+        "not culturally costumed for heritage signaling",
+        "not cold robot with no family interior"
+      ],
+      "source": "P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1",
+      "founderApproved": false,
+      "importedAt": "2026-10-03T17:00:00.000Z"
+    },
+    {
+      "id": "va:SW-RESIDENT-004:WORK_UNIFORM_REFERENCE",
+      "residentId": "SW-RESIDENT-004",
+      "authorityType": "WORK_UNIFORM_REFERENCE",
+      "status": "CONCEPT_LOCKED_VISUAL_PENDING",
+      "canonVersion": "season1-v1",
+      "isPrimaryIdentityAuthority": false,
+      "identityLocked": false,
+      "wardrobeAuthority": "Shared SW uniform system — personalize only: Most stripped-down, minimal, closed/practical",
+      "notes": "ONE shared Studio World uniform system — instantly recognizable guild/atelier hospitality, not generic corporate or cosplay.. Final uniform visual NOT founder-approved; generated uniform candidates must not be marked FOUNDER_APPROVED.",
+      "prohibitedDrift": [
+        "Eight unrelated outfits with SW badge only",
+        "Replacing natural habitat as default identity"
+      ],
+      "source": "P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1",
+      "founderApproved": false,
+      "importedAt": "2026-10-03T17:00:00.000Z"
+    },
+    {
+      "id": "va:SW-RESIDENT-005:NATURAL_HABITAT_FULL_BODY",
+      "residentId": "SW-RESIDENT-005",
+      "authorityType": "NATURAL_HABITAT_FULL_BODY",
+      "status": "FOUNDER_APPROVED",
+      "canonVersion": "season1-v1",
+      "isPrimaryIdentityAuthority": true,
+      "identityLocked": true,
+      "faceAuthority": "cinematic, dramatic, luxe-bohemian, visionary, theatrical, sensual; Russian / Eastern European man",
+      "bodyAuthority": "6'2\"; ~192 lb; long, broad, graceful; Russian / Eastern European man",
+      "hairAuthority": "Longer romantic wavy hair",
+      "wardrobeAuthority": "Decadent Bohemian Aristocrat / Romantic World-Builder: Burgundy/oxblood long patterned coat; dark silk shirt; tailored dark trousers; boots; sensual masculine jewelry; decadent bohemian aristocrat",
+      "allowedVariation": [
+        "Scene-specific wardrobe swaps off-duty",
+        "Documentary lighting only — not identity change"
+      ],
+      "prohibitedDrift": [
+        "not generic European cologne model",
+        "not vampire",
+        "not gay-fashion stereotype",
+        "not fantasy prince"
+      ],
+      "notes": "deep burgundy / oxblood / tobacco / espresso velvet, jacquard, silk, long coat, high-waisted tailored trousers, boots, rings longer romantic wavy hair — tactile, worldly, masculine, sensual storybook editorial energy without costume",
+      "source": "P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1",
+      "founderApproved": true,
+      "importedAt": "2026-10-03T17:00:00.000Z"
+    },
+    {
+      "id": "va:SW-RESIDENT-005:SIGNED_WALL_PORTRAIT",
+      "residentId": "SW-RESIDENT-005",
+      "authorityType": "SIGNED_WALL_PORTRAIT",
+      "status": "FOUNDER_APPROVED",
+      "canonVersion": "season1-v1",
+      "isPrimaryIdentityAuthority": false,
+      "identityLocked": true,
+      "faceAuthority": "Direct-camera essence — separate from full-body natural habitat or competency portrait",
+      "notes": "Beautiful expressive signature: “Caspian Reed” with possible heart/flourish. Beautiful expressive “Caspian Reed”; possible flourish — not vampire/fantasy prince",
+      "prohibitedDrift": [
+        "not generic European cologne model",
+        "not vampire",
+        "not gay-fashion stereotype",
+        "not fantasy prince"
+      ],
+      "source": "P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1",
+      "founderApproved": true,
+      "importedAt": "2026-10-03T17:00:00.000Z"
+    },
+    {
+      "id": "va:SW-RESIDENT-005:ROLE_COMPETENCY_FULL_BODY",
+      "residentId": "SW-RESIDENT-005",
+      "authorityType": "ROLE_COMPETENCY_FULL_BODY",
+      "status": "FOUNDER_APPROVED",
+      "canonVersion": "season1-v1",
+      "isPrimaryIdentityAuthority": false,
+      "identityLocked": false,
+      "wardrobeAuthority": "Role-aligned presentation for World Director / Environmental Storyteller — may echo natural lane but demonstrates competency context",
+      "notes": "World director — environmental storyteller; spatial narrative and atmosphere in frame. Question: “Why are you here, and how do you operate?”",
+      "prohibitedDrift": [
+        "not generic European cologne model",
+        "not vampire",
+        "not gay-fashion stereotype",
+        "not fantasy prince"
+      ],
+      "source": "P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1",
+      "founderApproved": true,
+      "importedAt": "2026-10-03T17:00:00.000Z"
+    },
+    {
+      "id": "va:SW-RESIDENT-005:IDENTITY_ANGLE_PACK",
+      "residentId": "SW-RESIDENT-005",
+      "authorityType": "IDENTITY_ANGLE_PACK",
+      "status": "PROVISIONAL",
+      "canonVersion": "season1-v1",
+      "isPrimaryIdentityAuthority": false,
+      "identityLocked": false,
+      "notes": "Angle pack slot reserved for facial/body continuity (MetaHuman/UE). No repo-verified approved angle pack at ingest — do not treat exploratory generations as canon.",
+      "prohibitedDrift": [
+        "not generic European cologne model",
+        "not vampire",
+        "not gay-fashion stereotype",
+        "not fantasy prince"
+      ],
+      "source": "P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1",
+      "founderApproved": false,
+      "importedAt": "2026-10-03T17:00:00.000Z"
+    },
+    {
+      "id": "va:SW-RESIDENT-005:WORK_UNIFORM_REFERENCE",
+      "residentId": "SW-RESIDENT-005",
+      "authorityType": "WORK_UNIFORM_REFERENCE",
+      "status": "CONCEPT_LOCKED_VISUAL_PENDING",
+      "canonVersion": "season1-v1",
+      "isPrimaryIdentityAuthority": false,
+      "identityLocked": false,
+      "wardrobeAuthority": "Shared SW uniform system — personalize only: Textured scarf, collar treatment, romantic layering",
+      "notes": "ONE shared Studio World uniform system — instantly recognizable guild/atelier hospitality, not generic corporate or cosplay.. Final uniform visual NOT founder-approved; generated uniform candidates must not be marked FOUNDER_APPROVED.",
+      "prohibitedDrift": [
+        "Eight unrelated outfits with SW badge only",
+        "Replacing natural habitat as default identity"
+      ],
+      "source": "P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1",
+      "founderApproved": false,
+      "importedAt": "2026-10-03T17:00:00.000Z"
+    },
+    {
+      "id": "va:SW-RESIDENT-006:NATURAL_HABITAT_FULL_BODY",
+      "residentId": "SW-RESIDENT-006",
+      "authorityType": "NATURAL_HABITAT_FULL_BODY",
+      "status": "FOUNDER_APPROVED",
+      "canonVersion": "season1-v1",
+      "isPrimaryIdentityAuthority": true,
+      "identityLocked": true,
+      "faceAuthority": "Heavy freckles; intentional grooming; not frumpy or generic pretty redhead",
+      "bodyAuthority": "5'11\"; ~154 lb; tall, lanky, slightly awkward; white woman; Tall lanky slightly awkward white woman — already beautiful; glamour is alternate mode only",
+      "hairAuthority": "Reddish-brown hair; practical updo / clip; tortoiseshell glasses remain important",
+      "wardrobeAuthority": "Precision Utilitarian: Crisp white collared shirt; refined olive/graphite/stone utility jacket; high-waisted technical trousers; refined work boots",
+      "allowedVariation": [
+        "Scene-specific wardrobe swaps off-duty",
+        "Documentary lighting only — not identity change"
+      ],
+      "prohibitedDrift": [
+        "not frumpy nerd or ugly duckling",
+        "not cottagecore or librarian cosplay",
+        "not manic pixie",
+        "not glam makeover endpoint"
+      ],
+      "notes": "white collared shirt refined olive / graphite / stone utility jacket high-waisted technical work trousers functional pockets, durable luxury materials, refined work boots hair pinned / clipped / practical — glasses remain important",
+      "source": "P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1",
+      "founderApproved": true,
+      "importedAt": "2026-10-03T17:00:00.000Z"
+    },
+    {
+      "id": "va:SW-RESIDENT-006:SIGNED_WALL_PORTRAIT",
+      "residentId": "SW-RESIDENT-006",
+      "authorityType": "SIGNED_WALL_PORTRAIT",
+      "status": "FOUNDER_APPROVED",
+      "canonVersion": "season1-v1",
+      "isPrimaryIdentityAuthority": false,
+      "identityLocked": true,
+      "faceAuthority": "Direct-camera essence — separate from full-body natural habitat or competency portrait",
+      "notes": "Careful, modest, small, slightly hesitant — possible correction/arrow/micro-note. Careful modest signature; possible correction arrow / micro-note",
+      "prohibitedDrift": [
+        "not frumpy nerd or ugly duckling",
+        "not cottagecore or librarian cosplay",
+        "not manic pixie",
+        "not glam makeover endpoint"
+      ],
+      "source": "P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1",
+      "founderApproved": true,
+      "importedAt": "2026-10-03T17:00:00.000Z"
+    },
+    {
+      "id": "va:SW-RESIDENT-006:ROLE_COMPETENCY_FULL_BODY",
+      "residentId": "SW-RESIDENT-006",
+      "authorityType": "ROLE_COMPETENCY_FULL_BODY",
+      "status": "FOUNDER_APPROVED",
+      "canonVersion": "season1-v1",
+      "isPrimaryIdentityAuthority": false,
+      "identityLocked": false,
+      "wardrobeAuthority": "Role-aligned presentation for Fabrication Lead / Character Lab / Image Construction — may echo natural lane but demonstrates competency context",
+      "notes": "Fabrication lead — character lab, tools, material focus; precision utilitarian competency portrait. Question: “Why are you here, and how do you operate?”",
+      "prohibitedDrift": [
+        "not frumpy nerd or ugly duckling",
+        "not cottagecore or librarian cosplay",
+        "not manic pixie",
+        "not glam makeover endpoint"
+      ],
+      "source": "P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1",
+      "founderApproved": true,
+      "importedAt": "2026-10-03T17:00:00.000Z"
+    },
+    {
+      "id": "va:SW-RESIDENT-006:IDENTITY_ANGLE_PACK",
+      "residentId": "SW-RESIDENT-006",
+      "authorityType": "IDENTITY_ANGLE_PACK",
+      "status": "PROVISIONAL",
+      "canonVersion": "season1-v1",
+      "isPrimaryIdentityAuthority": false,
+      "identityLocked": false,
+      "notes": "Angle pack slot reserved for facial/body continuity (MetaHuman/UE). No repo-verified approved angle pack at ingest — do not treat exploratory generations as canon.",
+      "prohibitedDrift": [
+        "not frumpy nerd or ugly duckling",
+        "not cottagecore or librarian cosplay",
+        "not manic pixie",
+        "not glam makeover endpoint"
+      ],
+      "source": "P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1",
+      "founderApproved": false,
+      "importedAt": "2026-10-03T17:00:00.000Z"
+    },
+    {
+      "id": "va:SW-RESIDENT-006:WORK_UNIFORM_REFERENCE",
+      "residentId": "SW-RESIDENT-006",
+      "authorityType": "WORK_UNIFORM_REFERENCE",
+      "status": "CONCEPT_LOCKED_VISUAL_PENDING",
+      "canonVersion": "season1-v1",
+      "isPrimaryIdentityAuthority": false,
+      "identityLocked": false,
+      "wardrobeAuthority": "Shared SW uniform system — personalize only: Tool loop, utility clip, rolled sleeves",
+      "notes": "ONE shared Studio World uniform system — instantly recognizable guild/atelier hospitality, not generic corporate or cosplay.. Final uniform visual NOT founder-approved; generated uniform candidates must not be marked FOUNDER_APPROVED.",
+      "prohibitedDrift": [
+        "Eight unrelated outfits with SW badge only",
+        "Replacing natural habitat as default identity"
+      ],
+      "source": "P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1",
+      "founderApproved": false,
+      "importedAt": "2026-10-03T17:00:00.000Z"
+    },
+    {
+      "id": "va:SW-RESIDENT-006:GLAMOUR_OR_ALTERNATE_MODE",
+      "residentId": "SW-RESIDENT-006",
+      "authorityType": "GLAMOUR_OR_ALTERNATE_MODE",
+      "status": "FOUNDER_APPROVED",
+      "canonVersion": "season1-v1",
+      "isPrimaryIdentityAuthority": false,
+      "identityLocked": false,
+      "notes": "Iona was already beautiful. Arc is discovering deliberate control of perception — glamour rare, contextual, surprising, not permanent. NOT makeover-final-state. Contexts: formal event, date, client presentation, fabrication experiment, social event, Jules dragging her into a photo, wearing something she made. MUST NOT replace natural Precision Utilitarian authority.",
+      "prohibitedDrift": [
+        "Permanent glam makeover endpoint",
+        "Ugly-duckling reveal",
+        "not frumpy nerd or ugly duckling",
+        "not cottagecore or librarian cosplay",
+        "not manic pixie",
+        "not glam makeover endpoint"
+      ],
+      "source": "P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1",
+      "founderApproved": true,
+      "importedAt": "2026-10-03T17:00:00.000Z"
+    },
+    {
+      "id": "va:SW-RESIDENT-007:NATURAL_HABITAT_FULL_BODY",
+      "residentId": "SW-RESIDENT-007",
+      "authorityType": "NATURAL_HABITAT_FULL_BODY",
+      "status": "FOUNDER_APPROVED",
+      "canonVersion": "season1-v1",
+      "isPrimaryIdentityAuthority": true,
+      "identityLocked": true,
+      "faceAuthority": "Fuller face; commanding; lived-in",
+      "bodyAuthority": "Substantial stature; Larger-bodied — fuller face, broad chest and shoulders; Larger-bodied, older, lived-in, commanding — NOT slender, NOT young, NOT frail; Black man (elder queer cultural authority spirit — no real-person likeness); Age 54; larger-bodied; substantial; broad chest; broad shoulders — never slim young fashion-boy Marlowe",
+      "hairAuthority": "Mature salt-and-pepper curls",
+      "wardrobeAuthority": "Off-Duty Grand Cultural Icon: Burgundy, black, antique gold; richly patterned scarf/textiles; rings/jewelry; luxury comfort; off-duty cultural icon hybrid",
+      "allowedVariation": [
+        "Scene-specific wardrobe swaps off-duty",
+        "Documentary lighting only — not identity change"
+      ],
+      "prohibitedDrift": [
+        "not young or slim",
+        "not frail",
+        "not comic relief because of size",
+        "not “older flamboyant man = robe only”"
+      ],
+      "notes": "Direction 04 primary + Direction 03 cultural knowledge + occasional Direction 01 grandeur burgundy, black, antique gold, richly patterned scarf, tactile fabrics mature salt-and-pepper curls — comfortable but unmistakably Marlowe Can wear a T-shirt and still be Marlowe Saint",
+      "source": "P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1",
+      "founderApproved": true,
+      "importedAt": "2026-10-03T17:00:00.000Z"
+    },
+    {
+      "id": "va:SW-RESIDENT-007:SIGNED_WALL_PORTRAIT",
+      "residentId": "SW-RESIDENT-007",
+      "authorityType": "SIGNED_WALL_PORTRAIT",
+      "status": "FOUNDER_APPROVED",
+      "canonVersion": "season1-v1",
+      "isPrimaryIdentityAuthority": false,
+      "identityLocked": true,
+      "faceAuthority": "Direct-camera essence — separate from full-body natural habitat or competency portrait",
+      "notes": "Large, dramatic, composition-integrated: “Marlowe Saint”. Possible: “You’re welcome.”. Large dramatic “Marlowe Saint”; possible “You’re welcome.”",
+      "prohibitedDrift": [
+        "not young or slim",
+        "not frail",
+        "not comic relief because of size",
+        "not “older flamboyant man = robe only”"
+      ],
+      "source": "P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1",
+      "founderApproved": true,
+      "importedAt": "2026-10-03T17:00:00.000Z"
+    },
+    {
+      "id": "va:SW-RESIDENT-007:ROLE_COMPETENCY_FULL_BODY",
+      "residentId": "SW-RESIDENT-007",
+      "authorityType": "ROLE_COMPETENCY_FULL_BODY",
+      "status": "FOUNDER_APPROVED",
+      "canonVersion": "season1-v1",
+      "isPrimaryIdentityAuthority": false,
+      "identityLocked": false,
+      "wardrobeAuthority": "Role-aligned presentation for Casting Director / Performance Design / Persona Mapping — may echo natural lane but demonstrates competency context",
+      "notes": "Casting director — performance design, persona mapping, seasoned authority. Question: “Why are you here, and how do you operate?”",
+      "prohibitedDrift": [
+        "not young or slim",
+        "not frail",
+        "not comic relief because of size",
+        "not “older flamboyant man = robe only”"
+      ],
+      "source": "P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1",
+      "founderApproved": true,
+      "importedAt": "2026-10-03T17:00:00.000Z"
+    },
+    {
+      "id": "va:SW-RESIDENT-007:IDENTITY_ANGLE_PACK",
+      "residentId": "SW-RESIDENT-007",
+      "authorityType": "IDENTITY_ANGLE_PACK",
+      "status": "PROVISIONAL",
+      "canonVersion": "season1-v1",
+      "isPrimaryIdentityAuthority": false,
+      "identityLocked": false,
+      "notes": "Angle pack slot reserved for facial/body continuity (MetaHuman/UE). No repo-verified approved angle pack at ingest — do not treat exploratory generations as canon.",
+      "prohibitedDrift": [
+        "not young or slim",
+        "not frail",
+        "not comic relief because of size",
+        "not “older flamboyant man = robe only”"
+      ],
+      "source": "P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1",
+      "founderApproved": false,
+      "importedAt": "2026-10-03T17:00:00.000Z"
+    },
+    {
+      "id": "va:SW-RESIDENT-007:WORK_UNIFORM_REFERENCE",
+      "residentId": "SW-RESIDENT-007",
+      "authorityType": "WORK_UNIFORM_REFERENCE",
+      "status": "CONCEPT_LOCKED_VISUAL_PENDING",
+      "canonVersion": "season1-v1",
+      "isPrimaryIdentityAuthority": false,
+      "identityLocked": false,
+      "wardrobeAuthority": "Shared SW uniform system — personalize only: Brooch, scarf, flower, jewelry, ornate cuff — on base uniform",
+      "notes": "ONE shared Studio World uniform system — instantly recognizable guild/atelier hospitality, not generic corporate or cosplay.. Final uniform visual NOT founder-approved; generated uniform candidates must not be marked FOUNDER_APPROVED.",
+      "prohibitedDrift": [
+        "Eight unrelated outfits with SW badge only",
+        "Replacing natural habitat as default identity"
+      ],
+      "source": "P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1",
+      "founderApproved": false,
+      "importedAt": "2026-10-03T17:00:00.000Z"
+    },
+    {
+      "id": "va:SW-RESIDENT-007:SUPERSEDED:marlowe-slender-young",
+      "residentId": "SW-RESIDENT-007",
+      "authorityType": "SUPERSEDED_REFERENCE",
+      "status": "REFERENCE_ONLY",
+      "canonVersion": "season1-v1",
+      "isPrimaryIdentityAuthority": false,
+      "identityLocked": false,
+      "notes": "Superseded: Slender / younger Marlowe body → active: Age 54 larger-bodied Marlowe",
+      "supersedes": [
+        "Slender / younger Marlowe body"
+      ],
+      "supersededBy": "Age 54 larger-bodied Marlowe",
+      "prohibitedDrift": [
+        "Using Slender / younger Marlowe body as default visual authority"
+      ],
+      "source": "P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1",
+      "founderApproved": false,
+      "importedAt": "2026-10-03T17:00:00.000Z"
+    },
+    {
+      "id": "va:SW-RESIDENT-008:NATURAL_HABITAT_FULL_BODY",
+      "residentId": "SW-RESIDENT-008",
+      "authorityType": "NATURAL_HABITAT_FULL_BODY",
+      "status": "FOUNDER_APPROVED",
+      "canonVersion": "season1-v1",
+      "isPrimaryIdentityAuthority": true,
+      "identityLocked": true,
+      "faceAuthority": "polished, expensive, tailored, controlled, elegant shark; Italian / Mediterranean man",
+      "bodyAuthority": "6'1\"; ~188 lb; mature, tailored, athletic; Italian / Mediterranean man",
+      "hairAuthority": "Dark wavy hair; controlled stubble; mature Mediterranean grooming",
+      "wardrobeAuthority": "Private Club Strategist: Deep burgundy velvet jacket; black silk/dark shirt; dark tailored trousers; polished loafer; restrained signet/ring",
+      "allowedVariation": [
+        "Scene-specific wardrobe swaps off-duty",
+        "Documentary lighting only — not identity change"
+      ],
+      "prohibitedDrift": [
+        "not mafia",
+        "not billionaire TikTok cliché",
+        "not generic Italian businessman",
+        "not Caspian-lite",
+        "not black-suit stock photo"
+      ],
+      "notes": "deep burgundy velvet jacket black silk / dark shirt black tailored trousers polished loafers understated signet / ring mature Mediterranean grooming — controlled, luxurious, unreadable",
+      "source": "P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1",
+      "founderApproved": true,
+      "importedAt": "2026-10-03T17:00:00.000Z"
+    },
+    {
+      "id": "va:SW-RESIDENT-008:SIGNED_WALL_PORTRAIT",
+      "residentId": "SW-RESIDENT-008",
+      "authorityType": "SIGNED_WALL_PORTRAIT",
+      "status": "FOUNDER_APPROVED",
+      "canonVersion": "season1-v1",
+      "isPrimaryIdentityAuthority": false,
+      "identityLocked": true,
+      "faceAuthority": "Direct-camera essence — separate from full-body natural habitat or competency portrait",
+      "notes": "ONLY “Regards, EV” with underline beneath EV — do NOT use “Elio Vahn” as portrait signature.. ONLY “Regards, EV” with underline beneath EV — never “Elio Vahn” as portrait signature",
+      "prohibitedDrift": [
+        "not mafia",
+        "not billionaire TikTok cliché",
+        "not generic Italian businessman",
+        "not Caspian-lite",
+        "not black-suit stock photo"
+      ],
+      "source": "P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1",
+      "founderApproved": true,
+      "importedAt": "2026-10-03T17:00:00.000Z"
+    },
+    {
+      "id": "va:SW-RESIDENT-008:ROLE_COMPETENCY_FULL_BODY",
+      "residentId": "SW-RESIDENT-008",
+      "authorityType": "ROLE_COMPETENCY_FULL_BODY",
+      "status": "FOUNDER_APPROVED",
+      "canonVersion": "season1-v1",
+      "isPrimaryIdentityAuthority": false,
+      "identityLocked": false,
+      "wardrobeAuthority": "Role-aligned presentation for Tenancy / Expansion / Business Development — may echo natural lane but demonstrates competency context",
+      "notes": "Tenancy / expansion — strategic business development presence; controlled unreadable polish. Question: “Why are you here, and how do you operate?”",
+      "prohibitedDrift": [
+        "not mafia",
+        "not billionaire TikTok cliché",
+        "not generic Italian businessman",
+        "not Caspian-lite",
+        "not black-suit stock photo"
+      ],
+      "source": "P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1",
+      "founderApproved": true,
+      "importedAt": "2026-10-03T17:00:00.000Z"
+    },
+    {
+      "id": "va:SW-RESIDENT-008:IDENTITY_ANGLE_PACK",
+      "residentId": "SW-RESIDENT-008",
+      "authorityType": "IDENTITY_ANGLE_PACK",
+      "status": "PROVISIONAL",
+      "canonVersion": "season1-v1",
+      "isPrimaryIdentityAuthority": false,
+      "identityLocked": false,
+      "notes": "Angle pack slot reserved for facial/body continuity (MetaHuman/UE). No repo-verified approved angle pack at ingest — do not treat exploratory generations as canon.",
+      "prohibitedDrift": [
+        "not mafia",
+        "not billionaire TikTok cliché",
+        "not generic Italian businessman",
+        "not Caspian-lite",
+        "not black-suit stock photo"
+      ],
+      "source": "P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1",
+      "founderApproved": false,
+      "importedAt": "2026-10-03T17:00:00.000Z"
+    },
+    {
+      "id": "va:SW-RESIDENT-008:WORK_UNIFORM_REFERENCE",
+      "residentId": "SW-RESIDENT-008",
+      "authorityType": "WORK_UNIFORM_REFERENCE",
+      "status": "CONCEPT_LOCKED_VISUAL_PENDING",
+      "canonVersion": "season1-v1",
+      "isPrimaryIdentityAuthority": false,
+      "identityLocked": false,
+      "wardrobeAuthority": "Shared SW uniform system — personalize only: Tie, pocket square, signet, formal buttoning — on base uniform",
+      "notes": "ONE shared Studio World uniform system — instantly recognizable guild/atelier hospitality, not generic corporate or cosplay.. Final uniform visual NOT founder-approved; generated uniform candidates must not be marked FOUNDER_APPROVED.",
+      "prohibitedDrift": [
+        "Eight unrelated outfits with SW badge only",
+        "Replacing natural habitat as default identity"
+      ],
+      "source": "P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1",
+      "founderApproved": false,
+      "importedAt": "2026-10-03T17:00:00.000Z"
+    }
+  ]
+}
