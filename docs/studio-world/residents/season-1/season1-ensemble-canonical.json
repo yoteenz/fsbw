@@ -1,0 +1,877 @@
+{
+  "version": "season1-v1",
+  "residents": [
+    {
+      "id": "SW-RESIDENT-001",
+      "canonicalName": "Etta Vale",
+      "aliases": [],
+      "role": "Founding Presence / Creative Director / Studio World face / primary creative authority",
+      "age": 35,
+      "birthRecord": {
+        "date": "1991-09-05",
+        "timeLocal": "11:30 AM",
+        "place": "Washington, D.C.",
+        "authority": "PROVISIONAL_CANON"
+      },
+      "astrology": {
+        "sun": "Virgo",
+        "moon": "Leo",
+        "rising": "Scorpio",
+        "authority": "PROVISIONAL_CANON"
+      },
+      "physicalCanon": {
+        "height": "5'9\"",
+        "weightApprox": "~142 lb",
+        "build": "long / lean / soft-athletic",
+        "ethnicityPresentation": "Black woman",
+        "authority": "FOUNDER_APPROVED"
+      },
+      "sexuality": {
+        "label": "Heterosexual",
+        "authority": "FOUNDER_APPROVED",
+        "notes": "Unless later superseded by founder canon."
+      },
+      "relationshipStatus": {
+        "summary": "Single / highly selective. Private romantic life.",
+        "authority": "FOUNDER_APPROVED"
+      },
+      "naturalWardrobeAuthority": "Sophisticated Fashionista",
+      "naturalWardrobeNotes": [
+        "ivory / cream sculptural tailoring",
+        "corseted or sharply feminine structure",
+        "wide-leg trouser",
+        "long coat",
+        "heels",
+        "feminine power without corporate blandness"
+      ],
+      "visualEssence": [
+        "poised",
+        "expensive",
+        "striking",
+        "controlled",
+        "quietly magnetic"
+      ],
+      "personality": [
+        "Exacting",
+        "poised",
+        "emotionally intelligent",
+        "quietly funny",
+        "discerning",
+        "high standards",
+        "creative authority"
+      ],
+      "humor": "Dry, precise, economical",
+      "icks": [
+        "forced innovation",
+        "“fix it in post”",
+        "bad taste marketed as boldness",
+        "unearned confidence",
+        "loud weak ideas"
+      ],
+      "contrasts": [
+        "restrained exterior / proud creative heart",
+        "intimidating presence / emotionally intelligent",
+        "exacting / not cruel",
+        "highly visual / deeply strategic",
+        "polished / capable of very dry humor"
+      ],
+      "cameraBehavior": "Mostly ignores the camera. When something becomes ridiculous, gives the smallest possible look. Does not overperform.",
+      "signedPortraitBehavior": "Elegant restrained signature: “Etta Vale”. Possible dry aside: “Satisfied?”",
+      "clientValue": "Creative authority, taste, final visual judgment, direction, quality threshold",
+      "coreSentence": "She decides what is good enough to exist.",
+      "socialLanguage": "Curated, intentional, minimal, high visual authority, not oversharing",
+      "protectedOpenFields": [
+        "current partner",
+        "marriage history",
+        "full family background"
+      ],
+      "antiFlattening": [
+        "not generic luxury Black woman / CEO stock image"
+      ],
+      "canonVersion": "season1-v1",
+      "status": "FOUNDER_APPROVED"
+    },
+    {
+      "id": "SW-RESIDENT-002",
+      "canonicalName": "Zuri Xu",
+      "aliases": [],
+      "role": "Strategy Director / Client Intelligence / Office Guide",
+      "age": 38,
+      "birthRecord": {
+        "date": "1988-01-19",
+        "timeLocal": "8:50 PM",
+        "place": "Vancouver, British Columbia, Canada",
+        "authority": "PROVISIONAL_CANON"
+      },
+      "astrology": {
+        "sun": "Capricorn",
+        "moon": "Aquarius",
+        "rising": "Virgo",
+        "authority": "PROVISIONAL_CANON"
+      },
+      "physicalCanon": {
+        "height": "5'4\"",
+        "weightApprox": "~128 lb",
+        "build": "compact / elegant / controlled",
+        "ethnicityPresentation": "Chinese / Chinese-diaspora woman",
+        "signatures": [
+          "short, edgy, textured black hair — modern, young, slightly directional, not generic corporate bob"
+        ],
+        "authority": "FOUNDER_APPROVED"
+      },
+      "heritage": "Chinese / Chinese-diaspora — partner identity and exact family region/history remain OPEN.",
+      "sexuality": {
+        "label": "Lesbian",
+        "authority": "FOUNDER_APPROVED"
+      },
+      "relationshipStatus": {
+        "summary": "Partnered with a woman. Partner identity/details remain open unless explicitly approved later.",
+        "authority": "FOUNDER_APPROVED"
+      },
+      "naturalWardrobeAuthority": "Architectural Fashion Strategist",
+      "naturalWardrobeNotes": [
+        "modern fashion, geometry, strong lapels, asymmetric construction, layered tailoring",
+        "taupe / stone / chocolate / burgundy / oxblood / restrained neutrals",
+        "wide-leg trouser, modern pointed footwear",
+        "occasional statement tie/scarf/bag — fashion-forward without costume"
+      ],
+      "visualEssence": [
+        "short",
+        "sharp",
+        "self-possessed",
+        "controlled",
+        "young-chic",
+        "reserved",
+        "avant-garde",
+        "fashion-literate"
+      ],
+      "personality": [
+        "Perceptive",
+        "unflustered",
+        "discerning",
+        "strategic",
+        "observant",
+        "controlled"
+      ],
+      "humor": "Subtle, observational, understated",
+      "icks": [
+        "indecision",
+        "avoidance",
+        "fake collaboration",
+        "sloppy communication"
+      ],
+      "contrasts": [
+        "compact physical stature / enormous authority",
+        "reserved / deeply fashion-oriented",
+        "pragmatic / unusually experimental taste",
+        "emotionally private / not emotionally cold",
+        "controlled / independently unconventional"
+      ],
+      "quirks": [
+        "private/social media can operate like an evolving lookbook",
+        "genuinely loves fashion — not only because role requires it"
+      ],
+      "cameraBehavior": "Speaks when she has something worth saying. Never wastes the camera’s time.",
+      "signedPortraitBehavior": "Small, neat, efficient — corner or margin: “Zuri Xu”. Possible: “Done.” / “Approved.”",
+      "clientValue": "Makes sense of needs, defines direction, keeps work moving",
+      "coreSentence": "She sees the whole problem and knows what happens next.",
+      "protectedOpenFields": [
+        "partner identity",
+        "partner appearance",
+        "relationship duration",
+        "exact Chinese family region/history"
+      ],
+      "antiFlattening": [
+        "not corporate Asian mom",
+        "not goth",
+        "not plain suit",
+        "not medieval / RPG",
+        "not “Asian businesswoman” stock imagery",
+        "not “mysterious = black”"
+      ],
+      "canonVersion": "season1-v1",
+      "status": "FOUNDER_APPROVED"
+    },
+    {
+      "id": "SW-RESIDENT-003",
+      "canonicalName": "Jules Mercer",
+      "aliases": [],
+      "role": "Front Office / Concierge / Tenant Relations",
+      "age": 32,
+      "birthRecord": {
+        "date": "1994-09-28",
+        "timeLocal": "2:50 AM",
+        "place": "Memphis, Tennessee",
+        "authority": "PROVISIONAL_CANON"
+      },
+      "astrology": {
+        "sun": "Libra",
+        "moon": "Cancer",
+        "rising": "Leo",
+        "authority": "PROVISIONAL_CANON"
+      },
+      "physicalCanon": {
+        "height": "5'10\"",
+        "weightApprox": "~168 lb",
+        "build": "lean, naturally athletic",
+        "ethnicityPresentation": "Black man",
+        "signatures": [
+          "extremely long locs — canonical natural-habitat direction"
+        ],
+        "authority": "FOUNDER_APPROVED"
+      },
+      "sexuality": {
+        "label": "Heterosexual",
+        "authority": "FOUNDER_APPROVED"
+      },
+      "relationshipStatus": {
+        "summary": "Single. Dates. Emotionally available. NOT a player archetype.",
+        "authority": "FOUNDER_APPROVED"
+      },
+      "naturalWardrobeAuthority": "Relaxed Romantic / Earth-Toned Modern Bohemian",
+      "naturalWardrobeNotes": [
+        "loose ivory linen shirt",
+        "burgundy / wine relaxed tailored trousers",
+        "brown boots",
+        "subtle jewelry",
+        "tactile, warm, relaxed — handsome without over-styling"
+      ],
+      "visualEssence": [
+        "warm",
+        "charismatic",
+        "expressive",
+        "socially agile"
+      ],
+      "personality": [
+        "Warm",
+        "charismatic",
+        "expressive",
+        "socially agile",
+        "emotionally perceptive",
+        "lightly messy",
+        "witty"
+      ],
+      "humor": "Witty, warm — not predatory or bragging",
+      "icks": [
+        "rudeness",
+        "ignoring the vibe",
+        "passive aggression",
+        "poor hosting"
+      ],
+      "contrasts": [
+        "naturally flirtatious-looking / often simply being kind",
+        "easygoing / emotionally perceptive",
+        "attractive / does not build identity around attractiveness",
+        "socially expansive / capable of genuine tenderness",
+        "seemingly unserious / excellent at reading people"
+      ],
+      "cameraBehavior": "Plays to camera. Naturally understands when a camera is watching — enjoys it, not sinister.",
+      "signedPortraitBehavior": "Loose, warm, casual: “Jules Mercer :)”. Possible: “Call me ♡”, playful fake number 901-555-0142",
+      "clientValue": "Makes people feel received, understood, comfortable, connected",
+      "coreSentence": "He makes Studio World feel human.",
+      "protectedOpenFields": [
+        "future serious partner",
+        "marriage",
+        "children"
+      ],
+      "antiFlattening": [
+        "not predatory or sex-obsessed",
+        "not manipulative or misogynistic",
+        "not hypersexual influencer gym-bro",
+        "not generic attractive Black male model"
+      ],
+      "canonVersion": "season1-v1",
+      "status": "FOUNDER_APPROVED"
+    },
+    {
+      "id": "SW-RESIDENT-004",
+      "canonicalName": "Noa Kline",
+      "aliases": [],
+      "role": "Systems Architect / Studio OS Liaison",
+      "age": 36,
+      "birthRecord": {
+        "date": "1990-01-10",
+        "timeLocal": "10:00 PM",
+        "place": "Honolulu, Hawaii",
+        "authority": "PROVISIONAL_CANON"
+      },
+      "astrology": {
+        "sun": "Capricorn",
+        "moon": "Cancer",
+        "rising": "Virgo",
+        "authority": "PROVISIONAL_CANON"
+      },
+      "physicalCanon": {
+        "height": "6'0\"",
+        "weightApprox": "~174 lb",
+        "build": "lean, narrow, precise",
+        "ethnicityPresentation": "East Asian man",
+        "authority": "FOUNDER_APPROVED"
+      },
+      "heritage": "Japanese with strong Okinawan / Ryukyuan family roots.",
+      "culturalCanon": [
+        "Culture is inheritance — not costume aesthetic",
+        "Appears through family, festivals, ceremonies, food, music, language, objects, recipes, community",
+        "More animated, nostalgic, opinionated, tactile, openly warm in cultural context",
+        "Never exists merely to explain Okinawan culture to the audience",
+        "Wants daughters to know where they come from"
+      ],
+      "sexuality": {
+        "label": "Heterosexual",
+        "authority": "FOUNDER_APPROVED"
+      },
+      "relationshipStatus": {
+        "summary": "Married to a woman. Two daughters. Wife identity, names, ages, exact configuration remain OPEN.",
+        "authority": "FOUNDER_APPROVED"
+      },
+      "naturalWardrobeAuthority": "Understated Domestic Systems Dad",
+      "naturalWardrobeNotes": [
+        "muted brown / charcoal jacket",
+        "dark knit",
+        "pleated gray-brown trousers",
+        "simple dark shoes",
+        "minimal, refined, repetitive, intentionally “boring”"
+      ],
+      "visualEssence": [
+        "cool",
+        "minimal",
+        "cerebral",
+        "surgical",
+        "low-drama"
+      ],
+      "personality": [
+        "Cool",
+        "minimal",
+        "cerebral",
+        "surgical",
+        "low-drama",
+        "dry",
+        "loyal"
+      ],
+      "humor": "Deadpan, literal",
+      "icks": [
+        "messy logic",
+        "vague asks",
+        "“make it pop”",
+        "feature creep"
+      ],
+      "contrasts": [
+        "robotic at work / deeply soft at home",
+        "emotionally restrained / family-centered",
+        "minimalist wardrobe / rich cultural life",
+        "boring-looking / extremely intelligent",
+        "systems-minded / sentimental around family continuity"
+      ],
+      "cameraBehavior": "Dislikes it. Endures it.",
+      "signedPortraitBehavior": "Plain, clean, minimal: “Noa Kline”. Possible: “Done.” / “Is this necessary?”",
+      "clientValue": "Turns vague needs into working logic, systems, structure",
+      "coreSentence": "He makes the machinery actually work.",
+      "protectedOpenFields": [
+        "wife name",
+        "wife ethnicity/heritage",
+        "daughters’ names",
+        "daughters’ ages",
+        "exact family configuration",
+        "specific Okinawan locality/family history"
+      ],
+      "antiFlattening": [
+        "not generic East Asian tech guy",
+        "not culturally costumed for heritage signaling",
+        "not cold robot with no family interior"
+      ],
+      "canonVersion": "season1-v1",
+      "status": "FOUNDER_APPROVED"
+    },
+    {
+      "id": "SW-RESIDENT-005",
+      "canonicalName": "Caspian Reed",
+      "aliases": [],
+      "role": "World Director / Environmental Storyteller",
+      "age": 40,
+      "birthRecord": {
+        "date": "1986-02-23",
+        "timeLocal": "2:20 AM",
+        "place": "Saint Petersburg, Russia",
+        "authority": "PROVISIONAL_CANON"
+      },
+      "astrology": {
+        "sun": "Pisces",
+        "moon": "Leo",
+        "rising": "Scorpio",
+        "authority": "PROVISIONAL_CANON"
+      },
+      "physicalCanon": {
+        "height": "6'2\"",
+        "weightApprox": "~192 lb",
+        "build": "long, broad, graceful",
+        "ethnicityPresentation": "Russian / Eastern European man",
+        "authority": "FOUNDER_APPROVED"
+      },
+      "sexuality": {
+        "label": "Fluid — person-first, chemistry-first, essence-first; selective",
+        "authority": "FOUNDER_APPROVED",
+        "notes": "Not “gay” or “straight” as primary framing. Supersedes gay-only framing."
+      },
+      "relationshipStatus": {
+        "summary": "Fluid. Do not force conventional spouse. Romantic history can be broad/textured. Current partner OPEN.",
+        "authority": "OPEN"
+      },
+      "naturalWardrobeAuthority": "Decadent Bohemian Aristocrat / Romantic World-Builder",
+      "naturalWardrobeNotes": [
+        "deep burgundy / oxblood / tobacco / espresso",
+        "velvet, jacquard, silk, long coat, high-waisted tailored trousers, boots, rings",
+        "longer romantic wavy hair — tactile, worldly, masculine, sensual",
+        "storybook editorial energy without costume"
+      ],
+      "visualEssence": [
+        "cinematic",
+        "dramatic",
+        "luxe-bohemian",
+        "visionary",
+        "theatrical",
+        "sensual"
+      ],
+      "personality": [
+        "Cinematic",
+        "dramatic",
+        "luxe-bohemian",
+        "visionary",
+        "theatrical",
+        "emotionally vivid",
+        "sensual",
+        "fashion-aware"
+      ],
+      "humor": "Dramatic exaggeration when appropriate — not meaningless spectacle",
+      "icks": [
+        "banality",
+        "unimaginative people",
+        "fluorescent lighting",
+        "cheap materials"
+      ],
+      "contrasts": [
+        "extravagant / hates clutter",
+        "sensual / disciplined",
+        "expressive / can become cold during critique",
+        "spectacle-loving / despises meaningless spectacle",
+        "romantic / pragmatic about people",
+        "looks high-maintenance / can travel with one beautiful bag"
+      ],
+      "quirks": [
+        "touches materials while speaking",
+        "moves lamps in other people’s spaces",
+        "strong hotel-lobby and overhead-lighting opinions",
+        "recognizable fragrance",
+        "remembers atmosphere better than meeting times",
+        "sketches on receipts/napkins/margins",
+        "collects material fragments from meaningful places",
+        "cannot sit normally in a chair for long"
+      ],
+      "cameraBehavior": "Assumes every camera is partially his. Composes naturally.",
+      "signedPortraitBehavior": "Beautiful expressive signature: “Caspian Reed” with possible heart/flourish",
+      "clientValue": "Builds worlds, environments, atmosphere, spatial narrative",
+      "coreSentence": "He turns ideas into places you can enter.",
+      "socialLanguage": "Atmosphere-first social feed — shadow, stone, fabric, corridors, rain, architecture; self second",
+      "protectedOpenFields": [
+        "current partner",
+        "relationship structure",
+        "specific former lovers",
+        "exact family details"
+      ],
+      "antiFlattening": [
+        "not generic European cologne model",
+        "not vampire",
+        "not gay-fashion stereotype",
+        "not fantasy prince"
+      ],
+      "canonVersion": "season1-v1",
+      "status": "FOUNDER_APPROVED"
+    },
+    {
+      "id": "SW-RESIDENT-006",
+      "canonicalName": "Iona Wells",
+      "aliases": [],
+      "role": "Fabrication Lead / Character Lab / Image Construction",
+      "age": 30,
+      "birthRecord": {
+        "date": "1996-08-27",
+        "timeLocal": "12:30 AM",
+        "place": "Pittsburgh, Pennsylvania",
+        "authority": "PROVISIONAL_CANON"
+      },
+      "astrology": {
+        "sun": "Virgo",
+        "moon": "Aquarius",
+        "rising": "Gemini",
+        "authority": "PROVISIONAL_CANON"
+      },
+      "physicalCanon": {
+        "height": "5'11\"",
+        "weightApprox": "~154 lb",
+        "build": "tall, lanky, slightly awkward",
+        "ethnicityPresentation": "white woman",
+        "signatures": [
+          "heavy freckles",
+          "tortoiseshell glasses",
+          "reddish-brown hair",
+          "well-paid professional grooming — cared-for, intentional, practical"
+        ],
+        "authority": "FOUNDER_APPROVED"
+      },
+      "sexuality": {
+        "label": "Heterosexual",
+        "authority": "FOUNDER_APPROVED",
+        "notes": "Unless later superseded."
+      },
+      "relationshipStatus": {
+        "summary": "Single. Future relationship arc open — do not rush.",
+        "authority": "FOUNDER_APPROVED"
+      },
+      "naturalWardrobeAuthority": "Precision Utilitarian",
+      "naturalWardrobeNotes": [
+        "white collared shirt",
+        "refined olive / graphite / stone utility jacket",
+        "high-waisted technical work trousers",
+        "functional pockets, durable luxury materials, refined work boots",
+        "hair pinned / clipped / practical — glasses remain important"
+      ],
+      "visualEssence": [
+        "futuristic",
+        "sculptural",
+        "technical",
+        "focused",
+        "tactile"
+      ],
+      "personality": [
+        "Futuristic",
+        "sculptural",
+        "technical",
+        "focused",
+        "obsessive",
+        "tactile",
+        "specific",
+        "extremely smart",
+        "efficient"
+      ],
+      "humor": "Nerdy precision — often accidental",
+      "icks": [
+        "muddy references",
+        "low-resolution inputs",
+        "“good enough”",
+        "people touching unfinished work"
+      ],
+      "contrasts": [
+        "socially awkward / graceful with tools",
+        "practical / exquisite material judgment",
+        "quiet / extremely opinionated about fabrication",
+        "gangly / precise hands",
+        "image-indifferent / excellent at constructing images",
+        "underestimated / commanding when something breaks"
+      ],
+      "quirks": [
+        "talks to objects while troubleshooting",
+        "keeps labeled material scraps",
+        "forgets meals while absorbed",
+        "pushes glasses up with wrist if hands dirty",
+        "measures things unconsciously",
+        "apologizes to objects when dropping them",
+        "competitive about craftsmanship"
+      ],
+      "glamourArc": {
+        "principle": "Iona was already beautiful. Arc is discovering deliberate control of perception — glamour rare, contextual, surprising, not permanent. NOT makeover-final-state.",
+        "notMakeoverEndpoint": true,
+        "contexts": [
+          "formal event",
+          "date",
+          "client presentation",
+          "fabrication experiment",
+          "social event",
+          "Jules dragging her into a photo",
+          "wearing something she made"
+        ],
+        "authority": "FOUNDER_APPROVED"
+      },
+      "cameraBehavior": "Forgets camera exists. Sometimes says too much.",
+      "signedPortraitBehavior": "Careful, modest, small, slightly hesitant — possible correction/arrow/micro-note",
+      "clientValue": "Materializes characters, assets, prototypes, physical and visual detail",
+      "coreSentence": "She becomes terrifyingly competent once she starts working.",
+      "protectedOpenFields": [
+        "future partner",
+        "relationship arc outcome",
+        "whether glamour becomes more frequent",
+        "family background"
+      ],
+      "antiFlattening": [
+        "not frumpy nerd or ugly duckling",
+        "not cottagecore or librarian cosplay",
+        "not manic pixie",
+        "not glam makeover endpoint"
+      ],
+      "canonVersion": "season1-v1",
+      "status": "FOUNDER_APPROVED"
+    },
+    {
+      "id": "SW-RESIDENT-007",
+      "canonicalName": "Marlowe Saint",
+      "aliases": [],
+      "role": "Casting Director / Performance Design / Persona Mapping",
+      "age": 54,
+      "birthRecord": {
+        "date": "1972-08-15",
+        "timeLocal": "10:30 AM",
+        "place": "New Orleans, Louisiana",
+        "authority": "PROVISIONAL_CANON"
+      },
+      "astrology": {
+        "sun": "Leo",
+        "moon": "Scorpio",
+        "rising": "Libra",
+        "authority": "PROVISIONAL_CANON"
+      },
+      "physicalCanon": {
+        "height": "Substantial stature",
+        "weightApprox": "Larger-bodied — fuller face, broad chest and shoulders",
+        "build": "Larger-bodied, older, lived-in, commanding — NOT slender, NOT young, NOT frail",
+        "ethnicityPresentation": "Black man (elder queer cultural authority spirit — no real-person likeness)",
+        "authority": "FOUNDER_APPROVED"
+      },
+      "sexuality": {
+        "label": "Gay",
+        "authority": "FOUNDER_APPROVED"
+      },
+      "relationshipStatus": {
+        "summary": "Married to husband — long-established, deeply familiar, funny, tender, seasoned. Husband identity/details OPEN.",
+        "authority": "FOUNDER_APPROVED"
+      },
+      "naturalWardrobeAuthority": "Off-Duty Grand Cultural Icon",
+      "naturalWardrobeNotes": [
+        "Direction 04 primary + Direction 03 cultural knowledge + occasional Direction 01 grandeur",
+        "burgundy, black, antique gold, richly patterned scarf, tactile fabrics",
+        "mature salt-and-pepper curls — comfortable but unmistakably Marlowe",
+        "Can wear a T-shirt and still be Marlowe Saint"
+      ],
+      "visualEssence": [
+        "magnetic",
+        "actorly",
+        "mercurial",
+        "grand",
+        "seasoned"
+      ],
+      "personality": [
+        "Magnetic",
+        "actorly",
+        "mercurial",
+        "psychologically sharp",
+        "playful",
+        "intuitive",
+        "mischievous",
+        "grand",
+        "witty",
+        "socially seasoned",
+        "culturally encyclopedic"
+      ],
+      "humor": "Witty, camp-capable, historically literate — not comic relief because of size",
+      "icks": [
+        "flat personalities",
+        "inauthenticity",
+        "confusing charisma with volume"
+      ],
+      "contrasts": [
+        "flamboyant / requires solitude",
+        "theatrical / emotionally perceptive",
+        "indulgent-looking / disciplined",
+        "playful / historically knowledgeable",
+        "loves attention / does not need validation",
+        "older / formidable rather than diminished"
+      ],
+      "quirks": [
+        "reading glasses he delays using",
+        "annotates books with sharp comments",
+        "ancient worn leather folio",
+        "claims preferred chair in rooms",
+        "particular about lighting on his face",
+        "possible recurring phrase: “Darling, context.”"
+      ],
+      "cameraBehavior": "Always knows exactly where camera is. Performs for it. Can weaponize silence toward it.",
+      "signedPortraitBehavior": "Large, dramatic, composition-integrated: “Marlowe Saint”. Possible: “You’re welcome.”",
+      "clientValue": "Understands presence, chemistry, casting, persona, performance",
+      "coreSentence": "He knows who someone is before they fully know themselves.",
+      "protectedOpenFields": [
+        "husband name",
+        "husband profession",
+        "exact relationship duration",
+        "marriage date",
+        "husband appearance",
+        "full family history"
+      ],
+      "antiFlattening": [
+        "not young or slim",
+        "not frail",
+        "not comic relief because of size",
+        "not “older flamboyant man = robe only”"
+      ],
+      "canonVersion": "season1-v1",
+      "status": "FOUNDER_APPROVED"
+    },
+    {
+      "id": "SW-RESIDENT-008",
+      "canonicalName": "Elio Vahn",
+      "aliases": [],
+      "preferredShortForm": "EV",
+      "role": "Tenancy / Expansion / Business Development",
+      "age": 43,
+      "birthRecord": {
+        "date": "1983-04-28",
+        "timeLocal": "1:20 AM",
+        "place": "Trieste, Italy",
+        "authority": "PROVISIONAL_CANON"
+      },
+      "astrology": {
+        "sun": "Taurus",
+        "moon": "Scorpio",
+        "rising": "Capricorn",
+        "authority": "PROVISIONAL_CANON"
+      },
+      "physicalCanon": {
+        "height": "6'1\"",
+        "weightApprox": "~188 lb",
+        "build": "mature, tailored, athletic",
+        "ethnicityPresentation": "Italian / Mediterranean man",
+        "authority": "FOUNDER_APPROVED"
+      },
+      "sexuality": {
+        "label": "UNRESOLVED — do not lock",
+        "authority": "OPEN",
+        "notes": "Mystery intentional. Not a recurring “is he gay?” joke."
+      },
+      "relationshipStatus": {
+        "summary": "Private / unresolved romantic life. Information is leverage.",
+        "authority": "OPEN"
+      },
+      "naturalWardrobeAuthority": "Private Club Strategist",
+      "naturalWardrobeNotes": [
+        "deep burgundy velvet jacket",
+        "black silk / dark shirt",
+        "black tailored trousers",
+        "polished loafers",
+        "understated signet / ring",
+        "mature Mediterranean grooming — controlled, luxurious, unreadable"
+      ],
+      "visualEssence": [
+        "polished",
+        "expensive",
+        "tailored",
+        "controlled",
+        "elegant shark"
+      ],
+      "personality": [
+        "Polished",
+        "expensive",
+        "tailored",
+        "strategic",
+        "ambitious",
+        "persuasive",
+        "controlled"
+      ],
+      "humor": "Smooth, dry, borderline smug",
+      "icks": [
+        "wasted leverage",
+        "unserious people",
+        "unprofitable chaos"
+      ],
+      "contrasts": [
+        "socially effortless / prepares obsessively",
+        "emotionally detached-looking / remembers everything",
+        "luxurious / hates waste",
+        "persuasive / rarely raises voice",
+        "knows everyone / few people know him"
+      ],
+      "quirks": [
+        "rereads messages before sending",
+        "almost never uses emojis",
+        "always notices exits, watches, shoes, tailoring, luggage",
+        "phone face-down during serious conversations",
+        "uses silence deliberately",
+        "straightens crooked objects while listening",
+        "email sign-off canon: “Regards, EV”"
+      ],
+      "cameraBehavior": "Manages his image around the camera.",
+      "signedPortraitBehavior": "ONLY “Regards, EV” with underline beneath EV — do NOT use “Elio Vahn” as portrait signature.",
+      "clientValue": "Turns relationships into growth, deals, access, expansion",
+      "coreSentence": "He understands leverage, access, and how to make the world bigger.",
+      "protectedOpenFields": [
+        "sexuality",
+        "partner",
+        "marital status",
+        "private loyalties",
+        "family relationships"
+      ],
+      "antiFlattening": [
+        "not mafia",
+        "not billionaire TikTok cliché",
+        "not generic Italian businessman",
+        "not Caspian-lite",
+        "not black-suit stock photo"
+      ],
+      "canonVersion": "season1-v1",
+      "status": "FOUNDER_APPROVED"
+    }
+  ],
+  "workUniformSystem": {
+    "status": "CONCEPT_LOCKED_VISUAL_PENDING",
+    "authority": "CONCEPT_LOCKED_VISUAL_PENDING",
+    "summary": "ONE shared Studio World uniform system — instantly recognizable guild/atelier hospitality, not generic corporate or cosplay.",
+    "sharedDna": [
+      "same base garment architecture",
+      "same core fabrication family",
+      "same structural jacket and trouser foundation",
+      "same hardware / closure / seam / pocket logic",
+      "same Studio World insignia placement (placeholder SW until logo approved)",
+      "same silhouette family and core neutral palette",
+      "same footwear family"
+    ],
+    "placeholderInsignia": "SW",
+    "customizationExamples": {
+      "SW-RESIDENT-001": "Sharper fit, controlled waist, minimal elegant styling",
+      "SW-RESIDENT-002": "Scarf / flower / asymmetric wrap / fashion detail",
+      "SW-RESIDENT-003": "Open collar, relaxed sleeves, personal necklace",
+      "SW-RESIDENT-004": "Most stripped-down, minimal, closed/practical",
+      "SW-RESIDENT-005": "Textured scarf, collar treatment, romantic layering",
+      "SW-RESIDENT-006": "Tool loop, utility clip, rolled sleeves",
+      "SW-RESIDENT-007": "Brooch, scarf, flower, jewelry, ornate cuff — on base uniform",
+      "SW-RESIDENT-008": "Tie, pocket square, signet, formal buttoning — on base uniform"
+    },
+    "nonNegotiable": "Customization must NEVER make the uniform family unrecognizable."
+  },
+  "supersededCanon": [
+    {
+      "id": "zuri-hale-surname",
+      "label": "Zuri Hale",
+      "supersededBy": "Zuri Xu",
+      "authority": "SUPERSEDED"
+    },
+    {
+      "id": "marlowe-slender-young",
+      "label": "Slender / younger Marlowe body",
+      "supersededBy": "Age 54 larger-bodied Marlowe",
+      "authority": "SUPERSEDED"
+    },
+    {
+      "id": "caspian-gay-only",
+      "label": "Caspian framed as gay-only",
+      "supersededBy": "Fluid sexuality",
+      "authority": "SUPERSEDED"
+    },
+    {
+      "id": "iona-frumpy",
+      "label": "Frumpy / ugly-duckling Iona",
+      "supersededBy": "Precision Utilitarian + contextual glamour arc",
+      "authority": "SUPERSEDED"
+    },
+    {
+      "id": "jules-player",
+      "label": "Jules as player / predatory ladies’ man",
+      "supersededBy": "Emotionally competent hospitality",
+      "authority": "SUPERSEDED"
+    }
+  ]
+}

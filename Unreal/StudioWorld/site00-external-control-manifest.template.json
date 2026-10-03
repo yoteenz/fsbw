@@ -1,0 +1,23 @@
+{
+  "_comment": "Copy to site00-external-control-manifest.local.json (gitignored). Register SITE00 Etta UE control project without committing secrets or absolute paths to shared branches.",
+  "site00Repo": "https://github.com/yoteenz/SITE00",
+  "site00InRepoCharacterPipelines": [
+    "shared/site00-studio-world-production/embodiedCharacterDiscovery",
+    "shared/site00-studio-world-production/characterVisualCasting",
+    "shared/site00-studio-world-production/founderCharacterCalibration"
+  ],
+  "externalControlProject": {
+    "uprojectAbsolutePath": "FILL_ON_FOUNDER_MACHINE",
+    "ueEngineVersion": "FILL e.g. 5.4.4",
+    "ettaTestMapPath": "FILL e.g. /Game/.../ETtaTestSandbox",
+    "ettaCharacterBlueprintPath": "FILL",
+    "metahumanAssetPath": "FILL",
+    "lastVerifiedDate": null,
+    "notes": "Historical calibration source — do not delete until FSBW parity PASS"
+  },
+  "fsbwCanonicalProject": {
+    "uprojectRelativePath": "Unreal/StudioWorld/StudioWorld.uproject",
+    "ettaTestMapTarget": "/Game/StudioWorld/Maps/ETtaTestSandbox",
+    "verticalSliceMapTarget": "/Game/StudioWorld/Maps/SW_VerticalSlice_01"
+  }
+}

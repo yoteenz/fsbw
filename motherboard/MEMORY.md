@@ -55034,3 +55034,27 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Branch / PR:** `cursor/studio-world-resident-life-os-foundation2` pushed; draft PR separate from #32. **Not merged, not deployed.** Vercel account blocked remains infra-only.
 
 - **Deferred:** Full simulation tick, offline reflection runtime, 3D movement, public Resident Workspace UI, Postgres-backed service reads (in-memory store for Foundation2).
+
+---
+
+## 2026-10-02 — P0 Studio World UE Composer Operator Migration Bootstrap1
+
+- **Context:** Sprint `P0.STUDIOWORLD.UE-COMPOSER-OPERATOR.MIGRATION-BOOTSTRAP1` — canonical fsbw home for Etta UE work, Composer-as-operator workflow, Etta test map + SW_VerticalSlice_01 greybox foundation. No merge/deploy/final world.
+
+- **Forensics:** No `.uproject` in fsbw or SITE00 git; Etta UE likely external to git. SITE00 `shared/site00-studio-world-production/` holds TS character calibration (reference). FSBW `studio-world-residents` — Etta embodiment NOT_STARTED.
+
+- **Shipped:** `Unreal/StudioWorld/`, migration audit + operator docs, `studio-world-ue` location/anchor contracts, proof matrix, MCP template. PR #36.
+
+- **Blocked on cloud:** No Unreal Editor — MCP/PIE/parity proofs require founder UE machine + manifest local path.
+
+---
+
+## 2026-10-03 — P0 Studio World Season 1 Core Ensemble Canon1
+
+- **Context:** Sprint `P0.STUDIOWORLD.SEASON1.CORE-ENSEMBLE-CANON1` — founder-approved Season 1 eight-resident bible ingested into fsbw as durable source (not chat-only).
+
+- **Shipped:** `season1-ensemble/` (8 resident canon modules, uniform system, superseded canon, validation), `season1-residents.ts` now derives identities from ensemble; Zuri **Xu** (Hale superseded); Marlowe 54 larger-bodied; Caspian fluid; EV sexuality OPEN; Noa Okinawan heritage + wife/two daughters; Iona glamour arc not makeover endpoint; work uniform CONCEPT_LOCKED_VISUAL_PENDING; Jules/Iona support edge; docs bible + `season1-ensemble-canonical.json`.
+
+- **Tests:** 73 resident vitest tests PASS including `studio-world-residents-ensemble-canon.test.ts`.
+
+- **Branch:** `cursor/studio-world-season1-core-ensemble-canon1-21dc`. Not merged/deployed.
