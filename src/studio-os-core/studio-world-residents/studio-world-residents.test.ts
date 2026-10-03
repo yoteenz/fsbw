@@ -120,7 +120,10 @@ describe('Studio World Resident System — Season 1', () => {
     expect(etta.fabricationStatus).not.toBe('WORLD_READY');
     expect(etta.fabricationStatus).not.toBe('UE_RECONSTRUCTION_APPROVED');
     expect(etta.embodimentTargets[0]?.status).toBe('NOT_STARTED');
-    expect(etta.embodimentTargets[0]?.referenceLinks).toEqual([]);
+    expect(etta.embodimentTargets[0]?.referenceLinks?.length).toBeGreaterThan(0);
+    expect(etta.embodimentTargets[0]?.referenceLinks?.[0]?.pathOrUrl).toContain(
+      '/studio-world/residents/season-1/'
+    );
   });
 
   it('internal QA route is debug-only, not public storefront', () => {

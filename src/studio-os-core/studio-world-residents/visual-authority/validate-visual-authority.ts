@@ -1,6 +1,9 @@
 import { SEASON1_ENSEMBLE_RESIDENTS } from '../season1-ensemble/residents';
 import { SEASON1_WORK_UNIFORM_SYSTEM } from '../season1-ensemble/uniform-system';
 import type { ResidentId } from '../types';
+import { existsSync } from 'fs';
+import { join } from 'path';
+import { SEASON1_INGESTED_VISUAL_ASSETS } from './season1-ingested-assets.generated';
 import {
   SEASON1_VISUAL_AUTHORITY_BUNDLES,
   SEASON1_VISUAL_AUTHORITY_RECORDS,
@@ -29,13 +32,20 @@ export function validateSeason1VisualAuthority(): string[] {
       errors.push(`${id}: natural habitat must be primary identity authority`);
     }
 
-    const glam = SEASON1_VISUAL_AUTHORITY_RECORDS.find(
-      (r) => r.residentId === id && r.authorityType === 'GLAMOUR_OR_ALTERNATE_MODE'
+    const alternates = SEASON1_VISUAL_AUTHORITY_RECORDS.filter(
+      (r) =>
+        r.residentId === id &&
+        (r.authorityType === 'GLAMOUR_OR_ALTERNATE_MODE' || r.authorityType === 'ALTERNATE_MODE')
     );
-    if (glam?.isPrimaryIdentityAuthority) {
-      errors.push(`${id}: glamour/alternate cannot be primary identity authority`);
+    for (const alt of alternates) {
+      if (alt.isPrimaryIdentityAuthority) {
+        errors.push(`${id}: glamour/alternate cannot be primary identity authority`);
+      }
+      if (alt.status === 'REFERENCE_ONLY' && alt.isPrimaryIdentityAuthority) {
+        errors.push(`${alt.id}: reference-only alternate cannot be default`);
+      }
     }
-    if (id === 'SW-RESIDENT-006' && glam && natural?.id === glam.id) {
+    if (id === 'SW-RESIDENT-006' && alternates.some((g) => natural?.id === g.id)) {
       errors.push('Iona: full-glam must not replace natural authority');
     }
 
@@ -98,10 +108,22 @@ export function validateSeason1VisualAuthority(): string[] {
       (r) => r.residentId === id && r.authorityType === 'NATURAL_HABITAT_FULL_BODY'
     );
     if (naturals.length !== 1) errors.push(`${id}: expected exactly one natural habitat authority`);
+    if (!naturals[0]?.assetPath) errors.push(`${id}: natural habitat must link ingested asset`);
     const signed = SEASON1_VISUAL_AUTHORITY_RECORDS.filter(
       (r) => r.residentId === id && r.authorityType === 'SIGNED_WALL_PORTRAIT'
     );
     if (signed.length !== 1) errors.push(`${id}: expected signed portrait authority slot`);
+  }
+
+  if (SEASON1_INGESTED_VISUAL_ASSETS.length !== 27) {
+    errors.push(`expected 27 ingested package assets, got ${SEASON1_INGESTED_VISUAL_ASSETS.length}`);
+  }
+  for (const asset of SEASON1_INGESTED_VISUAL_ASSETS) {
+    const abs = join(process.cwd(), asset.repoPath);
+    if (!existsSync(abs)) errors.push(`missing ingested asset file ${asset.repoPath}`);
+    if (asset.residentName.toLowerCase().includes('hale')) {
+      errors.push('ingested asset must not use Hale naming');
+    }
   }
 
   return errors;

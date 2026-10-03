@@ -55058,3 +55058,29 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Tests:** 73 resident vitest tests PASS including `studio-world-residents-ensemble-canon.test.ts`.
 
 - **Branch:** `cursor/studio-world-season1-core-ensemble-canon1-21dc`. Not merged/deployed.
+
+---
+
+## 2026-10-03 — P0 Studio World Season 1 Resident Visual Authority Ingest1
+
+- **Context:** Sprint `P0.STUDIOWORLD.SEASON1.RESIDENT-VISUAL-AUTHORITY.INGEST1` — bind founder-approved visual identity lanes to canonical residents (continuity sprint; no image regen).
+
+- **Shipped:** `src/studio-os-core/studio-world-residents/visual-authority/` (43 authority records, bundles, validation); identities expose `visualAuthorityRefs` + `primaryNaturalHabitatAuthorityId` + fabrication readiness flags; docs `docs/studio-world/residents/season-1/VISUAL_AUTHORITY_REGISTRY.md` + JSON export.
+
+- **Locks:** Natural habitat = primary identity; signed vs competency vs natural remain separate; Iona glam = alternate mode only; Marlowe larger-body on natural authority; work uniform stays `CONCEPT_LOCKED_VISUAL_PENDING`; angle packs `PROVISIONAL` until repo-verified assets.
+
+- **Tests:** 80/80 resident vitest tests PASS including `studio-world-residents-visual-authority.test.ts`.
+
+- **Branch:** `cursor/studio-world-season1-resident-visual-authority-ingest1-21dc`. Not merged/deployed.
+
+---
+
+## 2026-10-03 — P0 Studio World Season 1 Visual Authority Ingest2
+
+- **Context:** Sprint `P0.STUDIOWORLD.SEASON1.VISUAL-AUTHORITY.INGEST2` — bind founder-approved Cursor-light visual package (`STUDIO_WORLD_SEASON1_VISUAL_AUTHORITY_CURSOR_LIGHT_v1.zip`) to Season 1 resident canon.
+
+- **Shipped:** 27 JPEGs under `public/studio-world/residents/season-1/` (normalized names + `sourceFilename` traceability); `visual-authority-package-manifest.json`; generated `season1-ingested-assets.generated.ts`; visual authority records linked to assets; Noa 3 close-ups retained; Iona glam + Marlowe alternate isolated; uniform candidates stay `CONCEPT_LOCKED_VISUAL_PENDING`; `scripts/ingest-season1-visual-authority-package.mjs` for re-ingest.
+
+- **Tests:** 83/83 resident vitest tests PASS; on-disk asset validation in `validateSeason1VisualAuthority()`.
+
+- **Branch:** `cursor/studio-world-season1-visual-authority-ingest2-21dc`. Not merged/deployed.

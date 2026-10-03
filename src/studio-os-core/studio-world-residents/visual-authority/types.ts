@@ -6,7 +6,10 @@ export type VisualAuthorityType =
   | 'NATURAL_HABITAT_FULL_BODY'
   | 'ROLE_COMPETENCY_FULL_BODY'
   | 'IDENTITY_ANGLE_PACK'
+  | 'IDENTITY_CLOSEUP'
+  | 'IDENTITY_ANGLE_REFERENCE'
   | 'WORK_UNIFORM_REFERENCE'
+  | 'ALTERNATE_MODE'
   | 'GLAMOUR_OR_ALTERNATE_MODE'
   | 'SUPERSEDED_REFERENCE';
 
@@ -49,6 +52,8 @@ export type ResidentVisualAuthorityRecord = {
   prohibitedDrift: string[];
   notes?: string;
   source: string;
+  sourcePackage?: string;
+  sourceFilename?: string;
   founderApproved: boolean;
   supersedes?: string[];
   supersededBy?: string;
