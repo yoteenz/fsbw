@@ -1,0 +1,48 @@
+{
+  "cases": [
+    {
+      "actor": "CUSTOMER_A",
+      "table": "aio_profiles",
+      "op": "UPDATE",
+      "field": "first_name",
+      "expected": "ALLOW"
+    },
+    {
+      "actor": "CUSTOMER_A",
+      "table": "aio_service_requests",
+      "op": "UPDATE",
+      "scope": "customer_b",
+      "expected": "DENY"
+    },
+    {
+      "actor": "CUSTOMER_A",
+      "table": "aio_service_requests",
+      "op": "UPDATE",
+      "field": "internal_verification_status",
+      "expected": "DENY"
+    },
+    {
+      "actor": "DRIVER_A",
+      "table": "aio_driver_credentials",
+      "op": "UPDATE",
+      "field": "staff_approved",
+      "expected": "DENY"
+    },
+    {
+      "actor": "PROVIDER_A",
+      "table": "aio_service_providers",
+      "op": "UPDATE",
+      "field": "review_status",
+      "expected": "DENY"
+    },
+    {
+      "actor": "STAFF_GENERAL",
+      "table": "aio_internal_staff",
+      "op": "UPDATE",
+      "field": "role",
+      "scope": "self",
+      "expected": "DENY"
+    }
+  ],
+  "note": "Write proofs expand in CI as table-specific fixtures are seeded"
+}

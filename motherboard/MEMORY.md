@@ -54985,6 +54985,15 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 ---
 
+## 2026-10-05 — AIO Wave 1 identity / auth / RLS / tenant safety (security foundation)
+
+- **Context:** Sprint **P0.AIO.WAVE-1-IDENTITY-AUTH-ROLE-RLS-TENANT-SAFETY** after Wave 0 — prove tenant isolation at database/RLS layer, not only route guards; no visual redesign, zero paid generation.
+- **Outcomes:** Canonical identity/membership/session docs; production RLS snapshot (**132** `aio_*` tables, **47** zero-policy); live test harness (`src/security/live/`, `runAs` identities, `sessionContract.ts`, re-export from `authService`); extended `aio-provision-rls-test-sessions.mjs` + CI **Wave 1 security live stage** (`aio-security-live-stage.sh`); artifacts under `docs/structural-completion/wave1/` (24 files); inbox child route meta fix in `build-wave0-runtime.mjs` for validator regression.
+- **Status:** **COMPLETE_WITH_BLOCKED_LIVE_PROOFS** — role/customer/driver/provider matrix **BLOCKED** until GitHub `aio-production` secrets (`AIO_RLS_TEST_*_EMAIL/PASSWORD` or JWTs per `AIO_SECURITY_CI_SECRET_REQUIREMENTS.md`); `AUTH_RLS_TENANT_SAFETY` remains **PARTIAL** until CI live proofs pass.
+- **Human action:** Provision test Auth users in AIO Supabase `nnnljnhtmseagotvgxxt`; set secrets listed in wave1 CI doc; re-run `aio-supabase-production-validate` workflow.
+
+---
+
 ## 2026-10-05 — AIO Wave 0 canonical graph + route meta (runtime binding)
 
 - **Context:** After forensic merge (#40), founder sprint **P0.AIO.WAVE-0-CANONICAL-GRAPH-AND-ROUTE-META** — bind F01–F18 graph to executable runtime (no visual redesign, zero paid generation).

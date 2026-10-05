@@ -1,0 +1,47 @@
+{
+  "version": "wave1.0",
+  "membership_table": "aio_organization_memberships",
+  "fields": {
+    "user_id": {
+      "type": "uuid",
+      "required": true,
+      "source": "auth.users.id"
+    },
+    "organization_id": {
+      "type": "uuid",
+      "required": true,
+      "fk": "aio_organizations.id"
+    },
+    "membership_role": {
+      "column": "role",
+      "enum": [
+        "organization_owner",
+        "organization_admin",
+        "organization_member",
+        "organization_viewer"
+      ]
+    },
+    "status": {
+      "enum": [
+        "active",
+        "invited",
+        "revoked"
+      ],
+      "note": "revoked_at semantics via status"
+    },
+    "permissions": {
+      "projection": "client derives from role + internal staff; server enforces via RLS"
+    },
+    "created_at": {
+      "type": "timestamptz"
+    },
+    "updated_at": {
+      "type": "timestamptz"
+    }
+  },
+  "rules": [
+    "NO_CROSS_ORG_FROM_CLIENT_ORG_ID",
+    "MEMBERSHIP_REQUIRED_FOR_ORG_SCOPED_READ",
+    "INTERNAL_STAFF_SEPARATE_FROM_MEMBERSHIP"
+  ]
+}

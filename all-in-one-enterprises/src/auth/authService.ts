@@ -2,6 +2,9 @@ import type { Session, User } from '@supabase/supabase-js';
 import type { AioInternalRole, AioMembershipRole, AioOrgType } from '../data/supabase/database.types';
 import { getAioSupabase } from '../data/supabase/client';
 
+export { toSessionContract, resolvePortalProjection, mapSupabaseErrorToSecurityCode } from '../security/sessionContract';
+export type { AioSessionContract, AuthSecurityErrorCode } from '../security/sessionContract';
+
 export type SignUpAccountType = 'carrier' | 'fleet' | 'shipper' | 'unsure';
 
 export interface AioAuthSession {

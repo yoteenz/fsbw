@@ -1,0 +1,498 @@
+{
+  "generated_at": "2026-10-05T22:34:50.055Z",
+  "route_meta_coverage": {
+    "total_route_declarations_audited": 310,
+    "total_active_material_routes": 304,
+    "total_meta_entries": 308,
+    "active_material_with_meta": 304,
+    "active_material_route_meta_coverage_pct": 100,
+    "unmapped_active_product_routes": [],
+    "families_in_runtime": 18,
+    "role_projections_in_runtime": 4
+  },
+  "methodology": "Compare Wave 0 route meta guards vs RLS inventory + live matrix",
+  "sample_routes": [
+    {
+      "route": "/login",
+      "runtime_guard": "ROUTE_META",
+      "backend_proof": "LIVE_MATRIX_OR_INVENTORY",
+      "mismatch": "NONE_RECORDED"
+    },
+    {
+      "route": "/signup",
+      "runtime_guard": "ROUTE_META",
+      "backend_proof": "LIVE_MATRIX_OR_INVENTORY",
+      "mismatch": "NONE_RECORDED"
+    },
+    {
+      "route": "/forgot-password",
+      "runtime_guard": "ROUTE_META",
+      "backend_proof": "LIVE_MATRIX_OR_INVENTORY",
+      "mismatch": "NONE_RECORDED"
+    },
+    {
+      "route": "/reset-password",
+      "runtime_guard": "ROUTE_META",
+      "backend_proof": "LIVE_MATRIX_OR_INVENTORY",
+      "mismatch": "NONE_RECORDED"
+    },
+    {
+      "route": "/verify-email",
+      "runtime_guard": "ROUTE_META",
+      "backend_proof": "LIVE_MATRIX_OR_INVENTORY",
+      "mismatch": "NONE_RECORDED"
+    },
+    {
+      "route": "/portal/onboarding",
+      "runtime_guard": "ROUTE_META",
+      "backend_proof": "LIVE_MATRIX_OR_INVENTORY",
+      "mismatch": "NONE_RECORDED"
+    },
+    {
+      "route": "/",
+      "runtime_guard": "ROUTE_META",
+      "backend_proof": "LIVE_MATRIX_OR_INVENTORY",
+      "mismatch": "NONE_RECORDED"
+    },
+    {
+      "route": "/portal/services",
+      "runtime_guard": "ROUTE_META",
+      "backend_proof": "LIVE_MATRIX_OR_INVENTORY",
+      "mismatch": "NONE_RECORDED"
+    },
+    {
+      "route": "/portal/services/find",
+      "runtime_guard": "ROUTE_META",
+      "backend_proof": "LIVE_MATRIX_OR_INVENTORY",
+      "mismatch": "NONE_RECORDED"
+    },
+    {
+      "route": "/portal/services/factoring",
+      "runtime_guard": "ROUTE_META",
+      "backend_proof": "LIVE_MATRIX_OR_INVENTORY",
+      "mismatch": "NONE_RECORDED"
+    },
+    {
+      "route": "/portal/services/bookkeeping",
+      "runtime_guard": "ROUTE_META",
+      "backend_proof": "LIVE_MATRIX_OR_INVENTORY",
+      "mismatch": "NONE_RECORDED"
+    },
+    {
+      "route": "/portal/services/fleetcare",
+      "runtime_guard": "ROUTE_META",
+      "backend_proof": "LIVE_MATRIX_OR_INVENTORY",
+      "mismatch": "NONE_RECORDED"
+    },
+    {
+      "route": "/portal/services/fleetcare/plans",
+      "runtime_guard": "ROUTE_META",
+      "backend_proof": "LIVE_MATRIX_OR_INVENTORY",
+      "mismatch": "NONE_RECORDED"
+    },
+    {
+      "route": "/portal/services/driverlink",
+      "runtime_guard": "ROUTE_META",
+      "backend_proof": "LIVE_MATRIX_OR_INVENTORY",
+      "mismatch": "NONE_RECORDED"
+    },
+    {
+      "route": "/portal/driverlink/signup",
+      "runtime_guard": "ROUTE_META",
+      "backend_proof": "LIVE_MATRIX_OR_INVENTORY",
+      "mismatch": "NONE_RECORDED"
+    },
+    {
+      "route": "/portal/fleetcare/providers/join",
+      "runtime_guard": "ROUTE_META",
+      "backend_proof": "LIVE_MATRIX_OR_INVENTORY",
+      "mismatch": "NONE_RECORDED"
+    },
+    {
+      "route": "/portal/fleetcare/providers/apply",
+      "runtime_guard": "ROUTE_META",
+      "backend_proof": "LIVE_MATRIX_OR_INVENTORY",
+      "mismatch": "NONE_RECORDED"
+    },
+    {
+      "route": "/portal/services/bookkeeping/assessment",
+      "runtime_guard": "ROUTE_META",
+      "backend_proof": "LIVE_MATRIX_OR_INVENTORY",
+      "mismatch": "NONE_RECORDED"
+    },
+    {
+      "route": "/portal/services/bookkeeping/recommendation",
+      "runtime_guard": "ROUTE_META",
+      "backend_proof": "LIVE_MATRIX_OR_INVENTORY",
+      "mismatch": "NONE_RECORDED"
+    },
+    {
+      "route": "/portal/services/permitting",
+      "runtime_guard": "ROUTE_META",
+      "backend_proof": "LIVE_MATRIX_OR_INVENTORY",
+      "mismatch": "NONE_RECORDED"
+    },
+    {
+      "route": "/portal/services/business-formation",
+      "runtime_guard": "ROUTE_META",
+      "backend_proof": "LIVE_MATRIX_OR_INVENTORY",
+      "mismatch": "NONE_RECORDED"
+    },
+    {
+      "route": "/portal/services/insurance",
+      "runtime_guard": "ROUTE_META",
+      "backend_proof": "LIVE_MATRIX_OR_INVENTORY",
+      "mismatch": "NONE_RECORDED"
+    },
+    {
+      "route": "/portal/services/dispatching",
+      "runtime_guard": "ROUTE_META",
+      "backend_proof": "LIVE_MATRIX_OR_INVENTORY",
+      "mismatch": "NONE_RECORDED"
+    },
+    {
+      "route": "/portal/services/brokerage",
+      "runtime_guard": "ROUTE_META",
+      "backend_proof": "LIVE_MATRIX_OR_INVENTORY",
+      "mismatch": "NONE_RECORDED"
+    },
+    {
+      "route": "/portal/services/:serviceSlug",
+      "runtime_guard": "ROUTE_META",
+      "backend_proof": "LIVE_MATRIX_OR_INVENTORY",
+      "mismatch": "NONE_RECORDED"
+    },
+    {
+      "route": "/portal/roadmap/results",
+      "runtime_guard": "ROUTE_META",
+      "backend_proof": "LIVE_MATRIX_OR_INVENTORY",
+      "mismatch": "NONE_RECORDED"
+    },
+    {
+      "route": "/service-plan",
+      "runtime_guard": "ROUTE_META",
+      "backend_proof": "LIVE_MATRIX_OR_INVENTORY",
+      "mismatch": "NONE_RECORDED"
+    },
+    {
+      "route": "/request/submit",
+      "runtime_guard": "ROUTE_META",
+      "backend_proof": "LIVE_MATRIX_OR_INVENTORY",
+      "mismatch": "NONE_RECORDED"
+    },
+    {
+      "route": "/request/confirmation/:requestId",
+      "runtime_guard": "ROUTE_META",
+      "backend_proof": "LIVE_MATRIX_OR_INVENTORY",
+      "mismatch": "NONE_RECORDED"
+    },
+    {
+      "route": "/about",
+      "runtime_guard": "ROUTE_META",
+      "backend_proof": "LIVE_MATRIX_OR_INVENTORY",
+      "mismatch": "NONE_RECORDED"
+    },
+    {
+      "route": "/contact",
+      "runtime_guard": "ROUTE_META",
+      "backend_proof": "LIVE_MATRIX_OR_INVENTORY",
+      "mismatch": "NONE_RECORDED"
+    },
+    {
+      "route": "/request-callback",
+      "runtime_guard": "ROUTE_META",
+      "backend_proof": "LIVE_MATRIX_OR_INVENTORY",
+      "mismatch": "NONE_RECORDED"
+    },
+    {
+      "route": "/quote/:secureToken",
+      "runtime_guard": "ROUTE_META",
+      "backend_proof": "LIVE_MATRIX_OR_INVENTORY",
+      "mismatch": "NONE_RECORDED"
+    },
+    {
+      "route": "/schedule",
+      "runtime_guard": "ROUTE_META",
+      "backend_proof": "LIVE_MATRIX_OR_INVENTORY",
+      "mismatch": "NONE_RECORDED"
+    },
+    {
+      "route": "/portal/roadmap",
+      "runtime_guard": "ROUTE_META",
+      "backend_proof": "LIVE_MATRIX_OR_INVENTORY",
+      "mismatch": "NONE_RECORDED"
+    },
+    {
+      "route": "/portal/road-ready",
+      "runtime_guard": "ROUTE_META",
+      "backend_proof": "LIVE_MATRIX_OR_INVENTORY",
+      "mismatch": "NONE_RECORDED"
+    },
+    {
+      "route": "/start-your-business",
+      "runtime_guard": "ROUTE_META",
+      "backend_proof": "LIVE_MATRIX_OR_INVENTORY",
+      "mismatch": "NONE_RECORDED"
+    },
+    {
+      "route": "/start-your-business/build",
+      "runtime_guard": "ROUTE_META",
+      "backend_proof": "LIVE_MATRIX_OR_INVENTORY",
+      "mismatch": "NONE_RECORDED"
+    },
+    {
+      "route": "/start-your-business/register",
+      "runtime_guard": "ROUTE_META",
+      "backend_proof": "LIVE_MATRIX_OR_INVENTORY",
+      "mismatch": "NONE_RECORDED"
+    },
+    {
+      "route": "/start-your-business/activate",
+      "runtime_guard": "ROUTE_META",
+      "backend_proof": "LIVE_MATRIX_OR_INVENTORY",
+      "mismatch": "NONE_RECORDED"
+    },
+    {
+      "route": "/start-your-business/roll",
+      "runtime_guard": "ROUTE_META",
+      "backend_proof": "LIVE_MATRIX_OR_INVENTORY",
+      "mismatch": "NONE_RECORDED"
+    },
+    {
+      "route": "/client-portal",
+      "runtime_guard": "ROUTE_META",
+      "backend_proof": "LIVE_MATRIX_OR_INVENTORY",
+      "mismatch": "NONE_RECORDED"
+    },
+    {
+      "route": "/debug/icon-library",
+      "runtime_guard": "ROUTE_META",
+      "backend_proof": "LIVE_MATRIX_OR_INVENTORY",
+      "mismatch": "NONE_RECORDED"
+    },
+    {
+      "route": "/get-started",
+      "runtime_guard": "ROUTE_META",
+      "backend_proof": "LIVE_MATRIX_OR_INVENTORY",
+      "mismatch": "NONE_RECORDED"
+    },
+    {
+      "route": "/portal",
+      "runtime_guard": "ROUTE_META",
+      "backend_proof": "LIVE_MATRIX_OR_INVENTORY",
+      "mismatch": "NONE_RECORDED"
+    },
+    {
+      "route": "/",
+      "runtime_guard": "ROUTE_META",
+      "backend_proof": "LIVE_MATRIX_OR_INVENTORY",
+      "mismatch": "NONE_RECORDED"
+    },
+    {
+      "route": "/portal/business",
+      "runtime_guard": "ROUTE_META",
+      "backend_proof": "LIVE_MATRIX_OR_INVENTORY",
+      "mismatch": "NONE_RECORDED"
+    },
+    {
+      "route": "/portal/business/summary",
+      "runtime_guard": "ROUTE_META",
+      "backend_proof": "LIVE_MATRIX_OR_INVENTORY",
+      "mismatch": "NONE_RECORDED"
+    },
+    {
+      "route": "/portal/operations",
+      "runtime_guard": "ROUTE_META",
+      "backend_proof": "LIVE_MATRIX_OR_INVENTORY",
+      "mismatch": "NONE_RECORDED"
+    },
+    {
+      "route": "/portal/money",
+      "runtime_guard": "ROUTE_META",
+      "backend_proof": "LIVE_MATRIX_OR_INVENTORY",
+      "mismatch": "NONE_RECORDED"
+    },
+    {
+      "route": "/portal/documents",
+      "runtime_guard": "ROUTE_META",
+      "backend_proof": "LIVE_MATRIX_OR_INVENTORY",
+      "mismatch": "NONE_RECORDED"
+    },
+    {
+      "route": "/portal/communication",
+      "runtime_guard": "ROUTE_META",
+      "backend_proof": "LIVE_MATRIX_OR_INVENTORY",
+      "mismatch": "NONE_RECORDED"
+    },
+    {
+      "route": "/portal/inbox",
+      "runtime_guard": "ROUTE_META",
+      "backend_proof": "LIVE_MATRIX_OR_INVENTORY",
+      "mismatch": "NONE_RECORDED"
+    },
+    {
+      "route": "/portal/messages",
+      "runtime_guard": "ROUTE_META",
+      "backend_proof": "LIVE_MATRIX_OR_INVENTORY",
+      "mismatch": "NONE_RECORDED"
+    },
+    {
+      "route": "/portal/messages/:conversationId",
+      "runtime_guard": "ROUTE_META",
+      "backend_proof": "LIVE_MATRIX_OR_INVENTORY",
+      "mismatch": "NONE_RECORDED"
+    },
+    {
+      "route": "/portal/notifications",
+      "runtime_guard": "ROUTE_META",
+      "backend_proof": "LIVE_MATRIX_OR_INVENTORY",
+      "mismatch": "NONE_RECORDED"
+    },
+    {
+      "route": "/portal/appointments",
+      "runtime_guard": "ROUTE_META",
+      "backend_proof": "LIVE_MATRIX_OR_INVENTORY",
+      "mismatch": "NONE_RECORDED"
+    },
+    {
+      "route": "/portal/appointments/:appointmentId",
+      "runtime_guard": "ROUTE_META",
+      "backend_proof": "LIVE_MATRIX_OR_INVENTORY",
+      "mismatch": "NONE_RECORDED"
+    },
+    {
+      "route": "/portal/messages/:conversationId",
+      "runtime_guard": "ROUTE_META",
+      "backend_proof": "LIVE_MATRIX_OR_INVENTORY",
+      "mismatch": "NONE_RECORDED"
+    },
+    {
+      "route": "/portal/appointments/:appointmentId",
+      "runtime_guard": "ROUTE_META",
+      "backend_proof": "LIVE_MATRIX_OR_INVENTORY",
+      "mismatch": "NONE_RECORDED"
+    },
+    {
+      "route": "/portal/requests",
+      "runtime_guard": "ROUTE_META",
+      "backend_proof": "LIVE_MATRIX_OR_INVENTORY",
+      "mismatch": "NONE_RECORDED"
+    },
+    {
+      "route": "/portal/services",
+      "runtime_guard": "ROUTE_META",
+      "backend_proof": "LIVE_MATRIX_OR_INVENTORY",
+      "mismatch": "NONE_RECORDED"
+    },
+    {
+      "route": "/portal/activity",
+      "runtime_guard": "ROUTE_META",
+      "backend_proof": "LIVE_MATRIX_OR_INVENTORY",
+      "mismatch": "NONE_RECORDED"
+    },
+    {
+      "route": "/portal/team",
+      "runtime_guard": "ROUTE_META",
+      "backend_proof": "LIVE_MATRIX_OR_INVENTORY",
+      "mismatch": "NONE_RECORDED"
+    },
+    {
+      "route": "/portal/search",
+      "runtime_guard": "ROUTE_META",
+      "backend_proof": "LIVE_MATRIX_OR_INVENTORY",
+      "mismatch": "NONE_RECORDED"
+    },
+    {
+      "route": "/portal/onboarding",
+      "runtime_guard": "ROUTE_META",
+      "backend_proof": "LIVE_MATRIX_OR_INVENTORY",
+      "mismatch": "NONE_RECORDED"
+    },
+    {
+      "route": "/portal/road-ready",
+      "runtime_guard": "ROUTE_META",
+      "backend_proof": "LIVE_MATRIX_OR_INVENTORY",
+      "mismatch": "NONE_RECORDED"
+    },
+    {
+      "route": "/portal/fleet",
+      "runtime_guard": "ROUTE_META",
+      "backend_proof": "LIVE_MATRIX_OR_INVENTORY",
+      "mismatch": "NONE_RECORDED"
+    },
+    {
+      "route": "/portal/fleet/vehicles/:vehicleId",
+      "runtime_guard": "ROUTE_META",
+      "backend_proof": "LIVE_MATRIX_OR_INVENTORY",
+      "mismatch": "NONE_RECORDED"
+    },
+    {
+      "route": "/portal/vault",
+      "runtime_guard": "ROUTE_META",
+      "backend_proof": "LIVE_MATRIX_OR_INVENTORY",
+      "mismatch": "NONE_RECORDED"
+    },
+    {
+      "route": "/portal/vault/:documentId",
+      "runtime_guard": "ROUTE_META",
+      "backend_proof": "LIVE_MATRIX_OR_INVENTORY",
+      "mismatch": "NONE_RECORDED"
+    },
+    {
+      "route": "/portal/calendar",
+      "runtime_guard": "ROUTE_META",
+      "backend_proof": "LIVE_MATRIX_OR_INVENTORY",
+      "mismatch": "NONE_RECORDED"
+    },
+    {
+      "route": "/portal/renewals",
+      "runtime_guard": "ROUTE_META",
+      "backend_proof": "LIVE_MATRIX_OR_INVENTORY",
+      "mismatch": "NONE_RECORDED"
+    },
+    {
+      "route": "/portal/settings/notifications",
+      "runtime_guard": "ROUTE_META",
+      "backend_proof": "LIVE_MATRIX_OR_INVENTORY",
+      "mismatch": "NONE_RECORDED"
+    },
+    {
+      "route": "/portal/quotes",
+      "runtime_guard": "ROUTE_META",
+      "backend_proof": "LIVE_MATRIX_OR_INVENTORY",
+      "mismatch": "NONE_RECORDED"
+    },
+    {
+      "route": "/portal/quotes/:quoteId",
+      "runtime_guard": "ROUTE_META",
+      "backend_proof": "LIVE_MATRIX_OR_INVENTORY",
+      "mismatch": "NONE_RECORDED"
+    },
+    {
+      "route": "/portal/billing",
+      "runtime_guard": "ROUTE_META",
+      "backend_proof": "LIVE_MATRIX_OR_INVENTORY",
+      "mismatch": "NONE_RECORDED"
+    },
+    {
+      "route": "/portal/billing/invoices/:invoiceId",
+      "runtime_guard": "ROUTE_META",
+      "backend_proof": "LIVE_MATRIX_OR_INVENTORY",
+      "mismatch": "NONE_RECORDED"
+    },
+    {
+      "route": "/portal/billing/pay/:invoiceId",
+      "runtime_guard": "ROUTE_META",
+      "backend_proof": "LIVE_MATRIX_OR_INVENTORY",
+      "mismatch": "NONE_RECORDED"
+    },
+    {
+      "route": "/portal/billing/receipts/:receiptId",
+      "runtime_guard": "ROUTE_META",
+      "backend_proof": "LIVE_MATRIX_OR_INVENTORY",
+      "mismatch": "NONE_RECORDED"
+    }
+  ],
+  "runtime_denies_backend_allows_count": 0,
+  "note": "Full parity requires live JWT matrix PASS; zero critical mismatches recorded in Wave 1 harness"
+}

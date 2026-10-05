@@ -1,6 +1,6 @@
 # AIO Route Meta Registry (Wave 0)
 
-Single registry: `src/product-graph/generated/routeMetaRegistry.json` (305 entries).
+Single registry: `src/product-graph/generated/routeMetaRegistry.json` (308 entries).
 
 Drives: guard expectations, container membership, nav visibility hooks, legacy alias metadata.
 

@@ -1,0 +1,94 @@
+{
+  "matrix": [
+    {
+      "actor": "ANON",
+      "resource": "aio_service_requests",
+      "op": "SELECT",
+      "expected": "DENY"
+    },
+    {
+      "actor": "CUSTOMER_A",
+      "resource": "aio_service_requests",
+      "op": "SELECT",
+      "scope": "own_org",
+      "expected": "ALLOW"
+    },
+    {
+      "actor": "CUSTOMER_A",
+      "resource": "aio_service_requests",
+      "op": "SELECT",
+      "scope": "customer_b_org",
+      "expected": "DENY"
+    },
+    {
+      "actor": "SHIPPER_A",
+      "resource": "aio_shipment_requests",
+      "op": "SELECT",
+      "scope": "own",
+      "expected": "ALLOW"
+    },
+    {
+      "actor": "SHIPPER_A",
+      "resource": "aio_shipment_requests",
+      "op": "SELECT",
+      "scope": "shipper_b",
+      "expected": "DENY"
+    },
+    {
+      "actor": "SHIPPER_A",
+      "resource": "aio_brokerage_load_financials",
+      "op": "SELECT",
+      "field": "carrier_rate_minor",
+      "expected": "DENY"
+    },
+    {
+      "actor": "CARRIER_A",
+      "resource": "aio_brokerage_load_financials",
+      "op": "SELECT",
+      "field": "shipper_rate_minor",
+      "expected": "DENY"
+    },
+    {
+      "actor": "DRIVER_A",
+      "resource": "aio_driver_profiles",
+      "op": "SELECT",
+      "scope": "own",
+      "expected": "ALLOW"
+    },
+    {
+      "actor": "DRIVER_A",
+      "resource": "aio_driver_profiles",
+      "op": "SELECT",
+      "scope": "driver_b",
+      "expected": "DENY"
+    },
+    {
+      "actor": "PROVIDER_A",
+      "resource": "aio_fleetcare_tickets",
+      "op": "SELECT",
+      "scope": "own",
+      "expected": "ALLOW"
+    },
+    {
+      "actor": "PROVIDER_A",
+      "resource": "aio_fleetcare_tickets",
+      "op": "SELECT",
+      "scope": "provider_b",
+      "expected": "DENY"
+    },
+    {
+      "actor": "SHIPPER_A",
+      "resource": "aio_internal_staff",
+      "op": "SELECT",
+      "expected": "DENY"
+    },
+    {
+      "actor": "STAFF_GENERAL",
+      "resource": "aio_user_roles",
+      "op": "UPDATE",
+      "scope": "self_elevate_admin",
+      "expected": "DENY"
+    }
+  ],
+  "live_test_file": "src/security/live/wave1TenantIsolation.live.test.ts"
+}

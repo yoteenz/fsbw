@@ -1,0 +1,82 @@
+{
+  "tests": [
+    {
+      "actor": "ANON",
+      "table": "aio_service_requests",
+      "op": "SELECT",
+      "expected": "DENY"
+    },
+    {
+      "actor": "ANON",
+      "table": "aio_documents",
+      "op": "SELECT",
+      "expected": "DENY"
+    },
+    {
+      "actor": "ANON",
+      "table": "aio_invoices",
+      "op": "SELECT",
+      "expected": "DENY"
+    },
+    {
+      "actor": "ANON",
+      "table": "aio_messages",
+      "op": "SELECT",
+      "expected": "DENY"
+    },
+    {
+      "actor": "ANON",
+      "table": "aio_appointments",
+      "op": "SELECT",
+      "expected": "DENY"
+    },
+    {
+      "actor": "ANON",
+      "table": "aio_road_ready_profiles",
+      "op": "SELECT",
+      "expected": "DENY"
+    },
+    {
+      "actor": "ANON",
+      "table": "aio_insurance_cases",
+      "op": "SELECT",
+      "expected": "DENY"
+    },
+    {
+      "actor": "ANON",
+      "table": "aio_factoring_cases",
+      "op": "SELECT",
+      "expected": "DENY"
+    },
+    {
+      "actor": "ANON",
+      "table": "aio_internal_staff",
+      "op": "SELECT",
+      "expected": "DENY"
+    },
+    {
+      "actor": "ANON",
+      "table": "aio_crm_notes",
+      "op": "SELECT",
+      "expected": "DENY"
+    },
+    {
+      "actor": "ANON",
+      "table": "aio_internal_notes",
+      "op": "SELECT",
+      "expected": "DENY"
+    },
+    {
+      "actor": "ANON",
+      "table": "aio_brokerage_load_financials",
+      "op": "SELECT",
+      "expected": "DENY"
+    },
+    {
+      "actor": "ANON",
+      "table": "aio_brokerage_quote_pricing_drafts",
+      "op": "SELECT",
+      "expected": "DENY"
+    }
+  ]
+}

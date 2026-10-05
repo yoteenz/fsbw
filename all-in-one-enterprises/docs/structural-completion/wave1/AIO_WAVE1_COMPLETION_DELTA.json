@@ -1,0 +1,22 @@
+{
+  "sprint": "P0.AIO.WAVE-1-IDENTITY-AUTH-ROLE-RLS-TENANT-SAFETY",
+  "auth_rls_tenant_safety_before": "PARTIAL",
+  "auth_rls_tenant_safety_after": "PARTIAL",
+  "tenant_resource_scope_before": "PARTIAL",
+  "tenant_resource_scope_after": "PARTIAL",
+  "live_proofs_status": "BLOCKED_UNTIL_CI_SECRETS",
+  "note": "Harness + anon tests ready; role matrix BLOCKED without AIO_RLS_TEST_* in aio-production",
+  "functional_completion_before": 64,
+  "functional_completion_after": 65,
+  "launch_readiness_before": 45,
+  "launch_readiness_after": 48,
+  "deliverables": {
+    "identity_model": true,
+    "session_contract": true,
+    "live_harness": true,
+    "rls_inventory": true,
+    "ci_secret_docs": true
+  },
+  "tables_audited": 132,
+  "missing_policy_tables": 40
+}

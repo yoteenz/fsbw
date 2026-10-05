@@ -2,7 +2,7 @@
 /**
  * Obtain short-lived role JWTs for live RLS validation via Supabase Auth sign-in.
  * Uses email/password GitHub secrets — never prints tokens to stdout.
- * Writes AIO_RLS_TEST_*_JWT and AIO_RLS_TEST_SHIPPER_A_ORG to GITHUB_ENV when present.
+ * Writes AIO_RLS_TEST_*_JWT and org env vars to GITHUB_ENV when present.
  */
 import { appendFileSync } from 'node:fs';
 import { createClient } from '@supabase/supabase-js';
@@ -12,6 +12,18 @@ const anonKey = process.env.AIO_STAGING_SUPABASE_ANON_KEY ?? process.env.VITE_AI
 
 /** @type {Array<{ envJwt: string; emailKey: string; passwordKey: string; orgEnv?: string }>} */
 const ROLES = [
+  {
+    envJwt: 'AIO_RLS_TEST_CUSTOMER_A_JWT',
+    emailKey: 'AIO_RLS_TEST_CUSTOMER_A_EMAIL',
+    passwordKey: 'AIO_RLS_TEST_CUSTOMER_A_PASSWORD',
+    orgEnv: 'AIO_RLS_TEST_CUSTOMER_A_ORG',
+  },
+  {
+    envJwt: 'AIO_RLS_TEST_CUSTOMER_B_JWT',
+    emailKey: 'AIO_RLS_TEST_CUSTOMER_B_EMAIL',
+    passwordKey: 'AIO_RLS_TEST_CUSTOMER_B_PASSWORD',
+    orgEnv: 'AIO_RLS_TEST_CUSTOMER_B_ORG',
+  },
   {
     envJwt: 'AIO_RLS_TEST_SHIPPER_A_JWT',
     emailKey: 'AIO_RLS_TEST_SHIPPER_A_EMAIL',
@@ -29,9 +41,39 @@ const ROLES = [
     passwordKey: 'AIO_RLS_TEST_CARRIER_A_PASSWORD',
   },
   {
+    envJwt: 'AIO_RLS_TEST_DRIVER_A_JWT',
+    emailKey: 'AIO_RLS_TEST_DRIVER_A_EMAIL',
+    passwordKey: 'AIO_RLS_TEST_DRIVER_A_PASSWORD',
+  },
+  {
+    envJwt: 'AIO_RLS_TEST_DRIVER_B_JWT',
+    emailKey: 'AIO_RLS_TEST_DRIVER_B_EMAIL',
+    passwordKey: 'AIO_RLS_TEST_DRIVER_B_PASSWORD',
+  },
+  {
+    envJwt: 'AIO_RLS_TEST_PROVIDER_A_JWT',
+    emailKey: 'AIO_RLS_TEST_PROVIDER_A_EMAIL',
+    passwordKey: 'AIO_RLS_TEST_PROVIDER_A_PASSWORD',
+  },
+  {
+    envJwt: 'AIO_RLS_TEST_PROVIDER_B_JWT',
+    emailKey: 'AIO_RLS_TEST_PROVIDER_B_EMAIL',
+    passwordKey: 'AIO_RLS_TEST_PROVIDER_B_PASSWORD',
+  },
+  {
     envJwt: 'AIO_RLS_TEST_STAFF_JWT',
     emailKey: 'AIO_RLS_TEST_STAFF_EMAIL',
     passwordKey: 'AIO_RLS_TEST_STAFF_PASSWORD',
+  },
+  {
+    envJwt: 'AIO_RLS_TEST_STAFF_SPECIALIST_JWT',
+    emailKey: 'AIO_RLS_TEST_STAFF_SPECIALIST_EMAIL',
+    passwordKey: 'AIO_RLS_TEST_STAFF_SPECIALIST_PASSWORD',
+  },
+  {
+    envJwt: 'AIO_RLS_TEST_STAFF_ADMIN_JWT',
+    emailKey: 'AIO_RLS_TEST_STAFF_ADMIN_EMAIL',
+    passwordKey: 'AIO_RLS_TEST_STAFF_ADMIN_PASSWORD',
   },
 ];
 
@@ -108,11 +150,12 @@ async function main() {
     process.exit(0);
   }
 
-  if (!hasJwt('AIO_RLS_TEST_SHIPPER_B_JWT')) {
-    console.log('RLS session provisioning: shipper B JWT unavailable — role matrix may skip');
+  const optionalMissing = ROLES.map((r) => r.envJwt).filter((k) => !hasJwt(k) && !required.includes(k));
+  if (optionalMissing.length > 0) {
+    console.log(`RLS session provisioning: optional identities still BLOCKED — ${optionalMissing.join(', ')}`);
   }
 
-  console.log(`RLS session provisioning: complete (${obtained}/${ROLES.length} roles)`);
+  console.log(`RLS session provisioning: core complete (${obtained}/${ROLES.length} attempted)`);
 }
 
 main().catch((err) => {

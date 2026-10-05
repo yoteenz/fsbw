@@ -31,7 +31,9 @@
     "readiness:local": "node scripts/readiness/run-production-readiness.mjs",
     "readiness:domain": "TEST_SCOPE=domain-select DOMAIN_SELECT=${DOMAIN:-smart-intake} node scripts/readiness/run-production-readiness.mjs",
     "structural:forensic": "node scripts/structural-completion/build-forensic-artifacts.mjs",
-    "structural:wave0": "node scripts/structural-completion/build-wave0-runtime.mjs"
+    "structural:wave0": "node scripts/structural-completion/build-wave0-runtime.mjs",
+    "structural:wave1": "node scripts/structural-completion/build-wave1-security-artifacts.mjs",
+    "test:security-live": "AIO_LIVE_SUPABASE_TEST=1 vitest run src/security/live/"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.0",

@@ -257,6 +257,26 @@ for (const node of graph.nodes) {
   });
 }
 
+const INBOX_CHILD_ALIASES = [
+  { path: '/portal/inbox/messages', source: '/portal/messages' },
+  { path: '/portal/inbox/notifications', source: '/portal/notifications' },
+  { path: '/portal/inbox/appointments', source: '/portal/appointments' },
+];
+for (const { path: inboxPath, source } of INBOX_CHILD_ALIASES) {
+  if (routeMetaEntries.some((e) => e.path === inboxPath)) continue;
+  const sourceMeta = routeMetaEntries.find((e) => e.path === source);
+  const hubMeta = routeMetaEntries.find((e) => e.path === '/portal/inbox');
+  const base = sourceMeta ?? hubMeta;
+  if (!base) continue;
+  routeMetaEntries.push({
+    ...base,
+    path: inboxPath,
+    node_id: `${base.node_id}:inbox-container:${inboxPath}`,
+    legacy_alias: source,
+    nav_visibility: false,
+  });
+}
+
 mkdirFs(GEN, { recursive: true });
 mkdirFs(OUT_WAVE0, { recursive: true });
 

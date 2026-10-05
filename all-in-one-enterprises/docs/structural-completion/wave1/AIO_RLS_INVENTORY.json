@@ -1,0 +1,985 @@
+{
+  "project_ref": "nnnljnhtmseagotvgxxt",
+  "captured_at": "2026-10-05T22:33:00Z",
+  "totals": {
+    "aio_tables": 132,
+    "rls_enabled": 132,
+    "missing_policies": 40,
+    "with_policies": 92
+  },
+  "tables": [
+    {
+      "table": "aio_activity_events",
+      "rls_enabled": true,
+      "policy_count": 2,
+      "classification": "POLICIES_PRESENT",
+      "domains": []
+    },
+    {
+      "table": "aio_appointments",
+      "rls_enabled": true,
+      "policy_count": 1,
+      "classification": "POLICIES_PRESENT",
+      "domains": [
+        "customer"
+      ]
+    },
+    {
+      "table": "aio_archive_migration_batch_files",
+      "rls_enabled": true,
+      "policy_count": 1,
+      "classification": "POLICIES_PRESENT",
+      "domains": []
+    },
+    {
+      "table": "aio_archive_migration_batches",
+      "rls_enabled": true,
+      "policy_count": 1,
+      "classification": "POLICIES_PRESENT",
+      "domains": []
+    },
+    {
+      "table": "aio_audit_events",
+      "rls_enabled": true,
+      "policy_count": 2,
+      "classification": "POLICIES_PRESENT",
+      "domains": []
+    },
+    {
+      "table": "aio_automation_executions",
+      "rls_enabled": true,
+      "policy_count": 0,
+      "classification": "RLS_ON_ZERO_POLICIES_DEFAULT_DENY",
+      "domains": []
+    },
+    {
+      "table": "aio_automation_rules",
+      "rls_enabled": true,
+      "policy_count": 0,
+      "classification": "RLS_ON_ZERO_POLICIES_DEFAULT_DENY",
+      "domains": []
+    },
+    {
+      "table": "aio_bookkeeping_cycles",
+      "rls_enabled": true,
+      "policy_count": 0,
+      "classification": "RLS_ON_ZERO_POLICIES_DEFAULT_DENY",
+      "domains": []
+    },
+    {
+      "table": "aio_bookkeeping_reports",
+      "rls_enabled": true,
+      "policy_count": 0,
+      "classification": "RLS_ON_ZERO_POLICIES_DEFAULT_DENY",
+      "domains": []
+    },
+    {
+      "table": "aio_bookkeeping_subscriptions",
+      "rls_enabled": true,
+      "policy_count": 0,
+      "classification": "RLS_ON_ZERO_POLICIES_DEFAULT_DENY",
+      "domains": []
+    },
+    {
+      "table": "aio_books_rescue_engagements",
+      "rls_enabled": true,
+      "policy_count": 0,
+      "classification": "RLS_ON_ZERO_POLICIES_DEFAULT_DENY",
+      "domains": []
+    },
+    {
+      "table": "aio_brokerage_audit_events",
+      "rls_enabled": true,
+      "policy_count": 3,
+      "classification": "POLICIES_PRESENT",
+      "domains": []
+    },
+    {
+      "table": "aio_brokerage_bookkeeping_handoffs",
+      "rls_enabled": true,
+      "policy_count": 1,
+      "classification": "POLICIES_PRESENT",
+      "domains": []
+    },
+    {
+      "table": "aio_brokerage_freight_quotes",
+      "rls_enabled": true,
+      "policy_count": 3,
+      "classification": "POLICIES_PRESENT",
+      "domains": []
+    },
+    {
+      "table": "aio_brokerage_info_requests",
+      "rls_enabled": true,
+      "policy_count": 2,
+      "classification": "POLICIES_PRESENT",
+      "domains": []
+    },
+    {
+      "table": "aio_brokerage_load_financial_revisions",
+      "rls_enabled": true,
+      "policy_count": 1,
+      "classification": "POLICIES_PRESENT",
+      "domains": []
+    },
+    {
+      "table": "aio_brokerage_load_financials",
+      "rls_enabled": true,
+      "policy_count": 1,
+      "classification": "POLICIES_PRESENT",
+      "domains": [
+        "financial"
+      ]
+    },
+    {
+      "table": "aio_brokerage_quote_pricing_drafts",
+      "rls_enabled": true,
+      "policy_count": 1,
+      "classification": "POLICIES_PRESENT",
+      "domains": [
+        "financial"
+      ]
+    },
+    {
+      "table": "aio_brokerage_quote_revisions",
+      "rls_enabled": true,
+      "policy_count": 2,
+      "classification": "POLICIES_PRESENT",
+      "domains": []
+    },
+    {
+      "table": "aio_brokerage_quotes",
+      "rls_enabled": true,
+      "policy_count": 1,
+      "classification": "POLICIES_PRESENT",
+      "domains": [
+        "shipper"
+      ]
+    },
+    {
+      "table": "aio_brokerage_shipments",
+      "rls_enabled": true,
+      "policy_count": 1,
+      "classification": "POLICIES_PRESENT",
+      "domains": [
+        "shipper"
+      ]
+    },
+    {
+      "table": "aio_brokerage_shipper_invoices",
+      "rls_enabled": true,
+      "policy_count": 2,
+      "classification": "POLICIES_PRESENT",
+      "domains": [
+        "shipper"
+      ]
+    },
+    {
+      "table": "aio_carrier_offers",
+      "rls_enabled": true,
+      "policy_count": 3,
+      "classification": "POLICIES_PRESENT",
+      "domains": []
+    },
+    {
+      "table": "aio_carrier_settlements",
+      "rls_enabled": true,
+      "policy_count": 2,
+      "classification": "POLICIES_PRESENT",
+      "domains": []
+    },
+    {
+      "table": "aio_consents",
+      "rls_enabled": true,
+      "policy_count": 1,
+      "classification": "POLICIES_PRESENT",
+      "domains": []
+    },
+    {
+      "table": "aio_contacts",
+      "rls_enabled": true,
+      "policy_count": 0,
+      "classification": "RLS_ON_ZERO_POLICIES_DEFAULT_DENY",
+      "domains": []
+    },
+    {
+      "table": "aio_conversations",
+      "rls_enabled": true,
+      "policy_count": 1,
+      "classification": "POLICIES_PRESENT",
+      "domains": []
+    },
+    {
+      "table": "aio_crm_notes",
+      "rls_enabled": true,
+      "policy_count": 1,
+      "classification": "POLICIES_PRESENT",
+      "domains": [
+        "office"
+      ]
+    },
+    {
+      "table": "aio_customer_organizations",
+      "rls_enabled": true,
+      "policy_count": 0,
+      "classification": "RLS_ON_ZERO_POLICIES_DEFAULT_DENY",
+      "domains": []
+    },
+    {
+      "table": "aio_customers",
+      "rls_enabled": true,
+      "policy_count": 0,
+      "classification": "RLS_ON_ZERO_POLICIES_DEFAULT_DENY",
+      "domains": []
+    },
+    {
+      "table": "aio_data_quality_issues",
+      "rls_enabled": true,
+      "policy_count": 1,
+      "classification": "POLICIES_PRESENT",
+      "domains": []
+    },
+    {
+      "table": "aio_data_quality_rules",
+      "rls_enabled": true,
+      "policy_count": 1,
+      "classification": "POLICIES_PRESENT",
+      "domains": []
+    },
+    {
+      "table": "aio_deadlines",
+      "rls_enabled": true,
+      "policy_count": 1,
+      "classification": "POLICIES_PRESENT",
+      "domains": []
+    },
+    {
+      "table": "aio_dispatch_loads",
+      "rls_enabled": true,
+      "policy_count": 2,
+      "classification": "POLICIES_PRESENT",
+      "domains": []
+    },
+    {
+      "table": "aio_dispatch_package_snapshots",
+      "rls_enabled": true,
+      "policy_count": 1,
+      "classification": "POLICIES_PRESENT",
+      "domains": []
+    },
+    {
+      "table": "aio_document_sharing_events",
+      "rls_enabled": true,
+      "policy_count": 0,
+      "classification": "RLS_ON_ZERO_POLICIES_DEFAULT_DENY",
+      "domains": []
+    },
+    {
+      "table": "aio_document_versions",
+      "rls_enabled": true,
+      "policy_count": 1,
+      "classification": "POLICIES_PRESENT",
+      "domains": [
+        "vault"
+      ]
+    },
+    {
+      "table": "aio_documents",
+      "rls_enabled": true,
+      "policy_count": 5,
+      "classification": "POLICIES_PRESENT",
+      "domains": [
+        "customer",
+        "vault"
+      ]
+    },
+    {
+      "table": "aio_driver_applications",
+      "rls_enabled": true,
+      "policy_count": 1,
+      "classification": "POLICIES_PRESENT",
+      "domains": [
+        "driver"
+      ]
+    },
+    {
+      "table": "aio_driver_consent_records",
+      "rls_enabled": true,
+      "policy_count": 0,
+      "classification": "RLS_ON_ZERO_POLICIES_DEFAULT_DENY",
+      "domains": []
+    },
+    {
+      "table": "aio_driver_credentials",
+      "rls_enabled": true,
+      "policy_count": 1,
+      "classification": "POLICIES_PRESENT",
+      "domains": [
+        "driver"
+      ]
+    },
+    {
+      "table": "aio_driver_job_matches",
+      "rls_enabled": true,
+      "policy_count": 0,
+      "classification": "RLS_ON_ZERO_POLICIES_DEFAULT_DENY",
+      "domains": []
+    },
+    {
+      "table": "aio_driver_job_opportunities",
+      "rls_enabled": true,
+      "policy_count": 2,
+      "classification": "POLICIES_PRESENT",
+      "domains": []
+    },
+    {
+      "table": "aio_driver_profiles",
+      "rls_enabled": true,
+      "policy_count": 1,
+      "classification": "POLICIES_PRESENT",
+      "domains": [
+        "driver"
+      ]
+    },
+    {
+      "table": "aio_driver_settlement_adjustments",
+      "rls_enabled": true,
+      "policy_count": 1,
+      "classification": "POLICIES_PRESENT",
+      "domains": []
+    },
+    {
+      "table": "aio_driver_settlements",
+      "rls_enabled": true,
+      "policy_count": 2,
+      "classification": "POLICIES_PRESENT",
+      "domains": []
+    },
+    {
+      "table": "aio_driverlink_company_subscriptions",
+      "rls_enabled": true,
+      "policy_count": 0,
+      "classification": "RLS_ON_ZERO_POLICIES_DEFAULT_DENY",
+      "domains": []
+    },
+    {
+      "table": "aio_driverlink_network_settings",
+      "rls_enabled": true,
+      "policy_count": 0,
+      "classification": "RLS_ON_ZERO_POLICIES_DEFAULT_DENY",
+      "domains": []
+    },
+    {
+      "table": "aio_factoring_cases",
+      "rls_enabled": true,
+      "policy_count": 1,
+      "classification": "POLICIES_PRESENT",
+      "domains": [
+        "customer"
+      ]
+    },
+    {
+      "table": "aio_financial_events",
+      "rls_enabled": true,
+      "policy_count": 1,
+      "classification": "POLICIES_PRESENT",
+      "domains": []
+    },
+    {
+      "table": "aio_fleet_vehicles",
+      "rls_enabled": true,
+      "policy_count": 1,
+      "classification": "POLICIES_PRESENT",
+      "domains": []
+    },
+    {
+      "table": "aio_fleetcare_client_subscriptions",
+      "rls_enabled": true,
+      "policy_count": 0,
+      "classification": "RLS_ON_ZERO_POLICIES_DEFAULT_DENY",
+      "domains": []
+    },
+    {
+      "table": "aio_fleetcare_customer_authorizations",
+      "rls_enabled": true,
+      "policy_count": 0,
+      "classification": "RLS_ON_ZERO_POLICIES_DEFAULT_DENY",
+      "domains": []
+    },
+    {
+      "table": "aio_fleetcare_disputes",
+      "rls_enabled": true,
+      "policy_count": 0,
+      "classification": "RLS_ON_ZERO_POLICIES_DEFAULT_DENY",
+      "domains": []
+    },
+    {
+      "table": "aio_fleetcare_estimate_line_items",
+      "rls_enabled": true,
+      "policy_count": 0,
+      "classification": "RLS_ON_ZERO_POLICIES_DEFAULT_DENY",
+      "domains": []
+    },
+    {
+      "table": "aio_fleetcare_estimates",
+      "rls_enabled": true,
+      "policy_count": 0,
+      "classification": "RLS_ON_ZERO_POLICIES_DEFAULT_DENY",
+      "domains": []
+    },
+    {
+      "table": "aio_fleetcare_network_settings",
+      "rls_enabled": true,
+      "policy_count": 0,
+      "classification": "RLS_ON_ZERO_POLICIES_DEFAULT_DENY",
+      "domains": []
+    },
+    {
+      "table": "aio_fleetcare_preexisting_relationships",
+      "rls_enabled": true,
+      "policy_count": 0,
+      "classification": "RLS_ON_ZERO_POLICIES_DEFAULT_DENY",
+      "domains": []
+    },
+    {
+      "table": "aio_fleetcare_provider_reviews",
+      "rls_enabled": true,
+      "policy_count": 0,
+      "classification": "RLS_ON_ZERO_POLICIES_DEFAULT_DENY",
+      "domains": []
+    },
+    {
+      "table": "aio_fleetcare_provider_subscriptions",
+      "rls_enabled": true,
+      "policy_count": 0,
+      "classification": "RLS_ON_ZERO_POLICIES_DEFAULT_DENY",
+      "domains": []
+    },
+    {
+      "table": "aio_fleetcare_referral_transactions",
+      "rls_enabled": true,
+      "policy_count": 1,
+      "classification": "POLICIES_PRESENT",
+      "domains": []
+    },
+    {
+      "table": "aio_fleetcare_repair_records",
+      "rls_enabled": true,
+      "policy_count": 0,
+      "classification": "RLS_ON_ZERO_POLICIES_DEFAULT_DENY",
+      "domains": []
+    },
+    {
+      "table": "aio_fleetcare_service_categories",
+      "rls_enabled": true,
+      "policy_count": 1,
+      "classification": "POLICIES_PRESENT",
+      "domains": []
+    },
+    {
+      "table": "aio_fleetcare_service_jobs",
+      "rls_enabled": true,
+      "policy_count": 0,
+      "classification": "RLS_ON_ZERO_POLICIES_DEFAULT_DENY",
+      "domains": [
+        "provider"
+      ]
+    },
+    {
+      "table": "aio_fleetcare_ticket_assignments",
+      "rls_enabled": true,
+      "policy_count": 0,
+      "classification": "RLS_ON_ZERO_POLICIES_DEFAULT_DENY",
+      "domains": []
+    },
+    {
+      "table": "aio_fleetcare_ticket_events",
+      "rls_enabled": true,
+      "policy_count": 0,
+      "classification": "RLS_ON_ZERO_POLICIES_DEFAULT_DENY",
+      "domains": []
+    },
+    {
+      "table": "aio_fleetcare_ticket_matches",
+      "rls_enabled": true,
+      "policy_count": 0,
+      "classification": "RLS_ON_ZERO_POLICIES_DEFAULT_DENY",
+      "domains": []
+    },
+    {
+      "table": "aio_fleetcare_tickets",
+      "rls_enabled": true,
+      "policy_count": 3,
+      "classification": "POLICIES_PRESENT",
+      "domains": [
+        "provider"
+      ]
+    },
+    {
+      "table": "aio_freight_autopilot_events",
+      "rls_enabled": true,
+      "policy_count": 2,
+      "classification": "POLICIES_PRESENT",
+      "domains": []
+    },
+    {
+      "table": "aio_freight_billing_packages",
+      "rls_enabled": true,
+      "policy_count": 2,
+      "classification": "POLICIES_PRESENT",
+      "domains": []
+    },
+    {
+      "table": "aio_freight_document_completeness",
+      "rls_enabled": true,
+      "policy_count": 2,
+      "classification": "POLICIES_PRESENT",
+      "domains": []
+    },
+    {
+      "table": "aio_freight_exceptions",
+      "rls_enabled": true,
+      "policy_count": 2,
+      "classification": "POLICIES_PRESENT",
+      "domains": []
+    },
+    {
+      "table": "aio_freight_locations",
+      "rls_enabled": true,
+      "policy_count": 1,
+      "classification": "POLICIES_PRESENT",
+      "domains": []
+    },
+    {
+      "table": "aio_idempotency_keys",
+      "rls_enabled": true,
+      "policy_count": 1,
+      "classification": "POLICIES_PRESENT",
+      "domains": []
+    },
+    {
+      "table": "aio_inbox_events",
+      "rls_enabled": true,
+      "policy_count": 1,
+      "classification": "POLICIES_PRESENT",
+      "domains": []
+    },
+    {
+      "table": "aio_insurance_cases",
+      "rls_enabled": true,
+      "policy_count": 2,
+      "classification": "POLICIES_PRESENT",
+      "domains": [
+        "customer"
+      ]
+    },
+    {
+      "table": "aio_insurance_events",
+      "rls_enabled": true,
+      "policy_count": 1,
+      "classification": "POLICIES_PRESENT",
+      "domains": []
+    },
+    {
+      "table": "aio_intake_sessions",
+      "rls_enabled": true,
+      "policy_count": 1,
+      "classification": "POLICIES_PRESENT",
+      "domains": []
+    },
+    {
+      "table": "aio_integration_connections",
+      "rls_enabled": true,
+      "policy_count": 1,
+      "classification": "POLICIES_PRESENT",
+      "domains": []
+    },
+    {
+      "table": "aio_integration_operations",
+      "rls_enabled": true,
+      "policy_count": 1,
+      "classification": "POLICIES_PRESENT",
+      "domains": []
+    },
+    {
+      "table": "aio_integration_providers",
+      "rls_enabled": true,
+      "policy_count": 1,
+      "classification": "POLICIES_PRESENT",
+      "domains": []
+    },
+    {
+      "table": "aio_internal_notes",
+      "rls_enabled": true,
+      "policy_count": 1,
+      "classification": "POLICIES_PRESENT",
+      "domains": [
+        "office"
+      ]
+    },
+    {
+      "table": "aio_internal_staff",
+      "rls_enabled": true,
+      "policy_count": 2,
+      "classification": "POLICIES_PRESENT",
+      "domains": [
+        "office"
+      ]
+    },
+    {
+      "table": "aio_invoice_items",
+      "rls_enabled": true,
+      "policy_count": 0,
+      "classification": "RLS_ON_ZERO_POLICIES_DEFAULT_DENY",
+      "domains": []
+    },
+    {
+      "table": "aio_invoices",
+      "rls_enabled": true,
+      "policy_count": 2,
+      "classification": "POLICIES_PRESENT",
+      "domains": [
+        "customer"
+      ]
+    },
+    {
+      "table": "aio_leads",
+      "rls_enabled": true,
+      "policy_count": 1,
+      "classification": "POLICIES_PRESENT",
+      "domains": []
+    },
+    {
+      "table": "aio_load_board_publications",
+      "rls_enabled": true,
+      "policy_count": 2,
+      "classification": "POLICIES_PRESENT",
+      "domains": []
+    },
+    {
+      "table": "aio_load_board_recent_searches",
+      "rls_enabled": true,
+      "policy_count": 1,
+      "classification": "POLICIES_PRESENT",
+      "domains": []
+    },
+    {
+      "table": "aio_load_board_saved_searches",
+      "rls_enabled": true,
+      "policy_count": 1,
+      "classification": "POLICIES_PRESENT",
+      "domains": []
+    },
+    {
+      "table": "aio_load_board_search_alert_events",
+      "rls_enabled": true,
+      "policy_count": 2,
+      "classification": "POLICIES_PRESENT",
+      "domains": []
+    },
+    {
+      "table": "aio_load_status_history",
+      "rls_enabled": true,
+      "policy_count": 2,
+      "classification": "POLICIES_PRESENT",
+      "domains": []
+    },
+    {
+      "table": "aio_load_stops",
+      "rls_enabled": true,
+      "policy_count": 1,
+      "classification": "POLICIES_PRESENT",
+      "domains": []
+    },
+    {
+      "table": "aio_messages",
+      "rls_enabled": true,
+      "policy_count": 1,
+      "classification": "POLICIES_PRESENT",
+      "domains": [
+        "customer"
+      ]
+    },
+    {
+      "table": "aio_notifications",
+      "rls_enabled": true,
+      "policy_count": 1,
+      "classification": "POLICIES_PRESENT",
+      "domains": []
+    },
+    {
+      "table": "aio_opportunities",
+      "rls_enabled": true,
+      "policy_count": 1,
+      "classification": "POLICIES_PRESENT",
+      "domains": []
+    },
+    {
+      "table": "aio_organization_memberships",
+      "rls_enabled": true,
+      "policy_count": 2,
+      "classification": "POLICIES_PRESENT",
+      "domains": []
+    },
+    {
+      "table": "aio_organization_regulatory_identifiers",
+      "rls_enabled": true,
+      "policy_count": 1,
+      "classification": "POLICIES_PRESENT",
+      "domains": []
+    },
+    {
+      "table": "aio_organizations",
+      "rls_enabled": true,
+      "policy_count": 3,
+      "classification": "POLICIES_PRESENT",
+      "domains": []
+    },
+    {
+      "table": "aio_outbox_events",
+      "rls_enabled": true,
+      "policy_count": 1,
+      "classification": "POLICIES_PRESENT",
+      "domains": []
+    },
+    {
+      "table": "aio_payments",
+      "rls_enabled": true,
+      "policy_count": 2,
+      "classification": "POLICIES_PRESENT",
+      "domains": []
+    },
+    {
+      "table": "aio_permissions",
+      "rls_enabled": true,
+      "policy_count": 1,
+      "classification": "POLICIES_PRESENT",
+      "domains": []
+    },
+    {
+      "table": "aio_pretrip_inspections",
+      "rls_enabled": true,
+      "policy_count": 1,
+      "classification": "POLICIES_PRESENT",
+      "domains": []
+    },
+    {
+      "table": "aio_privacy_requests",
+      "rls_enabled": true,
+      "policy_count": 1,
+      "classification": "POLICIES_PRESENT",
+      "domains": []
+    },
+    {
+      "table": "aio_profiles",
+      "rls_enabled": true,
+      "policy_count": 2,
+      "classification": "POLICIES_PRESENT",
+      "domains": []
+    },
+    {
+      "table": "aio_quotes",
+      "rls_enabled": true,
+      "policy_count": 0,
+      "classification": "RLS_ON_ZERO_POLICIES_DEFAULT_DENY",
+      "domains": []
+    },
+    {
+      "table": "aio_record_holds",
+      "rls_enabled": true,
+      "policy_count": 1,
+      "classification": "POLICIES_PRESENT",
+      "domains": []
+    },
+    {
+      "table": "aio_road_ready_profiles",
+      "rls_enabled": true,
+      "policy_count": 1,
+      "classification": "POLICIES_PRESENT",
+      "domains": [
+        "customer"
+      ]
+    },
+    {
+      "table": "aio_road_ready_requirement_statuses",
+      "rls_enabled": true,
+      "policy_count": 0,
+      "classification": "RLS_ON_ZERO_POLICIES_DEFAULT_DENY",
+      "domains": []
+    },
+    {
+      "table": "aio_road_ready_requirements",
+      "rls_enabled": true,
+      "policy_count": 1,
+      "classification": "POLICIES_PRESENT",
+      "domains": []
+    },
+    {
+      "table": "aio_roadmap_items",
+      "rls_enabled": true,
+      "policy_count": 1,
+      "classification": "POLICIES_PRESENT",
+      "domains": []
+    },
+    {
+      "table": "aio_roadmaps",
+      "rls_enabled": true,
+      "policy_count": 1,
+      "classification": "POLICIES_PRESENT",
+      "domains": []
+    },
+    {
+      "table": "aio_role_permissions",
+      "rls_enabled": true,
+      "policy_count": 0,
+      "classification": "RLS_ON_ZERO_POLICIES_DEFAULT_DENY",
+      "domains": []
+    },
+    {
+      "table": "aio_roles",
+      "rls_enabled": true,
+      "policy_count": 1,
+      "classification": "POLICIES_PRESENT",
+      "domains": []
+    },
+    {
+      "table": "aio_security_incidents",
+      "rls_enabled": true,
+      "policy_count": 1,
+      "classification": "POLICIES_PRESENT",
+      "domains": []
+    },
+    {
+      "table": "aio_service_provider_credentials",
+      "rls_enabled": true,
+      "policy_count": 0,
+      "classification": "RLS_ON_ZERO_POLICIES_DEFAULT_DENY",
+      "domains": []
+    },
+    {
+      "table": "aio_service_provider_insurance",
+      "rls_enabled": true,
+      "policy_count": 0,
+      "classification": "RLS_ON_ZERO_POLICIES_DEFAULT_DENY",
+      "domains": []
+    },
+    {
+      "table": "aio_service_provider_locations",
+      "rls_enabled": true,
+      "policy_count": 0,
+      "classification": "RLS_ON_ZERO_POLICIES_DEFAULT_DENY",
+      "domains": []
+    },
+    {
+      "table": "aio_service_provider_service_areas",
+      "rls_enabled": true,
+      "policy_count": 0,
+      "classification": "RLS_ON_ZERO_POLICIES_DEFAULT_DENY",
+      "domains": []
+    },
+    {
+      "table": "aio_service_provider_services",
+      "rls_enabled": true,
+      "policy_count": 0,
+      "classification": "RLS_ON_ZERO_POLICIES_DEFAULT_DENY",
+      "domains": []
+    },
+    {
+      "table": "aio_service_provider_users",
+      "rls_enabled": true,
+      "policy_count": 1,
+      "classification": "POLICIES_PRESENT",
+      "domains": []
+    },
+    {
+      "table": "aio_service_providers",
+      "rls_enabled": true,
+      "policy_count": 2,
+      "classification": "POLICIES_PRESENT",
+      "domains": [
+        "provider"
+      ]
+    },
+    {
+      "table": "aio_service_request_status_history",
+      "rls_enabled": true,
+      "policy_count": 1,
+      "classification": "POLICIES_PRESENT",
+      "domains": []
+    },
+    {
+      "table": "aio_service_requests",
+      "rls_enabled": true,
+      "policy_count": 1,
+      "classification": "POLICIES_PRESENT",
+      "domains": [
+        "customer"
+      ]
+    },
+    {
+      "table": "aio_shipment_request_templates",
+      "rls_enabled": true,
+      "policy_count": 1,
+      "classification": "POLICIES_PRESENT",
+      "domains": []
+    },
+    {
+      "table": "aio_shipment_requests",
+      "rls_enabled": true,
+      "policy_count": 1,
+      "classification": "POLICIES_PRESENT",
+      "domains": [
+        "shipper"
+      ]
+    },
+    {
+      "table": "aio_staff_profiles",
+      "rls_enabled": true,
+      "policy_count": 1,
+      "classification": "POLICIES_PRESENT",
+      "domains": []
+    },
+    {
+      "table": "aio_tasks",
+      "rls_enabled": true,
+      "policy_count": 1,
+      "classification": "POLICIES_PRESENT",
+      "domains": []
+    },
+    {
+      "table": "aio_user_roles",
+      "rls_enabled": true,
+      "policy_count": 1,
+      "classification": "POLICIES_PRESENT",
+      "domains": []
+    },
+    {
+      "table": "aio_workflow_definitions",
+      "rls_enabled": true,
+      "policy_count": 0,
+      "classification": "RLS_ON_ZERO_POLICIES_DEFAULT_DENY",
+      "domains": []
+    },
+    {
+      "table": "aio_workflow_instances",
+      "rls_enabled": true,
+      "policy_count": 2,
+      "classification": "POLICIES_PRESENT",
+      "domains": []
+    },
+    {
+      "table": "aio_workflow_steps",
+      "rls_enabled": true,
+      "policy_count": 0,
+      "classification": "RLS_ON_ZERO_POLICIES_DEFAULT_DENY",
+      "domains": []
+    },
+    {
+      "table": "aio_workflow_versions",
+      "rls_enabled": true,
+      "policy_count": 0,
+      "classification": "RLS_ON_ZERO_POLICIES_DEFAULT_DENY",
+      "domains": []
+    }
+  ]
+}

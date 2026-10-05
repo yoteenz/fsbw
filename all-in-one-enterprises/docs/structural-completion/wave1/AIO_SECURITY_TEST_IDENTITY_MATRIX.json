@@ -1,0 +1,113 @@
+{
+  "identities": [
+    {
+      "id": "CUSTOMER_A",
+      "jwtEnv": "AIO_RLS_TEST_CUSTOMER_A_JWT",
+      "emailEnv": "AIO_RLS_TEST_CUSTOMER_A_EMAIL",
+      "passwordEnv": "AIO_RLS_TEST_CUSTOMER_A_PASSWORD",
+      "orgEnv": "AIO_RLS_TEST_CUSTOMER_A_ORG",
+      "anon": false
+    },
+    {
+      "id": "CUSTOMER_B",
+      "jwtEnv": "AIO_RLS_TEST_CUSTOMER_B_JWT",
+      "emailEnv": "AIO_RLS_TEST_CUSTOMER_B_EMAIL",
+      "passwordEnv": "AIO_RLS_TEST_CUSTOMER_B_PASSWORD",
+      "orgEnv": "AIO_RLS_TEST_CUSTOMER_B_ORG",
+      "anon": false
+    },
+    {
+      "id": "SHIPPER_A",
+      "jwtEnv": "AIO_RLS_TEST_SHIPPER_A_JWT",
+      "emailEnv": "AIO_RLS_TEST_SHIPPER_A_EMAIL",
+      "passwordEnv": "AIO_RLS_TEST_SHIPPER_A_PASSWORD",
+      "orgEnv": "AIO_RLS_TEST_SHIPPER_A_ORG",
+      "anon": false
+    },
+    {
+      "id": "SHIPPER_B",
+      "jwtEnv": "AIO_RLS_TEST_SHIPPER_B_JWT",
+      "emailEnv": "AIO_RLS_TEST_SHIPPER_B_EMAIL",
+      "passwordEnv": "AIO_RLS_TEST_SHIPPER_B_PASSWORD",
+      "anon": false
+    },
+    {
+      "id": "CARRIER_A",
+      "jwtEnv": "AIO_RLS_TEST_CARRIER_A_JWT",
+      "emailEnv": "AIO_RLS_TEST_CARRIER_A_EMAIL",
+      "passwordEnv": "AIO_RLS_TEST_CARRIER_A_PASSWORD",
+      "anon": false
+    },
+    {
+      "id": "DRIVER_A",
+      "jwtEnv": "AIO_RLS_TEST_DRIVER_A_JWT",
+      "emailEnv": "AIO_RLS_TEST_DRIVER_A_EMAIL",
+      "passwordEnv": "AIO_RLS_TEST_DRIVER_A_PASSWORD",
+      "anon": false
+    },
+    {
+      "id": "DRIVER_B",
+      "jwtEnv": "AIO_RLS_TEST_DRIVER_B_JWT",
+      "emailEnv": "AIO_RLS_TEST_DRIVER_B_EMAIL",
+      "passwordEnv": "AIO_RLS_TEST_DRIVER_B_PASSWORD",
+      "anon": false
+    },
+    {
+      "id": "PROVIDER_A",
+      "jwtEnv": "AIO_RLS_TEST_PROVIDER_A_JWT",
+      "emailEnv": "AIO_RLS_TEST_PROVIDER_A_EMAIL",
+      "passwordEnv": "AIO_RLS_TEST_PROVIDER_A_PASSWORD",
+      "anon": false
+    },
+    {
+      "id": "PROVIDER_B",
+      "jwtEnv": "AIO_RLS_TEST_PROVIDER_B_JWT",
+      "emailEnv": "AIO_RLS_TEST_PROVIDER_B_EMAIL",
+      "passwordEnv": "AIO_RLS_TEST_PROVIDER_B_PASSWORD",
+      "anon": false
+    },
+    {
+      "id": "STAFF_GENERAL",
+      "jwtEnv": "AIO_RLS_TEST_STAFF_JWT",
+      "emailEnv": "AIO_RLS_TEST_STAFF_EMAIL",
+      "passwordEnv": "AIO_RLS_TEST_STAFF_PASSWORD",
+      "anon": false
+    },
+    {
+      "id": "STAFF_SPECIALIST",
+      "jwtEnv": "AIO_RLS_TEST_STAFF_SPECIALIST_JWT",
+      "emailEnv": "AIO_RLS_TEST_STAFF_SPECIALIST_EMAIL",
+      "passwordEnv": "AIO_RLS_TEST_STAFF_SPECIALIST_PASSWORD",
+      "anon": false
+    },
+    {
+      "id": "STAFF_ADMIN",
+      "jwtEnv": "AIO_RLS_TEST_STAFF_ADMIN_JWT",
+      "emailEnv": "AIO_RLS_TEST_STAFF_ADMIN_EMAIL",
+      "passwordEnv": "AIO_RLS_TEST_STAFF_ADMIN_PASSWORD",
+      "anon": false
+    },
+    {
+      "id": "ANON",
+      "jwtEnv": null,
+      "emailEnv": null,
+      "passwordEnv": null
+    }
+  ],
+  "core_ci_jwt_envs": [
+    "AIO_RLS_TEST_SHIPPER_A_JWT",
+    "AIO_RLS_TEST_SHIPPER_B_JWT",
+    "AIO_RLS_TEST_CARRIER_A_JWT",
+    "AIO_RLS_TEST_STAFF_JWT"
+  ],
+  "extended_ci_jwt_envs": [
+    "AIO_RLS_TEST_CUSTOMER_A_JWT",
+    "AIO_RLS_TEST_CUSTOMER_B_JWT",
+    "AIO_RLS_TEST_DRIVER_A_JWT",
+    "AIO_RLS_TEST_DRIVER_B_JWT",
+    "AIO_RLS_TEST_PROVIDER_A_JWT",
+    "AIO_RLS_TEST_PROVIDER_B_JWT",
+    "AIO_RLS_TEST_STAFF_SPECIALIST_JWT",
+    "AIO_RLS_TEST_STAFF_ADMIN_JWT"
+  ]
+}

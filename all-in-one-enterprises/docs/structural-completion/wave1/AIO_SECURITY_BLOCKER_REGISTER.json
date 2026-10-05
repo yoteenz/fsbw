@@ -1,0 +1,103 @@
+{
+  "critical": [],
+  "high": [
+    {
+      "id": "RLS-ZERO-POLICY-aio_automation_executions",
+      "severity": "HIGH",
+      "title": "aio_automation_executions has RLS enabled but no policies",
+      "domain": "general"
+    },
+    {
+      "id": "RLS-ZERO-POLICY-aio_automation_rules",
+      "severity": "HIGH",
+      "title": "aio_automation_rules has RLS enabled but no policies",
+      "domain": "general"
+    },
+    {
+      "id": "RLS-ZERO-POLICY-aio_bookkeeping_cycles",
+      "severity": "HIGH",
+      "title": "aio_bookkeeping_cycles has RLS enabled but no policies",
+      "domain": "general"
+    },
+    {
+      "id": "RLS-ZERO-POLICY-aio_bookkeeping_reports",
+      "severity": "HIGH",
+      "title": "aio_bookkeeping_reports has RLS enabled but no policies",
+      "domain": "general"
+    },
+    {
+      "id": "RLS-ZERO-POLICY-aio_bookkeeping_subscriptions",
+      "severity": "HIGH",
+      "title": "aio_bookkeeping_subscriptions has RLS enabled but no policies",
+      "domain": "general"
+    },
+    {
+      "id": "RLS-ZERO-POLICY-aio_books_rescue_engagements",
+      "severity": "HIGH",
+      "title": "aio_books_rescue_engagements has RLS enabled but no policies",
+      "domain": "general"
+    },
+    {
+      "id": "RLS-ZERO-POLICY-aio_contacts",
+      "severity": "HIGH",
+      "title": "aio_contacts has RLS enabled but no policies",
+      "domain": "general"
+    },
+    {
+      "id": "RLS-ZERO-POLICY-aio_customer_organizations",
+      "severity": "HIGH",
+      "title": "aio_customer_organizations has RLS enabled but no policies",
+      "domain": "general"
+    },
+    {
+      "id": "RLS-ZERO-POLICY-aio_customers",
+      "severity": "HIGH",
+      "title": "aio_customers has RLS enabled but no policies",
+      "domain": "general"
+    },
+    {
+      "id": "RLS-ZERO-POLICY-aio_document_sharing_events",
+      "severity": "HIGH",
+      "title": "aio_document_sharing_events has RLS enabled but no policies",
+      "domain": "general"
+    },
+    {
+      "id": "RLS-ZERO-POLICY-aio_driver_consent_records",
+      "severity": "HIGH",
+      "title": "aio_driver_consent_records has RLS enabled but no policies",
+      "domain": "general"
+    },
+    {
+      "id": "RLS-ZERO-POLICY-aio_driver_job_matches",
+      "severity": "HIGH",
+      "title": "aio_driver_job_matches has RLS enabled but no policies",
+      "domain": "general"
+    },
+    {
+      "id": "RLS-ZERO-POLICY-aio_driverlink_company_subscriptions",
+      "severity": "HIGH",
+      "title": "aio_driverlink_company_subscriptions has RLS enabled but no policies",
+      "domain": "general"
+    },
+    {
+      "id": "RLS-ZERO-POLICY-aio_driverlink_network_settings",
+      "severity": "HIGH",
+      "title": "aio_driverlink_network_settings has RLS enabled but no policies",
+      "domain": "general"
+    },
+    {
+      "id": "RLS-ZERO-POLICY-aio_fleetcare_client_subscriptions",
+      "severity": "HIGH",
+      "title": "aio_fleetcare_client_subscriptions has RLS enabled but no policies",
+      "domain": "general"
+    }
+  ],
+  "medium": [
+    {
+      "id": "LIVE-CI-SECRETS",
+      "severity": "MEDIUM",
+      "title": "Extended identities (customer/driver/provider) require GitHub Auth secrets"
+    }
+  ],
+  "low": []
+}
