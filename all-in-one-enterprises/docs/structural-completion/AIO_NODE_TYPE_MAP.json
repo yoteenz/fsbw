@@ -1,0 +1,35 @@
+{
+  "taxonomy": [
+    "FAMILY",
+    "PARENT_PAGE",
+    "CHILD_PAGE",
+    "GRANDCHILD_PAGE",
+    "WORKFLOW",
+    "STATE",
+    "OVERLAY",
+    "DRAWER",
+    "MODAL",
+    "DETAIL_VIEW",
+    "LIST_VIEW",
+    "FORM",
+    "WIZARD",
+    "BACKGROUND_SYSTEM",
+    "GLOBAL_SYSTEM",
+    "ROLE_PROJECTION",
+    "INTERNAL_TOOL",
+    "PUBLIC_MARKETING_SURFACE",
+    "DEPRECATED",
+    "LEGACY_ALIAS"
+  ],
+  "distribution": {
+    "CHILD_PAGE": 180,
+    "DETAIL_VIEW": 95,
+    "PARENT_PAGE": 22,
+    "INTERNAL_TOOL": 35,
+    "PUBLIC_MARKETING_SURFACE": 37,
+    "ROLE_PROJECTION": 4,
+    "GLOBAL_SYSTEM": 18,
+    "LEGACY_ALIAS": 4
+  },
+  "notes": "Derived from AIO_ROUTE_FORENSIC.json classification; layout-only routes excluded from material nodes."
+}

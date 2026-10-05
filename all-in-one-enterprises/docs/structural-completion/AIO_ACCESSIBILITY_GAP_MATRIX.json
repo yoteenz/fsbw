@@ -1,0 +1,15 @@
+{
+  "meta": { "sprint": "P0.AIO.COMPLETE-PRODUCT-BLUEPRINT-STRUCTURAL-COMPLETION-FORENSIC1" },
+  "checks": {
+    "keyboard_navigation": "PARTIAL",
+    "focus_management_dialogs": "PARTIAL",
+    "semantic_headings": "PARTIAL",
+    "form_labels": "PARTIAL",
+    "table_accessibility": "WEAK",
+    "map_fallbacks": "PARTIAL",
+    "touch_targets_mobile": "PARTIAL",
+    "status_not_color_only": "PARTIAL"
+  },
+  "office_qa_surface": "office/system/qa/accessibility exists — meta tooling present; coverage not universal",
+  "wave": "WAVE_10"
+}

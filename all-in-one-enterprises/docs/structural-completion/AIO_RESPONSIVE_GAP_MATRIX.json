@@ -1,0 +1,12 @@
+{
+  "meta": { "sprint": "P0.AIO.COMPLETE-PRODUCT-BLUEPRINT-STRUCTURAL-COMPLETION-FORENSIC1" },
+  "breakpoints": ["mobile", "tablet", "desktop", "ultra_wide"],
+  "gaps": [
+    { "surface": "office_dispatch_tables", "mobile": "FAIL", "notes": "Data density; scroll patterns" },
+    { "surface": "load_board_map", "mobile": "PARTIAL", "notes": "Map + filters" },
+    { "surface": "brokerage_office_finance", "tablet": "PARTIAL" },
+    { "surface": "portal_global", "mobile": "PARTIAL", "notes": "Layout preview mirrors exist; not all pages validated" }
+  ],
+  "structural_only": true,
+  "visual_redesign": false
+}

@@ -1,0 +1,14 @@
+{
+  "meta": { "sprint": "P0.AIO.COMPLETE-PRODUCT-BLUEPRINT-STRUCTURAL-COMPLETION-FORENSIC1" },
+  "interaction_types": ["primary_cta", "form", "wizard", "filter", "search", "upload", "negotiation", "payment", "messaging", "status_change", "print_export"],
+  "coverage_summary": {
+    "F02": { "wizard": "PASS", "form": "PASS", "primary_cta": "PASS" },
+    "F03": { "wizard": "PASS", "form": "PARTIAL", "notes": "BUILD/REGISTER/ACTIVATE/ROLL pages exist" },
+    "F08": { "search": "PASS", "filter": "PARTIAL", "negotiation": "PARTIAL", "saved_search": "MISSING" },
+    "F09": { "form": "PASS", "negotiation": "PARTIAL", "status_change": "PARTIAL" },
+    "F10": { "payment": "PARTIAL", "form": "PASS" },
+    "F11": { "upload": "PARTIAL", "form": "PASS" },
+    "F16": { "upload": "PASS", "versioning": "PARTIAL" },
+    "F17": { "messaging": "PASS", "notifications": "PASS", "appointments": "PASS" }
+  }
+}
