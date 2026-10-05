@@ -1,0 +1,10 @@
+{
+  "total_route_declarations_audited": 310,
+  "total_active_material_routes": 304,
+  "total_meta_entries": 305,
+  "active_material_with_meta": 304,
+  "active_material_route_meta_coverage_pct": 100,
+  "unmapped_active_product_routes": [],
+  "families_in_runtime": 18,
+  "role_projections_in_runtime": 4
+}

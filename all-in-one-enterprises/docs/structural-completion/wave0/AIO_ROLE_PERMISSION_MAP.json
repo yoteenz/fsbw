@@ -1,0 +1,41 @@
+{
+  "customer_membership_roles": [
+    "organization_owner",
+    "organization_admin",
+    "organization_member",
+    "shipper_user"
+  ],
+  "internal_staff_roles": [
+    "super_admin",
+    "administrator",
+    "permitting_specialist",
+    "compliance_specialist",
+    "dispatcher",
+    "insurance_specialist",
+    "factoring_specialist",
+    "brokerage_specialist",
+    "support_specialist"
+  ],
+  "permissions": [
+    "CAN_VIEW",
+    "CAN_CREATE",
+    "CAN_EDIT",
+    "CAN_APPROVE",
+    "CAN_ASSIGN",
+    "CAN_QUOTE",
+    "CAN_NEGOTIATE",
+    "CAN_BILL",
+    "CAN_PAY",
+    "CAN_VERIFY",
+    "CAN_VIEW_INTERNAL",
+    "CAN_MANAGE_TEAM",
+    "CAN_MANAGE_SYSTEM"
+  ],
+  "route_guard_expectations": {
+    "CUSTOMER": "CustomerRouteGuard + org membership",
+    "SHIPPER": "CustomerRouteGuard + shipper projection",
+    "PROVIDER": "ProviderRouteGuard + aio_service_provider_users",
+    "DRIVER": "DriverRouteGuard + aio_driver_profiles.user_id",
+    "OFFICE": "OfficeRouteGuard + aio_internal_staff"
+  }
+}

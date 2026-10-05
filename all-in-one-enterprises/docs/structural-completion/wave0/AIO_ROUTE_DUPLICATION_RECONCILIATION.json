@@ -1,0 +1,38 @@
+[
+  {
+    "group": "route_tree_mirror",
+    "owner": "CANONICAL_ROOT_MOUNT",
+    "status": "COMPATIBILITY",
+    "note": "desktop/mobile preview prefixes"
+  },
+  {
+    "group": "client_command_naming",
+    "owner": "F05_MY_OFFICE",
+    "status": "CANONICAL",
+    "note": "Display MY OFFICE; internal Client Command Center modules preserved"
+  },
+  {
+    "group": "document_storage",
+    "owner": "F16_VAULT",
+    "status": "CANONICAL",
+    "note": "Vault owns documents"
+  },
+  {
+    "group": "load_records",
+    "owner": "aio_dispatch_loads",
+    "status": "COMPATIBILITY",
+    "note": "Demo loads until backend mode"
+  },
+  {
+    "group": "financial_summaries",
+    "owner": "DOMAIN_SEPARATED",
+    "status": "CANONICAL",
+    "note": "FINANCES container only — no merged money model"
+  },
+  {
+    "group": "inbox_vs_messages",
+    "owner": "F17_INBOX_CONTAINER",
+    "status": "CANONICAL",
+    "note": "/portal/inbox over messages/notifications/appointments"
+  }
+]

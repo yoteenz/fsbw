@@ -1,0 +1,26 @@
+[
+  {
+    "from": "/client-portal",
+    "to": "/client-portal",
+    "kind": "MARKETING_SURFACE",
+    "target_family": "F01"
+  },
+  {
+    "from": "/sign-up",
+    "to": "/signup",
+    "kind": "REDIRECT",
+    "preserve_query": true
+  },
+  {
+    "from": "/get-started/desktop",
+    "to": "/desktop/get-started",
+    "kind": "REDIRECT",
+    "preserve_query": true
+  },
+  {
+    "from": "/get-started/mobile",
+    "to": "/mobile/get-started",
+    "kind": "REDIRECT",
+    "preserve_query": true
+  }
+]

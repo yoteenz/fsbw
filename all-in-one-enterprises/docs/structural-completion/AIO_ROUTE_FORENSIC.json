@@ -1272,12 +1272,60 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:messages:53",
+    "route_id": "src/routes/AioCoreRoutes.tsx:inbox:53",
+    "path": "inbox",
+    "component": "PortalInboxLayout",
+    "source_file": "src/routes/AioCoreRoutes.tsx",
+    "raw": "path=\"inbox\" element={<PortalInboxLayout /",
+    "audience": "customer",
+    "family_id": "F17",
+    "recommended_family": "F17",
+    "current_family": "F17",
+    "node_type": "CHILD_PAGE",
+    "role_projection": null,
+    "functional_status": "PARTIAL",
+    "functional_completion": 55,
+    "visual_completion": 38,
+    "approval_completion": 22,
+    "launch_readiness": 41,
+    "data_mode": "DEMO_WITH_BACKEND_ADAPTER",
+    "backend_dependency": "demo_store",
+    "duplicate_group": null,
+    "legacy_status": "ACTIVE",
+    "recommended_action": "PRESERVE",
+    "notes": ""
+  },
+  {
+    "route_id": "src/routes/AioCoreRoutes.tsx:(index):54",
+    "path": "",
+    "component": "Navigate",
+    "source_file": "src/routes/AioCoreRoutes.tsx",
+    "raw": "index element={<Navigate to=\"messages\" replace /",
+    "audience": "public",
+    "family_id": "F01",
+    "recommended_family": "F01",
+    "current_family": "F01",
+    "node_type": "PARENT_PAGE",
+    "role_projection": null,
+    "functional_status": "PARTIAL",
+    "functional_completion": 55,
+    "visual_completion": 38,
+    "approval_completion": 22,
+    "launch_readiness": 41,
+    "data_mode": "DEMO_WITH_BACKEND_ADAPTER",
+    "backend_dependency": "demo_store",
+    "duplicate_group": null,
+    "legacy_status": "ACTIVE",
+    "recommended_action": "PRESERVE",
+    "notes": ""
+  },
+  {
+    "route_id": "src/routes/AioCoreRoutes.tsx:messages:55",
     "path": "messages",
     "component": "PortalMessagesListPage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
     "raw": "path=\"messages\" element={<PortalMessagesListPage /",
-    "audience": "public",
+    "audience": "customer",
     "family_id": "F17",
     "recommended_family": "F17",
     "current_family": "F17",
@@ -1296,12 +1344,12 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:messages/:conversationId:54",
+    "route_id": "src/routes/AioCoreRoutes.tsx:messages/:conversationId:56",
     "path": "messages/:conversationId",
     "component": "PortalConversationDetailPage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
     "raw": "path=\"messages/:conversationId\" element={<PortalConversationDetailPage /",
-    "audience": "public",
+    "audience": "customer",
     "family_id": "F17",
     "recommended_family": "F17",
     "current_family": "F17",
@@ -1320,12 +1368,12 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:appointments:55",
-    "path": "appointments",
-    "component": "PortalAppointmentsListPage",
+    "route_id": "src/routes/AioCoreRoutes.tsx:notifications:57",
+    "path": "notifications",
+    "component": "NotificationsPage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
-    "raw": "path=\"appointments\" element={<PortalAppointmentsListPage /",
-    "audience": "public",
+    "raw": "path=\"notifications\" element={<NotificationsPage /",
+    "audience": "customer",
     "family_id": "F17",
     "recommended_family": "F17",
     "current_family": "F17",
@@ -1344,12 +1392,36 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:appointments/:appointmentId:56",
+    "route_id": "src/routes/AioCoreRoutes.tsx:appointments:58",
+    "path": "appointments",
+    "component": "PortalAppointmentsListPage",
+    "source_file": "src/routes/AioCoreRoutes.tsx",
+    "raw": "path=\"appointments\" element={<PortalAppointmentsListPage /",
+    "audience": "customer",
+    "family_id": "F17",
+    "recommended_family": "F17",
+    "current_family": "F17",
+    "node_type": "CHILD_PAGE",
+    "role_projection": null,
+    "functional_status": "PARTIAL",
+    "functional_completion": 55,
+    "visual_completion": 38,
+    "approval_completion": 22,
+    "launch_readiness": 41,
+    "data_mode": "DEMO_WITH_BACKEND_ADAPTER",
+    "backend_dependency": "demo_store",
+    "duplicate_group": null,
+    "legacy_status": "ACTIVE",
+    "recommended_action": "PRESERVE",
+    "notes": ""
+  },
+  {
+    "route_id": "src/routes/AioCoreRoutes.tsx:appointments/:appointmentId:59",
     "path": "appointments/:appointmentId",
     "component": "PortalAppointmentDetailPage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
     "raw": "path=\"appointments/:appointmentId\" element={<PortalAppointmentDetailPage /",
-    "audience": "public",
+    "audience": "customer",
     "family_id": "F17",
     "recommended_family": "F17",
     "current_family": "F17",
@@ -1368,7 +1440,103 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:requests:57",
+    "route_id": "src/routes/AioCoreRoutes.tsx:messages:60",
+    "path": "messages",
+    "component": "Navigate",
+    "source_file": "src/routes/AioCoreRoutes.tsx",
+    "raw": "path=\"messages\" element={<Navigate to={aioPaths.portalInboxMessages} replace /",
+    "audience": "customer",
+    "family_id": "F17",
+    "recommended_family": "F17",
+    "current_family": "F17",
+    "node_type": "CHILD_PAGE",
+    "role_projection": null,
+    "functional_status": "PARTIAL",
+    "functional_completion": 55,
+    "visual_completion": 38,
+    "approval_completion": 22,
+    "launch_readiness": 41,
+    "data_mode": "DEMO_WITH_BACKEND_ADAPTER",
+    "backend_dependency": "demo_store",
+    "duplicate_group": null,
+    "legacy_status": "ACTIVE",
+    "recommended_action": "PRESERVE",
+    "notes": ""
+  },
+  {
+    "route_id": "src/routes/AioCoreRoutes.tsx:messages/:conversationId:61",
+    "path": "messages/:conversationId",
+    "component": "PortalConversationDetailPage",
+    "source_file": "src/routes/AioCoreRoutes.tsx",
+    "raw": "path=\"messages/:conversationId\" element={<PortalConversationDetailPage /",
+    "audience": "customer",
+    "family_id": "F17",
+    "recommended_family": "F17",
+    "current_family": "F17",
+    "node_type": "DETAIL_VIEW",
+    "role_projection": null,
+    "functional_status": "PARTIAL",
+    "functional_completion": 55,
+    "visual_completion": 38,
+    "approval_completion": 22,
+    "launch_readiness": 41,
+    "data_mode": "DEMO_WITH_BACKEND_ADAPTER",
+    "backend_dependency": "demo_store",
+    "duplicate_group": null,
+    "legacy_status": "ACTIVE",
+    "recommended_action": "PRESERVE",
+    "notes": ""
+  },
+  {
+    "route_id": "src/routes/AioCoreRoutes.tsx:appointments:62",
+    "path": "appointments",
+    "component": "Navigate",
+    "source_file": "src/routes/AioCoreRoutes.tsx",
+    "raw": "path=\"appointments\" element={<Navigate to={aioPaths.portalInboxAppointments} replace /",
+    "audience": "customer",
+    "family_id": "F17",
+    "recommended_family": "F17",
+    "current_family": "F17",
+    "node_type": "CHILD_PAGE",
+    "role_projection": null,
+    "functional_status": "PARTIAL",
+    "functional_completion": 55,
+    "visual_completion": 38,
+    "approval_completion": 22,
+    "launch_readiness": 41,
+    "data_mode": "DEMO_WITH_BACKEND_ADAPTER",
+    "backend_dependency": "demo_store",
+    "duplicate_group": null,
+    "legacy_status": "ACTIVE",
+    "recommended_action": "PRESERVE",
+    "notes": ""
+  },
+  {
+    "route_id": "src/routes/AioCoreRoutes.tsx:appointments/:appointmentId:63",
+    "path": "appointments/:appointmentId",
+    "component": "PortalAppointmentDetailPage",
+    "source_file": "src/routes/AioCoreRoutes.tsx",
+    "raw": "path=\"appointments/:appointmentId\" element={<PortalAppointmentDetailPage /",
+    "audience": "customer",
+    "family_id": "F17",
+    "recommended_family": "F17",
+    "current_family": "F17",
+    "node_type": "DETAIL_VIEW",
+    "role_projection": null,
+    "functional_status": "PARTIAL",
+    "functional_completion": 55,
+    "visual_completion": 38,
+    "approval_completion": 22,
+    "launch_readiness": 41,
+    "data_mode": "DEMO_WITH_BACKEND_ADAPTER",
+    "backend_dependency": "demo_store",
+    "duplicate_group": null,
+    "legacy_status": "ACTIVE",
+    "recommended_action": "PRESERVE",
+    "notes": ""
+  },
+  {
+    "route_id": "src/routes/AioCoreRoutes.tsx:requests:64",
     "path": "requests",
     "component": "ServiceRequestsCenterPage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -1392,7 +1560,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:services:58",
+    "route_id": "src/routes/AioCoreRoutes.tsx:services:65",
     "path": "services",
     "component": "ServicesCenterPage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -1416,7 +1584,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:activity:59",
+    "route_id": "src/routes/AioCoreRoutes.tsx:activity:66",
     "path": "activity",
     "component": "ActivityTimelinePage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -1440,7 +1608,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:team:60",
+    "route_id": "src/routes/AioCoreRoutes.tsx:team:67",
     "path": "team",
     "component": "TeamPage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -1464,7 +1632,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:search:61",
+    "route_id": "src/routes/AioCoreRoutes.tsx:search:68",
     "path": "search",
     "component": "PortalSearchPage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -1488,7 +1656,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:onboarding:62",
+    "route_id": "src/routes/AioCoreRoutes.tsx:onboarding:69",
     "path": "onboarding",
     "component": "RoadReadyOnboardingPage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -1512,7 +1680,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:road-ready:63",
+    "route_id": "src/routes/AioCoreRoutes.tsx:road-ready:70",
     "path": "road-ready",
     "component": "RoadReadyPage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -1536,7 +1704,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:fleet:64",
+    "route_id": "src/routes/AioCoreRoutes.tsx:fleet:71",
     "path": "fleet",
     "component": "FleetPage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -1560,7 +1728,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:fleet/vehicles/:vehicleId:65",
+    "route_id": "src/routes/AioCoreRoutes.tsx:fleet/vehicles/:vehicleId:72",
     "path": "fleet/vehicles/:vehicleId",
     "component": "VehicleDetailPage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -1584,7 +1752,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:vault:66",
+    "route_id": "src/routes/AioCoreRoutes.tsx:vault:73",
     "path": "vault",
     "component": "VaultPage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -1608,7 +1776,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:vault/:documentId:67",
+    "route_id": "src/routes/AioCoreRoutes.tsx:vault/:documentId:74",
     "path": "vault/:documentId",
     "component": "VaultDocumentPage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -1632,7 +1800,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:calendar:68",
+    "route_id": "src/routes/AioCoreRoutes.tsx:calendar:75",
     "path": "calendar",
     "component": "CalendarPage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -1656,7 +1824,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:renewals:69",
+    "route_id": "src/routes/AioCoreRoutes.tsx:renewals:76",
     "path": "renewals",
     "component": "RenewalsPage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -1680,12 +1848,12 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:notifications:70",
+    "route_id": "src/routes/AioCoreRoutes.tsx:notifications:77",
     "path": "notifications",
-    "component": "NotificationsPage",
+    "component": "Navigate",
     "source_file": "src/routes/AioCoreRoutes.tsx",
-    "raw": "path=\"notifications\" element={<NotificationsPage /",
-    "audience": "public",
+    "raw": "path=\"notifications\" element={<Navigate to={aioPaths.portalInboxNotifications} replace /",
+    "audience": "customer",
     "family_id": "F17",
     "recommended_family": "F17",
     "current_family": "F17",
@@ -1704,7 +1872,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:settings/notifications:71",
+    "route_id": "src/routes/AioCoreRoutes.tsx:settings/notifications:78",
     "path": "settings/notifications",
     "component": "NotificationSettingsPage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -1728,7 +1896,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:quotes:72",
+    "route_id": "src/routes/AioCoreRoutes.tsx:quotes:79",
     "path": "quotes",
     "component": "QuotesPage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -1752,7 +1920,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:quotes/:quoteId:73",
+    "route_id": "src/routes/AioCoreRoutes.tsx:quotes/:quoteId:80",
     "path": "quotes/:quoteId",
     "component": "QuoteDetailPage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -1776,7 +1944,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:billing:74",
+    "route_id": "src/routes/AioCoreRoutes.tsx:billing:81",
     "path": "billing",
     "component": "BillingPage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -1800,7 +1968,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:billing/invoices/:invoiceId:75",
+    "route_id": "src/routes/AioCoreRoutes.tsx:billing/invoices/:invoiceId:82",
     "path": "billing/invoices/:invoiceId",
     "component": "InvoiceDetailPage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -1824,7 +1992,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:billing/pay/:invoiceId:76",
+    "route_id": "src/routes/AioCoreRoutes.tsx:billing/pay/:invoiceId:83",
     "path": "billing/pay/:invoiceId",
     "component": "PayInvoicePage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -1848,7 +2016,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:billing/receipts/:receiptId:77",
+    "route_id": "src/routes/AioCoreRoutes.tsx:billing/receipts/:receiptId:84",
     "path": "billing/receipts/:receiptId",
     "component": "ReceiptPage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -1872,7 +2040,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:dispatch:78",
+    "route_id": "src/routes/AioCoreRoutes.tsx:dispatch:85",
     "path": "dispatch",
     "component": "DispatchHomePage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -1896,7 +2064,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:dispatch/onboarding:79",
+    "route_id": "src/routes/AioCoreRoutes.tsx:dispatch/onboarding:86",
     "path": "dispatch/onboarding",
     "component": "DispatchOnboardingPage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -1920,7 +2088,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:dispatch/loads:80",
+    "route_id": "src/routes/AioCoreRoutes.tsx:dispatch/loads:87",
     "path": "dispatch/loads",
     "component": "DispatchLoadsPage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -1944,7 +2112,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:dispatch/loads/:loadId:81",
+    "route_id": "src/routes/AioCoreRoutes.tsx:dispatch/loads/:loadId:88",
     "path": "dispatch/loads/:loadId",
     "component": "DispatchLoadDetailPage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -1968,7 +2136,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:dispatch/history:82",
+    "route_id": "src/routes/AioCoreRoutes.tsx:dispatch/history:89",
     "path": "dispatch/history",
     "component": "DispatchHistoryPage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -1992,7 +2160,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:load-board:83",
+    "route_id": "src/routes/AioCoreRoutes.tsx:load-board:90",
     "path": "load-board",
     "component": "LoadBoardLayout",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -2016,7 +2184,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:(index):84",
+    "route_id": "src/routes/AioCoreRoutes.tsx:(index):91",
     "path": "",
     "component": "LoadBoardSearchPage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -2040,7 +2208,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:results:85",
+    "route_id": "src/routes/AioCoreRoutes.tsx:results:92",
     "path": "results",
     "component": "LoadBoardResultsPage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -2064,7 +2232,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:loads/:loadId:86",
+    "route_id": "src/routes/AioCoreRoutes.tsx:loads/:loadId:93",
     "path": "loads/:loadId",
     "component": "LoadBoardDetailPage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -2088,7 +2256,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:my-loads:87",
+    "route_id": "src/routes/AioCoreRoutes.tsx:my-loads:94",
     "path": "my-loads",
     "component": "LoadBoardMyLoadsPage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -2112,7 +2280,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:fleet:88",
+    "route_id": "src/routes/AioCoreRoutes.tsx:fleet:95",
     "path": "fleet",
     "component": "LoadBoardFleetPage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -2136,7 +2304,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:map:89",
+    "route_id": "src/routes/AioCoreRoutes.tsx:map:96",
     "path": "map",
     "component": "LoadBoardMapPage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -2160,7 +2328,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:saved:90",
+    "route_id": "src/routes/AioCoreRoutes.tsx:saved:97",
     "path": "saved",
     "component": "LoadBoardSavedPage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -2184,7 +2352,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:factoring:91",
+    "route_id": "src/routes/AioCoreRoutes.tsx:factoring:98",
     "path": "factoring",
     "component": "FactoringHomePage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -2208,7 +2376,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:factoring/application:92",
+    "route_id": "src/routes/AioCoreRoutes.tsx:factoring/application:99",
     "path": "factoring/application",
     "component": "FactoringApplicationPage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -2232,7 +2400,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:factoring/ready:93",
+    "route_id": "src/routes/AioCoreRoutes.tsx:factoring/ready:100",
     "path": "factoring/ready",
     "component": "FactoringReadyPage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -2256,7 +2424,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:factoring/submissions/:submissionId:94",
+    "route_id": "src/routes/AioCoreRoutes.tsx:factoring/submissions/:submissionId:101",
     "path": "factoring/submissions/:submissionId",
     "component": "FactoringSubmissionDetailPage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -2280,7 +2448,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:factoring/history:95",
+    "route_id": "src/routes/AioCoreRoutes.tsx:factoring/history:102",
     "path": "factoring/history",
     "component": "FactoringHistoryPage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -2304,7 +2472,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:factoring/invoices/:invoiceId:96",
+    "route_id": "src/routes/AioCoreRoutes.tsx:factoring/invoices/:invoiceId:103",
     "path": "factoring/invoices/:invoiceId",
     "component": "FreightInvoicePrintPage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -2328,7 +2496,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:bookkeeping:97",
+    "route_id": "src/routes/AioCoreRoutes.tsx:bookkeeping:104",
     "path": "bookkeeping",
     "component": "BookkeepingHomePage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -2352,7 +2520,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:fleetcare:98",
+    "route_id": "src/routes/AioCoreRoutes.tsx:fleetcare:105",
     "path": "fleetcare",
     "component": "FleetCareHomePage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -2376,7 +2544,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:fleetcare/request:99",
+    "route_id": "src/routes/AioCoreRoutes.tsx:fleetcare/request:106",
     "path": "fleetcare/request",
     "component": "FleetCareRequestPage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -2400,7 +2568,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:fleetcare/tickets/:ticketId:100",
+    "route_id": "src/routes/AioCoreRoutes.tsx:fleetcare/tickets/:ticketId:107",
     "path": "fleetcare/tickets/:ticketId",
     "component": "FleetCareTicketDetailPage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -2424,7 +2592,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:fleetcare/vehicles/:vehicleId/history:101",
+    "route_id": "src/routes/AioCoreRoutes.tsx:fleetcare/vehicles/:vehicleId/history:108",
     "path": "fleetcare/vehicles/:vehicleId/history",
     "component": "FleetCareVehicleHistoryPage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -2448,7 +2616,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:driverlink:102",
+    "route_id": "src/routes/AioCoreRoutes.tsx:driverlink:109",
     "path": "driverlink",
     "component": "DriverLinkCompanyHomePage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -2472,7 +2640,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:driverlink/opportunities:103",
+    "route_id": "src/routes/AioCoreRoutes.tsx:driverlink/opportunities:110",
     "path": "driverlink/opportunities",
     "component": "DriverLinkCompanyOpportunitiesPage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -2496,7 +2664,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:driverlink/opportunities/new:104",
+    "route_id": "src/routes/AioCoreRoutes.tsx:driverlink/opportunities/new:111",
     "path": "driverlink/opportunities/new",
     "component": "DriverLinkCompanyCreateJobPage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -2520,7 +2688,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:driverlink/opportunities/:opportunityId:105",
+    "route_id": "src/routes/AioCoreRoutes.tsx:driverlink/opportunities/:opportunityId:112",
     "path": "driverlink/opportunities/:opportunityId",
     "component": "DriverLinkPortalOpportunityRoute",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -2544,7 +2712,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:driverlink/candidates:106",
+    "route_id": "src/routes/AioCoreRoutes.tsx:driverlink/candidates:113",
     "path": "driverlink/candidates",
     "component": "DriverLinkCompanyCandidatesPage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -2568,7 +2736,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:insurance:107",
+    "route_id": "src/routes/AioCoreRoutes.tsx:insurance:114",
     "path": "insurance",
     "component": "InsuranceHomePage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -2592,7 +2760,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:insurance/request:108",
+    "route_id": "src/routes/AioCoreRoutes.tsx:insurance/request:115",
     "path": "insurance/request",
     "component": "InsuranceRequestPage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -2616,7 +2784,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:insurance/requests/:requestId:109",
+    "route_id": "src/routes/AioCoreRoutes.tsx:insurance/requests/:requestId:116",
     "path": "insurance/requests/:requestId",
     "component": "InsuranceRequestDetailPage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -2640,7 +2808,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:insurance/policies/:policyId:110",
+    "route_id": "src/routes/AioCoreRoutes.tsx:insurance/policies/:policyId:117",
     "path": "insurance/policies/:policyId",
     "component": "InsurancePolicyDetailPage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -2664,7 +2832,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:insurance/certificates:111",
+    "route_id": "src/routes/AioCoreRoutes.tsx:insurance/certificates:118",
     "path": "insurance/certificates",
     "component": "InsuranceCertificatesPage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -2688,7 +2856,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:insurance/certificates/new:112",
+    "route_id": "src/routes/AioCoreRoutes.tsx:insurance/certificates/new:119",
     "path": "insurance/certificates/new",
     "component": "InsuranceCertificateNewPage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -2712,7 +2880,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:insurance/renewals:113",
+    "route_id": "src/routes/AioCoreRoutes.tsx:insurance/renewals:120",
     "path": "insurance/renewals",
     "component": "InsuranceRenewalsPage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -2736,7 +2904,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:brokerage:114",
+    "route_id": "src/routes/AioCoreRoutes.tsx:brokerage:121",
     "path": "brokerage",
     "component": "CarrierBrokerageHomePage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -2760,7 +2928,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:brokerage/offers:115",
+    "route_id": "src/routes/AioCoreRoutes.tsx:brokerage/offers:122",
     "path": "brokerage/offers",
     "component": "CarrierBrokerageOffersPage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -2784,7 +2952,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:brokerage/loads/:loadId:116",
+    "route_id": "src/routes/AioCoreRoutes.tsx:brokerage/loads/:loadId:123",
     "path": "brokerage/loads/:loadId",
     "component": "CarrierBrokerageLoadPage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -2808,7 +2976,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:brokerage/payments:117",
+    "route_id": "src/routes/AioCoreRoutes.tsx:brokerage/payments:124",
     "path": "brokerage/payments",
     "component": "CarrierBrokeragePaymentsPage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -2832,7 +3000,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:requests/:requestId:118",
+    "route_id": "src/routes/AioCoreRoutes.tsx:requests/:requestId:125",
     "path": "requests/:requestId",
     "component": "RequestDetailPage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -2856,7 +3024,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:services/:serviceRequestId:119",
+    "route_id": "src/routes/AioCoreRoutes.tsx:services/:serviceRequestId:126",
     "path": "services/:serviceRequestId",
     "component": "PortalServiceTrackerPage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -2880,7 +3048,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:roadmap:120",
+    "route_id": "src/routes/AioCoreRoutes.tsx:roadmap:127",
     "path": "roadmap",
     "component": "PortalJourneyRoadmapPage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -2904,7 +3072,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:settings:121",
+    "route_id": "src/routes/AioCoreRoutes.tsx:settings:128",
     "path": "settings",
     "component": "PortalSettingsPage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -2928,7 +3096,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:settings/connections:122",
+    "route_id": "src/routes/AioCoreRoutes.tsx:settings/connections:129",
     "path": "settings/connections",
     "component": "PortalConnectionsPage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -2952,7 +3120,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:settings/security:123",
+    "route_id": "src/routes/AioCoreRoutes.tsx:settings/security:130",
     "path": "settings/security",
     "component": "PortalSecuritySettingsPage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -2976,7 +3144,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:settings/privacy:124",
+    "route_id": "src/routes/AioCoreRoutes.tsx:settings/privacy:131",
     "path": "settings/privacy",
     "component": "PortalPrivacySettingsPage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -3000,7 +3168,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:shipper:125",
+    "route_id": "src/routes/AioCoreRoutes.tsx:shipper:132",
     "path": "shipper",
     "component": "AIOPortalLayout",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -3024,7 +3192,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:(index):126",
+    "route_id": "src/routes/AioCoreRoutes.tsx:(index):133",
     "path": "",
     "component": "ShipperHomePage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -3048,7 +3216,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:onboarding:127",
+    "route_id": "src/routes/AioCoreRoutes.tsx:onboarding:134",
     "path": "onboarding",
     "component": "ShipperOnboardingPage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -3072,7 +3240,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:ship-with-aio:128",
+    "route_id": "src/routes/AioCoreRoutes.tsx:ship-with-aio:135",
     "path": "ship-with-aio",
     "component": "ShipFreightRequestWizard",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -3096,7 +3264,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:ship-with-aio/:requestId:129",
+    "route_id": "src/routes/AioCoreRoutes.tsx:ship-with-aio/:requestId:136",
     "path": "ship-with-aio/:requestId",
     "component": "ShipFreightRequestWizard",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -3120,7 +3288,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:requests:130",
+    "route_id": "src/routes/AioCoreRoutes.tsx:requests:137",
     "path": "requests",
     "component": "ShipperRequestsListPage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -3144,7 +3312,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:requests/:requestId:131",
+    "route_id": "src/routes/AioCoreRoutes.tsx:requests/:requestId:138",
     "path": "requests/:requestId",
     "component": "ShipperRequestDetailPage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -3168,7 +3336,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:shipments:132",
+    "route_id": "src/routes/AioCoreRoutes.tsx:shipments:139",
     "path": "shipments",
     "component": "ShipperShipmentsPage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -3192,7 +3360,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:shipments/new:133",
+    "route_id": "src/routes/AioCoreRoutes.tsx:shipments/new:140",
     "path": "shipments/new",
     "component": "ShipperNewShipmentPage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -3216,7 +3384,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:shipments/:loadId:134",
+    "route_id": "src/routes/AioCoreRoutes.tsx:shipments/:loadId:141",
     "path": "shipments/:loadId",
     "component": "ShipperShipmentDetailPage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -3240,7 +3408,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:quotes:135",
+    "route_id": "src/routes/AioCoreRoutes.tsx:quotes:142",
     "path": "quotes",
     "component": "ShipperQuotesPage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -3264,7 +3432,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:quotes/:quoteId:136",
+    "route_id": "src/routes/AioCoreRoutes.tsx:quotes/:quoteId:143",
     "path": "quotes/:quoteId",
     "component": "ShipperQuoteDetailPage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -3288,7 +3456,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:billing:137",
+    "route_id": "src/routes/AioCoreRoutes.tsx:billing:144",
     "path": "billing",
     "component": "ShipperBillingPage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -3312,7 +3480,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:billing/:invoiceId:138",
+    "route_id": "src/routes/AioCoreRoutes.tsx:billing/:invoiceId:145",
     "path": "billing/:invoiceId",
     "component": "ShipperInvoiceDetailPage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -3336,7 +3504,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:provider/fleetcare:139",
+    "route_id": "src/routes/AioCoreRoutes.tsx:provider/fleetcare:146",
     "path": "provider/fleetcare",
     "component": "FleetCareProviderLayout",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -3360,7 +3528,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:(index):140",
+    "route_id": "src/routes/AioCoreRoutes.tsx:(index):147",
     "path": "",
     "component": "FleetCareProviderDashboardPage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -3384,7 +3552,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:leads:141",
+    "route_id": "src/routes/AioCoreRoutes.tsx:leads:148",
     "path": "leads",
     "component": "FleetCareProviderLeadsPage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -3408,7 +3576,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:leads/:ticketId:142",
+    "route_id": "src/routes/AioCoreRoutes.tsx:leads/:ticketId:149",
     "path": "leads/:ticketId",
     "component": "FleetCareProviderLeadDetailPage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -3432,7 +3600,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:jobs:143",
+    "route_id": "src/routes/AioCoreRoutes.tsx:jobs:150",
     "path": "jobs",
     "component": "FleetCareProviderJobsPage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -3456,7 +3624,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:jobs/:ticketId:144",
+    "route_id": "src/routes/AioCoreRoutes.tsx:jobs/:ticketId:151",
     "path": "jobs/:ticketId",
     "component": "FleetCareProviderJobDetailPage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -3480,7 +3648,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:earnings:145",
+    "route_id": "src/routes/AioCoreRoutes.tsx:earnings:152",
     "path": "earnings",
     "component": "FleetCareProviderEarningsPage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -3504,7 +3672,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:compliance:146",
+    "route_id": "src/routes/AioCoreRoutes.tsx:compliance:153",
     "path": "compliance",
     "component": "FleetCareProviderCompliancePage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -3528,7 +3696,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:profile:147",
+    "route_id": "src/routes/AioCoreRoutes.tsx:profile:154",
     "path": "profile",
     "component": "FleetCareProviderProfilePage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -3552,7 +3720,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:driver/driverlink:148",
+    "route_id": "src/routes/AioCoreRoutes.tsx:driver/driverlink:155",
     "path": "driver/driverlink",
     "component": "DriverLinkDriverLayout",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -3576,7 +3744,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:(index):149",
+    "route_id": "src/routes/AioCoreRoutes.tsx:(index):156",
     "path": "",
     "component": "DriverLinkDriverDashboardPage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -3600,7 +3768,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:profile:150",
+    "route_id": "src/routes/AioCoreRoutes.tsx:profile:157",
     "path": "profile",
     "component": "DriverLinkDriverProfilePage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -3624,7 +3792,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:credentials:151",
+    "route_id": "src/routes/AioCoreRoutes.tsx:credentials:158",
     "path": "credentials",
     "component": "DriverLinkDriverCredentialsPage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -3648,7 +3816,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:find-work:152",
+    "route_id": "src/routes/AioCoreRoutes.tsx:find-work:159",
     "path": "find-work",
     "component": "DriverLinkDriverFindWorkPage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -3672,7 +3840,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:matches:153",
+    "route_id": "src/routes/AioCoreRoutes.tsx:matches:160",
     "path": "matches",
     "component": "DriverLinkDriverMatchesPage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -3696,7 +3864,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:applications:154",
+    "route_id": "src/routes/AioCoreRoutes.tsx:applications:161",
     "path": "applications",
     "component": "DriverLinkDriverApplicationsPage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -3720,7 +3888,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:opportunities/:opportunityId:155",
+    "route_id": "src/routes/AioCoreRoutes.tsx:opportunities/:opportunityId:162",
     "path": "opportunities/:opportunityId",
     "component": "DriverLinkDriverOpportunityPage",
     "source_file": "src/routes/AioCoreRoutes.tsx",
@@ -3744,7 +3912,7 @@
     "notes": ""
   },
   {
-    "route_id": "src/routes/AioCoreRoutes.tsx:office/*:156",
+    "route_id": "src/routes/AioCoreRoutes.tsx:office/*:163",
     "path": "office/*",
     "component": null,
     "source_file": "src/routes/AioCoreRoutes.tsx",

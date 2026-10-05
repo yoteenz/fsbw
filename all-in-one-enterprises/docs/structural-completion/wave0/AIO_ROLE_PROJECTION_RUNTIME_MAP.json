@@ -1,0 +1,26 @@
+{
+  "SHIPPER": {
+    "route_prefixes": [
+      "/shipper"
+    ],
+    "guard": "SHIPPER"
+  },
+  "DRIVER": {
+    "route_prefixes": [
+      "/driver/driverlink"
+    ],
+    "guard": "DRIVER"
+  },
+  "FLEETCARE_PROVIDER": {
+    "route_prefixes": [
+      "/provider/fleetcare"
+    ],
+    "guard": "PROVIDER"
+  },
+  "AIO_OFFICE": {
+    "route_prefixes": [
+      "/office"
+    ],
+    "guard": "OFFICE"
+  }
+}

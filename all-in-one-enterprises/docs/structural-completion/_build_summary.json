@@ -1,0 +1,12 @@
+{
+  "total_route_declarations_audited": 310,
+  "total_material_nodes": 305,
+  "overall_functional_completion": 64,
+  "overall_visual_completion": 38,
+  "overall_approval_completion": 22,
+  "overall_launch_readiness": 45,
+  "role_projections": 4,
+  "global_systems": 18,
+  "duplication_groups": 6,
+  "legacy_aliases": 4
+}

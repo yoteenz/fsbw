@@ -65,7 +65,9 @@ function classifyRoute(r) {
   else if (full.startsWith('driver/')) audience = 'driver';
   else if (
     full.startsWith('portal/') ||
-    ['portal', 'business', 'operations', 'money', 'documents', 'communication'].some((x) => full.startsWith(x))
+    full === 'inbox' ||
+    full.startsWith('inbox/') ||
+    ['portal', 'business', 'operations', 'money', 'documents', 'communication', 'messages', 'notifications', 'appointments'].some((x) => full === x || full.startsWith(`${x}/`))
   )
     audience = 'customer';
   else if (['login', 'signup', 'forgot-password', 'reset-password', 'verify-email', 'onboarding'].includes(full))
@@ -79,10 +81,9 @@ function classifyRoute(r) {
   else if (full.includes('road-ready')) family_id = 'F04';
   else if (
     full === 'portal' ||
-    full === '(index)' && r.source_file.includes('PortalPage') ||
+    (full === '(index)' && r.component === 'PortalPage') ||
     full === 'activity' ||
     full === 'search' ||
-    full === 'portal' ||
     (full === '' && r.component === 'PortalPage')
   )
     family_id = 'F05';
@@ -98,7 +99,15 @@ function classifyRoute(r) {
   else if (full.startsWith('fleetcare') || full.startsWith('provider/fleetcare')) family_id = 'F14';
   else if (full.startsWith('driverlink') || full.startsWith('driver/driverlink')) family_id = 'F15';
   else if (full.startsWith('vault') || full.startsWith('documents')) family_id = 'F16';
-  else if (full.startsWith('messages') || full.startsWith('notifications') || full.startsWith('appointments') || full === 'communication')
+  else if (
+    full === 'inbox' ||
+    full.startsWith('inbox/') ||
+    full.startsWith('portal/inbox') ||
+    full.startsWith('messages') ||
+    full.startsWith('notifications') ||
+    full.startsWith('appointments') ||
+    full === 'communication'
+  )
     family_id = 'F17';
   else if (full.startsWith('settings') || full === 'team' || full.startsWith('login')) family_id = 'F18';
   else if (full.startsWith('office/')) {

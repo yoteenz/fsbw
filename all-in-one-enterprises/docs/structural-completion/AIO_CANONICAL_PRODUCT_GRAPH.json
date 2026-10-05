@@ -1,7 +1,7 @@
 {
   "meta": {
     "sprint": "P0.AIO.COMPLETE-PRODUCT-BLUEPRINT-STRUCTURAL-COMPLETION-FORENSIC1",
-    "generated_at": "2026-10-05T22:00:58.230Z",
+    "generated_at": "2026-10-05T22:21:15.360Z",
     "app_root": "all-in-one-enterprises/",
     "doctrine": "structural-completion-first",
     "brand_locked": true,
@@ -1525,14 +1525,41 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:messages:53",
+      "node_id": "src/routes/AioCoreRoutes.tsx:inbox:53",
+      "family_id": "F17",
+      "title": "PortalInboxLayout",
+      "product_name": "PortalInboxLayout",
+      "technical_name": "PortalInboxLayout",
+      "node_type": "CHILD_PAGE",
+      "route": "inbox",
+      "audience": "customer",
+      "role_projection": null,
+      "visibility": "customer",
+      "source_files": [
+        "src/routes/AioCoreRoutes.tsx"
+      ],
+      "source_routes": [
+        "inbox"
+      ],
+      "functional_completion": 55,
+      "visual_completion": 38,
+      "approval_completion": 22,
+      "launch_readiness": 41,
+      "backend_status": "DEMO_WITH_BACKEND_ADAPTER",
+      "recommended_action": "PRESERVE",
+      "legacy_aliases": [],
+      "duplicate_group": null,
+      "notes": ""
+    },
+    {
+      "node_id": "src/routes/AioCoreRoutes.tsx:messages:55",
       "family_id": "F17",
       "title": "PortalMessagesListPage",
       "product_name": "PortalMessagesListPage",
       "technical_name": "PortalMessagesListPage",
       "node_type": "CHILD_PAGE",
       "route": "messages",
-      "audience": "public",
+      "audience": "customer",
       "role_projection": null,
       "visibility": "customer",
       "source_files": [
@@ -1552,14 +1579,14 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:messages/:conversationId:54",
+      "node_id": "src/routes/AioCoreRoutes.tsx:messages/:conversationId:56",
       "family_id": "F17",
       "title": "PortalConversationDetailPage",
       "product_name": "PortalConversationDetailPage",
       "technical_name": "PortalConversationDetailPage",
       "node_type": "DETAIL_VIEW",
       "route": "messages/:conversationId",
-      "audience": "public",
+      "audience": "customer",
       "role_projection": null,
       "visibility": "customer",
       "source_files": [
@@ -1579,14 +1606,41 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:appointments:55",
+      "node_id": "src/routes/AioCoreRoutes.tsx:notifications:57",
+      "family_id": "F17",
+      "title": "NotificationsPage",
+      "product_name": "NotificationsPage",
+      "technical_name": "NotificationsPage",
+      "node_type": "CHILD_PAGE",
+      "route": "notifications",
+      "audience": "customer",
+      "role_projection": null,
+      "visibility": "customer",
+      "source_files": [
+        "src/routes/AioCoreRoutes.tsx"
+      ],
+      "source_routes": [
+        "notifications"
+      ],
+      "functional_completion": 55,
+      "visual_completion": 38,
+      "approval_completion": 22,
+      "launch_readiness": 41,
+      "backend_status": "DEMO_WITH_BACKEND_ADAPTER",
+      "recommended_action": "PRESERVE",
+      "legacy_aliases": [],
+      "duplicate_group": null,
+      "notes": ""
+    },
+    {
+      "node_id": "src/routes/AioCoreRoutes.tsx:appointments:58",
       "family_id": "F17",
       "title": "PortalAppointmentsListPage",
       "product_name": "PortalAppointmentsListPage",
       "technical_name": "PortalAppointmentsListPage",
       "node_type": "CHILD_PAGE",
       "route": "appointments",
-      "audience": "public",
+      "audience": "customer",
       "role_projection": null,
       "visibility": "customer",
       "source_files": [
@@ -1606,14 +1660,14 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:appointments/:appointmentId:56",
+      "node_id": "src/routes/AioCoreRoutes.tsx:appointments/:appointmentId:59",
       "family_id": "F17",
       "title": "PortalAppointmentDetailPage",
       "product_name": "PortalAppointmentDetailPage",
       "technical_name": "PortalAppointmentDetailPage",
       "node_type": "DETAIL_VIEW",
       "route": "appointments/:appointmentId",
-      "audience": "public",
+      "audience": "customer",
       "role_projection": null,
       "visibility": "customer",
       "source_files": [
@@ -1633,7 +1687,61 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:requests:57",
+      "node_id": "src/routes/AioCoreRoutes.tsx:messages/:conversationId:61",
+      "family_id": "F17",
+      "title": "PortalConversationDetailPage",
+      "product_name": "PortalConversationDetailPage",
+      "technical_name": "PortalConversationDetailPage",
+      "node_type": "DETAIL_VIEW",
+      "route": "messages/:conversationId",
+      "audience": "customer",
+      "role_projection": null,
+      "visibility": "customer",
+      "source_files": [
+        "src/routes/AioCoreRoutes.tsx"
+      ],
+      "source_routes": [
+        "messages/:conversationId"
+      ],
+      "functional_completion": 55,
+      "visual_completion": 38,
+      "approval_completion": 22,
+      "launch_readiness": 41,
+      "backend_status": "DEMO_WITH_BACKEND_ADAPTER",
+      "recommended_action": "PRESERVE",
+      "legacy_aliases": [],
+      "duplicate_group": null,
+      "notes": ""
+    },
+    {
+      "node_id": "src/routes/AioCoreRoutes.tsx:appointments/:appointmentId:63",
+      "family_id": "F17",
+      "title": "PortalAppointmentDetailPage",
+      "product_name": "PortalAppointmentDetailPage",
+      "technical_name": "PortalAppointmentDetailPage",
+      "node_type": "DETAIL_VIEW",
+      "route": "appointments/:appointmentId",
+      "audience": "customer",
+      "role_projection": null,
+      "visibility": "customer",
+      "source_files": [
+        "src/routes/AioCoreRoutes.tsx"
+      ],
+      "source_routes": [
+        "appointments/:appointmentId"
+      ],
+      "functional_completion": 55,
+      "visual_completion": 38,
+      "approval_completion": 22,
+      "launch_readiness": 41,
+      "backend_status": "DEMO_WITH_BACKEND_ADAPTER",
+      "recommended_action": "PRESERVE",
+      "legacy_aliases": [],
+      "duplicate_group": null,
+      "notes": ""
+    },
+    {
+      "node_id": "src/routes/AioCoreRoutes.tsx:requests:64",
       "family_id": "F06",
       "title": "ServiceRequestsCenterPage",
       "product_name": "ServiceRequestsCenterPage",
@@ -1660,7 +1768,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:services:58",
+      "node_id": "src/routes/AioCoreRoutes.tsx:services:65",
       "family_id": "F06",
       "title": "ServicesCenterPage",
       "product_name": "ServicesCenterPage",
@@ -1687,7 +1795,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:activity:59",
+      "node_id": "src/routes/AioCoreRoutes.tsx:activity:66",
       "family_id": "F05",
       "title": "ActivityTimelinePage",
       "product_name": "ActivityTimelinePage",
@@ -1714,7 +1822,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:team:60",
+      "node_id": "src/routes/AioCoreRoutes.tsx:team:67",
       "family_id": "F18",
       "title": "TeamPage",
       "product_name": "TeamPage",
@@ -1741,7 +1849,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:search:61",
+      "node_id": "src/routes/AioCoreRoutes.tsx:search:68",
       "family_id": "F05",
       "title": "PortalSearchPage",
       "product_name": "PortalSearchPage",
@@ -1768,7 +1876,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:onboarding:62",
+      "node_id": "src/routes/AioCoreRoutes.tsx:onboarding:69",
       "family_id": "F01",
       "title": "RoadReadyOnboardingPage",
       "product_name": "RoadReadyOnboardingPage",
@@ -1795,7 +1903,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:road-ready:63",
+      "node_id": "src/routes/AioCoreRoutes.tsx:road-ready:70",
       "family_id": "F04",
       "title": "RoadReadyPage",
       "product_name": "RoadReadyPage",
@@ -1822,7 +1930,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:fleet:64",
+      "node_id": "src/routes/AioCoreRoutes.tsx:fleet:71",
       "family_id": "F01",
       "title": "FleetPage",
       "product_name": "FleetPage",
@@ -1849,7 +1957,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:fleet/vehicles/:vehicleId:65",
+      "node_id": "src/routes/AioCoreRoutes.tsx:fleet/vehicles/:vehicleId:72",
       "family_id": "F01",
       "title": "VehicleDetailPage",
       "product_name": "VehicleDetailPage",
@@ -1876,7 +1984,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:vault:66",
+      "node_id": "src/routes/AioCoreRoutes.tsx:vault:73",
       "family_id": "F16",
       "title": "VaultPage",
       "product_name": "VaultPage",
@@ -1903,7 +2011,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:vault/:documentId:67",
+      "node_id": "src/routes/AioCoreRoutes.tsx:vault/:documentId:74",
       "family_id": "F16",
       "title": "VaultDocumentPage",
       "product_name": "VaultDocumentPage",
@@ -1930,7 +2038,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:calendar:68",
+      "node_id": "src/routes/AioCoreRoutes.tsx:calendar:75",
       "family_id": "F01",
       "title": "CalendarPage",
       "product_name": "CalendarPage",
@@ -1957,7 +2065,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:renewals:69",
+      "node_id": "src/routes/AioCoreRoutes.tsx:renewals:76",
       "family_id": "F01",
       "title": "RenewalsPage",
       "product_name": "RenewalsPage",
@@ -1984,34 +2092,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:notifications:70",
-      "family_id": "F17",
-      "title": "NotificationsPage",
-      "product_name": "NotificationsPage",
-      "technical_name": "NotificationsPage",
-      "node_type": "CHILD_PAGE",
-      "route": "notifications",
-      "audience": "public",
-      "role_projection": null,
-      "visibility": "customer",
-      "source_files": [
-        "src/routes/AioCoreRoutes.tsx"
-      ],
-      "source_routes": [
-        "notifications"
-      ],
-      "functional_completion": 55,
-      "visual_completion": 38,
-      "approval_completion": 22,
-      "launch_readiness": 41,
-      "backend_status": "DEMO_WITH_BACKEND_ADAPTER",
-      "recommended_action": "PRESERVE",
-      "legacy_aliases": [],
-      "duplicate_group": null,
-      "notes": ""
-    },
-    {
-      "node_id": "src/routes/AioCoreRoutes.tsx:settings/notifications:71",
+      "node_id": "src/routes/AioCoreRoutes.tsx:settings/notifications:78",
       "family_id": "F18",
       "title": "NotificationSettingsPage",
       "product_name": "NotificationSettingsPage",
@@ -2038,7 +2119,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:quotes:72",
+      "node_id": "src/routes/AioCoreRoutes.tsx:quotes:79",
       "family_id": "F10",
       "title": "QuotesPage",
       "product_name": "QuotesPage",
@@ -2065,7 +2146,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:quotes/:quoteId:73",
+      "node_id": "src/routes/AioCoreRoutes.tsx:quotes/:quoteId:80",
       "family_id": "F10",
       "title": "QuoteDetailPage",
       "product_name": "QuoteDetailPage",
@@ -2092,7 +2173,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:billing:74",
+      "node_id": "src/routes/AioCoreRoutes.tsx:billing:81",
       "family_id": "F10",
       "title": "BillingPage",
       "product_name": "BillingPage",
@@ -2119,7 +2200,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:billing/invoices/:invoiceId:75",
+      "node_id": "src/routes/AioCoreRoutes.tsx:billing/invoices/:invoiceId:82",
       "family_id": "F10",
       "title": "InvoiceDetailPage",
       "product_name": "InvoiceDetailPage",
@@ -2146,7 +2227,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:billing/pay/:invoiceId:76",
+      "node_id": "src/routes/AioCoreRoutes.tsx:billing/pay/:invoiceId:83",
       "family_id": "F10",
       "title": "PayInvoicePage",
       "product_name": "PayInvoicePage",
@@ -2173,7 +2254,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:billing/receipts/:receiptId:77",
+      "node_id": "src/routes/AioCoreRoutes.tsx:billing/receipts/:receiptId:84",
       "family_id": "F10",
       "title": "ReceiptPage",
       "product_name": "ReceiptPage",
@@ -2200,7 +2281,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:dispatch:78",
+      "node_id": "src/routes/AioCoreRoutes.tsx:dispatch:85",
       "family_id": "F07",
       "title": "DispatchHomePage",
       "product_name": "DispatchHomePage",
@@ -2227,7 +2308,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:dispatch/onboarding:79",
+      "node_id": "src/routes/AioCoreRoutes.tsx:dispatch/onboarding:86",
       "family_id": "F07",
       "title": "DispatchOnboardingPage",
       "product_name": "DispatchOnboardingPage",
@@ -2254,7 +2335,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:dispatch/loads:80",
+      "node_id": "src/routes/AioCoreRoutes.tsx:dispatch/loads:87",
       "family_id": "F07",
       "title": "DispatchLoadsPage",
       "product_name": "DispatchLoadsPage",
@@ -2281,7 +2362,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:dispatch/loads/:loadId:81",
+      "node_id": "src/routes/AioCoreRoutes.tsx:dispatch/loads/:loadId:88",
       "family_id": "F07",
       "title": "DispatchLoadDetailPage",
       "product_name": "DispatchLoadDetailPage",
@@ -2308,7 +2389,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:dispatch/history:82",
+      "node_id": "src/routes/AioCoreRoutes.tsx:dispatch/history:89",
       "family_id": "F07",
       "title": "DispatchHistoryPage",
       "product_name": "DispatchHistoryPage",
@@ -2335,7 +2416,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:load-board:83",
+      "node_id": "src/routes/AioCoreRoutes.tsx:load-board:90",
       "family_id": "F08",
       "title": "LoadBoardLayout",
       "product_name": "LoadBoardLayout",
@@ -2362,7 +2443,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:(index):84",
+      "node_id": "src/routes/AioCoreRoutes.tsx:(index):91",
       "family_id": "F01",
       "title": "LoadBoardSearchPage",
       "product_name": "LoadBoardSearchPage",
@@ -2389,7 +2470,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:results:85",
+      "node_id": "src/routes/AioCoreRoutes.tsx:results:92",
       "family_id": "F01",
       "title": "LoadBoardResultsPage",
       "product_name": "LoadBoardResultsPage",
@@ -2416,7 +2497,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:loads/:loadId:86",
+      "node_id": "src/routes/AioCoreRoutes.tsx:loads/:loadId:93",
       "family_id": "F01",
       "title": "LoadBoardDetailPage",
       "product_name": "LoadBoardDetailPage",
@@ -2443,7 +2524,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:my-loads:87",
+      "node_id": "src/routes/AioCoreRoutes.tsx:my-loads:94",
       "family_id": "F01",
       "title": "LoadBoardMyLoadsPage",
       "product_name": "LoadBoardMyLoadsPage",
@@ -2470,7 +2551,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:fleet:88",
+      "node_id": "src/routes/AioCoreRoutes.tsx:fleet:95",
       "family_id": "F01",
       "title": "LoadBoardFleetPage",
       "product_name": "LoadBoardFleetPage",
@@ -2497,7 +2578,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:map:89",
+      "node_id": "src/routes/AioCoreRoutes.tsx:map:96",
       "family_id": "F01",
       "title": "LoadBoardMapPage",
       "product_name": "LoadBoardMapPage",
@@ -2524,7 +2605,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:saved:90",
+      "node_id": "src/routes/AioCoreRoutes.tsx:saved:97",
       "family_id": "F01",
       "title": "LoadBoardSavedPage",
       "product_name": "LoadBoardSavedPage",
@@ -2551,7 +2632,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:factoring:91",
+      "node_id": "src/routes/AioCoreRoutes.tsx:factoring:98",
       "family_id": "F11",
       "title": "FactoringHomePage",
       "product_name": "FactoringHomePage",
@@ -2578,7 +2659,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:factoring/application:92",
+      "node_id": "src/routes/AioCoreRoutes.tsx:factoring/application:99",
       "family_id": "F11",
       "title": "FactoringApplicationPage",
       "product_name": "FactoringApplicationPage",
@@ -2605,7 +2686,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:factoring/ready:93",
+      "node_id": "src/routes/AioCoreRoutes.tsx:factoring/ready:100",
       "family_id": "F11",
       "title": "FactoringReadyPage",
       "product_name": "FactoringReadyPage",
@@ -2632,7 +2713,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:factoring/submissions/:submissionId:94",
+      "node_id": "src/routes/AioCoreRoutes.tsx:factoring/submissions/:submissionId:101",
       "family_id": "F11",
       "title": "FactoringSubmissionDetailPage",
       "product_name": "FactoringSubmissionDetailPage",
@@ -2659,7 +2740,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:factoring/history:95",
+      "node_id": "src/routes/AioCoreRoutes.tsx:factoring/history:102",
       "family_id": "F11",
       "title": "FactoringHistoryPage",
       "product_name": "FactoringHistoryPage",
@@ -2686,7 +2767,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:factoring/invoices/:invoiceId:96",
+      "node_id": "src/routes/AioCoreRoutes.tsx:factoring/invoices/:invoiceId:103",
       "family_id": "F11",
       "title": "FreightInvoicePrintPage",
       "product_name": "FreightInvoicePrintPage",
@@ -2713,7 +2794,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:bookkeeping:97",
+      "node_id": "src/routes/AioCoreRoutes.tsx:bookkeeping:104",
       "family_id": "F13",
       "title": "BookkeepingHomePage",
       "product_name": "BookkeepingHomePage",
@@ -2740,7 +2821,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:fleetcare:98",
+      "node_id": "src/routes/AioCoreRoutes.tsx:fleetcare:105",
       "family_id": "F14",
       "title": "FleetCareHomePage",
       "product_name": "FleetCareHomePage",
@@ -2767,7 +2848,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:fleetcare/request:99",
+      "node_id": "src/routes/AioCoreRoutes.tsx:fleetcare/request:106",
       "family_id": "F14",
       "title": "FleetCareRequestPage",
       "product_name": "FleetCareRequestPage",
@@ -2794,7 +2875,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:fleetcare/tickets/:ticketId:100",
+      "node_id": "src/routes/AioCoreRoutes.tsx:fleetcare/tickets/:ticketId:107",
       "family_id": "F14",
       "title": "FleetCareTicketDetailPage",
       "product_name": "FleetCareTicketDetailPage",
@@ -2821,7 +2902,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:fleetcare/vehicles/:vehicleId/history:101",
+      "node_id": "src/routes/AioCoreRoutes.tsx:fleetcare/vehicles/:vehicleId/history:108",
       "family_id": "F14",
       "title": "FleetCareVehicleHistoryPage",
       "product_name": "FleetCareVehicleHistoryPage",
@@ -2848,7 +2929,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:driverlink:102",
+      "node_id": "src/routes/AioCoreRoutes.tsx:driverlink:109",
       "family_id": "F15",
       "title": "DriverLinkCompanyHomePage",
       "product_name": "DriverLinkCompanyHomePage",
@@ -2875,7 +2956,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:driverlink/opportunities:103",
+      "node_id": "src/routes/AioCoreRoutes.tsx:driverlink/opportunities:110",
       "family_id": "F15",
       "title": "DriverLinkCompanyOpportunitiesPage",
       "product_name": "DriverLinkCompanyOpportunitiesPage",
@@ -2902,7 +2983,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:driverlink/opportunities/new:104",
+      "node_id": "src/routes/AioCoreRoutes.tsx:driverlink/opportunities/new:111",
       "family_id": "F15",
       "title": "DriverLinkCompanyCreateJobPage",
       "product_name": "DriverLinkCompanyCreateJobPage",
@@ -2929,7 +3010,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:driverlink/opportunities/:opportunityId:105",
+      "node_id": "src/routes/AioCoreRoutes.tsx:driverlink/opportunities/:opportunityId:112",
       "family_id": "F15",
       "title": "DriverLinkPortalOpportunityRoute",
       "product_name": "DriverLinkPortalOpportunityRoute",
@@ -2956,7 +3037,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:driverlink/candidates:106",
+      "node_id": "src/routes/AioCoreRoutes.tsx:driverlink/candidates:113",
       "family_id": "F15",
       "title": "DriverLinkCompanyCandidatesPage",
       "product_name": "DriverLinkCompanyCandidatesPage",
@@ -2983,7 +3064,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:insurance:107",
+      "node_id": "src/routes/AioCoreRoutes.tsx:insurance:114",
       "family_id": "F12",
       "title": "InsuranceHomePage",
       "product_name": "InsuranceHomePage",
@@ -3010,7 +3091,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:insurance/request:108",
+      "node_id": "src/routes/AioCoreRoutes.tsx:insurance/request:115",
       "family_id": "F12",
       "title": "InsuranceRequestPage",
       "product_name": "InsuranceRequestPage",
@@ -3037,7 +3118,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:insurance/requests/:requestId:109",
+      "node_id": "src/routes/AioCoreRoutes.tsx:insurance/requests/:requestId:116",
       "family_id": "F12",
       "title": "InsuranceRequestDetailPage",
       "product_name": "InsuranceRequestDetailPage",
@@ -3064,7 +3145,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:insurance/policies/:policyId:110",
+      "node_id": "src/routes/AioCoreRoutes.tsx:insurance/policies/:policyId:117",
       "family_id": "F12",
       "title": "InsurancePolicyDetailPage",
       "product_name": "InsurancePolicyDetailPage",
@@ -3091,7 +3172,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:insurance/certificates:111",
+      "node_id": "src/routes/AioCoreRoutes.tsx:insurance/certificates:118",
       "family_id": "F12",
       "title": "InsuranceCertificatesPage",
       "product_name": "InsuranceCertificatesPage",
@@ -3118,7 +3199,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:insurance/certificates/new:112",
+      "node_id": "src/routes/AioCoreRoutes.tsx:insurance/certificates/new:119",
       "family_id": "F12",
       "title": "InsuranceCertificateNewPage",
       "product_name": "InsuranceCertificateNewPage",
@@ -3145,7 +3226,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:insurance/renewals:113",
+      "node_id": "src/routes/AioCoreRoutes.tsx:insurance/renewals:120",
       "family_id": "F12",
       "title": "InsuranceRenewalsPage",
       "product_name": "InsuranceRenewalsPage",
@@ -3172,7 +3253,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:brokerage:114",
+      "node_id": "src/routes/AioCoreRoutes.tsx:brokerage:121",
       "family_id": "F09",
       "title": "CarrierBrokerageHomePage",
       "product_name": "CarrierBrokerageHomePage",
@@ -3199,7 +3280,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:brokerage/offers:115",
+      "node_id": "src/routes/AioCoreRoutes.tsx:brokerage/offers:122",
       "family_id": "F09",
       "title": "CarrierBrokerageOffersPage",
       "product_name": "CarrierBrokerageOffersPage",
@@ -3226,7 +3307,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:brokerage/loads/:loadId:116",
+      "node_id": "src/routes/AioCoreRoutes.tsx:brokerage/loads/:loadId:123",
       "family_id": "F09",
       "title": "CarrierBrokerageLoadPage",
       "product_name": "CarrierBrokerageLoadPage",
@@ -3253,7 +3334,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:brokerage/payments:117",
+      "node_id": "src/routes/AioCoreRoutes.tsx:brokerage/payments:124",
       "family_id": "F09",
       "title": "CarrierBrokeragePaymentsPage",
       "product_name": "CarrierBrokeragePaymentsPage",
@@ -3280,7 +3361,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:requests/:requestId:118",
+      "node_id": "src/routes/AioCoreRoutes.tsx:requests/:requestId:125",
       "family_id": "F01",
       "title": "RequestDetailPage",
       "product_name": "RequestDetailPage",
@@ -3307,7 +3388,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:services/:serviceRequestId:119",
+      "node_id": "src/routes/AioCoreRoutes.tsx:services/:serviceRequestId:126",
       "family_id": "F06",
       "title": "PortalServiceTrackerPage",
       "product_name": "PortalServiceTrackerPage",
@@ -3334,7 +3415,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:roadmap:120",
+      "node_id": "src/routes/AioCoreRoutes.tsx:roadmap:127",
       "family_id": "F02",
       "title": "PortalJourneyRoadmapPage",
       "product_name": "PortalJourneyRoadmapPage",
@@ -3361,7 +3442,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:settings:121",
+      "node_id": "src/routes/AioCoreRoutes.tsx:settings:128",
       "family_id": "F18",
       "title": "PortalSettingsPage",
       "product_name": "PortalSettingsPage",
@@ -3388,7 +3469,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:settings/connections:122",
+      "node_id": "src/routes/AioCoreRoutes.tsx:settings/connections:129",
       "family_id": "F18",
       "title": "PortalConnectionsPage",
       "product_name": "PortalConnectionsPage",
@@ -3415,7 +3496,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:settings/security:123",
+      "node_id": "src/routes/AioCoreRoutes.tsx:settings/security:130",
       "family_id": "F18",
       "title": "PortalSecuritySettingsPage",
       "product_name": "PortalSecuritySettingsPage",
@@ -3442,7 +3523,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:settings/privacy:124",
+      "node_id": "src/routes/AioCoreRoutes.tsx:settings/privacy:131",
       "family_id": "F18",
       "title": "PortalPrivacySettingsPage",
       "product_name": "PortalPrivacySettingsPage",
@@ -3469,7 +3550,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:shipper:125",
+      "node_id": "src/routes/AioCoreRoutes.tsx:shipper:132",
       "family_id": "F09",
       "title": "AIOPortalLayout",
       "product_name": "AIOPortalLayout",
@@ -3496,7 +3577,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:(index):126",
+      "node_id": "src/routes/AioCoreRoutes.tsx:(index):133",
       "family_id": "F01",
       "title": "ShipperHomePage",
       "product_name": "ShipperHomePage",
@@ -3523,7 +3604,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:onboarding:127",
+      "node_id": "src/routes/AioCoreRoutes.tsx:onboarding:134",
       "family_id": "F01",
       "title": "ShipperOnboardingPage",
       "product_name": "ShipperOnboardingPage",
@@ -3550,7 +3631,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:ship-with-aio:128",
+      "node_id": "src/routes/AioCoreRoutes.tsx:ship-with-aio:135",
       "family_id": "F01",
       "title": "ShipFreightRequestWizard",
       "product_name": "ShipFreightRequestWizard",
@@ -3577,7 +3658,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:ship-with-aio/:requestId:129",
+      "node_id": "src/routes/AioCoreRoutes.tsx:ship-with-aio/:requestId:136",
       "family_id": "F01",
       "title": "ShipFreightRequestWizard",
       "product_name": "ShipFreightRequestWizard",
@@ -3604,7 +3685,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:requests:130",
+      "node_id": "src/routes/AioCoreRoutes.tsx:requests:137",
       "family_id": "F06",
       "title": "ShipperRequestsListPage",
       "product_name": "ShipperRequestsListPage",
@@ -3631,7 +3712,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:requests/:requestId:131",
+      "node_id": "src/routes/AioCoreRoutes.tsx:requests/:requestId:138",
       "family_id": "F01",
       "title": "ShipperRequestDetailPage",
       "product_name": "ShipperRequestDetailPage",
@@ -3658,7 +3739,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:shipments:132",
+      "node_id": "src/routes/AioCoreRoutes.tsx:shipments:139",
       "family_id": "F01",
       "title": "ShipperShipmentsPage",
       "product_name": "ShipperShipmentsPage",
@@ -3685,7 +3766,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:shipments/new:133",
+      "node_id": "src/routes/AioCoreRoutes.tsx:shipments/new:140",
       "family_id": "F01",
       "title": "ShipperNewShipmentPage",
       "product_name": "ShipperNewShipmentPage",
@@ -3712,7 +3793,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:shipments/:loadId:134",
+      "node_id": "src/routes/AioCoreRoutes.tsx:shipments/:loadId:141",
       "family_id": "F01",
       "title": "ShipperShipmentDetailPage",
       "product_name": "ShipperShipmentDetailPage",
@@ -3739,7 +3820,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:quotes:135",
+      "node_id": "src/routes/AioCoreRoutes.tsx:quotes:142",
       "family_id": "F10",
       "title": "ShipperQuotesPage",
       "product_name": "ShipperQuotesPage",
@@ -3766,7 +3847,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:quotes/:quoteId:136",
+      "node_id": "src/routes/AioCoreRoutes.tsx:quotes/:quoteId:143",
       "family_id": "F10",
       "title": "ShipperQuoteDetailPage",
       "product_name": "ShipperQuoteDetailPage",
@@ -3793,7 +3874,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:billing:137",
+      "node_id": "src/routes/AioCoreRoutes.tsx:billing:144",
       "family_id": "F10",
       "title": "ShipperBillingPage",
       "product_name": "ShipperBillingPage",
@@ -3820,7 +3901,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:billing/:invoiceId:138",
+      "node_id": "src/routes/AioCoreRoutes.tsx:billing/:invoiceId:145",
       "family_id": "F10",
       "title": "ShipperInvoiceDetailPage",
       "product_name": "ShipperInvoiceDetailPage",
@@ -3847,7 +3928,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:provider/fleetcare:139",
+      "node_id": "src/routes/AioCoreRoutes.tsx:provider/fleetcare:146",
       "family_id": "F14",
       "title": "FleetCareProviderLayout",
       "product_name": "FleetCareProviderLayout",
@@ -3874,7 +3955,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:(index):140",
+      "node_id": "src/routes/AioCoreRoutes.tsx:(index):147",
       "family_id": "F01",
       "title": "FleetCareProviderDashboardPage",
       "product_name": "FleetCareProviderDashboardPage",
@@ -3901,7 +3982,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:leads:141",
+      "node_id": "src/routes/AioCoreRoutes.tsx:leads:148",
       "family_id": "F01",
       "title": "FleetCareProviderLeadsPage",
       "product_name": "FleetCareProviderLeadsPage",
@@ -3928,7 +4009,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:leads/:ticketId:142",
+      "node_id": "src/routes/AioCoreRoutes.tsx:leads/:ticketId:149",
       "family_id": "F01",
       "title": "FleetCareProviderLeadDetailPage",
       "product_name": "FleetCareProviderLeadDetailPage",
@@ -3955,7 +4036,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:jobs:143",
+      "node_id": "src/routes/AioCoreRoutes.tsx:jobs:150",
       "family_id": "F01",
       "title": "FleetCareProviderJobsPage",
       "product_name": "FleetCareProviderJobsPage",
@@ -3982,7 +4063,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:jobs/:ticketId:144",
+      "node_id": "src/routes/AioCoreRoutes.tsx:jobs/:ticketId:151",
       "family_id": "F01",
       "title": "FleetCareProviderJobDetailPage",
       "product_name": "FleetCareProviderJobDetailPage",
@@ -4009,7 +4090,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:earnings:145",
+      "node_id": "src/routes/AioCoreRoutes.tsx:earnings:152",
       "family_id": "F01",
       "title": "FleetCareProviderEarningsPage",
       "product_name": "FleetCareProviderEarningsPage",
@@ -4036,7 +4117,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:compliance:146",
+      "node_id": "src/routes/AioCoreRoutes.tsx:compliance:153",
       "family_id": "F01",
       "title": "FleetCareProviderCompliancePage",
       "product_name": "FleetCareProviderCompliancePage",
@@ -4063,7 +4144,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:profile:147",
+      "node_id": "src/routes/AioCoreRoutes.tsx:profile:154",
       "family_id": "F01",
       "title": "FleetCareProviderProfilePage",
       "product_name": "FleetCareProviderProfilePage",
@@ -4090,7 +4171,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:driver/driverlink:148",
+      "node_id": "src/routes/AioCoreRoutes.tsx:driver/driverlink:155",
       "family_id": "F15",
       "title": "DriverLinkDriverLayout",
       "product_name": "DriverLinkDriverLayout",
@@ -4117,7 +4198,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:(index):149",
+      "node_id": "src/routes/AioCoreRoutes.tsx:(index):156",
       "family_id": "F01",
       "title": "DriverLinkDriverDashboardPage",
       "product_name": "DriverLinkDriverDashboardPage",
@@ -4144,7 +4225,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:profile:150",
+      "node_id": "src/routes/AioCoreRoutes.tsx:profile:157",
       "family_id": "F01",
       "title": "DriverLinkDriverProfilePage",
       "product_name": "DriverLinkDriverProfilePage",
@@ -4171,7 +4252,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:credentials:151",
+      "node_id": "src/routes/AioCoreRoutes.tsx:credentials:158",
       "family_id": "F01",
       "title": "DriverLinkDriverCredentialsPage",
       "product_name": "DriverLinkDriverCredentialsPage",
@@ -4198,7 +4279,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:find-work:152",
+      "node_id": "src/routes/AioCoreRoutes.tsx:find-work:159",
       "family_id": "F01",
       "title": "DriverLinkDriverFindWorkPage",
       "product_name": "DriverLinkDriverFindWorkPage",
@@ -4225,7 +4306,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:matches:153",
+      "node_id": "src/routes/AioCoreRoutes.tsx:matches:160",
       "family_id": "F01",
       "title": "DriverLinkDriverMatchesPage",
       "product_name": "DriverLinkDriverMatchesPage",
@@ -4252,7 +4333,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:applications:154",
+      "node_id": "src/routes/AioCoreRoutes.tsx:applications:161",
       "family_id": "F01",
       "title": "DriverLinkDriverApplicationsPage",
       "product_name": "DriverLinkDriverApplicationsPage",
@@ -4279,7 +4360,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:opportunities/:opportunityId:155",
+      "node_id": "src/routes/AioCoreRoutes.tsx:opportunities/:opportunityId:162",
       "family_id": "F01",
       "title": "DriverLinkDriverOpportunityPage",
       "product_name": "DriverLinkDriverOpportunityPage",
@@ -4306,7 +4387,7 @@
       "notes": ""
     },
     {
-      "node_id": "src/routes/AioCoreRoutes.tsx:office/*:156",
+      "node_id": "src/routes/AioCoreRoutes.tsx:office/*:163",
       "family_id": "F07",
       "title": "office/*",
       "product_name": null,

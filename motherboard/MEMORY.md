@@ -54985,6 +54985,15 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 ---
 
+## 2026-10-05 — AIO Wave 0 canonical graph + route meta (runtime binding)
+
+- **Context:** After forensic merge (#40), founder sprint **P0.AIO.WAVE-0-CANONICAL-GRAPH-AND-ROUTE-META** — bind F01–F18 graph to executable runtime (no visual redesign, zero paid generation).
+- **Outcomes:** `src/product-graph/` loads generated registry from forensic `AIO_CANONICAL_PRODUCT_GRAPH.json` via `npm run structural:wave0`; route meta drives container/guard expectations; **100%** active material route meta coverage; customer containers formalized; **MY OFFICE** display name in portal nav/locale; **F17** `/portal/inbox` hub with legacy redirects; **ProviderRouteGuard** / **DriverRouteGuard** + session provider/driver IDs from Supabase; validators + guard test matrix in `productGraph.test.ts`.
+- **Artifacts:** `all-in-one-enterprises/docs/structural-completion/wave0/*`; `scripts/structural-completion/build-wave0-runtime.mjs`.
+- **Still partial:** Auth/RLS tenant safety (CI JWT secrets); functional completion remains ~64% (meta ≠ functional).
+
+---
+
 ## 2026-10-05 — AIO structural completion forensic (F01–F18 blueprint)
 
 - **Context:** Founder completed AIO formal identity pass; requested JURNL-aligned structural-completion-first forensic — canonical product graph, independent completion axes, zero-generation path to 100% functional, no visual redesign, no paid generation.

@@ -1,0 +1,110 @@
+{
+  "MY_OFFICE": {
+    "label": "MY OFFICE",
+    "families": [
+      "F05"
+    ],
+    "route_prefixes": [
+      "portal",
+      "portal/activity",
+      "portal/search"
+    ]
+  },
+  "MY_BUSINESS": {
+    "label": "MY BUSINESS",
+    "families": [
+      "F03",
+      "F04",
+      "F12"
+    ],
+    "route_prefixes": [
+      "start-your-business",
+      "portal/business",
+      "portal/road-ready",
+      "portal/insurance",
+      "portal/fleet",
+      "portal/calendar",
+      "portal/renewals"
+    ]
+  },
+  "OPERATIONS": {
+    "label": "OPERATIONS",
+    "families": [
+      "F07",
+      "F08",
+      "F09",
+      "F14",
+      "F15"
+    ],
+    "route_prefixes": [
+      "portal/operations",
+      "portal/dispatch",
+      "portal/load-board",
+      "portal/brokerage",
+      "portal/fleetcare",
+      "portal/driverlink",
+      "shipper"
+    ]
+  },
+  "FINANCES": {
+    "label": "FINANCES",
+    "families": [
+      "F10",
+      "F11",
+      "F13"
+    ],
+    "route_prefixes": [
+      "portal/money",
+      "portal/billing",
+      "portal/quotes",
+      "portal/factoring",
+      "portal/bookkeeping"
+    ]
+  },
+  "VAULT": {
+    "label": "VAULT",
+    "families": [
+      "F16"
+    ],
+    "route_prefixes": [
+      "portal/documents",
+      "portal/vault"
+    ]
+  },
+  "INBOX": {
+    "label": "INBOX",
+    "families": [
+      "F17"
+    ],
+    "route_prefixes": [
+      "portal/inbox",
+      "portal/messages",
+      "portal/notifications",
+      "portal/appointments",
+      "portal/communication"
+    ]
+  },
+  "SERVICES": {
+    "label": "SERVICES",
+    "families": [
+      "F06"
+    ],
+    "route_prefixes": [
+      "services",
+      "portal/services",
+      "portal/requests"
+    ]
+  },
+  "ACCOUNT": {
+    "label": "ACCOUNT",
+    "families": [
+      "F18"
+    ],
+    "route_prefixes": [
+      "portal/settings",
+      "portal/team",
+      "login",
+      "signup"
+    ]
+  }
+}

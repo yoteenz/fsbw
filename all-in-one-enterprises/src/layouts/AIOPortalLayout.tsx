@@ -9,45 +9,7 @@ import { resolvePortalKind, resolveOrganizationId } from '../portal/organization
 import { aioPaths } from '../utils/paths';
 import { LanguageSelector } from '../components/i18n/LanguageSelector';
 import { PortalModuleContextRail } from '../context-rail/StartBusinessStepShell';
-
-type NavItem = { label: string; href: string; section?: string };
-
-const carrierNav: NavItem[] = [
-  { label: 'Command Center', href: aioPaths.portal, section: 'HOME' },
-  { label: 'My Business', href: aioPaths.portalBusiness, section: 'MY BUSINESS' },
-  { label: 'Road Ready', href: aioPaths.roadReady, section: 'MY BUSINESS' },
-  { label: 'Fleet', href: aioPaths.portalFleet, section: 'MY BUSINESS' },
-  { label: 'Insurance', href: aioPaths.portalInsurance, section: 'MY BUSINESS' },
-  { label: 'Calendar', href: aioPaths.portalCalendar, section: 'MY BUSINESS' },
-  { label: 'Renewals', href: aioPaths.portalRenewals, section: 'MY BUSINESS' },
-  { label: 'Operations', href: aioPaths.portalOperations, section: 'OPERATIONS' },
-  { label: 'Dispatch', href: aioPaths.portalDispatch, section: 'OPERATIONS' },
-  { label: 'Load Board', href: aioPaths.portalLoadBoard, section: 'OPERATIONS' },
-  { label: 'FleetCare', href: aioPaths.portalFleetCare, section: 'OPERATIONS' },
-  { label: 'DriverLink', href: aioPaths.portalDriverLink, section: 'OPERATIONS' },
-  { label: 'AIO Freight', href: aioPaths.portalBrokerage, section: 'OPERATIONS' },
-  { label: 'Money', href: aioPaths.portalMoney, section: 'MONEY' },
-  { label: 'Billing', href: aioPaths.portalBilling, section: 'MONEY' },
-  { label: 'Factoring', href: aioPaths.portalFactoring, section: 'MONEY' },
-  { label: 'Bookkeeping', href: aioPaths.portalBookkeeping, section: 'MONEY' },
-  { label: 'Documents', href: aioPaths.portalDocuments, section: 'DOCUMENTS' },
-  { label: 'Vault', href: aioPaths.portalVault, section: 'DOCUMENTS' },
-  { label: 'Messages', href: aioPaths.portalMessages, section: 'COMMUNICATION' },
-  { label: 'Appointments', href: aioPaths.portalAppointments, section: 'COMMUNICATION' },
-  { label: 'Notifications', href: aioPaths.portalNotifications, section: 'COMMUNICATION' },
-  { label: 'Service Requests', href: aioPaths.portalRequestsCenter, section: 'ACCOUNT' },
-  { label: 'Team', href: aioPaths.portalTeam, section: 'ACCOUNT' },
-  { label: 'Settings', href: aioPaths.portalSettings, section: 'ACCOUNT' },
-];
-
-const shipperNav: NavItem[] = [
-  { label: 'Shipper Home', href: aioPaths.shipper },
-  { label: 'Shipments', href: aioPaths.shipperShipments },
-  { label: 'Quotes', href: aioPaths.shipperQuotes },
-  { label: 'Billing', href: aioPaths.shipperBilling },
-  { label: 'Messages', href: aioPaths.portalMessages },
-  { label: 'Notifications', href: aioPaths.portalNotifications },
-];
+import { buildCarrierPortalNav, buildShipperPortalNav, type PortalNavItem } from '../product-graph/portalNavFromMeta';
 
 const mobileBottomNav = [
   { label: 'Home', href: aioPaths.portal },
@@ -63,7 +25,7 @@ export function AIOPortalLayout() {
   const store = useDemoStore();
   const portalKind = resolvePortalKind(location.pathname);
   const orgId = resolveOrganizationId(store, portalKind);
-  const nav = portalKind === 'shipper' ? shipperNav : carrierNav;
+  const nav: PortalNavItem[] = portalKind === 'shipper' ? buildShipperPortalNav() : buildCarrierPortalNav();
 
   const unread = useMemo(
     () => store.notifications.filter((n) => n.recipientType === 'customer' && n.organizationId === orgId && !n.read).length,

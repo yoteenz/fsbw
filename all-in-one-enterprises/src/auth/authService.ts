@@ -24,6 +24,10 @@ export interface AioAuthSession {
   internalRole: AioInternalRole | null;
   isInternal: boolean;
   emailVerified: boolean;
+  /** Active FleetCare provider membership (aio_service_provider_users). */
+  fleetcareProviderId: string | null;
+  /** Driver profile owned by this user (aio_driver_profiles). */
+  driverProfileId: string | null;
 }
 
 export interface SignUpPayload {
@@ -218,6 +222,21 @@ export async function loadAuthSession(): Promise<AioAuthSession | null> {
     .eq('status', 'active')
     .maybeSingle();
 
+  const { data: providerLink } = await supabase
+    .from('aio_service_provider_users')
+    .select('provider_id')
+    .eq('user_id', user.id)
+    .eq('status', 'active')
+    .limit(1)
+    .maybeSingle();
+
+  const { data: driverProfile } = await supabase
+    .from('aio_driver_profiles')
+    .select('id')
+    .eq('user_id', user.id)
+    .limit(1)
+    .maybeSingle();
+
   return {
     user,
     session,
@@ -242,6 +261,8 @@ export async function loadAuthSession(): Promise<AioAuthSession | null> {
     internalRole: internalStaff?.role ?? null,
     isInternal: Boolean(internalStaff),
     emailVerified: Boolean(user.email_confirmed_at),
+    fleetcareProviderId: providerLink?.provider_id ?? null,
+    driverProfileId: driverProfile?.id ?? null,
   };
 }
 

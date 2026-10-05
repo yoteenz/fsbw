@@ -7,7 +7,7 @@
 | Cross-org tenant isolation (RLS designed) | **PARTIAL** — migrations + live tests; role JWT BLOCKED in CI |
 | Shipper vs carrier financial privacy | **PASS** — projection tests + RLS integration design |
 | Internal notes visibility | **PARTIAL** — policies exist; needs live staff JWT proofs |
-| Provider/driver route isolation | **FAIL** — no guards on provider/driver trees |
+| Provider/driver route isolation | **PARTIAL** — `ProviderRouteGuard` / `DriverRouteGuard` added (Wave 0); RLS + membership proofs still partial |
 | Demo fallback in production build | **PASS** — throws if misconfigured |
 | Secrets in frontend | **PASS** — service role not in client bundle |
 | localStorage as SoT in prod | **PASS** — demo only by default |

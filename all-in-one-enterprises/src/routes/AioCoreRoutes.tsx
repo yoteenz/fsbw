@@ -1,6 +1,6 @@
 import { lazy, Suspense } from 'react';
 import { Navigate, Route, useParams } from 'react-router-dom';
-import { CustomerRouteGuard, OfficeRouteGuard } from '../auth/guards/RouteGuards';
+import { CustomerRouteGuard, DriverRouteGuard, OfficeRouteGuard, ProviderRouteGuard } from '../auth/guards/RouteGuards';
 import { AIOPublicLayout } from '../layouts/AIOPublicLayout';
 import { SmartIntakeLayout } from '../layouts/SmartIntakeLayout';
 import { AIOPortalLayout } from '../layouts/AIOPortalLayout';
@@ -116,6 +116,7 @@ import {
 import { BookkeepingHomePage } from '../pages/portal/bookkeeping/BookkeepingPortalPages';
 import { PortalServiceTrackerPage, PortalJourneyRoadmapPage } from '../pages/portal/WorkflowPortalPages';
 import { PortalMessagesListPage, PortalConversationDetailPage } from '../pages/portal/PortalMessagesPages';
+import { PortalInboxLayout } from '../pages/portal/PortalInboxPages';
 import { PortalAppointmentsListPage, PortalAppointmentDetailPage } from '../pages/portal/PortalAppointmentsPages';
 import { SchedulePage } from '../pages/SchedulePage';
 import { aioAppConfig } from '../config/appConfig';
@@ -258,9 +259,17 @@ export const aioCoreRoutes = (
           <Route path="money" element={<MoneyCenterPage />} />
           <Route path="documents" element={<DocumentCenterPage />} />
           <Route path="communication" element={<CommunicationHubPage />} />
-          <Route path="messages" element={<PortalMessagesListPage />} />
+          <Route path="inbox" element={<PortalInboxLayout />}>
+            <Route index element={<Navigate to="messages" replace />} />
+            <Route path="messages" element={<PortalMessagesListPage />} />
+            <Route path="messages/:conversationId" element={<PortalConversationDetailPage />} />
+            <Route path="notifications" element={<NotificationsPage />} />
+            <Route path="appointments" element={<PortalAppointmentsListPage />} />
+            <Route path="appointments/:appointmentId" element={<PortalAppointmentDetailPage />} />
+          </Route>
+          <Route path="messages" element={<Navigate to={aioPaths.portalInboxMessages} replace />} />
           <Route path="messages/:conversationId" element={<PortalConversationDetailPage />} />
-          <Route path="appointments" element={<PortalAppointmentsListPage />} />
+          <Route path="appointments" element={<Navigate to={aioPaths.portalInboxAppointments} replace />} />
           <Route path="appointments/:appointmentId" element={<PortalAppointmentDetailPage />} />
           <Route path="requests" element={<ServiceRequestsCenterPage />} />
           <Route path="services" element={<ServicesCenterPage />} />
@@ -275,7 +284,7 @@ export const aioCoreRoutes = (
           <Route path="vault/:documentId" element={<VaultDocumentPage />} />
           <Route path="calendar" element={<CalendarPage />} />
           <Route path="renewals" element={<RenewalsPage />} />
-          <Route path="notifications" element={<NotificationsPage />} />
+          <Route path="notifications" element={<Navigate to={aioPaths.portalInboxNotifications} replace />} />
           <Route path="settings/notifications" element={<NotificationSettingsPage />} />
           <Route path="quotes" element={<QuotesPage />} />
           <Route path="quotes/:quoteId" element={<QuoteDetailPage />} />
@@ -349,7 +358,8 @@ export const aioCoreRoutes = (
         </Route>
       </Route>
 
-      <Route path="provider/fleetcare" element={<FleetCareProviderLayout />}>
+      <Route element={<ProviderRouteGuard />}>
+        <Route path="provider/fleetcare" element={<FleetCareProviderLayout />}>
         <Route index element={<FleetCareProviderDashboardPage />} />
         <Route path="leads" element={<FleetCareProviderLeadsPage />} />
         <Route path="leads/:ticketId" element={<FleetCareProviderLeadDetailPage />} />
@@ -358,9 +368,11 @@ export const aioCoreRoutes = (
         <Route path="earnings" element={<FleetCareProviderEarningsPage />} />
         <Route path="compliance" element={<FleetCareProviderCompliancePage />} />
         <Route path="profile" element={<FleetCareProviderProfilePage />} />
+        </Route>
       </Route>
 
-      <Route path="driver/driverlink" element={<DriverLinkDriverLayout />}>
+      <Route element={<DriverRouteGuard />}>
+        <Route path="driver/driverlink" element={<DriverLinkDriverLayout />}>
         <Route index element={<DriverLinkDriverDashboardPage />} />
         <Route path="profile" element={<DriverLinkDriverProfilePage />} />
         <Route path="credentials" element={<DriverLinkDriverCredentialsPage />} />
@@ -368,6 +380,7 @@ export const aioCoreRoutes = (
         <Route path="matches" element={<DriverLinkDriverMatchesPage />} />
         <Route path="applications" element={<DriverLinkDriverApplicationsPage />} />
         <Route path="opportunities/:opportunityId" element={<DriverLinkDriverOpportunityPage />} />
+        </Route>
       </Route>
 
       <Route element={<OfficeRouteGuard />}>

@@ -1,0 +1,41 @@
+{
+  "sprint": "P0.AIO.WAVE-0-CANONICAL-GRAPH-AND-ROUTE-META",
+  "functional_completion_before": 64,
+  "functional_completion_after": 64,
+  "note": "Route meta improves structural observability; functional % unchanged until domain contracts pass.",
+  "auth_rls_tenant_safety_before": "PARTIAL",
+  "auth_rls_tenant_safety_after": "PARTIAL",
+  "provider_guard": "REPAIRED_RUNTIME",
+  "driver_guard": "REPAIRED_RUNTIME",
+  "gaps_closed": [
+    "GAP-AUTH-PROVIDER-DRIVER",
+    "GAP-INBOX-CONTAINER",
+    "GAP-MY-OFFICE-NAME"
+  ],
+  "gaps_remaining": [
+    {
+      "id": "GAP-BOOKKEEPING-PORTAL-DEPTH",
+      "severity": "P1",
+      "title": "Customer bookkeeping portal thin vs office bookkeeping ops",
+      "families": [
+        "F13"
+      ]
+    },
+    {
+      "id": "GAP-ROUTE-MIRROR",
+      "severity": "P2",
+      "title": "Core tree mounted 3x (root/desktop/mobile) inflates route count — canonical graph uses single mount",
+      "families": [
+        "GLOBAL"
+      ]
+    },
+    {
+      "id": "GAP-PRODUCTION-CI",
+      "severity": "P0",
+      "title": "Supabase live validation requires RLS role Auth secrets; GRANT migration applied 20260827001621",
+      "families": [
+        "GLOBAL"
+      ]
+    }
+  ]
+}
