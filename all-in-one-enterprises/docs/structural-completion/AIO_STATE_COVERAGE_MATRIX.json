@@ -1,0 +1,12 @@
+{
+  "meta": { "sprint": "P0.AIO.COMPLETE-PRODUCT-BLUEPRINT-STRUCTURAL-COMPLETION-FORENSIC1" },
+  "required_states": ["default", "loading", "empty", "error", "success", "unauthorized", "pending_review", "blocked"],
+  "families": {
+    "F05": { "loading": "PARTIAL", "empty": "PARTIAL", "error": "PARTIAL", "notes": "Portal home uses demo store; patterns vary by page" },
+    "F08": { "loading": "PARTIAL", "empty": "PARTIAL", "error": "WEAK", "notes": "Load board search/results need consistent empty/error" },
+    "F09": { "loading": "PARTIAL", "error": "PARTIAL", "notes": "Shipper + live CI domain" },
+    "F14": { "unauthorized": "FAIL", "notes": "Provider routes unguarded" },
+    "F15": { "unauthorized": "FAIL", "notes": "Driver routes unguarded" }
+  },
+  "global_gap": "No shared state kit enforced across all portal pages; office pages more complete."
+}

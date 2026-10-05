@@ -1,0 +1,20 @@
+{
+  "meta": { "sprint": "P0.AIO.COMPLETE-PRODUCT-BLUEPRINT-STRUCTURAL-COMPLETION-FORENSIC1" },
+  "canonical_events": [
+    { "event": "intake_started", "status": "PARTIAL", "hooks": ["get-started", "smart intake"] },
+    { "event": "intake_completed", "status": "PARTIAL" },
+    { "event": "road_ready_item_updated", "status": "PARTIAL", "hooks": ["road-ready pages"] },
+    { "event": "service_request_created", "status": "PASS", "hooks": ["request submit", "demo store"] },
+    { "event": "document_uploaded", "status": "PARTIAL", "hooks": ["vault"] },
+    { "event": "quote_accepted", "status": "PARTIAL", "hooks": ["brokerage/shipper"] },
+    { "event": "load_offer_viewed", "status": "PARTIAL", "hooks": ["load board"] },
+    { "event": "pod_uploaded", "status": "PARTIAL", "hooks": ["freight autopilot domain"] },
+    { "event": "factoring_submitted", "status": "PARTIAL" },
+    { "event": "insurance_requested", "status": "PARTIAL" },
+    { "event": "fleetcare_ticket_created", "status": "PARTIAL" },
+    { "event": "driverlink_application_submitted", "status": "PARTIAL" },
+    { "event": "message_sent", "status": "PARTIAL" },
+    { "event": "appointment_booked", "status": "PARTIAL" }
+  ],
+  "note": "Activity/audit tables exist in schema; client emission not uniform — W2/W9 hardening."
+}

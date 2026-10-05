@@ -1,0 +1,53 @@
+{
+  "gaps": [
+    {
+      "id": "GAP-AUTH-PROVIDER-DRIVER",
+      "severity": "P0",
+      "title": "Provider and driver route trees lack CustomerRouteGuard / role auth",
+      "families": [
+        "F14",
+        "F15"
+      ]
+    },
+    {
+      "id": "GAP-MY-OFFICE-NAME",
+      "severity": "P1",
+      "title": "Client Command Center product logic maps to portal home; MY OFFICE nav label not canonical in routes",
+      "families": [
+        "F05"
+      ]
+    },
+    {
+      "id": "GAP-INBOX-CONTAINER",
+      "severity": "P1",
+      "title": "Customer inbox split across messages/notifications/appointments — no /portal/inbox route",
+      "families": [
+        "F17"
+      ]
+    },
+    {
+      "id": "GAP-BOOKKEEPING-PORTAL-DEPTH",
+      "severity": "P1",
+      "title": "Customer bookkeeping portal thin vs office bookkeeping ops",
+      "families": [
+        "F13"
+      ]
+    },
+    {
+      "id": "GAP-ROUTE-MIRROR",
+      "severity": "P2",
+      "title": "Core tree mounted 3x (root/desktop/mobile) inflates route count — canonical graph uses single mount",
+      "families": [
+        "GLOBAL"
+      ]
+    },
+    {
+      "id": "GAP-PRODUCTION-CI",
+      "severity": "P0",
+      "title": "Supabase live validation requires RLS role Auth secrets; GRANT migration applied 20260827001621",
+      "families": [
+        "GLOBAL"
+      ]
+    }
+  ]
+}
