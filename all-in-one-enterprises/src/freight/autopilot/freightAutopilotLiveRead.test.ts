@@ -19,6 +19,7 @@ describe.skipIf(!hasLive)('Freight Autopilot — live read path setup', () => {
   let shipperOrgId = '';
   let loadId = '';
   let loadNumber = '';
+  let staffUserId = '';
 
   it('seeds minimal persisted autopilot state for read validation', async () => {
     const admin = createFreightAutopilotAdminClient()!;
@@ -81,10 +82,55 @@ describe.skipIf(!hasLive)('Freight Autopilot — live read path setup', () => {
 
   describe.skipIf(!hasStaffSession)('staff session read path', () => {
     it('panel repository reflects persisted multi-session state under staff RLS', async () => {
+      const admin = createFreightAutopilotAdminClient()!;
+      const {
+        data: { user: staffUser },
+        error: staffLookupError,
+      } = await admin.auth.getUser(staffJwt!);
+
+      expect(staffLookupError).toBeNull();
+      expect(staffUser?.id).toBeTruthy();
+      staffUserId = staffUser!.id;
+
+      const { error: membershipError } = await admin.from('aio_organization_memberships').insert([
+        {
+          organization_id: orgId,
+          user_id: staffUserId,
+          role: 'organization_member',
+          status: 'active',
+        },
+        {
+          organization_id: shipperOrgId,
+          user_id: staffUserId,
+          role: 'organization_member',
+          status: 'active',
+        },
+      ]);
+      expect(membershipError).toBeNull();
+
+      const { data: fixtureMemberships, error: fixtureMembershipError } = await admin
+        .from('aio_organization_memberships')
+        .select('organization_id, user_id, status')
+        .eq('user_id', staffUserId)
+        .in('organization_id', [orgId, shipperOrgId]);
+
+      expect(fixtureMembershipError).toBeNull();
+      expect(fixtureMemberships ?? []).toHaveLength(2);
+      expect((fixtureMemberships ?? []).every((row) => row.status === 'active')).toBe(true);
+
       const readClient = createClient(url!, anonKey!, {
         auth: { persistSession: false },
         global: { headers: { Authorization: `Bearer ${staffJwt}` } },
       });
+
+      const { data: visibleLoad, error: visibleLoadError } = await readClient
+        .from('aio_dispatch_loads')
+        .select('id')
+        .eq('id', loadId)
+        .maybeSingle();
+
+      expect(visibleLoadError).toBeNull();
+      expect(visibleLoad?.id).toBe(loadId);
 
       const repo = createSupabaseFreightAutopilotRepository(readClient);
       const sessionA = await repo.getPanelData(loadId);
@@ -99,6 +145,13 @@ describe.skipIf(!hasLive)('Freight Autopilot — live read path setup', () => {
   afterAll(async () => {
     if (!hasLive || !loadId) return;
     const admin = createFreightAutopilotAdminClient()!;
+    if (staffUserId && orgId && shipperOrgId) {
+      await admin
+        .from('aio_organization_memberships')
+        .delete()
+        .eq('user_id', staffUserId)
+        .in('organization_id', [orgId, shipperOrgId]);
+    }
     await admin.from('aio_brokerage_shipper_invoices').delete().eq('load_id', loadId);
     await admin.from('aio_freight_document_completeness').delete().eq('load_id', loadId);
     await admin.from('aio_dispatch_loads').delete().eq('id', loadId);
