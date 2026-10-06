@@ -106,6 +106,12 @@ jobs:
           set +x
           node scripts/ci/aio-ci-export-db-url.mjs
 
+      - name: Postgres auth precheck (raw DSN)
+        shell: bash
+        run: |
+          set +x
+          node scripts/ci/aio-ci-postgres-auth-precheck.mjs
+
       - name: Project guard (post-link)
         shell: bash
         run: bash scripts/ci/aio-project-guard.sh post-link

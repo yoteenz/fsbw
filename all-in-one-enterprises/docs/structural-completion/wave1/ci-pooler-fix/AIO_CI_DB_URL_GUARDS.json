@@ -1,0 +1,8 @@
+{
+  "guards": [
+    { "code": "AIO_CI_DB_URL_FULL_URI_PERCENT_ENCODED", "pattern": "^postgres(?:ql)?%3A" },
+    { "code": "AIO_CI_DIRECT_IPV6_HOST_FORBIDDEN", "host": "db.<ref>.supabase.co" },
+    { "code": "AIO_CI_TRANSACTION_POOLER_FORBIDDEN_FOR_SESSION_PATH", "port": 6543 },
+    { "code": "AIO_CI_DB_URL_MALFORMED", "requires": "^postgresql://" }
+  ]
+}

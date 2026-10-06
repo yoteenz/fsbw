@@ -54985,6 +54985,14 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 ---
 
+## 2026-10-06 — AIO Supabase CI link PAT permission diagnostic
+
+- **Context:** Pooler precheck PASS; `supabase link` fails with scoped PAT authorization (`AIO_SUPABASE_PROJECT_LINK_FAILURE`).
+- **Delivered:** On link failure, `--debug` capture + sanitization + permission parser + artifact `aio-supabase-link-diagnostic`; optional `GET /v1/projects/{ref}` probe; unit tests; job summary fields. No token/password rotation.
+- **Status:** **AWAITING_GITHUB_ACTIONS_LIVE_DIAGNOSTIC** for exact `missing_permissions[]` from artifact after next workflow run.
+
+---
+
 ## 2026-10-06 — AIO Supabase CI IPv4 pooler connection fix
 
 - **Context:** GitHub Actions `aio-supabase-production-validate` failed with `network is unreachable` on direct `db.nnnljnhtmseagotvgxxt.supabase.co` (IPv6).

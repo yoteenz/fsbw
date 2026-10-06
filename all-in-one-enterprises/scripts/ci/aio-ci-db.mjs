@@ -8,6 +8,7 @@ import { readFileSync, existsSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
+import { encodePasswordComponent } from './aio-ci-db-transport.mjs';
 
 export const AIO_CANONICAL_PROJECT_REF = 'nnnljnhtmseagotvgxxt';
 export const FS_FORBIDDEN_PROJECT_REF = 'hyycomvcaqxxvyrfupes';
@@ -48,8 +49,25 @@ export function resolvePoolerUri({
   password = process.env.SUPABASE_DB_PASSWORD ?? '',
   poolerPath = DEFAULT_POOLER_URL_PATH,
   projectRef = process.env.SUPABASE_PROJECT_ID ?? AIO_CANONICAL_PROJECT_REF,
+  dbUrl = process.env.AIO_CI_DB_URL ?? '',
 } = {}) {
   assertAioProjectRef(projectRef);
+
+  const envUrl = dbUrl.trim();
+  if (envUrl) {
+    if (/^postgres(?:ql)?%3A/i.test(envUrl)) {
+      return {
+        ok: false,
+        method: 'pooler',
+        error: 'AIO_CI_DB_URL_FULL_URI_PERCENT_ENCODED',
+        uri: null,
+      };
+    }
+    if (!/^postgres(?:ql)?:\/\//i.test(envUrl)) {
+      return { ok: false, method: 'pooler', error: 'AIO_CI_DB_URL_MALFORMED', uri: null };
+    }
+    return { ok: true, method: 'pooler', error: null, uri: envUrl };
+  }
 
   if (!password) {
     return { ok: false, method: 'none', error: 'missing SUPABASE_DB_PASSWORD', uri: null };
@@ -105,8 +123,7 @@ export function resolvePoolerUri({
     };
   }
 
-  const encoded = encodeURIComponent(password);
-  const uri = template.replace('[YOUR-PASSWORD]', encoded);
+  const uri = template.replace('[YOUR-PASSWORD]', encodePasswordComponent(password));
 
   return { ok: true, method: 'pooler', error: null, uri };
 }

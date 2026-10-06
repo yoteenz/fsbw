@@ -13,6 +13,21 @@ export const CI_TRANSACTION_POOLER_PORT = 6543;
 
 const DIRECT_DB_HOST_RE = /db\.[a-z0-9]+\.supabase\.co/i;
 
+/** Encode only the password userinfo component (no double-encoding). */
+export function encodePasswordComponent(password) {
+  if (password == null || password === '') return '';
+  let raw = String(password);
+  if (/%[0-9A-Fa-f]{2}/.test(raw)) {
+    try {
+      const once = decodeURIComponent(raw);
+      if (encodeURIComponent(once) === raw) raw = once;
+    } catch {
+      /* keep raw */
+    }
+  }
+  return encodeURIComponent(raw);
+}
+
 /** Default shared pooler host for AIO project region (us-west-2). Override via secret. */
 export function defaultPoolerHost() {
   return (
@@ -34,7 +49,7 @@ export function buildSessionPoolerTemplate({
   if (DIRECT_DB_HOST_RE.test(host)) {
     throw new Error('AIO_SUPABASE_DIRECT_HOST_GUARD: CI must not use db.<ref>.supabase.co');
   }
-  return `postgresql://postgres.${projectRef}:[YOUR-PASSWORD]@${host}:${port}/postgres`;
+  return `postgresql://postgres.${projectRef}:[YOUR-PASSWORD]@${host}:${port}/postgres?sslmode=require`;
 }
 
 export function parsePoolerTemplateMeta(template) {
@@ -109,27 +124,4 @@ export function ensurePoolerUrlFile(options = {}) {
   return { poolerPath, source, meta: guard.meta };
 }
 
-export function getPercentEncodedPoolerDbUrl(options = {}) {
-  const password = options.password ?? process.env.SUPABASE_DB_PASSWORD ?? '';
-  if (!password) {
-    throw new Error('AIO_SUPABASE_DB_AUTH_FAILURE: missing SUPABASE_DB_PASSWORD');
-  }
-  const { template } = resolvePoolerTemplate(options);
-  const guard = assertCiTransportAllowed(template);
-  if (!guard.ok) {
-    throw new Error(`${guard.code}: ${guard.message}`);
-  }
-  const uri = template.replace('[YOUR-PASSWORD]', encodeURIComponent(password));
-  return encodeURIComponent(uri);
-}
-
-export function exportEncodedDbUrlToGithubEnv() {
-  const encoded = getPercentEncodedPoolerDbUrl();
-  const gh = process.env.GITHUB_ENV;
-  if (gh) {
-    appendFileSync(gh, `AIO_CI_DB_URL=${encoded}\n`);
-    appendFileSync(gh, `AIO_CI_DATABASE_TRANSPORT=${CI_DATABASE_TRANSPORT}\n`);
-    appendFileSync(gh, `AIO_CI_POOLER_PORT=${CI_POOLER_PORT}\n`);
-  }
-  return encoded;
-}
+export { buildAioCiDatabaseUrl, exportRawDbUrlToGithubEnv, validateAioCiDatabaseUrl } from './aio-ci-db-url.mjs';

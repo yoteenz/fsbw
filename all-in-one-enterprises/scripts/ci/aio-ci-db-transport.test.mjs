@@ -8,8 +8,8 @@ import {
   assertCiTransportAllowed,
   CI_POOLER_PORT,
   CI_DATABASE_TRANSPORT,
-  getPercentEncodedPoolerDbUrl,
 } from './aio-ci-db-transport.mjs';
+import { buildAioCiDatabaseUrl } from './aio-ci-db-url.mjs';
 import { resolvePoolerUri, AIO_CANONICAL_PROJECT_REF } from './aio-ci-db.mjs';
 
 function testSessionTemplate() {
@@ -37,13 +37,13 @@ function testTransactionPortGuard() {
   console.log('OK: transaction port guard');
 }
 
-function testEncodedDbUrlNoPasswordInTemplate() {
+function testRawDbUrlNotFullyEncoded() {
   process.env.SUPABASE_DB_PASSWORD = 'unit-test-pass';
-  const enc = getPercentEncodedPoolerDbUrl();
-  assert.ok(enc.length > 10);
-  assert.ok(!decodeURIComponent(enc).includes('[YOUR-PASSWORD]'));
+  const url = buildAioCiDatabaseUrl();
+  assert.match(url, /^postgresql:\/\//);
+  assert.ok(!url.includes('[YOUR-PASSWORD]'));
   delete process.env.SUPABASE_DB_PASSWORD;
-  console.log('OK: encoded db url');
+  console.log('OK: raw db url (not full-uri encoded)');
 }
 
 function testResolvePoolerRejects6543() {
@@ -68,7 +68,7 @@ assert.equal(CI_DATABASE_TRANSPORT, 'SUPAVISOR_SESSION');
 testSessionTemplate();
 testDirectHostGuard();
 testTransactionPortGuard();
-testEncodedDbUrlNoPasswordInTemplate();
+testRawDbUrlNotFullyEncoded();
 testResolvePoolerRejects6543();
 
 console.log('All aio-ci-db-transport tests passed.');

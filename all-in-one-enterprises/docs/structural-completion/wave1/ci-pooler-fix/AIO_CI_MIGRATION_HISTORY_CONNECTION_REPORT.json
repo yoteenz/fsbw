@@ -1,0 +1,7 @@
+{
+  "status": "AWAITING_GITHUB_ACTIONS_LIVE_PROOF",
+  "connection_fix": "AIO_CI_DB_URL raw DSN",
+  "migration_list_flag": "--db-url \"$AIO_CI_DB_URL\"",
+  "pooler_sql_fallback": "runPoolerSql uses same AIO_CI_DB_URL via resolvePoolerUri",
+  "local_migrations": 17
+}

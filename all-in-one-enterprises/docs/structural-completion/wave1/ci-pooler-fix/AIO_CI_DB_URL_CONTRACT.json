@@ -1,0 +1,13 @@
+{
+  "env_var": "AIO_CI_DB_URL",
+  "format": "raw_postgresql_dsn",
+  "full_uri_percent_encode": "FORBIDDEN",
+  "password_encoding": "encodeURIComponent on password component only",
+  "scheme": "postgresql",
+  "username": "postgres.<project-ref>",
+  "port": 5432,
+  "database": "postgres",
+  "sslmode": "require",
+  "github_env_export": "heredoc delimiter via GITHUB_ENV",
+  "builder": "scripts/ci/aio-ci-db-url.mjs buildAioCiDatabaseUrl"
+}
