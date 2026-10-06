@@ -1,0 +1,138 @@
+{
+  "sprint": "P0.AIO.EXPERIENCE-DRIVEN-PAGE-REFINEMENT1 — founder override",
+  "status": "PROPOSED_FOR_FOUNDER_REVIEW",
+  "route": "/services/ifta-filing",
+  "primary_message": "AIO handles the business side of quarterly fuel-tax filing.",
+  "one_cta": "REQUEST FILING",
+  "sections": [
+    {
+      "id": "THRESHOLD",
+      "content": [
+        "eyebrow TAX & FUEL · IFTA FILING",
+        "H1: AIO handles the business side of quarterly fuel-tax filing.",
+        "promise: AIO handles the quarter: you send fuel and miles as they happen, AIO checks, reconciles, files and keeps the record.",
+        "REQUEST FILING (gold, the one decision)",
+        "Need an IFTA account first? → services/ifta-fuel-tax-assistance"
+      ],
+      "object": "JACKET SPECIMEN — the client's real quarter card (Q3 2026 · due Oct 31 · 2 items needed · CONTINUE FILING) labelled 'This is your quarter in AIO'",
+      "brain": [
+        "perspectives.public.workspace_continuity",
+        "information_hierarchy.PUBLIC",
+        "business_promise",
+        "public_cta"
+      ]
+    },
+    {
+      "id": "WHAT_IT_IS · WHO_ITS_FOR · TIMING",
+      "content": [
+        "IFTA is the quarterly fuel tax report for qualifying interstate carriers",
+        "it is due every quarter (Apr 30 · Jul 31 · Oct 31 · Jan 31)",
+        "it needs fuel receipts and miles by state",
+        "AIO builds, checks and files it with you — you approve before anything is filed",
+        "Interstate carriers with qualified motor vehicles and an active IFTA account (AIO can help set the account up first).",
+        "Quarterly; due the last day of the month after each quarter."
+      ],
+      "object": "paper sheet in three columns + due-date strip (Apr 30 · Jul 31 · Oct 31 · Jan 31; next due marked)",
+      "brain": [
+        "perspectives.public.must_understand",
+        "who_its_for",
+        "timing"
+      ]
+    },
+    {
+      "id": "HOW_IT_WORKS",
+      "content": [
+        "Your quarter opens",
+        "Send receipts and miles as you go",
+        "AIO reviews and reconciles",
+        "You approve the return",
+        "AIO files it",
+        "The filed quarter lands in your Vault"
+      ],
+      "object": "the same six-step rail the client sees in the room, each step tagged YOU or AIO",
+      "brain": [
+        "perspectives.public.how_it_works",
+        "workspace_continuity"
+      ]
+    },
+    {
+      "id": "WHAT_WE_HANDLE ‖ WHAT_YOU_PROVIDE",
+      "content": {
+        "aio_handles": [
+          "collecting and checking receipts",
+          "turning ELD / trip records into miles by state",
+          "matching fuel to miles",
+          "preparing the return",
+          "filing it",
+          "keeping the quarter in your Vault",
+          "reminding you before the next one"
+        ],
+        "you_provide": [
+          "fuel receipts (photo, upload or from your Vault)",
+          "miles by state (ELD report, import, spreadsheet or manual)",
+          "confirmation of which trucks ran",
+          "approval of the return"
+        ]
+      },
+      "object": "two-sided ledger",
+      "brain": [
+        "what_we_handle",
+        "what_client_provides"
+      ]
+    },
+    {
+      "id": "OUTCOME",
+      "content": [
+        "A filed quarterly IFTA return with confirmation and the full record in your Vault — and the next quarter already open.",
+        "IFTA return summary · Filed IFTA return · Filing confirmation · Quarter filing packet"
+      ],
+      "object": "sealed jacket specimen + Vault path",
+      "brain": [
+        "outcome",
+        "output_artifacts"
+      ]
+    },
+    {
+      "id": "PRICING_RELATIONSHIP · BOUNDARIES",
+      "content": [
+        "Quote required (per-quarter service fee by fleet size); fuel tax owed is the carrier’s own liability, separate from AIO fees.",
+        "AIO is not a tax authority; AIO staff file with your base jurisdiction (fuel-tax activation INTERNAL_ONLY)"
+      ],
+      "object": "terms strip",
+      "brain": [
+        "pricing_relationship",
+        "avoid_list (implying AIO is the government)"
+      ]
+    },
+    {
+      "id": "START",
+      "content": [
+        "REQUEST FILING",
+        "Already filing with AIO? Open your quarter → /portal/services/ifta"
+      ],
+      "object": "closing CTA band",
+      "brain": [
+        "public_cta",
+        "client_entry"
+      ]
+    }
+  ],
+  "imagery": {
+    "policy": "No photography required — the jacket specimen is the hero.",
+    "optional_slots": [
+      {
+        "slot": "threshold background",
+        "subject": "fuel island at night, office light, no people posing, no generic semi hero",
+        "status": "GENERATION_REQUIRED — not generated, needs founder approval"
+      }
+    ],
+    "retired": [
+      "public/brand/all-in-one-hero-truck.png (IDNTY_10 prohibits generic semi hero shots)",
+      "aio-icon-ifta-fuel-tax.png (cropped)"
+    ]
+  },
+  "open_decisions": [
+    "D-02 public chrome",
+    "D-04 availability truth"
+  ]
+}

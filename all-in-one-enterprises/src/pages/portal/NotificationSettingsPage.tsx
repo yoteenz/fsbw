@@ -8,6 +8,7 @@ import { aioPaths } from '../../utils/paths';
 
 const CATEGORY_LABELS: Record<NotificationCategory, string> = {
   road_ready: 'Road Ready',
+  tax_fuel: 'Tax & Fuel (IFTA)',
   documents: 'Documents',
   renewals: 'Renewals',
   messages: 'Messages',

@@ -208,6 +208,18 @@ export type TaskStatus = 'open' | 'in_progress' | 'waiting' | 'complete';
 export type DeadlineSeverity = 'upcoming' | 'due_soon' | 'due_today' | 'overdue' | 'complete';
 
 export type ActivityKind =
+  | 'IFTA_RECEIPTS_ADDED'
+  | 'IFTA_MILEAGE_IMPORTED'
+  | 'IFTA_QUARTER_SUBMITTED'
+  | 'IFTA_REVIEW_STARTED'
+  | 'IFTA_CORRECTION_REQUESTED'
+  | 'IFTA_ITEMS_RESOLVED'
+  | 'IFTA_RETURN_SENT_FOR_APPROVAL'
+  | 'IFTA_CLIENT_APPROVED'
+  | 'IFTA_RETURN_FILED'
+  | 'IFTA_PAYMENT_RECORDED'
+  | 'IFTA_VAULT_PACKAGE_CREATED'
+  | 'IFTA_QUARTER_ARCHIVED'
   | 'REQUEST_CREATED'
   | 'REQUEST_ASSIGNED'
   | 'REQUEST_STATUS_CHANGED'
@@ -549,6 +561,8 @@ export interface DemoStore {
   officeStaffId?: string;
   /** Current office staff role override for authorization demo. */
   officeStaffRole?: OfficeStaffRole;
+  /** IFTA / Fuel Tax — one quarter case per client-quarter (Quarterly Filing Room + Fuel Tax queue). */
+  iftaQuarters?: import('../ifta/iftaTypes').IftaQuarterCase[];
   /** Office work items — references canonical domain records. */
   officeWorkItems?: OfficeWorkItem[];
   officeTeams?: OfficeTeam[];

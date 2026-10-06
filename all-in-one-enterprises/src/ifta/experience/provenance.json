@@ -1,0 +1,22 @@
+{
+  "source_repo": "yoteenz/SITE00",
+  "source_path": "docs/studioos/experience-brain",
+  "source_commit": "5d6c074",
+  "source_sprint": "P0.SITE00.WORKSPACE-EXPERIENCE-BRAIN.CANONICAL-SCHEMA-AIO-PROOF1",
+  "consumed_by_sprint": "P0.AIO.EXPERIENCE-DRIVEN-PAGE-REFINEMENT1",
+  "rule": "Vendored byte-for-byte. Never hand-edit — change the brain in SITE00 and re-run this script.",
+  "files": {
+    "AIO_IFTA_FUEL_TAX_EXPERIENCE_CONTRACT.json": {
+      "sha256": "29da0236cbdec3242f1da145da52e082f02288c78cea2b2f4f6966f5319ebe0c",
+      "bytes": 70496
+    },
+    "AIO_IFTA_FUEL_TAX_VISUAL_CONTRACT.json": {
+      "sha256": "1eb9e5b80878a4de1e44b705c0f0407c24c155b6cd86022a874ea659639b4532",
+      "bytes": 45239
+    },
+    "AIO_IFTA_FUEL_TAX_E2E_CONTRACT.json": {
+      "sha256": "31cd76292e917425c4a0419c219fedad072ae6c01dbd09375a84d3bc534a76c4",
+      "bytes": 8265
+    }
+  }
+}

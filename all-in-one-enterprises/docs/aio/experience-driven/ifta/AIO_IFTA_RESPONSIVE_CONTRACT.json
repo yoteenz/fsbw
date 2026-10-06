@@ -1,0 +1,69 @@
+{
+  "sprint": "P0.AIO.EXPERIENCE-DRIVEN-PAGE-REFINEMENT1 — founder override",
+  "status": "PROPOSED_FOR_FOUNDER_REVIEW",
+  "breakpoints": {
+    "mobile": "360–767",
+    "tablet": "768–1199",
+    "desktop": "1200–1599",
+    "wide": "≥1600 — content max 1480, centred"
+  },
+  "legacy_breakpoints": "767px split and mobile-only/desktop-only duplicate trees — discarded",
+  "surfaces": {
+    "P1": {
+      "mobile": "stacked: threshold → specimen → sheet → six steps (vertical) → ledger (stacked, YOU/AIO tags) → sealed specimen → terms → start; sticky REQUEST FILING",
+      "tablet": "two-column threshold; sheet in two columns",
+      "desktop": "threshold 7/5 with specimen; sheet three columns; horizontal six-step rail; two-sided ledger"
+    },
+    "C1": {
+      "mobile": {
+        "task_model": "capture-first task flow: snap receipts at the pump, resolve one flag at a time, approve in one decision window",
+        "layout": "quarter header (state · % · due) → single next action → compartments as collapsible rows → sticky TAKE PHOTO / CONTINUE",
+        "primary_object_treatment": "quarter card pinned at top with a completeness ring",
+        "input_treatment": "camera + upload as full-width primary; mileage source picker as a sheet"
+      },
+      "tablet": {
+        "task_model": "review-and-resolve: compartments side by side, flags resolved in place",
+        "layout": "quarter header + two-column compartments (receipts | mileage) with vehicles strip",
+        "primary_object_treatment": "quarter header with timeline of the six steps",
+        "input_treatment": "drag-and-drop upload + camera"
+      },
+      "desktop": {
+        "task_model": "workbench: build and check the packet with everything visible",
+        "layout": "left: quarter + six-step progress; centre: active compartment (receipt grid / mileage table by state × truck); right: flags + messages",
+        "primary_object_treatment": "quarter as the bench object with compartments as tabs of one packet",
+        "input_treatment": "bulk upload, ELD report upload, spreadsheet mapping"
+      }
+    },
+    "C2": {
+      "mobile": "slips as two-line cards, flagged first, class chips scroll horizontally",
+      "tablet": "ledger with 5 columns (truck folds into line 2)",
+      "desktop": "full 7-column slip ledger + capture bar + totals"
+    },
+    "C3": {
+      "mobile": "one lane per truck, collapsible; source picker as a bottom sheet",
+      "tablet": "lanes side by side with receipts",
+      "desktop": "lanes + state × truck matrix"
+    },
+    "C6": {
+      "mobile": "sheet full width, decision bar sticky at bottom",
+      "tablet": "sheet + decision column",
+      "desktop": "sheet centred, decision column right"
+    },
+    "S1": {
+      "mobile": "grouped by bucket, one next action per row",
+      "tablet": "pipeline ribbon + list",
+      "desktop": "pipeline ribbon + full jacket rows"
+    },
+    "S2": {
+      "mobile": "next action → blockers → status list → actions; tables 'best on desktop'",
+      "tablet": "header + two zones (instruments | thread)",
+      "desktop": "three zones (context | instruments | thread + audit)"
+    }
+  },
+  "rules": [
+    "Mobile never shrinks the staff desktop (sprint §20)",
+    "Desktop supports operational review: workbench, multi-zone review, receipt queue, mileage table, status rail, filing sidebar (sprint §21)",
+    "Sticky task bar on client mobile: TAKE PHOTO + the state's one CTA",
+    "Touch targets ≥ 44px"
+  ]
+}

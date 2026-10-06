@@ -1,0 +1,180 @@
+{
+  "sprint": "P0.AIO.EXPERIENCE-DRIVEN-PAGE-REFINEMENT1 \u2014 founder override",
+  "status": "LEGACY EVIDENCE CAPTURED \u00b7 NEW-FAMILY CAPTURES PENDING IMPLEMENTATION",
+  "note": "No screenshot of the new family exists because no new visual was built. Composition wireframes are in AIO_IFTA_COMPOSITION_REVIEW.html; they are not screenshots of product.",
+  "captured_legacy_evidence": [
+    {
+      "file": "evidence/legacy/legacy-notifications.jpg",
+      "purpose": "audit evidence of legacy visuals (zero design authority)",
+      "source": "running app, demo mode, 2026-10-06"
+    },
+    {
+      "file": "evidence/legacy/legacy-office-mobile.jpg",
+      "purpose": "audit evidence of legacy visuals (zero design authority)",
+      "source": "running app, demo mode, 2026-10-06"
+    },
+    {
+      "file": "evidence/legacy/legacy-office-permitting.jpg",
+      "purpose": "audit evidence of legacy visuals (zero design authority)",
+      "source": "running app, demo mode, 2026-10-06"
+    },
+    {
+      "file": "evidence/legacy/legacy-portal-home-desktop.jpg",
+      "purpose": "audit evidence of legacy visuals (zero design authority)",
+      "source": "running app, demo mode, 2026-10-06"
+    },
+    {
+      "file": "evidence/legacy/legacy-portal-home-mobile.jpg",
+      "purpose": "audit evidence of legacy visuals (zero design authority)",
+      "source": "running app, demo mode, 2026-10-06"
+    },
+    {
+      "file": "evidence/legacy/legacy-portal-ifta-route.jpg",
+      "purpose": "audit evidence of legacy visuals (zero design authority)",
+      "source": "running app, demo mode, 2026-10-06"
+    },
+    {
+      "file": "evidence/legacy/legacy-public-desktop.jpg",
+      "purpose": "audit evidence of legacy visuals (zero design authority)",
+      "source": "running app, demo mode, 2026-10-06"
+    },
+    {
+      "file": "evidence/legacy/legacy-public-mobile.jpg",
+      "purpose": "audit evidence of legacy visuals (zero design authority)",
+      "source": "running app, demo mode, 2026-10-06"
+    },
+    {
+      "file": "evidence/legacy/legacy-road-ready.jpg",
+      "purpose": "audit evidence of legacy visuals (zero design authority)",
+      "source": "running app, demo mode, 2026-10-06"
+    },
+    {
+      "file": "evidence/legacy/legacy-vault.jpg",
+      "purpose": "audit evidence of legacy visuals (zero design authority)",
+      "source": "running app, demo mode, 2026-10-06"
+    }
+  ],
+  "required_after_approval": [
+    {
+      "surface": "PUBLIC IFTA",
+      "viewport": "MOBILE",
+      "size": "390x844",
+      "status": "PENDING_IMPLEMENTATION"
+    },
+    {
+      "surface": "PUBLIC IFTA",
+      "viewport": "TABLET",
+      "size": "820x1180",
+      "status": "PENDING_IMPLEMENTATION"
+    },
+    {
+      "surface": "PUBLIC IFTA",
+      "viewport": "DESKTOP",
+      "size": "1440x900",
+      "status": "PENDING_IMPLEMENTATION"
+    },
+    {
+      "surface": "CLIENT QUARTER",
+      "viewport": "MOBILE",
+      "size": "390x844",
+      "status": "PENDING_IMPLEMENTATION"
+    },
+    {
+      "surface": "CLIENT QUARTER",
+      "viewport": "TABLET",
+      "size": "820x1180",
+      "status": "PENDING_IMPLEMENTATION"
+    },
+    {
+      "surface": "CLIENT QUARTER",
+      "viewport": "DESKTOP",
+      "size": "1440x900",
+      "status": "PENDING_IMPLEMENTATION"
+    },
+    {
+      "surface": "CLIENT RECEIPTS",
+      "viewport": "MOBILE",
+      "size": "390x844",
+      "status": "PENDING_IMPLEMENTATION"
+    },
+    {
+      "surface": "CLIENT RECEIPTS",
+      "viewport": "TABLET",
+      "size": "820x1180",
+      "status": "PENDING_IMPLEMENTATION"
+    },
+    {
+      "surface": "CLIENT RECEIPTS",
+      "viewport": "DESKTOP",
+      "size": "1440x900",
+      "status": "PENDING_IMPLEMENTATION"
+    },
+    {
+      "surface": "CLIENT REVIEW / APPROVAL",
+      "viewport": "MOBILE",
+      "size": "390x844",
+      "status": "PENDING_IMPLEMENTATION"
+    },
+    {
+      "surface": "CLIENT REVIEW / APPROVAL",
+      "viewport": "TABLET",
+      "size": "820x1180",
+      "status": "PENDING_IMPLEMENTATION"
+    },
+    {
+      "surface": "CLIENT REVIEW / APPROVAL",
+      "viewport": "DESKTOP",
+      "size": "1440x900",
+      "status": "PENDING_IMPLEMENTATION"
+    },
+    {
+      "surface": "STAFF REVIEW",
+      "viewport": "MOBILE",
+      "size": "390x844",
+      "status": "PENDING_IMPLEMENTATION"
+    },
+    {
+      "surface": "STAFF REVIEW",
+      "viewport": "TABLET",
+      "size": "820x1180",
+      "status": "PENDING_IMPLEMENTATION"
+    },
+    {
+      "surface": "STAFF REVIEW",
+      "viewport": "DESKTOP",
+      "size": "1440x900",
+      "status": "PENDING_IMPLEMENTATION"
+    },
+    {
+      "surface": "FILED STATE",
+      "viewport": "MOBILE",
+      "size": "390x844",
+      "status": "PENDING_IMPLEMENTATION"
+    },
+    {
+      "surface": "FILED STATE",
+      "viewport": "TABLET",
+      "size": "820x1180",
+      "status": "PENDING_IMPLEMENTATION"
+    },
+    {
+      "surface": "FILED STATE",
+      "viewport": "DESKTOP",
+      "size": "1440x900",
+      "status": "PENDING_IMPLEMENTATION"
+    }
+  ],
+  "journey_captures_after_approval": [
+    "public discovery",
+    "get started",
+    "client quarter",
+    "receipt action",
+    "mileage action",
+    "blocker",
+    "AIO review",
+    "client approval",
+    "filed",
+    "vault",
+    "next quarter"
+  ]
+}

@@ -713,7 +713,7 @@ export function getClientCommandCenterView(
     },
     quickActions: buildQuickActions(ctx),
     activityPreview: store.activity
-      .filter((a) => a.visibility === 'customer' || a.clientId === orgId)
+      .filter((a) => (a.clientId ? a.clientId === orgId : a.visibility === 'customer'))
       .slice(0, 8)
       .map((a) => ({ id: a.id, title: a.title, createdAt: a.createdAt })),
     moduleErrors,

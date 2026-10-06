@@ -1,4 +1,5 @@
 import { defaultIntakeAnswers } from '../intake/intakeTypes';
+import { applyIftaSeed } from '../ifta/iftaStoreSeed';
 import type { DemoStore } from './demoTypes';
 import { createRoadReadySeedData } from './roadReadySeed';
 import { createVaultSeedData, defaultNotificationPreferences } from './vaultSeed';
@@ -59,7 +60,7 @@ export function createDemoSeed(): DemoStore {
   const fleetcare = createFleetCareSeedData();
   const driverlink = createDriverLinkSeedData();
 
-  return {
+  const seed: DemoStore = {
     version: 25,
     dataSystem: {
       demoSchemaVersion: AIO_DEMO_SCHEMA_VERSION,
@@ -409,6 +410,7 @@ export function createDemoSeed(): DemoStore {
     ...fleetcare,
     ...driverlink,
   };
+  return applyIftaSeed(seed, now);
 }
 
 function mkRequest(

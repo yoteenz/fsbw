@@ -1,0 +1,211 @@
+{
+  "sprint": "P0.AIO.EXPERIENCE-DRIVEN-PAGE-REFINEMENT1 — founder override",
+  "status": "PRESERVED — the new visual layer binds to this contract and nothing visual from legacy",
+  "routes": [
+    {
+      "path": "/services/ifta-filing",
+      "actor": "PUBLIC",
+      "source": "contract public_entry",
+      "today": "generic ServiceCatalogDetailPage inside AIOPublicLayout",
+      "binding": "new family page on the same path (static route outranks services/:serviceSlug)",
+      "guard": "none"
+    },
+    {
+      "path": "/services/ifta-fuel-tax-assistance",
+      "actor": "PUBLIC",
+      "source": "contract public_entry (account setup)",
+      "today": "generic catalog page",
+      "binding": "linked as the IFTA-account prerequisite; page itself out of scope"
+    },
+    {
+      "path": "/portal/services/ifta",
+      "actor": "CLIENT",
+      "source": "contract client_entry",
+      "today": "falls into services/:serviceRequestId → SERVICE NOT FOUND",
+      "binding": "new family route, outside AIOPortalLayout (static route outranks portal › services/:serviceRequestId)",
+      "guard": "CustomerRouteGuard",
+      "shell_side_effects_to_keep": [
+        "runExpirationEvaluation()",
+        "runBillingEvaluation()",
+        "unread notification count"
+      ]
+    },
+    {
+      "path": "/portal/services/ifta/:bench (receipts · mileage · vehicles · approval)",
+      "actor": "CLIENT",
+      "source": "contract client perspective (compartments) — sub-paths PROPOSED",
+      "today": "none",
+      "binding": "same shell"
+    },
+    {
+      "path": "/portal/vault/tax-fuel/ifta",
+      "actor": "CLIENT",
+      "source": "contract vault_destination — path PROPOSED",
+      "today": "none (vault is one flat grid)",
+      "binding": "family-owned Vault drawer; founder decision D-08"
+    },
+    {
+      "path": "/office/permitting/fuel-tax",
+      "actor": "FOUNDER_STAFF",
+      "source": "contract founder_staff_entry (permitting › Fuel Tax queue)",
+      "today": "none",
+      "binding": "new family route outside AIOOfficeLayout (outranks office/*)",
+      "guard": "OfficeRouteGuard",
+      "shell_side_effects_to_keep": [
+        "office staff identity (officeStaffId / setOfficeStaff)",
+        "hasOfficePermission checks",
+        "command palette capability (optional)"
+      ]
+    },
+    {
+      "path": "/office/permitting/fuel-tax/:caseId",
+      "actor": "FOUNDER_STAFF",
+      "source": "contract founder_staff_entry (quarter work item)",
+      "today": "none",
+      "binding": "same staff shell",
+      "guard": "OfficeRouteGuard"
+    },
+    {
+      "path": "/desktop/* · /mobile/* mirrors",
+      "actor": "ALL",
+      "source": "src/routes/AllInOneRoutes.tsx",
+      "binding": "new routes join aioCoreRoutes so layout-preview mirrors keep working"
+    }
+  ],
+  "data": [
+    {
+      "store": "DemoStore.iftaQuarters (IftaQuarterCase[])",
+      "module": "src/ifta/iftaTypes.ts",
+      "note": "optional field; seeded once into existing v25 stores (ensureIftaSeed) — no schema bump"
+    },
+    {
+      "store": "DemoStore.notifications (category tax_fuel; IFTA_* event types)",
+      "module": "src/ifta/iftaEvents.ts"
+    },
+    {
+      "store": "DemoStore.commConversations / commMessages — one quarter request thread per client-quarter",
+      "module": "src/ifta/iftaEvents.ts"
+    },
+    {
+      "store": "DemoStore.activity (IFTA_* kinds, org-scoped)",
+      "module": "src/ifta/iftaEvents.ts"
+    },
+    {
+      "store": "DemoStore.documents — sealed packet VaultDocument (tax_fuel) + Vault fuel receipts for IMPORT FROM VAULT",
+      "module": "src/ifta/iftaEvents.ts · iftaStoreSeed.ts"
+    },
+    {
+      "store": "clients · staff · powerUnits (fleet pre-fill)",
+      "module": "existing seeds — read only"
+    }
+  ],
+  "engines": [
+    {
+      "name": "assessIftaReadiness",
+      "module": "src/fleet/ifta/iftaReadiness.ts",
+      "status": "UNCHANGED — used per vehicle; READY_FOR_REPORTING only with verified miles + verified fuel"
+    },
+    {
+      "name": "Quarter derivations (receipt classes, packet completeness, open items, effective state, stages, mirror lines, staff buckets, heat strip, miles-without-fuel)",
+      "module": "src/ifta/iftaDerive.ts",
+      "status": "NEW — pure, no tax computation"
+    },
+    {
+      "name": "Return summary",
+      "module": "src/ifta/iftaSeed.ts returnSummaryFrom",
+      "status": "NEW — sums verified miles / gallons; tax column = staff worksheet values only"
+    },
+    {
+      "name": "Service catalog ifta-filing / ifta-reg; launch matrix fuel-tax INTERNAL_ONLY",
+      "module": "src/services/catalog/serviceCatalog.ts · src/launch/serviceActivationLaunch.ts",
+      "status": "UNCHANGED — availability truth needs founder decision D-04"
+    }
+  ],
+  "interaction_grammar": {
+    "source": "contract interaction_grammar — implemented as reducers in src/ifta/iftaActions.ts",
+    "client": [
+      "captureReceipts (TAKE PHOTO · UPLOAD FILES · IMPORT FROM VAULT)",
+      "resolveReceipt (truck/reefer · retake · add missing · no fuel bought · remove/keep duplicate)",
+      "addMileage (ELD report · spreadsheet · manual state entry · ask AIO; ELD/GPS connection refused — not live)",
+      "confirmVehicles",
+      "sendQuarterToAio",
+      "approveReturn",
+      "askQuestion"
+    ],
+    "staff": [
+      "startReconciliation (+ system discrepancy detection)",
+      "requestCorrection (receipts or miles-without-fuel gaps)",
+      "nudgeClient",
+      "verifyReceipt",
+      "verifyMileage (estimates refused)",
+      "resolveDiscrepancy (override requires note, audited)",
+      "prepareReturnSummary (requires READY_FOR_REPORTING, no open discrepancies)",
+      "sendForApproval",
+      "recordFiling (seals packet into Vault, resolves thread)",
+      "recordPayment (→ ARCHIVED, next quarter)"
+    ],
+    "binding": "runIftaAction(reducer) — atomic; returns an error message instead of throwing"
+  },
+  "relationships_implemented": [
+    {
+      "contract": "IFTA_NEEDS_YOU inbox + correction thread",
+      "behaviour": "staff correction → notice + thread message; client resolution in the room archives the notice and replies in the thread"
+    },
+    {
+      "contract": "IFTA_APPROVAL_REQUEST",
+      "behaviour": "send for approval → notice; approve or ask resolves it"
+    },
+    {
+      "contract": "IFTA_FILED_TO_INBOX (RESOLVES)",
+      "behaviour": "filing resolves the quarter thread and posts the confirmation"
+    },
+    {
+      "contract": "IFTA_FILED_TO_VAULT (ARCHIVES_TO)",
+      "behaviour": "one sealed packet document at Vault › Tax & Fuel › IFTA › YYYY › Qn"
+    },
+    {
+      "contract": "IFTA_FILED_TO_ACTIVITY",
+      "behaviour": "activity events for every sprint §19 milestone"
+    },
+    {
+      "contract": "IFTA_ARCHIVED_OPENS_NEXT",
+      "behaviour": "payment recorded → ARCHIVED → next quarter (idempotent with the quarter boundary)"
+    },
+    {
+      "contract": "DISPATCH_TO_IFTA",
+      "behaviour": "load-derived miles stored as ESTIMATE, never verifiable"
+    }
+  ],
+  "relationships_not_implemented": [
+    {
+      "contract": "IFTA_FILED_TO_ROAD_READY",
+      "reason": "Road Ready IFTA item tracks the account (slug 'ifta-setup' does not exist); left untouched — product logic"
+    },
+    {
+      "contract": "IFTA_FILED_TO_FINANCES / BOOKKEEPING",
+      "reason": "billing and bookkeeping engines untouched"
+    },
+    {
+      "contract": "OfficeWorkItem per client-quarter",
+      "reason": "founder decision D-13"
+    }
+  ],
+  "permissions": [
+    "CustomerRouteGuard (demo mode passes)",
+    "OfficeRouteGuard",
+    "portal org scoping via getOrganizationId — IFTA reads only the portal org's quarters",
+    "activity org scoping fix (clientId-scoped events no longer leak across organizations)"
+  ],
+  "content_truth": [
+    "contract perspectives (public / client / staff) — vendored",
+    "receipt class rules + mileage source rules — vendored",
+    "catalog requirements: fuel purchase records, mileage by jurisdiction",
+    "pricing: quote required; fuel tax owed is the carrier's liability; AIO is not a tax authority",
+    "fuel-tax activation INTERNAL_ONLY — staff files manually with the base jurisdiction"
+  ],
+  "verification": {
+    "tests": "src/ifta/iftaFamily.test.ts — 10 passing",
+    "suite": "369 passing · 1 failing (pre-existing on clean master: src/data/data.test.ts expects schema v20, store is v25)",
+    "typecheck": "clean"
+  }
+}

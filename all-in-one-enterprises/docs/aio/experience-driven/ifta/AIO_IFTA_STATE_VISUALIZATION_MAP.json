@@ -1,0 +1,303 @@
+{
+  "sprint": "P0.AIO.EXPERIENCE-DRIVEN-PAGE-REFINEMENT1 — founder override",
+  "status": "PROPOSED_FOR_FOUNDER_REVIEW",
+  "rule": "State changes composition, posture and object — not only a label (sprint §14).",
+  "emphasis_map_source": "AIO DNA visual_language.emphasis_map (brain)",
+  "materials": {
+    "room": {
+      "material": "asphalt / office at night",
+      "tokens": [
+        "BLACK",
+        "OBSIDIAN",
+        "CHARCOAL"
+      ],
+      "source": "IDNTY_10 brand world; brain palette"
+    },
+    "records": {
+      "material": "paper",
+      "tokens": [
+        "STONE WHITE"
+      ],
+      "source": "IDNTY_10 (paper) + IDNTY_09 document legibility"
+    },
+    "client_decision": {
+      "material": "gold fill — once per screen",
+      "tokens": [
+        "GOLD"
+      ],
+      "source": "emphasis_map.DECISION / ATTENTION; composition_rules[1]"
+    },
+    "aio_at_work": {
+      "material": "silver band",
+      "tokens": [
+        "SILVER"
+      ],
+      "source": "emphasis_map.REVIEW"
+    },
+    "progress_and_seal": {
+      "material": "champagne line / seal",
+      "tokens": [
+        "CHAMPAGNE"
+      ],
+      "source": "emphasis_map.PROGRESS / SUCCESS"
+    },
+    "estimate_and_archive": {
+      "material": "stone, hatched when estimate",
+      "tokens": [
+        "STONE"
+      ],
+      "source": "emphasis_map.ARCHIVED; composition_rules[3]; DISPATCH_TO_IFTA visual_transition (estimate badge, stone)"
+    },
+    "blocker": {
+      "material": "gold outline + solid marker, never alarm red",
+      "tokens": [
+        "GOLD"
+      ],
+      "source": "emphasis_map.BLOCKER"
+    }
+  },
+  "required_distinctions": {
+    "COLLECTING": "OPEN JACKET (FILLING)",
+    "BLOCKED": "HELD — CORRECTION SLIP / DEADLINE STRIP",
+    "REVIEW": "WITH AIO — CLOSED JACKET",
+    "APPROVAL": "DECISION WINDOW",
+    "FILED": "SEALED",
+    "ARCHIVED": "FILED AWAY"
+  },
+  "states": [
+    {
+      "state": "NOT_ENROLLED",
+      "posture": "THRESHOLD",
+      "client_composition": "No jacket on the desk. One explanatory threshold: what IFTA filing with AIO is, what you send, and SET UP IFTA FILING. Prerequisite link when no IFTA account.",
+      "staff_composition": "Client row absent from queue; offer appears in client 360.",
+      "motion": "none",
+      "state_class": "EMPTY",
+      "emphasis_role": "NEUTRAL",
+      "density": "SPARSE",
+      "artifact_visibility": "HIDDEN",
+      "client_cta": "SET UP IFTA FILING",
+      "staff_cta": "OFFER IFTA FILING",
+      "quiet": [
+        "flags",
+        "history"
+      ],
+      "composition_emphasis": "single explanatory threshold: what IFTA filing with AIO is + set up",
+      "client_meaning": "Set up IFTA filing with AIO",
+      "staff_meaning": "Client has no IFTA filing service"
+    },
+    {
+      "state": "QUARTER_OPEN",
+      "posture": "OPEN JACKET (EMPTY)",
+      "client_composition": "Jacket open with three empty compartments drawn as dashed capture slots. Capture methods are the main content (TAKE PHOTO / UPLOAD / IMPORT FROM VAULT). Trucks shown pre-filled. Ring at 0 with champagne start mark.",
+      "staff_composition": "Row: collection window open, nothing received · REMIND CLIENT.",
+      "motion": "none",
+      "state_class": "EMPTY",
+      "emphasis_role": "PROGRESS",
+      "density": "SPARSE",
+      "artifact_visibility": "HIDDEN",
+      "client_cta": "ADD FIRST RECEIPT",
+      "staff_cta": "REMIND CLIENT",
+      "quiet": [
+        "review",
+        "history"
+      ],
+      "composition_emphasis": "empty packet with three compartments and the capture method picker",
+      "client_meaning": "Your quarter is open — start sending fuel and miles",
+      "staff_meaning": "Collection window open, nothing received"
+    },
+    {
+      "state": "COLLECTING",
+      "posture": "OPEN JACKET (FILLING)",
+      "client_composition": "Jacket open; active compartment on the bench; counts by class on each tab; the single next item leads the answer line; champagne progress line on the jacket spine.",
+      "staff_composition": "Row: % of packet received · VIEW PROGRESS.",
+      "motion": "ring fills; slips stack into the compartment",
+      "state_class": "ACTIVE",
+      "emphasis_role": "PROGRESS",
+      "density": "BALANCED",
+      "artifact_visibility": "PREVIEW",
+      "client_cta": "CONTINUE FILING",
+      "staff_cta": "VIEW PROGRESS",
+      "quiet": [
+        "return summary",
+        "history"
+      ],
+      "composition_emphasis": "packet filling: compartments show counts and classes; next item leads",
+      "client_meaning": "Building your quarter packet",
+      "staff_meaning": "Records arriving"
+    },
+    {
+      "state": "NEEDS_CLIENT",
+      "posture": "HELD — CORRECTION SLIP",
+      "client_composition": "A correction slip from AIO (gold rule, reviewer name, message) is clipped on top of the jacket; flags stack one at a time with the fix inline (1 of 2); compartments behind are dimmed; jacket outlined gold with a solid marker. CTA RESOLVE 2 ITEMS.",
+      "staff_composition": "Row edge gold; AWAITING CLIENT — 2 RECEIPT CORRECTIONS · NUDGE CLIENT.",
+      "motion": "resolved slip un-clips and drops into the compartment",
+      "state_class": "BLOCKED",
+      "emphasis_role": "BLOCKER",
+      "density": "BALANCED",
+      "artifact_visibility": "PREVIEW",
+      "client_cta": "RESOLVE {n} ITEMS",
+      "staff_cta": "NUDGE CLIENT",
+      "quiet": [
+        "completed compartments",
+        "history"
+      ],
+      "composition_emphasis": "flags lead: one card per flag with the fix inline; packet dimmed behind",
+      "client_meaning": "A few items need you before AIO can review",
+      "staff_meaning": "Blocked on client — flags open"
+    },
+    {
+      "state": "OVERDUE_RISK",
+      "posture": "HELD — DEADLINE STRIP",
+      "client_composition": "HELD posture plus a deadline strip across the desk (due in {d} days · {pct}%), remaining gaps ordered by impact. CTA FINISH QUARTER.",
+      "staff_composition": "Moves to BLOCKED; CALL CLIENT.",
+      "motion": "none",
+      "state_class": "BLOCKED",
+      "emphasis_role": "BLOCKER",
+      "density": "BALANCED",
+      "artifact_visibility": "PREVIEW",
+      "client_cta": "FINISH QUARTER",
+      "staff_cta": "CALL CLIENT",
+      "quiet": [
+        "history"
+      ],
+      "composition_emphasis": "deadline banner over the packet; remaining gaps listed by impact",
+      "client_meaning": "Due {due_date} — finish the quarter to avoid late filing",
+      "staff_meaning": "Deadline risk — escalate"
+    },
+    {
+      "state": "AIO_REVIEW",
+      "posture": "WITH AIO — CLOSED JACKET",
+      "client_composition": "Jacket closed with a silver band WITH AIO — JORDAN LEE. Capture tools removed. An AIO-at-work sheet beside it: what AIO is checking, started when, what happens next. CTA MESSAGE AIO.",
+      "staff_composition": "Case opens on QUARTER_CASE + RECEIPT_CLASSES; START RECONCILIATION.",
+      "motion": "silver band slides on when sent",
+      "state_class": "REVIEW",
+      "emphasis_role": "REVIEW",
+      "density": "SPARSE",
+      "artifact_visibility": "PREVIEW",
+      "client_cta": "MESSAGE AIO",
+      "staff_cta": "START RECONCILIATION",
+      "quiet": [
+        "capture tools"
+      ],
+      "composition_emphasis": "inputs locked; who is reviewing + what happens next foregrounded",
+      "client_meaning": "AIO is reviewing your quarter",
+      "staff_meaning": "Ready for review"
+    },
+    {
+      "state": "RECONCILING",
+      "posture": "WITH AIO — RECONCILING",
+      "client_composition": "Same closed jacket; AIO sheet shows fuel-to-miles matching by state in plain language. Calm, sparse.",
+      "staff_composition": "Dense: reconciliation table state × truck, discrepancies with override + note; PREPARE RETURN SUMMARY.",
+      "motion": "none",
+      "state_class": "REVIEW",
+      "emphasis_role": "REVIEW",
+      "density": "DENSE",
+      "artifact_visibility": "PREVIEW",
+      "client_cta": "MESSAGE AIO",
+      "staff_cta": "PREPARE RETURN SUMMARY",
+      "quiet": [
+        "capture tools"
+      ],
+      "composition_emphasis": "client: calm progress; staff: jurisdiction × truck reconciliation table with discrepancies",
+      "client_meaning": "AIO is matching fuel to miles",
+      "staff_meaning": "Discrepancies being resolved"
+    },
+    {
+      "state": "AWAITING_APPROVAL",
+      "posture": "DECISION WINDOW",
+      "client_composition": "The return summary sheet is laid on top of the closed jacket and fills the bench: totals, lines by state, AIO review status, material flags. One gold decision: APPROVE FOR FILING; ASK A QUESTION beside it. Receipts detail quiet.",
+      "staff_composition": "Row: AWAITING CLIENT — return approval sent {date} · REMIND CLIENT.",
+      "motion": "sheet slides over the jacket",
+      "state_class": "APPROVAL",
+      "emphasis_role": "DECISION",
+      "density": "BALANCED",
+      "artifact_visibility": "PROMINENT",
+      "client_cta": "APPROVE RETURN",
+      "staff_cta": "REMIND CLIENT",
+      "quiet": [
+        "receipts detail",
+        "capture tools"
+      ],
+      "composition_emphasis": "decision window: the return summary is the object, approve / ask beside it",
+      "client_meaning": "Review and approve your return",
+      "staff_meaning": "Awaiting client approval"
+    },
+    {
+      "state": "FILING",
+      "posture": "WITH AIO — FILING",
+      "client_composition": "Approved sheet clipped to the jacket; silver band reads FILING WITH {base jurisdiction}. CTA VIEW SUMMARY.",
+      "staff_composition": "READY TO FILE: approved summary + confirmation entry; RECORD FILING CONFIRMATION.",
+      "motion": "approval stamp on the sheet",
+      "state_class": "REVIEW",
+      "emphasis_role": "REVIEW",
+      "density": "SPARSE",
+      "artifact_visibility": "PROMINENT",
+      "client_cta": "VIEW SUMMARY",
+      "staff_cta": "RECORD FILING CONFIRMATION",
+      "quiet": [
+        "capture tools"
+      ],
+      "composition_emphasis": "approved summary with filing in progress",
+      "client_meaning": "AIO is filing your return",
+      "staff_meaning": "Ready to file / filing in progress"
+    },
+    {
+      "state": "FILED",
+      "posture": "SEALED",
+      "client_composition": "Workbench collapses: closed jacket with champagne seal on black, filed date, confirmation number, amount due / credit, payment status. The jacket travels along the Vault path (VAULT › TAX & FUEL › IFTA › 2026 › Q3). Next quarter jacket appears at the desk edge. CTA VIEW IN VAULT.",
+      "staff_composition": "FILED / PAYMENT PENDING buckets; RECORD PAYMENT STATUS.",
+      "motion": "seal stamps, jacket moves into the drawer",
+      "state_class": "COMPLETE",
+      "emphasis_role": "SUCCESS",
+      "density": "SPARSE",
+      "artifact_visibility": "PROMINENT",
+      "client_cta": "VIEW IN VAULT",
+      "staff_cta": "RECORD PAYMENT STATUS",
+      "quiet": [
+        "flags",
+        "capture tools"
+      ],
+      "composition_emphasis": "sealed quarter with confirmation; artifacts prominent; motion to the Vault",
+      "client_meaning": "Filed — confirmation in your Vault",
+      "staff_meaning": "Filed — confirm payment status"
+    },
+    {
+      "state": "ARCHIVED",
+      "posture": "FILED AWAY",
+      "client_composition": "Desk shows the next quarter as the bench object; the archived quarter is a stone jacket on the history shelf (one tap opens the sealed packet). CTA START Q{n+1} / open next quarter.",
+      "staff_composition": "COMPLETE; VIEW AUDIT TRAIL.",
+      "motion": "archived jacket slides onto the shelf",
+      "state_class": "ARCHIVED",
+      "emphasis_role": "ARCHIVED",
+      "density": "SPARSE",
+      "artifact_visibility": "ARCHIVED",
+      "client_cta": "START Q{n+1}",
+      "staff_cta": "VIEW AUDIT TRAIL",
+      "quiet": [
+        "everything except next quarter"
+      ],
+      "composition_emphasis": "history row in the filing room; next quarter becomes the bench object",
+      "client_meaning": "Q{n} {YYYY} is filed and archived",
+      "staff_meaning": "Closed — audit trail complete"
+    },
+    {
+      "state": "FILING_REJECTED",
+      "posture": "RETURNED",
+      "client_composition": "Correction notice (gold on black) over the summary: what the jurisdiction returned and what AIO is doing; explicit recovery copy. CTA MESSAGE AIO.",
+      "staff_composition": "BLOCKED; OPEN CORRECTION.",
+      "motion": "none",
+      "state_class": "ERROR",
+      "emphasis_role": "ERROR",
+      "density": "BALANCED",
+      "artifact_visibility": "PROMINENT",
+      "client_cta": "MESSAGE AIO",
+      "staff_cta": "OPEN CORRECTION",
+      "quiet": [
+        "capture tools"
+      ],
+      "composition_emphasis": "correction notice over the summary: what was returned and what AIO is doing",
+      "client_meaning": "The jurisdiction returned your filing — AIO is correcting it",
+      "staff_meaning": "Rejected / amendment required"
+    }
+  ]
+}

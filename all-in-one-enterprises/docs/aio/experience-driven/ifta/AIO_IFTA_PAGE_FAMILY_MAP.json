@@ -1,0 +1,340 @@
+{
+  "sprint": "P0.AIO.EXPERIENCE-DRIVEN-PAGE-REFINEMENT1 — founder override",
+  "status": "PROPOSED_FOR_FOUNDER_REVIEW",
+  "family": "AIO.IFTA — QUARTERLY FILING ROOM",
+  "family_object": {
+    "name": "THE QUARTER JACKET",
+    "definition": "The quarter (Q{n} {YYYY}) drawn as one filing jacket: tab label with quarter + due date, completeness meter on the spine, three compartments (receipts · mileage · vehicles). Open while collecting, closed with a silver band while AIO works, laid under the return summary for the decision, sealed in champagne when filed, filed into the Vault drawer, replaced on the desk by the next quarter.",
+    "brain_sources": [
+      "primary_visual_object",
+      "secondary_metaphor (BUILDING A COMPLETE FILING PACKET)",
+      "output_artifacts.QUARTER_PACKET.view_behavior (single folder object — one tap opens the whole quarter)",
+      "composition_rules[0] (quarter leads; three compartments, never three equal cards)",
+      "composition_rules[5] (completion collapses the workbench into a sealed quarter that moves to the Vault)",
+      "cross_feature_relationships.IFTA_FILED_TO_VAULT.visual_transition",
+      "IDNTY_10 brand world: asphalt, paper, cab, dispatch"
+    ],
+    "same_object_on": [
+      "PUBLIC specimen",
+      "MY OFFICE card",
+      "FILING ROOM desk",
+      "STAFF queue row",
+      "STAFF case file",
+      "VAULT drawer"
+    ]
+  },
+  "shell": {
+    "client": {
+      "name": "ROAD OFFICE BAR",
+      "replaces": "AIOPortalLayout (visual)",
+      "contents": [
+        "AIO monogram only (LOCKED: nav uses simple monogram; source D-06)",
+        "path — MY OFFICE › TAX & FUEL › IFTA › Q3 2026 (answers WHERE AM I)",
+        "Inbox with count",
+        "account"
+      ],
+      "no": [
+        "sidebar",
+        "bottom nav",
+        "notification bar",
+        "context rail"
+      ],
+      "keeps": [
+        "runExpirationEvaluation()",
+        "runBillingEvaluation()",
+        "unread count",
+        "CustomerRouteGuard",
+        "portal org context"
+      ],
+      "mobile": "52px bar (monogram · IFTA Q3 · inbox) + sticky task bar (TAKE PHOTO + the state's one CTA)"
+    },
+    "staff": {
+      "name": "OPERATIONS BAR",
+      "replaces": "AIOOfficeLayout (visual)",
+      "contents": [
+        "AIO monogram + OFFICE label",
+        "path — OFFICE › PERMITTING › FUEL TAX › {client} Q3",
+        "acting staff (identity selector)",
+        "Inbox"
+      ],
+      "keeps": [
+        "OfficeRouteGuard",
+        "officeStaffId / setOfficeStaff",
+        "hasOfficePermission"
+      ],
+      "mobile": "52px bar + sticky next-action bar"
+    },
+    "public": {
+      "name": "PUBLIC BAR (family scope)",
+      "replaces": "AIONav + AIOServicePlanBar + AIOFooter on this page",
+      "contents": [
+        "AIO monogram",
+        "Services",
+        "Log in",
+        "REQUEST FILING"
+      ],
+      "lockup": "full lockup only in the intro band and footer (LOCKED rule)",
+      "footer": "full lockup + one-line legal + contact; full public chrome rebuild is a separate family",
+      "decision": "D-02"
+    },
+    "environment": "Demo banner kept as one instance (tooling, not design)"
+  },
+  "answer_line": {
+    "rule": "Every screen answers WHERE AM I · CURRENT STATE · WHAT NEEDS ME · WHAT IS AIO DOING · WHAT HAPPENS NEXT (sprint §26)",
+    "placement": {
+      "WHERE": "shell path",
+      "STATE": "jacket header status (emphasis role styled)",
+      "NEEDS_ME": "answer line cell 1 (count + first item)",
+      "AIO_DOING": "answer line cell 2 (named reviewer when staff is working)",
+      "NEXT": "answer line cell 3"
+    },
+    "source": "information_hierarchy.CLIENT / FOUNDER_STAFF; perspectives.client.project_room; derived lines in src/ifta/iftaDerive.ts (aioDoingLine, nextStepLine, nextItemLine)"
+  },
+  "surfaces": [
+    {
+      "id": "P1",
+      "sprint_surface": "A. PUBLIC SERVICE EXPERIENCE",
+      "name": "IFTA Filing — public",
+      "actor": "PUBLIC",
+      "route": "/services/ifta-filing",
+      "route_status": "KEEP PATH · NEW ELEMENT",
+      "archetype": [
+        "THRESHOLD",
+        "CHECKLIST (six-step quarter)",
+        "PACKET specimen"
+      ],
+      "brain": [
+        "perspectives.public.*",
+        "information_hierarchy.PUBLIC",
+        "public_cta",
+        "emotional_target.PUBLIC",
+        "workspace_continuity"
+      ]
+    },
+    {
+      "id": "C0",
+      "sprint_surface": "4. CLIENT ENTRY STATE",
+      "name": "Quarter card — My Office",
+      "actor": "CLIENT",
+      "route": "/portal (embedded object)",
+      "route_status": "EMBED IN HOST · D-08",
+      "archetype": [
+        "PACKET (closed jacket)"
+      ],
+      "brain": [
+        "client_entry",
+        "perspectives.client.entry_point",
+        "client_cta (CONTINUE FILING)"
+      ]
+    },
+    {
+      "id": "C1",
+      "sprint_surface": "B. CLIENT QUARTERLY FILING ROOM",
+      "name": "Filing room",
+      "actor": "CLIENT",
+      "route": "/portal/services/ifta",
+      "route_status": "CONTRACT ROUTE · NEW ELEMENT + SHELL",
+      "archetype": [
+        "PACKET_BUILDER",
+        "WORKBENCH",
+        "CHECKLIST"
+      ],
+      "brain": [
+        "perspectives.client.*",
+        "section_overrides.CLIENT",
+        "visual_relationships",
+        "desktop/tablet/mobile_behavior",
+        "composition_rules"
+      ]
+    },
+    {
+      "id": "C2",
+      "sprint_surface": "C. CLIENT RECEIPT WORKSPACE",
+      "name": "Receipts bench",
+      "actor": "CLIENT",
+      "route": "/portal/services/ifta/receipts",
+      "route_status": "PROPOSED SUB-PATH",
+      "archetype": [
+        "DOCUMENT_TABLE as slip ledger",
+        "CHECKLIST"
+      ],
+      "brain": [
+        "required_inputs.FUEL_RECEIPTS",
+        "receipt_classes",
+        "system_derivations.RECEIPT_PARSE / DUPLICATE_CHECK / POSSIBLE_MISSING",
+        "output_artifacts.FUEL_RECEIPT.view_behavior"
+      ]
+    },
+    {
+      "id": "C3",
+      "sprint_surface": "D. CLIENT MILEAGE WORKSPACE",
+      "name": "Mileage bench",
+      "actor": "CLIENT",
+      "route": "/portal/services/ifta/mileage",
+      "route_status": "PROPOSED SUB-PATH",
+      "archetype": [
+        "LEDGER per truck",
+        "MAP-lite (state bars)"
+      ],
+      "brain": [
+        "required_inputs.JURISDICTION_MILEAGE",
+        "mileage_sources",
+        "system_derivations.MILEAGE_QUALITY",
+        "output_artifacts.JURISDICTION_MILEAGE_RECORD.view_behavior",
+        "composition_rules[3]"
+      ]
+    },
+    {
+      "id": "C4",
+      "sprint_surface": "(vehicles)",
+      "name": "Fleet strip",
+      "actor": "CLIENT",
+      "route": "/portal/services/ifta/vehicles",
+      "route_status": "PROPOSED SUB-PATH",
+      "archetype": [
+        "CHECKLIST"
+      ],
+      "brain": [
+        "required_inputs.QUARTER_VEHICLES",
+        "system_already_knows (fleet pre-filled)"
+      ]
+    },
+    {
+      "id": "C5",
+      "sprint_surface": "AIO REVIEW",
+      "name": "With AIO posture",
+      "actor": "CLIENT",
+      "route": "/portal/services/ifta (AIO_REVIEW · RECONCILING · FILING)",
+      "route_status": "STATE OF C1",
+      "archetype": [
+        "CASE (read-only)"
+      ],
+      "brain": [
+        "perspectives.client.under_review",
+        "visual_relationships AIO_REVIEW/RECONCILING/FILING",
+        "composition_rules[4]"
+      ]
+    },
+    {
+      "id": "C6",
+      "sprint_surface": "E. CLIENT REVIEW / APPROVAL",
+      "name": "Decision window",
+      "actor": "CLIENT",
+      "route": "/portal/services/ifta/approval",
+      "route_status": "PROPOSED SUB-PATH",
+      "archetype": [
+        "DECISION_WINDOW"
+      ],
+      "brain": [
+        "client_approval_points.CLIENT_APPROVES_RETURN",
+        "output_artifacts.RETURN_SUMMARY.view_behavior",
+        "section_overrides.CLIENT.AWAITING_APPROVAL",
+        "e2e CLIENT_APPROVAL expect"
+      ]
+    },
+    {
+      "id": "C7",
+      "sprint_surface": "F. FILED / COMPLETE",
+      "name": "Sealed quarter",
+      "actor": "CLIENT",
+      "route": "/portal/services/ifta?quarter=2026-Q3",
+      "route_status": "STATE OF C1",
+      "archetype": [
+        "PACKET (sealed)"
+      ],
+      "brain": [
+        "section_overrides.CLIENT.FILED",
+        "visual_relationships.FILED",
+        "perspectives.client.completion_looks_like"
+      ]
+    },
+    {
+      "id": "C8",
+      "sprint_surface": "H. VAULT HANDOFF",
+      "name": "Vault drawer — Tax & Fuel › IFTA",
+      "actor": "CLIENT",
+      "route": "/portal/vault/tax-fuel/ifta",
+      "route_status": "PROPOSED · D-08",
+      "archetype": [
+        "ARCHIVE",
+        "CABINET"
+      ],
+      "brain": [
+        "vault_destination",
+        "output_artifacts.QUARTER_PACKET",
+        "cross_feature_relationships.IFTA_FILED_TO_VAULT"
+      ]
+    },
+    {
+      "id": "C9",
+      "sprint_surface": "I. NEXT-QUARTER CONTINUITY",
+      "name": "Next quarter on the desk",
+      "actor": "CLIENT",
+      "route": "/portal/services/ifta",
+      "route_status": "STATE OF C1",
+      "archetype": [
+        "HORIZON → PACKET_BUILDER"
+      ],
+      "brain": [
+        "next_step",
+        "cross_feature_relationships.IFTA_ARCHIVED_OPENS_NEXT",
+        "perspectives.system.next_cycle_creation",
+        "DISPATCH_TO_IFTA"
+      ]
+    },
+    {
+      "id": "C10",
+      "sprint_surface": "18. INBOX RELATIONSHIP",
+      "name": "Correction slip in Inbox",
+      "actor": "CLIENT",
+      "route": "/portal/inbox/messages/:conversationId (embedded object)",
+      "route_status": "EMBED IN HOST · D-08",
+      "archetype": [
+        "QUEUE item"
+      ],
+      "brain": [
+        "inbox_events",
+        "cross_feature_relationships.IFTA_FILED_TO_INBOX",
+        "perspectives.client.project_room.messages"
+      ]
+    },
+    {
+      "id": "S1",
+      "sprint_surface": "G. FOUNDER / STAFF REVIEW WORKSPACE (queue) · 13. WORK QUEUE",
+      "name": "Fuel Tax queue",
+      "actor": "FOUNDER_STAFF",
+      "route": "/office/permitting/fuel-tax",
+      "route_status": "CONTRACT QUEUE · NEW ROUTE + SHELL",
+      "archetype": [
+        "QUEUE",
+        "PIPELINE"
+      ],
+      "brain": [
+        "perspectives.founder_staff.work_queue",
+        "hub_buckets",
+        "information_hierarchy.FOUNDER_STAFF",
+        "mirror_not_copy"
+      ]
+    },
+    {
+      "id": "S2",
+      "sprint_surface": "G. FOUNDER / STAFF REVIEW WORKSPACE (case) · 12.",
+      "name": "Quarter case file",
+      "actor": "FOUNDER_STAFF",
+      "route": "/office/permitting/fuel-tax/:caseId",
+      "route_status": "CONTRACT WORK ITEM · NEW ROUTE",
+      "archetype": [
+        "CASE_FILE"
+      ],
+      "brain": [
+        "section_overrides.FOUNDER_STAFF",
+        "perspectives.founder_staff.*",
+        "human_review_points",
+        "founder_override_points",
+        "human_tasks"
+      ]
+    }
+  ],
+  "continuity": "PUBLIC specimen → MY OFFICE card → FILING ROOM → WITH AIO → DECISION → SEALED → VAULT DRAWER → NEXT QUARTER — the same jacket object at every step; staff see the same jacket as a case file across many clients.",
+  "legacy_visual_inheritance": "NONE — see AIO_IFTA_LEGACY_VISUAL_DEPENDENCY_AUDIT.json"
+}

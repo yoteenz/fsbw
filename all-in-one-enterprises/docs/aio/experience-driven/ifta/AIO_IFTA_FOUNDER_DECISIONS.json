@@ -1,0 +1,100 @@
+[
+  {
+    "id": "D-01",
+    "title": "Family shell",
+    "question": "Give the IFTA family its own slim shell (road-office bar for clients, operations bar for staff) on the existing routes, instead of the legacy portal sidebar and office layout. Legacy pages for other families stay as they are.",
+    "recommendation": "Approve the new family shell",
+    "alternative": "Keep legacy shells for now"
+  },
+  {
+    "id": "D-02",
+    "title": "Public chrome",
+    "question": "On /services/ifta-filing, use a family-scoped bar (wordmark · Services · Log in · Request filing) and a one-line footer instead of the legacy nav, plan bar and footer.",
+    "recommendation": "Approve the family bar",
+    "alternative": "Keep the legacy public nav"
+  },
+  {
+    "id": "D-03",
+    "title": "Palette hex values",
+    "question": "The names are locked; the values are not. Proposed: obsidian #121417 · charcoal #1D2024 · stone white #EDE9E1 · platinum / silver #C3C8CD · warm champagne #E2CFA0 · signature gold #C9A227 (SITE00 brand-family registry; the legacy app used #D4A017), plus black #0B0B0C and a muted stone #A39D93 from the Brain.",
+    "recommendation": "Approve, signature gold #C9A227",
+    "alternative": "Approve, signature gold #D4A017"
+  },
+  {
+    "id": "D-04",
+    "title": "IFTA availability on the public page",
+    "question": "The public page says GO / Get Started; the catalog says PREPARING and fuel tax is INTERNAL_ONLY. Recommendation: REQUEST FILING opens a quote request, with the honest line \"AIO staff file with your base jurisdiction\".",
+    "recommendation": "Request filing as a quote request",
+    "alternative": "Show as coming soon"
+  },
+  {
+    "id": "D-05",
+    "title": "Sentence case inside records",
+    "question": "Uppercase primary is locked and stays on every UI element. Approve one exception: sentence case inside paper records and message threads (receipt lines, return-summary lines, AIO and client messages), for document legibility. Typefaces stay as they are until the IDNTY type work.",
+    "recommendation": "Approve the records exception",
+    "alternative": "Uppercase everywhere"
+  },
+  {
+    "id": "D-06",
+    "title": "Monogram source",
+    "question": "The lock says nav uses the simple monogram only, but no standalone monogram file exists. Crop the existing mark from the current lockup (no generation) until the IDNTY mark work delivers one.",
+    "recommendation": "Crop the mark from the lockup",
+    "alternative": "Wait for the IDNTY mark"
+  },
+  {
+    "id": "D-07",
+    "title": "Imagery",
+    "question": "No photography in this family. Retire the hero truck photo (IDNTY prohibits generic semi hero shots). Keep one optional fuel-island-at-night slot marked GENERATION_REQUIRED; nothing generated.",
+    "recommendation": "No imagery now",
+    "alternative": "Approve generating the fuel-island image"
+  },
+  {
+    "id": "D-08",
+    "title": "Objects inside legacy hosts",
+    "question": "The quarter card (My Office) and the correction slip (Inbox) are family-designed objects mounted in the legacy hosts. The Vault handoff gets a family route: /portal/vault/tax-fuel/ifta.",
+    "recommendation": "Approve objects + Vault drawer route",
+    "alternative": "Wait until those families are rebuilt"
+  },
+  {
+    "id": "D-09",
+    "title": "Brain update: Under AIO review",
+    "question": "Add UNDER_AIO_REVIEW (sprint §6) to the IFTA receipt classes in the Experience Brain.",
+    "recommendation": "Add to the Brain",
+    "alternative": "Drop the class"
+  },
+  {
+    "id": "D-10",
+    "title": "Brain update: activity events",
+    "question": "Add mileage imported, review started, correction requested, payment recorded and vault package created (sprint §19) to the contract activity events.",
+    "recommendation": "Add to the Brain",
+    "alternative": "Keep the contract list"
+  },
+  {
+    "id": "D-11",
+    "title": "Brain update: staff buckets",
+    "question": "Split the contract COMPLETE bucket into FILED and PAYMENT PENDING (sprint §13).",
+    "recommendation": "Add to the Brain",
+    "alternative": "Keep one COMPLETE bucket"
+  },
+  {
+    "id": "D-12",
+    "title": "Demo anchoring",
+    "question": "Pioneer Fleet is the primary enrolled quarter. Summit Ridge, the default demo org, is a new owner-operator with no IFTA account, so it shows the not-set-up threshold with a demo link to Pioneer.",
+    "recommendation": "Approve",
+    "alternative": "Make Summit Ridge an IFTA filer"
+  },
+  {
+    "id": "D-13",
+    "title": "Office work items",
+    "question": "Create an Office work item per client-quarter so IFTA cases appear in My Work, Queues and Approvals too.",
+    "recommendation": "Yes, in implementation",
+    "alternative": "Fuel-tax queue only"
+  },
+  {
+    "id": "D-14",
+    "title": "Approval button wording",
+    "question": "The sprint says APPROVE FOR FILING; the contract says APPROVE RETURN.",
+    "recommendation": "APPROVE FOR FILING (update the Brain)",
+    "alternative": "APPROVE RETURN"
+  }
+]

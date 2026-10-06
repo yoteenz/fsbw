@@ -1,0 +1,91 @@
+{
+  "tokens": {
+    "status": "PROPOSED — palette names are LOCKED (forensic brand foundation); no hex is approved (IDNTY_08); founder decision D-03",
+    "locked_names": [
+      "obsidian",
+      "charcoal",
+      "signature gold",
+      "platinum/silver",
+      "stone white",
+      "warm champagne"
+    ],
+    "BLACK (brain)": "#0B0B0C",
+    "OBSIDIAN": "#121417",
+    "CHARCOAL": "#1D2024",
+    "STONE WHITE (paper)": "#EDE9E1",
+    "STONE (brain, muted: estimate / archived)": "#A39D93",
+    "PLATINUM / SILVER": "#C3C8CD",
+    "WARM CHAMPAGNE": "#E2CFA0",
+    "SIGNATURE GOLD": {
+      "recommended": "#C9A227",
+      "source": "SITE00 brand-family registry (AIO primary)",
+      "alternative": "#D4A017 (legacy app — no authority)"
+    },
+    "ink_on_dark": "#F2EEE6",
+    "muted_on_dark": "#A39D93",
+    "ink_on_paper": "#1B1C1E",
+    "muted_on_paper": "#5E5A54"
+  },
+  "type": {
+    "status": "Uppercase primary is LOCKED; typefaces are open (IDNTY_09 IN_PROGRESS); founder decision D-05 covers one exception",
+    "locked": "Uppercase primary for founder-owned brands",
+    "recommendation": "Uppercase for every UI element — navigation path, quarter object, headings, labels, status, actions, answer line, staff instruments. Sentence case only inside paper records and message threads (receipt lines, return-summary lines, AIO / client messages) for document legibility (IDNTY_09).",
+    "typefaces": "Interim: the AIO typefaces already in use (Plus Jakarta Sans display, DM Sans body/data) until IDNTY_09 settles type — not a new choice",
+    "numerals": "Tabular numerals wherever numbers line up (IDNTY_09 numeric_data_need HIGH)",
+    "mono": "IBM Plex Mono only for confirmation numbers and receipt references — the thermal-print detail (proposal)",
+    "implementation_note": "No single global text-transform over inputs and records (legacy implementation discarded); casing applied by role"
+  },
+  "materials": {
+    "room": {
+      "material": "asphalt / office at night",
+      "tokens": [
+        "BLACK",
+        "OBSIDIAN",
+        "CHARCOAL"
+      ],
+      "source": "IDNTY_10 brand world; brain palette"
+    },
+    "records": {
+      "material": "paper",
+      "tokens": [
+        "STONE WHITE"
+      ],
+      "source": "IDNTY_10 (paper) + IDNTY_09 document legibility"
+    },
+    "client_decision": {
+      "material": "gold fill — once per screen",
+      "tokens": [
+        "GOLD"
+      ],
+      "source": "emphasis_map.DECISION / ATTENTION; composition_rules[1]"
+    },
+    "aio_at_work": {
+      "material": "silver band",
+      "tokens": [
+        "SILVER"
+      ],
+      "source": "emphasis_map.REVIEW"
+    },
+    "progress_and_seal": {
+      "material": "champagne line / seal",
+      "tokens": [
+        "CHAMPAGNE"
+      ],
+      "source": "emphasis_map.PROGRESS / SUCCESS"
+    },
+    "estimate_and_archive": {
+      "material": "stone, hatched when estimate",
+      "tokens": [
+        "STONE"
+      ],
+      "source": "emphasis_map.ARCHIVED; composition_rules[3]; DISPATCH_TO_IFTA visual_transition (estimate badge, stone)"
+    },
+    "blocker": {
+      "material": "gold outline + solid marker, never alarm red",
+      "tokens": [
+        "GOLD"
+      ],
+      "source": "emphasis_map.BLOCKER"
+    }
+  }
+}

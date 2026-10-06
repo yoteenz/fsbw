@@ -13,6 +13,7 @@ import { aioPaths } from '../../utils/paths';
 const CATEGORY_FILTERS: { id: '' | NotificationCategory; label: string }[] = [
   { id: '', label: 'All' },
   { id: 'road_ready', label: 'Road Ready' },
+  { id: 'tax_fuel', label: 'Tax & Fuel' },
   { id: 'documents', label: 'Documents' },
   { id: 'renewals', label: 'Renewals' },
   { id: 'messages', label: 'Messages' },

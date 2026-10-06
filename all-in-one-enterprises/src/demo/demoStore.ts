@@ -8,6 +8,7 @@ import { createAutopilotSeedData } from './autopilotSeed';
 import { createFleetCareSeedData } from './fleetcareSeed';
 import { createDriverLinkSeedData } from './driverlinkSeed';
 import { createDemoSeed } from './demoSeed';
+import { ensureIftaSeed } from '../ifta/iftaStoreSeed';
 import type { DemoStore, ServiceRequest } from './demoTypes';
 import { AIO_DEMO_SCHEMA_VERSION } from '../data/constants';
 import { getDataModeLabel, canResetDemoData } from '../config/dataMode';
@@ -68,10 +69,11 @@ export function loadDemoStore(): DemoStore {
   const existing = readStorage<DemoStore | (Omit<DemoStore, 'version'> & { version: 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 20 | 21 | 22 | 23 | 24 }) | null>(DEMO_STORE_KEY, null);
   if (existing?.version === 25) {
     const patched = ensureLoadBoardFields(existing as DemoStore);
-    if (patched !== existing) {
-      saveDemoStore(patched);
+    const ifta = ensureIftaSeed(patched);
+    if (patched !== existing || ifta.changed) {
+      saveDemoStore(ifta.store);
     }
-    return patched;
+    return ifta.store;
   }
 
   if (existing?.version === 24) {

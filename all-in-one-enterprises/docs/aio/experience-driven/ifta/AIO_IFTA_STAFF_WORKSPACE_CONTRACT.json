@@ -1,0 +1,161 @@
+{
+  "sprint": "P0.AIO.EXPERIENCE-DRIVEN-PAGE-REFINEMENT1 — founder override",
+  "status": "PROPOSED_FOR_FOUNDER_REVIEW",
+  "routes": [
+    "/office/permitting/fuel-tax",
+    "/office/permitting/fuel-tax/:caseId"
+  ],
+  "principle": "Staff see the same quarter as a CASE FILE across many clients: due-date × readiness queue, flag counts, MPG / jurisdiction discrepancies, override + audit trail, payment status — not the client’s guided packet builder.",
+  "queue": {
+    "header": "period + due + days + client count",
+    "pipeline": [
+      "NEEDS REVIEW",
+      "BLOCKED",
+      "AWAITING CLIENT",
+      "READY TO FILE",
+      "FILED",
+      "PAYMENT PENDING",
+      "COMPLETE"
+    ],
+    "pipeline_source": "contract hub_buckets + sprint §13 split (FILED / PAYMENT PENDING) — D-11",
+    "order": "due date × readiness (contract work_queue)",
+    "row": [
+      "client",
+      "quarter",
+      "due + days",
+      "packet %",
+      "receipts (flagged)",
+      "mileage quality",
+      "jurisdiction flags",
+      "CLIENT SEES ⇄ YOU SEE",
+      "next action"
+    ],
+    "next_quarter": "collapsed group"
+  },
+  "case_file": {
+    "header": [
+      "client",
+      "quarter",
+      "due + days",
+      "staff state + bucket",
+      "primary staff action"
+    ],
+    "mirror_strip": "CLIENT SEES … ⇄ YOU SEE …",
+    "status_rail": [
+      "CLIENT",
+      "QUARTER",
+      "DUE DATE",
+      "RECEIPT COUNTS",
+      "UNRESOLVED RECEIPTS",
+      "MILEAGE QUALITY",
+      "JURISDICTION FLAGS",
+      "VEHICLE STATUS",
+      "AIO REVIEW",
+      "CLIENT APPROVAL",
+      "FILING STATUS",
+      "PAYMENT STATUS",
+      "VAULT STATUS",
+      "NEXT ACTION"
+    ],
+    "zones": {
+      "left": "CLIENT_CONTEXT",
+      "centre": "state section stack",
+      "right": "thread + audit trail"
+    },
+    "sections_by_state": {
+      "NOT_ENROLLED": {
+        "sections": null,
+        "source": "PROPOSED (contract silent)"
+      },
+      "QUARTER_OPEN": {
+        "sections": null,
+        "source": "PROPOSED (contract silent)"
+      },
+      "COLLECTING": {
+        "sections": null,
+        "source": "PROPOSED (contract silent)"
+      },
+      "NEEDS_CLIENT": {
+        "sections": null,
+        "source": "PROPOSED (contract silent)"
+      },
+      "OVERDUE_RISK": {
+        "sections": null,
+        "source": "PROPOSED (contract silent)"
+      },
+      "AIO_REVIEW": {
+        "sections": [
+          "CLIENT_CONTEXT",
+          "QUARTER_CASE",
+          "RECEIPT_CLASSES",
+          "MILEAGE_QUALITY",
+          "VEHICLE_READINESS",
+          "FLAGS",
+          "ACTIONS"
+        ],
+        "source": "contract section_overrides.FOUNDER_STAFF"
+      },
+      "RECONCILING": {
+        "sections": [
+          "CLIENT_CONTEXT",
+          "RECONCILIATION_TABLE",
+          "DISCREPANCIES",
+          "OVERRIDES",
+          "RETURN_SUMMARY_DRAFT"
+        ],
+        "source": "contract section_overrides.FOUNDER_STAFF"
+      },
+      "AWAITING_APPROVAL": {
+        "sections": null,
+        "source": "PROPOSED (contract silent)"
+      },
+      "FILING": {
+        "sections": [
+          "CLIENT_CONTEXT",
+          "APPROVED_SUMMARY",
+          "FILING_STATUS",
+          "CONFIRMATION_ENTRY"
+        ],
+        "source": "contract section_overrides.FOUNDER_STAFF"
+      },
+      "FILED": {
+        "sections": [
+          "CLIENT_CONTEXT",
+          "FILING_STATUS",
+          "PAYMENT_STATUS",
+          "ARTIFACTS",
+          "AUDIT_HISTORY"
+        ],
+        "source": "contract section_overrides.FOUNDER_STAFF"
+      },
+      "ARCHIVED": {
+        "sections": null,
+        "source": "PROPOSED (contract silent)"
+      },
+      "FILING_REJECTED": {
+        "sections": null,
+        "source": "PROPOSED (contract silent)"
+      }
+    },
+    "instruments": [
+      "receipt heat strip truck × month (gaps visible)",
+      "reconciliation table state × truck",
+      "MPG vs prior quarter band",
+      "discrepancy list with override + required note",
+      "return summary draft from verified records",
+      "confirmation entry",
+      "payment status buttons",
+      "audit trail"
+    ]
+  },
+  "mobile": "triage, not a shrunk desktop: next action, blockers, status rail as a list, actions; heavy tables open as 'best on desktop'.",
+  "operational_actions": [
+    "START RECONCILIATION",
+    "REQUEST CORRECTION",
+    "PREPARE RETURN SUMMARY",
+    "SEND FOR APPROVAL",
+    "RECORD FILING CONFIRMATION",
+    "RECORD PAYMENT STATUS",
+    "ESCALATE"
+  ]
+}

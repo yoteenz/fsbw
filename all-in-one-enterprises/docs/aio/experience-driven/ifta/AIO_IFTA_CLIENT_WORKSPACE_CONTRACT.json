@@ -1,0 +1,219 @@
+{
+  "sprint": "P0.AIO.EXPERIENCE-DRIVEN-PAGE-REFINEMENT1 — founder override",
+  "status": "PROPOSED_FOR_FOUNDER_REVIEW",
+  "routes": [
+    "/portal/services/ifta",
+    "/portal/services/ifta/receipts",
+    "/portal/services/ifta/mileage",
+    "/portal/services/ifta/vehicles",
+    "/portal/services/ifta/approval",
+    "?quarter=YYYY-Qn"
+  ],
+  "entry": {
+    "my_office_card": "closed jacket: Q3 2026 · due Oct 31 · NEEDS YOU — 2 RECEIPTS · CONTINUE FILING (only primary action)",
+    "nav": "TAX & FUEL → IFTA",
+    "inbox": "correction slip with OPEN FILING ROOM"
+  },
+  "zones": {
+    "desktop": {
+      "spine": "quarter jacket header: quarter, period, due + days, completeness ring, status, six-step progress, the one CTA, quarter shelf (Q4 collecting · Q2 filed)",
+      "bench": "active compartment as folder tabs of one jacket — receipts / mileage / vehicles; swaps to AIO sheet / return summary / sealed jacket by state",
+      "work_rail": "NEEDS YOU (flags with inline fix) · AIO IS (named reviewer) · thread · NEXT"
+    }
+  },
+  "sections_by_state": {
+    "NOT_ENROLLED": {
+      "sections": null,
+      "source": "PROPOSED (contract silent)"
+    },
+    "QUARTER_OPEN": {
+      "sections": [
+        "QUARTER",
+        "CAPTURE_METHODS",
+        "VEHICLES_PREFILLED",
+        "DUE_DATE"
+      ],
+      "source": "contract section_overrides.CLIENT"
+    },
+    "COLLECTING": {
+      "sections": [
+        "QUARTER",
+        "NEXT_ITEM",
+        "RECEIPTS",
+        "MILEAGE",
+        "VEHICLES",
+        "SEND_TO_AIO"
+      ],
+      "source": "contract section_overrides.CLIENT"
+    },
+    "NEEDS_CLIENT": {
+      "sections": [
+        "QUARTER",
+        "FLAGS",
+        "RECEIPTS",
+        "MILEAGE"
+      ],
+      "source": "contract section_overrides.CLIENT"
+    },
+    "OVERDUE_RISK": {
+      "sections": null,
+      "source": "PROPOSED (contract silent)"
+    },
+    "AIO_REVIEW": {
+      "sections": null,
+      "source": "PROPOSED (contract silent)"
+    },
+    "RECONCILING": {
+      "sections": null,
+      "source": "PROPOSED (contract silent)"
+    },
+    "AWAITING_APPROVAL": {
+      "sections": [
+        "QUARTER",
+        "RETURN_SUMMARY",
+        "APPROVE_OR_ASK"
+      ],
+      "source": "contract section_overrides.CLIENT"
+    },
+    "FILING": {
+      "sections": null,
+      "source": "PROPOSED (contract silent)"
+    },
+    "FILED": {
+      "sections": [
+        "QUARTER_SEALED",
+        "CONFIRMATION",
+        "ARTIFACTS",
+        "VAULT_LINK",
+        "NEXT_QUARTER"
+      ],
+      "source": "contract section_overrides.CLIENT"
+    },
+    "ARCHIVED": {
+      "sections": null,
+      "source": "PROPOSED (contract silent)"
+    },
+    "FILING_REJECTED": {
+      "sections": null,
+      "source": "PROPOSED (contract silent)"
+    }
+  },
+  "proposed_sections_where_contract_silent": {
+    "QUARTER_OPEN_inherits": "contract",
+    "AIO_REVIEW": [
+      "QUARTER (closed, silver band)",
+      "AIO_AT_WORK",
+      "PACKET_LOCKED",
+      "MESSAGES"
+    ],
+    "RECONCILING": [
+      "QUARTER (closed)",
+      "AIO_AT_WORK (matching fuel to miles)",
+      "MESSAGES"
+    ],
+    "FILING": [
+      "QUARTER (closed)",
+      "APPROVED_SUMMARY",
+      "AIO_AT_WORK (filing with base jurisdiction)"
+    ],
+    "OVERDUE_RISK": [
+      "DEADLINE_STRIP",
+      "QUARTER",
+      "FLAGS",
+      "RECEIPTS",
+      "MILEAGE"
+    ],
+    "ARCHIVED": [
+      "NEXT_QUARTER (bench)",
+      "HISTORY_SHELF",
+      "VAULT_LINK"
+    ],
+    "FILING_REJECTED": [
+      "CORRECTION_NOTICE",
+      "QUARTER",
+      "RETURN_SUMMARY"
+    ]
+  },
+  "receipts": {
+    "object": "slip ledger — not file cards",
+    "columns": [
+      "vendor + location",
+      "date",
+      "state",
+      "gallons",
+      "amount",
+      "truck",
+      "status"
+    ],
+    "classes": {
+      "READY": "plain slip",
+      "NEEDS_YOU": "gold rule + question + inline answers",
+      "UNREADABLE": "dark thumbnail + reason + RETAKE PHOTO",
+      "DUPLICATE": "struck slip, HELD OUT OF TOTALS, Keep both / Remove copy",
+      "POSSIBLE_MISSING": "dashed empty slip: NO {STATE} RECEIPT — {miles} MI, Add receipt / No fuel bought there",
+      "UNDER_AIO_REVIEW": "silver tag: AIO confirming station state — nothing needed"
+    },
+    "capture": [
+      "TAKE PHOTO",
+      "UPLOAD FILES",
+      "IMPORT FROM VAULT",
+      "CONTINUOUS CAPTURE status"
+    ],
+    "totals": "gallons · amount · count (held-out excluded)"
+  },
+  "mileage": {
+    "object": "mileage lane per truck",
+    "row": [
+      "truck",
+      "source badge (VERIFIED champagne · AIO VERIFYING silver · ESTIMATE stone hatched · NO MILES gold outline)",
+      "source + file",
+      "total miles",
+      "state bar (miles by state)",
+      "expand: state · miles · gallons bought"
+    ],
+    "sources": [
+      "ELD / GPS CONNECTED — not live (roadmap); shown disabled with reason",
+      "ELD REPORT UPLOAD",
+      "SPREADSHEET UPLOAD",
+      "MANUAL STATE ENTRY",
+      "ASK AIO FOR HELP"
+    ],
+    "human_language": "READINESS_COPY in src/ifta/iftaDerive.ts — system states never shown raw to the client"
+  },
+  "decision_window": {
+    "summary": [
+      "total miles",
+      "total gallons",
+      "fleet MPG",
+      "jurisdictions",
+      "tax due / credit (staff worksheet)",
+      "AIO review status",
+      "material flags (resolved, plain language)"
+    ],
+    "actions": [
+      "APPROVE FOR FILING (gold)",
+      "ASK A QUESTION"
+    ],
+    "liability_line": "Fuel tax owed is your liability, paid to your base jurisdiction; AIO's service fee is separate."
+  },
+  "filed": {
+    "facts": [
+      "filed date",
+      "confirmation (mono)",
+      "amount due / credit",
+      "payment status"
+    ],
+    "actions": [
+      "VIEW IN VAULT (primary)",
+      "VIEW FILED RETURN"
+    ],
+    "vault_path": "VAULT › TAX & FUEL › IFTA › 2026 › Q3",
+    "next": "Q4 2026 — collecting · due Jan 31 · 3 receipts captured · trucks pre-filled · continuous capture on"
+  },
+  "mobile_priority": [
+    "What do I need to do?",
+    "What is blocking me?",
+    "What is AIO doing?",
+    "What happens next?"
+  ]
+}

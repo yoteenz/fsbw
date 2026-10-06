@@ -317,7 +317,10 @@ export function ActivityTimelinePage() {
   const store = useDemoStore();
   const [filter, setFilter] = useState('all');
   const events = useMemo(() => {
-    const all = store.activity.filter((a: ActivityEvent) => a.visibility === 'customer' || a.clientId === view.context.organizationId);
+    // Org-scoped events belong to their org only; unscoped customer events stay visible to everyone.
+    const all = store.activity.filter((a: ActivityEvent) =>
+      a.clientId ? a.clientId === view.context.organizationId : a.visibility === 'customer',
+    );
     if (filter === 'all') return all;
     return all.filter((a: ActivityEvent) => a.kind.toLowerCase().includes(filter));
   }, [store.activity, view.context.organizationId, filter]);
@@ -327,9 +330,9 @@ export function ActivityTimelinePage() {
       <BackToCommandCenter />
       <h1>Business Activity</h1>
       <div className="aio-cc-filters">
-        {['all', 'document', 'insurance', 'dispatch', 'invoice', 'road'].map((f) => (
+        {['all', 'ifta', 'document', 'insurance', 'dispatch', 'invoice', 'road'].map((f) => (
           <button key={f} type="button" className={`aio-btn aio-btn--sm ${filter === f ? 'aio-btn--gold' : 'aio-btn--outline'}`} onClick={() => setFilter(f)}>
-            {f === 'all' ? 'All' : f.charAt(0).toUpperCase() + f.slice(1)}
+            {f === 'all' ? 'All' : f === 'ifta' ? 'IFTA' : f.charAt(0).toUpperCase() + f.slice(1)}
           </button>
         ))}
       </div>

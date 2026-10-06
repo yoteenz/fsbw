@@ -1,0 +1,541 @@
+{
+  "sprint": "P0.AIO.EXPERIENCE-DRIVEN-PAGE-REFINEMENT1 — founder override (visual layer superseded)",
+  "status": "AUDIT_COMPLETE",
+  "rule": "Legacy AIO visuals carry zero design authority. Legacy code may be used only for function, data, routing, business logic, permissions, content truth and existing capabilities.",
+  "visual_authority_sources": [
+    "AIO brand foundation — LOCKED (all-in-one-enterprises/docs/structural-completion/AIO_FORENSIC_EXECUTIVE_SUMMARY.md): tagline, positioning, voice; typography uppercase primary; nav uses the simple monogram only, full lockup in lower bands / footer / intro moments; palette obsidian, charcoal, signature gold, platinum/silver, stone white, warm champagne",
+    "AIO IDNTY (SITE00 docs/site00/idnty/intake/AIO_IDNTY_INTAKE_VALIDATION_CASE.json) — verbal system decided; mark, palette, type, visual grammar IN_PROGRESS",
+    "Brand family skin AIO (SITE00 shared/site00-brand-lore/projectSkin/brandFamily/registry.ts) — skinIntent OPERATIONAL_COMMAND, status NEW_SKIN_TO_DESIGN, visualAuthorityStatus NOT_STARTED",
+    "Workspace Experience Brain — AIO DNA + AIO.IFTA experience / visual / E2E contracts (vendored at src/ifta/experience, SITE00 @ 5d6c074)",
+    "Founder-approved new composition — pending this review"
+  ],
+  "counts": {
+    "total": 41,
+    "by_surface": {
+      "PUBLIC": 13,
+      "ALL": 6,
+      "CLIENT": 11,
+      "FOUNDER_STAFF": 5,
+      "FAMILY": 6
+    },
+    "by_decision": {
+      "SPLIT": 5,
+      "DISCARD_VISUAL": 8,
+      "DISCARD": 12,
+      "FOUNDER_DECISION": 3,
+      "PRESERVE_TRUTH": 2,
+      "OUT_OF_DESIGN_SCOPE": 1,
+      "REPLACE": 1,
+      "FIX_IN_IMPLEMENTATION": 2,
+      "PRESERVE": 5,
+      "PRESERVE_FUNCTION": 1,
+      "WITHDRAWN": 1
+    },
+    "by_classification": {
+      "MIXED": 13,
+      "VISUAL": 12,
+      "CONTENT_PLACEHOLDER": 2,
+      "FUNCTIONAL": 13,
+      "ENVIRONMENT": 1
+    }
+  },
+  "dependencies": [
+    {
+      "id": "L-P01",
+      "surface": "PUBLIC",
+      "source": "src/routes/AioCoreRoutes.tsx — services/:serviceSlug → ServiceCatalogDetailPage",
+      "kind": "ROUTE_ELEMENT",
+      "what": "IFTA Filing renders through the generic catalog detail page",
+      "classification": "MIXED",
+      "decision": "SPLIT",
+      "functional_contract_kept": [
+        "route path services/ifta-filing (contract public_entry)",
+        "catalog lookup getCatalogServiceBySlug('ifta-filing')"
+      ],
+      "evidence": "evidence/legacy/legacy-public-desktop.jpg",
+      "note": "A static route ranks above :serviceSlug — the path is kept, the element is replaced."
+    },
+    {
+      "id": "L-P02",
+      "surface": "PUBLIC",
+      "source": "src/layouts/AIOPublicLayout.tsx",
+      "kind": "SHELL",
+      "what": "AIONav + AIOServicePlanBar + AIOFooter + skip link wrapper",
+      "classification": "MIXED",
+      "decision": "DISCARD_VISUAL",
+      "functional_contract_kept": [
+        "skip-to-content link (accessibility)",
+        "service plan capability (servicePlanRepository) — not the bar"
+      ],
+      "evidence": "evidence/legacy/legacy-public-desktop.jpg",
+      "note": "Founder decision D-02 sets the replacement chrome."
+    },
+    {
+      "id": "L-P03",
+      "surface": "PUBLIC",
+      "source": "src/components/page-system/templates (ServiceDetailTemplate, AioPageShell) + src/context-rail/configs.tsx buildServiceDetailRail",
+      "kind": "LAYOUT",
+      "what": "Left 'ON THIS PAGE' rail + white content canvas + numbered section list",
+      "classification": "VISUAL",
+      "decision": "DISCARD",
+      "evidence": "evidence/legacy/legacy-public-desktop.jpg"
+    },
+    {
+      "id": "L-P04",
+      "surface": "PUBLIC",
+      "source": "src/styles/aio-page-system.css",
+      "kind": "CSS",
+      "what": "Page-system stylesheet is imported by nothing — the desktop template renders unstyled",
+      "classification": "VISUAL",
+      "decision": "DISCARD",
+      "evidence": "evidence/legacy/legacy-public-desktop.jpg",
+      "note": "Proof the current desktop service page carries no design authority."
+    },
+    {
+      "id": "L-P05",
+      "surface": "PUBLIC",
+      "source": "src/components/mobile/service/MobileServiceDetailView.tsx",
+      "kind": "LAYOUT",
+      "what": "Mobile service template (status box, 3 stacked CTAs, generic benefit grid, process list, accordions)",
+      "classification": "VISUAL",
+      "decision": "DISCARD",
+      "evidence": "evidence/legacy/legacy-public-mobile.jpg"
+    },
+    {
+      "id": "L-P06",
+      "surface": "PUBLIC",
+      "source": "src/services/mobileServicePageConfig.ts DEFAULT_BENEFITS",
+      "kind": "COPY",
+      "what": "'End-to-End Guidance · Fast & Reliable · Accuracy You Can Trust · Ongoing Support'",
+      "classification": "CONTENT_PLACEHOLDER",
+      "decision": "DISCARD",
+      "evidence": "evidence/legacy/legacy-public-mobile.jpg",
+      "note": "Replaced by contract perspectives.public.what_we_handle (7 concrete items)."
+    },
+    {
+      "id": "L-P07",
+      "surface": "PUBLIC",
+      "source": "src/services/mobileServicePageConfig.ts resolveMobileServiceProcess fallback",
+      "kind": "COPY",
+      "what": "'All In One coordinates this step with your business profile.' repeated per step",
+      "classification": "CONTENT_PLACEHOLDER",
+      "decision": "DISCARD",
+      "evidence": "evidence/legacy/legacy-public-desktop.jpg",
+      "note": "Replaced by contract how_it_works (six-step quarter)."
+    },
+    {
+      "id": "L-P08",
+      "surface": "PUBLIC",
+      "source": "src/data/services.ts (ifta-filing)",
+      "kind": "CONTENT",
+      "what": "title, description, audience, requirements",
+      "classification": "MIXED",
+      "decision": "SPLIT",
+      "functional_contract_kept": [
+        "requirements: fuel purchase records, mileage by jurisdiction",
+        "audience: carriers with active IFTA accounts"
+      ],
+      "note": "Description 'coordination and document support' superseded by contract purpose."
+    },
+    {
+      "id": "L-P09",
+      "surface": "PUBLIC",
+      "source": "src/launch/serviceActivationLaunch.ts getPublicServiceCta — SLUG_MAP has no 'ifta-filing'",
+      "kind": "FUNCTIONAL_TRUTH_CONFLICT",
+      "what": "Public page shows SERVICE STATUS AVAILABLE / GO and 'Get Started' because the slug falls through to the default",
+      "classification": "FUNCTIONAL",
+      "decision": "FOUNDER_DECISION",
+      "functional_contract_kept": [
+        "fuel-tax activation INTERNAL_ONLY · publicCta 'Staff-coordinated filing'",
+        "serviceCatalog ifta-filing activationStatus PREPARING, quote_required"
+      ],
+      "evidence": "evidence/legacy/legacy-public-mobile.jpg",
+      "note": "Decision D-04. Contract CTA is REQUEST FILING."
+    },
+    {
+      "id": "L-P10",
+      "surface": "PUBLIC",
+      "source": "src/billing/servicePricingConfig.ts customerPriceLabel",
+      "kind": "CONTENT",
+      "what": "'Pricing after review'",
+      "classification": "FUNCTIONAL",
+      "decision": "PRESERVE_TRUTH",
+      "functional_contract_kept": [
+        "quote_required pricing"
+      ],
+      "note": "Kept as truth; contract pricing_relationship adds that fuel tax owed is the carrier's liability."
+    },
+    {
+      "id": "L-P11",
+      "surface": "PUBLIC",
+      "source": "ServiceCatalogDetailPage hero + sidebar",
+      "kind": "INTERACTION",
+      "what": "Four competing CTAs: Add to My Plan · Get Started · Start Smart Intake · Check My Status",
+      "classification": "MIXED",
+      "decision": "SPLIT",
+      "functional_contract_kept": [
+        "aioPaths.getStartedForService('ifta-filing') → smart-intake request",
+        "service plan add"
+      ],
+      "evidence": "evidence/legacy/legacy-public-desktop.jpg",
+      "note": "Contract: exactly one primary action — REQUEST FILING."
+    },
+    {
+      "id": "L-P12",
+      "surface": "ALL",
+      "source": "src/styles/aio.css .aio-standalone-root { text-transform: uppercase } + Google Fonts import (Plus Jakarta Sans, DM Sans)",
+      "kind": "TYPOGRAPHY",
+      "what": "One global CSS transform forces all-caps on every string, including form inputs, numbers, receipts and long copy",
+      "classification": "MIXED",
+      "decision": "SPLIT",
+      "note": "The uppercase-primary rule is locked brand authority and stays. The legacy implementation (one global transform over records and inputs) is discarded; typefaces are an open IDNTY_09 item. Decision D-05 covers a sentence-case exception inside paper records only.",
+      "functional_contract_kept": [
+        "LOCKED brand rule: uppercase primary"
+      ]
+    },
+    {
+      "id": "L-P13",
+      "surface": "ALL",
+      "source": "src/styles/aio.css .aio-app tokens (--aio-gold #d4a017, --aio-surface #111415, white canvas, 8/12px radii, shadows)",
+      "kind": "TOKENS",
+      "what": "Legacy token set",
+      "classification": "VISUAL",
+      "decision": "DISCARD",
+      "note": "Locked palette names: obsidian, charcoal, signature gold, platinum/silver, stone white, warm champagne (Brain adds black, stone). No hex is approved (IDNTY_08 IN_PROGRESS; brand-family registry #c9a227; bootstrap low-confidence #1f4fd6). Decision D-03."
+    },
+    {
+      "id": "L-P14",
+      "surface": "PUBLIC",
+      "source": "public/brand/all-in-one-hero-truck.png",
+      "kind": "IMAGERY",
+      "what": "Branded semi on highway at sunset",
+      "classification": "VISUAL",
+      "decision": "DISCARD",
+      "note": "AIO IDNTY_10 prohibits 'Generic semi hero shots'. Not reused."
+    },
+    {
+      "id": "L-P15",
+      "surface": "ALL",
+      "source": "public/brand/icons/compliance/aio-icon-ifta-fuel-tax.png",
+      "kind": "ICON",
+      "what": "IFTA / Fuel Tax icon — artwork is cut off at the right edge",
+      "classification": "VISUAL",
+      "decision": "DISCARD",
+      "note": "Marked GENERATION_REQUIRED (icon redraw) — not generated."
+    },
+    {
+      "id": "L-P16",
+      "surface": "ALL",
+      "source": "public/brand/aio-logo-lockup.png",
+      "kind": "MARK",
+      "what": "Full logo lockup PNG — the only mark asset; no standalone monogram file exists",
+      "classification": "VISUAL",
+      "decision": "FOUNDER_DECISION",
+      "note": "Locked rule: nav uses the simple monogram only; full lockup in lower bands / footer / intro moments. IDNTY_07_MARK IN_PROGRESS. Decision D-06 (monogram source)."
+    },
+    {
+      "id": "L-P19",
+      "surface": "ALL",
+      "source": "src/components/AIOLogo.tsx (header variant) in AIONav, AIOPortalLayout sidebar, AIOOfficeLayout sidebar",
+      "kind": "MARK_PLACEMENT",
+      "what": "The full lockup (mark + ALL IN ONE ENTERPRISES INC.) sits in every navigation bar",
+      "classification": "VISUAL",
+      "decision": "DISCARD",
+      "evidence": "evidence/legacy/legacy-portal-home-desktop.jpg",
+      "note": "Violates the locked rule 'nav uses simple monogram only'. The new bars use the monogram; the lockup moves to the public intro band and footer."
+    },
+    {
+      "id": "L-P17",
+      "surface": "ALL",
+      "source": "src/App.tsx + every layout render AIODebugBanner",
+      "kind": "ENVIRONMENT_TOOLING",
+      "what": "Demo environment banner renders twice",
+      "classification": "ENVIRONMENT",
+      "decision": "OUT_OF_DESIGN_SCOPE",
+      "functional_contract_kept": [
+        "demo org / role / reset controls"
+      ],
+      "evidence": "evidence/legacy/legacy-portal-home-mobile.jpg",
+      "note": "Tooling, not design. One instance in the new shell."
+    },
+    {
+      "id": "L-P18",
+      "surface": "PUBLIC",
+      "source": "ServiceCatalogDetailPage relatedServices",
+      "kind": "CONTENT",
+      "what": "Related: IFTA / Fuel Tax Assistance",
+      "classification": "FUNCTIONAL",
+      "decision": "PRESERVE_TRUTH",
+      "functional_contract_kept": [
+        "ifta-reg prerequisite relationship (contract public information_hierarchy.blocker)"
+      ]
+    },
+    {
+      "id": "L-C01",
+      "surface": "CLIENT",
+      "source": "src/routes/AioCoreRoutes.tsx portal → services/:serviceRequestId",
+      "kind": "ROUTE_ELEMENT",
+      "what": "/portal/services/ifta falls into the service tracker and renders SERVICE NOT FOUND",
+      "classification": "FUNCTIONAL",
+      "decision": "REPLACE",
+      "functional_contract_kept": [
+        "route path portal/services/ifta (contract client_entry)",
+        "CustomerRouteGuard"
+      ],
+      "evidence": "evidence/legacy/legacy-portal-ifta-route.jpg",
+      "note": "No client IFTA surface exists today."
+    },
+    {
+      "id": "L-C02",
+      "surface": "CLIENT",
+      "source": "src/layouts/AIOPortalLayout.tsx",
+      "kind": "SHELL",
+      "what": "Black sidebar (23 links, section headings), mobile Menu bar, bottom nav (Home/Business/Ops/Money/More), notification bar, PortalModuleContextRail, grey/white main canvas",
+      "classification": "MIXED",
+      "decision": "DISCARD_VISUAL",
+      "functional_contract_kept": [
+        "runExpirationEvaluation() + runBillingEvaluation() on mount",
+        "unread notification count",
+        "portal route destinations"
+      ],
+      "evidence": "evidence/legacy/legacy-portal-home-desktop.jpg",
+      "note": "The new shell must keep both evaluation side effects. Decision D-01."
+    },
+    {
+      "id": "L-C03",
+      "surface": "CLIENT",
+      "source": "src/product-graph/portalNavFromMeta.ts buildCarrierPortalNav",
+      "kind": "NAVIGATION",
+      "what": "Carrier nav map — no Tax & Fuel / IFTA entry",
+      "classification": "MIXED",
+      "decision": "SPLIT",
+      "functional_contract_kept": [
+        "portal route map"
+      ],
+      "note": "Contract client entry is TAX & FUEL → IFTA plus the My Office quarter card."
+    },
+    {
+      "id": "L-C04",
+      "surface": "CLIENT",
+      "source": "src/pages/PortalPage.tsx + src/components/CommandCenterComponents.tsx + src/components/mobile/MobilePortalHome.tsx",
+      "kind": "LAYOUT",
+      "what": "My Office command center: navy next-action hero, orange-ruled attention cards, health grid, emoji quick actions, Road Ready ring",
+      "classification": "MIXED",
+      "decision": "DISCARD_VISUAL",
+      "functional_contract_kept": [
+        "useClientCommandCenter attention / next-action engine"
+      ],
+      "evidence": "evidence/legacy/legacy-portal-home-desktop.jpg",
+      "note": "Not a host for the quarter card's design. Decision D-08 on where the card mounts."
+    },
+    {
+      "id": "L-C05",
+      "surface": "CLIENT",
+      "source": "src/pages/portal/VaultPage.tsx + components/vault/*",
+      "kind": "LAYOUT",
+      "what": "Document card grid, metrics bar, category nav, Road Ready badges",
+      "classification": "MIXED",
+      "decision": "DISCARD_VISUAL",
+      "functional_contract_kept": [
+        "VaultDocument store",
+        "vault taxonomy tax_fuel",
+        "portal/vault/:documentId route"
+      ],
+      "evidence": "evidence/legacy/legacy-vault.jpg"
+    },
+    {
+      "id": "L-C06",
+      "surface": "CLIENT",
+      "source": "src/vault/vaultTaxonomy.ts labelForCategory('tax_fuel')",
+      "kind": "FUNCTIONAL_TRUTH_BUG",
+      "what": "tax_fuel sits in two taxonomy groups; first match labels it 'Permits'",
+      "classification": "FUNCTIONAL",
+      "decision": "FIX_IN_IMPLEMENTATION",
+      "note": "Vault path for the packet must read Tax & Fuel."
+    },
+    {
+      "id": "L-C07",
+      "surface": "CLIENT",
+      "source": "src/pages/portal/PortalInboxPages.tsx · NotificationsPage.tsx · PortalMessagesPages.tsx",
+      "kind": "LAYOUT",
+      "what": "Inbox tabs, notification list rows, message list",
+      "classification": "MIXED",
+      "decision": "DISCARD_VISUAL",
+      "functional_contract_kept": [
+        "notifications store",
+        "commConversations / commMessages",
+        "filterPortalConversations"
+      ],
+      "evidence": "evidence/legacy/legacy-notifications.jpg",
+      "note": "IFTA thread + notices flow through these stores; the IFTA request card is a family object."
+    },
+    {
+      "id": "L-C08",
+      "surface": "CLIENT",
+      "source": "src/pages/portal/ClientPortalPages.tsx ActivityTimelinePage + clientCommandCenterService activityPreview",
+      "kind": "LAYOUT",
+      "what": "Plain activity rows",
+      "classification": "MIXED",
+      "decision": "DISCARD_VISUAL",
+      "functional_contract_kept": [
+        "activity store",
+        "org scoping (fixed this sprint: org-scoped events no longer leak across clients)"
+      ]
+    },
+    {
+      "id": "L-C09",
+      "surface": "CLIENT",
+      "source": "src/road-ready/roadReadyConfig.ts ifta.serviceSlug 'ifta-setup' + src/journeys/startBusinessJourneyConfig.ts",
+      "kind": "FUNCTIONAL_TRUTH_BUG",
+      "what": "Road Ready IFTA item and Start Your Business journey link to slug 'ifta-setup', which no catalog entry has",
+      "classification": "FUNCTIONAL",
+      "decision": "FIX_IN_IMPLEMENTATION",
+      "evidence": "evidence/legacy/legacy-road-ready.jpg",
+      "note": "Should point at ifta-fuel-tax-assistance (account) or ifta-filing (quarter)."
+    },
+    {
+      "id": "L-C10",
+      "surface": "CLIENT",
+      "source": "src/styles/aio-mobile.css (767px split, bottom nav, mobile-only toggles), aio-badge / aio-cc-* / aio-portal-* classes",
+      "kind": "CSS",
+      "what": "Legacy responsive split and component classes",
+      "classification": "VISUAL",
+      "decision": "DISCARD"
+    },
+    {
+      "id": "L-C11",
+      "surface": "CLIENT",
+      "source": "src/components/RoadReadyRing.tsx",
+      "kind": "COMPONENT",
+      "what": "Road Ready completion ring",
+      "classification": "VISUAL",
+      "decision": "DISCARD",
+      "note": "The quarter completeness ring is a new object, not a reskin."
+    },
+    {
+      "id": "L-S01",
+      "surface": "FOUNDER_STAFF",
+      "source": "src/office/layouts/AIOOfficeLayout.tsx",
+      "kind": "SHELL",
+      "what": "Black sidebar (~80 links), search header with ⌘K palette, red inbox badge, + NEW, internal preview banner",
+      "classification": "MIXED",
+      "decision": "DISCARD_VISUAL",
+      "functional_contract_kept": [
+        "OfficeRouteGuard",
+        "staff identity (setOfficeStaff / officeStaffId)",
+        "office permissions (hasOfficePermission)",
+        "command palette capability"
+      ],
+      "evidence": "evidence/legacy/legacy-office-permitting.jpg",
+      "note": "Decision D-01."
+    },
+    {
+      "id": "L-S02",
+      "surface": "FOUNDER_STAFF",
+      "source": "src/office/pages/DivisionOpsPages.tsx DivisionQueuePage (permitting)",
+      "kind": "LAYOUT",
+      "what": "Plain request list with pill badges — no IFTA work",
+      "classification": "MIXED",
+      "decision": "DISCARD_VISUAL",
+      "functional_contract_kept": [
+        "requests by division"
+      ],
+      "evidence": "evidence/legacy/legacy-office-mobile.jpg"
+    },
+    {
+      "id": "L-S03",
+      "surface": "FOUNDER_STAFF",
+      "source": "aio-office-table / aio-office-page CSS",
+      "kind": "CSS",
+      "what": "Blank admin table styling",
+      "classification": "VISUAL",
+      "decision": "DISCARD"
+    },
+    {
+      "id": "L-S04",
+      "surface": "FOUNDER_STAFF",
+      "source": "OfficeWorkItem model (docs/OFFICE_WORK_MODEL.md)",
+      "kind": "FUNCTIONAL_GAP",
+      "what": "IFTA quarter cases are not yet OfficeWorkItems",
+      "classification": "FUNCTIONAL",
+      "decision": "FOUNDER_DECISION",
+      "functional_contract_kept": [
+        "office work queue model"
+      ],
+      "note": "Contract staff entry says an OfficeWorkItem per client-quarter. Decision D-13."
+    },
+    {
+      "id": "L-S05",
+      "surface": "FOUNDER_STAFF",
+      "source": "getOfficeNotifications / office communications hub",
+      "kind": "FUNCTIONAL",
+      "what": "Staff notices and quarter thread",
+      "classification": "FUNCTIONAL",
+      "decision": "PRESERVE",
+      "functional_contract_kept": [
+        "staff notifications",
+        "quarter thread messages"
+      ]
+    },
+    {
+      "id": "W-01",
+      "surface": "FAMILY",
+      "source": "src/ifta/experience/* (vendored brain contracts + typed accessor)",
+      "kind": "BRAIN_CONSUMPTION",
+      "what": "Experience contract read directly by code",
+      "classification": "FUNCTIONAL",
+      "decision": "PRESERVE",
+      "functional_contract_kept": [
+        "contract states, meanings, CTAs, sections, events"
+      ],
+      "note": "DEFAULT_CLIENT_SECTIONS / DEFAULT_STAFF_SECTIONS are composition inferences for states the contract does not list — PROPOSED, re-decided in the concept."
+    },
+    {
+      "id": "W-02",
+      "surface": "FAMILY",
+      "source": "src/ifta/iftaTypes · iftaDates · iftaJurisdictions · iftaSeed · iftaDerive · iftaActions · iftaEvents · iftaStoreSeed",
+      "kind": "DOMAIN",
+      "what": "Quarter case model, derivations (assessIftaReadiness unchanged), contract-transition reducers, Inbox/Activity/Vault emission",
+      "classification": "FUNCTIONAL",
+      "decision": "PRESERVE"
+    },
+    {
+      "id": "W-03",
+      "surface": "FAMILY",
+      "source": "src/demo/demoStore.ts · demoSeed.ts · demoTypes.ts · notificationTypes.ts",
+      "kind": "DATA",
+      "what": "Optional iftaQuarters field, seed hook, additive event / category unions",
+      "classification": "FUNCTIONAL",
+      "decision": "PRESERVE"
+    },
+    {
+      "id": "W-04",
+      "surface": "FAMILY",
+      "source": "src/utils/paths.ts portalIfta / portalIftaBench / portalIftaQuarter / officeFuelTax / officeFuelTaxCase",
+      "kind": "ROUTING",
+      "what": "Path helpers only — no route or layout mounted",
+      "classification": "FUNCTIONAL",
+      "decision": "PRESERVE"
+    },
+    {
+      "id": "W-05",
+      "surface": "FAMILY",
+      "source": "NotificationsPage 'Tax & Fuel' filter · NotificationSettingsPage label · ActivityTimelinePage 'IFTA' filter",
+      "kind": "FUNCTIONAL_ON_LEGACY_SURFACE",
+      "what": "Small functional additions rendered by legacy pages",
+      "classification": "FUNCTIONAL",
+      "decision": "PRESERVE_FUNCTION",
+      "note": "Visual stays legacy until Inbox / Activity are rebuilt."
+    },
+    {
+      "id": "W-06",
+      "surface": "FAMILY",
+      "source": "Planned, never written: IFTA room inside AIOPortalLayout, quarter card inside the command center, vault cabinet inside VaultPage, staff pages inside AIOOfficeLayout, public page inside AIOPublicLayout, reuse of hero truck image and .aio-app tokens",
+      "kind": "VISUAL_PLAN",
+      "what": "Mounting the new experience on legacy shells",
+      "classification": "VISUAL",
+      "decision": "WITHDRAWN",
+      "note": "No visual code was committed. Superseded by the founder override."
+    }
+  ]
+}

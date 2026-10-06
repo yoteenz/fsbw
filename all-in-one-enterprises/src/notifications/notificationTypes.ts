@@ -1,4 +1,10 @@
 export type NotificationEventType =
+  | 'IFTA_QUARTER_OPEN'
+  | 'IFTA_NEEDS_YOU'
+  | 'IFTA_APPROVAL_REQUEST'
+  | 'IFTA_FILED'
+  | 'IFTA_REVIEW_READY'
+  | 'IFTA_CLIENT_APPROVED'
   | 'ROAD_READY_ATTENTION_REQUIRED'
   | 'DOCUMENT_REQUESTED'
   | 'DOCUMENT_UPLOADED'
@@ -106,6 +112,7 @@ export type NotificationEventType =
 
 export type NotificationCategory =
   | 'road_ready'
+  | 'tax_fuel'
   | 'documents'
   | 'renewals'
   | 'messages'
@@ -146,6 +153,7 @@ export interface NotificationPreference {
 
 export const DEFAULT_NOTIFICATION_PREFERENCES: NotificationPreference[] = [
   { category: 'road_ready', inApp: true, emailFuture: false, smsFuture: false },
+  { category: 'tax_fuel', inApp: true, emailFuture: false, smsFuture: false },
   { category: 'documents', inApp: true, emailFuture: false, smsFuture: false },
   { category: 'renewals', inApp: true, emailFuture: false, smsFuture: false },
   { category: 'messages', inApp: true, emailFuture: false, smsFuture: false },
