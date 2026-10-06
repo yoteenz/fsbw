@@ -1,0 +1,536 @@
+/* IFTA family — authority-driven shells (public dark · client/staff light). Inter / Inter Tight via app stack. */
+.ifta-root {
+  --ifta-obsidian: #050505;
+  --ifta-charcoal: #1a1a1a;
+  --ifta-gold: #d4a853;
+  --ifta-champagne: #ebd9b7;
+  --ifta-silver: #c0c6cc;
+  --ifta-stone: #8a8580;
+  --ifta-paper: #f6f6f4;
+  --ifta-warm: #faf8f5;
+  --ifta-ink: #141414;
+  font-family: 'Inter', 'Inter Tight', system-ui, sans-serif;
+  color: var(--ifta-ink);
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+.ifta-root--dark {
+  background: var(--ifta-obsidian);
+  color: var(--ifta-paper);
+}
+
+.ifta-root--light {
+  background: var(--ifta-warm);
+  color: var(--ifta-ink);
+}
+
+.ifta-tight-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.75rem 1.25rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--ifta-silver) 22%, transparent);
+  background: color-mix(in srgb, var(--ifta-paper) 92%, white);
+}
+
+.ifta-root--dark .ifta-tight-nav {
+  background: color-mix(in srgb, var(--ifta-charcoal) 88%, black);
+  border-bottom-color: color-mix(in srgb, var(--ifta-gold) 18%, transparent);
+}
+
+.ifta-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.35rem;
+  background: linear-gradient(145deg, var(--ifta-gold), #a67c2e);
+  color: var(--ifta-obsidian);
+  font-weight: 800;
+  font-size: 0.85rem;
+  letter-spacing: -0.04em;
+  text-decoration: none;
+}
+
+.ifta-tight-nav__links {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  font-size: 0.8125rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.ifta-tight-nav__links a {
+  color: inherit;
+  text-decoration: none;
+  opacity: 0.85;
+}
+
+.ifta-tight-nav__links a:hover,
+.ifta-tight-nav__links a:focus-visible {
+  opacity: 1;
+  color: var(--ifta-gold);
+}
+
+.ifta-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  padding: 0.65rem 1.15rem;
+  border-radius: 999px;
+  border: none;
+  font-weight: 600;
+  font-size: 0.8125rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  background: var(--ifta-gold);
+  color: var(--ifta-obsidian);
+}
+
+.ifta-cta--ghost {
+  background: transparent;
+  border: 1px solid color-mix(in srgb, var(--ifta-gold) 55%, transparent);
+  color: var(--ifta-champagne);
+}
+
+.ifta-main {
+  flex: 1;
+  width: 100%;
+  max-width: 90rem;
+  margin: 0 auto;
+  padding: 1.25rem clamp(1rem, 3vw, 2rem) 2.5rem;
+}
+
+/* ── Public ── */
+.ifta-public-hero {
+  display: grid;
+  gap: 2rem;
+  padding: 2rem 0 3rem;
+}
+
+@media (min-width: 900px) {
+  .ifta-public-hero {
+    grid-template-columns: 1.1fr 0.9fr;
+    align-items: center;
+    min-height: 28rem;
+  }
+}
+
+.ifta-public-hero__atmosphere {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 80% 60% at 70% 20%, color-mix(in srgb, var(--ifta-gold) 14%, transparent), transparent),
+    linear-gradient(165deg, #0a0a0a 0%, #121212 45%, #050505 100%);
+  z-index: -1;
+}
+
+.ifta-public-wrap {
+  position: relative;
+  isolation: isolate;
+}
+
+.ifta-eyebrow {
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ifta-champagne);
+  opacity: 0.9;
+  margin: 0 0 0.75rem;
+}
+
+.ifta-h1 {
+  font-size: clamp(2rem, 5vw, 3.25rem);
+  line-height: 1.05;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  margin: 0 0 1rem;
+}
+
+.ifta-lead {
+  font-size: 1.05rem;
+  line-height: 1.55;
+  max-width: 36rem;
+  color: color-mix(in srgb, var(--ifta-paper) 82%, var(--ifta-silver));
+  margin: 0 0 1.5rem;
+}
+
+.ifta-specimen {
+  background: color-mix(in srgb, var(--ifta-charcoal) 70%, black);
+  border: 1px solid color-mix(in srgb, var(--ifta-gold) 35%, transparent);
+  border-radius: 1rem;
+  padding: 1.25rem;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+}
+
+.ifta-specimen__label {
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ifta-champagne);
+  margin-bottom: 0.75rem;
+}
+
+.ifta-section {
+  padding: 2.5rem 0;
+  border-top: 1px solid color-mix(in srgb, var(--ifta-silver) 12%, transparent);
+}
+
+.ifta-section h2 {
+  font-size: 1.35rem;
+  margin: 0 0 1rem;
+  letter-spacing: -0.02em;
+}
+
+.ifta-steps {
+  display: grid;
+  gap: 0.75rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+@media (min-width: 834px) {
+  .ifta-steps {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.ifta-step {
+  padding: 1rem;
+  border-radius: 0.75rem;
+  background: color-mix(in srgb, var(--ifta-charcoal) 55%, transparent);
+  border: 1px solid color-mix(in srgb, var(--ifta-silver) 15%, transparent);
+  font-size: 0.92rem;
+}
+
+.ifta-step span {
+  display: inline-block;
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ifta-gold);
+  margin-bottom: 0.35rem;
+}
+
+.ifta-ledger {
+  display: grid;
+  gap: 1.25rem;
+}
+
+@media (min-width: 834px) {
+  .ifta-ledger {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.ifta-ledger ul {
+  margin: 0;
+  padding-left: 1.1rem;
+  line-height: 1.5;
+  font-size: 0.95rem;
+}
+
+.ifta-public-footer {
+  text-align: center;
+  padding: 1.5rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.55;
+  border-top: 1px solid color-mix(in srgb, var(--ifta-silver) 10%, transparent);
+}
+
+/* ── Client filing room ── */
+.ifta-client-hero {
+  border-radius: 1rem;
+  overflow: hidden;
+  margin-bottom: 1.25rem;
+  border: 1px solid color-mix(in srgb, var(--ifta-gold) 28%, transparent);
+  background: white;
+}
+
+.ifta-client-hero__scene {
+  min-height: 7rem;
+  background:
+    linear-gradient(180deg, transparent 40%, rgba(255, 255, 255, 0.95) 100%),
+    linear-gradient(120deg, #c9dce8 0%, #e8dfd0 40%, #d4a85333 100%);
+}
+
+@media (min-width: 834px) {
+  .ifta-client-hero__scene {
+    min-height: 9rem;
+  }
+}
+
+.ifta-client-hero__body {
+  padding: 1rem 1.25rem 1.25rem;
+}
+
+.ifta-quarter-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.ifta-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  background: color-mix(in srgb, var(--ifta-gold) 18%, white);
+  color: #5c4a1f;
+}
+
+.ifta-tabs {
+  display: flex;
+  gap: 0.35rem;
+  overflow-x: auto;
+  padding-bottom: 0.35rem;
+  margin-bottom: 1rem;
+  -webkit-overflow-scrolling: touch;
+}
+
+.ifta-tab {
+  flex: 0 0 auto;
+  padding: 0.5rem 0.85rem;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--ifta-silver) 35%, transparent);
+  background: white;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  color: var(--ifta-ink);
+}
+
+.ifta-tab--active {
+  border-color: var(--ifta-gold);
+  background: color-mix(in srgb, var(--ifta-gold) 12%, white);
+}
+
+.ifta-panel {
+  background: white;
+  border: 1px solid color-mix(in srgb, var(--ifta-silver) 25%, transparent);
+  border-radius: 0.85rem;
+  padding: 1rem 1.15rem;
+  margin-bottom: 0.85rem;
+}
+
+.ifta-panel h3 {
+  margin: 0 0 0.5rem;
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ifta-stone);
+}
+
+.ifta-tax-pending {
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ifta-stone);
+}
+
+.ifta-progress-ring {
+  width: 4.5rem;
+  height: 4.5rem;
+  border-radius: 50%;
+  border: 4px solid color-mix(in srgb, var(--ifta-gold) 25%, #eee);
+  border-top-color: var(--ifta-gold);
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.ifta-client-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+@media (min-width: 834px) {
+  .ifta-client-grid {
+    grid-template-columns: 1.2fr 0.8fr;
+  }
+}
+
+.ifta-workspace-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  margin-bottom: 1rem;
+  font-size: 0.78rem;
+}
+
+.ifta-workspace-chip {
+  padding: 0.35rem 0.65rem;
+  border-radius: 0.5rem;
+  border: 1px solid color-mix(in srgb, var(--ifta-silver) 30%, transparent);
+  background: white;
+}
+
+.ifta-workspace-chip--active {
+  border-color: var(--ifta-gold);
+  font-weight: 600;
+}
+
+.ifta-workspace-chip--muted {
+  opacity: 0.55;
+}
+
+/* ── Staff queue / case ── */
+.ifta-staff-header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+}
+
+.ifta-staff-header h1 {
+  margin: 0;
+  font-size: 1.35rem;
+  letter-spacing: -0.02em;
+}
+
+.ifta-select {
+  font: inherit;
+  padding: 0.45rem 0.65rem;
+  border-radius: 0.5rem;
+  border: 1px solid color-mix(in srgb, var(--ifta-silver) 40%, transparent);
+  background: white;
+  min-width: 10rem;
+}
+
+.ifta-queue-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  background: white;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--ifta-silver) 28%, transparent);
+}
+
+.ifta-queue-table th,
+.ifta-queue-table td {
+  padding: 0.65rem 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid color-mix(in srgb, var(--ifta-silver) 18%, transparent);
+}
+
+.ifta-queue-table th {
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ifta-stone);
+  background: var(--ifta-paper);
+}
+
+.ifta-queue-table tr:hover td {
+  background: color-mix(in srgb, var(--ifta-gold) 6%, white);
+}
+
+.ifta-queue-table a {
+  color: inherit;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.ifta-mirror {
+  font-size: 0.78rem;
+  padding: 0.65rem 0.85rem;
+  border-radius: 0.5rem;
+  background: color-mix(in srgb, var(--ifta-gold) 10%, white);
+  border: 1px solid color-mix(in srgb, var(--ifta-gold) 25%, transparent);
+  margin-bottom: 1rem;
+}
+
+.ifta-staff-layout {
+  display: grid;
+  gap: 1rem;
+}
+
+@media (min-width: 834px) {
+  .ifta-staff-layout {
+    grid-template-columns: 1fr 16rem;
+  }
+}
+
+.ifta-notes {
+  font-size: 0.82rem;
+  background: color-mix(in srgb, var(--ifta-silver) 12%, white);
+  border-radius: 0.65rem;
+  padding: 0.75rem;
+}
+
+.ifta-run-faqs {
+  margin-top: 0.75rem;
+}
+
+.ifta-run-faqs summary {
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.ifta-empty {
+  padding: 2rem;
+  text-align: center;
+  color: var(--ifta-stone);
+  background: white;
+  border-radius: 0.75rem;
+  border: 1px dashed color-mix(in srgb, var(--ifta-silver) 40%, transparent);
+}
+
+.ifta-demo-hint {
+  font-size: 0.8rem;
+  padding: 0.65rem 0.85rem;
+  border-radius: 0.5rem;
+  background: color-mix(in srgb, var(--ifta-gold) 12%, white);
+  margin-bottom: 1rem;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.ifta-demo-hint button {
+  font: inherit;
+  font-weight: 600;
+  color: #5c4a1f;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-decoration: underline;
+}

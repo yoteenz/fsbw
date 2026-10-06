@@ -141,6 +141,7 @@ export const aioPaths = {
   industries: `${BASE}/about#industries`,
   resources: `${BASE}/about#resources`,
   serviceSlug: (slug: string) => `${BASE}/services/${slug}`,
+  publicIftaFiling: `${BASE}/services/ifta-filing`,
   portalRequest: (requestId: string) => `${BASE}/portal/requests/${requestId}`,
   requestConfirmation: (requestId: string) => `${BASE}/request/confirmation/${requestId}`,
   portalOnboarding: `${BASE}/portal/onboarding`,
@@ -148,10 +149,13 @@ export const aioPaths = {
   portalFleet: `${BASE}/portal/fleet`,
   portalVehicle: (id: string) => `${BASE}/portal/fleet/vehicles/${id}`,
   portalVault: `${BASE}/portal/vault`,
-  portalIfta: `${BASE}/portal/services/ifta`,
+  /** @deprecated superseded by portalWorkspaceIfta — kept for deep links during migration */
+  portalIfta: `${BASE}/portal/workspaces/ifta`,
   portalIftaBench: (bench: string, quarterKey?: string) =>
-    `${BASE}/portal/services/ifta/${bench}${quarterKey ? `?quarter=${quarterKey}` : ''}`,
-  portalIftaQuarter: (quarterKey: string) => `${BASE}/portal/services/ifta?quarter=${quarterKey}`,
+    `${BASE}/portal/workspaces/ifta${quarterKey ? `/${quarterKey}` : ''}${bench ? `#${bench}` : ''}`,
+  portalIftaQuarter: (quarterKey: string) => `${BASE}/portal/workspaces/ifta/${quarterKey}`,
+  portalWorkspaceIfta: `${BASE}/portal/workspaces/ifta`,
+  portalWorkspaceIftaQuarter: (quarterKey: string) => `${BASE}/portal/workspaces/ifta/${quarterKey}`,
   portalVaultDocument: (id: string) => `${BASE}/portal/vault/${id}`,
   portalCalendar: `${BASE}/portal/calendar`,
   portalRenewals: `${BASE}/portal/renewals`,
@@ -216,8 +220,14 @@ export const aioPaths = {
   portalActivationReview: `${BASE}/portal/activation/review`,
   officeMessages: `${BASE}/office/messages`,
   officePermitting: `${BASE}/office/permitting`,
-  officeFuelTax: `${BASE}/office/permitting/fuel-tax`,
-  officeFuelTaxCase: (caseId: string) => `${BASE}/office/permitting/fuel-tax/${caseId}`,
+  /** @deprecated superseded by officeWorkspaceIfta */
+  officeFuelTax: `${BASE}/office/workspaces/ifta`,
+  officeFuelTaxCase: (_caseId: string) => `${BASE}/office/workspaces/ifta`,
+  officeWorkspaceIfta: `${BASE}/office/workspaces/ifta`,
+  officeWorkspaceIftaCase: (clientId: string, quarterKey: string) =>
+    `${BASE}/office/workspaces/ifta/${clientId}/${quarterKey}`,
+  officeClientIftaQuarter: (clientId: string, quarterKey: string) =>
+    `${BASE}/office/clients/${clientId}/ifta/${quarterKey}`,
   officeFormation: `${BASE}/office/business-formation`,
   officeInsurance: `${BASE}/office/insurance`,
   officeInsuranceRequests: `${BASE}/office/insurance/requests`,

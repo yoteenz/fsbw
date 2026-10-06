@@ -168,6 +168,11 @@ import {
   DriverLinkDriverOpportunityPage,
 } from '../pages/driver/DriverLinkDriverPages';
 import { IconLibraryDebugPage } from '../pages/debug/IconLibraryDebugPage';
+import { IftaPublicLayout } from '../ifta/ui/IftaPublicLayout';
+import { IftaPublicPage } from '../ifta/ui/IftaPublicPage';
+import { IftaClientShell } from '../ifta/ui/IftaClientShell';
+import { IftaClientFilingRoomPage } from '../ifta/ui/IftaClientFilingRoomPage';
+import { PortalIftaLegacyRedirect } from '../ifta/ui/IftaLegacyRedirects';
 import {
   LoadBoardLayout,
   LoadBoardSearchPage,
@@ -206,6 +211,10 @@ export const aioCoreRoutes = (
         <Route path="reset-password" element={<ResetPasswordPage />} />
         <Route path="verify-email" element={<VerifyEmailPage />} />
         <Route path="onboarding" element={<OnboardingPage />} />
+      </Route>
+
+      <Route path="services/ifta-filing" element={<IftaPublicLayout />}>
+        <Route index element={<IftaPublicPage />} />
       </Route>
 
       <Route element={<AIOPublicLayout />}>
@@ -254,6 +263,12 @@ export const aioCoreRoutes = (
       </Route>
 
       <Route element={<CustomerRouteGuard />}>
+        <Route path="portal/workspaces/ifta" element={<IftaClientShell />}>
+          <Route index element={<IftaClientFilingRoomPage />} />
+          <Route path=":quarterKey" element={<IftaClientFilingRoomPage />} />
+        </Route>
+        <Route path="portal/services/ifta" element={<PortalIftaLegacyRedirect />} />
+        <Route path="portal/services/ifta/*" element={<PortalIftaLegacyRedirect />} />
         <Route path="portal" element={<AIOPortalLayout />}>
           <Route index element={<PortalPage />} />
           <Route path="business" element={<BusinessProfilePage />} />
