@@ -55193,3 +55193,14 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Experience Brain:** `docs/aio/client-migration/IMPLEMENTATION_STATUS.md` — `GENERATED_ARTIFACT_REGEN_BLOCKED_BY_TOOLING`.
 - **Still blocking READY_FOR_STAFF_MIGRATION_PILOT (production Supabase):** configured extraction provider, live staff E2E with service role in deploy env, full supabase fact UI refresh, responsive QA, production validate rerun.
 
+---
+
+## 2026-10-06 — AIO env-unblock + final validation sprint (P0.AIO.CLIENT-MIGRATION-ACTIVATION.ENVIRONMENT-UNBLOCK-AND-FINAL-VALIDATION1) — PR #42
+
+- **Context:** Narrow validation sprint after prior gate report; fix stale full-suite test, separate code vs environment blockers, no feature redesign.
+- **Demo schema audit (20→26):** Six canonical upgrade steps — v21 bookkeeping, v22 financial autopilot, v23 archive migration batches, v24 FleetCare, v25 DriverLink/load board (persisted as v26), v26 client migration activation fields (`ensureClientMigrationFields`). Updated `AIO_DEMO_SCHEMA_VERSION` to **26** and `data.test.ts` expectations; full `npm test` **395 pass / 0 fail**.
+- **Extraction:** Only `fixtureMigrationPipelineAdapter` exists; `process-file.ts` has no production AI adapter — `AIO_MIGRATION_EXTRACTION_PROVIDER` unset → `PROVIDER_UNAVAILABLE`. Contract gap: architecture allows staff review/manual facts but intake marks uploads FAILED when provider missing.
+- **Environment:** Cloud agent lacks `VITE_AIO_*`, `AIO_SUPABASE_SERVICE_ROLE_KEY`, `AIO_RLS_TEST_*`, `RESEND_API_KEY`, extraction vars — live staff E2E, RLS matrix, activation email, client responsive QA = **BLOCKED_BY_ENVIRONMENT**.
+- **Docs:** `IMPLEMENTATION_STATUS.md` split into **CODE STATUS** vs **ENVIRONMENT STATUS**.
+- **Commit:** `e4b8f0173` on `cursor/client-migration-activation-88a7`. Pilot gates still **NO** until secrets + extraction/manual path resolved.
+
