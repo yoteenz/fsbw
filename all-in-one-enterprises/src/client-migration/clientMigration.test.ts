@@ -8,6 +8,7 @@ import { isActiveClient } from './lifecycle';
 import {
   confirmAndActivateClient,
   recordReviewSectionResponse,
+  recordWhatChanged,
 } from './services/clientActivationService';
 import { createActivationInvite, redeemActivationInvite } from './services/activationInviteService';
 import type { DemoStore } from '../demo/demoTypes';
@@ -104,6 +105,54 @@ describe('client migration lifecycle', () => {
     const activeClient = activated.store.clients.find((c) => c.id === orgId)!;
     expect(activeClient.clientLifecycle).toBe('ACTIVE');
     expect(isActiveClient({ clientLifecycle: activeClient.clientLifecycle!, activationConditions: activeClient.activationConditions })).toBe(true);
+  });
+
+  it('synthetic migration journey: batch → PREBUILT → invite → change report → ACTIVE', async () => {
+    let store = createDemoSeed();
+    const orgId = 'client-b';
+    const batchId = 'synthetic-batch-1';
+    store.archiveMigrationBatches = [
+      {
+        id: batchId,
+        organizationId: orgId,
+        clientId: orgId,
+        createdByStaffId: 'staff-2',
+        state: 'ready_for_review',
+        reviewState: 'complete',
+        approvalState: 'pending',
+        fileCount: 2,
+        documentCount: 2,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      },
+    ];
+    store.clientExtractedFacts = [
+      {
+        id: 'fact-synthetic-1',
+        batchId,
+        organizationId: orgId,
+        entityType: 'company',
+        fieldKey: 'legal_name',
+        proposedValue: 'Summit Ridge Hauling LLC',
+        confidence: 'HIGH',
+        reviewAction: 'CONFIRM',
+        createdAt: new Date().toISOString(),
+      },
+    ];
+    commitApprovedMigration(store, batchId, 'staff-2');
+    const prebuilt = store.clients.find((c) => c.id === orgId);
+    expect(prebuilt?.clientLifecycle).toBe('PREBUILT');
+
+    const { store: invitedStore, rawToken } = await createActivationInvite(store, orgId, prebuilt!.contactEmail, 'staff-2');
+    store = invitedStore;
+    store = (await redeemActivationInvite(store, rawToken)).store;
+    for (const section of ['COMPANY', 'PEOPLE', 'VEHICLES', 'ACTIVE_SERVICES'] as const) {
+      store = recordReviewSectionResponse(store, orgId, section, 'LOOKS_RIGHT');
+    }
+    store = recordWhatChanged(store, orgId, 'SOLD_A_TRUCK', 'Sold older unit per client review');
+    const activated = confirmAndActivateClient(store, orgId);
+    expect(activated.error).toBeUndefined();
+    expect(activated.store.clients.find((c) => c.id === orgId)?.clientLifecycle).toBe('ACTIVE');
   });
 
   it('active client count excludes PREBUILT', () => {

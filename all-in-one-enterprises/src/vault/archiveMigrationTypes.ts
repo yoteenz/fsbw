@@ -43,6 +43,9 @@ export interface ArchiveMigrationBatchFile {
   processingState: MigrationBatchFileState;
   documentId?: string;
   createdAt: string;
+  queueState?: string;
+  processingStage?: string;
+  processingError?: string;
 }
 
 export type ClientArchiveMigrationProfile = {

@@ -1,14 +1,12 @@
 import type { Client } from '../demo/demoTypes';
-import { isActiveClient } from './lifecycle';
+import { countActiveClientsCanonical, isCountedActiveClient } from './activeClientRule';
 
+/** @deprecated use countActiveClientsCanonical or isCountedActiveClient */
 export function countActiveClients(clients: Client[]): number {
-  return clients.filter((c) =>
-    isActiveClient({
-      clientLifecycle: c.clientLifecycle ?? 'KNOWN_UNMIGRATED',
-      activationConditions: c.activationConditions,
-    }),
-  ).length;
+  return countActiveClientsCanonical(clients);
 }
+
+export { isCountedActiveClient, countActiveClientsCanonical };
 
 export function filterClientsByFounderSegment(clients: Client[], segment: string): Client[] {
   return clients.filter((c) => {

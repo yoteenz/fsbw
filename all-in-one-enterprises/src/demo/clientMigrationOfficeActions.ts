@@ -17,5 +17,24 @@ export async function sendClientActivationInvite(
   updateDemoStore(() => next);
   const base = typeof window !== 'undefined' ? window.location.origin : '';
   const path = `/all-in-one/office-activation/${rawToken}`;
-  return { activationUrl: `${base}${path}` };
+  const activationUrl = `${base}${path}`;
+
+  try {
+    const res = await fetch('/api/aio/client-migration/send-activation-invite', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email,
+        companyName: client.companyName,
+        activationUrl,
+      }),
+    });
+    if (!res.ok) {
+      return { activationUrl, error: 'Invite created but email delivery failed — copy the link manually.' };
+    }
+  } catch {
+    return { activationUrl, error: 'Invite created but email delivery failed — copy the link manually.' };
+  }
+
+  return { activationUrl };
 }

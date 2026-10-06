@@ -11,15 +11,26 @@ import { DocumentRecordList } from '../../components/vault/DocumentRecordList';
 import { DocumentRecordDetailPanel } from '../../components/vault/DocumentRecordDetailPanel';
 import { SecureDocumentUploader } from '../../components/vault/SecureDocumentUploader';
 import {
-  addFilesToMigrationBatch,
-  approveMigrationBatch,
-  createMigrationBatch,
   getArchiveMigrationBatch,
   getBatchFiles,
   getPendingMigrationDocuments,
   reviewMigrationDocument,
   searchClientsForMigration,
 } from '../../demo/archiveMigrationActions';
+import { useAIOAuth } from '../../auth/AIOAuthProvider';
+import { filterClientsByFounderSegment } from '../../client-migration/activeClientMetrics';
+import { applyReviewActionToFact } from '../../client-migration/services/migrationCommitService';
+import {
+  createMigrationBatchForOffice,
+  uploadFilesToMigrationBatch,
+} from '../../client-migration/services/migrationIntakeService';
+import { useMigrationBatches } from '../../client-migration/hooks/useMigrationBatches';
+import { useMigrationBatchFiles } from '../../client-migration/hooks/useMigrationBatches';
+import { approveMigrationBatchForOffice } from '../../client-migration/services/approveMigrationOfficeService';
+import { supabaseUpdateExtractedFactReview } from '../../client-migration/repositories/supabaseMigrationRepository';
+import { MigrationFileQueuePanel } from '../../components/vault/MigrationFileQueuePanel';
+import { isSupabaseMode } from '../../config/dataMode';
+import { updateDemoStore } from '../../demo/demoStore';
 import { CLIENT_MIGRATION_STATUS_LABELS, MIGRATION_BATCH_STATE_LABELS } from '../../vault/archiveMigrationTypes';
 import { resolveOfficeStaffContext } from '../../office-core/officeContext';
 import { aioPaths } from '../../utils/paths';
@@ -81,8 +92,19 @@ export function OfficeDocumentVaultPage() {
   );
 }
 
+const FOUNDER_QUEUE_SEGMENTS = [
+  { id: 'MIGRATING', label: 'Migrating' },
+  { id: 'MIGRATION_REVIEW', label: 'Migration review' },
+  { id: 'PREBUILT', label: 'PREBUILT not invited' },
+  { id: 'INVITED', label: 'Invite sent' },
+  { id: 'WAITING_FOR_CLIENT', label: 'Waiting for client' },
+  { id: 'ACTIVE', label: 'Active' },
+] as const;
+
 export function ArchiveMigrationDashboardPage() {
   const store = useDemoStore();
+  const supabaseBatches = useMigrationBatches();
+  const [segment, setSegment] = useState<string>('all');
   const metrics = useMemo(
     () =>
       computeMigrationDashboardMetrics({
@@ -93,7 +115,9 @@ export function ArchiveMigrationDashboardPage() {
     [store],
   );
 
-  const batches = store.archiveMigrationBatches ?? [];
+  const batches = isSupabaseMode() ? supabaseBatches : store.archiveMigrationBatches ?? [];
+  const queueClients =
+    segment === 'all' ? store.clients : filterClientsByFounderSegment(store.clients, segment);
 
   return (
     <div className="aio-office-page aio-doc-vault-page">
@@ -135,12 +159,36 @@ export function ArchiveMigrationDashboardPage() {
               <span className="aio-doc-vault-metrics__value">{metrics.percentComplete}%</span>
               <span className="aio-doc-vault-metrics__label">Archive Complete</span>
             </div>
+            <div className="aio-doc-vault-metrics__item">
+              <span className="aio-doc-vault-metrics__value">{metrics.canonicalActiveClients}</span>
+              <span className="aio-doc-vault-metrics__label">Active Clients (canonical)</span>
+            </div>
+          </div>
+
+          <div className="aio-office-filters">
+            {FOUNDER_QUEUE_SEGMENTS.map((s) => (
+              <button
+                key={s.id}
+                type="button"
+                className={`aio-btn aio-btn--sm ${segment === s.id ? 'aio-btn--gold' : 'aio-btn--outline-dark'}`}
+                onClick={() => setSegment(s.id)}
+              >
+                {s.label}
+              </button>
+            ))}
+            <button
+              type="button"
+              className={`aio-btn aio-btn--sm ${segment === 'all' ? 'aio-btn--gold' : 'aio-btn--outline-dark'}`}
+              onClick={() => setSegment('all')}
+            >
+              All
+            </button>
           </div>
 
           <section className="aio-oc-panel">
             <h2 className="aio-oc-panel__title">Client Migration Status</h2>
             <ul className="aio-doc-vault-list">
-              {store.clients.map((c) => (
+              {queueClients.map((c) => (
                 <li key={c.id} className="aio-doc-vault-record">
                   <div>
                     <strong>{c.companyName}</strong>
@@ -189,20 +237,30 @@ export function ArchiveMigrationDashboardPage() {
 
 export function ArchiveMigrationDigitizePage() {
   const store = useDemoStore();
+  const { session } = useAIOAuth();
   const ctx = resolveOfficeStaffContext(store);
   const [step, setStep] = useState<'search' | 'confirm' | 'upload'>('search');
   const [query, setQuery] = useState('');
   const [selectedClientId, setSelectedClientId] = useState<string | null>(null);
   const [batchId, setBatchId] = useState<string | null>(null);
   const [uploadMessage, setUploadMessage] = useState<string | null>(null);
+  const queueFiles = useMigrationBatchFiles(batchId ?? undefined);
 
   const results = useMemo(() => searchClientsForMigration(query, store), [query, store]);
   const selected = selectedClientId ? store.clients.find((c) => c.id === selectedClientId) : undefined;
 
-  function confirmClient() {
+  async function confirmClient() {
     if (!selectedClientId) return;
-    const batch = createMigrationBatch(selectedClientId, ctx.staffId);
-    setBatchId(batch.id);
+    const staffUserId = session?.user.id ?? ctx.staffId;
+    const { batchId: createdId, error } = await createMigrationBatchForOffice({
+      organizationId: selectedClientId,
+      staffUserId,
+    });
+    if (error || !createdId) {
+      setUploadMessage(error ?? 'Could not create batch');
+      return;
+    }
+    setBatchId(createdId);
     setStep('upload');
   }
 
@@ -254,9 +312,10 @@ export function ArchiveMigrationDigitizePage() {
         <section>
           <h2>Upload batch for {selected.companyName}</h2>
           <SecureDocumentUploader
-            label="Drop scanned pages or PDFs for this physical file"
+            allowFolder
+            label="Drop scanned pages, PDFs, or a folder for this physical file"
             onFilesSelected={async (files) => {
-              const result = await addFilesToMigrationBatch(batchId, files);
+              const result = await uploadFilesToMigrationBatch(batchId, files, selectedClientId ?? undefined);
               const parts = [`${result.added} file(s) added.`];
               if (result.duplicates.length) parts.push(`Duplicates flagged: ${result.duplicates.join('; ')}`);
               if (result.errors.length) parts.push(result.errors.join(' '));
@@ -264,6 +323,7 @@ export function ArchiveMigrationDigitizePage() {
             }}
           />
           {uploadMessage && <p className="aio-prototype-note">{uploadMessage}</p>}
+          <MigrationFileQueuePanel files={queueFiles} />
           <Link to={aioPaths.officeArchiveMigrationBatch(batchId)} className="aio-btn aio-btn--gold">
             Continue to Review →
           </Link>
@@ -280,7 +340,12 @@ export function ArchiveMigrationBatchReviewPage() {
   const batch = batchId ? getArchiveMigrationBatch(batchId, store) : undefined;
   const client = batch ? store.clients.find((c) => c.id === batch.clientId) : undefined;
   const pendingDocs = batch ? getPendingMigrationDocuments(batch.clientId, store) : [];
+  const batchFacts = (store.clientExtractedFacts ?? []).filter((f) => f.batchId === batchId);
+  const queueFiles = useMigrationBatchFiles(batchId);
   const [reviewDocId, setReviewDocId] = useState<string | null>(null);
+  const [matchChoice, setMatchChoice] = useState<'existing' | 'new' | 'unresolved'>('existing');
+  const [approveError, setApproveError] = useState<string | null>(null);
+  const [approving, setApproving] = useState(false);
 
   const reviewDoc = reviewDocId ? store.documents.find((d) => d.id === reviewDocId) : undefined;
   const [form, setForm] = useState({
@@ -335,6 +400,74 @@ export function ArchiveMigrationBatchReviewPage() {
         <p>{MIGRATION_BATCH_STATE_LABELS[batch.state]} · {getBatchFiles(batchId, store).length} files</p>
       </header>
 
+      {batchFacts.length > 0 && (
+        <section className="aio-oc-panel" aria-label="Extraction review">
+          <h2 className="aio-oc-panel__title">Extracted facts</h2>
+          <table className="aio-office-table">
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Extracted</th>
+                <th>Existing</th>
+                <th>Confidence</th>
+                <th>Source</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {batchFacts.map((fact) => (
+                <tr key={fact.id}>
+                  <td>{fact.entityType}.{fact.fieldKey}</td>
+                  <td>{fact.proposedValue ?? '—'}</td>
+                  <td>{fact.existingValue ?? '—'}</td>
+                  <td>{fact.confidence}</td>
+                  <td>{fact.sourceReference ?? '—'}</td>
+                  <td>
+                    {(['CONFIRM', 'REJECT', 'MARK_STALE', 'NEEDS_CLIENT_CONFIRMATION'] as const).map((action) => (
+                      <button
+                        key={action}
+                        type="button"
+                        className="aio-btn aio-btn--sm aio-btn--outline-dark"
+                        onClick={() => {
+                          if (isSupabaseMode()) {
+                            void supabaseUpdateExtractedFactReview(fact.id, action);
+                          } else {
+                            updateDemoStore((s) => applyReviewActionToFact(s, fact.id, action, ctx.staffId));
+                          }
+                        }}
+                      >
+                        {action}
+                      </button>
+                    ))}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </section>
+      )}
+
+      <section className="aio-oc-panel" aria-label="Client matching">
+        <h2 className="aio-oc-panel__title">Client match</h2>
+        <p>Potential match: <strong>{client?.companyName}</strong></p>
+        <label className="aio-doc-vault-label">
+          Founder decision
+          <select className="aio-intake-input" value={matchChoice} onChange={(e) => setMatchChoice(e.target.value as typeof matchChoice)}>
+            <option value="existing">Match to existing</option>
+            <option value="new">Create new client</option>
+            <option value="unresolved">Keep unresolved</option>
+          </select>
+        </label>
+        {matchChoice === 'unresolved' && (
+          <p className="aio-prototype-note">Approval blocked until match is resolved.</p>
+        )}
+      </section>
+
+      <section className="aio-oc-panel" aria-label="File queue">
+        <h2 className="aio-oc-panel__title">File queue</h2>
+        <MigrationFileQueuePanel files={queueFiles.length ? queueFiles : getBatchFiles(batchId, store)} />
+      </section>
+
       <DocumentRecordList
         documents={pendingDocs.length ? pendingDocs : store.documents.filter((d) => d.batchId === batchId)}
         detailHref={(id) => aioPaths.officeVaultDocument(id)}
@@ -374,8 +507,25 @@ export function ArchiveMigrationBatchReviewPage() {
         </section>
       )}
 
-      <button type="button" className="aio-btn aio-btn--gold" onClick={() => approveMigrationBatch(batchId, ctx.staffId)}>
-        Approve Batch → Client Vault
+      {approveError ? <p className="aio-prototype-note">{approveError}</p> : null}
+      <button
+        type="button"
+        className="aio-btn aio-btn--gold"
+        disabled={matchChoice === 'unresolved' || approving}
+        onClick={() => {
+          setApproving(true);
+          setApproveError(null);
+          void approveMigrationBatchForOffice({
+            batchId,
+            staffId: ctx.staffId,
+            matchResolved: matchChoice !== 'unresolved',
+          }).then((result) => {
+            setApproving(false);
+            if (!result.ok) setApproveError(result.error ?? 'Approve failed');
+          });
+        }}
+      >
+        {approving ? 'Approving…' : 'Approve Batch → Client Vault'}
       </button>
     </div>
   );
