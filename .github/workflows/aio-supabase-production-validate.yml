@@ -135,11 +135,15 @@ jobs:
           set +x
           source scripts/ci/aio-constants.sh
           bash scripts/ci/aio-project-guard.sh pre-push
-          push_cmd=(npx --yes "supabase@${SUPABASE_CLI_VERSION}" db push --linked)
           if [[ -n "${AIO_CI_DB_URL:-}" ]]; then
-            push_cmd+=(--db-url "$AIO_CI_DB_URL")
-          elif [[ -n "${SUPABASE_DB_PASSWORD:-}" ]]; then
-            push_cmd+=(-p "$SUPABASE_DB_PASSWORD")
+            # --db-url and --linked are mutually exclusive in the Supabase CLI.
+            # CI's canonical path is the IPv4-compatible Supavisor session DSN.
+            push_cmd=(npx --yes "supabase@${SUPABASE_CLI_VERSION}" db push --db-url "$AIO_CI_DB_URL")
+          else
+            push_cmd=(npx --yes "supabase@${SUPABASE_CLI_VERSION}" db push --linked)
+            if [[ -n "${SUPABASE_DB_PASSWORD:-}" ]]; then
+              push_cmd+=(-p "$SUPABASE_DB_PASSWORD")
+            fi
           fi
           if ! "${push_cmd[@]}"; then
             bash scripts/ci/aio-record-result.sh migrations FAIL "db push failed — manual intervention may be required"
