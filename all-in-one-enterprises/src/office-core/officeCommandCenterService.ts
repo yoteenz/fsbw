@@ -1,4 +1,5 @@
 import type { DemoStore } from '../demo/demoTypes';
+import { countActiveClients } from '../client-migration/activeClientMetrics';
 import { aioPaths } from '../utils/paths';
 import { aggregateOfficeAttention, collectOfficeAttentionCandidates } from './officeAttentionEngine';
 import { greetingForStaff, hasOfficePermission, resolveOfficeStaffContext } from './officeContext';
@@ -229,7 +230,7 @@ export function getOfficeCommandCenterView(store: DemoStore): OfficeCommandCente
 
   const managerSummary = ctx.isManager
     ? {
-        customersActive: store.clients.filter((c) => c.accountStatus === 'active').length,
+        customersActive: countActiveClients(store.clients),
         openServiceRequests: store.requests.filter((r) => !['completed', 'cancelled'].includes(r.status)).length,
         customersWaitingOnUs: countByQueue(store, 'customers_waiting_on_us'),
         waitingOnCustomer: countByQueue(store, 'waiting_on_customer'),

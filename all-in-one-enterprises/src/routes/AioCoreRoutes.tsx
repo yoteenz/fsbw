@@ -44,6 +44,8 @@ import { ForgotPasswordPage } from '../pages/auth/ForgotPasswordPage';
 import { ResetPasswordPage } from '../pages/auth/ResetPasswordPage';
 import { VerifyEmailPage } from '../pages/auth/VerifyEmailPage';
 import { OnboardingPage } from '../pages/auth/OnboardingPage';
+import { OfficeActivationPage } from '../pages/activation/OfficeActivationPage';
+import { ClientOfficeReviewPage } from '../pages/activation/ClientOfficeReviewPage';
 import {
   BusinessProfilePage,
   BusinessSummaryPage,
@@ -242,6 +244,7 @@ export const aioCoreRoutes = (
         <Route path="start-your-business/register" element={<StartBusinessRegisterPage />} />
         <Route path="start-your-business/activate" element={<StartBusinessActivatePage />} />
         <Route path="start-your-business/roll" element={<StartBusinessRollPage />} />
+        <Route path="office-activation/:token" element={<OfficeActivationPage />} />
         <Route path="client-portal" element={<ClientPortalInfoPage />} />
         <Route path="debug/icon-library" element={<IconLibraryDebugPage />} />
       </Route>
@@ -276,6 +279,7 @@ export const aioCoreRoutes = (
           <Route path="activity" element={<ActivityTimelinePage />} />
           <Route path="team" element={<TeamPage />} />
           <Route path="search" element={<PortalSearchPage />} />
+          <Route path="activation/review" element={<ClientOfficeReviewPage />} />
           <Route path="onboarding" element={<RoadReadyOnboardingPage />} />
           <Route path="road-ready" element={<RoadReadyPage />} />
           <Route path="fleet" element={<FleetPage />} />

@@ -8,6 +8,7 @@ import { createAutopilotSeedData } from './autopilotSeed';
 import { createFleetCareSeedData } from './fleetcareSeed';
 import { createDriverLinkSeedData } from './driverlinkSeed';
 import { createDemoSeed } from './demoSeed';
+import { ensureClientMigrationFields } from '../client-migration/demo/ensureClientMigrationFields';
 import { ensureIftaSeed } from '../ifta/iftaStoreSeed';
 import type { DemoStore, ServiceRequest } from './demoTypes';
 import { AIO_DEMO_SCHEMA_VERSION } from '../data/constants';
@@ -66,14 +67,20 @@ function ensureLoadBoardFields(store: DemoStore): DemoStore {
 export function loadDemoStore(): DemoStore {
   if (typeof window === 'undefined') return createDemoSeed();
 
-  const existing = readStorage<DemoStore | (Omit<DemoStore, 'version'> & { version: 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 20 | 21 | 22 | 23 | 24 }) | null>(DEMO_STORE_KEY, null);
-  if (existing?.version === 25) {
+  const existing = readStorage<DemoStore | (Omit<DemoStore, 'version'> & { version: 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 20 | 21 | 22 | 23 | 24 | 25 }) | null>(DEMO_STORE_KEY, null);
+  if (existing?.version === 26) {
     const patched = ensureLoadBoardFields(existing as DemoStore);
     const ifta = ensureIftaSeed(patched);
     if (patched !== existing || ifta.changed) {
       saveDemoStore(ifta.store);
     }
     return ifta.store;
+  }
+
+  if (existing?.version === 25) {
+    const upgraded = upgradeStoreV25ToV26(ensureLoadBoardFields(existing as DemoStore & { version: 25 }));
+    saveDemoStore(upgraded);
+    return upgraded;
   }
 
   if (existing?.version === 24) {
@@ -335,15 +342,20 @@ function upgradeStoreV17ToV18(store: DemoStoreV17): DemoStoreV18 {
 
 function upgradeStoreV24ToV25(store: DemoStoreV24): DemoStore {
   const driverlink = createDriverLinkSeedData();
-  return ensureLoadBoardFields({
+  const stepped = ensureLoadBoardFields({
     ...store,
-    version: 25 as const,
     ...driverlink,
     loadBoardPublications: createLoadBoardSeedPublications(DEMO_LOAD_BOARD_LOAD_IDS),
     loadBoardSavedSearches: [],
     loadBoardRecentSearches: [],
     carrierLoadBoardOffers: [],
-  });
+    version: 26,
+  } as DemoStore);
+  return ensureClientMigrationFields(stepped);
+}
+
+function upgradeStoreV25ToV26(store: DemoStore): DemoStore {
+  return ensureClientMigrationFields({ ...store, version: 26 });
 }
 
 function upgradeStoreV23ToV24(store: DemoStoreV23): DemoStoreV24 {
