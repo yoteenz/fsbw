@@ -55204,3 +55204,13 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Docs:** `IMPLEMENTATION_STATUS.md` split into **CODE STATUS** vs **ENVIRONMENT STATUS**.
 - **Commit:** `e4b8f0173` on `cursor/client-migration-activation-88a7`. Pilot gates still **NO** until secrets + extraction/manual path resolved.
 
+---
+
+## 2026-10-06 — AIO environment/provider resolution sprint (P0 ENVIRONMENT-PROVIDER-RESOLUTION1) — PR #42
+
+- **Provider decision:** `NO_APPROVED_PROVIDER_AVAILABLE` for migration pipeline (OpenAI/Fal used elsewhere; no migration OCR adapter in repo). `process-file.ts` returns `PROVIDER_UNAVAILABLE` with `extractionOutcome`.
+- **Manual fallback:** **SUPPORTED_WITH_SMALL_GAP → closed in code** — uploads on provider unavailable now `READY_FOR_REVIEW` (not FAILED); batch review UI banner + manual facts with `MANUAL_REVIEW|` source_reference and provenance `MANUAL_REVIEW` on approve (`manualFactSource.ts`, `manualMigrationFactService.ts`, `DocumentVaultPages.tsx`).
+- **Docs:** `ENVIRONMENT_SETUP.md`, `CLOUD_AGENT_VALIDATION_BLOCKERS.md`; `IMPLEMENTATION_STATUS.md` updated.
+- **Tests:** 397 pass; `manualFactSource.test.ts` added.
+- **Pilot logic:** Automated extraction **not** required for staff pilot if manual path proven live; environment secrets still block live E2E/RLS/activation.
+
