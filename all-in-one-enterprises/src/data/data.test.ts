@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { validateAioEnvironment, effectiveDataMode, isFrontalSlayerSupabaseUrl } from '../config/env';
-import { FRONTAL_SLAYER_SUPABASE_PROJECT_ID } from './constants';
+import { AIO_DEMO_SCHEMA_VERSION, FRONTAL_SLAYER_SUPABASE_PROJECT_ID } from './constants';
 import { PERSISTENCE_INVENTORY } from './persistenceInventory';
 import { evaluateDataSystemStatus, AIO_MIGRATION_FILES } from './dataHealth';
 import { DemoDocumentStorageProvider } from './storage/documentStorageProvider';
@@ -98,11 +98,11 @@ describe('server permissions', () => {
   });
 });
 
-describe('demo store v20', () => {
-  it('seeds with schema version 20', () => {
+describe('demo store schema version', () => {
+  it('seeds with canonical AIO_DEMO_SCHEMA_VERSION', () => {
     const seed = createDemoSeed();
-    expect(seed.version).toBe(20);
-    expect(seed.dataSystem?.demoSchemaVersion).toBe(20);
+    expect(seed.version).toBe(AIO_DEMO_SCHEMA_VERSION);
+    expect(seed.dataSystem?.demoSchemaVersion).toBe(AIO_DEMO_SCHEMA_VERSION);
   });
 });
 

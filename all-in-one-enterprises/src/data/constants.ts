@@ -12,8 +12,8 @@ export const AIO_DEDICATED_SUPABASE_PROJECT_REF = 'nnnljnhtmseagotvgxxt';
 /** Env var for migration scripts — must match {@link AIO_DEDICATED_SUPABASE_PROJECT_REF} */
 export const AIO_EXPECTED_PROJECT_REF_ENV = 'AIO_SUPABASE_PROJECT_REF';
 
-/** Canonical demo schema version (Sprint 20) */
-export const AIO_DEMO_SCHEMA_VERSION = 20;
+/** Canonical demo schema version (v26 — client migration + IFTA demo fields) */
+export const AIO_DEMO_SCHEMA_VERSION = 26;
 
 /** Canonical migration directory (repo-relative) */
 export const AIO_MIGRATIONS_DIR = 'supabase/migrations';
