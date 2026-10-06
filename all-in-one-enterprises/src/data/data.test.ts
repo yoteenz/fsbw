@@ -98,11 +98,14 @@ describe('server permissions', () => {
   });
 });
 
-describe('demo store v20', () => {
-  it('seeds with schema version 20', () => {
+describe('demo store v26', () => {
+  it('seeds with canonical schema version 26', () => {
     const seed = createDemoSeed();
-    expect(seed.version).toBe(20);
-    expect(seed.dataSystem?.demoSchemaVersion).toBe(20);
+    expect(seed.version).toBe(26);
+    expect(seed.dataSystem?.demoSchemaVersion).toBe(26);
+    expect(seed.clientExtractedFacts).toBeDefined();
+    expect(seed.clientActivationInvites).toBeDefined();
+    expect(seed.archiveMigrationBatches).toBeDefined();
   });
 });
 
