@@ -33,6 +33,9 @@ function mapBatchFile(row: Record<string, unknown>): ArchiveMigrationBatchFile {
     processingState: row.processing_state as ArchiveMigrationBatchFile['processingState'],
     documentId: row.document_id ? String(row.document_id) : undefined,
     createdAt: String(row.created_at),
+    queueState: row.queue_state ? String(row.queue_state) : undefined,
+    processingStage: row.processing_stage ? String(row.processing_stage) : undefined,
+    processingError: row.processing_error ? String(row.processing_error) : undefined,
   };
 }
 
@@ -205,4 +208,49 @@ export async function supabaseUpdateOrgLifecycle(organizationId: string, lifecyc
   const supabase = getAioSupabase();
   if (!supabase) return;
   await supabase.from('aio_organizations').update({ client_lifecycle: lifecycle }).eq('id', organizationId);
+}
+
+export async function supabaseUpdateBatchFileState(
+  fileId: string,
+  patch: {
+    queueState?: string;
+    processingStage?: string;
+    processingState?: string;
+    processingError?: string | null;
+    documentId?: string;
+  },
+): Promise<void> {
+  const supabase = getAioSupabase();
+  if (!supabase) return;
+  await supabase
+    .from('aio_archive_migration_batch_files')
+    .update({
+      queue_state: patch.queueState,
+      processing_stage: patch.processingStage,
+      processing_state: patch.processingState,
+      processing_error: patch.processingError,
+      document_id: patch.documentId,
+      last_processed_at: new Date().toISOString(),
+    })
+    .eq('id', fileId);
+}
+
+export async function supabaseListExtractedFacts(batchId: string) {
+  const supabase = getAioSupabase();
+  if (!supabase) return [];
+  const { data } = await supabase.from('aio_client_extracted_facts').select('*').eq('batch_id', batchId);
+  return data ?? [];
+}
+
+export async function supabaseUpdateExtractedFactReview(
+  factId: string,
+  reviewAction: string,
+): Promise<{ error?: string }> {
+  const supabase = getAioSupabase();
+  if (!supabase) return { error: 'Backend is not configured.' };
+  const { error } = await supabase
+    .from('aio_client_extracted_facts')
+    .update({ review_action: reviewAction })
+    .eq('id', factId);
+  return { error: error?.message };
 }

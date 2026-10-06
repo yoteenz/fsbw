@@ -11,7 +11,6 @@ import { DocumentRecordList } from '../../components/vault/DocumentRecordList';
 import { DocumentRecordDetailPanel } from '../../components/vault/DocumentRecordDetailPanel';
 import { SecureDocumentUploader } from '../../components/vault/SecureDocumentUploader';
 import {
-  approveMigrationBatch,
   getArchiveMigrationBatch,
   getBatchFiles,
   getPendingMigrationDocuments,
@@ -26,6 +25,10 @@ import {
   uploadFilesToMigrationBatch,
 } from '../../client-migration/services/migrationIntakeService';
 import { useMigrationBatches } from '../../client-migration/hooks/useMigrationBatches';
+import { useMigrationBatchFiles } from '../../client-migration/hooks/useMigrationBatches';
+import { approveMigrationBatchForOffice } from '../../client-migration/services/approveMigrationOfficeService';
+import { supabaseUpdateExtractedFactReview } from '../../client-migration/repositories/supabaseMigrationRepository';
+import { MigrationFileQueuePanel } from '../../components/vault/MigrationFileQueuePanel';
 import { isSupabaseMode } from '../../config/dataMode';
 import { updateDemoStore } from '../../demo/demoStore';
 import { CLIENT_MIGRATION_STATUS_LABELS, MIGRATION_BATCH_STATE_LABELS } from '../../vault/archiveMigrationTypes';
@@ -241,6 +244,7 @@ export function ArchiveMigrationDigitizePage() {
   const [selectedClientId, setSelectedClientId] = useState<string | null>(null);
   const [batchId, setBatchId] = useState<string | null>(null);
   const [uploadMessage, setUploadMessage] = useState<string | null>(null);
+  const queueFiles = useMigrationBatchFiles(batchId ?? undefined);
 
   const results = useMemo(() => searchClientsForMigration(query, store), [query, store]);
   const selected = selectedClientId ? store.clients.find((c) => c.id === selectedClientId) : undefined;
@@ -308,7 +312,8 @@ export function ArchiveMigrationDigitizePage() {
         <section>
           <h2>Upload batch for {selected.companyName}</h2>
           <SecureDocumentUploader
-            label="Drop scanned pages or PDFs for this physical file"
+            allowFolder
+            label="Drop scanned pages, PDFs, or a folder for this physical file"
             onFilesSelected={async (files) => {
               const result = await uploadFilesToMigrationBatch(batchId, files, selectedClientId ?? undefined);
               const parts = [`${result.added} file(s) added.`];
@@ -318,6 +323,7 @@ export function ArchiveMigrationDigitizePage() {
             }}
           />
           {uploadMessage && <p className="aio-prototype-note">{uploadMessage}</p>}
+          <MigrationFileQueuePanel files={queueFiles} />
           <Link to={aioPaths.officeArchiveMigrationBatch(batchId)} className="aio-btn aio-btn--gold">
             Continue to Review →
           </Link>
@@ -335,8 +341,11 @@ export function ArchiveMigrationBatchReviewPage() {
   const client = batch ? store.clients.find((c) => c.id === batch.clientId) : undefined;
   const pendingDocs = batch ? getPendingMigrationDocuments(batch.clientId, store) : [];
   const batchFacts = (store.clientExtractedFacts ?? []).filter((f) => f.batchId === batchId);
+  const queueFiles = useMigrationBatchFiles(batchId);
   const [reviewDocId, setReviewDocId] = useState<string | null>(null);
   const [matchChoice, setMatchChoice] = useState<'existing' | 'new' | 'unresolved'>('existing');
+  const [approveError, setApproveError] = useState<string | null>(null);
+  const [approving, setApproving] = useState(false);
 
   const reviewDoc = reviewDocId ? store.documents.find((d) => d.id === reviewDocId) : undefined;
   const [form, setForm] = useState({
@@ -419,9 +428,13 @@ export function ArchiveMigrationBatchReviewPage() {
                         key={action}
                         type="button"
                         className="aio-btn aio-btn--sm aio-btn--outline-dark"
-                        onClick={() =>
-                          updateDemoStore((s) => applyReviewActionToFact(s, fact.id, action, ctx.staffId))
-                        }
+                        onClick={() => {
+                          if (isSupabaseMode()) {
+                            void supabaseUpdateExtractedFactReview(fact.id, action);
+                          } else {
+                            updateDemoStore((s) => applyReviewActionToFact(s, fact.id, action, ctx.staffId));
+                          }
+                        }}
                       >
                         {action}
                       </button>
@@ -448,6 +461,11 @@ export function ArchiveMigrationBatchReviewPage() {
         {matchChoice === 'unresolved' && (
           <p className="aio-prototype-note">Approval blocked until match is resolved.</p>
         )}
+      </section>
+
+      <section className="aio-oc-panel" aria-label="File queue">
+        <h2 className="aio-oc-panel__title">File queue</h2>
+        <MigrationFileQueuePanel files={queueFiles.length ? queueFiles : getBatchFiles(batchId, store)} />
       </section>
 
       <DocumentRecordList
@@ -489,13 +507,25 @@ export function ArchiveMigrationBatchReviewPage() {
         </section>
       )}
 
+      {approveError ? <p className="aio-prototype-note">{approveError}</p> : null}
       <button
         type="button"
         className="aio-btn aio-btn--gold"
-        disabled={matchChoice === 'unresolved'}
-        onClick={() => approveMigrationBatch(batchId, ctx.staffId)}
+        disabled={matchChoice === 'unresolved' || approving}
+        onClick={() => {
+          setApproving(true);
+          setApproveError(null);
+          void approveMigrationBatchForOffice({
+            batchId,
+            staffId: ctx.staffId,
+            matchResolved: matchChoice !== 'unresolved',
+          }).then((result) => {
+            setApproving(false);
+            if (!result.ok) setApproveError(result.error ?? 'Approve failed');
+          });
+        }}
       >
-        Approve Batch → Client Vault
+        {approving ? 'Approving…' : 'Approve Batch → Client Vault'}
       </button>
     </div>
   );

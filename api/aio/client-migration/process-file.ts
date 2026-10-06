@@ -31,7 +31,10 @@ export default async function handler(req: Request): Promise<Response> {
   }
 
   const provider = process.env.AIO_MIGRATION_EXTRACTION_PROVIDER?.trim().toLowerCase() ?? '';
-  if (provider === 'fixture' || process.env.AIO_ALLOW_MIGRATION_FIXTURE === '1') {
+  const allowFixture =
+    process.env.AIO_ALLOW_MIGRATION_FIXTURE === '1' &&
+    process.env.NODE_ENV !== 'production';
+  if (provider === 'fixture' && allowFixture) {
     const result = await fixtureMigrationPipelineAdapter.processFile(body.input, body.context);
     return json(result, 200);
   }

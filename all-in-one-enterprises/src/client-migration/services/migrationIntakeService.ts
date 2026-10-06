@@ -1,4 +1,5 @@
 import { isSupabaseMode } from '../../config/dataMode';
+import { getAioSupabase } from '../../data/supabase/client';
 import { hashFileSha256 } from '../../vault/documentHash';
 import { validateUploadFile } from '../../vault/vaultStorage';
 import { storeMigrationRawFile } from '../../vault/migrationRawStorage';
@@ -14,6 +15,7 @@ import {
   supabaseInsertExtractedFacts,
   supabaseInsertLifecycleEvent,
   supabaseUpdateBatchCounts,
+  supabaseUpdateBatchFileState,
   supabaseUpdateOrgLifecycle,
 } from '../repositories/supabaseMigrationRepository';
 import { createMigrationBatch, addFilesToMigrationBatch } from '../../demo/archiveMigrationActions';
@@ -62,6 +64,21 @@ export async function uploadFilesToMigrationBatchSupabase(
     }
 
     const fileHash = await hashFileSha256(file);
+
+    const sb = getAioSupabase();
+    const { data: dupeRows } = sb
+      ? await sb
+          .from('aio_archive_migration_batch_files')
+          .select('id')
+          .eq('batch_id', batchId)
+          .eq('file_hash', fileHash)
+          .limit(1)
+      : { data: [] as { id: string }[] };
+    if (dupeRows?.length) {
+      duplicates.push(`${file.name} — duplicate hash in batch`);
+      continue;
+    }
+
     const stored = await storeMigrationRawFile({
       organizationId,
       batchId,
@@ -88,8 +105,15 @@ export async function uploadFilesToMigrationBatchSupabase(
     }
 
     appendBatchFileInCache(row);
+    await supabaseUpdateBatchFileState(row.id, {
+      queueState: 'UPLOADED',
+      processingStage: 'HASH',
+      processingState: 'processing',
+    });
+    await supabaseUpdateBatchFileState(row.id, { processingStage: 'DUPLICATE_CHECK' });
 
     const pipeline = getMigrationPipelineAdapter();
+    await supabaseUpdateBatchFileState(row.id, { queueState: 'PROCESSING', processingStage: 'CLASSIFICATION' });
     const pipelineResult = await pipeline.processFile(
       {
         fileName: file.name,
@@ -100,6 +124,27 @@ export async function uploadFilesToMigrationBatchSupabase(
       { organizationId, batchId },
     );
 
+    if (pipelineResult.exception === 'PROVIDER_UNAVAILABLE') {
+      await supabaseUpdateBatchFileState(row.id, {
+        queueState: 'FAILED',
+        processingStage: 'FIELD_EXTRACTION',
+        processingError: 'PROVIDER_UNAVAILABLE',
+        processingState: 'failed',
+      });
+      errors.push(`${file.name}: extraction provider unavailable`);
+      continue;
+    }
+    if (pipelineResult.exception === 'UNSUPPORTED_DOCUMENT') {
+      await supabaseUpdateBatchFileState(row.id, {
+        queueState: 'UNSUPPORTED',
+        processingError: 'UNSUPPORTED_DOCUMENT',
+        processingState: 'failed',
+      });
+      errors.push(`${file.name}: unsupported document type`);
+      continue;
+    }
+
+    await supabaseUpdateBatchFileState(row.id, { processingStage: 'FIELD_EXTRACTION' });
     await supabaseInsertExtractedFacts(
       pipelineResult.proposedFacts.map((f) => ({
         batchId,
@@ -114,7 +159,7 @@ export async function uploadFilesToMigrationBatchSupabase(
     );
 
     await supabaseUpdateBatchCounts(batchId, {
-      state: pipelineResult.exception === 'PROVIDER_UNAVAILABLE' ? 'needs_attention' : 'ready_for_review',
+      state: pipelineResult.exception ? 'needs_attention' : 'ready_for_review',
       reviewState: 'pending',
       fileCount: added + 1,
       documentCount: added + 1,
@@ -128,6 +173,11 @@ export async function uploadFilesToMigrationBatchSupabase(
       metadata: { batchId, exception: pipelineResult.exception ?? null },
     });
     await supabaseUpdateOrgLifecycle(organizationId, 'MIGRATION_REVIEW_REQUIRED');
+    await supabaseUpdateBatchFileState(row.id, {
+      queueState: 'READY_FOR_REVIEW',
+      processingStage: 'READY_FOR_REVIEW',
+      processingState: 'ready',
+    });
 
     added += 1;
   }

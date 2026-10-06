@@ -1,6 +1,13 @@
 import { useMemo, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { isSupabaseMode } from '../../config/dataMode';
 import { loadDemoStore, updateDemoStore } from '../../demo/demoStore';
+import { useAIOAuth } from '../../auth/AIOAuthProvider';
+import {
+  supabaseConfirmActivation,
+  supabaseRecordReviewSection,
+  supabaseRecordWhatChanged,
+} from '../../client-migration/repositories/supabaseClientActivationRepository';
 import {
   confirmAndActivateClient,
   recordReviewSectionResponse,
@@ -28,6 +35,7 @@ const SHORTCUTS: { code: WhatChangedShortcut; label: string }[] = [
 export function ClientOfficeReviewPage() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { session } = useAIOAuth();
   const organizationId =
     (location.state as { organizationId?: string } | null)?.organizationId ??
     loadDemoStore().portalClientId ??
@@ -44,15 +52,39 @@ export function ClientOfficeReviewPage() {
     updateDemoStore((s) => mutator(s));
   }
 
-  function markSection(code: ReviewSectionCode, response: 'LOOKS_RIGHT' | 'NEEDS_UPDATE' | 'NOT_SURE') {
+  async function markSection(code: ReviewSectionCode, response: 'LOOKS_RIGHT' | 'NEEDS_UPDATE' | 'NOT_SURE') {
+    if (isSupabaseMode()) {
+      const { error } = await supabaseRecordReviewSection(organizationId, code, response);
+      if (error) setMessage(error);
+      return;
+    }
     patchStore((s) => recordReviewSectionResponse(s, organizationId, code, response));
   }
 
-  function onShortcut(code: WhatChangedShortcut) {
+  async function onShortcut(code: WhatChangedShortcut) {
+    if (isSupabaseMode()) {
+      const { error } = await supabaseRecordWhatChanged(organizationId, code);
+      if (error) setMessage(error);
+      return;
+    }
     patchStore((s) => recordWhatChanged(s, organizationId, code));
   }
 
-  function onConfirm() {
+  async function onConfirm() {
+    if (isSupabaseMode()) {
+      const userId = session?.user.id;
+      if (!userId) {
+        setMessage('Sign in to confirm activation');
+        return;
+      }
+      const { error } = await supabaseConfirmActivation({ organizationId, userId });
+      if (error) {
+        setMessage(error);
+        return;
+      }
+      navigate(aioPaths.portal, { replace: true });
+      return;
+    }
     const store = loadDemoStore();
     const { store: next, error } = confirmAndActivateClient(store, organizationId);
     if (error) {
