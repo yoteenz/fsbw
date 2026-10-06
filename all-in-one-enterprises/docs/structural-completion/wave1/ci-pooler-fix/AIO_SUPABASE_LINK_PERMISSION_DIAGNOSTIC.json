@@ -1,0 +1,10 @@
+{
+  "status": "AWAITING_GITHUB_ACTIONS_LIVE_DIAGNOSTIC",
+  "note": "Populated at runtime in CI artifact aio-supabase-link-diagnostic/aio-link-permission-diagnostic.json — not committed from production runs.",
+  "workflow": "AIO Supabase Production Validate",
+  "cli_version": "2.119.0",
+  "pooler_mode": "SUPAVISOR_SESSION",
+  "missing_permissions": [],
+  "ui_permissions": [],
+  "required_access_levels": []
+}

@@ -1,0 +1,15 @@
+{
+  "redacted_patterns": [
+    "SUPABASE_ACCESS_TOKEN",
+    "SUPABASE_DB_PASSWORD",
+    "AIO_SUPABASE_SERVICE_ROLE_KEY",
+    "sbp_* PAT prefix",
+    "Bearer tokens",
+    "JWT eyJ*",
+    "postgresql:// and postgres:// DSN credentials",
+    "RLS test passwords when present in env"
+  ],
+  "replacement": "[REDACTED]",
+  "leak_scan": "scripts/ci/aio-link-debug-redaction.mjs scanSanitizedForLeaks",
+  "artifact_log": "sanitized-link-debug.log"
+}

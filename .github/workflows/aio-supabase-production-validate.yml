@@ -86,10 +86,19 @@ jobs:
           node scripts/ci/aio-ci-pooler-precheck.mjs
 
       - name: Link AIO Supabase project (Supavisor session pooler)
+        id: supabase_link
         shell: bash
         run: |
           set +x
           bash scripts/ci/aio-supabase-link-ci.sh
+
+      - name: Upload link diagnostic artifact
+        if: failure() && steps.supabase_link.outcome == 'failure'
+        uses: actions/upload-artifact@v4
+        with:
+          name: aio-supabase-link-diagnostic
+          path: all-in-one-enterprises/.ci/aio-link-diagnostic/
+          retention-days: 14
 
       - name: Export CI session pooler db-url
         shell: bash

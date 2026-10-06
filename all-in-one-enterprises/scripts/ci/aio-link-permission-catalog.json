@@ -1,0 +1,38 @@
+{
+  "source": "https://supabase.com/docs/guides/platform/personal-access-tokens",
+  "note": "UI labels from official Supabase scoped PAT documentation. Machine IDs are filled when extracted from live Management API / CLI responses.",
+  "mappings": {
+    "project_settings:read": {
+      "ui_label": "Project Settings",
+      "access_level": "READ"
+    },
+    "project_settings:write": {
+      "ui_label": "Project Settings",
+      "access_level": "READ-WRITE"
+    },
+    "api_keys:read": {
+      "ui_label": "API Keys",
+      "access_level": "READ"
+    },
+    "api_key_secrets:read": {
+      "ui_label": "API Key Secrets",
+      "access_level": "READ"
+    },
+    "database:read": {
+      "ui_label": "Database",
+      "access_level": "READ"
+    },
+    "database:write": {
+      "ui_label": "Database",
+      "access_level": "READ-WRITE"
+    },
+    "migrations:read": {
+      "ui_label": "Migrations",
+      "access_level": "READ"
+    },
+    "migrations:write": {
+      "ui_label": "Migrations",
+      "access_level": "READ-WRITE"
+    }
+  }
+}

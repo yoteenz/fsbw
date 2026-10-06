@@ -22,8 +22,19 @@ function norm(v) {
 }
 
 const blockers = [];
+if (norm(r.supabaseLink) === 'FAIL') {
+  blockers.push('supabaseLink: FAIL');
+  const diag = r.linkPermissionDiagnostic;
+  if (diag?.missing_permissions?.length) {
+    blockers.push(`pat_missing: ${diag.missing_permissions.join(', ')}`);
+  } else if (diag?.classification) {
+    blockers.push(`link: ${diag.classification}`);
+  }
+}
+
 const checks = [
   ['projectGuard', r.projectGuard],
+  ['supabaseLink', r.supabaseLink],
   ['migrations', r.migrations],
   ['schema', r.schema],
   ['rlsEnablement', r.rlsEnablement],
@@ -105,6 +116,7 @@ const lines = [
   '| Gate | Status |',
   '|------|--------|',
   `| PROJECT GUARD | ${norm(r.projectGuard)} |`,
+  `| SUPABASE LINK | ${norm(r.supabaseLink)} |`,
   `| DATABASE CONNECTIVITY | ${norm(r.databaseConnectivity?.status)} |`,
   `| MIGRATIONS | ${norm(r.migrations)} |`,
   `| SCHEMA | ${norm(r.schema)} |`,
@@ -135,6 +147,22 @@ const lines = [
   '',
 ];
 
+if (r.linkPermissionDiagnostic) {
+  const d = r.linkPermissionDiagnostic;
+  lines.push(
+    '### Supabase link diagnostic',
+    '',
+    `| Field | Value |`,
+    `|-------|-------|`,
+    `| Classification | ${d.classification ?? 'UNKNOWN'} |`,
+    `| HTTP | ${d.http_status ?? 'UNKNOWN'} |`,
+    `| Endpoint | ${d.endpoint ?? 'UNKNOWN'} |`,
+    `| Missing permissions | ${(d.missing_permissions ?? []).join(', ') || 'UNKNOWN'} |`,
+    `| UI permissions | ${(d.ui_permissions ?? []).join(', ') || 'UNKNOWN'} |`,
+    `| Access levels | ${(d.required_access_levels ?? []).join(', ') || 'UNKNOWN'} |`,
+    '',
+  );
+}
 if (r.rlsBlockedReason) {
   lines.push(`> RLS note: ${r.rlsBlockedReason}`, '');
 }
