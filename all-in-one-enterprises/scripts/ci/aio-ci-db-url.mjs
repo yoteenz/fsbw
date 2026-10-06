@@ -18,6 +18,27 @@ export const DEFAULT_SSL_MODE = 'require';
 
 export { encodePasswordComponent };
 
+function injectPasswordIntoPoolerTemplate(template, password) {
+  if (template.includes('[YOUR-PASSWORD]')) {
+    return template.replace('[YOUR-PASSWORD]', encodePasswordComponent(password));
+  }
+
+  let parsed;
+  try {
+    parsed = new URL(template);
+  } catch {
+    throw new Error('AIO_CI_DB_URL_MALFORMED: pooler template URL parse failed');
+  }
+
+  if (!parsed.password) {
+    // URL.password expects the raw credential and performs component encoding itself.
+    // Pre-encoding here would double-encode reserved characters such as @, :, %, or /.
+    parsed.password = String(password);
+  }
+
+  return parsed.toString();
+}
+
 export function buildAioCiDatabaseUrl(options = {}) {
   const password = options.password ?? process.env.SUPABASE_DB_PASSWORD ?? '';
   const projectRef = options.projectRef ?? process.env.SUPABASE_PROJECT_ID ?? AIO_CANONICAL_PROJECT_REF;
@@ -33,7 +54,7 @@ export function buildAioCiDatabaseUrl(options = {}) {
     throw new Error(`${guard.code}: ${guard.message}`);
   }
 
-  let base = template.replace('[YOUR-PASSWORD]', encodePasswordComponent(password));
+  let base = injectPasswordIntoPoolerTemplate(template, password);
   if (!base.includes('sslmode=')) {
     base += base.includes('?') ? '&sslmode=require' : '?sslmode=require';
   }
@@ -128,4 +149,3 @@ export function exportRawDbUrlToGithubEnv(options = {}) {
 
   return url;
 }
-
