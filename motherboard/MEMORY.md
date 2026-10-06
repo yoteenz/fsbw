@@ -55157,3 +55157,12 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
   2. Data sprint: lifecycle column; fact + decision tables; invite table + activation endpoint; C8 / C9 / C10 / C11 + portal gating; count sites → one rule; APPROVE MIGRATION permission.
   3. Visual authority for MIGRATION INTAKE · MIGRATION REVIEW · EXISTING CLIENT WELCOME · WHAT CHANGED · CLIENT OFFICE ACTIVATION · CLIENT OFFICE HUB.
 
+---
+
+## 2026-10-06 — AIO client migration + activation implementation foundation (P0.AIO.CLIENT-MIGRATION-ACTIVATION-AND-OFFICE-PROVISIONING-IMPLEMENTATION1)
+
+- **Context:** Production foundation sprint consuming architecture docs @ `514fc5d16` (`docs/aio/client-migration/`). PROFILE EXISTS ≠ ACTIVE; extend Physical Archive Migration — no parallel identity system.
+- **Schema (AIO Supabase `nnnljnhtmseagotvgxxt`):** migration `20261006210000_aio_client_migration_activation.sql` applied — org `client_lifecycle` + review fields; tables `aio_client_activation_invites`, `aio_client_extracted_facts`, `aio_client_profile_provenance`, `aio_client_review_sessions`, `aio_client_reported_changes`, `aio_client_lifecycle_events`, `aio_office_workspace_entitlements`; RLS internal-only for raw migration/extraction; membership insert hardened (C11 — first owner + internal only).
+- **App (demo-first, supabase-ready):** module `all-in-one-enterprises/src/client-migration/` — lifecycle helpers, fixture migration pipeline adapter, commit/invite/provisioning/activation services; demo store v26; archive migration hooks pipeline + APPROVE → PREBUILT; CRM conversion → PREBUILT/pending not ACTIVE; active client count via `countActiveClients`; routes `/office-activation/:token`, `/portal/activation/review`; feature flags `VITE_AIO_CLIENT_MIGRATION_V1`, `VITE_AIO_EXISTING_CLIENT_ACTIVATION_V1`.
+- **Tests:** `clientMigration.test.ts` (5) + `npm run build` PASS. Supabase live adapters for batch upload/review UI still TODO; staff pilot requires wiring `dataMode=supabase` repositories next.
+

@@ -212,6 +212,8 @@ export const aioPaths = {
   officeArchiveMigration: `${BASE}/office/archive-migration`,
   officeArchiveMigrationDigitize: `${BASE}/office/archive-migration/digitize`,
   officeArchiveMigrationBatch: (batchId: string) => `${BASE}/office/archive-migration/batches/${batchId}`,
+  officeActivation: (token: string) => `${BASE}/office-activation/${token}`,
+  portalActivationReview: `${BASE}/portal/activation/review`,
   officeMessages: `${BASE}/office/messages`,
   officePermitting: `${BASE}/office/permitting`,
   officeFuelTax: `${BASE}/office/permitting/fuel-tax`,

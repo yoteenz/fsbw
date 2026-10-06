@@ -4,6 +4,17 @@ import type { ServicePlanItem } from '../repositories/servicePlanRepository';
 import type { AioNotification, NotificationPreference } from '../notifications/notificationTypes';
 import type { RenewalRecord } from '../renewals/renewalTypes';
 import type { VaultDocument, ClientMigrationStatus } from '../vault/vaultTypes';
+import type {
+  ActivationConditions,
+  ClientActivationInvite,
+  ClientLifecycleState,
+  ClientReportedChange,
+  ClientReviewSection,
+  ClientReviewState,
+  ClientLifecycleEvent,
+  ExtractedFactRecord,
+  OfficeWorkspaceEntitlement,
+} from '../client-migration/types';
 import type { ArchiveMigrationBatch, ArchiveMigrationBatchFile } from '../vault/archiveMigrationTypes';
 import type { DeadlineSource, DeadlineType, DeadlineVerification } from '../calendar/calendarTypes';
 import type {
@@ -327,6 +338,14 @@ export interface Client {
   clientType: ClientType;
   primaryState: string;
   accountStatus: 'active' | 'pending' | 'inactive';
+  /** Canonical lifecycle — PROFILE EXISTS ≠ ACTIVE */
+  clientLifecycle?: ClientLifecycleState;
+  clientReviewState?: ClientReviewState;
+  customerNumber?: string;
+  profileCompletenessPct?: number;
+  activationConditions?: Partial<ActivationConditions>;
+  invitedAt?: string;
+  activatedAt?: string;
   assignedStaffId?: string;
   roadmapProgress: number;
   customerSince: string;
@@ -547,7 +566,7 @@ import type {
 } from '../bookkeeping/autopilot/autopilotTypes';
 
 export interface DemoStore {
-  version: 25;
+  version: 26;
   requestCounter: number;
   portalClientId?: string;
   shipperPortalOrgId?: string;
@@ -581,6 +600,14 @@ export interface DemoStore {
   documents: VaultDocument[];
   archiveMigrationBatches?: ArchiveMigrationBatch[];
   archiveMigrationBatchFiles?: ArchiveMigrationBatchFile[];
+  clientExtractedFacts?: ExtractedFactRecord[];
+  clientActivationInvites?: ClientActivationInvite[];
+  clientReviewSections?: ClientReviewSection[];
+  clientReportedChanges?: ClientReportedChange[];
+  clientLifecycleEvents?: ClientLifecycleEvent[];
+  officeWorkspaceEntitlements?: OfficeWorkspaceEntitlement[];
+  clientMigrationCommitKeys?: string[];
+  clientActivationCommitKeys?: string[];
   renewals: RenewalRecord[];
   notes: InternalNote[];
   messages: Message[];

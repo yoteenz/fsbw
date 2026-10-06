@@ -9,6 +9,9 @@ import type { ClientMigrationStatus, VaultDocument } from '../vault/vaultTypes';
 import { loadDemoStore, updateDemoStore } from './demoStore';
 import type { Client, DemoStore } from './demoTypes';
 import { recordSecurityAudit } from '../security/securityAudit';
+import { getMigrationPipelineAdapter } from '../client-migration/migrationPipeline';
+import { recordExtractedFacts, commitApprovedMigration } from '../client-migration/services/migrationCommitService';
+import { transitionClientLifecycle } from '../client-migration/services/lifecycleEvents';
 
 function uid(): string {
   return crypto.randomUUID();
@@ -84,6 +87,7 @@ export function createMigrationBatch(clientId: string, staffId: string): Archive
       entityType: 'archive_migration_batch',
       entityId: batch.id,
     });
+    transitionClientLifecycle(s, clientId, 'MIGRATION_IN_PROGRESS', 'MIGRATION_BATCH_CREATED', 'STAFF', staffId);
     return s;
   });
 
@@ -160,6 +164,17 @@ export async function addFilesToMigrationBatch(
       verificationStatus: 'pending_review',
     };
 
+    const pipeline = getMigrationPipelineAdapter();
+    const pipelineResult = await pipeline.processFile(
+      {
+        fileName: file.name,
+        mimeType: file.type || 'application/octet-stream',
+        sizeBytes: file.size,
+        sha256: fileHash,
+      },
+      { organizationId: batch.organizationId, batchId },
+    );
+
     updateDemoStore((s) => {
       if (!s.archiveMigrationBatchFiles) s.archiveMigrationBatchFiles = [];
       s.archiveMigrationBatchFiles.push(batchFile);
@@ -169,8 +184,31 @@ export async function addFilesToMigrationBatch(
         b.fileCount += 1;
         b.documentCount += 1;
         b.state = 'ready_for_review';
+        b.reviewState = pipelineResult.exception === 'AMBIGUOUS_CLIENT_MATCH' ? 'pending' : b.reviewState;
+        b.reviewState = 'pending';
         b.updatedAt = now();
       }
+      recordExtractedFacts(
+        s,
+        pipelineResult.proposedFacts.map((f) => ({
+          batchId,
+          organizationId: batch.organizationId,
+          documentId: pendingDoc.id,
+          entityType: f.entityType,
+          fieldKey: f.fieldKey,
+          proposedValue: f.proposedValue,
+          existingValue: f.existingValue,
+          confidence: f.confidence,
+          sourceReference: f.sourceReference,
+        })),
+      );
+      transitionClientLifecycle(
+        s,
+        batch.clientId,
+        'MIGRATION_REVIEW_REQUIRED',
+        'MATCH_PROPOSED',
+        'SYSTEM',
+      );
       return s;
     });
 
@@ -290,6 +328,7 @@ export function approveMigrationBatch(batchId: string, staffId: string): void {
       entityType: 'archive_migration_batch',
       entityId: batchId,
     });
+    commitApprovedMigration(s, batchId, staffId);
     return s;
   });
 }
