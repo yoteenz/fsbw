@@ -169,7 +169,10 @@ fi
 echo ""
 echo "REMOTE-ONLY: ${remote_only:-(none)}"
 echo "LOCAL-ONLY: ${local_only:-(none)}"
-echo "HISTORY STATUS: $history_status"\nif [[ "$history_status" == "PENDING_LOCAL" ]]; then\n  echo "INFO: local-only migrations are pending and will be applied by the following db push."\nfi
+echo "HISTORY STATUS: $history_status"
+if [[ "$history_status" == "PENDING_LOCAL" ]]; then
+  echo "INFO: local-only migrations are pending and will be applied by the following db push."
+fi
 
 echo "$eval_json" | node "$SCRIPT_DIR/aio-migration-history-check.mjs" "$RESULTS"
 
