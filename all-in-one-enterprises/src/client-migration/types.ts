@@ -53,7 +53,12 @@ export type WorkspaceEntitlementState =
   | 'PAUSED'
   | 'ENDED';
 
-export type ProvenanceSource = 'STAFF_KNOWLEDGE' | 'LEGACY_SCAN' | 'CLIENT_UPLOAD' | 'EXTRACTION';
+export type ProvenanceSource =
+  | 'STAFF_KNOWLEDGE'
+  | 'LEGACY_SCAN'
+  | 'CLIENT_UPLOAD'
+  | 'EXTRACTION'
+  | 'MANUAL_REVIEW';
 
 export interface ActivationConditions {
   canonicalIdentityExists: boolean;

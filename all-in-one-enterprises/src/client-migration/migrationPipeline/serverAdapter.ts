@@ -10,9 +10,11 @@ export const serverMigrationPipelineAdapter: MigrationPipelineAdapter = {
         body: JSON.stringify({ input, context }),
       });
       if (res.status === 503) {
+        const body = (await res.json().catch(() => ({}))) as MigrationPipelineResult;
         return {
           stage: 'REVIEW_REQUIRED',
-          exception: 'PROVIDER_UNAVAILABLE',
+          exception: body.exception ?? 'PROVIDER_UNAVAILABLE',
+          extractionOutcome: body.extractionOutcome ?? 'PROVIDER_UNAVAILABLE',
           proposedFacts: [],
         };
       }

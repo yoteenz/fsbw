@@ -21,7 +21,7 @@ Implementation on branch `cursor/client-migration-activation-88a7` (PR #42) is *
 | Activation invite API (email) | **Implemented** | `send-activation-invite.ts` → Resend when configured |
 | Demo store schema v26 | **Canonical** | Includes client-migration arrays via `ensureClientMigrationFields` |
 | Automated extraction provider adapter | **Not implemented** | Only `fixture` adapter exists; production does not call external AI |
-| Manual upload → review when provider unavailable | **Contract gap** | Intake marks files `FAILED` / `PROVIDER_UNAVAILABLE`; architecture allows staff review but upload path does not advance to `READY_FOR_REVIEW` without extraction or fixture |
+| Manual upload → review when provider unavailable | **Resolved (code)** | See `migrationIntakeService` + batch review UI; env doc `ENVIRONMENT_SETUP.md` |
 
 ### Demo schema version ladder (20 → 26)
 
@@ -55,7 +55,9 @@ Validation blocked when secrets are missing. **Do not treat as code failure.**
 | `AIO_MIGRATION_EXTRACTION_PROVIDER` | Yes | **No** | Only `fixture` is implemented today; any other/non-empty value still returns unavailable until a real adapter ships |
 | `AIO_ALLOW_MIGRATION_FIXTURE` | Yes | **No** | Dev/test only; ignored when `NODE_ENV=production` |
 
-**Extraction blocker:** No approved production adapter wired in `process-file.ts`. Founder action: implement + configure provider, **or** ship canonical manual intake path (see contract gap above).
+**Extraction automation:** **Provider decision: `NO_APPROVED_PROVIDER_AVAILABLE`** for migration pipeline (OpenAI/Fal exist elsewhere; no migration OCR/classification adapter approved in repo). Staff pilot may proceed via **manual review** without provider.
+
+**Env docs:** `ENVIRONMENT_SETUP.md` · `CLOUD_AGENT_VALIDATION_BLOCKERS.md`
 
 ### Live Supabase E2E (staff + activation)
 

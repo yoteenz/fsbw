@@ -124,14 +124,33 @@ export async function uploadFilesToMigrationBatchSupabase(
       { organizationId, batchId },
     );
 
-    if (pipelineResult.exception === 'PROVIDER_UNAVAILABLE') {
-      await supabaseUpdateBatchFileState(row.id, {
-        queueState: 'FAILED',
-        processingStage: 'FIELD_EXTRACTION',
-        processingError: 'PROVIDER_UNAVAILABLE',
-        processingState: 'failed',
+    if (
+      pipelineResult.exception === 'PROVIDER_UNAVAILABLE' ||
+      pipelineResult.exception === 'PROVIDER_TIMEOUT' ||
+      pipelineResult.extractionOutcome === 'PROVIDER_UNAVAILABLE' ||
+      pipelineResult.extractionOutcome === 'PROVIDER_TIMEOUT'
+    ) {
+      await supabaseUpdateBatchCounts(batchId, {
+        state: 'ready_for_review',
+        reviewState: 'pending',
+        fileCount: added + 1,
+        documentCount: added + 1,
       });
-      errors.push(`${file.name}: extraction provider unavailable`);
+      await supabaseInsertLifecycleEvent({
+        organizationId,
+        toState: 'MIGRATION_REVIEW_REQUIRED',
+        eventType: 'DOCUMENT_INGESTED',
+        actorType: 'SYSTEM',
+        metadata: { batchId, manualReviewRequired: true, reason: 'PROVIDER_UNAVAILABLE' },
+      });
+      await supabaseUpdateOrgLifecycle(organizationId, 'MIGRATION_REVIEW_REQUIRED');
+      await supabaseUpdateBatchFileState(row.id, {
+        queueState: 'READY_FOR_REVIEW',
+        processingStage: 'READY_FOR_REVIEW',
+        processingError: 'PROVIDER_UNAVAILABLE',
+        processingState: 'ready',
+      });
+      added += 1;
       continue;
     }
     if (pipelineResult.exception === 'UNSUPPORTED_DOCUMENT') {

@@ -163,6 +163,7 @@ export async function supabaseInsertExtractedFacts(
     existingValue?: string;
     confidence: string;
     sourceReference?: string;
+    reviewAction?: string;
   }[],
 ): Promise<void> {
   const supabase = getAioSupabase();
@@ -178,6 +179,7 @@ export async function supabaseInsertExtractedFacts(
       existing_value: f.existingValue ?? null,
       confidence: f.confidence,
       source_reference: f.sourceReference ?? null,
+      review_action: f.reviewAction ?? null,
     })),
   );
 }

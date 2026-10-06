@@ -1,5 +1,5 @@
 import { Link, useParams } from 'react-router-dom';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useDemoStore } from '../../demo/useDemoStore';
 import { documentRepository } from '../../repositories/documentRepository';
 import { computeDocumentVaultMetrics, computeMigrationDashboardMetrics } from '../../vault/documentVaultMetrics';
@@ -27,7 +27,15 @@ import {
 import { useMigrationBatches } from '../../client-migration/hooks/useMigrationBatches';
 import { useMigrationBatchFiles } from '../../client-migration/hooks/useMigrationBatches';
 import { approveMigrationBatchForOffice } from '../../client-migration/services/approveMigrationOfficeService';
-import { supabaseUpdateExtractedFactReview } from '../../client-migration/repositories/supabaseMigrationRepository';
+import {
+  supabaseListExtractedFacts,
+  supabaseUpdateExtractedFactReview,
+} from '../../client-migration/repositories/supabaseMigrationRepository';
+import {
+  addManualMigrationFact,
+  recordManualMigrationFactOnDemoStore,
+} from '../../client-migration/services/manualMigrationFactService';
+import { isManualFactSource } from '../../client-migration/manualFactSource';
 import { MigrationFileQueuePanel } from '../../components/vault/MigrationFileQueuePanel';
 import { isSupabaseMode } from '../../config/dataMode';
 import { updateDemoStore } from '../../demo/demoStore';
@@ -335,17 +343,73 @@ export function ArchiveMigrationDigitizePage() {
 
 export function ArchiveMigrationBatchReviewPage() {
   const { batchId } = useParams<{ batchId: string }>();
+  const { session } = useAIOAuth();
   const store = useDemoStore();
   const ctx = resolveOfficeStaffContext(store);
   const batch = batchId ? getArchiveMigrationBatch(batchId, store) : undefined;
   const client = batch ? store.clients.find((c) => c.id === batch.clientId) : undefined;
   const pendingDocs = batch ? getPendingMigrationDocuments(batch.clientId, store) : [];
-  const batchFacts = (store.clientExtractedFacts ?? []).filter((f) => f.batchId === batchId);
+  const demoBatchFacts = (store.clientExtractedFacts ?? []).filter((f) => f.batchId === batchId);
   const queueFiles = useMigrationBatchFiles(batchId);
+  const [remoteFacts, setRemoteFacts] = useState<
+    Array<{
+      id: string;
+      entityType: string;
+      fieldKey: string;
+      proposedValue?: string;
+      existingValue?: string;
+      confidence: string;
+      sourceReference?: string;
+      reviewAction?: string;
+    }>
+  >([]);
   const [reviewDocId, setReviewDocId] = useState<string | null>(null);
   const [matchChoice, setMatchChoice] = useState<'existing' | 'new' | 'unresolved'>('existing');
   const [approveError, setApproveError] = useState<string | null>(null);
   const [approving, setApproving] = useState(false);
+  const [manualEntity, setManualEntity] = useState('company');
+  const [manualField, setManualField] = useState('legal_name');
+  const [manualValue, setManualValue] = useState('');
+  const [manualMessage, setManualMessage] = useState<string | null>(null);
+
+  const manualReviewRequired = queueFiles.some((f) => f.processingError === 'PROVIDER_UNAVAILABLE');
+
+  async function refreshRemoteFacts() {
+    if (!isSupabaseMode() || !batchId) return;
+    const rows = await supabaseListExtractedFacts(batchId);
+    setRemoteFacts(
+      rows.map((r) => ({
+        id: String(r.id),
+        entityType: String(r.entity_type),
+        fieldKey: String(r.field_key),
+        proposedValue: r.proposed_value ? String(r.proposed_value) : undefined,
+        existingValue: r.existing_value ? String(r.existing_value) : undefined,
+        confidence: String(r.confidence),
+        sourceReference: r.source_reference ? String(r.source_reference) : undefined,
+        reviewAction: r.review_action ? String(r.review_action) : undefined,
+      })),
+    );
+  }
+
+  useEffect(() => {
+    void refreshRemoteFacts();
+  }, [batchId]);
+
+  const batchFacts = isSupabaseMode()
+    ? remoteFacts.map((f) => ({
+        id: f.id,
+        batchId: batchId!,
+        organizationId: batch!.clientId,
+        entityType: f.entityType,
+        fieldKey: f.fieldKey,
+        proposedValue: f.proposedValue,
+        existingValue: f.existingValue,
+        confidence: f.confidence as 'HIGH' | 'MEDIUM' | 'LOW' | 'CONFLICT',
+        sourceReference: f.sourceReference,
+        reviewAction: f.reviewAction as import('../../client-migration/types').MigrationReviewAction | undefined,
+        createdAt: '',
+      }))
+    : demoBatchFacts;
 
   const reviewDoc = reviewDocId ? store.documents.find((d) => d.id === reviewDocId) : undefined;
   const [form, setForm] = useState({
@@ -400,6 +464,71 @@ export function ArchiveMigrationBatchReviewPage() {
         <p>{MIGRATION_BATCH_STATE_LABELS[batch.state]} · {getBatchFiles(batchId, store).length} files</p>
       </header>
 
+      {manualReviewRequired && (
+        <section className="aio-oc-panel" aria-label="Manual migration review">
+          <h2 className="aio-oc-panel__title">Automated extraction unavailable</h2>
+          <p>
+            Documents are stored securely. Continue with <strong>manual review</strong>: classify each document,
+            then enter verified facts below. Facts remain proposals until you approve the migration.
+          </p>
+          <div className="aio-doc-vault-confirm__actions">
+            <label className="aio-doc-vault-label">
+              Entity
+              <input className="aio-intake-input" value={manualEntity} onChange={(e) => setManualEntity(e.target.value)} />
+            </label>
+            <label className="aio-doc-vault-label">
+              Field
+              <input className="aio-intake-input" value={manualField} onChange={(e) => setManualField(e.target.value)} />
+            </label>
+            <label className="aio-doc-vault-label">
+              Value
+              <input className="aio-intake-input" value={manualValue} onChange={(e) => setManualValue(e.target.value)} />
+            </label>
+            <button
+              type="button"
+              className="aio-btn aio-btn--gold"
+              onClick={() => {
+                const staffUserId = session?.user.id ?? ctx.staffId;
+                if (!isSupabaseMode()) {
+                  updateDemoStore((s) =>
+                    recordManualMigrationFactOnDemoStore(s, {
+                      batchId,
+                      organizationId: batch.clientId,
+                      entityType: manualEntity.trim(),
+                      fieldKey: manualField.trim(),
+                      proposedValue: manualValue,
+                      staffUserId,
+                    }),
+                  );
+                  setManualValue('');
+                  setManualMessage('Manual fact saved (MANUAL_REVIEW provenance).');
+                  return;
+                }
+                void addManualMigrationFact({
+                  batchId,
+                  organizationId: batch.clientId,
+                  entityType: manualEntity.trim(),
+                  fieldKey: manualField.trim(),
+                  proposedValue: manualValue,
+                  staffUserId,
+                }).then(async (result) => {
+                  if (!result.ok) {
+                    setManualMessage(result.error ?? 'Could not save fact');
+                    return;
+                  }
+                  await refreshRemoteFacts();
+                  setManualValue('');
+                  setManualMessage('Manual fact saved (MANUAL_REVIEW provenance).');
+                });
+              }}
+            >
+              Add manual fact
+            </button>
+          </div>
+          {manualMessage ? <p className="aio-prototype-note">{manualMessage}</p> : null}
+        </section>
+      )}
+
       {batchFacts.length > 0 && (
         <section className="aio-oc-panel" aria-label="Extraction review">
           <h2 className="aio-oc-panel__title">Extracted facts</h2>
@@ -421,7 +550,9 @@ export function ArchiveMigrationBatchReviewPage() {
                   <td>{fact.proposedValue ?? '—'}</td>
                   <td>{fact.existingValue ?? '—'}</td>
                   <td>{fact.confidence}</td>
-                  <td>{fact.sourceReference ?? '—'}</td>
+                  <td>
+                    {isManualFactSource(fact.sourceReference) ? 'MANUAL_REVIEW' : (fact.sourceReference ?? '—')}
+                  </td>
                   <td>
                     {(['CONFIRM', 'REJECT', 'MARK_STALE', 'NEEDS_CLIENT_CONFIRMATION'] as const).map((action) => (
                       <button

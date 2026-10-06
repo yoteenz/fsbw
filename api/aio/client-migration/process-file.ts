@@ -44,16 +44,19 @@ export default async function handler(req: Request): Promise<Response> {
       {
         stage: 'REVIEW_REQUIRED',
         exception: 'PROVIDER_UNAVAILABLE',
+        extractionOutcome: 'PROVIDER_UNAVAILABLE',
         proposedFacts: [],
       } satisfies MigrationPipelineResult,
       503,
     );
   }
 
+  // Approved provider slugs must be wired here (server-side only). No silent fixture in production.
   return json(
     {
       stage: 'REVIEW_REQUIRED',
       exception: 'PROVIDER_UNAVAILABLE',
+      extractionOutcome: 'PROVIDER_UNAVAILABLE',
       proposedFacts: [],
     } satisfies MigrationPipelineResult,
     503,

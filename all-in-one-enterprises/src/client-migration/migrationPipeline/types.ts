@@ -20,6 +20,15 @@ export type MigrationExceptionCode =
   | 'EXTRACTION_FAILED'
   | 'AMBIGUOUS_CLIENT_MATCH'
   | 'PROVIDER_UNAVAILABLE'
+  | 'PROVIDER_TIMEOUT'
+  | 'PROCESSING_FAILED'
+  | 'PARTIAL_EXTRACTION';
+
+export type MigrationExtractionOutcome =
+  | 'EXTRACTION_COMPLETE'
+  | 'PARTIAL_EXTRACTION'
+  | 'PROVIDER_UNAVAILABLE'
+  | 'PROVIDER_TIMEOUT'
   | 'PROCESSING_FAILED';
 
 export interface MigrationFileInput {
@@ -41,8 +50,12 @@ export interface ProposedFact {
 export interface MigrationPipelineResult {
   stage: MigrationPipelineStage;
   exception?: MigrationExceptionCode;
+  /** High-level extraction outcome for queue + manual fallback UX. */
+  extractionOutcome?: MigrationExtractionOutcome;
   documentClass?: string;
   documentClassConfidence?: number;
+  /** Raw or OCR text when provider returns it (proposed only — not canonical). */
+  extractedText?: string;
   proposedFacts: ProposedFact[];
   ambiguousClientMatches?: string[];
 }

@@ -4,6 +4,7 @@ import {
   validateApproveMigration,
   type ApproveFactRow,
 } from './approveMigrationLogic';
+import { provenanceForFactSource } from '../manualFactSource';
 
 export type ApproveBatchRequest = {
   batchId: string;
@@ -97,7 +98,7 @@ export async function supabaseApproveMigrationBatch(req: ApproveBatchRequest): P
       entity_type: fact.entityType,
       field_key: fact.fieldKey,
       value: fact.proposedValue,
-      provenance: 'MIGRATION_APPROVED',
+      provenance: provenanceForFactSource(fact.sourceReference),
       source_fact_id: fact.id,
     });
 

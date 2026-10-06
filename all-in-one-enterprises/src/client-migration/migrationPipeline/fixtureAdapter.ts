@@ -53,6 +53,7 @@ export const fixtureMigrationPipelineAdapter: MigrationPipelineAdapter = {
       stage: 'REVIEW_REQUIRED',
       documentClass,
       documentClassConfidence: 0.88,
+      extractionOutcome: 'EXTRACTION_COMPLETE',
       proposedFacts,
     };
   },
