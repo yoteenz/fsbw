@@ -1,0 +1,11 @@
+{
+  "guard": "AIO_SUPABASE_DIRECT_HOST_GUARD",
+  "ci_default": "FAIL_IF_pooler-url_contains_db_host",
+  "enforced_in": [
+    "scripts/ci/aio-ci-db.mjs",
+    "scripts/ci/aio-ci-db-transport.mjs",
+    "scripts/ci/aio-project-guard.sh pre-db-connectivity"
+  ],
+  "transaction_port_guard": "AIO_SUPABASE_TRANSACTION_MODE_GUARD",
+  "session_port": 5432
+}

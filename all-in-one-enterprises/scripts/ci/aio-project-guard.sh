@@ -34,6 +34,20 @@ if [[ -n "${AIO_SUPABASE_URL:-}" && "$AIO_SUPABASE_URL" == *"$FS_FORBIDDEN_PROJE
   exit 1
 fi
 
+if [[ "$stage" == "pre-db-connectivity" || "$stage" == "pre-push" ]]; then
+  if [[ -f supabase/.temp/pooler-url ]]; then
+    pooler_line="$(tr -d '\n' < supabase/.temp/pooler-url)"
+    if [[ "$pooler_line" == *"db.${AIO_CANONICAL_PROJECT_REF}.supabase.co"* ]]; then
+      echo "FAIL: AIO_SUPABASE_DIRECT_HOST_GUARD — pooler-url must not use direct db host in CI"
+      exit 1
+    fi
+    if [[ "$pooler_line" == *":6543/"* ]]; then
+      echo "FAIL: AIO_SUPABASE_TRANSACTION_MODE_GUARD — CI requires session pooler port 5432"
+      exit 1
+    fi
+  fi
+fi
+
 if [[ -f supabase/.temp/project-ref ]]; then
   linked_ref="$(tr -d '[:space:]' < supabase/.temp/project-ref)"
   if [[ "$linked_ref" == "$FS_FORBIDDEN_PROJECT_REF" ]]; then

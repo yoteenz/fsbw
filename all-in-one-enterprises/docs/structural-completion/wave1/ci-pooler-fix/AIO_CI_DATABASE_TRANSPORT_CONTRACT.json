@@ -1,0 +1,20 @@
+{
+  "transport": "SUPAVISOR_SESSION",
+  "port": 5432,
+  "forbidden_ports": [6543],
+  "forbidden_hosts": ["db.<project-ref>.supabase.co"],
+  "username_format": "postgres.<project-ref>",
+  "database": "postgres",
+  "default_pooler_host": "aws-0-us-west-2.pooler.supabase.com",
+  "project_ref": "nnnljnhtmseagotvgxxt",
+  "region": "us-west-2",
+  "password_secret": "SUPABASE_DB_PASSWORD",
+  "optional_host_secret": "AIO_SUPABASE_POOLER_HOST",
+  "optional_full_url_secret": "AIO_SUPABASE_POOLER_URL",
+  "cli_db_url_env": "AIO_CI_DB_URL",
+  "supabase_cli_version": "2.119.0",
+  "link_flags": {
+    "use_skip_pooler": false,
+    "note": "Default link uses pooler; never pass --skip-pooler in GitHub Actions"
+  }
+}

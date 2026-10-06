@@ -17,7 +17,7 @@ import {
 } from './aio-ci-db.mjs';
 import { verifySchemaAndRls, REQUIRED_TABLES, RLS_TABLES, SERVICE_ROLE_GRANT_TABLES } from './aio-verify-schema.mjs';
 
-const POOLER_TEMPLATE = `postgresql://postgres.${AIO_CANONICAL_PROJECT_REF}:[YOUR-PASSWORD]@aws-0-us-east-1.pooler.supabase.com:6543/postgres`;
+const POOLER_TEMPLATE = `postgresql://postgres.${AIO_CANONICAL_PROJECT_REF}:[YOUR-PASSWORD]@aws-0-us-west-2.pooler.supabase.com:5432/postgres`;
 
 function withTempPooler(fn) {
   const dir = mkdtempSync(join(tmpdir(), 'aio-ci-db-'));
@@ -77,7 +77,7 @@ function testForbiddenProject() {
 
 function testSecretRedaction() {
   const raw =
-    'postgresql://postgres:secret@aws-0-us-east-1.pooler.supabase.com:6543/postgres password=abc';
+    'postgresql://postgres:secret@aws-0-us-west-2.pooler.supabase.com:5432/postgres password=abc';
   const red = redactSecrets(raw);
   assert.ok(!red.includes('secret'));
   assert.ok(!red.includes('password=abc'));

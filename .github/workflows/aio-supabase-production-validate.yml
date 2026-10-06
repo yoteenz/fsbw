@@ -20,6 +20,8 @@ jobs:
       SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
       SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
       SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+      AIO_SUPABASE_POOLER_HOST: ${{ secrets.AIO_SUPABASE_POOLER_HOST }}
+      AIO_SUPABASE_POOLER_URL: ${{ secrets.AIO_SUPABASE_POOLER_URL }}
       AIO_RLS_TEST_SHIPPER_A_JWT: ${{ secrets.AIO_RLS_TEST_SHIPPER_A_JWT }}
       AIO_RLS_TEST_SHIPPER_B_JWT: ${{ secrets.AIO_RLS_TEST_SHIPPER_B_JWT }}
       AIO_RLS_TEST_CARRIER_A_JWT: ${{ secrets.AIO_RLS_TEST_CARRIER_A_JWT }}
@@ -75,22 +77,25 @@ jobs:
           set +x
           bash scripts/ci/aio-migration-preflight.sh
 
-      - name: Link AIO Supabase project
+      - name: Pooler transport precheck (session / IPv4)
         shell: bash
         run: |
           set +x
           source scripts/ci/aio-constants.sh
-          if [[ "$SUPABASE_PROJECT_ID" != "$AIO_CANONICAL_PROJECT_REF" ]]; then
-            echo "FAIL: SUPABASE_PROJECT_ID must be $AIO_CANONICAL_PROJECT_REF"
-            exit 1
-          fi
-          if [[ "$SUPABASE_PROJECT_ID" == "$FS_FORBIDDEN_PROJECT_REF" ]]; then
-            echo "FAIL: forbidden Frontal Slayer project"
-            exit 1
-          fi
-          npx --yes "supabase@${SUPABASE_CLI_VERSION}" link \
-            --project-ref "$AIO_CANONICAL_PROJECT_REF" \
-            --password "$SUPABASE_DB_PASSWORD"
+          node scripts/ci/aio-ci-normalize-pooler.mjs
+          node scripts/ci/aio-ci-pooler-precheck.mjs
+
+      - name: Link AIO Supabase project (Supavisor session pooler)
+        shell: bash
+        run: |
+          set +x
+          bash scripts/ci/aio-supabase-link-ci.sh
+
+      - name: Export CI session pooler db-url
+        shell: bash
+        run: |
+          set +x
+          node scripts/ci/aio-ci-export-db-url.mjs
 
       - name: Project guard (post-link)
         shell: bash
@@ -115,7 +120,13 @@ jobs:
           set +x
           source scripts/ci/aio-constants.sh
           bash scripts/ci/aio-project-guard.sh pre-push
-          if ! npx --yes "supabase@${SUPABASE_CLI_VERSION}" db push --linked; then
+          push_cmd=(npx --yes "supabase@${SUPABASE_CLI_VERSION}" db push --linked)
+          if [[ -n "${AIO_CI_DB_URL:-}" ]]; then
+            push_cmd+=(--db-url "$AIO_CI_DB_URL")
+          elif [[ -n "${SUPABASE_DB_PASSWORD:-}" ]]; then
+            push_cmd+=(-p "$SUPABASE_DB_PASSWORD")
+          fi
+          if ! "${push_cmd[@]}"; then
             bash scripts/ci/aio-record-result.sh migrations FAIL "db push failed — manual intervention may be required"
             exit 1
           fi

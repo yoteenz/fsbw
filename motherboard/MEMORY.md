@@ -54985,6 +54985,15 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 
 ---
 
+## 2026-10-06 — AIO Supabase CI IPv4 pooler connection fix
+
+- **Context:** GitHub Actions `aio-supabase-production-validate` failed with `network is unreachable` on direct `db.nnnljnhtmseagotvgxxt.supabase.co` (IPv6).
+- **Fix:** Pin Supabase CLI **2.119.0**; CI transport **SUPAVISOR_SESSION** port **5432**; scripts `aio-ci-db-transport.mjs`, pooler precheck, `aio-supabase-link-ci.sh`, `db push`/`migration list` via `AIO_CI_DB_URL`; direct-host + port 6543 guards.
+- **Secrets:** Reuse `SUPABASE_DB_PASSWORD`; optional `AIO_SUPABASE_POOLER_HOST` / `AIO_SUPABASE_POOLER_URL` (0 new required).
+- **Proof:** Unit tests pass; live GHA run **AWAITING_GITHUB_ACTIONS_LIVE_PROOF** (agent cannot dispatch workflow).
+
+---
+
 ## 2026-10-05 — AIO Wave 1 identity / auth / RLS / tenant safety (security foundation)
 
 - **Context:** Sprint **P0.AIO.WAVE-1-IDENTITY-AUTH-ROLE-RLS-TENANT-SAFETY** after Wave 0 — prove tenant isolation at database/RLS layer, not only route guards; no visual redesign, zero paid generation.

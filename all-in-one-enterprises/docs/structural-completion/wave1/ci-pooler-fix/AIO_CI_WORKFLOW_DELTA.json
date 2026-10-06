@@ -1,0 +1,18 @@
+{
+  "workflow": ".github/workflows/aio-supabase-production-validate.yml",
+  "added_steps": [
+    "Pooler transport precheck (session / IPv4)",
+    "Export CI session pooler db-url"
+  ],
+  "changed_steps": [
+    "Link AIO Supabase project (Supavisor session pooler via aio-supabase-link-ci.sh)",
+    "Apply migrations (db push --db-url $AIO_CI_DB_URL when set)"
+  ],
+  "scripts_added": [
+    "scripts/ci/aio-ci-db-transport.mjs",
+    "scripts/ci/aio-ci-pooler-precheck.mjs",
+    "scripts/ci/aio-supabase-link-ci.sh",
+    "scripts/ci/aio-ci-export-db-url.mjs",
+    "scripts/ci/aio-ci-normalize-pooler.mjs"
+  ]
+}

@@ -83,6 +83,15 @@ export function resolvePoolerUri({
     return { ok: false, method: 'other', error: 'pooler-url host is not a Supabase pooler', uri: null };
   }
 
+  if (/:6543\//.test(template) || template.endsWith(':6543/postgres')) {
+    return {
+      ok: false,
+      method: 'pooler-transaction',
+      error: 'AIO_SUPABASE_TRANSACTION_MODE_GUARD: port 6543 forbidden in CI session mode',
+      uri: null,
+    };
+  }
+
   if (
     !template.includes(projectRef) &&
     !template.includes(`postgres.${projectRef}`) &&

@@ -1,0 +1,6 @@
+{
+  "before": "2.23.4",
+  "after": "2.119.0",
+  "reason": "supabase link defaults to pooler; --skip-pooler opts into direct IPv6 host",
+  "pin_location": "scripts/ci/aio-constants.sh"
+}
