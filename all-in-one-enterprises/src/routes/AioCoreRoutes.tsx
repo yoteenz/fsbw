@@ -1,6 +1,7 @@
 import { lazy, Suspense } from 'react';
 import { Navigate, Route, useParams } from 'react-router-dom';
 import { CustomerRouteGuard, DriverRouteGuard, OfficeRouteGuard, ProviderRouteGuard } from '../auth/guards/RouteGuards';
+import { ClientPortalLifecycleGuard } from '../auth/guards/ClientPortalLifecycleGuard';
 import { AIOPublicLayout } from '../layouts/AIOPublicLayout';
 import { SmartIntakeLayout } from '../layouts/SmartIntakeLayout';
 import { AIOPortalLayout } from '../layouts/AIOPortalLayout';
@@ -254,6 +255,7 @@ export const aioCoreRoutes = (
       </Route>
 
       <Route element={<CustomerRouteGuard />}>
+        <Route element={<ClientPortalLifecycleGuard />}>
         <Route path="portal" element={<AIOPortalLayout />}>
           <Route index element={<PortalPage />} />
           <Route path="business" element={<BusinessProfilePage />} />
@@ -359,6 +361,7 @@ export const aioCoreRoutes = (
           <Route path="quotes/:quoteId" element={<ShipperQuoteDetailPage />} />
           <Route path="billing" element={<ShipperBillingPage />} />
           <Route path="billing/:invoiceId" element={<ShipperInvoiceDetailPage />} />
+        </Route>
         </Route>
       </Route>
 

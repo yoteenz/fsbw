@@ -1,6 +1,8 @@
 import type { Session, User } from '@supabase/supabase-js';
 import type { AioInternalRole, AioMembershipRole, AioOrgType } from '../data/supabase/database.types';
+import { normalizeBusinessNameForLookup } from '../business-formation/businessNameRegistry/normalize';
 import { getAioSupabase } from '../data/supabase/client';
+import { aioPaths } from '../utils/paths';
 
 export { toSessionContract, resolvePortalProjection, mapSupabaseErrorToSecurityCode } from '../security/sessionContract';
 export type { AioSessionContract, AuthSecurityErrorCode } from '../security/sessionContract';
@@ -22,6 +24,7 @@ export interface AioAuthSession {
     name: string;
     organizationType: AioOrgType;
     primaryOperatingState: string | null;
+    clientLifecycle?: string | null;
   } | null;
   membershipRole: AioMembershipRole | null;
   internalRole: AioInternalRole | null;
@@ -58,14 +61,40 @@ function mapOrgType(accountType: SignUpAccountType): AioOrgType {
   }
 }
 
+async function findDuplicateKnownOrganization(businessName: string): Promise<string | null> {
+  const supabase = getAioSupabase();
+  if (!supabase) return null;
+  const normalized = normalizeBusinessNameForLookup(businessName);
+  const { data } = await supabase
+    .from('aio_organizations')
+    .select('id, name, client_lifecycle')
+    .ilike('name', normalized)
+    .limit(5);
+  const match = (data ?? []).find(
+    (row) =>
+      normalizeBusinessNameForLookup(String(row.name)) === normalized &&
+      String(row.client_lifecycle ?? 'KNOWN_UNMIGRATED') !== 'INTAKE_IN_PROGRESS',
+  );
+  return match ? String(match.id) : null;
+}
+
 async function createOrganizationForUser(userId: string, payload: SignUpPayload): Promise<string | null> {
   const supabase = getAioSupabase();
   if (!supabase) return 'Backend is not configured.';
 
+  const duplicateOrgId = await findDuplicateKnownOrganization(payload.businessName);
+  if (duplicateOrgId) {
+    return 'This business is already known to All In One. Use your activation link or contact us — do not create a second account.';
+  }
+
   const orgType = mapOrgType(payload.accountType);
   const { data: org, error: orgError } = await supabase
     .from('aio_organizations')
-    .insert({ name: payload.businessName, organization_type: orgType })
+    .insert({
+      name: payload.businessName,
+      organization_type: orgType,
+      client_lifecycle: 'INTAKE_IN_PROGRESS',
+    })
     .select('id')
     .single();
 
@@ -168,7 +197,7 @@ export async function sendPasswordReset(email: string): Promise<{ error: string 
   const supabase = getAioSupabase();
   if (!supabase) return { error: 'Backend is not configured.' };
 
-  const redirectTo = `${window.location.origin}/all-in-one/reset-password`;
+  const redirectTo = `${window.location.origin}${aioPaths.resetPassword}`;
   const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo });
   return { error: error ? friendlyAuthError(error.message) : null };
 }
@@ -208,12 +237,42 @@ export async function loadAuthSession(): Promise<AioAuthSession | null> {
     .limit(1)
     .maybeSingle();
 
-  let org: { id: string; name: string; organization_type: AioOrgType; primary_operating_state: string | null } | null = null;
-  if (membership?.organization_id) {
+  let org: {
+    id: string;
+    name: string;
+    organization_type: AioOrgType;
+    primary_operating_state: string | null;
+    client_lifecycle: string | null;
+  } | null = null;
+  if (!membership?.organization_id) {
+    const meta = user.user_metadata ?? {};
+    const businessName = typeof meta.business_name === 'string' ? meta.business_name : undefined;
+    if (businessName) {
+      await ensureOrganizationForUser(user.id, {
+        businessName,
+        accountType: (meta.account_type as SignUpAccountType) ?? 'unsure',
+        email: user.email ?? '',
+        firstName: typeof meta.first_name === 'string' ? meta.first_name : '',
+        lastName: typeof meta.last_name === 'string' ? meta.last_name : '',
+      });
+    }
+  }
+
+  const { data: membershipAfterEnsure } = await supabase
+    .from('aio_organization_memberships')
+    .select('role, organization_id')
+    .eq('user_id', user.id)
+    .eq('status', 'active')
+    .limit(1)
+    .maybeSingle();
+
+  const activeMembership = membershipAfterEnsure ?? membership;
+
+  if (activeMembership?.organization_id) {
     const { data: orgRow } = await supabase
       .from('aio_organizations')
-      .select('id, name, organization_type, primary_operating_state')
-      .eq('id', membership.organization_id)
+      .select('id, name, organization_type, primary_operating_state, client_lifecycle')
+      .eq('id', activeMembership.organization_id)
       .maybeSingle();
     org = orgRow ?? null;
   }
@@ -258,9 +317,10 @@ export async function loadAuthSession(): Promise<AioAuthSession | null> {
           name: org.name,
           organizationType: org.organization_type,
           primaryOperatingState: org.primary_operating_state,
+          clientLifecycle: org.client_lifecycle,
         }
       : null,
-    membershipRole: membership?.role ?? null,
+    membershipRole: activeMembership?.role ?? null,
     internalRole: internalStaff?.role ?? null,
     isInternal: Boolean(internalStaff),
     emailVerified: Boolean(user.email_confirmed_at),

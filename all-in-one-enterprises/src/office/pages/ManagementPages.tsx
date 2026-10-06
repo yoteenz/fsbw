@@ -403,7 +403,8 @@ export function ManagementCustomersPage() {
         <ManagementPeriodFilter periodId={periodId} onChange={setPeriodId} />
 
         <div className="aio-metrics-grid aio-metrics-grid--compact">
-          <MetricCard label="Total Customers" value={String(summary.total)} href={aioPaths.officeClients} />
+          <MetricCard metricKey="active_customers" label="Active Customers" value={String(summary.activeClients)} href={aioPaths.officeClients} />
+          <MetricCard label="Total Organizations" value={String(summary.total)} href={aioPaths.officeClients} />
           <MetricCard label="New Customers" value={String(summary.newCustomers)} />
           <MetricCard label="Waiting on All In One" value={String(summary.waitingOnUs)} />
           <MetricCard label="Waiting on Customer" value={String(summary.waitingOnCustomer)} />

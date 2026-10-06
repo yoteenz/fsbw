@@ -18,7 +18,9 @@ export type MigrationExceptionCode =
   | 'DUPLICATE_DOCUMENT'
   | 'UNREADABLE_DOCUMENT'
   | 'EXTRACTION_FAILED'
-  | 'AMBIGUOUS_CLIENT_MATCH';
+  | 'AMBIGUOUS_CLIENT_MATCH'
+  | 'PROVIDER_UNAVAILABLE'
+  | 'PROCESSING_FAILED';
 
 export interface MigrationFileInput {
   fileName: string;

@@ -1,3 +1,4 @@
+import { countActiveClientsCanonical } from '../client-migration/activeClientMetrics';
 import type { DemoStore } from '../demo/demoTypes';
 import { getCrmMetrics, getCrmLeads } from '../demo/crmActions';
 import { getOfficeDispatchMetrics } from '../demo/dispatchActions';
@@ -89,9 +90,7 @@ export function resolveRange(
 export function getExecutiveSnapshot(store: DemoStore, range: ManagementDateRange): ExecutiveSnapshot {
   const financial = getFinancialSummary(store, range);
   const activeRequests = store.requests.filter((r) => !['completed', 'cancelled'].includes(r.status));
-  const activeCustomers = store.clients.filter((c) =>
-    store.requests.some((r) => r.clientId === c.id && !['completed', 'cancelled'].includes(r.status)),
-  ).length;
+  const activeCustomers = countActiveClientsCanonical(store.clients);
   const opps = (store.crmOpportunities ?? []).filter((o) => o.status === 'open');
   const dispatch = getOfficeDispatchMetrics(store);
   const attention = getManagementAttentionCount(store);
@@ -99,7 +98,7 @@ export function getExecutiveSnapshot(store: DemoStore, range: ManagementDateRang
   return {
     collectedServiceRevenueMinor: financial.serviceFeesCollectedMinor,
     outstandingReceivablesMinor: financial.totalOutstandingMinor,
-    activeCustomers: activeCustomers || store.clients.length,
+    activeCustomers,
     activeServiceRequests: activeRequests.length,
     openSalesOpportunities: opps.length,
     activeLoads: dispatch.activeLoads,
@@ -317,6 +316,7 @@ export function getCustomerSummary(store: DemoStore, range: ManagementDateRange)
   const renewalsUpcoming = store.renewals.filter((r) => r.status !== 'completed').length;
   return {
     total: store.clients.length,
+    activeClients: countActiveClientsCanonical(store.clients),
     newCustomers,
     withOverdueBalances: new Set(store.invoices.filter((i) => i.status === 'past_due').map((i) => i.organizationId)).size,
     overdueInvoices: withOverdue,

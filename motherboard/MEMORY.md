@@ -55166,3 +55166,30 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **App (demo-first, supabase-ready):** module `all-in-one-enterprises/src/client-migration/` — lifecycle helpers, fixture migration pipeline adapter, commit/invite/provisioning/activation services; demo store v26; archive migration hooks pipeline + APPROVE → PREBUILT; CRM conversion → PREBUILT/pending not ACTIVE; active client count via `countActiveClients`; routes `/office-activation/:token`, `/portal/activation/review`; feature flags `VITE_AIO_CLIENT_MIGRATION_V1`, `VITE_AIO_EXISTING_CLIENT_ACTIVATION_V1`.
 - **Tests:** `clientMigration.test.ts` (5) + `npm run build` PASS. Supabase live adapters for batch upload/review UI still TODO; staff pilot requires wiring `dataMode=supabase` repositories next.
 
+---
+
+## 2026-10-06 — AIO client migration production completion sprint (P0.AIO.CLIENT-MIGRATION-ACTIVATION.PRODUCTION-COMPLETION1) — PR #41 continued
+
+- **Context:** Continue foundation on `cursor/client-migration-activation-88a7` / draft PR #41; close gaps toward staff migration pilot without real client data.
+- **Shipped on branch @ `bc220e54f`:**
+  - **Portal gate:** `ClientPortalLifecycleGuard` + `portalLifecycleAccess`; portal routes wrapped in `AioCoreRoutes.tsx`; session org `client_lifecycle` from Supabase when present.
+  - **Production data path (partial):** `supabaseMigrationRepository`, `migrationIntakeService`, private bucket migration `20261006230000_aio_migration_intake_storage.sql` applied to AIO Supabase; `migrationRawStorage`; batch cache + `useMigrationBatches`; Supabase mode uses server pipeline adapter → `/api/aio/client-migration/process-file` (fixture only when `AIO_MIGRATION_EXTRACTION_PROVIDER=fixture` / `AIO_ALLOW_MIGRATION_FIXTURE=1`, else `PROVIDER_UNAVAILABLE`).
+  - **Staff UI:** Archive Migration dashboard founder queue segments; extraction fact review table + match decision on batch review; digitize uses unified intake service; activation invite email via `/api/aio/client-migration/send-activation-invite` (Resend stack).
+  - **Canonical active counts:** `activeClientRule` wired through office command center, management executive snapshot, metric registry copy, customer command center, clients list, archive migration metrics (`canonicalActiveClients`); guard test `activeClientCountSites.test.ts`.
+  - **Auth reconciliation:** C8 duplicate known business on sign-up; C9 `ensureOrganizationForUser` on session load when metadata present; C10 reset redirect uses `aioPaths.resetPassword`; new orgs set `INTAKE_IN_PROGRESS`.
+  - **Tests:** `clientMigration.test.ts` (6 incl. synthetic PREBUILT→ACTIVE), `portalLifecycleAccess.test.ts`, build PASS.
+- **Still open for pilot-ready / merge:** Supabase APPROVE MIGRATION transaction + demo-store decoupling for full staff path; production AI extraction provider; complete client review UI surfaces; RLS/route/idempotency live matrix; responsive QA 393/834/1440; SITE00 Experience Brain JSON regen (`scripts/studioos/aio-client-migration-export.ts` absent); AIO production validate rerun post-merge.
+
+---
+
+## 2026-10-06 — AIO client migration staff pilot closeout (P0.AIO.CLIENT-MIGRATION-ACTIVATION.STAFF-PILOT-CLOSEOUT1) — PR #42
+
+- **Branch:** `cursor/client-migration-activation-88a7` @ post-closeout commit (after `579752f44`).
+- **Production APPROVE MIGRATION:** Server path `supabaseApproveMigrationBatch` + `POST /api/aio/client-migration/approve-batch` (staff JWT + `AIO_SUPABASE_SERVICE_ROLE_KEY`); idempotency table `aio_client_migration_commits`; provenance inserts, Vault `aio_documents` promotion, fleet vehicles, regulatory IDs, workspace entitlements, PREBUILT lifecycle events.
+- **File queue:** Columns `queue_state`, `processing_stage`, `processing_error` on batch files; `MigrationFileQueuePanel`; folder upload on digitize; staged updates in `migrationIntakeService`.
+- **Extraction:** Production `process-file` blocks fixture unless non-production + `AIO_ALLOW_MIGRATION_FIXTURE`; otherwise `PROVIDER_UNAVAILABLE`.
+- **Client activation (Supabase):** `supabaseClientActivationRepository` — review sessions, reported changes, confirm → ACTIVE + entitlement promotion; `ClientOfficeReviewPage` dual-mode.
+- **Tests:** `approveMigrationLogic.test.ts`, expanded route matrix, RLS live tests (skip without env); build PASS; demo synthetic journey still PASS.
+- **Experience Brain:** `docs/aio/client-migration/IMPLEMENTATION_STATUS.md` — `GENERATED_ARTIFACT_REGEN_BLOCKED_BY_TOOLING`.
+- **Still blocking READY_FOR_STAFF_MIGRATION_PILOT (production Supabase):** configured extraction provider, live staff E2E with service role in deploy env, full supabase fact UI refresh, responsive QA, production validate rerun.
+
