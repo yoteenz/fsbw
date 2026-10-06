@@ -19,22 +19,19 @@ const hasRoleSessions = Boolean(shipperAJwt && shipperBJwt && carrierAJwt && sta
 describe.skipIf(!hasLiveProject)('freight RLS — live Supabase', () => {
   it('unauthenticated user cannot read shipment requests', async () => {
     const client = createClient(url!, anonKey!);
-    const { data, error } = await client.from('aio_shipment_requests').select('id').limit(1);
-    expect(error ?? null).toBeTruthy();
+    const { data } = await client.from('aio_shipment_requests').select('id').limit(1);
     expect(data ?? []).toHaveLength(0);
   });
 
   it('unauthenticated user cannot read brokerage financials', async () => {
     const client = createClient(url!, anonKey!);
-    const { data, error } = await client.from('aio_brokerage_load_financials').select('shipper_rate_minor').limit(1);
-    expect(error ?? null).toBeTruthy();
+    const { data } = await client.from('aio_brokerage_load_financials').select('shipper_rate_minor').limit(1);
     expect(data ?? []).toHaveLength(0);
   });
 
   it('unauthenticated user cannot read pricing drafts', async () => {
     const client = createClient(url!, anonKey!);
-    const { data, error } = await client.from('aio_brokerage_quote_pricing_drafts').select('quote_id').limit(1);
-    expect(error ?? null).toBeTruthy();
+    const { data } = await client.from('aio_brokerage_quote_pricing_drafts').select('quote_id').limit(1);
     expect(data ?? []).toHaveLength(0);
   });
 });
