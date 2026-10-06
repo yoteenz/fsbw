@@ -55180,3 +55180,16 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
   - **Tests:** `clientMigration.test.ts` (6 incl. synthetic PREBUILT→ACTIVE), `portalLifecycleAccess.test.ts`, build PASS.
 - **Still open for pilot-ready / merge:** Supabase APPROVE MIGRATION transaction + demo-store decoupling for full staff path; production AI extraction provider; complete client review UI surfaces; RLS/route/idempotency live matrix; responsive QA 393/834/1440; SITE00 Experience Brain JSON regen (`scripts/studioos/aio-client-migration-export.ts` absent); AIO production validate rerun post-merge.
 
+---
+
+## 2026-10-06 — AIO client migration staff pilot closeout (P0.AIO.CLIENT-MIGRATION-ACTIVATION.STAFF-PILOT-CLOSEOUT1) — PR #42
+
+- **Branch:** `cursor/client-migration-activation-88a7` @ post-closeout commit (after `579752f44`).
+- **Production APPROVE MIGRATION:** Server path `supabaseApproveMigrationBatch` + `POST /api/aio/client-migration/approve-batch` (staff JWT + `AIO_SUPABASE_SERVICE_ROLE_KEY`); idempotency table `aio_client_migration_commits`; provenance inserts, Vault `aio_documents` promotion, fleet vehicles, regulatory IDs, workspace entitlements, PREBUILT lifecycle events.
+- **File queue:** Columns `queue_state`, `processing_stage`, `processing_error` on batch files; `MigrationFileQueuePanel`; folder upload on digitize; staged updates in `migrationIntakeService`.
+- **Extraction:** Production `process-file` blocks fixture unless non-production + `AIO_ALLOW_MIGRATION_FIXTURE`; otherwise `PROVIDER_UNAVAILABLE`.
+- **Client activation (Supabase):** `supabaseClientActivationRepository` — review sessions, reported changes, confirm → ACTIVE + entitlement promotion; `ClientOfficeReviewPage` dual-mode.
+- **Tests:** `approveMigrationLogic.test.ts`, expanded route matrix, RLS live tests (skip without env); build PASS; demo synthetic journey still PASS.
+- **Experience Brain:** `docs/aio/client-migration/IMPLEMENTATION_STATUS.md` — `GENERATED_ARTIFACT_REGEN_BLOCKED_BY_TOOLING`.
+- **Still blocking READY_FOR_STAFF_MIGRATION_PILOT (production Supabase):** configured extraction provider, live staff E2E with service role in deploy env, full supabase fact UI refresh, responsive QA, production validate rerun.
+
