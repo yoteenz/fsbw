@@ -1,3 +1,5 @@
+import { countActiveClientsCanonical } from '../client-migration/activeClientMetrics';
+import type { Client } from '../demo/demoTypes';
 import type { VaultDocument } from './vaultTypes';
 
 export type DocumentVaultMetrics = {
@@ -40,6 +42,7 @@ export function computeDocumentVaultMetrics(docs: VaultDocument[]): DocumentVaul
 export type MigrationDashboardMetrics = {
   clientsDigitized: number;
   totalClients: number;
+  canonicalActiveClients: number;
   documentsPreserved: number;
   needsReview: number;
   unmatchedDocuments: number;
@@ -48,11 +51,12 @@ export type MigrationDashboardMetrics = {
 };
 
 export function computeMigrationDashboardMetrics(input: {
-  clients: { id: string; archiveMigrationStatus?: string }[];
+  clients: ({ id: string; archiveMigrationStatus?: string } & Partial<Client>)[];
   documents: VaultDocument[];
   batches: { state: string; organizationId: string }[];
 }): MigrationDashboardMetrics {
   const totalClients = input.clients.length;
+  const canonicalActiveClients = countActiveClientsCanonical(input.clients as Client[]);
   const clientsDigitized = input.clients.filter((c) =>
     ['digitized', 'quality_check', 'complete'].includes(c.archiveMigrationStatus ?? 'not_started'),
   ).length;
@@ -75,6 +79,7 @@ export function computeMigrationDashboardMetrics(input: {
   return {
     clientsDigitized,
     totalClients,
+    canonicalActiveClients,
     documentsPreserved,
     needsReview,
     unmatchedDocuments,

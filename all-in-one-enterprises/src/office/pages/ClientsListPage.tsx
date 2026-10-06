@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { countActiveClientsCanonical } from '../../client-migration/activeClientMetrics';
 import { useDemoStore } from '../../demo/useDemoStore';
 import { aioPaths } from '../../utils/paths';
 
@@ -28,7 +29,9 @@ export function ClientsListPage() {
     <div className="aio-office-page">
       <header className="aio-office-page__header">
         <h1>Clients</h1>
-        <p>CRM · {filtered.length} clients</p>
+        <p>
+          CRM · {countActiveClientsCanonical(store.clients)} active · {filtered.length} shown · {store.clients.length} total
+        </p>
       </header>
 
       <div className="aio-office-filters">
