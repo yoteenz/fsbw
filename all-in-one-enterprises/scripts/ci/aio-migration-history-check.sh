@@ -38,11 +38,13 @@ remote_method="none"
 remote_versions_json='[]'
 
 # --- Primary: Supabase CLI (same connection stack as `supabase link` / `db push`) ---
-cli_cmd=(npx --yes "supabase@${SUPABASE_CLI_VERSION}" migration list --linked)
 if [[ -n "${AIO_CI_DB_URL:-}" ]]; then
-  cli_cmd+=(--db-url "$AIO_CI_DB_URL")
-elif [[ -n "${SUPABASE_DB_PASSWORD:-}" ]]; then
-  cli_cmd+=(-p "$SUPABASE_DB_PASSWORD")
+  cli_cmd=(npx --yes "supabase@${SUPABASE_CLI_VERSION}" migration list --db-url "$AIO_CI_DB_URL")
+else
+  cli_cmd=(npx --yes "supabase@${SUPABASE_CLI_VERSION}" migration list --linked)
+  if [[ -n "${SUPABASE_DB_PASSWORD:-}" ]]; then
+    cli_cmd+=(-p "$SUPABASE_DB_PASSWORD")
+  fi
 fi
 
 set +e
