@@ -55087,3 +55087,40 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
   1. The founder confirms the tree.
   2. Authority-driven implementation, in this repo, of the ready nodes.
   3. In parallel, a data-contract completion sprint.
+
+---
+
+## 2026-10-06 — AIO OFFICE / CLIENT OFFICE workspace architecture; IFTA tree revised and founder decisions locked (P0.AIO.OFFICE-WORKSPACE-ARCHITECTURE-AND-IFTA-TREE-FOUNDER-LOCK1)
+
+- **Context:** SITE00 PR #1403 (`61a5e90`). Architecture, Experience Brain reconciliation, page-tree revision and founder-decision lock. No page was implemented; no AIO code or data contract was changed; 0 paid generations; OpenArt was not accessed.
+- **Founder decision (durable):** AIO services are **workspaces inside a connected business office**.
+  - **AIO OFFICE** (founder / staff) = CLIENT × WORKSPACE × SUBCONTEXT. Client and workspace switch independently.
+  - **CLIENT OFFICE** (client) = FIXED CLIENT × WORKSPACE × SUBCONTEXT. There is no client switcher.
+  - **CASE** = PROJECT + CLIENT + WORKSPACE + CASE TYPE + SUBCONTEXT. It has one canonical identity; for IFTA, the single `IftaQuarterCase` per organisation-quarter serves client and staff.
+- **Read-only audit of this repo (@ `20438a2`):**
+  - The office has no client context, client switcher or workspace concept. Client context exists only through the `:clientId` route param, and the demo portal flips the global `portalClientId`.
+  - "Active services" is derived twice and the two derivations disagree (portal `buildActiveServices` vs Client 360). Neither covers IFTA. The portal shows 5 generic AVAILABLE / ACTIVE fallbacks.
+  - Per-domain entitlement records exist for dispatch, factoring, bookkeeping, insurance and brokerage, and for IFTA through `iftaQuarters`. `Client.services` is unreliable free text.
+  - Every office role reads every client.
+  - There is no founder role, and Supabase internal roles are not mapped to office roles.
+- **IFTA tree revision 2 (SITE00):**
+  - Founder tree: AIO OFFICE → WORKSPACE IFTA → FUEL TAX QUEUE → CLIENT CONTEXT → CASE, plus WORKSPACE NOT ACTIVE FOR THIS CLIENT.
+  - Client tree: CLIENT OFFICE → WORKSPACE IFTA → QUARTER SELECTOR → FILING ROOM (six tabs; no client NOTES), plus SET UP IFTA FILING as the NOT ACTIVE YET state.
+  - The ten decisions are locked: brand board tokens; INTER TIGHT / INTER; interaction 09 = RUN FAQS; planned static routes with the new shell; REQUEST / QUOTE; staff NOTES secondary; no staff modules on client desktop; tax figures only from the staff summary; truthful public copy; queue derived from the staff case authority.
+  - Readiness: 49 / 64 (was 39). All remaining blockers are data. The reference package is COMPLETE.
+  - The tree awaits final founder confirmation.
+- **In this repo:**
+  - `docs/aio/office/`: pointer README plus byte-for-byte copies of `AIO_OFFICE_ARCHITECTURE.md` and `CLIENT_OFFICE_ARCHITECTURE.md`.
+  - `docs/aio/ifta/authority-bundle/`: README revised for revision 2 (16 artifacts with sha256), plus byte-for-byte copies of `AIO_IFTA_PAGE_TREE_PROOF.md` and `AIO_IFTA_INTERACTION_09_CORRECTION_PROOF.md`.
+  - The vendored experience contract was checked with `sync-ifta-contract.mjs --check` against `61a5e90`: no drift.
+- **Planned routes (not registered):** `/office/workspaces/ifta(/:clientId/:quarter)`, `/office/clients/:clientId/ifta/:quarter`, `/portal/workspaces/ifta(/:quarter)`. They supersede the `/portal/services/ifta` and `/office/permitting/fuel-tax` helpers.
+- **Next:**
+  1. The founder confirms the revised tree.
+  2. Authority-driven implementation of the ready nodes on the planned routes, using the new family shell.
+  3. Data sprint:
+     - worksheet writer, CSV import, escalate / mark not operated / rejection / reopen / reclassify / export, staff notes model
+     - availability reconciliation
+     - one canonical client × workspace resolver
+     - IFTA OfficeWorkItem domain
+     - founder role
+     - production persistence
