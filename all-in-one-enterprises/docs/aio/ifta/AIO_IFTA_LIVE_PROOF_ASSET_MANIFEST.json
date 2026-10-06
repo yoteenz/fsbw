@@ -1,43 +1,119 @@
 {
-  "sprint": "P0.AIO.IFTA.THREE-MODE-LIVE-AUTHORITY-IMPLEMENTATION1",
-  "status": "LIVE_PROOF_MOUNTED",
-  "authority_package": "docs/aio/ifta/authority-bundle/README.md + experience contracts under src/ifta/experience/",
+  "sprint": "P0.AIO.IFTA.THREE-MODE-LIVE-VISUAL-AUTHORITY-RECONSTRUCTION1",
+  "supersedes": "P0.AIO.IFTA.THREE-MODE-LIVE-AUTHORITY-IMPLEMENTATION1 asset records (CSS gradient placeholders, text \"AIO\" square)",
+  "status": "LIVE_VISUAL_RECONSTRUCTION_MOUNTED",
+  "generated_from": "src/ifta/ui/iftaAssetManifest.ts (single source)",
+  "authority_bundle": "SITE00 docs/aio/ifta/authority-bundle/source/AIO_IFTA_AUTHORITY_BUNDLE",
+  "derivation_script": "scripts/ifta/derive-ifta-brand-assets.py (reproduces every derived file byte-for-byte)",
+  "new_paid_generations": 0,
+  "brand": {
+    "markOnLight": "/brand/ifta/aio-mark-on-light.png",
+    "markOnDark": "/brand/ifta/aio-mark-on-dark.png",
+    "lockupOnLight": "/brand/ifta/aio-lockup-on-light.png",
+    "lockupOnDark": "/brand/ifta/aio-lockup-on-dark.png"
+  },
+  "media": {
+    "filingRoomHero": "/brand/ifta/ifta-filing-room-hero.jpg",
+    "publicHero": "/brand/aio-login-hero.png",
+    "publicRoad": "/brand/all-in-one-hero-truck.png",
+    "publicRange": "/brand/ifta/ifta-public-range.jpg"
+  },
   "records": [
     {
-      "authoritySource": "AIO_IFTA_PUBLIC_PAGE_CONTRACT.json",
+      "asset": "/brand/ifta/aio-mark-on-light.png",
+      "source": "public/brand/aio-logo-lockup.png (approved lockup) · emblem",
+      "derivation": "emblem crop · black → alpha · white strokes → CHARCOAL #1A1A1A (reference light nav)",
+      "actor": "ALL",
+      "region": "top operational chrome (client / staff light)",
+      "crop": "emblem only",
+      "focal": "n/a",
+      "viewport": "32px mobile · 36px tablet / desktop",
+      "overlay": "none",
+      "text": "never beside a wordmark in the top nav"
+    },
+    {
+      "asset": "/brand/ifta/aio-mark-on-dark.png",
+      "source": "00_BRAND/AIO_SIMPLE_NAV_MARK.jpeg (approved app / nav mark)",
+      "derivation": "emblem crop inside the tile · black → alpha (metallic gold / platinum kept)",
       "actor": "PUBLIC",
-      "route": "/services/ifta-filing",
-      "purpose": "Dark service entry + REQUEST FILING",
-      "path": "src/ifta/ui/IftaPublicPage.tsx",
-      "crop": "family-scoped shell only",
-      "responsive": "393 + 1440 captures"
+      "region": "public top nav",
+      "crop": "emblem only",
+      "focal": "n/a",
+      "viewport": "34px mobile · 40px desktop",
+      "overlay": "none",
+      "text": "never beside a wordmark in the top nav"
     },
     {
-      "authoritySource": "CLIENT FILING ROOM authority",
+      "asset": "/brand/ifta/aio-lockup-on-light.png",
+      "source": "public/brand/aio-logo-lockup.png (approved lockup)",
+      "derivation": "black → alpha · ALL IN ONE white → CHARCOAL · ENTERPRISES INC. gold kept",
       "actor": "CLIENT",
-      "route": "/portal/workspaces/ifta/:quarter",
-      "purpose": "Light filing room PROGRESS default",
-      "path": "src/ifta/ui/IftaClientFilingRoomPage.tsx",
-      "crop": "hero scene band",
-      "responsive": "393 + 834 + 1440 captures"
+      "region": "client / staff footer",
+      "crop": "full lockup",
+      "focal": "n/a",
+      "viewport": "200px mobile · 240px desktop, centred between gold rules",
+      "overlay": "none",
+      "text": "tagline line below (DATA · COMPLIANCE · REAL PROGRESS / OPERATIONS · COMPLIANCE · CLIENT SUCCESS)"
     },
     {
-      "authoritySource": "Derived staff FUEL TAX QUEUE",
-      "actor": "STAFF",
-      "route": "/office/workspaces/ifta",
-      "purpose": "Cross-client queue",
-      "path": "src/ifta/ui/IftaStaffQueuePage.tsx",
-      "crop": "n/a",
-      "responsive": "393 + 834 + 1440 captures"
+      "asset": "/brand/ifta/aio-lockup-on-dark.png",
+      "source": "public/brand/aio-logo-lockup.png (approved lockup)",
+      "derivation": "black → alpha",
+      "actor": "PUBLIC",
+      "region": "public footer over the mountain range",
+      "crop": "full lockup",
+      "focal": "n/a",
+      "viewport": "210px mobile · 260px desktop",
+      "overlay": "sits on the obsidian fade of the range band",
+      "text": "DRIVEN BY COMPLIANCE. BUILT FOR WHAT MOVES YOU."
     },
     {
-      "authoritySource": "Staff client-quarter case",
-      "actor": "STAFF",
-      "route": "/office/workspaces/ifta/:clientId/:quarter",
-      "purpose": "Canonical case file + NOTES + RUN FAQS",
-      "path": "src/ifta/ui/IftaStaffCasePage.tsx",
-      "crop": "n/a",
-      "responsive": "393 + 834 + 1440 captures"
+      "asset": "/brand/ifta/ifta-filing-room-hero.jpg",
+      "source": "02_CLIENT_MODE/AIO_IFTA_CLIENT_MOBILE_PARENT_AUTHORITY.jpeg (approved client parent) · hero photograph",
+      "derivation": "photographic region only (x 520–1206, y 88–505: right of the baked headline, below the baked nav icons, above the baked metrics card) · 2× Lanczos",
+      "actor": "CLIENT",
+      "region": "Filing Room hero (client) · case hero + queue band (staff)",
+      "crop": "truck + range, right-weighted",
+      "focal": "truck cab (≈ 70% x · 60% y)",
+      "viewport": "mobile: full-bleed, focal right · tablet / desktop: right 72% of the hero",
+      "overlay": "STONE WHITE wash from the left (the reference hero washes the sky behind the headline)",
+      "text": "quarter identity left on the wash; metrics rail overlaps the hero foot"
+    },
+    {
+      "asset": "/brand/aio-login-hero.png",
+      "source": "public/brand/aio-login-hero.png (approved AIO hero — black truck, range, gold dusk)",
+      "derivation": "mounted as-is",
+      "actor": "PUBLIC",
+      "region": "public hero",
+      "crop": "cover",
+      "focal": "truck cab (≈ 68% x · 62% y)",
+      "viewport": "mobile: focal right, darker wash · desktop: full-bleed",
+      "overlay": "OBSIDIAN gradient from the left + foot fade into the metrics rail",
+      "text": "IFTA FILING ROOM · SAMPLE QUARTER headline left"
+    },
+    {
+      "asset": "/brand/all-in-one-hero-truck.png",
+      "source": "public/brand/all-in-one-hero-truck.png (approved AIO truck on the road)",
+      "derivation": "mounted as-is",
+      "actor": "PUBLIC",
+      "region": "“REAL DRIVERS. REAL ROADS. REAL COMPLIANCE.” panel",
+      "crop": "cover",
+      "focal": "road + truck (≈ 60% x · 55% y)",
+      "viewport": "tablet / desktop only (the mobile reference omits this panel)",
+      "overlay": "OBSIDIAN gradient from the left",
+      "text": "three-line statement left with a gold rule"
+    },
+    {
+      "asset": "/brand/ifta/ifta-public-range.jpg",
+      "source": "public/brand/aio-login-hero.png (approved) · mountain band",
+      "derivation": "crop x 0–760 · y 400–640 (range + dusk sky, left of the truck)",
+      "actor": "PUBLIC",
+      "region": "public footer panorama",
+      "crop": "wide band",
+      "focal": "ridge line centre",
+      "viewport": "full-bleed band at every width",
+      "overlay": "OBSIDIAN fade top and bottom",
+      "text": "full lockup + tagline"
     }
   ]
 }

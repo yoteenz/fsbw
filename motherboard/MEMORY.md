@@ -55193,3 +55193,20 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Experience Brain:** `docs/aio/client-migration/IMPLEMENTATION_STATUS.md` — `GENERATED_ARTIFACT_REGEN_BLOCKED_BY_TOOLING`.
 - **Still blocking READY_FOR_STAFF_MIGRATION_PILOT (production Supabase):** configured extraction provider, live staff E2E with service role in deploy env, full supabase fact UI refresh, responsive QA, production validate rerun.
 
+---
+
+## 2026-10-06 — AIO IFTA three-mode live visual authority reconstruction (P0.AIO.IFTA.THREE-MODE-LIVE-VISUAL-AUTHORITY-RECONSTRUCTION1)
+
+- **Context:** The three IFTA actor modes were live and functional (PR #43 → master `faeb7503`), but founder review found them visually wrong — text panels, a spreadsheet queue, generic cards, a gradient where the hero image belongs, a placeholder "AIO" square. Those screenshots are FUNCTIONAL EVIDENCE ONLY.
+- **Founder decision (durable):** KEEP THE FUNCTION. REBUILD THE LOOK. The approved authority images (SITE00 `docs/aio/ifta/authority-bundle/source/`) are the design authority; current code is evidence, not authority. Recorded as a permanent rule in `CORE.md`.
+- **Rebuilt (four mounted surfaces only, no new child states):**
+  - PUBLIC `/services/ifta-filing` (dark cinematic: approved AIO hero, labelled SAMPLE quarter rail, clear-path + road panel, five-step process, glowing jurisdiction map, promises, ledger, 09 RUN FAQS, range footer + lockup).
+  - CLIENT `/portal/workspaces/ifta/:quarter` (light Filing Room: authority hero photograph, metrics rail, gold tabs, workflow stepper, checklist, client-safe quarter tasks, bars / map / donut / vehicles, uploads, activity, insights, dark GO TO rail).
+  - STAFF QUEUE `/office/workspaces/ifta` (status lanes + case rows, metrics rail, queue health, dates, flags, open-next-case rail — no table).
+  - STAFF CASE `/office/workspaces/ifta/:clientId/:quarter` (CLIENT HEALTH glass panel, mirror, workflow, tasks, dates, charts, client vs AIO activity, flags, 09 RUN FAQS tool card, audit timeline, case ID demoted to a CASE RECORD strip, NUDGE CLIENT rail).
+- **Preserved:** routes, guards (OfficeRouteGuard · CustomerRouteGuard · ClientPortalLifecycleGuard), demo store, `iftaDerive`, canonical case identity, tabs (client six / staff seven incl. NOTES), legacy redirects, tax truth (no engine; pending until the staff return summary), RUN FAQS identity. Primary business actions are still unbound, as in the baseline. Rules-of-hooks bug fixed (`useMemo` after early returns).
+- **Assets:** marks / lockups alpha-extracted from the approved lockup + nav mark; client hero = the photographic region of the approved client parent (686×417, upscaled 2× — soft on desktop, no larger source exists); public hero / road = approved AIO photos; footer range = crop of the approved hero. Inter Tight / Inter self-hosted (OFL), lucide-static glyphs (ISC) and us-atlas state paths (ISC) vendored — no new dependency. 0 paid generations; OpenArt not used.
+- **Proof:** `src/ifta` 21 tests (+9 view-model), full AIO suite 406 passed, tsc clean, build passes, live interaction pass 27/27 with 0 page errors. Boards + captures (393 / 834 / 1440) in `all-in-one-enterprises/docs/aio/ifta/visual-reconstruction/`.
+- **Tunnel:** the founder's AIO tunnel runs in the Cursor VM. Verified here on a local dev server only, because the Claude Code container's network policy denies `api.trycloudflare.com`. To see it live: pull master in the Cursor environment and restart `aio-vite` + `aio-preview-tunnel`.
+- **Next:** founder visual review of the four surfaces → bind the primary actions (client CTA, NUDGE CLIENT) to the existing domain actions → fan out the IFTA child states on the same module system.
+

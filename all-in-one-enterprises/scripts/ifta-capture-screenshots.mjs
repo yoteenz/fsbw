@@ -35,7 +35,8 @@ async function primePioneer(page) {
 for (const s of shots) {
   const page = await browser.newPage({ viewport: { width: s.w, height: s.h } });
   if (s.url.includes('/portal/workspaces/ifta')) await primePioneer(page);
-  await page.goto(`${BASE}${s.url}`, { waitUntil: 'networkidle', timeout: 60000 });
+  // Founder-review captures hide the preview harness (developer chrome) — ?harness=off.
+  await page.goto(`${BASE}${s.url}?harness=off`, { waitUntil: 'networkidle', timeout: 60000 });
   await page.waitForTimeout(800);
   await page.screenshot({ path: `${OUT}/${s.name}.png`, fullPage: true });
   await page.close();
