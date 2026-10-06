@@ -2,6 +2,10 @@
 
 Sprint P0.AIO.EXPERIENCE-DRIVEN-PAGE-REFINEMENT1 — **founder override in effect: visual layer superseded, composition awaiting founder review.**
 
+> **SUPERSEDED (2026-10-06, P0.AIO.IFTA.AUTHORITY-BUNDLE-INGEST-AND-PAGE-TREE-PROOF1).** The founder approved the AIO IFTA AUTHORITY BUNDLE: the LIGHT ANALYTICS COMMAND client parent, with staff and public derived from it. That bundle is the visual authority for this family. The quarter-jacket concept, wireframes, visual-language proposal and responsive contract below were proposals for founder review and **never authorities**. Do not implement from them. Implement from `../../ifta/authority-bundle/` (page / tab / state tree), whose source of truth is SITE00.
+>
+> Still valid from this folder: the legacy visual dependency audit, the functional contract, and the `src/ifta/` function layer (reconciled in the new data-contract reconciliation).
+
 | File | What it is |
 |---|---|
 | `AIO_IFTA_COMPOSITION_REVIEW.html` | Founder review page: audit summary, family concept, wireframes per surface and viewport, state postures, mirror table, decision sheet |

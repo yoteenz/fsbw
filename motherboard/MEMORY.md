@@ -55054,3 +55054,36 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Concept (PROPOSED_FOR_FOUNDER_REVIEW):** one **quarter jacket** object across actors (public specimen → My Office card → open on the desk → WITH AIO silver band → decision window → champagne seal → Vault drawer → next quarter; staff see jackets as queue + case file). Follows the **locked brand foundation** (uppercase primary, monogram-only nav, palette names). Family shell on existing routes, no legacy sidebar/canvas. Contracts + review page in `docs/aio/experience-driven/ifta/`; review published privately (claude.ai artifact 8pvmHZALwKsg4ksFiqQNc3).
 - **Open founder decisions D-01…D-14:** shell, public chrome, palette hexes, availability truth, sentence case inside records, monogram source (no standalone file), imagery (none; hero truck retired per IDNTY), objects in legacy hosts + Vault drawer route, Brain updates (UNDER_AIO_REVIEW, extra activity events, FILED/PAYMENT PENDING split, APPROVE FOR FILING wording), demo anchoring, Office work items.
 - **Conventions:** Legacy AIO code is forensic only (function, data, routing, permissions, content truth). No visual implementation of the IFTA family until the founder answers the decisions. 0 paid generations.
+
+---
+
+## 2026-10-06 — AIO IFTA authority bundle ingested; page / tab / state tree proved in SITE00 (P0.AIO.IFTA.AUTHORITY-BUNDLE-INGEST-AND-PAGE-TREE-PROOF1)
+
+- **Context:** the founder approved `AIO_IFTA_AUTHORITY_BUNDLE_LEAN.zip`: the LIGHT ANALYTICS COMMAND client parent, plus derived staff and public modes. The Brain (SITE00) ingested it and produced the full page / tab / state tree in SITE00 PR #1402 (`2225bc9`). No page was implemented, no paid generation ran, and no AIO data contract was changed.
+- **Founder decisions (durable):**
+  - Tabs are first-class authority-design nodes.
+  - The client parent authority precedes actor / viewport derivation.
+  - The authority package precedes implementation (the founder confirms the tree first).
+  - Sidekick is fallback, not default.
+  - **Supersedes:** the direct experience-contract → implementation pipeline.
+  - **Do not regress:** legacy AIO visuals have zero design authority.
+- **In this repo:**
+  - `docs/aio/ifta/authority-bundle/`: pointer README with SITE00 paths and sha256 of the 13 artifacts, plus a byte-for-byte copy of `AIO_IFTA_PAGE_TREE_PROOF.md`.
+  - `docs/aio/experience-driven/ifta/README.md`: the sprint-1 quarter-jacket concept is marked SUPERSEDED (it was never an authority). The audit and functional contract remain valid.
+  - `src/ifta/experience/` re-synced to SITE00. Only `expression_refs` and `lineage` changed; `iftaFamily.test.ts` still passes 10/10.
+- **Read-only data scan (@ `48d463f`, recorded in SITE00):**
+  - IFTA persists only in the demo store (no Supabase table; production rejects demo mode).
+  - `/portal/services/ifta` is caught by `services/:serviceRequestId`, and the office fuel-tax routes are unregistered.
+  - Availability conflicts: PREPARING / INTERNAL_ONLY / GO.
+  - `staffWorksheet` has no writer, so `prepareReturnSummary` fails on any non-seeded quarter.
+  - There is no OCR / CSV / ELD parsing and no tax computation.
+  - The client activity page shows org-internal events. This is pre-existing and not changed.
+- **Status:**
+  - Gate: all actors AUTHORITY_APPROVED, held by PAGE_TREE_CONFIRMATION_REQUIRED.
+  - Readiness: 39 / 64 nodes IMPLEMENTATION_READY.
+  - Reference package INCOMPLETE (staff queue authority; contract interaction 09).
+  - 10 open founder decisions.
+- **Next:**
+  1. The founder confirms the tree.
+  2. Authority-driven implementation, in this repo, of the ready nodes.
+  3. In parallel, a data-contract completion sprint.
