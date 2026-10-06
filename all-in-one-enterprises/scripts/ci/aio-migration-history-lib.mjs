@@ -132,10 +132,20 @@ export function evaluateHistoryCheck({
     };
   }
 
-  const { remoteOnly, localOnly, historyStatus } = compareHistories(
+  const { remoteOnly, localOnly, historyStatus: comparedStatus } = compareHistories(
     localVersions,
     remoteVersions,
   );
+
+  // Local-only migrations are the expected pre-db-push state: they are pending
+  // repository migrations that the following db push should apply. Remote-only
+  // migrations remain a blocking drift because CI is missing remote history.
+  const historyStatus =
+    remoteOnly.length > 0
+      ? 'MISMATCH'
+      : localOnly.length > 0
+        ? 'PENDING_LOCAL'
+        : comparedStatus;
 
   return {
     localCount,
@@ -146,6 +156,6 @@ export function evaluateHistoryCheck({
     remoteMethod,
     remoteOnly,
     localOnly,
-    exitCode: historyStatus === 'MATCH' ? 0 : 1,
+    exitCode: remoteOnly.length > 0 ? 1 : 0,
   };
 }
