@@ -55135,3 +55135,25 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Autopilot harness:** Live read fixture resolves staff user from `AIO_RLS_TEST_STAFF_JWT`, inserts temporary `aio_organization_memberships` for synthetic carrier/shipper orgs, verifies visibility, runs repository read, deletes memberships in `afterAll`.
 - **Git:** Rebased `fix/aio-final-production-validation-blockers` onto `master` @ `c88a30008` → tip `bbe33ff30`; fast-forward merged to `master`; only files: `freightRlsIntegration.test.ts`, `freightAutopilotLiveRead.test.ts`.
 - **Local tests:** Vitest skipped live cases (no staging creds in cloud agent env); authoritative proof = fresh GHA run on post-merge `master`.
+
+---
+
+## 2026-10-06 — AIO client migration, activation + office provisioning architecture (P0.AIO.CLIENT-MIGRATION-ACTIVATION-AND-OFFICE-PROVISIONING-ARCHITECTURE1)
+
+- **Context:** SITE00 PR #1409 (`597513c`). Architecture, data contract and workflow formalisation in the Experience Brain. No page was implemented; no AIO code or data contract was changed; 0 paid generations; OpenArt was not accessed; the IFTA lane is not blocked (`sync-ifta-contract.mjs --check` OK).
+- **Founder decision (durable):** EXISTING-CLIENT ONBOARDING IS NOT ACCOUNT CREATION — it is reconciliation between AIO's existing knowledge and the client's current business truth.
+  - Lifecycle: KNOWN_UNMIGRATED → MIGRATION_IN_PROGRESS → MIGRATION_REVIEW_REQUIRED → PREBUILT → INVITED → CLIENT_CONFIRMATION_REQUIRED → ACTIVE (· PAUSED · ENDED).
+  - **PROFILE EXISTS ≠ ACTIVE CLIENT.** ACTIVE needs CONFIRM & ENTER MY OFFICE plus all 8 activation conditions; prebuilt / invited / waiting clients are never counted.
+  - Nothing extracted becomes truth without a recorded decision; uncertain identity never merges; passwords are never generated or sent; documents alone never activate a workspace.
+- **Read-only audit of this repo (@ `c88a300`):**
+  - `Client.accountStatus` has no transitions; `ClientMigrationStatus` is Vault digitisation progress only.
+  - Physical Archive Migration (batch + SHA-256 + manual classify + approve into the Vault) is the intake to extend; approval has no permission check and bypasses verify side effects.
+  - `aio_next_customer_number()` (AIO-CUS-######) exists unused; `aio_organization_regulatory_identifiers` exists unused; matching ignores USDOT / MC / EIN / VIN.
+  - No invite / magic-link / service-role path. C11 RLS self-membership, C8 duplicate org on sign-up, C10 broken reset redirect, C9 `ensureOrganizationForUser` unused; the portal never reads account status.
+  - Six client-count sites disagree; terms acceptance is not persisted (`aio_consents` unused); the expiration notifier ignores document visibility.
+- **Landed here:** `all-in-one-enterprises/docs/aio/client-migration/` — pointer README (12 artifacts with sha256) plus byte-for-byte copies of `AIO_CLIENT_MIGRATION_ARCHITECTURE.md` and `AIO_EXISTING_CLIENT_FIRST_LOGIN.md`.
+- **Next:**
+  1. Founder answers: client ID display format; the legally required consent set.
+  2. Data sprint: lifecycle column; fact + decision tables; invite table + activation endpoint; C8 / C9 / C10 / C11 + portal gating; count sites → one rule; APPROVE MIGRATION permission.
+  3. Visual authority for MIGRATION INTAKE · MIGRATION REVIEW · EXISTING CLIENT WELCOME · WHAT CHANGED · CLIENT OFFICE ACTIVATION · CLIENT OFFICE HUB.
+
