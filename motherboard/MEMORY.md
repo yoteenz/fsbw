@@ -55124,3 +55124,14 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
      - IFTA OfficeWorkItem domain
      - founder role
      - production persistence
+
+---
+
+## 2026-10-06 — AIO final production validation harness blockers merged (P0.AIO.FINAL-PRODUCTION-VALIDATION-BLOCKERS.MERGE-ONTO-MASTER-AND-RERUN1)
+
+- **Context:** GitHub **AIO Supabase Production Validate** failed on two **test-harness** defects while production RLS role matrix already passed. Fix branch `fix/aio-final-production-validation-blockers` existed but was never on `master`, so CI kept running stale assertions.
+- **Decisions:** No Supabase RLS/policy/schema changes; no new secrets; surgical two-file test fix only; rebase fix onto current `master` and land on `master`.
+- **RLS harness:** Anonymous live reads assert `data` has length 0 (RLS deny via empty result) instead of `expect(error).toBeTruthy()` when Supabase returns `error=null`, `data=[]`.
+- **Autopilot harness:** Live read fixture resolves staff user from `AIO_RLS_TEST_STAFF_JWT`, inserts temporary `aio_organization_memberships` for synthetic carrier/shipper orgs, verifies visibility, runs repository read, deletes memberships in `afterAll`.
+- **Git:** Rebased `fix/aio-final-production-validation-blockers` onto `master` @ `c88a30008` → tip `bbe33ff30`; fast-forward merged to `master`; only files: `freightRlsIntegration.test.ts`, `freightAutopilotLiveRead.test.ts`.
+- **Local tests:** Vitest skipped live cases (no staging creds in cloud agent env); authoritative proof = fresh GHA run on post-merge `master`.
