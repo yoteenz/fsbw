@@ -1,7 +1,6 @@
 import { Link, Outlet, useLocation } from 'react-router-dom';
 import { useEffect, useMemo, useState } from 'react';
 import { AIOLogo } from '../components/AIOLogo';
-import { AIODebugBanner } from '../components/AIODebugBanner';
 import { runExpirationEvaluation } from '../demo/vaultActions';
 import { runBillingEvaluation } from '../demo/billingActions';
 import { useDemoStore } from '../demo/useDemoStore';
@@ -43,7 +42,6 @@ export function AIOPortalLayout() {
 
   return (
     <div className="aio-app aio-portal">
-      <AIODebugBanner />
       <div className="aio-portal__mobile-bar">
         <AIOLogo />
         <button type="button" className="aio-btn aio-btn--gold aio-btn--sm" onClick={() => setSidebarOpen((o) => !o)}>

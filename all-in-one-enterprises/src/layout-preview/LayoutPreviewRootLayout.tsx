@@ -1,5 +1,4 @@
 import { Outlet } from 'react-router-dom';
-import { AIODebugBanner } from '../components/AIODebugBanner';
 import { AioLayoutPreviewBar } from '../components/layout-preview/AioLayoutPreviewBar';
 import { LayoutPreviewProvider } from './LayoutPreviewContext';
 import type { AioLayoutPreviewMode } from './layoutPreviewMode';
@@ -16,7 +15,6 @@ export function LayoutPreviewRootLayout({ mode }: Props) {
   return (
     <LayoutPreviewProvider mode={mode}>
       <div className={rootClass}>
-        <AIODebugBanner />
         <AioLayoutPreviewBar />
         <Outlet />
       </div>
