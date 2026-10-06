@@ -177,10 +177,20 @@ import {
 import { BookkeepingAutopilotPage } from '../pages/BookkeepingAutopilotPage';
 import { StaffTrainingCenterPage } from '../pages/TrainingPages';
 import { OfficeBusinessNameReviewPage } from '../../pages/office/BusinessNameReviewOfficePage';
+import { IftaStaffShell } from '../../ifta/ui/IftaStaffShell';
+import { IftaStaffQueuePage } from '../../ifta/ui/IftaStaffQueuePage';
+import { IftaStaffCasePage } from '../../ifta/ui/IftaStaffCasePage';
+import { OfficeFuelTaxLegacyRedirect } from '../../ifta/ui/IftaLegacyRedirects';
 
 export default function OfficeRoutes() {
   return (
     <Routes>
+      <Route path="workspaces/ifta" element={<IftaStaffShell />}>
+        <Route index element={<IftaStaffQueuePage />} />
+        <Route path=":clientId/:quarterKey" element={<IftaStaffCasePage />} />
+      </Route>
+      <Route path="permitting/fuel-tax" element={<OfficeFuelTaxLegacyRedirect />} />
+      <Route path="permitting/fuel-tax/:caseId" element={<OfficeFuelTaxLegacyRedirect />} />
       <Route element={<AIOOfficeLayout />}>
         <Route index element={<OfficeDashboardPage />} />
         <Route path="work" element={<OfficeMyWorkPage />} />

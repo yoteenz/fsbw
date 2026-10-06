@@ -62,7 +62,7 @@ export function createDemoSeed(): DemoStore {
   const driverlink = createDriverLinkSeedData();
 
   const seed: DemoStore = {
-    version: 26,
+    version: AIO_DEMO_SCHEMA_VERSION,
     dataSystem: {
       demoSchemaVersion: AIO_DEMO_SCHEMA_VERSION,
       seedVersion: `demo-v${AIO_DEMO_SCHEMA_VERSION}`,

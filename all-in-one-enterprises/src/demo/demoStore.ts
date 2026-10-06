@@ -68,7 +68,7 @@ export function loadDemoStore(): DemoStore {
   if (typeof window === 'undefined') return createDemoSeed();
 
   const existing = readStorage<DemoStore | (Omit<DemoStore, 'version'> & { version: 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 20 | 21 | 22 | 23 | 24 | 25 }) | null>(DEMO_STORE_KEY, null);
-  if (existing?.version === 26) {
+  if (existing?.version === AIO_DEMO_SCHEMA_VERSION) {
     const patched = ensureLoadBoardFields(existing as DemoStore);
     const ifta = ensureIftaSeed(patched);
     if (patched !== existing || ifta.changed) {
@@ -349,13 +349,13 @@ function upgradeStoreV24ToV25(store: DemoStoreV24): DemoStore {
     loadBoardSavedSearches: [],
     loadBoardRecentSearches: [],
     carrierLoadBoardOffers: [],
-    version: 26,
+    version: AIO_DEMO_SCHEMA_VERSION,
   } as DemoStore);
   return ensureClientMigrationFields(stepped);
 }
 
 function upgradeStoreV25ToV26(store: DemoStore): DemoStore {
-  return ensureClientMigrationFields({ ...store, version: 26 });
+  return ensureClientMigrationFields({ ...store, version: AIO_DEMO_SCHEMA_VERSION });
 }
 
 function upgradeStoreV23ToV24(store: DemoStoreV23): DemoStoreV24 {
