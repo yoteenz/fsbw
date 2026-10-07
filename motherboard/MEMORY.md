@@ -55301,3 +55301,24 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Next:** founder / sister review of V2, then the live implementation pass applies `v2-reference.patch`.
 - **Spatial Architecture Review:** SKIPPED. This is a refinement of existing IFTA surfaces; no new Studio surface.
 - **Sync:** master, `[sync-only]`, docs only.
+
+---
+
+## 2026-10-07 — AIO IFTA authority V2 redone as a fine-tune of V1 (composition locked)
+
+- **Founder correction:** the first V2 (`ab2e4e99`) reformatted the layouts: phone single-column stacks, moved health panel, reordered modules, re-laid heroes. The direction was to fine-tune V1 only and not change the composition. That draft is withdrawn.
+- **Now:**
+  - `docs/aio/ifta/authority-refinement-v2/v2-reference.patch` is one appended `ifta-ui.css` block, with no TSX changes. It touches only type size, weight, tracking and contrast. The queue is untouched except the shared hero-contrast fix.
+  - Staff / queue hero lockup is light on the night-yard plate (it was nearly invisible). Q3 2026 is set at weight 600, and the client name leads the hero lines.
+  - The staff desktop rail label no longer collides with its delta.
+  - Next-action label is 22 px for client and staff; card, tab, label and metadata sizes are evened.
+- **Proof:**
+  - Geometry lock: 18 / 18 views identical to V1 (blocks ±1 px, text anchors ±4 px), page heights included.
+  - Clipped / small text is equal or lower than V1 in every view.
+  - `tsc` clean; `vitest src/ifta` 21 / 21; live pass 41 / 43, the same as `master` (the two `596dc269` items still await a founder decision).
+- **Links:** the same V2 URLs, now on version 2.
+  - public https://claude.ai/artifact/Mwz9TDJadxqKMPpcoBxxCR
+  - client https://claude.ai/artifact/D4rPXM9faMgPse25oUxgzt
+  - staff https://claude.ai/artifact/2562hEnELiQyQSjCkoB5FR
+- **Spatial Architecture Review:** SKIPPED. Type refinement of existing surfaces.
+- **Sync:** master, `[sync-only]`, docs only.

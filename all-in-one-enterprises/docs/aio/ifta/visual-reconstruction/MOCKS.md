@@ -29,7 +29,7 @@ npm run ifta:mocks            # → .ifta-mocks/*.html (git-ignored); starts and
 
 ## V2 refinement (static, for comparison)
 
-These are the authority refinement V2 snapshots. They are built from a worktree on `aace9d2d` with the V2 reference patch applied (not live), and are not refreshed by the routine. Details are in `../authority-refinement-v2/README.md`.
+These are the V2 fine-tune snapshots. The composition is identical to V1; only type size, weight, tracking and contrast are refined. They are built from a worktree on `aace9d2d` with `v2-reference.patch` applied (not live), and are not refreshed by the routine. Details are in `../authority-refinement-v2/README.md`.
 
 | Mock | V2 link |
 |---|---|

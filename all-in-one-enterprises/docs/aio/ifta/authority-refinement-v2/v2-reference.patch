@@ -1,843 +1,122 @@
-diff --git a/all-in-one-enterprises/src/ifta/ui/IftaClientFilingRoomPage.tsx b/all-in-one-enterprises/src/ifta/ui/IftaClientFilingRoomPage.tsx
-index 500a080e..4937b741 100644
---- a/all-in-one-enterprises/src/ifta/ui/IftaClientFilingRoomPage.tsx
-+++ b/all-in-one-enterprises/src/ifta/ui/IftaClientFilingRoomPage.tsx
-@@ -172,6 +172,7 @@ function FilingRoom({
-       ? `Resolve ${blocking.length} item${blocking.length === 1 ? '' : 's'} · ${ctaTab}`
-       : ctaRaw.replace(/\{[^}]+\}/g, '').trim() || `Open ${ctaTab}`;
- 
-+  const cta = <IftaCtaRail eyebrow="Go to" label={ctaLabel} icon={first ? 'clipboard' : 'doc'} onClick={() => go(ctaTab)} />;
-   const shares = mileageShares(quarter);
-   const fuel = fuelShares(quarter);
-   const totals = receiptTotals(quarter);
-@@ -268,6 +269,7 @@ function FilingRoom({
-       <IftaCard title="Quick actions" className="ifta-a-quick ifta-card--list">
-         <IftaQuickActions rows={checklistRows(quarter, now)} onSelect={(r) => go(r.tab)} />
-       </IftaCard>
-+      {band === 'mobile' ? <div className="ifta-a-cta">{cta}</div> : null}
-       {mapCard}
-       {uploadsCard}
-       {insights}
-@@ -429,7 +431,6 @@ function FilingRoom({
-     DOCUMENTS: documentsTab,
-   };
- 
--  const cta = <IftaCtaRail eyebrow="Go to" label={ctaLabel} icon={first ? 'clipboard' : 'doc'} onClick={() => go(ctaTab)} />;
-   const footerWords = desktop ? ['Operations', 'Compliance', 'Client success'] : ['Data', 'Compliance', 'Real progress'];
- 
-   return (
-@@ -510,7 +511,7 @@ function FilingRoom({
-           </div>
-         ) : (
-           <>
--            {cta}
-+            {band === 'mobile' && tab === 'PROGRESS' ? null : cta}
-             <IftaFooter tagline={footerWords} />
-           </>
-         )}
-diff --git a/all-in-one-enterprises/src/ifta/ui/IftaModules.tsx b/all-in-one-enterprises/src/ifta/ui/IftaModules.tsx
-index df678c55..8a7c623b 100644
---- a/all-in-one-enterprises/src/ifta/ui/IftaModules.tsx
-+++ b/all-in-one-enterprises/src/ifta/ui/IftaModules.tsx
-@@ -65,9 +65,11 @@ export function IftaHero({
-         <h1 className="ifta-hero__title">{title}</h1>
-         {period ? <p className="ifta-hero__period">{period}</p> : null}
-         {actor === 'client' ? <span className="ifta-hero__rule" aria-hidden="true" /> : null}
--        {lines ? <div className="ifta-hero__lines">{lines}</div> : null}
-+        <div className="ifta-hero__foot">
-+          {lines ? <div className="ifta-hero__lines">{lines}</div> : null}
-+          {pill ? <div className="ifta-hero__pill">{pill}</div> : null}
-+        </div>
-       </div>
--      {pill ? <div className="ifta-hero__pill">{pill}</div> : null}
-       {aside ? <div className="ifta-hero__aside">{aside}</div> : null}
-       {rail ? <div className="ifta-hero__rail">{rail}</div> : null}
-     </section>
-diff --git a/all-in-one-enterprises/src/ifta/ui/IftaPublicPage.tsx b/all-in-one-enterprises/src/ifta/ui/IftaPublicPage.tsx
-index 9d3bc949..6449bec2 100644
---- a/all-in-one-enterprises/src/ifta/ui/IftaPublicPage.tsx
-+++ b/all-in-one-enterprises/src/ifta/ui/IftaPublicPage.tsx
-@@ -55,7 +55,7 @@ export function IftaPublicPage() {
-           <span className="ifta-pubhero__rule" aria-hidden="true" />
-           <p className="ifta-pubhero__tag">
-             Real data. Real progress.
--            <br />
-+            {' '}<br />
-             Every mile accounted for.
-           </p>
-           <a href="#how-it-works" className="ifta-pubbtn ifta-pubhero__cta">
-@@ -83,7 +83,7 @@ export function IftaPublicPage() {
-           <div className="ifta-clear__text">
-             <h2 id="ifta-clear-path" className="ifta-pubh2">
-               A clear path
--              <br />
-+              {' '}<br />
-               from miles to compliance.
-             </h2>
-             <p className="ifta-clear__lead">
-@@ -99,9 +99,9 @@ export function IftaPublicPage() {
-             <img src={IFTA_PLATES.publicRoad} alt="A highway winding through the mountains at dusk" loading="lazy" decoding="async" />
-             <figcaption>
-               Real drivers.
--              <br />
-+              {' '}<br />
-               Real roads.
--              <br />
-+              {' '}<br />
-               Real compliance.
-               <span className="ifta-clear__rule" aria-hidden="true" />
-             </figcaption>
-@@ -137,7 +137,7 @@ export function IftaPublicPage() {
-                   {p.title[1] && desktop && p.n === '01' ? ` ${p.title[1]}` : null}
-                   {p.title[1] && !(desktop && p.n === '01') ? (
-                     <>
--                      <br />
-+                      {' '}<br />
-                       {p.title[1]}
-                     </>
-                   ) : null}
-@@ -145,7 +145,7 @@ export function IftaPublicPage() {
-                 {desktop ? (
-                   <span className="ifta-process__text">
-                     {p.text[0]}
--                    <br />
-+                    {' '}<br />
-                     {p.text[1]}
-                   </span>
-                 ) : null}
-@@ -170,17 +170,17 @@ export function IftaPublicPage() {
-             <span className="ifta-oneret__n">{SAMPLE.jurisdictions}</span>
-             <span className="ifta-oneret__unit">
-               Jurisdictions
--              <br />
-+              {' '}<br />
-               One return
-             </span>
-             <span className="ifta-oneret__rule" aria-hidden="true" />
-             <p id="ifta-one-return">
-               We track your fuel,
--              <br />
-+              {' '}<br />
-               mileage, and routes
--              <br />
-+              {' '}<br />
-               across all states
--              <br />
-+              {' '}<br />
-               so you stay compliant.
-             </p>
-           </div>
-@@ -195,7 +195,7 @@ export function IftaPublicPage() {
-                   <span className="ifta-promises__title">{p.title}</span>
-                   <span className="ifta-promises__text">
-                     {p.text[0]}
--                    <br />
-+                    {' '}<br />
-                     {p.text[1]}
-                   </span>
-                 </span>
-diff --git a/all-in-one-enterprises/src/ifta/ui/IftaStaffCasePage.tsx b/all-in-one-enterprises/src/ifta/ui/IftaStaffCasePage.tsx
-index 2bc79687..a347993d 100644
---- a/all-in-one-enterprises/src/ifta/ui/IftaStaffCasePage.tsx
-+++ b/all-in-one-enterprises/src/ifta/ui/IftaStaffCasePage.tsx
-@@ -170,6 +170,8 @@ function StaffCase({
-   const totals = receiptTotals(quarter);
-   const fleet = fleetReadiness(quarter);
-   const desktop = band === 'desktop';
-+  const phone = band === 'mobile';
-+  const nextAction = <IftaCtaRail eyebrow="Open" label={quarter.staffWorksheet?.length ? 'Return draft' : staffCta} icon="clipboard" />;
-   const gallonsOf = new Map(fuel.map((s) => [s.code, s.value]));
- 
-   useIftaShellData({
-@@ -267,6 +269,7 @@ function StaffCase({
-       {clientAct}
-       {teamAct}
-       {risks}
-+      {band === 'mobile' ? <div className="ifta-a-cta">{nextAction}</div> : null}
-     </div>
-   );
- 
-@@ -453,7 +456,7 @@ function StaffCase({
-     ),
-   };
- 
--  const healthPanel = <IftaHealth title="Client health" rows={healthRows(quarter, now)} risk={band === 'mobile' ? undefined : risk} />;
-+  const healthPanel = <IftaHealth title="Client health" rows={healthRows(quarter, now)} risk={risk} />;
- 
-   return (
-     <div className={`ifta-page ifta-page--staff is-${band}`}>
-@@ -472,7 +475,7 @@ function StaffCase({
-           </p>
-         }
-         pill={<IftaStatePill label={health.bucketLabel} tone={PILL_TONE[BUCKET_TONE[health.bucket]] ?? 'gold'} />}
--        aside={healthPanel}
-+        aside={phone ? undefined : healthPanel}
-       />
-       <div className="ifta-frame ifta-frame--rail">
-         <IftaRail
-@@ -482,9 +485,9 @@ function StaffCase({
-             { glyph: 'metric-pin', value: String(metrics.jurisdictions), label: 'Jurisdictions', delta: deltas?.jurisdictions },
-             { glyph: 'metric-coins', value: metrics.tax.value, label: metrics.tax.kind === 'PENDING' ? 'Tax due / credit' : metrics.tax.label, muted: metrics.tax.kind === 'PENDING', delta: deltas?.tax.dir === 'none' ? null : deltas?.tax },
-           ]}
--          extra={band === 'mobile' ? <span className={`ifta-riskchip is-${risk.level.toLowerCase()}`}>{risk.label}</span> : undefined}
-         />
-       </div>
-+      {phone ? <div className="ifta-frame ifta-health-strip">{healthPanel}</div> : null}
- 
-       <div className="ifta-frame">
-         <IftaTabs
-@@ -507,7 +510,7 @@ function StaffCase({
-           {body[tab]}
-         </div>
- 
--        <IftaCtaRail eyebrow="Open" label={quarter.staffWorksheet?.length ? 'Return draft' : staffCta} icon="clipboard" />
-+        {phone && tab === 'OVERVIEW' ? null : nextAction}
-         <IftaFooter tagline={['Operations', 'Compliance', 'Client success']} />
-       </div>
-     </div>
-diff --git a/all-in-one-enterprises/src/ifta/ui/IftaStaffQueuePage.tsx b/all-in-one-enterprises/src/ifta/ui/IftaStaffQueuePage.tsx
-index 569100d7..a0757b30 100644
---- a/all-in-one-enterprises/src/ifta/ui/IftaStaffQueuePage.tsx
-+++ b/all-in-one-enterprises/src/ifta/ui/IftaStaffQueuePage.tsx
-@@ -112,6 +112,18 @@ export function IftaStaffQueuePage() {
-     </IftaCard>
-   );
- 
-+  const phone = band === 'mobile';
-+  const healthPanel = (
-+    <IftaHealth
-+      title="Queue health"
-+      rows={[
-+        { label: 'Needs AIO now', value: String(needsAio), ok: needsAio === 0 },
-+        { label: 'Waiting on clients', value: String(summary.counts.AWAITING_CLIENT), ok: summary.counts.AWAITING_CLIENT === 0 },
-+        { label: 'Open discrepancies', value: String(summary.openDiscrepancies), ok: summary.openDiscrepancies === 0 },
-+        { label: 'Days to deadline', value: summary.filing.days !== null ? String(summary.filing.days) : '—', ok: (summary.filing.days ?? 99) > 10, accent: true },
-+      ]}
-+    />
-+  );
-   return (
-     <div className={`ifta-page ifta-page--staff ifta-page--queue is-${band}`}>
-       <IftaHero
-@@ -129,17 +141,7 @@ export function IftaStaffQueuePage() {
-           </p>
-         }
-         pill={<IftaStatePill label={`${needsAio} need AIO`} tone={needsAio ? 'gold' : 'green'} />}
--        aside={
--          <IftaHealth
--            title="Queue health"
--            rows={[
--              { label: 'Needs AIO now', value: String(needsAio), ok: needsAio === 0 },
--              { label: 'Waiting on clients', value: String(summary.counts.AWAITING_CLIENT), ok: summary.counts.AWAITING_CLIENT === 0 },
--              { label: 'Open discrepancies', value: String(summary.openDiscrepancies), ok: summary.openDiscrepancies === 0 },
--              { label: 'Days to deadline', value: summary.filing.days !== null ? String(summary.filing.days) : '—', ok: (summary.filing.days ?? 99) > 10, accent: true },
--            ]}
--          />
--        }
-+        aside={phone ? undefined : healthPanel}
-       />
-       <div className="ifta-frame ifta-frame--rail">
-         <IftaRail
-@@ -151,6 +153,7 @@ export function IftaStaffQueuePage() {
-           ]}
-         />
-       </div>
-+      {phone ? <div className="ifta-frame ifta-health-strip">{healthPanel}</div> : null}
-       <div className="ifta-frame">
-         <IftaTabs tabs={QUEUE_TABS} current={tab} onSelect={setTab} label="Queue filter" />
-         <div role="tabpanel" aria-label={tab} className={`ifta-grid ifta-grid--queue-${band === 'desktop' ? 'desktop' : 'compact'}`}>
 diff --git a/all-in-one-enterprises/src/ifta/ui/ifta-ui.css b/all-in-one-enterprises/src/ifta/ui/ifta-ui.css
-index e30a4e7c..503ca6c4 100644
+index e30a4e7c..24fe3d3d 100644
 --- a/all-in-one-enterprises/src/ifta/ui/ifta-ui.css
 +++ b/all-in-one-enterprises/src/ifta/ui/ifta-ui.css
-@@ -5416,3 +5416,591 @@ body:has(.ifta-root--dark) {
+@@ -5416,3 +5416,117 @@ body:has(.ifta-root--dark) {
      margin-left: 0.4rem;
    }
  }
 +
 +/* ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════
-+ * AIO IFTA AUTHORITY · V2 REFINEMENT LAYER (P0.AIO.IFTA.THREE-MODE-AUTHORITY-REFINEMENT-V2)
-+ * One family system over the three actor compositions. Nothing here changes a concept, an image, a section or copy.
-+ *
-+ * TYPE (rem = 10 px at each band's reference width: desktop 1440 · tablet 834 / staff 1024 · phone 402)
-+ *   T0 hero signal · T1 page title · T1s period · TL hero lines   — the hero lockup; same anatomy, actor-scaled
-+ *   T2 section · T3 card / module title · T4 metric · T5 body · T6 metadata · T7 eyebrow / label / status
-+ *   INTER TIGHT = headings, metrics, labels, actions · INTER = body + metadata · uppercase for headings / labels / status
-+ * SPACE  s1 4 · s2 8 · s3 12 · s4 16 · s5 20 · s6 24 · s7 32 · s8 48 · s9 64      gutters 24 / 24 / 16
++ * AIO IFTA AUTHORITY · V2 FINE-TUNE (P0.AIO.IFTA.THREE-MODE-AUTHORITY-REFINEMENT-V2)
++ * V1 composition is locked: no box, grid, order, position, image or module size changes here. This layer only
++ * normalises type (size · weight · tracking · line-height), restores contrast and evens small inner details, so one
++ * role reads the same in every mode. Values are authority rem (1rem = 10 px at the band's reference width).
 + * ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════ */
-+:is(#ifta-v2, .ifta-root) {
-+  --s1: 0.4rem; --s2: 0.8rem; --s3: 1.2rem; --s4: 1.6rem; --s5: 2rem; --s6: 2.4rem; --s7: 3.2rem; --s8: 4.8rem; --s9: 6.4rem;
-+  --gutter: 2.4rem; --sect: 4.8rem;
-+  --t0: 8.4rem; --t1: 2.2rem; --t1s: 2rem; --tl: 1.6rem;
-+  --t2: 2.6rem; --t3: 1.6rem; --t4: 3rem; --t5: 1.5rem; --t6: 1.3rem; --t7: 1.15rem;
-+  --ttab: 1.3rem; --tcta: 2rem; --tbtn: 1.4rem;
-+  --pad: 2rem; --gap: 1.6rem; --radius: 1.2rem;
-+  --ic-meta: 1.6rem; --ic-row: 2rem; --ic-card: 2.4rem; --ic-metric: 3.2rem;
-+  --pill-h: 3.6rem; --chip-h: 2.4rem; --flow-n: 4rem; --hero-pt: 3.6rem;
-+  --ink-2: #4a4b50; --ink-3: #6b6c72; --hair: #ececea;
++
++/* ───────── every band: contrast + roles that are band-independent ───────── */
++/* staff / queue hero sits on the night-yard plate: light lockup, quieter Q3 2026, client name leads the lines */
++:is(#ifta-ft, .ifta-root) :is(.ifta-hero--staff, .ifta-hero--queue) .ifta-hero__text { color: rgba(244, 244, 242, 0.9); text-shadow: 0 0.1rem 1.6rem rgba(0, 0, 0, 0.55); }
++:is(#ifta-ft, .ifta-root) :is(.ifta-hero--staff, .ifta-hero--queue) .ifta-hero__title { color: #fff; font-weight: 600; }
++:is(#ifta-ft, .ifta-root) :is(.ifta-hero--staff, .ifta-hero--queue) .ifta-hero__lines { color: rgba(244, 244, 242, 0.84); }
++:is(#ifta-ft, .ifta-root) .ifta-hero--staff .ifta-hero__lines span[title] { color: #fff; font-weight: 600; }
++:is(#ifta-ft, .ifta-root) :is(.ifta-hero--staff, .ifta-hero--queue) .ifta-pill { text-shadow: none; }
++/* one status voice: pill / chips share weight and tracking */
++
++/* clipped rows: tighter tracking before ellipsis */
++:is(#ifta-ft, .ifta-root) :is(.ifta-legend__name, .ifta-tasks__label, .ifta-actor__title, .ifta-risks__detail, .ifta-uploads__name, .ifta-uploads__meta) { letter-spacing: 0; }
++
++/* ───────── desktop ───────── */
++@media (min-width: 1200px) {
++  /* card + module titles, tabs, links */
++  :is(#ifta-ft, .ifta-root) :is(.ifta-page--client, .ifta-page--staff:not(.ifta-page--queue)) .ifta-card__title, :is(#ifta-ft, .ifta-root) .ifta-page--staff:not(.ifta-page--queue) .ifta-card__title { font-size: 1.85rem; letter-spacing: 0.01em; }
++  :is(#ifta-ft, .ifta-root) :is(.ifta-page--client, .ifta-page--staff:not(.ifta-page--queue)) .ifta-tab, :is(#ifta-ft, .ifta-root) .ifta-page--staff:not(.ifta-page--queue) .ifta-tab { font-size: 1.45rem; }
++  :is(#ifta-ft, .ifta-root) :is(.ifta-page--client, .ifta-page--staff:not(.ifta-page--queue)) .ifta-viewall, :is(#ifta-ft, .ifta-root) .ifta-page--staff:not(.ifta-page--queue) .ifta-viewall { font-size: 1.3rem; }
++  /* metric rails (light): one label voice, deltas no longer collide with labels */
++  :is(#ifta-ft, .ifta-root) :is(.ifta-page--client, .ifta-page--staff:not(.ifta-page--queue)) .ifta-rail__label { font-size: 1.45rem; letter-spacing: 0.01em; }
++  :is(#ifta-ft, .ifta-root) :is(.ifta-page--client, .ifta-page--staff:not(.ifta-page--queue)) .ifta-rail__value { font-size: 3.1rem; }
++  :is(#ifta-ft, .ifta-root) :is(.ifta-page--client, .ifta-page--staff:not(.ifta-page--queue)) .ifta-rail__delta-v { font-size: 1.4rem; }
++  :is(#ifta-ft, .ifta-root) :is(.ifta-page--client, .ifta-page--staff:not(.ifta-page--queue)) .ifta-rail__delta-vs { font-size: 1.3rem; }
++  /* client health: same box, quieter type so it supports the hero instead of competing */
++  :is(#ifta-ft, .ifta-root) .ifta-page--staff:not(.ifta-page--queue) .ifta-health__title { font-size: 2rem; letter-spacing: 0.04em; }
++  :is(#ifta-ft, .ifta-root) .ifta-page--staff:not(.ifta-page--queue) .ifta-health__chip { font-size: 1.35rem; }
++  :is(#ifta-ft, .ifta-root) .ifta-page--staff:not(.ifta-page--queue) .ifta-health__label { font-size: 1.55rem; }
++  :is(#ifta-ft, .ifta-root) .ifta-page--staff:not(.ifta-page--queue) .ifta-health strong { font-size: 1.65rem; }
++  /* next-action rail: one size for client and staff */
++  :is(#ifta-ft, .ifta-root) :is(.ifta-page--client, .ifta-page--staff:not(.ifta-page--queue)) .ifta-cta__label, :is(#ifta-ft, .ifta-root) .ifta-page--staff:not(.ifta-page--queue) .ifta-cta__label { font-size: 2.2rem; letter-spacing: 0.02em; }
++  :is(#ifta-ft, .ifta-root) :is(.ifta-page--client, .ifta-page--staff:not(.ifta-page--queue)) .ifta-cta__eyebrow, :is(#ifta-ft, .ifta-root) .ifta-page--staff:not(.ifta-page--queue) .ifta-cta__eyebrow { font-size: 1.6rem; letter-spacing: 0.08em; }
++  /* rows */
++  :is(#ifta-ft, .ifta-root) :is(.ifta-page--client, .ifta-page--staff:not(.ifta-page--queue)) .ifta-flow__label, :is(#ifta-ft, .ifta-root) .ifta-page--staff:not(.ifta-page--queue) .ifta-flow__label { font-size: 1.7rem; }
++  :is(#ifta-ft, .ifta-root) :is(.ifta-page--client, .ifta-page--staff:not(.ifta-page--queue)) .ifta-flow__status, :is(#ifta-ft, .ifta-root) .ifta-page--staff:not(.ifta-page--queue) .ifta-flow__status { font-size: 1.45rem; }
++  :is(#ifta-ft, .ifta-root) :is(.ifta-page--client, .ifta-page--staff:not(.ifta-page--queue)) .ifta-flow__date { font-size: 1.25rem; }
++  :is(#ifta-ft, .ifta-root) :is(.ifta-page--client, .ifta-page--staff:not(.ifta-page--queue)) .ifta-tasks__label, :is(#ifta-ft, .ifta-root) .ifta-page--staff:not(.ifta-page--queue) .ifta-tasks__label { font-size: 1.5rem; }
++  :is(#ifta-ft, .ifta-root) :is(.ifta-page--client, .ifta-page--staff:not(.ifta-page--queue)) .ifta-tasks__date { font-size: 1.4rem; }
++  :is(#ifta-ft, .ifta-root) :is(.ifta-page--client, .ifta-page--staff:not(.ifta-page--queue)) .ifta-tasks__who { font-size: 1.3rem; }
++  :is(#ifta-ft, .ifta-root) :is(.ifta-page--client, .ifta-page--staff:not(.ifta-page--queue)) .ifta-dates__label { font-size: 1.7rem; }
++  :is(#ifta-ft, .ifta-root) :is(.ifta-page--client, .ifta-page--staff:not(.ifta-page--queue)) .ifta-dates__value { font-size: 1.5rem; }
++  :is(#ifta-ft, .ifta-root) :is(.ifta-page--client, .ifta-page--staff:not(.ifta-page--queue)) .ifta-vehicles__unit, :is(#ifta-ft, .ifta-root) .ifta-page--staff:not(.ifta-page--queue) .ifta-vehicles__unit { font-size: 1.6rem; font-weight: 600; font-family: var(--display); }
++  :is(#ifta-ft, .ifta-root) :is(.ifta-page--client, .ifta-page--staff:not(.ifta-page--queue)) .ifta-vehicles__value { font-size: 1.5rem; }
++  :is(#ifta-ft, .ifta-root) .ifta-page--client .ifta-bars__x { font-size: 1.2rem; }
++  :is(#ifta-ft, .ifta-root) :is(.ifta-page--client, .ifta-page--staff:not(.ifta-page--queue)) :is(.ifta-table td, .ifta-table__event span, .ifta-table__file span, .ifta-table__when span) { font-size: 1.4rem; }
++  /* shell */
++  :is(#ifta-ft, .ifta-root):is(.ifta-root--client, .ifta-root--staff) .ifta-top__name { font-size: 1.5rem; }
++  :is(#ifta-ft, .ifta-root):is(.ifta-root--client, .ifta-root--staff) .ifta-top__role { font-size: 1.25rem; }
++  /* public */
++  :is(#ifta-ft, .ifta-root) :is(.ifta-clear, .ifta-process) .ifta-pubh2 { font-size: 2.9rem; letter-spacing: 0.08em; }
++  :is(#ifta-ft, .ifta-root) .ifta-promises .ifta-pubh2 { font-size: 2.6rem; letter-spacing: 0.08em; white-space: nowrap; }
++  :is(#ifta-ft, .ifta-root) .ifta-rail--dark .ifta-rail__label { font-size: 1.7rem; letter-spacing: 0.05em; }
++  :is(#ifta-ft, .ifta-root) .ifta-rail__badge { font-size: 1.15rem; }
++  :is(#ifta-ft, .ifta-root) .ifta-pubbtn { font-size: 1.85rem; }
 +}
-+:is(#ifta-v2, .ifta-root).ifta-root--staff { --t0: 6.8rem; --t1: 1.8rem; --t1s: 1.7rem; --tl: 1.5rem; --hero-pt: 3.2rem; }
-+:is(#ifta-v2, .ifta-root).ifta-root--public { --t0: 10rem; --t1: 3rem; --t1s: 2.4rem; --tl: 2rem; --t4: 3.4rem; --hero-pt: 4.4rem; --hair: #2c2c2f; --ink-2: #d2d2d4; --ink-3: #a4a4a8; }
++
++/* ───────── tablet ───────── */
 +@media (min-width: 700px) and (max-width: 1199.98px) {
-+  :is(#ifta-v2, .ifta-root) { --t0: 8rem; --t3: 1.7rem; --t4: 2.8rem; --t7: 1.2rem; --tbtn: 1.5rem; --sect: 4rem; }
-+  :is(#ifta-v2, .ifta-root).ifta-root--staff { --t0: 7.2rem; --t1: 2rem; --t1s: 1.8rem; --tl: 1.6rem; }
-+  :is(#ifta-v2, .ifta-root).ifta-root--public { --t0: 8.8rem; --t1: 2.8rem; --t1s: 2.4rem; --tl: 2rem; --t4: 3rem; --t2: 2.4rem; }
++  :is(#ifta-ft, .ifta-root) :is(.ifta-page--client, .ifta-page--staff:not(.ifta-page--queue)) .ifta-card__title, :is(#ifta-ft, .ifta-root) .ifta-page--client .ifta-card__title, :is(#ifta-ft, .ifta-root) .ifta-page--staff:not(.ifta-page--queue) .ifta-card__title { font-size: 2.1rem; letter-spacing: 0.01em; }
++  :is(#ifta-ft, .ifta-root) .ifta-page--staff:not(.ifta-page--queue) :is(.ifta-a-clientact, .ifta-a-teamact, .ifta-a-risks) .ifta-card__title { font-size: 1.7rem; letter-spacing: 0; }
++  :is(#ifta-ft, .ifta-root) :is(.ifta-page--client, .ifta-page--staff:not(.ifta-page--queue)) .ifta-tab, :is(#ifta-ft, .ifta-root) .ifta-page--client .ifta-tab, :is(#ifta-ft, .ifta-root) .ifta-page--staff:not(.ifta-page--queue) .ifta-tab { font-size: 1.5rem; }
++  :is(#ifta-ft, .ifta-root) :is(.ifta-page--client, .ifta-page--staff:not(.ifta-page--queue)) .ifta-viewall, :is(#ifta-ft, .ifta-root) .ifta-page--staff:not(.ifta-page--queue) .ifta-viewall, :is(#ifta-ft, .ifta-root) .ifta-page--client .ifta-viewall { font-size: 1.5rem; }
++  :is(#ifta-ft, .ifta-root) :is(.ifta-page--client, .ifta-page--staff:not(.ifta-page--queue)) .ifta-rail__label { font-size: 1.55rem; letter-spacing: 0.03em; }
++  :is(#ifta-ft, .ifta-root) :is(.ifta-page--client, .ifta-page--staff:not(.ifta-page--queue)) .ifta-cta__label, :is(#ifta-ft, .ifta-root) .ifta-page--client .ifta-cta__label, :is(#ifta-ft, .ifta-root) .ifta-page--staff:not(.ifta-page--queue) .ifta-cta__label { font-size: 2.2rem; letter-spacing: 0.02em; }
++  :is(#ifta-ft, .ifta-root) :is(.ifta-page--client, .ifta-page--staff:not(.ifta-page--queue)) .ifta-cta__eyebrow, :is(#ifta-ft, .ifta-root) .ifta-page--client .ifta-cta__eyebrow, :is(#ifta-ft, .ifta-root) .ifta-page--staff:not(.ifta-page--queue) .ifta-cta__eyebrow { font-size: 1.6rem; letter-spacing: 0.08em; }
++  :is(#ifta-ft, .ifta-root) .ifta-page--staff:not(.ifta-page--queue) .ifta-health__title { font-size: 2rem; letter-spacing: 0.04em; }
++  :is(#ifta-ft, .ifta-root) .ifta-page--staff:not(.ifta-page--queue) .ifta-health__chip { font-size: 1.5rem; }
++  :is(#ifta-ft, .ifta-root) .ifta-page--staff:not(.ifta-page--queue) .ifta-health__label { font-size: 1.7rem; }
++  :is(#ifta-ft, .ifta-root) .ifta-page--staff:not(.ifta-page--queue) .ifta-health strong { font-size: 1.8rem; }
++  :is(#ifta-ft, .ifta-root) .ifta-page--staff:not(.ifta-page--queue) .ifta-tasks__label { font-size: 1.8rem; }
++  :is(#ifta-ft, .ifta-root) :is(.ifta-page--client, .ifta-page--staff:not(.ifta-page--queue)) .ifta-flow__label { font-size: 1.85rem; }
++  :is(#ifta-ft, .ifta-root) :is(.ifta-page--client, .ifta-page--staff:not(.ifta-page--queue)) .ifta-flow__status { font-size: 1.6rem; }
++  :is(#ifta-ft, .ifta-root) .ifta-page--staff:not(.ifta-page--queue) .ifta-flow__date { font-size: 1.5rem; }
++  :is(#ifta-ft, .ifta-root) .ifta-page--staff:not(.ifta-page--queue) :is(.ifta-legend__name, .ifta-legend__val) { font-size: 1.7rem; }
++  :is(#ifta-ft, .ifta-root) .ifta-page--client .ifta-uploads__name { font-size: 1.5rem; }
++  :is(#ifta-ft, .ifta-root) .ifta-page--client .ifta-uploads__meta { font-size: 1.3rem; }
++  :is(#ifta-ft, .ifta-root) .ifta-page--staff:not(.ifta-page--queue) :is(.ifta-actor__title, .ifta-risks__item) { font-size: 1.75rem; }
++  :is(#ifta-ft, .ifta-root) .ifta-page--staff:not(.ifta-page--queue) :is(.ifta-actor__when, .ifta-risks__detail) { font-size: 1.65rem; }
++  :is(#ifta-ft, .ifta-root) .ifta-page--client :is(.ifta-timeline__text, .ifta-timeline__when) { font-size: 1.4rem; }
++  :is(#ifta-ft, .ifta-root):is(.ifta-root--client, .ifta-root--staff) .ifta-top__name, :is(#ifta-ft, .ifta-root).ifta-root--staff .ifta-top__name, :is(#ifta-ft, .ifta-root).ifta-root--client .ifta-top__name { font-size: 1.7rem; }
++  :is(#ifta-ft, .ifta-root):is(.ifta-root--client, .ifta-root--staff) .ifta-top__role, :is(#ifta-ft, .ifta-root).ifta-root--staff .ifta-top__role, :is(#ifta-ft, .ifta-root).ifta-root--client .ifta-top__role { font-size: 1.5rem; }
++  /* public */
++  :is(#ifta-ft, .ifta-root) .ifta-rail--dark .ifta-rail__label { font-size: 1.5rem; letter-spacing: 0.05em; }
++  :is(#ifta-ft, .ifta-root) .ifta-rail__badge { font-size: 1.15rem; }
++  :is(#ifta-ft, .ifta-root) .ifta-pubbtn { font-size: 2rem; }
 +}
++
++/* ───────── phone (the authority phone composition is dense: nudge the smallest roles up where the box allows) ───────── */
 +@media (max-width: 699.98px) {
-+  :is(#ifta-v2, .ifta-root) {
-+    --gutter: 1.6rem; --sect: 3.2rem;
-+    --t0: 4.8rem; --t1: 1.4rem; --t1s: 1.3rem; --tl: 1.2rem;
-+    --t2: 1.8rem; --t3: 1.4rem; --t4: 2.2rem; --t5: 1.4rem; --t6: 1.2rem; --t7: 1.1rem;
-+    --ttab: 1.2rem; --tcta: 1.6rem; --tbtn: 1.3rem;
-+    --pad: 1.6rem; --gap: 1.2rem; --radius: 1rem;
-+    --ic-meta: 1.4rem; --ic-row: 1.8rem; --ic-card: 2rem; --ic-metric: 2.4rem;
-+    --pill-h: 3rem; --chip-h: 2.2rem; --flow-n: 3.2rem; --hero-pt: 6.4rem;
-+  }
-+  :is(#ifta-v2, .ifta-root).ifta-root--staff { --t0: 4.4rem; --t1: 1.3rem; --t1s: 1.2rem; --hero-pt: 2.4rem; }
-+  :is(#ifta-v2, .ifta-root).ifta-root--public { --t0: 4.6rem; --t1: 1.5rem; --t1s: 1.3rem; --tl: 1.2rem; --t4: 2rem; --hero-pt: 2.8rem; }
-+}
-+
-+/* ───────── hero lockup (client · staff · queue): flow layout, contrast scrim, no fixed text coordinates ───────── */
-+:is(#ifta-v2, .ifta-root) .ifta-hero__plate { z-index: 0; }
-+:is(#ifta-v2, .ifta-root) .ifta-hero::after { content: ''; position: absolute; inset: 0; z-index: 1; pointer-events: none; }
-+:is(#ifta-v2, .ifta-root) .ifta-hero--client::after { background: linear-gradient(90deg, rgba(251, 246, 236, 0.55) 0%, rgba(251, 246, 236, 0.28) 30%, rgba(251, 246, 236, 0) 52%); }
-+:is(#ifta-v2, .ifta-root) .ifta-hero--staff::after,
-+:is(#ifta-v2, .ifta-root) .ifta-hero--queue::after { background: linear-gradient(90deg, rgba(6, 7, 9, 0.88) 0%, rgba(6, 7, 9, 0.66) 30%, rgba(6, 7, 9, 0.12) 58%, rgba(6, 7, 9, 0) 72%); }
-+:is(#ifta-v2, .ifta-root) .ifta-hero__text {
-+  inset: 0 auto 0 0; z-index: 2; display: flex; flex-direction: column; align-items: flex-start;
-+  padding: var(--hero-pt) var(--gutter) 0 calc(var(--gutter) + 1.6rem);
-+}
-+:is(#ifta-v2, .ifta-root) .ifta-hero__text > * { position: static; }
-+:is(#ifta-v2, .ifta-root) .ifta-hero__aside, :is(#ifta-v2, .ifta-root) .ifta-hero__rail { z-index: 3; }
-+:is(#ifta-v2, .ifta-root) .ifta-hero__eyebrow { font: 500 var(--t1) / 1.1 var(--display); letter-spacing: 0.08em; }
-+:is(#ifta-v2, .ifta-root) .ifta-hero__title { margin-top: var(--s2); font: 700 var(--t0) / 0.92 var(--display); letter-spacing: -0.03em; }
-+:is(#ifta-v2, .ifta-root) .ifta-hero__period { margin-top: var(--s2); font: 600 var(--t1s) / 1.15 var(--display); letter-spacing: 0.06em; }
-+:is(#ifta-v2, .ifta-root) .ifta-hero__rule { display: none; }
-+:is(#ifta-v2, .ifta-root) .ifta-hero__foot { display: flex; flex-direction: column; align-items: flex-start; gap: var(--s4); margin-top: var(--s5); }
-+:is(#ifta-v2, .ifta-root) .ifta-hero__lines { font: 500 var(--tl) / 1.4 var(--display); letter-spacing: 0.05em; color: inherit; }
-+:is(#ifta-v2, .ifta-root) .ifta-hero__pill { position: static; }
-+:is(#ifta-v2, .ifta-root) .ifta-hero--client .ifta-hero__foot { flex-direction: row; align-items: center; gap: var(--s6); }
-+:is(#ifta-v2, .ifta-root) .ifta-hero--staff, :is(#ifta-v2, .ifta-root) .ifta-hero--queue { height: 30rem; }
-+:is(#ifta-v2, .ifta-root) .ifta-hero--staff .ifta-hero__text, :is(#ifta-v2, .ifta-root) .ifta-hero--queue .ifta-hero__text { color: #f4f4f2; }
-+:is(#ifta-v2, .ifta-root) .ifta-hero--staff .ifta-hero__title, :is(#ifta-v2, .ifta-root) .ifta-hero--queue .ifta-hero__title { color: #fff; }
-+:is(#ifta-v2, .ifta-root) .ifta-hero--staff .ifta-hero__lines, :is(#ifta-v2, .ifta-root) .ifta-hero--queue .ifta-hero__lines { color: rgba(244, 244, 242, 0.86); }
-+:is(#ifta-v2, .ifta-root) .ifta-hero--client .ifta-hero__plate img { object-position: 70% 50%; }
-+:is(#ifta-v2, .ifta-root) .ifta-hero--staff .ifta-hero__plate img, :is(#ifta-v2, .ifta-root) .ifta-hero--queue .ifta-hero__plate img { object-position: 50% 58%; }
-+
-+/* status family: one shape, one type, tone by meaning (green on track · amber needs attention · blue in review · red blocked) */
-+:is(#ifta-v2, .ifta-root) .ifta-pill { height: var(--pill-h); min-width: 0; gap: var(--s2); padding: 0 var(--s5) 0 var(--s4); border-radius: 99rem; font: 700 var(--tbtn) / 1 var(--display); letter-spacing: 0.06em; box-shadow: 0 0.2rem 0.8rem rgba(214, 160, 48, 0.22); }
-+:is(#ifta-v2, .ifta-root) .ifta-pill__icon { width: var(--ic-meta); height: var(--ic-meta); }
-+:is(#ifta-v2, .ifta-root) .ifta-chip, :is(#ifta-v2, .ifta-root) .ifta-cases__state, :is(#ifta-v2, .ifta-root) .ifta-health__chip, :is(#ifta-v2, .ifta-root) .ifta-riskchip {
-+  height: var(--chip-h); min-width: 0; padding: 0 var(--s3); border-radius: 99rem; display: inline-flex; align-items: center; gap: var(--s1);
-+  font: 600 var(--t7) / 1 var(--display); letter-spacing: 0.08em; text-transform: uppercase; white-space: nowrap;
-+}
-+
-+/* ───────── staff CLIENT HEALTH: supports the quarter, does not fight it ───────── */
-+:is(#ifta-v2, .ifta-root) .ifta-health {
-+  width: 32rem; height: auto; padding: var(--s4) var(--s5) var(--s3);
-+  background: rgba(12, 12, 14, 0.7); border-color: rgba(255, 255, 255, 0.12);
-+  box-shadow: 0 0.8rem 2.4rem rgba(0, 0, 0, 0.28);
-+}
-+:is(#ifta-v2, .ifta-root) .ifta-health__head { height: auto; gap: var(--s3); }
-+:is(#ifta-v2, .ifta-root) .ifta-health__title { font: 600 var(--t3) / 1.2 var(--display); letter-spacing: 0.06em; }
-+:is(#ifta-v2, .ifta-root) .ifta-health__chip.is-green { background: rgba(52, 211, 153, 0.18); color: #6ee7b7; }
-+:is(#ifta-v2, .ifta-root) .ifta-health__chip.is-amber { background: rgba(246, 192, 96, 0.18); color: #f8c968; }
-+:is(#ifta-v2, .ifta-root) .ifta-health__chip.is-red { background: rgba(243, 126, 116, 0.2); color: #f9a39b; }
-+:is(#ifta-v2, .ifta-root) .ifta-health ul { margin-top: var(--s3); }
-+:is(#ifta-v2, .ifta-root) .ifta-health li { height: 3.6rem; }
-+:is(#ifta-v2, .ifta-root) .ifta-health__check { width: var(--ic-row); height: var(--ic-row); margin-left: 0; }
-+:is(#ifta-v2, .ifta-root) .ifta-health__label { margin-left: var(--s3); font: 400 var(--t6) / 1.2 var(--text); color: rgba(255, 255, 255, 0.82); }
-+:is(#ifta-v2, .ifta-root) .ifta-health strong { margin-right: 0; padding-left: var(--s3); font: 600 var(--t5) / 1 var(--display); }
-+:is(#ifta-v2, .ifta-root) .ifta-hero--staff .ifta-hero__aside, :is(#ifta-v2, .ifta-root) .ifta-hero--queue .ifta-hero__aside { left: auto; right: var(--gutter); top: auto; bottom: var(--s6); }
-+
-+/* ───────── metrics rail ───────── */
-+:is(#ifta-v2, .ifta-root) .ifta-rail__value { font: 600 var(--t4) / 1 var(--display); letter-spacing: -0.01em; }
-+:is(#ifta-v2, .ifta-root) .ifta-rail__cell.is-muted .ifta-rail__value { font-size: calc(var(--t4) * 0.8); color: var(--gold-deep); letter-spacing: 0.02em; }
-+:is(#ifta-v2, .ifta-root) .ifta-rail__label { font: 600 var(--t7) / 1.2 var(--display); letter-spacing: 0.08em; color: var(--ink-3); }
-+:is(#ifta-v2, .ifta-root) .ifta-rail--dark .ifta-rail__label { color: #c9c9cc; }
-+:is(#ifta-v2, .ifta-root) .ifta-rail__icon { width: var(--ic-metric); height: var(--ic-metric); }
-+:is(#ifta-v2, .ifta-root) .ifta-rail__text { margin-left: var(--s4); gap: var(--s2); }
-+:is(#ifta-v2, .ifta-root) .ifta-rail__cell { padding-left: var(--s6); }
-+:is(#ifta-v2, .ifta-root) .ifta-rail__delta { position: static; transform: none; margin-left: auto; padding: 0 var(--s5) 0 var(--s4); gap: var(--s1); text-align: right; }
-+:is(#ifta-v2, .ifta-root) .ifta-rail__delta-v { font: 600 var(--t6) / 1 var(--display); justify-content: flex-end; }
-+:is(#ifta-v2, .ifta-root) .ifta-rail__delta-vs { font: 400 var(--t7) / 1.2 var(--text); letter-spacing: 0.02em; }
-+:is(#ifta-v2, .ifta-root) .ifta-page--staff .ifta-rail { height: 9.6rem; }
-+:is(#ifta-v2, .ifta-root) .ifta-page--staff .ifta-rail__icon { width: var(--ic-metric); height: var(--ic-metric); }
-+:is(#ifta-v2, .ifta-root) .ifta-page--staff .ifta-rail__text { margin-left: var(--s4); gap: var(--s2); }
-+:is(#ifta-v2, .ifta-root) .ifta-page--staff .ifta-rail__value { font-size: var(--t4); line-height: 1; }
-+:is(#ifta-v2, .ifta-root) .ifta-page--staff .ifta-rail__cell.is-muted .ifta-rail__value { font-size: calc(var(--t4) * 0.8); }
-+:is(#ifta-v2, .ifta-root) .ifta-page--staff .ifta-rail__label { font-size: var(--t7); line-height: 1.2; }
-+:is(#ifta-v2, .ifta-root) .ifta-page--staff .ifta-rail__cell { padding-left: var(--s6); }
-+:is(#ifta-v2, .ifta-root) .ifta-frame--rail { padding: 0 var(--gutter); margin-top: calc(-1 * var(--s6)); }
-+
-+/* ───────── tabs ───────── */
-+:is(#ifta-v2, .ifta-root) .ifta-tabrow { margin: var(--s6) var(--gutter) 0; gap: var(--s4); }
-+:is(#ifta-v2, .ifta-root) .ifta-tab { font: 600 var(--ttab) / 1 var(--display); letter-spacing: 0.05em; }
-+:is(#ifta-v2, .ifta-root) .ifta-page--staff .ifta-tab { font-size: var(--ttab); }
-+:is(#ifta-v2, .ifta-root) .ifta-quarter select { font: 600 var(--ttab) / 1 var(--display); letter-spacing: 0.04em; }
-+:is(#ifta-v2, .ifta-root) .ifta-export { font: 600 var(--tbtn) / 1 var(--display); letter-spacing: 0.05em; }
-+
-+/* ───────── cards: one padding, one title, one link style ───────── */
-+:is(#ifta-v2, .ifta-root) .ifta-grid { margin: var(--s6) var(--gutter) 0; gap: var(--gap); }
-+:is(#ifta-v2, .ifta-root) .ifta-grid--client-desktop, :is(#ifta-v2, .ifta-root) .ifta-grid--staff-desktop, :is(#ifta-v2, .ifta-root) .ifta-grid--client-tablet, :is(#ifta-v2, .ifta-root) .ifta-grid--staff-tablet { column-gap: 0; }
-+:is(#ifta-v2, .ifta-root) .ifta-card, :is(#ifta-v2, .ifta-root) .ifta-page--staff .ifta-card, :is(#ifta-v2, .ifta-root) .ifta-page--client .ifta-card { padding: var(--pad) var(--pad) calc(var(--pad) - 0.4rem); border-radius: var(--radius); }
-+:is(#ifta-v2, .ifta-root) .ifta-card__head { gap: var(--s3); min-height: 2rem; }
-+:is(#ifta-v2, .ifta-root) .ifta-card__title, :is(#ifta-v2, .ifta-root) .ifta-page--staff .ifta-card__title, :is(#ifta-v2, .ifta-root) .ifta-page--client .ifta-card__title { font: 600 var(--t3) / 1.2 var(--display); letter-spacing: 0.05em; }
-+:is(#ifta-v2, .ifta-root) .ifta-card__icon svg { width: var(--ic-card); height: var(--ic-card); }
-+:is(#ifta-v2, .ifta-root) .ifta-card__body, :is(#ifta-v2, .ifta-root) .ifta-page--client .ifta-card__body { margin-top: var(--s4); }
-+:is(#ifta-v2, .ifta-root) .ifta-viewall, :is(#ifta-v2, .ifta-root) .ifta-page--staff .ifta-viewall, :is(#ifta-v2, .ifta-root) .ifta-page--client .ifta-viewall { font: 500 var(--t6) / 1 var(--text); letter-spacing: 0.01em; text-transform: none; color: var(--ink-3); gap: var(--s1); }
-+:is(#ifta-v2, .ifta-root) .ifta-viewall svg { width: 1.2rem; height: 1.2rem; }
-+:is(#ifta-v2, .ifta-root) .ifta-empty { font: 400 var(--t6) / 1.4 var(--text); }
-+
-+/* workflow */
-+:is(#ifta-v2, .ifta-root) .ifta-flow__step, :is(#ifta-v2, .ifta-root) .ifta-page--staff .ifta-flow__step, :is(#ifta-v2, .ifta-root) .ifta-page--client .ifta-flow__step {
-+  grid-template-columns: var(--flow-n) minmax(0, 1fr) auto auto; column-gap: var(--s4); padding: 0 var(--s2) 0 var(--s3);
-+}
-+:is(#ifta-v2, .ifta-root) .ifta-flow__n, :is(#ifta-v2, .ifta-root) .ifta-page--staff .ifta-flow__n, :is(#ifta-v2, .ifta-root) .ifta-page--client .ifta-flow__n { width: var(--flow-n); height: var(--flow-n); font: 600 var(--t6) / 1 var(--display); }
-+:is(#ifta-v2, .ifta-root) .ifta-flow__step:not(:last-child)::after,
-+:is(#ifta-v2, .ifta-root) .ifta-page--staff .ifta-flow__step:not(:last-child)::after,
-+:is(#ifta-v2, .ifta-root) .ifta-page--client .ifta-flow__step:not(:last-child)::after { left: calc(var(--s3) + var(--flow-n) / 2 - 0.1rem); top: calc(50% + var(--flow-n) / 2); height: calc(100% - var(--flow-n)); width: 0.2rem; }
-+:is(#ifta-v2, .ifta-root) .ifta-flow__text { gap: var(--s1); }
-+:is(#ifta-v2, .ifta-root) .ifta-flow__label, :is(#ifta-v2, .ifta-root) .ifta-page--staff .ifta-flow__label, :is(#ifta-v2, .ifta-root) .ifta-page--client .ifta-flow__label { font: 600 var(--t5) / 1.2 var(--display); letter-spacing: 0.03em; }
-+:is(#ifta-v2, .ifta-root) .ifta-flow__status, :is(#ifta-v2, .ifta-root) .ifta-page--staff .ifta-flow__status, :is(#ifta-v2, .ifta-root) .ifta-page--client .ifta-flow__status { font: 500 var(--t6) / 1.2 var(--text); text-transform: none; }
-+:is(#ifta-v2, .ifta-root) .ifta-flow__date, :is(#ifta-v2, .ifta-root) .ifta-page--staff .ifta-flow__date { font: 600 var(--t7) / 1 var(--display); letter-spacing: 0.08em; }
-+:is(#ifta-v2, .ifta-root) .ifta-flow__icon, :is(#ifta-v2, .ifta-root) .ifta-page--staff .ifta-flow__icon, :is(#ifta-v2, .ifta-root) .ifta-page--client .ifta-flow__icon { width: var(--ic-card); height: var(--ic-card); }
-+
-+/* tasks · quick actions */
-+:is(#ifta-v2, .ifta-root) .ifta-tasks__row, :is(#ifta-v2, .ifta-root) .ifta-page--staff .ifta-tasks__row { gap: var(--s4); padding: 0 var(--s3); }
-+:is(#ifta-v2, .ifta-root) .ifta-tasks--staff .ifta-tasks__row { padding: 0 var(--s1); }
-+:is(#ifta-v2, .ifta-root) .ifta-check, :is(#ifta-v2, .ifta-root) .ifta-page--staff .ifta-check { width: var(--ic-row); height: var(--ic-row); }
-+:is(#ifta-v2, .ifta-root) .ifta-tasks__label, :is(#ifta-v2, .ifta-root) .ifta-page--staff .ifta-tasks__label { font: 400 var(--t5) / 1.3 var(--text); color: #2f3035; }
-+:is(#ifta-v2, .ifta-root) .ifta-tasks__date { width: 6.4rem; font: 600 var(--t7) / 1 var(--display); letter-spacing: 0.08em; color: var(--ink-2); }
-+:is(#ifta-v2, .ifta-root) .ifta-tasks__who { width: 3.2rem; }
-+:is(#ifta-v2, .ifta-root) .ifta-initials { width: 2.8rem; height: 2.8rem; font: 600 var(--t7) / 1 var(--display); letter-spacing: 0.04em; }
-+:is(#ifta-v2, .ifta-root) .ifta-initials--lg, :is(#ifta-v2, .ifta-root) .ifta-page--staff .ifta-initials--lg { width: 3.2rem; height: 3.2rem; font-size: var(--t7); }
-+:is(#ifta-v2, .ifta-root) .ifta-quick__row { gap: var(--s4); }
-+:is(#ifta-v2, .ifta-root) .ifta-quick__icon { width: 4rem; height: 4rem; }
-+:is(#ifta-v2, .ifta-root) .ifta-quick__icon svg { width: var(--ic-row); height: var(--ic-row); }
-+:is(#ifta-v2, .ifta-root) .ifta-quick__text { gap: var(--s1); }
-+:is(#ifta-v2, .ifta-root) .ifta-quick__label, :is(#ifta-v2, .ifta-root) .ifta-page--client .ifta-quick__label { font: 600 var(--t5) / 1.2 var(--display); letter-spacing: 0.03em; }
-+:is(#ifta-v2, .ifta-root) .ifta-quick__note, :is(#ifta-v2, .ifta-root) .ifta-page--client .ifta-quick__note { font: 500 var(--t6) / 1.2 var(--text); text-transform: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-+
-+/* data viz: map first, values second, detail third */
-+:is(#ifta-v2, .ifta-root) .ifta-legend li { column-gap: var(--s2); }
-+:is(#ifta-v2, .ifta-root) .ifta-legend__dot { width: 1rem; height: 1rem; }
-+:is(#ifta-v2, .ifta-root) .ifta-legend__name, :is(#ifta-v2, .ifta-root) .ifta-page--staff .ifta-legend__name, :is(#ifta-v2, .ifta-root) .ifta-page--client .ifta-legend__name { font: 400 var(--t6) / 1.2 var(--text); color: var(--ink-2); }
-+:is(#ifta-v2, .ifta-root) .ifta-legend__val, :is(#ifta-v2, .ifta-root) .ifta-page--staff .ifta-legend__val, :is(#ifta-v2, .ifta-root) .ifta-page--client .ifta-legend__val { font: 600 var(--t6) / 1 var(--display); color: #141414; }
-+:is(#ifta-v2, .ifta-root) .ifta-legend__extra { font: 400 var(--t6) / 1 var(--text); }
-+:is(#ifta-v2, .ifta-root) .ifta-bars__axis, :is(#ifta-v2, .ifta-root) .ifta-page--staff .ifta-bars__axis { font: 500 var(--t7) / 0 var(--text); }
-+:is(#ifta-v2, .ifta-root) .ifta-bars__x, :is(#ifta-v2, .ifta-root) .ifta-page--staff .ifta-bars__x { font: 600 var(--t7) / 1 var(--display); letter-spacing: 0.06em; color: var(--ink-2); }
-+:is(#ifta-v2, .ifta-root) .ifta-bars__value { font: 600 var(--t6) / 1 var(--display); }
-+:is(#ifta-v2, .ifta-root) .ifta-donut__total, :is(#ifta-v2, .ifta-root) .ifta-page--staff .ifta-donut__total { font: 600 var(--t4) / 1 var(--display); }
-+:is(#ifta-v2, .ifta-root) .ifta-donut__caption, :is(#ifta-v2, .ifta-root) .ifta-page--staff .ifta-donut__caption { font: 500 var(--t7) / 1.2 var(--text); letter-spacing: 0.04em; }
-+:is(#ifta-v2, .ifta-root) .ifta-mapwrap { column-gap: var(--s6); }
-+
-+/* lists · tables */
-+:is(#ifta-v2, .ifta-root) .ifta-table th { font: 600 var(--t7) / 1 var(--display); letter-spacing: 0.08em; padding-bottom: var(--s2); }
-+:is(#ifta-v2, .ifta-root) .ifta-table td, :is(#ifta-v2, .ifta-root) .ifta-table--client td, :is(#ifta-v2, .ifta-root) .ifta-table--team td, :is(#ifta-v2, .ifta-root) .ifta-table--risks td { font: 400 var(--t6) / 1.3 var(--text); }
-+:is(#ifta-v2, .ifta-root) .ifta-table__file span, :is(#ifta-v2, .ifta-root) .ifta-table__event span:last-child { font: 500 var(--t6) / 1.3 var(--text); }
-+:is(#ifta-v2, .ifta-root) .ifta-table--uploads th:nth-child(1) { width: 56%; }
-+:is(#ifta-v2, .ifta-root) .ifta-table--uploads th:nth-child(2) { width: 28%; }
-+:is(#ifta-v2, .ifta-root) .ifta-table--activity td { height: 2.8rem; }
-+:is(#ifta-v2, .ifta-root) .ifta-file { width: 2rem; height: 2.4rem; }
-+:is(#ifta-v2, .ifta-root) .ifta-status { width: var(--ic-row); height: var(--ic-row); }
-+:is(#ifta-v2, .ifta-root) .ifta-risk, :is(#ifta-v2, .ifta-root) .ifta-page--staff .ifta-risk { width: var(--ic-row); height: var(--ic-row); }
-+:is(#ifta-v2, .ifta-root) .ifta-uploads li, :is(#ifta-v2, .ifta-root) .ifta-actor li, :is(#ifta-v2, .ifta-root) .ifta-risks li { gap: var(--s3); }
-+:is(#ifta-v2, .ifta-root) .ifta-uploads__name, :is(#ifta-v2, .ifta-root) .ifta-actor__title, :is(#ifta-v2, .ifta-root) .ifta-risks__item, :is(#ifta-v2, .ifta-root) .ifta-page--staff .ifta-actor__title, :is(#ifta-v2, .ifta-root) .ifta-page--staff .ifta-risks__item { font: 500 var(--t5) / 1.25 var(--text); text-transform: none; }
-+:is(#ifta-v2, .ifta-root) .ifta-uploads__meta, :is(#ifta-v2, .ifta-root) .ifta-actor__when, :is(#ifta-v2, .ifta-root) .ifta-risks__detail, :is(#ifta-v2, .ifta-root) .ifta-page--staff .ifta-actor__when, :is(#ifta-v2, .ifta-root) .ifta-page--staff .ifta-risks__detail { font: 400 var(--t6) / 1.25 var(--text); text-transform: none; }
-+:is(#ifta-v2, .ifta-root) .ifta-uploads__tile, :is(#ifta-v2, .ifta-root) .ifta-actor__tile, :is(#ifta-v2, .ifta-root) .ifta-page--staff .ifta-actor__tile { width: 3.6rem; height: 3.6rem; border-radius: 0.8rem; }
-+:is(#ifta-v2, .ifta-root) .ifta-timeline li { padding-left: 3.6rem; gap: var(--s1); }
-+:is(#ifta-v2, .ifta-root) .ifta-timeline li::before { left: 0.6rem; width: 1.2rem; height: 1.2rem; margin-top: -1.2rem; }
-+:is(#ifta-v2, .ifta-root) .ifta-timeline li:not(:last-child)::after { left: 1.15rem; }
-+:is(#ifta-v2, .ifta-root) .ifta-timeline__text, :is(#ifta-v2, .ifta-root) .ifta-page--client .ifta-timeline__text { font: 600 var(--t6) / 1.25 var(--display); letter-spacing: 0.03em; }
-+:is(#ifta-v2, .ifta-root) .ifta-timeline__when, :is(#ifta-v2, .ifta-root) .ifta-page--client .ifta-timeline__when { font: 400 var(--t6) / 1.25 var(--text); }
-+:is(#ifta-v2, .ifta-root) .ifta-dates li { gap: var(--s4); }
-+:is(#ifta-v2, .ifta-root) .ifta-dates__icon { width: 3.6rem; height: 3.6rem; }
-+:is(#ifta-v2, .ifta-root) .ifta-dates__icon svg { width: var(--ic-row); height: var(--ic-row); }
-+:is(#ifta-v2, .ifta-root) .ifta-dates__label { font: 600 var(--t5) / 1.2 var(--display); letter-spacing: 0.02em; }
-+:is(#ifta-v2, .ifta-root) .ifta-dates__value { font: 500 var(--t6) / 1.2 var(--text); }
-+:is(#ifta-v2, .ifta-root) .ifta-vehicles li { gap: var(--s4); }
-+:is(#ifta-v2, .ifta-root) .ifta-vehicles__unit, :is(#ifta-v2, .ifta-root) .ifta-vehicles--staff .ifta-vehicles__unit { font: 600 var(--t5) / 1.2 var(--display); }
-+:is(#ifta-v2, .ifta-root) .ifta-vehicles__meta { font: 400 var(--t6) / 1.2 var(--text); }
-+:is(#ifta-v2, .ifta-root) .ifta-vehicles__value { font: 500 var(--t5) / 1 var(--display); }
-+:is(#ifta-v2, .ifta-root) .ifta-vehicles__icon, :is(#ifta-v2, .ifta-root) .ifta-vehicles--client .ifta-vehicles__icon svg { width: var(--ic-card); height: var(--ic-card); }
-+
-+/* insights: comfortable measure */
-+:is(#ifta-v2, .ifta-root) .ifta-insights { gap: var(--s4); padding: var(--pad); }
-+:is(#ifta-v2, .ifta-root) .ifta-insights__bulb { width: 4.4rem; height: 4.4rem; }
-+:is(#ifta-v2, .ifta-root) .ifta-insights__bulb svg { width: var(--ic-card); height: var(--ic-card); }
-+:is(#ifta-v2, .ifta-root) .ifta-insights__body { gap: var(--s2); padding-top: var(--s2); }
-+:is(#ifta-v2, .ifta-root) .ifta-insights__body p, :is(#ifta-v2, .ifta-root) .ifta-page--client .ifta-insights__body p { max-width: 44ch; font: 400 var(--t5) / 1.5 var(--text); letter-spacing: 0.01em; text-transform: none; color: var(--ink-2); }
-+
-+/* ───────── action hierarchy: one primary per view ───────── */
-+:is(#ifta-v2, .ifta-root) .ifta-cta, :is(#ifta-v2, .ifta-root) .ifta-page--staff .ifta-cta, :is(#ifta-v2, .ifta-root) .ifta-page--client .ifta-cta { height: 7.6rem; padding: 0 var(--s4) 0 var(--s4); border-radius: var(--radius); }
-+:is(#ifta-v2, .ifta-root) .ifta-cta__icon, :is(#ifta-v2, .ifta-root) .ifta-page--staff .ifta-cta__icon, :is(#ifta-v2, .ifta-root) .ifta-page--client .ifta-cta__icon { width: 5.6rem; height: 5.2rem; }
-+:is(#ifta-v2, .ifta-root) .ifta-cta__icon svg, :is(#ifta-v2, .ifta-root) .ifta-page--staff .ifta-cta__icon svg { width: var(--ic-card); height: var(--ic-card); }
-+:is(#ifta-v2, .ifta-root) .ifta-cta__text, :is(#ifta-v2, .ifta-root) .ifta-page--staff .ifta-cta__text, :is(#ifta-v2, .ifta-root) .ifta-page--client .ifta-cta__text { display: grid; gap: var(--s1); margin-left: var(--s5); }
-+:is(#ifta-v2, .ifta-root) .ifta-cta__eyebrow, :is(#ifta-v2, .ifta-root) .ifta-page--staff .ifta-cta__eyebrow, :is(#ifta-v2, .ifta-root) .ifta-page--client .ifta-cta__eyebrow { font: 600 var(--t7) / 1 var(--display); letter-spacing: 0.12em; }
-+:is(#ifta-v2, .ifta-root) .ifta-cta__label, :is(#ifta-v2, .ifta-root) .ifta-page--staff .ifta-cta__label, :is(#ifta-v2, .ifta-root) .ifta-page--client .ifta-cta__label { font: 600 var(--tcta) / 1.1 var(--display); letter-spacing: 0.04em; }
-+:is(#ifta-v2, .ifta-root) .ifta-cta__go, :is(#ifta-v2, .ifta-root) .ifta-page--staff .ifta-cta__go, :is(#ifta-v2, .ifta-root) .ifta-page--client .ifta-cta__go { width: 6.4rem; height: 4.8rem; border-radius: 0.8rem; }
-+:is(#ifta-v2, .ifta-root) .ifta-page--staff > .ifta-frame > .ifta-cta, :is(#ifta-v2, .ifta-root) .ifta-page--client > .ifta-frame > .ifta-cta { width: calc(100% - 2 * var(--gutter)); margin: var(--s6) var(--gutter) 0; }
-+:is(#ifta-v2, .ifta-root) .ifta-ctarow { margin: var(--s6) var(--gutter) 0; padding-bottom: var(--s7); column-gap: var(--s8); }
-+/* secondary = outline; it never competes with the dark primary rail */
-+:is(#ifta-v2, .ifta-root) .ifta-qcard { height: auto; padding: var(--s4) var(--s5); font: 500 var(--t6) / 1.6 var(--display); letter-spacing: 0.06em; }
-+:is(#ifta-v2, .ifta-root) .ifta-qcard__btn { height: 4rem; margin-top: var(--s3); background: transparent; border: 0.15rem solid #1a1a1a; font: 700 var(--tbtn) / 1 var(--display); letter-spacing: 0.06em; }
-+:is(#ifta-v2, .ifta-root) .ifta-qcard__btn:hover { background: #fdf3dc; }
-+
-+/* footers (client / staff): approved lockup at a proportion that closes the page instead of shouting */
-+:is(#ifta-v2, .ifta-root) .ifta-foot { padding: var(--s7) var(--gutter) var(--s7); column-gap: var(--s5); }
-+:is(#ifta-v2, .ifta-root) .ifta-foot__lockup { height: 8rem; }
-+:is(#ifta-v2, .ifta-root) .ifta-foot--inline { padding: 0; column-gap: var(--s5); grid-template-columns: auto 1fr; }
-+:is(#ifta-v2, .ifta-root) .ifta-foot--inline .ifta-foot__lockup { height: 7.6rem; }
-+:is(#ifta-v2, .ifta-root) .ifta-foot__tagline { margin-top: var(--s3); font: 600 var(--t7) / 1 var(--display); letter-spacing: 0.3em; }
-+:is(#ifta-v2, .ifta-root) .ifta-foot--inline .ifta-foot__tagline { height: 7.6rem; margin: 0; font-size: var(--t7); letter-spacing: 0.16em; }
-+
-+/* top bars */
-+:is(#ifta-v2, .ifta-root) .ifta-top__name { font: 600 var(--t6) / 1 var(--display); letter-spacing: 0.04em; }
-+:is(#ifta-v2, .ifta-root) .ifta-top__role { font: 600 var(--t7) / 1 var(--display); letter-spacing: 0.08em; }
-+
-+/* ═══════════════ PUBLIC ═══════════════ */
-+:is(#ifta-v2, .ifta-root) .ifta-pubnav__links :is(a, button) { font: 500 1.45rem / 1 var(--display); letter-spacing: 0.08em; }
-+:is(#ifta-v2, .ifta-root) .ifta-pubnav__cta { width: auto; height: 4.4rem; padding: 0 var(--s5); font: 700 var(--tbtn) / 1 var(--display); letter-spacing: 0.06em; }
-+:is(#ifta-v2, .ifta-root) .ifta-pubhero::after { content: ''; position: absolute; inset: 0; z-index: 1; pointer-events: none; background: linear-gradient(90deg, rgba(4, 4, 6, 0.72) 0%, rgba(4, 4, 6, 0.42) 34%, rgba(4, 4, 6, 0) 58%), linear-gradient(0deg, rgba(4, 4, 6, 0.55) 0%, rgba(4, 4, 6, 0) 30%); }
-+:is(#ifta-v2, .ifta-root) .ifta-pubhero__text { z-index: 2; inset: 0 auto 0 0; display: flex; flex-direction: column; align-items: flex-start; padding: var(--hero-pt) var(--gutter) 0 calc(var(--gutter) + 4rem); }
-+:is(#ifta-v2, .ifta-root) .ifta-pubhero__text > * { position: static; left: auto !important; top: auto; }
-+:is(#ifta-v2, .ifta-root) .ifta-pubhero__eyebrow { font: 500 var(--t1) / 1.1 var(--display); letter-spacing: 0.1em; }
-+:is(#ifta-v2, .ifta-root) .ifta-pubhero__title { margin-top: var(--s2); font: 600 var(--t0) / 0.92 var(--display); letter-spacing: -0.025em; }
-+:is(#ifta-v2, .ifta-root) .ifta-pubhero__period { margin-top: var(--s3); font: 500 var(--t1s) / 1.15 var(--display); letter-spacing: 0.08em; }
-+:is(#ifta-v2, .ifta-root) .ifta-pubhero__rule { margin-top: var(--s4); width: 6.4rem; height: 0.2rem; background: #f2b543; }
-+:is(#ifta-v2, .ifta-root) .ifta-pubhero__tag { margin-top: var(--s4); font: 500 var(--tl) / 1.45 var(--display); letter-spacing: 0.07em; }
-+:is(#ifta-v2, .ifta-root) .ifta-pubbtn { gap: var(--s3); font: 700 var(--tbtn) / 1 var(--display); letter-spacing: 0.06em; }
-+:is(#ifta-v2, .ifta-root) .ifta-pubhero__cta { margin-top: var(--s6); width: auto; height: 4.8rem; padding: 0 var(--s6); font-size: var(--tbtn); background: rgba(242, 181, 67, 0.08); border: 0.15rem solid #f2b543; color: #f6cf7a !important; box-shadow: none; }
-+:is(#ifta-v2, .ifta-root) .ifta-pubhero__cta:hover { background: rgba(242, 181, 67, 0.18); }
-+:is(#ifta-v2, .ifta-root) .ifta-pubrail { padding: 0 var(--gutter); }
-+:is(#ifta-v2, .ifta-root) .ifta-rail--dark { height: 10rem; }
-+:is(#ifta-v2, .ifta-root) .ifta-rail--dark .ifta-rail__value { font-weight: 500; font-size: var(--t4); line-height: 1; }
-+:is(#ifta-v2, .ifta-root) .ifta-rail--dark .ifta-rail__label { font-size: var(--t7); line-height: 1.2; letter-spacing: 0.08em; }
-+:is(#ifta-v2, .ifta-root) .ifta-rail--dark .ifta-rail__icon { width: 4rem; height: 4rem; }
-+:is(#ifta-v2, .ifta-root) .ifta-rail--dark .ifta-rail__text { margin-left: var(--s4); gap: var(--s2); }
-+:is(#ifta-v2, .ifta-root) .ifta-rail--dark .ifta-rail__cell { padding-left: var(--s7); }
-+:is(#ifta-v2, .ifta-root) .ifta-rail__badge { font: 600 1rem / 1 var(--display); letter-spacing: 0.14em; padding: var(--s1) var(--s2); }
-+:is(#ifta-v2, .ifta-root) .ifta-pubh2, :is(#ifta-v2, .ifta-root) .ifta-clear .ifta-pubh2, :is(#ifta-v2, .ifta-root) .ifta-process .ifta-pubh2, :is(#ifta-v2, .ifta-root) .ifta-promises .ifta-pubh2 { font: 500 var(--t2) / 1.2 var(--display); letter-spacing: 0.08em; text-wrap: balance; }
-+:is(#ifta-v2, .ifta-root) .ifta-clear { margin-top: var(--sect); align-items: start; }
-+:is(#ifta-v2, .ifta-root) .ifta-clear__text { padding: 0 var(--s6) 0 calc(var(--gutter) + 3.2rem); }
-+:is(#ifta-v2, .ifta-root) .ifta-clear__lead { margin-top: var(--s4); max-width: 54ch; font: 400 var(--t5) / 1.65 var(--text); letter-spacing: 0.03em; color: #c9c9cc; }
-+:is(#ifta-v2, .ifta-root) .ifta-clear__cta { margin-top: var(--s6); width: auto; height: 4.8rem; padding: 0 var(--s6); }
-+:is(#ifta-v2, .ifta-root) .ifta-clear__media figcaption { font: 500 2.6rem / 1.35 var(--display); letter-spacing: 0.1em; }
-+:is(#ifta-v2, .ifta-root) .ifta-process { margin-top: var(--sect); padding: 0 var(--gutter) var(--s8) calc(var(--gutter) + 3.2rem); }
-+:is(#ifta-v2, .ifta-root) .ifta-process__list { margin-top: var(--s6); }
-+:is(#ifta-v2, .ifta-root) .ifta-process__title { margin-top: var(--s3); font: 600 var(--t5) / 1.35 var(--display); letter-spacing: 0.06em; }
-+:is(#ifta-v2, .ifta-root) .ifta-process__text { margin-top: var(--s2); font: 400 var(--t6) / 1.55 var(--text); color: #bdbdc1; }
-+:is(#ifta-v2, .ifta-root) .ifta-process__n { width: 3.6rem; height: 3.6rem; font: 700 var(--t7) / 1 var(--display); letter-spacing: 0.04em; }
-+:is(#ifta-v2, .ifta-root) .ifta-process__icon { width: 3.2rem; height: 3.2rem; }
-+:is(#ifta-v2, .ifta-root) .ifta-oneret { padding: var(--sect) var(--gutter) var(--sect) calc(var(--gutter) + 2.4rem); }
-+:is(#ifta-v2, .ifta-root) .ifta-oneret__n { font: 300 6.4rem / 1 var(--display); }
-+:is(#ifta-v2, .ifta-root) .ifta-oneret__unit { font: 500 var(--t3) / 1.5 var(--display); letter-spacing: 0.12em; }
-+:is(#ifta-v2, .ifta-root) .ifta-oneret__count p { font: 400 var(--t6) / 1.7 var(--text); letter-spacing: 0.06em; color: #c9c9cc; white-space: normal; max-width: 26ch; }
-+:is(#ifta-v2, .ifta-root) .ifta-promises__list { margin-top: var(--s6); }
-+:is(#ifta-v2, .ifta-root) .ifta-promises__title { font: 500 var(--t3) / 1.2 var(--display); letter-spacing: 0.08em; }
-+:is(#ifta-v2, .ifta-root) .ifta-promises__text { font: 400 var(--t6) / 1.55 var(--text); white-space: normal; color: #bdbdc1; }
-+:is(#ifta-v2, .ifta-root) .ifta-promises__icon { width: 3.6rem; height: 3.6rem; }
-+:is(#ifta-v2, .ifta-root) .ifta-pubfoot { height: 24rem; }
-+:is(#ifta-v2, .ifta-root) .ifta-pubfoot__lockup { height: 12.8rem; }
-+:is(#ifta-v2, .ifta-root) .ifta-pubfoot__line { font: 500 var(--t6) / 1.4 var(--display); letter-spacing: 0.14em; }
-+:is(#ifta-v2, .ifta-root) .ifta-pubfoot__words span { font: 600 var(--t7) / 1 var(--display); letter-spacing: 0.16em; }
-+
-+/* ═══════════════ TABLET (700–1199) ═══════════════ */
-+@media (min-width: 700px) and (max-width: 1199.98px) {
-+  :is(#ifta-v2, .ifta-root) .ifta-hero--client { height: 40rem; }
-+  :is(#ifta-v2, .ifta-root) .ifta-hero--client .ifta-hero__foot { flex-direction: column; align-items: flex-start; }
-+  :is(#ifta-v2, .ifta-root) .ifta-hero--client .ifta-hero__rail { top: auto; bottom: -4rem; left: var(--gutter); width: calc(100% - 2 * var(--gutter)); }
-+  :is(#ifta-v2, .ifta-root) .ifta-page--client .ifta-tabrow { margin-top: 6.4rem; }
-+  :is(#ifta-v2, .ifta-root) .ifta-hero--staff, :is(#ifta-v2, .ifta-root) .ifta-hero--queue { height: 33rem; }
-+  :is(#ifta-v2, .ifta-root) .ifta-page--staff .ifta-health { width: 32rem; }
-+  :is(#ifta-v2, .ifta-root) .ifta-page--staff .ifta-rail { height: 10.4rem; }
-+  :is(#ifta-v2, .ifta-root) .ifta-pubhero { height: 42rem; }
-+  :is(#ifta-v2, .ifta-root) .ifta-pubhero__text { padding-left: calc(var(--gutter) + 1.2rem); max-width: 56%; }
-+  :is(#ifta-v2, .ifta-root) .ifta-pubhero__tag br { display: none; }
-+  :is(#ifta-v2, .ifta-root) .ifta-clear--compact { padding: var(--sect) var(--gutter) 0; }
-+  :is(#ifta-v2, .ifta-root) .ifta-clear--compact .ifta-pubh2 { white-space: normal; }
-+  :is(#ifta-v2, .ifta-root) .ifta-clear--compact .ifta-clear__lead { font-size: var(--t5); line-height: 1.65; }
-+  :is(#ifta-v2, .ifta-root) .ifta-process--tiles { margin-top: var(--s6); padding: 0 var(--gutter); }
-+  :is(#ifta-v2, .ifta-root) .ifta-process--tiles .ifta-process__step { height: 13.2rem; }
-+  :is(#ifta-v2, .ifta-root) .ifta-process--tiles .ifta-process__title { font: 600 var(--t5) / 1.35 var(--display); }
-+  :is(#ifta-v2, .ifta-root) .ifta-oneret { padding: var(--sect) var(--gutter) 0; }
-+  :is(#ifta-v2, .ifta-root) .ifta-oneret__count p { font-size: var(--t5); }
-+  :is(#ifta-v2, .ifta-root) .ifta-promises { padding-top: var(--sect); }
-+  :is(#ifta-v2, .ifta-root) .ifta-promises__title { font-size: var(--t3); }
-+  :is(#ifta-v2, .ifta-root) .ifta-promises__text { font-size: var(--t6); }
-+  :is(#ifta-v2, .ifta-root) .ifta-pubfoot { height: 26rem; }
-+  :is(#ifta-v2, .ifta-root) .ifta-pubfoot__lockup { height: 12rem; }
-+  :is(#ifta-v2, .ifta-root) .ifta-page--client .ifta-quick__icon { width: 4.4rem; height: 4.4rem; }
-+}
-+
-+/* ═══════════════ PHONE (< 700): composed for the phone, not a shrunken desktop ═══════════════ */
-+@media (max-width: 699.98px) {
-+  /* hero lockups: flow, bottom-anchored text, image kept visible */
-+  :is(#ifta-v2, .ifta-root) .ifta-hero--client, :is(#ifta-v2, .ifta-root) .ifta-hero--staff, :is(#ifta-v2, .ifta-root) .ifta-hero--queue { height: auto; min-height: 30rem; display: flex; flex-direction: column; }
-+  :is(#ifta-v2, .ifta-root) .ifta-hero__text { position: relative; inset: auto; padding: var(--hero-pt) var(--gutter) var(--s6); max-width: none; }
-+  :is(#ifta-v2, .ifta-root) .ifta-hero--client::after { background: linear-gradient(90deg, rgba(251, 246, 236, 0.86) 0%, rgba(251, 246, 236, 0.6) 46%, rgba(251, 246, 236, 0) 78%); }
-+  :is(#ifta-v2, .ifta-root) .ifta-hero--staff::after, :is(#ifta-v2, .ifta-root) .ifta-hero--queue::after { background: linear-gradient(0deg, rgba(6, 7, 9, 0.9) 0%, rgba(6, 7, 9, 0.6) 46%, rgba(6, 7, 9, 0.15) 100%); }
-+  :is(#ifta-v2, .ifta-root) .ifta-hero--staff .ifta-hero__text, :is(#ifta-v2, .ifta-root) .ifta-hero--queue .ifta-hero__text { padding-top: 9.6rem; }
-+  :is(#ifta-v2, .ifta-root) .ifta-hero--client .ifta-hero__plate img { object-position: 78% 50%; }
-+  :is(#ifta-v2, .ifta-root) .ifta-hero--staff .ifta-hero__plate img, :is(#ifta-v2, .ifta-root) .ifta-hero--queue .ifta-hero__plate img { object-position: 22% 40%; }
-+  :is(#ifta-v2, .ifta-root) .ifta-hero--client .ifta-hero__foot { flex-direction: column; align-items: flex-start; gap: var(--s3); margin-top: var(--s4); }
-+  :is(#ifta-v2, .ifta-root) .ifta-hero__foot { margin-top: var(--s4); gap: var(--s3); }
-+  :is(#ifta-v2, .ifta-root) .ifta-hero__lines { line-height: 1.45; }
-+  :is(#ifta-v2, .ifta-root) .ifta-hero--client .ifta-hero__rule { display: none; }
-+  :is(#ifta-v2, .ifta-root) .ifta-hero--client .ifta-hero__plate { bottom: 4.4rem; height: auto; }
-+  :is(#ifta-v2, .ifta-root) .ifta-hero--client::after { bottom: 4.4rem; }
-+  :is(#ifta-v2, .ifta-root) .ifta-hero__rail { position: relative; inset: auto; width: auto; margin: 0 var(--gutter); z-index: 3; }
-+  :is(#ifta-v2, .ifta-root).ifta-root--client .ifta-top { position: absolute; z-index: 5; height: 5.6rem; padding: 0 var(--gutter); }
-+  :is(#ifta-v2, .ifta-root).ifta-root--client .ifta-mark img { height: 2.8rem; }
-+  :is(#ifta-v2, .ifta-root).ifta-root--client .ifta-top__btn svg { width: 2rem; height: 2rem; }
-+  :is(#ifta-v2, .ifta-root).ifta-root--client .ifta-top__bell { margin-left: var(--s5); }
-+  :is(#ifta-v2, .ifta-root).ifta-root--client .ifta-top__who { margin-left: var(--s4); }
-+  :is(#ifta-v2, .ifta-root).ifta-root--client .ifta-avatar { width: 3.6rem; height: 3.6rem; }
-+  :is(#ifta-v2, .ifta-root).ifta-root--client .ifta-avatar > span { font-size: 1.1rem; }
-+  :is(#ifta-v2, .ifta-root).ifta-root--client .ifta-top__dot, :is(#ifta-v2, .ifta-root).ifta-root--staff .ifta-top__dot { width: 0.8rem; height: 0.8rem; }
-+  :is(#ifta-v2, .ifta-root).ifta-root--staff .ifta-top { height: 5.6rem; padding: 0 var(--gutter); }
-+  :is(#ifta-v2, .ifta-root).ifta-root--staff .ifta-mark img { height: 2.8rem; }
-+  :is(#ifta-v2, .ifta-root).ifta-root--staff .ifta-top__btn svg { width: 2rem; height: 2rem; }
-+  :is(#ifta-v2, .ifta-root).ifta-root--staff .ifta-top__bell { margin-left: var(--s5); }
-+  :is(#ifta-v2, .ifta-root).ifta-root--staff .ifta-top__who { margin-left: var(--s4); }
-+  :is(#ifta-v2, .ifta-root).ifta-root--staff .ifta-avatar { width: 3.6rem; height: 3.6rem; }
-+  :is(#ifta-v2, .ifta-root).ifta-root--staff .ifta-avatar > span { font-size: 1.1rem; }
-+  :is(#ifta-v2, .ifta-root).ifta-root--staff .ifta-top__id { width: auto; margin-left: var(--s2); gap: var(--s1); }
-+  :is(#ifta-v2, .ifta-root).ifta-root--staff .ifta-top__name { font-size: var(--t6); }
-+  :is(#ifta-v2, .ifta-root).ifta-root--staff .ifta-top__role { font-size: 1rem; }
-+  :is(#ifta-v2, .ifta-root).ifta-root--staff .ifta-top__chev { width: 1.4rem; height: 1.4rem; }
-+
-+  /* metrics: 2 × 2, every value and label readable */
-+  :is(#ifta-v2, .ifta-root) .ifta-rail, :is(#ifta-v2, .ifta-root) .ifta-page--client .ifta-rail, :is(#ifta-v2, .ifta-root) .ifta-page--staff .ifta-rail, :is(#ifta-v2, .ifta-root) .ifta-page--queue .ifta-rail, :is(#ifta-v2, .ifta-root) .ifta-rail--dark { grid-template-columns: 1fr 1fr; height: auto; border-radius: var(--radius); }
-+  :is(#ifta-v2, .ifta-root) .ifta-rail__cell, :is(#ifta-v2, .ifta-root) .ifta-page--client .ifta-rail__cell, :is(#ifta-v2, .ifta-root) .ifta-page--staff .ifta-rail__cell, :is(#ifta-v2, .ifta-root) .ifta-rail--dark .ifta-rail__cell { min-height: 7.2rem; padding: var(--s4) var(--s3) var(--s4) var(--s4); }
-+  :is(#ifta-v2, .ifta-root) .ifta-rail__cell + .ifta-rail__cell::before { display: none; }
-+  :is(#ifta-v2, .ifta-root) .ifta-rail__cell:nth-of-type(odd) { border-right: 0.1rem solid var(--hair); }
-+  :is(#ifta-v2, .ifta-root) .ifta-rail__cell:nth-of-type(-n + 2) { border-bottom: 0.1rem solid var(--hair); }
-+  :is(#ifta-v2, .ifta-root) .ifta-rail__icon, :is(#ifta-v2, .ifta-root) .ifta-page--client .ifta-rail__icon, :is(#ifta-v2, .ifta-root) .ifta-page--staff .ifta-rail__icon, :is(#ifta-v2, .ifta-root) .ifta-rail--dark .ifta-rail__icon { width: var(--ic-metric); height: var(--ic-metric); }
-+  :is(#ifta-v2, .ifta-root) .ifta-rail__text, :is(#ifta-v2, .ifta-root) .ifta-page--client .ifta-rail__text, :is(#ifta-v2, .ifta-root) .ifta-page--staff .ifta-rail__text, :is(#ifta-v2, .ifta-root) .ifta-rail--dark .ifta-rail__text { margin-left: var(--s3); gap: var(--s1); }
-+  :is(#ifta-v2, .ifta-root) .ifta-rail__value, :is(#ifta-v2, .ifta-root) .ifta-page--client .ifta-rail__value, :is(#ifta-v2, .ifta-root) .ifta-page--staff .ifta-rail__value, :is(#ifta-v2, .ifta-root) .ifta-rail--dark .ifta-rail__value { font-size: var(--t4); line-height: 1; }
-+  :is(#ifta-v2, .ifta-root) .ifta-rail__cell.is-muted .ifta-rail__value, :is(#ifta-v2, .ifta-root) .ifta-page--client .ifta-rail__cell.is-muted .ifta-rail__value, :is(#ifta-v2, .ifta-root) .ifta-page--staff .ifta-rail__cell.is-muted .ifta-rail__value { font-size: calc(var(--t4) * 0.8); }
-+  :is(#ifta-v2, .ifta-root) .ifta-rail__label, :is(#ifta-v2, .ifta-root) .ifta-page--client .ifta-rail__label, :is(#ifta-v2, .ifta-root) .ifta-page--staff .ifta-rail__label, :is(#ifta-v2, .ifta-root) .ifta-rail--dark .ifta-rail__label { font-size: var(--t7); line-height: 1.25; letter-spacing: 0.06em; white-space: normal; }
-+  :is(#ifta-v2, .ifta-root) .ifta-rail__delta { display: none; }
-+  :is(#ifta-v2, .ifta-root) .ifta-frame--rail, :is(#ifta-v2, .ifta-root) .ifta-page--staff .ifta-frame--rail { padding: 0 var(--gutter); margin-top: calc(-1 * var(--s6)); }
-+  :is(#ifta-v2, .ifta-root) .ifta-health-strip { padding: var(--s4) var(--gutter) 0; }
-+  :is(#ifta-v2, .ifta-root) .ifta-health-strip .ifta-health, :is(#ifta-v2, .ifta-root) .ifta-page--staff .ifta-health-strip .ifta-health { width: 100%; height: auto; padding: var(--s4); background: #121214; border-radius: var(--radius); }
-+  :is(#ifta-v2, .ifta-root) .ifta-health-strip .ifta-health__title, :is(#ifta-v2, .ifta-root) .ifta-page--staff .ifta-health-strip .ifta-health__title { font-size: var(--t3); }
-+  :is(#ifta-v2, .ifta-root) .ifta-health-strip ul { display: grid; grid-template-columns: 1fr 1fr; column-gap: var(--s4); margin-top: var(--s3); }
-+  :is(#ifta-v2, .ifta-root) .ifta-health-strip li, :is(#ifta-v2, .ifta-root) .ifta-page--staff .ifta-health-strip li { height: 4rem; border-top: 0.1rem solid rgba(255, 255, 255, 0.08); }
-+  :is(#ifta-v2, .ifta-root) .ifta-health-strip li:nth-child(-n + 2) { border-top: 0; }
-+  :is(#ifta-v2, .ifta-root) .ifta-health-strip .ifta-health__label, :is(#ifta-v2, .ifta-root) .ifta-page--staff .ifta-health-strip .ifta-health__label { font-size: var(--t6); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-left: var(--s2); }
-+  :is(#ifta-v2, .ifta-root) .ifta-health-strip strong, :is(#ifta-v2, .ifta-root) .ifta-page--staff .ifta-health-strip strong { font-size: var(--t6); padding-left: var(--s2); }
-+  :is(#ifta-v2, .ifta-root) .ifta-health-strip .ifta-health__check, :is(#ifta-v2, .ifta-root) .ifta-page--staff .ifta-health-strip .ifta-health__check { width: 1.6rem; height: 1.6rem; }
-+
-+  /* tabs: readable labels, scrolling strip with a visible continuation */
-+  :is(#ifta-v2, .ifta-root) .ifta-tabrow, :is(#ifta-v2, .ifta-root) .ifta-page--client .ifta-tabrow, :is(#ifta-v2, .ifta-root) .ifta-page--staff .ifta-tabrow { margin: var(--s5) 0 0; padding: 0 var(--gutter); }
-+  :is(#ifta-v2, .ifta-root) .ifta-tabs, :is(#ifta-v2, .ifta-root) .ifta-page--staff .ifta-tabs { height: 4.4rem; padding: 0 var(--s1); border-radius: var(--radius); -webkit-mask-image: linear-gradient(90deg, #000 86%, transparent); mask-image: linear-gradient(90deg, #000 86%, transparent); scroll-padding-inline: var(--s4); }
-+  :is(#ifta-v2, .ifta-root) .ifta-tab, :is(#ifta-v2, .ifta-root) .ifta-page--staff .ifta-tab, :is(#ifta-v2, .ifta-root) .ifta-tab.is-active, :is(#ifta-v2, .ifta-root) .ifta-page--staff .ifta-tab.is-active { height: 3.6rem; padding: 0 var(--s4); border-radius: 0.8rem; font-size: var(--ttab); }
-+
-+  /* one column, ordered by what matters now */
-+  :is(#ifta-v2, .ifta-root) .ifta-grid, :is(#ifta-v2, .ifta-root) .ifta-page--client .ifta-grid, :is(#ifta-v2, .ifta-root) .ifta-page--staff .ifta-grid { margin: var(--s5) var(--gutter) 0; }
-+  :is(#ifta-v2, .ifta-root) .ifta-grid--client-mobile, :is(#ifta-v2, .ifta-root) .ifta-grid--staff-mobile { display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: none; grid-auto-rows: auto; row-gap: var(--gap); column-gap: 0; }
-+  :is(#ifta-v2, .ifta-root) .ifta-grid--client-mobile > *, :is(#ifta-v2, .ifta-root) .ifta-grid--staff-mobile > * { grid-area: auto !important; }
-+  :is(#ifta-v2, .ifta-root) .ifta-grid--client-mobile .ifta-a-workflow { order: 1; }
-+  :is(#ifta-v2, .ifta-root) .ifta-grid--client-mobile .ifta-a-quick { order: 2; }
-+  :is(#ifta-v2, .ifta-root) .ifta-grid--client-mobile .ifta-a-cta { order: 3; }
-+  :is(#ifta-v2, .ifta-root) .ifta-grid--client-mobile .ifta-a-map { order: 4; }
-+  :is(#ifta-v2, .ifta-root) .ifta-grid--client-mobile .ifta-a-uploads { order: 5; }
-+  :is(#ifta-v2, .ifta-root) .ifta-grid--client-mobile .ifta-a-insights { order: 6; }
-+  :is(#ifta-v2, .ifta-root) .ifta-grid--client-mobile .ifta-a-activity { order: 7; }
-+  :is(#ifta-v2, .ifta-root) .ifta-grid--staff-mobile .ifta-a-risks { order: 1; }
-+  :is(#ifta-v2, .ifta-root) .ifta-grid--staff-mobile .ifta-a-cta { order: 2; }
-+  :is(#ifta-v2, .ifta-root) .ifta-grid--staff-mobile .ifta-a-tasks { order: 3; }
-+  :is(#ifta-v2, .ifta-root) .ifta-grid--staff-mobile .ifta-a-workflow { order: 4; }
-+  :is(#ifta-v2, .ifta-root) .ifta-grid--staff-mobile .ifta-a-bars { order: 5; }
-+  :is(#ifta-v2, .ifta-root) .ifta-grid--staff-mobile .ifta-a-donut { order: 6; }
-+  :is(#ifta-v2, .ifta-root) .ifta-grid--staff-mobile .ifta-a-clientact { order: 7; }
-+  :is(#ifta-v2, .ifta-root) .ifta-grid--staff-mobile .ifta-a-teamact { order: 8; }
-+  :is(#ifta-v2, .ifta-root) .ifta-a-cta .ifta-cta { width: 100% !important; margin: 0 !important; }
-+  :is(#ifta-v2, .ifta-root) .ifta-card__body, :is(#ifta-v2, .ifta-root) .ifta-page--client .ifta-card__body, :is(#ifta-v2, .ifta-root) .ifta-page--staff .ifta-card__body { margin-top: var(--s3); }
-+  :is(#ifta-v2, .ifta-root) :is(.ifta-flow, .ifta-tasks, .ifta-quick, .ifta-uploads, .ifta-actor, .ifta-risks, .ifta-timeline, .ifta-dates, .ifta-vehicles) { height: auto; grid-auto-rows: minmax(5.2rem, auto); }
-+  :is(#ifta-v2, .ifta-root) .ifta-timeline { grid-auto-rows: minmax(4.8rem, auto); }
-+  :is(#ifta-v2, .ifta-root) .ifta-page--client .ifta-a-quick { padding: var(--pad) var(--pad) calc(var(--pad) - 0.4rem); background: #fff; box-shadow: 0 0.2rem 0.8rem rgba(0, 0, 0, 0.04), 0 0 0 0.1rem rgba(0, 0, 0, 0.035); overflow: hidden; }
-+  :is(#ifta-v2, .ifta-root) .ifta-page--client .ifta-a-quick .ifta-card__head { display: flex; }
-+  :is(#ifta-v2, .ifta-root) .ifta-page--client .ifta-a-quick .ifta-card__body { margin-top: var(--s3); }
-+  :is(#ifta-v2, .ifta-root) .ifta-quick, :is(#ifta-v2, .ifta-root) .ifta-page--client .ifta-quick { gap: 0; }
-+  :is(#ifta-v2, .ifta-root) .ifta-quick > li, :is(#ifta-v2, .ifta-root) .ifta-page--client .ifta-quick > li { border-radius: 0; background: none; box-shadow: none; border-bottom: 0.1rem solid #f0f0ee; }
-+  :is(#ifta-v2, .ifta-root) .ifta-quick > li:last-child { border-bottom: 0; }
-+  :is(#ifta-v2, .ifta-root) .ifta-quick__row, :is(#ifta-v2, .ifta-root) .ifta-page--client .ifta-quick__row { gap: var(--s3); padding: 0; }
-+  :is(#ifta-v2, .ifta-root) .ifta-quick__icon, :is(#ifta-v2, .ifta-root) .ifta-page--client .ifta-quick__icon { width: 3.6rem; height: 3.6rem; }
-+  :is(#ifta-v2, .ifta-root) .ifta-quick__chev, :is(#ifta-v2, .ifta-root) .ifta-tasks__chev, :is(#ifta-v2, .ifta-root) .ifta-actor__chev { width: 1.6rem; height: 1.6rem; }
-+  :is(#ifta-v2, .ifta-root) .ifta-mapwrap, :is(#ifta-v2, .ifta-root) .ifta-page--client .ifta-mapwrap { grid-template-columns: 1fr; row-gap: var(--s4); height: auto; }
-+  :is(#ifta-v2, .ifta-root) .ifta-mapwrap .ifta-map { max-width: 32rem; justify-self: center; }
-+  :is(#ifta-v2, .ifta-root) .ifta-mapwrap .ifta-legend { grid-template-columns: 1fr 1fr; column-gap: var(--s5); grid-auto-rows: 2.6rem; }
-+  :is(#ifta-v2, .ifta-root) .ifta-barswrap, :is(#ifta-v2, .ifta-root) .ifta-page--staff .ifta-barswrap { grid-template-columns: 11rem minmax(0, 1fr); column-gap: var(--s5); height: 15rem; }
-+  :is(#ifta-v2, .ifta-root) .ifta-donutwrap, :is(#ifta-v2, .ifta-root) .ifta-page--staff .ifta-donutwrap { grid-template-columns: 13rem minmax(0, 1fr); column-gap: var(--s5); }
-+  :is(#ifta-v2, .ifta-root) .ifta-legend li, :is(#ifta-v2, .ifta-root) .ifta-page--staff .ifta-legend li { grid-template-columns: 1rem minmax(0, 1fr) auto; column-gap: var(--s2); }
-+  :is(#ifta-v2, .ifta-root) .ifta-legend__name, :is(#ifta-v2, .ifta-root) .ifta-legend__val, :is(#ifta-v2, .ifta-root) .ifta-page--staff .ifta-legend__name, :is(#ifta-v2, .ifta-root) .ifta-page--staff .ifta-legend__val { font-size: var(--t6); }
-+  :is(#ifta-v2, .ifta-root) .ifta-donut__total, :is(#ifta-v2, .ifta-root) .ifta-page--staff .ifta-donut__total { font-size: var(--t4); }
-+  :is(#ifta-v2, .ifta-root) .ifta-donut__caption, :is(#ifta-v2, .ifta-root) .ifta-page--staff .ifta-donut__caption { font-size: var(--t7); }
-+  :is(#ifta-v2, .ifta-root) .ifta-check.is-open { border-width: 0.15rem; border-radius: 0.5rem; }
-+  :is(#ifta-v2, .ifta-root) .ifta-flow__date { font-size: 1rem; }
-+  :is(#ifta-v2, .ifta-root) .ifta-insights .ifta-card__title { font-size: var(--t3); }
-+  :is(#ifta-v2, .ifta-root) .ifta-insights__media { display: none; }
-+  :is(#ifta-v2, .ifta-root) .ifta-cta, :is(#ifta-v2, .ifta-root) .ifta-page--client .ifta-cta, :is(#ifta-v2, .ifta-root) .ifta-page--staff > .ifta-frame > .ifta-cta { height: 6.4rem; padding: 0 var(--s3); }
-+  :is(#ifta-v2, .ifta-root) .ifta-page--staff > .ifta-frame > .ifta-cta, :is(#ifta-v2, .ifta-root) .ifta-page--client > .ifta-frame > .ifta-cta { width: calc(100% - 2 * var(--gutter)); margin: var(--s6) var(--gutter) 0; }
-+  :is(#ifta-v2, .ifta-root) .ifta-cta__icon, :is(#ifta-v2, .ifta-root) .ifta-page--staff .ifta-cta__icon, :is(#ifta-v2, .ifta-root) .ifta-page--client .ifta-cta__icon { width: 4.4rem; height: 4rem; clip-path: none; }
-+  :is(#ifta-v2, .ifta-root) .ifta-cta__text, :is(#ifta-v2, .ifta-root) .ifta-page--staff .ifta-cta__text { margin-left: var(--s3); }
-+  :is(#ifta-v2, .ifta-root) .ifta-cta__go, :is(#ifta-v2, .ifta-root) .ifta-page--staff .ifta-cta__go { width: 4.4rem; height: 4rem; }
-+  :is(#ifta-v2, .ifta-root) .ifta-foot { padding: var(--s7) var(--gutter); }
-+  :is(#ifta-v2, .ifta-root) .ifta-foot__lockup { height: 6.4rem; }
-+  :is(#ifta-v2, .ifta-root) .ifta-foot__tagline { font-size: 1rem; letter-spacing: 0.24em; }
-+  :is(#ifta-v2, .ifta-root) .ifta-foot__sep { margin: 0 var(--s2); }
-+
-+  /* PUBLIC phone */
-+  :is(#ifta-v2, .ifta-root) .ifta-pubnav { height: 5.6rem; padding: 0 var(--gutter); }
-+  :is(#ifta-v2, .ifta-root) .ifta-pubnav .ifta-mark img { height: 3rem; }
-+  :is(#ifta-v2, .ifta-root) .ifta-pubnav__search svg, :is(#ifta-v2, .ifta-root) .ifta-pubnav__menu svg { width: 2.2rem; height: 2.2rem; }
-+  :is(#ifta-v2, .ifta-root) .ifta-pubnav__cta { height: 3.6rem; margin-left: var(--s4); padding: 0 var(--s4); font-size: var(--tbtn); border-radius: 0.8rem; }
-+  :is(#ifta-v2, .ifta-root) .ifta-pubnav__menu { margin-left: var(--s3); }
-+  :is(#ifta-v2, .ifta-root) .ifta-pubhero { height: auto; min-height: 36rem; display: flex; flex-direction: column; justify-content: flex-end; }
-+  :is(#ifta-v2, .ifta-root) .ifta-pubhero::after { background: linear-gradient(0deg, rgba(4, 4, 6, 0.92) 0%, rgba(4, 4, 6, 0.6) 48%, rgba(4, 4, 6, 0.1) 100%); }
-+  :is(#ifta-v2, .ifta-root) .ifta-pubhero__plate img { object-position: 68% 50%; }
-+  :is(#ifta-v2, .ifta-root) .ifta-pubhero__text { position: relative; inset: auto; padding: 12rem var(--gutter) var(--s7); max-width: none; }
-+  :is(#ifta-v2, .ifta-root) .ifta-pubhero__rule { width: 4.8rem; }
-+  :is(#ifta-v2, .ifta-root) .ifta-pubhero__tag br { display: inline; }
-+  :is(#ifta-v2, .ifta-root) .ifta-pubhero__cta { height: 4.4rem; margin-top: var(--s5); }
-+  :is(#ifta-v2, .ifta-root) .ifta-pubrail { padding: 0 var(--gutter); margin-top: calc(-1 * var(--s4)); position: relative; z-index: 3; }
-+  :is(#ifta-v2, .ifta-root) .ifta-rail--dark { margin: 0; }
-+  :is(#ifta-v2, .ifta-root) .ifta-rail--dark .ifta-rail__cell:nth-of-type(odd) { border-right-color: #2c2c2f; }
-+  :is(#ifta-v2, .ifta-root) .ifta-rail--dark .ifta-rail__cell:nth-of-type(-n + 2) { border-bottom-color: #2c2c2f; }
-+  :is(#ifta-v2, .ifta-root) .ifta-rail__badge { top: -0.9rem; right: var(--s3); font-size: 0.95rem; }
-+  :is(#ifta-v2, .ifta-root) .ifta-clear--compact { padding: var(--sect) var(--gutter) 0; }
-+  :is(#ifta-v2, .ifta-root) .ifta-clear--compact .ifta-pubh2 { font-size: var(--t2); line-height: 1.25; white-space: normal; }
-+  :is(#ifta-v2, .ifta-root) .ifta-clear--compact .ifta-clear__lead { margin-top: var(--s3); font: 400 var(--t5) / 1.6 var(--text); letter-spacing: 0.02em; }
-+  :is(#ifta-v2, .ifta-root) .ifta-process--tiles { margin-top: var(--s6); padding: 0 var(--gutter); }
-+  :is(#ifta-v2, .ifta-root) .ifta-process--tiles .ifta-process__list { grid-template-columns: 1fr 1fr; gap: var(--s3); }
-+  :is(#ifta-v2, .ifta-root) .ifta-process--tiles .ifta-process__step, :is(#ifta-v2, .ifta-root) .ifta-process--tiles .ifta-process__step:nth-child(n + 4) { grid-column: auto; height: auto; min-height: 10.4rem; padding: var(--s5) var(--s3) var(--s4); border-radius: var(--radius); }
-+  :is(#ifta-v2, .ifta-root) .ifta-process--tiles .ifta-process__step:last-child { grid-column: 1 / -1; }
-+  :is(#ifta-v2, .ifta-root) .ifta-process--tiles .ifta-process__icon { width: 2.8rem; height: 2.8rem; }
-+  :is(#ifta-v2, .ifta-root) .ifta-process--tiles .ifta-process__title { margin-top: var(--s3); font: 600 var(--t6) / 1.35 var(--display); letter-spacing: 0.06em; }
-+  :is(#ifta-v2, .ifta-root) .ifta-oneret { padding: var(--sect) var(--gutter) 0; }
-+  :is(#ifta-v2, .ifta-root) .ifta-oneret__card { grid-template-columns: 1fr; height: auto; border-radius: var(--radius); }
-+  :is(#ifta-v2, .ifta-root) .ifta-oneret__map { height: auto; aspect-ratio: 16 / 9; }
-+  :is(#ifta-v2, .ifta-root) .ifta-oneret__count { padding: var(--s5) var(--s5) var(--s6); column-gap: var(--s3); }
-+  :is(#ifta-v2, .ifta-root) .ifta-oneret__n { font-size: 4.8rem; }
-+  :is(#ifta-v2, .ifta-root) .ifta-oneret__unit { font-size: var(--t6); line-height: 1.5; }
-+  :is(#ifta-v2, .ifta-root) .ifta-oneret__rule { width: 4.8rem; height: 0.2rem; margin: var(--s4) 0 var(--s3); }
-+  :is(#ifta-v2, .ifta-root) .ifta-oneret__count p { font-size: var(--t6); line-height: 1.6; max-width: none; }
-+  :is(#ifta-v2, .ifta-root) .ifta-oneret__count p br { display: none; }
-+  :is(#ifta-v2, .ifta-root) .ifta-promises { padding-top: var(--sect); }
-+  :is(#ifta-v2, .ifta-root) .ifta-promises .ifta-pubh2 { font-size: var(--t2); }
-+  :is(#ifta-v2, .ifta-root) .ifta-promises__list { grid-template-columns: 1fr; gap: var(--s3); margin-top: var(--s4); }
-+  :is(#ifta-v2, .ifta-root) .ifta-promises__list li, :is(#ifta-v2, .ifta-root) .ifta-promises__list li:first-child { height: auto; padding: var(--s4); gap: var(--s4); border-radius: var(--radius); }
-+  :is(#ifta-v2, .ifta-root) .ifta-promises__icon { width: 3.2rem; height: 3.2rem; }
-+  :is(#ifta-v2, .ifta-root) .ifta-promises__body { gap: var(--s2); padding-top: 0; }
-+  :is(#ifta-v2, .ifta-root) .ifta-promises__title { font-size: var(--t3); }
-+  :is(#ifta-v2, .ifta-root) .ifta-promises__text { font-size: var(--t6); line-height: 1.5; }
-+  :is(#ifta-v2, .ifta-root) .ifta-promises__text br { display: none; }
-+  :is(#ifta-v2, .ifta-root) .ifta-pubfoot { height: 22rem; margin-top: var(--sect); }
-+  :is(#ifta-v2, .ifta-root) .ifta-pubfoot__brand { margin-top: var(--s6); gap: var(--s3); }
-+  :is(#ifta-v2, .ifta-root) .ifta-pubfoot__lockup { height: 10.4rem; }
-+  :is(#ifta-v2, .ifta-root) .ifta-pubfoot__line { font-size: 1rem; letter-spacing: 0.12em; }
-+}
-+
-+/* V2 · round 2: metric labels at metadata size · hero state reads first · panel clear of the rail */
-+:is(#ifta-v2, .ifta-root) { --tstate: 1.6rem; }
-+@media (max-width: 699.98px) { :is(#ifta-v2, .ifta-root) { --tstate: 1.3rem; --pill-h: 3.2rem; } }
-+@media (min-width: 700px) { :is(#ifta-v2, .ifta-root) { --pill-h: 4rem; } }
-+:is(#ifta-v2, .ifta-root) .ifta-rail__label,
-+:is(#ifta-v2, .ifta-root) .ifta-page--staff .ifta-rail__label,
-+:is(#ifta-v2, .ifta-root) .ifta-rail--dark .ifta-rail__label { font: 500 var(--t6) / 1.2 var(--display); letter-spacing: 0.06em; }
-+:is(#ifta-v2, .ifta-root) .ifta-pill { font-size: var(--tstate); gap: var(--s3); padding: 0 var(--s6) 0 var(--s5); }
-+:is(#ifta-v2, .ifta-root) .ifta-pill__icon { width: var(--ic-row); height: var(--ic-row); }
-+:is(#ifta-v2, .ifta-root) .ifta-hero--staff .ifta-hero__aside, :is(#ifta-v2, .ifta-root) .ifta-hero--queue .ifta-hero__aside { top: var(--s7); bottom: auto; }
-+:is(#ifta-v2, .ifta-root) .ifta-clear__cta, :is(#ifta-v2, .ifta-root) .ifta-pubnav__cta { font-size: 1.5rem; }
-+@media (min-width: 1200px) { :is(#ifta-v2, .ifta-root) .ifta-promises__text { white-space: nowrap; } }
-+/* V2 round 3 — staff identity weight, phone readability (wrap instead of clip) */
-+:is(#ifta-v2, .ifta-root) .ifta-hero--staff .ifta-hero__lines span[title] { font-weight: 600; color: #fff; letter-spacing: 0.06em; }
-+@media (max-width: 699.98px) {
-+  :is(#ifta-v2, .ifta-root) .ifta-health-strip ul { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-+  :is(#ifta-v2, .ifta-root) .ifta-health-strip li { min-width: 0; }
-+  :is(#ifta-v2, .ifta-root) .ifta-health-strip .ifta-health__label, :is(#ifta-v2, .ifta-root) .ifta-page--staff .ifta-health-strip .ifta-health__label { flex: 1 1 auto; min-width: 0; }
-+  :is(#ifta-v2, .ifta-root) .ifta-cta__label, :is(#ifta-v2, .ifta-root) .ifta-page--staff .ifta-cta__label, :is(#ifta-v2, .ifta-root) .ifta-page--client .ifta-cta__label { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; line-height: 1.15; }
-+  :is(#ifta-v2, .ifta-root) .ifta-tasks__label, :is(#ifta-v2, .ifta-root) .ifta-page--staff .ifta-tasks__label { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; padding: var(--s2) 0; }
-+  :is(#ifta-v2, .ifta-root) .ifta-pubhero__plate img { object-position: 82% 50%; }
-+}
-+@media (max-width: 699.98px) {
-+  :is(#ifta-v2, .ifta-root) .ifta-health-strip ul { grid-template-columns: minmax(0, 1fr); }
-+  :is(#ifta-v2, .ifta-root) .ifta-health-strip li:nth-child(2) { border-top: 0.1rem solid rgba(255, 255, 255, 0.08); }
-+  :is(#ifta-v2, .ifta-root) .ifta-health-strip li, :is(#ifta-v2, .ifta-root) .ifta-page--staff .ifta-health-strip li { height: 3.6rem; }
-+}
-+/* V2 round 4 — staff tablet portrait keeps a 10px authority unit (no squeezed 1024 layout below 1024) */
-+@media (min-width: 700px) and (max-width: 1023.98px) {
-+  html.ifta-scaled--staff { font-size: 10px; }
-+}
-+/* staff tablet band: activity pair, then risks full width directly above the next-action rail */
-+@media (min-width: 700px) and (max-width: 1199.98px) {
-+  :is(#ifta-v2, .ifta-root) .ifta-grid--staff-tablet { grid-template-rows: 34rem 28.5rem auto auto; }
-+  :is(#ifta-v2, .ifta-root) .ifta-grid--staff-tablet .ifta-a-clientact { grid-area: 3 / 1 / 4 / 4; }
-+  :is(#ifta-v2, .ifta-root) .ifta-grid--staff-tablet .ifta-a-teamact { grid-area: 3 / 5 / 4 / 8; }
-+  :is(#ifta-v2, .ifta-root) .ifta-grid--staff-tablet .ifta-a-risks { grid-area: 4 / 1 / 5 / 8; }
-+  :is(#ifta-v2, .ifta-root) .ifta-grid--staff-tablet :is(.ifta-actor, .ifta-risks) { height: auto; }
-+  :is(#ifta-v2, .ifta-root) .ifta-grid--staff-tablet .ifta-a-risks .ifta-risks { display: grid; grid-template-columns: 1fr 1fr; column-gap: var(--s7); }
-+  :is(#ifta-v2, .ifta-root) .ifta-grid--staff-tablet .ifta-a-risks .ifta-risks li { border-top: 0; }
-+  :is(#ifta-v2, .ifta-root) .ifta-grid--staff-tablet :is(.ifta-actor__title, .ifta-risks__detail, .ifta-tasks__label) { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
-+}
-+@media (min-width: 700px) and (max-width: 1023.98px) {
-+  :is(#ifta-v2, .ifta-root) .ifta-page--staff .ifta-tabs { display: flex; justify-content: space-between; }
-+  :is(#ifta-v2, .ifta-root) .ifta-page--staff .ifta-tab { flex: none; padding: 0 var(--s3); letter-spacing: 0.03em; }
-+  :is(#ifta-v2, .ifta-root) .ifta-page--staff .ifta-tab.is-active { padding: 0 var(--s5); }
-+  :is(#ifta-v2, .ifta-root) .ifta-page--staff .ifta-barswrap { grid-template-columns: 12rem 1fr; column-gap: var(--s5); }
-+  :is(#ifta-v2, .ifta-root) .ifta-page--staff .ifta-bars__plot { column-gap: 0.8rem; }
-+}
-+/* tables: a gutter between columns; activity text and risk detail may take a second line instead of clipping */
-+:is(#ifta-v2, .ifta-root) .ifta-table td:not(:last-child), :is(#ifta-v2, .ifta-root) .ifta-table th:not(:last-child) { padding-right: var(--s3); }
-+:is(#ifta-v2, .ifta-root) :is(.ifta-table--client, .ifta-table--team, .ifta-table--risks) td { white-space: normal; height: auto; padding-block: var(--s2); line-height: 1.3; }
-+:is(#ifta-v2, .ifta-root) :is(.ifta-table--client, .ifta-table--team, .ifta-table--risks) td > * { -webkit-line-clamp: 2; }
-+:is(#ifta-v2, .ifta-root) .ifta-tasks__label { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
-+:is(#ifta-v2, .ifta-root) :is(.ifta-actor__title, .ifta-uploads__name) { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
-+/* V2 round 5 — readability floors (metadata never below 12px desktop/tablet, 11px phone) + public tablet rail fit */
-+:is(#ifta-v2, .ifta-root) { --t7: 1.2rem; }
-+@media (min-width: 700px) and (max-width: 1199.98px) {
-+  :is(#ifta-v2, .ifta-root) { --t7: max(1.2rem, 11.5px); --t6: max(1.3rem, 12px); --t5: max(1.5rem, 13px); }
-+  :is(#ifta-v2, .ifta-root) .ifta-rail--dark .ifta-rail__cell { padding-left: var(--s5); }
-+  :is(#ifta-v2, .ifta-root) .ifta-rail--dark .ifta-rail__icon { width: var(--ic-metric); height: var(--ic-metric); }
-+  :is(#ifta-v2, .ifta-root) .ifta-rail--dark .ifta-rail__text { margin-left: var(--s3); }
-+}
-+@media (max-width: 699.98px) {
-+  :is(#ifta-v2, .ifta-root) { --t7: max(1.1rem, 11px); --t6: max(1.2rem, 11.5px); --t5: max(1.4rem, 13px); }
-+  :is(#ifta-v2, .ifta-root) .ifta-foot__tagline { font-size: var(--t7); letter-spacing: 0.14em; }
-+  :is(#ifta-v2, .ifta-root) .ifta-pubfoot__line { font-size: var(--t7); letter-spacing: 0.1em; }
-+}
-+:is(#ifta-v2, .ifta-root) .ifta-rail__badge { font-size: var(--t7); }
-+@media (max-width: 699.98px) {
-+  :is(#ifta-v2, .ifta-root).ifta-root--staff .ifta-top__role { font-size: var(--t7); }
-+  :is(#ifta-v2, .ifta-root).ifta-root--client .ifta-avatar > span, :is(#ifta-v2, .ifta-root).ifta-root--staff .ifta-avatar > span { font-size: max(1.1rem, 11px); }
-+}
-+:is(#ifta-v2, .ifta-root) .ifta-table--activity th:nth-child(1) { width: 57%; }
-+/* queue (staff) — phone case list on the V2 scale */
-+@media (max-width: 699.98px) {
-+  :is(#ifta-v2, .ifta-root) .ifta-cases__row { grid-template-columns: 3.2rem minmax(0, 1fr) auto 1.6rem; column-gap: var(--s3); row-gap: var(--s2); padding: var(--s3) 0; }
-+  :is(#ifta-v2, .ifta-root) .ifta-cases__row > .ifta-initials { width: 3.2rem; height: 3.2rem; font-size: var(--t7); }
-+  :is(#ifta-v2, .ifta-root) .ifta-cases__who { gap: var(--s1); }
-+  :is(#ifta-v2, .ifta-root) .ifta-cases__name { font: 600 var(--t5) / 1.25 var(--display); }
-+  :is(#ifta-v2, .ifta-root) .ifta-cases__meta { font: 400 var(--t7) / 1.3 var(--text); }
-+  :is(#ifta-v2, .ifta-root) .ifta-cases__state { font-size: var(--t7); padding: 0 var(--s3); height: var(--chip-h); }
-+  :is(#ifta-v2, .ifta-root) .ifta-cases__due { font: 600 var(--t7) / 1 var(--display); letter-spacing: 0.06em; }
-+  :is(#ifta-v2, .ifta-root) .ifta-cases__chev { width: 1.6rem; height: 1.6rem; }
-+}
-+/* client tablet: the insights / activity row grows to give each timeline event its own breathing room */
-+@media (min-width: 700px) and (max-width: 1199.98px) {
-+  :is(#ifta-v2, .ifta-root) .ifta-grid--client-tablet { grid-template-rows: 48.5rem 25rem minmax(19rem, auto); row-gap: var(--s4); }
-+  :is(#ifta-v2, .ifta-root) .ifta-page--client .ifta-timeline { height: auto; grid-auto-rows: auto; row-gap: var(--s4); }
-+}
-+/* public desktop/tablet: process tiles keep a bottom inset; the footer closes with the brand at V1 presence */
-+@media (min-width: 700px) {
-+  :is(#ifta-v2, .ifta-root) .ifta-process__step { padding-bottom: var(--s5); height: auto; }
-+  :is(#ifta-v2, .ifta-root) .ifta-pubfoot__lockup { height: 15.2rem; }
-+  :is(#ifta-v2, .ifta-root) .ifta-pubfoot__line { font: 500 var(--t3) / 1.4 var(--display); letter-spacing: 0.1em; }
-+  :is(#ifta-v2, .ifta-root) .ifta-pubfoot__words span { font-size: var(--t6); }
-+}
-+@media (min-width: 700px) and (max-width: 1199.98px) {
-+  :is(#ifta-v2, .ifta-root) .ifta-pubhero__tag br { display: inline; }
++  :is(#ifta-ft, .ifta-root) :is(.ifta-page--client, .ifta-page--staff:not(.ifta-page--queue)) .ifta-card__title { font-size: 0.92rem; letter-spacing: 0.01em; }
++  :is(#ifta-ft, .ifta-root) .ifta-page--staff:not(.ifta-page--queue) :is(.ifta-a-clientact, .ifta-a-teamact, .ifta-a-risks) .ifta-card__title { font-size: 0.7rem; letter-spacing: 0; }
++  :is(#ifta-ft, .ifta-root) :is(.ifta-page--client, .ifta-page--staff:not(.ifta-page--queue)) .ifta-cta__eyebrow { font-size: 0.8rem; letter-spacing: 0.1em; }
++  :is(#ifta-ft, .ifta-root) :is(.ifta-page--client, .ifta-page--staff:not(.ifta-page--queue)) .ifta-rail__label { font-size: 0.72rem; letter-spacing: 0.02em; }
++  :is(#ifta-ft, .ifta-root) .ifta-rail--dark .ifta-rail__label { font-size: 0.74rem; letter-spacing: 0.03em; }
++  :is(#ifta-ft, .ifta-root) .ifta-rail__badge { font-size: 0.7rem; }
++  :is(#ifta-ft, .ifta-root) :is(.ifta-page--client, .ifta-page--staff:not(.ifta-page--queue)) .ifta-viewall { font-size: 0.7rem; }
++  :is(#ifta-ft, .ifta-root) .ifta-page--staff:not(.ifta-page--queue) :is(.ifta-a-clientact, .ifta-a-teamact, .ifta-a-risks) .ifta-viewall { font-size: 0.55rem; }
++  :is(#ifta-ft, .ifta-root) :is(.ifta-page--client, .ifta-page--staff:not(.ifta-page--queue)) .ifta-flow__status { font-size: 0.68rem; }
++  :is(#ifta-ft, .ifta-root) :is(.ifta-page--client, .ifta-page--staff:not(.ifta-page--queue)) .ifta-flow__date { font-size: 0.65rem; }
++  :is(#ifta-ft, .ifta-root) .ifta-page--staff:not(.ifta-page--queue) :is(.ifta-actor__when, .ifta-risks__detail) { font-size: 0.64rem; }
++  :is(#ifta-ft, .ifta-root) .ifta-page--client :is(.ifta-timeline__text, .ifta-timeline__when) { font-size: 0.68rem; }
++  :is(#ifta-ft, .ifta-root) .ifta-page--client .ifta-insights__body p { font-size: 0.7rem; }
++  :is(#ifta-ft, .ifta-root) :is(.ifta-page--client, .ifta-page--staff:not(.ifta-page--queue)) .ifta-foot__tagline > span, :is(#ifta-ft, .ifta-root) :is(.ifta-page--client, .ifta-page--staff:not(.ifta-page--queue)) .ifta-foot__sep { font-size: 0.75rem; }
++  :is(#ifta-ft, .ifta-root) .ifta-process__title { font-size: 0.8rem; }
++  :is(#ifta-ft, .ifta-root) .ifta-promises__text { font-size: 0.75rem; }
++  :is(#ifta-ft, .ifta-root) .ifta-oneret__count p { font-size: 0.78rem; }
 +}
