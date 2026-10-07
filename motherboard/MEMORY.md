@@ -55239,3 +55239,15 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
   - Inter Tight is wider than the drawn condensed lettering (D-TYPOGRAPHY).
   - Avatars are initials.
   - Inpainted regions of the plates are softer.
+
+---
+
+## 2026-10-07 — AIO IFTA metrics rails: no clipped values at any width
+
+- **Found while building founder mocks:** the public rail's last cells ran past their edge on tablet (up to 36 px, "$2,184.32" cut off). The client and staff phone rails were 1–8 px over. `body { overflow-x: hidden }` hid it from the horizontal-scroll checks.
+- **Fix (CSS only):** rebalanced rail columns, padding, icon size and value size per band.
+- **Proof:**
+  - every rail cell's content fits its cell on public, client, case and queue at 1440 / 1199 / 1024 / 834 / 700 / 402 / 375 / 360
+  - no content past the viewport on any of those
+  - live pass 43/43
+- **Founder mocks:** static artifacts captured from the live pages (client, public, founder / staff case).

@@ -5346,3 +5346,69 @@ body:has(.ifta-root--dark) {
     line-height: 1.1;
   }
 }
+
+/* metrics rails: every value and label fits its cell at every width (measured: no cell content past its edge) */
+@media (max-width: 1199.98px) {
+  .ifta-root .ifta-rail--dark {
+    grid-template-columns: 20.2fr 22.3fr 19.3fr 21.6fr;
+  }
+  .ifta-root .ifta-rail--dark .ifta-rail__cell {
+    padding-left: 1.5rem;
+  }
+  .ifta-root .ifta-rail--dark .ifta-rail__icon {
+    width: 4.2rem;
+    height: 4.6rem;
+  }
+  .ifta-root .ifta-rail--dark .ifta-rail__text {
+    margin-left: 1.5rem;
+  }
+  .ifta-root .ifta-rail--dark .ifta-rail__value {
+    font-size: 3rem;
+    line-height: 3rem;
+  }
+}
+@media (max-width: 699.98px) {
+  .ifta-root .ifta-rail--dark {
+    grid-template-columns: 9.5fr 10.65fr 9.25fr 10.4fr;
+  }
+  .ifta-root .ifta-rail--dark .ifta-rail__cell {
+    padding-left: 1rem;
+  }
+  .ifta-root .ifta-rail--dark .ifta-rail__icon {
+    width: 2rem;
+    height: 2.2rem;
+  }
+  .ifta-root .ifta-rail--dark .ifta-rail__text {
+    margin-left: 0.7rem;
+  }
+  .ifta-root .ifta-rail--dark .ifta-rail__value {
+    font-size: 1.4rem;
+    line-height: 1.4rem;
+  }
+  .ifta-root .ifta-page--client .ifta-rail {
+    grid-template-columns: 9.4fr 9.5fr 8.4fr 9.4fr;
+  }
+  .ifta-root .ifta-page--client .ifta-rail__cell {
+    padding-left: 0.8rem;
+  }
+  .ifta-root .ifta-page--client .ifta-rail__text {
+    margin-left: 0.6rem;
+  }
+  .ifta-root .ifta-page--staff .ifta-rail,
+  .ifta-root .ifta-page--staff .ifta-rail--extra {
+    grid-template-columns: 7.6fr 8.3fr 7.65fr 8.45fr 6.25fr;
+  }
+  .ifta-root .ifta-page--queue .ifta-rail {
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+  }
+  .ifta-root .ifta-page--staff .ifta-rail__cell {
+    padding-left: 0.55rem;
+  }
+  .ifta-root .ifta-page--staff .ifta-rail__icon {
+    width: 1.5rem;
+    height: 1.8rem;
+  }
+  .ifta-root .ifta-page--staff .ifta-rail__text {
+    margin-left: 0.4rem;
+  }
+}
