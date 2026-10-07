@@ -7,6 +7,7 @@
   "scripts": {
     "dev": "vite --port 5173 --host",
     "preview:tunnel": "bash scripts/aio-preview-tunnel.sh",
+    "ifta:mocks": "node scripts/ifta/build-founder-mocks.mjs",
     "prebuild": "node scripts/prebuild-validate.mjs",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview --port 4173 --host",

@@ -55263,3 +55263,16 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Spatial Architecture Review:** SKIPPED — existing IFTA asset replacement, no new Studio surface.
 - **Sync:** master, `[sync-only]`. Vercel waits for “deploy now”.
 
+---
+
+## 2026-10-07 — AIO IFTA founder review mocks: repeatable build + scheduled refresh
+
+- **What:** `all-in-one-enterprises/scripts/ifta/build-founder-mocks.mjs` (`npm run ifta:mocks`) captures the live client, public and founder / staff pages at desktop / tablet / phone into self-contained HTML mocks (`.ifta-mocks/`, git-ignored).
+  - It records each tab / View All / rail destination from the app.
+  - It stamps the source commit (`<!-- ifta-mock-sha -->`).
+  - It starts and stops its own dev server.
+- **Published links (same URLs on every republish):** see `docs/aio/ifta/visual-reconstruction/MOCKS.md`.
+  - client https://claude.ai/artifact/JDEeSCFdEea3JUTDkYxMzw
+  - public https://claude.ai/artifact/WQDLzooEj26KangyyzKssx
+  - founder / staff https://claude.ai/artifact/LbuNRAW5JrDtnevYrjSfQ4
+- **Refresh:** artifacts never follow `master` on their own. The routine "AIO IFTA mock refresh" checks `master` every 6 hours. When the commit differs from the mocks' stamped commit, it rebuilds and republishes to the same links.
