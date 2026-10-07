@@ -5,6 +5,12 @@
 Outputs are listed with their source + crop in src/ifta/ui/iftaAssetManifest.ts (media ownership).
 """
 import sys
+
+sys.exit(
+    "Refused. The IFTA footer lockup is the founder full logo. "
+    "This script must not overwrite public/brand/ifta lockups or marks."
+)
+
 import numpy as np
 from PIL import Image, ImageFilter
 

@@ -7,7 +7,14 @@ the image (headline, pills, panels, metrics rail) is removed with OpenCV inpaint
 same geometry, so nothing interactive is a picture. Deterministic for a given OpenCV build (made with
 opencv-python-headless 5.0.0). Box = board pixels; css = the CSS size the region maps to at the authority width.
 """
-import sys, os, json
+import sys
+
+sys.exit(
+    "Refused. IFTA photographic plates are OpenArt HQ masters. "
+    "Board crops and OpenCV inpaint are forbidden and must not overwrite public/brand/ifta/plates."
+)
+
+import os, json
 import numpy as np, cv2
 
 BUNDLE, OUT = sys.argv[1], sys.argv[2]

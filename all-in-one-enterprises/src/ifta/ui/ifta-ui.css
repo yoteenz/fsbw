@@ -2045,8 +2045,11 @@ body:has(.ifta-root--dark) {
   background: linear-gradient(270deg, transparent, rgba(212, 168, 83, 0.6));
 }
 .ifta-foot__lockup {
-  height: 4.2rem;
+  height: 9.6rem;
   width: auto;
+  background: #070708;
+  padding: 0.45rem 0.8rem 0.55rem;
+  border-radius: 0.4rem;
 }
 .ifta-foot__tagline {
   grid-column: 1 / -1;
@@ -2070,7 +2073,7 @@ body:has(.ifta-root--dark) {
   display: none;
 }
 .ifta-foot--inline .ifta-foot__lockup {
-  height: 4.5rem;
+  height: 10.4rem;
 }
 .ifta-foot--inline .ifta-foot__tagline {
   grid-column: auto;
@@ -3779,7 +3782,8 @@ body:has(.ifta-root--dark) {
     column-gap: 1.6rem;
   }
   .ifta-foot__lockup {
-    height: 2.5rem;
+    height: 6.6rem;
+    padding: 0.3rem 0.45rem 0.35rem;
   }
   .ifta-foot__tagline {
     margin-top: 0.6rem;
@@ -4668,7 +4672,7 @@ body:has(.ifta-root--dark) {
   display: flex;
   align-items: center;
   width: min(100%, 144rem);
-  height: 15.5rem;
+  height: 28rem;
   margin-inline: auto;
   overflow: hidden;
 }
@@ -4689,7 +4693,7 @@ body:has(.ifta-root--dark) {
   margin-left: 11.7rem;
 }
 .ifta-pubfoot__lockup {
-  height: 6.4rem;
+  height: 16rem;
   width: auto;
 }
 .ifta-pubfoot__line {
@@ -4935,7 +4939,7 @@ body:has(.ifta-root--dark) {
   }
   .ifta-pubfoot {
     width: 100%;
-    height: 20.3rem;
+    height: 32rem;
     justify-content: center;
     margin-top: 1rem;
   }
@@ -4945,7 +4949,7 @@ body:has(.ifta-root--dark) {
     gap: 1.6rem;
   }
   .ifta-pubfoot__lockup {
-    height: 6.5rem;
+    height: 16rem;
   }
   .ifta-pubfoot__line {
     font-size: 1.9rem;
@@ -5158,7 +5162,7 @@ body:has(.ifta-root--dark) {
     line-height: 1.02rem;
   }
   .ifta-pubfoot {
-    height: 13.7rem;
+    height: 22rem;
     margin-top: 0.9rem;
   }
   .ifta-pubfoot__brand {
@@ -5166,7 +5170,7 @@ body:has(.ifta-root--dark) {
     gap: 0.9rem;
   }
   .ifta-pubfoot__lockup {
-    height: 3rem;
+    height: 12rem;
   }
   .ifta-pubfoot__line {
     font-size: max(0.82rem, 6.5px);

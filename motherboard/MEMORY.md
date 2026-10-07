@@ -55251,3 +55251,15 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
   - no content past the viewport on any of those
   - live pass 43/43
 - **Founder mocks:** static artifacts captured from the live pages (client, public, founder / staff case).
+
+---
+
+## 2026-10-07 — IFTA footer uses the full lockup; plates are OpenArt HQ masters
+
+- **Context:** Founder rejected the public IFTA bottom panel. It was still the old horizontal wordmark, and the map plus the other photographic plates were low-resolution crops of the authority boards. Crops, Telea inpaint, and upscales of those boards are forbidden.
+- **Logo:** Footer lockups (`aio-lockup-on-dark.png` and `aio-lockup-on-light.png`) are the supplied full lockup: mark, ALL IN ONE, ENTERPRISES INC., WHERE BUSINESS MEETS THE ROAD. Near-black is keyed out. The public footer sits on the mountain plate. Client and staff footers put the same lockup on a dark plate so the metal reads on the light page. Nav stays the emblem only.
+- **Plates:** Isolated OpenArt generations (Nano Banana 2.1, 4K except the snow strip at 2K). One master per scene, framed by the live layout: gold lower-48 map, blue-hour ridgeline, compact light-trail range, dusk highway, public night truck, client golden-hour truck, staff night fleet yard, dawn snow peaks. `derive-ifta-authority-plates.py` and `derive-ifta-brand-assets.py` now refuse to run so they cannot overwrite these files.
+- **Proof:** `iftaViewModel.test.ts` 9/9. Live public page at 1440 and 390 shows the new map and the full lockup in the footer. Client and staff heroes and footers use the new masters.
+- **Spatial Architecture Review:** SKIPPED — existing IFTA asset replacement, no new Studio surface.
+- **Sync:** master, `[sync-only]`. Vercel waits for “deploy now”.
+

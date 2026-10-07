@@ -1,7 +1,8 @@
 /**
- * IFTA family — media + brand asset manifest (authority → runtime binding). Every runtime asset is an APPROVED project
- * asset or a crop / alpha extraction of one (scripts/ifta/derive-ifta-brand-assets.py). No generation, no stock.
- * Authority bundle: SITE00 docs/aio/ifta/authority-bundle/source/AIO_IFTA_AUTHORITY_BUNDLE.
+ * IFTA family — media + brand asset manifest.
+ * Footer lockup: the founder full logo (mark + ALL IN ONE + ENTERPRISES INC. + WHERE BUSINESS MEETS THE ROAD).
+ * Photographic plates: isolated OpenArt HQ masters. Board crops, Telea inpaint, and upscales of authority JPEGs are forbidden.
+ * Nav marks stay emblem-only.
  */
 export const IFTA_BRAND = {
   markOnLight: '/brand/ifta/aio-mark-on-light.png',
@@ -13,18 +14,21 @@ export const IFTA_BRAND = {
 const PLATE = (name: string) => `/brand/ifta/plates/${name}.jpg`;
 
 /**
- * Authority plates — the photographic region of each approved screen with its baked UI inpainted out
- * (scripts/ifta/derive-ifta-authority-plates.py). The live UI is laid over the same geometry.
+ * Isolated OpenArt masters. One HQ file is shared across breakpoints; the live layout frames it.
+ * Desktop and compact map/footer pairs that differ are two generations, not crops of one board.
  */
 export const IFTA_PLATES = {
-  client: { desktop: PLATE('client-hero-desktop'), tablet: PLATE('client-hero-tablet'), mobile: PLATE('client-hero-mobile') },
-  staff: { desktop: PLATE('staff-hero-desktop'), tablet: PLATE('staff-hero-tablet'), mobile: PLATE('staff-hero-mobile') },
-  public: { desktop: PLATE('public-hero-desktop'), tablet: PLATE('public-hero-tablet'), mobile: PLATE('public-hero-mobile') },
+  client: { desktop: PLATE('client-hero'), tablet: PLATE('client-hero'), mobile: PLATE('client-hero') },
+  staff: { desktop: PLATE('staff-hero'), tablet: PLATE('staff-hero'), mobile: PLATE('staff-hero') },
+  public: { desktop: PLATE('public-hero'), tablet: PLATE('public-hero'), mobile: PLATE('public-hero') },
   publicRoad: PLATE('public-road'),
-  publicMap: { desktop: PLATE('public-map-desktop'), compact: PLATE('public-map') },
+  publicMap: { desktop: PLATE('public-map'), compact: PLATE('public-map') },
   publicFooter: { desktop: PLATE('public-footer-desktop'), compact: PLATE('public-footer-tablet') },
   clientInsights: PLATE('client-insights'),
 } as const;
+
+const OA = 'OpenArt Nano Banana 2.1 text-to-image, founder-approved isolated master';
+const HQ = 'isolated HQ generation · no board crop · no inpaint · no upscale of an authority JPEG';
 
 export type IftaAssetRecord = {
   asset: string;
@@ -67,122 +71,103 @@ export const IFTA_ASSET_MANIFEST: IftaAssetRecord[] = [
   },
   {
     asset: IFTA_BRAND.lockupOnLight,
-    source: 'public/brand/aio-logo-lockup.png (approved lockup)',
-    derivation: 'black → alpha · ALL IN ONE white → CHARCOAL · ENTERPRISES INC. gold kept',
+    source: 'founder-approved full lockup (mark · ALL IN ONE · ENTERPRISES INC. · WHERE BUSINESS MEETS THE ROAD.)',
+    derivation: 'supplied logo · near-black keyed to alpha · same master as the dark footer, on a dark plate so the metal reads',
     actor: 'CLIENT',
     region: 'client / staff footer',
-    crop: 'full lockup',
+    crop: 'full lockup, not a wordmark crop',
     focal: 'n/a',
-    viewport: '200px mobile · 240px desktop, centred between gold rules',
-    overlay: 'none',
-    text: 'tagline line below (DATA · COMPLIANCE · REAL PROGRESS / OPERATIONS · COMPLIANCE · CLIENT SUCCESS)',
+    viewport: 'centred between gold rules',
+    overlay: 'dark plate behind the transparent lockup',
+    text: 'tagline is inside the lockup; page line below (DATA · COMPLIANCE · REAL PROGRESS / OPERATIONS · COMPLIANCE · CLIENT SUCCESS)',
   },
   {
     asset: IFTA_BRAND.lockupOnDark,
-    source: 'public/brand/aio-logo-lockup.png (approved lockup)',
-    derivation: 'black → alpha',
+    source: 'founder-approved full lockup (mark · ALL IN ONE · ENTERPRISES INC. · WHERE BUSINESS MEETS THE ROAD.)',
+    derivation: 'supplied logo · near-black keyed to alpha · no redraw',
     actor: 'PUBLIC',
     region: 'public footer over the mountain range',
-    crop: 'full lockup',
+    crop: 'full lockup, not a wordmark crop',
     focal: 'n/a',
-    viewport: '210px mobile · 260px desktop',
-    overlay: 'sits on the obsidian fade of the range band',
+    viewport: 'stacked lockup, sized to stay legible',
+    overlay: 'sits on the dark range band',
     text: 'DRIVEN BY COMPLIANCE. BUILT FOR WHAT MOVES YOU.',
   },
   ...plateRecords(),
 ];
 
 function plateRecords(): IftaAssetRecord[] {
-  const B = 'AIO_IFTA_AUTHORITY_BUNDLE';
-  const hero = (actor: 'CLIENT' | 'STAFF' | 'PUBLIC', band: 'desktop' | 'tablet' | 'mobile', source: string, box: string): IftaAssetRecord => ({
-    asset: IFTA_PLATES[actor === 'CLIENT' ? 'client' : actor === 'STAFF' ? 'staff' : 'public'][band],
-    source: `${B}/${source} (approved)`,
-    derivation: `board crop ${box} · baked headline / pill / panel / rail inpainted (OpenCV Telea) · Lanczos upscale + light unsharp`,
+  const hero = (actor: 'CLIENT' | 'STAFF' | 'PUBLIC', subject: string): IftaAssetRecord => ({
+    asset: IFTA_PLATES[actor === 'CLIENT' ? 'client' : actor === 'STAFF' ? 'staff' : 'public'].desktop,
+    source: OA,
+    derivation: `${HQ} · 4K 16:9 · ${subject}`,
     actor,
-    region: `${actor.toLowerCase()} hero · ${band}`,
-    crop: 'the authority screen hero, edge to edge',
-    focal: 'as drawn (truck right of the headline)',
-    viewport: band === 'desktop' ? '≥ 1200 px' : band === 'tablet' ? '700 – 1199 px' : '< 700 px',
-    overlay: actor === 'STAFF' ? 'live CLIENT HEALTH panel over the right' : actor === 'CLIENT' && band === 'desktop' ? 'live quarter card over the right' : 'none',
-    text: 'live headline, status pill and metrics rail at the drawn positions',
+    region: `${actor.toLowerCase()} hero · all breakpoints`,
+    crop: 'none — one generated master, framed by the live layout',
+    focal: actor === 'STAFF' ? 'fleet row, left' : 'truck on the right',
+    viewport: 'same master at desktop, tablet, and phone',
+    overlay: actor === 'STAFF' ? 'live CLIENT HEALTH panel over the right' : actor === 'CLIENT' ? 'live quarter card over the right on desktop' : 'none',
+    text: 'live headline, status pill and metrics rail',
   });
   return [
-    hero('CLIENT', 'desktop', '02_CLIENT_MODE/AIO_IFTA_CLIENT_TABLET_DESKTOP.jpeg', 'x522–1411 · y161–371'),
-    hero('CLIENT', 'tablet', '02_CLIENT_MODE/AIO_IFTA_CLIENT_TABLET_DESKTOP.jpeg', 'x44–477 · y155–371'),
-    hero('CLIENT', 'mobile', '02_CLIENT_MODE/AIO_IFTA_CLIENT_MOBILE_PARENT_AUTHORITY.jpeg', 'x0–1206 · y0–645 (native 3×)'),
-    hero('STAFF', 'desktop', '03_FOUNDER_STAFF_MODE/AIO_IFTA_FOUNDER_STAFF_TABLET_DESKTOP.jpeg', 'x608–1411 · y226–401'),
-    hero('STAFF', 'tablet', '03_FOUNDER_STAFF_MODE/AIO_IFTA_FOUNDER_STAFF_TABLET_DESKTOP.jpeg', 'x39–556 · y229–406'),
-    hero('STAFF', 'mobile', '01_TERRITORY_SELECTION/AIO_IFTA_3_ACTOR_MODES_MOBILE.jpeg', 'staff column x514–1023 · y56–271'),
-    hero('PUBLIC', 'desktop', '04_PUBLIC_CUSTOMER_MODE/AIO_IFTA_PUBLIC_TABLET_DESKTOP.jpeg', 'x516–1433 · y73–335'),
-    hero('PUBLIC', 'tablet', '04_PUBLIC_CUSTOMER_MODE/AIO_IFTA_PUBLIC_TABLET_DESKTOP.jpeg', 'x27–486 · y97–319'),
-    hero('PUBLIC', 'mobile', '01_TERRITORY_SELECTION/AIO_IFTA_3_ACTOR_MODES_MOBILE.jpeg', 'public column x1032–1536 · y55–307'),
+    hero('CLIENT', 'golden-hour unbranded semi on an open highway'),
+    hero('STAFF', 'night fleet yard, continuous photograph'),
+    hero('PUBLIC', 'night interstate, unbranded semi, open left for the headline'),
     {
       asset: IFTA_PLATES.publicRoad,
-      source: `${B}/04_PUBLIC_CUSTOMER_MODE/AIO_IFTA_PUBLIC_TABLET_DESKTOP.jpeg (approved)`,
-      derivation: 'board crop x931–1431 · y418–595 · baked statement + rule inpainted',
+      source: OA,
+      derivation: `${HQ} · 4K 16:9 · winding mountain highway at dusk`,
       actor: 'PUBLIC',
       region: '“REAL DRIVERS. REAL ROADS. REAL COMPLIANCE.” panel (desktop)',
-      crop: 'winding road at dusk',
-      focal: 'road bend (≈ 55% x)',
-      viewport: '≥ 1200 px (tablet / mobile authority omit the panel)',
+      crop: 'none',
+      focal: 'road bend',
+      viewport: '≥ 1200 px (tablet / mobile omit the panel)',
       overlay: 'none',
-      text: 'live three-line statement + gold rule at the drawn position',
+      text: 'live three-line statement + gold rule',
     },
     {
       asset: IFTA_PLATES.publicMap.desktop,
-      source: `${B}/04_PUBLIC_CUSTOMER_MODE/AIO_IFTA_PUBLIC_TABLET_DESKTOP.jpeg (approved)`,
-      derivation: 'board crop x547–789 · y784–904 (glowing jurisdiction map, no text)',
+      source: OA,
+      derivation: `${HQ} · 4K 16:9 · gold city-light map of the lower 48 on pure black`,
       actor: 'PUBLIC',
-      region: '8 JURISDICTIONS · ONE RETURN (desktop) — sample illustration',
-      crop: 'map card',
+      region: '8 JURISDICTIONS · ONE RETURN — sample illustration',
+      crop: 'none',
       focal: 'centre',
-      viewport: '≥ 1200 px',
-      overlay: 'none',
-      text: 'live count + copy beside it',
-    },
-    {
-      asset: IFTA_PLATES.publicMap.compact,
-      source: `${B}/04_PUBLIC_CUSTOMER_MODE/AIO_IFTA_PUBLIC_TABLET_DESKTOP.jpeg (approved)`,
-      derivation: 'board crop x37–310 · y633–766 (tablet map card, no text)',
-      actor: 'PUBLIC',
-      region: '8 JURISDICTIONS · ONE RETURN (tablet / mobile) — sample illustration',
-      crop: 'map card',
-      focal: 'centre',
-      viewport: '< 1200 px',
+      viewport: 'same master at every width',
       overlay: 'none',
       text: 'live count + copy beside it',
     },
     {
       asset: IFTA_PLATES.publicFooter.desktop,
-      source: `${B}/04_PUBLIC_CUSTOMER_MODE/AIO_IFTA_PUBLIC_TABLET_DESKTOP.jpeg (approved)`,
-      derivation: 'board crop x517–1431 · y917–1011 · baked lockup + taglines inpainted',
+      source: OA,
+      derivation: `${HQ} · 4K 21:9 · blue-hour ridgeline, no baked logo`,
       actor: 'PUBLIC',
       region: 'public footer band (desktop)',
-      crop: 'mountain range at dusk',
+      crop: 'none',
       focal: 'ridge line',
       viewport: '≥ 1200 px',
       overlay: 'none',
-      text: 'live lockup + DRIVEN BY COMPLIANCE line + DATA | COMPLIANCE | REAL PROGRESS',
+      text: 'live full lockup + DRIVEN BY COMPLIANCE line + DATA | COMPLIANCE | REAL PROGRESS',
     },
     {
       asset: IFTA_PLATES.publicFooter.compact,
-      source: `${B}/04_PUBLIC_CUSTOMER_MODE/AIO_IFTA_PUBLIC_TABLET_DESKTOP.jpeg (approved)`,
-      derivation: 'board crop x29–484 · y893–1002 · baked lockup + tagline inpainted',
+      source: OA,
+      derivation: `${HQ} · 4K 16:9 · range and gold light-trail highway, no baked logo`,
       actor: 'PUBLIC',
       region: 'public footer band (tablet / mobile)',
-      crop: 'range + light-trail road',
-      focal: 'centre',
+      crop: 'none',
+      focal: 'light trail',
       viewport: '< 1200 px',
       overlay: 'none',
-      text: 'live lockup centred + DRIVEN BY COMPLIANCE line',
+      text: 'live full lockup centred + DRIVEN BY COMPLIANCE line',
     },
     {
       asset: IFTA_PLATES.clientInsights,
-      source: `${B}/02_CLIENT_MODE/AIO_IFTA_CLIENT_TABLET_DESKTOP.jpeg (approved)`,
-      derivation: 'board crop x1160–1395 · y887–952 (AIO INSIGHTS card foot) · baked copy inpainted',
+      source: OA,
+      derivation: `${HQ} · 2K 21:9 · snow peaks at dawn`,
       actor: 'CLIENT',
       region: 'AIO INSIGHTS card foot (client desktop)',
-      crop: 'snow range',
+      crop: 'none',
       focal: 'right peaks',
       viewport: '≥ 1200 px',
       overlay: 'fades into the white card',
