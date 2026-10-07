@@ -1,6 +1,6 @@
 import type { Client } from '../../demo/demoTypes';
 import type { ArchiveMigrationBatch, ArchiveMigrationBatchFile } from '../../vault/archiveMigrationTypes';
-import { AioMigrationPanel, AioMonogram, AioStatusPill, AioSteps, AioWhatNext, Ico, type StepState } from './AioMigrationKit';
+import { AioMigrationPanel, AioMonogram, AioStatusPill, AioSteps, AioWhatNext, Ico, type IcoName, type StepState } from './AioMigrationKit';
 import { fileKind, formatBytes, formatStarted } from './migrationViewer';
 
 const SELECT_STEPS = [
@@ -201,7 +201,14 @@ export function MigrationExtractScreen({
   );
 }
 
-type Row = { key: string; name: string; type: string; size: string; icon: string; status: 'ACCEPTED' | 'PARTIAL' | 'UNSUPPORTED'; local?: boolean };
+type Row = { key: string; name: string; type: string; size: string; kind: FileIconKind; status: 'ACCEPTED' | 'PARTIAL' | 'UNSUPPORTED'; local?: boolean };
+
+type FileIconKind = ReturnType<typeof fileKind>['icon'];
+
+/** File-type glyphs from the icon sheet, tinted by type (PDF red, sheet green, document blue). */
+const FILE_ICON: Record<FileIconKind, IcoName> = { pdf: 'pdf', xlsx: 'text', docx: 'text', jpg: 'image', zip: 'folder' };
+
+const STATE_ICON: Record<Row['status'], IcoName> = { ACCEPTED: 'success', PARTIAL: 'warning', UNSUPPORTED: 'failure' };
 
 export function MigrationReceivedScreen({
   client,
@@ -226,7 +233,7 @@ export function MigrationReceivedScreen({
         name: f.fileName,
         type: k.ext,
         size: formatBytes(f.fileSizeBytes),
-        icon: `/migration/row-${k.icon}.png`,
+        kind: k.icon,
         status: (f.processingState === 'failed' ? 'PARTIAL' : 'ACCEPTED') as Row['status'],
       };
     }),
@@ -237,7 +244,7 @@ export function MigrationReceivedScreen({
         name: f.name,
         type: k.ext,
         size: formatBytes(f.size),
-        icon: `/migration/row-${k.icon}.png`,
+        kind: k.icon,
         status: (f.status === 'unsupported' ? 'UNSUPPORTED' : 'ACCEPTED') as Row['status'],
         local: true,
       };
@@ -280,14 +287,14 @@ export function MigrationReceivedScreen({
           {rows.map((row) => (
             <div className="amg-tr" role="row" key={row.key}>
               <span role="cell" className="amg-td-name">
-                <img src={row.icon} alt="" />
+                <Ico name={FILE_ICON[row.kind]} className={`amg-filetype amg-filetype--${row.kind}`} />
                 <span className="amg-td-name__t" title={row.name}>{row.name}</span>
               </span>
               <span role="cell">{row.type}</span>
               <span role="cell">{row.size}</span>
               <span role="cell">
                 <span className={`amg-state amg-state--${row.status.toLowerCase()}`}>
-                  <Ico name={row.status === 'ACCEPTED' ? 'check' : row.status === 'PARTIAL' ? 'alert' : 'x'} />
+                  <Ico name={STATE_ICON[row.status]} />
                   {row.status}
                 </span>
               </span>

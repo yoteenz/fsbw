@@ -7,9 +7,9 @@ import { AioMigrationCTA, AioMigrationPanel, AioMonogram, AioStatusPill, AioWhat
 import { MigrationSelectSteps } from './MigrationExistingScreens';
 
 const CHOICES: Array<{ response: ReviewSectionResponse; label: string; icon: IcoName; tone: 'green' | 'amber' | 'gray' }> = [
-  { response: 'LOOKS_RIGHT', label: 'LOOKS RIGHT', icon: 'check', tone: 'green' },
+  { response: 'LOOKS_RIGHT', label: 'LOOKS RIGHT', icon: 'success', tone: 'green' },
   { response: 'NEEDS_UPDATE', label: 'NEEDS AN UPDATE', icon: 'pencil', tone: 'amber' },
-  { response: 'NOT_SURE', label: 'I’M NOT SURE', icon: 'question', tone: 'gray' },
+  { response: 'NOT_SURE', label: 'I’M NOT SURE', icon: 'help-mark', tone: 'gray' },
 ];
 
 const ROLE_LABEL: Partial<Record<OrganizationMember['role'], string>> = {
@@ -62,9 +62,9 @@ export function ActivationCompanyScreen({
         <p className="amg-cinfo__sub">This information is already on file in AIO.</p>
         <span className="amg-cinfo__pill">
           {active ? (
-            <AioStatusPill tone="green" icon="check">ACTIVE</AioStatusPill>
+            <AioStatusPill tone="green" icon="success">ACTIVE</AioStatusPill>
           ) : (
-            <AioStatusPill tone="red" icon="alert">NOT ACTIVE YET</AioStatusPill>
+            <AioStatusPill tone="red" icon="warning">NOT ACTIVE YET</AioStatusPill>
           )}
         </span>
         <AioMonogram name={name} className="amg-cinfo__mono" />
@@ -137,9 +137,7 @@ export function ActivationCompleteScreen({ onEnter }: { onEnter: () => void }) {
   return (
     <div className="amg-activation amg-arrival">
       <span className="amg-arrival__state">
-        <span className="amg-arrival__check" aria-hidden="true">
-          <Ico name="check" />
-        </span>
+        <Ico name="success" className="amg-arrival__check" />
         ACTIVE
       </span>
       <AioMigrationPanel className="amg-office">

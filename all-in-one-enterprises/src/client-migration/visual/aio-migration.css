@@ -182,8 +182,8 @@ html:has(.amg) body {
   color: var(--ink);
 }
 .amg-head__tool .amg-ico {
-  width: calc(34 * var(--u));
-  height: calc(34 * var(--u));
+  width: calc(41 * var(--u));
+  height: calc(41 * var(--u));
   stroke-width: 2.1;
 }
 .amg-head__search {
@@ -205,6 +205,8 @@ html:has(.amg) body {
 .amg-head__bell .amg-ico {
   fill: var(--ink);
   stroke: none;
+  width: calc(44 * var(--u));
+  height: calc(44 * var(--u));
 }
 .amg-head__dot {
   position: absolute;
@@ -295,12 +297,11 @@ html:has(.amg) body {
 
 /* ───────── icons ───────── */
 .amg-ico {
+  /* glyphs come from the founder icon sheet (traced, filled shapes) */
   display: block;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.8;
-  stroke-linecap: round;
-  stroke-linejoin: round;
+  flex: none;
+  fill: currentColor;
+  stroke: none;
 }
 .amg-ico .is-fill {
   fill: currentColor;
@@ -427,8 +428,8 @@ html:has(.amg) body {
   box-shadow: 0 calc(4 * var(--u)) calc(10 * var(--u)) rgba(0, 0, 0, 0.25);
 }
 .amg-path__disc .amg-ico {
-  width: calc(34 * var(--u));
-  height: calc(34 * var(--u));
+  width: calc(46 * var(--u));
+  height: calc(46 * var(--u));
   stroke-width: 1.7;
 }
 .amg-path__disc--gold .amg-ico {
@@ -638,11 +639,10 @@ html:has(.amg) body {
   color: var(--ink-2);
   text-align: center;
 }
-.amg-types img {
-  width: calc(40 * var(--u));
-  height: calc(42 * var(--u));
-  object-fit: contain;
-  margin-bottom: calc(5 * var(--u));
+.amg-types .amg-ico {
+  width: calc(46 * var(--u));
+  height: calc(46 * var(--u));
+  margin-bottom: calc(2 * var(--u));
 }
 .amg-providers {
   position: absolute;
@@ -710,8 +710,8 @@ html:has(.amg) body {
   color: var(--ink);
 }
 .amg-secure__badge .amg-ico {
-  width: calc(46 * var(--u));
-  height: calc(46 * var(--u));
+  width: calc(63 * var(--u));
+  height: calc(63 * var(--u));
   stroke-width: 1.7;
 }
 .amg-secure__title {
@@ -862,8 +862,8 @@ html:has(.amg) body {
   color: var(--ink);
 }
 .amg-next__icon .amg-ico {
-  width: calc(50 * var(--u));
-  height: calc(50 * var(--u));
+  width: calc(60 * var(--u));
+  height: calc(60 * var(--u));
   stroke-width: 1.6;
 }
 .amg-next__text {
@@ -1284,9 +1284,13 @@ html:has(.amg) body {
   color: var(--ink);
 }
 .amg-leave__icon .amg-ico {
-  width: calc(32 * var(--u));
-  height: calc(32 * var(--u));
+  width: calc(62 * var(--u));
+  height: calc(62 * var(--u));
   stroke-width: 2.6;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
 }
 .amg-leave b {
   left: calc(110 * var(--u));
@@ -1336,8 +1340,8 @@ html:has(.amg) body {
   background: #f9e3b9;
 }
 .amg-xstep__icon .amg-ico {
-  width: calc(44 * var(--u));
-  height: calc(44 * var(--u));
+  width: calc(56 * var(--u));
+  height: calc(56 * var(--u));
   stroke-width: 1.7;
 }
 .amg-xstep__box > b {
@@ -1393,14 +1397,14 @@ html:has(.amg) body {
 }
 .amg-xstats .amg-ico {
   position: absolute;
-  left: calc(16 * var(--u));
-  top: calc(16 * var(--u));
-  width: calc(32 * var(--u));
-  height: calc(32 * var(--u));
+  left: calc(11 * var(--u));
+  top: calc(10 * var(--u));
+  width: calc(36 * var(--u));
+  height: calc(36 * var(--u));
   stroke-width: 1.7;
 }
 .amg-xstats > div + div .amg-ico {
-  left: calc(24 * var(--u));
+  left: calc(16 * var(--u));
 }
 .amg-xstats dt {
   margin-top: calc(5 * var(--u));
@@ -1430,10 +1434,10 @@ html:has(.amg) body {
   position: absolute;
 }
 .amg-xact__icon {
-  left: calc(26 * var(--u));
-  top: calc(26 * var(--u));
-  width: calc(34 * var(--u));
-  height: calc(34 * var(--u));
+  left: calc(16 * var(--u));
+  top: calc(19 * var(--u));
+  width: calc(45 * var(--u));
+  height: calc(45 * var(--u));
   stroke-width: 1.6;
 }
 .amg-xact::before {
@@ -1511,8 +1515,8 @@ html:has(.amg) body {
 .amg-rclient__doc {
   left: calc(551 * var(--u));
   top: calc(41 * var(--u));
-  width: calc(68 * var(--u));
-  height: calc(68 * var(--u));
+  width: calc(64 * var(--u));
+  height: calc(64 * var(--u));
   stroke-width: 1.5;
 }
 .amg-rclient__n {
@@ -1557,8 +1561,8 @@ html:has(.amg) body {
   letter-spacing: 0.05em;
 }
 .amg-rfiles__add .amg-ico {
-  width: calc(34 * var(--u));
-  height: calc(34 * var(--u));
+  width: calc(41 * var(--u));
+  height: calc(41 * var(--u));
   stroke-width: 2;
 }
 .amg-table {
@@ -1599,7 +1603,7 @@ html:has(.amg) body {
 .amg-td-name {
   display: flex;
   align-items: center;
-  gap: calc(14 * var(--u));
+  gap: calc(11 * var(--u));
   min-width: 0;
   font-size: calc(17 * var(--u));
   color: #222225;
@@ -1607,11 +1611,10 @@ html:has(.amg) body {
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.amg-td-name img {
-  width: calc(32 * var(--u));
-  height: calc(32 * var(--u));
-  object-fit: contain;
-  flex: none;
+.amg-td-name .amg-ico {
+  width: calc(36 * var(--u));
+  height: calc(36 * var(--u));
+  margin-left: calc(-2 * var(--u));
 }
 .amg-state {
   display: inline-flex;
@@ -1624,19 +1627,20 @@ html:has(.amg) body {
   letter-spacing: 0.04em;
 }
 .amg-state .amg-ico {
-  width: calc(24 * var(--u));
-  height: calc(24 * var(--u));
-  padding: calc(4 * var(--u));
-  border-radius: 50%;
-  color: #fff;
-  stroke-width: 3.2;
+  width: calc(27 * var(--u));
+  height: calc(27 * var(--u));
 }
 .amg-state--accepted { background: #e1f1e4; color: #24814a; }
-.amg-state--accepted .amg-ico { background: #2a9b55; }
+.amg-state--accepted .amg-ico { color: #2a873a; }
 .amg-state--partial { background: #fbebc8; color: #9a6411; }
-.amg-state--partial .amg-ico { background: #e1951e; }
+.amg-state--partial .amg-ico { color: #e1951e; }
 .amg-state--unsupported { background: #fde2df; color: #c2372c; }
-.amg-state--unsupported .amg-ico { background: #dd4436; }
+.amg-state--unsupported .amg-ico { color: #e2271f; }
+/* file-type tints on the sheet's file glyphs */
+.amg-filetype { color: #4b5057; }
+.amg-filetype--pdf { color: #d7332a; }
+.amg-filetype--xlsx { color: #1e7d45; }
+.amg-filetype--docx { color: #2860c7; }
 .amg-td-act {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -1656,8 +1660,8 @@ html:has(.amg) body {
   cursor: default;
 }
 .amg-td-act .amg-ico {
-  width: calc(28 * var(--u));
-  height: calc(28 * var(--u));
+  width: calc(30 * var(--u));
+  height: calc(30 * var(--u));
   color: var(--ink);
   stroke-width: 1.9;
 }
@@ -1709,7 +1713,7 @@ html:has(.amg) body {
   padding-left: calc(76 * var(--u));
 }
 .amg-xstats > div:nth-child(3) .amg-ico {
-  left: calc(30 * var(--u));
+  left: calc(18 * var(--u));
 }
 .amg--existing .amg-dock {
   left: calc(3 * var(--u));
@@ -1754,8 +1758,8 @@ html:has(.amg) body {
   left: calc(678.5 * var(--u));
 }
 .amg--existing .amg-head__bell .amg-ico {
-  width: calc(40 * var(--u));
-  height: calc(40 * var(--u));
+  width: calc(46 * var(--u));
+  height: calc(46 * var(--u));
 }
 .amg--existing .amg-step.is-current .amg-step__dot, .amg--existing .amg-step.is-done .amg-step__dot {
   background: linear-gradient(180deg, #f7c349, #f0aa2c);
@@ -1842,26 +1846,22 @@ html:has(.amg) body {
   letter-spacing: 0.045em;
 }
 .amg-cinfo__pill .amg-pill__icon {
-  width: calc(33 * var(--u));
-  height: calc(33 * var(--u));
-  padding: calc(6 * var(--u));
-  border-radius: 50%;
-  color: #fff;
-  stroke-width: 3.4;
+  width: calc(38 * var(--u));
+  height: calc(38 * var(--u));
 }
 .amg-pill--red {
   background: #fde4e1;
   color: #c3291f;
 }
 .amg-pill--red .amg-pill__icon {
-  background: #d8261c;
+  color: #d8261c;
 }
 .amg-pill--green {
   background: #e2f2e5;
   color: #1f7a3f;
 }
 .amg-pill--green .amg-pill__icon {
-  background: #23894a;
+  color: #23894a;
 }
 .amg-cinfo__mono {
   left: calc(35 * var(--u));
@@ -1918,10 +1918,11 @@ html:has(.amg) body {
   color: #2a2a2d;
 }
 .amg-cinfo__contact .amg-ico {
-  width: calc(30 * var(--u));
-  height: calc(30 * var(--u));
+  width: calc(34 * var(--u));
+  height: calc(34 * var(--u));
   color: #1c1c1e;
   stroke-width: 1.6;
+  margin: calc(-3 * var(--u)) 0 0 calc(-3 * var(--u));
 }
 .amg-cinfo__contact small {
   display: block;
@@ -1972,9 +1973,12 @@ html:has(.amg) body {
   color: #fff;
 }
 .amg-choice__icon .amg-ico {
-  width: calc(26 * var(--u));
-  height: calc(26 * var(--u));
-  stroke-width: 3;
+  width: calc(50 * var(--u));
+  height: calc(50 * var(--u));
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
 }
 .amg-choice__label {
   top: calc(61.6 * var(--u));
@@ -1988,7 +1992,7 @@ html:has(.amg) body {
   border-color: #b9dcc1;
 }
 .amg-choice--green .amg-choice__icon {
-  background: #1f7a40;
+  color: #1f7a40;
 }
 .amg-choice--amber {
   background: #fdf0dd;
@@ -1999,9 +2003,8 @@ html:has(.amg) body {
   color: #17171a;
 }
 .amg-choice--amber .amg-choice__icon .amg-ico {
-  width: calc(42 * var(--u));
-  height: calc(42 * var(--u));
-  stroke-width: 1.7;
+  width: calc(52 * var(--u));
+  height: calc(52 * var(--u));
 }
 .amg-choice--gray {
   background: #ececed;
@@ -2011,7 +2014,8 @@ html:has(.amg) body {
   background: #68686d;
 }
 .amg-choice--gray .amg-choice__icon .amg-ico {
-  stroke-width: 2.6;
+  width: calc(54 * var(--u));
+  height: calc(54 * var(--u));
 }
 .amg-choice.is-on {
   box-shadow: 0 0 0 calc(3 * var(--u)) rgba(241, 193, 88, 0.55);
@@ -2081,18 +2085,10 @@ html:has(.amg) body {
   letter-spacing: 0.12em;
 }
 .amg-arrival__check {
-  display: grid;
-  place-items: center;
-  width: calc(48 * var(--u));
-  height: calc(48 * var(--u));
-  border-radius: 50%;
-  background: linear-gradient(180deg, #34b45a, #1f8f43);
-  color: #fff;
-}
-.amg-arrival__check .amg-ico {
-  width: calc(30 * var(--u));
-  height: calc(30 * var(--u));
-  stroke-width: 3.2;
+  width: calc(57 * var(--u));
+  height: calc(57 * var(--u));
+  margin-left: calc(-4 * var(--u));
+  color: #27a347;
 }
 .amg-office {
   margin: 0 calc(18 * var(--u)) 0 calc(18 * var(--u));
@@ -2145,8 +2141,8 @@ html:has(.amg) body {
   color: #e3ad4b;
 }
 .amg-office__tile .amg-ico {
-  width: calc(42 * var(--u));
-  height: calc(42 * var(--u));
+  width: calc(54 * var(--u));
+  height: calc(54 * var(--u));
   stroke-width: 1.5;
 }
 .amg-office__row b {
@@ -2165,8 +2161,8 @@ html:has(.amg) body {
 .amg-office__chev {
   right: calc(14 * var(--u));
   top: calc(32 * var(--u));
-  width: calc(34 * var(--u));
-  height: calc(34 * var(--u));
+  width: calc(27 * var(--u));
+  height: calc(27 * var(--u));
   stroke-width: 2;
   color: #1c1c1e;
 }
@@ -2203,4 +2199,50 @@ html:has(.amg) body {
 }
 .amg-company .amg-flowcard {
   margin: 0 calc(17 * var(--u)) 0 calc(18 * var(--u));
+}
+.amg-dock__item:nth-child(1) .amg-ico {
+  transform: scale(0.854);
+}
+.amg-dock__item:nth-child(2) .amg-ico {
+  transform: scale(0.958);
+}
+.amg-dock__item:nth-child(3) .amg-ico {
+  transform: scale(0.917);
+}
+.amg-dock__item:nth-child(4) .amg-ico {
+  transform: scale(1.250);
+}
+.amg-dock__item:nth-child(5) .amg-ico {
+  transform: scale(0.875);
+}
+.amg-office__tile .amg-ico--bars {
+  width: calc(66 * var(--u));
+  height: calc(66 * var(--u));
+}
+.amg--existing .amg-dock__item:nth-child(5) .amg-ico {
+  transform: scale(0.864) translateY(calc(3 * var(--u)));
+}
+.amg--existing .amg-dock__item:nth-child(1) .amg-ico {
+  width: None;
+  height: None;
+  margin-top: None;
+  transform: scale(0.932);
+}
+.amg--existing .amg-dock__item:nth-child(2) .amg-ico {
+  width: None;
+  height: None;
+  margin-top: None;
+  transform: scale(1.045);
+}
+.amg--existing .amg-dock__item:nth-child(3) .amg-ico {
+  width: None;
+  height: None;
+  margin-top: None;
+  transform: scale(1.000);
+}
+.amg--existing .amg-dock__item:nth-child(4) .amg-ico {
+  width: None;
+  height: None;
+  margin-top: None;
+  transform: scale(1.341);
 }

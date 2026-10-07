@@ -4,11 +4,11 @@ import { aioPaths } from '../../utils/paths';
 import { AioMigrationPanel, AioSteps, Ico, type IcoName } from './AioMigrationKit';
 
 /** Accepted upload types come from the live vault policy (authority supplies the treatment only). */
-const TYPE_TILES: Record<string, { icon: string; label: string; ext: string }> = {
-  '.pdf': { icon: '/migration/type-pdf.png', label: 'PDF', ext: '(.pdf)' },
-  '.jpg': { icon: '/migration/row-jpg.png', label: 'JPG', ext: '(.jpg, .jpeg)' },
-  '.png': { icon: '/migration/row-jpg.png', label: 'PNG', ext: '(.png)' },
-  '.webp': { icon: '/migration/row-jpg.png', label: 'WEBP', ext: '(.webp)' },
+const TYPE_TILES: Record<string, { icon: 'pdf' | 'image'; label: string; ext: string }> = {
+  '.pdf': { icon: 'pdf', label: 'PDF', ext: '(.pdf)' },
+  '.jpg': { icon: 'image', label: 'JPG', ext: '(.jpg, .jpeg)' },
+  '.png': { icon: 'image', label: 'PNG', ext: '(.png)' },
+  '.webp': { icon: 'image', label: 'WEBP', ext: '(.webp)' },
 };
 
 const PROVIDERS = [
@@ -74,7 +74,7 @@ export function MigrationRootScreen({ onOpen, selected = 'existing' }: { onOpen:
           <ul className="amg-types" style={{ ['--n' as string]: types.length }}>
             {types.map((t) => (
               <li key={t.label}>
-                <img src={t.icon} alt="" />
+                <Ico name={t.icon} className={`amg-filetype amg-filetype--${t.icon === 'pdf' ? 'pdf' : 'jpg'}`} />
                 <span>{t.label}</span>
                 <span>{t.ext}</span>
               </li>

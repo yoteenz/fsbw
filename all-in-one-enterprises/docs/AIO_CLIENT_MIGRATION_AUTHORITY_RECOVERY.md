@@ -41,6 +41,21 @@ Screens: `MigrationRootScreen`, `MigrationExistingScreens` (existing / extract /
 
 Captures: `docs/migration-recovery/live/`. Boards (authority | live | overlay): `docs/migration-recovery/boards/`.
 
+## Icons — founder icon sheet
+
+Every migration icon comes from the founder-supplied icon sheet (`docs/migration-recovery/icon-sheet/aio-icon-sheet-source.png`), traced to vector rather than cropped. The 79 sheet icons are segmented in sheet order and traced with potrace at 10× (per-icon ink normalisation keeps gray and coloured icons as clean as black ones). Derived glyphs: `arrow-right` (the up-arrow of `migrate`, rotated), and the `info-mark` / `help-mark` / `alert-mark` inner marks. Output is one cached sprite, `public/migration/icons/aio-icon-sheet.svg` (61 KB gzipped), with names in `src/client-migration/visual/aioIconSheet.ts`. Regenerate with `scripts/icon-sheet/`.
+
+| UI spot | Sheet glyph |
+| --- | --- |
+| Dock HOME / INTAKE / FILING / REPORTS / MORE | home / inbox / folder / signal / menu |
+| Header search / bell / account chevron | search / notification / dropdown |
+| Status: accepted / partial / unsupported / NOT ACTIVE YET / ACTIVE | success / warning / failure / warning / success |
+| File types (PDF / image / sheet, doc / archive) | pdf / image / text / folder (tinted by type) |
+| Office: My Business / Operations / Finances / Vault / Inbox | profile / settings / signal / security / inbox |
+| Arrows and chevrons | arrow-right (derived) / forward |
+
+The sheet has no phone glyph: the phone in the company contact rows is the one icon still drawn in code. Provider logos (Samsara, Motive, …) are third-party brand marks and stay as images. Icon sizes were measured against the authority's ink boxes (dock labels stay on their calibrated line; glyphs scale with `transform`).
+
 ## Live data instead of authority sample data
 
 Names, USDOT/MC, monograms, viewer identity, file rows, counts, progress, start time and the company record come from the store. The authority's sample people (ALEX R., BROWN LOGISTICS LLC, 842 files) do not appear. Photos of people are not invented — the avatar is the viewer's initials.
