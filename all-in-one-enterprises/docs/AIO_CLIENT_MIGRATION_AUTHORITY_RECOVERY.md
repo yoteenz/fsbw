@@ -83,7 +83,14 @@ Deliberate deviations where runtime truth differs from the authority:
 - `#done` renders the arrival only when the lifecycle is ACTIVE (`canAccessClientOffice`). PREBUILT is stopped by the portal lifecycle guard; INVITED and CLIENT_CONFIRMATION_REQUIRED fall back to CONFIRM & ACTIVATE.
 - The arrival shows no INTAKE, MIGRATION, PREBUILT, NOT ACTIVE YET, extraction or approval copy. Office rows link to `/portal/business|operations|money|vault|inbox`.
 
+## Tablet and desktop (derived, not authority-drawn)
+
+The authority frames are phone frames. Wider screens get a layout derived from them in `aio-migration.css`; the phone composition below 700px is unchanged (0% pixel difference).
+
+- **≥ 700px (tablet):** header becomes a bar (logo left, actions right, centered 1240px column). The authority photograph becomes a full-width band holding the headline. Panels flow in one column, stretched to the column, at a desktop type scale (`--u` clamped 0.82–0.95px). Multi-up rows spread out: three path tiles, three providers, three extraction stats, three activation choices. Right-hand row content (status, counts, add buttons) stays anchored to the right edge. The existing-family dock is centered.
+- **≥ 1120px (desktop):** EXISTING, FILES RECEIVED and COMPANY REVIEW go two-column (main 2fr, side 1fr); the flow card spans both. WELCOME TO YOUR OFFICE stays a focused single card (940px).
+- **Verified:** no horizontal overflow at 700 / 768 / 900 / 1024 / 1119 / 1120 / 1280 / 1440 / 1920 on all ten migration screens; boundary checks 23/23.
+
 ## Not yet done (founder gate first)
 
 - The remaining authority screens still render their functional panels (`.amg-legacy`) inside the new environment and shell. Propagation starts after founder review of the six.
-- Tablet/desktop are full-bleed (no white wrapper) but are the mobile composition on a wider environment, not yet a derived layout.

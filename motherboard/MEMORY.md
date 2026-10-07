@@ -55422,3 +55422,12 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Changes:** `aio-uppercase.css` exempts `input[type=password]` and `input[data-aio-password]` (`text-transform: none !important`). `data-aio-password` was added to `AuthPasswordInput`, mobile `PasswordField` (both have show/hide toggles that switch to `type="text"`) and the office activation password. Placeholders and labels stay uppercase.
 - **Verified:** on `/login`, "MySecret pass9" shows as typed both hidden and revealed; the placeholder and email field stay uppercase.
 - **Conventions:** Updated `.cursor/rules/aio-uppercase-brand.mdc` and `CORE.md` (amendment line). Any new password input or show/hide component must carry `data-aio-password`. Nothing else is exempt.
+
+---
+
+## 2026-10-07 — Client migration: tablet and desktop layouts
+
+- **Context:** Founder: "are these responsive for tablet/desktop? they should be." Before this, wider screens showed the phone composition centered on a full-bleed environment.
+- **Changes:** `aio-migration.css` adds derived layers. At ≥700px the header becomes a bar, the authority photo becomes a full-width band holding the headline, panels stretch to a 1240px column at a desktop type scale, multi-up rows spread out (3 paths / providers / stats / choices), right-side row content is anchored to the right edge, and the existing dock is centered. At ≥1120px EXISTING, FILES RECEIVED and COMPANY REVIEW are two-column (2fr / 1fr), and WELCOME stays one focused 940px card. The phone layout (<700px) is unchanged.
+- **Verified:** phone pixel difference 0%; no overflow at nine widths from 700 to 1920 on ten screens; checks 23/23; build OK. The six founder mock links were republished (Version 2).
+- **Note:** Tablet/desktop is derived; the authority set has only phone frames. If the founder supplies wide frames, they replace this layer.

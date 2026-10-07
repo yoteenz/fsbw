@@ -1,6 +1,6 @@
 # Client migration — founder review mocks
 
-Static, self-contained copies of the six representative client-migration screens, captured from the live app with the founder icon sheet and the uppercase law applied. The renderer is unit-based (1u = 1px of the 853×1536 authority frame). Phones see the authority composition; wider screens see the same column on a full-bleed environment.
+Static, self-contained copies of the six representative client-migration screens, captured from the live app with the founder icon sheet and the uppercase law applied. The renderer is unit-based (1u = 1px of the 853×1536 authority frame). Phones see the authority composition. Tablets (≥700px) and desktops (≥1120px) see the derived layout described in `docs/AIO_CLIENT_MIGRATION_AUTHORITY_RECOVERY.md`. Open a link on a phone, a tablet and a desktop browser, or resize the window, to review all three.
 
 | Screen | Live route | Authority | Actor | Published link |
 |---|---|---|---|---|
