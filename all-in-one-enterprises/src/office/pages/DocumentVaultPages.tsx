@@ -126,9 +126,14 @@ export function ArchiveMigrationDashboardPage() {
           <h1>Physical Archive Migration</h1>
           <p>Convert historical paper client files into structured, searchable digital records.</p>
         </div>
-        <Link to={aioPaths.officeArchiveMigrationDigitize} className="aio-btn aio-btn--gold">
-          Digitize Physical File →
-        </Link>
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+          <Link to={aioPaths.officeMigration()} className="aio-btn aio-btn--gold">
+            Client migration intake →
+          </Link>
+          <Link to={aioPaths.officeArchiveMigrationDigitize} className="aio-btn">
+            Digitize Physical File →
+          </Link>
+        </div>
       </header>
 
       {metrics.totalClients === 0 ? (

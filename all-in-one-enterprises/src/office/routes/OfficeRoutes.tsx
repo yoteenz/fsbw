@@ -181,6 +181,7 @@ import { IftaStaffShell } from '../../ifta/ui/IftaStaffShell';
 import { IftaStaffQueuePage } from '../../ifta/ui/IftaStaffQueuePage';
 import { IftaStaffCasePage } from '../../ifta/ui/IftaStaffCasePage';
 import { OfficeFuelTaxLegacyRedirect } from '../../ifta/ui/IftaLegacyRedirects';
+import { MigrationStudioPage } from '../../client-migration/visual/MigrationStudioPage';
 
 export default function OfficeRoutes() {
   return (
@@ -191,6 +192,8 @@ export default function OfficeRoutes() {
       </Route>
       <Route path="permitting/fuel-tax" element={<OfficeFuelTaxLegacyRedirect />} />
       <Route path="permitting/fuel-tax/:caseId" element={<OfficeFuelTaxLegacyRedirect />} />
+      <Route path="migration" element={<MigrationStudioPage />} />
+      <Route path="migration/:screen" element={<MigrationStudioPage />} />
       <Route element={<AIOOfficeLayout />}>
         <Route index element={<OfficeDashboardPage />} />
         <Route path="work" element={<OfficeMyWorkPage />} />

@@ -55353,3 +55353,13 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Checks:** `tsc` clean; `vitest src/ifta` 21/21; live pass 41/43, the same as `master` (the case-ID check now compares case-insensitively).
 - **Links:** the original three mock links were republished; the routine applies the patch until V2 is live.
 - **Sync:** master, `[sync-only]`, docs only.
+
+---
+
+## 2026-10-07 — Client migration authority tree, nav reconciliation, activation complete
+
+- **Context:** Founder sprints on AIO client migration. Production pilot stayed closed. Visual work then built the migration authority tree and corrected dock drift plus the activation-complete arrival screen.
+- **Topics covered:** Production validation and pilot gate; environment unblock; provider resolution (no approved extraction provider; manual review fallback only). PR #44 stayed closed. IFTA footer lockup and OpenArt plates were already locked and were not regenerated. Full migration authority tree (4 locked parents + 37 descendants). Organized JPEG zip for download. Surgical nav reconciliation and activation-complete redesign.
+- **Decisions / outcomes:** Extraction provider remains unresolved, so staff and existing-client pilots stay NO and nothing from that gate merges. PREBUILT is not ACTIVE. AIO Supabase is `nnnljnhtmseagotvgxxt`. Four locked parents stay design authority. Nav drift on staff screens uses the locked family dock (HOME / INTAKE / FILING / REPORTS / MORE) and leaves everything above it unchanged. Client confirmation screens that were named (company, documents) lose the staff INTAKE dock. No visual client dock was invented: `CLIENT_NAV_AUTHORITY_MISSING` for a drawn dock. Office destinations on the arrival screen are the existing portal sections My Business, Operations, Finances, Vault, Inbox. `AIO-MIG-ACTIVATION-COMPLETE-001` is SUPERSEDED and kept. `AIO-MIG-ACTIVATION-COMPLETE-002` is FOUNDER_REVIEW_REQUIRED, lifecycle ACTIVE, no INTAKE, CTA ENTER YOUR OFFICE. Live client review route hides the staff dock.
+- **Changes:** `AIO_CLIENT_MIGRATION_AUTHORITY/` pack and manifests; migration studio under `all-in-one-enterprises/src/client-migration/visual/`; office migration routes; client activation review route; public authority zip. Spatial Architecture Review skipped — no new Studio OS surface.
+- **Conventions:** One OpenArt prompt is one full screen. Shell lock composites the parent header, photograph, and dock back onto descendants. Do not crop top or bottom UI. Do not show INTAKE to a client. Do not draw a client dock until a visual authority exists. Do not deploy unless the founder says deploy now.
