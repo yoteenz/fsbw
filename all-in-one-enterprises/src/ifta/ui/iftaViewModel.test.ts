@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { createDemoSeed } from '../../demo/demoSeed';
 import { findCaseById } from '../iftaRouteHelpers';
 import { staffBucket } from '../iftaDerive';
-import { IFTA_ASSET_MANIFEST, IFTA_BRAND, IFTA_MEDIA } from './iftaAssetManifest';
+import { IFTA_ASSET_MANIFEST, IFTA_BRAND, IFTA_PLATES } from './iftaAssetManifest';
 import {
   LANE_ORDER,
   PUBLIC_SAMPLE_QUARTER,
@@ -53,7 +53,7 @@ describe('IFTA view model — authority modules bind to the canonical case only'
 
   it('four reference phases map over the contract states (D-PROGRESS-PHASES); NEEDS_CLIENT blocks data collection', () => {
     const phases = filingPhases(pioneer, NOW, 'CLIENT');
-    expect(phases.map((p) => p.label)).toEqual(['Data collection', 'AIO preparation', 'Your review & approval', 'File & confirm']);
+    expect(phases.map((p) => p.label)).toEqual(['Data collection', 'AIO preparation', 'Review & approve', 'File & confirm']);
     expect(phases[0].status).toBe('blocked');
     expect(phases.slice(1).every((p) => p.status === 'upcoming')).toBe(true);
     expect(filingPhases(pioneer, NOW, 'STAFF')[0].statusLabel).toBe('Waiting on client');
@@ -100,7 +100,8 @@ describe('IFTA view model — authority modules bind to the canonical case only'
 
   it('every runtime media / brand asset is in the manifest with its approved source', () => {
     const assets = new Set(IFTA_ASSET_MANIFEST.map((a) => a.asset));
-    for (const path of [...Object.values(IFTA_BRAND), ...Object.values(IFTA_MEDIA)]) expect(assets.has(path), path).toBe(true);
+    const flat = (v: unknown): string[] => (typeof v === 'string' ? [v] : Object.values(v as Record<string, unknown>).flatMap(flat));
+    for (const path of [...Object.values(IFTA_BRAND), ...flat(IFTA_PLATES)]) expect(assets.has(path), path).toBe(true);
     for (const a of IFTA_ASSET_MANIFEST) expect(a.source).toMatch(/approved|AUTHORITY|NAV_MARK/);
   });
 });

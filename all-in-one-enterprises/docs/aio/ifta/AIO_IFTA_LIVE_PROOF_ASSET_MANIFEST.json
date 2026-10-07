@@ -1,10 +1,12 @@
 {
-  "sprint": "P0.AIO.IFTA.THREE-MODE-LIVE-VISUAL-AUTHORITY-RECONSTRUCTION1",
-  "supersedes": "P0.AIO.IFTA.THREE-MODE-LIVE-AUTHORITY-IMPLEMENTATION1 asset records (CSS gradient placeholders, text \"AIO\" square)",
-  "status": "LIVE_VISUAL_RECONSTRUCTION_MOUNTED",
+  "sprint": "P0.AIO.IFTA.THREE-MODE-LIVE-VISUAL-AUTHORITY-RECONSTRUCTION1 · pixel-faithful pass",
+  "status": "LIVE_AUTHORITY_REPRODUCTION_MOUNTED",
   "generated_from": "src/ifta/ui/iftaAssetManifest.ts (single source)",
   "authority_bundle": "SITE00 docs/aio/ifta/authority-bundle/source/AIO_IFTA_AUTHORITY_BUNDLE",
-  "derivation_script": "scripts/ifta/derive-ifta-brand-assets.py (reproduces every derived file byte-for-byte)",
+  "derivation_scripts": [
+    "scripts/ifta/derive-ifta-brand-assets.py (mark + lockups)",
+    "scripts/ifta/derive-ifta-authority-plates.py (hero / media plates)"
+  ],
   "new_paid_generations": 0,
   "brand": {
     "markOnLight": "/brand/ifta/aio-mark-on-light.png",
@@ -12,11 +14,32 @@
     "lockupOnLight": "/brand/ifta/aio-lockup-on-light.png",
     "lockupOnDark": "/brand/ifta/aio-lockup-on-dark.png"
   },
-  "media": {
-    "filingRoomHero": "/brand/ifta/ifta-filing-room-hero.jpg",
-    "publicHero": "/brand/aio-login-hero.png",
-    "publicRoad": "/brand/all-in-one-hero-truck.png",
-    "publicRange": "/brand/ifta/ifta-public-range.jpg"
+  "plates": {
+    "client": {
+      "desktop": "/brand/ifta/plates/client-hero-desktop.jpg",
+      "tablet": "/brand/ifta/plates/client-hero-tablet.jpg",
+      "mobile": "/brand/ifta/plates/client-hero-mobile.jpg"
+    },
+    "staff": {
+      "desktop": "/brand/ifta/plates/staff-hero-desktop.jpg",
+      "tablet": "/brand/ifta/plates/staff-hero-tablet.jpg",
+      "mobile": "/brand/ifta/plates/staff-hero-mobile.jpg"
+    },
+    "public": {
+      "desktop": "/brand/ifta/plates/public-hero-desktop.jpg",
+      "tablet": "/brand/ifta/plates/public-hero-tablet.jpg",
+      "mobile": "/brand/ifta/plates/public-hero-mobile.jpg"
+    },
+    "publicRoad": "/brand/ifta/plates/public-road.jpg",
+    "publicMap": {
+      "desktop": "/brand/ifta/plates/public-map-desktop.jpg",
+      "compact": "/brand/ifta/plates/public-map.jpg"
+    },
+    "publicFooter": {
+      "desktop": "/brand/ifta/plates/public-footer-desktop.jpg",
+      "compact": "/brand/ifta/plates/public-footer-tablet.jpg"
+    },
+    "clientInsights": "/brand/ifta/plates/client-insights.jpg"
   },
   "records": [
     {
@@ -68,52 +91,184 @@
       "text": "DRIVEN BY COMPLIANCE. BUILT FOR WHAT MOVES YOU."
     },
     {
-      "asset": "/brand/ifta/ifta-filing-room-hero.jpg",
-      "source": "02_CLIENT_MODE/AIO_IFTA_CLIENT_MOBILE_PARENT_AUTHORITY.jpeg (approved client parent) · hero photograph",
-      "derivation": "photographic region only (x 520–1206, y 88–505: right of the baked headline, below the baked nav icons, above the baked metrics card) · 2× Lanczos",
+      "asset": "/brand/ifta/plates/client-hero-desktop.jpg",
+      "source": "AIO_IFTA_AUTHORITY_BUNDLE/02_CLIENT_MODE/AIO_IFTA_CLIENT_TABLET_DESKTOP.jpeg (approved)",
+      "derivation": "board crop x522–1411 · y161–371 · baked headline / pill / panel / rail inpainted (OpenCV Telea) · Lanczos upscale + light unsharp",
       "actor": "CLIENT",
-      "region": "Filing Room hero (client) · case hero + queue band (staff)",
-      "crop": "truck + range, right-weighted",
-      "focal": "truck cab (≈ 70% x · 60% y)",
-      "viewport": "mobile: full-bleed, focal right · tablet / desktop: right 72% of the hero",
-      "overlay": "STONE WHITE wash from the left (the reference hero washes the sky behind the headline)",
-      "text": "quarter identity left on the wash; metrics rail overlaps the hero foot"
+      "region": "client hero · desktop",
+      "crop": "the authority screen hero, edge to edge",
+      "focal": "as drawn (truck right of the headline)",
+      "viewport": "≥ 1200 px",
+      "overlay": "live quarter card over the right",
+      "text": "live headline, status pill and metrics rail at the drawn positions"
     },
     {
-      "asset": "/brand/aio-login-hero.png",
-      "source": "public/brand/aio-login-hero.png (approved AIO hero — black truck, range, gold dusk)",
-      "derivation": "mounted as-is",
-      "actor": "PUBLIC",
-      "region": "public hero",
-      "crop": "cover",
-      "focal": "truck cab (≈ 68% x · 62% y)",
-      "viewport": "mobile: focal right, darker wash · desktop: full-bleed",
-      "overlay": "OBSIDIAN gradient from the left + foot fade into the metrics rail",
-      "text": "IFTA FILING ROOM · SAMPLE QUARTER headline left"
+      "asset": "/brand/ifta/plates/client-hero-tablet.jpg",
+      "source": "AIO_IFTA_AUTHORITY_BUNDLE/02_CLIENT_MODE/AIO_IFTA_CLIENT_TABLET_DESKTOP.jpeg (approved)",
+      "derivation": "board crop x44–477 · y155–371 · baked headline / pill / panel / rail inpainted (OpenCV Telea) · Lanczos upscale + light unsharp",
+      "actor": "CLIENT",
+      "region": "client hero · tablet",
+      "crop": "the authority screen hero, edge to edge",
+      "focal": "as drawn (truck right of the headline)",
+      "viewport": "700 – 1199 px",
+      "overlay": "none",
+      "text": "live headline, status pill and metrics rail at the drawn positions"
     },
     {
-      "asset": "/brand/all-in-one-hero-truck.png",
-      "source": "public/brand/all-in-one-hero-truck.png (approved AIO truck on the road)",
-      "derivation": "mounted as-is",
-      "actor": "PUBLIC",
-      "region": "“REAL DRIVERS. REAL ROADS. REAL COMPLIANCE.” panel",
-      "crop": "cover",
-      "focal": "road + truck (≈ 60% x · 55% y)",
-      "viewport": "tablet / desktop only (the mobile reference omits this panel)",
-      "overlay": "OBSIDIAN gradient from the left",
-      "text": "three-line statement left with a gold rule"
+      "asset": "/brand/ifta/plates/client-hero-mobile.jpg",
+      "source": "AIO_IFTA_AUTHORITY_BUNDLE/02_CLIENT_MODE/AIO_IFTA_CLIENT_MOBILE_PARENT_AUTHORITY.jpeg (approved)",
+      "derivation": "board crop x0–1206 · y0–645 (native 3×) · baked headline / pill / panel / rail inpainted (OpenCV Telea) · Lanczos upscale + light unsharp",
+      "actor": "CLIENT",
+      "region": "client hero · mobile",
+      "crop": "the authority screen hero, edge to edge",
+      "focal": "as drawn (truck right of the headline)",
+      "viewport": "< 700 px",
+      "overlay": "none",
+      "text": "live headline, status pill and metrics rail at the drawn positions"
     },
     {
-      "asset": "/brand/ifta/ifta-public-range.jpg",
-      "source": "public/brand/aio-login-hero.png (approved) · mountain band",
-      "derivation": "crop x 0–760 · y 400–640 (range + dusk sky, left of the truck)",
+      "asset": "/brand/ifta/plates/staff-hero-desktop.jpg",
+      "source": "AIO_IFTA_AUTHORITY_BUNDLE/03_FOUNDER_STAFF_MODE/AIO_IFTA_FOUNDER_STAFF_TABLET_DESKTOP.jpeg (approved)",
+      "derivation": "board crop x608–1411 · y226–401 · baked headline / pill / panel / rail inpainted (OpenCV Telea) · Lanczos upscale + light unsharp",
+      "actor": "STAFF",
+      "region": "staff hero · desktop",
+      "crop": "the authority screen hero, edge to edge",
+      "focal": "as drawn (truck right of the headline)",
+      "viewport": "≥ 1200 px",
+      "overlay": "live CLIENT HEALTH panel over the right",
+      "text": "live headline, status pill and metrics rail at the drawn positions"
+    },
+    {
+      "asset": "/brand/ifta/plates/staff-hero-tablet.jpg",
+      "source": "AIO_IFTA_AUTHORITY_BUNDLE/03_FOUNDER_STAFF_MODE/AIO_IFTA_FOUNDER_STAFF_TABLET_DESKTOP.jpeg (approved)",
+      "derivation": "board crop x39–556 · y229–406 · baked headline / pill / panel / rail inpainted (OpenCV Telea) · Lanczos upscale + light unsharp",
+      "actor": "STAFF",
+      "region": "staff hero · tablet",
+      "crop": "the authority screen hero, edge to edge",
+      "focal": "as drawn (truck right of the headline)",
+      "viewport": "700 – 1199 px",
+      "overlay": "live CLIENT HEALTH panel over the right",
+      "text": "live headline, status pill and metrics rail at the drawn positions"
+    },
+    {
+      "asset": "/brand/ifta/plates/staff-hero-mobile.jpg",
+      "source": "AIO_IFTA_AUTHORITY_BUNDLE/01_TERRITORY_SELECTION/AIO_IFTA_3_ACTOR_MODES_MOBILE.jpeg (approved)",
+      "derivation": "board crop staff column x514–1023 · y56–271 · baked headline / pill / panel / rail inpainted (OpenCV Telea) · Lanczos upscale + light unsharp",
+      "actor": "STAFF",
+      "region": "staff hero · mobile",
+      "crop": "the authority screen hero, edge to edge",
+      "focal": "as drawn (truck right of the headline)",
+      "viewport": "< 700 px",
+      "overlay": "live CLIENT HEALTH panel over the right",
+      "text": "live headline, status pill and metrics rail at the drawn positions"
+    },
+    {
+      "asset": "/brand/ifta/plates/public-hero-desktop.jpg",
+      "source": "AIO_IFTA_AUTHORITY_BUNDLE/04_PUBLIC_CUSTOMER_MODE/AIO_IFTA_PUBLIC_TABLET_DESKTOP.jpeg (approved)",
+      "derivation": "board crop x516–1433 · y73–335 · baked headline / pill / panel / rail inpainted (OpenCV Telea) · Lanczos upscale + light unsharp",
       "actor": "PUBLIC",
-      "region": "public footer panorama",
-      "crop": "wide band",
-      "focal": "ridge line centre",
-      "viewport": "full-bleed band at every width",
-      "overlay": "OBSIDIAN fade top and bottom",
-      "text": "full lockup + tagline"
+      "region": "public hero · desktop",
+      "crop": "the authority screen hero, edge to edge",
+      "focal": "as drawn (truck right of the headline)",
+      "viewport": "≥ 1200 px",
+      "overlay": "none",
+      "text": "live headline, status pill and metrics rail at the drawn positions"
+    },
+    {
+      "asset": "/brand/ifta/plates/public-hero-tablet.jpg",
+      "source": "AIO_IFTA_AUTHORITY_BUNDLE/04_PUBLIC_CUSTOMER_MODE/AIO_IFTA_PUBLIC_TABLET_DESKTOP.jpeg (approved)",
+      "derivation": "board crop x27–486 · y97–319 · baked headline / pill / panel / rail inpainted (OpenCV Telea) · Lanczos upscale + light unsharp",
+      "actor": "PUBLIC",
+      "region": "public hero · tablet",
+      "crop": "the authority screen hero, edge to edge",
+      "focal": "as drawn (truck right of the headline)",
+      "viewport": "700 – 1199 px",
+      "overlay": "none",
+      "text": "live headline, status pill and metrics rail at the drawn positions"
+    },
+    {
+      "asset": "/brand/ifta/plates/public-hero-mobile.jpg",
+      "source": "AIO_IFTA_AUTHORITY_BUNDLE/01_TERRITORY_SELECTION/AIO_IFTA_3_ACTOR_MODES_MOBILE.jpeg (approved)",
+      "derivation": "board crop public column x1032–1536 · y55–307 · baked headline / pill / panel / rail inpainted (OpenCV Telea) · Lanczos upscale + light unsharp",
+      "actor": "PUBLIC",
+      "region": "public hero · mobile",
+      "crop": "the authority screen hero, edge to edge",
+      "focal": "as drawn (truck right of the headline)",
+      "viewport": "< 700 px",
+      "overlay": "none",
+      "text": "live headline, status pill and metrics rail at the drawn positions"
+    },
+    {
+      "asset": "/brand/ifta/plates/public-road.jpg",
+      "source": "AIO_IFTA_AUTHORITY_BUNDLE/04_PUBLIC_CUSTOMER_MODE/AIO_IFTA_PUBLIC_TABLET_DESKTOP.jpeg (approved)",
+      "derivation": "board crop x931–1431 · y418–595 · baked statement + rule inpainted",
+      "actor": "PUBLIC",
+      "region": "“REAL DRIVERS. REAL ROADS. REAL COMPLIANCE.” panel (desktop)",
+      "crop": "winding road at dusk",
+      "focal": "road bend (≈ 55% x)",
+      "viewport": "≥ 1200 px (tablet / mobile authority omit the panel)",
+      "overlay": "none",
+      "text": "live three-line statement + gold rule at the drawn position"
+    },
+    {
+      "asset": "/brand/ifta/plates/public-map-desktop.jpg",
+      "source": "AIO_IFTA_AUTHORITY_BUNDLE/04_PUBLIC_CUSTOMER_MODE/AIO_IFTA_PUBLIC_TABLET_DESKTOP.jpeg (approved)",
+      "derivation": "board crop x547–789 · y784–904 (glowing jurisdiction map, no text)",
+      "actor": "PUBLIC",
+      "region": "8 JURISDICTIONS · ONE RETURN (desktop) — sample illustration",
+      "crop": "map card",
+      "focal": "centre",
+      "viewport": "≥ 1200 px",
+      "overlay": "none",
+      "text": "live count + copy beside it"
+    },
+    {
+      "asset": "/brand/ifta/plates/public-map.jpg",
+      "source": "AIO_IFTA_AUTHORITY_BUNDLE/04_PUBLIC_CUSTOMER_MODE/AIO_IFTA_PUBLIC_TABLET_DESKTOP.jpeg (approved)",
+      "derivation": "board crop x37–310 · y633–766 (tablet map card, no text)",
+      "actor": "PUBLIC",
+      "region": "8 JURISDICTIONS · ONE RETURN (tablet / mobile) — sample illustration",
+      "crop": "map card",
+      "focal": "centre",
+      "viewport": "< 1200 px",
+      "overlay": "none",
+      "text": "live count + copy beside it"
+    },
+    {
+      "asset": "/brand/ifta/plates/public-footer-desktop.jpg",
+      "source": "AIO_IFTA_AUTHORITY_BUNDLE/04_PUBLIC_CUSTOMER_MODE/AIO_IFTA_PUBLIC_TABLET_DESKTOP.jpeg (approved)",
+      "derivation": "board crop x517–1431 · y917–1011 · baked lockup + taglines inpainted",
+      "actor": "PUBLIC",
+      "region": "public footer band (desktop)",
+      "crop": "mountain range at dusk",
+      "focal": "ridge line",
+      "viewport": "≥ 1200 px",
+      "overlay": "none",
+      "text": "live lockup + DRIVEN BY COMPLIANCE line + DATA | COMPLIANCE | REAL PROGRESS"
+    },
+    {
+      "asset": "/brand/ifta/plates/public-footer-tablet.jpg",
+      "source": "AIO_IFTA_AUTHORITY_BUNDLE/04_PUBLIC_CUSTOMER_MODE/AIO_IFTA_PUBLIC_TABLET_DESKTOP.jpeg (approved)",
+      "derivation": "board crop x29–484 · y893–1002 · baked lockup + tagline inpainted",
+      "actor": "PUBLIC",
+      "region": "public footer band (tablet / mobile)",
+      "crop": "range + light-trail road",
+      "focal": "centre",
+      "viewport": "< 1200 px",
+      "overlay": "none",
+      "text": "live lockup centred + DRIVEN BY COMPLIANCE line"
+    },
+    {
+      "asset": "/brand/ifta/plates/client-insights.jpg",
+      "source": "AIO_IFTA_AUTHORITY_BUNDLE/02_CLIENT_MODE/AIO_IFTA_CLIENT_TABLET_DESKTOP.jpeg (approved)",
+      "derivation": "board crop x1160–1395 · y887–952 (AIO INSIGHTS card foot) · baked copy inpainted",
+      "actor": "CLIENT",
+      "region": "AIO INSIGHTS card foot (client desktop)",
+      "crop": "snow range",
+      "focal": "right peaks",
+      "viewport": "≥ 1200 px",
+      "overlay": "fades into the white card",
+      "text": "live insight copy above"
     }
   ]
 }

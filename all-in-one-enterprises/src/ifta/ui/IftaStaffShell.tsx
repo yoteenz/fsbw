@@ -1,93 +1,66 @@
-import { Link, Outlet, useNavigate, useParams } from 'react-router-dom';
+import { Link, Outlet, useParams } from 'react-router-dom';
 import { useDemoStore } from '../../demo/useDemoStore';
 import { aioPaths } from '../../utils/paths';
 import { companyName, orgHasIftaWorkspace, quartersForOrg } from '../iftaRouteHelpers';
-import { IftaIcon } from './IftaIcon';
-import { IftaLockup, IftaMark } from './IftaMark';
-import { IftaAvatar } from './IftaModules';
+import { IftaWorkspaceShell } from './IftaWorkspaceShell';
+import { useIftaAuthorityScale } from './iftaScale';
+import { shortName } from './iftaViewModel';
 import './ifta-ui.css';
 
 const STAFF_WORKSPACES = ['IFTA', 'Bookkeeping', 'Dispatch'] as const;
-const ALL_CLIENTS = '__queue__';
 
-/** AIO OFFICE · IFTA workspace shell — client and workspace switch independently; light internal command chrome. */
+/** AIO OFFICE · IFTA workspace — the approved staff chrome; client + workspace switching live in the avatar menu. */
 export function IftaStaffShell() {
+  useIftaAuthorityScale('staff');
   const store = useDemoStore();
-  const navigate = useNavigate();
   const { clientId } = useParams<{ clientId?: string }>();
   // On the cross-client queue no client is selected; inside a case the case's client is.
   const selectedClient = clientId ?? store.clients.find((c) => orgHasIftaWorkspace(store, c.id))?.id ?? 'client-c';
   const clientLabel = companyName(store, selectedClient);
   const iftaActive = orgHasIftaWorkspace(store, selectedClient);
+  const staffId = store.officeStaffId ?? store.staff[0]?.id;
+  const staff = store.staff.find((s) => s.id === staffId);
+  const iftaClients = store.clients.filter((c) => orgHasIftaWorkspace(store, c.id));
 
   return (
     <div className="ifta-root ifta-root--light ifta-root--staff">
-      <header className="ifta-topbar ifta-topbar--staff">
-        <div className="ifta-topbar__inner">
-          <IftaMark to={aioPaths.office} label="AIO Office" surface="light" />
-          <span className="ifta-topbar__place">
-            <span className="ifta-topbar__env">AIO Office</span>
-            <span className="ifta-topbar__ws">IFTA workspace</span>
-          </span>
-          <div className="ifta-switchers">
-            <label className="ifta-switch">
-              <span className="ifta-switch__label">Client</span>
-              <select
-                className="ifta-switch__select"
-                value={clientId ?? ALL_CLIENTS}
-                onChange={(e) => {
-                  const id = e.target.value;
-                  if (id === ALL_CLIENTS) return navigate(aioPaths.officeWorkspaceIfta);
-                  const q = quartersForOrg(store, id)[0];
-                  if (q) navigate(aioPaths.officeWorkspaceIftaCase(id, `${q.year}-Q${q.quarter}`));
-                  else navigate(aioPaths.officeWorkspaceIfta);
-                }}
-              >
-                <option value={ALL_CLIENTS}>All clients · fuel tax queue</option>
-                {store.clients.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.companyName}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label className="ifta-switch">
-              <span className="ifta-switch__label">Workspace</span>
-              <select className="ifta-switch__select" defaultValue="IFTA" aria-label="Workspace">
-                {STAFF_WORKSPACES.map((w) => (
-                  <option key={w} value={w}>
-                    {w}
-                  </option>
-                ))}
-              </select>
-            </label>
-          </div>
-          <div className="ifta-topbar__right">
-            <Link to={aioPaths.office} className="ifta-iconlink" aria-label="Office home">
-              <IftaIcon name="building" size={20} />
-              <span className="ifta-iconlink__label">Office home</span>
-            </Link>
-            <IftaAvatar initials="AIO" name="AIO team" role="AIO staff" />
-          </div>
-        </div>
-      </header>
-      <main className="ifta-main">
-        {!iftaActive && (
-          <div className="ifta-frame">
-            <div className="ifta-notice ifta-notice--block">
-              <strong>Workspace not active for this client</strong>
-              <p>{clientLabel} does not have IFTA filing active.</p>
-              <Link to={aioPaths.officeWorkspaceIfta} className="ifta-btn ifta-btn--ghost">
-                Return to fuel tax queue
-              </Link>
+      <IftaWorkspaceShell
+        actor="staff"
+        homeTo={aioPaths.office}
+        homeLabel="AIO Office"
+        person={shortName(staff?.name ?? 'AIO Staff')}
+        role="AIO Staff"
+        menu={[
+          { items: [{ id: 'who', label: staff?.name ?? 'AIO staff', detail: 'AIO Office · IFTA workspace' }] },
+          {
+            title: 'Client',
+            items: [
+              { id: 'queue', label: 'All clients · fuel tax queue', to: aioPaths.officeWorkspaceIfta, current: !clientId },
+              ...iftaClients.map((c) => {
+                const q = quartersForOrg(store, c.id)[0];
+                return { id: c.id, label: c.companyName, to: q ? aioPaths.officeWorkspaceIftaCase(c.id, `${q.year}-Q${q.quarter}`) : aioPaths.officeWorkspaceIfta, current: c.id === clientId };
+              }),
+            ],
+          },
+          { title: 'Workspace', items: STAFF_WORKSPACES.map((w) => ({ id: w, label: w, current: w === 'IFTA', disabled: w !== 'IFTA', to: w === 'IFTA' ? aioPaths.officeWorkspaceIfta : undefined })) },
+          { items: [{ id: 'office', label: 'Office home', to: aioPaths.office }] },
+        ]}
+      >
+        <main className="ifta-main">
+          {!iftaActive && (
+            <div className="ifta-frame">
+              <div className="ifta-notice ifta-notice--block">
+                <strong>Workspace not active for this client</strong>
+                <p>{clientLabel} does not have IFTA filing active.</p>
+                <Link to={aioPaths.officeWorkspaceIfta} className="ifta-btn ifta-btn--ghost">
+                  Return to fuel tax queue
+                </Link>
+              </div>
             </div>
-          </div>
-        )}
-        {iftaActive && <Outlet context={{ selectedClientId: selectedClient }} />}
-      </main>
-      <footer className="ifta-footer ifta-footer--light">
-        <IftaLockup surface="light" tagline="Operations · Compliance · Client success" />
-      </footer>
+          )}
+          {iftaActive && <Outlet context={{ selectedClientId: selectedClient }} />}
+        </main>
+      </IftaWorkspaceShell>
     </div>
   );
 }

@@ -1,146 +1,235 @@
 /**
- * IFTA family modules — the authority's component stack (PAGE / COMPONENT / INTERACTION CONTRACT §04):
- * hero banner · metrics rail · tab bar · workflow status · task list · map panel · recent uploads · insights ·
- * recent activity · bottom CTA rail · footer lockup. Presentational only; every value arrives from the view model.
+ * IFTA family modules — the approved screens' component stack (PAGE / COMPONENT / INTERACTION CONTRACT §04), drawn
+ * to the authority geometry: hero banner · metrics rail · tab bar · workflow status · task lists · charts · map ·
+ * uploads · insights · activity · CTA rail · footer lockup. Presentational only; every value comes from the view model.
  */
 import type { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
-import { formatDateTime } from '../iftaDates';
 import { formatNumber } from '../iftaDerive';
-import type { IftaAuditEvent } from '../iftaTypes';
+import { IftaFileBadge, IftaGlyph, type IftaGlyphName } from './IftaGlyph';
 import { IftaIcon, type IftaIconName } from './IftaIcon';
+import { IFTA_BRAND } from './iftaAssetManifest';
 import { US_STATE_PATHS, US_STATE_VIEWBOX } from './usStatePaths';
-import type { IftaChecklistRow, IftaFlagRow, IftaPhase, IftaShare, IftaTaskRow, IftaUploadRow } from './iftaViewModel';
+import type {
+  IftaActivityRow,
+  IftaChecklistRow,
+  IftaDelta,
+  IftaHealthRow,
+  IftaPhase,
+  IftaRiskLevel,
+  IftaRiskRow,
+  IftaShare,
+  IftaStaffTaskRow,
+  IftaStageTaskRow,
+  IftaUploadTableRow,
+} from './iftaViewModel';
 import { STAGE_STATUS_LABEL } from './iftaViewModel';
 
-/* ───────────────────────────── panel ───────────────────────────── */
+/* ───────────────────────────── hero ───────────────────────────── */
 
-export function IftaPanel({
+export type IftaPlateSet = { desktop: string; tablet: string; mobile: string };
+
+/** Hero banner over the authority plate for the band; the live headline, pill, aside and rail sit at the drawn geometry. */
+export function IftaHero({
+  actor,
+  plates,
+  label,
+  eyebrow,
   title,
+  period,
+  lines,
+  pill,
   aside,
-  className = '',
-  children,
-  id,
+  rail,
 }: {
+  actor: 'client' | 'staff' | 'queue';
+  plates: IftaPlateSet;
+  label: string;
+  eyebrow: string;
   title: string;
+  period?: string;
+  lines?: ReactNode;
+  pill?: ReactNode;
   aside?: ReactNode;
-  className?: string;
-  children: ReactNode;
-  id?: string;
+  rail?: ReactNode;
 }) {
   return (
-    <section className={`ifta-panel ${className}`} aria-label={title} id={id}>
-      <header className="ifta-panel__head">
-        <h3 className="ifta-panel__title">{title}</h3>
-        {aside ? <div className="ifta-panel__aside">{aside}</div> : null}
-      </header>
-      {children}
+    <section className={`ifta-hero ifta-hero--${actor}`} aria-label={label}>
+      <picture className="ifta-hero__plate" aria-hidden="true">
+        <source media="(max-width: 699.98px)" srcSet={plates.mobile} />
+        <source media="(max-width: 1199.98px)" srcSet={plates.tablet} />
+        <img src={plates.desktop} alt="" fetchPriority="high" decoding="async" />
+      </picture>
+      <div className="ifta-hero__text">
+        <p className="ifta-hero__eyebrow">{eyebrow}</p>
+        <h1 className="ifta-hero__title">{title}</h1>
+        {period ? <p className="ifta-hero__period">{period}</p> : null}
+        {actor === 'client' ? <span className="ifta-hero__rule" aria-hidden="true" /> : null}
+        {lines ? <div className="ifta-hero__lines">{lines}</div> : null}
+      </div>
+      {pill ? <div className="ifta-hero__pill">{pill}</div> : null}
+      {aside ? <div className="ifta-hero__aside">{aside}</div> : null}
+      {rail ? <div className="ifta-hero__rail">{rail}</div> : null}
     </section>
   );
 }
 
-/** "VIEW ALL →" — only rendered where it does something real (switches to the tab that holds the full list). */
-export function IftaViewAll({ onClick, label = 'View all' }: { onClick: () => void; label?: string }) {
+export type IftaTone = 'gold' | 'green' | 'amber' | 'blue' | 'red' | 'grey';
+
+/** Status pill (IN PROGRESS on the authority): bars glyph + state label. */
+export function IftaStatePill({ label, tone = 'gold' }: { label: string; tone?: IftaTone }) {
   return (
-    <button type="button" className="ifta-viewall" onClick={onClick}>
-      {label}
-      <IftaIcon name="arrow" size={13} />
-    </button>
+    <span className={`ifta-pill ifta-pill--${tone}`}>
+      <IftaGlyph name="pill-bars" className="ifta-pill__icon" />
+      <span>{label}</span>
+    </span>
   );
 }
 
 /* ───────────────────────────── metrics rail ───────────────────────────── */
 
-export type IftaMetricCell = { icon: IftaIconName; value: string; label: string; note?: string; pending?: boolean };
+export type IftaRailCell = { glyph?: IftaGlyphName; icon?: IftaIconName; value: string; label: string; note?: string; muted?: boolean; delta?: IftaDelta | null };
 
-export function IftaMetricsRail({ cells, tone = 'light', badge }: { cells: IftaMetricCell[]; tone?: 'light' | 'dark'; badge?: string }) {
+export function IftaRail({ cells, tone = 'light', extra, badge }: { cells: IftaRailCell[]; tone?: 'light' | 'dark'; extra?: ReactNode; badge?: string }) {
   return (
-    <div className={`ifta-metrics ifta-metrics--${tone}`} role="list" aria-label="Quarter metrics">
-      {badge ? <span className="ifta-metrics__badge">{badge}</span> : null}
+    <div className={`ifta-rail ifta-rail--${tone}${extra ? ' ifta-rail--extra' : ''}`} role="list" aria-label="Quarter metrics">
+      {badge ? <span className="ifta-rail__badge">{badge}</span> : null}
       {cells.map((c) => (
-        <div key={c.label} className={`ifta-metric${c.pending ? ' ifta-metric--pending' : ''}`} role="listitem">
-          <IftaIcon name={c.icon} size={28} strokeWidth={1.6} className="ifta-metric__icon" />
-          <div className="ifta-metric__text">
-            <span className="ifta-metric__value">{c.value}</span>
-            <span className="ifta-metric__label">{c.label}</span>
-            {c.note ? <span className="ifta-metric__note">{c.note}</span> : null}
-          </div>
+        <div key={c.label} className={`ifta-rail__cell${c.muted ? ' is-muted' : ''}`} role="listitem">
+          {c.glyph ? <IftaGlyph name={c.glyph} className="ifta-rail__icon" /> : <IftaIcon name={c.icon ?? 'tasks'} strokeWidth={2.1} className="ifta-rail__icon ifta-rail__icon--line" />}
+          <span className="ifta-rail__text">
+            <span className="ifta-rail__value">{c.value}</span>
+            <span className="ifta-rail__label">{c.label}</span>
+            {c.note ? <span className="ifta-rail__note">{c.note}</span> : null}
+          </span>
+          {c.delta ? (
+            <span className={`ifta-rail__delta is-${c.delta.dir}`}>
+              <span className="ifta-rail__delta-v">
+                {c.delta.dir === 'up' ? '↑ ' : c.delta.dir === 'down' ? '↓ ' : c.delta.dir === 'flat' ? <IftaIcon name="clock" size={12} className="ifta-rail__flat" /> : null}
+                {c.delta.text}
+              </span>
+              <span className="ifta-rail__delta-vs">{c.delta.vs}</span>
+            </span>
+          ) : null}
         </div>
       ))}
+      {extra ? <div className="ifta-rail__extra">{extra}</div> : null}
     </div>
   );
 }
 
-/* ───────────────────────────── status pill + chips ───────────────────────────── */
+/* ───────────────────────────── tabs ───────────────────────────── */
 
-export function IftaStatusPill({ label, tone = 'gold', icon = 'miles' }: { label: string; tone?: 'gold' | 'warn' | 'success' | 'progress' | 'alert' | 'muted'; icon?: IftaIconName }) {
+export function IftaTabs<T extends string>({
+  tabs,
+  current,
+  onSelect,
+  label,
+  secondary = [],
+  right,
+  tabsRef,
+}: {
+  tabs: readonly T[];
+  current: T;
+  onSelect: (t: T) => void;
+  label: string;
+  secondary?: readonly T[];
+  right?: ReactNode;
+  tabsRef?: React.Ref<HTMLDivElement>;
+}) {
   return (
-    <span className={`ifta-pill ifta-pill--${tone}`}>
-      <IftaIcon name={icon} size={16} strokeWidth={2.2} />
-      {label}
-    </span>
+    <div className="ifta-tabrow" ref={tabsRef}>
+      <div className="ifta-tabs" role="tablist" aria-label={label} data-count={tabs.length}>
+        {tabs.map((t) => (
+          <button
+            key={t}
+            type="button"
+            role="tab"
+            aria-selected={current === t}
+            className={`ifta-tab${current === t ? ' is-active' : ''}${secondary.includes(t) ? ' is-secondary' : ''}`}
+            onClick={() => onSelect(t)}
+          >
+            {t}
+          </button>
+        ))}
+      </div>
+      {right ? <div className="ifta-tabrow__right">{right}</div> : null}
+    </div>
   );
 }
 
-export function IftaChip({ label, tone }: { label: string; tone: 'gold' | 'warn' | 'success' | 'progress' | 'alert' | 'muted' }) {
+/* ───────────────────────────── card ───────────────────────────── */
+
+export function IftaCard({
+  title,
+  action,
+  className = '',
+  children,
+  icon,
+}: {
+  title: string;
+  action?: { label?: string; onClick: () => void } | null;
+  className?: string;
+  children: ReactNode;
+  icon?: ReactNode;
+}) {
   return (
-    <span className={`ifta-chip ifta-chip--${tone}`}>
-      <span className="ifta-chip__dot" aria-hidden="true" />
-      {label}
-    </span>
+    <section className={`ifta-card ${className}`} aria-label={title}>
+      <header className="ifta-card__head">
+        {icon ? <span className="ifta-card__icon">{icon}</span> : null}
+        <h2 className="ifta-card__title">{title}</h2>
+        {action ? (
+          <button type="button" className="ifta-viewall" onClick={action.onClick}>
+            {action.label ?? 'View All'}
+            <IftaIcon name="arrow" size={12} strokeWidth={2} />
+          </button>
+        ) : null}
+      </header>
+      <div className="ifta-card__body">{children}</div>
+    </section>
   );
 }
 
-/* ───────────────────────────── workflow stepper ───────────────────────────── */
+/* ───────────────────────────── workflow (four phases) ───────────────────────────── */
 
-const PHASE_END: Record<IftaPhase['status'], IftaIconName> = { done: 'done', current: 'active', blocked: 'alert', upcoming: 'more' };
+const PHASE_GLYPH: Record<IftaPhase['status'], IftaGlyphName> = { done: 'status-done', current: 'status-current', blocked: 'status-blocked', upcoming: 'status-upcoming' };
 
-export function IftaPhaseStepper({ phases, showDetails = false }: { phases: IftaPhase[]; showDetails?: boolean }) {
+export function IftaWorkflow({ phases, dates = true }: { phases: IftaPhase[]; dates?: boolean }) {
   return (
-    <ol className="ifta-stepper">
+    <ol className="ifta-flow">
       {phases.map((p) => (
-        <li key={p.index} className={`ifta-step ifta-step--${p.status}`}>
-          <span className="ifta-step__badge">{String(p.index).padStart(2, '0')}</span>
-          <div className="ifta-step__body">
-            <span className="ifta-step__label">{p.label}</span>
-            <span className="ifta-step__status">{p.statusLabel}</span>
-            {showDetails && (p.status === 'current' || p.status === 'blocked') ? (
-              <ul className="ifta-step__details">
-                {p.details.map((d) => (
-                  <li key={d}>{d}</li>
-                ))}
-              </ul>
-            ) : null}
-          </div>
-          {p.date ? <span className="ifta-step__date">{p.date}</span> : null}
-          <span className="ifta-step__end" aria-hidden="true">
-            <IftaIcon name={PHASE_END[p.status]} size={20} strokeWidth={2} />
+        <li key={p.index} className={`ifta-flow__step is-${p.status}`}>
+          <span className="ifta-flow__n" aria-hidden="true">
+            {String(p.index).padStart(2, '0')}
           </span>
+          <span className="ifta-flow__text">
+            <span className="ifta-flow__label">{p.label}</span>
+            <span className="ifta-flow__status">{p.statusLabel}</span>
+          </span>
+          {dates ? <span className="ifta-flow__date">{p.status === 'upcoming' && p.index !== 4 ? '—' : p.date ? p.date.toUpperCase() : '—'}</span> : null}
+          <IftaGlyph name={PHASE_GLYPH[p.status]} className="ifta-flow__icon" aria-label={p.statusLabel} />
         </li>
       ))}
     </ol>
   );
 }
 
-/* ───────────────────────────── checklist rows ───────────────────────────── */
+/* ───────────────────────────── task lists ───────────────────────────── */
 
-export function IftaChecklist({ rows, onSelect }: { rows: IftaChecklistRow[]; onSelect: (row: IftaChecklistRow) => void }) {
+export function IftaCheck({ done, blocked = false }: { done: boolean; blocked?: boolean }) {
+  return done ? <IftaGlyph name="status-done" className="ifta-check is-done" /> : <span className={`ifta-check is-open${blocked ? ' is-blocked' : ''}`} aria-hidden="true" />;
+}
+
+/** Client desktop QUARTER TASKS — the six quarter steps, client-safe (D-CLIENT-DESKTOP-STAFF-MODULES). */
+export function IftaStageTasks({ rows, onSelect }: { rows: IftaStageTaskRow[]; onSelect: (r: IftaStageTaskRow) => void }) {
   return (
-    <ul className="ifta-checklist">
+    <ul className="ifta-tasks">
       {rows.map((r) => (
         <li key={r.id}>
-          <button type="button" className={`ifta-checkrow ifta-checkrow--${r.status}`} onClick={() => onSelect(r)}>
-            <span className="ifta-checkrow__icon" aria-hidden="true">
-              <IftaIcon name={r.icon} size={20} strokeWidth={1.9} />
-            </span>
-            <span className="ifta-checkrow__text">
-              <span className="ifta-checkrow__title">{r.label}</span>
-              <span className="ifta-checkrow__status">
-                {STAGE_STATUS_LABEL[r.status]}
-                <span className="ifta-checkrow__note"> · {r.note}</span>
-              </span>
-            </span>
-            <IftaIcon name="chevron" size={18} className="ifta-checkrow__chev" />
+          <button type="button" className="ifta-tasks__row" onClick={() => onSelect(r)} title={r.blocked ? 'Needs you' : undefined}>
+            <IftaCheck done={r.done} blocked={r.blocked} />
+            <span className="ifta-tasks__label">{r.label}</span>
+            <IftaIcon name="chevron" size={16} strokeWidth={2} className="ifta-tasks__chev" />
           </button>
         </li>
       ))}
@@ -148,205 +237,373 @@ export function IftaChecklist({ rows, onSelect }: { rows: IftaChecklistRow[]; on
   );
 }
 
-/* ───────────────────────────── share colours ───────────────────────────── */
-
-export const SHARE_COLORS = ['#8C6A2E', '#D4A853', '#E2C27E', '#EBD9B7', '#A7A9AC', '#1A1A1A'];
-export const shareColor = (s: IftaShare, i: number) => (s.code === 'OTHER' ? SHARE_COLORS[5] : SHARE_COLORS[Math.min(i, 4)]);
-
-function lerp(a: string, b: string, t: number) {
-  const pa = [1, 3, 5].map((i) => parseInt(a.slice(i, i + 2), 16));
-  const pb = [1, 3, 5].map((i) => parseInt(b.slice(i, i + 2), 16));
-  return `rgb(${pa.map((v, i) => Math.round(v + (pb[i] - v) * t)).join(',')})`;
-}
-const lightFill = (t: number) => (t < 0.5 ? lerp('#EBD9B7', '#D4A853', t * 2) : lerp('#D4A853', '#5E4720', (t - 0.5) * 2));
-
-/* ───────────────────────────── jurisdiction map ───────────────────────────── */
-
-export function IftaUsMap({ intensity, tone = 'light', label }: { intensity: Record<string, number>; tone?: 'light' | 'dark'; label: string }) {
-  const codes = Object.keys(US_STATE_PATHS);
+/** Staff QUARTER TASKS — check · task · assignee initials · date (desktop) or chevron (compact). */
+export function IftaStaffTasks({ rows, compact = false }: { rows: IftaStaffTaskRow[]; compact?: boolean }) {
   return (
-    <svg className={`ifta-map ifta-map--${tone}`} viewBox={US_STATE_VIEWBOX} role="img" aria-label={label}>
-      {tone === 'dark' ? (
-        <defs>
-          <filter id="ifta-map-glow" x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur stdDeviation="6" result="b" />
-            <feMerge>
-              <feMergeNode in="b" />
-              <feMergeNode in="SourceGraphic" />
-            </feMerge>
-          </filter>
-        </defs>
-      ) : null}
-      {codes.map((code) => {
-        const t = intensity[code];
-        const active = t !== undefined;
-        const fill = tone === 'light' ? (active ? lightFill(t) : '#ECEAE6') : active ? `rgba(212,168,83,${0.16 + 0.42 * t})` : '#141414';
-        return <path key={code} d={US_STATE_PATHS[code].d} fill={fill} className={active ? 'is-active' : undefined} />;
-      })}
-      {tone === 'dark'
-        ? codes
-            .filter((c) => intensity[c] !== undefined)
-            .map((c) => (
-              <circle key={c} cx={US_STATE_PATHS[c].c[0]} cy={US_STATE_PATHS[c].c[1]} r={4 + 6 * intensity[c]} className="ifta-map__dot" filter="url(#ifta-map-glow)" />
-            ))
-        : null}
-    </svg>
-  );
-}
-
-export function IftaShareLegend({ shares }: { shares: IftaShare[] }) {
-  return (
-    <ul className="ifta-legend">
-      {shares.map((s, i) => (
-        <li key={s.code}>
-          <span className="ifta-legend__dot" style={{ background: shareColor(s, i) }} aria-hidden="true" />
-          <span className="ifta-legend__name">{s.name}</span>
-          <span className="ifta-legend__pct">{s.pct}%</span>
+    <ul className={`ifta-tasks ifta-tasks--staff${compact ? ' is-compact' : ''}`}>
+      {rows.map((r) => (
+        <li key={r.id} className="ifta-tasks__row">
+          <IftaCheck done={r.done} />
+          <span className="ifta-tasks__label">{r.label}</span>
+          {compact ? (
+            <IftaIcon name="chevron" size={16} strokeWidth={2} className="ifta-tasks__chev" />
+          ) : (
+            <>
+              <span className="ifta-tasks__who">{r.done && r.assignee ? <span className="ifta-initials">{r.assignee}</span> : '—'}</span>
+              <span className="ifta-tasks__date">{r.date.toUpperCase()}</span>
+            </>
+          )}
         </li>
       ))}
     </ul>
   );
 }
 
-/* ───────────────────────────── bars + donut ───────────────────────────── */
+const STAGE_TONE: Record<IftaChecklistRow['status'], string> = { done: 'green', current: 'blue', blocked: 'amber', upcoming: 'grey' };
 
-export function IftaMileageBars({ shares }: { shares: IftaShare[] }) {
-  const max = Math.max(1, ...shares.map((s) => s.value));
+/** Client compact QUICK ACTIONS — the six checklist lines (icon · step · status) → their tab. */
+export function IftaQuickActions({ rows, onSelect }: { rows: IftaChecklistRow[]; onSelect: (r: IftaChecklistRow) => void }) {
   return (
-    <div className="ifta-bars" role="img" aria-label={`Miles by jurisdiction: ${shares.map((s) => `${s.name} ${formatNumber(s.value)}`).join(', ')}`}>
-      {shares.map((s, i) => (
-        <div key={s.code} className="ifta-bars__col">
-          <span className="ifta-bars__value">{formatNumber(s.value)}</span>
-          <span className="ifta-bars__track">
-            <span className="ifta-bars__bar" style={{ height: `${Math.max(4, (s.value / max) * 100)}%`, background: s.code === 'OTHER' ? '#1A1A1A' : undefined, opacity: s.code === 'OTHER' ? 1 : 1 - i * 0.08 }} />
-          </span>
-          <span className="ifta-bars__code">{s.code === 'OTHER' ? 'Other' : s.code}</span>
-        </div>
+    <ul className="ifta-quick">
+      {rows.map((r) => (
+        <li key={r.id}>
+          <button type="button" className={`ifta-quick__row is-${STAGE_TONE[r.status]}`} onClick={() => onSelect(r)}>
+            <span className="ifta-quick__icon" aria-hidden="true">
+              <IftaIcon name={r.icon} strokeWidth={2} />
+            </span>
+            <span className="ifta-quick__text">
+              <span className="ifta-quick__label">{r.label}</span>
+              <span className="ifta-quick__note">{r.status === 'blocked' ? STAGE_STATUS_LABEL.blocked : r.status === 'upcoming' ? 'Pending' : r.note}</span>
+            </span>
+            <IftaIcon name="chevron" size={16} strokeWidth={2} className="ifta-quick__chev" />
+          </button>
+        </li>
       ))}
-    </div>
+    </ul>
   );
 }
 
-export function IftaFuelDonut({ shares, total, unit = 'Total gallons' }: { shares: IftaShare[]; total: string; unit?: string }) {
-  const r = 46;
-  const c = 2 * Math.PI * r;
-  let offset = 0;
+/* ───────────────────────────── charts ───────────────────────────── */
+
+export const SHARE_COLORS = ['#F2A93B', '#F5BE52', '#AA742B', '#6C4A20', '#A3A7AD'];
+export function shareColor(s: IftaShare, i: number) {
+  return s.code === 'OTHER' ? '#111111' : SHARE_COLORS[i % SHARE_COLORS.length];
+}
+
+function niceTicks(max: number): number[] {
+  if (max <= 0) return [0];
+  const raw = max / 4;
+  const mag = 10 ** Math.floor(Math.log10(raw));
+  const step = [1, 2, 2.5, 5, 10].map((m) => m * mag).find((s) => s * 4 >= max) ?? raw;
+  return [0, 1, 2, 3, 4].map((i) => i * step);
+}
+
+function shortNum(n: number) {
+  return n >= 1000 ? `${Math.round((n / 1000) * 10) / 10}K`.replace('.0K', 'K') : String(n);
+}
+
+/** MILEAGE BY JURISDICTION bars: axis + bars (+ values above on staff desktop). */
+export function IftaBars({ shares, values = false, axis = true, labels = true }: { shares: IftaShare[]; values?: boolean; axis?: boolean; labels?: boolean }) {
+  const ticks = niceTicks(Math.max(...shares.map((s) => s.value)));
+  const top = ticks[ticks.length - 1] || 1;
   return (
-    <div className="ifta-donut">
-      <svg viewBox="0 0 120 120" role="img" aria-label={`${total} ${unit}`}>
-        <circle cx="60" cy="60" r={r} className="ifta-donut__track" />
-        {shares.map((s, i) => {
-          const len = (s.pct / 100) * c;
-          const el = (
-            <circle
-              key={s.code}
-              cx="60"
-              cy="60"
-              r={r}
-              className="ifta-donut__seg"
-              stroke={shareColor(s, i)}
-              strokeDasharray={`${Math.max(0, len - 1.2)} ${c}`}
-              strokeDashoffset={-offset}
-            />
-          );
-          offset += len;
-          return el;
-        })}
-      </svg>
-      <div className="ifta-donut__center">
-        <span className="ifta-donut__total">{total}</span>
-        <span className="ifta-donut__unit">{unit}</span>
+    <div className={`ifta-bars${axis ? ' has-axis' : ''}${values ? ' has-values' : ''}`} role="img" aria-label={shares.map((s) => `${s.name} ${formatNumber(s.value)} miles`).join(', ')}>
+      {axis ? (
+        <div className="ifta-bars__axis" aria-hidden="true">
+          {[...ticks].reverse().map((t) => (
+            <span key={t}>{shortNum(t)}</span>
+          ))}
+        </div>
+      ) : null}
+      <div className="ifta-bars__plot" aria-hidden="true">
+        {shares.map((s, i) => (
+          <div key={s.code} className="ifta-bars__col">
+            <div className="ifta-bars__track">
+              <div className="ifta-bars__bar" style={{ height: `${(s.value / top) * 100}%`, background: shareColor(s, i) }}>
+                {values ? <span className="ifta-bars__value">{formatNumber(s.value)}</span> : null}
+              </div>
+            </div>
+            {labels ? <span className="ifta-bars__x">{s.code}</span> : null}
+          </div>
+        ))}
       </div>
     </div>
   );
 }
 
-/* ───────────────────────────── uploads · activity · tasks · flags ───────────────────────────── */
-
-function fileBadge(label: string): { text: string; tone: string } {
-  const ext = /\.([a-z0-9]+)$/i.exec(label)?.[1]?.toLowerCase();
-  if (ext === 'csv') return { text: 'CSV', tone: 'csv' };
-  if (ext === 'xls' || ext === 'xlsx') return { text: 'XLS', tone: 'xls' };
-  if (ext === 'jpg' || ext === 'jpeg' || ext === 'png' || ext === 'heic') return { text: 'IMG', tone: 'img' };
-  return { text: 'PDF', tone: 'pdf' };
-}
-
-export function IftaUploadRows({ rows }: { rows: IftaUploadRow[] }) {
-  if (!rows.length) return <p className="ifta-empty-line">Nothing uploaded yet this quarter.</p>;
+/** Legend rows: dot · name/code · value (+ optional extra column, e.g. gallons). */
+export function IftaLegend({ shares, show = 'name', value = 'pct', extra }: { shares: IftaShare[]; show?: 'name' | 'code'; value?: 'pct' | 'value'; extra?: (s: IftaShare) => string }) {
   return (
-    <ul className="ifta-uploads">
-      {rows.map((u) => {
-        const badge = u.kind === 'RECEIPTS' ? { text: 'IMG', tone: 'img' } : fileBadge(u.label);
-        return (
-          <li key={u.id}>
-            <span className={`ifta-filebadge ifta-filebadge--${badge.tone}`}>{badge.text}</span>
-            <span className="ifta-uploads__text">
-              <span className="ifta-uploads__name">{u.label}</span>
-              <span className="ifta-uploads__meta">{u.detail}</span>
-            </span>
-            <IftaIcon name="done" size={20} className="ifta-uploads__ok" />
-          </li>
-        );
-      })}
+    <ul className={`ifta-legend${extra ? ' has-extra' : ''}`}>
+      {shares.map((s, i) => (
+        <li key={s.code}>
+          <span className="ifta-legend__dot" style={{ background: shareColor(s, i) }} aria-hidden="true" />
+          <span className="ifta-legend__name">{show === 'code' ? (s.code === 'OTHER' ? 'Other' : s.code) : s.name}</span>
+          <span className="ifta-legend__val">{value === 'pct' ? `${s.pct}%` : formatNumber(s.value)}</span>
+          {extra ? <span className="ifta-legend__extra">{extra(s)}</span> : null}
+        </li>
+      ))}
     </ul>
   );
 }
 
-const ACTOR_LABEL: Record<IftaAuditEvent['actor'], string> = { CLIENT: 'Client', FOUNDER_STAFF: 'AIO', SYSTEM: 'System' };
+/** Non-travelled states: a fixed muted mosaic (no data meaning); travelled states take the legend colours. */
+const MOSAIC = ['#4B3F33', '#5F4F3F', '#3B322A', '#6E5B47', '#2E2722', '#7A6550', '#544638'];
 
-export function IftaActivity({ events, showActor = false }: { events: IftaAuditEvent[]; showActor?: boolean }) {
-  if (!events.length) return <p className="ifta-empty-line">No activity yet.</p>;
+export function IftaUsMap({ shares, label }: { shares: IftaShare[]; label: string }) {
+  const color = new Map(shares.filter((s) => s.code !== 'OTHER').map((s, i) => [s.code, shareColor(s, i)]));
+  const codes = Object.keys(US_STATE_PATHS);
   return (
-    <ol className="ifta-timeline">
-      {events.map((e, i) => (
-        <li key={e.id} className={i === 0 ? 'is-latest' : undefined}>
-          <span className="ifta-timeline__dot" aria-hidden="true" />
-          <div className="ifta-timeline__body">
-            <span className="ifta-timeline__action">{e.action}</span>
-            <span className="ifta-timeline__meta">
-              {showActor ? (
-                <span className={`ifta-actor ifta-actor--${e.actor.toLowerCase()}`}>{ACTOR_LABEL[e.actor]}</span>
-              ) : null}
-              {e.actorName} · {formatDateTime(e.at)}
+    <svg className="ifta-map" viewBox={US_STATE_VIEWBOX} role="img" aria-label={label}>
+      {codes.map((code, i) => (
+        <path key={code} d={US_STATE_PATHS[code].d} fill={color.get(code) ?? MOSAIC[(i * 5 + code.charCodeAt(0)) % MOSAIC.length]} className={color.has(code) ? 'is-active' : undefined} />
+      ))}
+    </svg>
+  );
+}
+
+/** FUEL PURCHASES donut with the total in the centre. */
+export function IftaDonut({ shares, total, caption = 'Total Gallons' }: { shares: IftaShare[]; total: string; caption?: string }) {
+  const r = 42;
+  const c = 2 * Math.PI * r;
+  let offset = 0;
+  return (
+    <div className="ifta-donut">
+      <svg viewBox="0 0 100 100" role="img" aria-label={`${total} ${caption.toLowerCase()}: ${shares.map((s) => `${s.code} ${s.pct}%`).join(', ')}`}>
+        <circle cx="50" cy="50" r={r} fill="none" stroke="#EDEDED" strokeWidth="11" />
+        {shares.map((s, i) => {
+          const len = (s.pct / 100) * c;
+          const seg = <circle key={s.code} cx="50" cy="50" r={r} fill="none" stroke={shareColor(s, i)} strokeWidth="11" strokeDasharray={`${Math.max(0, len - 0.6)} ${c}`} strokeDashoffset={-offset} transform="rotate(-90 50 50)" />;
+          offset += len;
+          return seg;
+        })}
+      </svg>
+      <span className="ifta-donut__center">
+        <span className="ifta-donut__total">{total}</span>
+        <span className="ifta-donut__caption">{caption}</span>
+      </span>
+    </div>
+  );
+}
+
+/* ───────────────────────────── vehicles · uploads · activity ───────────────────────────── */
+
+export type IftaVehicleRow = { id: string; unit: string; detail: string; value?: string; tone: 'green' | 'amber' | 'grey' | 'red'; status: string };
+
+export function IftaVehicles({ rows, variant }: { rows: IftaVehicleRow[]; variant: 'client' | 'staff' }) {
+  return (
+    <ul className={`ifta-vehicles ifta-vehicles--${variant}`}>
+      {rows.map((v) => (
+        <li key={v.id}>
+          {variant === 'client' ? (
+            <span className="ifta-vehicles__icon" aria-hidden="true">
+              <IftaIcon name="truck" strokeWidth={1.9} />
             </span>
-          </div>
+          ) : (
+            <IftaGlyph name="truck-solid" className="ifta-vehicles__icon" />
+          )}
+          <span className="ifta-vehicles__text">
+            <span className="ifta-vehicles__unit">{v.unit}</span>
+            {variant === 'client' ? <span className="ifta-vehicles__meta">{v.detail}</span> : null}
+          </span>
+          {variant === 'staff' ? <span className="ifta-vehicles__value">{v.value}</span> : <span className={`ifta-dot is-${v.tone}`} role="img" aria-label={v.status} />}
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+/** RECENT UPLOADS — table (desktop: FILE NAME · DATE · STATUS) or rows (compact: name · detail – date · status). */
+export function IftaUploads({ rows, table }: { rows: IftaUploadTableRow[]; table: boolean }) {
+  if (!rows.length) return <p className="ifta-empty">No uploads yet this quarter.</p>;
+  return table ? (
+    <table className="ifta-table ifta-table--uploads">
+      <thead>
+        <tr>
+          <th scope="col">File name</th>
+          <th scope="col">Date</th>
+          <th scope="col">Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {rows.map((r) => (
+          <tr key={r.id}>
+            <td>
+              <span className="ifta-table__file">
+                <IftaFileBadge fileName={r.fileName} />
+                <span>{r.name}</span>
+              </span>
+            </td>
+            <td>{r.date}</td>
+            <td>
+              <UploadStatus done={r.done} />
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  ) : (
+    <ul className="ifta-uploads">
+      {rows.map((r) => (
+        <li key={r.id}>
+          <span className="ifta-uploads__tile" aria-hidden="true">
+            <IftaFileBadge fileName={r.fileName} />
+          </span>
+          <span className="ifta-uploads__text">
+            <span className="ifta-uploads__name">{r.name}</span>
+            <span className="ifta-uploads__meta">
+              {r.detail} – {r.date}
+            </span>
+          </span>
+          <UploadStatus done={r.done} />
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function UploadStatus({ done }: { done: boolean }) {
+  return done ? <IftaGlyph name="ring-check" className="ifta-status is-done" aria-label="Verified" /> : <IftaIcon name="clock" className="ifta-status is-wait" aria-label="AIO checking" />;
+}
+
+/** RECENT ACTIVITY — table (EVENT · DATE) or timeline (compact). */
+export function IftaActivity({ rows, table }: { rows: IftaActivityRow[]; table: boolean }) {
+  if (!rows.length) return <p className="ifta-empty">No activity yet.</p>;
+  return table ? (
+    <table className="ifta-table ifta-table--activity">
+      <thead>
+        <tr>
+          <th scope="col">Event</th>
+          <th scope="col">Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        {rows.map((r) => (
+          <tr key={r.id}>
+            <td>
+              <span className="ifta-table__event">
+                <span className={`ifta-dot is-${r.tone}`} aria-hidden="true" />
+                <span>{r.text}</span>
+              </span>
+            </td>
+            <td>
+              <span className="ifta-table__when">
+                <span>{r.date}</span>
+                <span>{r.time}</span>
+              </span>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  ) : (
+    <ol className="ifta-timeline">
+      {rows.map((r) => (
+        <li key={r.id} className={`is-${r.tone}`}>
+          <span className="ifta-timeline__text">{r.text}</span>
+          <span className="ifta-timeline__when">
+            {r.date} &nbsp;{r.time}
+          </span>
         </li>
       ))}
     </ol>
   );
 }
 
-export function IftaTaskList({ tasks, empty }: { tasks: IftaTaskRow[]; empty: string }) {
-  if (!tasks.length) return <p className="ifta-empty-line">{empty}</p>;
-  return (
-    <ul className="ifta-tasks">
-      {tasks.map((t) => (
-        <li key={t.id} className={t.done ? 'is-done' : undefined}>
-          <span className="ifta-tasks__box" aria-hidden="true">
-            {t.done ? <IftaIcon name="check" size={13} strokeWidth={3} /> : null}
+/** Staff RECENT CLIENT ACTIVITY (TYPE · ACTIVITY · DATE · BY) / AIO TEAM ACTIVITY (USER · ACTIVITY · DATE). */
+export function IftaActorActivity({ rows, kind, table }: { rows: IftaActivityRow[]; kind: 'client' | 'team'; table: boolean }) {
+  if (!rows.length) return <p className="ifta-empty">{kind === 'client' ? 'No client activity yet.' : 'No AIO activity yet.'}</p>;
+  const lead = (r: IftaActivityRow) =>
+    kind === 'client' ? (
+      <span className="ifta-actor__tile" aria-hidden="true">
+        <IftaFileBadge fileName={/upload|receipt|eld|csv/i.test(r.text) ? 'file.pdf' : 'note.doc'} />
+      </span>
+    ) : (
+      <span className="ifta-initials ifta-initials--lg">{initialsOf(r.actorName)}</span>
+    );
+  return table ? (
+    <table className={`ifta-table ifta-table--${kind}`}>
+      <thead>
+        <tr>
+          <th scope="col">{kind === 'client' ? 'Type' : 'User'}</th>
+          <th scope="col">Activity</th>
+          <th scope="col">Date</th>
+          {kind === 'client' ? <th scope="col">By</th> : null}
+        </tr>
+      </thead>
+      <tbody>
+        {rows.map((r) => (
+          <tr key={r.id}>
+            <td>{lead(r)}</td>
+            <td>{r.text}</td>
+            <td>
+              {r.date} {r.time}
+            </td>
+            {kind === 'client' ? <td>Client</td> : null}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  ) : (
+    <ul className={`ifta-actor ifta-actor--${kind}`}>
+      {rows.map((r) => (
+        <li key={r.id}>
+          {lead(r)}
+          <span className="ifta-actor__text">
+            <span className="ifta-actor__title">{r.text}</span>
+            <span className="ifta-actor__when">
+              {r.date} {r.time}
+            </span>
           </span>
-          <span className="ifta-tasks__text">
-            <span className="ifta-tasks__label">{t.label}</span>
-            <span className="ifta-tasks__detail">{t.detail}</span>
-          </span>
-          <span className={`ifta-owner ifta-owner--${t.owner.toLowerCase()}`}>{t.owner === 'CLIENT' ? 'Client' : 'AIO'}</span>
+          {kind === 'client' ? <IftaIcon name="chevron" size={14} strokeWidth={2} className="ifta-actor__chev" /> : null}
         </li>
       ))}
     </ul>
   );
 }
 
-const FLAG_ICON: Record<IftaFlagRow['tone'], IftaIconName> = { ok: 'done', warn: 'warn', alert: 'flag' };
+function initialsOf(name: string) {
+  return name
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((w) => w[0]!.toUpperCase())
+    .join('');
+}
 
-export function IftaFlags({ flags }: { flags: IftaFlagRow[] }) {
-  return (
-    <ul className="ifta-flags">
-      {flags.map((f) => (
-        <li key={f.id} className={`ifta-flags__row ifta-flags__row--${f.tone}`}>
-          <IftaIcon name={FLAG_ICON[f.tone]} size={20} />
-          <span className="ifta-flags__text">
-            <span className="ifta-flags__label">{f.label}</span>
-            <span className="ifta-flags__detail">{f.detail}</span>
+const RISK_GLYPH: Record<IftaRiskRow['icon'], IftaGlyphName> = { ok: 'status-done', check: 'ring-check', flag: 'flag', info: 'info' };
+
+/** RISKS / FLAGS — STATUS · ITEM · DETAIL (desktop table) or icon + two lines (compact). */
+export function IftaRisks({ rows, table }: { rows: IftaRiskRow[]; table: boolean }) {
+  return table ? (
+    <table className="ifta-table ifta-table--risks">
+      <thead>
+        <tr>
+          <th scope="col">Status</th>
+          <th scope="col">Item</th>
+          <th scope="col">Detail</th>
+        </tr>
+      </thead>
+      <tbody>
+        {rows.map((r) => (
+          <tr key={r.id}>
+            <td>
+              <IftaGlyph name={RISK_GLYPH[r.icon]} className={`ifta-risk is-${r.icon}`} />
+            </td>
+            <td>{r.item}</td>
+            <td>{r.detail}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  ) : (
+    <ul className="ifta-risks">
+      {rows.map((r) => (
+        <li key={r.id}>
+          <IftaGlyph name={RISK_GLYPH[r.icon]} className={`ifta-risk is-${r.icon}`} />
+          <span className="ifta-risks__text">
+            <span className="ifta-risks__item">{r.item}</span>
+            <span className="ifta-risks__detail">{r.detail}</span>
           </span>
         </li>
       ))}
@@ -354,82 +611,123 @@ export function IftaFlags({ flags }: { flags: IftaFlagRow[] }) {
   );
 }
 
-/* ───────────────────────────── insights ───────────────────────────── */
+export type IftaDateItem = { label: string; value: string; icon: IftaIconName };
+
+export function IftaDates({ rows }: { rows: IftaDateItem[] }) {
+  return (
+    <ul className="ifta-dates">
+      {rows.map((d) => (
+        <li key={d.label}>
+          <span className="ifta-dates__icon" aria-hidden="true">
+            <IftaIcon name={d.icon} strokeWidth={2.1} />
+          </span>
+          <span className="ifta-dates__text">
+            <span className="ifta-dates__label">{d.label}</span>
+            <span className="ifta-dates__value">{d.value}</span>
+          </span>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+/* ───────────────────────────── insights · health · CTA · footer ───────────────────────────── */
 
 export function IftaInsights({ lines, media }: { lines: string[]; media?: string }) {
   return (
-    <section className="ifta-panel ifta-insights" aria-label="AIO insights">
-      <header className="ifta-panel__head">
-        <span className="ifta-insights__bulb" aria-hidden="true">
-          <IftaIcon name="bulb" size={20} />
-        </span>
-        <h3 className="ifta-panel__title">AIO insights</h3>
-      </header>
-      {lines.map((l) => (
-        <p key={l} className="ifta-insights__line">
-          {l}
-        </p>
-      ))}
+    <section className="ifta-card ifta-insights" aria-label="AIO insights">
+      <span className="ifta-insights__bulb" aria-hidden="true">
+        <IftaIcon name="bulb" strokeWidth={2} />
+      </span>
+      <div className="ifta-insights__body">
+        <h2 className="ifta-card__title">AIO Insights</h2>
+        {lines.map((l) => (
+          <p key={l}>{l}</p>
+        ))}
+      </div>
       {media ? <img className="ifta-insights__media" src={media} alt="" loading="lazy" decoding="async" /> : null}
     </section>
   );
 }
 
-/* ───────────────────────────── bottom CTA rail ───────────────────────────── */
+const RISK_CHIP: Record<IftaRiskLevel, string> = { LOW: 'green', MEDIUM: 'amber', HIGH: 'red' };
 
-export function IftaCtaRail({
-  eyebrow,
-  label,
-  icon = 'clipboard',
-  to,
-  onClick,
-  actionLabel,
-}: {
-  eyebrow: string;
-  label: string;
-  icon?: IftaIconName;
-  to?: string;
-  onClick?: () => void;
-  actionLabel: string;
-}) {
-  const inner = (
+/** CLIENT HEALTH (staff) — dark glass panel over the hero: risk chip + four checks. */
+export function IftaHealth({ title, rows, risk }: { title: string; rows: IftaHealthRow[]; risk?: { level: IftaRiskLevel; label: string } }) {
+  return (
+    <div className="ifta-health" aria-label={title}>
+      <div className="ifta-health__head">
+        <p className="ifta-health__title">{title}</p>
+        {risk ? <span className={`ifta-health__chip is-${RISK_CHIP[risk.level]}`}>{risk.label}</span> : null}
+      </div>
+      <ul>
+        {rows.map((r) => (
+          <li key={r.label}>
+            <IftaGlyph name={r.ok ? 'status-done' : 'status-blocked'} className={`ifta-health__check${r.ok ? '' : ' is-open'}`} />
+            <span className="ifta-health__label">{r.label}</span>
+            <strong className={r.accent ? (r.ok ? 'is-accent' : 'is-warn') : undefined}>{r.value}</strong>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+/** Bottom CTA rail: icon tile · eyebrow + label · gold arrow button (the whole rail is the control). */
+export function IftaCtaRail({ eyebrow, label, icon = 'clipboard', to, onClick }: { eyebrow: string; label: string; icon?: IftaIconName; to?: string; onClick?: () => void }) {
+  const body = (
     <>
-      <span className="ifta-cta-rail__tile" aria-hidden="true">
-        <IftaIcon name={icon} size={24} strokeWidth={1.6} />
+      <span className="ifta-cta__icon" aria-hidden="true">
+        <IftaIcon name={icon} strokeWidth={1.8} />
       </span>
-      <span className="ifta-cta-rail__divider" aria-hidden="true" />
-      <span className="ifta-cta-rail__text">
-        <span className="ifta-cta-rail__eyebrow">{eyebrow}</span>
-        <span className="ifta-cta-rail__label">{label}</span>
+      <span className="ifta-cta__text">
+        <span className="ifta-cta__eyebrow">{eyebrow}</span>
+        <span className="ifta-cta__label">{label}</span>
       </span>
-      <span className="ifta-cta-rail__go" aria-hidden="true">
-        <IftaIcon name="arrow" size={22} strokeWidth={2.2} />
+      <span className="ifta-cta__go" aria-hidden="true">
+        <IftaIcon name="arrow" strokeWidth={2.2} />
       </span>
     </>
   );
-  return to ? (
-    <Link to={to} className="ifta-cta-rail" aria-label={actionLabel}>
-      {inner}
-    </Link>
-  ) : (
-    <button type="button" className="ifta-cta-rail" onClick={onClick} aria-label={actionLabel}>
-      {inner}
+  if (to)
+    return (
+      <Link to={to} className="ifta-cta" aria-label={`${eyebrow} ${label}`}>
+        {body}
+      </Link>
+    );
+  return (
+    <button type="button" className="ifta-cta" onClick={onClick} aria-label={`${eyebrow} ${label}`} disabled={!onClick}>
+      {body}
     </button>
   );
 }
 
-/* ───────────────────────────── identity chips ───────────────────────────── */
-
-export function IftaAvatar({ initials, name, role }: { initials: string; name: string; role: string }) {
+/** Footer lockup (asset sheet §1: full lockup in footers only) with its tagline line. */
+export function IftaFooter({ tagline, variant = 'stack' }: { tagline: string[]; variant?: 'stack' | 'inline' }) {
   return (
-    <span className="ifta-avatar">
-      <span className="ifta-avatar__disc" aria-hidden="true">
-        {initials}
-      </span>
-      <span className="ifta-avatar__text">
-        <span className="ifta-avatar__name">{name}</span>
-        <span className="ifta-avatar__role">{role}</span>
-      </span>
-    </span>
+    <footer className={`ifta-foot ifta-foot--${variant}`}>
+      <span className="ifta-foot__rule" aria-hidden="true" />
+      <img className="ifta-foot__lockup" src={IFTA_BRAND.lockupOnLight} alt="All In One Enterprises Inc." loading="lazy" decoding="async" />
+      <span className="ifta-foot__rule" aria-hidden="true" />
+      <p className="ifta-foot__tagline">
+        {tagline.map((t, i) => (
+          <span key={t}>
+            {i ? <span className="ifta-foot__sep" aria-hidden="true">•</span> : null}
+            {t}
+          </span>
+        ))}
+      </p>
+    </footer>
   );
+}
+
+/* ───────────────────────────── tab-body helpers (non-overview tabs) ───────────────────────────── */
+
+export function IftaChip({ label, tone = 'grey' }: { label: string; tone?: IftaTone | 'success' | 'warn' | 'progress' | 'alert' | 'muted' }) {
+  const map: Record<string, string> = { success: 'green', warn: 'amber', progress: 'blue', alert: 'red', muted: 'grey' };
+  return <span className={`ifta-chip is-${map[tone] ?? tone}`}>{label}</span>;
+}
+
+export function IftaRows({ children }: { children: ReactNode }) {
+  return <ul className="ifta-rows">{children}</ul>;
 }

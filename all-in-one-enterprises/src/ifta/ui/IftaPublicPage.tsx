@@ -1,207 +1,207 @@
+import { Fragment } from 'react';
 import { Link } from 'react-router-dom';
 import { usePageMeta } from '../../hooks/usePageMeta';
 import { aioPaths } from '../../utils/paths';
 import { formatNumber } from '../iftaDerive';
 import { IftaIcon, type IftaIconName } from './IftaIcon';
-import { IFTA_MEDIA } from './iftaAssetManifest';
-import { IftaMetricsRail, IftaUsMap } from './IftaModules';
-import { RunFaqsPanel } from './RunFaqsPanel';
+import { IFTA_PLATES } from './iftaAssetManifest';
+import { IftaRail } from './IftaModules';
+import { useIftaBand } from './iftaScale';
 import { PUBLIC_SAMPLE_QUARTER as SAMPLE } from './iftaViewModel';
 
-/** Five-step process — truthful copy (D-PUBLIC-COPY-TRUTH): staff-prepared, client-approved, AIO-filed. */
-const PROCESS: { n: string; icon: IftaIconName; title: string; text: string; who: 'You' | 'AIO' }[] = [
-  { n: '01', icon: 'fuel', title: 'Fuel purchases', text: 'Send receipts as you go — photo, upload, or from your Vault.', who: 'You' },
-  { n: '02', icon: 'miles', title: 'Mileage by jurisdiction', text: 'Upload your ELD report; AIO checks your miles by state.', who: 'You' },
-  { n: '03', icon: 'truck', title: 'Vehicle & trip data', text: 'Confirm which trucks ran this quarter.', who: 'You' },
-  { n: '04', icon: 'doc', title: 'Return preparation', text: 'AIO reviews and reconciles fuel to miles and prepares the return for your approval.', who: 'AIO' },
-  { n: '05', icon: 'send', title: 'Filing & confirmation', text: 'After you approve, AIO files and stores the confirmation in your Vault.', who: 'AIO' },
+/**
+ * Five-step process. Composition as drawn; copy rewritten truthfully (D-PUBLIC-COPY-TRUTH): AIO collects and reviews,
+ * prepares the return, the client approves, AIO files and stores the confirmation. No automated tracking or tax claims.
+ */
+const PROCESS: { n: string; icon: IftaIconName; title: [string, string?]; text: [string, string] }[] = [
+  { n: '01', icon: 'fuel', title: ['Fuel', 'purchases'], text: ['Send and organize', 'your fuel receipts.'] },
+  { n: '02', icon: 'miles', title: ['Mileage by', 'jurisdiction'], text: ['Report miles by state', 'from your ELD.'] },
+  { n: '03', icon: 'truck', title: ['Vehicle &', 'trip data'], text: ['Keep your fleet data', 'accurate and complete.'] },
+  { n: '04', icon: 'doc', title: ['Return', 'preparation'], text: ['AIO prepares your', 'IFTA return for you.'] },
+  { n: '05', icon: 'miles', title: ['Filing &', 'confirmation'], text: ['You approve, AIO files', 'and confirms.'] },
 ];
 
-const PROMISES: { icon: IftaIconName; title: string; text: string }[] = [
-  { icon: 'target', title: 'Accurate', text: 'Every receipt and mile checked by AIO.' },
-  { icon: 'clock', title: 'Efficient', text: 'Less time on paperwork. More time on the road.' },
-  { icon: 'shield', title: 'Compliant', text: 'You approve before anything is filed.' },
+const PROMISES: { icon: IftaIconName; title: string; text: [string, string] }[] = [
+  { icon: 'target', title: 'Accurate', text: ['Real data. Fewer errors.', 'Greater confidence.'] },
+  { icon: 'clock', title: 'Efficient', text: ['Less time on paperwork.', 'More time on the road.'] },
+  { icon: 'shield', title: 'Compliant', text: ['Stay ahead of every', 'quarterly deadline.'] },
 ];
 
-/** Sample jurisdictions for the public map (static, labelled SAMPLE — never a client record). */
-const SAMPLE_MAP: Record<string, number> = { TX: 1, OK: 0.75, NM: 0.5, AR: 0.42, LA: 0.37, AZ: 0.3, MO: 0.24, TN: 0.2 };
-
+/** PUBLIC · IFTA — the approved public / customer-facing screens (dark), with a labelled SAMPLE quarter. */
 export function IftaPublicPage() {
   usePageMeta({
     title: 'IFTA Filing — All In One Enterprises',
     description: 'AIO handles the business side of quarterly fuel-tax filing — collect, review, prepare, you approve, AIO files.',
   });
+  const band = useIftaBand();
+  const desktop = band === 'desktop';
   const requestFiling = aioPaths.getStartedForService('ifta-filing');
 
   return (
-    <main className="ifta-pub">
-      <section id="filing-room" className="ifta-pubhero" aria-label="IFTA filing room">
-        <img className="ifta-pubhero__img" src={IFTA_MEDIA.publicHero} alt="" fetchPriority="high" decoding="async" />
-        <div className="ifta-pubhero__shade" aria-hidden="true" />
-        <div className="ifta-pub-frame ifta-pubhero__body">
-          <p className="ifta-pubhero__eyebrow">IFTA filing room</p>
+    <main className={`ifta-pub is-${band}`}>
+      <section id="filing-room" className="ifta-pubhero" aria-label="IFTA filing room — sample quarter">
+        <picture className="ifta-pubhero__plate" aria-hidden="true">
+          <source media="(max-width: 699.98px)" srcSet={IFTA_PLATES.public.mobile} />
+          <source media="(max-width: 1199.98px)" srcSet={IFTA_PLATES.public.tablet} />
+          <img src={IFTA_PLATES.public.desktop} alt="" fetchPriority="high" decoding="async" />
+        </picture>
+        <div className="ifta-pubhero__text">
+          <p className="ifta-pubhero__eyebrow">{band === 'mobile' ? 'IFTA filing' : 'IFTA filing room'}</p>
           <h1 className="ifta-pubhero__title">
             <span className="visually-hidden">IFTA filing room — sample quarter </span>
             {SAMPLE.label}
           </h1>
-          <p className="ifta-pubhero__period">
-            {SAMPLE.period}
-            <span className="ifta-pubhero__sample">Sample quarter</span>
-          </p>
+          <p className="ifta-pubhero__period">{SAMPLE.period}</p>
+          <span className="ifta-pubhero__rule" aria-hidden="true" />
           <p className="ifta-pubhero__tag">
             Real data. Real progress.
             <br />
             Every mile accounted for.
           </p>
-          <a href="#how-it-works" className="ifta-btn ifta-btn--gold ifta-btn--pill">
+          <a href="#how-it-works" className="ifta-pubbtn ifta-pubhero__cta">
             See how it works
-            <IftaIcon name="arrow" size={18} />
+            <IftaIcon name="arrow" strokeWidth={2.2} />
           </a>
         </div>
       </section>
 
-      <div className="ifta-pub-frame ifta-pub-lift">
-        <IftaMetricsRail
+      <div className="ifta-pubrail">
+        <IftaRail
           tone="dark"
           badge="Sample quarter"
           cells={[
-            { icon: 'miles', value: formatNumber(SAMPLE.miles), label: 'Total miles' },
-            { icon: 'fuel', value: formatNumber(SAMPLE.gallons), label: 'Total fuel (gal)' },
-            { icon: 'pin', value: String(SAMPLE.jurisdictions), label: 'Jurisdictions' },
-            { icon: 'coins', value: SAMPLE.tax.value, label: SAMPLE.tax.label, note: SAMPLE.tax.note },
+            { glyph: 'metric-miles', value: formatNumber(SAMPLE.miles), label: 'Total miles' },
+            { glyph: 'metric-fuel', value: formatNumber(SAMPLE.gallons), label: 'Total fuel (gal)' },
+            { glyph: 'metric-pin', value: String(SAMPLE.jurisdictions), label: 'Jurisdictions' },
+            { glyph: 'metric-coins', value: SAMPLE.tax.value, label: 'Est. tax due' },
           ]}
         />
       </div>
 
-      <section className="ifta-pub-section" aria-labelledby="ifta-clear-path">
-        <div className="ifta-pub-frame ifta-clearpath">
-          <div className="ifta-clearpath__text">
-            <h2 id="ifta-clear-path" className="ifta-pub-h2">
+      {desktop ? (
+        <section className="ifta-clear" aria-labelledby="ifta-clear-path">
+          <div className="ifta-clear__text">
+            <h2 id="ifta-clear-path" className="ifta-pubh2">
               A clear path
               <br />
               from miles to compliance.
             </h2>
-            <p className="ifta-pub-lead">
-              AIO handles the business side of quarterly fuel-tax filing. You send fuel and miles as they happen; AIO checks, reconciles, prepares the return, files it after
-              you approve, and keeps the record.
+            <p className="ifta-clear__lead">
+              The All In One IFTA filing room takes the complexity out of fuel tax reporting. We organize your records, prepare your return for your approval, and file it with
+              your base jurisdiction — so you can keep moving forward.
             </p>
-            <div className="ifta-clearpath__actions">
-              <Link to={requestFiling} className="ifta-btn ifta-btn--gold ifta-btn--pill">
-                Get started
-                <IftaIcon name="arrow" size={18} />
-              </Link>
-              <p className="ifta-pub-small">
-                Need an IFTA account first? <Link to={aioPaths.serviceSlug('ifta-fuel-tax-assistance')}>IFTA account assistance</Link>
-              </p>
-            </div>
+            <Link to={requestFiling} className="ifta-pubbtn ifta-clear__cta">
+              Get started
+              <IftaIcon name="arrow" strokeWidth={2.2} />
+            </Link>
           </div>
-          <figure className="ifta-clearpath__media">
-            <img src={IFTA_MEDIA.publicRoad} alt="An All In One truck on the highway at dusk" loading="lazy" decoding="async" />
+          <figure className="ifta-clear__media">
+            <img src={IFTA_PLATES.publicRoad} alt="A highway winding through the mountains at dusk" loading="lazy" decoding="async" />
             <figcaption>
               Real drivers.
               <br />
               Real roads.
               <br />
               Real compliance.
-              <span className="ifta-rule" aria-hidden="true" />
+              <span className="ifta-clear__rule" aria-hidden="true" />
             </figcaption>
           </figure>
-        </div>
-      </section>
+        </section>
+      ) : (
+        <section className="ifta-clear ifta-clear--compact" aria-labelledby="ifta-clear-path">
+          <h2 id="ifta-clear-path" className="ifta-pubh2">
+            A clear path from miles to compliance.
+          </h2>
+          <p className="ifta-clear__lead">We keep IFTA simple, organized, and on time so you can focus on what moves your business forward.</p>
+        </section>
+      )}
 
-      <section id="how-it-works" className="ifta-pub-section" aria-labelledby="ifta-process">
-        <div className="ifta-pub-frame">
-          <h2 id="ifta-process" className="ifta-pub-h3">
+      <section id="how-it-works" className={`ifta-process${desktop ? '' : ' ifta-process--tiles'}`} aria-labelledby="ifta-process-h">
+        {desktop ? (
+          <h2 id="ifta-process-h" className="ifta-pubh2">
             Our IFTA process keeps you on track.
           </h2>
-          <ol className="ifta-process">
-            {PROCESS.map((p) => (
-              <li key={p.n} className="ifta-process__step">
-                <span className="ifta-process__n">{p.n}</span>
-                <IftaIcon name={p.icon} size={30} strokeWidth={1.5} className="ifta-process__icon" />
-                <span className="ifta-process__title">{p.title}</span>
-                <span className="ifta-process__text">{p.text}</span>
-                <span className={`ifta-process__who ifta-process__who--${p.who.toLowerCase()}`}>{p.who}</span>
+        ) : (
+          <h2 id="ifta-process-h" className="visually-hidden">
+            Our IFTA process keeps you on track.
+          </h2>
+        )}
+        <ol className="ifta-process__list">
+          {PROCESS.map((p, i) => (
+            <Fragment key={p.n}>
+              <li className="ifta-process__step">
+                {desktop ? <span className="ifta-process__n">{p.n}</span> : null}
+                <IftaIcon name={p.icon} strokeWidth={1.7} className="ifta-process__icon" />
+                <span className="ifta-process__title">
+                  {p.title[0]}
+                  {p.title[1] && desktop && p.n === '01' ? ` ${p.title[1]}` : null}
+                  {p.title[1] && !(desktop && p.n === '01') ? (
+                    <>
+                      <br />
+                      {p.title[1]}
+                    </>
+                  ) : null}
+                </span>
+                {desktop ? (
+                  <span className="ifta-process__text">
+                    {p.text[0]}
+                    <br />
+                    {p.text[1]}
+                  </span>
+                ) : null}
+              </li>
+              {desktop && i < PROCESS.length - 1 ? (
+                <li className="ifta-process__chev" aria-hidden="true">
+                  <IftaIcon name="chevron" strokeWidth={2} />
+                </li>
+              ) : null}
+            </Fragment>
+          ))}
+        </ol>
+      </section>
+
+      <section id="jurisdictions" className="ifta-oneret" aria-labelledby="ifta-one-return">
+        <div className="ifta-oneret__card">
+          <picture className="ifta-oneret__map">
+            <source media="(max-width: 1199.98px)" srcSet={IFTA_PLATES.publicMap.compact} />
+            <img src={IFTA_PLATES.publicMap.desktop} alt="Sample: jurisdictions joined into one quarterly return" loading="lazy" decoding="async" />
+          </picture>
+          <div className="ifta-oneret__count">
+            <span className="ifta-oneret__n">{SAMPLE.jurisdictions}</span>
+            <span className="ifta-oneret__unit">
+              Jurisdictions
+              <br />
+              One return
+            </span>
+            <span className="ifta-oneret__rule" aria-hidden="true" />
+            <p id="ifta-one-return">
+              We reconcile fuel
+              <br />
+              and mileage across
+              <br />
+              every state you run
+              <br />
+              so you stay compliant.
+            </p>
+          </div>
+        </div>
+        <div id="features" className="ifta-promises">
+          <h2 className="ifta-pubh2">Built for owner operators and fleets.</h2>
+          <ul className="ifta-promises__list">
+            {PROMISES.map((p) => (
+              <li key={p.title}>
+                <IftaIcon name={p.icon} strokeWidth={1.8} className="ifta-promises__icon" />
+                <span className="ifta-promises__body">
+                  <span className="ifta-promises__title">{p.title}</span>
+                  <span className="ifta-promises__text">
+                    {p.text[0]}
+                    <br />
+                    {p.text[1]}
+                  </span>
+                </span>
               </li>
             ))}
-          </ol>
-        </div>
-      </section>
-
-      <section id="jurisdictions" className="ifta-pub-section ifta-pub-band" aria-labelledby="ifta-one-return">
-        <div className="ifta-pub-frame ifta-oneret">
-          <div className="ifta-oneret__map">
-            <IftaUsMap intensity={SAMPLE_MAP} tone="dark" label="Sample: eight jurisdictions in one quarterly return" />
-            <div className="ifta-oneret__count">
-              <span className="ifta-oneret__n">{SAMPLE.jurisdictions}</span>
-              <span className="ifta-oneret__unit">
-                Jurisdictions
-                <br />
-                One return
-              </span>
-              <span className="ifta-rule" aria-hidden="true" />
-              <p id="ifta-one-return">
-                Miles and fuel by state come together in one quarterly return, filed with your base jurisdiction. Due every quarter: Apr 30 · Jul 31 · Oct 31 · Jan 31.
-              </p>
-            </div>
-          </div>
-          <div className="ifta-oneret__promises">
-            <h2 className="ifta-pub-h3">Built for owner operators and fleets.</h2>
-            <ul className="ifta-promises">
-              {PROMISES.map((p) => (
-                <li key={p.title}>
-                  <IftaIcon name={p.icon} size={28} strokeWidth={1.5} className="ifta-promises__icon" />
-                  <span className="ifta-promises__title">{p.title}</span>
-                  <span className="ifta-promises__text">{p.text}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      </section>
-
-      <section id="what-aio-handles" className="ifta-pub-section" aria-labelledby="ifta-handles">
-        <div className="ifta-pub-frame">
-          <h2 id="ifta-handles" className="ifta-pub-h3">
-            What AIO handles · What you provide
-          </h2>
-          <div className="ifta-ledger">
-            <div className="ifta-ledger__col ifta-ledger__col--aio">
-              <h3>AIO handles</h3>
-              <ul>
-                <li>Collecting and checking receipts</li>
-                <li>Turning ELD / trip records into miles by state</li>
-                <li>Matching fuel to miles and preparing the return</li>
-                <li>Filing after your approval and sealing the Vault packet</li>
-              </ul>
-            </div>
-            <div className="ifta-ledger__col">
-              <h3>You provide</h3>
-              <ul>
-                <li>Fuel receipts (photo, upload, or from your Vault)</li>
-                <li>Miles by state (ELD report, import, or manual)</li>
-                <li>Confirmation of which trucks ran</li>
-                <li>Approval of the return</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <RunFaqsPanel />
-
-      <section className="ifta-pub-section ifta-pub-start" aria-labelledby="ifta-start">
-        <div className="ifta-pub-frame ifta-pub-start__inner">
-          <div>
-            <h2 id="ifta-start" className="ifta-pub-h3">
-              How to start
-            </h2>
-            <p className="ifta-pub-lead">Request filing support — AIO collects your quarter, reviews, prepares, and files after you approve.</p>
-          </div>
-          <Link to={requestFiling} className="ifta-btn ifta-btn--gold ifta-btn--pill">
-            Get started · request quote
-            <IftaIcon name="arrow" size={18} />
-          </Link>
+          </ul>
         </div>
       </section>
     </main>

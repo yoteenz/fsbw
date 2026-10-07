@@ -1,107 +1,84 @@
 # AIO IFTA — three-mode live visual authority reconstruction
 
-**Sprint:** P0.AIO.IFTA.THREE-MODE-LIVE-VISUAL-AUTHORITY-RECONSTRUCTION1
-**Rule:** KEEP THE FUNCTION. REBUILD THE LOOK. The approved authority images are the design authority; the previous live screenshots are functional evidence only.
+**Sprint:** P0.AIO.IFTA.THREE-MODE-LIVE-VISUAL-AUTHORITY-RECONSTRUCTION1, plus the pixel-faithful pass (founder: "replicate these screens exactly, pixel perfect, including the shell").
+**Rule:** KEEP THE FUNCTION. REBUILD THE LOOK. The approved authority images are the design authority. Earlier live screenshots are functional evidence only.
 
-**Scope.** Only the four mounted proof surfaces were rebuilt. No further IFTA child states were added, nothing was generated, and OpenArt was not used.
+**Scope.** Only the four mounted proof surfaces were rebuilt. No other IFTA child states were added, nothing was generated, and OpenArt was not used.
 
-## 1 · Forensic of the live implementation (base `faeb7503`, the IFTA proof as merged from PR #43)
+## 1 · How the live pages reproduce the authority
 
-| Surface | Route | Kept (function) | Rebuilt (look) | Removed |
-|---|---|---|---|---|
-| PUBLIC | `/services/ifta-filing` | layout route outside the legacy public layout; REQUEST FILING → `getStartedForService('ifta-filing')`; IFTA account assistance link; Services / Log in links; RUN FAQS answers; truthful copy | header, hero, metrics, sections, process, map, footer | text-block section stack; placeholder "AIO" square |
-| CLIENT | `/portal/workspaces/ifta/:quarterKey` | `CustomerRouteGuard` + `ClientPortalLifecycleGuard`; default-quarter redirect; `resolvePortalContext`; six tabs (no NOTES); demo "switch to Pioneer Fleet"; every derivation in `iftaDerive` | shell, hero, metrics rail, tab bar, every module, CTA rail, footer | plain header + text panels; DISPATCH · N/A chip (NOT_APPLICABLE is never surfaced to the client) |
-| STAFF QUEUE | `/office/workspaces/ifta` | `OfficeRouteGuard`; `sortStaffQueue` order; bucket model; client / workspace switchers; case links | queue → status lanes + case rows; metrics rail; queue health; dates; flags; next-case rail | the spreadsheet table |
-| STAFF CASE | `/office/workspaces/ifta/:clientId/:quarterKey` | canonical case lookup (`findOrgQuarter`); client ⇄ staff mirror; seven tabs incl. secondary NOTES; 09 RUN FAQS; audit trail; primary staff CTA (unbound, as before); open-client-room link | hero + CLIENT HEALTH panel, metrics, workflow, tasks, dates, charts, activity split, flags, FAQ tool, audit timeline, CTA rail | raw case-ID box as the primary object (now a secondary CASE RECORD strip) |
+**Authority units.** Each surface is laid out in authority pixels: 1rem = 10 px of the approved screen it reproduces.
+- `iftaScale.ts` puts the document on that scale while the surface is mounted.
+- The root font-size per band is in `ifta-ui.css`:
+  - Desktop (≥ 1200 px) uses the 1440 screens.
+  - Tablet (700–1199 px) uses the 834 client and public screens, and the 1024 staff screen.
+  - Phone (< 700 px) uses the 402 screens.
+- Inside a band, the page is the authority composition at any width.
+- On phone, text keeps a legibility floor where the drawn type is smaller.
 
-Data is unchanged: the same demo store, the same `iftaDerive` functions and no new actions. The new `src/ifta/ui/iftaViewModel.ts` only projects existing derivations for the modules; it is read-only and computes no tax.
+**Geometry.** Every card edge, row, column split and text baseline was measured on the authority screens. Each screen was cropped from its board and scaled to its CSS width (`scratchpad` grid overlays). Each band has its own grid areas, which reproduce the drawn compositions:
+- Client desktop: three rows of three cards. Client tablet: two plus two plus two. Client phone: the parent's pairs.
+- Staff desktop: three plus three plus three. Staff tablet: two plus two plus three. Staff phone: the drawn derivation.
+- Public: nav, hero, rail, clear path (desktop), process, one return and promises, footer.
 
-Bug fixed on the way: `useMemo` ran after early returns on the client page and the case page (a rules-of-hooks violation). The pages now render through child components.
+**Shell.** The client and staff top bars are exactly as drawn: the simple mark on the left; search, notifications (with a dot when something is open) and the avatar chip (name, role, chevron) on the right.
+- Nothing from the old chrome was lost; it moved into the avatar menu:
+  - workspace switching (NOT_APPLICABLE stays hidden)
+  - client switching (staff)
+  - Messages, My Office and Office home
+- Search filters the case record the page registers. Notifications list its open items. Selecting either opens the tab that holds the item.
+- The public nav is as drawn: mark; IFTA FILING ROOM, HOW IT WORKS, FEATURES, JURISDICTIONS, RESOURCES; search; GET STARTED. RESOURCES and search open 09 RUN FAQS. Tablet and phone add the drawn menu.
 
-## 2 · Authority manifest
+**Photography.** Each hero, the road panel, the jurisdiction map card and the footer band are **plates**: the photographic region of the authority screen itself, with the baked UI inpainted out (`scripts/ifta/derive-ifta-authority-plates.py`, OpenCV Telea).
+- The baked UI includes the headline, pill, panels and rail.
+- The live text, pills, panels and rails sit over the plate at the drawn coordinates.
+- Nothing interactive is a picture, and no screenshot is used as a background.
 
-| Actor / view | Reference (SITE00 `docs/aio/ifta/authority-bundle/source/AIO_IFTA_AUTHORITY_BUNDLE/…`) | Status |
-|---|---|---|
-| PUBLIC tablet + desktop | `04_PUBLIC_CUSTOMER_MODE/AIO_IFTA_PUBLIC_TABLET_DESKTOP.jpeg` | approved |
-| PUBLIC mobile | `01_TERRITORY_SELECTION/AIO_IFTA_3_ACTOR_MODES_MOBILE.jpeg` (public column) | approved |
-| CLIENT mobile (parent) | `02_CLIENT_MODE/AIO_IFTA_CLIENT_MOBILE_PARENT_AUTHORITY.jpeg` | approved parent |
-| CLIENT tablet + desktop | `02_CLIENT_MODE/AIO_IFTA_CLIENT_TABLET_DESKTOP.jpeg` | approved (with D-CLIENT-DESKTOP-STAFF-MODULES) |
-| STAFF tablet + desktop | `03_FOUNDER_STAFF_MODE/AIO_IFTA_FOUNDER_STAFF_TABLET_DESKTOP.jpeg` | approved |
-| STAFF mobile | `01_TERRITORY_SELECTION/AIO_IFTA_3_ACTOR_MODES_MOBILE.jpeg` (staff column) | approved (D-STAFF-MOBILE-SCOPE) |
-| STAFF QUEUE | derived from the staff case authority | D-STAFF-QUEUE-AUTHORITY (derivation authorised) |
-| BRAND | `00_BRAND/AIO_BRAND_DNA_BOARD.jpeg` · `AIO_SIMPLE_NAV_MARK.jpeg` · `AIO_FULL_LOGO_LOCKUP.jpeg` | approved |
-| COMPONENTS / ICONS | `06_CONTRACTS/AIO_IFTA_ICON_ASSET_SHEET.png` · `AIO_IFTA_PAGE_COMPONENT_INTERACTION_CONTRACT.png` | approved |
+**Components drawn as on the screens:**
+- filled metric glyphs; workflow steps with status rings; checkbox tasks with assignee initials and dates
+- bar chart with axis or values; legend tables; the US map; the donut
+- file-type badges; activity tables and timelines
+- CLIENT HEALTH glass panel; CTA rail; footer lockup and tagline
 
-Founder decisions applied: D-BRAND-TOKENS, D-TYPOGRAPHY, D-INTERACTION-09, D-NOTES-TAB, D-CLIENT-DESKTOP-STAFF-MODULES, D-TAX-FIGURES, D-PUBLIC-COPY-TRUTH, D-PUBLIC-SAMPLE-DATA, D-PROGRESS-PHASES, D-CTA-GET-STARTED and D-STAFF-QUEUE-AUTHORITY.
+## 2 · What each surface binds (function kept)
 
-**Runtime assets.** The single source is `src/ifta/ui/iftaAssetManifest.ts` (also exported to `docs/aio/ifta/AIO_IFTA_LIVE_PROOF_ASSET_MANIFEST.json`). Every file is an approved asset or a crop / alpha extraction of one. `scripts/ifta/derive-ifta-brand-assets.py` reproduces each derived file byte for byte.
+| Surface | Route | Live data | Kept functions |
+|---|---|---|---|
+| PUBLIC | `/services/ifta-filing` | static labelled SAMPLE quarter (D-PUBLIC-SAMPLE-DATA) | GET STARTED → `getStartedForService('ifta-filing')`; IFTA account assistance, services and log in links (RESOURCES / menu); 09 RUN FAQS; truthful copy (D-PUBLIC-COPY-TRUTH) |
+| CLIENT | `/portal/workspaces/ifta/:quarterKey` | canonical case (Pioneer Fleet, `ifta-client-c-2026-q3`) | guards; default-quarter redirect; six tabs with no NOTES; quarter selector; quarter tasks, quick actions and CTA rail open the tab holding the item; no staff-only content (D-CLIENT-DESKTOP-STAFF-MODULES: the drawn account card slot carries the client's due date and NEXT STEP) |
+| STAFF QUEUE | `/office/workspaces/ifta` | every enrolled client quarter | derived from the staff case authority (D-STAFF-QUEUE-AUTHORITY): QUEUE HEALTH panel, metrics rail, filter tabs, case rows → case, deadlines, risks, team activity, OPEN NEXT CASE |
+| STAFF CASE | `/office/workspaces/ifta/:clientId/:quarterKey` | same canonical case | CLIENT HEALTH (risk chip from the record); deltas against the prior quarter's record; seven tabs (NOTES secondary); EXPORT REPORT downloads the case CSV (miles and fuel by jurisdiction); NOTES keeps the client ⇄ AIO mirror, open client filing room, case record, 09 RUN FAQS and the audit trail; staff CTA unbound as in the baseline |
 
-| Asset | Source |
-|---|---|
-| `public/brand/ifta/aio-mark-on-dark.png` | metallic emblem from the approved simple nav mark |
-| `public/brand/ifta/aio-mark-on-light.png` | approved lockup emblem; white strokes recoloured to CHARCOAL |
-| `public/brand/ifta/aio-lockup-on-dark.png` / `-on-light.png` | approved lockup, alpha-extracted (light: charcoal wordmark) |
-| `public/brand/ifta/ifta-filing-room-hero.jpg` | photographic region of the approved client parent hero (no baked UI) |
-| `public/brand/aio-login-hero.png` | approved AIO hero (black truck, range, gold dusk), mounted as-is |
-| `public/brand/all-in-one-hero-truck.png` | approved AIO truck on the road, mounted as-is |
-| `public/brand/ifta/ifta-public-range.jpg` | mountain band of the approved AIO hero |
+Data is unchanged. The view model only projects existing derivations: no tax engine, no new business action.
 
-**Type.** Inter Tight (headings) and Inter (body) are self-hosted under SIL OFL in `public/fonts/ifta/`, so there is no runtime font dependency.
+## 3 · Known deviations (not hidden)
 
-**Icons.** 44 glyphs are vendored from lucide-static (ISC) into `src/ifta/ui/IftaIcon.tsx`.
-
-**Map.** State outlines are pre-generated from us-atlas (ISC) into `src/ifta/ui/usStatePaths.ts`.
-
-None of these adds a package dependency.
-
-## 3 · Visual fidelity scorecard (0–10, honest)
-
-| Criterion | PUBLIC | CLIENT | STAFF QUEUE | STAFF CASE |
-|---|---|---|---|---|
-| Composition | 8 | 9 | 8 | 9 |
-| Hierarchy | 8 | 9 | 8 | 9 |
-| Media | 8 | 8 | 7 | 8 |
-| Typography | 7 | 8 | 8 | 8 |
-| Materials | 8 | 8 | 8 | 8 |
-| Spacing | 8 | 8 | 8 | 8 |
-| Brand expression | 9 | 9 | 8 | 9 |
-| Actor differentiation | 9 | 9 | 9 | 9 |
-| Responsive behaviour | 8 | 8 | 9 | 8 |
-| Functional clarity | 9 | 9 | 9 | 9 |
-
-**Known deviations (not hidden):**
-- **Display face.** MONUMENT EXTENDED is not used: it is unlicensed, so INTER TIGHT is used per D-TYPOGRAPHY.
-- **Client hero resolution.** The client hero photograph is the 686 × 417 region of the approved parent, upscaled 2×. It is soft at 1440 because no higher-resolution source exists in the repository.
-- **Avatars.** Identity uses initials discs; no client or staff photo assets exist.
-- **Omitted controls.** Search, bell and EXPORT REPORT are omitted because they have no backing function. Staff get OPEN CLIENT FILING ROOM instead.
-- **Map coverage.** The client and staff maps colour only the states with recorded miles, which is truthful but fewer than in the reference.
-- **Mobile client layout.** Modules stack in one column on mobile rather than the parent's two-column pairs (the sprint asks for no cramped card wall).
-- **Unbound actions.** The primary business actions (client CTA, NUDGE CLIENT) are still unbound, exactly as in the baseline. The client rail navigates to the tab that holds the next item. Domain actions such as `nudgeClient` exist; binding them is the next functional step.
-- **Public copy.** Public copy is the truthful rewrite (D-PUBLIC-COPY-TRUTH), and the figures are a labelled SAMPLE quarter.
+- **Live data differs from the drawn sample.** The record has 3 trucks and 6 states, the tax is PENDING until the staff return summary (D-TAX-FIGURES), and the state is NEEDS YOU or AWAITING CLIENT. Card contents therefore differ in values and row counts; geometry, styling and hierarchy match.
+- **Display face.** INTER TIGHT is used (D-TYPOGRAPHY; MONUMENT EXTENDED is unlicensed). The authority's display lettering is narrower, so Q3 2026 and some labels render about 15–30% wider at the same cap height.
+- **Avatars.** The avatars are initials, because no person photos exist.
+- **Staff hero line.** The staff hero shows CLIENT: <contact> and the IFTA account, as drawn. The company name is on hover and in the avatar menu.
+- **Phone legibility floor.** Drawn phone type below about 6.5–7.5 px is raised to that floor.
+- **Staff queue.** The queue has no authority of its own; it is derived from the case screens.
+- **Inpainted plates.** Plates are reconstructed where the baked UI was. The texture behind the old headline and panels is softer than the untouched photograph.
 
 ## 4 · Functional preservation
 
-- **Unit tests:** `src/ifta/` 3 files · 21 tests pass, including the new `iftaViewModel.test.ts`.
-- **Full AIO suite:** 61 files · 406 tests pass on the master-based tree.
-- **Type-check:** `tsc --noEmit` is clean.
-- **Build:** `npm run build` passes.
-- **Live interaction pass:** 27/27 checks with 0 page errors, covering:
-  - tabs and the CTA rail
-  - mobile checklist → tab
-  - every queue case and the queue → case link
-  - client switcher both ways
-  - canonical case ID, 09 RUN FAQS and the client ⇄ staff mirror
-  - client room link and staff NOTES
+- **Unit tests:** full AIO suite, 61 files, 406 tests pass. `src/ifta` passes, including `iftaViewModel.test.ts`, which checks that every plate is in the manifest with an approved source.
+- **Type-check and build:** `tsc --noEmit` is clean, and `npm run build` passes.
+- **Live interaction pass:** 43/43 checks with 0 page errors, covering:
+  - shell search, notifications and avatar menu (workspace, client switching, Messages, My Office)
+  - tabs, quarter tasks and quick actions → tab; the CTA rail; the quarter selector
+  - every queue case, the filter tabs and OPEN NEXT CASE
+  - EXPORT REPORT, NOTES, mirror, case identity, 09 RUN FAQS and the audit trail
   - legacy redirects
-  - no staff-only content on the client page; no harness inside the product
-  - public SAMPLE label and REQUEST FILING CTA
+  - no staff-only content and no preview harness on the client page
+  - public nav, RESOURCES and search FAQs, GET STARTED, the phone menu
+  - no horizontal scroll at 393 / 834 / 1440
 
-## 5 · Captures
+## 5 · Captures and boards
 
-- `boards/IFTA_BEFORE_AFTER_{PUBLIC,CLIENT,STAFF_QUEUE,STAFF_CASE}.jpg` — reference | before | after, at 1440 and 393.
-- `captures/before/*` — the functional baseline.
-- `captures/after/*` — the reconstruction.
-
-Required captures: PUBLIC at 393 and 1440; CLIENT, STAFF QUEUE and STAFF CASE at 393, 834 and 1440. The preview harness is absent: master removed `AIODebugBanner` from every shell.
+- `boards/IFTA_AUTHORITY_VS_LIVE_{PUBLIC,CLIENT,STAFF_CASE,STAFF_QUEUE}.jpg`: the approved screen beside the live page at the same width, for desktop, tablet and phone.
+- `boards/IFTA_BEFORE_AFTER_*.jpg`: reference | functional baseline | live page.
+- `captures/after/*`: live pages at 393, 834 and 1440. `captures/before/*`: the functional baseline.
 
 **Reproduce:** run `AIO_CLOUD_MOBILE_PREVIEW=1 npm run dev`, then `node scripts/ifta-capture-screenshots.mjs`.

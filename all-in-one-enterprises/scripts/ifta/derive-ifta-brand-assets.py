@@ -50,20 +50,4 @@ rgb, a = alpha_from_black(full, 8, 200)
 print('lockup-on-dark', save_rgba(rgb, a, f'{out}/aio-lockup-on-dark.png'))
 print('lockup-on-light', save_rgba(recolor_white(rgb, a), a, f'{out}/aio-lockup-on-light.png'))
 
-# 3 · Filing Room hero photograph — the photographic region of the approved client parent authority
-#     (right of the baked headline, below the baked nav icons, above the baked metrics card)
-hero = Image.open(f'{bundle}/02_CLIENT_MODE/AIO_IFTA_CLIENT_MOBILE_PARENT_AUTHORITY.jpeg').convert('RGB').crop((520, 88, 1206, 505))
-hero = hero.resize((hero.width * 2, hero.height * 2), Image.LANCZOS).filter(ImageFilter.UnsharpMask(radius=1.2, percent=60, threshold=2))
-hero.save(f'{out}/ifta-filing-room-hero.jpg', quality=90, optimize=True, progressive=True)
-print('hero', hero.size)
-
-# 4 · public footer range — mountain band of the approved login hero
-login = Image.open(f'{brand}/aio-login-hero.png').convert('RGB')
-band = login.crop((0, 400, 760, 640))  # range + dusk sky, left of the truck
-band.save(f'{out}/ifta-public-range.jpg', quality=88, optimize=True, progressive=True)
-print('range', band.size)
-
-# 5 · runtime sizes (marks 220 px tall, lockups 200 px tall)
-for name, h in [('aio-mark-on-dark.png', 220), ('aio-mark-on-light.png', 220), ('aio-lockup-on-dark.png', 200), ('aio-lockup-on-light.png', 200)]:
-    m = Image.open(f'{out}/{name}')
-    m.resize((round(m.width * h / m.height), h), Image.LANCZOS).save(f'{out}/{name}', optimize=True)
+# Hero / media plates come from the authority boards: scripts/ifta/derive-ifta-authority-plates.py

@@ -23,7 +23,7 @@ import {
   type IftaStage,
   type StaffBucket,
 } from '../iftaDerive';
-import { daysUntil, formatShortDate, lastEndedQuarter } from '../iftaDates';
+import { daysUntil, formatShortDate, lastEndedQuarter, parseIsoDate } from '../iftaDates';
 import type { IftaStateId } from '../experience/iftaExperience';
 import type { IftaAuditEvent, IftaQuarterCase } from '../iftaTypes';
 import type { IftaIconName } from './IftaIcon';
@@ -189,7 +189,7 @@ export function filingPhases(q: IftaQuarterCase, now: Date, actor: 'CLIENT' | 'S
     },
     {
       index: 3,
-      label: actor === 'CLIENT' ? 'Your review & approval' : 'Client review',
+      label: actor === 'CLIENT' ? 'Review & approve' : 'Client review',
       status: statusFor(2),
       date: q.returnSummary?.sentForApprovalAt ? formatShortDate(q.returnSummary.sentForApprovalAt) : null,
       details: [stage('approval').note],
@@ -413,4 +413,221 @@ export function initials(name: string): string {
     .slice(0, 2)
     .map((w) => w[0]!.toUpperCase())
     .join('');
+}
+
+/* ───────────────────────────── authority rows (pixel-faithful modules) ───────────────────────────── */
+
+/** "Alex Rivera" → "ALEX R." — the authority's avatar-chip name form. */
+export function shortName(full: string | undefined | null): string {
+  const words = (full ?? '').trim().split(/\s+/).filter(Boolean);
+  if (!words.length) return '';
+  if (words.length === 1) return words[0].toUpperCase();
+  return `${words[0]} ${words[words.length - 1][0]}.`.toUpperCase();
+}
+
+/** The same client's previous quarter, when the record exists (metrics deltas compare against it). */
+export function priorQuarterCase(cases: IftaQuarterCase[], q: IftaQuarterCase): IftaQuarterCase | undefined {
+  const year = q.quarter === 1 ? q.year - 1 : q.year;
+  const quarter = q.quarter === 1 ? 4 : q.quarter - 1;
+  return cases.find((c) => c.organizationId === q.organizationId && c.year === year && c.quarter === quarter);
+}
+
+export interface IftaDelta {
+  dir: 'up' | 'down' | 'flat' | 'none';
+  text: string;
+  vs: string;
+}
+
+function pctDelta(now: number, before: number, vs: string): IftaDelta {
+  if (!before) return { dir: 'none', text: '—', vs };
+  const pct = Math.round(((now - before) / before) * 100);
+  if (pct === 0) return { dir: 'flat', text: 'No change', vs };
+  return { dir: pct > 0 ? 'up' : 'down', text: `${pct > 0 ? '+' : ''}${pct}%`, vs };
+}
+
+/** Staff metrics deltas vs the prior quarter (recorded data only; tax compares only staff-prepared summaries). */
+export function metricDeltas(q: IftaQuarterCase, prior: IftaQuarterCase | undefined) {
+  if (!prior) return null;
+  const vs = `vs ${quarterLabelOf(prior)}`;
+  const a = quarterMetrics(q);
+  const b = quarterMetrics(prior);
+  const jur = a.jurisdictions - b.jurisdictions;
+  const tax: IftaDelta =
+    q.returnSummary && prior.returnSummary
+      ? pctDelta(Math.abs(q.returnSummary.netPosition), Math.abs(prior.returnSummary.netPosition), vs)
+      : { dir: 'none', text: 'Pending', vs: 'staff return summary' };
+  return {
+    miles: pctDelta(a.miles, b.miles, vs),
+    gallons: pctDelta(a.gallons, b.gallons, vs),
+    jurisdictions: { dir: jur === 0 ? 'flat' : jur > 0 ? 'up' : 'down', text: jur === 0 ? 'No change' : `${jur > 0 ? '+' : ''}${jur}`, vs } as IftaDelta,
+    tax,
+  };
+}
+
+function quarterLabelOf(q: { year: number; quarter: number }) {
+  return `Q${q.quarter} ${q.year}`;
+}
+
+/** Client desktop QUARTER TASKS — the six quarter steps as client-safe tasks (D-CLIENT-DESKTOP-STAFF-MODULES). */
+const STAGE_TASK: Record<IftaStage['id'], string> = {
+  receipts: 'Send fuel receipts',
+  mileage: 'Upload mileage by state',
+  vehicles: 'Confirm which trucks ran',
+  review: 'AIO prepares the return',
+  approval: 'Review & approve the return',
+  filed: 'AIO files & confirms',
+};
+
+export interface IftaStageTaskRow {
+  id: IftaStage['id'];
+  label: string;
+  done: boolean;
+  blocked: boolean;
+  tab: IftaClientTab;
+}
+
+export function stageTaskRows(q: IftaQuarterCase, now: Date): IftaStageTaskRow[] {
+  return checklistRows(q, now).map((r) => ({ id: r.id, label: STAGE_TASK[r.id], done: r.status === 'done', blocked: r.status === 'blocked', tab: r.tab }));
+}
+
+export interface IftaStaffTaskRow {
+  id: string;
+  label: string;
+  done: boolean;
+  assignee: string | null;
+  date: string;
+}
+
+/** Staff QUARTER TASKS with owner initials and a date (client items: due date; AIO items: when raised). */
+export function staffTaskRows(q: IftaQuarterCase, now: Date, staffName: string, clientName: string): IftaStaffTaskRow[] {
+  const staffIn = initials(staffName);
+  const clientIn = initials(clientName);
+  const correctionAt = q.corrections.find((c) => !c.resolvedAt)?.requestedAt;
+  const client = clientOpenItems(q, now).map((i) => ({ id: i.id, label: i.title, done: false, assignee: clientIn || null, date: formatShortDate(i.requestedByAio && correctionAt ? correctionAt : q.dueDate) }));
+  const discrepancies = q.discrepancies.map((d) => ({ id: d.id, label: d.detail, done: d.status === 'RESOLVED', assignee: staffIn || null, date: formatShortDate(d.resolution?.at ?? q.reviewStartedAt ?? q.dueDate) }));
+  const corrections = q.corrections.map((c) => ({ id: c.id, label: c.resolvedAt ? 'Client corrections received' : 'Wait for client corrections', done: Boolean(c.resolvedAt), assignee: staffIn || null, date: formatShortDate(c.resolvedAt ?? c.requestedAt) }));
+  const review = q.reviewStartedAt ? [{ id: 'review-started', label: 'Start AIO review', done: true, assignee: staffIn || null, date: formatShortDate(q.reviewStartedAt) }] : [];
+  const prepare = [{ id: 'prepare-return', label: 'Prepare return summary', done: Boolean(q.returnSummary), assignee: q.returnSummary ? staffIn || null : null, date: formatShortDate(q.returnSummary?.preparedAt ?? q.dueDate) }];
+  const send = [{ id: 'send-approval', label: 'Send to client for approval', done: Boolean(q.returnSummary?.sentForApprovalAt), assignee: q.returnSummary?.sentForApprovalAt ? staffIn || null : null, date: formatShortDate(q.returnSummary?.sentForApprovalAt ?? q.dueDate) }];
+  return [...review, ...client, ...discrepancies, ...corrections, ...prepare, ...send].sort((a, b) => Number(b.done) - Number(a.done));
+}
+
+/** "Sep 28, 2026" — the authority's table date form. */
+export function formatMediumDate(value: string): string {
+  return parseIsoDate(value.slice(0, 10)).toLocaleDateString('en-US', { timeZone: 'UTC', month: 'short', day: 'numeric', year: 'numeric' });
+}
+
+export interface IftaUploadTableRow {
+  id: string;
+  name: string;
+  fileName: string;
+  detail: string;
+  date: string;
+  done: boolean;
+}
+
+/** RECENT UPLOADS rows — real file names (badge from the extension), upload date, verified state. */
+export function uploadTableRows(q: IftaQuarterCase, limit = 3): IftaUploadTableRow[] {
+  const rows: (IftaUploadTableRow & { at: string })[] = [];
+  for (const m of q.mileage) {
+    if (!m.fileLabel || m.supersededById) continue;
+    const unit = q.vehicles.find((v) => v.id === m.vehicleId)?.unit;
+    rows.push({ id: m.id, name: m.fileLabel, fileName: m.fileLabel, detail: [unit, `${m.entries.length} state${m.entries.length === 1 ? '' : 's'}`].filter(Boolean).join(' · '), date: formatMediumDate(m.addedAt), done: Boolean(m.staffVerifiedAt) || m.sourceId === 'ELD_REPORT_UPLOAD', at: m.addedAt });
+  }
+  const batches = new Map<string, { count: number; ready: number }>();
+  for (const r of q.receipts) {
+    if (r.source === 'SYSTEM_GAP') continue;
+    const day = r.addedAt.slice(0, 10);
+    const b = batches.get(day) ?? { count: 0, ready: 0 };
+    b.count += 1;
+    if (r.receiptClass === 'READY') b.ready += 1;
+    batches.set(day, b);
+  }
+  for (const [day, b] of batches) {
+    rows.push({ id: `receipts-${day}`, name: 'Fuel receipts', fileName: 'receipts.jpg', detail: `${b.count} file${b.count === 1 ? '' : 's'}`, date: formatMediumDate(day), done: b.ready === b.count, at: `${day}T23:59:59.000Z` });
+  }
+  return rows.sort((a, b) => b.at.localeCompare(a.at)).slice(0, limit).map(({ at: _at, ...r }) => r);
+}
+
+export interface IftaActivityRow {
+  id: string;
+  text: string;
+  actor: IftaAuditEvent['actor'];
+  actorName: string;
+  date: string;
+  time: string;
+  tone: 'green' | 'gold' | 'grey';
+}
+
+export function activityRows(q: IftaQuarterCase, limit = 5, actor?: IftaAuditEvent['actor']): IftaActivityRow[] {
+  return recentActivity(q, limit, actor).map((a) => {
+    const d = new Date(a.at);
+    return {
+      id: a.id,
+      text: a.action,
+      actor: a.actor,
+      actorName: a.actorName,
+      date: d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+      time: d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }),
+      tone: a.actor === 'CLIENT' ? 'green' : a.actor === 'FOUNDER_STAFF' ? 'gold' : 'grey',
+    };
+  });
+}
+
+export type IftaRiskLevel = 'LOW' | 'MEDIUM' | 'HIGH';
+
+/** CLIENT HEALTH risk chip: HIGH when overdue / rejected, MEDIUM while client items or discrepancies are open. */
+export function caseRisk(q: IftaQuarterCase, now: Date): { level: IftaRiskLevel; label: string } {
+  const state = effectiveState(q, now);
+  if (state === 'OVERDUE_RISK' || state === 'FILING_REJECTED') return { level: 'HIGH', label: 'High risk' };
+  if (blockingItems(q, now).length || q.discrepancies.some((d) => d.status === 'OPEN')) return { level: 'MEDIUM', label: 'Medium risk' };
+  return { level: 'LOW', label: 'Low risk' };
+}
+
+const READINESS_SHORT: Record<ReturnType<typeof quarterReadiness>, string> = {
+  INSUFFICIENT_DATA: 'No miles yet',
+  ESTIMATED: 'Estimate only',
+  MANUAL_VERIFICATION_REQUIRED: 'Verifying',
+  VERIFIED_SOURCE_AVAILABLE: 'Checking fuel',
+  READY_FOR_REPORTING: 'On track',
+};
+
+export interface IftaHealthRow {
+  label: string;
+  value: string;
+  ok: boolean;
+  accent?: boolean;
+}
+
+export function healthRows(q: IftaQuarterCase, now: Date): IftaHealthRow[] {
+  const packet = packetCompleteness(q, now);
+  const readiness = quarterReadiness(q);
+  return [
+    { label: 'Data completeness', value: `${packet.pct}%`, ok: packet.pct === 100 },
+    { label: 'Fuel receipts', value: `${packet.receipts.done}/${packet.receipts.total}`, ok: packet.receipts.done === packet.receipts.total },
+    { label: 'Mileage (trucks)', value: `${packet.mileage.done}/${packet.mileage.total}`, ok: packet.mileage.done === packet.mileage.total },
+    { label: 'Return readiness', value: READINESS_SHORT[readiness], ok: readiness === 'READY_FOR_REPORTING', accent: true },
+  ];
+}
+
+export interface IftaRiskRow {
+  id: string;
+  icon: 'ok' | 'check' | 'flag' | 'info';
+  item: string;
+  detail: string;
+}
+
+/** RISKS / FLAGS rows (status icon · item · detail) from the case record. */
+export function riskRows(q: IftaQuarterCase, now: Date): IftaRiskRow[] {
+  const rows: IftaRiskRow[] = [];
+  const blocking = blockingItems(q, now);
+  if (blocking.length) rows.push({ id: 'client-items', icon: 'flag', item: `${blocking.length} client item${blocking.length === 1 ? '' : 's'} open`, detail: blocking[0].title });
+  for (const d of q.discrepancies.filter((x) => x.status === 'OPEN')) rows.push({ id: d.id, icon: 'flag', item: d.kind.replace(/_/g, ' ').toLowerCase().replace(/^./, (c) => c.toUpperCase()), detail: d.detail });
+  for (const v of fleetReadiness(q)) if (v.mpgOutlier) rows.push({ id: `mpg-${v.vehicle.id}`, icon: 'info', item: 'MPG outside band', detail: `${v.vehicle.unit} · ${v.mpg} vs ${v.vehicle.priorMpg} prior` });
+  const resolved = q.discrepancies.filter((x) => x.status === 'RESOLVED').length;
+  if (resolved) rows.push({ id: 'resolved', icon: 'check', item: 'Discrepancies resolved', detail: `${resolved} with staff note` });
+  const verified = fleetReadiness(q).filter((v) => v.quality === 'VERIFIED').length;
+  if (verified) rows.push({ id: 'mileage-ok', icon: 'ok', item: 'Mileage verified', detail: `${verified} truck${verified === 1 ? '' : 's'} from ELD records` });
+  if (!rows.length) rows.push({ id: 'none', icon: 'ok', item: 'No issues detected', detail: 'All recorded data looks consistent' });
+  return rows;
 }

@@ -55210,3 +55210,32 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Tunnel:** the founder's AIO tunnel runs in the Cursor VM. Verified here on a local dev server only, because the Claude Code container's network policy denies `api.trycloudflare.com`. To see it live: pull master in the Cursor environment and restart `aio-vite` + `aio-preview-tunnel`.
 - **Next:** founder visual review of the four surfaces → bind the primary actions (client CTA, NUDGE CLIENT) to the existing domain actions → fan out the IFTA child states on the same module system.
 
+
+---
+
+## 2026-10-07 — AIO IFTA pixel-faithful authority reproduction (shell included)
+
+- **Context:** Founder: "you're supposed to be replicating these 3 screens/modes EXACTLY so they're pixel perfect, including the shell." The first reconstruction (`4e5ef963`) was authority-led but its own composition: different shell, card grid, type scale and media crop.
+- **Method:**
+  - Each approved screen (client desktop / tablet / parent phone, staff desktop / tablet / phone, public desktop / tablet / phone) was cropped from its board, scaled to its CSS width and measured: card edges, rows, column splits, cap heights and baselines.
+  - Pages are laid out in authority pixels. `iftaScale.ts` sets 1rem = 10 authority px per band: ≥1200 = 1440 screens; 700–1199 = 834 client / public and 1024 staff; <700 = 402 phone.
+  - Grid areas per band reproduce the drawn compositions. Phone text keeps a legibility floor.
+- **Shell (as drawn):**
+  - Client / staff: mark, search, notifications, avatar chip (name · role · chevron). Workspace switching, client switching, Messages and My Office / Office home moved into the avatar menu. Search and notifications read the case record and open the tab holding the item.
+  - Public: mark · IFTA FILING ROOM · HOW IT WORKS · FEATURES · JURISDICTIONS · RESOURCES · search · GET STARTED. RESOURCES and search open 09 RUN FAQS; tablet and phone add the menu.
+- **Media:** `scripts/ifta/derive-ifta-authority-plates.py` cuts the hero, road, map and footer plates out of the authority screens themselves and inpaints the baked UI (OpenCV Telea). The live UI sits over the same geometry; nothing interactive is a picture. 0 generations.
+- **New:**
+  - `IftaWorkspaceShell` (shared top bar + popovers)
+  - `IftaGlyph` (filled metric / status / file glyphs from the asset sheet)
+  - staff EXPORT REPORT (case CSV)
+  - quarter selector (client)
+  - queue filter tabs
+  - prior-quarter metric deltas (staff)
+  - risk chip from the record
+- **Kept:** routes, guards, data, canonical case, client six tabs / staff seven (NOTES now holds mirror, case record, 09 RUN FAQS, audit trail), legacy redirects, tax truth, no staff-only content on the client.
+- **Proof:** tsc clean, 406 tests pass, build passes, live pass 43/43 with 0 page errors. `docs/aio/ifta/visual-reconstruction/boards/IFTA_AUTHORITY_VS_LIVE_*.jpg` show the authority beside the live page at the same width for desktop, tablet and phone.
+- **Known deviations:**
+  - Live data values differ from the drawn sample.
+  - Inter Tight is wider than the drawn condensed lettering (D-TYPOGRAPHY).
+  - Avatars are initials.
+  - Inpainted regions of the plates are softer.
