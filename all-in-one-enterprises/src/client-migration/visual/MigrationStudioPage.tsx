@@ -431,20 +431,42 @@ function screenCopy(screen: string, client: Client | undefined): { kicker: strin
 }
 
 function RootChoices({ onOpen }: { onOpen: (screen: string) => void }) {
+  const paths = [
+    ['existing', '/migration/path-existing.jpg', 'EXISTING CLIENT FILE', 'Import current records for a known client.'],
+    ['new', '/migration/path-new.jpg', 'NEW CLIENT FILE', 'Start a file for a business that is not a client yet.'],
+    ['batch', '/migration/path-bulk.jpg', 'BULK BATCH MIGRATION', 'Intake many files. Each client stays separate.'],
+  ] as const;
   return (
     <>
-      <div className="mig-paths">
-        <button type="button" onClick={() => onOpen('existing')}><b>EXISTING CLIENT FILE</b><span>Import current records for a known client.</span></button>
-        <button type="button" onClick={() => onOpen('new')}><b>NEW CLIENT FILE</b><span>Start a file for a business that is not a client yet.</span></button>
-        <button type="button" onClick={() => onOpen('batch')}><b>BULK BATCH MIGRATION</b><span>Intake many files. Each client stays separate.</span></button>
+      <div className="mig-path-grid">
+        {paths.map(([screen, image, title, body]) => (
+          <button key={screen} type="button" className="mig-path-card" onClick={() => onOpen(screen)}>
+            <img src={image} alt="" />
+            <b>{title}</b>
+            <span>{body}</span>
+          </button>
+        ))}
       </div>
       <article className="mig-card">
         <h2>MIGRATION STATUS</h2>
-        <ol className="mig-steps">
+        <ol className="mig-steps mig-steps--6">
           {['UPLOAD', 'EXTRACT', 'CLASSIFY', 'VALIDATE', 'REVIEW', 'COMPLETE'].map((step, index) => <li key={step}><b>{index + 1}</b>{step}</li>)}
         </ol>
       </article>
-      <article className="mig-note">Your files stay on this client’s migration. Starting a path does not activate a client.</article>
+      <div className="mig-split">
+        <article className="mig-card">
+          <h2>SUPPORTED FILE TYPES</h2>
+          <p className="mig-sub">Stored uploads are PDF, JPG, PNG, and WEBP.</p>
+          <div className="mig-chips">
+            {['PDF', 'JPG', 'PNG', 'WEBP'].map((type) => <span key={type} className="mig-chip">{type}</span>)}
+          </div>
+        </article>
+        <article className="mig-card">
+          <h2>THIS INTAKE</h2>
+          <p className="mig-sub">Starting a path does not activate a client. PREBUILT is not ACTIVE.</p>
+        </article>
+      </div>
+      <article className="mig-note">Your files stay on this client’s migration. A batch finish does not make anyone active.</article>
     </>
   );
 }

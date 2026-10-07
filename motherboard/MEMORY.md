@@ -55372,3 +55372,12 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Corrected in place (same authority IDs, upper pixels unchanged):** welcome, people, vehicles, services, what changed, confirm. Company and documents were already clear and were re-audited. Activation-complete 002 was left intact with no dock. Superseded 001 stays archived with its old dock so the lineage of that defect remains.
 - **Live:** `/portal/activation/review` renders with `dock="none"` (no INTAKE). `/office/migration` still shows the intake dock. Browser captures confirmed both. Default demo lifecycle blocks the client route until the record is CLIENT_CONFIRMATION_REQUIRED; the capture set that only in the browser profile.
 - **Conventions:** INTAKE is founder/staff only. Client activation and reconciliation screens have no bottom nav until a client-office navigation authority exists. Product labels (My Business, Operations, Finances, Vault, Inbox) are body destinations only.
+
+---
+
+## 2026-10-07 — Post-merge live migration shell on the authority frame
+
+- **Context:** PR #45 merged before the actor-boundary cleanup. Main `ce1c00004` is the baseline. Do not revert that merge. Live migration screens were a simplified shell with doubled hero type and a staff dock on the client review route.
+- **Live:** The migration frame now scales to the 853-wide authority. Staff routes keep HOME / INTAKE / FILING / REPORTS / MORE. Client review hashes (`#welcome` through `#done`) render with no dock. Activation complete keeps WELCOME TO YOUR OFFICE, ACTIVE, My Business, Operations, Finances, Vault, Inbox, and ENTER YOUR OFFICE. Root shows the three path cards, a six-step status, and only the file types the uploader actually stores. Browser captures at 853×1536 confirmed the actor split. Inner staff and client cards are still simpler than the full authority plates.
+- **Gate:** Default demo client stays KNOWN_UNMIGRATED, so `/portal/activation/review` stays blocked until the record is invited or in client confirmation. Captures set that lifecycle only in the browser profile.
+- **Conventions:** Do not bake authority screenshots into the app. Do not invent a client dock. PREBUILT is not ACTIVE. Do not deploy unless the founder says deploy now.
