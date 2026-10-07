@@ -1,7 +1,8 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { isSupabaseMode } from '../../config/dataMode';
 import { loadDemoStore, updateDemoStore } from '../../demo/demoStore';
+import { useDemoStore } from '../../demo/useDemoStore';
 import { useAIOAuth } from '../../auth/AIOAuthProvider';
 import {
   supabaseConfirmActivation,
@@ -15,7 +16,15 @@ import {
 } from '../../client-migration/services/clientActivationService';
 import type { ReviewSectionCode, WhatChangedShortcut } from '../../client-migration/types';
 import { canAccessClientOffice } from '../../client-migration/lifecycle';
-import { MigrationAuthorityShell } from '../../client-migration/visual/MigrationAuthorityShell';
+import {
+  AioMigrationCTA,
+  AioMigrationEnvironment,
+  AioMigrationHeader,
+  AioMigrationHero,
+} from '../../client-migration/visual/AioMigrationKit';
+import { ActivationCompanyScreen, ActivationCompleteScreen } from '../../client-migration/visual/ActivationScreens';
+import { clientIdentifiers, clientViewer } from '../../client-migration/visual/migrationViewer';
+import '../../client-migration/visual/migration-authority.css';
 import { aioPaths } from '../../utils/paths';
 
 const SECTIONS: { code: ReviewSectionCode; label: string; step: Step }[] = [
@@ -52,15 +61,13 @@ export function ClientOfficeReviewPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const { session } = useAIOAuth();
+  const store = useDemoStore();
   const organizationId =
     (location.state as { organizationId?: string } | null)?.organizationId ??
-    loadDemoStore().portalClientId ??
+    store.portalClientId ??
     'client-a';
 
-  const client = useMemo(
-    () => loadDemoStore().clients.find((c) => c.id === organizationId),
-    [organizationId],
-  );
+  const client = store.clients.find((c) => c.id === organizationId);
 
   const [message, setMessage] = useState<string | null>(null);
   const [step, setStep] = useState<Step>(() => stepFromHash(window.location.hash));
@@ -138,7 +145,6 @@ export function ClientOfficeReviewPage() {
     );
   }
 
-  const section = SECTIONS.find((item) => item.step === step);
   const nextStep: Record<Step, Step | null> = {
     welcome: 'company',
     company: 'people',
@@ -151,117 +157,141 @@ export function ClientOfficeReviewPage() {
     done: null,
   };
 
-  const titles: Record<Step, string> = {
-    welcome: "HERE'S WHAT AIO ALREADY KNOWS",
-    company: 'COMPANY REVIEW',
-    people: 'PEOPLE REVIEW',
-    vehicles: 'VEHICLES REVIEW',
-    services: 'ACTIVE SERVICES',
-    documents: 'DOCUMENTS WE HAVE',
-    changed: 'WHAT CHANGED?',
-    confirm: 'CONFIRM YOUR INFORMATION',
-    done: 'WELCOME TO YOUR OFFICE',
+  /** PREBUILT ≠ ACTIVE: the arrival screen exists only for a client whose lifecycle is ACTIVE. */
+  const isActive = active || canAccessClientOffice(client.clientLifecycle ?? 'KNOWN_UNMIGRATED');
+  const view: Step = step === 'done' && !isActive ? 'confirm' : step;
+  const section = SECTIONS.find((item) => item.step === view);
+  const profile = (store.roadReadyProfiles ?? []).find((p) => p.organizationId === organizationId);
+  const contact = (store.organizationMembers ?? []).find(
+    (m) => m.organizationId === organizationId && (m.email === client.contactEmail || m.name === client.contactName),
+  );
+  const companyResponse = (store.clientReviewSections ?? []).find(
+    (r) => r.organizationId === organizationId && r.sectionCode === 'COMPANY',
+  )?.response;
+
+  const titles: Record<Step, string[]> = {
+    welcome: ["HERE'S WHAT", 'AIO ALREADY KNOWS'],
+    company: ['COMPANY', 'REVIEW'],
+    people: ['PEOPLE', 'REVIEW'],
+    vehicles: ['VEHICLES', 'REVIEW'],
+    services: ['ACTIVE', 'SERVICES'],
+    documents: ['DOCUMENTS', 'WE HAVE'],
+    changed: ['WHAT', 'CHANGED?'],
+    confirm: ['CONFIRM YOUR', 'INFORMATION'],
+    done: ['WELCOME TO', 'YOUR OFFICE'],
   };
 
+  function onCta() {
+    if (view === 'confirm') {
+      void onConfirm();
+      return;
+    }
+    const next = nextStep[view];
+    if (next) go(next);
+  }
+
+  if (view === 'done') {
+    return (
+      <AioMigrationEnvironment family="active" actor="client" screen="complete">
+        <AioMigrationHeader viewer={clientViewer(client)} tools={false} />
+        <main className="amg-main amg-col">
+          <AioMigrationHero
+            kicker="CLIENT ACTIVATION"
+            title={titles.done}
+            accent="ACTIVE WITH AIO"
+            subtitle={
+              <>
+                <span className="amg-line">Your information is confirmed and</span>
+                <span className="amg-line">your client office is ready.</span>
+              </>
+            }
+          />
+          <ActivationCompleteScreen onEnter={() => navigate(aioPaths.portal, { replace: true })} />
+          {message ? <p className="amg-msg">{message}</p> : null}
+        </main>
+      </AioMigrationEnvironment>
+    );
+  }
+
   return (
-    <MigrationAuthorityShell
-      plate={step === 'done' ? 'root' : 'existing'}
-      dock="none"
-      kicker="CLIENT ACTIVATION"
-      title={titles[step]}
-      subtitle={
-        step === 'done'
-          ? 'Your information is confirmed and your client office is ready.'
-          : `${client.companyName} is reviewing what AIO already has. This is not a blank account.`
-      }
-      cta={step === 'confirm' ? 'CONFIRM & ACTIVATE' : step === 'done' ? 'ENTER YOUR OFFICE' : 'CONTINUE'}
-      onCta={() => {
-        if (step === 'confirm') {
-          void onConfirm();
-          return;
-        }
-        if (step === 'done') {
-          navigate(aioPaths.portal, { replace: true });
-          return;
-        }
-        const next = nextStep[step];
-        if (next) go(next);
-      }}
-      ctaDisabled={step === 'done' && !active && !canAccessClientOffice(client.clientLifecycle ?? 'KNOWN_UNMIGRATED')}
-    >
-      <article className="mig-card">
-        <h2>{client.companyName}</h2>
-        <p className="mig-sub">
-          {client.contactName}
-          {client.customerNumber ? ` · ${client.customerNumber}` : ''}
-          {' · '}
-          {step === 'done' ? 'ACTIVE' : 'NOT ACTIVE YET'}
-        </p>
-        {step === 'welcome' ? (
-          <p className="mig-sub">
-            Profile {client.profileCompletenessPct ?? 0}% known. Vault {client.archiveMigrationStatus ?? 'not started'}.
-            Client review {client.clientReviewState ?? 'REQUIRED'}.
-          </p>
-        ) : null}
-        {step === 'company' ? (
-          <>
-            <div className="mig-row"><span>COMPANY</span><b>{client.companyName}</b></div>
-            <div className="mig-row"><span>CONTACT</span><b>{client.contactName}</b></div>
-            {client.contactEmail ? <div className="mig-row"><span>EMAIL</span><b>{client.contactEmail}</b></div> : null}
-            {client.primaryState ? <div className="mig-row"><span>STATE</span><b>{client.primaryState}</b></div> : null}
-          </>
-        ) : null}
-        {section ? (
-          <div className="mig-actions mig-actions--choice">
-            <button type="button" className="mig-chip mig-chip--gold" onClick={() => markSection(section.code, 'LOOKS_RIGHT')}>LOOKS RIGHT</button>
-            <button type="button" className="mig-chip" onClick={() => markSection(section.code, 'NEEDS_UPDATE')}>NEEDS AN UPDATE</button>
-            <button type="button" className="mig-chip" onClick={() => markSection(section.code, 'NOT_SURE')}>I&apos;M NOT SURE</button>
+    <AioMigrationEnvironment family="existing" actor="client" screen={view === 'company' ? 'company' : 'legacy-activation'}>
+      <AioMigrationHeader viewer={clientViewer(client)} />
+      <main className="amg-main amg-col">
+        <AioMigrationHero
+          kicker="CLIENT ACTIVATION"
+          title={titles[view]}
+          subtitle={
+            view === 'company' ? (
+              <>
+                <span className="amg-line">Review your current client information</span>
+                <span className="amg-line">below. Confirm that everything looks</span>
+                <span className="amg-line">right before we activate your account.</span>
+              </>
+            ) : (
+              `${client.companyName} is reviewing what AIO already has. This is not a blank account.`
+            )
+          }
+        />
+        {view === 'company' ? (
+          <ActivationCompanyScreen
+            client={client}
+            business={profile?.business}
+            identifiers={clientIdentifiers(store, client)}
+            contact={contact}
+            active={isActive}
+            response={companyResponse}
+            onRespond={(response) => void markSection('COMPANY', response)}
+            onContinue={() => go('people')}
+          />
+        ) : (
+          <div className="amg-legacy">
+            <article className="mig-card">
+              <h2>{client.companyName}</h2>
+              <p className="mig-sub">
+                {client.contactName}
+                {client.customerNumber ? ` · ${client.customerNumber}` : ''}
+                {' · '}
+                {isActive ? 'ACTIVE' : 'NOT ACTIVE YET'}
+              </p>
+              {view === 'welcome' ? (
+                <p className="mig-sub">
+                  Profile {client.profileCompletenessPct ?? 0}% known. Vault {client.archiveMigrationStatus ?? 'not started'}.
+                  Client review {client.clientReviewState ?? 'REQUIRED'}.
+                </p>
+              ) : null}
+              {section ? (
+                <div className="mig-actions mig-actions--choice">
+                  <button type="button" className="mig-chip mig-chip--gold" onClick={() => markSection(section.code, 'LOOKS_RIGHT')}>LOOKS RIGHT</button>
+                  <button type="button" className="mig-chip" onClick={() => markSection(section.code, 'NEEDS_UPDATE')}>NEEDS AN UPDATE</button>
+                  <button type="button" className="mig-chip" onClick={() => markSection(section.code, 'NOT_SURE')}>I&apos;M NOT SURE</button>
+                </div>
+              ) : null}
+              {view === 'changed' ? (
+                <div className="mig-actions">
+                  {SHORTCUTS.map((item) => (
+                    <button key={item.code} type="button" className="mig-chip" onClick={() => onShortcut(item.code)}>
+                      {item.label.toUpperCase()}
+                    </button>
+                  ))}
+                </div>
+              ) : null}
+              {view === 'confirm' ? (
+                <p className="mig-sub">Confirming writes your review and is the step that can make this client ACTIVE.</p>
+              ) : null}
+            </article>
+            {client.services.length && view === 'services' ? (
+              <article className="mig-card">
+                <h2>SERVICES ON RECORD</h2>
+                {client.services.map((service) => (
+                  <div className="mig-row" key={service}><span>{service}</span></div>
+                ))}
+              </article>
+            ) : null}
           </div>
-        ) : null}
-        {step === 'changed' ? (
-          <div className="mig-actions">
-            {SHORTCUTS.map((item) => (
-              <button key={item.code} type="button" className="mig-chip" onClick={() => onShortcut(item.code)}>
-                {item.label.toUpperCase()}
-              </button>
-            ))}
-          </div>
-        ) : null}
-        {step === 'confirm' ? (
-          <p className="mig-sub">Confirming writes your review and is the step that can make this client ACTIVE.</p>
-        ) : null}
-        {step === 'done' ? (
-          <p className="mig-status-active">ACTIVE</p>
-        ) : null}
-      </article>
-      {step === 'done' ? (
-        <article className="mig-card">
-          <h2>YOUR OFFICE IS READY</h2>
-          <p className="mig-sub">ACTIVE WITH AIO. Your information is confirmed.</p>
-          <div className="mig-office-list">
-            {(
-              [
-                ['My Business', aioPaths.portalBusiness],
-                ['Operations', aioPaths.portalOperations],
-                ['Finances', aioPaths.portalMoney],
-                ['Vault', aioPaths.portalVault],
-                ['Inbox', aioPaths.portalInbox],
-              ] as const
-            ).map(([label, href]) => (
-              <Link key={href} to={href}>{label}<span>→</span></Link>
-            ))}
-          </div>
-        </article>
-      ) : null}
-      {client.services.length && step === 'services' ? (
-        <article className="mig-card">
-          <h2>SERVICES ON RECORD</h2>
-          {client.services.map((service) => (
-            <div className="mig-row" key={service}><span>{service}</span></div>
-          ))}
-        </article>
-      ) : null}
-      {message ? <p className="mig-error">{message}</p> : null}
-    </MigrationAuthorityShell>
+        )}
+        {message ? <p className="amg-msg">{message}</p> : null}
+        {view !== 'company' ? <AioMigrationCTA label={view === 'confirm' ? 'CONFIRM & ACTIVATE' : 'CONTINUE'} onClick={onCta} /> : null}
+      </main>
+    </AioMigrationEnvironment>
   );
 }

@@ -13,7 +13,11 @@ import { approveMigrationBatchForOffice } from '../services/approveMigrationOffi
 import { createMigrationBatchForOffice, uploadFilesToMigrationBatch } from '../services/migrationIntakeService';
 import { transitionClientLifecycle } from '../services/lifecycleEvents';
 import type { ClientLifecycleState, MigrationReviewAction } from '../types';
-import { MigrationAuthorityShell } from './MigrationAuthorityShell';
+import { AioMigrationCTA, AioMigrationEnvironment, AioMigrationHeader, AioMigrationHero, AioStaffDock, type MigrationFamily } from './AioMigrationKit';
+import { MigrationExistingScreen, MigrationExtractScreen, MigrationReceivedScreen } from './MigrationExistingScreens';
+import { MigrationRootScreen } from './MigrationRootScreen';
+import { clientIdentifiers, staffViewer } from './migrationViewer';
+import './migration-authority.css';
 
 type LocalFile = {
   name: string;
@@ -186,8 +190,14 @@ export function MigrationStudioPage() {
         return;
       }
       if (screen === 'new-received' || screen === 'received') {
-        if (clientId) await storeAcceptedFiles(clientId);
+        // Store newly chosen files; files already on the batch are enough to begin extraction.
+        if (clientId && localFiles.some((item) => item.file)) await storeAcceptedFiles(clientId);
+        else if (!files.length) throw new Error('Add at least one PDF, JPG, PNG, or WEBP file');
         go(screen === 'new-received' ? 'new-extract' : 'extract');
+        return;
+      }
+      if (screen === 'extract' && !extractionReady(files, batch?.state)) {
+        go('root', '');
         return;
       }
       if (screen === 'extract' || screen === 'new-extract') {
@@ -265,130 +275,201 @@ export function MigrationStudioPage() {
     updateDemoStore((current) => applyReviewActionToFact(current, fact.id, action, staffId));
   }
 
-  const plate = screen.startsWith('new') || screen.startsWith('batch') || screen === 'root' ? 'root' : 'existing';
+  const family: MigrationFamily = screen === 'root' || screen.startsWith('new') || screen.startsWith('batch') ? 'root' : 'existing';
   const copy = screenCopy(screen, client);
+  const hero = AUTHORITY_HERO[screen];
   const active = isActiveLifecycle(client?.clientLifecycle);
   const batchClients = store.clients.filter((item) =>
     (store.archiveMigrationBatches ?? []).some((row) => row.clientId === item.id && (!batchName || row.notes === batchName || !row.notes)),
   );
   const queue = batchClients.length ? batchClients : client ? [client] : [];
+  const viewer = staffViewer(store, session?.user.id);
+  const legacy = !REPRESENTATIVE.has(screen);
 
   return (
-    <MigrationAuthorityShell
-      plate={plate}
-      kicker={copy.kicker}
-      title={copy.title}
-      subtitle={copy.subtitle}
-      cta={copy.cta}
-      onCta={() => void onContinue()}
-      ctaDisabled={busy}
-    >
-      {screen === 'root' ? <RootChoices onOpen={go} /> : null}
-      {screen === 'existing' ? (
-        <article className="mig-card">
-          <h2>FIND YOUR EXISTING CLIENT</h2>
-          <p className="mig-sub">Search the AIO client account you want to migrate.</p>
-          <input className="mig-field" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search by client name, email, or account ID" />
-          <div className="mig-list">
-            {filteredClients.map((item) => (
-              <button key={item.id} type="button" className={item.id === clientId ? 'mig-person is-on' : 'mig-person'} onClick={() => go('existing', item.id)}>
-                <b>{item.companyName}</b>
-                <span>{item.contactName} · {lifecycleLabel(item.clientLifecycle)}</span>
-              </button>
-            ))}
+    <AioMigrationEnvironment family={family} actor="staff" screen={legacy ? `legacy-${family}` : screen}>
+      <AioMigrationHeader viewer={viewer} />
+      <main className="amg-main amg-col">
+        <AioMigrationHero
+          kicker={hero?.kicker ?? copy.kicker}
+          title={hero?.title ?? splitTitle(copy.title)}
+          subtitle={hero ? hero.sub.map((line) => <span key={line} className="amg-line">{line}</span>) : copy.subtitle}
+        />
+        {screen === 'root' ? <MigrationRootScreen onOpen={go} /> : null}
+        {screen === 'existing' ? (
+          <MigrationExistingScreen
+            clients={filteredClients}
+            selectedId={clientId}
+            query={query}
+            onQuery={setQuery}
+            identifiers={(item) => clientIdentifiers(store, item)}
+            onSelect={(id) => go('existing', id)}
+            onAddManually={() => go('new')}
+          />
+        ) : null}
+        {screen === 'extract' && client ? (
+          <MigrationExtractScreen client={client} identifiers={clientIdentifiers(store, client)} files={files} batch={batch} onActivity={batch ? () => navigate(aioPaths.officeArchiveMigrationBatch(batch.id)) : undefined} />
+        ) : null}
+        {screen === 'received' && client ? (
+          <MigrationReceivedScreen
+            client={client}
+            identifiers={clientIdentifiers(store, client)}
+            stored={files}
+            local={localFiles}
+            onAdd={() => inputRef.current?.click()}
+            onRemoveLocal={(name) => setLocalFiles((current) => current.filter((item) => item.name !== name))}
+          />
+        ) : null}
+        {legacy ? (
+          <div className="amg-legacy">
+            {screen === 'upload' || screen === 'new' ? (
+              <>
+                {client ? <Identity client={client} /> : null}
+                {screen === 'new' ? (
+                  <article className="mig-card">
+                    <h2>BUSINESS IDENTITY</h2>
+                    <label className="mig-label">COMPANY NAME</label>
+                    <input className="mig-field" value={draft.companyName} onChange={(event) => setDraft({ ...draft, companyName: event.target.value })} placeholder="Enter company name" />
+                    <label className="mig-label">PRIMARY CONTACT</label>
+                    <input className="mig-field" value={draft.contactName} onChange={(event) => setDraft({ ...draft, contactName: event.target.value })} placeholder="Enter contact name" />
+                    <label className="mig-label">EMAIL</label>
+                    <input className="mig-field" value={draft.email} onChange={(event) => setDraft({ ...draft, email: event.target.value })} placeholder="Enter email" />
+                    <label className="mig-label">PHONE</label>
+                    <input className="mig-field" value={draft.phone} onChange={(event) => setDraft({ ...draft, phone: event.target.value })} placeholder="Enter phone" />
+                  </article>
+                ) : null}
+                <UploadCard inputRef={inputRef} files={localFiles} onPick={onPickFiles} onRemove={(name) => setLocalFiles((current) => current.filter((item) => item.name !== name))} />
+              </>
+            ) : null}
+            {(screen === 'new-received' || screen === 'batch-received') && (
+              <Received files={files} localFiles={localFiles} batch={batch} batchName={batchName} client={client} />
+            )}
+            {(screen === 'new-extract' || screen === 'batch-processing' || screen === 'batch-run') && (
+              <Stages files={files} batchState={batch?.state} />
+            )}
+            {screen === 'match' && client ? (
+              <article className="mig-card">
+                <h2>MATCH AND CONFLICT REVIEW</h2>
+                <Identity client={client} plain />
+                <p className="mig-sub">Strong identifiers on the record are used first. Company, phone, and email are secondary.</p>
+                <div className="mig-actions">
+                  <button type="button" className={matchChoice === 'existing' ? 'mig-chip mig-chip--gold' : 'mig-chip'} onClick={() => setMatchChoice('existing')}>MATCH TO EXISTING</button>
+                  <button type="button" className={matchChoice === 'new' ? 'mig-chip mig-chip--gold' : 'mig-chip'} onClick={() => setMatchChoice('new')}>CREATE NEW</button>
+                  <button type="button" className={matchChoice === 'review' ? 'mig-chip mig-chip--gold' : 'mig-chip'} onClick={() => setMatchChoice('review')}>NEEDS REVIEW</button>
+                </div>
+              </article>
+            ) : null}
+            {(screen === 'review' || screen === 'new-review' || screen === 'new-records' || screen === 'new-identity') && client ? (
+              <ReviewCards client={client} documents={documents.length} onReview={onReview} />
+            ) : null}
+            {screen === 'conflicts' || screen === 'batch-conflicts' ? (
+              <article className="mig-card">
+                <h2>CONFLICTS</h2>
+                {conflicts.length === 0 ? <p className="mig-sub">No conflicting facts are on this record. Existing canonical values stay as they are.</p> : conflicts.map((fact) => (
+                  <div key={fact.id} className="mig-row">
+                    <span>{fact.fieldKey}<br />{fact.existingValue || 'Current empty'} → {fact.proposedValue || 'Extracted empty'}</span>
+                    <span className="mig-pill">{fact.sourceReference ?? fact.confidence}</span>
+                  </div>
+                ))}
+              </article>
+            ) : null}
+            {(screen === 'approval' || screen === 'new-approval' || screen === 'batch-approval') && (
+              <Approval client={client} documents={documents.length} conflicts={conflicts.length} queue={queue} />
+            )}
+            {(screen === 'prebuilt' || screen === 'new-prebuilt') && client ? <Prebuilt client={client} documents={documents.length} /> : null}
+            {(screen === 'invite' || screen === 'new-invite') && client ? <Invite client={client} /> : null}
+            {(screen === 'invited' || screen === 'new-confirm') && client ? <Invited client={client} active={active} /> : null}
+            {screen === 'batch' ? (
+              <article className="mig-card">
+                <h2>BATCH</h2>
+                <label className="mig-label">BATCH NAME</label>
+                <input className="mig-field" value={batchName} onChange={(event) => setBatchName(event.target.value)} />
+                <p className="mig-sub">Batch ID {batch?.id ?? 'Assigned when the first client file is stored'}.</p>
+                <UploadCard inputRef={inputRef} files={localFiles} onPick={onPickFiles} onRemove={(name) => setLocalFiles((current) => current.filter((item) => item.name !== name))} />
+              </article>
+            ) : null}
+            {screen === 'batch-summary' ? <Buckets queue={queue} /> : null}
+            {screen === 'batch-queue' ? (
+              <article className="mig-card">
+                <h2>PER-CLIENT REVIEW QUEUE</h2>
+                {queue.length === 0 ? <p className="mig-sub">No clients are in this batch yet.</p> : queue.map((item) => (
+                  <button key={item.id} type="button" className="mig-person" onClick={() => go('batch-client', item.id)}>
+                    <b>{item.companyName}</b>
+                    <span>{lifecycleLabel(item.clientLifecycle)}</span>
+                  </button>
+                ))}
+              </article>
+            ) : null}
+            {screen === 'batch-client' && client ? (
+              <article className="mig-card">
+                <h2>ONE CLIENT</h2>
+                <Identity client={client} plain />
+                <p className="mig-sub">This review does not approve any other client in the batch.</p>
+              </article>
+            ) : null}
+            {screen === 'batch-complete' ? <BatchComplete queue={queue} /> : null}
+            {(screen === 'extract' || screen === 'received') && !client ? (
+              <article className="mig-card"><p className="mig-sub">Open an existing client file first.</p></article>
+            ) : null}
           </div>
-        </article>
-      ) : null}
-      {screen === 'upload' || screen === 'new' ? (
-        <>
-          {client ? <Identity client={client} /> : null}
-          {screen === 'new' ? (
-            <article className="mig-card">
-              <h2>BUSINESS IDENTITY</h2>
-              <label className="mig-label">COMPANY NAME</label>
-              <input className="mig-field" value={draft.companyName} onChange={(event) => setDraft({ ...draft, companyName: event.target.value })} placeholder="Enter company name" />
-              <label className="mig-label">PRIMARY CONTACT</label>
-              <input className="mig-field" value={draft.contactName} onChange={(event) => setDraft({ ...draft, contactName: event.target.value })} placeholder="Enter contact name" />
-              <label className="mig-label">EMAIL</label>
-              <input className="mig-field" value={draft.email} onChange={(event) => setDraft({ ...draft, email: event.target.value })} placeholder="Enter email" />
-              <label className="mig-label">PHONE</label>
-              <input className="mig-field" value={draft.phone} onChange={(event) => setDraft({ ...draft, phone: event.target.value })} placeholder="Enter phone" />
-            </article>
-          ) : null}
-          <UploadCard inputRef={inputRef} files={localFiles} onPick={onPickFiles} onRemove={(name) => setLocalFiles((current) => current.filter((item) => item.name !== name))} />
-        </>
-      ) : null}
-      {(screen === 'received' || screen === 'new-received' || screen === 'batch-received') && (
-        <Received files={files} localFiles={localFiles} batch={batch} batchName={batchName} client={client} />
-      )}
-      {(screen === 'extract' || screen === 'new-extract' || screen === 'batch-processing' || screen === 'batch-run') && (
-        <Stages files={files} batchState={batch?.state} />
-      )}
-      {screen === 'match' && client ? (
-        <article className="mig-card">
-          <h2>MATCH AND CONFLICT REVIEW</h2>
-          <Identity client={client} plain />
-          <p className="mig-sub">Strong identifiers on the record are used first. Company, phone, and email are secondary.</p>
-          <div className="mig-actions">
-            <button type="button" className={matchChoice === 'existing' ? 'mig-chip mig-chip--gold' : 'mig-chip'} onClick={() => setMatchChoice('existing')}>MATCH TO EXISTING</button>
-            <button type="button" className={matchChoice === 'new' ? 'mig-chip mig-chip--gold' : 'mig-chip'} onClick={() => setMatchChoice('new')}>CREATE NEW</button>
-            <button type="button" className={matchChoice === 'review' ? 'mig-chip mig-chip--gold' : 'mig-chip'} onClick={() => setMatchChoice('review')}>NEEDS REVIEW</button>
-          </div>
-        </article>
-      ) : null}
-      {(screen === 'review' || screen === 'new-review' || screen === 'new-records' || screen === 'new-identity') && client ? (
-        <ReviewCards client={client} documents={documents.length} onReview={onReview} />
-      ) : null}
-      {screen === 'conflicts' || screen === 'batch-conflicts' ? (
-        <article className="mig-card">
-          <h2>CONFLICTS</h2>
-          {conflicts.length === 0 ? <p className="mig-sub">No conflicting facts are on this record. Existing canonical values stay as they are.</p> : conflicts.map((fact) => (
-            <div key={fact.id} className="mig-row">
-              <span>{fact.fieldKey}<br />{fact.existingValue || 'Current empty'} → {fact.proposedValue || 'Extracted empty'}</span>
-              <span className="mig-pill">{fact.sourceReference ?? fact.confidence}</span>
-            </div>
-          ))}
-        </article>
-      ) : null}
-      {(screen === 'approval' || screen === 'new-approval' || screen === 'batch-approval') && (
-        <Approval client={client} documents={documents.length} conflicts={conflicts.length} queue={queue} />
-      )}
-      {(screen === 'prebuilt' || screen === 'new-prebuilt') && client ? <Prebuilt client={client} documents={documents.length} /> : null}
-      {(screen === 'invite' || screen === 'new-invite') && client ? <Invite client={client} /> : null}
-      {(screen === 'invited' || screen === 'new-confirm') && client ? <Invited client={client} active={active} /> : null}
-      {screen === 'batch' ? (
-        <article className="mig-card">
-          <h2>BATCH</h2>
-          <label className="mig-label">BATCH NAME</label>
-          <input className="mig-field" value={batchName} onChange={(event) => setBatchName(event.target.value)} />
-          <p className="mig-sub">Batch ID {batch?.id ?? 'Assigned when the first client file is stored'}.</p>
-          <UploadCard inputRef={inputRef} files={localFiles} onPick={onPickFiles} onRemove={(name) => setLocalFiles((current) => current.filter((item) => item.name !== name))} />
-        </article>
-      ) : null}
-      {screen === 'batch-summary' ? <Buckets queue={queue} /> : null}
-      {screen === 'batch-queue' ? (
-        <article className="mig-card">
-          <h2>PER-CLIENT REVIEW QUEUE</h2>
-          {queue.length === 0 ? <p className="mig-sub">No clients are in this batch yet.</p> : queue.map((item) => (
-            <button key={item.id} type="button" className="mig-person" onClick={() => go('batch-client', item.id)}>
-              <b>{item.companyName}</b>
-              <span>{lifecycleLabel(item.clientLifecycle)}</span>
-            </button>
-          ))}
-        </article>
-      ) : null}
-      {screen === 'batch-client' && client ? (
-        <article className="mig-card">
-          <h2>ONE CLIENT</h2>
-          <Identity client={client} plain />
-          <p className="mig-sub">This review does not approve any other client in the batch.</p>
-        </article>
-      ) : null}
-      {screen === 'batch-complete' ? <BatchComplete queue={queue} /> : null}
-      {message ? <p className="mig-error">{message}</p> : null}
-      <input ref={inputRef} className="mig-file" type="file" multiple onChange={(event) => onPickFiles(event.target.files)} />
-    </MigrationAuthorityShell>
+        ) : null}
+        {screen === 'extract' && !client ? <p className="amg-msg">Open an existing client file first.</p> : null}
+        {screen === 'received' && !client ? <p className="amg-msg">Open an existing client file first.</p> : null}
+        {message ? <p className="amg-msg">{message}</p> : null}
+        <AioMigrationCTA
+          label={screen === 'extract' ? (extractionReady(files, batch?.state) ? 'CONTINUE' : 'VIEW IN BACKGROUND') : copy.cta}
+          onClick={() => void onContinue()}
+          disabled={busy}
+        />
+        <input ref={inputRef} className="amg-file-input" type="file" multiple onChange={(event) => onPickFiles(event.target.files)} />
+      </main>
+      <AioStaffDock />
+    </AioMigrationEnvironment>
   );
+}
+
+/** Screens rebuilt to their locked authority in this pass (the rest keep the shared renderer with legacy panels). */
+const REPRESENTATIVE = new Set(['root', 'existing', 'extract', 'received']);
+
+/** Authority copy for the representative screens (line breaks as drawn). */
+const AUTHORITY_HERO: Record<string, { kicker: string; title: string[]; sub: string[] }> = {
+  root: {
+    kicker: 'CLIENT MIGRATION INTAKE',
+    title: ['BRING YOUR', 'DATA TO AIO'],
+    sub: ['Let’s get your existing records into AIO', 'so you can manage everything in one', 'secure place.'],
+  },
+  existing: {
+    kicker: 'CLIENT MIGRATION INTAKE',
+    title: ['EXISTING', 'CLIENT FILE'],
+    sub: ['Bring your current AIO client records', 'into the new system. We’ll preserve', 'your data and keep everything organized.'],
+  },
+  extract: {
+    kicker: 'CLIENT MIGRATION INTAKE',
+    title: ['EXTRACTING', 'AND CLASSIFYING'],
+    sub: ['We’re extracting your client records', 'and automatically classifying the data', 'for a smooth migration.'],
+  },
+  received: {
+    kicker: 'CLIENT MIGRATION INTAKE',
+    title: ['FILES RECEIVED'],
+    sub: ['We’ve received your client files.', 'Review them below and make sure', 'everything looks good before', 'we begin extraction.'],
+  },
+};
+
+function splitTitle(title: string): string[] {
+  const words = title.split(' ');
+  if (words.length < 3) return [title];
+  const half = Math.ceil(title.length / 2);
+  let acc = 0;
+  let cut = 1;
+  words.forEach((word, i) => {
+    if (acc < half) cut = i + 1;
+    acc += word.length + 1;
+  });
+  return [words.slice(0, cut).join(' '), words.slice(cut).join(' ')];
+}
+
+function extractionReady(files: ReturnType<typeof getBatchFiles>, batchState?: string): boolean {
+  return files.length > 0 && files.every((file) => file.processingState === 'ready' || file.processingState === 'grouped') && (batchState === 'ready_for_review' || batchState === 'reviewing' || batchState === 'completed');
 }
 
 function screenCopy(screen: string, client: Client | undefined): { kicker: string; title: string; subtitle: string; cta: string } {
@@ -428,47 +509,6 @@ function screenCopy(screen: string, client: Client | undefined): { kicker: strin
     'batch-complete': { kicker: 'CLIENT MIGRATION INTAKE', title: 'BATCH COMPLETE', subtitle: 'No client becomes active because the batch finished.', cta: 'BACK TO INTAKE' },
   };
   return map[screen] ?? map.root;
-}
-
-function RootChoices({ onOpen }: { onOpen: (screen: string) => void }) {
-  const paths = [
-    ['existing', '/migration/path-existing.jpg', 'EXISTING CLIENT FILE', 'Import current records for a known client.'],
-    ['new', '/migration/path-new.jpg', 'NEW CLIENT FILE', 'Start a file for a business that is not a client yet.'],
-    ['batch', '/migration/path-bulk.jpg', 'BULK BATCH MIGRATION', 'Intake many files. Each client stays separate.'],
-  ] as const;
-  return (
-    <>
-      <div className="mig-path-grid">
-        {paths.map(([screen, image, title, body]) => (
-          <button key={screen} type="button" className="mig-path-card" onClick={() => onOpen(screen)}>
-            <img src={image} alt="" />
-            <b>{title}</b>
-            <span>{body}</span>
-          </button>
-        ))}
-      </div>
-      <article className="mig-card">
-        <h2>MIGRATION STATUS</h2>
-        <ol className="mig-steps mig-steps--6">
-          {['UPLOAD', 'EXTRACT', 'CLASSIFY', 'VALIDATE', 'REVIEW', 'COMPLETE'].map((step, index) => <li key={step}><b>{index + 1}</b>{step}</li>)}
-        </ol>
-      </article>
-      <div className="mig-split">
-        <article className="mig-card">
-          <h2>SUPPORTED FILE TYPES</h2>
-          <p className="mig-sub">Stored uploads are PDF, JPG, PNG, and WEBP.</p>
-          <div className="mig-chips">
-            {['PDF', 'JPG', 'PNG', 'WEBP'].map((type) => <span key={type} className="mig-chip">{type}</span>)}
-          </div>
-        </article>
-        <article className="mig-card">
-          <h2>THIS INTAKE</h2>
-          <p className="mig-sub">Starting a path does not activate a client. PREBUILT is not ACTIVE.</p>
-        </article>
-      </div>
-      <article className="mig-note">Your files stay on this client’s migration. A batch finish does not make anyone active.</article>
-    </>
-  );
 }
 
 function Identity({ client, plain }: { client: Client; plain?: boolean }) {

@@ -1,0 +1,2206 @@
+/* ═══════════════════════════════════════════════════════════════════════════════════════════════════════
+ * AIO CLIENT MIGRATION — authority renderer
+ * 1u = 1px of the 853×1536 mobile authority frame. Phones: --u = 100vw / 853, so the authority composition is
+ * reproduced at every phone width. ≥ 854px: --u = 1px and the column sits on a full-bleed environment.
+ * L0 env plate (the page) · L1 frosted shell · L2 hero · L3 panels · L4 CTA · L5 staff dock.
+ * ═══════════════════════════════════════════════════════════════════════════════════════════════════════ */
+@font-face {
+  font-family: 'AMG Roboto';
+  src: url('/fonts/migration/roboto-latin-wght-normal.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'AMG Roboto Condensed';
+  src: url('/fonts/migration/roboto-condensed-latin-wght-normal.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+.amg {
+  --u: calc(100vw / 853);
+  --text: 'AMG Roboto', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --cond: 'AMG Roboto Condensed', 'Roboto Condensed', 'Arial Narrow', sans-serif;
+  --ink: #111112;
+  --ink-2: #3b3b3f;
+  --ink-3: #66666c;
+  --ink-4: #8b8b90;
+  --hair: rgba(17, 17, 18, 0.09);
+  --gold: #f1c158;
+  --gold-hi: #f7d27a;
+  --gold-lo: #e7ab3c;
+  --gold-ink: #c48f28;
+  --gold-soft: #fbecd0;
+  --page: #f2f0ec;
+  --glass: rgba(252, 251, 249, 0.93);
+  --glass-edge: rgba(255, 255, 255, 0.8);
+  --panel-shadow: 0 calc(8 * var(--u)) calc(26 * var(--u)) rgba(70, 48, 18, 0.08), 0 calc(1 * var(--u)) calc(2 * var(--u)) rgba(70, 48, 18, 0.05);
+  --plate-h: 760;
+  --head-h: 98;
+  position: relative;
+  isolation: isolate;
+  min-height: 100vh;
+  min-height: 100dvh;
+  width: 100%;
+  overflow-x: clip;
+  background: var(--page);
+  color: var(--ink);
+  font-family: var(--text);
+  font-size: calc(22 * var(--u));
+  line-height: 1.2;
+  text-transform: none;
+  letter-spacing: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  box-sizing: border-box;
+}
+.amg *,
+.amg *::before,
+.amg *::after {
+  box-sizing: border-box;
+}
+/* resets carry zero class weight so every component class wins over them */
+:where(.amg) button {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+:where(.amg) a {
+  color: inherit;
+  text-decoration: none;
+}
+:where(.amg) :is(h1, h2, h3, p, ol, ul, dl, dd) {
+  margin: 0;
+  padding: 0;
+}
+:where(.amg) :is(ol, ul) {
+  list-style: none;
+}
+/* the environment is the page: no browser margin frame around it */
+html:has(.amg),
+html:has(.amg) body {
+  margin: 0;
+  background: #f2f0ec;
+}
+.amg--existing {
+  --plate-h: 720;
+  --head-h: 88;
+}
+.amg--active {
+  --head-h: 100;
+  padding-top: calc(var(--head-h) * var(--u));
+}
+@media (min-width: 854px) {
+  .amg {
+    --u: 1px;
+  }
+}
+
+.amg-col {
+  position: relative;
+  width: calc(853 * var(--u));
+  margin-inline: auto;
+}
+
+/* ───────── L0 · environment ───────── */
+.amg-env {
+  position: absolute;
+  inset: 0 0 auto;
+  height: calc(var(--plate-h) * var(--u));
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+.amg-env__plate {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 62% 0;
+}
+.amg--active .amg-env {
+  position: fixed;
+  inset: 0;
+  height: auto;
+}
+.amg--active .amg-env__plate {
+  object-position: 60% 50%;
+}
+
+/* ───────── L1 · shell ───────── */
+.amg-head {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  height: calc(var(--head-h) * var(--u));
+  background: rgba(250, 249, 246, 0.9);
+  -webkit-backdrop-filter: blur(12px) saturate(1.1);
+  backdrop-filter: blur(12px) saturate(1.1);
+  box-shadow: 0 calc(1 * var(--u)) 0 rgba(255, 255, 255, 0.65), 0 calc(6 * var(--u)) calc(18 * var(--u)) rgba(70, 48, 18, 0.06);
+}
+.amg--active .amg-head {
+  position: absolute;
+  inset: 0 0 auto;
+  background: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  box-shadow: none;
+}
+.amg-head__in {
+  height: 100%;
+}
+.amg-head__in > * {
+  position: absolute;
+}
+.amg-head__lockup {
+  left: calc(34 * var(--u));
+  top: calc(14 * var(--u));
+  width: calc(282 * var(--u));
+  height: auto;
+}
+.amg--existing .amg-head__lockup {
+  left: calc(28 * var(--u));
+  top: calc(10 * var(--u));
+  width: calc(288 * var(--u));
+}
+.amg--active .amg-head__lockup {
+  left: calc(21.8 * var(--u));
+  top: calc(15.8 * var(--u));
+  width: calc(297 * var(--u));
+}
+.amg-head__tool {
+  display: grid;
+  place-items: center;
+  width: calc(44 * var(--u));
+  height: calc(44 * var(--u));
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ink);
+}
+.amg-head__tool .amg-ico {
+  width: calc(34 * var(--u));
+  height: calc(34 * var(--u));
+  stroke-width: 2.1;
+}
+.amg-head__search {
+  left: calc(455 * var(--u));
+  top: calc(31 * var(--u));
+}
+.amg-head__bell {
+  left: calc(523 * var(--u));
+  top: calc(32 * var(--u));
+}
+.amg--existing .amg-head__search {
+  left: calc(476 * var(--u));
+  top: calc(23 * var(--u));
+}
+.amg--existing .amg-head__bell {
+  left: calc(541 * var(--u));
+  top: calc(20 * var(--u));
+}
+.amg-head__bell .amg-ico {
+  fill: var(--ink);
+  stroke: none;
+}
+.amg-head__dot {
+  position: absolute;
+  top: calc(3 * var(--u));
+  right: calc(5 * var(--u));
+  width: calc(11 * var(--u));
+  height: calc(11 * var(--u));
+  border-radius: 50%;
+  background: var(--gold-lo);
+  box-shadow: 0 0 0 calc(2 * var(--u)) rgba(250, 249, 246, 0.95);
+}
+.amg-head__avatar {
+  left: calc(591 * var(--u));
+  top: calc(22 * var(--u));
+  width: calc(65 * var(--u));
+  height: calc(65 * var(--u));
+  border-radius: 50%;
+  padding: calc(3 * var(--u));
+  background: linear-gradient(145deg, var(--gold-hi), var(--gold-lo));
+  box-shadow: 0 calc(3 * var(--u)) calc(8 * var(--u)) rgba(70, 48, 18, 0.18);
+}
+.amg-head__avatar > span {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: #17171a;
+  border: calc(2 * var(--u)) solid #fbf6ea;
+  color: var(--gold-hi);
+  font: 700 calc(22 * var(--u)) / 1 var(--cond);
+  letter-spacing: 0.04em;
+}
+.amg--existing .amg-head__avatar {
+  left: calc(603 * var(--u));
+  top: calc(11 * var(--u));
+  width: calc(68 * var(--u));
+  height: calc(68 * var(--u));
+}
+.amg--active .amg-head__avatar {
+  left: calc(604 * var(--u));
+  top: calc(17 * var(--u));
+  width: calc(70 * var(--u));
+  height: calc(70 * var(--u));
+}
+.amg-head__who {
+  left: calc(677 * var(--u));
+  top: calc(33 * var(--u));
+  display: grid;
+  gap: calc(6 * var(--u));
+  color: var(--ink);
+}
+.amg-head__who b {
+  font: 600 calc(17 * var(--u)) / 1.1 var(--text);
+  letter-spacing: 0.05em;
+}
+.amg-head__who span {
+  font: 500 calc(16.5 * var(--u)) / 1.1 var(--text);
+  letter-spacing: 0.08em;
+}
+.amg--existing .amg-head__who {
+  left: calc(687 * var(--u));
+  top: calc(23 * var(--u));
+}
+.amg--active .amg-head__who {
+  left: calc(690 * var(--u));
+  top: calc(32 * var(--u));
+}
+.amg-head__chev {
+  left: calc(780 * var(--u));
+  top: calc(41 * var(--u));
+  width: calc(24 * var(--u));
+  height: calc(24 * var(--u));
+  stroke-width: 2.2;
+}
+.amg--existing .amg-head__chev {
+  left: calc(791 * var(--u));
+  top: calc(32 * var(--u));
+  width: calc(22 * var(--u));
+  height: calc(22 * var(--u));
+}
+.amg--active .amg-head__chev {
+  left: calc(797 * var(--u));
+  top: calc(40 * var(--u));
+  width: calc(23 * var(--u));
+  height: calc(23 * var(--u));
+}
+
+/* ───────── icons ───────── */
+.amg-ico {
+  display: block;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.amg-ico .is-fill {
+  fill: currentColor;
+  stroke: none;
+}
+
+/* ───────── L2 · hero lockup (authority coordinates, page-top based) ───────── */
+.amg-main {
+  padding-bottom: calc(150 * var(--u));
+}
+.amg--active .amg-main,
+.amg--client .amg-main {
+  padding-bottom: calc(40 * var(--u));
+}
+.amg-hero {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  pointer-events: none;
+}
+.amg-hero > * {
+  position: absolute;
+  left: calc(var(--hx, 48) * var(--u));
+  pointer-events: auto;
+  white-space: nowrap;
+}
+.amg-hero__kicker {
+  top: calc((var(--k-top) - var(--head-h)) * var(--u));
+  font: 500 calc(var(--k-size) * var(--u)) / 1 var(--text);
+  letter-spacing: var(--k-track, 0.3em);
+  color: #17171a;
+}
+.amg-hero__title {
+  top: calc((var(--t-top) - var(--head-h)) * var(--u));
+  margin-left: calc(var(--t-dx, 0) * var(--u));
+  display: grid;
+  font: 800 calc(var(--t-size) * var(--u)) / calc(var(--t-pitch) * var(--u)) var(--cond);
+  letter-spacing: var(--t-track, -0.005em);
+  color: #0d0d0e;
+}
+.amg-hero__accent {
+  top: calc((var(--a-top) - var(--head-h)) * var(--u));
+  font: 700 calc(var(--a-size) * var(--u)) / 1 var(--cond);
+  letter-spacing: 0.24em;
+  color: #e4a52c;
+}
+.amg-hero__sub {
+  top: calc((var(--s-top) - var(--head-h)) * var(--u));
+  width: calc(var(--s-w, 400) * var(--u));
+  white-space: normal;
+  font: 400 calc(var(--s-size) * var(--u)) / calc(var(--s-pitch) * var(--u)) var(--text);
+  color: #1c1c1e;
+}
+/* family values (cap-top coordinates converted to box tops for Roboto metrics) */
+.amg[data-screen='root'] {
+  --k-top: 162; --k-size: 21; --k-track: 0.185em;
+  --t-top: 193.5; --t-size: 86; --t-pitch: 71.5; --t-dx: -3;
+  --s-top: 348; --s-size: 22.4; --s-pitch: 26; --s-w: 402;
+}
+
+/* ───────── L3 · panels ───────── */
+.amg-panel {
+  position: relative;
+  background: var(--glass);
+  border: calc(1 * var(--u)) solid var(--glass-edge);
+  border-radius: calc(16 * var(--u));
+  box-shadow: var(--panel-shadow);
+}
+.amg-h2 {
+  font: 600 calc(21 * var(--u)) / 1 var(--cond);
+  letter-spacing: 0.03em;
+  color: var(--ink);
+}
+.amg-sub {
+  font: 400 calc(15.9 * var(--u)) / 1.25 var(--text);
+  color: var(--ink-3);
+}
+
+/* ROOT · path choices */
+.amg-root {
+  padding-top: calc((466 - var(--head-h)) * var(--u));
+}
+.amg-paths {
+  display: grid;
+  grid-template-columns: calc(268 * var(--u)) calc(261 * var(--u)) calc(265 * var(--u));
+  column-gap: calc(10 * var(--u));
+  padding-left: calc(19 * var(--u));
+  height: calc(275 * var(--u));
+}
+.amg-path {
+  position: relative;
+  display: block;
+  height: 100%;
+  padding: 0;
+  text-align: left;
+  border-radius: calc(16 * var(--u));
+}
+.amg-path.is-on {
+  border: calc(2.5 * var(--u)) solid #e9b649;
+  box-shadow: 0 0 0 calc(3 * var(--u)) rgba(241, 193, 88, 0.22), var(--panel-shadow);
+}
+.amg-path__thumb {
+  position: absolute;
+  left: calc(22 * var(--u));
+  right: calc(22 * var(--u));
+  top: calc(22 * var(--u));
+  height: calc(93 * var(--u));
+  width: auto;
+  border-radius: calc(8 * var(--u));
+  object-fit: cover;
+}
+.amg-path__disc {
+  position: absolute;
+  left: calc(23 * var(--u));
+  top: calc(35 * var(--u));
+  width: calc(72 * var(--u));
+  height: calc(72 * var(--u));
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: radial-gradient(circle at 35% 30%, #2e2e31, #121214 70%);
+  color: #fff;
+  box-shadow: 0 calc(4 * var(--u)) calc(10 * var(--u)) rgba(0, 0, 0, 0.25);
+}
+.amg-path__disc .amg-ico {
+  width: calc(34 * var(--u));
+  height: calc(34 * var(--u));
+  stroke-width: 1.7;
+}
+.amg-path__disc--gold .amg-ico {
+  color: var(--gold);
+}
+.amg-path__title {
+  position: absolute;
+  left: calc(22 * var(--u));
+  top: calc(130 * var(--u));
+  display: grid;
+  font: 600 calc(22.5 * var(--u)) / calc(25 * var(--u)) var(--cond);
+  letter-spacing: 0;
+  color: var(--ink);
+}
+.amg-path__body {
+  position: absolute;
+  left: calc(22 * var(--u));
+  top: calc(184 * var(--u));
+  width: calc(202 * var(--u));
+  font: 400 calc(14.7 * var(--u)) / calc(19.6 * var(--u)) var(--text);
+  color: var(--ink-3);
+}
+.amg-path__go {
+  position: absolute;
+  right: calc(20 * var(--u));
+  top: calc(207 * var(--u));
+  width: calc(46 * var(--u));
+  height: calc(46 * var(--u));
+  border-radius: calc(8 * var(--u));
+  display: grid;
+  place-items: center;
+  background: linear-gradient(180deg, var(--gold-hi), var(--gold-lo));
+  color: var(--ink);
+  box-shadow: 0 calc(3 * var(--u)) calc(8 * var(--u)) rgba(200, 140, 30, 0.25);
+}
+.amg-path__go .amg-ico {
+  width: calc(26 * var(--u));
+  height: calc(26 * var(--u));
+  stroke-width: 2.1;
+}
+.amg-path:nth-child(2) .amg-path__thumb,
+.amg-path:nth-child(2) .amg-path__title,
+.amg-path:nth-child(2) .amg-path__body {
+  left: calc(20 * var(--u));
+}
+.amg-path:nth-child(2) .amg-path__thumb {
+  right: calc(26 * var(--u));
+}
+.amg-path:nth-child(2) .amg-path__body {
+  width: calc(160 * var(--u));
+}
+.amg-path:nth-child(3) .amg-path__body {
+  width: calc(156 * var(--u));
+}
+.amg-path:nth-child(2) .amg-path__disc {
+  left: calc(20 * var(--u));
+}
+
+/* ROOT · migration status */
+.amg-status {
+  margin: calc(16 * var(--u)) calc(20 * var(--u)) 0 calc(20 * var(--u));
+  height: calc(184 * var(--u));
+}
+.amg-status .amg-h2 {
+  position: absolute;
+  left: calc(21 * var(--u));
+  top: calc(18 * var(--u));
+}
+.amg-status .amg-sub {
+  position: absolute;
+  left: calc(21 * var(--u));
+  top: calc(44 * var(--u));
+}
+.amg-status__all {
+  position: absolute;
+  left: calc(585 * var(--u));
+  top: calc(17 * var(--u));
+  width: calc(210 * var(--u));
+  height: calc(36 * var(--u));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: calc(12 * var(--u));
+  border: calc(1.5 * var(--u)) solid #d6d2ca;
+  border-radius: calc(8 * var(--u));
+  background: rgba(255, 255, 255, 0.7);
+  font: 500 calc(12.5 * var(--u)) / 1 var(--text);
+  letter-spacing: 0.09em;
+}
+.amg-status__all .amg-ico {
+  width: calc(20 * var(--u));
+  height: calc(20 * var(--u));
+  stroke-width: 2;
+}
+.amg-status .amg-steps {
+  position: absolute;
+  left: calc(-2 * var(--u));
+  right: calc(-3 * var(--u));
+  top: calc(84 * var(--u));
+}
+
+/* steps (shared) */
+.amg-steps {
+  display: grid;
+  grid-template-columns: repeat(var(--n), 1fr);
+  align-items: start;
+}
+.amg-step {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  text-align: center;
+}
+.amg-step + .amg-step::before {
+  content: '';
+  position: absolute;
+  top: calc(var(--dot) * var(--u) / 2);
+  right: calc(50% + (var(--dot) / 2 + 8) * var(--u));
+  width: calc(100% - (var(--dot) + 16) * var(--u));
+  height: calc(1.5 * var(--u));
+  background: #d9d5ce;
+}
+.amg-step.is-done + .amg-step::before,
+.amg-step.is-done + .amg-step.is-current::before {
+  background: var(--gold);
+}
+.amg-steps {
+  --dot: 34;
+}
+.amg-step__dot {
+  display: grid;
+  place-items: center;
+  width: calc(var(--dot) * var(--u));
+  height: calc(var(--dot) * var(--u));
+  border-radius: 50%;
+  background: #e8e6e2;
+  border: calc(1 * var(--u)) solid #d9d6d0;
+  font: 500 calc(17 * var(--u)) / 1 var(--text);
+  color: #2a2a2d;
+}
+.amg-step.is-current .amg-step__dot,
+.amg-step.is-done .amg-step__dot {
+  background: radial-gradient(circle at 40% 35%, var(--gold-hi), var(--gold-lo));
+  border-color: #e5b04c;
+  box-shadow: 0 0 0 calc(4 * var(--u)) rgba(241, 193, 88, 0.25);
+  color: var(--ink);
+}
+.amg-step__dot .amg-ico {
+  width: 62%;
+  height: 62%;
+  color: #fff;
+  stroke-width: 3;
+}
+.amg-step__label {
+  margin-top: calc(17 * var(--u));
+  font: 600 calc(13.5 * var(--u)) / 1 var(--cond);
+  letter-spacing: 0.04em;
+  color: var(--ink);
+}
+.amg-step__sub {
+  margin-top: calc(8 * var(--u));
+  font: 400 calc(13.3 * var(--u)) / 1.1 var(--text);
+  color: var(--ink-3);
+}
+
+/* ROOT · supported files + providers */
+.amg-duo {
+  display: grid;
+  grid-template-columns: calc(414 * var(--u)) calc(386 * var(--u));
+  column-gap: calc(12 * var(--u));
+  margin: calc(16 * var(--u)) 0 0 calc(20 * var(--u));
+  height: calc(205 * var(--u));
+}
+.amg-duo > .amg-panel {
+  height: 100%;
+}
+.amg-duo .amg-h2 {
+  font-size: calc(19.7 * var(--u));
+  letter-spacing: 0.022em;
+  position: absolute;
+  left: calc(21 * var(--u));
+  top: calc(18 * var(--u));
+}
+.amg-duo .amg-sub {
+  position: absolute;
+  left: calc(21 * var(--u));
+  top: calc(45 * var(--u));
+}
+.amg-types {
+  position: absolute;
+  left: calc(17 * var(--u));
+  right: calc(15 * var(--u));
+  top: calc(77 * var(--u));
+  height: calc(110 * var(--u));
+  display: grid;
+  grid-template-columns: repeat(var(--n, 5), 1fr);
+  align-items: start;
+  padding-top: calc(13 * var(--u));
+  border: calc(1 * var(--u)) solid #e6e2db;
+  border-radius: calc(8 * var(--u));
+  background: rgba(255, 255, 255, 0.85);
+}
+.amg-types li {
+  display: grid;
+  justify-items: center;
+  font: 400 calc(13.5 * var(--u)) / calc(19 * var(--u)) var(--text);
+  color: var(--ink-2);
+  text-align: center;
+}
+.amg-types img {
+  width: calc(40 * var(--u));
+  height: calc(42 * var(--u));
+  object-fit: contain;
+  margin-bottom: calc(5 * var(--u));
+}
+.amg-providers {
+  position: absolute;
+  left: calc(22 * var(--u));
+  right: calc(8 * var(--u));
+  top: calc(77 * var(--u));
+  display: grid;
+  grid-template-columns: calc(124 * var(--u)) calc(108 * var(--u)) 1fr;
+  row-gap: calc(12 * var(--u));
+}
+.amg-providers li {
+  display: flex;
+  align-items: center;
+  gap: calc(9 * var(--u));
+  height: calc(34 * var(--u));
+  font: 500 calc(15 * var(--u)) / 1 var(--text);
+  color: var(--ink-2);
+}
+.amg-providers img {
+  width: calc(32 * var(--u));
+  height: calc(32 * var(--u));
+  object-fit: contain;
+}
+.amg-providers__more {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(174 * var(--u));
+  text-align: center;
+  font: 500 calc(11 * var(--u)) / 1 var(--text);
+  letter-spacing: 0.12em;
+  color: var(--ink-3);
+}
+
+/* ROOT · secure callout */
+.amg-secure {
+  position: relative;
+  margin: calc(18 * var(--u)) calc(23 * var(--u)) 0 calc(20 * var(--u));
+  height: calc(131 * var(--u));
+  border-radius: calc(14 * var(--u));
+  overflow: hidden;
+  background: linear-gradient(90deg, #fbefd9 0%, #fbf3e4 45%, #f6ead4 100%);
+  box-shadow: var(--panel-shadow);
+}
+.amg-secure__img {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: calc(318 * var(--u));
+  height: 100%;
+  object-fit: cover;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 28%);
+  mask-image: linear-gradient(90deg, transparent 0%, #000 28%);
+}
+.amg-secure__badge {
+  position: absolute;
+  left: calc(21 * var(--u));
+  top: calc(22 * var(--u));
+  width: calc(86 * var(--u));
+  height: calc(86 * var(--u));
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: radial-gradient(circle at 40% 35%, #f8dea4, #efc779);
+  color: var(--ink);
+}
+.amg-secure__badge .amg-ico {
+  width: calc(46 * var(--u));
+  height: calc(46 * var(--u));
+  stroke-width: 1.7;
+}
+.amg-secure__title {
+  position: absolute;
+  left: calc(132 * var(--u));
+  top: calc(23 * var(--u));
+  font: 600 calc(18.3 * var(--u)) / 1 var(--cond);
+  letter-spacing: 0.047em;
+}
+.amg-secure__text {
+  position: absolute;
+  left: calc(132 * var(--u));
+  top: calc(47 * var(--u));
+  width: calc(370 * var(--u));
+  font: 400 calc(15.5 * var(--u)) / calc(21 * var(--u)) var(--text);
+  color: var(--ink-2);
+}
+
+/* ───────── L4 · CTA ───────── */
+.amg-cta {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: calc(813 * var(--u));
+  height: calc(65 * var(--u));
+  margin: calc(13 * var(--u)) 0 0 calc(20 * var(--u));
+  border: 0;
+  border-radius: calc(12 * var(--u));
+  background: linear-gradient(180deg, #f6cd6c 0%, #f0bd52 55%, #e8ad3e 100%);
+  box-shadow: inset 0 calc(1 * var(--u)) 0 rgba(255, 255, 255, 0.45), 0 calc(6 * var(--u)) calc(16 * var(--u)) rgba(196, 140, 34, 0.25);
+  color: var(--ink);
+  font: 600 calc(24 * var(--u)) / 1 var(--cond);
+  letter-spacing: 0.005em;
+}
+.amg-cta:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+.amg-cta__arrow {
+  position: absolute;
+  right: calc(30 * var(--u));
+  top: 50%;
+  width: calc(32 * var(--u));
+  height: calc(32 * var(--u));
+  transform: translateY(-50%);
+  stroke-width: 2;
+}
+
+/* ───────── L5 · staff dock ───────── */
+.amg-dock {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 40;
+  height: calc(132 * var(--u));
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  background: rgba(250, 249, 247, 0.94);
+  -webkit-backdrop-filter: blur(14px) saturate(1.1);
+  backdrop-filter: blur(14px) saturate(1.1);
+  border-radius: calc(26 * var(--u)) calc(26 * var(--u)) 0 0;
+  box-shadow: 0 calc(-6 * var(--u)) calc(22 * var(--u)) rgba(70, 48, 18, 0.07), 0 calc(-1 * var(--u)) 0 rgba(255, 255, 255, 0.9);
+}
+.amg-dock__in {
+  height: 100%;
+}
+.amg-dock__item {
+  position: absolute;
+  top: calc(12 * var(--u));
+  width: calc(130 * var(--u));
+  height: calc(92 * var(--u));
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: calc(5 * var(--u));
+  padding-top: calc(1 * var(--u));
+  border-radius: calc(12 * var(--u));
+  color: #1b1b1d;
+  font: 500 calc(17 * var(--u)) / 1 var(--text);
+  letter-spacing: 0.06em;
+}
+.amg-dock__item .amg-ico {
+  width: calc(48 * var(--u));
+  height: calc(48 * var(--u));
+  stroke-width: 1.55;
+}
+.amg-dock__item:nth-child(1) { left: calc(35 * var(--u)); }
+.amg-dock__item:nth-child(2) { left: calc(196 * var(--u)); }
+.amg-dock__item:nth-child(3) { left: calc(361 * var(--u)); }
+.amg-dock__item:nth-child(4) { left: calc(522 * var(--u)); }
+.amg-dock__item:nth-child(5) { left: calc(690 * var(--u)); }
+.amg-dock__item.is-on {
+  background: linear-gradient(180deg, #3f352a, #2d261e);
+  color: #e9bb5c;
+  box-shadow: 0 calc(4 * var(--u)) calc(10 * var(--u)) rgba(40, 28, 10, 0.25);
+}
+
+/* ───────── shared bits ───────── */
+.amg-mono {
+  display: grid;
+  place-items: center;
+  border-radius: calc(10 * var(--u));
+  background: #0f0f10;
+  color: #e3b05a;
+  font: 500 calc(30 * var(--u)) / 1 var(--cond);
+  letter-spacing: -0.02em;
+}
+.amg-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(10 * var(--u));
+  border-radius: 999px;
+  font: 600 calc(16 * var(--u)) / 1 var(--cond);
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+.amg-pill__icon {
+  width: calc(26 * var(--u));
+  height: calc(26 * var(--u));
+}
+.amg-next {
+  position: relative;
+  display: grid;
+  grid-template-columns: calc(160 * var(--u)) 1fr;
+  align-items: center;
+  border-radius: calc(16 * var(--u));
+  background: linear-gradient(90deg, #fbeed7, #fbf2e3 60%, #faf3e8);
+  border: calc(1 * var(--u)) solid rgba(255, 255, 255, 0.7);
+}
+.amg-next::after {
+  content: '';
+  position: absolute;
+  left: calc(160 * var(--u));
+  top: calc(22 * var(--u));
+  bottom: calc(22 * var(--u));
+  width: calc(1 * var(--u));
+  background: rgba(150, 110, 40, 0.18);
+}
+.amg-next__icon {
+  justify-self: center;
+  display: grid;
+  place-items: center;
+  width: calc(104 * var(--u));
+  height: calc(104 * var(--u));
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, #f7dca2, #f0c97c);
+  color: var(--ink);
+}
+.amg-next__icon .amg-ico {
+  width: calc(50 * var(--u));
+  height: calc(50 * var(--u));
+  stroke-width: 1.6;
+}
+.amg-next__text {
+  padding-left: calc(38 * var(--u));
+  padding-right: calc(30 * var(--u));
+}
+.amg-next__text b {
+  display: block;
+  font: 600 calc(19.4 * var(--u)) / 1 var(--cond);
+  letter-spacing: 0.05em;
+}
+.amg-next__text p {
+  margin-top: calc(12 * var(--u));
+  font: 400 calc(18.5 * var(--u)) / calc(25.5 * var(--u)) var(--text);
+  color: var(--ink-2);
+}
+.amg-msg {
+  margin: calc(14 * var(--u)) calc(24 * var(--u)) 0;
+  padding: calc(14 * var(--u)) calc(18 * var(--u));
+  border-radius: calc(12 * var(--u));
+  background: #fff4f2;
+  color: #8a2a1b;
+  font: 500 calc(17 * var(--u)) / 1.3 var(--text);
+}
+.amg-file-input {
+  display: none;
+}
+
+/* ───────── hero values per screen (cap-top coordinates → box tops, Roboto metrics) ───────── */
+.amg[data-screen='existing'],
+.amg[data-screen='legacy-existing'] {
+  --hx: 46;
+  --k-top: 125.5; --k-size: 19; --k-track: 0.205em;
+  --t-top: 153.5; --t-size: 74.5; --t-pitch: 66;
+  --s-top: 289.9; --s-size: 22; --s-pitch: 26.5; --s-w: 400;
+  --k-track: 0.235em;
+}
+.amg[data-screen='extract'] {
+  --hx: 40;
+  --k-top: 125.5; --k-size: 19.5; --k-track: 0.2em;
+  --t-top: 154.5; --t-size: 73.5; --t-pitch: 66;
+  --s-top: 289.9; --s-size: 22; --s-pitch: 27; --s-w: 410;
+}
+.amg[data-screen='received'] {
+  --hx: 42;
+  --k-top: 125.5; --k-size: 19.5; --k-track: 0.2em;
+  --t-top: 161.5; --t-size: 80; --t-pitch: 80;
+  --s-top: 244.5; --s-size: 22.5; --s-pitch: 27.4; --s-w: 410;
+  --k-track: 0.213em;
+  --s-size: 23.6;
+  --s-pitch: 27.8;
+}
+.amg[data-screen='legacy-root'] {
+  --k-top: 160; --k-size: 21; --k-track: 0.205em;
+  --t-top: 194; --t-size: 70; --t-pitch: 62;
+  --s-top: 340; --s-size: 21; --s-pitch: 26; --s-w: 420;
+}
+.amg-line {
+  display: block;
+}
+.amg-hero__title > span {
+  display: block;
+}
+
+/* ───────── CTA geometry per screen ───────── */
+.amg[data-screen='existing'] .amg-cta { width: calc(808 * var(--u)); height: calc(67 * var(--u)); margin: calc(11 * var(--u)) 0 0 calc(23 * var(--u)); }
+.amg[data-screen='extract'] .amg-cta { width: calc(818 * var(--u)); height: calc(69 * var(--u)); margin: calc(16 * var(--u)) 0 0 calc(18 * var(--u)); }
+.amg[data-screen='received'] .amg-cta { width: calc(818 * var(--u)); height: calc(67 * var(--u)); margin: calc(9 * var(--u)) 0 0 calc(18 * var(--u)); }
+
+/* ───────── EXISTING · select client ───────── */
+.amg-existing,
+.amg-extract {
+  padding-top: calc((413 - var(--head-h)) * var(--u));
+}
+.amg-received {
+  padding-top: calc((396 - var(--head-h)) * var(--u));
+}
+.amg-flowcard {
+  margin: 0 calc(21 * var(--u)) 0 calc(22 * var(--u));
+  height: calc(136 * var(--u));
+}
+.amg-steps--flow {
+  --dot: 52;
+  position: absolute;
+  left: calc(15 * var(--u));
+  width: calc(780 * var(--u));
+  top: calc(18 * var(--u));
+}
+.amg-steps--flow .amg-step__dot {
+  font: 500 calc(23 * var(--u)) / 1 var(--text);
+}
+.amg-steps--flow .amg-step:not(.is-current):not(.is-done) .amg-step__dot {
+  transform: scale(0.9);
+}
+.amg-steps--flow .amg-step__label {
+  margin-top: calc(8 * var(--u));
+  font-size: calc(16.4 * var(--u));
+  letter-spacing: 0.02em;
+}
+.amg-steps--flow .amg-step__sub {
+  margin-top: calc(7 * var(--u));
+  font-size: calc(15.4 * var(--u));
+}
+.amg-find {
+  margin: calc(14 * var(--u)) calc(21 * var(--u)) 0 calc(22 * var(--u));
+  height: calc(625 * var(--u));
+}
+.amg-find > * {
+  position: absolute;
+}
+.amg-find__title {
+  left: calc(35 * var(--u));
+  top: calc(23 * var(--u));
+  font-size: calc(24.9 * var(--u));
+}
+.amg-find__sub {
+  left: calc(35 * var(--u));
+  top: calc(57 * var(--u));
+  font: 400 calc(19.5 * var(--u)) / 1 var(--text);
+  color: var(--ink-3);
+}
+.amg-search {
+  left: calc(33 * var(--u));
+  top: calc(97 * var(--u));
+  width: calc(744 * var(--u));
+  height: calc(66 * var(--u));
+  display: flex;
+  align-items: center;
+  gap: calc(28 * var(--u));
+  padding: 0 calc(22 * var(--u));
+  border: calc(1.5 * var(--u)) solid #dcd8d0;
+  border-radius: calc(10 * var(--u));
+  background: #fff;
+}
+.amg-search .amg-ico {
+  width: calc(30 * var(--u));
+  height: calc(30 * var(--u));
+  stroke-width: 2.3;
+  flex: none;
+}
+.amg-search input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: none;
+  font: 400 calc(19.5 * var(--u)) / 1 var(--text);
+  color: var(--ink);
+}
+.amg-search input::placeholder {
+  color: #5d5d62;
+}
+.amg-find__head {
+  left: calc(34 * var(--u));
+  right: calc(28 * var(--u));
+  top: calc(188 * var(--u));
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.amg-find__head b {
+  font: 500 calc(14.9 * var(--u)) / 1 var(--text);
+  letter-spacing: 0.16em;
+}
+.amg-find__head span {
+  display: flex;
+  align-items: center;
+  gap: calc(8 * var(--u));
+  font: 400 calc(18.5 * var(--u)) / 1 var(--text);
+  color: var(--ink-2);
+}
+.amg-find__head .amg-ico {
+  width: calc(20 * var(--u));
+  height: calc(20 * var(--u));
+}
+.amg-crows {
+  left: calc(34 * var(--u));
+  top: calc(222 * var(--u));
+  width: calc(743 * var(--u));
+  display: grid;
+  row-gap: calc(6.5 * var(--u));
+}
+.amg-crows__empty {
+  padding: calc(20 * var(--u));
+  font: 400 calc(18 * var(--u)) / 1.3 var(--text);
+  color: var(--ink-3);
+}
+.amg-crow {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: calc(67 * var(--u));
+  padding: 0;
+  border: calc(1 * var(--u)) solid #e7e3dc;
+  border-radius: calc(8 * var(--u));
+  background: #fff;
+  text-align: left;
+}
+.amg-crow.is-on {
+  border-color: #e9b649;
+  box-shadow: 0 0 0 calc(2 * var(--u)) rgba(241, 193, 88, 0.35);
+}
+.amg-crow > * {
+  position: absolute;
+}
+.amg-crow__mono {
+  left: calc(10 * var(--u));
+  top: calc(5 * var(--u));
+  width: calc(56 * var(--u));
+  height: calc(56 * var(--u));
+  font-size: calc(24 * var(--u));
+}
+.amg-crow__name {
+  left: calc(102 * var(--u));
+  top: calc(12 * var(--u));
+  font: 600 calc(20.5 * var(--u)) / 1 var(--cond);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+.amg-crow__ids {
+  left: calc(102 * var(--u));
+  top: calc(39 * var(--u));
+  white-space: pre;
+  font: 400 calc(17.5 * var(--u)) / 1 var(--text);
+  color: var(--ink-3);
+}
+.amg-crow__chev {
+  right: calc(22 * var(--u));
+  top: calc(22 * var(--u));
+  width: calc(24 * var(--u));
+  height: calc(24 * var(--u));
+  stroke-width: 2.2;
+}
+.amg-cantfind {
+  left: calc(30 * var(--u));
+  top: calc(528 * var(--u));
+  width: calc(750 * var(--u));
+  height: calc(83 * var(--u));
+  padding: 0;
+  border: 0;
+  border-radius: calc(10 * var(--u));
+  background: #ebe9e5;
+  text-align: left;
+}
+.amg-cantfind > * {
+  position: absolute;
+}
+.amg-cantfind__plus {
+  left: calc(22 * var(--u));
+  top: calc(18 * var(--u));
+  width: calc(46 * var(--u));
+  height: calc(46 * var(--u));
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: #4b4b50;
+  color: #fff;
+}
+.amg-cantfind__plus .amg-ico {
+  width: calc(28 * var(--u));
+  height: calc(28 * var(--u));
+  stroke-width: 2.4;
+}
+.amg-cantfind b {
+  left: calc(112 * var(--u));
+  top: calc(19 * var(--u));
+  font: 600 calc(19.5 * var(--u)) / 1 var(--cond);
+  letter-spacing: 0.04em;
+}
+.amg-cantfind > span:not(.amg-cantfind__plus) {
+  left: calc(112 * var(--u));
+  top: calc(46 * var(--u));
+  font: 400 calc(18.5 * var(--u)) / 1 var(--text);
+  color: var(--ink-2);
+}
+.amg-cantfind__chev {
+  right: calc(18 * var(--u));
+  top: calc(28 * var(--u));
+  width: calc(26 * var(--u));
+  height: calc(26 * var(--u));
+  stroke-width: 2.2;
+}
+.amg-existing .amg-next {
+  margin: calc(12 * var(--u)) calc(21 * var(--u)) 0 calc(22 * var(--u));
+  height: calc(142 * var(--u));
+}
+
+/* ───────── EXTRACT · processing ───────── */
+.amg-xcard {
+  margin: 0 calc(16 * var(--u)) 0 calc(17 * var(--u));
+  height: calc(497 * var(--u));
+}
+.amg-xcard > * {
+  position: absolute;
+}
+.amg-xcard__mono {
+  left: calc(26 * var(--u));
+  top: calc(20 * var(--u));
+  width: calc(80 * var(--u));
+  height: calc(80 * var(--u));
+  border-radius: calc(12 * var(--u));
+  font-size: calc(36 * var(--u));
+}
+.amg-xcard__name {
+  left: calc(129 * var(--u));
+  top: calc(29 * var(--u));
+  font: 600 calc(32.5 * var(--u)) / 1 var(--cond);
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+}
+.amg-xcard__ids {
+  left: calc(129 * var(--u));
+  top: calc(68 * var(--u));
+  white-space: pre;
+  font: 400 calc(19.5 * var(--u)) / 1 var(--text);
+  color: var(--ink-3);
+}
+.amg-xcard__pill {
+  right: calc(22 * var(--u));
+  top: calc(42 * var(--u));
+}
+.amg-xcard__pill .amg-pill {
+  height: calc(36 * var(--u));
+  padding: 0 calc(16 * var(--u));
+  background: #f8e6c2;
+  color: #2f2510;
+  font-size: calc(15 * var(--u));
+  letter-spacing: 0.08em;
+}
+.amg-steps--x {
+  --dot: 58;
+  left: calc(12 * var(--u));
+  width: calc(792 * var(--u));
+  top: calc(123 * var(--u));
+}
+.amg-steps--x .amg-step__dot {
+  font-size: calc(24 * var(--u));
+}
+.amg-steps--x .amg-step__label {
+  margin-top: calc(16 * var(--u));
+  max-width: calc(100 * var(--u));
+  font-size: calc(17.6 * var(--u));
+  line-height: calc(19 * var(--u));
+}
+.amg-steps--x .amg-step__sub {
+  margin-top: calc(8 * var(--u));
+  font-size: calc(16.6 * var(--u));
+}
+.amg-steps--x .amg-step.is-todo .amg-step__sub {
+  color: var(--ink-4);
+}
+.amg-steps--x .amg-step.is-current .amg-step__sub {
+  color: var(--ink-2);
+}
+.amg-xprog {
+  left: 0;
+  right: 0;
+  top: calc(285 * var(--u));
+  height: calc(90 * var(--u));
+  border-top: calc(1 * var(--u)) solid #e8e4dd;
+}
+.amg-xprog > * {
+  position: absolute;
+}
+.amg-xprog b {
+  left: calc(30 * var(--u));
+  top: calc(15 * var(--u));
+  font: 500 calc(16.2 * var(--u)) / 1 var(--text);
+  letter-spacing: 0.12em;
+}
+.amg-xprog__count {
+  right: calc(26 * var(--u));
+  top: calc(15 * var(--u));
+  font: 400 calc(15.6 * var(--u)) / 1 var(--text);
+  letter-spacing: 0.14em;
+  color: var(--ink-3);
+}
+.amg-xprog__bar {
+  left: calc(28 * var(--u));
+  top: calc(51 * var(--u));
+  width: calc(702 * var(--u));
+  height: calc(25 * var(--u));
+  border-radius: calc(13 * var(--u));
+  background: #ebe9e5;
+  overflow: hidden;
+}
+.amg-xprog__bar > span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(180deg, var(--gold-hi), var(--gold-lo));
+}
+.amg-xprog__pct {
+  right: calc(30 * var(--u));
+  top: calc(53 * var(--u));
+  font: 600 calc(20 * var(--u)) / 1 var(--text);
+}
+.amg-leave {
+  left: calc(27 * var(--u));
+  top: calc(389 * var(--u));
+  width: calc(766 * var(--u));
+  height: calc(86 * var(--u));
+  border-radius: calc(12 * var(--u));
+  background: #fbefd9;
+}
+.amg-leave > * {
+  position: absolute;
+}
+.amg-leave__icon {
+  left: calc(24 * var(--u));
+  top: calc(16 * var(--u));
+  width: calc(54 * var(--u));
+  height: calc(54 * var(--u));
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: #f8deaa;
+  color: var(--ink);
+}
+.amg-leave__icon .amg-ico {
+  width: calc(32 * var(--u));
+  height: calc(32 * var(--u));
+  stroke-width: 2.6;
+}
+.amg-leave b {
+  left: calc(110 * var(--u));
+  top: calc(20 * var(--u));
+  font: 500 calc(17.3 * var(--u)) / 1 var(--text);
+  letter-spacing: 0.065em;
+}
+.amg-leave > span:not(.amg-leave__icon) {
+  left: calc(110 * var(--u));
+  top: calc(46 * var(--u));
+  font: 400 calc(18.5 * var(--u)) / 1 var(--text);
+  color: var(--ink-2);
+}
+.amg-xstep {
+  margin: calc(15 * var(--u)) calc(16 * var(--u)) 0 calc(17 * var(--u));
+  height: calc(372 * var(--u));
+}
+.amg-xstep > * {
+  position: absolute;
+}
+.amg-xstep__title {
+  left: calc(29 * var(--u));
+  top: calc(17 * var(--u));
+  font: 500 calc(15.9 * var(--u)) / 1 var(--text);
+  letter-spacing: 0.12em;
+}
+.amg-xstep__box {
+  left: calc(28 * var(--u));
+  top: calc(50 * var(--u));
+  width: calc(764 * var(--u));
+  height: calc(122 * var(--u));
+  border: calc(1 * var(--u)) solid #e6e2db;
+  border-radius: calc(10 * var(--u));
+  background: #fff;
+}
+.amg-xstep__box > * {
+  position: absolute;
+}
+.amg-xstep__icon {
+  left: calc(22 * var(--u));
+  top: calc(17 * var(--u));
+  width: calc(90 * var(--u));
+  height: calc(90 * var(--u));
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: #f9e3b9;
+}
+.amg-xstep__icon .amg-ico {
+  width: calc(44 * var(--u));
+  height: calc(44 * var(--u));
+  stroke-width: 1.7;
+}
+.amg-xstep__box > b {
+  left: calc(136 * var(--u));
+  top: calc(22 * var(--u));
+  font: 600 calc(19.6 * var(--u)) / 1 var(--cond);
+  letter-spacing: 0.03em;
+}
+.amg-xstep__box > span:not(.amg-xstep__icon):not(.amg-spin) {
+  left: calc(136 * var(--u));
+  top: calc(50 * var(--u));
+  width: calc(400 * var(--u));
+  font: 400 calc(17.2 * var(--u)) / calc(25.5 * var(--u)) var(--text);
+  color: var(--ink-3);
+}
+.amg-spin {
+  left: calc(666 * var(--u));
+  top: calc(30 * var(--u));
+  width: calc(56 * var(--u));
+  height: calc(56 * var(--u));
+  border-radius: 50%;
+  border: calc(6 * var(--u)) solid #f7e6c4;
+  border-top-color: var(--gold-lo);
+  border-left-color: var(--gold);
+  animation: amg-spin 1.2s linear infinite;
+}
+@keyframes amg-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .amg-spin {
+    animation: none;
+  }
+}
+.amg-xstats {
+  left: calc(28 * var(--u));
+  top: calc(187 * var(--u));
+  width: calc(764 * var(--u));
+  height: calc(68 * var(--u));
+  display: grid;
+  grid-template-columns: calc(266 * var(--u)) calc(286 * var(--u)) 1fr;
+  margin: 0;
+}
+.amg-xstats > div {
+  position: relative;
+  padding-left: calc(61 * var(--u));
+}
+.amg-xstats > div + div {
+  border-left: calc(1 * var(--u)) solid #e3dfd8;
+  padding-left: calc(68 * var(--u));
+}
+.amg-xstats .amg-ico {
+  position: absolute;
+  left: calc(16 * var(--u));
+  top: calc(16 * var(--u));
+  width: calc(32 * var(--u));
+  height: calc(32 * var(--u));
+  stroke-width: 1.7;
+}
+.amg-xstats > div + div .amg-ico {
+  left: calc(24 * var(--u));
+}
+.amg-xstats dt {
+  margin-top: calc(5 * var(--u));
+  font: 600 calc(15.6 * var(--u)) / 1 var(--cond);
+  letter-spacing: 0.07em;
+}
+.amg-xstats dd {
+  margin: calc(14 * var(--u)) 0 0;
+  font: 400 calc(18 * var(--u)) / 1 var(--text);
+  color: var(--ink-2);
+}
+.amg-xact {
+  left: calc(28 * var(--u));
+  top: calc(266 * var(--u));
+  width: calc(764 * var(--u));
+  height: calc(87 * var(--u));
+  padding: 0;
+  border: calc(1 * var(--u)) solid #e6e2db;
+  border-radius: calc(10 * var(--u));
+  background: #fff;
+  text-align: left;
+}
+.amg-xact:disabled {
+  cursor: default;
+}
+.amg-xact > * {
+  position: absolute;
+}
+.amg-xact__icon {
+  left: calc(26 * var(--u));
+  top: calc(26 * var(--u));
+  width: calc(34 * var(--u));
+  height: calc(34 * var(--u));
+  stroke-width: 1.6;
+}
+.amg-xact::before {
+  content: '';
+  position: absolute;
+  left: calc(85 * var(--u));
+  top: calc(14 * var(--u));
+  bottom: calc(14 * var(--u));
+  width: calc(1 * var(--u));
+  background: #e3dfd8;
+}
+.amg-xact b {
+  left: calc(101 * var(--u));
+  top: calc(15 * var(--u));
+  font: 600 calc(18.6 * var(--u)) / 1 var(--cond);
+  letter-spacing: 0.06em;
+}
+.amg-xact > span {
+  left: calc(102 * var(--u));
+  top: calc(48 * var(--u));
+  font: 400 calc(18 * var(--u)) / 1 var(--text);
+  color: var(--ink-3);
+}
+.amg-xact__chev {
+  right: calc(22 * var(--u));
+  top: calc(31 * var(--u));
+  width: calc(24 * var(--u));
+  height: calc(24 * var(--u));
+  stroke-width: 2.2;
+}
+
+/* ───────── RECEIVED · files ───────── */
+.amg-rclient {
+  margin: 0 calc(16 * var(--u)) 0 calc(18 * var(--u));
+  height: calc(149 * var(--u));
+}
+.amg-rclient > * {
+  position: absolute;
+}
+.amg-rclient__label {
+  left: calc(28 * var(--u));
+  top: calc(15 * var(--u));
+  font: 500 calc(16.9 * var(--u)) / 1 var(--text);
+  letter-spacing: 0.11em;
+}
+.amg-rclient__mono {
+  left: calc(28 * var(--u));
+  top: calc(48 * var(--u));
+  width: calc(80 * var(--u));
+  height: calc(80 * var(--u));
+  border-radius: calc(12 * var(--u));
+  font-size: calc(36 * var(--u));
+}
+.amg-rclient__name {
+  left: calc(136 * var(--u));
+  top: calc(61 * var(--u));
+  font: 600 calc(26 * var(--u)) / 1 var(--cond);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+.amg-rclient__ids {
+  left: calc(136 * var(--u));
+  top: calc(96 * var(--u));
+  white-space: pre;
+  font: 400 calc(20 * var(--u)) / 1 var(--text);
+  color: var(--ink-3);
+}
+.amg-rclient__div {
+  left: calc(517 * var(--u));
+  top: calc(29 * var(--u));
+  width: calc(1 * var(--u));
+  height: calc(95 * var(--u));
+  background: #e3dfd8;
+}
+.amg-rclient__doc {
+  left: calc(551 * var(--u));
+  top: calc(41 * var(--u));
+  width: calc(68 * var(--u));
+  height: calc(68 * var(--u));
+  stroke-width: 1.5;
+}
+.amg-rclient__n {
+  left: calc(627 * var(--u));
+  top: calc(35 * var(--u));
+  font: 700 calc(67.5 * var(--u)) / 1 var(--text);
+  color: #f0b44a;
+}
+.amg-rclient__lbl {
+  left: calc(675 * var(--u));
+  top: calc(50 * var(--u));
+  font: 600 calc(20.5 * var(--u)) / calc(25 * var(--u)) var(--cond);
+  letter-spacing: 0.05em;
+  font-size: calc(19.3 * var(--u));
+}
+.amg-rfiles {
+  margin: calc(12 * var(--u)) calc(16 * var(--u)) 0 calc(18 * var(--u));
+  min-height: calc(596 * var(--u));
+  padding: calc(73 * var(--u)) calc(14 * var(--u)) calc(8 * var(--u));
+}
+.amg-rfiles__title {
+  position: absolute;
+  left: calc(28 * var(--u));
+  top: calc(24 * var(--u));
+  font: 600 calc(24.6 * var(--u)) / 1 var(--cond);
+  letter-spacing: 0.05em;
+}
+.amg-rfiles__add {
+  position: absolute;
+  left: calc(619 * var(--u));
+  top: calc(16 * var(--u));
+  width: calc(174 * var(--u));
+  height: calc(45 * var(--u));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: calc(12 * var(--u));
+  border: 0;
+  border-radius: calc(23 * var(--u));
+  background: #e9e7e3;
+  font: 500 calc(18.4 * var(--u)) / 1 var(--cond);
+  letter-spacing: 0.05em;
+}
+.amg-rfiles__add .amg-ico {
+  width: calc(34 * var(--u));
+  height: calc(34 * var(--u));
+  stroke-width: 2;
+}
+.amg-table {
+  display: grid;
+}
+.amg-tr {
+  display: grid;
+  grid-template-columns: calc(275 * var(--u)) calc(78 * var(--u)) calc(87 * var(--u)) calc(175 * var(--u)) 1fr;
+  align-items: center;
+  height: calc(58.7 * var(--u));
+  padding-left: calc(15 * var(--u));
+  border-bottom: calc(1 * var(--u)) solid #ece9e4;
+  font: 400 calc(15.4 * var(--u)) / 1 var(--text);
+  color: var(--ink-3);
+}
+.amg-tr:last-child {
+  border-bottom: 0;
+}
+.amg-tr--head {
+  height: calc(44 * var(--u));
+  border: 0;
+  border-radius: calc(8 * var(--u));
+  background: #f1efeb;
+  font: 500 calc(16 * var(--u)) / 1 var(--text);
+  letter-spacing: 0.09em;
+  color: #5c5c61;
+}
+.amg-tr--head > span:last-child {
+  text-align: center;
+  padding-right: calc(22 * var(--u));
+}
+.amg-tr--empty {
+  grid-template-columns: 1fr;
+  height: auto;
+  padding: calc(24 * var(--u)) calc(15 * var(--u));
+  font-size: calc(18 * var(--u));
+}
+.amg-td-name {
+  display: flex;
+  align-items: center;
+  gap: calc(14 * var(--u));
+  min-width: 0;
+  font-size: calc(17 * var(--u));
+  color: #222225;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.amg-td-name img {
+  width: calc(32 * var(--u));
+  height: calc(32 * var(--u));
+  object-fit: contain;
+  flex: none;
+}
+.amg-state {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(8 * var(--u));
+  height: calc(34 * var(--u));
+  padding: 0 calc(14 * var(--u)) 0 calc(6 * var(--u));
+  border-radius: calc(17 * var(--u));
+  font: 500 calc(14.5 * var(--u)) / 1 var(--cond);
+  letter-spacing: 0.04em;
+}
+.amg-state .amg-ico {
+  width: calc(24 * var(--u));
+  height: calc(24 * var(--u));
+  padding: calc(4 * var(--u));
+  border-radius: 50%;
+  color: #fff;
+  stroke-width: 3.2;
+}
+.amg-state--accepted { background: #e1f1e4; color: #24814a; }
+.amg-state--accepted .amg-ico { background: #2a9b55; }
+.amg-state--partial { background: #fbebc8; color: #9a6411; }
+.amg-state--partial .amg-ico { background: #e1951e; }
+.amg-state--unsupported { background: #fde2df; color: #c2372c; }
+.amg-state--unsupported .amg-ico { background: #dd4436; }
+.amg-td-act {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  justify-items: center;
+}
+.amg-td-act button {
+  display: grid;
+  justify-items: center;
+  gap: calc(3 * var(--u));
+  padding: 0;
+  border: 0;
+  background: none;
+  font: 400 calc(14.5 * var(--u)) / 1 var(--text);
+  color: var(--ink-3);
+}
+.amg-td-act button:disabled {
+  cursor: default;
+}
+.amg-td-act .amg-ico {
+  width: calc(28 * var(--u));
+  height: calc(28 * var(--u));
+  color: var(--ink);
+  stroke-width: 1.9;
+}
+.amg-received .amg-next {
+  margin: calc(17 * var(--u)) calc(16 * var(--u)) 0 calc(18 * var(--u));
+  height: calc(142 * var(--u));
+}
+
+/* ───────── legacy panels inside the authority shell (screens not yet rebuilt) ───────── */
+.amg-legacy {
+  display: grid;
+  gap: calc(16 * var(--u));
+  padding: calc((470 - var(--head-h)) * var(--u)) calc(20 * var(--u)) 0;
+  font-size: calc(26 * var(--u));
+}
+.amg--existing .amg-legacy {
+  padding-top: calc((420 - var(--head-h)) * var(--u));
+}
+.amg-legacy .mig-card {
+  background: var(--glass);
+  border: calc(1 * var(--u)) solid var(--glass-edge);
+  border-radius: calc(16 * var(--u));
+  box-shadow: var(--panel-shadow);
+  padding: calc(26 * var(--u));
+}
+.amg-legacy .mig-card h2 {
+  font: 600 calc(25 * var(--u)) / 1.1 var(--cond);
+  letter-spacing: 0.05em;
+  margin-bottom: calc(10 * var(--u));
+}
+.amg-legacy .mig-sub,
+.amg-legacy .mig-row,
+.amg-legacy .mig-label,
+.amg-legacy .mig-field,
+.amg-legacy .mig-chip,
+.amg-legacy .mig-person b,
+.amg-legacy .mig-person span,
+.amg-legacy .mig-stat span {
+  font-size: calc(19 * var(--u));
+}
+.amg-legacy .mig-chip {
+  padding: calc(10 * var(--u)) calc(16 * var(--u));
+}
+.amg--existing .amg-cta {
+  font-size: calc(27.4 * var(--u));
+  letter-spacing: 0.02em;
+}
+.amg-xstats > div:nth-child(3) {
+  padding-left: calc(76 * var(--u));
+}
+.amg-xstats > div:nth-child(3) .amg-ico {
+  left: calc(30 * var(--u));
+}
+.amg--existing .amg-dock {
+  left: calc(3 * var(--u));
+  right: calc(4 * var(--u));
+  bottom: calc(3 * var(--u));
+  height: calc(105 * var(--u));
+  border-radius: calc(16 * var(--u));
+  padding-bottom: 0;
+  box-shadow: 0 calc(4 * var(--u)) calc(18 * var(--u)) rgba(70, 48, 18, 0.1), inset 0 calc(1 * var(--u)) 0 rgba(255, 255, 255, 0.9);
+}
+.amg--existing .amg-dock__in {
+  width: calc(846 * var(--u));
+  margin: 0;
+}
+.amg--existing .amg-dock__item {
+  top: calc(5 * var(--u));
+  width: calc(115 * var(--u));
+  height: calc(87 * var(--u));
+  align-content: start;
+  padding-top: calc(8 * var(--u));
+  gap: calc(7 * var(--u));
+  font-size: calc(17.6 * var(--u));
+  letter-spacing: 0.05em;
+}
+.amg--existing .amg-dock__item .amg-ico {
+  width: calc(44 * var(--u));
+  height: calc(44 * var(--u));
+}
+.amg--existing .amg-dock__item:nth-child(1) {
+  left: calc(47.5 * var(--u));
+}
+.amg--existing .amg-dock__item:nth-child(2) {
+  left: calc(203.5 * var(--u));
+}
+.amg--existing .amg-dock__item:nth-child(3) {
+  left: calc(364.5 * var(--u));
+}
+.amg--existing .amg-dock__item:nth-child(4) {
+  left: calc(519.5 * var(--u));
+}
+.amg--existing .amg-dock__item:nth-child(5) {
+  left: calc(678.5 * var(--u));
+}
+.amg--existing .amg-head__bell .amg-ico {
+  width: calc(40 * var(--u));
+  height: calc(40 * var(--u));
+}
+.amg--existing .amg-step.is-current .amg-step__dot, .amg--existing .amg-step.is-done .amg-step__dot {
+  background: linear-gradient(180deg, #f7c349, #f0aa2c);
+  border-color: transparent;
+  box-shadow: 0 calc(2 * var(--u)) calc(6 * var(--u)) rgba(200, 130, 20, 0.25);
+}
+.amg--existing .amg-step__dot {
+  background: #ececec;
+  border-color: #e2e2e2;
+  font-weight: 600;
+  color: #161616;
+}
+.amg--existing .amg-step__sub {
+  color: #5d5d63;
+}
+.amg[data-screen='existing'] .amg-cta {
+
+  font-size: calc(28.8 * var(--u));
+}
+.amg-existing .amg-next__text p {
+  font-size: calc(18.9 * var(--u));
+  line-height: calc(25 * var(--u));
+  max-width: calc(535 * var(--u));
+}
+.amg-received .amg-next__text p {
+  font-size: calc(18.6 * var(--u));
+  line-height: calc(25.5 * var(--u));
+  max-width: calc(540 * var(--u));
+}
+.amg[data-screen='received'] .amg-cta {
+  font-size: calc(29.2 * var(--u));
+}
+.amg-existing .amg-next__text {
+  padding-top: calc(5 * var(--u));
+}
+
+/* ═════════ CLIENT ACTIVATION (client actor · no staff dock) ═════════ */
+.amg--client .amg-main {
+  padding-bottom: calc(40 * var(--u));
+}
+.amg[data-screen='company'],
+.amg[data-screen='legacy-activation'] {
+  --hx: 41;
+  --k-top: 125.4; --k-size: 19.5; --k-track: 0.235em;
+  --t-top: 154.3; --t-size: 72.5; --t-pitch: 65; --t-dx: 0;
+  --s-top: 290.4;
+  --t-track: 0.035em;
+  --s-size: 22.6;
+}
+.amg-activation {
+  padding-top: calc((413 - var(--head-h)) * var(--u));
+}
+
+/* COMPANY · steps card is the shared select-flow card (same authority geometry as EXISTING) */
+.amg-cinfo {
+  margin: calc(16 * var(--u)) calc(17 * var(--u)) 0 calc(18 * var(--u));
+  height: calc(607 * var(--u));
+}
+.amg-cinfo > * {
+  position: absolute;
+}
+.amg-cinfo__title {
+  left: calc(31 * var(--u));
+  top: calc(18 * var(--u));
+  font: 600 calc(28.3 * var(--u)) / 1 var(--cond);
+  letter-spacing: 0.035em;
+}
+.amg-cinfo__sub {
+  left: calc(32 * var(--u));
+  top: calc(56.4 * var(--u));
+  font: 400 calc(20.5 * var(--u)) / 1 var(--text);
+  color: var(--ink-3);
+}
+.amg-cinfo__pill {
+  right: calc(27 * var(--u));
+  top: calc(25 * var(--u));
+}
+.amg-cinfo__pill .amg-pill {
+  height: calc(47 * var(--u));
+  padding: 0 calc(16 * var(--u)) 0 calc(14 * var(--u));
+  gap: calc(12 * var(--u));
+  border-radius: calc(10 * var(--u));
+  font: 500 calc(19.9 * var(--u)) / 1 var(--cond);
+  letter-spacing: 0.045em;
+}
+.amg-cinfo__pill .amg-pill__icon {
+  width: calc(33 * var(--u));
+  height: calc(33 * var(--u));
+  padding: calc(6 * var(--u));
+  border-radius: 50%;
+  color: #fff;
+  stroke-width: 3.4;
+}
+.amg-pill--red {
+  background: #fde4e1;
+  color: #c3291f;
+}
+.amg-pill--red .amg-pill__icon {
+  background: #d8261c;
+}
+.amg-pill--green {
+  background: #e2f2e5;
+  color: #1f7a3f;
+}
+.amg-pill--green .amg-pill__icon {
+  background: #23894a;
+}
+.amg-cinfo__mono {
+  left: calc(35 * var(--u));
+  top: calc(110 * var(--u));
+  width: calc(112 * var(--u));
+  height: calc(110 * var(--u));
+  border-radius: calc(14 * var(--u));
+  font-size: calc(50 * var(--u));
+  box-shadow: 0 calc(3 * var(--u)) calc(8 * var(--u)) rgba(0, 0, 0, 0.18);
+}
+.amg-cinfo__name {
+  left: calc(174 * var(--u));
+  top: calc(105.4 * var(--u));
+  font: 600 calc(35 * var(--u)) / 1 var(--cond);
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.amg-cinfo__addr {
+  left: calc(175 * var(--u));
+  top: calc(145.3 * var(--u));
+  display: grid;
+  font: 400 calc(22.5 * var(--u)) / calc(30 * var(--u)) var(--text);
+  color: var(--ink-3);
+  letter-spacing: 0.01em;
+  white-space: pre;
+}
+.amg-cinfo__rule {
+  height: calc(1 * var(--u));
+  background: #e3e0da;
+}
+.amg-cinfo__rule--1 {
+  left: calc(177 * var(--u));
+  right: calc(31 * var(--u));
+  top: calc(229 * var(--u));
+}
+.amg-cinfo__rule--2 {
+  left: calc(34 * var(--u));
+  right: calc(31 * var(--u));
+  top: calc(401 * var(--u));
+}
+.amg-cinfo__contact {
+  left: calc(42 * var(--u));
+  top: calc(242 * var(--u));
+  display: grid;
+  row-gap: calc(12 * var(--u));
+}
+.amg-cinfo__contact li {
+  display: grid;
+  grid-template-columns: calc(59 * var(--u)) 1fr;
+  align-items: start;
+  min-height: calc(28 * var(--u));
+  font: 400 calc(22 * var(--u)) / calc(28 * var(--u)) var(--text);
+  color: #2a2a2d;
+}
+.amg-cinfo__contact .amg-ico {
+  width: calc(30 * var(--u));
+  height: calc(30 * var(--u));
+  color: #1c1c1e;
+  stroke-width: 1.6;
+}
+.amg-cinfo__contact small {
+  display: block;
+  margin-top: calc(1 * var(--u));
+  font: 400 calc(18.5 * var(--u)) / calc(24 * var(--u)) var(--text);
+  color: var(--ink-3);
+}
+.amg-cinfo__q {
+  left: calc(31 * var(--u));
+  top: calc(419.7 * var(--u));
+  font: 600 calc(26.2 * var(--u)) / 1 var(--cond);
+  letter-spacing: 0.04em;
+}
+.amg-cinfo__qs {
+  left: calc(32 * var(--u));
+  top: calc(451.4 * var(--u));
+  font: 400 calc(20.2 * var(--u)) / 1 var(--text);
+  color: var(--ink-3);
+}
+.amg-choices {
+  left: calc(34 * var(--u));
+  right: calc(31 * var(--u));
+  top: calc(492 * var(--u));
+  height: calc(102 * var(--u));
+  display: grid;
+  grid-template-columns: calc(239 * var(--u)) calc(237 * var(--u)) calc(238 * var(--u));
+  column-gap: calc(19 * var(--u));
+}
+.amg-choice {
+  position: relative;
+  border: calc(1.5 * var(--u)) solid;
+  border-radius: calc(12 * var(--u));
+  padding: 0;
+}
+.amg-choice > * {
+  position: absolute;
+  left: 0;
+  right: 0;
+}
+.amg-choice__icon {
+  top: calc(13 * var(--u));
+  margin: 0 auto;
+  width: calc(42 * var(--u));
+  height: calc(42 * var(--u));
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: #fff;
+}
+.amg-choice__icon .amg-ico {
+  width: calc(26 * var(--u));
+  height: calc(26 * var(--u));
+  stroke-width: 3;
+}
+.amg-choice__label {
+  top: calc(61.6 * var(--u));
+  text-align: center;
+  font: 500 calc(19.4 * var(--u)) / 1 var(--cond);
+  letter-spacing: 0.05em;
+  color: #1c1c1e;
+}
+.amg-choice--green {
+  background: #e4f2e7;
+  border-color: #b9dcc1;
+}
+.amg-choice--green .amg-choice__icon {
+  background: #1f7a40;
+}
+.amg-choice--amber {
+  background: #fdf0dd;
+  border-color: #f2d9ad;
+}
+.amg-choice--amber .amg-choice__icon {
+  background: none;
+  color: #17171a;
+}
+.amg-choice--amber .amg-choice__icon .amg-ico {
+  width: calc(42 * var(--u));
+  height: calc(42 * var(--u));
+  stroke-width: 1.7;
+}
+.amg-choice--gray {
+  background: #ececed;
+  border-color: #d9d9db;
+}
+.amg-choice--gray .amg-choice__icon {
+  background: #68686d;
+}
+.amg-choice--gray .amg-choice__icon .amg-ico {
+  stroke-width: 2.6;
+}
+.amg-choice.is-on {
+  box-shadow: 0 0 0 calc(3 * var(--u)) rgba(241, 193, 88, 0.55);
+}
+.amg-company .amg-next {
+  margin: calc(11 * var(--u)) calc(32 * var(--u)) 0 calc(34 * var(--u));
+  height: calc(129 * var(--u));
+  grid-template-columns: calc(140 * var(--u)) 1fr;
+}
+.amg-company .amg-next::after {
+  left: calc(145 * var(--u));
+}
+.amg-company .amg-next__icon {
+  width: calc(98 * var(--u));
+  height: calc(98 * var(--u));
+}
+.amg-company .amg-next__text {
+  padding-left: calc(39 * var(--u));
+  padding-right: calc(12 * var(--u));
+  margin-top: calc(-6 * var(--u));
+}
+.amg-company .amg-next__text b {
+  font-size: calc(18.8 * var(--u));
+}
+.amg-company .amg-next__text p {
+  margin-top: calc(10 * var(--u));
+  font-size: calc(19.1 * var(--u));
+  line-height: calc(25 * var(--u));
+  max-width: calc(576 * var(--u));
+}
+.amg-company .amg-cta {
+  width: calc(818 * var(--u));
+  height: calc(65 * var(--u));
+  margin: calc(13 * var(--u)) 0 0 calc(18 * var(--u));
+  font-size: calc(31.1 * var(--u));
+}
+
+/* ═════════ ACTIVE ARRIVAL · AIO-MIG-ACTIVATION-COMPLETE-002 ═════════ */
+.amg[data-screen='complete'] {
+  --hx: 46;
+  --k-top: 135.4; --k-size: 19.5; --k-track: 0.235em;
+  --t-top: 166; --t-size: 84; --t-pitch: 72; --t-dx: -2;
+  --a-top: 311; --a-size: 30.5;
+  --s-top: 348.9; --s-size: 21.5; --s-pitch: 28; --s-w: 380;
+  --t-track: -0.035em;
+  --t-dx: -4;
+  --k-track: 0.21em;
+}
+.amg-arrival {
+  padding-top: calc((657 - var(--head-h)) * var(--u));
+}
+.amg-arrival__state {
+  position: absolute;
+  left: calc(45 * var(--u));
+  top: calc((518 - var(--head-h)) * var(--u));
+  width: calc(217 * var(--u));
+  height: calc(72 * var(--u));
+  display: flex;
+  align-items: center;
+  gap: calc(30 * var(--u));
+  padding-left: calc(17 * var(--u));
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(236, 250, 230, 0.96), rgba(214, 240, 206, 0.94));
+  box-shadow: 0 0 calc(18 * var(--u)) calc(4 * var(--u)) rgba(150, 230, 140, 0.55), inset 0 calc(1 * var(--u)) 0 rgba(255, 255, 255, 0.9);
+  color: #1d6b37;
+  font: 600 calc(25 * var(--u)) / 1 var(--cond);
+  letter-spacing: 0.12em;
+}
+.amg-arrival__check {
+  display: grid;
+  place-items: center;
+  width: calc(48 * var(--u));
+  height: calc(48 * var(--u));
+  border-radius: 50%;
+  background: linear-gradient(180deg, #34b45a, #1f8f43);
+  color: #fff;
+}
+.amg-arrival__check .amg-ico {
+  width: calc(30 * var(--u));
+  height: calc(30 * var(--u));
+  stroke-width: 3.2;
+}
+.amg-office {
+  margin: 0 calc(18 * var(--u)) 0 calc(18 * var(--u));
+  height: calc(790 * var(--u));
+  border-radius: calc(22 * var(--u));
+  background: rgba(250, 249, 247, 0.95);
+}
+.amg-office > * {
+  position: absolute;
+}
+.amg-office__title {
+  left: calc(43 * var(--u));
+  top: calc(32.6 * var(--u));
+  font: 600 calc(32.8 * var(--u)) / 1 var(--cond);
+  letter-spacing: 0.03em;
+}
+.amg-office__sub {
+  left: calc(45 * var(--u));
+  top: calc(73 * var(--u));
+  font: 400 calc(22 * var(--u)) / 1 var(--text);
+  color: var(--ink-3);
+}
+.amg-office__list {
+  left: calc(34 * var(--u));
+  right: calc(33 * var(--u));
+  top: calc(119 * var(--u));
+  display: grid;
+  row-gap: calc(9.5 * var(--u));
+}
+.amg-office__row {
+  position: relative;
+  display: block;
+  height: calc(98 * var(--u));
+  border: calc(1 * var(--u)) solid #e7e4df;
+  border-radius: calc(12 * var(--u));
+  background: rgba(255, 255, 255, 0.82);
+}
+.amg-office__row > * {
+  position: absolute;
+}
+.amg-office__tile {
+  left: calc(13 * var(--u));
+  top: calc(9 * var(--u));
+  width: calc(78 * var(--u));
+  height: calc(77 * var(--u));
+  border-radius: calc(10 * var(--u));
+  display: grid;
+  place-items: center;
+  background: linear-gradient(180deg, #232325, #111113);
+  color: #e3ad4b;
+}
+.amg-office__tile .amg-ico {
+  width: calc(42 * var(--u));
+  height: calc(42 * var(--u));
+  stroke-width: 1.5;
+}
+.amg-office__row b {
+  left: calc(129 * var(--u));
+  top: calc(20 * var(--u));
+  font: 600 calc(28.6 * var(--u)) / 1 var(--cond);
+  letter-spacing: 0.005em;
+  color: #121214;
+}
+.amg-office__row > span:not(.amg-office__tile) {
+  left: calc(131 * var(--u));
+  top: calc(55 * var(--u));
+  font: 400 calc(19.5 * var(--u)) / 1 var(--text);
+  color: var(--ink-3);
+}
+.amg-office__chev {
+  right: calc(14 * var(--u));
+  top: calc(32 * var(--u));
+  width: calc(34 * var(--u));
+  height: calc(34 * var(--u));
+  stroke-width: 2;
+  color: #1c1c1e;
+}
+.amg-office .amg-cta {
+  position: absolute;
+  left: calc(20 * var(--u));
+  top: calc(681 * var(--u));
+  width: calc(778 * var(--u));
+  height: calc(87 * var(--u));
+  margin: 0;
+  border-radius: calc(12 * var(--u));
+  font-size: calc(29.5 * var(--u));
+  letter-spacing: 0.06em;
+}
+.amg[data-screen='complete'] .amg-hero__accent {
+  letter-spacing: 0.32em;
+}
+.amg--active .amg-main {
+
+}
+.amg-td-name__t {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-right: calc(8 * var(--u));
+}
+@media (min-width: 854px) {
+  .amg--active .amg-env__plate {
+    object-position: 60% 10%;
+  }
+}
+.amg-status .amg-step__label {
+  margin-top: calc(10 * var(--u));
+}
+.amg-company .amg-flowcard {
+  margin: 0 calc(17 * var(--u)) 0 calc(18 * var(--u));
+}
