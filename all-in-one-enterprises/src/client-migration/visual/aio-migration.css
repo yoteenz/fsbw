@@ -133,7 +133,7 @@ html:has(.amg) body {
 /* ───────── L1 · shell ───────── */
 .amg-head {
   position: sticky;
-  top: 0;
+  top: env(safe-area-inset-top, 0px);
   z-index: 30;
   height: calc(var(--head-h) * var(--u));
   background: rgba(250, 249, 246, 0.9);
@@ -1718,7 +1718,7 @@ html:has(.amg) body {
 .amg--existing .amg-dock {
   left: calc(3 * var(--u));
   right: calc(4 * var(--u));
-  bottom: calc(3 * var(--u));
+  bottom: calc(3 * var(--u) + env(safe-area-inset-bottom, 0px));
   height: calc(105 * var(--u));
   border-radius: calc(16 * var(--u));
   padding-bottom: 0;
