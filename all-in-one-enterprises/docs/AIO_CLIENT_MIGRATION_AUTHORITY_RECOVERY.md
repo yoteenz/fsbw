@@ -41,6 +41,10 @@ Screens: `MigrationRootScreen`, `MigrationExistingScreens` (existing / extract /
 
 Captures: `docs/migration-recovery/live/`. Boards (authority | live | overlay): `docs/migration-recovery/boards/`.
 
+## Uppercase law (founder rule, overrides authority casing)
+
+Every AIO page renders all text uppercase (`src/styles/aio-uppercase.css`, imported last, `!important`; tab titles via `src/utils/uppercaseDocumentTitle.ts`). Where the authority draws lowercase, these screens keep the authority composition and **fit** the uppercase copy. The generated "UPPERCASE FIT" block at the end of `aio-migration.css` sizes each block so it keeps its authority line count inside its panel. It was measured in the browser at 427×768 @2x by comparing each block in its original case against uppercase. Letter-case differences from the authority images are intentional; QA compares composition and fit.
+
 ## Icons — founder icon sheet
 
 Every migration icon comes from the founder-supplied icon sheet (`docs/migration-recovery/icon-sheet/aio-icon-sheet-source.png`), traced to vector rather than cropped. The 79 sheet icons are segmented in sheet order and traced with potrace at 10× (per-icon ink normalisation keeps gray and coloured icons as clean as black ones). Derived glyphs: `arrow-right` (the up-arrow of `migrate`, rotated), and the `info-mark` / `help-mark` / `alert-mark` inner marks. Output is one cached sprite, `public/migration/icons/aio-icon-sheet.svg` (61 KB gzipped), with names in `src/client-migration/visual/aioIconSheet.ts`. Regenerate with `scripts/icon-sheet/`.

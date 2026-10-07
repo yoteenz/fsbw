@@ -1,0 +1,28 @@
+# AIO uppercase typography (mandatory · founder rule 2026-10-07)
+
+Applies to **every All In One Enterprises page** — the standalone app in `all-in-one-enterprises/` (public site, client portal, office, staff, migration, activation, IFTA, every workspace and every future page).
+
+## Rule
+
+**ALL visible text is UPPERCASE. No lowercase anywhere — no exceptions.**
+
+The founder's preference **takes precedence over every design authority**: when an approved authority image, mock, storyboard or reference draws sentence case, title case or lowercase, the implementation is still UPPERCASE.
+
+## Enforcement
+
+- Global safety net: `all-in-one-enterprises/src/styles/aio-uppercase.css` — `text-transform: uppercase !important` on `body`, every descendant, pseudo-elements and placeholders. It is imported **last** in `src/App.tsx`. Never remove or weaken it.
+- Browser tab titles: `src/utils/uppercaseDocumentTitle.ts` (installed in `main.tsx`) uppercases `document.title` whoever sets it.
+- Text that CSS cannot reach must be authored uppercase in source: native `alert` / `confirm` / `prompt`, notifications, emails/SMS, exported files and PDFs, text baked into images, canvas text.
+
+## When matching an authority
+
+- Keep the authority's composition; set the copy uppercase and **fit the size** so each block keeps its line count and stays inside its panel (see the generated "UPPERCASE FIT" block in `src/client-migration/visual/aio-migration.css` and `docs/AIO_CLIENT_MIGRATION_AUTHORITY_RECOVERY.md`).
+- Visual QA compares layout and fit, not letter case.
+
+## Do not
+
+- Add `text-transform: none | lowercase | capitalize` to any AIO text (the global rule overrides it anyway — do not leave misleading declarations in new code).
+- Lowercase labels, body copy, empty states, nav items, table data or user-entered values to match a reference.
+- Exempt password or email fields: typed values display uppercase; the stored value is exactly what was typed.
+
+Canon: `motherboard/CORE.md` (All In One section).

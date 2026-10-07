@@ -1663,6 +1663,9 @@ body:has(.ifta-root--dark) {
   height: 2.85rem;
   border-top: 0;
 }
+.ifta-table--activity td:first-child {
+  padding-right: 1.6rem;
+}
 .ifta-table--activity .ifta-dot {
   width: 1.5rem;
   height: 1.5rem;
@@ -2281,7 +2284,7 @@ body:has(.ifta-root--dark) {
 }
 .ifta-cases__row {
   display: grid;
-  grid-template-columns: 3.2rem 1fr auto 9.6rem 1.6rem;
+  grid-template-columns: 3.2rem 1fr auto 11.8rem 1.6rem; /* due column sized for uppercase (founder rule) */
   align-items: center;
   column-gap: 1.8rem;
   min-height: 5.6rem;
@@ -4647,6 +4650,7 @@ body:has(.ifta-root--dark) {
 }
 .ifta-promises__body {
   display: grid;
+  align-content: start;
   gap: 1.2rem;
   padding-top: 0.4rem;
 }
@@ -4662,8 +4666,7 @@ body:has(.ifta-root--dark) {
   font-size: 1.45rem;
   line-height: 2.1rem;
   color: #cfcfcf;
-  text-transform: none;
-  white-space: nowrap;
+  white-space: normal; /* uppercase (founder rule) is wider; wrap inside the column */
 }
 
 /* public footer */

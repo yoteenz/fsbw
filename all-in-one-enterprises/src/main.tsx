@@ -4,8 +4,10 @@ import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 import { validateAioEnvironment } from './config/env';
 import { initI18n } from './i18n';
+import { enforceUppercaseDocumentTitle } from './utils/uppercaseDocumentTitle';
 
 initI18n();
+enforceUppercaseDocumentTitle();
 
 const validation = validateAioEnvironment();
 if (!validation.ok && import.meta.env.VITE_AIO_DATA_MODE === 'supabase') {

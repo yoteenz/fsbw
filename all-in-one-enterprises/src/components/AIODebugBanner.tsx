@@ -34,10 +34,10 @@ export function AIODebugBanner() {
   }
 
   const handleReset = () => {
-    if (window.confirm('Reset all demo data? This restores the canonical seed state.')) {
+    if (window.confirm('RESET ALL DEMO DATA? THIS RESTORES THE CANONICAL SEED STATE.')) {
       const result = resetDemoStore();
       if (!result.ok) {
-        window.alert(result.error);
+        window.alert(result.error.toUpperCase());
         return;
       }
       window.location.href = aioPaths.home;

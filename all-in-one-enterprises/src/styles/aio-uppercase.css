@@ -1,0 +1,15 @@
+/*
+ * FOUNDER RULE — every AIO page renders in UPPERCASE. No lowercase text anywhere, even where an approved
+ * authority image draws lowercase: the founder's preference takes precedence over authority casing.
+ * Loaded last and !important so no component, page or authority-matched style can reintroduce lowercase.
+ * Covers portals/modals mounted on <body>, pseudo-element content, SVG text and placeholders.
+ * Typed values (emails, passwords) are displayed uppercase; what is stored is exactly what was typed.
+ */
+html,
+body,
+body *,
+body *::before,
+body *::after,
+body ::placeholder {
+  text-transform: uppercase !important;
+}

@@ -16,6 +16,8 @@ import './styles/aio-context-rail.css';
 import './styles/aio-layout-preview.css';
 import './styles/aio-load-board.css';
 import './styles/aio-mgmt.css';
+// Founder rule: all AIO text uppercase — must stay the last stylesheet.
+import './styles/aio-uppercase.css';
 /** Standalone application shell — Sprint 22 */
 export default function App() {
   return (

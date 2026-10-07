@@ -50,7 +50,7 @@
   font-family: var(--text);
   font-size: calc(22 * var(--u));
   line-height: 1.2;
-  text-transform: none;
+  text-transform: uppercase;
   letter-spacing: 0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -2246,3 +2246,23 @@ html:has(.amg) body {
   margin-top: None;
   transform: scale(1.341);
 }
+
+/* ═════════ UPPERCASE FIT (founder rule: all text uppercase) ═════════
+ * Text the authority draws in lowercase is set uppercase; sizes below keep each block on its authority
+ * line count and inside its panel. Measured in the browser at the canonical viewport (427×768 @2x). */
+.amg.amg[data-screen='root'] .amg-line { font-size: calc(18.30 * var(--u)); }
+.amg.amg[data-screen='root'] .amg-path__body { font-size: calc(12.42 * var(--u)); }
+.amg.amg[data-screen='root'] .amg-providers > li { font-size: calc(12.34 * var(--u)); }
+.amg.amg[data-screen='root'] .amg-secure__text { font-size: calc(14.59 * var(--u)); }
+.amg.amg[data-screen='root'] .amg-step__sub { font-size: calc(12.14 * var(--u)); }
+.amg.amg[data-screen='existing'] .amg-line { font-size: calc(17.38 * var(--u)); }
+.amg.amg[data-screen='existing'] .amg-step__sub { font-size: calc(14.46 * var(--u)); }
+.amg.amg[data-screen='extract'] .amg-line { font-size: calc(17.14 * var(--u)); }
+.amg.amg[data-screen='received'] .amg-line { font-size: calc(18.90 * var(--u)); }
+.amg.amg[data-screen='received'] .amg-next__text > p { font-size: calc(16.29 * var(--u)); }
+.amg.amg[data-screen='received'] .amg-td-name__t { font-size: calc(15.71 * var(--u)); }
+.amg.amg[data-screen='company'] .amg-line { font-size: calc(17.38 * var(--u)); }
+.amg.amg[data-screen='company'] .amg-next__text > p { font-size: calc(15.80 * var(--u)); }
+.amg.amg[data-screen='company'] .amg-step__sub { font-size: calc(14.46 * var(--u)); }
+.amg.amg[data-screen='complete'] .amg-line { font-size: calc(17.05 * var(--u)); }
+/* ═════════ end uppercase fit ═════════ */
