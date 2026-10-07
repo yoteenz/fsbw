@@ -334,7 +334,17 @@
     "asset_dependencies": [
       "06_ASSETS/AIO-MIG-HERO-EXISTING.jpg"
     ],
-    "status": "APPROVED_AUTHORITY"
+    "status": "APPROVED_AUTHORITY",
+    "actor_boundary": {
+      "sprint": "P0.AIO.CLIENT-ACTIVATION.ACTOR-BOUNDARY-DOCK-CLEANUP1",
+      "date": "2026-10-07",
+      "authority_id_retained": true,
+      "staff_dock_visible": false,
+      "intake_visible": false,
+      "upper_content_changed": false,
+      "client_nav_invented": false,
+      "correction": "Staff intake dock removed in this sprint. Upper pixels above y=1424 unchanged (MAE 0). Empty lower field filled with the plate's own page background."
+    }
   },
   {
     "authority_id": "AIO-MIG-ACTIVATION-COMPANY-001",
@@ -365,6 +375,16 @@
       "intake_visible": false,
       "client_nav_authority_missing": true,
       "note": "Upper content locked (MAE 0 above y=1424). Staff INTAKE dock removed. No client dock was drawn because no approved visual client-nav authority exists."
+    },
+    "actor_boundary": {
+      "sprint": "P0.AIO.CLIENT-ACTIVATION.ACTOR-BOUNDARY-DOCK-CLEANUP1",
+      "date": "2026-10-07",
+      "authority_id_retained": true,
+      "staff_dock_visible": false,
+      "intake_visible": false,
+      "upper_content_changed": false,
+      "client_nav_invented": false,
+      "correction": "Re-audited. Staff dock was already removed. No further pixel change. Same authority ID."
     }
   },
   {
@@ -386,7 +406,17 @@
     "asset_dependencies": [
       "06_ASSETS/AIO-MIG-HERO-EXISTING.jpg"
     ],
-    "status": "APPROVED_AUTHORITY"
+    "status": "APPROVED_AUTHORITY",
+    "actor_boundary": {
+      "sprint": "P0.AIO.CLIENT-ACTIVATION.ACTOR-BOUNDARY-DOCK-CLEANUP1",
+      "date": "2026-10-07",
+      "authority_id_retained": true,
+      "staff_dock_visible": false,
+      "intake_visible": false,
+      "upper_content_changed": false,
+      "client_nav_invented": false,
+      "correction": "Staff intake dock removed in this sprint. Upper pixels above y=1424 unchanged (MAE 0). Empty lower field filled with the plate's own page background."
+    }
   },
   {
     "authority_id": "AIO-MIG-ACTIVATION-VEHICLES-001",
@@ -407,7 +437,17 @@
     "asset_dependencies": [
       "06_ASSETS/AIO-MIG-HERO-EXISTING.jpg"
     ],
-    "status": "APPROVED_AUTHORITY"
+    "status": "APPROVED_AUTHORITY",
+    "actor_boundary": {
+      "sprint": "P0.AIO.CLIENT-ACTIVATION.ACTOR-BOUNDARY-DOCK-CLEANUP1",
+      "date": "2026-10-07",
+      "authority_id_retained": true,
+      "staff_dock_visible": false,
+      "intake_visible": false,
+      "upper_content_changed": false,
+      "client_nav_invented": false,
+      "correction": "Staff intake dock removed in this sprint. Upper pixels above y=1424 unchanged (MAE 0). Empty lower field filled with the plate's own page background."
+    }
   },
   {
     "authority_id": "AIO-MIG-ACTIVATION-SERVICES-001",
@@ -428,7 +468,17 @@
     "asset_dependencies": [
       "06_ASSETS/AIO-MIG-HERO-EXISTING.jpg"
     ],
-    "status": "APPROVED_AUTHORITY"
+    "status": "APPROVED_AUTHORITY",
+    "actor_boundary": {
+      "sprint": "P0.AIO.CLIENT-ACTIVATION.ACTOR-BOUNDARY-DOCK-CLEANUP1",
+      "date": "2026-10-07",
+      "authority_id_retained": true,
+      "staff_dock_visible": false,
+      "intake_visible": false,
+      "upper_content_changed": false,
+      "client_nav_invented": false,
+      "correction": "Staff intake dock removed in this sprint. Upper pixels above y=1424 unchanged (MAE 0). Empty lower field filled with the plate's own page background."
+    }
   },
   {
     "authority_id": "AIO-MIG-ACTIVATION-DOCUMENTS-001",
@@ -459,6 +509,16 @@
       "intake_visible": false,
       "client_nav_authority_missing": true,
       "note": "Upper content locked (MAE 0 above y=1424). Staff INTAKE dock removed. No client dock was drawn because no approved visual client-nav authority exists."
+    },
+    "actor_boundary": {
+      "sprint": "P0.AIO.CLIENT-ACTIVATION.ACTOR-BOUNDARY-DOCK-CLEANUP1",
+      "date": "2026-10-07",
+      "authority_id_retained": true,
+      "staff_dock_visible": false,
+      "intake_visible": false,
+      "upper_content_changed": false,
+      "client_nav_invented": false,
+      "correction": "Re-audited. Staff dock was already removed. No further pixel change. Same authority ID."
     }
   },
   {
@@ -478,7 +538,17 @@
     "asset_dependencies": [
       "06_ASSETS/AIO-MIG-HERO-EXISTING.jpg"
     ],
-    "status": "APPROVED_AUTHORITY"
+    "status": "APPROVED_AUTHORITY",
+    "actor_boundary": {
+      "sprint": "P0.AIO.CLIENT-ACTIVATION.ACTOR-BOUNDARY-DOCK-CLEANUP1",
+      "date": "2026-10-07",
+      "authority_id_retained": true,
+      "staff_dock_visible": false,
+      "intake_visible": false,
+      "upper_content_changed": false,
+      "client_nav_invented": false,
+      "correction": "Staff intake dock removed in this sprint. Upper pixels above y=1424 unchanged (MAE 0). Empty lower field filled with the plate's own page background."
+    }
   },
   {
     "authority_id": "AIO-MIG-ACTIVATION-CONFIRM-001",
@@ -497,7 +567,17 @@
     "asset_dependencies": [
       "06_ASSETS/AIO-MIG-HERO-EXISTING.jpg"
     ],
-    "status": "APPROVED_AUTHORITY"
+    "status": "APPROVED_AUTHORITY",
+    "actor_boundary": {
+      "sprint": "P0.AIO.CLIENT-ACTIVATION.ACTOR-BOUNDARY-DOCK-CLEANUP1",
+      "date": "2026-10-07",
+      "authority_id_retained": true,
+      "staff_dock_visible": false,
+      "intake_visible": false,
+      "upper_content_changed": false,
+      "client_nav_invented": false,
+      "correction": "Staff intake dock removed in this sprint. Upper pixels above y=1424 unchanged (MAE 0). Empty lower field filled with the plate's own page background."
+    }
   },
   {
     "authority_id": "AIO-MIG-ACTIVATION-COMPLETE-001",
@@ -518,7 +598,14 @@
     ],
     "status": "SUPERSEDED",
     "superseded_by": "AIO-MIG-ACTIVATION-COMPLETE-002",
-    "lineage": "OLD authority. Kept on disk. Do not treat as the activation-complete screen."
+    "lineage": "OLD authority. Kept on disk. Do not treat as the activation-complete screen.",
+    "actor_boundary": {
+      "sprint": "P0.AIO.CLIENT-ACTIVATION.ACTOR-BOUNDARY-DOCK-CLEANUP1",
+      "date": "2026-10-07",
+      "current_client_authority": false,
+      "historical_staff_dock_retained": true,
+      "note": "Superseded archive of the pre-002 plate. Not a current client screen. Dock left so the archived defect stays visible in lineage."
+    }
   },
   {
     "authority_id": "AIO-MIG-ACTIVATION-COMPLETE-002",
@@ -554,6 +641,15 @@
       "client_office_transition_clear": true,
       "visual_completion_moment": true,
       "enter_your_office_cta": true
+    },
+    "actor_boundary": {
+      "sprint": "P0.AIO.CLIENT-ACTIVATION.ACTOR-BOUNDARY-DOCK-CLEANUP1",
+      "date": "2026-10-07",
+      "preserved": true,
+      "staff_dock_visible": false,
+      "intake_visible": false,
+      "client_nav_invented": false,
+      "note": "Canonical ACTIVE arrival. No bottom dock. Body destinations only."
     }
   },
   {
