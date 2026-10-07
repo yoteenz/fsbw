@@ -4,13 +4,16 @@ Applies to **every All In One Enterprises page** — the standalone app in `all-
 
 ## Rule
 
-**ALL visible text is UPPERCASE. No lowercase anywhere — no exceptions.**
+**ALL visible text is UPPERCASE.**
+
+**Only exception:** password `<input>` fields keep the real case of what is typed — hidden **and** when revealed by a show/hide toggle. Every password field carries `data-aio-password` (a revealed field switches to `type="text"`). Their labels and placeholders stay uppercase.
 
 The founder's preference **takes precedence over every design authority**: when an approved authority image, mock, storyboard or reference draws sentence case, title case or lowercase, the implementation is still UPPERCASE.
 
 ## Enforcement
 
-- Global safety net: `all-in-one-enterprises/src/styles/aio-uppercase.css` — `text-transform: uppercase !important` on `body`, every descendant, pseudo-elements and placeholders. It is imported **last** in `src/App.tsx`. Never remove or weaken it.
+- Global safety net: `all-in-one-enterprises/src/styles/aio-uppercase.css` — `text-transform: uppercase !important` on `body`, every descendant, pseudo-elements and placeholders, with the single password exemption (`input[type=password]`, `input[data-aio-password]`). It is imported **last** in `src/App.tsx`. Never remove or weaken it.
+- New password inputs (and any show/hide password component) must carry `data-aio-password`.
 - Browser tab titles: `src/utils/uppercaseDocumentTitle.ts` (installed in `main.tsx`) uppercases `document.title` whoever sets it.
 - Text that CSS cannot reach must be authored uppercase in source: native `alert` / `confirm` / `prompt`, notifications, emails/SMS, exported files and PDFs, text baked into images, canvas text.
 
@@ -23,6 +26,6 @@ The founder's preference **takes precedence over every design authority**: when 
 
 - Add `text-transform: none | lowercase | capitalize` to any AIO text (the global rule overrides it anyway — do not leave misleading declarations in new code).
 - Lowercase labels, body copy, empty states, nav items, table data or user-entered values to match a reference.
-- Exempt password or email fields: typed values display uppercase; the stored value is exactly what was typed.
+- Exempt anything other than password inputs. Email and every other typed value displays uppercase; the stored value is exactly what was typed.
 
 Canon: `motherboard/CORE.md` (All In One section).

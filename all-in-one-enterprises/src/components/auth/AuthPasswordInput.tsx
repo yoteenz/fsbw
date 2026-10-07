@@ -38,6 +38,7 @@ export function AuthPasswordInput({
           id={fieldId}
           className="aio-auth-premium__input aio-auth-premium__input--password"
           type={visible ? 'text' : 'password'}
+          data-aio-password=""
           autoComplete={autoComplete}
           required={required}
           minLength={minLength}

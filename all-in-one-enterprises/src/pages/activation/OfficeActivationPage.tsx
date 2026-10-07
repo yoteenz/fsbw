@@ -50,6 +50,7 @@ export function OfficeActivationPage() {
           <input
             className="aio-input"
             type="password"
+            data-aio-password=""
             autoComplete="new-password"
             value={password}
             onChange={(ev) => setPassword(ev.target.value)}

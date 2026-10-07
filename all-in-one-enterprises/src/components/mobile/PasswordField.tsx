@@ -22,6 +22,7 @@ export function PasswordField({ label, value, onChange, autoComplete, required, 
         <input
           id={fieldId}
           type={visible ? 'text' : 'password'}
+          data-aio-password=""
           autoComplete={autoComplete}
           required={required}
           minLength={minLength}

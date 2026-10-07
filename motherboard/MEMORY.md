@@ -55413,3 +55413,12 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Built:** `all-in-one-enterprises/scripts/migration/build-founder-mocks.mjs` (`npm run migration:mocks`) captures the six representative migration screens from the live app. Each is one self-contained page with the app's `aio-migration.css` + `aio-uppercase.css`, inlined fonts and photography, the used icon-sheet symbols inlined, and inert links. Output goes to `.migration-mocks/` (git-ignored).
 - **Published (private Artifacts):** links in `all-in-one-enterprises/docs/migration-recovery/MOCKS.md`. They are not auto-refreshed; republish to the same URLs after changes.
 - **Also:** the sticky header and the floating existing-family dock respect iPhone safe-area insets.
+
+---
+
+## 2026-10-07 — AIO uppercase law: password inputs are the only exception
+
+- **Context:** Founder: "password input is the only exception for lowercase". This amends the uppercase law entry above, which had no exceptions.
+- **Changes:** `aio-uppercase.css` exempts `input[type=password]` and `input[data-aio-password]` (`text-transform: none !important`). `data-aio-password` was added to `AuthPasswordInput`, mobile `PasswordField` (both have show/hide toggles that switch to `type="text"`) and the office activation password. Placeholders and labels stay uppercase.
+- **Verified:** on `/login`, "MySecret pass9" shows as typed both hidden and revealed; the placeholder and email field stay uppercase.
+- **Conventions:** Updated `.cursor/rules/aio-uppercase-brand.mdc` and `CORE.md` (amendment line). Any new password input or show/hide component must carry `data-aio-password`. Nothing else is exempt.
