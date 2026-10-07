@@ -1,0 +1,25 @@
+[
+  {
+    "asset_id": "AIO-MIG-HERO-ROOT",
+    "path": "06_ASSETS/AIO-MIG-HERO-ROOT.jpg",
+    "kind": "hero plate",
+    "source": "cropped from locked root authority, title band cleared",
+    "used_by": [
+      "ROOT",
+      "NEW",
+      "BULK"
+    ],
+    "regenerated_in_starburst_4k": false
+  },
+  {
+    "asset_id": "AIO-MIG-HERO-EXISTING",
+    "path": "06_ASSETS/AIO-MIG-HERO-EXISTING.jpg",
+    "kind": "hero plate",
+    "source": "cropped from locked existing-client authority, title band cleared",
+    "used_by": [
+      "EXISTING",
+      "ACTIVATION"
+    ],
+    "regenerated_in_starburst_4k": false
+  }
+]

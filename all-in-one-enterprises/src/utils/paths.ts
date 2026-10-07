@@ -213,6 +213,8 @@ export const aioPaths = {
   officeDocumentVault: `${BASE}/office/documents/vault`,
   officeClientDocuments: (clientId: string) => `${BASE}/office/clients/${clientId}/documents`,
   officeVaultDocument: (documentId: string) => `${BASE}/office/documents/vault/${documentId}`,
+  officeMigration: (screen?: string) =>
+    screen ? `${BASE}/office/migration/${screen}` : `${BASE}/office/migration`,
   officeArchiveMigration: `${BASE}/office/archive-migration`,
   officeArchiveMigrationDigitize: `${BASE}/office/archive-migration/digitize`,
   officeArchiveMigrationBatch: (batchId: string) => `${BASE}/office/archive-migration/batches/${batchId}`,

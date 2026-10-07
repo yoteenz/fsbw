@@ -269,6 +269,7 @@ export const aioCoreRoutes = (
           <Route index element={<IftaClientFilingRoomPage />} />
           <Route path=":quarterKey" element={<IftaClientFilingRoomPage />} />
         </Route>
+        <Route path="portal/activation/review" element={<ClientOfficeReviewPage />} />
         <Route path="portal/services/ifta" element={<PortalIftaLegacyRedirect />} />
         <Route path="portal/services/ifta/*" element={<PortalIftaLegacyRedirect />} />
         <Route path="portal" element={<AIOPortalLayout />}>
@@ -296,7 +297,6 @@ export const aioCoreRoutes = (
           <Route path="activity" element={<ActivityTimelinePage />} />
           <Route path="team" element={<TeamPage />} />
           <Route path="search" element={<PortalSearchPage />} />
-          <Route path="activation/review" element={<ClientOfficeReviewPage />} />
           <Route path="onboarding" element={<RoadReadyOnboardingPage />} />
           <Route path="road-ready" element={<RoadReadyPage />} />
           <Route path="fleet" element={<FleetPage />} />
