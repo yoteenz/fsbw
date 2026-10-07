@@ -10,7 +10,21 @@ Only type size, weight, tracking and contrast are refined, so one role reads the
 
 An earlier V2 draft (`ab2e4e99`) recomposed the phone and tablet layouts. It was withdrawn and replaced by this fine-tune.
 
-**Nothing live was changed.** The fine-tune is one appended block in `ifta-ui.css`; no TSX changes. It ships here as `v2-reference.patch`, which applies cleanly to `master` with `git apply -p1`.
+**Nothing live was changed.** The patch ships here as `v2-reference.patch`, which applies cleanly to `master` with `git apply -p1`. It contains:
+- one appended block in `ifta-ui.css`
+- the new light-ground lockup `public/brand/ifta/aio-lockup-light-bg.png`
+- its manifest entry
+- one line in the mock builder (the mock note is uppercase too)
+
+There are no TSX changes.
+
+## Founder additions (after the fine-tune)
+
+- **Uppercase.** Every word on the IFTA pages and mocks is uppercase: client, staff case, queue, public, shell and footers. Identifiers such as the case ID display uppercase; the stored values are unchanged.
+  - Where uppercase ran wider, row text was sized down slightly so V1's widths and line breaks hold: the public desktop process tiles and promises, the client activity lines and upload names, one client tablet card title, and the staff phone health and task rows.
+  - The public desktop promises keep their exact V1 widths.
+  - One long staff quarter-task row ("CONFIRM A DUPLICATE TA PETRO RECEIPT") truncates on staff desktop and at 375 px, like its neighbours already did in V1.
+- **Light-ground footer logo.** On the client, staff and queue footers, the black-plate lockup is replaced by the founder's transparent light-ground lockup (`aio-lockup-light-bg.png`). It has the same height and position, is 6–8 px wider (the logo's own proportions) and has no plate. The public footer keeps the dark-ground lockup over the mountain photo.
 
 | | V1 (kept for comparison) | V2 fine-tune |
 |---|---|---|

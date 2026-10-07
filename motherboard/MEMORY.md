@@ -55335,3 +55335,21 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Routine:** "AIO IFTA mock refresh" (`trig_01Nq3YwqPchD7EuSNQKDEwXv`) now applies the patch before building until V2 is live on `master`, and stops and reports if the patch no longer applies.
 - **V1 for comparison:** kept in `docs/aio/ifta/authority-refinement-v2/boards/`.
 - **Sync:** master, `[sync-only]`, docs only.
+
+---
+
+## 2026-10-07 — AIO IFTA V2: all text uppercase + light-ground footer logo
+
+- **Founder ask:**
+  - all text on the IFTA pages and artifacts in uppercase
+  - the black-plate footer logo replaced with the supplied transparent lockup so it blends into the light background
+- **Done (in `docs/aio/ifta/authority-refinement-v2/v2-reference.patch`, not live):**
+  - Global uppercase on `.ifta-root`.
+  - New asset `public/brand/ifta/aio-lockup-light-bg.png`, trimmed from the founder upload. `IFTA_BRAND.lockupOnLight` points at it, and the light footers drop the `#070708` plate.
+  - The public dark footer keeps `aio-lockup-on-dark.png`.
+  - The mock note is uppercase.
+- **Fit:** uppercase-widened text was sized down in a few rows so V1's composition holds. The lock passes everywhere except the footer logo box (same height and position, +6–8 px width, logo proportions). No text spills.
+- **Clipping:** equal to or below V1 except one long staff task row.
+- **Checks:** `tsc` clean; `vitest src/ifta` 21/21; live pass 41/43, the same as `master` (the case-ID check now compares case-insensitively).
+- **Links:** the original three mock links were republished; the routine applies the patch until V2 is live.
+- **Sync:** master, `[sync-only]`, docs only.
