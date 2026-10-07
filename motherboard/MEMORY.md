@@ -55276,3 +55276,28 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
   - public https://claude.ai/artifact/WQDLzooEj26KangyyzKssx
   - founder / staff https://claude.ai/artifact/LbuNRAW5JrDtnevYrjSfQ4
 - **Refresh:** artifacts never follow `master` on their own. The routine "AIO IFTA mock refresh" checks `master` every 6 hours. When the commit differs from the mocks' stamped commit, it rebuilds and republishes to the same links.
+
+---
+
+## 2026-10-07 — AIO IFTA three-mode authority refinement V2 (reference only, not live)
+
+- **Sprint:** `P0.AIO.IFTA.THREE-MODE-AUTHORITY-REFINEMENT-V2`. Surgical typography, hierarchy, spacing and composition pass on the V1 authority look.
+  - Concepts, imagery, content, data, logic and brand are unchanged.
+  - No live routes were modified.
+  - No image generation was run.
+- **Where:** `all-in-one-enterprises/docs/aio/ifta/authority-refinement-v2/`
+  - `README.md`: shared system (T0–T7 type scale, s1–s9 spacing, module proportions, CTA / status / icon systems), per-mode changes, checks.
+  - `boards/`: V1→V2 board per mode and the equal-scale three-mode V2 board.
+  - `v2-reference.patch`: against `aace9d2d`, applies cleanly. It is an appended `ifta-ui.css` V2 layer plus small TSX moves for the phone CTA / health panel and br spacing.
+- **V2 artifacts (static):**
+  - public https://claude.ai/artifact/Mwz9TDJadxqKMPpcoBxxCR
+  - client https://claude.ai/artifact/D4rPXM9faMgPse25oUxgzt
+  - staff https://claude.ai/artifact/2562hEnELiQyQSjCkoB5FR
+  - The V1 links are kept, and still follow `master` via the refresh routine.
+- **Proof:**
+  - Clip / overflow / readability sweep is clean at 375–1440 for public, client, staff and queue.
+  - `tsc` clean; `vitest src/ifta` 21/21.
+  - Live interaction pass 41/43. Untouched `master` scores the same 41/43; both failures come from `596dc269` (client "Client health" card; staff CTA "Return draft" instead of "Nudge client") and await a founder decision.
+- **Next:** founder / sister review of V2, then the live implementation pass applies `v2-reference.patch`.
+- **Spatial Architecture Review:** SKIPPED. This is a refinement of existing IFTA surfaces; no new Studio surface.
+- **Sync:** master, `[sync-only]`, docs only.

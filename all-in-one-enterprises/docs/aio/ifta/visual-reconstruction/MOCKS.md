@@ -26,3 +26,13 @@ npm run ifta:mocks            # → .ifta-mocks/*.html (git-ignored); starts and
 **Publish.** The links do not follow `master` by themselves. A Claude session republishes each file to its link above: the Artifact tool with `url` set to that link, after reading it once. The link stays the same, and open viewers get the new version.
 
 **Automatic refresh.** A scheduled routine ("AIO IFTA mock refresh") checks `master` every 6 hours. When the commit differs from the one the published mocks were built from, it rebuilds them and republishes to the same three links; otherwise it stops. It can also be run on demand from the Routines list.
+
+## V2 refinement (static, for comparison)
+
+These are the authority refinement V2 snapshots. They are built from a worktree on `aace9d2d` with the V2 reference patch applied (not live), and are not refreshed by the routine. Details are in `../authority-refinement-v2/README.md`.
+
+| Mock | V2 link |
+|---|---|
+| Public IFTA page | https://claude.ai/artifact/Mwz9TDJadxqKMPpcoBxxCR |
+| Client filing room | https://claude.ai/artifact/D4rPXM9faMgPse25oUxgzt |
+| Founder / staff case | https://claude.ai/artifact/2562hEnELiQyQSjCkoB5FR |
