@@ -55404,3 +55404,12 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Fit, not reflow, on authority-locked screens:** The six migration representatives keep their composition. A browser pass measured every block the authority draws in lowercase and set the size that restores its authority line count inside its panel. The generated "UPPERCASE FIT" block lives at the end of `aio-migration.css` (hero subtitles about 0.78–0.82×, body copy 0.84–0.94×).
 - **Audit:** 249 static routes at 390 and 1280. Before: 806 lowercase elements. After: 0, with no new page-level horizontal scroll. Rows that newly ran off-screen sit in the table wrap (scrolls by design) or the office content pane (already scrolled on phones). A same-load collision check (uppercase sheet on vs off) found only the client IFTA activity table. Fixes: IFTA queue due column 9.6→11.8rem; public promises copy wraps (was `nowrap`, clipped at the page edge) and is top-aligned; activity event cell gets a right gap before the date. The 35 migration screens not yet rebuilt and the client review steps: hero clear of content, no collisions.
 - **Conventions:** No lowercase on any AIO page, no exceptions (password and email fields display uppercase; stored values unchanged). Founder preference overrides authority casing. Never add `text-transform: none | lowercase | capitalize` to AIO. Author text outside CSS reach (native dialogs, notifications, emails, exports, baked images) in uppercase. Rule files: `.cursor/rules/aio-uppercase-brand.mdc`; `CORE.md` "AIO uppercase law".
+
+---
+
+## 2026-10-07 — Client migration founder review artifacts
+
+- **Context:** Founder asked to "send the artifacts for migration", after the recovery, icon sheet and uppercase law (entries above).
+- **Built:** `all-in-one-enterprises/scripts/migration/build-founder-mocks.mjs` (`npm run migration:mocks`) captures the six representative migration screens from the live app. Each is one self-contained page with the app's `aio-migration.css` + `aio-uppercase.css`, inlined fonts and photography, the used icon-sheet symbols inlined, and inert links. Output goes to `.migration-mocks/` (git-ignored).
+- **Published (private Artifacts):** links in `all-in-one-enterprises/docs/migration-recovery/MOCKS.md`. They are not auto-refreshed; republish to the same URLs after changes.
+- **Also:** the sticky header and the floating existing-family dock respect iPhone safe-area insets.
