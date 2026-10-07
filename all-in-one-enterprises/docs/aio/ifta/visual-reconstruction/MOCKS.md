@@ -3,6 +3,8 @@
 Static, self-contained copies of the live IFTA pages for founder review on any device. Each page shows the desktop
 (≥ 1200 px), tablet (700–1199 px) or phone (< 700 px) layout for the viewer's width.
 
+**These links show V2**, the fine-tune in `../authority-refinement-v2/`. Until that patch is live on `master`, the mocks are built from `master` with `v2-reference.patch` applied, and they are stamped `<sha>+v2`.
+
 | Mock | Live route it copies | Published link |
 |---|---|---|
 | Client filing room | `/portal/workspaces/ifta/2026-Q3` (Pioneer Fleet demo data) | https://claude.ai/artifact/JDEeSCFdEea3JUTDkYxMzw |
@@ -25,9 +27,14 @@ npm run ifta:mocks            # → .ifta-mocks/*.html (git-ignored); starts and
 
 **Publish.** The links do not follow `master` by themselves. A Claude session republishes each file to its link above: the Artifact tool with `url` set to that link, after reading it once. The link stays the same, and open viewers get the new version.
 
-**Automatic refresh.** A scheduled routine ("AIO IFTA mock refresh") checks `master` every 6 hours. When the commit differs from the one the published mocks were built from, it rebuilds them and republishes to the same three links; otherwise it stops. It can also be run on demand from the Routines list.
+**Automatic refresh.** A scheduled routine ("AIO IFTA mock refresh") checks `master` every 6 hours.
+- If the patch is not yet live, it applies `authority-refinement-v2/v2-reference.patch` locally (never committed). Once the patch is live on `master`, it builds `master` as is.
+- When the result differs from the published stamp, it rebuilds and republishes to the same three links. Otherwise it stops.
+- If the patch stops applying, it publishes nothing and reports it.
 
-## V2 refinement (static, for comparison)
+It can also be run on demand from the Routines list.
+
+## V2 snapshot links (static)
 
 These are the V2 fine-tune snapshots. The composition is identical to V1; only type size, weight, tracking and contrast are refined. They are built from a worktree on `aace9d2d` with `v2-reference.patch` applied (not live), and are not refreshed by the routine. Details are in `../authority-refinement-v2/README.md`.
 

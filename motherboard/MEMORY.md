@@ -55322,3 +55322,16 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
   - staff https://claude.ai/artifact/2562hEnELiQyQSjCkoB5FR
 - **Spatial Architecture Review:** SKIPPED. Type refinement of existing surfaces.
 - **Sync:** master, `[sync-only]`, docs only.
+
+---
+
+## 2026-10-07 — AIO IFTA mock links now show V2
+
+- **Founder ask:** update the artifact links so they show V2.
+- **Done:** the original three mock links were republished with the V2 fine-tune, built from `master` `c95840dc` with `v2-reference.patch` applied and stamped `c95840dc+v2`:
+  - client https://claude.ai/artifact/JDEeSCFdEea3JUTDkYxMzw
+  - public https://claude.ai/artifact/WQDLzooEj26KangyyzKssx
+  - founder / staff https://claude.ai/artifact/LbuNRAW5JrDtnevYrjSfQ4
+- **Routine:** "AIO IFTA mock refresh" (`trig_01Nq3YwqPchD7EuSNQKDEwXv`) now applies the patch before building until V2 is live on `master`, and stops and reports if the patch no longer applies.
+- **V1 for comparison:** kept in `docs/aio/ifta/authority-refinement-v2/boards/`.
+- **Sync:** master, `[sync-only]`, docs only.
