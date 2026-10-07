@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Link, Outlet } from 'react-router-dom';
 import { useDemoStore } from '../../demo/useDemoStore';
 import { resolvePortalContext, setPortalOrganization } from '../../portal/organizationContext';
@@ -23,6 +24,11 @@ export function IftaClientShell() {
   const store = useDemoStore();
   const ctx = resolvePortalContext(store);
   const hasIfta = orgHasIftaWorkspace(store, ctx.organizationId);
+  useEffect(() => {
+    if (hasIfta || !canEnterDemoOffice()) return;
+    const pioneer = store.clients.find((c) => c.id === 'client-c' && c.accountStatus === 'active');
+    if (pioneer && orgHasIftaWorkspace(store, pioneer.id)) setPortalOrganization(pioneer.id);
+  }, [hasIfta, store]);
   const role = store.portalMemberRole ?? 'owner';
   const person = shortName(ctx.contactName ?? ctx.companyName);
 

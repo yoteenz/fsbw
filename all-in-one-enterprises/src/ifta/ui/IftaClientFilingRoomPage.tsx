@@ -19,7 +19,7 @@ import {
   templateVars,
   type IftaCompartment,
 } from '../iftaDerive';
-import { daysUntil, formatShortDate, quarterKey, quarterLabel } from '../iftaDates';
+import { formatShortDate, quarterKey, quarterLabel } from '../iftaDates';
 import { experienceState, primaryCta, stateLabel } from '../experience/iftaExperience';
 import { defaultQuarterKeyForOrg, findOrgQuarter, orgHasIftaWorkspace, quartersForOrg } from '../iftaRouteHelpers';
 import type { IftaQuarterCase, IftaReceiptClass } from '../iftaTypes';
@@ -54,10 +54,10 @@ import {
   activityRows,
   checklistRows,
   filingPhases,
-  formatMediumDate,
   fuelShares,
   mileageShares,
   quarterMetrics,
+  shortName,
   stageTaskRows,
   uploadTableRows,
   type IftaClientTab,
@@ -117,6 +117,7 @@ export function IftaClientFilingRoomPage() {
   const quarters = quartersForOrg(store, ctx.organizationId);
   return (
     <FilingRoom
+      contact={ctx.contactName}
       quarter={quarter}
       quarters={quarters}
       onQuarter={(key) => navigate(aioPaths.portalWorkspaceIftaQuarter(key))}
@@ -131,6 +132,7 @@ export function IftaClientFilingRoomPage() {
 }
 
 function FilingRoom({
+  contact,
   quarter,
   quarters,
   onQuarter,
@@ -141,6 +143,7 @@ function FilingRoom({
   tabsRef,
   band,
 }: {
+  contact?: string;
   quarter: IftaQuarterCase;
   quarters: IftaQuarterCase[];
   onQuarter: (key: string) => void;
@@ -156,7 +159,6 @@ function FilingRoom({
   const vars = templateVars(quarter, now);
   const openItems = clientOpenItems(quarter, now);
   const blocking = blockingItems(quarter, now);
-  const days = Math.max(0, daysUntil(quarter.dueDate, now));
   const stateClass = experienceState(state).state_class;
   const desktop = band === 'desktop';
 
@@ -164,7 +166,11 @@ function FilingRoom({
   const first = blocking[0] ?? openItems[0];
   const ctaTab: IftaClientTab = first ? COMPARTMENT_TAB[first.compartment] : quarter.vault ? 'DOCUMENTS' : 'PROGRESS';
   const ctaRaw = primaryCta(state, 'CLIENT', vars);
-  const ctaLabel = blocking.length ? `Resolve ${blocking.length} item${blocking.length === 1 ? '' : 's'} · ${ctaTab}` : ctaRaw.replace(/\{[^}]+\}/g, '').trim() || `Open ${ctaTab}`;
+  const ctaLabel = quarter.mileage.length
+    ? 'Review mileage summary'
+    : blocking.length
+      ? `Resolve ${blocking.length} item${blocking.length === 1 ? '' : 's'} · ${ctaTab}`
+      : ctaRaw.replace(/\{[^}]+\}/g, '').trim() || `Open ${ctaTab}`;
 
   const shares = mileageShares(quarter);
   const fuel = fuelShares(quarter);
@@ -446,12 +452,10 @@ function FilingRoom({
         aside={
           desktop ? (
             <div className="ifta-qcard">
-              <p>Due: {formatMediumDate(quarter.dueDate)}</p>
-              <p>
-                {days} day{days === 1 ? '' : 's'} · {quarter.baseJurisdiction} base
-              </p>
-              <button type="button" className="ifta-qcard__btn" onClick={() => go(ctaTab)}>
-                Next step
+              <p>Client: {shortName(contact ?? quarter.iftaAccount)}</p>
+              <p>Account {quarter.iftaAccount}</p>
+              <button type="button" className="ifta-qcard__btn" onClick={() => go('MILEAGE')}>
+                Client health
                 <IftaIcon name="arrow" size={16} strokeWidth={2.2} />
               </button>
             </div>

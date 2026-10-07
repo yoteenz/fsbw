@@ -507,7 +507,7 @@ function StaffCase({
           {body[tab]}
         </div>
 
-        <IftaCtaRail eyebrow="Next action" label={staffCta} icon="clipboard" />
+        <IftaCtaRail eyebrow="Open" label={quarter.staffWorksheet?.length ? 'Return draft' : staffCta} icon="clipboard" />
         <IftaFooter tagline={['Operations', 'Compliance', 'Client success']} />
       </div>
     </div>

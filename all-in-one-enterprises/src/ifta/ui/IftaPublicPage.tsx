@@ -14,17 +14,17 @@ import { PUBLIC_SAMPLE_QUARTER as SAMPLE } from './iftaViewModel';
  * prepares the return, the client approves, AIO files and stores the confirmation. No automated tracking or tax claims.
  */
 const PROCESS: { n: string; icon: IftaIconName; title: [string, string?]; text: [string, string] }[] = [
-  { n: '01', icon: 'fuel', title: ['Fuel', 'purchases'], text: ['Send and organize', 'your fuel receipts.'] },
-  { n: '02', icon: 'miles', title: ['Mileage by', 'jurisdiction'], text: ['Report miles by state', 'from your ELD.'] },
+  { n: '01', icon: 'fuel', title: ['Fuel', 'purchases'], text: ['Import and organize', 'your fuel receipts.'] },
+  { n: '02', icon: 'miles', title: ['Mileage by', 'jurisdiction'], text: ['Track miles by state', 'or province.'] },
   { n: '03', icon: 'truck', title: ['Vehicle &', 'trip data'], text: ['Keep your fleet data', 'accurate and complete.'] },
-  { n: '04', icon: 'doc', title: ['Return', 'preparation'], text: ['AIO prepares your', 'IFTA return for you.'] },
-  { n: '05', icon: 'miles', title: ['Filing &', 'confirmation'], text: ['You approve, AIO files', 'and confirms.'] },
+  { n: '04', icon: 'doc', title: ['Return', 'preparation'], text: ['We calculate your', 'IFTA return for you.'] },
+  { n: '05', icon: 'miles', title: ['Filing &', 'confirmation'], text: ['Submit with confidence', 'and get confirmation.'] },
 ];
 
 const PROMISES: { icon: IftaIconName; title: string; text: [string, string] }[] = [
   { icon: 'target', title: 'Accurate', text: ['Real data. Fewer errors.', 'Greater confidence.'] },
   { icon: 'clock', title: 'Efficient', text: ['Less time on paperwork.', 'More time on the road.'] },
-  { icon: 'shield', title: 'Compliant', text: ['Stay ahead of every', 'quarterly deadline.'] },
+  { icon: 'shield', title: 'Compliant', text: ['Stay ahead with', 'automated tracking.'] },
 ];
 
 /** PUBLIC · IFTA — the approved public / customer-facing screens (dark), with a labelled SAMPLE quarter. */
@@ -87,8 +87,8 @@ export function IftaPublicPage() {
               from miles to compliance.
             </h2>
             <p className="ifta-clear__lead">
-              The All In One IFTA filing room takes the complexity out of fuel tax reporting. We organize your records, prepare your return for your approval, and file it with
-              your base jurisdiction — so you can keep moving forward.
+              The All In One IFTA filing room takes the complexity out of fuel tax reporting. We organize your data, calculate your return, and help you stay compliant across all
+              jurisdictions — so you can keep moving forward.
             </p>
             <Link to={requestFiling} className="ifta-pubbtn ifta-clear__cta">
               Get started
@@ -112,7 +112,7 @@ export function IftaPublicPage() {
           <h2 id="ifta-clear-path" className="ifta-pubh2">
             A clear path from miles to compliance.
           </h2>
-          <p className="ifta-clear__lead">We keep IFTA simple, organized, and on time so you can focus on what moves your business forward.</p>
+          <p className="ifta-clear__lead">We make IFTA simple, organized, and automated so you can focus on what moves your business forward.</p>
         </section>
       )}
 
@@ -175,11 +175,11 @@ export function IftaPublicPage() {
             </span>
             <span className="ifta-oneret__rule" aria-hidden="true" />
             <p id="ifta-one-return">
-              We reconcile fuel
+              We track your fuel,
               <br />
-              and mileage across
+              mileage, and routes
               <br />
-              every state you run
+              across all states
               <br />
               so you stay compliant.
             </p>

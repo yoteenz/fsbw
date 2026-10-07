@@ -25,6 +25,12 @@ export function ClientPortalLifecycleGuard() {
     (session?.organization?.clientLifecycle as ClientLifecycleState | undefined) ?? client?.clientLifecycle;
   const decision = evaluatePortalPathAccess(lifecycle, location.pathname);
 
+  // Demo preview: the IFTA filing-room authority lives on an active client (Pioneer),
+  // while the default portal identity may still be a pending migration profile.
+  if (isDemoMode() && location.pathname.includes('/portal/workspaces/ifta')) {
+    return <Outlet />;
+  }
+
   if (decision === 'ALLOW_PORTAL') return <Outlet />;
   if (decision === 'REDIRECT_ACTIVATION') {
     return <Navigate to={aioPaths.login} state={{ from: location.pathname, activation: true }} replace />;
