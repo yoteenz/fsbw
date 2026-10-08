@@ -55706,3 +55706,33 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Limits:** Contract/validator only — no Blender/Unreal/Maya execution, no paid generation, no DB tables, no resident fabrication, no deploy.
 
 - **Branch:** `cursor/studioos-world-fabrication-engine-v1-game-art-standards1-21dc` → stacked PR base **foundation branch** until #49 merges.
+
+---
+
+## 2026-10-08 — WFE V1 Codex/Blender asset package benchmark (SITE 00 Build Object V2)
+
+- **Context:** Sprint `P0.STUDIOOS.WORLD-FABRICATION-ENGINE.V1-CODEX-BLENDER-ASSET-PACKAGE-BENCHMARK1` — first **real-file** WFE benchmark using uploaded `SITE00_Build_Object_V2_Under4MB` zip (17 files; reduced vs full review package per README).
+
+- **PR dependency:** #49 and #50 remain **OPEN**; continued on stacked branch `cursor/studioos-wfe-v1-codex-blender-benchmark1-21dc` from #50 @ `553e8b3dc`.
+
+- **Shipped:** `package-ingestion/` — inventory+SHA256, **real GLB JSON-chunk parser** (Web GLB verified: 63 meshes, 5700 tris, sha256 `813f0646…`), ingest workflow, lineage, readiness report, Codex return-path verification (`IMPORT_RETURN_PATH_ONLY`). Benchmark reports under `benchmarks/site00-build-object-v2/reports/`. **7** ingestion tests + **51** total WFE-related tests pass; build pass.
+
+- **Blocked / not verified:** Blender CLI absent (`.blend` checks **BLOCKED**); Unreal **NOT TESTED**; full renders/comparisons/High GLB/FBX **MISSING** in reduced archive; founder approval **PENDING** (visual fidelity PARTIAL per package docs).
+
+- **Docs:** `PACKAGE_INGESTION_BENCHMARK_V1.md`.
+
+---
+
+## 2026-10-08 — WFE full asset validation + Blender execution loop (SITE 00 V2)
+
+- **Context:** Sprint `P0.STUDIOOS.WORLD-FABRICATION-ENGINE.V1-FULL-ASSET-VALIDATION-AND-CODEX-BLENDER-EXECUTION-LOOP1`. PRs **#49/#50/#51** remain **OPEN**; work stacked on #51 @ `2ba5e3673`.
+
+- **Full package:** **NOT AVAILABLE** in runtime — only Under4MB zip (17 files); `full-package-missing-manifest.json` lists missing High GLB, FBX, renders, comparisons.
+
+- **Blender:** Installed **Blender 5.2.2 LTS** at `/home/ubuntu/.tools/blender-5.2.2-linux-x64/blender` (required for Zstd `.blend`). **REAL EXECUTION PASS** — opens V2 master, exports execution test GLB, `wfe-blender-execution-report.json`. Original `validate_v2.py` **FAIL** on reduced fixture (missing High.glb). Codex programmatic dispatch: **BLOCKED**.
+
+- **Shipped:** `execution/` adapter (assignment, authorize, dispatch, verify, ingest loop), `wfe_blender_benchmark_runner.py`, benchmark artifacts under `execution-runs/2026-10-08-loop1/`. Tests **57** WFE-related pass (6 execution, incl. real Blender integration).
+
+- **Status:** **PARTIAL** — Blender + return ingestion verified; **FULL_LOOP** not verified (Codex dispatch blocked; full review zip missing).
+
+- **Docs:** `FABRICATION_EXECUTION_LOOP_V1.md`.

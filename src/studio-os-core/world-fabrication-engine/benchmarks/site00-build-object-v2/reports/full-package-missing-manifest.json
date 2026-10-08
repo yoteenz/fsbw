@@ -1,0 +1,18 @@
+{
+  "fullPackageName": "SITE00_Build_Object_V2_Review_Package.zip",
+  "availableInComposerRuntime": false,
+  "availableArchive": "SITE00_Build_Object_V2_Under4MB_4d08.zip",
+  "availableArchivePath": "/home/ubuntu/.cursor/projects/workspace/uploads/SITE00_Build_Object_V2_Under4MB_4d08.zip",
+  "availableFileCount": 17,
+  "missingFromReducedArchive": [
+    "02_EXPORTS/SITE00_Build_Object_V2_High.glb",
+    "02_EXPORTS/SITE00_Build_Object_V2_DCC.fbx",
+    "03_RENDERS/*",
+    "04_COMPARISONS/*",
+    "01_SOURCE/serve-viewer.cjs",
+    "01_SOURCE/calibrate_reference_camera.py",
+    "01_SOURCE/create_comparison.py"
+  ],
+  "artifactIngestionRoute": "Upload full SITE00_Build_Object_V2_Review_Package.zip to agent uploads or attach to WFE benchmark fixture path; re-run package-ingestion + execution loop",
+  "validateV2ScriptOnReducedFixture": "FAIL — FileNotFoundError for High.glb (see execution-runs/2026-10-08-loop1/logs/validate_v2_stderr.log)"
+}
