@@ -55538,3 +55538,34 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
   It reads the step before from `MigrationShell onBack` via context, so it travels with the action: side column on a wide desktop, under the action elsewhere. Header back button and lockup shift removed; the header is back to the authority. On a wide desktop the COMPANY grid puts BACK in row 4 under CONTINUE. The new-approval note's 30u rhythm is tightened to 16u for BACK. QA counts primary actions as `.amg-cta:not(.amg-cta--back)`. Prototype exit label "BACK (under the action)".
 - **Desktop action width:** with the side column on, `[data-grid='MAIN_SIDE'] .amg-main > :is(.amg-cta, .amg-msg)` is `calc(100% - 340px - 11px)` (EXISTING CLIENT FILE, FILES RECEIVED: 154–1073 at 1440). `[data-grid='SINGLE']` actions take the 1000px centred measure (EXTRACTING). Root stays workspace-wide per the approved desktop master.
 - **Verified:** BACK on 41 screens × phone/tablet/desktop (123 cases): same width and height as the action, directly under it, never behind the dock, absent on root, welcome and complete, header clean. BACK clicks go to the step before in the prototype (client kept). The desktop span audit at 1280/1440/1920 leaves only root (by design) and false positives inside panels.
+
+---
+
+## 2026-10-08 — AIO office information architecture: staff root HOME · INTAKE · WORK · REPORTS · MORE
+
+- **Context:** Sprint `P0.AIO.OFFICE-IA.FOUNDER-WORK-TREE-AND-CLIENT-OFFICE-CANONICALIZATION1`. Architecture only.
+  - The founder approved a new AIO OFFICE root, HOME · INTAKE · WORK · REPORTS · MORE.
+  - FILING is no longer a root item. It lives at WORK → FILING & FUEL TAXES, with IFTA beneath it.
+  - CLIENT OFFICE is MY BUSINESS · OPERATIONS · FINANCES · VAULT · INBOX · SERVICES · ACCOUNT. INTAKE is staff only.
+- **Source of truth:** the SITE00 Experience Brain (`shared/studioos-experience-brain/projects/aio/office-ia.ts`), branch `cursor/aio-office-ia-work-tree-4f59`. Its generated docs are copied to `all-in-one-enterprises/docs/aio/office-ia/` with `PROVENANCE.json` (sha256).
+- **Here:**
+  - `src/product-graph/officeInformationArchitecture.json` is a byte-identical overlay of `AIO_OFFICE_IA.json`.
+  - `officeInformationArchitecture.ts` is the typed loader. It is data only and imported by no page.
+  - `officeInformationArchitecture.test.ts` checks the overlay against:
+    - the runtime graph (containers, families, role projections, routes, declared gaps)
+    - every cited file:line
+    - the route-file declarations
+    - the migration authority manifest (40 approved and COMPLETE-002 under review, each on exactly one node; COMPLETE-001 lineage only)
+    - the provenance hashes
+- **Superseded:** the old dock HOME · INTAKE · FILING · REPORTS · MORE is marked `SUPERSEDED_BY_AIO_OFFICE_WORK_TREE1`.
+  - It is marked in `AIO_CLIENT_MIGRATION_RESPONSIVE_BLUEPRINT/nav-rules.json` (`supersession`) and `docs/AIO_CLIENT_MIGRATION_AUTHORITY_RECOVERY.md`.
+  - Lineage is kept.
+  - The authority images are untouched.
+- **Not changed:**
+  - live nav (`STAFF_NAV` still shows FILING; MIGRATE_LATER)
+  - routes, pages, Supabase schema, lifecycle and auth
+  - the generated runtime graph and route meta
+- **Conventions:**
+  - When the nav is implemented, render it from the architecture (root_nav and nodes), not from a label array.
+  - Daily production goes in WORK, never in MORE.
+  - Client pages never link into `/office`. The existing `/office/messages` links from client dispatch and factoring are REMOVE_WHEN_IMPLEMENTED.

@@ -1,0 +1,42 @@
+{
+  "id": "AIO_OFFICE_IA_PROVENANCE",
+  "sprint": "P0.AIO.OFFICE-IA.FOUNDER-WORK-TREE-AND-CLIENT-OFFICE-CANONICALIZATION1",
+  "source": {
+    "repo": "yoteenz/SITE00",
+    "branch": "cursor/aio-office-ia-work-tree-4f59",
+    "commit": "1244f4894e3e48223b83771186717f137deee632",
+    "path": "docs/aio/office-ia/",
+    "generated_by": "scripts/studioos/aio-office-ia-export.ts"
+  },
+  "rule": "Copied verbatim from SITE00 (the Experience Brain is the source). Edit the SITE00 TypeScript and re-copy; never edit these files here.",
+  "overlay": {
+    "path": "all-in-one-enterprises/src/product-graph/officeInformationArchitecture.json",
+    "copy_of": "AIO_OFFICE_IA.json"
+  },
+  "sha256": {
+    "01_AIO_OFFICE_TREE.md": "ca07b647fc6d7eae1cf27deb31e251965b5e4fb85f5764c4c626c4311b89592c",
+    "02_CLIENT_OFFICE_TREE.md": "0b2f063346bec1d20f12efffdae572246dc7e9d316876215452c2bbce0c91f38",
+    "03_ACTOR_VISIBILITY_MATRIX.md": "e73fd958cd4de60193abbcecfc7d63493e2c5428576a1563a795731a5caf548c",
+    "04_SERVICE_STAFF_WORKSPACE_MAP.md": "c819da66ceaf752a67bb0584aa3b811d8db1c8b31ab81066b61ac8a1441ace6a",
+    "05_SERVICE_CLIENT_DESTINATION_MAP.md": "21dce7e13cec785943017b11542eaa225715bbcef695bc29381f6a3d5146edc7",
+    "06_FILING_SUPERSESSION_MAP.md": "9baa61b47ba57c6cadc0f26d7b8cb775e4db8ca107378cd16ca74081c820c63d",
+    "07_HOME_PROJECTION_MODEL.md": "cc441fbb8244efd49c0c64315a9d853318ce6b4a4054c2d2ed4daa68bf5a714c",
+    "08_REPORTS_AGGREGATION_MODEL.md": "eb96c726ec67424ce52084702016412daa3b98f29a12c76e92819cf1271c3d1d",
+    "09_MORE_RULES.md": "38736f546f9766b23c17d9e2652744ea34e66862c9ab171882b67999b18e93c3",
+    "10_EXPERIENCE_BRAIN_UPDATES.md": "b383b0b8c648b2e5bd86498b332a5dc4526ab06a2711e3f5bf9c98a5a1397ce6",
+    "11_PRODUCT_GRAPH_UPDATES.md": "f50f8badccf7443ab8882a764e800b2dc382d789ce1177ae1512e04f8ccb0213",
+    "ACTOR_VISIBILITY_MATRIX.json": "9403e6c9b0832100cda7cf88786ca8bf90889949e770ed5e2b8ecc59945b4613",
+    "AIO_OFFICE_IA.json": "6a9585efdc97a6d019b5f66344e4426c97693d04efdb629ff60fb895764e4278",
+    "AIO_OFFICE_TREE.json": "b4938ece31e9957a5d4c565e2314fc7fa32d68197fc0ee0737f2c2f5c9124e3b",
+    "CANDIDATES_AND_OPEN_QUESTIONS.md": "9924610545c4a63784ba9f9b2be60598b4715b489e546ee25c312db92cdbc233",
+    "CLIENT_OFFICE_TREE.json": "a809a2c372b883f89de602dc8e48f78ebb729629713a9e208b487205a76697e4",
+    "HOME_PROJECTION_MODEL.json": "24440912cc1a4a287453d6c6fc41e031593fa8bfc3863d1ee2d158a7a8e9090b",
+    "LEGACY_RECONCILIATION.md": "979ddc524dc59ba78252132ac2e7c819149857d68f671ba2bcb470e522c8a31c",
+    "QUALITY_GATE.json": "a05204cf630cd8e758633ef05555c28568acc8c932444600927cf4cb0e566449",
+    "README.md": "aa4f85d5c1414cee204e04abc0e33a7f9fbebf2d666d507a91d67b60e95295d0",
+    "REPORTS_AGGREGATION_MODEL.json": "f6e4fb8a9ac2afe4b66753bec51d93bdabece625f46fa57b732eed2ae9469f0a",
+    "SERVICE_CROSSWALK.json": "61e875a13af2661986439fee4c797a7b2a8fa09dab1f969c2084a9fc8dcfeacf",
+    "SERVICE_CROSSWALK.md": "9e85ca1c008f878f99da07fe4105df57a7b17b5be4b18d6d49fa23b9b90309fd",
+    "SUPERSESSION_MAP.json": "f01f39ecafaaaf1d07984a3fb3b9df50999171cadd47a4d166a95a2d711243ec"
+  }
+}

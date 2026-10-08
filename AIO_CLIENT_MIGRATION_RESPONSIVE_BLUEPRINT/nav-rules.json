@@ -7,6 +7,15 @@
     "sourceOrder": "header, sidebar, main, dock — keyboard focus reaches the header search first, then the sidebar, then the work",
     "back": "BACK (founder request 2026-10-08; not drawn in the authority set): a gold button of the same size directly under the page action (AioMigrationBack, class amg-cta amg-cta--back, arrow mirrored on the left), so it is where the thumb already is; it travels with the action (side column on a wide desktop). Not in the header. Shown on every screen but the intake root, the client's first step (HERE'S WHAT AIO ALREADY KNOWS) and the arrival screen; while a step is still running it stands alone. It opens the step before the current one in its branch (MigrationStudioPage PREVIOUS, ClientOfficeReviewPage previousStep) and keeps the open client."
   },
+  "supersession": {
+    "superseded_by": "SUPERSEDED_BY_AIO_OFFICE_WORK_TREE1",
+    "applies_to": "implementation.items and actors.STAFF.DESKTOP.nav — the item list HOME · INTAKE · FILING · REPORTS · MORE as the canonical founder / staff root",
+    "canonical_root": "HOME · INTAKE · WORK · REPORTS · MORE — FILING is AIO OFFICE → WORK → FILING & FUEL TAXES (IFTA beneath it)",
+    "source": "all-in-one-enterprises/docs/aio/office-ia/ (SITE00 Experience Brain, P0.AIO.OFFICE-IA.FOUNDER-WORK-TREE-AND-CLIENT-OFFICE-CANONICALIZATION1) · overlay src/product-graph/officeInformationArchitecture.json",
+    "live_nav": "unchanged — AioMigrationKit STAFF_NAV still renders FILING; migrating it is MIGRATE_LATER (implementation sprint)",
+    "still_valid": "everything else in this file (shell order, per-viewport presentation, client never sees INTAKE, BACK)",
+    "lineage": "the item text above is kept as history, not deleted"
+  },
   "actors": {
     "STAFF": {
       "shell": "AIO OFFICE",

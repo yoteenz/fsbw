@@ -161,7 +161,8 @@ family blueprint that every migration page now inherits.
   (`AIO_CLIENT_MIGRATION_RESPONSIVE_BLUEPRINT/future-page-contract.md`).
 - **Staff shell (AIO OFFICE):** tablet — 77px header with CLIENT MIGRATION context and the touch dock; desktop — 68px header
   with AIO OFFICE / CLIENT MIGRATION, a search field (opens the existing-client finder filtered by the term), the 138px left
-  sidebar HOME / INTAKE / FILING / REPORTS / MORE, and **no dock**.
+  sidebar HOME / INTAKE / FILING / REPORTS / MORE, and **no dock**. (That item list is `SUPERSEDED_BY_AIO_OFFICE_WORK_TREE1`;
+  see “Office information architecture” below. The live dock and sidebar are unchanged until the implementation sprint.)
 - **Client shell (CLIENT OFFICE):** never INTAKE, a dock, a sidebar, staff controls or `/office` links; desktop content is centred
   (1240px, arrival 940px).
 - **Hero band:** FULL on the landing (tablet 323px, desktop 278px) and the arrival; COMPACT on working screens (headline reflowed
@@ -181,3 +182,19 @@ family blueprint that every migration page now inherits.
   actor/leak checks, proof set A–G) → `AIO_CLIENT_MIGRATION_RESPONSIVE_BLUEPRINT/validation/responsive-qa.json`;
   `npm run migration:blueprint -- --check` keeps `screen-responsive-map.json` in sync with the declarations.
 
+## Office information architecture — staff root superseded (2026-10-08)
+
+Sprint `P0.AIO.OFFICE-IA.FOUNDER-WORK-TREE-AND-CLIENT-OFFICE-CANONICALIZATION1`. The staff / founder root dock
+HOME · INTAKE · FILING · REPORTS · MORE described above is **`SUPERSEDED_BY_AIO_OFFICE_WORK_TREE1`**. The text is kept as lineage.
+
+- **AIO OFFICE root:** HOME · INTAKE · WORK · REPORTS · MORE.
+  - FILING now lives at AIO OFFICE → WORK → FILING & FUEL TAXES, with IFTA beneath it. Case identity is unchanged.
+- **CLIENT OFFICE root:** MY BUSINESS · OPERATIONS · FINANCES · VAULT · INBOX · SERVICES · ACCOUNT. It never shows INTAKE.
+- **This family's authorities:** the migration screens belong to AIO OFFICE → INTAKE, and the client activation screens to the CLIENT OFFICE activation gate.
+  - The approved images are not touched. They still draw the old dock, which is historical lineage.
+  - `AIO-MIG-ACTIVATION-COMPLETE-001` stays superseded by `COMPLETE-002`.
+- **Still FILING:** the live `STAFF_NAV` (`AioMigrationKit.tsx`) still renders FILING. Moving it to WORK is MIGRATE_LATER, left for the implementation sprint, and it will read the architecture rather than a label array.
+- **Source:**
+  - `docs/aio/office-ia/` (copied from the SITE00 Experience Brain, with provenance and sha256)
+  - the data-only overlay `src/product-graph/officeInformationArchitecture.json`
+  - the overlay's tests in `officeInformationArchitecture.test.ts`
