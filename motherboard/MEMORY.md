@@ -55616,3 +55616,20 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
   - Clients see draft bookkeeping reports.
   - Fix these in a security sprint before building client-safe projections on them.
 - **Not changed:** live nav, routes, pages, schema, lifecycle, auth.
+
+---
+
+## 2026-10-08 — AIO office: founder four-screen design reconciliation vendored (awaiting founder)
+
+- **Context:** The founder supplied a four-screen mobile direction for AIO OFFICE (HOME, WORK, REPORTS, MORE). SITE00 reconciled it against the office IA and the root authority contracts (commit `808e2202`). This repo copies `docs/aio/office-design-reconciliation/`: 13 generated files plus `reference/AIO_OFFICE_FOUR_SCREEN_REFERENCE.png` byte for byte, with PROVENANCE.json.
+- **Test:** `src/product-graph/officeDesignReconciliation.test.ts`. It checks four things:
+  - every asset the plan reuses, fixes or keeps out exists here;
+  - the proposed WORK lanes and MORE entries equal the IA overlay;
+  - every decision is still OPEN;
+  - every hash matches.
+- **For the implementation sprint (after founder approval only):**
+  - The header lockup is `public/migration/brand-lockup.png` (no dot above the I). `public/brand/aio-logo-lockup.png` has the dot and is DO_NOT_USE in AIO OFFICE authorities.
+  - Reuse approved plates for four lanes: Vehicles & Fleet `ifta/plates/staff-hero.jpg`, Filing `ifta/plates/public-road.jpg`, Dispatch `all-in-one-hero-truck.png`, Road Ready `aio-login-hero.png`.
+  - Every other photo needs a controlled asset pass; the founder's composite must never be cropped into production.
+  - Tablet and desktop use the approved migration staff frame (`AIO_CLIENT_MIGRATION_RESPONSIVE_BLUEPRINT/nav-rules.json`), with WORK in place of FILING.
+- **Not changed:** live nav, routes, pages, schema, auth, permissions. No image generated.

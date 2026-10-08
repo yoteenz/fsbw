@@ -1,0 +1,28 @@
+{
+  "id": "AIO_DESIGN_RECONCILIATION_PROVENANCE",
+  "sprint": "P0.AIO.OFFICE.FOUNDER-HOME-WORK-REPORTS-MORE.EXISTING-DESIGN-RECONCILIATION1",
+  "source": {
+    "repo": "yoteenz/SITE00",
+    "branch": "cursor/aio-office-ia-work-tree-4f59",
+    "commit": "808e2202f4fdf104a1cfa53813ff711c8386a9b1",
+    "path": "docs/aio/office-design-reconciliation/",
+    "generated_by": "scripts/studioos/aio-office-design-reconciliation-export.ts"
+  },
+  "rule": "Copied verbatim from SITE00 (the Experience Brain is the source). reference/ is the founder’s four-screen image, byte for byte — a design reference only, never a production asset. First delivery: nothing approved; nothing in src imports these files.",
+  "sha256": {
+    "01_EXISTING_FOUR_SCREEN_AUDIT.md": "c5311ac57d13ad5cc304378024e68c3662f8bd467d1e6e4950b71756a9355c4d",
+    "02_HOME_RECONCILIATION.md": "73555b30e137e2e24de192c1630a51cbfa96862fceeeb813a987579a748d7fc7",
+    "03_WORK_RECONCILIATION.md": "edbccbde4ad7b0bbc0b3fc7f5556a42e5a59aa2450e3e7406323586b8ecdf657",
+    "04_REPORTS_RECONCILIATION.md": "3a7ddc776de043e48d28992eee27ca55227f883f02ef190620a5cf7af5b04f8b",
+    "05_MORE_RECONCILIATION.md": "ef3599ced61869219d7b22bef1253fd5b178f7c5eeca6254cc758df38617f4a7",
+    "06_EXISTING_VS_REQUIRED.md": "8c6454971037dfb56ab7537e155516638c5d48164c2eebf2669e9a37b96cc844",
+    "07_RECOMMENDED_CHANGES.md": "9ca133fcd64ba9ea44829c54a274a62c738a4a0ffb51f3b0c8e815d5247fb884",
+    "08_FOUNDER_DECISIONS.md": "71f58bd091d0d258f9f7831b3a930359c63b7f1eec142bb3857f8066fa1a48c9",
+    "09_RESPONSIVE_DESIGN_PLAN.md": "54edcd94d2017519dc5b50ffd9492344409e2dfbd291a50598da396cfab28085",
+    "10_ASSET_PRESERVATION_PLAN.md": "423e50f70b6fb2d43a4863c60a41258beb7691e5cf20b38ba5669551f136b1fd",
+    "DESIGN_RECONCILIATION.json": "37105bb0c03bf7b9a4bac92c17ecd2872fc5490a21e2887ee791e5c19c5606e1",
+    "QUALITY_GATE.json": "737b6069459a1b481e8a1843f05b2bd05ab1788249d031e37bec24cc4424dc12",
+    "README.md": "1815fd882f326171a09bec3e6eb47d6eb1f521149528d1f310c50c816d33766d",
+    "reference/AIO_OFFICE_FOUR_SCREEN_REFERENCE.png": "47343139eccfe6055479d4f1f0841da74ab87134fd1d62f5f5cded040dd5e961"
+  }
+}
