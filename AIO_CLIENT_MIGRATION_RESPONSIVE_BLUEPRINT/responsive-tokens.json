@@ -1,0 +1,62 @@
+{
+  "$schema": "AIO_CLIENT_MIGRATION_RESPONSIVE_BLUEPRINT/responsive-tokens",
+  "principle": "DO NOT SCALE. REFLOW. Tokens change per semantic viewport; screens never redefine them.",
+  "implementation": "all-in-one-enterprises/src/client-migration/visual/aio-migration-responsive.css (custom properties on .amg)",
+  "breakpoints": {
+    "MOBILE": { "min": 0, "max": 699, "authority": "locked phone family (853×1536 frame, 1u = 100vw / 853)" },
+    "TABLET": { "min": 700, "max": 1023, "master": "masters/AIO-MIG-ROOT-TABLET-834x1194.png" },
+    "DESKTOP": { "min": 1024, "master": "masters/AIO-MIG-ROOT-DESKTOP-1440x900.png" },
+    "rule": "No per-screen breakpoints. CSS uses exactly @media (min-width: 700px) and @media (min-width: 1024px) (+ the tablet-only range 700–1023)."
+  },
+  "unit": {
+    "MOBILE": "--u: calc(100vw / 853) — authority units, pixel-locked to the phone authorities",
+    "TABLET": "--u: clamp(0.84px, 100vw / 834, 1px) — panel internals at the master's 1u ≈ 1px",
+    "DESKTOP": "--u: 1px"
+  },
+  "tokens": {
+    "PAGE_GUTTER": { "css": "--gutter", "MOBILE": "authority coordinates (≈ 17–20u)", "TABLET": "16px", "DESKTOP": "16px" },
+    "SECTION_GAP": { "css": "--section-gap", "MOBILE": "authority (13–18u)", "TABLET": "12px", "DESKTOP": "11px" },
+    "CARD_GAP": { "css": "--card-gap", "MOBILE": "10u (path cards)", "TABLET": "8px", "DESKTOP": "12px" },
+    "CARD_PADDING": { "css": "--card-pad", "MOBILE": "authority (≈ 20–26u)", "TABLET": "18px", "DESKTOP": "18px" },
+    "HERO_GAP": { "css": "--hero-gap", "MOBILE": "authority", "TABLET": "5px (title baseline → subtitle)", "DESKTOP": "5px" },
+    "GRID_GAP": { "css": "--grid-gap", "MOBILE": "authority", "TABLET": "11px", "DESKTOP": "10px" },
+    "HEADER_HEIGHT": { "css": "--head-px", "MOBILE": "98u root family · 88u existing family · 100u arrival", "TABLET": "77px", "DESKTOP": "68px" },
+    "NAV_WIDTH": { "css": "--nav-w", "MOBILE": "0 (bottom dock)", "TABLET": "0 (bottom dock)", "DESKTOP": "138px (staff sidebar) · 0 for clients" },
+    "BOTTOM_SAFE_AREA": { "css": "--bottom-safe", "MOBILE": "150u staff (dock) · 40u client", "TABLET": "dock 113px + 22px + env(safe-area-inset-bottom) staff · 40px client", "DESKTOP": "16px" },
+    "DOCK_HEIGHT": { "css": "--dock-h", "MOBILE": "132u root family · 105u existing family", "TABLET": "113px", "DESKTOP": "0 (no dock)" }
+  },
+  "contentWidths": {
+    "rule": "No universal max-width (never 768px). Content fills the workspace up to a page-type measure; the hero band is always full-bleed across the workspace.",
+    "staffWorkspace": "viewport − NAV_WIDTH; content padding max(PAGE_GUTTER, (workspace − 1480px) / 2) → content measure caps at 1480px on very wide screens",
+    "clientWorkspace": "viewport (no navigation); content measure 1240px, centred",
+    "arrival": "940px, centred",
+    "singleColumnFlow": "1000px, centred (a working flow without a side column)"
+  },
+  "typographyRoles": {
+    "families": { "text": "Roboto (AMG Roboto)", "condensed": "Roboto Condensed (AMG Roboto Condensed)" },
+    "case": "UPPERCASE everywhere (founder law); password inputs are the only exception",
+    "roles": {
+      "HERO_KICKER": { "TABLET": "15px / 500 / tracking .25em", "DESKTOP": "15px / 500 / tracking .22em", "COMPACT": "13px / tracking .28em" },
+      "HERO_TITLE": { "FULL_TABLET": "73px / 60px / condensed 800", "FULL_DESKTOP": "72px / 59px", "COMPACT_TABLET": "46px / 42px", "COMPACT_DESKTOP": "52px / 47px" },
+      "HERO_SUBTITLE": { "FULL_TABLET": "15.5px / 24px", "FULL_DESKTOP": "18px / 22.5px", "COMPACT": "14.5–15px / 20–21px (reflows inside the safe zone)" },
+      "SECTION_TITLE": "21–22px / condensed 600 / tracking .03em",
+      "CARD_TITLE": { "TABLET": "21.5px condensed 600 (single line)", "DESKTOP": "24px condensed 600 tracking .04em" },
+      "BODY": "12–15px / Roboto 400 / secondary ink",
+      "STEP_LABEL": { "TABLET": "15.5px condensed 600", "DESKTOP": "14px tracking .07em" },
+      "NAV_LABEL": { "TABLET_DOCK": "16px / 400", "DESKTOP_SIDEBAR": "13.5px / 500 / tracking .06em" },
+      "CTA_LABEL": "22–23px condensed 600"
+    }
+  },
+  "ctaRules": {
+    "primary": "One gold primary action per screen. Never several equal gold buttons side by side (path-card arrows are navigation affordances, not page actions).",
+    "MOBILE": "authority geometry (full-width bar at the authority position)",
+    "TABLET": "page action: centred, width min(456px, 100%), 58px tall; inside a card: full card width",
+    "DESKTOP": "LANDING: workspace-wide bar 47px tall · MAIN_SIDE / CANVAS_PANEL: full width of the sticky side column"
+  },
+  "color": {
+    "gold": "#f1c158 → #e7ab3c gradient (CTA, current step, active nav accent)",
+    "activeNav": "#19191b tile, #edb63f label/icon, 5px #f1b440 edge (sidebar)",
+    "page": "#f2f0ec",
+    "glassPanel": "rgba(252, 251, 249, 0.93) with a 1px rgba(255, 255, 255, 0.8) edge"
+  }
+}

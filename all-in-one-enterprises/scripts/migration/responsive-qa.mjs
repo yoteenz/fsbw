@@ -127,7 +127,7 @@ async function composition(which) {
   const m = MASTER[which];
   const root = SCREENS.find((s) => s.key === 'root');
   const { ctx, p } = await open(root, { ...m.vp, hasTouch: which === 'TABLET' });
-  await p.screenshot({ path: join(BP, 'validation', `root-${which.toLowerCase()}-live.png`) });
+  await p.screenshot({ path: join(BP, 'validation', `root-${which.toLowerCase()}-live.jpg`), type: 'jpeg', quality: 85 });
   const live = await p.evaluate((els) => {
     const firstText = (el) => {
       const w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);

@@ -85,6 +85,9 @@ Deliberate deviations where runtime truth differs from the authority:
 
 ## Tablet and desktop (derived, not authority-drawn)
 
+> **Superseded by the responsive blueprint** (next section): the founder approved tablet (834×1194) and desktop (1440×900)
+> masters for the root. The notes below describe the first derived layer and are kept for history.
+
 The authority frames are phone frames. Wider screens get a layout derived from them in `aio-migration.css`; the phone composition below 700px is unchanged (0% pixel difference).
 
 - **≥ 700px (tablet):** header becomes a bar (logo left, actions right, centered 1240px column). The authority photograph becomes a full-width band holding the headline. Panels flow in one column, stretched to the column, at a desktop type scale (`--u` clamped 0.82–0.95px). Multi-up rows spread out: three path tiles, three providers, three extraction stats, three activation choices. Right-hand row content (status, counts, add buttons) stays anchored to the right edge. The existing-family dock is centered.
@@ -128,8 +131,43 @@ Fidelity: captured at 427×768 @2x and compared with each authority (side-by-sid
 
 ### Tablet and desktop (propagated screens)
 
-≥ 700px: one stack in authority order at the desktop type scale, as on the representatives. ≥ 1120px: the step card spans the top, cards form a 2fr main column and the closing items (what happens next, notes, the action) a sticky 1fr side column; screens with nothing for the side keep a 1000px measure.
+≥ 700px: one stack in authority order at the desktop type scale, as on the representatives. ≥ 1024px (was 1120px before the blueprint): the step card spans the top; once the work column keeps ≥ ~820px (content ≥ 1184px, a container query) the closing items (what happens next, notes, the action) sit in a sticky 340px side column, otherwise they pair up under the work; screens with nothing for the side (SINGLE) keep a centred 1000px measure.
 
 ### Review gallery
 
 `npm run migration:gallery` captures all 41 built screens with demo data and writes `.migration-mocks/aio-migration-gallery.html`: each screen renders live at phone, tablet or desktop width next to its authority image. Link: `docs/migration-recovery/MOCKS.md`.
+
+## Responsive blueprint — tablet and desktop masters (RESPONSIVE-COMPOSITION-BLUEPRINT1)
+
+**DO NOT SCALE. REFLOW.** The founder approved two root masters: tablet 834×1194 and desktop 1440×900. They are archived (not
+added to the authority directory) in `AIO_CLIENT_MIGRATION_RESPONSIVE_BLUEPRINT/masters/` at the repo root, next to the
+family blueprint that every migration page now inherits.
+
+- **Breakpoints (semantic, no per-screen values):** MOBILE < 700 (the locked phone authorities, untouched) · TABLET 700–1023 ·
+  DESKTOP ≥ 1024.
+- **Declarations:** `migrationResponsive.ts` declares each screen's ACTOR, PAGE_TYPE, DENSITY_CLASS, HERO_MODE, PRIMARY_GRID_MODE,
+  PROCESS_MODE, SUPPORT_GRID_MODE, FORM_MODE, TABLE_MODE and OVERLAY_MODE. `MigrationShell` writes them onto `.amg` as data
+  attributes; `aio-migration-responsive.css` composes only from those. A new page inherits everything by adding one entry
+  (`AIO_CLIENT_MIGRATION_RESPONSIVE_BLUEPRINT/future-page-contract.md`).
+- **Staff shell (AIO OFFICE):** tablet — 77px header with CLIENT MIGRATION context and the touch dock; desktop — 68px header
+  with AIO OFFICE / CLIENT MIGRATION, a search field (opens the existing-client finder filtered by the term), the 138px left
+  sidebar HOME / INTAKE / FILING / REPORTS / MORE, and **no dock**.
+- **Client shell (CLIENT OFFICE):** never INTAKE, a dock, a sidebar, staff controls or `/office` links; desktop content is centred
+  (1240px, arrival 940px).
+- **Hero band:** FULL on the landing (tablet 323px, desktop 278px) and the arrival; COMPACT on working screens (headline reflowed
+  into the left safe zone over a light scrim). Wide plates `public/migration/env-wide-tablet.jpg` / `env-wide-desktop.jpg` are cut
+  from the masters' hero bands with the baked headline removed; phones never download them.
+- **Root:** 3-up path cards, horizontal process band, 2-column support (tablet: file types + data is secure) / 3-column support
+  (desktop: + WHAT HAPPENS NEXT — PREBUILT is not ACTIVE), centred tablet action / workspace-wide desktop action. The common
+  providers panel, the photo security callout and VIEW ALL MIGRATIONS are phone-only (the masters do not draw them; REPORTS in the
+  dock / sidebar reaches the same archive).
+- **Grids:** MAIN_SIDE (work + sticky 340px side column), CANVAS_PANEL for founder review (canvas + sticky 320px
+  context/actions panel), SINGLE (centred 1000px measure), CENTERED for client screens. The side column appears only when the
+  work column keeps ≥ ~820px (container query on the main column: module internals are drawn in phone authority units);
+  narrower desktops stack and pair the support panels. Tablet pairs support panels two per row and keeps one moderate centred action.
+- **Tables:** the batch queue is a semantic `<table>` from tablet up (stacked rows on the phone); new-client received files carry
+  table roles.
+- **Validation:** `npm run migration:responsive-qa` (root composition vs the masters, per-screen RESPONSIVE_SYSTEM_CONFORMANCE,
+  actor/leak checks, proof set A–G) → `AIO_CLIENT_MIGRATION_RESPONSIVE_BLUEPRINT/validation/responsive-qa.json`;
+  `npm run migration:blueprint -- --check` keeps `screen-responsive-map.json` in sync with the declarations.
+

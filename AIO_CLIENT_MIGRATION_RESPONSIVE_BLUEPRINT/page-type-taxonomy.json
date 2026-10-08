@@ -1,0 +1,29 @@
+{
+  "$schema": "AIO_CLIENT_MIGRATION_RESPONSIVE_BLUEPRINT/page-type-taxonomy",
+  "principle": "ONE RESPONSIVE SYSTEM, MANY PAGE EXPRESSIONS. A page type fixes the default regions and defaults for hero, grid and density; a screen may override a default in its declaration (migrationResponsive.ts).",
+  "densityClasses": {
+    "LOW": "one decision or confirmation; few rows; generous spacing (invite, invited, arrival, what changed)",
+    "MEDIUM": "a working screen with one main card group and a support column",
+    "HIGH": "many records with per-record decisions (founder review, conflicts, people, vehicles)",
+    "TABLE_HEAVY": "records read as a table (received files, batch queue, duplicates)"
+  },
+  "pageTypes": {
+    "LANDING": { "defaults": { "hero": "FULL", "grid": "PATHS_3UP", "process": "BAND", "support": "SUPPORT_GRID", "density": "MEDIUM" }, "regions": ["hero", "path cards", "process band", "support grid", "landing CTA"], "screens": ["root"] },
+    "PATH_SELECT": { "defaults": { "hero": "COMPACT", "grid": "MAIN_SIDE", "process": "STEPPER", "support": "SIDE" }, "regions": ["select steps", "finder card (search + rows)", "what happens next", "action"], "screens": ["existing"] },
+    "UPLOAD": { "defaults": { "hero": "COMPACT", "grid": "MAIN_SIDE", "support": "SIDE", "form": "FIELDS" }, "regions": ["client / identity card", "drop zone", "chosen files rows", "notes", "action"], "screens": ["upload", "new"] },
+    "PROCESSING": { "defaults": { "hero": "COMPACT", "grid": "MAIN_SIDE", "process": "BAND|STAGES" }, "regions": ["subject card", "stage band / list", "progress", "saved-progress strip", "action when finished"], "screens": ["extract", "new-extract", "batch-processing", "batch-run"] },
+    "REVIEW": { "defaults": { "hero": "COMPACT", "grid": "CANVAS_PANEL (staff) | CENTERED (client)", "form": "CHOICES", "table": "ROWS", "density": "HIGH" }, "regions": ["subject card", "review rows with decisions", "context / actions panel"], "screens": ["match", "review", "conflicts", "new-records", "new-review", "company", "people", "vehicles", "services", "documents"] },
+    "TABLE_LIST": { "defaults": { "hero": "COMPACT", "grid": "MAIN_SIDE", "table": "TABLE", "density": "TABLE_HEAVY" }, "regions": ["summary card", "table", "side support", "action"], "screens": ["received", "new-received", "batch-queue", "batch-conflicts"] },
+    "DETAIL": { "defaults": { "hero": "COMPACT", "grid": "MAIN_SIDE", "table": "ROWS" }, "regions": ["identity card", "detail rows / key-values", "notes", "action"], "screens": ["prebuilt", "new-identity", "new-prebuilt", "batch-client"] },
+    "CONFIRMATION": { "defaults": { "hero": "COMPACT", "grid": "MAIN_SIDE", "table": "ROWS" }, "regions": ["status card", "readiness rows / outcome tiles", "what happens next", "action"], "screens": ["approval", "invited", "confirm", "new-approval", "new-confirm", "batch-approval", "batch-complete"] },
+    "INVITE": { "defaults": { "hero": "COMPACT", "grid": "MAIN_SIDE", "form": "FIELDS", "density": "LOW" }, "regions": ["recipient card", "delivery details", "link", "action"], "screens": ["invite", "new-invite"] },
+    "ACTIVATION": { "defaults": { "hero": "COMPACT", "grid": "CENTERED", "actor": "CLIENT" }, "regions": ["what AIO knows / shortcuts", "what happens next", "action"], "screens": ["welcome", "changed"] },
+    "ARRIVAL": { "defaults": { "hero": "FULL", "grid": "CENTERED", "support": "NONE", "density": "LOW", "actor": "CLIENT" }, "regions": ["full environment", "ACTIVE seal", "office card", "enter action"], "screens": ["complete"], "rule": "stays a celebratory arrival at every viewport (no dashboard chrome)" },
+    "BATCH": { "defaults": { "hero": "COMPACT", "grid": "MAIN_SIDE", "form": "FIELDS" }, "regions": ["batch identity", "drop zone / counts / detection tiles", "not-activated strip", "action"], "screens": ["batch", "batch-received", "batch-summary"] }
+  },
+  "perViewportComposition": {
+    "MOBILE": "the locked authority composition of each screen",
+    "TABLET": "compact header + touch dock (staff); hero band per HERO_MODE; one column; support panels paired; centred moderate action",
+    "DESKTOP": "sidebar + AIO OFFICE header (staff) or CLIENT OFFICE header (client); hero band in the workspace; PRIMARY_GRID_MODE composition; sticky side column"
+  }
+}

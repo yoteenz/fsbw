@@ -1,0 +1,7513 @@
+{
+ "generatedAt": "2026-10-08T03:32:54.929Z",
+ "base": "http://127.0.0.1:5180",
+ "composition": {
+  "TABLET": {
+   "master": "masters/AIO-MIG-ROOT-TABLET-834x1194.png",
+   "viewport": {
+    "width": 832,
+    "height": 1200
+   },
+   "tolerancePx": 4,
+   "score": 93.5,
+   "rows": [
+    {
+     "label": "header",
+     "master": [
+      0,
+      0,
+      832,
+      77
+     ],
+     "live": [
+      0,
+      0,
+      832,
+      77
+     ],
+     "iou": 1
+    },
+    {
+     "label": "lockup",
+     "master": [
+      33,
+      17,
+      247,
+      67
+     ],
+     "live": [
+      33,
+      16,
+      226,
+      68
+     ],
+     "iou": 0.878
+    },
+    {
+     "label": "context",
+     "master": [
+      270,
+      27,
+      428,
+      57
+     ],
+     "live": [
+      270,
+      27,
+      436,
+      57
+     ],
+     "iou": 0.954
+    },
+    {
+     "label": "search",
+     "master": [
+      516,
+      30,
+      541,
+      55
+     ],
+     "live": [
+      513,
+      29,
+      539,
+      55
+     ],
+     "iou": 0.837
+    },
+    {
+     "label": "bell",
+     "master": [
+      569,
+      29,
+      594,
+      55
+     ],
+     "live": [
+      567,
+      29,
+      593,
+      55
+     ],
+     "iou": 0.914
+    },
+    {
+     "label": "avatar",
+     "master": [
+      619,
+      16,
+      671,
+      68
+     ],
+     "live": [
+      619,
+      16,
+      671,
+      68
+     ],
+     "iou": 1
+    },
+    {
+     "label": "identity",
+     "master": [
+      686,
+      26,
+      742,
+      57
+     ],
+     "live": [
+      686,
+      25,
+      773,
+      56
+     ],
+     "iou": 0.645
+    },
+    {
+     "label": "hero band",
+     "master": [
+      0,
+      77,
+      832,
+      400
+     ],
+     "live": [
+      0,
+      77,
+      832,
+      400
+     ],
+     "iou": 1
+    },
+    {
+     "label": "kicker",
+     "master": [
+      48,
+      138,
+      317,
+      149
+     ],
+     "live": [
+      48,
+      137,
+      323,
+      148
+     ],
+     "iou": 0.882
+    },
+    {
+     "label": "title",
+     "master": [
+      48,
+      163,
+      367,
+      274
+     ],
+     "live": [
+      46,
+      163,
+      424,
+      275
+     ],
+     "iou": 0.84
+    },
+    {
+     "label": "subtitle",
+     "master": [
+      48,
+      290,
+      368,
+      357
+     ],
+     "live": [
+      48,
+      291,
+      373,
+      350
+     ],
+     "iou": 0.881
+    },
+    {
+     "label": "path existing",
+     "master": [
+      16,
+      400,
+      281,
+      632
+     ],
+     "live": [
+      16,
+      400,
+      281,
+      633
+     ],
+     "iou": 0.996
+    },
+    {
+     "label": "path new",
+     "master": [
+      289,
+      400,
+      544,
+      632
+     ],
+     "live": [
+      289,
+      400,
+      544,
+      633
+     ],
+     "iou": 0.996
+    },
+    {
+     "label": "path batch",
+     "master": [
+      552,
+      400,
+      816,
+      632
+     ],
+     "live": [
+      552,
+      400,
+      816,
+      633
+     ],
+     "iou": 0.996
+    },
+    {
+     "label": "process band",
+     "master": [
+      17,
+      645,
+      815,
+      826
+     ],
+     "live": [
+      16,
+      645,
+      816,
+      826
+     ],
+     "iou": 0.998
+    },
+    {
+     "label": "file types",
+     "master": [
+      17,
+      838,
+      429,
+      989
+     ],
+     "live": [
+      16,
+      838,
+      429,
+      989
+     ],
+     "iou": 0.998
+    },
+    {
+     "label": "secure",
+     "master": [
+      440,
+      838,
+      815,
+      989
+     ],
+     "live": [
+      440,
+      838,
+      816,
+      989
+     ],
+     "iou": 0.997
+    },
+    {
+     "label": "cta",
+     "master": [
+      187,
+      1007,
+      644,
+      1065
+     ],
+     "live": [
+      188,
+      1007,
+      644,
+      1065
+     ],
+     "iou": 0.998
+    },
+    {
+     "label": "dock",
+     "master": [
+      0,
+      1087,
+      832,
+      1200
+     ],
+     "live": [
+      0,
+      1087,
+      832,
+      1200
+     ],
+     "iou": 1
+    },
+    {
+     "label": "dock active",
+     "master": [
+      203,
+      1097,
+      327,
+      1172
+     ],
+     "live": [
+      195,
+      1097,
+      319,
+      1172
+     ],
+     "iou": 0.886
+    }
+   ]
+  },
+  "DESKTOP": {
+   "master": "masters/AIO-MIG-ROOT-DESKTOP-1440x900.png",
+   "viewport": {
+    "width": 1440,
+    "height": 896
+   },
+   "tolerancePx": 4,
+   "score": 92.4,
+   "rows": [
+    {
+     "label": "header",
+     "master": [
+      0,
+      0,
+      1440,
+      68
+     ],
+     "live": [
+      0,
+      0,
+      1440,
+      68
+     ],
+     "iou": 1
+    },
+    {
+     "label": "lockup",
+     "master": [
+      37,
+      11,
+      258,
+      56
+     ],
+     "live": [
+      37,
+      11,
+      223,
+      61
+     ],
+     "iou": 0.784
+    },
+    {
+     "label": "context",
+     "master": [
+      291,
+      16,
+      460,
+      55
+     ],
+     "live": [
+      291,
+      17,
+      472,
+      56
+     ],
+     "iou": 0.899
+    },
+    {
+     "label": "search field",
+     "master": [
+      719,
+      15,
+      1089,
+      55
+     ],
+     "live": [
+      719,
+      16,
+      1089,
+      56
+     ],
+     "iou": 0.959
+    },
+    {
+     "label": "bell",
+     "master": [
+      1130,
+      22,
+      1152,
+      48
+     ],
+     "live": [
+      1126,
+      24,
+      1150,
+      48
+     ],
+     "iou": 0.78
+    },
+    {
+     "label": "avatar",
+     "master": [
+      1203,
+      9,
+      1257,
+      63
+     ],
+     "live": [
+      1203,
+      9,
+      1257,
+      63
+     ],
+     "iou": 1
+    },
+    {
+     "label": "identity",
+     "master": [
+      1273,
+      19,
+      1329,
+      50
+     ],
+     "live": [
+      1271,
+      21,
+      1362,
+      50
+     ],
+     "iou": 0.625
+    },
+    {
+     "label": "sidebar",
+     "master": [
+      0,
+      68,
+      138,
+      896
+     ],
+     "live": [
+      0,
+      68,
+      138,
+      896
+     ],
+     "iou": 1
+    },
+    {
+     "label": "sidebar active",
+     "master": [
+      0,
+      155,
+      135,
+      215
+     ],
+     "live": [
+      0,
+      157,
+      135,
+      217
+     ],
+     "iou": 0.943
+    },
+    {
+     "label": "hero band",
+     "master": [
+      138,
+      68,
+      1440,
+      346
+     ],
+     "live": [
+      138,
+      68,
+      1440,
+      346
+     ],
+     "iou": 1
+    },
+    {
+     "label": "kicker",
+     "master": [
+      174,
+      102,
+      430,
+      114
+     ],
+     "live": [
+      174,
+      101,
+      439,
+      112
+     ],
+     "iou": 0.831
+    },
+    {
+     "label": "title",
+     "master": [
+      174,
+      128,
+      505,
+      240
+     ],
+     "live": [
+      172,
+      128,
+      545,
+      238
+     ],
+     "iou": 0.877
+    },
+    {
+     "label": "subtitle",
+     "master": [
+      174,
+      252,
+      541,
+      320
+     ],
+     "live": [
+      174,
+      252,
+      551,
+      310
+     ],
+     "iou": 0.849
+    },
+    {
+     "label": "path existing",
+     "master": [
+      154,
+      357,
+      569,
+      545
+     ],
+     "live": [
+      154,
+      357,
+      569,
+      545
+     ],
+     "iou": 1
+    },
+    {
+     "label": "path new",
+     "master": [
+      581,
+      357,
+      993,
+      545
+     ],
+     "live": [
+      581,
+      357,
+      997,
+      545
+     ],
+     "iou": 0.991
+    },
+    {
+     "label": "path batch",
+     "master": [
+      1005,
+      357,
+      1420,
+      545
+     ],
+     "live": [
+      1009,
+      357,
+      1424,
+      545
+     ],
+     "iou": 0.981
+    },
+    {
+     "label": "process band",
+     "master": [
+      154,
+      557,
+      1420,
+      679
+     ],
+     "live": [
+      154,
+      556,
+      1424,
+      679
+     ],
+     "iou": 0.989
+    },
+    {
+     "label": "file types",
+     "master": [
+      154,
+      689,
+      600,
+      823
+     ],
+     "live": [
+      154,
+      690,
+      602,
+      824
+     ],
+     "iou": 0.982
+    },
+    {
+     "label": "secure",
+     "master": [
+      610,
+      689,
+      990,
+      823
+     ],
+     "live": [
+      612,
+      690,
+      993,
+      824
+     ],
+     "iou": 0.973
+    },
+    {
+     "label": "what next",
+     "master": [
+      1001,
+      689,
+      1420,
+      823
+     ],
+     "live": [
+      1003,
+      690,
+      1424,
+      824
+     ],
+     "iou": 0.972
+    },
+    {
+     "label": "cta",
+     "master": [
+      156,
+      833,
+      1420,
+      880
+     ],
+     "live": [
+      154,
+      834,
+      1424,
+      881
+     ],
+     "iou": 0.96
+    }
+   ]
+  }
+ },
+ "screens": [
+  {
+   "key": "root",
+   "authority": "AIO-MIG-ROOT-001",
+   "route": "/office/migration",
+   "viewports": {
+    "MOBILE": {
+     "errors": 0,
+     "hscroll": false
+    },
+    "TABLET": {
+     "score": 100,
+     "parts": {
+      "shell": 20,
+      "hero": 15,
+      "grid": 15,
+      "overflow": 15,
+      "gutter": 10,
+      "cta": 10,
+      "table": 5,
+      "touch": 10
+     },
+     "errors": 0,
+     "probe": {
+      "actor": "staff",
+      "decl": {
+       "screen": "root",
+       "pageType": "LANDING",
+       "density": "MEDIUM",
+       "hero": "FULL",
+       "grid": "PATHS_3UP",
+       "process": "BAND",
+       "support": "SUPPORT_GRID",
+       "form": "NONE",
+       "table": "NONE",
+       "overlay": "NONE"
+      },
+      "dock": true,
+      "sidebar": false,
+      "navW": 0,
+      "field": false,
+      "ctx": "CLIENT MIGRATION",
+      "intakeNav": true,
+      "officeLinks": 5,
+      "iftaLinks": 0,
+      "iftaUi": 0,
+      "headH": 77,
+      "plate": true,
+      "env": false,
+      "hero": {
+       "l": 0,
+       "t": 77,
+       "r": 834,
+       "b": 400,
+       "w": 834,
+       "h": 323
+      },
+      "heroTextRight": 424.390625,
+      "hscroll": false,
+      "overflow": 0,
+      "split": null,
+      "flowMain": null,
+      "flowSide": null,
+      "paths": [
+       400,
+       400,
+       400
+      ],
+      "ctas": [
+       {
+        "w": 456,
+        "h": 58
+       }
+      ],
+      "table": false,
+      "touch": 1,
+      "contentL": 16,
+      "contentR": 818,
+      "vw": 834
+     }
+    },
+    "DESKTOP": {
+     "score": 100,
+     "parts": {
+      "shell": 20,
+      "hero": 15,
+      "grid": 15,
+      "overflow": 15,
+      "gutter": 10,
+      "cta": 10,
+      "table": 5,
+      "touch": 10
+     },
+     "errors": 0,
+     "probe": {
+      "actor": "staff",
+      "decl": {
+       "screen": "root",
+       "pageType": "LANDING",
+       "density": "MEDIUM",
+       "hero": "FULL",
+       "grid": "PATHS_3UP",
+       "process": "BAND",
+       "support": "SUPPORT_GRID",
+       "form": "NONE",
+       "table": "NONE",
+       "overlay": "NONE"
+      },
+      "dock": false,
+      "sidebar": true,
+      "navW": 138,
+      "field": true,
+      "ctx": "AIO OFFICE CLIENT MIGRATION",
+      "intakeNav": true,
+      "officeLinks": 5,
+      "iftaLinks": 0,
+      "iftaUi": 0,
+      "headH": 68,
+      "plate": true,
+      "env": false,
+      "hero": {
+       "l": 138,
+       "t": 68,
+       "r": 1440,
+       "b": 346,
+       "w": 1302,
+       "h": 278
+      },
+      "heroTextRight": 550.921875,
+      "hscroll": false,
+      "overflow": 0,
+      "split": null,
+      "flowMain": null,
+      "flowSide": null,
+      "paths": [
+       357,
+       357,
+       357
+      ],
+      "ctas": [
+       {
+        "w": 1270,
+        "h": 47
+       }
+      ],
+      "table": false,
+      "touch": 1,
+      "contentL": 154,
+      "contentR": 1424,
+      "vw": 1440
+     }
+    }
+   },
+   "conformance": 100
+  },
+  {
+   "key": "existing",
+   "authority": "AIO-MIG-EXISTING-SELECT-001",
+   "route": "/office/migration/existing?client=client-b",
+   "viewports": {
+    "MOBILE": {
+     "errors": 0,
+     "hscroll": false
+    },
+    "TABLET": {
+     "score": 100,
+     "parts": {
+      "shell": 20,
+      "hero": 15,
+      "grid": 15,
+      "overflow": 15,
+      "gutter": 10,
+      "cta": 10,
+      "table": 5,
+      "touch": 10
+     },
+     "errors": 0,
+     "probe": {
+      "actor": "staff",
+      "decl": {
+       "screen": "existing",
+       "pageType": "PATH_SELECT",
+       "density": "MEDIUM",
+       "hero": "COMPACT",
+       "grid": "MAIN_SIDE",
+       "process": "STEPPER",
+       "support": "SIDE",
+       "form": "NONE",
+       "table": "ROWS",
+       "overlay": "NONE"
+      },
+      "dock": true,
+      "sidebar": false,
+      "navW": 0,
+      "field": false,
+      "ctx": "CLIENT MIGRATION",
+      "intakeNav": true,
+      "officeLinks": 5,
+      "iftaLinks": 0,
+      "iftaUi": 0,
+      "headH": 77,
+      "plate": true,
+      "env": false,
+      "hero": {
+       "l": 0,
+       "t": 77,
+       "r": 834,
+       "b": 327,
+       "w": 834,
+       "h": 250
+      },
+      "heroTextRight": 379.5,
+      "hscroll": false,
+      "overflow": 0,
+      "split": null,
+      "flowMain": null,
+      "flowSide": null,
+      "paths": [],
+      "ctas": [
+       {
+        "w": 456,
+        "h": 58
+       }
+      ],
+      "table": false,
+      "touch": 1,
+      "contentL": 16,
+      "contentR": 818,
+      "vw": 834
+     }
+    },
+    "DESKTOP": {
+     "score": 100,
+     "parts": {
+      "shell": 20,
+      "hero": 15,
+      "grid": 15,
+      "overflow": 15,
+      "gutter": 10,
+      "cta": 10,
+      "table": 5,
+      "touch": 10
+     },
+     "errors": 0,
+     "probe": {
+      "actor": "staff",
+      "decl": {
+       "screen": "existing",
+       "pageType": "PATH_SELECT",
+       "density": "MEDIUM",
+       "hero": "COMPACT",
+       "grid": "MAIN_SIDE",
+       "process": "STEPPER",
+       "support": "SIDE",
+       "form": "NONE",
+       "table": "ROWS",
+       "overlay": "NONE"
+      },
+      "dock": false,
+      "sidebar": true,
+      "navW": 138,
+      "field": true,
+      "ctx": "AIO OFFICE CLIENT MIGRATION",
+      "intakeNav": true,
+      "officeLinks": 5,
+      "iftaLinks": 0,
+      "iftaUi": 0,
+      "headH": 68,
+      "plate": true,
+      "env": false,
+      "hero": {
+       "l": 138,
+       "t": 68,
+       "r": 1440,
+       "b": 300,
+       "w": 1302,
+       "h": 232
+      },
+      "heroTextRight": 634.9375,
+      "hscroll": false,
+      "overflow": 0,
+      "split": null,
+      "flowMain": null,
+      "flowSide": null,
+      "paths": [],
+      "ctas": [
+       {
+        "w": 1270,
+        "h": 47
+       }
+      ],
+      "table": false,
+      "touch": 1,
+      "contentL": 154,
+      "contentR": 1424,
+      "vw": 1440
+     }
+    }
+   },
+   "conformance": 100
+  },
+  {
+   "key": "upload",
+   "authority": "AIO-MIG-EXISTING-UPLOAD-001",
+   "route": "/office/migration/upload?client=client-b",
+   "viewports": {
+    "MOBILE": {
+     "errors": 0,
+     "hscroll": false
+    },
+    "TABLET": {
+     "score": 100,
+     "parts": {
+      "shell": 20,
+      "hero": 15,
+      "grid": 15,
+      "overflow": 15,
+      "gutter": 10,
+      "cta": 10,
+      "table": 5,
+      "touch": 10
+     },
+     "errors": 0,
+     "probe": {
+      "actor": "staff",
+      "decl": {
+       "screen": "upload",
+       "pageType": "UPLOAD",
+       "density": "MEDIUM",
+       "hero": "COMPACT",
+       "grid": "MAIN_SIDE",
+       "process": "NONE",
+       "support": "SIDE",
+       "form": "NONE",
+       "table": "ROWS",
+       "overlay": "NONE"
+      },
+      "dock": true,
+      "sidebar": false,
+      "navW": 0,
+      "field": false,
+      "ctx": "CLIENT MIGRATION",
+      "intakeNav": true,
+      "officeLinks": 5,
+      "iftaLinks": 0,
+      "iftaUi": 0,
+      "headH": 77,
+      "plate": true,
+      "env": false,
+      "hero": {
+       "l": 0,
+       "t": 77,
+       "r": 834,
+       "b": 335,
+       "w": 834,
+       "h": 258
+      },
+      "heroTextRight": 369.984375,
+      "hscroll": false,
+      "overflow": 0,
+      "split": false,
+      "flowMain": null,
+      "flowSide": {
+       "l": 16,
+       "t": 1176.609375,
+       "r": 818,
+       "b": 1400.515625,
+       "w": 802,
+       "h": 223.90625
+      },
+      "paths": [],
+      "ctas": [
+       {
+        "w": 456,
+        "h": 67
+       }
+      ],
+      "table": false,
+      "touch": 1,
+      "contentL": 16,
+      "contentR": 818,
+      "vw": 834
+     }
+    },
+    "DESKTOP": {
+     "score": 100,
+     "parts": {
+      "shell": 20,
+      "hero": 15,
+      "grid": 15,
+      "overflow": 15,
+      "gutter": 10,
+      "cta": 10,
+      "table": 5,
+      "touch": 10
+     },
+     "errors": 0,
+     "probe": {
+      "actor": "staff",
+      "decl": {
+       "screen": "upload",
+       "pageType": "UPLOAD",
+       "density": "MEDIUM",
+       "hero": "COMPACT",
+       "grid": "MAIN_SIDE",
+       "process": "NONE",
+       "support": "SIDE",
+       "form": "NONE",
+       "table": "ROWS",
+       "overlay": "NONE"
+      },
+      "dock": false,
+      "sidebar": true,
+      "navW": 138,
+      "field": true,
+      "ctx": "AIO OFFICE CLIENT MIGRATION",
+      "intakeNav": true,
+      "officeLinks": 5,
+      "iftaLinks": 0,
+      "iftaUi": 0,
+      "headH": 68,
+      "plate": true,
+      "env": false,
+      "hero": {
+       "l": 138,
+       "t": 68,
+       "r": 1440,
+       "b": 300,
+       "w": 1302,
+       "h": 232
+      },
+      "heroTextRight": 613.328125,
+      "hscroll": false,
+      "overflow": 0,
+      "split": true,
+      "flowMain": {
+       "l": 154,
+       "t": 300,
+       "r": 1060,
+       "b": 1145.609375,
+       "w": 906,
+       "h": 845.609375
+      },
+      "flowSide": {
+       "l": 1084,
+       "t": 300,
+       "r": 1424,
+       "b": 731.40625,
+       "w": 340,
+       "h": 431.40625
+      },
+      "paths": [],
+      "ctas": [
+       {
+        "w": 340,
+        "h": 67
+       }
+      ],
+      "table": false,
+      "touch": 1,
+      "contentL": 154,
+      "contentR": 1424,
+      "vw": 1440
+     }
+    }
+   },
+   "conformance": 100
+  },
+  {
+   "key": "received",
+   "authority": "AIO-MIG-EXISTING-RECEIVED-001",
+   "route": "/office/migration/received?client=client-b",
+   "viewports": {
+    "MOBILE": {
+     "errors": 0,
+     "hscroll": false
+    },
+    "TABLET": {
+     "score": 100,
+     "parts": {
+      "shell": 20,
+      "hero": 15,
+      "grid": 15,
+      "overflow": 15,
+      "gutter": 10,
+      "cta": 10,
+      "table": 5,
+      "touch": 10
+     },
+     "errors": 0,
+     "probe": {
+      "actor": "staff",
+      "decl": {
+       "screen": "received",
+       "pageType": "TABLE_LIST",
+       "density": "TABLE_HEAVY",
+       "hero": "COMPACT",
+       "grid": "MAIN_SIDE",
+       "process": "NONE",
+       "support": "SIDE",
+       "form": "NONE",
+       "table": "TABLE",
+       "overlay": "NONE"
+      },
+      "dock": true,
+      "sidebar": false,
+      "navW": 0,
+      "field": false,
+      "ctx": "CLIENT MIGRATION",
+      "intakeNav": true,
+      "officeLinks": 5,
+      "iftaLinks": 0,
+      "iftaUi": 0,
+      "headH": 77,
+      "plate": true,
+      "env": false,
+      "hero": {
+       "l": 0,
+       "t": 77,
+       "r": 834,
+       "b": 327,
+       "w": 834,
+       "h": 250
+      },
+      "heroTextRight": 355.625,
+      "hscroll": false,
+      "overflow": 0,
+      "split": null,
+      "flowMain": null,
+      "flowSide": null,
+      "paths": [],
+      "ctas": [
+       {
+        "w": 456,
+        "h": 58
+       }
+      ],
+      "table": true,
+      "touch": 1,
+      "contentL": 16,
+      "contentR": 818,
+      "vw": 834
+     }
+    },
+    "DESKTOP": {
+     "score": 100,
+     "parts": {
+      "shell": 20,
+      "hero": 15,
+      "grid": 15,
+      "overflow": 15,
+      "gutter": 10,
+      "cta": 10,
+      "table": 5,
+      "touch": 10
+     },
+     "errors": 0,
+     "probe": {
+      "actor": "staff",
+      "decl": {
+       "screen": "received",
+       "pageType": "TABLE_LIST",
+       "density": "TABLE_HEAVY",
+       "hero": "COMPACT",
+       "grid": "MAIN_SIDE",
+       "process": "NONE",
+       "support": "SIDE",
+       "form": "NONE",
+       "table": "TABLE",
+       "overlay": "NONE"
+      },
+      "dock": false,
+      "sidebar": true,
+      "navW": 138,
+      "field": true,
+      "ctx": "AIO OFFICE CLIENT MIGRATION",
+      "intakeNav": true,
+      "officeLinks": 5,
+      "iftaLinks": 0,
+      "iftaUi": 0,
+      "headH": 68,
+      "plate": true,
+      "env": false,
+      "hero": {
+       "l": 138,
+       "t": 68,
+       "r": 1440,
+       "b": 300,
+       "w": 1302,
+       "h": 232
+      },
+      "heroTextRight": 617.921875,
+      "hscroll": false,
+      "overflow": 0,
+      "split": null,
+      "flowMain": null,
+      "flowSide": null,
+      "paths": [],
+      "ctas": [
+       {
+        "w": 1270,
+        "h": 47
+       }
+      ],
+      "table": true,
+      "touch": 1,
+      "contentL": 154,
+      "contentR": 1424,
+      "vw": 1440
+     }
+    }
+   },
+   "conformance": 100
+  },
+  {
+   "key": "extract",
+   "authority": "AIO-MIG-EXISTING-EXTRACT-001",
+   "route": "/office/migration/extract?client=client-b",
+   "viewports": {
+    "MOBILE": {
+     "errors": 0,
+     "hscroll": false
+    },
+    "TABLET": {
+     "score": 100,
+     "parts": {
+      "shell": 20,
+      "hero": 15,
+      "grid": 15,
+      "overflow": 15,
+      "gutter": 10,
+      "cta": 10,
+      "table": 5,
+      "touch": 10
+     },
+     "errors": 0,
+     "probe": {
+      "actor": "staff",
+      "decl": {
+       "screen": "extract",
+       "pageType": "PROCESSING",
+       "density": "MEDIUM",
+       "hero": "COMPACT",
+       "grid": "SINGLE",
+       "process": "BAND",
+       "support": "SIDE",
+       "form": "NONE",
+       "table": "NONE",
+       "overlay": "NONE"
+      },
+      "dock": true,
+      "sidebar": false,
+      "navW": 0,
+      "field": false,
+      "ctx": "CLIENT MIGRATION",
+      "intakeNav": true,
+      "officeLinks": 5,
+      "iftaLinks": 0,
+      "iftaUi": 0,
+      "headH": 77,
+      "plate": true,
+      "env": false,
+      "hero": {
+       "l": 0,
+       "t": 77,
+       "r": 834,
+       "b": 327,
+       "w": 834,
+       "h": 250
+      },
+      "heroTextRight": 380.28125,
+      "hscroll": false,
+      "overflow": 0,
+      "split": null,
+      "flowMain": null,
+      "flowSide": null,
+      "paths": [],
+      "ctas": [
+       {
+        "w": 456,
+        "h": 58
+       }
+      ],
+      "table": false,
+      "touch": 1,
+      "contentL": 16,
+      "contentR": 818,
+      "vw": 834
+     }
+    },
+    "DESKTOP": {
+     "score": 100,
+     "parts": {
+      "shell": 20,
+      "hero": 15,
+      "grid": 15,
+      "overflow": 15,
+      "gutter": 10,
+      "cta": 10,
+      "table": 5,
+      "touch": 10
+     },
+     "errors": 0,
+     "probe": {
+      "actor": "staff",
+      "decl": {
+       "screen": "extract",
+       "pageType": "PROCESSING",
+       "density": "MEDIUM",
+       "hero": "COMPACT",
+       "grid": "SINGLE",
+       "process": "BAND",
+       "support": "SIDE",
+       "form": "NONE",
+       "table": "NONE",
+       "overlay": "NONE"
+      },
+      "dock": false,
+      "sidebar": true,
+      "navW": 138,
+      "field": true,
+      "ctx": "AIO OFFICE CLIENT MIGRATION",
+      "intakeNav": true,
+      "officeLinks": 5,
+      "iftaLinks": 0,
+      "iftaUi": 0,
+      "headH": 68,
+      "plate": true,
+      "env": false,
+      "hero": {
+       "l": 138,
+       "t": 68,
+       "r": 1440,
+       "b": 300,
+       "w": 1302,
+       "h": 232
+      },
+      "heroTextRight": 628.65625,
+      "hscroll": false,
+      "overflow": 0,
+      "split": null,
+      "flowMain": null,
+      "flowSide": null,
+      "paths": [],
+      "ctas": [
+       {
+        "w": 1270,
+        "h": 47
+       }
+      ],
+      "table": false,
+      "touch": 1,
+      "contentL": 154,
+      "contentR": 1424,
+      "vw": 1440
+     }
+    }
+   },
+   "conformance": 100
+  },
+  {
+   "key": "match",
+   "authority": "AIO-MIG-EXISTING-MATCH-001",
+   "route": "/office/migration/match?client=client-b",
+   "viewports": {
+    "MOBILE": {
+     "errors": 0,
+     "hscroll": false
+    },
+    "TABLET": {
+     "score": 100,
+     "parts": {
+      "shell": 20,
+      "hero": 15,
+      "grid": 15,
+      "overflow": 15,
+      "gutter": 10,
+      "cta": 10,
+      "table": 5,
+      "touch": 10
+     },
+     "errors": 0,
+     "probe": {
+      "actor": "staff",
+      "decl": {
+       "screen": "match",
+       "pageType": "REVIEW",
+       "density": "HIGH",
+       "hero": "COMPACT",
+       "grid": "SINGLE",
+       "process": "NONE",
+       "support": "SIDE",
+       "form": "CHOICES",
+       "table": "ROWS",
+       "overlay": "NONE"
+      },
+      "dock": true,
+      "sidebar": false,
+      "navW": 0,
+      "field": false,
+      "ctx": "CLIENT MIGRATION",
+      "intakeNav": true,
+      "officeLinks": 6,
+      "iftaLinks": 0,
+      "iftaUi": 0,
+      "headH": 77,
+      "plate": true,
+      "env": false,
+      "hero": {
+       "l": 0,
+       "t": 77,
+       "r": 834,
+       "b": 357,
+       "w": 834,
+       "h": 280
+      },
+      "heroTextRight": 355.0625,
+      "hscroll": false,
+      "overflow": 0,
+      "split": false,
+      "flowMain": null,
+      "flowSide": null,
+      "paths": [],
+      "ctas": [
+       {
+        "w": 748,
+        "h": 65
+       }
+      ],
+      "table": false,
+      "touch": 1,
+      "contentL": 16,
+      "contentR": 818,
+      "vw": 834
+     }
+    },
+    "DESKTOP": {
+     "score": 100,
+     "parts": {
+      "shell": 20,
+      "hero": 15,
+      "grid": 15,
+      "overflow": 15,
+      "gutter": 10,
+      "cta": 10,
+      "table": 5,
+      "touch": 10
+     },
+     "errors": 0,
+     "probe": {
+      "actor": "staff",
+      "decl": {
+       "screen": "match",
+       "pageType": "REVIEW",
+       "density": "HIGH",
+       "hero": "COMPACT",
+       "grid": "SINGLE",
+       "process": "NONE",
+       "support": "SIDE",
+       "form": "CHOICES",
+       "table": "ROWS",
+       "overlay": "NONE"
+      },
+      "dock": false,
+      "sidebar": true,
+      "navW": 138,
+      "field": true,
+      "ctx": "AIO OFFICE CLIENT MIGRATION",
+      "intakeNav": true,
+      "officeLinks": 6,
+      "iftaLinks": 0,
+      "iftaUi": 0,
+      "headH": 68,
+      "plate": true,
+      "env": false,
+      "hero": {
+       "l": 138,
+       "t": 68,
+       "r": 1440,
+       "b": 307,
+       "w": 1302,
+       "h": 239
+      },
+      "heroTextRight": 653.84375,
+      "hscroll": false,
+      "overflow": 0,
+      "split": false,
+      "flowMain": {
+       "l": 289,
+       "t": 307,
+       "r": 1289,
+       "b": 1287.09375,
+       "w": 1000,
+       "h": 980.09375
+      },
+      "flowSide": null,
+      "paths": [],
+      "ctas": [
+       {
+        "w": 946,
+        "h": 65
+       }
+      ],
+      "table": false,
+      "touch": 1,
+      "contentL": 289,
+      "contentR": 1289,
+      "vw": 1440
+     }
+    }
+   },
+   "conformance": 100
+  },
+  {
+   "key": "review",
+   "authority": "AIO-MIG-EXISTING-REVIEW-001",
+   "route": "/office/migration/review?client=client-b",
+   "viewports": {
+    "MOBILE": {
+     "errors": 0,
+     "hscroll": false
+    },
+    "TABLET": {
+     "score": 100,
+     "parts": {
+      "shell": 20,
+      "hero": 15,
+      "grid": 15,
+      "overflow": 15,
+      "gutter": 10,
+      "cta": 10,
+      "table": 5,
+      "touch": 10
+     },
+     "errors": 0,
+     "probe": {
+      "actor": "staff",
+      "decl": {
+       "screen": "review",
+       "pageType": "REVIEW",
+       "density": "HIGH",
+       "hero": "COMPACT",
+       "grid": "CANVAS_PANEL",
+       "process": "STEPPER",
+       "support": "SIDE",
+       "form": "CHOICES",
+       "table": "ROWS",
+       "overlay": "NONE"
+      },
+      "dock": true,
+      "sidebar": false,
+      "navW": 0,
+      "field": false,
+      "ctx": "CLIENT MIGRATION",
+      "intakeNav": true,
+      "officeLinks": 5,
+      "iftaLinks": 0,
+      "iftaUi": 0,
+      "headH": 77,
+      "plate": true,
+      "env": false,
+      "hero": {
+       "l": 0,
+       "t": 77,
+       "r": 834,
+       "b": 327,
+       "w": 834,
+       "h": 250
+      },
+      "heroTextRight": 376.21875,
+      "hscroll": false,
+      "overflow": 0,
+      "split": false,
+      "flowMain": null,
+      "flowSide": {
+       "l": 16,
+       "t": 1244.109375,
+       "r": 818,
+       "b": 1464.109375,
+       "w": 802,
+       "h": 220
+      },
+      "paths": [],
+      "ctas": [
+       {
+        "w": 456,
+        "h": 67
+       }
+      ],
+      "table": false,
+      "touch": 1,
+      "contentL": 16,
+      "contentR": 818,
+      "vw": 834
+     }
+    },
+    "DESKTOP": {
+     "score": 100,
+     "parts": {
+      "shell": 20,
+      "hero": 15,
+      "grid": 15,
+      "overflow": 15,
+      "gutter": 10,
+      "cta": 10,
+      "table": 5,
+      "touch": 10
+     },
+     "errors": 0,
+     "probe": {
+      "actor": "staff",
+      "decl": {
+       "screen": "review",
+       "pageType": "REVIEW",
+       "density": "HIGH",
+       "hero": "COMPACT",
+       "grid": "CANVAS_PANEL",
+       "process": "STEPPER",
+       "support": "SIDE",
+       "form": "CHOICES",
+       "table": "ROWS",
+       "overlay": "NONE"
+      },
+      "dock": false,
+      "sidebar": true,
+      "navW": 138,
+      "field": true,
+      "ctx": "AIO OFFICE CLIENT MIGRATION",
+      "intakeNav": true,
+      "officeLinks": 5,
+      "iftaLinks": 0,
+      "iftaUi": 0,
+      "headH": 68,
+      "plate": true,
+      "env": false,
+      "hero": {
+       "l": 138,
+       "t": 68,
+       "r": 1440,
+       "b": 300,
+       "w": 1302,
+       "h": 232
+      },
+      "heroTextRight": 631.6875,
+      "hscroll": false,
+      "overflow": 0,
+      "split": true,
+      "flowMain": {
+       "l": 154,
+       "t": 447,
+       "r": 1080,
+       "b": 1164.109375,
+       "w": 926,
+       "h": 717.109375
+      },
+      "flowSide": {
+       "l": 1104,
+       "t": 447,
+       "r": 1424,
+       "b": 852.90625,
+       "w": 320,
+       "h": 405.90625
+      },
+      "paths": [],
+      "ctas": [
+       {
+        "w": 320,
+        "h": 67
+       }
+      ],
+      "table": false,
+      "touch": 1,
+      "contentL": 154,
+      "contentR": 1424,
+      "vw": 1440
+     }
+    }
+   },
+   "conformance": 100
+  },
+  {
+   "key": "conflicts",
+   "authority": "AIO-MIG-EXISTING-CONFLICTS-001",
+   "route": "/office/migration/conflicts?client=client-b",
+   "viewports": {
+    "MOBILE": {
+     "errors": 0,
+     "hscroll": false
+    },
+    "TABLET": {
+     "score": 100,
+     "parts": {
+      "shell": 20,
+      "hero": 15,
+      "grid": 15,
+      "overflow": 15,
+      "gutter": 10,
+      "cta": 10,
+      "table": 5,
+      "touch": 10
+     },
+     "errors": 0,
+     "probe": {
+      "actor": "staff",
+      "decl": {
+       "screen": "conflicts",
+       "pageType": "REVIEW",
+       "density": "HIGH",
+       "hero": "COMPACT",
+       "grid": "CANVAS_PANEL",
+       "process": "STEPPER",
+       "support": "SIDE",
+       "form": "CHOICES",
+       "table": "ROWS",
+       "overlay": "NONE"
+      },
+      "dock": true,
+      "sidebar": false,
+      "navW": 0,
+      "field": false,
+      "ctx": "CLIENT MIGRATION",
+      "intakeNav": true,
+      "officeLinks": 5,
+      "iftaLinks": 0,
+      "iftaUi": 0,
+      "headH": 77,
+      "plate": true,
+      "env": false,
+      "hero": {
+       "l": 0,
+       "t": 77,
+       "r": 834,
+       "b": 335,
+       "w": 834,
+       "h": 258
+      },
+      "heroTextRight": 368.078125,
+      "hscroll": false,
+      "overflow": 0,
+      "split": false,
+      "flowMain": null,
+      "flowSide": {
+       "l": 16,
+       "t": 1209.5625,
+       "r": 818,
+       "b": 1433.46875,
+       "w": 802,
+       "h": 223.90625
+      },
+      "paths": [],
+      "ctas": [
+       {
+        "w": 456,
+        "h": 67
+       }
+      ],
+      "table": false,
+      "touch": 1,
+      "contentL": 16,
+      "contentR": 818,
+      "vw": 834
+     }
+    },
+    "DESKTOP": {
+     "score": 100,
+     "parts": {
+      "shell": 20,
+      "hero": 15,
+      "grid": 15,
+      "overflow": 15,
+      "gutter": 10,
+      "cta": 10,
+      "table": 5,
+      "touch": 10
+     },
+     "errors": 0,
+     "probe": {
+      "actor": "staff",
+      "decl": {
+       "screen": "conflicts",
+       "pageType": "REVIEW",
+       "density": "HIGH",
+       "hero": "COMPACT",
+       "grid": "CANVAS_PANEL",
+       "process": "STEPPER",
+       "support": "SIDE",
+       "form": "CHOICES",
+       "table": "ROWS",
+       "overlay": "NONE"
+      },
+      "dock": false,
+      "sidebar": true,
+      "navW": 138,
+      "field": true,
+      "ctx": "AIO OFFICE CLIENT MIGRATION",
+      "intakeNav": true,
+      "officeLinks": 5,
+      "iftaLinks": 0,
+      "iftaUi": 0,
+      "headH": 68,
+      "plate": true,
+      "env": false,
+      "hero": {
+       "l": 138,
+       "t": 68,
+       "r": 1440,
+       "b": 300,
+       "w": 1302,
+       "h": 232
+      },
+      "heroTextRight": 677.984375,
+      "hscroll": false,
+      "overflow": 0,
+      "split": true,
+      "flowMain": {
+       "l": 154,
+       "t": 447,
+       "r": 1080,
+       "b": 1169.5625,
+       "w": 926,
+       "h": 722.5625
+      },
+      "flowSide": {
+       "l": 1104,
+       "t": 447,
+       "r": 1424,
+       "b": 878.40625,
+       "w": 320,
+       "h": 431.40625
+      },
+      "paths": [],
+      "ctas": [
+       {
+        "w": 320,
+        "h": 67
+       }
+      ],
+      "table": false,
+      "touch": 1,
+      "contentL": 154,
+      "contentR": 1424,
+      "vw": 1440
+     }
+    }
+   },
+   "conformance": 100
+  },
+  {
+   "key": "approval",
+   "authority": "AIO-MIG-EXISTING-APPROVAL-001",
+   "route": "/office/migration/approval?client=client-b",
+   "viewports": {
+    "MOBILE": {
+     "errors": 0,
+     "hscroll": false
+    },
+    "TABLET": {
+     "score": 100,
+     "parts": {
+      "shell": 20,
+      "hero": 15,
+      "grid": 15,
+      "overflow": 15,
+      "gutter": 10,
+      "cta": 10,
+      "table": 5,
+      "touch": 10
+     },
+     "errors": 0,
+     "probe": {
+      "actor": "staff",
+      "decl": {
+       "screen": "approval",
+       "pageType": "CONFIRMATION",
+       "density": "MEDIUM",
+       "hero": "COMPACT",
+       "grid": "MAIN_SIDE",
+       "process": "NONE",
+       "support": "SIDE",
+       "form": "NONE",
+       "table": "ROWS",
+       "overlay": "NONE"
+      },
+      "dock": true,
+      "sidebar": false,
+      "navW": 0,
+      "field": false,
+      "ctx": "CLIENT MIGRATION",
+      "intakeNav": true,
+      "officeLinks": 5,
+      "iftaLinks": 0,
+      "iftaUi": 0,
+      "headH": 77,
+      "plate": true,
+      "env": false,
+      "hero": {
+       "l": 0,
+       "t": 77,
+       "r": 834,
+       "b": 327,
+       "w": 834,
+       "h": 250
+      },
+      "heroTextRight": 382.546875,
+      "hscroll": false,
+      "overflow": 0,
+      "split": false,
+      "flowMain": null,
+      "flowSide": {
+       "l": 16,
+       "t": 1333.609375,
+       "r": 818,
+       "b": 1561.515625,
+       "w": 802,
+       "h": 227.90625
+      },
+      "paths": [],
+      "ctas": [
+       {
+        "w": 456,
+        "h": 67
+       }
+      ],
+      "table": false,
+      "touch": 1,
+      "contentL": 16,
+      "contentR": 818,
+      "vw": 834
+     }
+    },
+    "DESKTOP": {
+     "score": 100,
+     "parts": {
+      "shell": 20,
+      "hero": 15,
+      "grid": 15,
+      "overflow": 15,
+      "gutter": 10,
+      "cta": 10,
+      "table": 5,
+      "touch": 10
+     },
+     "errors": 0,
+     "probe": {
+      "actor": "staff",
+      "decl": {
+       "screen": "approval",
+       "pageType": "CONFIRMATION",
+       "density": "MEDIUM",
+       "hero": "COMPACT",
+       "grid": "MAIN_SIDE",
+       "process": "NONE",
+       "support": "SIDE",
+       "form": "NONE",
+       "table": "ROWS",
+       "overlay": "NONE"
+      },
+      "dock": false,
+      "sidebar": true,
+      "navW": 138,
+      "field": true,
+      "ctx": "AIO OFFICE CLIENT MIGRATION",
+      "intakeNav": true,
+      "officeLinks": 5,
+      "iftaLinks": 0,
+      "iftaUi": 0,
+      "headH": 68,
+      "plate": true,
+      "env": false,
+      "hero": {
+       "l": 138,
+       "t": 68,
+       "r": 1440,
+       "b": 300,
+       "w": 1302,
+       "h": 232
+      },
+      "heroTextRight": 640.1875,
+      "hscroll": false,
+      "overflow": 0,
+      "split": true,
+      "flowMain": {
+       "l": 154,
+       "t": 300,
+       "r": 1060,
+       "b": 1290,
+       "w": 906,
+       "h": 990
+      },
+      "flowSide": {
+       "l": 1084,
+       "t": 300,
+       "r": 1424,
+       "b": 760.90625,
+       "w": 340,
+       "h": 460.90625
+      },
+      "paths": [],
+      "ctas": [
+       {
+        "w": 340,
+        "h": 67
+       }
+      ],
+      "table": false,
+      "touch": 1,
+      "contentL": 154,
+      "contentR": 1424,
+      "vw": 1440
+     }
+    }
+   },
+   "conformance": 100
+  },
+  {
+   "key": "prebuilt",
+   "authority": "AIO-MIG-EXISTING-PREBUILT-001",
+   "route": "/office/migration/prebuilt?client=client-b",
+   "viewports": {
+    "MOBILE": {
+     "errors": 0,
+     "hscroll": false
+    },
+    "TABLET": {
+     "score": 100,
+     "parts": {
+      "shell": 20,
+      "hero": 15,
+      "grid": 15,
+      "overflow": 15,
+      "gutter": 10,
+      "cta": 10,
+      "table": 5,
+      "touch": 10
+     },
+     "errors": 0,
+     "probe": {
+      "actor": "staff",
+      "decl": {
+       "screen": "prebuilt",
+       "pageType": "DETAIL",
+       "density": "MEDIUM",
+       "hero": "COMPACT",
+       "grid": "MAIN_SIDE",
+       "process": "NONE",
+       "support": "SIDE",
+       "form": "NONE",
+       "table": "ROWS",
+       "overlay": "NONE"
+      },
+      "dock": true,
+      "sidebar": false,
+      "navW": 0,
+      "field": false,
+      "ctx": "CLIENT MIGRATION",
+      "intakeNav": true,
+      "officeLinks": 7,
+      "iftaLinks": 0,
+      "iftaUi": 0,
+      "headH": 77,
+      "plate": true,
+      "env": false,
+      "hero": {
+       "l": 0,
+       "t": 77,
+       "r": 834,
+       "b": 327,
+       "w": 834,
+       "h": 250
+      },
+      "heroTextRight": 364.203125,
+      "hscroll": false,
+      "overflow": 0,
+      "split": false,
+      "flowMain": null,
+      "flowSide": {
+       "l": 16,
+       "t": 1014.875,
+       "r": 818,
+       "b": 1282.28125,
+       "w": 802,
+       "h": 267.40625
+      },
+      "paths": [],
+      "ctas": [
+       {
+        "w": 456,
+        "h": 85
+       }
+      ],
+      "table": false,
+      "touch": 1,
+      "contentL": 16,
+      "contentR": 818,
+      "vw": 834
+     }
+    },
+    "DESKTOP": {
+     "score": 100,
+     "parts": {
+      "shell": 20,
+      "hero": 15,
+      "grid": 15,
+      "overflow": 15,
+      "gutter": 10,
+      "cta": 10,
+      "table": 5,
+      "touch": 10
+     },
+     "errors": 0,
+     "probe": {
+      "actor": "staff",
+      "decl": {
+       "screen": "prebuilt",
+       "pageType": "DETAIL",
+       "density": "MEDIUM",
+       "hero": "COMPACT",
+       "grid": "MAIN_SIDE",
+       "process": "NONE",
+       "support": "SIDE",
+       "form": "NONE",
+       "table": "ROWS",
+       "overlay": "NONE"
+      },
+      "dock": false,
+      "sidebar": true,
+      "navW": 138,
+      "field": true,
+      "ctx": "AIO OFFICE CLIENT MIGRATION",
+      "intakeNav": true,
+      "officeLinks": 7,
+      "iftaLinks": 0,
+      "iftaUi": 0,
+      "headH": 68,
+      "plate": true,
+      "env": false,
+      "hero": {
+       "l": 138,
+       "t": 68,
+       "r": 1440,
+       "b": 304,
+       "w": 1302,
+       "h": 236
+      },
+      "heroTextRight": 622.140625,
+      "hscroll": false,
+      "overflow": 0,
+      "split": true,
+      "flowMain": {
+       "l": 154,
+       "t": 304,
+       "r": 1060,
+       "b": 963,
+       "w": 906,
+       "h": 659
+      },
+      "flowSide": {
+       "l": 1084,
+       "t": 304,
+       "r": 1424,
+       "b": 778.90625,
+       "w": 340,
+       "h": 474.90625
+      },
+      "paths": [],
+      "ctas": [
+       {
+        "w": 340,
+        "h": 85
+       }
+      ],
+      "table": false,
+      "touch": 1,
+      "contentL": 154,
+      "contentR": 1424,
+      "vw": 1440
+     }
+    }
+   },
+   "conformance": 100
+  },
+  {
+   "key": "invite",
+   "authority": "AIO-MIG-EXISTING-INVITE-001",
+   "route": "/office/migration/invite?client=client-b",
+   "viewports": {
+    "MOBILE": {
+     "errors": 0,
+     "hscroll": false
+    },
+    "TABLET": {
+     "score": 100,
+     "parts": {
+      "shell": 20,
+      "hero": 15,
+      "grid": 15,
+      "overflow": 15,
+      "gutter": 10,
+      "cta": 10,
+      "table": 5,
+      "touch": 10
+     },
+     "errors": 0,
+     "probe": {
+      "actor": "staff",
+      "decl": {
+       "screen": "invite",
+       "pageType": "INVITE",
+       "density": "LOW",
+       "hero": "COMPACT",
+       "grid": "MAIN_SIDE",
+       "process": "NONE",
+       "support": "SIDE",
+       "form": "NONE",
+       "table": "NONE",
+       "overlay": "NONE"
+      },
+      "dock": true,
+      "sidebar": false,
+      "navW": 0,
+      "field": false,
+      "ctx": "CLIENT MIGRATION",
+      "intakeNav": true,
+      "officeLinks": 5,
+      "iftaLinks": 0,
+      "iftaUi": 0,
+      "headH": 77,
+      "plate": true,
+      "env": false,
+      "hero": {
+       "l": 0,
+       "t": 77,
+       "r": 834,
+       "b": 357,
+       "w": 834,
+       "h": 280
+      },
+      "heroTextRight": 344.46875,
+      "hscroll": false,
+      "overflow": 0,
+      "split": false,
+      "flowMain": null,
+      "flowSide": {
+       "l": 16,
+       "t": 1080.59375,
+       "r": 818,
+       "b": 1304.5,
+       "w": 802,
+       "h": 223.90625
+      },
+      "paths": [],
+      "ctas": [
+       {
+        "w": 456,
+        "h": 67
+       }
+      ],
+      "table": false,
+      "touch": 1,
+      "contentL": 16,
+      "contentR": 818,
+      "vw": 834
+     }
+    },
+    "DESKTOP": {
+     "score": 100,
+     "parts": {
+      "shell": 20,
+      "hero": 15,
+      "grid": 15,
+      "overflow": 15,
+      "gutter": 10,
+      "cta": 10,
+      "table": 5,
+      "touch": 10
+     },
+     "errors": 0,
+     "probe": {
+      "actor": "staff",
+      "decl": {
+       "screen": "invite",
+       "pageType": "INVITE",
+       "density": "LOW",
+       "hero": "COMPACT",
+       "grid": "MAIN_SIDE",
+       "process": "NONE",
+       "support": "SIDE",
+       "form": "NONE",
+       "table": "NONE",
+       "overlay": "NONE"
+      },
+      "dock": false,
+      "sidebar": true,
+      "navW": 138,
+      "field": true,
+      "ctx": "AIO OFFICE CLIENT MIGRATION",
+      "intakeNav": true,
+      "officeLinks": 5,
+      "iftaLinks": 0,
+      "iftaUi": 0,
+      "headH": 68,
+      "plate": true,
+      "env": false,
+      "hero": {
+       "l": 138,
+       "t": 68,
+       "r": 1440,
+       "b": 300,
+       "w": 1302,
+       "h": 232
+      },
+      "heroTextRight": 635.46875,
+      "hscroll": false,
+      "overflow": 0,
+      "split": true,
+      "flowMain": {
+       "l": 154,
+       "t": 300,
+       "r": 1060,
+       "b": 1019.59375,
+       "w": 906,
+       "h": 719.59375
+      },
+      "flowSide": {
+       "l": 1084,
+       "t": 300,
+       "r": 1424,
+       "b": 756.90625,
+       "w": 340,
+       "h": 456.90625
+      },
+      "paths": [],
+      "ctas": [
+       {
+        "w": 340,
+        "h": 67
+       }
+      ],
+      "table": false,
+      "touch": 1,
+      "contentL": 154,
+      "contentR": 1424,
+      "vw": 1440
+     }
+    }
+   },
+   "conformance": 100
+  },
+  {
+   "key": "invited",
+   "authority": "AIO-MIG-EXISTING-INVITED-001",
+   "route": "/office/migration/invited?client=client-b",
+   "viewports": {
+    "MOBILE": {
+     "errors": 0,
+     "hscroll": false
+    },
+    "TABLET": {
+     "score": 100,
+     "parts": {
+      "shell": 20,
+      "hero": 15,
+      "grid": 15,
+      "overflow": 15,
+      "gutter": 10,
+      "cta": 10,
+      "table": 5,
+      "touch": 10
+     },
+     "errors": 0,
+     "probe": {
+      "actor": "staff",
+      "decl": {
+       "screen": "invited",
+       "pageType": "CONFIRMATION",
+       "density": "LOW",
+       "hero": "COMPACT",
+       "grid": "MAIN_SIDE",
+       "process": "NONE",
+       "support": "SIDE",
+       "form": "NONE",
+       "table": "ROWS",
+       "overlay": "NONE"
+      },
+      "dock": true,
+      "sidebar": false,
+      "navW": 0,
+      "field": false,
+      "ctx": "CLIENT MIGRATION",
+      "intakeNav": true,
+      "officeLinks": 5,
+      "iftaLinks": 0,
+      "iftaUi": 0,
+      "headH": 77,
+      "plate": true,
+      "env": false,
+      "hero": {
+       "l": 0,
+       "t": 77,
+       "r": 834,
+       "b": 327,
+       "w": 834,
+       "h": 250
+      },
+      "heroTextRight": 374.953125,
+      "hscroll": false,
+      "overflow": 0,
+      "split": false,
+      "flowMain": null,
+      "flowSide": {
+       "l": 16,
+       "t": 1350.234375,
+       "r": 818,
+       "b": 1417.234375,
+       "w": 802,
+       "h": 67
+      },
+      "paths": [],
+      "ctas": [
+       {
+        "w": 456,
+        "h": 67
+       }
+      ],
+      "table": false,
+      "touch": 1,
+      "contentL": 16,
+      "contentR": 818,
+      "vw": 834
+     }
+    },
+    "DESKTOP": {
+     "score": 100,
+     "parts": {
+      "shell": 20,
+      "hero": 15,
+      "grid": 15,
+      "overflow": 15,
+      "gutter": 10,
+      "cta": 10,
+      "table": 5,
+      "touch": 10
+     },
+     "errors": 0,
+     "probe": {
+      "actor": "staff",
+      "decl": {
+       "screen": "invited",
+       "pageType": "CONFIRMATION",
+       "density": "LOW",
+       "hero": "COMPACT",
+       "grid": "MAIN_SIDE",
+       "process": "NONE",
+       "support": "SIDE",
+       "form": "NONE",
+       "table": "ROWS",
+       "overlay": "NONE"
+      },
+      "dock": false,
+      "sidebar": true,
+      "navW": 138,
+      "field": true,
+      "ctx": "AIO OFFICE CLIENT MIGRATION",
+      "intakeNav": true,
+      "officeLinks": 5,
+      "iftaLinks": 0,
+      "iftaUi": 0,
+      "headH": 68,
+      "plate": true,
+      "env": false,
+      "hero": {
+       "l": 138,
+       "t": 68,
+       "r": 1440,
+       "b": 300,
+       "w": 1302,
+       "h": 232
+      },
+      "heroTextRight": 626.359375,
+      "hscroll": false,
+      "overflow": 0,
+      "split": true,
+      "flowMain": {
+       "l": 154,
+       "t": 300,
+       "r": 1060,
+       "b": 1319.234375,
+       "w": 906,
+       "h": 1019.234375
+      },
+      "flowSide": {
+       "l": 1084,
+       "t": 300,
+       "r": 1424,
+       "b": 367,
+       "w": 340,
+       "h": 67
+      },
+      "paths": [],
+      "ctas": [
+       {
+        "w": 340,
+        "h": 67
+       }
+      ],
+      "table": false,
+      "touch": 1,
+      "contentL": 154,
+      "contentR": 1424,
+      "vw": 1440
+     }
+    }
+   },
+   "conformance": 100
+  },
+  {
+   "key": "welcome",
+   "authority": "AIO-MIG-ACTIVATION-WELCOME-001",
+   "route": "/portal/activation/review#welcome",
+   "viewports": {
+    "MOBILE": {
+     "errors": 0,
+     "hscroll": false
+    },
+    "TABLET": {
+     "score": 100,
+     "parts": {
+      "shell": 20,
+      "hero": 15,
+      "grid": 15,
+      "overflow": 15,
+      "gutter": 10,
+      "cta": 10,
+      "table": 5,
+      "touch": 10
+     },
+     "errors": 0,
+     "probe": {
+      "actor": "client",
+      "decl": {
+       "screen": "welcome",
+       "pageType": "ACTIVATION",
+       "density": "MEDIUM",
+       "hero": "COMPACT",
+       "grid": "CENTERED",
+       "process": "STEPPER",
+       "support": "SIDE",
+       "form": "NONE",
+       "table": "NONE",
+       "overlay": "NONE"
+      },
+      "dock": false,
+      "sidebar": false,
+      "navW": 0,
+      "field": false,
+      "ctx": "CLIENT ACTIVATION",
+      "intakeNav": false,
+      "officeLinks": 0,
+      "iftaLinks": 0,
+      "iftaUi": 0,
+      "headH": 77,
+      "plate": true,
+      "env": false,
+      "hero": {
+       "l": 0,
+       "t": 77,
+       "r": 834,
+       "b": 335,
+       "w": 834,
+       "h": 258
+      },
+      "heroTextRight": 385.3125,
+      "hscroll": false,
+      "overflow": 0,
+      "split": false,
+      "flowMain": null,
+      "flowSide": {
+       "l": 16,
+       "t": 1256.015625,
+       "r": 818,
+       "b": 1337.015625,
+       "w": 802,
+       "h": 81
+      },
+      "paths": [],
+      "ctas": [
+       {
+        "w": 456,
+        "h": 81
+       }
+      ],
+      "table": false,
+      "touch": 1,
+      "contentL": 16,
+      "contentR": 818,
+      "vw": 834
+     }
+    },
+    "DESKTOP": {
+     "score": 100,
+     "parts": {
+      "shell": 20,
+      "hero": 15,
+      "grid": 15,
+      "overflow": 15,
+      "gutter": 10,
+      "cta": 10,
+      "table": 5,
+      "touch": 10
+     },
+     "errors": 0,
+     "probe": {
+      "actor": "client",
+      "decl": {
+       "screen": "welcome",
+       "pageType": "ACTIVATION",
+       "density": "MEDIUM",
+       "hero": "COMPACT",
+       "grid": "CENTERED",
+       "process": "STEPPER",
+       "support": "SIDE",
+       "form": "NONE",
+       "table": "NONE",
+       "overlay": "NONE"
+      },
+      "dock": false,
+      "sidebar": false,
+      "navW": 0,
+      "field": false,
+      "ctx": "CLIENT OFFICE CLIENT ACTIVATION",
+      "intakeNav": false,
+      "officeLinks": 0,
+      "iftaLinks": 0,
+      "iftaUi": 0,
+      "headH": 68,
+      "plate": true,
+      "env": false,
+      "hero": {
+       "l": 0,
+       "t": 68,
+       "r": 1440,
+       "b": 307,
+       "w": 1440,
+       "h": 239
+      },
+      "heroTextRight": 562.15625,
+      "hscroll": false,
+      "overflow": 0,
+      "split": true,
+      "flowMain": {
+       "l": 100,
+       "t": 454,
+       "r": 976,
+       "b": 1176.015625,
+       "w": 876,
+       "h": 722.015625
+      },
+      "flowSide": {
+       "l": 1000,
+       "t": 454,
+       "r": 1340,
+       "b": 535,
+       "w": 340,
+       "h": 81
+      },
+      "paths": [],
+      "ctas": [
+       {
+        "w": 340,
+        "h": 81
+       }
+      ],
+      "table": false,
+      "touch": 1,
+      "contentL": 100,
+      "contentR": 1340,
+      "vw": 1440
+     }
+    }
+   },
+   "conformance": 100
+  },
+  {
+   "key": "company",
+   "authority": "AIO-MIG-ACTIVATION-COMPANY-001",
+   "route": "/portal/activation/review#company",
+   "viewports": {
+    "MOBILE": {
+     "errors": 0,
+     "hscroll": false
+    },
+    "TABLET": {
+     "score": 100,
+     "parts": {
+      "shell": 20,
+      "hero": 15,
+      "grid": 15,
+      "overflow": 15,
+      "gutter": 10,
+      "cta": 10,
+      "table": 5,
+      "touch": 10
+     },
+     "errors": 0,
+     "probe": {
+      "actor": "client",
+      "decl": {
+       "screen": "company",
+       "pageType": "REVIEW",
+       "density": "MEDIUM",
+       "hero": "COMPACT",
+       "grid": "CENTERED",
+       "process": "STEPPER",
+       "support": "SIDE",
+       "form": "CHOICES",
+       "table": "NONE",
+       "overlay": "NONE"
+      },
+      "dock": false,
+      "sidebar": false,
+      "navW": 0,
+      "field": false,
+      "ctx": "CLIENT ACTIVATION",
+      "intakeNav": false,
+      "officeLinks": 0,
+      "iftaLinks": 0,
+      "iftaUi": 0,
+      "headH": 77,
+      "plate": true,
+      "env": false,
+      "hero": {
+       "l": 0,
+       "t": 77,
+       "r": 834,
+       "b": 327,
+       "w": 834,
+       "h": 250
+      },
+      "heroTextRight": 357.53125,
+      "hscroll": false,
+      "overflow": 0,
+      "split": null,
+      "flowMain": null,
+      "flowSide": null,
+      "paths": [],
+      "ctas": [
+       {
+        "w": 802,
+        "h": 65
+       }
+      ],
+      "table": false,
+      "touch": 1,
+      "contentL": 16,
+      "contentR": 818,
+      "vw": 834
+     }
+    },
+    "DESKTOP": {
+     "score": 100,
+     "parts": {
+      "shell": 20,
+      "hero": 15,
+      "grid": 15,
+      "overflow": 15,
+      "gutter": 10,
+      "cta": 10,
+      "table": 5,
+      "touch": 10
+     },
+     "errors": 0,
+     "probe": {
+      "actor": "client",
+      "decl": {
+       "screen": "company",
+       "pageType": "REVIEW",
+       "density": "MEDIUM",
+       "hero": "COMPACT",
+       "grid": "CENTERED",
+       "process": "STEPPER",
+       "support": "SIDE",
+       "form": "CHOICES",
+       "table": "NONE",
+       "overlay": "NONE"
+      },
+      "dock": false,
+      "sidebar": false,
+      "navW": 0,
+      "field": false,
+      "ctx": "CLIENT OFFICE CLIENT ACTIVATION",
+      "intakeNav": false,
+      "officeLinks": 0,
+      "iftaLinks": 0,
+      "iftaUi": 0,
+      "headH": 68,
+      "plate": true,
+      "env": false,
+      "hero": {
+       "l": 0,
+       "t": 68,
+       "r": 1440,
+       "b": 300,
+       "w": 1440,
+       "h": 232
+      },
+      "heroTextRight": 565.3125,
+      "hscroll": false,
+      "overflow": 0,
+      "split": null,
+      "flowMain": null,
+      "flowSide": null,
+      "paths": [],
+      "ctas": [
+       {
+        "w": 340,
+        "h": 65
+       }
+      ],
+      "table": false,
+      "touch": 1,
+      "contentL": 100,
+      "contentR": 1340,
+      "vw": 1440
+     }
+    }
+   },
+   "conformance": 100
+  },
+  {
+   "key": "people",
+   "authority": "AIO-MIG-ACTIVATION-PEOPLE-001",
+   "route": "/portal/activation/review#people",
+   "viewports": {
+    "MOBILE": {
+     "errors": 0,
+     "hscroll": false
+    },
+    "TABLET": {
+     "score": 100,
+     "parts": {
+      "shell": 20,
+      "hero": 15,
+      "grid": 15,
+      "overflow": 15,
+      "gutter": 10,
+      "cta": 10,
+      "table": 5,
+      "touch": 10
+     },
+     "errors": 0,
+     "probe": {
+      "actor": "client",
+      "decl": {
+       "screen": "people",
+       "pageType": "REVIEW",
+       "density": "HIGH",
+       "hero": "COMPACT",
+       "grid": "CENTERED",
+       "process": "NONE",
+       "support": "SIDE",
+       "form": "CHOICES",
+       "table": "ROWS",
+       "overlay": "NONE"
+      },
+      "dock": false,
+      "sidebar": false,
+      "navW": 0,
+      "field": false,
+      "ctx": "CLIENT ACTIVATION",
+      "intakeNav": false,
+      "officeLinks": 0,
+      "iftaLinks": 0,
+      "iftaUi": 0,
+      "headH": 77,
+      "plate": true,
+      "env": false,
+      "hero": {
+       "l": 0,
+       "t": 77,
+       "r": 834,
+       "b": 327,
+       "w": 834,
+       "h": 250
+      },
+      "heroTextRight": 367.1875,
+      "hscroll": false,
+      "overflow": 0,
+      "split": false,
+      "flowMain": null,
+      "flowSide": {
+       "l": 16,
+       "t": 1038.1875,
+       "r": 818,
+       "b": 1262.09375,
+       "w": 802,
+       "h": 223.90625
+      },
+      "paths": [],
+      "ctas": [
+       {
+        "w": 456,
+        "h": 67
+       }
+      ],
+      "table": false,
+      "touch": 1,
+      "contentL": 16,
+      "contentR": 818,
+      "vw": 834
+     }
+    },
+    "DESKTOP": {
+     "score": 100,
+     "parts": {
+      "shell": 20,
+      "hero": 15,
+      "grid": 15,
+      "overflow": 15,
+      "gutter": 10,
+      "cta": 10,
+      "table": 5,
+      "touch": 10
+     },
+     "errors": 0,
+     "probe": {
+      "actor": "client",
+      "decl": {
+       "screen": "people",
+       "pageType": "REVIEW",
+       "density": "HIGH",
+       "hero": "COMPACT",
+       "grid": "CENTERED",
+       "process": "NONE",
+       "support": "SIDE",
+       "form": "CHOICES",
+       "table": "ROWS",
+       "overlay": "NONE"
+      },
+      "dock": false,
+      "sidebar": false,
+      "navW": 0,
+      "field": false,
+      "ctx": "CLIENT OFFICE CLIENT ACTIVATION",
+      "intakeNav": false,
+      "officeLinks": 0,
+      "iftaLinks": 0,
+      "iftaUi": 0,
+      "headH": 68,
+      "plate": true,
+      "env": false,
+      "hero": {
+       "l": 0,
+       "t": 68,
+       "r": 1440,
+       "b": 300,
+       "w": 1440,
+       "h": 232
+      },
+      "heroTextRight": 585.953125,
+      "hscroll": false,
+      "overflow": 0,
+      "split": true,
+      "flowMain": {
+       "l": 100,
+       "t": 300,
+       "r": 976,
+       "b": 1007.1875,
+       "w": 876,
+       "h": 707.1875
+      },
+      "flowSide": {
+       "l": 1000,
+       "t": 300,
+       "r": 1340,
+       "b": 705.90625,
+       "w": 340,
+       "h": 405.90625
+      },
+      "paths": [],
+      "ctas": [
+       {
+        "w": 340,
+        "h": 67
+       }
+      ],
+      "table": false,
+      "touch": 1,
+      "contentL": 100,
+      "contentR": 1340,
+      "vw": 1440
+     }
+    }
+   },
+   "conformance": 100
+  },
+  {
+   "key": "vehicles",
+   "authority": "AIO-MIG-ACTIVATION-VEHICLES-001",
+   "route": "/portal/activation/review#vehicles",
+   "viewports": {
+    "MOBILE": {
+     "errors": 0,
+     "hscroll": false
+    },
+    "TABLET": {
+     "score": 100,
+     "parts": {
+      "shell": 20,
+      "hero": 15,
+      "grid": 15,
+      "overflow": 15,
+      "gutter": 10,
+      "cta": 10,
+      "table": 5,
+      "touch": 10
+     },
+     "errors": 0,
+     "probe": {
+      "actor": "client",
+      "decl": {
+       "screen": "vehicles",
+       "pageType": "REVIEW",
+       "density": "HIGH",
+       "hero": "COMPACT",
+       "grid": "CENTERED",
+       "process": "STEPPER",
+       "support": "SIDE",
+       "form": "CHOICES",
+       "table": "ROWS",
+       "overlay": "NONE"
+      },
+      "dock": false,
+      "sidebar": false,
+      "navW": 0,
+      "field": false,
+      "ctx": "CLIENT ACTIVATION",
+      "intakeNav": false,
+      "officeLinks": 0,
+      "iftaLinks": 0,
+      "iftaUi": 0,
+      "headH": 77,
+      "plate": true,
+      "env": false,
+      "hero": {
+       "l": 0,
+       "t": 77,
+       "r": 834,
+       "b": 327,
+       "w": 834,
+       "h": 250
+      },
+      "heroTextRight": 383.546875,
+      "hscroll": false,
+      "overflow": 0,
+      "split": false,
+      "flowMain": null,
+      "flowSide": {
+       "l": 16,
+       "t": 853.40625,
+       "r": 818,
+       "b": 920.40625,
+       "w": 802,
+       "h": 67
+      },
+      "paths": [],
+      "ctas": [
+       {
+        "w": 456,
+        "h": 67
+       }
+      ],
+      "table": false,
+      "touch": 1,
+      "contentL": 16,
+      "contentR": 818,
+      "vw": 834
+     }
+    },
+    "DESKTOP": {
+     "score": 100,
+     "parts": {
+      "shell": 20,
+      "hero": 15,
+      "grid": 15,
+      "overflow": 15,
+      "gutter": 10,
+      "cta": 10,
+      "table": 5,
+      "touch": 10
+     },
+     "errors": 0,
+     "probe": {
+      "actor": "client",
+      "decl": {
+       "screen": "vehicles",
+       "pageType": "REVIEW",
+       "density": "HIGH",
+       "hero": "COMPACT",
+       "grid": "CENTERED",
+       "process": "STEPPER",
+       "support": "SIDE",
+       "form": "CHOICES",
+       "table": "ROWS",
+       "overlay": "NONE"
+      },
+      "dock": false,
+      "sidebar": false,
+      "navW": 0,
+      "field": false,
+      "ctx": "CLIENT OFFICE CLIENT ACTIVATION",
+      "intakeNav": false,
+      "officeLinks": 0,
+      "iftaLinks": 0,
+      "iftaUi": 0,
+      "headH": 68,
+      "plate": true,
+      "env": false,
+      "hero": {
+       "l": 0,
+       "t": 68,
+       "r": 1440,
+       "b": 300,
+       "w": 1440,
+       "h": 232
+      },
+      "heroTextRight": 578.5625,
+      "hscroll": false,
+      "overflow": 0,
+      "split": true,
+      "flowMain": {
+       "l": 100,
+       "t": 447,
+       "r": 976,
+       "b": 809.5,
+       "w": 876,
+       "h": 362.5
+      },
+      "flowSide": {
+       "l": 1000,
+       "t": 447,
+       "r": 1340,
+       "b": 514,
+       "w": 340,
+       "h": 67
+      },
+      "paths": [],
+      "ctas": [
+       {
+        "w": 340,
+        "h": 67
+       }
+      ],
+      "table": false,
+      "touch": 1,
+      "contentL": 100,
+      "contentR": 1340,
+      "vw": 1440
+     }
+    }
+   },
+   "conformance": 100
+  },
+  {
+   "key": "services",
+   "authority": "AIO-MIG-ACTIVATION-SERVICES-001",
+   "route": "/portal/activation/review#services",
+   "viewports": {
+    "MOBILE": {
+     "errors": 0,
+     "hscroll": false
+    },
+    "TABLET": {
+     "score": 100,
+     "parts": {
+      "shell": 20,
+      "hero": 15,
+      "grid": 15,
+      "overflow": 15,
+      "gutter": 10,
+      "cta": 10,
+      "table": 5,
+      "touch": 10
+     },
+     "errors": 0,
+     "probe": {
+      "actor": "client",
+      "decl": {
+       "screen": "services",
+       "pageType": "REVIEW",
+       "density": "MEDIUM",
+       "hero": "COMPACT",
+       "grid": "CENTERED",
+       "process": "NONE",
+       "support": "SIDE",
+       "form": "CHOICES",
+       "table": "ROWS",
+       "overlay": "NONE"
+      },
+      "dock": false,
+      "sidebar": false,
+      "navW": 0,
+      "field": false,
+      "ctx": "CLIENT ACTIVATION",
+      "intakeNav": false,
+      "officeLinks": 0,
+      "iftaLinks": 0,
+      "iftaUi": 0,
+      "headH": 77,
+      "plate": true,
+      "env": false,
+      "hero": {
+       "l": 0,
+       "t": 77,
+       "r": 834,
+       "b": 327,
+       "w": 834,
+       "h": 250
+      },
+      "heroTextRight": 379.25,
+      "hscroll": false,
+      "overflow": 0,
+      "split": false,
+      "flowMain": null,
+      "flowSide": {
+       "l": 16,
+       "t": 1036.703125,
+       "r": 818,
+       "b": 1256.703125,
+       "w": 802,
+       "h": 220
+      },
+      "paths": [],
+      "ctas": [
+       {
+        "w": 456,
+        "h": 67
+       }
+      ],
+      "table": false,
+      "touch": 1,
+      "contentL": 16,
+      "contentR": 818,
+      "vw": 834
+     }
+    },
+    "DESKTOP": {
+     "score": 100,
+     "parts": {
+      "shell": 20,
+      "hero": 15,
+      "grid": 15,
+      "overflow": 15,
+      "gutter": 10,
+      "cta": 10,
+      "table": 5,
+      "touch": 10
+     },
+     "errors": 0,
+     "probe": {
+      "actor": "client",
+      "decl": {
+       "screen": "services",
+       "pageType": "REVIEW",
+       "density": "MEDIUM",
+       "hero": "COMPACT",
+       "grid": "CENTERED",
+       "process": "NONE",
+       "support": "SIDE",
+       "form": "CHOICES",
+       "table": "ROWS",
+       "overlay": "NONE"
+      },
+      "dock": false,
+      "sidebar": false,
+      "navW": 0,
+      "field": false,
+      "ctx": "CLIENT OFFICE CLIENT ACTIVATION",
+      "intakeNav": false,
+      "officeLinks": 0,
+      "iftaLinks": 0,
+      "iftaUi": 0,
+      "headH": 68,
+      "plate": true,
+      "env": false,
+      "hero": {
+       "l": 0,
+       "t": 68,
+       "r": 1440,
+       "b": 300,
+       "w": 1440,
+       "h": 232
+      },
+      "heroTextRight": 578.453125,
+      "hscroll": false,
+      "overflow": 0,
+      "split": true,
+      "flowMain": {
+       "l": 100,
+       "t": 300,
+       "r": 976,
+       "b": 1005.703125,
+       "w": 876,
+       "h": 705.703125
+      },
+      "flowSide": {
+       "l": 1000,
+       "t": 300,
+       "r": 1340,
+       "b": 705.90625,
+       "w": 340,
+       "h": 405.90625
+      },
+      "paths": [],
+      "ctas": [
+       {
+        "w": 340,
+        "h": 67
+       }
+      ],
+      "table": false,
+      "touch": 1,
+      "contentL": 100,
+      "contentR": 1340,
+      "vw": 1440
+     }
+    }
+   },
+   "conformance": 100
+  },
+  {
+   "key": "documents",
+   "authority": "AIO-MIG-ACTIVATION-DOCUMENTS-001",
+   "route": "/portal/activation/review#documents",
+   "viewports": {
+    "MOBILE": {
+     "errors": 0,
+     "hscroll": false
+    },
+    "TABLET": {
+     "score": 100,
+     "parts": {
+      "shell": 20,
+      "hero": 15,
+      "grid": 15,
+      "overflow": 15,
+      "gutter": 10,
+      "cta": 10,
+      "table": 5,
+      "touch": 10
+     },
+     "errors": 0,
+     "probe": {
+      "actor": "client",
+      "decl": {
+       "screen": "documents",
+       "pageType": "REVIEW",
+       "density": "MEDIUM",
+       "hero": "COMPACT",
+       "grid": "CENTERED",
+       "process": "NONE",
+       "support": "SIDE",
+       "form": "CHOICES",
+       "table": "ROWS",
+       "overlay": "NONE"
+      },
+      "dock": false,
+      "sidebar": false,
+      "navW": 0,
+      "field": false,
+      "ctx": "CLIENT ACTIVATION",
+      "intakeNav": false,
+      "officeLinks": 0,
+      "iftaLinks": 0,
+      "iftaUi": 0,
+      "headH": 77,
+      "plate": true,
+      "env": false,
+      "hero": {
+       "l": 0,
+       "t": 77,
+       "r": 834,
+       "b": 327,
+       "w": 834,
+       "h": 250
+      },
+      "heroTextRight": 372.140625,
+      "hscroll": false,
+      "overflow": 0,
+      "split": false,
+      "flowMain": null,
+      "flowSide": {
+       "l": 16,
+       "t": 972.8125,
+       "r": 818,
+       "b": 1192.8125,
+       "w": 802,
+       "h": 220
+      },
+      "paths": [],
+      "ctas": [
+       {
+        "w": 456,
+        "h": 67
+       }
+      ],
+      "table": false,
+      "touch": 1,
+      "contentL": 16,
+      "contentR": 818,
+      "vw": 834
+     }
+    },
+    "DESKTOP": {
+     "score": 100,
+     "parts": {
+      "shell": 20,
+      "hero": 15,
+      "grid": 15,
+      "overflow": 15,
+      "gutter": 10,
+      "cta": 10,
+      "table": 5,
+      "touch": 10
+     },
+     "errors": 0,
+     "probe": {
+      "actor": "client",
+      "decl": {
+       "screen": "documents",
+       "pageType": "REVIEW",
+       "density": "MEDIUM",
+       "hero": "COMPACT",
+       "grid": "CENTERED",
+       "process": "NONE",
+       "support": "SIDE",
+       "form": "CHOICES",
+       "table": "ROWS",
+       "overlay": "NONE"
+      },
+      "dock": false,
+      "sidebar": false,
+      "navW": 0,
+      "field": false,
+      "ctx": "CLIENT OFFICE CLIENT ACTIVATION",
+      "intakeNav": false,
+      "officeLinks": 0,
+      "iftaLinks": 0,
+      "iftaUi": 0,
+      "headH": 68,
+      "plate": true,
+      "env": false,
+      "hero": {
+       "l": 0,
+       "t": 68,
+       "r": 1440,
+       "b": 300,
+       "w": 1440,
+       "h": 232
+      },
+      "heroTextRight": 591.6875,
+      "hscroll": false,
+      "overflow": 0,
+      "split": true,
+      "flowMain": {
+       "l": 100,
+       "t": 300,
+       "r": 976,
+       "b": 849.65625,
+       "w": 876,
+       "h": 549.65625
+      },
+      "flowSide": {
+       "l": 1000,
+       "t": 300,
+       "r": 1340,
+       "b": 705.90625,
+       "w": 340,
+       "h": 405.90625
+      },
+      "paths": [],
+      "ctas": [
+       {
+        "w": 340,
+        "h": 67
+       }
+      ],
+      "table": false,
+      "touch": 1,
+      "contentL": 100,
+      "contentR": 1340,
+      "vw": 1440
+     }
+    }
+   },
+   "conformance": 100
+  },
+  {
+   "key": "changed",
+   "authority": "AIO-MIG-ACTIVATION-CHANGED-001",
+   "route": "/portal/activation/review#changed",
+   "viewports": {
+    "MOBILE": {
+     "errors": 0,
+     "hscroll": false
+    },
+    "TABLET": {
+     "score": 100,
+     "parts": {
+      "shell": 20,
+      "hero": 15,
+      "grid": 15,
+      "overflow": 15,
+      "gutter": 10,
+      "cta": 10,
+      "table": 5,
+      "touch": 10
+     },
+     "errors": 0,
+     "probe": {
+      "actor": "client",
+      "decl": {
+       "screen": "changed",
+       "pageType": "ACTIVATION",
+       "density": "LOW",
+       "hero": "COMPACT",
+       "grid": "CENTERED",
+       "process": "NONE",
+       "support": "SIDE",
+       "form": "CHOICES",
+       "table": "NONE",
+       "overlay": "NONE"
+      },
+      "dock": false,
+      "sidebar": false,
+      "navW": 0,
+      "field": false,
+      "ctx": "CLIENT ACTIVATION",
+      "intakeNav": false,
+      "officeLinks": 0,
+      "iftaLinks": 0,
+      "iftaUi": 0,
+      "headH": 77,
+      "plate": true,
+      "env": false,
+      "hero": {
+       "l": 0,
+       "t": 77,
+       "r": 834,
+       "b": 327,
+       "w": 834,
+       "h": 250
+      },
+      "heroTextRight": 372.328125,
+      "hscroll": false,
+      "overflow": 0,
+      "split": false,
+      "flowMain": null,
+      "flowSide": {
+       "l": 16,
+       "t": 1058.59375,
+       "r": 818,
+       "b": 1278.59375,
+       "w": 802,
+       "h": 220
+      },
+      "paths": [],
+      "ctas": [
+       {
+        "w": 456,
+        "h": 67
+       }
+      ],
+      "table": false,
+      "touch": 1,
+      "contentL": 16,
+      "contentR": 818,
+      "vw": 834
+     }
+    },
+    "DESKTOP": {
+     "score": 100,
+     "parts": {
+      "shell": 20,
+      "hero": 15,
+      "grid": 15,
+      "overflow": 15,
+      "gutter": 10,
+      "cta": 10,
+      "table": 5,
+      "touch": 10
+     },
+     "errors": 0,
+     "probe": {
+      "actor": "client",
+      "decl": {
+       "screen": "changed",
+       "pageType": "ACTIVATION",
+       "density": "LOW",
+       "hero": "COMPACT",
+       "grid": "CENTERED",
+       "process": "NONE",
+       "support": "SIDE",
+       "form": "CHOICES",
+       "table": "NONE",
+       "overlay": "NONE"
+      },
+      "dock": false,
+      "sidebar": false,
+      "navW": 0,
+      "field": false,
+      "ctx": "CLIENT OFFICE CLIENT ACTIVATION",
+      "intakeNav": false,
+      "officeLinks": 0,
+      "iftaLinks": 0,
+      "iftaUi": 0,
+      "headH": 68,
+      "plate": true,
+      "env": false,
+      "hero": {
+       "l": 0,
+       "t": 68,
+       "r": 1440,
+       "b": 300,
+       "w": 1440,
+       "h": 232
+      },
+      "heroTextRight": 549.75,
+      "hscroll": false,
+      "overflow": 0,
+      "split": true,
+      "flowMain": {
+       "l": 100,
+       "t": 300,
+       "r": 976,
+       "b": 1019.59375,
+       "w": 876,
+       "h": 719.59375
+      },
+      "flowSide": {
+       "l": 1000,
+       "t": 300,
+       "r": 1340,
+       "b": 680.40625,
+       "w": 340,
+       "h": 380.40625
+      },
+      "paths": [],
+      "ctas": [
+       {
+        "w": 340,
+        "h": 67
+       }
+      ],
+      "table": false,
+      "touch": 1,
+      "contentL": 100,
+      "contentR": 1340,
+      "vw": 1440
+     }
+    }
+   },
+   "conformance": 100
+  },
+  {
+   "key": "confirm",
+   "authority": "AIO-MIG-ACTIVATION-CONFIRM-001",
+   "route": "/portal/activation/review#confirm",
+   "viewports": {
+    "MOBILE": {
+     "errors": 0,
+     "hscroll": false
+    },
+    "TABLET": {
+     "score": 100,
+     "parts": {
+      "shell": 20,
+      "hero": 15,
+      "grid": 15,
+      "overflow": 15,
+      "gutter": 10,
+      "cta": 10,
+      "table": 5,
+      "touch": 10
+     },
+     "errors": 0,
+     "probe": {
+      "actor": "client",
+      "decl": {
+       "screen": "confirm",
+       "pageType": "CONFIRMATION",
+       "density": "MEDIUM",
+       "hero": "COMPACT",
+       "grid": "CENTERED",
+       "process": "NONE",
+       "support": "SIDE",
+       "form": "NONE",
+       "table": "ROWS",
+       "overlay": "NONE"
+      },
+      "dock": false,
+      "sidebar": false,
+      "navW": 0,
+      "field": false,
+      "ctx": "CLIENT ACTIVATION",
+      "intakeNav": false,
+      "officeLinks": 0,
+      "iftaLinks": 0,
+      "iftaUi": 0,
+      "headH": 77,
+      "plate": true,
+      "env": false,
+      "hero": {
+       "l": 0,
+       "t": 77,
+       "r": 834,
+       "b": 335,
+       "w": 834,
+       "h": 258
+      },
+      "heroTextRight": 379.421875,
+      "hscroll": false,
+      "overflow": 0,
+      "split": false,
+      "flowMain": null,
+      "flowSide": {
+       "l": 16,
+       "t": 1218.5625,
+       "r": 818,
+       "b": 1285.5625,
+       "w": 802,
+       "h": 67
+      },
+      "paths": [],
+      "ctas": [
+       {
+        "w": 456,
+        "h": 67
+       }
+      ],
+      "table": false,
+      "touch": 1,
+      "contentL": 16,
+      "contentR": 818,
+      "vw": 834
+     }
+    },
+    "DESKTOP": {
+     "score": 100,
+     "parts": {
+      "shell": 20,
+      "hero": 15,
+      "grid": 15,
+      "overflow": 15,
+      "gutter": 10,
+      "cta": 10,
+      "table": 5,
+      "touch": 10
+     },
+     "errors": 0,
+     "probe": {
+      "actor": "client",
+      "decl": {
+       "screen": "confirm",
+       "pageType": "CONFIRMATION",
+       "density": "MEDIUM",
+       "hero": "COMPACT",
+       "grid": "CENTERED",
+       "process": "NONE",
+       "support": "SIDE",
+       "form": "NONE",
+       "table": "ROWS",
+       "overlay": "NONE"
+      },
+      "dock": false,
+      "sidebar": false,
+      "navW": 0,
+      "field": false,
+      "ctx": "CLIENT OFFICE CLIENT ACTIVATION",
+      "intakeNav": false,
+      "officeLinks": 0,
+      "iftaLinks": 0,
+      "iftaUi": 0,
+      "headH": 68,
+      "plate": true,
+      "env": false,
+      "hero": {
+       "l": 0,
+       "t": 68,
+       "r": 1440,
+       "b": 307,
+       "w": 1440,
+       "h": 239
+      },
+      "heroTextRight": 538.34375,
+      "hscroll": false,
+      "overflow": 0,
+      "split": true,
+      "flowMain": {
+       "l": 100,
+       "t": 307,
+       "r": 976,
+       "b": 1169.90625,
+       "w": 876,
+       "h": 862.90625
+      },
+      "flowSide": {
+       "l": 1000,
+       "t": 307,
+       "r": 1340,
+       "b": 374,
+       "w": 340,
+       "h": 67
+      },
+      "paths": [],
+      "ctas": [
+       {
+        "w": 340,
+        "h": 67
+       }
+      ],
+      "table": false,
+      "touch": 1,
+      "contentL": 100,
+      "contentR": 1340,
+      "vw": 1440
+     }
+    }
+   },
+   "conformance": 100
+  },
+  {
+   "key": "complete",
+   "authority": "AIO-MIG-ACTIVATION-COMPLETE-002",
+   "route": "/portal/activation/review#done",
+   "viewports": {
+    "MOBILE": {
+     "errors": 0,
+     "hscroll": false
+    },
+    "TABLET": {
+     "score": 100,
+     "parts": {
+      "shell": 20,
+      "hero": 15,
+      "grid": 15,
+      "overflow": 15,
+      "gutter": 10,
+      "cta": 10,
+      "table": 5,
+      "touch": 10
+     },
+     "errors": 0,
+     "probe": {
+      "actor": "client",
+      "decl": {
+       "screen": "complete",
+       "pageType": "ARRIVAL",
+       "density": "LOW",
+       "hero": "FULL",
+       "grid": "CENTERED",
+       "process": "NONE",
+       "support": "NONE",
+       "form": "NONE",
+       "table": "NONE",
+       "overlay": "NONE"
+      },
+      "dock": false,
+      "sidebar": false,
+      "navW": 0,
+      "field": false,
+      "ctx": "CLIENT ACTIVATION",
+      "intakeNav": false,
+      "officeLinks": 0,
+      "iftaLinks": 0,
+      "iftaUi": 0,
+      "headH": 77,
+      "plate": false,
+      "env": true,
+      "hero": {
+       "l": 0,
+       "t": 77,
+       "r": 834,
+       "b": 400,
+       "w": 834,
+       "h": 323
+      },
+      "heroTextRight": 439.859375,
+      "hscroll": false,
+      "overflow": 0,
+      "split": null,
+      "flowMain": null,
+      "flowSide": null,
+      "paths": [],
+      "ctas": [
+       {
+        "w": 732,
+        "h": 87
+       }
+      ],
+      "table": false,
+      "touch": 1,
+      "contentL": 16,
+      "contentR": 818,
+      "vw": 834
+     }
+    },
+    "DESKTOP": {
+     "score": 100,
+     "parts": {
+      "shell": 20,
+      "hero": 15,
+      "grid": 15,
+      "overflow": 15,
+      "gutter": 10,
+      "cta": 10,
+      "table": 5,
+      "touch": 10
+     },
+     "errors": 0,
+     "probe": {
+      "actor": "client",
+      "decl": {
+       "screen": "complete",
+       "pageType": "ARRIVAL",
+       "density": "LOW",
+       "hero": "FULL",
+       "grid": "CENTERED",
+       "process": "NONE",
+       "support": "NONE",
+       "form": "NONE",
+       "table": "NONE",
+       "overlay": "NONE"
+      },
+      "dock": false,
+      "sidebar": false,
+      "navW": 0,
+      "field": false,
+      "ctx": "CLIENT OFFICE CLIENT ACTIVATION",
+      "intakeNav": false,
+      "officeLinks": 0,
+      "iftaLinks": 0,
+      "iftaUi": 0,
+      "headH": 68,
+      "plate": false,
+      "env": true,
+      "hero": {
+       "l": 0,
+       "t": 68,
+       "r": 1440,
+       "b": 348.390625,
+       "w": 1440,
+       "h": 280.390625
+      },
+      "heroTextRight": 656.46875,
+      "hscroll": false,
+      "overflow": 0,
+      "split": null,
+      "flowMain": null,
+      "flowSide": null,
+      "paths": [],
+      "ctas": [
+       {
+        "w": 870,
+        "h": 87
+       }
+      ],
+      "table": false,
+      "touch": 1,
+      "contentL": 250,
+      "contentR": 1190,
+      "vw": 1440
+     }
+    }
+   },
+   "conformance": 100
+  },
+  {
+   "key": "new",
+   "authority": "AIO-MIG-NEW-FILE-001",
+   "route": "/office/migration/new",
+   "viewports": {
+    "MOBILE": {
+     "errors": 0,
+     "hscroll": false
+    },
+    "TABLET": {
+     "score": 100,
+     "parts": {
+      "shell": 20,
+      "hero": 15,
+      "grid": 15,
+      "overflow": 15,
+      "gutter": 10,
+      "cta": 10,
+      "table": 5,
+      "touch": 10
+     },
+     "errors": 0,
+     "probe": {
+      "actor": "staff",
+      "decl": {
+       "screen": "new",
+       "pageType": "UPLOAD",
+       "density": "MEDIUM",
+       "hero": "COMPACT",
+       "grid": "MAIN_SIDE",
+       "process": "NONE",
+       "support": "SIDE",
+       "form": "FIELDS",
+       "table": "ROWS",
+       "overlay": "NONE"
+      },
+      "dock": true,
+      "sidebar": false,
+      "navW": 0,
+      "field": false,
+      "ctx": "CLIENT MIGRATION",
+      "intakeNav": true,
+      "officeLinks": 5,
+      "iftaLinks": 0,
+      "iftaUi": 0,
+      "headH": 77,
+      "plate": true,
+      "env": false,
+      "hero": {
+       "l": 0,
+       "t": 77,
+       "r": 834,
+       "b": 327,
+       "w": 834,
+       "h": 250
+      },
+      "heroTextRight": 386.015625,
+      "hscroll": false,
+      "overflow": 0,
+      "split": false,
+      "flowMain": null,
+      "flowSide": {
+       "l": 16,
+       "t": 1027.578125,
+       "r": 818,
+       "b": 1238.578125,
+       "w": 802,
+       "h": 211
+      },
+      "paths": [],
+      "ctas": [
+       {
+        "w": 456,
+        "h": 67
+       }
+      ],
+      "table": false,
+      "touch": 1,
+      "contentL": 16,
+      "contentR": 818,
+      "vw": 834
+     }
+    },
+    "DESKTOP": {
+     "score": 100,
+     "parts": {
+      "shell": 20,
+      "hero": 15,
+      "grid": 15,
+      "overflow": 15,
+      "gutter": 10,
+      "cta": 10,
+      "table": 5,
+      "touch": 10
+     },
+     "errors": 0,
+     "probe": {
+      "actor": "staff",
+      "decl": {
+       "screen": "new",
+       "pageType": "UPLOAD",
+       "density": "MEDIUM",
+       "hero": "COMPACT",
+       "grid": "MAIN_SIDE",
+       "process": "NONE",
+       "support": "SIDE",
+       "form": "FIELDS",
+       "table": "ROWS",
+       "overlay": "NONE"
+      },
+      "dock": false,
+      "sidebar": true,
+      "navW": 138,
+      "field": true,
+      "ctx": "AIO OFFICE CLIENT MIGRATION",
+      "intakeNav": true,
+      "officeLinks": 5,
+      "iftaLinks": 0,
+      "iftaUi": 0,
+      "headH": 68,
+      "plate": true,
+      "env": false,
+      "hero": {
+       "l": 138,
+       "t": 68,
+       "r": 1440,
+       "b": 300,
+       "w": 1302,
+       "h": 232
+      },
+      "heroTextRight": 607.953125,
+      "hscroll": false,
+      "overflow": 0,
+      "split": true,
+      "flowMain": {
+       "l": 154,
+       "t": 300,
+       "r": 1060,
+       "b": 996.578125,
+       "w": 906,
+       "h": 696.578125
+      },
+      "flowSide": {
+       "l": 1084,
+       "t": 300,
+       "r": 1424,
+       "b": 692.390625,
+       "w": 340,
+       "h": 392.390625
+      },
+      "paths": [],
+      "ctas": [
+       {
+        "w": 340,
+        "h": 67
+       }
+      ],
+      "table": false,
+      "touch": 1,
+      "contentL": 154,
+      "contentR": 1424,
+      "vw": 1440
+     }
+    }
+   },
+   "conformance": 100
+  },
+  {
+   "key": "new-received",
+   "authority": "AIO-MIG-NEW-RECEIVED-001",
+   "route": "/office/migration/new-received?client=mig-demo-new",
+   "viewports": {
+    "MOBILE": {
+     "errors": 0,
+     "hscroll": false
+    },
+    "TABLET": {
+     "score": 100,
+     "parts": {
+      "shell": 20,
+      "hero": 15,
+      "grid": 15,
+      "overflow": 15,
+      "gutter": 10,
+      "cta": 10,
+      "table": 5,
+      "touch": 10
+     },
+     "errors": 0,
+     "probe": {
+      "actor": "staff",
+      "decl": {
+       "screen": "new-received",
+       "pageType": "TABLE_LIST",
+       "density": "TABLE_HEAVY",
+       "hero": "COMPACT",
+       "grid": "MAIN_SIDE",
+       "process": "NONE",
+       "support": "SIDE",
+       "form": "NONE",
+       "table": "TABLE",
+       "overlay": "NONE"
+      },
+      "dock": true,
+      "sidebar": false,
+      "navW": 0,
+      "field": false,
+      "ctx": "CLIENT MIGRATION",
+      "intakeNav": true,
+      "officeLinks": 5,
+      "iftaLinks": 0,
+      "iftaUi": 0,
+      "headH": 77,
+      "plate": true,
+      "env": false,
+      "hero": {
+       "l": 0,
+       "t": 77,
+       "r": 834,
+       "b": 327,
+       "w": 834,
+       "h": 250
+      },
+      "heroTextRight": 386.890625,
+      "hscroll": false,
+      "overflow": 0,
+      "split": false,
+      "flowMain": null,
+      "flowSide": {
+       "l": 16,
+       "t": 1080.390625,
+       "r": 818,
+       "b": 1310.390625,
+       "w": 802,
+       "h": 230
+      },
+      "paths": [],
+      "ctas": [
+       {
+        "w": 456,
+        "h": 67
+       }
+      ],
+      "table": true,
+      "touch": 1,
+      "contentL": 16,
+      "contentR": 818,
+      "vw": 834
+     }
+    },
+    "DESKTOP": {
+     "score": 100,
+     "parts": {
+      "shell": 20,
+      "hero": 15,
+      "grid": 15,
+      "overflow": 15,
+      "gutter": 10,
+      "cta": 10,
+      "table": 5,
+      "touch": 10
+     },
+     "errors": 0,
+     "probe": {
+      "actor": "staff",
+      "decl": {
+       "screen": "new-received",
+       "pageType": "TABLE_LIST",
+       "density": "TABLE_HEAVY",
+       "hero": "COMPACT",
+       "grid": "MAIN_SIDE",
+       "process": "NONE",
+       "support": "SIDE",
+       "form": "NONE",
+       "table": "TABLE",
+       "overlay": "NONE"
+      },
+      "dock": false,
+      "sidebar": true,
+      "navW": 138,
+      "field": true,
+      "ctx": "AIO OFFICE CLIENT MIGRATION",
+      "intakeNav": true,
+      "officeLinks": 5,
+      "iftaLinks": 0,
+      "iftaUi": 0,
+      "headH": 68,
+      "plate": true,
+      "env": false,
+      "hero": {
+       "l": 138,
+       "t": 68,
+       "r": 1440,
+       "b": 300,
+       "w": 1302,
+       "h": 232
+      },
+      "heroTextRight": 617.625,
+      "hscroll": false,
+      "overflow": 0,
+      "split": true,
+      "flowMain": {
+       "l": 154,
+       "t": 300,
+       "r": 1060,
+       "b": 1057.390625,
+       "w": 906,
+       "h": 757.390625
+      },
+      "flowSide": {
+       "l": 1084,
+       "t": 300,
+       "r": 1424,
+       "b": 642.578125,
+       "w": 340,
+       "h": 342.578125
+      },
+      "paths": [],
+      "ctas": [
+       {
+        "w": 340,
+        "h": 67
+       }
+      ],
+      "table": true,
+      "touch": 1,
+      "contentL": 154,
+      "contentR": 1424,
+      "vw": 1440
+     }
+    }
+   },
+   "conformance": 100
+  },
+  {
+   "key": "new-extract",
+   "authority": "AIO-MIG-NEW-EXTRACT-001",
+   "route": "/office/migration/new-extract?client=mig-demo-new",
+   "viewports": {
+    "MOBILE": {
+     "errors": 0,
+     "hscroll": false
+    },
+    "TABLET": {
+     "score": 100,
+     "parts": {
+      "shell": 20,
+      "hero": 15,
+      "grid": 15,
+      "overflow": 15,
+      "gutter": 10,
+      "cta": 10,
+      "table": 5,
+      "touch": 10
+     },
+     "errors": 0,
+     "probe": {
+      "actor": "staff",
+      "decl": {
+       "screen": "new-extract",
+       "pageType": "PROCESSING",
+       "density": "MEDIUM",
+       "hero": "COMPACT",
+       "grid": "SINGLE",
+       "process": "STAGES",
+       "support": "SIDE",
+       "form": "NONE",
+       "table": "NONE",
+       "overlay": "NONE"
+      },
+      "dock": true,
+      "sidebar": false,
+      "navW": 0,
+      "field": false,
+      "ctx": "CLIENT MIGRATION",
+      "intakeNav": true,
+      "officeLinks": 5,
+      "iftaLinks": 0,
+      "iftaUi": 0,
+      "headH": 77,
+      "plate": true,
+      "env": false,
+      "hero": {
+       "l": 0,
+       "t": 77,
+       "r": 834,
+       "b": 327,
+       "w": 834,
+       "h": 250
+      },
+      "heroTextRight": 380.953125,
+      "hscroll": false,
+      "overflow": 0,
+      "split": false,
+      "flowMain": null,
+      "flowSide": null,
+      "paths": [],
+      "ctas": [],
+      "table": false,
+      "touch": 1,
+      "contentL": 16,
+      "contentR": 818,
+      "vw": 834
+     }
+    },
+    "DESKTOP": {
+     "score": 100,
+     "parts": {
+      "shell": 20,
+      "hero": 15,
+      "grid": 15,
+      "overflow": 15,
+      "gutter": 10,
+      "cta": 10,
+      "table": 5,
+      "touch": 10
+     },
+     "errors": 0,
+     "probe": {
+      "actor": "staff",
+      "decl": {
+       "screen": "new-extract",
+       "pageType": "PROCESSING",
+       "density": "MEDIUM",
+       "hero": "COMPACT",
+       "grid": "SINGLE",
+       "process": "STAGES",
+       "support": "SIDE",
+       "form": "NONE",
+       "table": "NONE",
+       "overlay": "NONE"
+      },
+      "dock": false,
+      "sidebar": true,
+      "navW": 138,
+      "field": true,
+      "ctx": "AIO OFFICE CLIENT MIGRATION",
+      "intakeNav": true,
+      "officeLinks": 5,
+      "iftaLinks": 0,
+      "iftaUi": 0,
+      "headH": 68,
+      "plate": true,
+      "env": false,
+      "hero": {
+       "l": 138,
+       "t": 68,
+       "r": 1440,
+       "b": 300,
+       "w": 1302,
+       "h": 232
+      },
+      "heroTextRight": 619.890625,
+      "hscroll": false,
+      "overflow": 0,
+      "split": false,
+      "flowMain": {
+       "l": 289,
+       "t": 300,
+       "r": 1289,
+       "b": 1147,
+       "w": 1000,
+       "h": 847
+      },
+      "flowSide": null,
+      "paths": [],
+      "ctas": [],
+      "table": false,
+      "touch": 1,
+      "contentL": 289,
+      "contentR": 1289,
+      "vw": 1440
+     }
+    }
+   },
+   "conformance": 100
+  },
+  {
+   "key": "new-identity",
+   "authority": "AIO-MIG-NEW-IDENTITY-001",
+   "route": "/office/migration/new-identity?client=mig-demo-new",
+   "viewports": {
+    "MOBILE": {
+     "errors": 0,
+     "hscroll": false
+    },
+    "TABLET": {
+     "score": 100,
+     "parts": {
+      "shell": 20,
+      "hero": 15,
+      "grid": 15,
+      "overflow": 15,
+      "gutter": 10,
+      "cta": 10,
+      "table": 5,
+      "touch": 10
+     },
+     "errors": 0,
+     "probe": {
+      "actor": "staff",
+      "decl": {
+       "screen": "new-identity",
+       "pageType": "DETAIL",
+       "density": "MEDIUM",
+       "hero": "COMPACT",
+       "grid": "MAIN_SIDE",
+       "process": "NONE",
+       "support": "SIDE",
+       "form": "FIELDS",
+       "table": "NONE",
+       "overlay": "NONE"
+      },
+      "dock": true,
+      "sidebar": false,
+      "navW": 0,
+      "field": false,
+      "ctx": "CLIENT MIGRATION",
+      "intakeNav": true,
+      "officeLinks": 5,
+      "iftaLinks": 0,
+      "iftaUi": 0,
+      "headH": 77,
+      "plate": true,
+      "env": false,
+      "hero": {
+       "l": 0,
+       "t": 77,
+       "r": 834,
+       "b": 327,
+       "w": 834,
+       "h": 250
+      },
+      "heroTextRight": 377.890625,
+      "hscroll": false,
+      "overflow": 0,
+      "split": false,
+      "flowMain": null,
+      "flowSide": {
+       "l": 16,
+       "t": 742,
+       "r": 818,
+       "b": 1002.65625,
+       "w": 802,
+       "h": 260.65625
+      },
+      "paths": [],
+      "ctas": [
+       {
+        "w": 456,
+        "h": 67
+       }
+      ],
+      "table": false,
+      "touch": 1,
+      "contentL": 16,
+      "contentR": 818,
+      "vw": 834
+     }
+    },
+    "DESKTOP": {
+     "score": 100,
+     "parts": {
+      "shell": 20,
+      "hero": 15,
+      "grid": 15,
+      "overflow": 15,
+      "gutter": 10,
+      "cta": 10,
+      "table": 5,
+      "touch": 10
+     },
+     "errors": 0,
+     "probe": {
+      "actor": "staff",
+      "decl": {
+       "screen": "new-identity",
+       "pageType": "DETAIL",
+       "density": "MEDIUM",
+       "hero": "COMPACT",
+       "grid": "MAIN_SIDE",
+       "process": "NONE",
+       "support": "SIDE",
+       "form": "FIELDS",
+       "table": "NONE",
+       "overlay": "NONE"
+      },
+      "dock": false,
+      "sidebar": true,
+      "navW": 138,
+      "field": true,
+      "ctx": "AIO OFFICE CLIENT MIGRATION",
+      "intakeNav": true,
+      "officeLinks": 5,
+      "iftaLinks": 0,
+      "iftaUi": 0,
+      "headH": 68,
+      "plate": true,
+      "env": false,
+      "hero": {
+       "l": 138,
+       "t": 68,
+       "r": 1440,
+       "b": 300,
+       "w": 1302,
+       "h": 232
+      },
+      "heroTextRight": 626.859375,
+      "hscroll": false,
+      "overflow": 0,
+      "split": true,
+      "flowMain": {
+       "l": 154,
+       "t": 300,
+       "r": 1060,
+       "b": 703,
+       "w": 906,
+       "h": 403
+      },
+      "flowSide": {
+       "l": 1084,
+       "t": 300,
+       "r": 1424,
+       "b": 986.984375,
+       "w": 340,
+       "h": 686.984375
+      },
+      "paths": [],
+      "ctas": [
+       {
+        "w": 340,
+        "h": 67
+       }
+      ],
+      "table": false,
+      "touch": 1,
+      "contentL": 154,
+      "contentR": 1424,
+      "vw": 1440
+     }
+    }
+   },
+   "conformance": 100
+  },
+  {
+   "key": "new-records",
+   "authority": "AIO-MIG-NEW-RECORDS-001",
+   "route": "/office/migration/new-records?client=mig-demo-new",
+   "viewports": {
+    "MOBILE": {
+     "errors": 0,
+     "hscroll": false
+    },
+    "TABLET": {
+     "score": 100,
+     "parts": {
+      "shell": 20,
+      "hero": 15,
+      "grid": 15,
+      "overflow": 15,
+      "gutter": 10,
+      "cta": 10,
+      "table": 5,
+      "touch": 10
+     },
+     "errors": 0,
+     "probe": {
+      "actor": "staff",
+      "decl": {
+       "screen": "new-records",
+       "pageType": "REVIEW",
+       "density": "HIGH",
+       "hero": "COMPACT",
+       "grid": "CANVAS_PANEL",
+       "process": "NONE",
+       "support": "SIDE",
+       "form": "CHOICES",
+       "table": "ROWS",
+       "overlay": "NONE"
+      },
+      "dock": true,
+      "sidebar": false,
+      "navW": 0,
+      "field": false,
+      "ctx": "CLIENT MIGRATION",
+      "intakeNav": true,
+      "officeLinks": 5,
+      "iftaLinks": 0,
+      "iftaUi": 0,
+      "headH": 77,
+      "plate": true,
+      "env": false,
+      "hero": {
+       "l": 0,
+       "t": 77,
+       "r": 834,
+       "b": 399,
+       "w": 834,
+       "h": 322
+      },
+      "heroTextRight": 386.015625,
+      "hscroll": false,
+      "overflow": 0,
+      "split": false,
+      "flowMain": null,
+      "flowSide": {
+       "l": 16,
+       "t": 1016.8125,
+       "r": 818,
+       "b": 1227.8125,
+       "w": 802,
+       "h": 211
+      },
+      "paths": [],
+      "ctas": [
+       {
+        "w": 456,
+        "h": 67
+       }
+      ],
+      "table": false,
+      "touch": 1,
+      "contentL": 16,
+      "contentR": 818,
+      "vw": 834
+     }
+    },
+    "DESKTOP": {
+     "score": 100,
+     "parts": {
+      "shell": 20,
+      "hero": 15,
+      "grid": 15,
+      "overflow": 15,
+      "gutter": 10,
+      "cta": 10,
+      "table": 5,
+      "touch": 10
+     },
+     "errors": 0,
+     "probe": {
+      "actor": "staff",
+      "decl": {
+       "screen": "new-records",
+       "pageType": "REVIEW",
+       "density": "HIGH",
+       "hero": "COMPACT",
+       "grid": "CANVAS_PANEL",
+       "process": "NONE",
+       "support": "SIDE",
+       "form": "CHOICES",
+       "table": "ROWS",
+       "overlay": "NONE"
+      },
+      "dock": false,
+      "sidebar": true,
+      "navW": 138,
+      "field": true,
+      "ctx": "AIO OFFICE CLIENT MIGRATION",
+      "intakeNav": true,
+      "officeLinks": 5,
+      "iftaLinks": 0,
+      "iftaUi": 0,
+      "headH": 68,
+      "plate": true,
+      "env": false,
+      "hero": {
+       "l": 138,
+       "t": 68,
+       "r": 1440,
+       "b": 307,
+       "w": 1302,
+       "h": 239
+      },
+      "heroTextRight": 662.34375,
+      "hscroll": false,
+      "overflow": 0,
+      "split": true,
+      "flowMain": {
+       "l": 154,
+       "t": 307,
+       "r": 1080,
+       "b": 912.8125,
+       "w": 926,
+       "h": 605.8125
+      },
+      "flowSide": {
+       "l": 1104,
+       "t": 307,
+       "r": 1424,
+       "b": 699.390625,
+       "w": 320,
+       "h": 392.390625
+      },
+      "paths": [],
+      "ctas": [
+       {
+        "w": 320,
+        "h": 67
+       }
+      ],
+      "table": false,
+      "touch": 1,
+      "contentL": 154,
+      "contentR": 1424,
+      "vw": 1440
+     }
+    }
+   },
+   "conformance": 100
+  },
+  {
+   "key": "new-review",
+   "authority": "AIO-MIG-NEW-REVIEW-001",
+   "route": "/office/migration/new-review?client=mig-demo-new",
+   "viewports": {
+    "MOBILE": {
+     "errors": 0,
+     "hscroll": false
+    },
+    "TABLET": {
+     "score": 100,
+     "parts": {
+      "shell": 20,
+      "hero": 15,
+      "grid": 15,
+      "overflow": 15,
+      "gutter": 10,
+      "cta": 10,
+      "table": 5,
+      "touch": 10
+     },
+     "errors": 0,
+     "probe": {
+      "actor": "staff",
+      "decl": {
+       "screen": "new-review",
+       "pageType": "REVIEW",
+       "density": "HIGH",
+       "hero": "COMPACT",
+       "grid": "CANVAS_PANEL",
+       "process": "NONE",
+       "support": "SIDE",
+       "form": "CHOICES",
+       "table": "ROWS",
+       "overlay": "NONE"
+      },
+      "dock": true,
+      "sidebar": false,
+      "navW": 0,
+      "field": false,
+      "ctx": "CLIENT MIGRATION",
+      "intakeNav": true,
+      "officeLinks": 5,
+      "iftaLinks": 0,
+      "iftaUi": 0,
+      "headH": 77,
+      "plate": true,
+      "env": false,
+      "hero": {
+       "l": 0,
+       "t": 77,
+       "r": 834,
+       "b": 327,
+       "w": 834,
+       "h": 250
+      },
+      "heroTextRight": 376.671875,
+      "hscroll": false,
+      "overflow": 0,
+      "split": false,
+      "flowMain": null,
+      "flowSide": {
+       "l": 16,
+       "t": 1032,
+       "r": 818,
+       "b": 1264.34375,
+       "w": 802,
+       "h": 232.34375
+      },
+      "paths": [],
+      "ctas": [
+       {
+        "w": 456,
+        "h": 67
+       }
+      ],
+      "table": false,
+      "touch": 1,
+      "contentL": 16,
+      "contentR": 818,
+      "vw": 834
+     }
+    },
+    "DESKTOP": {
+     "score": 100,
+     "parts": {
+      "shell": 20,
+      "hero": 15,
+      "grid": 15,
+      "overflow": 15,
+      "gutter": 10,
+      "cta": 10,
+      "table": 5,
+      "touch": 10
+     },
+     "errors": 0,
+     "probe": {
+      "actor": "staff",
+      "decl": {
+       "screen": "new-review",
+       "pageType": "REVIEW",
+       "density": "HIGH",
+       "hero": "COMPACT",
+       "grid": "CANVAS_PANEL",
+       "process": "NONE",
+       "support": "SIDE",
+       "form": "CHOICES",
+       "table": "ROWS",
+       "overlay": "NONE"
+      },
+      "dock": false,
+      "sidebar": true,
+      "navW": 138,
+      "field": true,
+      "ctx": "AIO OFFICE CLIENT MIGRATION",
+      "intakeNav": true,
+      "officeLinks": 5,
+      "iftaLinks": 0,
+      "iftaUi": 0,
+      "headH": 68,
+      "plate": true,
+      "env": false,
+      "hero": {
+       "l": 138,
+       "t": 68,
+       "r": 1440,
+       "b": 300,
+       "w": 1302,
+       "h": 232
+      },
+      "heroTextRight": 608.46875,
+      "hscroll": false,
+      "overflow": 0,
+      "split": true,
+      "flowMain": {
+       "l": 154,
+       "t": 300,
+       "r": 1080,
+       "b": 949,
+       "w": 926,
+       "h": 649
+      },
+      "flowSide": {
+       "l": 1104,
+       "t": 300,
+       "r": 1424,
+       "b": 787.265625,
+       "w": 320,
+       "h": 487.265625
+      },
+      "paths": [],
+      "ctas": [
+       {
+        "w": 320,
+        "h": 67
+       }
+      ],
+      "table": false,
+      "touch": 1,
+      "contentL": 154,
+      "contentR": 1424,
+      "vw": 1440
+     }
+    }
+   },
+   "conformance": 100
+  },
+  {
+   "key": "new-approval",
+   "authority": "AIO-MIG-NEW-APPROVAL-001",
+   "route": "/office/migration/new-approval?client=mig-demo-new",
+   "viewports": {
+    "MOBILE": {
+     "errors": 0,
+     "hscroll": false
+    },
+    "TABLET": {
+     "score": 100,
+     "parts": {
+      "shell": 20,
+      "hero": 15,
+      "grid": 15,
+      "overflow": 15,
+      "gutter": 10,
+      "cta": 10,
+      "table": 5,
+      "touch": 10
+     },
+     "errors": 0,
+     "probe": {
+      "actor": "staff",
+      "decl": {
+       "screen": "new-approval",
+       "pageType": "CONFIRMATION",
+       "density": "MEDIUM",
+       "hero": "COMPACT",
+       "grid": "SINGLE",
+       "process": "NONE",
+       "support": "SIDE",
+       "form": "NONE",
+       "table": "ROWS",
+       "overlay": "NONE"
+      },
+      "dock": true,
+      "sidebar": false,
+      "navW": 0,
+      "field": false,
+      "ctx": "CLIENT MIGRATION",
+      "intakeNav": true,
+      "officeLinks": 5,
+      "iftaLinks": 0,
+      "iftaUi": 0,
+      "headH": 77,
+      "plate": true,
+      "env": false,
+      "hero": {
+       "l": 0,
+       "t": 77,
+       "r": 834,
+       "b": 327,
+       "w": 834,
+       "h": 250
+      },
+      "heroTextRight": 295.296875,
+      "hscroll": false,
+      "overflow": 0,
+      "split": false,
+      "flowMain": null,
+      "flowSide": null,
+      "paths": [],
+      "ctas": [
+       {
+        "w": 728,
+        "h": 96
+       }
+      ],
+      "table": false,
+      "touch": 1,
+      "contentL": 16,
+      "contentR": 818,
+      "vw": 834
+     }
+    },
+    "DESKTOP": {
+     "score": 100,
+     "parts": {
+      "shell": 20,
+      "hero": 15,
+      "grid": 15,
+      "overflow": 15,
+      "gutter": 10,
+      "cta": 10,
+      "table": 5,
+      "touch": 10
+     },
+     "errors": 0,
+     "probe": {
+      "actor": "staff",
+      "decl": {
+       "screen": "new-approval",
+       "pageType": "CONFIRMATION",
+       "density": "MEDIUM",
+       "hero": "COMPACT",
+       "grid": "SINGLE",
+       "process": "NONE",
+       "support": "SIDE",
+       "form": "NONE",
+       "table": "ROWS",
+       "overlay": "NONE"
+      },
+      "dock": false,
+      "sidebar": true,
+      "navW": 138,
+      "field": true,
+      "ctx": "AIO OFFICE CLIENT MIGRATION",
+      "intakeNav": true,
+      "officeLinks": 5,
+      "iftaLinks": 0,
+      "iftaUi": 0,
+      "headH": 68,
+      "plate": true,
+      "env": false,
+      "hero": {
+       "l": 138,
+       "t": 68,
+       "r": 1440,
+       "b": 300,
+       "w": 1302,
+       "h": 232
+      },
+      "heroTextRight": 640.1875,
+      "hscroll": false,
+      "overflow": 0,
+      "split": false,
+      "flowMain": {
+       "l": 289,
+       "t": 300,
+       "r": 1289,
+       "b": 1096.796875,
+       "w": 1000,
+       "h": 796.796875
+      },
+      "flowSide": null,
+      "paths": [],
+      "ctas": [
+       {
+        "w": 926,
+        "h": 96
+       }
+      ],
+      "table": false,
+      "touch": 1,
+      "contentL": 289,
+      "contentR": 1289,
+      "vw": 1440
+     }
+    }
+   },
+   "conformance": 100
+  },
+  {
+   "key": "new-prebuilt",
+   "authority": "AIO-MIG-NEW-PREBUILT-001",
+   "route": "/office/migration/new-prebuilt?client=mig-demo-new",
+   "viewports": {
+    "MOBILE": {
+     "errors": 0,
+     "hscroll": false
+    },
+    "TABLET": {
+     "score": 100,
+     "parts": {
+      "shell": 20,
+      "hero": 15,
+      "grid": 15,
+      "overflow": 15,
+      "gutter": 10,
+      "cta": 10,
+      "table": 5,
+      "touch": 10
+     },
+     "errors": 0,
+     "probe": {
+      "actor": "staff",
+      "decl": {
+       "screen": "new-prebuilt",
+       "pageType": "DETAIL",
+       "density": "MEDIUM",
+       "hero": "COMPACT",
+       "grid": "MAIN_SIDE",
+       "process": "NONE",
+       "support": "SIDE",
+       "form": "NONE",
+       "table": "NONE",
+       "overlay": "NONE"
+      },
+      "dock": true,
+      "sidebar": false,
+      "navW": 0,
+      "field": false,
+      "ctx": "CLIENT MIGRATION",
+      "intakeNav": true,
+      "officeLinks": 5,
+      "iftaLinks": 0,
+      "iftaUi": 0,
+      "headH": 77,
+      "plate": true,
+      "env": false,
+      "hero": {
+       "l": 0,
+       "t": 77,
+       "r": 834,
+       "b": 327,
+       "w": 834,
+       "h": 250
+      },
+      "heroTextRight": 382.4375,
+      "hscroll": false,
+      "overflow": 0,
+      "split": false,
+      "flowMain": null,
+      "flowSide": {
+       "l": 16,
+       "t": 1219,
+       "r": 818,
+       "b": 1286,
+       "w": 802,
+       "h": 67
+      },
+      "paths": [],
+      "ctas": [
+       {
+        "w": 456,
+        "h": 67
+       }
+      ],
+      "table": false,
+      "touch": 1,
+      "contentL": 16,
+      "contentR": 818,
+      "vw": 834
+     }
+    },
+    "DESKTOP": {
+     "score": 100,
+     "parts": {
+      "shell": 20,
+      "hero": 15,
+      "grid": 15,
+      "overflow": 15,
+      "gutter": 10,
+      "cta": 10,
+      "table": 5,
+      "touch": 10
+     },
+     "errors": 0,
+     "probe": {
+      "actor": "staff",
+      "decl": {
+       "screen": "new-prebuilt",
+       "pageType": "DETAIL",
+       "density": "MEDIUM",
+       "hero": "COMPACT",
+       "grid": "MAIN_SIDE",
+       "process": "NONE",
+       "support": "SIDE",
+       "form": "NONE",
+       "table": "NONE",
+       "overlay": "NONE"
+      },
+      "dock": false,
+      "sidebar": true,
+      "navW": 138,
+      "field": true,
+      "ctx": "AIO OFFICE CLIENT MIGRATION",
+      "intakeNav": true,
+      "officeLinks": 5,
+      "iftaLinks": 0,
+      "iftaUi": 0,
+      "headH": 68,
+      "plate": true,
+      "env": false,
+      "hero": {
+       "l": 138,
+       "t": 68,
+       "r": 1440,
+       "b": 300,
+       "w": 1302,
+       "h": 232
+      },
+      "heroTextRight": 641.75,
+      "hscroll": false,
+      "overflow": 0,
+      "split": true,
+      "flowMain": {
+       "l": 154,
+       "t": 300,
+       "r": 1060,
+       "b": 1179,
+       "w": 906,
+       "h": 879
+      },
+      "flowSide": {
+       "l": 1084,
+       "t": 300,
+       "r": 1424,
+       "b": 367,
+       "w": 340,
+       "h": 67
+      },
+      "paths": [],
+      "ctas": [
+       {
+        "w": 340,
+        "h": 67
+       }
+      ],
+      "table": false,
+      "touch": 1,
+      "contentL": 154,
+      "contentR": 1424,
+      "vw": 1440
+     }
+    }
+   },
+   "conformance": 100
+  },
+  {
+   "key": "new-invite",
+   "authority": "AIO-MIG-NEW-INVITE-001",
+   "route": "/office/migration/new-invite?client=mig-demo-new",
+   "viewports": {
+    "MOBILE": {
+     "errors": 0,
+     "hscroll": false
+    },
+    "TABLET": {
+     "score": 100,
+     "parts": {
+      "shell": 20,
+      "hero": 15,
+      "grid": 15,
+      "overflow": 15,
+      "gutter": 10,
+      "cta": 10,
+      "table": 5,
+      "touch": 10
+     },
+     "errors": 0,
+     "probe": {
+      "actor": "staff",
+      "decl": {
+       "screen": "new-invite",
+       "pageType": "INVITE",
+       "density": "LOW",
+       "hero": "COMPACT",
+       "grid": "MAIN_SIDE",
+       "process": "NONE",
+       "support": "SIDE",
+       "form": "FIELDS",
+       "table": "NONE",
+       "overlay": "NONE"
+      },
+      "dock": true,
+      "sidebar": false,
+      "navW": 0,
+      "field": false,
+      "ctx": "CLIENT MIGRATION",
+      "intakeNav": true,
+      "officeLinks": 5,
+      "iftaLinks": 0,
+      "iftaUi": 0,
+      "headH": 77,
+      "plate": true,
+      "env": false,
+      "hero": {
+       "l": 0,
+       "t": 77,
+       "r": 834,
+       "b": 327,
+       "w": 834,
+       "h": 250
+      },
+      "heroTextRight": 367.765625,
+      "hscroll": false,
+      "overflow": 0,
+      "split": false,
+      "flowMain": null,
+      "flowSide": {
+       "l": 16,
+       "t": 1063,
+       "r": 818,
+       "b": 1130,
+       "w": 802,
+       "h": 67
+      },
+      "paths": [],
+      "ctas": [
+       {
+        "w": 456,
+        "h": 67
+       }
+      ],
+      "table": false,
+      "touch": 1,
+      "contentL": 16,
+      "contentR": 818,
+      "vw": 834
+     }
+    },
+    "DESKTOP": {
+     "score": 100,
+     "parts": {
+      "shell": 20,
+      "hero": 15,
+      "grid": 15,
+      "overflow": 15,
+      "gutter": 10,
+      "cta": 10,
+      "table": 5,
+      "touch": 10
+     },
+     "errors": 0,
+     "probe": {
+      "actor": "staff",
+      "decl": {
+       "screen": "new-invite",
+       "pageType": "INVITE",
+       "density": "LOW",
+       "hero": "COMPACT",
+       "grid": "MAIN_SIDE",
+       "process": "NONE",
+       "support": "SIDE",
+       "form": "FIELDS",
+       "table": "NONE",
+       "overlay": "NONE"
+      },
+      "dock": false,
+      "sidebar": true,
+      "navW": 138,
+      "field": true,
+      "ctx": "AIO OFFICE CLIENT MIGRATION",
+      "intakeNav": true,
+      "officeLinks": 5,
+      "iftaLinks": 0,
+      "iftaUi": 0,
+      "headH": 68,
+      "plate": true,
+      "env": false,
+      "hero": {
+       "l": 138,
+       "t": 68,
+       "r": 1440,
+       "b": 300,
+       "w": 1302,
+       "h": 232
+      },
+      "heroTextRight": 603.40625,
+      "hscroll": false,
+      "overflow": 0,
+      "split": true,
+      "flowMain": {
+       "l": 154,
+       "t": 300,
+       "r": 1060,
+       "b": 1048,
+       "w": 906,
+       "h": 748
+      },
+      "flowSide": {
+       "l": 1084,
+       "t": 300,
+       "r": 1424,
+       "b": 367,
+       "w": 340,
+       "h": 67
+      },
+      "paths": [],
+      "ctas": [
+       {
+        "w": 340,
+        "h": 67
+       }
+      ],
+      "table": false,
+      "touch": 1,
+      "contentL": 154,
+      "contentR": 1424,
+      "vw": 1440
+     }
+    }
+   },
+   "conformance": 100
+  },
+  {
+   "key": "new-confirm",
+   "authority": "AIO-MIG-NEW-CONFIRM-001",
+   "route": "/office/migration/new-confirm?client=mig-demo-new",
+   "viewports": {
+    "MOBILE": {
+     "errors": 0,
+     "hscroll": false
+    },
+    "TABLET": {
+     "score": 100,
+     "parts": {
+      "shell": 20,
+      "hero": 15,
+      "grid": 15,
+      "overflow": 15,
+      "gutter": 10,
+      "cta": 10,
+      "table": 5,
+      "touch": 10
+     },
+     "errors": 0,
+     "probe": {
+      "actor": "staff",
+      "decl": {
+       "screen": "new-confirm",
+       "pageType": "CONFIRMATION",
+       "density": "LOW",
+       "hero": "COMPACT",
+       "grid": "MAIN_SIDE",
+       "process": "NONE",
+       "support": "SIDE",
+       "form": "NONE",
+       "table": "ROWS",
+       "overlay": "NONE"
+      },
+      "dock": true,
+      "sidebar": false,
+      "navW": 0,
+      "field": false,
+      "ctx": "CLIENT MIGRATION",
+      "intakeNav": true,
+      "officeLinks": 5,
+      "iftaLinks": 0,
+      "iftaUi": 0,
+      "headH": 77,
+      "plate": true,
+      "env": false,
+      "hero": {
+       "l": 0,
+       "t": 77,
+       "r": 834,
+       "b": 327,
+       "w": 834,
+       "h": 250
+      },
+      "heroTextRight": 339.640625,
+      "hscroll": false,
+      "overflow": 0,
+      "split": false,
+      "flowMain": null,
+      "flowSide": {
+       "l": 16,
+       "t": 1271,
+       "r": 818,
+       "b": 1338,
+       "w": 802,
+       "h": 67
+      },
+      "paths": [],
+      "ctas": [
+       {
+        "w": 456,
+        "h": 67
+       }
+      ],
+      "table": false,
+      "touch": 1,
+      "contentL": 16,
+      "contentR": 818,
+      "vw": 834
+     }
+    },
+    "DESKTOP": {
+     "score": 100,
+     "parts": {
+      "shell": 20,
+      "hero": 15,
+      "grid": 15,
+      "overflow": 15,
+      "gutter": 10,
+      "cta": 10,
+      "table": 5,
+      "touch": 10
+     },
+     "errors": 0,
+     "probe": {
+      "actor": "staff",
+      "decl": {
+       "screen": "new-confirm",
+       "pageType": "CONFIRMATION",
+       "density": "LOW",
+       "hero": "COMPACT",
+       "grid": "MAIN_SIDE",
+       "process": "NONE",
+       "support": "SIDE",
+       "form": "NONE",
+       "table": "ROWS",
+       "overlay": "NONE"
+      },
+      "dock": false,
+      "sidebar": true,
+      "navW": 138,
+      "field": true,
+      "ctx": "AIO OFFICE CLIENT MIGRATION",
+      "intakeNav": true,
+      "officeLinks": 5,
+      "iftaLinks": 0,
+      "iftaUi": 0,
+      "headH": 68,
+      "plate": true,
+      "env": false,
+      "hero": {
+       "l": 138,
+       "t": 68,
+       "r": 1440,
+       "b": 300,
+       "w": 1302,
+       "h": 232
+      },
+      "heroTextRight": 666.484375,
+      "hscroll": false,
+      "overflow": 0,
+      "split": true,
+      "flowMain": {
+       "l": 154,
+       "t": 300,
+       "r": 1060,
+       "b": 1232,
+       "w": 906,
+       "h": 932
+      },
+      "flowSide": {
+       "l": 1084,
+       "t": 300,
+       "r": 1424,
+       "b": 367,
+       "w": 340,
+       "h": 67
+      },
+      "paths": [],
+      "ctas": [
+       {
+        "w": 340,
+        "h": 67
+       }
+      ],
+      "table": false,
+      "touch": 1,
+      "contentL": 154,
+      "contentR": 1424,
+      "vw": 1440
+     }
+    }
+   },
+   "conformance": 100
+  },
+  {
+   "key": "batch",
+   "authority": "AIO-MIG-BULK-001",
+   "route": "/office/migration/batch",
+   "viewports": {
+    "MOBILE": {
+     "errors": 0,
+     "hscroll": false
+    },
+    "TABLET": {
+     "score": 100,
+     "parts": {
+      "shell": 20,
+      "hero": 15,
+      "grid": 15,
+      "overflow": 15,
+      "gutter": 10,
+      "cta": 10,
+      "table": 5,
+      "touch": 10
+     },
+     "errors": 0,
+     "probe": {
+      "actor": "staff",
+      "decl": {
+       "screen": "batch",
+       "pageType": "BATCH",
+       "density": "MEDIUM",
+       "hero": "COMPACT",
+       "grid": "MAIN_SIDE",
+       "process": "NONE",
+       "support": "SIDE",
+       "form": "FIELDS",
+       "table": "ROWS",
+       "overlay": "NONE"
+      },
+      "dock": true,
+      "sidebar": false,
+      "navW": 0,
+      "field": false,
+      "ctx": "CLIENT MIGRATION",
+      "intakeNav": true,
+      "officeLinks": 5,
+      "iftaLinks": 0,
+      "iftaUi": 0,
+      "headH": 77,
+      "plate": true,
+      "env": false,
+      "hero": {
+       "l": 0,
+       "t": 77,
+       "r": 834,
+       "b": 327,
+       "w": 834,
+       "h": 250
+      },
+      "heroTextRight": 330.5625,
+      "hscroll": false,
+      "overflow": 0,
+      "split": false,
+      "flowMain": null,
+      "flowSide": {
+       "l": 16,
+       "t": 1204.40625,
+       "r": 818,
+       "b": 1271.40625,
+       "w": 802,
+       "h": 67
+      },
+      "paths": [],
+      "ctas": [
+       {
+        "w": 456,
+        "h": 67
+       }
+      ],
+      "table": false,
+      "touch": 1,
+      "contentL": 16,
+      "contentR": 818,
+      "vw": 834
+     }
+    },
+    "DESKTOP": {
+     "score": 100,
+     "parts": {
+      "shell": 20,
+      "hero": 15,
+      "grid": 15,
+      "overflow": 15,
+      "gutter": 10,
+      "cta": 10,
+      "table": 5,
+      "touch": 10
+     },
+     "errors": 0,
+     "probe": {
+      "actor": "staff",
+      "decl": {
+       "screen": "batch",
+       "pageType": "BATCH",
+       "density": "MEDIUM",
+       "hero": "COMPACT",
+       "grid": "MAIN_SIDE",
+       "process": "NONE",
+       "support": "SIDE",
+       "form": "FIELDS",
+       "table": "ROWS",
+       "overlay": "NONE"
+      },
+      "dock": false,
+      "sidebar": true,
+      "navW": 138,
+      "field": true,
+      "ctx": "AIO OFFICE CLIENT MIGRATION",
+      "intakeNav": true,
+      "officeLinks": 5,
+      "iftaLinks": 0,
+      "iftaUi": 0,
+      "headH": 68,
+      "plate": true,
+      "env": false,
+      "hero": {
+       "l": 138,
+       "t": 68,
+       "r": 1440,
+       "b": 300,
+       "w": 1302,
+       "h": 232
+      },
+      "heroTextRight": 698.390625,
+      "hscroll": false,
+      "overflow": 0,
+      "split": true,
+      "flowMain": {
+       "l": 154,
+       "t": 300,
+       "r": 1060,
+       "b": 1151.34375,
+       "w": 906,
+       "h": 851.34375
+      },
+      "flowSide": {
+       "l": 1084,
+       "t": 300,
+       "r": 1424,
+       "b": 367,
+       "w": 340,
+       "h": 67
+      },
+      "paths": [],
+      "ctas": [
+       {
+        "w": 340,
+        "h": 67
+       }
+      ],
+      "table": false,
+      "touch": 1,
+      "contentL": 154,
+      "contentR": 1424,
+      "vw": 1440
+     }
+    }
+   },
+   "conformance": 100
+  },
+  {
+   "key": "batch-received",
+   "authority": "AIO-MIG-BATCH-RECEIVED-001",
+   "route": "/office/migration/batch-received",
+   "viewports": {
+    "MOBILE": {
+     "errors": 0,
+     "hscroll": false
+    },
+    "TABLET": {
+     "score": 100,
+     "parts": {
+      "shell": 20,
+      "hero": 15,
+      "grid": 15,
+      "overflow": 15,
+      "gutter": 10,
+      "cta": 10,
+      "table": 5,
+      "touch": 10
+     },
+     "errors": 0,
+     "probe": {
+      "actor": "staff",
+      "decl": {
+       "screen": "batch-received",
+       "pageType": "BATCH",
+       "density": "MEDIUM",
+       "hero": "COMPACT",
+       "grid": "MAIN_SIDE",
+       "process": "NONE",
+       "support": "SIDE",
+       "form": "NONE",
+       "table": "NONE",
+       "overlay": "NONE"
+      },
+      "dock": true,
+      "sidebar": false,
+      "navW": 0,
+      "field": false,
+      "ctx": "CLIENT MIGRATION",
+      "intakeNav": true,
+      "officeLinks": 5,
+      "iftaLinks": 0,
+      "iftaUi": 0,
+      "headH": 77,
+      "plate": true,
+      "env": false,
+      "hero": {
+       "l": 0,
+       "t": 77,
+       "r": 834,
+       "b": 327,
+       "w": 834,
+       "h": 250
+      },
+      "heroTextRight": 376.1875,
+      "hscroll": false,
+      "overflow": 0,
+      "split": false,
+      "flowMain": null,
+      "flowSide": {
+       "l": 16,
+       "t": 980,
+       "r": 818,
+       "b": 1075,
+       "w": 802,
+       "h": 95
+      },
+      "paths": [],
+      "ctas": [
+       {
+        "w": 456,
+        "h": 95
+       }
+      ],
+      "table": false,
+      "touch": 1,
+      "contentL": 16,
+      "contentR": 818,
+      "vw": 834
+     }
+    },
+    "DESKTOP": {
+     "score": 100,
+     "parts": {
+      "shell": 20,
+      "hero": 15,
+      "grid": 15,
+      "overflow": 15,
+      "gutter": 10,
+      "cta": 10,
+      "table": 5,
+      "touch": 10
+     },
+     "errors": 0,
+     "probe": {
+      "actor": "staff",
+      "decl": {
+       "screen": "batch-received",
+       "pageType": "BATCH",
+       "density": "MEDIUM",
+       "hero": "COMPACT",
+       "grid": "MAIN_SIDE",
+       "process": "NONE",
+       "support": "SIDE",
+       "form": "NONE",
+       "table": "NONE",
+       "overlay": "NONE"
+      },
+      "dock": false,
+      "sidebar": true,
+      "navW": 138,
+      "field": true,
+      "ctx": "AIO OFFICE CLIENT MIGRATION",
+      "intakeNav": true,
+      "officeLinks": 5,
+      "iftaLinks": 0,
+      "iftaUi": 0,
+      "headH": 68,
+      "plate": true,
+      "env": false,
+      "hero": {
+       "l": 138,
+       "t": 68,
+       "r": 1440,
+       "b": 300,
+       "w": 1302,
+       "h": 232
+      },
+      "heroTextRight": 664.40625,
+      "hscroll": false,
+      "overflow": 0,
+      "split": true,
+      "flowMain": {
+       "l": 154,
+       "t": 300,
+       "r": 1060,
+       "b": 957,
+       "w": 906,
+       "h": 657
+      },
+      "flowSide": {
+       "l": 1084,
+       "t": 300,
+       "r": 1424,
+       "b": 395,
+       "w": 340,
+       "h": 95
+      },
+      "paths": [],
+      "ctas": [
+       {
+        "w": 340,
+        "h": 95
+       }
+      ],
+      "table": false,
+      "touch": 1,
+      "contentL": 154,
+      "contentR": 1424,
+      "vw": 1440
+     }
+    }
+   },
+   "conformance": 100
+  },
+  {
+   "key": "batch-processing",
+   "authority": "AIO-MIG-BATCH-PROCESSING-001",
+   "route": "/office/migration/batch-processing",
+   "viewports": {
+    "MOBILE": {
+     "errors": 0,
+     "hscroll": false
+    },
+    "TABLET": {
+     "score": 100,
+     "parts": {
+      "shell": 20,
+      "hero": 15,
+      "grid": 15,
+      "overflow": 15,
+      "gutter": 10,
+      "cta": 10,
+      "table": 5,
+      "touch": 10
+     },
+     "errors": 0,
+     "probe": {
+      "actor": "staff",
+      "decl": {
+       "screen": "batch-processing",
+       "pageType": "PROCESSING",
+       "density": "MEDIUM",
+       "hero": "COMPACT",
+       "grid": "SINGLE",
+       "process": "BAND",
+       "support": "SIDE",
+       "form": "FIELDS",
+       "table": "NONE",
+       "overlay": "NONE"
+      },
+      "dock": true,
+      "sidebar": false,
+      "navW": 0,
+      "field": false,
+      "ctx": "CLIENT MIGRATION",
+      "intakeNav": true,
+      "officeLinks": 5,
+      "iftaLinks": 0,
+      "iftaUi": 0,
+      "headH": 77,
+      "plate": true,
+      "env": false,
+      "hero": {
+       "l": 0,
+       "t": 77,
+       "r": 834,
+       "b": 357,
+       "w": 834,
+       "h": 280
+      },
+      "heroTextRight": 381.59375,
+      "hscroll": false,
+      "overflow": 0,
+      "split": false,
+      "flowMain": null,
+      "flowSide": null,
+      "paths": [],
+      "ctas": [],
+      "table": false,
+      "touch": 1,
+      "contentL": 16,
+      "contentR": 818,
+      "vw": 834
+     }
+    },
+    "DESKTOP": {
+     "score": 100,
+     "parts": {
+      "shell": 20,
+      "hero": 15,
+      "grid": 15,
+      "overflow": 15,
+      "gutter": 10,
+      "cta": 10,
+      "table": 5,
+      "touch": 10
+     },
+     "errors": 0,
+     "probe": {
+      "actor": "staff",
+      "decl": {
+       "screen": "batch-processing",
+       "pageType": "PROCESSING",
+       "density": "MEDIUM",
+       "hero": "COMPACT",
+       "grid": "SINGLE",
+       "process": "BAND",
+       "support": "SIDE",
+       "form": "FIELDS",
+       "table": "NONE",
+       "overlay": "NONE"
+      },
+      "dock": false,
+      "sidebar": true,
+      "navW": 138,
+      "field": true,
+      "ctx": "AIO OFFICE CLIENT MIGRATION",
+      "intakeNav": true,
+      "officeLinks": 5,
+      "iftaLinks": 0,
+      "iftaUi": 0,
+      "headH": 68,
+      "plate": true,
+      "env": false,
+      "hero": {
+       "l": 138,
+       "t": 68,
+       "r": 1440,
+       "b": 307,
+       "w": 1302,
+       "h": 239
+      },
+      "heroTextRight": 623.65625,
+      "hscroll": false,
+      "overflow": 0,
+      "split": false,
+      "flowMain": {
+       "l": 289,
+       "t": 307,
+       "r": 1289,
+       "b": 1129.796875,
+       "w": 1000,
+       "h": 822.796875
+      },
+      "flowSide": null,
+      "paths": [],
+      "ctas": [],
+      "table": false,
+      "touch": 1,
+      "contentL": 289,
+      "contentR": 1289,
+      "vw": 1440
+     }
+    }
+   },
+   "conformance": 100
+  },
+  {
+   "key": "batch-summary",
+   "authority": "AIO-MIG-BATCH-SUMMARY-001",
+   "route": "/office/migration/batch-summary",
+   "viewports": {
+    "MOBILE": {
+     "errors": 0,
+     "hscroll": false
+    },
+    "TABLET": {
+     "score": 100,
+     "parts": {
+      "shell": 20,
+      "hero": 15,
+      "grid": 15,
+      "overflow": 15,
+      "gutter": 10,
+      "cta": 10,
+      "table": 5,
+      "touch": 10
+     },
+     "errors": 0,
+     "probe": {
+      "actor": "staff",
+      "decl": {
+       "screen": "batch-summary",
+       "pageType": "BATCH",
+       "density": "MEDIUM",
+       "hero": "COMPACT",
+       "grid": "SINGLE",
+       "process": "NONE",
+       "support": "SIDE",
+       "form": "NONE",
+       "table": "NONE",
+       "overlay": "NONE"
+      },
+      "dock": true,
+      "sidebar": false,
+      "navW": 0,
+      "field": false,
+      "ctx": "CLIENT MIGRATION",
+      "intakeNav": true,
+      "officeLinks": 5,
+      "iftaLinks": 0,
+      "iftaUi": 0,
+      "headH": 77,
+      "plate": true,
+      "env": false,
+      "hero": {
+       "l": 0,
+       "t": 77,
+       "r": 834,
+       "b": 327,
+       "w": 834,
+       "h": 250
+      },
+      "heroTextRight": 363.65625,
+      "hscroll": false,
+      "overflow": 0,
+      "split": false,
+      "flowMain": null,
+      "flowSide": null,
+      "paths": [],
+      "ctas": [
+       {
+        "w": 744,
+        "h": 87
+       }
+      ],
+      "table": false,
+      "touch": 1,
+      "contentL": 16,
+      "contentR": 818,
+      "vw": 834
+     }
+    },
+    "DESKTOP": {
+     "score": 100,
+     "parts": {
+      "shell": 20,
+      "hero": 15,
+      "grid": 15,
+      "overflow": 15,
+      "gutter": 10,
+      "cta": 10,
+      "table": 5,
+      "touch": 10
+     },
+     "errors": 0,
+     "probe": {
+      "actor": "staff",
+      "decl": {
+       "screen": "batch-summary",
+       "pageType": "BATCH",
+       "density": "MEDIUM",
+       "hero": "COMPACT",
+       "grid": "SINGLE",
+       "process": "NONE",
+       "support": "SIDE",
+       "form": "NONE",
+       "table": "NONE",
+       "overlay": "NONE"
+      },
+      "dock": false,
+      "sidebar": true,
+      "navW": 138,
+      "field": true,
+      "ctx": "AIO OFFICE CLIENT MIGRATION",
+      "intakeNav": true,
+      "officeLinks": 5,
+      "iftaLinks": 0,
+      "iftaUi": 0,
+      "headH": 68,
+      "plate": true,
+      "env": false,
+      "hero": {
+       "l": 138,
+       "t": 68,
+       "r": 1440,
+       "b": 300,
+       "w": 1302,
+       "h": 232
+      },
+      "heroTextRight": 648.921875,
+      "hscroll": false,
+      "overflow": 0,
+      "split": false,
+      "flowMain": {
+       "l": 289,
+       "t": 300,
+       "r": 1289,
+       "b": 1055,
+       "w": 1000,
+       "h": 755
+      },
+      "flowSide": null,
+      "paths": [],
+      "ctas": [
+       {
+        "w": 942,
+        "h": 87
+       }
+      ],
+      "table": false,
+      "touch": 1,
+      "contentL": 289,
+      "contentR": 1289,
+      "vw": 1440
+     }
+    }
+   },
+   "conformance": 100
+  },
+  {
+   "key": "batch-conflicts",
+   "authority": "AIO-MIG-BATCH-CONFLICTS-001",
+   "route": "/office/migration/batch-conflicts",
+   "viewports": {
+    "MOBILE": {
+     "errors": 0,
+     "hscroll": false
+    },
+    "TABLET": {
+     "score": 100,
+     "parts": {
+      "shell": 20,
+      "hero": 15,
+      "grid": 15,
+      "overflow": 15,
+      "gutter": 10,
+      "cta": 10,
+      "table": 5,
+      "touch": 10
+     },
+     "errors": 0,
+     "probe": {
+      "actor": "staff",
+      "decl": {
+       "screen": "batch-conflicts",
+       "pageType": "TABLE_LIST",
+       "density": "TABLE_HEAVY",
+       "hero": "COMPACT",
+       "grid": "MAIN_SIDE",
+       "process": "NONE",
+       "support": "SIDE",
+       "form": "CHOICES",
+       "table": "ROWS",
+       "overlay": "NONE"
+      },
+      "dock": true,
+      "sidebar": false,
+      "navW": 0,
+      "field": false,
+      "ctx": "CLIENT MIGRATION",
+      "intakeNav": true,
+      "officeLinks": 5,
+      "iftaLinks": 0,
+      "iftaUi": 0,
+      "headH": 77,
+      "plate": true,
+      "env": false,
+      "hero": {
+       "l": 0,
+       "t": 77,
+       "r": 834,
+       "b": 327,
+       "w": 834,
+       "h": 250
+      },
+      "heroTextRight": 381.3125,
+      "hscroll": false,
+      "overflow": 0,
+      "split": false,
+      "flowMain": null,
+      "flowSide": {
+       "l": 16,
+       "t": 839.28125,
+       "r": 818,
+       "b": 906.28125,
+       "w": 802,
+       "h": 67
+      },
+      "paths": [],
+      "ctas": [
+       {
+        "w": 456,
+        "h": 67
+       }
+      ],
+      "table": false,
+      "touch": 1,
+      "contentL": 16,
+      "contentR": 818,
+      "vw": 834
+     }
+    },
+    "DESKTOP": {
+     "score": 100,
+     "parts": {
+      "shell": 20,
+      "hero": 15,
+      "grid": 15,
+      "overflow": 15,
+      "gutter": 10,
+      "cta": 10,
+      "table": 5,
+      "touch": 10
+     },
+     "errors": 0,
+     "probe": {
+      "actor": "staff",
+      "decl": {
+       "screen": "batch-conflicts",
+       "pageType": "TABLE_LIST",
+       "density": "TABLE_HEAVY",
+       "hero": "COMPACT",
+       "grid": "MAIN_SIDE",
+       "process": "NONE",
+       "support": "SIDE",
+       "form": "CHOICES",
+       "table": "ROWS",
+       "overlay": "NONE"
+      },
+      "dock": false,
+      "sidebar": true,
+      "navW": 138,
+      "field": true,
+      "ctx": "AIO OFFICE CLIENT MIGRATION",
+      "intakeNav": true,
+      "officeLinks": 5,
+      "iftaLinks": 0,
+      "iftaUi": 0,
+      "headH": 68,
+      "plate": true,
+      "env": false,
+      "hero": {
+       "l": 138,
+       "t": 68,
+       "r": 1440,
+       "b": 300,
+       "w": 1302,
+       "h": 232
+      },
+      "heroTextRight": 638.390625,
+      "hscroll": false,
+      "overflow": 0,
+      "split": true,
+      "flowMain": {
+       "l": 154,
+       "t": 300,
+       "r": 1060,
+       "b": 783.375,
+       "w": 906,
+       "h": 483.375
+      },
+      "flowSide": {
+       "l": 1084,
+       "t": 300,
+       "r": 1424,
+       "b": 367,
+       "w": 340,
+       "h": 67
+      },
+      "paths": [],
+      "ctas": [
+       {
+        "w": 340,
+        "h": 67
+       }
+      ],
+      "table": false,
+      "touch": 1,
+      "contentL": 154,
+      "contentR": 1424,
+      "vw": 1440
+     }
+    }
+   },
+   "conformance": 100
+  },
+  {
+   "key": "batch-queue",
+   "authority": "AIO-MIG-BATCH-QUEUE-001",
+   "route": "/office/migration/batch-queue",
+   "viewports": {
+    "MOBILE": {
+     "errors": 0,
+     "hscroll": false
+    },
+    "TABLET": {
+     "score": 100,
+     "parts": {
+      "shell": 20,
+      "hero": 15,
+      "grid": 15,
+      "overflow": 15,
+      "gutter": 10,
+      "cta": 10,
+      "table": 5,
+      "touch": 10
+     },
+     "errors": 0,
+     "probe": {
+      "actor": "staff",
+      "decl": {
+       "screen": "batch-queue",
+       "pageType": "TABLE_LIST",
+       "density": "TABLE_HEAVY",
+       "hero": "COMPACT",
+       "grid": "MAIN_SIDE",
+       "process": "NONE",
+       "support": "SIDE",
+       "form": "NONE",
+       "table": "TABLE",
+       "overlay": "NONE"
+      },
+      "dock": true,
+      "sidebar": false,
+      "navW": 0,
+      "field": false,
+      "ctx": "CLIENT MIGRATION",
+      "intakeNav": true,
+      "officeLinks": 5,
+      "iftaLinks": 0,
+      "iftaUi": 0,
+      "headH": 77,
+      "plate": true,
+      "env": false,
+      "hero": {
+       "l": 0,
+       "t": 77,
+       "r": 834,
+       "b": 327,
+       "w": 834,
+       "h": 250
+      },
+      "heroTextRight": 370.5,
+      "hscroll": false,
+      "overflow": 0,
+      "split": false,
+      "flowMain": null,
+      "flowSide": {
+       "l": 16,
+       "t": 854.25,
+       "r": 818,
+       "b": 921.25,
+       "w": 802,
+       "h": 67
+      },
+      "paths": [],
+      "ctas": [
+       {
+        "w": 456,
+        "h": 67
+       }
+      ],
+      "table": true,
+      "touch": 1,
+      "contentL": 16,
+      "contentR": 818,
+      "vw": 834
+     }
+    },
+    "DESKTOP": {
+     "score": 100,
+     "parts": {
+      "shell": 20,
+      "hero": 15,
+      "grid": 15,
+      "overflow": 15,
+      "gutter": 10,
+      "cta": 10,
+      "table": 5,
+      "touch": 10
+     },
+     "errors": 0,
+     "probe": {
+      "actor": "staff",
+      "decl": {
+       "screen": "batch-queue",
+       "pageType": "TABLE_LIST",
+       "density": "TABLE_HEAVY",
+       "hero": "COMPACT",
+       "grid": "MAIN_SIDE",
+       "process": "NONE",
+       "support": "SIDE",
+       "form": "NONE",
+       "table": "TABLE",
+       "overlay": "NONE"
+      },
+      "dock": false,
+      "sidebar": true,
+      "navW": 138,
+      "field": true,
+      "ctx": "AIO OFFICE CLIENT MIGRATION",
+      "intakeNav": true,
+      "officeLinks": 5,
+      "iftaLinks": 0,
+      "iftaUi": 0,
+      "headH": 68,
+      "plate": true,
+      "env": false,
+      "hero": {
+       "l": 138,
+       "t": 68,
+       "r": 1440,
+       "b": 300,
+       "w": 1302,
+       "h": 232
+      },
+      "heroTextRight": 639.75,
+      "hscroll": false,
+      "overflow": 0,
+      "split": true,
+      "flowMain": {
+       "l": 154,
+       "t": 300,
+       "r": 1060,
+       "b": 795.125,
+       "w": 906,
+       "h": 495.125
+      },
+      "flowSide": {
+       "l": 1084,
+       "t": 300,
+       "r": 1424,
+       "b": 367,
+       "w": 340,
+       "h": 67
+      },
+      "paths": [],
+      "ctas": [
+       {
+        "w": 340,
+        "h": 67
+       }
+      ],
+      "table": true,
+      "touch": 1,
+      "contentL": 154,
+      "contentR": 1424,
+      "vw": 1440
+     }
+    }
+   },
+   "conformance": 100
+  },
+  {
+   "key": "batch-client",
+   "authority": "AIO-MIG-BATCH-CLIENT-001",
+   "route": "/office/migration/batch-client?client=client-a",
+   "viewports": {
+    "MOBILE": {
+     "errors": 0,
+     "hscroll": false
+    },
+    "TABLET": {
+     "score": 100,
+     "parts": {
+      "shell": 20,
+      "hero": 15,
+      "grid": 15,
+      "overflow": 15,
+      "gutter": 10,
+      "cta": 10,
+      "table": 5,
+      "touch": 10
+     },
+     "errors": 0,
+     "probe": {
+      "actor": "staff",
+      "decl": {
+       "screen": "batch-client",
+       "pageType": "DETAIL",
+       "density": "HIGH",
+       "hero": "COMPACT",
+       "grid": "MAIN_SIDE",
+       "process": "NONE",
+       "support": "SIDE",
+       "form": "NONE",
+       "table": "ROWS",
+       "overlay": "NONE"
+      },
+      "dock": true,
+      "sidebar": false,
+      "navW": 0,
+      "field": false,
+      "ctx": "CLIENT MIGRATION",
+      "intakeNav": true,
+      "officeLinks": 6,
+      "iftaLinks": 0,
+      "iftaUi": 0,
+      "headH": 77,
+      "plate": true,
+      "env": false,
+      "hero": {
+       "l": 0,
+       "t": 77,
+       "r": 834,
+       "b": 327,
+       "w": 834,
+       "h": 250
+      },
+      "heroTextRight": 333.796875,
+      "hscroll": false,
+      "overflow": 0,
+      "split": false,
+      "flowMain": null,
+      "flowSide": {
+       "l": 16,
+       "t": 1103.796875,
+       "r": 818,
+       "b": 1170.796875,
+       "w": 802,
+       "h": 67
+      },
+      "paths": [],
+      "ctas": [
+       {
+        "w": 456,
+        "h": 67
+       }
+      ],
+      "table": false,
+      "touch": 1,
+      "contentL": 16,
+      "contentR": 818,
+      "vw": 834
+     }
+    },
+    "DESKTOP": {
+     "score": 100,
+     "parts": {
+      "shell": 20,
+      "hero": 15,
+      "grid": 15,
+      "overflow": 15,
+      "gutter": 10,
+      "cta": 10,
+      "table": 5,
+      "touch": 10
+     },
+     "errors": 0,
+     "probe": {
+      "actor": "staff",
+      "decl": {
+       "screen": "batch-client",
+       "pageType": "DETAIL",
+       "density": "HIGH",
+       "hero": "COMPACT",
+       "grid": "MAIN_SIDE",
+       "process": "NONE",
+       "support": "SIDE",
+       "form": "NONE",
+       "table": "ROWS",
+       "overlay": "NONE"
+      },
+      "dock": false,
+      "sidebar": true,
+      "navW": 138,
+      "field": true,
+      "ctx": "AIO OFFICE CLIENT MIGRATION",
+      "intakeNav": true,
+      "officeLinks": 6,
+      "iftaLinks": 0,
+      "iftaUi": 0,
+      "headH": 68,
+      "plate": true,
+      "env": false,
+      "hero": {
+       "l": 138,
+       "t": 68,
+       "r": 1440,
+       "b": 300,
+       "w": 1302,
+       "h": 232
+      },
+      "heroTextRight": 658.671875,
+      "hscroll": false,
+      "overflow": 0,
+      "split": true,
+      "flowMain": {
+       "l": 154,
+       "t": 300,
+       "r": 1060,
+       "b": 1073.65625,
+       "w": 906,
+       "h": 773.65625
+      },
+      "flowSide": {
+       "l": 1084,
+       "t": 300,
+       "r": 1424,
+       "b": 367,
+       "w": 340,
+       "h": 67
+      },
+      "paths": [],
+      "ctas": [
+       {
+        "w": 340,
+        "h": 67
+       }
+      ],
+      "table": false,
+      "touch": 1,
+      "contentL": 154,
+      "contentR": 1424,
+      "vw": 1440
+     }
+    }
+   },
+   "conformance": 100
+  },
+  {
+   "key": "batch-approval",
+   "authority": "AIO-MIG-BATCH-APPROVAL-001",
+   "route": "/office/migration/batch-approval",
+   "viewports": {
+    "MOBILE": {
+     "errors": 0,
+     "hscroll": false
+    },
+    "TABLET": {
+     "score": 100,
+     "parts": {
+      "shell": 20,
+      "hero": 15,
+      "grid": 15,
+      "overflow": 15,
+      "gutter": 10,
+      "cta": 10,
+      "table": 5,
+      "touch": 10
+     },
+     "errors": 0,
+     "probe": {
+      "actor": "staff",
+      "decl": {
+       "screen": "batch-approval",
+       "pageType": "CONFIRMATION",
+       "density": "MEDIUM",
+       "hero": "COMPACT",
+       "grid": "MAIN_SIDE",
+       "process": "NONE",
+       "support": "SIDE",
+       "form": "NONE",
+       "table": "NONE",
+       "overlay": "NONE"
+      },
+      "dock": true,
+      "sidebar": false,
+      "navW": 0,
+      "field": false,
+      "ctx": "CLIENT MIGRATION",
+      "intakeNav": true,
+      "officeLinks": 5,
+      "iftaLinks": 0,
+      "iftaUi": 0,
+      "headH": 77,
+      "plate": true,
+      "env": false,
+      "hero": {
+       "l": 0,
+       "t": 77,
+       "r": 834,
+       "b": 327,
+       "w": 834,
+       "h": 250
+      },
+      "heroTextRight": 330.5625,
+      "hscroll": false,
+      "overflow": 0,
+      "split": false,
+      "flowMain": null,
+      "flowSide": {
+       "l": 16,
+       "t": 1110.859375,
+       "r": 818,
+       "b": 1177.859375,
+       "w": 802,
+       "h": 67
+      },
+      "paths": [],
+      "ctas": [
+       {
+        "w": 456,
+        "h": 67
+       }
+      ],
+      "table": false,
+      "touch": 1,
+      "contentL": 16,
+      "contentR": 818,
+      "vw": 834
+     }
+    },
+    "DESKTOP": {
+     "score": 100,
+     "parts": {
+      "shell": 20,
+      "hero": 15,
+      "grid": 15,
+      "overflow": 15,
+      "gutter": 10,
+      "cta": 10,
+      "table": 5,
+      "touch": 10
+     },
+     "errors": 0,
+     "probe": {
+      "actor": "staff",
+      "decl": {
+       "screen": "batch-approval",
+       "pageType": "CONFIRMATION",
+       "density": "MEDIUM",
+       "hero": "COMPACT",
+       "grid": "MAIN_SIDE",
+       "process": "NONE",
+       "support": "SIDE",
+       "form": "NONE",
+       "table": "NONE",
+       "overlay": "NONE"
+      },
+      "dock": false,
+      "sidebar": true,
+      "navW": 138,
+      "field": true,
+      "ctx": "AIO OFFICE CLIENT MIGRATION",
+      "intakeNav": true,
+      "officeLinks": 5,
+      "iftaLinks": 0,
+      "iftaUi": 0,
+      "headH": 68,
+      "plate": true,
+      "env": false,
+      "hero": {
+       "l": 138,
+       "t": 68,
+       "r": 1440,
+       "b": 300,
+       "w": 1302,
+       "h": 232
+      },
+      "heroTextRight": 698.390625,
+      "hscroll": false,
+      "overflow": 0,
+      "split": true,
+      "flowMain": {
+       "l": 154,
+       "t": 300,
+       "r": 1060,
+       "b": 1046.59375,
+       "w": 906,
+       "h": 746.59375
+      },
+      "flowSide": {
+       "l": 1084,
+       "t": 300,
+       "r": 1424,
+       "b": 367,
+       "w": 340,
+       "h": 67
+      },
+      "paths": [],
+      "ctas": [
+       {
+        "w": 340,
+        "h": 67
+       }
+      ],
+      "table": false,
+      "touch": 1,
+      "contentL": 154,
+      "contentR": 1424,
+      "vw": 1440
+     }
+    }
+   },
+   "conformance": 100
+  },
+  {
+   "key": "batch-run",
+   "authority": "AIO-MIG-BATCH-RUN-001",
+   "route": "/office/migration/batch-run",
+   "viewports": {
+    "MOBILE": {
+     "errors": 0,
+     "hscroll": false
+    },
+    "TABLET": {
+     "score": 100,
+     "parts": {
+      "shell": 20,
+      "hero": 15,
+      "grid": 15,
+      "overflow": 15,
+      "gutter": 10,
+      "cta": 10,
+      "table": 5,
+      "touch": 10
+     },
+     "errors": 0,
+     "probe": {
+      "actor": "staff",
+      "decl": {
+       "screen": "batch-run",
+       "pageType": "PROCESSING",
+       "density": "MEDIUM",
+       "hero": "COMPACT",
+       "grid": "MAIN_SIDE",
+       "process": "STAGES",
+       "support": "SIDE",
+       "form": "NONE",
+       "table": "NONE",
+       "overlay": "NONE"
+      },
+      "dock": true,
+      "sidebar": false,
+      "navW": 0,
+      "field": false,
+      "ctx": "CLIENT MIGRATION",
+      "intakeNav": true,
+      "officeLinks": 5,
+      "iftaLinks": 0,
+      "iftaUi": 0,
+      "headH": 77,
+      "plate": true,
+      "env": false,
+      "hero": {
+       "l": 0,
+       "t": 77,
+       "r": 834,
+       "b": 337,
+       "w": 834,
+       "h": 260
+      },
+      "heroTextRight": 374.640625,
+      "hscroll": false,
+      "overflow": 0,
+      "split": false,
+      "flowMain": null,
+      "flowSide": {
+       "l": 16,
+       "t": 1145.765625,
+       "r": 818,
+       "b": 1212.765625,
+       "w": 802,
+       "h": 67
+      },
+      "paths": [],
+      "ctas": [
+       {
+        "w": 456,
+        "h": 67
+       }
+      ],
+      "table": false,
+      "touch": 1,
+      "contentL": 16,
+      "contentR": 818,
+      "vw": 834
+     }
+    },
+    "DESKTOP": {
+     "score": 100,
+     "parts": {
+      "shell": 20,
+      "hero": 15,
+      "grid": 15,
+      "overflow": 15,
+      "gutter": 10,
+      "cta": 10,
+      "table": 5,
+      "touch": 10
+     },
+     "errors": 0,
+     "probe": {
+      "actor": "staff",
+      "decl": {
+       "screen": "batch-run",
+       "pageType": "PROCESSING",
+       "density": "MEDIUM",
+       "hero": "COMPACT",
+       "grid": "MAIN_SIDE",
+       "process": "STAGES",
+       "support": "SIDE",
+       "form": "NONE",
+       "table": "NONE",
+       "overlay": "NONE"
+      },
+      "dock": false,
+      "sidebar": true,
+      "navW": 138,
+      "field": true,
+      "ctx": "AIO OFFICE CLIENT MIGRATION",
+      "intakeNav": true,
+      "officeLinks": 5,
+      "iftaLinks": 0,
+      "iftaUi": 0,
+      "headH": 68,
+      "plate": true,
+      "env": false,
+      "hero": {
+       "l": 138,
+       "t": 68,
+       "r": 1440,
+       "b": 300,
+       "w": 1302,
+       "h": 232
+      },
+      "heroTextRight": 693.40625,
+      "hscroll": false,
+      "overflow": 0,
+      "split": true,
+      "flowMain": {
+       "l": 154,
+       "t": 300,
+       "r": 1060,
+       "b": 1079.359375,
+       "w": 906,
+       "h": 779.359375
+      },
+      "flowSide": {
+       "l": 1084,
+       "t": 300,
+       "r": 1424,
+       "b": 367,
+       "w": 340,
+       "h": 67
+      },
+      "paths": [],
+      "ctas": [
+       {
+        "w": 340,
+        "h": 67
+       }
+      ],
+      "table": false,
+      "touch": 1,
+      "contentL": 154,
+      "contentR": 1424,
+      "vw": 1440
+     }
+    }
+   },
+   "conformance": 100
+  },
+  {
+   "key": "batch-complete",
+   "authority": "AIO-MIG-BATCH-COMPLETE-001",
+   "route": "/office/migration/batch-complete",
+   "viewports": {
+    "MOBILE": {
+     "errors": 0,
+     "hscroll": false
+    },
+    "TABLET": {
+     "score": 100,
+     "parts": {
+      "shell": 20,
+      "hero": 15,
+      "grid": 15,
+      "overflow": 15,
+      "gutter": 10,
+      "cta": 10,
+      "table": 5,
+      "touch": 10
+     },
+     "errors": 0,
+     "probe": {
+      "actor": "staff",
+      "decl": {
+       "screen": "batch-complete",
+       "pageType": "CONFIRMATION",
+       "density": "MEDIUM",
+       "hero": "COMPACT",
+       "grid": "MAIN_SIDE",
+       "process": "NONE",
+       "support": "SIDE",
+       "form": "NONE",
+       "table": "ROWS",
+       "overlay": "NONE"
+      },
+      "dock": true,
+      "sidebar": false,
+      "navW": 0,
+      "field": false,
+      "ctx": "CLIENT MIGRATION",
+      "intakeNav": true,
+      "officeLinks": 6,
+      "iftaLinks": 0,
+      "iftaUi": 0,
+      "headH": 77,
+      "plate": true,
+      "env": false,
+      "hero": {
+       "l": 0,
+       "t": 77,
+       "r": 834,
+       "b": 327,
+       "w": 834,
+       "h": 250
+      },
+      "heroTextRight": 377.921875,
+      "hscroll": false,
+      "overflow": 0,
+      "split": false,
+      "flowMain": null,
+      "flowSide": {
+       "l": 16,
+       "t": 1112.796875,
+       "r": 818,
+       "b": 1179.796875,
+       "w": 802,
+       "h": 67
+      },
+      "paths": [],
+      "ctas": [
+       {
+        "w": 456,
+        "h": 67
+       }
+      ],
+      "table": false,
+      "touch": 1,
+      "contentL": 16,
+      "contentR": 818,
+      "vw": 834
+     }
+    },
+    "DESKTOP": {
+     "score": 100,
+     "parts": {
+      "shell": 20,
+      "hero": 15,
+      "grid": 15,
+      "overflow": 15,
+      "gutter": 10,
+      "cta": 10,
+      "table": 5,
+      "touch": 10
+     },
+     "errors": 0,
+     "probe": {
+      "actor": "staff",
+      "decl": {
+       "screen": "batch-complete",
+       "pageType": "CONFIRMATION",
+       "density": "MEDIUM",
+       "hero": "COMPACT",
+       "grid": "MAIN_SIDE",
+       "process": "NONE",
+       "support": "SIDE",
+       "form": "NONE",
+       "table": "ROWS",
+       "overlay": "NONE"
+      },
+      "dock": false,
+      "sidebar": true,
+      "navW": 138,
+      "field": true,
+      "ctx": "AIO OFFICE CLIENT MIGRATION",
+      "intakeNav": true,
+      "officeLinks": 6,
+      "iftaLinks": 0,
+      "iftaUi": 0,
+      "headH": 68,
+      "plate": true,
+      "env": false,
+      "hero": {
+       "l": 138,
+       "t": 68,
+       "r": 1440,
+       "b": 300,
+       "w": 1302,
+       "h": 232
+      },
+      "heroTextRight": 635.09375,
+      "hscroll": false,
+      "overflow": 0,
+      "split": true,
+      "flowMain": {
+       "l": 154,
+       "t": 300,
+       "r": 1060,
+       "b": 1061.5625,
+       "w": 906,
+       "h": 761.5625
+      },
+      "flowSide": {
+       "l": 1084,
+       "t": 300,
+       "r": 1424,
+       "b": 367,
+       "w": 340,
+       "h": 67
+      },
+      "paths": [],
+      "ctas": [
+       {
+        "w": 340,
+        "h": 67
+       }
+      ],
+      "table": false,
+      "touch": 1,
+      "contentL": 154,
+      "contentR": 1424,
+      "vw": 1440
+     }
+    }
+   },
+   "conformance": 100
+  }
+ ],
+ "checks": [
+  {
+   "name": "CLIENT_INTAKE_EXPOSURE",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "STAFF_NAV_ON_CLIENT",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "MOBILE_BOTTOM_DOCK_ON_DESKTOP",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "DESKTOP_STAFF_SIDEBAR",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "TABLET_STAFF_DOCK",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "MOBILE_SHELL_LOCKED",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "IFTA_CONTENT_LEAK",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "NO_HORIZONTAL_SCROLL",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "NO_PAGE_ERRORS",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "DECLARATIONS_PRESENT",
+   "pass": true,
+   "detail": ""
+  }
+ ],
+ "proof": [
+  {
+   "id": "A",
+   "screen": "root",
+   "viewport": "MOBILE",
+   "file": "proof/A-root-mobile.jpg"
+  },
+  {
+   "id": "A",
+   "screen": "root",
+   "viewport": "TABLET",
+   "file": "proof/A-root-tablet.jpg"
+  },
+  {
+   "id": "A",
+   "screen": "root",
+   "viewport": "DESKTOP",
+   "file": "proof/A-root-desktop.jpg"
+  },
+  {
+   "id": "D",
+   "screen": "extract",
+   "viewport": "MOBILE",
+   "file": "proof/D-extract-mobile.jpg"
+  },
+  {
+   "id": "C",
+   "screen": "received",
+   "viewport": "MOBILE",
+   "file": "proof/C-received-mobile.jpg"
+  },
+  {
+   "id": "D",
+   "screen": "extract",
+   "viewport": "TABLET",
+   "file": "proof/D-extract-tablet.jpg"
+  },
+  {
+   "id": "C",
+   "screen": "received",
+   "viewport": "TABLET",
+   "file": "proof/C-received-tablet.jpg"
+  },
+  {
+   "id": "D",
+   "screen": "extract",
+   "viewport": "DESKTOP",
+   "file": "proof/D-extract-desktop.jpg"
+  },
+  {
+   "id": "C",
+   "screen": "received",
+   "viewport": "DESKTOP",
+   "file": "proof/C-received-desktop.jpg"
+  },
+  {
+   "id": "E",
+   "screen": "review",
+   "viewport": "MOBILE",
+   "file": "proof/E-review-mobile.jpg"
+  },
+  {
+   "id": "E",
+   "screen": "review",
+   "viewport": "TABLET",
+   "file": "proof/E-review-tablet.jpg"
+  },
+  {
+   "id": "E",
+   "screen": "review",
+   "viewport": "DESKTOP",
+   "file": "proof/E-review-desktop.jpg"
+  },
+  {
+   "id": "F",
+   "screen": "company",
+   "viewport": "MOBILE",
+   "file": "proof/F-company-mobile.jpg"
+  },
+  {
+   "id": "F",
+   "screen": "company",
+   "viewport": "TABLET",
+   "file": "proof/F-company-tablet.jpg"
+  },
+  {
+   "id": "F",
+   "screen": "company",
+   "viewport": "DESKTOP",
+   "file": "proof/F-company-desktop.jpg"
+  },
+  {
+   "id": "G",
+   "screen": "complete",
+   "viewport": "MOBILE",
+   "file": "proof/G-complete-mobile.jpg"
+  },
+  {
+   "id": "G",
+   "screen": "complete",
+   "viewport": "TABLET",
+   "file": "proof/G-complete-tablet.jpg"
+  },
+  {
+   "id": "B",
+   "screen": "new",
+   "viewport": "MOBILE",
+   "file": "proof/B-new-mobile.jpg"
+  },
+  {
+   "id": "G",
+   "screen": "complete",
+   "viewport": "DESKTOP",
+   "file": "proof/G-complete-desktop.jpg"
+  },
+  {
+   "id": "B",
+   "screen": "new",
+   "viewport": "TABLET",
+   "file": "proof/B-new-tablet.jpg"
+  },
+  {
+   "id": "B",
+   "screen": "new",
+   "viewport": "DESKTOP",
+   "file": "proof/B-new-desktop.jpg"
+  }
+ ],
+ "summary": {
+  "rootTablet": 93.5,
+  "rootDesktop": 92.4,
+  "conformanceMean": 100,
+  "conformanceMin": 100,
+  "below90": [],
+  "checksPassed": "10/10"
+ }
+}

@@ -1,0 +1,37 @@
+{
+  "$schema": "AIO_CLIENT_MIGRATION_RESPONSIVE_BLUEPRINT/nav-rules",
+  "principle": "One navigation list, one presentation per viewport, owned by the actor shell. CLIENT SCREENS MUST NEVER SHOW INTAKE.",
+  "implementation": {
+    "shell": "MigrationShell (AioMigrationKit.tsx): environment → header → AioDesktopSidebar (staff) → main → AioStaffDock (staff)",
+    "items": "STAFF_NAV: HOME · INTAKE (current) · FILING · REPORTS · MORE — the same list feeds the dock and the sidebar",
+    "sourceOrder": "header, sidebar, main, dock — keyboard focus reaches the header search first, then the sidebar, then the work"
+  },
+  "actors": {
+    "STAFF": {
+      "shell": "AIO OFFICE",
+      "MOBILE": { "header": "authority header (lockup, search, bell, avatar, identity, chevron) — locked", "nav": "bottom dock (authority geometry)" },
+      "TABLET": {
+        "header": "77px compact full-width bar: lockup · divider · CLIENT MIGRATION · search icon · bell · avatar · identity (fixed 92px slot) · chevron",
+        "nav": "full-width touch dock, 113px, five equal columns, active INTAKE tile 124×75 dark with gold label — the tablet master keeps the dock (no mobile assumption: sized for touch, not the phone's absolute coordinates)"
+      },
+      "DESKTOP": {
+        "header": "68px full-width utility bar: lockup · divider · AIO OFFICE / CLIENT MIGRATION · search field (Search clients, migrations, or help…) · bell · rule · avatar · identity · chevron",
+        "nav": "persistent left sidebar 138px from the header to the bottom: HOME, INTAKE (active: dark tile, gold label, 5px gold edge), FILING, REPORTS, MORE",
+        "dock": "none — the phone dock never renders on desktop",
+        "search": "submits to /office/migration/existing?q=<term> — the existing-client finder filtered by the term (intake searches clients)"
+      }
+    },
+    "CLIENT": {
+      "shell": "CLIENT OFFICE",
+      "MOBILE": { "header": "authority header (client identity)", "nav": "none" },
+      "TABLET": { "header": "77px bar: lockup · divider · CLIENT ACTIVATION · search icon · bell · avatar · identity", "nav": "none" },
+      "DESKTOP": { "header": "68px bar: lockup · divider · CLIENT OFFICE / CLIENT ACTIVATION · search icon · bell · avatar · identity", "nav": "none — no sidebar, no dock, no INTAKE, no staff controls, no /office links" },
+      "ARRIVAL": "header without tools (avatar + identity only) over the full environment"
+    }
+  },
+  "transformations": {
+    "MOBILE→TABLET": "absolute authority header → flex bar with workspace context; dock re-laid as five equal touch columns across the full width (no absolute item coordinates)",
+    "TABLET→DESKTOP": "dock → persistent sidebar; search icon → search field; context gains the AIO OFFICE line; a rule separates notifications from the profile"
+  },
+  "validation": ["CLIENT_INTAKE_EXPOSURE", "STAFF_NAV_ON_CLIENT", "MOBILE_BOTTOM_DOCK_ON_DESKTOP", "DESKTOP_STAFF_SIDEBAR", "TABLET_STAFF_DOCK", "MOBILE_SHELL_LOCKED"]
+}

@@ -55444,3 +55444,17 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Responsive:** ≥700px one stack; ≥1120px main column + sticky side column (next steps, notes, action).
 - **Verified:** 113/113 functional and boundary checks (all 35 screens, three full flows, batch run, no horizontal scroll at 390/768/1440), original 23/23, unit tests 46 passed (3 DB skipped), build OK.
 - **Review gallery:** https://claude.ai/artifact/1rPbngoDNkMNwTg695HUZQ (`npm run migration:gallery`). Links in `docs/migration-recovery/MOCKS.md`.
+
+---
+
+## 2026-10-08 — Client migration: responsive blueprint (tablet + desktop masters)
+
+- **Context:** Sprint P0.AIO.CLIENT-MIGRATION.RESPONSIVE-COMPOSITION-BLUEPRINT-AND-FAMILY-RECONCILIATION1. Founder approved root masters for tablet (834×1194) and desktop (1440×900). "DO NOT SCALE. REFLOW." Phone authorities stay locked.
+- **Blueprint:** `AIO_CLIENT_MIGRATION_RESPONSIVE_BLUEPRINT/` (repo root, next to the untouched authority dir): responsive-blueprint, page-type-taxonomy, screen-responsive-map (41 screens, declarations generated from code), responsive-tokens, hero/grid/nav/overlay/table-list rules, future-page-contract.md, COMPOSER_PROPAGATION_MANIFEST.md, masters/, validation/, proof/ (A–G × 3 viewports).
+- **System:** `migrationResponsive.ts` declares ACTOR, PAGE_TYPE, DENSITY, HERO, GRID, PROCESS, SUPPORT, FORM, TABLE, OVERLAY per screen; `MigrationShell` writes them as data attributes; `aio-migration-responsive.css` composes only from those. Semantic breakpoints MOBILE < 700 · TABLET 700–1023 · DESKTOP ≥ 1024 (the old 1120 break is gone).
+- **Shells:** staff tablet = 77px header (CLIENT MIGRATION) + touch dock; staff desktop = 68px header (AIO OFFICE / CLIENT MIGRATION + search → existing-client finder `?q=`), 138px sidebar, no dock. Client = CLIENT OFFICE context, no nav / INTAKE / staff controls, centred 1240px (arrival 940px).
+- **Hero:** FULL (root, arrival) / COMPACT (working screens, reflowed headline in the left safe zone over a light scrim). Wide plates `env-wide-tablet.jpg` / `env-wide-desktop.jpg` cut from the masters (headline removed); phones never download them.
+- **Grids:** side column only when the work column keeps ≥ ~820px (container query `amg-main` ≥ 1184px; module internals are phone units) — MAIN_SIDE 340px side, CANVAS_PANEL (founder review) 320px panel, SINGLE centred 1000px; narrower desktops stack and pair support panels. Batch queue is a real `<table>` from tablet up; new-client received files carry table roles.
+- **Verified:** root composition vs the masters (element-box IoU, 4px tolerance) tablet 93.5 / desktop 92.4; RESPONSIVE_SYSTEM_CONFORMANCE 100 on all 41 screens at tablet and desktop; leak checks 10/10 (no INTAKE or staff nav on client screens, no dock on desktop, no IFTA); phone 41/41 pixel-identical to ccbc5191 (only a live invite-expiry clock differs); flows 113/113; checks 23/23 (full-bleed check updated to the hero-band plate); vitest 54 passed (+8 declaration tests); build OK. Proof set A–G × 3 viewports in the blueprint proof/.
+- **Deploy:** founder said "deploy now"; the blueprint commit is not [sync-only].
+- **Follow-ups:** COMPOSER_PROPAGATION_MANIFEST.md (tables for batch-complete / upload pending founder column OK; phone-unit row reflow 700–760px; header search covers clients only; master nav glyphs = founder decision; 2× plates need sources).

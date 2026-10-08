@@ -1,0 +1,19 @@
+{
+  "$schema": "AIO_CLIENT_MIGRATION_RESPONSIVE_BLUEPRINT/overlay-rules",
+  "status": "No migration screen opens an overlay today (every screen declares OVERLAY_MODE NONE: decisions are inline — choice bars, radio rows, expandable rows). These rules bind the first page that needs one.",
+  "modes": {
+    "SHEET": {
+      "MOBILE": "bottom sheet: full width, top radius 26u, drag handle, max-height 88dvh, content scrolls inside; sits above the dock (z 50) and leaves BOTTOM_SAFE_AREA",
+      "TABLET": "edge sheet: anchored to the bottom, width min(640px, 100% − 2×PAGE_GUTTER), centred, radius 22px; or a right edge sheet 420px for record inspection; the dock stays visible beneath the scrim",
+      "DESKTOP": "modal (centred, max 640px, for confirmations) or inspector (right panel 420px inside the workspace, for record detail beside the table); never covers the sidebar",
+      "behaviour": "focus moves into the overlay and is trapped; Escape and the scrim close it; focus returns to the trigger; body scroll locks; role=dialog with aria-modal and a labelled title",
+      "actions": "one gold primary at the bottom right (desktop) / full width (mobile, tablet); secondary actions are outline buttons"
+    },
+    "NONE": "inline decisions only"
+  },
+  "transformations": {
+    "MOBILE→TABLET": "bottom sheet → centred edge sheet with a max width (no full-bleed sheet on a wide screen)",
+    "TABLET→DESKTOP": "edge sheet → modal (decision) or inspector panel (record detail)"
+  },
+  "actorRule": "overlays inherit the actor shell; a client overlay never offers staff actions or links into /office"
+}

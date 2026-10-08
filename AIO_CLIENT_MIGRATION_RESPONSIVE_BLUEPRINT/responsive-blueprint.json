@@ -1,0 +1,95 @@
+{
+  "$schema": "AIO_CLIENT_MIGRATION_RESPONSIVE_BLUEPRINT/responsive-blueprint",
+  "sprint": "P0.AIO.CLIENT-MIGRATION.RESPONSIVE-COMPOSITION-BLUEPRINT-AND-FAMILY-RECONCILIATION1",
+  "principle": "DO NOT SCALE. REFLOW. ONE RESPONSIVE SYSTEM, MANY PAGE EXPRESSIONS.",
+  "authorities": {
+    "MOBILE": { "status": "LOCKED", "source": "AIO_CLIENT_MIGRATION_AUTHORITY/ (41 phone authorities, 853×1536) — untouched; only breakpoint leakage may be repaired" },
+    "TABLET": { "master": "masters/AIO-MIG-ROOT-TABLET-834x1194.png", "viewport": "834×1194 portrait", "image": "832×1200" },
+    "DESKTOP": { "master": "masters/AIO-MIG-ROOT-DESKTOP-1440x900.png", "viewport": "1440×900 landscape", "image": "1440×896" },
+    "note": "The two responsive masters are archived here for validation; the authority directory was not modified. The masters draw mixed-case copy; the founder uppercase law overrides it."
+  },
+  "files": {
+    "page-type-taxonomy.json": "12 page types, density classes, default regions",
+    "screen-responsive-map.json": "every screen: declaration + forensic audit + conformance (declaration fields generated from migrationResponsive.ts)",
+    "responsive-tokens.json": "breakpoints, units, spacing tokens, content widths, typography roles, CTA rules",
+    "hero-rules.json": "HERO_MODE, safe zones, plates, focal points",
+    "grid-rules.json": "primary grid / process / support / form modes, review rules",
+    "nav-rules.json": "actor shells, header, sidebar, dock",
+    "overlay-rules.json": "sheet → edge sheet → modal / inspector",
+    "table-list-rules.json": "TABLE vs ROWS",
+    "future-page-contract.md": "how a new page inherits the system",
+    "COMPOSER_PROPAGATION_MANIFEST.md": "repetitive follow-up work, scoped for Composer",
+    "validation/responsive-qa.json": "live-browser QA output (npm run migration:responsive-qa)",
+    "proof/": "proof set A–G at mobile / tablet / desktop"
+  },
+  "implementation": {
+    "declarations": "all-in-one-enterprises/src/client-migration/visual/migrationResponsive.ts",
+    "shell": "all-in-one-enterprises/src/client-migration/visual/AioMigrationKit.tsx (MigrationShell, AioMigrationEnvironment, AioMigrationHeader, AioDesktopSidebar, AioStaffDock, AioMigrationHero + HeroPlate, AioSteps)",
+    "modules": "all-in-one-enterprises/src/client-migration/visual/AioMigrationModules.tsx (AioFlow = ContentGrid main/side, AioCard, AioRows, AioField, AioNote …)",
+    "css": [
+      "aio-migration.css — phone authority renderer (representatives) + their tablet/desktop internals",
+      "aio-migration-flow.css — phone module renderer (propagated screens) + flow ≥700 / ≥1024",
+      "aio-migration-responsive.css — the blueprint: tokens, shell, hero band, root composition, page grammar"
+    ],
+    "primitiveNames": {
+      "MigrationShell": "MigrationShell",
+      "Header": "AioMigrationHeader",
+      "Hero": "AioMigrationHero (+ HeroPlate)",
+      "DesktopSidebar": "AioDesktopSidebar",
+      "MobileNav": "AioStaffDock (phone + tablet)",
+      "ProcessBand": "AioSteps (data-driven: --n = stage count)",
+      "ContentGrid": "AioFlow (top / main / side)",
+      "PrimaryActionGrid": ".amg-paths (MigrationRootScreen)",
+      "SupportGrid": ".amg-root support row (types / secure / what happens next) and the side column (SIDE)",
+      "FooterAction": "AioMigrationCTA (page action, rules in responsive-tokens.json › ctaRules)"
+    },
+    "assets": ["public/migration/env-wide-tablet.jpg", "public/migration/env-wide-desktop.jpg"]
+  },
+  "breakpoints": { "MOBILE": "< 700px", "TABLET": "700–1023px", "DESKTOP": "≥ 1024px" },
+  "actorShells": {
+    "STAFF": "AIO OFFICE — tablet: compact header + touch dock; desktop: AIO OFFICE / CLIENT MIGRATION header with search, persistent sidebar, no dock",
+    "CLIENT": "CLIENT OFFICE — no INTAKE, no staff sidebar, no dock, no staff controls; desktop content centred"
+  },
+  "transformations": {
+    "header": {
+      "MOBILE→TABLET": "absolute authority header (98u / 88u) → 77px flex bar; workspace context (CLIENT MIGRATION / CLIENT ACTIVATION) after a divider; identity in a fixed slot",
+      "TABLET→DESKTOP": "68px utility bar; context gains AIO OFFICE / CLIENT OFFICE; search icon → search field (staff); a rule before the profile"
+    },
+    "nav": {
+      "MOBILE→TABLET": "authority dock → full-width 113px touch dock, five equal columns (staff only)",
+      "TABLET→DESKTOP": "dock removed; persistent 138px left sidebar HOME / INTAKE / FILING / REPORTS / MORE (staff only); clients get neither"
+    },
+    "hero": {
+      "MOBILE→TABLET": "authority lockup over the family plate → flowed band over the art-directed tablet plate (FULL 323px, COMPACT ≥ 250px); headline in the left 46%",
+      "TABLET→DESKTOP": "band inside the workspace (FULL 278px, COMPACT ≥ 232px), desktop plate, text inset 36px, left 44% safe zone"
+    },
+    "paths": {
+      "MOBILE→TABLET": "authority cards (absolute internals, two-line titles) → 3-up grid cards: strip, disc, one-line title, body, arrow bottom-right",
+      "TABLET→DESKTOP": "shorter cards (188px), arrow beside the copy, CARD_GAP 12px"
+    },
+    "process": {
+      "MOBILE→TABLET": "authority steps → horizontal band, equal columns from data, 46px dots",
+      "TABLET→DESKTOP": "title + sub on one row, 34px dots, 32px inner padding"
+    },
+    "support": {
+      "MOBILE→TABLET": "providers panel + photo callout → 2-column support (file types tiles + secure)",
+      "TABLET→DESKTOP": "3-column support (+ what happens next); working screens: side column"
+    },
+    "forms": { "MOBILE→TABLET": "authority field grid → 2 columns", "TABLET→DESKTOP": "2 columns in the main column beside the side panel" },
+    "tables": { "MOBILE→TABLET": "stacked rows → semantic table with a header row (TABLE)", "TABLET→DESKTOP": "full main-column table with hover rows" },
+    "reviews": { "MOBILE→TABLET": "one column", "TABLET→DESKTOP": "staff: canvas + sticky context/actions panel; client: centred in the CLIENT OFFICE shell" },
+    "overlays": { "MOBILE→TABLET": "bottom sheet → centred edge sheet (max 640px)", "TABLET→DESKTOP": "modal (decision) or inspector panel (record)" },
+    "ctas": { "MOBILE→TABLET": "authority bar → one centred moderate action (≤ 456px, 58px)", "TABLET→DESKTOP": "landing: workspace-wide bar; working screens: full width of the sticky side column" },
+    "footers": { "MOBILE→TABLET": "authority dock reserve → BOTTOM_SAFE_AREA = dock 113px + 22px (+ safe-area inset); clients 40px", "TABLET→DESKTOP": "no dock: content ends 16px above the viewport bottom" },
+    "images": { "MOBILE→TABLET": "family plates → wide tablet plate (cover, focal 64–66%); path photos become 90px strips", "TABLET→DESKTOP": "desktop plate (truck fully framed); arrival keeps its full environment" },
+    "typography": { "MOBILE→TABLET": "authority units → px roles (1u ≈ 1px for panels; hero 73px FULL / 46px COMPACT)", "TABLET→DESKTOP": "hero 72 / 52px, step labels 14px tracked, sidebar labels 13.5px" },
+    "spacing": { "MOBILE→TABLET": "authority coordinates → tokens (gutter 16, section 12, grid 11, card gap 8)", "TABLET→DESKTOP": "section 11, grid 10, card gap 12; content measure caps at 1480px (staff) / 1240px (client) / 940px (arrival)" }
+  },
+  "validation": {
+    "rootComposition": "element-box IoU (4px tolerance) vs the masters at the master viewport — target ≥ 90",
+    "descendants": "RESPONSIVE_SYSTEM_CONFORMANCE 0–100 (shell 20 · hero 15 · grid 15 · overflow 15 · gutters 10 · CTA 10 · table 5 · touch 10), mean of tablet and desktop — not a pixel match",
+    "leaks": ["CLIENT_INTAKE_EXPOSURE", "STAFF_NAV_ON_CLIENT", "MOBILE_BOTTOM_DOCK_ON_DESKTOP", "IFTA_CONTENT_LEAK", "NO_HORIZONTAL_SCROLL", "MOBILE_SHELL_LOCKED"],
+    "mobileRegression": "every screen's phone capture vs the pre-sprint commit (pixel diff, threshold 0.01%)",
+    "run": "npm run migration:responsive-qa (writes validation/responsive-qa.json + proof/)"
+  }
+}

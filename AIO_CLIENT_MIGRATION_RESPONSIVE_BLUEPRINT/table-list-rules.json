@@ -1,0 +1,28 @@
+{
+  "$schema": "AIO_CLIENT_MIGRATION_RESPONSIVE_BLUEPRINT/table-list-rules",
+  "principle": "Tabular data is a true table from tablet up and stacked rows on the phone. Record lists that are not tabular (sections with actions, people with decisions) stay rows at every size.",
+  "modes": {
+    "TABLE": {
+      "MOBILE": "stacked rows exactly as the phone authority draws them",
+      "TABLET": "table: header row (column headers), one row per record, status as a pill column, the open affordance as the last column",
+      "DESKTOP": "same table at the full main-column width; row hover tint; the record name is the row's button",
+      "semantics": "<table> with <th scope=\"col\"> (batch queue) or role=table / row / columnheader / cell on grid rows (received files, new-client received files); a visually hidden header names icon-only columns (OPEN)",
+      "implementation": "TABLE presentations render alongside the phone rows and the declaration toggles them (data-table=TABLE): one is display:none at each viewport, so assistive tech reads exactly one"
+    },
+    "ROWS": {
+      "all": "AioRows / AioRow: lead icon or disc, title + sub, right-hand content, chevron; children (decision bars) open below the row",
+      "TABLET+": "rows stretch with the column; right-hand content keeps its distance from the right edge"
+    },
+    "NONE": "—"
+  },
+  "screens": {
+    "TABLE": ["received (role=table, all viewports)", "new-received (role=table on both file tables)", "batch-queue (<table> from tablet up; stacked rows on the phone)"],
+    "ROWS": ["existing (recent clients)", "upload (uploaded files)", "match", "review", "conflicts", "approval", "prebuilt", "invited", "people", "vehicles", "services", "documents", "confirm", "new", "new-records", "new-review", "new-approval", "new-confirm", "batch", "batch-conflicts", "batch-client", "batch-complete"]
+  },
+  "columnHeaders": "Headers only name data already shown in the row (no invented fields): batch queue → CLIENT · FILES · LAST ACTIVITY · STATUS · (OPEN)",
+  "transformations": {
+    "MOBILE→TABLET": "stacked rows → table with a header row (TABLE) / rows stretch (ROWS)",
+    "TABLET→DESKTOP": "table gains the full main-column width beside the sticky side column"
+  },
+  "composerFollowUp": "batch-complete results and the upload file list are candidates for TABLE once their columns are confirmed with the founder (see COMPOSER_PROPAGATION_MANIFEST.md)"
+}

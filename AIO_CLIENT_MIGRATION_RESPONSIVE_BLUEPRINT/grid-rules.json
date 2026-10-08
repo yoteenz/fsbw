@@ -1,0 +1,66 @@
+{
+  "$schema": "AIO_CLIENT_MIGRATION_RESPONSIVE_BLUEPRINT/grid-rules",
+  "principle": "Screens declare a PRIMARY_GRID_MODE; the family CSS composes it per viewport. No universal page — each grid mode is a small, named composition.",
+  "implementation": {
+    "flow": "AioFlow (AioMigrationModules.tsx) sorts children into top (select steps), main (cards) and side (what happens next, notes, the action bundle)",
+    "css": "aio-migration-flow.css (≥700 / ≥1024 blocks) + aio-migration-responsive.css (PAGE GRAMMAR)"
+  },
+  "primaryGridModes": {
+    "PATHS_3UP": {
+      "use": "LANDING",
+      "MOBILE": "3-up authority cards (pixel-locked)",
+      "TABLET": "3 columns 265 / 255 / 264 fr, CARD_GAP 8px, card 232px: 90px photo strip, 68px dark disc over the strip, single-line title, body, 42px gold square arrow bottom-right; the selected path has the gold border",
+      "DESKTOP": "3 equal columns, CARD_GAP 12px, card 188px: 90px strip, title + 2-line body left, 56×46 arrow right"
+    },
+    "MAIN_SIDE": {
+      "use": "working screens (upload, processing, approval, detail, invite, batch)",
+      "MOBILE": "authority stack",
+      "TABLET": "one column: steps, cards, then support panels (2-column support when there are two) and a centred moderate action",
+      "DESKTOP": "steps across the top; main + 340px side column (gap 24px) once the main column keeps ≥ ~820px (container amg-main ≥ 1184px; module internals are drawn in phone units); the side column is sticky (top: header + 16px) and holds what happens next, notes and the action. A narrower desktop workspace stacks and pairs the support panels"
+    },
+    "CANVAS_PANEL": {
+      "use": "founder review and record review (review, conflicts, new-records, new-review)",
+      "DESKTOP": "review canvas + 320px context / actions panel, sticky — the decision stays beside the evidence (same container condition as MAIN_SIDE)",
+      "TABLET": "as MAIN_SIDE (canvas first, panel under it)"
+    },
+    "SINGLE": { "use": "work with no side items (match, extract, new-extract, new-approval, batch-processing, batch-summary)", "TABLET": "one column at the full width", "DESKTOP": "one column, 1000px measure, centred in the workspace" },
+    "CENTERED": {
+      "use": "client activation screens and the arrival",
+      "DESKTOP": "the CLIENT OFFICE shell has no navigation: content measure 1240px centred (arrival 940px); review screens still pair the review card with what happens next",
+      "TABLET": "one column at the full width"
+    }
+  },
+  "processModes": {
+    "BAND": "horizontal stages in a panel; stage count comes from the data (AioSteps --n), equal columns; connectors between dots. TABLET: title + sub stacked, 46px dots. DESKTOP: title and sub on one row, 34px dots, 6 columns inside 32px padding",
+    "STEPPER": "select steps (MigrationSelectSteps) as a full-width top card at every viewport",
+    "STAGES": "live stage list (vertical on phone; horizontal where the screen draws hstages)",
+    "NONE": "—"
+  },
+  "supportGridModes": {
+    "SUPPORT_GRID": {
+      "MOBILE": "authority (file types + providers, secure callout)",
+      "TABLET": "2 columns 413 / 376 fr: SUPPORTED FILE TYPES (four bordered tiles) + YOUR DATA IS SECURE (88px gold disc, short line)",
+      "DESKTOP": "3 columns 446 / 380 / 419 fr: file types (icon, label, extension) + secure (79px disc, full sentence) + WHAT HAPPENS NEXT (78px grey disc; PREBUILT is not ACTIVE)"
+    },
+    "SIDE": { "TABLET": "support panels pair up two per row; a single panel spans the row", "DESKTOP": "stacked in the sticky side column, icon above the text" },
+    "NONE": "—"
+  },
+  "formModes": {
+    "FIELDS": { "MOBILE": "authority grid (1–2 columns as drawn)", "TABLET": "2 columns", "DESKTOP": "2 columns inside the main column (never wider than the card)" },
+    "CHOICES": "decision controls stay grouped with the item they decide (radio rows, choice bars); never detached into the side column",
+    "NONE": "—"
+  },
+  "reviewRules": {
+    "founderReview": "DESKTOP: main canvas + context/actions panel (CANVAS_PANEL)",
+    "clientReview": "DESKTOP: centred inside the CLIENT OFFICE shell (CENTERED), review card + what happens next",
+    "arrival": "remains a celebratory arrival: full environment, ACTIVE seal, one office card, 940px measure"
+  },
+  "transformations": {
+    "paths": { "MOBILE→TABLET": "absolute card internals → grid (strip / title / body + arrow); two-line titles → one line", "TABLET→DESKTOP": "shorter cards, arrow beside the copy, wider gaps" },
+    "process": { "MOBILE→TABLET": "authority positions → flowed band with equal columns", "TABLET→DESKTOP": "title + sub on one row; smaller dots; padded columns" },
+    "support": { "MOBILE→TABLET": "providers panel and photo callout drop out; types + secure become a 2-column row", "TABLET→DESKTOP": "third panel (what happens next) joins; secure shows the full sentence" },
+    "forms": { "MOBILE→TABLET": "authority grid → 2 columns", "TABLET→DESKTOP": "2 columns inside the main column next to the side panel" },
+    "reviews": { "MOBILE→TABLET": "single column", "TABLET→DESKTOP": "canvas + sticky panel (staff) / centred measure (client)" },
+    "spacing": { "MOBILE→TABLET": "authority coordinates → tokens (gutter 16, section 12, grid 11)", "TABLET→DESKTOP": "section 11, grid 10, card gap 12" }
+  }
+}

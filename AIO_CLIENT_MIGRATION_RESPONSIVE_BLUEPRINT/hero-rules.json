@@ -1,0 +1,41 @@
+{
+  "$schema": "AIO_CLIENT_MIGRATION_RESPONSIVE_BLUEPRINT/hero-rules",
+  "principle": "The hero is a band, not a poster: a text safe zone on the left, the truck / AIO building in the right image zone. Images are art-directed per viewport (object-fit: cover + focal point); never stretched or distorted.",
+  "implementation": {
+    "component": "AioMigrationHero (AioMigrationKit.tsx) — renders <picture class=\"amg-hero__plate\"> with tablet and desktop sources",
+    "css": "aio-migration-responsive.css › hero band"
+  },
+  "modes": {
+    "FULL": {
+      "use": "LANDING (root) and ARRIVAL (welcome to your office)",
+      "MOBILE": "authority hero over the family environment plate (env-root.jpg / env-existing.jpg / env-active.jpg) — locked",
+      "TABLET": { "bandHeight": "323px (header bottom 77 → 400)", "textInset": "48px from the viewport edge", "kickerCapTop": "61px into the band", "titleLines": "authority breaks, never wrapped" },
+      "DESKTOP": { "bandHeight": "278px (68 → 346), across the workspace (right of the sidebar)", "textInset": "36px from the workspace edge", "kickerCapTop": "34px into the band" },
+      "ARRIVAL": "keeps the full-page environment (env-active.jpg, fixed) with a left light scrim — celebratory, no band crop"
+    },
+    "COMPACT": {
+      "use": "every working screen (path select, upload, processing, review, tables, detail, confirmation, invite, batch, client activation)",
+      "MOBILE": "authority hero — locked",
+      "TABLET": { "minHeight": "250px", "paddingTop": "40px", "title": "46px / 42px, phone line breaks reflowed into the safe zone", "subtitle": "14.5px / 20px, max-width min(46%, 420px)" },
+      "DESKTOP": { "minHeight": "232px", "paddingTop": "30px", "title": "52px / 47px", "subtitle": "15px / 21px, max-width min(44%, 470px)" },
+      "scrim": "linear-gradient(90deg, rgba(248,246,242,.82) 0%, .62 32%, 0 58%) between plate and text"
+    },
+    "NONE": { "use": "reserved for future dense utility pages (e.g. a full-screen table)", "rule": "no band; the content starts one SECTION_GAP under the header" }
+  },
+  "safeZones": {
+    "text": { "TABLET": "left 46% of the band", "DESKTOP": "left 44% of the band (truck starts at ≈ 52% of the plate)" },
+    "image": "right 54–56%: truck, trailer and the AIO building; never covered by text",
+    "rule": "hero text right edge ≤ band left + 62% of band width (validated per screen by responsive-qa)"
+  },
+  "plates": {
+    "MOBILE": { "root family": "/migration/env-root.jpg (853×760)", "existing family": "/migration/env-existing.jpg (853×720)", "arrival": "/migration/env-active.jpg (853×1536)" },
+    "TABLET": { "file": "/migration/env-wide-tablet.jpg (832×317)", "source": "hero band of masters/AIO-MIG-ROOT-TABLET-834x1194.png, baked headline removed (inpaint + haze, same treatment as the phone plates)", "focal": "FULL 64% 50% · COMPACT 66% 62%" },
+    "DESKTOP": { "file": "/migration/env-wide-desktop.jpg (1294×276)", "source": "hero band of masters/AIO-MIG-ROOT-DESKTOP-1440x900.png, baked headline removed", "focal": "FULL 62% 50% · COMPACT 64% 60%" },
+    "loading": "the <picture> has no mobile source (1×1 placeholder) so phones never download the wide plates",
+    "edge": "22px mask fade at the band bottom into the page"
+  },
+  "transformations": {
+    "MOBILE→TABLET": "absolute authority lockup → flowed band; family plate → wide tablet plate; headline keeps its line breaks (FULL) or reflows into the safe zone (COMPACT); band height fixed per mode instead of the authority's panel top",
+    "TABLET→DESKTOP": "band moves into the workspace (right of the 138px sidebar); shorter band (278 / 232); desktop plate with the truck fully in frame; kicker tracking tightens; subtitle grows to 18px on FULL"
+  }
+}
