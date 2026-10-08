@@ -55569,3 +55569,21 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
   - When the nav is implemented, render it from the architecture (root_nav and nodes), not from a label array.
   - Daily production goes in WORK, never in MORE.
   - Client pages never link into `/office`. The existing `/office/messages` links from client dispatch and factoring are REMOVE_WHEN_IMPLEMENTED.
+
+---
+
+## 2026-10-08 — AIO office IA: founder decisions re-vendored
+
+- **Context:** The founder decided the six open IA questions. SITE00 records them (`AIO_IA_DECISIONS`, commit `fbc4731b`). This repo re-copies `docs/aio/office-ia/` (now 25 files, adding FOUNDER_DECISIONS.md) and the overlay `src/product-graph/officeInformationArchitecture.json`, with fresh PROVENANCE sha256.
+- **Decisions:**
+  - CLIENT OFFICE opens on HUB / OVERVIEW. It is the shell landing (today's `/portal` MY OFFICE command center), not a root tab.
+  - COMPLIANCE stays one lane.
+  - WORK → VEHICLES & FLEET is new, so there are 12 lanes. It has no staff surface yet; the Client 360 fleet tab is placeholder text.
+  - FOUNDER is a privileged role and can be more than one person.
+    - No founder role exists in code yet; the nearest are OfficeStaffRole owner and Supabase super_admin.
+    - No founder identity is hard-coded; keep it so.
+    - Staff see REPORTS (`reports.read`), internal financials, billing (`billing.read`), CRM (`crm.*`) and system settings only by grant. These match the permissions that already gate those pages.
+  - GROWTH / CRM (`/office/crm/*`) and BILLING (`/office/billing`, invoices, payments, quotes) live in MORE.
+  - Road Ready shows in SERVICES while available and OPERATIONS while active. No per-client engagement state exists yet.
+- **Not changed:** live nav, routes, pages, schema, lifecycle and auth.
+- **Tests:** the overlay tests still hold every cited file:line, route line, manifest status and hash.

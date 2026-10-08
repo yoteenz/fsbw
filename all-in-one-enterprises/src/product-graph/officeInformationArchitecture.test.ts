@@ -144,7 +144,7 @@ describe('Office IA docs ↔ SITE00 provenance', () => {
 
   it('the overlay is byte-identical to the copied AIO_OFFICE_IA.json and every copied file matches its sha256', () => {
     expect(readFileSync(path.join(__dirname, 'officeInformationArchitecture.json'), 'utf8')).toBe(readFileSync(path.join(DOCS, 'AIO_OFFICE_IA.json'), 'utf8'));
-    expect(Object.keys(prov.sha256).length).toBe(24);
+    expect(Object.keys(prov.sha256).length).toBe(25);
     for (const [f, sha] of Object.entries(prov.sha256)) expect(createHash('sha256').update(readFileSync(path.join(DOCS, f))).digest('hex'), f).toBe(sha);
   });
 });
