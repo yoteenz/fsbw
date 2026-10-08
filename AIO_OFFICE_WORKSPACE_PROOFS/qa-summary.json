@@ -1,0 +1,872 @@
+{
+ "when": "2026-10-08T23:42:32.267Z",
+ "pass": 173,
+ "fail": 0,
+ "results": [
+  {
+   "name": "fleet · phone · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fleet · phone · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fleet · phone · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fleet · phone · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fleet · phone · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fleet · phone · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fleet · tablet · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fleet · tablet · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fleet · tablet · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fleet · tablet · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fleet · tablet · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fleet · tablet · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fleet · tablet · fits one screen (only lists scroll)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fleet · desktop · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fleet · desktop · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fleet · desktop · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fleet · desktop · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fleet · desktop · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fleet · desktop · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fleet · desktop · fits one screen (only lists scroll)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fleet · wide · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fleet · wide · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fleet · wide · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fleet · wide · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fleet · wide · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fleet · wide · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fleet · wide · fits one screen (only lists scroll)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "books · phone · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "books · phone · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "books · phone · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "books · phone · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "books · phone · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "books · phone · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "books · tablet · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "books · tablet · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "books · tablet · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "books · tablet · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "books · tablet · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "books · tablet · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "books · tablet · fits one screen (only lists scroll)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "books · desktop · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "books · desktop · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "books · desktop · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "books · desktop · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "books · desktop · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "books · desktop · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "books · desktop · fits one screen (only lists scroll)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "books · wide · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "books · wide · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "books · wide · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "books · wide · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "books · wide · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "books · wide · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "books · wide · fits one screen (only lists scroll)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "comp · phone · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "comp · phone · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "comp · phone · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "comp · phone · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "comp · phone · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "comp · phone · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "comp · tablet · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "comp · tablet · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "comp · tablet · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "comp · tablet · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "comp · tablet · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "comp · tablet · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "comp · tablet · fits one screen (only lists scroll)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "comp · desktop · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "comp · desktop · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "comp · desktop · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "comp · desktop · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "comp · desktop · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "comp · desktop · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "comp · desktop · fits one screen (only lists scroll)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "comp · wide · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "comp · wide · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "comp · wide · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "comp · wide · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "comp · wide · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "comp · wide · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "comp · wide · fits one screen (only lists scroll)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "client · phone · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "client · phone · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "client · phone · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "client · phone · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "client · phone · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "client · phone · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "client · tablet · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "client · tablet · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "client · tablet · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "client · tablet · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "client · tablet · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "client · tablet · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "client · tablet · fits one screen (only lists scroll)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "client · desktop · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "client · desktop · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "client · desktop · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "client · desktop · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "client · desktop · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "client · desktop · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "client · desktop · fits one screen (only lists scroll)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "client · wide · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "client · wide · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "client · wide · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "client · wide · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "client · wide · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "client · wide · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "client · wide · fits one screen (only lists scroll)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fleet · select a truck moves the stage",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fleet · the panel opens the first issue on the truck",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fleet · change section changes the panel",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fleet · readout filters the yard",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fleet · search narrows the yard and keeps focus",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fleet · clicking a tag on the truck opens that section",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fleet · a simulated action confirms inline and says so",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fleet · confirming changes the sample state and the history",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fleet · the client chip opens Client 360 with a way back",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fleet · back returns to the same truck",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fleet · phone opens a connection in a drawer",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fleet · phone drawer closes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "books · AUG is a closed month",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "books · COLLECT shows the documents",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "books · opening a missing document focuses it",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "books · answering a charge is simulated and moves to the next",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "books · no balances are shown",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "books · a paused client shows paused, not a close",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "books · phone opens a charge in a drawer",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "comp · a marker on the horizon opens its case",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "comp · the queue opens a case",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "comp · NOW shows only what is due now",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "comp · DOT / SAFETY sits in the same lane, honestly empty",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "comp · CORRECTIVE WORK shows the out-of-service record",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "comp · the subject opens the truck in fleet",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "comp · back returns to the same case",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "comp · staff do not see founder-only REASSIGN",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "comp · phone opens the case in a drawer",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "client · INSURANCE focuses the service",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "client · a truck opens from the policy",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "client · back returns to the policy",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "client · back again keeps ABC and INSURANCE",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "client · founder sees BILLING",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "client · OPEN IN FLEET goes to the same truck",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "client · back returns to ABC with the truck still open",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "client · a prebuilt client is never shown as active",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "client · directory search",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "client · staff do not see BILLING",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "client · phone directory opens in a drawer",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "client · phone record opens in a drawer",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "shell · MORE opens Client 360",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "shell · WORK opens a WORK lane",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "shell · other roots answer (toast)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "shell · header search focuses the yard search",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · landing shows four live workspaces",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · every image loads",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · a card opens its workspace",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · the device fits the window",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · device switch",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · founder / staff switch",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · BEFORE shows the before → after board",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · TRY fleet #1 runs to the end",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · TRY fleet #2 runs to the end",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · TRY fleet #3 runs to the end",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · TRY books #1 runs to the end",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · TRY books #2 runs to the end",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · TRY books #3 runs to the end",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · TRY comp #1 runs to the end",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · TRY comp #2 runs to the end",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · TRY comp #3 runs to the end",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · TRY client #1 runs to the end",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · TRY client #2 runs to the end",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · TRY client #3 runs to the end",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · the ABC → INSURANCE → TRUCK → BACK demo ends where it started",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "no console or page errors",
+   "ok": true,
+   "detail": ""
+  }
+ ]
+}

@@ -55680,3 +55680,18 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
   - The Composer integration plan is a DRAFT until the founder approves.
   - The 12 privacy gaps were rechecked here at c74cf37c and are still OPEN. Nothing was patched; the separate handoff is `11_SECURITY_REPAIR_HANDOFF.md`.
 - **Review:** https://claude.ai/artifact/VQCyD4A4YmeErb27ik2hgG.
+
+---
+
+## 2026-10-08 — AIO office: four creative-directed workspace proofs (candidates, awaiting founder) [sync-only]
+
+- **Sprint:** P0.AIO.OFFICE.UNIFIED-EXPERIENCE2.CREATIVE-DIRECTION-AND-WORKSPACE-RECOVERY1.
+- **Why:** founder feedback on Batch 1 — "just a bunch of text … endless scrolling". Batch 1 deeper pages are now functional structure only, not approved visuals.
+- **Proofs:** `all-in-one-enterprises/design-authority/aio-office/workspaces/` (isolated from `src/`, sample data, never deployed).
+  - VEHICLES & FLEET (blueprint stage, design only), BOOKKEEPING (close ledger rule, SAMPLE amounts, no balances), COMPLIANCE (90-day horizon; DOT / SAFETY · EXPIRATIONS · AUDITS · CORRECTIVE WORK in one lane), CLIENT 360 (identity plate + 12-service constellation + drill stack).
+  - Drawn inside the approved header and five-root nav via `studio.js` embed mode. `studio.js` / `studio.css` and the Batch 1 studio (`office/`) are byte-for-byte unchanged.
+  - `build.mjs` (page + images), `qa.mjs` (173 checks, screenshots), `boards.mjs` (before → after, family check).
+- **Output:** `AIO_OFFICE_WORKSPACE_PROOFS/` — `boards/` (5 diagnosis, 4 before → after, family-roots), `screens/` (31), `qa-summary.json` (173/173).
+- **Record:** `docs/aio/office-workspace-proofs/` vendored from SITE00 33a93710 (PROVENANCE.json). Evidence test `src/product-graph/officeWorkspaceProofs.test.ts` (12) pins the approved roots' sha256.
+- **Not changed:** approved roots, migration / IFTA authorities, the 619-page review, live app, schema, auth, permissions, billing. 12 privacy gaps still OPEN. Not deployed.
+- **Review:** https://claude.ai/artifact/DKYZUHjSdiTw1qSC1evdbk. Next gate: FOUNDER REVIEW OF FOUR CREATIVE-DIRECTED AIO OFFICE WORKSPACE PROOFS — do not expand until approved.

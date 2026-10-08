@@ -1,0 +1,25 @@
+{
+  "id": "AIO_OFFICE_WORKSPACE_PROOFS_PROVENANCE",
+  "sprint": "P0.AIO.OFFICE.UNIFIED-EXPERIENCE2.CREATIVE-DIRECTION-AND-WORKSPACE-RECOVERY1",
+  "source": {
+    "repo": "yoteenz/SITE00",
+    "branch": "cursor/aio-office-ia-work-tree-4f59",
+    "commit": "33a93710640839524c4bd1b3574d9bf9fab19f71",
+    "path": "docs/aio/office-workspace-proofs/",
+    "generated_by": "scripts/studioos/aio-office-workspace-proofs-export.ts"
+  },
+  "rule": "Copied verbatim from SITE00 (the Experience Brain is the source). The four workspace proofs it describes live in this repo (all-in-one-enterprises/design-authority/aio-office/workspaces/, sample data only; boards, screens and QA in AIO_OFFICE_WORKSPACE_PROOFS/). Candidates awaiting founder approval; not expanded to other lanes; approved roots unchanged; nothing in src imports these files; nothing deployed.",
+  "sha256": {
+    "01_DIAGNOSIS.md": "24c8e6c052bd17ee45389b52742477ed04e055e7e54bddf72e5e34bc14f9ddf9",
+    "02_CREATIVE_DIRECTION.md": "e480d8f2e744f07821407781a88cd4e718b65d9b584c5cac5699c911254aa825",
+    "03_WORKSPACE_PROOFS.md": "d40d3e56c1eefda2ec820c90772058c079952d0e48d4969a8bc1fef1e8dbb2ac",
+    "04_INTERACTIONS_AND_QA.md": "07ffe752c159b227e950f800bd93ebcc3a1da9ff97cacb09325c74c2eaf9b1c3",
+    "05_DEVICES.md": "53ee08741e21624f8d88b33aef70fb63a396ad063f0786243ebef53c8496c91b",
+    "06_ASSETS_AND_ROOTS.md": "7f09dfa9e1dd839309ac30958f165f5e744ce1da2e3982aa615c1ba73f5566bc",
+    "07_FOUNDER_PACKAGE.md": "95a609fab44cd2a287917241077f9ad9910634c8c1f014febf279a2f513400f9",
+    "08_EXPANSION_AND_DEPENDENCIES.md": "6fd60869a0b75c05277cf610ddb716f45975c3352c63cf881ceb2250ce32c65a",
+    "QUALITY_GATE.json": "8e6c71d2da56b8d7c3afe6427ffa40ee640105f94cc01ff2e178c1c4ea95778f",
+    "README.md": "895da0a00b8a30ffc94f7ebd52910a66875f989bfd4fa6ff908d57f7bac558e5",
+    "WORKSPACE_PROOFS.json": "8bfe9fc4dd2dedb56aa8f9e17f64530d11175f9e5f2b365ce0cad8d4c6ab282a"
+  }
+}
