@@ -128,27 +128,27 @@ export function NewReceivedScreen({ stored, local, cta }: { stored: ArchiveMigra
       </AioCard>
       <AioCard className="amg-nrec__ok">
         <AioDiscHead icon="success-log" tone="dark" title="ACCEPTED FILES" sub="These files are ready for processing." right={<CountBadge tone="green" n={accepted.length} label="ACCEPTED" />} className="amg-dhead--ok" />
-        <div className="amg-ftable">
-          <div className="amg-ftable__r amg-ftable__r--head">
-            <span>FILE NAME</span>
-            <span>TYPE</span>
-            <span>SIZE</span>
+        <div className="amg-ftable" role="table" aria-label="Accepted files">
+          <div className="amg-ftable__r amg-ftable__r--head" role="row">
+            <span role="columnheader">FILE NAME</span>
+            <span role="columnheader">TYPE</span>
+            <span role="columnheader">SIZE</span>
           </div>
           {accepted.length === 0 ? (
-            <div className="amg-ftable__r">
-              <span>No accepted files yet.</span>
+            <div className="amg-ftable__r" role="row">
+              <span role="cell">No accepted files yet.</span>
             </div>
           ) : null}
           {accepted.map((f) => {
             const t = fileTone(f.name);
             return (
-              <div className="amg-ftable__r" key={f.key}>
-                <span className="amg-ftable__name">
+              <div className="amg-ftable__r" key={f.key} role="row">
+                <span className="amg-ftable__name" role="cell">
                   <Ico name={t.icon} className={`amg-ftype--${t.tone}`} />
                   <span title={f.name}>{f.name}</span>
                 </span>
-                <span>{t.ext}</span>
-                <span>{formatBytes(f.size)}</span>
+                <span role="cell">{t.ext}</span>
+                <span role="cell">{formatBytes(f.size)}</span>
               </div>
             );
           })}
@@ -157,22 +157,24 @@ export function NewReceivedScreen({ stored, local, cta }: { stored: ArchiveMigra
       {rejected.length ? (
         <AioCard className="amg-nrec__bad">
           <AioDiscHead icon="warning" tone="dark" title="UNSUPPORTED FILES" sub="These files were not accepted and will not be processed." right={<CountBadge tone="red" n={rejected.length} label="UNSUPPORTED" />} className="amg-dhead--warn" />
-          <div className="amg-ftable" style={{ ['--ft-cols' as string]: 'minmax(0, 1.9fr) minmax(0, 0.95fr) minmax(0, 1.25fr)' }}>
-            <div className="amg-ftable__r amg-ftable__r--head">
-              <span>FILE NAME</span>
-              <span>TYPE</span>
-              <span>REASON</span>
+          <div className="amg-ftable" role="table" aria-label="Unsupported files" style={{ ['--ft-cols' as string]: 'minmax(0, 1.9fr) minmax(0, 0.95fr) minmax(0, 1.25fr)' }}>
+            <div className="amg-ftable__r amg-ftable__r--head" role="row">
+              <span role="columnheader">FILE NAME</span>
+              <span role="columnheader">TYPE</span>
+              <span role="columnheader">REASON</span>
             </div>
             {rejected.map((f) => {
               const t = fileTone(f.name);
               return (
-                <div className="amg-ftable__r" key={f.name}>
-                  <span className="amg-ftable__name">
+                <div className="amg-ftable__r" key={f.name} role="row">
+                  <span className="amg-ftable__name" role="cell">
                     <Ico name="text" className="amg-ftype--other" />
                     <span title={f.name}>{f.name}</span>
                   </span>
-                  <span>{t.ext}</span>
-                  <span title={f.reason}>{f.reason ?? 'Unsupported file type'}</span>
+                  <span role="cell">{t.ext}</span>
+                  <span role="cell" title={f.reason}>
+                    {f.reason ?? 'Unsupported file type'}
+                  </span>
                 </div>
               );
             })}

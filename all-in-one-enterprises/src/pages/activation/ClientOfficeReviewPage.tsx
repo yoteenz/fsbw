@@ -18,9 +18,8 @@ import type { ReviewSectionCode, ReviewSectionResponse, WhatChangedShortcut } fr
 import { canAccessClientOffice } from '../../client-migration/lifecycle';
 import {
   AioMigrationCTA,
-  AioMigrationEnvironment,
-  AioMigrationHeader,
   AioMigrationHero,
+  MigrationShell,
 } from '../../client-migration/visual/AioMigrationKit';
 import { ActivationCompanyScreen, ActivationCompleteScreen } from '../../client-migration/visual/ActivationScreens';
 import {
@@ -195,9 +194,7 @@ export function ClientOfficeReviewPage() {
 
   if (view === 'done') {
     return (
-      <AioMigrationEnvironment family="active" actor="client" screen="complete">
-        <AioMigrationHeader viewer={clientViewer(client)} tools={false} />
-        <main className="amg-main amg-col">
+      <MigrationShell family="active" actor="client" screen="complete" viewer={clientViewer(client)} tools={false}>
           <AioMigrationHero
             kicker="CLIENT ACTIVATION"
             title={titles.done}
@@ -211,8 +208,7 @@ export function ClientOfficeReviewPage() {
           />
           <ActivationCompleteScreen onEnter={() => navigate(aioPaths.portal, { replace: true })} />
           {message ? <p className="amg-msg">{message}</p> : null}
-        </main>
-      </AioMigrationEnvironment>
+      </MigrationShell>
     );
   }
 
@@ -254,9 +250,7 @@ export function ClientOfficeReviewPage() {
   const sectionStep: Record<SectionKey, Step> = { COMPANY: 'company', PEOPLE: 'people', VEHICLES: 'vehicles', SERVICES: 'services', DOCUMENTS: 'documents' };
 
   return (
-    <AioMigrationEnvironment family="existing" actor="client" screen={view}>
-      <AioMigrationHeader viewer={clientViewer(client)} />
-      <main className="amg-main amg-col">
+    <MigrationShell family="existing" actor="client" screen={view} viewer={clientViewer(client)}>
         {view === 'company' ? (
           <AioMigrationHero
             kicker="CLIENT ACTIVATION"
@@ -307,7 +301,6 @@ export function ClientOfficeReviewPage() {
         {view === 'documents' ? <ActivationDocumentsScreen store={store} client={client} responses={items} onRespond={onItem} cta={cta()} /> : null}
         {view === 'changed' ? <ActivationChangedScreen client={client} selected={reported} onShortcut={(code) => (reported.has(code) ? undefined : void onShortcut(code))} cta={cta()} /> : null}
         {view === 'confirm' ? <ActivationConfirmScreen store={store} client={client} ids={ids} onOpen={(section) => go(sectionStep[section])} cta={cta('CONFIRM AND ACTIVATE')} /> : null}
-      </main>
-    </AioMigrationEnvironment>
+    </MigrationShell>
   );
 }

@@ -2259,104 +2259,13 @@ html:has(.amg) body {
 .amg.amg[data-screen='complete'] .amg-line { font-size: calc(17.05 * var(--u)); }
 /* ═════════ end uppercase fit ═════════ */
 
-/* ═════════ TABLET + DESKTOP (≥ 700px) — derived from the mobile authority, not a scaled phone ═════════
- * Phone (< 700px) keeps the pixel-locked authority composition above. Wider screens get:
- *   · a real header bar (lockup left, account cluster right) aligned to the content column;
- *   · the environment as a full-bleed photo band with the headline over the sky, fading into the page;
- *   · panels that stretch to the column (fixed-width internals stretch; right-side items keep their distance from
- *     the right edge) at a desktop type scale (1u ≈ 0.82–0.95px instead of growing with the screen);
- *   · ≥ 1120px: two-column layouts where the content allows (main panel + "what happens next" / actions). */
+/* ═════════ TABLET + DESKTOP — representative screen internals ═════════
+ * Phone (< 700px) keeps the pixel-locked authority composition above. The responsive shell, tokens, hero band,
+ * navigation and the root composition live in aio-migration-responsive.css (blueprint: AIO_CLIENT_MIGRATION_RESPONSIVE_BLUEPRINT/).
+ * This block only reflows the representatives' panels: fixed-width internals stretch with the column, right-side items keep
+ * their distance from the right edge; ≥ 1024px (DESKTOP) puts closing items in a side column. */
 @media (min-width: 700px) {
-  .amg {
-    --u: clamp(0.82px, calc((100vw - 48px) / 853), 0.95px);
-    --band: clamp(340px, 42vh, 470px);
-    --gutter: 24px;
-    --col: min(1240px, calc(100% - 2 * var(--gutter)));
-  }
-  /* header */
-  .amg.amg .amg-head {
-    --u: 0.78px;
-    height: 76px;
-  }
-  .amg.amg .amg-head__in {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    padding: 0 max(var(--gutter), calc((100% - 1240px) / 2));
-  }
-  .amg.amg .amg-head__in > * {
-    position: relative;
-    left: auto;
-    top: auto;
-  }
-  .amg.amg .amg-head__lockup {
-    width: auto;
-    height: 52px;
-    margin-right: auto;
-  }
-  .amg.amg .amg-head__avatar {
-    width: calc(64 * var(--u));
-    height: calc(64 * var(--u));
-    margin-left: 6px;
-  }
-  .amg.amg .amg-head__chev {
-    margin-left: -4px;
-  }
-  .amg--active {
-    padding-top: 76px;
-  }
-  /* environment band */
-  .amg.amg:not(.amg--active) .amg-env {
-    height: calc(76px + var(--band) + 90px);
-    -webkit-mask-image: linear-gradient(#000 72%, transparent);
-    mask-image: linear-gradient(#000 72%, transparent);
-  }
-  .amg--root .amg-env__plate {
-    object-position: 55% 34%;
-  }
-  .amg--existing .amg-env__plate {
-    object-position: 55% 30%;
-  }
-  .amg--active .amg-env__plate {
-    object-position: 60% 12%;
-  }
-  /* a soft light scrim behind the headline keeps it readable wherever the photo crops */
-  .amg.amg .amg-env::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(90deg, rgba(248, 246, 242, 0.86) 0%, rgba(248, 246, 242, 0.62) 30%, rgba(248, 246, 242, 0) 60%);
-  }
-  /* column */
-  .amg.amg .amg-main {
-    width: var(--col);
-    margin-inline: auto;
-  }
-  /* hero: flow layout over the band */
-  .amg.amg .amg-hero {
-    position: relative;
-    inset: auto;
-    min-height: var(--band);
-    padding: 44px 0 28px calc(4 * var(--u));
-    display: grid;
-    align-content: start;
-    justify-items: start;
-  }
-  .amg.amg .amg-hero > * {
-    position: static;
-    margin: 0;
-  }
-  .amg.amg .amg-hero__title {
-    margin-top: calc(14 * var(--u));
-    margin-left: calc(var(--t-dx, 0) * var(--u));
-  }
-  .amg.amg .amg-hero__accent {
-    margin-top: calc(10 * var(--u));
-  }
-  .amg.amg .amg-hero__sub {
-    margin-top: calc(18 * var(--u));
-  }
+  /* shell, tokens, hero band and navigation: aio-migration-responsive.css (the family blueprint) */
   /* screens: stacked panels with even gaps */
   .amg.amg :is(.amg-root, .amg-existing, .amg-extract, .amg-received, .amg-activation, .amg-arrival, .amg-legacy) {
     padding: 0;
@@ -2483,40 +2392,30 @@ html:has(.amg) body {
     width: 100%;
     margin-top: calc(28 * var(--u));
   }
-  /* staff dock: same bar, centred on the column */
-  .amg.amg.amg--existing .amg-dock {
-    left: 50%;
-    right: auto;
-    width: calc(846 * var(--u));
-    transform: translateX(-50%);
-  }
-  .amg.amg.amg--existing .amg-dock__in {
-    width: 100%;
-  }
 }
 
-@media (min-width: 1120px) {
-  .amg {
-    --gutter: 48px;
-    --band: clamp(380px, 46vh, 500px);
-  }
-  /* main panel + side column */
+/* DESKTOP main panel + side column — only when the main column keeps ≥ ~820px (the panels' phone-unit internals need it);
+   a narrower desktop workspace stacks (container amg-main is declared in aio-migration-responsive.css) */
+@container amg-main (min-width: 1184px) {
   .amg.amg .amg-existing {
-    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr) 340px;
   }
   .amg.amg .amg-existing > .amg-flowcard { grid-column: 1 / -1; }
   .amg.amg .amg-received {
-    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr) 340px;
   }
   .amg.amg .amg-received > .amg-rclient { grid-column: 1 / -1; }
   .amg.amg .amg-company {
-    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr) 340px;
     grid-template-rows: auto auto auto 1fr;
   }
   .amg.amg .amg-company > .amg-flowcard { grid-column: 1 / -1; }
   .amg.amg .amg-company > .amg-cinfo { grid-column: 1; grid-row: 2 / span 3; }
   .amg.amg .amg-company > .amg-next { grid-column: 2; grid-row: 2; }
   .amg.amg .amg-company > .amg-cta { grid-column: 2; grid-row: 3; }
+}
+
+@media (min-width: 1024px) {
   .amg.amg :is(.amg-existing, .amg-received, .amg-company) > .amg-next {
     align-self: start;
     grid-template-columns: 1fr;
@@ -2537,10 +2436,4 @@ html:has(.amg) body {
     padding: 0;
   }
   /* the arrival is one focused card over the environment */
-  .amg.amg[data-screen='complete'] .amg-main {
-    width: min(940px, calc(100% - 2 * var(--gutter)));
-  }
-  .amg.amg[data-screen='complete'] .amg-head__in {
-    padding-inline: max(var(--gutter), calc((100% - 940px) / 2));
-  }
 }

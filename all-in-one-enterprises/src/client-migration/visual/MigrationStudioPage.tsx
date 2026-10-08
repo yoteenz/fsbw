@@ -14,7 +14,7 @@ import { approveMigrationBatchForOffice } from '../services/approveMigrationOffi
 import { createMigrationBatchForOffice, uploadFilesToMigrationBatch } from '../services/migrationIntakeService';
 import { transitionClientLifecycle } from '../services/lifecycleEvents';
 import type { ClientLifecycleState, MigrationReviewAction } from '../types';
-import { AioMigrationCTA, AioMigrationEnvironment, AioMigrationHeader, AioMigrationHero, AioStaffDock, Ico, type MigrationFamily } from './AioMigrationKit';
+import { AioMigrationCTA, AioMigrationHero, Ico, MigrationShell, type MigrationFamily } from './AioMigrationKit';
 import { AioCard, AioFlow } from './AioMigrationModules';
 import { MigrationExistingScreen, MigrationExtractScreen, MigrationReceivedScreen } from './MigrationExistingScreens';
 import {
@@ -116,7 +116,7 @@ export function MigrationStudioPage() {
   const { session } = useAIOAuth();
   const staffId = session?.user.id ?? store.officeStaffId ?? 'staff-2';
   const inputRef = useRef<HTMLInputElement>(null);
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState(() => params.get('q') ?? '');
   const [message, setMessage] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [localFiles, setLocalFiles] = useState<LocalFile[]>([]);
@@ -171,6 +171,12 @@ export function MigrationStudioPage() {
       contactName: client.contactName === 'Primary contact' ? '' : client.contactName,
     });
   }, [screen, client?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Header search (desktop) lands on the existing-client finder with ?q=.
+  const searchParam = params.get('q');
+  useEffect(() => {
+    if (searchParam !== null) setQuery(searchParam);
+  }, [searchParam]);
 
   useEffect(() => {
     if (screen !== 'new-invite' && screen !== 'invite') return;
@@ -482,9 +488,7 @@ export function MigrationStudioPage() {
   const queueDone = batchStages(queueFiles, queueConflicts.length);
 
   return (
-    <AioMigrationEnvironment family={family} actor="staff" screen={screen}>
-      <AioMigrationHeader viewer={viewer} />
-      <main className="amg-main amg-col">
+    <MigrationShell family={family} actor="staff" screen={screen} viewer={viewer}>
         {authority ? (
           <AioMigrationHero kicker={authority.kicker} title={authority.title} subtitle={authority.sub.map((line) => <span key={line} className="amg-line">{line}</span>)} />
         ) : spec ? (
@@ -596,9 +600,7 @@ export function MigrationStudioPage() {
         {screen === 'batch-complete' ? <BatchCompleteScreen queue={queue} failedFiles={queueFiles.filter((f) => f.processingState === 'failed').length} cta={cta()} /> : null}
 
         <input ref={inputRef} className="amg-file-input" type="file" multiple onChange={(event) => { onPickFiles(event.target.files); event.target.value = ''; }} />
-      </main>
-      <AioStaffDock />
-    </AioMigrationEnvironment>
+    </MigrationShell>
   );
 }
 

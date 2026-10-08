@@ -319,6 +319,47 @@ export function BatchQueueScreen({ store, queue, onOpen, cta }: { store: DemoSto
             );
           })}
         </AioRows>
+        {/* TABLE_MODE TABLE: the phone draws stacked rows (above); tablet and desktop read the same queue as a table */}
+        {queue.length ? (
+          <table className="amg-qtable">
+            <thead>
+              <tr>
+                <th scope="col">CLIENT</th>
+                <th scope="col">FILES</th>
+                <th scope="col">LAST ACTIVITY</th>
+                <th scope="col">STATUS</th>
+                <th scope="col">
+                  <span className="amg-sr">OPEN</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {queue.map((client) => {
+                const files = batchFilesFor(store, client.id);
+                const last = files.map((f) => f.createdAt).sort().pop() ?? client.lastActivityAt;
+                const bucket = batchBucket(client);
+                return (
+                  <tr key={client.id}>
+                    <td>
+                      <button type="button" className="amg-qtable__client" onClick={() => onOpen(client.id)}>
+                        <AioDisc tone={BUCKET[bucket].tone === 'amber' ? 'tint' : BUCKET[bucket].tone} icon="truck" className={`amg-bq__disc amg-bq__disc--${BUCKET[bucket].tone}`} />
+                        <b>{client.companyName}</b>
+                      </button>
+                    </td>
+                    <td>{files.length}</td>
+                    <td>{formatDay(last)}</td>
+                    <td>
+                      <BucketPill bucket={bucket} />
+                    </td>
+                    <td aria-hidden="true">
+                      <Ico name="chevron" className="amg-qtable__chev" />
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        ) : null}
       </AioCard>
       {cta}
     </AioFlow>

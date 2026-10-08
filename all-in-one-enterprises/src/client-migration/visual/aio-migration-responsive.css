@@ -1,0 +1,1180 @@
+/* ═══════════════════════════════════════════════════════════════════════════════════════════════════════
+ * AIO CLIENT MIGRATION — responsive family blueprint (implementation)
+ * Blueprint: AIO_CLIENT_MIGRATION_RESPONSIVE_BLUEPRINT/ (repo root). Declarations: migrationResponsive.ts.
+ *
+ * DO NOT SCALE. REFLOW.
+ *   MOBILE   < 700px      the locked phone authority family (aio-migration.css, aio-migration-flow.css) — untouched here
+ *   TABLET   700–1023px   master: AIO-MIG-ROOT tablet 834×1194 — compact header, shorter hero band, 3-up paths,
+ *                         horizontal process band, 2-column support, touch dock
+ *   DESKTOP  ≥ 1024px     master: AIO-MIG-ROOT desktop 1440×900 — staff sidebar + AIO OFFICE header with search,
+ *                         no dock, wide hero (text safe zone left, truck right), 3-column support, workspace CTA
+ * Screens never own a breakpoint: they declare PAGE_TYPE / DENSITY / HERO / GRID / PROCESS / SUPPORT / FORM / TABLE /
+ * OVERLAY (data-* on .amg) and this file composes them. Actor shells: staff = AIO OFFICE (sidebar / dock),
+ * client = CLIENT OFFICE (no staff navigation, no intake, centred column).
+ * ═══════════════════════════════════════════════════════════════════════════════════════════════════════ */
+
+/* visually hidden, still read (table header for the open column, etc.) */
+.amg-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* phone: tablet/desktop-only shell parts do not exist */
+.amg-head__ctx,
+.amg-head__field,
+.amg-head__rule,
+.amg-side,
+.amg-hero__plate,
+.amg-secure__short,
+.amg-rnext,
+.amg-qtable {
+  display: none;
+}
+
+/* ═════════ TABLET + DESKTOP shared ═════════ */
+@media (min-width: 700px) {
+  /* ── tokens (responsive-tokens.json) ── */
+  .amg {
+    --u: clamp(0.84px, calc(100vw / 834), 1px);
+    --gutter: 16px; /* PAGE_GUTTER */
+    --section-gap: 12px; /* SECTION_GAP */
+    --card-gap: 8px; /* CARD_GAP (path cards) */
+    --grid-gap: 11px; /* GRID_GAP (support / content grids) */
+    --card-pad: 18px; /* CARD_PADDING */
+    --hero-gap: 5px; /* HERO_GAP (title → subtitle) */
+    --head-px: 77px; /* HEADER_HEIGHT */
+    --nav-w: 0px; /* NAV_WIDTH */
+    --dock-h: 113px;
+    --bottom-safe: calc(var(--dock-h) + 22px + env(safe-area-inset-bottom, 0px)); /* BOTTOM_SAFE_AREA */
+    --content-max: 1480px;
+    --pad-x: max(var(--gutter), calc((100vw - var(--nav-w) - var(--content-max)) / 2));
+    /* hero band (hero-rules.json) */
+    --hero-h: 323px;
+    --hero-pt: 59px;
+    --hero-tx: 32px;
+    --hero-safe: 46%;
+    --hero-focus: 64% 50%;
+  }
+  .amg--client {
+    --bottom-safe: 40px;
+    --content-max: 1240px;
+  }
+  /* ARRIVAL: one celebratory focused column over the full environment */
+  .amg[data-page-type='ARRIVAL'] {
+    --content-max: 940px;
+  }
+  .amg[data-hero='COMPACT'] {
+    --hero-h: 250px;
+    --hero-pt: 40px;
+    --hero-focus: 66% 62%;
+  }
+  .amg[data-hero='NONE'] {
+    --hero-h: 0px;
+  }
+
+  /* ── header (compact, full width) ── */
+  .amg.amg .amg-head {
+    --u: 1px;
+    height: var(--head-px);
+    background: rgba(252, 251, 249, 0.95);
+  }
+  .amg.amg .amg-head__in {
+    width: 100%;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    padding: 6px 36px 0 33px;
+  }
+  .amg.amg .amg-head__in > * {
+    position: relative;
+    left: auto;
+    top: auto;
+    flex: none;
+  }
+  .amg.amg .amg-head__lockup {
+    width: auto;
+    height: clamp(42px, calc(100vw * 52 / 832), 52px);
+  }
+  /* the context line is the only header item that may give way on a narrow tablet (ellipsis) */
+  .amg.amg .amg-head__in > .amg-head__ctx {
+    flex: 0 1 auto;
+    min-width: 0;
+  }
+  .amg.amg .amg-head__ctx {
+    display: grid;
+    align-content: center;
+    gap: 5px;
+    height: 30px;
+    margin: 0 auto 0 clamp(14px, calc(100vw - 788px), 44px);
+    padding-left: clamp(12px, calc(100vw - 812px), 20px);
+    border-left: 1px solid rgba(17, 17, 18, 0.2);
+    white-space: nowrap;
+  }
+  .amg.amg .amg-head__ctx > * {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .amg.amg .amg-head__ctx small {
+    display: none;
+    font: 500 12.5px / 1 var(--text);
+    letter-spacing: 0.16em;
+    color: #55555a;
+  }
+  .amg.amg .amg-head__ctx b {
+    font: 400 15.5px / 1 var(--text);
+    letter-spacing: 0.03em;
+    color: #4a4a4f;
+  }
+  .amg.amg .amg-head__tool {
+    width: 28px;
+    height: 28px;
+  }
+  .amg.amg .amg-head__tool .amg-ico {
+    width: 26px;
+    height: 26px;
+  }
+  .amg.amg .amg-head__bell {
+    margin-left: 26px;
+  }
+  .amg.amg .amg-head__dot {
+    top: 0;
+    right: 1px;
+    width: 9px;
+    height: 9px;
+  }
+  .amg.amg .amg-head__avatar {
+    width: 52px;
+    height: 52px;
+    margin-left: 25px;
+    padding: 2px;
+  }
+  .amg.amg .amg-head__avatar > span {
+    font-size: 17px;
+  }
+  /* fixed identity slot: the icons keep their master positions whatever the viewer's name length */
+  .amg.amg .amg-head__who {
+    width: 92px;
+    margin-left: 15px;
+    gap: 5px;
+  }
+  .amg.amg .amg-head__who > * {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .amg.amg .amg-head__who b {
+    font: 600 16px / 1.1 var(--text);
+    letter-spacing: 0.05em;
+  }
+  .amg.amg .amg-head__who span {
+    font: 500 14px / 1.1 var(--text);
+    letter-spacing: 0.06em;
+    color: #55555a;
+  }
+  .amg.amg .amg-head__chev {
+    width: 18px;
+    height: 18px;
+    margin-left: 0;
+  }
+  .amg--active {
+    padding-top: var(--head-px);
+  }
+
+  /* ── staff dock (tablet master: full-width touch bar, five equal columns) ── */
+  .amg.amg.amg .amg-dock {
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: auto;
+    height: calc(var(--dock-h) + env(safe-area-inset-bottom, 0px));
+    padding: 10px 18px env(safe-area-inset-bottom, 0px);
+    transform: none;
+    border-radius: 22px 22px 0 0;
+    box-shadow: 0 -6px 22px rgba(70, 48, 18, 0.07), 0 -1px 0 rgba(255, 255, 255, 0.9);
+  }
+  .amg.amg.amg .amg-dock__in {
+    width: 100%;
+    height: 75px;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+  .amg.amg.amg .amg-dock__item {
+    position: relative;
+    left: auto;
+    top: auto;
+    justify-self: center;
+    width: min(124px, 100%);
+    height: 75px;
+    padding: 0;
+    align-content: center;
+    gap: 12px;
+    border-radius: 10px;
+    font: 400 16px / 1 var(--text);
+    letter-spacing: 0.02em;
+    color: #3b3b40;
+  }
+  .amg.amg.amg .amg-dock__item .amg-ico {
+    width: 30px;
+    height: 30px;
+    transform: none;
+    color: #19191b;
+  }
+  /* the sheet glyphs carry different inner padding: the same optical-size factors as the phone dock */
+  .amg.amg.amg :is(.amg-dock__item, .amg-side__item):nth-child(1) .amg-ico { transform: scale(0.854); }
+  .amg.amg.amg :is(.amg-dock__item, .amg-side__item):nth-child(2) .amg-ico { transform: scale(0.958); }
+  .amg.amg.amg :is(.amg-dock__item, .amg-side__item):nth-child(3) .amg-ico { transform: scale(0.917); }
+  .amg.amg.amg :is(.amg-dock__item, .amg-side__item):nth-child(4) .amg-ico { transform: scale(1.25); }
+  .amg.amg.amg :is(.amg-dock__item, .amg-side__item):nth-child(5) .amg-ico { transform: scale(0.875); }
+  .amg.amg.amg .amg-dock__item.is-on {
+    background: #19191b;
+    color: #edb63f;
+    box-shadow: 0 4px 10px rgba(20, 16, 10, 0.18);
+  }
+  .amg.amg.amg .amg-dock__item.is-on .amg-ico {
+    color: #edb63f;
+  }
+
+  /* ── main column ── */
+  .amg.amg .amg-main {
+    width: auto;
+    margin: 0 0 0 var(--nav-w);
+    padding: 0 var(--pad-x) var(--bottom-safe);
+  }
+
+  /* ── hero band: the screen headline over the art-directed plate (HERO_MODE) ── */
+  .amg.amg:not(.amg--active) .amg-env {
+    display: none;
+  }
+  .amg.amg .amg-hero {
+    --u: 1px;
+    position: relative;
+    inset: auto;
+    isolation: isolate;
+    min-height: var(--hero-h);
+    margin: 0 calc(-1 * var(--pad-x));
+    padding: var(--hero-pt) calc(var(--pad-x) + var(--hero-tx)) 22px;
+    display: block;
+    pointer-events: auto;
+  }
+  .amg.amg .amg-hero > * {
+    position: relative;
+    left: auto;
+    top: auto;
+    margin: 0;
+    max-width: var(--hero-safe);
+  }
+  .amg.amg .amg-hero > .amg-hero__plate {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    display: block;
+    max-width: none;
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(#000 calc(100% - 22px), transparent);
+    mask-image: linear-gradient(#000 calc(100% - 22px), transparent);
+  }
+  .amg-hero__plate img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: var(--hero-focus);
+  }
+  .amg.amg .amg-hero__kicker {
+    display: block;
+    font: 500 15px / 1 var(--text);
+    letter-spacing: 0.25em;
+  }
+  .amg.amg .amg-hero__title {
+    display: block;
+    margin-top: 9px;
+    margin-left: -2px;
+    font: 800 73px / 60px var(--cond);
+    letter-spacing: -0.005em;
+    white-space: normal;
+  }
+  .amg.amg .amg-hero__title > span {
+    display: block;
+    white-space: nowrap;
+  }
+  .amg.amg .amg-hero__accent {
+    display: inline-block;
+    margin-top: 12px;
+    font-size: 21px;
+  }
+  .amg.amg .amg-hero__accent--box {
+    padding: 6px 16px 7px;
+    font-size: 19px;
+  }
+  .amg.amg .amg-hero__sub {
+    display: block;
+    width: auto;
+    margin-top: var(--hero-gap);
+    font: 400 15.5px / 24px var(--text);
+    color: #1c1c1e;
+    white-space: normal;
+  }
+  .amg.amg.amg[data-screen] .amg-hero .amg-hero__sub .amg-line {
+    display: block;
+    font-size: inherit;
+    white-space: nowrap;
+  }
+
+  /* COMPACT band: working screens reflow the phone line breaks into the safe zone; the photo is cropped tighter, so a
+     light scrim keeps the text zone readable wherever the truck lands */
+  .amg.amg[data-hero='COMPACT'] .amg-hero::before,
+  .amg.amg--active .amg-env::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    max-width: none;
+    background: linear-gradient(90deg, rgba(248, 246, 242, 0.82) 0%, rgba(248, 246, 242, 0.62) 32%, rgba(248, 246, 242, 0) 58%);
+  }
+  .amg.amg--active .amg-env::after {
+    z-index: 1;
+  }
+  .amg.amg[data-hero='COMPACT'] .amg-hero__kicker {
+    font-size: 13px;
+    letter-spacing: 0.28em;
+  }
+  .amg.amg[data-hero='COMPACT'] .amg-hero__title {
+    margin-top: 9px;
+    font-size: 46px;
+    line-height: 42px;
+  }
+  .amg.amg[data-hero='COMPACT'] .amg-hero__title > span {
+    display: inline;
+    white-space: normal;
+  }
+  .amg.amg[data-hero='COMPACT'] .amg-hero__title > span + span::before {
+    content: ' ';
+  }
+  .amg.amg[data-hero='COMPACT'] .amg-hero__sub {
+    max-width: min(var(--hero-safe), 420px);
+    margin-top: 10px;
+    font-size: 14.5px;
+    line-height: 20px;
+  }
+  .amg.amg.amg[data-hero='COMPACT'][data-screen] .amg-hero .amg-hero__sub .amg-line {
+    display: inline;
+    white-space: normal;
+  }
+  .amg.amg.amg[data-hero='COMPACT'][data-screen] .amg-hero .amg-hero__sub .amg-line + .amg-line::before {
+    content: ' ';
+  }
+
+  /* ── content rhythm ── */
+  .amg.amg :is(.amg-root, .amg-existing, .amg-extract, .amg-received, .amg-activation, .amg-arrival, .amg-legacy, .amg-flow) {
+    gap: var(--section-gap);
+  }
+  .amg.amg .amg-main > .amg-cta,
+  .amg.amg .amg-main > .amg-msg {
+    margin-top: 18px;
+  }
+  /* tablet CTA: one moderate centred action (CTA rules) */
+  .amg.amg .amg-main > .amg-cta {
+    --u: 1px;
+    width: min(456px, 100%);
+    height: 58px;
+    margin-inline: auto;
+    border-radius: 10px;
+    font-size: 23px;
+  }
+  .amg.amg .amg-cta__arrow {
+    right: 27px;
+    width: 26px;
+    height: 26px;
+  }
+
+  /* ═════════ ROOT · LANDING (PATHS_3UP · BAND · SUPPORT_GRID) — tablet master ═════════ */
+  .amg.amg .amg-root {
+    --u: 1px;
+    display: grid;
+    grid-template-columns: minmax(0, 413fr) minmax(0, 376fr);
+    gap: 12px 11px;
+    padding: 0;
+  }
+  .amg.amg .amg-root > :is(.amg-paths, .amg-status) {
+    grid-column: 1 / -1;
+  }
+  .amg.amg .amg-root > .amg-duo {
+    display: contents;
+  }
+  .amg.amg .amg-root .amg-provpanel {
+    display: none;
+  }
+  /* path cards */
+  .amg.amg .amg-paths {
+    height: auto;
+    grid-template-columns: minmax(0, 265fr) minmax(0, 255fr) minmax(0, 264fr);
+    column-gap: var(--card-gap);
+    padding: 0;
+  }
+  .amg.amg .amg-path {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: 90px auto 1fr;
+    column-gap: 8px;
+    min-height: 232px;
+    padding: 16px 18px 19px 19px;
+    border-radius: 14px;
+  }
+  .amg.amg .amg-path > * {
+    position: relative;
+    left: auto;
+    right: auto;
+    top: auto;
+  }
+  .amg.amg .amg-path__thumb {
+    grid-column: 1 / -1;
+    width: 100%;
+    height: 90px;
+    border-radius: 8px;
+  }
+  .amg.amg .amg-path__disc {
+    position: absolute;
+    left: 24px;
+    top: 28px;
+    width: 68px;
+    height: 68px;
+  }
+  .amg.amg .amg-path__disc .amg-ico {
+    width: 40px;
+    height: 40px;
+  }
+  .amg.amg .amg-path__title {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 0.26em;
+    margin: 13px 0 0 2px;
+    font: 600 21.5px / 26px var(--cond);
+    letter-spacing: 0;
+  }
+  .amg.amg .amg-path__body {
+    width: auto;
+    margin: 5px 0 0 2px;
+    font: 400 12.4px / 15px var(--text);
+    color: #6a6a70;
+  }
+  .amg.amg.amg[data-screen] .amg-path__body {
+    font-size: 12.4px;
+  }
+  .amg.amg .amg-path__go {
+    grid-column: 2;
+    grid-row: 3;
+    align-self: end;
+    width: 42px;
+    height: 42px;
+    border-radius: 7px;
+  }
+  .amg.amg .amg-path__go .amg-ico {
+    width: 24px;
+    height: 24px;
+  }
+  /* process band */
+  .amg.amg .amg-status {
+    height: auto;
+    min-height: 181px;
+    padding: 12px 0 18px;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-content: start;
+    border-radius: 14px;
+  }
+  .amg.amg .amg-status > * {
+    position: relative;
+    left: auto;
+    right: auto;
+    top: auto;
+  }
+  .amg.amg .amg-status .amg-h2 {
+    grid-column: 1 / -1;
+    margin-left: 23px;
+    font-size: 22px;
+  }
+  .amg.amg .amg-status .amg-sub {
+    grid-column: 1 / -1;
+    margin: 7px 0 0 23px;
+    font-size: 15px;
+  }
+  .amg.amg .amg-status__all {
+    display: none;
+  }
+  .amg.amg .amg-status .amg-steps {
+    grid-column: 1 / -1;
+    --dot: 46;
+    margin-top: 13px;
+  }
+  .amg.amg .amg-status .amg-step__dot {
+    font-size: 20px;
+  }
+  .amg.amg .amg-status .amg-step__label {
+    margin-top: 6px;
+    font-size: 15.5px;
+  }
+  .amg.amg.amg[data-screen] .amg-status .amg-step__sub {
+    margin-top: 3px;
+    font-size: 11.4px;
+    white-space: nowrap;
+  }
+  /* support grid */
+  .amg.amg .amg-root :is(.amg-typespanel, .amg-secure, .amg-rnext) {
+    position: relative;
+    height: auto;
+    min-height: 151px;
+    margin: 0;
+    border-radius: 14px;
+  }
+  .amg.amg .amg-typespanel {
+    padding: 12px 21px 12px 23px;
+  }
+  .amg.amg .amg-typespanel > * {
+    position: relative;
+    left: auto;
+    right: auto;
+    top: auto;
+  }
+  .amg.amg .amg-typespanel .amg-h2 {
+    font-size: 21px;
+    letter-spacing: 0.03em;
+  }
+  .amg.amg .amg-typespanel .amg-sub {
+    margin-top: 6px;
+    font-size: 14.5px;
+  }
+  .amg.amg .amg-types {
+    height: auto;
+    margin-top: 12px;
+    padding: 0;
+    gap: 8px;
+    border: 0;
+    background: none;
+    grid-template-columns: repeat(var(--n, 4), minmax(0, 1fr));
+  }
+  .amg.amg .amg-types li {
+    height: 68px;
+    align-content: center;
+    gap: 6px;
+    border: 1px solid #e7e3dc;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.9);
+    font: 600 14px / 1 var(--cond);
+    letter-spacing: 0.04em;
+    color: var(--ink);
+  }
+  .amg.amg .amg-types .amg-ico {
+    width: 30px;
+    height: 30px;
+    margin: 0;
+  }
+  .amg.amg .amg-types li > span + span {
+    display: none;
+  }
+  .amg-filetype--t-png {
+    color: #2563eb;
+  }
+  .amg-filetype--t-webp {
+    color: #8b46e6;
+  }
+  .amg-filetype--t-jpg {
+    color: #1f8a46;
+  }
+  /* secure panel */
+  .amg.amg .amg-secure {
+    display: grid;
+    grid-template-columns: 88px minmax(0, 1fr);
+    column-gap: 16px;
+    align-content: center;
+    align-items: center;
+    padding: 16px 22px 16px 21px;
+    overflow: visible;
+    background: var(--glass);
+    border: 1px solid var(--glass-edge);
+  }
+  .amg.amg .amg-secure > * {
+    position: relative;
+    left: auto;
+    top: auto;
+  }
+  .amg.amg .amg-secure__img {
+    display: none;
+  }
+  .amg.amg .amg-secure__badge {
+    grid-row: 1 / span 2;
+    width: 88px;
+    height: 88px;
+    background: radial-gradient(circle at 40% 35%, #fbe2ad, #f5cd7f);
+  }
+  .amg.amg .amg-secure__badge .amg-ico {
+    width: 52px;
+    height: 52px;
+  }
+  .amg.amg .amg-secure__title {
+    align-self: end;
+    font: 600 21px / 1 var(--cond);
+    letter-spacing: 0.03em;
+  }
+  .amg.amg.amg[data-screen] .amg-secure__text {
+    align-self: start;
+    width: auto;
+    margin-top: 8px;
+    font: 400 14.5px / 21px var(--text);
+    color: #6a6a70;
+  }
+  .amg.amg .amg-secure__long {
+    display: none;
+  }
+  .amg.amg .amg-secure__short {
+    display: inline;
+  }
+  /* the landing CTA keeps a little air above the dock */
+  .amg.amg[data-screen='root'] .amg-main > .amg-cta {
+    margin-top: 18px;
+  }
+  .amg.amg[data-screen='root'] .amg-main {
+    padding-bottom: calc(var(--dock-h) + 22px);
+  }
+}
+
+/* ═════════ DESKTOP (≥ 1024px) ═════════ */
+@media (min-width: 1024px) {
+  .amg {
+    --u: 1px;
+    --gutter: 16px;
+    --section-gap: 11px;
+    --card-gap: 12px;
+    --grid-gap: 10px;
+    --head-px: 68px;
+    --dock-h: 0px;
+    --bottom-safe: 16px;
+    --hero-h: 278px;
+    --hero-pt: 32px;
+    --hero-tx: 20px;
+    --hero-safe: 44%;
+    --hero-focus: 62% 50%;
+  }
+  .amg--staff {
+    --nav-w: 138px;
+  }
+  .amg[data-hero='COMPACT'] {
+    --hero-h: 232px;
+    --hero-pt: 30px;
+    --hero-focus: 64% 60%;
+  }
+
+  /* ── header: AIO OFFICE / CLIENT MIGRATION context, search, notifications, profile ── */
+  .amg.amg .amg-head__in {
+    padding: 4px 47px 0 37px;
+  }
+  .amg.amg .amg-head__lockup {
+    height: 50px;
+  }
+  .amg.amg .amg-head__ctx {
+    height: 39px;
+    margin-left: clamp(24px, calc(100vw - 1372px), 68px);
+    padding-left: 27px;
+  }
+  .amg.amg .amg-head__ctx small {
+    display: block;
+  }
+  .amg.amg .amg-head__ctx b {
+    font: 500 15px / 1 var(--text);
+    letter-spacing: 0.08em;
+    color: #18181a;
+  }
+  .amg.amg .amg-head__in > .amg-head__field {
+    flex: 0 1 370px;
+    min-width: 160px;
+  }
+  .amg.amg .amg-head__field {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    height: 40px;
+    padding: 0 14px;
+    border: 1px solid #e2e0dc;
+    border-radius: 10px;
+    background: rgba(243, 242, 240, 0.9);
+    color: #2a2a2d;
+  }
+  .amg.amg .amg-head__field .amg-ico {
+    width: 20px;
+    height: 20px;
+  }
+  .amg.amg .amg-head__field input {
+    flex: 1;
+    min-width: 0;
+    height: 100%;
+    padding: 0;
+    border: 0;
+    background: none;
+    outline: none;
+    color: var(--ink);
+    font: 400 13.5px / 1 var(--text);
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+  }
+  .amg.amg .amg-head__field input::placeholder {
+    color: #8b8b90;
+  }
+  .amg.amg .amg-head__field:focus-within {
+    border-color: var(--gold-lo);
+    box-shadow: 0 0 0 3px rgba(241, 193, 88, 0.25);
+  }
+  .amg--staff.amg--staff .amg-head__search {
+    display: none;
+  }
+  .amg.amg .amg-head__bell {
+    margin-left: clamp(18px, calc(100vw - 1405px), 35px);
+  }
+  .amg.amg .amg-head__tool .amg-ico {
+    width: 24px;
+    height: 24px;
+  }
+  .amg.amg .amg-head__rule {
+    display: block;
+    width: 1px;
+    height: 35px;
+    margin-left: 30px;
+    background: rgba(17, 17, 18, 0.12);
+  }
+  .amg.amg .amg-head__avatar {
+    width: 54px;
+    height: 54px;
+    margin-left: 20px;
+  }
+  .amg.amg .amg-head__who {
+    width: 100px;
+    margin-left: 14px;
+  }
+  .amg.amg .amg-head__who b {
+    font: 500 16px / 1.1 var(--text);
+    letter-spacing: 0.08em;
+  }
+  .amg.amg .amg-head__who span {
+    font: 500 12px / 1.1 var(--text);
+    letter-spacing: 0.16em;
+  }
+  .amg.amg .amg-head__chev {
+    width: 15px;
+    height: 15px;
+    margin-left: 7px;
+  }
+
+  /* ── staff navigation: persistent left sidebar, no bottom dock ── */
+  .amg.amg.amg .amg-dock {
+    display: none;
+  }
+  .amg--staff .amg-side {
+    position: fixed;
+    top: var(--head-px);
+    left: 0;
+    bottom: 0;
+    z-index: 25;
+    width: var(--nav-w);
+    display: flex;
+    flex-direction: column;
+    gap: 5.5px;
+    padding-top: 23px;
+    background: rgba(250, 249, 247, 0.97);
+    border-top-right-radius: 16px;
+    box-shadow: 1px 0 0 rgba(17, 17, 18, 0.05), 8px 0 22px rgba(70, 48, 18, 0.05);
+  }
+  .amg-side__item {
+    display: flex;
+    align-items: center;
+    gap: 17px;
+    height: 60px;
+    margin-right: 3px;
+    padding-left: 23px;
+    border-radius: 0 6px 6px 0;
+    color: #1b1b1d;
+    font: 500 13.5px / 1 var(--text);
+    letter-spacing: 0.06em;
+  }
+  .amg-side__item .amg-ico {
+    width: 23px;
+    height: 23px;
+    flex: none;
+  }
+  .amg-side__item:hover {
+    background: rgba(17, 17, 18, 0.04);
+  }
+  .amg-side__item.is-on {
+    background: #19191b;
+    color: #edb63f;
+    box-shadow: inset 5px 0 0 #f1b440, 0 4px 10px rgba(20, 16, 10, 0.16);
+  }
+  .amg-side__item:focus-visible {
+    outline: 2px solid var(--gold-lo);
+    outline-offset: -2px;
+  }
+
+  /* ── hero band (desktop master: text safe zone left, truck right) ── */
+  .amg.amg .amg-hero__kicker {
+    font-size: 15px;
+    letter-spacing: 0.22em;
+  }
+  .amg.amg .amg-hero__title {
+    margin-top: 10px;
+    font-size: 72px;
+    line-height: 59px;
+  }
+  .amg.amg .amg-hero__sub {
+    margin-top: 5px;
+    font-size: 18px;
+    line-height: 22.5px;
+  }
+  .amg.amg .amg-hero {
+    padding-bottom: 20px;
+  }
+  .amg.amg[data-hero='COMPACT'] .amg-hero__title {
+    font-size: 52px;
+    line-height: 47px;
+  }
+  .amg.amg[data-hero='COMPACT'] .amg-hero__sub {
+    max-width: min(var(--hero-safe), 470px);
+    font-size: 15px;
+    line-height: 21px;
+  }
+
+  /* ── CTA: workspace-wide primary action on the landing; side-column action elsewhere ── */
+  .amg.amg .amg-main > .amg-cta {
+    width: 100%;
+    height: 47px;
+    margin-top: 10px;
+    font-size: 22px;
+  }
+
+  /* ═════════ ROOT · desktop master ═════════ */
+  .amg.amg .amg-root {
+    grid-template-columns: minmax(0, 446fr) minmax(0, 380fr) minmax(0, 419fr);
+    gap: 11px 10px;
+    margin-top: 11px;
+  }
+  .amg.amg .amg-paths {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .amg.amg .amg-path {
+    grid-template-rows: 90px auto auto 1fr;
+    min-height: 188px;
+    padding: 10px 21px 12px 12px;
+  }
+  .amg.amg .amg-path__disc {
+    left: 21px;
+    top: 18px;
+  }
+  .amg.amg .amg-path__title {
+    grid-column: 1;
+    margin: 9px 0 0 13px;
+    font-size: 24px;
+    line-height: 24px;
+    letter-spacing: 0.04em;
+  }
+  .amg.amg .amg-path__body {
+    grid-row: 3;
+    margin: 4px 0 0 13px;
+    font-size: 13px;
+    line-height: 17.5px;
+  }
+  .amg.amg.amg[data-screen] .amg-path__body {
+    font-size: 13px;
+  }
+  .amg.amg .amg-path__go {
+    grid-row: 2 / span 2;
+    align-self: center;
+    width: 56px;
+    height: 46px;
+    margin-top: 10px;
+  }
+  .amg.amg .amg-path__go .amg-ico {
+    width: 28px;
+    height: 28px;
+  }
+  .amg.amg .amg-status {
+    min-height: 122px;
+    padding: 10px 32px 12px;
+    column-gap: 20px;
+    align-items: baseline;
+  }
+  .amg.amg .amg-status .amg-h2 {
+    grid-column: 1;
+    margin-left: -14px;
+  }
+  .amg.amg .amg-status .amg-sub {
+    grid-column: 2;
+    margin: 0;
+  }
+  .amg.amg .amg-status .amg-steps {
+    --dot: 34;
+    margin-top: 6px;
+  }
+  .amg.amg .amg-status .amg-step__dot {
+    font-size: 17px;
+  }
+  .amg.amg .amg-status .amg-step__label {
+    margin-top: 5px;
+    font-size: 14px;
+    letter-spacing: 0.07em;
+  }
+  .amg.amg.amg[data-screen] .amg-status .amg-step__sub {
+    margin-top: 3px;
+    font-size: 13px;
+  }
+  .amg.amg .amg-root :is(.amg-typespanel, .amg-secure, .amg-rnext) {
+    min-height: 134px;
+  }
+  .amg.amg .amg-typespanel {
+    padding: 10px 18px 6px 18px;
+  }
+  .amg.amg .amg-typespanel .amg-sub {
+    margin-top: 4px;
+  }
+  .amg.amg .amg-types {
+    margin: 5px 0 0 -9px;
+    gap: 0;
+  }
+  .amg.amg .amg-types li {
+    height: auto;
+    gap: 2px;
+    border: 0;
+    background: none;
+  }
+  .amg.amg .amg-types .amg-ico {
+    margin-bottom: 4px;
+  }
+  .amg.amg .amg-types li > span + span {
+    display: block;
+    font: 400 13px / 1 var(--text);
+    letter-spacing: 0;
+    color: #6a6a70;
+  }
+  .amg.amg .amg-secure {
+    grid-template-columns: 79px minmax(0, 1fr);
+    column-gap: 19px;
+    align-content: start;
+    padding: 13px 20px 10px 18px;
+  }
+  .amg.amg .amg-secure__badge {
+    grid-row: 1 / span 2;
+    align-self: start;
+    width: 79px;
+    height: 79px;
+    margin-top: 5px;
+  }
+  .amg.amg .amg-secure__badge .amg-ico {
+    width: 46px;
+    height: 46px;
+  }
+  .amg.amg .amg-secure__title,
+  .amg.amg .amg-rnext__title {
+    align-self: start;
+    font: 600 19px / 1 var(--cond);
+    letter-spacing: 0.05em;
+  }
+  .amg.amg.amg[data-screen] .amg-secure__text,
+  .amg.amg .amg-rnext__text {
+    margin-top: 5px;
+    font: 400 11.6px / 15px var(--text);
+    color: #6a6a70;
+  }
+  .amg.amg .amg-secure__long {
+    display: inline;
+  }
+  .amg.amg .amg-secure__short {
+    display: none;
+  }
+  .amg.amg .amg-rnext {
+    display: grid;
+    grid-template-columns: 78px minmax(0, 1fr);
+    grid-template-rows: auto 1fr;
+    column-gap: 25px;
+    padding: 13px 22px 10px 17px;
+  }
+  .amg-rnext__disc {
+    grid-row: 1 / span 2;
+    display: grid;
+    place-items: center;
+    width: 78px;
+    height: 78px;
+    margin-top: 7px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 40% 35%, #f6f5f3, #e9e7e3);
+    color: var(--ink);
+  }
+  .amg-rnext__disc .amg-ico {
+    width: 44px;
+    height: 44px;
+  }
+  .amg-rnext__text strong {
+    font-weight: 700;
+    color: var(--ink);
+  }
+  .amg.amg[data-screen='root'] .amg-main {
+    padding-bottom: 16px;
+  }
+  .amg.amg[data-screen='root'] .amg-main > .amg-cta {
+    margin-top: 10px;
+  }
+}
+
+/* ═════════ PAGE GRAMMAR · descendants (declared on .amg, composed here) ═════════ */
+@media (min-width: 700px) {
+  /* TABLE_MODE TABLE: a true table from tablet up (the phone keeps its stacked rows) */
+  .amg.amg[data-table='TABLE'] .amg-bq__rows {
+    display: none;
+  }
+  .amg.amg .amg-qtable {
+    display: table;
+    width: 100%;
+    margin-top: 14px;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-family: var(--text);
+  }
+  .amg-qtable th {
+    padding: 0 14px 10px;
+    border-bottom: 1px solid #e4e0d9;
+    text-align: left;
+    font: 600 12.5px / 1 var(--cond);
+    letter-spacing: 0.08em;
+    color: var(--ink-3);
+    white-space: nowrap;
+  }
+  .amg-qtable td {
+    padding: 10px 14px;
+    border-bottom: 1px solid #ece9e4;
+    vertical-align: middle;
+    font: 400 14px / 1.2 var(--text);
+    color: var(--ink-2);
+  }
+  .amg-qtable tbody tr:hover td {
+    background: rgba(241, 193, 88, 0.07);
+  }
+  .amg-qtable th:last-child,
+  .amg-qtable td:last-child {
+    width: 40px;
+    padding-inline: 0 12px;
+    text-align: right;
+  }
+  .amg-qtable__client {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    width: 100%;
+    padding: 0;
+    border: 0;
+    background: none;
+    text-align: left;
+    font: 600 17px / 1.2 var(--cond);
+    letter-spacing: 0.02em;
+    color: var(--ink);
+  }
+  .amg-qtable__client:focus-visible {
+    outline: 2px solid var(--gold-lo);
+    outline-offset: 4px;
+    border-radius: 6px;
+  }
+  .amg-qtable__chev {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    color: #8f8f95;
+  }
+
+  /* a flow without side items (PRIMARY_GRID_MODE SINGLE) keeps a centred measure */
+  .amg.amg .amg-flow:not(.amg-flow--split) {
+    margin-inline: auto;
+  }
+}
+
+/* TABLET only: support panels pair up (2-column support), the action stays one moderate centred button */
+@media (min-width: 700px) and (max-width: 1023px) {
+  .amg.amg .amg-flow__side {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--grid-gap);
+    align-items: stretch;
+  }
+  .amg.amg .amg-flow__side > * {
+    grid-column: 1 / -1;
+    margin: 0;
+  }
+  .amg.amg .amg-flow__side:has(> :is(.amg-next, .amg-note) ~ :is(.amg-next, .amg-note)) > :is(.amg-next, .amg-note) {
+    grid-column: auto;
+  }
+  .amg.amg .amg-flow__side > .amg-cta {
+    justify-self: center;
+    width: min(456px, 100%);
+  }
+}
+
+@media (min-width: 1024px) {
+  /* The grid mode is decided by the room the work column gets, not by the viewport alone: module internals are drawn in
+     phone authority units (853u) and need a main column of ~820px before a side column may sit beside it. */
+  .amg.amg .amg-main {
+    container: amg-main / inline-size;
+  }
+  /* narrower desktop workspace: one column, support panels paired under the work */
+  .amg.amg .amg-flow.amg-flow--split {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .amg.amg .amg-flow--split .amg-flow__side {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: stretch;
+  }
+  .amg.amg .amg-flow--split .amg-flow__side > * {
+    grid-column: 1 / -1;
+  }
+  .amg.amg .amg-flow--split .amg-flow__side:has(> :is(.amg-next, .amg-note) ~ :is(.amg-next, .amg-note)) > :is(.amg-next, .amg-note) {
+    grid-column: auto;
+  }
+  .amg.amg .amg-flow--split .amg-flow__side > .amg-cta {
+    justify-self: center;
+    width: min(456px, 100%);
+  }
+}
+
+/* SINGLE: one column with a readable measure, centred in the workspace (flows and the extract representative) */
+@media (min-width: 1024px) {
+  .amg.amg[data-grid='SINGLE'] :is(.amg-flow, .amg-extract) {
+    width: 100%;
+    max-width: 1000px;
+    margin-inline: auto;
+  }
+}
+
+/* MAIN_SIDE: work column + sticky 340px side column (what happens next, notes, the action) */
+@container amg-main (min-width: 1184px) {
+  .amg.amg .amg-flow.amg-flow--split {
+    grid-template-columns: minmax(0, 1fr) 340px;
+  }
+  .amg.amg .amg-flow--split .amg-flow__side {
+    position: sticky;
+    top: calc(var(--head-px) + 16px);
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .amg.amg .amg-flow--split .amg-flow__side > *,
+  .amg.amg .amg-flow--split .amg-flow__side:has(> :is(.amg-next, .amg-note) ~ :is(.amg-next, .amg-note)) > :is(.amg-next, .amg-note) {
+    grid-column: 1;
+  }
+  .amg.amg .amg-flow--split .amg-flow__side > .amg-cta {
+    width: 100%;
+  }
+  /* CANVAS_PANEL (founder review): the review canvas takes the room, the context / actions panel stays beside it */
+  .amg.amg[data-grid='CANVAS_PANEL'] .amg-flow.amg-flow--split {
+    grid-template-columns: minmax(0, 1fr) 320px;
+  }
+}
+

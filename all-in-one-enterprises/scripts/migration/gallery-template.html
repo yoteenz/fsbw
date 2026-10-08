@@ -296,7 +296,7 @@ body.no-auth[data-view='phone'] .pane--live { width: min(300px, 100%); }
     </div>
   </div>
   <div id="sections"></div>
-  <p class="foot">Static copies of the live screens, captured from fsbw __SHA__ with demo data (Heartland Freight Co., a new client file for River Bend Logistics LLC, four batch clients). Buttons and links are inactive. The authority images are phone frames; tablet and desktop layouts are derived from them. Each screen scrolls inside its frame.</p>
+  <p class="foot">Static copies of the live screens, captured from fsbw __SHA__ with demo data (Heartland Freight Co., a new client file for River Bend Logistics LLC, four batch clients). Buttons and links are inactive. The authority images are phone frames; tablet and desktop follow the founder-approved root masters through the family responsive blueprint (AIO_CLIENT_MIGRATION_RESPONSIVE_BLUEPRINT). Each screen scrolls inside its frame.</p>
 </div>
 
 <script id="gallery-data" type="application/json">/*__DATA__*/null</script>
@@ -309,7 +309,7 @@ body.no-auth[data-view='phone'] .pane--live { width: min(300px, 100%); }
     { id: 'new', title: 'New client', note: 'Staff intake · a business that is not an AIO client yet' },
     { id: 'batch', title: 'Bulk batch', note: 'Staff intake · many client files at once, each reviewed separately' },
   ];
-  const VIEWS = { phone: [427, 768], tablet: [820, 1180], desktop: [1440, 900] };
+  const VIEWS = { phone: [427, 768], tablet: [834, 1194], desktop: [1440, 900] };
   const store = {
     get(k) { try { return localStorage.getItem(k); } catch { return null; } },
     set(k, v) { try { localStorage.setItem(k, v); } catch {} },
@@ -320,7 +320,7 @@ body.no-auth[data-view='phone'] .pane--live { width: min(300px, 100%); }
   let branch = BRANCHES.some((b) => b.id === hashBranch) ? hashBranch : 'all';
 
   const docFor = (s) => {
-    const html = s.html.replace(/src="(\/migration\/[^"]+)"/g, (m, p) => `src="${data.assets[p] || p}"`);
+    const html = s.html.replace(/(src|srcset)="(\/migration\/[^"]+)"/g, (m, attr, p) => `${attr}="${data.assets[p] || p}"`);
     return `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>${data.css}</style></head><body>${data.sprite}${html}</body></html>`;
   };
 

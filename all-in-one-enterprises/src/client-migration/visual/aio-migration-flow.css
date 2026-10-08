@@ -3757,9 +3757,9 @@ button.amg-stat {
 }
 
 /* ═════════ TABLET + DESKTOP (≥ 700px) for the propagated screens ═════════
- * Same derivation as the representatives (aio-migration.css): header bar, photo band with the headline, a desktop type
- * scale, cards stretched to the column. ≥ 1120px: step card on top, cards in a main column, closing items (what happens
- * next, notes, the action) in a side column. */
+ * Cards stretch to the column. ≥ 1024px (DESKTOP): step card on top, cards in a main column, closing items (what happens
+ * next, notes, the action) in a side column once the workspace is wide enough (container query in
+ * aio-migration-responsive.css); the shell, hero band and grid modes are the blueprint's (aio-migration-responsive.css). */
 @media (min-width: 700px) {
   .amg.amg .amg-flow {
     padding: 0;
@@ -3801,9 +3801,8 @@ button.amg-stat {
   }
 }
 
-@media (min-width: 1120px) {
+@media (min-width: 1024px) {
   .amg.amg .amg-flow.amg-flow--split {
-    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
     align-items: start;
     column-gap: 24px;
   }
@@ -3817,10 +3816,6 @@ button.amg-stat {
   }
   .amg.amg .amg-flow__top {
     grid-column: 1 / -1;
-  }
-  .amg.amg .amg-flow--split .amg-flow__side {
-    position: sticky;
-    top: 96px;
   }
   /* side "what happens next": icon above the text, as on the representatives */
   .amg.amg .amg-flow__side > .amg-next {

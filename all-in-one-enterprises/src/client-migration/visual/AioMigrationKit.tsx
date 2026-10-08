@@ -3,14 +3,16 @@
  * L0 environment (photographic plate is the page) · L1 frosted shell · L2 hero lockup · L3 panels · L4 actions · L5 staff dock.
  * Geometry is authored in authority units: 1u = 1px of the 853×1536 authority frame (see aio-migration.css).
  */
-import { createContext, useContext, type CSSProperties, type ReactNode } from 'react';
-import { Link } from 'react-router-dom';
+import { createContext, useContext, useState, type CSSProperties, type FormEvent, type ReactNode } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { aioPaths } from '../../utils/paths';
 import { AIO_SHEET_URL, type AioSheetIcon } from './aioIconSheet';
 import type { MigrationViewer } from './migrationViewer';
 import { initialsOf } from './migrationViewer';
+import { migrationPage, migrationPageAttributes } from './migrationResponsive';
 import './aio-migration.css';
 import './aio-migration-flow.css';
+import './aio-migration-responsive.css';
 
 export type MigrationFamily = 'root' | 'existing' | 'active';
 export type MigrationActor = 'staff' | 'client';
@@ -23,6 +25,7 @@ const LOCKUP: Record<MigrationFamily, string> = {
 };
 
 const FamilyContext = createContext<MigrationFamily>('root');
+const ActorContext = createContext<MigrationActor>('staff');
 
 const PLATE: Record<MigrationFamily, string> = {
   root: '/migration/env-root.jpg',
@@ -41,24 +44,87 @@ export function AioMigrationEnvironment({
   screen: string;
   children: ReactNode;
 }) {
+  const page = migrationPage(screen, actor === 'client' ? 'CLIENT' : 'STAFF');
   return (
     <FamilyContext.Provider value={family}>
-      <div className={`amg amg--${family} amg--${actor}`} data-screen={screen}>
-        <div className="amg-env" aria-hidden="true">
-          <img className="amg-env__plate" src={PLATE[family]} alt="" decoding="async" fetchPriority="high" />
+      <ActorContext.Provider value={actor}>
+        <div className={`amg amg--${family} amg--${actor}`} data-screen={screen} {...migrationPageAttributes(page)}>
+          <div className="amg-env" aria-hidden="true">
+            <img className="amg-env__plate" src={PLATE[family]} alt="" decoding="async" fetchPriority="high" />
+          </div>
+          {children}
         </div>
-        {children}
-      </div>
+      </ActorContext.Provider>
     </FamilyContext.Provider>
+  );
+}
+
+/**
+ * The migration shell for one screen: environment, header, staff navigation (desktop sidebar + phone/tablet dock) and the
+ * main column. The screen's responsive declaration (migrationResponsive.ts) is applied by the environment; client screens
+ * never receive staff navigation.
+ */
+export function MigrationShell({
+  family,
+  actor,
+  screen,
+  viewer,
+  tools = true,
+  children,
+}: {
+  family: MigrationFamily;
+  actor: MigrationActor;
+  screen: string;
+  viewer: MigrationViewer;
+  tools?: boolean;
+  children: ReactNode;
+}) {
+  return (
+    <AioMigrationEnvironment family={family} actor={actor} screen={screen}>
+      <AioMigrationHeader viewer={viewer} tools={tools} />
+      {actor === 'staff' ? <AioDesktopSidebar /> : null}
+      <main className="amg-main amg-col">{children}</main>
+      {actor === 'staff' ? <AioStaffDock /> : null}
+    </AioMigrationEnvironment>
+  );
+}
+
+/** Workspace context shown beside the lockup from tablet up (AIO OFFICE for staff, CLIENT OFFICE for clients). */
+const CONTEXT: Record<MigrationActor, [string, string]> = {
+  staff: ['AIO OFFICE', 'CLIENT MIGRATION'],
+  client: ['CLIENT OFFICE', 'CLIENT ACTIVATION'],
+};
+
+/** Desktop staff search: opens the existing-client finder filtered by the query (clients are what intake searches). */
+function HeaderSearch() {
+  const navigate = useNavigate();
+  const [q, setQ] = useState('');
+  function onSubmit(event: FormEvent) {
+    event.preventDefault();
+    const term = q.trim();
+    navigate(`${aioPaths.officeMigration('existing')}${term ? `?q=${encodeURIComponent(term)}` : ''}`);
+  }
+  return (
+    <form className="amg-head__field" role="search" onSubmit={onSubmit}>
+      <Ico name="search" />
+      <input type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search clients, migrations, or help…" aria-label="Search clients" />
+    </form>
   );
 }
 
 export function AioMigrationHeader({ viewer, tools = true }: { viewer: MigrationViewer; tools?: boolean }) {
   const family = useContext(FamilyContext);
+  const actor = useContext(ActorContext);
+  const [office, area] = CONTEXT[actor];
   return (
     <header className="amg-head">
       <div className="amg-col amg-head__in">
         <img className="amg-head__lockup" src={LOCKUP[family]} alt="All In One Enterprises Inc." />
+        <span className="amg-head__ctx">
+          <small>{office}</small>
+          <b>{area}</b>
+        </span>
+        {tools && actor === 'staff' ? <HeaderSearch /> : null}
         {tools ? (
           <>
             <button type="button" className="amg-head__tool amg-head__search" aria-label="Search">
@@ -70,6 +136,7 @@ export function AioMigrationHeader({ viewer, tools = true }: { viewer: Migration
             </button>
           </>
         ) : null}
+        <span className="amg-head__rule" aria-hidden="true" />
         <span className="amg-head__avatar" aria-hidden="true">
           <span>{viewer.initials}</span>
         </span>
@@ -105,8 +172,10 @@ export function AioMigrationHero({
   /** Per-screen authority metrics as custom properties (see heroMetrics in migrationHero.ts). */
   style?: CSSProperties;
 }) {
+  const family = useContext(FamilyContext);
   return (
     <section className="amg-hero" style={style}>
+      {family !== 'active' ? <HeroPlate /> : null}
       {kicker ? <p className="amg-hero__kicker">{kicker}</p> : null}
       <h1 className="amg-hero__title">
         {title.map((line, i) => (
@@ -118,6 +187,20 @@ export function AioMigrationHero({
       {accent ? <p className={accentBox ? 'amg-hero__accent amg-hero__accent--box' : 'amg-hero__accent'}>{accent}</p> : null}
       {subtitle ? <p className="amg-hero__sub">{subtitle}</p> : null}
     </section>
+  );
+}
+
+/**
+ * Tablet / desktop hero band plate (art-directed per viewport from the approved masters). Mobile keeps the family plate
+ * in .amg-env, so the picture renders nothing below the tablet breakpoint (hidden by CSS, not downloaded: no mobile source).
+ */
+function HeroPlate() {
+  return (
+    <picture className="amg-hero__plate" aria-hidden="true">
+      <source media="(min-width: 1024px)" srcSet="/migration/env-wide-desktop.jpg" />
+      <source media="(min-width: 700px)" srcSet="/migration/env-wide-tablet.jpg" />
+      <img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" alt="" decoding="async" />
+    </picture>
   );
 }
 
@@ -135,15 +218,32 @@ export function AioMigrationCTA({ label, onClick, disabled, className = '', lead
   );
 }
 
-/** Staff / founder intake dock. Never rendered on client activation screens. */
+/** Staff navigation (one list, two presentations: phone/tablet dock and desktop sidebar). Never on client screens. */
+const STAFF_NAV: Array<{ to: string; label: string; icon: IcoName; on?: boolean }> = [
+  { to: aioPaths.office, label: 'HOME', icon: 'home' },
+  { to: aioPaths.officeMigration(), label: 'INTAKE', icon: 'intake', on: true },
+  { to: aioPaths.officeDocuments, label: 'FILING', icon: 'filing' },
+  { to: aioPaths.officeArchiveMigration, label: 'REPORTS', icon: 'reports' },
+  { to: aioPaths.office, label: 'MORE', icon: 'more' },
+];
+
+/** Desktop staff sidebar (≥ 1024px). The dock is not rendered on desktop. */
+export function AioDesktopSidebar() {
+  return (
+    <nav className="amg-side" aria-label="AIO office">
+      {STAFF_NAV.map((item) => (
+        <Link key={item.label} to={item.to} className={item.on ? 'amg-side__item is-on' : 'amg-side__item'} aria-current={item.on ? 'page' : undefined}>
+          <Ico name={item.icon} />
+          <span>{item.label}</span>
+        </Link>
+      ))}
+    </nav>
+  );
+}
+
+/** Staff / founder intake dock (phone + tablet). Never rendered on client activation screens. */
 export function AioStaffDock() {
-  const items: Array<{ to: string; label: string; icon: IcoName; on?: boolean }> = [
-    { to: aioPaths.office, label: 'HOME', icon: 'home' },
-    { to: aioPaths.officeMigration(), label: 'INTAKE', icon: 'intake', on: true },
-    { to: aioPaths.officeDocuments, label: 'FILING', icon: 'filing' },
-    { to: aioPaths.officeArchiveMigration, label: 'REPORTS', icon: 'reports' },
-    { to: aioPaths.office, label: 'MORE', icon: 'more' },
-  ];
+  const items = STAFF_NAV;
   return (
     <nav className="amg-dock" aria-label="Staff intake">
       <div className="amg-col amg-dock__in">
