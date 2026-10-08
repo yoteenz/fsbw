@@ -55680,3 +55680,15 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
   - The Composer integration plan is a DRAFT until the founder approves.
   - The 12 privacy gaps were rechecked here at c74cf37c and are still OPEN. Nothing was patched; the separate handoff is `11_SECURITY_REPAIR_HANDOFF.md`.
 - **Review:** https://claude.ai/artifact/VQCyD4A4YmeErb27ik2hgG.
+
+---
+
+## 2026-10-08 — P0 Studio OS World Fabrication Engine V1 foundation
+
+- **Context:** Sprint `P0.STUDIOOS.WORLD-FABRICATION-ENGINE.V1-PRODUCTION-CONTRACT-AND-PIPELINE-FOUNDATION1` — World Fabrication Engine as Studio OS production capability for SITE 00 BLDR→WORLD; contracts only (no paid Artlist, no navigable world built, no workspace UI redesign).
+
+- **Shipped:** `src/studio-os-core/world-fabrication-engine/` (stages 00–14, founder approval gates, cost control + production-governance bridge, asset lineage, massing provider contract, Codex/Blender/Unreal/web handoffs, job manifest service, SITE 00 Build Object example manifest, 14 vitest tests). Docs: `docs/studio-os/world-fabrication-engine/` (discovery report + 7 contract docs + README). Astréa Test 01 spec: `WORLD_FABRICATION_ASTRA_TEST01.md`.
+
+- **Reuse:** production-governance, governed-generation patterns, studio-asset-registry/compiler canon, SITE 00 + `astra-context/` — **0** new Supabase tables.
+
+- **Branch:** `cursor/studioos-world-fabrication-engine-v1-foundation1-21dc` from `origin/master` @ `cdd43dfbf`. Not merged/deployed.
