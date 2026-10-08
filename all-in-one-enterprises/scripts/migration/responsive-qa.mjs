@@ -198,7 +198,7 @@ const probe = () => {
   const flow = document.querySelector('.amg-flow');
   const fMain = document.querySelector('.amg-flow__main');
   const fSide = document.querySelector('.amg-flow__side');
-  const ctas = [...document.querySelectorAll('.amg-cta')].filter(vis);
+  const ctas = [...document.querySelectorAll('.amg-cta:not(.amg-cta--back)')].filter(vis); // BACK sits under the action (founder 2026-10-08)
   const interactive = [...document.querySelectorAll('.amg-main button, .amg-main a, .amg-main input, .amg-main [role=radio]')].filter(vis);
   const content = [...(main?.children ?? [])].filter((c) => vis(c) && !c.classList.contains('amg-hero') && !c.classList.contains('amg-file-input'));
   const contentL = content.length ? Math.min(...content.map((c) => c.getBoundingClientRect().left)) : 0;

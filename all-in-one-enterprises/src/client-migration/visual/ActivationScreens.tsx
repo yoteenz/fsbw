@@ -3,7 +3,7 @@ import type { Client, OrganizationMember } from '../../demo/demoTypes';
 import type { BusinessProfile } from '../../road-ready/roadReadyTypes';
 import { aioPaths } from '../../utils/paths';
 import type { ReviewSectionResponse } from '../types';
-import { AioMigrationCTA, AioMigrationPanel, AioMonogram, AioStatusPill, AioWhatNext, Ico, type IcoName } from './AioMigrationKit';
+import { AioMigrationBack, AioMigrationCTA, AioMigrationPanel, AioMonogram, AioStatusPill, AioWhatNext, Ico, type IcoName } from './AioMigrationKit';
 import { MigrationSelectSteps } from './MigrationExistingScreens';
 
 const CHOICES: Array<{ response: ReviewSectionResponse; label: string; icon: IcoName; tone: 'green' | 'amber' | 'gray' }> = [
@@ -120,6 +120,7 @@ export function ActivationCompanyScreen({
         Once you confirm the company information, we’ll keep your existing records and move to the next step to activate your account.
       </AioWhatNext>
       <AioMigrationCTA label="CONTINUE" onClick={onContinue} />
+      <AioMigrationBack />
     </div>
   );
 }

@@ -48,10 +48,10 @@
     }
   },
   "ctaRules": {
-    "primary": "One gold primary action per screen. Never several equal gold buttons side by side (path-card arrows are navigation affordances, not page actions).",
+    "primary": "One gold primary action per screen. Never several equal gold buttons side by side (path-card arrows are navigation affordances, not page actions). BACK (founder 2026-10-08) is the one exception: a gold button of the same size stacked directly under the primary action, never beside it.",
     "MOBILE": "authority geometry (full-width bar at the authority position)",
     "TABLET": "page action: as wide as the panels above it (full content width), 58px tall; inside a card: full card width (founder note 2026-10-08; was centred min(456px, 100%))",
-    "DESKTOP": "LANDING: workspace-wide bar 47px tall · MAIN_SIDE / CANVAS_PANEL: full width of the sticky side column, under any panel set beside the work (AioAside: BULK BATCH puts CLIENT DETECTION there, stacked portrait) · one column (narrow workspace): as wide as the panels above it"
+    "DESKTOP": "LANDING: workspace-wide bar 47px tall · MAIN_SIDE / CANVAS_PANEL: full width of the sticky side column, under any panel set beside the work (AioAside: BULK BATCH puts CLIENT DETECTION there, stacked portrait) · one column (narrow workspace): as wide as the panels above it · never under a side column: a main + side representative (EXISTING CLIENT FILE, FILES RECEIVED) keeps the action to the work column, a SINGLE screen to its 1000px measure (founder note 2026-10-08)"
   },
   "color": {
     "gold": "#f1c158 → #e7ab3c gradient (CTA, current step, active nav accent)",

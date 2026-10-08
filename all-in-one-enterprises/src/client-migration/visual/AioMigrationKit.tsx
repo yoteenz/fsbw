@@ -26,6 +26,8 @@ const LOCKUP: Record<MigrationFamily, string> = {
 
 const FamilyContext = createContext<MigrationFamily>('root');
 const ActorContext = createContext<MigrationActor>('staff');
+/** The step before this screen (MigrationShell onBack); AioMigrationBack draws it under the page action. */
+const BackContext = createContext<(() => void) | undefined>(undefined);
 
 const PLATE: Record<MigrationFamily, string> = {
   root: '/migration/env-root.jpg',
@@ -78,16 +80,18 @@ export function MigrationShell({
   screen: string;
   viewer: MigrationViewer;
   tools?: boolean;
-  /** The step before this one; omitted where there is nothing to go back to (intake root, first and last client steps). */
+  /** The step before this one, drawn as BACK under the page action; omitted where there is nothing to go back to. */
   onBack?: () => void;
   children: ReactNode;
 }) {
   return (
     <AioMigrationEnvironment family={family} actor={actor} screen={screen}>
-      <AioMigrationHeader viewer={viewer} tools={tools} onBack={onBack} />
-      {actor === 'staff' ? <AioDesktopSidebar /> : null}
-      <main className="amg-main amg-col">{children}</main>
-      {actor === 'staff' ? <AioStaffDock /> : null}
+      <BackContext.Provider value={onBack}>
+        <AioMigrationHeader viewer={viewer} tools={tools} />
+        {actor === 'staff' ? <AioDesktopSidebar /> : null}
+        <main className="amg-main amg-col">{children}</main>
+        {actor === 'staff' ? <AioStaffDock /> : null}
+      </BackContext.Provider>
     </AioMigrationEnvironment>
   );
 }
@@ -115,19 +119,13 @@ function HeaderSearch() {
   );
 }
 
-export function AioMigrationHeader({ viewer, tools = true, onBack }: { viewer: MigrationViewer; tools?: boolean; onBack?: () => void }) {
+export function AioMigrationHeader({ viewer, tools = true }: { viewer: MigrationViewer; tools?: boolean }) {
   const family = useContext(FamilyContext);
   const actor = useContext(ActorContext);
   const [office, area] = CONTEXT[actor];
   return (
-    <header className={onBack ? 'amg-head amg-head--back' : 'amg-head'}>
+    <header className="amg-head">
       <div className="amg-col amg-head__in">
-        {/* BACK is not drawn in the authority set: added at the founder's request (2026-10-08), left of the lockup */}
-        {onBack ? (
-          <button type="button" className="amg-head__back" onClick={onBack} aria-label="Back to the previous step">
-            <Ico name="back" />
-          </button>
-        ) : null}
         <img className="amg-head__lockup" src={LOCKUP[family]} alt="All In One Enterprises Inc." />
         <span className="amg-head__ctx">
           <small>{office}</small>
@@ -223,6 +221,21 @@ export function AioMigrationCTA({ label, onClick, disabled, className = '', lead
       {lead}
       <span>{label}</span>
       <Ico name="arrow" className="amg-cta__arrow" />
+    </button>
+  );
+}
+
+/**
+ * BACK to the step before (founder request 2026-10-08; not drawn in the authority set): a gold button of the same size
+ * directly under the page action, so it is where the thumb already is. Nothing where there is no step before.
+ */
+export function AioMigrationBack() {
+  const onBack = useContext(BackContext);
+  if (!onBack) return null;
+  return (
+    <button type="button" className="amg-cta amg-cta--back" onClick={onBack}>
+      <Ico name="arrow" className="amg-cta__arrow" />
+      <span>BACK</span>
     </button>
   );
 }

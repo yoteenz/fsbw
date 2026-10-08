@@ -5,7 +5,7 @@
     "shell": "MigrationShell (AioMigrationKit.tsx): environment → header → AioDesktopSidebar (staff) → main → AioStaffDock (staff)",
     "items": "STAFF_NAV: HOME · INTAKE (current) · FILING · REPORTS · MORE — the same list feeds the dock and the sidebar",
     "sourceOrder": "header, sidebar, main, dock — keyboard focus reaches the header search first, then the sidebar, then the work",
-    "back": "BACK (founder request 2026-10-08; not drawn in the authority set): a chevron button at the left of the header, before the lockup, on every screen but the intake root, the client's first step (HERE'S WHAT AIO ALREADY KNOWS) and the arrival screen. It opens the step before the current one in its branch (MigrationStudioPage PREVIOUS, ClientOfficeReviewPage previousStep) and keeps the open client. Phone: full-height 70u target, lockup moves right (76u root family, 78u existing family). Tablet/desktop: 40px button, first item of the header row."
+    "back": "BACK (founder request 2026-10-08; not drawn in the authority set): a gold button of the same size directly under the page action (AioMigrationBack, class amg-cta amg-cta--back, arrow mirrored on the left), so it is where the thumb already is; it travels with the action (side column on a wide desktop). Not in the header. Shown on every screen but the intake root, the client's first step (HERE'S WHAT AIO ALREADY KNOWS) and the arrival screen; while a step is still running it stands alone. It opens the step before the current one in its branch (MigrationStudioPage PREVIOUS, ClientOfficeReviewPage previousStep) and keeps the open client."
   },
   "actors": {
     "STAFF": {

@@ -55522,3 +55522,19 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
   - eight have only long lists or tables above (invited, vehicles, confirm, new-confirm, batch-conflicts, batch-queue, batch-client, batch-complete).
   Asked the founder which to apply.
 - **Verified:** CTA edges equal the panel above at tablet (root, new, batch, company) and at 1100/1280 desktop. Desktop batch side column holds the portrait panel + START BATCH within the work column's height at 1440. Responsive QA: root 93.5 / 92.4, conformance 100 on all screens, 10/10 checks. Flow checks 113/113, original 23/23, vitest 416 passed, build OK.
+
+---
+
+## 2026-10-08 — Client migration: BACK becomes a gold button under the action; desktop actions keep to the work column
+
+- **Context:** Founder:
+  - "move the back button below the gold button as its own gold button instead of putting it in the nav bar & having to scroll all the way up each time to utilize it".
+  - "same width as the panel above it" confirms the tablet CTA change already made.
+  - Desktop: "The middle column button … like continue … should only extend the width of the middle column and not extend all the way to the right side column".
+- **BACK:** `AioMigrationBack` in `AioMigrationKit.tsx`, a `button.amg-cta.amg-cta--back` with the arrow mirrored on the left. It is placed directly after the page action:
+  - the studio page's `cta()`, the representative block and the missing-client card;
+  - `backOnly()` while new-client extraction or batch processing is still running;
+  - the client review `cta()` and the company screen.
+  It reads the step before from `MigrationShell onBack` via context, so it travels with the action: side column on a wide desktop, under the action elsewhere. Header back button and lockup shift removed; the header is back to the authority. On a wide desktop the COMPANY grid puts BACK in row 4 under CONTINUE. The new-approval note's 30u rhythm is tightened to 16u for BACK. QA counts primary actions as `.amg-cta:not(.amg-cta--back)`. Prototype exit label "BACK (under the action)".
+- **Desktop action width:** with the side column on, `[data-grid='MAIN_SIDE'] .amg-main > :is(.amg-cta, .amg-msg)` is `calc(100% - 340px - 11px)` (EXISTING CLIENT FILE, FILES RECEIVED: 154–1073 at 1440). `[data-grid='SINGLE']` actions take the 1000px centred measure (EXTRACTING). Root stays workspace-wide per the approved desktop master.
+- **Verified:** BACK on 41 screens × phone/tablet/desktop (123 cases): same width and height as the action, directly under it, never behind the dock, absent on root, welcome and complete, header clean. BACK clicks go to the step before in the prototype (client kept). The desktop span audit at 1280/1440/1920 leaves only root (by design) and false positives inside panels.

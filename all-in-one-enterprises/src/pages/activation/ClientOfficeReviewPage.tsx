@@ -17,6 +17,7 @@ import {
 import type { ReviewSectionCode, ReviewSectionResponse, WhatChangedShortcut } from '../../client-migration/types';
 import { canAccessClientOffice } from '../../client-migration/lifecycle';
 import {
+  AioMigrationBack,
   AioMigrationCTA,
   AioMigrationHero,
   MigrationShell,
@@ -258,6 +259,7 @@ export function ClientOfficeReviewPage() {
     <>
       {message ? <p className="amg-msg">{message}</p> : null}
       <AioMigrationCTA label={label} onClick={onCta} />
+      <AioMigrationBack />
     </>
   );
   const sectionStep: Record<SectionKey, Step> = { COMPANY: 'company', PEOPLE: 'people', VEHICLES: 'vehicles', SERVICES: 'services', DOCUMENTS: 'documents' };

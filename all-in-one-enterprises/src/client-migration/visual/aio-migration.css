@@ -169,35 +169,6 @@ html:has(.amg) body {
   top: calc(15.8 * var(--u));
   width: calc(297 * var(--u));
 }
-/* BACK (founder request, not in the authority set): a full-height tap target at the left edge; the lockup moves right */
-.amg-head__back {
-  left: calc(4 * var(--u));
-  top: 0;
-  display: grid;
-  place-items: center;
-  width: calc(70 * var(--u));
-  height: 100%;
-  padding: 0;
-  border: 0;
-  background: none;
-  color: var(--ink);
-  cursor: pointer;
-}
-.amg-head__back .amg-ico {
-  width: calc(42 * var(--u));
-  height: calc(42 * var(--u));
-}
-.amg-head__back:focus-visible {
-  outline: calc(3 * var(--u)) solid var(--gold-lo);
-  outline-offset: calc(-6 * var(--u));
-  border-radius: calc(14 * var(--u));
-}
-.amg-head--back .amg-head__lockup {
-  left: calc(76 * var(--u));
-}
-.amg--existing .amg-head--back .amg-head__lockup {
-  left: calc(78 * var(--u));
-}
 .amg-head__tool {
   display: grid;
   place-items: center;
@@ -777,6 +748,12 @@ html:has(.amg) body {
 .amg-cta:disabled {
   opacity: 0.55;
   cursor: not-allowed;
+}
+/* BACK (founder request 2026-10-08): the same gold button directly under the page action, arrow mirrored on the left */
+.amg-cta--back .amg-cta__arrow {
+  right: auto;
+  left: calc(30 * var(--u));
+  transform: translateY(-50%) scaleX(-1);
 }
 .amg-cta__arrow {
   position: absolute;
@@ -2444,6 +2421,7 @@ html:has(.amg) body {
   .amg.amg .amg-company > .amg-cinfo { grid-column: 1; grid-row: 2 / span 3; }
   .amg.amg .amg-company > .amg-next { grid-column: 2; grid-row: 2; }
   .amg.amg .amg-company > .amg-cta { grid-column: 2; grid-row: 3; }
+  .amg.amg .amg-company > .amg-cta--back { grid-column: 2; grid-row: 4; align-self: start; }
 }
 
 @media (min-width: 1024px) {

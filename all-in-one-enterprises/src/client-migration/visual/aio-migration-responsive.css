@@ -102,23 +102,6 @@
     width: auto;
     height: clamp(42px, calc(100vw * 52 / 832), 52px);
   }
-  .amg.amg .amg-head__back {
-    width: 40px;
-    height: 40px;
-    margin: 0 6px 0 -12px;
-    border-radius: 10px;
-  }
-  .amg.amg .amg-head__back .amg-ico {
-    width: 24px;
-    height: 24px;
-  }
-  .amg.amg .amg-head__back:hover {
-    background: rgba(17, 17, 18, 0.06);
-  }
-  .amg.amg .amg-head__back:focus-visible {
-    outline-width: 2px;
-    outline-offset: 0;
-  }
   /* the context line is the only header item that may give way on a narrow tablet (ellipsis) */
   .amg.amg .amg-head__in > .amg-head__ctx {
     flex: 0 1 auto;
@@ -410,6 +393,10 @@
     right: 27px;
     width: 26px;
     height: 26px;
+  }
+  .amg.amg .amg-cta--back .amg-cta__arrow {
+    right: auto;
+    left: 27px;
   }
 
   /* ═════════ ROOT · LANDING (PATHS_3UP · BAND · SUPPORT_GRID) — tablet master ═════════ */
@@ -1169,6 +1156,12 @@
     max-width: 1000px;
     margin-inline: auto;
   }
+  /* founder note (2026-10-08): the page action and BACK are as wide as the column of work above them */
+  .amg.amg[data-grid='SINGLE'] .amg-main > :is(.amg-cta, .amg-msg) {
+    width: 100%;
+    max-width: 1000px;
+    margin-inline: auto;
+  }
 }
 
 /* MAIN_SIDE: work column + sticky 340px side column (what happens next, notes, the action) */
@@ -1222,6 +1215,11 @@
   /* the phone uppercase fit sizes this line per screen; in the side column it takes the strip's size */
   .amg.amg.amg .amg-flow--split .amg-flow__side .amg-bulk__detect .amg-strip__text > span {
     font-size: inherit;
+  }
+  /* representatives drawn as main + side (EXISTING CLIENT FILE, FILES RECEIVED): the page action and BACK sit under the work
+     column only, never under the side column (founder note 2026-10-08): 340px side column + the grid's 11px column gap */
+  .amg.amg[data-grid='MAIN_SIDE'] .amg-main > :is(.amg-cta, .amg-msg) {
+    width: calc(100% - 340px - 11px);
   }
   /* CANVAS_PANEL (founder review): the review canvas takes the room, the context / actions panel stays beside it */
   .amg.amg[data-grid='CANVAS_PANEL'] .amg-flow.amg-flow--split {

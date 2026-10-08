@@ -2922,6 +2922,10 @@ button.amg-stat {
   --cta-f: 31;
   margin-inline: 0;
 }
+/* BACK under the action: the note's 30u rhythm is for note → action; BACK keeps the flow's 16u */
+.amg.amg.amg .amg-nap__note > .amg-cta--back {
+  margin-top: calc(-14 * var(--u));
+}
 
 /* new · prebuilt cards */
 .amg-npb__card {

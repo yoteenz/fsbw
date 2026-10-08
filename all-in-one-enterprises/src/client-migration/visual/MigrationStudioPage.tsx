@@ -14,7 +14,7 @@ import { approveMigrationBatchForOffice } from '../services/approveMigrationOffi
 import { createMigrationBatchForOffice, uploadFilesToMigrationBatch } from '../services/migrationIntakeService';
 import { transitionClientLifecycle } from '../services/lifecycleEvents';
 import type { ClientLifecycleState, MigrationReviewAction } from '../types';
-import { AioMigrationCTA, AioMigrationHero, Ico, MigrationShell, type MigrationFamily } from './AioMigrationKit';
+import { AioMigrationBack, AioMigrationCTA, AioMigrationHero, Ico, MigrationShell, type MigrationFamily } from './AioMigrationKit';
 import { AioCard, AioFlow } from './AioMigrationModules';
 import { MigrationExistingScreen, MigrationExtractScreen, MigrationReceivedScreen } from './MigrationExistingScreens';
 import {
@@ -482,6 +482,14 @@ export function MigrationStudioPage() {
     <>
       {message ? <p className="amg-msg">{message}</p> : null}
       <AioMigrationCTA label={label} onClick={() => void onContinue()} disabled={busy} lead={lead} />
+      <AioMigrationBack />
+    </>
+  );
+  /** while a step is still running there is no page action yet, but BACK is always there */
+  const backOnly = (): ReactNode => (
+    <>
+      {message ? <p className="amg-msg">{message}</p> : null}
+      <AioMigrationBack />
     </>
   );
   const previous = PREVIOUS[screen];
@@ -528,6 +536,7 @@ export function MigrationStudioPage() {
             {missingClient ? <p className="amg-msg">Open an existing client file first.</p> : null}
             {message ? <p className="amg-msg">{message}</p> : null}
             <AioMigrationCTA label={ctaLabel} onClick={() => void onContinue()} disabled={busy} />
+            <AioMigrationBack />
           </>
         ) : null}
 
@@ -537,6 +546,7 @@ export function MigrationStudioPage() {
               <p>Open a client file first. This screen works on one client at a time.</p>
             </AioCard>
             <AioMigrationCTA label="OPEN EXISTING CLIENT FILE" onClick={() => go('existing', '')} />
+            <AioMigrationBack />
           </AioFlow>
         ) : null}
 
@@ -568,7 +578,7 @@ export function MigrationStudioPage() {
           <NewClientFileScreen draft={draft} onDraft={setDraft} local={localFiles} inputRef={inputRef} onFiles={onPickFiles} onRemoveLocal={removeLocal} cta={cta()} />
         ) : null}
         {!missingClient && screen === 'new-received' ? <NewReceivedScreen stored={files} local={localFiles} cta={cta()} /> : null}
-        {!missingClient && screen === 'new-extract' ? <NewExtractScreen done={newDone} cta={newDone.every(Boolean) ? cta() : message ? <p className="amg-msg">{message}</p> : null} /> : null}
+        {!missingClient && screen === 'new-extract' ? <NewExtractScreen done={newDone} cta={newDone.every(Boolean) ? cta() : backOnly()} /> : null}
         {!missingClient && screen === 'new-identity' ? <NewIdentityScreen identity={identity} onIdentity={setIdentity} cta={cta()} /> : null}
         {!missingClient && client && screen === 'new-records' ? <NewRecordsScreen store={store} client={client} storedFiles={files} applied={applied} onAction={onSectionAction} cta={cta()} /> : null}
         {!missingClient && screen === 'new-review' ? <NewReviewScreen applied={applied} onAction={onSectionAction} cta={cta()} /> : null}
@@ -586,7 +596,7 @@ export function MigrationStudioPage() {
         ) : null}
         {screen === 'batch-received' ? <BatchReceivedScreen batchName={batchName || queueBatch?.notes || ''} batchId={queueBatch?.id} fileCount={queueFiles.length + localFiles.length} clientCount={queue.length} cta={cta()} /> : null}
         {screen === 'batch-processing' ? (
-          <BatchProcessingScreen batchName={batchName || queueBatch?.notes || ''} batchId={queueBatch?.id} done={queueDone} cta={queueDone.every(Boolean) ? cta() : message ? <p className="amg-msg">{message}</p> : null} />
+          <BatchProcessingScreen batchName={batchName || queueBatch?.notes || ''} batchId={queueBatch?.id} done={queueDone} cta={queueDone.every(Boolean) ? cta() : backOnly()} />
         ) : null}
         {screen === 'batch-summary' ? <BatchSummaryScreen queue={queue} finished={queueDone.every(Boolean)} cta={cta()} /> : null}
         {screen === 'batch-conflicts' ? (

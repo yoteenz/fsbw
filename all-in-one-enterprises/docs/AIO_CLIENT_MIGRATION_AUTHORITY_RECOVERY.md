@@ -131,7 +131,7 @@ Fidelity: captured at 427×768 @2x and compared with each authority (side-by-sid
 - KEEP AIO no longer blocks approval (2026-10-08). The demo commit (`commitApprovedMigration`) refused PREBUILT whenever a conflict had been resolved as KEEP AIO (REJECT), so APPROVE MIGRATION said “Approval did not reach PREBUILT” after the conflicts were decided. Rejected facts are now left out of the commit, as on the server (`factsForCanonicalCommit`); an undecided conflict still blocks.
 - BATCH PROCESSING no longer waits for duplicates to be decided (2026-10-08). VALIDATE was held open until every duplicate and conflict was resolved, but those are decided on DUPLICATES AND CONFLICTS, two screens later, so a batch with one duplicate could never leave PROCESSING. The stages now finish when every file is processed (`batchStages`); DETECTION SUMMARY counts what needs review.
 
-- BACK (founder request, 2026-10-08; not drawn in the authority set): a chevron at the left of the header, before the lockup, on every screen except the intake root, the client's first step and the arrival screen. It opens the step before the current one in its branch and keeps the open client (`PREVIOUS` in `MigrationStudioPage.tsx`, `previousStep` in `ClientOfficeReviewPage.tsx`). On the phone the lockup moves right to make room.
+- BACK (founder request, 2026-10-08; not drawn in the authority set): a gold button of the same size directly under the page action (`AioMigrationBack`), on every screen except the intake root, the client's first step and the arrival screen. It opens the step before the current one in its branch and keeps the open client (`PREVIOUS` in `MigrationStudioPage.tsx`, `previousStep` in `ClientOfficeReviewPage.tsx`). It first sat in the header; the founder moved it under the action so nobody scrolls back up to use it, and the header is back to the authority.
 - The phone header is sticky at `top: 0` (was `env(safe-area-inset-top)`). The app does not opt into `viewport-fit=cover`, so the inset is 0 in the live app; inside an embedded frame on iPhone the inset was reported and pushed the bar down over the hero.
 
 ### Tablet and desktop (propagated screens)
@@ -140,6 +140,7 @@ Fidelity: captured at 427×768 @2x and compared with each authority (side-by-sid
 
 Founder notes (2026-10-08):
 - Tablet: the page action (START MIGRATION, CONTINUE…) is as wide as the panels above it, not a 456px centred button. The same applies to the one-column desktop layout of a narrower workspace. The tablet master drew the root action centred; the QA target follows the note.
+- Desktop: a page action never runs under the side column. EXISTING CLIENT FILE and FILES RECEIVED (work column + 340px side column) keep CONTINUE / BEGIN EXTRACTION and BACK to the work column; EXTRACTING AND CLASSIFYING keeps them to its centred 1000px column. The landing (START MIGRATION) stays workspace-wide, as in the approved desktop master.
 - Desktop: BULK BATCH puts CLIENT DETECTION in the right column above START BATCH, stacked portrait (`AioAside` in `AioMigrationModules.tsx`: a panel that belongs with the action; in reading order on phone and tablet, so the phone composition is unchanged).
 
 ### Review gallery
