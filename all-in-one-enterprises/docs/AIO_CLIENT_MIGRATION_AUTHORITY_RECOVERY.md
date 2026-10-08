@@ -129,6 +129,9 @@ Fidelity: captured at 427×768 @2x and compared with each authority (side-by-sid
 - BULK · PROCESS APPROVED CLIENTS now runs approval for matched clients without open conflicts (PREBUILT, never ACTIVE). Before, the button only advanced the screen.
 - ITEMS NEEDING REVIEW writes the decisions on SAVE DECISIONS (KEEP AIO → reject, USE EXTRACTED → confirm, NEEDS CLIENT CONFIRMATION); DUPLICATES AND CONFLICTS writes Merge / Keep Separate (Review Later leaves the item open).
 
+- BACK (founder request, 2026-10-08; not drawn in the authority set): a chevron at the left of the header, before the lockup, on every screen except the intake root, the client's first step and the arrival screen. It opens the step before the current one in its branch and keeps the open client (`PREVIOUS` in `MigrationStudioPage.tsx`, `previousStep` in `ClientOfficeReviewPage.tsx`). On the phone the lockup moves right to make room.
+- The phone header is sticky at `top: 0` (was `env(safe-area-inset-top)`). The app does not opt into `viewport-fit=cover`, so the inset is 0 in the live app; inside an embedded frame on iPhone the inset was reported and pushed the bar down over the hero.
+
 ### Tablet and desktop (propagated screens)
 
 ≥ 700px: one stack in authority order at the desktop type scale, as on the representatives. ≥ 1024px (was 1120px before the blueprint): the step card spans the top; once the work column keeps ≥ ~820px (content ≥ 1184px, a container query) the closing items (what happens next, notes, the action) sit in a sticky 340px side column, otherwise they pair up under the work; screens with nothing for the side (SINGLE) keep a centred 1000px measure.

@@ -484,11 +484,12 @@ export function MigrationStudioPage() {
       <AioMigrationCTA label={label} onClick={() => void onContinue()} disabled={busy} lead={lead} />
     </>
   );
+  const previous = PREVIOUS[screen];
   const newDone = newExtractStages(files, batch, facts);
   const queueDone = batchStages(queueFiles, queueConflicts.length);
 
   return (
-    <MigrationShell family={family} actor="staff" screen={screen} viewer={viewer}>
+    <MigrationShell family={family} actor="staff" screen={screen} viewer={viewer} onBack={previous ? () => go(previous, previous === 'root' ? '' : clientId) : undefined}>
         {authority ? (
           <AioMigrationHero kicker={authority.kicker} title={authority.title} subtitle={authority.sub.map((line) => <span key={line} className="amg-line">{line}</span>)} />
         ) : spec ? (
@@ -606,6 +607,41 @@ export function MigrationStudioPage() {
 
 /** The six representatives (RECOVERY1) keep their pixel-locked renderers; every other screen uses the module flow. */
 const REPRESENTATIVE = new Set(['root', 'existing', 'extract', 'received']);
+
+/** BACK: the step before each screen in its branch (the reverse of onContinue). The intake root has none. */
+const PREVIOUS: Record<string, string> = {
+  existing: 'root',
+  upload: 'existing',
+  received: 'upload',
+  extract: 'received',
+  match: 'extract',
+  review: 'match',
+  conflicts: 'review',
+  approval: 'conflicts',
+  prebuilt: 'approval',
+  invite: 'prebuilt',
+  invited: 'invite',
+  new: 'root',
+  'new-received': 'new',
+  'new-extract': 'new-received',
+  'new-identity': 'new-extract',
+  'new-records': 'new-identity',
+  'new-review': 'new-records',
+  'new-approval': 'new-review',
+  'new-prebuilt': 'new-approval',
+  'new-invite': 'new-prebuilt',
+  'new-confirm': 'new-invite',
+  batch: 'root',
+  'batch-received': 'batch',
+  'batch-processing': 'batch-received',
+  'batch-summary': 'batch-processing',
+  'batch-conflicts': 'batch-summary',
+  'batch-queue': 'batch-conflicts',
+  'batch-client': 'batch-queue',
+  'batch-approval': 'batch-client',
+  'batch-run': 'batch-approval',
+  'batch-complete': 'batch-run',
+};
 
 /** CTA labels as drawn on each authority. */
 const CTA: Record<string, string> = {

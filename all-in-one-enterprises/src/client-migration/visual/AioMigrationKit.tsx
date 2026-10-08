@@ -70,6 +70,7 @@ export function MigrationShell({
   screen,
   viewer,
   tools = true,
+  onBack,
   children,
 }: {
   family: MigrationFamily;
@@ -77,11 +78,13 @@ export function MigrationShell({
   screen: string;
   viewer: MigrationViewer;
   tools?: boolean;
+  /** The step before this one; omitted where there is nothing to go back to (intake root, first and last client steps). */
+  onBack?: () => void;
   children: ReactNode;
 }) {
   return (
     <AioMigrationEnvironment family={family} actor={actor} screen={screen}>
-      <AioMigrationHeader viewer={viewer} tools={tools} />
+      <AioMigrationHeader viewer={viewer} tools={tools} onBack={onBack} />
       {actor === 'staff' ? <AioDesktopSidebar /> : null}
       <main className="amg-main amg-col">{children}</main>
       {actor === 'staff' ? <AioStaffDock /> : null}
@@ -112,13 +115,19 @@ function HeaderSearch() {
   );
 }
 
-export function AioMigrationHeader({ viewer, tools = true }: { viewer: MigrationViewer; tools?: boolean }) {
+export function AioMigrationHeader({ viewer, tools = true, onBack }: { viewer: MigrationViewer; tools?: boolean; onBack?: () => void }) {
   const family = useContext(FamilyContext);
   const actor = useContext(ActorContext);
   const [office, area] = CONTEXT[actor];
   return (
-    <header className="amg-head">
+    <header className={onBack ? 'amg-head amg-head--back' : 'amg-head'}>
       <div className="amg-col amg-head__in">
+        {/* BACK is not drawn in the authority set: added at the founder's request (2026-10-08), left of the lockup */}
+        {onBack ? (
+          <button type="button" className="amg-head__back" onClick={onBack} aria-label="Back to the previous step">
+            <Ico name="back" />
+          </button>
+        ) : null}
         <img className="amg-head__lockup" src={LOCKUP[family]} alt="All In One Enterprises Inc." />
         <span className="amg-head__ctx">
           <small>{office}</small>

@@ -160,6 +160,19 @@ export function ClientOfficeReviewPage() {
     done: null,
   };
 
+  /** BACK: the step before this one. The first step (arrived from the invite) and the arrival screen have none. */
+  const previousStep: Record<Step, Step | null> = {
+    welcome: null,
+    company: 'welcome',
+    people: 'company',
+    vehicles: 'people',
+    services: 'vehicles',
+    documents: 'services',
+    changed: 'documents',
+    confirm: 'changed',
+    done: null,
+  };
+
   /** PREBUILT ≠ ACTIVE: the arrival screen exists only for a client whose lifecycle is ACTIVE. */
   const isActive = active || canAccessClientOffice(client.clientLifecycle ?? 'KNOWN_UNMIGRATED');
   const view: Step = step === 'done' && !isActive ? 'confirm' : step;
@@ -248,9 +261,16 @@ export function ClientOfficeReviewPage() {
     </>
   );
   const sectionStep: Record<SectionKey, Step> = { COMPANY: 'company', PEOPLE: 'people', VEHICLES: 'vehicles', SERVICES: 'services', DOCUMENTS: 'documents' };
+  const back = previousStep[view];
+  const onBack = back
+    ? () => {
+        setMessage(null);
+        go(back);
+      }
+    : undefined;
 
   return (
-    <MigrationShell family="existing" actor="client" screen={view} viewer={clientViewer(client)}>
+    <MigrationShell family="existing" actor="client" screen={view} viewer={clientViewer(client)} onBack={onBack}>
         {view === 'company' ? (
           <AioMigrationHero
             kicker="CLIENT ACTIVATION"

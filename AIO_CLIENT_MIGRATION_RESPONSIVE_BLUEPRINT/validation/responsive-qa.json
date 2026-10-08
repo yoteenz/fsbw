@@ -1,6 +1,6 @@
 {
- "generatedAt": "2026-10-08T03:32:54.929Z",
- "base": "http://127.0.0.1:5180",
+ "generatedAt": "2026-10-08T05:34:56.503Z",
+ "base": "http://127.0.0.1:5173",
  "composition": {
   "TABLET": {
    "master": "masters/AIO-MIG-ROOT-TABLET-834x1194.png",
@@ -7478,16 +7478,16 @@
    "file": "proof/G-complete-tablet.jpg"
   },
   {
-   "id": "B",
-   "screen": "new",
-   "viewport": "MOBILE",
-   "file": "proof/B-new-mobile.jpg"
-  },
-  {
    "id": "G",
    "screen": "complete",
    "viewport": "DESKTOP",
    "file": "proof/G-complete-desktop.jpg"
+  },
+  {
+   "id": "B",
+   "screen": "new",
+   "viewport": "MOBILE",
+   "file": "proof/B-new-mobile.jpg"
   },
   {
    "id": "B",

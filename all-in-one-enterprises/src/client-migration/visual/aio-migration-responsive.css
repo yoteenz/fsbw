@@ -102,6 +102,23 @@
     width: auto;
     height: clamp(42px, calc(100vw * 52 / 832), 52px);
   }
+  .amg.amg .amg-head__back {
+    width: 40px;
+    height: 40px;
+    margin: 0 6px 0 -12px;
+    border-radius: 10px;
+  }
+  .amg.amg .amg-head__back .amg-ico {
+    width: 24px;
+    height: 24px;
+  }
+  .amg.amg .amg-head__back:hover {
+    background: rgba(17, 17, 18, 0.06);
+  }
+  .amg.amg .amg-head__back:focus-visible {
+    outline-width: 2px;
+    outline-offset: 0;
+  }
   /* the context line is the only header item that may give way on a narrow tablet (ellipsis) */
   .amg.amg .amg-head__in > .amg-head__ctx {
     flex: 0 1 auto;

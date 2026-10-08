@@ -59,6 +59,8 @@ css = css.replace(/url\((['"]?)(?:\.\.?)?\/((?:fonts|migration)\/[^'")]+)\1\)/g,
   const file = join(APP, 'public', p);
   return existsSync(file) ? `url('${dataUri(file)}')` : m;
 });
+// the stage frame is not at the device edge, but an iPhone still reports its insets inside it: no safe areas in the frame
+css = css.replace(/env\(safe-area-inset-(?:top|right|bottom|left)(?:,[^()]*)?\)/g, '0px');
 const assets = {};
 for (const file of walk(join(APP, 'public/migration'))) {
   if (/\.(png|jpe?g|webp)$/i.test(file)) assets[`/${relative(join(APP, 'public'), file)}`] = dataUri(file);
@@ -142,6 +144,18 @@ const FLOW = {
   'batch-run': [E('PROCESS APPROVED CLIENTS → PREBUILT, never ACTIVE', 'batch-complete')],
   'batch-complete': [E('BACK TO INTAKE', 'root')],
 };
+// BACK in the header goes to the step before (MigrationStudioPage PREVIOUS, ClientOfficeReviewPage previousStep)
+const BACK = {
+  existing: 'root', upload: 'existing', received: 'upload', extract: 'received', match: 'extract', review: 'match', conflicts: 'review',
+  approval: 'conflicts', prebuilt: 'approval', invite: 'prebuilt', invited: 'invite',
+  company: 'welcome', people: 'company', vehicles: 'people', services: 'vehicles', documents: 'services', changed: 'documents', confirm: 'changed',
+  new: 'root', 'new-received': 'new', 'new-extract': 'new-received', 'new-identity': 'new-extract', 'new-records': 'new-identity',
+  'new-review': 'new-records', 'new-approval': 'new-review', 'new-prebuilt': 'new-approval', 'new-invite': 'new-prebuilt', 'new-confirm': 'new-invite',
+  batch: 'root', 'batch-received': 'batch', 'batch-processing': 'batch-received', 'batch-summary': 'batch-processing',
+  'batch-conflicts': 'batch-summary', 'batch-queue': 'batch-conflicts', 'batch-client': 'batch-queue', 'batch-approval': 'batch-client',
+  'batch-run': 'batch-approval', 'batch-complete': 'batch-run',
+};
+for (const [screen, to] of Object.entries(BACK)) FLOW[screen].push(E('BACK (header)', to));
 const GAPS = [
   { title: 'No authority screen for accepting the invite', body: 'The emailed link opens ACCOUNT ACTIVATION (set a password) before the client review. That page exists in the app but no authority frame designs it, so it renders in the generic AIO style.' },
   { title: 'Invite copy contradicts the activation page', body: 'SEND INVITE tells staff the client needs no password (“secure link, no password required”); the page the link opens asks the client to choose one. The authority only requires that no password is sent.' },
