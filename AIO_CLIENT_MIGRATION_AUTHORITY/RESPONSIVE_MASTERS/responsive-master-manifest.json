@@ -1,0 +1,104 @@
+{
+  "sprint": "P0.AIO.CLIENT-MIGRATION.RESPONSIVE-MASTER-AUTHORITIES.DESKTOP-TABLET1",
+  "generated": "2026-10-08",
+  "purpose": "Composition grammar for the client migration family. These two masters teach reflow. They are not templates every descendant must copy.",
+  "actor": "FOUNDER_STAFF_MIGRATION_INTAKE",
+  "not_actor": "CLIENT_OFFICE",
+  "source_mobile_authority": {
+    "authority_id": "AIO-MIG-ROOT-001",
+    "path": "AIO_CLIENT_MIGRATION_AUTHORITY/00_ROOT/AIO-MIG-ROOT-001.png",
+    "viewport": "853x1536",
+    "status": "APPROVED_AUTHORITY"
+  },
+  "generation": {
+    "provider": "OpenArt",
+    "model": "gpt-image-2-5-sunburst",
+    "mode": "image2image",
+    "reference_upload_id": "lj2dyGUecKibQmGnGJnA",
+    "auto_enhance_prompt": false
+  },
+  "nav_derivation": "No approved visual tablet or desktop migration shell existed. Both masters reuse the five staff items from the locked mobile intake dock (HOME, INTAKE, FILING, REPORTS, MORE). Tablet places them in a portrait tab strip. Desktop places them in a slim left rail under a full-width header. The full AIO Office 2.0 sidebar was not imported. The mobile bottom dock was not pasted onto desktop.",
+  "process_truth": "Stages follow the locked mobile root: UPLOAD, EXTRACT, CLASSIFY, VALIDATE, REVIEW, COMPLETE. MATCH and APPROVE were not introduced.",
+  "support_module_note": "Tablet and desktop support chips show the stored upload types PDF, JPG, PNG, WEBP. The locked phone plate also shows Excel, CSV, Documents, Zip and a COMMON PROVIDERS row. Those phone modules were not copied onto these masters. WHAT HAPPENS NEXT on desktop states that starting a path does not activate a client and PREBUILT is not ACTIVE.",
+  "implementation": "AUTHORITY_ONLY. No React, CSS, routes, Supabase, or migration logic were changed. Live derived responsive CSS on master is unchanged and is not replaced by these plates.",
+  "status": "FOUNDER_REVIEW_REQUIRED",
+  "ready_for_opus_responsive_blueprint": false,
+  "masters": [
+    {
+      "AUTHORITY_ID": "AIO-MIG-RESPONSIVE-MASTER-TABLET-001",
+      "VIEWPORT": "TABLET_PORTRAIT",
+      "WIDTH": 834,
+      "HEIGHT": 1194,
+      "FILE": "AIO_CLIENT_MIGRATION_AUTHORITY/RESPONSIVE_MASTERS/TABLET/AIO-MIG-RESPONSIVE-MASTER-TABLET-001.png",
+      "SOURCE_MOBILE_AUTHORITY": "AIO-MIG-ROOT-001",
+      "OPENART_HISTORY_ID": "tYulUmVRU5NxUiKfRrTb",
+      "OPENART_RESOURCE_ID": "aeI9bL0wO6swvqSNchO1",
+      "GENERATED_PIXELS": "832x1200",
+      "FIT": "Uniform scale to width 834 (height 1203), then crop 4px from the top and 5px from the bottom to 834x1194. Header and tab strip kept.",
+      "HEADER_MODEL": "Full-width white bar. Simple gold A mark and ALL IN ONE / ENTERPRISES INC. Context label CLIENT MIGRATION. Search, bell, staff portrait, ALEX R., role STAFF.",
+      "HERO_MODEL": "Wide cinematic band, shorter relative to the phone hero. Title and support copy sit on the bright sky at left. Truck and headquarters stay on the right. Type does not cover the grille.",
+      "CONTENT_GRID": "Single workspace column inside the tablet canvas, with 2-column modules. Not a stretched 853 phone column.",
+      "PRIMARY_PATH_LAYOUT": "Three equal cards in one row: EXISTING CLIENT FILE, NEW CLIENT FILE, BULK BATCH MIGRATION. Existing path is the selected gold outline.",
+      "PROCESS_LAYOUT": "One horizontal six-step band. Step 1 UPLOAD is gold. Steps: UPLOAD, EXTRACT, CLASSIFY, VALIDATE, REVIEW, COMPLETE.",
+      "SUPPORTING_GRID": "Two columns. Left: SUPPORTED FILE TYPES (PDF, JPG, PNG, WEBP). Right: YOUR DATA IS SECURE.",
+      "CTA_MODEL": "One gold START MIGRATION button, prominent, inset from the screen edges. No second primary.",
+      "NAV_MODEL": "Derived portrait staff tab strip: HOME, INTAKE selected in a black pill, FILING, REPORTS, MORE. Not a copied phone dock and not a sidebar.",
+      "IMAGE_CROP_RULE": "Same golden-hour truck and glass headquarters as the phone hero. Tablet crop is wider and shorter. Keep the truck whole on the right. Keep type on the sky.",
+      "CARD_DENSITY": "Three substantial touch cards. More horizontal information than the phone, less density than desktop.",
+      "SPACING_MODEL": "Generous touch spacing. Panels are rounded white with soft shadow. Margins stay inside the canvas. No giant empty regions.",
+      "STATUS": "FOUNDER_REVIEW_REQUIRED"
+    },
+    {
+      "AUTHORITY_ID": "AIO-MIG-RESPONSIVE-MASTER-DESKTOP-001",
+      "VIEWPORT": "DESKTOP_LANDSCAPE",
+      "WIDTH": 1440,
+      "HEIGHT": 900,
+      "FILE": "AIO_CLIENT_MIGRATION_AUTHORITY/RESPONSIVE_MASTERS/DESKTOP/AIO-MIG-RESPONSIVE-MASTER-DESKTOP-001.png",
+      "SOURCE_MOBILE_AUTHORITY": "AIO-MIG-ROOT-001",
+      "OPENART_HISTORY_ID": "zaoEqeYUV2hUe4fiqe6C",
+      "OPENART_RESOURCE_ID": "kAjMR4GWk99Dayywnfvp",
+      "GENERATED_PIXELS": "1440x896",
+      "FIT": "Pad 2px top and 2px bottom, sampled from the edge colors, to 1440x900. No content crop.",
+      "HEADER_MODEL": "Full-width application header. Simple gold A mark and ALL IN ONE / ENTERPRISES INC. Context AIO OFFICE / CLIENT MIGRATION. Search field, bell, staff portrait, ALEX R., role STAFF.",
+      "HERO_MODEL": "Operational intro zone inside the workspace. Left: CLIENT MIGRATION INTAKE, BRING YOUR DATA TO AIO, short support sentence. Right: cinematic truck and headquarters. Not a marketing banner.",
+      "CONTENT_GRID": "Slim left rail plus main workspace. Main column holds hero, three path cards, process band, and a 3-column support row.",
+      "PRIMARY_PATH_LAYOUT": "Three large path cards in one row: EXISTING CLIENT FILE, NEW CLIENT FILE, BULK BATCH MIGRATION. Existing path is the selected gold outline.",
+      "PROCESS_LAYOUT": "Strong horizontal process strip. Step 1 UPLOAD is gold. Steps: UPLOAD, EXTRACT, CLASSIFY, VALIDATE, REVIEW, COMPLETE.",
+      "SUPPORTING_GRID": "Three columns: SUPPORTED FILE TYPES (PDF, JPG, PNG, WEBP), YOUR DATA IS SECURE, WHAT HAPPENS NEXT (starting a path does not activate a client; PREBUILT is not ACTIVE).",
+      "CTA_MODEL": "One gold START MIGRATION bar at the bottom of the workspace. No second equal primary. No mobile dock under it.",
+      "NAV_MODEL": "Derived slim left rail of HOME, INTAKE selected, FILING, REPORTS, MORE. No bottom dock. Not the full Office 2.0 sidebar.",
+      "IMAGE_CROP_RULE": "Landscape crop of the same truck and headquarters. Truck stays whole on the right of the intro zone. Type stays on the sky, off the grille. Do not stretch the phone hero.",
+      "CARD_DENSITY": "Higher than tablet. Three substantial operational cards, not tiny dashboard tiles. Support row is three readable panels.",
+      "SPACING_MODEL": "Workspace margins inside the rail. Horizontal rhythm. No centered phone column and no large empty vertical bands.",
+      "STATUS": "FOUNDER_REVIEW_REQUIRED"
+    }
+  ],
+  "quality_gate": {
+    "tablet": {
+      "TRUE_TABLET_COMPOSITION": "YES",
+      "MOBILE_STRETCH": "NO",
+      "DESKTOP_SHRINK": "NO",
+      "TOUCH_SAFE": "YES",
+      "TWO_COLUMN_LOGIC": "YES",
+      "AIO_VISUAL_LANGUAGE": "YES",
+      "IFTA_CONTENT_LEAK": "NO",
+      "GENERIC_DASHBOARD_DRIFT": "NO"
+    },
+    "desktop": {
+      "TRUE_DESKTOP_WORKSPACE": "YES",
+      "MOBILE_COLUMN_CENTERED_ON_DESKTOP": "NO",
+      "BOTTOM_MOBILE_DOCK": "NO",
+      "CINEMATIC_HERO": "YES",
+      "PRIMARY_PATHS_CLEAR": "YES",
+      "HORIZONTAL_PROCESS_LANGUAGE": "YES",
+      "HIGHER_INFORMATION_DENSITY": "YES",
+      "AIO_VISUAL_LANGUAGE": "YES",
+      "IFTA_CONTENT_LEAK": "NO",
+      "GENERIC_DASHBOARD_DRIFT": "NO"
+    },
+    "family": {
+      "SAME_PRODUCT_FAMILY": "YES",
+      "DISTINCT_RESPONSIVE_COMPOSITIONS": "YES"
+    }
+  }
+}
