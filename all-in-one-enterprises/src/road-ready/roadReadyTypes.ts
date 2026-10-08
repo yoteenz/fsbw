@@ -60,6 +60,8 @@ export interface BusinessProfile {
   phone?: string;
   email?: string;
   einStatus?: YesNoProgress;
+  /** EIN as entered on a new client file (migration intake). */
+  ein?: string;
 }
 
 export interface OperatingProfile {

@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState, type RefObject } from 'react';
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useAIOAuth } from '../../auth/AIOAuthProvider';
 import { sendClientActivationInvite } from '../../demo/clientMigrationOfficeActions';
@@ -6,6 +6,7 @@ import { loadDemoStore, updateDemoStore } from '../../demo/demoStore';
 import { useDemoStore } from '../../demo/useDemoStore';
 import type { Client } from '../../demo/demoTypes';
 import { getBatchFiles } from '../../demo/archiveMigrationActions';
+import { createEmptyProfile } from '../../road-ready/roadReadyRules';
 import { aioPaths } from '../../utils/paths';
 import { validateUploadFile } from '../../vault/vaultStorage';
 import { applyReviewActionToFact } from '../services/migrationCommitService';
@@ -13,43 +14,99 @@ import { approveMigrationBatchForOffice } from '../services/approveMigrationOffi
 import { createMigrationBatchForOffice, uploadFilesToMigrationBatch } from '../services/migrationIntakeService';
 import { transitionClientLifecycle } from '../services/lifecycleEvents';
 import type { ClientLifecycleState, MigrationReviewAction } from '../types';
-import { AioMigrationCTA, AioMigrationEnvironment, AioMigrationHeader, AioMigrationHero, AioStaffDock, type MigrationFamily } from './AioMigrationKit';
+import { AioMigrationCTA, AioMigrationEnvironment, AioMigrationHeader, AioMigrationHero, AioStaffDock, Ico, type MigrationFamily } from './AioMigrationKit';
+import { AioCard, AioFlow } from './AioMigrationModules';
 import { MigrationExistingScreen, MigrationExtractScreen, MigrationReceivedScreen } from './MigrationExistingScreens';
+import {
+  INVITE_TTL_DAYS,
+  MigrationApprovalScreen,
+  MigrationConflictsScreen,
+  MigrationInviteScreen,
+  MigrationInvitedScreen,
+  MigrationMatchScreen,
+  MigrationPrebuiltScreen,
+  MigrationReviewScreen,
+  MigrationUploadScreen,
+  type ConflictDecision,
+  type LocalPick,
+  type MatchChoice,
+  type ReviewTarget,
+} from './MigrationIntakeScreens';
+import {
+  NewApprovalScreen,
+  NewClientFileScreen,
+  NewConfirmScreen,
+  NewExtractScreen,
+  NewIdentityScreen,
+  NewInviteScreen,
+  NewPrebuiltScreen,
+  NewReceivedScreen,
+  NewRecordsScreen,
+  NewReviewScreen,
+  newExtractStages,
+  type NewIdentity,
+} from './MigrationNewScreens';
+import {
+  BatchApprovalScreen,
+  BatchClientScreen,
+  BatchCompleteScreen,
+  BatchConflictsScreen,
+  BatchIntakeScreen,
+  BatchProcessingScreen,
+  BatchQueueScreen,
+  BatchReceivedScreen,
+  BatchRunScreen,
+  BatchSummaryScreen,
+  batchStages,
+  type DupDecision,
+} from './MigrationBatchScreens';
 import { MigrationRootScreen } from './MigrationRootScreen';
+import { MIGRATION_HERO, heroStyle } from './migrationHero';
+import { batchBucket, factSection, profileOf } from './migrationData';
 import { clientIdentifiers, staffViewer } from './migrationViewer';
-import './migration-authority.css';
 
-type LocalFile = {
-  name: string;
-  size: number;
-  status: 'accepted' | 'unsupported';
-  reason?: string;
-  file?: File;
-};
+type LocalFile = LocalPick & { file?: File };
 
-const REVIEW_ACTIONS: Array<MigrationReviewAction | 'IGNORE'> = [
-  'CONFIRM',
-  'EDIT',
-  'IGNORE',
-  'MARK_STALE',
-  'NEEDS_CLIENT_CONFIRMATION',
-  'RECLASSIFY',
-  'REJECT',
-];
-
-function formatBytes(size: number): string {
-  if (size < 1024) return `${size} B`;
-  if (size < 1024 * 1024) return `${Math.round(size / 1024)} KB`;
-  return `${(size / (1024 * 1024)).toFixed(1)} MB`;
-}
-
-function lifecycleLabel(state: ClientLifecycleState | undefined): string {
-  return (state ?? 'KNOWN_UNMIGRATED').replaceAll('_', ' ');
-}
+const EMPTY_IDENTITY: NewIdentity = { companyName: '', usdot: '', mc: '', ein: '', contactName: '' };
 
 function isActiveLifecycle(state: ClientLifecycleState | undefined): boolean {
   return state === 'ACTIVE';
 }
+
+/** Screens that need an open client file (?client=). */
+const NEEDS_CLIENT = new Set([
+  'upload',
+  'received',
+  'extract',
+  'match',
+  'review',
+  'conflicts',
+  'approval',
+  'prebuilt',
+  'invite',
+  'invited',
+  'new-received',
+  'new-extract',
+  'new-identity',
+  'new-records',
+  'new-review',
+  'new-approval',
+  'new-prebuilt',
+  'new-invite',
+  'new-confirm',
+  'batch-client',
+]);
+
+const CONFLICT_ACTION: Record<ConflictDecision, MigrationReviewAction> = {
+  KEEP: 'REJECT',
+  USE: 'CONFIRM',
+  CLIENT: 'NEEDS_CLIENT_CONFIRMATION',
+};
+
+const DUP_ACTION: Partial<Record<DupDecision, MigrationReviewAction>> = {
+  MERGE: 'MATCH_TO_EXISTING',
+  SEPARATE: 'CREATE_NEW_CLIENT',
+};
 
 export function MigrationStudioPage() {
   const { screen = 'root' } = useParams();
@@ -63,18 +120,23 @@ export function MigrationStudioPage() {
   const [message, setMessage] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [localFiles, setLocalFiles] = useState<LocalFile[]>([]);
-  const [batchName, setBatchName] = useState('Q1 2025 Clients');
-  const [matchChoice, setMatchChoice] = useState<'existing' | 'new' | 'review' | null>(null);
-  const [draft, setDraft] = useState({ companyName: '', contactName: '', email: '', phone: '' });
+  const [batchName, setBatchName] = useState('');
+  const [matchChoice, setMatchChoice] = useState<MatchChoice | null>(null);
+  const [draft, setDraft] = useState<NewIdentity>(EMPTY_IDENTITY);
+  const [identity, setIdentity] = useState<NewIdentity>(EMPTY_IDENTITY);
+  const [applied, setApplied] = useState<Partial<Record<ReviewTarget, MigrationReviewAction | 'IGNORE'>>>({});
+  const [decisions, setDecisions] = useState<Record<string, ConflictDecision>>({});
+  const [dupDecisions, setDupDecisions] = useState<Record<string, DupDecision>>({});
+  const [inviteEmail, setInviteEmail] = useState('');
+  const [sentUrl, setSentUrl] = useState<string | null>(null);
 
   const clientId = params.get('client') ?? '';
   const client = store.clients.find((item) => item.id === clientId);
   const batches = (store.archiveMigrationBatches ?? []).filter((batch) => !clientId || batch.clientId === clientId);
   const batch = batches[0];
   const files = batch ? getBatchFiles(batch.id, store) : [];
-  const facts = (store.clientExtractedFacts ?? []).filter((fact) => !batch || fact.batchId === batch.id);
+  const facts = (store.clientExtractedFacts ?? []).filter((fact) => (batch ? fact.batchId === batch.id : fact.organizationId === clientId));
   const conflicts = facts.filter((fact) => fact.confidence === 'CONFLICT' && !fact.reviewAction);
-  const documents = store.documents.filter((doc) => doc.organizationId === clientId);
 
   const filteredClients = useMemo(() => {
     const needle = query.trim().toLowerCase();
@@ -86,13 +148,44 @@ export function MigrationStudioPage() {
     });
   }, [query, store.clients]);
 
+  // Batch queue: clients with a migration batch in this intake (named batch when one is given).
+  const batchClients = store.clients.filter((item) =>
+    (store.archiveMigrationBatches ?? []).some((row) => row.clientId === item.id && (!batchName || row.notes === batchName || !row.notes)),
+  );
+  const queue = batchClients.length ? batchClients : client ? [client] : [];
+  const queueIds = new Set(queue.map((c) => c.id));
+  const queueFiles = (store.archiveMigrationBatchFiles ?? []).filter((f) => queueIds.has(f.organizationId));
+  const queueConflicts = (store.clientExtractedFacts ?? []).filter((f) => queueIds.has(f.organizationId) && f.confidence === 'CONFLICT' && !f.reviewAction);
+  const blocked = new Set(queueConflicts.map((f) => f.organizationId));
+  const queueBatch = (store.archiveMigrationBatches ?? []).find((b) => queueIds.has(b.clientId) && (!batchName || b.notes === batchName));
+
+  // Business identity review starts from the record (new client file → client + Road Ready profile).
+  useEffect(() => {
+    if (screen !== 'new-identity' || !client) return;
+    const profile = profileOf(loadDemoStore(), client.id);
+    setIdentity({
+      companyName: profile?.business?.legalName || client.companyName,
+      usdot: profile?.authority?.usdotNumber ?? '',
+      mc: profile?.authority?.mcNumber ?? '',
+      ein: profile?.business?.ein ?? '',
+      contactName: client.contactName === 'Primary contact' ? '' : client.contactName,
+    });
+  }, [screen, client?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (screen !== 'new-invite' && screen !== 'invite') return;
+    setSentUrl(null);
+    const email = client?.contactEmail ?? '';
+    setInviteEmail(email === 'pending@example.com' ? '' : email);
+  }, [screen, client?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+
   function go(next: string, nextClient = clientId) {
     const search = nextClient ? `?client=${encodeURIComponent(nextClient)}` : '';
     navigate(`${aioPaths.officeMigration(next === 'root' ? undefined : next)}${search}`);
     setMessage(null);
   }
 
-  function onPickFiles(list: FileList | null) {
+  function onPickFiles(list: FileList | File[] | null) {
     if (!list) return;
     const next: LocalFile[] = [];
     for (const file of Array.from(list)) {
@@ -105,8 +198,10 @@ export function MigrationStudioPage() {
         file: reason ? undefined : file,
       });
     }
-    setLocalFiles((current) => [...current, ...next]);
+    setLocalFiles((current) => [...current.filter((item) => !next.some((n) => n.name === item.name)), ...next]);
   }
+
+  const removeLocal = (name: string) => setLocalFiles((current) => current.filter((item) => item.name !== name));
 
   async function ensureBatch(organizationId: string): Promise<string> {
     const existing = loadDemoStore().archiveMigrationBatches?.find((item) => item.clientId === organizationId);
@@ -138,6 +233,7 @@ export function MigrationStudioPage() {
     setLocalFiles((current) => current.filter((item) => item.status !== 'accepted'));
   }
 
+  /** New client file: client record + Road Ready profile holding USDOT / MC. Not active. */
   function createDraftClient(): string {
     const companyName = draft.companyName.trim();
     if (!companyName) throw new Error('Company name is required');
@@ -146,8 +242,7 @@ export function MigrationStudioPage() {
       id,
       companyName,
       contactName: draft.contactName.trim() || 'Primary contact',
-      contactEmail: draft.email.trim() || 'pending@example.com',
-      contactPhone: draft.phone.trim() || undefined,
+      contactEmail: 'pending@example.com',
       clientType: 'carrier',
       primaryState: '',
       accountStatus: 'pending',
@@ -163,9 +258,38 @@ export function MigrationStudioPage() {
     };
     updateDemoStore((current) => {
       current.clients.unshift(record);
+      const profile = createEmptyProfile(id, companyName);
+      if (draft.usdot.trim()) profile.authority = { ...profile.authority, usdot: 'yes', usdotNumber: draft.usdot.trim() };
+      if (draft.mc.trim()) profile.authority = { ...profile.authority, mc: 'yes', mcNumber: draft.mc.trim() };
+      current.roadReadyProfiles = [...(current.roadReadyProfiles ?? []), profile];
       return transitionClientLifecycle(current, id, 'INTAKE_IN_PROGRESS', 'NEW_CLIENT_INTAKE', 'STAFF', staffId);
     });
     return id;
+  }
+
+  function saveIdentity(organizationId: string) {
+    const name = identity.companyName.trim();
+    if (!name) throw new Error('Company name is required');
+    updateDemoStore((current) => {
+      const record = current.clients.find((item) => item.id === organizationId);
+      if (record) {
+        record.companyName = name;
+        if (identity.contactName.trim()) record.contactName = identity.contactName.trim();
+      }
+      let profile = (current.roadReadyProfiles ?? []).find((p) => p.organizationId === organizationId);
+      if (!profile) {
+        profile = createEmptyProfile(organizationId, name);
+        current.roadReadyProfiles = [...(current.roadReadyProfiles ?? []), profile];
+      }
+      profile.business = { ...profile.business, legalName: name, ...(identity.ein.trim() ? { ein: identity.ein.trim(), einStatus: 'yes' as const } : {}) };
+      profile.authority = {
+        ...profile.authority,
+        ...(identity.usdot.trim() ? { usdot: 'yes' as const, usdotNumber: identity.usdot.trim() } : {}),
+        ...(identity.mc.trim() ? { mc: 'yes' as const, mcNumber: identity.mc.trim() } : {}),
+      };
+      profile.updatedAt = new Date().toISOString();
+      return current;
+    });
   }
 
   async function onContinue() {
@@ -183,7 +307,7 @@ export function MigrationStudioPage() {
         return;
       }
       if (screen === 'upload' || screen === 'new') {
-        const organizationId = screen === 'new' ? (clientId || createDraftClient()) : clientId;
+        const organizationId = screen === 'new' ? clientId || createDraftClient() : clientId;
         if (!organizationId) throw new Error('Select a client');
         if (screen === 'upload') await storeAcceptedFiles(organizationId);
         go(screen === 'new' ? 'new-received' : 'received', organizationId);
@@ -204,19 +328,24 @@ export function MigrationStudioPage() {
         go(screen === 'new-extract' ? 'new-identity' : 'match');
         return;
       }
-      if (screen === 'new-identity') go('new-records');
-      else if (screen === 'new-records') go('new-review');
+      if (screen === 'new-identity') {
+        if (!clientId) throw new Error('Open the new client file first');
+        saveIdentity(clientId);
+        go('new-records');
+      } else if (screen === 'new-records') go('new-review');
       else if (screen === 'new-review') go('new-approval');
       else if (screen === 'match') {
         if (matchChoice === 'review' || !matchChoice) throw new Error('Resolve the match before review');
         go('review');
       } else if (screen === 'review') go('conflicts');
-      else if (screen === 'conflicts') go('approval');
-      else if (screen === 'approval' || screen === 'new-approval') await approveCurrent(screen === 'new-approval' ? 'new-prebuilt' : 'prebuilt');
+      else if (screen === 'conflicts') {
+        saveConflictDecisions();
+        go('approval');
+      } else if (screen === 'approval' || screen === 'new-approval') await approveCurrent(screen === 'new-approval' ? 'new-prebuilt' : 'prebuilt');
       else if (screen === 'prebuilt' || screen === 'new-prebuilt') go(screen === 'new-prebuilt' ? 'new-invite' : 'invite');
       else if (screen === 'invite' || screen === 'new-invite') await sendInvite(screen === 'new-invite' ? 'new-confirm' : 'invited');
       else if (screen === 'invited') go('invite');
-      else if (screen === 'new-confirm' || screen === 'batch-complete') go('root');
+      else if (screen === 'new-confirm' || screen === 'batch-complete') go('root', '');
       else if (screen === 'batch') go('batch-received');
       else if (screen === 'batch-received') {
         if (localFiles.some((item) => item.file)) {
@@ -224,19 +353,42 @@ export function MigrationStudioPage() {
           await storeAcceptedFiles(clientId);
         }
         go('batch-processing');
-      }
-      else if (screen === 'batch-processing') go('batch-summary');
+      } else if (screen === 'batch-processing') go('batch-summary');
       else if (screen === 'batch-summary') go('batch-conflicts');
-      else if (screen === 'batch-conflicts') go('batch-queue');
-      else if (screen === 'batch-queue') go('batch-client');
+      else if (screen === 'batch-conflicts') {
+        saveDupDecisions();
+        go('batch-queue');
+      } else if (screen === 'batch-queue') go('batch-client', queue[0]?.id ?? clientId);
       else if (screen === 'batch-client') go('batch-approval');
       else if (screen === 'batch-approval') go('batch-run');
-      else if (screen === 'batch-run') go('batch-complete');
+      else if (screen === 'batch-run') await runApprovedClients();
     } catch (error) {
       setMessage(error instanceof Error ? error.message : 'Could not continue');
     } finally {
       setBusy(false);
     }
+  }
+
+  function saveConflictDecisions() {
+    const chosen = Object.entries(decisions).filter(([id]) => conflicts.some((f) => f.id === id));
+    if (!chosen.length) return;
+    updateDemoStore((current) => {
+      let next = current;
+      for (const [id, decision] of chosen) next = applyReviewActionToFact(next, id, CONFLICT_ACTION[decision], staffId);
+      return next;
+    });
+    setDecisions({});
+  }
+
+  function saveDupDecisions() {
+    const chosen = Object.entries(dupDecisions).flatMap(([id, d]) => (DUP_ACTION[d] && queueConflicts.some((f) => f.id === id) ? [[id, DUP_ACTION[d]!] as const] : []));
+    if (!chosen.length) return;
+    updateDemoStore((current) => {
+      let next = current;
+      for (const [id, action] of chosen) next = applyReviewActionToFact(next, id, action, staffId);
+      return next;
+    });
+    setDupDecisions({});
   }
 
   async function approveCurrent(next: string) {
@@ -254,47 +406,100 @@ export function MigrationStudioPage() {
 
   async function sendInvite(next: string) {
     if (!client) throw new Error('Client record missing');
-    const sent = await sendClientActivationInvite(client.id, client.contactEmail, staffId);
+    const email = (screen === 'new-invite' ? inviteEmail : client.contactEmail).trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email === 'pending@example.com') throw new Error('Enter the client’s email address');
+    if (email !== client.contactEmail) {
+      updateDemoStore((current) => {
+        const record = current.clients.find((item) => item.id === client.id);
+        if (record) record.contactEmail = email;
+        return current;
+      });
+    }
+    const sent = await sendClientActivationInvite(client.id, email, staffId);
     if (sent.error && !sent.activationUrl) throw new Error(sent.error);
-    if (sent.error) setMessage(sent.error);
     const updated = loadDemoStore().clients.find((item) => item.id === client.id);
     if (isActiveLifecycle(updated?.clientLifecycle)) throw new Error('Invite incorrectly marked the client ACTIVE');
+    if (sent.error) {
+      // Invite exists but email delivery failed: stay here with the link so staff can copy it.
+      setSentUrl(sent.activationUrl);
+      setMessage(sent.error);
+      return;
+    }
     go(next);
   }
 
-  function onReview(action: MigrationReviewAction | 'IGNORE') {
+  /** PROCESS APPROVED CLIENTS: matched clients without open conflicts move to PREBUILT, one by one. None become ACTIVE. */
+  async function runApprovedClients() {
+    const approved = queue.filter((c) => batchBucket(c) === 'READY' && !blocked.has(c.id) && c.clientLifecycle !== 'PREBUILT' && !isActiveLifecycle(c.clientLifecycle));
+    const failed: string[] = [];
+    for (const c of approved) {
+      const row = (loadDemoStore().archiveMigrationBatches ?? []).find((b) => b.clientId === c.id);
+      if (!row) {
+        failed.push(`${c.companyName}: no files`);
+        continue;
+      }
+      const result = await approveMigrationBatchForOffice({ batchId: row.id, staffId, matchResolved: true });
+      if (!result.ok) failed.push(`${c.companyName}: ${result.error ?? 'approval failed'}`);
+    }
+    go('batch-complete');
+    if (failed.length) setMessage(`${approved.length - failed.length} of ${approved.length} moved to PREBUILT. ${failed.join(' · ')}`);
+  }
+
+  function onSectionAction(target: ReviewTarget, action: MigrationReviewAction | 'IGNORE') {
+    setApplied((current) => ({ ...current, [target]: action }));
     if (action === 'IGNORE') {
       setMessage('Ignored for this review. The profile was not changed.');
       return;
     }
-    const fact = facts.find((item) => !item.reviewAction) ?? facts[0];
-    if (!fact) {
-      setMessage('No extracted fact is on this file yet. Nothing was written to the profile.');
+    const scope = facts.filter((f) => (target === 'CONFLICTS' ? f.confidence === 'CONFLICT' : factSection(f) === target && f.confidence !== 'CONFLICT'));
+    if (!scope.length) {
+      setMessage(`No extracted ${target.toLowerCase()} facts are on this file. Nothing was written to the profile.`);
       return;
     }
-    updateDemoStore((current) => applyReviewActionToFact(current, fact.id, action, staffId));
+    setMessage(null);
+    updateDemoStore((current) => {
+      let next = current;
+      for (const fact of scope) next = applyReviewActionToFact(next, fact.id, action, staffId);
+      return next;
+    });
   }
 
+  const representative = REPRESENTATIVE.has(screen);
   const family: MigrationFamily = screen === 'root' || screen.startsWith('new') || screen.startsWith('batch') ? 'root' : 'existing';
-  const copy = screenCopy(screen, client);
-  const hero = AUTHORITY_HERO[screen];
-  const active = isActiveLifecycle(client?.clientLifecycle);
-  const batchClients = store.clients.filter((item) =>
-    (store.archiveMigrationBatches ?? []).some((row) => row.clientId === item.id && (!batchName || row.notes === batchName || !row.notes)),
-  );
-  const queue = batchClients.length ? batchClients : client ? [client] : [];
+  const spec = MIGRATION_HERO[screen];
+  const authority = AUTHORITY_HERO[screen];
   const viewer = staffViewer(store, session?.user.id);
-  const legacy = !REPRESENTATIVE.has(screen);
+  const ids = clientIdentifiers(store, client);
+  const missingClient = NEEDS_CLIENT.has(screen) && !client;
+  const ctaLabel = screen === 'extract' ? (extractionReady(files, batch?.state) ? 'CONTINUE' : 'VIEW IN BACKGROUND') : CTA[screen] ?? 'CONTINUE';
+  const cta = (label = ctaLabel, lead?: ReactNode): ReactNode => (
+    <>
+      {message ? <p className="amg-msg">{message}</p> : null}
+      <AioMigrationCTA label={label} onClick={() => void onContinue()} disabled={busy} lead={lead} />
+    </>
+  );
+  const newDone = newExtractStages(files, batch, facts);
+  const queueDone = batchStages(queueFiles, queueConflicts.length);
 
   return (
-    <AioMigrationEnvironment family={family} actor="staff" screen={legacy ? `legacy-${family}` : screen}>
+    <AioMigrationEnvironment family={family} actor="staff" screen={screen}>
       <AioMigrationHeader viewer={viewer} />
       <main className="amg-main amg-col">
-        <AioMigrationHero
-          kicker={hero?.kicker ?? copy.kicker}
-          title={hero?.title ?? splitTitle(copy.title)}
-          subtitle={hero ? hero.sub.map((line) => <span key={line} className="amg-line">{line}</span>) : copy.subtitle}
-        />
+        {authority ? (
+          <AioMigrationHero kicker={authority.kicker} title={authority.title} subtitle={authority.sub.map((line) => <span key={line} className="amg-line">{line}</span>)} />
+        ) : spec ? (
+          <AioMigrationHero
+            kicker={spec.kicker}
+            title={spec.title}
+            accent={spec.accent}
+            accentBox={spec.accentBox}
+            goldLines={spec.gold}
+            thinLines={spec.thin}
+            subtitle={spec.sub.length ? spec.sub.map((line) => <span key={line} className="amg-line">{line}</span>) : undefined}
+            style={heroStyle(spec.m)}
+          />
+        ) : null}
+
         {screen === 'root' ? <MigrationRootScreen onOpen={go} /> : null}
         {screen === 'existing' ? (
           <MigrationExistingScreen
@@ -304,132 +509,120 @@ export function MigrationStudioPage() {
             onQuery={setQuery}
             identifiers={(item) => clientIdentifiers(store, item)}
             onSelect={(id) => go('existing', id)}
-            onAddManually={() => go('new')}
+            onAddManually={() => go('new', '')}
           />
         ) : null}
         {screen === 'extract' && client ? (
-          <MigrationExtractScreen client={client} identifiers={clientIdentifiers(store, client)} files={files} batch={batch} onActivity={batch ? () => navigate(aioPaths.officeArchiveMigrationBatch(batch.id)) : undefined} />
+          <MigrationExtractScreen client={client} identifiers={ids} files={files} batch={batch} onActivity={batch ? () => navigate(aioPaths.officeArchiveMigrationBatch(batch.id)) : undefined} />
         ) : null}
         {screen === 'received' && client ? (
-          <MigrationReceivedScreen
+          <MigrationReceivedScreen client={client} identifiers={ids} stored={files} local={localFiles} onAdd={() => inputRef.current?.click()} onRemoveLocal={removeLocal} />
+        ) : null}
+        {representative ? (
+          <>
+            {missingClient ? <p className="amg-msg">Open an existing client file first.</p> : null}
+            {message ? <p className="amg-msg">{message}</p> : null}
+            <AioMigrationCTA label={ctaLabel} onClick={() => void onContinue()} disabled={busy} />
+          </>
+        ) : null}
+
+        {!representative && missingClient ? (
+          <AioFlow top={spec?.top ?? 470} gap={16}>
+            <AioCard className="amg-missing">
+              <p>Open a client file first. This screen works on one client at a time.</p>
+            </AioCard>
+            <AioMigrationCTA label="OPEN EXISTING CLIENT FILE" onClick={() => go('existing', '')} />
+          </AioFlow>
+        ) : null}
+
+        {!missingClient && client && screen === 'upload' ? (
+          <MigrationUploadScreen client={client} ids={ids} stored={files} local={localFiles} inputRef={inputRef} onFiles={onPickFiles} onRemoveLocal={removeLocal} cta={cta()} />
+        ) : null}
+        {!missingClient && client && screen === 'match' ? (
+          <MigrationMatchScreen store={store} client={client} conflicts={conflicts} batch={batch} choice={matchChoice} onChoice={setMatchChoice} onReviewConflicts={() => go('conflicts')} cta={cta()} />
+        ) : null}
+        {!missingClient && client && screen === 'review' ? <MigrationReviewScreen store={store} client={client} ids={ids} facts={facts} applied={applied} onAction={onSectionAction} cta={cta()} /> : null}
+        {!missingClient && client && screen === 'conflicts' ? (
+          <MigrationConflictsScreen
+            store={store}
             client={client}
-            identifiers={clientIdentifiers(store, client)}
-            stored={files}
-            local={localFiles}
-            onAdd={() => inputRef.current?.click()}
-            onRemoveLocal={(name) => setLocalFiles((current) => current.filter((item) => item.name !== name))}
+            ids={ids}
+            conflicts={conflicts}
+            decisions={decisions}
+            onDecide={(id, d) => setDecisions((current) => ({ ...current, [id]: d }))}
+            onChangeClient={() => go('existing', '')}
+            cta={cta(conflicts.length ? 'SAVE DECISIONS' : 'CONTINUE')}
           />
         ) : null}
-        {legacy ? (
-          <div className="amg-legacy">
-            {screen === 'upload' || screen === 'new' ? (
-              <>
-                {client ? <Identity client={client} /> : null}
-                {screen === 'new' ? (
-                  <article className="mig-card">
-                    <h2>BUSINESS IDENTITY</h2>
-                    <label className="mig-label">COMPANY NAME</label>
-                    <input className="mig-field" value={draft.companyName} onChange={(event) => setDraft({ ...draft, companyName: event.target.value })} placeholder="Enter company name" />
-                    <label className="mig-label">PRIMARY CONTACT</label>
-                    <input className="mig-field" value={draft.contactName} onChange={(event) => setDraft({ ...draft, contactName: event.target.value })} placeholder="Enter contact name" />
-                    <label className="mig-label">EMAIL</label>
-                    <input className="mig-field" value={draft.email} onChange={(event) => setDraft({ ...draft, email: event.target.value })} placeholder="Enter email" />
-                    <label className="mig-label">PHONE</label>
-                    <input className="mig-field" value={draft.phone} onChange={(event) => setDraft({ ...draft, phone: event.target.value })} placeholder="Enter phone" />
-                  </article>
-                ) : null}
-                <UploadCard inputRef={inputRef} files={localFiles} onPick={onPickFiles} onRemove={(name) => setLocalFiles((current) => current.filter((item) => item.name !== name))} />
-              </>
-            ) : null}
-            {(screen === 'new-received' || screen === 'batch-received') && (
-              <Received files={files} localFiles={localFiles} batch={batch} batchName={batchName} client={client} />
-            )}
-            {(screen === 'new-extract' || screen === 'batch-processing' || screen === 'batch-run') && (
-              <Stages files={files} batchState={batch?.state} />
-            )}
-            {screen === 'match' && client ? (
-              <article className="mig-card">
-                <h2>MATCH AND CONFLICT REVIEW</h2>
-                <Identity client={client} plain />
-                <p className="mig-sub">Strong identifiers on the record are used first. Company, phone, and email are secondary.</p>
-                <div className="mig-actions">
-                  <button type="button" className={matchChoice === 'existing' ? 'mig-chip mig-chip--gold' : 'mig-chip'} onClick={() => setMatchChoice('existing')}>MATCH TO EXISTING</button>
-                  <button type="button" className={matchChoice === 'new' ? 'mig-chip mig-chip--gold' : 'mig-chip'} onClick={() => setMatchChoice('new')}>CREATE NEW</button>
-                  <button type="button" className={matchChoice === 'review' ? 'mig-chip mig-chip--gold' : 'mig-chip'} onClick={() => setMatchChoice('review')}>NEEDS REVIEW</button>
-                </div>
-              </article>
-            ) : null}
-            {(screen === 'review' || screen === 'new-review' || screen === 'new-records' || screen === 'new-identity') && client ? (
-              <ReviewCards client={client} documents={documents.length} onReview={onReview} />
-            ) : null}
-            {screen === 'conflicts' || screen === 'batch-conflicts' ? (
-              <article className="mig-card">
-                <h2>CONFLICTS</h2>
-                {conflicts.length === 0 ? <p className="mig-sub">No conflicting facts are on this record. Existing canonical values stay as they are.</p> : conflicts.map((fact) => (
-                  <div key={fact.id} className="mig-row">
-                    <span>{fact.fieldKey}<br />{fact.existingValue || 'Current empty'} → {fact.proposedValue || 'Extracted empty'}</span>
-                    <span className="mig-pill">{fact.sourceReference ?? fact.confidence}</span>
-                  </div>
-                ))}
-              </article>
-            ) : null}
-            {(screen === 'approval' || screen === 'new-approval' || screen === 'batch-approval') && (
-              <Approval client={client} documents={documents.length} conflicts={conflicts.length} queue={queue} />
-            )}
-            {(screen === 'prebuilt' || screen === 'new-prebuilt') && client ? <Prebuilt client={client} documents={documents.length} /> : null}
-            {(screen === 'invite' || screen === 'new-invite') && client ? <Invite client={client} /> : null}
-            {(screen === 'invited' || screen === 'new-confirm') && client ? <Invited client={client} active={active} /> : null}
-            {screen === 'batch' ? (
-              <article className="mig-card">
-                <h2>BATCH</h2>
-                <label className="mig-label">BATCH NAME</label>
-                <input className="mig-field" value={batchName} onChange={(event) => setBatchName(event.target.value)} />
-                <p className="mig-sub">Batch ID {batch?.id ?? 'Assigned when the first client file is stored'}.</p>
-                <UploadCard inputRef={inputRef} files={localFiles} onPick={onPickFiles} onRemove={(name) => setLocalFiles((current) => current.filter((item) => item.name !== name))} />
-              </article>
-            ) : null}
-            {screen === 'batch-summary' ? <Buckets queue={queue} /> : null}
-            {screen === 'batch-queue' ? (
-              <article className="mig-card">
-                <h2>PER-CLIENT REVIEW QUEUE</h2>
-                {queue.length === 0 ? <p className="mig-sub">No clients are in this batch yet.</p> : queue.map((item) => (
-                  <button key={item.id} type="button" className="mig-person" onClick={() => go('batch-client', item.id)}>
-                    <b>{item.companyName}</b>
-                    <span>{lifecycleLabel(item.clientLifecycle)}</span>
-                  </button>
-                ))}
-              </article>
-            ) : null}
-            {screen === 'batch-client' && client ? (
-              <article className="mig-card">
-                <h2>ONE CLIENT</h2>
-                <Identity client={client} plain />
-                <p className="mig-sub">This review does not approve any other client in the batch.</p>
-              </article>
-            ) : null}
-            {screen === 'batch-complete' ? <BatchComplete queue={queue} /> : null}
-            {(screen === 'extract' || screen === 'received') && !client ? (
-              <article className="mig-card"><p className="mig-sub">Open an existing client file first.</p></article>
-            ) : null}
-          </div>
+        {!missingClient && client && screen === 'approval' ? <MigrationApprovalScreen store={store} client={client} ids={ids} conflicts={conflicts.length} storedFiles={files.length} cta={cta()} /> : null}
+        {!missingClient && client && screen === 'prebuilt' ? <MigrationPrebuiltScreen store={store} client={client} ids={ids} cta={cta(undefined, <Ico name="send" className="amg-cta__lead" />)} /> : null}
+        {!missingClient && client && screen === 'invite' ? <MigrationInviteScreen client={client} ids={ids} sentUrl={sentUrl} cta={cta()} /> : null}
+        {!missingClient && client && screen === 'invited' ? <MigrationInvitedScreen client={client} ids={ids} cta={cta()} /> : null}
+
+        {screen === 'new' ? (
+          <NewClientFileScreen draft={draft} onDraft={setDraft} local={localFiles} inputRef={inputRef} onFiles={onPickFiles} onRemoveLocal={removeLocal} cta={cta()} />
         ) : null}
-        {screen === 'extract' && !client ? <p className="amg-msg">Open an existing client file first.</p> : null}
-        {screen === 'received' && !client ? <p className="amg-msg">Open an existing client file first.</p> : null}
-        {message ? <p className="amg-msg">{message}</p> : null}
-        <AioMigrationCTA
-          label={screen === 'extract' ? (extractionReady(files, batch?.state) ? 'CONTINUE' : 'VIEW IN BACKGROUND') : copy.cta}
-          onClick={() => void onContinue()}
-          disabled={busy}
-        />
-        <input ref={inputRef} className="amg-file-input" type="file" multiple onChange={(event) => onPickFiles(event.target.files)} />
+        {!missingClient && screen === 'new-received' ? <NewReceivedScreen stored={files} local={localFiles} cta={cta()} /> : null}
+        {!missingClient && screen === 'new-extract' ? <NewExtractScreen done={newDone} cta={newDone.every(Boolean) ? cta() : message ? <p className="amg-msg">{message}</p> : null} /> : null}
+        {!missingClient && screen === 'new-identity' ? <NewIdentityScreen identity={identity} onIdentity={setIdentity} cta={cta()} /> : null}
+        {!missingClient && client && screen === 'new-records' ? <NewRecordsScreen store={store} client={client} storedFiles={files} applied={applied} onAction={onSectionAction} cta={cta()} /> : null}
+        {!missingClient && screen === 'new-review' ? <NewReviewScreen applied={applied} onAction={onSectionAction} cta={cta()} /> : null}
+        {!missingClient && client && screen === 'new-approval' ? (
+          <NewApprovalScreen client={client} hasIds={ids.some((id) => id.startsWith('USDOT') || id.startsWith('MC'))} storedFiles={files.length} facts={facts} cta={cta()} />
+        ) : null}
+        {!missingClient && client && screen === 'new-prebuilt' ? <NewPrebuiltScreen store={store} client={client} cta={cta()} /> : null}
+        {!missingClient && screen === 'new-invite' ? (
+          <NewInviteScreen email={inviteEmail} onEmail={setInviteEmail} sentUrl={sentUrl} expiresAt={new Date(Date.now() + INVITE_TTL_DAYS * 86_400_000)} cta={cta()} />
+        ) : null}
+        {!missingClient && client && screen === 'new-confirm' ? <NewConfirmScreen client={client} cta={cta()} /> : null}
+
+        {screen === 'batch' ? (
+          <BatchIntakeScreen batchName={batchName} onBatchName={setBatchName} batchId={queueBatch?.id} local={localFiles} inputRef={inputRef} onFiles={onPickFiles} onRemoveLocal={removeLocal} cta={cta()} />
+        ) : null}
+        {screen === 'batch-received' ? <BatchReceivedScreen batchName={batchName || queueBatch?.notes || ''} batchId={queueBatch?.id} fileCount={queueFiles.length + localFiles.length} clientCount={queue.length} cta={cta()} /> : null}
+        {screen === 'batch-processing' ? (
+          <BatchProcessingScreen batchName={batchName || queueBatch?.notes || ''} batchId={queueBatch?.id} done={queueDone} cta={queueDone.every(Boolean) ? cta() : message ? <p className="amg-msg">{message}</p> : null} />
+        ) : null}
+        {screen === 'batch-summary' ? <BatchSummaryScreen queue={queue} finished={queueDone.every(Boolean)} cta={cta()} /> : null}
+        {screen === 'batch-conflicts' ? (
+          <BatchConflictsScreen store={store} conflicts={queueConflicts} decisions={dupDecisions} onDecide={(id, d) => setDupDecisions((current) => ({ ...current, [id]: d }))} cta={cta()} />
+        ) : null}
+        {screen === 'batch-queue' ? <BatchQueueScreen store={store} queue={queue} onOpen={(id) => go('batch-client', id)} cta={cta()} /> : null}
+        {!missingClient && client && screen === 'batch-client' ? <BatchClientScreen store={store} client={client} cta={cta()} /> : null}
+        {screen === 'batch-approval' ? <BatchApprovalScreen queue={queue} blocked={blocked} onOpenQueue={() => go('batch-queue')} cta={cta()} /> : null}
+        {screen === 'batch-run' ? (
+          <BatchRunScreen approved={queue.filter((c) => batchBucket(c) === 'READY' && !blocked.has(c.id) && !isActiveLifecycle(c.clientLifecycle)).length} cta={cta()} />
+        ) : null}
+        {screen === 'batch-complete' ? <BatchCompleteScreen queue={queue} failedFiles={queueFiles.filter((f) => f.processingState === 'failed').length} cta={cta()} /> : null}
+
+        <input ref={inputRef} className="amg-file-input" type="file" multiple onChange={(event) => { onPickFiles(event.target.files); event.target.value = ''; }} />
       </main>
       <AioStaffDock />
     </AioMigrationEnvironment>
   );
 }
 
-/** Screens rebuilt to their locked authority in this pass (the rest keep the shared renderer with legacy panels). */
+/** The six representatives (RECOVERY1) keep their pixel-locked renderers; every other screen uses the module flow. */
 const REPRESENTATIVE = new Set(['root', 'existing', 'extract', 'received']);
+
+/** CTA labels as drawn on each authority. */
+const CTA: Record<string, string> = {
+  root: 'START MIGRATION',
+  received: 'BEGIN EXTRACTION',
+  review: 'CONTINUE TO APPROVAL',
+  approval: 'APPROVE MIGRATION',
+  prebuilt: 'SEND ACTIVATION INVITE',
+  invite: 'SEND INVITE',
+  invited: 'VIEW INVITE DETAILS',
+  'new-received': 'BEGIN EXTRACTION',
+  'new-review': 'CONTINUE TO APPROVAL',
+  'new-approval': 'APPROVE MIGRATION',
+  'new-prebuilt': 'SEND ACTIVATION INVITE',
+  'new-invite': 'SEND INVITE',
+  batch: 'START BATCH',
+  'batch-run': 'PROCESS APPROVED CLIENTS',
+  'batch-complete': 'BACK TO INTAKE',
+};
 
 /** Authority copy for the representative screens (line breaks as drawn). */
 const AUTHORITY_HERO: Record<string, { kicker: string; title: string[]; sub: string[] }> = {
@@ -455,222 +648,6 @@ const AUTHORITY_HERO: Record<string, { kicker: string; title: string[]; sub: str
   },
 };
 
-function splitTitle(title: string): string[] {
-  const words = title.split(' ');
-  if (words.length < 3) return [title];
-  const half = Math.ceil(title.length / 2);
-  let acc = 0;
-  let cut = 1;
-  words.forEach((word, i) => {
-    if (acc < half) cut = i + 1;
-    acc += word.length + 1;
-  });
-  return [words.slice(0, cut).join(' '), words.slice(cut).join(' ')];
-}
-
 function extractionReady(files: ReturnType<typeof getBatchFiles>, batchState?: string): boolean {
   return files.length > 0 && files.every((file) => file.processingState === 'ready' || file.processingState === 'grouped') && (batchState === 'ready_for_review' || batchState === 'reviewing' || batchState === 'completed');
-}
-
-function screenCopy(screen: string, client: Client | undefined): { kicker: string; title: string; subtitle: string; cta: string } {
-  const name = client?.companyName ?? 'This client';
-  const map: Record<string, { kicker: string; title: string; subtitle: string; cta: string }> = {
-    root: { kicker: 'CLIENT MIGRATION INTAKE', title: 'BRING YOUR DATA TO AIO', subtitle: 'Start a migration path. Uploading records does not make a client active.', cta: 'START MIGRATION' },
-    existing: { kicker: 'CLIENT MIGRATION INTAKE', title: 'EXISTING CLIENT FILE', subtitle: 'Bring current AIO client records forward. The client stays inactive until confirmation.', cta: 'CONTINUE' },
-    upload: { kicker: 'CLIENT MIGRATION INTAKE', title: 'UPLOAD CLIENT FILE', subtitle: `${name} · ${lifecycleLabel(client?.clientLifecycle)}. The whole file can include a folder of documents.`, cta: 'CONTINUE' },
-    received: { kicker: 'CLIENT MIGRATION INTAKE', title: 'FILES RECEIVED', subtitle: 'Confirm this intake before extraction. Files received are not an active client.', cta: 'BEGIN EXTRACTION' },
-    extract: { kicker: 'CLIENT MIGRATION INTAKE', title: 'EXTRACTING AND CLASSIFYING', subtitle: 'You can leave and return. Extraction is not complete until every stage says so.', cta: 'CONTINUE' },
-    match: { kicker: 'CLIENT MIGRATION INTAKE', title: 'MATCH AND CONFLICT REVIEW', subtitle: 'Choose where these records belong. Nothing is overwritten yet.', cta: 'CONTINUE' },
-    review: { kicker: 'CLIENT MIGRATION INTAKE', title: 'FOUNDER REVIEW', subtitle: 'Nothing is written to the profile until you approve.', cta: 'CONTINUE TO APPROVAL' },
-    conflicts: { kicker: 'CLIENT MIGRATION INTAKE', title: 'ITEMS NEEDING REVIEW', subtitle: 'Current AIO values stay in place until you decide.', cta: 'CONTINUE' },
-    approval: { kicker: 'CLIENT MIGRATION INTAKE', title: 'APPROVAL SUMMARY', subtitle: 'Approval prepares PREBUILT. It does not activate the client.', cta: 'APPROVE MIGRATION' },
-    prebuilt: { kicker: 'CLIENT MIGRATION INTAKE', title: 'PREBUILT', subtitle: 'NOT ACTIVE YET. The office is prepared for confirmation.', cta: 'SEND ACTIVATION INVITE' },
-    invite: { kicker: 'CLIENT ACTIVATION', title: 'SEND ACTIVATION INVITE', subtitle: 'A secure link is sent. No password is created.', cta: 'SEND INVITE' },
-    invited: { kicker: 'CLIENT MIGRATION INTAKE', title: 'INVITE SENT', subtitle: 'CLIENT CONFIRMATION REQUIRED. The client is not active yet.', cta: 'VIEW INVITE DETAILS' },
-    new: { kicker: 'CLIENT MIGRATION INTAKE', title: 'NEW CLIENT FILE', subtitle: 'Start a file for a business that is not an AIO client yet. This does not activate them.', cta: 'CONTINUE' },
-    'new-received': { kicker: 'CLIENT MIGRATION INTAKE', title: 'FILES RECEIVED', subtitle: 'New client file. Receiving files does not make the client active.', cta: 'BEGIN EXTRACTION' },
-    'new-extract': { kicker: 'CLIENT MIGRATION INTAKE', title: 'EXTRACTION AND CLASSIFICATION', subtitle: 'Progress is saved if you leave. This is not finished.', cta: 'CONTINUE' },
-    'new-identity': { kicker: 'CLIENT MIGRATION INTAKE', title: 'BUSINESS IDENTITY REVIEW', subtitle: 'Confirm the new file. PREBUILT path, not active.', cta: 'CONTINUE' },
-    'new-records': { kicker: 'CLIENT MIGRATION INTAKE', title: 'PEOPLE VEHICLES SERVICES DOCUMENTS', subtitle: 'Review only what is on this new file.', cta: 'CONTINUE' },
-    'new-review': { kicker: 'CLIENT MIGRATION INTAKE', title: 'FOUNDER REVIEW', subtitle: 'Approval later creates PREBUILT, not an active client.', cta: 'CONTINUE TO APPROVAL' },
-    'new-approval': { kicker: 'CLIENT MIGRATION INTAKE', title: 'APPROVAL SUMMARY', subtitle: 'Approve only this new file.', cta: 'APPROVE MIGRATION' },
-    'new-prebuilt': { kicker: 'CLIENT MIGRATION INTAKE', title: 'PREBUILT', subtitle: 'NOT ACTIVE YET.', cta: 'SEND ACTIVATION INVITE' },
-    'new-invite': { kicker: 'CLIENT ACTIVATION', title: 'SEND INVITE', subtitle: 'Secure link only. No password is sent.', cta: 'SEND INVITE' },
-    'new-confirm': { kicker: 'CLIENT MIGRATION INTAKE', title: 'CLIENT CONFIRMATION REQUIRED', subtitle: 'NOT ACTIVE YET.', cta: 'CONTINUE' },
-    batch: { kicker: 'CLIENT MIGRATION INTAKE', title: 'BULK BATCH MIGRATION', subtitle: 'Each client stays separately reviewable. The batch does not activate anyone.', cta: 'START BATCH' },
-    'batch-received': { kicker: 'CLIENT MIGRATION INTAKE', title: 'BATCH FILES RECEIVED', subtitle: 'Receiving files does not activate any client.', cta: 'CONTINUE' },
-    'batch-processing': { kicker: 'CLIENT MIGRATION INTAKE', title: 'PROCESSING AND CLIENT DETECTION', subtitle: 'Detection is in progress. You can leave and return.', cta: 'CONTINUE' },
-    'batch-summary': { kicker: 'CLIENT MIGRATION INTAKE', title: 'DETECTION SUMMARY', subtitle: 'Matched, needs review, and unmatched stay in separate buckets.', cta: 'CONTINUE' },
-    'batch-conflicts': { kicker: 'CLIENT MIGRATION INTAKE', title: 'DUPLICATES AND CONFLICTS', subtitle: 'Conflicts stay on the client they belong to.', cta: 'CONTINUE' },
-    'batch-queue': { kicker: 'CLIENT MIGRATION INTAKE', title: 'PER-CLIENT REVIEW QUEUE', subtitle: 'Open one client at a time.', cta: 'CONTINUE' },
-    'batch-client': { kicker: 'CLIENT MIGRATION INTAKE', title: 'CLIENT REVIEW DETAIL', subtitle: name, cta: 'CONTINUE' },
-    'batch-approval': { kicker: 'CLIENT MIGRATION INTAKE', title: 'APPROVAL SUMMARY', subtitle: 'Ready, blocked, needs review, and unmatched are counted separately.', cta: 'CONTINUE' },
-    'batch-run': { kicker: 'CLIENT MIGRATION INTAKE', title: 'PROCESSING APPROVED CLIENTS', subtitle: 'Only approved clients move to PREBUILT. None become active here.', cta: 'CONTINUE' },
-    'batch-complete': { kicker: 'CLIENT MIGRATION INTAKE', title: 'BATCH COMPLETE', subtitle: 'No client becomes active because the batch finished.', cta: 'BACK TO INTAKE' },
-  };
-  return map[screen] ?? map.root;
-}
-
-function Identity({ client, plain }: { client: Client; plain?: boolean }) {
-  return (
-    <article className={plain ? '' : 'mig-card'}>
-      {!plain ? <h2>CLIENT</h2> : null}
-      <div className="mig-row"><b>{client.companyName}</b><span className="mig-pill mig-pill--alert">{isActiveLifecycle(client.clientLifecycle) ? 'ACTIVE' : 'NOT ACTIVE YET'}</span></div>
-      <p className="mig-sub">{client.contactName}{client.contactEmail ? ` · ${client.contactEmail}` : ''}{client.customerNumber ? ` · ${client.customerNumber}` : ''} · {lifecycleLabel(client.clientLifecycle)}</p>
-    </article>
-  );
-}
-
-function UploadCard({ inputRef, files, onPick, onRemove }: { inputRef: RefObject<HTMLInputElement | null>; files: LocalFile[]; onPick: (list: FileList | null) => void; onRemove: (name: string) => void }) {
-  return (
-    <article className="mig-card">
-      <h2>CLIENT FILE</h2>
-      <div className="mig-drop" onDragOver={(event) => event.preventDefault()} onDrop={(event) => { event.preventDefault(); onPick(event.dataTransfer.files); }}>
-        <p>Choose a file or drag and drop</p>
-        <p className="mig-sub">PDF, JPG, PNG, WEBP</p>
-        <button type="button" className="mig-chip mig-chip--gold" onClick={() => inputRef.current?.click()}>CHOOSE FILE</button>
-      </div>
-      {files.map((file) => (
-        <div className="mig-row" key={file.name}>
-          <span>{file.name}<br />{formatBytes(file.size)} · {file.reason ?? file.status}</span>
-          <button type="button" className="mig-chip" onClick={() => onRemove(file.name)}>REMOVE</button>
-        </div>
-      ))}
-    </article>
-  );
-}
-
-function Received({ files, localFiles, batch, batchName, client }: { files: ReturnType<typeof getBatchFiles>; localFiles: LocalFile[]; batch?: { id: string; notes?: string; fileCount: number }; batchName: string; client?: Client }) {
-  const accepted = files.length;
-  const rejected = localFiles.filter((file) => file.status === 'unsupported');
-  return (
-    <>
-      {client ? <Identity client={client} /> : null}
-      <article className="mig-card">
-        <h2>FILE SUMMARY</h2>
-        <div className="mig-stat"><b>{accepted + localFiles.length}</b><span>files in this intake</span></div>
-        <p className="mig-sub">{batch ? `Batch ${batch.notes || batchName} · ${batch.id}` : 'Batch opens when accepted files are stored.'}</p>
-        {files.map((file) => <div className="mig-row" key={file.id}><span>{file.fileName}</span><span className="mig-pill">{file.processingState}</span></div>)}
-        {rejected.map((file) => <div className="mig-row" key={file.name}><span>{file.name}</span><span className="mig-pill">{file.reason}</span></div>)}
-      </article>
-      <article className="mig-note">Receiving files does not make the client active.</article>
-    </>
-  );
-}
-
-function Stages({ files, batchState }: { files: ReturnType<typeof getBatchFiles>; batchState?: string }) {
-  const uploaded = files.length > 0;
-  const ready = files.every((file) => file.processingState === 'ready' || file.processingState === 'grouped') && uploaded;
-  const stages = [
-    ['UPLOAD', uploaded],
-    ['EXTRACT', ready],
-    ['CLASSIFY', batchState === 'ready_for_review' || batchState === 'reviewing' || batchState === 'completed'],
-    ['MATCH', false],
-    ['VALIDATE', false],
-    ['PREPARE FOR REVIEW', batchState === 'ready_for_review'],
-  ] as const;
-  return (
-    <article className="mig-card">
-      <h2>PROGRESS</h2>
-      {stages.map(([label, done]) => <div className="mig-row" key={label}><span>{label}</span><span className="mig-pill">{done ? 'DONE' : 'PENDING'}</span></div>)}
-      <p className="mig-sub">Leave and come back. This screen does not claim the file is finished.</p>
-    </article>
-  );
-}
-
-function ReviewCards({ client, documents, onReview }: { client: Client; documents: number; onReview: (action: MigrationReviewAction | 'IGNORE') => void }) {
-  const sections = [
-    ['COMPANY', client.companyName],
-    ['PEOPLE', client.contactName],
-    ['VEHICLES', 'No vehicles stored on this record'],
-    ['SERVICES', client.services.length ? client.services.join(', ') : 'No services stored on this record'],
-    ['DOCUMENTS', `${documents} vault document${documents === 1 ? '' : 's'}`],
-  ];
-  return (
-    <article className="mig-card">
-      <h2>REVIEW</h2>
-      {sections.map(([label, value]) => <div className="mig-row" key={label}><span><b>{label}</b><br />{value}</span></div>)}
-      <div className="mig-actions">
-        {REVIEW_ACTIONS.map((action) => <button key={action} type="button" className="mig-chip" onClick={() => onReview(action)}>{action.replaceAll('_', ' ')}</button>)}
-      </div>
-    </article>
-  );
-}
-
-function Approval({ client, documents, conflicts, queue }: { client?: Client; documents: number; conflicts: number; queue: Client[] }) {
-  const ready = Boolean(client) && conflicts === 0 && !isActiveLifecycle(client?.clientLifecycle);
-  return (
-    <article className="mig-card">
-      <h2>{ready ? 'READY TO APPROVE' : 'ITEMS REMAINING'}</h2>
-      <div className="mig-row"><span>BUSINESS PROFILE</span><span>{client?.companyName ?? 'Missing'}</span></div>
-      <div className="mig-row"><span>VAULT / DOCUMENTS</span><span>{documents}</span></div>
-      <div className="mig-row"><span>CLIENT REVIEW</span><span>{client?.clientReviewState ?? 'REQUIRED'}</span></div>
-      <div className="mig-row"><span>CONFLICTS</span><span>{conflicts}</span></div>
-      {queue.length > 1 ? <p className="mig-sub">{queue.filter((item) => item.clientLifecycle === 'PREBUILT').length} prebuilt · {queue.filter((item) => item.clientLifecycle === 'MIGRATION_REVIEW_REQUIRED').length} need review · {queue.filter((item) => !item.clientLifecycle || item.clientLifecycle === 'KNOWN_UNMIGRATED').length} unmatched</p> : null}
-    </article>
-  );
-}
-
-function Prebuilt({ client, documents }: { client: Client; documents: number }) {
-  return (
-    <article className="mig-card">
-      <h2>PREBUILT · NOT ACTIVE YET</h2>
-      <Identity client={client} plain />
-      <div className="mig-row"><span>AIO CLIENT ID</span><b>{client.customerNumber ?? client.id}</b></div>
-      <div className="mig-row"><span>OFFICE</span><span>{client.activationConditions?.officeProvisioningSucceeded ? 'Provisioned' : 'Prepared with approval'}</span></div>
-      <div className="mig-row"><span>VAULT</span><span>{documents} document{documents === 1 ? '' : 's'}</span></div>
-      <div className="mig-row"><span>CLIENT REVIEW</span><span>{client.clientReviewState ?? 'REQUIRED'}</span></div>
-    </article>
-  );
-}
-
-function Invite({ client }: { client: Client }) {
-  return (
-    <article className="mig-card">
-      <h2>INVITE DETAILS</h2>
-      <div className="mig-row"><span>DESTINATION EMAIL</span><b>{client.contactEmail}</b></div>
-      <div className="mig-row"><span>PHONE</span><span>{client.contactPhone || 'No phone on record'}</span></div>
-      <div className="mig-row"><span>ACTIVATION METHOD</span><span>Secure link. No password.</span></div>
-      <div className="mig-row"><span>LINK EXPIRATION</span><span>72 hours</span></div>
-    </article>
-  );
-}
-
-function Invited({ client, active }: { client: Client; active: boolean }) {
-  return (
-    <article className="mig-card">
-      <h2>{active ? 'ACTIVE' : 'NOT ACTIVE YET'}</h2>
-      <p className="mig-sub">{client.companyName} · {lifecycleLabel(client.clientLifecycle)}</p>
-      {['COMPANY', 'PEOPLE', 'VEHICLES', 'ACTIVE SERVICES', 'DOCUMENTS WE HAVE', 'WHAT CHANGED?'].map((item) => <div className="mig-row" key={item}><span>{item}</span></div>)}
-    </article>
-  );
-}
-
-function Buckets({ queue }: { queue: Client[] }) {
-  const matched = queue.filter((item) => item.customerNumber || item.clientLifecycle === 'PREBUILT' || item.clientLifecycle === 'MIGRATION_IN_PROGRESS');
-  const review = queue.filter((item) => item.clientLifecycle === 'MIGRATION_REVIEW_REQUIRED');
-  const unmatched = queue.filter((item) => !matched.includes(item) && !review.includes(item));
-  return (
-    <article className="mig-card">
-      <h2>DETECTION</h2>
-      <div className="mig-row"><span>MATCHED</span><b>{matched.length}</b></div>
-      <div className="mig-row"><span>NEEDS REVIEW</span><b>{review.length}</b></div>
-      <div className="mig-row"><span>UNMATCHED</span><b>{unmatched.length}</b></div>
-    </article>
-  );
-}
-
-function BatchComplete({ queue }: { queue: Client[] }) {
-  return (
-    <article className="mig-card">
-      <h2>PER-CLIENT OUTCOME</h2>
-      {queue.length === 0 ? <p className="mig-sub">No clients were in this batch.</p> : queue.map((item) => (
-        <div className="mig-row" key={item.id}>
-          <span>{item.companyName}</span>
-          <span className="mig-pill">{item.clientLifecycle === 'ACTIVE' ? 'ACTIVE' : item.clientLifecycle === 'PREBUILT' ? 'PREBUILT' : item.clientLifecycle === 'MIGRATION_REVIEW_REQUIRED' ? 'REVIEW REQUIRED' : 'UNMATCHED'}</span>
-        </div>
-      ))}
-      <p className="mig-sub">PREBUILT is not active.</p>
-    </article>
-  );
 }

@@ -1,0 +1,423 @@
+<meta charset="utf-8">
+<title>AIO Migration Screens</title>
+<style>
+/* Layout: a sticky control bar over flow-ordered sections; each card pairs the authority image with the live build. */
+/*__FONTS__*/
+:root {
+  --paper: #ecebe7;
+  --card: #fbfaf8;
+  --ink: #17150f;
+  --muted: #67645d;
+  --line: #d9d6cf;
+  --gold: #e3a535;
+  --gold-ink: #5a3d07;
+  --staff: #2f3b4d;
+  --client: #1f6a3c;
+  --display: 'AMG Roboto Condensed', 'Roboto Condensed', 'Arial Narrow', sans-serif;
+  --body: 'AMG Roboto', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --paper: #141311;
+    --card: #1d1c19;
+    --ink: #f0ede6;
+    --muted: #a6a197;
+    --line: #36332d;
+    --gold: #f0b94a;
+    --gold-ink: #241703;
+    --staff: #b9c7dc;
+    --client: #8fd3a6;
+    color-scheme: dark;
+  }
+}
+:root[data-theme='dark'] {
+  --paper: #141311;
+  --card: #1d1c19;
+  --ink: #f0ede6;
+  --muted: #a6a197;
+  --line: #36332d;
+  --gold: #f0b94a;
+  --gold-ink: #241703;
+  --staff: #b9c7dc;
+  --client: #8fd3a6;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font: 400 14px/1.45 var(--body);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+.wrap {
+  max-width: 1480px;
+  margin: 0 auto;
+  padding-inline: 20px;
+  padding-block: 0 48px;
+}
+.bar {
+  position: sticky;
+  top: env(safe-area-inset-top, 0px);
+  z-index: 5;
+  margin-inline: -20px;
+  padding: 14px 20px 12px;
+  background: color-mix(in srgb, var(--paper) 92%, transparent);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--line);
+  display: grid;
+  gap: 10px;
+}
+.bar__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 20px;
+}
+h1 {
+  margin: 0;
+  margin-right: auto;
+  font: 700 26px/1 var(--display);
+  letter-spacing: 0.01em;
+  text-wrap: balance;
+}
+h1 b { color: var(--gold); }
+.meta {
+  color: var(--muted);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+}
+.seg {
+  display: inline-flex;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 3px;
+  background: var(--card);
+}
+.seg button,
+.tabs button {
+  border: 0;
+  background: none;
+  color: var(--ink);
+  font: 600 12.5px/1 var(--display);
+  letter-spacing: 0.08em;
+  padding: 8px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+}
+.seg button[aria-pressed='true'] {
+  background: var(--ink);
+  color: var(--paper);
+}
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.tabs button {
+  border: 1px solid var(--line);
+  background: var(--card);
+}
+.tabs button[aria-pressed='true'] {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--gold-ink);
+}
+.tabs button span { color: inherit; opacity: 0.6; margin-left: 4px; }
+button:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+section.branch {
+  margin-top: 34px;
+}
+.branch > header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px 16px;
+  margin-bottom: 14px;
+}
+h2 {
+  margin: 0;
+  font: 700 22px/1.1 var(--display);
+  letter-spacing: 0.02em;
+}
+.branch > header p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12.5px;
+  letter-spacing: 0.06em;
+}
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 660px), 1fr));
+  gap: 18px;
+}
+body[data-view='tablet'] .cards,
+body[data-view='desktop'] .cards {
+  grid-template-columns: minmax(0, 1fr);
+}
+.card {
+  min-width: 0;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 14px;
+  display: grid;
+  gap: 12px;
+}
+.card__head {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 4px 12px;
+  align-items: center;
+}
+.card__n {
+  grid-row: span 2;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1.5px solid var(--ink);
+  font: 700 14px/1 var(--display);
+  font-variant-numeric: tabular-nums;
+}
+.card__name {
+  font: 700 17px/1.15 var(--display);
+  letter-spacing: 0.03em;
+  min-width: 0;
+}
+.card__ids {
+  grid-column: 2 / -1;
+  color: var(--muted);
+  font-size: 11.5px;
+  letter-spacing: 0.06em;
+  overflow-wrap: anywhere;
+}
+.chips { display: flex; gap: 6px; flex-wrap: wrap; justify-content: end; }
+.chip {
+  font: 600 11px/1 var(--display);
+  letter-spacing: 0.1em;
+  padding: 5px 8px;
+  border-radius: 999px;
+  border: 1px solid currentColor;
+  white-space: nowrap;
+}
+.chip--staff { color: var(--staff); }
+.chip--client { color: var(--client); }
+.chip--rep { color: var(--muted); }
+.pair {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  min-width: 0;
+}
+.pane {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+.pane small {
+  color: var(--muted);
+  font: 600 11px/1 var(--display);
+  letter-spacing: 0.12em;
+}
+.pane--auth { flex: 0 0 auto; width: min(300px, 46%); }
+.pane--live { flex: 1 1 0; }
+body[data-view='phone'] .pane--live { flex: 0 0 auto; width: min(300px, 50%); }
+.pane--auth img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+}
+.frame {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: #f2f0ec;
+}
+.frame iframe {
+  position: absolute;
+  left: 0;
+  top: 0;
+  border: 0;
+  transform-origin: 0 0;
+  background: #f2f0ec;
+}
+.frame__wait {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: #67645d;
+  font: 600 12px/1 var(--display);
+  letter-spacing: 0.12em;
+}
+body.no-auth .pane--auth { display: none; }
+body.no-auth[data-view='phone'] .pane--live { width: min(300px, 100%); }
+.foot {
+  margin-top: 40px;
+  color: var(--muted);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  max-width: 80ch;
+}
+@media (max-width: 560px) {
+  .pair { flex-direction: column; }
+  .pane--auth, body[data-view='phone'] .pane--live { width: 100%; }
+  h1 { font-size: 22px; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .card { transition: border-color 0.2s; }
+  .card:hover { border-color: var(--gold); }
+}
+</style>
+
+<div class="wrap">
+  <div class="bar" role="region" aria-label="Gallery controls">
+    <div class="bar__row">
+      <h1>AIO <b>migration</b> screens</h1>
+      <div class="seg" role="group" aria-label="Screen size">
+        <button type="button" id="v-phone" data-view="phone" aria-pressed="true">Phone</button>
+        <button type="button" id="v-tablet" data-view="tablet" aria-pressed="false">Tablet</button>
+        <button type="button" id="v-desktop" data-view="desktop" aria-pressed="false">Desktop</button>
+      </div>
+      <div class="seg" role="group" aria-label="Authority images">
+        <button type="button" id="a-on" data-auth="on" aria-pressed="true">With authority</button>
+        <button type="button" id="a-off" data-auth="off" aria-pressed="false">Build only</button>
+      </div>
+    </div>
+    <div class="bar__row">
+      <div class="tabs" role="group" aria-label="Branch" id="tabs"></div>
+      <span class="meta" id="meta"></span>
+    </div>
+  </div>
+  <div id="sections"></div>
+  <p class="foot">Static copies of the live screens, captured from fsbw __SHA__ with demo data (Heartland Freight Co., a new client file for River Bend Logistics LLC, four batch clients). Buttons and links are inactive. The authority images are phone frames; tablet and desktop layouts are derived from them. Each screen scrolls inside its frame.</p>
+</div>
+
+<script id="gallery-data" type="application/json">/*__DATA__*/null</script>
+<script>
+(() => {
+  const data = JSON.parse(document.getElementById('gallery-data').textContent);
+  const BRANCHES = [
+    { id: 'existing', title: 'Existing client', note: 'Staff intake · migrating a client AIO already serves' },
+    { id: 'activation', title: 'Client activation', note: 'Client · reviews what AIO knows, then confirms (no staff dock)' },
+    { id: 'new', title: 'New client', note: 'Staff intake · a business that is not an AIO client yet' },
+    { id: 'batch', title: 'Bulk batch', note: 'Staff intake · many client files at once, each reviewed separately' },
+  ];
+  const VIEWS = { phone: [427, 768], tablet: [820, 1180], desktop: [1440, 900] };
+  const store = {
+    get(k) { try { return localStorage.getItem(k); } catch { return null; } },
+    set(k, v) { try { localStorage.setItem(k, v); } catch {} },
+  };
+  let view = VIEWS[store.get('mig-view')] ? store.get('mig-view') : 'phone';
+  let showAuth = store.get('mig-auth') !== 'off';
+  const hashBranch = location.hash.slice(1);
+  let branch = BRANCHES.some((b) => b.id === hashBranch) ? hashBranch : 'all';
+
+  const docFor = (s) => {
+    const html = s.html.replace(/src="(\/migration\/[^"]+)"/g, (m, p) => `src="${data.assets[p] || p}"`);
+    return `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>${data.css}</style></head><body>${data.sprite}${html}</body></html>`;
+  };
+
+  const reps = data.screens.filter((s) => s.rep).length;
+  document.getElementById('meta').textContent = `${data.screens.length} screens · ${reps} from recovery1 · ${data.screens.length - reps} new · built ${data.built} · fsbw ${data.sha}`;
+
+  const tabs = document.getElementById('tabs');
+  [{ id: 'all', title: 'All' }, ...BRANCHES].forEach((b) => {
+    const n = b.id === 'all' ? data.screens.length : data.screens.filter((s) => s.branch === b.id).length;
+    const el = document.createElement('button');
+    el.type = 'button';
+    el.id = `t-${b.id}`;
+    el.dataset.branch = b.id;
+    el.innerHTML = `${b.title}<span>${n}</span>`;
+    tabs.append(el);
+  });
+
+  const sections = document.getElementById('sections');
+  const frames = [];
+  BRANCHES.forEach((b) => {
+    const sec = document.createElement('section');
+    sec.className = 'branch';
+    sec.dataset.branch = b.id;
+    sec.innerHTML = `<header><h2>${b.title}</h2><p>${b.note}</p></header><div class="cards"></div>`;
+    const cards = sec.querySelector('.cards');
+    data.screens.filter((s) => s.branch === b.id).forEach((s, i) => {
+      const card = document.createElement('article');
+      card.className = 'card';
+      card.id = s.key;
+      card.innerHTML = `
+        <div class="card__head">
+          <span class="card__n">${i + 1}</span>
+          <span class="card__name">${s.name}</span>
+          <span class="chips"><span class="chip chip--${s.actor}">${s.actor === 'client' ? 'Client' : 'Staff'}</span>${s.rep ? '<span class="chip chip--rep">Recovery1</span>' : ''}</span>
+          <span class="card__ids">${s.authority} · ${s.route}</span>
+        </div>
+        <div class="pair">
+          <div class="pane pane--auth"><small>Authority</small><img alt="Authority image ${s.authority}" src="${s.auth}" loading="lazy"></div>
+          <div class="pane pane--live"><small>Built · <span class="vlabel"></span></small><div class="frame"><span class="frame__wait">Loading screen</span></div></div>
+        </div>`;
+      cards.append(card);
+      frames.push({ s, frame: card.querySelector('.frame'), label: card.querySelector('.vlabel'), iframe: null });
+    });
+    sections.append(sec);
+  });
+
+  const layout = (f) => {
+    const [w, h] = VIEWS[view];
+    const scale = f.frame.clientWidth / w || 0.7;
+    f.frame.style.height = `${Math.round(h * scale)}px`;
+    f.label.textContent = `${view} ${w}px`;
+    if (f.iframe) {
+      f.iframe.width = w;
+      f.iframe.height = h;
+      f.iframe.style.width = `${w}px`;
+      f.iframe.style.height = `${h}px`;
+      f.iframe.style.transform = `scale(${scale})`;
+    }
+  };
+  const mount = (f) => {
+    if (f.iframe) return;
+    const iframe = document.createElement('iframe');
+    iframe.title = `${f.s.name} (built screen)`;
+    iframe.setAttribute('sandbox', 'allow-same-origin');
+    iframe.srcdoc = docFor(f.s);
+    f.iframe = iframe;
+    f.frame.append(iframe);
+    iframe.addEventListener('load', () => f.frame.querySelector('.frame__wait')?.remove(), { once: true });
+    layout(f);
+  };
+  const io = 'IntersectionObserver' in window
+    ? new IntersectionObserver((entries) => entries.forEach((e) => { if (e.isIntersecting) { mount(frames.find((f) => f.frame === e.target)); io.unobserve(e.target); } }), { rootMargin: '900px 0px' })
+    : null;
+  frames.forEach((f) => (io ? io.observe(f.frame) : mount(f)));
+  if ('ResizeObserver' in window) {
+    const ro = new ResizeObserver(() => frames.forEach(layout));
+    ro.observe(sections);
+  }
+
+  const apply = () => {
+    document.body.dataset.view = view;
+    document.body.classList.toggle('no-auth', !showAuth);
+    document.querySelectorAll('[data-view]').forEach((el) => el.tagName === 'BUTTON' && el.setAttribute('aria-pressed', String(el.dataset.view === view)));
+    document.querySelectorAll('[data-auth]').forEach((el) => el.setAttribute('aria-pressed', String((el.dataset.auth === 'on') === showAuth)));
+    tabs.querySelectorAll('button').forEach((el) => el.setAttribute('aria-pressed', String(el.dataset.branch === branch)));
+    sections.querySelectorAll('section.branch').forEach((sec) => { sec.hidden = branch !== 'all' && sec.dataset.branch !== branch; });
+    requestAnimationFrame(() => frames.forEach(layout));
+  };
+  document.querySelectorAll('.seg button[data-view]').forEach((el) => el.addEventListener('click', () => { view = el.dataset.view; store.set('mig-view', view); apply(); }));
+  document.querySelectorAll('.seg button[data-auth]').forEach((el) => el.addEventListener('click', () => { showAuth = el.dataset.auth === 'on'; store.set('mig-auth', showAuth ? 'on' : 'off'); apply(); }));
+  tabs.addEventListener('click', (e) => {
+    const el = e.target.closest('button');
+    if (!el) return;
+    branch = el.dataset.branch;
+    apply();
+    window.scrollTo({ top: 0 });
+  });
+  apply();
+})();
+</script>

@@ -91,6 +91,45 @@ The authority frames are phone frames. Wider screens get a layout derived from t
 - **≥ 1120px (desktop):** EXISTING, FILES RECEIVED and COMPANY REVIEW go two-column (main 2fr, side 1fr); the flow card spans both. WELCOME TO YOUR OFFICE stays a focused single card (940px).
 - **Verified:** no horizontal overflow at 700 / 768 / 900 / 1024 / 1119 / 1120 / 1280 / 1440 / 1920 on all ten migration screens; boundary checks 23/23.
 
-## Not yet done (founder gate first)
+## Propagation — every authority screen (after founder review of the six)
 
-- The remaining authority screens still render their functional panels (`.amg-legacy`) inside the new environment and shell. Propagation starts after founder review of the six.
+Every authority screen is built: 41 screens for the 42 images. The six representatives keep their pixel-locked renderers; the other 35 use a module renderer built on the same unit system. `AIO-MIG-ACTIVATION-COMPLETE-001` is the superseded draft of the arrival (it shows the staff dock on a client screen); `COMPLETE-002` is the one rendered. No legacy panels (`.amg-legacy`, `.mig-card`) remain on any migration route.
+
+| Layer | Implementation |
+| --- | --- |
+| Modules | `AioMigrationModules.tsx`: flow container, cards, client header, row lists, chips, discs, stat tiles, fields, drop zone (drops whole folders), notes, strips, callouts, choice buttons, confidence |
+| Styles | `aio-migration-flow.css`: module geometry in authority units, per-screen values, tablet/desktop layer, generated uppercase fit |
+| Headlines | `migrationHero.ts`: authority copy (line breaks as drawn) and metrics measured on each PNG (cap top, size from cap height, pitch) |
+| Data | `migrationData.ts`: live derivations (people, fleet, documents, lifecycle events, batch buckets, extracted-fact confidence) |
+| Screens | `MigrationIntakeScreens.tsx` (existing branch), `MigrationNewScreens.tsx`, `MigrationBatchScreens.tsx`, `ActivationReviewScreens.tsx` |
+| Glyphs | Founder icon sheet first. Drawn in the sheet's outline weight only where the sheet has no subject: company building, people, truck, link, envelope, map pin, history, person plus/minus, thumbs up, send, tag, ID card, folder upload, shield check, phone |
+
+| Branch | Screens (route `/office/migration/:screen` unless noted) |
+| --- | --- |
+| Existing client | upload · match · review · conflicts · approval · prebuilt · invite · invited |
+| Client activation (`/portal/activation/review#…`, client actor, no dock) | welcome · people · vehicles · services · documents · changed · confirm |
+| New client | new · new-received · new-extract · new-identity · new-records · new-review · new-approval · new-prebuilt · new-invite · new-confirm |
+| Bulk batch | batch · batch-received · batch-processing · batch-summary · batch-conflicts · batch-queue · batch-client · batch-approval · batch-run · batch-complete |
+
+Fidelity: captured at 427×768 @2x and compared with each authority (side-by-side and overlay boards). Composition, module order, geometry and type follow the authority; content follows the record, so list lengths and wraps differ where the live data differs. The uppercase fit was regenerated for these screens (each block keeps its authority-casing line count and width).
+
+### Live data and deliberate deviations (propagated screens)
+
+- No sample people, vehicles, documents, percentages or IDs from the authority. People are initials (no photos); extraction confidence is the level recorded on the facts (HIGH / MEDIUM / LOW / CONFLICT), never an invented percentage; empty sections say so.
+- Supported types come from `FILE_POLICY` (no CSV), as on the representatives.
+- Invite expiry reads 3 days, the real 72-hour link lifetime (the authority draws 7 and 14 days).
+- FOUNDER REVIEW and ITEMS NEEDING REVIEW show step 2 (REVIEW DATA) as current; the authority REVIEW image highlights only step 1.
+- Client activation: each person, vehicle, service and document can be answered on its own; the section response the activation service records is the roll-up (any NEEDS AN UPDATE, else any I'M NOT SURE, else LOOKS RIGHT once every item is answered). A section with nothing on file asks "Is that right?" so activation can still complete. CONFIRM AND ACTIVATE names the sections still to review instead of "Activation conditions not met".
+- Client DOCUMENTS lists customer-visible vault records only; internal staff scans never reach the client.
+- NEW · SEND INVITE takes the destination email (new files have no email until then) and keeps the link on screen with a copy button if email delivery fails.
+- NEW CLIENT FILE stores USDOT and MC on the Road Ready profile; BUSINESS IDENTITY REVIEW adds the EIN (`BusinessProfile.ein`).
+- BULK · PROCESS APPROVED CLIENTS now runs approval for matched clients without open conflicts (PREBUILT, never ACTIVE). Before, the button only advanced the screen.
+- ITEMS NEEDING REVIEW writes the decisions on SAVE DECISIONS (KEEP AIO → reject, USE EXTRACTED → confirm, NEEDS CLIENT CONFIRMATION); DUPLICATES AND CONFLICTS writes Merge / Keep Separate (Review Later leaves the item open).
+
+### Tablet and desktop (propagated screens)
+
+≥ 700px: one stack in authority order at the desktop type scale, as on the representatives. ≥ 1120px: the step card spans the top, cards form a 2fr main column and the closing items (what happens next, notes, the action) a sticky 1fr side column; screens with nothing for the side keep a 1000px measure.
+
+### Review gallery
+
+`npm run migration:gallery` captures all 41 built screens with demo data and writes `.migration-mocks/aio-migration-gallery.html`: each screen renders live at phone, tablet or desktop width next to its authority image. Link: `docs/migration-recovery/MOCKS.md`.

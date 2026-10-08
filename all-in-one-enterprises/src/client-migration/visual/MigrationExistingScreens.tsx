@@ -11,12 +11,14 @@ const SELECT_STEPS = [
   { label: 'IMPORT', sub: 'Complete' },
 ];
 
-export function MigrationSelectSteps({ current = 0 }: { current?: number }) {
+/** The five-step card drawn on SELECT, COMPANY, FOUNDER REVIEW, ITEMS NEEDING REVIEW, WELCOME and VEHICLES. */
+export function MigrationSelectSteps({ current = 0, steps = SELECT_STEPS }: { current?: number; steps?: Array<{ label: string; sub: string }> }) {
   return (
     <AioMigrationPanel className="amg-flowcard">
       <AioSteps
         className="amg-steps--flow"
-        steps={SELECT_STEPS.map((s, i) => ({ ...s, state: (i < current ? 'done' : i === current ? 'current' : 'todo') as StepState }))}
+        checks={false}
+        steps={steps.map((s, i) => ({ ...s, state: (i < current ? 'done' : i === current ? 'current' : 'todo') as StepState }))}
       />
     </AioMigrationPanel>
   );
