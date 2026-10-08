@@ -12,7 +12,7 @@
 
 | Actor | Class | What it is | Identity | Inherits | Self-elevate | Code today |
 |---|---|---|---|---|---|---|
-| FOUNDER | PRIVILEGED_INTERNAL | An explicitly authorized company principal with company-wide authority across AIO OFFICE. | A role / actor class granted explicitly — never a hard-coded person, name or email. More than one founder / principal is possible without redesigning permissions. (one or more) | STAFF | never | No FOUNDER role in code yet. Nearest today: OfficeStaffRole owner (all-in-one-enterprises/src/office-core/officeWorkTypes.ts:4-16; ROLE_PERMISSIONS all-in-one-enterprises/src/office-core/officeContext.ts:74) and Supabase aio_internal_role super_admin (all-in-one-enterprises/supabase/migrations/20260815100000_aio_identity_foundation.sql:29). No founder identity is hard-coded. |
+| FOUNDER | PRIVILEGED_INTERNAL | An explicitly authorized company principal with company-wide authority across AIO OFFICE. | A role / actor class granted explicitly — never a hard-coded person, name or email. More than one founder / principal is possible without redesigning permissions. (one or more) | STAFF | never | No FOUNDER role in code yet. Nearest today: OfficeStaffRole owner (all-in-one-enterprises/src/office-core/officeWorkTypes.ts:4-16; ROLE_PERMISSIONS all-in-one-enterprises/src/office-core/officeContext.ts:74) and Supabase aio_internal_role super_admin (all-in-one-enterprises/supabase/migrations/20260815100000_aio_identity_foundation.sql:28-29). No founder identity is hard-coded. |
 | STAFF | INTERNAL | AIO team members working in AIO OFFICE within the permissions granted to them. | Staff role plus explicit permission grants. Never inherits FOUNDER authority; BY_GRANT nodes need a grant. (many) | — | never | OfficeStaffRole + ROLE_PERMISSIONS (all-in-one-enterprises/src/office-core/officeContext.ts:74) · Supabase aio_internal_role. |
 | CLIENT | CLIENT | Users of one client organisation, inside CLIENT OFFICE only. | Authenticated membership of the client organisation (the session organisation is the only client). (many) | — | never | CustomerRouteGuard + ClientPortalLifecycleGuard (all-in-one-enterprises/src/auth/guards/ClientPortalLifecycleGuard.tsx:22-40). |
 
@@ -36,6 +36,7 @@
 
 | Node | Founder act | Staff |
 |---|---|---|
+| AIO OFFICE → HOME → Business Pulse | — | by grant (management.dashboard.read · management.financial.read for money figures (ROLE_PERMISSIONS)) |
 | AIO OFFICE → INTAKE → Founder Review | Founder review of the migrated profile (staff prepare it; they do not inherit the review) | sees it; the act is the founder’s |
 | AIO OFFICE → INTAKE → Prebuilt Client | PREBUILT review / approval (APPROVE MIGRATION) | sees it; the act is the founder’s |
 | AIO OFFICE → INTAKE → Activation Invite | Activation authority (sending the activation invite); client confirmation stays the gate before ACTIVE | sees it; the act is the founder’s |
@@ -105,6 +106,7 @@ Existing office permissions keep gating where they already do; nothing here broa
 | AIO OFFICE → HOME → Clients in Motion | FULL | FULL | HIDDEN | — | — | — | — | — |
 | AIO OFFICE → HOME → Recent Activity | FULL | FULL | HIDDEN | — | — | — | — | — |
 | AIO OFFICE → HOME → Quick Actions | FULL | FULL | HIDDEN | — | — | — | — | — |
+| AIO OFFICE → HOME → Business Pulse | FULL | BY_GRANT | HIDDEN | — | — | — | — | management.dashboard.read · management.financial.read for money figures (ROLE_PERMISSIONS) |
 | AIO OFFICE → INTAKE | FULL | FULL | HIDDEN (firewall) | — | — | — | — | — |
 | AIO OFFICE → INTAKE → Existing Client File | FULL | FULL | HIDDEN | — | — | — | — | — |
 | AIO OFFICE → INTAKE → New Client File | FULL | FULL | HIDDEN | — | — | — | — | — |

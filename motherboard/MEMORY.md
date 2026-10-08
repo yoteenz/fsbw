@@ -55587,3 +55587,32 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
   - Road Ready shows in SERVICES while available and OPERATIONS while active. No per-client engagement state exists yet.
 - **Not changed:** live nav, routes, pages, schema, lifecycle and auth.
 - **Tests:** the overlay tests still hold every cited file:line, route line, manifest status and hash.
+
+---
+
+## 2026-10-08 — AIO office root authority contracts vendored (HOME · WORK · REPORTS · MORE)
+
+- **Context:** SITE00 defined what each AIO OFFICE root owns, only projects, reads and may mutate (commit `b47a23ba`). This repo copies `docs/aio/office-contracts/` (19 files, PROVENANCE.json with sha256) and re-copies `docs/aio/office-ia/` plus the overlay (Business Pulse optional HOME region; VEHICLES & FLEET owns registration state; six corrected citations).
+- **Test:** `src/product-graph/officeRootContracts.test.ts` checks four things:
+  - every cited file and line exists;
+  - every identifier a source, record, metric or gap names sits on its cited lines;
+  - every route a contract names is declared in `OfficeRoutes.tsx`;
+  - every node it names exists in the IA overlay.
+  Nothing in `src` imports the docs.
+- **What it means for implementation:**
+  - HOME routes only; it never stores a queue, count or score.
+  - Every REPORTS metric is classified, and today all of them are demo-store backed. Production Business Pulse is therefore empty until metrics are production-backed.
+  - Only the owning root changes state.
+- **Verified live privacy gaps (recorded, NOT fixed; this sprint changed no auth or schema):**
+  - Portal request and invoice views are not `security_invoker` while anon has SELECT.
+  - The shipper view exposes `internal_notes`, and shippers can read the brokerage audit payload.
+  - Org owners can UPDATE `client_lifecycle`.
+  - Migrated scans keep `visibility = customer`.
+  - Internal docs open by direct link or the calendar.
+  - The `aio_messages` policy has no visibility filter.
+  - FleetCare ticket detail has no org check, and clients can read referral fees.
+  - The IFTA client room lists staff audit actions.
+  - Client pages link to `/office/messages`.
+  - Clients see draft bookkeeping reports.
+  - Fix these in a security sprint before building client-safe projections on them.
+- **Not changed:** live nav, routes, pages, schema, lifecycle, auth.

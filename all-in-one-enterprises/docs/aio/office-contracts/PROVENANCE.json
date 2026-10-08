@@ -1,0 +1,33 @@
+{
+  "id": "AIO_OFFICE_CONTRACTS_PROVENANCE",
+  "sprint": "P0.AIO.OFFICE-IA.FOUNDER-HOME-WORK-REPORTS-MORE.AUTHORITY-CONTRACTS1",
+  "source": {
+    "repo": "yoteenz/SITE00",
+    "branch": "cursor/aio-office-ia-work-tree-4f59",
+    "commit": "b47a23ba39e1ba5973cd19915c866ff7662f30dc",
+    "path": "docs/aio/office-contracts/",
+    "generated_by": "scripts/studioos/aio-office-contracts-export.ts"
+  },
+  "rule": "Copied verbatim from SITE00 (the Experience Brain is the source). Edit the SITE00 TypeScript and re-copy; never edit these files here. Contract only: nothing in src imports these files.",
+  "sha256": {
+    "01_HOME_AUTHORITY_CONTRACT.md": "7b95d28fe9fd07670e015b0e1bc3d2f15fa454ac18170433e7a35b7271b14a3b",
+    "02_WORK_AUTHORITY_CONTRACT.md": "36a5cd53fabe17c9bebfec8e7c5a66940030b14cfa1ef8a0bcb7a0b02cf70977",
+    "03_REPORTS_AUTHORITY_CONTRACT.md": "c49cc8ee4c70d8720eb1ff1ce237009228b2a52d9e60588e1c0a376f2456db43",
+    "04_MORE_AUTHORITY_CONTRACT.md": "d400c729cd0bc3d0df26bde057a5f2341cb77e431559dda5dc72efda268ab832",
+    "05_ROOT_OWNERSHIP_MATRIX.md": "15b78d657b037d454458d1a67ffedff3627c58c9da48f8bad170d2fb11c6e210",
+    "06_DATA_SOURCE_MATRIX.md": "d8288050663e2cf61c66f0b802c4dec203b1c26e57f42d0c7ebf0210aadac03c",
+    "07_PERMISSION_MATRIX.md": "300c41d085d109f9cade721035d01515358128daf9b4d2c84ddcd3093f625e44",
+    "08_CLIENT_SAFE_PROJECTION_MATRIX.md": "1a5208ce1b24265ebb9d3a5edd2939e91afc5e85f3c81ff70bb9723a34c9a655",
+    "09_RESPONSIVE_PRIORITY_MATRIX.md": "e2941f7e8b32e409148c6b358f3663ddb5d0613c2f785fea0c4126ea26c4add2",
+    "10_IMPLEMENTATION_GAPS.md": "ffc5e32f0affd8ef8b35602c1066f424ab49630df4b28b13d4de91b133962ecb",
+    "AIO_OFFICE_ROOT_CONTRACTS.json": "6e1bd6dd7aad2900999026519198716b5b0c1594d7b0c753bfab0a8c78014c63",
+    "CLIENT_SAFE_PROJECTION_MATRIX.json": "57702e6e6cf951beb56740daa1e92fec6118a023949093bb1294a75a1b070148",
+    "DATA_SOURCE_MATRIX.json": "ee445a5e1843557d174ec87c72d7e1d1ce375b65485cd3824de9d6813ccea8f8",
+    "IMPLEMENTATION_GAPS.json": "191d3232b25fad53ebef0b10668666be02d59e419d1a9b4f6fc0d7186b52fdfc",
+    "PERMISSION_MATRIX.json": "8830466b8fa45374c5b1c92aaef2e4754f154f9c77f7cce62bf0f2098fa0e58a",
+    "QUALITY_GATE.json": "9bd39e9d1552f436e701628ebeaa96bbbb66c0e9c678486d51696416ff29093a",
+    "README.md": "31fb407276fffd655e6f8c9c2485a4b2675e77a23713eb00632bb2576f5a6b6a",
+    "RESPONSIVE_PRIORITY_MATRIX.json": "d8dc59a08c3762d4022baed0eac888f4b2740a68dbd42ddae346acbe481684be",
+    "ROOT_OWNERSHIP_MATRIX.json": "cac1c4ca9ed71ca27e2164be4e5c200898aed6ac67c662fd2185c8bdb1ad4a9b"
+  }
+}
