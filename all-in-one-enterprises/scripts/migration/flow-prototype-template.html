@@ -1,0 +1,409 @@
+<meta charset="utf-8">
+<title>AIO Client Migration Flow</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@500;600;700&family=Roboto:wght@400;500&family=Roboto+Mono:wght@500&display=swap">
+<style>
+/* Layout: a flow workbench — screen tree | live device stage | inspector (connections, outbox, authority, gaps). */
+:root {
+  --paper: #efece6;
+  --panel: #faf8f4;
+  --raise: #ffffff;
+  --ink: #16161a;
+  --muted: #66656c;
+  --line: rgba(22, 22, 26, 0.11);
+  --gold: #e3a63a;
+  --gold-soft: rgba(227, 166, 58, 0.16);
+  --gold-ink: #8a5a0b;
+  --ok: #2d7a4c;
+  --ok-soft: rgba(45, 122, 76, 0.13);
+  --warn: #b0481a;
+  --warn-soft: rgba(176, 72, 26, 0.12);
+  --stage: #dcd8d0;
+  --display: 'Roboto Condensed', 'Arial Narrow', Arial, sans-serif;
+  --body: Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --mono: 'Roboto Mono', ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #17171a; --panel: #1f1f23; --raise: #26262b; --ink: #ecebe6; --muted: #a3a1a8; --line: rgba(236, 235, 230, 0.12);
+    --gold: #eab354; --gold-soft: rgba(234, 179, 84, 0.16); --gold-ink: #f0c470; --ok: #6cc08e; --ok-soft: rgba(108, 192, 142, 0.14);
+    --warn: #ef8a5a; --warn-soft: rgba(239, 138, 90, 0.14); --stage: #0f0f11; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #17171a; --panel: #1f1f23; --raise: #26262b; --ink: #ecebe6; --muted: #a3a1a8; --line: rgba(236, 235, 230, 0.12);
+  --gold: #eab354; --gold-soft: rgba(234, 179, 84, 0.16); --gold-ink: #f0c470; --ok: #6cc08e; --ok-soft: rgba(108, 192, 142, 0.14);
+  --warn: #ef8a5a; --warn-soft: rgba(239, 138, 90, 0.14); --stage: #0f0f11; color-scheme: dark;
+}
+[hidden] { display: none !important; }
+html, body { height: 100%; }
+body { background: var(--paper); color: var(--ink); font: 400 13px/1.45 var(--body); text-transform: uppercase; }
+* { box-sizing: border-box; }
+button { font: inherit; color: inherit; text-transform: inherit; cursor: pointer; }
+button:focus-visible, summary:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+.wb { height: 100%; display: grid; grid-template-columns: 290px minmax(0, 1fr) 340px; grid-template-rows: auto minmax(0, 1fr); grid-template-areas: "top top top" "tree stage insp"; }
+/* top bar */
+.top { grid-area: top; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 18px; padding: 12px 18px; border-bottom: 1px solid var(--line); background: var(--panel); }
+.brand { display: grid; gap: 2px; margin-right: auto; }
+.brand b { font: 700 18px/1 var(--display); letter-spacing: 0.04em; }
+.brand span { font: 500 10.5px/1 var(--display); letter-spacing: 0.2em; color: var(--muted); }
+.meter { display: grid; gap: 5px; min-width: 190px; }
+.meter__t { display: flex; justify-content: space-between; gap: 10px; font: 600 11px/1 var(--display); letter-spacing: 0.08em; color: var(--muted); font-variant-numeric: tabular-nums; }
+.meter__t b { color: var(--ink); }
+.meter__bar { height: 6px; border-radius: 3px; background: var(--line); overflow: hidden; }
+.meter__bar i { display: block; height: 100%; width: 0; background: var(--gold); transition: width 0.3s; }
+.seg { display: inline-flex; padding: 3px; border-radius: 10px; background: var(--paper); border: 1px solid var(--line); }
+.seg button { border: 0; background: none; padding: 7px 12px; border-radius: 7px; font: 600 12px/1 var(--display); letter-spacing: 0.07em; }
+.seg button small { font: 500 10px/1 var(--mono); color: var(--muted); margin-left: 5px; letter-spacing: 0; }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--panel); }
+.seg button[aria-pressed="true"] small { color: inherit; opacity: 0.7; }
+.btn { border: 1px solid var(--line); background: var(--raise); border-radius: 9px; padding: 8px 12px; font: 600 12px/1 var(--display); letter-spacing: 0.07em; }
+.btn--gold { background: var(--gold); border-color: transparent; color: #1a1408; }
+.btn:hover { border-color: var(--gold); }
+/* tree */
+.tree { grid-area: tree; overflow: auto; border-right: 1px solid var(--line); background: var(--panel); padding: 10px 10px 24px; }
+.branch { margin-top: 10px; }
+.branch h2 { margin: 6px 8px 6px; font: 700 12px/1.2 var(--display); letter-spacing: 0.14em; color: var(--gold-ink); }
+.branch p { margin: 0 8px 6px; font-size: 10.5px; color: var(--muted); }
+.node { width: 100%; display: grid; grid-template-columns: 14px minmax(0, 1fr); gap: 8px; align-items: start; padding: 7px 8px; border: 0; border-radius: 8px; background: none; text-align: left; }
+.node:hover { background: var(--gold-soft); }
+.node[aria-current="true"] { background: var(--ink); color: var(--panel); }
+.node[aria-current="true"] .node__id { color: inherit; opacity: 0.65; }
+.node__dot { width: 10px; height: 10px; margin-top: 3px; border-radius: 50%; border: 1.5px solid var(--muted); }
+.node[data-state="jump"] .node__dot { border-color: var(--gold); background: var(--gold-soft); }
+.node[data-state="flow"] .node__dot { border-color: var(--gold); background: var(--gold); }
+.node__name { display: block; font: 600 12.5px/1.25 var(--display); letter-spacing: 0.03em; }
+.node__id { display: block; margin-top: 2px; font: 500 10px/1.2 var(--mono); color: var(--muted); text-transform: none; }
+.tag { display: inline-block; margin-left: 6px; padding: 2px 5px; border-radius: 4px; font: 700 9px/1 var(--display); letter-spacing: 0.08em; vertical-align: 1px; }
+.tag--gap { background: var(--warn-soft); color: var(--warn); }
+.tag--client { background: var(--ok-soft); color: var(--ok); }
+.legend { display: grid; gap: 5px; margin: 14px 8px 0; padding-top: 12px; border-top: 1px solid var(--line); font-size: 10.5px; color: var(--muted); }
+.legend span { display: flex; align-items: center; gap: 8px; }
+.legend i { width: 10px; height: 10px; border-radius: 50%; border: 1.5px solid var(--muted); }
+.legend i.j { border-color: var(--gold); background: var(--gold-soft); }
+.legend i.f { border-color: var(--gold); background: var(--gold); }
+/* stage */
+.stage { grid-area: stage; display: grid; grid-template-rows: auto minmax(0, 1fr); min-width: 0; min-height: 0; background: var(--stage); }
+.now { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 12px; padding: 10px 16px; border-bottom: 1px solid var(--line); background: var(--panel); }
+.now b { font: 700 15px/1.2 var(--display); letter-spacing: 0.04em; }
+.now code { font: 500 11px/1.2 var(--mono); color: var(--muted); text-transform: none; overflow-wrap: anywhere; }
+.now em { font-style: normal; font: 700 10px/1 var(--display); letter-spacing: 0.1em; padding: 3px 6px; border-radius: 4px; background: var(--gold-soft); color: var(--gold-ink); }
+.viewport { position: relative; min-height: 0; overflow: hidden; display: grid; place-items: center; padding: 16px; }
+.device { position: relative; flex: none; border-radius: 26px; background: #0d0d0f; padding: 9px; box-shadow: 0 18px 50px rgba(0, 0, 0, 0.25); }
+.device[data-vp="desktop"] { border-radius: 12px; padding: 6px; }
+.device__clip { position: relative; overflow: hidden; border-radius: 18px; background: #f2f0ec; }
+.device[data-vp="desktop"] .device__clip { border-radius: 7px; }
+.device iframe { position: absolute; left: 0; top: 0; border: 0; transform-origin: 0 0; background: #f2f0ec; }
+.loading { position: absolute; inset: 0; display: grid; place-items: center; font: 600 12px/1 var(--display); letter-spacing: 0.14em; color: #8a8890; background: #f2f0ec; }
+/* inspector */
+.insp { grid-area: insp; overflow: auto; border-left: 1px solid var(--line); background: var(--panel); padding: 12px 14px 28px; display: grid; gap: 14px; align-content: start; }
+.card { display: grid; gap: 8px; align-content: start; padding: 12px; border-radius: 12px; background: var(--raise); border: 1px solid var(--line); min-width: 0; }
+.card h3 { margin: 0; font: 700 11.5px/1.2 var(--display); letter-spacing: 0.14em; color: var(--muted); }
+.kv { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 10px; font-size: 11.5px; }
+.kv dt { color: var(--muted); }
+.kv dd { margin: 0; font-weight: 500; overflow-wrap: anywhere; }
+.list { margin: 0; padding: 0; list-style: none; display: grid; gap: 6px; }
+.list li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; align-items: start; font-size: 11.5px; }
+.list li small { display: block; color: var(--muted); font-size: 10.5px; }
+.pill { padding: 3px 6px; border-radius: 5px; font: 700 9.5px/1 var(--display); letter-spacing: 0.08em; white-space: nowrap; }
+.pill--ok { background: var(--ok-soft); color: var(--ok); }
+.pill--no { background: var(--line); color: var(--muted); }
+.pill--warn { background: var(--warn-soft); color: var(--warn); }
+.link { border: 0; background: none; padding: 0; text-align: left; font-weight: 600; text-decoration: underline; text-decoration-color: var(--gold); text-underline-offset: 3px; }
+.empty { margin: 0; font-size: 11px; color: var(--muted); }
+.auth img { width: 100%; height: auto; border-radius: 8px; border: 1px solid var(--line); }
+.gaps { display: grid; gap: 10px; }
+.gaps div b { display: block; font: 600 12px/1.3 var(--display); letter-spacing: 0.03em; }
+.gaps div p { margin: 3px 0 0; font-size: 11px; color: var(--muted); }
+.mail { display: grid; gap: 6px; padding: 9px; border-radius: 9px; background: var(--gold-soft); }
+.mail small { color: var(--gold-ink); font: 700 10px/1 var(--display); letter-spacing: 0.1em; }
+.note { margin: 0; padding: 8px 10px; border-radius: 8px; background: var(--warn-soft); color: var(--warn); font-size: 11px; }
+.foot { font-size: 10px; color: var(--muted); }
+details summary { cursor: pointer; list-style: none; }
+details summary::-webkit-details-marker { display: none; }
+/* narrower screens: stage first, tree and inspector below */
+@media (max-width: 1180px) {
+  .wb { grid-template-columns: 260px minmax(0, 1fr); grid-template-areas: "top top" "tree stage" "insp insp"; grid-template-rows: auto minmax(560px, 78vh) auto; height: auto; }
+  .insp { border-left: 0; border-top: 1px solid var(--line); grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
+}
+@media (max-width: 760px) {
+  .wb { grid-template-columns: minmax(0, 1fr); grid-template-areas: "top" "stage" "tree" "insp"; grid-template-rows: auto minmax(520px, 80vh) auto auto; }
+  .tree { border-right: 0; border-top: 1px solid var(--line); max-height: 60vh; }
+  .top { padding-inline: 16px; }
+  .meter { min-width: 0; flex: 1 1 100%; }
+}
+@media (prefers-reduced-motion: reduce) { .meter__bar i { transition: none; } }
+</style>
+
+<div class="wb">
+  <header class="top">
+    <div class="brand"><b>AIO CLIENT MIGRATION</b><span>FLOW PROTOTYPE · LIVE SCREENS ON DEMO DATA</span></div>
+    <div class="meter" aria-live="polite">
+      <div class="meter__t"><span>REACHED BY CLICKING</span><b id="cov">0 / 0</b></div>
+      <div class="meter__bar"><i id="covbar"></i></div>
+    </div>
+    <div class="seg" role="group" aria-label="Viewport">
+      <button type="button" id="vp-phone" data-vp="phone" aria-pressed="true">PHONE<small>390</small></button>
+      <button type="button" id="vp-tablet" data-vp="tablet" aria-pressed="false">TABLET<small>834</small></button>
+      <button type="button" id="vp-desktop" data-vp="desktop" aria-pressed="false">DESKTOP<small>1440</small></button>
+    </div>
+    <button type="button" class="btn btn--gold" id="restart">RESTART FLOW</button>
+    <button type="button" class="btn" id="clear">CLEAR TEST RECORD</button>
+  </header>
+
+  <nav class="tree" id="tree" aria-label="Migration screens"></nav>
+
+  <main class="stage">
+    <div class="now"><b id="now-name">LOADING</b><code id="now-route"></code><em id="now-how" hidden></em></div>
+    <div class="viewport" id="viewport">
+      <div class="device" id="device" data-vp="phone">
+        <div class="device__clip" id="clip">
+          <iframe id="app" title="Migration screens"></iframe>
+          <div class="loading" id="loading">LOADING THE FLOW</div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <aside class="insp" id="insp" aria-label="Screen inspector">
+    <section class="card"><h3>THIS SCREEN</h3><dl class="kv" id="info"></dl><p class="note" id="storage-note" hidden>THIS BROWSER BLOCKS SITE STORAGE, SO EACH JUMP FROM THE TREE STARTS FROM FRESH DEMO DATA. CLICKING THROUGH THE FLOW KEEPS ITS STATE.</p></section>
+    <section class="card"><h3>EXITS ON THIS SCREEN</h3><ul class="list" id="exits"></ul></section>
+    <section class="card"><h3>ARRIVED HERE FROM</h3><ul class="list" id="from"></ul></section>
+    <section class="card"><h3>LOOKS TAPPABLE, DOES NOTHING</h3><ul class="list" id="dead"></ul></section>
+    <section class="card"><h3>OUTBOX</h3><div class="list" id="outbox"></div></section>
+    <section class="card auth"><details id="auth-d" open><summary><h3>AUTHORITY (PHONE FRAME)</h3></summary><div id="auth" style="margin-top:8px"></div></details></section>
+    <section class="card"><details id="gaps-d" open><summary><h3>GAPS FOUND WHILE WIRING THE FLOW</h3></summary><div class="gaps" id="gaps" style="margin-top:10px"></div></details></section>
+    <section class="card"><h3>LEFT THE MIGRATION FEATURE</h3><ul class="list" id="left"></ul></section>
+    <p class="foot">BUILT FROM FSBW __SHA__. THE SCREENS ARE THE REAL APP CODE ON DEMO DATA IN THIS BROWSER; NOTHING IS SENT ANYWHERE. EMAILS LAND IN THE OUTBOX.</p>
+  </aside>
+</div>
+
+<script>
+(() => {
+  const DATA = /*__DATA__*/null;
+  const APP_HTML = /*__APP__*/null;
+  const $ = (id) => document.getElementById(id);
+  const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const store = {
+    get(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch { return d; } },
+    set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch { /* per-viewer convenience only */ } },
+    del(k) { try { localStorage.removeItem(k); } catch { /* ignore */ } },
+  };
+
+  /* screens: the 41 built screens plus the account-activation page the invite link opens */
+  const BRANCHES = [
+    { id: 'existing', title: 'EXISTING CLIENT', note: 'STAFF · A CLIENT AIO ALREADY SERVES' },
+    { id: 'activation', title: 'CLIENT ACTIVATION', note: 'THE CLIENT · OPENS THE INVITE, REVIEWS, ACTIVATES' },
+    { id: 'new', title: 'NEW CLIENT', note: 'STAFF · A BUSINESS THAT IS NOT A CLIENT YET' },
+    { id: 'batch', title: 'BULK BATCH', note: 'STAFF · MANY CLIENT FILES AT ONCE' },
+  ];
+  const SCREENS = DATA.screens.slice();
+  const ACTIVATION = { key: 'activation', branch: 'activation', name: 'Account activation (set password)', authority: 'NO AUTHORITY FRAME', route: null, actor: 'client', seed: null, gap: true };
+  SCREENS.splice(SCREENS.findIndex((s) => s.key === 'welcome'), 0, ACTIVATION);
+  const byKey = Object.fromEntries(SCREENS.map((s) => [s.key, s]));
+  const VIEWPORTS = { phone: [390, 844], tablet: [834, 1194], desktop: [1440, 900] };
+
+  /* test record (this browser only) */
+  const KEY = 'aio-migration-flow-record-v1';
+  let rec = store.get(KEY, { visited: {}, edges: {}, left: [] });
+  let outbox = [];
+  let dead = {};
+  let current = null;
+  let bootPending = false;
+  let bootFor = null;
+  const save = () => store.set(KEY, rec);
+
+  function screenOf(path) {
+    const [p, hash = ''] = String(path).split('#');
+    const pathname = p.split('?')[0];
+    if (pathname === '/office/migration') return 'root';
+    const m = pathname.match(/^\/office\/migration\/([^/]+)$/);
+    if (m) return byKey[m[1]] ? m[1] : 'exit';
+    if (pathname.startsWith('/office-activation/')) return 'activation';
+    if (pathname === '/portal/activation/review') {
+      const step = hash || 'welcome';
+      return step === 'done' ? 'complete' : byKey[step] ? step : 'welcome';
+    }
+    return 'exit';
+  }
+
+  /* tree */
+  function renderTree() {
+    $('tree').innerHTML = BRANCHES.map((b) => `
+      <div class="branch"><h2>${b.title}</h2><p>${b.note}</p>
+      ${SCREENS.filter((s) => s.branch === b.id || (b.id === 'existing' && s.key === 'root')).map((s) => `
+        <button type="button" class="node" data-key="${s.key}" data-state="${rec.visited[s.key] ?? 'none'}" aria-current="${current === s.key}">
+          <span class="node__dot" aria-hidden="true"></span>
+          <span><span class="node__name">${esc(s.name)}${s.gap ? '<span class="tag tag--gap">NO AUTHORITY</span>' : ''}</span><span class="node__id">${esc(s.authority)}</span></span>
+        </button>`).join('')}
+      </div>`).join('') + `
+      <div class="legend"><span><i class="f"></i>REACHED BY CLICKING THROUGH</span><span><i class="j"></i>OPENED FROM THIS LIST</span><span><i></i>NOT OPENED YET</span>
+      <span style="margin-top:4px">AIO-MIG-ACTIVATION-COMPLETE-001 IS SUPERSEDED BY -002 AND NOT BUILT.</span></div>`;
+    const flow = SCREENS.filter((s) => rec.visited[s.key] === 'flow').length;
+    $('cov').textContent = `${flow} / ${SCREENS.length}`;
+    $('covbar').style.width = `${(flow / SCREENS.length) * 100}%`;
+  }
+  $('tree').addEventListener('click', (e) => {
+    const b = e.target.closest('.node');
+    if (!b) return;
+    const s = byKey[b.dataset.key];
+    if (s.key === 'activation') {
+      showHint('THE ACTIVATION PAGE OPENS FROM THE INVITE EMAIL: GO TO SEND INVITE, SEND IT, THEN OPEN THE EMAIL IN THE OUTBOX.');
+      return;
+    }
+    boot({ path: s.route, scenario: s.seed }, s.key);
+  });
+
+  /* the app frame */
+  let vp = store.get('aio-migration-flow-vp', 'phone');
+  function fit() {
+    const [w, h] = VIEWPORTS[vp];
+    const box = $('viewport').getBoundingClientRect();
+    const pad = vp === 'desktop' ? 12 : 18;
+    const scale = Math.min(1, (box.width - 32 - pad) / w, (box.height - 32 - pad) / h);
+    const iframe = $('app');
+    iframe.style.width = `${w}px`;
+    iframe.style.height = `${h}px`;
+    iframe.style.transform = `scale(${scale})`;
+    $('clip').style.width = `${Math.round(w * scale)}px`;
+    $('clip').style.height = `${Math.round(h * scale)}px`;
+    $('device').dataset.vp = vp;
+  }
+  function setVp(next) {
+    vp = next;
+    store.set('aio-migration-flow-vp', vp);
+    document.querySelectorAll('.seg button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.vp === vp)));
+    fit();
+  }
+  document.querySelectorAll('.seg button').forEach((b) => b.addEventListener('click', () => setVp(b.dataset.vp)));
+  new ResizeObserver(fit).observe($('viewport'));
+
+  function boot(cfg, key) {
+    bootPending = true;
+    bootFor = key ?? null;
+    $('loading').hidden = false;
+    const head = `<script>window.__AIO_PROTO=${JSON.stringify(cfg).replace(/</g, '\\u003c')};<\/script>`;
+    $('app').srcdoc = APP_HTML.replace('<head>', `<head>${head}`);
+    $('app').onload = () => { $('loading').hidden = true; };
+  }
+
+  /* messages from the app */
+  window.addEventListener('message', (e) => {
+    const d = e.data;
+    if (!d || d.source !== 'aio-migration-prototype') return;
+    if (d.type === 'storage' && d.persistent === false) $('storage-note').hidden = false;
+    if (d.type === 'route') onRoute(d.path);
+    if (d.type === 'outbox') {
+      outbox.unshift({ email: d.email, company: d.company, path: d.path, at: new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }) });
+      renderOutbox();
+    }
+    if (d.type === 'affordances') {
+      if (current) dead[current] = d.items;
+      renderInspector();
+    }
+  });
+
+  function onRoute(path) {
+    const key = screenOf(path);
+    $('loading').hidden = true;
+    if (key === 'exit') {
+      rec.left.unshift({ from: current, path: path.split('#')[0] });
+      rec.left = rec.left.slice(0, 20);
+      save();
+      setNow(null, path);
+      renderInspector();
+      return;
+    }
+    if (bootPending) {
+      bootPending = false;
+      if (rec.visited[key] !== 'flow') rec.visited[key] = 'jump';
+      $('now-how').textContent = 'OPENED FROM THE LIST';
+    } else if (key !== current) {
+      if (current) rec.edges[`${current}>${key}`] = (rec.edges[`${current}>${key}`] ?? 0) + 1;
+      rec.visited[key] = 'flow';
+      $('now-how').textContent = 'REACHED BY CLICKING';
+    }
+    $('now-how').hidden = false;
+    current = key;
+    save();
+    setNow(key, path);
+    renderTree();
+    renderInspector();
+  }
+
+  function setNow(key, path) {
+    $('now-name').textContent = key ? byKey[key].name.toUpperCase() : 'LEAVES CLIENT MIGRATION';
+    $('now-route').textContent = path;
+  }
+
+  const nameOf = (k) => (k === 'exit' ? 'OUTSIDE CLIENT MIGRATION' : byKey[k]?.name ?? k);
+  function renderInspector() {
+    const s = current ? byKey[current] : null;
+    $('info').innerHTML = s
+      ? `<dt>AUTHORITY</dt><dd>${esc(s.authority)}</dd><dt>ACTOR</dt><dd>${s.actor === 'client' ? 'THE CLIENT (CLIENT OFFICE)' : 'AIO STAFF (AIO OFFICE)'}</dd><dt>BRANCH</dt><dd>${esc(BRANCHES.find((b) => b.id === s.branch)?.title ?? '')}</dd>`
+      : '<dt>ROUTE</dt><dd>OUTSIDE THIS PROTOTYPE</dd>';
+    const exits = (current && DATA.flow[current]) || [];
+    $('exits').innerHTML = exits.length
+      ? exits.map((x) => {
+          const tested = rec.edges[`${current}>${x.to}`];
+          const pill = x.to === 'exit' ? '<span class="pill pill--no">LEAVES</span>' : tested ? '<span class="pill pill--ok">TESTED</span>' : '<span class="pill pill--no">NOT YET</span>';
+          return `<li><span>${esc(x.label)} → <b>${esc(nameOf(x.to))}</b>${x.note ? `<small>${esc(x.note)}</small>` : ''}</span>${pill}</li>`;
+        }).join('')
+      : '<li class="empty">NO EXITS RECORDED FOR THIS SCREEN.</li>';
+    const from = Object.entries(rec.edges).filter(([k]) => k.endsWith(`>${current}`)).map(([k, n]) => [k.split('>')[0], n]);
+    $('from').innerHTML = from.length
+      ? from.map(([k, n]) => `<li><button type="button" class="link" data-jump="${esc(k)}">${esc(nameOf(k))}</button><span class="pill pill--ok">${n}×</span></li>`).join('')
+      : '<li class="empty">NOT REACHED BY CLICKING YET. EXPECTED FROM: ' + esc(Object.entries(DATA.flow).filter(([, xs]) => xs.some((x) => x.to === current)).map(([k]) => nameOf(k)).join(', ') || 'NO SCREEN') + '.</li>';
+    const items = (current && dead[current]) || [];
+    $('dead').innerHTML = items.length
+      ? items.map((t) => `<li><span>${esc(t)}</span><span class="pill pill--warn">NO ACTION</span></li>`).join('')
+      : '<li class="empty">EVERY CHEVRON AND ARROW ON THIS SCREEN IS ON A BUTTON OR LINK.</li>';
+    const img = s && DATA.authority[s.authority];
+    $('auth').innerHTML = img ? `<img src="${img}" alt="Authority frame ${esc(s.authority)}">` : '<p class="empty">NO AUTHORITY FRAME FOR THIS SCREEN.</p>';
+    $('left').innerHTML = rec.left.length
+      ? rec.left.slice(0, 8).map((x) => `<li><span><code style="font:500 11px var(--mono);text-transform:none">${esc(x.path)}</code><small>FROM ${esc(nameOf(x.from))}</small></span><span class="pill pill--no">EXIT</span></li>`).join('')
+      : '<li class="empty">NO LINK HAS LEFT THE FEATURE YET (HOME, FILING, REPORTS AND ENTER YOUR OFFICE DO).</li>';
+  }
+  $('from').addEventListener('click', (e) => {
+    const k = e.target.closest('[data-jump]')?.dataset.jump;
+    if (k && byKey[k]?.route) boot({ path: byKey[k].route, scenario: byKey[k].seed }, k);
+  });
+
+  function renderOutbox() {
+    $('outbox').innerHTML = outbox.length
+      ? outbox.map((m, i) => `<div class="mail"><small>${esc(m.at)} · ACTIVATION INVITE</small><span>TO <b>${esc(m.email)}</b><br>${esc(m.company)}<br><code style="font:500 10.5px var(--mono);text-transform:none;overflow-wrap:anywhere">${esc(m.path || 'NO LINK IN THIS EMAIL')}</code></span><button type="button" class="btn btn--gold" data-mail="${i}">OPEN THE LINK AS THE CLIENT</button></div>`).join('')
+      : '<p class="empty">INVITES SENT FROM SEND INVITE ARRIVE HERE. OPENING ONE CONTINUES THE FLOW AS THE CLIENT.</p>';
+  }
+  $('outbox').addEventListener('click', (e) => {
+    const i = e.target.closest('[data-mail]')?.dataset.mail;
+    if (i == null) return;
+    $('app').contentWindow?.postMessage({ source: 'aio-migration-navigator', type: 'navigate', path: outbox[+i].path }, '*');
+  });
+
+  function showHint(text) {
+    $('now-how').hidden = false;
+    $('now-how').textContent = text;
+  }
+
+  $('gaps').innerHTML = DATA.gaps.map((g) => `<div><b>${esc(g.title)}</b><p>${esc(g.body)}</p></div>`).join('');
+  $('restart').addEventListener('click', () => {
+    store.del('aio_debug_store');
+    outbox = [];
+    renderOutbox();
+    boot({ path: '/office/migration', scenario: 'none' }, 'root');
+  });
+  $('clear').addEventListener('click', () => {
+    rec = { visited: {}, edges: {}, left: [] };
+    save();
+    renderTree();
+    renderInspector();
+  });
+
+  renderTree();
+  renderOutbox();
+  renderInspector();
+  setVp(vp);
+  boot({ path: '/office/migration', scenario: 'none' }, 'root');
+})();
+</script>

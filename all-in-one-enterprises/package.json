@@ -12,6 +12,7 @@
     "migration:gallery": "node scripts/migration/build-screen-gallery.mjs",
     "migration:blueprint": "node scripts/migration/export-responsive-blueprint.mjs",
     "migration:responsive-qa": "node scripts/migration/responsive-qa.mjs",
+    "migration:prototype": "node scripts/migration/build-flow-prototype.mjs",
     "prebuild": "node scripts/prebuild-validate.mjs",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview --port 4173 --host",

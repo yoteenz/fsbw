@@ -2,9 +2,11 @@
 
 Static, self-contained copies of the six representative client-migration screens, captured from the live app with the founder icon sheet and the uppercase law applied. The renderer is unit-based (1u = 1px of the 853×1536 authority frame). Phones see the authority composition. Tablets (≥700px) and desktops (≥1120px) see the derived layout described in `docs/AIO_CLIENT_MIGRATION_AUTHORITY_RECOVERY.md`. Open a link on a phone, a tablet and a desktop browser, or resize the window, to review all three.
 
-## All screens (review gallery)
+## All screens (flow prototype)
 
-https://claude.ai/artifact/1rPbngoDNkMNwTg695HUZQ — all 41 built migration screens (the six below plus the 35 propagated authority screens), each rendered live at phone, tablet or desktop width next to its authority image. Rebuild with `npm run migration:gallery` (→ `.migration-mocks/aio-migration-gallery.html`) and republish to the same link.
+https://claude.ai/artifact/1rPbngoDNkMNwTg695HUZQ — the real migration screens running on demo data, not pictures. A tree on the left lists all 41 built screens by branch (existing client, client activation, new client, bulk batch). The stage runs the selected screen at phone (390), tablet (834) or desktop (1440) width, and every button works. The inspector shows each screen's expected exits (tested or not yet), where you arrived from, chevrons that look tappable but do nothing, an outbox that catches activation invites (open one to continue as the client), the authority frame, links that leave client migration, and the gaps found while wiring the flow. The meter counts screens reached by clicking. The test record stays in the viewer's browser; CLEAR TEST RECORD resets it.
+
+Rebuild with `npm run migration:prototype` (→ `.migration-mocks/aio-migration-flow.html`, entry `prototype/migration-app.html`, app `src/prototype/migrationFlowPrototype.tsx`, navigator `scripts/migration/flow-prototype-template.html`) and republish to the same link. Version 2 of that link was the static gallery; `npm run migration:gallery` still builds it.
 
 ## The six representatives
 
