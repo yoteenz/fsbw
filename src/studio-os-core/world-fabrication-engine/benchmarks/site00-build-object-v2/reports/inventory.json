@@ -1,0 +1,191 @@
+{
+  "inventoryId": "inv-site00_bld_object_v2",
+  "packageRoot": "/workspace/src/studio-os-core/world-fabrication-engine/benchmarks/site00-build-object-v2/fixture",
+  "sourceArchivePath": "/home/ubuntu/.cursor/projects/workspace/uploads/SITE00_Build_Object_V2_Under4MB_4d08.zip",
+  "sourceArchiveSha256": "82c98b0f5c4bac57372b91a13d6b59a7550ab73e03069189b68d88ec7e7c8ab2",
+  "extractedAt": "2026-10-08T22:49:24.051Z",
+  "fileCount": 17,
+  "totalBytes": 4419582,
+  "files": [
+    {
+      "relativePath": "01_SOURCE/SITE00_Build_Object_V2.blend",
+      "bytes": 2154315,
+      "sha256": "938ef923dbaba969084b36898c554561ec968f8a7a1c9b29675dbed43b7cbcad",
+      "mimeGuess": "application/x-blender",
+      "role": "SOURCE_BLEND",
+      "assetTier": "SOURCE",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "01_SOURCE/camera-match.json",
+      "bytes": 1637,
+      "sha256": "978d85cd6055d05a89e657555e5f56f9bffae35c39decb79c30a3e153ba2c6ad",
+      "mimeGuess": "application/json",
+      "role": "SOURCE_CONFIG",
+      "assetTier": "SOURCE",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "01_SOURCE/fabricate_v2.py",
+      "bytes": 29646,
+      "sha256": "8e70c0146b8d7d3c296687a2828cb02009d934f61dbb003398a3a7f98b1ea59f",
+      "mimeGuess": "text/x-python",
+      "role": "SOURCE_SCRIPT",
+      "assetTier": "SOURCE",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "01_SOURCE/fabrication-parameters.json",
+      "bytes": 173,
+      "sha256": "038bcca27b643b77c86517f08aac879c9ab7a6b03d983a87b9b21492500b070a",
+      "mimeGuess": "application/json",
+      "role": "SOURCE_CONFIG",
+      "assetTier": "SOURCE",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "01_SOURCE/materials/dark_stone-web.png",
+      "bytes": 138905,
+      "sha256": "039701e5927472871e738cd0480411eb16d92a7e2e12f9c3b2167d1b383ca02d",
+      "mimeGuess": "image/png",
+      "role": "SOURCE_TEXTURE",
+      "assetTier": "SOURCE",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "01_SOURCE/materials/gray-marble-atlas.png",
+      "bytes": 385446,
+      "sha256": "4e6247a98c47d8e2c0b591a405649f18f627926d900a32f1481d3ccc694b5e3b",
+      "mimeGuess": "image/png",
+      "role": "SOURCE_TEXTURE",
+      "assetTier": "SOURCE",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "01_SOURCE/materials/white_marble-web.png",
+      "bytes": 567530,
+      "sha256": "655ca22080522ca5597920bde3af6a2cef0036470b63d434ea050fea88504f84",
+      "mimeGuess": "image/png",
+      "role": "SOURCE_TEXTURE",
+      "assetTier": "SOURCE",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "01_SOURCE/validate_v2.py",
+      "bytes": 7375,
+      "sha256": "62afbbe36190f275838f8147b14e09f679f72a74efd2afd13e7765556d04301f",
+      "mimeGuess": "text/x-python",
+      "role": "SOURCE_SCRIPT",
+      "assetTier": "SOURCE",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "02_EXPORTS/SITE00_Build_Object_V2_Web.glb",
+      "bytes": 1065776,
+      "sha256": "813f0646954f37deed11f3c8bca40d68d7ba158f8dd6ced04bb6a911d8dbac81",
+      "mimeGuess": "model/gltf-binary",
+      "role": "RUNTIME_GLB",
+      "assetTier": "DERIVED",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "05_DOCUMENTATION/KNOWN_LIMITATIONS.md",
+      "bytes": 2225,
+      "sha256": "3c407611bec263e850758c23be1a54b0516c0335c070a5bae1c652031fdd0ce9",
+      "mimeGuess": "text/markdown",
+      "role": "DOCUMENTATION",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "05_DOCUMENTATION/SITE00_BUILD_OBJECT_V2_GEOMETRY_SPEC.md",
+      "bytes": 5560,
+      "sha256": "6ae062088ca58ed2cc7c31c48bf61a75f30a8aac9abb13952ad7867fa05d7d1f",
+      "mimeGuess": "text/markdown",
+      "role": "DOCUMENTATION",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "05_DOCUMENTATION/VISUAL_FIDELITY_REPORT.md",
+      "bytes": 5364,
+      "sha256": "42bedc8d164b1e6c86c788d3eebfdd19b1b3c8179db1063473b13f4ac2a690d8",
+      "mimeGuess": "text/markdown",
+      "role": "DOCUMENTATION",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "05_DOCUMENTATION/export-validation-report.json",
+      "bytes": 5255,
+      "sha256": "27fa1e0ff4f5bf536da519fcc6f95ca9d9dbac6deaee72a1b209de37bd59fc30",
+      "mimeGuess": "application/json",
+      "role": "VALIDATION_REPORT",
+      "assetTier": "EVIDENCE",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "05_DOCUMENTATION/material-manifest.json",
+      "bytes": 3114,
+      "sha256": "7c39fcb76853b80f6a079e75a3369756447383a2298e89c1babc6ba8165bbc52",
+      "mimeGuess": "application/json",
+      "role": "MATERIAL_MANIFEST",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "05_DOCUMENTATION/module-manifest.json",
+      "bytes": 34216,
+      "sha256": "557b42cf0d8048c3c98134849c06b66aa2ad04e9f2aec3832e7991efdb020ae0",
+      "mimeGuess": "application/json",
+      "role": "MODULE_MANIFEST",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "05_DOCUMENTATION/version-manifest.json",
+      "bytes": 9491,
+      "sha256": "a534fcb465d1f465a2f4d2971115d295a90d76826493e4771e9a8f242f30a58e",
+      "mimeGuess": "application/json",
+      "role": "VERSION_MANIFEST",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "README.md",
+      "bytes": 3554,
+      "sha256": "2f16704a88ae97fdd8a3710acad00636a0f120c2155d83ad095c64cc70b01c55",
+      "mimeGuess": "text/markdown",
+      "role": "UNKNOWN",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    }
+  ],
+  "missingFromFullReviewPackage": [
+    "02_EXPORTS/SITE00_Build_Object_V2_High.glb",
+    "02_EXPORTS/SITE00_Build_Object_V2_DCC.fbx",
+    "03_RENDERS/*",
+    "04_COMPARISONS/*",
+    "01_SOURCE/serve-viewer.cjs"
+  ],
+  "warnings": [
+    "Fixture appears to be a reduced archive (missing 5 paths from full review package README)"
+  ]
+}

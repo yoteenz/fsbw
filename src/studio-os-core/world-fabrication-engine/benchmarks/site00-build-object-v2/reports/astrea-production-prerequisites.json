@@ -1,0 +1,17 @@
+{
+  "derivedFromBenchmark": "site00-build-object-v2-codex-blender-ingestion",
+  "astreaEntranceProfileId": "ASTREA_ENTRANCE_THRESHOLD",
+  "lessonsFromSite00Benchmark": [
+    "Separate structural export validation from visual fidelity gates",
+    "Require full review package (renders + comparisons) before founder approval",
+    "GLB parse + embedded texture verification is automatable in Studio OS",
+    "Blender-native and Unreal import checks need authorized DCC environments",
+    "Codex return path works as import/verify; agent loop remains manual"
+  ],
+  "astreaBlockedUntil": [
+    "Founder authorization for Astréa Test 01 execution",
+    "Approved Astréa visual authority attached to fabrication job",
+    "Navigation/collision evidence for environment-art profile"
+  ],
+  "site00DoesNotBlockAstrea": true
+}

@@ -20,6 +20,7 @@
 | [ASSET_PACKAGE_STANDARD_V1.md](./ASSET_PACKAGE_STANDARD_V1.md) | Package folders & manifest |
 | [TECHNICAL_ART_QA_V1.md](./TECHNICAL_ART_QA_V1.md) | Automated vs pending QA |
 | [CODEX_FABRICATION_HANDOFF_EXTENSION_V1.md](./CODEX_FABRICATION_HANDOFF_EXTENSION_V1.md) | Codex handoff extension |
+| [PACKAGE_INGESTION_BENCHMARK_V1.md](./PACKAGE_INGESTION_BENCHMARK_V1.md) | Real V2 package ingestion benchmark |
 
 **Code:** `src/studio-os-core/world-fabrication-engine/`  
 **Technical art:** `technical-art/`  

@@ -1,0 +1,24 @@
+{
+  "reportId": "site00-build-object-v2-readiness",
+  "assetId": "site00_bld_object_v2",
+  "packageVersion": "codex-blender-v2",
+  "architecturalVisualFidelity": "PARTIAL",
+  "technicalAssetQuality": "PASS",
+  "webRuntimeReadiness": "PASS",
+  "unrealReadiness": "NOT_TESTED",
+  "productionPackageCompleteness": "PARTIAL",
+  "founderApproval": "PENDING",
+  "founderApprovalNotes": [
+    "V2 architecture awaiting founder visual approval — technical ingest does not imply creative approval",
+    "README recommends REVISE / pending decision"
+  ],
+  "recommendedTechnicalCorrections": [
+    "Ingest full review package (High GLB, FBX, renders, comparisons) for complete founder review bundle",
+    "Add optional collision mesh if Builder interaction requires physics",
+    "Run Unreal import validation when authorized",
+    "Re-run Blender validate_v2.py when Shadow PC or CI Blender is available"
+  ],
+  "blockers": [
+    "Reduced archive — missing full review package folders/exports"
+  ]
+}
