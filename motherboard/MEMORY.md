@@ -55633,3 +55633,32 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
   - Every other photo needs a controlled asset pass; the founder's composite must never be cropped into production.
   - Tablet and desktop use the approved migration staff frame (`AIO_CLIENT_MIGRATION_RESPONSIVE_BLUEPRINT/nav-rules.json`), with WORK in place of FILING.
 - **Not changed:** live nav, routes, pages, schema, auth, permissions. No image generated.
+
+---
+
+## 2026-10-08 — AIO office: HOME · WORK · REPORTS · MORE visual authorities rendered (candidates, awaiting founder) [sync-only]
+
+- **Context:**
+  - The founder approved all 15 reconciliation decisions. The four-screen language becomes the internal AIO OFFICE profile only; PUBLIC, CLIENT OFFICE, IFTA and migration keep their own directions.
+  - SITE00 `0a153f9a` records the approvals, the profile and the authority record. This repo holds the studio and the pixels.
+- **Studio:**
+  - Location: `all-in-one-enterprises/design-authority/aio-office/`: `studio.html/css/js`, `compare.html`, `render.mjs`, and `standins/`.
+  - It is deterministic HTML/CSS over approved plates in `public/`, using the approved staff frame with WORK in place of FILING.
+  - It is never imported by src and never deployed.
+- **Renders:**
+  - Location: `AIO_OFFICE_VISUAL_AUTHORITY/` (01_MOBILE · 02_TABLET · 03_DESKTOP · 04_ULTRA_WIDE · 05_COMPONENTS · 06_COMPARISON · `renders.json`). 30 frames, 38 PNGs.
+  - Re-render: `cd all-in-one-enterprises && node design-authority/aio-office/render.mjs`. Same sha256 every time.
+  - DOM QA runs on every frame: uppercase, nav order, 12 lanes in canonical order with no INTAKE, four MORE groups, no revenue for staff, approved lockup only.
+- **Record:**
+  - `docs/aio/office-visual-authority/` (vendored, with PROVENANCE.json).
+  - Test: `src/product-graph/officeVisualAuthority.test.ts`. It checks four things:
+    - every pinned PNG exists with its sha256;
+    - every reused asset exists;
+    - the stand-ins match their manifest;
+    - nothing in src imports any of it.
+  - The reconciliation test now also checks that the approvals cover every decision.
+- **Do not ship:**
+  - The seven lane STAND-INs (cropped from the founder's drawing).
+  - The four page plates as final: they are shared with CLIENT OFFICE / PUBLIC and are interim.
+  - The photo pass is blocked until `www.figma.com` is allowed in Network access.
+- **Not changed:** live nav (still FILING), routes, pages, schema, auth, permissions, billing, IFTA, migration. Not deployed.

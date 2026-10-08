@@ -1,0 +1,27 @@
+{
+  "id": "AIO_OFFICE_VISUAL_AUTHORITY_PROVENANCE",
+  "sprint": "P0.AIO.OFFICE.FOUNDER-HOME-WORK-REPORTS-MORE.FOUNDER-APPROVAL-AND-VISUAL-AUTHORITY1",
+  "source": {
+    "repo": "yoteenz/SITE00",
+    "branch": "cursor/aio-office-ia-work-tree-4f59",
+    "commit": "0a153f9af61b9b8eb08c985492a7205ab65fd99f",
+    "path": "docs/aio/office-visual-authority/",
+    "generated_by": "scripts/studioos/aio-office-visual-authority-export.ts"
+  },
+  "rule": "Copied verbatim from SITE00 (the Experience Brain is the source). The renders it pins live in this repo (AIO_OFFICE_VISUAL_AUTHORITY/, rendered by all-in-one-enterprises/design-authority/aio-office/render.mjs). Decisions approved; visuals awaiting founder approval; live implementation not authorized; nothing in src imports these files.",
+  "sha256": {
+    "01_FOUNDER_APPROVAL_RECORD.md": "e6b3e8022e34dfc1913727ffc073d67be1214e912441980a9f63c6ff35b7659a",
+    "02_AIO_OFFICE_CREATIVE_DIRECTION_PROFILE.md": "6f18b46747bbec25fb470a2c8ccc7c178a1c605ba5e9af1bbde69eda16d663c3",
+    "03_VISUAL_AUTHORITY_FRAMES.md": "b1cc2b3a172625e75d14dcfe94416d248716f9b6a74d0f1875b3c77fdffe081f",
+    "04_APPROVED_ASSET_REUSE.md": "926a960524d506939cea4c300c62ca7d971e5ca0ac249f5533bb8afb4edbff3c",
+    "05_MISSING_ASSETS.md": "14cedd40ebb4b5bc461faa5f6247c28ced9dcad2ee97fd460bce6991981759a6",
+    "06_COMPONENTS_AND_ICONS.md": "2ed4ac6d6db9ad42dd04247ff8a565bed8681dd20bc329dd6e10593fd001c5ec",
+    "07_ORIGINAL_VS_REVISED.md": "d1e0ef5d366d695d891f40df2dd0781ada92aa985bed7fcca5aaaa27ca38bd14",
+    "08_RESPONSIVE_AND_ULTRA_WIDE.md": "62c6cb657aa70b15ca42f28326db3c1b20ecaebe3cda49f37bc56c092b03d2db",
+    "09_PERMISSIONS_AND_PRIVACY.md": "ca6a09ad59bd4ba46fd7057f12be103ae662f545cf498c353afb261c2250d06e",
+    "10_COMPOSER_HANDOFF_DRAFT.md": "53360d5eb6879dfa8a9dd037c52b81fbf9bbd34f72e4c88159ad497c4e2c24cc",
+    "QUALITY_GATE.json": "dcf97401ff71deaa8b55ccfe91e1a49025352898db3aa5bb049f9db7608af901",
+    "README.md": "c20b5f957649cfd8717ba8ee0141233430d7b08c2037ef1ab6e5fc021b292a58",
+    "VISUAL_AUTHORITY.json": "3a6ce969d9d5d4486ef95c997a0545fd6d5f6075a914b27a8d5b2126408d2705"
+  }
+}

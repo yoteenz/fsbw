@@ -47,9 +47,11 @@ describe('Design reconciliation ↔ this repo', () => {
     expect(more).toEqual(officeIaChildren('AIO_OFFICE.MORE').map((n) => n.node_id).sort());
   });
 
-  it('decides nothing on the founder’s behalf', () => {
+  it('is kept as delivered — decisions OPEN at delivery; the founder’s approvals live in docs/aio/office-visual-authority', () => {
     expect(REC.decisions.length).toBeGreaterThan(0);
     expect(REC.decisions.every((d) => d.status === 'OPEN')).toBe(true);
+    const va = JSON.parse(readFileSync(path.join(APP, 'docs/aio/office-visual-authority/VISUAL_AUTHORITY.json'), 'utf8')) as { approvals: { decision_id: string }[] };
+    expect(va.approvals.map((a) => a.decision_id).sort()).toEqual(REC.decisions.map((d) => d.decision_id).sort());
   });
 });
 

@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="robots" content="noindex" />
+    <title>AIO OFFICE — ORIGINAL VS REVISED</title>
+    <style>
+      @font-face {
+        font-family: 'AO Roboto';
+        src: url('/public/fonts/migration/roboto-latin-wght-normal.woff2') format('woff2');
+        font-weight: 100 900;
+      }
+      @font-face {
+        font-family: 'AO Roboto Condensed';
+        src: url('/public/fonts/migration/roboto-condensed-latin-wght-normal.woff2') format('woff2');
+        font-weight: 100 900;
+      }
+      body {
+        margin: 0;
+        background: #ece7dd;
+        color: #111112;
+        font: 400 20px/1.45 'AO Roboto', sans-serif;
+      }
+      .board {
+        padding: 44px 40px 52px;
+      }
+      h1 {
+        margin: 0;
+        font: 800 54px/1 'AO Roboto Condensed', sans-serif;
+        letter-spacing: 0.01em;
+      }
+      .meta {
+        margin-top: 10px;
+        font: 500 16px/1.4 'AO Roboto', sans-serif;
+        letter-spacing: 0.08em;
+        color: #66666c;
+      }
+      .cols {
+        display: flex;
+        gap: 26px;
+        align-items: flex-start;
+        margin-top: 36px;
+      }
+      .col h2 {
+        margin: 0 0 14px;
+        font: 700 18px/1 'AO Roboto', sans-serif;
+        letter-spacing: 0.16em;
+        color: #3b3b3f;
+      }
+      .shot {
+        border-radius: 22px;
+        overflow: hidden;
+        box-shadow: 0 18px 40px rgba(70, 48, 18, 0.18);
+        background: #fff;
+      }
+      .ref {
+        width: 756px;
+        height: 1812px;
+        background-repeat: no-repeat;
+      }
+      .shot img {
+        display: block;
+      }
+      ol {
+        margin: 0;
+        padding: 0 0 0 26px;
+        width: 470px;
+      }
+      li {
+        margin: 0 0 18px;
+      }
+      li b {
+        font-weight: 700;
+      }
+      .note {
+        margin-top: 26px;
+        padding: 18px 20px;
+        border-radius: 12px;
+        background: #f7f3eb;
+        border: 1px dashed #c9bfae;
+        font-size: 17px;
+        color: #4f4a42;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="board" id="b"></div>
+    <script>
+      const page = new URLSearchParams(location.search).get('page') || 'home';
+      const REF = '/docs/aio/office-design-reconciliation/reference/AIO_OFFICE_FOUR_SCREEN_REFERENCE.png';
+      const CROP = { home: [6, 86, 377, 906], work: [388, 86, 378, 906], reports: [771, 86, 379, 906], more: [1154, 86, 378, 906] };
+      const R = '/__out/01_MOBILE';
+      const CHANGES = {
+        home: [
+          '<b>Shorter welcome photograph</b> — about 60% of the original height, so the three cards and their list sit in the first screen.',
+          '<b>The three cards are views of one list</b> (up to five items): each item names the client, what is wrong and where it is fixed. The selected card points at its list.',
+          '<b>Quick actions</b> sit behind the gold square “+” in the phone header (tablet: a row after recent activity; desktop: the side column).',
+          '<b>WORK ACROSS AIO shows all twelve lanes</b> in the canonical order. INTAKE is gone (it is a root of its own). A lane shows a count only where it can supply one; otherwise it says NOT CONNECTED YET. VEHICLES & FLEET says it has no staff workspace yet.',
+          '<b>Clients in motion</b> shows PREBUILT clients as not active; <b>recent activity</b> marks each event INTERNAL or CLIENT-VISIBLE.',
+          '<b>One illustrative person</b> (ALEX R., the name on the approved INTAKE masters) with the role label FOUNDER. Every word is uppercase.',
+        ],
+        work: [
+          '<b>Slim photo band</b>, then <b>MY WORK</b> near the top: assigned to me, due this week, blocked — with the next items.',
+          '<b>INTAKE tile replaced by VEHICLES & FLEET</b>, drawn honestly: no staff workspace yet, so no arrow. MAINTENANCE is renamed <b>MECHANIC / MAINTENANCE</b>.',
+          '<b>Twelve lanes in the canonical order</b>, numbered 01–12. Each card carries a needs-attention count, a BLOCKED marker, or NOT CONNECTED YET.',
+          '<b>“NEED TO ASSIGN WORK?” removed</b>; ALL OPEN WORK opens the cross-client queue instead (a case creator does not exist yet).',
+          '<b>Photography:</b> five lanes use approved AIO plates. Seven are your own drawing’s images, marked STAND-IN, until the photo pass can run (generation works; downloading is blocked in this environment).',
+        ],
+        reports: [
+          '<b>Slim photo band</b> (approved snow-peak plate — no invented chart text).',
+          '<b>Four figures the records can back:</b> ACTIVE CLIENTS, FILINGS FILED (with last month beside it), ACTIVE WORK, and COLLECTED REVENUE for founder / finance only.',
+          '<b>No percentages, sparklines or “estimated” revenue</b> — none of them can be computed today.',
+          '<b>Service activity covers all twelve lanes</b>; lanes without data say NOT CONNECTED YET or NO WORKSPACE YET, and the panel is labelled PARTIAL DATA.',
+          '<b>Client growth</b> is an honest NOT CONNECTED YET panel instead of a +24% chart.',
+          '<b>All ten report areas</b> follow the overview with today’s state. Staff without a reporting grant see a clear explanation instead.',
+        ],
+        more: [
+          '<b>Slim photo band</b> — the notebook with an invented AIO mark is gone.',
+          '<b>Four groups</b>: CLIENTS & RECORDS · BUSINESS · PEOPLE & NETWORK · SYSTEM. GROWTH / CRM, BILLING and ACCOUNT are added; “ADDITIONAL TOOLS” is removed.',
+          '<b>NEED HELP card removed</b>; HELP & SUPPORT stays in SYSTEM.',
+          '<b>Founder-only and by-grant markers</b>; staff see only the entries they can use (CRM and BILLING by grant).',
+          '<b>ACCOUNT</b> is the same place as the header profile menu (marked NOT BUILT YET).',
+        ],
+      };
+      const [x, y, w, h] = CROP[page];
+      const s = 756 / w;
+      const title = { home: 'HOME', work: 'WORK', reports: 'REPORTS', more: 'MORE' }[page];
+      document.getElementById('b').innerHTML = `
+        <h1>AIO OFFICE · ${title} — YOUR DRAWING VS THE REVISED AUTHORITY</h1>
+        <div class="meta">PHONE 390 PX · CANDIDATE AWAITING FOUNDER APPROVAL · ILLUSTRATIVE SAMPLE DATA · LIVE IMPLEMENTATION NOT AUTHORIZED</div>
+        <div class="cols">
+          <div class="col"><h2>YOUR DRAWING</h2><div class="shot ref" style="background-image:url('${REF}');background-size:${1536 * s}px ${1024 * s}px;background-position:${-x * s}px ${-y * s}px"></div></div>
+          <div class="col"><h2>REVISED · FIRST SCREEN</h2><div class="shot"><img src="${R}/AIO-OFFICE-${title}-MOBILE-390-FIRST-SCREEN.png" style="width:837px;height:1812px"></div></div>
+          <div class="col"><h2>REVISED · FULL PAGE</h2><div class="shot"><img id="full" src="${R}/AIO-OFFICE-${title}-MOBILE-390.png" style="height:1812px"></div></div>
+          <div class="col"><h2>WHAT CHANGED</h2><ol>${CHANGES[page].map((c) => `<li>${c}</li>`).join('')}</ol>
+            <div class="note">Approved decisions applied: D-HERO-SCALE · D-HOME-ATTENTION · D-HOME-QUICK-ACTIONS · D-WORK-CARD-SIGNALS · D-WORK-BANNER · D-PHOTOGRAPHY · D-REPORTS-OVERVIEW · D-REPORTS-DOMAINS · D-REPORTS-STAFF · D-MORE-GROUPS · D-MORE-HELP-CARD · D-ACCOUNT · D-IDENTITY · D-DESKTOP-SHELL · D-CREATIVE-PROFILE.</div></div>
+        </div>`;
+      Promise.all([document.fonts.ready, ...[...document.images].map((i) => (i.complete ? null : new Promise((r) => (i.onload = i.onerror = r))))]).then(() => {
+        document.documentElement.dataset.ready = '1';
+      });
+    </script>
+  </body>
+</html>

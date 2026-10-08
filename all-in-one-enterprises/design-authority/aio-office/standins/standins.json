@@ -1,0 +1,128 @@
+{
+  "permitting-authorities": {
+    "file": "standins/permitting-authorities.jpg",
+    "source_box_in_reference": [
+      528,
+      365,
+      628,
+      433
+    ],
+    "source_px": [
+      100,
+      68
+    ],
+    "upscaled_px": [
+      400,
+      272
+    ],
+    "sha256": "ed0cb62eb876c11ae72c6cd0119a0f4983847eb33412578b50b2502724e22013"
+  },
+  "compliance": {
+    "file": "standins/compliance.jpg",
+    "source_box_in_reference": [
+      413,
+      490,
+      513,
+      557
+    ],
+    "source_px": [
+      100,
+      67
+    ],
+    "upscaled_px": [
+      400,
+      268
+    ],
+    "sha256": "c0658c92e702881e42892aa8ab2412c4ddcd07f289e4d28b9a76ca3cc5a0ee14"
+  },
+  "insurance": {
+    "file": "standins/insurance.jpg",
+    "source_box_in_reference": [
+      413,
+      613,
+      513,
+      683
+    ],
+    "source_px": [
+      100,
+      70
+    ],
+    "upscaled_px": [
+      400,
+      280
+    ],
+    "sha256": "bcb77a126973bb15bf872338b1c8184b067c63577631adc8b120101813fa7df3"
+  },
+  "factoring": {
+    "file": "standins/factoring.jpg",
+    "source_box_in_reference": [
+      528,
+      613,
+      628,
+      683
+    ],
+    "source_px": [
+      100,
+      70
+    ],
+    "upscaled_px": [
+      400,
+      280
+    ],
+    "sha256": "fa8536c817fb160ccdcfbc929628e5d6f4f4cb6c95ad7a3c172529549393c120"
+  },
+  "bookkeeping": {
+    "file": "standins/bookkeeping.jpg",
+    "source_box_in_reference": [
+      642,
+      613,
+      742,
+      683
+    ],
+    "source_px": [
+      100,
+      70
+    ],
+    "upscaled_px": [
+      400,
+      280
+    ],
+    "sha256": "ffa32022e80cf58bf118ba10e7cc185a1a2a23f5e154c38172bef9eb58007382"
+  },
+  "drivers-carriers": {
+    "file": "standins/drivers-carriers.jpg",
+    "source_box_in_reference": [
+      413,
+      740,
+      513,
+      809
+    ],
+    "source_px": [
+      100,
+      69
+    ],
+    "upscaled_px": [
+      400,
+      276
+    ],
+    "sha256": "ba76530dc988feb61857b60195f4f19485181aae3e85359f3f790c731b77e5e1"
+  },
+  "mechanic-maintenance": {
+    "file": "standins/mechanic-maintenance.jpg",
+    "source_box_in_reference": [
+      528,
+      740,
+      628,
+      809
+    ],
+    "source_px": [
+      100,
+      69
+    ],
+    "upscaled_px": [
+      400,
+      276
+    ],
+    "sha256": "d06c4405f8c162499afee0663dcbed11d1e91be2df9a4b61a0b95a9727c3f646"
+  }
+}
