@@ -2,6 +2,21 @@ import type { ProductionBudget, BudgetDecisionOutcome } from '../production-gove
 
 export type FabricationCostProvider = 'ARTLIST' | 'INTERNAL' | 'CLOUD_GPU' | 'MANUAL';
 
+/** Extended technical-art spend categories (ledger labels; no pricing invented). */
+export type FabricationTechnicalArtCostCategory =
+  | 'AI_MASSING'
+  | 'GEOMETRY_RECONSTRUCTION'
+  | 'TEXTURE_GENERATION'
+  | 'MATERIAL_DEVELOPMENT'
+  | 'TEXTURE_BAKING'
+  | 'RENDERING'
+  | 'ENGINE_VALIDATION'
+  | 'OPTIMIZATION'
+  | 'RIGGING'
+  | 'ANIMATION'
+  | 'REVISION'
+  | 'EXTERNAL_COMPUTE';
+
 export type FabricationCostLine = {
   lineId: string;
   manifestId: string;
@@ -17,6 +32,7 @@ export type FabricationCostLine = {
   computeDurationMs?: number;
   manualIntervention: boolean;
   recordedAt: string;
+  technicalArtCategory?: FabricationTechnicalArtCostCategory;
 };
 
 export type FabricationJobBudget = {

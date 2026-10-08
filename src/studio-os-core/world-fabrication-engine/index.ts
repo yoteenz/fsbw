@@ -13,3 +13,4 @@ export * from './handoffs';
 export * from './validation-report';
 export * from './scene-and-interaction';
 export * from './job-service';
+export * from './technical-art';
