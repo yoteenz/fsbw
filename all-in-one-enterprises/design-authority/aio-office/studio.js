@@ -7,20 +7,35 @@
  * its shell section is PARTIAL / AVAILABLE, otherwise NOT CONNECTED YET; VEHICLES & FLEET has no staff workspace.
  */
 const Q = new URLSearchParams(location.search);
-const PAGE = Q.get('page') || 'home';
-const ROLE = Q.get('role') || 'founder';
-const VIEW = Q.get('view') || 'attention';
-const STATE = Q.get('state') || '';
+let PAGE = Q.get('page') || 'home';
+let ROLE = Q.get('role') || 'founder';
+let VIEW = Q.get('view') || 'attention';
+let STATE = Q.get('state') || '';
 const W = window.innerWidth;
-const VP = W < 700 ? 'mobile' : W < 1024 ? 'tablet' : 'desktop';
-const WIDE = W >= 1900;
-const FOUNDER = ROLE === 'founder';
-document.documentElement.dataset.vp = VP;
-document.documentElement.dataset.wide = WIDE ? '1' : '0';
+let VP = W < 700 ? 'mobile' : W < 1024 ? 'tablet' : 'desktop';
+let WIDE = W >= 1900;
+let FOUNDER = ROLE === 'founder';
+let AREA = 'OVERVIEW';
+/** Embedding (the unified office review sets AIO_STUDIO_EMBED and drives these); the authority renders never call it. */
+const EMBED = window.AIO_STUDIO_EMBED === true;
+function studioSet(s) {
+  if ('page' in s) PAGE = s.page;
+  if ('role' in s) ROLE = s.role;
+  if ('view' in s) VIEW = s.view;
+  if ('state' in s) STATE = s.state;
+  if ('vp' in s) VP = s.vp;
+  if ('wide' in s) WIDE = s.wide;
+  if ('area' in s) AREA = s.area;
+  FOUNDER = ROLE === 'founder';
+}
+if (!EMBED) {
+  document.documentElement.dataset.vp = VP;
+  document.documentElement.dataset.wide = WIDE ? '1' : '0';
+}
 
-const P = '/public';
+const P = window.AIO_STUDIO_ASSETS ?? '/public';
 const PLATES = {
-  home: { src: `${P}/brand/ifta/plates/client-hero.jpg`, tone: 'light', pos: { mobile: '100% 50%', tablet: '100% 52%', desktop: WIDE ? '100% 40%' : '100% 50%' }, zoom: { mobile: 1.32, tablet: 1.05 } },
+  home: { src: `${P}/brand/ifta/plates/client-hero.jpg`, tone: 'light', pos: { mobile: '100% 50%', tablet: '100% 52%', get desktop() { return WIDE ? '100% 40%' : '100% 50%'; } }, zoom: { mobile: 1.32, tablet: 1.05 } },
   work: { src: `${P}/brand/ifta/plates/public-hero.jpg`, tone: 'dark', pos: { mobile: '72% 55%', tablet: '64% 56%', desktop: '60% 54%' } },
   reports: { src: `${P}/brand/ifta/plates/client-insights.jpg`, tone: 'light', pos: { mobile: '60% 40%', tablet: '60% 42%', desktop: '50% 44%' } },
   more: { src: `${P}/brand/ifta/plates/public-footer-desktop.jpg`, tone: 'dark', pos: { mobile: '64% 52%', tablet: '60% 54%', desktop: '50% 56%' } },
@@ -56,18 +71,18 @@ function ico(name, cls = '') {
 
 /* ── canonical WORK lanes (founder order) with sample signals ── */
 const LANES = [
-  { n: '01', name: 'PERMITTING & AUTHORITIES', icon: 'id-card', photo: 'standins/permitting-authorities.jpg', standin: true, att: 3, blocked: 1, active: 9 },
-  { n: '02', name: 'FILING & FUEL TAXES', icon: 'fuel', photo: `${P}/brand/ifta/plates/public-road.jpg`, att: 4, active: 14 },
-  { n: '03', name: 'COMPLIANCE', icon: 'shield-check', photo: 'standins/compliance.jpg', standin: true, att: 2, active: null },
-  { n: '04', name: 'VEHICLES & FLEET', icon: 'truck', photo: `${P}/brand/ifta/plates/staff-hero.jpg`, none: true },
-  { n: '05', name: 'DISPATCH', icon: 'pin', photo: `${P}/brand/all-in-one-hero-truck.png`, att: 2, active: 11 },
-  { n: '06', name: 'BROKERAGE', icon: 'link', photo: `${P}/brand/ifta/plates/public-map.jpg`, att: 1, blocked: 1, active: 6 },
-  { n: '07', name: 'INSURANCE', icon: 'umbrella', photo: 'standins/insurance.jpg', standin: true, att: 3, active: 7 },
-  { n: '08', name: 'FACTORING', icon: 'cash', photo: 'standins/factoring.jpg', standin: true, att: 0, active: 5 },
-  { n: '09', name: 'BOOKKEEPING', icon: 'calculator', photo: 'standins/bookkeeping.jpg', standin: true, att: null, blocked: 1, active: 4 },
-  { n: '10', name: 'DRIVERS & CARRIERS', icon: 'steering', photo: 'standins/drivers-carriers.jpg', standin: true, att: null, active: 3 },
-  { n: '11', name: 'MECHANIC / MAINTENANCE', icon: 'wrench', photo: 'standins/mechanic-maintenance.jpg', standin: true, att: null, blocked: 2, active: 2 },
-  { n: '12', name: 'ROAD READY', icon: 'tests', photo: `${P}/brand/aio-login-hero.png`, att: 2, active: 1 },
+  { n: '01', slug: 'permitting', name: 'PERMITTING & AUTHORITIES', icon: 'id-card', photo: 'standins/permitting-authorities.jpg', standin: true, att: 3, blocked: 1, active: 9 },
+  { n: '02', slug: 'filing', name: 'FILING & FUEL TAXES', icon: 'fuel', photo: `${P}/brand/ifta/plates/public-road.jpg`, att: 4, active: 14 },
+  { n: '03', slug: 'compliance', name: 'COMPLIANCE', icon: 'shield-check', photo: 'standins/compliance.jpg', standin: true, att: 2, active: null },
+  { n: '04', slug: 'vehicles', name: 'VEHICLES & FLEET', icon: 'truck', photo: `${P}/brand/ifta/plates/staff-hero.jpg`, none: true },
+  { n: '05', slug: 'dispatch', name: 'DISPATCH', icon: 'pin', photo: `${P}/brand/all-in-one-hero-truck.png`, att: 2, active: 11 },
+  { n: '06', slug: 'brokerage', name: 'BROKERAGE', icon: 'link', photo: `${P}/brand/ifta/plates/public-map.jpg`, att: 1, blocked: 1, active: 6 },
+  { n: '07', slug: 'insurance', name: 'INSURANCE', icon: 'umbrella', photo: 'standins/insurance.jpg', standin: true, att: 3, active: 7 },
+  { n: '08', slug: 'factoring', name: 'FACTORING', icon: 'cash', photo: 'standins/factoring.jpg', standin: true, att: 0, active: 5 },
+  { n: '09', slug: 'bookkeeping', name: 'BOOKKEEPING', icon: 'calculator', photo: 'standins/bookkeeping.jpg', standin: true, att: null, blocked: 1, active: 4 },
+  { n: '10', slug: 'drivers', name: 'DRIVERS & CARRIERS', icon: 'steering', photo: 'standins/drivers-carriers.jpg', standin: true, att: null, active: 3 },
+  { n: '11', slug: 'maintenance', name: 'MECHANIC / MAINTENANCE', icon: 'wrench', photo: 'standins/mechanic-maintenance.jpg', standin: true, att: null, blocked: 2, active: 2 },
+  { n: '12', slug: 'roadready', name: 'ROAD READY', icon: 'tests', photo: `${P}/brand/aio-login-hero.png`, att: 2, active: 1 },
 ];
 const PHOTO_POS = { '02': '50% 70%', '04': '30% 60%', '05': '62% 55%', '06': '50% 45%', '12': '72% 60%' };
 
@@ -86,43 +101,43 @@ function laneSignals(l, compact) {
 
 /* ── sample HOME data (illustrative) ── */
 const ATTENTION = [
-  { pri: ['URGENT', 'bad'], who: 'DELTA HAULING LLC', what: 'INSURANCE POLICY EXPIRES IN 6 DAYS', to: 'WORK › INSURANCE › RENEWALS', age: 'TODAY' },
-  { pri: ['URGENT', 'bad'], who: 'HORIZON FREIGHT', what: 'WORKFLOW BLOCKED — EIN LETTER NOT RECEIVED', to: 'WORK › PERMITTING & AUTHORITIES', age: '2 DAYS' },
-  { pri: ['HIGH', 'warn'], who: 'T&K TRANSPORT', what: '3 DOCUMENTS UPLOADED FOR REVIEW', to: 'MORE › DOCUMENTS & VAULT', age: '3 HRS' },
-  { pri: ['HIGH', 'warn'], who: 'RIVERSTONE LOGISTICS', what: 'Q3 2026 IFTA RETURN READY FOR REVIEW', to: 'WORK › FILING & FUEL TAXES', age: '5 HRS' },
-  { pri: ['HIGH', 'warn'], who: 'MASON TRANSPORT', what: 'CLIENT IS WAITING ON A REPLY', to: 'MORE › MESSAGES', age: '1 HR' },
+  { pri: ['URGENT', 'bad'], go: 'rec/policy/pol-dh', who: 'DELTA HAULING LLC', what: 'INSURANCE POLICY EXPIRES IN 6 DAYS', to: 'WORK › INSURANCE › RENEWALS', age: 'TODAY' },
+  { pri: ['URGENT', 'bad'], go: 'rec/request/req-hf-mc', who: 'HORIZON FREIGHT', what: 'WORKFLOW BLOCKED — EIN LETTER NOT RECEIVED', to: 'WORK › PERMITTING & AUTHORITIES', age: '2 DAYS' },
+  { pri: ['HIGH', 'warn'], go: 'more/documents@c-tk', who: 'T&K TRANSPORT', what: '3 DOCUMENTS UPLOADED FOR REVIEW', to: 'MORE › DOCUMENTS & VAULT', age: '3 HRS' },
+  { pri: ['HIGH', 'warn'], go: 'rec/quarter/ifta-rl-q3', who: 'RIVERSTONE LOGISTICS', what: 'Q3 2026 IFTA RETURN READY FOR REVIEW', to: 'WORK › FILING & FUEL TAXES', age: '5 HRS' },
+  { pri: ['HIGH', 'warn'], go: 'rec/thread/th-mt', who: 'MASON TRANSPORT', what: 'CLIENT IS WAITING ON A REPLY', to: 'MORE › MESSAGES', age: '1 HR' },
 ];
 const DEADLINES = [
-  { pri: ['OVERDUE', 'bad'], who: 'R&J TRUCKING', what: 'UCR REGISTRATION RENEWAL', to: 'WORK › PERMITTING & AUTHORITIES', age: 'OCT 7 · 1 DAY LATE' },
-  { pri: ['TODAY', 'warn'], who: 'DELTA HAULING LLC', what: 'SEND RENEWAL QUOTE TO THE CLIENT', to: 'WORK › INSURANCE', age: 'OCT 8' },
-  { pri: ['SOON', 'gold'], who: 'HORIZON FREIGHT', what: 'MC AUTHORITY REINSTATEMENT FILING', to: 'WORK › PERMITTING & AUTHORITIES', age: 'OCT 10' },
-  { pri: ['SOON', 'gold'], who: 'RIVERSTONE LOGISTICS', what: 'Q3 2026 IFTA — CLIENT APPROVAL', to: 'WORK › FILING & FUEL TAXES', age: 'OCT 13' },
+  { pri: ['OVERDUE', 'bad'], go: 'rec/request/req-rj-ucr', who: 'R&J TRUCKING', what: 'UCR REGISTRATION RENEWAL', to: 'WORK › PERMITTING & AUTHORITIES', age: 'OCT 7 · 1 DAY LATE' },
+  { pri: ['TODAY', 'warn'], go: 'rec/policy/pol-dh', who: 'DELTA HAULING LLC', what: 'SEND RENEWAL QUOTE TO THE CLIENT', to: 'WORK › INSURANCE', age: 'OCT 8' },
+  { pri: ['SOON', 'gold'], go: 'rec/request/req-hf-mc', who: 'HORIZON FREIGHT', what: 'MC AUTHORITY REINSTATEMENT FILING', to: 'WORK › PERMITTING & AUTHORITIES', age: 'OCT 10' },
+  { pri: ['SOON', 'gold'], go: 'rec/quarter/ifta-rl-q3', who: 'RIVERSTONE LOGISTICS', what: 'Q3 2026 IFTA — CLIENT APPROVAL', to: 'WORK › FILING & FUEL TAXES', age: 'OCT 13' },
 ];
 const BLOCKERS = [
-  { group: 'WAITING ON THE CLIENT', pri: ['BLOCKED', 'bad'], who: 'HORIZON FREIGHT', what: 'MC REINSTATEMENT — EIN LETTER NOT RECEIVED', to: 'WORK › PERMITTING & AUTHORITIES', age: '2 DAYS' },
-  { group: 'WAITING ON A CARRIER', pri: ['BLOCKED', 'bad'], who: 'R&J TRUCKING', what: 'LOAD 4471 — RATE CONFIRMATION NOT SIGNED', to: 'WORK › BROKERAGE', age: '1 DAY' },
+  { group: 'WAITING ON THE CLIENT', pri: ['BLOCKED', 'bad'], go: 'rec/request/req-hf-mc', who: 'HORIZON FREIGHT', what: 'MC REINSTATEMENT — EIN LETTER NOT RECEIVED', to: 'WORK › PERMITTING & AUTHORITIES', age: '2 DAYS' },
+  { group: 'WAITING ON A CARRIER', pri: ['BLOCKED', 'bad'], go: 'rec/shipment/sh-4471', who: 'R&J TRUCKING', what: 'LOAD 4471 — RATE CONFIRMATION NOT SIGNED', to: 'WORK › BROKERAGE', age: '1 DAY' },
 ];
 const CLIENTS = [
-  { b: 'RL', name: 'RIVERSTONE LOGISTICS', chips: ['IFTA', 'BOOKKEEPING', 'COMPLIANCE'], st: ['NEEDS YOUR APPROVAL', 'warn'], t: '2 HRS AGO' },
-  { b: 'DH', name: 'DELTA HAULING LLC', chips: ['PERMITS', 'INSURANCE'], st: ['DOCUMENTS RECEIVED', 'ok'], t: '4 HRS AGO' },
-  { b: 'TK', name: 'T&K TRANSPORT', chips: ['DISPATCH', 'IFTA'], st: ['FILING READY', 'ok'], t: '6 HRS AGO' },
-  { b: 'MT', name: 'MASON TRANSPORT', chips: ['INTAKE'], st: ['PREBUILT · NOT ACTIVE YET', 'mute'], t: 'YESTERDAY', pre: true },
+  { b: 'RL', go: 'client/c-rl', name: 'RIVERSTONE LOGISTICS', chips: ['IFTA', 'BOOKKEEPING', 'COMPLIANCE'], st: ['NEEDS YOUR APPROVAL', 'warn'], t: '2 HRS AGO' },
+  { b: 'DH', go: 'client/c-dh', name: 'DELTA HAULING LLC', chips: ['PERMITS', 'INSURANCE'], st: ['DOCUMENTS RECEIVED', 'ok'], t: '4 HRS AGO' },
+  { b: 'TK', go: 'client/c-tk', name: 'T&K TRANSPORT', chips: ['DISPATCH', 'IFTA'], st: ['FILING READY', 'ok'], t: '6 HRS AGO' },
+  { b: 'MT', go: 'client/c-mt', name: 'MASON TRANSPORT', chips: ['INTAKE'], st: ['PREBUILT · NOT ACTIVE YET', 'mute'], t: 'YESTERDAY', pre: true },
 ];
 const ACTIVITY = [
-  { t: 'IFTA Q3 RETURN PREPARED FOR HORIZON FREIGHT', time: '1 HR AGO', vis: 'internal' },
-  { t: 'NEW CLIENT FILE STARTED — MASON TRANSPORT', time: '3 HRS AGO', vis: 'internal' },
-  { t: 'R&J TRUCKING UPLOADED AN INSURANCE RENEWAL', time: '5 HRS AGO', vis: 'client' },
-  { t: 'PERMIT DOCUMENT APPROVED FOR DELTA HAULING', time: '6 HRS AGO', vis: 'client' },
-  { t: 'PAYMENT RECEIVED FROM T&K TRANSPORT', time: 'YESTERDAY', vis: 'internal', founder: true },
+  { go: 'rec/quarter/ifta-hf-q3', t: 'IFTA Q3 RETURN PREPARED FOR HORIZON FREIGHT', time: '1 HR AGO', vis: 'internal' },
+  { go: 'intake/case/mig-mt', t: 'NEW CLIENT FILE STARTED — MASON TRANSPORT', time: '3 HRS AGO', vis: 'internal' },
+  { go: 'rec/policy/pol-rj', t: 'R&J TRUCKING UPLOADED AN INSURANCE RENEWAL', time: '5 HRS AGO', vis: 'client' },
+  { go: 'rec/request/req-dh-ifta', t: 'PERMIT DOCUMENT APPROVED FOR DELTA HAULING', time: '6 HRS AGO', vis: 'client' },
+  { go: 'rec/invoice/inv-3301', t: 'PAYMENT RECEIVED FROM T&K TRANSPORT', time: 'YESTERDAY', vis: 'internal', founder: true },
 ];
 const QUICK = [
-  { l: 'START MIGRATION', to: 'INTAKE › EXISTING CLIENT FILE', i: 'migrate' },
-  { l: 'NEW CLIENT FILE', to: 'INTAKE › NEW CLIENT FILE', i: 'person-plus' },
-  { l: 'VIEW DEADLINES', to: 'WORK › COMPLIANCE › EXPIRATIONS', i: 'calendar' },
-  { l: 'MESSAGE A CLIENT', to: 'MORE › MESSAGES', i: 'letter' },
-  { l: 'ASSIGN WORK', to: 'WORK · MANAGERS AND FOUNDER', i: 'people', grant: 'WORK.ASSIGN' },
-  { l: 'NEW LEAD', to: 'MORE › GROWTH / CRM', i: 'tag', grant: 'CRM' },
-  { l: 'CREATE INVOICE', to: 'MORE › BILLING', i: 'summary', grant: 'BILLING' },
+  { go: 'intake/flow/existing/0', l: 'START MIGRATION', to: 'INTAKE › EXISTING CLIENT FILE', i: 'migrate' },
+  { go: 'intake/flow/new/0', l: 'NEW CLIENT FILE', to: 'INTAKE › NEW CLIENT FILE', i: 'person-plus' },
+  { go: 'work/compliance/expirations', l: 'VIEW DEADLINES', to: 'WORK › COMPLIANCE › EXPIRATIONS', i: 'calendar' },
+  { go: 'more/messages', l: 'MESSAGE A CLIENT', to: 'MORE › MESSAGES', i: 'letter' },
+  { go: 'work/queue', l: 'ASSIGN WORK', to: 'WORK · MANAGERS AND FOUNDER', i: 'people', grant: 'WORK.ASSIGN' },
+  { go: 'more/growth_crm', l: 'NEW LEAD', to: 'MORE › GROWTH / CRM', i: 'tag', grant: 'CRM' },
+  { go: 'more/billing', l: 'CREATE INVOICE', to: 'MORE › BILLING', i: 'summary', grant: 'BILLING' },
 ];
 
 /* ── shell ── */
@@ -133,29 +148,28 @@ const NAV = [
   ['reports', 'REPORTS'],
   ['more', 'MORE'],
 ];
-const ROLE_LABEL = FOUNDER ? 'FOUNDER' : 'STAFF';
 function header() {
-  const area = { home: 'HOME', work: 'WORK', reports: 'REPORTS', more: 'MORE', kit: 'DESIGN KIT' }[PAGE];
+  const area = { home: 'HOME', work: 'WORK', reports: 'REPORTS', more: 'MORE', kit: 'DESIGN KIT', intake: 'INTAKE' }[PAGE] ?? PAGE.toUpperCase();
   const ctx = VP === 'mobile' ? '' : `<span class="head__ctx"><small>AIO OFFICE</small><b>${area}</b></span>`;
-  const field = VP === 'desktop' ? `<span class="head__field">${ico('search')}<span>SEARCH CLIENTS, WORK, OR HELP…</span></span>` : '';
-  const plus = VP === 'mobile' && PAGE === 'home' ? `<button class="head__tool head__plus" aria-label="Quick actions">${ico('plus')}</button>` : '';
-  const search = VP === 'desktop' ? '' : `<button class="head__tool head__search" aria-label="Search">${ico('search')}</button>`;
+  const field = VP === 'desktop' ? `<span class="head__field" data-act="search">${ico('search')}<span>SEARCH CLIENTS, WORK, OR HELP…</span></span>` : '';
+  const plus = VP === 'mobile' && PAGE === 'home' ? `<button class="head__tool head__plus" aria-label="Quick actions" data-act="quick">${ico('plus')}</button>` : '';
+  const search = VP === 'desktop' ? '' : `<button class="head__tool head__search" aria-label="Search" data-act="search">${ico('search')}</button>`;
   return `<header class="head">
-    <img class="head__lockup" src="${P}/migration/brand-lockup.png" alt="ALL IN ONE ENTERPRISES INC.">
+    <img class="head__lockup" data-go="home" src="${P}/migration/brand-lockup.png" alt="ALL IN ONE ENTERPRISES INC.">
     ${ctx}${field}${plus}${search}
-    <button class="head__tool head__bell" aria-label="Notifications">${ico('bell')}<span class="head__dot"></span></button>
+    <button class="head__tool head__bell" aria-label="Notifications" data-act="notifications">${ico('bell')}<span class="head__dot"></span></button>
     ${VP === 'desktop' ? '<span class="head__rule"></span>' : ''}
-    <span class="head__avatar"><span>AR</span></span>
-    <span class="head__who"><b>ALEX R.</b><span>${ROLE_LABEL}</span></span>
+    <span class="head__avatar" data-go="more/account"><span>AR</span></span>
+    <span class="head__who" data-go="more/account"><b>ALEX R.</b><span>${FOUNDER ? 'FOUNDER' : 'STAFF'}</span></span>
     ${ico('down', 'head__chev')}
   </header>`;
 }
 function nav() {
   const on = PAGE;
   if (VP === 'desktop') {
-    return `<nav class="side" aria-label="AIO office">${NAV.map(([k, l]) => `<a class="side__item navi ${k === on ? 'is-on' : ''}">${ico(k)}<span>${l}</span></a>`).join('')}</nav>`;
+    return `<nav class="side" aria-label="AIO office">${NAV.map(([k, l]) => `<a class="side__item navi ${k === on ? 'is-on' : ''}" data-k="${k}">${ico(k)}<span>${l}</span></a>`).join('')}</nav>`;
   }
-  return `<nav class="dock" aria-label="AIO office">${NAV.map(([k, l]) => `<a class="dock__item navi ${k === on ? 'is-on' : ''}">${ico(k)}<span>${l}</span></a>`).join('')}</nav>`;
+  return `<nav class="dock" aria-label="AIO office">${NAV.map(([k, l]) => `<a class="dock__item navi ${k === on ? 'is-on' : ''}" data-k="${k}">${ico(k)}<span>${l}</span></a>`).join('')}</nav>`;
 }
 function plate(key, cls, inner) {
   const p = PLATES[key];
@@ -184,11 +198,11 @@ function attentionCards(view) {
     ['blocked', '2', 'BLOCKED', 'WAITING ON OTHERS'],
   ];
   return `<div class="cards">${c
-    .map(([k, n, l, s]) => `<div class="acard ${k === view ? 'is-on' : ''} ${k === 'blocked' ? 'acard--bad' : ''}"><span class="acard__n">${n}</span><span class="acard__l">${l}</span><span class="acard__s">${s}</span><span class="arrow ${k === view ? '' : 'arrow--quiet'}">${ico(k === view ? 'down' : 'arrow')}</span></div>`)
+    .map(([k, n, l, s]) => `<div class="acard ${k === view ? 'is-on' : ''} ${k === 'blocked' ? 'acard--bad' : ''}" data-view="${k}"><span class="acard__n">${n}</span><span class="acard__l">${l}</span><span class="acard__s">${s}</span><span class="arrow ${k === view ? '' : 'arrow--quiet'}">${ico(k === view ? 'down' : 'arrow')}</span></div>`)
     .join('')}</div>`;
 }
 function arow(r) {
-  return `<div class="arow"><span class="arow__pri">${st(r.pri)}</span><span class="arow__who">${r.who}</span><span class="arow__age">${r.age}</span><span class="arow__what">${r.what}</span><span class="arow__to">${ico('fwd')}${r.to}</span><span class="arow__go">${ico('fwd', 'chev')}</span></div>`;
+  return `<div class="arow" data-go="${r.go}"><span class="arow__pri">${st(r.pri)}</span><span class="arow__who">${r.who}</span><span class="arow__age">${r.age}</span><span class="arow__what">${r.what}</span><span class="arow__to">${ico('fwd')}${r.to}</span><span class="arow__go">${ico('fwd', 'chev')}</span></div>`;
 }
 function attentionList(view) {
   const titles = { attention: ['NEEDS ATTENTION', 'SHOWING 5 OF 7'], deadlines: ['DUE THIS WEEK', '4 ITEMS · TODAY IS OCT 8'], blocked: ['BLOCKED', '2 ITEMS · BY WHOM THEY WAIT ON'] };
@@ -200,28 +214,28 @@ function attentionList(view) {
   const honest = FOUNDER
     ? `<div class="honest">${ico('info')}<span><b>NOT CONNECTED YET:</b> COMPLIANCE EXCEPTIONS · DISPATCH EXCEPTIONS · MAINTENANCE HOLDS · ROAD READY ITEMS. THEY JOIN THIS LIST WHEN THEIR SOURCES ARE CONNECTED.</span></div>`
     : '';
-  return `<div class="panel alist"><div class="alist__head"><span><span class="alist__title">${t}</span>${sample()}<span class="alist__count">${c}</span></span><span class="link">VIEW ALL ${ico('fwd')}</span></div>${rows}${honest}</div>`;
+  return `<div class="panel alist"><div class="alist__head"><span><span class="alist__title">${t}</span>${sample()}<span class="alist__count">${c}</span></span><span class="link" data-go="home/list/${view}">VIEW ALL ${ico('fwd')}</span></div>${rows}${honest}</div>`;
 }
 function workTiles(cols) {
   return `<div class="tiles" style="grid-template-columns:repeat(${cols},minmax(0,1fr))">${LANES.map(
-    (l) => `<div class="tile ${l.none ? 'tile--none' : ''}"><span class="tile__n">${l.n}</span>${ico(l.icon, 'tile__ico')}<span class="tile__name">${l.name}</span><span class="tile__sig">${laneSignals(l, true).join('')}</span></div>`,
+    (l) => `<div class="tile ${l.none ? 'tile--none' : ''}" data-go="work/${l.slug}"><span class="tile__n">${l.n}</span>${ico(l.icon, 'tile__ico')}<span class="tile__name">${l.name}</span><span class="tile__sig">${laneSignals(l, true).join('')}</span></div>`,
   ).join('')}</div>`;
 }
 function clientsPanel(table) {
   return `<div class="panel">${CLIENTS.map(
-    (c) => `<div class="crow"><span class="badge ${c.pre ? 'badge--pre' : ''}">${c.b}</span><span class="crow__name">${c.name}</span><span class="crow__state">${st(c.st)}</span><span class="crow__chips">${c.chips.map((x) => `<span class="chip">${x}</span>`).join('')}</span><span class="crow__time">${c.t}</span></div>`,
+    (c) => `<div class="crow" data-go="${c.go}"><span class="badge ${c.pre ? 'badge--pre' : ''}">${c.b}</span><span class="crow__name">${c.name}</span><span class="crow__state">${st(c.st)}</span><span class="crow__chips">${c.chips.map((x) => `<span class="chip">${x}</span>`).join('')}</span><span class="crow__time">${c.t}</span></div>`,
   ).join('')}</div>`;
 }
 function activityPanel() {
   return `<div class="panel">${ACTIVITY.filter((e) => FOUNDER || !e.founder)
     .map(
-      (e) => `<div class="erow"><span class="erow__mark"></span><span class="erow__text">${e.t}</span><span class="erow__time">${e.time}</span><span class="erow__meta"><span class="tag-vis tag-vis--${e.vis}">${e.vis === 'client' ? 'CLIENT-VISIBLE' : 'INTERNAL'}</span></span></div>`,
+      (e) => `<div class="erow" data-go="${e.go}"><span class="erow__mark"></span><span class="erow__text">${e.t}</span><span class="erow__time">${e.time}</span><span class="erow__meta"><span class="tag-vis tag-vis--${e.vis}">${e.vis === 'client' ? 'CLIENT-VISIBLE' : 'INTERNAL'}</span></span></div>`,
     )
     .join('')}</div>`;
 }
 function quickList(items, head = '') {
   return `<div class="panel">${head ? `<div class="qa__head">${head}</div>` : ''}${items
-    .map((a) => `<div class="qa"><span class="qa__ico">${ico(a.i)}</span><span class="qa__label">${a.l}${a.grant ? `<span class="qa__grant">BY GRANT</span>` : ''}</span><span class="qa__to">${a.to}</span>${ico('fwd', 'chev')}</div>`)
+    .map((a) => `<div class="qa" data-go="${a.go}"><span class="qa__ico">${ico(a.i)}</span><span class="qa__label">${a.l}${a.grant ? `<span class="qa__grant">BY GRANT</span>` : ''}</span><span class="qa__to">${a.to}</span>${ico('fwd', 'chev')}</div>`)
     .join('')}</div>`;
 }
 const quickItems = () => QUICK.filter((a) => FOUNDER || !a.grant);
@@ -230,15 +244,15 @@ function pulsePanel() {
 }
 
 function home() {
-  const view = Q.get('view') || 'attention';
-  const workHead = secHead('WORK ACROSS AIO', 'WHAT IS MOVING IN EACH SERVICE — ALL TWELVE LANES.', `<span class="btn">OPEN WORK ${ico('fwd')}</span>`);
-  const clientsHead = secHead('CLIENTS IN MOTION', 'CLIENTS CHANGING STATE OR WAITING ON US.', `<span class="btn">VIEW ALL ${ico('fwd')}</span>`);
-  const actHead = secHead('RECENT ACTIVITY', 'WHAT CHANGED ACROSS AIO.', `<span class="btn">VIEW ALL ${ico('fwd')}</span>`);
+  const view = VIEW;
+  const workHead = secHead('WORK ACROSS AIO', 'WHAT IS MOVING IN EACH SERVICE — ALL TWELVE LANES.', `<span class="btn" data-go="work">OPEN WORK ${ico('fwd')}</span>`);
+  const clientsHead = secHead('CLIENTS IN MOTION', 'CLIENTS CHANGING STATE OR WAITING ON US.', `<span class="btn" data-go="more/clients">VIEW ALL ${ico('fwd')}</span>`);
+  const actHead = secHead('RECENT ACTIVITY', 'WHAT CHANGED ACROSS AIO.', `<span class="btn" data-go="home/activity">VIEW ALL ${ico('fwd')}</span>`);
   const sampleTag = (h) => h.replace('</h2>', `${sample()}</h2>`);
   if (VP === 'mobile') {
     const sheet =
       STATE === 'quick'
-        ? `<div class="scrim"></div><div class="sheet"><div class="sheet__grab"></div><div class="sheet__head"><div><h2 class="sec__title">QUICK ACTIONS</h2><p class="sec__sub">EACH ONE OPENS WHERE THE WORK IS DONE.</p></div><span class="sheet__x">${ico('close')}</span></div>${quickList(quickItems())}</div>`
+        ? `<div class="scrim" data-act="close"></div><div class="sheet"><div class="sheet__grab"></div><div class="sheet__head"><div><h2 class="sec__title">QUICK ACTIONS</h2><p class="sec__sub">EACH ONE OPENS WHERE THE WORK IS DONE.</p></div><span class="sheet__x" data-act="close">${ico('close')}</span></div>${quickList(quickItems())}</div>`
         : '';
     return `<main class="main">${homeHero()}${attentionCards(view)}${attentionList(view)}
       <section class="sec">${sampleTag(workHead)}${workTiles(3)}</section>
@@ -248,8 +262,8 @@ function home() {
   }
   if (VP === 'tablet') {
     const items = quickItems();
-    const row = items.slice(0, 4).map((a) => `<span class="btn" style="height:44px;justify-content:flex-start;gap:10px"><span class="qa__ico" style="width:28px;height:28px">${ico(a.i)}</span>${a.l}</span>`).join('');
-    const extra = items.length > 4 ? `<span class="btn" style="height:44px">+${items.length - 4} MORE</span>` : '';
+    const row = items.slice(0, 4).map((a) => `<span class="btn" data-go="${a.go}" style="height:44px;justify-content:flex-start;gap:10px"><span class="qa__ico" style="width:28px;height:28px">${ico(a.i)}</span>${a.l}</span>`).join('');
+    const extra = items.length > 4 ? `<span class="btn" data-go="home/quick" style="height:44px">+${items.length - 4} MORE</span>` : '';
     return `<main class="main">${homeHero()}${attentionCards(view)}${attentionList(view)}
       <section class="sec">${sampleTag(workHead)}${workTiles(6)}</section>
       <div style="display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:14px">
@@ -269,7 +283,7 @@ function home() {
       </div>
       <aside style="margin-top:-64px;position:relative;z-index:2;display:grid;gap:16px">
         <section>${quickList(quickItems(), '<h2 class="sec__title" style="font-size:16px">QUICK ACTIONS</h2><p class="sec__sub">EACH ONE OPENS WHERE THE WORK IS DONE.</p>')}</section>
-        <section>${secHead(`RECENT ACTIVITY${sample()}`, 'WHAT CHANGED ACROSS AIO.', `<span class="link">VIEW ALL ${ico('fwd')}</span>`)}${activityPanel()}</section>
+        <section>${secHead(`RECENT ACTIVITY${sample()}`, 'WHAT CHANGED ACROSS AIO.', `<span class="link" data-go="home/activity">VIEW ALL ${ico('fwd')}</span>`)}${activityPanel()}</section>
         ${FOUNDER ? `<section>${secHead('BUSINESS PULSE', 'FOUNDER · FINANCE ONLY.')}${pulsePanel()}</section>` : ''}
       </aside>
     </div>
@@ -278,9 +292,9 @@ function home() {
 
 /* ═══════════════ WORK ═══════════════ */
 const MINE = [
-  { who: 'HORIZON FREIGHT', what: 'MC AUTHORITY REINSTATEMENT · PERMITTING & AUTHORITIES', due: 'DUE OCT 10', st: ['BLOCKED · EIN LETTER', 'bad'] },
-  { who: 'DELTA HAULING LLC', what: 'POLICY RENEWAL QUOTE · INSURANCE', due: 'DUE OCT 14', st: ['WAITING ON CLIENT', 'warn'] },
-  { who: 'RIVERSTONE LOGISTICS', what: 'Q3 2026 IFTA RETURN · FILING & FUEL TAXES', due: 'DUE OCT 31', st: ['IN REVIEW', 'gold'] },
+  { go: 'rec/request/req-hf-mc', who: 'HORIZON FREIGHT', what: 'MC AUTHORITY REINSTATEMENT · PERMITTING & AUTHORITIES', due: 'DUE OCT 10', st: ['BLOCKED · EIN LETTER', 'bad'] },
+  { go: 'rec/policy/pol-dh', who: 'DELTA HAULING LLC', what: 'POLICY RENEWAL QUOTE · INSURANCE', due: 'DUE OCT 14', st: ['WAITING ON CLIENT', 'warn'] },
+  { go: 'rec/quarter/ifta-rl-q3', who: 'RIVERSTONE LOGISTICS', what: 'Q3 2026 IFTA RETURN · FILING & FUEL TAXES', due: 'DUE OCT 31', st: ['IN REVIEW', 'gold'] },
 ];
 function workBand() {
   return plate(
@@ -291,10 +305,10 @@ function workBand() {
 }
 function myWork(rows = 3) {
   return `<div class="panel mine">
-    <div class="mine__top"><span class="mine__title">${ico('work')}MY WORK${sample()}</span><span class="link">OPEN MY WORK ${ico('fwd')}</span></div>
+    <div class="mine__top"><span class="mine__title">${ico('work')}MY WORK${sample()}</span><span class="link" data-go="work/mine">OPEN MY WORK ${ico('fwd')}</span></div>
     <div class="mine__stats"><span class="stat"><b>7</b>ASSIGNED TO YOU</span><span class="stat"><b>3</b>DUE THIS WEEK</span><span class="stat stat--bad"><b>1</b>BLOCKED</span></div>
     <div class="mine__rows">${MINE.slice(0, rows)
-      .map((m) => `<div class="mrow"><span class="mrow__who">${m.who}</span><span class="mrow__due">${m.due}</span><span class="mrow__what">${m.what}</span><span class="mrow__st">${st(m.st)}</span></div>`)
+      .map((m) => `<div class="mrow" data-go="${m.go}"><span class="mrow__who">${m.who}</span><span class="mrow__due">${m.due}</span><span class="mrow__what">${m.what}</span><span class="mrow__st">${st(m.st)}</span></div>`)
       .join('')}</div>
     <div class="honest" style="margin:10px -14px -14px;border-radius:0 0 12px 12px">${ico('info')}<span>DRIVERS & CARRIERS AND MECHANIC / MAINTENANCE DO NOT ASSIGN WORK TO STAFF YET.</span></div>
   </div>`;
@@ -302,14 +316,14 @@ function myWork(rows = 3) {
 function laneCards(cols) {
   return `<div class="lanes" style="grid-template-columns:repeat(${cols},minmax(0,1fr))">${LANES.map((l) => {
     const src = l.photo.startsWith('/') ? l.photo : l.photo;
-    return `<article class="lane ${l.none ? 'lane--none' : ''}">
+    return `<article class="lane ${l.none ? 'lane--none' : ''}" data-go="work/${l.slug}">
       <div class="lane__img"><img src="${src}" alt="" style="object-position:${PHOTO_POS[l.n] || '50% 50%'}"><span class="lane__no">${l.n}</span>${l.standin ? '<span class="lane__standin">STAND-IN</span>' : ''}${l.none ? '' : `<span class="arrow lane__go">${ico('arrow')}</span>`}</div>
       <div class="lane__body"><span class="lane__name">${l.name}</span><span class="lane__sig">${laneSignals(l, true).join('')}</span></div>
     </article>`;
   }).join('')}</div>`;
 }
 function queueRow() {
-  return `<div class="panel queue"><span class="queue__ico">${ico('search')}</span><span><span class="queue__t" style="display:block">ALL OPEN WORK</span><span class="queue__s" style="display:block">SEARCH, FILTER AND SORT OPEN WORK ACROSS CLIENTS — EVERY ROW OPENS ITS CASE.</span></span><span class="arrow">${ico('arrow')}</span></div>`;
+  return `<div class="panel queue" data-go="work/queue"><span class="queue__ico">${ico('search')}</span><span><span class="queue__t" style="display:block">ALL OPEN WORK</span><span class="queue__s" style="display:block">SEARCH, FILTER AND SORT OPEN WORK ACROSS CLIENTS — EVERY ROW OPENS ITS CASE.</span></span><span class="arrow">${ico('arrow')}</span></div>`;
 }
 function work() {
   const lanesHead = secHead(`SERVICE WORKSPACES${sample()}`, 'TWELVE LANES IN THE CANONICAL ORDER. COUNTS SHOW ONLY WHERE THE LANE CAN SUPPLY THEM.');
@@ -351,12 +365,12 @@ function reportsBand() {
 }
 function figures(cols) {
   const f = [
-    ['ACTIVE CLIENTS', '48', 'BY THE ACTIVE-CLIENT RULE · PREBUILT NEVER COUNTS'],
-    ['FILINGS FILED', '36', 'THIS MONTH · LAST MONTH 29'],
-    ['ACTIVE WORK', '62', 'ACROSS TEN CONNECTED LANES'],
+    ['ACTIVE CLIENTS', '48', 'BY THE ACTIVE-CLIENT RULE · PREBUILT NEVER COUNTS', 'reports/clients'],
+    ['FILINGS FILED', '36', 'THIS MONTH · LAST MONTH 29', 'reports/filing_history'],
+    ['ACTIVE WORK', '62', 'ACROSS TEN CONNECTED LANES', 'reports/services'],
   ];
-  const cells = f.map(([l, v, s]) => `<div class="panel fig"><span class="fig__l">${l}</span><span class="fig__v">${v}</span><span class="fig__s">${s}</span></div>`);
-  if (FOUNDER) cells.push(`<div class="panel fig fig--locked"><span class="fig__l">COLLECTED REVENUE</span><span class="fig__v">$48,210</span><span class="fig__s">FOUNDER · FINANCE ONLY · COLLECTED, NEVER ESTIMATED</span></div>`);
+  const cells = f.map(([l, v, s, go]) => `<div class="panel fig" data-go="${go}"><span class="fig__l">${l}</span><span class="fig__v">${v}</span><span class="fig__s">${s}</span></div>`);
+  if (FOUNDER) cells.push(`<div class="panel fig fig--locked" data-go="reports/financial_revenue"><span class="fig__l">COLLECTED REVENUE</span><span class="fig__v">$48,210</span><span class="fig__s">FOUNDER · FINANCE ONLY · COLLECTED, NEVER ESTIMATED</span></div>`);
   return `<div class="figs" style="grid-template-columns:repeat(${cols || cells.length},minmax(0,1fr))">${cells.join('')}</div>`;
 }
 function serviceBars() {
@@ -364,11 +378,11 @@ function serviceBars() {
   return `<div class="panel bars">${LANES.map((l) => {
     if (l.none) return `<div class="bar bar--none"><span class="bar__l">${l.name}</span><span class="bar__t"></span><span class="bar__v">NO WORKSPACE YET</span></div>`;
     if (l.active === null) return `<div class="bar bar--none"><span class="bar__l">${l.name}</span><span class="bar__t"></span><span class="bar__v">NOT CONNECTED YET</span></div>`;
-    return `<div class="bar"><span class="bar__l">${l.name}</span><span class="bar__t"><i style="width:${(l.active / max) * 100}%"></i></span><span class="bar__v">${l.active}</span></div>`;
+    return `<div class="bar" data-go="work/${l.slug}"><span class="bar__l">${l.name}</span><span class="bar__t"><i style="width:${(l.active / max) * 100}%"></i></span><span class="bar__v">${l.active}</span></div>`;
   }).join('')}<div class="honest" style="margin:8px -14px 0;border-radius:0 0 12px 12px">${ico('info')}<span><b>PARTIAL DATA:</b> ACTIVE WORK BY LANE, AS EACH LANE REPORTS IT. NO TRENDS UNTIL STATUS HISTORY IS READ.</span></div></div>`;
 }
 function filingHistory() {
-  return `<div class="panel">${FILINGS.map(([t, s, d]) => `<div class="frow"><span class="frow__dot"></span><span class="frow__t">${t}</span><span class="frow__d">${d}</span><span class="frow__s">${s}</span></div>`).join('')}</div>`;
+  return `<div class="panel">${FILINGS.map(([t, s, d], i) => `<div class="frow" data-go="${['rec/quarter/ifta-hf-q3', 'rec/quarter/ifta-dh-q3', 'rec/quarter/ifta-rj-q3', 'rec/quarter/ifta-tk-q2'][i]}"><span class="frow__dot"></span><span class="frow__t">${t}</span><span class="frow__d">${d}</span><span class="frow__s">${s}</span></div>`).join('')}</div>`;
 }
 function clientGrowth() {
   return `<div class="panel empty"><div class="empty__frame"><span>NOT CONNECTED YET</span></div><div class="empty__t">CLIENT GROWTH NEEDS READABLE ACTIVATION DATES. IT APPEARS HERE WHEN THEY ARE RECORDED — NO PERCENTAGES UNTIL THEN.</div></div>`;
@@ -380,21 +394,21 @@ function exportsPanel() {
     ...(FOUNDER ? [['RECEIVABLES AGING', 'CSV · FOUNDER · FINANCE', st(['CSV', 'gold'])]] : []),
     ['PDF REPORTS', 'NO PDF RENDERER YET', st(['LATER', 'mute'])],
   ];
-  return `<div class="panel">${rows.map(([t, s, c]) => `<div class="xrow"><span class="xrow__t">${t}</span><span class="xrow__s">${s}</span>${c}</div>`).join('')}</div>`;
+  return `<div class="panel">${rows.map(([t, s, c]) => `<div class="xrow" data-go="reports/exports"><span class="xrow__t">${t}</span><span class="xrow__s">${s}</span>${c}</div>`).join('')}</div>`;
 }
 function areasList() {
   return `<div class="panel">${visibleAreas()
-    .map(([t, i, s, on]) => `<div class="area ${on ? 'is-on' : ''}"><span class="area__ico">${ico(i)}</span><span class="area__t">${t}</span>${st(s)}${ico('fwd', 'chev')}</div>`)
+    .map(([t, i, s, on]) => `<div class="area ${t === AREA ? 'is-on' : ''}" data-area="${t}"><span class="area__ico">${ico(i)}</span><span class="area__t">${t}</span>${st(s)}${ico('fwd', 'chev')}</div>`)
     .join('')}</div>`;
 }
 function areasSelector() {
   return `<div class="selector">${visibleAreas()
-    .map(([t, , s, on]) => `<span class="seg ${on ? 'is-on' : ''} ${s[0].startsWith('NOT') ? 'seg--none' : ''} ${s[1] === 'gold' && !on ? 'seg--grant' : ''}">${t}${on ? '' : `<i>${s[0].split(' · ')[0]}</i>`}</span>`)
+    .map(([t, , s, on]) => `<span class="seg ${t === AREA ? 'is-on' : ''} ${s[0].startsWith('NOT') ? 'seg--none' : ''} ${s[1] === 'gold' && t !== AREA ? 'seg--grant' : ''}" data-area="${t}">${t}${t === AREA ? '' : `<i>${s[0].split(' · ')[0]}</i>`}</span>`)
     .join('')}</div>`;
 }
 function periodRow() {
   const pdf = VP === 'mobile' ? '' : `<span class="btn btn--ghost" aria-disabled="true">PDF LATER</span>`;
-  return `<div class="period"><span class="select">THIS MONTH · OCT 2026 ${ico('down')}</span><span style="display:flex;gap:8px"><span class="btn">${ico('download')}EXPORT CSV</span>${pdf}</span></div>`;
+  return `<div class="period"><span class="select" data-act="period">THIS MONTH · OCT 2026 ${ico('down')}</span><span style="display:flex;gap:8px"><span class="btn" data-sim="export-csv">${ico('download')}EXPORT CSV</span>${pdf}</span></div>`;
 }
 function reportsNoAccess() {
   const grantable = AREAS.filter((a) => a[4] !== 'finance' && a[0] !== 'OVERVIEW').map((a) => `<span class="chip">${a[0]}</span>`).join('');
@@ -405,7 +419,7 @@ function reportsNoAccess() {
     <span class="lock__t">REPORTS ARE GRANTED BY ROLE.</span>
     <p class="lock__p">YOUR ROLE DOES NOT INCLUDE REPORTING YET. THE FOUNDER GRANTS ACCESS AREA BY AREA — CLIENTS, SERVICES, FILING HISTORY AND THE OTHERS — SO EACH PERSON SEES THE FIGURES THEIR WORK NEEDS.</p>
     <p class="lock__p" style="color:var(--ink-3)">ASK THE FOUNDER FOR THE AREAS YOU NEED. UNTIL THEN, YOUR ASSIGNED WORK AND DEADLINES ARE ALWAYS IN WORK AND HOME.</p>
-    <span class="lock__go"><span class="btn">${ico('work')}OPEN MY WORK</span><span class="btn">${ico('home')}BACK TO HOME</span></span>
+    <span class="lock__go"><span class="btn" data-go="work/mine">${ico('work')}OPEN MY WORK</span><span class="btn" data-go="home">${ico('home')}BACK TO HOME</span></span>
   </div>`;
 }
 function reports() {
@@ -418,7 +432,7 @@ function reports() {
     return `<main class="main">${reportsBand()}<div class="after-band panel" style="padding:12px 12px 12px">${ovHead.replace('class="sec__head"', 'class="sec__head" style="margin-bottom:10px"')}${periodRow()}</div>
       <div style="margin-top:10px">${figures(2)}</div>
       <section class="sec">${secHead('SERVICE ACTIVITY', 'ACTIVE WORK BY LANE.')}${serviceBars()}</section>
-      <section class="sec">${secHead('FILING HISTORY', 'FILED QUARTERS, NEWEST FIRST.', `<span class="link">VIEW ALL ${ico('fwd')}</span>`)}${filingHistory()}</section>
+      <section class="sec">${secHead('FILING HISTORY', 'FILED QUARTERS, NEWEST FIRST.', `<span class="link" data-go="reports/filing_history">VIEW ALL ${ico('fwd')}</span>`)}${filingHistory()}</section>
       <section class="sec">${secHead('CLIENT GROWTH', 'ACTIVE CLIENTS OVER TIME.')}${clientGrowth()}</section>
       <section class="sec">${secHead('REPORT AREAS', FOUNDER ? 'ALL TEN AREAS, WITH WHAT EACH CAN SHOW TODAY.' : 'THE AREAS YOUR ROLE IS GRANTED.')}${areasList()}</section>
     </main>`;
@@ -443,7 +457,7 @@ function reports() {
         <div style="margin-top:12px">${figures()}</div>
         <div style="display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:16px">
           <section class="sec">${secHead('SERVICE ACTIVITY', 'ACTIVE WORK BY LANE.')}${serviceBars()}</section>
-          <div><section class="sec">${secHead('FILING HISTORY', 'FILED QUARTERS, NEWEST FIRST.', `<span class="link">VIEW ALL ${ico('fwd')}</span>`)}${filingHistory()}</section>
+          <div><section class="sec">${secHead('FILING HISTORY', 'FILED QUARTERS, NEWEST FIRST.', `<span class="link" data-go="reports/filing_history">VIEW ALL ${ico('fwd')}</span>`)}${filingHistory()}</section>
           <section class="sec">${secHead('CLIENT GROWTH', 'ACTIVE CLIENTS OVER TIME.')}${clientGrowth()}</section></div>
         </div>
         <section class="sec">${secHead('EXPORTS', 'WHAT CAN LEAVE AIO, BY GRANT.')}${exportsPanel()}</section>
@@ -481,12 +495,12 @@ function groupBlock([g, entries]) {
     .filter((e) => FOUNDER || (e[4] !== 'grant' && e[4] !== 'notbuilt'))
     .map(([t, i, s, chipF, , chipS]) => {
       const chip = FOUNDER ? chipF : chipS;
-      return `<div class="entry"><span class="entry__ico">${ico(i)}</span><span class="entry__t">${t}${chip ? st(chip) : ''}</span><span class="entry__s">${s}</span>${ico('fwd', 'chev')}</div>`;
+      return `<div class="entry" data-go="more/${t.toLowerCase().replace(/[^a-z]+/g, '_').replace(/^_|_$/g, '')}"><span class="entry__ico">${ico(i)}</span><span class="entry__t">${t}${chip ? st(chip) : ''}</span><span class="entry__s">${s}</span>${ico('fwd', 'chev')}</div>`;
     });
   return `<section class="group"><h3 class="group__t">${g}</h3><div class="panel">${rows.join('')}</div></section>`;
 }
 function more() {
-  const search = `<div class="search">${ico('search')}${VP === 'mobile' ? 'SEARCH CLIENTS, DOCUMENTS, LEADS…' : 'SEARCH CLIENTS, DOCUMENTS, LEADS OR INVOICES…'}</div>`;
+  const search = `<div class="search" data-act="search">${ico('search')}${VP === 'mobile' ? 'SEARCH CLIENTS, DOCUMENTS, LEADS…' : 'SEARCH CLIENTS, DOCUMENTS, LEADS OR INVOICES…'}</div>`;
   const note = FOUNDER
     ? ''
     : `<div class="panel honest" style="border-radius:12px;border:1px solid var(--line);margin-top:14px">${ico('info')}<span>ENTRIES APPEAR BY ROLE AND GRANT. GROWTH / CRM AND BILLING SHOW WHEN YOUR ROLE INCLUDES THEM.</span></div>`;
@@ -585,4 +599,4 @@ async function mount() {
   await Promise.all([...document.images].map((i) => (i.complete ? null : new Promise((r) => { i.onload = i.onerror = r; }))));
   document.documentElement.dataset.ready = '1';
 }
-mount();
+if (!EMBED) mount();

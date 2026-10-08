@@ -55662,3 +55662,21 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
   - The four page plates as final: they are shared with CLIENT OFFICE / PUBLIC and are interim.
   - The photo pass is blocked until `www.figma.com` is allowed in Network access.
 - **Not changed:** live nav (still FILING), routes, pages, schema, auth, permissions, billing, IFTA, migration. Not deployed.
+
+---
+
+## 2026-10-08 — AIO office: unified internal office review (batch 1, awaiting founder) [sync-only]
+
+- **Sprint:** P0.AIO.OFFICE.COMPLETE-INTERNAL-OFFICE-AND-UNIFIED-EXPERIENCE1.
+- **Review studio:** `all-in-one-enterprises/design-authority/aio-office/office/`.
+  - Sample records only. Isolated from `src/` (nothing imports it) and never deployed.
+  - It reuses the approved roots through `studio.js` embed mode (`window.AIO_STUDIO_EMBED`, `studioSet()`, attribute hooks). All 38 authority renders keep their pinned sha256.
+  - `build.mjs` produces the page and images (python3 + Pillow); `qa.mjs` crawls and screenshots it.
+- **QA output:** `AIO_OFFICE_UNIFIED_REVIEW/` (60 screenshots, `qa-summary.json`).
+  - 619 routes, 4 sizes × 3 roles, 0 failures, 9/9 journeys, 8/8 interactions.
+- **Record:** `docs/aio/office-unified-experience/`, vendored from SITE00 e18b8169. Evidence test: `src/product-graph/officeUnifiedExperience.test.ts` (12).
+- **Status:**
+  - The office is NOT COMPLETE and the live app is NOT COMPLETE.
+  - The Composer integration plan is a DRAFT until the founder approves.
+  - The 12 privacy gaps were rechecked here at c74cf37c and are still OPEN. Nothing was patched; the separate handoff is `11_SECURITY_REPAIR_HANDOFF.md`.
+- **Review:** https://claude.ai/artifact/VQCyD4A4YmeErb27ik2hgG.

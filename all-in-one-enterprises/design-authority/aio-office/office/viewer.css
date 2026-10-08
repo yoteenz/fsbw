@@ -1,0 +1,82 @@
+/*
+ * Review chrome around the device: a quiet toolbar, the scaled device frame and the review guide. The device holds the
+ * AIO OFFICE in its own fixed ivory / obsidian / gold world; the chrome follows the viewer's light or dark theme.
+ */
+:root {
+  --bg: #ebe6dc;
+  --fg: #17171a;
+  --muted: #6a665e;
+  --line: #d7cfc1;
+  --btn: #fbf8f2;
+  --panel: #f6f2ea;
+  --on-bg: #19191b;
+  --on-fg: #edb63f;
+  --frame: #0f0f10;
+  --ok: #2f7d43;
+  --warn: #9a6a12;
+  --bad: #962a2a;
+  --chrome: 'Roboto Condensed', 'Arial Narrow', Arial, sans-serif;
+  --body: Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) { --bg: #121214; --fg: #efeae2; --muted: #a29d94; --line: #34322e; --btn: #1d1d20; --panel: #19191c; --on-bg: #edb63f; --on-fg: #141416; --frame: #000; --ok: #7cc48f; --warn: #e3b25b; --bad: #e08a80; color-scheme: dark; }
+}
+:root[data-theme='dark'] { --bg: #121214; --fg: #efeae2; --muted: #a29d94; --line: #34322e; --btn: #1d1d20; --panel: #19191c; --on-bg: #edb63f; --on-fg: #141416; --frame: #000; --ok: #7cc48f; --warn: #e3b25b; --bad: #e08a80; color-scheme: dark; }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 400 15px/1.5 var(--body); }
+.viewer { max-width: 2960px; margin: 0 auto; padding: 14px 16px 28px; display: grid; gap: 10px; }
+.v-top { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 14px; }
+.v-top h1 { margin: 0; font: 800 22px/1.1 var(--chrome); letter-spacing: 0.04em; text-transform: uppercase; }
+.v-top p { margin: 0; color: var(--muted); font-size: 14px; max-width: 90ch; }
+.tools { display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: center; }
+.tools .group { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.tools .group > span { font: 600 11px/1 var(--chrome); letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); margin-right: 2px; }
+.tools button, .tools select, .guide button { appearance: none; border: 1px solid var(--line); background: var(--btn); color: var(--fg); height: 34px; padding: 0 12px; border-radius: 9px; cursor: pointer; font: 700 12px/1 var(--chrome); letter-spacing: 0.1em; text-transform: uppercase; }
+.tools select { padding-right: 28px; background-image: linear-gradient(45deg, transparent 50%, currentColor 50%), linear-gradient(135deg, currentColor 50%, transparent 50%); background-position: calc(100% - 15px) 15px, calc(100% - 10px) 15px; background-size: 5px 5px; background-repeat: no-repeat; max-width: 220px; }
+.tools button[aria-pressed='true'] { background: var(--on-bg); border-color: var(--on-bg); color: var(--on-fg); }
+.tools button:disabled, .guide button:disabled { opacity: 0.45; cursor: default; }
+.tools button:focus-visible, .tools select:focus-visible, .guide button:focus-visible { outline: 2px solid #e7ab3c; outline-offset: 2px; }
+.v-addr { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; font: 600 11px/1.3 var(--chrome); letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+.v-addr code { font: 500 12px/1.3 ui-monospace, Menlo, monospace; letter-spacing: 0; text-transform: none; color: var(--fg); background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 3px 7px; overflow-wrap: anywhere; }
+.v-body { display: grid; gap: 16px; align-items: start; }
+@media (min-width: 1180px) { .v-body.has-guide { grid-template-columns: minmax(0, 1fr) 330px; } }
+#stage { display: grid; justify-items: center; min-width: 0; }
+#sizer { position: relative; max-width: 100%; }
+.device { position: absolute; left: 0; top: 0; overflow: hidden; transform-origin: top left; background: #f3f0ea; border-radius: 14px; box-shadow: 0 0 0 6px var(--frame), 0 24px 60px rgba(0, 0, 0, 0.28); }
+.device[data-device='phone'] { border-radius: 34px; box-shadow: 0 0 0 10px var(--frame), 0 24px 60px rgba(0, 0, 0, 0.3); }
+.device[data-device='tablet'] { border-radius: 26px; box-shadow: 0 0 0 12px var(--frame), 0 24px 60px rgba(0, 0, 0, 0.3); }
+.screen { position: absolute; inset: 0; overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; scrollbar-width: thin; }
+.device[data-device='phone'] .screen, .device[data-device='tablet'] .screen { scrollbar-width: none; }
+.device[data-device='phone'] .screen::-webkit-scrollbar, .device[data-device='tablet'] .screen::-webkit-scrollbar { display: none; }
+.ao-root .tile:hover, .ao-root .lane:hover, .ao-root .acard:hover { border-color: #e7ab3c; }
+.ao-root .arow:hover, .ao-root .qa:hover, .ao-root .crow:hover, .ao-root .entry:hover, .ao-root .area:hover, .ao-root .mrow:hover, .ao-root .frow:hover, .ao-root .erow:hover, .ao-root .xrow[data-sim]:hover { background: #fbf3e0; }
+.ao-root [data-k], .ao-root [data-view], .ao-root [data-area], .ao-root .head__chev { cursor: pointer; }
+.proto-toast { position: absolute; left: 50%; bottom: 96px; z-index: 80; transform: translateX(-50%); width: max-content; max-width: 86%; padding: 11px 15px 10px; border-radius: 10px; background: #19191b; color: #f3dfae; font: 600 11.5px/1.35 Roboto, Arial, sans-serif; letter-spacing: 0.08em; text-transform: uppercase; text-align: center; box-shadow: 0 10px 26px rgba(0, 0, 0, 0.3); }
+.device[data-vp='tablet'] .proto-toast { bottom: 140px; font-size: 14px; }
+.device[data-vp='desktop'] .proto-toast { bottom: 40px; font-size: 14px; }
+
+/* guide */
+.guide { display: grid; gap: 12px; align-content: start; padding: 14px; border-radius: 14px; background: var(--panel); border: 1px solid var(--line); font-size: 14px; }
+.guide[hidden] { display: none; }
+@media (min-width: 1180px) { .guide { position: sticky; top: 12px; max-height: calc(100vh - 24px); overflow: auto; } }
+.g-sec { display: grid; gap: 6px; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
+.g-sec:last-child { border-bottom: 0; padding-bottom: 0; }
+.g-sec h2 { margin: 0; font: 700 11px/1.2 var(--chrome); letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); }
+.g-sec p { margin: 0; }
+.g-fam { font: 700 15px/1.25 var(--chrome); letter-spacing: 0.03em; }
+.g-muted { color: var(--muted); font-size: 13px; }
+.g-live { font: 500 12px/1.4 ui-monospace, Menlo, monospace; color: var(--fg); overflow-wrap: anywhere; }
+.g-tag { display: inline-block; padding: 3px 8px; border-radius: 6px; font: 700 11px/1.2 var(--chrome); letter-spacing: 0.1em; background: var(--btn); border: 1px solid var(--line); }
+.g-tag--approved_root, .g-tag--approved_authority { border-color: var(--ok); color: var(--ok); }
+.g-tag--new_for_review { border-color: #e7ab3c; color: var(--warn); }
+.g-tag--honest_state { border-style: dashed; color: var(--muted); }
+.g-tag--not_designed, .g-tag--broken { border-color: var(--bad); color: var(--bad); }
+.g-list { margin: 0; padding: 0; list-style: none; display: grid; gap: 6px; }
+.g-list li { display: grid; gap: 1px; }
+.g-plain { margin: 0; padding-left: 18px; display: grid; gap: 4px; font-size: 13px; }
+.guide .g-link { all: unset; cursor: pointer; color: var(--fg); text-decoration: underline; text-decoration-color: #e7ab3c; text-underline-offset: 3px; font-size: 13.5px; }
+.guide .g-link.is-on { font-weight: 700; }
+.guide .g-link:focus-visible { outline: 2px solid #e7ab3c; outline-offset: 2px; }
+.g-journey { display: grid; gap: 6px; padding: 10px; border-radius: 10px; background: var(--btn); border: 1px solid #e7ab3c; }
+.g-row { display: flex; flex-wrap: wrap; gap: 6px; }
+.g-legend { margin: 0; padding-left: 18px; display: grid; gap: 4px; font-size: 13px; }
+.g-bad { color: var(--bad); }

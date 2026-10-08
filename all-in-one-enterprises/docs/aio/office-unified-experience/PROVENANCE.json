@@ -1,0 +1,30 @@
+{
+  "id": "AIO_OFFICE_UNIFIED_EXPERIENCE_PROVENANCE",
+  "sprint": "P0.AIO.OFFICE.COMPLETE-INTERNAL-OFFICE-AND-UNIFIED-EXPERIENCE1",
+  "source": {
+    "repo": "yoteenz/SITE00",
+    "branch": "cursor/aio-office-ia-work-tree-4f59",
+    "commit": "e18b816961493de340c2f8c5f246048eeb4e11ac",
+    "path": "docs/aio/office-unified-experience/",
+    "generated_by": "scripts/studioos/aio-office-unified-experience-export.ts"
+  },
+  "rule": "Copied verbatim from SITE00 (the Experience Brain is the source). The review studio it describes lives in this repo (all-in-one-enterprises/design-authority/aio-office/office/, sample data only; QA output in AIO_OFFICE_UNIFIED_REVIEW/). Batch 1 designed; founder review pending; the office and the live app are not complete; live implementation and security repairs not authorized; nothing in src imports these files.",
+  "sha256": {
+    "01_INVENTORY.md": "6e577239d399c6effb5f53a222fbd7b671550884e82e6b272f6373009f498644",
+    "02_FIVE_ROOT_PAGE_TREE.md": "d2f6cd2e036bcc61b4c0d926d01e7282ce2505a421f68ab8cbe50f2b2c40faaf",
+    "03_SHARED_DESIGN_SYSTEM.md": "bf646f4cd2c18b5c144733b96edca142492ba7f02f56d736ce1b7d0eb8d64d64",
+    "04_INTAKE.md": "3eb19c6e7e6d496daa5dd9b282f4a10766ce48298c18b8eaa47853b3530e01ac",
+    "05_WORK_LANES.md": "b8895ba24c32243207f322b38a444ee13f40b827fd0841fc62be6dd3ca84048b",
+    "06_REPORTS_AND_MORE.md": "1a7723d57a4ffc862ed0ae352556d27a3e43102446c6861d19b8c54e8dd312e6",
+    "07_ROLES_AND_CLIENT_CONTEXT.md": "5ce73fa6a617fed313779c8a2408c883dd4ebf14c4b6e282791cf21b57eb9e4f",
+    "08_REVIEW_ENVIRONMENT_AND_VIEWPORTS.md": "3e2e3f07aac5bc48e3e6d77c41c72de0868a106ed5a5b64c307895cb62abe9bd",
+    "09_JOURNEYS_AND_QA.md": "e44a14da8c5c775ffe306feffaa7b1f3ac809cf80fcc19c4e8e7a2d8d2a455db",
+    "10_COMPOSER_INTEGRATION_PLAN.md": "52ace1e6da8b15f931db6a38006a3900f2460965926bcfaaa9c3256a41bb976a",
+    "11_SECURITY_REPAIR_HANDOFF.md": "6bfa5e4a62aecac8ec5951e6ea14069bcd8a16c8956d27f06bf45716f2cd08dd",
+    "12_GAPS_AND_CONTINUATION.md": "1a8ede1e9a116b4fa34353a95d36c223a19672298b6fc809cf50275e1650de55",
+    "13_FOUNDER_WALKTHROUGH.md": "fe87e131eaee417481bf1f2e3ce6aec85da5af2c22008c2b11196e1329123300",
+    "QUALITY_GATE.json": "77b2a1c5cc259bef1600f798cf8ff3e96a8137819be8b2b566e035854f7441b0",
+    "README.md": "7ecb2df97333db664470b732809ec9ff7f2dd055d51cbd00d0e617e37493d859",
+    "UNIFIED_EXPERIENCE.json": "b925d192d8f365dad871be069f2457a689ffd72ca2fdbab4759ed71fe28f8ca3"
+  }
+}

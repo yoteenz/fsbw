@@ -28,3 +28,7 @@ Status:
 - **Implementation:** not authorized.
 
 The record lives in `docs/aio/office-visual-authority/`, vendored from SITE00.
+
+## The unified office review (`office/`)
+
+The next sprint (`P0.AIO.OFFICE.COMPLETE-INTERNAL-OFFICE-AND-UNIFIED-EXPERIENCE1`) builds the whole internal office around these roots: INTAKE, the twelve lanes, the report domains, the MORE destinations, record pages and Client 360. See `office/README.md`. The studio's only change for it is embed support: `window.AIO_STUDIO_EMBED` and `studioSet()`, plus `data-go` / `data-act` / `data-sim` hooks on existing controls. These are attributes only, and all 38 authority renders keep their pinned sha256.
