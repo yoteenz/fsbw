@@ -486,7 +486,7 @@ export function MigrationStudioPage() {
   );
   const previous = PREVIOUS[screen];
   const newDone = newExtractStages(files, batch, facts);
-  const queueDone = batchStages(queueFiles, queueConflicts.length);
+  const queueDone = batchStages(queueFiles);
 
   return (
     <MigrationShell family={family} actor="staff" screen={screen} viewer={viewer} onBack={previous ? () => go(previous, previous === 'root' ? '' : clientId) : undefined}>

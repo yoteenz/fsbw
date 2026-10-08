@@ -164,6 +164,8 @@ const GAPS = [
   { title: 'FOUNDER REVIEW’s button names the wrong next step', body: 'CONTINUE TO APPROVAL opens ITEMS NEEDING REVIEW first; approval comes after the decisions are saved.' },
   { title: 'Staff never see the client finish', body: 'The existing-client branch ends at INVITE SENT. Nothing in migration shows staff when the client confirms or becomes ACTIVE.' },
   { title: 'Batch results look tappable but are not', body: 'BATCH COMPLETE lists each client with a › chevron, but the rows do nothing, so there is no route from a batch to inviting its PREBUILT clients; each one has to be found again under EXISTING CLIENT FILE.' },
+  { title: 'The match decision is not saved', body: 'MATCH AND CONFLICT REVIEW keeps MATCH TO EXISTING / CREATE NEW in the open page only. After a reload, or when staff come back later (the processing screens say they can leave and return), APPROVE MIGRATION refuses with “Client match must be resolved before approval” until they go back through MATCH. Mock data goes back through MATCH for you and says so.' },
+  { title: 'A failed file stops the existing-client flow', body: 'EXTRACTING AND CLASSIFYING waits for every file to be ready, and a file that failed never is. FILES RECEIVED cannot remove a stored file, so the only way on is VIEW IN BACKGROUND, back to intake. Bulk batch already lets failed files through. Mock data marks failed files ready and says so.' },
 ];
 const SCREEN_META = SCREENS.map(({ key, branch, name, authority: id, route, actor, seed, rep }) => ({ key, branch, name, authority: id, route, actor, seed, rep: !!rep }));
 const data = { sha: SHA, built: new Date().toISOString().slice(0, 10), screens: SCREEN_META, flow: FLOW, gaps: GAPS, authority };

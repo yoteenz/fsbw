@@ -61,6 +61,15 @@ button:focus-visible, summary:focus-visible { outline: 2px solid var(--gold); ou
 .btn { border: 1px solid var(--line); background: var(--raise); border-radius: 9px; padding: 8px 12px; font: 600 12px/1 var(--display); letter-spacing: 0.07em; }
 .btn--gold { background: var(--gold); border-color: transparent; color: #1a1408; }
 .btn:hover { border-color: var(--gold); }
+.mockt { display: inline-flex; align-items: center; gap: 9px; border: 1px solid var(--line); background: var(--raise); border-radius: 9px; padding: 6px 10px 6px 8px; font: 600 12px/1 var(--display); letter-spacing: 0.07em; }
+.mockt:hover { border-color: var(--gold); }
+.mockt__sw { position: relative; width: 30px; height: 18px; border-radius: 9px; background: var(--line); transition: background 0.15s; }
+.mockt__sw::after { content: ""; position: absolute; top: 2px; left: 2px; width: 14px; height: 14px; border-radius: 50%; background: var(--raise); box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25); transition: transform 0.15s; }
+.mockt[aria-pressed="true"] .mockt__sw { background: var(--ok); }
+.mockt[aria-pressed="true"] .mockt__sw::after { transform: translateX(12px); }
+.mockt small { display: block; margin-top: 3px; font: 500 9.5px/1 var(--display); letter-spacing: 0.08em; color: var(--muted); }
+.list.mocked li { grid-template-columns: 7px minmax(0, 1fr); gap: 9px; }
+.list.mocked li::before { content: ""; width: 7px; height: 7px; margin-top: 4px; border-radius: 50%; background: var(--ok); }
 /* tree */
 .tree { grid-area: tree; overflow: auto; border-right: 1px solid var(--line); background: var(--panel); padding: 10px 10px 24px; }
 .branch { margin-top: 10px; }
@@ -133,7 +142,7 @@ details summary::-webkit-details-marker { display: none; }
   .top { padding-inline: 16px; }
   .meter { min-width: 0; flex: 1 1 100%; }
 }
-@media (prefers-reduced-motion: reduce) { .meter__bar i { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .meter__bar i, .mockt__sw, .mockt__sw::after { transition: none; } }
 </style>
 
 <div class="wb">
@@ -148,6 +157,7 @@ details summary::-webkit-details-marker { display: none; }
       <button type="button" id="vp-tablet" data-vp="tablet" aria-pressed="false">TABLET<small>834</small></button>
       <button type="button" id="vp-desktop" data-vp="desktop" aria-pressed="false">DESKTOP<small>1440</small></button>
     </div>
+    <button type="button" class="mockt" id="mock" aria-pressed="true" title="On: each screen fills what a person would supply, so CONTINUE always moves on. Off: every gate is live."><span class="mockt__sw" aria-hidden="true"></span><span>MOCK DATA <b id="mock-state">ON</b><small id="mock-sub">GATES OFF · FORMS FILL THEMSELVES</small></span></button>
     <button type="button" class="btn btn--gold" id="restart">RESTART FLOW</button>
     <button type="button" class="btn" id="clear">CLEAR TEST RECORD</button>
   </header>
@@ -168,6 +178,7 @@ details summary::-webkit-details-marker { display: none; }
 
   <aside class="insp" id="insp" aria-label="Screen inspector">
     <section class="card"><h3>THIS SCREEN</h3><dl class="kv" id="info"></dl><p class="note" id="storage-note" hidden>THIS BROWSER BLOCKS SITE STORAGE, SO EACH JUMP FROM THE TREE STARTS FROM FRESH DEMO DATA. CLICKING THROUGH THE FLOW KEEPS ITS STATE.</p></section>
+    <section class="card"><h3>MOCK DATA ON THIS SCREEN</h3><ul class="list mocked" id="mocked"></ul></section>
     <section class="card"><h3>EXITS ON THIS SCREEN</h3><ul class="list" id="exits"></ul></section>
     <section class="card"><h3>ARRIVED HERE FROM</h3><ul class="list" id="from"></ul></section>
     <section class="card"><h3>LOOKS TAPPABLE, DOES NOTHING</h3><ul class="list" id="dead"></ul></section>
@@ -209,6 +220,9 @@ details summary::-webkit-details-marker { display: none; }
   let rec = store.get(KEY, { visited: {}, edges: {}, left: [] });
   let outbox = [];
   let dead = {};
+  /* mock data: on unless this viewer turned it off */
+  let mockOn = store.get('aio-migration-flow-mock-v1', true) !== false;
+  let mocked = {};
   let current = null;
   let bootPending = false;
   let bootFor = null;
@@ -283,7 +297,8 @@ details summary::-webkit-details-marker { display: none; }
     bootPending = true;
     bootFor = key ?? null;
     $('loading').hidden = false;
-    const head = `<script>window.__AIO_PROTO=${JSON.stringify(cfg).replace(/</g, '\\u003c')};<\/script>`;
+    mocked = {};
+    const head = `<script>window.__AIO_PROTO=${JSON.stringify({ ...cfg, mock: mockOn }).replace(/</g, '\\u003c')};<\/script>`;
     $('app').srcdoc = APP_HTML.replace('<head>', `<head>${head}`);
     $('app').onload = () => { $('loading').hidden = true; };
   }
@@ -293,7 +308,12 @@ details summary::-webkit-details-marker { display: none; }
     const d = e.data;
     if (!d || d.source !== 'aio-migration-prototype') return;
     if (d.type === 'storage' && d.persistent === false) $('storage-note').hidden = false;
-    if (d.type === 'route') onRoute(d.path);
+    if (d.type === 'route' && !d.quiet) onRoute(d.path);
+    if (d.type === 'mocked') {
+      const prev = d.append && mocked[d.screen] ? mocked[d.screen] : [];
+      mocked[d.screen] = d.on ? [...prev, ...d.items.filter((t) => !prev.includes(t))] : null;
+      renderMocked();
+    }
     if (d.type === 'outbox') {
       outbox.unshift({ email: d.email, company: d.company, path: d.path, at: new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }) });
       renderOutbox();
@@ -339,6 +359,7 @@ details summary::-webkit-details-marker { display: none; }
 
   const nameOf = (k) => (k === 'exit' ? 'OUTSIDE CLIENT MIGRATION' : byKey[k]?.name ?? k);
   function renderInspector() {
+    renderMocked();
     const s = current ? byKey[current] : null;
     $('info').innerHTML = s
       ? `<dt>AUTHORITY</dt><dd>${esc(s.authority)}</dd><dt>ACTOR</dt><dd>${s.actor === 'client' ? 'THE CLIENT (CLIENT OFFICE)' : 'AIO STAFF (AIO OFFICE)'}</dd><dt>BRANCH</dt><dd>${esc(BRANCHES.find((b) => b.id === s.branch)?.title ?? '')}</dd>`
@@ -381,6 +402,28 @@ details summary::-webkit-details-marker { display: none; }
     $('app').contentWindow?.postMessage({ source: 'aio-migration-navigator', type: 'navigate', path: outbox[+i].path }, '*');
   });
 
+  function renderMocked() {
+    const items = current ? mocked[current] : undefined;
+    $('mocked').innerHTML = !mockOn
+      ? '<li class="empty">MOCK DATA IS OFF. EVERY GATE IS LIVE: SELECT, UPLOAD AND TYPE AS A REAL USER WOULD.</li>'
+      : items === undefined
+        ? '<li class="empty">CHECKING WHAT THIS SCREEN NEEDS…</li>'
+        : items && items.length
+          ? items.map((t) => `<li><span>${esc(t)}</span></li>`).join('')
+          : '<li class="empty">NOTHING TO FILL ON THIS SCREEN.</li>';
+  }
+  function setMock(on) {
+    mockOn = on;
+    store.set('aio-migration-flow-mock-v1', on);
+    $('mock').setAttribute('aria-pressed', String(on));
+    $('mock-state').textContent = on ? 'ON' : 'OFF';
+    $('mock-sub').textContent = on ? 'GATES OFF · FORMS FILL THEMSELVES' : 'GATES ON · ENTER EVERYTHING YOURSELF';
+    if (current) delete mocked[current];
+    $('app').contentWindow?.postMessage({ source: 'aio-migration-navigator', type: 'mock', on }, '*');
+    renderMocked();
+  }
+  $('mock').addEventListener('click', () => setMock(!mockOn));
+
   function showHint(text) {
     $('now-how').hidden = false;
     $('now-how').textContent = text;
@@ -400,6 +443,9 @@ details summary::-webkit-details-marker { display: none; }
     renderInspector();
   });
 
+  $('mock').setAttribute('aria-pressed', String(mockOn));
+  $('mock-state').textContent = mockOn ? 'ON' : 'OFF';
+  $('mock-sub').textContent = mockOn ? 'GATES OFF · FORMS FILL THEMSELVES' : 'GATES ON · ENTER EVERYTHING YOURSELF';
   renderTree();
   renderOutbox();
   renderInspector();

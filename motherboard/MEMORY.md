@@ -55479,3 +55479,31 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **BACK (not in the authority set; founder request):** chevron button at the left of the header on every screen except the intake root, the client's first step (HERE'S WHAT AIO ALREADY KNOWS) and the arrival screen. It opens the step before the current one in its branch and keeps the open client: `PREVIOUS` in `MigrationStudioPage.tsx` (reverse of `onContinue`), `previousStep` in `ClientOfficeReviewPage.tsx`. It deliberately does not follow browser history, which also records each client selection on EXISTING CLIENT FILE. Phone: 70u full-height target, lockup moved right (76u root family, 78u existing family). Tablet/desktop: 40px button, first item of the header row. Recorded in the recovery doc deviations and `nav-rules.json` (`implementation.back`). The prototype lists "BACK (header)" as an expected exit on each screen.
 - **Verified:** BACK clicked through staff (upload → existing with client kept → root), batch, and client steps (company → welcome, confirm → changed), and it is absent on root, welcome and complete. Header sweep: 5 screens × 16 widths (390, 700–1920), no horizontal scroll, nothing clipped or overlapping. Responsive QA: root 93.5 / 92.4, conformance 100 on all screens, 10/10 checks. Flow checks 113/113, original checks 23/23, vitest 414 passed, build OK. Blueprint proof images regenerated.
 - **Deploy:** `[sync-only]`; preview.fsbw-dev.com updates on "deploy now". The prototype link was republished.
+
+---
+
+## 2026-10-08 — Client migration prototype: MOCK DATA mode; two flow dead-ends fixed
+
+- **Context:** Founder: "there also needs to be a mode to turn off the input/entry gates & run mock data so that I can test the entire flow without having to input or upload information or data".
+- **Mock data (prototype only):** a top-bar switch in the flow prototype (on by default, remembered per browser). On arrival each screen gets what a person would supply, through the screen's own inputs or the demo-store services the screens use:
+  - the client is picked (first non-ACTIVE, Heartland preferred);
+  - `MOCK_CLIENT_FILE.pdf` is added through the file input;
+  - forms are typed: new client River Bend Logistics LLC / 4102877 / 1588201 / Sam Ortiz, invite email `client@mock.example`, a mock password;
+  - extraction and batch processing are finished;
+  - MATCH TO EXISTING and KEEP AIO are chosen;
+  - the required client sections are answered LOOKS RIGHT;
+  - the bulk batch gets its four demo clients.
+  The inspector card MOCK DATA ON THIS SCREEN lists each fill. Approval needs the in-page match choice, so after a jump past MATCH the mock goes back through it (quiet routes, not counted as tested edges). Code: `src/prototype/migrationMockData.ts` and `MockRunner` in `migrationFlowPrototype.tsx`. App checks unchanged; switch off = every gate live.
+- **App fixes found while wiring it:**
+  1. `commitApprovedMigration` (demo) refused PREBUILT whenever a conflict was resolved KEEP AIO (REJECT). Now rejected facts are skipped, as on the server. Tests added: KEEP AIO approves; an undecided conflict still blocks.
+  2. `batchStages` held VALIDATE open until duplicates were decided, but they are decided two screens later, so PROCESSING never offered CONTINUE with a duplicate. Now done when every file is processed.
+- **New gaps listed in the prototype:**
+  - The match decision is not saved: approval refuses after a reload until staff go back through MATCH.
+  - A failed file stops the existing-client flow: EXTRACTING waits for every file to be ready; FILES RECEIVED cannot remove a stored file.
+- **Verified:** with only the main button pressed, mock data runs all the way through:
+  - existing client → invite → outbox → password → client review → WELCOME TO YOUR OFFICE;
+  - new client to CLIENT CONFIRMATION REQUIRED;
+  - bulk batch to BATCH COMPLETE;
+  - a jump to APPROVAL approves via the MATCH detour.
+  Mock off restores the gates (SELECT A CLIENT). Both fixes were confirmed in the running app. vitest 416 passed; build OK; flow checks 113/113; original checks 23/23.
+- **Deploy:** `[sync-only]`; prototype link republished.

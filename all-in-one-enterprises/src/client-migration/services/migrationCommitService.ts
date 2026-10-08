@@ -66,8 +66,8 @@ export function commitApprovedMigration(
   const ambiguous = facts.some((f) => f.confidence === 'CONFLICT' && !f.reviewAction);
   if (ambiguous) return { store, error: 'Unresolved conflicts remain' };
 
-  const rejectedCommitted = facts.some((f) => f.reviewAction === 'REJECT' && f.proposedValue);
-  if (rejectedCommitted) return { store, error: 'Rejected facts must not commit' };
+  // A rejected fact (KEEP AIO) is resolved, not blocking: it is simply left out of the commit, as on the server
+  // (approveMigrationLogic factsForCanonicalCommit). This commit writes no fact values, so there is nothing to skip here.
 
   store.clientMigrationCommitKeys.push(key);
 

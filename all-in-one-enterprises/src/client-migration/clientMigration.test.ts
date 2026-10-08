@@ -61,6 +61,35 @@ describe('client migration lifecycle', () => {
     expect(isActiveClient({ clientLifecycle: client?.clientLifecycle ?? 'KNOWN_UNMIGRATED', activationConditions: client?.activationConditions })).toBe(false);
   });
 
+  it('a conflict resolved as KEEP AIO (REJECT) does not block approval', () => {
+    const store = createDemoSeed();
+    const batchId = 'batch-test-keep';
+    const at = new Date().toISOString();
+    store.archiveMigrationBatches = [
+      { id: batchId, organizationId: 'client-a', clientId: 'client-a', createdByStaffId: 'staff-2', state: 'ready_for_review', reviewState: 'pending', approvalState: 'pending', fileCount: 1, documentCount: 1, createdAt: at, updatedAt: at },
+    ];
+    store.clientExtractedFacts = [
+      { id: 'fact-keep-1', batchId, organizationId: 'client-a', entityType: 'company', fieldKey: 'legal_name', proposedValue: 'Summit Ridge Hauling LLC', confidence: 'HIGH', createdAt: at },
+      { id: 'fact-keep-2', batchId, organizationId: 'client-a', entityType: 'company', fieldKey: 'company_phone', proposedValue: '(614) 555-0187', existingValue: '(614) 555-0176', confidence: 'CONFLICT', reviewAction: 'REJECT', createdAt: at },
+    ];
+    const { error } = commitApprovedMigration(store, batchId, 'staff-2');
+    expect(error).toBeUndefined();
+    expect(store.clients.find((c) => c.id === 'client-a')?.clientLifecycle).toBe('PREBUILT');
+  });
+
+  it('an unresolved conflict still blocks approval', () => {
+    const store = createDemoSeed();
+    const batchId = 'batch-test-open';
+    const at = new Date().toISOString();
+    store.archiveMigrationBatches = [
+      { id: batchId, organizationId: 'client-a', clientId: 'client-a', createdByStaffId: 'staff-2', state: 'ready_for_review', reviewState: 'pending', approvalState: 'pending', fileCount: 1, documentCount: 1, createdAt: at, updatedAt: at },
+    ];
+    store.clientExtractedFacts = [
+      { id: 'fact-open-1', batchId, organizationId: 'client-a', entityType: 'company', fieldKey: 'company_phone', proposedValue: '(614) 555-0187', existingValue: '(614) 555-0176', confidence: 'CONFLICT', createdAt: at },
+    ];
+    expect(commitApprovedMigration(store, batchId, 'staff-2').error).toBe('Unresolved conflicts remain');
+  });
+
   it('fixture pipeline never auto-commits and can flag ambiguous match', async () => {
     const result = await fixtureMigrationPipelineAdapter.processFile(
       {

@@ -7,21 +7,23 @@
  *   · storage: if the frame refuses localStorage, an in-memory store stands in (state then lasts for this document only);
  *   · email: the activation-invite request is answered locally and the email is handed to the navigator's outbox;
  *   · assets: public /migration/* paths resolve to the data URIs packed into the page (window.__AIO_ASSETS);
- *   · exits: any route outside client migration shows where it leads instead of a blank page.
+ *   · exits: any route outside client migration shows where it leads instead of a blank page;
+ *   · mock data (on unless the navigator turns it off): each screen gets what a person would supply (migrationMockData.ts).
  */
-import { StrictMode, useEffect } from 'react';
+import { StrictMode, useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { MemoryRouter, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { SEED } from '../../scripts/migration/migration-screens.mjs';
 import { loadDemoStore, saveDemoStore } from '../demo/demoStore';
 import { MigrationStudioPage } from '../client-migration/visual/MigrationStudioPage';
+import { prepareScreen } from './migrationMockData';
 import { ClientOfficeReviewPage } from '../pages/activation/ClientOfficeReviewPage';
 import { OfficeActivationPage } from '../pages/activation/OfficeActivationPage';
 import '../styles/aio.css';
 import '../styles/aio-auth.css';
 import '../styles/aio-uppercase.css';
 
-type Boot = { path: string; scenario?: string | null };
+type Boot = { path: string; scenario?: string | null; mock?: boolean };
 type ProtoWindow = Window & { __AIO_PROTO?: Boot; __AIO_ASSETS?: Record<string, string> };
 const w = window as ProtoWindow;
 
@@ -135,11 +137,24 @@ if (boot.scenario) {
 }
 if (bootHash) window.history.replaceState(null, '', `#${bootHash}`);
 
+/* mock data mode, switched from the navigator; the client review moves between steps in the hash, announced as aio-proto-step */
+let mockOn = boot.mock !== false;
+/** MATCH AND CONFLICT REVIEW keeps its choice in the open page only, and APPROVE MIGRATION needs it */
+let matchChosen = false;
+/** one trip back through MATCH per arrival on APPROVAL (never a loop) */
+let detoured = false;
+/** while mock data goes back through MATCH for the approval, the navigator is told the moves are not the tester's */
+let quiet = false;
+const STEP_EVENT = 'aio-proto-step';
+
 /** The client review keeps its step in the document hash (replaceState); report it with the router path. */
 function RouteReporter() {
   const location = useLocation();
   useEffect(() => {
-    const send = () => post({ type: 'route', path: `${location.pathname}${location.search}${location.pathname.startsWith('/portal/activation') ? window.location.hash : ''}` });
+    const send = () => {
+      post({ type: 'route', quiet, path: `${location.pathname}${location.search}${location.pathname.startsWith('/portal/activation') ? window.location.hash : ''}` });
+      window.dispatchEvent(new Event(STEP_EVENT));
+    };
     send();
     const replaceState = window.history.replaceState;
     window.history.replaceState = function patched(...args: Parameters<History['replaceState']>) {
@@ -178,13 +193,115 @@ function AffordanceScan() {
   return null;
 }
 
+/** The screen key the navigator uses (client review steps live in the hash). */
+function screenKey(pathname: string): string {
+  if (pathname === '/office/migration') return 'root';
+  if (pathname.startsWith('/office/migration/')) return pathname.split('/')[3] ?? 'root';
+  if (pathname.startsWith('/office-activation/')) return 'activation';
+  if (pathname === '/portal/activation/review') {
+    const step = window.location.hash.replace('#', '') || 'welcome';
+    return step === 'done' ? 'complete' : step;
+  }
+  return 'exit';
+}
+
+/**
+ * MOCK DATA: on each arrival, fill what the screen needs (migrationMockData.ts) and tell the navigator what was filled.
+ * APPROVE MIGRATION needs the client match chosen in this page; after a jump past MATCH it goes back through it first.
+ */
+function MockRunner() {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [tick, setTick] = useState(0);
+  const resume = useRef<{ to: string; note: string } | null>(null);
+  /** the screen last reported: later runs on the same screen add to its list instead of replacing it */
+  const reported = useRef<string | null>(null);
+
+  useEffect(() => {
+    const bump = () => setTick((t) => t + 1);
+    window.addEventListener(STEP_EVENT, bump);
+    window.addEventListener('aio-proto-mock', bump);
+    // a choice the tester makes on MATCH counts too (MATCH TO EXISTING and CREATE NEW resolve it; NEEDS REVIEW does not)
+    const onClick = (event: MouseEvent) => {
+      const row = (event.target as Element | null)?.closest?.('.amg-match__options button.amg-row');
+      if (!row) return;
+      const rows = [...document.querySelectorAll('.amg-match__options button.amg-row')];
+      matchChosen = rows.indexOf(row) < 2;
+    };
+    document.addEventListener('click', onClick, true);
+    return () => {
+      window.removeEventListener(STEP_EVENT, bump);
+      window.removeEventListener('aio-proto-mock', bump);
+      document.removeEventListener('click', onClick, true);
+    };
+  }, []);
+
+  const key = screenKey(location.pathname);
+  useEffect(() => {
+    // leaving the migration pages for the intake root remounts the studio page, which forgets the match
+    if (key === 'root') matchChosen = false;
+    if (key !== 'approval' && key !== 'match') detoured = false;
+    const report = (items: string[], screen = key) => {
+      post({ type: 'mocked', screen, on: mockOn, items, append: reported.current === screen });
+      reported.current = screen;
+    };
+    if (!mockOn) {
+      report([]);
+      return;
+    }
+    let cancelled = false;
+    const timer = window.setTimeout(async () => {
+      if (key === 'approval' && !matchChosen && !detoured) {
+        detoured = true;
+        resume.current = { to: `${location.pathname}${location.search}`, note: 'Went back through MATCH AND CONFLICT REVIEW to choose the match (approval needs it and you jumped past it)' };
+        quiet = true;
+        navigate(`/office/migration/match${location.search}`, { replace: true });
+        return;
+      }
+      const items = await prepareScreen({
+        screen: key,
+        search: new URLSearchParams(location.search),
+        reviewOrg: (location.state as { organizationId?: string } | null)?.organizationId ?? loadDemoStore().portalClientId ?? 'client-a',
+        select: (clientId) => navigate(`${location.pathname}?client=${encodeURIComponent(clientId)}`, { replace: true }),
+      });
+      // a fill that moved the route (picking the client) still reports what it did
+      if (cancelled && !items.length) return;
+      if (key === 'match' && (items.length || document.querySelector('.amg-match__options button.amg-row.is-on'))) matchChosen = true;
+      if (key === 'match' && resume.current) {
+        const back = resume.current;
+        resume.current = null;
+        window.setTimeout(() => {
+          navigate(back.to, { replace: true });
+          window.setTimeout(() => {
+            quiet = false;
+            report([back.note], 'approval');
+          }, 250);
+        }, 400);
+        return;
+      }
+      report(items);
+    }, 200);
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timer);
+    };
+  }, [key, location.pathname, location.search, tick]); // eslint-disable-line react-hooks/exhaustive-deps
+  return null;
+}
+
 /** The navigator can move the frame (open an emailed link as the client) without rebooting it. */
 function NavigatorBridge() {
   const navigate = useNavigate();
   useEffect(() => {
     const onMessage = (event: MessageEvent) => {
-      const data = event.data as { source?: string; type?: string; path?: string } | null;
-      if (data?.source !== 'aio-migration-navigator' || data.type !== 'navigate' || !data.path) return;
+      const data = event.data as { source?: string; type?: string; path?: string; on?: boolean } | null;
+      if (data?.source !== 'aio-migration-navigator') return;
+      if (data.type === 'mock') {
+        mockOn = data.on !== false;
+        window.dispatchEvent(new Event('aio-proto-mock'));
+        return;
+      }
+      if (data.type !== 'navigate' || !data.path) return;
       const [path, hash] = data.path.split('#');
       window.history.replaceState(null, '', hash ? `#${hash}` : '#');
       navigate(path);
@@ -227,6 +344,7 @@ createRoot(document.getElementById('root')!).render(
       <RouteReporter />
       <NavigatorBridge />
       <AffordanceScan />
+      <MockRunner />
       <Routes>
         <Route path="/office/migration" element={<MigrationStudioPage />} />
         <Route path="/office/migration/:screen" element={<MigrationStudioPage />} />

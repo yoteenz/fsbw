@@ -122,10 +122,14 @@ const H_STAGES: Array<{ label: string; icon: IcoName; text: string }> = [
   { label: 'VALIDATE', icon: 'shield-check', text: 'Reviewing results for accuracy.' },
 ];
 
-export function batchStages(files: ArchiveMigrationBatchFile[], conflicts: number): boolean[] {
+/**
+ * Processing stages finish when every file is processed. Duplicates and conflicts are a result of detection (counted on
+ * DETECTION SUMMARY, decided on DUPLICATES AND CONFLICTS after it), so they do not hold VALIDATE open.
+ */
+export function batchStages(files: ArchiveMigrationBatchFile[]): boolean[] {
   const any = files.length > 0;
   const extracted = any && files.every((f) => f.processingState === 'ready' || f.processingState === 'grouped' || f.processingState === 'failed');
-  return [extracted, extracted, extracted, extracted && conflicts === 0];
+  return [extracted, extracted, extracted, extracted];
 }
 
 export function BatchProcessingScreen({ batchName, batchId, done, cta }: { batchName: string; batchId?: string; done: boolean[]; cta: ReactNode | null }) {
