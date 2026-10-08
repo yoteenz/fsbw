@@ -55431,3 +55431,16 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Changes:** `aio-migration.css` adds derived layers. At ≥700px the header becomes a bar, the authority photo becomes a full-width band holding the headline, panels stretch to a 1240px column at a desktop type scale, multi-up rows spread out (3 paths / providers / stats / choices), right-side row content is anchored to the right edge, and the existing dock is centered. At ≥1120px EXISTING, FILES RECEIVED and COMPANY REVIEW are two-column (2fr / 1fr), and WELCOME stays one focused 940px card. The phone layout (<700px) is unchanged.
 - **Verified:** phone pixel difference 0%; no overflow at nine widths from 700 to 1920 on ten screens; checks 23/23; build OK. The six founder mock links were republished (Version 2).
 - **Note:** Tablet/desktop is derived; the authority set has only phone frames. If the founder supplies wide frames, they replace this layer.
+
+---
+
+## 2026-10-08 — Client migration: every authority screen built; Cursor IFTA labels undone
+
+- **Context:** Founder: "yes & finish the rest of the screens". "Yes" answered the open question on Cursor commit `596dc269`.
+- **IFTA (`d019aedb`):** client desktop card back to due date, days left and Next step; client rail back to the next open item; staff rail back to Next action ("Return draft" gone). That commit's public copy and demo-only IFTA routing were kept. IFTA checks 43/43.
+- **Migration (`71f8a8ab`):** the 35 remaining authority screens are built (existing branch 8, client activation 7, new client 10, bulk batch 10); `ACTIVATION-COMPLETE-001` is the superseded arrival draft (staff dock on a client screen). New: `AioMigrationModules.tsx`, `aio-migration-flow.css`, `migrationHero.ts`, `migrationData.ts`, four screen files. No legacy panels remain on migration routes. The six representatives are pixel-identical to before.
+- **Functions:** section review actions write to that section's facts; conflict and duplicate decisions are saved; PROCESS APPROVED CLIENTS approves matched clients without open conflicts (PREBUILT, never ACTIVE); new client files store USDOT/MC/EIN (`BusinessProfile.ein`); NEW SEND INVITE takes the email; dropped folders are read; client per-item answers roll up to section responses; activation names the sections still to review. Client DOCUMENTS shows customer-visible records only.
+- **Deviations (documented in the recovery doc):** live data only (initials, no photos; confidence as recorded level, no %); invite expiry 3 days (real 72h TTL); no CSV; FOUNDER REVIEW shows step 2 current.
+- **Responsive:** ≥700px one stack; ≥1120px main column + sticky side column (next steps, notes, action).
+- **Verified:** 113/113 functional and boundary checks (all 35 screens, three full flows, batch run, no horizontal scroll at 390/768/1440), original 23/23, unit tests 46 passed (3 DB skipped), build OK.
+- **Review gallery:** https://claude.ai/artifact/1rPbngoDNkMNwTg695HUZQ (`npm run migration:gallery`). Links in `docs/migration-recovery/MOCKS.md`.
