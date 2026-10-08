@@ -79,7 +79,7 @@
     "tables": { "MOBILE→TABLET": "stacked rows → semantic table with a header row (TABLE)", "TABLET→DESKTOP": "full main-column table with hover rows" },
     "reviews": { "MOBILE→TABLET": "one column", "TABLET→DESKTOP": "staff: canvas + sticky context/actions panel; client: centred in the CLIENT OFFICE shell" },
     "overlays": { "MOBILE→TABLET": "bottom sheet → centred edge sheet (max 640px)", "TABLET→DESKTOP": "modal (decision) or inspector panel (record)" },
-    "ctas": { "MOBILE→TABLET": "authority bar → one centred moderate action (≤ 456px, 58px)", "TABLET→DESKTOP": "landing: workspace-wide bar; working screens: full width of the sticky side column" },
+    "ctas": { "MOBILE→TABLET": "authority bar → one action as wide as the panels above it, 58px (founder note 2026-10-08; was centred ≤ 456px)", "TABLET→DESKTOP": "landing: workspace-wide bar; working screens: full width of the sticky side column" },
     "footers": { "MOBILE→TABLET": "authority dock reserve → BOTTOM_SAFE_AREA = dock 113px + 22px (+ safe-area inset); clients 40px", "TABLET→DESKTOP": "no dock: content ends 16px above the viewport bottom" },
     "images": { "MOBILE→TABLET": "family plates → wide tablet plate (cover, focal 64–66%); path photos become 90px strips", "TABLET→DESKTOP": "desktop plate (truck fully framed); arrival keeps its full environment" },
     "typography": { "MOBILE→TABLET": "authority units → px roles (1u ≈ 1px for panels; hero 73px FULL / 46px COMPACT)", "TABLET→DESKTOP": "hero 72 / 52px, step labels 14px tracked, sidebar labels 13.5px" },

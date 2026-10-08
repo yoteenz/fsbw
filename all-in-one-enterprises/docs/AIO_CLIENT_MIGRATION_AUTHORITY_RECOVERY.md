@@ -138,6 +138,10 @@ Fidelity: captured at 427×768 @2x and compared with each authority (side-by-sid
 
 ≥ 700px: one stack in authority order at the desktop type scale, as on the representatives. ≥ 1024px (was 1120px before the blueprint): the step card spans the top; once the work column keeps ≥ ~820px (content ≥ 1184px, a container query) the closing items (what happens next, notes, the action) sit in a sticky 340px side column, otherwise they pair up under the work; screens with nothing for the side (SINGLE) keep a centred 1000px measure.
 
+Founder notes (2026-10-08):
+- Tablet: the page action (START MIGRATION, CONTINUE…) is as wide as the panels above it, not a 456px centred button. The same applies to the one-column desktop layout of a narrower workspace. The tablet master drew the root action centred; the QA target follows the note.
+- Desktop: BULK BATCH puts CLIENT DETECTION in the right column above START BATCH, stacked portrait (`AioAside` in `AioMigrationModules.tsx`: a panel that belongs with the action; in reading order on phone and tablet, so the phone composition is unchanged).
+
 ### Review gallery
 
 `npm run migration:gallery` captures all 41 built screens with demo data and writes `.migration-mocks/aio-migration-gallery.html`: each screen renders live at phone, tablet or desktop width next to its authority image. Link: `docs/migration-recovery/MOCKS.md`.

@@ -9,7 +9,7 @@ import type { ArchiveMigrationBatchFile } from '../../vault/archiveMigrationType
 import { aioPaths } from '../../utils/paths';
 import type { ExtractedFactRecord } from '../types';
 import { Ico, type IcoName } from './AioMigrationKit';
-import { AioCallout, AioCard, AioCardHead, AioChip, AioDisc, AioDiscHead, AioDrop, AioField, AioFlow, AioRow, AioRows, AioStat, AioStrip } from './AioMigrationModules';
+import { AioAside, AioCallout, AioCard, AioCardHead, AioChip, AioDisc, AioDiscHead, AioDrop, AioField, AioFlow, AioRow, AioRows, AioStat, AioStrip } from './AioMigrationModules';
 import { UploadedFiles, type LocalPick } from './MigrationIntakeScreens';
 import { acceptedTypeLabels, batchBucket, batchFilesFor, fieldLabel, fileTone, formatDay, isActive, plural, type BatchBucket } from './migrationData';
 import { clientIdentifiers } from './migrationViewer';
@@ -70,15 +70,18 @@ export function BatchIntakeScreen({
         <TypeRow />
         {local.length ? <UploadedFiles stored={[]} local={local} onRemoveLocal={onRemoveLocal} /> : null}
       </AioCard>
-      <AioCard className="amg-bulk__card">
-        <AioDiscHead num={3} title="CLIENT DETECTION" sub="We’ll scan your files and match them to existing clients." />
-        <div className="amg-stats amg-detect" style={{ ['--n' as string]: 3 }}>
-          <AioStat icon="check" tone="green" value="MATCHED" label="" sub="Will be linked to existing clients." />
-          <AioStat icon="alert-mark" tone="gold" value="NEEDS REVIEW" label="" sub="Requires manual review." />
-          <AioStat icon="x" tone="red" value="UNMATCHED" label="" sub="New clients will be identified." />
-        </div>
-        <AioStrip>{NOT_ACTIVATED}</AioStrip>
-      </AioCard>
+      {/* founder note (2026-10-08): on a wide desktop, CLIENT DETECTION stands in the right column above START BATCH */}
+      <AioAside>
+        <AioCard className="amg-bulk__card amg-bulk__detect">
+          <AioDiscHead num={3} title="CLIENT DETECTION" sub="We’ll scan your files and match them to existing clients." />
+          <div className="amg-stats amg-detect" style={{ ['--n' as string]: 3 }}>
+            <AioStat icon="check" tone="green" value="MATCHED" label="" sub="Will be linked to existing clients." />
+            <AioStat icon="alert-mark" tone="gold" value="NEEDS REVIEW" label="" sub="Requires manual review." />
+            <AioStat icon="x" tone="red" value="UNMATCHED" label="" sub="New clients will be identified." />
+          </div>
+          <AioStrip>{NOT_ACTIVATED}</AioStrip>
+        </AioCard>
+      </AioAside>
       {cta}
     </AioFlow>
   );

@@ -55507,3 +55507,18 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
   - a jump to APPROVAL approves via the MATCH detour.
   Mock off restores the gates (SELECT A CLIENT). Both fixes were confirmed in the running app. vitest 416 passed; build OK; flow checks 113/113; original checks 23/23.
 - **Deploy:** `[sync-only]`; prototype link republished.
+
+---
+
+## 2026-10-08 — Client migration: tablet actions full width; BULK BATCH detection beside the work on desktop
+
+- **Context:** Founder notes from the prototype on iPhone:
+  - Tablet: "the buttons like start migration & continue should be the same width as the button above it".
+  - Desktop: "move the client detection panel to the right side above the start batch button & adjust its panel to be portrait width vs landscape so the far right side has a panel on that column & not just the button".
+- **Tablet:** the page action spans the panels above it. Was `min(456px, 100%)` centred in `.amg-main > .amg-cta` and `.amg-flow__side > .amg-cta`. The one-column desktop layout (workspace under the side-column threshold) follows suit. QA's tablet root target for the CTA moved to the panel width; the master image is untouched. The blueprint `ctaRules` / `ctas` text is updated.
+- **Desktop BULK BATCH:** new `AioAside` in `AioMigrationModules.tsx`. `AioFlow` sends it to the side column, so it sits beside the work above the action on a wide desktop and stays in reading order elsewhere (phone unchanged). CLIENT DETECTION is wrapped in it. In the side column its three results stack into a column, at side-column type: title 24, results 17/14, note 13.5; the phone's per-screen uppercase fit on the note is reset there.
+- **Open question:** 14 other desktop screens still have only the button in the right column:
+  - six with a compact panel right above the button (welcome, new-prebuilt, new-invite, batch-received, batch-approval, batch-run) could take the same treatment;
+  - eight have only long lists or tables above (invited, vehicles, confirm, new-confirm, batch-conflicts, batch-queue, batch-client, batch-complete).
+  Asked the founder which to apply.
+- **Verified:** CTA edges equal the panel above at tablet (root, new, batch, company) and at 1100/1280 desktop. Desktop batch side column holds the portrait panel + START BATCH within the work column's height at 1440. Responsive QA: root 93.5 / 92.4, conformance 100 on all screens, 10/10 checks. Flow checks 113/113, original 23/23, vitest 416 passed, build OK.

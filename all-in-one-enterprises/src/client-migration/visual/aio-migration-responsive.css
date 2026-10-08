@@ -398,12 +398,11 @@
   .amg.amg .amg-main > .amg-msg {
     margin-top: 18px;
   }
-  /* tablet CTA: one moderate centred action (CTA rules) */
+  /* tablet CTA: the action spans the panels above it (founder note 2026-10-08; the tablet master drew it 456px centred) */
   .amg.amg .amg-main > .amg-cta {
     --u: 1px;
-    width: min(456px, 100%);
+    width: 100%;
     height: 58px;
-    margin-inline: auto;
     border-radius: 10px;
     font-size: 23px;
   }
@@ -1116,7 +1115,7 @@
   }
 }
 
-/* TABLET only: support panels pair up (2-column support), the action stays one moderate centred button */
+/* TABLET only: support panels pair up (2-column support); the action spans the panels above it */
 @media (min-width: 700px) and (max-width: 1023px) {
   .amg.amg .amg-flow__side {
     display: grid;
@@ -1132,8 +1131,8 @@
     grid-column: auto;
   }
   .amg.amg .amg-flow__side > .amg-cta {
-    justify-self: center;
-    width: min(456px, 100%);
+    justify-self: stretch;
+    width: 100%;
   }
 }
 
@@ -1158,8 +1157,8 @@
     grid-column: auto;
   }
   .amg.amg .amg-flow--split .amg-flow__side > .amg-cta {
-    justify-self: center;
-    width: min(456px, 100%);
+    justify-self: stretch;
+    width: 100%;
   }
 }
 
@@ -1188,6 +1187,41 @@
   }
   .amg.amg .amg-flow--split .amg-flow__side > .amg-cta {
     width: 100%;
+  }
+  /* a panel set beside the work (AioAside) turns portrait: its row of three stacks into a column, set at side-column type */
+  .amg.amg .amg-flow--split .amg-flow__side .amg-bulk__detect {
+    --cx: 18;
+    --cy: 16;
+    --dh-t: 24;
+    --dh-s: 14.5;
+    --dh-sgap: 4;
+  }
+  .amg.amg .amg-flow--split .amg-flow__side .amg-detect {
+    grid-template-columns: minmax(0, 1fr);
+    --sg: 8;
+    --st-h: 60;
+    --st-d: 40;
+    --st-gap: 14;
+    --st-px: 12;
+  }
+  .amg.amg .amg-flow--split .amg-flow__side .amg-detect .amg-stat {
+    padding-block: 9px;
+  }
+  .amg.amg .amg-flow--split .amg-flow__side .amg-detect .amg-stat__v {
+    font-size: 17px;
+  }
+  .amg.amg .amg-flow--split .amg-flow__side .amg-detect .amg-stat__s {
+    font-size: 14px;
+  }
+  .amg.amg .amg-flow--split .amg-flow__side .amg-bulk__detect .amg-strip {
+    --sp-f: 13.5;
+    --sp-gap: 12;
+    --sp-i: 26;
+    padding-inline: 12px;
+  }
+  /* the phone uppercase fit sizes this line per screen; in the side column it takes the strip's size */
+  .amg.amg.amg .amg-flow--split .amg-flow__side .amg-bulk__detect .amg-strip__text > span {
+    font-size: inherit;
   }
   /* CANVAS_PANEL (founder review): the review canvas takes the room, the context / actions panel stays beside it */
   .amg.amg[data-grid='CANVAS_PANEL'] .amg-flow.amg-flow--split {

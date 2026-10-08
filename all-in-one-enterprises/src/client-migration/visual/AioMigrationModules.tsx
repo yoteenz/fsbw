@@ -15,6 +15,14 @@ export type Tone = 'green' | 'amber' | 'red' | 'gray' | 'gold' | 'blue' | 'viole
  * column and the closing items (what happens next, notes, the action) form a side column. The wrappers are
  * `display: contents` below desktop, so the phone composition is untouched.
  */
+/**
+ * A panel that belongs with the action: in the side column beside the work on a wide desktop, in reading order (just
+ * before the action) everywhere else, so the phone composition does not change.
+ */
+export function AioAside({ children }: { children: ReactNode }) {
+  return <>{children}</>;
+}
+
 export function AioFlow({ top, gap, className = '', children }: { top: number; gap?: number; className?: string; children: ReactNode }) {
   const style = { '--p-top': top, ...(gap != null ? { '--gap': gap } : {}) } as CSSProperties;
   const head: ReactNode[] = [];
@@ -23,7 +31,7 @@ export function AioFlow({ top, gap, className = '', children }: { top: number; g
   Children.forEach(children, (child) => {
     if (!isValidElement(child)) return;
     if (child.type === MigrationSelectSteps) head.push(child);
-    else if (child.type === AioWhatNext || child.type === AioNote || child.type === Fragment) side.push(child);
+    else if (child.type === AioWhatNext || child.type === AioNote || child.type === AioAside || child.type === Fragment) side.push(child);
     else main.push(child);
   });
   const split = side.length > 0 && main.length > 0;

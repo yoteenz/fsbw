@@ -64,7 +64,8 @@ const MASTER = {
       ['process band', [17, 645, 815, 826], '.amg-status'],
       ['file types', [17, 838, 429, 989], '.amg-typespanel'],
       ['secure', [440, 838, 815, 989], '.amg-secure'],
-      ['cta', [187, 1007, 644, 1065], '.amg-main > .amg-cta'],
+      // founder note 2026-10-08: the action spans the panels above it (the master drew it 456px centred, x 187–644)
+      ['cta', [17, 1007, 815, 1065], '.amg-main > .amg-cta'],
       ['dock', [0, 1087, 832, 1200], '.amg-dock'],
       ['dock active', [203, 1097, 327, 1172], '.amg-dock__item.is-on'],
     ],
