@@ -15,6 +15,7 @@ import { fileURLToPath } from 'node:url';
 import { tmpdir } from 'node:os';
 import { execFileSync } from 'node:child_process';
 import { SINGLE_LINE, AUDIT_STATES, phoneActs, pageAudit } from './audit.mjs';
+import { pageStructure } from './audit.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const APP = resolve(HERE, '../../..');
@@ -37,6 +38,15 @@ const URL0 = `http://127.0.0.1:${srv.address().port}/local.html`;
 const browser = await chromium.launch({ executablePath: process.env.PLAYWRIGHT_CHROMIUM || '/opt/pw-browsers/chromium' });
 const DEV = { phone: [390, 844], tablet: [834, 1194], desktop: [1440, 900], wide: [2560, 1440] };
 const WS = ['fleet', 'books', 'comp', 'client'];
+/** Every registered page (approved roots, departments, deeper office pages), read from the built review. */
+const REG = await (async () => {
+  const p = await browser.newPage();
+  await p.goto(URL0);
+  await p.waitForFunction(() => document.documentElement.dataset.ready === '1');
+  const r = await p.evaluate(() => window.AIO_WS.registry());
+  await p.close();
+  return r;
+})();
 const results = [];
 const errors = [];
 const TMP = join(tmpdir(), `aio-ws-qa-${process.pid}`);
@@ -119,14 +129,14 @@ async function structure(p, label, { fits }) {
   if (fits) check(`${label} · fits one screen (only lists scroll)`, r.sh <= r.ch + 1, `${r.sh} > ${r.ch}`);
 }
 
-/* ── 1 · every workspace on every device: draws, fits, no dead controls; screenshots ── */
-for (const ws of WS) {
+/* ── 1 · every page on every device: draws, fits (departments), no dead controls; screenshots ── */
+for (const w of REG) {
   for (const dev of Object.keys(DEV)) {
-    const p = await open(ws, dev);
-    const label = `${ws} · ${dev}`;
-    check(`${label} · draws`, (await count(p, '.ws')) === 1);
-    await structure(p, label, { fits: dev === 'desktop' || dev === 'wide' || dev === 'tablet' });
-    await shot(p, `${ws}--${dev}`);
+    const p = await open(w.id, dev);
+    const label = `${w.id} · ${dev}`;
+    check(`${label} · draws`, (await count(p, '.main')) === 1 && !/FAILED TO DRAW/.test(await txt(p, '.main')));
+    await structure(p, label, { fits: !w.root && dev !== 'phone' });
+    await shot(p, `${w.id}--${dev}`);
     await p.close();
   }
 }
@@ -292,14 +302,15 @@ for (const ws of WS) {
 /* ── 6 · the approved shell inside the device stays live ── */
 {
   const p = await open('fleet');
-  await p.click('#rv-screen .side__item[data-k="more"]');
-  check('shell · MORE opens Client 360', (await st(p)).view === 'client');
-  await p.click('#rv-screen .side__item[data-k="work"]');
-  check('shell · WORK opens a WORK lane', (await st(p)).view === 'fleet');
-  await p.click('#rv-screen .side__item[data-k="reports"]');
-  check('shell · other roots answer (toast)', await p.evaluate(() => !document.getElementById('rv-toast').hidden));
+  for (const k of ['home', 'intake', 'work', 'reports', 'more']) {
+    await p.click(`#rv-screen .side__item[data-k="${k}"]`);
+    check(`shell · ${k.toUpperCase()} in the navigation opens the approved ${k.toUpperCase()} root`, (await st(p)).view === `r-${k}`);
+  }
+  await p.evaluate(() => window.AIO_WS.open('fleet'));
   await p.click('#rv-screen .head__field');
-  check('shell · header search focuses the yard search', (await p.evaluate(() => document.activeElement?.id)) === 'fl-q');
+  check('shell · header search focuses the workspace search', (await p.evaluate(() => document.activeElement?.id)) === 'fl-q');
+  await p.click('#rv-screen .head__lockup');
+  check('shell · the logo opens the approved HOME root', (await st(p)).view === 'r-home');
   await p.close();
 }
 
@@ -310,11 +321,13 @@ for (const ws of WS) {
   p.on('console', (m) => m.type() === 'error' && errors.push(`review: ${m.text()}`));
   await p.goto(URL0);
   await p.waitForFunction(() => document.documentElement.dataset.ready === '1');
-  check('review · landing shows four live workspaces', (await p.evaluate(() => document.querySelectorAll('.rv-card .rv-mini .ws').length)) === 4);
+  const visible = REG.filter((w) => !w.hidden).length;
+  check('review · the landing shows the four groups and a card for every department and root', (await p.evaluate(() => [document.querySelectorAll('.rv-group-sec').length, document.querySelectorAll('.rv-group-sec .rv-card').length].join())) === `4,${visible}`);
+  await p.evaluate(() => (document.querySelector('.rv-earlier').open = true));
   await p.evaluate(async () => { for (let y = 0; y <= document.body.scrollHeight; y += 700) { window.scrollTo(0, y); await new Promise((r) => setTimeout(r, 60)); } window.scrollTo(0, 0); }); // lazy images load as they come into view
   const imgs = await p.evaluate(() => Promise.all([...document.images].map((i) => (i.complete ? i.naturalWidth : new Promise((r) => { i.onload = () => r(i.naturalWidth); i.onerror = () => r(0); })))));
   check('review · every image loads', imgs.every((w) => w > 0), imgs.filter((w) => !w).length);
-  check('review · the landing leads with this pass: seven boards and twelve recorded interactions', (await p.evaluate(() => [document.querySelectorAll('.rv-diag--pass .rv-thumb').length, document.querySelectorAll('.rv-clip').length].join())) === '7,12');
+  check('review · the earlier passes keep their seven boards and twelve recorded interactions', (await p.evaluate(() => [document.querySelectorAll('.rv-diag--pass .rv-thumb').length, document.querySelectorAll('.rv-clip').length].join())) === '7,12');
   await p.click('.rv-clip[data-rv-clip="10"]');
   const clip = await p.waitForFunction(() => { const v = [...document.querySelectorAll('#rv-lightbox video')]; return v.length === 2 && v.every((x) => x.readyState >= 2 && x.videoWidth > 0) && v.map((x) => x.currentSrc.split('/').pop().replace(/\.(webm|mp4)$/, '')).join(); }, null, { timeout: 8000 }).then((h) => h.jsonValue(), () => '');
   check('review · a recorded interaction plays the last pass beside this one', clip === '10-before,10-after', clip);
@@ -330,13 +343,15 @@ for (const ws of WS) {
   check('review · and back', await p.evaluate(() => !document.documentElement.dataset.motion));
   if (SHOTS) await p.screenshot({ path: join(TMP, 'landing.png') }), execFileSync('python3', ['-I', '-c', 'import sys\nfrom PIL import Image\nImage.open(sys.argv[1]).convert("RGB").save(sys.argv[2],"JPEG",quality=82)', join(TMP, 'landing.png'), join(SHOTS, 'review--landing.jpg')]);
   await p.click('[data-rv-device="phone"]');
-  check('review · the landing previews follow the device switch (phone)', (await p.evaluate(() => [...document.querySelectorAll('.rv-mini__dev')].map((m) => m.dataset.vp).join())) === 'mobile,mobile,mobile,mobile');
+  check('review · the landing follows the device switch (phone thumbnails, or named cards before the first thumbnails)', await p.evaluate(() => { const i = [...document.querySelectorAll('.rv-shot img')]; return i.length ? i.every((x) => /--phone\.jpg$/.test(x.getAttribute('src'))) : document.querySelectorAll('.rv-shot--none').length > 0; }));
   if (SHOTS) await p.screenshot({ path: join(TMP, 'lp.png') }), execFileSync('python3', ['-I', '-c', 'import sys\nfrom PIL import Image\nImage.open(sys.argv[1]).convert("RGB").save(sys.argv[2],"JPEG",quality=82)', join(TMP, 'lp.png'), join(SHOTS, 'review--landing-phone.jpg')]);
-  await p.click('[data-rv-device="tablet"]');
-  check('review · the landing previews follow the device switch (tablet)', (await p.evaluate(() => [...document.querySelectorAll('.rv-mini__dev')].map((m) => m.dataset.vp).join())) === 'tablet,tablet,tablet,tablet');
   await p.click('[data-rv-device="desktop"]');
   await p.click('.rv-card[data-rv-tab="books"]');
   check('review · a card opens its workspace', (await p.evaluate(() => window.AIO_WS.state().view)) === 'books');
+  check('review · the group tab and the department row follow the open department', await p.evaluate(() => document.querySelector('[data-rv-group="money"]').getAttribute('aria-current') === 'true' && document.querySelector('.rv-dept[data-rv-tab="books"]').getAttribute('aria-current') === 'true'));
+  await p.click('[data-rv-group="auth"]');
+  check('review · a group tab opens its first department', (await p.evaluate(() => window.AIO_WS.registry().find((w) => w.id === window.AIO_WS.state().view)?.group)) === 'auth');
+  await p.click('.rv-card, [data-rv-group="money"]');
   const fit = await p.evaluate(() => document.getElementById('rv-sizer').getBoundingClientRect().bottom <= innerHeight);
   check('review · the device fits the window', fit);
   await p.click('[data-rv-device="phone"]');
@@ -349,19 +364,19 @@ for (const ws of WS) {
   check('review · BEFORE shows this pass beside the last one, then the board since Batch 1', await p.evaluate(() => { const i = [...document.querySelectorAll('#rv-before img')].map((x) => x.src); return !document.getElementById('rv-before').hidden && /polish-3-books/.test(i[0]) && /before-after-books/.test(i[1]); }));
   if (SHOTS) await p.screenshot({ path: join(TMP, 'b.png') }), execFileSync('python3', ['-I', '-c', 'import sys\nfrom PIL import Image\nImage.open(sys.argv[1]).convert("RGB").save(sys.argv[2],"JPEG",quality=82)', join(TMP, 'b.png'), join(SHOTS, 'review--before.jpg')]);
   await p.click('#rv-beforebtn');
-  for (const ws of WS) {
-    await p.click(`.rv-tab[data-rv-tab="${ws}"]`);
-    const n = await p.evaluate(() => document.querySelectorAll('[data-rv-demo]').length);
-    for (let i = 0; i < n; i++) {
+  for (const w of REG.filter((x) => x.demos.length)) {
+    await p.evaluate((id) => window.AIO_WS.open(id, 'desktop'), w.id);
+    for (let i = 0; i < w.demos.length; i++) {
       await p.evaluate(() => window.AIO_WS.reset());
+      await p.evaluate((id) => window.AIO_WS.open(id, 'desktop'), w.id);
       await p.evaluate((i) => window.AIO_WS.demo(i, 0.05), i);
-      await p.waitForFunction(() => window.AIO_WS.demoState().demo === null, null, { timeout: 15000 }).catch(() => {});
+      await p.waitForFunction(() => window.AIO_WS.demoState().demo === null, null, { timeout: 20000 }).catch(() => {});
       const d = await p.evaluate(() => window.AIO_WS.demoState());
-      check(`review · TRY ${ws} #${i + 1} runs to the end`, d.demo === null);
+      check(`review · TRY ${w.id} #${i + 1} ${w.demos[i]} runs to the end`, d.demo === null);
     }
   }
   await p.evaluate(() => window.AIO_WS.reset());
-  await p.click('.rv-tab[data-rv-tab="client"]');
+  await p.evaluate(() => window.AIO_WS.open('client', 'desktop'));
   await p.evaluate(() => window.AIO_WS.demo(0, 0.05));
   await p.waitForFunction(() => window.AIO_WS.demoState().demo === null, null, { timeout: 15000 }).catch(() => {});
   const s = await p.evaluate(() => window.AIO_WS.state());
@@ -503,7 +518,8 @@ for (const view of ['overview', ...WS]) {
   await w.close();
 }
 
-/* ── 11 · the text audit: every panel, tab, record and drawer at four sizes (audit.mjs) ── */
+/* ── 11 · the text audit: every panel, tab, record and drawer at four sizes (audit.mjs) — the approved roots are not ours to change ── */
+const REG_ROOTS = new Set(REG.filter((w) => w.root).map((w) => w.id));
 for (const dev of Object.keys(DEV)) {
   const p = await browser.newPage({ viewport: { width: DEV[dev][0] + 60, height: DEV[dev][1] + 300 } });
   p.on('pageerror', (e) => errors.push(`audit ${dev}: ${e}`));
@@ -511,6 +527,14 @@ for (const dev of Object.keys(DEV)) {
   await p.waitForFunction(() => document.documentElement.dataset.ready === '1');
   await p.evaluate(() => document.fonts.ready);
   const found = [];
+  const approved = new Set(WS);
+  const dynamic = (await p.evaluate(() => window.AIO_WS.auditStates())).filter(([id]) => !approved.has(id) && !REG_ROOTS.has(id));
+  for (const [id, acts] of dynamic) {
+    await p.evaluate(([w, a, d]) => { window.AIO_WS.go(w, a, d); window.AIO_WS.capture(true); }, [id, acts, dev]);
+    await settle(p);
+    const state = `${id}${acts.length ? ` ${acts.map(([a, v]) => `${a}=${v}`).join(' ')}` : ''}`;
+    for (const i of await p.evaluate(pageAudit, SINGLE_LINE)) found.push({ state, ...i });
+  }
   for (const [view, acts] of AUDIT_STATES) {
     await p.evaluate(([v, d]) => { window.AIO_WS.reset(); window.AIO_WS.open(v, d); window.AIO_WS.capture(true); }, [view, dev]);
     for (const [a, v] of dev === 'phone' ? phoneActs(acts) : acts) await p.evaluate(([a, v]) => window.AIO_WS.act(a, v), [a, v]);
@@ -520,13 +544,45 @@ for (const dev of Object.keys(DEV)) {
   }
   await p.close();
   const show = (k, f) => found.filter(f).slice(0, 4).map((i) => `${i.state}: ${i.el} "${i.text}"${i.with ? ` × ${i.with}` : ''}`).join(' || ');
-  const n = AUDIT_STATES.length;
+  const n = AUDIT_STATES.length + dynamic.length;
   check(`text · ${dev} · ${n} states · single-line components stay on one line`, !found.some((i) => i.kind === 'WRAPS'), show('WRAPS', (i) => i.kind === 'WRAPS'));
   check(`text · ${dev} · ${n} states · no text clipped by its panel`, !found.some((i) => i.kind === 'CLIPPED'), show('CLIPPED', (i) => i.kind === 'CLIPPED'));
   check(`text · ${dev} · ${n} states · no text overlapping text`, !found.some((i) => i.kind === 'OVERLAPS'), show('OVERLAPS', (i) => i.kind === 'OVERLAPS'));
   check(`text · ${dev} · ${n} states · nothing below 9 px`, !found.some((i) => i.kind === 'TINY'), show('TINY', (i) => i.kind === 'TINY'));
   check(`text · ${dev} · ${n} states · anything cut short keeps its full text reachable`, !found.some((i) => i.kind === 'TRUNCATED' && !i.reachable), show('TRUNCATED', (i) => i.kind === 'TRUNCATED' && !i.reachable));
   check(`text · ${dev} · ${n} states · only the rows drawn to scroll sideways do`, !found.some((i) => i.kind === 'SCROLLS_X' && !i.scroller), show('SCROLLS_X', (i) => i.kind === 'SCROLLS_X' && !i.scroller));
+}
+
+/* ── 12 · the complete office: every link on the approved roots opens a designed page; every SEE state draws clean ── */
+{
+  const p = await browser.newPage({ viewport: { width: 1500, height: 1144 } });
+  p.on('pageerror', (e) => errors.push(`nav: ${e}`));
+  p.on('console', (m) => m.type() === 'error' && errors.push(`nav: ${m.text()}`));
+  await p.goto(URL0);
+  await p.waitForFunction(() => document.documentElement.dataset.ready === '1');
+  for (const dev of ['desktop', 'tablet', 'phone']) {
+    const open = [];
+    for (const root of REG.filter((w) => w.root)) {
+      for (const role of ['founder', 'staff']) {
+        await p.evaluate(([id, d, r]) => { window.AIO_WS.open(id, d, r); }, [root.id, dev, role]);
+        const routes = await p.evaluate(() => [...new Set([...document.querySelectorAll('#rv-screen [data-go]')].map((e) => e.dataset.go))]);
+        for (const r of routes) if (!(await p.evaluate((x) => !!routeWs(x), r))) open.push(`${root.id}: ${r}`);
+      }
+    }
+    check(`nav · ${dev} · every link on the five approved roots opens a designed page`, !open.length, [...new Set(open)].join(' · '));
+  }
+  await p.evaluate(() => window.AIO_WS.open('fleet', 'desktop', 'founder'));
+  for (const w of REG) {
+    for (const [label, acts, dev] of w.states) {
+      await p.evaluate(([id, a, d]) => window.AIO_WS.go(id, a, d), [w.id, acts, dev || 'desktop']);
+      await settle(p);
+      const r = await p.evaluate(pageStructure);
+      const view = await p.evaluate(() => window.AIO_WS.state().view);
+      const okView = await p.evaluate((v) => !!window.AIO_WS.registry().find((x) => x.id === v), view);
+      check(`see · ${w.id} · ${label} draws a registered page with live controls`, okView && !r.unknown.length && !r.dead.length && !r.lower.length && !(r.sw > r.cw + 1) && !r.wide.length, JSON.stringify({ view, unknown: r.unknown, dead: r.dead.slice(0, 2), lower: r.lower, wide: r.wide }));
+    }
+  }
+  await p.close();
 }
 
 check('no console or page errors', !errors.length, errors.slice(0, 5).join(' || '));

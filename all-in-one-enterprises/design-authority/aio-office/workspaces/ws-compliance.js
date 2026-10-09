@@ -172,3 +172,22 @@ ACT['cp.filter'] = (f) => {
   const list = cpItems();
   if (list.length && !list.some((d) => d.id === WSX.comp.item)) WSX.comp.item = list[0].id;
 };
+
+registerWorkspace({
+  id: 'comp', no: '03', name: 'COMPLIANCE', group: 'auth', page: 'work', lane: 'compliance', view: () => compView(),
+  shape: 'A CALENDAR', line: 'WHAT IS DUE, HOW SOON, WHAT CLEARS IT.', diag: 'before-after-comp.jpg', pass: 'polish-4-comp.jpg',
+  states: [['MAIN', []], ['SELECTED', [['cp.item', 'dl-tk-09']]], ['DEEPER', [['cp.item', 'dl-rj-ucr'], ['sim.ask', 'cp:pay:dl-rj-ucr']]], ['PHONE', [['cp.open', 'dl-tk-09']], 'phone']],
+  demos: [
+    ['INSPECT A DEADLINE', [['cp.item', 'dl-abc-med', 'A MEDICAL CARD · 21 DAYS'], ['cp.item', 'dl-tk-09', 'UNIT 09 · BLOCKING DISPATCH'], ['cp.item', 'dl-rj-ucr', 'UCR · OVERDUE']]],
+    ['ONLY WHAT IS DUE NOW', [['cp.filter', 'now', 'NOW'], ['cp.filter', 'week', 'THIS WEEK'], ['cp.filter', 'all', 'EVERYTHING TRACKED']]],
+    ['FOLLOW IT TO THE TRUCK', [['cp.item', 'dl-abc-insp', 'UNIT 1 INSPECTION'], ['go', 'fleet:v-abc-1:compliance', 'OPEN THE TRUCK IN FLEET'], ['ret', '', 'BACK TO COMPLIANCE']]],
+  ],
+  phoneAct: { 'cp.item': 'cp.open' },
+  enter: (a) => a && Object.assign(WSX.comp, { item: a, sec: 'expirations', filter: 'all' }),
+  label: () => 'COMPLIANCE',
+  route: (s) => {
+    if (s[0] === 'work' && s[1] === 'compliance') return true;
+    if (s[0] === 'rec' && s[1] === 'deadline' && DUES[s[2]]) return Object.assign(WSX.comp, { item: s[2], sec: 'expirations', filter: 'all' }), true;
+    return false;
+  },
+});

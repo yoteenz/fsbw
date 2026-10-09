@@ -237,3 +237,24 @@ ACT['cl.pop'] = (n) => {
 ACT['cl.dir'] = () => (WSX.sheet = 'dir');
 ACT['cl.q'] = (q) => (WSX.client.q = q);
 ACT['cl.filter'] = (f) => (WSX.client.filter = f);
+
+registerWorkspace({
+  id: 'client', no: '360', name: 'CLIENT 360', group: 'office', page: 'more', view: () => clientView(),
+  shape: 'A COMPANY', line: 'WHO THEY ARE, WHAT WE DO, WHAT IS OPEN.', diag: 'before-after-client.jpg', pass: 'polish-2-client.jpg',
+  states: [['MAIN', []], ['SELECTED', [['cl.service', 'insurance']]], ['DEEPER', [['cl.service', 'insurance'], ['cl.push', 'policy:pol-abc'], ['cl.push', 'vehicle:v-abc-1']]], ['PHONE', [['cl.service', 'insurance'], ['cl.push', 'policy:pol-abc']], 'phone']],
+  demos: [
+    ['ABC → INSURANCE → A TRUCK → BACK', [['cl.client', 'c-abc', 'ABC TRUCKING LLC'], ['cl.service', 'insurance', 'INSURANCE'], ['cl.push', 'policy:pol-abc', 'THE POLICY'], ['cl.push', 'vehicle:v-abc-1', 'A COVERED TRUCK'], ['cl.back', '', 'BACK TO THE POLICY'], ['cl.back', '', 'BACK TO INSURANCE']]],
+    ['MOVE BETWEEN SERVICES', [['cl.client', 'c-abc', 'ABC TRUCKING LLC'], ['cl.service', 'permitting', 'PERMITTING'], ['cl.service', 'compliance', 'COMPLIANCE'], ['cl.view', 'fleet', 'ITS TRUCKS']]],
+    ['TO FLEET AND BACK', [['cl.client', 'c-abc', 'ABC TRUCKING LLC'], ['cl.view', 'fleet', 'ITS TRUCKS'], ['cl.push', 'vehicle:v-abc-1', 'UNIT 1'], ['go', 'fleet:v-abc-1', 'OPEN UNIT 1 IN FLEET'], ['ret', '', 'BACK TO ABC TRUCKING LLC']]],
+  ],
+  enter: (a, b) => a && Object.assign(WSX.client, { id: a, view: b ? 'service' : 'overview', service: b || null, stack: [] }),
+  label: () => ACCOUNTS[WSX.client.id]?.name ?? 'CLIENT',
+  route: (s) => {
+    if (s[0] === 'more' && s[1] === 'clients' && !s[2]) return true;
+    if (s[0] === 'client' && ACCOUNTS[s[1]]) {
+      const view = { fleet: 'fleet', people: 'people', documents: 'documents', activity: 'activity', billing: 'billing' }[s[2]] ?? 'overview';
+      return Object.assign(WSX.client, { id: s[1], view, service: null, stack: [] }), true;
+    }
+    return false;
+  },
+});

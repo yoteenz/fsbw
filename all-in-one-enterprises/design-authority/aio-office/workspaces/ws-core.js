@@ -76,17 +76,13 @@ ACT['sim.ok'] = (k) => {
 };
 
 /* ── moving between workspaces keeps a way back ── */
-const WS_NAMES = { fleet: 'VEHICLES & FLEET', books: 'BOOKKEEPING', comp: 'COMPLIANCE', client: 'CLIENT 360' };
 ACT['go'] = (v) => {
   const [ws, a, b] = v.split(':');
   WSX.ret = { ws: WSX.ws, label: retLabel() };
   WSX.ws = ws;
   WSX.sheet = false;
   WSX.pending = null;
-  if (ws === 'fleet' && a) Object.assign(WSX.fleet, { unit: a, sec: b || 'registration', filter: 'all' });
-  if (ws === 'client' && a) Object.assign(WSX.client, { id: a, view: b ? 'service' : 'overview', service: b || null, stack: [] });
-  if (ws === 'comp' && a) Object.assign(WSX.comp, { item: a, sec: 'expirations', filter: 'all' });
-  if (ws === 'books' && a) Object.assign(WSX.books, { client: a, item: null });
+  wsById(ws)?.enter?.(a, b);
 };
 ACT['ret'] = () => {
   const r = WSX.ret;
@@ -94,12 +90,10 @@ ACT['ret'] = () => {
   if (r) WSX.ws = r.ws;
   WSX.sheet = false;
 };
+/** What BACK TO … says: the workspace's own context (a truck, a client) or its name. */
 function retLabel() {
-  if (WSX.ws === 'fleet') return VEHICLES[WSX.fleet.unit]?.unit ?? 'FLEET';
-  if (WSX.ws === 'client') return ACCOUNTS[WSX.client.id]?.name ?? 'CLIENT';
-  if (WSX.ws === 'comp') return 'COMPLIANCE';
-  if (WSX.ws === 'books') return 'BOOKKEEPING';
-  return 'OVERVIEW';
+  const w = wsById(WSX.ws);
+  return w?.label?.() ?? w?.name ?? 'OVERVIEW';
 }
 const retChip = () => (WSX.ret && WSX.ret.ws !== 'overview' ? `<button type="button" class="wbtn wbtn--sm wbtn--dark" data-a="ret">${ico('back')}BACK TO ${WSX.ret.label}</button>` : '');
 ACT['sheet.close'] = () => {

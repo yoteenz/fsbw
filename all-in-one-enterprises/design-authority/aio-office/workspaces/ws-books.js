@@ -257,3 +257,23 @@ ACT['bk.cat'] = (v) => {
     if (next && VP !== 'mobile') WSX.books.item = `q:${next.id}`;
   } else delete WSX.over[key];
 };
+
+registerWorkspace({
+  id: 'books', no: '09', name: 'BOOKKEEPING', group: 'money', page: 'work', lane: 'bookkeeping', view: () => booksView(),
+  shape: 'A MONTH', line: 'ONE CLIENT, ONE MONTH, LINE BY LINE.', diag: 'before-after-books.jpg', pass: 'polish-3-books.jpg',
+  states: [['MAIN', []], ['SELECTED', [['bk.phase', 'collect'], ['bk.item', 'doc:s4']]], ['DEEPER', [['bk.phase', 'collect'], ['bk.item', 'doc:s4'], ['sim.ask', 'bk:rem:bkdoc:c-tk:SEP 2026:s4']]], ['PHONE', [['bk.phase', 'reconcile'], ['bk.open', 'q:q1']], 'phone']],
+  demos: [
+    ['CHANGE THE MONTH', [['bk.period', 'AUG 2026', 'AUGUST · CLOSED'], ['bk.period', 'OCT 2026', 'OCTOBER · NOT STARTED'], ['bk.period', 'SEP 2026', 'SEPTEMBER · IN PROGRESS']]],
+    ['CHASE A MISSING PAPER', [['bk.phase', 'collect', 'COLLECT'], ['bk.item', 'doc:s4', 'FUEL RECEIPTS · MISSING'], ['sim.ask', 'bk:rem:bkdoc:c-tk:SEP 2026:s4', 'SEND A REMINDER'], ['sim.ok', 'bk:rem:bkdoc:c-tk:SEP 2026:s4', 'CONFIRM · SIMULATED']]],
+    ['ANSWER A QUESTION', [['bk.phase', 'reconcile', 'RECONCILE'], ['bk.item', 'q:q1', 'AN UNCATEGORIZED CHARGE'], ['bk.cat', 'q1|FUEL', 'CATEGORIZE AS FUEL · SIMULATED']]],
+  ],
+  phoneAct: { 'bk.item': 'bk.open' },
+  enter: (a) => a && Object.assign(WSX.books, { client: a, item: null }),
+  label: () => 'BOOKKEEPING',
+  route: (s) => {
+    if (s[0] === 'work' && s[1] === 'bookkeeping') return true;
+    const cid = s[0] === 'rec' && s[1] === 'cycle' ? CYCLES[s[2]]?.client : s[0] === 'rec' && s[1] === 'subscription' ? SUBSCRIPTIONS[s[2]]?.client : null;
+    if (cid) return Object.assign(WSX.books, { client: cid, period: 'SEP 2026', item: null }), true;
+    return false;
+  },
+});

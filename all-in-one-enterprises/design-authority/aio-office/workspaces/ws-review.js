@@ -1,7 +1,10 @@
 /*
- * AIO OFFICE workspace proofs — the founder review. One landing, four workspaces, a device switch, a founder / staff
- * switch, a BEFORE view and a few TRY demonstrations that drive the real controls. The workspaces draw inside the
- * approved header and five-root navigation, in a device frame scaled to the window.
+ * AIO OFFICE — the founder review of the complete office. The landing shows the four review groups and every
+ * department in them; a department opens live inside the approved header and five-root navigation, in a device frame
+ * scaled to the window. For each department the review offers SEE (MAIN · SELECTED · DEEPER · PHONE), TRY (short
+ * demonstrations that press the real controls), a device switch, a founder / staff switch and, where an earlier pass
+ * exists, BEFORE. Inside the device everything is live: the approved roots (drawn by studio.js, unchanged) link into
+ * the workspaces, and every workspace keeps a way back.
  */
 const DEVICES = {
   phone: [390, 844, 'mobile', false],
@@ -9,40 +12,15 @@ const DEVICES = {
   desktop: [1440, 900, 'desktop', false],
   wide: [2560, 1440, 'desktop', true],
 };
-const WORKSPACES = [
-  { id: 'fleet', no: '04', name: 'VEHICLES & FLEET', page: 'work', view: () => fleetView(), diag: 'before-after-fleet.jpg', pass: 'polish-1-fleet.jpg', shape: 'A TRUCK', line: 'PICK A TRUCK. ALL IT TOUCHES IS ON IT.' },
-  { id: 'books', no: '09', name: 'BOOKKEEPING', page: 'work', view: () => booksView(), diag: 'before-after-books.jpg', pass: 'polish-3-books.jpg', shape: 'A MONTH', line: 'ONE CLIENT, ONE MONTH, LINE BY LINE.' },
-  { id: 'comp', no: '03', name: 'COMPLIANCE', page: 'work', view: () => compView(), diag: 'before-after-comp.jpg', pass: 'polish-4-comp.jpg', shape: 'A CALENDAR', line: 'WHAT IS DUE, HOW SOON, WHAT CLEARS IT.' },
-  { id: 'client', no: '360', name: 'CLIENT 360', page: 'more', view: () => clientView(), diag: 'before-after-client.jpg', pass: 'polish-2-client.jpg', shape: 'A COMPANY', line: 'WHO THEY ARE, WHAT WE DO, WHAT IS OPEN.' },
-];
-const wsById = (id) => WORKSPACES.find((w) => w.id === id);
 const DEVICE_WORD = { phone: 'ON A PHONE · 390 × 844', tablet: 'ON A TABLET · 834 × 1194', desktop: 'ON A DESKTOP · 1440 × 900', wide: 'ULTRA-WIDE · 2560 × 1440' };
 
-/* TRY: each step names the control it presses ([data-a][data-v]) so the reviewer sees where it is. */
-const DEMOS = {
-  fleet: [
-    ['SELECT A TRUCK', [['fl.unit', 'v-abc-1', 'UNIT 1 · ABC TRUCKING'], ['fl.sec', 'insurance', 'ITS INSURANCE'], ['fl.sec', 'driver', 'ITS DRIVER'], ['fl.sec', 'compliance', 'ITS DEADLINES']]],
-    ['CLEAR A BLOCKER', [['fl.unit', 'v-tk-09', 'UNIT 09 · OUT OF SERVICE'], ['fl.sec', 'maintenance', 'THE REPAIR TICKET'], ['sim.ask', 'fl:tk:t-tk-2', 'REQUEST AUTHORIZATION'], ['sim.ok', 'fl:tk:t-tk-2', 'CONFIRM · SIMULATED']]],
-    ['FILTER THE YARD', [['fl.filter', 'shop', 'IN THE SHOP'], ['fl.filter', 'stop', 'STOPPED'], ['fl.filter', 'all', 'ALL TRUCKS']]],
-  ],
-  books: [
-    ['CHANGE THE MONTH', [['bk.period', 'AUG 2026', 'AUGUST · CLOSED'], ['bk.period', 'OCT 2026', 'OCTOBER · NOT STARTED'], ['bk.period', 'SEP 2026', 'SEPTEMBER · IN PROGRESS']]],
-    ['CHASE A MISSING PAPER', [['bk.phase', 'collect', 'COLLECT'], ['bk.item', 'doc:s4', 'FUEL RECEIPTS · MISSING'], ['sim.ask', 'bk:rem:c-tk:SEP 2026:s4', 'SEND A REMINDER'], ['sim.ok', 'bk:rem:c-tk:SEP 2026:s4', 'CONFIRM · SIMULATED']]],
-    ['ANSWER A QUESTION', [['bk.phase', 'reconcile', 'RECONCILE'], ['bk.item', 'q:q1', 'AN UNCATEGORIZED CHARGE'], ['bk.cat', 'q1|FUEL', 'CATEGORIZE AS FUEL · SIMULATED']]],
-  ],
-  comp: [
-    ['INSPECT A DEADLINE', [['cp.item', 'dl-abc-med', 'A MEDICAL CARD · 21 DAYS'], ['cp.item', 'dl-tk-09', 'UNIT 09 · BLOCKING DISPATCH'], ['cp.item', 'dl-rj-ucr', 'UCR · OVERDUE']]],
-    ['ONLY WHAT IS DUE NOW', [['cp.filter', 'now', 'NOW'], ['cp.filter', 'week', 'THIS WEEK'], ['cp.filter', 'all', 'EVERYTHING TRACKED']]],
-    ['FOLLOW IT TO THE TRUCK', [['cp.item', 'dl-abc-insp', 'UNIT 1 INSPECTION'], ['go', 'fleet:v-abc-1:compliance', 'OPEN THE TRUCK IN FLEET'], ['ret', '', 'BACK TO COMPLIANCE']]],
-  ],
-  client: [
-    ['ABC → INSURANCE → A TRUCK → BACK', [['cl.client', 'c-abc', 'ABC TRUCKING LLC'], ['cl.service', 'insurance', 'INSURANCE'], ['cl.push', 'policy:pol-abc', 'THE POLICY'], ['cl.push', 'vehicle:v-abc-1', 'A COVERED TRUCK'], ['cl.back', '', 'BACK TO THE POLICY'], ['cl.back', '', 'BACK TO INSURANCE']]],
-    ['MOVE BETWEEN SERVICES', [['cl.client', 'c-abc', 'ABC TRUCKING LLC'], ['cl.service', 'permitting', 'PERMITTING'], ['cl.service', 'compliance', 'COMPLIANCE'], ['cl.view', 'fleet', 'ITS TRUCKS']]],
-    ['TO FLEET AND BACK', [['cl.client', 'c-abc', 'ABC TRUCKING LLC'], ['cl.view', 'fleet', 'ITS TRUCKS'], ['cl.push', 'vehicle:v-abc-1', 'UNIT 1'], ['go', 'fleet:v-abc-1', 'OPEN UNIT 1 IN FLEET'], ['ret', '', 'BACK TO ABC TRUCKING LLC']]],
-  ],
-};
-/* On a phone some choices open the drawer instead of a side panel. */
-const PHONE_ACT = { 'fl.sec': 'fl.open', 'bk.item': 'bk.open', 'cp.item': 'cp.open' };
+/* ── the approved roots: drawn exactly as approved; their links open the workspaces ── */
+const ROOT_STATES = (page, deeper) => [['THE ROOT', []], ...deeper];
+registerWorkspace({ id: 'r-home', no: 'H', name: 'HOME', group: 'office', page: 'home', root: true, view: () => home(), shape: 'THE APPROVED ROOT', line: 'EVERY LIST ON IT OPENS ITS WORK.', states: ROOT_STATES('home', [['NEEDS ATTENTION', [['nav', 'home/list/attention']]], ['A RECORD', [['nav', 'rec/policy/pol-dh']]], ['PHONE', [], 'phone']]) });
+registerWorkspace({ id: 'r-intake', no: 'I', name: 'INTAKE', group: 'office', page: 'intake', root: true, view: () => intakeRoot(), shape: 'THE APPROVED ROOT', line: 'THE MIGRATION ENTRANCE, THEN THE CASES.', states: ROOT_STATES('intake', [['THE CASES', [['nav', 'intake/status']]], ['A CASE', [['nav', 'intake/case/mig-bl']]], ['PHONE', [], 'phone']]) });
+registerWorkspace({ id: 'r-work', no: 'W', name: 'WORK', group: 'office', page: 'work', root: true, view: () => work(), shape: 'THE APPROVED ROOT', line: 'TWELVE LANES. EACH OPENS ITS WORKSPACE.', states: ROOT_STATES('work', [['A LANE', [['nav', 'work/permitting']]], ['MY WORK', [['nav', 'work/mine']]], ['PHONE', [], 'phone']]) });
+registerWorkspace({ id: 'r-reports', no: 'R', name: 'REPORTS', group: 'office', page: 'reports', root: true, view: () => reports(), shape: 'THE APPROVED ROOT', line: 'TEN AREAS. EACH OPENS ITS REPORT.', states: ROOT_STATES('reports', [['AN AREA', [['nav', 'reports/clients']]], ['ANOTHER', [['nav', 'reports/compliance']]], ['PHONE', [], 'phone']]) });
+registerWorkspace({ id: 'r-more', no: 'M', name: 'MORE', group: 'office', page: 'more', root: true, view: () => more(), shape: 'THE APPROVED ROOT', line: 'ELEVEN DESTINATIONS. EACH OPENS ITS PAGE.', states: ROOT_STATES('more', [['A DESTINATION', [['nav', 'more/documents_vault']]], ['ANOTHER', [['nav', 'more/team_staff']]], ['PHONE', [], 'phone']]) });
 
 const RULES = [
   ['THE WORK IS THE HERO', 'NO PHOTO BAND. A SLIM BAR, THEN THE WORK.'],
@@ -59,9 +37,9 @@ const RULES = [
   ['EACH DEVICE ITS OWN', 'PHONE, TABLET, DESKTOP, WIDE — RECOMPOSED.'],
 ];
 
-const RV = { view: 'overview', device: 'desktop', before: false, demo: null, step: -1, timer: null, lightbox: null, speed: 1, closing: false, closeTimer: null, opener: null };
+const RV = { view: 'overview', device: 'desktop', before: false, demo: null, step: -1, timer: null, lightbox: null, speed: 1, closing: false, closeTimer: null, opener: null, last: {} };
 const $ = (id) => document.getElementById(id);
-let device, screenEl, toastTimer;
+let device, screenEl, toastTimer, INITIAL;
 
 /* ── drawing ── */
 function deviceInner(wsId) {
@@ -72,9 +50,9 @@ function deviceInner(wsId) {
     body = w.view();
   } catch (err) {
     console.error(err);
-    body = `<div class="ws"><p class="ntb">THIS WORKSPACE FAILED TO DRAW · ${String(err.message || err).toUpperCase()}</p></div>`;
+    body = `<div class="ws"><p class="ntb">THIS PAGE FAILED TO DRAW · ${String(err.message || err).toUpperCase()}</p></div>`;
   }
-  return `<div class="ao">${header()}${nav()}<main class="main ws-main">${body}</main></div>`;
+  return `<div class="ao">${header()}${nav()}${w.root ? body : `<main class="main ws-main">${body}</main>`}</div>`;
 }
 /** Bring the selected row into view inside its list (after a demo step or a change made elsewhere). */
 function revealSelected() {
@@ -100,6 +78,7 @@ function render({ top = false, reveal = false } = {}) {
     drawLanding();
   } else {
     WSX.ws = RV.view;
+    RV.last[wsById(RV.view).group] = RV.view;
     device.dataset.vp = vp;
     device.dataset.wide = wide ? '1' : '0';
     device.dataset.device = RV.device;
@@ -118,6 +97,7 @@ function render({ top = false, reveal = false } = {}) {
       else morphInto(screenEl, html);
       placeThumbs(screenEl, !top);
       settleSheet(screenEl, wasOpen, RV.opener, wasShown);
+      if (top) screenEl.scrollTop = 0;
       if (reveal) revealSelected();
     };
     // a closing drawer leaves before the workspace behind it changes
@@ -140,24 +120,27 @@ function render({ top = false, reveal = false } = {}) {
 }
 
 function drawChrome() {
-  document.querySelectorAll('[data-rv-tab]').forEach((b) => b.setAttribute('aria-current', String(b.dataset.rvTab === RV.view)));
+  const w = wsById(RV.view);
+  const g = w ? w.group : null;
+  $('rv-tabs').innerHTML = [`<button type="button" class="rv-tab" data-rv-tab="overview" aria-current="${RV.view === 'overview'}">OVERVIEW</button>`, ...WS_GROUPS.map((x) => `<button type="button" class="rv-tab" data-rv-group="${x.id}" aria-current="${g === x.id}"><i>${x.no}</i>${x.name}</button>`)].join('');
+  $('rv-depts').innerHTML = g ? groupWs(g).map((x) => `<button type="button" class="rv-dept ${x.root ? 'rv-dept--root' : ''}" data-rv-tab="${x.id}" aria-current="${x.id === RV.view}"><i>${x.no}</i>${x.name}</button>`).join('') : '';
+  $('rv-depts').hidden = !g;
   document.querySelectorAll('[data-rv-device]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.rvDevice === RV.device)));
   document.querySelectorAll('[data-rv-role]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.rvRole === WSX.role)));
-  const w = wsById(RV.view);
   $('rv-line').innerHTML = w ? `<b>${w.shape}</b><span>${w.line}</span>` : '';
-  const demos = w ? DEMOS[w.id] : [];
-  $('rv-try').innerHTML = demos.length
-    ? `<span class="rv-k">TRY</span>${demos.map(([label], i) => `<button type="button" class="rv-demo" data-rv-demo="${i}" aria-pressed="${RV.demo === i}">${ico('run')}${label}</button>`).join('')}`
-    : '';
+  const see = w?.states?.length ? `<span class="rv-k">SEE</span>${w.states.map(([label], i) => `<button type="button" class="rv-see" data-rv-see="${i}" aria-pressed="${RV.see === `${w.id}:${i}`}">${label}</button>`).join('')}` : '';
+  const demos = w?.demos ?? [];
+  const tryRow = demos.length ? `<span class="rv-k">TRY</span>${demos.map(([label], i) => `<button type="button" class="rv-demo" data-rv-demo="${i}" aria-pressed="${RV.demo === i}">${ico('run')}${label}</button>`).join('')}` : '';
+  $('rv-try').innerHTML = `${see ? `<span class="rv-try__g">${see}</span>` : ''}${tryRow ? `<span class="rv-try__g">${tryRow}</span>` : ''}`;
   $('rv-beforebtn').setAttribute('aria-pressed', String(RV.before));
-  $('rv-beforebtn').hidden = !w;
+  $('rv-beforebtn').hidden = !(w && w.pass);
   $('rv-sims').textContent = WSX.sims.length ? `${WSX.sims.length} SIMULATED · NOTHING SAVED` : '';
   // the counter and RESET keep their place when empty, so a simulated action never shifts the device below
   $('rv-reset').disabled = !WSX.sims.length;
   $('rv-reset').style.visibility = WSX.sims.length ? '' : 'hidden';
 }
 
-/* ── this pass: the boards made by polish-boards.mjs and the recordings made by record.mjs ── */
+/* ── earlier passes: the boards made by polish-boards.mjs and the recordings made by record.mjs ── */
 const PASS_BOARDS = [
   ['polish-1-fleet.jpg', 'FLEET · THE LOWER TILES'],
   ['polish-2-client.jpg', 'CLIENT 360 · LOWER PANELS AND NESTED DETAIL'],
@@ -181,24 +164,23 @@ const CLIPS = [
   ['11', 'PHONE TABS', 'PHONE'],
   ['12', 'REDUCED MOTION', 'PHONE'],
 ];
+/** Thumbnails made from the last QA run (thumbs/<id>--<device>.jpg); the build lists the ones that exist. */
+const THUMB_SET = new Set(typeof THUMBS === 'undefined' ? [] : THUMBS);
+const thumbOf = (id) => {
+  const d = RV.device === 'phone' ? 'phone' : 'desktop';
+  const f = `${id}--${d}.jpg`;
+  return THUMB_SET.has(f) ? `thumbs/${f}` : null;
+};
 
-/* ── landing: four live miniatures, the diagnosis and the rules ── */
+/* ── landing: the four groups, every department in them, then the earlier passes ── */
 function drawLanding() {
-  const keep = { device: RV.device, ws: WSX.ws, sheet: WSX.sheet, pending: WSX.pending };
-  const [dw, dh, vp, wide] = DEVICES[RV.device];
-  studioSet({ vp, wide, role: WSX.role });
-  WSX.sheet = false;
-  WSX.pending = null;
-  const cards = WORKSPACES.map((w) => {
-    WSX.ws = w.id;
-    const inner = deviceInner(w.id);
-    return `<div class="rv-card" role="button" tabindex="0" data-rv-tab="${w.id}" aria-label="Open ${w.name}">
-      <span class="rv-mini"><span class="ao-root device rv-mini__dev" data-vp="${vp}" data-wide="${wide ? 1 : 0}" data-device="${RV.device}" style="--dw:${dw}px;--dh:${dh}px;--pad-x:${wide ? 24 : 16}px;width:${dw}px;height:${dh}px" inert>${inner}</span></span>
-      <span class="rv-card__cap"><span class="rv-card__no">${w.no}</span><span class="rv-card__t">${w.name}</span><span class="rv-card__shape">${w.shape}</span><span class="rv-card__go">${ico('fwd')}</span></span>
+  const card = (w) => {
+    const t = thumbOf(w.id);
+    return `<div class="rv-card ${w.root ? 'rv-card--root' : ''}" role="button" tabindex="0" data-rv-tab="${w.id}" aria-label="Open ${w.name}">
+      <span class="rv-shot ${t ? '' : 'rv-shot--none'}">${t ? `<img src="${t}" alt="" loading="lazy">` : `<b>${w.name}</b>`}</span>
+      <span class="rv-card__cap"><span class="rv-card__no">${w.no}</span><span class="rv-card__t">${w.name}</span><span class="rv-card__shape">${w.root ? 'APPROVED ROOT' : w.shape}</span><span class="rv-card__go">${ico('fwd')}</span></span>
     </div>`;
-  }).join('');
-  Object.assign(WSX, keep);
-  for (const key of Object.keys(SIM)) delete SIM[key];
+  };
   const diag = [
     ['diagnosis-1-one-template.jpg', 'ONE TEMPLATE FOR EVERYTHING'],
     ['diagnosis-2-fleet.jpg', 'THE TRUCK WAS A TABLE'],
@@ -206,35 +188,26 @@ function drawLanding() {
     ['diagnosis-4-compliance.jpg', 'DEADLINES WITHOUT TIME'],
     ['diagnosis-5-client.jpg', 'THE CLIENT WAS A FORM'],
   ];
+  const earlier = WS_REG.filter((w) => w.diag);
   $('rv-landing').innerHTML = `
-    <section class="rv-hero"><p class="rv-eyebrow">FOUR WORKSPACES · CANDIDATES FOR APPROVAL · SHOWN ${DEVICE_WORD[RV.device]}</p><h2>EACH ONE SHAPED LIKE ITS WORK.</h2></section>
-    <div class="rv-cards rv-cards--${RV.device}">${cards}</div>
-    <section class="rv-sec"><header><h3>THIS PASS · MATERIAL, MOTION AND DETAIL</h3><span>THE LAST PASS → THIS ONE · OPEN ANY BOARD</span></header>
+    <section class="rv-hero"><p class="rv-eyebrow">THE COMPLETE AIO OFFICE · ${WS_REG.filter((w) => !w.hidden).length} DESTINATIONS IN FOUR GROUPS · SHOWN ${DEVICE_WORD[RV.device]}</p><h2>ONE OFFICE. EVERY DEPARTMENT SHAPED LIKE ITS WORK.</h2></section>
+    ${WS_GROUPS.map((g) => `<section class="rv-group-sec"><header><i>${g.no}</i><h3>${g.name}</h3><span>${g.line}</span></header><div class="rv-cards rv-cards--${RV.device}">${groupWs(g.id).map(card).join('')}</div></section>`).join('')}
+    <details class="rv-earlier"><summary>EARLIER PASSES · THE FOUR APPROVED WORKSPACES</summary>
+    <section class="rv-sec"><header><h3>MATERIAL, MOTION AND DETAIL</h3><span>THE PASS BEFORE THIS ONE · OPEN ANY BOARD</span></header>
       <div class="rv-diag rv-diag--pass">${PASS_BOARDS.map(([f, l]) => `<button type="button" class="rv-thumb" data-rv-lightbox="${f}"><img src="diagnosis/${f}" alt="" loading="lazy"><span>${l}</span></button>`).join('')}</div></section>
-    <section class="rv-sec"><header><h3>MOTION · TWELVE INTERACTIONS</h3><span>RECORDED WITH REAL CLICKS · PLAY THE LAST PASS BESIDE THIS ONE</span></header>
+    <section class="rv-sec"><header><h3>MOTION · TWELVE INTERACTIONS</h3><span>RECORDED WITH REAL CLICKS</span></header>
       <div class="rv-clips">${CLIPS.map(([id, t, dev]) => `<button type="button" class="rv-clip" data-rv-clip="${id}"><img src="motion/${id}-poster.jpg" alt="" loading="lazy"><span class="rv-clip__c"><i>${id}</i><b>${t}</b><small>${dev}</small></span><span class="rv-clip__p" aria-hidden="true">${ico('run')}</span></button>`).join('')}</div></section>
-    <section class="rv-sec"><header><h3>SINCE BATCH 1 · BEFORE → AFTER</h3><span>THE SAME SAMPLE RECORDS · OPEN ANY BOARD</span></header>
-      <div class="rv-diag rv-diag--4">${WORKSPACES.map((w) => `<button type="button" class="rv-thumb" data-rv-lightbox="${w.diag}"><img src="diagnosis/${w.diag}" alt="" loading="lazy"><span>${w.name}</span></button>`).join('')}</div></section>
-    <section class="rv-sec"><header><h3>THE RULES</h3><span>TWELVE, FOR EVERY WORKSPACE THAT FOLLOWS</span></header>
+    <section class="rv-sec"><header><h3>SINCE BATCH 1 · BEFORE → AFTER</h3><span>THE SAME SAMPLE RECORDS</span></header>
+      <div class="rv-diag rv-diag--4">${earlier.map((w) => `<button type="button" class="rv-thumb" data-rv-lightbox="${w.diag}"><img src="diagnosis/${w.diag}" alt="" loading="lazy"><span>${w.name}</span></button>`).join('')}</div></section>
+    <section class="rv-sec"><header><h3>THE RULES</h3><span>TWELVE, FOR EVERY WORKSPACE</span></header>
       <ol class="rv-rules">${RULES.map(([t, s], i) => `<li><i>${String(i + 1).padStart(2, '0')}</i><b>${t}</b><span>${s}</span></li>`).join('')}</ol></section>
-    <section class="rv-sec"><header><h3>SAME FAMILY AS THE APPROVED ROOTS</h3><span>HEADER, NAVIGATION, TYPE AND GOLD ARE UNCHANGED</span></header>
-      <div class="rv-diag rv-diag--one"><button type="button" class="rv-thumb" data-rv-lightbox="family-roots.jpg"><img src="diagnosis/family-roots.jpg" alt="" loading="lazy"><span>APPROVED WORK ROOT NEXT TO THE FOUR WORKSPACES</span></button></div></section>
     <section class="rv-sec"><header><h3>WHAT WAS WRONG</h3><span>THE BATCH 1 DIAGNOSIS</span></header>
-      <div class="rv-diag">${diag.map(([f, l]) => `<button type="button" class="rv-thumb" data-rv-lightbox="${f}"><img src="diagnosis/${f}" alt="" loading="lazy"><span>${l}</span></button>`).join('')}</div></section>`;
-  scaleMinis();
-  placeThumbs($('rv-landing'), false);
-}
-function scaleMinis() {
-  const [dw, dh] = DEVICES[RV.device];
-  document.querySelectorAll('.rv-mini').forEach((m) => {
-    const s = m.clientWidth / dw;
-    m.style.height = `${Math.round(dh * s)}px`;
-    m.firstElementChild.style.transform = `scale(${s})`;
-  });
+      <div class="rv-diag">${diag.map(([f, l]) => `<button type="button" class="rv-thumb" data-rv-lightbox="${f}"><img src="diagnosis/${f}" alt="" loading="lazy"><span>${l}</span></button>`).join('')}</div></section>
+    </details>`;
 }
 function drawBefore() {
   const w = wsById(RV.view);
-  $('rv-before').innerHTML = `<figure class="rv-beforefig"><figcaption><b>THIS PASS · BEFORE → AFTER</b><span>THE LAST PASS BESIDE THIS ONE</span><button type="button" class="rv-btn rv-btn--on" data-rv-before="0">SEE THE NEW ${w.name}</button></figcaption><img src="diagnosis/${w.pass}" alt="${w.name}: the last pass beside this one"></figure>
+  $('rv-before').innerHTML = `<figure class="rv-beforefig"><figcaption><b>THE LAST PASS · BEFORE → AFTER</b><span>THE PASS BEFORE BESIDE THE APPROVED ONE</span><button type="button" class="rv-btn rv-btn--on" data-rv-before="0">SEE THE ${w.name}</button></figcaption><img src="diagnosis/${w.pass}" alt="${w.name}: the last pass beside this one"></figure>
     <figure class="rv-beforefig"><figcaption><b>SINCE BATCH 1</b><span>THE SAME SAMPLE RECORDS</span></figcaption><img src="diagnosis/${w.diag}" alt="Batch 1 ${w.name} beside the workspace" loading="lazy"></figure>`;
 }
 
@@ -274,15 +247,27 @@ function flash() {
 }
 
 /* ── one action → state → redraw ── */
+/** Open a route from an approved root (or anywhere a data-go link is drawn). The workspace it opens keeps a way back. */
+ACT['nav'] = (route) => {
+  const from = RV.view;
+  const id = routeWs(route);
+  if (!id) return void (WSX.flash = `${String(route).split(/[~@]/)[0].toUpperCase().replace(/\//g, ' › ')} · NOT IN THIS REVIEW`);
+  WSX.sheet = false;
+  WSX.pending = null;
+  if (wsById(id).root) WSX.ret = null;
+  else if (from !== id && from !== 'overview') WSX.ret = { ws: from, label: wsById(from)?.root ? wsById(from).name : retLabel() };
+  WSX.ws = id;
+};
 function run(a, v, { reveal = false } = {}) {
   const fn = ACT[a];
   if (!fn) {
     console.error(`no handler for ${a}`);
     return false;
   }
+  const was = RV.view;
   fn(v);
-  if (WSX.ws !== RV.view) RV.view = WSX.ws; // a cross-workspace jump
-  render({ reveal });
+  if (WSX.ws !== RV.view) RV.view = WSX.ws; // a jump to another workspace or page
+  render({ reveal, top: RV.view !== was });
   return true;
 }
 function onTap(e) {
@@ -296,6 +281,10 @@ function onTap(e) {
     if (el.dataset.a === 'sim.ok' && !MOTION.reduced()) return confirmSim(el.dataset.v);
     return run(el.dataset.a, el.dataset.v ?? '');
   }
+  if (el.dataset.go) {
+    e.preventDefault();
+    return run('nav', el.dataset.go);
+  }
   shellTap(el);
 }
 /** A simulated confirmation works briefly (the button shows it), then applies — never long enough to get in the way. */
@@ -307,32 +296,18 @@ function confirmSim(key) {
     run('sim.ok', key);
   }, MOTION.confirm * RV.speed);
 }
-/** The approved header and navigation stay live: WORK and MORE move between the workspaces, the rest say where they lead. */
+/** The approved header and navigation are live: the five roots open as approved. */
 function shellTap(el) {
   const k = el.dataset.k;
-  if (k === 'work') {
-    const next = ['fleet', 'books', 'comp'].includes(RV.view) ? RV.view : 'fleet';
-    if (next === RV.view) return toast('WORK · THIS LANE IS OPEN');
-    RV.view = next;
-    return render({ top: true });
-  }
-  if (k === 'more') {
-    if (RV.view === 'client') return toast('MORE · CLIENTS · CLIENT 360 IS OPEN');
-    RV.view = 'client';
-    return render({ top: true });
-  }
-  if (k) return toast(`${k.toUpperCase()} · APPROVED ROOT · UNCHANGED IN THIS REVIEW`);
+  if (k) return run('nav', k);
   const act = el.dataset.act;
   if (act === 'search') {
-    const f = screenEl.querySelector('#fl-q, #cl-q');
+    const f = screenEl.querySelector('.ws-main input[data-input]');
     if (f) return f.focus();
     return toast('SEARCH · CLIENTS, WORK AND HELP · OUTSIDE THIS REVIEW');
   }
   if (act === 'notifications') return toast('NOTIFICATIONS · OUTSIDE THIS REVIEW');
-  if (el.dataset.go === 'home') {
-    RV.view = 'overview';
-    return render({ top: true });
-  }
+  if (act === 'quick') return run('nav', 'home/quick');
   return toast(`SIGNED IN AS ${WSX.role === 'founder' ? 'FOUNDER' : 'STAFF'} · SWITCH WITH VIEW AS ABOVE`);
 }
 function onInput(e) {
@@ -340,6 +315,43 @@ function onInput(e) {
   if (!el) return;
   ACT[el.dataset.input]?.(el.value);
   render(); // the morph keeps this very input, its value and its caret
+}
+
+/* ── SEE: a department's main, selected, deeper and phone states ── */
+function resetState() {
+  const snap = JSON.parse(INITIAL);
+  for (const [k, v] of Object.entries(snap)) WSX[k] = v;
+  WSX.over = {};
+  WSX.hist = {};
+  WSX.sims = [];
+  WSX.pending = null;
+  WSX.sheet = false;
+  WSX.ret = null;
+  WSX.loading = null;
+}
+/** Open a workspace in a known state: reset, the device, then each action (phone actions where the phone differs). */
+function applyState(wsId, acts = [], dev) {
+  stopDemo();
+  resetState();
+  RV.before = false;
+  if (dev) RV.device = dev;
+  RV.view = wsId;
+  WSX.ws = wsId;
+  render({ top: true });
+  for (const [a, v] of acts) {
+    const w = wsById(RV.view);
+    const act = VP === 'mobile' && w?.phoneAct?.[a] ? w.phoneAct[a] : a;
+    run(act, v ?? '', { reveal: true });
+  }
+}
+function see(i) {
+  const w = wsById(RV.view);
+  const [, acts, dev] = w.states[i];
+  const home = w.id;
+  applyState(home, acts, dev || (RV.device === 'phone' ? 'desktop' : RV.device));
+  RV.see = `${home}:${i}`;
+  RV.view = WSX.ws;
+  drawChrome();
 }
 
 /* ── TRY demonstrations ── */
@@ -354,9 +366,11 @@ function stopDemo() {
 function startDemo(i) {
   stopDemo();
   RV.before = false;
+  RV.see = null;
   WSX.sheet = false;
   WSX.pending = null;
   RV.demo = i;
+  RV.demoWs = RV.view;
   render();
   nextStep();
 }
@@ -365,20 +379,23 @@ function findControl(a, v) {
   return [...screenEl.querySelectorAll(sel)].find((el) => el.getClientRects().length && !el.closest('[inert]'));
 }
 function nextStep() {
-  const list = DEMOS[RV.view]?.[RV.demo]?.[1];
+  const host = wsById(RV.demoWs);
+  const list = host?.demos?.[RV.demo]?.[1];
   if (!list) return stopDemo();
   RV.step += 1;
   if (RV.step >= list.length) {
     RV.timer = setTimeout(stopDemo, 1800 * RV.speed);
     return;
   }
+  const here = wsById(RV.view);
   let [a, v, say] = list[RV.step];
-  if (VP === 'mobile' && PHONE_ACT[a]) a = PHONE_ACT[a];
+  const raw = a;
+  if (VP === 'mobile' && here?.phoneAct?.[a]) a = here.phoneAct[a];
   if (VP === 'mobile' && a === 'cl.client' && WSX.client.id !== v) WSX.sheet = 'dir', render();
   const cap = $('rv-cap');
   cap.hidden = false;
   cap.innerHTML = `<i>${RV.step + 1}/${list.length}</i>${say}`;
-  const el = findControl(a, v) || (PHONE_ACT[list[RV.step][0]] ? findControl(list[RV.step][0], v) : null);
+  const el = findControl(a, v) || (a !== raw ? findControl(raw, v) : null);
   if (el) {
     el.scrollIntoView({ block: 'nearest', inline: 'nearest' });
     el.classList.add('rv-hl');
@@ -390,9 +407,22 @@ function nextStep() {
 }
 
 /* ── boot ── */
+function openDept(id) {
+  stopDemo();
+  RV.view = id;
+  RV.before = false;
+  RV.see = null;
+  WSX.sheet = false;
+  WSX.pending = null;
+  WSX.ret = null;
+  render({ top: true });
+  window.scrollTo(0, 0);
+}
 function boot() {
   device = $('rv-device');
   screenEl = $('rv-screen');
+  // every lane has declared its starting state by now; RESET and SEE return to it
+  INITIAL = JSON.stringify(Object.fromEntries(Object.entries(WSX).filter(([k, v]) => v && typeof v === 'object' && !Array.isArray(v) && !['over', 'hist', 'ret', 'pending'].includes(k))));
   screenEl.addEventListener('click', onTap);
   screenEl.addEventListener('input', onInput);
   screenEl.addEventListener('keydown', (e) => {
@@ -418,17 +448,18 @@ function boot() {
     }
   });
   document.querySelector('.rv').addEventListener('click', (e) => {
-    const b = e.target.closest('button, [data-rv-tab]');
+    const b = e.target.closest('button, [data-rv-tab], [data-rv-group]');
     if (!b || screenEl.contains(b)) return;
     const d = b.dataset;
     if (d.rvTab) {
-      stopDemo();
-      RV.view = d.rvTab;
-      RV.before = false;
-      WSX.sheet = false;
-      WSX.pending = null;
-      render({ top: true });
-      window.scrollTo(0, 0);
+      if (d.rvTab === 'overview') {
+        stopDemo();
+        RV.view = 'overview';
+        render({ top: true });
+        window.scrollTo(0, 0);
+      } else openDept(d.rvTab);
+    } else if (d.rvGroup) {
+      openDept(RV.last[d.rvGroup] ?? groupWs(d.rvGroup)[0].id);
     } else if (d.rvDevice) {
       stopDemo();
       RV.device = d.rvDevice;
@@ -441,6 +472,8 @@ function boot() {
       if (WSX.role !== 'founder' && WSX.client.view === 'billing') WSX.client.view = 'overview';
       WSX.client.stack = WSX.client.stack.filter((k) => WSX.role === 'founder' || !k.startsWith('invoice:'));
       render();
+    } else if (d.rvSee != null) {
+      see(Number(d.rvSee));
     } else if (d.rvDemo != null) {
       startDemo(Number(d.rvDemo));
     } else if (d.rvBefore != null) {
@@ -468,7 +501,7 @@ function boot() {
   $('rv-lightbox').addEventListener('click', (e) => {
     if (!e.target.closest('video')) closeLightbox();
   });
-  window.addEventListener('resize', () => (RV.view === 'overview' ? scaleMinis() : fit()));
+  window.addEventListener('resize', () => RV.view !== 'overview' && fit());
   const q = new URLSearchParams(location.search);
   const hash = decodeURIComponent(location.hash.slice(1));
   if (wsById(hash) || hash === 'overview') RV.view = hash;
@@ -477,7 +510,7 @@ function boot() {
   if (['founder', 'staff'].includes(q.get('role'))) WSX.role = q.get('role');
   render({ top: true });
   document.documentElement.dataset.ready = '1';
-  /* QA hook (qa.mjs drives the review through it; the review itself never calls it) */
+  /* QA hook (qa.mjs, audit.mjs and the capture tools drive the review through it; the review itself never calls it) */
   window.AIO_WS = {
     open(view, devName, role) {
       stopDemo();
@@ -490,6 +523,10 @@ function boot() {
     act(a, v) {
       return run(a, v ?? '', { reveal: true });
     },
+    /** A workspace in a known state on a device, as SEE draws it (phone actions applied on the phone). */
+    go(wsId, acts, devName) {
+      applyState(wsId, acts || [], devName || RV.device);
+    },
     set(path, value) {
       const parts = path.split('.');
       let o = WSX;
@@ -498,20 +535,14 @@ function boot() {
       render({ reveal: true });
     },
     reset() {
-      WSX.over = {};
-      WSX.hist = {};
-      WSX.sims = [];
-      WSX.pending = null;
-      WSX.sheet = false;
-      WSX.ret = null;
-      Object.assign(WSX.fleet, { unit: 'v-tk-09', sec: 'maintenance', filter: 'all', q: '' });
-      Object.assign(WSX.books, { client: 'c-tk', period: 'SEP 2026', phase: 'reconcile', item: 'q:q1' });
-      Object.assign(WSX.comp, { sec: 'expirations', item: 'dl-abc-med', filter: 'all' });
-      Object.assign(WSX.client, { id: 'c-abc', view: 'overview', service: null, stack: [], q: '', filter: 'all' });
+      resetState();
       render({ top: true });
     },
-    state: () => JSON.parse(JSON.stringify({ view: RV.view, device: RV.device, role: WSX.role, fleet: WSX.fleet, books: WSX.books, comp: WSX.comp, client: WSX.client, sheet: WSX.sheet, pending: WSX.pending, ret: WSX.ret, sims: WSX.sims.length })),
+    state: () => JSON.parse(JSON.stringify({ ...WSX, view: RV.view, device: RV.device, role: WSX.role, sims: WSX.sims.length, over: undefined, hist: undefined })),
     actions: () => Object.keys(ACT),
+    registry: () => WS_REG.map((w) => ({ id: w.id, no: w.no, name: w.name, group: w.group, page: w.page, lane: w.lane ?? null, root: !!w.root, hidden: !!w.hidden, shape: w.shape, states: w.states.map(([l, acts, dev]) => [l, acts, dev ?? null]), demos: w.demos.map(([l]) => l), audit: w.audit })),
+    /** Every state the text audit visits: each workspace's SEE states and its declared audit states. */
+    auditStates: () => WS_REG.flatMap((w) => [...w.states.filter(([, , dev]) => !dev).map(([, acts]) => [w.id, acts]), ...w.audit.map((acts) => [w.id, acts])]),
     capture(on) {
       RV.capture = !!on;
       if (!on) return fit();

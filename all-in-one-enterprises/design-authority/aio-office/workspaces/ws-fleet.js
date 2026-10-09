@@ -254,3 +254,22 @@ ACT['fl.filter'] = (f) => {
 ACT['fl.q'] = (q) => {
   WSX.fleet.q = q;
 };
+
+registerWorkspace({
+  id: 'fleet', no: '04', name: 'VEHICLES & FLEET', group: 'fleet', page: 'work', lane: 'vehicles', view: () => fleetView(),
+  shape: 'A TRUCK', line: 'PICK A TRUCK. ALL IT TOUCHES IS ON IT.', diag: 'before-after-fleet.jpg', pass: 'polish-1-fleet.jpg',
+  states: [['MAIN', []], ['SELECTED', [['fl.unit', 'v-abc-1']]], ['DEEPER', [['fl.unit', 'v-tk-09'], ['fl.sec', 'maintenance'], ['sim.ask', 'fl:tk:t-tk-2']]], ['PHONE', [['fl.open', 'insurance']], 'phone']],
+  demos: [
+    ['SELECT A TRUCK', [['fl.unit', 'v-abc-1', 'UNIT 1 · ABC TRUCKING'], ['fl.sec', 'insurance', 'ITS INSURANCE'], ['fl.sec', 'driver', 'ITS DRIVER'], ['fl.sec', 'compliance', 'ITS DEADLINES']]],
+    ['CLEAR A BLOCKER', [['fl.unit', 'v-tk-09', 'UNIT 09 · OUT OF SERVICE'], ['fl.sec', 'maintenance', 'THE REPAIR TICKET'], ['sim.ask', 'fl:tk:t-tk-2', 'REQUEST AUTHORIZATION'], ['sim.ok', 'fl:tk:t-tk-2', 'CONFIRM · SIMULATED']]],
+    ['FILTER THE YARD', [['fl.filter', 'shop', 'IN THE SHOP'], ['fl.filter', 'stop', 'STOPPED'], ['fl.filter', 'all', 'ALL TRUCKS']]],
+  ],
+  phoneAct: { 'fl.sec': 'fl.open' },
+  enter: (a, b) => a && Object.assign(WSX.fleet, { unit: a, sec: b || 'registration', filter: 'all' }),
+  label: () => VEHICLES[WSX.fleet.unit]?.unit ?? 'FLEET',
+  route: (s) => {
+    if (s[0] === 'work' && s[1] === 'vehicles') return true;
+    if (s[0] === 'rec' && s[1] === 'vehicle' && VEHICLES[s[2]]) return Object.assign(WSX.fleet, { unit: s[2], filter: 'all' }), true;
+    return false;
+  },
+});

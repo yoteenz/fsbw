@@ -146,6 +146,37 @@ export function pageAudit(SINGLE) {
   return out;
 }
 
+/** Runs inside the page. Structural problems in the device screen right now (the same rules qa.mjs applies). */
+export function pageStructure() {
+  const scr = document.getElementById('rv-screen');
+  const handlers = new Set(window.AIO_WS.actions());
+  const all = [...scr.querySelectorAll('[data-a]')];
+  const unknown = [...new Set(all.map((e) => e.dataset.a).filter((a) => !handlers.has(a)))];
+  const dead = [...scr.querySelectorAll('button, [role=button], a')].filter((b) => !b.disabled && !b.closest('[inert]') && !(b.dataset.a || b.dataset.act || b.dataset.k || b.dataset.go || b.dataset.input) && !(b.tagName === 'A' && /^(https?:|mailto:|tel:)/.test(b.getAttribute('href') || ''))).map((b) => b.outerHTML.slice(0, 90));
+  const inputs = [...scr.querySelectorAll('input')].filter((i) => !i.dataset.input).length;
+  const unreachable = [...scr.querySelectorAll('[data-a]:not(button):not(input):not(.wscrim), [data-k]:not(button), [data-go]:not(button)')].filter((e) => e.getAttribute('tabindex') !== '0' || e.getAttribute('role') !== 'button').map((e) => e.outerHTML.slice(0, 80));
+  const lower = [];
+  const walk = document.createTreeWalker(scr, NodeFilter.SHOW_TEXT);
+  while (walk.nextNode()) {
+    const n = walk.currentNode;
+    const t = n.textContent.trim();
+    if (!t || t === t.toUpperCase()) continue;
+    const el = n.parentElement;
+    if (!el.getClientRects().length || getComputedStyle(el).textTransform === 'uppercase') continue;
+    lower.push(t.slice(0, 40));
+  }
+  const W = scr.clientWidth;
+  const devBox = scr.getBoundingClientRect();
+  const scale = devBox.width / W;
+  const wide = [...scr.querySelectorAll('*')].filter((e) => {
+    const b = e.getBoundingClientRect();
+    if (!b.width || (b.right - devBox.left) / scale <= W + 1) return false;
+    for (let a = e.parentElement; a && a !== scr; a = a.parentElement) if (/(auto|scroll|hidden|clip)/.test(getComputedStyle(a).overflowX)) return false;
+    return true;
+  }).map((e) => String(e.className?.baseVal ?? e.className) || e.tagName).slice(0, 5);
+  return { unknown, dead, inputs, unreachable, lower: lower.slice(0, 6), wide, sh: scr.scrollHeight, ch: scr.clientHeight, sw: scr.scrollWidth, cw: scr.clientWidth, sheet: !!scr.querySelector('.wsheet') };
+}
+
 /* ── standalone runner ── */
 if (process.argv[1] && fileURLToPath(import.meta.url) === resolve(process.argv[1])) {
   const HERE = dirname(fileURLToPath(import.meta.url));
