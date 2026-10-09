@@ -9,8 +9,8 @@ import type { ClientMigrationStatus, VaultDocument } from '../vault/vaultTypes';
 import { loadDemoStore, updateDemoStore } from './demoStore';
 import type { Client, DemoStore } from './demoTypes';
 import { recordSecurityAudit } from '../security/securityAudit';
-import { getMigrationPipelineAdapter } from '../client-migration/migrationPipeline';
-import { recordExtractedFacts, commitApprovedMigration } from '../client-migration/services/migrationCommitService';
+import { commitApprovedMigration } from '../client-migration/services/migrationCommitService';
+import { enqueueDemoMigrationFileProcessing } from '../client-migration/services/migrationDemoFileProcessor';
 import { transitionClientLifecycle } from '../client-migration/services/lifecycleEvents';
 
 function uid(): string {
@@ -146,7 +146,8 @@ export async function addFilesToMigrationBatch(
       fileSizeBytes: file.size,
       fileHash,
       storageReference: stored.document.storageReference,
-      processingState: 'ready',
+      processingState: 'queued',
+      queueState: 'QUEUED',
       createdAt: now(),
     };
 
@@ -164,17 +165,6 @@ export async function addFilesToMigrationBatch(
       verificationStatus: 'pending_review',
     };
 
-    const pipeline = getMigrationPipelineAdapter();
-    const pipelineResult = await pipeline.processFile(
-      {
-        fileName: file.name,
-        mimeType: file.type || 'application/octet-stream',
-        sizeBytes: file.size,
-        sha256: fileHash,
-      },
-      { organizationId: batch.organizationId, batchId },
-    );
-
     updateDemoStore((s) => {
       if (!s.archiveMigrationBatchFiles) s.archiveMigrationBatchFiles = [];
       s.archiveMigrationBatchFiles.push(batchFile);
@@ -183,33 +173,19 @@ export async function addFilesToMigrationBatch(
       if (b) {
         b.fileCount += 1;
         b.documentCount += 1;
-        b.state = 'ready_for_review';
-        b.reviewState = pipelineResult.exception === 'AMBIGUOUS_CLIENT_MATCH' ? 'pending' : b.reviewState;
-        b.reviewState = 'pending';
+        b.state = 'uploading';
         b.updatedAt = now();
       }
-      recordExtractedFacts(
-        s,
-        pipelineResult.proposedFacts.map((f) => ({
-          batchId,
-          organizationId: batch.organizationId,
-          documentId: pendingDoc.id,
-          entityType: f.entityType,
-          fieldKey: f.fieldKey,
-          proposedValue: f.proposedValue,
-          existingValue: f.existingValue,
-          confidence: f.confidence,
-          sourceReference: f.sourceReference,
-        })),
-      );
-      transitionClientLifecycle(
-        s,
-        batch.clientId,
-        'MIGRATION_REVIEW_REQUIRED',
-        'MATCH_PROPOSED',
-        'SYSTEM',
-      );
+      transitionClientLifecycle(s, batch.clientId, 'MIGRATION_IN_PROGRESS', 'DOCUMENT_INGESTED', 'STAFF');
       return s;
+    });
+
+    enqueueDemoMigrationFileProcessing({
+      batchId,
+      batchFileId: batchFile.id,
+      organizationId: batch.organizationId,
+      file,
+      pendingDoc,
     });
 
     added += 1;

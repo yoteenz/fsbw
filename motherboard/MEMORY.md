@@ -55974,3 +55974,31 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
   - `src/product-graph/publicMigration.test.ts` has 10 tests.
 - **Not changed:** the live app, auth, data, business rules, prices, Brokerage (paused) and the 12 privacy gaps.
 - **Tunnel:** this container cannot reach fsbw-dev.com. To see the latest, pull master in the Cursor VM and restart `aio-vite` and `aio-preview-tunnel`.
+
+---
+
+## 2026-10-09 — AIO client migration real PDF extraction (RECOVERY1)
+
+- **Context:** P0 sprint — migration UI was wired to **DemoStore** but extraction was **filename fixture**; Supabase `process-file` returned **PROVIDER_UNAVAILABLE** without reading storage; demo **approve** did not write facts into Road Ready.
+- **Fix:** `contentExtractionAdapter` (pdf.js text layer) on real bytes; demo passes base64 on upload; API default **`AIO_MIGRATION_EXTRACTION_PROVIDER=local`** downloads `storageReference`; `applyCanonicalFactsFromMigration` on PREBUILT commit. Audit: `all-in-one-enterprises/docs/aio/client-migration/REAL_DOCUMENT_EXTRACTION_RECOVERY1_AUDIT.md`. Tests: NORTHLINE PDF + canonical commit.
+- **Blocked:** scanned/image OCR; full 25-step live Supabase E2E without creds; durable async jobs.
+- **Branch:** `cursor/client-migration-real-extraction-1087`; fixture only when `VITE_AIO_MIGRATION_FIXTURE=1`.
+
+---
+
+## 2026-10-09 — AIO migration OCR + zero-entry intake (RECOVERY2)
+
+- **Context:** P0 RECOVERY2 — document-first migration: no mandatory typing before extraction; OCR for photos/scanned PDFs; durable demo job queue; Supabase MC on approve.
+- **Delivered:** Tesseract.js OCR for images; scanned-PDF OCR in **browser** (pdf.js render + OCR); `createProvisionalIntakeClient` + upload-first on `/office/migration/new`; async `migrationDemoFileProcessor` with `queued`→`processing`→`ready`; identity auto-hydrate on review screens; audit `docs/aio/client-migration/OCR_PERSISTENCE_RECOVERY2_AUDIT.md`.
+- **Blocked:** API scanned-PDF OCR without native canvas on Vercel; full Supabase 25-step E2E; Playwright journey not run in agent.
+- **Tests:** 40+ client-migration unit tests including OCR post-processing + provisional intake.
+
+---
+
+## 2026-10-09 — AIO migration server OCR + Supabase jobs (RECOVERY3)
+
+- **Context:** P0 RECOVERY3 — close gap between browser OCR and production: server scanned-PDF OCR, durable Supabase file jobs, full canonical writes, review persistence, honest E2E readiness.
+- **Forensics:** PR #59 (RECOVERY1) and PR #60 (RECOVERY2) **open**, not merged to `master`; base **`cursor/client-migration-recovery2-1087`** @ `6d57a82d0`.
+- **Delivered:** `@napi-rs/canvas` + `serverPdfOcr.ts` for Node PDF rasterization + Tesseract; unified PDF OCR fallback on server; **`/api/aio/client-migration/process-batch-file`** + `processMigrationBatchFile.ts` (storage download, idempotent queue, facts persist); upload enqueues server job (not browser-inline); `useMigrationFacts` + `persistMigrationFactReview` for Supabase review; extended `supabaseApproveMigration` (EIN, VIN/unit fleet, Road Ready profile, contact email/phone); canonical map `docs/client-migration/CANONICAL_FIELD_MAP.md`; migration `20261009180000_aio_migration_processing_lease.sql`.
+- **Blocked:** Full 40-step Supabase E2E (dedicated AIO Supabase creds/project not in agent env); MCP apply/verify on FS production project timed out; scanned-PDF OCR on Vercel still CPU/time sensitive; insurance policy has provenance-only target; org–contact linkage gap.
+- **Branch:** `cursor/client-migration-recovery3-1087`.

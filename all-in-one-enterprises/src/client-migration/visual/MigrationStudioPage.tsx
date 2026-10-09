@@ -2,16 +2,25 @@ import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useAIOAuth } from '../../auth/AIOAuthProvider';
 import { sendClientActivationInvite } from '../../demo/clientMigrationOfficeActions';
-import { loadDemoStore, updateDemoStore } from '../../demo/demoStore';
+import {
+  DEMO_STORE_SAVE_FAILED_EVENT,
+  getLastDemoStoreSaveResult,
+  loadDemoStore,
+  updateDemoStore,
+} from '../../demo/demoStore';
+import { storageWriteErrorMessage } from '../../storage/demoStorage';
+import { isSupabaseMode } from '../../config/dataMode';
 import { useDemoStore } from '../../demo/useDemoStore';
-import type { Client } from '../../demo/demoTypes';
 import { getBatchFiles } from '../../demo/archiveMigrationActions';
 import { createEmptyProfile } from '../../road-ready/roadReadyRules';
 import { aioPaths } from '../../utils/paths';
 import { validateUploadFile } from '../../vault/vaultStorage';
+import { useMigrationFacts } from '../hooks/useMigrationFacts';
 import { applyReviewActionToFact } from '../services/migrationCommitService';
+import { persistMigrationFactReview } from '../services/migrationReviewPersist';
 import { approveMigrationBatchForOffice } from '../services/approveMigrationOfficeService';
 import { createMigrationBatchForOffice, uploadFilesToMigrationBatch } from '../services/migrationIntakeService';
+import { createProvisionalIntakeClient } from '../services/intakeProvisionalClient';
 import { transitionClientLifecycle } from '../services/lifecycleEvents';
 import type { ClientLifecycleState, MigrationReviewAction } from '../types';
 import { AioMigrationBack, AioMigrationCTA, AioMigrationHero, Ico, MigrationShell, type MigrationFamily } from './AioMigrationKit';
@@ -135,8 +144,25 @@ export function MigrationStudioPage() {
   const batches = (store.archiveMigrationBatches ?? []).filter((batch) => !clientId || batch.clientId === clientId);
   const batch = batches[0];
   const files = batch ? getBatchFiles(batch.id, store) : [];
-  const facts = (store.clientExtractedFacts ?? []).filter((fact) => (batch ? fact.batchId === batch.id : fact.organizationId === clientId));
+  const facts = useMigrationFacts(batch?.id, clientId);
   const conflicts = facts.filter((fact) => fact.confidence === 'CONFLICT' && !fact.reviewAction);
+
+  useEffect(() => {
+    const handler = (event: Event) => {
+      const detail = (event as CustomEvent<{ ok: boolean; error?: { kind: string } }>).detail;
+      if (detail && !detail.ok && detail.error) {
+        setMessage(storageWriteErrorMessage(detail.error as Parameters<typeof storageWriteErrorMessage>[0]));
+      }
+    };
+    window.addEventListener(DEMO_STORE_SAVE_FAILED_EVENT, handler);
+    return () => window.removeEventListener(DEMO_STORE_SAVE_FAILED_EVENT, handler);
+  }, []);
+
+  function throwIfDemoStoreSaveFailed(): void {
+    if (isSupabaseMode()) return;
+    const save = getLastDemoStoreSaveResult();
+    if (!save.ok) throw new Error(storageWriteErrorMessage(save.error));
+  }
 
   const filteredClients = useMemo(() => {
     const needle = query.trim().toLowerCase();
@@ -163,14 +189,18 @@ export function MigrationStudioPage() {
   useEffect(() => {
     if (screen !== 'new-identity' || !client) return;
     const profile = profileOf(loadDemoStore(), client.id);
+    const batchFacts = (loadDemoStore().clientExtractedFacts ?? []).filter(
+      (f) => f.organizationId === client.id && (!batch?.id || f.batchId === batch.id),
+    );
+    const fact = (key: string) => batchFacts.find((f) => f.fieldKey === key)?.proposedValue ?? '';
     setIdentity({
-      companyName: profile?.business?.legalName || client.companyName,
-      usdot: profile?.authority?.usdotNumber ?? '',
-      mc: profile?.authority?.mcNumber ?? '',
-      ein: profile?.business?.ein ?? '',
+      companyName: fact('legal_name') || profile?.business?.legalName || client.companyName,
+      usdot: fact('usdot') || profile?.authority?.usdotNumber || '',
+      mc: fact('mc_number') || profile?.authority?.mcNumber || '',
+      ein: fact('ein') || profile?.business?.ein || '',
       contactName: client.contactName === 'Primary contact' ? '' : client.contactName,
     });
-  }, [screen, client?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [screen, client?.id, batch?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Header search (desktop) lands on the existing-client finder with ?q=.
   const searchParam = params.get('q');
@@ -226,6 +256,7 @@ export function MigrationStudioPage() {
       }
       return current;
     });
+    throwIfDemoStoreSaveFailed();
     return created.batchId;
   }
 
@@ -236,46 +267,25 @@ export function MigrationStudioPage() {
     const result = await uploadFilesToMigrationBatch(batchId, accepted, organizationId);
     if (result.errors.length && result.added === 0) throw new Error(result.errors[0]);
     if (result.errors.length) setMessage(result.errors.join(' '));
+    throwIfDemoStoreSaveFailed();
     setLocalFiles((current) => current.filter((item) => item.status !== 'accepted'));
   }
 
-  /** New client file: client record + Road Ready profile holding USDOT / MC. Not active. */
-  function createDraftClient(): string {
-    const companyName = draft.companyName.trim();
-    if (!companyName) throw new Error('Company name is required');
-    const id = `mig-${crypto.randomUUID()}`;
-    const record: Client = {
-      id,
-      companyName,
-      contactName: draft.contactName.trim() || 'Primary contact',
-      contactEmail: 'pending@example.com',
-      clientType: 'carrier',
-      primaryState: '',
-      accountStatus: 'pending',
-      clientLifecycle: 'INTAKE_IN_PROGRESS',
-      clientReviewState: 'NOT_STARTED',
-      roadmapProgress: 0,
-      customerSince: new Date().toISOString().slice(0, 10),
-      services: [],
-      activeRequestCount: 0,
-      documentsNeededCount: 0,
-      lastActivityAt: new Date().toISOString(),
-      activationConditions: { canonicalIdentityExists: false },
-    };
+  /** Document-first intake — provisional client until extraction establishes identity. */
+  function ensureProvisionalClient(): string {
+    if (clientId) return clientId;
+    let newId = '';
     updateDemoStore((current) => {
-      current.clients.unshift(record);
-      const profile = createEmptyProfile(id, companyName);
-      if (draft.usdot.trim()) profile.authority = { ...profile.authority, usdot: 'yes', usdotNumber: draft.usdot.trim() };
-      if (draft.mc.trim()) profile.authority = { ...profile.authority, mc: 'yes', mcNumber: draft.mc.trim() };
-      current.roadReadyProfiles = [...(current.roadReadyProfiles ?? []), profile];
-      return transitionClientLifecycle(current, id, 'INTAKE_IN_PROGRESS', 'NEW_CLIENT_INTAKE', 'STAFF', staffId);
+      const { store, clientId: id } = createProvisionalIntakeClient(current, staffId);
+      newId = id;
+      return store;
     });
-    return id;
+    return newId;
   }
 
   function saveIdentity(organizationId: string) {
-    const name = identity.companyName.trim();
-    if (!name) throw new Error('Company name is required');
+    const name = identity.companyName.trim() || facts.find((f) => f.fieldKey === 'legal_name')?.proposedValue?.trim() || '';
+    if (!name) throw new Error('Company name is required — upload documents or enter the legal name');
     updateDemoStore((current) => {
       const record = current.clients.find((item) => item.id === organizationId);
       if (record) {
@@ -313,9 +323,12 @@ export function MigrationStudioPage() {
         return;
       }
       if (screen === 'upload' || screen === 'new') {
-        const organizationId = screen === 'new' ? clientId || createDraftClient() : clientId;
+        const organizationId = screen === 'new' ? ensureProvisionalClient() : clientId;
         if (!organizationId) throw new Error('Select a client');
-        if (screen === 'upload') await storeAcceptedFiles(organizationId);
+        if (screen === 'new') {
+          if (!localFiles.some((item) => item.file)) throw new Error('Add at least one PDF, JPG, PNG, or WEBP file');
+          await storeAcceptedFiles(organizationId);
+        } else if (screen === 'upload') await storeAcceptedFiles(organizationId);
         go(screen === 'new' ? 'new-received' : 'received', organizationId);
         return;
       }
@@ -463,11 +476,20 @@ export function MigrationStudioPage() {
       return;
     }
     setMessage(null);
-    updateDemoStore((current) => {
-      let next = current;
-      for (const fact of scope) next = applyReviewActionToFact(next, fact.id, action, staffId);
-      return next;
-    });
+    void (async () => {
+      for (const fact of scope) {
+        const persisted = await persistMigrationFactReview(fact.id, action);
+        if (persisted.error) {
+          setMessage(persisted.error);
+          return;
+        }
+      }
+      updateDemoStore((current) => {
+        let next = current;
+        for (const fact of scope) next = applyReviewActionToFact(next, fact.id, action, staffId);
+        return next;
+      });
+    })();
   }
 
   const representative = REPRESENTATIVE.has(screen);

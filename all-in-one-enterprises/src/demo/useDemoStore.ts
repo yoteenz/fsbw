@@ -1,10 +1,13 @@
 import { useCallback, useEffect, useState } from 'react';
-import { loadDemoStore, subscribeDemoStore } from './demoStore';
+import { bootstrapDemoBlobMigrationFromLocalStorage, loadDemoStore, subscribeDemoStore } from './demoStore';
 import type { DemoStore } from './demoTypes';
 
 export function useDemoStore(): DemoStore {
   const [store, setStore] = useState<DemoStore>(() => loadDemoStore());
-  useEffect(() => subscribeDemoStore(() => setStore(loadDemoStore())), []);
+  useEffect(() => {
+    bootstrapDemoBlobMigrationFromLocalStorage();
+    return subscribeDemoStore(() => setStore(loadDemoStore()));
+  }, []);
   return store;
 }
 

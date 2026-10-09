@@ -7,7 +7,18 @@ export const serverMigrationPipelineAdapter: MigrationPipelineAdapter = {
       const res = await fetch('/api/aio/client-migration/process-file', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ input, context }),
+        body: JSON.stringify({
+          input: {
+            fileName: input.fileName,
+            mimeType: input.mimeType,
+            sizeBytes: input.sizeBytes,
+            sha256: input.sha256,
+            documentId: input.documentId,
+            storageReference: input.storageReference,
+            fileContentBase64: input.fileContentBase64,
+          },
+          context,
+        }),
       });
       if (res.status === 503) {
         return {

@@ -2,6 +2,7 @@ import type { DemoStore } from '../../demo/demoTypes';
 import type { ExtractedFactRecord, MigrationReviewAction } from '../types';
 import { transitionClientLifecycle } from './lifecycleEvents';
 import { provisionPrebuiltClientOffice } from './officeProvisioningService';
+import { applyCanonicalFactsFromMigration } from './canonicalFactCommit';
 
 function uid(): string {
   return crypto.randomUUID();
@@ -74,6 +75,7 @@ export function commitApprovedMigration(
   const client = store.clients.find((c) => c.id === batch.clientId);
   const services = client?.services ?? [];
 
+  store = applyCanonicalFactsFromMigration(store, batchId, batch.clientId);
   store = provisionPrebuiltClientOffice(store, batch.clientId, services);
   store = transitionClientLifecycle(store, batch.clientId, 'PREBUILT', 'MIGRATION_APPROVED', 'STAFF', staffId);
 

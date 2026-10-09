@@ -27,6 +27,12 @@ export interface MigrationFileInput {
   mimeType: string;
   sizeBytes: number;
   sha256: string;
+  /** Vault document id — used for provenance links in review UI. */
+  documentId?: string;
+  /** Supabase storage path `bucket/object/path` for server-side byte retrieval. */
+  storageReference?: string;
+  /** Base64-encoded bytes when processing in-browser (demo) or inline API upload. */
+  fileContentBase64?: string;
 }
 
 export interface ProposedFact {

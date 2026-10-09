@@ -1,4 +1,15 @@
-import { AIO_STORAGE_KEYS, readStorage, removeStorage, writeStorage } from '../storage/demoStorage';
+import {
+  AIO_STORAGE_KEYS,
+  readStorage,
+  removeStorage,
+  writeStorage,
+  type StorageWriteResult,
+} from '../storage/demoStorage';
+import {
+  migrateLegacyDocumentBlobsToIndexedDb,
+  serializeDemoStoreForLocalStorage,
+  estimateDataUrlBytesInDocuments,
+} from '../storage/demoStorePersistence';
 import { defaultIntakeAnswers } from '../intake/intakeTypes';
 import type { ServicePlanItem } from '../repositories/servicePlanRepository';
 import type { RoadmapResult } from '../roadmap/roadmapTypes';
@@ -19,6 +30,35 @@ import { createLoadBoardSeedPublications, DEMO_LOAD_BOARD_LOAD_IDS } from '../fr
 export const DEMO_STORE_KEY = 'aio_debug_store';
 
 const STORE_EVENT = 'aio-demo-store-change';
+export const DEMO_STORE_SAVE_FAILED_EVENT = 'aio-demo-store-save-failed';
+
+export type DemoStoreSaveResult = StorageWriteResult;
+
+let blobMigrationFlush: Promise<void> = Promise.resolve();
+let lastSaveResult: DemoStoreSaveResult = { ok: true };
+
+export function getLastDemoStoreSaveResult(): DemoStoreSaveResult {
+  return lastSaveResult;
+}
+
+function notifySaveFailure(result: DemoStoreSaveResult): void {
+  if (typeof window === 'undefined' || result.ok) return;
+  window.dispatchEvent(new CustomEvent(DEMO_STORE_SAVE_FAILED_EVENT, { detail: result }));
+}
+
+function scheduleBlobMigrationAndCompactSave(store: DemoStore): void {
+  blobMigrationFlush = blobMigrationFlush.then(async () => {
+    const { store: migrated, result } = await migrateLegacyDocumentBlobsToIndexedDb(store);
+    if (!result.changed && estimateDataUrlBytesInDocuments(migrated) === 0) return;
+    const compact = serializeDemoStoreForLocalStorage(migrated);
+    const retry = writeStorage(DEMO_STORE_KEY, compact);
+    lastSaveResult = retry;
+    if (!retry.ok) notifySaveFailure(retry);
+    if (retry.ok && typeof window !== 'undefined') {
+      window.dispatchEvent(new Event(STORE_EVENT));
+    }
+  });
+}
 
 function ensureLoadBoardFields(store: DemoStore): DemoStore {
   const needsPublications = !store.loadBoardPublications?.length;
@@ -923,11 +963,26 @@ function migrateLegacyStore(): DemoStore | null {
   return seed;
 }
 
-export function saveDemoStore(store: DemoStore): void {
-  writeStorage(DEMO_STORE_KEY, store);
-  if (typeof window !== 'undefined') {
+export function saveDemoStore(store: DemoStore): DemoStoreSaveResult {
+  const inlineBytes = estimateDataUrlBytesInDocuments(store);
+  if (inlineBytes > 0) {
+    scheduleBlobMigrationAndCompactSave(store);
+  }
+
+  const payload = inlineBytes > 0 ? serializeDemoStoreForLocalStorage(store) : store;
+  let result = writeStorage(DEMO_STORE_KEY, payload);
+  if (!result.ok && result.error.kind === 'quota_exceeded') {
+    scheduleBlobMigrationAndCompactSave(store);
+    result = writeStorage(DEMO_STORE_KEY, serializeDemoStoreForLocalStorage(store));
+  }
+
+  lastSaveResult = result;
+  if (!result.ok) {
+    notifySaveFailure(result);
+  } else if (typeof window !== 'undefined') {
     window.dispatchEvent(new Event(STORE_EVENT));
   }
+  return result;
 }
 
 export type ResetDemoStoreResult =
@@ -976,4 +1031,20 @@ export function updateDemoStore(updater: (store: DemoStore) => DemoStore): DemoS
   const next = updater(structuredClone(loadDemoStore()));
   saveDemoStore(next);
   return next;
+}
+
+/** Run once on app boot to move legacy data-URL documents into IndexedDB. */
+export function bootstrapDemoBlobMigrationFromLocalStorage(): void {
+  if (typeof window === 'undefined') return;
+  const store = loadDemoStore();
+  if (estimateDataUrlBytesInDocuments(store) === 0) return;
+  scheduleBlobMigrationAndCompactSave(store);
+}
+
+export function exportDemoStoreBackup(): { metadata: DemoStore; exportedAt: string } {
+  const store = loadDemoStore();
+  return {
+    metadata: serializeDemoStoreForLocalStorage(store),
+    exportedAt: new Date().toISOString(),
+  };
 }
