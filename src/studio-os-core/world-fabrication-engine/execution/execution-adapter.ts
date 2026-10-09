@@ -6,6 +6,7 @@ import type { FabricationJobBudget } from '../cost-control';
 import { ingestFabricationAssetPackage } from '../package-ingestion/ingest-workflow';
 import { inspectGlbFile } from '../package-ingestion/glb-inspector';
 import { resolveBlenderExecutable } from './blender-path';
+import { discoverCodexInterface } from './codex-discovery';
 import { buildSite00BuildObjectV2Assignment } from './fabrication-assignment';
 import type {
   ExecutionJobRecord,
@@ -235,17 +236,22 @@ export function runSite00BuildObjectExecutionLoop(params: {
   return { assignment, job, evidence, ingestion };
 }
 
-/** Codex programmatic dispatch is not available in this repo — external manual transfer only. */
+/** Codex status from CLI discovery (not Blender local runner). */
 export function getCodexIntegrationStatus(): {
-  status: 'HANDOFF_PREPARED_ONLY';
-  dispatch: 'BLOCKED';
+  status: 'HANDOFF_PREPARED_ONLY' | 'DISPATCH_AVAILABLE';
+  dispatch: 'VERIFIED' | 'BLOCKED';
   reason: string;
+  interfaceReport: ReturnType<typeof discoverCodexInterface>;
 } {
+  const report = discoverCodexInterface({ runAuthProbe: false });
+  const blocked = report.authStatus !== 'VERIFIED';
   return {
-    status: 'HANDOFF_PREPARED_ONLY',
-    dispatch: 'BLOCKED',
-    reason:
-      'No Studio OS → Codex job API in repository; fabrication assignments are prepared for manual Codex/Shadow PC execution',
+    status: blocked ? 'HANDOFF_PREPARED_ONLY' : 'DISPATCH_AVAILABLE',
+    dispatch: blocked ? 'BLOCKED' : 'VERIFIED',
+    reason: blocked
+      ? report.authBlocker ?? 'Codex CLI present but authentication not verified in this environment'
+      : 'Codex CLI and authentication probe succeeded',
+    interfaceReport: report,
   };
 }
 

@@ -22,6 +22,7 @@
 | [CODEX_FABRICATION_HANDOFF_EXTENSION_V1.md](./CODEX_FABRICATION_HANDOFF_EXTENSION_V1.md) | Codex handoff extension |
 | [PACKAGE_INGESTION_BENCHMARK_V1.md](./PACKAGE_INGESTION_BENCHMARK_V1.md) | Real V2 package ingestion benchmark |
 | [FABRICATION_EXECUTION_LOOP_V1.md](./FABRICATION_EXECUTION_LOOP_V1.md) | Blender execution + return loop |
+| [CODEX_DISPATCH_INTEGRATION_V1.md](./CODEX_DISPATCH_INTEGRATION_V1.md) | Codex CLI discovery + dispatch states |
 
 **Code:** `src/studio-os-core/world-fabrication-engine/`  
 **Technical art:** `technical-art/`  
