@@ -1,0 +1,33 @@
+{
+  "job": {
+    "jobId": "job-site00-v2-loop-1791518450035",
+    "assignmentId": "site00-v2-loop-1791518450035",
+    "backend": "BLENDER_LOCAL",
+    "status": "FAILED",
+    "phasesCompleted": [
+      "PREPARE_ASSIGNMENT",
+      "VALIDATE_INPUTS",
+      "AUTHORIZE_EXECUTION"
+    ],
+    "codexDispatch": "NOT_APPLICABLE",
+    "errors": [
+      "V2 blend master missing",
+      "module-manifest.json missing"
+    ]
+  },
+  "evidence": {
+    "handoffPrepared": true,
+    "jobDispatched": true,
+    "blenderExecuted": false,
+    "outputsVerified": false,
+    "returnIngested": false,
+    "founderReviewReady": false,
+    "classification": "BLOCKED"
+  },
+  "verify": {
+    "ok": false,
+    "errors": [
+      "no return root"
+    ]
+  }
+}

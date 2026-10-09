@@ -1,0 +1,13 @@
+{
+  "packageId": "site00-build-object-audit-v1",
+  "productionProfileId": "SITE00_BUILD_OBJECT_WEB_3D",
+  "productionLane": "PROP_INTERACTIVE_OBJECT_ART",
+  "deliverableCompleteness": {
+    "source_blend": "PRESENT",
+    "runtime_glb": "PRESENT",
+    "material_definitions": "PRESENT",
+    "collision_mesh": "MISSING",
+    "skeleton": "NOT_APPLICABLE"
+  },
+  "notes": "See technical-art/examples/site00-build-object-audit.ts for full audit"
+}

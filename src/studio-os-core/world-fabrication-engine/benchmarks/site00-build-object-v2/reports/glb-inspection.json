@@ -1,0 +1,34 @@
+[
+  {
+    "filePath": "/workspace/src/studio-os-core/world-fabrication-engine/benchmarks/site00-build-object-v2/fixture/02_EXPORTS/SITE00_Build_Object_V2_Web.glb",
+    "sha256": "813f0646954f37deed11f3c8bca40d68d7ba158f8dd6ced04bb6a911d8dbac81",
+    "fileBytes": 1065776,
+    "parseOk": true,
+    "parseErrors": [],
+    "meshCount": 63,
+    "nodeCount": 71,
+    "materialNames": [
+      "CLEAR_ARCHITECTURAL_GLASS",
+      "WHITE_MARBLE",
+      "LIGHT_STONE",
+      "DARK_STONE",
+      "REFLECTIVE_METAL",
+      "RED_TRANSLUCENT_ACRYLIC"
+    ],
+    "textureCount": 2,
+    "embeddedImageCount": 2,
+    "triangleCount": 5700,
+    "extensionsUsed": [
+      "KHR_materials_transmission",
+      "KHR_materials_specular",
+      "KHR_materials_ior"
+    ],
+    "sceneRootNodeNames": [
+      "BUILD_OBJECT_ROOT"
+    ],
+    "accessorSummary": {
+      "positions": 63,
+      "indices": 63
+    }
+  }
+]

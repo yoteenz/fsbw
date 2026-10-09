@@ -1,0 +1,12 @@
+{
+  "shadowPcConnection": "NOT_AVAILABLE",
+  "founderApplications": ["Blender", "Maya", "Unreal Engine"],
+  "requirementsForFutureIntegration": [
+    "Authenticated runner with restricted permissions",
+    "Secure artifact upload/download (no public RDP)",
+    "Execution logging and cancellation",
+    "Output hash verification on return",
+    "Founder-authorized network path — not configured in this repository"
+  ],
+  "currentBenchmarkPath": "Local Blender 5.2.2 on cloud agent VM"
+}
