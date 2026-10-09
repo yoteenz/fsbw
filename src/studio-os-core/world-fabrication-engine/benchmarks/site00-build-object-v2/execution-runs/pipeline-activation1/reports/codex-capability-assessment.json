@@ -1,0 +1,17 @@
+{
+  "interfaceName": "@openai/codex",
+  "cliVersion": "0.162.0",
+  "invocation": "npx @openai/codex",
+  "authenticationMethod": "OPENAI_API_KEY or Codex OAuth session",
+  "authStatus": "BLOCKED",
+  "authBlocker": "No OPENAI_API_KEY/CODEX_API_KEY in environment (401 Unauthorized on probe)",
+  "executionEnvironment": "local subprocess (cloud agent VM)",
+  "statusTracking": "codex exec session / resume",
+  "costImplications": "OpenAI API usage when authenticated — not authorized in WFE without founder approval",
+  "securityNotes": [
+    "Never commit API keys; use Cursor/cloud secrets only",
+    "Fabrication jobs must not pass arbitrary shell from client input",
+    "Codex exec is general-purpose — WFE uses bounded assignment manifests only"
+  ],
+  "discoveryAt": "2026-10-09T01:29:00.799Z"
+}

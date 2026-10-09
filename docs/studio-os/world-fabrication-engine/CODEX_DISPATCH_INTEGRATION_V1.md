@@ -20,7 +20,11 @@ Local `blender --background` subprocess (WFE Blender runner) — separate backen
 
 ## Unblock dispatch
 
-Configure OpenAI/Codex credentials in **Cursor cloud secrets** (not repository). Re-run `discoverCodexInterface({ runAuthProbe: true })`.
+1. Cursor → **Project Settings → Cloud Agent → Secrets**
+2. Add **`OPENAI_API_KEY`** (valid OpenAI key with Codex access)
+3. Run: **`npm run wfe:codex-fabrication-proof`**
+
+Without that secret, outcome is **PARTIAL — CODEX CONNECTION REQUIRED**; external handoff bundle is written under `execution-runs/pipeline-activation1/external-handoff/`.
 
 ## Full V2 package
 
