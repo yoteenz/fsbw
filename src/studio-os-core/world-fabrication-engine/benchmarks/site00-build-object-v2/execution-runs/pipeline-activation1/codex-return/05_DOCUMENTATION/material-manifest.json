@@ -1,0 +1,129 @@
+[
+  {
+    "name": "CLEAR_ARCHITECTURAL_GLASS",
+    "baseColor": [
+      0.9700000286102295,
+      0.9850000143051147,
+      1.0,
+      1.0
+    ],
+    "roughness": 0.03500000014901161,
+    "metallic": 0.0,
+    "transmission": 1.0,
+    "ior": 1.4600000381469727,
+    "blenderProcedural": false,
+    "webOverride": "Set thickness/attenuation via manifest; glTF PBR approximation"
+  },
+  {
+    "name": "RED_TRANSLUCENT_ACRYLIC",
+    "baseColor": [
+      0.7200000286102295,
+      0.0010000000474974513,
+      0.004000000189989805,
+      1.0
+    ],
+    "roughness": 0.054999999701976776,
+    "metallic": 0.0,
+    "transmission": 0.8999999761581421,
+    "ior": 1.4900000095367432,
+    "blenderProcedural": false,
+    "webOverride": "Set thickness/attenuation via manifest; glTF PBR approximation",
+    "cyclesAbsorption": {
+      "colour": [
+        0.8,
+        0.012,
+        0.025
+      ],
+      "density": 18,
+      "portableThickness": 0.024,
+      "browserAttenuationDistance": 0.05555555555555555,
+      "specularIORLevel": 0.18
+    }
+  },
+  {
+    "name": "WHITE_MARBLE",
+    "baseColor": [
+      0.8600000143051147,
+      0.8650000095367432,
+      0.8600000143051147,
+      1.0
+    ],
+    "roughness": 0.2199999988079071,
+    "metallic": 0.0,
+    "transmission": 0.0,
+    "ior": 1.5,
+    "blenderProcedural": true,
+    "webOverride": "UV atlas PBR base colour",
+    "portableTexture": {
+      "high": "01_SOURCE/materials/white-marble-atlas.png",
+      "highSize": [
+        2048,
+        2048
+      ],
+      "web": "01_SOURCE/materials/white_marble-web.png",
+      "webSize": [
+        1024,
+        1024
+      ],
+      "type": "UV base colour; master-only procedural bump"
+    }
+  },
+  {
+    "name": "LIGHT_STONE",
+    "baseColor": [
+      0.8399999737739563,
+      0.8450000286102295,
+      0.8299999833106995,
+      1.0
+    ],
+    "roughness": 0.3100000023841858,
+    "metallic": 0.0,
+    "transmission": 0.0,
+    "ior": 1.5,
+    "blenderProcedural": false,
+    "webOverride": "Standard PBR"
+  },
+  {
+    "name": "DARK_STONE",
+    "baseColor": [
+      0.23000000417232513,
+      0.23499999940395355,
+      0.23499999940395355,
+      1.0
+    ],
+    "roughness": 0.28999999165534973,
+    "metallic": 0.0,
+    "transmission": 0.0,
+    "ior": 1.5,
+    "blenderProcedural": true,
+    "webOverride": "UV atlas PBR base colour",
+    "portableTexture": {
+      "high": "01_SOURCE/materials/gray-marble-atlas.png",
+      "highSize": [
+        1024,
+        1024
+      ],
+      "web": "01_SOURCE/materials/dark_stone-web.png",
+      "webSize": [
+        512,
+        512
+      ],
+      "type": "UV base colour; master-only procedural bump"
+    }
+  },
+  {
+    "name": "REFLECTIVE_METAL",
+    "baseColor": [
+      0.07500000298023224,
+      0.08500000089406967,
+      0.09000000357627869,
+      1.0
+    ],
+    "roughness": 0.20000000298023224,
+    "metallic": 0.9200000166893005,
+    "transmission": 0.0,
+    "ior": 1.5,
+    "blenderProcedural": false,
+    "webOverride": "Standard PBR"
+  }
+]

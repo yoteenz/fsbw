@@ -1,0 +1,42 @@
+{
+  "job": {
+    "jobId": "job-site00-v2-loop-1791519615662",
+    "assignmentId": "site00-v2-loop-1791519615662",
+    "backend": "BLENDER_LOCAL",
+    "status": "SUCCEEDED",
+    "phasesCompleted": [
+      "PREPARE_ASSIGNMENT",
+      "VALIDATE_INPUTS",
+      "AUTHORIZE_EXECUTION",
+      "DISPATCH_JOB",
+      "TRACK_STATUS",
+      "COLLECT_OUTPUTS",
+      "VERIFY_OUTPUTS",
+      "REGISTER_LINEAGE",
+      "PREPARE_REVIEW"
+    ],
+    "blenderBin": "/home/ubuntu/.tools/blender-5.2.2-linux-x64/blender",
+    "blenderVersion": "5.2.2 LTS",
+    "startedAt": "2026-10-09T04:20:15.663Z",
+    "finishedAt": "2026-10-09T04:20:16.260Z",
+    "exitCode": 0,
+    "stdoutLogPath": "/workspace/src/studio-os-core/world-fabrication-engine/benchmarks/site00-build-object-v2/execution-runs/pipeline-activation1/blender-local-proof/return-package/logs/blender-stdout.log",
+    "stderrLogPath": "/workspace/src/studio-os-core/world-fabrication-engine/benchmarks/site00-build-object-v2/execution-runs/pipeline-activation1/blender-local-proof/return-package/logs/blender-stderr.log",
+    "returnPackageRoot": "/workspace/src/studio-os-core/world-fabrication-engine/benchmarks/site00-build-object-v2/execution-runs/pipeline-activation1/blender-local-proof/return-package",
+    "codexDispatch": "BLOCKED",
+    "errors": []
+  },
+  "evidence": {
+    "handoffPrepared": true,
+    "jobDispatched": true,
+    "blenderExecuted": true,
+    "outputsVerified": true,
+    "returnIngested": true,
+    "founderReviewReady": true,
+    "classification": "PARTIAL_BLENDER_VERIFIED"
+  },
+  "verify": {
+    "ok": true,
+    "errors": []
+  }
+}

@@ -55733,3 +55733,113 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
   - public website (separate)
   - the 12 privacy gaps (still OPEN)
 - **Review:** https://claude.ai/artifact/DKYZUHjSdiTw1qSC1evdbk (version 3). **Next gate:** FOUNDER REVIEW OF AIO OFFICE MATERIAL, MOTION AND DETAIL POLISH.
+
+---
+
+## 2026-10-08 — P0 Studio OS World Fabrication Engine V1 foundation
+
+- **Context:** Sprint `P0.STUDIOOS.WORLD-FABRICATION-ENGINE.V1-PRODUCTION-CONTRACT-AND-PIPELINE-FOUNDATION1` — World Fabrication Engine as Studio OS production capability for SITE 00 BLDR→WORLD; contracts only (no paid Artlist, no navigable world built, no workspace UI redesign).
+
+- **Shipped:** `src/studio-os-core/world-fabrication-engine/` (stages 00–14, founder approval gates, cost control + production-governance bridge, asset lineage, massing provider contract, Codex/Blender/Unreal/web handoffs, job manifest service, SITE 00 Build Object example manifest, 14 vitest tests). Docs: `docs/studio-os/world-fabrication-engine/` (discovery report + 7 contract docs + README). Astréa Test 01 spec: `WORLD_FABRICATION_ASTRA_TEST01.md`.
+
+- **Reuse:** production-governance, governed-generation patterns, studio-asset-registry/compiler canon, SITE 00 + `astra-context/` — **0** new Supabase tables.
+
+- **Branch:** `cursor/studioos-world-fabrication-engine-v1-foundation1-21dc` from `origin/master` @ `cdd43dfbf`. Not merged/deployed.
+
+---
+
+## 2026-10-08 — WFE V1 professional game-art production standards extension
+
+- **Context:** Follow-up sprint `P0.STUDIOOS.WORLD-FABRICATION-ENGINE.V1-PROFESSIONAL-GAME-ART-PRODUCTION-STANDARDS-AND-PIPELINE-EXTENSION1` stacked on foundation PR **#49** (`93fc92e1d`, still OPEN vs `master` @ `cdd43dfbf`).
+
+- **Shipped:** `src/studio-os-core/world-fabrication-engine/technical-art/` — production lanes (environment/character/prop), conditional production profiles (Astréa entrance, SITE 00 Build Object web, Studio World env/character), geometry/UV/texture/material/baking contracts, modular kits, collision/nav/LOD, character rig/animation metadata, engine delivery profiles, asset package completeness (`PRESENT`/`MISSING`/…), conditional quality gates, Codex handoff extension, SITE 00 technical audit + example JSON. Extended `cost-control.ts` with `FabricationTechnicalArtCostCategory`. **13** new vitest tests (**27** total WFE); foundation **14** tests preserved; **17** production-governance tests pass; `npm run build` pass.
+
+- **Docs:** `docs/studio-os/world-fabrication-engine/` — 10 new technical-art docs + README index update.
+
+- **Limits:** Contract/validator only — no Blender/Unreal/Maya execution, no paid generation, no DB tables, no resident fabrication, no deploy.
+
+- **Branch:** `cursor/studioos-world-fabrication-engine-v1-game-art-standards1-21dc` → stacked PR base **foundation branch** until #49 merges.
+
+---
+
+## 2026-10-08 — WFE V1 Codex/Blender asset package benchmark (SITE 00 Build Object V2)
+
+- **Context:** Sprint `P0.STUDIOOS.WORLD-FABRICATION-ENGINE.V1-CODEX-BLENDER-ASSET-PACKAGE-BENCHMARK1` — first **real-file** WFE benchmark using uploaded `SITE00_Build_Object_V2_Under4MB` zip (17 files; reduced vs full review package per README).
+
+- **PR dependency:** #49 and #50 remain **OPEN**; continued on stacked branch `cursor/studioos-wfe-v1-codex-blender-benchmark1-21dc` from #50 @ `553e8b3dc`.
+
+- **Shipped:** `package-ingestion/` — inventory+SHA256, **real GLB JSON-chunk parser** (Web GLB verified: 63 meshes, 5700 tris, sha256 `813f0646…`), ingest workflow, lineage, readiness report, Codex return-path verification (`IMPORT_RETURN_PATH_ONLY`). Benchmark reports under `benchmarks/site00-build-object-v2/reports/`. **7** ingestion tests + **51** total WFE-related tests pass; build pass.
+
+- **Blocked / not verified:** Blender CLI absent (`.blend` checks **BLOCKED**); Unreal **NOT TESTED**; full renders/comparisons/High GLB/FBX **MISSING** in reduced archive; founder approval **PENDING** (visual fidelity PARTIAL per package docs).
+
+- **Docs:** `PACKAGE_INGESTION_BENCHMARK_V1.md`.
+
+---
+
+## 2026-10-08 — WFE full asset validation + Blender execution loop (SITE 00 V2)
+
+- **Context:** Sprint `P0.STUDIOOS.WORLD-FABRICATION-ENGINE.V1-FULL-ASSET-VALIDATION-AND-CODEX-BLENDER-EXECUTION-LOOP1`. PRs **#49/#50/#51** remain **OPEN**; work stacked on #51 @ `2ba5e3673`.
+
+- **Full package:** **NOT AVAILABLE** in runtime — only Under4MB zip (17 files); `full-package-missing-manifest.json` lists missing High GLB, FBX, renders, comparisons.
+
+- **Blender:** Installed **Blender 5.2.2 LTS** at `/home/ubuntu/.tools/blender-5.2.2-linux-x64/blender` (required for Zstd `.blend`). **REAL EXECUTION PASS** — opens V2 master, exports execution test GLB, `wfe-blender-execution-report.json`. Original `validate_v2.py` **FAIL** on reduced fixture (missing High.glb). Codex programmatic dispatch: **BLOCKED**.
+
+- **Shipped:** `execution/` adapter (assignment, authorize, dispatch, verify, ingest loop), `wfe_blender_benchmark_runner.py`, benchmark artifacts under `execution-runs/2026-10-08-loop1/`. Tests **57** WFE-related pass (6 execution, incl. real Blender integration).
+
+- **Status:** **PARTIAL** — Blender + return ingestion verified; **FULL_LOOP** not verified (Codex dispatch blocked; full review zip missing).
+
+- **Docs:** `FABRICATION_EXECUTION_LOOP_V1.md`.
+
+---
+
+## 2026-10-09 — WFE Codex dispatch integration + full V2 package intake
+
+- **Context:** Sprint `P0.STUDIOOS.WORLD-FABRICATION-ENGINE.V1-FULL-V2-REVIEW-PACKAGE-INGEST-AND-CODEX-DISPATCH-INTEGRATION1`. PRs **#49–#52** still **OPEN**; stacked from #52 @ `ae6b383b1`.
+
+- **Codex:** Verified **`@openai/codex` CLI 0.162.0** (`npx @openai/codex exec`); **auth BLOCKED** (401) without cloud secrets — dispatch adapter returns `AWAITING_EXTERNAL_EXECUTION`, not fake DISPATCHED. Local Blender remains separate backend.
+
+- **Full V2 zip:** **MISSING** in runtime; intake path `benchmarks/site00-build-object-v2/incoming/` + `WFE_FULL_V2_PACKAGE_PATH`; `validate_v2.py` **BLOCKED** until full package (High GLB + FBX).
+
+- **Shipped:** `codex-discovery.ts`, `codex-dispatch-adapter.ts`, `artifact-intake.ts`, `fabrication-pipeline.ts`, reports under `execution-runs/codex-dispatch-integration1/`. **64** WFE tests pass (incl. real pipeline + Blender).
+
+- **Status:** **PARTIAL — DISPATCH BLOCKED**; `FULL_LOOP_VERIFIED: NO`. Shadow PC / Unreal **NOT_AVAILABLE** / **NOT_TESTED**.
+
+---
+
+## 2026-10-09 — WFE Codex production pipeline activation (execution bridge)
+
+- **Context:** Sprint `P0.STUDIOOS.WORLD-FABRICATION-ENGINE.V1-CODEX-DISPATCH-AND-PRODUCTION-PIPELINE-ACTIVATION1`. PR stack **#49–#53 OPEN** (#49 **CONFLICTING** with master); continued on **`cursor/studioos-wfe-v1-codex-pipeline-activation1-21dc`** stacked on #53.
+
+- **Codex interface:** Supported **`@openai/codex` CLI 0.162.0** via `npx`; **auth BLOCKED** (401) without `OPENAI_API_KEY` in cloud secrets — not a missing endpoint.
+
+- **Shipped:** `execution-bridge.ts` (`activateProductionPipeline`), `codex-fabrication-proof.test.ts`, npm script **`wfe:codex-fabrication-proof`**, external handoff bundle (`external-handoff/RUN_EXTERNAL_CODEX_HANDOFF.sh`), evidence under `execution-runs/pipeline-activation1/`. **47** WFE + **17** governance tests pass; build pass.
+
+- **Verified locally (not Codex):** Blender **5.2.2** execution test GLB sha256 `516c1ef2…`, Studio OS ingest + lineage; founder review **PENDING — V2 REVISE**.
+
+- **Founder unblock:** Add **`OPENAI_API_KEY`** in Cursor Cloud Agent secrets → **`npm run wfe:codex-fabrication-proof`**.
+
+- **Status:** **PARTIAL — CODEX CONNECTION REQUIRED**; `FULL_LOOP_VERIFIED: NO`. Full `SITE00_Build_Object_V2_Review_Package.zip` still **MISSING**.
+
+
+---
+
+## 2026-10-09 — WFE asset recovery + Codex dispatch fix + full loop proof
+
+- **Context:** Sprints `P0.STUDIOOS.CODEX-AUTH-FRESH-ENVIRONMENT-VERIFICATION1`, `P0.STUDIOOS.WFE.V1-FIRST-AUTHENTICATED-CODEX-FABRICATION-PROOF1`, and `P0.STUDIOOS.WFE.V1-FABRICATION-PROOF-ASSET-RECOVERY-AND-EXECUTION-DIAGNOSTIC1` on branch `cursor/studioos-wfe-v1-codex-auth-unblock1-21dc`.
+- **Codex auth:** `OPENAI_API_KEY` present; `codex login --with-api-key` + `login status` VERIFIED (non-billable probes).
+- **Fixture recovery:** Attached `SITE00_Build_Object_V2_Under4MB_cfff.zip` (sha256 `82c98b0f…`) copied to `incoming/`, safe-extracted to `fixture/`; all 17 inventory file hashes PASS; blend + module-manifest present.
+- **Prior Codex failure root causes:** (1) missing fixture on fresh pod; (2) `spawnSync` default **maxBuffer** exceeded → child killed (`exitCode: null`, stderr tail from truncated Codex/MEMORY output); (3) invalid `codex exec` flags (`-a` / `--ask-for-approval` not supported on `exec` subcommand).
+- **Fixes:** `codex-dispatch-adapter.ts` — stdin prompt, `-s workspace-write`, `-C` repo root, configurable timeout/maxBuffer, receipt records signal/spawnError; proof test timeout 900s; Blender timeout 180s default.
+- **Proof run:** `npm run wfe:codex-fabrication-proof` PASS (~165s); Codex exec exit 0; **tokens used 54,102** (receipt stderr); `fullLoopVerified: true`; execution test GLB sha256 `516c1ef2…` (codex-return + blender-local); lineage registered; founder review **PENDING — V2 REVISE**; validate_v2.py PARTIAL (missing High GLB in reduced archive).
+- **Deploy:** none; benchmark binaries not committed.
+
+---
+
+## 2026-10-09 — WFE PR stack consolidation onto master baseline
+
+- **Context:** Sprint `P0.STUDIOOS.WFE.V1-PR-STACK-CONSOLIDATION-AND-PRODUCTION-BASELINE1` — merge verified WFE tip (`752cb4df8` auth-unblock) onto current `master` (`b488a7eee`) via branch `cursor/studioos-wfe-v1-pr-stack-consolidation1-8c25`.
+- **PR chain #49–#54:** all **OPEN** draft; #49 **CONFLICTING** with master (DIRTY); #50–#54 **MERGEABLE** within stack; auth/dispatch fix lives on auth-unblock **after** #54 tip, not in #54 alone.
+- **Reconciliation:** single merge of auth-unblock into master branch; only conflict **motherboard/MEMORY.md** (resolved — preserve AIO + WFE timelines).
+- **Canonical baseline:** consolidation branch SHA (post-merge); **not on master** until founder merges consolidation PR / stack.
+- **Fixture:** documented procedure in `BENCHMARK_FIXTURE_ACQUISITION_V1.md`; no binary commit; sha256 `82c98b0f…` Under4MB archive.
+- **No billable Codex** during consolidation; historic proof remains `752cb4df8` evidence.

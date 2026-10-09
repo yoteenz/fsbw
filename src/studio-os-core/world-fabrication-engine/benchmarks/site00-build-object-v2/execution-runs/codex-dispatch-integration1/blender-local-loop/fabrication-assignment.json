@@ -1,0 +1,97 @@
+{
+  "assignmentId": "site00-v2-loop-1791508220301",
+  "projectId": "site00",
+  "assetId": "site00_bld_object_v2",
+  "fabricationVersion": "codex-blender-v2",
+  "productionLane": "PROP_INTERACTIVE_OBJECT_ART",
+  "targetRuntime": "WEB_3D",
+  "secondaryProfile": "UNREAL_WORLD",
+  "packageRoot": "/workspace/src/studio-os-core/world-fabrication-engine/benchmarks/site00-build-object-v2/fixture",
+  "returnRoot": "/workspace/src/studio-os-core/world-fabrication-engine/benchmarks/site00-build-object-v2/execution-runs/codex-dispatch-integration1/blender-local-loop/return-package",
+  "approvedReferenceIds": [
+    "approved-blueprint-reference"
+  ],
+  "sourceAssetRefs": [
+    "01_SOURCE/SITE00_Build_Object_V2.blend"
+  ],
+  "expectedDeliverables": [
+    "02_EXPORTS/SITE00_Build_Object_V2_ExecutionTest_Web.glb",
+    "05_DOCUMENTATION/wfe-blender-execution-report.json"
+  ],
+  "performanceProfile": "web-prop-default",
+  "executionBudget": {
+    "allowPaidGeneration": false,
+    "maxAttempts": 1
+  },
+  "founderApprovalGate": "FOUNDER_VISUAL_APPROVAL",
+  "handoff": {
+    "handoffId": "handoff-site00-v2-loop-1791508220301",
+    "manifestId": "site00-build-object-v2-benchmark",
+    "approvedReferenceAssets": [
+      "approved-blueprint-reference"
+    ],
+    "spatialSpecificationRef": "site00-build-object-spatial",
+    "expectedModuleHierarchy": [
+      "BUILD_OBJECT_ROOT"
+    ],
+    "materialDefinitionsRef": "05_DOCUMENTATION/material-manifest.json",
+    "cameraTargets": [
+      "CAM_REFERENCE_MATCH"
+    ],
+    "exportRequirements": [
+      "GLB",
+      "BLEND"
+    ],
+    "qualityRequirements": [
+      "module naming",
+      "structural validation"
+    ],
+    "performanceConstraints": [
+      "web triangle budget"
+    ],
+    "allowedModificationScope": "validation-and-test-export-only",
+    "costLimitsRef": "budget-zero",
+    "validationSteps": [
+      "wfe-blender-execution-report.json"
+    ],
+    "expectedReturnPackage": [
+      "execution test GLB",
+      "validation report",
+      "manifest copies"
+    ],
+    "executionEnvironment": "BLENDER_LOCAL",
+    "technicalArt": {
+      "extensionVersion": "1.0",
+      "expectedPackageFolders": [
+        "00_MANIFEST",
+        "01_REFERENCES",
+        "02_SOURCE_MODELS",
+        "11_EXPORTS",
+        "07_MATERIALS",
+        "12_RENDERS_AND_QA"
+      ],
+      "productionLane": "PROP_INTERACTIVE_OBJECT_ART",
+      "productionProfileId": "SITE00_BUILD_OBJECT_WEB_3D",
+      "deliveryProfileId": "WEB_3D",
+      "assetClassificationRef": "site00_bld_object_v2",
+      "geometryRequirements": [],
+      "topologyRequirements": [
+        "NONEMPTY_GEOMETRY",
+        "EXPECTED_MODULE_NAMES"
+      ],
+      "uvRequirements": [],
+      "textureRequirements": [],
+      "materialDefinitions": [],
+      "collisionRequirements": [],
+      "lodRequirements": [],
+      "validationChecklist": [
+        "masterOpens",
+        "masterMaterialsPresent",
+        "webGlbIntegrity"
+      ],
+      "reviewRenderRequirements": [],
+      "executionCapabilityStatus": "CONTRACT_ONLY"
+    }
+  },
+  "createdAt": "2026-10-09T01:10:20.301Z"
+}

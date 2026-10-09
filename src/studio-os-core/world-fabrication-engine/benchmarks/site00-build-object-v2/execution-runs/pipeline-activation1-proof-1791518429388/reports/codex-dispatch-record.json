@@ -1,0 +1,17 @@
+{
+  "dispatchId": "dispatch-activation-1791518429388",
+  "assignmentId": "activation-1791518429388",
+  "projectId": "site00",
+  "state": "FAILED",
+  "authorizationRef": "wfe-budget-zero-activation-1791518429388",
+  "expectedOutputs": [
+    "02_EXPORTS/SITE00_Build_Object_V2_ExecutionTest_Web.glb",
+    "05_DOCUMENTATION/wfe-blender-execution-report.json"
+  ],
+  "errors": [
+    "Codex exec did not complete successfully"
+  ],
+  "attemptNumber": 1,
+  "dispatchTimestamp": "2026-10-09T04:00:36.535Z",
+  "executionReceiptPath": "src/studio-os-core/world-fabrication-engine/benchmarks/site00-build-object-v2/execution-runs/pipeline-activation1-proof-1791518429388/codex-work/codex-execution-receipt.json"
+}

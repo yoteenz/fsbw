@@ -1,0 +1,67 @@
+{
+  "manifestId": "wf-job-site00-build-object-poc-v1",
+  "manifestVersion": "world-fabrication-v1",
+  "proofEnvironment": "SITE00_BUILD_OBJECT",
+  "description": "Representative SITE 00 BLDR Build Object fabrication experiment — reported V1 measurements, not universal targets.",
+  "project": {
+    "worldProjectId": "site00-bldr-build-object-poc",
+    "organizationId": "site00-client-commission",
+    "site00ProjectId": "bldr-world-commission",
+    "title": "SITE 00 Builder Build Object — architectural massing POC"
+  },
+  "visualAuthority": {
+    "authorityId": "va-site00-build-object-hero-arch",
+    "sourceType": "APPROVED_ENVIRONMENT_IMAGE",
+    "approvalStatus": "APPROVED",
+    "assetReference": "commission:approved-architectural-reference-image",
+    "scope": "Single approved architectural image — massing input only"
+  },
+  "spatialSpecSummary": {
+    "zoneType": "BUILD_OBJECT",
+    "targetRuntime": "WEB_THREEJS",
+    "referenceUncertainties": [
+      { "subject": "Hidden rear geometry", "certainty": "DESIGN_INFERRED" },
+      { "subject": "Exact structural dimensions", "certainty": "ENGINEERING_REQUIRED" }
+    ]
+  },
+  "massingExperiment": {
+    "provider": "ARTLIST",
+    "model": "hyper3d-rodin-v2.5-fast",
+    "role": "MASSING_PROVIDER",
+    "paidExecutionAuthorized": false,
+    "reportedLimitations": [
+      "Simplified geometry",
+      "Reduced reference fidelity",
+      "Incorrect transparency interpretation",
+      "Fused architectural structures",
+      "Material inaccuracies",
+      "Limited architectural precision"
+    ]
+  },
+  "codexReconstructionReportedBaseline": {
+    "meshObjects": 69,
+    "materials": 6,
+    "trianglesApprox": 7452,
+    "glbSizeBytesApprox": 1190000,
+    "note": "Historical reported measurements — V2 reference-fidelity reconstruction assigned separately; NOT marked complete"
+  },
+  "stagePath": [
+    "STAGE_00",
+    "STAGE_01",
+    "STAGE_02",
+    "STAGE_04",
+    "STAGE_05",
+    "STAGE_06",
+    "STAGE_07",
+    "STAGE_08",
+    "STAGE_13"
+  ],
+  "lineageExample": [
+    "ORIGINAL_REFERENCE",
+    "AI_MASSING_SOURCE",
+    "FABRICATION_SOURCE",
+    "APPROVED_MASTER",
+    "RUNTIME_EXPORT"
+  ],
+  "deploymentAuthorized": false
+}

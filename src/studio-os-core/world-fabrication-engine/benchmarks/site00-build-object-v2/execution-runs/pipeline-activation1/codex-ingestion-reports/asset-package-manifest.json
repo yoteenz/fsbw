@@ -1,0 +1,42 @@
+{
+  "packageId": "pkg-site00_bld_object_v2_codex_return-v2",
+  "assetId": "site00_bld_object_v2_codex_return",
+  "productionLane": "PROP_INTERACTIVE_OBJECT_ART",
+  "productionProfileId": "SITE00_BUILD_OBJECT_WEB_3D",
+  "version": "codex-blender-v2",
+  "authorityRefs": [
+    "approved-blueprint-reference",
+    "artlist-rodin-massing"
+  ],
+  "folderPresence": {
+    "00_MANIFEST": "MISSING",
+    "02_SOURCE_MODELS": "MISSING",
+    "07_MATERIALS": "MISSING",
+    "11_EXPORTS": "PRESENT",
+    "12_RENDERS_AND_QA": "MISSING"
+  },
+  "deliverableCompleteness": {
+    "source_blend": "MISSING",
+    "runtime_glb": "PRESENT",
+    "runtime_fbx": "MISSING",
+    "material_definitions": "PRESENT",
+    "validation_report": "MISSING",
+    "package_manifest": "MISSING",
+    "review_renders": "MISSING",
+    "uv_layout": "UNVERIFIED",
+    "pbr_texture_set": "UNVERIFIED",
+    "collision_mesh": "NOT_REQUIRED",
+    "interaction_anchors": "UNVERIFIED",
+    "skeleton": "NOT_APPLICABLE",
+    "skin_weights": "NOT_APPLICABLE",
+    "animation_clips": "NOT_APPLICABLE",
+    "navigation_metadata": "NOT_APPLICABLE",
+    "engine_import_config": "UNVERIFIED",
+    "lod_meshes": "NOT_REQUIRED",
+    "high_poly_mesh": "MISSING"
+  },
+  "knownLimitations": [
+    "Fixture appears to be a reduced archive (missing 6 paths from full review package README)"
+  ],
+  "approvalState": "FOUNDER_REVIEW_PENDING"
+}

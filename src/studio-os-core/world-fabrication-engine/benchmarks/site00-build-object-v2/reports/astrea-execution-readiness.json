@@ -1,0 +1,17 @@
+{
+  "reportId": "astrea-execution-readiness-post-codex-integration-sprint",
+  "site00BenchmarkProves": [
+    "Blender 5.2 execution",
+    "Return package ingestion",
+    "Codex CLI discovery",
+    "Explicit dispatch blocked state when unauthenticated"
+  ],
+  "astreaStillRequires": [
+    "Environment-art fabrication assignment at entrance threshold scale",
+    "Navigation and collision evidence",
+    "Unreal world assembly validation",
+    "Authorized Codex or Shadow PC dispatch with credentials",
+    "Founder visual approval on environment geometry"
+  ],
+  "fullNavigableWorldValidated": false
+}
