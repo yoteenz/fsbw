@@ -55444,3 +55444,14 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Responsive:** ≥700px one stack; ≥1120px main column + sticky side column (next steps, notes, action).
 - **Verified:** 113/113 functional and boundary checks (all 35 screens, three full flows, batch run, no horizontal scroll at 390/768/1440), original 23/23, unit tests 46 passed (3 DB skipped), build OK.
 - **Review gallery:** https://claude.ai/artifact/1rPbngoDNkMNwTg695HUZQ (`npm run migration:gallery`). Links in `docs/migration-recovery/MOCKS.md`.
+
+---
+
+## 2026-10-09 — AIO Workflow Journal operating-authority pilot
+
+- **Context:** Recover Studio Institute Expert Capture and build a first Workflow Journal for AIO. Research first, the expert corrects, the owner approves. Do not start a second platform. Do not deploy. Do not change AIO Office, migration, or IFTA.
+- **Recovery:** Expert Capture, permitting and tax profiles, invites, Knowledge Vault, and Workflow Engine V1 are still in the repo. Sessions and recordings still begin on the device. Server save exists for expert capture only when its migration and service role are present. The old interview files were not rewritten. `/expert-capture`, permitting, and tax preparation still render.
+- **Pilot:** `/workflow-journal/review` is one operating-authority review. Quick review, a typed “just tell me” mode, and `.txt` / `.md` file import. Audio recording is not advertised. PDF is refused. Private notes have visibility labels, and another organization cannot read them. Owner approval does not grant worker use and does not execute a workflow. Drafts save in `sessionStorage` and say so. The SQL migration is in the repo and was not applied.
+- **Research:** Twelve service families are in `src/studio-os-core/workflow-journal/research/service-library.ts`. Brokerage is paused. Only permitting is interactive. Fees and the BOC-3 rules come from FMCSA pages read on 2026-10-09. Insurance dollar minimums were not copied because that page fetch timed out.
+- **Checks:** Journal tests 6/6. `tsc --noEmit` passed. Production build passed. Phone, tablet, and desktop screenshots were taken. Spatial review score 4.0, placed in Studio Institute, not a new dashboard.
+- **Conventions:** Keep researched wording next to the expert’s words. Do not treat a draft as an approved procedure. Do not activate brokerage. Do not expand the interactive journal to the other eleven families before founder review.
