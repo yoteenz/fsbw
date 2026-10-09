@@ -55765,3 +55765,12 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Runtime note:** The FS named Cloudflare token routes to **localhost:3001**. Port 3001 must run **AIO Vite** from `all-in-one-enterprises` with the same tunnel-hostname env the Cloud Agent uses for mobile preview (see AGENTS.md) so Vite allows the public host — not the old `/tmp/aio-public-server.mjs` static dist at `/`. AIO dev on **5173** serves the same paths but is a separate tunnel unless Zero Trust points the hostname there.
 - **Explicitly not done:** No root wiring, no vite config edits in repo, no deploy, no brokerage/auth/prices/privacy work.
 - **Fix (2026-10-09):** Homepage START / OPERATE / MAINTAIN tabs (`data-a="eco"`) now patch the eco section in place instead of full `draw()` — no page flash or scroll jump on mobile preview.
+
+---
+
+## 2026-10-09 — AIO public design: all tab rails patch in place
+
+- **Context:** Founder reported tapping START / OPERATE / MAINTAIN and **THE JOURNEY** stage tabs (01–06 on Start Your Business) felt like a full page refresh (nav, hero, footer redraw; scroll jump). Same pattern needed everywhere the public design uses tab / pick actions.
+- **Change:** `all-in-one-enterprises/design-authority/aio-public/site.js` — patch helpers update only the relevant panel (`patchHomeEco`, `patchHomeExplore`, `patchSybJourney`, `patchGuideTab`, `patchSxExplorer`, `patchSxMore`, `patchServicesFam`, `patchFinderNeed`, `patchGetStarted`, `patchGetStartedForm`); ACT handlers call patch first and fall back to `draw()` only when not on that page. Rebuilt `design-authority/aio-public/preview/` via `build.mjs`.
+- **Covers:** Homepage eco + explore pathways; `/start-your-business` journey rail; `/roadmap` compliance guide families; `/services` family filter + search; `/services/find` need toggles; division explorer pick/more; `/get-started` rail and form steps.
+- **Checks:** Headless Chromium at 390×844 — SYB stage 03 keeps hero node and scroll; eco tab at `#begin` keeps scroll; roadmap guide tab keeps hero. Branch `cursor/guided-apprenticeship-foundation-1087`; `[sync-only]`, no deploy.

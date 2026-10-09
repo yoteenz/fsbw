@@ -129,9 +129,11 @@ for (const [src, dst, w, kind] of jobs) {
 }
 if (resize.length) {
   const py = `import json,sys\nfrom PIL import Image\nfor src,dst,w in json.loads(sys.argv[1]):\n  im=Image.open(src).convert('RGB')\n  if im.width>w: im=im.resize((w,round(im.height*w/im.width)),Image.LANCZOS)\n  im.save(dst,'JPEG',quality=82,optimize=True,progressive=True)`;
-  execFileSync('python3', ['-I', '-c', py, JSON.stringify(resize)], { stdio: 'inherit' });
+  execFileSync('python3', ['-c', py, JSON.stringify(resize)], { stdio: 'inherit' });
 }
 writeFileSync(join(OUT, 'index.html'), html);
-writeFileSync(join(OUT, 'local.html'), `<!doctype html>\n<html lang="en">\n<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"></head>\n<body>\n${html}</body>\n</html>\n`);
+const localDoc = `<!doctype html>\n<html lang="en">\n<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"></head>\n<body>\n${html}</body>\n</html>\n`;
+writeFileSync(join(OUT, 'local.html'), localDoc);
+writeFileSync(join(OUT, 'site.html'), localDoc);
 writeFileSync(join(OUT, 'files.json'), JSON.stringify(jobs.map(([, dst]) => dst.slice(OUT.length + 1)), null, 1));
 console.log(`built ${join(OUT, 'index.html')} (${(html.length / 1024).toFixed(0)} KB) + ${jobs.length} images (${resize.length} resized)`);
