@@ -1,0 +1,94 @@
+{
+  "materials": [
+    {
+      "name": "Anodized crimson edge",
+      "base_color": [
+        0.5,
+        0.006000000052154064,
+        0.012000000104308128,
+        1.0
+      ],
+      "roughness": 0.1899999976158142,
+      "transmission": 0.0,
+      "ior": 1.4500000476837158
+    },
+    {
+      "name": "Brushed platinum",
+      "base_color": [
+        0.2800000011920929,
+        0.3199999928474426,
+        0.3400000035762787,
+        1.0
+      ],
+      "roughness": 0.23000000417232513,
+      "transmission": 0.0,
+      "ior": 1.4500000476837158
+    },
+    {
+      "name": "Low iron architectural glass",
+      "base_color": [
+        0.9750000238418579,
+        0.9929999709129333,
+        1.0,
+        1.0
+      ],
+      "roughness": 0.04500000178813934,
+      "transmission": 1.0,
+      "ior": 1.4600000381469727
+    },
+    {
+      "name": "Porcelain | neutral white",
+      "base_color": [
+        0.8199999928474426,
+        0.8399999737739563,
+        0.8500000238418579,
+        1.0
+      ],
+      "roughness": 0.23999999463558197,
+      "transmission": 0.0,
+      "ior": 1.4500000476837158
+    },
+    {
+      "name": "Scale figures | graphite",
+      "base_color": [
+        0.08500000089406967,
+        0.0949999988079071,
+        0.10499999672174454,
+        1.0
+      ],
+      "roughness": 0.5,
+      "transmission": 0.0,
+      "ior": 1.4500000476837158
+    },
+    {
+      "name": "Scarlet optical acrylic",
+      "base_color": [
+        1.0,
+        0.04500000178813934,
+        0.06499999761581421,
+        1.0
+      ],
+      "roughness": 0.02500000037252903,
+      "transmission": 1.0,
+      "ior": 1.4600000381469727
+    },
+    {
+      "name": "White veined marble",
+      "base_color": [
+        0.8999999761581421,
+        0.8999999761581421,
+        0.8999999761581421,
+        1.0
+      ],
+      "roughness": 0.23999999463558197,
+      "transmission": 0.0,
+      "ior": 1.4500000476837158
+    }
+  ],
+  "marble_texture": {
+    "file": "white-marble-veins.png",
+    "source": "repository public/assets/marble-half.png",
+    "packed_in_blend": true,
+    "embedded_in_glb": true
+  }
+}

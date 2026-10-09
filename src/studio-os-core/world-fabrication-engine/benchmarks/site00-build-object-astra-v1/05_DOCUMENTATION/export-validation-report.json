@@ -1,0 +1,1464 @@
+{
+  "blender_version": "5.2.2 LTS",
+  "source": "evaluated Blender meshes, render stage excluded",
+  "mesh_object_count": 277,
+  "material_count": 7,
+  "triangles": 228996,
+  "vertices": 115052,
+  "triangle_target": [
+    50000,
+    250000
+  ],
+  "triangle_budget_pass": true,
+  "collections": [
+    "SITE00_BUILD_OBJECT",
+    "ARCHITECTURE",
+    "GLASS_VOLUMES",
+    "RED_PORTAL",
+    "INTERIOR_STRUCTURE",
+    "FLOOR_PLATES",
+    "MARBLE_PLINTH",
+    "METAL_DETAILS",
+    "LIGHTING",
+    "CAMERAS",
+    "MATERIALS"
+  ],
+  "objects": [
+    {
+      "name": "Veined vertical fin 00",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Veined vertical fin 01",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Veined vertical fin 02",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Veined vertical fin 03",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "West low gallery front pane 0",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "West low gallery front pane 1",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "West low gallery front pane 2",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "West low gallery back pane 0",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "West low gallery back pane 1",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "West low gallery back pane 2",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "West low gallery left glass",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "West low gallery right glass",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "West low gallery roof",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Central atrium front pane 0",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Central atrium front pane 1",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Central atrium front pane 2",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Central atrium back pane 0",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Central atrium back pane 1",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Central atrium back pane 2",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Central atrium left glass",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Central atrium right glass",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Central atrium roof",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "East stepped gallery front pane 0",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "East stepped gallery front pane 1",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "East stepped gallery front pane 2",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "East stepped gallery back pane 0",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "East stepped gallery back pane 1",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "East stepped gallery back pane 2",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "East stepped gallery left glass",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "East stepped gallery right glass",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "East stepped gallery roof",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Rear lantern front pane 0",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Rear lantern front pane 1",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Rear lantern front pane 2",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Rear lantern back pane 0",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Rear lantern back pane 1",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Rear lantern back pane 2",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Rear lantern left glass",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Rear lantern right glass",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Rear lantern roof",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Entry vestibule front pane 0",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Entry vestibule front pane 1",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Entry vestibule front pane 2",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Entry vestibule back pane 0",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Entry vestibule back pane 1",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Entry vestibule back pane 2",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Entry vestibule left glass",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Entry vestibule right glass",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Entry vestibule roof",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Glass balustrade 0 wing 0",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Glass balustrade 0 wing 1",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Glass balustrade 0 wing 2",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Glass balustrade 1 wing 0",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Glass balustrade 1 wing 1",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Glass balustrade 1 wing 2",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Glass balustrade 2 wing 0",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Glass balustrade 2 wing 1",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Portal thick acrylic blade",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Portal thick acrylic blade.001",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Portal rear light plane",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Portal upper transom",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Portal entry sidelight",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Portal entry sidelight.001",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Portal scarlet perimeter",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Portal scarlet perimeter.001",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Portal scarlet perimeter.002",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Portal scarlet perimeter.003",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Portal front seam",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Portal return seam",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Portal return seam.001",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Portal front seam.001",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Portal return seam.002",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Portal return seam.003",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Portal front seam.002",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Portal return seam.004",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Portal return seam.005",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Portal front seam.003",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Portal return seam.006",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Portal return seam.007",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Portal front seam.004",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Portal return seam.008",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Portal return seam.009",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Portal raised sill",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Slender interior column",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Slender interior column.001",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Slender interior column.002",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Slender interior column.003",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Slender interior column.004",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Slender interior column.005",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Slender interior column.006",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Slender interior column.007",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Slender interior column.008",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Slender interior column.009",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Floating interior partition",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Floating interior partition.001",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Floating interior partition.002",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Human head",
+      "triangles": 440,
+      "vertices": 222
+    },
+    {
+      "name": "Human torso",
+      "triangles": 440,
+      "vertices": 222
+    },
+    {
+      "name": "Human leg",
+      "triangles": 440,
+      "vertices": 222
+    },
+    {
+      "name": "Human arm",
+      "triangles": 440,
+      "vertices": 222
+    },
+    {
+      "name": "Human leg.001",
+      "triangles": 440,
+      "vertices": 222
+    },
+    {
+      "name": "Human arm.001",
+      "triangles": 440,
+      "vertices": 222
+    },
+    {
+      "name": "Human head.001",
+      "triangles": 440,
+      "vertices": 222
+    },
+    {
+      "name": "Human torso.001",
+      "triangles": 440,
+      "vertices": 222
+    },
+    {
+      "name": "Human leg.002",
+      "triangles": 440,
+      "vertices": 222
+    },
+    {
+      "name": "Human arm.002",
+      "triangles": 440,
+      "vertices": 222
+    },
+    {
+      "name": "Human leg.003",
+      "triangles": 440,
+      "vertices": 222
+    },
+    {
+      "name": "Human arm.003",
+      "triangles": 440,
+      "vertices": 222
+    },
+    {
+      "name": "Human head.002",
+      "triangles": 440,
+      "vertices": 222
+    },
+    {
+      "name": "Human torso.002",
+      "triangles": 440,
+      "vertices": 222
+    },
+    {
+      "name": "Human leg.004",
+      "triangles": 440,
+      "vertices": 222
+    },
+    {
+      "name": "Human arm.004",
+      "triangles": 440,
+      "vertices": 222
+    },
+    {
+      "name": "Human leg.005",
+      "triangles": 440,
+      "vertices": 222
+    },
+    {
+      "name": "Human arm.005",
+      "triangles": 440,
+      "vertices": 222
+    },
+    {
+      "name": "Mezzanine 0 wing 0",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Mezzanine 0 wing 1",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Mezzanine 0 wing 2",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Mezzanine 1 wing 0",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Mezzanine 1 wing 1",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Mezzanine 1 wing 2",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Mezzanine 2 wing 0",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Mezzanine 2 wing 1",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Cantilever stair 0 00",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Cantilever stair 0 01",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Cantilever stair 0 02",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Cantilever stair 0 03",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Cantilever stair 0 04",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Cantilever stair 0 05",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Cantilever stair 0 06",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Cantilever stair 0 07",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Cantilever stair 0 08",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Cantilever stair 0 09",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Cantilever stair 0 10",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Cantilever stair 0 11",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Cantilever stair 0 12",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Cantilever stair 1 00",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Cantilever stair 1 01",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Cantilever stair 1 02",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Cantilever stair 1 03",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Cantilever stair 1 04",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Cantilever stair 1 05",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Cantilever stair 1 06",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Cantilever stair 1 07",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Cantilever stair 1 08",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Cantilever stair 1 09",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Cantilever stair 1 10",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Cantilever stair 1 11",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Cantilever stair 1 12",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Recessed underside",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Continuous marble foundation",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Polished upper lip",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "West low gallery front mullion 0",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "West low gallery front mullion 1",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "West low gallery front mullion 2",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "West low gallery front mullion 3",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "West low gallery back mullion 0",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "West low gallery back mullion 1",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "West low gallery back mullion 2",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "West low gallery back mullion 3",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "West low gallery perimeter",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "West low gallery perimeter.001",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "West low gallery return",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "West low gallery return.001",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "West low gallery perimeter.002",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "West low gallery perimeter.003",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "West low gallery return.002",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "West low gallery return.003",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Central atrium front mullion 0",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Central atrium front mullion 1",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Central atrium front mullion 2",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Central atrium front mullion 3",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Central atrium back mullion 0",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Central atrium back mullion 1",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Central atrium back mullion 2",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Central atrium back mullion 3",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Central atrium perimeter",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Central atrium perimeter.001",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Central atrium return",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Central atrium return.001",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Central atrium perimeter.002",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Central atrium perimeter.003",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Central atrium return.002",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Central atrium return.003",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "East stepped gallery front mullion 0",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "East stepped gallery front mullion 1",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "East stepped gallery front mullion 2",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "East stepped gallery front mullion 3",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "East stepped gallery back mullion 0",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "East stepped gallery back mullion 1",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "East stepped gallery back mullion 2",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "East stepped gallery back mullion 3",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "East stepped gallery perimeter",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "East stepped gallery perimeter.001",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "East stepped gallery return",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "East stepped gallery return.001",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "East stepped gallery perimeter.002",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "East stepped gallery perimeter.003",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "East stepped gallery return.002",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "East stepped gallery return.003",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Rear lantern front mullion 0",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Rear lantern front mullion 1",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Rear lantern front mullion 2",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Rear lantern front mullion 3",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Rear lantern back mullion 0",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Rear lantern back mullion 1",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Rear lantern back mullion 2",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Rear lantern back mullion 3",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Rear lantern perimeter",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Rear lantern perimeter.001",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Rear lantern return",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Rear lantern return.001",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Rear lantern perimeter.002",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Rear lantern perimeter.003",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Rear lantern return.002",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Rear lantern return.003",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Entry vestibule front mullion 0",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Entry vestibule front mullion 1",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Entry vestibule front mullion 2",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Entry vestibule front mullion 3",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Entry vestibule back mullion 0",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Entry vestibule back mullion 1",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Entry vestibule back mullion 2",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Entry vestibule back mullion 3",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Entry vestibule perimeter",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Entry vestibule perimeter.001",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Entry vestibule return",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Entry vestibule return.001",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Entry vestibule perimeter.002",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Entry vestibule perimeter.003",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Entry vestibule return.002",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Entry vestibule return.003",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Balustrade cap",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Balustrade cap.001",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Balustrade cap.002",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Balustrade cap.003",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Balustrade cap.004",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Balustrade cap.005",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Balustrade cap.006",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Balustrade cap.007",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Portal vertical pull",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Portal vertical pull.001",
+      "triangles": 972,
+      "vertices": 488
+    },
+    {
+      "name": "Glass standoff",
+      "triangles": 120,
+      "vertices": 62
+    },
+    {
+      "name": "Glass standoff.001",
+      "triangles": 120,
+      "vertices": 62
+    },
+    {
+      "name": "Glass standoff.002",
+      "triangles": 120,
+      "vertices": 62
+    },
+    {
+      "name": "Glass standoff.003",
+      "triangles": 120,
+      "vertices": 62
+    },
+    {
+      "name": "Glass standoff.004",
+      "triangles": 120,
+      "vertices": 62
+    },
+    {
+      "name": "Glass standoff.005",
+      "triangles": 120,
+      "vertices": 62
+    },
+    {
+      "name": "Glass standoff.006",
+      "triangles": 120,
+      "vertices": 62
+    },
+    {
+      "name": "Glass standoff.007",
+      "triangles": 120,
+      "vertices": 62
+    },
+    {
+      "name": "Glass standoff.008",
+      "triangles": 120,
+      "vertices": 62
+    },
+    {
+      "name": "Glass standoff.009",
+      "triangles": 120,
+      "vertices": 62
+    },
+    {
+      "name": "Glass standoff.010",
+      "triangles": 120,
+      "vertices": 62
+    },
+    {
+      "name": "Glass standoff.011",
+      "triangles": 120,
+      "vertices": 62
+    },
+    {
+      "name": "Glass standoff.012",
+      "triangles": 120,
+      "vertices": 62
+    },
+    {
+      "name": "Glass standoff.013",
+      "triangles": 120,
+      "vertices": 62
+    },
+    {
+      "name": "Glass standoff.014",
+      "triangles": 120,
+      "vertices": 62
+    },
+    {
+      "name": "Glass standoff.015",
+      "triangles": 120,
+      "vertices": 62
+    },
+    {
+      "name": "Glass standoff.016",
+      "triangles": 120,
+      "vertices": 62
+    },
+    {
+      "name": "Glass standoff.017",
+      "triangles": 120,
+      "vertices": 62
+    },
+    {
+      "name": "Glass standoff.018",
+      "triangles": 120,
+      "vertices": 62
+    },
+    {
+      "name": "Glass standoff.019",
+      "triangles": 120,
+      "vertices": 62
+    },
+    {
+      "name": "Glass standoff.020",
+      "triangles": 120,
+      "vertices": 62
+    },
+    {
+      "name": "Glass standoff.021",
+      "triangles": 120,
+      "vertices": 62
+    },
+    {
+      "name": "Glass standoff.022",
+      "triangles": 120,
+      "vertices": 62
+    },
+    {
+      "name": "Glass standoff.023",
+      "triangles": 120,
+      "vertices": 62
+    },
+    {
+      "name": "Glass standoff.024",
+      "triangles": 120,
+      "vertices": 62
+    },
+    {
+      "name": "Glass standoff.025",
+      "triangles": 120,
+      "vertices": 62
+    },
+    {
+      "name": "Glass standoff.026",
+      "triangles": 120,
+      "vertices": 62
+    },
+    {
+      "name": "Glass standoff.027",
+      "triangles": 120,
+      "vertices": 62
+    },
+    {
+      "name": "Glass standoff.028",
+      "triangles": 120,
+      "vertices": 62
+    },
+    {
+      "name": "Glass standoff.029",
+      "triangles": 120,
+      "vertices": 62
+    },
+    {
+      "name": "Glass standoff.030",
+      "triangles": 120,
+      "vertices": 62
+    },
+    {
+      "name": "Glass standoff.031",
+      "triangles": 120,
+      "vertices": 62
+    },
+    {
+      "name": "Glass standoff.032",
+      "triangles": 120,
+      "vertices": 62
+    },
+    {
+      "name": "Glass standoff.033",
+      "triangles": 120,
+      "vertices": 62
+    },
+    {
+      "name": "Glass standoff.034",
+      "triangles": 120,
+      "vertices": 62
+    },
+    {
+      "name": "Glass standoff.035",
+      "triangles": 120,
+      "vertices": 62
+    }
+  ],
+  "glb": {
+    "valid_header": true,
+    "bytes": 14847404,
+    "sha256": "51fea6b74954fc1990b2be3861240d29a5dff9f87f2ee8db259324e3722042dc",
+    "mesh_count": 277,
+    "material_count": 7,
+    "triangles": 228996,
+    "matches_evaluated_blender_triangles": true,
+    "extensions_used": [
+      "KHR_materials_transmission",
+      "KHR_materials_ior"
+    ],
+    "embedded_images": 1
+  },
+  "renders": [
+    {
+      "file": "01_HERO_REFERENCE_MATCH.png",
+      "width": 1280,
+      "height": 720,
+      "bytes": 1077133,
+      "sha256": "daaa9f865fc36d0706b47a05cd8c084b7102145831a72a670f130756a9fb45ae"
+    },
+    {
+      "file": "02_FRONT_THREE_QUARTER.png",
+      "width": 1280,
+      "height": 720,
+      "bytes": 1068077,
+      "sha256": "3bac45caafb16f4e5da1eef55ce9e4c3ba3e34d801539b20975c7f702e4bf2b0"
+    },
+    {
+      "file": "03_SIDE_INSPECTION.png",
+      "width": 1280,
+      "height": 720,
+      "bytes": 1031592,
+      "sha256": "8f842f66522ac6f0acfa3ef3022e123a58927ce49eebfc54b3b8a4cf837b5ea5"
+    },
+    {
+      "file": "04_ELEVATED_INSPECTION.png",
+      "width": 1280,
+      "height": 720,
+      "bytes": 1046863,
+      "sha256": "97ea9d74784a92e739dcecc94965af7dc69989bdbcf09f59d4ff83492d9638da"
+    },
+    {
+      "file": "05_ARCHITECTURAL_DETAIL.png",
+      "width": 1280,
+      "height": 720,
+      "bytes": 1147054,
+      "sha256": "649bb79eb297775e3e5e131ce32988724b9e5cdbafe49b4739abf77dcc9c2878"
+    }
+  ]
+}

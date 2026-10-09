@@ -1,0 +1,42 @@
+{
+  "packageId": "pkg-site00_bld_object_astra_v1-v2",
+  "assetId": "site00_bld_object_astra_v1",
+  "productionLane": "PROP_INTERACTIVE_OBJECT_ART",
+  "productionProfileId": "SITE00_BUILD_OBJECT_WEB_3D",
+  "version": "codex-blender-v2",
+  "authorityRefs": [
+    "approved-blueprint-reference",
+    "artlist-rodin-massing"
+  ],
+  "folderPresence": {
+    "00_MANIFEST": "MISSING",
+    "02_SOURCE_MODELS": "PRESENT",
+    "07_MATERIALS": "MISSING",
+    "11_EXPORTS": "PRESENT",
+    "12_RENDERS_AND_QA": "PRESENT"
+  },
+  "deliverableCompleteness": {
+    "source_blend": "PRESENT",
+    "runtime_glb": "PRESENT",
+    "runtime_fbx": "MISSING",
+    "material_definitions": "MISSING",
+    "validation_report": "PRESENT",
+    "package_manifest": "MISSING",
+    "review_renders": "UNVERIFIED",
+    "uv_layout": "UNVERIFIED",
+    "pbr_texture_set": "UNVERIFIED",
+    "collision_mesh": "NOT_REQUIRED",
+    "interaction_anchors": "UNVERIFIED",
+    "skeleton": "NOT_APPLICABLE",
+    "skin_weights": "NOT_APPLICABLE",
+    "animation_clips": "NOT_APPLICABLE",
+    "navigation_metadata": "NOT_APPLICABLE",
+    "engine_import_config": "UNVERIFIED",
+    "lod_meshes": "NOT_REQUIRED",
+    "high_poly_mesh": "MISSING"
+  },
+  "knownLimitations": [
+    "Fixture appears to be a reduced archive (missing 4 paths from full review package README)"
+  ],
+  "approvalState": "FOUNDER_REVIEW_PENDING"
+}

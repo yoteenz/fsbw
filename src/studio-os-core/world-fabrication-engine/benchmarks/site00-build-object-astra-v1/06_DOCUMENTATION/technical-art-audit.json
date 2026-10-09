@@ -1,0 +1,94 @@
+{
+  "status": "PASS_WITH_LIMITATIONS",
+  "measured_geometry": {
+    "mesh_object_count": 277,
+    "material_count": 7,
+    "triangles": 228996,
+    "vertices": 115052
+  },
+  "glb": {
+    "valid_header": true,
+    "bytes": 14847404,
+    "sha256": "51fea6b74954fc1990b2be3861240d29a5dff9f87f2ee8db259324e3722042dc",
+    "mesh_count": 277,
+    "material_count": 7,
+    "triangles": 228996,
+    "matches_evaluated_blender_triangles": true,
+    "extensions_used": [
+      "KHR_materials_transmission",
+      "KHR_materials_ior"
+    ],
+    "embedded_images": 1
+  },
+  "checks": {
+    "five_1280x720_renders": true,
+    "triangle_budget_pass": true,
+    "required_collections": [
+      "SITE00_BUILD_OBJECT",
+      "ARCHITECTURE",
+      "GLASS_VOLUMES",
+      "RED_PORTAL",
+      "INTERIOR_STRUCTURE",
+      "FLOOR_PLATES",
+      "MARBLE_PLINTH",
+      "METAL_DETAILS",
+      "LIGHTING",
+      "CAMERAS",
+      "MATERIALS"
+    ],
+    "new_geometry": true,
+    "marble_texture_embedded": true
+  },
+  "limitations": [
+    "No browser/device performance test; GLB transmission requires compatible renderer.",
+    "Glass multilayer refraction and thin acrylic are Cycles reference appearance; web lighting will differ.",
+    "No LODs, collision meshes, lightmap UV2, rigging or navigation; presentation object only.",
+    "MATERIALS is an organizational collection; materials are assigned directly to meshes.",
+    "Creative approval pending founder review."
+  ],
+  "source_scene": {
+    "units": "meters",
+    "bevels": "non-destructive eight-segment precision bevels, evaluated during GLB export",
+    "uv": "meter-scaled planar stone UVs; primitive UVs on remaining meshes",
+    "textures": "repository marble PNG, packed and embedded"
+  },
+  "validation_scope": "Blender evaluated counts plus independent GLB JSON chunk and PNG headers; no claim of Unreal/browser runtime certification",
+  "saved_blend_validation": {
+    "opened_saved_blend": true,
+    "collections": [
+      "ARCHITECTURE",
+      "CAMERAS",
+      "FLOOR_PLATES",
+      "GLASS_VOLUMES",
+      "INTERIOR_STRUCTURE",
+      "LIGHTING",
+      "MARBLE_PLINTH",
+      "MATERIALS",
+      "METAL_DETAILS",
+      "RED_PORTAL",
+      "SITE00_BUILD_OBJECT"
+    ],
+    "cameras": [
+      "01_HERO_REFERENCE_MATCH",
+      "02_FRONT_THREE_QUARTER",
+      "03_SIDE_INSPECTION",
+      "04_ELEVATED_INSPECTION",
+      "05_ARCHITECTURAL_DETAIL"
+    ],
+    "packed_images": [
+      "marble-source.png"
+    ],
+    "missing_external_images": []
+  },
+  "render_generations": {
+    "final_revision": [
+      "01_HERO_REFERENCE_MATCH",
+      "04_ELEVATED_INSPECTION"
+    ],
+    "initial_pass": [
+      "02_FRONT_THREE_QUARTER",
+      "03_SIDE_INSPECTION",
+      "05_ARCHITECTURAL_DETAIL"
+    ]
+  }
+}

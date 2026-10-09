@@ -1,0 +1,11 @@
+{
+  "note": "Non-billable forensic record of how the original Astra V1 Codex session was launched (Composer session, Oct 9 2026).",
+  "codexInvocation": "npx --yes @openai/codex@0.162.0 exec -m gpt-6-astra -s workspace-write -C /workspace -i <approved-reference.jpg> - < codex-assignment-prompt.txt",
+  "imageInputPath": "src/studio-os-core/world-fabrication-engine/benchmarks/site00-build-object-astra-v1/04_COMPARISONS/approved-reference.jpg",
+  "imageInputBytes": 301334,
+  "imageDimensions": "1672x941 JPEG",
+  "promptPath": "execution-runs/creative-v1/codex-assignment-prompt.txt",
+  "transcriptPath": "execution-runs/creative-v1/codex-exec.log",
+  "transcriptHeaderModel": "gpt-6-astra",
+  "sessionId": "01a11f12-6254-7af1-8bbc-e8285030d0fc"
+}

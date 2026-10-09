@@ -1,0 +1,21 @@
+{
+  "auditId": "site00-build-object-v2-full-available-audit",
+  "generatedAt": "2026-10-08T23:18:00Z",
+  "fullPackageAvailable": false,
+  "sourceFileCount": 17,
+  "inventoryPath": "benchmarks/site00-build-object-v2/reports/inventory.json",
+  "blenderExecutionReport": "benchmarks/site00-build-object-v2/execution-runs/2026-10-08-loop1/return-package/05_DOCUMENTATION/wfe-blender-execution-report.json",
+  "summary": {
+    "sourceGeometry": "PRESENT",
+    "runtimeWebGlb": "PRESENT",
+    "runtimeHighGlb": "MISSING",
+    "runtimeFbx": "MISSING",
+    "renderEvidence": "MISSING",
+    "referenceComparisons": "MISSING",
+    "rigAnimation": "NOT_APPLICABLE",
+    "blenderNativeValidation": "PASS",
+    "validateV2FullScript": "BLOCKED",
+    "unrealImport": "NOT_TESTED",
+    "founderApproval": "PENDING"
+  }
+}

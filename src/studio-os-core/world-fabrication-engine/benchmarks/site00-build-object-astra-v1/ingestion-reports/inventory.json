@@ -1,0 +1,278 @@
+{
+  "inventoryId": "inv-site00_bld_object_astra_v1",
+  "packageRoot": "src/studio-os-core/world-fabrication-engine/benchmarks/site00-build-object-astra-v1",
+  "extractedAt": "2026-10-09T05:19:37.760Z",
+  "fileCount": 26,
+  "totalBytes": 39820172,
+  "files": [
+    {
+      "relativePath": "01_SOURCE/SITE00_Build_Object_Astra_V1.blend",
+      "bytes": 5857067,
+      "sha256": "368ac7ea7c206aeba4823609b4901d2f6e7106db4f465efbcd2271aa270bcd5f",
+      "mimeGuess": "application/x-blender",
+      "role": "SOURCE_BLEND",
+      "assetTier": "SOURCE",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "01_SOURCE/build_astra_v1.py",
+      "bytes": 13525,
+      "sha256": "c24727362a71f6a01b575a92e47b2f8c62ec9023648d02498d6a8c2cd2429cb9",
+      "mimeGuess": "text/x-python",
+      "role": "SOURCE_SCRIPT",
+      "assetTier": "SOURCE",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "01_SOURCE/validate_package.py",
+      "bytes": 2735,
+      "sha256": "d15aa9142acefa89491f1c9469a14c9a62b9b145ca611bbd9477cd3573f3622f",
+      "mimeGuess": "text/x-python",
+      "role": "SOURCE_SCRIPT",
+      "assetTier": "SOURCE",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "02_EXPORTS/SITE00_Build_Object_Astra_V1_Web.glb",
+      "bytes": 14847404,
+      "sha256": "51fea6b74954fc1990b2be3861240d29a5dff9f87f2ee8db259324e3722042dc",
+      "mimeGuess": "model/gltf-binary",
+      "role": "RUNTIME_GLB",
+      "assetTier": "DERIVED",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "03_RENDERS/01_HERO_REFERENCE_MATCH.png",
+      "bytes": 1077133,
+      "sha256": "daaa9f865fc36d0706b47a05cd8c084b7102145831a72a670f130756a9fb45ae",
+      "mimeGuess": "image/png",
+      "role": "RENDER_EVIDENCE",
+      "assetTier": "EVIDENCE",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "03_RENDERS/02_FRONT_THREE_QUARTER.png",
+      "bytes": 1068077,
+      "sha256": "3bac45caafb16f4e5da1eef55ce9e4c3ba3e34d801539b20975c7f702e4bf2b0",
+      "mimeGuess": "image/png",
+      "role": "RENDER_EVIDENCE",
+      "assetTier": "EVIDENCE",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "03_RENDERS/03_SIDE_INSPECTION.png",
+      "bytes": 1031592,
+      "sha256": "8f842f66522ac6f0acfa3ef3022e123a58927ce49eebfc54b3b8a4cf837b5ea5",
+      "mimeGuess": "image/png",
+      "role": "RENDER_EVIDENCE",
+      "assetTier": "EVIDENCE",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "03_RENDERS/04_ELEVATED_INSPECTION.png",
+      "bytes": 1046863,
+      "sha256": "97ea9d74784a92e739dcecc94965af7dc69989bdbcf09f59d4ff83492d9638da",
+      "mimeGuess": "image/png",
+      "role": "RENDER_EVIDENCE",
+      "assetTier": "EVIDENCE",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "03_RENDERS/05_ARCHITECTURAL_DETAIL.png",
+      "bytes": 1147054,
+      "sha256": "649bb79eb297775e3e5e131ce32988724b9e5cdbafe49b4739abf77dcc9c2878",
+      "mimeGuess": "image/png",
+      "role": "RENDER_EVIDENCE",
+      "assetTier": "EVIDENCE",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "04_COMPARISONS/approved-reference-authority.jpg",
+      "bytes": 301334,
+      "sha256": "50590912003833aeff8a1851dcbd5a1342d7aa8e47c4603a4eea3e932726582b",
+      "mimeGuess": "application/octet-stream",
+      "role": "COMPARISON",
+      "assetTier": "EVIDENCE",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "04_COMPARISONS/approved-reference.jpg",
+      "bytes": 301334,
+      "sha256": "50590912003833aeff8a1851dcbd5a1342d7aa8e47c4603a4eea3e932726582b",
+      "mimeGuess": "application/octet-stream",
+      "role": "COMPARISON",
+      "assetTier": "EVIDENCE",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "04_COMPARISONS/hero-vs-approved-reference.png",
+      "bytes": 1235516,
+      "sha256": "42ac62f73734e8870dd4c53314153f479475fbe3efc2e0b41c0591ac9b13ef6f",
+      "mimeGuess": "image/png",
+      "role": "COMPARISON",
+      "assetTier": "EVIDENCE",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "04_COMPARISONS/initial-pass-hero.png",
+      "bytes": 1072181,
+      "sha256": "1818ece1bab0cda84763ff564c6e3669dd7fc559fd9ccfd4a0c263eb4331ebf2",
+      "mimeGuess": "image/png",
+      "role": "COMPARISON",
+      "assetTier": "EVIDENCE",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "05_DOCUMENTATION/camera-manifest.json",
+      "bytes": 1541,
+      "sha256": "b3ea9cfffaa63650cd2dffdb8c0fdb356ca652c2d64c8973b022343b45bf9442",
+      "mimeGuess": "application/json",
+      "role": "DOCUMENTATION",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "05_DOCUMENTATION/export-validation-report.json",
+      "bytes": 29831,
+      "sha256": "4e68a9b96551d10f729532646f76a14b19620392be7f236bd2d90de4fd7987c3",
+      "mimeGuess": "application/json",
+      "role": "VALIDATION_REPORT",
+      "assetTier": "EVIDENCE",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "05_DOCUMENTATION/initial-pass-timing.json",
+      "bytes": 631,
+      "sha256": "bacd4f18238aa51f8f207f5063c25cf78692d8931e5a0faa90a8235200e30143",
+      "mimeGuess": "application/json",
+      "role": "DOCUMENTATION",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "05_DOCUMENTATION/saved-blend-validation.json",
+      "bytes": 527,
+      "sha256": "d19cec3e58117cd0406abcedd62236505f0cb4e2df836c9c221b11f7efb145c8",
+      "mimeGuess": "application/json",
+      "role": "DOCUMENTATION",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "05_DOCUMENTATION/wfe-astra-fabrication-report.json",
+      "bytes": 2159,
+      "sha256": "c049e5136acebcf252e0fc0b8ad3414a8b6e108ac80af73ac6e730f30f1e1c2f",
+      "mimeGuess": "application/json",
+      "role": "DOCUMENTATION",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "05_MATERIALS/marble-source.png",
+      "bytes": 3626202,
+      "sha256": "ad7d8e9c94c89fdafc23edad3f49fa7700fcefcf00df6272fbd6cf66a1a71c0e",
+      "mimeGuess": "image/png",
+      "role": "UNKNOWN",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "05_MATERIALS/material-manifest.json",
+      "bytes": 2104,
+      "sha256": "bf9b1391d15ea05be39bbd2c337b4a8255c4768bbbf1f8ad77d682485aaa8195",
+      "mimeGuess": "application/json",
+      "role": "UNKNOWN",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "05_MATERIALS/white-marble-veins.png",
+      "bytes": 5670250,
+      "sha256": "ed80234daa3cf92a10eabc3661fdc7098812fe633c7f95e0a6a7b86ea84572d4",
+      "mimeGuess": "image/png",
+      "role": "UNKNOWN",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "06_DOCUMENTATION/creative-fidelity-assessment.md",
+      "bytes": 4683,
+      "sha256": "92f9b496dc10a21809c1bca59d345697b804ca9f2ba30b9e2028a98d686cb15f",
+      "mimeGuess": "text/markdown",
+      "role": "UNKNOWN",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "06_DOCUMENTATION/technical-art-audit.json",
+      "bytes": 2736,
+      "sha256": "26fc5a1d0182ffb0a1a8bd82518374342697a1e2120318eea7055f8a2785083f",
+      "mimeGuess": "application/json",
+      "role": "UNKNOWN",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "07_FOUNDER_REVIEW/founder-contact-sheet.md",
+      "bytes": 1626,
+      "sha256": "83e527fcbb3f38cb9eeb636ce2c601bd8b58ce29e7f87341f3dac5150339be6f",
+      "mimeGuess": "text/markdown",
+      "role": "UNKNOWN",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "execution-runs/creative-v1/codex-assignment-prompt.txt",
+      "bytes": 3154,
+      "sha256": "4ddfd7382479587c138d8906a437cf8174624591d1f3fe23b7eaa06be3a5716d",
+      "mimeGuess": "application/octet-stream",
+      "role": "UNKNOWN",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "execution-runs/creative-v1/codex-exec.log",
+      "bytes": 1472913,
+      "sha256": "9d2dcceeb749925967e730d70b3eafff92b3284614d3cb9c43095a716885cc79",
+      "mimeGuess": "application/octet-stream",
+      "role": "UNKNOWN",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    }
+  ],
+  "missingFromFullReviewPackage": [
+    "02_EXPORTS/SITE00_Build_Object_V2_High.glb",
+    "02_EXPORTS/SITE00_Build_Object_V2_DCC.fbx",
+    "01_SOURCE/serve-viewer.cjs",
+    "01_SOURCE/validate_v2.py"
+  ],
+  "warnings": [
+    "Fixture appears to be a reduced archive (missing 4 paths from full review package README)"
+  ]
+}

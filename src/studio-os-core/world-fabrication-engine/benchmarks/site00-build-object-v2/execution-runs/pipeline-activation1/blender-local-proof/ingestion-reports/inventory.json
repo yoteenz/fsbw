@@ -1,0 +1,80 @@
+{
+  "inventoryId": "inv-site00_bld_object_v2_execution_return",
+  "packageRoot": "/workspace/src/studio-os-core/world-fabrication-engine/benchmarks/site00-build-object-v2/execution-runs/pipeline-activation1/blender-local-proof/return-package",
+  "extractedAt": "2026-10-09T04:20:16.261Z",
+  "fileCount": 6,
+  "totalBytes": 233705,
+  "files": [
+    {
+      "relativePath": "02_EXPORTS/SITE00_Build_Object_V2_ExecutionTest_Web.glb",
+      "bytes": 186760,
+      "sha256": "516c1ef25defca658c786decfc58ef7c82777faa63c97022461f84502a9ed048",
+      "mimeGuess": "model/gltf-binary",
+      "role": "RUNTIME_GLB",
+      "assetTier": "DERIVED",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "05_DOCUMENTATION/material-manifest.json",
+      "bytes": 3114,
+      "sha256": "7c39fcb76853b80f6a079e75a3369756447383a2298e89c1babc6ba8165bbc52",
+      "mimeGuess": "application/json",
+      "role": "MATERIAL_MANIFEST",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "05_DOCUMENTATION/module-manifest.json",
+      "bytes": 34216,
+      "sha256": "557b42cf0d8048c3c98134849c06b66aa2ad04e9f2aec3832e7991efdb020ae0",
+      "mimeGuess": "application/json",
+      "role": "MODULE_MANIFEST",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "05_DOCUMENTATION/wfe-blender-execution-report.json",
+      "bytes": 1728,
+      "sha256": "f8ea76d24c1187a67a384f4c27c617cbe0a0b0ae3866fd2b653bb6ee924c8e55",
+      "mimeGuess": "application/json",
+      "role": "DOCUMENTATION",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "logs/blender-stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "mimeGuess": "application/octet-stream",
+      "role": "UNKNOWN",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "logs/blender-stdout.log",
+      "bytes": 7887,
+      "sha256": "463332ec3eb951c95ffc301a267a6b874d3633d884d5e8b266d79d5fa09cccb1",
+      "mimeGuess": "application/octet-stream",
+      "role": "UNKNOWN",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    }
+  ],
+  "missingFromFullReviewPackage": [
+    "02_EXPORTS/SITE00_Build_Object_V2_High.glb",
+    "02_EXPORTS/SITE00_Build_Object_V2_DCC.fbx",
+    "03_RENDERS/*",
+    "04_COMPARISONS/*",
+    "01_SOURCE/serve-viewer.cjs",
+    "01_SOURCE/validate_v2.py"
+  ],
+  "warnings": [
+    "Fixture appears to be a reduced archive (missing 6 paths from full review package README)"
+  ]
+}

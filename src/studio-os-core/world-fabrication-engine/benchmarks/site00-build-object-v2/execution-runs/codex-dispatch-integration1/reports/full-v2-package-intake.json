@@ -1,0 +1,10 @@
+{
+  "fullPackage": "SITE00_Build_Object_V2_Review_Package.zip",
+  "status": "MISSING",
+  "searched": [
+    "/workspace/src/studio-os-core/world-fabrication-engine/benchmarks/site00-build-object-v2/incoming/SITE00_Build_Object_V2_Review_Package.zip",
+    "/home/ubuntu/.cursor/projects/workspace/uploads/SITE00_Build_Object_V2_Review_Package.zip"
+  ],
+  "intakeInstructions": "Upload SITE00_Build_Object_V2_Review_Package.zip to /workspace/src/studio-os-core/world-fabrication-engine/benchmarks/site00-build-object-v2/incoming or set WFE_FULL_V2_PACKAGE_PATH (no chat attachment size limit on internal path).",
+  "reducedFixtureAvailable": true
+}

@@ -1,0 +1,1160 @@
+{
+  "root": "BUILD_OBJECT_ROOT",
+  "modules": [
+    {
+      "name": "FOUNDATION_MARBLE_CONTINUOUS",
+      "function": "Continuous veined marble pedestal",
+      "material": "WHITE_MARBLE",
+      "parent": "FOUNDATION",
+      "visibilityDependencies": [
+        "FOUNDATION"
+      ],
+      "visibilityTier": 1,
+      "interaction": "Pending integration: transform/visibility/material control through existing Builder contract; no new canonical fields."
+    },
+    {
+      "name": "FOUNDATION_CLEAR_TOP_PLATE",
+      "function": "FOUNDATION_CLEAR_TOP_PLATE",
+      "material": "CLEAR_ARCHITECTURAL_GLASS",
+      "parent": "FOUNDATION",
+      "visibilityDependencies": [
+        "FOUNDATION"
+      ],
+      "visibilityTier": 1,
+      "interaction": "Pending integration: transform/visibility/material control through existing Builder contract; no new canonical fields."
+    },
+    {
+      "name": "RED_CORE_PRIMARY",
+      "function": "Reference-constrained architectural plane",
+      "material": "RED_TRANSLUCENT_ACRYLIC",
+      "parent": "RED_THRESHOLD",
+      "visibilityDependencies": [
+        "RED_THRESHOLD"
+      ],
+      "visibilityTier": 1,
+      "interaction": "Pending integration: module visibility/transforms/material control",
+      "referencePixels": [
+        [
+          930,
+          141
+        ],
+        [
+          1067,
+          78
+        ],
+        [
+          1067,
+          688
+        ],
+        [
+          930,
+          678
+        ]
+      ],
+      "inference": "Depth plane and non-orthogonal quadrilateral inferred from single-view projection"
+    },
+    {
+      "name": "RED_CORE_SECONDARY",
+      "function": "Reference-constrained architectural plane",
+      "material": "RED_TRANSLUCENT_ACRYLIC",
+      "parent": "RED_THRESHOLD",
+      "visibilityDependencies": [
+        "RED_THRESHOLD"
+      ],
+      "visibilityTier": 1,
+      "interaction": "Pending integration: module visibility/transforms/material control",
+      "referencePixels": [
+        [
+          819,
+          186
+        ],
+        [
+          930,
+          141
+        ],
+        [
+          930,
+          678
+        ],
+        [
+          819,
+          665
+        ]
+      ],
+      "inference": "Depth plane and non-orthogonal quadrilateral inferred from single-view projection"
+    },
+    {
+      "name": "RED_CORE_FRAME_PRIMARY_00",
+      "function": "RED_CORE_FRAME_PRIMARY_00",
+      "material": "RED_TRANSLUCENT_ACRYLIC",
+      "parent": "RED_THRESHOLD",
+      "visibilityDependencies": [
+        "RED_THRESHOLD"
+      ],
+      "visibilityTier": 1,
+      "interaction": "Pending integration: transform/visibility/material control through existing Builder contract; no new canonical fields."
+    },
+    {
+      "name": "RED_CORE_FRAME_PRIMARY_01",
+      "function": "RED_CORE_FRAME_PRIMARY_01",
+      "material": "RED_TRANSLUCENT_ACRYLIC",
+      "parent": "RED_THRESHOLD",
+      "visibilityDependencies": [
+        "RED_THRESHOLD"
+      ],
+      "visibilityTier": 1,
+      "interaction": "Pending integration: transform/visibility/material control through existing Builder contract; no new canonical fields."
+    },
+    {
+      "name": "RED_CORE_FRAME_PRIMARY_02",
+      "function": "RED_CORE_FRAME_PRIMARY_02",
+      "material": "RED_TRANSLUCENT_ACRYLIC",
+      "parent": "RED_THRESHOLD",
+      "visibilityDependencies": [
+        "RED_THRESHOLD"
+      ],
+      "visibilityTier": 1,
+      "interaction": "Pending integration: transform/visibility/material control through existing Builder contract; no new canonical fields."
+    },
+    {
+      "name": "RED_CORE_FRAME_PRIMARY_03",
+      "function": "RED_CORE_FRAME_PRIMARY_03",
+      "material": "RED_TRANSLUCENT_ACRYLIC",
+      "parent": "RED_THRESHOLD",
+      "visibilityDependencies": [
+        "RED_THRESHOLD"
+      ],
+      "visibilityTier": 1,
+      "interaction": "Pending integration: transform/visibility/material control through existing Builder contract; no new canonical fields."
+    },
+    {
+      "name": "RED_CORE_FRAME_SECONDARY_00",
+      "function": "RED_CORE_FRAME_SECONDARY_00",
+      "material": "RED_TRANSLUCENT_ACRYLIC",
+      "parent": "RED_THRESHOLD",
+      "visibilityDependencies": [
+        "RED_THRESHOLD"
+      ],
+      "visibilityTier": 1,
+      "interaction": "Pending integration: transform/visibility/material control through existing Builder contract; no new canonical fields."
+    },
+    {
+      "name": "RED_CORE_FRAME_SECONDARY_01",
+      "function": "RED_CORE_FRAME_SECONDARY_01",
+      "material": "RED_TRANSLUCENT_ACRYLIC",
+      "parent": "RED_THRESHOLD",
+      "visibilityDependencies": [
+        "RED_THRESHOLD"
+      ],
+      "visibilityTier": 1,
+      "interaction": "Pending integration: transform/visibility/material control through existing Builder contract; no new canonical fields."
+    },
+    {
+      "name": "RED_CORE_FRAME_SECONDARY_02",
+      "function": "RED_CORE_FRAME_SECONDARY_02",
+      "material": "RED_TRANSLUCENT_ACRYLIC",
+      "parent": "RED_THRESHOLD",
+      "visibilityDependencies": [
+        "RED_THRESHOLD"
+      ],
+      "visibilityTier": 1,
+      "interaction": "Pending integration: transform/visibility/material control through existing Builder contract; no new canonical fields."
+    },
+    {
+      "name": "RED_CORE_FRAME_SECONDARY_03",
+      "function": "RED_CORE_FRAME_SECONDARY_03",
+      "material": "RED_TRANSLUCENT_ACRYLIC",
+      "parent": "RED_THRESHOLD",
+      "visibilityDependencies": [
+        "RED_THRESHOLD"
+      ],
+      "visibilityTier": 1,
+      "interaction": "Pending integration: transform/visibility/material control through existing Builder contract; no new canonical fields."
+    },
+    {
+      "name": "RED_CORE_INTERIOR_01",
+      "function": "Reference-constrained architectural plane",
+      "material": "RED_TRANSLUCENT_ACRYLIC",
+      "parent": "RED_THRESHOLD",
+      "visibilityDependencies": [
+        "RED_THRESHOLD"
+      ],
+      "visibilityTier": 2,
+      "interaction": "Pending integration: module visibility/transforms/material control",
+      "referencePixels": [
+        [
+          820,
+          232
+        ],
+        [
+          971,
+          289
+        ],
+        [
+          971,
+          653
+        ],
+        [
+          820,
+          637
+        ]
+      ],
+      "inference": "Depth plane and non-orthogonal quadrilateral inferred from single-view projection"
+    },
+    {
+      "name": "RED_CORE_INTERIOR_02",
+      "function": "Reference-constrained architectural plane",
+      "material": "RED_TRANSLUCENT_ACRYLIC",
+      "parent": "RED_THRESHOLD",
+      "visibilityDependencies": [
+        "RED_THRESHOLD"
+      ],
+      "visibilityTier": 3,
+      "interaction": "Pending integration: module visibility/transforms/material control",
+      "referencePixels": [
+        [
+          881,
+          346
+        ],
+        [
+          1008,
+          394
+        ],
+        [
+          1008,
+          663
+        ],
+        [
+          881,
+          653
+        ]
+      ],
+      "inference": "Depth plane and non-orthogonal quadrilateral inferred from single-view projection"
+    },
+    {
+      "name": "RED_CORE_INTERIOR_03",
+      "function": "Reference-constrained architectural plane",
+      "material": "RED_TRANSLUCENT_ACRYLIC",
+      "parent": "RED_THRESHOLD",
+      "visibilityDependencies": [
+        "RED_THRESHOLD"
+      ],
+      "visibilityTier": 3,
+      "interaction": "Pending integration: module visibility/transforms/material control",
+      "referencePixels": [
+        [
+          852,
+          480
+        ],
+        [
+          941,
+          434
+        ],
+        [
+          941,
+          658
+        ],
+        [
+          852,
+          640
+        ]
+      ],
+      "inference": "Depth plane and non-orthogonal quadrilateral inferred from single-view projection"
+    },
+    {
+      "name": "RED_CORE_HORIZONTAL_00",
+      "function": "RED_CORE_HORIZONTAL_00",
+      "material": "RED_TRANSLUCENT_ACRYLIC",
+      "parent": "RED_THRESHOLD",
+      "visibilityDependencies": [
+        "RED_THRESHOLD"
+      ],
+      "visibilityTier": 2,
+      "interaction": "Pending integration: transform/visibility/material control through existing Builder contract; no new canonical fields."
+    },
+    {
+      "name": "RED_CORE_HORIZONTAL_01",
+      "function": "RED_CORE_HORIZONTAL_01",
+      "material": "RED_TRANSLUCENT_ACRYLIC",
+      "parent": "RED_THRESHOLD",
+      "visibilityDependencies": [
+        "RED_THRESHOLD"
+      ],
+      "visibilityTier": 2,
+      "interaction": "Pending integration: transform/visibility/material control through existing Builder contract; no new canonical fields."
+    },
+    {
+      "name": "RED_CORE_HORIZONTAL_02",
+      "function": "RED_CORE_HORIZONTAL_02",
+      "material": "RED_TRANSLUCENT_ACRYLIC",
+      "parent": "RED_THRESHOLD",
+      "visibilityDependencies": [
+        "RED_THRESHOLD"
+      ],
+      "visibilityTier": 2,
+      "interaction": "Pending integration: transform/visibility/material control through existing Builder contract; no new canonical fields."
+    },
+    {
+      "name": "RED_CORE_HORIZONTAL_03",
+      "function": "RED_CORE_HORIZONTAL_03",
+      "material": "RED_TRANSLUCENT_ACRYLIC",
+      "parent": "RED_THRESHOLD",
+      "visibilityDependencies": [
+        "RED_THRESHOLD"
+      ],
+      "visibilityTier": 2,
+      "interaction": "Pending integration: transform/visibility/material control through existing Builder contract; no new canonical fields."
+    },
+    {
+      "name": "RED_CORE_LOWER_THRESHOLD",
+      "function": "RED_CORE_LOWER_THRESHOLD",
+      "material": "RED_TRANSLUCENT_ACRYLIC",
+      "parent": "RED_THRESHOLD",
+      "visibilityDependencies": [
+        "RED_THRESHOLD"
+      ],
+      "visibilityTier": 1,
+      "interaction": "Pending integration: transform/visibility/material control through existing Builder contract; no new canonical fields."
+    },
+    {
+      "name": "GLASS_PRIMARY_01",
+      "function": "Reference-constrained architectural plane",
+      "material": "CLEAR_ARCHITECTURAL_GLASS",
+      "parent": "PRIMARY_GLASS",
+      "visibilityDependencies": [
+        "PRIMARY_GLASS"
+      ],
+      "visibilityTier": 1,
+      "interaction": "Pending integration: module visibility/transforms/material control",
+      "referencePixels": [
+        [
+          519,
+          320
+        ],
+        [
+          819,
+          186
+        ],
+        [
+          819,
+          660
+        ],
+        [
+          519,
+          691
+        ]
+      ],
+      "inference": "Depth plane and non-orthogonal quadrilateral inferred from single-view projection"
+    },
+    {
+      "name": "GLASS_PRIMARY_02",
+      "function": "Reference-constrained architectural plane",
+      "material": "CLEAR_ARCHITECTURAL_GLASS",
+      "parent": "PRIMARY_GLASS",
+      "visibilityDependencies": [
+        "PRIMARY_GLASS"
+      ],
+      "visibilityTier": 1,
+      "interaction": "Pending integration: module visibility/transforms/material control",
+      "referencePixels": [
+        [
+          1067,
+          201
+        ],
+        [
+          1210,
+          298
+        ],
+        [
+          1210,
+          715
+        ],
+        [
+          1067,
+          688
+        ]
+      ],
+      "inference": "Depth plane and non-orthogonal quadrilateral inferred from single-view projection"
+    },
+    {
+      "name": "GLASS_PRIMARY_03",
+      "function": "Reference-constrained architectural plane",
+      "material": "CLEAR_ARCHITECTURAL_GLASS",
+      "parent": "PRIMARY_GLASS",
+      "visibilityDependencies": [
+        "PRIMARY_GLASS"
+      ],
+      "visibilityTier": 1,
+      "interaction": "Pending integration: module visibility/transforms/material control",
+      "referencePixels": [
+        [
+          1067,
+          78
+        ],
+        [
+          1283,
+          215
+        ],
+        [
+          1283,
+          728
+        ],
+        [
+          1067,
+          688
+        ]
+      ],
+      "inference": "Depth plane and non-orthogonal quadrilateral inferred from single-view projection"
+    },
+    {
+      "name": "PRIMARY_FRAME_LEFT_00",
+      "function": "PRIMARY_FRAME_LEFT_00",
+      "material": "REFLECTIVE_METAL",
+      "parent": "STRUCTURAL_FRAMES",
+      "visibilityDependencies": [
+        "STRUCTURAL_FRAMES"
+      ],
+      "visibilityTier": 1,
+      "interaction": "Pending integration: transform/visibility/material control through existing Builder contract; no new canonical fields."
+    },
+    {
+      "name": "PRIMARY_FRAME_LEFT_01",
+      "function": "PRIMARY_FRAME_LEFT_01",
+      "material": "REFLECTIVE_METAL",
+      "parent": "STRUCTURAL_FRAMES",
+      "visibilityDependencies": [
+        "STRUCTURAL_FRAMES"
+      ],
+      "visibilityTier": 1,
+      "interaction": "Pending integration: transform/visibility/material control through existing Builder contract; no new canonical fields."
+    },
+    {
+      "name": "PRIMARY_FRAME_LEFT_02",
+      "function": "PRIMARY_FRAME_LEFT_02",
+      "material": "REFLECTIVE_METAL",
+      "parent": "STRUCTURAL_FRAMES",
+      "visibilityDependencies": [
+        "STRUCTURAL_FRAMES"
+      ],
+      "visibilityTier": 1,
+      "interaction": "Pending integration: transform/visibility/material control through existing Builder contract; no new canonical fields."
+    },
+    {
+      "name": "PRIMARY_FRAME_LEFT_03",
+      "function": "PRIMARY_FRAME_LEFT_03",
+      "material": "REFLECTIVE_METAL",
+      "parent": "STRUCTURAL_FRAMES",
+      "visibilityDependencies": [
+        "STRUCTURAL_FRAMES"
+      ],
+      "visibilityTier": 1,
+      "interaction": "Pending integration: transform/visibility/material control through existing Builder contract; no new canonical fields."
+    },
+    {
+      "name": "PRIMARY_FRAME_RIGHT_00",
+      "function": "PRIMARY_FRAME_RIGHT_00",
+      "material": "REFLECTIVE_METAL",
+      "parent": "STRUCTURAL_FRAMES",
+      "visibilityDependencies": [
+        "STRUCTURAL_FRAMES"
+      ],
+      "visibilityTier": 1,
+      "interaction": "Pending integration: transform/visibility/material control through existing Builder contract; no new canonical fields."
+    },
+    {
+      "name": "PRIMARY_FRAME_RIGHT_01",
+      "function": "PRIMARY_FRAME_RIGHT_01",
+      "material": "REFLECTIVE_METAL",
+      "parent": "STRUCTURAL_FRAMES",
+      "visibilityDependencies": [
+        "STRUCTURAL_FRAMES"
+      ],
+      "visibilityTier": 1,
+      "interaction": "Pending integration: transform/visibility/material control through existing Builder contract; no new canonical fields."
+    },
+    {
+      "name": "PRIMARY_FRAME_RIGHT_02",
+      "function": "PRIMARY_FRAME_RIGHT_02",
+      "material": "REFLECTIVE_METAL",
+      "parent": "STRUCTURAL_FRAMES",
+      "visibilityDependencies": [
+        "STRUCTURAL_FRAMES"
+      ],
+      "visibilityTier": 1,
+      "interaction": "Pending integration: transform/visibility/material control through existing Builder contract; no new canonical fields."
+    },
+    {
+      "name": "PRIMARY_FRAME_RIGHT_03",
+      "function": "PRIMARY_FRAME_RIGHT_03",
+      "material": "REFLECTIVE_METAL",
+      "parent": "STRUCTURAL_FRAMES",
+      "visibilityDependencies": [
+        "STRUCTURAL_FRAMES"
+      ],
+      "visibilityTier": 1,
+      "interaction": "Pending integration: transform/visibility/material control through existing Builder contract; no new canonical fields."
+    },
+    {
+      "name": "GLASS_SECONDARY_01",
+      "function": "Reference-constrained architectural plane",
+      "material": "CLEAR_ARCHITECTURAL_GLASS",
+      "parent": "SECONDARY_GLASS",
+      "visibilityDependencies": [
+        "SECONDARY_GLASS"
+      ],
+      "visibilityTier": 1,
+      "interaction": "Pending integration: module visibility/transforms/material control",
+      "referencePixels": [
+        [
+          243,
+          428
+        ],
+        [
+          312,
+          398
+        ],
+        [
+          312,
+          709
+        ],
+        [
+          243,
+          721
+        ]
+      ],
+      "inference": "Depth plane and non-orthogonal quadrilateral inferred from single-view projection"
+    },
+    {
+      "name": "GLASS_SECONDARY_02",
+      "function": "Reference-constrained architectural plane",
+      "material": "CLEAR_ARCHITECTURAL_GLASS",
+      "parent": "SECONDARY_GLASS",
+      "visibilityDependencies": [
+        "SECONDARY_GLASS"
+      ],
+      "visibilityTier": 1,
+      "interaction": "Pending integration: module visibility/transforms/material control",
+      "referencePixels": [
+        [
+          1210,
+          390
+        ],
+        [
+          1457,
+          477
+        ],
+        [
+          1457,
+          733
+        ],
+        [
+          1210,
+          715
+        ]
+      ],
+      "inference": "Depth plane and non-orthogonal quadrilateral inferred from single-view projection"
+    },
+    {
+      "name": "INTERIOR_DARK_MARBLE_BLADE",
+      "function": "Reference-constrained architectural plane",
+      "material": "DARK_STONE",
+      "parent": "INTERIOR",
+      "visibilityDependencies": [
+        "INTERIOR"
+      ],
+      "visibilityTier": 1,
+      "interaction": "Pending integration: module visibility/transforms/material control",
+      "referencePixels": [
+        [
+          367,
+          323
+        ],
+        [
+          479,
+          268
+        ],
+        [
+          479,
+          696
+        ],
+        [
+          367,
+          710
+        ]
+      ],
+      "inference": "Depth plane and non-orthogonal quadrilateral inferred from single-view projection"
+    },
+    {
+      "name": "INTERIOR_LIGHT_STONE_BLADE",
+      "function": "Reference-constrained architectural plane",
+      "material": "LIGHT_STONE",
+      "parent": "INTERIOR",
+      "visibilityDependencies": [
+        "INTERIOR"
+      ],
+      "visibilityTier": 1,
+      "interaction": "Pending integration: module visibility/transforms/material control",
+      "referencePixels": [
+        [
+          312,
+          398
+        ],
+        [
+          367,
+          419
+        ],
+        [
+          367,
+          710
+        ],
+        [
+          312,
+          709
+        ]
+      ],
+      "inference": "Depth plane and non-orthogonal quadrilateral inferred from single-view projection"
+    },
+    {
+      "name": "GLASS_PARTITION_01",
+      "function": "Reference-constrained architectural plane",
+      "material": "CLEAR_ARCHITECTURAL_GLASS",
+      "parent": "INTERIOR",
+      "visibilityDependencies": [
+        "INTERIOR"
+      ],
+      "visibilityTier": 2,
+      "interaction": "Pending integration: module visibility/transforms/material control",
+      "referencePixels": [
+        [
+          479,
+          268
+        ],
+        [
+          574,
+          309
+        ],
+        [
+          574,
+          686
+        ],
+        [
+          479,
+          695
+        ]
+      ],
+      "inference": "Depth plane and non-orthogonal quadrilateral inferred from single-view projection"
+    },
+    {
+      "name": "GLASS_PARTITION_02",
+      "function": "Reference-constrained architectural plane",
+      "material": "CLEAR_ARCHITECTURAL_GLASS",
+      "parent": "INTERIOR",
+      "visibilityDependencies": [
+        "INTERIOR"
+      ],
+      "visibilityTier": 2,
+      "interaction": "Pending integration: module visibility/transforms/material control",
+      "referencePixels": [
+        [
+          574,
+          309
+        ],
+        [
+          655,
+          329
+        ],
+        [
+          655,
+          682
+        ],
+        [
+          574,
+          686
+        ]
+      ],
+      "inference": "Depth plane and non-orthogonal quadrilateral inferred from single-view projection"
+    },
+    {
+      "name": "GLASS_PARTITION_03",
+      "function": "Reference-constrained architectural plane",
+      "material": "CLEAR_ARCHITECTURAL_GLASS",
+      "parent": "INTERIOR",
+      "visibilityDependencies": [
+        "INTERIOR"
+      ],
+      "visibilityTier": 2,
+      "interaction": "Pending integration: module visibility/transforms/material control",
+      "referencePixels": [
+        [
+          655,
+          329
+        ],
+        [
+          709,
+          352
+        ],
+        [
+          709,
+          676
+        ],
+        [
+          655,
+          682
+        ]
+      ],
+      "inference": "Depth plane and non-orthogonal quadrilateral inferred from single-view projection"
+    },
+    {
+      "name": "GLASS_CHAMBER_01",
+      "function": "Reference-constrained architectural plane",
+      "material": "CLEAR_ARCHITECTURAL_GLASS",
+      "parent": "SECONDARY_GLASS",
+      "visibilityDependencies": [
+        "SECONDARY_GLASS"
+      ],
+      "visibilityTier": 2,
+      "interaction": "Pending integration: module visibility/transforms/material control",
+      "referencePixels": [
+        [
+          709,
+          301
+        ],
+        [
+          817,
+          252
+        ],
+        [
+          817,
+          453
+        ],
+        [
+          709,
+          476
+        ]
+      ],
+      "inference": "Depth plane and non-orthogonal quadrilateral inferred from single-view projection"
+    },
+    {
+      "name": "GLASS_CHAMBER_02",
+      "function": "Reference-constrained architectural plane",
+      "material": "CLEAR_ARCHITECTURAL_GLASS",
+      "parent": "SECONDARY_GLASS",
+      "visibilityDependencies": [
+        "SECONDARY_GLASS"
+      ],
+      "visibilityTier": 2,
+      "interaction": "Pending integration: module visibility/transforms/material control",
+      "referencePixels": [
+        [
+          646,
+          449
+        ],
+        [
+          712,
+          419
+        ],
+        [
+          712,
+          678
+        ],
+        [
+          646,
+          686
+        ]
+      ],
+      "inference": "Depth plane and non-orthogonal quadrilateral inferred from single-view projection"
+    },
+    {
+      "name": "GLASS_CHAMBER_03",
+      "function": "Reference-constrained architectural plane",
+      "material": "CLEAR_ARCHITECTURAL_GLASS",
+      "parent": "SECONDARY_GLASS",
+      "visibilityDependencies": [
+        "SECONDARY_GLASS"
+      ],
+      "visibilityTier": 3,
+      "interaction": "Pending integration: module visibility/transforms/material control",
+      "referencePixels": [
+        [
+          646,
+          449
+        ],
+        [
+          786,
+          488
+        ],
+        [
+          786,
+          672
+        ],
+        [
+          646,
+          686
+        ]
+      ],
+      "inference": "Depth plane and non-orthogonal quadrilateral inferred from single-view projection"
+    },
+    {
+      "name": "GLASS_PARTITION_04",
+      "function": "Reference-constrained architectural plane",
+      "material": "CLEAR_ARCHITECTURAL_GLASS",
+      "parent": "INTERIOR",
+      "visibilityDependencies": [
+        "INTERIOR"
+      ],
+      "visibilityTier": 3,
+      "interaction": "Pending integration: module visibility/transforms/material control",
+      "referencePixels": [
+        [
+          1097,
+          385
+        ],
+        [
+          1165,
+          416
+        ],
+        [
+          1165,
+          695
+        ],
+        [
+          1097,
+          687
+        ]
+      ],
+      "inference": "Depth plane and non-orthogonal quadrilateral inferred from single-view projection"
+    },
+    {
+      "name": "GLASS_PARTITION_05",
+      "function": "Reference-constrained architectural plane",
+      "material": "CLEAR_ARCHITECTURAL_GLASS",
+      "parent": "INTERIOR",
+      "visibilityDependencies": [
+        "INTERIOR"
+      ],
+      "visibilityTier": 2,
+      "interaction": "Pending integration: module visibility/transforms/material control",
+      "referencePixels": [
+        [
+          1283,
+          374
+        ],
+        [
+          1350,
+          405
+        ],
+        [
+          1350,
+          728
+        ],
+        [
+          1283,
+          728
+        ]
+      ],
+      "inference": "Depth plane and non-orthogonal quadrilateral inferred from single-view projection"
+    },
+    {
+      "name": "GLASS_PARTITION_06",
+      "function": "Reference-constrained architectural plane",
+      "material": "CLEAR_ARCHITECTURAL_GLASS",
+      "parent": "INTERIOR",
+      "visibilityDependencies": [
+        "INTERIOR"
+      ],
+      "visibilityTier": 3,
+      "interaction": "Pending integration: module visibility/transforms/material control",
+      "referencePixels": [
+        [
+          1350,
+          405
+        ],
+        [
+          1400,
+          447
+        ],
+        [
+          1400,
+          729
+        ],
+        [
+          1350,
+          728
+        ]
+      ],
+      "inference": "Depth plane and non-orthogonal quadrilateral inferred from single-view projection"
+    },
+    {
+      "name": "GLASS_PARTITION_07",
+      "function": "Reference-constrained architectural plane",
+      "material": "CLEAR_ARCHITECTURAL_GLASS",
+      "parent": "INTERIOR",
+      "visibilityDependencies": [
+        "INTERIOR"
+      ],
+      "visibilityTier": 3,
+      "interaction": "Pending integration: module visibility/transforms/material control",
+      "referencePixels": [
+        [
+          1119,
+          569
+        ],
+        [
+          1300,
+          612
+        ],
+        [
+          1300,
+          721
+        ],
+        [
+          1119,
+          697
+        ]
+      ],
+      "inference": "Depth plane and non-orthogonal quadrilateral inferred from single-view projection"
+    },
+    {
+      "name": "GLASS_PRIMARY_REAR",
+      "function": "Reference-constrained architectural plane",
+      "material": "CLEAR_ARCHITECTURAL_GLASS",
+      "parent": "PRIMARY_GLASS",
+      "visibilityDependencies": [
+        "PRIMARY_GLASS"
+      ],
+      "visibilityTier": 2,
+      "interaction": "Pending integration: module visibility/transforms/material control",
+      "referencePixels": [
+        [
+          819,
+          145
+        ],
+        [
+          1067,
+          249
+        ],
+        [
+          1067,
+          680
+        ],
+        [
+          819,
+          666
+        ]
+      ],
+      "inference": "Depth plane and non-orthogonal quadrilateral inferred from single-view projection"
+    },
+    {
+      "name": "GLASS_ROOF_PLANE_01",
+      "function": "GLASS_ROOF_PLANE_01",
+      "material": "CLEAR_ARCHITECTURAL_GLASS",
+      "parent": "PRIMARY_GLASS",
+      "visibilityDependencies": [
+        "PRIMARY_GLASS"
+      ],
+      "visibilityTier": 2,
+      "interaction": "Pending integration: transform/visibility/material control through existing Builder contract; no new canonical fields."
+    },
+    {
+      "name": "GLASS_ROOF_PLANE_02",
+      "function": "GLASS_ROOF_PLANE_02",
+      "material": "CLEAR_ARCHITECTURAL_GLASS",
+      "parent": "PRIMARY_GLASS",
+      "visibilityDependencies": [
+        "PRIMARY_GLASS"
+      ],
+      "visibilityTier": 2,
+      "interaction": "Pending integration: transform/visibility/material control through existing Builder contract; no new canonical fields."
+    },
+    {
+      "name": "GLASS_INTERIOR_LEDGE_01",
+      "function": "GLASS_INTERIOR_LEDGE_01",
+      "material": "CLEAR_ARCHITECTURAL_GLASS",
+      "parent": "INTERIOR",
+      "visibilityDependencies": [
+        "INTERIOR"
+      ],
+      "visibilityTier": 3,
+      "interaction": "Pending integration: transform/visibility/material control through existing Builder contract; no new canonical fields."
+    },
+    {
+      "name": "INTERIOR_STONE_UPPER_PARTITION",
+      "function": "Reference-constrained architectural plane",
+      "material": "DARK_STONE",
+      "parent": "INTERIOR",
+      "visibilityDependencies": [
+        "INTERIOR"
+      ],
+      "visibilityTier": 2,
+      "interaction": "Pending integration: module visibility/transforms/material control",
+      "referencePixels": [
+        [
+          709,
+          301
+        ],
+        [
+          755,
+          330
+        ],
+        [
+          755,
+          463
+        ],
+        [
+          709,
+          476
+        ]
+      ],
+      "inference": "Depth plane and non-orthogonal quadrilateral inferred from single-view projection"
+    },
+    {
+      "name": "INTERIOR_ARCH_PANEL_01",
+      "function": "INTERIOR_ARCH_PANEL_01",
+      "material": "LIGHT_STONE",
+      "parent": "INTERIOR",
+      "visibilityDependencies": [
+        "INTERIOR"
+      ],
+      "visibilityTier": 3,
+      "interaction": "Pending integration: transform/visibility/material control through existing Builder contract; no new canonical fields."
+    },
+    {
+      "name": "INTERIOR_ARCH_PANEL_02",
+      "function": "INTERIOR_ARCH_PANEL_02",
+      "material": "LIGHT_STONE",
+      "parent": "INTERIOR",
+      "visibilityDependencies": [
+        "INTERIOR"
+      ],
+      "visibilityTier": 3,
+      "interaction": "Pending integration: transform/visibility/material control through existing Builder contract; no new canonical fields."
+    },
+    {
+      "name": "INTERIOR_ARCH_PANEL_03",
+      "function": "INTERIOR_ARCH_PANEL_03",
+      "material": "LIGHT_STONE",
+      "parent": "INTERIOR",
+      "visibilityDependencies": [
+        "INTERIOR"
+      ],
+      "visibilityTier": 3,
+      "interaction": "Pending integration: transform/visibility/material control through existing Builder contract; no new canonical fields."
+    },
+    {
+      "name": "INTERIOR_LIGHT_PLATFORM",
+      "function": "INTERIOR_LIGHT_PLATFORM",
+      "material": "LIGHT_STONE",
+      "parent": "INTERIOR",
+      "visibilityDependencies": [
+        "INTERIOR"
+      ],
+      "visibilityTier": 3,
+      "interaction": "Pending integration: transform/visibility/material control through existing Builder contract; no new canonical fields."
+    },
+    {
+      "name": "OPTIONAL_SCALE_SILHOUETTE_01",
+      "function": "Small optional reference scale cue",
+      "material": "REFLECTIVE_METAL",
+      "parent": "OPTIONAL_MODULES",
+      "visibilityDependencies": [
+        "OPTIONAL_MODULES"
+      ],
+      "visibilityTier": 3,
+      "interaction": "Optional visibility, pending integration"
+    },
+    {
+      "name": "OPTIONAL_SCALE_SILHOUETTE_02",
+      "function": "Small optional reference scale cue",
+      "material": "REFLECTIVE_METAL",
+      "parent": "OPTIONAL_MODULES",
+      "visibilityDependencies": [
+        "OPTIONAL_MODULES"
+      ],
+      "visibilityTier": 3,
+      "interaction": "Optional visibility, pending integration"
+    },
+    {
+      "name": "OPTIONAL_SCALE_SILHOUETTE_03",
+      "function": "Small optional reference scale cue",
+      "material": "REFLECTIVE_METAL",
+      "parent": "OPTIONAL_MODULES",
+      "visibilityDependencies": [
+        "OPTIONAL_MODULES"
+      ],
+      "visibilityTier": 3,
+      "interaction": "Optional visibility, pending integration"
+    },
+    {
+      "name": "OPTIONAL_SCALE_SILHOUETTE_04",
+      "function": "Small optional reference scale cue",
+      "material": "REFLECTIVE_METAL",
+      "parent": "OPTIONAL_MODULES",
+      "visibilityDependencies": [
+        "OPTIONAL_MODULES"
+      ],
+      "visibilityTier": 3,
+      "interaction": "Optional visibility, pending integration"
+    },
+    {
+      "name": "GLASS_INFERRED_REAR_01",
+      "function": "GLASS_INFERRED_REAR_01",
+      "material": "CLEAR_ARCHITECTURAL_GLASS",
+      "parent": "INTERIOR",
+      "visibilityDependencies": [
+        "INTERIOR"
+      ],
+      "visibilityTier": 3,
+      "interaction": "Pending integration: transform/visibility/material control through existing Builder contract; no new canonical fields."
+    },
+    {
+      "name": "GLASS_INFERRED_REAR_02",
+      "function": "GLASS_INFERRED_REAR_02",
+      "material": "CLEAR_ARCHITECTURAL_GLASS",
+      "parent": "INTERIOR",
+      "visibilityDependencies": [
+        "INTERIOR"
+      ],
+      "visibilityTier": 3,
+      "interaction": "Pending integration: transform/visibility/material control through existing Builder contract; no new canonical fields."
+    },
+    {
+      "name": "GLASS_INFERRED_REAR_CHAMBER_REAR",
+      "function": "GLASS_INFERRED_REAR_CHAMBER_REAR",
+      "material": "CLEAR_ARCHITECTURAL_GLASS",
+      "parent": "PRIMARY_GLASS",
+      "visibilityDependencies": [
+        "PRIMARY_GLASS"
+      ],
+      "visibilityTier": 3,
+      "interaction": "Pending integration: transform/visibility/material control through existing Builder contract; no new canonical fields."
+    },
+    {
+      "name": "GLASS_INFERRED_REAR_CHAMBER_LEFT",
+      "function": "GLASS_INFERRED_REAR_CHAMBER_LEFT",
+      "material": "CLEAR_ARCHITECTURAL_GLASS",
+      "parent": "PRIMARY_GLASS",
+      "visibilityDependencies": [
+        "PRIMARY_GLASS"
+      ],
+      "visibilityTier": 3,
+      "interaction": "Pending integration: transform/visibility/material control through existing Builder contract; no new canonical fields."
+    },
+    {
+      "name": "GLASS_INFERRED_REAR_ROOF",
+      "function": "GLASS_INFERRED_REAR_ROOF",
+      "material": "CLEAR_ARCHITECTURAL_GLASS",
+      "parent": "PRIMARY_GLASS",
+      "visibilityDependencies": [
+        "PRIMARY_GLASS"
+      ],
+      "visibilityTier": 3,
+      "interaction": "Pending integration: transform/visibility/material control through existing Builder contract; no new canonical fields."
+    }
+  ],
+  "builderContractVerified": false,
+  "canonicalFields": [
+    "layer_count_hint",
+    "structural_complexity",
+    "work_modules"
+  ]
+}

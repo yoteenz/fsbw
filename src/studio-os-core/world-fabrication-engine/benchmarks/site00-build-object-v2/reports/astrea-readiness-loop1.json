@@ -1,0 +1,22 @@
+{
+  "reportId": "astrea-readiness-post-blender-loop1",
+  "reusableCapabilities": [
+    "package-ingestion inventory + SHA256",
+    "GLB JSON-chunk parser",
+    "Fabrication assignment + Codex handoff extension",
+    "Blender 5.2 local execution adapter",
+    "Return package verification + re-ingestion",
+    "Conditional technical-art audit cells",
+    "Founder review bundle generation"
+  ],
+  "stillRequiredForAstreaTest01": [
+    "Full environment-art production profile execution on entrance threshold geometry",
+    "Navigation + collision evidence",
+    "Unreal world import validation",
+    "Authorized Codex dispatch OR Shadow PC secure runner",
+    "Full review renders and founder visual approval",
+    "Paid generation authorization if massing iteration needed"
+  ],
+  "codexDispatch": "BLOCKED",
+  "blenderRunner": "VERIFIED"
+}

@@ -1,0 +1,15 @@
+{
+  "dispatchId": "dispatch-pipeline-1791508220300",
+  "assignmentId": "pipeline-1791508220300",
+  "projectId": "site00",
+  "state": "AWAITING_EXTERNAL_EXECUTION",
+  "authorizationRef": "wfe-budget-zero-pipeline-1791508220300",
+  "expectedOutputs": [
+    "02_EXPORTS/SITE00_Build_Object_V2_ExecutionTest_Web.glb",
+    "05_DOCUMENTATION/wfe-blender-execution-report.json"
+  ],
+  "errors": [
+    "No OPENAI_API_KEY/CODEX_API_KEY in environment (401 Unauthorized on probe)"
+  ],
+  "attemptNumber": 0
+}
