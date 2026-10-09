@@ -55983,3 +55983,12 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Fix:** `contentExtractionAdapter` (pdf.js text layer) on real bytes; demo passes base64 on upload; API default **`AIO_MIGRATION_EXTRACTION_PROVIDER=local`** downloads `storageReference`; `applyCanonicalFactsFromMigration` on PREBUILT commit. Audit: `all-in-one-enterprises/docs/aio/client-migration/REAL_DOCUMENT_EXTRACTION_RECOVERY1_AUDIT.md`. Tests: NORTHLINE PDF + canonical commit.
 - **Blocked:** scanned/image OCR; full 25-step live Supabase E2E without creds; durable async jobs.
 - **Branch:** `cursor/client-migration-real-extraction-1087`; fixture only when `VITE_AIO_MIGRATION_FIXTURE=1`.
+
+---
+
+## 2026-10-09 — AIO migration OCR + zero-entry intake (RECOVERY2)
+
+- **Context:** P0 RECOVERY2 — document-first migration: no mandatory typing before extraction; OCR for photos/scanned PDFs; durable demo job queue; Supabase MC on approve.
+- **Delivered:** Tesseract.js OCR for images; scanned-PDF OCR in **browser** (pdf.js render + OCR); `createProvisionalIntakeClient` + upload-first on `/office/migration/new`; async `migrationDemoFileProcessor` with `queued`→`processing`→`ready`; identity auto-hydrate on review screens; audit `docs/aio/client-migration/OCR_PERSISTENCE_RECOVERY2_AUDIT.md`.
+- **Blocked:** API scanned-PDF OCR without native canvas on Vercel; full Supabase 25-step E2E; Playwright journey not run in agent.
+- **Tests:** 40+ client-migration unit tests including OCR post-processing + provisional intake.
