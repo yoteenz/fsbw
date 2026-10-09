@@ -1,0 +1,433 @@
+{
+ "pages": 92,
+ "devices": [
+  "phone",
+  "tablet",
+  "desktop",
+  "wide"
+ ],
+ "pass": 76,
+ "fail": 8,
+ "results": [
+  {
+   "name": "pages · phone · all 92 pages draw without errors",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "pages · phone · every page is a designed page (none fall to 404)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "pages · phone · no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "text · phone · every letter uppercase",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "text · phone · nothing under 9 px",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "text · phone · buttons, chips, tabs and links stay on one line",
+   "ok": false,
+   "detail": "/services: LEARN MORE | LEARN MORE | LEARN MORE ; /services/permitting: LEARN MORE | LEARN MORE | LEARN MORE ; /services/business-formation: LEARN MORE | LEARN MORE | LEARN MORE ; /services/insurance: LEARN MORE | LEARN MORE | LEARN MORE ; /services/dispatching: LEARN MORE | LEARN MORE | LEARN MORE ; /services/brokerage: DETAILS | DETAILS | DETAILS ; /services/bookkeeping: LEARN MORE | LEARN MORE | LEARN MORE ; /services/factoring: LEARN MORE | LEARN MORE ; /services/fleetcare: REQUEST SERVICE ; /start-your-business: LEARN MORE | LEARN MORE | LEARN MORE ; /start-your-business/build: GET STARTE"
+  },
+  {
+   "name": "text · phone · nothing clipped by its box",
+   "ok": false,
+   "detail": "/services: sr \"FILTER SERVICES\""
+  },
+  {
+   "name": "pages · phone · every image loads",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "controls · phone · every button has a handler (or says it is disabled)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "pages · tablet · all 92 pages draw without errors",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "pages · tablet · every page is a designed page (none fall to 404)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "pages · tablet · no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "text · tablet · every letter uppercase",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "text · tablet · nothing under 9 px",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "text · tablet · buttons, chips, tabs and links stay on one line",
+   "ok": false,
+   "detail": "/: GET MY ROADMAP | GET STARTED ; /services: LEARN MORE | LEARN MORE | LEARN MORE ; /services/permitting: LEARN MORE | LEARN MORE | LEARN MORE ; /services/business-formation: GET STARTED | LEARN MORE | LEARN MORE ; /services/insurance: GET STARTED | LEARN MORE | LEARN MORE ; /services/dispatching: LEARN MORE | LEARN MORE | LEARN MORE ; /services/brokerage: DETAILS | DETAILS | DETAILS ; /services/bookkeeping: LEARN MORE | LEARN MORE | LEARN MORE ; /services/factoring: LEARN MORE | LEARN MORE ; /start-your-business: LEARN MORE | LEARN MORE | LEARN MORE ; /start-your-business/build: LEARN MORE | "
+  },
+  {
+   "name": "text · tablet · nothing clipped by its box",
+   "ok": false,
+   "detail": "/services: sr \"FILTER SERVICES\""
+  },
+  {
+   "name": "pages · tablet · every image loads",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "controls · tablet · every button has a handler (or says it is disabled)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "pages · desktop · all 92 pages draw without errors",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "pages · desktop · every page is a designed page (none fall to 404)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "pages · desktop · no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "text · desktop · every letter uppercase",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "text · desktop · nothing under 9 px",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "text · desktop · buttons, chips, tabs and links stay on one line",
+   "ok": false,
+   "detail": "/: SERVICES | SOLUTIONS | RESOURCES ; /services: SERVICES | SOLUTIONS | RESOURCES ; /services/find: SERVICES | SOLUTIONS | RESOURCES ; /services/permitting: SERVICES | SOLUTIONS | RESOURCES ; /services/business-formation: SERVICES | SOLUTIONS | RESOURCES ; /services/insurance: SERVICES | SOLUTIONS | RESOURCES ; /services/dispatching: SERVICES | SOLUTIONS | RESOURCES ; /services/brokerage: SERVICES | SOLUTIONS | RESOURCES ; /services/bookkeeping: SERVICES | SOLUTIONS | RESOURCES ; /services/bookkeeping/assessment: SERVICES | SOLUTIONS | RESOURCES ; /services/bookkeeping/recommendation: SERVICES"
+  },
+  {
+   "name": "text · desktop · nothing clipped by its box",
+   "ok": false,
+   "detail": "/services: sr \"FILTER SERVICES\""
+  },
+  {
+   "name": "pages · desktop · every image loads",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "controls · desktop · every button has a handler (or says it is disabled)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "pages · wide · all 92 pages draw without errors",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "pages · wide · every page is a designed page (none fall to 404)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "pages · wide · no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "text · wide · every letter uppercase",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "text · wide · nothing under 9 px",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "text · wide · buttons, chips, tabs and links stay on one line",
+   "ok": false,
+   "detail": "/: GET STARTED | GET STARTED | SEE HOW IT WORKS ; /services: GET STARTED | FIND MY SERVICE | LEARN MORE ; /services/find: GET STARTED | GET STARTED ; /services/permitting: GET STARTED | GET STARTED | GET STARTED ; /services/business-formation: GET STARTED | GET STARTED | GET STARTED ; /services/insurance: GET STARTED | GET STARTED | GET STARTED ; /services/dispatching: GET STARTED | GET STARTED | GET STARTED ; /services/brokerage: GET STARTED | DETAILS | DETAILS ; /services/bookkeeping: GET STARTED | ASSESS MY BOOKS | LEARN MORE ; /services/bookkeeping/assessment: GET STARTED | SEE MY RECOMMEN"
+  },
+  {
+   "name": "text · wide · nothing clipped by its box",
+   "ok": false,
+   "detail": "/services: sr \"FILTER SERVICES\""
+  },
+  {
+   "name": "pages · wide · every image loads",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "controls · wide · every button has a handler (or says it is disabled)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "links · all 125 internal links land on a page of the tree",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "images · all 10 photographs behind the pages exist",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "honesty · no price on any page",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "honesty · no client counts, approval rates or round-the-clock claims",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "honesty · no testimonials or reviews",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "honesty · the retired identity never appears (Perfect Choice, Frontal Slayer)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "honesty · the brand lines are the founder’s: tagline, positioning, promise",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "honesty · every service shows its status from the matrices (52 services)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "honesty · placeholders are labelled, not shown as contact details",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "brokerage · shown as PAUSED, its start actions disabled, no route into get-started from the page",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "brokerage · a freight service page says PAUSED and offers no start",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "nav · SERVICES opens the mega menu with all seven families",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "nav · Esc closes the menu",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "nav · SOLUTIONS opens, and a choice opens its page (ROAD READY™)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search · typing IFTA finds the IFTA services",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search · a result opens its page and closes the search",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "home · SEE HOW IT WORKS scrolls to START · OPERATE · MAINTAIN",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "home · a service family on the road opens its page",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "services · a family narrows the directory, the filter narrows it again",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "finder · choosing GETTING MY AUTHORITY recommends USDOT, MC and BOC-3",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "get started · CONTINUE asks for an answer first",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "get started · three steps lead to a roadmap built from the answers",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "forms · sending says NOTHING WAS SENT (design review)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "account · log in has no site header (focused), and links to forgot password and create account",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "interactions · no errors on desktop",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "phone · the menu opens, SERVICES lists all families, a choice navigates and closes it",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "phone · the four pathways swipe sideways (snap), inside their row only",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "phone · START / OPERATE / MAINTAIN switch the stage",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "phone · the first screen shows the truck, the headline and GET STARTED",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "interactions · no errors on the phone",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "motion · nothing loops",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "motion · the hero settles in once (photo and words), under two seconds",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "motion · sections rise into view once as they arrive",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "motion · reduced motion shows everything at once (no rising, no hero zoom)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · the overview shows the five curated groups as cards",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · a card opens the page in the device frame",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · phone frame is 390 wide and the site composes at 390",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · tablet frame is 834 wide and the site composes at 834",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · desktop frame is 1440 wide and the site composes at 1440",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · wide frame is 2560 wide and the site composes at 2560",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · the homepage shows panel 04 beside it",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · the reference can be put away",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · a service page shows the approved IFTA public page beside it",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · clicking inside the site navigates inside the frame",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · the page tree lists every page (92)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · reference & recovery shows the brand board, the IFTA authority and what was not found",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · no errors",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · at 390 the review has no sideways scroll and opens on the phone frame",
+   "ok": true,
+   "detail": ""
+  }
+ ]
+}
