@@ -55880,6 +55880,26 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Outcome:** Founder approval **REVISION REQUIRED**; next step **founder approves Recovery Strategy C scope + budget** before any camera-matched blockout fabrication.
 - **Prior thread also:** public GLB zip at `public/downloads/SITE00_Build_Object_Astra_V1_Web.zip` (`d615b3eae`).
 
+---
+
+## 2026-10-09 — SITE 00 Astra V2 camera-matched blockout preflight (Recovery C Stage 01)
+
+- **Context:** Sprint `P0.STUDIOOS.WFE.V1-ASTRA-SITE00-CAMERA-MATCHED-ARCHITECTURAL-BLOCKOUT1` — Recovery **C** hybrid; **Stage 01 blockout only**; Astra V1 preserved; Astréa deferred; **no paid Codex in Phase A**.
+- **Package:** `benchmarks/site00-build-object-astra-v2-blockout/` — reference copy (SHA `50590912…`), `REFERENCE_GEOMETRY_MAP.json`, camera/portal/glass/interior plans, Gate 01 founder packet, Phase B `codex-assignment-prompt.txt` ready.
+- **Gates:** Preflight script `./scripts/wfe-site00-astra-v2-blockout-preflight.sh` (reference, Codex auth, gpt-6-astra, Blender 5.2.2); launch script blocked until `WFE_BLOCKOUT_PHASE_B_AUTHORIZED=1` + `WFE_FOUNDER_AUTHORIZED_BUDGET_USD`; WFE `authorizeCodexDispatch` enforces Phase B flag for v2 blockout assignment id; **`BUDGET_ENFORCEMENT: SOFT_ONLY`** (no API USD hard cap).
+- **Status:** **PREFLIGHT COMPLETE — FABRICATION AWAITING AUTHORIZATION**; no `.blend`/blockout renders yet.
+- **Next:** Founder approves Gate 01 plans + authorizes bounded Phase B budget, then launch script.
+
+---
+
+## 2026-10-09 — Astra V2 blockout Phase B execution (founder-authorized)
+
+- **Context:** Sprint `P0.STUDIOOS.WFE.V1-ASTRA-SITE00-CAMERA-MATCHED-BLOCKOUT-PHASE-B-EXECUTION1` — one bounded **gpt-6-astra** Codex session (`WFE_BLOCKOUT_PHASE_B_AUTHORIZED=1`, soft **$10** ceiling acknowledged).
+- **Delivered:** `SITE00_Build_Object_Astra_V2_Blockout.blend`, `build_astra_v2_blockout.py`, five **PERSP** diagnostic renders @ 1672×941, comparisons/overlays, `image-inspection-evidence.md` **before** bpy, one structural revision, WFE ingest **INGESTED_WITH_WARNINGS** (no GLB — blockout stage).
+- **Measured:** **140,564** tokens (CLI); USD **UNKNOWN**; **157** mesh objects, **2436** tris (low-poly blockout); hero camera **PERSP** 34.16 mm; landmark RMS ~10.4 px (partial fit).
+- **Fidelity:** **PARTIAL** vs reference — improved vs V1 (perspective, interlocking red planes, asymmetric glass shells, arches); portal depth/saturation and interior density still below reference. **FOUNDER_APPROVAL: PENDING**.
+- **Launch:** `./scripts/wfe-site00-astra-v2-blockout-launch.sh`; review `05_FOUNDER_REVIEW/review-contact-sheet.md`.
+
 ## 2026-10-09 — AIO complete product: the complete AIO OFFICE and the public website design [sync-only]
 
 - **Sprint:** P0.AIO.COMPLETE-PRODUCT-VISUAL-CONVERGENCE.INTERNAL-OFFICE-AND-PUBLIC-WEBSITE1. Design review only; nothing deployed. Candidates, awaiting founder review.

@@ -1,0 +1,113 @@
+{
+  "created_utc": "2026-10-09T14:22:02.061603+00:00",
+  "all_required_files_present": true,
+  "reference_hash_verified": true,
+  "required_file_count": 15,
+  "structural_revision": 1,
+  "approval": "PENDING",
+  "files": [
+    {
+      "path": "01_SOURCE/SITE00_Build_Object_Astra_V2_Blockout.blend",
+      "bytes": 169058,
+      "sha256": "463fba028e6b7e41b03909ac6f1bbe30f7dcec10ad66e2921c0bb9b04f6985ed"
+    },
+    {
+      "path": "01_SOURCE/build_astra_v2_blockout.py",
+      "bytes": 13473,
+      "sha256": "355e7ae4b5e7b84432c513e252a903e7d410144a44c0c6042bf30384541a7d7d"
+    },
+    {
+      "path": "02_RENDERS/01_REFERENCE_CAMERA_BLOCKOUT.png",
+      "bytes": 1489547,
+      "sha256": "cfb82ad2df172a0eec7033937702dbea6ed67cbab32905a055bdd2a1c817b60e",
+      "dimensions": [
+        1672,
+        941
+      ]
+    },
+    {
+      "path": "02_RENDERS/02_LEFT_THREE_QUARTER.png",
+      "bytes": 1337889,
+      "sha256": "1ac48d97783ce32c3365734a2453719b064665d786b1f3b19ef51d237359cd04",
+      "dimensions": [
+        1672,
+        941
+      ]
+    },
+    {
+      "path": "02_RENDERS/03_RIGHT_THREE_QUARTER.png",
+      "bytes": 1394280,
+      "sha256": "b373ed8673b872382a7185f185806e6d35af68ed54aa407389785cafdbd15096",
+      "dimensions": [
+        1672,
+        941
+      ]
+    },
+    {
+      "path": "02_RENDERS/04_ELEVATED_INSPECTION.png",
+      "bytes": 1402138,
+      "sha256": "4cb4985a0142d7a50f75f7378904d2cb55421052ec8aedd8a0c8ed4e1345600a",
+      "dimensions": [
+        1672,
+        941
+      ]
+    },
+    {
+      "path": "02_RENDERS/05_REFERENCE_OVERLAY.png",
+      "bytes": 1655852,
+      "sha256": "2244e9224ecf8a34c4bbbf2aeb81b74530d91a19836f463608d9e8b27e7b0105",
+      "dimensions": [
+        1672,
+        941
+      ]
+    },
+    {
+      "path": "03_COMPARISONS/blockout-vs-reference-hero.png",
+      "bytes": 2901807,
+      "sha256": "5f6034bdb033ee74a7548e6d6374742acad0818af91c509ee7c134ffe2a6ec6c",
+      "dimensions": [
+        3344,
+        995
+      ]
+    },
+    {
+      "path": "03_COMPARISONS/landmark-overlay-hero.png",
+      "bytes": 1728423,
+      "sha256": "583f2aad348c5bd7dd5db405138c26277c5d49d88e9e8741ebf26481231ddce8",
+      "dimensions": [
+        1672,
+        941
+      ]
+    },
+    {
+      "path": "04_DOCUMENTATION/image-inspection-evidence.md",
+      "bytes": 3493,
+      "sha256": "9ae83fe2613adcc992959f89ab5b2bc47bd7d4e43cf08291400bcb95fee4d360"
+    },
+    {
+      "path": "04_DOCUMENTATION/camera-match-report.json",
+      "bytes": 5809,
+      "sha256": "60b617475d70a320ee73ec81a423ccfd08274e82676d9d17c79f6de776797d81"
+    },
+    {
+      "path": "04_DOCUMENTATION/structural-fidelity-report.md",
+      "bytes": 4125,
+      "sha256": "ed07041f7afa8b10fcb21858070ace0a073b866799089fece3c35b352642b21c"
+    },
+    {
+      "path": "04_DOCUMENTATION/usage-report.json",
+      "bytes": 981,
+      "sha256": "19d624dac7c019a079b79da47ca563c97661e43ab49734bc88fcb7e0094d0f6e"
+    },
+    {
+      "path": "05_FOUNDER_REVIEW/review-contact-sheet.md",
+      "bytes": 1603,
+      "sha256": "595fbd8c15f6e28d88f0a59e9080c7ddec055aefbd6221722af981d9b2273bbd"
+    },
+    {
+      "path": "05_FOUNDER_REVIEW/approval-status.json",
+      "bytes": 267,
+      "sha256": "9f0eb636eb36f035a870aa47463c017474d90c64b618e37d0bec060bff90a8d6"
+    }
+  ]
+}

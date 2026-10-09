@@ -1,0 +1,10 @@
+{
+  "status": "PENDING",
+  "stage": "01_BLOCKOUT",
+  "gate": "02_FOUNDER_BLOCKOUT_REVIEW",
+  "self_approved": false,
+  "structural_revision_passes": 1,
+  "next_stage_authorized": false,
+  "reference_fidelity": "PARTIAL",
+  "review_packet": "review-contact-sheet.md"
+}

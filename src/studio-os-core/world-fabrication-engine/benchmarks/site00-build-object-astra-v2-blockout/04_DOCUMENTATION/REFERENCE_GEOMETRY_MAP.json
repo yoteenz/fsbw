@@ -1,0 +1,183 @@
+{
+  "mapId": "site00-build-object-blueprint-reveal-v1",
+  "authorityFile": "03_COMPARISONS/approved-reference.jpg",
+  "authoritySha256": "50590912003833aeff8a1851dcbd5a1342d7aa8e47c4603a4eea3e932726582b",
+  "resolution": [1672, 941],
+  "aspectRatio": 1.777,
+  "producedBy": "Phase A preflight (Composer visual inspection + forensic audit E doc)",
+  "producedAt": "2026-10-09",
+  "elements": [
+    {
+      "id": "01_marble_plinth",
+      "name": "Marble plinth",
+      "visibleShape": "Thick rectangular pedestal; front and right faces visible; crisp vertical edges",
+      "relativeDimensions": "Width ~1.15× object footprint width; height ~0.12–0.15× total object height",
+      "placement": "Base anchor; entire composition sits on plinth top",
+      "orientation": "Axis-aligned; primary view shows front-left corner",
+      "depthOrder": "Foreground anchor",
+      "confidence": "high",
+      "evidence": "Strong dark veining on white marble; shadow under lip"
+    },
+    {
+      "id": "02_red_portal",
+      "name": "Red architectural portal",
+      "visibleShape": "Tall crimson translucent blade interlocking with glass; not a flat doorway",
+      "relativeDimensions": "Height ~0.85–0.95× total height above plinth; width ~0.18–0.22× total width",
+      "placement": "Right-of-center; vertical focal element",
+      "orientation": "Mostly vertical planes with visible thickness and internal depth",
+      "depthOrder": "Mid-forward; overlaps glass volumes",
+      "confidence": "high",
+      "evidence": "Edge glow + darker core saturation; planar intersections visible"
+    },
+    {
+      "id": "03_primary_glass_enclosure",
+      "name": "Primary glass enclosure",
+      "visibleShape": "Large transparent volume with white mullion framing",
+      "relativeDimensions": "Occupies central-left mass; height ~0.7× total",
+      "placement": "Center-left, nested against marble fin",
+      "orientation": "Rectilinear with layered depth",
+      "depthOrder": "Mid",
+      "confidence": "high",
+      "evidence": "Multiple pane lines; interior floors readable"
+    },
+    {
+      "id": "04_secondary_glass_volumes",
+      "name": "Secondary glass volumes",
+      "visibleShape": "Smaller stacked boxes; staggered roofline",
+      "relativeDimensions": "Right wing lower than left fin; 2–3 distinct boxes",
+      "placement": "Right and upper tiers",
+      "orientation": "Varied footprints — not identical cubes",
+      "depthOrder": "Mid to back",
+      "confidence": "high",
+      "evidence": "Tiered silhouette vs single box"
+    },
+    {
+      "id": "05_interior_floor_plates",
+      "name": "Interior floor plates",
+      "visibleShape": "Strong horizontal slabs visible through glass",
+      "relativeDimensions": "3–4 major levels implied",
+      "placement": "Stacked vertically inside glass",
+      "orientation": "Horizontal",
+      "depthOrder": "Interior",
+      "confidence": "medium-high",
+      "evidence": "Rhythmic horizontals in central volume"
+    },
+    {
+      "id": "06_structural_supports",
+      "name": "Structural supports",
+      "visibleShape": "White vertical partitions and columns",
+      "relativeDimensions": "Thin relative to floor spans",
+      "placement": "Inside glass grid",
+      "orientation": "Vertical",
+      "depthOrder": "Interior mid",
+      "confidence": "medium",
+      "evidence": "Vertical breaks between glass bays"
+    },
+    {
+      "id": "07_horizontal_planes",
+      "name": "Horizontal architectural planes",
+      "visibleShape": "Ceiling/soffit lines and mezzanine edges",
+      "relativeDimensions": "Align with floor stack",
+      "placement": "Throughout interior",
+      "orientation": "Horizontal",
+      "depthOrder": "Interior",
+      "confidence": "medium",
+      "evidence": "Layered horizontals in depth"
+    },
+    {
+      "id": "08_vertical_partitions",
+      "name": "Vertical partitions",
+      "visibleShape": "Interior walls dividing bays",
+      "relativeDimensions": "Partial-height and full-height segments",
+      "placement": "Central interior",
+      "orientation": "Vertical",
+      "depthOrder": "Interior",
+      "confidence": "medium",
+      "evidence": "Visible wall planes behind glass"
+    },
+    {
+      "id": "09_openings_passageways",
+      "name": "Openings and passageways",
+      "visibleShape": "Rectangular and arched voids",
+      "relativeDimensions": "Human-scale openings on lower levels",
+      "placement": "Center-left depth",
+      "orientation": "Mixed",
+      "depthOrder": "Deep interior",
+      "confidence": "medium",
+      "evidence": "Arched sequence visible deep left"
+    },
+    {
+      "id": "10_interior_arches",
+      "name": "Interior arches",
+      "visibleShape": "Soft arched openings in white structure",
+      "relativeDimensions": "Roughly human-scale width",
+      "placement": "Deep center-left",
+      "orientation": "Facing camera obliquely",
+      "depthOrder": "Deep",
+      "confidence": "medium",
+      "evidence": "Curved tops on interior openings"
+    },
+    {
+      "id": "11_intersections",
+      "name": "Architectural intersections",
+      "visibleShape": "Glass/red/marble meet with intentional overlaps",
+      "relativeDimensions": "Portal penetrates glass stack",
+      "placement": "Right-center",
+      "orientation": "Orthogonal interlock",
+      "depthOrder": "Mid",
+      "confidence": "high",
+      "evidence": "Red plane visible through and beside glass"
+    },
+    {
+      "id": "12_foreground_background",
+      "name": "Foreground / background layers",
+      "visibleShape": "Object vs seamless white field",
+      "relativeDimensions": "Object fills ~75% frame height",
+      "placement": "Centered with slight right weight",
+      "orientation": "N/A",
+      "depthOrder": "Plinth foreground; infinite white backdrop",
+      "confidence": "high",
+      "evidence": "High-key studio environment"
+    },
+    {
+      "id": "13_human_scale",
+      "name": "Human scale references",
+      "visibleShape": "Three dark human silhouettes on interior floor",
+      "relativeDimensions": "~1/10 total structure height",
+      "placement": "Lower interior platform above plinth",
+      "orientation": "Standing",
+      "depthOrder": "Interior",
+      "confidence": "high",
+      "evidence": "Distinct silhouettes — not ellipsoids",
+      "blockoutNote": "Do not model in Stage 01; use scale guides only"
+    },
+    {
+      "id": "14_lighting",
+      "name": "Lighting direction",
+      "visibleShape": "Soft top/front high-key; minimal harsh shadow",
+      "relativeDimensions": "N/A",
+      "placement": "Global",
+      "orientation": "Top-front bias",
+      "depthOrder": "N/A",
+      "confidence": "medium",
+      "evidence": "Subtle ground shadow; bright glass highlights"
+    },
+    {
+      "id": "15_camera",
+      "name": "Camera perspective",
+      "visibleShape": "Three-quarter perspective (not orthographic)",
+      "relativeDimensions": "See CAMERA_MATCH_PLAN.md",
+      "placement": "Front-right, slightly elevated",
+      "orientation": "Looks at front-right corner of plinth",
+      "depthOrder": "N/A",
+      "confidence": "high",
+      "evidence": "Converging verticals; V1 ortho hero failed gate"
+    }
+  ],
+  "antiPatternsFromV1": [
+    "Symmetric pavilion() template",
+    "Twin red acrylic boxes",
+    "Orthographic hero labeled reference match",
+    "Ellipsoid human placeholders in hero renders"
+  ]
+}

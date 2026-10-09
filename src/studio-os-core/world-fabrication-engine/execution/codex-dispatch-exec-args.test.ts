@@ -17,4 +17,14 @@ describe('Codex exec invocation (non-billable regression)', () => {
     expect(mIdx).toBeGreaterThan(-1);
     expect(argv[mIdx + 1]).toBe('gpt-6-astra');
   });
+
+  it('appends -i paths before stdin prompt flag', () => {
+    const { argv } = buildCodexExecInvocation('test', {
+      imageInputs: ['/tmp/ref.jpg', '/tmp/overlay.png'],
+    });
+    expect(argv).toContain('-i');
+    const iIdx = argv.lastIndexOf('-i');
+    expect(argv[iIdx + 1]).toBe('/tmp/overlay.png');
+    expect(argv[argv.length - 1]).toBe('-');
+  });
 });

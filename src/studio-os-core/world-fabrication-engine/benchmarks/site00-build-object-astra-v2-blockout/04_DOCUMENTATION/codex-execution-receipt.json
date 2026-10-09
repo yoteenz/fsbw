@@ -1,0 +1,16 @@
+{
+  "sprintId": "P0.STUDIOOS.WFE.V1-ASTRA-SITE00-CAMERA-MATCHED-BLOCKOUT-PHASE-B-EXECUTION1",
+  "executionModel": "gpt-6-astra",
+  "codexCliVersion": "0.162.0",
+  "sessions": 1,
+  "automaticRetries": 0,
+  "exitCode": 0,
+  "tokensReported": 140564,
+  "attributableUsd": null,
+  "softBudgetUsd": 10,
+  "budgetEnforcement": "SOFT_ONLY",
+  "launchEvidence": "../execution-runs/phase-b-blockout/LAUNCH_IMAGE_INPUT_EVIDENCE.json",
+  "transcriptLog": "../execution-runs/phase-b-blockout/codex-exec.log",
+  "completionMarker": "WFE_ASTRA_V2_BLOCKOUT_COMPLETE",
+  "structuralRevisionPasses": 1
+}

@@ -1,0 +1,10 @@
+{
+  "launchedAt": "2026-10-09T14:04:39Z",
+  "model": "gpt-6-astra",
+  "codexCli": "0.162.0",
+  "imageInput": "/workspace/src/studio-os-core/world-fabrication-engine/benchmarks/site00-build-object-astra-v2-blockout/03_COMPARISONS/approved-reference.jpg",
+  "promptPath": "/workspace/src/studio-os-core/world-fabrication-engine/benchmarks/site00-build-object-astra-v2-blockout/execution-runs/phase-b-blockout/codex-assignment-prompt.txt",
+  "budgetUsdSoftCeiling": "10",
+  "budgetEnforcement": "SOFT_ONLY",
+  "timeoutMs": 900000
+}

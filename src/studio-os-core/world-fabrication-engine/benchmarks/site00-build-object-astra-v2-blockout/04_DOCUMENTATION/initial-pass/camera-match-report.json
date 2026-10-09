@@ -1,0 +1,152 @@
+{
+  "stage": "01_BLOCKOUT",
+  "revision": 0,
+  "projection": "PERSP",
+  "focal_length_mm": 34.159690856933594,
+  "sensor_width_mm": 36.0,
+  "location": [
+    14.55251693725586,
+    -10.844253540039062,
+    0.35318687558174133
+  ],
+  "target": [
+    0,
+    0,
+    0.35318688866216597
+  ],
+  "shift_x": 0.07250047475099564,
+  "shift_y": 0.17606249451637268,
+  "resolution": [
+    1672,
+    941
+  ],
+  "landmarks": [
+    {
+      "name": "red_peak",
+      "world": [
+        6.316999481977161,
+        -1.35,
+        5.68261543962624
+      ],
+      "reference_px": [
+        1067,
+        77
+      ],
+      "projected_px": [
+        1062.6759128570557,
+        76.15013307332993
+      ],
+      "error_px": 4.40681329452748
+    },
+    {
+      "name": "red_left",
+      "world": [
+        3.3440964373620865,
+        -1.35,
+        5.68261543962624
+      ],
+      "reference_px": [
+        818,
+        190
+      ],
+      "projected_px": [
+        813.8715736865997,
+        188.13812375068665
+      ],
+      "error_px": 4.5288505156311905
+    },
+    {
+      "name": "fin_peak",
+      "world": [
+        0.6715978323173353,
+        -3.4,
+        5.245136970566672
+      ],
+      "reference_px": [
+        478,
+        268
+      ],
+      "projected_px": [
+        477.9999794960022,
+        266.67760437726974
+      ],
+      "error_px": 1.3223956228892144
+    },
+    {
+      "name": "fin_left",
+      "world": [
+        -1.9127152477046678,
+        -3.4,
+        5.245136970566672
+      ],
+      "reference_px": [
+        367,
+        324
+      ],
+      "projected_px": [
+        366.9999476671219,
+        325.16698157787323
+      ],
+      "error_px": 1.1669815790466547
+    },
+    {
+      "name": "central_left",
+      "world": [
+        -1.6586245028916586,
+        -1.6,
+        5.561175633209342
+      ],
+      "reference_px": [
+        520,
+        319
+      ],
+      "projected_px": [
+        519.9999551773071,
+        318.7928641438484
+      ],
+      "error_px": 0.20713586100123313
+    },
+    {
+      "name": "central_peak",
+      "world": [
+        3.7239706956361918,
+        -1.6,
+        5.561175633209342
+      ],
+      "reference_px": [
+        820,
+        183
+      ],
+      "projected_px": [
+        819.9999523162842,
+        183.26980006694794
+      ],
+      "error_px": 0.26980007116168087
+    },
+    {
+      "name": "right_wing",
+      "world": [
+        6.6,
+        3.75,
+        3.35
+      ],
+      "reference_px": [
+        1456,
+        476
+      ],
+      "projected_px": [
+        1445.203001499176,
+        449.94751662015915
+      ],
+      "error_px": 28.20118910407288
+    }
+  ],
+  "landmark_rms_px": 10.944429965068457,
+  "status": "PARTIAL_CAMERA_FIT_NOT_APPROVED",
+  "residual_notes": [
+    "Lens solved from receding roof axes, not assumed from metadata.",
+    "Near-level lens shift retains vertical architectural edges.",
+    "Plinth/portal/fin anchors prioritized. Rear shell and secondary tiers interpreted from a single image.",
+    "Camera-plan framing 88\u201392% was replaced by observed ~78% plinth image width."
+  ]
+}

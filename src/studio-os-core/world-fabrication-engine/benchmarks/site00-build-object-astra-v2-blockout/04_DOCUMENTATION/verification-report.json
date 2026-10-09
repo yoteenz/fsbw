@@ -1,0 +1,58 @@
+{
+  "checks": {
+    "required_collections": true,
+    "hero_perspective": true,
+    "four_perspective_cameras": true,
+    "five_distinct_glass_shells": true,
+    "three_arch_voids": true,
+    "no_human_meshes": true,
+    "scene_approval_pending": true,
+    "one_revision": true,
+    "01_REFERENCE_CAMERA_BLOCKOUT_size": true,
+    "02_LEFT_THREE_QUARTER_size": true,
+    "03_RIGHT_THREE_QUARTER_size": true,
+    "04_ELEVATED_INSPECTION_size": true,
+    "05_REFERENCE_OVERLAY_size": true
+  },
+  "all_pass": true,
+  "measured_mesh_objects": 157,
+  "evaluated_triangles": 2436,
+  "render_files": {
+    "01_REFERENCE_CAMERA_BLOCKOUT": {
+      "size": [
+        1672,
+        941
+      ],
+      "sha256": "cfb82ad2df172a0eec7033937702dbea6ed67cbab32905a055bdd2a1c817b60e"
+    },
+    "02_LEFT_THREE_QUARTER": {
+      "size": [
+        1672,
+        941
+      ],
+      "sha256": "1ac48d97783ce32c3365734a2453719b064665d786b1f3b19ef51d237359cd04"
+    },
+    "03_RIGHT_THREE_QUARTER": {
+      "size": [
+        1672,
+        941
+      ],
+      "sha256": "b373ed8673b872382a7185f185806e6d35af68ed54aa407389785cafdbd15096"
+    },
+    "04_ELEVATED_INSPECTION": {
+      "size": [
+        1672,
+        941
+      ],
+      "sha256": "4cb4985a0142d7a50f75f7378904d2cb55421052ec8aedd8a0c8ed4e1345600a"
+    },
+    "05_REFERENCE_OVERLAY": {
+      "size": [
+        1672,
+        941
+      ],
+      "sha256": "2244e9224ecf8a34c4bbbf2aeb81b74530d91a19836f463608d9e8b27e7b0105"
+    }
+  },
+  "scope": "File and scene validation only. Does not approve reference fidelity."
+}
