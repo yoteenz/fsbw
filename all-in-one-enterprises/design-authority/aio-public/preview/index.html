@@ -1176,6 +1176,82 @@ function explorePanelBody(sel) {
       <div class="hero__ctas"><a class="btn btn--gold" href="#${P.href}">${U(P.ctaLabel)} ${ic('arrow', 'ic--go')}</a><a class="btn btn--line" href="#${CAT_HUB[PATH_CATS[P.id][0]]}">SEE EVERY SERVICE</a></div></div>`,
   };
 }
+function sybJourneyInner(k) {
+  const steps = D.journey;
+  const cur = steps[k];
+  const cs = (cur.serviceSlugs || []).map(svcBySlug).filter(Boolean);
+  const csList = cs.length ? cs : D.services.filter((x) => x.category === (k < 1 ? 'start-my-business' : k < 4 ? 'get-road-ready' : 'permits-taxes-compliance')).slice(0, 4);
+  return `<div class="journey__copy"><p class="eyebrow">STAGE ${cur.number} OF 0${steps.length}</p><h3 class="h2">${U(cur.title)}.</h3><p class="lead">${U(cur.description || D.stages[k]?.description || '')}</p>
+      <div class="hero__ctas"><a class="btn btn--gold" href="#${cur.route}">OPEN ${U(cur.title)} ${ic('arrow', 'ic--go')}</a>${k < steps.length - 1 ? `<button class="btn btn--line" data-a="syb" data-v="${k + 1}">NEXT: ${U(steps[k + 1].title)} ${ic('chev')}</button>` : ''}</div></div>
+      <div class="list">${csList.map((x) => `<a class="row" href="#/services/${x.slug}">${ic(svcIcon(x))}<div><b>${U(x.name)}</b><span>${U(x.shortDescription)}</span></div>${chip(x.state)}</a>`).join('')}</div>`;
+}
+function guidePanelInner(gid) {
+  const gc = catById(gid);
+  const gl = D.services.filter((x) => x.category === gid);
+  return `<p class="eyebrow">0${gc.order} · ${U(gc.title)}</p><h2 class="h2" style="margin:12px 0 10px">${U(gc.headline)}</h2><p class="lead" style="margin-bottom:22px">${U(gc.description)}</p>
+      <div class="list">${gl.map((x) => `<a class="row" href="#/services/${x.slug}">${ic(svcIcon(x))}<div><b>${U(x.name)}</b><span>${U(x.shortDescription)}</span></div>${chip(x.state)}</a>`).join('')}</div>
+      <div class="hero__ctas" style="margin-top:22px"><a class="btn btn--gold" href="#${CAT_HUB[gid].startsWith('/services?') ? '/services' : CAT_HUB[gid]}">OPEN ${U(gc.title)} ${ic('arrow', 'ic--go')}</a>${gc.order < D.categories.length ? `<button class="btn btn--line" data-a="pick" data-v="guide|${D.categories.find((c) => c.order === gc.order + 1)?.id || gid}">NEXT FAMILY ${ic('chev')}</button>` : ''}</div>`;
+}
+function sxPickForList(id, list) {
+  const slug = PUB.pick[id];
+  const candidate = slug && svcBySlug(slug);
+  return candidate && list.includes(candidate) ? candidate : [...list].sort((a, b) => Number(b.ctaAllowed) - Number(a.ctaAllowed))[0];
+}
+function sxPanelInner(pick) {
+  const prov = provides(pick).slice(0, 5);
+  return `<div class="sx__head" style="--img:url(${IMG(PHOTO[pick.category] || 'mountain-road')})"><div><p class="eyebrow">${U(catById(pick.category).title)}</p><h3 class="h2">${U(pick.name)}</h3></div>${chip(pick.state)}</div>
+        <div class="sx__body"><p class="lead">${U(pick.description)}</p>
+          <div class="sx__cols">${pick.audience ? `<div><p class="eyebrow eyebrow--plain">WHO IT IS FOR</p><p>${U(pick.audience)}</p></div>` : ''}${prov.length ? `<div><p class="eyebrow eyebrow--plain">WHAT YOU PROVIDE</p><ul>${prov.map((x) => `<li>${ic('check')}<span>${x}</span></li>`).join('')}</ul></div>` : ''}</div>
+          <div class="sx__meta"><span>${ic((DELIVERY[pick.fulfillmentType] || DELIVERY.AIO_DIRECT)[1])}${(DELIVERY[pick.fulfillmentType] || DELIVERY.AIO_DIRECT)[0]}</span><span>${ic('receipt')}${PRICING[pick.pricingModel] || 'QUOTE AFTER REVIEW'}</span>${pick.renewalInterval ? `<span>${ic('calendar')}RENEWS ${RENEW[pick.renewalInterval] || U(pick.renewalInterval)}</span>` : ''}</div>
+          <div class="hero__ctas"><a class="btn btn--gold" href="#/services/${pick.slug}">OPEN THIS SERVICE ${ic('arrow', 'ic--go')}</a>${pick.ctaAllowed ? `<a class="btn btn--line" href="#/get-started?service=${pick.slug}">${U(pick.ctaLabel)}</a>` : `<a class="btn btn--line" href="#/contact">ASK ABOUT IT</a>`}</div></div>`;
+}
+function explorerServiceList(id) {
+  return D.services.filter((s) => s.division === id);
+}
+function servicesCatalogBlock(f, q) {
+  const list = D.services.filter((s) => (f === 'all' || s.category === f) && (!q || `${s.name} ${s.shortDescription}`.toLowerCase().includes(q)));
+  const index = f === 'all' && !q;
+  const wide = (ROOT?.clientWidth || PUB.width || 0) >= 600;
+  const idx = D.categories.map((c, i) => {
+    const xs = D.services.filter((s) => s.category === c.id);
+    const best = c.id === 'move-freight' ? 'PAUSED' : RANK.find((k) => xs.some((s) => s.state === k));
+    return `<details class="idx__fam rv" style="--d:${i % 3}"${i === 0 || wide ? ' open' : ''}><summary>${ic(CAT_ICON[c.id])}<span><b>${U(c.title)}</b><em>${xs.length} SERVICES</em></span>${chip(best)}${ic('caret')}</summary>
+      <div class="idx__rows">${xs.map((s) => `<a href="#/services/${s.slug}"><span>${U(s.name)}</span>${chip(s.state)}</a>`).join('')}<button class="link" data-a="fam" data-v="${c.id}">OPEN ${U(c.title)} ${ic('arrow')}</button></div></details>`;
+  }).join('');
+  const head = f !== 'all' ? `<div class="sec__head sec__head--row" style="margin-bottom:22px"><div><p class="eyebrow">${U(catById(f).title)}</p><h2 class="h2" style="margin-top:12px">${U(catById(f).headline)}</h2></div>${['move-freight'].includes(f) ? chip('PAUSED') : ''}</div>` : '';
+  const body = index ? `<div class="idx" data-slot="svcs-index">${idx}</div><div class="svcs" data-slot="svcs" hidden></div>` : `<div class="svcs" data-slot="svcs">${list.map(svcCard).join('') || `<p class="muted">NO SERVICE MATCHES THAT FILTER.</p>`}</div>`;
+  return head + body;
+}
+function finderAsideInner() {
+  const picked = D.needs.filter((n) => PUB.needs.includes(n.id));
+  const rec = [...new Set(picked.flatMap((n) => n.recommendedSlugs))].map(svcBySlug).filter(Boolean);
+  return `<p class="eyebrow">WHERE TO START</p><h3 class="h3" style="margin:12px 0 18px">${rec.length ? `${rec.length} SERVICES FOR YOU` : 'CHOOSE WHAT APPLIES'}</h3>
+      <div class="list">${rec.length ? rec.map((s) => `<a class="row" href="#/services/${s.slug}">${ic(svcIcon(s))}<div><b>${U(s.name)}</b><span>${STATE[s.state][0]}</span></div>${ic('chev')}</a>`).join('') : `<p class="note">YOUR RECOMMENDATIONS APPEAR HERE AS YOU CHOOSE.</p>`}</div>
+      ${rec.length ? `<a class="btn btn--gold" style="width:100%;margin-top:18px" href="#/get-started">CONTINUE TO GET STARTED ${ic('arrow', 'ic--go')}</a>` : ''}`;
+}
+function gsStepState() {
+  const I = D.intake;
+  const g = PUB.gs;
+  const flow = I.flows[g.goal || 'start_business'];
+  const k = Math.min(g.step, flow.length - 1);
+  const sec = I.sections.find((s) => s.id === flow[k]);
+  const last = k === flow.length - 1;
+  const blocked = (k === 0 && !g.goal) || (sec.id === 'journey' && !g.ans.journey);
+  return { I, g, flow, k, sec, last, blocked };
+}
+function gsRailHtml(I, flow, k) {
+  return flow.map((id, i) => {
+    const s = I.sections.find((x) => x.id === id);
+    return `<li><button data-a="gsGo" data-v="${i}" aria-current="${i === k ? 'step' : 'false'}"${i > k ? ' disabled' : ''} class="${i < k ? 'is-done' : ''}"><span class="gs-rail__n">${i < k ? ic('check') : String(i + 1).padStart(2, '0')}</span><span><b>${U(s.rail[0])}</b><em>${U(s.rail[1])}</em></span></button></li>`;
+  }).join('');
+}
+function gsMainInner({ flow, k, sec, last, blocked }) {
+  return `<div class="gs-progress" aria-hidden="true">${flow.map((_, i) => `<i class="${i <= k ? 'on' : ''}"></i>`).join('')}</div>
+      <p class="eyebrow">STEP ${k + 1} OF ${flow.length} · ${U(sec.rail[0])}</p><h2 class="h2" style="margin:12px 0 6px">${U(sec.title)}</h2><p class="lead" style="margin-bottom:22px">${U(sec.description)}</p>
+      <div class="form gs-form${sec.id === 'assets' ? ' gs-form--assets' : ''}">${sec.questions.map(gsQuestion).join('')}</div>
+      <div class="gs-nav">${k ? `<button class="btn btn--line" data-a="gsBack">${ic('back')} BACK</button>` : `<a class="link" href="#/">SAVE &amp; EXIT</a>`}${last ? `<a class="btn btn--gold" href="#/roadmap/results">SEE MY ROADMAP ${ic('arrow', 'ic--go')}</a>` : `<button class="btn btn--gold" data-a="gsNext"${blocked ? ' aria-disabled="true"' : ''}>CONTINUE ${ic('arrow', 'ic--go')}</button>`}</div>
+      <p class="note" style="margin-top:16px">DESIGN REVIEW — NOTHING YOU ENTER IS SAVED OR SENT. THE LIVE INTAKE SAVES AS YOU GO.</p>`;
+}
 function home() {
   const fams = (ids) => ids.map((id) => {
     if (id === 'fleetcare') return `<a class="fam" href="#/services/fleetcare">${ic('wrench')}<div><b>FLEETCARE NETWORK</b><span>MAINTENANCE & REPAIR · INDEPENDENT PROVIDERS</span></div><div class="fam__end">${ic('chev')}</div></a>`;
@@ -1246,21 +1322,14 @@ function home() {
 const RENEW = { annual: 'EVERY YEAR', biennial: 'EVERY TWO YEARS', quarterly: 'EVERY QUARTER', monthly: 'EVERY MONTH', as_needed: 'AS NEEDED' };
 const provides = (s) => [...new Set([...(s.requirements || []), ...(s.documents || [])].map((x) => x.toUpperCase()))];
 function explorer(id, list, title) {
-  const pick = svcBySlug(PUB.pick[id]) && list.includes(svcBySlug(PUB.pick[id])) ? svcBySlug(PUB.pick[id]) : [...list].sort((a, b) => Number(b.ctaAllowed) - Number(a.ctaAllowed))[0];
+  const pick = sxPickForList(id, list);
   const open = PUB.open[id];
   const cards = open ? list : list.slice(0, 6);
-  const prov = provides(pick).slice(0, 5);
   return `<div class="sec__head sec__head--row">${rv(`<p class="eyebrow">${list.length} SERVICES · ONE RECORD</p><h2 class="h2" style="margin-top:14px">${title}</h2>`)}${rv(`<a class="link" href="#/services">ALL SERVICES ${ic('arrow')}</a>`, 1)}</div>
     <div class="sx-phone"><div class="svcs">${cards.map(svcCard).join('')}</div>${list.length > 6 ? `<button class="btn btn--line sx-more" data-a="more" data-v="${id}" aria-expanded="${!!open}">${open ? 'SHOW FEWER' : `SHOW ALL ${list.length} SERVICES`} ${ic(open ? 'up' : 'down')}</button>` : ''}</div>
     ${rv(`<div class="sx">
       <div class="sx__list" role="tablist" aria-label="${esc(title)}">${list.map((x) => `<button class="sx__row" role="tab" aria-selected="${x === pick}" data-a="pick" data-v="${id}|${x.slug}">${ic(svcIcon(x))}<b>${U(x.name)}</b>${chip(x.state)}</button>`).join('')}</div>
-      <div class="sx__panel" role="tabpanel">
-        <div class="sx__head" style="--img:url(${IMG(PHOTO[pick.category] || 'mountain-road')})"><div><p class="eyebrow">${U(catById(pick.category).title)}</p><h3 class="h2">${U(pick.name)}</h3></div>${chip(pick.state)}</div>
-        <div class="sx__body"><p class="lead">${U(pick.description)}</p>
-          <div class="sx__cols">${pick.audience ? `<div><p class="eyebrow eyebrow--plain">WHO IT IS FOR</p><p>${U(pick.audience)}</p></div>` : ''}${prov.length ? `<div><p class="eyebrow eyebrow--plain">WHAT YOU PROVIDE</p><ul>${prov.map((x) => `<li>${ic('check')}<span>${x}</span></li>`).join('')}</ul></div>` : ''}</div>
-          <div class="sx__meta"><span>${ic((DELIVERY[pick.fulfillmentType] || DELIVERY.AIO_DIRECT)[1])}${(DELIVERY[pick.fulfillmentType] || DELIVERY.AIO_DIRECT)[0]}</span><span>${ic('receipt')}${PRICING[pick.pricingModel] || 'QUOTE AFTER REVIEW'}</span>${pick.renewalInterval ? `<span>${ic('calendar')}RENEWS ${RENEW[pick.renewalInterval] || U(pick.renewalInterval)}</span>` : ''}</div>
-          <div class="hero__ctas"><a class="btn btn--gold" href="#/services/${pick.slug}">OPEN THIS SERVICE ${ic('arrow', 'ic--go')}</a>${pick.ctaAllowed ? `<a class="btn btn--line" href="#/get-started?service=${pick.slug}">${U(pick.ctaLabel)}</a>` : `<a class="btn btn--line" href="#/contact">ASK ABOUT IT</a>`}</div></div>
-      </div>
+      <div class="sx__panel" role="tabpanel">${sxPanelInner(pick)}</div>
     </div>`, 1)}`;
 }
 function division(id) {
@@ -1359,35 +1428,20 @@ function bookkeeping() {
 function services() {
   const f = PUB.fam;
   const q = PUB.fq.trim().toLowerCase();
-  const list = D.services.filter((s) => (f === 'all' || s.category === f) && (!q || `${s.name} ${s.shortDescription}`.toLowerCase().includes(q)));
-  /* the whole catalog at a glance: one compact index grouped by family (accordions on the phone) — cards only once a family or a search narrows it */
-  const index = f === 'all' && !q;
-  const wide = (ROOT?.clientWidth || PUB.width || 0) >= 600; // tablet + desktop show every family open; the phone opens the first
-  const idx = D.categories.map((c, i) => {
-    const xs = D.services.filter((s) => s.category === c.id);
-    const best = c.id === 'move-freight' ? 'PAUSED' : RANK.find((k) => xs.some((s) => s.state === k));
-    return `<details class="idx__fam rv" style="--d:${i % 3}"${i === 0 || wide ? ' open' : ''}><summary>${ic(CAT_ICON[c.id])}<span><b>${U(c.title)}</b><em>${xs.length} SERVICES</em></span>${chip(best)}${ic('caret')}</summary>
-      <div class="idx__rows">${xs.map((s) => `<a href="#/services/${s.slug}"><span>${U(s.name)}</span>${chip(s.state)}</a>`).join('')}<button class="link" data-a="fam" data-v="${c.id}">OPEN ${U(c.title)} ${ic('arrow')}</button></div></details>`;
-  }).join('');
   return `${phero({ img: 'mountain-road', crumbs: [['/', 'HOME'], [null, 'SERVICES']], eyebrow: 'SERVICES', title: 'EVERYTHING YOUR BUSINESS NEEDS.', lead: 'SEVEN FAMILIES OF SERVICES BEHIND YOUR TRUCKING BUSINESS — EACH WITH ITS STATUS SHOWN HONESTLY.', ctas: `<a class="btn btn--gold" href="#/services/find">FIND MY SERVICE ${ic('arrow', 'ic--go')}</a><a class="btn btn--line" href="#/get-started">CHECK WHAT I NEED</a>` })}
   <section class="sec" style="padding-top:56px"><div class="wrap">
     <div class="sec__head" style="gap:18px">
       <div class="fambar" role="tablist" aria-label="SERVICE FAMILIES">${[['all', 'ALL SERVICES', 'layers', D.services.length], ...D.categories.map((c) => [c.id, c.title, CAT_ICON[c.id], D.services.filter((s) => s.category === c.id).length])].map(([id, t, i, n]) => `<button class="fambar__b" role="tab" data-a="fam" data-v="${id}" aria-selected="${f === id}">${ic(i)}<span><b>${U(t)}</b><em>${n}</em></span></button>`).join('')}</div>
       <label class="search__box" style="margin:0;max-width:none">${ic('search')}<span class="sr">FILTER SERVICES</span><input data-input="fq" value="${esc(PUB.fq)}" placeholder="FILTER BY NAME — “UCR”, “IFTA”, “DISPATCH”…" autocomplete="off"></label>
     </div>
-    ${f !== 'all' ? `<div class="sec__head sec__head--row" style="margin-bottom:22px"><div><p class="eyebrow">${U(catById(f).title)}</p><h2 class="h2" style="margin-top:12px">${U(catById(f).headline)}</h2></div>${['move-freight'].includes(f) ? chip('PAUSED') : ''}</div>` : ''}
-    ${index ? `<div class="idx" data-slot="svcs-index">${idx}</div><div class="svcs" data-slot="svcs" hidden></div>` : `<div class="svcs" data-slot="svcs">${list.map(svcCard).join('') || `<p class="muted">NO SERVICE MATCHES THAT FILTER.</p>`}</div>`}
+    <div data-slot="svcs-body">${servicesCatalogBlock(f, q)}</div>
   </div></section>${closing()}`;
 }
 function finder() {
-  const picked = D.needs.filter((n) => PUB.needs.includes(n.id));
-  const rec = [...new Set(picked.flatMap((n) => n.recommendedSlugs))].map(svcBySlug).filter(Boolean);
   return `${phero({ img: 'highway-gold', crumbs: [['/', 'HOME'], ['/services', 'SERVICES'], [null, 'FIND A SERVICE']], eyebrow: 'FIND A SERVICE', title: 'WHAT DO YOU NEED HELP WITH?', lead: 'PICK EVERYTHING THAT APPLIES. WE WILL SHOW YOU WHERE TO START.' })}
   <section class="sec" style="padding-top:56px"><div class="wrap cols cols--wide">
     <div><div class="choices" style="grid-template-columns:repeat(auto-fill,minmax(min(100%,250px),1fr))">${D.needs.map((n) => `<button class="choice" data-a="need" data-v="${n.id}" aria-pressed="${PUB.needs.includes(n.id)}">${ic('compass')}<div><b>${U(n.label)}</b><span>${U(n.description)}</span></div><span class="choice__tick">${ic('check')}</span></button>`).join('')}</div></div>
-    <aside class="panel" style="position:sticky;top:calc(var(--nav) + 20px)"><p class="eyebrow">WHERE TO START</p><h3 class="h3" style="margin:12px 0 18px">${rec.length ? `${rec.length} SERVICES FOR YOU` : 'CHOOSE WHAT APPLIES'}</h3>
-      <div class="list">${rec.length ? rec.map((s) => `<a class="row" href="#/services/${s.slug}">${ic(svcIcon(s))}<div><b>${U(s.name)}</b><span>${STATE[s.state][0]}</span></div>${ic('chev')}</a>`).join('') : `<p class="note">YOUR RECOMMENDATIONS APPEAR HERE AS YOU CHOOSE.</p>`}</div>
-      ${rec.length ? `<a class="btn btn--gold" style="width:100%;margin-top:18px" href="#/get-started">CONTINUE TO GET STARTED ${ic('arrow', 'ic--go')}</a>` : ''}</aside>
+    <aside class="panel" style="position:sticky;top:calc(var(--nav) + 20px)" data-slot="finder-aside">${finderAsideInner()}</aside>
   </div></section>${closing()}`;
 }
 
@@ -1435,16 +1489,11 @@ function startBusiness(step) {
     <div class="sec__head">${rv(`<h2 class="h2">WHAT HAPPENS IN ${U(s.title)}.</h2>`)}</div><div class="svcs">${svcs.length ? svcs.map(svcCard).join('') : D.services.filter((x) => x.category === (i < 1 ? 'start-my-business' : i < 4 ? 'get-road-ready' : 'permits-taxes-compliance')).slice(0, 6).map(svcCard).join('')}</div></div></section>${closing()}`;
   }
   const k = Math.min(PUB.syb || 0, steps.length - 1);
-  const cur = steps[k];
-  const cs = (cur.serviceSlugs || []).map(svcBySlug).filter(Boolean);
-  const csList = cs.length ? cs : D.services.filter((x) => x.category === (k < 1 ? 'start-my-business' : k < 4 ? 'get-road-ready' : 'permits-taxes-compliance')).slice(0, 4);
   return `${phero({ img: 'aio-login', pos: '75% 50%', crumbs: [['/', 'HOME'], [null, 'START YOUR BUSINESS']], eyebrow: 'START YOUR BUSINESS', title: 'FROM IDEA TO RUNNING YOUR TRUCKING BUSINESS.', lead: 'SIX STAGES, IN ORDER. AIO HELPS AT EVERY ONE — AND KEEPS IT ALL ON ONE RECORD.', ctas: `<a class="btn btn--gold" href="#/start-your-business/build">START WITH BUILD ${ic('arrow', 'ic--go')}</a><a class="btn btn--line" href="#/get-started">CHECK WHAT I NEED</a>` })}
   <section class="sec" style="padding-top:64px"><div class="wrap">
     ${rv(`<div class="sec__head"><p class="eyebrow">THE JOURNEY</p><h2 class="h2">PICK A STAGE TO SEE WHAT HAPPENS IN IT.</h2></div>`)}
     <div class="rail rail--pick" role="tablist" aria-label="THE SIX STAGES">${steps.map((s, i) => `<button class="st${i === k ? ' is-cur' : ''}" role="tab" aria-selected="${i === k}" data-a="syb" data-v="${i}"><span class="st__dot">${s.number}</span><b>${U(s.title)}</b><span>${U(D.stages[i]?.description || '')}</span></button>`).join('')}</div>
-    <div class="journey" role="tabpanel"><div class="journey__copy"><p class="eyebrow">STAGE ${cur.number} OF 0${steps.length}</p><h3 class="h2">${U(cur.title)}.</h3><p class="lead">${U(cur.description || D.stages[k]?.description || '')}</p>
-      <div class="hero__ctas"><a class="btn btn--gold" href="#${cur.route}">OPEN ${U(cur.title)} ${ic('arrow', 'ic--go')}</a>${k < steps.length - 1 ? `<button class="btn btn--line" data-a="syb" data-v="${k + 1}">NEXT: ${U(steps[k + 1].title)} ${ic('chev')}</button>` : ''}</div></div>
-      <div class="list">${csList.map((x) => `<a class="row" href="#/services/${x.slug}">${ic(svcIcon(x))}<div><b>${U(x.name)}</b><span>${U(x.shortDescription)}</span></div>${chip(x.state)}</a>`).join('')}</div></div>
+    <div class="journey" role="tabpanel">${sybJourneyInner(k)}</div>
   </div></section>${closing()}`;
 }
 function roadReady() {
@@ -1466,9 +1515,7 @@ function roadmap(results) {
   return `${phero({ img: 'freight-map', pos: '50% 50%', crumbs: [['/', 'HOME'], [null, 'COMPLIANCE GUIDE']], eyebrow: 'COMPLIANCE GUIDE', title: 'THE ALL IN ONE ROADMAP.', lead: 'WHAT A TRUCKING BUSINESS NEEDS, IN THE ORDER IT NEEDS IT.', ctas: `<a class="btn btn--gold" href="#/get-started">MAKE IT MINE ${ic('arrow', 'ic--go')}</a>` })}
   <section class="sec" style="padding-top:64px"><div class="wrap guide">
     <div class="guide__tabs" role="tablist" aria-label="THE SEVEN FAMILIES">${D.categories.map((c) => `<button role="tab" aria-selected="${c.id === gid}" data-a="pick" data-v="guide|${c.id}"><span>0${c.order}</span>${ic(CAT_ICON[c.id])}<b>${U(c.title)}</b><em>${D.services.filter((x) => x.category === c.id).length}</em></button>`).join('')}</div>
-    <div class="guide__panel panel" role="tabpanel"><p class="eyebrow">0${gc.order} · ${U(gc.title)}</p><h2 class="h2" style="margin:12px 0 10px">${U(gc.headline)}</h2><p class="lead" style="margin-bottom:22px">${U(gc.description)}</p>
-      <div class="list">${gl.map((x) => `<a class="row" href="#/services/${x.slug}">${ic(svcIcon(x))}<div><b>${U(x.name)}</b><span>${U(x.shortDescription)}</span></div>${chip(x.state)}</a>`).join('')}</div>
-      <div class="hero__ctas" style="margin-top:22px"><a class="btn btn--gold" href="#${CAT_HUB[gid].startsWith('/services?') ? '/services' : CAT_HUB[gid]}">OPEN ${U(gc.title)} ${ic('arrow', 'ic--go')}</a>${gc.order < D.categories.length ? `<button class="btn btn--line" data-a="pick" data-v="guide|${D.categories.find((c) => c.order === gc.order + 1)?.id || gid}">NEXT FAMILY ${ic('chev')}</button>` : ''}</div></div>
+    <div class="guide__panel panel" role="tabpanel">${guidePanelInner(gid)}</div>
   </div></section>${closing()}`;
 }
 function clientPortal() {
@@ -1497,24 +1544,12 @@ function gsQuestion(q) {
   return `<div class="field"><label for="${id}">${U(q.question)}${req}</label><input id="${id}" type="${q.type === 'number' ? 'number' : q.type === 'date' ? 'date' : 'text'}" min="0" data-input="field" autocomplete="off"></div>`;
 }
 function getStarted() {
-  const I = D.intake;
-  const g = PUB.gs;
-  const flow = I.flows[g.goal || 'start_business'];
-  const k = Math.min(g.step, flow.length - 1);
-  const sec = I.sections.find((s) => s.id === flow[k]);
-  const last = k === flow.length - 1;
-  const blocked = (k === 0 && !g.goal) || (sec.id === 'journey' && !g.ans.journey);
-  const rail = `<ol class="gs-rail" aria-label="${U(I.shell.journeyAria)}">${flow.map((id, i) => { const s = I.sections.find((x) => x.id === id); return `<li><button data-a="gsGo" data-v="${i}" aria-current="${i === k ? 'step' : 'false'}"${i > k ? ' disabled' : ''} class="${i < k ? 'is-done' : ''}"><span class="gs-rail__n">${i < k ? ic('check') : String(i + 1).padStart(2, '0')}</span><span><b>${U(s.rail[0])}</b><em>${U(s.rail[1])}</em></span></button></li>`; }).join('')}</ol>`;
-  return `${phero({ img: 'hero-home', crumbs: [['/', 'HOME'], [null, 'GET STARTED']], eyebrow: 'SMART INTAKE · CHECK WHAT I NEED', title: `${U(I.shell.headlineLine1)} ${U(I.shell.headlineLine2)}`, lead: U(I.shell.lede) })}
+  const st = gsStepState();
+  const rail = `<ol class="gs-rail" aria-label="${U(st.I.shell.journeyAria)}">${gsRailHtml(st.I, st.flow, st.k)}</ol>`;
+  return `${phero({ img: 'hero-home', crumbs: [['/', 'HOME'], [null, 'GET STARTED']], eyebrow: 'SMART INTAKE · CHECK WHAT I NEED', title: `${U(st.I.shell.headlineLine1)} ${U(st.I.shell.headlineLine2)}`, lead: U(st.I.shell.lede) })}
   <section class="sec" style="padding-top:56px"><div class="wrap gs">
     <aside class="gs-side">${rail}<div class="gs-next"><p class="eyebrow">WHAT HAPPENS NEXT</p><div class="list" style="margin-top:14px">${[['map', 'YOUR ROADMAP', 'THE SERVICES THAT FIT WHERE YOU ARE.'], ['layers', 'YOUR SERVICE PLAN', 'CHOOSE WHAT TO START WITH.'], ['headset', 'THE AIO TEAM', 'PICKS UP YOUR REQUEST IN THE OFFICE.']].map(([i, b, s]) => `<div class="row">${ic(i)}<div><b>${b}</b><span>${s}</span></div><span></span></div>`).join('')}</div></div></aside>
-    <div class="panel gs-main">
-      <div class="gs-progress" aria-hidden="true">${flow.map((_, i) => `<i class="${i <= k ? 'on' : ''}"></i>`).join('')}</div>
-      <p class="eyebrow">STEP ${k + 1} OF ${flow.length} · ${U(sec.rail[0])}</p><h2 class="h2" style="margin:12px 0 6px">${U(sec.title)}</h2><p class="lead" style="margin-bottom:22px">${U(sec.description)}</p>
-      <div class="form gs-form${sec.id === 'assets' ? ' gs-form--assets' : ''}">${sec.questions.map(gsQuestion).join('')}</div>
-      <div class="gs-nav">${k ? `<button class="btn btn--line" data-a="gsBack">${ic('back')} BACK</button>` : `<a class="link" href="#/">SAVE &amp; EXIT</a>`}${last ? `<a class="btn btn--gold" href="#/roadmap/results">SEE MY ROADMAP ${ic('arrow', 'ic--go')}</a>` : `<button class="btn btn--gold" data-a="gsNext"${blocked ? ' aria-disabled="true"' : ''}>CONTINUE ${ic('arrow', 'ic--go')}</button>`}</div>
-      <p class="note" style="margin-top:16px">DESIGN REVIEW — NOTHING YOU ENTER IS SAVED OR SENT. THE LIVE INTAKE SAVES AS YOU GO.</p>
-    </div>
+    <div class="panel gs-main">${gsMainInner(st)}</div>
   </div></section>${closing()}`;
 }
 function servicePlan() {
@@ -1664,9 +1699,10 @@ function jump(id) {
   const top = el.getBoundingClientRect().top - (PUB.scroller ? PUB.scroller.getBoundingClientRect().top : 0) + scrollEl().scrollTop - parseFloat(getComputedStyle(ROOT.firstElementChild).getPropertyValue('--nav'));
   scrollEl().scrollTo({ top, behavior: reduced() || PUB.capture ? 'auto' : 'smooth' });
 }
-/** Homepage tab switches — patch DOM only so the hero and nav do not rebuild. */
+function pubPath() { return (PUB.path || '/').split('?')[0] || '/'; }
+/** Tab / panel switches — patch DOM only so nav, hero and scroll position stay put. */
 function patchHomeEco() {
-  if ((PUB.path !== '/' && PUB.path !== '') || !ROOT) return false;
+  if (pubPath() !== '/' || !ROOT) return false;
   const eco = ROOT.querySelector('.eco');
   if (!eco) return false;
   const tabs = eco.querySelector('.eco__tabs');
@@ -1682,7 +1718,7 @@ function patchHomeEco() {
   return true;
 }
 function patchHomeExplore() {
-  if ((PUB.path !== '/' && PUB.path !== '') || !ROOT) return false;
+  if (pubPath() !== '/' || !ROOT) return false;
   const explore = ROOT.querySelector('.explore');
   if (!explore) return false;
   const sel = Math.min(PUB.pathSel || 0, D.pathways.length - 1);
@@ -1703,6 +1739,109 @@ function patchHomeExplore() {
   }
   return true;
 }
+function patchSybJourney() {
+  if (pubPath() !== '/start-your-business' || !ROOT) return false;
+  const rail = ROOT.querySelector('.rail--pick');
+  const journey = ROOT.querySelector('.journey');
+  if (!rail || !journey) return false;
+  const k = Math.min(PUB.syb || 0, D.journey.length - 1);
+  rail.querySelectorAll('button[data-a="syb"]').forEach((btn, i) => {
+    btn.classList.toggle('is-cur', i === k);
+    btn.setAttribute('aria-selected', i === k ? 'true' : 'false');
+  });
+  journey.innerHTML = sybJourneyInner(k);
+  return true;
+}
+function patchGuideTab() {
+  if (pubPath() !== '/roadmap' || !ROOT) return false;
+  const guide = ROOT.querySelector('.guide');
+  if (!guide) return false;
+  const gid = D.categories.some((c) => c.id === PUB.pick.guide) ? PUB.pick.guide : D.categories[0].id;
+  guide.querySelectorAll('.guide__tabs button[data-a="pick"]').forEach((btn) => {
+    const id = btn.dataset.v?.split('|')[1];
+    btn.setAttribute('aria-selected', id === gid ? 'true' : 'false');
+  });
+  const panel = guide.querySelector('.guide__panel');
+  if (panel) panel.innerHTML = guidePanelInner(gid);
+  return true;
+}
+function patchSxExplorer(id) {
+  if (!ROOT) return false;
+  const row = ROOT.querySelector(`.sx__row[data-a="pick"][data-v^="${id}|"]`);
+  const sx = row?.closest('.sx');
+  if (!sx) return false;
+  const list = explorerServiceList(id);
+  if (!list.length) return false;
+  const pick = sxPickForList(id, list);
+  sx.querySelectorAll('.sx__row').forEach((btn) => {
+    const slug = btn.dataset.v.split('|')[1];
+    btn.setAttribute('aria-selected', slug === pick.slug ? 'true' : 'false');
+  });
+  const panel = sx.querySelector('.sx__panel');
+  if (panel) panel.innerHTML = sxPanelInner(pick);
+  return true;
+}
+function patchSxMore(id) {
+  if (!ROOT) return false;
+  const moreBtn = ROOT.querySelector(`.sx-more[data-a="more"][data-v="${id}"]`);
+  const phone = moreBtn?.closest('.sx-phone');
+  if (!phone) return false;
+  const list = explorerServiceList(id);
+  const open = PUB.open[id];
+  const cards = open ? list : list.slice(0, 6);
+  const svcs = phone.querySelector('.svcs');
+  if (svcs) svcs.innerHTML = cards.map(svcCard).join('');
+  if (moreBtn) {
+    moreBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    moreBtn.innerHTML = `${open ? 'SHOW FEWER' : `SHOW ALL ${list.length} SERVICES`} ${ic(open ? 'up' : 'down')}`;
+  }
+  return true;
+}
+function patchServicesFam() {
+  if (pubPath() !== '/services' || !ROOT) return false;
+  const fambar = ROOT.querySelector('.fambar');
+  const body = ROOT.querySelector('[data-slot="svcs-body"]');
+  if (!fambar || !body) return false;
+  fambar.querySelectorAll('.fambar__b').forEach((btn) => {
+    btn.setAttribute('aria-selected', btn.dataset.v === PUB.fam ? 'true' : 'false');
+  });
+  const q = PUB.fq.trim().toLowerCase();
+  body.innerHTML = servicesCatalogBlock(PUB.fam, q);
+  body.querySelectorAll('.rv').forEach((e) => e.classList.add('in'));
+  return true;
+}
+function patchFinderNeed() {
+  if (pubPath() !== '/services/find' || !ROOT) return false;
+  const aside = ROOT.querySelector('[data-slot="finder-aside"]');
+  if (!aside) return false;
+  aside.innerHTML = finderAsideInner();
+  ROOT.querySelectorAll('.choice[data-a="need"]').forEach((btn) => {
+    btn.setAttribute('aria-pressed', PUB.needs.includes(btn.dataset.v) ? 'true' : 'false');
+  });
+  return true;
+}
+function patchGetStarted(scrollClamp) {
+  if (pubPath() !== '/get-started' || !ROOT) return false;
+  const gs = ROOT.querySelector('.gs');
+  if (!gs) return false;
+  const st = gsStepState();
+  const rail = gs.querySelector('.gs-rail');
+  if (rail) rail.innerHTML = gsRailHtml(st.I, st.flow, st.k);
+  const main = gs.querySelector('.gs-main');
+  if (main) main.innerHTML = gsMainInner(st);
+  if (scrollClamp) scrollEl().scrollTop = Math.min(scrollEl().scrollTop, gs.offsetTop || 0);
+  return true;
+}
+function patchGetStartedForm() {
+  if (pubPath() !== '/get-started' || !ROOT) return false;
+  const st = gsStepState();
+  const form = ROOT.querySelector('.gs-form');
+  if (!form) return false;
+  form.innerHTML = st.sec.questions.map(gsQuestion).join('');
+  const next = ROOT.querySelector('.gs-main [data-a="gsNext"]');
+  if (next) next.setAttribute('aria-disabled', st.blocked ? 'true' : 'false');
+  return true;
+}
 const ACT = {
   menu: (v) => { PUB.menu = PUB.menu === v ? null : v; PUB.search = false; draw(); },
   search: () => { PUB.search = !PUB.search; PUB.menu = null; PUB.drawer = false; draw(); },
@@ -1710,25 +1849,37 @@ const ACT = {
   grp: (v) => { PUB.grp = PUB.grp === v ? null : v; draw(); },
   eco: (v) => { PUB.eco = Number(v); if (!patchHomeEco()) draw(); },
   pathSel: (v) => { PUB.pathSel = Number(v); if (!patchHomeExplore()) draw(); },
-  pick: (v) => { const [id, slug] = v.split('|'); PUB.pick[id] = slug; draw(); },
-  more: (v) => { PUB.open[v] = !PUB.open[v]; draw(); },
+  pick: (v) => {
+    const [id, slug] = v.split('|');
+    PUB.pick[id] = slug;
+    if (id === 'guide' && patchGuideTab()) return;
+    if (patchSxExplorer(id)) return;
+    draw();
+  },
+  more: (v) => { PUB.open[v] = !PUB.open[v]; if (!patchSxMore(v)) draw(); },
   plan: (v) => { PUB.plan = PUB.plan.includes(v) ? PUB.plan.filter((x) => x !== v) : [...PUB.plan, v]; draw(); toast(PUB.plan.includes(v) ? 'ADDED TO MY PLAN — DESIGN REVIEW, NOTHING IS SAVED.' : 'REMOVED FROM MY PLAN.'); },
-  syb: (v) => { PUB.syb = Number(v); draw(); },
-  fam: (v) => { PUB.fam = v; draw(); },
-  need: (v) => { PUB.needs = PUB.needs.includes(v) ? PUB.needs.filter((x) => x !== v) : [...PUB.needs, v]; draw(); },
-  gsGoal: (v) => { PUB.gs.goal = v; PUB.gs.step = 0; draw(); },
-  gsAns: (v) => { const [q, x] = v.split('|'); PUB.gs.ans[q] = x; draw(); },
-  gsMulti: (v) => { const [q, x] = v.split('|'); const cur = PUB.gs.ans[q] || []; PUB.gs.ans[q] = cur.includes(x) ? cur.filter((y) => y !== x) : [...cur, x]; draw(); },
-  gsGo: (v) => { PUB.gs.step = Number(v); draw(); },
-  gsNext: () => { const flow = D.intake.flows[PUB.gs.goal || 'start_business']; const id = flow[Math.min(PUB.gs.step, flow.length - 1)]; if ((PUB.gs.step === 0 && !PUB.gs.goal) || (id === 'journey' && !PUB.gs.ans.journey)) return toast('ANSWER THE REQUIRED QUESTION TO CONTINUE.'); PUB.gs.step = Math.min(PUB.gs.step + 1, flow.length - 1); draw(); scrollEl().scrollTop = Math.min(scrollEl().scrollTop, ROOT.querySelector('.gs')?.offsetTop || 0); },
-  gsBack: () => { PUB.gs.step = Math.max(0, PUB.gs.step - 1); draw(); },
+  syb: (v) => { PUB.syb = Number(v); if (!patchSybJourney()) draw(); },
+  fam: (v) => { PUB.fam = v; if (!patchServicesFam()) draw(); },
+  need: (v) => { PUB.needs = PUB.needs.includes(v) ? PUB.needs.filter((x) => x !== v) : [...PUB.needs, v]; if (!patchFinderNeed()) draw(); },
+  gsGoal: (v) => { PUB.gs.goal = v; PUB.gs.step = 0; if (!patchGetStarted()) draw(); },
+  gsAns: (v) => { const [q, x] = v.split('|'); PUB.gs.ans[q] = x; if (!patchGetStartedForm()) draw(); },
+  gsMulti: (v) => { const [q, x] = v.split('|'); const cur = PUB.gs.ans[q] || []; PUB.gs.ans[q] = cur.includes(x) ? cur.filter((y) => y !== x) : [...cur, x]; if (!patchGetStartedForm()) draw(); },
+  gsGo: (v) => { PUB.gs.step = Number(v); if (!patchGetStarted()) draw(); },
+  gsNext: () => {
+    const flow = D.intake.flows[PUB.gs.goal || 'start_business'];
+    const id = flow[Math.min(PUB.gs.step, flow.length - 1)];
+    if ((PUB.gs.step === 0 && !PUB.gs.goal) || (id === 'journey' && !PUB.gs.ans.journey)) return toast('ANSWER THE REQUIRED QUESTION TO CONTINUE.');
+    PUB.gs.step = Math.min(PUB.gs.step + 1, flow.length - 1);
+    if (!patchGetStarted(true)) draw();
+  },
+  gsBack: () => { PUB.gs.step = Math.max(0, PUB.gs.step - 1); if (!patchGetStarted()) draw(); },
   send: (v) => { PUB.sent[v] = true; draw(); },
   jump: (v) => { PUB.menu = null; jump(v); },
 };
 function toast(t) { PUB.toast = t; draw(); clearTimeout(toast.t); toast.t = setTimeout(() => { PUB.toast = null; draw(); }, 2400); }
 const INPUT = {
   q: (v) => { PUB.q = v; const s = ROOT.querySelector('[data-slot="hits"]'); if (s) s.innerHTML = hitsHtml(searchHits(v)); },
-  fq: (v) => { PUB.fq = v; const q = v.trim().toLowerCase(); const list = D.services.filter((s) => (PUB.fam === 'all' || s.category === PUB.fam) && (!q || `${s.name} ${s.shortDescription}`.toLowerCase().includes(q))); const s = ROOT.querySelector('[data-slot="svcs"]'); const idx = ROOT.querySelector('[data-slot="svcs-index"]'); if (idx) idx.hidden = !!q; if (s) { s.hidden = !q && !!idx; s.innerHTML = list.map(svcCard).join('') || `<p class="muted">NO SERVICE MATCHES THAT FILTER.</p>`; s.querySelectorAll('.rv').forEach((e) => e.classList.add('in')); } },
+  fq: (v) => { PUB.fq = v; if (!patchServicesFam()) draw(); },
   field: () => {},
 };
 function mountPub(root, { scroller = null, width = null } = {}) {
