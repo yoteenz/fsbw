@@ -1,0 +1,37 @@
+{
+  "id": "AIO_PUBLIC_MIGRATION_PROVENANCE",
+  "sprint": "P0.AIO.PUBLIC-WEBSITE.LIVE-LEGACY-AUDIT-RESPONSIVE-CREATIVE-RECONCILIATION-AND-MIGRATION-READINESS1",
+  "source": {
+    "repo": "yoteenz/SITE00",
+    "branch": "cursor/aio-office-ia-work-tree-4f59",
+    "commit": "46b0e46b8ddc2a5567b15e22fb9b3e318f11266d",
+    "path": "docs/aio/public-migration/",
+    "generated_by": "scripts/studioos/aio-public-migration-export.ts"
+  },
+  "rule": "Copied verbatim from SITE00 (the Experience Brain is the source). The design is in all-in-one-enterprises/design-authority/aio-public/; the evidence (QA, page lengths, the current app rendered from a local build, boards) is in AIO_PUBLIC_MIGRATION_READINESS/; src/product-graph/publicMigration.test.ts holds them together. Candidates awaiting founder review; nothing deployed; the live app unchanged; Brokerage paused; no production URL was verified.",
+  "sha256": {
+    "01_LIVE_FUNCTIONAL_INVENTORY.md": "fb0bb1117d804458caa7f7ac736e53881f7f67bc4ac8cfa92792aba60a27e3aa",
+    "02_ROUTE_AND_CONTENT_COMPARISON.md": "2a30075d69d11ed65f3c9e74cbd7bba985ba7d3aa25eddb3f19c1c6548f9a831",
+    "03_PRESERVATION_MATRIX.md": "3b4d52a4d20a828aae2720ee4b22ad7a42db0793cd4b526344c7c87ad386f28d",
+    "04_INTEGRATION_INVENTORY.md": "503cbb2193adfb5861397f4752dbb25dff502d5a7bc3d17fc0e025d387218bcf",
+    "05_VERIFIED_LEGACY_DEPENDENCIES.md": "7567ad0cd937810ee84067553ca126baa7b65213493a54de5f8edc825c872265",
+    "06_DESKTOP_RECONSTRUCTION.md": "390454c299c00c663b6717dc8d79f0df5f6c6211ed72b497ecc416297144755e",
+    "07_TABLET_RECONSTRUCTION.md": "6f47de34335f96263bb010975c5f997ef431e23d3dcbe66256996b588cd7a6cf",
+    "08_PROTECTED_MOBILE.md": "6f6be3ea9561de3a7fdabe698a0bfea5508c380894756e89135ed26822495553",
+    "09_HOMEPAGE_SCROLL.md": "98bd499ecdcc4135930c480681fae9af7f083c69310edcf9123ca197df54d012",
+    "10_SERVICE_PAGE_SCROLL.md": "21a646bd961c6eb13d9f9b6bfedfc3f3e6280af51be6fb5b398b35fe435a570f",
+    "11_INTERACTIVE_JOURNEYS.md": "df22010292cf91532f59380346201eca81cea523bf9b5d012301d9afa49c47e3",
+    "12_RESPONSIVE_SCREENSHOTS.md": "8666dd828667b8e0cd1fc47fa2b9b790205ab6dfb2c4ef5ec8b80d5f3e23d3e5",
+    "13_INTERACTIVE_REVIEW.md": "e10ddd5690b4297f00eba3508372f59646f84ae09f683e60df596de4304e0447",
+    "14_TYPOGRAPHY_AND_OVERFLOW_QA.md": "967efa934efb5aa4e30abddb8df32e5fe01126abcb3b16877d4b1e02fc3d1cae",
+    "15_ACCESSIBILITY_AND_PERFORMANCE.md": "7e4e52ced7a367af7f46670027cd55fae53ad43cdfa461993a98cfc93b3d075d",
+    "16_ASSET_MANIFEST.md": "1dadc2765370c5a165e12ce0efdffddce8aa4a1e65c04e054c724823cdd8f728",
+    "17_COMPOSER_MIGRATION_HANDOFF.md": "552a05827ef0cfa9352c63e3e1b9e932cec6449f49acb5b6fbe00f4d39d6e81e",
+    "18_RELEASE_CHECKLIST.md": "9e34bcfcfd8069195701d21b567356e00f07c26b2e5fbf437d8589bf405338a1",
+    "19_ROLLBACK_AND_REGRESSION.md": "c5280121d7dcc7c0b128d0289e03a70d469b67f9e21a1ce0649a8c0632450814",
+    "20_BLOCKERS_AND_DECISIONS.md": "1541719b1be296605a6b25025dac060554e4f512b9fd6abf0c2644818b45507c",
+    "PUBLIC_MIGRATION.json": "7c2e2edb64a9c3a2a49ac6ac3a051145561b7761c85e470e5f8d9a35cf89fa1d",
+    "QUALITY_GATE.json": "c5c74303284e67be5722a808b1f0e386dfd0af30698826288862e7c6e6ffae20",
+    "README.md": "4d62fa393d6d0a5ad75dd217093dea929beb67be7070295e1a16aaeeeb636889"
+  }
+}

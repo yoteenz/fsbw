@@ -55961,3 +55961,16 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - the 12 privacy gaps (still OPEN; Composer)
 
 **Next gate:** FOUNDER REVIEW OF THE COMPLETE AIO OFFICE AND THE PUBLIC WEBSITE DESIGN. The founder should confirm panel 04 as the homepage authority.
+
+## 2026-10-09 — AIO public website: migration-readiness evidence vendored; review fits phones (sprint paused by founder)
+
+- **Context:** The founder saw the current app at the root of `preview.fsbw-dev.com` and asked where the new mobile designs were.
+  - The new design is intentionally not wired into the app root. Rule: DO NOT REPLACE THE PRODUCTION WEBSITE UNTIL THE FOUNDER APPROVES THE FINAL DESKTOP / TABLET DESIGN AND THE FUNCTIONAL PRESERVATION PLAN.
+  - It is served by the AIO dev server at `/design-authority/aio-public/preview/site.html` (the site) and `/design-authority/aio-public/preview/local.html` (the review).
+- **Fix:** The review header overflowed at phone width; the status pills set the grid's min width. `.rv-hero` now uses `minmax(0, 1fr)` and the pills wrap at ≤700px. Every review tab measured with no sideways scroll at 360, 390 and 834.
+- **Vendored:**
+  - `all-in-one-enterprises/docs/aio/public-migration/` comes from SITE00 46b0e46b (PROVENANCE.json).
+  - `AIO_PUBLIC_MIGRATION_READINESS/` holds the evidence: screens, QA summary, scroll lengths, current-app renders from a local build, and boards A/B/C.
+  - `src/product-graph/publicMigration.test.ts` has 10 tests.
+- **Not changed:** the live app, auth, data, business rules, prices, Brokerage (paused) and the 12 privacy gaps.
+- **Tunnel:** this container cannot reach fsbw-dev.com. To see the latest, pull master in the Cursor VM and restart `aio-vite` and `aio-preview-tunnel`.
