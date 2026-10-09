@@ -1,0 +1,88 @@
+{
+  "resolution": [
+    1280,
+    720
+  ],
+  "cameras": [
+    {
+      "name": "01_HERO_REFERENCE_MATCH",
+      "location": [
+        13,
+        -21,
+        7.4
+      ],
+      "target": [
+        0,
+        0,
+        3.9
+      ],
+      "projection": "ORTHOGRAPHIC",
+      "ortho_scale": 19.8,
+      "render": "03_RENDERS/01_HERO_REFERENCE_MATCH.png"
+    },
+    {
+      "name": "02_FRONT_THREE_QUARTER",
+      "location": [
+        -12,
+        -23,
+        10
+      ],
+      "target": [
+        0,
+        0,
+        3.8
+      ],
+      "projection": "ORTHOGRAPHIC",
+      "ortho_scale": 20,
+      "render": "03_RENDERS/02_FRONT_THREE_QUARTER.png"
+    },
+    {
+      "name": "03_SIDE_INSPECTION",
+      "location": [
+        23,
+        -6,
+        9
+      ],
+      "target": [
+        0,
+        0,
+        3.8
+      ],
+      "projection": "ORTHOGRAPHIC",
+      "ortho_scale": 19.5,
+      "render": "03_RENDERS/03_SIDE_INSPECTION.png"
+    },
+    {
+      "name": "04_ELEVATED_INSPECTION",
+      "location": [
+        13,
+        -18,
+        19
+      ],
+      "target": [
+        0,
+        0,
+        3.6
+      ],
+      "projection": "ORTHOGRAPHIC",
+      "ortho_scale": 25,
+      "render": "03_RENDERS/04_ELEVATED_INSPECTION.png"
+    },
+    {
+      "name": "05_ARCHITECTURAL_DETAIL",
+      "location": [
+        9,
+        -14,
+        8
+      ],
+      "target": [
+        1,
+        -1.1,
+        4
+      ],
+      "projection": "ORTHOGRAPHIC",
+      "ortho_scale": 11,
+      "render": "03_RENDERS/05_ARCHITECTURAL_DETAIL.png"
+    }
+  ]
+}

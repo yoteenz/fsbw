@@ -1,0 +1,51 @@
+WFE CREATIVE FABRICATION — SITE 00 Build Object Astra V1
+
+MODEL: You are running as gpt-6-astra inside Codex. This is a founder-authorized creative benchmark ($10 USD max — stay conservative: prefer ONE build pass + ONE targeted revision; avoid extra sessions).
+
+BLENDER: /home/ubuntu/.tools/blender-5.2.2-linux-x64/blender (add to PATH when shelling)
+
+PACKAGE ROOT (write all deliverables here):
+/workspace/src/studio-os-core/world-fabrication-engine/benchmarks/site00-build-object-astra-v1
+
+REFERENCE AUTHORITY (inspect attached image + file):
+04_COMPARISONS/approved-reference.jpg
+Match: white marble plinth, layered transparent glass volumes, tall vivid red translucent portal, dense interior floor plates/partitions, crisp framing, architectural studio lighting, three-quarter hero camera.
+
+DO NOT open or re-export existing SITE00_Build_Object_V2.blend as your primary output. CREATE new geometry.
+
+REQUIRED COLLECTIONS in .blend:
+SITE00_BUILD_OBJECT, ARCHITECTURE, GLASS_VOLUMES, RED_PORTAL, INTERIOR_STRUCTURE, FLOOR_PLATES, MARBLE_PLINTH, METAL_DETAILS, LIGHTING, CAMERAS, MATERIALS
+
+DELIVERABLES (must exist on disk before you finish):
+01_SOURCE/SITE00_Build_Object_Astra_V1.blend
+01_SOURCE/build_astra_v1.py (script that can rebuild scene headless)
+02_EXPORTS/SITE00_Build_Object_Astra_V1_Web.glb
+03_RENDERS/01_HERO_REFERENCE_MATCH.png
+03_RENDERS/02_FRONT_THREE_QUARTER.png
+03_RENDERS/03_SIDE_INSPECTION.png
+03_RENDERS/04_ELEVATED_INSPECTION.png
+03_RENDERS/05_ARCHITECTURAL_DETAIL.png
+04_COMPARISONS/hero-vs-approved-reference.png (side-by-side or overlay contact sheet)
+05_MATERIALS/material-manifest.json
+05_DOCUMENTATION/export-validation-report.json (geometry stats, mesh/material counts)
+05_DOCUMENTATION/camera-manifest.json
+05_DOCUMENTATION/wfe-astra-fabrication-report.json (tokens/cost unknown — note wall time)
+06_DOCUMENTATION/technical-art-audit.json
+06_DOCUMENTATION/creative-fidelity-assessment.md (honest comparison to reference; note weaknesses)
+07_FOUNDER_REVIEW/founder-contact-sheet.md
+
+CAMERAS: five named objects matching render filenames; hero aligns with reference perspective.
+
+MATERIALS: premium white marble (veined), architectural glass (transmission/refraction), red translucent acrylic, restrained metal trim — no flat gray glass, no beige wash.
+
+WORKFLOW:
+1) Study reference image; plan modular architecture.
+2) Write build_astra_v1.py using bpy — bevels, arrays, layered glass boxes, interior slabs, red portal with thickness; meaningful triangle budget (target 50k–250k tris).
+3) Run: blender --background --python 01_SOURCE/build_astra_v1.py (script must save .blend and export GLB).
+4) Render all 5 views (Cycles or EEVEE, 1280x720 min).
+5) Inspect renders visually; if obvious mismatch (portal scale, glass layering, plinth), apply ONE revision in script and re-render hero + one angle only.
+6) Write all JSON/MD reports with actual measured counts from Blender.
+
+V2 COMPARISON: If accessible at benchmarks/site00-build-object-v2/fixture or execution-runs, note in creative-fidelity-assessment.md — do not require V2 blend if missing.
+
+On completion, print a single line: WFE_ASTRA_V1_COMPLETE

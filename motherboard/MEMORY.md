@@ -55843,3 +55843,27 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Canonical baseline:** consolidation branch SHA (post-merge); **not on master** until founder merges consolidation PR / stack.
 - **Fixture:** documented procedure in `BENCHMARK_FIXTURE_ACQUISITION_V1.md`; no binary commit; sha256 `82c98b0f…` Under4MB archive.
 - **No billable Codex** during consolidation; historic proof remains `752cb4df8` evidence.
+
+---
+
+## 2026-10-09 — Astréa Astra creative benchmark preflight (WFE)
+
+- **Context:** Sprint `P0.STUDIOOS.WFE.V1-ASTRA-NATIVE-BLENDER-CREATIVE-FABRICATION-BENCHMARK1` — first **creative** Astréa entrance threshold benchmark; billable Codex execution **not authorized** in sprint turn (preflight + model gate only).
+- **Baseline:** PR **#58 MERGED** → `master` @ `ab93c0051` (consolidation tip `44fd14337` in history).
+- **Model gate:** Founder-requested **Astra** → verified Codex slug **`gpt-6-astra`** (`debug models`, `supported_in_api: true`); prior SITE 00 proof used **`gpt-6.1-sol`**, not Astra. Selection: `codex exec -m gpt-6-astra` / `WFE_CODEX_MODEL`.
+- **Auth:** Codex CLI **0.162.0**, `OPENAI_API_KEY` login **VERIFIED** (non-billable).
+- **Creative authority:** `astra-context/references/` (REFERENCE A/B + AW_D_01 / AW_M_01 final composition JPGs); WFE spec `WORLD_FABRICATION_ASTRA_TEST01.md`; no fsbw TEST 02 doc — spatial refs via AW masters + `09_SPATIAL_EVIDENCE.md`.
+- **Shipped:** `ASTREA_CREATIVE_BENCHMARK_PREFLIGHT1.md`, benchmark folder `benchmarks/astrea-entrance-threshold-v1/` (assignment JSON, model verification, authorization request, fabrication plan); `buildCodexExecInvocation` optional `-m` / `WFE_CODEX_MODEL`.
+- **Blocked until founder approves:** paid generation budget (proposed ≤3 Codex sessions, ~150k–400k token band estimate), WFE dispatch allowlist for `projectId: astrea`, creative assignment prompt (not SITE 00 validate_v2).
+- **Status:** **PREFLIGHT COMPLETE — AWAITING FOUNDER BILLABLE AUTHORIZATION**; Codex/Blender fabrication **NOT_RUN**.
+
+
+---
+
+## 2026-10-09 — SITE 00 Astra V1 creative fabrication benchmark
+
+- **Context:** Founder authorized a conservative $10-max creative benchmark, one build plus one targeted revision, using approved marble/glass/red-portal reference.
+- **Outcome:** New bpy geometry, packed Blender source, GLB, five 1280×720 Cycles renders, comparison sheet, measured manifests and honest technical/creative audits under `benchmarks/site00-build-object-astra-v1/`. No V2 blend opened or re-exported.
+- **Measured:** 277 mesh objects, 228,996 evaluated/exported triangles, 7 materials; independent GLB counts agree. One revision rendered hero and elevated only; front/side/detail retain initial appearance and are labeled.
+- **Limits:** Partial creative fidelity; marble contrast, red saturation and interior density remain below reference. Founder approval pending. Browser/Unreal/LOD/collision untested. Tokens and cost unknown; no extra paid model sessions or image services invoked.
+- **Sync:** Required `agent-commit.sh --sync-only` attempted; blocked by read-only `.git/index.lock`. All deliverables remain local; no deploy.

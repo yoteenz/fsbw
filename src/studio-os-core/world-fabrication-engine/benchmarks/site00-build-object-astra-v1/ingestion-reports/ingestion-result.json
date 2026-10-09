@@ -1,0 +1,889 @@
+{
+  "outcome": "INGESTED_WITH_WARNINGS",
+  "record": {
+    "recordId": "fap-site00_bld_object_astra_v1-1791523177786",
+    "projectId": "site00",
+    "assetId": "site00_bld_object_astra_v1",
+    "packageManifest": {
+      "packageId": "pkg-site00_bld_object_astra_v1-v2",
+      "assetId": "site00_bld_object_astra_v1",
+      "productionLane": "PROP_INTERACTIVE_OBJECT_ART",
+      "productionProfileId": "SITE00_BUILD_OBJECT_WEB_3D",
+      "version": "codex-blender-v2",
+      "authorityRefs": [
+        "approved-blueprint-reference",
+        "artlist-rodin-massing"
+      ],
+      "folderPresence": {
+        "00_MANIFEST": "MISSING",
+        "02_SOURCE_MODELS": "PRESENT",
+        "07_MATERIALS": "MISSING",
+        "11_EXPORTS": "PRESENT",
+        "12_RENDERS_AND_QA": "PRESENT"
+      },
+      "deliverableCompleteness": {
+        "source_blend": "PRESENT",
+        "runtime_glb": "PRESENT",
+        "runtime_fbx": "MISSING",
+        "material_definitions": "MISSING",
+        "validation_report": "PRESENT",
+        "package_manifest": "MISSING",
+        "review_renders": "UNVERIFIED",
+        "uv_layout": "UNVERIFIED",
+        "pbr_texture_set": "UNVERIFIED",
+        "collision_mesh": "NOT_REQUIRED",
+        "interaction_anchors": "UNVERIFIED",
+        "skeleton": "NOT_APPLICABLE",
+        "skin_weights": "NOT_APPLICABLE",
+        "animation_clips": "NOT_APPLICABLE",
+        "navigation_metadata": "NOT_APPLICABLE",
+        "engine_import_config": "UNVERIFIED",
+        "lod_meshes": "NOT_REQUIRED",
+        "high_poly_mesh": "MISSING"
+      },
+      "knownLimitations": [
+        "Fixture appears to be a reduced archive (missing 4 paths from full review package README)"
+      ],
+      "approvalState": "FOUNDER_REVIEW_PENDING"
+    },
+    "inventory": {
+      "inventoryId": "inv-site00_bld_object_astra_v1",
+      "packageRoot": "src/studio-os-core/world-fabrication-engine/benchmarks/site00-build-object-astra-v1",
+      "extractedAt": "2026-10-09T05:19:37.760Z",
+      "fileCount": 26,
+      "totalBytes": 39820172,
+      "files": [
+        {
+          "relativePath": "01_SOURCE/SITE00_Build_Object_Astra_V1.blend",
+          "bytes": 5857067,
+          "sha256": "368ac7ea7c206aeba4823609b4901d2f6e7106db4f465efbcd2271aa270bcd5f",
+          "mimeGuess": "application/x-blender",
+          "role": "SOURCE_BLEND",
+          "assetTier": "SOURCE",
+          "dependencies": [],
+          "productionVersion": "V2"
+        },
+        {
+          "relativePath": "01_SOURCE/build_astra_v1.py",
+          "bytes": 13525,
+          "sha256": "c24727362a71f6a01b575a92e47b2f8c62ec9023648d02498d6a8c2cd2429cb9",
+          "mimeGuess": "text/x-python",
+          "role": "SOURCE_SCRIPT",
+          "assetTier": "SOURCE",
+          "dependencies": [],
+          "productionVersion": "V2"
+        },
+        {
+          "relativePath": "01_SOURCE/validate_package.py",
+          "bytes": 2735,
+          "sha256": "d15aa9142acefa89491f1c9469a14c9a62b9b145ca611bbd9477cd3573f3622f",
+          "mimeGuess": "text/x-python",
+          "role": "SOURCE_SCRIPT",
+          "assetTier": "SOURCE",
+          "dependencies": [],
+          "productionVersion": "V2"
+        },
+        {
+          "relativePath": "02_EXPORTS/SITE00_Build_Object_Astra_V1_Web.glb",
+          "bytes": 14847404,
+          "sha256": "51fea6b74954fc1990b2be3861240d29a5dff9f87f2ee8db259324e3722042dc",
+          "mimeGuess": "model/gltf-binary",
+          "role": "RUNTIME_GLB",
+          "assetTier": "DERIVED",
+          "dependencies": [],
+          "productionVersion": "V2"
+        },
+        {
+          "relativePath": "03_RENDERS/01_HERO_REFERENCE_MATCH.png",
+          "bytes": 1077133,
+          "sha256": "daaa9f865fc36d0706b47a05cd8c084b7102145831a72a670f130756a9fb45ae",
+          "mimeGuess": "image/png",
+          "role": "RENDER_EVIDENCE",
+          "assetTier": "EVIDENCE",
+          "dependencies": [],
+          "productionVersion": "V2"
+        },
+        {
+          "relativePath": "03_RENDERS/02_FRONT_THREE_QUARTER.png",
+          "bytes": 1068077,
+          "sha256": "3bac45caafb16f4e5da1eef55ce9e4c3ba3e34d801539b20975c7f702e4bf2b0",
+          "mimeGuess": "image/png",
+          "role": "RENDER_EVIDENCE",
+          "assetTier": "EVIDENCE",
+          "dependencies": [],
+          "productionVersion": "V2"
+        },
+        {
+          "relativePath": "03_RENDERS/03_SIDE_INSPECTION.png",
+          "bytes": 1031592,
+          "sha256": "8f842f66522ac6f0acfa3ef3022e123a58927ce49eebfc54b3b8a4cf837b5ea5",
+          "mimeGuess": "image/png",
+          "role": "RENDER_EVIDENCE",
+          "assetTier": "EVIDENCE",
+          "dependencies": [],
+          "productionVersion": "V2"
+        },
+        {
+          "relativePath": "03_RENDERS/04_ELEVATED_INSPECTION.png",
+          "bytes": 1046863,
+          "sha256": "97ea9d74784a92e739dcecc94965af7dc69989bdbcf09f59d4ff83492d9638da",
+          "mimeGuess": "image/png",
+          "role": "RENDER_EVIDENCE",
+          "assetTier": "EVIDENCE",
+          "dependencies": [],
+          "productionVersion": "V2"
+        },
+        {
+          "relativePath": "03_RENDERS/05_ARCHITECTURAL_DETAIL.png",
+          "bytes": 1147054,
+          "sha256": "649bb79eb297775e3e5e131ce32988724b9e5cdbafe49b4739abf77dcc9c2878",
+          "mimeGuess": "image/png",
+          "role": "RENDER_EVIDENCE",
+          "assetTier": "EVIDENCE",
+          "dependencies": [],
+          "productionVersion": "V2"
+        },
+        {
+          "relativePath": "04_COMPARISONS/approved-reference-authority.jpg",
+          "bytes": 301334,
+          "sha256": "50590912003833aeff8a1851dcbd5a1342d7aa8e47c4603a4eea3e932726582b",
+          "mimeGuess": "application/octet-stream",
+          "role": "COMPARISON",
+          "assetTier": "EVIDENCE",
+          "dependencies": [],
+          "productionVersion": "V2"
+        },
+        {
+          "relativePath": "04_COMPARISONS/approved-reference.jpg",
+          "bytes": 301334,
+          "sha256": "50590912003833aeff8a1851dcbd5a1342d7aa8e47c4603a4eea3e932726582b",
+          "mimeGuess": "application/octet-stream",
+          "role": "COMPARISON",
+          "assetTier": "EVIDENCE",
+          "dependencies": [],
+          "productionVersion": "V2"
+        },
+        {
+          "relativePath": "04_COMPARISONS/hero-vs-approved-reference.png",
+          "bytes": 1235516,
+          "sha256": "42ac62f73734e8870dd4c53314153f479475fbe3efc2e0b41c0591ac9b13ef6f",
+          "mimeGuess": "image/png",
+          "role": "COMPARISON",
+          "assetTier": "EVIDENCE",
+          "dependencies": [],
+          "productionVersion": "V2"
+        },
+        {
+          "relativePath": "04_COMPARISONS/initial-pass-hero.png",
+          "bytes": 1072181,
+          "sha256": "1818ece1bab0cda84763ff564c6e3669dd7fc559fd9ccfd4a0c263eb4331ebf2",
+          "mimeGuess": "image/png",
+          "role": "COMPARISON",
+          "assetTier": "EVIDENCE",
+          "dependencies": [],
+          "productionVersion": "V2"
+        },
+        {
+          "relativePath": "05_DOCUMENTATION/camera-manifest.json",
+          "bytes": 1541,
+          "sha256": "b3ea9cfffaa63650cd2dffdb8c0fdb356ca652c2d64c8973b022343b45bf9442",
+          "mimeGuess": "application/json",
+          "role": "DOCUMENTATION",
+          "assetTier": "DOCUMENTATION",
+          "dependencies": [],
+          "productionVersion": "V2"
+        },
+        {
+          "relativePath": "05_DOCUMENTATION/export-validation-report.json",
+          "bytes": 29831,
+          "sha256": "4e68a9b96551d10f729532646f76a14b19620392be7f236bd2d90de4fd7987c3",
+          "mimeGuess": "application/json",
+          "role": "VALIDATION_REPORT",
+          "assetTier": "EVIDENCE",
+          "dependencies": [],
+          "productionVersion": "V2"
+        },
+        {
+          "relativePath": "05_DOCUMENTATION/initial-pass-timing.json",
+          "bytes": 631,
+          "sha256": "bacd4f18238aa51f8f207f5063c25cf78692d8931e5a0faa90a8235200e30143",
+          "mimeGuess": "application/json",
+          "role": "DOCUMENTATION",
+          "assetTier": "DOCUMENTATION",
+          "dependencies": [],
+          "productionVersion": "V2"
+        },
+        {
+          "relativePath": "05_DOCUMENTATION/saved-blend-validation.json",
+          "bytes": 527,
+          "sha256": "d19cec3e58117cd0406abcedd62236505f0cb4e2df836c9c221b11f7efb145c8",
+          "mimeGuess": "application/json",
+          "role": "DOCUMENTATION",
+          "assetTier": "DOCUMENTATION",
+          "dependencies": [],
+          "productionVersion": "V2"
+        },
+        {
+          "relativePath": "05_DOCUMENTATION/wfe-astra-fabrication-report.json",
+          "bytes": 2159,
+          "sha256": "c049e5136acebcf252e0fc0b8ad3414a8b6e108ac80af73ac6e730f30f1e1c2f",
+          "mimeGuess": "application/json",
+          "role": "DOCUMENTATION",
+          "assetTier": "DOCUMENTATION",
+          "dependencies": [],
+          "productionVersion": "V2"
+        },
+        {
+          "relativePath": "05_MATERIALS/marble-source.png",
+          "bytes": 3626202,
+          "sha256": "ad7d8e9c94c89fdafc23edad3f49fa7700fcefcf00df6272fbd6cf66a1a71c0e",
+          "mimeGuess": "image/png",
+          "role": "UNKNOWN",
+          "assetTier": "DOCUMENTATION",
+          "dependencies": [],
+          "productionVersion": "V2"
+        },
+        {
+          "relativePath": "05_MATERIALS/material-manifest.json",
+          "bytes": 2104,
+          "sha256": "bf9b1391d15ea05be39bbd2c337b4a8255c4768bbbf1f8ad77d682485aaa8195",
+          "mimeGuess": "application/json",
+          "role": "UNKNOWN",
+          "assetTier": "DOCUMENTATION",
+          "dependencies": [],
+          "productionVersion": "V2"
+        },
+        {
+          "relativePath": "05_MATERIALS/white-marble-veins.png",
+          "bytes": 5670250,
+          "sha256": "ed80234daa3cf92a10eabc3661fdc7098812fe633c7f95e0a6a7b86ea84572d4",
+          "mimeGuess": "image/png",
+          "role": "UNKNOWN",
+          "assetTier": "DOCUMENTATION",
+          "dependencies": [],
+          "productionVersion": "V2"
+        },
+        {
+          "relativePath": "06_DOCUMENTATION/creative-fidelity-assessment.md",
+          "bytes": 4683,
+          "sha256": "92f9b496dc10a21809c1bca59d345697b804ca9f2ba30b9e2028a98d686cb15f",
+          "mimeGuess": "text/markdown",
+          "role": "UNKNOWN",
+          "assetTier": "DOCUMENTATION",
+          "dependencies": [],
+          "productionVersion": "V2"
+        },
+        {
+          "relativePath": "06_DOCUMENTATION/technical-art-audit.json",
+          "bytes": 2736,
+          "sha256": "26fc5a1d0182ffb0a1a8bd82518374342697a1e2120318eea7055f8a2785083f",
+          "mimeGuess": "application/json",
+          "role": "UNKNOWN",
+          "assetTier": "DOCUMENTATION",
+          "dependencies": [],
+          "productionVersion": "V2"
+        },
+        {
+          "relativePath": "07_FOUNDER_REVIEW/founder-contact-sheet.md",
+          "bytes": 1626,
+          "sha256": "83e527fcbb3f38cb9eeb636ce2c601bd8b58ce29e7f87341f3dac5150339be6f",
+          "mimeGuess": "text/markdown",
+          "role": "UNKNOWN",
+          "assetTier": "DOCUMENTATION",
+          "dependencies": [],
+          "productionVersion": "V2"
+        },
+        {
+          "relativePath": "execution-runs/creative-v1/codex-assignment-prompt.txt",
+          "bytes": 3154,
+          "sha256": "4ddfd7382479587c138d8906a437cf8174624591d1f3fe23b7eaa06be3a5716d",
+          "mimeGuess": "application/octet-stream",
+          "role": "UNKNOWN",
+          "assetTier": "DOCUMENTATION",
+          "dependencies": [],
+          "productionVersion": "V2"
+        },
+        {
+          "relativePath": "execution-runs/creative-v1/codex-exec.log",
+          "bytes": 1472913,
+          "sha256": "9d2dcceeb749925967e730d70b3eafff92b3284614d3cb9c43095a716885cc79",
+          "mimeGuess": "application/octet-stream",
+          "role": "UNKNOWN",
+          "assetTier": "DOCUMENTATION",
+          "dependencies": [],
+          "productionVersion": "V2"
+        }
+      ],
+      "missingFromFullReviewPackage": [
+        "02_EXPORTS/SITE00_Build_Object_V2_High.glb",
+        "02_EXPORTS/SITE00_Build_Object_V2_DCC.fbx",
+        "01_SOURCE/serve-viewer.cjs",
+        "01_SOURCE/validate_v2.py"
+      ],
+      "warnings": [
+        "Fixture appears to be a reduced archive (missing 4 paths from full review package README)"
+      ]
+    },
+    "glbInspections": [
+      {
+        "filePath": "src/studio-os-core/world-fabrication-engine/benchmarks/site00-build-object-astra-v1/02_EXPORTS/SITE00_Build_Object_Astra_V1_Web.glb",
+        "sha256": "51fea6b74954fc1990b2be3861240d29a5dff9f87f2ee8db259324e3722042dc",
+        "fileBytes": 14847404,
+        "parseOk": true,
+        "parseErrors": [],
+        "meshCount": 277,
+        "nodeCount": 277,
+        "materialNames": [
+          "Brushed platinum",
+          "Porcelain | neutral white",
+          "Low iron architectural glass",
+          "White veined marble",
+          "Scale figures | graphite",
+          "Scarlet optical acrylic",
+          "Anodized crimson edge"
+        ],
+        "textureCount": 1,
+        "embeddedImageCount": 1,
+        "triangleCount": 228996,
+        "extensionsUsed": [
+          "KHR_materials_transmission",
+          "KHR_materials_ior"
+        ],
+        "sceneRootNodeNames": [
+          "Balustrade cap",
+          "Balustrade cap.001",
+          "Balustrade cap.002",
+          "Balustrade cap.003",
+          "Balustrade cap.004",
+          "Balustrade cap.005",
+          "Balustrade cap.006",
+          "Balustrade cap.007",
+          "Cantilever stair 0 00",
+          "Cantilever stair 0 01",
+          "Cantilever stair 0 02",
+          "Cantilever stair 0 03",
+          "Cantilever stair 0 04",
+          "Cantilever stair 0 05",
+          "Cantilever stair 0 06",
+          "Cantilever stair 0 07",
+          "Cantilever stair 0 08",
+          "Cantilever stair 0 09",
+          "Cantilever stair 0 10",
+          "Cantilever stair 0 11",
+          "Cantilever stair 0 12",
+          "Cantilever stair 1 00",
+          "Cantilever stair 1 01",
+          "Cantilever stair 1 02",
+          "Cantilever stair 1 03",
+          "Cantilever stair 1 04",
+          "Cantilever stair 1 05",
+          "Cantilever stair 1 06",
+          "Cantilever stair 1 07",
+          "Cantilever stair 1 08",
+          "Cantilever stair 1 09",
+          "Cantilever stair 1 10",
+          "Cantilever stair 1 11",
+          "Cantilever stair 1 12",
+          "Central atrium back mullion 0",
+          "Central atrium back mullion 1",
+          "Central atrium back mullion 2",
+          "Central atrium back mullion 3",
+          "Central atrium back pane 0",
+          "Central atrium back pane 1",
+          "Central atrium back pane 2",
+          "Central atrium front mullion 0",
+          "Central atrium front mullion 1",
+          "Central atrium front mullion 2",
+          "Central atrium front mullion 3",
+          "Central atrium front pane 0",
+          "Central atrium front pane 1",
+          "Central atrium front pane 2",
+          "Central atrium left glass",
+          "Central atrium perimeter",
+          "Central atrium perimeter.001",
+          "Central atrium perimeter.002",
+          "Central atrium perimeter.003",
+          "Central atrium return",
+          "Central atrium return.001",
+          "Central atrium return.002",
+          "Central atrium return.003",
+          "Central atrium right glass",
+          "Central atrium roof",
+          "Continuous marble foundation",
+          "East stepped gallery back mullion 0",
+          "East stepped gallery back mullion 1",
+          "East stepped gallery back mullion 2",
+          "East stepped gallery back mullion 3",
+          "East stepped gallery back pane 0",
+          "East stepped gallery back pane 1",
+          "East stepped gallery back pane 2",
+          "East stepped gallery front mullion 0",
+          "East stepped gallery front mullion 1",
+          "East stepped gallery front mullion 2",
+          "East stepped gallery front mullion 3",
+          "East stepped gallery front pane 0",
+          "East stepped gallery front pane 1",
+          "East stepped gallery front pane 2",
+          "East stepped gallery left glass",
+          "East stepped gallery perimeter",
+          "East stepped gallery perimeter.001",
+          "East stepped gallery perimeter.002",
+          "East stepped gallery perimeter.003",
+          "East stepped gallery return",
+          "East stepped gallery return.001",
+          "East stepped gallery return.002",
+          "East stepped gallery return.003",
+          "East stepped gallery right glass",
+          "East stepped gallery roof",
+          "Entry vestibule back mullion 0",
+          "Entry vestibule back mullion 1",
+          "Entry vestibule back mullion 2",
+          "Entry vestibule back mullion 3",
+          "Entry vestibule back pane 0",
+          "Entry vestibule back pane 1",
+          "Entry vestibule back pane 2",
+          "Entry vestibule front mullion 0",
+          "Entry vestibule front mullion 1",
+          "Entry vestibule front mullion 2",
+          "Entry vestibule front mullion 3",
+          "Entry vestibule front pane 0",
+          "Entry vestibule front pane 1",
+          "Entry vestibule front pane 2",
+          "Entry vestibule left glass",
+          "Entry vestibule perimeter",
+          "Entry vestibule perimeter.001",
+          "Entry vestibule perimeter.002",
+          "Entry vestibule perimeter.003",
+          "Entry vestibule return",
+          "Entry vestibule return.001",
+          "Entry vestibule return.002",
+          "Entry vestibule return.003",
+          "Entry vestibule right glass",
+          "Entry vestibule roof",
+          "Floating interior partition",
+          "Floating interior partition.001",
+          "Floating interior partition.002",
+          "Glass balustrade 0 wing 0",
+          "Glass balustrade 0 wing 1",
+          "Glass balustrade 0 wing 2",
+          "Glass balustrade 1 wing 0",
+          "Glass balustrade 1 wing 1",
+          "Glass balustrade 1 wing 2",
+          "Glass balustrade 2 wing 0",
+          "Glass balustrade 2 wing 1",
+          "Glass standoff",
+          "Glass standoff.001",
+          "Glass standoff.002",
+          "Glass standoff.003",
+          "Glass standoff.004",
+          "Glass standoff.005",
+          "Glass standoff.006",
+          "Glass standoff.007",
+          "Glass standoff.008",
+          "Glass standoff.009",
+          "Glass standoff.010",
+          "Glass standoff.011",
+          "Glass standoff.012",
+          "Glass standoff.013",
+          "Glass standoff.014",
+          "Glass standoff.015",
+          "Glass standoff.016",
+          "Glass standoff.017",
+          "Glass standoff.018",
+          "Glass standoff.019",
+          "Glass standoff.020",
+          "Glass standoff.021",
+          "Glass standoff.022",
+          "Glass standoff.023",
+          "Glass standoff.024",
+          "Glass standoff.025",
+          "Glass standoff.026",
+          "Glass standoff.027",
+          "Glass standoff.028",
+          "Glass standoff.029",
+          "Glass standoff.030",
+          "Glass standoff.031",
+          "Glass standoff.032",
+          "Glass standoff.033",
+          "Glass standoff.034",
+          "Glass standoff.035",
+          "Human arm",
+          "Human arm.001",
+          "Human arm.002",
+          "Human arm.003",
+          "Human arm.004",
+          "Human arm.005",
+          "Human head",
+          "Human head.001",
+          "Human head.002",
+          "Human leg",
+          "Human leg.001",
+          "Human leg.002",
+          "Human leg.003",
+          "Human leg.004",
+          "Human leg.005",
+          "Human torso",
+          "Human torso.001",
+          "Human torso.002",
+          "Mezzanine 0 wing 0",
+          "Mezzanine 0 wing 1",
+          "Mezzanine 0 wing 2",
+          "Mezzanine 1 wing 0",
+          "Mezzanine 1 wing 1",
+          "Mezzanine 1 wing 2",
+          "Mezzanine 2 wing 0",
+          "Mezzanine 2 wing 1",
+          "Polished upper lip",
+          "Portal entry sidelight",
+          "Portal entry sidelight.001",
+          "Portal front seam",
+          "Portal front seam.001",
+          "Portal front seam.002",
+          "Portal front seam.003",
+          "Portal front seam.004",
+          "Portal raised sill",
+          "Portal rear light plane",
+          "Portal return seam",
+          "Portal return seam.001",
+          "Portal return seam.002",
+          "Portal return seam.003",
+          "Portal return seam.004",
+          "Portal return seam.005",
+          "Portal return seam.006",
+          "Portal return seam.007",
+          "Portal return seam.008",
+          "Portal return seam.009",
+          "Portal scarlet perimeter",
+          "Portal scarlet perimeter.001",
+          "Portal scarlet perimeter.002",
+          "Portal scarlet perimeter.003",
+          "Portal thick acrylic blade",
+          "Portal thick acrylic blade.001",
+          "Portal upper transom",
+          "Portal vertical pull",
+          "Portal vertical pull.001",
+          "Rear lantern back mullion 0",
+          "Rear lantern back mullion 1",
+          "Rear lantern back mullion 2",
+          "Rear lantern back mullion 3",
+          "Rear lantern back pane 0",
+          "Rear lantern back pane 1",
+          "Rear lantern back pane 2",
+          "Rear lantern front mullion 0",
+          "Rear lantern front mullion 1",
+          "Rear lantern front mullion 2",
+          "Rear lantern front mullion 3",
+          "Rear lantern front pane 0",
+          "Rear lantern front pane 1",
+          "Rear lantern front pane 2",
+          "Rear lantern left glass",
+          "Rear lantern perimeter",
+          "Rear lantern perimeter.001",
+          "Rear lantern perimeter.002",
+          "Rear lantern perimeter.003",
+          "Rear lantern return",
+          "Rear lantern return.001",
+          "Rear lantern return.002",
+          "Rear lantern return.003",
+          "Rear lantern right glass",
+          "Rear lantern roof",
+          "Recessed underside",
+          "Slender interior column",
+          "Slender interior column.001",
+          "Slender interior column.002",
+          "Slender interior column.003",
+          "Slender interior column.004",
+          "Slender interior column.005",
+          "Slender interior column.006",
+          "Slender interior column.007",
+          "Slender interior column.008",
+          "Slender interior column.009",
+          "Veined vertical fin 00",
+          "Veined vertical fin 01",
+          "Veined vertical fin 02",
+          "Veined vertical fin 03",
+          "West low gallery back mullion 0",
+          "West low gallery back mullion 1",
+          "West low gallery back mullion 2",
+          "West low gallery back mullion 3",
+          "West low gallery back pane 0",
+          "West low gallery back pane 1",
+          "West low gallery back pane 2",
+          "West low gallery front mullion 0",
+          "West low gallery front mullion 1",
+          "West low gallery front mullion 2",
+          "West low gallery front mullion 3",
+          "West low gallery front pane 0",
+          "West low gallery front pane 1",
+          "West low gallery front pane 2",
+          "West low gallery left glass",
+          "West low gallery perimeter",
+          "West low gallery perimeter.001",
+          "West low gallery perimeter.002",
+          "West low gallery perimeter.003",
+          "West low gallery return",
+          "West low gallery return.001",
+          "West low gallery return.002",
+          "West low gallery return.003",
+          "West low gallery right glass",
+          "West low gallery roof"
+        ],
+        "accessorSummary": {
+          "positions": 277,
+          "indices": 277
+        }
+      }
+    ],
+    "lineageAssets": [
+      {
+        "assetId": "site00-approved-blueprint-reference",
+        "manifestId": "site00-build-object-v2-benchmark",
+        "tier": "ORIGINAL_REFERENCE",
+        "storageRef": "external:approved-blueprint-image",
+        "approvalStatus": "APPROVED",
+        "inputAuthorityVersion": "founder-approved"
+      },
+      {
+        "assetId": "site00-artlist-rodin-massing",
+        "manifestId": "site00-build-object-v2-benchmark",
+        "tier": "AI_MASSING_SOURCE",
+        "storageRef": "external:artlist-rodin-glb",
+        "provider": "ARTLIST",
+        "approvalStatus": "APPROVED_FOR_RECONSTRUCTION"
+      },
+      {
+        "assetId": "site00-codex-blender-v1-package",
+        "manifestId": "site00-build-object-v2-benchmark",
+        "tier": "FABRICATION_SOURCE",
+        "storageRef": "external:SITE00_Build_Object_Review_Package.zip",
+        "sourceTool": "BLENDER",
+        "fabricationScriptVersion": "V1",
+        "approvalStatus": "SUPERSEDED_BY_V2",
+        "supersededByAssetId": "site00-codex-blender-v2-package"
+      },
+      {
+        "assetId": "site00-codex-blender-v2-package",
+        "manifestId": "site00-build-object-v2-benchmark",
+        "tier": "APPROVED_MASTER",
+        "storageRef": "src/studio-os-core/world-fabrication-engine/benchmarks/site00-build-object-astra-v1",
+        "sourceTool": "BLENDER",
+        "fabricationScriptVersion": "V2",
+        "approvalStatus": "FOUNDER_REVIEW_PENDING"
+      },
+      {
+        "assetId": "site00-build-object-v2-blend-master",
+        "manifestId": "site00-build-object-v2-benchmark",
+        "tier": "FABRICATION_SOURCE",
+        "storageRef": "01_SOURCE/SITE00_Build_Object_Astra_V1.blend",
+        "contentHash": "368ac7ea7c206aeba4823609b4901d2f6e7106db4f465efbcd2271aa270bcd5f",
+        "sourceTool": "BLENDER",
+        "materialDependencies": [],
+        "approvalStatus": "FOUNDER_REVIEW_PENDING"
+      },
+      {
+        "assetId": "site00-build-object-v2-web-glb",
+        "manifestId": "site00-build-object-v2-benchmark",
+        "tier": "RUNTIME_EXPORT",
+        "storageRef": "02_EXPORTS/SITE00_Build_Object_Astra_V1_Web.glb",
+        "contentHash": "51fea6b74954fc1990b2be3861240d29a5dff9f87f2ee8db259324e3722042dc",
+        "exportConfiguration": {
+          "target": "WEB_3D",
+          "profile": "SITE00_BUILD_OBJECT_WEB_3D"
+        },
+        "approvalStatus": "FOUNDER_REVIEW_PENDING"
+      }
+    ],
+    "lineageTransforms": [
+      {
+        "transformId": "xf-blueprint-to-rodin",
+        "manifestId": "site00-build-object-v2-benchmark",
+        "inputAssetIds": [
+          "site00-approved-blueprint-reference"
+        ],
+        "outputAssetIds": [
+          "site00-artlist-rodin-massing"
+        ],
+        "version": "1",
+        "agentOrTool": "ARTLIST_RODIN",
+        "executedAt": "historical-reported",
+        "configuration": {
+          "paidGeneration": false,
+          "note": "Historical — not re-run in this sprint"
+        },
+        "validationResult": "SKIPPED",
+        "approvalState": "APPROVED",
+        "tier": "AI_MASSING_SOURCE"
+      },
+      {
+        "transformId": "xf-rodin-to-codex-v1",
+        "manifestId": "site00-build-object-v2-benchmark",
+        "inputAssetIds": [
+          "site00-artlist-rodin-massing",
+          "site00-approved-blueprint-reference"
+        ],
+        "outputAssetIds": [
+          "site00-codex-blender-v1-package"
+        ],
+        "version": "1",
+        "agentOrTool": "CODEX_BLENDER",
+        "executedAt": "historical-reported",
+        "configuration": {},
+        "validationResult": "PASS",
+        "approvalState": "SUPERSEDED",
+        "tier": "FABRICATION_SOURCE"
+      },
+      {
+        "transformId": "xf-v1-to-codex-v2",
+        "manifestId": "site00-build-object-v2-benchmark",
+        "inputAssetIds": [
+          "site00-codex-blender-v1-package",
+          "site00-approved-blueprint-reference"
+        ],
+        "outputAssetIds": [
+          "site00-codex-blender-v2-package"
+        ],
+        "version": "2",
+        "agentOrTool": "CODEX_BLENDER",
+        "executedAt": "2026-10-09T05:19:37.760Z",
+        "configuration": {
+          "sprint": "P0.SITE00.BUILDER.BUILD-OBJECT.V2-REFERENCE-FIDELITY-ARCHITECTURAL-RECONSTRUCTION1"
+        },
+        "validationResult": "PENDING",
+        "approvalState": "FOUNDER_REVIEW_PENDING",
+        "tier": "FABRICATION_SOURCE",
+        "supersedesTransformId": "xf-rodin-to-codex-v1"
+      }
+    ],
+    "technicalAssessments": [
+      {
+        "requirementId": "source_geometry_blend",
+        "category": "GEOMETRY",
+        "cell": "PRESENT",
+        "evidence": [
+          "368ac7ea7c206aeba4823609b4901d2f6e7106db4f465efbcd2271aa270bcd5f"
+        ]
+      },
+      {
+        "requirementId": "runtime_web_glb",
+        "category": "GEOMETRY",
+        "cell": "PRESENT",
+        "evidence": [
+          "triangles=228996",
+          "sha256=51fea6b74954fc1990b2be3861240d29a5dff9f87f2ee8db259324e3722042dc"
+        ]
+      },
+      {
+        "requirementId": "runtime_high_glb",
+        "category": "GEOMETRY",
+        "cell": "MISSING",
+        "evidence": [],
+        "notes": "Missing in reduced Under4MB fixture"
+      },
+      {
+        "requirementId": "runtime_fbx",
+        "category": "GEOMETRY",
+        "cell": "MISSING",
+        "notes": "Missing in reduced Under4MB fixture",
+        "evidence": []
+      },
+      {
+        "requirementId": "material_definitions",
+        "category": "MATERIALS",
+        "cell": "MISSING",
+        "evidence": [
+          "material-manifest.json"
+        ]
+      },
+      {
+        "requirementId": "module_hierarchy",
+        "category": "MODULARITY",
+        "cell": "MISSING",
+        "evidence": [
+          "module-manifest.json"
+        ]
+      },
+      {
+        "requirementId": "validation_report",
+        "category": "QA",
+        "cell": "PRESENT",
+        "evidence": [
+          "export-validation-report.json"
+        ]
+      },
+      {
+        "requirementId": "render_evidence",
+        "category": "QA",
+        "cell": "PRESENT",
+        "notes": "Full review package includes Blender renders; reduced fixture omits 03_RENDERS",
+        "evidence": []
+      },
+      {
+        "requirementId": "reference_lineage",
+        "category": "LINEAGE",
+        "cell": "PRESENT",
+        "notes": "Comparison assets absent in reduced fixture",
+        "evidence": []
+      },
+      {
+        "requirementId": "collision_mesh",
+        "category": "COLLISION",
+        "cell": "NOT_REQUIRED",
+        "evidence": [],
+        "notes": "Static prop web delivery — collision optional per profile"
+      },
+      {
+        "requirementId": "navigation",
+        "category": "NAVIGATION",
+        "cell": "NOT_APPLICABLE",
+        "evidence": []
+      },
+      {
+        "requirementId": "lod_meshes",
+        "category": "LOD",
+        "cell": "NOT_REQUIRED",
+        "evidence": []
+      },
+      {
+        "requirementId": "rig_animation",
+        "category": "CHARACTER",
+        "cell": "NOT_APPLICABLE",
+        "evidence": []
+      },
+      {
+        "requirementId": "blender_native_inspection",
+        "category": "DCC",
+        "cell": "BLOCKED",
+        "evidence": [],
+        "notes": "Blender CLI not available in cloud benchmark environment"
+      },
+      {
+        "requirementId": "unreal_import",
+        "category": "ENGINE",
+        "cell": "UNVERIFIED",
+        "evidence": [
+          "export-validation-report.json: unreal NOT TESTED"
+        ]
+      },
+      {
+        "requirementId": "glb_integrity_parse",
+        "category": "GEOMETRY",
+        "cell": "PRESENT",
+        "evidence": [
+          "meshes=277",
+          "materials=Brushed platinum,Porcelain | neutral white,Low iron architectural glass,White veined marble,Scale figures | graphite,Scarlet optical acrylic,Anodized crimson edge"
+        ]
+      },
+      {
+        "requirementId": "uv_texture_embedded",
+        "category": "TEXTURES",
+        "cell": "PRESENT",
+        "evidence": [
+          "embeddedImages=1"
+        ]
+      }
+    ],
+    "ingestionRunId": "run-1791523177786",
+    "ingestedAt": "2026-10-09T05:19:37.786Z"
+  },
+  "errors": []
+}

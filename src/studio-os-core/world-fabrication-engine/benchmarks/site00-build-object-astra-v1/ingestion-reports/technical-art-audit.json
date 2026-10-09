@@ -1,0 +1,222 @@
+{
+  "assessments": [
+    {
+      "requirementId": "source_geometry_blend",
+      "category": "GEOMETRY",
+      "cell": "PRESENT",
+      "evidence": [
+        "368ac7ea7c206aeba4823609b4901d2f6e7106db4f465efbcd2271aa270bcd5f"
+      ]
+    },
+    {
+      "requirementId": "runtime_web_glb",
+      "category": "GEOMETRY",
+      "cell": "PRESENT",
+      "evidence": [
+        "triangles=228996",
+        "sha256=51fea6b74954fc1990b2be3861240d29a5dff9f87f2ee8db259324e3722042dc"
+      ]
+    },
+    {
+      "requirementId": "runtime_high_glb",
+      "category": "GEOMETRY",
+      "cell": "MISSING",
+      "evidence": [],
+      "notes": "Missing in reduced Under4MB fixture"
+    },
+    {
+      "requirementId": "runtime_fbx",
+      "category": "GEOMETRY",
+      "cell": "MISSING",
+      "notes": "Missing in reduced Under4MB fixture",
+      "evidence": []
+    },
+    {
+      "requirementId": "material_definitions",
+      "category": "MATERIALS",
+      "cell": "MISSING",
+      "evidence": [
+        "material-manifest.json"
+      ]
+    },
+    {
+      "requirementId": "module_hierarchy",
+      "category": "MODULARITY",
+      "cell": "MISSING",
+      "evidence": [
+        "module-manifest.json"
+      ]
+    },
+    {
+      "requirementId": "validation_report",
+      "category": "QA",
+      "cell": "PRESENT",
+      "evidence": [
+        "export-validation-report.json"
+      ]
+    },
+    {
+      "requirementId": "render_evidence",
+      "category": "QA",
+      "cell": "PRESENT",
+      "notes": "Full review package includes Blender renders; reduced fixture omits 03_RENDERS",
+      "evidence": []
+    },
+    {
+      "requirementId": "reference_lineage",
+      "category": "LINEAGE",
+      "cell": "PRESENT",
+      "notes": "Comparison assets absent in reduced fixture",
+      "evidence": []
+    },
+    {
+      "requirementId": "collision_mesh",
+      "category": "COLLISION",
+      "cell": "NOT_REQUIRED",
+      "evidence": [],
+      "notes": "Static prop web delivery — collision optional per profile"
+    },
+    {
+      "requirementId": "navigation",
+      "category": "NAVIGATION",
+      "cell": "NOT_APPLICABLE",
+      "evidence": []
+    },
+    {
+      "requirementId": "lod_meshes",
+      "category": "LOD",
+      "cell": "NOT_REQUIRED",
+      "evidence": []
+    },
+    {
+      "requirementId": "rig_animation",
+      "category": "CHARACTER",
+      "cell": "NOT_APPLICABLE",
+      "evidence": []
+    },
+    {
+      "requirementId": "blender_native_inspection",
+      "category": "DCC",
+      "cell": "BLOCKED",
+      "evidence": [],
+      "notes": "Blender CLI not available in cloud benchmark environment"
+    },
+    {
+      "requirementId": "unreal_import",
+      "category": "ENGINE",
+      "cell": "UNVERIFIED",
+      "evidence": [
+        "export-validation-report.json: unreal NOT TESTED"
+      ]
+    },
+    {
+      "requirementId": "glb_integrity_parse",
+      "category": "GEOMETRY",
+      "cell": "PRESENT",
+      "evidence": [
+        "meshes=277",
+        "materials=Brushed platinum,Porcelain | neutral white,Low iron architectural glass,White veined marble,Scale figures | graphite,Scarlet optical acrylic,Anodized crimson edge"
+      ]
+    },
+    {
+      "requirementId": "uv_texture_embedded",
+      "category": "TEXTURES",
+      "cell": "PRESENT",
+      "evidence": [
+        "embeddedImages=1"
+      ]
+    }
+  ],
+  "completeness": [
+    {
+      "slot": "source_blend",
+      "expected": "PRESENT",
+      "actual": "PRESENT",
+      "ok": true
+    },
+    {
+      "slot": "runtime_glb",
+      "expected": "PRESENT",
+      "actual": "PRESENT",
+      "ok": true
+    },
+    {
+      "slot": "material_definitions",
+      "expected": "PRESENT",
+      "actual": "MISSING",
+      "ok": false
+    },
+    {
+      "slot": "validation_report",
+      "expected": "PRESENT",
+      "actual": "PRESENT",
+      "ok": true
+    },
+    {
+      "slot": "package_manifest",
+      "expected": "PRESENT",
+      "actual": "MISSING",
+      "ok": false
+    },
+    {
+      "slot": "uv_layout",
+      "expected": "NOT_REQUIRED",
+      "actual": "UNVERIFIED",
+      "ok": true
+    },
+    {
+      "slot": "pbr_texture_set",
+      "expected": "NOT_REQUIRED",
+      "actual": "UNVERIFIED",
+      "ok": true
+    },
+    {
+      "slot": "collision_mesh",
+      "expected": "NOT_REQUIRED",
+      "actual": "NOT_REQUIRED",
+      "ok": true
+    },
+    {
+      "slot": "interaction_anchors",
+      "expected": "NOT_REQUIRED",
+      "actual": "UNVERIFIED",
+      "ok": true
+    },
+    {
+      "slot": "review_renders",
+      "expected": "NOT_REQUIRED",
+      "actual": "UNVERIFIED",
+      "ok": true
+    },
+    {
+      "slot": "skeleton",
+      "expected": "NOT_APPLICABLE",
+      "actual": "NOT_APPLICABLE",
+      "ok": true
+    },
+    {
+      "slot": "skin_weights",
+      "expected": "NOT_APPLICABLE",
+      "actual": "NOT_APPLICABLE",
+      "ok": true
+    },
+    {
+      "slot": "animation_clips",
+      "expected": "NOT_APPLICABLE",
+      "actual": "NOT_APPLICABLE",
+      "ok": true
+    },
+    {
+      "slot": "navigation_metadata",
+      "expected": "NOT_APPLICABLE",
+      "actual": "NOT_APPLICABLE",
+      "ok": true
+    },
+    {
+      "slot": "runtime_fbx",
+      "expected": "NOT_APPLICABLE",
+      "actual": "MISSING",
+      "ok": true
+    }
+  ]
+}

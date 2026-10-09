@@ -1,0 +1,27 @@
+{
+  "opened_saved_blend": true,
+  "collections": [
+    "ARCHITECTURE",
+    "CAMERAS",
+    "FLOOR_PLATES",
+    "GLASS_VOLUMES",
+    "INTERIOR_STRUCTURE",
+    "LIGHTING",
+    "MARBLE_PLINTH",
+    "MATERIALS",
+    "METAL_DETAILS",
+    "RED_PORTAL",
+    "SITE00_BUILD_OBJECT"
+  ],
+  "cameras": [
+    "01_HERO_REFERENCE_MATCH",
+    "02_FRONT_THREE_QUARTER",
+    "03_SIDE_INSPECTION",
+    "04_ELEVATED_INSPECTION",
+    "05_ARCHITECTURAL_DETAIL"
+  ],
+  "packed_images": [
+    "marble-source.png"
+  ],
+  "missing_external_images": []
+}

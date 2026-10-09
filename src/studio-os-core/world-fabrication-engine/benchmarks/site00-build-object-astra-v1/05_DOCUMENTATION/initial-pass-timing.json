@@ -1,0 +1,21 @@
+{
+  "status": "FABRICATED_AWAITING_FOUNDER_REVIEW",
+  "new_geometry": true,
+  "v2_blend_opened": false,
+  "build_passes": 1,
+  "revision": false,
+  "wall_time_seconds": 219.1,
+  "render_wall_seconds": {
+    "01_HERO_REFERENCE_MATCH": 37.18,
+    "02_FRONT_THREE_QUARTER": 35.0,
+    "03_SIDE_INSPECTION": 33.48,
+    "04_ELEVATED_INSPECTION": 37.06,
+    "05_ARCHITECTURAL_DETAIL": 72.91
+  },
+  "tokens": null,
+  "cost_usd": null,
+  "budget_usd": 10,
+  "cost_note": "Session billing unavailable; no additional agents, paid generation APIs or Codex sessions invoked. Local Blender CPU only.",
+  "engine": "Cycles CPU",
+  "samples": 32
+}

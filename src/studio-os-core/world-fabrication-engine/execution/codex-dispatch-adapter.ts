@@ -81,9 +81,14 @@ export function authorizeCodexDispatch(
   assignment: FabricationAssignmentManifest,
   _record: CodexDispatchRecord
 ): { allowed: boolean; reason?: string } {
-  if (assignment.projectId !== 'site00') return { allowed: false, reason: 'Cross-project dispatch denied' };
+  if (assignment.projectId !== 'site00' && assignment.projectId !== 'astrea') {
+    return { allowed: false, reason: 'Cross-project dispatch denied' };
+  }
   if (assignment.executionBudget.allowPaidGeneration) {
-    return { allowed: false, reason: 'Paid generation not authorized' };
+    const budgetUsd = process.env.WFE_FOUNDER_AUTHORIZED_BUDGET_USD;
+    if (!budgetUsd || Number(budgetUsd) <= 0) {
+      return { allowed: false, reason: 'Paid generation requires WFE_FOUNDER_AUTHORIZED_BUDGET_USD' };
+    }
   }
   const discovery = discoverCodexInterface({ runAuthProbe: true });
   if (discovery.interfaceName === 'UNAVAILABLE') {
