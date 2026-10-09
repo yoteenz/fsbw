@@ -48,7 +48,7 @@ If the demonstration shows checks split across screens, that becomes a design re
 
 ## What this proof is
 
-`/studio-institute/guided-apprenticeship` is a scripted walkthrough of the contract. It is not a thinking guide. The AIO Office files from the active design work were not edited.
+The practice session is `/studio-institute/guided-apprenticeship` on the Frontal Slayer preview tunnel. It is a scripted walkthrough of the contract. It is not a thinking guide. The page says so. The AIO Office files from the active design work were not edited. Nothing in the session is saved to production.
 
 ## Next build, after review
 

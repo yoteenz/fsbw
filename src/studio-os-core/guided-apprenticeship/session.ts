@@ -191,8 +191,8 @@ function moveOrder(steps: ProposedStep[], fromOrder: number, toOrder: number): P
 }
 
 function reasonFor(events: ObservationEvent[], eventId: string): string | null {
-  const note = events.find((event) => event.kind === 'explained_why' && event.aboutEventId === eventId && event.reason?.trim());
-  return note?.reason?.trim() || null;
+  const notes = events.filter((event) => event.kind === 'explained_why' && event.aboutEventId === eventId && event.reason?.trim());
+  return notes[notes.length - 1]?.reason?.trim() || null;
 }
 
 function baselineOrder(session: ApprenticeshipSession, stepId: string): number {

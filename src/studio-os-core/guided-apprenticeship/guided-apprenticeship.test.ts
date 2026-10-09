@@ -55,6 +55,16 @@ describe('guided apprenticeship foundation', () => {
     expect(replay.beat).toBe('replay');
     expect(replay.proposed.map((step) => step.id)).toEqual(['collect', 'verify', 'prepare', 'submit']);
     expect(replay.proposed.find((step) => step.id === 'verify')?.reason).toContain('before I prepare');
+    const again = expertConfirm(replay, 'almost');
+    const revised = recordEvent(again, {
+      id: 'why-2',
+      kind: 'explained_why',
+      aboutEventId: 'move-1',
+      reason: 'Names and addresses are checked before any application is prepared.',
+      simulated: true,
+    });
+    expect(revised.proposed.find((step) => step.id === 'verify')?.reason).toContain('before any application');
+    expect(revised.clarificationRequired).toBe(false);
     expect(replay.baseline.map((step) => step.id)).toEqual(['collect', 'prepare', 'verify', 'submit']);
   });
 

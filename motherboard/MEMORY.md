@@ -55744,3 +55744,13 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Proof:** `/studio-institute/guided-apprenticeship` is a scripted demonstration. The sample order becomes collect, verify, prepare, submit only after the expert explains the change. No character was cast.
 - **Checks:** 5/5 contract tests. `tsc --noEmit` passed. Screenshots of the scripted proof were taken.
 - **Conventions:** Do not hardcode a guide appearance. Do not treat a design request as an office edit. Do not activate brokerage or a worker from a lesson.
+
+---
+
+## 2026-10-09 — Guided apprenticeship founder preview
+
+- **Context:** The founder had the contract and a scripted proof, and had not yet used the interaction. This turn makes that same proof reviewable in a browser. PR #57 stays a draft. It is not merged. Production is not deployed.
+- **Preview:** Frontal Slayer named tunnel, route `/studio-institute/guided-apprenticeship`. Synthetic Northline Hauling only. The public host is an environment secret and is not stored in the repo.
+- **Journey:** Welcome, show me, let me take over, move verify before prepare, require a reason, replay, that’s right / needs another change / reject, owner approval, separate training publication, completion. A live filing from the page is refused.
+- **Checks:** Contract tests 5/5. Browser pass at 390×844, 834×1194, 1440×900, and 2560×1440 with no horizontal overflow. Explain stays disabled until a reason is entered. Reject returns to Show me. Needs another change returns to the reason. Start over returns to the welcome.
+- **Still true:** No character. No office edits. No worker. No Workflow Journal merge. Observation is not understanding. Training publication is not execution.
