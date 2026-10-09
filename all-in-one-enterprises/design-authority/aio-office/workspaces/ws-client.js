@@ -43,7 +43,7 @@ function clServices(c) {
     const tone = mine.length ? worst(mine.map((x) => (x.s ? x.s[1] : 'ok'))) : 'ok';
     const sel = WSX.client.view === 'service' && WSX.client.service === l.slug;
     if (!on) return `<span class="cl-svc cl-svc--off" title="${l.name} · NOT USED">${ico(l.icon)}<span>${SVC_SHORT[l.slug]}</span></span>`;
-    return `<button type="button" class="cl-svc ${sel ? 'is-on' : ''} cl-svc--${tone}" data-a="cl.service" data-v="${l.slug}" title="${l.name}">${ico(l.icon)}<i class="pip pip--${tone}"></i><span>${SVC_SHORT[l.slug]}</span>${mine.length ? `<em>${mine.length}</em>` : ''}</button>`;
+    return `<button type="button" class="cl-svc ${sel ? 'is-on' : ''} cl-svc--${tone}" data-a="cl.service" data-v="${l.slug}" title="${l.name}" aria-pressed="${sel}">${sel ? `<i class="cl-svc__ring" data-swap="ring:${c.id}:${l.slug}" aria-hidden="true"></i>` : ''}${ico(l.icon)}<i class="pip pip--${tone}"></i><span>${SVC_SHORT[l.slug]}</span>${mine.length ? `<em>${mine.length}</em>` : ''}</button>`;
   }).join('');
   return `<section class="cl-svcs"><div class="cl-svcs__h"><span class="rg__t">SERVICES</span><span class="rg__n">${c.lanes.length} OF 12 · LIT WHERE ${c.name.split(' ')[0]} USES AIO</span></div><div class="cl-svcs__line">${nodes}</div></section>`;
 }
@@ -58,7 +58,7 @@ function clSections(c) {
 const recRowCl = (type, r, extra = '') => {
   const s = ov(`${type}:${r.id}`, statusWord(r));
   const sel = stackTop() === `${type}:${r.id}`;
-  return `<div class="pk cl-rec ${sel ? 'is-sel' : ''}" data-a="cl.push" data-v="${type}:${r.id}"><span class="cl-rec__i">${ico(OWNER_ICON[type])}</span><span style="min-width:0"><b class="pk__t">${RECORD_TYPES[type].title(r)}</b><span class="pk__s">${OWNER_LABEL[type]}${extra}</span></span>${sw(s)}</div>`;
+  return `<div class="pk cl-rec ${sel ? 'is-sel' : ''}" data-a="cl.push" data-v="${type}:${r.id}" title="${RECORD_TYPES[type].title(r)}"><span class="cl-rec__i">${ico(OWNER_ICON[type])}</span><span style="min-width:0"><b class="pk__t">${RECORD_TYPES[type].title(r)}</b><span class="pk__s">${OWNER_LABEL[type]}${extra}</span></span>${sw(s)}</div>`;
 };
 function clContent(c) {
   const { view, service } = WSX.client;
@@ -67,10 +67,7 @@ function clContent(c) {
     return `<div class="cl-gate">${ico('lock')}<div><b>${c.life === 'PREBUILT' ? 'PREBUILT · NOT ACTIVE YET' : 'INVITED · AWAITING CLIENT CONFIRMATION'}</b><span>${c.life === 'PREBUILT' ? 'STAFF PREPARED THIS CLIENT. ONLY THE CLIENT’S CONFIRMATION MAKES IT ACTIVE.' : `INVITE SENT ${mig?.invited ?? ''}. NOTHING IS ACTIVE UNTIL THE CLIENT CONFIRMS.`}</span></div></div>${clOverview(c)}`;
   }
   if (view === 'overview') return clOverview(c);
-  if (view === 'service') {
-    const recs = clRecords(c.id).filter((x) => x.lane === service);
-    return `<div class="rg rg--flat cl-list">${recs.map((x) => recRowCl(x.type, x.r, x.r.due ? ` · DUE ${x.r.due}` : x.r.exp ? ` · EXPIRES ${x.r.exp}` : '')).join('') || '<div class="grp">NO RECORDS IN THIS SERVICE YET</div>'}</div>`;
-  }
+  if (view === 'service') return clService(c, service);
   if (view === 'fleet') {
     const vs = vals(VEHICLES).filter((v) => v.client === c.id);
     return `<div class="cl-fleet">${vs.map((v) => {
@@ -87,36 +84,77 @@ function clContent(c) {
   if (view === 'billing') return `<div class="rg rg--flat cl-list">${vals(INVOICES).filter((i) => i.client === c.id).map((i) => `<div class="pk cl-rec ${stackTop() === `invoice:${i.id}` ? 'is-sel' : ''}" data-a="cl.push" data-v="invoice:${i.id}"><span class="cl-rec__i">${ico('summary')}</span><span><b class="pk__t">${i.ref}</b><span class="pk__s">${i.what}</span></span><span class="lt-amt">${i.amount}</span>${sw(ov(`invoice:${i.id}`, i.status))}</div>`).join('') || '<div class="grp">NO INVOICES</div>'}<div style="padding:10px 14px">${ntb('SAMPLE AMOUNTS · FOUNDER / BILLING GRANT ONLY')}</div></div>`;
   return '';
 }
+const MON = { JAN: 0, FEB: 1, MAR: 2, APR: 3, MAY: 4, JUN: 5, JUL: 6, AUG: 7, SEP: 8, OCT: 9, NOV: 10, DEC: 11 };
+/** 'OCT 20, 2026' → a sortable number (sample dates are all written this way). */
+const dayOf = (d) => {
+  const m = /^([A-Z]{3}) (\d{1,2}), (\d{4})$/.exec(d || '');
+  return m ? Number(m[3]) * 400 + MON[m[1]] * 32 + Number(m[2]) : Infinity;
+};
+/** The service state: a plate for the service (what it is for this client, how much is open, the next date), its
+ *  records, the trucks and documents those records touch, and the latest in the service. Only sample records. */
+function clService(c, slug) {
+  const lane = laneBySlug(slug);
+  const recs = clRecords(c.id).filter((x) => x.lane === slug);
+  const open = recs.filter((x) => x.s && !['ok', 'mute'].includes(x.s[1]));
+  const worst = [...open].sort((a, b) => TONE_RANK[a.s[1]] - TONE_RANK[b.s[1]])[0];
+  const dated = recs.map((x) => [x.r.due || x.r.exp, x]).filter(([d]) => d).sort((a, b) => dayOf(a[0]) - dayOf(b[0]));
+  const vids = [...new Set(recs.flatMap((x) => x.r.vehicles || (x.r.vehicle ? [x.r.vehicle] : [])))].filter((id) => VEHICLES[id]);
+  const docs = [...new Set(recs.flatMap((x) => x.r.docs || []))].filter((id) => DOCS[id]);
+  const owners = [...new Set(recs.map((x) => x.r.owner).filter(Boolean))];
+  const plate = `<div class="cl-sp" data-swap="sp:${c.id}:${slug}"><span class="cl-sp__i">${ico(lane.icon)}</span><span class="cl-sp__t"><small>SERVICE · ${c.name}</small><b>${lane.name}</b></span><span>${sw(worst ? [`${open.length} OPEN`, worst.s[1]] : recs.length ? ['ALL CURRENT', 'ok'] : ['NO RECORDS', 'mute'])}</span>
+    <div class="cl-sp__ro">${ro(recs.length, 'RECORDS')}${ro(open.length, 'OPEN', { tone: open.length ? 'gold' : '' })}${ro(dated[0] ? dated[0][0].replace(/, \d{4}$/, '') : '—', 'NEXT DATE')}${ro(owners.length ? owners.map((o) => STAFF[o]?.b ?? '—').join(' · ') : '—', 'OWNER')}</div></div>`;
+  const list = `<div class="rg rg--flat cl-list">${recs.map((x) => recRowCl(x.type, x.r, x.r.due ? ` · DUE ${x.r.due}` : x.r.exp ? ` · EXPIRES ${x.r.exp}` : '')).join('') || '<div class="grp">NO RECORDS IN THIS SERVICE YET</div>'}</div>`;
+  const trucks = vids.length ? `<div><div class="sec-l"><span>TRUCKS ON THESE RECORDS · ${vids.length}</span></div><div class="cl-ovfleet">${vids.slice(0, 2).map((id) => { const v = VEHICLES[id]; return `<button type="button" class="cl-truck cl-truck--xs" data-a="cl.push" data-v="vehicle:${v.id}" aria-label="${v.unit} · ${vAvail(v)[0]}" title="${v.unit} · ${vAvail(v)[0]}"><svg viewBox="0 0 500 210" aria-hidden="true">${truckShape(FLEET_META[v.id].cab)}</svg><span class="cl-truck__l"><b>${v.unit}</b>${sw([vAvail(v)[0].split(' · ')[0], vAvail(v)[1]])}</span></button>`; }).join('')}</div></div>` : '';
+  const papers = docs.length ? `<div><div class="sec-l"><span>DOCUMENTS · ${docs.length}</span></div><div class="rg rg--flat cl-list">${docs.slice(0, 3).map((id) => { const d = DOCS[id]; return `<div class="pk cl-rec ${stackTop() === `document:${d.id}` ? 'is-sel' : ''}" data-a="cl.push" data-v="document:${d.id}" title="${d.title}"><span class="cl-rec__i">${ico('folder')}</span><span style="min-width:0"><b class="pk__t">${d.title}</b><span class="pk__s">${d.type} · ${d.added}</span></span></div>`; }).join('')}</div></div>` : '';
+  const latest = dated.length ? mhist(`svc:${c.id}:${slug}`, dated.slice(0, 3).map(([d, x]) => [d, `${RECORD_TYPES[x.type].title(x.r)} · ${x.s?.[0] ?? ''}`]), 'DATES IN THIS SERVICE') : '';
+  const row = [trucks, papers || latest].filter(Boolean);
+  return `<div class="cl-sv">${plate}${list}${row.length ? `<div class="cl-sv__row">${row.join('')}</div>` : ''}${papers && latest ? latest : ''}</div>`;
+}
 function clOverview(c) {
   const open = clOpen(c.id);
-  const att = open.sort((a, b) => TONE_RANK[a.s[1]] - TONE_RANK[b.s[1]]).slice(0, 4);
-  const trucks = vals(VEHICLES).filter((v) => v.client === c.id).length;
+  const att = open.sort((a, b) => TONE_RANK[a.s[1]] - TONE_RANK[b.s[1]]);
+  const vs = vals(VEHICLES).filter((v) => v.client === c.id);
   const docs = vals(DOCS).filter((d) => d.client === c.id).length;
   const ppl = vals(DRIVERS).filter((d) => d.client === c.id).length;
-  return `<div class="cl-ov">
-    <div class="cl-ov__att"><div class="sec-l">NEEDS ATTENTION · ${open.length}</div><div class="rg rg--flat cl-list">${att.map((x) => recRowCl(x.type, x.r)).join('') || '<div class="grp">NOTHING NEEDS ATTENTION</div>'}</div></div>
-    <div class="cl-ov__ro"><div class="sec-l">AT A GLANCE</div><div class="cl-glance">${[['fleet', trucks, 'TRUCKS'], ['people', ppl, 'DRIVERS'], ['documents', docs, 'DOCUMENTS'], ['overview', open.length, 'OPEN WORK']].map(([v, n, l]) => `<button type="button" class="cl-g" data-a="cl.view" data-v="${v}"><b>${n}</b><span>${l}</span></button>`).join('')}</div></div>
-  </div>`;
+  // the overview fits one screen: with a fleet to show, a desktop lists the two most urgent (the count says how many)
+  const show = !vs.length ? 5 : WSX.device === 'wide' ? 4 : WSX.device === 'desktop' ? 2 : 3;
+  // figures are instruments: one strip, each one opens its section
+  const strip = `<div class="ros cl-ros">${ro(open.length, 'OPEN WORK', { tone: open.length ? 'gold' : '' })}${ro(vs.length, 'TRUCKS', { a: 'cl.view', v: 'fleet' })}${ro(ppl, 'DRIVERS', { a: 'cl.view', v: 'people' })}${ro(docs, 'DOCUMENTS', { a: 'cl.view', v: 'documents' })}</div>`;
+  const attention = `<div class="cl-ov__att"><div class="sec-l"><span>NEEDS ATTENTION · ${open.length}</span>${open.length > show ? `<span>${show} SHOWN</span>` : ''}</div><div class="rg rg--flat cl-list">${att.slice(0, show).map((x) => recRowCl(x.type, x.r)).join('') || '<div class="grp">NOTHING NEEDS ATTENTION</div>'}</div></div>`;
+  const fleet = vs.length ? `<div class="cl-ov__fleet"><div class="sec-l"><span>THEIR FLEET · ${vs.length}</span><a data-a="cl.view" data-v="fleet">ALL ${ico('fwd')}</a></div><div class="cl-ovfleet">${vs.slice(0, 2).map((v) => `<button type="button" class="cl-truck cl-truck--xs" data-a="cl.push" data-v="vehicle:${v.id}" aria-label="${v.unit} · ${vAvail(v)[0]}" title="${v.unit} · ${vAvail(v)[0]}"><svg viewBox="0 0 500 210" aria-hidden="true">${truckShape(FLEET_META[v.id].cab)}</svg><span class="cl-truck__l"><b>${v.unit}</b>${sw([vAvail(v)[0].split(' · ')[0], vAvail(v)[1]])}</span></button>`).join('')}</div></div>` : '';
+  const latest = `<div class="cl-ov__act">${mhist(`client:${c.id}`, [...clRecords(c.id).filter((x) => x.r.due || x.r.exp).slice(0, 2).map((x) => [x.r.due || x.r.exp, RECORD_TYPES[x.type].title(x.r)]), [CLIENT_META[c.id].since, `CLIENT SINCE · ${CLIENT_META[c.id].via}`]], 'LATEST')}</div>`;
+  return `<div class="cl-ov">${strip}${attention}${fleet ? `<div class="cl-ov__row">${fleet}${latest}</div>` : latest}</div>`;
 }
 
 /* ── drill-in panel ── */
+const CRUMB = { policy: 'POLICY', request: 'REQUEST', document: 'DOCUMENT', deadline: 'DEADLINE', quarter: 'IFTA', invoice: 'INVOICE', subscription: 'PACKAGE', cycle: 'CLOSE', profile: 'ROAD READY', submission: 'SUBMISSION' };
+/** The breadcrumb word for a record: short enough that the trail stays on one line. */
 function clStackLabel(key) {
   const [type, id] = key.split(':');
   const r = rec(type, id);
-  return type === 'vehicle' ? r.unit : type === 'policy' ? 'POLICY' : type === 'driver' ? r.name : RECORD_TYPES[type].title(r).split(' · ')[0];
+  if (type === 'vehicle') return r.unit;
+  if (type === 'driver') return r.name.split(' ').map((w, i, a) => (i < a.length - 1 ? `${w[0]}.` : w)).join(' ');
+  if (type === 'ticket' || type === 'load') return r.ref;
+  return CRUMB[type] ?? RECORD_TYPES[type].title(r).split(' · ')[0];
+}
+/** The record plate: the client's own identity language, carried into whatever is open. */
+function recPlate(c, type, title, status, key) {
+  return `<div class="cl-rp" data-swap="rp:${key}"><span class="cl-rp__i">${ico(OWNER_ICON[type] || 'company')}</span><span class="cl-rp__t"><small>${OWNER_LABEL[type] || 'CLIENT'} · ${c.name}</small><b>${title}</b></span>${status ? `<span class="cl-rp__s">${sw(status)}</span>` : ''}</div>`;
 }
 function clPanel(c) {
   const st = WSX.client.stack;
-  const crumbs = [`<a data-a="cl.pop" data-v="0">${c.name}</a>`, ...(WSX.client.view === 'service' ? [`<a data-a="cl.pop" data-v="0">${laneBySlug(WSX.client.service).name}</a>`] : []), ...st.map((k, i) => (i === st.length - 1 ? `<span>${clStackLabel(k)}</span>` : `<a data-a="cl.pop" data-v="${i + 1}">${clStackLabel(k)}</a>`))].join(ico('fwd'));
+  const svc = WSX.client.view === 'service' ? laneBySlug(WSX.client.service) : null;
+  const crumbs = [`<a data-a="cl.pop" data-v="0" title="${c.name}">${c.b}</a>`, ...(svc ? [`<a data-a="cl.pop" data-v="0" title="${svc.name}">${SVC_SHORT[svc.slug]}</a>`] : []), ...st.map((k, i) => (i === st.length - 1 ? `<span>${clStackLabel(k)}</span>` : `<a data-a="cl.pop" data-v="${i + 1}">${clStackLabel(k)}</a>`))].join(ico('fwd'));
   const back = st.length ? `<button type="button" class="cx__back" data-a="cl.back" aria-label="Back">${ico('back')}</button>` : '';
   if (!st.length) {
     const open = clOpen(c.id).sort((a, b) => TONE_RANK[a.s[1]] - TONE_RANK[b.s[1]]);
     const top = open[0];
-    return `<section class="rg cx cl-cx"><header class="cx__h"><div class="cx__crumb">${crumbs}</div><h2 class="cx__t">THE RELATIONSHIP</h2></header><div class="cx__b" data-keep="cl-cx">${top ? nextBlock(RECORD_TYPES[top.type].title(top.r), `<button type="button" class="wbtn wbtn--gold" data-a="cl.push" data-v="${top.type}:${top.r.id}">OPEN ${ico('fwd')}</button>`) : nextBlock('NOTHING NEEDS ATTENTION', '', 'calm')}${facts([['CONTACT', c.contact], ['CLIENT SINCE', CLIENT_META[c.id].since, CLIENT_META[c.id].via], ['SERVICES', `${c.lanes.length} OF 12`], ['POWER UNITS', String(c.trucks)], ['LIFECYCLE', sw(LIFE[c.life])]])}${mhist(`client:${c.id}`, [...clRecords(c.id).filter((x) => x.r.due || x.r.exp).slice(0, 3).map((x) => [x.r.due || x.r.exp, RECORD_TYPES[x.type].title(x.r)]), [CLIENT_META[c.id].since, `CLIENT SINCE · ${CLIENT_META[c.id].via}`]])}</div></section>`;
+    return `<section class="rg cx cl-cx"><header class="cx__h">${recPlate(c, 'client', 'THE RELATIONSHIP', [LIFE[c.life][0].split(' · ')[0], LIFE[c.life][1]], `rel:${c.id}`)}</header><div class="cx__b" data-keep="cl-cx" data-swap="b:rel:${c.id}">${top ? nextBlock(RECORD_TYPES[top.type].title(top.r), `<button type="button" class="wbtn wbtn--gold" data-a="cl.push" data-v="${top.type}:${top.r.id}">OPEN ${ico('fwd')}</button>`) : nextBlock('NOTHING NEEDS ATTENTION', '', 'calm')}${facts([['CONTACT', c.contact], ['CLIENT SINCE', CLIENT_META[c.id].since, CLIENT_META[c.id].via], ['SERVICES', `${c.lanes.length} OF 12`], ['POWER UNITS', String(c.trucks)], ['LIFECYCLE', sw(LIFE[c.life])]])}${mhist(`client:${c.id}`, [...clRecords(c.id).filter((x) => x.r.due || x.r.exp).slice(0, 3).map((x) => [x.r.due || x.r.exp, RECORD_TYPES[x.type].title(x.r)]), [CLIENT_META[c.id].since, `CLIENT SINCE · ${CLIENT_META[c.id].via}`]])}</div></section>`;
   }
   const [type, id] = stackTop().split(':');
   const r = rec(type, id);
-  return `<section class="rg cx cl-cx"><header class="cx__h"><div class="cx__crumb">${back}${crumbs}</div><h2 class="cx__t">${RECORD_TYPES[type].title(r)}</h2>${sw(ov(`${type}:${r.id}`, statusWord(r)))}</header><div class="cx__b ws-in" data-keep="cl-cx">${clRecordBody(type, r)}</div></section>`;
+  const key = `${c.id}:${stackTop()}`;
+  return `<section class="rg cx cl-cx"><header class="cx__h"><div class="cx__crumb">${back}${crumbs}</div>${recPlate(c, type, RECORD_TYPES[type].title(r), ov(`${type}:${r.id}`, statusWord(r)), key)}</header><div class="cx__b" data-keep="cl-cx" data-swap="b:${key}">${clRecordBody(type, r)}</div></section>`;
 }
 /** One record, in the client's context — linked records open on top of it; the crumb walks back. */
 function clRecordBody(type, r) {
@@ -130,8 +168,8 @@ function clRecordBody(type, r) {
   }
   if (type === 'vehicle') {
     const conns = fleetConns(r);
-    return `<div class="cl-vstage"><svg viewBox="0 0 500 210" aria-hidden="true">${truckShape(FLEET_META[r.id].cab)}</svg><span>${sw(vAvail(r))}</span></div>
-      <div class="cl-conns">${CONN.map(([k, l, i]) => `<div class="cl-conn cl-conn--${conns[k].tone}">${ico(i)}<span><small>${l}</small><b>${conns[k].word}</b></span></div>`).join('')}</div>
+    return `<div class="fl-slab fl-slab--mini"><div class="cl-vstage"><svg viewBox="0 0 500 210" aria-hidden="true">${truckShape(FLEET_META[r.id].cab)}</svg><span>${sw(vAvail(r))}</span><b>${r.unit}</b></div>
+      <div class="fl-cluster">${CONN.map(([k, l, i]) => `<button type="button" class="fl-cg fl-cg--${conns[k].tone}" data-a="go" data-v="fleet:${r.id}:${k}" aria-label="${l} · ${conns[k].word} — open in Fleet">${ico(i)}<span>${l}</span><small>${conns[k].tagW || conns[k].word}</small></button>`).join('')}</div></div>
       <button type="button" class="wbtn wbtn--gold" data-a="go" data-v="fleet:${r.id}">${ico('truck')}OPEN ${r.unit} IN FLEET</button>`;
   }
   if (type === 'driver') return `${facts([['CDL', r.cdl], ['MEDICAL CARD', r.med], ['TRUCK', r.vehicle ? VEHICLES[r.vehicle].unit : 'NONE']])}${r.vehicle ? `<div class="cl-links">${chip('vehicle', r.vehicle, VEHICLES[r.vehicle].unit)}</div>` : ''}${vals(DUES).filter((d) => d.links.includes(`driver:${r.id}`)).map((d) => `<button type="button" class="wbtn" data-a="go" data-v="comp:${d.id}">${ico('shield-check')}${d.what.split(' · ')[0]} · ${d.due.replace(', 2026', '')}</button>`).join('')}`;
@@ -158,12 +196,12 @@ function clientBar(c) {
 }
 function clientView() {
   const c = ACCOUNTS[WSX.client.id];
-  const main = `<div class="cl-main">${clIdentity(c)}${clServices(c)}${clSections(c)}<div class="cl-body" data-keep="cl-body">${clContent(c)}</div></div>`;
+  const main = `<div class="cl-main">${clIdentity(c)}${clServices(c)}${clSections(c)}<div class="cl-body" data-keep="cl-body" data-swap="body:${c.id}:${WSX.client.view}:${WSX.client.service ?? ''}">${clContent(c)}</div></div>`;
   if (VP === 'mobile') {
-    const sheet = WSX.sheet === 'dir' ? phoneSheet(`<div class="cx">${clDirectory()}</div>`) : phoneSheet(clPanel(c));
+    const sheet = WSX.sheet === 'dir' ? phoneSheet(`<div class="cx">${clDirectory()}</div>`, { label: 'Clients' }) : phoneSheet(clPanel(c), { label: ACCOUNTS[WSX.client.id].name });
     return `<div class="ws cl cl--m">${clientBar(c)}${main}</div>${sheet}`;
   }
-  if (VP === 'tablet') return `<div class="ws cl cl--t">${clientBar(c)}<div class="cl-t2">${main}${clPanel(c)}</div></div>${WSX.sheet === 'dir' ? phoneSheet(`<div class="cx">${clDirectory()}</div>`) : ''}`;
+  if (VP === 'tablet') return `<div class="ws cl cl--t">${clientBar(c)}<div class="cl-t2">${main}${clPanel(c)}</div></div>${WSX.sheet === 'dir' ? phoneSheet(`<div class="cx">${clDirectory()}</div>`, { side: true, label: 'Clients' }) : ''}`;
   return `<div class="ws cl">${clientBar(c)}<div class="cl-grid">${clDirectory()}${main}${clPanel(c)}</div></div>`;
 }
 

@@ -10,10 +10,10 @@ const DEVICES = {
   wide: [2560, 1440, 'desktop', true],
 };
 const WORKSPACES = [
-  { id: 'fleet', no: '04', name: 'VEHICLES & FLEET', page: 'work', view: () => fleetView(), diag: 'before-after-fleet.jpg', shape: 'A TRUCK', line: 'PICK A TRUCK. ALL IT TOUCHES IS ON IT.' },
-  { id: 'books', no: '09', name: 'BOOKKEEPING', page: 'work', view: () => booksView(), diag: 'before-after-books.jpg', shape: 'A MONTH', line: 'ONE CLIENT, ONE MONTH, LINE BY LINE.' },
-  { id: 'comp', no: '03', name: 'COMPLIANCE', page: 'work', view: () => compView(), diag: 'before-after-comp.jpg', shape: 'A CALENDAR', line: 'WHAT IS DUE, HOW SOON, WHAT CLEARS IT.' },
-  { id: 'client', no: '360', name: 'CLIENT 360', page: 'more', view: () => clientView(), diag: 'before-after-client.jpg', shape: 'A COMPANY', line: 'WHO THEY ARE, WHAT WE DO, WHAT IS OPEN.' },
+  { id: 'fleet', no: '04', name: 'VEHICLES & FLEET', page: 'work', view: () => fleetView(), diag: 'before-after-fleet.jpg', pass: 'polish-1-fleet.jpg', shape: 'A TRUCK', line: 'PICK A TRUCK. ALL IT TOUCHES IS ON IT.' },
+  { id: 'books', no: '09', name: 'BOOKKEEPING', page: 'work', view: () => booksView(), diag: 'before-after-books.jpg', pass: 'polish-3-books.jpg', shape: 'A MONTH', line: 'ONE CLIENT, ONE MONTH, LINE BY LINE.' },
+  { id: 'comp', no: '03', name: 'COMPLIANCE', page: 'work', view: () => compView(), diag: 'before-after-comp.jpg', pass: 'polish-4-comp.jpg', shape: 'A CALENDAR', line: 'WHAT IS DUE, HOW SOON, WHAT CLEARS IT.' },
+  { id: 'client', no: '360', name: 'CLIENT 360', page: 'more', view: () => clientView(), diag: 'before-after-client.jpg', pass: 'polish-2-client.jpg', shape: 'A COMPANY', line: 'WHO THEY ARE, WHAT WE DO, WHAT IS OPEN.' },
 ];
 const wsById = (id) => WORKSPACES.find((w) => w.id === id);
 const DEVICE_WORD = { phone: 'ON A PHONE · 390 × 844', tablet: 'ON A TABLET · 834 × 1194', desktop: 'ON A DESKTOP · 1440 × 900', wide: 'ULTRA-WIDE · 2560 × 1440' };
@@ -59,7 +59,7 @@ const RULES = [
   ['EACH DEVICE ITS OWN', 'PHONE, TABLET, DESKTOP, WIDE — RECOMPOSED.'],
 ];
 
-const RV = { view: 'overview', device: 'desktop', before: false, demo: null, step: -1, timer: null, lightbox: null, speed: 1 };
+const RV = { view: 'overview', device: 'desktop', before: false, demo: null, step: -1, timer: null, lightbox: null, speed: 1, closing: false, closeTimer: null, opener: null };
 const $ = (id) => document.getElementById(id);
 let device, screenEl, toastTimer;
 
@@ -76,28 +76,19 @@ function deviceInner(wsId) {
   }
   return `<div class="ao">${header()}${nav()}<main class="main ws-main">${body}</main></div>`;
 }
-function keepScroll() {
-  const k = {};
-  screenEl.querySelectorAll('[data-keep]').forEach((el) => (k[el.dataset.keep] = el.scrollTop));
-  k.__screen = screenEl.scrollTop;
-  return k;
-}
-function restoreScroll(k) {
-  screenEl.querySelectorAll('[data-keep]').forEach((el) => {
-    if (k[el.dataset.keep] != null) el.scrollTop = k[el.dataset.keep];
-  });
-  screenEl.scrollTop = k.__screen ?? 0;
-}
 /** Bring the selected row into view inside its list (after a demo step or a change made elsewhere). */
 function revealSelected() {
   screenEl.querySelectorAll('[data-keep] .is-sel').forEach((el) => {
     const box = el.closest('[data-keep]');
     const top = el.offsetTop - box.offsetTop;
-    if (top < box.scrollTop || top + el.offsetHeight > box.scrollTop + box.clientHeight) box.scrollTop = Math.max(0, top - 40);
+    if (top < box.scrollTop || top + el.offsetHeight > box.scrollTop + box.clientHeight) box.scrollTo({ top: Math.max(0, top - 40), behavior: MOTION.reduced() ? 'auto' : 'smooth' });
   });
 }
 
 function render({ top = false, reveal = false } = {}) {
+  // a newer draw supersedes a drawer that is still leaving
+  clearTimeout(RV.closeTimer);
+  RV.closing = false;
   const [w, h, vp, wide] = DEVICES[RV.device];
   WSX.device = RV.device;
   studioSet({ vp, wide, role: WSX.role });
@@ -109,7 +100,6 @@ function render({ top = false, reveal = false } = {}) {
     drawLanding();
   } else {
     WSX.ws = RV.view;
-    const k = top ? {} : keepScroll();
     device.dataset.vp = vp;
     device.dataset.wide = wide ? '1' : '0';
     device.dataset.device = RV.device;
@@ -119,9 +109,27 @@ function render({ top = false, reveal = false } = {}) {
     device.style.setProperty('--dh', `${h}px`);
     device.style.setProperty('--pad-x', wide ? '24px' : '16px');
     for (const key of Object.keys(SIM)) delete SIM[key];
-    screenEl.innerHTML = deviceInner(RV.view);
-    restoreScroll(k);
-    if (reveal) revealSelected();
+    const html = deviceInner(RV.view);
+    const oldSheet = screenEl.querySelector('.wsheet:not(.is-out)');
+    const wasOpen = !!oldSheet;
+    const wasShown = !!screenEl.querySelector('.wsheet'); // open, or still leaving
+    const draw = () => {
+      if (top || !screenEl.firstChild) replaceInto(screenEl, html);
+      else morphInto(screenEl, html);
+      placeThumbs(screenEl, !top);
+      settleSheet(screenEl, wasOpen, RV.opener, wasShown);
+      if (reveal) revealSelected();
+    };
+    // a closing drawer leaves before the workspace behind it changes
+    if (oldSheet && !/class="wsheet[ "]/.test(html) && !top && !MOTION.reduced()) {
+      RV.closing = true;
+      oldSheet.classList.add('is-out');
+      screenEl.querySelector('.wscrim')?.classList.add('is-out');
+      RV.closeTimer = setTimeout(() => {
+        RV.closing = false;
+        draw();
+      }, MOTION.sheetOut);
+    } else draw();
     $('rv-before').hidden = !RV.before;
     $('rv-stagewrap').hidden = RV.before;
     if (RV.before) drawBefore();
@@ -144,8 +152,35 @@ function drawChrome() {
   $('rv-beforebtn').setAttribute('aria-pressed', String(RV.before));
   $('rv-beforebtn').hidden = !w;
   $('rv-sims').textContent = WSX.sims.length ? `${WSX.sims.length} SIMULATED · NOTHING SAVED` : '';
-  $('rv-reset').hidden = !WSX.sims.length;
+  // the counter and RESET keep their place when empty, so a simulated action never shifts the device below
+  $('rv-reset').disabled = !WSX.sims.length;
+  $('rv-reset').style.visibility = WSX.sims.length ? '' : 'hidden';
 }
+
+/* ── this pass: the boards made by polish-boards.mjs and the recordings made by record.mjs ── */
+const PASS_BOARDS = [
+  ['polish-1-fleet.jpg', 'FLEET · THE LOWER TILES'],
+  ['polish-2-client.jpg', 'CLIENT 360 · LOWER PANELS AND NESTED DETAIL'],
+  ['polish-3-books.jpg', 'BOOKKEEPING · DETAIL STATES'],
+  ['polish-4-comp.jpg', 'COMPLIANCE · CALENDAR AND TABS'],
+  ['polish-5-drawers.jpg', 'MOBILE DRAWERS'],
+  ['polish-6-text.jpg', 'TEXT FIT · AUDITED'],
+  ['polish-7-motion.jpg', 'MOTION · FRAME BY FRAME'],
+];
+const CLIPS = [
+  ['01', 'FLEET · SELECT A TRUCK', 'DESKTOP'],
+  ['02', 'FLEET · CONNECTION DETAIL', 'DESKTOP'],
+  ['03', 'CLIENT 360 · SELECT A SERVICE', 'DESKTOP'],
+  ['04', 'CLIENT 360 · DRILL IN AND BACK', 'DESKTOP'],
+  ['05', 'BOOKKEEPING · STEP TO STEP', 'DESKTOP'],
+  ['06', 'BOOKKEEPING · DETAIL DRAWER', 'PHONE'],
+  ['07', 'COMPLIANCE · SELECT A DEADLINE', 'DESKTOP'],
+  ['08', 'COMPLIANCE · ISSUE DETAIL', 'DESKTOP'],
+  ['09', 'CONFIRM A SIMULATED ACTION', 'DESKTOP'],
+  ['10', 'PHONE DRAWER · OPEN AND CLOSE', 'PHONE'],
+  ['11', 'PHONE TABS', 'PHONE'],
+  ['12', 'REDUCED MOTION', 'PHONE'],
+];
 
 /* ── landing: four live miniatures, the diagnosis and the rules ── */
 function drawLanding() {
@@ -174,7 +209,11 @@ function drawLanding() {
   $('rv-landing').innerHTML = `
     <section class="rv-hero"><p class="rv-eyebrow">FOUR WORKSPACES · CANDIDATES FOR APPROVAL · SHOWN ${DEVICE_WORD[RV.device]}</p><h2>EACH ONE SHAPED LIKE ITS WORK.</h2></section>
     <div class="rv-cards rv-cards--${RV.device}">${cards}</div>
-    <section class="rv-sec"><header><h3>BEFORE → AFTER</h3><span>THE SAME SAMPLE RECORDS · OPEN ANY BOARD</span></header>
+    <section class="rv-sec"><header><h3>THIS PASS · MATERIAL, MOTION AND DETAIL</h3><span>THE LAST PASS → THIS ONE · OPEN ANY BOARD</span></header>
+      <div class="rv-diag rv-diag--pass">${PASS_BOARDS.map(([f, l]) => `<button type="button" class="rv-thumb" data-rv-lightbox="${f}"><img src="diagnosis/${f}" alt="" loading="lazy"><span>${l}</span></button>`).join('')}</div></section>
+    <section class="rv-sec"><header><h3>MOTION · TWELVE INTERACTIONS</h3><span>RECORDED WITH REAL CLICKS · PLAY THE LAST PASS BESIDE THIS ONE</span></header>
+      <div class="rv-clips">${CLIPS.map(([id, t, dev]) => `<button type="button" class="rv-clip" data-rv-clip="${id}"><img src="motion/${id}-poster.jpg" alt="" loading="lazy"><span class="rv-clip__c"><i>${id}</i><b>${t}</b><small>${dev}</small></span><span class="rv-clip__p" aria-hidden="true">${ico('run')}</span></button>`).join('')}</div></section>
+    <section class="rv-sec"><header><h3>SINCE BATCH 1 · BEFORE → AFTER</h3><span>THE SAME SAMPLE RECORDS · OPEN ANY BOARD</span></header>
       <div class="rv-diag rv-diag--4">${WORKSPACES.map((w) => `<button type="button" class="rv-thumb" data-rv-lightbox="${w.diag}"><img src="diagnosis/${w.diag}" alt="" loading="lazy"><span>${w.name}</span></button>`).join('')}</div></section>
     <section class="rv-sec"><header><h3>THE RULES</h3><span>TWELVE, FOR EVERY WORKSPACE THAT FOLLOWS</span></header>
       <ol class="rv-rules">${RULES.map(([t, s], i) => `<li><i>${String(i + 1).padStart(2, '0')}</i><b>${t}</b><span>${s}</span></li>`).join('')}</ol></section>
@@ -183,6 +222,7 @@ function drawLanding() {
     <section class="rv-sec"><header><h3>WHAT WAS WRONG</h3><span>THE BATCH 1 DIAGNOSIS</span></header>
       <div class="rv-diag">${diag.map(([f, l]) => `<button type="button" class="rv-thumb" data-rv-lightbox="${f}"><img src="diagnosis/${f}" alt="" loading="lazy"><span>${l}</span></button>`).join('')}</div></section>`;
   scaleMinis();
+  placeThumbs($('rv-landing'), false);
 }
 function scaleMinis() {
   const [dw, dh] = DEVICES[RV.device];
@@ -194,7 +234,8 @@ function scaleMinis() {
 }
 function drawBefore() {
   const w = wsById(RV.view);
-  $('rv-before').innerHTML = `<figure class="rv-beforefig"><figcaption><b>BEFORE → AFTER</b><span>THE SAME SAMPLE RECORDS</span><button type="button" class="rv-btn rv-btn--on" data-rv-before="0">SEE THE NEW ${w.name}</button></figcaption><img src="diagnosis/${w.diag}" alt="Batch 1 ${w.name} diagnosis board"></figure>`;
+  $('rv-before').innerHTML = `<figure class="rv-beforefig"><figcaption><b>THIS PASS · BEFORE → AFTER</b><span>THE LAST PASS BESIDE THIS ONE</span><button type="button" class="rv-btn rv-btn--on" data-rv-before="0">SEE THE NEW ${w.name}</button></figcaption><img src="diagnosis/${w.pass}" alt="${w.name}: the last pass beside this one"></figure>
+    <figure class="rv-beforefig"><figcaption><b>SINCE BATCH 1</b><span>THE SAME SAMPLE RECORDS</span></figcaption><img src="diagnosis/${w.diag}" alt="Batch 1 ${w.name} beside the workspace" loading="lazy"></figure>`;
 }
 
 function fit() {
@@ -214,10 +255,17 @@ function fit() {
 /* ── toasts (inside the device, so they scale with it) ── */
 function toast(text) {
   const t = $('rv-toast');
-  t.textContent = text;
+  t.innerHTML = `${ico('pass')}<span>${text}</span>`;
   t.hidden = false;
+  t.classList.remove('is-out');
+  void t.offsetWidth;
+  t.classList.add('is-in');
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => (t.hidden = true), 2600);
+  toastTimer = setTimeout(() => {
+    t.classList.remove('is-in');
+    t.classList.add('is-out');
+    toastTimer = setTimeout(() => (t.hidden = true), MOTION.reduced() ? 0 : 180);
+  }, 2600);
 }
 function flash() {
   if (!WSX.flash) return;
@@ -240,13 +288,24 @@ function run(a, v, { reveal = false } = {}) {
 function onTap(e) {
   if (RV.demo != null && e.isTrusted) stopDemo();
   const el = e.target.closest('[data-a], [data-k], [data-act], [data-go], .head__chev');
-  if (!el || !screenEl.contains(el)) return;
+  if (!el || !screenEl.contains(el) || RV.closing || WSX.loading) return;
   if (el.dataset.a) {
     if (el.matches('input')) return;
     e.preventDefault();
+    if (!screenEl.querySelector('.wsheet')) RV.opener = `${el.dataset.a}|${el.dataset.v ?? ''}`;
+    if (el.dataset.a === 'sim.ok' && !MOTION.reduced()) return confirmSim(el.dataset.v);
     return run(el.dataset.a, el.dataset.v ?? '');
   }
   shellTap(el);
+}
+/** A simulated confirmation works briefly (the button shows it), then applies — never long enough to get in the way. */
+function confirmSim(key) {
+  WSX.loading = key;
+  render();
+  setTimeout(() => {
+    WSX.loading = null;
+    run('sim.ok', key);
+  }, MOTION.confirm * RV.speed);
 }
 /** The approved header and navigation stay live: WORK and MORE move between the workspaces, the rest say where they lead. */
 function shellTap(el) {
@@ -279,17 +338,8 @@ function shellTap(el) {
 function onInput(e) {
   const el = e.target.closest('[data-input]');
   if (!el) return;
-  const { id } = el;
-  const pos = el.selectionStart;
   ACT[el.dataset.input]?.(el.value);
-  render();
-  const again = id && $(id);
-  if (again) {
-    again.focus();
-    try {
-      again.setSelectionRange(pos, pos);
-    } catch {}
-  }
+  render(); // the morph keeps this very input, its value and its caret
 }
 
 /* ── TRY demonstrations ── */
@@ -345,6 +395,14 @@ function boot() {
   screenEl = $('rv-screen');
   screenEl.addEventListener('click', onTap);
   screenEl.addEventListener('input', onInput);
+  screenEl.addEventListener('keydown', (e) => {
+    trapTab(e, screenEl);
+    const t = e.target;
+    if ((e.key === 'Enter' || e.key === ' ') && t.matches?.('[role="button"]') && !t.matches('button')) {
+      e.preventDefault();
+      t.click();
+    }
+  });
   document.addEventListener('keydown', (e) => {
     const card = e.target.closest?.('.rv-card');
     if (card && (e.key === 'Enter' || e.key === ' ')) {
@@ -391,6 +449,14 @@ function boot() {
       render();
     } else if (d.rvLightbox) {
       openLightbox(d.rvLightbox);
+    } else if (d.rvClip) {
+      openClip(d.rvClip);
+    } else if (d.rvMotion != null) {
+      // the review's own switch for reduced motion (the system setting is honoured either way)
+      const on = document.documentElement.dataset.motion !== 'reduce';
+      if (on) document.documentElement.dataset.motion = 'reduce';
+      else delete document.documentElement.dataset.motion;
+      b.setAttribute('aria-pressed', String(on));
     } else if (b.id === 'rv-reset') {
       WSX.over = {};
       WSX.hist = {};
@@ -399,7 +465,9 @@ function boot() {
       render();
     }
   });
-  $('rv-lightbox').addEventListener('click', closeLightbox);
+  $('rv-lightbox').addEventListener('click', (e) => {
+    if (!e.target.closest('video')) closeLightbox();
+  });
   window.addEventListener('resize', () => (RV.view === 'overview' ? scaleMinis() : fit()));
   const q = new URLSearchParams(location.search);
   const hash = decodeURIComponent(location.hash.slice(1));
@@ -461,9 +529,22 @@ function boot() {
 function openLightbox(f) {
   RV.lightbox = f;
   $('rv-lightbox').hidden = false;
+  $('rv-lightbox').dataset.kind = 'board';
   $('rv-lightbox').innerHTML = `<img src="diagnosis/${f}" alt=""><span class="rv-lb__x">CLOSE</span>`;
+  $('rv-lightbox').scrollTop = 0;
+}
+/** A recorded interaction: the last pass beside this one, both playing. */
+function openClip(id) {
+  const [, t, dev] = CLIPS.find(([x]) => x === id);
+  RV.lightbox = id;
+  $('rv-lightbox').hidden = false;
+  $('rv-lightbox').dataset.kind = dev === 'PHONE' ? 'clip-phone' : 'clip';
+  const v = (label) => `<figure><figcaption>${label === 'before' ? 'BEFORE · LAST PASS' : 'AFTER · THIS PASS'}</figcaption><video autoplay muted loop playsinline controls preload="auto"><source src="motion/${id}-${label}.webm" type="video/webm"><source src="motion/${id}-${label}.mp4" type="video/mp4"></video></figure>`;
+  $('rv-lightbox').innerHTML = `<div class="rv-lb__clip"><p><i>${id}</i><b>${t}</b><span>${dev} · REAL CLICKS IN CHROMIUM · NOTHING SAVED</span></p><div class="rv-lb__v">${v('before')}${v('after')}</div></div><span class="rv-lb__x">CLOSE</span>`;
+  $('rv-lightbox').scrollTop = 0;
 }
 function closeLightbox() {
   RV.lightbox = null;
   $('rv-lightbox').hidden = true;
+  $('rv-lightbox').innerHTML = ''; // stops the clips
 }

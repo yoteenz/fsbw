@@ -1,10 +1,15 @@
 {
- "when": "2026-10-09T01:48:38.711Z",
- "pass": 180,
+ "when": "2026-10-09T03:44:59.129Z",
+ "pass": 258,
  "fail": 0,
  "results": [
   {
    "name": "fleet · phone · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fleet · phone · every control is keyboard-reachable",
    "ok": true,
    "detail": ""
   },
@@ -35,6 +40,11 @@
   },
   {
    "name": "fleet · tablet · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fleet · tablet · every control is keyboard-reachable",
    "ok": true,
    "detail": ""
   },
@@ -74,6 +84,11 @@
    "detail": ""
   },
   {
+   "name": "fleet · desktop · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
    "name": "fleet · desktop · every control has a handler",
    "ok": true,
    "detail": ""
@@ -105,6 +120,11 @@
   },
   {
    "name": "fleet · wide · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fleet · wide · every control is keyboard-reachable",
    "ok": true,
    "detail": ""
   },
@@ -144,6 +164,11 @@
    "detail": ""
   },
   {
+   "name": "books · phone · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
    "name": "books · phone · every control has a handler",
    "ok": true,
    "detail": ""
@@ -170,6 +195,11 @@
   },
   {
    "name": "books · tablet · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "books · tablet · every control is keyboard-reachable",
    "ok": true,
    "detail": ""
   },
@@ -209,6 +239,11 @@
    "detail": ""
   },
   {
+   "name": "books · desktop · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
    "name": "books · desktop · every control has a handler",
    "ok": true,
    "detail": ""
@@ -240,6 +275,11 @@
   },
   {
    "name": "books · wide · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "books · wide · every control is keyboard-reachable",
    "ok": true,
    "detail": ""
   },
@@ -279,6 +319,11 @@
    "detail": ""
   },
   {
+   "name": "comp · phone · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
    "name": "comp · phone · every control has a handler",
    "ok": true,
    "detail": ""
@@ -305,6 +350,11 @@
   },
   {
    "name": "comp · tablet · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "comp · tablet · every control is keyboard-reachable",
    "ok": true,
    "detail": ""
   },
@@ -344,6 +394,11 @@
    "detail": ""
   },
   {
+   "name": "comp · desktop · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
    "name": "comp · desktop · every control has a handler",
    "ok": true,
    "detail": ""
@@ -375,6 +430,11 @@
   },
   {
    "name": "comp · wide · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "comp · wide · every control is keyboard-reachable",
    "ok": true,
    "detail": ""
   },
@@ -414,6 +474,11 @@
    "detail": ""
   },
   {
+   "name": "client · phone · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
    "name": "client · phone · every control has a handler",
    "ok": true,
    "detail": ""
@@ -440,6 +505,11 @@
   },
   {
    "name": "client · tablet · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "client · tablet · every control is keyboard-reachable",
    "ok": true,
    "detail": ""
   },
@@ -479,6 +549,11 @@
    "detail": ""
   },
   {
+   "name": "client · desktop · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
    "name": "client · desktop · every control has a handler",
    "ok": true,
    "detail": ""
@@ -510,6 +585,11 @@
   },
   {
    "name": "client · wide · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "client · wide · every control is keyboard-reachable",
    "ok": true,
    "detail": ""
   },
@@ -579,7 +659,17 @@
    "detail": ""
   },
   {
+   "name": "fleet · confirming shows WORKING on the button first",
+   "ok": true,
+   "detail": ""
+  },
+  {
    "name": "fleet · confirming changes the sample state and the history",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fleet · the confirmation toast says it was simulated",
    "ok": true,
    "detail": ""
   },
@@ -694,6 +784,11 @@
    "detail": ""
   },
   {
+   "name": "client · the nested truck is drawn as a truck with its connections",
+   "ok": true,
+   "detail": ""
+  },
+  {
    "name": "client · back returns to the policy",
    "ok": true,
    "detail": ""
@@ -774,6 +869,36 @@
    "detail": ""
   },
   {
+   "name": "review · the landing leads with this pass: seven boards and twelve recorded interactions",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · a recorded interaction plays the last pass beside this one",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · Escape closes the clip and stops it",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · a tall board opens at full width and scrolls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · REDUCE MOTION switches the workspaces to reduced motion",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · and back",
+   "ok": true,
+   "detail": ""
+  },
+  {
    "name": "review · the landing previews follow the device switch (phone)",
    "ok": true,
    "detail": ""
@@ -804,7 +929,7 @@
    "detail": ""
   },
   {
-   "name": "review · BEFORE shows the before → after board",
+   "name": "review · BEFORE shows this pass beside the last one, then the board since Batch 1",
    "ok": true,
    "detail": ""
   },
@@ -895,6 +1020,271 @@
   },
   {
    "name": "review 390 · client · no sideways scroll, phone switch visible, device fits",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "motion · durations sit inside the brief (micro 100–160, select 150–220, panel 200–300, context 220–350 ms)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "motion · no bounce in the easing curve",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "type · the scale sits inside the brief (micro 9–10, label 10–11, row 11–13, body 12–14, heading 14–18 px)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "motion · selecting a truck updates in place (rows and panel kept, only their content moves)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "motion · every running animation is short (≤ 350 ms) and none repeat forever on a selection",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "motion · nothing pulses constantly in a settled workspace",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "motion · every tab row has its thumb on the active choice",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "motion · controls transition their state (not a jump)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "drawer · opens as a labelled modal dialog",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "drawer · slides in (200–300 ms)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "drawer · takes focus and makes the workspace behind it inert",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "drawer · the close button never sits on text",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "drawer · Tab and Shift+Tab stay inside the drawer",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "drawer · its content scrolls inside it (header and close stay put) and never scrolls the page behind",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "drawer · Escape closes it, and it leaves with motion",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "drawer · it is gone within 400 ms",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "drawer · focus returns to what opened it, and nothing is left inert",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "drawer · a change made while it leaves wins (no stale redraw)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "drawer · opens from the keyboard",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "drawer · closes from the keyboard",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "drawer · on tablet the client directory opens as a side drawer",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "reduced motion · the drawer appears without sliding (no animation over 10 ms)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "reduced motion · the drawer closes at once",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "reduced motion · a selection has no motion over 10 ms",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "reduced motion · a confirmation applies at once (no WORKING wait)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "books · MONTHLY is the default cadence",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "books · ANNUAL says honestly that no sample client is annual",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "books · MONTHLY brings the month back",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "books · ultra-wide fills the space with the month at a glance",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "text · phone · 79 states · single-line components stay on one line",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "text · phone · 79 states · no text clipped by its panel",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "text · phone · 79 states · no text overlapping text",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "text · phone · 79 states · nothing below 9 px",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "text · phone · 79 states · anything cut short keeps its full text reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "text · phone · 79 states · only the rows drawn to scroll sideways do",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "text · tablet · 79 states · single-line components stay on one line",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "text · tablet · 79 states · no text clipped by its panel",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "text · tablet · 79 states · no text overlapping text",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "text · tablet · 79 states · nothing below 9 px",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "text · tablet · 79 states · anything cut short keeps its full text reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "text · tablet · 79 states · only the rows drawn to scroll sideways do",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "text · desktop · 79 states · single-line components stay on one line",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "text · desktop · 79 states · no text clipped by its panel",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "text · desktop · 79 states · no text overlapping text",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "text · desktop · 79 states · nothing below 9 px",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "text · desktop · 79 states · anything cut short keeps its full text reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "text · desktop · 79 states · only the rows drawn to scroll sideways do",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "text · wide · 79 states · single-line components stay on one line",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "text · wide · 79 states · no text clipped by its panel",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "text · wide · 79 states · no text overlapping text",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "text · wide · 79 states · nothing below 9 px",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "text · wide · 79 states · anything cut short keeps its full text reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "text · wide · 79 states · only the rows drawn to scroll sideways do",
    "ok": true,
    "detail": ""
   },

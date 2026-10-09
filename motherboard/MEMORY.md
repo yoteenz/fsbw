@@ -55703,3 +55703,33 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - Founder: "where's the mobile version? i just see tablet/desktop". The landing showed desktop previews only with the device switch hidden, and on a phone-sized screen the review spilled sideways (718 px).
 - Fixed in `design-authority/aio-office/workspaces/` (`ws-review.js`, `review.css`): device switch on the landing, previews follow it (PHONE = four phone layouts side by side), tab strip shrinks/scrolls, toolbar compacts on phones. No workspace design changed.
 - QA 180/180; `AIO_OFFICE_WORKSPACE_PROOFS/screens/` now 32 (adds `review--landing-phone.jpg`). Record re-vendored from SITE00 89f59cd5. Same review link (version 2): https://claude.ai/artifact/DKYZUHjSdiTw1qSC1evdbk.
+
+---
+
+## 2026-10-09 — AIO office: material, motion and detail polish; AIO OFFICE WORKSPACE STYLE locked [sync-only]
+
+- **Sprint:** P0.AIO.OFFICE.UNIFIED-EXPERIENCE2.MATERIAL-MOTION-AND-DETAIL-POLISH1. The four workspace directions were refined in place, not redesigned. Candidates, awaiting founder review.
+- **Code (`all-in-one-enterprises/design-authority/aio-office/workspaces/`, isolated, sample data, never deployed):**
+  - `ws-motion.js`: the morph renderer, segmented thumbs, and drawer focus with a Tab trap.
+  - `ws.css`: locked tokens and the MOTION, DRAWERS and CONTROLS · STATES layers. Type is 9 / 10 / 12 / 13 / 17 px; motion is 130 / 190 / 260 / 320 / 200 ms with no bounce; reduced motion is 1 ms.
+  - Per-workspace refinements for defects A–J.
+  - `audit.mjs`: the text audit, 79 states × 4 sizes.
+  - `record.mjs`: 12 interactions, MP4 + WebM.
+  - `polish-boards.mjs`.
+  - `qa.mjs`: 258 checks.
+- **Output (`AIO_OFFICE_WORKSPACE_PROOFS/`):**
+  - `boards/polish-1..7` and `polish-audit.json`. On the last pass → this pass: wraps 24 → 0, overlaps 3 → 0, unreachable truncations 7 → 0, sub-9 px 859 → 0, unintended sideways 2 → 0.
+  - The since-Batch-1 boards, refreshed.
+  - `recordings/`: 12 interactions × last pass and this pass.
+  - `screens/` (35) and `qa-summary.json` (258/258).
+- **Record:** `docs/aio/office-workspace-style/` (new) and `docs/aio/office-workspace-proofs/` (re-vendored), from SITE00 3a243a20 (PROVENANCE.json).
+- **Evidence tests:** `src/product-graph/officeWorkspaceStyle.test.ts` (15) holds ws.css tokens to STYLE.json and checks the motion and drawer rules and the evidence files. `officeWorkspaceProofs.test.ts` was updated for the new confirm plate.
+- **Founder recording:** not available; not inspected. The same states were captured directly.
+- **Not changed:**
+  - approved roots (studio.js / studio.css sha256 pinned)
+  - migration / IFTA authorities and the 619-page review
+  - live app, schema, permissions, business logic
+  - Brokerage (paused)
+  - public website (separate)
+  - the 12 privacy gaps (still OPEN)
+- **Review:** https://claude.ai/artifact/DKYZUHjSdiTw1qSC1evdbk (version 3). **Next gate:** FOUNDER REVIEW OF AIO OFFICE MATERIAL, MOTION AND DETAIL POLISH.

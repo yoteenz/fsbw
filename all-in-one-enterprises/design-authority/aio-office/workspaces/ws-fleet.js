@@ -62,13 +62,13 @@ function fleetConns(v) {
   if (dues.length) {
     const first = [...dues].sort((a, b) => a.days - b.days)[0];
     const tone = worst(dues.map((d) => ov(`deadline:${d.id}`, d.state)[1]));
-    out.compliance = { tone, word: first.days <= 0 ? ov(`deadline:${first.id}`, first.state)[0] : `${dues.length} DUE · NEXT ${daysWord(first.days)}`, title: first.what, facts: dues.map((d) => [d.kind, d.what, `${d.due} · ${daysWord(d.days)}`]), rec: `deadline:${first.id}`, next: [first.what, `<button type="button" class="wbtn wbtn--gold" data-a="go" data-v="comp:${first.id}">${ico('shield-check')}OPEN IN COMPLIANCE</button>`], hist: [] };
+    out.compliance = { tone, word: first.days <= 0 ? ov(`deadline:${first.id}`, first.state)[0] : `${dues.length} DUE · NEXT ${daysWord(first.days)}`, tagW: first.days <= 0 ? ov(`deadline:${first.id}`, first.state)[0] : `${dues.length} DUE · ${daysWord(first.days)}`, title: first.what, facts: dues.map((d) => [d.kind, d.what, `${d.due} · ${daysWord(d.days)}`]), rec: `deadline:${first.id}`, next: [first.what, `<button type="button" class="wbtn wbtn--gold" data-a="go" data-v="comp:${first.id}">${ico('shield-check')}OPEN IN COMPLIANCE</button>`], hist: [] };
   } else out.compliance = { tone: 'ok', word: 'NOTHING DUE', title: 'NOTHING DUE IN 90 DAYS', facts: [['NEXT 90 DAYS', 'NO DEADLINES']], rec: `vehicle:${v.id}`, next: ['NOTHING DUE', '', 'calm'], hist: [] };
   // ifta
   if (v.quarter) {
     const q = QUARTERS[v.quarter];
     const s = ov(`quarter:${q.id}`, q.bucket);
-    out.ifta = { tone: s[1] === 'ok' ? 'ok' : s[1], word: `${q.q.split(' ')[0]} · ${s[0]}`, title: `IFTA ${q.q}`, facts: [['QUARTER', q.q], ['CLIENT MILES', q.miles, 'WHOLE FLEET, NOT THIS TRUCK'], ['DUE', q.due]], rec: `quarter:${q.id}`, next: s[0] === 'AWAITING CLIENT' ? ['RECEIPTS MISSING FOR THIS TRUCK', simBtn(`fl:ifta:${q.id}`, { label: 'REQUEST RECEIPTS', effect: 'ASKS THE CLIENT FOR THIS TRUCK’S FUEL RECEIPTS.', apply: () => {}, rec: `quarter:${q.id}`, primary: true })] : [q.next, '', 'calm'], hist: [] };
+    out.ifta = { tone: s[1] === 'ok' ? 'ok' : s[1], word: `${q.q.split(' ')[0]} · ${s[0]}`, tagL: `IFTA · ${q.q.split(' ')[0]}`, tagW: s[0], title: `IFTA ${q.q}`, facts: [['QUARTER', q.q], ['CLIENT MILES', q.miles, 'WHOLE FLEET, NOT THIS TRUCK'], ['DUE', q.due]], rec: `quarter:${q.id}`, next: s[0] === 'AWAITING CLIENT' ? ['RECEIPTS MISSING FOR THIS TRUCK', simBtn(`fl:ifta:${q.id}`, { label: 'REQUEST RECEIPTS', effect: 'ASKS THE CLIENT FOR THIS TRUCK’S FUEL RECEIPTS.', apply: () => {}, rec: `quarter:${q.id}`, primary: true })] : [q.next, '', 'calm'], hist: [] };
   } else out.ifta = { tone: 'mute', word: 'NOT IN IFTA', title: 'NOT IN AN IFTA QUARTER', facts: [['IFTA', 'NOT FILED BY AIO FOR THIS CLIENT']], rec: `vehicle:${v.id}`, next: ['NO AIO ACTION', '', 'calm'], hist: [] };
   // dispatch
   const blockReq = vals(REQUESTS).find((q) => q.vehicles.includes(v.id) && q.section === 'OPERATING AUTHORITIES' && ov(`request:${q.id}`, q.status)[1] === 'bad');
@@ -76,7 +76,7 @@ function fleetConns(v) {
   if (blockReq) out.dispatch = { tone: 'bad', word: 'CANNOT DISPATCH', title: 'AUTHORITY INACTIVE', facts: [['WHY', blockReq.title], ['WAITING ON', blockReq.blocker]], rec: `request:${blockReq.id}`, next: ['THE MC AUTHORITY MUST BE REINSTATED', `<button type="button" class="wbtn wbtn--gold" data-a="go" data-v="client:${v.client}:permitting">${ico('company')}SEE IN CLIENT 360</button>`], hist: [['OCT 6', 'EIN LETTER REQUESTED FROM CLIENT']] };
   else if (load) {
     const s = ov(`load:${load.id}`, load.status);
-    out.dispatch = { tone: s[1] === 'mute' ? 'gold' : s[1], word: `${load.ref} · ${s[0]}`, title: load.lane, facts: [['LOAD', load.ref], ['LANE', load.lane], ['PICKUP · DELIVERY', `${load.pickup} · ${load.delivery}`], ['DISPATCHER', staffName(load.owner)]], rec: `load:${load.id}`, next: s[0] === 'ISSUE' ? ['MOVE THE LOAD TO A WORKING TRUCK', simBtn(`fl:ld:${load.id}`, { label: 'REASSIGN TO UNIT 07', effect: 'MOVES LOAD 5517 TO UNIT 07 AFTER ITS CURRENT DELIVERY.', apply: () => (WSX.over[`load:${load.id}`] = ['REASSIGNED', 'gold']), rec: `load:${load.id}`, primary: true })] : [`DELIVERS ${load.delivery}`, '', 'calm'], hist: [[load.pickup, 'LOAD BOOKED']] };
+    out.dispatch = { tone: s[1] === 'mute' ? 'gold' : s[1], word: `${load.ref} · ${s[0]}`, tagL: `DISPATCH · ${load.ref.replace('LOAD ', '')}`, tagW: s[0], title: load.lane, facts: [['LOAD', load.ref], ['LANE', load.lane], ['PICKUP · DELIVERY', `${load.pickup} · ${load.delivery}`], ['DISPATCHER', staffName(load.owner)]], rec: `load:${load.id}`, next: s[0] === 'ISSUE' ? ['MOVE THE LOAD TO A WORKING TRUCK', simBtn(`fl:ld:${load.id}`, { label: 'REASSIGN TO UNIT 07', effect: 'MOVES LOAD 5517 TO UNIT 07 AFTER ITS CURRENT DELIVERY.', apply: () => (WSX.over[`load:${load.id}`] = ['REASSIGNED', 'gold']), rec: `load:${load.id}`, primary: true })] : [`DELIVERS ${load.delivery}`, '', 'calm'], hist: [[load.pickup, 'LOAD BOOKED']] };
   } else out.dispatch = { tone: vGroup(v) === 'ready' ? 'ok' : 'mute', word: vGroup(v) === 'ready' ? 'READY FOR A LOAD' : 'NOT ON A LOAD', title: 'NOT ON A LOAD', facts: [['DISPATCH', c.lanes.includes('dispatch') ? 'NO LOAD BOOKED' : 'THIS CLIENT DOES NOT USE AIO DISPATCH']], rec: `vehicle:${v.id}`, next: ['NO LOAD BOOKED', '', 'calm'], hist: [] };
   // documents
   const keys = [v.policy && `policy:${v.policy}`, v.request && `request:${v.request}`, v.ticket && `ticket:${v.ticket}`, v.driver && `driver:${v.driver}`, v.quarter && `quarter:${v.quarter}`, load && `load:${load.id}`].filter(Boolean);
@@ -126,17 +126,20 @@ function blueprint(v, conns, sel, tags = true) {
         const y1 = ay + BP.ty;
         const c = conns[k];
         const on = k === sel;
-        return `<path d="M${x1} ${y1} L${tx} ${ty === 40 ? 44 : 292}" class="t-lead ${on ? 'is-on' : ''} t-lead--${c.tone}"/>${c.tone === 'bad' || c.tone === 'warn' ? `<circle cx="${x1}" cy="${y1}" r="5" class="t-ring t-ring--${c.tone} pulse"/>` : ''}<circle cx="${x1}" cy="${y1}" r="${on ? 5 : 3.6}" class="t-dot t-dot--${c.tone} ${on ? 'is-on' : ''}"/>`;
+        const d = `M${x1} ${y1} L${tx} ${ty === 40 ? 44 : 292}`;
+        const halo = c.tone === 'bad' || c.tone === 'warn' ? `<circle data-key="ring:${k}" cx="${x1}" cy="${y1}" r="7" class="t-ring t-ring--${c.tone}"/>` : '';
+        const lit = on ? `<path data-swap="lead:${v.id}:${k}" d="${d}" pathLength="1" class="t-lead-on"/><circle data-swap="sel:${v.id}:${k}" cx="${x1}" cy="${y1}" r="6" class="t-sel"/>` : '';
+        return `<path data-key="lead:${k}" d="${d}" class="t-lead ${on ? 'is-on' : ''} t-lead--${c.tone}"/>${halo}${lit}<circle data-key="dot:${k}" cx="${x1}" cy="${y1}" r="4" class="t-dot t-dot--${c.tone} ${on ? 'is-on' : ''}"/>`;
       }).join('')
     : '';
   const tagHtml = tags
     ? CONN.map(([k, label, icon]) => {
         const [tx, ty, side] = TAGPOS[k];
         const c = conns[k];
-        return `<button type="button" class="fl-tag fl-tag--${side} fl-tag--${c.tone} ${k === sel ? 'is-on' : ''}" style="left:${((tx / BP.w) * 100).toFixed(2)}%;top:${(((side === 'top' ? 44 : 292) / BP.h) * 100).toFixed(2)}%" data-a="fl.sec" data-v="${k}"><span class="fl-tag__l">${ico(icon)}${label}</span><span class="fl-tag__w">${c.word}</span></button>`;
+        return `<button type="button" class="fl-tag fl-tag--${side} fl-tag--${c.tone} ${k === sel ? 'is-on' : ''}" style="left:${((tx / BP.w) * 100).toFixed(2)}%;top:${(((side === 'top' ? 44 : 292) / BP.h) * 100).toFixed(2)}%" data-a="fl.sec" data-v="${k}" aria-label="${label} · ${c.word}" aria-pressed="${k === sel}"><span class="fl-tag__l">${ico(icon)}${c.tagL || label}</span><span class="fl-tag__w">${c.tagW || c.word}</span></button>`;
       }).join('')
     : '';
-  return `<div class="fl-bpwrap"><div class="fl-bp ${tags ? '' : 'fl-bp--plain'}"><svg viewBox="0 0 ${BP.w} ${BP.h}" class="fl-svg" aria-label="${v.unit} side elevation" role="img"><g transform="translate(${BP.tx} ${BP.ty})">${truckShape(meta.cab)}</g>${leaders}</svg>${tagHtml}</div></div>`;
+  return `<div class="fl-bpwrap"><div class="fl-bp ${tags ? '' : 'fl-bp--plain'}"><svg viewBox="0 0 ${BP.w} ${BP.h}" class="fl-svg" aria-label="${v.unit} side elevation" role="img"><g transform="translate(${BP.tx} ${BP.ty})"><g class="t-truck" data-swap="truck:${v.id}">${truckShape(meta.cab)}</g></g>${leaders}</svg>${tagHtml}</div></div>`;
 }
 
 /* ── regions ── */
@@ -154,10 +157,11 @@ function rosterRow(v, wide) {
   const conns = fleetConns(v);
   const g = GROUP_WORD[vGroup(v)];
   const dots = CONN.map(([k]) => `<i class="fl-fp__d fl-fp__d--${conns[k].tone}" title="${k}"></i>`).join('');
-  return `<div class="pk fl-row ${v.id === WSX.fleet.unit ? 'is-sel' : ''}" data-a="fl.unit" data-v="${v.id}">
+  const model = v.ymm.replace(/^\d{4} /, '');
+  return `<div class="pk fl-row ${v.id === WSX.fleet.unit ? 'is-sel' : ''}" data-a="fl.unit" data-v="${v.id}" title="${v.unit} · ${model} · ${clientName(v.client)} · ${g[0]}" aria-pressed="${v.id === WSX.fleet.unit}">
     <span class="fl-row__u">${v.unit.replace('UNIT ', '')}</span>
-    <span class="fl-row__t"><b class="pk__t">${v.ymm.replace(/^\d{4} /, '')}</b><span class="pk__s">${clientName(v.client)}${wide && v.driver ? ` · ${DRIVERS[v.driver].name}` : ''}</span></span>
-    <span class="fl-row__r">${sw(g)}<span class="fl-fp">${dots}</span></span>
+    <span class="fl-row__t"><b class="pk__t">${model}</b><span class="pk__s">${clientName(v.client)}${wide && v.driver ? ` · ${DRIVERS[v.driver].name}` : ''}</span></span>
+    <span class="fl-row__r"><span class="fl-fp">${dots}</span>${sw(g)}</span>
   </div>`;
 }
 function fleetRoster(wide = false) {
@@ -172,8 +176,8 @@ function fleetStage(v, conns, tags = true) {
   const meta = FLEET_META[v.id];
   return `<section class="fl-stage">
     <img class="fl-stage__img" src="./brand/ifta/plates/staff-hero.jpg" alt="">
-    <div class="fl-stage__id">
-      <div class="fl-stage__unit"><small>${v.ymm.split(' ')[0]} · ${meta.cab === 'sleeper' ? 'SLEEPER' : 'DAY CAB'} · VIN ${v.vin}</small><b>${v.unit}</b><span>${v.ymm.replace(/^\d{4} /, '')}</span></div>
+    <div class="fl-stage__id" data-swap="unit:${v.id}">
+      <div class="fl-stage__unit"><small>${v.ymm.split(' ')[0]}${VP === 'mobile' ? '' : ` · ${meta.cab === 'sleeper' ? 'SLEEPER' : 'DAY CAB'}`} · VIN ${v.vin}</small><b>${v.unit}</b><span>${v.ymm.replace(/^\d{4} /, '')}</span></div>
       <div class="fl-stage__st"><span class="fl-big fl-big--${s[1]}">${s[0].replace(' · AUTHORITY INACTIVE', '')}</span><button type="button" class="fl-client" data-a="go" data-v="client:${v.client}">${badge(ACCOUNTS[v.client])}<span>${clientName(v.client)}</span>${ico('fwd')}</button></div>
       <dl class="fl-stage__ro"><div><dt>PLATE</dt><dd>${v.plate}</dd></div><div><dt>ODOMETER</dt><dd>${meta.odo} <small>SAMPLE</small></dd></div><div><dt>IN FLEET SINCE</dt><dd>${meta.since}</dd></div></dl>
     </div>
@@ -191,11 +195,12 @@ function fleetContext(v, conns) {
   const k = WSX.fleet.sec;
   const c = conns[k];
   const [, label, icon] = CONN.find(([x]) => x === k);
-  const tabs = `<div class="fl-ctabs">${CONN.map(([x, l, i]) => `<button type="button" class="fl-ctab ${x === k ? 'is-on' : ''}" data-a="fl.sec" data-v="${x}" title="${l}" aria-label="${l}">${ico(i)}<i class="pip pip--${conns[x].tone}"></i></button>`).join('')}</div>`;
+  const tabs = `<div class="fl-ctabs has-thumb" role="tablist" data-thumb><i class="thumb" aria-hidden="true" data-keep-attrs="style data-placed"></i>${CONN.map(([x, l, i]) => `<button type="button" role="tab" class="fl-ctab ${x === k ? 'is-on' : ''}" data-a="fl.sec" data-v="${x}" title="${l}" aria-label="${l} · ${conns[x].word}" aria-selected="${x === k}">${ico(i)}<i class="pip pip--${conns[x].tone}"></i></button>`).join('')}</div>`;
   const body = k === 'documents'
     ? `${c.docs.length ? c.docs.map((d) => docChip(d.id)).join('') : ntb('NO DOCUMENTS LINKED TO THIS TRUCK YET')}${nextBlock(c.next[0], c.next[1], c.next[2])}`
     : `${nextBlock(c.next[0], c.next[1], c.next[2])}${facts(c.facts)}${c.hist.length || WSX.hist[c.rec] ? mhist(c.rec, c.hist) : ''}`;
-  return `<section class="rg cx fl-cx"><header class="cx__h">${tabs}<div class="cx__crumb"><span>${v.unit}</span>${ico('fwd')}<span>${label}</span></div><h2 class="cx__t">${c.title}</h2>${sw([c.word, c.tone])}</header><div class="cx__b" data-keep="fl-cx">${body}</div></section>`;
+  const sk = `${v.id}:${k}`;
+  return `<section class="rg cx fl-cx"><header class="cx__h">${tabs}<div class="cx__hd" data-swap="hd:${sk}"><div class="cx__crumb"><span>${v.unit}</span>${ico('fwd')}<span>${label}</span></div><h2 class="cx__t">${c.title}</h2>${sw([c.word, c.tone])}</div></header><div class="cx__b" data-keep="fl-cx" data-swap="b:${sk}">${body}</div></section>`;
 }
 function fleetBar() {
   const all = vals(VEHICLES);
@@ -213,8 +218,9 @@ function fleetView() {
   const conns = fleetConns(v);
   if (VP === 'mobile') {
     const strip = `<div class="fl-strip">${fleetList().map((u) => `<button type="button" class="fl-chip ${u.id === v.id ? 'is-sel' : ''}" data-a="fl.unit" data-v="${u.id}"><b>${u.unit.replace('UNIT ', '')}</b><i class="pip pip--${worst(Object.values(fleetConns(u)).map((c) => c.tone))}"></i></button>`).join('')}</div>`;
-    const grid = `<div class="fl-cgrid">${CONN.map(([k, l, i]) => `<button type="button" class="fl-cg fl-cg--${conns[k].tone}" data-a="fl.open" data-v="${k}">${ico(i)}<span>${l}</span><small>${conns[k].word}</small></button>`).join('')}</div>`;
-    return `<div class="ws fl fl--m">${fleetBar()}${strip}${fleetStage(v, conns, false)}${grid}${fleetNext(v, conns, 2)}</div>${phoneSheet(fleetContext(v, conns))}`;
+    // the truck and its eight connections are one dark object: the stage, then its instrument cluster
+    const cluster = `<div class="fl-cluster">${CONN.map(([k, l, i]) => `<button type="button" class="fl-cg fl-cg--${conns[k].tone} ${WSX.sheet && WSX.fleet.sec === k ? 'is-on' : ''}" data-a="fl.open" data-v="${k}" aria-label="${l} · ${conns[k].word}">${ico(i)}<span>${l}</span><small>${conns[k].tagW || conns[k].word}</small></button>`).join('')}</div>`;
+    return `<div class="ws fl fl--m">${fleetBar()}${strip}<div class="fl-slab">${fleetStage(v, conns, false)}${cluster}</div>${fleetNext(v, conns, 2)}</div>${phoneSheet(fleetContext(v, conns), { label: `${v.unit} connection` })}`;
   }
   if (VP === 'tablet') {
     const strip = `<div class="fl-strip fl-strip--t">${fleetList().map((u) => `<button type="button" class="fl-chip ${u.id === v.id ? 'is-sel' : ''}" data-a="fl.unit" data-v="${u.id}"><b>${u.unit.replace('UNIT ', '')}</b><span>${clientName(u.client)}</span><i class="pip pip--${worst(Object.values(fleetConns(u)).map((c) => c.tone))}"></i></button>`).join('')}</div>`;

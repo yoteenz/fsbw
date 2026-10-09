@@ -9,7 +9,7 @@ const WSX = {
   role: 'founder',
   before: false,
   fleet: { unit: 'v-tk-09', sec: 'maintenance', filter: 'all', q: '' },
-  books: { client: 'c-tk', period: 'SEP 2026', phase: 'reconcile', item: 'q:q1' },
+  books: { client: 'c-tk', period: 'SEP 2026', phase: 'reconcile', item: 'q:q1', cadence: 'monthly' },
   comp: { sec: 'expirations', item: 'dl-abc-med', filter: 'all' },
   client: { id: 'c-abc', view: 'overview', service: null, stack: [], q: '', filter: 'all' },
   sheet: false,
@@ -19,6 +19,7 @@ const WSX = {
   sims: [],
   ret: null,
   flash: null,
+  loading: null,
 };
 const ACT = {};
 const SIM = {};
@@ -36,9 +37,9 @@ const daysWord = (d) => (d < 0 ? `${-d} DAY${d === -1 ? '' : 'S'} LATE` : d === 
 const sw = (s) => (s ? `<span class="sw sw--${s[1]}"><i class="pip pip--${s[1]}"></i>${s[0]}</span>` : '');
 const av = (id) => `<span class="av ${id === 's-alex' ? 'av--you' : ''}" title="${STAFF[id]?.name ?? ''}">${initials(id)}</span>`;
 const ro = (n, label, { tone = '', a = '', v = '', on = false } = {}) => `<${a ? 'button type="button"' : 'div'} class="ro ${tone ? `ro--${tone}` : ''} ${on ? 'is-on' : ''}" ${a ? `data-a="${a}" data-v="${v}"` : ''}><b>${n}</b><span>${label}</span></${a ? 'button' : 'div'}>`;
-const seg = (items, active, a, cls = '') => `<div class="wseg ${cls}" role="tablist">${items.map(([id, label, n, quiet]) => `<button type="button" role="tab" class="wseg__b ${id === active ? 'is-on' : ''} ${quiet ? 'wseg__b--quiet' : ''}" data-a="${a}" data-v="${id}" aria-selected="${id === active}">${label}${n != null ? `<i>${n}</i>` : ''}</button>`).join('')}</div>`;
+const seg = (items, active, a, cls = '') => `<div class="wseg has-thumb ${cls}" role="tablist" data-thumb><i class="thumb" aria-hidden="true" data-keep-attrs="style data-placed"></i>${items.map(([id, label, n, quiet]) => `<button type="button" role="tab" class="wseg__b ${id === active ? 'is-on' : ''} ${quiet ? 'wseg__b--quiet' : ''}" data-a="${a}" data-v="${id}" aria-selected="${id === active}">${label}${n != null ? `<i>${n}</i>` : ''}</button>`).join('')}</div>`;
 const facts = (pairs) => `<dl class="fx">${pairs.filter(Boolean).map(([k, v, s]) => `<div><dt>${k}</dt><dd>${v}${s ? `<small>${s}</small>` : ''}</dd></div>`).join('')}</dl>`;
-const mhist = (key, base) => `<div><div class="sec-l">HISTORY</div><ul class="mh">${hv(key, base.map(([w, t]) => [w, t, false])).slice(0, 4).map(([w, t, sim]) => `<li class="${sim ? 'is-sim' : ''}"><b>${t}${sim ? ' <span class="simtag">SIMULATED</span>' : ''}</b><small>${w}</small></li>`).join('')}</ul></div>`;
+const mhist = (key, base, title = 'HISTORY') => `<div><div class="sec-l">${title}</div><ul class="mh">${hv(key, base.map(([w, t]) => [w, t, false])).slice(0, 4).map(([w, t, sim]) => `<li class="${sim ? 'is-sim' : ''}"><b>${t}${sim ? ' <span class="simtag">SIMULATED</span>' : ''}</b><small>${w}</small></li>`).join('')}</ul></div>`;
 const ntb = (html) => `<div class="ntb">${ico('info')}<span>${html}</span></div>`;
 const rgn = (title, n, tools, body, cls = '', keep = '') => `<section class="rg ${cls}"><header class="rg__h"><span class="rg__t">${title}</span>${n != null ? `<span class="rg__n">${n}</span>` : ''}${tools ? `<span>${tools}</span>` : ''}</header><div class="rg__b" ${keep ? `data-keep="${keep}"` : ''}>${body}</div></section>`;
 function docChip(id) {
@@ -53,8 +54,10 @@ function docChip(id) {
 function simBtn(key, { label, effect, apply, rec, primary = false, founder = false, sm = false }) {
   if (founder && !FOUNDER) return '';
   SIM[key] = { label, effect, apply, rec };
-  if (WSX.pending === key)
-    return `<div class="simc ws-in"><b>SIMULATED IN THIS REVIEW — NOTHING IS SAVED OR SENT</b><span>${effect}</span><span style="display:flex;gap:6px"><button type="button" class="wbtn wbtn--gold wbtn--sm" data-a="sim.ok" data-v="${key}">${ico('pass')}CONFIRM</button><button type="button" class="wbtn wbtn--sm" data-a="sim.no">CANCEL</button></span></div>`;
+  if (WSX.pending === key || WSX.loading === key) {
+    const busy = WSX.loading === key;
+    return `<div class="simc" data-key="simc:${key}" role="group" aria-label="Confirm ${label}"><span class="simc__h"><b>${label}</b><span class="simtag">SIMULATED</span></span><span class="simc__e">${effect}</span><span class="simc__n">NOTHING IS SAVED OR SENT.</span><span class="simc__acts"><button type="button" class="wbtn wbtn--gold wbtn--sm ${busy ? 'is-loading' : ''}" data-a="sim.ok" data-v="${key}" ${busy ? 'aria-busy="true"' : ''}>${busy ? '<i class="spin" aria-hidden="true"></i>WORKING' : `${ico('pass')}CONFIRM`}</button><button type="button" class="wbtn wbtn--sm wbtn--ghost" data-a="sim.no" ${busy ? 'disabled' : ''}>CANCEL</button></span></div>`;
+  }
   return `<button type="button" class="wbtn ${primary ? 'wbtn--gold' : ''} ${sm ? 'wbtn--sm' : ''}" data-a="sim.ask" data-v="${key}">${label}${founder ? ' <span class="founder">FOUNDER</span>' : ''}</button>`;
 }
 function nextBlock(title, buttons, tone = '') {
@@ -108,8 +111,9 @@ ACT['sheet.close'] = () => {
 function wsBar(no, title, readouts, tools = '') {
   return `<header class="wsb"><div class="wsb__id"><span class="wsb__no">${no}</span><h1 class="wsb__t">${title}</h1></div>${readouts ? `<div class="ros">${readouts}</div>` : ''}<div class="wsb__tools">${retChip()}${tools}</div></header>`;
 }
-/** Phone: context opens in a drawer over the workspace. */
-function phoneSheet(inner) {
+/** A drawer: a bottom sheet on the phone, a side drawer when asked. The bar holds the grip and the close control, so
+ *  nothing ever sits on top of the content's own header. */
+function phoneSheet(inner, { side = false, label = 'Detail' } = {}) {
   if (!WSX.sheet) return '';
-  return `<div class="wscrim" data-a="sheet.close"></div><div class="wsheet ws-in" role="dialog" aria-modal="true"><div class="wsheet__grab"></div><button type="button" class="wbtn wbtn--icon wbtn--sm wsheet__x" data-a="sheet.close" aria-label="Close">${ico('close')}</button>${inner}</div>`;
+  return `<div class="wscrim ${side ? 'wscrim--side' : ''}" data-a="sheet.close" data-key="scrim" aria-hidden="true"></div><div class="wsheet ${side ? 'wsheet--side' : ''}" data-key="sheet" role="dialog" aria-modal="true" aria-label="${label}" tabindex="-1"><div class="wsheet__bar"><span class="wsheet__grab" aria-hidden="true"></span><span class="wsheet__l">${side ? label.toUpperCase() : ''}</span><button type="button" class="wbtn wbtn--icon wbtn--sm wsheet__x" data-a="sheet.close" aria-label="Close">${ico('close')}</button></div><div class="wsheet__body">${inner}</div></div>`;
 }

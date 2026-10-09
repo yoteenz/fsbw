@@ -1,0 +1,29 @@
+{
+ "before": {
+  "WRAPS": 24,
+  "CLIPPED": 0,
+  "OVERLAPS": 3,
+  "TRUNCATED": 7,
+  "TINY": 859,
+  "SCROLLS_X": 2,
+  "intended_scroll": 32,
+  "truncated_reachable": 0
+ },
+ "after": {
+  "WRAPS": 0,
+  "CLIPPED": 0,
+  "OVERLAPS": 0,
+  "TRUNCATED": 0,
+  "TINY": 0,
+  "SCROLLS_X": 0,
+  "intended_scroll": 32,
+  "truncated_reachable": 2
+ },
+ "states": 79,
+ "sizes": [
+  "phone",
+  "tablet",
+  "desktop",
+  "wide"
+ ]
+}

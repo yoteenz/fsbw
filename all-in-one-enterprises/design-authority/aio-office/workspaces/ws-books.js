@@ -9,6 +9,7 @@ const bkPeriod = (cid = WSX.books.client, p = WSX.books.period) => BOOKS[cid]?.p
 const bkDocState = (cid, p, d) => ov(`bkdoc:${cid}:${p}:${d.id}`, d.status);
 const bkItemState = (cid, p, q) => WSX.over[`bkq:${cid}:${p}:${q.id}`] ?? null;
 const DOC_TONE = { RECEIVED: 'ok', MISSING: 'bad', REQUESTED: 'warn', 'NOT YET DUE': 'mute' };
+const CAT_ICON = { FUEL: 'fuel', SUPPLIES: 'tag', REPAIRS: 'wrench', 'OWNER PERSONAL': 'profile', 'ASK THE CLIENT': 'letter' };
 function bkCounts(cid = WSX.books.client, p = WSX.books.period) {
   const per = bkPeriod(cid, p);
   if (!per) return { missing: 0, questions: 0 };
@@ -46,7 +47,7 @@ function bkTable() {
       const s = bkDocState(cid, p, d);
       return `<tr class="lt-row ${sel(`doc:${d.id}`)}" data-a="bk.item" data-v="doc:${d.id}"><td><b class="pk__t">${d.name}</b></td><td class="lt-m">${d.source}</td><td>${sw([s, DOC_TONE[s] || 'mute'])}</td><td class="lt-m lt-r">${bkDocDate(cid, p, d)}</td></tr>`;
     });
-    return rgn(`DOCUMENTS FOR ${p}`, `${per.docs.length - bkCounts().missing} OF ${per.docs.length} IN`, '', `<table class="lt"><thead><tr><th>DOCUMENT</th><th>FROM</th><th>STATUS</th><th class="lt-r">WHEN</th></tr></thead><tbody>${rows.join('') || '<tr><td colspan="4" class="lt-empty">NOTHING REQUESTED YET</td></tr>'}</tbody></table>`, 'bk-table', 'bk-table');
+    return rgn(`DOCUMENTS FOR ${p}`, `${per.docs.length - bkCounts().missing} OF ${per.docs.length} IN`, '', `<table class="lt" data-swap="t:${cid}:${p}:collect"><thead><tr><th>DOCUMENT</th><th>FROM</th><th>STATUS</th><th class="lt-r">WHEN</th></tr></thead><tbody>${rows.join('') || '<tr><td colspan="4" class="lt-empty">NOTHING REQUESTED YET</td></tr>'}</tbody></table>`, 'bk-table', 'bk-table');
   }
   if (phase === 'reconcile') {
     const rows = per.items.map((q) => {
@@ -54,16 +55,16 @@ function bkTable() {
       return `<tr class="lt-row ${sel(`q:${q.id}`)}" data-a="bk.item" data-v="q:${q.id}"><td class="lt-m">${q.date}</td><td><b class="pk__t">${q.desc}</b><span class="pk__s">${q.acct}</span></td><td class="lt-r lt-amt">${q.amt}</td><td class="lt-q">${s ? `${sw([s === 'ASK THE CLIENT' ? 'ASKED' : s, s === 'ASK THE CLIENT' ? 'gold' : 'ok'])} <span class="simtag">SIM</span>` : `<span class="bk-ask">${q.ask}</span>`}</td></tr>`;
     });
     const accts = per.docs.filter((d) => /STATEMENT/.test(d.name)).map((d) => `<tr class="lt-row ${sel(`acct:${d.id}`)}" data-a="bk.item" data-v="acct:${d.id}"><td colspan="2"><b class="pk__t">${d.name.replace(' STATEMENT', '')}</b><span class="pk__s">STATEMENT ${bkDocState(cid, p, d)}</span></td><td></td><td>${sw(bkStep() > 4 ? ['RECONCILED', 'ok'] : bkStep() === 4 ? ['IN PROGRESS', 'gold'] : ['NOT STARTED', 'mute'])}</td></tr>`).join('');
-    return rgn('CHARGES NEEDING A CATEGORY', per.items.length ? `${bkCounts().questions} OPEN · AMOUNTS ARE SAMPLES` : 'NONE', '', `<table class="lt"><thead><tr><th>DATE</th><th>CHARGE</th><th class="lt-r">AMOUNT</th><th>QUESTION</th></tr></thead><tbody>${rows.join('') || '<tr><td colspan="4" class="lt-empty">NO OPEN QUESTIONS THIS PERIOD</td></tr>'}<tr class="lt-sub"><td colspan="4">ACCOUNTS</td></tr>${accts}</tbody></table><div style="padding:10px 14px">${ntb('<b>MATCHING TRANSACTIONS TO STATEMENTS IS NOT BUILT.</b> THE STEP IS TRACKED HERE; MATCHING HAPPENS OUTSIDE AIO.')}</div>`, 'bk-table', 'bk-table');
+    return rgn('CHARGES NEEDING A CATEGORY', per.items.length ? `${bkCounts().questions} OPEN · AMOUNTS ARE SAMPLES` : 'NONE', '', `<table class="lt" data-swap="t:${cid}:${p}:reconcile"><thead><tr><th>DATE</th><th>CHARGE</th><th class="lt-r">AMOUNT</th><th>QUESTION</th></tr></thead><tbody>${rows.join('') || '<tr><td colspan="4" class="lt-empty">NO OPEN QUESTIONS THIS PERIOD</td></tr>'}<tr class="lt-sub"><td colspan="4">ACCOUNTS</td></tr>${accts}</tbody></table><div style="padding:10px 14px">${ntb('<b>MATCHING TRANSACTIONS TO STATEMENTS IS NOT BUILT.</b> THE STEP IS TRACKED HERE; MATCHING HAPPENS OUTSIDE AIO.')}</div>`, 'bk-table', 'bk-table');
   }
   if (phase === 'review') {
     const done = bkChecks();
     const rows = REVIEW_CHECKS.map((t, i) => `<tr class="lt-row ${sel(`chk:${i}`)}" data-a="bk.item" data-v="chk:${i}"><td style="width:36px"><span class="bk-tick bk-tick--${done[i] ? 'ok' : 'open'}">${done[i] ? ico('pass') : ''}</span></td><td><b class="pk__t">${t}</b></td><td>${sw(done[i] ? ['DONE', 'ok'] : ['OPEN', 'mute'])}</td></tr>`).join('');
-    return rgn('STAFF REVIEW', `${done.filter(Boolean).length} OF ${REVIEW_CHECKS.length}`, '', `<table class="lt"><tbody>${rows}</tbody></table>`, 'bk-table', 'bk-table');
+    return rgn('STAFF REVIEW', `${done.filter(Boolean).length} OF ${REVIEW_CHECKS.length}`, '', `<table class="lt" data-swap="t:${cid}:${p}:review"><tbody>${rows}</tbody></table>`, 'bk-table', 'bk-table');
   }
   const delivered = bkStep() >= 7;
   const reports = [['pl', 'PROFIT & LOSS'], ['bs', 'BALANCE SHEET']].map(([k, t]) => `<tr class="lt-row ${sel(`rep:${k}`)}" data-a="bk.item" data-v="rep:${k}"><td><b class="pk__t">${t} · ${p}</b><span class="pk__s">${BOOKS[cid].sub ? SUBSCRIPTIONS[BOOKS[cid].sub].pkg : ''}</span></td><td>${sw(delivered ? ['DELIVERED', 'ok'] : ['NOT PREPARED', 'mute'])}</td><td class="lt-m lt-r">${delivered ? per.closed ?? '' : ''}</td></tr>`).join('');
-  return rgn('REPORT PACKAGE', '', '', `<table class="lt"><tbody>${reports}</tbody></table><div style="padding:10px 14px">${ntb('<b>THE DELIVERY WORKSPACE IS NOT BUILT.</b> DELIVERED IS RECORDED AS A CLOSE STATUS.')}</div>`, 'bk-table', 'bk-table');
+  return rgn('REPORT PACKAGE', '', '', `<table class="lt" data-swap="t:${cid}:${p}:deliver"><tbody>${reports}</tbody></table><div style="padding:10px 14px">${ntb('<b>THE DELIVERY WORKSPACE IS NOT BUILT.</b> DELIVERED IS RECORDED AS A CLOSE STATUS.')}</div>`, 'bk-table', 'bk-table');
 }
 const bkDocDate = (cid, p, d) => (bkDocState(cid, p, d) === 'RECEIVED' && d.status !== 'RECEIVED' ? 'JUST NOW' : d.date);
 function bkChecks() {
@@ -81,7 +82,7 @@ function bkFocus() {
   if (!per || !item) {
     const c = bkCounts();
     const step = bkStep();
-    return `<section class="rg cx bk-cx"><header class="cx__h">${crumb()}<h2 class="cx__t">${per ? `${p} CLOSE` : clientName(cid)}</h2>${per ? sw([CYCLE_STEPS[step] ?? '—', step >= 8 ? 'ok' : 'gold']) : ''}</header><div class="cx__b">${per ? `${nextBlock(c.missing ? `${c.missing} DOCUMENT${c.missing > 1 ? 'S' : ''} STILL MISSING` : c.questions ? `${c.questions} CHARGES NEED A CATEGORY` : step >= 8 ? 'THIS PERIOD IS CLOSED' : 'READY FOR STAFF REVIEW', '', c.missing || c.questions ? '' : 'calm')}${facts([['CLIENT', clientName(cid)], ['PACKAGE', SUBSCRIPTIONS[BOOKS[cid].sub]?.pkg ?? '—'], ['DUE', per.due], ['OWNER', staffName(SUBSCRIPTIONS[BOOKS[cid].sub]?.owner)]])}` : ''}</div></section>`;
+    return `<section class="rg cx bk-cx"><header class="cx__h"><div class="cx__hd" data-swap="hd:${cid}:${p}:none">${crumb()}<h2 class="cx__t">${per ? `${p} CLOSE` : clientName(cid)}</h2>${per ? sw([CYCLE_STEPS[step] ?? '—', step >= 8 ? 'ok' : 'gold']) : ''}</div></header><div class="cx__b" data-swap="b:${cid}:${p}:none">${per ? `<div class="bk-meter"><b>${Math.min(step + 1, 9)}<small>/ 9</small></b><span><small>STEP · ${CYCLE_STEPS[step] ?? '—'}</small><span class="bk-meter__bar bk-meter__bar--9">${CYCLE_STEPS.map((_, j) => `<i class="${j < step ? 'd' : ''} ${j === step ? 'is-sel' : ''}"></i>`).join('')}</span></span></div>` : ''}${per ? `${nextBlock(c.missing ? `${c.missing} DOCUMENT${c.missing > 1 ? 'S' : ''} STILL MISSING` : c.questions ? `${c.questions} CHARGES NEED A CATEGORY` : step >= 8 ? 'THIS PERIOD IS CLOSED' : 'READY FOR STAFF REVIEW', '', c.missing || c.questions ? '' : 'calm')}${facts([['CLIENT', clientName(cid)], ['PACKAGE', SUBSCRIPTIONS[BOOKS[cid].sub]?.pkg ?? '—'], ['DUE', per.due], ['OWNER', staffName(SUBSCRIPTIONS[BOOKS[cid].sub]?.owner)]])}` : ''}</div></section>`;
   }
   const [kind, id] = item.split(':');
   let title = '';
@@ -92,8 +93,11 @@ function bkFocus() {
     title = d.name;
     const key = `bkdoc:${cid}:${p}:${d.id}`;
     const open = /MISSING|REQUESTED/.test(s);
-    body = `${open ? nextBlock(`${clientName(cid)} HAS NOT SENT IT YET`, `${simBtn(`bk:rem:${key}`, { label: 'REMIND THE CLIENT', effect: 'SENDS A REMINDER TO THE CLIENT’S OFFICE AND EMAIL.', apply: () => {}, rec: key, primary: true })}${simBtn(`bk:got:${key}`, { label: 'MARK RECEIVED', effect: 'RECORDS THE DOCUMENT AS RECEIVED FOR THIS PERIOD.', apply: () => (WSX.over[key] = 'RECEIVED'), rec: key })}`) : nextBlock('RECEIVED', '', 'done')}
-      ${facts([['FOR', `${clientName(cid)} · ${p}`], ['FROM', d.source], ['STATUS', sw([s, DOC_TONE[s] || 'mute']), bkDocDate(cid, p, d)], ['NEEDED FOR', /RECEIPT/.test(d.name) ? 'FUEL COSTS AND IFTA' : /PAY/.test(d.name) ? 'DRIVER WAGES' : 'MATCHING THE MONTH']])}
+    const reminded = (WSX.hist[key] || []).length > 0;
+    const track = [['ASKED', open || s === 'RECEIVED', d.date.replace('ASKED ', '')], ['REMINDED', reminded, reminded ? 'JUST NOW' : ''], ['RECEIVED', s === 'RECEIVED', s === 'RECEIVED' ? bkDocDate(cid, p, d) : '']];
+    body = `<div class="bk-doc"><span class="bk-docsheet bk-docsheet--${DOC_TONE[s] || 'mute'}"><i></i><i></i><i></i><i></i><em>${s}</em></span><span class="bk-doc__t"><small>FROM ${d.source}</small><b>${d.name}</b><span class="bk-track">${track.map(([l, on, w]) => `<span class="${on ? 'is-on' : ''}"><i></i><b>${l}</b><small>${w || '—'}</small></span>`).join('')}</span></span></div>
+      ${open ? nextBlock(`${clientName(cid)} HAS NOT SENT IT YET`, `${simBtn(`bk:rem:${key}`, { label: 'REMIND THE CLIENT', effect: 'SENDS A REMINDER TO THE CLIENT’S OFFICE AND EMAIL.', apply: () => {}, rec: key, primary: true })}${simBtn(`bk:got:${key}`, { label: 'MARK RECEIVED', effect: 'RECORDS THE DOCUMENT AS RECEIVED FOR THIS PERIOD.', apply: () => (WSX.over[key] = 'RECEIVED'), rec: key })}`) : nextBlock('RECEIVED', '', 'done')}
+      ${facts([['FOR', `${clientName(cid)} · ${p}`], ['NEEDED FOR', /RECEIPT/.test(d.name) ? 'FUEL COSTS AND IFTA' : /PAY/.test(d.name) ? 'DRIVER WAGES' : 'MATCHING THE MONTH']])}
       ${d.link ? docChip(d.link) : ''}${mhist(key, open ? [[d.date.replace('ASKED ', ''), 'REQUESTED FROM THE CLIENT']] : [[d.date, 'RECEIVED']])}`;
   }
   if (kind === 'q') {
@@ -101,9 +105,9 @@ function bkFocus() {
     const key = `bkq:${cid}:${p}:${q.id}`;
     const s = WSX.over[key];
     title = q.desc;
-    body = `${s ? nextBlock(s === 'ASK THE CLIENT' ? 'ASKED THE CLIENT' : `CATEGORIZED AS ${s}`, `<button type="button" class="wbtn wbtn--sm" data-a="bk.cat" data-v="${q.id}|">UNDO</button>`, 'done') : nextBlock(q.ask, `<div class="bk-cats">${q.options.map((o) => `<button type="button" class="wbtn ${o === 'ASK THE CLIENT' ? '' : 'wbtn--dark'}" data-a="bk.cat" data-v="${q.id}|${o}">${o}</button>`).join('')}</div>`)}
+    body = `${s ? nextBlock(s === 'ASK THE CLIENT' ? 'ASKED THE CLIENT' : `CATEGORIZED AS ${s}`, `<button type="button" class="wbtn wbtn--sm" data-a="bk.cat" data-v="${q.id}|">UNDO</button>`, 'done') : nextBlock(q.ask, `<div class="bk-cats">${q.options.map((o) => `<button type="button" class="bk-opt ${o === 'ASK THE CLIENT' ? 'bk-opt--ask' : ''}" data-a="bk.cat" data-v="${q.id}|${o}">${ico(CAT_ICON[o] || 'tag')}<b>${o}</b></button>`).join('')}</div>`)}
       <div class="bk-amt"><small>AMOUNT · SAMPLE</small><b>${q.amt}</b><span>${q.date} · ${q.acct}</span></div>
-      ${facts([['CHARGE', q.desc], ['ACCOUNT', q.acct], ['PERIOD', p], ['STATUS', s ? sw([s === 'ASK THE CLIENT' ? 'ASKED' : 'CATEGORIZED', s === 'ASK THE CLIENT' ? 'gold' : 'ok']) : sw(['NEEDS A CATEGORY', 'warn'])]])}
+      ${facts([['ACCOUNT', q.acct], ['PERIOD', p], ['STATUS', s ? sw([s === 'ASK THE CLIENT' ? 'ASKED' : 'CATEGORIZED', s === 'ASK THE CLIENT' ? 'gold' : 'ok']) : sw(['NEEDS A CATEGORY', 'warn'])]])}
       ${s ? `<span class="simtag" style="justify-self:start">SIMULATED · NOT SAVED</span>` : ''}`;
   }
   if (kind === 'acct') {
@@ -120,13 +124,24 @@ function bkFocus() {
     body = i === 4 && !done[4]
       ? nextBlock(all ? 'SIGN OFF THE STAFF REVIEW' : 'FINISH THE CHECKS ABOVE FIRST', all ? simBtn(`bk:sign:${signKey}`, { label: 'SIGN OFF REVIEW', effect: 'RECORDS YOUR STAFF REVIEW SIGN-OFF AND MOVES THE CLOSE TO REPORTS PREPARED.', apply: () => { WSX.over[signKey] = true; WSX.over[`bkstep:${cid}:${p}`] = 6; }, rec: signKey, primary: true }) : '', all ? '' : 'calm')
       : nextBlock(done[i] ? 'DONE' : i < 3 ? 'RESOLVE IT IN THE EARLIER PHASE' : 'CHECK BEFORE SIGN-OFF', i === 0 && !done[0] ? `<button type="button" class="wbtn" data-a="bk.phase" data-v="collect">GO TO COLLECT</button>` : i < 3 && !done[i] ? `<button type="button" class="wbtn" data-a="bk.phase" data-v="reconcile">GO TO RECONCILE</button>` : '', done[i] ? 'done' : 'calm');
-    body += facts([['CHECK', REVIEW_CHECKS[i]], ['STATE', sw(done[i] ? ['DONE', 'ok'] : ['OPEN', 'mute'])], ['REVIEWER', staffName(SUBSCRIPTIONS[BOOKS[cid].sub]?.owner)]]);
+    const n = done.filter(Boolean).length;
+    body = `<div class="bk-meter"><b>${n}<small>/ ${REVIEW_CHECKS.length}</small></b><span><small>STAFF REVIEW</small><span class="bk-meter__bar">${done.map((x, j) => `<i class="${x ? 'd' : ''} ${j === i ? 'is-sel' : ''}"></i>`).join('')}</span></span></div>${body}`;
+    body += facts([['STATE', sw(done[i] ? ['DONE', 'ok'] : ['OPEN', 'mute'])], ['REVIEWER', staffName(SUBSCRIPTIONS[BOOKS[cid].sub]?.owner)]]);
   }
   if (kind === 'rep') {
     title = id === 'pl' ? 'PROFIT & LOSS' : 'BALANCE SHEET';
-    body = `${ntb('<b>THE DELIVERY WORKSPACE IS NOT BUILT.</b> REPORTS ARE PREPARED IN THE BOOKKEEPING SYSTEM.')}${facts([['PERIOD', p], ['STATE', sw(bkStep() >= 7 ? ['DELIVERED', 'ok'] : ['NOT PREPARED', 'mute'])]])}`;
+    const delivered = bkStep() >= 7;
+    body = `<div class="bk-cover"><small>${clientName(cid)}</small><b>${title}</b><span>${p}</span>${sw(delivered ? ['DELIVERED', 'ok'] : ['NOT PREPARED', 'mute'])}</div>${ntb('<b>THE DELIVERY WORKSPACE IS NOT BUILT.</b> REPORTS ARE PREPARED IN THE BOOKKEEPING SYSTEM.')}`;
   }
-  return `<section class="rg cx bk-cx"><header class="cx__h">${crumb(kind === 'q' ? 'CHARGE' : kind === 'doc' ? 'DOCUMENT' : kind === 'chk' ? 'REVIEW' : kind === 'rep' ? 'REPORT' : 'ACCOUNT')}<h2 class="cx__t">${title}</h2></header><div class="cx__b" data-keep="bk-cx">${body}</div></section>`;
+  // the rest of this step stays in reach below the focus, so the panel keeps working instead of ending in blank paper
+  const go = VP === 'mobile' ? 'bk.open' : 'bk.item';
+  const sib = (rows, label) => (rows.length > 1 ? `<div class="bk-sib"><div class="sec-l"><span>${label}</span><span>${rows.length}</span></div>${rows.map(([k, t, st, i]) => `<button type="button" class="pk bk-sib__r ${k === item ? 'is-sel' : ''}" data-a="${go}" data-v="${k}" title="${t}" aria-current="${k === item}">${ico(i)}<b class="pk__t">${t}</b>${sw(st)}</button>`).join('')}</div>` : '');
+  if (kind === 'doc') body += sib(per.docs.map((d) => { const st = bkDocState(cid, p, d); return [`doc:${d.id}`, d.name, [st, DOC_TONE[st] || 'mute'], 'folder']; }), `DOCUMENTS FOR ${p}`);
+  if (kind === 'q' || kind === 'acct') body += sib(per.items.map((q) => { const st = bkItemState(cid, p, q); return [`q:${q.id}`, q.desc, st ? [st === 'ASK THE CLIENT' ? 'ASKED' : st, st === 'ASK THE CLIENT' ? 'gold' : 'ok'] : ['OPEN', 'warn'], 'tag']; }), 'CHARGES THIS MONTH');
+  if (kind === 'chk') body += sib(REVIEW_CHECKS.map((t, j) => [`chk:${j}`, t, bkChecks()[j] ? ['DONE', 'ok'] : ['OPEN', 'mute'], bkChecks()[j] ? 'pass' : 'pending']), 'STAFF REVIEW');
+  if (kind === 'rep') body += sib([['rep:pl', 'PROFIT & LOSS'], ['rep:bs', 'BALANCE SHEET']].map(([k, t]) => [k, t, bkStep() >= 7 ? ['DELIVERED', 'ok'] : ['NOT PREPARED', 'mute'], 'summary']), `REPORTS FOR ${p}`);
+  const sk = `${cid}:${p}:${item}`;
+  return `<section class="rg cx bk-cx"><header class="cx__h"><div class="cx__hd" data-swap="hd:${sk}">${crumb(kind === 'q' ? 'CHARGE' : kind === 'doc' ? 'DOCUMENT' : kind === 'chk' ? 'REVIEW' : kind === 'rep' ? 'REPORT' : 'ACCOUNT')}<h2 class="cx__t">${title}</h2></div></header><div class="cx__b" data-keep="bk-cx" data-swap="b:${sk}">${body}</div></section>`;
 }
 
 /* ── clients rail ── */
@@ -141,8 +156,11 @@ function bkRail(asStrip = false) {
     if (asStrip) return `<button type="button" class="bk-chip ${cid === WSX.books.client ? 'is-sel' : ''}" data-a="bk.client" data-v="${cid}">${badge(ACCOUNTS[cid])}<span>${ACCOUNTS[cid].name}</span>${bar}</button>`;
     return `<div class="pk bk-cl ${cid === WSX.books.client ? 'is-sel' : ''}" data-a="bk.client" data-v="${cid}">${badge(ACCOUNTS[cid])}<span style="min-width:0"><b class="pk__t">${ACCOUNTS[cid].name}</b><span class="pk__s">${SUBSCRIPTIONS[b.sub].pkg}${per ? ` · DUE ${per.due}` : ''}</span>${bar}${state}</span></div>`;
   }).join('');
-  if (asStrip) return `<div class="bk-strip">${items}</div>`;
-  return rgn(`CLIENTS · ${p}`, '4', '', items, 'bk-rail');
+  const cad = seg([['monthly', 'MONTHLY'], ['annual', 'ANNUAL']], WSX.books.cadence, 'bk.cadence', 'wseg--cad');
+  const none = `<div class="bk-none"><b>NO ANNUAL CLIENTS IN THIS SAMPLE</b><span>ANNUAL CLOSES WOULD LIST HERE BY TAX YEAR.</span></div>`;
+  const list = WSX.books.cadence === 'annual' ? none : items;
+  if (asStrip) return `<div class="bk-stripwrap">${cad}<div class="bk-strip">${WSX.books.cadence === 'annual' ? none : items}</div></div>`;
+  return rgn(WSX.books.cadence === 'annual' ? 'ANNUAL CLIENTS' : `MONTHLY · ${p}`, WSX.books.cadence === 'annual' ? '0' : '4', '', `<div class="bk-rail__tools">${cad}</div>${list}`, 'bk-rail', 'bk-rail');
 }
 function bkBar() {
   const { client: cid, period: p } = WSX.books;
@@ -155,14 +173,34 @@ function bkBar() {
   if (VP === 'mobile') return `${wsBar('09 · WORK', 'BOOKKEEPING', '', period)}${per ? `<div class="ros ros--m">${r}</div>` : ''}`;
   return wsBar('09 · WORK', 'BOOKKEEPING', r, `${period}<span class="chipsel">${badge(ACCOUNTS[cid])}${ACCOUNTS[cid].name}</span>`);
 }
-function booksView() {
+/** Ultra-wide only: the month at a glance — the close as a timeline, what is in, what is answered. */
+function bkMonth() {
+  const { client: cid, period: p } = WSX.books;
   const per = bkPeriod();
+  if (!per) return '';
+  const step = bkStep();
+  const c = bkCounts();
+  const docsIn = per.docs.length - c.missing;
+  const answered = per.items.length - c.questions;
+  const checks = bkChecks().filter(Boolean).length;
+  const tally = (n, of, l, tone) => `<div class="bk-tally"><b class="${tone}">${n}<small>/ ${of}</small></b><span>${l}</span><i style="width:${of ? (n / of) * 100 : 100}%"></i></div>`;
+  const tl = CYCLE_STEPS.map((t, i) => `<li class="${i < step ? 'd' : i === step ? 'n' : ''}"><i>${i < step ? ico('pass') : i + 1}</i><span>${t}</span>${i === step ? `<small>NOW</small>` : i === 8 && per.closed ? `<small>${per.closed}</small>` : ''}</li>`).join('');
+  return rgn('THE MONTH', p, '', `<div class="bk-month" data-swap="m:${cid}:${p}">${tally(docsIn, per.docs.length, 'DOCUMENTS IN', c.missing ? 'bad' : 'ok')}${tally(answered, per.items.length, 'CHARGES ANSWERED', c.questions ? 'warn' : 'ok')}${tally(checks, REVIEW_CHECKS.length, 'REVIEW CHECKS', '')}<div class="sec-l">THE CLOSE · DUE ${per.due}</div><ol class="bk-tl">${tl}</ol></div>`, 'bk-monthrg', 'bk-month');
+}
+function bkAnnualTable() {
+  return rgn('ANNUAL CLOSES', '0', '', `<div class="bk-paused"><b>NO ANNUAL BOOKKEEPING CLIENTS IN THIS SAMPLE</b><span>ANNUAL CLOSES WOULD BE WORKED HERE BY TAX YEAR. NOTHING IS INVENTED.</span>${ntb('<b>SAMPLE DATA HAS MONTHLY CLIENTS ONLY.</b> SWITCH BACK TO MONTHLY.')}</div>`, 'bk-table');
+}
+function booksView() {
+  const annual = WSX.books.cadence === 'annual';
+  const per = annual ? null : bkPeriod();
+  const table = annual ? bkAnnualTable() : bkTable();
+  const focus = annual ? `<section class="rg cx bk-cx"><header class="cx__h"><h2 class="cx__t">ANNUAL</h2>${sw(['NO SAMPLE CLIENTS', 'mute'])}</header><div class="cx__b">${nextBlock('NOTHING TO WORK ON', '', 'calm')}</div></section>` : bkFocus();
   if (VP === 'mobile') {
-    const items = bkMobileList();
-    return `<div class="ws bk bk--m">${bkBar()}${bkRail(true)}${per ? `${seg(BOOK_PHASES.map(([id, l]) => [id, l]), WSX.books.phase, 'bk.phase', 'wseg--scroll')}<div class="bk-mstep">${sw([`STEP ${bkStep() + 1} OF 9 · ${CYCLE_STEPS[bkStep()]}`, 'gold'])}</div>` : ''}${items}</div>${phoneSheet(bkFocus())}`;
+    const items = annual ? table : bkMobileList();
+    return `<div class="ws bk bk--m">${bkBar()}${bkRail(true)}${per ? `${seg(BOOK_PHASES.map(([id, l]) => [id, l]), WSX.books.phase, 'bk.phase', 'wseg--fit')}<div class="bk-mstep">${sw([`STEP ${bkStep() + 1} OF 9 · ${CYCLE_STEPS[bkStep()]}`, 'gold'])}</div>` : ''}${items}</div>${annual ? '' : phoneSheet(focus, { label: 'Bookkeeping detail' })}`;
   }
-  if (VP === 'tablet') return `<div class="ws bk bk--t">${bkBar()}${bkRail(true)}${per ? bkSpine() : ''}<div class="bk-t2">${bkTable()}${bkFocus()}</div></div>`;
-  return `<div class="ws bk">${bkBar()}${per ? bkSpine() : '<div></div>'}<div class="bk-grid">${bkRail()}${bkTable()}${bkFocus()}</div></div>`;
+  if (VP === 'tablet') return `<div class="ws bk bk--t">${bkBar()}${bkRail(true)}${per ? bkSpine() : ''}<div class="bk-t2">${table}${focus}</div></div>`;
+  return `<div class="ws bk">${bkBar()}${per ? bkSpine() : '<div></div>'}<div class="bk-grid ${WIDE && per ? 'bk-grid--4' : ''}">${bkRail()}${table}${focus}${WIDE && per ? bkMonth() : ''}</div></div>`;
 }
 /** Phone: the active phase as a list; tapping a row opens it in the drawer. */
 function bkMobileList() {
@@ -171,6 +209,12 @@ function bkMobileList() {
 }
 
 /* ── actions ── */
+ACT['bk.cadence'] = (c) => {
+  WSX.books.cadence = c;
+  WSX.books.item = null;
+  WSX.pending = null;
+  WSX.sheet = false;
+};
 ACT['bk.client'] = (cid) => {
   WSX.books.client = cid;
   if (!BOOKS[cid].periods[WSX.books.period] && !BOOKS[cid].paused) WSX.books.period = 'SEP 2026';

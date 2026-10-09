@@ -4,7 +4,7 @@
   "source": {
     "repo": "yoteenz/SITE00",
     "branch": "cursor/aio-office-ia-work-tree-4f59",
-    "commit": "89f59cd5fca88e453b0ce6582f265f0a49abac1a",
+    "commit": "3a243a20318f3db6d09428dc0099ef2548300bdf",
     "path": "docs/aio/office-workspace-proofs/",
     "generated_by": "scripts/studioos/aio-office-workspace-proofs-export.ts"
   },
@@ -13,13 +13,13 @@
     "01_DIAGNOSIS.md": "24c8e6c052bd17ee45389b52742477ed04e055e7e54bddf72e5e34bc14f9ddf9",
     "02_CREATIVE_DIRECTION.md": "e480d8f2e744f07821407781a88cd4e718b65d9b584c5cac5699c911254aa825",
     "03_WORKSPACE_PROOFS.md": "d40d3e56c1eefda2ec820c90772058c079952d0e48d4969a8bc1fef1e8dbb2ac",
-    "04_INTERACTIONS_AND_QA.md": "c919d68ac1d90e142f0f39140a959cd45ad1cc188400c8968408804e99207bb0",
+    "04_INTERACTIONS_AND_QA.md": "69c15a9aca66adfbd3e0465a8d1371155a7baf221bd0e59a35da823af029bb88",
     "05_DEVICES.md": "53ee08741e21624f8d88b33aef70fb63a396ad063f0786243ebef53c8496c91b",
     "06_ASSETS_AND_ROOTS.md": "7f09dfa9e1dd839309ac30958f165f5e744ce1da2e3982aa615c1ba73f5566bc",
-    "07_FOUNDER_PACKAGE.md": "66bea72adc18ea3749533cfbe8a414f2e9a62a74415e2560f8c24739112f898c",
+    "07_FOUNDER_PACKAGE.md": "d91da3cba05674e7e96579247c2520dd790f74e200c99722a67b62387b62c548",
     "08_EXPANSION_AND_DEPENDENCIES.md": "6fd60869a0b75c05277cf610ddb716f45975c3352c63cf881ceb2250ce32c65a",
-    "QUALITY_GATE.json": "c587aad8b3b0d644ab0b76e80b37da772f4fedaeb4a8d6a1789936b9ecc7d8b0",
-    "README.md": "5ef6030195becf6fdebb341ca6471162f3d3893b89d52b69613553d847981a03",
-    "WORKSPACE_PROOFS.json": "4faf21f84796e791eb13d6704a0ac46f9185be7c8259708f2de1af1cfebcaf0a"
+    "QUALITY_GATE.json": "de45485ccae99995bd9100562bf6f90f5f2779bb680b347fb88d42b6a6ba397a",
+    "README.md": "ba6ae067491cb96893580d660b60e817681c54189b8778be617bd724af4a9843",
+    "WORKSPACE_PROOFS.json": "c6ca2d8120dabe741cc21a7cd7addef0178f1199b2020685047f61a450694ca5"
   }
 }

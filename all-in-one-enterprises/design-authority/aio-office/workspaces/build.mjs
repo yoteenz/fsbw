@@ -44,7 +44,7 @@ const js = [
   studio,
   read(join(OFFICE, 'office-data.js')),
   read(join(OFFICE, 'office-ui.js')),
-  ...['ws-data.js', 'ws-core.js', 'ws-fleet.js', 'ws-books.js', 'ws-compliance.js', 'ws-client.js', 'ws-review.js'].map((f) => read(join(HERE, f))),
+  ...['ws-data.js', 'ws-core.js', 'ws-motion.js', 'ws-fleet.js', 'ws-books.js', 'ws-compliance.js', 'ws-client.js', 'ws-review.js'].map((f) => read(join(HERE, f))),
   'boot();',
 ].join('\n\n');
 if (js.includes('</script')) throw new Error('build: a script contains </script');
@@ -72,8 +72,9 @@ ${read(join(HERE, 'ws.css'))}
     <div class="rv-line" id="rv-line"></div>
     <div class="rv-try" id="rv-try"></div>
     <div class="rv-right">
-      <span class="rv-sims" id="rv-sims"></span><button type="button" class="rv-btn" id="rv-reset" hidden>RESET</button>
+      <span class="rv-sims" id="rv-sims"></span><button type="button" class="rv-btn" id="rv-reset" disabled style="visibility:hidden">RESET</button>
       <div class="rv-group" role="group" aria-label="Screen"><button type="button" class="rv-btn" data-rv-device="phone">PHONE</button><button type="button" class="rv-btn" data-rv-device="tablet">TABLET</button><button type="button" class="rv-btn" data-rv-device="desktop">DESKTOP</button><button type="button" class="rv-btn" data-rv-device="wide">ULTRA-WIDE</button></div>
+      <button type="button" class="rv-btn" id="rv-motionbtn" data-rv-motion="toggle" aria-pressed="false" title="TURNS MOTION OFF IN THE WORKSPACES, AS A PHONE SET TO REDUCE MOTION WOULD">REDUCE MOTION</button>
       <button type="button" class="rv-btn" id="rv-beforebtn" data-rv-before="toggle">BEFORE</button>
     </div>
   </div>
@@ -100,6 +101,12 @@ const plate = (name, w) => jobs.push([join(APP, `public/brand/ifta/plates/${name
 jobs.push([join(APP, 'public/migration/brand-lockup.png'), join(OUT, 'migration/brand-lockup.png'), 0, 'copy']);
 /* the Batch 1 diagnosis (deliverable A) and the boards made by boards.mjs */
 for (const n of ['diagnosis-1-one-template', 'diagnosis-2-fleet', 'diagnosis-3-bookkeeping', 'diagnosis-4-compliance', 'diagnosis-5-client', 'before-after-fleet', 'before-after-books', 'before-after-comp', 'before-after-client', 'family-roots']) jobs.push([join(REPO, 'AIO_OFFICE_WORKSPACE_PROOFS/boards', `${n}.jpg`), join(OUT, `diagnosis/${n}.jpg`), 0, 'copy']);
+/* this pass: the boards made by polish-boards.mjs, and the twelve recordings (last pass and this one) made by record.mjs */
+for (const n of ['polish-1-fleet', 'polish-2-client', 'polish-3-books', 'polish-4-comp', 'polish-5-drawers', 'polish-6-text', 'polish-7-motion']) jobs.push([join(REPO, 'AIO_OFFICE_WORKSPACE_PROOFS/boards', `${n}.jpg`), join(OUT, `diagnosis/${n}.jpg`), 0, 'copy']);
+for (let i = 1; i <= 12; i++) {
+  const id = String(i).padStart(2, '0');
+  for (const f of [`${id}-before.webm`, `${id}-after.webm`, `${id}-before.mp4`, `${id}-after.mp4`, `${id}-poster.jpg`]) jobs.push([join(REPO, 'AIO_OFFICE_WORKSPACE_PROOFS/recordings', f), join(OUT, `motion/${f}`), 0, 'copy']);
+}
 
 mkdirSync(OUT, { recursive: true });
 const fresh = (src, dst) => existsSync(dst) && statSync(dst).mtimeMs >= statSync(src).mtimeMs;
@@ -118,4 +125,4 @@ if (resize.length) {
 writeFileSync(join(OUT, 'index.html'), html);
 writeFileSync(join(OUT, 'local.html'), `<!doctype html>\n<html lang="en">\n<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"></head>\n<body>\n${html}</body>\n</html>\n`);
 writeFileSync(join(OUT, 'files.json'), JSON.stringify(jobs.map(([, dst]) => dst.slice(OUT.length + 1)), null, 1));
-console.log(`built ${join(OUT, 'index.html')} (${(html.length / 1024).toFixed(0)} KB) + ${jobs.length} images (${resize.length} resized)`);
+console.log(`built ${join(OUT, 'index.html')} (${(html.length / 1024).toFixed(0)} KB) + ${jobs.length} files (${resize.length} resized)`);

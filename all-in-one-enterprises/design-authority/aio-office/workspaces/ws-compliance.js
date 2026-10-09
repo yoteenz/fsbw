@@ -37,10 +37,11 @@ function cpHorizon(compact = false) {
   const axis = `<div class="hz-months">${months.map(([m, a, b]) => `<span style="left:${hzX(a)}%;width:${(hzX(b) - hzX(a)).toFixed(2)}%">${m}</span>`).join('')}</div>`;
   const grid = `${weeks.map((d) => `<i class="hz-wk" style="left:${hzX(d)}%"></i>`).join('')}<i class="hz-zone hz-zone--late" style="left:0;width:${hzX(0)}%"></i><i class="hz-zone hz-zone--week" style="left:${hzX(0)}%;width:${(hzX(7) - hzX(0)).toFixed(2)}%"></i><i class="hz-30" style="left:${hzX(30)}%"><span>30 DAYS</span></i><i class="hz-today" style="left:${hzX(0)}%"><span>TODAY · OCT 8</span></i>`;
   if (sec === 'dot_safety' || sec === 'audits') {
-    return `<section class="hz hz--ghost">${axis}<div class="hz-plot">${grid}<div class="hz-ghost"><b>${sec === 'audits' ? 'NO AUDITS SCHEDULED IN AIO' : 'NO SAFETY DATA CONNECTED'}</b><span>${sec === 'audits' ? 'NEW-ENTRANT AND COMPLIANCE REVIEWS WOULD SIT ON THIS LINE' : 'INSPECTIONS, OUT-OF-SERVICE EVENTS AND SCORES WOULD SIT ON THIS LINE'}</span></div></div></section>`;
+    return `<section class="hz hz--ghost">${axis}<div class="hz-plot">${grid}<div class="hz-ghost"><div class="hz-ghost__m"><b>${sec === 'audits' ? 'NO AUDITS SCHEDULED IN AIO' : 'NO SAFETY DATA CONNECTED'}</b><span>${sec === 'audits' ? 'NEW-ENTRANT AND COMPLIANCE REVIEWS WOULD SIT ON THIS LINE' : 'INSPECTIONS, OUT-OF-SERVICE EVENTS AND SCORES WOULD SIT ON THIS LINE'}</span></div></div></div></section>`;
   }
   const items = cpItems();
   const lanes = compact ? [''] : LANES_CP;
+  let calloutHidden = null;
   const rows = lanes.map((ln) => {
     const mine = items.filter((d) => compact || KIND_LANE[d.kind] === ln);
     // markers that would touch stack into a second or third line instead of overlapping
@@ -54,14 +55,25 @@ function cpHorizon(compact = false) {
       lineOf[d.id] = r;
     });
     const lines = Math.max(1, ends.length);
+    const track = VP === 'tablet' ? 640 : WIDE ? 2200 : 1100;
     const marks = mine.map((d) => {
       const s = dueState(d);
       const on = d.id === item;
-      return `<button type="button" class="hz-m hz-m--${s[1]} ${on ? 'is-on' : ''}" style="left:${hzX(d.days)}%;top:calc(50% + ${((lineOf[d.id] - (lines - 1) / 2) * 27).toFixed(1)}px)" data-a="cp.item" data-v="${d.id}" aria-label="${d.what} · ${d.due}"><b>${ACCOUNTS[d.client].b}</b>${on && !compact ? `<span class="hz-m__call ${d.days > 50 ? 'hz-m__call--l' : ''}">${d.what.split(' · ')[0]}<small>${d.due.replace(', 2026', '')} · ${daysWord(d.days)}</small></span>` : ''}</button>`;
+      let side = '';
+      if (on && !compact) {
+        const x = Number(hzX(d.days));
+        const w = ((Math.max(d.what.split(' · ')[0].length, 18) * 6.3 + 30) / track) * 100;
+        const free = (a, b) => !mine.some((o) => o.id !== d.id && lineOf[o.id] === lineOf[d.id] && Number(hzX(o.days)) > a && Number(hzX(o.days)) < b);
+        side = x + w < 99 && free(x, x + w + 3) ? 'r' : x - w > 0 && free(x - w - 3, x) ? 'l' : '';
+        if (!side) calloutHidden = d;
+      }
+      return `<button type="button" class="hz-m hz-m--${s[1]} ${on ? 'is-on' : ''}" aria-pressed="${on}" style="left:${hzX(d.days)}%;top:calc(50% + ${((lineOf[d.id] - (lines - 1) / 2) * 27).toFixed(1)}px)" data-a="cp.item" data-v="${d.id}" aria-label="${d.what} · ${d.due}"><b>${ACCOUNTS[d.client].b}</b>${on ? `<i class="hz-m__ring" data-swap="ring:${d.id}" aria-hidden="true"></i>` : ''}${on && side ? `<span class="hz-m__call ${side === 'l' ? 'hz-m__call--l' : ''}" data-swap="call:${d.id}">${d.what.split(' · ')[0]}<small>${d.due.replace(', 2026', '')} · ${daysWord(d.days)}</small></span>` : ''}</button>`;
     }).join('');
     return `<div class="hz-row" style="${lines > 1 ? `height:${(compact ? 20 : 15) + lines * 27}px` : ''}">${compact ? '' : `<span class="hz-lane">${ln}</span>`}<div class="hz-track">${marks}</div></div>`;
   }).join('');
-  return `<section class="hz ${compact ? 'hz--c' : ''}">${axis}<div class="hz-plot">${grid}<div class="hz-rows">${rows}</div></div></section>`;
+  const sel = items.find((d) => d.id === item);
+  const readout = sel && (compact || calloutHidden) ? `<span class="hz-sel" data-swap="sel:${sel.id}"><i class="pip pip--${dueState(sel)[1]}"></i>${sel.what.split(' · ')[0]}<small>${sel.due.replace(', 2026', '')} · ${daysWord(sel.days)}</small></span>` : '';
+  return `<section class="hz ${compact ? 'hz--c' : ''}">${readout}${axis}<div class="hz-plot">${grid}<div class="hz-rows">${rows}</div></div></section>`;
 }
 
 /* ── the queue ── */
@@ -103,12 +115,22 @@ function cpCase() {
       : simBtn(`cp:rem:${d.id}`, { label: m.docs.length ? 'REQUEST THE NEW DOCUMENT' : 'SEND REMINDER', effect: m.docs.length ? 'ASKS THE CLIENT TO UPLOAD THE RENEWED DOCUMENT IN THEIR OFFICE.' : 'REMINDS THE CLIENT IN THEIR OFFICE AND BY EMAIL.', apply: () => {}, rec: key, primary: true });
   const done = simBtn(`cp:done:${d.id}`, { label: 'MARK RENEWED', effect: 'CLOSES THE DEADLINE ONCE THE NEW DOCUMENT IS REVIEWED.', apply: () => (WSX.over[key] = ['RENEWED', 'ok']), rec: key });
   const reassign = simBtn(`cp:own:${d.id}`, { label: 'REASSIGN', effect: 'MOVES THIS DEADLINE TO ANOTHER STAFF MEMBER.', apply: () => {}, rec: key, founder: true, sm: true });
-  const subjCard = `<div class="cp-subj">${subj.truck ? `<svg viewBox="0 0 500 210" class="cp-truck" aria-hidden="true">${truckShape(FLEET_META[DUE_META[d.id].subject.split(':')[1]].cab)}</svg>` : `<span class="cp-subj__b">${badge(ACCOUNTS[d.client])}</span>`}<span style="min-width:0"><small>${subj.kind}</small><b>${subj.title}</b><span>${subj.sub}</span></span><button type="button" class="wbtn wbtn--sm" data-a="go" data-v="${subj.go}">${subj.goLabel}${ico('fwd')}</button></div>`;
+  // ultra-wide has the room: a truck subject is drawn as the Fleet slab, with its eight connections one tap from Fleet
+  const vid = subj.truck ? DUE_META[d.id].subject.split(':')[1] : null;
+  const slab = vid && WSX.device === 'wide' ? (() => {
+    const v = VEHICLES[vid];
+    const conns = fleetConns(v);
+    return `<div class="fl-slab fl-slab--mini cp-slab" data-swap="slab:${d.id}"><div class="cl-vstage"><svg viewBox="0 0 500 210" aria-hidden="true">${truckShape(FLEET_META[vid].cab)}</svg><span>${sw(vAvail(v))}</span><b>${v.unit}</b></div><div class="fl-cluster">${CONN.map(([k, l, i]) => `<button type="button" class="fl-cg fl-cg--${conns[k].tone}" data-a="go" data-v="fleet:${vid}:${k}" aria-label="${l} · ${conns[k].word} — open in Fleet">${ico(i)}<span>${l}</span><small>${conns[k].tagW || conns[k].word}</small></button>`).join('')}</div></div>`;
+  })() : '';
+  const subjCard = `<div class="cp-subj">${subj.truck && !slab ? `<svg viewBox="0 0 500 210" class="cp-truck" aria-hidden="true">${truckShape(FLEET_META[DUE_META[d.id].subject.split(':')[1]].cab)}</svg>` : `<span class="cp-subj__b">${badge(ACCOUNTS[d.client])}</span>`}<span style="min-width:0"><small>${subj.kind}</small><b>${subj.title}</b><span>${subj.sub}</span></span><button type="button" class="wbtn wbtn--sm" data-a="go" data-v="${subj.go}">${subj.goLabel}${ico('fwd')}</button></div>`;
   const due = `<div class="cp-due cp-due--${s[1]}"><div><b>${renewed ? 'DONE' : d.days < 0 ? `${-d.days}` : d.days === 0 ? 'NOW' : d.days}</b><span>${renewed ? 'RENEWED' : d.days < 0 ? 'DAY LATE' : d.days === 0 ? 'BLOCKING' : 'DAYS LEFT'}</span></div><div class="cp-due__r"><small>DUE</small><b>${d.due}</b><span class="cp-bar"><i style="width:${renewed ? 0 : pct}%"></i></span></div></div>`;
-  const left = `<div class="cp-col"><div class="sec-l">SUBJECT</div>${subjCard}<div class="sec-l">REQUIRED</div><p class="cx__lead">${m.need}</p></div>`;
-  const right = `<div class="cp-col"><div class="sec-l"><span>OWNER</span>${reassign}</div><div class="cp-own">${av(m.owner)}<b>${staffName(m.owner)}</b><small>${STAFF[m.owner].area}</small></div><div class="sec-l">DOCUMENTS</div>${m.docs.length ? m.docs.map(docChip).join('') : `<div class="ntb">${ico('folder')}<span>NO DOCUMENT ON FILE YET</span></div>`}${mhist(key, m.hist)}</div>`;
+  const left = `<div class="cp-col cp-col--a"><div class="sec-l">SUBJECT</div>${slab}${subjCard}<div class="sec-l">REQUIRED</div><p class="cx__lead">${m.need}</p></div>`;
+  // connected context: what else this client has on the horizon
+  const also = vals(DUES).filter((x) => x.client === d.client && x.id !== d.id).sort((a, b) => a.days - b.days);
+  const related = `<div class="cp-col cp-col--c">${also.length ? `<div><div class="sec-l">ALSO DUE · ${clientName(d.client)}</div><div class="cp-also">${also.map((x) => { const xs = dueState(x); return `<button type="button" class="cp-also__r" data-a="cp.item" data-v="${x.id}"><span class="cp-cd cp-cd--${xs[1]} cp-cd--s"><b>${x.days < 0 ? x.days : x.days === 0 ? 'NOW' : x.days}</b></span><span><b>${x.what.split(' · ')[0]}</b><small>${x.due.replace(', 2026', '')}</small></span></button>`; }).join('')}</div></div>` : ''}${mhist(key, m.hist)}</div>`;
+  const right = `<div class="cp-col cp-col--b"><div class="sec-l"><span>OWNER</span>${reassign}</div><div class="cp-own">${av(m.owner)}<b>${staffName(m.owner)}</b><small>${STAFF[m.owner].area}</small></div><div class="sec-l">DOCUMENTS</div>${m.docs.length ? m.docs.map(docChip).join('') : `<div class="ntb">${ico('folder')}<span>NO DOCUMENT ON FILE YET</span></div>`}</div>`;
   const next = renewed ? nextBlock('RENEWED FOR THIS VISIT', '', 'done') : nextBlock(m.need, `${primary}${done}`);
-  return `<section class="rg cx cp-case"><header class="cx__h"><div class="cx__crumb"><span>COMPLIANCE</span>${ico('fwd')}<span>${sec === 'corrective' ? 'CORRECTIVE WORK' : 'EXPIRATIONS'}</span>${ico('fwd')}<span>${d.kind}</span></div><div class="cp-h"><div class="cp-h__t"><h2 class="cx__t">${d.what}</h2><span class="cp-h__s">${sw(s)}<span class="pk__s">${clientName(d.client)}</span></span></div>${due}</div></header><div class="cx__b" data-keep="cp-case">${next}<div class="cp-cols">${left}${right}</div></div></section>`;
+  return `<section class="rg cx cp-case"><header class="cx__h"><div class="cx__hd" data-swap="hd:${d.id}"><div class="cx__crumb"><span>COMPLIANCE</span>${ico('fwd')}<span>${sec === 'corrective' ? 'CORRECTIVE WORK' : 'EXPIRATIONS'}</span>${ico('fwd')}<span>${d.kind}</span></div><div class="cp-h"><div class="cp-h__t"><h2 class="cx__t">${d.what}</h2><span class="cp-h__s">${sw(s)}<span class="pk__s">${clientName(d.client)}</span></span></div>${due}</div></div></header><div class="cx__b" data-keep="cp-case" data-swap="b:${d.id}">${next}<div class="cp-cols">${left}${right}${related}</div></div></section>`;
 }
 
 function compBar() {
@@ -119,10 +141,11 @@ function compBar() {
   return wsBar('03 · WORK', 'COMPLIANCE', r);
 }
 function compSections() {
-  return seg([['expirations', 'EXPIRATIONS', vals(DUES).length], ['dot_safety', 'DOT / SAFETY', null, true], ['audits', 'AUDITS', null, true], ['corrective', 'CORRECTIVE WORK', 1]], WSX.comp.sec, 'cp.sec', 'wseg--scroll');
+  if (VP === 'mobile') return seg([['expirations', 'EXPIRATIONS'], ['dot_safety', 'DOT / SAFETY', null, true], ['audits', 'AUDITS', null, true], ['corrective', 'CORRECTIVE']], WSX.comp.sec, 'cp.sec', 'wseg--fit');
+  return seg([['expirations', 'EXPIRATIONS', vals(DUES).length], ['dot_safety', 'DOT / SAFETY', null, true], ['audits', 'AUDITS', null, true], ['corrective', 'CORRECTIVE WORK', 1]], WSX.comp.sec, 'cp.sec');
 }
 function compView() {
-  if (VP === 'mobile') return `<div class="ws cp cp--m">${compBar()}${compSections()}${cpHorizon(true)}${cpQueue()}</div>${phoneSheet(cpCase())}`;
+  if (VP === 'mobile') return `<div class="ws cp cp--m">${compBar()}${compSections()}${cpHorizon(true)}${cpQueue()}</div>${phoneSheet(cpCase(), { label: 'Compliance issue' })}`;
   if (VP === 'tablet') return `<div class="ws cp cp--t">${compBar()}${compSections()}${cpHorizon()}<div class="cp-t2">${cpQueue()}${cpCase()}</div></div>`;
   return `<div class="ws cp">${compBar()}<div class="cp-grid"><div class="cp-top">${compSections()}${cpHorizon()}</div>${cpQueue()}${cpCase()}</div></div>`;
 }

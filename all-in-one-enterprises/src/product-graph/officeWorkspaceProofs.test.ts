@@ -78,7 +78,9 @@ describe('Record ↔ workspaces', () => {
 describe('Simulated, sample and isolated', () => {
   it('says SIMULATED on every confirmation and hides founder-only actions from staff', () => {
     const core = ws('ws-core.js');
-    expect(core).toContain('SIMULATED IN THIS REVIEW — NOTHING IS SAVED OR SENT');
+    // the confirm plate (material, motion and detail pass): a SIMULATED tag and the line NOTHING IS SAVED OR SENT.
+    expect(core).toContain('<span class="simtag">SIMULATED</span>');
+    expect(core).toContain('NOTHING IS SAVED OR SENT.');
     expect(core).toMatch(/if \(founder && !FOUNDER\) return '';/);
   });
 

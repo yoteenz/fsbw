@@ -1,0 +1,291 @@
+[
+ {
+  "id": "01",
+  "title": "FLEET \u00b7 VEHICLE SELECTION",
+  "dev": "desktop",
+  "reduced": false,
+  "mp4": "01-before.mp4",
+  "strip": "01-before-strip.jpg",
+  "marks": [
+   {
+    "label": "UNIT 104",
+    "at": 1.869
+   },
+   {
+    "label": "UNIT 1",
+    "at": 3.135
+   },
+   {
+    "label": "UNIT 09",
+    "at": 4.385
+   }
+  ],
+  "webm": "01-before.webm"
+ },
+ {
+  "id": "02",
+  "title": "FLEET \u00b7 CONNECTION DETAIL",
+  "dev": "desktop",
+  "reduced": false,
+  "mp4": "02-before.mp4",
+  "strip": "02-before-strip.jpg",
+  "marks": [
+   {
+    "label": "INSURANCE",
+    "at": 1.871
+   },
+   {
+    "label": "DRIVER",
+    "at": 3.097
+   },
+   {
+    "label": "MAINTENANCE",
+    "at": 4.273
+   }
+  ],
+  "webm": "02-before.webm"
+ },
+ {
+  "id": "03",
+  "title": "CLIENT 360 \u00b7 SERVICE SELECTION",
+  "dev": "desktop",
+  "reduced": false,
+  "mp4": "03-before.mp4",
+  "strip": "03-before-strip.jpg",
+  "marks": [
+   {
+    "label": "INSURANCE",
+    "at": 1.771
+   },
+   {
+    "label": "COMPLIANCE",
+    "at": 2.916
+   },
+   {
+    "label": "OVERVIEW",
+    "at": 4.06
+   }
+  ],
+  "webm": "03-before.webm"
+ },
+ {
+  "id": "04",
+  "title": "CLIENT 360 \u00b7 DRILL DOWN AND RETURN",
+  "dev": "desktop",
+  "reduced": false,
+  "mp4": "04-before.mp4",
+  "strip": "04-before-strip.jpg",
+  "marks": [
+   {
+    "label": "INSURANCE",
+    "at": 1.638
+   },
+   {
+    "label": "POLICY",
+    "at": 2.797
+   },
+   {
+    "label": "UNIT 1",
+    "at": 3.935
+   },
+   {
+    "label": "BACK",
+    "at": 5.065
+   },
+   {
+    "label": "BACK",
+    "at": 6.196
+   }
+  ],
+  "webm": "04-before.webm"
+ },
+ {
+  "id": "05",
+  "title": "BOOKKEEPING \u00b7 STEP TRANSITION",
+  "dev": "desktop",
+  "reduced": false,
+  "mp4": "05-before.mp4",
+  "strip": "05-before-strip.jpg",
+  "marks": [
+   {
+    "label": "COLLECT",
+    "at": 1.701
+   },
+   {
+    "label": "REVIEW",
+    "at": 2.85
+   },
+   {
+    "label": "RECONCILE",
+    "at": 3.975
+   },
+   {
+    "label": "A CHARGE",
+    "at": 5.107
+   }
+  ],
+  "webm": "05-before.webm"
+ },
+ {
+  "id": "06",
+  "title": "BOOKKEEPING \u00b7 DETAIL DRAWER",
+  "dev": "phone",
+  "reduced": false,
+  "mp4": "06-before.mp4",
+  "strip": "06-before-strip.jpg",
+  "marks": [
+   {
+    "label": "OPEN A CHARGE",
+    "at": 1.7
+   },
+   {
+    "label": "FUEL \u00b7 SIMULATED",
+    "at": 2.844
+   },
+   {
+    "label": "CLOSE",
+    "at": 3.972
+   }
+  ],
+  "webm": "06-before.webm"
+ },
+ {
+  "id": "07",
+  "title": "COMPLIANCE \u00b7 DEADLINE SELECTION",
+  "dev": "desktop",
+  "reduced": false,
+  "mp4": "07-before.mp4",
+  "strip": "07-before-strip.jpg",
+  "marks": [
+   {
+    "label": "UNIT 09",
+    "at": 1.473
+   },
+   {
+    "label": "UCR",
+    "at": 2.618
+   },
+   {
+    "label": "IRP",
+    "at": 3.747
+   }
+  ],
+  "webm": "07-before.webm"
+ },
+ {
+  "id": "08",
+  "title": "COMPLIANCE \u00b7 ISSUE DETAIL",
+  "dev": "desktop",
+  "reduced": false,
+  "mp4": "08-before.mp4",
+  "strip": "08-before-strip.jpg",
+  "marks": [
+   {
+    "label": "DOT INSPECTION",
+    "at": 1.641
+   },
+   {
+    "label": "ALSO DUE",
+    "at": null,
+    "missing": "#rv-screen .cp-also__r[data-v=\"dl-abc-med\"]"
+   },
+   {
+    "label": "POLICY RENEWAL",
+    "at": 2.795
+   }
+  ],
+  "webm": "08-before.webm"
+ },
+ {
+  "id": "09",
+  "title": "ACTION CONFIRMATION",
+  "dev": "desktop",
+  "reduced": false,
+  "mp4": "09-before.mp4",
+  "strip": "09-before-strip.jpg",
+  "marks": [
+   {
+    "label": "REQUEST AUTHORIZATION",
+    "at": 1.921
+   },
+   {
+    "label": "CONFIRM \u00b7 SIMULATED",
+    "at": 3.11
+   }
+  ],
+  "webm": "09-before.webm"
+ },
+ {
+  "id": "10",
+  "title": "MOBILE DRAWER \u00b7 OPEN AND CLOSE",
+  "dev": "phone",
+  "reduced": false,
+  "mp4": "10-before.mp4",
+  "strip": "10-before-strip.jpg",
+  "marks": [
+   {
+    "label": "INSURANCE",
+    "at": 1.763
+   },
+   {
+    "label": "CLOSE",
+    "at": 2.905
+   },
+   {
+    "label": "MAINTENANCE",
+    "at": 4.029
+   },
+   {
+    "label": "TAP OUTSIDE",
+    "at": 5.165
+   }
+  ],
+  "webm": "10-before.webm"
+ },
+ {
+  "id": "11",
+  "title": "MOBILE TABS",
+  "dev": "phone",
+  "reduced": false,
+  "mp4": "11-before.mp4",
+  "strip": "11-before-strip.jpg",
+  "marks": [
+   {
+    "label": "DOT / SAFETY",
+    "at": 1.623
+   },
+   {
+    "label": "CORRECTIVE",
+    "at": 2.763
+   },
+   {
+    "label": "EXPIRATIONS",
+    "at": 3.897
+   }
+  ],
+  "webm": "11-before.webm"
+ },
+ {
+  "id": "12",
+  "title": "REDUCED MOTION",
+  "dev": "phone",
+  "reduced": true,
+  "mp4": "12-before.mp4",
+  "strip": "12-before-strip.jpg",
+  "marks": [
+   {
+    "label": "INSURANCE",
+    "at": 1.886
+   },
+   {
+    "label": "CLOSE",
+    "at": 3.029
+   },
+   {
+    "label": "UNIT 1",
+    "at": 4.17
+   }
+  ],
+  "webm": "12-before.webm"
+ }
+]

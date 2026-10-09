@@ -1,6 +1,8 @@
 /**
- * QA for the four workspace proofs: interaction journeys, dead controls, handlers, fit, overflow, the uppercase law,
- * console errors, founder / staff visibility, the TRY demonstrations, and screenshots at four sizes.
+ * QA for the four workspace proofs: interaction journeys, dead controls, handlers, keyboard reach, fit, overflow, the
+ * uppercase law, console errors, founder / staff visibility, the TRY demonstrations, the motion system (tokens, drawers
+ * entering and leaving, reduced motion), drawer focus and keyboard behaviour, the text audit (audit.mjs) over every
+ * panel, tab, record and drawer at four sizes, and screenshots.
  *
  *   node design-authority/aio-office/workspaces/qa.mjs <workspacesDist> [screensDir]
  *
@@ -12,6 +14,7 @@ import { dirname, join, extname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { tmpdir } from 'node:os';
 import { execFileSync } from 'node:child_process';
+import { SINGLE_LINE, AUDIT_STATES, phoneActs, pageAudit } from './audit.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const APP = resolve(HERE, '../../..');
@@ -58,6 +61,9 @@ const act = (p, a, v = '') => p.evaluate(([a, v]) => window.AIO_WS.act(a, v), [a
 const st = (p) => p.evaluate(() => window.AIO_WS.state());
 const txt = (p, sel) => p.evaluate((s) => [...document.querySelectorAll(`#rv-screen ${s}`)].map((e) => e.innerText).join(' | '), sel);
 const count = (p, sel) => p.evaluate((s) => document.querySelectorAll(`#rv-screen ${s}`).length, sel);
+/** A drawer leaves on its own (about 200 ms) before the workspace behind it changes. */
+const sheetGone = (p) => p.waitForFunction(() => !document.querySelector('#rv-screen .wsheet'), null, { timeout: 2000 }).then(() => true, () => false);
+const settle = (p) => p.evaluate(() => document.getAnimations().forEach((a) => a.effect?.getComputedTiming().endTime !== Infinity && a.finish()));
 async function shot(p, name) {
   if (!SHOTS) return;
   await p.evaluate(() => window.AIO_WS.capture(true));
@@ -76,6 +82,8 @@ async function structure(p, label, { fits }) {
     const unknown = [...new Set(all.map((e) => e.dataset.a).filter((a) => !handlers.has(a)))];
     const dead = [...scr.querySelectorAll('button, [role=button], a')].filter((b) => !b.disabled && !b.closest('[inert]') && !(b.dataset.a || b.dataset.act || b.dataset.k || b.dataset.go || b.dataset.input)).map((b) => b.outerHTML.slice(0, 90));
     const inputs = [...scr.querySelectorAll('input')].filter((i) => !i.dataset.input).length;
+    // every clickable that is not a native control can be reached and pressed from the keyboard
+    const unreachable = [...scr.querySelectorAll('[data-a]:not(button):not(input):not(.wscrim), [data-k]:not(button), [data-go]:not(button)')].filter((e) => e.getAttribute('tabindex') !== '0' || e.getAttribute('role') !== 'button').map((e) => e.outerHTML.slice(0, 80));
     // the uppercase law: every visible letter renders uppercase
     const lower = [];
     const walk = document.createTreeWalker(scr, NodeFilter.SHOW_TEXT);
@@ -100,8 +108,9 @@ async function structure(p, label, { fits }) {
       }
       return true;
     }).map((e) => e.className || e.tagName).slice(0, 5);
-    return { unknown, dead, inputs, lower: lower.slice(0, 6), wide, sh: scr.scrollHeight, ch: scr.clientHeight, sw: scr.scrollWidth, cw: scr.clientWidth };
+    return { unknown, dead, inputs, unreachable, lower: lower.slice(0, 6), wide, sh: scr.scrollHeight, ch: scr.clientHeight, sw: scr.scrollWidth, cw: scr.clientWidth };
   });
+  check(`${label} · every control is keyboard-reachable`, !r.unreachable.length, r.unreachable);
   check(`${label} · every control has a handler`, !r.unknown.length, r.unknown);
   check(`${label} · no dead controls`, !r.dead.length, r.dead);
   check(`${label} · inputs are wired`, r.inputs === 0, r.inputs);
@@ -147,10 +156,14 @@ for (const ws of WS) {
   await p.click('#rv-screen .fl-tag[data-v="maintenance"]');
   check('fleet · clicking a tag on the truck opens that section', (await st(p)).fleet.sec === 'maintenance');
   await p.click('#rv-screen [data-a="sim.ask"][data-v="fl:tk:t-tk-2"]');
-  check('fleet · a simulated action confirms inline and says so', /SIMULATED IN THIS REVIEW/.test(await txt(p, '.simc')));
+  check('fleet · a simulated action confirms inline and says so', /SIMULATED/.test(await txt(p, '.simc .simtag')) && /NOTHING IS SAVED OR SENT/.test(await txt(p, '.simc')));
   await shot(p, 'fleet--desktop--action');
   await p.click('#rv-screen [data-a="sim.ok"]');
+  check('fleet · confirming shows WORKING on the button first', /WORKING/.test(await txt(p, '.simc [data-a="sim.ok"]')) && (await count(p, '.simc [data-a="sim.no"][disabled]')) === 1);
+  await p.waitForFunction(() => window.AIO_WS.state().sims === 1, null, { timeout: 3000 }).catch(() => {});
   check('fleet · confirming changes the sample state and the history', /AUTHORIZATION REQUESTED/.test(await txt(p, '.fl-cx')) && /JUST NOW/.test(await txt(p, '.fl-cx .mh')) && (await st(p)).sims === 1);
+  await p.waitForTimeout(500);
+  check('fleet · the confirmation toast says it was simulated', await p.evaluate(() => /SIMULATED/.test(document.getElementById('rv-toast').innerText)));
   await p.click('#rv-screen .fl-client');
   check('fleet · the client chip opens Client 360 with a way back', (await st(p)).view === 'client' && (await count(p, '[data-a="ret"]')) === 1);
   await p.click('#rv-screen [data-a="ret"]');
@@ -161,7 +174,7 @@ for (const ws of WS) {
   check('fleet · phone opens a connection in a drawer', (await count(m, '.wsheet')) === 1);
   await shot(m, 'fleet--phone--context');
   await m.click('#rv-screen .wscrim', { position: { x: 20, y: 20 } });
-  check('fleet · phone drawer closes', (await count(m, '.wsheet')) === 0);
+  check('fleet · phone drawer closes', await sheetGone(m));
   await m.close();
 }
 
@@ -238,7 +251,8 @@ for (const ws of WS) {
   await shot(p, 'client--desktop--selected');
   await p.click('#rv-screen .cl-cx [data-a="cl.push"][data-v="vehicle:v-abc-1"]');
   let s = await st(p);
-  check('client · a truck opens from the policy', s.client.stack.join() === 'policy:pol-abc,vehicle:v-abc-1' && /UNIT 1/.test(await txt(p, '.cl-cx .cx__t')), s.client.stack);
+  check('client · a truck opens from the policy', s.client.stack.join() === 'policy:pol-abc,vehicle:v-abc-1' && /UNIT 1/.test(await txt(p, '.cl-cx .cl-rp__t b')), s.client.stack);
+  check('client · the nested truck is drawn as a truck with its connections', (await count(p, '.cl-cx .fl-slab--mini svg')) >= 1 && (await count(p, '.cl-cx .fl-cluster .fl-cg')) === 8);
   await shot(p, 'client--desktop--context');
   await p.click('#rv-screen .cl-cx .cx__back');
   s = await st(p);
@@ -297,8 +311,23 @@ for (const ws of WS) {
   await p.goto(URL0);
   await p.waitForFunction(() => document.documentElement.dataset.ready === '1');
   check('review · landing shows four live workspaces', (await p.evaluate(() => document.querySelectorAll('.rv-card .rv-mini .ws').length)) === 4);
+  await p.evaluate(async () => { for (let y = 0; y <= document.body.scrollHeight; y += 700) { window.scrollTo(0, y); await new Promise((r) => setTimeout(r, 60)); } window.scrollTo(0, 0); }); // lazy images load as they come into view
   const imgs = await p.evaluate(() => Promise.all([...document.images].map((i) => (i.complete ? i.naturalWidth : new Promise((r) => { i.onload = () => r(i.naturalWidth); i.onerror = () => r(0); })))));
   check('review · every image loads', imgs.every((w) => w > 0), imgs.filter((w) => !w).length);
+  check('review · the landing leads with this pass: seven boards and twelve recorded interactions', (await p.evaluate(() => [document.querySelectorAll('.rv-diag--pass .rv-thumb').length, document.querySelectorAll('.rv-clip').length].join())) === '7,12');
+  await p.click('.rv-clip[data-rv-clip="10"]');
+  const clip = await p.waitForFunction(() => { const v = [...document.querySelectorAll('#rv-lightbox video')]; return v.length === 2 && v.every((x) => x.readyState >= 2 && x.videoWidth > 0) && v.map((x) => x.currentSrc.split('/').pop().replace(/\.(webm|mp4)$/, '')).join(); }, null, { timeout: 8000 }).then((h) => h.jsonValue(), () => '');
+  check('review · a recorded interaction plays the last pass beside this one', clip === '10-before,10-after', clip);
+  if (SHOTS) await p.waitForTimeout(600), await p.screenshot({ path: join(TMP, 'clip.png') }), execFileSync('python3', ['-I', '-c', 'import sys\nfrom PIL import Image\nImage.open(sys.argv[1]).convert("RGB").save(sys.argv[2],"JPEG",quality=82)', join(TMP, 'clip.png'), join(SHOTS, 'review--motion-clip.jpg')]);
+  await p.keyboard.press('Escape');
+  check('review · Escape closes the clip and stops it', await p.evaluate(() => document.getElementById('rv-lightbox').hidden && !document.querySelector('#rv-lightbox video')));
+  await p.click('.rv-diag--pass .rv-thumb[data-rv-lightbox="polish-5-drawers.jpg"]');
+  check('review · a tall board opens at full width and scrolls', await p.evaluate(() => { const lb = document.getElementById('rv-lightbox'); const i = lb.querySelector('img'); return !lb.hidden && lb.dataset.kind === 'board' && (i.complete ? i.naturalWidth > 0 : true); }));
+  await p.keyboard.press('Escape');
+  await p.click('#rv-motionbtn');
+  check('review · REDUCE MOTION switches the workspaces to reduced motion', await p.evaluate(() => document.documentElement.dataset.motion === 'reduce' && document.getElementById('rv-motionbtn').getAttribute('aria-pressed') === 'true'));
+  await p.click('#rv-motionbtn');
+  check('review · and back', await p.evaluate(() => !document.documentElement.dataset.motion));
   if (SHOTS) await p.screenshot({ path: join(TMP, 'landing.png') }), execFileSync('python3', ['-I', '-c', 'import sys\nfrom PIL import Image\nImage.open(sys.argv[1]).convert("RGB").save(sys.argv[2],"JPEG",quality=82)', join(TMP, 'landing.png'), join(SHOTS, 'review--landing.jpg')]);
   await p.click('[data-rv-device="phone"]');
   check('review · the landing previews follow the device switch (phone)', (await p.evaluate(() => [...document.querySelectorAll('.rv-mini__dev')].map((m) => m.dataset.vp).join())) === 'mobile,mobile,mobile,mobile');
@@ -317,7 +346,7 @@ for (const ws of WS) {
   await p.click('[data-rv-role="founder"]');
   await p.click('[data-rv-device="desktop"]');
   await p.click('#rv-beforebtn');
-  check('review · BEFORE shows the before → after board', await p.evaluate(() => !document.getElementById('rv-before').hidden && /before-after-books/.test(document.querySelector('#rv-before img').src)));
+  check('review · BEFORE shows this pass beside the last one, then the board since Batch 1', await p.evaluate(() => { const i = [...document.querySelectorAll('#rv-before img')].map((x) => x.src); return !document.getElementById('rv-before').hidden && /polish-3-books/.test(i[0]) && /before-after-books/.test(i[1]); }));
   if (SHOTS) await p.screenshot({ path: join(TMP, 'b.png') }), execFileSync('python3', ['-I', '-c', 'import sys\nfrom PIL import Image\nImage.open(sys.argv[1]).convert("RGB").save(sys.argv[2],"JPEG",quality=82)', join(TMP, 'b.png'), join(SHOTS, 'review--before.jpg')]);
   await p.click('#rv-beforebtn');
   for (const ws of WS) {
@@ -349,6 +378,155 @@ for (const view of ['overview', ...WS]) {
   const r = await p.evaluate(() => ({ doc: document.documentElement.scrollWidth, dev: window.AIO_WS.state().device, phone: !!document.querySelector('[data-rv-device="phone"]').getClientRects().length, sizer: document.getElementById('rv-sizer').getBoundingClientRect().right }));
   check(`review 390 · ${view} · no sideways scroll, phone switch visible${view === 'overview' ? '' : ', device fits'}`, r.doc <= 390 && r.phone && r.dev === 'phone' && (view === 'overview' || r.sizer <= 390), JSON.stringify(r));
   await p.close();
+}
+
+/* ── 9 · motion: the tokens, selections that travel, drawers that enter and leave, reduced motion ── */
+{
+  const p = await open('fleet');
+  const tok = await p.evaluate(() => {
+    const cs = getComputedStyle(document.querySelector('#rv-screen .ao-root') || document.querySelector('.ao-root'));
+    return Object.fromEntries(['--m-micro', '--m-select', '--m-panel', '--m-context', '--m-out', '--ease-out', '--fs-micro', '--fs-label', '--fs-row', '--fs-body', '--fs-h'].map((k) => [k, cs.getPropertyValue(k).trim()]));
+  });
+  const ms = (k) => parseFloat(tok[k]);
+  check('motion · durations sit inside the brief (micro 100–160, select 150–220, panel 200–300, context 220–350 ms)', ms('--m-micro') >= 100 && ms('--m-micro') <= 160 && ms('--m-select') >= 150 && ms('--m-select') <= 220 && ms('--m-panel') >= 200 && ms('--m-panel') <= 300 && ms('--m-context') >= 220 && ms('--m-context') <= 350 && ms('--m-out') >= 150 && ms('--m-out') <= 300, JSON.stringify(tok));
+  check('motion · no bounce in the easing curve', /^cubic-bezier\(0\.22, ?0\.9, ?0\.28, ?1\)$/.test(tok['--ease-out']), tok['--ease-out']);
+  check('type · the scale sits inside the brief (micro 9–10, label 10–11, row 11–13, body 12–14, heading 14–18 px)', ms('--fs-micro') >= 9 && ms('--fs-micro') <= 10 && ms('--fs-label') >= 10 && ms('--fs-label') <= 11 && ms('--fs-row') >= 11 && ms('--fs-row') <= 13 && ms('--fs-body') >= 12 && ms('--fs-body') <= 14 && ms('--fs-h') >= 14 && ms('--fs-h') <= 18, JSON.stringify(tok));
+  // a selection updates in place: the same roster rows stay, the stage is redrawn, the context panel is not replaced wholesale
+  const before = await p.evaluate(() => { window.__rows = [...document.querySelectorAll('#rv-screen .fl-row')]; window.__cx = document.querySelector('#rv-screen .fl-cx'); return window.__rows.length; });
+  await p.click('#rv-screen .fl-row[data-v="v-abc-1"]');
+  const kept = await p.evaluate(() => ({ rows: [...document.querySelectorAll('#rv-screen .fl-row')].every((r, i) => r === window.__rows[i]), cx: document.querySelector('#rv-screen .fl-cx') === window.__cx, anims: document.getAnimations().filter((a) => a.playState === 'running').map((a) => a.effect?.getComputedTiming().duration).filter((d) => d !== Infinity) }));
+  check('motion · selecting a truck updates in place (rows and panel kept, only their content moves)', before > 0 && kept.rows && kept.cx, JSON.stringify(kept));
+  check('motion · every running animation is short (≤ 350 ms) and none repeat forever on a selection', kept.anims.length > 0 && kept.anims.every((d) => d <= 350), JSON.stringify(kept.anims));
+  const loops = await p.evaluate(() => document.getAnimations().filter((a) => a.effect?.getComputedTiming().iterations === Infinity).map((a) => a.animationName || a.effect?.target?.className));
+  check('motion · nothing pulses constantly in a settled workspace', !loops.length, JSON.stringify(loops));
+  const thumbs = await p.evaluate(() => [...document.querySelectorAll('#rv-screen [data-thumb]')].filter((g) => g.getClientRects().length).map((g) => { const t = g.querySelector(':scope > .thumb'); const on = g.querySelector(':scope > .is-on'); return !on || (t.dataset.placed === '1' && Math.abs(t.offsetWidth - on.offsetWidth) <= 1); }));
+  check('motion · every tab row has its thumb on the active choice', thumbs.length > 0 && thumbs.every(Boolean), JSON.stringify(thumbs));
+  const tr = await p.evaluate(() => getComputedStyle(document.querySelector('#rv-screen .wseg__b')).transitionDuration);
+  check('motion · controls transition their state (not a jump)', /0\.1[0-9]s|0\.13s|190ms|0\.19s/.test(tr) || parseFloat(tr) > 0, tr);
+  await p.close();
+
+  // drawers on the phone: enter, take focus, hold Tab, close on Escape, leave, give focus back
+  const m = await open('fleet', 'phone');
+  await m.click('#rv-screen .fl-cg[data-v="insurance"]');
+  const opened = await m.evaluate(() => {
+    const sh = document.querySelector('#rv-screen .wsheet');
+    const a = sh?.getAnimations()[0];
+    return { sheet: !!sh, label: sh?.getAttribute('aria-label'), modal: sh?.getAttribute('aria-modal'), role: sh?.getAttribute('role'), anim: a?.animationName, dur: a?.effect?.getComputedTiming().duration, focusIn: !!sh?.contains(document.activeElement), inert: [...document.querySelectorAll('#rv-screen .ws-main > .ws, #rv-screen .ao > :not(.ws-main)')].every((e) => e.inert) };
+  });
+  check('drawer · opens as a labelled modal dialog', opened.sheet && opened.role === 'dialog' && opened.modal === 'true' && !!opened.label, JSON.stringify(opened));
+  check('drawer · slides in (200–300 ms)', opened.anim === 'wsSheetIn' && opened.dur >= 200 && opened.dur <= 300, JSON.stringify(opened));
+  check('drawer · takes focus and makes the workspace behind it inert', opened.focusIn && opened.inert, JSON.stringify(opened));
+  const x = await m.evaluate(() => {
+    const sh = document.querySelector('#rv-screen .wsheet');
+    const b = sh.querySelector('.wsheet__x').getBoundingClientRect();
+    const hits = [...sh.querySelectorAll('.wsheet__body *')].filter((e) => [...e.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim())).filter((e) => { const r = e.getBoundingClientRect(); return r.width && !(r.right <= b.left || r.left >= b.right || r.bottom <= b.top || r.top >= b.bottom); });
+    return hits.map((e) => e.textContent.trim().slice(0, 30));
+  });
+  check('drawer · the close button never sits on text', !x.length, JSON.stringify(x));
+  await settle(m);
+  let trapped = true;
+  for (let i = 0; i < 14; i++) {
+    await m.keyboard.press(i % 5 === 4 ? 'Shift+Tab' : 'Tab');
+    trapped &&= await m.evaluate(() => !!document.querySelector('#rv-screen .wsheet')?.contains(document.activeElement));
+  }
+  check('drawer · Tab and Shift+Tab stay inside the drawer', trapped);
+  const scroll = await m.evaluate(() => {
+    const sh = document.querySelector('#rv-screen .wsheet');
+    const sc = [...sh.querySelectorAll('*')].find((e) => /auto|scroll/.test(getComputedStyle(e).overflowY));
+    return { scroller: sc?.className, ob: sc && getComputedStyle(sc).overscrollBehaviorY, fits: sh.getBoundingClientRect().height <= document.getElementById('rv-screen').getBoundingClientRect().height * 0.87 + 1 };
+  });
+  check('drawer · its content scrolls inside it (header and close stay put) and never scrolls the page behind', !!scroll.scroller && scroll.ob === 'contain' && scroll.fits, JSON.stringify(scroll));
+  await m.keyboard.press('Escape');
+  const leaving = await m.evaluate(() => !!document.querySelector('#rv-screen .wsheet.is-out'));
+  check('drawer · Escape closes it, and it leaves with motion', leaving);
+  check('drawer · it is gone within 400 ms', await sheetGone(m));
+  const back = await m.evaluate(() => ({ el: document.activeElement?.dataset?.a + '|' + document.activeElement?.dataset?.v, inert: [...document.querySelectorAll('#rv-screen [inert]')].length }));
+  check('drawer · focus returns to what opened it, and nothing is left inert', back.el === 'fl.open|insurance' && back.inert === 0, JSON.stringify(back));
+  // a tap during the exit is not lost into the leaving drawer, and the workspace stays usable
+  await m.click('#rv-screen .fl-cg[data-v="driver"]');
+  await m.click('#rv-screen .wsheet [data-a="sheet.close"]');
+  await m.evaluate(() => window.AIO_WS.act('fl.unit', 'v-abc-1'));
+  await m.waitForTimeout(400);
+  const after = await m.evaluate(() => ({ sheets: document.querySelectorAll('#rv-screen .wsheet').length, unit: window.AIO_WS.state().fleet.unit }));
+  check('drawer · a change made while it leaves wins (no stale redraw)', after.sheets === 0 && after.unit === 'v-abc-1', JSON.stringify(after));
+  // keyboard: open a connection with Enter, close with the close button by keyboard
+  await m.focus('#rv-screen .fl-cg[data-v="maintenance"]');
+  await m.keyboard.press('Enter');
+  check('drawer · opens from the keyboard', (await count(m, '.wsheet')) === 1);
+  await m.focus('#rv-screen .wsheet .wsheet__x');
+  await m.keyboard.press('Enter');
+  check('drawer · closes from the keyboard', await sheetGone(m));
+  await m.close();
+
+  // the tablet directory is a side drawer, not a bottom sheet
+  const t = await open('client', 'tablet');
+  await t.click('#rv-screen [data-a="cl.dir"]');
+  check('drawer · on tablet the client directory opens as a side drawer', (await count(t, '.wsheet.wsheet--side')) === 1 && (await t.evaluate(() => document.querySelector('#rv-screen .wsheet').getAnimations()[0]?.animationName)) === 'wsSideIn');
+  await shot(t, 'client--tablet--directory');
+  await t.close();
+
+  // reduced motion: nothing slides, nothing waits
+  const r = await browser.newContext({ reducedMotion: 'reduce', viewport: { width: 1500, height: 1144 } });
+  const rp = await r.newPage();
+  rp.on('pageerror', (e) => errors.push(`reduced: ${e}`));
+  await rp.goto(`${URL0}?device=phone#fleet`);
+  await rp.waitForFunction(() => document.documentElement.dataset.ready === '1');
+  await rp.click('#rv-screen .fl-cg[data-v="insurance"]');
+  const rm = await rp.evaluate(() => document.getAnimations().filter((a) => a.playState === 'running').map((a) => a.effect?.getComputedTiming().duration).filter((d) => d > 10));
+  check('reduced motion · the drawer appears without sliding (no animation over 10 ms)', !rm.length, JSON.stringify(rm));
+  await rp.click('#rv-screen .wsheet [data-a="sheet.close"]');
+  check('reduced motion · the drawer closes at once', (await rp.evaluate(() => document.querySelectorAll('#rv-screen .wsheet').length)) === 0);
+  await rp.click('#rv-screen [data-a="fl.unit"][data-v="v-abc-1"], #rv-screen .fl-strip [data-v="v-abc-1"]').catch(() => rp.evaluate(() => window.AIO_WS.act('fl.unit', 'v-abc-1')));
+  const rs = await rp.evaluate(() => document.getAnimations().filter((a) => a.playState === 'running').map((a) => a.effect?.getComputedTiming().duration).filter((d) => d > 10));
+  check('reduced motion · a selection has no motion over 10 ms', !rs.length, JSON.stringify(rs));
+  await rp.goto(`${URL0}?device=desktop#fleet`);
+  await rp.waitForFunction(() => document.documentElement.dataset.ready === '1');
+  await rp.click('#rv-screen [data-a="sim.ask"][data-v="fl:tk:t-tk-2"]');
+  await rp.click('#rv-screen [data-a="sim.ok"]');
+  check('reduced motion · a confirmation applies at once (no WORKING wait)', (await rp.evaluate(() => window.AIO_WS.state().sims)) === 1);
+  await r.close();
+}
+
+/* ── 10 · bookkeeping cadence: MONTHLY / ANNUAL without inventing annual data ── */
+{
+  const p = await open('books');
+  check('books · MONTHLY is the default cadence', (await count(p, '[data-a="bk.cadence"][data-v="monthly"].is-on')) === 1);
+  await p.click('#rv-screen [data-a="bk.cadence"][data-v="annual"]');
+  const t = await txt(p, '.ws');
+  check('books · ANNUAL says honestly that no sample client is annual', (await count(p, '.bk-none')) >= 1 && /NO ANNUAL CLIENTS IN THIS SAMPLE/.test(t) && (await count(p, '.lt-row')) === 0, t.slice(0, 200));
+  await shot(p, 'books--desktop--annual');
+  await p.click('#rv-screen [data-a="bk.cadence"][data-v="monthly"]');
+  check('books · MONTHLY brings the month back', (await count(p, '.lt-row')) > 0);
+  await p.close();
+  const w = await open('books', 'wide');
+  check('books · ultra-wide fills the space with the month at a glance', (await count(w, '.bk-month')) === 1 && (await count(w, '.bk-grid--4')) === 1);
+  await w.close();
+}
+
+/* ── 11 · the text audit: every panel, tab, record and drawer at four sizes (audit.mjs) ── */
+for (const dev of Object.keys(DEV)) {
+  const p = await browser.newPage({ viewport: { width: DEV[dev][0] + 60, height: DEV[dev][1] + 300 } });
+  p.on('pageerror', (e) => errors.push(`audit ${dev}: ${e}`));
+  await p.goto(`${URL0}?device=${dev}#fleet`);
+  await p.waitForFunction(() => document.documentElement.dataset.ready === '1');
+  await p.evaluate(() => document.fonts.ready);
+  const found = [];
+  for (const [view, acts] of AUDIT_STATES) {
+    await p.evaluate(([v, d]) => { window.AIO_WS.reset(); window.AIO_WS.open(v, d); window.AIO_WS.capture(true); }, [view, dev]);
+    for (const [a, v] of dev === 'phone' ? phoneActs(acts) : acts) await p.evaluate(([a, v]) => window.AIO_WS.act(a, v), [a, v]);
+    await settle(p);
+    const state = `${view}${acts.length ? ` ${acts.map(([a, v]) => `${a}=${v}`).join(' ')}` : ''}`;
+    for (const i of await p.evaluate(pageAudit, SINGLE_LINE)) found.push({ state, ...i });
+  }
+  await p.close();
+  const show = (k, f) => found.filter(f).slice(0, 4).map((i) => `${i.state}: ${i.el} "${i.text}"${i.with ? ` × ${i.with}` : ''}`).join(' || ');
+  const n = AUDIT_STATES.length;
+  check(`text · ${dev} · ${n} states · single-line components stay on one line`, !found.some((i) => i.kind === 'WRAPS'), show('WRAPS', (i) => i.kind === 'WRAPS'));
+  check(`text · ${dev} · ${n} states · no text clipped by its panel`, !found.some((i) => i.kind === 'CLIPPED'), show('CLIPPED', (i) => i.kind === 'CLIPPED'));
+  check(`text · ${dev} · ${n} states · no text overlapping text`, !found.some((i) => i.kind === 'OVERLAPS'), show('OVERLAPS', (i) => i.kind === 'OVERLAPS'));
+  check(`text · ${dev} · ${n} states · nothing below 9 px`, !found.some((i) => i.kind === 'TINY'), show('TINY', (i) => i.kind === 'TINY'));
+  check(`text · ${dev} · ${n} states · anything cut short keeps its full text reachable`, !found.some((i) => i.kind === 'TRUNCATED' && !i.reachable), show('TRUNCATED', (i) => i.kind === 'TRUNCATED' && !i.reachable));
+  check(`text · ${dev} · ${n} states · only the rows drawn to scroll sideways do`, !found.some((i) => i.kind === 'SCROLLS_X' && !i.scroller), show('SCROLLS_X', (i) => i.kind === 'SCROLLS_X' && !i.scroller));
 }
 
 check('no console or page errors', !errors.length, errors.slice(0, 5).join(' || '));

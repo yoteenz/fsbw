@@ -1,0 +1,19 @@
+{
+  "id": "AIO_OFFICE_WORKSPACE_STYLE_PROVENANCE",
+  "sprint": "P0.AIO.OFFICE.UNIFIED-EXPERIENCE2.MATERIAL-MOTION-AND-DETAIL-POLISH1",
+  "source": {
+    "repo": "yoteenz/SITE00",
+    "branch": "cursor/aio-office-ia-work-tree-4f59",
+    "commit": "3a243a20318f3db6d09428dc0099ef2548300bdf",
+    "path": "docs/aio/office-workspace-style/",
+    "generated_by": "scripts/studioos/aio-office-workspace-style-export.ts"
+  },
+  "rule": "Copied verbatim from SITE00 (the Experience Brain is the source). The style tokens it records are the ones in all-in-one-enterprises/design-authority/aio-office/workspaces/ws.css (src/product-graph/officeWorkspaceStyle.test.ts holds them together); boards, recordings, screens and QA are in AIO_OFFICE_WORKSPACE_PROOFS/. Candidates awaiting founder review; the style is not applied to other lanes or to the public website; approved roots unchanged; nothing in src imports these files; nothing deployed.",
+  "sha256": {
+    "01_STYLE.md": "edfe640fd81b366b716f6be20c525fa113ceb6e4e3cc798fd4d6a68e69c5f14f",
+    "02_POLISH_PASS.md": "2e86d23352678b6f0b1237844b419e6e9051985d3d7ad4416023ac0cad3ccd0c",
+    "QUALITY_GATE.json": "57d2bfa4235ece6f12858ab4929ce728fa58a92a602d8ee9ee0e801c8a9de3cf",
+    "README.md": "2195d7f03ab5187b7cf74eeaaa412faaccf251086d14bb13bfe54b99c75b57ca",
+    "STYLE.json": "d0a0b9c0ece1e6b17e1b9415ee82e6981e9b3b6f4ec6d0acf62709493014220a"
+  }
+}
