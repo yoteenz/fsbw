@@ -991,6 +991,16 @@ const STAGES = [
   ['truck', 'OPERATE', 'YOUR TRUCKS ARE ROLLING AND THE OFFICE WORK IS PILING UP.', 'KEEP THE TRUCK MOVING AND THE MONEY STRAIGHT.', ['operate-my-business', 'move-freight', 'manage-my-money'], ['/get-started', 'CHECK WHAT I NEED', 'A SHORT GUIDED CHECK — YOUR ROADMAP AT THE END.']],
   ['wrench', 'MAINTAIN', 'YOU RUN A FLEET AND EVERYTHING HAS TO STAY CURRENT.', 'STAY CURRENT. STAY SAFE. STAY ON THE ROAD.', ['permits-taxes-compliance', 'safety-drivers', 'fleetcare', 'driverlink'], ['/road-ready', 'CHECK MY BUSINESS', 'ROAD READY™ SHOWS WHAT IS DONE, WHAT IS DUE AND WHAT IS MISSING.']],
 ];
+function explorePanelBody(sel) {
+  const P = D.pathways[sel];
+  const pServices = pathServices(P.id);
+  return {
+    img: IMG(PATH_IMG[P.id]),
+    html: `<div class="explore__body"><p class="eyebrow">0${sel + 1} · ${pServices.length} SERVICES</p><h3 class="h2">${U(P.title)}</h3><p class="lead">${U(P.description)}</p>
+      <div class="explore__svcs">${pServices.slice(0, 6).map((s) => `<a href="#/services/${s.slug}">${ic(svcIcon(s))}<span>${U(s.name)}</span>${chip(s.state)}</a>`).join('')}</div>
+      <div class="hero__ctas"><a class="btn btn--gold" href="#${P.href}">${U(P.ctaLabel)} ${ic('arrow', 'ic--go')}</a><a class="btn btn--line" href="#${CAT_HUB[PATH_CATS[P.id][0]]}">SEE EVERY SERVICE</a></div></div>`,
+  };
+}
 function home() {
   const fams = (ids) => ids.map((id) => {
     if (id === 'fleetcare') return `<a class="fam" href="#/services/fleetcare">${ic('wrench')}<div><b>FLEETCARE NETWORK</b><span>MAINTENANCE & REPAIR · INDEPENDENT PROVIDERS</span></div><div class="fam__end">${ic('chev')}</div></a>`;
@@ -1002,8 +1012,7 @@ function home() {
     return `<a class="fam" href="#${CAT_HUB[id]}">${ic(CAT_ICON[id])}<div><b>${U(c.title)}</b><span>${list.length} SERVICES${id === 'move-freight' ? ' · BROKERAGE PAUSED' : ''}</span></div><div class="fam__end">${chip(st)}</div></a>`;
   }).join('');
   const sel = Math.min(PUB.pathSel || 0, D.pathways.length - 1);
-  const P = D.pathways[sel];
-  const pServices = pathServices(P.id);
+  const panel = explorePanelBody(sel);
   return `
   <section class="hero" data-over-hero>
     <div class="hero__img" style="--img:url(${IMG('hero-home')})"></div>
@@ -1027,11 +1036,7 @@ function home() {
     <div class="dots" aria-hidden="true">${D.pathways.map(() => '<i></i>').join('')}</div>
     ${rv(`<div class="explore" data-key="explore">
       <div class="explore__list" role="tablist" aria-label="WHAT CAN WE HELP YOU DO?">${D.pathways.map((p, i) => `<button class="explore__tab" role="tab" aria-selected="${i === sel}" data-a="pathSel" data-v="${i}"><span class="explore__no">0${i + 1}</span><span class="explore__ic">${ic(PATH_ICON[p.id])}</span><span class="explore__t"><b>${U(p.title)}</b><em>${U(p.description)}</em></span>${ic('chev')}</button>`).join('')}</div>
-      <div class="explore__panel" role="tabpanel" style="--img:url(${IMG(PATH_IMG[P.id])})">
-        <div class="explore__body"><p class="eyebrow">0${sel + 1} · ${pServices.length} SERVICES</p><h3 class="h2">${U(P.title)}</h3><p class="lead">${U(P.description)}</p>
-          <div class="explore__svcs">${pServices.slice(0, 6).map((s) => `<a href="#/services/${s.slug}">${ic(svcIcon(s))}<span>${U(s.name)}</span>${chip(s.state)}</a>`).join('')}</div>
-          <div class="hero__ctas"><a class="btn btn--gold" href="#${P.href}">${U(P.ctaLabel)} ${ic('arrow', 'ic--go')}</a><a class="btn btn--line" href="#${CAT_HUB[PATH_CATS[P.id][0]]}">SEE EVERY SERVICE</a></div></div>
-      </div>
+      <div class="explore__panel" role="tabpanel" style="--img:url(${panel.img})">${panel.html}</div>
     </div>`, 1)}
   </div></section>
 
@@ -1484,13 +1489,52 @@ function jump(id) {
   const top = el.getBoundingClientRect().top - (PUB.scroller ? PUB.scroller.getBoundingClientRect().top : 0) + scrollEl().scrollTop - parseFloat(getComputedStyle(ROOT.firstElementChild).getPropertyValue('--nav'));
   scrollEl().scrollTo({ top, behavior: reduced() || PUB.capture ? 'auto' : 'smooth' });
 }
+/** Homepage tab switches — patch DOM only so the hero and nav do not rebuild. */
+function patchHomeEco() {
+  if ((PUB.path !== '/' && PUB.path !== '') || !ROOT) return false;
+  const eco = ROOT.querySelector('.eco');
+  if (!eco) return false;
+  const tabs = eco.querySelector('.eco__tabs');
+  if (tabs) {
+    tabs.style.setProperty('--i', String(PUB.eco));
+    tabs.querySelectorAll('button[role="tab"]').forEach((btn, n) => {
+      btn.setAttribute('aria-selected', PUB.eco === n ? 'true' : 'false');
+    });
+  }
+  eco.querySelectorAll('.eco__road .stage').forEach((st, n) => {
+    st.classList.toggle('is-on', PUB.eco === n);
+  });
+  return true;
+}
+function patchHomeExplore() {
+  if ((PUB.path !== '/' && PUB.path !== '') || !ROOT) return false;
+  const explore = ROOT.querySelector('.explore');
+  if (!explore) return false;
+  const sel = Math.min(PUB.pathSel || 0, D.pathways.length - 1);
+  explore.querySelectorAll('.explore__tab').forEach((btn, i) => {
+    btn.setAttribute('aria-selected', i === sel ? 'true' : 'false');
+  });
+  const { img, html } = explorePanelBody(sel);
+  const panel = explore.querySelector('.explore__panel');
+  if (panel) {
+    panel.style.setProperty('--img', `url(${img})`);
+    panel.innerHTML = html;
+  }
+  const dots = explore.parentElement?.querySelector('.dots');
+  if (dots) {
+    dots.querySelectorAll('i').forEach((d, i) => {
+      d.style.background = i === sel ? 'var(--gold)' : '';
+    });
+  }
+  return true;
+}
 const ACT = {
   menu: (v) => { PUB.menu = PUB.menu === v ? null : v; PUB.search = false; draw(); },
   search: () => { PUB.search = !PUB.search; PUB.menu = null; PUB.drawer = false; draw(); },
   drawer: () => { PUB.drawer = !PUB.drawer; PUB.search = false; draw(); },
   grp: (v) => { PUB.grp = PUB.grp === v ? null : v; draw(); },
-  eco: (v) => { PUB.eco = Number(v); draw(); },
-  pathSel: (v) => { PUB.pathSel = Number(v); draw(); },
+  eco: (v) => { PUB.eco = Number(v); if (!patchHomeEco()) draw(); },
+  pathSel: (v) => { PUB.pathSel = Number(v); if (!patchHomeExplore()) draw(); },
   pick: (v) => { const [id, slug] = v.split('|'); PUB.pick[id] = slug; draw(); },
   more: (v) => { PUB.open[v] = !PUB.open[v]; draw(); },
   plan: (v) => { PUB.plan = PUB.plan.includes(v) ? PUB.plan.filter((x) => x !== v) : [...PUB.plan, v]; draw(); toast(PUB.plan.includes(v) ? 'ADDED TO MY PLAN — DESIGN REVIEW, NOTHING IS SAVED.' : 'REMOVED FROM MY PLAN.'); },
