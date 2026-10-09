@@ -55754,3 +55754,13 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Journey:** Welcome, show me, let me take over, move verify before prepare, require a reason, replay, that’s right / needs another change / reject, owner approval, separate training publication, completion. A live filing from the page is refused.
 - **Checks:** Contract tests 5/5. Browser pass at 390×844, 834×1194, 1440×900, and 2560×1440 with no horizontal overflow. Explain stays disabled until a reason is entered. Reject returns to Show me. Needs another change returns to the reason. Start over returns to the welcome.
 - **Still true:** No character. No office edits. No worker. No Workflow Journal merge. Observation is not understanding. Training publication is not execution.
+
+---
+
+## 2026-10-09 — AIO public mobile design on preview tunnel (files-only)
+
+- **Context:** Founder needs the new AIO **public website mobile** design on the phone preview tunnel without replacing the live React homepage at `/` or shipping app code changes.
+- **Sprint:** `P0.AIO.PREVIEW-TUNNEL.SHOW-PUBLIC-MOBILE-DESIGN1` on branch `cursor/guided-apprenticeship-foundation-1087` (no branch switch). Copied `all-in-one-enterprises/design-authority/aio-public/` from `origin/master` (design at `4097645e`); **142 files** committed `ae7198fbd` with `[sync-only]`.
+- **URLs (named tunnel):** `/design-authority/aio-public/preview/site.html` (static mobile site — dark truck hero, “FROM STARTUP TO EVERY MILE AFTER.”, GET STARTED, `id="pub"`); `.../local.html` (founder review — START HERE, “THREE QUESTIONS, THEN THE WHOLE SITE”); `/` remains the **current AIO React app** (WHERE BUSINESS MEETS THE ROAD, yellow CTAs). Hostname is the env-configured preview URL (not stored in repo).
+- **Runtime note:** The FS named Cloudflare token routes to **localhost:3001**. Port 3001 must run **AIO Vite** from `all-in-one-enterprises` with `CLOUDFLARE_TUNNEL_HOSTNAME` / `AIO_CLOUDFLARE_TUNNEL_HOSTNAME` set to that public URL so Vite allows the host — not the old `/tmp/aio-public-server.mjs` static dist at `/`. AIO dev on **5173** serves the same paths but is a separate tunnel unless Zero Trust points the hostname there.
+- **Explicitly not done:** No root wiring, no vite config edits in repo, no deploy, no brokerage/auth/prices/privacy work.
