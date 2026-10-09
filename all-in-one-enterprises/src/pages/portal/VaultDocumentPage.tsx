@@ -3,7 +3,7 @@ import { useDemoStore } from '../../demo/useDemoStore';
 import { getVaultDocument } from '../../demo/vaultActions';
 import { getOrganizationId } from '../../demo/vaultActions';
 import { VAULT_CATEGORIES, REJECTION_REASONS } from '../../vault/vaultConfig';
-import { canPreviewDocument } from '../../vault/vaultStorage';
+import { VaultStoragePreview } from '../../components/vault/VaultStoragePreview';
 import { RoadReadyStatusBadge } from '../../components/RoadReadyStatusBadge';
 import { VaultUpload } from '../../components/VaultUpload';
 import { formatDaysRemaining } from '../../calendar/calendarService';
@@ -57,16 +57,12 @@ export function VaultDocumentPage() {
         </section>
       )}
 
-      {canPreviewDocument(doc.mimeType) && doc.storageReference && (
+      {doc.storageReference ? (
         <section className="aio-vault-preview">
           <h2>Preview</h2>
-          {doc.mimeType?.startsWith('image/') ? (
-            <img src={doc.storageReference} alt="" className="aio-vault-preview__img" />
-          ) : (
-            <a href={doc.storageReference} target="_blank" rel="noopener noreferrer" className="aio-btn aio-btn--outline">View PDF</a>
-          )}
+          <VaultStoragePreview doc={doc} pdfLinkLabel="View PDF" />
         </section>
-      )}
+      ) : null}
 
       {(doc.status === 'rejected' || doc.status === 'expired') && (
         <section>

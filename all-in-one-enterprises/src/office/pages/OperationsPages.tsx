@@ -4,7 +4,7 @@ import { useDemoStore } from '../../demo/useDemoStore';
 import { completeTask } from '../../demo/demoActions';
 import { verifyVaultDocument, rejectVaultDocument } from '../../demo/vaultActions';
 import { VAULT_CATEGORIES, REJECTION_REASONS } from '../../vault/vaultConfig';
-import { canPreviewDocument } from '../../vault/vaultStorage';
+import { VaultStoragePreview } from '../../components/vault/VaultStoragePreview';
 import type { RejectionReason } from '../../vault/vaultTypes';
 import { formatDaysRemaining } from '../../calendar/calendarService';
 import { aioPaths } from '../../utils/paths';
@@ -212,13 +212,7 @@ export function DocumentsPage() {
             <div><dt>Expiration</dt><dd>{reviewDoc.expiresAt?.slice(0, 10) ?? 'Not set'}</dd></div>
             {reviewDoc.roadReadyItemId && <div><dt>Road Ready</dt><dd>Linked item {reviewDoc.roadReadyItemId}</dd></div>}
           </dl>
-          {canPreviewDocument(reviewDoc.mimeType) && reviewDoc.storageReference && (
-            reviewDoc.mimeType?.startsWith('image/') ? (
-              <img src={reviewDoc.storageReference} alt="" className="aio-vault-preview__img" />
-            ) : (
-              <a href={reviewDoc.storageReference} target="_blank" rel="noopener noreferrer" className="aio-btn aio-btn--outline">View file</a>
-            )
-          )}
+          <VaultStoragePreview doc={reviewDoc} />
           <div className="aio-office-verify-row__actions">
             <button type="button" className="aio-btn aio-btn--gold" onClick={() => { verifyVaultDocument(reviewDoc.id, 'staff-2', 'Demo Staff'); setReviewId(null); }}>Verify</button>
             <div className="aio-office-reject-form">

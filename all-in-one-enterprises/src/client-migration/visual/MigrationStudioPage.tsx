@@ -2,7 +2,14 @@ import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useAIOAuth } from '../../auth/AIOAuthProvider';
 import { sendClientActivationInvite } from '../../demo/clientMigrationOfficeActions';
-import { loadDemoStore, updateDemoStore } from '../../demo/demoStore';
+import {
+  DEMO_STORE_SAVE_FAILED_EVENT,
+  getLastDemoStoreSaveResult,
+  loadDemoStore,
+  updateDemoStore,
+} from '../../demo/demoStore';
+import { storageWriteErrorMessage } from '../../storage/demoStorage';
+import { isSupabaseMode } from '../../config/dataMode';
 import { useDemoStore } from '../../demo/useDemoStore';
 import { getBatchFiles } from '../../demo/archiveMigrationActions';
 import { createEmptyProfile } from '../../road-ready/roadReadyRules';
@@ -140,6 +147,23 @@ export function MigrationStudioPage() {
   const facts = useMigrationFacts(batch?.id, clientId);
   const conflicts = facts.filter((fact) => fact.confidence === 'CONFLICT' && !fact.reviewAction);
 
+  useEffect(() => {
+    const handler = (event: Event) => {
+      const detail = (event as CustomEvent<{ ok: boolean; error?: { kind: string } }>).detail;
+      if (detail && !detail.ok && detail.error) {
+        setMessage(storageWriteErrorMessage(detail.error as Parameters<typeof storageWriteErrorMessage>[0]));
+      }
+    };
+    window.addEventListener(DEMO_STORE_SAVE_FAILED_EVENT, handler);
+    return () => window.removeEventListener(DEMO_STORE_SAVE_FAILED_EVENT, handler);
+  }, []);
+
+  function throwIfDemoStoreSaveFailed(): void {
+    if (isSupabaseMode()) return;
+    const save = getLastDemoStoreSaveResult();
+    if (!save.ok) throw new Error(storageWriteErrorMessage(save.error));
+  }
+
   const filteredClients = useMemo(() => {
     const needle = query.trim().toLowerCase();
     return store.clients.filter((item) => {
@@ -232,6 +256,7 @@ export function MigrationStudioPage() {
       }
       return current;
     });
+    throwIfDemoStoreSaveFailed();
     return created.batchId;
   }
 
@@ -242,6 +267,7 @@ export function MigrationStudioPage() {
     const result = await uploadFilesToMigrationBatch(batchId, accepted, organizationId);
     if (result.errors.length && result.added === 0) throw new Error(result.errors[0]);
     if (result.errors.length) setMessage(result.errors.join(' '));
+    throwIfDemoStoreSaveFailed();
     setLocalFiles((current) => current.filter((item) => item.status !== 'accepted'));
   }
 
