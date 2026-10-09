@@ -7,6 +7,8 @@ import {
 } from './codex-dispatch-adapter';
 import { buildSite00BuildObjectV2Assignment } from './fabrication-assignment';
 import { join } from 'node:path';
+import { mkdtempSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 
 const FIXTURE = join(import.meta.dirname, '../benchmarks/site00-build-object-v2/fixture');
 
@@ -17,8 +19,18 @@ describe('Codex discovery', () => {
     expect(report.cliVersion).toBeTruthy();
   });
 
-  it('reports auth blocked without API key in cloud agent', () => {
+  it('reports auth blocked without API key and without Codex session store', () => {
+    const prevHome = process.env.CODEX_HOME;
+    const prevKey = process.env.OPENAI_API_KEY;
+    const prevCodexKey = process.env.CODEX_API_KEY;
+    process.env.CODEX_HOME = mkdtempSync(join(tmpdir(), 'wfe-codex-test-'));
+    delete process.env.OPENAI_API_KEY;
+    delete process.env.CODEX_API_KEY;
     const report = discoverCodexInterface({ runAuthProbe: true });
+    if (prevHome) process.env.CODEX_HOME = prevHome;
+    else delete process.env.CODEX_HOME;
+    if (prevKey) process.env.OPENAI_API_KEY = prevKey;
+    if (prevCodexKey) process.env.CODEX_API_KEY = prevCodexKey;
     expect(['BLOCKED', 'UNTESTED']).toContain(report.authStatus);
   });
 });
@@ -42,12 +54,16 @@ describe('Codex dispatch adapter', () => {
       packageRoot: FIXTURE,
       returnRoot: join(import.meta.dirname, '../benchmarks/site00-build-object-v2/execution-runs/codex-test-return2'),
     });
+    const prevHome = process.env.CODEX_HOME;
     const prev = process.env.OPENAI_API_KEY;
+    process.env.CODEX_HOME = mkdtempSync(join(tmpdir(), 'wfe-codex-dispatch-'));
     delete process.env.OPENAI_API_KEY;
     delete process.env.CODEX_API_KEY;
     const record = attemptCodexDispatch(assignment, join(import.meta.dirname, '../benchmarks/site00-build-object-v2/execution-runs/codex-dispatch-work'), {
       forceAuthProbe: true,
     });
+    if (prevHome) process.env.CODEX_HOME = prevHome;
+    else delete process.env.CODEX_HOME;
     if (prev) process.env.OPENAI_API_KEY = prev;
     expect(record.state).toBe('AWAITING_EXTERNAL_EXECUTION');
     expect(record.codexJobId).toBeUndefined();

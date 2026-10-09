@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { beforeAll, describe, expect, it } from 'vitest';
 import { join } from 'node:path';
 import { existsSync } from 'node:fs';
 import { activateProductionPipeline } from './execution-bridge';
@@ -7,6 +7,10 @@ const FIXTURE = join(import.meta.dirname, '../benchmarks/site00-build-object-v2/
 const RUN_ROOT = join(import.meta.dirname, '../benchmarks/site00-build-object-v2/execution-runs/pipeline-activation1');
 
 describe('WFE production pipeline activation proof', () => {
+  beforeAll(() => {
+    process.env.WFE_ALLOW_CODEX_EXEC_IN_VITEST = '1';
+  });
+
   it.skipIf(!existsSync(join(FIXTURE, '01_SOURCE/SITE00_Build_Object_V2.blend')))(
     'activateProductionPipeline — Codex if authed else handoff + Blender proof',
     async () => {

@@ -128,6 +128,16 @@ export function attemptCodexDispatch(
     return record;
   }
 
+  const billableExecAllowed =
+    process.env.WFE_ALLOW_CODEX_EXEC_IN_VITEST === '1' || process.env.VITEST !== 'true';
+  if (!billableExecAllowed) {
+    record.state = 'AWAITING_EXTERNAL_EXECUTION';
+    record.errors.push(
+      'Codex exec skipped in vitest (non-billable). Set WFE_ALLOW_CODEX_EXEC_IN_VITEST=1 for wfe:codex-fabrication-proof only.'
+    );
+    return record;
+  }
+
   mkdirSync(workDir, { recursive: true });
   const promptPath = join(workDir, 'codex-assignment-prompt.txt');
   const prompt = [
