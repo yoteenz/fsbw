@@ -1,5 +1,5 @@
 {
-  "assignmentId": "activation-1791509340224",
+  "assignmentId": "activation-1791519451074",
   "projectId": "site00",
   "assetId": "site00_bld_object_v2",
   "fabricationVersion": "codex-blender-v2",
@@ -25,7 +25,7 @@
   },
   "founderApprovalGate": "FOUNDER_VISUAL_APPROVAL",
   "handoff": {
-    "handoffId": "handoff-activation-1791509340224",
+    "handoffId": "handoff-activation-1791519451074",
     "manifestId": "site00-build-object-v2-benchmark",
     "approvedReferenceAssets": [
       "approved-blueprint-reference"
@@ -93,5 +93,5 @@
       "executionCapabilityStatus": "CONTRACT_ONLY"
     }
   },
-  "createdAt": "2026-10-09T01:29:00.224Z"
+  "createdAt": "2026-10-09T04:17:31.074Z"
 }

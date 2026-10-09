@@ -30,7 +30,7 @@
       "assetId": "site00-codex-blender-v2-package",
       "manifestId": "site00-build-object-v2-benchmark",
       "tier": "APPROVED_MASTER",
-      "storageRef": "/workspace/src/studio-os-core/world-fabrication-engine/benchmarks/site00-build-object-v2/execution-runs/pipeline-activation1/blender-local-proof/return-package",
+      "storageRef": "/workspace/src/studio-os-core/world-fabrication-engine/benchmarks/site00-build-object-v2/execution-runs/pipeline-activation1/codex-return",
       "sourceTool": "BLENDER",
       "fabricationScriptVersion": "V2",
       "approvalStatus": "FOUNDER_REVIEW_PENDING"
@@ -99,7 +99,7 @@
       ],
       "version": "2",
       "agentOrTool": "CODEX_BLENDER",
-      "executedAt": "2026-10-09T04:20:16.261Z",
+      "executedAt": "2026-10-09T04:20:15.660Z",
       "configuration": {
         "sprint": "P0.SITE00.BUILDER.BUILD-OBJECT.V2-REFERENCE-FIDELITY-ARCHITECTURAL-RECONSTRUCTION1"
       },

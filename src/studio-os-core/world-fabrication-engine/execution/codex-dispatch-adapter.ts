@@ -129,16 +129,42 @@ export function attemptCodexDispatch(
   record.state = 'DISPATCHED';
 
   const receiptPath = join(workDir, 'codex-execution-receipt.json');
-  const result = spawnSync('npx', ['--yes', '@openai/codex', 'exec', prompt], {
-    encoding: 'utf8',
-    timeout: 120_000,
-    cwd: workDir,
-    env: process.env,
-  });
+  const timeoutMs = Number(process.env.WFE_CODEX_EXEC_TIMEOUT_MS ?? 480_000);
+  const maxBufferBytes = Number(process.env.WFE_CODEX_EXEC_MAX_BUFFER_BYTES ?? 64 * 1024 * 1024);
+  const result = spawnSync(
+    'npx',
+    [
+      '--yes',
+      '@openai/codex',
+      'exec',
+      '-s',
+      'workspace-write',
+      '-C',
+      process.cwd(),
+      '-',
+    ],
+    {
+      input: prompt,
+      encoding: 'utf8',
+      timeout: timeoutMs,
+      maxBuffer: maxBufferBytes,
+      cwd: workDir,
+      env: process.env,
+    }
+  );
+
+  const timedOut = result.error?.message?.includes('ETIMEDOUT') ?? false;
+  const maxBufferExceeded = result.error?.message?.includes('maxBuffer') ?? false;
 
   const receipt = {
     dispatchId: record.dispatchId,
     exitCode: result.status,
+    signal: result.signal,
+    spawnError: result.error?.message,
+    timedOut,
+    maxBufferExceeded,
+    timeoutMs,
+    maxBufferBytes,
     stdoutTail: (result.stdout ?? '').slice(-4000),
     stderrTail: (result.stderr ?? '').slice(-4000),
     dispatchedAt: record.dispatchTimestamp,
@@ -146,9 +172,21 @@ export function attemptCodexDispatch(
   writeFileSync(receiptPath, JSON.stringify(receipt, null, 2));
   record.executionReceiptPath = receiptPath;
 
+  if (timedOut) {
+    record.state = 'FAILED';
+    record.errors.push(`Codex exec timed out after ${timeoutMs}ms`);
+    return record;
+  }
+  if (maxBufferExceeded) {
+    record.state = 'FAILED';
+    record.errors.push(`Codex exec output exceeded maxBuffer (${maxBufferBytes} bytes)`);
+    return record;
+  }
   if (result.status !== 0 || (result.stderr ?? '').includes('401 Unauthorized')) {
     record.state = 'FAILED';
     record.errors.push('Codex exec did not complete successfully');
+    if (result.signal) record.errors.push(`Codex exec terminated by signal ${result.signal}`);
+    if (result.error?.message) record.errors.push(result.error.message);
     return record;
   }
 

@@ -95,7 +95,7 @@ export function dispatchBlenderBenchmarkJob(
         WFE_RETURN_ROOT: assignment.returnRoot,
       },
       encoding: 'utf8',
-      timeout: options?.timeoutMs ?? 120_000,
+      timeout: options?.timeoutMs ?? Number(process.env.WFE_BLENDER_EXEC_TIMEOUT_MS ?? 180_000),
     }
   );
 

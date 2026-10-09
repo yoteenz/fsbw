@@ -55766,3 +55766,16 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Founder unblock:** Add **`OPENAI_API_KEY`** in Cursor Cloud Agent secrets → **`npm run wfe:codex-fabrication-proof`**.
 
 - **Status:** **PARTIAL — CODEX CONNECTION REQUIRED**; `FULL_LOOP_VERIFIED: NO`. Full `SITE00_Build_Object_V2_Review_Package.zip` still **MISSING**.
+
+
+---
+
+## 2026-10-09 — WFE asset recovery + Codex dispatch fix + full loop proof
+
+- **Context:** Sprints `P0.STUDIOOS.CODEX-AUTH-FRESH-ENVIRONMENT-VERIFICATION1`, `P0.STUDIOOS.WFE.V1-FIRST-AUTHENTICATED-CODEX-FABRICATION-PROOF1`, and `P0.STUDIOOS.WFE.V1-FABRICATION-PROOF-ASSET-RECOVERY-AND-EXECUTION-DIAGNOSTIC1` on branch `cursor/studioos-wfe-v1-codex-auth-unblock1-21dc`.
+- **Codex auth:** `OPENAI_API_KEY` present; `codex login --with-api-key` + `login status` VERIFIED (non-billable probes).
+- **Fixture recovery:** Attached `SITE00_Build_Object_V2_Under4MB_cfff.zip` (sha256 `82c98b0f…`) copied to `incoming/`, safe-extracted to `fixture/`; all 17 inventory file hashes PASS; blend + module-manifest present.
+- **Prior Codex failure root causes:** (1) missing fixture on fresh pod; (2) `spawnSync` default **maxBuffer** exceeded → child killed (`exitCode: null`, stderr tail from truncated Codex/MEMORY output); (3) invalid `codex exec` flags (`-a` / `--ask-for-approval` not supported on `exec` subcommand).
+- **Fixes:** `codex-dispatch-adapter.ts` — stdin prompt, `-s workspace-write`, `-C` repo root, configurable timeout/maxBuffer, receipt records signal/spawnError; proof test timeout 900s; Blender timeout 180s default.
+- **Proof run:** `npm run wfe:codex-fabrication-proof` PASS (~165s); Codex exec exit 0; **tokens used 54,102** (receipt stderr); `fullLoopVerified: true`; execution test GLB sha256 `516c1ef2…` (codex-return + blender-local); lineage registered; founder review **PENDING — V2 REVISE**; validate_v2.py PARTIAL (missing High GLB in reduced archive).
+- **Deploy:** none; benchmark binaries not committed.

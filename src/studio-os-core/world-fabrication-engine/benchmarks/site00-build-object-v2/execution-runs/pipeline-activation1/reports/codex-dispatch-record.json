@@ -1,15 +1,16 @@
 {
-  "dispatchId": "dispatch-activation-1791509340224",
-  "assignmentId": "activation-1791509340224",
+  "dispatchId": "dispatch-activation-1791519451074",
+  "assignmentId": "activation-1791519451074",
   "projectId": "site00",
-  "state": "AWAITING_EXTERNAL_EXECUTION",
-  "authorizationRef": "wfe-budget-zero-activation-1791509340224",
+  "state": "READY_FOR_REVIEW",
+  "authorizationRef": "wfe-budget-zero-activation-1791519451074",
   "expectedOutputs": [
     "02_EXPORTS/SITE00_Build_Object_V2_ExecutionTest_Web.glb",
     "05_DOCUMENTATION/wfe-blender-execution-report.json"
   ],
-  "errors": [
-    "No OPENAI_API_KEY/CODEX_API_KEY in environment (401 Unauthorized on probe)"
-  ],
-  "attemptNumber": 0
+  "errors": [],
+  "attemptNumber": 1,
+  "dispatchTimestamp": "2026-10-09T04:17:35.307Z",
+  "executionReceiptPath": "/workspace/src/studio-os-core/world-fabrication-engine/benchmarks/site00-build-object-v2/execution-runs/pipeline-activation1/codex-work/codex-execution-receipt.json",
+  "codexJobId": "codex-exec-dispatch-activation-1791519451074"
 }

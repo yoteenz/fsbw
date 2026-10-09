@@ -1,7 +1,7 @@
 {
   "job": {
-    "jobId": "job-site00-v2-loop-1791509340804",
-    "assignmentId": "site00-v2-loop-1791509340804",
+    "jobId": "job-site00-v2-loop-1791519615662",
+    "assignmentId": "site00-v2-loop-1791519615662",
     "backend": "BLENDER_LOCAL",
     "status": "SUCCEEDED",
     "phasesCompleted": [
@@ -17,8 +17,8 @@
     ],
     "blenderBin": "/home/ubuntu/.tools/blender-5.2.2-linux-x64/blender",
     "blenderVersion": "5.2.2 LTS",
-    "startedAt": "2026-10-09T01:29:00.804Z",
-    "finishedAt": "2026-10-09T01:29:01.463Z",
+    "startedAt": "2026-10-09T04:20:15.663Z",
+    "finishedAt": "2026-10-09T04:20:16.260Z",
     "exitCode": 0,
     "stdoutLogPath": "/workspace/src/studio-os-core/world-fabrication-engine/benchmarks/site00-build-object-v2/execution-runs/pipeline-activation1/blender-local-proof/return-package/logs/blender-stdout.log",
     "stderrLogPath": "/workspace/src/studio-os-core/world-fabrication-engine/benchmarks/site00-build-object-v2/execution-runs/pipeline-activation1/blender-local-proof/return-package/logs/blender-stderr.log",

@@ -33,6 +33,6 @@ describe('WFE production pipeline activation proof', () => {
 
       expect(existsSync(join(result.reportDir, 'pipeline-activation-result.json'))).toBe(true);
     },
-    180_000
+    900_000
   );
 });
