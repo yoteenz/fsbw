@@ -55865,5 +55865,7 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Context:** Founder authorized a conservative $10-max creative benchmark, one build plus one targeted revision, using approved marble/glass/red-portal reference.
 - **Outcome:** New bpy geometry, packed Blender source, GLB, five 1280×720 Cycles renders, comparison sheet, measured manifests and honest technical/creative audits under `benchmarks/site00-build-object-astra-v1/`. No V2 blend opened or re-exported.
 - **Measured:** 277 mesh objects, 228,996 evaluated/exported triangles, 7 materials; independent GLB counts agree. One revision rendered hero and elevated only; front/side/detail retain initial appearance and are labeled.
-- **Limits:** Partial creative fidelity; marble contrast, red saturation and interior density remain below reference. Founder approval pending. Browser/Unreal/LOD/collision untested. Tokens and cost unknown; no extra paid model sessions or image services invoked.
-- **Sync:** Required `agent-commit.sh --sync-only` attempted; blocked by read-only `.git/index.lock`. All deliverables remain local; no deploy.
+- **Limits:** Partial creative fidelity; marble contrast, red saturation and interior density remain below reference. Founder approval **PENDING** (V2 remains **REVISE — UNCHANGED**). Browser/Unreal/LOD/collision untested.
+- **Codex:** **`gpt-6-astra`** single session, **94,346 tokens** (CLI receipt); USD not exposed by CLI — verify OpenAI usage dashboard against **$10** founder cap.
+- **WFE:** Package ingestion **INGESTED_WITH_WARNINGS**; lineage updated under `ingestion-reports/`. Dispatch adapter allows paid site00/astrea when `WFE_FOUNDER_AUTHORIZED_BUDGET_USD` set.
+- **Sprint ID:** `P0.STUDIOOS.WFE.V1-ASTRA-NATIVE-SITE00-BUILD-OBJECT-CREATIVE-FABRICATION1`. Astréa fabrication **NOT STARTED** (deferred per founder).
