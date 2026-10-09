@@ -55750,3 +55750,19 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Shipped:** `codex-discovery.ts`, `codex-dispatch-adapter.ts`, `artifact-intake.ts`, `fabrication-pipeline.ts`, reports under `execution-runs/codex-dispatch-integration1/`. **64** WFE tests pass (incl. real pipeline + Blender).
 
 - **Status:** **PARTIAL — DISPATCH BLOCKED**; `FULL_LOOP_VERIFIED: NO`. Shadow PC / Unreal **NOT_AVAILABLE** / **NOT_TESTED**.
+
+---
+
+## 2026-10-09 — WFE Codex production pipeline activation (execution bridge)
+
+- **Context:** Sprint `P0.STUDIOOS.WORLD-FABRICATION-ENGINE.V1-CODEX-DISPATCH-AND-PRODUCTION-PIPELINE-ACTIVATION1`. PR stack **#49–#53 OPEN** (#49 **CONFLICTING** with master); continued on **`cursor/studioos-wfe-v1-codex-pipeline-activation1-21dc`** stacked on #53.
+
+- **Codex interface:** Supported **`@openai/codex` CLI 0.162.0** via `npx`; **auth BLOCKED** (401) without `OPENAI_API_KEY` in cloud secrets — not a missing endpoint.
+
+- **Shipped:** `execution-bridge.ts` (`activateProductionPipeline`), `codex-fabrication-proof.test.ts`, npm script **`wfe:codex-fabrication-proof`**, external handoff bundle (`external-handoff/RUN_EXTERNAL_CODEX_HANDOFF.sh`), evidence under `execution-runs/pipeline-activation1/`. **47** WFE + **17** governance tests pass; build pass.
+
+- **Verified locally (not Codex):** Blender **5.2.2** execution test GLB sha256 `516c1ef2…`, Studio OS ingest + lineage; founder review **PENDING — V2 REVISE**.
+
+- **Founder unblock:** Add **`OPENAI_API_KEY`** in Cursor Cloud Agent secrets → **`npm run wfe:codex-fabrication-proof`**.
+
+- **Status:** **PARTIAL — CODEX CONNECTION REQUIRED**; `FULL_LOOP_VERIFIED: NO`. Full `SITE00_Build_Object_V2_Review_Package.zip` still **MISSING**.

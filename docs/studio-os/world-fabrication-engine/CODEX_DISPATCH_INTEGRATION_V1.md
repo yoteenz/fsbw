@@ -7,8 +7,8 @@
 | Package | `@openai/codex` |
 | CLI | `npx @openai/codex` (0.162.0 observed) |
 | Subcommand | `codex exec` |
-| Auth | `OPENAI_API_KEY` or Codex OAuth session |
-| Cloud agent probe | **401 Unauthorized** without configured secrets |
+| Auth | ChatGPT login, device-auth, or `OPENAI_API_KEY` → `codex login --with-api-key` |
+| Cloud agent probe | **Non-billable:** `codex login status` + `codex doctor` (see `CODEX_AUTHENTICATION_UNBLOCK_V1.md`) |
 
 ## Dispatch states
 
@@ -20,9 +20,12 @@ Local `blender --background` subprocess (WFE Blender runner) — separate backen
 
 ## Unblock dispatch
 
+See **`CODEX_AUTHENTICATION_UNBLOCK_V1.md`** for ChatGPT vs API-key billing and cloud constraints.
+
 1. Cursor → **Project Settings → Cloud Agent → Secrets**
-2. Add **`OPENAI_API_KEY`** (valid OpenAI key with Codex access)
-3. Run: **`npm run wfe:codex-fabrication-proof`**
+2. Add **`OPENAI_API_KEY`** (Platform API key — usage billed separately from ChatGPT subscription)
+3. **Authorize** one bounded proof run in chat (billable when using API key)
+4. Run: **`npm run wfe:codex-fabrication-proof`**
 
 Without that secret, outcome is **PARTIAL — CODEX CONNECTION REQUIRED**; external handoff bundle is written under `execution-runs/pipeline-activation1/external-handoff/`.
 
