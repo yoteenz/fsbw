@@ -55736,3 +55736,17 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Status:** **PARTIAL** — Blender + return ingestion verified; **FULL_LOOP** not verified (Codex dispatch blocked; full review zip missing).
 
 - **Docs:** `FABRICATION_EXECUTION_LOOP_V1.md`.
+
+---
+
+## 2026-10-09 — WFE Codex dispatch integration + full V2 package intake
+
+- **Context:** Sprint `P0.STUDIOOS.WORLD-FABRICATION-ENGINE.V1-FULL-V2-REVIEW-PACKAGE-INGEST-AND-CODEX-DISPATCH-INTEGRATION1`. PRs **#49–#52** still **OPEN**; stacked from #52 @ `ae6b383b1`.
+
+- **Codex:** Verified **`@openai/codex` CLI 0.162.0** (`npx @openai/codex exec`); **auth BLOCKED** (401) without cloud secrets — dispatch adapter returns `AWAITING_EXTERNAL_EXECUTION`, not fake DISPATCHED. Local Blender remains separate backend.
+
+- **Full V2 zip:** **MISSING** in runtime; intake path `benchmarks/site00-build-object-v2/incoming/` + `WFE_FULL_V2_PACKAGE_PATH`; `validate_v2.py` **BLOCKED** until full package (High GLB + FBX).
+
+- **Shipped:** `codex-discovery.ts`, `codex-dispatch-adapter.ts`, `artifact-intake.ts`, `fabrication-pipeline.ts`, reports under `execution-runs/codex-dispatch-integration1/`. **64** WFE tests pass (incl. real pipeline + Blender).
+
+- **Status:** **PARTIAL — DISPATCH BLOCKED**; `FULL_LOOP_VERIFIED: NO`. Shadow PC / Unreal **NOT_AVAILABLE** / **NOT_TESTED**.
