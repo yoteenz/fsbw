@@ -57,7 +57,8 @@ describe('Record ↔ workspaces', () => {
   });
 
   it('the review offers exactly the recorded TRY demonstrations', () => {
-    const review = ws('ws-review.js');
+    // since the complete-office sprint each workspace registers its own demonstrations beside it (registerWorkspace)
+    const review = ['ws-review.js', 'ws-fleet.js', 'ws-books.js', 'ws-compliance.js', 'ws-client.js'].map(ws).join('\n');
     for (const [id, labels] of Object.entries(REC.demos)) for (const l of labels) expect(review, `${id}: ${l}`).toContain(`['${l}', [`);
   });
 
