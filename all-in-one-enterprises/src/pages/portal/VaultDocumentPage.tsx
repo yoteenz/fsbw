@@ -4,6 +4,7 @@ import { getVaultDocument } from '../../demo/vaultActions';
 import { getOrganizationId } from '../../demo/vaultActions';
 import { VAULT_CATEGORIES, REJECTION_REASONS } from '../../vault/vaultConfig';
 import { canPreviewDocument } from '../../vault/vaultStorage';
+import { useVaultStorageUrl } from '../../vault/useVaultStorageUrl';
 import { RoadReadyStatusBadge } from '../../components/RoadReadyStatusBadge';
 import { VaultUpload } from '../../components/VaultUpload';
 import { formatDaysRemaining } from '../../calendar/calendarService';
@@ -15,6 +16,7 @@ export function VaultDocumentPage() {
   const store = useDemoStore();
   const orgId = getOrganizationId(store);
   const doc = documentId ? getVaultDocument(documentId) : undefined;
+  const previewUrl = useVaultStorageUrl(doc?.storageReference);
 
   if (!doc || doc.organizationId !== orgId) {
     return (
@@ -57,13 +59,13 @@ export function VaultDocumentPage() {
         </section>
       )}
 
-      {canPreviewDocument(doc.mimeType) && doc.storageReference && (
+      {canPreviewDocument(doc.mimeType) && previewUrl && (
         <section className="aio-vault-preview">
           <h2>Preview</h2>
           {doc.mimeType?.startsWith('image/') ? (
-            <img src={doc.storageReference} alt="" className="aio-vault-preview__img" />
+            <img src={previewUrl} alt="" className="aio-vault-preview__img" />
           ) : (
-            <a href={doc.storageReference} target="_blank" rel="noopener noreferrer" className="aio-btn aio-btn--outline">View PDF</a>
+            <a href={previewUrl} target="_blank" rel="noopener noreferrer" className="aio-btn aio-btn--outline">View PDF</a>
           )}
         </section>
       )}

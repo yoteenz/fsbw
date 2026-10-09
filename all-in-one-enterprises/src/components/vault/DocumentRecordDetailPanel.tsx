@@ -3,7 +3,7 @@ import { useState } from 'react';
 import type { VaultDocument } from '../../vault/vaultTypes';
 import { labelForCategory } from '../../vault/vaultTaxonomy';
 import { REJECTION_REASONS } from '../../vault/vaultConfig';
-import { canPreviewDocument } from '../../vault/vaultStorage';
+import { VaultDocumentPreview } from '../../vault/VaultDocumentPreview';
 import { formatDaysRemaining } from '../../calendar/calendarService';
 import { aioPaths } from '../../utils/paths';
 import type { RejectionReason } from '../../vault/vaultTypes';
@@ -134,18 +134,18 @@ export function DocumentRecordDetailPanel({
         )}
       </div>
 
-      {canPreviewDocument(doc.mimeType) && doc.storageReference && (
+      {doc.storageReference ? (
         <section className="aio-doc-vault-preview aio-oc-panel">
           <h2>Preview</h2>
-          {doc.mimeType?.startsWith('image/') ? (
-            <img src={doc.storageReference} alt="" className="aio-doc-vault-preview__img" />
-          ) : (
-            <a href={doc.storageReference} target="_blank" rel="noopener noreferrer" className="aio-btn aio-btn--outline-dark">
-              Open PDF
-            </a>
-          )}
+          <VaultDocumentPreview
+            mimeType={doc.mimeType}
+            storageReference={doc.storageReference}
+            imgClassName="aio-doc-vault-preview__img"
+            linkClassName="aio-btn aio-btn--outline-dark"
+            linkLabel="Open PDF"
+          />
         </section>
-      )}
+      ) : null}
 
       {doc.rejectionReason && (
         <section className="aio-doc-vault-rejection aio-oc-panel" role="alert">

@@ -55784,3 +55784,11 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Tunnel paths (hostname from env, not in repo):** `…/design-authority/aio-office/workspaces/preview/site.html` and `…/design-authority/aio-office/office/preview/site.html`. Canon doc: `docs/cloud-agent/aio-design-preview-tunnel.md`.
 - **Build fix:** Office `build.mjs` scripts use `python3 -c` (not `-I`) so Pillow in user site-packages works on Cloud Agent; both builds emit `site.html` alias beside `local.html`.
 - **Checks:** HTTP 200 on localhost:3001; browser pass — workspace Fleet phone + unified HOME phone. Claude artifact links remain canonical in founder docs.
+
+---
+
+## 2026-10-09 — AIO public nav overlays patch in place
+
+- **Context:** Top nav dropdowns (SERVICES / SOLUTIONS / RESOURCES), search panel, and mobile drawer were calling full `draw()`, refreshing the whole page and jumping scroll — same class of bug as eco/syb tabs.
+- **Fix:** `patchNavChrome()` updates only `header.nav` (pop, search, drawer, aria-expanded, icons); `patchToast()` for toasts. ACT `menu`, `search`, `drawer`, `grp`, outside-click dismiss, and Escape use patch-first. `#pub-main` is not replaced when opening overlays.
+- **Checks:** Desktop SERVICES mega-menu and mobile drawer + grp expand keep the same `#pub-main` node and scroll (rebuilt preview).

@@ -1,4 +1,5 @@
 import { AIO_STORAGE_KEYS, readStorage, removeStorage, writeStorage } from '../storage/demoStorage';
+import { demoIdbReference, putDemoBlob } from '../storage/demoBlobStorage';
 import { defaultIntakeAnswers } from '../intake/intakeTypes';
 import type { ServicePlanItem } from '../repositories/servicePlanRepository';
 import type { RoadmapResult } from '../roadmap/roadmapTypes';
@@ -923,8 +924,55 @@ function migrateLegacyStore(): DemoStore | null {
   return seed;
 }
 
+function storeHasInlineVaultData(store: DemoStore): boolean {
+  if ((store.documents ?? []).some((d) => d.storageReference?.startsWith('data:'))) return true;
+  return (store.archiveMigrationBatchFiles ?? []).some((f) => f.storageReference?.startsWith('data:'));
+}
+
+/** Move inline data URLs to IndexedDB; localStorage keeps demo-idb: refs only. */
+function offloadInlineVaultDataToIndexedDb(next: DemoStore): void {
+  for (const doc of next.documents ?? []) {
+    const ref = doc.storageReference;
+    if (!ref?.startsWith('data:')) continue;
+    const dataUrl = ref;
+    doc.storageReference = demoIdbReference(doc.id);
+    void putDemoBlob(doc.id, dataUrl);
+  }
+  for (const file of next.archiveMigrationBatchFiles ?? []) {
+    const ref = file.storageReference;
+    if (!ref?.startsWith('data:')) continue;
+    const dataUrl = ref;
+    file.storageReference = demoIdbReference(file.id);
+    void putDemoBlob(file.id, dataUrl);
+  }
+}
+
+/** Keep PDF/image bytes out of localStorage — metadata only in aio_debug_store. */
+function prepareStoreForPersistence(store: DemoStore): DemoStore {
+  const next = structuredClone(store);
+  offloadInlineVaultDataToIndexedDb(next);
+  return next;
+}
+
+export function demoStoreHasInlineVaultData(store: DemoStore = loadDemoStore()): boolean {
+  return storeHasInlineVaultData(store);
+}
+
 export function saveDemoStore(store: DemoStore): void {
-  writeStorage(DEMO_STORE_KEY, store);
+  let payload = prepareStoreForPersistence(store);
+  try {
+    writeStorage(DEMO_STORE_KEY, payload);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    if (!message.includes('exceeded the quota')) throw err;
+    payload = prepareStoreForPersistence(structuredClone(store));
+    try {
+      writeStorage(DEMO_STORE_KEY, payload);
+    } catch {
+      offloadInlineVaultDataToIndexedDb(payload);
+      writeStorage(DEMO_STORE_KEY, payload);
+    }
+  }
   if (typeof window !== 'undefined') {
     window.dispatchEvent(new Event(STORE_EVENT));
   }

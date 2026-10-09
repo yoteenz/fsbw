@@ -25,7 +25,17 @@ export function readStorage<T>(key: string, fallback: T): T {
 
 export function writeStorage<T>(key: string, value: T): void {
   if (typeof window === 'undefined') return;
-  window.localStorage.setItem(key, JSON.stringify(value));
+  try {
+    window.localStorage.setItem(key, JSON.stringify(value));
+  } catch (e) {
+    if (e instanceof DOMException && e.name === 'QuotaExceededError') {
+      throw new Error(
+        `Setting the value of '${key}' exceeded the quota. Clear site data for this preview host or use Reset demo data in the debug banner.`,
+        { cause: e },
+      );
+    }
+    throw e;
+  }
 }
 
 export function removeStorage(key: string): void {

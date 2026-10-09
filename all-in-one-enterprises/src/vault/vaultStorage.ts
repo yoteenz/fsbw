@@ -1,6 +1,9 @@
+import { demoIdbReference, getDemoBlob, parseDemoIdbReference, putDemoBlob } from '../storage/demoBlobStorage';
 import { FILE_POLICY } from './vaultConfig';
 import { hashFileSha256 } from './documentHash';
 import type { VaultUploadInput, VaultUploadResult } from './vaultTypes';
+
+const dataUrlCache = new Map<string, string>();
 
 export type StorageMode = 'demo' | 'backend';
 
@@ -22,7 +25,7 @@ export function validateUploadFile(file: File): string | null {
   return null;
 }
 
-/** Demo: store as data URL in metadata. Backend: would upload to dedicated AIO bucket. */
+/** Demo: file bytes in IndexedDB; metadata + demo-idb ref in localStorage. Backend: dedicated bucket. */
 export async function storeVaultFile(input: VaultUploadInput): Promise<VaultUploadResult> {
   const validationError = validateUploadFile(input.file);
   if (validationError) return { document: null as never, error: validationError };
@@ -31,11 +34,14 @@ export async function storeVaultFile(input: VaultUploadInput): Promise<VaultUplo
     return { document: null as never, error: 'Secure storage not configured. Document metadata saved in demo mode only.' };
   }
 
+  const docId = crypto.randomUUID();
   const dataUrl = await readFileAsDataUrl(input.file);
+  await putDemoBlob(docId, dataUrl);
+  dataUrlCache.set(docId, dataUrl);
   const fileHash = await hashFileSha256(input.file);
   return {
     document: {
-      id: crypto.randomUUID(),
+      id: docId,
       organizationId: input.organizationId,
       category: input.category,
       documentType: input.documentType,
@@ -50,7 +56,7 @@ export async function storeVaultFile(input: VaultUploadInput): Promise<VaultUplo
       verificationStatus: 'pending_review',
       recordLifecycle: 'pending',
       source: input.source ?? 'client_upload',
-      storageReference: dataUrl,
+      storageReference: demoIdbReference(docId),
       mimeType: input.file.type || 'application/octet-stream',
       fileName: input.file.name,
       fileSizeBytes: input.file.size,
@@ -82,6 +88,20 @@ function readFileAsDataUrl(file: File): Promise<string> {
     reader.onerror = () => reject(new Error('Failed to read file'));
     reader.readAsDataURL(file);
   });
+}
+
+/** Preview href/src for vault documents (inline data URLs or demo IndexedDB blobs). */
+export async function resolveVaultStorageReference(ref?: string): Promise<string | undefined> {
+  if (!ref) return undefined;
+  if (ref.startsWith('data:') || ref.startsWith('http://') || ref.startsWith('https://') || ref.startsWith('blob:')) {
+    return ref;
+  }
+  const blobId = parseDemoIdbReference(ref);
+  if (!blobId) return ref;
+  if (dataUrlCache.has(blobId)) return dataUrlCache.get(blobId);
+  const dataUrl = await getDemoBlob(blobId);
+  if (dataUrl) dataUrlCache.set(blobId, dataUrl);
+  return dataUrl ?? undefined;
 }
 
 export function canPreviewDocument(mimeType?: string): boolean {

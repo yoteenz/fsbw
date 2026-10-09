@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useAIOAuth } from '../../auth/AIOAuthProvider';
 import { sendClientActivationInvite } from '../../demo/clientMigrationOfficeActions';
-import { loadDemoStore, updateDemoStore } from '../../demo/demoStore';
+import { demoStoreHasInlineVaultData, loadDemoStore, saveDemoStore, updateDemoStore } from '../../demo/demoStore';
 import { useDemoStore } from '../../demo/useDemoStore';
 import type { Client } from '../../demo/demoTypes';
 import { getBatchFiles } from '../../demo/archiveMigrationActions';
@@ -129,6 +129,11 @@ export function MigrationStudioPage() {
   const [dupDecisions, setDupDecisions] = useState<Record<string, DupDecision>>({});
   const [inviteEmail, setInviteEmail] = useState('');
   const [sentUrl, setSentUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    const s = loadDemoStore();
+    if (demoStoreHasInlineVaultData(s)) saveDemoStore(s);
+  }, []);
 
   const clientId = params.get('client') ?? '';
   const client = store.clients.find((item) => item.id === clientId);
