@@ -55792,3 +55792,12 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Context:** Top nav dropdowns (SERVICES / SOLUTIONS / RESOURCES), search panel, and mobile drawer were calling full `draw()`, refreshing the whole page and jumping scroll — same class of bug as eco/syb tabs.
 - **Fix:** `patchNavChrome()` updates only `header.nav` (pop, search, drawer, aria-expanded, icons); `patchToast()` for toasts. ACT `menu`, `search`, `drawer`, `grp`, outside-click dismiss, and Escape use patch-first. `#pub-main` is not replaced when opening overlays.
 - **Checks:** Desktop SERVICES mega-menu and mobile drawer + grp expand keep the same `#pub-main` node and scroll (rebuilt preview).
+
+---
+
+## 2026-10-09 — AIO migration localStorage quota (new client intake)
+
+- **Context:** Founder saw **`Failed to execute 'setItem' on 'Storage': setting the value of 'AIO_DEBUG_STORE' exceeded the quota`** on **FILES RECEIVED → BEGIN EXTRACTION** for new client migration (demo mode embedded full PDFs as base64 in `localStorage` key `aio_debug_store`).
+- **Fix:** Demo vault bytes go to **IndexedDB** (`aio_demo_vault_blobs`); store keeps **`demo-idb:{id}`** refs only. `storeVaultFile` writes blobs via `putDemoBlob`; `saveDemoStore` offloads legacy inline `data:` URLs from `documents` and `archiveMigrationBatchFiles` before persist. Previews use `useVaultStorageUrl` / `VaultDocumentPreview`.
+- **Recovery:** If the preview host is already over quota, **clear site data** once (or Reset demo data); after fix, new uploads stay small in localStorage.
+- **Checks:** `127.0.0.1:3001/office/migration` new client → upload → BEGIN EXTRACTION reaches extraction stages with no quota error. Commit `e8f9599c6` on `cursor/guided-apprenticeship-foundation-1087`; PR branch, not master deploy.
