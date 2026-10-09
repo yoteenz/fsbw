@@ -1,0 +1,26 @@
+{
+  "sprintId": "P0.STUDIOOS.WFE.V1-ASTRA-NATIVE-BLENDER-CREATIVE-FABRICATION-BENCHMARK1",
+  "founderBillableAuthorization": "NO",
+  "authorizationRequiredFor": "codex exec creative fabrication (gpt-6-astra) + Blender scene construction + render inspection loops",
+  "billingMechanism": "OpenAI API — Codex exec token usage",
+  "proposedExecutionBudget": {
+    "maxCodexSessions": 3,
+    "maxRevisionCycles": 2,
+    "timeoutMsPerSession": 900000,
+    "estimatedTokenBand": "150000-400000",
+    "allowPaidGeneration": true,
+    "note": "Estimate only; actual cost reported from execution receipt after authorized run"
+  },
+  "blockedUntil": [
+    "Founder explicit billable authorization",
+    "WFE dispatch authorization extended for astrea creative project",
+    "Assignment prompt wired to creative benchmark (not SITE 00 validate_v2)"
+  ],
+  "preflightCompleted": [
+    "PR #58 merged on master",
+    "Codex auth verified",
+    "gpt-6-astra catalog + API support verified",
+    "Creative references located in astra-context/",
+    "Fabrication plan documented"
+  ]
+}

@@ -1,0 +1,70 @@
+{
+  "assignmentId": "astrea-entrance-threshold-creative-v1",
+  "projectId": "astrea",
+  "assetId": "astrea_entrance_threshold",
+  "fabricationVersion": "codex-astra-blender-v1",
+  "productionLane": "ENVIRONMENT_ART",
+  "productionProfileId": "ASTREA_ENTRANCE_THRESHOLD",
+  "targetRuntime": "WEB_3D",
+  "secondaryProfile": "UNREAL_WORLD",
+  "proofEnvironment": "ASTREA_ENTRANCE_THRESHOLD",
+  "codexModelId": "gpt-6-astra",
+  "packageRoot": "src/studio-os-core/world-fabrication-engine/benchmarks/astrea-entrance-threshold-v1",
+  "returnRoot": "src/studio-os-core/world-fabrication-engine/benchmarks/astrea-entrance-threshold-v1/execution-runs/creative-v1/return-package",
+  "approvedReferenceIds": [
+    "astra-context/references/astral-world-desktop-reference.png",
+    "astra-context/references/astral-world-mobile-reference.png",
+    "astra-context/references/AW_D_01_final-composition-reference-v1.jpg",
+    "astra-context/references/AW_M_01_final-composition-reference-v1.jpg"
+  ],
+  "expectedDeliverables": [
+    "01_SOURCE/Astrea_Entrance_Threshold_v1.blend",
+    "02_EXPORTS/Astrea_Entrance_Threshold_Review.glb",
+    "02_EXPORTS/Astrea_Entrance_Threshold_Web.glb",
+    "03_RENDERS/CAM_01_HERO_THRESHOLD.png",
+    "03_RENDERS/CAM_02_LEFT_THREE_QUARTER.png",
+    "03_RENDERS/CAM_03_RIGHT_THREE_QUARTER.png",
+    "03_RENDERS/CAM_04_ENTRANCE_DETAIL.png",
+    "03_RENDERS/CAM_05_THROUGH_THRESHOLD.png",
+    "03_RENDERS/CAM_06_ELEVATED_SPATIAL.png",
+    "04_COMPARISONS/reference-vs-hero-v1.png",
+    "05_MATERIALS/material-manifest.json",
+    "06_DOCUMENTATION/fabrication-manifest.json",
+    "06_DOCUMENTATION/technical-art-audit.json",
+    "06_DOCUMENTATION/creative-fidelity-assessment.md",
+    "07_REVIEW/founder-contact-sheet.md"
+  ],
+  "moduleHierarchy": [
+    "ENTRANCE_STRUCTURE",
+    "PRIMARY_PORTAL",
+    "FLOOR_SYSTEM",
+    "LEFT_ARCHITECTURE",
+    "RIGHT_ARCHITECTURE",
+    "OVERHEAD_STRUCTURE",
+    "GLASS_ELEMENTS",
+    "METAL_DETAILS",
+    "ARCHITECTURAL_ACCENTS",
+    "LIGHTING",
+    "CAMERAS",
+    "ENVIRONMENT"
+  ],
+  "executionBudget": {
+    "allowPaidGeneration": false,
+    "maxAttempts": 3,
+    "maxRevisionCycles": 2,
+    "awaitingFounderAuthorization": true
+  },
+  "founderApprovalGate": "FOUNDER_VISUAL_APPROVAL",
+  "creativeWorkflow": [
+    "interpret_reference",
+    "plan_architecture",
+    "build_blender_geometry",
+    "materials_and_lighting",
+    "configure_cameras",
+    "render",
+    "inspect_renders_with_image_input",
+    "bounded_revision",
+    "package_and_ingest"
+  ],
+  "status": "PREFLIGHT_ONLY_NOT_DISPATCHED"
+}

@@ -10,4 +10,11 @@ describe('Codex exec invocation (non-billable regression)', () => {
     expect(argv.join(' ')).not.toMatch(/\s-a\s|--ask-for-approval/);
     expect(argv).toContain('-s');
   });
+
+  it('inserts -m when model option is provided', () => {
+    const { argv } = buildCodexExecInvocation('test', { model: 'gpt-6-astra' });
+    const mIdx = argv.indexOf('-m');
+    expect(mIdx).toBeGreaterThan(-1);
+    expect(argv[mIdx + 1]).toBe('gpt-6-astra');
+  });
 });

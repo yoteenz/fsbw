@@ -44,20 +44,24 @@ function stableDispatchKey(assignment: FabricationAssignmentManifest): string {
 }
 
 /** Stable argv for `codex exec` — regression-tested (no unsupported approval flags). */
-export function buildCodexExecInvocation(_prompt: string): { argv: string[]; useStdin: true } {
-  return {
-    argv: [
-      '--yes',
-      '@openai/codex',
-      'exec',
-      '-s',
-      'workspace-write',
-      '-C',
-      process.cwd(),
-      '-',
-    ],
-    useStdin: true,
-  };
+export function buildCodexExecInvocation(
+  _prompt: string,
+  options?: { model?: string; cwd?: string }
+): { argv: string[]; useStdin: true } {
+  const model = options?.model ?? process.env.WFE_CODEX_MODEL;
+  const cwd = options?.cwd ?? process.cwd();
+  const argv = [
+    '--yes',
+    '@openai/codex',
+    'exec',
+    ...(model ? ['-m', model] : []),
+    '-s',
+    'workspace-write',
+    '-C',
+    cwd,
+    '-',
+  ];
+  return { argv, useStdin: true };
 }
 
 export function prepareCodexHandoff(assignment: FabricationAssignmentManifest): CodexDispatchRecord {
