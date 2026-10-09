@@ -242,3 +242,9 @@ body { margin: 0; background: var(--bg); color: var(--fg); font: 400 15px/1.45 v
 .rv-earlier[open] > summary::before { content: '− '; }
 .rv-earlier[open] { display: grid; gap: 22px; }
 @media (prefers-reduced-motion: reduce) { .rv-shot { transition: none; } }
+/* group cards: the name on one row, what it is built around on the next — every caption the same height */
+.rv-group-sec .rv-card__cap { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; grid-template-rows: auto auto; align-items: center; column-gap: 10px; row-gap: 7px; }
+.rv-group-sec .rv-card__no { grid-row: 1; grid-column: 1; }
+.rv-group-sec .rv-card__t { grid-row: 1; grid-column: 2; min-width: 0; }
+.rv-group-sec .rv-card__shape { grid-row: 2; grid-column: 2; justify-self: start; }
+.rv-group-sec .rv-card__go { grid-row: 1 / span 2; grid-column: 3; margin-left: 0; }

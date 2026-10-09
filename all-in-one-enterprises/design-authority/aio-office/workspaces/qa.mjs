@@ -90,7 +90,7 @@ async function structure(p, label, { fits }) {
     const handlers = new Set(window.AIO_WS.actions());
     const all = [...scr.querySelectorAll('[data-a]')];
     const unknown = [...new Set(all.map((e) => e.dataset.a).filter((a) => !handlers.has(a)))];
-    const dead = [...scr.querySelectorAll('button, [role=button], a')].filter((b) => !b.disabled && !b.closest('[inert]') && !(b.dataset.a || b.dataset.act || b.dataset.k || b.dataset.go || b.dataset.input)).map((b) => b.outerHTML.slice(0, 90));
+    const dead = [...scr.querySelectorAll('button, [role=button], a')].filter((b) => !b.disabled && !b.closest('[inert]') && !(b.dataset.a || b.dataset.act || b.dataset.k || b.dataset.go || b.dataset.input) && !(b.tagName === 'A' && /^(https?:|mailto:|tel:)/.test(b.getAttribute('href') || ''))).map((b) => b.outerHTML.slice(0, 90)); // a real link out is live
     const inputs = [...scr.querySelectorAll('input')].filter((i) => !i.dataset.input).length;
     // every clickable that is not a native control can be reached and pressed from the keyboard
     const unreachable = [...scr.querySelectorAll('[data-a]:not(button):not(input):not(.wscrim), [data-k]:not(button), [data-go]:not(button)')].filter((e) => e.getAttribute('tabindex') !== '0' || e.getAttribute('role') !== 'button').map((e) => e.outerHTML.slice(0, 80));

@@ -78,17 +78,23 @@ function inspect() {
   for (const el of pub.querySelectorAll('input[placeholder], textarea[placeholder]')) if (/[a-z]/.test(el.placeholder) && getComputedStyle(el).textTransform !== 'uppercase') out.lower.push(el.placeholder);
   for (const el of pub.querySelectorAll('.btn, .chip, .nav__a, .link, .rv-tag, .crumbs a, .svc__go, .plan__flag, .screen__tag, .eco__tabs button, .step__n, .st__dot')) {
     if (!vis(el)) continue;
-    const cs = getComputedStyle(el);
-    const lh = parseFloat(cs.lineHeight) || parseFloat(cs.fontSize) * 1.2;
-    const range = document.createRange();
-    range.selectNodeContents(el);
-    const lines = new Set([...range.getClientRects()].filter((r) => r.width > 1).map((r) => Math.round(r.top)));
-    if (lines.size > 1 && el.getBoundingClientRect().height > lh * 1.9) out.wraps.push(el.textContent.trim().slice(0, 40));
+    // the text's own line boxes only (an icon beside the words is not a second line)
+    const fs = parseFloat(getComputedStyle(el).fontSize);
+    const tops = [];
+    const tw = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+    while (tw.nextNode()) {
+      if (!tw.currentNode.textContent.trim()) continue;
+      const range = document.createRange();
+      range.selectNodeContents(tw.currentNode);
+      for (const r of range.getClientRects()) if (r.width > 1) tops.push(r.top);
+    }
+    const lines = tops.sort((x, y) => x - y).filter((t, i, a) => i === 0 || t - a[i - 1] > fs * 0.6).length;
+    if (lines > 1) out.wraps.push(el.textContent.trim().slice(0, 40));
   }
   for (const el of pub.querySelectorAll('*')) {
     if (!vis(el) || !el.textContent.trim()) continue;
     const cs = getComputedStyle(el);
-    if (['hidden', 'clip'].includes(cs.overflowX) && el.scrollWidth > el.clientWidth + 2 && !el.matches('.pub, .pub-wrap, .hero, .phero, .eco, .ready, .close, .path, .photo, .pop--mega, .rv-frame')) out.clipped.push(`${el.className} "${el.textContent.trim().slice(0, 30)}"`);
+    if (['hidden', 'clip'].includes(cs.overflowX) && el.scrollWidth > el.clientWidth + 2 && !el.matches('.pub, .pub-wrap, .hero, .phero, .eco, .ready, .close, .path, .photo, .pop--mega, .rv-frame, .sr')) out.clipped.push(`${el.className} "${el.textContent.trim().slice(0, 30)}"`);
   }
   for (const img of pub.querySelectorAll('img')) if (vis(img) && (!img.complete || !img.naturalWidth)) out.images.push(img.getAttribute('src'));
   for (const el of pub.querySelectorAll('[style*="url("]')) {
@@ -254,7 +260,7 @@ for (const dev of process.env.QA_SKIP_PAGES ? [] : Object.keys(DEV)) {
 /* ── 5 · motion: cinematic, controlled, off for reduced motion ── */
 {
   const p = await site('desktop');
-  const css = await p.evaluate(() => [...document.styleSheets].flatMap((s) => [...s.cssRules].map((r) => r.cssText)).join('\n'));
+  const css = await p.evaluate(() => [...document.styleSheets].flatMap((s) => { try { return [...s.cssRules].map((r) => r.cssText); } catch { return []; } }).join('\n')); // the hosted font sheet is cross-origin
   check('motion · nothing loops', !/infinite/.test(css), '');
   check('motion · the hero settles in once (photo and words), under two seconds', await p.evaluate(() => { const a = document.querySelector('#pub .hero__img').getAnimations()[0]; return !!a && a.effect.getComputedTiming().duration <= 2000 && a.effect.getComputedTiming().iterations === 1; }), '');
   await p.evaluate(() => window.AIO_PUB.go('/'));
