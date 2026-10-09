@@ -132,7 +132,7 @@ if (!data.fleetPlans.client.length) data.fleetPlans.client = JSON.stringify(M.FL
 /* ── 2 · assets: photography (founder-supplied / founder-approved plates), brand marks, fonts, approved IFTA captures ── */
 const PUBLIC = join(APP, 'public');
 const PHOTOS = {
-  'hero-home': 'brand/aio-login-hero.png', 'aio-login': 'brand/aio-login-hero.png', 'truck-branded': 'brand/all-in-one-hero-truck.png',
+  'hero-home': 'brand/aio-login-hero.png', 'aio-login': 'brand/aio-login-hero.png', // all-in-one-hero-truck.png is retired (IFTA public contract, IDNTY_10)
   'highway-gold': 'brand/ifta/plates/client-hero.jpg', 'mountain-road': 'brand/ifta/plates/public-road.jpg', 'night-interstate': 'brand/ifta/plates/public-hero.jpg',
   'fleet-yard': 'brand/ifta/plates/staff-hero.jpg', 'freight-map': 'brand/ifta/plates/public-map.jpg', 'valley-trail': 'brand/ifta/plates/public-footer-tablet.jpg',
   'mountains-dusk': 'brand/ifta/plates/public-footer-desktop.jpg',
@@ -167,6 +167,19 @@ if (existsSync(THUMBS)) {
   for (const f of (await import('node:fs')).readdirSync(THUMBS).filter((x) => x.endsWith('.jpg'))) { copyFileSync(join(THUMBS, f), join(OUT, 'thumbs', f)); thumbs.push(f); }
 }
 
+/* ── 2b · the migration-readiness evidence the review shows (vendored record + measured page lengths + captures) ── */
+const READY = join(APP, '..', 'AIO_PUBLIC_MIGRATION_READINESS');
+const RECORD = join(APP, 'docs/aio/public-migration/PUBLIC_MIGRATION.json');
+const MIG = existsSync(RECORD) ? (({ status, live, inventory, routes, issues, blockers, decisions }) => ({ status, live, inventory, routes, issues, blockers, decisions }))(JSON.parse(readFileSync(RECORD, 'utf8'))) : null;
+const SCROLL = existsSync(join(READY, 'scroll.json')) ? JSON.parse(readFileSync(join(READY, 'scroll.json'), 'utf8')) : null;
+const reviewImgs = [];
+for (const dir of ['current', 'after', 'strips']) {
+  const from = join(READY, 'review', dir);
+  if (!existsSync(from)) continue;
+  mkdirSync(join(OUT, dir), { recursive: true });
+  for (const f of (await import('node:fs')).readdirSync(from).filter((x) => x.endsWith('.jpg'))) { copyFileSync(join(from, f), join(OUT, dir, f)); reviewImgs.push(`${dir}/${f}`); }
+}
+
 /* ── 3 · pages ── */
 const read = (f) => readFileSync(join(HERE, f), 'utf8');
 const js = `const PUB_DATA = ${JSON.stringify(data)};\n${read('site-icons.js')}\n${read('site.js')}`;
@@ -185,9 +198,9 @@ document.documentElement.dataset.ready = '1';
 </script></body></html>`);
 /* index.html is the artifact page (the viewer adds the document skeleton); local.html is the same page as a document. */
 const GF = '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap">';
-const review = `<title>AIO Public Website</title>${GF}<style>${read('site.css')}\n${read('review.css')}</style><div id="rv"></div><script>${js}\nconst THUMBS = ${JSON.stringify(thumbs)};\n${read('review.js')}</script>`;
+const review = `<title>AIO Public Website</title>${GF}<style>${read('site.css')}\n${read('review.css')}</style><div id="rv"></div><script>${js}\nconst THUMBS = ${JSON.stringify(thumbs)};\nconst MIG = ${JSON.stringify(MIG)};\nconst SCROLL = ${JSON.stringify(SCROLL)};\n${read('review.js')}</script>`;
 writeFileSync(join(OUT, 'index.html'), review);
 writeFileSync(join(OUT, 'local.html'), `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body>${review}</body></html>`);
-const files = ['site.html', ...Object.keys(PHOTOS).map((k) => `img/${k}.jpg`), 'brand/aio-mark-on-dark.png', 'brand/aio-lockup-on-dark.png', 'fonts/inter-latin-wght.woff2', 'fonts/inter-tight-latin-wght.woff2', 'ifta/CLIENT_1440.jpg', 'ifta/PUBLIC_393.jpg', 'ifta/PUBLIC_834.jpg', 'ifta/PUBLIC_1440.jpg', ...(existsSync(join(OUT, 'reference')) ? ['reference/brand-dna-board.jpg', 'reference/panel-04-homepage.jpg', 'reference/ifta-public-authority.jpg'].filter((f) => existsSync(join(OUT, f))) : []), ...thumbs.map((f) => `thumbs/${f}`)];
+const files = ['site.html', ...Object.keys(PHOTOS).map((k) => `img/${k}.jpg`), 'brand/aio-mark-on-dark.png', 'brand/aio-lockup-on-dark.png', 'fonts/inter-latin-wght.woff2', 'fonts/inter-tight-latin-wght.woff2', 'ifta/CLIENT_1440.jpg', 'ifta/PUBLIC_393.jpg', 'ifta/PUBLIC_834.jpg', 'ifta/PUBLIC_1440.jpg', ...(existsSync(join(OUT, 'reference')) ? ['reference/brand-dna-board.jpg', 'reference/panel-04-homepage.jpg', 'reference/ifta-public-authority.jpg'].filter((f) => existsSync(join(OUT, f))) : []), ...thumbs.map((f) => `thumbs/${f}`), ...reviewImgs];
 writeFileSync(join(OUT, 'files.json'), JSON.stringify(Object.fromEntries(files.map((f) => [f, join(OUT, f)])), null, 1));
 console.log(`built ${OUT} · ${services.length} services · ${data.categories.length} families · ${resized} photos resized · ${files.length} files`);

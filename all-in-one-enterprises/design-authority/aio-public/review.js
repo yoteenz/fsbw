@@ -1,9 +1,11 @@
 /*
  * AIO PUBLIC WEBSITE — the founder review. The site (site.js) is mounted once inside a device frame and keeps running;
- * the review only changes the frame (phone 390 · tablet 834 · desktop 1440 · ultra-wide 2560), the page, and what sits
- * beside it (the founder reference the page is held to, where one exists).
+ * the review only changes the frame (small phone 360 · phone 390 · tablet 834 · tablet landscape 1194 · desktop 1440 ·
+ * ultra-wide 2560), the page, and what sits beside it (the founder reference the page is held to, where one exists).
+ * Three reviews come first (LIVE-LEGACY-AUDIT sprint): A · what the current site does and what happens to each part,
+ * B · the desktop and tablet beside the approved phone, C · the shorter pages — then the connected site itself.
  */
-const RV_DEV = { phone: [390, 844, 'PHONE'], tablet: [834, 1194, 'TABLET'], desktop: [1440, 900, 'DESKTOP'], wide: [2560, 1440, 'ULTRA-WIDE'] };
+const RV_DEV = { s360: [360, 800, 'SMALL PHONE'], phone: [390, 844, 'PHONE'], tablet: [834, 1194, 'TABLET'], tabletL: [1194, 834, 'TABLET LANDSCAPE'], desktop: [1440, 900, 'DESKTOP'], wide: [2560, 1440, 'ULTRA-WIDE'] };
 const RV_GROUPS = [
   { id: 'home', no: '1', name: 'HOMEPAGE', line: 'HELD TO THE FOUNDER BRAND BOARD · PANEL 04 · WEBSITE HOMEPAGE EXPRESSION', pages: ['/'] },
   { id: 'family', no: '2', name: 'SERVICE FAMILY', line: 'HELD TO THE APPROVED IFTA PUBLIC PAGE · HUB · SERVICE · PLANS · PARTNER · PAUSED', pages: ['/services/permitting', '/services/trip-permits', '/services/bookkeeping', '/services/insurance', '/services/brokerage', '/services/ifta-filing'] },
@@ -11,7 +13,7 @@ const RV_GROUPS = [
   { id: 'journeys', no: '4', name: 'SOLUTIONS & GET STARTED', line: 'START YOUR BUSINESS · ROAD READY · CLIENT PORTAL · CHECK WHAT I NEED · REQUEST', pages: ['/start-your-business', '/start-your-business/register', '/road-ready', '/roadmap', '/client-portal', '/get-started', '/roadmap/results', '/service-plan', '/request/submit', '/request/confirmation/req-sample'] },
   { id: 'company', no: '5', name: 'COMPANY & ACCOUNT', line: 'ABOUT · CONTACT · CALLBACK · SCHEDULE · LOG IN · CREATE ACCOUNT · 404', pages: ['/about', '/contact', '/request-callback', '/schedule', '/login', '/signup', '/forgot-password', '/onboarding', '/not-found'] },
 ];
-const RV = { view: 'overview', group: 'home', dev: 'desktop', ref: true };
+const RV = { view: 'start', group: 'home', dev: 'desktop', ref: true };
 const $ = (id) => document.getElementById(id);
 const nameOf = (p) => (TREE.find((t) => t[0] === p) || [p, p.toUpperCase()])[1];
 const groupOf = (p) => RV_GROUPS.find((g) => g.pages.includes(p));
@@ -43,7 +45,7 @@ function shell() {
 }
 function chrome() {
   $('rv-devs').innerHTML = Object.entries(RV_DEV).map(([k, [w, , n]]) => `<button data-dev="${k}" aria-pressed="${RV.dev === k}">${n} ${w}</button>`).join('');
-  const tabs = [['overview', 'OVERVIEW'], ...RV_GROUPS.map((g) => [`g:${g.id}`, `${g.no} · ${g.name}`]), ['tree', 'PAGE TREE'], ['reference', 'REFERENCE & RECOVERY']];
+  const tabs = [['start', 'START HERE'], ['a', 'A · KEEP WHAT WORKS'], ['b', 'B · DESKTOP & TABLET'], ['c', 'C · SHORTER PAGES'], ['overview', 'THE CONNECTED SITE'], ...RV_GROUPS.map((g) => [`g:${g.id}`, `${g.no} · ${g.name}`]), ['tree', 'PAGE TREE'], ['reference', 'REFERENCE & RECOVERY']];
   const cur = RV.view === 'work' ? `g:${RV.group}` : RV.view;
   $('rv-tabs').innerHTML = tabs.map(([k, t]) => `<button class="rv-tab" data-tab="${k}" aria-current="${cur === k}">${t}</button>`).join('');
   $('rv-full').href = `site.html#${PUB.path}`;
@@ -77,6 +79,57 @@ function reference() {
     <div style="display:grid;gap:16px"><figure><img src="reference/ifta-public-authority.jpg" alt="APPROVED IFTA PUBLIC PAGE"><figcaption><b>APPROVED IFTA PUBLIC PAGE</b> · THE ONLY PUBLIC PAGE BUILT TO A FOUNDER AUTHORITY · THE SERVICE FAMILY’S MODEL</figcaption></figure>
     <div class="rv-box"><h3>NOT FOUND — NOT SUBSTITUTED</h3><ul class="rv-notes">${['THE 2026-08 DESKTOP HOMEPAGE “APPROVED REFERENCE” MOCK', 'THE 13-SCREEN FOUNDER MOBILE REFERENCE', 'THE PAGE STORY & MOODBOARD (14 PAGE FAMILIES)', 'APPROVED PRICES — ALL PRICING IS DRAFT OR SAMPLE', 'VERIFIED PHONE, EMAIL AND HOURS — THE LIVE ONES ARE PLACEHOLDERS', 'A BRANDED BLACK-TRUCK PHOTOGRAPH LIKE PANEL 04’S', 'A LICENCE FOR MONUMENT EXTENDED'].map((t) => `<li class="x"><i>×</i><span>${t}</span></li>`).join('')}</ul></div></div></div>`;
 }
+/* ═════════════ the three reviews (LIVE-LEGACY-AUDIT sprint) ═════════════ */
+const CLS = { 'PRESERVE EXACTLY': 'keep', 'REUSE AND RESTYLE': 'reuse', 'RECONNECT TO NEW DESIGN': 'link', 'REPAIR BEFORE MIGRATION': 'fix', 'REPLACE PRESENTATION ONLY': 'skin', 'REMOVE ONLY WITH APPROVAL': 'cut', DEFER: 'later' };
+const clsChip = (c) => `<span class="rv-cls rv-cls--${CLS[c] || 'later'}">${c}</span>`;
+const fig = (src, cap, cls = '') => `<figure class="rv-fig ${cls}"><img src="${src}" alt="${esc(cap)}" loading="lazy"><figcaption>${cap}</figcaption></figure>`;
+const noMig = () => `<div class="rv-hero"><h1>THE AUDIT RECORD IS NOT IN THIS BUILD</h1><p>BUILD AFTER THE RECORD IS VENDORED (DOCS/AIO/PUBLIC-MIGRATION/).</p></div>`;
+function startHere() {
+  const M = MIG;
+  const cards = [['a', 'A', 'KEEP WHAT WORKS', 'WHAT THE CURRENT SITE DOES, PART BY PART — AND WHAT HAPPENS TO EACH PART IN THE NEW SITE. NOTHING IS DROPPED SILENTLY.'], ['b', 'B', 'DESKTOP & TABLET', 'THE DESKTOP AND TABLET NOW HAVE THEIR OWN COMPOSITIONS. THE APPROVED PHONE STAYS THE BENCHMARK, SHOWN BESIDE THEM.'], ['c', 'C', 'SHORTER PAGES', 'THE LONGEST PAGES, BEFORE AND AFTER — SELECTORS, EXPLORERS AND ACCORDIONS INSTEAD OF ENDLESS LISTS. NOTHING IMPORTANT HIDDEN.'], ['overview', '→', 'THE CONNECTED SITE', 'THE WHOLE PUBLIC SITE, CLICKABLE, IN SIX DEVICE FRAMES — 360 · 390 · 834 · 1194 · 1440 · 2560.']];
+  return `<div class="rv-hero"><small>ALL IN ONE ENTERPRISES INC. · PUBLIC WEBSITE · FINAL RESPONSIVE DESIGN AND MIGRATION READINESS</small><h1>THREE QUESTIONS, THEN THE WHOLE SITE.</h1>
+    <p>${M ? `${M.status.live_site}. ${M.status.audit_basis}.` : ''} THE NEW DESIGN IS A CANDIDATE: NOTHING IS DEPLOYED, THE LIVE SITE IS UNCHANGED, BROKERAGE STAYS PAUSED.</p>
+    <div class="rv-flags"><span class="rv-flag rv-flag--warn"><i></i>LIVE SITE NOT REACHABLE FROM HERE</span><span class="rv-flag"><i></i>AUDITED FROM THE SOURCE + A LOCAL BUILD</span><span class="rv-flag rv-flag--ok"><i></i>SIX SIZES COMPOSED</span><span class="rv-flag rv-flag--warn"><i></i>DO NOT REPLACE THE PRODUCTION SITE BEFORE APPROVAL</span></div></div>
+    <div class="rv-start">${cards.map(([k, n, t, d]) => `<button class="rv-startcard" data-tab="${k}"><i>${n}</i><b>${t}</b><span>${d}</span><em>${ic('arrow')} OPEN</em></button>`).join('')}</div>`;
+}
+function reviewA() {
+  const M = MIG;
+  if (!M) return noMig();
+  const areas = [...new Set(M.inventory.map((r) => r.area))];
+  const counts = {};
+  for (const r of M.inventory) for (const c of r.classes) counts[c] = (counts[c] || 0) + 1;
+  return `<div class="rv-hero"><small>REVIEW A · THE EXISTING WEBSITE · PRESERVATION AUDIT</small><h1>KEEP WHAT WORKS. FIX WHAT DOESN’T. DROP NOTHING SILENTLY.</h1>
+    <p>${M.live.local_render}. ${M.live.screen_recordings}.</p>
+    <div class="rv-flags">${Object.keys(CLS).map((c) => `${clsChip(c)}<span class="rv-n">${counts[c] || 0}</span>`).join('')}</div></div>
+    <section class="rv-sec"><h2>THE CURRENT SITE · LOCAL BUILD OF THE CURRENT SOURCE (NOT PRODUCTION)</h2>
+      <div class="rv-figs">${CURRENT.map(([slug, cap]) => fig(`current/${slug}--desktop.jpg`, cap)).join('')}</div>
+      <p class="rv-note">WHAT THESE SHOW: PLACEHOLDER PHONE AND EMAIL · PUBLISHED SAMPLE PRICES · THE AIO OFFICE OPEN TO ANYONE IN DEMO MODE · THE DEBUG ICON PAGE · DARK-ON-DARK NAVIGATION LINKS · AN UNSTYLED 404.</p></section>
+    <section class="rv-sec"><h2>EVERY CAPABILITY AND WHAT HAPPENS TO IT · ${M.inventory.length}</h2>
+      ${areas.map((a) => `<details class="rv-area" open><summary>${a} · ${M.inventory.filter((r) => r.area === a).length}</summary><div class="rv-rows">${M.inventory.filter((r) => r.area === a).map((r) => `<div class="rv-row"><div><b>${esc(r.route.toUpperCase())}</b><span>${esc(r.fn.toUpperCase())}</span></div><div class="rv-row__go"><em>NEW DESIGN</em><span>${esc(r.destination.toUpperCase())}</span></div><div class="rv-row__cls">${r.classes.map(clsChip).join('')}<span class="rv-risk rv-risk--${r.risk.toLowerCase()}">${r.risk} RISK</span></div></div>`).join('')}</div></details>`).join('')}</section>
+    <section class="rv-sec"><h2>THE EIGHT KNOWN ISSUES · RE-CHECKED AGAINST TODAY’S SOURCE</h2><div class="rv-issues">${M.issues.map((i) => `<div class="rv-issue"><i>${i.id}</i><b>${esc(i.claim.toUpperCase())}</b><span class="rv-verdict">${i.verdict}</span><p>${esc(i.evidence.toUpperCase())}</p><em>COMPOSER TASK ${i.task}</em></div>`).join('')}</div></section>
+    <section class="rv-sec rv-two"><div class="rv-box"><h3>FEATURE CONFLICTS · THE NEW DESIGN MUST NOT SIMPLIFY THESE</h3><ul class="rv-notes">${M.routes.conflicts.map((t) => `<li class="${/RESOLVED/.test(t) ? '' : 'x'}"><i>${/RESOLVED/.test(t) ? '✓' : '!'}</i><span>${esc(t.toUpperCase())}</span></li>`).join('')}</ul></div>
+      <div class="rv-box"><h3>BEFORE THE NEW SITE CAN GO LIVE</h3><ul class="rv-notes">${M.blockers.map((t) => `<li class="x"><i>×</i><span>${esc(t.toUpperCase())}</span></li>`).join('')}</ul></div></section>
+    <section class="rv-sec"><div class="rv-box"><h3>YOUR DECISIONS</h3><ul class="rv-notes">${M.decisions.map((t) => `<li><i>?</i><span>${esc(t.toUpperCase())}</span></li>`).join('')}</ul></div></section>`;
+}
+const B_PAGES = [['/', 'HOMEPAGE', ['WHAT CAN WE HELP YOU DO: A SPLIT EXPLORER (DESKTOP) · A TOUCH SELECTOR (TABLET) · THE APPROVED SNAP CARDS (PHONE)', 'WHICH ONE ARE YOU → WHERE TO BEGIN: A VERTICAL STAGE ROAD BESIDE ONE PANEL', 'ROAD READY™ IN ONE COMPACT BAND']], ['/services/permitting', 'A SERVICE FAMILY', ['PICK A SERVICE ON THE LEFT, READ IT ON THE RIGHT — WHO IT IS FOR, WHAT YOU PROVIDE, NEXT STEP', 'THE PHONE SHOWS SIX CARDS, THEN SHOW ALL']], ['/services/trip-permits', 'A SERVICE PAGE', ['ON THIS PAGE BAR · WHAT AIO PROVIDES · WHO IT IS FOR · WHAT YOU PROVIDE · HOW IT WORKS · AFTER · QUESTIONS · NEXT STEP', 'THE WORDS ARE THE LIVE SERVICE PAGE’S']], ['/services', 'ALL SERVICES', ['THE WHOLE CATALOG AS ONE INDEX BY FAMILY — CARDS ONLY WHEN NARROWED']], ['/get-started', 'GET STARTED', ['THE LIVE SMART INTAKE, SECTION BY SECTION, WITH A STEP RAIL ON THE DESKTOP']], ['/start-your-business', 'START YOUR BUSINESS', ['PICK A STAGE AND READ IT IN PLACE']]];
+function reviewB() {
+  return `<div class="rv-hero"><small>REVIEW B · DESKTOP AND TABLET BESIDE THE APPROVED PHONE</small><h1>EACH SCREEN SIZE COMPOSED FOR ITSELF.</h1>
+    <p>THE PHONE IS THE APPROVED BENCHMARK AND IS UNCHANGED EXCEPT WHERE A PAGE WAS GENUINELY TOO LONG. THE TABLET GETS TOUCH SELECTORS AND TWO-COLUMN PANELS; THE DESKTOP GETS SPLIT EXPLORERS, LAYERED PANELS OVER THE PHOTOGRAPHY AND SELECTORS; THE ULTRA-WIDE KEEPS EVERY COMPOSITION AT ITS OWN SCALE. EACH FIRST SCREEN BELOW OPENS LIVE IN ITS FRAME.</p></div>
+    ${B_PAGES.map(([p, name, notes]) => { const s = slugOf(p); return `<section class="rv-sec"><h2>${name} <code>${p}</code></h2><div class="rv-bset">${[['phone', 'PHONE 390 · APPROVED'], ['tablet', 'TABLET 834'], ['desktop', 'DESKTOP 1440'], ['wide', 'ULTRA-WIDE 2560']].map(([d, cap]) => `<button class="rv-bfig rv-bfig--${d}" data-open="${p}" data-opendev="${d}"><img src="after/${s}--${d}.jpg" alt="${name} · ${cap}" loading="lazy"><span>${cap}</span></button>`).join('')}</div><ul class="rv-notes">${notes.map((t) => `<li><i>✓</i><span>${t}</span></li>`).join('')}</ul></section>`; }).join('')}`;
+}
+function reviewC() {
+  const rows = (SCROLL?.pages || []).filter((x) => C_PAGES.includes(x.path));
+  const max = Math.max(...rows.flatMap((r) => ['phone', 'tablet', 'desktop'].map((d) => r.before[d])), 1);
+  const bar = (b, a) => `<span class="rv-bars"><i style="width:${(100 * b) / max}%"></i><i class="a" style="width:${(100 * a) / max}%"></i></span>`;
+  return `<div class="rv-hero"><small>REVIEW C · SHORTER PAGE JOURNEYS · BEFORE AND AFTER</small><h1>LESS SCROLLING, NOTHING HIDDEN.</h1>
+    <p>PAGE LENGTH IN SCREENS (PAGE HEIGHT ÷ SCREEN HEIGHT), MEASURED ON THE REAL RENDERED PAGES, BEFORE THIS SPRINT AND AFTER. LONG LISTS BECAME SELECTORS, EXPLORERS, ACCORDIONS AND BOUNDED SWIPE RAILS; DISCLOSURES STAY ON THE PAGE. SERVICE PAGES NOW ANSWER NINE QUESTIONS IN ABOUT THE SAME LENGTH THAT ANSWERED FOUR.</p></div>
+    <section class="rv-sec"><div class="rv-ctable"><div class="rv-crow rv-crow--h"><b>PAGE</b><b>PHONE 390</b><b>TABLET 834</b><b>DESKTOP 1440</b></div>${rows.map((r) => `<div class="rv-crow"><b>${nameOf(r.path)}<code>${r.path}</code></b>${['phone', 'tablet', 'desktop'].map((d) => `<span>${bar(r.before[d], r.after[d])}<em>${r.before[d].toFixed(1)} → <strong>${r.after[d].toFixed(1)}</strong></em></span>`).join('')}</div>`).join('')}</div><p class="rv-note"><span class="rv-key"></span> BEFORE · <span class="rv-key rv-key--a"></span> AFTER — ALL ${SCROLL ? SCROLL.pages.length : ''} PAGES × SIX SIZES ARE IN THE EVIDENCE (AIO_PUBLIC_MIGRATION_READINESS/SCROLL.JSON).</p></section>
+    ${C_STRIPS.map(([p, d]) => { const s = slugOf(p); return `<section class="rv-sec"><h2>${nameOf(p)} · ${d === 'phone' ? 'PHONE 390' : 'DESKTOP 1440'}</h2><div class="rv-strips rv-strips--${d}">${fig(`strips/${s}--${d}--before.jpg`, 'BEFORE')}${fig(`strips/${s}--${d}--after.jpg`, 'AFTER')}</div></section>`; }).join('')}`;
+}
+const C_PAGES = ['/', '/services', '/services/permitting', '/services/business-formation', '/services/insurance', '/services/bookkeeping', '/services/trip-permits', '/roadmap', '/start-your-business', '/get-started'];
+const C_STRIPS = [['/services', 'phone'], ['/services/permitting', 'phone'], ['/', 'desktop'], ['/roadmap', 'desktop']];
+const CURRENT = [['home', 'HOMEPAGE · LOCAL BUILD'], ['contact', 'CONTACT · PLACEHOLDER PHONE AND EMAIL'], ['services_bookkeeping', 'BOOKKEEPING · SAMPLE PRICES PUBLISHED'], ['get_started', 'SMART INTAKE · THE LIVE SECTIONS'], ['office', 'THE AIO OFFICE · OPEN IN DEMO MODE'], ['debug_icon_library', 'THE DEBUG ICON PAGE · PUBLIC'], ['login', 'LOG IN · DEMO PORTAL SHORTCUT'], ['this_route_does_not_exist', '404 · UNSTYLED']];
+
 function bar() {
   const g = RV_GROUPS.find((x) => x.id === RV.group) || RV_GROUPS[0];
   const p = PUB.path.split('?')[0];
@@ -100,7 +153,7 @@ function render() {
   const work = RV.view === 'work';
   $('rv-work').hidden = !work;
   $('rv-over').hidden = work;
-  if (!work) $('rv-over').innerHTML = RV.view === 'tree' ? tree() : RV.view === 'reference' ? reference() : RV.view.startsWith('g:') ? groupOnly(RV.view.slice(2)) : overview();
+  if (!work) $('rv-over').innerHTML = RV.view === 'tree' ? tree() : RV.view === 'reference' ? reference() : RV.view === 'start' ? startHere() : RV.view === 'a' ? reviewA() : RV.view === 'b' ? reviewB() : RV.view === 'c' ? reviewC() : RV.view.startsWith('g:') ? groupOnly(RV.view.slice(2)) : overview();
   else {
     $('rv-bar').innerHTML = bar();
     const ref = refPanel();
@@ -155,7 +208,7 @@ function boot() {
   const root = $('pub');
   root.style.setProperty('--fh', `${h}px`);
   if (p && p.startsWith('/')) { PUB.path = p; RV.view = 'work'; const g = groupOf(p.split('?')[0]); if (g) RV.group = g.id; }
-  else if (p === 'tree' || p === 'reference' || p?.startsWith('g:')) RV.view = p;
+  else if (['tree', 'reference', 'start', 'a', 'b', 'c', 'overview'].includes(p) || p?.startsWith('g:')) RV.view = p;
   mountPub(root, { scroller: $('rv-frame'), width: w });
   addEventListener('pub:route', () => { const g = groupOf(PUB.path.split('?')[0]); if (g) RV.group = g.id; RV.view = 'work'; render(); });
   document.addEventListener('click', (e) => {
@@ -163,7 +216,7 @@ function boot() {
     if (!t || t.closest('#pub')) return;
     if (t.dataset.dev) { RV.dev = t.dataset.dev; render(); $('rv-frame').scrollTop = 0; return; }
     if (t.dataset.tab) { RV.view = t.dataset.tab; render(); scrollTo(0, 0); return; }
-    if (t.dataset.open) return openPage(t.dataset.open);
+    if (t.dataset.open) return openPage(t.dataset.open, t.dataset.opendev);
     if (t.dataset.step) { const g = RV_GROUPS.find((x) => x.id === RV.group); const i = g.pages.indexOf(PUB.path.split('?')[0]) + Number(t.dataset.step); if (g.pages[i]) openPage(g.pages[i]); return; }
     if (t.hasAttribute('data-ref')) { RV.ref = !RV.ref; render(); }
   });

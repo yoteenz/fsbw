@@ -22,11 +22,12 @@ const chip = (k) => (k && STATE[k] ? `<span class="chip chip--${STATE[k][1]}">${
 const DELIVERY = { AIO_DIRECT: ['AIO PREPARES IT', 'clipboard'], AIO_MANAGED: ['AIO MANAGES IT', 'gear'], PARTNER_PROVIDED: ['THROUGH A PARTNER', 'handshake'], HYBRID: ['AIO + A PARTNER', 'handshake'] };
 const PRICING = { quote_required: 'QUOTE AFTER REVIEW', contact_us: 'BY CONSULTATION', starting_at: 'NOT YET PUBLISHED', consultation: 'BY CONSULTATION', fixed: 'NOT YET PUBLISHED', referral: 'PARTNER QUOTE' };
 
-/* ── photography (founder-supplied and founder-approved plates; see the asset manifest) ── */
+/* ── photography (founder-supplied and founder-approved plates; see the asset manifest). public/brand/all-in-one-hero-truck.png
+ *    is RETIRED (docs/aio/experience-driven/ifta/AIO_IFTA_PUBLIC_PAGE_CONTRACT.json — IDNTY_10, no generic semi hero) and is not used. ── */
 const PHOTO = {
-  'start-my-business': 'truck-branded', 'get-road-ready': 'highway-gold', 'permits-taxes-compliance': 'mountain-road', 'safety-drivers': 'night-interstate',
+  'start-my-business': 'aio-login', 'get-road-ready': 'highway-gold', 'permits-taxes-compliance': 'mountain-road', 'safety-drivers': 'night-interstate',
   'operate-my-business': 'fleet-yard', 'move-freight': 'freight-map', 'manage-my-money': 'valley-trail',
-  permitting: 'mountain-road', 'business-formation': 'truck-branded', insurance: 'night-interstate', dispatching: 'fleet-yard', brokerage: 'freight-map', bookkeeping: 'valley-trail', factoring: 'highway-gold', fleetcare: 'fleet-yard', driverlink: 'night-interstate',
+  permitting: 'mountain-road', 'business-formation': 'aio-login', insurance: 'night-interstate', dispatching: 'fleet-yard', brokerage: 'freight-map', bookkeeping: 'valley-trail', factoring: 'highway-gold', fleetcare: 'fleet-yard', driverlink: 'night-interstate',
 };
 const CAT_ICON = { 'start-my-business': 'building', 'get-road-ready': 'badge', 'permits-taxes-compliance': 'doc', 'safety-drivers': 'hardhat', 'operate-my-business': 'truck', 'move-freight': 'package', 'manage-my-money': 'calc' };
 const SVC_ICON = { formation: 'building', legal: 'stamp', compliance: 'doc', safety: 'hardhat', dispatching: 'truck', brokerage: 'package', bookkeeping: 'calc', factoring: 'coins', insurance: 'shield', permits: 'doc', tax: 'receipt', fuel: 'fuel', renewals: 'calendar', drivers: 'idcard', eld: 'gauge', freight: 'package', payroll: 'wallet', documents: 'clipboard' };
@@ -164,7 +165,7 @@ const startCta = (s) => (s && !s.ctaAllowed ? `<span class="btn btn--gold" aria-
  * CUSTOMER AM I + WHERE TO BEGIN (start · operate · maintain, one stage at a time, each ending in one first step) · WHY
  * TRUST (the client portal and who does what — no figures, no testimonials) · ROAD READY™ (the six live stages) · WHAT NEXT. */
 const PATH_CATS = { 'start-business': ['start-my-business', 'get-road-ready'], 'stay-compliant': ['permits-taxes-compliance', 'safety-drivers'], 'run-operation': ['operate-my-business', 'move-freight'], 'manage-money': ['manage-my-money'] };
-const PATH_IMG = { 'start-business': 'truck-branded', 'stay-compliant': 'mountain-road', 'run-operation': 'fleet-yard', 'manage-money': 'highway-gold' };
+const PATH_IMG = { 'start-business': 'night-interstate', 'stay-compliant': 'mountain-road', 'run-operation': 'fleet-yard', 'manage-money': 'highway-gold' };
 const PATH_ICON = { 'start-business': 'rocket', 'stay-compliant': 'shield', 'run-operation': 'truck', 'manage-money': 'coins' };
 const RANK = ['AVAILABLE', 'PILOT', 'STAFF', 'PARTNER', 'HOLD', 'PREPARING', 'SOON', 'BLOCKED', 'PAUSED'];
 const pathServices = (id) => D.services.filter((s) => PATH_CATS[id].includes(s.category)).sort((a, b) => RANK.indexOf(a.state) - RANK.indexOf(b.state));
@@ -334,10 +335,10 @@ function service(s) {
   </div></section>
   <section class="sec sv" id="sv-faq" style="padding-top:0"><div class="wrap cols cols--wide">
     <div>${rv(`<div class="sec__head" style="margin-bottom:22px"><h2 class="h2">QUESTIONS.</h2></div>`)}${rv(`<div class="faq">${faq.map(([q, a], n) => `<details${n === 0 ? ' open' : ''}><summary>${U(q)}${ic('caret')}</summary><p>${U(a)}</p></details>`).join('')}</div>`, 1)}</div>
-    <div>${disclosure([s.disclosure].filter(Boolean))}</div>
+    <div class="sv-side">${rv(`<div class="nextstep"><p class="eyebrow">NEXT STEP</p><h3 class="h3">${s.ctaAllowed ? `READY FOR ${U(s.name)}?` : 'NOT TAKING REQUESTS YET.'}</h3><p>${s.ctaAllowed ? 'START IT NOW, ADD IT TO YOUR PLAN, OR TALK IT THROUGH WITH THE AIO TEAM.' : 'TALK TO AIO AND WE WILL TELL YOU WHAT IS POSSIBLE TODAY.'}</p><div class="hero__ctas">${startCta(s)}<a class="btn btn--line" href="#/contact">TALK TO AIO</a></div></div>`, 1)}${disclosure([s.disclosure].filter(Boolean))}</div>
   </div></section>
   ${related.length + more.length ? `<section class="sec sv" style="padding-top:0"><div class="wrap"><div class="sec__head sec__head--row">${rv(`<h2 class="h2">OFTEN PAIRED WITH.</h2>`)}${rv(`<a class="link" href="#${hub}">ALL ${U(d.title)} ${ic('arrow')}</a>`, 1)}</div><div class="svcs svcs--rail">${[...related, ...more].slice(0, 3).map(svcCard).join('')}</div></div></section>` : ''}
-  ${closing(`READY FOR ${U(s.name)}?`, s.ctaAllowed ? 'START IT NOW, ADD IT TO YOUR PLAN, OR TALK IT THROUGH WITH THE AIO TEAM.' : 'THIS SERVICE IS NOT TAKING REQUESTS YET. TALK TO AIO AND WE WILL TELL YOU WHAT IS POSSIBLE TODAY.', s)}`;
+  `; // the next step sits beside QUESTIONS — no second closing band repeating the hero's action
 }
 const DIVISION_PATHS = { permitting: '/services/permitting', 'business-formation': '/services/business-formation', insurance: '/services/insurance', dispatching: '/services/dispatching', brokerage: '/services/brokerage', bookkeeping: '/services/bookkeeping', factoring: '/services/factoring' };
 
@@ -349,7 +350,7 @@ function bookkeeping() {
   ${facts([['layers', `${plans.length} PLANS`, 'PLUS BOOKS RESCUE'], ['badge', '', 'STATUS', chip(svcBySlug('bookkeeping')?.state)], ['clipboard', 'AIO PREPARES IT', 'HOW IT IS DELIVERED'], ['receipt', 'NOT YET PUBLISHED', 'PRICING']])}
   <section class="sec" id="plans"><div class="wrap">
     <div class="sec__head">${rv(`<p class="eyebrow">THREE PLANS</p>`)}${rv(`<h2 class="h2">CHOOSE HOW MUCH OF THE BACK OFFICE WE RUN.</h2>`, 1)}</div>
-    <div class="plans">${plans.map((p, i) => rv(`${i === 1 ? '<span class="plan__flag">MOST CHOSEN FOR GROWING CARRIERS</span>' : ''}<div><b class="h3">${U(p.name)}</b><p class="muted" style="margin:8px 0 0;font-size:var(--small);letter-spacing:.1em">${U(p.tagline)}</p></div><div class="plan__price"><b>PRICE ON REQUEST</b><span>PUBLISHED PRICING IS AWAITING APPROVAL</span></div><ul>${p.features.slice(0, 7).map((f) => `<li>${ic('check')}<span>${U(f)}</span></li>`).join('')}</ul><a class="btn ${i === 1 ? 'btn--gold' : 'btn--line'}" href="#/services/bookkeeping/assessment">START WITH AN ASSESSMENT</a>`, i, 'div', `plan${i === 1 ? ' plan--mid' : ''}`)).join('')}</div>
+    <div class="plans">${plans.map((p, i) => rv(`${i === plans.length - 1 ? '<span class="plan__flag">MOST COMPLETE</span>' : ''}<div><b class="h3">${U(p.name)}</b><p class="muted" style="margin:8px 0 0;font-size:var(--small);letter-spacing:.1em">${U(p.tagline)}</p></div><div class="plan__price"><b>PRICE ON REQUEST</b><span>PUBLISHED PRICING IS AWAITING APPROVAL</span></div><ul>${p.features.slice(0, 7).map((f) => `<li>${ic('check')}<span>${U(f)}</span></li>`).join('')}</ul><a class="btn ${i === plans.length - 1 ? 'btn--gold' : 'btn--line'}" href="#/services/bookkeeping/assessment">START WITH AN ASSESSMENT</a>`, i, 'div', `plan${i === plans.length - 1 ? ' plan--mid' : ''}`)).join('')}</div>
   </div></section>
   ${steps('books', 'HOW BOOKKEEPING WORKS WITH AIO.')}
   <section class="sec" style="padding-top:0"><div class="wrap"><div class="sec__head">${rv(`<h2 class="h2">CATEGORIZED THE TRUCKING WAY.</h2>`)}</div>${rv(`<div style="display:flex;flex-wrap:wrap;gap:8px">${D.bookCategories.map((c) => `<span class="chip" style="color:var(--champagne)">${U(c)}</span>`).join('')}</div>`, 1)}</div></section>
@@ -433,7 +434,7 @@ function startBusiness(step) {
     const s = steps.find((x) => x.route.endsWith(`/${step}`));
     const i = steps.indexOf(s);
     const svcs = (s.serviceSlugs || []).map(svcBySlug).filter(Boolean);
-    return `${phero({ img: ['truck-branded', 'mountain-road', 'night-interstate', 'highway-gold', 'fleet-yard', 'valley-trail'][i] || 'truck-branded', crumbs: [['/', 'HOME'], ['/start-your-business', 'START YOUR BUSINESS'], [null, U(s.title)]], eyebrow: `STAGE ${s.number} OF 0${steps.length}`, title: `${U(s.title)}.`, lead: U(s.subtitle || s.description || ''), ctas: `<a class="btn btn--gold" href="#/get-started">GET STARTED ${ic('arrow', 'ic--go')}</a>` })}
+    return `${phero({ img: ['aio-login', 'mountain-road', 'night-interstate', 'highway-gold', 'fleet-yard', 'valley-trail'][i] || 'aio-login', crumbs: [['/', 'HOME'], ['/start-your-business', 'START YOUR BUSINESS'], [null, U(s.title)]], eyebrow: `STAGE ${s.number} OF 0${steps.length}`, title: `${U(s.title)}.`, lead: U(s.subtitle || s.description || ''), ctas: `<a class="btn btn--gold" href="#/get-started">GET STARTED ${ic('arrow', 'ic--go')}</a>` })}
     <section class="sec" style="padding-top:56px"><div class="wrap"><div class="rail" style="margin:0 0 56px">${steps.map((x) => `<a class="st${x === s ? ' is-cur' : ''}" href="#${x.route.startsWith('/start-your-business') ? x.route : x.route}"><span class="st__dot"${x === s ? ' style="background:var(--gold);color:#17130b"' : ''}>${x.number}</span><b>${U(x.title)}</b></a>`).join('')}</div>
     <div class="sec__head">${rv(`<h2 class="h2">WHAT HAPPENS IN ${U(s.title)}.</h2>`)}</div><div class="svcs">${svcs.length ? svcs.map(svcCard).join('') : D.services.filter((x) => x.category === (i < 1 ? 'start-my-business' : i < 4 ? 'get-road-ready' : 'permits-taxes-compliance')).slice(0, 6).map(svcCard).join('')}</div></div></section>${closing()}`;
   }
@@ -441,7 +442,7 @@ function startBusiness(step) {
   const cur = steps[k];
   const cs = (cur.serviceSlugs || []).map(svcBySlug).filter(Boolean);
   const csList = cs.length ? cs : D.services.filter((x) => x.category === (k < 1 ? 'start-my-business' : k < 4 ? 'get-road-ready' : 'permits-taxes-compliance')).slice(0, 4);
-  return `${phero({ img: 'truck-branded', pos: '70% 55%', crumbs: [['/', 'HOME'], [null, 'START YOUR BUSINESS']], eyebrow: 'START YOUR BUSINESS', title: 'FROM IDEA TO RUNNING YOUR TRUCKING BUSINESS.', lead: 'SIX STAGES, IN ORDER. AIO HELPS AT EVERY ONE — AND KEEPS IT ALL ON ONE RECORD.', ctas: `<a class="btn btn--gold" href="#/start-your-business/build">START WITH BUILD ${ic('arrow', 'ic--go')}</a><a class="btn btn--line" href="#/get-started">CHECK WHAT I NEED</a>` })}
+  return `${phero({ img: 'aio-login', pos: '75% 50%', crumbs: [['/', 'HOME'], [null, 'START YOUR BUSINESS']], eyebrow: 'START YOUR BUSINESS', title: 'FROM IDEA TO RUNNING YOUR TRUCKING BUSINESS.', lead: 'SIX STAGES, IN ORDER. AIO HELPS AT EVERY ONE — AND KEEPS IT ALL ON ONE RECORD.', ctas: `<a class="btn btn--gold" href="#/start-your-business/build">START WITH BUILD ${ic('arrow', 'ic--go')}</a><a class="btn btn--line" href="#/get-started">CHECK WHAT I NEED</a>` })}
   <section class="sec" style="padding-top:64px"><div class="wrap">
     ${rv(`<div class="sec__head"><p class="eyebrow">THE JOURNEY</p><h2 class="h2">PICK A STAGE TO SEE WHAT HAPPENS IN IT.</h2></div>`)}
     <div class="rail rail--pick" role="tablist" aria-label="THE SIX STAGES">${steps.map((s, i) => `<button class="st${i === k ? ' is-cur' : ''}" role="tab" aria-selected="${i === k}" data-a="syb" data-v="${i}"><span class="st__dot">${s.number}</span><b>${U(s.title)}</b><span>${U(D.stages[i]?.description || '')}</span></button>`).join('')}</div>
