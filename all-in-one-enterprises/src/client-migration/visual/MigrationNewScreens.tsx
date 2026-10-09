@@ -48,9 +48,9 @@ export function NewClientFileScreen({
   return (
     <AioFlow top={470} gap={18} className="amg-newfile">
       <AioCard className="amg-newfile__id">
-        <AioDiscHead icon="company" title="BUSINESS IDENTITY" sub="Tell us about the business you’re adding." />
+        <AioDiscHead icon="company" title="BUSINESS IDENTITY" sub="Optional — upload documents below and AIO will extract identity automatically." />
         <div className="amg-fields">
-          <AioField label="COMPANY NAME" value={draft.companyName} onChange={(v) => onDraft({ ...draft, companyName: v })} placeholder="Enter company name" />
+          <AioField label="COMPANY NAME (OPTIONAL)" value={draft.companyName} onChange={(v) => onDraft({ ...draft, companyName: v })} placeholder="Or enter if known" />
           <AioField label="USDOT NUMBER" value={draft.usdot} onChange={(v) => onDraft({ ...draft, usdot: v })} placeholder="Enter USDOT number" inputMode="numeric" />
           <AioField label="MC NUMBER" value={draft.mc} onChange={(v) => onDraft({ ...draft, mc: v })} placeholder="Enter MC number" />
           <AioField label="PRIMARY CONTACT" value={draft.contactName} onChange={(v) => onDraft({ ...draft, contactName: v })} placeholder="Enter contact name" />
@@ -200,7 +200,10 @@ const NEW_STAGES: Array<{ label: string; icon: IcoName; done: string; todo: stri
 
 export function newExtractStages(files: ArchiveMigrationBatchFile[], batch: ArchiveMigrationBatch | undefined, facts: ExtractedFactRecord[]): boolean[] {
   const uploaded = files.length > 0;
-  const extracted = uploaded && files.every((f) => f.processingState === 'ready' || f.processingState === 'grouped');
+  const extracted =
+    uploaded
+    && files.every((f) => f.processingState === 'ready' || f.processingState === 'grouped')
+    && !files.some((f) => f.processingState === 'processing' || f.processingState === 'queued');
   const classified = extracted && (batch?.state === 'ready_for_review' || batch?.state === 'reviewing' || batch?.state === 'completed');
   const validated = classified && !facts.some((f) => f.confidence === 'CONFLICT' && !f.reviewAction);
   return [uploaded, extracted, classified, validated, validated];

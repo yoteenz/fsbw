@@ -13,7 +13,7 @@ export type MigrationBatchState =
 export type MigrationBatchReviewState = 'pending' | 'in_progress' | 'complete';
 export type MigrationBatchApprovalState = 'pending' | 'approved' | 'rejected';
 
-export type MigrationBatchFileState = 'uploaded' | 'processing' | 'ready' | 'grouped' | 'failed';
+export type MigrationBatchFileState = 'uploaded' | 'queued' | 'processing' | 'ready' | 'grouped' | 'failed';
 
 export interface ArchiveMigrationBatch {
   id: string;
