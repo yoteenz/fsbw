@@ -55992,3 +55992,13 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Delivered:** Tesseract.js OCR for images; scanned-PDF OCR in **browser** (pdf.js render + OCR); `createProvisionalIntakeClient` + upload-first on `/office/migration/new`; async `migrationDemoFileProcessor` with `queued`→`processing`→`ready`; identity auto-hydrate on review screens; audit `docs/aio/client-migration/OCR_PERSISTENCE_RECOVERY2_AUDIT.md`.
 - **Blocked:** API scanned-PDF OCR without native canvas on Vercel; full Supabase 25-step E2E; Playwright journey not run in agent.
 - **Tests:** 40+ client-migration unit tests including OCR post-processing + provisional intake.
+
+---
+
+## 2026-10-09 — AIO migration server OCR + Supabase jobs (RECOVERY3)
+
+- **Context:** P0 RECOVERY3 — close gap between browser OCR and production: server scanned-PDF OCR, durable Supabase file jobs, full canonical writes, review persistence, honest E2E readiness.
+- **Forensics:** PR #59 (RECOVERY1) and PR #60 (RECOVERY2) **open**, not merged to `master`; base **`cursor/client-migration-recovery2-1087`** @ `6d57a82d0`.
+- **Delivered:** `@napi-rs/canvas` + `serverPdfOcr.ts` for Node PDF rasterization + Tesseract; unified PDF OCR fallback on server; **`/api/aio/client-migration/process-batch-file`** + `processMigrationBatchFile.ts` (storage download, idempotent queue, facts persist); upload enqueues server job (not browser-inline); `useMigrationFacts` + `persistMigrationFactReview` for Supabase review; extended `supabaseApproveMigration` (EIN, VIN/unit fleet, Road Ready profile, contact email/phone); canonical map `docs/client-migration/CANONICAL_FIELD_MAP.md`; migration `20261009180000_aio_migration_processing_lease.sql`.
+- **Blocked:** Full 40-step Supabase E2E (dedicated AIO Supabase creds/project not in agent env); MCP apply/verify on FS production project timed out; scanned-PDF OCR on Vercel still CPU/time sensitive; insurance policy has provenance-only target; org–contact linkage gap.
+- **Branch:** `cursor/client-migration-recovery3-1087`.

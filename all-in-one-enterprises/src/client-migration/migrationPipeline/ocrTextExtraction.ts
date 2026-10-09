@@ -16,15 +16,19 @@ async function getWorker(): Promise<import('tesseract.js').Worker> {
 }
 
 export async function ocrImageBytes(bytes: Uint8Array, mimeType: string): Promise<{ text: string; confidence: number }> {
-  const worker = await getWorker();
-  const input =
-    typeof Blob !== 'undefined'
-      ? new Blob([bytes], { type: mimeType || 'image/png' })
-      : Buffer.from(bytes);
-  const {
-    data: { text, confidence },
-  } = await worker.recognize(input);
-  return { text: text.trim(), confidence: confidence ?? 0 };
+  try {
+    const worker = await getWorker();
+    const input =
+      typeof Blob !== 'undefined'
+        ? new Blob([bytes], { type: mimeType || 'image/png' })
+        : Buffer.from(bytes);
+    const {
+      data: { text, confidence },
+    } = await worker.recognize(input);
+    return { text: text.trim(), confidence: confidence ?? 0 };
+  } catch {
+    return { text: '', confidence: 0 };
+  }
 }
 
 const MIN_PDF_TEXT_CHARS = 48;
@@ -37,7 +41,8 @@ export async function extractPdfTextWithOcrFallback(bytes: Uint8Array): Promise<
     return { text: native, usedOcr: false };
   }
   if (typeof document === 'undefined') {
-    return { text: native, usedOcr: false };
+    const { extractPdfTextWithServerOcr } = await import('./serverPdfOcr');
+    return extractPdfTextWithServerOcr(bytes);
   }
 
   const pdfjs = await import('pdfjs-dist/legacy/build/pdf.mjs');

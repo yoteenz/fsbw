@@ -1,6 +1,5 @@
 /** Read text from uploaded bytes — PDF text layer + self-hosted OCR for scans/images. */
 
-import { extractTextFromPdfBytes } from './pdfTextExtract';
 import { extractPdfTextWithOcrFallback, ocrImageBytes } from './ocrTextExtraction';
 
 export async function extractTextFromDocumentBytes(
@@ -8,11 +7,7 @@ export async function extractTextFromDocumentBytes(
   bytes: Uint8Array,
 ): Promise<{ text: string; usedOcr: boolean }> {
   if (mimeType === 'application/pdf' || mimeType.endsWith('/pdf')) {
-    if (typeof document !== 'undefined') {
-      return extractPdfTextWithOcrFallback(bytes);
-    }
-    const text = await extractTextFromPdfBytes(bytes);
-    return { text, usedOcr: false };
+    return extractPdfTextWithOcrFallback(bytes);
   }
   if (/^image\/(jpeg|jpg|png|webp)$/i.test(mimeType)) {
     const { text, confidence } = await ocrImageBytes(bytes, mimeType);

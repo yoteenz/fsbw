@@ -3,16 +3,16 @@ import { getAioSupabase } from '../../data/supabase/client';
 import { hashFileSha256 } from '../../vault/documentHash';
 import { validateUploadFile } from '../../vault/vaultStorage';
 import { storeMigrationRawFile } from '../../vault/migrationRawStorage';
-import { getMigrationPipelineAdapter } from '../migrationPipeline';
 import {
   appendBatchFileInCache,
   refreshMigrationBatchCacheFromSupabase,
+  refreshBatchFilesCache,
   upsertMigrationBatchInCache,
 } from '../repositories/migrationBatchCache';
+import { enqueueMigrationBatchFileProcessing } from './migrationFileProcessingEnqueue';
 import {
   supabaseCreateMigrationBatch,
   supabaseInsertBatchFile,
-  supabaseInsertExtractedFacts,
   supabaseInsertLifecycleEvent,
   supabaseUpdateBatchCounts,
   supabaseUpdateBatchFileState,
@@ -110,81 +110,35 @@ export async function uploadFilesToMigrationBatchSupabase(
       processingStage: 'HASH',
       processingState: 'processing',
     });
-    await supabaseUpdateBatchFileState(row.id, { processingStage: 'DUPLICATE_CHECK' });
+    await supabaseUpdateBatchFileState(row.id, { processingStage: 'DUPLICATE_CHECK', queueState: 'QUEUED' });
 
-    const pipeline = getMigrationPipelineAdapter();
-    await supabaseUpdateBatchFileState(row.id, { queueState: 'PROCESSING', processingStage: 'CLASSIFICATION' });
-    const pipelineResult = await pipeline.processFile(
-      {
-        fileName: file.name,
-        mimeType: file.type || 'application/octet-stream',
-        sizeBytes: file.size,
-        sha256: fileHash,
-        documentId: row.id,
-        storageReference: stored.storagePath,
-      },
-      { organizationId, batchId },
-    );
-
-    if (pipelineResult.exception === 'PROVIDER_UNAVAILABLE') {
+    const enqueue = await enqueueMigrationBatchFileProcessing({
+      batchFileId: row.id,
+      batchId,
+      organizationId,
+    });
+    if (!enqueue.ok) {
       await supabaseUpdateBatchFileState(row.id, {
         queueState: 'FAILED',
-        processingStage: 'FIELD_EXTRACTION',
-        processingError: 'PROVIDER_UNAVAILABLE',
+        processingError: enqueue.error ?? 'ENQUEUE_FAILED',
         processingState: 'failed',
       });
-      errors.push(`${file.name}: extraction provider unavailable`);
+      errors.push(`${file.name}: ${enqueue.error ?? 'Could not start server processing'}`);
       continue;
     }
-    if (pipelineResult.exception === 'UNSUPPORTED_DOCUMENT') {
-      await supabaseUpdateBatchFileState(row.id, {
-        queueState: 'UNSUPPORTED',
-        processingError: 'UNSUPPORTED_DOCUMENT',
-        processingState: 'failed',
-      });
-      errors.push(`${file.name}: unsupported document type`);
-      continue;
-    }
-
-    await supabaseUpdateBatchFileState(row.id, { processingStage: 'FIELD_EXTRACTION' });
-    await supabaseInsertExtractedFacts(
-      pipelineResult.proposedFacts.map((f) => ({
-        batchId,
-        organizationId,
-        entityType: f.entityType,
-        fieldKey: f.fieldKey,
-        proposedValue: f.proposedValue,
-        existingValue: f.existingValue,
-        confidence: f.confidence,
-        sourceReference: f.sourceReference,
-      })),
-    );
 
     await supabaseUpdateBatchCounts(batchId, {
-      state: pipelineResult.exception ? 'needs_attention' : 'ready_for_review',
+      state: 'processing',
       reviewState: 'pending',
       fileCount: added + 1,
       documentCount: added + 1,
-    });
-
-    await supabaseInsertLifecycleEvent({
-      organizationId,
-      toState: 'MIGRATION_REVIEW_REQUIRED',
-      eventType: pipelineResult.exception ? 'DOCUMENT_CLASSIFIED' : 'FACT_EXTRACTED',
-      actorType: 'SYSTEM',
-      metadata: { batchId, exception: pipelineResult.exception ?? null },
-    });
-    await supabaseUpdateOrgLifecycle(organizationId, 'MIGRATION_REVIEW_REQUIRED');
-    await supabaseUpdateBatchFileState(row.id, {
-      queueState: 'READY_FOR_REVIEW',
-      processingStage: 'READY_FOR_REVIEW',
-      processingState: 'ready',
     });
 
     added += 1;
   }
 
   await refreshMigrationBatchCacheFromSupabase();
+  await refreshBatchFilesCache(batchId);
   return { added, errors, duplicates };
 }
 

@@ -8,7 +8,9 @@ import { getBatchFiles } from '../../demo/archiveMigrationActions';
 import { createEmptyProfile } from '../../road-ready/roadReadyRules';
 import { aioPaths } from '../../utils/paths';
 import { validateUploadFile } from '../../vault/vaultStorage';
+import { useMigrationFacts } from '../hooks/useMigrationFacts';
 import { applyReviewActionToFact } from '../services/migrationCommitService';
+import { persistMigrationFactReview } from '../services/migrationReviewPersist';
 import { approveMigrationBatchForOffice } from '../services/approveMigrationOfficeService';
 import { createMigrationBatchForOffice, uploadFilesToMigrationBatch } from '../services/migrationIntakeService';
 import { createProvisionalIntakeClient } from '../services/intakeProvisionalClient';
@@ -135,7 +137,7 @@ export function MigrationStudioPage() {
   const batches = (store.archiveMigrationBatches ?? []).filter((batch) => !clientId || batch.clientId === clientId);
   const batch = batches[0];
   const files = batch ? getBatchFiles(batch.id, store) : [];
-  const facts = (store.clientExtractedFacts ?? []).filter((fact) => (batch ? fact.batchId === batch.id : fact.organizationId === clientId));
+  const facts = useMigrationFacts(batch?.id, clientId);
   const conflicts = facts.filter((fact) => fact.confidence === 'CONFLICT' && !fact.reviewAction);
 
   const filteredClients = useMemo(() => {
@@ -448,11 +450,20 @@ export function MigrationStudioPage() {
       return;
     }
     setMessage(null);
-    updateDemoStore((current) => {
-      let next = current;
-      for (const fact of scope) next = applyReviewActionToFact(next, fact.id, action, staffId);
-      return next;
-    });
+    void (async () => {
+      for (const fact of scope) {
+        const persisted = await persistMigrationFactReview(fact.id, action);
+        if (persisted.error) {
+          setMessage(persisted.error);
+          return;
+        }
+      }
+      updateDemoStore((current) => {
+        let next = current;
+        for (const fact of scope) next = applyReviewActionToFact(next, fact.id, action, staffId);
+        return next;
+      });
+    })();
   }
 
   const representative = REPRESENTATIVE.has(screen);

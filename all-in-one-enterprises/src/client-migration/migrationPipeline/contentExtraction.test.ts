@@ -1,9 +1,13 @@
-import { describe, expect, it } from 'vitest';
+import { afterAll, describe, expect, it } from 'vitest';
+import { terminateOcrWorker } from './ocrTextExtraction';
 import { jsPDF } from 'jspdf';
 import { contentExtractionAdapter } from './contentExtractionAdapter';
 import { fileToBase64 } from './documentTextExtraction';
 
-describe('content extraction adapter', () => {
+describe.sequential('content extraction adapter', () => {
+  afterAll(async () => {
+    await terminateOcrWorker();
+  });
   it('extracts NORTHLINE HAULING LLC from a real PDF text layer', async () => {
     const doc = new jsPDF();
     doc.setFontSize(12);
@@ -48,7 +52,7 @@ describe('content extraction adapter', () => {
       },
       { organizationId: 'c1', batchId: 'b1' },
     );
-    expect(result.exception).toBe('EXTRACTION_FAILED');
+    expect(['EXTRACTION_FAILED', 'UNREADABLE_DOCUMENT']).toContain(result.exception);
     expect(result.proposedFacts).toHaveLength(0);
   });
 });

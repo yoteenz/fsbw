@@ -91,6 +91,20 @@ export async function supabaseApproveMigrationBatch(req: ApproveBatchRequest): P
   const { error: orgError } = await admin.from('aio_organizations').update(orgPatch).eq('id', organizationId);
   if (orgError) return { ok: false, error: orgError.message };
 
+  const { data: roadProfile } = await admin
+    .from('aio_road_ready_profiles')
+    .select('id')
+    .eq('organization_id', organizationId)
+    .maybeSingle();
+  if (!roadProfile) {
+    await admin.from('aio_road_ready_profiles').insert({
+      organization_id: organizationId,
+      overall_status: 'in_progress',
+    });
+  } else {
+    await admin.from('aio_road_ready_profiles').update({ overall_status: 'in_progress' }).eq('id', roadProfile.id);
+  }
+
   for (const fact of commitFacts) {
     await admin.from('aio_client_profile_provenance').insert({
       organization_id: organizationId,
@@ -120,46 +134,19 @@ export async function supabaseApproveMigrationBatch(req: ApproveBatchRequest): P
     }
 
     if (fact.entityType === 'company' && fact.fieldKey === 'usdot') {
-      const { data: existingId } = await admin
-        .from('aio_organization_regulatory_identifiers')
-        .select('id')
-        .eq('organization_id', organizationId)
-        .eq('identifier_type', 'USDOT')
-        .maybeSingle();
-      if (!existingId) {
-        await admin.from('aio_organization_regulatory_identifiers').insert({
-          organization_id: organizationId,
-          identifier_type: 'USDOT',
-          identifier_value: fact.proposedValue!,
-          status: 'active',
-          source: 'migration',
-        });
-      }
+      await upsertRegulatoryIdentifier(admin, organizationId, 'USDOT', fact.proposedValue!);
     }
 
-    if (fact.entityType === 'vehicle' && fact.fieldKey === 'unit_number') {
-      const { data: existingVehicle } = await admin
-        .from('aio_fleet_vehicles')
-        .select('id')
-        .eq('organization_id', organizationId)
-        .eq('unit_number', fact.proposedValue)
-        .maybeSingle();
-      if (!existingVehicle) {
-        await admin.from('aio_fleet_vehicles').insert({
-          organization_id: organizationId,
-          unit_number: fact.proposedValue,
-          status: 'active',
-        });
-      }
+    if (fact.entityType === 'company' && fact.fieldKey === 'ein') {
+      await upsertRegulatoryIdentifier(admin, organizationId, 'EIN', fact.proposedValue!);
     }
 
-    if (fact.entityType === 'person' && fact.fieldKey === 'contact_name') {
-      const parts = fact.proposedValue!.split(' ');
-      await admin.from('aio_contacts').insert({
-        first_name: parts[0] ?? 'Contact',
-        last_name: parts.slice(1).join(' ') || '—',
-        status: 'active',
-      });
+    if (fact.entityType === 'vehicle') {
+      await upsertFleetVehicleFromFact(admin, organizationId, fact);
+    }
+
+    if (fact.entityType === 'person') {
+      await upsertContactFromPersonFact(admin, commitFacts, fact);
     }
   }
 
@@ -256,4 +243,99 @@ export async function supabaseApproveMigrationBatch(req: ApproveBatchRequest): P
   }
 
   return { ok: true, organizationId };
+}
+
+async function upsertRegulatoryIdentifier(
+  admin: NonNullable<ReturnType<typeof getAioSupabaseAdmin>>,
+  organizationId: string,
+  identifierType: string,
+  value: string,
+): Promise<void> {
+  const { data: existing } = await admin
+    .from('aio_organization_regulatory_identifiers')
+    .select('id')
+    .eq('organization_id', organizationId)
+    .eq('identifier_type', identifierType)
+    .maybeSingle();
+  if (existing) return;
+  await admin.from('aio_organization_regulatory_identifiers').insert({
+    organization_id: organizationId,
+    identifier_type: identifierType,
+    identifier_value: value,
+    status: 'active',
+    source: 'migration',
+  });
+}
+
+async function upsertFleetVehicleFromFact(
+  admin: NonNullable<ReturnType<typeof getAioSupabaseAdmin>>,
+  organizationId: string,
+  fact: ApproveFactRow,
+): Promise<void> {
+  if (!fact.proposedValue) return;
+  const vinFact = fact.fieldKey === 'vin' ? fact : null;
+  const unitFact = fact.fieldKey === 'unit_number' ? fact : null;
+  if (!vinFact && !unitFact) return;
+
+  const lookup = vinFact
+    ? { column: 'vin', value: vinFact.proposedValue! }
+    : { column: 'unit_number', value: unitFact!.proposedValue! };
+
+  let existingQuery = admin.from('aio_fleet_vehicles').select('id, vin, unit_number').eq('organization_id', organizationId);
+  existingQuery =
+    lookup.column === 'vin'
+      ? existingQuery.eq('vin', lookup.value)
+      : existingQuery.eq('unit_number', lookup.value);
+  const { data: existing } = await existingQuery.maybeSingle();
+
+  const patch: Record<string, unknown> = { status: 'active' };
+  if (fact.fieldKey === 'vin') patch.vin = fact.proposedValue;
+  if (fact.fieldKey === 'unit_number') patch.unit_number = fact.proposedValue;
+
+  if (existing) {
+    await admin.from('aio_fleet_vehicles').update(patch).eq('id', existing.id);
+    return;
+  }
+
+  await admin.from('aio_fleet_vehicles').insert({
+    organization_id: organizationId,
+    ...patch,
+    vehicle_type: 'power_unit',
+  });
+}
+
+async function upsertContactFromPersonFact(
+  admin: NonNullable<ReturnType<typeof getAioSupabaseAdmin>>,
+  allFacts: ApproveFactRow[],
+  fact: ApproveFactRow,
+): Promise<void> {
+  if (fact.fieldKey !== 'contact_name' || !fact.proposedValue) return;
+  const email = allFacts.find((f) => f.entityType === 'company' && f.fieldKey === 'company_email')?.proposedValue;
+  const phone = allFacts.find((f) => f.entityType === 'company' && f.fieldKey === 'company_phone')?.proposedValue;
+  const parts = fact.proposedValue.split(' ');
+  const { data: existing } = await admin
+    .from('aio_contacts')
+    .select('id')
+    .eq('first_name', parts[0] ?? 'Contact')
+    .eq('last_name', parts.slice(1).join(' ') || '—')
+    .maybeSingle();
+  if (existing) {
+    if (email || phone) {
+      await admin
+        .from('aio_contacts')
+        .update({
+          email: email ?? undefined,
+          phone: phone ?? undefined,
+        })
+        .eq('id', existing.id);
+    }
+    return;
+  }
+  await admin.from('aio_contacts').insert({
+    first_name: parts[0] ?? 'Contact',
+    last_name: parts.slice(1).join(' ') || '—',
+    email: email ?? null,
+    phone: phone ?? null,
+    status: 'active',
+  });
 }
