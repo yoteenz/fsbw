@@ -1,0 +1,13 @@
+{
+  "sprintId": "P0.STUDIOOS.WFE.V1-ASTRA-SITE00-CAMERA-MATCHED-ARCHITECTURAL-BLOCKOUT1",
+  "phase": "A",
+  "status": "PREFLIGHT_COMPLETE_FABRICATION_AWAITING_AUTHORIZATION",
+  "completedAt": "2026-10-09",
+  "referenceSha256": "50590912003833aeff8a1851dcbd5a1342d7aa8e47c4603a4eea3e932726582b",
+  "modelAccess": "VERIFIED",
+  "budgetEnforcement": "SOFT_ONLY",
+  "blockers": [
+    "Founder must authorize Phase B paid Codex session with explicit USD ceiling",
+    "Set WFE_BLOCKOUT_PHASE_B_AUTHORIZED=1 and WFE_FOUNDER_AUTHORIZED_BUDGET_USD before launch script"
+  ]
+}

@@ -1,0 +1,56 @@
+WFE CREATIVE RECOVERY — SITE 00 Build Object Astra V2 BLOCKOUT (Stage 01 only)
+
+MODEL: gpt-6-astra inside Codex. Founder authorized Phase B with soft USD ceiling via env — stay within ONE session + ONE structural revision pass.
+
+BLENDER: /home/ubuntu/.tools/blender-5.2.2-linux-x64/blender
+
+PACKAGE ROOT (all writes here):
+/workspace/src/studio-os-core/world-fabrication-engine/benchmarks/site00-build-object-astra-v2-blockout
+
+REFERENCE AUTHORITY (attached via -i — you MUST visually inspect before any bpy):
+03_COMPARISONS/approved-reference.jpg
+SHA-256: 50590912003833aeff8a1851dcbd5a1342d7aa8e47c4603a4eea3e932726582b
+
+MANDATORY FIRST STEPS (blocking — do not skip):
+1) Open and inspect the attached reference image. Write 04_DOCUMENTATION/image-inspection-evidence.md with at least 12 reference-specific observations (silhouette, portal, glass tiers, left fin, floor count, arches, asymmetry, camera perspective). Include confidence notes.
+2) Read 04_DOCUMENTATION/REFERENCE_GEOMETRY_MAP.json and CAMERA_MATCH_PLAN.md — align your build to them.
+3) Solve a PERSPECTIVE hero camera — ORTHOGRAPHIC is forbidden for 01_REFERENCE_CAMERA_BLOCKOUT.
+
+DO NOT copy massing from site00-build-object-astra-v1/build_astra_v1.py pavilion template.
+DO NOT open V1 .blend as primary geometry. V1 is lineage only.
+DO NOT put human meshes or gray ellipsoids in hero render (scale empties OK if hidden from render).
+
+BLOCKOUT ONLY — diagnostic materials (flat white/red/glass tint). No final marble polish sprint.
+
+REQUIRED COLLECTIONS:
+SITE00_BUILD_OBJECT_V2_BLOCKOUT, MARBLE_PLINTH, PRIMARY_STRUCTURE, RED_PORTAL, GLASS_VOLUMES, FLOOR_PLATES, INTERIOR_OPENINGS, STRUCTURAL_SUPPORTS, CAMERAS, DIAGNOSTIC_MATERIALS
+
+DELIVERABLES:
+01_SOURCE/SITE00_Build_Object_Astra_V2_Blockout.blend
+01_SOURCE/build_astra_v2_blockout.py  (headless rebuild + render entrypoint)
+02_RENDERS/01_REFERENCE_CAMERA_BLOCKOUT.png  (PERSP, match reference framing)
+02_RENDERS/02_LEFT_THREE_QUARTER.png
+02_RENDERS/03_RIGHT_THREE_QUARTER.png
+02_RENDERS/04_ELEVATED_INSPECTION.png
+02_RENDERS/05_REFERENCE_OVERLAY.png  (50% blend blockout hero over reference)
+03_COMPARISONS/blockout-vs-reference-hero.png
+03_COMPARISONS/landmark-overlay-hero.png
+04_DOCUMENTATION/camera-match-report.json  (focal length, location, target, residual notes)
+04_DOCUMENTATION/structural-fidelity-report.md  (honest vs reference)
+04_DOCUMENTATION/usage-report.json  (tokens if known; USD unknown OK)
+05_FOUNDER_REVIEW/review-contact-sheet.md
+05_FOUNDER_REVIEW/approval-status.json  (status: PENDING — do not self-approve)
+
+RED PORTAL: interlocking crimson planes with thickness — NOT two identical red boxes.
+GLASS: 3–5 distinct volumes with frames; asymmetric left fin vs right wing.
+INTERIOR: floor plates + at least one arched opening visible on hero.
+
+WORKFLOW:
+A) image-inspection-evidence.md
+B) perspective camera + empty blockout landmarks overlay check
+C) build_astra_v2_blockout.py — blockout geometry only
+D) render all 5 views from same scene
+E) compare to reference; ONE structural revision if silhouette/portal clearly wrong; re-render ALL five views after revision
+F) write reports with measured mesh counts (informational only — not success criteria)
+
+On completion print: WFE_ASTRA_V2_BLOCKOUT_COMPLETE

@@ -1,0 +1,10 @@
+{
+  "verifiedAt": "2026-10-09T00:00:00Z",
+  "codexCliVersion": "0.162.0",
+  "requestedModelId": "gpt-6-astra",
+  "verificationMethod": "codex debug models + login status (non-billable)",
+  "authStatus": "VERIFIED",
+  "modelListedInCatalog": true,
+  "effectiveModelAtRuntime": "PENDING_PHASE_B",
+  "notes": "Effective model confirmed only from Phase B transcript header, as in V1 forensic receipt."
+}

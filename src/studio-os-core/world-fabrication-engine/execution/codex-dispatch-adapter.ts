@@ -46,10 +46,11 @@ function stableDispatchKey(assignment: FabricationAssignmentManifest): string {
 /** Stable argv for `codex exec` — regression-tested (no unsupported approval flags). */
 export function buildCodexExecInvocation(
   _prompt: string,
-  options?: { model?: string; cwd?: string }
+  options?: { model?: string; cwd?: string; imageInputs?: string[] }
 ): { argv: string[]; useStdin: true } {
   const model = options?.model ?? process.env.WFE_CODEX_MODEL;
   const cwd = options?.cwd ?? process.cwd();
+  const imageInputs = options?.imageInputs ?? [];
   const argv = [
     '--yes',
     '@openai/codex',
@@ -59,6 +60,7 @@ export function buildCodexExecInvocation(
     'workspace-write',
     '-C',
     cwd,
+    ...imageInputs.flatMap((p) => ['-i', p]),
     '-',
   ];
   return { argv, useStdin: true };
@@ -88,6 +90,14 @@ export function authorizeCodexDispatch(
     const budgetUsd = process.env.WFE_FOUNDER_AUTHORIZED_BUDGET_USD;
     if (!budgetUsd || Number(budgetUsd) <= 0) {
       return { allowed: false, reason: 'Paid generation requires WFE_FOUNDER_AUTHORIZED_BUDGET_USD' };
+    }
+    if (assignment.assignmentId.includes('site00-build-object-astra-v2-blockout')) {
+      if (process.env.WFE_BLOCKOUT_PHASE_B_AUTHORIZED !== '1') {
+        return {
+          allowed: false,
+          reason: 'SITE 00 Astra V2 blockout Phase B requires WFE_BLOCKOUT_PHASE_B_AUTHORIZED=1',
+        };
+      }
     }
   }
   const discovery = discoverCodexInterface({ runAuthProbe: true });
