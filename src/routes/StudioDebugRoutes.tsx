@@ -43,6 +43,7 @@ import StudioInstituteInviteLegacyRedirect from '../pages/studio-institute/invit
 import StudioInstituteInviteLandingPage from '../pages/studio-institute/invite/landing/page';
 import StudioInstituteInterviewPage from '../pages/studio-institute/interview/page';
 import StudioInstituteVaultPage from '../pages/studio-institute/knowledge-vault/page';
+import GuidedApprenticeshipProofPage from '../pages/guided-apprenticeship/page';
 import ContextCapsuleDownloadPage from '../pages/context/page';
 import FounderIntelligenceDownloadPage from '../pages/founder-intelligence/page';
 import CollaborationIntelligenceDownloadPage from '../pages/collaboration-intelligence/page';
@@ -195,6 +196,7 @@ export default function StudioDebugRoutes() {
       <Route path="/studio-institute/invite/:token" element={<StudioInstituteInviteLandingPage />} />
       <Route path="/studio-institute/interview" element={<StudioInstituteInterviewPage />} />
       <Route path="/studio-institute/knowledge-vault" element={<StudioInstituteVaultPage />} />
+      <Route path="/studio-institute/guided-apprenticeship" element={<GuidedApprenticeshipProofPage />} />
       <Route path="/context" element={<ContextCapsuleDownloadPage />} />
       <Route path="/founder-intelligence" element={<FounderIntelligenceDownloadPage />} />
       <Route path="/collaboration-intelligence" element={<CollaborationIntelligenceDownloadPage />} />
