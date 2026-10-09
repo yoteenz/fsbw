@@ -117,6 +117,24 @@ export default defineConfig(({ mode, command }) => {
     }
   }
 
+  /** Short tunnel URLs: /design-authority/… → all-in-one-enterprises/design-authority/… (FS Vite on :3001). */
+  function aioDesignAuthorityAliasPlugin() {
+    return {
+      name: 'aio-design-authority-alias',
+      configureServer(server: { middlewares: { use: (fn: (req: any, res: any, next: () => void) => void) => void } }) {
+        server.middlewares.use((req: { url?: string }, res: { writeHead: (c: number, h: Record<string, string>) => void; end: () => void }, next: () => void) => {
+          const raw = req.url ?? ''
+          const q = raw.indexOf('?')
+          const pathname = q >= 0 ? raw.slice(0, q) : raw
+          const search = q >= 0 ? raw.slice(q) : ''
+          if (!pathname.startsWith('/design-authority/')) return next()
+          res.writeHead(302, { Location: `/all-in-one-enterprises${pathname}${search}` })
+          res.end()
+        })
+      },
+    }
+  }
+
   /** Cloudflare Tunnel caches Vite module responses by default — force revalidation every request. */
   function cloudPreviewNoCachePlugin() {
     return {
@@ -143,7 +161,8 @@ export default defineConfig(({ mode, command }) => {
     ...(command === 'serve'
       ? [logDevApiProxyPlugin(apiTarget), site00AsstsLocalApiPlugin(), studioVpLocalApiPlugin()]
       : []),
-    ...(cloudMobilePreview ? [logCloudMobilePreviewPlugin(), stripViteClientForCloudPreviewPlugin(), cloudPreviewNoCachePlugin()] : []),
+      ...(cloudMobilePreview ? [logCloudMobilePreviewPlugin(), stripViteClientForCloudPreviewPlugin(), cloudPreviewNoCachePlugin()] : []),
+      aioDesignAuthorityAliasPlugin(),
     apiDevNoProxyGuard(apiTarget),
     react(cloudMobilePreview ? { fastRefresh: false } : undefined),
   ],
