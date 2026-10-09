@@ -1,0 +1,653 @@
+{
+  "prReconciliation": {
+    "pr49": "OPEN",
+    "pr50": "OPEN",
+    "pr51": "OPEN",
+    "pr52": "OPEN",
+    "note": "Stack #49→#53 open; merge requires founder/repo approval — continued on stacked branch"
+  },
+  "codexInterface": {
+    "interfaceName": "@openai/codex",
+    "cliVersion": "0.162.0",
+    "invocation": "npx @openai/codex",
+    "authenticationMethod": "OPENAI_API_KEY or Codex OAuth session",
+    "authStatus": "BLOCKED",
+    "authBlocker": "No OPENAI_API_KEY/CODEX_API_KEY in environment (401 Unauthorized on probe)",
+    "executionEnvironment": "local subprocess (cloud agent VM)",
+    "statusTracking": "codex exec session / resume",
+    "costImplications": "OpenAI API usage when authenticated — not authorized in WFE without founder approval",
+    "securityNotes": [
+      "Never commit API keys; use Cursor/cloud secrets only",
+      "Fabrication jobs must not pass arbitrary shell from client input",
+      "Codex exec is general-purpose — WFE uses bounded assignment manifests only"
+    ],
+    "discoveryAt": "2026-10-09T01:29:00.799Z"
+  },
+  "codexDispatch": {
+    "dispatchId": "dispatch-activation-1791509340224",
+    "assignmentId": "activation-1791509340224",
+    "projectId": "site00",
+    "state": "AWAITING_EXTERNAL_EXECUTION",
+    "authorizationRef": "wfe-budget-zero-activation-1791509340224",
+    "expectedOutputs": [
+      "02_EXPORTS/SITE00_Build_Object_V2_ExecutionTest_Web.glb",
+      "05_DOCUMENTATION/wfe-blender-execution-report.json"
+    ],
+    "errors": [
+      "No OPENAI_API_KEY/CODEX_API_KEY in environment (401 Unauthorized on probe)"
+    ],
+    "attemptNumber": 0
+  },
+  "realCodexDispatch": false,
+  "realCodexExecution": false,
+  "blenderLocal": {
+    "assignment": {
+      "assignmentId": "site00-v2-loop-1791509340804",
+      "projectId": "site00",
+      "assetId": "site00_bld_object_v2",
+      "fabricationVersion": "codex-blender-v2",
+      "productionLane": "PROP_INTERACTIVE_OBJECT_ART",
+      "targetRuntime": "WEB_3D",
+      "secondaryProfile": "UNREAL_WORLD",
+      "packageRoot": "/workspace/src/studio-os-core/world-fabrication-engine/benchmarks/site00-build-object-v2/fixture",
+      "returnRoot": "/workspace/src/studio-os-core/world-fabrication-engine/benchmarks/site00-build-object-v2/execution-runs/pipeline-activation1/blender-local-proof/return-package",
+      "approvedReferenceIds": [
+        "approved-blueprint-reference"
+      ],
+      "sourceAssetRefs": [
+        "01_SOURCE/SITE00_Build_Object_V2.blend"
+      ],
+      "expectedDeliverables": [
+        "02_EXPORTS/SITE00_Build_Object_V2_ExecutionTest_Web.glb",
+        "05_DOCUMENTATION/wfe-blender-execution-report.json"
+      ],
+      "performanceProfile": "web-prop-default",
+      "executionBudget": {
+        "allowPaidGeneration": false,
+        "maxAttempts": 1
+      },
+      "founderApprovalGate": "FOUNDER_VISUAL_APPROVAL",
+      "handoff": {
+        "handoffId": "handoff-site00-v2-loop-1791509340804",
+        "manifestId": "site00-build-object-v2-benchmark",
+        "approvedReferenceAssets": [
+          "approved-blueprint-reference"
+        ],
+        "spatialSpecificationRef": "site00-build-object-spatial",
+        "expectedModuleHierarchy": [
+          "BUILD_OBJECT_ROOT"
+        ],
+        "materialDefinitionsRef": "05_DOCUMENTATION/material-manifest.json",
+        "cameraTargets": [
+          "CAM_REFERENCE_MATCH"
+        ],
+        "exportRequirements": [
+          "GLB",
+          "BLEND"
+        ],
+        "qualityRequirements": [
+          "module naming",
+          "structural validation"
+        ],
+        "performanceConstraints": [
+          "web triangle budget"
+        ],
+        "allowedModificationScope": "validation-and-test-export-only",
+        "costLimitsRef": "budget-zero",
+        "validationSteps": [
+          "wfe-blender-execution-report.json"
+        ],
+        "expectedReturnPackage": [
+          "execution test GLB",
+          "validation report",
+          "manifest copies"
+        ],
+        "executionEnvironment": "BLENDER_LOCAL",
+        "technicalArt": {
+          "extensionVersion": "1.0",
+          "expectedPackageFolders": [
+            "00_MANIFEST",
+            "01_REFERENCES",
+            "02_SOURCE_MODELS",
+            "11_EXPORTS",
+            "07_MATERIALS",
+            "12_RENDERS_AND_QA"
+          ],
+          "productionLane": "PROP_INTERACTIVE_OBJECT_ART",
+          "productionProfileId": "SITE00_BUILD_OBJECT_WEB_3D",
+          "deliveryProfileId": "WEB_3D",
+          "assetClassificationRef": "site00_bld_object_v2",
+          "geometryRequirements": [],
+          "topologyRequirements": [
+            "NONEMPTY_GEOMETRY",
+            "EXPECTED_MODULE_NAMES"
+          ],
+          "uvRequirements": [],
+          "textureRequirements": [],
+          "materialDefinitions": [],
+          "collisionRequirements": [],
+          "lodRequirements": [],
+          "validationChecklist": [
+            "masterOpens",
+            "masterMaterialsPresent",
+            "webGlbIntegrity"
+          ],
+          "reviewRenderRequirements": [],
+          "executionCapabilityStatus": "CONTRACT_ONLY"
+        }
+      },
+      "createdAt": "2026-10-09T01:29:00.804Z"
+    },
+    "job": {
+      "jobId": "job-site00-v2-loop-1791509340804",
+      "assignmentId": "site00-v2-loop-1791509340804",
+      "backend": "BLENDER_LOCAL",
+      "status": "SUCCEEDED",
+      "phasesCompleted": [
+        "PREPARE_ASSIGNMENT",
+        "VALIDATE_INPUTS",
+        "AUTHORIZE_EXECUTION",
+        "DISPATCH_JOB",
+        "TRACK_STATUS",
+        "COLLECT_OUTPUTS",
+        "VERIFY_OUTPUTS",
+        "REGISTER_LINEAGE",
+        "PREPARE_REVIEW"
+      ],
+      "blenderBin": "/home/ubuntu/.tools/blender-5.2.2-linux-x64/blender",
+      "blenderVersion": "5.2.2 LTS",
+      "startedAt": "2026-10-09T01:29:00.804Z",
+      "finishedAt": "2026-10-09T01:29:01.463Z",
+      "exitCode": 0,
+      "stdoutLogPath": "/workspace/src/studio-os-core/world-fabrication-engine/benchmarks/site00-build-object-v2/execution-runs/pipeline-activation1/blender-local-proof/return-package/logs/blender-stdout.log",
+      "stderrLogPath": "/workspace/src/studio-os-core/world-fabrication-engine/benchmarks/site00-build-object-v2/execution-runs/pipeline-activation1/blender-local-proof/return-package/logs/blender-stderr.log",
+      "returnPackageRoot": "/workspace/src/studio-os-core/world-fabrication-engine/benchmarks/site00-build-object-v2/execution-runs/pipeline-activation1/blender-local-proof/return-package",
+      "codexDispatch": "BLOCKED",
+      "errors": []
+    },
+    "evidence": {
+      "handoffPrepared": true,
+      "jobDispatched": true,
+      "blenderExecuted": true,
+      "outputsVerified": true,
+      "returnIngested": true,
+      "founderReviewReady": true,
+      "classification": "PARTIAL_BLENDER_VERIFIED"
+    },
+    "ingestion": {
+      "outcome": "INGESTED_WITH_WARNINGS",
+      "record": {
+        "recordId": "fap-site00_bld_object_v2_execution_return-1791509341467",
+        "projectId": "site00",
+        "assetId": "site00_bld_object_v2_execution_return",
+        "packageManifest": {
+          "packageId": "pkg-site00_bld_object_v2_execution_return-v2",
+          "assetId": "site00_bld_object_v2_execution_return",
+          "productionLane": "PROP_INTERACTIVE_OBJECT_ART",
+          "productionProfileId": "SITE00_BUILD_OBJECT_WEB_3D",
+          "version": "codex-blender-v2",
+          "authorityRefs": [
+            "approved-blueprint-reference",
+            "artlist-rodin-massing"
+          ],
+          "folderPresence": {
+            "00_MANIFEST": "MISSING",
+            "02_SOURCE_MODELS": "MISSING",
+            "07_MATERIALS": "MISSING",
+            "11_EXPORTS": "PRESENT",
+            "12_RENDERS_AND_QA": "MISSING"
+          },
+          "deliverableCompleteness": {
+            "source_blend": "MISSING",
+            "runtime_glb": "PRESENT",
+            "runtime_fbx": "MISSING",
+            "material_definitions": "PRESENT",
+            "validation_report": "MISSING",
+            "package_manifest": "MISSING",
+            "review_renders": "MISSING",
+            "uv_layout": "UNVERIFIED",
+            "pbr_texture_set": "UNVERIFIED",
+            "collision_mesh": "NOT_REQUIRED",
+            "interaction_anchors": "UNVERIFIED",
+            "skeleton": "NOT_APPLICABLE",
+            "skin_weights": "NOT_APPLICABLE",
+            "animation_clips": "NOT_APPLICABLE",
+            "navigation_metadata": "NOT_APPLICABLE",
+            "engine_import_config": "UNVERIFIED",
+            "lod_meshes": "NOT_REQUIRED",
+            "high_poly_mesh": "MISSING"
+          },
+          "knownLimitations": [
+            "Fixture appears to be a reduced archive (missing 6 paths from full review package README)"
+          ],
+          "approvalState": "FOUNDER_REVIEW_PENDING"
+        },
+        "inventory": {
+          "inventoryId": "inv-site00_bld_object_v2_execution_return",
+          "packageRoot": "/workspace/src/studio-os-core/world-fabrication-engine/benchmarks/site00-build-object-v2/execution-runs/pipeline-activation1/blender-local-proof/return-package",
+          "extractedAt": "2026-10-09T01:29:01.465Z",
+          "fileCount": 6,
+          "totalBytes": 233705,
+          "files": [
+            {
+              "relativePath": "02_EXPORTS/SITE00_Build_Object_V2_ExecutionTest_Web.glb",
+              "bytes": 186760,
+              "sha256": "516c1ef25defca658c786decfc58ef7c82777faa63c97022461f84502a9ed048",
+              "mimeGuess": "model/gltf-binary",
+              "role": "RUNTIME_GLB",
+              "assetTier": "DERIVED",
+              "dependencies": [],
+              "productionVersion": "V2"
+            },
+            {
+              "relativePath": "05_DOCUMENTATION/material-manifest.json",
+              "bytes": 3114,
+              "sha256": "7c39fcb76853b80f6a079e75a3369756447383a2298e89c1babc6ba8165bbc52",
+              "mimeGuess": "application/json",
+              "role": "MATERIAL_MANIFEST",
+              "assetTier": "DOCUMENTATION",
+              "dependencies": [],
+              "productionVersion": "V2"
+            },
+            {
+              "relativePath": "05_DOCUMENTATION/module-manifest.json",
+              "bytes": 34216,
+              "sha256": "557b42cf0d8048c3c98134849c06b66aa2ad04e9f2aec3832e7991efdb020ae0",
+              "mimeGuess": "application/json",
+              "role": "MODULE_MANIFEST",
+              "assetTier": "DOCUMENTATION",
+              "dependencies": [],
+              "productionVersion": "V2"
+            },
+            {
+              "relativePath": "05_DOCUMENTATION/wfe-blender-execution-report.json",
+              "bytes": 1728,
+              "sha256": "cb7913ef6a196723820e18fc7c3844e4b9752485527f9e601c43d449bfaad9b0",
+              "mimeGuess": "application/json",
+              "role": "DOCUMENTATION",
+              "assetTier": "DOCUMENTATION",
+              "dependencies": [],
+              "productionVersion": "V2"
+            },
+            {
+              "relativePath": "logs/blender-stderr.log",
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "mimeGuess": "application/octet-stream",
+              "role": "UNKNOWN",
+              "assetTier": "DOCUMENTATION",
+              "dependencies": [],
+              "productionVersion": "V2"
+            },
+            {
+              "relativePath": "logs/blender-stdout.log",
+              "bytes": 7887,
+              "sha256": "c4654d7a5e09c4d752f6bc43a0bf8a0ac5e85bb933aaab9c7d30598a561f0a3d",
+              "mimeGuess": "application/octet-stream",
+              "role": "UNKNOWN",
+              "assetTier": "DOCUMENTATION",
+              "dependencies": [],
+              "productionVersion": "V2"
+            }
+          ],
+          "missingFromFullReviewPackage": [
+            "02_EXPORTS/SITE00_Build_Object_V2_High.glb",
+            "02_EXPORTS/SITE00_Build_Object_V2_DCC.fbx",
+            "03_RENDERS/*",
+            "04_COMPARISONS/*",
+            "01_SOURCE/serve-viewer.cjs",
+            "01_SOURCE/validate_v2.py"
+          ],
+          "warnings": [
+            "Fixture appears to be a reduced archive (missing 6 paths from full review package README)"
+          ]
+        },
+        "glbInspections": [
+          {
+            "filePath": "/workspace/src/studio-os-core/world-fabrication-engine/benchmarks/site00-build-object-v2/execution-runs/pipeline-activation1/blender-local-proof/return-package/02_EXPORTS/SITE00_Build_Object_V2_ExecutionTest_Web.glb",
+            "sha256": "516c1ef25defca658c786decfc58ef7c82777faa63c97022461f84502a9ed048",
+            "fileBytes": 186760,
+            "parseOk": true,
+            "parseErrors": [],
+            "meshCount": 63,
+            "nodeCount": 63,
+            "materialNames": [
+              "CLEAR_ARCHITECTURAL_GLASS",
+              "WHITE_MARBLE",
+              "LIGHT_STONE",
+              "DARK_STONE",
+              "REFLECTIVE_METAL",
+              "RED_TRANSLUCENT_ACRYLIC"
+            ],
+            "textureCount": 0,
+            "embeddedImageCount": 0,
+            "triangleCount": 3464,
+            "extensionsUsed": [
+              "KHR_materials_transmission",
+              "KHR_materials_specular",
+              "KHR_materials_ior"
+            ],
+            "sceneRootNodeNames": [
+              "FOUNDATION_CLEAR_TOP_PLATE",
+              "FOUNDATION_MARBLE_CONTINUOUS",
+              "GLASS_INFERRED_REAR_01",
+              "GLASS_INFERRED_REAR_02",
+              "GLASS_INTERIOR_LEDGE_01",
+              "GLASS_PARTITION_01",
+              "GLASS_PARTITION_02",
+              "GLASS_PARTITION_03",
+              "GLASS_PARTITION_04",
+              "GLASS_PARTITION_05",
+              "GLASS_PARTITION_06",
+              "GLASS_PARTITION_07",
+              "INTERIOR_ARCH_PANEL_01",
+              "INTERIOR_ARCH_PANEL_02",
+              "INTERIOR_ARCH_PANEL_03",
+              "INTERIOR_DARK_MARBLE_BLADE",
+              "INTERIOR_LIGHT_PLATFORM",
+              "INTERIOR_LIGHT_STONE_BLADE",
+              "INTERIOR_STONE_UPPER_PARTITION",
+              "OPTIONAL_SCALE_SILHOUETTE_01",
+              "OPTIONAL_SCALE_SILHOUETTE_02",
+              "OPTIONAL_SCALE_SILHOUETTE_03",
+              "OPTIONAL_SCALE_SILHOUETTE_04",
+              "GLASS_INFERRED_REAR_CHAMBER_LEFT",
+              "GLASS_INFERRED_REAR_CHAMBER_REAR",
+              "GLASS_INFERRED_REAR_ROOF",
+              "GLASS_PRIMARY_01",
+              "GLASS_PRIMARY_02",
+              "GLASS_PRIMARY_03",
+              "GLASS_PRIMARY_REAR",
+              "GLASS_ROOF_PLANE_01",
+              "GLASS_ROOF_PLANE_02",
+              "RED_CORE_FRAME_PRIMARY_00",
+              "RED_CORE_FRAME_PRIMARY_01",
+              "RED_CORE_FRAME_PRIMARY_02",
+              "RED_CORE_FRAME_PRIMARY_03",
+              "RED_CORE_FRAME_SECONDARY_00",
+              "RED_CORE_FRAME_SECONDARY_01",
+              "RED_CORE_FRAME_SECONDARY_02",
+              "RED_CORE_FRAME_SECONDARY_03",
+              "RED_CORE_HORIZONTAL_00",
+              "RED_CORE_HORIZONTAL_01",
+              "RED_CORE_HORIZONTAL_02",
+              "RED_CORE_HORIZONTAL_03",
+              "RED_CORE_INTERIOR_01",
+              "RED_CORE_INTERIOR_02",
+              "RED_CORE_INTERIOR_03",
+              "RED_CORE_LOWER_THRESHOLD",
+              "RED_CORE_PRIMARY",
+              "RED_CORE_SECONDARY",
+              "GLASS_CHAMBER_01",
+              "GLASS_CHAMBER_02",
+              "GLASS_CHAMBER_03",
+              "GLASS_SECONDARY_01",
+              "GLASS_SECONDARY_02",
+              "PRIMARY_FRAME_LEFT_00",
+              "PRIMARY_FRAME_LEFT_01",
+              "PRIMARY_FRAME_LEFT_02",
+              "PRIMARY_FRAME_LEFT_03",
+              "PRIMARY_FRAME_RIGHT_00",
+              "PRIMARY_FRAME_RIGHT_01",
+              "PRIMARY_FRAME_RIGHT_02",
+              "PRIMARY_FRAME_RIGHT_03"
+            ],
+            "accessorSummary": {
+              "positions": 63,
+              "indices": 63
+            }
+          }
+        ],
+        "lineageAssets": [
+          {
+            "assetId": "site00-approved-blueprint-reference",
+            "manifestId": "site00-build-object-v2-benchmark",
+            "tier": "ORIGINAL_REFERENCE",
+            "storageRef": "external:approved-blueprint-image",
+            "approvalStatus": "APPROVED",
+            "inputAuthorityVersion": "founder-approved"
+          },
+          {
+            "assetId": "site00-artlist-rodin-massing",
+            "manifestId": "site00-build-object-v2-benchmark",
+            "tier": "AI_MASSING_SOURCE",
+            "storageRef": "external:artlist-rodin-glb",
+            "provider": "ARTLIST",
+            "approvalStatus": "APPROVED_FOR_RECONSTRUCTION"
+          },
+          {
+            "assetId": "site00-codex-blender-v1-package",
+            "manifestId": "site00-build-object-v2-benchmark",
+            "tier": "FABRICATION_SOURCE",
+            "storageRef": "external:SITE00_Build_Object_Review_Package.zip",
+            "sourceTool": "BLENDER",
+            "fabricationScriptVersion": "V1",
+            "approvalStatus": "SUPERSEDED_BY_V2",
+            "supersededByAssetId": "site00-codex-blender-v2-package"
+          },
+          {
+            "assetId": "site00-codex-blender-v2-package",
+            "manifestId": "site00-build-object-v2-benchmark",
+            "tier": "APPROVED_MASTER",
+            "storageRef": "/workspace/src/studio-os-core/world-fabrication-engine/benchmarks/site00-build-object-v2/execution-runs/pipeline-activation1/blender-local-proof/return-package",
+            "sourceTool": "BLENDER",
+            "fabricationScriptVersion": "V2",
+            "approvalStatus": "FOUNDER_REVIEW_PENDING"
+          },
+          {
+            "assetId": "site00-build-object-v2-web-glb",
+            "manifestId": "site00-build-object-v2-benchmark",
+            "tier": "RUNTIME_EXPORT",
+            "storageRef": "02_EXPORTS/SITE00_Build_Object_V2_ExecutionTest_Web.glb",
+            "contentHash": "516c1ef25defca658c786decfc58ef7c82777faa63c97022461f84502a9ed048",
+            "exportConfiguration": {
+              "target": "WEB_3D",
+              "profile": "SITE00_BUILD_OBJECT_WEB_3D"
+            },
+            "approvalStatus": "FOUNDER_REVIEW_PENDING"
+          }
+        ],
+        "lineageTransforms": [
+          {
+            "transformId": "xf-blueprint-to-rodin",
+            "manifestId": "site00-build-object-v2-benchmark",
+            "inputAssetIds": [
+              "site00-approved-blueprint-reference"
+            ],
+            "outputAssetIds": [
+              "site00-artlist-rodin-massing"
+            ],
+            "version": "1",
+            "agentOrTool": "ARTLIST_RODIN",
+            "executedAt": "historical-reported",
+            "configuration": {
+              "paidGeneration": false,
+              "note": "Historical — not re-run in this sprint"
+            },
+            "validationResult": "SKIPPED",
+            "approvalState": "APPROVED",
+            "tier": "AI_MASSING_SOURCE"
+          },
+          {
+            "transformId": "xf-rodin-to-codex-v1",
+            "manifestId": "site00-build-object-v2-benchmark",
+            "inputAssetIds": [
+              "site00-artlist-rodin-massing",
+              "site00-approved-blueprint-reference"
+            ],
+            "outputAssetIds": [
+              "site00-codex-blender-v1-package"
+            ],
+            "version": "1",
+            "agentOrTool": "CODEX_BLENDER",
+            "executedAt": "historical-reported",
+            "configuration": {},
+            "validationResult": "PASS",
+            "approvalState": "SUPERSEDED",
+            "tier": "FABRICATION_SOURCE"
+          },
+          {
+            "transformId": "xf-v1-to-codex-v2",
+            "manifestId": "site00-build-object-v2-benchmark",
+            "inputAssetIds": [
+              "site00-codex-blender-v1-package",
+              "site00-approved-blueprint-reference"
+            ],
+            "outputAssetIds": [
+              "site00-codex-blender-v2-package"
+            ],
+            "version": "2",
+            "agentOrTool": "CODEX_BLENDER",
+            "executedAt": "2026-10-09T01:29:01.465Z",
+            "configuration": {
+              "sprint": "P0.SITE00.BUILDER.BUILD-OBJECT.V2-REFERENCE-FIDELITY-ARCHITECTURAL-RECONSTRUCTION1"
+            },
+            "validationResult": "PENDING",
+            "approvalState": "FOUNDER_REVIEW_PENDING",
+            "tier": "FABRICATION_SOURCE",
+            "supersedesTransformId": "xf-rodin-to-codex-v1"
+          }
+        ],
+        "technicalAssessments": [
+          {
+            "requirementId": "source_geometry_blend",
+            "category": "GEOMETRY",
+            "cell": "MISSING",
+            "evidence": []
+          },
+          {
+            "requirementId": "runtime_web_glb",
+            "category": "GEOMETRY",
+            "cell": "PRESENT",
+            "evidence": [
+              "triangles=3464",
+              "sha256=516c1ef25defca658c786decfc58ef7c82777faa63c97022461f84502a9ed048"
+            ]
+          },
+          {
+            "requirementId": "runtime_high_glb",
+            "category": "GEOMETRY",
+            "cell": "MISSING",
+            "evidence": [],
+            "notes": "Missing in reduced Under4MB fixture"
+          },
+          {
+            "requirementId": "runtime_fbx",
+            "category": "GEOMETRY",
+            "cell": "MISSING",
+            "notes": "Missing in reduced Under4MB fixture",
+            "evidence": []
+          },
+          {
+            "requirementId": "material_definitions",
+            "category": "MATERIALS",
+            "cell": "PRESENT",
+            "evidence": [
+              "material-manifest.json"
+            ]
+          },
+          {
+            "requirementId": "module_hierarchy",
+            "category": "MODULARITY",
+            "cell": "PRESENT",
+            "evidence": [
+              "module-manifest.json"
+            ]
+          },
+          {
+            "requirementId": "validation_report",
+            "category": "QA",
+            "cell": "MISSING",
+            "evidence": [
+              "export-validation-report.json"
+            ]
+          },
+          {
+            "requirementId": "render_evidence",
+            "category": "QA",
+            "cell": "MISSING",
+            "notes": "Full review package includes Blender renders; reduced fixture omits 03_RENDERS",
+            "evidence": []
+          },
+          {
+            "requirementId": "reference_lineage",
+            "category": "LINEAGE",
+            "cell": "MISSING",
+            "notes": "Comparison assets absent in reduced fixture",
+            "evidence": []
+          },
+          {
+            "requirementId": "collision_mesh",
+            "category": "COLLISION",
+            "cell": "NOT_REQUIRED",
+            "evidence": [],
+            "notes": "Static prop web delivery — collision optional per profile"
+          },
+          {
+            "requirementId": "navigation",
+            "category": "NAVIGATION",
+            "cell": "NOT_APPLICABLE",
+            "evidence": []
+          },
+          {
+            "requirementId": "lod_meshes",
+            "category": "LOD",
+            "cell": "NOT_REQUIRED",
+            "evidence": []
+          },
+          {
+            "requirementId": "rig_animation",
+            "category": "CHARACTER",
+            "cell": "NOT_APPLICABLE",
+            "evidence": []
+          },
+          {
+            "requirementId": "blender_native_inspection",
+            "category": "DCC",
+            "cell": "BLOCKED",
+            "evidence": [],
+            "notes": "Blender CLI not available in cloud benchmark environment"
+          },
+          {
+            "requirementId": "unreal_import",
+            "category": "ENGINE",
+            "cell": "UNVERIFIED",
+            "evidence": [
+              "export-validation-report.json: unreal NOT TESTED"
+            ]
+          },
+          {
+            "requirementId": "glb_integrity_parse",
+            "category": "GEOMETRY",
+            "cell": "PRESENT",
+            "evidence": [
+              "meshes=63",
+              "materials=CLEAR_ARCHITECTURAL_GLASS,WHITE_MARBLE,LIGHT_STONE,DARK_STONE,REFLECTIVE_METAL,RED_TRANSLUCENT_ACRYLIC"
+            ]
+          },
+          {
+            "requirementId": "uv_texture_embedded",
+            "category": "TEXTURES",
+            "cell": "MISSING",
+            "evidence": [
+              "embeddedImages=0"
+            ]
+          }
+        ],
+        "ingestionRunId": "run-1791509341467",
+        "ingestedAt": "2026-10-09T01:29:01.467Z"
+      },
+      "errors": []
+    }
+  },
+  "blenderViaCodex": false,
+  "returnIngestionFromCodex": false,
+  "fullLoopVerified": false,
+  "fullV2Package": "MISSING",
+  "founderReview": "PENDING — V2 REVISE",
+  "handoffBundlePath": "/workspace/src/studio-os-core/world-fabrication-engine/benchmarks/site00-build-object-v2/execution-runs/pipeline-activation1/external-handoff",
+  "reportDir": "/workspace/src/studio-os-core/world-fabrication-engine/benchmarks/site00-build-object-v2/execution-runs/pipeline-activation1/reports",
+  "exactMissingConnection": "OpenAI API authentication for @openai/codex CLI (401 without OPENAI_API_KEY)",
+  "requiredFounderAction": "In Cursor → Project Settings → Cloud Agent → Secrets, add secret name OPENAI_API_KEY with a valid OpenAI API key authorized for Codex, then re-run: npm run wfe:codex-fabrication-proof",
+  "nextStepAfterUnblock": "npm run wfe:codex-fabrication-proof (same command — will attempt real codex exec and ingest codex-return/)"
+}

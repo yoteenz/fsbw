@@ -1,0 +1,54 @@
+{
+  "runner": "wfe_blender_benchmark_runner",
+  "startedAt": "2026-10-09T01:29:01.215208+00:00",
+  "blenderVersion": "5.2.2 LTS",
+  "packageRoot": "/workspace/src/studio-os-core/world-fabrication-engine/benchmarks/site00-build-object-v2/fixture",
+  "returnRoot": "/workspace/src/studio-os-core/world-fabrication-engine/benchmarks/site00-build-object-v2/execution-runs/pipeline-activation1/blender-local-proof/return-package",
+  "formats": {
+    "SITE00_Build_Object_V2_Web.glb": {
+      "fileBytes": 1065776,
+      "sha256": "813f0646954f37deed11f3c8bca40d68d7ba158f8dd6ced04bb6a911d8dbac81",
+      "nodeCount": 71,
+      "meshCount": 63
+    }
+  },
+  "checks": {
+    "masterOpens": true,
+    "masterMaterialsPresent": true,
+    "requiredCamerasPresent": true
+  },
+  "missingExports": [
+    "SITE00_Build_Object_V2_High.glb",
+    "SITE00_Build_Object_V2_DCC.fbx"
+  ],
+  "limitations": [],
+  "master": {
+    "meshObjectCount": 63,
+    "expectedMeshObjectCount": 63,
+    "triangles": 9968,
+    "bounds": [
+      [
+        -5.0,
+        -3.75,
+        0.0
+      ],
+      [
+        5.0,
+        3.75,
+        4.373773574829102
+      ]
+    ],
+    "geometryIssues": [],
+    "exactDuplicateMeshes": [],
+    "missingNames": [],
+    "allExpectedNamesPresent": true
+  },
+  "executionTestExport": {
+    "path": "/workspace/src/studio-os-core/world-fabrication-engine/benchmarks/site00-build-object-v2/execution-runs/pipeline-activation1/blender-local-proof/return-package/02_EXPORTS/SITE00_Build_Object_V2_ExecutionTest_Web.glb",
+    "bytes": 186760,
+    "sha256": "516c1ef25defca658c786decfc58ef7c82777faa63c97022461f84502a9ed048"
+  },
+  "failedGeometryTargets": [],
+  "status": "PASS",
+  "finishedAt": "2026-10-09T01:29:01.384986+00:00"
+}
