@@ -1,12 +1,13 @@
 /* AIO PUBLIC WEBSITE — the founder review around the site (device frames, page tree, the reference beside it). */
-:root { --rv-bg: #0b0b0c; --rv-panel: #141415; --rv-line: rgba(235, 217, 183, 0.14); --rv-text: #efe8da; --rv-muted: #a39b8d; --rv-gold: #d4a853; --rv-chrome: 'Inter', Arial, sans-serif; }
+:root { --rv-bg: #0b0b0c; --rv-panel: #141415; --rv-line: rgba(235, 217, 183, 0.14); --rv-text: #efe8da; --rv-muted: #a39b8d; --rv-gold: #d4a853; --rv-chrome: 'AIO Inter', 'Inter', Arial, sans-serif; }
 html, body { margin: 0; background: var(--rv-bg); color: var(--rv-text); }
+:root { color-scheme: dark; } /* a deliberately single, dark look (the public brand is dark) */
 body { font: 500 13px/1.5 var(--rv-chrome); letter-spacing: 0.06em; text-transform: uppercase; }
 #rv { min-height: 100vh; display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto auto 1fr; }
 .rv-top { position: sticky; top: 0; z-index: 30; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 22px; padding: 14px 24px; background: rgba(11, 11, 12, 0.94); backdrop-filter: blur(8px); border-bottom: 1px solid var(--rv-line); }
 .rv-brand { display: flex; align-items: center; gap: 12px; margin-right: auto; }
 .rv-brand img { height: 30px; }
-.rv-brand b { display: block; font: 800 15px/1.1 'Inter Tight', var(--rv-chrome); letter-spacing: 0.12em; }
+.rv-brand b { display: block; font: 800 15px/1.1 'AIO Inter Tight', 'Inter Tight', var(--rv-chrome); letter-spacing: 0.12em; }
 .rv-brand span { display: block; font: 600 10px/1.2 var(--rv-chrome); letter-spacing: 0.18em; color: var(--rv-gold); }
 .rv-seg { display: inline-flex; flex: 0 1 auto; min-width: 0; max-width: 100%; overflow-x: auto; scrollbar-width: none; gap: 3px; padding: 3px; border-radius: 999px; background: var(--rv-panel); border: 1px solid var(--rv-line); }
 .rv-seg button { height: 32px; padding: 0 14px; border-radius: 999px; border: 0; background: none; color: var(--rv-muted); font: 700 10.5px/1 var(--rv-chrome); letter-spacing: 0.14em; cursor: pointer; white-space: nowrap; text-transform: uppercase; }
@@ -26,7 +27,7 @@ body { font: 500 13px/1.5 var(--rv-chrome); letter-spacing: 0.06em; text-transfo
 /* overview */
 .rv-hero { display: grid; gap: 10px; max-width: 1100px; margin-bottom: 26px; }
 .rv-hero small { font: 700 11px/1 var(--rv-chrome); letter-spacing: 0.24em; color: var(--rv-gold); }
-.rv-hero h1 { margin: 0; font: 800 clamp(26px, 3.2vw, 44px)/1 'Inter Tight', var(--rv-chrome); letter-spacing: 0.01em; }
+.rv-hero h1 { margin: 0; font: 800 clamp(26px, 3.2vw, 44px)/1 'AIO Inter Tight', 'Inter Tight', var(--rv-chrome); letter-spacing: 0.01em; }
 .rv-hero p { margin: 0; color: var(--rv-muted); max-width: 90ch; line-height: 1.6; }
 .rv-flags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
 .rv-flag { display: inline-flex; align-items: center; gap: 8px; height: 28px; padding: 0 12px; border-radius: 999px; border: 1px solid var(--rv-line); font: 700 10px/1 var(--rv-chrome); letter-spacing: 0.14em; color: var(--rv-text); white-space: nowrap; }
@@ -36,14 +37,14 @@ body { font: 500 13px/1.5 var(--rv-chrome); letter-spacing: 0.06em; text-transfo
 .rv-grp { display: grid; gap: 14px; padding-top: 20px; margin-top: 20px; border-top: 1px solid var(--rv-line); }
 .rv-grp > header { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 16px; }
 .rv-grp > header i { font: 800 13px/1 var(--rv-chrome); font-style: normal; letter-spacing: 0.12em; color: var(--rv-gold); }
-.rv-grp > header h2 { margin: 0; font: 800 20px/1 'Inter Tight', var(--rv-chrome); letter-spacing: 0.06em; }
+.rv-grp > header h2 { margin: 0; font: 800 20px/1 'AIO Inter Tight', 'Inter Tight', var(--rv-chrome); letter-spacing: 0.06em; }
 .rv-grp > header span { font: 600 10.5px/1.3 var(--rv-chrome); letter-spacing: 0.14em; color: var(--rv-muted); }
 .rv-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); gap: 16px; }
 .rv-card { display: grid; gap: 10px; padding: 0; border: 0; background: none; color: inherit; text-align: left; cursor: pointer; font: inherit; text-transform: uppercase; letter-spacing: inherit; }
 .rv-shot { position: relative; aspect-ratio: 16 / 10; border-radius: 10px; overflow: hidden; background: #000 center top / cover no-repeat; box-shadow: 0 0 0 1px var(--rv-line), 0 16px 34px rgba(0, 0, 0, 0.45); transition: box-shadow 220ms cubic-bezier(0.22, 0.9, 0.28, 1), transform 220ms cubic-bezier(0.22, 0.9, 0.28, 1); }
 .rv-card:hover .rv-shot { box-shadow: 0 0 0 2px var(--rv-gold), 0 20px 40px rgba(0, 0, 0, 0.5); transform: translateY(-2px); }
 .rv-shot--none { display: grid; place-items: center; background: linear-gradient(160deg, #1b1a19, #0a0a0a); }
-.rv-shot--none b { font: 800 18px/1.1 'Inter Tight', var(--rv-chrome); letter-spacing: 0.08em; color: var(--rv-gold); padding: 18px; text-align: center; }
+.rv-shot--none b { font: 800 18px/1.1 'AIO Inter Tight', 'Inter Tight', var(--rv-chrome); letter-spacing: 0.08em; color: var(--rv-gold); padding: 18px; text-align: center; }
 .rv-phone { position: absolute; right: 10px; bottom: 10px; width: 22%; aspect-ratio: 390 / 844; border-radius: 10px; background: #000 center top / cover no-repeat; box-shadow: 0 0 0 3px #1b1b1b, 0 10px 24px rgba(0, 0, 0, 0.6); }
 .rv-card__t { display: flex; align-items: center; justify-content: space-between; gap: 10px; font: 800 13px/1.25 var(--rv-chrome); letter-spacing: 0.1em; }
 .rv-card__s { font: 600 10px/1.3 var(--rv-chrome); letter-spacing: 0.14em; color: var(--rv-muted); margin-top: -6px; }

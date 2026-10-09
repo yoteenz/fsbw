@@ -905,3 +905,4 @@
 .mo-net__cols span:nth-child(5), .mo-net__cols span:nth-child(7) { text-align: center; }
 .mo-net--m .mo-net__cols { display: none; }
 .mo-sv--now { background: var(--obsidian); color: var(--nav-gold); }
+.mo-dview .fx > div { grid-template-columns: 84px minmax(0, 1fr); }

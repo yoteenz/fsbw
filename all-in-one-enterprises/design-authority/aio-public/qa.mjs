@@ -276,7 +276,7 @@ for (const dev of process.env.QA_SKIP_PAGES ? [] : Object.keys(DEV)) {
   const p = await browser.newPage({ viewport: { width: 1600, height: 1000 } });
   const errs = [];
   p.on('pageerror', (e) => errs.push(e.message));
-  await p.goto(`${BASE}/index.html`);
+  await p.goto(`${BASE}/local.html`);
   await p.waitForFunction(() => document.documentElement.dataset.ready === '1');
   const groups = await p.evaluate(() => window.AIO_PUBREV.groups().map((g) => g.pages.length));
   check('review · the overview shows the five curated groups as cards', (await p.locator('.rv-grp').count()) === 5 && (await p.locator('.rv-card').count()) === groups.reduce((a, b) => a + b, 0), groups.join(','));
@@ -307,7 +307,7 @@ for (const dev of process.env.QA_SKIP_PAGES ? [] : Object.keys(DEV)) {
   check('review · no errors', !errs.length, errs.join(' | '));
   await p.close();
   const m = await browser.newPage({ viewport: { width: 390, height: 844 } });
-  await m.goto(`${BASE}/index.html#/@phone`);
+  await m.goto(`${BASE}/local.html#/@phone`);
   await m.waitForFunction(() => document.documentElement.dataset.ready === '1');
   check('review · at 390 the review has no sideways scroll and opens on the phone frame', (await m.evaluate(() => document.documentElement.scrollWidth)) <= 390 && (await m.evaluate(() => window.AIO_PUBREV.state().dev)) === 'phone', await m.evaluate(() => document.documentElement.scrollWidth));
   await m.close();

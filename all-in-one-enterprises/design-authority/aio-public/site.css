@@ -2,14 +2,14 @@
  * platinum (founder brand DNA board §02). Inter Tight display + Inter text (D-TYPOGRAPHY; Monument Extended unlicensed).
  * Everything renders uppercase. The site is one container (#pub, container "pub") so the same CSS composes the phone
  * (< 600), tablet (600–1099), desktop (1100–1899) and ultra-wide (≥ 1900) whether it fills a window or a review frame. */
-@font-face { font-family: 'Inter Tight'; src: url('fonts/inter-tight-latin-wght.woff2') format('woff2'); font-weight: 100 900; font-display: swap; }
-@font-face { font-family: 'Inter'; src: url('fonts/inter-latin-wght.woff2') format('woff2'); font-weight: 100 900; font-display: swap; }
+@font-face { font-family: 'AIO Inter Tight'; src: url('fonts/inter-tight-latin-wght.woff2') format('woff2'); font-weight: 100 900; font-display: swap; }
+@font-face { font-family: 'AIO Inter'; src: url('fonts/inter-latin-wght.woff2') format('woff2'); font-weight: 100 900; font-display: swap; }
 
 .pub {
   --obsidian: #050505; --charcoal: #1a1a1a; --ink: #0d0d0e; --ink-2: #141415; --gold: #d4a853; --gold-hi: #f3d189;
   --gold-lo: #a97c2c; --champagne: #ebd9b7; --platinum: #c0c6cc; --stone: #f6f6f4; --text: #f4efe4; --muted: #a8a195;
   --dim: #78726a; --line: rgba(235, 217, 183, 0.14); --line-2: rgba(235, 217, 183, 0.26); --ok: #7fc795; --warn: #e2b04a;
-  --stop: #e07a6a; --display: 'Inter Tight', 'Inter', Arial, sans-serif; --sans: 'Inter', Arial, sans-serif;
+  --stop: #e07a6a; --display: 'AIO Inter Tight', 'Inter Tight', 'AIO Inter', 'Inter', Arial, sans-serif; --sans: 'AIO Inter', 'Inter', Arial, sans-serif;
   --ease: cubic-bezier(0.22, 0.9, 0.28, 1); --t-fast: 160ms; --t-mid: 320ms; --t-slow: 900ms; --t-hero: 1600ms;
   --gut: 20px; --maxw: 1320px; --nav: 60px; --h1: 33px; --h2: 26px; --h3: 17px; --lead: 13px; --body: 12.5px;
   --small: 10.5px; --eyebrow: 10.5px; --btn: 12px; --sec: 64px; --r: 8px; --fh: 100vh;
