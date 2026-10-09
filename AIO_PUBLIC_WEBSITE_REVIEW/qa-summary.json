@@ -6,8 +6,8 @@
   "desktop",
   "wide"
  ],
- "pass": 76,
- "fail": 8,
+ "pass": 84,
+ "fail": 0,
  "results": [
   {
    "name": "pages · phone · all 92 pages draw without errors",
@@ -36,13 +36,13 @@
   },
   {
    "name": "text · phone · buttons, chips, tabs and links stay on one line",
-   "ok": false,
-   "detail": "/services: LEARN MORE | LEARN MORE | LEARN MORE ; /services/permitting: LEARN MORE | LEARN MORE | LEARN MORE ; /services/business-formation: LEARN MORE | LEARN MORE | LEARN MORE ; /services/insurance: LEARN MORE | LEARN MORE | LEARN MORE ; /services/dispatching: LEARN MORE | LEARN MORE | LEARN MORE ; /services/brokerage: DETAILS | DETAILS | DETAILS ; /services/bookkeeping: LEARN MORE | LEARN MORE | LEARN MORE ; /services/factoring: LEARN MORE | LEARN MORE ; /services/fleetcare: REQUEST SERVICE ; /start-your-business: LEARN MORE | LEARN MORE | LEARN MORE ; /start-your-business/build: GET STARTE"
+   "ok": true,
+   "detail": ""
   },
   {
    "name": "text · phone · nothing clipped by its box",
-   "ok": false,
-   "detail": "/services: sr \"FILTER SERVICES\""
+   "ok": true,
+   "detail": ""
   },
   {
    "name": "pages · phone · every image loads",
@@ -81,13 +81,13 @@
   },
   {
    "name": "text · tablet · buttons, chips, tabs and links stay on one line",
-   "ok": false,
-   "detail": "/: GET MY ROADMAP | GET STARTED ; /services: LEARN MORE | LEARN MORE | LEARN MORE ; /services/permitting: LEARN MORE | LEARN MORE | LEARN MORE ; /services/business-formation: GET STARTED | LEARN MORE | LEARN MORE ; /services/insurance: GET STARTED | LEARN MORE | LEARN MORE ; /services/dispatching: LEARN MORE | LEARN MORE | LEARN MORE ; /services/brokerage: DETAILS | DETAILS | DETAILS ; /services/bookkeeping: LEARN MORE | LEARN MORE | LEARN MORE ; /services/factoring: LEARN MORE | LEARN MORE ; /start-your-business: LEARN MORE | LEARN MORE | LEARN MORE ; /start-your-business/build: LEARN MORE | "
+   "ok": true,
+   "detail": ""
   },
   {
    "name": "text · tablet · nothing clipped by its box",
-   "ok": false,
-   "detail": "/services: sr \"FILTER SERVICES\""
+   "ok": true,
+   "detail": ""
   },
   {
    "name": "pages · tablet · every image loads",
@@ -126,13 +126,13 @@
   },
   {
    "name": "text · desktop · buttons, chips, tabs and links stay on one line",
-   "ok": false,
-   "detail": "/: SERVICES | SOLUTIONS | RESOURCES ; /services: SERVICES | SOLUTIONS | RESOURCES ; /services/find: SERVICES | SOLUTIONS | RESOURCES ; /services/permitting: SERVICES | SOLUTIONS | RESOURCES ; /services/business-formation: SERVICES | SOLUTIONS | RESOURCES ; /services/insurance: SERVICES | SOLUTIONS | RESOURCES ; /services/dispatching: SERVICES | SOLUTIONS | RESOURCES ; /services/brokerage: SERVICES | SOLUTIONS | RESOURCES ; /services/bookkeeping: SERVICES | SOLUTIONS | RESOURCES ; /services/bookkeeping/assessment: SERVICES | SOLUTIONS | RESOURCES ; /services/bookkeeping/recommendation: SERVICES"
+   "ok": true,
+   "detail": ""
   },
   {
    "name": "text · desktop · nothing clipped by its box",
-   "ok": false,
-   "detail": "/services: sr \"FILTER SERVICES\""
+   "ok": true,
+   "detail": ""
   },
   {
    "name": "pages · desktop · every image loads",
@@ -171,13 +171,13 @@
   },
   {
    "name": "text · wide · buttons, chips, tabs and links stay on one line",
-   "ok": false,
-   "detail": "/: GET STARTED | GET STARTED | SEE HOW IT WORKS ; /services: GET STARTED | FIND MY SERVICE | LEARN MORE ; /services/find: GET STARTED | GET STARTED ; /services/permitting: GET STARTED | GET STARTED | GET STARTED ; /services/business-formation: GET STARTED | GET STARTED | GET STARTED ; /services/insurance: GET STARTED | GET STARTED | GET STARTED ; /services/dispatching: GET STARTED | GET STARTED | GET STARTED ; /services/brokerage: GET STARTED | DETAILS | DETAILS ; /services/bookkeeping: GET STARTED | ASSESS MY BOOKS | LEARN MORE ; /services/bookkeeping/assessment: GET STARTED | SEE MY RECOMMEN"
+   "ok": true,
+   "detail": ""
   },
   {
    "name": "text · wide · nothing clipped by its box",
-   "ok": false,
-   "detail": "/services: sr \"FILTER SERVICES\""
+   "ok": true,
+   "detail": ""
   },
   {
    "name": "pages · wide · every image loads",
