@@ -79,8 +79,8 @@ const slug = (p) => p.replace(/[^a-z0-9]+/gi, '_').replace(/^_|_$/g, '') || 'hom
 const css = `
 body{margin:0;background:#0b0b0c}
 .board{width:2400px;box-sizing:border-box;padding:52px 64px 60px;background:radial-gradient(1200px 600px at 80% -10%,#2a2620 0,#0e0e0f 60%);color:#efe6d2;font-family:Inter,Arial,sans-serif;text-transform:uppercase}
-@font-face{font-family:Inter;src:url('${BASE}/fonts/inter-latin-wght.woff2')}
-@font-face{font-family:'Inter Tight';src:url('${BASE}/fonts/inter-tight-latin-wght.woff2')}
+@font-face{font-family:Inter;src:url('file://${DIST}/fonts/inter-latin-wght.woff2');font-weight:100 900}
+@font-face{font-family:'Inter Tight';src:url('file://${DIST}/fonts/inter-tight-latin-wght.woff2');font-weight:100 900}
 header small{font:700 15px/1 Inter;letter-spacing:.26em;color:#d4a853}
 header h1{margin:12px 0 0;font:800 52px/1 'Inter Tight';letter-spacing:.01em}
 header p{margin:14px 0 0;font:600 17px/1.5 Inter;letter-spacing:.1em;color:#a9a091;max-width:1700px}

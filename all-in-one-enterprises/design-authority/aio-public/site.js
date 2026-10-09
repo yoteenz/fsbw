@@ -519,7 +519,7 @@ function page(path) {
   if (p === '/onboarding') return authPage('onboarding');
   return notFound();
 }
-const AUTH = ['/login', '/signup', '/forgot-password', '/onboarding'];
+const AUTH = ['/login', '/signup', '/forgot-password', '/onboarding', '/services/ifta-filing']; // own chrome: focused account pages; the approved IFTA page brings its own header
 
 /* ── draw, events, reveal ── */
 let ROOT = null;

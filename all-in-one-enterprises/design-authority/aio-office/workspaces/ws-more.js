@@ -329,6 +329,13 @@ function moConvo(t, inSheet = false) {
   const legend = `<div class="mo-legend"><span class="mo-key mo-key--c"><i></i>CLIENT</span><span class="mo-key mo-key--s"><i></i>STAFF REPLY</span><span class="mo-key mo-key--n">${ico('lock')}NOTE · STAFF ONLY</span></div>`;
   const msgs = `<div class="mo-msgs" data-keep="mo-msgs">${moMsgs(t).map((m) => moMsg(m, c)).join('')}</div>`;
   if (inSheet) return `${legend}${msgs}${moComposer(t)}`;
+  if (moWide()) {
+    // ultra-wide: the same conversation as the client sees it, beside the office's view — notes never cross over
+    const seen = moMsgs(t).filter((m) => m[0] !== 'internal');
+    const notes = moMsgs(t).length - seen.length;
+    const cview = `<aside class="mo-cview"><header class="mo-cview__h"><span>${ico('view')}</span><span><small>THE CLIENT’S OFFICE</small><b>AS ${moContact(t.client)} SEES IT</b></span></header><div class="mo-cview__b" data-keep="mo-cview">${seen.map(([kind, who, text, when]) => `<div class="mo-cv mo-cv--${kind === 'client' ? 'me' : 'aio'}"><small>${kind === 'client' ? 'YOU' : 'AIO · ' + who} · ${when}</small><p>${text}</p></div>`).join('')}</div><footer class="mo-cview__f">${ico('lock')}<span>${notes} INTERNAL NOTE${notes === 1 ? '' : 'S'} · NEVER SHOWN HERE</span></footer></aside>`;
+    return `<section class="mo-convo" data-swap="cv:${t.id}">${head}${legend}<div class="mo-convo__split"><div class="mo-convo__office"><div class="mo-convo__cap">${ico('people')}THE OFFICE · EVERYTHING</div>${msgs}</div>${cview}</div>${moComposer(t)}</section>`;
+  }
   return `<section class="mo-convo" data-swap="cv:${t.id}">${head}${legend}${msgs}${moComposer(t)}</section>`;
 }
 function moThContext(t) {

@@ -298,7 +298,7 @@ function ikWork(m) {
   } else if (sec === 'match') {
     const oc = ikOpenConf(m);
     n = `${ikShort(m)} · ${oc ? `${oc} OPEN` : 'SETTLED'}`;
-    body = `<div class="ik-mx"><div class="ik-cfs">${ikConfCards(m)}<span class="ik-cfs__n">SAMPLE VALUES · NOTHING IS MERGED SILENTLY</span></div>${ikMinis(ikScreensFor('match', b))}</div>`;
+    body = `<div class="ik-mx"><div class="ik-cfs" style="--k:${Math.max(1, Math.min(2, ikConfs(m).length))}">${ikConfCards(m)}<span class="ik-cfs__n">SAMPLE VALUES · NOTHING IS MERGED SILENTLY</span></div>${ikMinis(ikScreensFor('match', b))}</div>`;
   } else if (sec === 'review') {
     const list = ikView('review');
     n = `${list.length} IN REVIEW · APPROVAL LANDS ON PREBUILT`;
@@ -317,7 +317,9 @@ function ikWork(m) {
     n = `${list.length} COMPLETED · CLIENT CONFIRMED`;
     body = `<div class="ik-hi"><div class="ik-hi__l">${list.map((x) => ikJourney(x, m)).join('') || '<div class="ik-none"><b>NO COMPLETED MIGRATIONS</b></div>'}${ikIn(m, 'history') ? ikFigs(m, `BROUGHT INTO AIO · ${ikShort(m)}`) : ''}</div>${ikMinis(ikScreensFor('history', b), 'WHAT THEY SAW LAST')}</div>`;
   }
-  return rgn(full, n, '', `<div class="ik-w ik-w--${sec}" data-swap="w:${sec}:${m.id}">${body}</div>`, 'ik-work', 'ik-work');
+  // ultra-wide has the room: under the section's work, the case's whole approved path, its screen marked HERE
+  const path = WSX.device === 'wide' && !IK_PATHS.includes(sec) && !['status', 'activation'].includes(sec) ? ikFilm(b, m, `THE APPROVED PATH · ${MIG_BRANCH[b][0]}`) : '';
+  return rgn(full, n, '', `<div class="ik-w ik-w--${sec}" data-swap="w:${sec}:${m.id}">${body}${path}</div>`, 'ik-work', 'ik-work');
 }
 
 /* ── the case file ── */
@@ -371,7 +373,7 @@ function ikCase(m, phone = false) {
   const plate = `<div class="ik-plate" data-swap="pl:${m.id}"><span class="ik-plate__i">${ico(ikIco(m.branch))}</span><span class="ik-plate__t"><small>${MIG_BRANCH[m.branch][0]} · SAMPLE CASE</small><b>${m.name}</b></span><span class="ik-plate__s">${sw(ikStage(m))}</span></div>`;
   const hist = mhist(`mig:${m.id}`, ikHist(m));
   const body = wide
-    ? `<div class="ik-cx2"><div class="ik-cx2__a">${ikShot(m, true)}${ikGate(m)}</div><div class="ik-cx2__b">${ikMeter(m)}${ikNext(m)}${ikFacts(m)}${hist}</div></div>`
+    ? `<div class="ik-cx2"><div class="ik-cx2__a">${ikShot(m, true)}${hist}</div><div class="ik-cx2__b">${ikMeter(m)}${ikNext(m)}${ikFacts(m)}${ikGate(m)}</div></div>`
     : `${ikMeter(m)}${ikNext(m)}${phone ? ikDetail(m) : ''}${ikShot(m)}${ikFacts(m)}${ikGate(m)}${hist}`;
   return `<section class="rg cx ik-cx"><header class="cx__h">${crumb}${plate}</header><div class="cx__b" data-keep="ik-cx" data-swap="b:${m.id}">${body}</div></section>`;
 }

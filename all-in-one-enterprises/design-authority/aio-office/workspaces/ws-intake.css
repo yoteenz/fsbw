@@ -171,7 +171,7 @@
 
 /* match & reconcile: each conflict side by side, settled by a person */
 .ik-mx { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 18px; align-items: start; }
-.ik-cfs { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 10px; min-width: 0; align-items: start; }
+.ik-cfs { display: grid; grid-template-columns: repeat(var(--k, 1), minmax(0, 1fr)); gap: 10px; min-width: 0; align-items: start; }
 .ik-cfs > .sec-l, .ik-cfs__n { grid-column: 1 / -1; }
 .ik-cfs__n { font: 700 9px/1 var(--text); letter-spacing: 0.12em; color: var(--ink-4); }
 .ik-cf { display: grid; gap: 10px; padding: 12px 13px; border-radius: 12px; border: 1px solid var(--rule-2); background: #fffefb; min-width: 0; }
@@ -301,7 +301,7 @@
 .ik-hand--now b { color: var(--ink); }
 .ik-gate__x { justify-self: start; }
 /* ultra-wide: the case file in two columns, the approved screen large */
-.ik-cx2 { display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: 22px; align-items: start; }
+.ik-cx2 { display: grid; grid-template-columns: 290px minmax(0, 1fr); gap: 22px; align-items: start; }
 .ik-cx2__a, .ik-cx2__b { display: grid; gap: 14px; align-content: start; min-width: 0; }
 .ik-scr--big { grid-template-columns: minmax(0, 1fr); padding: 14px; justify-items: stretch; }
 .ik-scr--big .ik-shot { grid-row: auto; }
@@ -393,6 +393,7 @@
 [data-wide='1'] .ik-th { padding: 11px 18px; }
 [data-wide='1'] .ik-w { padding: 16px 18px 18px; gap: 16px; }
 [data-wide='1'] .ik-film { gap: 14px; }
+[data-wide='1'] .ik-w > .ik-filmw { margin-top: 10px; padding-top: 16px; border-top: 1px solid var(--rule); }
 [data-wide='1'] .ik-ex { grid-template-columns: 240px minmax(0, 1fr) auto; }
 
 /* ── phone: the line as a step strip, the cases as a list, the case in a drawer ── */

@@ -80,7 +80,7 @@ function insRunway() {
     const on = sel === `policy:${p.id}`;
     const c = ACCOUNTS[p.client];
     const end = `<span class="ins-ln__end ${p.days > 110 ? 'ins-ln__end--l' : ''}" style="left:${insX(p.days)}%"><b>${insShort(p.exp)}</b><small>${daysWord(p.days)}</small></span>`;
-    const win = p.id === 'pol-abc' ? `<i class="ins-ln__win" style="left:${insX(114)}%">${big ? '<span>WINDOW OPENS JAN 30</span>' : ''}</i>` : '';
+    const win = p.id === 'pol-abc' ? `<i class="ins-ln__win" style="left:${insX(114)}%"></i>` : '';
     const id = compact ? `<span class="ins-ln__id">${badge(c)}</span>` : `<span class="ins-ln__id">${badge(c)}<span><b>${c.name}</b><small>${p.title}</small>${big ? `<em>${p.partner} · ${staffName(p.owner)}</em>` : ''}</span></span>`;
     const miss = insMissing(p);
     const note = big ? `<span class="ins-ln__note">${sw(insStatus(p))}<span>${insStatus(p)[0] === 'QUOTE SENT' ? 'QUOTE SENT · THE CLIENT DECIDES WITH THE PARTNER' : p.renewal}</span></span><span class="ins-ln__miss">${miss.map((m) => `<span class="ins-chip ins-chip--${m.tone}">${m.t}</span>`).join('') || '<span class="ins-chip ins-chip--ok">NOTHING MISSING</span>'}</span>` : '';
