@@ -892,20 +892,31 @@ for (const s of D.services) if (!TREE.find((t) => t[0] === `/services/${s.slug}`
 /* ── navigation ── */
 const SOLUTIONS = [['/start-your-business', 'START YOUR BUSINESS', 'FROM IDEA TO ROLLING', 'rocket'], ['/road-ready', 'ROAD READY™', 'KNOW WHERE YOU STAND', 'badge'], ['/get-started', 'CHECK WHAT I NEED', 'A SHORT GUIDED CHECK', 'compass'], ['/client-portal', 'CLIENT PORTAL', 'ONE PLACE TO RUN IT', 'layers'], ['/roadmap', 'COMPLIANCE GUIDE', 'THE ALL IN ONE ROADMAP', 'map']];
 const RESOURCES = [['/about#resources', 'TRUCKING RESOURCES', 'GUIDES AND LINKS', 'book'], ['/roadmap', 'COMPLIANCE GUIDE', 'WHAT IS DUE AND WHEN', 'map'], ['/services/find', 'FIND A SERVICE', 'ANSWER A FEW QUESTIONS', 'search'], ['/contact', 'CONTACT & FAQ', 'TALK TO AIO', 'message']];
-function nav() {
-  const cur = (p) => (PUB.path === p || (p !== '/' && PUB.path.startsWith(p)) ? ' aria-current="page"' : '');
-  const dd = (id, label) => `<button class="nav__a" data-a="menu" data-v="${id}" aria-expanded="${PUB.menu === id}" aria-haspopup="true">${label}${ic('caret')}</button>`;
-  let pop = '';
+function navPopHtml() {
   if (PUB.menu === 'services') {
     const cols = [['start-my-business', 'get-road-ready'], ['permits-taxes-compliance', 'safety-drivers'], ['operate-my-business', 'move-freight'], ['manage-my-money']];
-    pop = `<div class="pop pop--mega" role="menu">${cols.map((col) => `<div class="pop__col">${col.map((cid) => { const c = catById(cid); const hub = CAT_HUB[cid]; return `<h4>${ic(CAT_ICON[cid])}${U(c.title)}</h4>${D.services.filter((s) => s.category === cid).slice(0, cid === 'manage-my-money' ? 9 : 4).map((s) => `<a class="pop__item" href="#/services/${s.slug}">${U(s.name)}${s.state !== 'AVAILABLE' && s.state !== 'PILOT' ? `<small>${STATE[s.state][0]}</small>` : ''}</a>`).join('')}<a class="pop__item" href="#${hub}"><b class="gold">ALL ${U(c.title)}</b>${ic('arrow')}</a>`; }).join('<div style="height:14px"></div>')}</div>`).join('')}
+    return `<div class="pop pop--mega" role="menu">${cols.map((col) => `<div class="pop__col">${col.map((cid) => { const c = catById(cid); const hub = CAT_HUB[cid]; return `<h4>${ic(CAT_ICON[cid])}${U(c.title)}</h4>${D.services.filter((s) => s.category === cid).slice(0, cid === 'manage-my-money' ? 9 : 4).map((s) => `<a class="pop__item" href="#/services/${s.slug}">${U(s.name)}${s.state !== 'AVAILABLE' && s.state !== 'PILOT' ? `<small>${STATE[s.state][0]}</small>` : ''}</a>`).join('')}<a class="pop__item" href="#${hub}"><b class="gold">ALL ${U(c.title)}</b>${ic('arrow')}</a>`; }).join('<div style="height:14px"></div>')}</div>`).join('')}
       <a class="pop__feature" href="#/services" style="background-image:url(${IMG('mountain-road')})"><p class="eyebrow">ALL SERVICES</p><b class="h3">EVERYTHING BEHIND YOUR TRUCKING BUSINESS.</b><span class="link">VIEW ALL SERVICES ${ic('arrow')}</span></a></div>`;
   }
   if (PUB.menu === 'solutions' || PUB.menu === 'resources') {
     const items = PUB.menu === 'solutions' ? SOLUTIONS : RESOURCES;
-    pop = `<div class="pop pop--list" role="menu" style="left:${PUB.menu === 'solutions' ? 'var(--pop-sol)' : 'var(--pop-res)'}">${items.map(([p, t, d, i]) => `<a class="pop__item" href="#${p}"><span><b>${t}</b><em>${d}</em></span>${ic(i)}</a>`).join('')}</div>`;
+    return `<div class="pop pop--list" role="menu" style="left:${PUB.menu === 'solutions' ? 'var(--pop-sol)' : 'var(--pop-res)'}">${items.map(([p, t, d, i]) => `<a class="pop__item" href="#${p}"><span><b>${t}</b><em>${d}</em></span>${ic(i)}</a>`).join('')}</div>`;
   }
-  const hits = PUB.search ? searchHits(PUB.q) : [];
+  return '';
+}
+function navSearchHtml() {
+  if (!PUB.search) return '';
+  return `<div class="search" role="search"><label class="search__box">${ic('search')}<span class="sr">SEARCH SERVICES AND PAGES</span><input data-input="q" value="${esc(PUB.q)}" placeholder="SEARCH SERVICES, PERMITS, FILINGS…" autocomplete="off"></label><div data-slot="hits">${hitsHtml(searchHits(PUB.q))}</div></div>`;
+}
+function syncNavPopOffsets() {
+  const solBtn = ROOT?.querySelector('[data-a="menu"][data-v="solutions"]');
+  const resBtn = ROOT?.querySelector('[data-a="menu"][data-v="resources"]');
+  if (solBtn) ROOT.style.setProperty('--pop-sol', `${solBtn.offsetLeft - 10}px`);
+  if (resBtn) ROOT.style.setProperty('--pop-res', `${resBtn.offsetLeft - 10}px`);
+}
+function nav() {
+  const cur = (p) => (PUB.path === p || (p !== '/' && PUB.path.startsWith(p)) ? ' aria-current="page"' : '');
+  const dd = (id, label) => `<button class="nav__a" data-a="menu" data-v="${id}" aria-expanded="${PUB.menu === id}" aria-haspopup="true">${label}${ic('caret')}</button>`;
   return `<header class="nav" data-key="nav">
     <a class="nav__mark" href="#/" aria-label="ALL IN ONE ENTERPRISES INC. — HOME"><img src="brand/aio-mark-on-dark.png" alt=""></a>
     <nav class="nav__links" aria-label="MAIN">${dd('services', 'SERVICES')}${dd('solutions', 'SOLUTIONS')}<a class="nav__a" href="#/about"${cur('/about')}>ABOUT</a>${dd('resources', 'RESOURCES')}<a class="nav__a" href="#/contact"${cur('/contact')}>CONTACT</a></nav>
@@ -916,9 +927,7 @@ function nav() {
       <a class="btn btn--gold nav__start-sm" href="#/get-started">GET STARTED</a>
       <button class="nav__icon nav__menu" data-a="drawer" aria-label="MENU" aria-expanded="${PUB.drawer}">${ic(PUB.drawer ? 'close' : 'menu')}</button>
     </div>
-    ${pop}
-    ${PUB.search ? `<div class="search" role="search"><label class="search__box">${ic('search')}<span class="sr">SEARCH SERVICES AND PAGES</span><input data-input="q" value="${esc(PUB.q)}" placeholder="SEARCH SERVICES, PERMITS, FILINGS…" autocomplete="off"></label><div data-slot="hits">${hitsHtml(hits)}</div></div>` : ''}
-    ${PUB.drawer ? drawer() : ''}
+    ${navPopHtml()}${navSearchHtml()}${PUB.drawer ? drawer() : ''}
   </header>`;
 }
 const CAT_HUB = { 'start-my-business': '/services/business-formation', 'get-road-ready': '/services?f=get-road-ready', 'permits-taxes-compliance': '/services/permitting', 'safety-drivers': '/services?f=safety-drivers', 'operate-my-business': '/services/dispatching', 'move-freight': '/services/brokerage', 'manage-my-money': '/services/bookkeeping' };
@@ -1492,10 +1501,7 @@ function draw(opts = {}) {
   const isHome = PUB.path === '/' || PUB.path === '';
   ROOT.dataset.over = isHome && !opts.scrolled ? '1' : '0';
   ROOT.innerHTML = `<div class="pub-wrap">${auth ? '' : nav()}<main id="pub-main">${page(PUB.path)}</main>${auth ? '' : footer()}${PUB.toast ? `<div class="toast" role="status">${ic('info')}${PUB.toast}</div>` : ''}</div>`;
-  const solBtn = ROOT.querySelector('[data-v="solutions"]');
-  const resBtn = ROOT.querySelector('[data-v="resources"]');
-  if (solBtn) ROOT.style.setProperty('--pop-sol', `${solBtn.offsetLeft - 10}px`);
-  if (resBtn) ROOT.style.setProperty('--pop-res', `${resBtn.offsetLeft - 10}px`);
+  syncNavPopOffsets();
   observe();
   if (PUB.search && opts.focus !== false) { const i = ROOT.querySelector('[data-input="q"]'); i?.focus(); i?.setSelectionRange(i.value.length, i.value.length); }
 }
@@ -1525,6 +1531,46 @@ function jump(id) {
   scrollEl().scrollTo({ top, behavior: reduced() || PUB.capture ? 'auto' : 'smooth' });
 }
 function pubPath() { return (PUB.path || '/').split('?')[0] || '/'; }
+/** Nav overlays (mega menu, search, mobile drawer) — patch header only; never redraw main. */
+function patchNavChrome(opts = {}) {
+  if (!ROOT || AUTH.includes(pubPath())) return false;
+  const header = ROOT.querySelector('header.nav');
+  if (!header) return false;
+  header.querySelectorAll('.pop, .search, .drawer').forEach((el) => el.remove());
+  const tools = header.querySelector('.nav__tools');
+  if (tools) {
+    const extra = `${navPopHtml()}${navSearchHtml()}${PUB.drawer ? drawer() : ''}`;
+    if (extra) tools.insertAdjacentHTML('afterend', extra);
+  }
+  header.querySelectorAll('[data-a="menu"]').forEach((btn) => {
+    btn.setAttribute('aria-expanded', PUB.menu === btn.dataset.v ? 'true' : 'false');
+  });
+  const searchBtn = header.querySelector('[data-a="search"]');
+  if (searchBtn) {
+    searchBtn.setAttribute('aria-expanded', PUB.search ? 'true' : 'false');
+    searchBtn.innerHTML = ic(PUB.search ? 'close' : 'search');
+  }
+  const drawerBtn = header.querySelector('[data-a="drawer"]');
+  if (drawerBtn) {
+    drawerBtn.setAttribute('aria-expanded', PUB.drawer ? 'true' : 'false');
+    drawerBtn.innerHTML = ic(PUB.drawer ? 'close' : 'menu');
+  }
+  syncNavPopOffsets();
+  if (PUB.search && opts.focusSearch !== false) {
+    const i = header.querySelector('[data-input="q"]');
+    i?.focus();
+    i?.setSelectionRange(i.value.length, i.value.length);
+  }
+  return true;
+}
+function patchToast() {
+  if (!ROOT) return false;
+  const wrap = ROOT.querySelector('.pub-wrap');
+  if (!wrap) return false;
+  wrap.querySelector('.toast')?.remove();
+  if (PUB.toast) wrap.insertAdjacentHTML('beforeend', `<div class="toast" role="status">${ic('info')}${PUB.toast}</div>`);
+  return true;
+}
 /** Tab / panel switches — patch DOM only so nav, hero and scroll position stay put. */
 function patchHomeEco() {
   if (pubPath() !== '/' || !ROOT) return false;
@@ -1668,10 +1714,10 @@ function patchGetStartedForm() {
   return true;
 }
 const ACT = {
-  menu: (v) => { PUB.menu = PUB.menu === v ? null : v; PUB.search = false; draw(); },
-  search: () => { PUB.search = !PUB.search; PUB.menu = null; PUB.drawer = false; draw(); },
-  drawer: () => { PUB.drawer = !PUB.drawer; PUB.search = false; draw(); },
-  grp: (v) => { PUB.grp = PUB.grp === v ? null : v; draw(); },
+  menu: (v) => { PUB.menu = PUB.menu === v ? null : v; PUB.search = false; if (!patchNavChrome()) draw(); },
+  search: () => { PUB.search = !PUB.search; PUB.menu = null; PUB.drawer = false; if (!patchNavChrome()) draw(); },
+  drawer: () => { PUB.drawer = !PUB.drawer; PUB.search = false; if (!patchNavChrome()) draw(); },
+  grp: (v) => { PUB.grp = PUB.grp === v ? null : v; if (!patchNavChrome()) draw(); },
   eco: (v) => { PUB.eco = Number(v); if (!patchHomeEco()) draw(); },
   pathSel: (v) => { PUB.pathSel = Number(v); if (!patchHomeExplore()) draw(); },
   pick: (v) => {
@@ -1699,9 +1745,9 @@ const ACT = {
   },
   gsBack: () => { PUB.gs.step = Math.max(0, PUB.gs.step - 1); if (!patchGetStarted()) draw(); },
   send: (v) => { PUB.sent[v] = true; draw(); },
-  jump: (v) => { PUB.menu = null; jump(v); },
+  jump: (v) => { if (PUB.menu) { PUB.menu = null; patchNavChrome({ focusSearch: false }); } jump(v); },
 };
-function toast(t) { PUB.toast = t; draw(); clearTimeout(toast.t); toast.t = setTimeout(() => { PUB.toast = null; draw(); }, 2400); }
+function toast(t) { PUB.toast = t; if (!patchToast()) draw(); clearTimeout(toast.t); toast.t = setTimeout(() => { PUB.toast = null; if (!patchToast()) draw(); }, 2400); }
 const INPUT = {
   q: (v) => { PUB.q = v; const s = ROOT.querySelector('[data-slot="hits"]'); if (s) s.innerHTML = hitsHtml(searchHits(v)); },
   fq: (v) => { PUB.fq = v; if (!patchServicesFam()) draw(); },
@@ -1717,11 +1763,11 @@ function mountPub(root, { scroller = null, width = null } = {}) {
     if (a && root.contains(a)) { e.preventDefault(); if (a.getAttribute('aria-disabled') === 'true' && a.dataset.a !== 'gsNext') return; return ACT[a.dataset.a]?.(a.dataset.v, a); }
     const l = e.target.closest('a[href^="#/"]');
     if (l && root.contains(l)) { e.preventDefault(); return go(l.getAttribute('href').slice(1)); }
-    if (PUB.menu && !e.target.closest('.pop')) { PUB.menu = null; draw(); }
+    if (PUB.menu && !e.target.closest('.pop') && !e.target.closest('[data-a="menu"]')) { PUB.menu = null; if (!patchNavChrome({ focusSearch: false })) draw(); }
   });
   root.addEventListener('input', (e) => { const k = e.target.dataset?.input; if (k) INPUT[k]?.(e.target.value); });
   document.addEventListener('keydown', (e) => { // the document: a redrawn menu takes the focused control with it
-    if (e.key === 'Escape' && (PUB.menu || PUB.search || PUB.drawer)) { PUB.menu = null; PUB.search = false; PUB.drawer = false; draw(); }
+    if (e.key === 'Escape' && (PUB.menu || PUB.search || PUB.drawer)) { PUB.menu = null; PUB.search = false; PUB.drawer = false; if (!patchNavChrome({ focusSearch: false })) draw(); }
   });
   (scroller || window).addEventListener('scroll', () => {
     const over = (PUB.path === '/' || PUB.path === '') && scrollEl().scrollTop < 40 ? '1' : '0';

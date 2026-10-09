@@ -55774,3 +55774,13 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Change:** `all-in-one-enterprises/design-authority/aio-public/site.js` — patch helpers update only the relevant panel (`patchHomeEco`, `patchHomeExplore`, `patchSybJourney`, `patchGuideTab`, `patchSxExplorer`, `patchSxMore`, `patchServicesFam`, `patchFinderNeed`, `patchGetStarted`, `patchGetStartedForm`); ACT handlers call patch first and fall back to `draw()` only when not on that page. Rebuilt `design-authority/aio-public/preview/` via `build.mjs`.
 - **Covers:** Homepage eco + explore pathways; `/start-your-business` journey rail; `/roadmap` compliance guide families; `/services` family filter + search; `/services/find` need toggles; division explorer pick/more; `/get-started` rail and form steps.
 - **Checks:** Headless Chromium at 390×844 — SYB stage 03 keeps hero node and scroll; eco tab at `#begin` keeps scroll; roadmap guide tab keeps hero. Branch `cursor/guided-apprenticeship-foundation-1087`; `[sync-only]`, no deploy.
+
+---
+
+## 2026-10-09 — AIO office design previews on mobile tunnel
+
+- **Context:** Founder needs **live bookmarkable tunnel URLs** (like public `aio-public/preview/site.html`) for the **four workspace proofs** (Fleet · Books · Compliance · Client 360) and the **unified internal office** review — to demo on phone for family, not only Claude artifacts.
+- **Built:** Committed `design-authority/aio-office/workspaces/preview/` (~21 MB, 79 assets + `site.html`/`local.html`) and `design-authority/aio-office/office/preview/` (~11 MB, unified office). `node scripts/build-design-previews.mjs` rebuilds public + both office previews.
+- **Tunnel paths (hostname from env, not in repo):** `…/design-authority/aio-office/workspaces/preview/site.html` and `…/design-authority/aio-office/office/preview/site.html`. Canon doc: `docs/cloud-agent/aio-design-preview-tunnel.md`.
+- **Build fix:** Office `build.mjs` scripts use `python3 -c` (not `-I`) so Pillow in user site-packages works on Cloud Agent; both builds emit `site.html` alias beside `local.html`.
+- **Checks:** HTTP 200 on localhost:3001; browser pass — workspace Fleet phone + unified HOME phone. Claude artifact links remain canonical in founder docs.
