@@ -763,13 +763,14 @@ body { font: 500 13px/1.5 var(--rv-chrome); letter-spacing: 0.06em; text-transfo
 .rv-main { padding: 22px 24px 60px; min-width: 0; }
 
 /* overview */
-.rv-hero { display: grid; gap: 10px; max-width: 1100px; margin-bottom: 26px; }
+.rv-hero { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; max-width: 1100px; margin-bottom: 26px; }
 .rv-hero small { font: 700 11px/1 var(--rv-chrome); letter-spacing: 0.24em; color: var(--rv-gold); }
 .rv-hero h1 { margin: 0; font: 800 clamp(26px, 3.2vw, 44px)/1 'AIO Inter Tight', 'Inter Tight', var(--rv-chrome); letter-spacing: 0.01em; }
 .rv-hero p { margin: 0; color: var(--rv-muted); max-width: 90ch; line-height: 1.6; }
 .rv-flags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
 .rv-flag { display: inline-flex; align-items: center; gap: 8px; height: 28px; padding: 0 12px; border-radius: 999px; border: 1px solid var(--rv-line); font: 700 10px/1 var(--rv-chrome); letter-spacing: 0.14em; color: var(--rv-text); white-space: nowrap; }
-.rv-flag i { width: 7px; height: 7px; border-radius: 50%; background: var(--rv-gold); }
+.rv-flag i { flex: none; width: 7px; height: 7px; border-radius: 50%; background: var(--rv-gold); }
+@media (max-width: 700px) { .rv-flag { height: auto; min-height: 28px; padding: 7px 12px; line-height: 1.4; white-space: normal; } }
 .rv-flag--ok i { background: #7fc795; }
 .rv-flag--warn i { background: #e07a6a; }
 .rv-grp { display: grid; gap: 14px; padding-top: 20px; margin-top: 20px; border-top: 1px solid var(--rv-line); }
