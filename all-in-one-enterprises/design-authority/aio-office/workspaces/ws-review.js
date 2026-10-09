@@ -306,7 +306,7 @@ function shellTap(el) {
     if (f) return f.focus();
     return toast('SEARCH · CLIENTS, WORK AND HELP · OUTSIDE THIS REVIEW');
   }
-  if (act === 'notifications') return toast('NOTIFICATIONS · OUTSIDE THIS REVIEW');
+  if (act === 'notifications') return run('nav', 'home/notifications');
   if (act === 'quick') return run('nav', 'home/quick');
   return toast(`SIGNED IN AS ${WSX.role === 'founder' ? 'FOUNDER' : 'STAFF'} · SWITCH WITH VIEW AS ABOVE`);
 }

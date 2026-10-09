@@ -231,15 +231,7 @@ function rrFile(c, p, items) {
   if (!it) {
     const done = rrDone(p);
     const plate = `<div class="rr-plate" data-swap="pl:${c.id}"><span class="rr-plate__b">${badge(c)}</span><span class="rr-plate__t"><small>READINESS FILE · ${c.dot}</small><b>${c.name}</b>${sw(rrLife(c))}</span><span class="rr-ring" style="--p:${(done / p.total) * 100}"><b>${done}</b><small>OF ${p.total}</small></span></div>`;
-    const lanes = Object.entries(RR_LANE).map(([lane, [name, icon]]) => {
-      const mine = items.filter((x) => rrOwner(c.id, x)[0] === lane);
-      if (!mine.length) return '';
-      const open = mine.filter((x) => x.cls !== 'ver');
-      const first = open[0] || mine[0];
-      const [, , attrs] = rrOwner(c.id, first);
-      return `<button type="button" class="rr-lane" ${attrs} title="${name}">${ico(icon)}<span><b>${name}</b><small>${mine.length} CHECKPOINT${mine.length > 1 ? 'S' : ''} · ${open.length ? `${open.length} OPEN` : 'ALL VERIFIED'}</small></span><span class="rr-lane__d">${mine.map((x) => `<i class="rr-strip__s rr-strip__s--${x.cls}"></i>`).join('')}</span>${ico('fwd')}</button>`;
-    }).join('');
-    const body = `<div class="rr-fa">${rrClientNext(c, items)}${ntb('<b>NO ENGAGEMENT STATE YET.</b> ROAD READY IS AVAILABLE, NOT ACTIVE.')}<div class="rr-lanes"><div class="sec-l"><span>WHO OWNS EACH CHECKPOINT</span></div>${lanes}</div>${facts([['CONTACT', c.contact], ['PROFILE', ov(`rrmode:${c.id}`, p.mode)[0]], ['ROAD READY', 'AVAILABLE · NOT ACTIVE', 'NO ENGAGEMENT STATE IN THE PRODUCT'], ['CLIENT', rrLife(c)[0], CLIENT_META[c.id]?.since]])}</div><div class="rr-fb">${rrSiblings(c, items, go)}</div>`;
+    const body = `<div class="rr-fa">${rrClientNext(c, items)}${ntb('<b>NO ENGAGEMENT STATE YET.</b> ROAD READY IS AVAILABLE, NOT ACTIVE.')}${rrLanes(c, items)}${facts([['CONTACT', c.contact], ['PROFILE', ov(`rrmode:${c.id}`, p.mode)[0]], ['ROAD READY', 'AVAILABLE · NOT ACTIVE', 'NO ENGAGEMENT STATE IN THE PRODUCT'], ['CLIENT', rrLife(c)[0], CLIENT_META[c.id]?.since]])}</div><div class="rr-fb">${rrSiblings(c, items, go)}</div>`;
     return `<section class="rg cx rr-cx"><header class="cx__h"><div class="cx__hd" data-swap="hd:${c.id}">${crumb}${plate}</div></header><div class="cx__b" data-keep="rr-cx" data-swap="b:${c.id}:file">${body}</div></section>`;
   }
   const [lane, recLabel, attrs] = rrOwner(c.id, it);
@@ -249,8 +241,20 @@ function rrFile(c, p, items) {
   const fx = facts([['STATUS', it.listed ? it.shown : 'NOT STARTED', it.listed ? '' : 'NO RECORD IN THE SAMPLE YET'], ['WHAT IT PROVES', RR_PROVES[it.key]], r ? ['RECORD', r.title, `${ov(`request:${r.id}`, r.status)[0]} · DUE ${r.due}`] : null, r?.owner ? ['OWNER', staffName(r.owner)] : null]);
   const docs = r?.docs?.length ? `<div class="rr-docs"><div class="sec-l"><span>DOCUMENTS</span><span>${r.docs.length}</span></div>${r.docs.map(docChip).join('')}</div>` : '';
   const honest = it.cls === 'partner' ? ntb('<b>BOC-3 IS A PARTNER / MANUAL WORKFLOW</b> UNTIL A PROVIDER IS READY.') : '';
-  const body = `<div class="rr-fa">${rrNextFor(c, it)}${honest}${owner}${fx}${docs}</div><div class="rr-fb">${WSX.hist[`rrcp:${c.id}:${it.key}`] ? mhist(`rrcp:${c.id}:${it.key}`, []) : ''}${rrSiblings(c, items, go)}</div>`;
+  const body = `<div class="rr-fa">${rrNextFor(c, it)}${honest}${owner}${fx}${docs}</div><div class="rr-fb">${WSX.hist[`rrcp:${c.id}:${it.key}`] ? mhist(`rrcp:${c.id}:${it.key}`, []) : ''}${rrSiblings(c, items, go)}${WSX.device === 'wide' ? rrLanes(c, items) : ''}</div>`;
   return `<section class="rg cx rr-cx"><header class="cx__h"><div class="cx__hd" data-swap="hd:${c.id}:${it.key}">${crumb}${plate}</div></header><div class="cx__b" data-keep="rr-cx" data-swap="b:${c.id}:${it.key}">${body}</div></section>`;
+}
+/** Which lane owns which checkpoints, each one tap away. */
+function rrLanes(c, items) {
+  const lanes = Object.entries(RR_LANE).map(([lane, [name, icon]]) => {
+    const mine = items.filter((x) => rrOwner(c.id, x)[0] === lane);
+    if (!mine.length) return '';
+    const open = mine.filter((x) => x.cls !== 'ver');
+    const first = open[0] || mine[0];
+    const [, , attrs] = rrOwner(c.id, first);
+    return `<button type="button" class="rr-lane" ${attrs} title="${name}">${ico(icon)}<span><b>${name}</b><small>${mine.length} CHECKPOINT${mine.length > 1 ? 'S' : ''} · ${open.length ? `${open.length} OPEN` : 'ALL VERIFIED'}</small></span><span class="rr-lane__d">${mine.map((x) => `<i class="rr-strip__s rr-strip__s--${x.cls}"></i>`).join('')}</span>${ico('fwd')}</button>`;
+  }).join('');
+  return `<div class="rr-lanes"><div class="sec-l"><span>WHO OWNS EACH CHECKPOINT</span></div>${lanes}</div>`;
 }
 /** The rest of the road stays in reach under the focus. */
 function rrSiblings(c, items, go) {
