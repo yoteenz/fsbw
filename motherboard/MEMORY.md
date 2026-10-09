@@ -55974,3 +55974,12 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
   - `src/product-graph/publicMigration.test.ts` has 10 tests.
 - **Not changed:** the live app, auth, data, business rules, prices, Brokerage (paused) and the 12 privacy gaps.
 - **Tunnel:** this container cannot reach fsbw-dev.com. To see the latest, pull master in the Cursor VM and restart `aio-vite` and `aio-preview-tunnel`.
+
+---
+
+## 2026-10-09 — AIO client migration real PDF extraction (RECOVERY1)
+
+- **Context:** P0 sprint — migration UI was wired to **DemoStore** but extraction was **filename fixture**; Supabase `process-file` returned **PROVIDER_UNAVAILABLE** without reading storage; demo **approve** did not write facts into Road Ready.
+- **Fix:** `contentExtractionAdapter` (pdf.js text layer) on real bytes; demo passes base64 on upload; API default **`AIO_MIGRATION_EXTRACTION_PROVIDER=local`** downloads `storageReference`; `applyCanonicalFactsFromMigration` on PREBUILT commit. Audit: `all-in-one-enterprises/docs/aio/client-migration/REAL_DOCUMENT_EXTRACTION_RECOVERY1_AUDIT.md`. Tests: NORTHLINE PDF + canonical commit.
+- **Blocked:** scanned/image OCR; full 25-step live Supabase E2E without creds; durable async jobs.
+- **Branch:** `cursor/client-migration-real-extraction-1087`; fixture only when `VITE_AIO_MIGRATION_FIXTURE=1`.

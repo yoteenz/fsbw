@@ -120,6 +120,8 @@ export async function uploadFilesToMigrationBatchSupabase(
         mimeType: file.type || 'application/octet-stream',
         sizeBytes: file.size,
         sha256: fileHash,
+        documentId: row.id,
+        storageReference: stored.storagePath,
       },
       { organizationId, batchId },
     );

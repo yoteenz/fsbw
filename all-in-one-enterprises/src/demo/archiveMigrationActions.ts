@@ -10,6 +10,8 @@ import { loadDemoStore, updateDemoStore } from './demoStore';
 import type { Client, DemoStore } from './demoTypes';
 import { recordSecurityAudit } from '../security/securityAudit';
 import { getMigrationPipelineAdapter } from '../client-migration/migrationPipeline';
+import { readFileAsBase64 } from '../client-migration/migrationPipeline/documentTextExtraction';
+import { profileOf } from '../client-migration/visual/migrationData';
 import { recordExtractedFacts, commitApprovedMigration } from '../client-migration/services/migrationCommitService';
 import { transitionClientLifecycle } from '../client-migration/services/lifecycleEvents';
 
@@ -164,6 +166,7 @@ export async function addFilesToMigrationBatch(
       verificationStatus: 'pending_review',
     };
 
+    const fileContentBase64 = await readFileAsBase64(file);
     const pipeline = getMigrationPipelineAdapter();
     const pipelineResult = await pipeline.processFile(
       {
@@ -171,9 +174,22 @@ export async function addFilesToMigrationBatch(
         mimeType: file.type || 'application/octet-stream',
         sizeBytes: file.size,
         sha256: fileHash,
+        documentId: pendingDoc.id,
+        fileContentBase64,
       },
       { organizationId: batch.organizationId, batchId },
     );
+
+    const extractionHardFail =
+      pipelineResult.exception === 'UNREADABLE_DOCUMENT' || pipelineResult.exception === 'EXTRACTION_FAILED';
+    if (extractionHardFail) {
+      batchFile.processingState = 'failed';
+      errors.push(
+        `${file.name}: ${pipelineResult.exception === 'UNREADABLE_DOCUMENT' ? 'Document unreadable (OCR not configured)' : 'No fields extracted from document text'}`,
+      );
+    }
+
+    const profile = profileOf(store, batch.organizationId);
 
     updateDemoStore((s) => {
       if (!s.archiveMigrationBatchFiles) s.archiveMigrationBatchFiles = [];
@@ -190,17 +206,30 @@ export async function addFilesToMigrationBatch(
       }
       recordExtractedFacts(
         s,
-        pipelineResult.proposedFacts.map((f) => ({
-          batchId,
-          organizationId: batch.organizationId,
-          documentId: pendingDoc.id,
-          entityType: f.entityType,
-          fieldKey: f.fieldKey,
-          proposedValue: f.proposedValue,
-          existingValue: f.existingValue,
-          confidence: f.confidence,
-          sourceReference: f.sourceReference,
-        })),
+        pipelineResult.proposedFacts.map((f) => {
+          let existingValue = f.existingValue;
+          if (!existingValue && profile) {
+            if (f.fieldKey === 'legal_name') existingValue = profile.business.legalName || s.clients.find((c) => c.id === batch.organizationId)?.companyName;
+            if (f.fieldKey === 'usdot') existingValue = profile.authority.usdotNumber;
+            if (f.fieldKey === 'mc_number') existingValue = profile.authority.mcNumber;
+            if (f.fieldKey === 'company_phone') existingValue = profile.business.phone;
+          }
+          const confidence =
+            existingValue && existingValue.trim().toLowerCase() !== f.proposedValue.trim().toLowerCase()
+              ? ('CONFLICT' as const)
+              : f.confidence;
+          return {
+            batchId,
+            organizationId: batch.organizationId,
+            documentId: pendingDoc.id,
+            entityType: f.entityType,
+            fieldKey: f.fieldKey,
+            proposedValue: f.proposedValue,
+            existingValue,
+            confidence,
+            sourceReference: f.sourceReference,
+          };
+        }),
       );
       transitionClientLifecycle(
         s,
@@ -212,7 +241,7 @@ export async function addFilesToMigrationBatch(
       return s;
     });
 
-    added += 1;
+    if (!extractionHardFail && pipelineResult.proposedFacts.length > 0) added += 1;
   }
 
   return { added, errors, duplicates };
