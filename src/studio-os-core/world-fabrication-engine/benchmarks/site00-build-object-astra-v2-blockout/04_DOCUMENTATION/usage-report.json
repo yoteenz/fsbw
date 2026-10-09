@@ -1,0 +1,22 @@
+{
+  "requested_model": "gpt-6-astra",
+  "model_evidence": "model-verification.json (preflight); no model change or child session launched",
+  "codex_sessions": 1,
+  "child_codex_sessions": 0,
+  "subagents": 0,
+  "structural_revision_passes": 1,
+  "authorized_soft_ceiling_usd": 10.0,
+  "phase_b_env_authorized": true,
+  "tokens": 140564,
+  "usd": null,
+  "tokens_source": "codex-exec.log footer (CLI); not reconciled to OpenAI billing",
+  "budget_enforcement": "SOFT_ONLY",
+  "cost_note": "Token counter and actual billed USD unavailable inside this turn. No claim that spend has been reconciled against the ceiling. Parent CLI receipt/dashboard required.",
+  "paid_image_generation_calls": 0,
+  "blender_backend": "local CPU Cycles, 24 samples, 1672x941",
+  "overlay_count": 3,
+  "scope": "Stage 01 only; no Stage 02 material polish, export optimization, or production deployment",
+  "render_count": 12,
+  "diagnostic_display_corrections": 1,
+  "display_correction_note": "Restored original AgX transform after clipping in Standard; no second structural revision."
+}

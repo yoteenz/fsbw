@@ -45,7 +45,7 @@
     "DIAGNOSTIC_MATERIALS"
   ],
   "executionBudget": {
-    "allowPaidGeneration": false,
+    "allowPaidGeneration": true,
     "maxCodexSessions": 1,
     "maxStructuralRevisionPasses": 1,
     "awaitingFounderAuthorization": true,
@@ -63,5 +63,5 @@
     "bounded_structural_correction",
     "package_for_founder_review"
   ],
-  "status": "PREFLIGHT_COMPLETE_AWAITING_PHASE_B_AUTHORIZATION"
+  "status": "PHASE_B_COMPLETE_FOUNDER_REVIEW_PENDING"
 }

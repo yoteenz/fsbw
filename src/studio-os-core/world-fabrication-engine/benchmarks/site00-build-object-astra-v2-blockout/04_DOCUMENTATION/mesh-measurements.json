@@ -1,0 +1,20 @@
+{
+  "revision": 1,
+  "mesh_objects": 157,
+  "triangles": 2436,
+  "vertices": 1532,
+  "materials": 9,
+  "glass_shells": 5,
+  "human_meshes": 0,
+  "by_collection": {
+    "MARBLE_PLINTH": 1,
+    "PRIMARY_STRUCTURE": 3,
+    "RED_PORTAL": 17,
+    "GLASS_VOLUMES": 111,
+    "FLOOR_PLATES": 10,
+    "INTERIOR_OPENINGS": 9,
+    "STRUCTURAL_SUPPORTS": 5,
+    "CAMERAS": 0,
+    "DIAGNOSTIC_MATERIALS": 1
+  }
+}

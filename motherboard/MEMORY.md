@@ -55890,6 +55890,16 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Status:** **PREFLIGHT COMPLETE — FABRICATION AWAITING AUTHORIZATION**; no `.blend`/blockout renders yet.
 - **Next:** Founder approves Gate 01 plans + authorizes bounded Phase B budget, then launch script.
 
+---
+
+## 2026-10-09 — Astra V2 blockout Phase B execution (founder-authorized)
+
+- **Context:** Sprint `P0.STUDIOOS.WFE.V1-ASTRA-SITE00-CAMERA-MATCHED-BLOCKOUT-PHASE-B-EXECUTION1` — one bounded **gpt-6-astra** Codex session (`WFE_BLOCKOUT_PHASE_B_AUTHORIZED=1`, soft **$10** ceiling acknowledged).
+- **Delivered:** `SITE00_Build_Object_Astra_V2_Blockout.blend`, `build_astra_v2_blockout.py`, five **PERSP** diagnostic renders @ 1672×941, comparisons/overlays, `image-inspection-evidence.md` **before** bpy, one structural revision, WFE ingest **INGESTED_WITH_WARNINGS** (no GLB — blockout stage).
+- **Measured:** **140,564** tokens (CLI); USD **UNKNOWN**; **157** mesh objects, **2436** tris (low-poly blockout); hero camera **PERSP** 34.16 mm; landmark RMS ~10.4 px (partial fit).
+- **Fidelity:** **PARTIAL** vs reference — improved vs V1 (perspective, interlocking red planes, asymmetric glass shells, arches); portal depth/saturation and interior density still below reference. **FOUNDER_APPROVAL: PENDING**.
+- **Launch:** `./scripts/wfe-site00-astra-v2-blockout-launch.sh`; review `05_FOUNDER_REVIEW/review-contact-sheet.md`.
+
 ## 2026-10-09 — AIO complete product: the complete AIO OFFICE and the public website design [sync-only]
 
 - **Sprint:** P0.AIO.COMPLETE-PRODUCT-VISUAL-CONVERGENCE.INTERNAL-OFFICE-AND-PUBLIC-WEBSITE1. Design review only; nothing deployed. Candidates, awaiting founder review.

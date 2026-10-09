@@ -1,11 +1,10 @@
 {
-  "assetId": "site00_build_object",
-  "fabricationVersion": "SITE00_BUILD_OBJECT_ASTRA_V2_BLOCKOUT",
-  "stage": "01_ARCHITECTURAL_BLOCKOUT",
-  "gate01Preflight": "COMPLETE",
-  "gate02BlockoutRenders": "NOT_STARTED",
-  "founderVisualApproval": "PENDING",
-  "creativeStatus": "REVISION_REQUIRED_FROM_V1",
-  "paidPhaseBAuthorized": false,
-  "updatedAt": "2026-10-09"
+  "status": "PENDING",
+  "stage": "01_BLOCKOUT",
+  "gate": "02_FOUNDER_BLOCKOUT_REVIEW",
+  "self_approved": false,
+  "structural_revision_passes": 1,
+  "next_stage_authorized": false,
+  "reference_fidelity": "PARTIAL",
+  "review_packet": "review-contact-sheet.md"
 }

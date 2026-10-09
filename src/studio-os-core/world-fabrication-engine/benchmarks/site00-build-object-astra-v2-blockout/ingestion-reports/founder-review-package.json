@@ -1,0 +1,76 @@
+{
+  "founderApproval": "PENDING",
+  "recommendedDecision": "REVISE",
+  "readiness": {
+    "reportId": "site00-build-object-v2-readiness",
+    "assetId": "site00_build_object_astra_v2_blockout",
+    "packageVersion": "codex-blender-v2",
+    "architecturalVisualFidelity": "PENDING",
+    "technicalAssetQuality": "UNVERIFIED",
+    "webRuntimeReadiness": "UNVERIFIED",
+    "unrealReadiness": "NOT_TESTED",
+    "productionPackageCompleteness": "PARTIAL",
+    "founderApproval": "PENDING",
+    "founderApprovalNotes": [
+      "V2 architecture awaiting founder visual approval — technical ingest does not imply creative approval",
+      "README recommends REVISE / pending decision"
+    ],
+    "recommendedTechnicalCorrections": [
+      "Ingest full review package (High GLB, FBX, renders, comparisons) for complete founder review bundle",
+      "Add optional collision mesh if Builder interaction requires physics",
+      "Run Unreal import validation when authorized",
+      "Re-run Blender validate_v2.py when Shadow PC or CI Blender is available"
+    ],
+    "blockers": [
+      "Reduced archive — missing full review package folders/exports"
+    ]
+  },
+  "manifest": {
+    "packageId": "pkg-site00_build_object_astra_v2_blockout-v2",
+    "assetId": "site00_build_object_astra_v2_blockout",
+    "productionLane": "PROP_INTERACTIVE_OBJECT_ART",
+    "productionProfileId": "SITE00_BUILD_OBJECT_ASTRA_V2_BLOCKOUT",
+    "version": "codex-blender-v2",
+    "authorityRefs": [
+      "approved-blueprint-reference",
+      "artlist-rodin-massing"
+    ],
+    "folderPresence": {
+      "00_MANIFEST": "MISSING",
+      "02_SOURCE_MODELS": "PRESENT",
+      "07_MATERIALS": "MISSING",
+      "11_EXPORTS": "MISSING",
+      "12_RENDERS_AND_QA": "MISSING"
+    },
+    "deliverableCompleteness": {
+      "source_blend": "PRESENT",
+      "runtime_glb": "MISSING",
+      "runtime_fbx": "MISSING",
+      "material_definitions": "MISSING",
+      "validation_report": "MISSING",
+      "package_manifest": "MISSING",
+      "review_renders": "MISSING",
+      "uv_layout": "UNVERIFIED",
+      "pbr_texture_set": "UNVERIFIED",
+      "collision_mesh": "NOT_REQUIRED",
+      "interaction_anchors": "UNVERIFIED",
+      "skeleton": "NOT_APPLICABLE",
+      "skin_weights": "NOT_APPLICABLE",
+      "animation_clips": "NOT_APPLICABLE",
+      "navigation_metadata": "NOT_APPLICABLE",
+      "engine_import_config": "UNVERIFIED",
+      "lod_meshes": "NOT_REQUIRED",
+      "high_poly_mesh": "MISSING"
+    },
+    "knownLimitations": [
+      "Fixture appears to be a reduced archive (missing 6 paths from full review package README)"
+    ],
+    "approvalState": "FOUNDER_REVIEW_PENDING"
+  },
+  "inventorySummary": {
+    "fileCount": 80,
+    "warnings": [
+      "Fixture appears to be a reduced archive (missing 6 paths from full review package README)"
+    ]
+  }
+}

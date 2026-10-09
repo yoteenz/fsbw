@@ -1,0 +1,76 @@
+{
+  "type": "PERSP",
+  "focal_length_mm": 34.159690856933594,
+  "sensor_width_mm": 36,
+  "location": [
+    14.55251693725586,
+    -10.844253540039062,
+    0.35318687558174133
+  ],
+  "rotation_euler": [
+    1.570796251296997,
+    7.548189273620665e-08,
+    0.9303866624832153
+  ],
+  "target": [
+    0,
+    0,
+    0.35318688866216597
+  ],
+  "shift_x": 0.07250047194378263,
+  "shift_y": 0.17606249031493518,
+  "plinth_width": 14,
+  "plinth_depth": 7.625648741456951,
+  "base_landmarks": [
+    {
+      "world": [
+        -7,
+        -3.8128243707284755,
+        0
+      ],
+      "reference": [
+        180,
+        794
+      ],
+      "projected": [
+        180.11230397224426,
+        790.958971336484
+      ]
+    },
+    {
+      "world": [
+        7,
+        -3.8128243707284755,
+        0
+      ],
+      "reference": [
+        889,
+        822
+      ],
+      "projected": [
+        888.8378882408142,
+        819.5041027218103
+      ]
+    },
+    {
+      "world": [
+        7,
+        3.8128243707284755,
+        0
+      ],
+      "reference": [
+        1490,
+        797
+      ],
+      "projected": [
+        1490.1588621139526,
+        802.7015348672867
+      ]
+    }
+  ],
+  "notes": [
+    "Level perspective with vertical shift; focal length is not uniquely identifiable.",
+    "Lens and azimuth jointly fitted to receding roof edges and plinth corners.",
+    "Actual architectural landmark positions are in geometry-layout.json; these are derived on orthogonal planes, not arbitrary depth rays."
+  ]
+}

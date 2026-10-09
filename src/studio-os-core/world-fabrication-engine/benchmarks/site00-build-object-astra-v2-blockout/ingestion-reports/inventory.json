@@ -1,0 +1,820 @@
+{
+  "inventoryId": "inv-site00_build_object_astra_v2_blockout",
+  "packageRoot": "/workspace/src/studio-os-core/world-fabrication-engine/benchmarks/site00-build-object-astra-v2-blockout",
+  "extractedAt": "2026-10-09T14:24:12.841Z",
+  "fileCount": 80,
+  "totalBytes": 29194252,
+  "files": [
+    {
+      "relativePath": "01_SOURCE/README.md",
+      "bytes": 1606,
+      "sha256": "b208e9df754d21f609d533663cb3ba99e522b3a3ddcb5e538451b0a20fb657e0",
+      "mimeGuess": "text/markdown",
+      "role": "UNKNOWN",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "01_SOURCE/SITE00_Build_Object_Astra_V2_Blockout.blend",
+      "bytes": 169058,
+      "sha256": "463fba028e6b7e41b03909ac6f1bbe30f7dcec10ad66e2921c0bb9b04f6985ed",
+      "mimeGuess": "application/x-blender",
+      "role": "SOURCE_BLEND",
+      "assetTier": "SOURCE",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "01_SOURCE/build_astra_v2_blockout.py",
+      "bytes": 13473,
+      "sha256": "355e7ae4b5e7b84432c513e252a903e7d410144a44c0c6042bf30384541a7d7d",
+      "mimeGuess": "text/x-python",
+      "role": "SOURCE_SCRIPT",
+      "assetTier": "SOURCE",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "01_SOURCE/compose_review.cjs",
+      "bytes": 3168,
+      "sha256": "9a70f5d91d3d23085ae6dceef1fe66828fb2ae42a0c595581ce466f73fe269e8",
+      "mimeGuess": "application/octet-stream",
+      "role": "UNKNOWN",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "01_SOURCE/correct_display_transform.py",
+      "bytes": 987,
+      "sha256": "09bf278924695456e8a55e7333d1659647047dc7783537d46437814936e0cc91",
+      "mimeGuess": "text/x-python",
+      "role": "SOURCE_SCRIPT",
+      "assetTier": "SOURCE",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "01_SOURCE/finalize_manifest.py",
+      "bytes": 1735,
+      "sha256": "63a69fd0ae832450356ad315bdaa7e6041ef532f7b1b4d9a0a34e849b691c0f2",
+      "mimeGuess": "text/x-python",
+      "role": "SOURCE_SCRIPT",
+      "assetTier": "SOURCE",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "01_SOURCE/finish_initial_views.py",
+      "bytes": 468,
+      "sha256": "479c202bbbd8dc5e45ee749924087b4550097b3bd8c4e2e84144620c1b17d03e",
+      "mimeGuess": "text/x-python",
+      "role": "SOURCE_SCRIPT",
+      "assetTier": "SOURCE",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "01_SOURCE/prepare_landmarks.py",
+      "bytes": 2654,
+      "sha256": "3eb32418c3cbd23f6216f03e6c41fb001d31e0f59d2699fbd01a0f96db184622",
+      "mimeGuess": "text/x-python",
+      "role": "SOURCE_SCRIPT",
+      "assetTier": "SOURCE",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "01_SOURCE/solve_camera.py",
+      "bytes": 2738,
+      "sha256": "25306335854e142e1ed635f683b507f94ea93b4f51604ee4706d608dd1c9e0d5",
+      "mimeGuess": "text/x-python",
+      "role": "SOURCE_SCRIPT",
+      "assetTier": "SOURCE",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "01_SOURCE/verify_blockout.py",
+      "bytes": 2266,
+      "sha256": "906ce753a5c65a0208d7f4eab8f42563a59e249f1b7c861c9222d83ba8629544",
+      "mimeGuess": "text/x-python",
+      "role": "SOURCE_SCRIPT",
+      "assetTier": "SOURCE",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "02_RENDERS/01_REFERENCE_CAMERA_BLOCKOUT.png",
+      "bytes": 1489547,
+      "sha256": "cfb82ad2df172a0eec7033937702dbea6ed67cbab32905a055bdd2a1c817b60e",
+      "mimeGuess": "image/png",
+      "role": "UNKNOWN",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "02_RENDERS/02_LEFT_THREE_QUARTER.png",
+      "bytes": 1337889,
+      "sha256": "1ac48d97783ce32c3365734a2453719b064665d786b1f3b19ef51d237359cd04",
+      "mimeGuess": "image/png",
+      "role": "UNKNOWN",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "02_RENDERS/03_RIGHT_THREE_QUARTER.png",
+      "bytes": 1394280,
+      "sha256": "b373ed8673b872382a7185f185806e6d35af68ed54aa407389785cafdbd15096",
+      "mimeGuess": "image/png",
+      "role": "UNKNOWN",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "02_RENDERS/04_ELEVATED_INSPECTION.png",
+      "bytes": 1402138,
+      "sha256": "4cb4985a0142d7a50f75f7378904d2cb55421052ec8aedd8a0c8ed4e1345600a",
+      "mimeGuess": "image/png",
+      "role": "UNKNOWN",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "02_RENDERS/05_REFERENCE_OVERLAY.png",
+      "bytes": 1655852,
+      "sha256": "2244e9224ecf8a34c4bbbf2aeb81b74530d91a19836f463608d9e8b27e7b0105",
+      "mimeGuess": "image/png",
+      "role": "UNKNOWN",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "03_COMPARISONS/approved-reference.jpg",
+      "bytes": 301334,
+      "sha256": "50590912003833aeff8a1851dcbd5a1342d7aa8e47c4603a4eea3e932726582b",
+      "mimeGuess": "application/octet-stream",
+      "role": "UNKNOWN",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "03_COMPARISONS/blockout-vs-reference-hero.png",
+      "bytes": 2901807,
+      "sha256": "5f6034bdb033ee74a7548e6d6374742acad0818af91c509ee7c134ffe2a6ec6c",
+      "mimeGuess": "image/png",
+      "role": "UNKNOWN",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "03_COMPARISONS/landmark-overlay-hero.png",
+      "bytes": 1728423,
+      "sha256": "583f2aad348c5bd7dd5db405138c26277c5d49d88e9e8741ebf26481231ddce8",
+      "mimeGuess": "image/png",
+      "role": "UNKNOWN",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "03_COMPARISONS/prebuild-landmark-overlay.png",
+      "bytes": 1611998,
+      "sha256": "089edd670d232f70becd79d252b68682bb4963ea84784829c5f69b51ea58a97a",
+      "mimeGuess": "image/png",
+      "role": "UNKNOWN",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "03_COMPARISONS/prebuild-landmarks.svg",
+      "bytes": 8955,
+      "sha256": "c767b72ecd7ff5612d1a8c54aa7867ad9aa135e0236e66604084675b379ba1f0",
+      "mimeGuess": "application/octet-stream",
+      "role": "UNKNOWN",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "03_COMPARISONS/v1-failed-hero-vs-reference.png",
+      "bytes": 1235516,
+      "sha256": "42ac62f73734e8870dd4c53314153f479475fbe3efc2e0b41c0591ac9b13ef6f",
+      "mimeGuess": "image/png",
+      "role": "UNKNOWN",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "03_COMPARISONS/v1-hero-vs-v2-blockout-hero.png",
+      "bytes": 720777,
+      "sha256": "548e608e8a0f876737c02a43c0893f3ca65e80e269ec43ead0277fb92446b5ac",
+      "mimeGuess": "image/png",
+      "role": "UNKNOWN",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "04_DOCUMENTATION/ARCHITECTURAL_MODULE_PLAN.md",
+      "bytes": 1339,
+      "sha256": "eeb0c1d59fc30395c9e87f175680d6e8495100b1d457af759153feeba14cb766",
+      "mimeGuess": "text/markdown",
+      "role": "UNKNOWN",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "04_DOCUMENTATION/BUDGET_ENFORCEMENT_STATUS.md",
+      "bytes": 1787,
+      "sha256": "705e9ad1472b031f26faa727822174f6e6a8d22df8d62355a042f3ed4b85fc50",
+      "mimeGuess": "text/markdown",
+      "role": "UNKNOWN",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "04_DOCUMENTATION/CAMERA_MATCH_PLAN.md",
+      "bytes": 2150,
+      "sha256": "dff8f2f159ed50a1d904bc4362e5f7767141a9146a3febeae5cde53d93c31ec4",
+      "mimeGuess": "text/markdown",
+      "role": "UNKNOWN",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "04_DOCUMENTATION/GLASS_VOLUME_PLAN.md",
+      "bytes": 1026,
+      "sha256": "3836bab0f75a3d5d83d26f3100cabaa8b16aab9f3993a08b73fdf1b877261108",
+      "mimeGuess": "text/markdown",
+      "role": "UNKNOWN",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "04_DOCUMENTATION/INTERIOR_STRUCTURE_PLAN.md",
+      "bytes": 979,
+      "sha256": "4d8eb9328bc39e2c1f5598ab3d57f5dfc7aa3281bec852cc1a754353549018b6",
+      "mimeGuess": "text/markdown",
+      "role": "UNKNOWN",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "04_DOCUMENTATION/PREFLIGHT_IMAGE_INSPECTION.md",
+      "bytes": 1423,
+      "sha256": "e7fbe679631db0b6dbf5dd8830aad929abb85006f6b3670945c917b48f631aa6",
+      "mimeGuess": "text/markdown",
+      "role": "UNKNOWN",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "04_DOCUMENTATION/RED_PORTAL_PLAN.md",
+      "bytes": 1277,
+      "sha256": "aaa0272830d7ad8f9f853503bef97507d0c1ebb8a16cdb2fa34c62842356e094",
+      "mimeGuess": "text/markdown",
+      "role": "UNKNOWN",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "04_DOCUMENTATION/REFERENCE_GEOMETRY_MAP.json",
+      "bytes": 7392,
+      "sha256": "2cfc013611fdd9afd860e86201e8ab17b93e4a1213fece635cebd5738f1186e6",
+      "mimeGuess": "application/json",
+      "role": "UNKNOWN",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "04_DOCUMENTATION/build-pass-0.log",
+      "bytes": 1304,
+      "sha256": "fef6d9b2fe26d1fb237e01de2423d85320a639a6e72ed1e2fdf0f1c736aa5014",
+      "mimeGuess": "application/octet-stream",
+      "role": "UNKNOWN",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "04_DOCUMENTATION/build-pass-1.log",
+      "bytes": 1805,
+      "sha256": "02aff935f348a80b2c00b21afd8a8b2fc3d6014db1be9587d5a8a4fed5fe34bf",
+      "mimeGuess": "application/octet-stream",
+      "role": "UNKNOWN",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "04_DOCUMENTATION/camera-match-report.json",
+      "bytes": 5809,
+      "sha256": "60b617475d70a320ee73ec81a423ccfd08274e82676d9d17c79f6de776797d81",
+      "mimeGuess": "application/json",
+      "role": "UNKNOWN",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "04_DOCUMENTATION/camera-prebuild-solve.json",
+      "bytes": 1500,
+      "sha256": "a1815011b990a1cc8ff164e208fad4bf8db63ba97bde6ea0eb673dce6c7876fe",
+      "mimeGuess": "application/json",
+      "role": "UNKNOWN",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "04_DOCUMENTATION/camera-solve.log",
+      "bytes": 3995,
+      "sha256": "a7c2f449267e24e48d969f1495e6634f55e79d736ec224f27c28016532d2ce2f",
+      "mimeGuess": "application/octet-stream",
+      "role": "UNKNOWN",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "04_DOCUMENTATION/codex-execution-receipt.json",
+      "bytes": 587,
+      "sha256": "cb9b6bfc3a501f5486fcaa6e844f2e7a7e250a4e09d91a4b9e5c5f6419d7cd7e",
+      "mimeGuess": "application/json",
+      "role": "UNKNOWN",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "04_DOCUMENTATION/deliverable-manifest.json",
+      "bytes": 3280,
+      "sha256": "b5acebb9c3ce05cb18b58eab6eb35230261cf17886efa39c28d9a87d55d9e34f",
+      "mimeGuess": "application/json",
+      "role": "UNKNOWN",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "04_DOCUMENTATION/display-correction.log",
+      "bytes": 1248,
+      "sha256": "9f435091faf946521743ef1fd57585f783dd7e5f30e91f8cffc73df407111f1d",
+      "mimeGuess": "application/octet-stream",
+      "role": "UNKNOWN",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "04_DOCUMENTATION/geometry-layout.json",
+      "bytes": 3572,
+      "sha256": "25ac88807de1986cec63fe72115bca66fe26acb5ff60a666e31625db8994e1a9",
+      "mimeGuess": "application/json",
+      "role": "UNKNOWN",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "04_DOCUMENTATION/image-inspection-evidence.md",
+      "bytes": 3493,
+      "sha256": "9ae83fe2613adcc992959f89ab5b2bc47bd7d4e43cf08291400bcb95fee4d360",
+      "mimeGuess": "text/markdown",
+      "role": "UNKNOWN",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "04_DOCUMENTATION/initial-pass/01_REFERENCE_CAMERA_BLOCKOUT.png",
+      "bytes": 1503189,
+      "sha256": "7273c1c6513d9252c1f59ccf6b785a17380f956500af1dae64a21468d7e25821",
+      "mimeGuess": "image/png",
+      "role": "UNKNOWN",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "04_DOCUMENTATION/initial-pass/02_LEFT_THREE_QUARTER.png",
+      "bytes": 1409829,
+      "sha256": "8b17b2b08c2c3089d9e1a374c4126245ac612becc0b8d89ee6c2588e99622e19",
+      "mimeGuess": "image/png",
+      "role": "UNKNOWN",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "04_DOCUMENTATION/initial-pass/03_RIGHT_THREE_QUARTER.png",
+      "bytes": 1450092,
+      "sha256": "d9e289d7310d3e5666fd896e27442196d7b5bb1b974a28be6994d826933a1580",
+      "mimeGuess": "image/png",
+      "role": "UNKNOWN",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "04_DOCUMENTATION/initial-pass/04_ELEVATED_INSPECTION.png",
+      "bytes": 1437817,
+      "sha256": "18864693ed3766a3a37601694c7c72e3e36ac38c9910bda13017fcec934a13ae",
+      "mimeGuess": "image/png",
+      "role": "UNKNOWN",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "04_DOCUMENTATION/initial-pass/05_REFERENCE_OVERLAY.png",
+      "bytes": 1668491,
+      "sha256": "b8b37d20b124b47d5be8c8d8e117ebf3e5fdac15eba2549da125f74ab9ead9b5",
+      "mimeGuess": "image/png",
+      "role": "UNKNOWN",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "04_DOCUMENTATION/initial-pass/build-pass-0.py",
+      "bytes": 11929,
+      "sha256": "34b3505f877d617e8c975ee8b83142f3a6083b66168c8283c0405418d6d73f66",
+      "mimeGuess": "text/x-python",
+      "role": "UNKNOWN",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "04_DOCUMENTATION/initial-pass/camera-match-report.json",
+      "bytes": 3056,
+      "sha256": "a158af557cfd5948de527016a2f643bace3da2ca9d444e1dc94ee32deee5adcf",
+      "mimeGuess": "application/json",
+      "role": "UNKNOWN",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "04_DOCUMENTATION/initial-pass/mesh-measurements.json",
+      "bytes": 399,
+      "sha256": "6efcad0f97819d29c9f5c548f23388ea7319554932fe6be291197dd2118ba245",
+      "mimeGuess": "application/json",
+      "role": "UNKNOWN",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "04_DOCUMENTATION/initial-pass/review-contact-sheet.png",
+      "bytes": 2209021,
+      "sha256": "3944b97c5acda9618f6b96a6fb962fb6281f1d58689278a117f6f18ab0166ad7",
+      "mimeGuess": "image/png",
+      "role": "UNKNOWN",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "04_DOCUMENTATION/initial-views.log",
+      "bytes": 1005,
+      "sha256": "af3006d348bcafd0732270a478e0cf0ec936507b848975e4332d520c4a6823c9",
+      "mimeGuess": "application/octet-stream",
+      "role": "UNKNOWN",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "04_DOCUMENTATION/iteration-record.md",
+      "bytes": 1897,
+      "sha256": "394df347283a9e6dfd72f3b0d6b4d27ded232ab19f0e36846177e17aea5347ea",
+      "mimeGuess": "text/markdown",
+      "role": "UNKNOWN",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "04_DOCUMENTATION/layout.log",
+      "bytes": 3573,
+      "sha256": "7cf031ba6d9a5c23730dd9a15307838d21d95848407eb8c64b69c5ad038d6555",
+      "mimeGuess": "application/octet-stream",
+      "role": "UNKNOWN",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "04_DOCUMENTATION/mesh-measurements.json",
+      "bytes": 399,
+      "sha256": "228a7258a56dacdc157f663cdecc0da1016da89f557e73997e64bd6a865eb04b",
+      "mimeGuess": "application/json",
+      "role": "UNKNOWN",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "04_DOCUMENTATION/model-verification.json",
+      "bytes": 400,
+      "sha256": "80531d4cd0b9797f9a955e72ad50ca97a52198273c7edf9d120b01f6792299d9",
+      "mimeGuess": "application/json",
+      "role": "UNKNOWN",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "04_DOCUMENTATION/runtime-cache/fontconfig/14a344830950b8faf001f72579ff87e4-le64.cache-9",
+      "bytes": 33352,
+      "sha256": "a91721d9314e82a9a20ebeb922e9fa2c5a85be7e1bbe5b0f2edcd707d3379486",
+      "mimeGuess": "application/octet-stream",
+      "role": "UNKNOWN",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "04_DOCUMENTATION/runtime-cache/fontconfig/CACHEDIR.TAG",
+      "bytes": 200,
+      "sha256": "05e7633fb31bf1f6f8d89020c16b9f24587fdf7638e951c9745b192f5fc3b682",
+      "mimeGuess": "application/octet-stream",
+      "role": "UNKNOWN",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "04_DOCUMENTATION/runtime-cache/thumbnails/large/83117611e05ad68cfa81a21c532c6546.png",
+      "bytes": 2997,
+      "sha256": "24a94f949a38c220a956aaac19b9cdb80abe4d8c2968d654b8f1b13aa2355003",
+      "mimeGuess": "image/png",
+      "role": "UNKNOWN",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "04_DOCUMENTATION/scope-and-sync.md",
+      "bytes": 675,
+      "sha256": "6705465d81b2f8ac29299a2d4efd2d943c8ad3726f8ad06f14c210b7d28834da",
+      "mimeGuess": "text/markdown",
+      "role": "UNKNOWN",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "04_DOCUMENTATION/structural-fidelity-report.md",
+      "bytes": 4125,
+      "sha256": "ed07041f7afa8b10fcb21858070ace0a073b866799089fece3c35b352642b21c",
+      "mimeGuess": "text/markdown",
+      "role": "UNKNOWN",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "04_DOCUMENTATION/usage-report.json",
+      "bytes": 1067,
+      "sha256": "b1b46d2a65868fd7e64d1bf920ac09d3e80cdf2931a3b1e5beabd1c09f5ac508",
+      "mimeGuess": "application/json",
+      "role": "UNKNOWN",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "04_DOCUMENTATION/verification-report.json",
+      "bytes": 1549,
+      "sha256": "5dd4e9d21ccfc893418212453a3529fcc6da9052b9414296057573bd6f6e65cf",
+      "mimeGuess": "application/json",
+      "role": "UNKNOWN",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "04_DOCUMENTATION/verification.log",
+      "bytes": 1752,
+      "sha256": "e436f49383c41d4cbd24544d8f9823a8419364adda8f0a1ae00100ab5590bf59",
+      "mimeGuess": "application/octet-stream",
+      "role": "UNKNOWN",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "05_FOUNDER_REVIEW/GATE_01_PREFLIGHT_PACKAGE.md",
+      "bytes": 1905,
+      "sha256": "ecf787113c6d5caa1325fff796f9d50624d0aabf884991017efe84a7482df469",
+      "mimeGuess": "text/markdown",
+      "role": "UNKNOWN",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "05_FOUNDER_REVIEW/approval-status.json",
+      "bytes": 267,
+      "sha256": "9f0eb636eb36f035a870aa47463c017474d90c64b618e37d0bec060bff90a8d6",
+      "mimeGuess": "application/json",
+      "role": "UNKNOWN",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "05_FOUNDER_REVIEW/review-contact-sheet.md",
+      "bytes": 1603,
+      "sha256": "595fbd8c15f6e28d88f0a59e9080c7ddec055aefbd6221722af981d9b2273bbd",
+      "mimeGuess": "text/markdown",
+      "role": "UNKNOWN",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "05_FOUNDER_REVIEW/review-contact-sheet.png",
+      "bytes": 2128093,
+      "sha256": "a157c357328a0ae29f6f27dd7af46fe48de2a76bea9521f736193233992f00c0",
+      "mimeGuess": "image/png",
+      "role": "UNKNOWN",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "README.md",
+      "bytes": 645,
+      "sha256": "5dbf21e5eb34fcdf5103c1df48b0803d680fe8913ecb3c932271a2c100b78924",
+      "mimeGuess": "text/markdown",
+      "role": "UNKNOWN",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "execution-runs/phase-b-blockout/LAUNCH_IMAGE_INPUT_EVIDENCE.json",
+      "bytes": 529,
+      "sha256": "69f4e2a89953c3bae11a20b541b614592061713c90e1d3b6e99d869e41549cfe",
+      "mimeGuess": "application/json",
+      "role": "UNKNOWN",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "execution-runs/phase-b-blockout/PREFLIGHT_COMPLETE.json",
+      "bytes": 568,
+      "sha256": "59aa21e29ae64f01b36a773557c0fca24fa21f94e43e71fc17d6a18b88947b53",
+      "mimeGuess": "application/json",
+      "role": "UNKNOWN",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "execution-runs/phase-b-blockout/codex-assignment-prompt.txt",
+      "bytes": 3279,
+      "sha256": "5fdc087fd102d1f6cb8732ee6c5accd53c64bf7e19e80bc65d04dfc83a411d87",
+      "mimeGuess": "application/octet-stream",
+      "role": "UNKNOWN",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "execution-runs/phase-b-blockout/codex-exec.log",
+      "bytes": 1236462,
+      "sha256": "f6570106355f00d0ec4281a6fb21e844ee8a977ed32c73d1364d1298eabe45b7",
+      "mimeGuess": "application/octet-stream",
+      "role": "UNKNOWN",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "fabrication-assignment.json",
+      "bytes": 2719,
+      "sha256": "893af08ba81283dc69d335e2390088047a8b43156e8fd9050e4e1760e8a83717",
+      "mimeGuess": "application/json",
+      "role": "UNKNOWN",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "ingest-blockout.test.ts",
+      "bytes": 891,
+      "sha256": "3221d46c5920af9a1848a114cde61c92ffaac4650565fc7c495e4d7f8763e776",
+      "mimeGuess": "application/octet-stream",
+      "role": "UNKNOWN",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "ingestion-reports/asset-package-manifest.json",
+      "bytes": 1399,
+      "sha256": "ef3720aaffb4f30341664da32f07399610cc41a60470bc2183886341acae8e0e",
+      "mimeGuess": "application/json",
+      "role": "UNKNOWN",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "ingestion-reports/founder-review-package.json",
+      "bytes": 2824,
+      "sha256": "085c287f2b6f85181c9736c04c4bb61228dd60ae5d360e3a88fe8205a0d44d7e",
+      "mimeGuess": "application/json",
+      "role": "UNKNOWN",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "ingestion-reports/glb-inspection.json",
+      "bytes": 2,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "mimeGuess": "application/json",
+      "role": "UNKNOWN",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "ingestion-reports/inventory.json",
+      "bytes": 28109,
+      "sha256": "c518d32bd66558230b91073a2578a1c8b34d20fd8d1b9f73b63e68db62e5b11c",
+      "mimeGuess": "application/json",
+      "role": "UNKNOWN",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "ingestion-reports/lineage.json",
+      "bytes": 3763,
+      "sha256": "bccfeb1cf2894b93d3c57e235a94f9b272f76a1ddc367d05c0d74717cd522d57",
+      "mimeGuess": "application/json",
+      "role": "UNKNOWN",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "ingestion-reports/readiness-report.json",
+      "bytes": 1023,
+      "sha256": "6513082d6b5b9baacde91324a6107d8bf5d755624893759e33308080d66bc489",
+      "mimeGuess": "application/json",
+      "role": "UNKNOWN",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    },
+    {
+      "relativePath": "ingestion-reports/technical-art-audit.json",
+      "bytes": 2722,
+      "sha256": "eb647bd258397eeb897557d2162870f4fdb375afb3960962900cc7e50d48b624",
+      "mimeGuess": "application/json",
+      "role": "UNKNOWN",
+      "assetTier": "DOCUMENTATION",
+      "dependencies": [],
+      "productionVersion": "V2"
+    }
+  ],
+  "missingFromFullReviewPackage": [
+    "02_EXPORTS/SITE00_Build_Object_V2_High.glb",
+    "02_EXPORTS/SITE00_Build_Object_V2_DCC.fbx",
+    "03_RENDERS/*",
+    "04_COMPARISONS/*",
+    "01_SOURCE/serve-viewer.cjs",
+    "01_SOURCE/validate_v2.py"
+  ],
+  "warnings": [
+    "Fixture appears to be a reduced archive (missing 6 paths from full review package README)"
+  ]
+}

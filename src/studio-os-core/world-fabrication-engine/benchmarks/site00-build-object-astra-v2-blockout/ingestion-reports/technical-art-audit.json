@@ -1,0 +1,111 @@
+{
+  "assessments": [
+    {
+      "requirementId": "source_geometry_blend",
+      "category": "GEOMETRY",
+      "cell": "PRESENT",
+      "evidence": [
+        "463fba028e6b7e41b03909ac6f1bbe30f7dcec10ad66e2921c0bb9b04f6985ed"
+      ]
+    },
+    {
+      "requirementId": "runtime_web_glb",
+      "category": "GEOMETRY",
+      "cell": "MISSING",
+      "evidence": []
+    },
+    {
+      "requirementId": "runtime_high_glb",
+      "category": "GEOMETRY",
+      "cell": "MISSING",
+      "evidence": [],
+      "notes": "Missing in reduced Under4MB fixture"
+    },
+    {
+      "requirementId": "runtime_fbx",
+      "category": "GEOMETRY",
+      "cell": "MISSING",
+      "notes": "Missing in reduced Under4MB fixture",
+      "evidence": []
+    },
+    {
+      "requirementId": "material_definitions",
+      "category": "MATERIALS",
+      "cell": "MISSING",
+      "evidence": [
+        "material-manifest.json"
+      ]
+    },
+    {
+      "requirementId": "module_hierarchy",
+      "category": "MODULARITY",
+      "cell": "MISSING",
+      "evidence": [
+        "module-manifest.json"
+      ]
+    },
+    {
+      "requirementId": "validation_report",
+      "category": "QA",
+      "cell": "MISSING",
+      "evidence": [
+        "export-validation-report.json"
+      ]
+    },
+    {
+      "requirementId": "render_evidence",
+      "category": "QA",
+      "cell": "MISSING",
+      "notes": "Full review package includes Blender renders; reduced fixture omits 03_RENDERS",
+      "evidence": []
+    },
+    {
+      "requirementId": "reference_lineage",
+      "category": "LINEAGE",
+      "cell": "MISSING",
+      "notes": "Comparison assets absent in reduced fixture",
+      "evidence": []
+    },
+    {
+      "requirementId": "collision_mesh",
+      "category": "COLLISION",
+      "cell": "NOT_REQUIRED",
+      "evidence": [],
+      "notes": "Static prop web delivery — collision optional per profile"
+    },
+    {
+      "requirementId": "navigation",
+      "category": "NAVIGATION",
+      "cell": "NOT_APPLICABLE",
+      "evidence": []
+    },
+    {
+      "requirementId": "lod_meshes",
+      "category": "LOD",
+      "cell": "NOT_REQUIRED",
+      "evidence": []
+    },
+    {
+      "requirementId": "rig_animation",
+      "category": "CHARACTER",
+      "cell": "NOT_APPLICABLE",
+      "evidence": []
+    },
+    {
+      "requirementId": "blender_native_inspection",
+      "category": "DCC",
+      "cell": "BLOCKED",
+      "evidence": [],
+      "notes": "Blender CLI not available in cloud benchmark environment"
+    },
+    {
+      "requirementId": "unreal_import",
+      "category": "ENGINE",
+      "cell": "UNVERIFIED",
+      "evidence": [
+        "export-validation-report.json: unreal NOT TESTED"
+      ]
+    }
+  ],
+  "completeness": []
+}
