@@ -5,7 +5,9 @@
  * The words and services are bundled from the live sources at build time (esbuild): the canonical service catalog, the
  * discovery categories and need options, the two activation matrices (public CTA and PAUSED state), divisionMeta, the
  * homepage pathways and roadmap stages, the Start Your Business journey, bookkeeping plan features, the FleetCare and
- * DriverLink disclosures. Prices are dropped before anything reaches the page: none are approved.
+ * DriverLink disclosures, and the live per-service detail (src/data/services.ts — audience, requirements, process, documents,
+ * FAQ; src/services/mobileServicePageConfig.ts — the operating-authority process and FAQ). Prices are dropped before anything
+ * reaches the page: none are approved.
  *
  *   node design-authority/aio-public/build.mjs <outDir>
  */
@@ -28,7 +30,9 @@ const bundle = await build({
       export { SERVICE_DISCOVERY_CATEGORIES } from './src/services/catalog/serviceDiscoveryCategories';
       export { getServiceLaunchEntry, getPublicServiceCta } from './src/launch/serviceActivationLaunch';
       export { SERVICE_ACTIVATION_MATRIX } from './src/infrastructure/serviceActivation';
-      export { divisionMeta } from './src/data/services';
+      export { divisionMeta, aioServices } from './src/data/services';
+      export { mobileServiceProcessBySlug, mobileServiceFaqBySlug } from './src/services/mobileServicePageConfig';
+      export { intakeSections, getVisibleSections } from './src/intake/intakeConfig';
       export { homepagePathways, homepageRoadmapStages, homepageHeroSupportingCopy } from './src/data/homepageMobileContent';
       export { startBusinessJourneyDef } from './src/journeys/startBusinessJourneyConfig';
       export { BOOKKEEPING_PLANS, BOOKKEEPING_TRUCKING_CATEGORIES } from './src/bookkeeping/bookkeepingPlans';
@@ -55,6 +59,22 @@ function stateOf(s) {
 }
 /** Unapproved prices live inside some catalog sentences ("Starting at $249/month — …"); they are cut, never shown. */
 const noPrice = (t) => (t == null ? t : String(t).replace(/\s*starting at \$[\d,.]+(\/(month|mo|year))?\s*[—;,-]*\s*/gi, ' ').replace(/\s+—\s*$/, '').replace(/^\s*—\s*/, '').replace(/\s{2,}/g, ' ').trim().replace(/^./, (c) => c.toUpperCase()));
+/** The live service page's detail (src/data/services.ts, the mobile service config): recovered, never rewritten. A line that
+ *  carries a price is left out (prices are not approved), never edited. */
+const priced = (t) => /\$\s?\d/.test(String(t ?? ''));
+function detailOf(slug) {
+  const L = M.aioServices.find((x) => x.slug === slug);
+  const steps = M.mobileServiceProcessBySlug[slug];
+  const faq = [...(M.mobileServiceFaqBySlug[slug] ?? L?.faq ?? [])].filter((f) => !priced(f.question) && !priced(f.answer));
+  return {
+    audience: L && !priced(L.audience) ? L.audience : null,
+    requirements: (L?.requirements ?? []).filter((x) => !priced(x)),
+    documents: (L?.documents ?? []).filter((x) => !priced(x)),
+    process: steps ? steps.map((x) => [x.title, x.description]) : (L?.process ?? []).filter((x) => !priced(x)).map((x) => [x, '']),
+    faq: faq.map((f) => [f.question, f.answer]),
+    detailSource: L ? (steps ? 'src/data/services.ts + src/services/mobileServicePageConfig.ts' : 'src/data/services.ts') : null,
+  };
+}
 const services = M.CANONICAL_SERVICE_CATALOG.filter((s) => s.customerPortalVisible !== false).map((s) => {
   const state = stateOf(s);
   const cta = M.getPublicServiceCta(s.slug);
@@ -65,9 +85,25 @@ const services = M.CANONICAL_SERVICE_CATALOG.filter((s) => s.customerPortalVisib
     renewalInterval: s.renewalInterval ?? null, roadReadyApplicable: !!s.roadReadyApplicable, icon: s.icon, relatedSlugs: s.relatedSlugs ?? [],
     state, ctaAllowed: allowed, ctaLabel: allowed ? (cta.label && cta.label !== 'Get Started' ? cta.label : s.cta || 'Get Started') : state === 'PAUSED' ? 'BUSINESS ACTIVATION REQUIRED' : 'REQUEST INFORMATION',
     disclosure: M.fulfillmentDisclosure(s) ?? null,
+    ...detailOf(s.slug),
+    needsFor: M.SERVICE_NEED_OPTIONS.filter((n) => n.id !== 'not-sure' && n.recommendedSlugs.includes(s.slug)).map((n) => n.label),
   };
 });
 const has = (slug) => services.some((s) => s.slug === slug);
+/** The live Smart Intake (src/intake/intakeConfig.ts): its sections, questions and options as built — the design draws these,
+ *  it does not invent a shorter form. Which sections a goal shows comes from the live getVisibleSections(). */
+function intakeOf() {
+  const ix = JSON.parse(readFileSync(join(APP, 'src/locales/en/intake.json'), 'utf8'));
+  const RAIL = { goal: 'goal', journey: 'status', business: 'business', operating: 'operating', assets: 'assets', pain_points: 'painPoints', factoring_branch: 'factoring', insurance_branch: 'insurance', shipper: 'shipper', contact: 'contact' };
+  const sections = M.intakeSections.map((sec) => ({
+    id: sec.id, title: sec.title, description: String(sec.description || '').replace(/\s*\(Demo — no sensitive data\.\)/, ''),
+    rail: ix.journey[RAIL[sec.id]] ? [ix.journey[RAIL[sec.id]].label, ix.journey[RAIL[sec.id]].subtitle] : [sec.title, ''],
+    questions: sec.questions.map((q) => ({ id: q.id, question: q.question, type: q.type, required: !!q.required, description: q.description || '', states: (q.options || []).length > 40, options: (q.options || []).length > 40 ? [] : (q.options || []).map((o) => [o.value, o.label, o.description || '']) })),
+  }));
+  const goals = M.intakeSections.find((x) => x.id === 'goal').questions[0].options.map((o) => o.value);
+  const flows = Object.fromEntries(goals.map((g) => [g, M.getVisibleSections({ goal: g }).map((x) => x.id)]));
+  return { sections, flows, shell: ix.shell };
+}
 const ALIAS = { 'irp-registration': 'irp-apportioned-registration', 'ifta-setup': 'ifta-fuel-tax-assistance', 'vehicle-registration': 'tag-services', 'boc-3-filing': 'boc-3-assistance' };
 const data = {
   services,
@@ -86,9 +122,12 @@ const data = {
   driverDisclosures: M.DRIVERLINK_LEGAL_DISCLOSURES,
   driverLead: dl.heroLead,
   driverSteps: [dl.step1, dl.step2, dl.step3, dl.step4],
+  intake: intakeOf(),
 };
 if (!data.fleetPlans.client.length) data.fleetPlans.client = JSON.stringify(M.FLEETCARE_PRICING_CONFIG).match(/"name":"FleetCare[^"]*"/g)?.map((x) => x.slice(8, -1)).filter((n) => !/Provider/.test(n)) ?? [];
-{ const hit = JSON.stringify(data).match(/.{0,80}\$\s?\d.{0,40}/g); if (hit) throw new Error(`a price reached the page data: ${hit.join(" | ")}`); }
+{ // no price reaches the page. The one allowed dollar figure is the live intake's own answer bands for "monthly invoice volume" (factoring_volume) — the customer's volume, not an AIO price.
+  const scan = JSON.stringify({ ...data, intake: { ...data.intake, sections: data.intake.sections.map((x) => ({ ...x, questions: x.questions.filter((q) => q.id !== 'factoring_volume') })) } });
+  const hit = scan.match(/.{0,80}\$\s?\d.{0,40}/g); if (hit) throw new Error(`a price reached the page data: ${hit.join(" | ")}`); }
 
 /* ── 2 · assets: photography (founder-supplied / founder-approved plates), brand marks, fonts, approved IFTA captures ── */
 const PUBLIC = join(APP, 'public');

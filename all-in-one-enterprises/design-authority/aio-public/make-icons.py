@@ -17,7 +17,7 @@ NAMES = {
   'rocket': 'rocket', 'compass': 'compass', 'headset': 'headset', 'scale': 'scale', 'briefcase': 'briefcase',
   'gauge': 'gauge', 'layers': 'layers', 'container': 'container', 'warehouse': 'warehouse', 'book': 'book-open',
   'help': 'circle-help', 'play': 'circle-play', 'eye': 'eye', 'send': 'send', 'upload': 'upload',
-  'message': 'message-square', 'bell': 'bell', 'archive': 'archive', 'vault': 'vault',
+  'message': 'message-square', 'bell': 'bell', 'archive': 'archive', 'vault': 'vault', 'plus': 'plus', 'up': 'arrow-up',
 }
 rows = []
 for key, name in NAMES.items():
