@@ -1,0 +1,76 @@
+.ga {
+  min-height: 100vh;
+  background: #f4efe6;
+  color: #141414;
+  font-family: Inter, "Segoe UI", sans-serif;
+  padding: 24px 16px 40px;
+}
+
+.ga-wrap {
+  width: min(880px, 100%);
+  margin: 0 auto;
+  display: grid;
+  gap: 14px;
+}
+
+.ga-kicker {
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-size: 12px;
+  color: #7a6844;
+}
+
+.ga h1 {
+  font-size: 36px;
+  line-height: 1.05;
+  letter-spacing: -0.04em;
+  margin: 0;
+}
+
+.ga-note, .ga-card {
+  background: #fffdf8;
+  border: 1px solid #e4d3ae;
+  border-radius: 14px;
+  padding: 14px;
+}
+
+.ga-step {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 0;
+  border-top: 1px solid #efe4d0;
+}
+
+.ga-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.ga button {
+  min-height: 48px;
+  border-radius: 10px;
+  border: 1px solid #141414;
+  background: #fff;
+  padding: 10px 14px;
+  font-weight: 650;
+}
+
+.ga button.gold {
+  background: linear-gradient(180deg, #f0ddb0, #b8893a);
+  border-color: #8d6828;
+}
+
+.ga button:disabled {
+  opacity: 0.4;
+}
+
+.ga textarea {
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid #c5c6c4;
+  padding: 12px;
+  font: inherit;
+  text-transform: none;
+}

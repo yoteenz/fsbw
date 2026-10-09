@@ -55733,3 +55733,14 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
   - public website (separate)
   - the 12 privacy gaps (still OPEN)
 - **Review:** https://claude.ai/artifact/DKYZUHjSdiTw1qSC1evdbk (version 3). **Next gate:** FOUNDER REVIEW OF AIO OFFICE MATERIAL, MOTION AND DETAIL POLISH.
+
+---
+
+## 2026-10-09 — Studio World guided apprenticeship foundation
+
+- **Context:** Formalize a Studio World way for an expert to teach a guide. AIO is the first practice case. This is a contract, not a worker and not a new brand. The active AIO Office polish was left untouched.
+- **Product:** Show me, let me take over, try it my way, then expert confirmation, owner approval, and a separate training publication. A click is not a reason. Confirmation is not approval. Approval is not tool use. Practice cannot file, pay, or edit a live account.
+- **Reuse:** Expert Capture, the vault, invites, and the Workflow Engine stay. Tutorial OS and the Studio manual are later spotlight sources. Vision Engine and room fabrication are deferred. SITE 00 is not the home of this guide. Workflow Journal remains the written capture on its own review branch and was not merged into this one.
+- **Proof:** `/studio-institute/guided-apprenticeship` is a scripted demonstration. The sample order becomes collect, verify, prepare, submit only after the expert explains the change. No character was cast.
+- **Checks:** 5/5 contract tests. `tsc --noEmit` passed. Screenshots of the scripted proof were taken.
+- **Conventions:** Do not hardcode a guide appearance. Do not treat a design request as an office edit. Do not activate brokerage or a worker from a lesson.
