@@ -1,0 +1,220 @@
+{
+  "assessments": [
+    {
+      "requirementId": "source_geometry_blend",
+      "category": "GEOMETRY",
+      "cell": "MISSING",
+      "evidence": []
+    },
+    {
+      "requirementId": "runtime_web_glb",
+      "category": "GEOMETRY",
+      "cell": "PRESENT",
+      "evidence": [
+        "triangles=3464",
+        "sha256=516c1ef25defca658c786decfc58ef7c82777faa63c97022461f84502a9ed048"
+      ]
+    },
+    {
+      "requirementId": "runtime_high_glb",
+      "category": "GEOMETRY",
+      "cell": "MISSING",
+      "evidence": [],
+      "notes": "Missing in reduced Under4MB fixture"
+    },
+    {
+      "requirementId": "runtime_fbx",
+      "category": "GEOMETRY",
+      "cell": "MISSING",
+      "notes": "Missing in reduced Under4MB fixture",
+      "evidence": []
+    },
+    {
+      "requirementId": "material_definitions",
+      "category": "MATERIALS",
+      "cell": "PRESENT",
+      "evidence": [
+        "material-manifest.json"
+      ]
+    },
+    {
+      "requirementId": "module_hierarchy",
+      "category": "MODULARITY",
+      "cell": "PRESENT",
+      "evidence": [
+        "module-manifest.json"
+      ]
+    },
+    {
+      "requirementId": "validation_report",
+      "category": "QA",
+      "cell": "MISSING",
+      "evidence": [
+        "export-validation-report.json"
+      ]
+    },
+    {
+      "requirementId": "render_evidence",
+      "category": "QA",
+      "cell": "MISSING",
+      "notes": "Full review package includes Blender renders; reduced fixture omits 03_RENDERS",
+      "evidence": []
+    },
+    {
+      "requirementId": "reference_lineage",
+      "category": "LINEAGE",
+      "cell": "MISSING",
+      "notes": "Comparison assets absent in reduced fixture",
+      "evidence": []
+    },
+    {
+      "requirementId": "collision_mesh",
+      "category": "COLLISION",
+      "cell": "NOT_REQUIRED",
+      "evidence": [],
+      "notes": "Static prop web delivery — collision optional per profile"
+    },
+    {
+      "requirementId": "navigation",
+      "category": "NAVIGATION",
+      "cell": "NOT_APPLICABLE",
+      "evidence": []
+    },
+    {
+      "requirementId": "lod_meshes",
+      "category": "LOD",
+      "cell": "NOT_REQUIRED",
+      "evidence": []
+    },
+    {
+      "requirementId": "rig_animation",
+      "category": "CHARACTER",
+      "cell": "NOT_APPLICABLE",
+      "evidence": []
+    },
+    {
+      "requirementId": "blender_native_inspection",
+      "category": "DCC",
+      "cell": "BLOCKED",
+      "evidence": [],
+      "notes": "Blender CLI not available in cloud benchmark environment"
+    },
+    {
+      "requirementId": "unreal_import",
+      "category": "ENGINE",
+      "cell": "UNVERIFIED",
+      "evidence": [
+        "export-validation-report.json: unreal NOT TESTED"
+      ]
+    },
+    {
+      "requirementId": "glb_integrity_parse",
+      "category": "GEOMETRY",
+      "cell": "PRESENT",
+      "evidence": [
+        "meshes=63",
+        "materials=CLEAR_ARCHITECTURAL_GLASS,WHITE_MARBLE,LIGHT_STONE,DARK_STONE,REFLECTIVE_METAL,RED_TRANSLUCENT_ACRYLIC"
+      ]
+    },
+    {
+      "requirementId": "uv_texture_embedded",
+      "category": "TEXTURES",
+      "cell": "MISSING",
+      "evidence": [
+        "embeddedImages=0"
+      ]
+    }
+  ],
+  "completeness": [
+    {
+      "slot": "source_blend",
+      "expected": "PRESENT",
+      "actual": "MISSING",
+      "ok": false
+    },
+    {
+      "slot": "runtime_glb",
+      "expected": "PRESENT",
+      "actual": "PRESENT",
+      "ok": true
+    },
+    {
+      "slot": "material_definitions",
+      "expected": "PRESENT",
+      "actual": "PRESENT",
+      "ok": true
+    },
+    {
+      "slot": "validation_report",
+      "expected": "PRESENT",
+      "actual": "MISSING",
+      "ok": false
+    },
+    {
+      "slot": "package_manifest",
+      "expected": "PRESENT",
+      "actual": "MISSING",
+      "ok": false
+    },
+    {
+      "slot": "uv_layout",
+      "expected": "NOT_REQUIRED",
+      "actual": "UNVERIFIED",
+      "ok": true
+    },
+    {
+      "slot": "pbr_texture_set",
+      "expected": "NOT_REQUIRED",
+      "actual": "UNVERIFIED",
+      "ok": true
+    },
+    {
+      "slot": "collision_mesh",
+      "expected": "NOT_REQUIRED",
+      "actual": "NOT_REQUIRED",
+      "ok": true
+    },
+    {
+      "slot": "interaction_anchors",
+      "expected": "NOT_REQUIRED",
+      "actual": "UNVERIFIED",
+      "ok": true
+    },
+    {
+      "slot": "review_renders",
+      "expected": "NOT_REQUIRED",
+      "actual": "MISSING",
+      "ok": true
+    },
+    {
+      "slot": "skeleton",
+      "expected": "NOT_APPLICABLE",
+      "actual": "NOT_APPLICABLE",
+      "ok": true
+    },
+    {
+      "slot": "skin_weights",
+      "expected": "NOT_APPLICABLE",
+      "actual": "NOT_APPLICABLE",
+      "ok": true
+    },
+    {
+      "slot": "animation_clips",
+      "expected": "NOT_APPLICABLE",
+      "actual": "NOT_APPLICABLE",
+      "ok": true
+    },
+    {
+      "slot": "navigation_metadata",
+      "expected": "NOT_APPLICABLE",
+      "actual": "NOT_APPLICABLE",
+      "ok": true
+    },
+    {
+      "slot": "runtime_fbx",
+      "expected": "NOT_APPLICABLE",
+      "actual": "MISSING",
+      "ok": true
+    }
+  ]
+}

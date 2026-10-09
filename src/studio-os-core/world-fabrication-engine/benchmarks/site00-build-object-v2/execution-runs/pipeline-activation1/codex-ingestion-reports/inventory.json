@@ -1,9 +1,9 @@
 {
-  "inventoryId": "inv-site00_bld_object_v2_execution_return",
-  "packageRoot": "/workspace/src/studio-os-core/world-fabrication-engine/benchmarks/site00-build-object-v2/execution-runs/pipeline-activation1/blender-local-proof/return-package",
-  "extractedAt": "2026-10-09T04:20:16.261Z",
+  "inventoryId": "inv-site00_bld_object_v2_codex_return",
+  "packageRoot": "/workspace/src/studio-os-core/world-fabrication-engine/benchmarks/site00-build-object-v2/execution-runs/pipeline-activation1/codex-return",
+  "extractedAt": "2026-10-09T04:20:15.660Z",
   "fileCount": 6,
-  "totalBytes": 233705,
+  "totalBytes": 239993,
   "files": [
     {
       "relativePath": "02_EXPORTS/SITE00_Build_Object_V2_ExecutionTest_Web.glb",
@@ -37,8 +37,8 @@
     },
     {
       "relativePath": "05_DOCUMENTATION/wfe-blender-execution-report.json",
-      "bytes": 1728,
-      "sha256": "f8ea76d24c1187a67a384f4c27c617cbe0a0b0ae3866fd2b653bb6ee924c8e55",
+      "bytes": 6934,
+      "sha256": "c51116637f2c6aaaf585982f67cdfebb76d9d8897670dac1b9f154c16462865f",
       "mimeGuess": "application/json",
       "role": "DOCUMENTATION",
       "assetTier": "DOCUMENTATION",
@@ -46,9 +46,9 @@
       "productionVersion": "V2"
     },
     {
-      "relativePath": "logs/blender-stderr.log",
-      "bytes": 0,
-      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "relativePath": "logs/benchmark-runner.log",
+      "bytes": 7923,
+      "sha256": "efe6d4b6c64eeac1253a5957ba6f54f83aaefb6fe1099a7ffc48174bd619ebc8",
       "mimeGuess": "application/octet-stream",
       "role": "UNKNOWN",
       "assetTier": "DOCUMENTATION",
@@ -56,9 +56,9 @@
       "productionVersion": "V2"
     },
     {
-      "relativePath": "logs/blender-stdout.log",
-      "bytes": 7887,
-      "sha256": "463332ec3eb951c95ffc301a267a6b874d3633d884d5e8b266d79d5fa09cccb1",
+      "relativePath": "logs/validate_v2.log",
+      "bytes": 1046,
+      "sha256": "efef10fce96686dd38e51d2acf4022c214ff6f7db7292c7552abb00ffc0c4905",
       "mimeGuess": "application/octet-stream",
       "role": "UNKNOWN",
       "assetTier": "DOCUMENTATION",

@@ -1,6 +1,6 @@
 {
   "runner": "wfe_blender_benchmark_runner",
-  "startedAt": "2026-10-09T01:29:01.215208+00:00",
+  "startedAt": "2026-10-09T04:20:16.042881+00:00",
   "blenderVersion": "5.2.2 LTS",
   "packageRoot": "/workspace/src/studio-os-core/world-fabrication-engine/benchmarks/site00-build-object-v2/fixture",
   "returnRoot": "/workspace/src/studio-os-core/world-fabrication-engine/benchmarks/site00-build-object-v2/execution-runs/pipeline-activation1/blender-local-proof/return-package",
@@ -50,5 +50,5 @@
   },
   "failedGeometryTargets": [],
   "status": "PASS",
-  "finishedAt": "2026-10-09T01:29:01.384986+00:00"
+  "finishedAt": "2026-10-09T04:20:16.189861+00:00"
 }

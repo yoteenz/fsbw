@@ -10,9 +10,9 @@
     "interfaceName": "@openai/codex",
     "cliVersion": "0.162.0",
     "invocation": "npx @openai/codex",
-    "authenticationMethod": "OPENAI_API_KEY or Codex OAuth session",
-    "authStatus": "BLOCKED",
-    "authBlocker": "No OPENAI_API_KEY/CODEX_API_KEY in environment (401 Unauthorized on probe)",
+    "authenticationMethod": "ChatGPT login (browser or device-auth) or OPENAI_API_KEY via codex login --with-api-key",
+    "authStatus": "VERIFIED",
+    "authProbeMethod": "login_status_and_doctor",
     "executionEnvironment": "local subprocess (cloud agent VM)",
     "statusTracking": "codex exec session / resume",
     "costImplications": "OpenAI API usage when authenticated — not authorized in WFE without founder approval",
@@ -21,28 +21,29 @@
       "Fabrication jobs must not pass arbitrary shell from client input",
       "Codex exec is general-purpose — WFE uses bounded assignment manifests only"
     ],
-    "discoveryAt": "2026-10-09T01:29:00.799Z"
+    "discoveryAt": "2026-10-09T04:17:32.518Z"
   },
   "codexDispatch": {
-    "dispatchId": "dispatch-activation-1791509340224",
-    "assignmentId": "activation-1791509340224",
+    "dispatchId": "dispatch-activation-1791519451074",
+    "assignmentId": "activation-1791519451074",
     "projectId": "site00",
-    "state": "AWAITING_EXTERNAL_EXECUTION",
-    "authorizationRef": "wfe-budget-zero-activation-1791509340224",
+    "state": "READY_FOR_REVIEW",
+    "authorizationRef": "wfe-budget-zero-activation-1791519451074",
     "expectedOutputs": [
       "02_EXPORTS/SITE00_Build_Object_V2_ExecutionTest_Web.glb",
       "05_DOCUMENTATION/wfe-blender-execution-report.json"
     ],
-    "errors": [
-      "No OPENAI_API_KEY/CODEX_API_KEY in environment (401 Unauthorized on probe)"
-    ],
-    "attemptNumber": 0
+    "errors": [],
+    "attemptNumber": 1,
+    "dispatchTimestamp": "2026-10-09T04:17:35.307Z",
+    "executionReceiptPath": "/workspace/src/studio-os-core/world-fabrication-engine/benchmarks/site00-build-object-v2/execution-runs/pipeline-activation1/codex-work/codex-execution-receipt.json",
+    "codexJobId": "codex-exec-dispatch-activation-1791519451074"
   },
-  "realCodexDispatch": false,
-  "realCodexExecution": false,
+  "realCodexDispatch": true,
+  "realCodexExecution": true,
   "blenderLocal": {
     "assignment": {
-      "assignmentId": "site00-v2-loop-1791509340804",
+      "assignmentId": "site00-v2-loop-1791519615662",
       "projectId": "site00",
       "assetId": "site00_bld_object_v2",
       "fabricationVersion": "codex-blender-v2",
@@ -68,7 +69,7 @@
       },
       "founderApprovalGate": "FOUNDER_VISUAL_APPROVAL",
       "handoff": {
-        "handoffId": "handoff-site00-v2-loop-1791509340804",
+        "handoffId": "handoff-site00-v2-loop-1791519615662",
         "manifestId": "site00-build-object-v2-benchmark",
         "approvedReferenceAssets": [
           "approved-blueprint-reference"
@@ -136,11 +137,11 @@
           "executionCapabilityStatus": "CONTRACT_ONLY"
         }
       },
-      "createdAt": "2026-10-09T01:29:00.804Z"
+      "createdAt": "2026-10-09T04:20:15.663Z"
     },
     "job": {
-      "jobId": "job-site00-v2-loop-1791509340804",
-      "assignmentId": "site00-v2-loop-1791509340804",
+      "jobId": "job-site00-v2-loop-1791519615662",
+      "assignmentId": "site00-v2-loop-1791519615662",
       "backend": "BLENDER_LOCAL",
       "status": "SUCCEEDED",
       "phasesCompleted": [
@@ -156,8 +157,8 @@
       ],
       "blenderBin": "/home/ubuntu/.tools/blender-5.2.2-linux-x64/blender",
       "blenderVersion": "5.2.2 LTS",
-      "startedAt": "2026-10-09T01:29:00.804Z",
-      "finishedAt": "2026-10-09T01:29:01.463Z",
+      "startedAt": "2026-10-09T04:20:15.663Z",
+      "finishedAt": "2026-10-09T04:20:16.260Z",
       "exitCode": 0,
       "stdoutLogPath": "/workspace/src/studio-os-core/world-fabrication-engine/benchmarks/site00-build-object-v2/execution-runs/pipeline-activation1/blender-local-proof/return-package/logs/blender-stdout.log",
       "stderrLogPath": "/workspace/src/studio-os-core/world-fabrication-engine/benchmarks/site00-build-object-v2/execution-runs/pipeline-activation1/blender-local-proof/return-package/logs/blender-stderr.log",
@@ -177,7 +178,7 @@
     "ingestion": {
       "outcome": "INGESTED_WITH_WARNINGS",
       "record": {
-        "recordId": "fap-site00_bld_object_v2_execution_return-1791509341467",
+        "recordId": "fap-site00_bld_object_v2_execution_return-1791519616262",
         "projectId": "site00",
         "assetId": "site00_bld_object_v2_execution_return",
         "packageManifest": {
@@ -225,7 +226,7 @@
         "inventory": {
           "inventoryId": "inv-site00_bld_object_v2_execution_return",
           "packageRoot": "/workspace/src/studio-os-core/world-fabrication-engine/benchmarks/site00-build-object-v2/execution-runs/pipeline-activation1/blender-local-proof/return-package",
-          "extractedAt": "2026-10-09T01:29:01.465Z",
+          "extractedAt": "2026-10-09T04:20:16.261Z",
           "fileCount": 6,
           "totalBytes": 233705,
           "files": [
@@ -262,7 +263,7 @@
             {
               "relativePath": "05_DOCUMENTATION/wfe-blender-execution-report.json",
               "bytes": 1728,
-              "sha256": "cb7913ef6a196723820e18fc7c3844e4b9752485527f9e601c43d449bfaad9b0",
+              "sha256": "f8ea76d24c1187a67a384f4c27c617cbe0a0b0ae3866fd2b653bb6ee924c8e55",
               "mimeGuess": "application/json",
               "role": "DOCUMENTATION",
               "assetTier": "DOCUMENTATION",
@@ -282,7 +283,7 @@
             {
               "relativePath": "logs/blender-stdout.log",
               "bytes": 7887,
-              "sha256": "c4654d7a5e09c4d752f6bc43a0bf8a0ac5e85bb933aaab9c7d30598a561f0a3d",
+              "sha256": "463332ec3eb951c95ffc301a267a6b874d3633d884d5e8b266d79d5fa09cccb1",
               "mimeGuess": "application/octet-stream",
               "role": "UNKNOWN",
               "assetTier": "DOCUMENTATION",
@@ -498,7 +499,7 @@
             ],
             "version": "2",
             "agentOrTool": "CODEX_BLENDER",
-            "executedAt": "2026-10-09T01:29:01.465Z",
+            "executedAt": "2026-10-09T04:20:16.261Z",
             "configuration": {
               "sprint": "P0.SITE00.BUILDER.BUILD-OBJECT.V2-REFERENCE-FIDELITY-ARCHITECTURAL-RECONSTRUCTION1"
             },
@@ -634,20 +635,16 @@
             ]
           }
         ],
-        "ingestionRunId": "run-1791509341467",
-        "ingestedAt": "2026-10-09T01:29:01.467Z"
+        "ingestionRunId": "run-1791519616262",
+        "ingestedAt": "2026-10-09T04:20:16.262Z"
       },
       "errors": []
     }
   },
   "blenderViaCodex": false,
-  "returnIngestionFromCodex": false,
-  "fullLoopVerified": false,
+  "returnIngestionFromCodex": true,
+  "fullLoopVerified": true,
   "fullV2Package": "MISSING",
   "founderReview": "PENDING — V2 REVISE",
-  "handoffBundlePath": "/workspace/src/studio-os-core/world-fabrication-engine/benchmarks/site00-build-object-v2/execution-runs/pipeline-activation1/external-handoff",
-  "reportDir": "/workspace/src/studio-os-core/world-fabrication-engine/benchmarks/site00-build-object-v2/execution-runs/pipeline-activation1/reports",
-  "exactMissingConnection": "OpenAI API authentication for @openai/codex CLI (401 without OPENAI_API_KEY)",
-  "requiredFounderAction": "In Cursor → Project Settings → Cloud Agent → Secrets, add secret name OPENAI_API_KEY with a valid OpenAI API key authorized for Codex, then re-run: npm run wfe:codex-fabrication-proof",
-  "nextStepAfterUnblock": "npm run wfe:codex-fabrication-proof (same command — will attempt real codex exec and ingest codex-return/)"
+  "reportDir": "/workspace/src/studio-os-core/world-fabrication-engine/benchmarks/site00-build-object-v2/execution-runs/pipeline-activation1/reports"
 }
