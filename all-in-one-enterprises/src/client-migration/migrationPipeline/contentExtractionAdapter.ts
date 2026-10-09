@@ -24,7 +24,8 @@ export const contentExtractionAdapter: MigrationPipelineAdapter = {
     }
 
     const bytes = decodeBase64ToBytes(input.fileContentBase64);
-    const text = await extractTextFromDocumentBytes(input.mimeType, bytes);
+    const { text, usedOcr } = await extractTextFromDocumentBytes(input.mimeType, bytes);
+    const sourceSuffix = usedOcr ? '#ocr' : '#text';
 
     if (input.mimeType.startsWith('image/') && !text.trim()) {
       return {
@@ -45,8 +46,8 @@ export const contentExtractionAdapter: MigrationPipelineAdapter = {
 
     const documentClass = classifyDocumentFromText(text, input.fileName);
     const sourceReference = input.documentId
-      ? `document:${input.documentId}#${input.fileName}`
-      : `${context.batchId}/${input.fileName}#extracted`;
+      ? `document:${input.documentId}#${input.fileName}${sourceSuffix}`
+      : `${context.batchId}/${input.fileName}#extracted${sourceSuffix}`;
 
     const proposedFacts = extractFactsFromDocumentText(text, sourceReference);
 

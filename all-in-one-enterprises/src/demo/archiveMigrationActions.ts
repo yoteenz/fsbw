@@ -9,10 +9,8 @@ import type { ClientMigrationStatus, VaultDocument } from '../vault/vaultTypes';
 import { loadDemoStore, updateDemoStore } from './demoStore';
 import type { Client, DemoStore } from './demoTypes';
 import { recordSecurityAudit } from '../security/securityAudit';
-import { getMigrationPipelineAdapter } from '../client-migration/migrationPipeline';
-import { readFileAsBase64 } from '../client-migration/migrationPipeline/documentTextExtraction';
-import { profileOf } from '../client-migration/visual/migrationData';
-import { recordExtractedFacts, commitApprovedMigration } from '../client-migration/services/migrationCommitService';
+import { commitApprovedMigration } from '../client-migration/services/migrationCommitService';
+import { enqueueDemoMigrationFileProcessing } from '../client-migration/services/migrationDemoFileProcessor';
 import { transitionClientLifecycle } from '../client-migration/services/lifecycleEvents';
 
 function uid(): string {
@@ -148,7 +146,8 @@ export async function addFilesToMigrationBatch(
       fileSizeBytes: file.size,
       fileHash,
       storageReference: stored.document.storageReference,
-      processingState: 'ready',
+      processingState: 'queued',
+      queueState: 'QUEUED',
       createdAt: now(),
     };
 
@@ -166,31 +165,6 @@ export async function addFilesToMigrationBatch(
       verificationStatus: 'pending_review',
     };
 
-    const fileContentBase64 = await readFileAsBase64(file);
-    const pipeline = getMigrationPipelineAdapter();
-    const pipelineResult = await pipeline.processFile(
-      {
-        fileName: file.name,
-        mimeType: file.type || 'application/octet-stream',
-        sizeBytes: file.size,
-        sha256: fileHash,
-        documentId: pendingDoc.id,
-        fileContentBase64,
-      },
-      { organizationId: batch.organizationId, batchId },
-    );
-
-    const extractionHardFail =
-      pipelineResult.exception === 'UNREADABLE_DOCUMENT' || pipelineResult.exception === 'EXTRACTION_FAILED';
-    if (extractionHardFail) {
-      batchFile.processingState = 'failed';
-      errors.push(
-        `${file.name}: ${pipelineResult.exception === 'UNREADABLE_DOCUMENT' ? 'Document unreadable (OCR not configured)' : 'No fields extracted from document text'}`,
-      );
-    }
-
-    const profile = profileOf(store, batch.organizationId);
-
     updateDemoStore((s) => {
       if (!s.archiveMigrationBatchFiles) s.archiveMigrationBatchFiles = [];
       s.archiveMigrationBatchFiles.push(batchFile);
@@ -199,49 +173,22 @@ export async function addFilesToMigrationBatch(
       if (b) {
         b.fileCount += 1;
         b.documentCount += 1;
-        b.state = 'ready_for_review';
-        b.reviewState = pipelineResult.exception === 'AMBIGUOUS_CLIENT_MATCH' ? 'pending' : b.reviewState;
-        b.reviewState = 'pending';
+        b.state = 'uploading';
         b.updatedAt = now();
       }
-      recordExtractedFacts(
-        s,
-        pipelineResult.proposedFacts.map((f) => {
-          let existingValue = f.existingValue;
-          if (!existingValue && profile) {
-            if (f.fieldKey === 'legal_name') existingValue = profile.business.legalName || s.clients.find((c) => c.id === batch.organizationId)?.companyName;
-            if (f.fieldKey === 'usdot') existingValue = profile.authority.usdotNumber;
-            if (f.fieldKey === 'mc_number') existingValue = profile.authority.mcNumber;
-            if (f.fieldKey === 'company_phone') existingValue = profile.business.phone;
-          }
-          const confidence =
-            existingValue && existingValue.trim().toLowerCase() !== f.proposedValue.trim().toLowerCase()
-              ? ('CONFLICT' as const)
-              : f.confidence;
-          return {
-            batchId,
-            organizationId: batch.organizationId,
-            documentId: pendingDoc.id,
-            entityType: f.entityType,
-            fieldKey: f.fieldKey,
-            proposedValue: f.proposedValue,
-            existingValue,
-            confidence,
-            sourceReference: f.sourceReference,
-          };
-        }),
-      );
-      transitionClientLifecycle(
-        s,
-        batch.clientId,
-        'MIGRATION_REVIEW_REQUIRED',
-        'MATCH_PROPOSED',
-        'SYSTEM',
-      );
+      transitionClientLifecycle(s, batch.clientId, 'MIGRATION_IN_PROGRESS', 'DOCUMENT_INGESTED', 'STAFF');
       return s;
     });
 
-    if (!extractionHardFail && pipelineResult.proposedFacts.length > 0) added += 1;
+    enqueueDemoMigrationFileProcessing({
+      batchId,
+      batchFileId: batchFile.id,
+      organizationId: batch.organizationId,
+      file,
+      pendingDoc,
+    });
+
+    added += 1;
   }
 
   return { added, errors, duplicates };

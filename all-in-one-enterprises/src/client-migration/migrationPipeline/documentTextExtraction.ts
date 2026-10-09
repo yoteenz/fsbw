@@ -1,30 +1,28 @@
-/** Read text from uploaded bytes (PDF text layer; images require OCR provider). */
+/** Read text from uploaded bytes — PDF text layer + self-hosted OCR for scans/images. */
 
-export async function extractTextFromDocumentBytes(mimeType: string, bytes: Uint8Array): Promise<string> {
+import { extractTextFromPdfBytes } from './pdfTextExtract';
+import { extractPdfTextWithOcrFallback, ocrImageBytes } from './ocrTextExtraction';
+
+export async function extractTextFromDocumentBytes(
+  mimeType: string,
+  bytes: Uint8Array,
+): Promise<{ text: string; usedOcr: boolean }> {
   if (mimeType === 'application/pdf' || mimeType.endsWith('/pdf')) {
-    return extractTextFromPdfBytes(bytes);
+    if (typeof document !== 'undefined') {
+      return extractPdfTextWithOcrFallback(bytes);
+    }
+    const text = await extractTextFromPdfBytes(bytes);
+    return { text, usedOcr: false };
   }
   if (/^image\/(jpeg|jpg|png|webp)$/i.test(mimeType)) {
-    return '';
+    const { text, confidence } = await ocrImageBytes(bytes, mimeType);
+    if (confidence < 25 && text.length < 12) return { text: '', usedOcr: true };
+    return { text, usedOcr: true };
   }
-  return '';
+  return { text: '', usedOcr: false };
 }
 
-export async function extractTextFromPdfBytes(bytes: Uint8Array): Promise<string> {
-  const pdfjs = await import('pdfjs-dist/legacy/build/pdf.mjs');
-  const loadingTask = pdfjs.getDocument({ data: bytes, useSystemFonts: true });
-  const pdf = await loadingTask.promise;
-  const parts: string[] = [];
-  for (let pageNum = 1; pageNum <= pdf.numPages; pageNum += 1) {
-    const page = await pdf.getPage(pageNum);
-    const textContent = await page.getTextContent();
-    const pageText = textContent.items
-      .map((item) => ('str' in item && typeof item.str === 'string' ? item.str : ''))
-      .join(' ');
-    parts.push(pageText);
-  }
-  return parts.join('\n').trim();
-}
+export { extractTextFromPdfBytes } from './pdfTextExtract';
 
 export function fileToBase64(bytes: Uint8Array): string {
   if (typeof Buffer !== 'undefined') {

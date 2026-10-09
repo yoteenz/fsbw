@@ -101,6 +101,24 @@ export async function supabaseApproveMigrationBatch(req: ApproveBatchRequest): P
       source_fact_id: fact.id,
     });
 
+    if (fact.entityType === 'company' && fact.fieldKey === 'mc_number') {
+      const { data: existingMc } = await admin
+        .from('aio_organization_regulatory_identifiers')
+        .select('id')
+        .eq('organization_id', organizationId)
+        .eq('identifier_type', 'MC')
+        .maybeSingle();
+      if (!existingMc) {
+        await admin.from('aio_organization_regulatory_identifiers').insert({
+          organization_id: organizationId,
+          identifier_type: 'MC',
+          identifier_value: fact.proposedValue!,
+          status: 'active',
+          source: 'migration',
+        });
+      }
+    }
+
     if (fact.entityType === 'company' && fact.fieldKey === 'usdot') {
       const { data: existingId } = await admin
         .from('aio_organization_regulatory_identifiers')

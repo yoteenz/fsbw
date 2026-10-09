@@ -48,7 +48,8 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-i18next": "^17.0.11",
-    "react-router-dom": "^6.8.0"
+    "react-router-dom": "^6.8.0",
+    "tesseract.js": "^5.1.1"
   },
   "engines": {
     "node": ">=22"
@@ -60,6 +61,7 @@
     "@types/react-dom": "^18.3.1",
     "@vitejs/plugin-react": "^4.3.3",
     "jspdf": "^4.2.1",
+    "sharp": "^0.35.5",
     "typescript": "~5.6.2",
     "vite": "^5.4.10",
     "vitest": "^3.2.7"

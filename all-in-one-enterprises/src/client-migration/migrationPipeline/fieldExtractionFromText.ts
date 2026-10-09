@@ -115,6 +115,28 @@ export function extractFactsFromDocumentText(text: string, sourceReference: stri
     });
   }
 
+  const policy = pick(/\b(?:policy\s*(?:#|number|no\.?)|policy number)\s*[:\-]?\s*([A-Z0-9-]{5,24})\b/i, flat);
+  if (policy) {
+    facts.push({
+      entityType: 'insurance',
+      fieldKey: 'policy_number',
+      proposedValue: policy.toUpperCase(),
+      confidence: 'MEDIUM',
+      sourceReference,
+    });
+  }
+
+  const carrier = pick(/\b(?:insurer|insurance company|carrier)\s*[:\-]?\s*([^\n\r]{3,80})/i, flat);
+  if (carrier) {
+    facts.push({
+      entityType: 'insurance',
+      fieldKey: 'carrier_name',
+      proposedValue: carrier.trim(),
+      confidence: 'LOW',
+      sourceReference,
+    });
+  }
+
   const unit = pick(/\b(?:unit|truck)\s*(?:#|no\.?|number)?\s*[:\-]?\s*([A-Z0-9-]{2,12})\b/i, flat);
   if (unit) {
     facts.push({
