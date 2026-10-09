@@ -319,7 +319,7 @@
 [data-wide='1'] .wsheet.ik-vsheet { width: min(1120px, 46%); }
 /* the office's 1480 reading measure on ultra-wide must not clamp the viewer's scrim and drawer */
 [data-vp='desktop'][data-wide='1'] .wscrim.ik-scrim, [data-vp='desktop'][data-wide='1'] .wsheet.ik-vsheet { max-width: none; margin: 0; }
-[data-vp='tablet'] .wsheet.ik-vsheet { width: min(720px, 88%); }
+[data-vp='tablet'] .wsheet.ik-vsheet { width: min(784px, 94%); }
 .ik-vbar { flex: none; display: flex; align-items: center; gap: 10px; height: 50px; padding: 0 12px 0 24px; border-bottom: 1px solid var(--rule); }
 .ik-vbar__l { display: inline-flex; align-items: center; gap: 8px; font: 700 10px/1 var(--text); letter-spacing: 0.18em; color: var(--gold-ink); white-space: nowrap; }
 .ik-vbar__l .ico { width: 15px; height: 15px; }
@@ -370,7 +370,8 @@
 .ik--t .ik-cpl { grid-template-columns: 46px minmax(0, 1fr); }
 .ik--t .ik-cpl .wbtn { grid-column: 2; justify-self: start; }
 .wsheet.ik-vsheet .ik-vw__main { min-width: 0; }
-[data-vp='tablet'] .ik-vw__img { height: auto; width: 330px; }
+[data-vp='tablet'] .ik-vw__img { height: auto; width: 440px; max-height: calc(100% - 5px); }
+[data-vp='tablet'] .ik-vw__main { gap: 22px; }
 [data-wide='1'] .ik-vw__img { height: auto; width: 600px; max-height: calc(100% - 5px); }
 
 /* ── ultra-wide: more of each case on the line, larger screens ── */
@@ -393,7 +394,8 @@
 [data-wide='1'] .ik-th { padding: 11px 18px; }
 [data-wide='1'] .ik-w { padding: 16px 18px 18px; gap: 16px; }
 [data-wide='1'] .ik-film { gap: 14px; }
-[data-wide='1'] .ik-w > .ik-filmw { margin-top: 10px; padding-top: 16px; border-top: 1px solid var(--rule); }
+[data-wide='1'] .ik-w > .ik-filmw { margin-top: 2px; padding-top: 14px; border-top: 1px solid var(--rule); }
+[data-wide='1'] .ik-w > .ik-filmw .ik-film { column-gap: 28px; }
 [data-wide='1'] .ik-ex { grid-template-columns: 240px minmax(0, 1fr) auto; }
 
 /* ── phone: the line as a step strip, the cases as a list, the case in a drawer ── */

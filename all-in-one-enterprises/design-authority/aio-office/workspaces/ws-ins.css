@@ -89,7 +89,7 @@
 
 /* ── POLICIES: client → policy → insured trucks ── */
 .ins-maprg .rg__b { display: flex; flex-direction: column; }
-.ins-map__cols, .ins-ch { display: grid; grid-template-columns: minmax(0, 1fr) 20px minmax(0, 0.72fr); align-items: center; }
+.ins-map__cols, .ins-ch { display: grid; grid-template-columns: minmax(0, 1fr) 20px minmax(0, 0.8fr); align-items: center; }
 .ins-map__cp, .ins-ch__sel { display: grid; grid-template-columns: minmax(0, 0.82fr) 20px minmax(0, 1.18fr); align-items: center; min-width: 0; }
 .ins-map__cols { padding: 10px 21px 0; font: 700 var(--fs-micro)/1 var(--text); letter-spacing: 0.16em; color: var(--ink-3); }
 .ins-map { display: grid; align-content: start; gap: 8px; padding: 8px 12px 12px; }
@@ -125,7 +125,7 @@
 .ins-across__r { display: grid; grid-template-columns: 16px minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 8px 10px; border-radius: 9px; text-align: left; }
 .ins-across__r:hover { background: #fcf7ec; }
 .ins-across__r > .ico { width: 15px; height: 15px; color: var(--gold-ink); }
-.ins-across__r > span { display: grid; gap: 3px; min-width: 0; }
+.ins-across__r > span:not(.sw) { display: grid; gap: 3px; min-width: 0; }
 .ins-across__r b { font: 700 11.5px/1.15 var(--cond); letter-spacing: 0.04em; }
 .ins-across__r small { font: 600 var(--fs-micro)/1 var(--text); letter-spacing: 0.1em; color: var(--ink-3); }
 .ins-ch.is-sel { border-color: transparent; background: var(--tint); box-shadow: var(--gold-edge); }
@@ -293,8 +293,8 @@
 [data-wide='1'] .ins-ln__end b { font-size: 14px; }
 [data-wide='1'] .ins-map { gap: 12px; padding: 12px 16px 16px; }
 [data-wide='1'] .ins-map__cols { padding: 12px 29px 0; }
-[data-wide='1'] .ins-ch { padding: 12px 12px; }
-[data-wide='1'] .ins-nd { padding: 14px 14px; }
+[data-wide='1'] .ins-ch { padding: 14px 14px; }
+[data-wide='1'] .ins-nd { min-height: 66px; padding: 12px 16px; }
 [data-wide='1'] .ins-nd b { font-size: 14px; }
 [data-wide='1'] .ins-trk { height: 44px; grid-template-columns: 60px auto 7px; padding: 0 12px 0 6px; }
 [data-wide='1'] .ins-trk svg { width: 60px; }

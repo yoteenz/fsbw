@@ -2,13 +2,13 @@
 :root { --rv-bg: #0b0b0c; --rv-panel: #141415; --rv-line: rgba(235, 217, 183, 0.14); --rv-text: #efe8da; --rv-muted: #a39b8d; --rv-gold: #d4a853; --rv-chrome: 'Inter', Arial, sans-serif; }
 html, body { margin: 0; background: var(--rv-bg); color: var(--rv-text); }
 body { font: 500 13px/1.5 var(--rv-chrome); letter-spacing: 0.06em; text-transform: uppercase; }
-#rv { min-height: 100vh; display: grid; grid-template-rows: auto auto 1fr; }
+#rv { min-height: 100vh; display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto auto 1fr; }
 .rv-top { position: sticky; top: 0; z-index: 30; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 22px; padding: 14px 24px; background: rgba(11, 11, 12, 0.94); backdrop-filter: blur(8px); border-bottom: 1px solid var(--rv-line); }
 .rv-brand { display: flex; align-items: center; gap: 12px; margin-right: auto; }
 .rv-brand img { height: 30px; }
 .rv-brand b { display: block; font: 800 15px/1.1 'Inter Tight', var(--rv-chrome); letter-spacing: 0.12em; }
 .rv-brand span { display: block; font: 600 10px/1.2 var(--rv-chrome); letter-spacing: 0.18em; color: var(--rv-gold); }
-.rv-seg { display: inline-flex; gap: 3px; padding: 3px; border-radius: 999px; background: var(--rv-panel); border: 1px solid var(--rv-line); }
+.rv-seg { display: inline-flex; flex: 0 1 auto; min-width: 0; max-width: 100%; overflow-x: auto; scrollbar-width: none; gap: 3px; padding: 3px; border-radius: 999px; background: var(--rv-panel); border: 1px solid var(--rv-line); }
 .rv-seg button { height: 32px; padding: 0 14px; border-radius: 999px; border: 0; background: none; color: var(--rv-muted); font: 700 10.5px/1 var(--rv-chrome); letter-spacing: 0.14em; cursor: pointer; white-space: nowrap; text-transform: uppercase; }
 .rv-seg button[aria-pressed='true'] { background: linear-gradient(180deg, #f6d995, var(--rv-gold)); color: #17130b; }
 .rv-seg button:focus-visible, .rv-tab:focus-visible, .rv-card:focus-visible, .rv-btn:focus-visible { outline: 2px solid #f3d189; outline-offset: 2px; }
@@ -55,12 +55,12 @@ body { font: 500 13px/1.5 var(--rv-chrome); letter-spacing: 0.06em; text-transfo
 /* work view: the site in a device frame */
 .rv-work { display: grid; gap: 14px; }
 .rv-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; }
-.rv-bar__path { display: flex; align-items: center; gap: 10px; min-width: 0; padding: 0 14px; height: 34px; border-radius: 6px; border: 1px solid var(--rv-line); background: #070707; font: 600 11px/1 ui-monospace, monospace; letter-spacing: 0.06em; color: #cfc6b4; text-transform: none; }
+.rv-bar__path { display: flex; max-width: 100%; overflow: hidden; white-space: nowrap; align-items: center; gap: 10px; min-width: 0; padding: 0 14px; height: 34px; border-radius: 6px; border: 1px solid var(--rv-line); background: #070707; font: 600 11px/1 ui-monospace, monospace; letter-spacing: 0.06em; color: #cfc6b4; text-transform: none; }
 .rv-bar__path b { font: 700 10px/1 var(--rv-chrome); letter-spacing: 0.16em; color: var(--rv-gold); text-transform: uppercase; }
 .rv-bar__sp { flex: 1; }
 .rv-stage { display: grid; grid-template-columns: minmax(0, 1fr); gap: 18px; align-items: start; }
 .rv-stage--ref { grid-template-columns: minmax(0, 1fr) minmax(0, 0.62fr); }
-.rv-stage--ref:is([data-dev='phone'], [data-dev='tablet']) { grid-template-columns: auto minmax(0, 760px); gap: 36px; }
+@media (min-width: 1101px) { .rv-stage--ref:is([data-dev='phone'], [data-dev='tablet']) { grid-template-columns: auto minmax(0, 760px); gap: 36px; } }
 .rv-sizer { position: relative; }
 .rv-device { position: absolute; left: 0; top: 0; transform-origin: 0 0; border-radius: 14px; overflow: hidden; background: #050505; box-shadow: 0 0 0 1px rgba(235, 217, 183, 0.18), 0 0 0 9px #161616, 0 0 0 10px rgba(235, 217, 183, 0.08), 0 40px 80px rgba(0, 0, 0, 0.6); }
 .rv-device[data-dev='phone'] { border-radius: 34px; }
@@ -97,4 +97,4 @@ body { font: 500 13px/1.5 var(--rv-chrome); letter-spacing: 0.06em; text-transfo
 .rv-box { padding: 18px 20px; border-radius: 10px; border: 1px solid var(--rv-line); background: var(--rv-panel); display: grid; gap: 10px; }
 .rv-box h3 { margin: 0; font: 800 13px/1.2 var(--rv-chrome); letter-spacing: 0.18em; color: var(--rv-gold); }
 @media (max-width: 1000px) { .rv-recov { grid-template-columns: 1fr; } }
-@media (max-width: 700px) { .rv-top { padding: 12px 16px; } .rv-tabs { padding: 8px 16px; } .rv-main { padding: 16px 16px 48px; } .rv-brand span { display: none; } }
+@media (max-width: 700px) { #rv-full { display: none; } .rv-seg button { padding: 0 10px; } .rv-top { padding: 12px 16px; } .rv-tabs { padding: 8px 16px; } .rv-main { padding: 16px 16px 48px; } .rv-brand span { display: none; } }

@@ -267,10 +267,10 @@ function insBar() {
   const s = WSX.ins.sec;
   if (VP === 'mobile') return wsBar('07 · WORK', 'INSURANCE', [ro(pols.length, 'POLICIES'), ro(`${next.days}D`, 'NEXT EXPIRY', { tone: next.days <= 7 ? 'bad' : 'gold' }), ro(missing, 'MISSING INFO', { tone: missing ? 'warn' : '' })].join(''));
   const r = [ro(pols.length, 'POLICIES', { a: 'ins.sec', v: 'policies', on: s === 'policies' }), ro(`${next.days} DAYS`, 'NEXT EXPIRY', { tone: next.days <= 7 ? 'bad' : 'gold', a: 'ins.sec', v: 'renewals', on: s === 'renewals' }), ro(review, 'IN REVIEW', { a: 'ins.sec', v: 'quotes', on: s === 'quotes' }), ro(missing, 'MISSING INFORMATION', { tone: missing ? 'warn' : '' }), ro(units, 'INSURED UNITS'), ro(vals(INS_INTAKE).length, 'INTAKE', { a: 'ins.sec', v: 'intake', on: s === 'intake' })];
-  return wsBar('07 · WORK', 'INSURANCE', (VP === 'tablet' ? r.slice(0, 4) : r).join(''), VP === 'tablet' ? '' : `<span class="design-pill">REFERRAL ONLY · NOTHING IS BOUND</span>`);
+  return wsBar('07 · WORK', 'INSURANCE', (VP === 'tablet' ? r.slice(0, 4) : r).join(''), VP === 'tablet' ? '' : `<span class="design-pill">REFERRAL · ${SERVICES.find(([n]) => n === 'INSURANCE (REFERRAL)')?.[1] ?? 'PARTNER PENDING'} · NOTHING IS BOUND</span>`);
 }
 function insSecs() {
-  const n = { intake: vals(INS_INTAKE).length, quotes: insPolicies().filter((p) => /QUOTE|REVIEW/.test(`${p.renewal} ${insReq(p)[0]}`) && insReq(p)[0] !== 'COMPLETED').length + 1, policies: insPolicies().length, renewals: insPolicies().length };
+  const n = { intake: vals(INS_INTAKE).length, quotes: insPolicies().filter((p) => /QUOTE|REVIEW/.test(`${p.renewal} ${insReq(p)[0]}`) && insReq(p)[0] !== 'COMPLETED').length + vals(INS_INTAKE).filter((r) => !r.lead).length, policies: insPolicies().length, renewals: insPolicies().length };
   return seg(INS_SECS.map(([id, l]) => [id, l, VP === 'mobile' ? null : n[id]]), WSX.ins.sec, 'ins.sec', VP === 'mobile' ? 'wseg--fit' : '');
 }
 function insSection() {

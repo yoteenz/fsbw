@@ -82,7 +82,7 @@ function fiRunway(compact = false) {
     const bar = l.to ? `<i class="fi-ln__bar fi-ln__bar--${l.tone}" style="left:${fiX(1)}%;width:${(fiX(l.to) - fiX(1)).toFixed(2)}%"></i>` : '';
     const rest = l.tone !== 'ok' && l.tone !== 'held' ? `<i class="fi-ln__rest" style="left:${fiX(l.to)}%;width:${(fiX(31) - fiX(l.to)).toFixed(2)}%"></i>` : '';
     const label = !compact || on ? `<span class="fi-ln__w">${l.word}</span>` : '';
-    return `<button type="button" class="fi-ln fi-ln--${l.tone} ${on ? 'is-sel' : ''}" data-a="${fiPick()}" data-v="${q.id}" aria-pressed="${on}" title="${clientName(q.client)} · ${l.word}"><span class="fi-ln__b">${ACCOUNTS[q.client].b}</span>${WSX.device === 'wide' ? `<span class="fi-ln__n">${clientName(q.client)}</span>` : ''}<span class="fi-ln__t">${bar}${rest}<span class="fi-ln__mk" style="left:${fiX(l.at)}%">${l.tone === 'held' ? ico('lock') : ''}${label}</span></span></button>`;
+    return `<button type="button" class="fi-ln fi-ln--${l.tone} ${on ? 'is-sel' : ''}" data-a="${fiPick()}" data-v="${q.id}" aria-pressed="${on}" title="${clientName(q.client)} · ${l.word}"><span class="fi-ln__b">${ACCOUNTS[q.client].b}</span>${WSX.device === 'wide' ? `<span class="fi-ln__n"><b>${clientName(q.client)}</b><small>${q.miles === '—' ? 'MILES NOT IN YET' : `${q.miles} MI · ${q.gallons} GAL`}${q.owner ? ` · ${STAFF[q.owner].b}` : ''}</small></span>` : ''}<span class="fi-ln__t">${bar}${rest}<span class="fi-ln__mk" style="left:${fiX(l.at)}%">${l.tone === 'held' ? ico('lock') : ''}${label}</span></span></button>`;
   }).join('');
   const ticks = compact ? '' : Array.from({ length: 31 }, (_, i) => i + 1).map((n) => `<i class="fi-rw__tk ${[1, 8, 15, 22, 29].includes(n) ? 'fi-rw__tk--wk' : ''}" style="left:${fiX(n)}%"></i>`).join('');
   return `<div class="fi-rw ${compact ? 'fi-rw--c' : ''}" aria-label="Q3 2026 · the October filing window">
@@ -146,7 +146,8 @@ function fiBoard() {
     return `<div class="fi-col fi-col--${k}"><div class="fi-col__h fi-col__h--${tone}"><b>${label}</b><em>${list.length}</em></div><div class="fi-col__b">${list.map(fiToken).join('') || '<span class="fi-none">NONE</span>'}</div></div>`;
   }).join('');
   const inQ = all.filter((q) => fiCol(q) !== 'held').length;
-  return rgn('THE QUEUE', `${inQ} CLIENT QUARTERS`, fiHeld(true), `<div class="fi-board">${cols}</div>`, 'fi-boardrg', 'fi-board');
+  const approved = `<button type="button" class="fi-qlink" data-a="fi.room" data-v="queue">${ico('view')}APPROVED IFTA QUEUE</button>`;
+  return rgn('THE QUEUE', `${inQ} CLIENT QUARTERS`, `<span class="fi-tools">${fiHeld(true)}${approved}</span>`, `<div class="fi-board">${cols}</div>`, 'fi-boardrg', 'fi-board');
 }
 
 /* ── FILING QUEUE: every open return, in the order AIO should take them ── */
@@ -259,7 +260,8 @@ function fiCase() {
   const c = ACCOUNTS[q.client];
   const key = `quarter:${q.id}`;
   const docs = vals(DOCS).filter((d) => d.owner === key);
-  const gate = fiStatus(q) === 'NOT ENROLLED' ? `<div class="fi-gate">${ico('lock')}<span><b>INVITED · NOT ACTIVE</b><small>${q.next}</small></span></div>` : '';
+  const mig = vals(MIG_CASES).find((m) => m.client === q.client);
+  const gate = fiStatus(q) === 'NOT ENROLLED' ? `<div class="fi-gate">${ico('lock')}<span><b>INVITED · AWAITING CLIENT CONFIRMATION</b><small>${mig?.invited ? `INVITE SENT ${mig.invited}. ` : ''}NOTHING IS ACTIVE UNTIL THE CLIENT CONFIRMS.</small></span></div>` : '';
   const figs = `<div class="ros fi-figs">${ro(fiMiles(q), 'TOTAL MILES')}${ro(q.gallons, 'TOTAL GALLONS')}${ro(q.due.replace(', 2026', ''), 'RETURN DUE', { tone: fiCol(q) === 'filed' || fiCol(q) === 'complete' ? '' : 'gold' })}</div>`;
   const plate = `<div class="fi-plate" data-swap="plate:${q.id}"><span class="fi-plate__i">${ico('fuel')}</span><span class="fi-plate__t"><small>IFTA ${q.q} · DUE ${q.due.replace(', 2026', '')}</small><b>${c.name}</b><span>${sw(b)}<em>${fiStepWord(q)}</em></span></span><button type="button" class="wbtn wbtn--sm fi-plate__go" data-a="go" data-v="client:${q.client}:filing" aria-label="${c.name} in Client 360">${ico('company')}CLIENT 360</button></div>`;
   const colA = `${gate}${fiNext(q)}${figs}<div class="fi-blk"><div class="sec-l"><span>FILING WORKFLOW</span><span>${fiStepWord(q)}</span></div>${fiFlow(q)}</div>`;

@@ -594,7 +594,7 @@ function mountPub(root, { scroller = null, width = null } = {}) {
     if (PUB.menu && !e.target.closest('.pop')) { PUB.menu = null; draw(); }
   });
   root.addEventListener('input', (e) => { const k = e.target.dataset?.input; if (k) INPUT[k]?.(e.target.value); });
-  root.addEventListener('keydown', (e) => {
+  document.addEventListener('keydown', (e) => { // the document: a redrawn menu takes the focused control with it
     if (e.key === 'Escape' && (PUB.menu || PUB.search || PUB.drawer)) { PUB.menu = null; PUB.search = false; PUB.drawer = false; draw(); }
   });
   (scroller || window).addEventListener('scroll', () => {

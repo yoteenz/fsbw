@@ -206,9 +206,7 @@ function pmFile() {
   const prof = wsById('ready') ? vals(PROFILES).find((p) => p.client === r.client) : null;
   const rrN = prof ? (typeof rrDone === 'function' ? rrDone(prof) : prof.done) : 0;
   const alsoHtml = also.length || prof ? `<div class="pm-also"><div class="sec-l"><span>ALSO FOR ${c.name}</span><span>${also.length + (prof ? 1 : 0)}</span></div>${also.map((x) => `<button type="button" class="pm-also__r" data-a="pm.app" data-v="${x.id}" title="${x.title}">${ico(pmSec(x)[2])}<span><b>${PM_META[x.id].short}</b><small>${PM_STATIONS.find(([k]) => k === pmStage(x))?.[1] ?? 'PARTNER / MANUAL'}</small></span>${sw(pmStatus(x))}</button>`).join('')}${prof ? `<button type="button" class="pm-also__r" data-a="go" data-v="ready:${c.id}">${ico('tests')}<span><b>ROAD READY · ${rrN} OF ${prof.total}</b><small>AVAILABLE · NO ENGAGEMENT STATE</small></span>${ico('fwd')}</button>` : ''}</div>` : '';
-  const body = WSX.device === 'wide'
-    ? `${pmNext(r)}${honest}<div class="pm-cols"><div class="pm-col">${reqList}${docs}${alsoHtml}</div><div class="pm-col">${links}${own}${fx}${hist}</div></div>`
-    : `${pmNext(r)}${honest}${reqList}${docs}${links}${own}${fx}${hist}${alsoHtml}`;
+  const body = `${pmNext(r)}${honest}${reqList}${docs}${links}${own}${fx}${hist}${alsoHtml}`;
   return `<section class="rg cx pm-cx"><header class="cx__h"><div class="cx__hd" data-swap="hd:${r.id}"><div class="cx__crumb"><span>PERMITTING</span>${ico('fwd')}<span>${sec[1]}</span>${ico('fwd')}<span>${c.b}</span></div>${plate}${pmTrack(r)}</div></header><div class="cx__b" data-keep="pm-cx" data-swap="b:${r.id}">${body}</div></section>`;
 }
 
@@ -233,11 +231,11 @@ function permitsView() {
   if (VP === 'mobile') {
     const all = pmOrder(vals(REQUESTS));
     const stn = WSX.pm.station;
-    const counts = Object.fromEntries(PM_STATIONS.map(([k]) => [k, all.filter((x) => pmStage(x) === k).length]));
+    const counts = Object.fromEntries(PM_STATIONS.map(([k]) => [k, all.filter((x) => pmStage(x) === k && pmMatch(x)).length]));
     const rail = `<div class="pm-mrail" role="tablist">${PM_STATIONS.map(([k, , s], i) => `<button type="button" role="tab" class="pm-mst ${k === stn ? 'is-on' : ''}" data-a="pm.station" data-v="${k}" aria-selected="${k === stn}"><i>${counts[k]}</i><span>${s}</span><small>${String(i + 1).padStart(2, '0')}</small></button>`).join('')}</div>`;
     const list = all.filter((x) => pmStage(x) === stn && pmMatch(x));
     const side = stn === 'prep' ? all.filter((x) => pmStage(x) === 'partner' && pmMatch(x)) : [];
-    const rows = list.map((x) => pmFolder(x, { pos: 'pm-f--row', mini: true })).join('') || `<span class="pm-ghost pm-ghost--m">NOTHING ${stn === 'done' ? 'COMPLETE' : 'HERE'} IN ${pmFilterName(WSX.pm.filter)}</span>`;
+    const rows = list.map((x) => pmFolder(x, { pos: 'pm-f--row', mini: true })).join('') || (side.length ? '' : `<span class="pm-ghost pm-ghost--m">NOTHING AT THIS STATION · ${pmFilterName(WSX.pm.filter)}</span>`);
     const sideRows = side.length ? `<div class="pm-msiding"><span class="pm-siding__l"><b>PARTNER / MANUAL</b><small>OFF THE RAIL</small></span>${side.map((x) => pmFolder(x, { pos: 'pm-f--row', mini: true })).join('')}</div>` : '';
     return `<div class="ws pm pm--m">${pmBar()}${pmSections(true)}<section class="pm-stage pm-stage--m">${rail}<div class="pm-mlist" data-swap="ml:${stn}:${WSX.pm.filter}">${rows}${sideRows}</div></section></div>${phoneSheet(pmFile(), { label: 'Application file' })}`;
   }

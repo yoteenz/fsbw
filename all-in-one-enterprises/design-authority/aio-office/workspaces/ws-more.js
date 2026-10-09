@@ -126,12 +126,12 @@ const MO_HELP = [
     ['h6', 'SHARING A STAFF-ONLY FILE', ['ONLY THE FOUNDER SHARES IT', 'THE CHANGE IS RECORDED', 'THE CLIENT SEES IT AT ONCE'], 'documents_vault'],
   ]],
   ['THE WORK', 'work', [
-    ['h7', 'WHAT NEEDS ME TODAY', ['HOME LISTS WHAT NEEDS ATTENTION', 'WORK OPENS EACH LANE', 'THE GOLD BUTTON IS THE NEXT STEP'], null],
-    ['h8', 'CLEARING A BLOCKER', ['OPEN THE BLOCKED RECORD', 'SEE WHO IT WAITS ON', 'ASK, REMIND OR REASSIGN'], null],
+    ['h7', 'WHAT NEEDS ME TODAY', ['HOME LISTS WHAT NEEDS ATTENTION', 'WORK OPENS EACH LANE', 'THE GOLD BUTTON IS THE NEXT STEP'], 'nav:home'],
+    ['h8', 'CLEARING A BLOCKER', ['OPEN THE BLOCKED RECORD', 'SEE WHO IT WAITS ON', 'ASK, REMIND OR REASSIGN'], 'nav:work'],
     ['h9', 'WHO OWNS WHAT', ['EVERY RECORD HAS ONE OWNER', 'TEAM & STAFF COUNTS THE LOAD', 'THE FOUNDER REASSIGNS'], 'team_staff'],
   ]],
   ['CLIENTS & INTAKE', 'company', [
-    ['h10', 'BRINGING A CLIENT IN', ['INTAKE READS THEIR FILES', 'STAFF PREPARE UP TO PREBUILT', 'ONLY THE CLIENT MAKES IT ACTIVE'], null],
+    ['h10', 'BRINGING A CLIENT IN', ['INTAKE READS THEIR FILES', 'STAFF PREPARE UP TO PREBUILT', 'ONLY THE CLIENT MAKES IT ACTIVE'], 'nav:intake'],
     ['h11', 'A SERVICE THAT IS NOT LIVE', ['THE CATALOG SAYS EACH STATE', 'PARTNER PENDING IS MANUAL', 'PAUSED IS NOT OFFERED'], 'service_catalog'],
     ['h12', 'A NEW LEAD', ['GROWTH / CRM HOLDS LEADS', 'FOLLOW UP ON THE DATE', 'A WON LEAD GOES TO INTAKE'], 'growth_crm'],
   ]],
@@ -240,7 +240,7 @@ function moVault() {
   const none = (t) => `<div class="mo-none">${t}</div>`;
   const filt = WSX.mo.docVis === 'all' ? '' : ` · ${{ client: 'CLIENT-VISIBLE', internal: 'STAFF ONLY', review: 'TO REVIEW', requested: 'REQUESTED' }[WSX.mo.docVis]}`;
   const head = `<header class="mo-vault__h"><span class="mo-vault__t"><small>THE VAULT · ${c === 'all' ? 'EVERY CLIENT' : ACCOUNTS[c].name}${filt}</small><b>${list.length} DOCUMENT${list.length === 1 ? '' : 'S'}</b></span><span class="mo-split" title="${allPub} CLIENT-VISIBLE · ${allPrv} STAFF ONLY"><i class="mo-split__c" style="flex:${allPub || 0.0001}"></i><i class="mo-split__s" style="flex:${allPrv || 0.0001}"></i></span><span class="mo-split__l"><b>${allPub}</b> CLIENT-VISIBLE<b>${allPrv}</b> STAFF ONLY</span></header>`;
-  const comp = (kind, rows) => `<section class="mo-comp mo-comp--${kind}"><header class="mo-comp__h"><span class="mo-comp__i">${ico(kind === 'client' ? 'view' : 'lock')}</span><span class="mo-comp__t"><b>${kind === 'client' ? 'CLIENT-VISIBLE' : 'STAFF ONLY'}</b><small>${kind === 'client' ? 'SHOWN IN THE CLIENT’S OFFICE' : 'NEVER SHOWN TO THE CLIENT'}</small></span><em>${rows.length}</em></header><div class="mo-comp__b" data-keep="mo-v-${kind}">${rows.map(moDocRow).join('') || none(kind === 'client' ? 'NOTHING CLIENT-VISIBLE HERE' : 'NOTHING STAFF-ONLY HERE')}</div></section>`;
+  const comp = (kind, rows) => `<section class="mo-comp mo-comp--${kind}"><header class="mo-comp__h"><span class="mo-comp__i">${ico(kind === 'client' ? 'view' : 'lock')}</span><span class="mo-comp__t"><b>${kind === 'client' ? 'CLIENT-VISIBLE' : 'STAFF ONLY'}</b><small>${kind === 'client' ? 'SHOWN IN THE CLIENT’S OFFICE' : 'NEVER SHOWN TO THE CLIENT'}</small></span><em>${rows.length}</em></header><div class="mo-comp__b" data-keep="mo-v-${kind}">${rows.map(moDocRow).join('') || none(kind === 'client' ? 'NOTHING CLIENT-VISIBLE HERE' : 'NOTHING STAFF-ONLY HERE')}</div><footer class="mo-comp__f">${ico(kind === 'client' ? 'view' : 'lock')}<span>${kind === 'client' ? 'EACH CLIENT SEES ONLY THEIR OWN' : 'ONLY THE FOUNDER CAN SHARE ONE'}</span></footer></section>`;
   return `<section class="mo-vault" data-swap="vault:${c}:${WSX.mo.docVis}">${head}<div class="mo-vault__cols">${comp('client', pub)}<i class="mo-wall" aria-hidden="true"><span>${ico('lock')}</span></i>${comp('staff', prv)}</div></section>`;
 }
 function moDocPanel() {
@@ -633,7 +633,7 @@ function moCoverage() {
   return rgn('COVERAGE · CLIENT HOME STATES', `${cov} OF ${states.length} HAVE A NETWORK SHOP`, '', `<div class="mo-cov">${states.map((s) => { const p = provIn(s); const c = cs.filter((x) => x.state === s); return `<div class="mo-st ${p ? `mo-st--${moProvSt(p)[1]}` : 'mo-st--none'}" title="${s} · ${p ? moProvName(p) : 'NO NETWORK SHOP'}"><b>${s}</b><span>${c.map((x) => x.b).join(' · ')}</span><small>${p ? moProvName(p).split(' ').slice(0, 2).join(' ') : 'NO SHOP YET'}</small></div>`; }).join('')}</div>`, 'mo-covrg');
 }
 function moNetStage() {
-  return `<section class="mo-net"><header class="mo-net__h"><span class="mo-net__t"><small>THE NETWORK · PROVIDER → TICKET → TRUCK → CLIENT</small><b>WHO HOLDS OUR TRUCKS TODAY</b></span>${ntb('PROVIDERS OWN THE REPAIR · AIO COORDINATES')}</header><div class="mo-net__rows">${vals(PROVIDERS).map(moNetRow).join('')}</div></section>`;
+  return `<section class="mo-net"><header class="mo-net__h"><span class="mo-net__t"><small>THE NETWORK · PROVIDER → TICKET → TRUCK → CLIENT</small><b>WHO HOLDS OUR TRUCKS TODAY</b></span>${ntb('PROVIDERS OWN THE REPAIR · AIO COORDINATES')}</header><div class="mo-net__rows"><div class="mo-net__row mo-net__cols" aria-hidden="true"><span>PROVIDER</span><i></i><span>OPEN TICKET</span><i></i><span>TRUCK</span><i></i><span>CLIENT</span></div>${vals(PROVIDERS).map(moNetRow).join('')}</div></section>`;
 }
 function moNetPanel() {
   const p = moProv();
@@ -698,7 +698,7 @@ function moSetPanel() {
   else control = ntb('A STATE, NOT A SWITCH · CHANGES WHEN IT IS BUILT');
   const head = moPlate(a.icon, `${a.name} · ${can ? 'EDITABLE' : 'VIEW ONLY'}`, it.t, null, `set:${it.id}`);
   const sib = moSib(`IN ${a.name}`, a.items.map((x) => moSibRow(x.id, x.k === 'lock' ? 'lock' : a.icon, x.t, null)));
-  return moCx(head, `<div class="mo-now"><small>NOW</small>${moSetValue(it)}</div>${it.k === 'choice' || it.k === 'toggle' || it.k === 'action' ? `<div class="nx"><span class="nx__l">${can ? 'CHANGE IT' : 'VIEW ONLY'}</span>${control}</div>` : control}${facts([['AFFECTS', it.who], ['AREA', a.name], ['WHO CHANGES IT', a.staff === 'YOUR OWN' ? 'EACH PERSON · THEIR OWN' : 'THE FOUNDER']])}${moHist(key, [])}${sib}`, `set:${it.id}`, moCrumb(a.name));
+  return moCx(head, `<div class="mo-now"><small>NOW</small>${it.k === 'choice' ? `<span class="mo-sv mo-sv--now">${v}</span>` : moSetValue(it)}</div>${it.k === 'choice' || it.k === 'toggle' || it.k === 'action' ? `<div class="nx"><span class="nx__l">${can ? 'CHANGE IT' : 'VIEW ONLY'}</span>${control}</div>` : control}${facts([['AFFECTS', it.who], ['AREA', a.name], ['WHO CHANGES IT', a.staff === 'YOUR OWN' ? 'EACH PERSON · THEIR OWN' : 'THE FOUNDER']])}${moHist(key, [])}${sib}`, `set:${it.id}`, moCrumb(a.name));
 }
 function moSetBody() {
   if (VP === 'mobile') return `<div class="mo-chips wseg--scroll">${moAreas().map((a) => `<button type="button" class="mo-chip ${moArea().id === a.id ? 'is-sel' : ''}" data-a="mo.area" data-v="${a.id}"><span class="mo-chip__i">${ico(a.icon)}</span><span>${a.name}</span></button>`).join('')}</div>${moConsole()}${FOUNDER ? '' : ntb('OTHER AREAS ARE FOUNDER-ONLY')}`;
@@ -727,12 +727,13 @@ function moSupport() {
 }
 function moHelpPanel() {
   const t = moTopic();
-  const go = t.go ? (t.go.includes(':') ? `data-a="go" data-v="${t.go}"` : `data-a="mo.dest" data-v="${t.go}"`) : t.id === 'h10' ? 'data-go="intake"' : 'data-go="home"';
-  const where = t.go ? (t.go.includes(':') ? 'CLIENT 360' : MO_BY[t.go].name) : t.id === 'h10' ? 'INTAKE' : 'HOME';
+  const nav = t.go?.startsWith('nav:') ? t.go.slice(4) : null;
+  const go = !t.go ? '' : nav ? `data-go="${nav}"` : t.go.includes(':') ? `data-a="go" data-v="${t.go}"` : `data-a="mo.dest" data-v="${t.go}"`;
+  const where = !t.go ? '' : nav ? nav.toUpperCase() : t.go.includes(':') ? 'CLIENT 360' : MO_BY[t.go].name;
   const head = moPlate(t.icon, `HELP · ${t.g}`, t.t, null, `h:${t.id}`);
   const steps = `<ol class="mo-steps">${t.steps.map((s, i) => `<li><i>${i + 1}</i><b>${s}</b></li>`).join('')}</ol>`;
   const sib = moSib(`MORE IN ${t.g}`, MO_TOPICS.filter((x) => x.g === t.g).map((x) => moSibRow(x.id, x.icon, x.t, null)));
-  return moCx(head, `${steps}<button type="button" class="wbtn wbtn--dark mo-gobtn" ${go}>${ico('fwd')}GO TO ${where}</button>${VP === 'desktop' && !moWide() ? '' : moSupport()}${sib}`, `h:${t.id}`, moCrumb(t.g));
+  return moCx(head, `${steps}${go ? `<button type="button" class="wbtn wbtn--dark mo-gobtn" ${go}>${ico('fwd')}GO TO ${where}</button>` : ''}${VP === 'desktop' && !moWide() ? '' : moSupport()}${sib}`, `h:${t.id}`, moCrumb(t.g));
 }
 function moHelpBody() {
   if (VP === 'mobile') return `${moAsk()}${moShelves()}${moSupport()}`;
@@ -792,7 +793,7 @@ function moAcctBody() {
 function moNoAccess(d) {
   const crm = d.slug === 'growth_crm';
   const who = [['s-alex', 'FOUNDER'], ...(crm ? [] : [['s-kayla', 'BILLING GRANT']])];
-  return `<section class="mo-lock" data-swap="lock:${d.slug}"><span class="mo-lock__i">${ico('lock')}</span><small>${crm ? 'BY GRANT' : 'FOUNDER · BILLING GRANT'}</small><b>${d.name} IS NOT IN YOUR ROLE</b><p>NOTHING IS HIDDEN BEHIND A BLANK. IT IS SIMPLY NOT SHOWN.</p><div class="mo-lock__who"><span class="sec-l">WHO CAN OPEN IT</span>${who.map(([id, g]) => `<span class="mo-lock__p">${av(id)}<b>${id === 's-alex' ? 'THE FOUNDER' : STAFF[id].name}</b><small>${g}</small></span>`).join('')}</div><div class="nx__acts">${simBtn(`mo:ask:${d.slug}`, { label: `ASK FOR ${crm ? 'THE CRM' : 'THE BILLING'} GRANT`, effect: 'SENDS A GRANT REQUEST TO THE FOUNDER.', apply: () => {}, rec: `grant:${d.slug}`, primary: true })}<button type="button" class="wbtn wbtn--ghost" data-a="mo.dest" data-v="messages">${ico('letter')}MESSAGES</button></div></section>`;
+  return `<section class="mo-lock" data-swap="lock:${d.slug}"><span class="mo-lock__i">${ico('lock')}</span><small>${crm ? 'BY GRANT' : 'FOUNDER · BILLING GRANT'}</small><b>${d.name} IS NOT IN YOUR ROLE</b><p>NOTHING IS HIDDEN BEHIND A BLANK. IT IS SIMPLY NOT SHOWN.</p><div class="mo-lock__who"><span class="sec-l">WHO CAN OPEN IT</span>${who.map(([id, g]) => `<span class="mo-lock__p">${id === 's-alex' ? `<span class="av mo-lock__f">${ico('shield-check')}</span>` : av(id)}<b>${id === 's-alex' ? 'THE FOUNDER' : STAFF[id].name}</b><small>${g}</small></span>`).join('')}</div><div class="nx__acts">${simBtn(`mo:ask:${d.slug}`, { label: `ASK FOR ${crm ? 'THE CRM' : 'THE BILLING'} GRANT`, effect: 'SENDS A GRANT REQUEST TO THE FOUNDER.', apply: () => {}, rec: `grant:${d.slug}`, primary: true })}<button type="button" class="wbtn wbtn--ghost" data-a="mo.dest" data-v="messages">${ico('letter')}MESSAGES</button></div></section>`;
 }
 
 /* ═══════════════ the frame: bar, destination switch, the destination, the drawer ═══════════════ */

@@ -221,7 +221,7 @@ function drBoard(act = 'dr.pick') {
     }).join('');
     const tTok = free.map((v) => `<button type="button" class="dr-bt dr-bt--truck" data-a="go" data-v="${drTruckGo(v.id)}" title="${v.unit} · NO DRIVER · ${vAvail(v)[0]}"><span class="dr-bt__main"><span class="dr-bt__ico"><svg viewBox="0 0 500 210" aria-hidden="true">${truckShape(FLEET_META[v.id].cab)}</svg></span><span class="dr-bt__t"><b>${v.unit}</b>${sw([vAvail(v)[0].split(' · ')[0], vAvail(v)[1]])}</span></span></button>`).join('');
     const dues = vals(DUES).filter((x) => x.client === cid && x.links.some((k) => k.startsWith('driver:')));
-    const dueTok = dues.map((x) => `<button type="button" class="dr-bt dr-bt--due" data-a="go" data-v="comp:${x.id}" title="${x.what} · ${x.due}"><span class="dr-bt__main"><span class="dr-cd dr-cd--${x.days <= 30 ? 'warn' : x.days <= 90 ? 'gold' : 'mute'} dr-cd--s"><b>${x.days}</b><small>DAYS</small></span><span class="dr-bt__t"><b>${drDueLabel(x)}</b><small>DUE ${x.due.replace(', 2026', '')}</small></span></span></button>`).join('');
+    const dueTok = dues.map((x) => `<button type="button" class="dr-bt dr-bt--due" data-a="go" data-v="comp:${x.id}" title="${x.what} · ${x.due}"><span class="dr-bt__main"><span class="dr-cd dr-cd--${x.days <= 30 ? 'warn' : x.days <= 90 ? 'gold' : 'mute'} dr-cd--s"><b>${x.days}</b><small>DAYS</small></span><span class="dr-bt__t"><b>${drDueLabel(x).replace(' QUERY', '')}</b><small>DUE ${x.due.replace(', 2026', '')}</small></span></span></button>`).join('');
     const grp = (label, n, html) => (n ? `<div class="dr-bg"><span class="dr-bg__l">${label}<i>${n}</i></span>${html}</div>` : '');
     return `<div class="dr-bcol"><div class="dr-bcol__h"><span class="dr-mono">${c.b}</span><span><b>${c.name}</b>${sw(c.lanes.includes('drivers') ? ['USES AIO DRIVERS', 'ok'] : ['SERVICE OFF', 'mute'])}</span></div>${grp('DRIVING', drv.length, dTok)}${grp('APPLYING', apps.length, aTok)}${grp('TRUCKS WITH NO DRIVER', free.length, tTok)}${grp('DRIVER DEADLINES', dues.length, dueTok)}</div>`;
   }).join('');
@@ -265,7 +265,7 @@ function drAppPanel(a) {
   const c = ACCOUNTS[a.client];
   const name = drName(a);
   let next;
-  if (st[0] === 'UNDER REVIEW') next = nextBlock('REVIEWED · ASK FOR THE DRIVER’S PAPERS', simBtn(`dr:docs:${a.id}`, { label: 'REQUEST DOCUMENTS', effect: `ASKS ${name} FOR THEIR CDL, MEDICAL CARD AND MVR.`, apply: () => (WSX.over[key] = ['DOCUMENTS NEEDED', 'warn']), rec: key, primary: true }));
+  if (st[0] === 'UNDER REVIEW') next = nextBlock(`ASK ${name} FOR THE CDL, MEDICAL CARD AND MVR`, simBtn(`dr:docs:${a.id}`, { label: 'REQUEST DOCUMENTS', effect: `ASKS ${name} FOR THEIR CDL, MEDICAL CARD AND MVR.`, apply: () => (WSX.over[key] = ['DOCUMENTS NEEDED', 'warn']), rec: key, primary: true }));
   else if (st[0] === 'DOCUMENTS NEEDED') next = nextBlock(`WAITING ON ${name}’S CDL, MEDICAL CARD AND MVR`, `${simBtn(`dr:rem:${a.id}`, { label: 'REMIND THE APPLICANT', effect: `ASKS ${name} AGAIN FOR THE MISSING DOCUMENTS.`, apply: () => {}, rec: key, primary: true })}${simBtn(`dr:int:${a.id}`, { label: 'SCHEDULE INTERVIEW', effect: `OFFERS ${c.name} AND ${name} A TIME.`, apply: () => (WSX.over[key] = ['INTERVIEW SCHEDULED', 'ok']), rec: key })}`);
   else if (st[0] === 'INTERVIEW SCHEDULED') next = nextBlock(`INTERVIEW WITH ${c.name}${a.status[0] === 'INTERVIEW SCHEDULED' ? ` · ${a.at}` : ''}`, simBtn(`dr:rmd:${a.id}`, { label: 'REMIND BOTH SIDES', effect: `REMINDS ${c.name} AND ${name} OF THE INTERVIEW.`, apply: () => {}, rec: key, sm: true }), 'calm');
   else next = nextBlock('THE CLIENT DECIDES', '', 'calm');
@@ -343,7 +343,7 @@ function driversView() {
     const lower = drLower();
     return `<div class="ws dr dr--t dr--${sec}">${drBar()}<div class="dr-top">${drSeg()}</div>${strip}${drStage()}<div class="dr-t2 ${lower ? '' : 'dr-t2--one'}">${lower}${drPanel()}</div></div>`;
   }
-  const mid = sec === 'approvals' ? `<div class="dr-mid dr-mid--board">${drStage()}</div>` : `${drRail()}<div class="dr-mid">${drStage()}${drLower()}</div>`;
+  const mid = sec === 'approvals' ? `<div class="dr-mid dr-mid--board">${drStage()}${WIDE ? drMatrix() : ''}</div>` : `${drRail()}<div class="dr-mid">${drStage()}${drLower()}</div>`;
   return `<div class="ws dr dr--${sec}">${drBar()}<div class="dr-grid"><div class="dr-top">${drSeg()}</div>${mid}${drPanel()}</div></div>`;
 }
 

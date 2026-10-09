@@ -374,7 +374,7 @@ function dispatchView() {
   }
   if (VP === 'tablet') return `<div class="ws dp dp--t">${dpBar()}<div class="dp-segrow">${dpViews()}</div>${dpBoard()}${dpStage(l)}${dpPanel(l, { split: true })}</div>`;
   const wide = WSX.device === 'wide';
-  return `<div class="ws dp">${dpBar()}<div class="dp-grid ${wide ? 'dp-grid--w' : ''}"><div class="dp-segrow">${dpViews()}</div>${dpBoard()}${dpStage(l)}${wide ? dpFleetCol() : ''}${dpPanel(l)}</div></div>`;
+  return `<div class="ws dp">${dpBar()}<div class="dp-grid ${wide ? 'dp-grid--w' : ''}"><div class="dp-segrow">${dpViews()}<span class="dp-segrow__n">ONLY T&K USES AIO DISPATCH</span></div>${dpBoard()}${dpStage(l)}${wide ? dpFleetCol() : ''}${dpPanel(l)}</div></div>`;
 }
 
 /* ── actions ── */

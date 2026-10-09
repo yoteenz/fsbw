@@ -438,51 +438,14 @@ RP.filing_history = {
         const d = f ? rpDate(f).d : tday ?? 1;
         const gap = due - d;
         const word = f ? `${gap} DAY${gap === 1 ? '' : 'S'} BEFORE DUE` : `${s[0]} · ${gap} DAYS LEFT`;
-        return `<div class="rp-fr ${f ? 'rp-fr--filed' : `rp-fr--open rp-fr--${s[1]}`} ${k === `q:${q.id}` ? 'is-on' : ''} ${f && rpIn(f) ? 'is-per' : ''}" ${rpBtn(`q:${q.id}`, `${w.q} · ${clientName(q.client)} · ${f ? `FILED ${f}` : s[0]}`)}><span class="rp-fr__l">${rpBadge(q.client)}</span><span class="rp-fr__t"><i class="rp-fr__s" style="left:${x(d)}%"></i><i class="rp-fr__m" style="left:${x(d)}%"></i><em style="left:${x(d)}%">${word}</em></span></div>`;
+        return `<div class="rp-fr ${f ? 'rp-fr--filed' : `rp-fr--open rp-fr--${s[1]}`} ${k === `q:${q.id}` ? 'is-on' : ''} ${f && rpIn(f) ? 'is-per' : ''} ${d > 17 ? 'rp-fr--l' : ''} ${!f && filed.length && q === open[0] ? 'rp-fr--sep' : ''}" ${rpBtn(`q:${q.id}`, `${w.q} · ${clientName(q.client)} · ${f ? `FILED ${f}` : s[0]}`)}><span class="rp-fr__l">${rpBadge(q.client)}</span><span class="rp-fr__t"><i class="rp-fr__s" style="left:${x(d)}%"></i><i class="rp-fr__m" style="left:${x(d)}%"></i><em style="left:${x(d)}%">${word}</em></span></div>`;
       };
       const per = w.mon === WSX.rp.month;
       const wk = `w:${w.q}`;
       return `<div class="rp-fw ${per ? 'is-per' : ''} ${rpOn(wk)}">
         <button type="button" class="rp-fw__h" ${rpBtn(wk, `${w.q} · ${filed.length} FILED`)}><b>${w.q}</b><span>WINDOW · ${w.mon} 1–31</span><em>${filed.length} FILED${open.length ? ` · ${open.length} OPEN` : ''}</em></button>
         <div class="rp-fw__plot">
-          <div class="rp-fw__rows">${filed.length ? `<span class="rp-fr__g">FILED</span>${filed.map(row).join('')}` : ''}${open.length ? `<span class="rp-fr__g">OPEN</span>${open.map(row).join('')}` : ''}</div>
-          <div class="rp-fw__ax"><span class="rp-fw__lab"></span><div class="rp-fw__trk">${[1, 8, 15, 22].map((d) => `<span style="left:${x(d)}%">${w.mon} ${d}</span>`).join('')}</div></div>
-          <div class="rp-fw__over"><span class="rp-fw__lab"></span><div class="rp-fw__trk">${tday ? `<i class="rp-fw__today" style="left:${x(tday)}%"><span>TODAY</span></i>` : ''}<i class="rp-fw__dl"><span>DUE ${w.due.replace(', 2026', '')}</span></i></div></div>
-        </div>
-      </div>`;
-    }).join('');
-    const all = vals(QUARTERS);
-    const filed = all.filter(rpFiledOn);
-    const onTime = filed.filter((q) => rpDate(rpFiledOn(q)).n <= rpDate(q.due).n).length;
-    const r = [ro(filed.filter((q) => rpIn(rpFiledOn(q))).length, `FILED · ${WSX.rp.month}`, { tone: 'gold' }), ro(filed.length, 'RETURNS FILED'), ro(`${onTime}/${filed.length}`, 'ON TIME'), ro(all.length - filed.length, 'OPEN', { tone: 'warn' })];
-    return (m ? [r[0], r[1], r[3]] : r).join('');
-  },
-  hero: () => {
-    const k = rpKey();
-    const trackW = { mobile: 260, tablet: 300, desktop: 300, wide: 620 }[VP === 'desktop' && rpWide() ? 'wide' : VP];
-    const step = (36 / trackW) * 31;
-    const x = (d) => (((d - 0.5) / 31) * 100).toFixed(2);
-    const wins = rpWindows().map((w) => {
-      const filed = w.list.filter(rpFiledOn).sort((a, b) => rpDate(rpFiledOn(a)).n - rpDate(rpFiledOn(b)).n);
-      const open = w.list.filter((q) => !rpFiledOn(q)).sort((a, b) => TONE_RANK[rpQState(a)[1]] - TONE_RANK[rpQState(b)[1]]);
-      const ends = [];
-      const tok = filed.map((q) => {
-        const d = rpDate(rpFiledOn(q)).d;
-        let lv = ends.findIndex((e) => d - e >= step);
-        if (lv < 0) lv = ends.length;
-        ends[lv] = d;
-        return `<button type="button" class="rp-ft ${k === `q:${q.id}` ? 'is-on' : ''} ${rpIn(rpFiledOn(q)) ? 'is-per' : ''}" style="left:${x(d)}%;bottom:${lv * 26}px" ${rpBtn(`q:${q.id}`, `${clientName(q.client)} · FILED ${rpFiledOn(q)}`)}>${ACCOUNTS[q.client].b}</button>`;
-      }).join('');
-      const today = rpDate(TODAY);
-      const tday = today.m === w.mon ? today.d : null;
-      const otok = open.map((q, i) => `<button type="button" class="rp-ft rp-ft--open rp-ft--${rpQState(q)[1]} ${k === `q:${q.id}` ? 'is-on' : ''}" style="left:${x(tday ?? 1)}%;bottom:${i * 26}px" ${rpBtn(`q:${q.id}`, `${clientName(q.client)} · ${rpQState(q)[0]}`)}>${ACCOUNTS[q.client].b}</button>`).join('');
-      const per = w.mon === WSX.rp.month;
-      const wk = `w:${w.q}`;
-      return `<div class="rp-fw ${per ? 'is-per' : ''} ${rpOn(wk)}">
-        <button type="button" class="rp-fw__h" ${rpBtn(wk, `${w.q} · ${filed.length} FILED`)}><b>${w.q}</b><span>WINDOW · ${w.mon} 1–31</span><em>${filed.length} FILED${open.length ? ` · ${open.length} OPEN` : ''}</em></button>
-        <div class="rp-fw__plot">
-          <div class="rp-fw__ln"><span class="rp-fw__lab">FILED</span><div class="rp-fw__trk">${tok}</div></div>
-          <div class="rp-fw__ln rp-fw__ln--open"><span class="rp-fw__lab">OPEN</span><div class="rp-fw__trk">${otok || '<span class="rp-fw__none">NONE</span>'}</div></div>
+          <div class="rp-fw__rows">${[...filed, ...open].map(row).join('')}</div>
           <div class="rp-fw__ax"><span class="rp-fw__lab"></span><div class="rp-fw__trk">${[1, 8, 15, 22].map((d) => `<span style="left:${x(d)}%">${w.mon} ${d}</span>`).join('')}</div></div>
           <div class="rp-fw__over"><span class="rp-fw__lab"></span><div class="rp-fw__trk">${tday ? `<i class="rp-fw__today" style="left:${x(tday)}%"><span>TODAY</span></i>` : ''}<i class="rp-fw__dl"><span>DUE ${w.due.replace(', 2026', '')}</span></i></div></div>
         </div>

@@ -39,10 +39,13 @@ function brHeading(from, to) {
 }
 /** A commercial action, drawn as it will be — and disabled, because brokerage is paused. */
 const brOff = (label, sm = false) => `<span class="br-off"><button type="button" class="wbtn ${sm ? 'wbtn--sm' : ''}" disabled aria-disabled="true" title="${label} — PAUSED, NOT ACTIVE">${ico('lock')}${label}</button><span class="br-off__t">PAUSED — NOT ACTIVE</span></span>`;
-const brSeals = (r) => {
+/** Each side's own commercial actions, listed so it is plain what the workspace will do — and that it is off. */
+const brOffList = (items) => `<div class="br-offs"><div class="sec-l"><span>OFF WHILE PAUSED</span><span>${items.length}</span></div>${items.map((x) => `<button type="button" class="br-offs__r" disabled aria-disabled="true" title="${x} — PAUSED, NOT ACTIVE">${ico('lock')}<b>${x}</b><span>NOT ACTIVE</span></button>`).join('')}</div>`;
+const brSeals = (r, short = false) => {
   const c = brCarrier(r);
+  const rc = short ? 'RATE CON' : 'RATE CONFIRMATION';
   const left = brIsQuote(r) ? ['QUOTE', ['SENT', brSt(r)[1]]] : ['SHIPMENT', ['ON FILE', 'ok']];
-  const right = c ? ['RATE CONFIRMATION', [brShort(brSt(r)[0]), brSt(r)[1]]] : ['RATE CONFIRMATION', ['NO CARRIER', 'mute']];
+  const right = c ? [rc, [brShort(brSt(r)[0]), brSt(r)[1]]] : [rc, ['NO CARRIER', 'mute']];
   return { left, right };
 };
 
@@ -59,16 +62,16 @@ function brCarPlate(r) {
   if (!c) return `<button type="button" class="br-plate br-plate--car br-plate--none ${on ? 'is-on' : ''}" data-a="br.side" data-v="carrier" aria-pressed="${on}" data-swap="cp:${r.id}"><span class="br-plate__k">${ico('truck')}CARRIER</span><span class="br-plate__id"><span class="br-mono br-mono--none">—</span><span><b>NO CARRIER YET</b><small>OFFERS OPEN WHEN BROKERAGE IS ACTIVE</small></span></span><span class="br-plate__ro"><span><small>ON FILE</small><b>${brRecs().map(brCarrier).filter(Boolean).length} CARRIER</b></span></span><i class="br-port br-port--l br-port--mute" aria-hidden="true"></i></button>`;
   return `<button type="button" class="br-plate br-plate--car ${on ? 'is-on' : ''}" data-a="br.side" data-v="carrier" aria-pressed="${on}" data-swap="cp:${r.id}"><span class="br-plate__k">${ico('truck')}CARRIER</span><span class="br-plate__id">${badge(c)}<span><b>${c.name}</b><small>AIO CLIENT · ${c.mc} · ${c.state}</small></span></span><span class="br-plate__ro"><span><small>POWER UNITS</small><b>${c.trucks}</b></span><span><small>ACCOUNT</small><b>${sw(LIFE[c.life])}</b></span></span><i class="br-port br-port--l br-port--${tone}" aria-hidden="true"></i></button>`;
 }
-function brLoadPlate(r, { compact = false } = {}) {
+function brLoadPlate(r, { compact = false, short = false } = {}) {
   const st = brSt(r);
   const [o, d] = brEnds(r);
   const hd = brHeading(o, d);
-  const { left, right } = brSeals(r);
-  const tickets = compact ? '' : `<div class="br-tix" role="tablist">${brRecs().map((x) => `<button type="button" role="tab" class="br-tix__b ${x.id === r.id ? 'is-on' : ''}" data-a="br.ship" data-v="${x.id}" aria-selected="${x.id === r.id}"><b>${x.ref}</b><i class="pip pip--${brSt(x)[1]}"></i></button>`).join('')}<span class="br-stamp">${ico('lock')}PAUSED · NOT ACTIVE</span></div>`;
+  const { left, right } = brSeals(r, short);
+  const tickets = compact ? '' : `<div class="br-tix" role="tablist">${brRecs().map((x) => `<button type="button" role="tab" class="br-tix__b ${x.id === r.id ? 'is-on' : ''}" data-a="br.ship" data-v="${x.id}" aria-selected="${x.id === r.id}"><b>${x.ref}</b><i class="pip pip--${brSt(x)[1]}"></i></button>`).join('')}<span class="br-stamp">${ico('lock')}${short ? 'PAUSED' : 'PAUSED · NOT ACTIVE'}</span></div>`;
   const seal = (side, [label, word]) => `<span class="br-seal br-seal--${side} br-seal--${word[1]}"><small>${label}</small>${sw(word)}</span>`;
   return `<section class="br-load ${WSX.br.side === 'load' ? 'is-on' : ''}" data-swap="lp:${r.id}">
     ${tickets}
-    <div class="br-load__mid">${compact ? '' : seal('l', left)}<button type="button" class="br-load__ref" data-a="br.side" data-v="load"><small>${clientName(r.client)} · BROKERAGE${compact ? '' : ` · ${staffName(r.owner)}`}</small><b>${r.ref}</b>${sw(st)}</button>${compact ? '' : seal('r', right)}</div>
+    <div class="br-load__mid">${compact ? '' : seal('l', left)}<button type="button" class="br-load__ref" data-a="br.side" data-v="load"><small>${clientName(r.client)} · BROKERAGE${compact ? '' : ` · ${staffName(r.owner)}`}</small><b>${r.ref}</b>${sw(short ? [brShort(st[0]), st[1]] : st)}</button>${compact ? '' : seal('r', right)}</div>
     <div class="br-lane"><span class="br-lane__e"><small>PICKUP</small><b>${o}</b></span><span class="br-lane__bar" aria-hidden="true"><i></i><i></i></span><span class="br-lane__e br-lane__e--d"><small>DELIVERY</small><b>${d}</b></span>${hd ? `<span class="br-lane__dir"><svg viewBox="0 0 16 16" aria-hidden="true"><g transform="rotate(${hd.deg.toFixed(0)} 8 8)"><path d="M8 1.5 11.6 12 8 10 4.4 12Z"/></g></svg>${hd.word} · NOT TENDERED</span>` : ''}</div>
   </section>`;
 }
@@ -87,7 +90,7 @@ function brPipe(r) {
     return `<li class="br-pipe__s br-pipe__s--${state} ${i === step ? `br-pipe__s--${st[1]}` : ''}"><i>${i < step ? ico('pass') : i > step ? ico('lock') : i + 1}</i><b>${s}</b><small>${i < step ? 'DONE' : i === step ? brShort(st[0]) : 'PAUSED'}</small></li>`;
   }).join('')}</ol>`;
 }
-function brWorkBody(r, sec) {
+function brWorkBody(r, sec, { wall = false } = {}) {
   const c = brCarrier(r);
   const st = brSt(r);
   const [o, d] = brEnds(r);
@@ -103,7 +106,7 @@ function brWorkBody(r, sec) {
   }
   if (sec === 'offers') {
     const ghost = ['CARRIER', 'EQUIPMENT', 'OFFERED RATE', 'ANSWER'].map((f) => `<span>${f}</span>`).join('');
-    return `<div class="br-offers"><div class="sec-l"><span>CARRIER OFFERS · ${r.ref}</span><span>0</span></div><div class="br-ghost">${ghost}</div>${ntb('<b>CARRIER OFFERS ARE NOT BUILT</b> AND BROKERAGE IS PAUSED.')}</div>${c ? facts([['ASSIGNED', c.name, `AIO CLIENT · ${c.mc}`], ['RATE CONFIRMATION', sw(st), wait ? `${wait[7]} · ${wait[6]}` : '']]) : facts([['ASSIGNED', 'NO CARRIER YET']])}${brNext(r)}`;
+    return `<div class="br-offers"><div class="sec-l"><span>CARRIER OFFERS · ${r.ref}</span><span>0</span></div><div class="br-ghost">${ghost}</div>${ntb('<b>CARRIER OFFERS ARE NOT BUILT</b> AND BROKERAGE IS PAUSED.')}</div>${wall ? '' : c ? facts([['ASSIGNED', c.name, `AIO CLIENT · ${c.mc}`], ['RATE CONFIRMATION', sw(st), wait ? `${wait[7]} · ${wait[6]}` : '']]) : facts([['ASSIGNED', 'NO CARRIER YET']])}${wall ? '' : brNext(r)}`;
   }
   // quotes and shipments: the deal as it stands
   const rows = [
@@ -116,13 +119,21 @@ function brWorkBody(r, sec) {
   ];
   return `${brNext(r)}${facts(rows)}`;
 }
+/** Ultra-wide: every section of the load at once, the chosen one lit. */
+function brWall(r) {
+  const sec = WSX.br.sec;
+  const first = brIsQuote(r) ? ['quotes', 'THE QUOTE'] : ['shipments', 'THE SHIPMENT'];
+  const panes = [first, ['stops', 'STOPS / STATUS'], ['offers', 'CARRIER OFFERS'], ...(FOUNDER ? [['money', 'LOAD FINANCIALS']] : [])];
+  return `<section class="rg br-work ${WSX.br.side === 'load' ? 'is-focus' : ''}"><header class="rg__h"><span class="rg__t">THE LOAD · EVERY SECTION</span><span class="rg__n">${r.ref}</span></header><div class="br-wall ${FOUNDER ? '' : 'br-wall--3'}" data-keep="br-work" data-swap="wall:${r.id}">${panes.map(([id, label]) => `<div class="br-pane ${id === sec ? 'is-on' : ''}"><button type="button" class="br-pane__h" data-a="br.sec" data-v="${id}" aria-pressed="${id === sec}"><span>${label}</span>${id === 'money' ? '<span class="founder">FOUNDER · FINANCE</span>' : ''}</button><div class="br-pane__b">${brWorkBody(r, id, { wall: true })}</div></div>`).join('')}</div></section>`;
+}
 function brWork(r, { two = false } = {}) {
+  if (two) return brWall(r);
   const sec = WSX.br.sec;
   const label = BR_SECS.find(([id]) => id === sec)[1];
   const focus = WSX.br.side === 'load';
-  const pipe = two && sec !== 'stops' ? `<div class="br-work__aside"><div class="sec-l"><span>STATUS</span><span>${BR_STEPS[brStep(r)]}</span></div>${brPipe(r)}</div>` : '';
-  const split = sec === 'stops' && VP !== 'mobile';
-  return `<section class="rg br-work ${focus ? 'is-focus' : ''}"><header class="rg__h"><span class="rg__t">${label}</span><span class="rg__n">${r.ref}</span></header><div class="br-work__b ${pipe || split ? 'br-work__b--two' : ''}" data-keep="br-work" data-swap="w:${r.id}:${sec}">${split ? brWorkBody(r, sec) : `<div class="br-work__main">${brWorkBody(r, sec)}</div>${pipe}`}</div></section>`;
+  const pipe = VP === 'tablet' && !['stops', 'money'].includes(sec) ? `<div class="br-work__aside"><div class="sec-l"><span>STATUS</span><span>${BR_STEPS[brStep(r)]}</span></div>${brPipe(r)}</div>` : '';
+  const split = sec === 'stops' && VP === 'desktop';
+  return `<section class="rg br-work ${focus ? 'is-focus' : ''}"><header class="rg__h"><span class="rg__t">${label}</span><span class="rg__n">${r.ref}</span></header><div class="br-work__b ${split ? 'br-work__b--two' : ''}" data-keep="br-work" data-swap="w:${r.id}:${sec}">${split ? brWorkBody(r, sec) : `<div class="br-work__main">${brWorkBody(r, sec)}</div>${pipe}`}</div></section>`;
 }
 
 /* ── the two sides in depth ── */
@@ -132,11 +143,11 @@ function brShipSide(r) {
   const rows = shippers.map((x) => {
     const n = brShipper(x);
     const sel = x.id === r.id;
-    return `<div class="pk br-row ${sel ? 'is-sel' : ''}" data-a="${VP === 'mobile' ? 'br.open' : 'br.ship'}" data-v="${x.id}" title="${n} · ${x.ref} · ${x.lane}" aria-pressed="${sel}"><span class="br-mono br-mono--s">${brMono(n)}</span><span class="br-row__t"><b class="pk__t">${n}</b><span class="pk__s">${x.ref} · FROM ${brTown(brEnds(x)[0])}</span></span>${sw([brShort(brSt(x)[0]), brSt(x)[1]])}</div>`;
+    return `<div class="pk br-row ${sel ? 'is-sel' : ''}" data-a="${VP === 'mobile' ? 'br.open' : 'br.ship'}" data-v="${x.id}" title="${n} · ${x.ref} · ${x.lane}" aria-pressed="${sel}"><span class="br-mono br-mono--s">${brMono(n)}</span><span class="br-row__t"><b class="pk__t">${n}</b><span class="pk__s">${x.ref} · ${brTown(brEnds(x)[0])}</span></span>${sw([brShort(brSt(x)[0]), brSt(x)[1]])}</div>`;
   }).join('');
   const body = `<div class="br-list">${rows}</div>
     <div class="br-sub"><div class="sec-l"><span>${brIsQuote(r) ? 'THE QUOTE' : 'THE SHIPPER’S LOAD'}</span><span>${r.ref}</span></div>${facts([[brIsQuote(r) ? 'QUOTE' : 'LOAD', r.ref], ['PICKUP', brEnds(r)[0]], ['DELIVERY', brEnds(r)[1]], ['QUOTED RATE', 'NOT IN THIS SAMPLE']])}</div>
-    <div class="br-sub__acts">${brOff('NEW QUOTE', true)}</div>
+    ${brOffList(['SEND A QUOTE', 'CONFIRM THE TENDER', 'INVOICE THE SHIPPER'])}
     ${ntb('SHIPPERS ARE SAMPLE NAMES. NO SHIPPER RECORD IN AIO.')}`;
   return `<section class="rg br-side br-side--ship ${focus ? 'is-focus' : ''}"><header class="rg__h"><span class="rg__t">SHIPPER SIDE</span><span class="rg__n">${shippers.length} SAMPLE SHIPPERS</span></header><div class="rg__b br-side__b" data-keep="br-ship" data-swap="ss:${r.id}">${body}</div></section>`;
 }
@@ -147,7 +158,7 @@ function brPacket(c) {
   const ifta = vals(QUARTERS).find((q) => q.client === c.id && q.q === 'Q3 2026');
   const rows = [
     ['id-card', 'AUTHORITY', `${c.mc} · ${c.dot}`, ['ON FILE', 'mute'], `client:${c.id}:permitting`],
-    pol && ['umbrella', `INSURANCE · EXP ${pol.exp.replace(', 2026', '')}`, pol.title, ov(`policy:${pol.id}`, pol.status), `client:${c.id}:insurance`],
+    pol && ['umbrella', `INSURANCE · ${pol.exp.replace(', 2026', '')}`, pol.title, ov(`policy:${pol.id}`, pol.status), `client:${c.id}:insurance`],
     ucr && ['shield-check', `UCR · DUE ${ucr.due.replace(', 2026', '')}`, ucr.what, ov(`deadline:${ucr.id}`, ucr.state), `comp:${ucr.id}`],
     ifta && ['fuel', 'IFTA · Q3 2026', ifta.next, ifta.bucket, `client:${c.id}:filing`],
   ].filter(Boolean);
@@ -161,7 +172,7 @@ function brCarSide(r) {
   const body = `${c ? '' : `<div class="br-none">${ico('truck')}<span><b>NO CARRIER ON ${r.ref}</b><small>OFFERS OPEN WHEN BROKERAGE IS ACTIVE</small></span></div>`}
     <div class="br-sub"><div class="sec-l"><span>${c ? 'CARRIER PACKET' : 'THE CARRIER ON FILE'}</span><span>${pc.name}</span></div>${brPacket(pc)}</div>
     <div class="br-sub"><div class="sec-l"><span>OFFERS</span><span>0</span></div>${ntb('<b>OFFERS ARE NOT BUILT.</b> PACKET READ FROM AIO RECORDS.')}</div>
-    <div class="br-sub__acts">${brOff(c ? 'SEND RATE CONFIRMATION' : 'OFFER TO CARRIER', true)}</div>`;
+    ${brOffList([c ? 'SEND RATE CONFIRMATION' : 'OFFER TO CARRIERS', 'BOOK THE LOAD', 'PAY THE CARRIER'])}`;
   return `<section class="rg br-side br-side--car ${focus ? 'is-focus' : ''}"><header class="rg__h"><span class="rg__t">CARRIER SIDE</span><span class="rg__n">${onFile.length} CARRIER ON FILE</span></header><div class="rg__b br-side__b" data-keep="br-car" data-swap="cs:${r.id}">${body}</div></section>`;
 }
 
@@ -186,6 +197,7 @@ function brBar() {
   const plate = `<div class="br-paused">${ico('lock')}<span><b>PAUSED</b><small>${VP === 'mobile' ? 'BUSINESS ACTIVATION REQUIRED' : 'BUSINESS ACTIVATION REQUIRED · AUTHORITY / LICENSING SEPARATE'}</small></span><button type="button" class="wbtn wbtn--sm br-why" data-a="br.why">WHY PAUSED</button></div>`;
   const s = WSX.br.sec;
   if (VP === 'mobile') return `${wsBar('06 · WORK', 'BROKERAGE', [ro(all.length, 'RECORDS'), ro(blocked, 'BLOCKED', { tone: 'bad' })].join(''))}${plate}`;
+  if (VP === 'tablet') return `${wsBar('06 · WORK', 'BROKERAGE', [ro(all.length, 'RECORDS'), ro(q, 'QUOTES', { a: 'br.sec', v: 'quotes', on: s === 'quotes' }), ro(all.length - q, 'SHIPMENTS', { a: 'br.sec', v: 'shipments', on: s === 'shipments' }), ro(blocked, 'BLOCKED', { tone: 'bad' })].join(''))}${plate}`;
   const r = [ro(all.length, 'RECORDS'), ro(q, 'QUOTES', { a: 'br.sec', v: 'quotes', on: s === 'quotes' }), ro(all.length - q, 'SHIPMENTS', { a: 'br.sec', v: 'shipments', on: s === 'shipments' }), ro(blocked, 'BLOCKED', { tone: 'bad' })];
   return wsBar('06 · WORK', 'BROKERAGE', (VP === 'tablet' ? r.slice(1) : r).join(''), plate);
 }
@@ -205,12 +217,13 @@ function brokerView() {
   const wide = WSX.device === 'wide';
   const why = WSX.sheet === 'why';
   if (VP === 'mobile') {
-    const list = brRecs().filter((x) => (WSX.br.sec === 'quotes' ? brIsQuote(x) : WSX.br.sec === 'shipments' ? !brIsQuote(x) : true));
+    const list = [...brRecs()].sort((a, b) => (brIsQuote(b) === (WSX.br.sec === 'quotes')) - (brIsQuote(a) === (WSX.br.sec === 'quotes')));
+    const onFile = [...new Set(brRecs().map(brCarrier).filter(Boolean))];
     const side = WSX.br.side;
     const inner = `<section class="rg cx br-cx br-cx--m"><header class="cx__h"><div class="cx__crumb"><span>BROKERAGE</span>${ico('fwd')}<span>${clientName(r.client)}</span>${ico('fwd')}<span>${r.ref}</span></div><h2 class="cx__t">${r.lane}</h2>${seg([['shipper', 'SHIPPER'], ['load', 'THE LOAD'], ['carrier', 'CARRIER']], side, 'br.side', 'wseg--fit')}</header><div class="cx__b" data-keep="br-m" data-swap="m:${r.id}:${side}:${WSX.br.sec}">${side === 'load' ? `${brLoadPlate(r, { compact: true })}${brWorkBody(r, WSX.br.sec)}` : side === 'shipper' ? `${brShipPlate(r)}${brShipSide(r)}` : `${brCarPlate(r)}${brCarSide(r)}`}</div></section>`;
-    return `<div class="ws br br--m">${brBar()}${brSegs()}<div class="br-mlist">${list.map(brCard).join('')}</div>${ntb('<b>BROKERAGE IS PAUSED.</b> SAMPLE RECORDS · NOTHING BOOKS FROM HERE.')}</div>${why ? phoneSheet(brWhy(), { label: 'Brokerage paused' }) : phoneSheet(inner, { label: r.ref })}`;
+    return `<div class="ws br br--m">${brBar()}${brSegs()}<div class="br-mlist">${list.map(brCard).join('')}</div>${onFile.map((c) => `<div class="br-mcar"><div class="sec-l"><span>CARRIER ON FILE · ${c.name}</span><span>${c.mc}</span></div>${brPacket(c)}</div>`).join('')}${ntb('<b>BROKERAGE IS PAUSED.</b> SAMPLE RECORDS · NOTHING BOOKS FROM HERE.')}</div>${why ? phoneSheet(brWhy(), { label: 'Brokerage paused' }) : phoneSheet(inner, { label: r.ref })}`;
   }
-  const plates = `<div class="br-plates">${brShipPlate(r)}${brLoadPlate(r)}${brCarPlate(r)}</div>`;
+  const plates = `<div class="br-plates">${brShipPlate(r)}${brLoadPlate(r, { short: VP === 'tablet' })}${brCarPlate(r)}</div>`;
   if (VP === 'tablet') {
     const side = WSX.br.side === 'shipper' ? brShipSide(r) : brCarSide(r);
     return `<div class="ws br br--t">${brBar()}<div class="br-segrow">${brSegs()}</div>${plates}<div class="br-t2">${brWork(r)}<div class="br-t2__side">${seg([['shipper', 'SHIPPER SIDE'], ['carrier', 'CARRIER SIDE']], WSX.br.side === 'shipper' ? 'shipper' : 'carrier', 'br.side', 'wseg--fit')}${side}</div></div></div>${why ? phoneSheet(brWhy(), { side: true, label: 'Brokerage paused' }) : ''}`;

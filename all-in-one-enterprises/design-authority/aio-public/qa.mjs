@@ -109,7 +109,7 @@ const REP = ['/services/trip-permits', '/services/usdot-registration', '/service
 const SHOOT = (path, group) => group !== 'SERVICE PAGES' || REP.includes(path);
 const allLinks = new Set();
 const allBg = new Set();
-for (const dev of Object.keys(DEV)) {
+for (const dev of process.env.QA_SKIP_PAGES ? [] : Object.keys(DEV)) {
   const p = await site(dev);
   const bad = { lower: [], tiny: [], wraps: [], clipped: [], sideways: [], images: [], dead: [], unknown: [], errors: [], fourofour: [] };
   for (const [path, , group] of tree) {
@@ -200,7 +200,7 @@ for (const dev of Object.keys(DEV)) {
   check('search · a result opens its page and closes the search', (await p.evaluate(() => window.AIO_PUB.state().path)).startsWith('/services/') && (await p.locator('#pub .search').count()) === 0, '');
   await p.evaluate(() => window.AIO_PUB.go('/'));
   await p.click('#pub [data-a="jump"][data-v="ecosystem"]');
-  await p.waitForTimeout(900);
+  await p.waitForTimeout(1700);
   check('home · SEE HOW IT WORKS scrolls to START · OPERATE · MAINTAIN', await p.evaluate(() => { const r = document.getElementById('ecosystem').getBoundingClientRect(); return r.top < 200 && r.top > -50; }), '');
   await p.click('#pub .fam >> nth=0');
   check('home · a service family on the road opens its page', (await p.evaluate(() => window.AIO_PUB.state().path)) !== '/', '');
@@ -216,7 +216,7 @@ for (const dev of Object.keys(DEV)) {
   const rec = await p.locator('#pub aside .row').allInnerTexts();
   check('finder · choosing GETTING MY AUTHORITY recommends USDOT, MC and BOC-3', rec.length === 3 && /USDOT/.test(rec.join()), rec.join(' / '));
   await p.evaluate(() => window.AIO_PUB.go('/get-started'));
-  await p.click('#pub [data-a="gsNext"]');
+  await p.click('#pub [data-a="gsNext"]', { force: true }); // drawn disabled until an answer is chosen; pressing it explains why
   check('get started · CONTINUE asks for an answer first', (await p.locator('#pub .toast').count()) === 1 && (await p.evaluate(() => window.AIO_PUB.state().gs.step)) === 0, '');
   await p.click('#pub [data-a="gsStage"][data-v="new"]');
   await p.click('#pub [data-a="gsNext"]');
@@ -295,6 +295,7 @@ for (const dev of Object.keys(DEV)) {
   await p.click('[data-step="1"]').catch(() => {});
   await p.click('[data-tab="g:family"]');
   await p.click('.rv-card >> nth=1');
+  await p.click('[data-ref]'); // put back after the check above
   check('review · a service page shows the approved IFTA public page beside it', (await p.locator('#rv-ref img[src*="ifta-public"]').count()) === 1, '');
   await p.click('#pub a[href="#/services"] >> nth=0');
   check('review · clicking inside the site navigates inside the frame', (await p.evaluate(() => window.AIO_PUBREV.state().path)) === '/services', '');

@@ -265,8 +265,8 @@ function ikChecks(m) {
 function ikFigs(m, title = 'APPROVAL CREATES') {
   return `<div class="ik-figs"><div class="sec-l">${title}</div><div class="ros">${ikFound(m).map(([n, l]) => ro(n, l)).join('')}</div></div>`;
 }
-function ikSum(m) {
-  return `<div class="ik-sum">${ikFigs(m)}<div class="ik-land"><span>${ico('security')}APPROVAL LANDS ON</span><b>PREBUILT · NOT ACTIVE YET</b></div>${ikChecks(m)}${FOUNDER ? '' : ntb('<b>FOUNDER ONLY.</b> STAFF PREPARE THE CASE AND SEND IT.')}</div>`;
+function ikSum(m, note = true) {
+  return `<div class="ik-sum">${ikFigs(m)}<div class="ik-land"><span>${ico('security')}APPROVAL LANDS ON</span><b>PREBUILT · NOT ACTIVE YET</b></div>${ikChecks(m)}${FOUNDER || !note ? '' : ntb('<b>FOUNDER ONLY.</b> STAFF PREPARE THE CASE AND SEND IT.')}</div>`;
 }
 function ikQueue(list, m, sub) {
   return `<div class="ik-q">${list.map((x) => `<div class="pk ik-pc ${x.id === m.id ? 'is-sel' : ''}" data-a="ik.case" data-v="${x.id}" title="${x.name}">${ikMonoTag(x)}<span><b class="pk__t">${x.name}</b><span class="pk__s">${sub(x)}</span></span>${sw(ikStage(x))}</div>`).join('') || '<div class="ik-none"><b>NOTHING HERE NOW</b></div>'}</div>`;
@@ -364,7 +364,7 @@ function ikDetail(m) {
   const l = ikLife(m);
   if (IK_SEC_LIVES.extraction.includes(l)) return `<div class="ik-rd"><div class="sec-l"><span>WHAT AIO READ</span><span>${m.files} FILES</span></div>${ikReadRows(m)}</div>`;
   if (l === 'MIGRATION_REVIEW_REQUIRED' && m.conflicts) return `<div class="ik-cfs"><div class="sec-l"><span>CONFLICTS</span><span>${ikOpenConf(m) ? `${ikOpenConf(m)} OPEN` : 'SETTLED'}</span></div>${ikConfCards(m)}</div>`;
-  if (l === 'MIGRATION_REVIEW_REQUIRED') return ikSum(m);
+  if (l === 'MIGRATION_REVIEW_REQUIRED') return ikSum(m, false);
   return '';
 }
 function ikCase(m, phone = false) {
