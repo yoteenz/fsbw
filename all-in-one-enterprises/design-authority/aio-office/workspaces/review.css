@@ -23,7 +23,8 @@
 body { margin: 0; background: var(--bg); color: var(--fg); font: 400 15px/1.45 var(--body); }
 
 .rv [hidden] { display: none !important; }
-.rv { max-width: 2960px; margin: 0 auto; padding: 12px 16px 28px; display: grid; gap: 12px; }
+.rv { max-width: 2960px; margin: 0 auto; padding: 12px 16px 28px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; }
+.rv > * { min-width: 0; }
 .rv button { font-family: inherit; }
 .rv-k { font: 700 10.5px/1 var(--chrome); letter-spacing: 0.18em; color: var(--muted); }
 
@@ -34,14 +35,14 @@ body { margin: 0; background: var(--bg); color: var(--fg); font: 400 15px/1.45 v
 .rv-id span { display: grid; gap: 3px; padding-left: 12px; border-left: 1px solid var(--line); }
 .rv-id b { font: 800 15px/1 var(--chrome); letter-spacing: 0.08em; }
 .rv-id small { font: 600 9.5px/1 var(--chrome); letter-spacing: 0.18em; color: var(--accent); }
-.rv-tabs { display: flex; gap: 4px; padding: 4px; border-radius: 12px; background: var(--panel); border: 1px solid var(--line); overflow-x: auto; scrollbar-width: none; max-width: 100%; }
+.rv-tabs { display: flex; gap: 4px; padding: 4px; border-radius: 12px; background: var(--panel); border: 1px solid var(--line); overflow-x: auto; scrollbar-width: none; max-width: 100%; min-width: 0; }
 .rv-tabs::-webkit-scrollbar { display: none; }
 .rv-tab { appearance: none; border: 0; background: none; color: var(--fg); height: 36px; padding: 0 14px; border-radius: 9px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; font: 700 12.5px/1 var(--chrome); letter-spacing: 0.08em; white-space: nowrap; }
 .rv-tab i { font-style: normal; font: 700 10px/1 var(--chrome); letter-spacing: 0.1em; color: var(--muted); }
 .rv-tab:hover { background: var(--btn); }
 .rv-tab[aria-current='true'] { background: var(--on-bg); color: var(--on-fg); }
 .rv-tab[aria-current='true'] i { color: inherit; opacity: 0.7; }
-.rv-group { display: flex; align-items: center; gap: 5px; }
+.rv-group { display: flex; flex-wrap: wrap; align-items: center; gap: 5px; }
 .rv-top .rv-group:last-child { margin-left: auto; }
 .rv-btn { appearance: none; border: 1px solid var(--line); background: var(--btn); color: var(--fg); height: 32px; padding: 0 11px; border-radius: 8px; cursor: pointer; font: 700 11px/1 var(--chrome); letter-spacing: 0.1em; white-space: nowrap; display: inline-flex; align-items: center; gap: 6px; }
 .rv-btn[aria-pressed='true'], .rv-btn--on { background: var(--on-bg); border-color: var(--on-bg); color: var(--on-fg); }
@@ -61,7 +62,8 @@ body { margin: 0; background: var(--bg); color: var(--fg); font: 400 15px/1.45 v
 .rv-demo[aria-pressed='true'] .ico { color: #17130a; }
 .rv-bar .rv-right { margin-left: auto; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; }
 .rv-sims { font: 700 10.5px/1 var(--chrome); letter-spacing: 0.12em; color: var(--accent); }
-.rv[data-view='overview'] .rv-bar { display: none; }
+/* the landing keeps the device switch: the previews follow it */
+.rv[data-view='overview'] .rv-line, .rv[data-view='overview'] .rv-try { display: none; }
 
 /* stage */
 .rv-stagewrap { display: grid; gap: 6px; }
@@ -108,7 +110,17 @@ body { margin: 0; background: var(--bg); color: var(--fg); font: 400 15px/1.45 v
 .rv-mini { position: relative; display: block; overflow: hidden; border-radius: 12px; background: #f3f0ea; box-shadow: 0 0 0 1px var(--line), 0 16px 40px rgba(0, 0, 0, 0.16); transition: box-shadow 0.18s, transform 0.18s; }
 .rv-mini__dev { position: absolute; left: 0; top: 0; transform-origin: top left; overflow: hidden; pointer-events: none; }
 .rv-card:hover .rv-mini, .rv-card:focus-visible .rv-mini { box-shadow: 0 0 0 2px var(--accent), 0 20px 46px rgba(0, 0, 0, 0.22); transform: translateY(-2px); }
-.rv-card__cap { display: flex; align-items: center; gap: 12px; }
+.rv-card__cap { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
+/* phone and tablet previews: four side by side, framed like the device */
+.rv-cards--phone, .rv-cards--tablet { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 26px; }
+.rv-cards--phone { max-width: 1480px; }
+.rv-cards--tablet { max-width: 2000px; }
+.rv-cards--phone .rv-mini { border-radius: 30px; box-shadow: 0 0 0 7px var(--frame), 0 18px 40px rgba(0, 0, 0, 0.22); margin: 7px; }
+.rv-cards--tablet .rv-mini { border-radius: 20px; box-shadow: 0 0 0 8px var(--frame), 0 18px 40px rgba(0, 0, 0, 0.22); margin: 8px; }
+.rv-cards--phone .rv-card:hover .rv-mini, .rv-cards--tablet .rv-card:hover .rv-mini { box-shadow: 0 0 0 7px var(--accent), 0 20px 46px rgba(0, 0, 0, 0.26); }
+.rv-cards--phone .rv-card__t, .rv-cards--tablet .rv-card__t { font-size: 18px; }
+@media (max-width: 1100px) { .rv-cards--phone, .rv-cards--tablet { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 760px) { .rv-cards--phone { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; } .rv-cards--tablet { grid-template-columns: minmax(0, 1fr); } .rv-cards--phone .rv-card__shape { display: none; } .rv-cards--phone .rv-card__t { font-size: 15px; } }
 .rv-card__no { font: 700 11px/1 var(--chrome); letter-spacing: 0.16em; color: var(--accent); min-width: 26px; }
 .rv-card__t { font: 800 21px/1 var(--chrome); letter-spacing: 0.03em; }
 .rv-card__shape { font: 700 10.5px/1 var(--chrome); letter-spacing: 0.18em; color: var(--muted); padding: 5px 8px; border: 1px solid var(--line); border-radius: 6px; }
@@ -143,7 +155,12 @@ body { margin: 0; background: var(--bg); color: var(--fg); font: 400 15px/1.45 v
 .rv-lb__x { position: absolute; top: 14px; right: 18px; color: #f3dfae; font: 700 12px/1 var(--chrome); letter-spacing: 0.16em; }
 
 @media (max-width: 700px) {
-  .rv { padding: 10px 12px 24px; }
+  .rv { padding: 10px 12px 24px; gap: 10px; }
+  .rv-bar { gap: 8px 10px; }
+  .rv-try { flex: 1 1 100%; min-width: 0; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+  .rv-try::-webkit-scrollbar { display: none; }
+  .rv-try .rv-demo { flex: none; }
+  .rv-bar .rv-right { margin-left: 0; }
   .rv-id img { height: 24px; }
   .rv-top .rv-group:last-child { margin-left: 0; }
   .rv-line span { font-size: 12px; }

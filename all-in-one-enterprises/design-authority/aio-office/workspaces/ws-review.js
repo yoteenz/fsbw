@@ -16,6 +16,7 @@ const WORKSPACES = [
   { id: 'client', no: '360', name: 'CLIENT 360', page: 'more', view: () => clientView(), diag: 'before-after-client.jpg', shape: 'A COMPANY', line: 'WHO THEY ARE, WHAT WE DO, WHAT IS OPEN.' },
 ];
 const wsById = (id) => WORKSPACES.find((w) => w.id === id);
+const DEVICE_WORD = { phone: 'ON A PHONE · 390 × 844', tablet: 'ON A TABLET · 834 × 1194', desktop: 'ON A DESKTOP · 1440 × 900', wide: 'ULTRA-WIDE · 2560 × 1440' };
 
 /* TRY: each step names the control it presses ([data-a][data-v]) so the reviewer sees where it is. */
 const DEMOS = {
@@ -149,14 +150,15 @@ function drawChrome() {
 /* ── landing: four live miniatures, the diagnosis and the rules ── */
 function drawLanding() {
   const keep = { device: RV.device, ws: WSX.ws, sheet: WSX.sheet, pending: WSX.pending };
-  studioSet({ vp: 'desktop', wide: false, role: WSX.role });
+  const [dw, dh, vp, wide] = DEVICES[RV.device];
+  studioSet({ vp, wide, role: WSX.role });
   WSX.sheet = false;
   WSX.pending = null;
   const cards = WORKSPACES.map((w) => {
     WSX.ws = w.id;
     const inner = deviceInner(w.id);
     return `<div class="rv-card" role="button" tabindex="0" data-rv-tab="${w.id}" aria-label="Open ${w.name}">
-      <span class="rv-mini"><span class="ao-root device rv-mini__dev" data-vp="desktop" data-wide="0" data-device="desktop" style="--dw:1440px;--dh:900px;width:1440px;height:900px" inert>${inner}</span></span>
+      <span class="rv-mini"><span class="ao-root device rv-mini__dev" data-vp="${vp}" data-wide="${wide ? 1 : 0}" data-device="${RV.device}" style="--dw:${dw}px;--dh:${dh}px;--pad-x:${wide ? 24 : 16}px;width:${dw}px;height:${dh}px" inert>${inner}</span></span>
       <span class="rv-card__cap"><span class="rv-card__no">${w.no}</span><span class="rv-card__t">${w.name}</span><span class="rv-card__shape">${w.shape}</span><span class="rv-card__go">${ico('fwd')}</span></span>
     </div>`;
   }).join('');
@@ -170,8 +172,8 @@ function drawLanding() {
     ['diagnosis-5-client.jpg', 'THE CLIENT WAS A FORM'],
   ];
   $('rv-landing').innerHTML = `
-    <section class="rv-hero"><p class="rv-eyebrow">FOUR WORKSPACES · CANDIDATES FOR APPROVAL</p><h2>EACH ONE SHAPED LIKE ITS WORK.</h2></section>
-    <div class="rv-cards">${cards}</div>
+    <section class="rv-hero"><p class="rv-eyebrow">FOUR WORKSPACES · CANDIDATES FOR APPROVAL · SHOWN ${DEVICE_WORD[RV.device]}</p><h2>EACH ONE SHAPED LIKE ITS WORK.</h2></section>
+    <div class="rv-cards rv-cards--${RV.device}">${cards}</div>
     <section class="rv-sec"><header><h3>BEFORE → AFTER</h3><span>THE SAME SAMPLE RECORDS · OPEN ANY BOARD</span></header>
       <div class="rv-diag rv-diag--4">${WORKSPACES.map((w) => `<button type="button" class="rv-thumb" data-rv-lightbox="${w.diag}"><img src="diagnosis/${w.diag}" alt="" loading="lazy"><span>${w.name}</span></button>`).join('')}</div></section>
     <section class="rv-sec"><header><h3>THE RULES</h3><span>TWELVE, FOR EVERY WORKSPACE THAT FOLLOWS</span></header>
@@ -183,9 +185,10 @@ function drawLanding() {
   scaleMinis();
 }
 function scaleMinis() {
+  const [dw, dh] = DEVICES[RV.device];
   document.querySelectorAll('.rv-mini').forEach((m) => {
-    const s = m.clientWidth / 1440;
-    m.style.height = `${Math.round(900 * s)}px`;
+    const s = m.clientWidth / dw;
+    m.style.height = `${Math.round(dh * s)}px`;
     m.firstElementChild.style.transform = `scale(${s})`;
   });
 }

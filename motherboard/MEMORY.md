@@ -55695,3 +55695,11 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Record:** `docs/aio/office-workspace-proofs/` vendored from SITE00 33a93710 (PROVENANCE.json). Evidence test `src/product-graph/officeWorkspaceProofs.test.ts` (12) pins the approved roots' sha256.
 - **Not changed:** approved roots, migration / IFTA authorities, the 619-page review, live app, schema, auth, permissions, billing. 12 privacy gaps still OPEN. Not deployed.
 - **Review:** https://claude.ai/artifact/DKYZUHjSdiTw1qSC1evdbk. Next gate: FOUNDER REVIEW OF FOUR CREATIVE-DIRECTED AIO OFFICE WORKSPACE PROOFS — do not expand until approved.
+
+---
+
+## 2026-10-09 — AIO office workspace proofs: mobile made visible in the review [sync-only]
+
+- Founder: "where's the mobile version? i just see tablet/desktop". The landing showed desktop previews only with the device switch hidden, and on a phone-sized screen the review spilled sideways (718 px).
+- Fixed in `design-authority/aio-office/workspaces/` (`ws-review.js`, `review.css`): device switch on the landing, previews follow it (PHONE = four phone layouts side by side), tab strip shrinks/scrolls, toolbar compacts on phones. No workspace design changed.
+- QA 180/180; `AIO_OFFICE_WORKSPACE_PROOFS/screens/` now 32 (adds `review--landing-phone.jpg`). Record re-vendored from SITE00 89f59cd5. Same review link (version 2): https://claude.ai/artifact/DKYZUHjSdiTw1qSC1evdbk.

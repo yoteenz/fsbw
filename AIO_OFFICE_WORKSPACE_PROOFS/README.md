@@ -13,17 +13,17 @@ The files here show the review with sample records, not the live app. The four w
 
 ## `screens/`
 
-There are 31 captures from `workspaces/qa.mjs`:
+There are 32 captures from `workspaces/qa.mjs`:
 
 - **Every workspace at all four sizes**: `{fleet,books,comp,client}--{phone,tablet,desktop,wide}.jpg`
 - **Desktop states**: `--desktop--selected`, `--desktop--context` and `--desktop--action` captures.
 - **Phone drawers**: `--phone--context` captures.
 - **Staff view of Client 360**: `client--desktop--staff.jpg`, with no BILLING section.
-- **The review itself**: `review--landing.jpg` and `review--before.jpg`.
+- **The review itself**: `review--landing.jpg`, `review--landing-phone.jpg` (the four phone layouts) and `review--before.jpg`.
 
 ## `qa-summary.json`
 
-This is the result of every check `qa.mjs` ran: 173 run and 0 failed.
+This is the result of every check `qa.mjs` ran: 180 run and 0 failed.
 
 For each workspace on each device, it checked that:
 

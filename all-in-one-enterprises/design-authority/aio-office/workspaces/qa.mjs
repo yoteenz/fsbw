@@ -300,6 +300,12 @@ for (const ws of WS) {
   const imgs = await p.evaluate(() => Promise.all([...document.images].map((i) => (i.complete ? i.naturalWidth : new Promise((r) => { i.onload = () => r(i.naturalWidth); i.onerror = () => r(0); })))));
   check('review · every image loads', imgs.every((w) => w > 0), imgs.filter((w) => !w).length);
   if (SHOTS) await p.screenshot({ path: join(TMP, 'landing.png') }), execFileSync('python3', ['-I', '-c', 'import sys\nfrom PIL import Image\nImage.open(sys.argv[1]).convert("RGB").save(sys.argv[2],"JPEG",quality=82)', join(TMP, 'landing.png'), join(SHOTS, 'review--landing.jpg')]);
+  await p.click('[data-rv-device="phone"]');
+  check('review · the landing previews follow the device switch (phone)', (await p.evaluate(() => [...document.querySelectorAll('.rv-mini__dev')].map((m) => m.dataset.vp).join())) === 'mobile,mobile,mobile,mobile');
+  if (SHOTS) await p.screenshot({ path: join(TMP, 'lp.png') }), execFileSync('python3', ['-I', '-c', 'import sys\nfrom PIL import Image\nImage.open(sys.argv[1]).convert("RGB").save(sys.argv[2],"JPEG",quality=82)', join(TMP, 'lp.png'), join(SHOTS, 'review--landing-phone.jpg')]);
+  await p.click('[data-rv-device="tablet"]');
+  check('review · the landing previews follow the device switch (tablet)', (await p.evaluate(() => [...document.querySelectorAll('.rv-mini__dev')].map((m) => m.dataset.vp).join())) === 'tablet,tablet,tablet,tablet');
+  await p.click('[data-rv-device="desktop"]');
   await p.click('.rv-card[data-rv-tab="books"]');
   check('review · a card opens its workspace', (await p.evaluate(() => window.AIO_WS.state().view)) === 'books');
   const fit = await p.evaluate(() => document.getElementById('rv-sizer').getBoundingClientRect().bottom <= innerHeight);
@@ -331,6 +337,17 @@ for (const ws of WS) {
   await p.waitForFunction(() => window.AIO_WS.demoState().demo === null, null, { timeout: 15000 }).catch(() => {});
   const s = await p.evaluate(() => window.AIO_WS.state());
   check('review · the ABC → INSURANCE → TRUCK → BACK demo ends where it started', s.client.id === 'c-abc' && s.client.service === 'insurance' && s.client.stack.length === 0, JSON.stringify(s.client));
+  await p.close();
+}
+
+/* ── 8 · the review on a phone-sized screen: nothing spills sideways, the phone device fits ── */
+for (const view of ['overview', ...WS]) {
+  const p = await browser.newPage({ viewport: { width: 390, height: 844 } });
+  p.on('pageerror', (e) => errors.push(`review 390 ${view}: ${e}`));
+  await p.goto(`${URL0}#${view}`);
+  await p.waitForFunction(() => document.documentElement.dataset.ready === '1');
+  const r = await p.evaluate(() => ({ doc: document.documentElement.scrollWidth, dev: window.AIO_WS.state().device, phone: !!document.querySelector('[data-rv-device="phone"]').getClientRects().length, sizer: document.getElementById('rv-sizer').getBoundingClientRect().right }));
+  check(`review 390 · ${view} · no sideways scroll, phone switch visible${view === 'overview' ? '' : ', device fits'}`, r.doc <= 390 && r.phone && r.dev === 'phone' && (view === 'overview' || r.sizer <= 390), JSON.stringify(r));
   await p.close();
 }
 

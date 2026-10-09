@@ -1,6 +1,6 @@
 {
- "when": "2026-10-08T23:42:32.267Z",
- "pass": 173,
+ "when": "2026-10-09T01:48:38.711Z",
+ "pass": 180,
  "fail": 0,
  "results": [
   {
@@ -774,6 +774,16 @@
    "detail": ""
   },
   {
+   "name": "review · the landing previews follow the device switch (phone)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · the landing previews follow the device switch (tablet)",
+   "ok": true,
+   "detail": ""
+  },
+  {
    "name": "review · a card opens its workspace",
    "ok": true,
    "detail": ""
@@ -860,6 +870,31 @@
   },
   {
    "name": "review · the ABC → INSURANCE → TRUCK → BACK demo ends where it started",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review 390 · overview · no sideways scroll, phone switch visible",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review 390 · fleet · no sideways scroll, phone switch visible, device fits",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review 390 · books · no sideways scroll, phone switch visible, device fits",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review 390 · comp · no sideways scroll, phone switch visible, device fits",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review 390 · client · no sideways scroll, phone switch visible, device fits",
    "ok": true,
    "detail": ""
   },

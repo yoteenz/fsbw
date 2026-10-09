@@ -26,7 +26,7 @@ The workspaces are candidates until the founder approves them. They are isolated
 | `ws.css` | The workspace grammar on the approved tokens. |
 | `ws-review.js`, `review.css` | The founder review: landing, tabs, device switch, FOUNDER / STAFF switch, BEFORE view, and TRY demonstrations. |
 | `build.mjs` | Builds one self-contained page plus its images, as a fragment for the artifact and as `local.html`. |
-| `qa.mjs` | 173 checks: journeys, dead controls, handlers, fit, overflow, uppercase, roles, demonstrations, and console errors. It also takes screenshots. |
+| `qa.mjs` | 180 checks: journeys, dead controls, handlers, fit, overflow, uppercase, roles, demonstrations, and console errors. It also takes screenshots. |
 | `boards.mjs` | Makes the before → after boards and the board comparing the approved roots with the workspaces. |
 
 ```
