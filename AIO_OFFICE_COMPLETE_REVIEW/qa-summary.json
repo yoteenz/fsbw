@@ -1,0 +1,4682 @@
+{
+ "when": "2026-10-09T05:42:49.785Z",
+ "pass": 935,
+ "fail": 0,
+ "results": [
+  {
+   "name": "fleet · phone · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fleet · phone · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fleet · phone · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fleet · phone · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fleet · phone · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fleet · phone · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fleet · phone · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fleet · tablet · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fleet · tablet · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fleet · tablet · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fleet · tablet · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fleet · tablet · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fleet · tablet · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fleet · tablet · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fleet · tablet · fits one screen (only lists scroll)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fleet · desktop · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fleet · desktop · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fleet · desktop · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fleet · desktop · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fleet · desktop · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fleet · desktop · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fleet · desktop · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fleet · desktop · fits one screen (only lists scroll)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fleet · wide · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fleet · wide · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fleet · wide · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fleet · wide · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fleet · wide · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fleet · wide · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fleet · wide · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fleet · wide · fits one screen (only lists scroll)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "books · phone · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "books · phone · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "books · phone · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "books · phone · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "books · phone · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "books · phone · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "books · phone · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "books · tablet · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "books · tablet · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "books · tablet · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "books · tablet · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "books · tablet · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "books · tablet · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "books · tablet · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "books · tablet · fits one screen (only lists scroll)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "books · desktop · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "books · desktop · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "books · desktop · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "books · desktop · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "books · desktop · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "books · desktop · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "books · desktop · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "books · desktop · fits one screen (only lists scroll)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "books · wide · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "books · wide · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "books · wide · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "books · wide · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "books · wide · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "books · wide · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "books · wide · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "books · wide · fits one screen (only lists scroll)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "comp · phone · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "comp · phone · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "comp · phone · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "comp · phone · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "comp · phone · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "comp · phone · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "comp · phone · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "comp · tablet · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "comp · tablet · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "comp · tablet · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "comp · tablet · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "comp · tablet · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "comp · tablet · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "comp · tablet · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "comp · tablet · fits one screen (only lists scroll)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "comp · desktop · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "comp · desktop · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "comp · desktop · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "comp · desktop · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "comp · desktop · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "comp · desktop · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "comp · desktop · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "comp · desktop · fits one screen (only lists scroll)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "comp · wide · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "comp · wide · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "comp · wide · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "comp · wide · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "comp · wide · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "comp · wide · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "comp · wide · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "comp · wide · fits one screen (only lists scroll)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "client · phone · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "client · phone · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "client · phone · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "client · phone · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "client · phone · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "client · phone · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "client · phone · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "client · tablet · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "client · tablet · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "client · tablet · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "client · tablet · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "client · tablet · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "client · tablet · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "client · tablet · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "client · tablet · fits one screen (only lists scroll)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "client · desktop · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "client · desktop · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "client · desktop · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "client · desktop · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "client · desktop · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "client · desktop · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "client · desktop · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "client · desktop · fits one screen (only lists scroll)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "client · wide · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "client · wide · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "client · wide · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "client · wide · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "client · wide · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "client · wide · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "client · wide · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "client · wide · fits one screen (only lists scroll)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "broker · phone · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "broker · phone · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "broker · phone · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "broker · phone · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "broker · phone · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "broker · phone · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "broker · phone · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "broker · tablet · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "broker · tablet · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "broker · tablet · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "broker · tablet · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "broker · tablet · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "broker · tablet · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "broker · tablet · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "broker · tablet · fits one screen (only lists scroll)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "broker · desktop · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "broker · desktop · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "broker · desktop · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "broker · desktop · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "broker · desktop · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "broker · desktop · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "broker · desktop · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "broker · desktop · fits one screen (only lists scroll)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "broker · wide · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "broker · wide · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "broker · wide · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "broker · wide · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "broker · wide · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "broker · wide · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "broker · wide · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "broker · wide · fits one screen (only lists scroll)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "dispatch · phone · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "dispatch · phone · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "dispatch · phone · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "dispatch · phone · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "dispatch · phone · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "dispatch · phone · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "dispatch · phone · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "dispatch · tablet · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "dispatch · tablet · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "dispatch · tablet · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "dispatch · tablet · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "dispatch · tablet · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "dispatch · tablet · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "dispatch · tablet · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "dispatch · tablet · fits one screen (only lists scroll)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "dispatch · desktop · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "dispatch · desktop · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "dispatch · desktop · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "dispatch · desktop · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "dispatch · desktop · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "dispatch · desktop · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "dispatch · desktop · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "dispatch · desktop · fits one screen (only lists scroll)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "dispatch · wide · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "dispatch · wide · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "dispatch · wide · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "dispatch · wide · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "dispatch · wide · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "dispatch · wide · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "dispatch · wide · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "dispatch · wide · fits one screen (only lists scroll)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "drivers · phone · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "drivers · phone · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "drivers · phone · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "drivers · phone · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "drivers · phone · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "drivers · phone · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "drivers · phone · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "drivers · tablet · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "drivers · tablet · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "drivers · tablet · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "drivers · tablet · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "drivers · tablet · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "drivers · tablet · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "drivers · tablet · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "drivers · tablet · fits one screen (only lists scroll)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "drivers · desktop · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "drivers · desktop · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "drivers · desktop · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "drivers · desktop · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "drivers · desktop · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "drivers · desktop · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "drivers · desktop · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "drivers · desktop · fits one screen (only lists scroll)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "drivers · wide · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "drivers · wide · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "drivers · wide · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "drivers · wide · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "drivers · wide · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "drivers · wide · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "drivers · wide · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "drivers · wide · fits one screen (only lists scroll)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "factor · phone · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "factor · phone · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "factor · phone · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "factor · phone · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "factor · phone · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "factor · phone · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "factor · phone · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "factor · tablet · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "factor · tablet · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "factor · tablet · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "factor · tablet · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "factor · tablet · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "factor · tablet · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "factor · tablet · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "factor · tablet · fits one screen (only lists scroll)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "factor · desktop · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "factor · desktop · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "factor · desktop · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "factor · desktop · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "factor · desktop · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "factor · desktop · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "factor · desktop · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "factor · desktop · fits one screen (only lists scroll)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "factor · wide · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "factor · wide · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "factor · wide · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "factor · wide · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "factor · wide · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "factor · wide · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "factor · wide · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "factor · wide · fits one screen (only lists scroll)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "filing · phone · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "filing · phone · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "filing · phone · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "filing · phone · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "filing · phone · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "filing · phone · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "filing · phone · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "filing · tablet · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "filing · tablet · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "filing · tablet · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "filing · tablet · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "filing · tablet · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "filing · tablet · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "filing · tablet · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "filing · tablet · fits one screen (only lists scroll)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "filing · desktop · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "filing · desktop · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "filing · desktop · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "filing · desktop · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "filing · desktop · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "filing · desktop · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "filing · desktop · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "filing · desktop · fits one screen (only lists scroll)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "filing · wide · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "filing · wide · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "filing · wide · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "filing · wide · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "filing · wide · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "filing · wide · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "filing · wide · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "filing · wide · fits one screen (only lists scroll)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "home · phone · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "home · phone · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "home · phone · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "home · phone · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "home · phone · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "home · phone · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "home · phone · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "home · tablet · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "home · tablet · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "home · tablet · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "home · tablet · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "home · tablet · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "home · tablet · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "home · tablet · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "home · tablet · fits one screen (only lists scroll)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "home · desktop · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "home · desktop · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "home · desktop · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "home · desktop · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "home · desktop · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "home · desktop · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "home · desktop · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "home · desktop · fits one screen (only lists scroll)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "home · wide · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "home · wide · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "home · wide · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "home · wide · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "home · wide · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "home · wide · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "home · wide · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "home · wide · fits one screen (only lists scroll)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "ins · phone · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "ins · phone · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "ins · phone · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "ins · phone · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "ins · phone · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "ins · phone · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "ins · phone · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "ins · tablet · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "ins · tablet · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "ins · tablet · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "ins · tablet · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "ins · tablet · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "ins · tablet · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "ins · tablet · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "ins · tablet · fits one screen (only lists scroll)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "ins · desktop · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "ins · desktop · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "ins · desktop · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "ins · desktop · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "ins · desktop · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "ins · desktop · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "ins · desktop · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "ins · desktop · fits one screen (only lists scroll)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "ins · wide · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "ins · wide · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "ins · wide · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "ins · wide · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "ins · wide · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "ins · wide · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "ins · wide · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "ins · wide · fits one screen (only lists scroll)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "intake · phone · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "intake · phone · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "intake · phone · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "intake · phone · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "intake · phone · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "intake · phone · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "intake · phone · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "intake · tablet · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "intake · tablet · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "intake · tablet · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "intake · tablet · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "intake · tablet · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "intake · tablet · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "intake · tablet · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "intake · tablet · fits one screen (only lists scroll)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "intake · desktop · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "intake · desktop · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "intake · desktop · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "intake · desktop · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "intake · desktop · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "intake · desktop · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "intake · desktop · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "intake · desktop · fits one screen (only lists scroll)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "intake · wide · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "intake · wide · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "intake · wide · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "intake · wide · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "intake · wide · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "intake · wide · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "intake · wide · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "intake · wide · fits one screen (only lists scroll)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "mech · phone · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "mech · phone · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "mech · phone · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "mech · phone · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "mech · phone · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "mech · phone · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "mech · phone · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "mech · tablet · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "mech · tablet · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "mech · tablet · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "mech · tablet · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "mech · tablet · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "mech · tablet · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "mech · tablet · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "mech · tablet · fits one screen (only lists scroll)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "mech · desktop · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "mech · desktop · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "mech · desktop · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "mech · desktop · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "mech · desktop · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "mech · desktop · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "mech · desktop · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "mech · desktop · fits one screen (only lists scroll)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "mech · wide · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "mech · wide · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "mech · wide · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "mech · wide · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "mech · wide · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "mech · wide · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "mech · wide · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "mech · wide · fits one screen (only lists scroll)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "more · phone · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "more · phone · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "more · phone · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "more · phone · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "more · phone · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "more · phone · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "more · phone · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "more · tablet · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "more · tablet · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "more · tablet · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "more · tablet · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "more · tablet · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "more · tablet · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "more · tablet · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "more · tablet · fits one screen (only lists scroll)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "more · desktop · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "more · desktop · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "more · desktop · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "more · desktop · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "more · desktop · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "more · desktop · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "more · desktop · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "more · desktop · fits one screen (only lists scroll)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "more · wide · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "more · wide · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "more · wide · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "more · wide · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "more · wide · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "more · wide · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "more · wide · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "more · wide · fits one screen (only lists scroll)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "permits · phone · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "permits · phone · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "permits · phone · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "permits · phone · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "permits · phone · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "permits · phone · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "permits · phone · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "permits · tablet · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "permits · tablet · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "permits · tablet · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "permits · tablet · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "permits · tablet · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "permits · tablet · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "permits · tablet · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "permits · tablet · fits one screen (only lists scroll)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "permits · desktop · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "permits · desktop · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "permits · desktop · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "permits · desktop · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "permits · desktop · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "permits · desktop · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "permits · desktop · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "permits · desktop · fits one screen (only lists scroll)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "permits · wide · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "permits · wide · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "permits · wide · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "permits · wide · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "permits · wide · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "permits · wide · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "permits · wide · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "permits · wide · fits one screen (only lists scroll)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "ready · phone · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "ready · phone · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "ready · phone · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "ready · phone · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "ready · phone · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "ready · phone · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "ready · phone · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "ready · tablet · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "ready · tablet · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "ready · tablet · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "ready · tablet · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "ready · tablet · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "ready · tablet · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "ready · tablet · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "ready · tablet · fits one screen (only lists scroll)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "ready · desktop · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "ready · desktop · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "ready · desktop · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "ready · desktop · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "ready · desktop · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "ready · desktop · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "ready · desktop · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "ready · desktop · fits one screen (only lists scroll)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "ready · wide · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "ready · wide · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "ready · wide · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "ready · wide · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "ready · wide · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "ready · wide · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "ready · wide · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "ready · wide · fits one screen (only lists scroll)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "reports · phone · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "reports · phone · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "reports · phone · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "reports · phone · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "reports · phone · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "reports · phone · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "reports · phone · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "reports · tablet · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "reports · tablet · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "reports · tablet · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "reports · tablet · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "reports · tablet · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "reports · tablet · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "reports · tablet · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "reports · tablet · fits one screen (only lists scroll)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "reports · desktop · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "reports · desktop · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "reports · desktop · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "reports · desktop · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "reports · desktop · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "reports · desktop · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "reports · desktop · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "reports · desktop · fits one screen (only lists scroll)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "reports · wide · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "reports · wide · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "reports · wide · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "reports · wide · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "reports · wide · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "reports · wide · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "reports · wide · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "reports · wide · fits one screen (only lists scroll)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-home · phone · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-home · phone · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-home · phone · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-home · phone · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-home · phone · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-home · phone · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-home · phone · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-home · tablet · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-home · tablet · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-home · tablet · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-home · tablet · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-home · tablet · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-home · tablet · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-home · tablet · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-home · desktop · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-home · desktop · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-home · desktop · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-home · desktop · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-home · desktop · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-home · desktop · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-home · desktop · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-home · wide · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-home · wide · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-home · wide · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-home · wide · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-home · wide · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-home · wide · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-home · wide · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-intake · phone · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-intake · phone · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-intake · phone · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-intake · phone · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-intake · phone · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-intake · phone · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-intake · phone · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-intake · tablet · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-intake · tablet · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-intake · tablet · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-intake · tablet · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-intake · tablet · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-intake · tablet · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-intake · tablet · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-intake · desktop · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-intake · desktop · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-intake · desktop · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-intake · desktop · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-intake · desktop · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-intake · desktop · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-intake · desktop · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-intake · wide · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-intake · wide · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-intake · wide · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-intake · wide · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-intake · wide · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-intake · wide · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-intake · wide · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-work · phone · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-work · phone · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-work · phone · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-work · phone · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-work · phone · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-work · phone · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-work · phone · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-work · tablet · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-work · tablet · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-work · tablet · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-work · tablet · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-work · tablet · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-work · tablet · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-work · tablet · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-work · desktop · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-work · desktop · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-work · desktop · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-work · desktop · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-work · desktop · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-work · desktop · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-work · desktop · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-work · wide · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-work · wide · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-work · wide · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-work · wide · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-work · wide · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-work · wide · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-work · wide · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-reports · phone · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-reports · phone · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-reports · phone · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-reports · phone · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-reports · phone · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-reports · phone · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-reports · phone · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-reports · tablet · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-reports · tablet · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-reports · tablet · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-reports · tablet · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-reports · tablet · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-reports · tablet · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-reports · tablet · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-reports · desktop · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-reports · desktop · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-reports · desktop · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-reports · desktop · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-reports · desktop · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-reports · desktop · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-reports · desktop · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-reports · wide · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-reports · wide · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-reports · wide · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-reports · wide · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-reports · wide · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-reports · wide · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-reports · wide · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-more · phone · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-more · phone · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-more · phone · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-more · phone · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-more · phone · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-more · phone · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-more · phone · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-more · tablet · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-more · tablet · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-more · tablet · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-more · tablet · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-more · tablet · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-more · tablet · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-more · tablet · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-more · desktop · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-more · desktop · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-more · desktop · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-more · desktop · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-more · desktop · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-more · desktop · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-more · desktop · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-more · wide · draws",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-more · wide · every control is keyboard-reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-more · wide · every control has a handler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-more · wide · no dead controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-more · wide · inputs are wired",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-more · wide · uppercase law",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "r-more · wide · no horizontal overflow",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fleet · select a truck moves the stage",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fleet · the panel opens the first issue on the truck",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fleet · change section changes the panel",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fleet · readout filters the yard",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fleet · search narrows the yard and keeps focus",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fleet · clicking a tag on the truck opens that section",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fleet · a simulated action confirms inline and says so",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fleet · confirming shows WORKING on the button first",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fleet · confirming changes the sample state and the history",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fleet · the confirmation toast says it was simulated",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fleet · the client chip opens Client 360 with a way back",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fleet · back returns to the same truck",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fleet · phone opens a connection in a drawer",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fleet · phone drawer closes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "books · AUG is a closed month",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "books · COLLECT shows the documents",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "books · opening a missing document focuses it",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "books · answering a charge is simulated and moves to the next",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "books · no balances are shown",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "books · a paused client shows paused, not a close",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "books · phone opens a charge in a drawer",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "comp · a marker on the horizon opens its case",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "comp · the queue opens a case",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "comp · NOW shows only what is due now",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "comp · DOT / SAFETY sits in the same lane, honestly empty",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "comp · CORRECTIVE WORK shows the out-of-service record",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "comp · the subject opens the truck in fleet",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "comp · back returns to the same case",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "comp · staff do not see founder-only REASSIGN",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "comp · phone opens the case in a drawer",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "client · INSURANCE focuses the service",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "client · a truck opens from the policy",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "client · the nested truck is drawn as a truck with its connections",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "client · back returns to the policy",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "client · back again keeps ABC and INSURANCE",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "client · founder sees BILLING",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "client · OPEN IN FLEET goes to the same truck",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "client · back returns to ABC with the truck still open",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "client · a prebuilt client is never shown as active",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "client · directory search",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "client · staff do not see BILLING",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "client · phone directory opens in a drawer",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "client · phone record opens in a drawer",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "shell · HOME in the navigation opens the approved HOME root",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "shell · INTAKE in the navigation opens the approved INTAKE root",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "shell · WORK in the navigation opens the approved WORK root",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "shell · REPORTS in the navigation opens the approved REPORTS root",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "shell · MORE in the navigation opens the approved MORE root",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "shell · header search focuses the workspace search",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "shell · the logo opens the approved HOME root",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · the landing shows the four groups and a card for every department and root",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · every image loads",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · the earlier passes keep their seven boards and twelve recorded interactions",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · a recorded interaction plays the last pass beside this one",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · Escape closes the clip and stops it",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · a tall board opens at full width and scrolls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · REDUCE MOTION switches the workspaces to reduced motion",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · and back",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · the landing follows the device switch (phone thumbnails, or named cards before the first thumbnails)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · a card opens its workspace",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · the group tab and the department row follow the open department",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · a group tab opens its first department",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · the device fits the window",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · device switch",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · founder / staff switch",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · BEFORE shows this pass beside the last one, then the board since Batch 1",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · TRY fleet #1 SELECT A TRUCK runs to the end",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · TRY fleet #2 CLEAR A BLOCKER runs to the end",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · TRY fleet #3 FILTER THE YARD runs to the end",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · TRY books #1 CHANGE THE MONTH runs to the end",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · TRY books #2 CHASE A MISSING PAPER runs to the end",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · TRY books #3 ANSWER A QUESTION runs to the end",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · TRY comp #1 INSPECT A DEADLINE runs to the end",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · TRY comp #2 ONLY WHAT IS DUE NOW runs to the end",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · TRY comp #3 FOLLOW IT TO THE TRUCK runs to the end",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · TRY client #1 ABC → INSURANCE → A TRUCK → BACK runs to the end",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · TRY client #2 MOVE BETWEEN SERVICES runs to the end",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · TRY client #3 TO FLEET AND BACK runs to the end",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · TRY broker #1 TWO SIDES OF ONE LOAD runs to the end",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · TRY broker #2 A QUOTE WITH NO CARRIER runs to the end",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · TRY broker #3 FOLLOW THE CARRIER runs to the end",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · TRY dispatch #1 FOLLOW THE LOADS runs to the end",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · TRY dispatch #2 CLEAR AN EXCEPTION runs to the end",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · TRY dispatch #3 THE BOARD, FIVE WAYS runs to the end",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · TRY drivers #1 RENEW A MEDICAL CARD runs to the end",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · TRY drivers #2 APPLICANTS ON THEIR PATH runs to the end",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · TRY drivers #3 FOLLOW THE DRIVER runs to the end",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · TRY factor #1 CLEAR THE BLOCKER runs to the end",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · TRY factor #2 WALK THE PATH runs to the end",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · TRY factor #3 ONLY WHAT IS STUCK runs to the end",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · TRY filing #1 FILE A RETURN runs to the end",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · TRY filing #2 THE APPROVED FILING ROOM runs to the end",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · TRY filing #3 WALK THE LANE runs to the end",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · TRY home #1 TRIAGE THE MORNING runs to the end",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · TRY home #2 DEADLINES, THEN BLOCKERS runs to the end",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · TRY home #3 QUICK ACTIONS runs to the end",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · TRY ins #1 SEND THE DELTA RENEWAL runs to the end",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · TRY ins #2 FOLLOW A POLICY TO ITS TRUCK runs to the end",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · TRY ins #3 INTAKE TO QUOTE runs to the end",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · TRY intake #1 APPROVE · IT LANDS ON PREBUILT runs to the end",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · TRY intake #2 SETTLE BLUELINE’S CONFLICTS runs to the end",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · TRY intake #3 WHAT THE CLIENT SEES runs to the end",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · TRY mech #1 GET THE REPAIR APPROVED runs to the end",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · TRY mech #2 WALK THE SHOP runs to the end",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · TRY mech #3 THE NETWORK runs to the end",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · TRY more #1 WHO SEES EACH DOCUMENT runs to the end",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · TRY more #2 ANSWER A CLIENT runs to the end",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · TRY more #3 WALK THE DESTINATIONS runs to the end",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · TRY permits #1 MOVE AN APPLICATION runs to the end",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · TRY permits #2 CHASE A MISSING DOCUMENT runs to the end",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · TRY permits #3 WORK BY SECTION runs to the end",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · TRY ready #1 VERIFY A CHECKPOINT runs to the end",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · TRY ready #2 THREE CLIENTS, THREE ROADS runs to the end",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · TRY ready #3 TO THE LANE THAT OWNS IT runs to the end",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · TRY reports #1 FROM THE OVERVIEW TO A RECORD runs to the end",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · TRY reports #2 CHANGE THE PERIOD runs to the end",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · TRY reports #3 PREPARE AN EXPORT runs to the end",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review · the ABC → INSURANCE → TRUCK → BACK demo ends where it started",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review 390 · overview · no sideways scroll, phone switch visible",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review 390 · fleet · no sideways scroll, phone switch visible, device fits",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review 390 · books · no sideways scroll, phone switch visible, device fits",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review 390 · comp · no sideways scroll, phone switch visible, device fits",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "review 390 · client · no sideways scroll, phone switch visible, device fits",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "motion · durations sit inside the brief (micro 100–160, select 150–220, panel 200–300, context 220–350 ms)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "motion · no bounce in the easing curve",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "type · the scale sits inside the brief (micro 9–10, label 10–11, row 11–13, body 12–14, heading 14–18 px)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "motion · selecting a truck updates in place (rows and panel kept, only their content moves)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "motion · every running animation is short (≤ 350 ms) and none repeat forever on a selection",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "motion · nothing pulses constantly in a settled workspace",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "motion · every tab row has its thumb on the active choice",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "motion · controls transition their state (not a jump)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "drawer · opens as a labelled modal dialog",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "drawer · slides in (200–300 ms)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "drawer · takes focus and makes the workspace behind it inert",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "drawer · the close button never sits on text",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "drawer · Tab and Shift+Tab stay inside the drawer",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "drawer · its content scrolls inside it (header and close stay put) and never scrolls the page behind",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "drawer · Escape closes it, and it leaves with motion",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "drawer · it is gone within 400 ms",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "drawer · focus returns to what opened it, and nothing is left inert",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "drawer · a change made while it leaves wins (no stale redraw)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "drawer · opens from the keyboard",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "drawer · closes from the keyboard",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "drawer · on tablet the client directory opens as a side drawer",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "reduced motion · the drawer appears without sliding (no animation over 10 ms)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "reduced motion · the drawer closes at once",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "reduced motion · a selection has no motion over 10 ms",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "reduced motion · a confirmation applies at once (no WORKING wait)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "books · MONTHLY is the default cadence",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "books · ANNUAL says honestly that no sample client is annual",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "books · MONTHLY brings the month back",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "books · ultra-wide fills the space with the month at a glance",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "text · phone · 323 states · single-line components stay on one line",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "text · phone · 323 states · no text clipped by its panel",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "text · phone · 323 states · no text overlapping text",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "text · phone · 323 states · nothing below 9 px",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "text · phone · 323 states · anything cut short keeps its full text reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "text · phone · 323 states · only the rows drawn to scroll sideways do",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "text · tablet · 323 states · single-line components stay on one line",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "text · tablet · 323 states · no text clipped by its panel",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "text · tablet · 323 states · no text overlapping text",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "text · tablet · 323 states · nothing below 9 px",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "text · tablet · 323 states · anything cut short keeps its full text reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "text · tablet · 323 states · only the rows drawn to scroll sideways do",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "text · desktop · 323 states · single-line components stay on one line",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "text · desktop · 323 states · no text clipped by its panel",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "text · desktop · 323 states · no text overlapping text",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "text · desktop · 323 states · nothing below 9 px",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "text · desktop · 323 states · anything cut short keeps its full text reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "text · desktop · 323 states · only the rows drawn to scroll sideways do",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "text · wide · 323 states · single-line components stay on one line",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "text · wide · 323 states · no text clipped by its panel",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "text · wide · 323 states · no text overlapping text",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "text · wide · 323 states · nothing below 9 px",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "text · wide · 323 states · anything cut short keeps its full text reachable",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "text · wide · 323 states · only the rows drawn to scroll sideways do",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "nav · desktop · every link on the five approved roots opens a designed page",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "nav · tablet · every link on the five approved roots opens a designed page",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "nav · phone · every link on the five approved roots opens a designed page",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "see · fleet · MAIN draws a registered page with live controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "see · fleet · SELECTED draws a registered page with live controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "see · fleet · DEEPER draws a registered page with live controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "see · fleet · PHONE draws a registered page with live controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "see · books · MAIN draws a registered page with live controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "see · books · SELECTED draws a registered page with live controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "see · books · DEEPER draws a registered page with live controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "see · books · PHONE draws a registered page with live controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "see · comp · MAIN draws a registered page with live controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "see · comp · SELECTED draws a registered page with live controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "see · comp · DEEPER draws a registered page with live controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "see · comp · PHONE draws a registered page with live controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "see · client · MAIN draws a registered page with live controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "see · client · SELECTED draws a registered page with live controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "see · client · DEEPER draws a registered page with live controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "see · client · PHONE draws a registered page with live controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "see · broker · MAIN draws a registered page with live controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "see · broker · SELECTED draws a registered page with live controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "see · broker · DEEPER draws a registered page with live controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "see · broker · PHONE draws a registered page with live controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "see · dispatch · MAIN draws a registered page with live controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "see · dispatch · SELECTED draws a registered page with live controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "see · dispatch · DEEPER draws a registered page with live controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "see · dispatch · PHONE draws a registered page with live controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "see · drivers · MAIN draws a registered page with live controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "see · drivers · SELECTED draws a registered page with live controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "see · drivers · DEEPER draws a registered page with live controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "see · drivers · PHONE draws a registered page with live controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "see · factor · MAIN draws a registered page with live controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "see · factor · SELECTED draws a registered page with live controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "see · factor · DEEPER draws a registered page with live controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "see · factor · PHONE draws a registered page with live controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "see · filing · MAIN draws a registered page with live controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "see · filing · SELECTED draws a registered page with live controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "see · filing · DEEPER draws a registered page with live controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "see · filing · PHONE draws a registered page with live controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "see · home · MAIN draws a registered page with live controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "see · home · SELECTED draws a registered page with live controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "see · home · DEEPER draws a registered page with live controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "see · home · PHONE draws a registered page with live controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "see · ins · MAIN draws a registered page with live controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "see · ins · SELECTED draws a registered page with live controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "see · ins · DEEPER draws a registered page with live controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "see · ins · PHONE draws a registered page with live controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "see · intake · MAIN draws a registered page with live controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "see · intake · SELECTED draws a registered page with live controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "see · intake · DEEPER draws a registered page with live controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "see · intake · PHONE draws a registered page with live controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "see · mech · MAIN draws a registered page with live controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "see · mech · SELECTED draws a registered page with live controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "see · mech · DEEPER draws a registered page with live controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "see · mech · PHONE draws a registered page with live controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "see · more · MAIN draws a registered page with live controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "see · more · SELECTED draws a registered page with live controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "see · more · DEEPER draws a registered page with live controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "see · more · PHONE draws a registered page with live controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "see · permits · MAIN draws a registered page with live controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "see · permits · SELECTED draws a registered page with live controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "see · permits · DEEPER draws a registered page with live controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "see · permits · PHONE draws a registered page with live controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "see · ready · MAIN draws a registered page with live controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "see · ready · SELECTED draws a registered page with live controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "see · ready · DEEPER draws a registered page with live controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "see · ready · PHONE draws a registered page with live controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "see · reports · MAIN draws a registered page with live controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "see · reports · SELECTED draws a registered page with live controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "see · reports · DEEPER draws a registered page with live controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "see · reports · PHONE draws a registered page with live controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "see · r-home · THE ROOT draws a registered page with live controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "see · r-home · NEEDS ATTENTION draws a registered page with live controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "see · r-home · A RECORD draws a registered page with live controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "see · r-home · PHONE draws a registered page with live controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "see · r-intake · THE ROOT draws a registered page with live controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "see · r-intake · THE CASES draws a registered page with live controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "see · r-intake · A CASE draws a registered page with live controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "see · r-intake · PHONE draws a registered page with live controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "see · r-work · THE ROOT draws a registered page with live controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "see · r-work · A LANE draws a registered page with live controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "see · r-work · MY WORK draws a registered page with live controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "see · r-work · PHONE draws a registered page with live controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "see · r-reports · THE ROOT draws a registered page with live controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "see · r-reports · AN AREA draws a registered page with live controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "see · r-reports · ANOTHER draws a registered page with live controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "see · r-reports · PHONE draws a registered page with live controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "see · r-more · THE ROOT draws a registered page with live controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "see · r-more · A DESTINATION draws a registered page with live controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "see · r-more · ANOTHER draws a registered page with live controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "see · r-more · PHONE draws a registered page with live controls",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "no console or page errors",
+   "ok": true,
+   "detail": ""
+  }
+ ]
+}

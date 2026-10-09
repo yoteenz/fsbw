@@ -55733,3 +55733,67 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
   - public website (separate)
   - the 12 privacy gaps (still OPEN)
 - **Review:** https://claude.ai/artifact/DKYZUHjSdiTw1qSC1evdbk (version 3). **Next gate:** FOUNDER REVIEW OF AIO OFFICE MATERIAL, MOTION AND DETAIL POLISH.
+
+---
+
+## 2026-10-09 — AIO complete product: the complete AIO OFFICE and the public website design [sync-only]
+
+- **Sprint:** P0.AIO.COMPLETE-PRODUCT-VISUAL-CONVERGENCE.INTERNAL-OFFICE-AND-PUBLIC-WEBSITE1. Design review only; nothing deployed. Candidates, awaiting founder review.
+
+**Office (`all-in-one-enterprises/design-authority/aio-office/workspaces/`)**
+- `ws-registry.js` holds every page. The review groups them as AUTHORITY & FILINGS · TRUCKS & PEOPLE · FREIGHT & MONEY · THE OFFICE.
+- The five approved roots render unchanged inside the review, and every link on them opens a designed page.
+- Thirteen new workspaces, one `ws-<id>.js/.css` pair each:
+  - permits (an application)
+  - filing (a quarter; it opens the approved IFTA staff screens unchanged)
+  - ins (coverage)
+  - dispatch (a load board)
+  - broker (a match, PAUSED)
+  - factor (an invoice packet)
+  - drivers (a driver's credentials)
+  - mech (a repair line)
+  - ready (a road)
+  - home (a triage desk)
+  - intake (the migration line)
+  - reports (ten areas)
+  - more (eleven destinations)
+- The four approved workspaces now register their own states and demos.
+- New tools: `lane-check.mjs`, `dept-boards.mjs`, `thumbs.mjs`. `qa.mjs` now covers the whole registry.
+- QA: 935/935. Lane checks: 989 renders, 0 failed.
+- Evidence is in `AIO_OFFICE_COMPLETE_REVIEW/`:
+  - `boards/dept-*.jpg` (17)
+  - `renders/`
+  - `thumbs/`
+  - `screens/` (107)
+  - `qa-summary.json`
+- `AIO_OFFICE_WORKSPACE_PROOFS/` is untouched.
+
+**Public website (`all-in-one-enterprises/design-authority/aio-public/`, new)**
+- Files: `site.js`, `site.css`, `site-icons.js` (lucide-static 1.52.0, ISC), `review.js` / `review.css`, `build.mjs` (esbuild-bundles the canonical catalog and the activation matrices; prices are cut and the build fails on a `$` figure), `qa.mjs`, `boards.mjs`, and `reference/` (brand DNA board, panel 04 crop, IFTA public authority — for comparison only).
+- The homepage is held to panel 04 of the founder brand DNA board.
+- The service family is held to the approved IFTA public page.
+- All 92 pages of the recovered tree are designed.
+- QA: 84/84 over 92 pages × 4 sizes.
+- Evidence is in `AIO_PUBLIC_WEBSITE_REVIEW/`:
+  - `boards/` (`match-home`, `match-family`, `home-sizes`, `family`, `remaining`)
+  - `screens/` (188)
+  - `thumbs/`
+  - `qa-summary.json`
+
+**Record**
+- `docs/aio/complete-product/` (9 files), from SITE00 03ad00b9, with PROVENANCE.json.
+- Tests:
+  - `src/product-graph/completeProduct.test.ts` (new, 9 tests).
+  - `officeWorkspaceProofs.test.ts` now reads the demos beside each workspace.
+
+**Reviews**
+- Office: https://claude.ai/artifact/DKYZUHjSdiTw1qSC1evdbk (v4)
+- Public: https://claude.ai/artifact/BzsjSbyLHoLAxhGZBr27UE
+
+**Not changed**
+- approved roots (sha pinned)
+- live app, auth, database, business rules, prices
+- Brokerage (paused)
+- the 12 privacy gaps (still OPEN; Composer)
+
+**Next gate:** FOUNDER REVIEW OF THE COMPLETE AIO OFFICE AND THE PUBLIC WEBSITE DESIGN. The founder should confirm panel 04 as the homepage authority.

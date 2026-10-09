@@ -1,0 +1,23 @@
+{
+  "id": "AIO_COMPLETE_PRODUCT_PROVENANCE",
+  "sprint": "P0.AIO.COMPLETE-PRODUCT-VISUAL-CONVERGENCE.INTERNAL-OFFICE-AND-PUBLIC-WEBSITE1",
+  "source": {
+    "repo": "yoteenz/SITE00",
+    "branch": "cursor/aio-office-ia-work-tree-4f59",
+    "commit": "03ad00b9e013547a036a72777685283a5cadb3a3",
+    "path": "docs/aio/complete-product/",
+    "generated_by": "scripts/studioos/aio-complete-product-export.ts"
+  },
+  "rule": "Copied verbatim from SITE00 (the Experience Brain is the source). The office workspaces are in all-in-one-enterprises/design-authority/aio-office/workspaces/ (evidence: AIO_OFFICE_COMPLETE_REVIEW/); the public website design is in all-in-one-enterprises/design-authority/aio-public/ (evidence: AIO_PUBLIC_WEBSITE_REVIEW/); src/product-graph/completeProduct.test.ts holds them together. Candidates awaiting founder review; approved roots unchanged; nothing in src imports these files; nothing deployed; Brokerage paused.",
+  "sha256": {
+    "01_OFFICE.md": "96b26fb3ed26056309301f48ae52be822bf5492897606bb8c077c0c2d05a4e51",
+    "02_PUBLIC_WEBSITE.md": "c6b9b05a86795ce558183ca0add5c6ebffb04676def6ef88078ab7425449f213",
+    "03_QA_AND_SIZES.md": "bb026663879d58c4100bb0dff3b87e10d7609ae450d45c346b61135116259513",
+    "04_ASSETS.md": "14ab63910242fd24dcab3d17cd563aaa5cb57ebe325b67440be3fdcb5c265125",
+    "05_COMPOSER_HANDOFF.md": "f18a0ee84c885919096805342b2acfaedbee39440ac5f0a694f97a75c72c1cd2",
+    "06_GAPS_AND_DECISIONS.md": "4bfd309eafa505698cb9d8da3d302eecab1d93496a736b8cb9bfb7a24806ac08",
+    "COMPLETE_PRODUCT.json": "0379ad83cb9ed6d5a2f67c78125175da6a14f2fb74a004c6ba23a87208edbce9",
+    "QUALITY_GATE.json": "6f267a0b6e495f481496b601005a8af5e335ad87266bfea3ae6b7c099be6823c",
+    "README.md": "d4d81f6a51d3f44288a48b8cff778b9a725a4ed8bb67c698c88d0208b28d8055"
+  }
+}
