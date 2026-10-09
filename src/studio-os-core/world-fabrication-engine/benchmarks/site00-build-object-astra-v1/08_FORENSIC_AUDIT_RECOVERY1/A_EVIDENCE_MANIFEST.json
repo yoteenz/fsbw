@@ -1,0 +1,358 @@
+{
+  "benchmarkId": "SITE00_BUILD_OBJECT_ASTRA_V1",
+  "auditSprint": "P0.STUDIOOS.WFE.V1-ASTRA-BUILD-OBJECT-VISUAL-FIDELITY-FORENSIC-AUDIT-AND-RECOVERY1",
+  "fileCount": 39,
+  "files": [
+    {
+      "path": "01_SOURCE/SITE00_Build_Object_Astra_V1.blend",
+      "type": ".blend",
+      "bytes": 5857067,
+      "sha256": "368ac7ea7c206aeba4823609b4901d2f6e7106db4f465efbcd2271aa270bcd5f",
+      "stage": "blender_source",
+      "availability": "PRESENT",
+      "verification": "HASH_OK"
+    },
+    {
+      "path": "01_SOURCE/build_astra_v1.py",
+      "type": ".py",
+      "bytes": 13525,
+      "sha256": "c24727362a71f6a01b575a92e47b2f8c62ec9023648d02498d6a8c2cd2429cb9",
+      "stage": "blender_source",
+      "availability": "PRESENT",
+      "verification": "HASH_OK"
+    },
+    {
+      "path": "01_SOURCE/validate_package.py",
+      "type": ".py",
+      "bytes": 2735,
+      "sha256": "d15aa9142acefa89491f1c9469a14c9a62b9b145ca611bbd9477cd3573f3622f",
+      "stage": "blender_source",
+      "availability": "PRESENT",
+      "verification": "HASH_OK"
+    },
+    {
+      "path": "02_EXPORTS/SITE00_Build_Object_Astra_V1_Web.glb",
+      "type": ".glb",
+      "bytes": 14847404,
+      "sha256": "51fea6b74954fc1990b2be3861240d29a5dff9f87f2ee8db259324e3722042dc",
+      "stage": "package",
+      "availability": "PRESENT",
+      "verification": "HASH_OK"
+    },
+    {
+      "path": "03_RENDERS/01_HERO_REFERENCE_MATCH.png",
+      "type": ".png",
+      "bytes": 1077133,
+      "sha256": "daaa9f865fc36d0706b47a05cd8c084b7102145831a72a670f130756a9fb45ae",
+      "stage": "cycles_renders",
+      "availability": "PRESENT",
+      "verification": "HASH_OK"
+    },
+    {
+      "path": "03_RENDERS/02_FRONT_THREE_QUARTER.png",
+      "type": ".png",
+      "bytes": 1068077,
+      "sha256": "3bac45caafb16f4e5da1eef55ce9e4c3ba3e34d801539b20975c7f702e4bf2b0",
+      "stage": "cycles_renders",
+      "availability": "PRESENT",
+      "verification": "HASH_OK"
+    },
+    {
+      "path": "03_RENDERS/03_SIDE_INSPECTION.png",
+      "type": ".png",
+      "bytes": 1031592,
+      "sha256": "8f842f66522ac6f0acfa3ef3022e123a58927ce49eebfc54b3b8a4cf837b5ea5",
+      "stage": "cycles_renders",
+      "availability": "PRESENT",
+      "verification": "HASH_OK"
+    },
+    {
+      "path": "03_RENDERS/04_ELEVATED_INSPECTION.png",
+      "type": ".png",
+      "bytes": 1046863,
+      "sha256": "97ea9d74784a92e739dcecc94965af7dc69989bdbcf09f59d4ff83492d9638da",
+      "stage": "cycles_renders",
+      "availability": "PRESENT",
+      "verification": "HASH_OK"
+    },
+    {
+      "path": "03_RENDERS/05_ARCHITECTURAL_DETAIL.png",
+      "type": ".png",
+      "bytes": 1147054,
+      "sha256": "649bb79eb297775e3e5e131ce32988724b9e5cdbafe49b4739abf77dcc9c2878",
+      "stage": "cycles_renders",
+      "availability": "PRESENT",
+      "verification": "HASH_OK"
+    },
+    {
+      "path": "04_COMPARISONS/approved-reference-authority.jpg",
+      "type": ".jpg",
+      "bytes": 301334,
+      "sha256": "50590912003833aeff8a1851dcbd5a1342d7aa8e47c4603a4eea3e932726582b",
+      "stage": "comparisons",
+      "availability": "PRESENT",
+      "verification": "HASH_OK"
+    },
+    {
+      "path": "04_COMPARISONS/approved-reference.jpg",
+      "type": ".jpg",
+      "bytes": 301334,
+      "sha256": "50590912003833aeff8a1851dcbd5a1342d7aa8e47c4603a4eea3e932726582b",
+      "stage": "comparisons",
+      "availability": "PRESENT",
+      "verification": "HASH_OK"
+    },
+    {
+      "path": "04_COMPARISONS/hero-vs-approved-reference.png",
+      "type": ".png",
+      "bytes": 1235516,
+      "sha256": "42ac62f73734e8870dd4c53314153f479475fbe3efc2e0b41c0591ac9b13ef6f",
+      "stage": "comparisons",
+      "availability": "PRESENT",
+      "verification": "HASH_OK"
+    },
+    {
+      "path": "04_COMPARISONS/initial-pass-hero.png",
+      "type": ".png",
+      "bytes": 1072181,
+      "sha256": "1818ece1bab0cda84763ff564c6e3669dd7fc559fd9ccfd4a0c263eb4331ebf2",
+      "stage": "comparisons",
+      "availability": "PRESENT",
+      "verification": "HASH_OK"
+    },
+    {
+      "path": "04_COMPARISONS/v2-vs-astra-v1-comparison.md",
+      "type": ".md",
+      "bytes": 686,
+      "sha256": "ae2db023a3910df35ebe00b1595219793ef4b65a6827713213e16a93bb7fe9d0",
+      "stage": "comparisons",
+      "availability": "PRESENT",
+      "verification": "HASH_OK"
+    },
+    {
+      "path": "05_DOCUMENTATION/camera-manifest.json",
+      "type": ".json",
+      "bytes": 1541,
+      "sha256": "b3ea9cfffaa63650cd2dffdb8c0fdb356ca652c2d64c8973b022343b45bf9442",
+      "stage": "package",
+      "availability": "PRESENT",
+      "verification": "HASH_OK"
+    },
+    {
+      "path": "05_DOCUMENTATION/export-validation-report.json",
+      "type": ".json",
+      "bytes": 29831,
+      "sha256": "4e68a9b96551d10f729532646f76a14b19620392be7f236bd2d90de4fd7987c3",
+      "stage": "package",
+      "availability": "PRESENT",
+      "verification": "HASH_OK"
+    },
+    {
+      "path": "05_DOCUMENTATION/initial-pass-timing.json",
+      "type": ".json",
+      "bytes": 631,
+      "sha256": "bacd4f18238aa51f8f207f5063c25cf78692d8931e5a0faa90a8235200e30143",
+      "stage": "package",
+      "availability": "PRESENT",
+      "verification": "HASH_OK"
+    },
+    {
+      "path": "05_DOCUMENTATION/saved-blend-validation.json",
+      "type": ".json",
+      "bytes": 527,
+      "sha256": "d19cec3e58117cd0406abcedd62236505f0cb4e2df836c9c221b11f7efb145c8",
+      "stage": "package",
+      "availability": "PRESENT",
+      "verification": "HASH_OK"
+    },
+    {
+      "path": "05_DOCUMENTATION/wfe-astra-fabrication-report.json",
+      "type": ".json",
+      "bytes": 2229,
+      "sha256": "2b39fdd08e9f1cf214ececc3c9e2110df607fc444def433ea8cf18cd950a4d14",
+      "stage": "package",
+      "availability": "PRESENT",
+      "verification": "HASH_OK"
+    },
+    {
+      "path": "05_MATERIALS/marble-source.png",
+      "type": ".png",
+      "bytes": 3626202,
+      "sha256": "ad7d8e9c94c89fdafc23edad3f49fa7700fcefcf00df6272fbd6cf66a1a71c0e",
+      "stage": "package",
+      "availability": "PRESENT",
+      "verification": "HASH_OK"
+    },
+    {
+      "path": "05_MATERIALS/material-manifest.json",
+      "type": ".json",
+      "bytes": 2104,
+      "sha256": "bf9b1391d15ea05be39bbd2c337b4a8255c4768bbbf1f8ad77d682485aaa8195",
+      "stage": "package",
+      "availability": "PRESENT",
+      "verification": "HASH_OK"
+    },
+    {
+      "path": "05_MATERIALS/white-marble-veins.png",
+      "type": ".png",
+      "bytes": 5670250,
+      "sha256": "ed80234daa3cf92a10eabc3661fdc7098812fe633c7f95e0a6a7b86ea84572d4",
+      "stage": "package",
+      "availability": "PRESENT",
+      "verification": "HASH_OK"
+    },
+    {
+      "path": "06_DOCUMENTATION/creative-fidelity-assessment.md",
+      "type": ".md",
+      "bytes": 4683,
+      "sha256": "92f9b496dc10a21809c1bca59d345697b804ca9f2ba30b9e2028a98d686cb15f",
+      "stage": "package",
+      "availability": "PRESENT",
+      "verification": "HASH_OK"
+    },
+    {
+      "path": "06_DOCUMENTATION/technical-art-audit.json",
+      "type": ".json",
+      "bytes": 2736,
+      "sha256": "26fc5a1d0182ffb0a1a8bd82518374342697a1e2120318eea7055f8a2785083f",
+      "stage": "package",
+      "availability": "PRESENT",
+      "verification": "HASH_OK"
+    },
+    {
+      "path": "07_FOUNDER_REVIEW/founder-contact-sheet.md",
+      "type": ".md",
+      "bytes": 1626,
+      "sha256": "83e527fcbb3f38cb9eeb636ce2c601bd8b58ce29e7f87341f3dac5150339be6f",
+      "stage": "package",
+      "availability": "PRESENT",
+      "verification": "HASH_OK"
+    },
+    {
+      "path": "execution-runs/creative-v1/codex-assignment-prompt.txt",
+      "type": ".txt",
+      "bytes": 3154,
+      "sha256": "4ddfd7382479587c138d8906a437cf8174624591d1f3fe23b7eaa06be3a5716d",
+      "stage": "codex_execution",
+      "availability": "PRESENT",
+      "verification": "HASH_OK"
+    },
+    {
+      "path": "execution-runs/creative-v1/codex-assignment-prompt.txt",
+      "type": ".txt",
+      "bytes": 3154,
+      "sha256": "4ddfd7382479587c138d8906a437cf8174624591d1f3fe23b7eaa06be3a5716d",
+      "stage": "codex_execution",
+      "availability": "PRESENT",
+      "verification": "HASH_OK"
+    },
+    {
+      "path": "execution-runs/creative-v1/codex-exec.log",
+      "type": ".log",
+      "bytes": 1472913,
+      "sha256": "9d2dcceeb749925967e730d70b3eafff92b3284614d3cb9c43095a716885cc79",
+      "stage": "codex_execution",
+      "availability": "PRESENT",
+      "verification": "HASH_OK"
+    },
+    {
+      "path": "execution-runs/creative-v1/codex-exec.log",
+      "type": ".log",
+      "bytes": 1472913,
+      "sha256": "9d2dcceeb749925967e730d70b3eafff92b3284614d3cb9c43095a716885cc79",
+      "stage": "codex_execution",
+      "availability": "PRESENT",
+      "verification": "HASH_OK"
+    },
+    {
+      "path": "execution-runs/creative-v1/codex-execution-receipt.json",
+      "type": ".json",
+      "bytes": 651,
+      "sha256": "eff210a0e40fb3bc2d07f5f35b9b6a73f09ad1b88bc5adadffe975ebf9d84a4f",
+      "stage": "codex_execution",
+      "availability": "PRESENT",
+      "verification": "HASH_OK"
+    },
+    {
+      "path": "execution-runs/creative-v1/codex-execution-receipt.json",
+      "type": ".json",
+      "bytes": 651,
+      "sha256": "eff210a0e40fb3bc2d07f5f35b9b6a73f09ad1b88bc5adadffe975ebf9d84a4f",
+      "stage": "codex_execution",
+      "availability": "PRESENT",
+      "verification": "HASH_OK"
+    },
+    {
+      "path": "ingestion-reports/asset-package-manifest.json",
+      "type": ".json",
+      "bytes": 1369,
+      "sha256": "43d4b0f124610e95f5f9e62709d1092b8baa50500327b2d841e11192427d25ab",
+      "stage": "wfe_ingestion",
+      "availability": "PRESENT",
+      "verification": "HASH_OK"
+    },
+    {
+      "path": "ingestion-reports/founder-review-package.json",
+      "type": ".json",
+      "bytes": 2849,
+      "sha256": "5d29dfb9275d692a7254ececaf984c96a5129990b5d8f1f9abe529f9722172ba",
+      "stage": "wfe_ingestion",
+      "availability": "PRESENT",
+      "verification": "HASH_OK"
+    },
+    {
+      "path": "ingestion-reports/glb-inspection.json",
+      "type": ".json",
+      "bytes": 10230,
+      "sha256": "dd2f53d1cef79ba392e4b45d2301027ea9d818079c489beda39aea5cf45da8ce",
+      "stage": "wfe_ingestion",
+      "availability": "PRESENT",
+      "verification": "HASH_OK"
+    },
+    {
+      "path": "ingestion-reports/ingestion-result.json",
+      "type": ".json",
+      "bytes": 32045,
+      "sha256": "2315e92aa122c1218ae0839ad1ea3d8fcc276d7316c5d2e10e690efa6f219e8b",
+      "stage": "wfe_ingestion",
+      "availability": "PRESENT",
+      "verification": "HASH_OK"
+    },
+    {
+      "path": "ingestion-reports/inventory.json",
+      "type": ".json",
+      "bytes": 9511,
+      "sha256": "f1043e98ddeed99cf7dba0b936a230b6d3cd6ddd77d8f9fd072529be9c5e69e3",
+      "stage": "wfe_ingestion",
+      "availability": "PRESENT",
+      "verification": "HASH_OK"
+    },
+    {
+      "path": "ingestion-reports/lineage.json",
+      "type": ".json",
+      "bytes": 4211,
+      "sha256": "cdc9afb19ff5942c0b542ce5f7b106e3cb48eb3ffee1426c2545682aa547e289",
+      "stage": "wfe_ingestion",
+      "availability": "PRESENT",
+      "verification": "HASH_OK"
+    },
+    {
+      "path": "ingestion-reports/readiness-report.json",
+      "type": ".json",
+      "bytes": 1076,
+      "sha256": "9a9682d5fc5dcd4ddf1b03a5ac15c5a087da871453fe22dfb4833e6249483c0a",
+      "stage": "wfe_ingestion",
+      "availability": "PRESENT",
+      "verification": "HASH_OK"
+    },
+    {
+      "path": "ingestion-reports/technical-art-audit.json",
+      "type": ".json",
+      "bytes": 5236,
+      "sha256": "bab215400b059eded77be58358ebf46581c86c2a9003a54832f7bb064129a6de",
+      "stage": "wfe_ingestion",
+      "availability": "PRESENT",
+      "verification": "HASH_OK"
+    }
+  ]
+}

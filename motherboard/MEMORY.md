@@ -55869,3 +55869,13 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
 - **Codex:** **`gpt-6-astra`** single session, **94,346 tokens** (CLI receipt); USD not exposed by CLI — verify OpenAI usage dashboard against **$10** founder cap.
 - **WFE:** Package ingestion **INGESTED_WITH_WARNINGS**; lineage updated under `ingestion-reports/`. Dispatch adapter allows paid site00/astrea when `WFE_FOUNDER_AUTHORIZED_BUDGET_USD` set.
 - **Sprint ID:** `P0.STUDIOOS.WFE.V1-ASTRA-NATIVE-SITE00-BUILD-OBJECT-CREATIVE-FABRICATION1`. Astréa fabrication **NOT STARTED** (deferred per founder).
+
+---
+
+## 2026-10-09 — Astra V1 Build Object visual fidelity forensic audit (zero generation)
+
+- **Context:** Sprint `P0.STUDIOOS.WFE.V1-ASTRA-BUILD-OBJECT-VISUAL-FIDELITY-FORENSIC-AUDIT-AND-RECOVERY1` after founder 3D viewer review: glass improved vs prior versions but architecture generic, interior weak, humans placeholder, insufficient reference match. **No paid Codex, no geometry edits, no new model.**
+- **Evidence package:** `benchmarks/site00-build-object-astra-v1/08_FORENSIC_AUDIT_RECOVERY1/` — manifest (SHA-256), prompt copy, image ingestion report, model receipt, reference deconstruction, camera/geometry/material/human audits, five-render contact sheet index, iteration history, cost evidence, root cause, recovery **C (hybrid)**, quality gates, founder decision summary.
+- **Key findings:** `gpt-6-astra` **VERIFIED**; reference attached via `codex exec -i` **CONFIRMED** but **REFERENCE_VISUALLY_INSPECTED: NOT VERIFIED** pre-blockout; orthographic hero vs perspective reference **CONFIRMED**; geometry from parametric `pavilion()` recipe **CONFIRMED**; humans ellipsoid placeholders **by design**; one revision mostly camera/re-render on 2/5 views; brief favored deliverable checklist + single revision → **early technical completion**; $10 cap **prompt-only** (not enforced); run cost **UNKNOWN** (94,346 tokens).
+- **Outcome:** Founder approval **REVISION REQUIRED**; next step **founder approves Recovery Strategy C scope + budget** before any camera-matched blockout fabrication.
+- **Prior thread also:** public GLB zip at `public/downloads/SITE00_Build_Object_Astra_V1_Web.zip` (`d615b3eae`).
