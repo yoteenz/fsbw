@@ -211,10 +211,7 @@ function home() {
     <div class="dots" aria-hidden="true">${D.pathways.map(() => '<i></i>').join('')}</div>
     ${rv(`<div class="explore" data-key="explore">
       <div class="explore__list" role="tablist" aria-label="WHAT CAN WE HELP YOU DO?">${D.pathways.map((p, i) => `<button class="explore__tab" role="tab" aria-selected="${i === sel}" data-a="pathSel" data-v="${i}"><span class="explore__no">0${i + 1}</span><span class="explore__ic">${ic(PATH_ICON[p.id])}</span><span class="explore__t"><b>${U(p.title)}</b><em>${U(p.description)}</em></span>${ic('chev')}</button>`).join('')}</div>
-      <div class="explore__panel" role="tabpanel" style="--img:url(${IMG(PATH_IMG[P.id])})">
-        <div class="explore__body"><p class="eyebrow">0${sel + 1} · ${pServices.length} SERVICES</p><h3 class="h2">${U(P.title)}</h3><p class="lead">${U(P.description)}</p>
-          <div class="explore__svcs">${pServices.slice(0, 6).map((s) => `<a href="#/services/${s.slug}">${ic(svcIcon(s))}<span>${U(s.name)}</span>${chip(s.state)}</a>`).join('')}</div>
-          <div class="hero__ctas"><a class="btn btn--gold" href="#${P.href}">${U(P.ctaLabel)} ${ic('arrow', 'ic--go')}</a><a class="btn btn--line" href="#${CAT_HUB[PATH_CATS[P.id][0]]}">SEE EVERY SERVICE</a></div></div>
+      <div class="explore__panel" role="tabpanel" style="--img:url(${IMG(PATH_IMG[P.id])})">${explorePanelInner(sel)}
       </div>
     </div>`, 1)}
   </div></section>
@@ -253,19 +250,61 @@ function explorer(id, list, title) {
   const pick = svcBySlug(PUB.pick[id]) && list.includes(svcBySlug(PUB.pick[id])) ? svcBySlug(PUB.pick[id]) : [...list].sort((a, b) => Number(b.ctaAllowed) - Number(a.ctaAllowed))[0];
   const open = PUB.open[id];
   const cards = open ? list : list.slice(0, 6);
-  const prov = provides(pick).slice(0, 5);
   return `<div class="sec__head sec__head--row">${rv(`<p class="eyebrow">${list.length} SERVICES · ONE RECORD</p><h2 class="h2" style="margin-top:14px">${title}</h2>`)}${rv(`<a class="link" href="#/services">ALL SERVICES ${ic('arrow')}</a>`, 1)}</div>
     <div class="sx-phone"><div class="svcs">${cards.map(svcCard).join('')}</div>${list.length > 6 ? `<button class="btn btn--line sx-more" data-a="more" data-v="${id}" aria-expanded="${!!open}">${open ? 'SHOW FEWER' : `SHOW ALL ${list.length} SERVICES`} ${ic(open ? 'up' : 'down')}</button>` : ''}</div>
     ${rv(`<div class="sx">
       <div class="sx__list" role="tablist" aria-label="${esc(title)}">${list.map((x) => `<button class="sx__row" role="tab" aria-selected="${x === pick}" data-a="pick" data-v="${id}|${x.slug}">${ic(svcIcon(x))}<b>${U(x.name)}</b>${chip(x.state)}</button>`).join('')}</div>
-      <div class="sx__panel" role="tabpanel">
-        <div class="sx__head" style="--img:url(${IMG(PHOTO[pick.category] || 'mountain-road')})"><div><p class="eyebrow">${U(catById(pick.category).title)}</p><h3 class="h2">${U(pick.name)}</h3></div>${chip(pick.state)}</div>
+      <div class="sx__panel" role="tabpanel">${sxPanelInner(pick)}
+      </div>
+    </div>`, 1)}`;
+}
+function sxPanelInner(pick) {
+  const prov = provides(pick).slice(0, 5);
+  return `<div class="sx__head" style="--img:url(${IMG(PHOTO[pick.category] || 'mountain-road')})"><div><p class="eyebrow">${U(catById(pick.category).title)}</p><h3 class="h2">${U(pick.name)}</h3></div>${chip(pick.state)}</div>
         <div class="sx__body"><p class="lead">${U(pick.description)}</p>
           <div class="sx__cols">${pick.audience ? `<div><p class="eyebrow eyebrow--plain">WHO IT IS FOR</p><p>${U(pick.audience)}</p></div>` : ''}${prov.length ? `<div><p class="eyebrow eyebrow--plain">WHAT YOU PROVIDE</p><ul>${prov.map((x) => `<li>${ic('check')}<span>${x}</span></li>`).join('')}</ul></div>` : ''}</div>
           <div class="sx__meta"><span>${ic((DELIVERY[pick.fulfillmentType] || DELIVERY.AIO_DIRECT)[1])}${(DELIVERY[pick.fulfillmentType] || DELIVERY.AIO_DIRECT)[0]}</span><span>${ic('receipt')}${PRICING[pick.pricingModel] || 'QUOTE AFTER REVIEW'}</span>${pick.renewalInterval ? `<span>${ic('calendar')}RENEWS ${RENEW[pick.renewalInterval] || U(pick.renewalInterval)}</span>` : ''}</div>
-          <div class="hero__ctas"><a class="btn btn--gold" href="#/services/${pick.slug}">OPEN THIS SERVICE ${ic('arrow', 'ic--go')}</a>${pick.ctaAllowed ? `<a class="btn btn--line" href="#/get-started?service=${pick.slug}">${U(pick.ctaLabel)}</a>` : `<a class="btn btn--line" href="#/contact">ASK ABOUT IT</a>`}</div></div>
-      </div>
-    </div>`, 1)}`;
+          <div class="hero__ctas"><a class="btn btn--gold" href="#/services/${pick.slug}">OPEN THIS SERVICE ${ic('arrow', 'ic--go')}</a>${pick.ctaAllowed ? `<a class="btn btn--line" href="#/get-started?service=${pick.slug}">${U(pick.ctaLabel)}</a>` : `<a class="btn btn--line" href="#/contact">ASK ABOUT IT</a>`}</div></div>`;
+}
+function explorePanelInner(sel) {
+  const P = D.pathways[sel];
+  const pServices = pathServices(P.id);
+  return `<div class="explore__body"><p class="eyebrow">0${sel + 1} · ${pServices.length} SERVICES</p><h3 class="h2">${U(P.title)}</h3><p class="lead">${U(P.description)}</p>
+          <div class="explore__svcs">${pServices.slice(0, 6).map((s) => `<a href="#/services/${s.slug}">${ic(svcIcon(s))}<span>${U(s.name)}</span>${chip(s.state)}</a>`).join('')}</div>
+          <div class="hero__ctas"><a class="btn btn--gold" href="#${P.href}">${U(P.ctaLabel)} ${ic('arrow', 'ic--go')}</a><a class="btn btn--line" href="#${CAT_HUB[PATH_CATS[P.id][0]]}">SEE EVERY SERVICE</a></div></div>`;
+}
+function journeyPanelInner(k) {
+  const steps = D.journey;
+  const cur = steps[k];
+  const cs = (cur.serviceSlugs || []).map(svcBySlug).filter(Boolean);
+  const csList = cs.length ? cs : D.services.filter((x) => x.category === (k < 1 ? 'start-my-business' : k < 4 ? 'get-road-ready' : 'permits-taxes-compliance')).slice(0, 4);
+  return `<div class="journey__copy"><p class="eyebrow">STAGE ${cur.number} OF 0${steps.length}</p><h3 class="h2">${U(cur.title)}.</h3><p class="lead">${U(cur.description || D.stages[k]?.description || '')}</p>
+      <div class="hero__ctas"><a class="btn btn--gold" href="#${cur.route}">OPEN ${U(cur.title)} ${ic('arrow', 'ic--go')}</a>${k < steps.length - 1 ? `<button class="btn btn--line" data-a="syb" data-v="${k + 1}">NEXT: ${U(steps[k + 1].title)} ${ic('chev')}</button>` : ''}</div></div>
+      <div class="list">${csList.map((x) => `<a class="row" href="#/services/${x.slug}">${ic(svcIcon(x))}<div><b>${U(x.name)}</b><span>${U(x.shortDescription)}</span></div>${chip(x.state)}</a>`).join('')}</div>`;
+}
+function guidePanelInner(gid) {
+  const gc = catById(gid);
+  const gl = D.services.filter((x) => x.category === gid);
+  const next = D.categories.find((c) => c.order === gc.order + 1)?.id;
+  return `<p class="eyebrow">0${gc.order} · ${U(gc.title)}</p><h2 class="h2" style="margin:12px 0 10px">${U(gc.headline)}</h2><p class="lead" style="margin-bottom:22px">${U(gc.description)}</p>
+      <div class="list">${gl.map((x) => `<a class="row" href="#/services/${x.slug}">${ic(svcIcon(x))}<div><b>${U(x.name)}</b><span>${U(x.shortDescription)}</span></div>${chip(x.state)}</a>`).join('')}</div>
+      <div class="hero__ctas" style="margin-top:22px"><a class="btn btn--gold" href="#${CAT_HUB[gid].startsWith('/services?') ? '/services' : CAT_HUB[gid]}">OPEN ${U(gc.title)} ${ic('arrow', 'ic--go')}</a>${next ? `<button class="btn btn--line" data-a="pick" data-v="guide|${next}">NEXT FAMILY ${ic('chev')}</button>` : ''}</div>`;
+}
+function servicesCatalogBody() {
+  const f = PUB.fam;
+  const q = PUB.fq.trim().toLowerCase();
+  const list = D.services.filter((s) => (f === 'all' || s.category === f) && (!q || `${s.name} ${s.shortDescription}`.toLowerCase().includes(q)));
+  const index = f === 'all' && !q;
+  const wide = (ROOT?.clientWidth || PUB.width || 0) >= 600;
+  const idx = D.categories.map((c, i) => {
+    const xs = D.services.filter((s) => s.category === c.id);
+    const best = c.id === 'move-freight' ? 'PAUSED' : RANK.find((k) => xs.some((s) => s.state === k));
+    return `<details class="idx__fam rv" style="--d:${i % 3}"${i === 0 || wide ? ' open' : ''}><summary>${ic(CAT_ICON[c.id])}<span><b>${U(c.title)}</b><em>${xs.length} SERVICES</em></span>${chip(best)}${ic('caret')}</summary>
+      <div class="idx__rows">${xs.map((s) => `<a href="#/services/${s.slug}"><span>${U(s.name)}</span>${chip(s.state)}</a>`).join('')}<button class="link" data-a="fam" data-v="${c.id}">OPEN ${U(c.title)} ${ic('arrow')}</button></div></details>`;
+  }).join('');
+  const head = f !== 'all' ? `<div class="sec__head sec__head--row" style="margin-bottom:22px"><div><p class="eyebrow">${U(catById(f).title)}</p><h2 class="h2" style="margin-top:12px">${U(catById(f).headline)}</h2></div>${['move-freight'].includes(f) ? chip('PAUSED') : ''}</div>` : '';
+  const body = index ? `<div class="idx" data-slot="svcs-index">${idx}</div><div class="svcs" data-slot="svcs" hidden></div>` : `<div class="svcs" data-slot="svcs">${list.map(svcCard).join('') || `<p class="muted">NO SERVICE MATCHES THAT FILTER.</p>`}</div>`;
+  return head + body;
 }
 function division(id) {
   const m = D.divisions[id];
@@ -362,25 +401,13 @@ function bookkeeping() {
 /* ═════════════ SERVICES HUB + FINDER ═════════════ */
 function services() {
   const f = PUB.fam;
-  const q = PUB.fq.trim().toLowerCase();
-  const list = D.services.filter((s) => (f === 'all' || s.category === f) && (!q || `${s.name} ${s.shortDescription}`.toLowerCase().includes(q)));
-  /* the whole catalog at a glance: one compact index grouped by family (accordions on the phone) — cards only once a family or a search narrows it */
-  const index = f === 'all' && !q;
-  const wide = (ROOT?.clientWidth || PUB.width || 0) >= 600; // tablet + desktop show every family open; the phone opens the first
-  const idx = D.categories.map((c, i) => {
-    const xs = D.services.filter((s) => s.category === c.id);
-    const best = c.id === 'move-freight' ? 'PAUSED' : RANK.find((k) => xs.some((s) => s.state === k));
-    return `<details class="idx__fam rv" style="--d:${i % 3}"${i === 0 || wide ? ' open' : ''}><summary>${ic(CAT_ICON[c.id])}<span><b>${U(c.title)}</b><em>${xs.length} SERVICES</em></span>${chip(best)}${ic('caret')}</summary>
-      <div class="idx__rows">${xs.map((s) => `<a href="#/services/${s.slug}"><span>${U(s.name)}</span>${chip(s.state)}</a>`).join('')}<button class="link" data-a="fam" data-v="${c.id}">OPEN ${U(c.title)} ${ic('arrow')}</button></div></details>`;
-  }).join('');
   return `${phero({ img: 'mountain-road', crumbs: [['/', 'HOME'], [null, 'SERVICES']], eyebrow: 'SERVICES', title: 'EVERYTHING YOUR BUSINESS NEEDS.', lead: 'SEVEN FAMILIES OF SERVICES BEHIND YOUR TRUCKING BUSINESS — EACH WITH ITS STATUS SHOWN HONESTLY.', ctas: `<a class="btn btn--gold" href="#/services/find">FIND MY SERVICE ${ic('arrow', 'ic--go')}</a><a class="btn btn--line" href="#/get-started">CHECK WHAT I NEED</a>` })}
   <section class="sec" style="padding-top:56px"><div class="wrap">
     <div class="sec__head" style="gap:18px">
       <div class="fambar" role="tablist" aria-label="SERVICE FAMILIES">${[['all', 'ALL SERVICES', 'layers', D.services.length], ...D.categories.map((c) => [c.id, c.title, CAT_ICON[c.id], D.services.filter((s) => s.category === c.id).length])].map(([id, t, i, n]) => `<button class="fambar__b" role="tab" data-a="fam" data-v="${id}" aria-selected="${f === id}">${ic(i)}<span><b>${U(t)}</b><em>${n}</em></span></button>`).join('')}</div>
       <label class="search__box" style="margin:0;max-width:none">${ic('search')}<span class="sr">FILTER SERVICES</span><input data-input="fq" value="${esc(PUB.fq)}" placeholder="FILTER BY NAME — “UCR”, “IFTA”, “DISPATCH”…" autocomplete="off"></label>
     </div>
-    ${f !== 'all' ? `<div class="sec__head sec__head--row" style="margin-bottom:22px"><div><p class="eyebrow">${U(catById(f).title)}</p><h2 class="h2" style="margin-top:12px">${U(catById(f).headline)}</h2></div>${['move-freight'].includes(f) ? chip('PAUSED') : ''}</div>` : ''}
-    ${index ? `<div class="idx" data-slot="svcs-index">${idx}</div><div class="svcs" data-slot="svcs" hidden></div>` : `<div class="svcs" data-slot="svcs">${list.map(svcCard).join('') || `<p class="muted">NO SERVICE MATCHES THAT FILTER.</p>`}</div>`}
+    <div data-key="services-catalog">${servicesCatalogBody()}</div>
   </div></section>${closing()}`;
 }
 function finder() {
@@ -439,16 +466,11 @@ function startBusiness(step) {
     <div class="sec__head">${rv(`<h2 class="h2">WHAT HAPPENS IN ${U(s.title)}.</h2>`)}</div><div class="svcs">${svcs.length ? svcs.map(svcCard).join('') : D.services.filter((x) => x.category === (i < 1 ? 'start-my-business' : i < 4 ? 'get-road-ready' : 'permits-taxes-compliance')).slice(0, 6).map(svcCard).join('')}</div></div></section>${closing()}`;
   }
   const k = Math.min(PUB.syb || 0, steps.length - 1);
-  const cur = steps[k];
-  const cs = (cur.serviceSlugs || []).map(svcBySlug).filter(Boolean);
-  const csList = cs.length ? cs : D.services.filter((x) => x.category === (k < 1 ? 'start-my-business' : k < 4 ? 'get-road-ready' : 'permits-taxes-compliance')).slice(0, 4);
   return `${phero({ img: 'aio-login', pos: '75% 50%', crumbs: [['/', 'HOME'], [null, 'START YOUR BUSINESS']], eyebrow: 'START YOUR BUSINESS', title: 'FROM IDEA TO RUNNING YOUR TRUCKING BUSINESS.', lead: 'SIX STAGES, IN ORDER. AIO HELPS AT EVERY ONE — AND KEEPS IT ALL ON ONE RECORD.', ctas: `<a class="btn btn--gold" href="#/start-your-business/build">START WITH BUILD ${ic('arrow', 'ic--go')}</a><a class="btn btn--line" href="#/get-started">CHECK WHAT I NEED</a>` })}
   <section class="sec" style="padding-top:64px"><div class="wrap">
     ${rv(`<div class="sec__head"><p class="eyebrow">THE JOURNEY</p><h2 class="h2">PICK A STAGE TO SEE WHAT HAPPENS IN IT.</h2></div>`)}
     <div class="rail rail--pick" role="tablist" aria-label="THE SIX STAGES">${steps.map((s, i) => `<button class="st${i === k ? ' is-cur' : ''}" role="tab" aria-selected="${i === k}" data-a="syb" data-v="${i}"><span class="st__dot">${s.number}</span><b>${U(s.title)}</b><span>${U(D.stages[i]?.description || '')}</span></button>`).join('')}</div>
-    <div class="journey" role="tabpanel"><div class="journey__copy"><p class="eyebrow">STAGE ${cur.number} OF 0${steps.length}</p><h3 class="h2">${U(cur.title)}.</h3><p class="lead">${U(cur.description || D.stages[k]?.description || '')}</p>
-      <div class="hero__ctas"><a class="btn btn--gold" href="#${cur.route}">OPEN ${U(cur.title)} ${ic('arrow', 'ic--go')}</a>${k < steps.length - 1 ? `<button class="btn btn--line" data-a="syb" data-v="${k + 1}">NEXT: ${U(steps[k + 1].title)} ${ic('chev')}</button>` : ''}</div></div>
-      <div class="list">${csList.map((x) => `<a class="row" href="#/services/${x.slug}">${ic(svcIcon(x))}<div><b>${U(x.name)}</b><span>${U(x.shortDescription)}</span></div>${chip(x.state)}</a>`).join('')}</div></div>
+    <div class="journey" role="tabpanel">${journeyPanelInner(k)}</div>
   </div></section>${closing()}`;
 }
 function roadReady() {
@@ -465,14 +487,10 @@ function roadmap(results) {
   }
   /* the guide: one family at a time (a bounded chip row on the phone, a tab rail on the tablet and desktop) — not seven stacked lists */
   const gid = D.categories.some((c) => c.id === PUB.pick.guide) ? PUB.pick.guide : D.categories[0].id;
-  const gc = catById(gid);
-  const gl = D.services.filter((x) => x.category === gid);
   return `${phero({ img: 'freight-map', pos: '50% 50%', crumbs: [['/', 'HOME'], [null, 'COMPLIANCE GUIDE']], eyebrow: 'COMPLIANCE GUIDE', title: 'THE ALL IN ONE ROADMAP.', lead: 'WHAT A TRUCKING BUSINESS NEEDS, IN THE ORDER IT NEEDS IT.', ctas: `<a class="btn btn--gold" href="#/get-started">MAKE IT MINE ${ic('arrow', 'ic--go')}</a>` })}
   <section class="sec" style="padding-top:64px"><div class="wrap guide">
     <div class="guide__tabs" role="tablist" aria-label="THE SEVEN FAMILIES">${D.categories.map((c) => `<button role="tab" aria-selected="${c.id === gid}" data-a="pick" data-v="guide|${c.id}"><span>0${c.order}</span>${ic(CAT_ICON[c.id])}<b>${U(c.title)}</b><em>${D.services.filter((x) => x.category === c.id).length}</em></button>`).join('')}</div>
-    <div class="guide__panel panel" role="tabpanel"><p class="eyebrow">0${gc.order} · ${U(gc.title)}</p><h2 class="h2" style="margin:12px 0 10px">${U(gc.headline)}</h2><p class="lead" style="margin-bottom:22px">${U(gc.description)}</p>
-      <div class="list">${gl.map((x) => `<a class="row" href="#/services/${x.slug}">${ic(svcIcon(x))}<div><b>${U(x.name)}</b><span>${U(x.shortDescription)}</span></div>${chip(x.state)}</a>`).join('')}</div>
-      <div class="hero__ctas" style="margin-top:22px"><a class="btn btn--gold" href="#${CAT_HUB[gid].startsWith('/services?') ? '/services' : CAT_HUB[gid]}">OPEN ${U(gc.title)} ${ic('arrow', 'ic--go')}</a>${gc.order < D.categories.length ? `<button class="btn btn--line" data-a="pick" data-v="guide|${D.categories.find((c) => c.order === gc.order + 1)?.id || gid}">NEXT FAMILY ${ic('chev')}</button>` : ''}</div></div>
+    <div class="guide__panel panel" role="tabpanel">${guidePanelInner(gid)}</div>
   </div></section>${closing()}`;
 }
 function clientPortal() {
@@ -629,6 +647,83 @@ function page(path) {
 }
 const AUTH = ['/login', '/signup', '/forgot-password', '/onboarding', '/services/ifta-filing']; // own chrome: focused account pages; the approved IFTA page brings its own header
 
+/* ── in-place tab updates (avoid replacing the whole page tree on every tab click) ── */
+const onHome = () => PUB.path === '/' || PUB.path === '';
+function patchEco() {
+  if (!onHome() || !ROOT) return false;
+  const tabs = ROOT.querySelector('.eco__tabs');
+  const road = ROOT.querySelector('.eco__road');
+  if (!tabs || !road) return false;
+  tabs.style.setProperty('--i', String(PUB.eco));
+  tabs.querySelectorAll('button[role="tab"]').forEach((btn, n) => { btn.setAttribute('aria-selected', n === PUB.eco ? 'true' : 'false'); });
+  road.querySelectorAll('.stage').forEach((st, n) => { st.classList.toggle('is-on', n === PUB.eco); });
+  return true;
+}
+function patchExplore() {
+  if (!onHome() || !ROOT) return false;
+  const explore = ROOT.querySelector('[data-key="explore"]');
+  if (!explore) return false;
+  const sel = Math.min(PUB.pathSel || 0, D.pathways.length - 1);
+  const P = D.pathways[sel];
+  explore.querySelectorAll('.explore__tab').forEach((btn, i) => { btn.setAttribute('aria-selected', i === sel ? 'true' : 'false'); });
+  const panel = explore.querySelector('.explore__panel');
+  if (!panel) return false;
+  panel.style.setProperty('--img', `url(${IMG(PATH_IMG[P.id])})`);
+  panel.innerHTML = explorePanelInner(sel);
+  return true;
+}
+function patchSx(id) {
+  if (!ROOT) return false;
+  const sx = ROOT.querySelector('.sx');
+  if (!sx) return false;
+  const rows = [...sx.querySelectorAll(`[data-a="pick"][data-v^="${id}|"]`)];
+  if (!rows.length) return false;
+  const slugs = rows.map((r) => r.dataset.v.split('|')[1]);
+  let pick = svcBySlug(PUB.pick[id]);
+  if (!pick || !slugs.includes(pick.slug)) pick = D.services.filter((s) => slugs.includes(s.slug)).sort((a, b) => Number(b.ctaAllowed) - Number(a.ctaAllowed))[0];
+  rows.forEach((r) => { r.setAttribute('aria-selected', r.dataset.v.split('|')[1] === pick.slug ? 'true' : 'false'); });
+  const panel = sx.querySelector('.sx__panel');
+  if (panel) panel.innerHTML = sxPanelInner(pick);
+  return true;
+}
+function patchSyb() {
+  if (PUB.path !== '/start-your-business' || !ROOT) return false;
+  const rail = ROOT.querySelector('.rail--pick');
+  const journey = ROOT.querySelector('.journey');
+  if (!rail || !journey) return false;
+  const steps = D.journey;
+  const k = Math.min(PUB.syb || 0, steps.length - 1);
+  rail.querySelectorAll('[data-a="syb"]').forEach((btn, i) => {
+    btn.classList.toggle('is-cur', i === k);
+    btn.setAttribute('aria-selected', i === k ? 'true' : 'false');
+  });
+  journey.innerHTML = journeyPanelInner(k);
+  return true;
+}
+function patchGuide() {
+  if (PUB.path !== '/roadmap' || !ROOT) return false;
+  const guide = ROOT.querySelector('.guide');
+  if (!guide) return false;
+  const gid = D.categories.some((c) => c.id === PUB.pick.guide) ? PUB.pick.guide : D.categories[0].id;
+  guide.querySelectorAll('.guide__tabs [role="tab"]').forEach((btn) => {
+    const id = btn.dataset.v?.split('|')[1];
+    btn.setAttribute('aria-selected', id === gid ? 'true' : 'false');
+  });
+  const panel = guide.querySelector('.guide__panel');
+  if (panel) panel.innerHTML = guidePanelInner(gid);
+  return true;
+}
+function patchFam() {
+  if (PUB.path !== '/services' || !ROOT) return false;
+  const fambar = ROOT.querySelector('.fambar');
+  const slot = ROOT.querySelector('[data-key="services-catalog"]');
+  if (!fambar || !slot) return false;
+  fambar.querySelectorAll('[data-a="fam"]').forEach((btn) => { btn.setAttribute('aria-selected', btn.dataset.v === PUB.fam ? 'true' : 'false'); });
+  slot.innerHTML = servicesCatalogBody();
+  slot.querySelectorAll('.rv').forEach((e) => e.classList.add('in'));
+  return true;
+}
+
 /* ── draw, events, reveal ── */
 let ROOT = null;
 function draw(opts = {}) {
@@ -668,18 +763,19 @@ function jump(id) {
   const top = el.getBoundingClientRect().top - (PUB.scroller ? PUB.scroller.getBoundingClientRect().top : 0) + scrollEl().scrollTop - parseFloat(getComputedStyle(ROOT.firstElementChild).getPropertyValue('--nav'));
   scrollEl().scrollTo({ top, behavior: reduced() || PUB.capture ? 'auto' : 'smooth' });
 }
+const SOFT_TAB = new Set(['eco', 'pathSel', 'pick', 'syb', 'fam']);
 const ACT = {
   menu: (v) => { PUB.menu = PUB.menu === v ? null : v; PUB.search = false; draw(); },
   search: () => { PUB.search = !PUB.search; PUB.menu = null; PUB.drawer = false; draw(); },
   drawer: () => { PUB.drawer = !PUB.drawer; PUB.search = false; draw(); },
   grp: (v) => { PUB.grp = PUB.grp === v ? null : v; draw(); },
-  eco: (v) => { PUB.eco = Number(v); draw(); },
-  pathSel: (v) => { PUB.pathSel = Number(v); draw(); },
-  pick: (v) => { const [id, slug] = v.split('|'); PUB.pick[id] = slug; draw(); },
+  eco: (v) => { PUB.eco = Number(v); if (!patchEco()) draw(); },
+  pathSel: (v) => { PUB.pathSel = Number(v); if (!patchExplore()) draw(); },
+  pick: (v) => { const [id, slug] = v.split('|'); PUB.pick[id] = slug; if (id === 'guide' ? patchGuide() : patchSx(id)) return; draw(); },
   more: (v) => { PUB.open[v] = !PUB.open[v]; draw(); },
   plan: (v) => { PUB.plan = PUB.plan.includes(v) ? PUB.plan.filter((x) => x !== v) : [...PUB.plan, v]; draw(); toast(PUB.plan.includes(v) ? 'ADDED TO MY PLAN — DESIGN REVIEW, NOTHING IS SAVED.' : 'REMOVED FROM MY PLAN.'); },
-  syb: (v) => { PUB.syb = Number(v); draw(); },
-  fam: (v) => { PUB.fam = v; draw(); },
+  syb: (v) => { PUB.syb = Number(v); if (!patchSyb()) draw(); },
+  fam: (v) => { PUB.fam = v; if (!patchFam()) draw(); },
   need: (v) => { PUB.needs = PUB.needs.includes(v) ? PUB.needs.filter((x) => x !== v) : [...PUB.needs, v]; draw(); },
   gsGoal: (v) => { PUB.gs.goal = v; PUB.gs.step = 0; draw(); },
   gsAns: (v) => { const [q, x] = v.split('|'); PUB.gs.ans[q] = x; draw(); },
@@ -701,9 +797,39 @@ function mountPub(root, { scroller = null, width = null } = {}) {
   PUB.scroller = scroller;
   PUB.width = width || root.clientWidth;
   root.classList.add('pub');
+  root.addEventListener('mousedown', (e) => {
+    const a = e.target.closest('[data-a]');
+    if (a && root.contains(a) && SOFT_TAB.has(a.dataset.a)) {
+      PUB._tabScroll = scrollEl().scrollTop;
+      e.preventDefault();
+    }
+  }, true);
   root.addEventListener('click', (e) => {
     const a = e.target.closest('[data-a]');
-    if (a && root.contains(a)) { e.preventDefault(); if (a.getAttribute('aria-disabled') === 'true' && a.dataset.a !== 'gsNext') return; return ACT[a.dataset.a]?.(a.dataset.v, a); }
+    if (a && root.contains(a)) {
+      e.preventDefault();
+      if (a.getAttribute('aria-disabled') === 'true' && a.dataset.a !== 'gsNext') return;
+      const soft = SOFT_TAB.has(a.dataset.a);
+      const sc = soft ? scrollEl() : null;
+      const y = soft ? (PUB._tabScroll ?? sc.scrollTop) : 0;
+      if (soft) PUB._tabScroll = undefined;
+      const r = ACT[a.dataset.a]?.(a.dataset.v, a);
+      if (soft && sc) {
+        const keep = () => { sc.scrollTop = y; };
+        keep();
+        requestAnimationFrame(() => { keep(); requestAnimationFrame(keep); });
+        if (sc !== document.scrollingElement && sc !== document.documentElement) {
+          let until = performance.now() + 400;
+          const guard = () => {
+            if (performance.now() < until) keep();
+            else sc.removeEventListener('scroll', guard);
+          };
+          sc.addEventListener('scroll', guard);
+          setTimeout(() => sc.removeEventListener('scroll', guard), 450);
+        }
+      }
+      return r;
+    }
     const l = e.target.closest('a[href^="#/"]');
     if (l && root.contains(l)) { e.preventDefault(); return go(l.getAttribute('href').slice(1)); }
     if (PUB.menu && !e.target.closest('.pop')) { PUB.menu = null; draw(); }
