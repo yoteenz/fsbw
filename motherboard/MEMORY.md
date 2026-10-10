@@ -55974,3 +55974,11 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
   - `src/product-graph/publicMigration.test.ts` has 10 tests.
 - **Not changed:** the live app, auth, data, business rules, prices, Brokerage (paused) and the 12 privacy gaps.
 - **Tunnel:** this container cannot reach fsbw-dev.com. To see the latest, pull master in the Cursor VM and restart `aio-vite` and `aio-preview-tunnel`.
+
+---
+
+## 2026-10-09 — AIO public homepage tabs: soft patch (no full draw)
+
+- **Context:** Founder review artifact ([public site](https://claude.ai/artifact/BzsjSbyLHoLAxhGZBr27UE)) — START / OPERATE / MAINTAIN and pathway/explorer tabs felt like a full page refresh (hero flash, scroll loss) because every `data-a` tab called `draw()` and replaced `#pub` innerHTML.
+- **Fix:** `design-authority/aio-public/site.js` — in-place `patchEco`, `patchExplore`, `patchSx`, `patchSyb`, `patchGuide`, `patchFam`; soft-tab click path preserves scroll (mousedown capture + brief scroll guard in review frame); removed `.stage.is-on` rise re-animation on tab switch; `overflow-anchor: none` on `.pub` / `#rv-frame`. Rebuilt `design-authority/aio-public/preview/*`.
+- **Scope:** Design-review public site only (not migration UI or production routes).

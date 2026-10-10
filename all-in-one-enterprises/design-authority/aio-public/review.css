@@ -66,7 +66,7 @@ body { font: 500 13px/1.5 var(--rv-chrome); letter-spacing: 0.06em; text-transfo
 .rv-sizer { position: relative; }
 .rv-device { position: absolute; left: 0; top: 0; transform-origin: 0 0; border-radius: 14px; overflow: hidden; background: #050505; box-shadow: 0 0 0 1px rgba(235, 217, 183, 0.18), 0 0 0 9px #161616, 0 0 0 10px rgba(235, 217, 183, 0.08), 0 40px 80px rgba(0, 0, 0, 0.6); }
 .rv-device[data-dev='phone'] { border-radius: 34px; }
-.rv-frame { position: absolute; inset: 0; overflow-y: auto; overflow-x: hidden; scrollbar-width: thin; scrollbar-color: #3a3530 transparent; }
+.rv-frame { position: absolute; inset: 0; overflow-y: auto; overflow-x: hidden; overflow-anchor: none; scrollbar-width: thin; scrollbar-color: #3a3530 transparent; }
 .rv-frame > #pub { min-height: 100%; }
 .rv-ref { position: sticky; top: 120px; display: grid; gap: 10px; }
 .rv-ref figure { margin: 0; display: grid; gap: 8px; }
