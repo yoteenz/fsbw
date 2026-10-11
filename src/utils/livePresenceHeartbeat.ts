@@ -98,6 +98,30 @@ async function postPageView(path: string, geo: GeoPayload | null): Promise<void>
 
 let intervalId: ReturnType<typeof setInterval> | null = null;
 let started = false;
+let visibilityResumeTimer: ReturnType<typeof setTimeout> | null = null;
+let tickInFlight = false;
+
+function shouldSendLivePresenceHeartbeat(): boolean {
+  if (typeof window === 'undefined') return false;
+  const path = window.location.pathname || '';
+  /** Admin sessions do not need storefront page_view heartbeats (globe reads all visitors). */
+  if (path.startsWith('/admin')) return false;
+  return true;
+}
+
+function clearHeartbeatInterval(): void {
+  if (intervalId != null) {
+    clearInterval(intervalId);
+    intervalId = null;
+  }
+}
+
+function scheduleHeartbeatInterval(tick: () => Promise<void>): void {
+  clearHeartbeatInterval();
+  intervalId = setInterval(() => {
+    void tick();
+  }, HEARTBEAT_MS);
+}
 
 /** Call once on app load (non-admin routes still contribute to "visitors" when browsing the storefront). */
 export function startLivePresenceHeartbeat(): void {
@@ -105,24 +129,40 @@ export function startLivePresenceHeartbeat(): void {
   started = true;
 
   const tick = async () => {
-    const geo = await fetchGeo();
-    await postPageView(window.location.pathname + window.location.search, geo);
+    if (!shouldSendLivePresenceHeartbeat()) return;
+    if (tickInFlight) return;
+    tickInFlight = true;
+    try {
+      const geo = await fetchGeo();
+      await postPageView(window.location.pathname + window.location.search, geo);
+    } finally {
+      tickInFlight = false;
+    }
   };
 
   void tick();
-  intervalId = setInterval(() => {
-    void tick();
-  }, HEARTBEAT_MS);
+  scheduleHeartbeatInterval(tick);
 
-  window.addEventListener('visibilitychange', () => {
-    if (document.visibilityState === 'visible') void tick();
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden') {
+      clearHeartbeatInterval();
+      if (visibilityResumeTimer != null) clearTimeout(visibilityResumeTimer);
+      return;
+    }
+    if (visibilityResumeTimer != null) clearTimeout(visibilityResumeTimer);
+    visibilityResumeTimer = setTimeout(() => {
+      void tick();
+      scheduleHeartbeatInterval(tick);
+    }, 400);
   });
 }
 
 export function stopLivePresenceHeartbeatForTests(): void {
-  if (intervalId != null) {
-    clearInterval(intervalId);
-    intervalId = null;
+  clearHeartbeatInterval();
+  if (visibilityResumeTimer != null) {
+    clearTimeout(visibilityResumeTimer);
+    visibilityResumeTimer = null;
   }
   started = false;
+  tickInFlight = false;
 }

@@ -1,4 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
+import { checkRateLimit } from '../_lib/rateLimit.js';
 import { getSupabaseAdminServiceRole, hasSupabaseServiceRole } from '../_lib/supabase.js';
 
 const SOCIAL_PLATFORMS = new Set(['instagram', 'twitter', 'facebook', 'tiktok']);
@@ -63,6 +64,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const lng = Number(meta.lng);
     if (!Number.isFinite(lat) || !Number.isFinite(lng) || Math.abs(lat) > 90 || Math.abs(lng) > 180) {
       return res.status(400).json({ error: 'page_view requires meta.lat and meta.lng' });
+    }
+    /** Best-effort per-instance cap — allows 60s heartbeat + one visibility resume per minute. */
+    const pvLimit = checkRateLimit(`analytics:page_view:${visitorId}`, { max: 3, windowMs: 60_000 });
+    if (!pvLimit.ok) {
+      return res.status(429).json({ error: 'Rate limited', retryAfterSec: pvLimit.retryAfterSec });
     }
   } else {
     return res.status(400).json({ error: 'Unsupported eventType' });
