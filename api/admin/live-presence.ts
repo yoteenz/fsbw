@@ -1,20 +1,9 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { requireAdmin } from '../_lib/adminAuth.js';
-import { getSupabaseAdminServiceRole, hasSupabaseServiceRole } from '../_lib/supabase.js';
-
-/** Page_view heartbeats in this window (deduped per visitor = latest point). */
-const LIVE_WINDOW_MS = 24 * 60 * 60 * 1000;
-
-type VisitorRow = {
-  visitor_id: string;
-  lat: number;
-  lng: number;
-  path: string | null;
-  city?: string;
-  region?: string;
-  country?: string;
-  lastAt: number;
-};
+import { getLivePresenceCached } from '../_lib/livePresenceCache.js';
+import { logLivePresenceMetric } from '../_lib/livePresenceMetrics.js';
+import { hasSupabaseServiceRole } from '../_lib/supabase.js';
+import { checkRateLimit, rateLimitResponse } from '../_lib/rateLimit.js';
 
 /** GET /api/admin/live-presence — recent page_view heartbeats with geo (admin only). */
 export default async function handler(req: VercelRequest, res: VercelResponse) {
@@ -29,63 +18,103 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   const empty = {
     visitorsNow: 0,
-    visitors: [] as VisitorRow[],
+    visitors: [] as Array<{
+      visitor_id: string;
+      lat: number;
+      lng: number;
+      path: string | null;
+      city?: string;
+      region?: string;
+      country?: string;
+      lastAt: number;
+    }>,
+    meta: {
+      stale: false,
+      analyticsUnavailable: false,
+    },
   };
 
   if (!hasSupabaseServiceRole()) {
-    return res.status(200).json(empty);
+    return res.status(200).json({
+      ...empty,
+      meta: { stale: false, analyticsUnavailable: true },
+    });
   }
 
+  const adminKey = (admin.email || 'admin').toLowerCase().slice(0, 320);
+  const rl = checkRateLimit(`live-presence:admin:${adminKey}`, { max: 40, windowMs: 60_000 });
+  if (!rl.ok) {
+    logLivePresenceMetric({
+      kind: 'live_presence',
+      cacheHit: false,
+      stale: false,
+      queryDurationMs: null,
+      rowCount: null,
+      visitorCount: 0,
+      timeout: false,
+      error: false,
+      rateLimited: true,
+      inFlightCoalesced: false,
+    });
+    rateLimitResponse(res, rl.retryAfterSec);
+    return;
+  }
+
+  const forceRefresh = req.query.refresh === '1' || req.query.force === '1';
+
   try {
-    const supabase = getSupabaseAdminServiceRole();
-    const sinceIso = new Date(Date.now() - LIVE_WINDOW_MS).toISOString();
+    const payload = await getLivePresenceCached(forceRefresh);
+    const analyticsUnavailable = payload.stale && (payload.timedOut || Boolean(payload.dbError));
 
-    const { data: rows, error } = await supabase
-      .from('site_analytics_events')
-      .select('visitor_id, path, created_at, meta')
-      .eq('event_type', 'page_view')
-      .gte('created_at', sinceIso)
-      .order('created_at', { ascending: false })
-      .limit(5000);
+    logLivePresenceMetric({
+      kind: 'live_presence',
+      cacheHit: payload.cacheHit,
+      stale: payload.stale,
+      queryDurationMs: payload.queryDurationMs,
+      rowCount: payload.rowCountScanned,
+      visitorCount: payload.visitorsNow,
+      timeout: payload.timedOut,
+      error: Boolean(payload.dbError),
+      rateLimited: false,
+      inFlightCoalesced: payload.inFlightCoalesced,
+    });
 
-    if (error) {
-      console.error('[admin/live-presence]', error.message);
-      return res.status(200).json(empty);
+    res.setHeader('Cache-Control', 'private, no-store');
+    if (payload.cachedAt != null) {
+      res.setHeader('X-Live-Presence-Cached-At', String(payload.cachedAt));
+    }
+    if (payload.stale) {
+      res.setHeader('X-Live-Presence-Stale', '1');
     }
 
-    const byVisitor = new Map<string, VisitorRow>();
-
-    for (const r of rows ?? []) {
-      const vid = String(r.visitor_id ?? '').trim();
-      if (!vid) continue;
-      const meta = (r.meta && typeof r.meta === 'object' ? r.meta : {}) as Record<string, unknown>;
-      const lat = Number(meta.lat);
-      const lng = Number(meta.lng);
-      if (!Number.isFinite(lat) || !Number.isFinite(lng)) continue;
-
-      const created = r.created_at ? new Date(r.created_at as string).getTime() : Date.now();
-      const existing = byVisitor.get(vid);
-      if (existing && existing.lastAt >= created) continue;
-
-      byVisitor.set(vid, {
-        visitor_id: vid,
-        lat,
-        lng,
-        path: (r.path as string) || null,
-        city: typeof meta.city === 'string' ? meta.city : undefined,
-        region: typeof meta.region === 'string' ? meta.region : undefined,
-        country: typeof meta.country === 'string' ? meta.country : undefined,
-        lastAt: created,
-      });
-    }
-
-    const visitors = Array.from(byVisitor.values());
     return res.status(200).json({
-      visitorsNow: visitors.length,
-      visitors,
+      visitorsNow: payload.visitorsNow,
+      visitors: payload.visitors,
+      meta: {
+        stale: payload.stale,
+        analyticsUnavailable: analyticsUnavailable && payload.stale,
+        cachedAt: payload.cachedAt,
+        queryDurationMs: payload.queryDurationMs,
+        rowCountScanned: payload.rowCountScanned,
+      },
     });
   } catch (e) {
     console.error('[admin/live-presence]', e);
-    return res.status(200).json(empty);
+    logLivePresenceMetric({
+      kind: 'live_presence',
+      cacheHit: false,
+      stale: true,
+      queryDurationMs: null,
+      rowCount: null,
+      visitorCount: 0,
+      timeout: false,
+      error: true,
+      rateLimited: false,
+      inFlightCoalesced: false,
+    });
+    return res.status(200).json({
+      ...empty,
+      meta: { stale: true, analyticsUnavailable: true },
+    });
   }
 }

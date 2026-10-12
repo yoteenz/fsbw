@@ -1093,8 +1093,7 @@ export async function getAdminAnalytics(): Promise<{
   return await res.json();
 }
 
-/** Admin: live visitors (page_view heartbeats with geo, last ~24h, deduped per visitor) for Revenue Live View globe. */
-export async function getAdminLivePresence(): Promise<{
+export type AdminLivePresenceResponse = {
   visitorsNow: number;
   visitors: Array<{
     visitor_id: string;
@@ -1104,11 +1103,21 @@ export async function getAdminLivePresence(): Promise<{
     city?: string;
     region?: string;
     country?: string;
-    lastAt: number;
+    lastAt?: number;
   }>;
-}> {
+  meta?: {
+    stale?: boolean;
+    analyticsUnavailable?: boolean;
+    cachedAt?: number | null;
+    queryDurationMs?: number | null;
+    rowCountScanned?: number | null;
+  };
+};
+
+/** Admin: live visitors (page_view heartbeats with geo, last ~24h, deduped per visitor) for Revenue Live View globe. */
+export async function getAdminLivePresence(options?: { signal?: AbortSignal }): Promise<AdminLivePresenceResponse> {
   /** Avoid 304 + empty body (browser revalidation): `JSON.parse('')` throws and looked like a hard failure. */
-  const res = await apiFetch('/api/admin/live-presence', { cache: 'no-store' });
+  const res = await apiFetch('/api/admin/live-presence', { cache: 'no-store', signal: options?.signal });
   const text = await res.text();
   if (res.status === 403) throw new Error('Forbidden');
   if (!res.ok) throw new Error(text || `HTTP ${res.status}`);
@@ -1117,19 +1126,7 @@ export async function getAdminLivePresence(): Promise<{
     return { visitorsNow: 0, visitors: [] };
   }
   try {
-    return JSON.parse(trimmed) as {
-      visitorsNow: number;
-      visitors: Array<{
-        visitor_id: string;
-        lat: number;
-        lng: number;
-        path: string | null;
-        city?: string;
-        region?: string;
-        country?: string;
-        lastAt: number;
-      }>;
-    };
+    return JSON.parse(trimmed) as AdminLivePresenceResponse;
   } catch {
     throw new Error(
       text.trim().startsWith('<')

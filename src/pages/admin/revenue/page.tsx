@@ -16,6 +16,7 @@ import { isSupabaseConfigured } from '../../../utils/supabase';
 import { isAdminEmail } from '../../../utils/adminAuth';
 import { useRequireAdminPageAccess } from '../../../hooks/useRequireAdminPageAccess';
 import { usePersistentQueryState } from '../../../hooks/usePersistentQueryState';
+import { useAdminLivePresencePolling } from '../../../hooks/useAdminLivePresencePolling';
 import {
   buildRevenueOrdersList,
   getBcfProductSalesCounts,
@@ -850,6 +851,7 @@ export default function AdminRevenue() {
     }>
   >([]);
   const [liveGlobeError, setLiveGlobeError] = useState<string | null>(null);
+  const [liveGlobeStale, setLiveGlobeStale] = useState(false);
   /** Bumps when mock mode is toggled so `orderGlobePoints` and live fetches re-run (storage is outside React state). */
   const [globeMockUiRev, setGlobeMockUiRev] = useState(0);
 
@@ -880,20 +882,8 @@ export default function AdminRevenue() {
     [orderGlobePoints]
   );
 
-  const fetchLiveGlobe = useCallback(async () => {
-    persistGlobeMockFromBrowserLocation();
-    setLiveGlobeError(null);
-    try {
-      const raw = localStorage.getItem('currentUser');
-      const u = raw ? (JSON.parse(raw) as { email?: string }) : null;
-      if (!u?.email || !isAdminEmail(u.email)) {
-        setLiveVisitorsNow(0);
-        setLiveVisitorGlobePoints([]);
-        setLivePresenceVisitors([]);
-        return;
-      }
-      const data = await getAdminLivePresence();
-      const mergedPresence = mergeMockPresenceRows(Array.isArray(data.visitors) ? data.visitors : []);
+  const applyLivePresenceRows = useCallback(
+    (mergedPresence: typeof livePresenceVisitors) => {
       setLiveVisitorsNow(mergedPresence.length);
       setLivePresenceVisitors(mergedPresence);
       setLiveVisitorGlobePoints(
@@ -912,36 +902,53 @@ export default function AdminRevenue() {
           })
         )
       );
-    } catch {
-      if (adminGlobeMockDataEnabled()) {
-        setLiveGlobeError(null);
-        const mergedPresence = mergeMockPresenceRows([]);
-        setLiveVisitorsNow(mergedPresence.length);
-        setLivePresenceVisitors(mergedPresence);
-        setLiveVisitorGlobePoints(
-          mergeMockVisitorGlobePoints(
-            mergedPresence.map((v) => {
-              const geo = [v.city, v.region, v.country].filter(Boolean).join(', ') || 'ACTIVE';
-              const fullLabel = `VISITOR · ${geo}${v.path ? ` · ${v.path}` : ''}`;
-              const place = visitorPlaceFieldsFromHeartbeatLabel(fullLabel);
-              return {
-                lat: v.lat,
-                lng: v.lng,
-                label: fullLabel,
-                placeLine: place.placeLine,
-                placeDetail: place.placeDetail,
-              };
-            })
-          )
-        );
-      } else {
-        setLiveGlobeError('LIVE DATA UNAVAILABLE');
-        setLiveVisitorsNow(0);
-        setLiveVisitorGlobePoints([]);
-        setLivePresenceVisitors([]);
+    },
+    [globeMockUiRev]
+  );
+
+  const fetchLiveGlobe = useCallback(
+    async (signal?: AbortSignal) => {
+      persistGlobeMockFromBrowserLocation();
+      try {
+        const raw = localStorage.getItem('currentUser');
+        const u = raw ? (JSON.parse(raw) as { email?: string }) : null;
+        if (!u?.email || !isAdminEmail(u.email)) {
+          setLiveGlobeError(null);
+          setLiveGlobeStale(false);
+          setLiveVisitorsNow(0);
+          setLiveVisitorGlobePoints([]);
+          setLivePresenceVisitors([]);
+          return;
+        }
+        const data = await getAdminLivePresence({ signal });
+        if (signal?.aborted) return;
+        const mergedPresence = mergeMockPresenceRows(Array.isArray(data.visitors) ? data.visitors : []);
+        const unavailable = Boolean(data.meta?.analyticsUnavailable);
+        const stale = Boolean(data.meta?.stale);
+        setLiveGlobeStale(stale && !unavailable);
+        if (unavailable && !adminGlobeMockDataEnabled()) {
+          setLiveGlobeError('LIVE DATA UNAVAILABLE');
+        } else {
+          setLiveGlobeError(null);
+        }
+        applyLivePresenceRows(mergedPresence);
+      } catch (e) {
+        if (signal?.aborted) return;
+        if (adminGlobeMockDataEnabled()) {
+          setLiveGlobeError(null);
+          setLiveGlobeStale(false);
+          applyLivePresenceRows(mergeMockPresenceRows([]));
+        } else {
+          setLiveGlobeError('LIVE DATA UNAVAILABLE');
+          setLiveGlobeStale(false);
+          setLiveVisitorsNow(0);
+          setLiveVisitorGlobePoints([]);
+          setLivePresenceVisitors([]);
+        }
       }
-    }
-  }, [globeMockUiRev]);
+    },
+    [applyLivePresenceRows, globeMockUiRev]
+  );
 
   const liveViewCardMetrics = useMemo(() => {
     const visitors = livePresenceVisitors;
@@ -996,10 +1003,26 @@ export default function AdminRevenue() {
     if (activeTab !== 'OVERVIEW') return;
     persistGlobeMockFromSearchParams(searchParams);
     persistGlobeMockFromBrowserLocation();
-    void fetchLiveGlobe();
-    const id = setInterval(() => void fetchLiveGlobe(), LIVE_GLOBE_REFRESH_MS);
-    return () => clearInterval(id);
-  }, [activeTab, fetchLiveGlobe, globeMockUiRev, searchParams, location.hash]);
+  }, [activeTab, globeMockUiRev, searchParams, location.hash]);
+
+  const liveGlobePollEnabled = activeTab === 'OVERVIEW';
+
+  useAdminLivePresencePolling({
+    enabled: liveGlobePollEnabled,
+    refreshMs: LIVE_GLOBE_REFRESH_MS,
+    poll: async (signal) => {
+      await fetchLiveGlobe(signal);
+    },
+  });
+
+  useEffect(() => {
+    const onAuth = () => {
+      if (!liveGlobePollEnabled) return;
+      void fetchLiveGlobe();
+    };
+    window.addEventListener('signInStateChanged', onAuth);
+    return () => window.removeEventListener('signInStateChanged', onAuth);
+  }, [fetchLiveGlobe, liveGlobePollEnabled]);
 
   useEffect(() => {
     let currentUser: { email?: string } | null = null;
@@ -1351,6 +1374,11 @@ export default function AdminRevenue() {
                           </span>
                         </span>
                       </p>
+                      {liveGlobeStale && !liveGlobeError && (
+                        <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#ea580c', margin: '8px 0 0 0', textAlign: 'center', textTransform: 'uppercase' }}>
+                          LIVE DATA MAY BE STALE · LAST SUCCESSFUL FETCH IS CACHED
+                        </p>
+                      )}
                       {liveGlobeError && (
                         <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#EB1C24', margin: '8px 0 0 0', textAlign: 'center', textTransform: 'uppercase' }}>
                           {liveGlobeError} · Heartbeats require Supabase + page_view ingest
