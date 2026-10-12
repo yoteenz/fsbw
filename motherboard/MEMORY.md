@@ -55974,3 +55974,20 @@ generated-v5/ transparent PNGs → Experience Lab V2 runtime
   - `src/product-graph/publicMigration.test.ts` has 10 tests.
 - **Not changed:** the live app, auth, data, business rules, prices, Brokerage (paused) and the 12 privacy gaps.
 - **Tunnel:** this container cannot reach fsbw-dev.com. To see the latest, pull master in the Cursor VM and restart `aio-vite` and `aio-preview-tunnel`.
+
+## 2026-10-12 — AIO office: the complete office on the tunnel (workspaces preview from master)
+
+- **Context:** The founder can see the public mobile design on the AIO tunnel and asked how to see the office workspaces too.
+- **Found:**
+  - The tunnel serves `cursor/guided-apprenticeship-foundation-1087`.
+  - Composer already committed office previews there (e4e90d67), built from that branch's older office sources: 8 `ws-*` files against master's 35. So `/design-authority/aio-office/workspaces/preview/` on the tunnel shows the first four workspaces, not the complete office (18 destinations in four groups).
+  - The unified office (`office/`) sources match master, so that preview is current.
+- **Ported from the tunnel branch to master, unchanged:**
+  - Composer's build fixes in both `build.mjs` files: `python3` without `-I` so Pillow loads on the Cursor VM, and `site.html` written beside `local.html`.
+  - Both README notes.
+  - `docs/cloud-agent/aio-design-preview-tunnel.md`, `all-in-one-enterprises/scripts/build-design-previews.mjs` and `office/preview/`.
+- **Built:**
+  - `all-in-one-enterprises/design-authority/aio-office/workspaces/preview/` now holds the complete office from master: `site.html`, `local.html`, `index.html` and 191 files.
+  - It was verified through the AIO dev server at 390, 834 and 1440: no errors, no failed requests, no sideways scroll, and opening PERMITTING & AUTHORITIES at 390 works.
+- **Still needed:** Composer must copy `all-in-one-enterprises/design-authority/aio-office/workspaces` from master onto the tunnel branch. `aio-public` must NOT be copied: Composer has edits there (9214a8bd, 9d79a113, 35f79a12) that master lacks, and they must be merged back before the public sprint resumes.
+- **Not changed:** the live app, auth, data, prices, Brokerage (paused), the approved roots and the 12 privacy gaps.

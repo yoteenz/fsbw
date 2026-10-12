@@ -35,7 +35,10 @@ The workspaces are candidates until the founder approves them. They are isolated
 | `boards.mjs` | Makes the since-Batch-1 before → after boards and the board comparing the approved roots with the workspaces. |
 | `polish-boards.mjs` | Makes the seven boards comparing the last pass with this one, including the text-audit counts and frames from the recordings. |
 
+**Mobile preview tunnel (live demo):** build into `preview/`, then open `site.html` on the AIO Vite tunnel (paths in `docs/cloud-agent/aio-design-preview-tunnel.md` at repo root).
+
 ```
+node design-authority/aio-office/workspaces/build.mjs design-authority/aio-office/workspaces/preview
 node design-authority/aio-office/workspaces/build.mjs /tmp/ws
 node design-authority/aio-office/workspaces/qa.mjs /tmp/ws ../AIO_OFFICE_WORKSPACE_PROOFS/screens
 node design-authority/aio-office/office/build.mjs /tmp/b1 && node design-authority/aio-office/workspaces/boards.mjs /tmp/b1 /tmp/ws

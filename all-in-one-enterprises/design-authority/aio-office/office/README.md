@@ -15,11 +15,14 @@ The approved roots (HOME · WORK · REPORTS · MORE) are drawn by `../studio.js`
 | `pages-work.js` | MY WORK, ALL OPEN WORK and the twelve lane workspaces. |
 | `pages-reports-more.js` | The ten REPORTS domains and the eleven MORE destinations with their child pages. |
 | `office-app.js` · `viewer.css` | Router, client context, simulated actions, search, switcher, the device frame, and the review guide (page status, journeys, incomplete destinations). |
-| `build.mjs` | Bundles one page plus its images into `dist/` (`index.html` to publish, `local.html` for QA). Needs python3 + Pillow for resizing. |
+| `build.mjs` | Bundles one page plus its images into `preview/` or `dist/` (`site.html` / `local.html` for tunnel demos, `index.html` for artifact publish). Needs python3 + Pillow for resizing. |
 | `qa.mjs` | Crawls every reachable page at four screen sizes and three roles, runs the journeys and interactions, writes `qa-report.json`, and with `--shots` the review screenshots. |
+
+**Mobile preview tunnel:** `node design-authority/aio-office/office/build.mjs design-authority/aio-office/office/preview` → open `preview/site.html` on the AIO Vite tunnel. Paths: `docs/cloud-agent/aio-design-preview-tunnel.md`.
 
 ```
 cd all-in-one-enterprises
+node design-authority/aio-office/office/build.mjs design-authority/aio-office/office/preview
 node design-authority/aio-office/office/build.mjs /tmp/aio-office-review
 node design-authority/aio-office/office/qa.mjs /tmp/aio-office-review --shots ../AIO_OFFICE_UNIFIED_REVIEW/screens
 ```
