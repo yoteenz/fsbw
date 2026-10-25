@@ -1,0 +1,47 @@
+ID,CAPABILITY,CUSTOMER_ACTION,ADMIN_COUNTERPART,SHARED_DATA_SOURCE,STATE_TRANSITIONS,AUTHORIZATION,NOTIFICATIONS,AUDIT_HISTORY,VERDICT,ORPHAN_TYPE,FIX_PHASE
+MW-01,Place order,Checkout (Stripe product PI),Orders list (MISSING); revenue totals,orders JSON stub (server) vs userOrders_* (local),"PAID (server) / PLACED,PREPARING (local)",JWT; Stripe signature,order_confirmed / payment_received emails,none for order content,BROKEN,both (no shared record),1
+MW-02,View order status,Account > Orders / Concierge tracking,Revenue EDIT TRACKING (admin localStorage),none shared,client time-computed stages,—,tracking email only,none,DISCONNECTED,admin action not reflected,1
+MW-03,Tracking number,See tracking on order,EDIT TRACKING,admin localStorage,SHIPPED (local),—,order_shipped email (real),none,DISCONNECTED,admin action not reflected,1
+MW-04,Cancel / refund order,(none; UI auto-cancel after 24h unsigned),"Clients CANCEL ORDER (""refunded"")",admin localStorage,CANCELED (local),—,none,none,BROKEN,both,1
+MW-05,Sign order authorization form,/tools/order-form,Approvals > FORMS approve/decline,pending_order_forms; profiles.signed_order_forms,pending → approved/declined; order PLACED→CONFIRMED/CANCELED (no-op: id mismatch),JWT / requireAdmin,none to customer,audit_log,PARTIAL (order side no-op),—,1
+MW-06,See BAW spec of order,Order detail (local only),Customer detail / order (MISSING server),userOrders_* local,—,—,—,—,BROKEN,admin cannot see spec,1
+MW-07,Subscribe (Stripe),Rewards > CONFIRM SUBSCRIPTION > SUBSCRIBE WITH CARD,Finance > PAYMENTS (read),profiles membership columns; membership_payments,STANDARD→PREMIUM(tier)→renew/downgrade/deleted,Server + Stripe,membership_welcome email,membership_payments,RECONCILED (no admin edit),admin edit missing,4
+MW-08,Subscribe (non-Stripe CONFIRM ORDER),/checkout/upgrade CONFIRM ORDER,local demo row in revenue,localStorage,local PREMIUM,client only,none,none,BROKEN (free premium client-side),orphaned-customer,0B
+MW-09,Cancel subscription,Rewards > CANCEL SUBSCRIPTION,(none),localStorage autoRenewMembership,local flag,client only,none,none,BROKEN (Stripe keeps billing),orphaned-customer,0B
+MW-10,Spend tier SILVER/RED/BLACK,passive,founder toggle only,lastKnownTier_* local; current_tier_name never written,client recompute,client,none,none,CLIENT-ONLY,orphaned-customer,4
+MW-11,Loyalty points balance,Rewards > points,(none),composite localStorage; profiles.loyalty_points frozen,client awards,client,points_earned email (stale),none,CLIENT-ONLY,no admin counterpart,4
+MW-12,Redeem points,REDEEM,(none),none,none,—,none,none,PLACEHOLDER (fake success),orphaned-customer,4
+MW-13,Vouchers,Use at checkout,rewards-notify email only,voucherList local (wiped for non-founder),—,client,voucher_expiring cron (empty),none,BROKEN,both,4
+MW-14,Digital cash / gift card,Apply at checkout; LOAD GIFT CARD,Brand > CODES (local),giftCardBalance local; gift_card_balance frozen; codes in admin localStorage,client +/-,client,none,local history,BROKEN,admin codes unusable,4
+MW-15,Slay Challenge,"Pick reward, START CHALLENGE",founder stage select (concierge),localStorage (not user-scoped),labels only; progress never advances,client,none,none,SHELL / ORPHANED,no admin counterpart,4
+MW-16,Slay Quests,View levels,(none),hard-coded,static,—,—,—,PLACEHOLDER,no admin counterpart,4
+MW-17,Collectibles (education),View gallery,(none),"user_collectibles, education_certifications",issued on certification,server,certification modal,rows,RECONCILED-customer,no admin counterpart,4
+MW-18,Referral credit,Apply code at checkout; view referrals,Referrals (empty table; export no-op),registeredUsers/referralEarnings local; referral_earnings unwritten,confirmed at order (client),client,local flag,none,ORPHANED both sides,both,6
+MW-19,Affiliate content submission,/account/affiliate SUBMIT,Approvals > AFFILIATE,pending_affiliate_submissions; profiles.affiliate_submitted_content,pending→approved/declined,JWT / requireAdmin,pending/approved/denied emails,audit_log,RECONCILED (workflow),—,6
+MW-20,Affiliate points award,(implicit on approval),Approve button,profile JSON points ?? 100; no ledger,none effective,—,email shows 100,audit row,DISCONNECTED (policy 400/600 not applied),—,6
+MW-21,Hair analysis monthly credit,Generate analysis,(none; MISSING usage view),hairstyle_analysis_usage,count++/refund,server RPC,PSA status copy,table row,RECONCILED-customer,no admin counterpart,5
+MW-22,Buy extra analysis (1 or 4),Purchase comparisons,(none),PI metadata → paid_credit_queue; purchase_grants,grant→consume,webhook,none,console.error only,BROKEN for 4-pack (live-confirmed),no admin counterpart,0B
+MW-23,PSA FIND MY BEST LOOKS,Submit selfie in PSA,(none),none (response discarded),submitted→nothing,JWT + premium,promises 24h; nothing sent,none,BROKEN,orphaned-customer,5
+MW-24,Consult style-analysis add-on,Pay $20/$60 at consult booking,Meetings (no style-analysis UI),local order JSON (selfie data URL),paid→never fulfilled,—,none,none,DISCONNECTED,orphaned-customer,5
+MW-25,Save BAW configuration,(only bag > + LIST),(none),wishlist,—,JWT,none,none,PARTIAL,no admin counterpart,5
+MW-26,Edit BAW line from cart,EDIT IN BUILD-A-WIG,(none),editingCartItem local,—,premium (client) vs canon sign-in,none,none,PARTIAL,—,5
+MW-27,BAW option catalogue / pricing,Configure + see price,(MISSING admin editor),client constants in 6+ places; server quote ignores options,—,—,—,—,BROKEN (server charges base price),admin counterpart missing,0B/5
+MW-28,Inventory / sold out,See sold-out,Edit inventory (admin localStorage),per-browser computation,—,—,back-in-stock (local),none,DISCONNECTED,admin action not reflected,3
+MW-29,Back-in-stock waitlist,Notify me,View waitlist (local + mock),unitStockNotifyWaitlist_v1 local,—,admin-only notify endpoint,confirmation email,none,DISCONNECTED,both,3
+MW-30,Special offer,Claim offer (concierge),Marketing > SPECIAL OFFERS,app_config.special_offer_admin,—,requireAdmin / client price,none,audit_log,"PARTIAL (client price, no validation)",—,6
+MW-31,Consult offer,VIEW OFFER modal; redeem code at checkout,Meetings > SEND OFFER,consult_quotes,sent→redeemed,requireAdmin / owner,client notification,audit_log,RECONCILED,—,—
+MW-32,Product review,Leave review,Approvals > REVIEWS,reviews; profiles.user_submitted_reviews,pending→published/rejected,JWT (no purchase check) / requireAdmin,none,audit_log,PARTIAL (no public display; silent decline),—,5
+MW-33,Unpublish review,(none),(API only; no UI),reviews,published→pending/rejected,requireAdmin,none,audit,UNREACHABLE,admin UI missing,5
+MW-34,Slay Cam submission,(none; CTA loops),(none),none,—,—,—,—,MISSING,both,5
+MW-35,Lounge comment report,Report comment,(no queue),report_count,count++,JWT,none,none,DISCONNECTED,admin counterpart missing,5
+MW-36,Priority message,Concierge > PRIORITY MESSAGES,Inbox (read-only),priority_messages,new→read/archived,JWT / requireAdmin,none,none,PARTIAL (no reply),customer cannot see reply,6
+MW-37,Contact / FAQ question,"/brand/contact, FAQ form","Inbox CONTACT (mark read) / FAQ (reads local, not server)",brand_contact_inquiries; brand_faq_questions,new→read,public / requireAdmin,ops inbox email,none,PARTIAL / DISCONNECTED (FAQ),—,6
+MW-38,Admin sends notification,Account > Alerts,Brand > ALERTS; /admin/notifications,notifications.items,append,requireAdmin,in-app,audit_log,RECONCILED (read state local),—,2
+MW-39,Addresses,Save address,Customer detail (read profile),profiles.saved_addresses (never written),—,—,—,—,BROKEN,—,2
+MW-40,Payment methods,Save card,(none),localStorage last-4,—,—,—,—,PLACEHOLDER,—,2
+MW-41,Profile edit,Settings,Customer detail (read),profiles,—,JWT,—,audit_log profile.update,RECONCILED,—,—
+MW-42,Delete account,Settings > DELETE,Deleted accounts (restore fake),deleted_accounts; auth.users,active→deleted,JWT / requireAdmin,none,deleted_accounts row,PARTIAL (restore fake),admin restore fake,3
+MW-43,Block / disable customer,(n/a),"Clients BLOCK (fake) vs Users DISABLE (real, unreachable)",auth ban vs localStorage,active→banned,requireAdmin,none,not audited,PARTIAL,—,3
+MW-44,Slay Tickets,Buy pack; spend on content,(none),slay_ticket_transactions; profiles.slay_ticket_balance,earned/purchased/used,JWT + premium; no payment proof,none,transactions,RECONCILED-customer / EXPLOITABLE,no admin counterpart,0B
+MW-45,Wishlist share,Share list,(n/a),localStorage registry,—,—,—,—,BROKEN,—,5
+MW-46,Booking autopay,Book appointment (deposit + final),Meetings,meetings.metadata (client-supplied Stripe ids),autopay charge,cron secret; no ownership check,none,booking_autopay_attempts,EXPLOITABLE (H1),—,0B
