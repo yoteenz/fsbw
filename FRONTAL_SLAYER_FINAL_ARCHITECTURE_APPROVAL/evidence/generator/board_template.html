@@ -1,0 +1,642 @@
+<title>Frontal Slayer Architecture Board</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Covered+By+Your+Grace&display=swap">
+<style>
+/* Layout: marble ground, glass panels; tree left + sticky inspector right on wide screens, stacked on phones. */
+:root {
+  --bg: #f3f3f5;
+  --vein: rgba(110, 110, 120, 0.07);
+  --glass: rgba(255, 255, 255, 0.74);
+  --glass-strong: rgba(255, 255, 255, 0.92);
+  --ink: #0b0b0c;
+  --muted: #5f5f66;
+  --gray: #808080;
+  --line: rgba(11, 11, 12, 0.11);
+  --red: #eb1c24;
+  --red-ink: #c4121a;
+  --red-wash: rgba(235, 28, 36, 0.08);
+  --ok: #1d7a46;
+  --ok-wash: rgba(29, 122, 70, 0.1);
+  --warn: #8a5a00;
+  --warn-wash: rgba(176, 116, 0, 0.12);
+  --chrome: linear-gradient(180deg, #ffffff 0%, #e4e4e8 48%, #f7f7f9 100%);
+  --shadow: 0 1px 0 rgba(255, 255, 255, 0.8) inset, 0 10px 30px rgba(20, 20, 30, 0.06);
+  --font-ui: "Futura PT", "Jost", "Futura", "Century Gothic", system-ui, sans-serif;
+  --font-hand: "Covered By Your Grace", "Bradley Hand", cursive;
+  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0d0d0f; --vein: rgba(200, 200, 210, 0.05); --glass: rgba(26, 26, 30, 0.74); --glass-strong: rgba(30, 30, 34, 0.94);
+    --ink: #f1f1f3; --muted: #a6a6ad; --gray: #8c8c8c; --line: rgba(255, 255, 255, 0.12);
+    --red: #ff2d35; --red-ink: #ff5a60; --red-wash: rgba(255, 45, 53, 0.12);
+    --ok: #4cc283; --ok-wash: rgba(76, 194, 131, 0.13); --warn: #e0a83a; --warn-wash: rgba(224, 168, 58, 0.14);
+    --chrome: linear-gradient(180deg, #2a2a2f 0%, #18181b 50%, #232327 100%);
+    --shadow: 0 1px 0 rgba(255, 255, 255, 0.05) inset, 0 10px 30px rgba(0, 0, 0, 0.35);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0d0d0f; --vein: rgba(200, 200, 210, 0.05); --glass: rgba(26, 26, 30, 0.74); --glass-strong: rgba(30, 30, 34, 0.94);
+  --ink: #f1f1f3; --muted: #a6a6ad; --gray: #8c8c8c; --line: rgba(255, 255, 255, 0.12);
+  --red: #ff2d35; --red-ink: #ff5a60; --red-wash: rgba(255, 45, 53, 0.12);
+  --ok: #4cc283; --ok-wash: rgba(76, 194, 131, 0.13); --warn: #e0a83a; --warn-wash: rgba(224, 168, 58, 0.14);
+  --chrome: linear-gradient(180deg, #2a2a2f 0%, #18181b 50%, #232327 100%);
+  --shadow: 0 1px 0 rgba(255, 255, 255, 0.05) inset, 0 10px 30px rgba(0, 0, 0, 0.35);
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body {
+  background-color: var(--bg);
+  background-image:
+    linear-gradient(118deg, transparent 0 38%, var(--vein) 38.4%, transparent 39.2% 100%),
+    linear-gradient(64deg, transparent 0 61%, var(--vein) 61.3%, transparent 62% 100%),
+    linear-gradient(152deg, transparent 0 74%, var(--vein) 74.2%, transparent 74.8% 100%);
+  background-attachment: fixed;
+  color: var(--ink);
+  font-family: var(--font-ui);
+  font-size: 15px;
+  line-height: 1.5;
+}
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--glass-strong); }
+.wrap { max-width: 1320px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 0 48px; }
+h1, h2, h3 { text-wrap: balance; margin: 0; font-weight: 500; }
+.label { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); font-weight: 500; }
+.num { font-variant-numeric: tabular-nums; }
+button, select, input, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
+
+/* Header */
+.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--glass-strong); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-bottom: 1px solid var(--line); }
+.top .wrap { padding-block: 14px 0; display: grid; gap: 12px; }
+.brandrow { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 18px; justify-content: space-between; }
+.brand { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.brand h1 { font-size: clamp(18px, 2.6vw, 24px); letter-spacing: 0.22em; text-transform: uppercase; }
+.brand h1 b { color: var(--red); font-weight: 600; }
+.brand .sub { font-size: 13px; color: var(--muted); }
+.status { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.pill { display: inline-flex; align-items: center; gap: 6px; border-radius: 999px; padding: 4px 10px; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 500; border: 1px solid var(--line); background: var(--glass); white-space: nowrap; }
+.pill .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--gray); }
+.pill.pending { color: var(--red-ink); border-color: color-mix(in srgb, var(--red) 40%, transparent); background: var(--red-wash); }
+.pill.pending .dot { background: var(--red); }
+.pill.ok .dot { background: var(--ok); }
+.pill.warn .dot { background: var(--warn); }
+.tabs { display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; margin: 0 -4px; }
+.tabs::-webkit-scrollbar { display: none; }
+.tab { border: 0; background: none; padding: 10px 12px 12px; font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); border-bottom: 2px solid transparent; white-space: nowrap; min-height: 44px; }
+.tab[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--red); }
+
+/* Panels */
+main { padding-top: 22px; display: grid; gap: 22px; }
+.stack { display: grid; gap: 22px; }
+.panel { background: var(--glass); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow); padding: 18px; min-width: 0; }
+.panel h2 { font-size: 13px; letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 12px; }
+.note { font-family: var(--font-hand); font-size: 20px; color: var(--red-ink); line-height: 1.2; }
+.muted { color: var(--muted); }
+.small { font-size: 13px; }
+
+/* Overview */
+.stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+@media (min-width: 760px) { .stats { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.stat { border: 1px solid var(--line); border-radius: 12px; padding: 14px; background: var(--chrome); }
+.stat .v { font-size: 30px; font-weight: 500; line-height: 1.1; }
+.stat .k { font-size: 12px; color: var(--muted); margin-top: 4px; }
+.grid2 { display: grid; grid-template-columns: 1fr; gap: 22px; }
+@media (min-width: 980px) { .grid2 { grid-template-columns: 1.1fr 0.9fr; } }
+.path { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.step { border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; background: var(--glass-strong); min-width: 0; }
+.step b { display: block; font-size: 13px; letter-spacing: 0.08em; }
+.step span { font-size: 12px; color: var(--muted); }
+.step.p0 { border-color: color-mix(in srgb, var(--red) 55%, transparent); }
+.arrow { color: var(--gray); }
+.tbl-wrap { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 13px; }
+th { text-align: left; font-weight: 500; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); padding: 6px 8px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+td { padding: 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+tr:last-child td { border-bottom: 0; }
+.sev { display: inline-block; font-size: 10px; letter-spacing: 0.12em; padding: 2px 6px; border-radius: 4px; font-weight: 600; }
+.sev.CRITICAL { background: var(--red); color: #fff; }
+.sev.HIGH { background: var(--red-wash); color: var(--red-ink); }
+.sev.MEDIUM { background: var(--warn-wash); color: var(--warn); }
+.bar { height: 6px; border-radius: 3px; background: var(--line); overflow: hidden; min-width: 60px; }
+.bar i { display: block; height: 100%; background: var(--ok); }
+
+/* Tree */
+.toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 14px; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; padding: 3px; background: var(--glass-strong); }
+.seg button { border: 0; background: none; border-radius: 999px; padding: 6px 14px; font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); min-height: 36px; }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+.ghost { border: 1px solid var(--line); background: var(--glass-strong); border-radius: 999px; padding: 6px 12px; font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; min-height: 36px; }
+.ghost:hover { border-color: var(--gray); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { border: 1px solid var(--line); background: var(--glass-strong); border-radius: 999px; padding: 4px 10px; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; min-height: 32px; display: inline-flex; align-items: center; gap: 6px; }
+.chip[aria-pressed="false"] { opacity: 0.45; }
+.treegrid { display: grid; grid-template-columns: 1fr; gap: 18px; }
+@media (min-width: 1024px) { .treegrid { grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr); align-items: start; } .inspector { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 120px); max-height: calc(100vh - 140px); overflow: auto; } }
+.fam { border-top: 1px solid var(--line); }
+.fam:first-child { border-top: 0; }
+.famhead { width: 100%; display: flex; align-items: center; gap: 10px; border: 0; background: none; text-align: left; padding: 12px 4px; min-height: 44px; }
+.famhead .caret { width: 14px; color: var(--gray); transition: transform 0.15s; }
+.fam[data-open="true"] .caret { transform: rotate(90deg); }
+.famhead .fname { font-size: 13px; letter-spacing: 0.16em; text-transform: uppercase; font-weight: 500; flex: 1; min-width: 0; }
+.famhead .count { font-size: 12px; color: var(--muted); }
+.fambody { padding: 0 0 12px 24px; display: grid; gap: 4px; }
+.fam[data-open="false"] .fambody { display: none; }
+.node { display: grid; grid-template-columns: auto 1fr; gap: 4px 10px; align-items: start; width: 100%; text-align: left; border: 1px solid transparent; background: none; border-radius: 10px; padding: 8px 10px; min-height: 44px; }
+.node:hover { background: var(--glass-strong); border-color: var(--line); }
+.node[aria-current="true"] { background: var(--glass-strong); border-color: color-mix(in srgb, var(--red) 55%, transparent); }
+.node .cond { grid-row: span 2; width: 26px; height: 26px; border-radius: 7px; display: grid; place-items: center; font-size: 12px; font-weight: 600; background: var(--chrome); border: 1px solid var(--line); }
+.node .nm { font-size: 14px; font-weight: 500; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; min-width: 0; }
+.node .rt { font-family: var(--font-mono); font-size: 12px; color: var(--muted); overflow-wrap: anywhere; }
+.node.depth1 { margin-left: 18px; }
+.node.depth2 { margin-left: 36px; }
+.mk { font-size: 9.5px; letter-spacing: 0.12em; text-transform: uppercase; padding: 2px 6px; border-radius: 4px; border: 1px solid var(--line); color: var(--muted); font-weight: 600; white-space: nowrap; }
+.mk.NEW { color: var(--red-ink); border-color: color-mix(in srgb, var(--red) 50%, transparent); background: var(--red-wash); }
+.mk.CONSOLIDATED { border-style: dashed; }
+.mk.RETIRED { text-decoration: line-through; }
+.mk.BLOCKED { color: var(--warn); background: var(--warn-wash); border-color: transparent; }
+.mk.UNVERIFIED { border-style: dotted; }
+.inspector h3 { font-size: 20px; letter-spacing: 0.04em; }
+.kv { display: grid; grid-template-columns: 1fr; gap: 12px; margin-top: 14px; }
+.kv div { min-width: 0; }
+.kv .v { font-size: 14px; overflow-wrap: anywhere; }
+.kv .v.mono { font-family: var(--font-mono); font-size: 12.5px; }
+.linkish { border: 0; background: none; padding: 0; color: var(--red-ink); text-decoration: underline; text-underline-offset: 3px; font-size: inherit; }
+.taglist { display: flex; flex-wrap: wrap; gap: 6px; }
+.tagbtn { border: 1px solid var(--line); background: var(--glass-strong); border-radius: 6px; padding: 3px 8px; font-size: 12px; min-height: 30px; }
+.tagbtn:hover { border-color: var(--red); }
+.empty { color: var(--muted); font-size: 14px; padding: 12px 0; }
+
+/* Workflows */
+.wf { border-top: 1px solid var(--line); }
+.wf:first-child { border-top: 0; }
+.wf > button { width: 100%; display: grid; grid-template-columns: 56px 1fr auto; gap: 10px; align-items: center; text-align: left; background: none; border: 0; padding: 10px 4px; min-height: 48px; }
+.wf .id { font-family: var(--font-mono); font-size: 12px; color: var(--muted); }
+.wf .wn { font-weight: 500; min-width: 0; }
+.wf .st { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); text-align: right; }
+.wf .st.bad { color: var(--red-ink); }
+.wfbody { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px 18px; padding: 4px 4px 16px 66px; }
+@media (max-width: 640px) { .wfbody { padding-left: 4px; } .wf > button { grid-template-columns: 48px 1fr; } .wf .st { grid-column: 2; text-align: left; } }
+
+/* Decisions */
+.dgrid { display: grid; gap: 14px; }
+.dcard { border: 1px solid var(--line); border-radius: 14px; background: var(--glass-strong); padding: 16px; display: grid; gap: 12px; min-width: 0; }
+.dcard.rec-APPROVED { border-color: color-mix(in srgb, var(--ok) 60%, transparent); }
+.dhead { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: baseline; }
+.did { font-family: var(--font-mono); font-size: 13px; color: var(--red-ink); font-weight: 600; }
+.dsub { font-size: 16px; font-weight: 500; flex: 1; min-width: 200px; }
+.opts { display: grid; gap: 8px; }
+.opt { border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; display: grid; grid-template-columns: auto 1fr; gap: 4px 10px; align-items: start; }
+.opt.isrec { border-color: color-mix(in srgb, var(--red) 50%, transparent); background: var(--red-wash); }
+.opt.chosen { border-color: var(--ok); background: var(--ok-wash); }
+.opt input { margin-top: 3px; width: 18px; height: 18px; accent-color: var(--red); }
+.opt .ol { font-size: 14px; }
+.opt .oc { grid-column: 2; font-size: 13px; color: var(--muted); }
+.recbadge { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--red-ink); font-weight: 600; margin-left: 6px; }
+.dmeta { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px 16px; font-size: 13px; }
+.dactions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.dactions select, .dactions input { border: 1px solid var(--line); background: var(--glass-strong); border-radius: 8px; padding: 6px 10px; min-height: 40px; }
+.dactions input { flex: 1; min-width: 160px; }
+.primary { border: 0; background: var(--ink); color: var(--bg); border-radius: 999px; padding: 8px 16px; font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; min-height: 40px; }
+.primary:disabled { opacity: 0.4; cursor: not-allowed; }
+.recline { font-size: 13px; }
+.recline b { color: var(--ok); }
+.banner { border-radius: 12px; padding: 12px 14px; font-size: 14px; border: 1px solid var(--line); background: var(--glass-strong); }
+.banner.warn { background: var(--warn-wash); border-color: transparent; }
+.banner.ok { background: var(--ok-wash); border-color: transparent; }
+details summary { cursor: pointer; font-size: 13px; color: var(--muted); }
+textarea#manifest { width: 100%; min-height: 360px; font-family: var(--font-mono); font-size: 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--glass-strong); padding: 12px; resize: vertical; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<header class="top">
+  <div class="wrap">
+    <div class="brandrow">
+      <div class="brand">
+        <h1>Frontal <b>Slayer</b> · Architecture</h1>
+        <div class="sub">Account + admin final architecture · board V2 · built from audit <span class="num" id="auditCommit"></span></div>
+      </div>
+      <div class="status">
+        <span class="pill pending"><span class="dot"></span>Pending founder approval</span>
+        <span class="pill" id="storePill"><span class="dot"></span><span id="storeText">Connecting decision store…</span></span>
+      </div>
+    </div>
+    <nav class="tabs" role="tablist" aria-label="Board views">
+      <button class="tab" role="tab" data-view="overview" id="tab-overview">Overview</button>
+      <button class="tab" role="tab" data-view="tree" id="tab-tree">Page tree</button>
+      <button class="tab" role="tab" data-view="workflows" id="tab-workflows">Workflows</button>
+      <button class="tab" role="tab" data-view="decisions" id="tab-decisions">Founder decisions</button>
+      <button class="tab" role="tab" data-view="export" id="tab-export">Export</button>
+    </nav>
+  </div>
+</header>
+
+<div class="wrap">
+<main>
+  <!-- OVERVIEW -->
+  <section data-panel="overview" class="stack">
+    <div class="panel">
+      <div style="display:flex;flex-wrap:wrap;gap:8px 20px;align-items:baseline;justify-content:space-between;margin-bottom:14px">
+        <h2 style="margin:0">Architecture at a glance</h2>
+        <span class="note">recommendations only · nothing here is approved until recorded</span>
+      </div>
+      <div class="stats" id="stats"></div>
+    </div>
+    <div class="grid2">
+      <div class="panel">
+        <h2>Critical path</h2>
+        <div class="path" id="critpath"></div>
+        <p class="small muted" style="margin:12px 0 0">Money, database and UI changes ship in separate sprints unless inseparable. S0B-1 touches the database shared with SITE00 and JURNL; it needs decision A1 and H3 plus a branch rehearsal.</p>
+      </div>
+      <div class="panel">
+        <h2>Sprint gates</h2>
+        <div class="tbl-wrap"><table><thead><tr><th>Gate</th><th>Founder decisions</th><th>Recorded</th></tr></thead><tbody id="gates"></tbody></table></div>
+      </div>
+    </div>
+    <div class="panel">
+      <h2>Security and money risks</h2>
+      <div class="tbl-wrap"><table><thead><tr><th>ID</th><th>Risk</th><th>Severity</th><th>Band</th><th>Gate</th><th>Decision</th></tr></thead><tbody id="risks"></tbody></table></div>
+    </div>
+  </section>
+
+  <!-- TREE -->
+  <section data-panel="tree" hidden>
+    <div class="toolbar">
+      <div class="seg" role="group" aria-label="Tree">
+        <button id="t-customer" aria-pressed="true" data-tree="customer">Customer</button>
+        <button id="t-admin" aria-pressed="false" data-tree="admin">Admin</button>
+      </div>
+      <div class="seg" role="group" aria-label="Hierarchy">
+        <button id="h-proposed" aria-pressed="true" data-h="proposed">Proposed</button>
+        <button id="h-current" aria-pressed="false" data-h="current">Current</button>
+      </div>
+      <button class="ghost" id="expandAll">Expand all</button>
+      <button class="ghost" id="collapseAll">Collapse all</button>
+    </div>
+    <div class="chips" id="markerChips" style="margin-bottom:14px" aria-label="Filter by marker"></div>
+    <div class="treegrid">
+      <div class="panel" id="tree" style="padding-top:6px"></div>
+      <aside class="panel inspector" id="inspector" aria-live="polite"></aside>
+    </div>
+  </section>
+
+  <!-- WORKFLOWS -->
+  <section data-panel="workflows" hidden>
+    <div class="panel">
+      <div class="toolbar"><h2 style="margin:0;flex:1">Customer ↔ admin workflows</h2><div class="chips" id="wfAreas"></div></div>
+      <div id="wflist"></div>
+    </div>
+  </section>
+
+  <!-- DECISIONS -->
+  <section data-panel="decisions" hidden>
+    <div style="display:grid;gap:14px">
+      <div class="banner" id="decBanner"></div>
+      <div class="toolbar">
+        <div class="chips" id="groupChips"></div>
+        <div class="seg" role="group" aria-label="Show">
+          <button id="f-all" aria-pressed="true" data-f="all">All</button>
+          <button id="f-pending" aria-pressed="false" data-f="pending">Pending</button>
+          <button id="f-recorded" aria-pressed="false" data-f="recorded">Recorded</button>
+        </div>
+      </div>
+      <div class="dgrid" id="dlist"></div>
+    </div>
+  </section>
+
+  <!-- EXPORT -->
+  <section data-panel="export" hidden>
+    <div class="panel" style="display:grid;gap:12px">
+      <h2 style="margin:0">Approval manifest export</h2>
+      <p class="small muted" style="margin:0">Same shape as <code>20_ARCHITECTURE_APPROVAL_MANIFEST.json</code>. A founder selection appears here only when it is recorded in the decision store by the artifact owner. Drafts on this device are listed separately and never count. The export becomes the repository's decision record only when it is committed.</p>
+      <div class="dactions">
+        <button class="primary" id="copyManifest">Copy manifest</button>
+        <button class="ghost" id="saveManifest" hidden>Save as JSON</button>
+        <span class="small muted" id="exportMsg" role="status"></span>
+      </div>
+      <textarea id="manifest" readonly aria-label="Manifest JSON"></textarea>
+    </div>
+  </section>
+</main>
+</div>
+
+<script>
+/*__DATA__*/
+</script>
+<script>
+(function () {
+  const A = window.ARCH;
+  const $ = (s, r) => (r || document).querySelector(s);
+  const el = (tag, attrs, ...kids) => {
+    const n = document.createElement(tag);
+    if (attrs) for (const [k, v] of Object.entries(attrs)) {
+      if (v == null || v === false) continue;
+      if (k === 'class') n.className = v; else if (k === 'text') n.textContent = v;
+      else if (k.startsWith('on')) n.addEventListener(k.slice(2), v); else n.setAttribute(k, v === true ? '' : v);
+    }
+    for (const c of kids.flat()) if (c != null && c !== false) n.append(c.nodeType ? c : document.createTextNode(String(c)));
+    return n;
+  };
+  const store = { get(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } }, set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} } };
+
+  $('#auditCommit').textContent = A.auditCommit.slice(0, 7);
+  const decById = Object.fromEntries(A.decisions.map(d => [d.id, d]));
+  const wfById = Object.fromEntries(A.workflows.map(w => [w.id, w]));
+  const pageById = Object.fromEntries(A.pages.map(p => [p.id, p]));
+
+  // ---------------- decision records ----------------
+  let records = {};            // id -> {selection,status,note,decidedBy,decidedAt}  (from the store, owner-written)
+  let drafts = store.get('fs-arch-v2-drafts', {}); // device-only drafts when the store is unavailable
+  let mode = 'connecting';     // connecting | owner | readonly | local
+  let db = null, me = null;
+
+  function setStore(text, cls) { $('#storeText').textContent = text; $('#storePill').className = 'pill ' + (cls || ''); }
+
+  // ---------------- views ----------------
+  const views = ['overview', 'tree', 'workflows', 'decisions', 'export'];
+  let view = views.includes(location.hash.slice(1)) ? location.hash.slice(1) : 'overview';
+  function show(v) {
+    view = v;
+    document.querySelectorAll('[data-panel]').forEach(p => p.hidden = p.dataset.panel !== v);
+    document.querySelectorAll('.tab').forEach(t => t.setAttribute('aria-selected', String(t.dataset.view === v)));
+    if (v === 'export') renderExport();
+    try { history.replaceState(null, '', '#' + v); } catch (e) {}
+  }
+  document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => show(t.dataset.view)));
+
+  // ---------------- overview ----------------
+  function renderOverview() {
+    const c = A.counts;
+    const rec = Object.keys(records).length;
+    const stats = [
+      [c.customerFamilies + ' · ' + c.customerRoutedPages, 'Customer families · routed pages'],
+      [c.adminFamilies + ' · ' + c.adminRoutedPages, 'Admin families · routed pages'],
+      [c.newPages.length, 'New pages'],
+      [c.consolidatedRoutes.length, 'URLs folded into tabs'],
+      [c.retiredOrRestricted.length, 'Retired or restricted'],
+      [A.workflows.length, 'Mirrored workflows'],
+      [A.risks.filter(r => r.sev === 'CRITICAL').length, 'Critical risks'],
+      [rec + ' / ' + A.decisions.length, 'Decisions recorded'],
+    ];
+    $('#stats').replaceChildren(...stats.map(([v, k]) => el('div', { class: 'stat' }, el('div', { class: 'v num', text: v }), el('div', { class: 'k', text: k }))));
+    const path = [['S0B-1 ∥ S0B-2', 'P0A containment', true], ['S1', 'Order of record', true], ['S2 ∥ S3', 'Customer + admin core'], ['S4', 'Rewards ledgers'], ['S7', 'Verification']];
+    const nodes = [];
+    path.forEach(([b, s, p0], i) => { if (i) nodes.push(el('span', { class: 'arrow', 'aria-hidden': 'true', text: '→' })); nodes.push(el('div', { class: 'step' + (p0 ? ' p0' : '') }, el('b', { text: b }), el('span', { text: s }))); });
+    nodes.push(el('span', { class: 'small muted', text: 'Side tracks: S1B (BAW pricing) after S1 · S5, S6 after S2/S3' }));
+    $('#critpath').replaceChildren(...nodes);
+    $('#gates').replaceChildren(...A.gates.map(g => {
+      const n = g.requires.filter(id => records[id]).length;
+      const pct = g.requires.length ? Math.round(100 * n / g.requires.length) : 0;
+      return el('tr', null, el('td', { class: 'num', text: g.gate }),
+        el('td', null, el('div', { class: 'taglist' }, g.requires.map(id => el('button', { class: 'tagbtn', text: id, title: decById[id] ? decById[id].subject : id, onclick: () => openDecision(id) })))),
+        el('td', { class: 'num' }, el('div', { class: 'small', text: n + ' / ' + g.requires.length }), el('div', { class: 'bar', role: 'img', 'aria-label': pct + '% recorded' }, el('i', { style: 'width:' + pct + '%' }))));
+    }));
+    $('#risks').replaceChildren(...A.risks.map(r => el('tr', null, el('td', { class: 'num', text: r.id }), el('td', { text: r.risk }), el('td', null, el('span', { class: 'sev ' + r.sev.split(' ')[0], text: r.sev })), el('td', { text: r.band }), el('td', { text: r.gate }), el('td', { text: r.decision }))));
+  }
+
+  // ---------------- tree ----------------
+  const markers = ['EXISTING', 'NEW', 'CONSOLIDATED', 'RETIRED', 'BLOCKED', 'UNVERIFIED'];
+  const markerHelp = { EXISTING: 'Exists today; kept or repaired', NEW: 'Does not exist today', CONSOLIDATED: 'Old URL folded into a tab', RETIRED: 'Redirected or restricted', BLOCKED: 'Held until a decision or containment', UNVERIFIED: 'Not verified end-to-end' };
+  let tree = store.get('fs-arch-v2-tree', 'customer'), hier = 'proposed', selected = null;
+  let markerOn = Object.fromEntries(markers.map(m => [m, true]));
+  let openFam = store.get('fs-arch-v2-open', null);
+  const isUnverified = p => p.cond === 'G' || /UNVERIFIED/i.test(p.backend || '') || /UNVERIFIED/i.test(p.missing || '');
+  const pageMarkers = p => [p.marker].concat(isUnverified(p) && p.marker !== 'UNVERIFIED' ? ['UNVERIFIED'] : []);
+  const visible = p => pageMarkers(p).some(m => markerOn[m]);
+
+  $('#markerChips').replaceChildren(...markers.map(m => el('button', { class: 'chip', 'aria-pressed': 'true', title: markerHelp[m], onclick: (e) => { markerOn[m] = !markerOn[m]; e.currentTarget.setAttribute('aria-pressed', String(markerOn[m])); renderTree(); } }, el('span', { class: 'mk ' + m, text: m }))));
+  function segSet(prefix, val) { document.querySelectorAll('[id^="' + prefix + '"]').forEach(b => b.setAttribute('aria-pressed', String(b.id === prefix + val))); }
+  document.querySelectorAll('[data-tree]').forEach(b => b.addEventListener('click', () => { tree = b.dataset.tree; store.set('fs-arch-v2-tree', tree); segSet('t-', tree); selected = null; renderTree(); }));
+  document.querySelectorAll('[data-h]').forEach(b => b.addEventListener('click', () => { hier = b.dataset.h; segSet('h-', hier); renderTree(); }));
+  $('#expandAll').addEventListener('click', () => { openFam = null; document.querySelectorAll('.fam').forEach(f => f.dataset.open = 'true'); saveOpen(); });
+  $('#collapseAll').addEventListener('click', () => { document.querySelectorAll('.fam').forEach(f => f.dataset.open = 'false'); saveOpen(); });
+  function saveOpen() { const o = {}; document.querySelectorAll('.fam').forEach(f => o[f.dataset.key] = f.dataset.open === 'true'); openFam = Object.assign(openFam || {}, o); store.set('fs-arch-v2-open', openFam); }
+
+  function nodeBtn(p, depth, routeText) {
+    return el('button', { class: 'node depth' + Math.min(depth, 2), 'aria-current': String(selected === p.id), onclick: () => { selected = p.id; renderTree(); if (window.innerWidth < 1024) $('#inspector').scrollIntoView({ behavior: 'smooth', block: 'start' }); } },
+      el('span', { class: 'cond', title: 'Condition ' + p.cond, text: p.cond }),
+      el('span', { class: 'nm' }, p.name, pageMarkers(p).map(m => el('span', { class: 'mk ' + m, text: m }))),
+      el('span', { class: 'rt', text: routeText }));
+  }
+  function famBlock(key, title, items) {
+    const open = openFam && key in openFam ? openFam[key] : true;
+    const f = el('div', { class: 'fam', 'data-key': key, 'data-open': String(open) },
+      el('button', { class: 'famhead', 'aria-expanded': String(open), onclick: (e) => { const o = f.dataset.open !== 'true'; f.dataset.open = String(o); e.currentTarget.setAttribute('aria-expanded', String(o)); saveOpen(); } },
+        el('span', { class: 'caret', 'aria-hidden': 'true', text: '▸' }), el('span', { class: 'fname', text: title }), el('span', { class: 'count num', text: items.length })),
+      el('div', { class: 'fambody' }, items));
+    return f;
+  }
+  function renderTree() {
+    const ps = A.pages.filter(p => p.tree === tree);
+    const blocks = [];
+    if (hier === 'proposed') {
+      const fams = [...new Set(ps.map(p => p.family))];
+      for (const fam of fams) {
+        const inFam = ps.filter(p => p.family === fam);
+        const ids = new Set(inFam.map(p => p.id));
+        const depth = (p) => { let d = 0, q = p; while (q && ids.has(q.parent) && d < 3) { d++; q = pageById[q.parent]; } return d; };
+        const ordered = [];
+        const walk = (parentId, d) => inFam.filter(p => (d === 0 ? !ids.has(p.parent) : p.parent === parentId)).forEach(p => { ordered.push(p); walk(p.id, d + 1); });
+        walk(null, 0);
+        const items = ordered.filter(visible).map(p => nodeBtn(p, depth(p), p.canonical));
+        if (items.length) blocks.push(famBlock(tree + ':' + fam, fam, items));
+      }
+    } else {
+      const groups = {};
+      for (const p of ps) {
+        const r = p.route === '—' || p.route.startsWith('(') ? null : p.route;
+        const g = r ? '/' + r.split(',')[0].trim().split('/').filter(Boolean).slice(0, r.startsWith('/admin') ? 2 : 1).join('/') : 'Not present today';
+        (groups[g] = groups[g] || []).push(p);
+      }
+      const keys = Object.keys(groups).sort((a, b) => (a === 'Not present today') - (b === 'Not present today') || a.localeCompare(b));
+      for (const g of keys) {
+        const items = groups[g].sort((a, b) => a.route.localeCompare(b.route)).filter(visible).map(p => nodeBtn(p, 0, p.route === '—' ? 'proposed: ' + p.canonical : p.route));
+        if (items.length) blocks.push(famBlock(tree + ':cur:' + g, g, items));
+      }
+    }
+    $('#tree').replaceChildren(...(blocks.length ? blocks : [el('p', { class: 'empty', text: 'No pages match the selected markers.' })]));
+    renderInspector();
+  }
+  function kv(label, value, mono) {
+    if (value == null || value === '' || (Array.isArray(value) && !value.length)) value = '—';
+    return el('div', null, el('div', { class: 'label', text: label }), value.nodeType ? value : el('div', { class: 'v' + (mono ? ' mono' : ''), text: Array.isArray(value) ? value.join(', ') : value }));
+  }
+  function renderInspector() {
+    const box = $('#inspector');
+    const p = selected && pageById[selected];
+    if (!p || p.tree !== tree) {
+      const ps = A.pages.filter(x => x.tree === tree);
+      const by = m => ps.filter(x => pageMarkers(x).includes(m)).length;
+      box.replaceChildren(el('div', { class: 'label', text: tree === 'customer' ? 'Customer account' : 'Admin dashboard' }), el('h3', { text: 'Select a page' }),
+        el('p', { class: 'small muted', text: 'Each page shows its status, owner, current and proposed route, visual preservation rule, workflows, mirror, backend readiness, missing work, risks, decisions and sprint.' }),
+        el('div', { class: 'kv' }, markers.map(m => kv(m, String(by(m))))));
+      return;
+    }
+    const wfs = (p.workflows || []).map(id => wfById[id]).filter(Boolean);
+    box.replaceChildren(
+      el('div', { class: 'label', text: p.family + ' · ' + p.type }),
+      el('h3', { text: p.name }),
+      el('div', { class: 'taglist', style: 'margin-top:8px' }, pageMarkers(p).map(m => el('span', { class: 'mk ' + m, text: m })), el('span', { class: 'mk', text: 'Condition ' + p.cond }), el('span', { class: 'mk', text: p.disp })),
+      el('div', { class: 'kv' },
+        kv('Responsibility', p.responsibility),
+        kv('Status', p.auditStatus.replace(/_/g, ' ').toLowerCase()),
+        kv('Data owner', p.owner),
+        kv('Existing route', p.route, true),
+        kv('Proposed route', p.canonical, true),
+        kv('Visual preservation', p.visual),
+        kv('Mirror', p.mirror),
+        kv('Backend readiness', p.backend),
+        kv('Missing functionality', p.missing),
+        kv('Risks', p.risk),
+        kv('Workflows', wfs.length ? el('div', { class: 'taglist' }, wfs.map(w => el('button', { class: 'tagbtn', text: w.id + ' ' + w.name, onclick: () => openWorkflow(w.id) }))) : '—'),
+        kv('Decisions', p.decisions.length ? el('div', { class: 'taglist' }, p.decisions.map(id => el('button', { class: 'tagbtn', text: id + (records[id] ? ' ✓' : ''), title: decById[id] ? decById[id].subject : '', onclick: () => openDecision(id) }))) : '—'),
+        kv('Data dependencies', p.deps, true),
+        kv('Sprint', p.sprint)));
+  }
+
+  // ---------------- workflows ----------------
+  const areas = [...new Set(A.workflows.map(w => w.area))];
+  let areaOn = null, openWf = null;
+  function renderWfAreas() {
+    $('#wfAreas').replaceChildren(el('button', { class: 'chip', 'aria-pressed': String(areaOn === null), onclick: () => { areaOn = null; renderWfAreas(); renderWorkflows(); } }, 'All'),
+      ...areas.map(a => el('button', { class: 'chip', 'aria-pressed': String(areaOn === a), onclick: () => { areaOn = a; renderWfAreas(); renderWorkflows(); } }, a)));
+  }
+  const WF_FIELDS = [['entry', 'Entry point'], ['userAction', 'User action'], ['api', 'API'], ['record', 'Authoritative record'], ['external', 'Stripe / external'], ['adminVisibility', 'Admin visibility'], ['adminAction', 'Admin action'], ['customerUpdate', 'Customer status update'], ['notification', 'Notification'], ['audit', 'Audit event'], ['failureRecovery', 'Failure recovery'], ['test', 'Verification test']];
+  function renderWorkflows() {
+    const list = A.workflows.filter(w => !areaOn || w.area === areaOn);
+    $('#wflist').replaceChildren(...list.map(w => {
+      const open = openWf === w.id;
+      return el('div', { class: 'wf', id: 'wf-' + w.id },
+        el('button', { 'aria-expanded': String(open), onclick: () => { openWf = open ? null : w.id; renderWorkflows(); } },
+          el('span', { class: 'id', text: w.id }), el('span', { class: 'wn', text: w.name }), el('span', { class: 'st' + (/^BROKEN|^MISSING/.test(w.current) ? ' bad' : ''), text: w.current.split(' (')[0] + ' · ' + w.sprint })),
+        open ? el('div', { class: 'wfbody' }, kv('Current state', w.current), ...WF_FIELDS.map(([k, l]) => kv(l, w[k], k === 'api')), kv('Prior defects', w.bw), kv('Risks', w.risks),
+          kv('Decisions', el('div', { class: 'taglist' }, w.decisions.map(id => el('button', { class: 'tagbtn', text: id, onclick: () => openDecision(id) }))))) : null);
+    }));
+  }
+  function openWorkflow(id) { areaOn = null; openWf = id; renderWfAreas(); renderWorkflows(); show('workflows'); const n = document.getElementById('wf-' + id); if (n) n.scrollIntoView({ block: 'center' }); }
+
+  // ---------------- decisions ----------------
+  const groups = [...new Set(A.decisions.map(d => d.group))];
+  let groupOn = null, dfilter = 'all';
+  const pick = {}; // id -> {selection,status,note} working values in the form
+  function renderGroups() {
+    $('#groupChips').replaceChildren(el('button', { class: 'chip', 'aria-pressed': String(groupOn === null), onclick: () => { groupOn = null; renderGroups(); renderDecisions(); } }, 'All groups'),
+      ...groups.map(g => el('button', { class: 'chip', 'aria-pressed': String(groupOn === g), onclick: () => { groupOn = g; renderGroups(); renderDecisions(); } }, g)));
+  }
+  document.querySelectorAll('[data-f]').forEach(b => b.addEventListener('click', () => { dfilter = b.dataset.f; segSet('f-', dfilter); renderDecisions(); }));
+  function bannerText() {
+    const b = $('#decBanner');
+    if (mode === 'owner') { b.className = 'banner ok'; b.textContent = 'You are the artifact owner. Recording a decision saves it to this board\'s shared decision store with your account and the time. To authorize implementation, export the manifest and commit it to the repository.'; }
+    else if (mode === 'readonly') { b.className = 'banner'; b.textContent = 'Read-only view. Only the artifact owner can record founder decisions. Recorded decisions appear here for everyone with access.'; }
+    else if (mode === 'local') { b.className = 'banner warn'; b.textContent = 'The decision store is not available in this view. You can draft selections on this device, but drafts are not recorded and never count as founder approval.'; }
+    else { b.className = 'banner'; b.textContent = 'Connecting to the decision store…'; }
+  }
+  function renderDecisions() {
+    bannerText();
+    const list = A.decisions.filter(d => (!groupOn || d.group === groupOn) && (dfilter === 'all' || (dfilter === 'recorded') === !!records[d.id]));
+    $('#dlist').replaceChildren(...(list.length ? list.map(decisionCard) : [el('p', { class: 'empty', text: dfilter === 'recorded' ? 'No decisions are recorded yet.' : 'Every decision in this group is recorded.' })]));
+  }
+  function decisionCard(d) {
+    const rec = records[d.id];
+    const draft = mode === 'local' ? drafts[d.id] : null;
+    const w = pick[d.id] || (pick[d.id] = { selection: rec ? rec.selection : (draft ? draft.selection : null), status: rec ? rec.status : (draft ? draft.status : 'APPROVED'), note: rec ? (rec.note || '') : (draft ? draft.note || '' : '') });
+    const canEdit = mode === 'owner' || mode === 'local';
+    const name = 'opt-' + d.id;
+    const blocks = A.gates.filter(g => g.requires.includes(d.id)).map(g => g.gate);
+    const pagesUsing = A.pages.filter(p => p.decisions.includes(d.id)).map(p => p.id);
+    const card = el('article', { class: 'dcard' + (rec ? ' rec-' + rec.status : ''), id: 'dec-' + d.id },
+      el('div', { class: 'dhead' }, el('span', { class: 'did', text: d.id }), el('span', { class: 'dsub', text: d.subject }),
+        rec ? el('span', { class: 'pill ok' }, el('span', { class: 'dot' }), 'Recorded · ' + rec.status) : draft ? el('span', { class: 'pill warn' }, el('span', { class: 'dot' }), 'Draft on this device') : el('span', { class: 'pill pending' }, el('span', { class: 'dot' }), 'Pending')),
+      el('div', { class: 'small' }, el('span', { class: 'label', text: 'Current state  ' }), d.current),
+      el('div', { class: 'opts', role: 'radiogroup', 'aria-label': d.id + ' options' }, d.options.map(o => {
+        const id = name + '-' + o.key;
+        return el('label', { class: 'opt' + (o.key === d.rec ? ' isrec' : '') + (rec && rec.selection === o.key ? ' chosen' : ''), for: id },
+          el('input', { type: 'radio', name, id, value: o.key, checked: w.selection === o.key, disabled: !canEdit, onchange: () => { w.selection = o.key; } }),
+          el('span', { class: 'ol' }, el('b', { text: o.key + '. ' }), o.label, o.key === d.rec ? el('span', { class: 'recbadge', text: 'Recommended' }) : null),
+          el('span', { class: 'oc', text: o.consequence }));
+      })),
+      el('div', { class: 'dmeta' }, kv('Rationale', d.rationale), kv('Evidence', d.evidence), kv('Impact', d.impact), kv('Reversibility', d.reversibility), kv('Depends on', d.deps), kv('Unblocks', blocks.length ? blocks.join(', ') : d.gate), kv('Pages', pagesUsing.join(', ')), kv('Prior audit ids', d.priorAuditIds)),
+      rec ? el('div', { class: 'recline' }, el('b', { text: 'Recorded ' }), 'option ' + rec.selection + ' · ' + rec.status + ' · ' + new Date(rec.decidedAt).toLocaleString() + (rec.note ? ' · “' + rec.note + '”' : '')) : null,
+      canEdit ? el('div', { class: 'dactions' },
+        el('select', { id: 'st-' + d.id, 'aria-label': 'Status', onchange: (e) => { w.status = e.target.value; } }, ['APPROVED', 'REJECTED', 'DEFERRED'].map(s => el('option', { value: s, selected: w.status === s, text: s }))),
+        el('input', { id: 'note-' + d.id, type: 'text', placeholder: 'Note (optional)', value: w.note, 'aria-label': 'Note', oninput: (e) => { w.note = e.target.value; } }),
+        el('button', { class: 'primary', onclick: (e) => record(d, w, e.currentTarget) }, mode === 'owner' ? 'Record decision' : 'Save draft'),
+        (rec || draft) ? el('button', { class: 'ghost', onclick: () => clearRecord(d) }, mode === 'owner' ? 'Clear record' : 'Clear draft') : null,
+        el('span', { class: 'small muted', role: 'status', id: 'msg-' + d.id })) : null);
+    return card;
+  }
+  async function record(d, w, btn) {
+    const msg = $('#msg-' + d.id);
+    if (!w.selection) { msg.textContent = 'Choose an option first.'; return; }
+    if (mode === 'local') { drafts[d.id] = { selection: w.selection, status: w.status, note: w.note, savedAt: new Date().toISOString() }; store.set('fs-arch-v2-drafts', drafts); renderAll(); return; }
+    btn.disabled = true; msg.textContent = 'Recording…';
+    try {
+      await db.doc('decisions/' + d.id).set({ id: d.id, selection: w.selection, status: w.status, note: w.note || '', decidedBy: me, decidedAt: new Date().toISOString(), recommendation: d.rec });
+      msg.textContent = 'Recorded.';
+    } catch (e) { btn.disabled = false; msg.textContent = 'Not recorded: ' + (e && e.code === 'invalid_argument' ? 'this account cannot write decisions.' : (e && e.message) || 'the store refused the write.'); }
+  }
+  async function clearRecord(d) {
+    if (mode === 'local') { delete drafts[d.id]; store.set('fs-arch-v2-drafts', drafts); delete pick[d.id]; renderAll(); return; }
+    try { await db.doc('decisions/' + d.id).delete(); delete pick[d.id]; } catch (e) { const m = $('#msg-' + d.id); if (m) m.textContent = 'Could not clear: ' + ((e && e.message) || 'refused'); }
+  }
+  function openDecision(id) { groupOn = null; dfilter = 'all'; segSet('f-', 'all'); renderGroups(); renderDecisions(); show('decisions'); const n = document.getElementById('dec-' + id); if (n) n.scrollIntoView({ block: 'start' }); }
+
+  // ---------------- export ----------------
+  function buildManifest() {
+    const tr = t => A.pages.filter(p => p.tree === t).map(p => ({ id: p.id, family: p.family, name: p.name, currentRoute: p.route, canonicalRoute: p.canonical, disposition: p.disp, condition: p.cond, marker: p.marker, sprint: p.sprint, decisions: p.decisions }));
+    const recorded = Object.keys(records).length;
+    return {
+      manifestVersion: '2.0', sprintId: A.sprintId, exportedAt: new Date().toISOString(), exportedFrom: 'interactive board V2',
+      status: recorded === A.decisions.length ? 'ALL_DECISIONS_RECORDED_IN_BOARD' : 'PENDING_FOUNDER_APPROVAL',
+      approvalRecorded: recorded > 0,
+      note: 'founderSelection comes only from decisions recorded by the artifact owner in the board store. It authorizes implementation only after this file is committed as 20_ARCHITECTURE_APPROVAL_MANIFEST.json.',
+      traceability: { initialAuditCommit: A.auditCommit },
+      counts: A.counts,
+      customerTree: tr('customer'), adminTree: tr('admin'),
+      decisions: A.decisions.map(d => { const r = records[d.id]; return { id: d.id, group: d.group, subject: d.subject, recommendation: d.rec, gate: d.gate, founderSelection: r ? r.selection : null, status: r ? r.status : 'PENDING', note: r ? r.note || '' : '', decidedBy: r ? r.decidedBy || null : null, decidedAt: r ? r.decidedAt : null }; }),
+      approvalRequirements: A.gates,
+      localDraftsNotRecorded: mode === 'local' ? drafts : {},
+    };
+  }
+  function renderExport() { $('#manifest').value = JSON.stringify(buildManifest(), null, 2); }
+  $('#copyManifest').addEventListener('click', () => {
+    renderExport();
+    const t = $('#manifest');
+    const done = (ok) => { $('#exportMsg').textContent = ok ? 'Copied.' : 'Copy is blocked here. The text is selected: copy it with your keyboard.'; if (!ok) { t.focus(); t.select(); } };
+    try { navigator.clipboard.writeText(t.value).then(() => done(true), () => done(false)); } catch (e) { done(false); }
+  });
+
+  // ---------------- boot ----------------
+  function renderAll() { renderOverview(); renderTree(); renderWfAreas(); renderWorkflows(); renderGroups(); renderDecisions(); if (view === 'export') renderExport(); }
+  segSet('t-', tree);
+  renderAll();
+  show(view);
+
+  (async () => {
+    const claude = window.claude;
+    if (!claude || !claude.use) { mode = 'local'; setStore('Decision store unavailable · drafts only', 'warn'); renderAll(); return; }
+    try {
+      const [d, u, dl] = await Promise.all([claude.use('db'), claude.use('user'), claude.use('downloads').catch(() => null)]);
+      if (dl) { const b = $('#saveManifest'); b.hidden = false; b.addEventListener('click', async () => { renderExport(); try { await dl.save({ filename: '20_ARCHITECTURE_APPROVAL_MANIFEST.export.json', data: $('#manifest').value }); $('#exportMsg').textContent = 'Saved.'; } catch (e) { $('#exportMsg').textContent = e && e.code === 'declined' ? 'Save cancelled.' : 'Saving is unavailable here. Use Copy instead.'; } }); }
+      if (!d) { mode = 'local'; setStore('Decision store unavailable · drafts only', 'warn'); renderAll(); return; }
+      db = d;
+      const owner = u ? await u.isOwner() : false;
+      me = u && owner ? await u.id() : null;
+      mode = owner ? 'owner' : 'readonly';
+      setStore(owner ? 'Owner · decisions record to the store' : 'Read-only · recorded decisions shown', owner ? 'ok' : '');
+      db.collection('decisions').onSnapshot((snap) => {
+        const next = {};
+        snap.docs.forEach(doc => { const v = doc.data(); if (v && decById[doc.id] && v.selection && v.decidedAt) next[doc.id] = v; });
+        records = next;
+        for (const k of Object.keys(pick)) if (!records[k]) delete pick[k];
+        renderAll();
+      }, () => { setStore('Decision store disconnected · reload to retry', 'warn'); });
+      renderAll();
+    } catch (e) { mode = 'local'; setStore('Decision store unavailable · drafts only', 'warn'); renderAll(); }
+  })();
+})();
+</script>

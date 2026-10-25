@@ -1,0 +1,2363 @@
+{
+  "manifestVersion": "2.0",
+  "sprintId": "P0.FRONTAL-SLAYER.OPUS.ACCOUNT-ADMIN-FINAL-ARCHITECTURE-AND-FOUNDER-APPROVAL-PACKAGE.V1",
+  "status": "PENDING_FOUNDER_APPROVAL",
+  "approvalRecorded": false,
+  "note": "Recommendations only. founderSelection is null for every decision. Nothing here authorizes implementation.",
+  "repository": "yoteenz/fsbw",
+  "branch": "claude/frontal-slayer-audit-vclp3w",
+  "traceability": {
+    "initialAuditCommit": "4863456a3c73e9c3acb8cc913294a5a1025ed1ab",
+    "initialAuditFolder": "FRONTAL_SLAYER_ACCOUNT_ADMIN_AUDIT/",
+    "evidence": [
+      "evidence/R2_rewards_canon.md",
+      "evidence/V2_assets_components.md",
+      "evidence/X2_crossproject_stripe_routes.md"
+    ]
+  },
+  "counts": {
+    "customerRoutedPages": 21,
+    "customerFamilies": 10,
+    "adminRoutedPages": 24,
+    "adminFamilies": 15,
+    "newPages": [
+      "C-03",
+      "C-05",
+      "C-11",
+      "C-12",
+      "A-02",
+      "A-03",
+      "A-07",
+      "A-09",
+      "A-13"
+    ],
+    "consolidatedRoutes": [
+      "A-R1",
+      "A-R2",
+      "A-R3",
+      "A-R4",
+      "A-R5",
+      "A-R6",
+      "A-R7",
+      "A-R8",
+      "A-R9",
+      "A-R10"
+    ],
+    "retiredOrRestricted": [
+      "C-R1",
+      "C-R2",
+      "C-R3",
+      "C-R5",
+      "A-R11"
+    ],
+    "workflows": 35,
+    "decisions": 55
+  },
+  "customerTree": [
+    {
+      "id": "C-01",
+      "family": "01 OVERVIEW",
+      "name": "Account overview",
+      "type": "PAGE",
+      "currentRoute": "/account",
+      "canonicalRoute": "/account",
+      "parent": "(top)",
+      "disposition": "REPAIR",
+      "condition": "A",
+      "marker": "EXISTING",
+      "sprint": "S2",
+      "decisions": [
+        "B1",
+        "B5",
+        "G4"
+      ]
+    },
+    {
+      "id": "C-02",
+      "family": "02 ORDERS",
+      "name": "My orders",
+      "type": "PAGE + TABS",
+      "currentRoute": "/account/orders",
+      "canonicalRoute": "/account/orders",
+      "parent": "C-01",
+      "disposition": "REPAIR",
+      "condition": "A",
+      "marker": "EXISTING",
+      "sprint": "S2",
+      "decisions": [
+        "B1",
+        "C4"
+      ]
+    },
+    {
+      "id": "C-03",
+      "family": "02 ORDERS",
+      "name": "Order detail",
+      "type": "DETAIL",
+      "currentRoute": "—",
+      "canonicalRoute": "/account/orders/:orderId",
+      "parent": "C-02",
+      "disposition": "NEW",
+      "condition": "D",
+      "marker": "NEW",
+      "sprint": "S2",
+      "decisions": [
+        "B1",
+        "C4"
+      ]
+    },
+    {
+      "id": "C-04",
+      "family": "02 ORDERS",
+      "name": "Leave a review",
+      "type": "CHILD PAGE",
+      "currentRoute": "/account/orders/:orderId/review",
+      "canonicalRoute": "/account/orders/:orderId/review",
+      "parent": "C-03",
+      "disposition": "REPAIR",
+      "condition": "C",
+      "marker": "EXISTING",
+      "sprint": "S5",
+      "decisions": [
+        "F2",
+        "F3"
+      ]
+    },
+    {
+      "id": "C-05",
+      "family": "02 ORDERS",
+      "name": "Appointments (tab)",
+      "type": "TAB",
+      "currentRoute": "—",
+      "canonicalRoute": "/account/orders?tab=appointments",
+      "parent": "C-02",
+      "disposition": "NEW",
+      "condition": "D",
+      "marker": "NEW",
+      "sprint": "S2",
+      "decisions": [
+        "B1"
+      ]
+    },
+    {
+      "id": "C-06",
+      "family": "03 CONCIERGE",
+      "name": "Concierge (premium)",
+      "type": "PAGE",
+      "currentRoute": "/account/concierge",
+      "canonicalRoute": "/account/concierge",
+      "parent": "C-01",
+      "disposition": "REPAIR",
+      "condition": "C",
+      "marker": "EXISTING",
+      "sprint": "S2/S6",
+      "decisions": [
+        "B3",
+        "B4",
+        "A5"
+      ]
+    },
+    {
+      "id": "C-07",
+      "family": "04 REWARDS",
+      "name": "Rewards & membership",
+      "type": "PAGE + TABS",
+      "currentRoute": "/account/rewards",
+      "canonicalRoute": "/account/rewards",
+      "parent": "C-01",
+      "disposition": "REPAIR",
+      "condition": "A",
+      "marker": "EXISTING",
+      "sprint": "S4",
+      "decisions": [
+        "A3",
+        "A4",
+        "B4",
+        "D1",
+        "D4",
+        "D5"
+      ]
+    },
+    {
+      "id": "C-08",
+      "family": "04 REWARDS",
+      "name": "Load gift card",
+      "type": "CHILD PAGE",
+      "currentRoute": "/account/load-card",
+      "canonicalRoute": "/account/load-card",
+      "parent": "C-07",
+      "disposition": "NEST",
+      "condition": "C",
+      "marker": "EXISTING",
+      "sprint": "S4",
+      "decisions": [
+        "D9"
+      ]
+    },
+    {
+      "id": "C-09",
+      "family": "04 REWARDS",
+      "name": "Collectibles",
+      "type": "CHILD PAGE",
+      "currentRoute": "/account/collectibles",
+      "canonicalRoute": "/account/collectibles",
+      "parent": "C-07",
+      "disposition": "NEST",
+      "condition": "B",
+      "marker": "EXISTING",
+      "sprint": "S4",
+      "decisions": [
+        "D1",
+        "G6"
+      ]
+    },
+    {
+      "id": "C-10",
+      "family": "04 REWARDS",
+      "name": "Membership checkout",
+      "type": "ADJACENT",
+      "currentRoute": "/checkout/upgrade",
+      "canonicalRoute": "/checkout/upgrade",
+      "parent": "C-07",
+      "disposition": "REPAIR",
+      "condition": "C",
+      "marker": "EXISTING",
+      "sprint": "S0B-2",
+      "decisions": [
+        "A3"
+      ]
+    },
+    {
+      "id": "C-11",
+      "family": "05 MY HAIR",
+      "name": "My Hair",
+      "type": "PAGE + TABS",
+      "currentRoute": "—",
+      "canonicalRoute": "/account/hair",
+      "parent": "C-01",
+      "disposition": "NEW",
+      "condition": "D",
+      "marker": "NEW",
+      "sprint": "S5",
+      "decisions": [
+        "B2",
+        "E1",
+        "E2",
+        "E3"
+      ]
+    },
+    {
+      "id": "C-12",
+      "family": "05 MY HAIR",
+      "name": "Analysis detail",
+      "type": "DETAIL",
+      "currentRoute": "—",
+      "canonicalRoute": "/account/hair/analyses/:analysisId",
+      "parent": "C-11",
+      "disposition": "NEW",
+      "condition": "D",
+      "marker": "NEW",
+      "sprint": "S5",
+      "decisions": [
+        "B2",
+        "E6"
+      ]
+    },
+    {
+      "id": "C-13",
+      "family": "06 WISHLIST",
+      "name": "Wishlist",
+      "type": "PAGE",
+      "currentRoute": "/wishlist",
+      "canonicalRoute": "/wishlist",
+      "parent": "C-01",
+      "disposition": "KEEP",
+      "condition": "G",
+      "marker": "EXISTING",
+      "sprint": "S2",
+      "decisions": []
+    },
+    {
+      "id": "C-14",
+      "family": "06 WISHLIST",
+      "name": "Wishlist lists",
+      "type": "CHILD PAGE",
+      "currentRoute": "/wishlist/lists, /wishlist/lists/:listId",
+      "canonicalRoute": "/wishlist/lists/:listId",
+      "parent": "C-13",
+      "disposition": "REPAIR",
+      "condition": "C",
+      "marker": "EXISTING",
+      "sprint": "S5",
+      "decisions": []
+    },
+    {
+      "id": "C-15",
+      "family": "06 WISHLIST",
+      "name": "Shared list (public)",
+      "type": "PAGE",
+      "currentRoute": "/wishlist/shared/:token",
+      "canonicalRoute": "/wishlist/shared/:token",
+      "parent": "C-14",
+      "disposition": "REPAIR",
+      "condition": "C",
+      "marker": "EXISTING",
+      "sprint": "S5",
+      "decisions": []
+    },
+    {
+      "id": "C-16",
+      "family": "07 REVIEWS & CONTENT",
+      "name": "Reviews & content",
+      "type": "PAGE + TABS",
+      "currentRoute": "/account/reviews",
+      "canonicalRoute": "/account/reviews",
+      "parent": "C-01",
+      "disposition": "REPAIR",
+      "condition": "C",
+      "marker": "EXISTING",
+      "sprint": "S5",
+      "decisions": [
+        "F2",
+        "F3"
+      ]
+    },
+    {
+      "id": "C-17",
+      "family": "08 EARN & SHARE",
+      "name": "Affiliate",
+      "type": "PAGE",
+      "currentRoute": "/account/affiliate",
+      "canonicalRoute": "/account/affiliate",
+      "parent": "C-01",
+      "disposition": "REPAIR",
+      "condition": "A",
+      "marker": "EXISTING",
+      "sprint": "S6",
+      "decisions": [
+        "D6"
+      ]
+    },
+    {
+      "id": "C-18",
+      "family": "08 EARN & SHARE",
+      "name": "Referrals",
+      "type": "PAGE",
+      "currentRoute": "/account/referrals",
+      "canonicalRoute": "/account/referrals",
+      "parent": "C-01",
+      "disposition": "REPAIR",
+      "condition": "C",
+      "marker": "EXISTING",
+      "sprint": "S6",
+      "decisions": [
+        "D8"
+      ]
+    },
+    {
+      "id": "C-19",
+      "family": "09 ALERTS",
+      "name": "Alerts",
+      "type": "PAGE + TABS",
+      "currentRoute": "/account/alerts",
+      "canonicalRoute": "/account/alerts",
+      "parent": "C-01",
+      "disposition": "REPAIR",
+      "condition": "C",
+      "marker": "EXISTING",
+      "sprint": "S2",
+      "decisions": []
+    },
+    {
+      "id": "C-20",
+      "family": "10 SETTINGS",
+      "name": "Settings",
+      "type": "PAGE",
+      "currentRoute": "/account/settings",
+      "canonicalRoute": "/account/settings",
+      "parent": "C-01",
+      "disposition": "REPAIR",
+      "condition": "G",
+      "marker": "EXISTING",
+      "sprint": "S2",
+      "decisions": [
+        "B7"
+      ]
+    },
+    {
+      "id": "C-21",
+      "family": "10 SETTINGS",
+      "name": "Addresses",
+      "type": "CHILD PAGE",
+      "currentRoute": "/account/shipping",
+      "canonicalRoute": "/account/shipping",
+      "parent": "C-20",
+      "disposition": "NEST",
+      "condition": "A",
+      "marker": "EXISTING",
+      "sprint": "S2",
+      "decisions": []
+    },
+    {
+      "id": "C-22",
+      "family": "10 SETTINGS",
+      "name": "Payment methods",
+      "type": "CHILD PAGE",
+      "currentRoute": "/account/payment",
+      "canonicalRoute": "/account/payment",
+      "parent": "C-20",
+      "disposition": "NEST",
+      "condition": "A",
+      "marker": "EXISTING",
+      "sprint": "S0B-2/S2",
+      "decisions": [
+        "A4"
+      ]
+    },
+    {
+      "id": "C-R1",
+      "family": "RETIRED",
+      "name": "Consult offer (legacy page)",
+      "type": "PAGE",
+      "currentRoute": "/account/consult-offer",
+      "canonicalRoute": "/account/orders",
+      "parent": "—",
+      "disposition": "REDIRECT",
+      "condition": "F",
+      "marker": "RETIRED",
+      "sprint": "S2",
+      "decisions": [
+        "B1"
+      ]
+    },
+    {
+      "id": "C-R2",
+      "family": "RETIRED",
+      "name": "Hairstyle analysis harness",
+      "type": "PAGE",
+      "currentRoute": "/tools/hairstyle-analysis",
+      "canonicalRoute": "/admin-only (customers → /account/hair?tab=analyses)",
+      "parent": "—",
+      "disposition": "MOVE",
+      "condition": "F",
+      "marker": "RETIRED",
+      "sprint": "S0B-2",
+      "decisions": [
+        "E2"
+      ]
+    },
+    {
+      "id": "C-R3",
+      "family": "RETIRED",
+      "name": "Mobile Mansion profile/concierge/rewards/analysis",
+      "type": "PARALLEL SHELL",
+      "currentRoute": "/mobile/profile, /mobile/concierge, /mobile/rewards, /mobile/analysis",
+      "canonicalRoute": "(pending B6)",
+      "parent": "—",
+      "disposition": "DEPRECATE",
+      "condition": "F",
+      "marker": "BLOCKED",
+      "sprint": "—",
+      "decisions": [
+        "B6"
+      ]
+    },
+    {
+      "id": "C-R4",
+      "family": "ADJACENT",
+      "name": "Desktop Penthouse account",
+      "type": "PARALLEL SHELL",
+      "currentRoute": "/desktop/account",
+      "canonicalRoute": "/desktop/account",
+      "parent": "—",
+      "disposition": "KEEP",
+      "condition": "C",
+      "marker": "EXISTING",
+      "sprint": "S7",
+      "decisions": [
+        "B5"
+      ]
+    },
+    {
+      "id": "C-R5",
+      "family": "ADJACENT",
+      "name": "Slay Tickets purchase",
+      "type": "ADJACENT",
+      "currentRoute": "/tools/slay-tickets, /checkout/slay-tickets",
+      "canonicalRoute": "/tools/slay-tickets",
+      "parent": "C-07",
+      "disposition": "REPAIR",
+      "condition": "C",
+      "marker": "BLOCKED",
+      "sprint": "S0B-2",
+      "decisions": [
+        "A6"
+      ]
+    },
+    {
+      "id": "C-R6",
+      "family": "ADJACENT",
+      "name": "Slay Cam",
+      "type": "ADJACENT",
+      "currentRoute": "/slay-cam",
+      "canonicalRoute": "/slay-cam",
+      "parent": "C-16",
+      "disposition": "REPAIR",
+      "condition": "A",
+      "marker": "EXISTING",
+      "sprint": "S0B-2/S5",
+      "decisions": [
+        "F1",
+        "F4"
+      ]
+    }
+  ],
+  "adminTree": [
+    {
+      "id": "A-01",
+      "family": "01 COMMAND CENTER",
+      "name": "Command Center",
+      "type": "PAGE",
+      "currentRoute": "/admin/dashboard",
+      "canonicalRoute": "/admin/dashboard",
+      "parent": "(top)",
+      "disposition": "REPAIR",
+      "condition": "A",
+      "marker": "EXISTING",
+      "sprint": "S3",
+      "decisions": [
+        "C1",
+        "G3"
+      ]
+    },
+    {
+      "id": "A-02",
+      "family": "02 ORDERS",
+      "name": "Orders",
+      "type": "PAGE + TABS",
+      "currentRoute": "—",
+      "canonicalRoute": "/admin/orders",
+      "parent": "A-01",
+      "disposition": "NEW",
+      "condition": "D",
+      "marker": "NEW",
+      "sprint": "S3",
+      "decisions": [
+        "C1",
+        "C4"
+      ]
+    },
+    {
+      "id": "A-03",
+      "family": "02 ORDERS",
+      "name": "Order detail",
+      "type": "DETAIL",
+      "currentRoute": "—",
+      "canonicalRoute": "/admin/orders/:orderId",
+      "parent": "A-02",
+      "disposition": "NEW",
+      "condition": "D",
+      "marker": "NEW",
+      "sprint": "S3",
+      "decisions": [
+        "C2",
+        "C4"
+      ]
+    },
+    {
+      "id": "A-04",
+      "family": "03 APPROVALS",
+      "name": "Approvals",
+      "type": "PAGE + TABS",
+      "currentRoute": "/admin/pending",
+      "canonicalRoute": "/admin/pending",
+      "parent": "A-01",
+      "disposition": "REPAIR",
+      "condition": "C",
+      "marker": "EXISTING",
+      "sprint": "S3",
+      "decisions": [
+        "C1",
+        "F5"
+      ]
+    },
+    {
+      "id": "A-05",
+      "family": "03 APPROVALS",
+      "name": "Published reviews",
+      "type": "CHILD PAGE",
+      "currentRoute": "/admin/reviews",
+      "canonicalRoute": "/admin/reviews",
+      "parent": "A-04",
+      "disposition": "NEST",
+      "condition": "A",
+      "marker": "EXISTING",
+      "sprint": "S5",
+      "decisions": [
+        "F3"
+      ]
+    },
+    {
+      "id": "A-06",
+      "family": "04 CUSTOMERS",
+      "name": "Customers",
+      "type": "PAGE",
+      "currentRoute": "/admin/clients/overview",
+      "canonicalRoute": "/admin/clients/overview",
+      "parent": "A-01",
+      "disposition": "REPAIR",
+      "condition": "A",
+      "marker": "EXISTING",
+      "sprint": "S3",
+      "decisions": [
+        "C1"
+      ]
+    },
+    {
+      "id": "A-07",
+      "family": "04 CUSTOMERS",
+      "name": "Customer detail",
+      "type": "DETAIL",
+      "currentRoute": "(inline ?email=)",
+      "canonicalRoute": "/admin/clients/:userId",
+      "parent": "A-06",
+      "disposition": "NEW",
+      "condition": "D",
+      "marker": "NEW",
+      "sprint": "S3",
+      "decisions": [
+        "C2"
+      ]
+    },
+    {
+      "id": "A-08",
+      "family": "04 CUSTOMERS",
+      "name": "Deleted accounts",
+      "type": "CHILD PAGE",
+      "currentRoute": "/admin/clients/deleted",
+      "canonicalRoute": "/admin/clients/deleted",
+      "parent": "A-06",
+      "disposition": "REPAIR",
+      "condition": "A",
+      "marker": "EXISTING",
+      "sprint": "S3",
+      "decisions": []
+    },
+    {
+      "id": "A-09",
+      "family": "05 MEMBERSHIP & REWARDS",
+      "name": "Membership & rewards console",
+      "type": "PAGE + TABS",
+      "currentRoute": "—",
+      "canonicalRoute": "/admin/rewards",
+      "parent": "A-01",
+      "disposition": "NEW",
+      "condition": "D",
+      "marker": "NEW",
+      "sprint": "S4",
+      "decisions": [
+        "C2",
+        "D1",
+        "D4",
+        "D5"
+      ]
+    },
+    {
+      "id": "A-10",
+      "family": "06 MEETINGS",
+      "name": "Meetings",
+      "type": "PAGE",
+      "currentRoute": "/admin/meetings",
+      "canonicalRoute": "/admin/meetings",
+      "parent": "A-01",
+      "disposition": "REPAIR",
+      "condition": "C",
+      "marker": "EXISTING",
+      "sprint": "S3",
+      "decisions": [
+        "A2",
+        "A7"
+      ]
+    },
+    {
+      "id": "A-11",
+      "family": "06 MEETINGS",
+      "name": "New appointment",
+      "type": "CHILD PAGE",
+      "currentRoute": "/admin/meetings/schedule",
+      "canonicalRoute": "/admin/meetings/schedule",
+      "parent": "A-10",
+      "disposition": "REPAIR",
+      "condition": "C",
+      "marker": "EXISTING",
+      "sprint": "S3",
+      "decisions": []
+    },
+    {
+      "id": "A-12",
+      "family": "07 INBOX",
+      "name": "Inbox",
+      "type": "PAGE + TABS",
+      "currentRoute": "/admin/messages",
+      "canonicalRoute": "/admin/messages",
+      "parent": "A-01",
+      "disposition": "REPAIR",
+      "condition": "C",
+      "marker": "EXISTING",
+      "sprint": "S6",
+      "decisions": [
+        "B7"
+      ]
+    },
+    {
+      "id": "A-13",
+      "family": "08 CATALOG & INVENTORY",
+      "name": "Inventory",
+      "type": "PAGE + TABS",
+      "currentRoute": "—",
+      "canonicalRoute": "/admin/inventory",
+      "parent": "A-01",
+      "disposition": "NEW",
+      "condition": "D",
+      "marker": "NEW",
+      "sprint": "S3",
+      "decisions": [
+        "E5"
+      ]
+    },
+    {
+      "id": "A-14",
+      "family": "09 MARKETING",
+      "name": "Marketing",
+      "type": "PAGE + TABS",
+      "currentRoute": "/admin/marketing",
+      "canonicalRoute": "/admin/marketing",
+      "parent": "A-01",
+      "disposition": "REPAIR",
+      "condition": "C",
+      "marker": "EXISTING",
+      "sprint": "S6",
+      "decisions": []
+    },
+    {
+      "id": "A-15",
+      "family": "09 MARKETING",
+      "name": "Copy editors",
+      "type": "CHILD PAGE",
+      "currentRoute": "/admin/brand/edit/:copyKind",
+      "canonicalRoute": "/admin/brand/edit/:copyKind",
+      "parent": "A-14",
+      "disposition": "MOVE",
+      "condition": "C",
+      "marker": "EXISTING",
+      "sprint": "S6",
+      "decisions": []
+    },
+    {
+      "id": "A-16",
+      "family": "10 FINANCE",
+      "name": "Finance",
+      "type": "PAGE + TABS",
+      "currentRoute": "/admin/revenue",
+      "canonicalRoute": "/admin/revenue",
+      "parent": "A-01",
+      "disposition": "REPAIR",
+      "condition": "A",
+      "marker": "EXISTING",
+      "sprint": "S3",
+      "decisions": []
+    },
+    {
+      "id": "A-17",
+      "family": "10 FINANCE",
+      "name": "Accounting",
+      "type": "CHILD PAGE",
+      "currentRoute": "/admin/revenue/accounting-report",
+      "canonicalRoute": "/admin/revenue/accounting-report",
+      "parent": "A-16",
+      "disposition": "REPAIR",
+      "condition": "C",
+      "marker": "EXISTING",
+      "sprint": "S6",
+      "decisions": []
+    },
+    {
+      "id": "A-18",
+      "family": "10 FINANCE",
+      "name": "Fraud",
+      "type": "CHILD PAGE",
+      "currentRoute": "/admin/revenue/fraud-analysis",
+      "canonicalRoute": "/admin/revenue/fraud-analysis",
+      "parent": "A-16",
+      "disposition": "REPAIR",
+      "condition": "C",
+      "marker": "EXISTING",
+      "sprint": "S6",
+      "decisions": []
+    },
+    {
+      "id": "A-19",
+      "family": "11 BRAND",
+      "name": "Brand",
+      "type": "PAGE + TABS",
+      "currentRoute": "/admin/brand",
+      "canonicalRoute": "/admin/brand",
+      "parent": "A-01",
+      "disposition": "REPAIR",
+      "condition": "C",
+      "marker": "EXISTING",
+      "sprint": "S6",
+      "decisions": []
+    },
+    {
+      "id": "A-20",
+      "family": "12 CONTENT STUDIO",
+      "name": "Trend Desk",
+      "type": "PAGE",
+      "currentRoute": "/admin/trend-desk",
+      "canonicalRoute": "/admin/trend-desk",
+      "parent": "A-01",
+      "disposition": "REPAIR",
+      "condition": "B",
+      "marker": "EXISTING",
+      "sprint": "S6",
+      "decisions": [
+        "G5"
+      ]
+    },
+    {
+      "id": "A-21",
+      "family": "12 CONTENT STUDIO",
+      "name": "PSA Broadcast",
+      "type": "PAGE",
+      "currentRoute": "/admin/slay-forecast-broadcast",
+      "canonicalRoute": "/admin/slay-forecast-broadcast",
+      "parent": "A-01",
+      "disposition": "REPAIR",
+      "condition": "B",
+      "marker": "EXISTING",
+      "sprint": "S6",
+      "decisions": [
+        "G5"
+      ]
+    },
+    {
+      "id": "A-22",
+      "family": "13 TEAM",
+      "name": "Team",
+      "type": "PAGE",
+      "currentRoute": "/admin/workers",
+      "canonicalRoute": "/admin/workers",
+      "parent": "A-01",
+      "disposition": "REPAIR",
+      "condition": "C",
+      "marker": "EXISTING",
+      "sprint": "S6",
+      "decisions": []
+    },
+    {
+      "id": "A-23",
+      "family": "14 SYSTEM",
+      "name": "System",
+      "type": "PAGE + TABS",
+      "currentRoute": "/admin/backend",
+      "canonicalRoute": "/admin/backend",
+      "parent": "A-01",
+      "disposition": "KEEP",
+      "condition": "G",
+      "marker": "EXISTING",
+      "sprint": "S3",
+      "decisions": [
+        "C2"
+      ]
+    },
+    {
+      "id": "A-24",
+      "family": "15 STUDIO",
+      "name": "Studio boundary link",
+      "type": "EXTERNAL",
+      "currentRoute": "/admin/headquarters",
+      "canonicalRoute": "/admin/headquarters",
+      "parent": "A-01",
+      "disposition": "KEEP",
+      "condition": "G",
+      "marker": "EXISTING",
+      "sprint": "S3",
+      "decisions": [
+        "C5"
+      ]
+    },
+    {
+      "id": "A-R1",
+      "family": "CONSOLIDATED",
+      "name": "Users",
+      "type": "PAGE",
+      "currentRoute": "/admin/users",
+      "canonicalRoute": "/admin/backend?tab=USERS",
+      "parent": "A-23",
+      "disposition": "CONSOLIDATE",
+      "condition": "E",
+      "marker": "CONSOLIDATED",
+      "sprint": "S3",
+      "decisions": [
+        "C1"
+      ]
+    },
+    {
+      "id": "A-R2",
+      "family": "CONSOLIDATED",
+      "name": "Audit",
+      "type": "PAGE",
+      "currentRoute": "/admin/audit",
+      "canonicalRoute": "/admin/backend?tab=AUDIT",
+      "parent": "A-23",
+      "disposition": "CONSOLIDATE",
+      "condition": "E",
+      "marker": "CONSOLIDATED",
+      "sprint": "S3",
+      "decisions": [
+        "C1"
+      ]
+    },
+    {
+      "id": "A-R3",
+      "family": "CONSOLIDATED",
+      "name": "Alerts (fake feed)",
+      "type": "PAGE",
+      "currentRoute": "/admin/alerts",
+      "canonicalRoute": "/admin/backend?tab=ALERTS",
+      "parent": "A-23",
+      "disposition": "CONSOLIDATE",
+      "condition": "E",
+      "marker": "CONSOLIDATED",
+      "sprint": "S3",
+      "decisions": [
+        "C1"
+      ]
+    },
+    {
+      "id": "A-R4",
+      "family": "CONSOLIDATED",
+      "name": "Analytics",
+      "type": "PAGE",
+      "currentRoute": "/admin/analytics",
+      "canonicalRoute": "/admin/brand?tab=ANALYTICS",
+      "parent": "A-19",
+      "disposition": "CONSOLIDATE",
+      "condition": "E",
+      "marker": "CONSOLIDATED",
+      "sprint": "S6",
+      "decisions": [
+        "C1"
+      ]
+    },
+    {
+      "id": "A-R5",
+      "family": "CONSOLIDATED",
+      "name": "Notifications (send)",
+      "type": "PAGE",
+      "currentRoute": "/admin/notifications",
+      "canonicalRoute": "/admin/marketing?tab=NOTIFICATIONS",
+      "parent": "A-14",
+      "disposition": "CONSOLIDATE",
+      "condition": "E",
+      "marker": "CONSOLIDATED",
+      "sprint": "S6",
+      "decisions": [
+        "C1"
+      ]
+    },
+    {
+      "id": "A-R6",
+      "family": "CONSOLIDATED",
+      "name": "Special offer (standalone)",
+      "type": "PAGE",
+      "currentRoute": "/admin/marketing/offers",
+      "canonicalRoute": "/admin/marketing?tab=SPECIAL%20OFFERS",
+      "parent": "A-14",
+      "disposition": "CONSOLIDATE",
+      "condition": "E",
+      "marker": "CONSOLIDATED",
+      "sprint": "S6",
+      "decisions": [
+        "C1"
+      ]
+    },
+    {
+      "id": "A-R7",
+      "family": "CONSOLIDATED",
+      "name": "Referrals",
+      "type": "PAGE",
+      "currentRoute": "/admin/referrals",
+      "canonicalRoute": "/admin/rewards?tab=REFERRALS",
+      "parent": "A-09",
+      "disposition": "CONSOLIDATE",
+      "condition": "E",
+      "marker": "CONSOLIDATED",
+      "sprint": "S4",
+      "decisions": [
+        "C1",
+        "D8"
+      ]
+    },
+    {
+      "id": "A-R8",
+      "family": "CONSOLIDATED",
+      "name": "Edit inventory",
+      "type": "CHILD PAGE",
+      "currentRoute": "/admin/revenue/edit-inventory",
+      "canonicalRoute": "/admin/inventory?tab=STOCK",
+      "parent": "A-13",
+      "disposition": "CONSOLIDATE",
+      "condition": "E",
+      "marker": "CONSOLIDATED",
+      "sprint": "S3",
+      "decisions": [
+        "C1"
+      ]
+    },
+    {
+      "id": "A-R9",
+      "family": "CONSOLIDATED",
+      "name": "View waitlist",
+      "type": "CHILD PAGE",
+      "currentRoute": "/admin/revenue/view-waitlist",
+      "canonicalRoute": "/admin/inventory?tab=WAITLIST",
+      "parent": "A-13",
+      "disposition": "CONSOLIDATE",
+      "condition": "E",
+      "marker": "CONSOLIDATED",
+      "sprint": "S3",
+      "decisions": [
+        "C1"
+      ]
+    },
+    {
+      "id": "A-R10",
+      "family": "CONSOLIDATED",
+      "name": "Fulfilled orders",
+      "type": "CHILD PAGE",
+      "currentRoute": "/admin/revenue/fulfilled-orders",
+      "canonicalRoute": "/admin/orders?tab=DELIVERED",
+      "parent": "A-02",
+      "disposition": "CONSOLIDATE",
+      "condition": "E",
+      "marker": "CONSOLIDATED",
+      "sprint": "S3",
+      "decisions": [
+        "C1"
+      ]
+    },
+    {
+      "id": "A-R11",
+      "family": "CONSOLIDATED",
+      "name": "Clients account (orphan)",
+      "type": "REDIRECT",
+      "currentRoute": "/admin/clients/account",
+      "canonicalRoute": "/admin/clients/:userId",
+      "parent": "A-07",
+      "disposition": "REDIRECT",
+      "condition": "F",
+      "marker": "RETIRED",
+      "sprint": "S3",
+      "decisions": []
+    },
+    {
+      "id": "A-R12",
+      "family": "OUT OF SCOPE",
+      "name": "Studio health",
+      "type": "PAGE",
+      "currentRoute": "/admin/studio/health",
+      "canonicalRoute": "/admin/studio/health",
+      "parent": "—",
+      "disposition": "KEEP",
+      "condition": "G",
+      "marker": "EXISTING",
+      "sprint": "—",
+      "decisions": [
+        "C5"
+      ]
+    }
+  ],
+  "decisions": [
+    {
+      "id": "A1",
+      "group": "A. Security/payment",
+      "subject": "Approve the P0A database containment migration",
+      "options": [
+        {
+          "key": "1",
+          "label": "Approve narrowly scoped migration with prepared rollback, rehearsed on a Supabase branch, SITE00 smoke-tested"
+        },
+        {
+          "key": "2",
+          "label": "Defer"
+        }
+      ],
+      "recommendation": "1",
+      "gate": "S0B-1",
+      "founderSelection": null,
+      "status": "PENDING",
+      "decidedBy": null,
+      "decidedAt": null
+    },
+    {
+      "id": "A2",
+      "group": "A. Security/payment",
+      "subject": "Build-A-Wig checkout until server pricing exists",
+      "options": [
+        {
+          "key": "1",
+          "label": "Concierge-confirmed custom quote: Atelier and bag stay open; custom lines become \"Request my custom quote\" → admin sends consult offer → customer pays the server-held quoted amount"
+        },
+        {
+          "key": "2",
+          "label": "Block card checkout for custom lines and route to \"Book a consultation\""
+        },
+        {
+          "key": "3",
+          "label": "Keep current behaviour"
+        }
+      ],
+      "recommendation": "1",
+      "gate": "S0B-2",
+      "founderSelection": null,
+      "status": "PENDING",
+      "decidedBy": null,
+      "decidedAt": null
+    },
+    {
+      "id": "A3",
+      "group": "A. Security/payment",
+      "subject": "Non-Stripe CONFIRM ORDER on /checkout/upgrade",
+      "options": [
+        {
+          "key": "1",
+          "label": "Disable in production (keep for non-production demo builds only)"
+        },
+        {
+          "key": "2",
+          "label": "Keep"
+        }
+      ],
+      "recommendation": "1",
+      "gate": "S0B-2",
+      "founderSelection": null,
+      "status": "PENDING",
+      "decidedBy": null,
+      "decidedAt": null
+    },
+    {
+      "id": "A4",
+      "group": "A. Security/payment",
+      "subject": "Membership cancellation and saved payment methods",
+      "options": [
+        {
+          "key": "1",
+          "label": "Stripe Customer Portal for cancel/plan/payment methods"
+        },
+        {
+          "key": "2",
+          "label": "In-app cancel (cancel_at_period_end) + Stripe Elements for cards"
+        }
+      ],
+      "recommendation": "1",
+      "gate": "S0B-2",
+      "founderSelection": null,
+      "status": "PENDING",
+      "decidedBy": null,
+      "decidedAt": null
+    },
+    {
+      "id": "A5",
+      "group": "A. Security/payment",
+      "subject": "Mock / demo / seed data in production",
+      "options": [
+        {
+          "key": "1",
+          "label": "Quarantine all mock paths behind ?demo=1 on non-production hosts; founder \"view as client\" shows real data"
+        },
+        {
+          "key": "2",
+          "label": "Keep founder-only mocks"
+        }
+      ],
+      "recommendation": "1",
+      "gate": "S0B-2",
+      "founderSelection": null,
+      "status": "PENDING",
+      "decidedBy": null,
+      "decidedAt": null
+    },
+    {
+      "id": "A6",
+      "group": "A. Security/payment",
+      "subject": "Slay Ticket purchases",
+      "options": [
+        {
+          "key": "1",
+          "label": "Pause pack purchases until webhook-only crediting ships (in S0B-2)"
+        },
+        {
+          "key": "2",
+          "label": "Ship webhook crediting first, then re-enable"
+        }
+      ],
+      "recommendation": "1",
+      "gate": "S0B-2",
+      "founderSelection": null,
+      "status": "PENDING",
+      "decidedBy": null,
+      "decidedAt": null
+    },
+    {
+      "id": "A7",
+      "group": "A. Security/payment",
+      "subject": "Booking autopay final payments",
+      "options": [
+        {
+          "key": "1",
+          "label": "Keep autopay off until server-sourced IDs and amounts ship; collect final balances manually meanwhile"
+        },
+        {
+          "key": "2",
+          "label": "Fix and enable in the same sprint"
+        }
+      ],
+      "recommendation": "1",
+      "gate": "S0B-2",
+      "founderSelection": null,
+      "status": "PENDING",
+      "decidedBy": null,
+      "decidedAt": null
+    },
+    {
+      "id": "A8",
+      "group": "A. Security/payment",
+      "subject": "Remediation for customers affected by money defects",
+      "options": [
+        {
+          "key": "1",
+          "label": "Check Stripe for any 4-pack analysis or Slay Ticket or BAW payments; refund or grant manually with audit"
+        },
+        {
+          "key": "2",
+          "label": "No action"
+        }
+      ],
+      "recommendation": "1",
+      "gate": "S0B-2",
+      "founderSelection": null,
+      "status": "PENDING",
+      "decidedBy": null,
+      "decidedAt": null
+    },
+    {
+      "id": "A9",
+      "group": "A. Security/payment",
+      "subject": "Approve the additive schema plan (orders first)",
+      "options": [
+        {
+          "key": "1",
+          "label": "Approve S1 tables now (customer_orders, items, status events, webhook events); later tables per sprint"
+        },
+        {
+          "key": "2",
+          "label": "Approve all at once"
+        },
+        {
+          "key": "3",
+          "label": "Defer"
+        }
+      ],
+      "recommendation": "1",
+      "gate": "S1",
+      "founderSelection": null,
+      "status": "PENDING",
+      "decidedBy": null,
+      "decidedAt": null
+    },
+    {
+      "id": "B1",
+      "group": "B. Customer architecture",
+      "subject": "Approve the customer page tree (10 families, 21 routed pages, 3 new)",
+      "options": [
+        {
+          "key": "1",
+          "label": "Approve as proposed"
+        },
+        {
+          "key": "2",
+          "label": "Approve with amendments (note them)"
+        }
+      ],
+      "recommendation": "1",
+      "gate": "S2",
+      "founderSelection": null,
+      "status": "PENDING",
+      "decidedBy": null,
+      "decidedAt": null
+    },
+    {
+      "id": "B2",
+      "group": "B. Customer architecture",
+      "subject": "MY HAIR as its own family (profile, analyses, builds)",
+      "options": [
+        {
+          "key": "1",
+          "label": "Own family /account/hair with 3 tabs + analysis detail route"
+        },
+        {
+          "key": "2",
+          "label": "Split: analyses under Rewards, builds under Wishlist"
+        }
+      ],
+      "recommendation": "1",
+      "gate": "S5",
+      "founderSelection": null,
+      "status": "PENDING",
+      "decidedBy": null,
+      "decidedAt": null
+    },
+    {
+      "id": "B3",
+      "group": "B. Customer architecture",
+      "subject": "Concierge scope",
+      "options": [
+        {
+          "key": "1",
+          "label": "Premium-only page: messages (with replies), offers, orders-in-progress links, gifts; tracking → order detail"
+        },
+        {
+          "key": "2",
+          "label": "Keep as is"
+        }
+      ],
+      "recommendation": "1",
+      "gate": "S2",
+      "founderSelection": null,
+      "status": "PENDING",
+      "decidedBy": null,
+      "decidedAt": null
+    },
+    {
+      "id": "B4",
+      "group": "B. Customer architecture",
+      "subject": "Where Slay Challenge lives",
+      "options": [
+        {
+          "key": "1",
+          "label": "REWARDS › SLAY CHALLENGE tab"
+        },
+        {
+          "key": "2",
+          "label": "Stay in Concierge"
+        }
+      ],
+      "recommendation": "1",
+      "gate": "S4",
+      "founderSelection": null,
+      "status": "PENDING",
+      "decidedBy": null,
+      "decidedAt": null
+    },
+    {
+      "id": "B5",
+      "group": "B. Customer architecture",
+      "subject": "/account on tablet/desktop",
+      "options": [
+        {
+          "key": "1",
+          "label": "Keep the Penthouse redirect, but it must read /api/account/overview so numbers match"
+        },
+        {
+          "key": "2",
+          "label": "Pause redirect until desktop phase; centred 720px account column"
+        }
+      ],
+      "recommendation": "1",
+      "gate": "S2",
+      "founderSelection": null,
+      "status": "PENDING",
+      "decidedBy": null,
+      "decidedAt": null
+    },
+    {
+      "id": "B6",
+      "group": "B. Customer architecture",
+      "subject": "Mobile Mansion /mobile/* placeholder pages",
+      "options": [
+        {
+          "key": "1",
+          "label": "Keep unlinked and out of the account tree until a dedicated creative sprint"
+        },
+        {
+          "key": "2",
+          "label": "Remove routes"
+        },
+        {
+          "key": "3",
+          "label": "Make it the mobile home now"
+        }
+      ],
+      "recommendation": "1",
+      "gate": "—",
+      "founderSelection": null,
+      "status": "PENDING",
+      "decidedBy": null,
+      "decidedAt": null
+    },
+    {
+      "id": "B7",
+      "group": "B. Customer architecture",
+      "subject": "Support for all members (MY REQUESTS + replies)",
+      "options": [
+        {
+          "key": "1",
+          "label": "support_requests threads for everyone; premium keeps priority routing"
+        },
+        {
+          "key": "2",
+          "label": "Premium-only replies"
+        }
+      ],
+      "recommendation": "1",
+      "gate": "S6",
+      "founderSelection": null,
+      "status": "PENDING",
+      "decidedBy": null,
+      "decidedAt": null
+    },
+    {
+      "id": "B8",
+      "group": "B. Customer architecture",
+      "subject": "Navigation labels (creative)",
+      "options": [
+        {
+          "key": "1",
+          "label": "Use proposed labels"
+        },
+        {
+          "key": "2",
+          "label": "Founder wording (note it)"
+        }
+      ],
+      "recommendation": "1",
+      "gate": "S2",
+      "founderSelection": null,
+      "status": "PENDING",
+      "decidedBy": null,
+      "decidedAt": null
+    },
+    {
+      "id": "C1",
+      "group": "C. Admin architecture",
+      "subject": "Approve the admin page tree (15 families, 24 routed pages, 5 new, 10 folded)",
+      "options": [
+        {
+          "key": "1",
+          "label": "Approve as proposed"
+        },
+        {
+          "key": "2",
+          "label": "Approve with amendments"
+        }
+      ],
+      "recommendation": "1",
+      "gate": "S3",
+      "founderSelection": null,
+      "status": "PENDING",
+      "decidedBy": null,
+      "decidedAt": null
+    },
+    {
+      "id": "C2",
+      "group": "C. Admin architecture",
+      "subject": "Admin roles and money authority",
+      "options": [
+        {
+          "key": "1",
+          "label": "admin_roles: FOUNDER / ADMIN (STAFF later); refunds and adjustments above a threshold need FOUNDER"
+        },
+        {
+          "key": "2",
+          "label": "Everyone on the allow-list can do everything"
+        }
+      ],
+      "recommendation": "1",
+      "gate": "S3",
+      "founderSelection": null,
+      "status": "PENDING",
+      "decidedBy": null,
+      "decidedAt": null
+    },
+    {
+      "id": "C3",
+      "group": "C. Admin architecture",
+      "subject": "Command Center content",
+      "options": [
+        {
+          "key": "1",
+          "label": "Queues first (forms, ready to ship, delayed, approvals, inbox, meetings, offers expiring, low stock) + system alerts + 4 metrics"
+        },
+        {
+          "key": "2",
+          "label": "Keep cards, remove fake numbers"
+        }
+      ],
+      "recommendation": "1",
+      "gate": "S3",
+      "founderSelection": null,
+      "status": "PENDING",
+      "decidedBy": null,
+      "decidedAt": null
+    },
+    {
+      "id": "C4",
+      "group": "C. Admin architecture",
+      "subject": "Canonical order status vocabulary and stage SLAs",
+      "options": [
+        {
+          "key": "1",
+          "label": "pending_payment → paid → awaiting_form → confirmed → in_production (sourcing, constructing, cleansing, customizing, finalizing) → shipped → delivered; + canceled, refunded, issue; digital: paid → processing → complete; founder supplies SLA days per stage"
+        },
+        {
+          "key": "2",
+          "label": "Founder-specified list"
+        }
+      ],
+      "recommendation": "1",
+      "gate": "S1",
+      "founderSelection": null,
+      "status": "PENDING",
+      "decidedBy": null,
+      "decidedAt": null
+    },
+    {
+      "id": "C5",
+      "group": "C. Admin architecture",
+      "subject": "Studio OS boundary",
+      "options": [
+        {
+          "key": "1",
+          "label": "Single STUDIO link in the admin menu; no Studio/SITE00 modules in FS admin"
+        },
+        {
+          "key": "2",
+          "label": "Keep cards"
+        }
+      ],
+      "recommendation": "1",
+      "gate": "S3",
+      "founderSelection": null,
+      "status": "PENDING",
+      "decidedBy": null,
+      "decidedAt": null
+    },
+    {
+      "id": "D1",
+      "group": "D. Membership/rewards",
+      "subject": "Slay Challenge requirement and reveal model",
+      "options": [
+        {
+          "key": "1",
+          "label": "Keep 4 tiers; reveal phase = share of the tier's own required count (phase 2 at ≥75%, phase 3 at 100%)"
+        },
+        {
+          "key": "2",
+          "label": "Adopt 3 requirements per reward (rewrite tiers to 3 tasks)"
+        },
+        {
+          "key": "3",
+          "label": "Other (founder specifies)"
+        }
+      ],
+      "recommendation": "1",
+      "gate": "S4",
+      "founderSelection": null,
+      "status": "PENDING",
+      "decidedBy": null,
+      "decidedAt": null
+    },
+    {
+      "id": "D2",
+      "group": "D. Membership/rewards",
+      "subject": "Benefit eligibility conflicts",
+      "options": [
+        {
+          "key": "1",
+          "label": "Follow the published benefit list (special offers 12; challenges all premium; live tracking 3+)"
+        },
+        {
+          "key": "2",
+          "label": "Follow current code gates; update copy"
+        }
+      ],
+      "recommendation": "1",
+      "gate": "S4",
+      "founderSelection": null,
+      "status": "PENDING",
+      "decidedBy": null,
+      "decidedAt": null
+    },
+    {
+      "id": "D3",
+      "group": "D. Membership/rewards",
+      "subject": "Welcome credits",
+      "options": [
+        {
+          "key": "1",
+          "label": "Founder confirms amounts, once-per-tier vs per-term, and whether premium and spend-tier credits stack"
+        }
+      ],
+      "recommendation": "1",
+      "gate": "S4",
+      "founderSelection": null,
+      "status": "PENDING",
+      "decidedBy": null,
+      "decidedAt": null
+    },
+    {
+      "id": "D4",
+      "group": "D. Membership/rewards",
+      "subject": "Purchase points formula",
+      "options": [
+        {
+          "key": "1",
+          "label": "Eligible net × multiplier (checkout rule) everywhere"
+        },
+        {
+          "key": "2",
+          "label": "Order total 1:1"
+        }
+      ],
+      "recommendation": "1",
+      "gate": "S4",
+      "founderSelection": null,
+      "status": "PENDING",
+      "decidedBy": null,
+      "decidedAt": null
+    },
+    {
+      "id": "D5",
+      "group": "D. Membership/rewards",
+      "subject": "Points expiry",
+      "options": [
+        {
+          "key": "1",
+          "label": "Points never expire (retire points_expiring email)"
+        },
+        {
+          "key": "2",
+          "label": "Expire after N months inactivity"
+        },
+        {
+          "key": "3",
+          "label": "Fixed period from earn date"
+        }
+      ],
+      "recommendation": "1",
+      "gate": "S4",
+      "founderSelection": null,
+      "status": "PENDING",
+      "decidedBy": null,
+      "decidedAt": null
+    },
+    {
+      "id": "D6",
+      "group": "D. Membership/rewards",
+      "subject": "Affiliate rewards and caps",
+      "options": [
+        {
+          "key": "1",
+          "label": "Confirm copy values as canonical; caps per copy; show sub-caps; no multipliers; define Featured Creator later"
+        },
+        {
+          "key": "2",
+          "label": "Founder edits values"
+        }
+      ],
+      "recommendation": "1",
+      "gate": "S6",
+      "founderSelection": null,
+      "status": "PENDING",
+      "decidedBy": null,
+      "decidedAt": null
+    },
+    {
+      "id": "D7",
+      "group": "D. Membership/rewards",
+      "subject": "Points for review content",
+      "options": [
+        {
+          "key": "1",
+          "label": "Founder sets review-content points (or none)"
+        }
+      ],
+      "recommendation": "1",
+      "gate": "S5",
+      "founderSelection": null,
+      "status": "PENDING",
+      "decidedBy": null,
+      "decidedAt": null
+    },
+    {
+      "id": "D8",
+      "group": "D. Membership/rewards",
+      "subject": "Referral program rules",
+      "options": [
+        {
+          "key": "1",
+          "label": "Confirm $20/$20; credit when the referred order is delivered; reverse on refund/cancel; no stacking with +100 earn task"
+        },
+        {
+          "key": "2",
+          "label": "Confirm $20/$20 at confirmation (current)"
+        },
+        {
+          "key": "3",
+          "label": "Different amounts"
+        }
+      ],
+      "recommendation": "1",
+      "gate": "S6",
+      "founderSelection": null,
+      "status": "PENDING",
+      "decidedBy": null,
+      "decidedAt": null
+    },
+    {
+      "id": "D9",
+      "group": "D. Membership/rewards",
+      "subject": "Undefined perks",
+      "options": [
+        {
+          "key": "1",
+          "label": "Define each (contents, trigger, fulfilment) or remove its copy"
+        }
+      ],
+      "recommendation": "1",
+      "gate": "S4",
+      "founderSelection": null,
+      "status": "PENDING",
+      "decidedBy": null,
+      "decidedAt": null
+    },
+    {
+      "id": "D10",
+      "group": "D. Membership/rewards",
+      "subject": "Unknown premium tier default",
+      "options": [
+        {
+          "key": "1",
+          "label": "Default to 3-month privileges"
+        },
+        {
+          "key": "2",
+          "label": "Keep 12-month"
+        }
+      ],
+      "recommendation": "1",
+      "gate": "S4",
+      "founderSelection": null,
+      "status": "PENDING",
+      "decidedBy": null,
+      "decidedAt": null
+    },
+    {
+      "id": "D11",
+      "group": "D. Membership/rewards",
+      "subject": "Anniversary semantics",
+      "options": [
+        {
+          "key": "1",
+          "label": "Once per completed term, including renewals"
+        },
+        {
+          "key": "2",
+          "label": "Once per membership year"
+        },
+        {
+          "key": "3",
+          "label": "First term only"
+        }
+      ],
+      "recommendation": "1",
+      "gate": "S4",
+      "founderSelection": null,
+      "status": "PENDING",
+      "decidedBy": null,
+      "decidedAt": null
+    },
+    {
+      "id": "D12",
+      "group": "D. Membership/rewards",
+      "subject": "\"Hair Bestie Bonus\"",
+      "options": [
+        {
+          "key": "1",
+          "label": "Drop the term"
+        },
+        {
+          "key": "2",
+          "label": "Define amount, trigger, eligibility"
+        }
+      ],
+      "recommendation": "1",
+      "gate": "S4",
+      "founderSelection": null,
+      "status": "PENDING",
+      "decidedBy": null,
+      "decidedAt": null
+    },
+    {
+      "id": "D13",
+      "group": "D. Membership/rewards",
+      "subject": "Birthday gift",
+      "options": [
+        {
+          "key": "1",
+          "label": "Premium only; claim window around birthday; fulfilled via ledger"
+        },
+        {
+          "key": "2",
+          "label": "Premium + affiliates"
+        }
+      ],
+      "recommendation": "1",
+      "gate": "S4",
+      "founderSelection": null,
+      "status": "PENDING",
+      "decidedBy": null,
+      "decidedAt": null
+    },
+    {
+      "id": "E1",
+      "group": "E. Hair Analysis/Build-A-Wig",
+      "subject": "Hair Analysis eligibility and bonus credits",
+      "options": [
+        {
+          "key": "1",
+          "label": "Subscribers + anyone who buys credits may use purchased credits; BLACK gets no free monthly; bonus credit = one paid-credit grant"
+        },
+        {
+          "key": "2",
+          "label": "Subscribers only; disable purchase for others"
+        },
+        {
+          "key": "3",
+          "label": "Also give BLACK the monthly free analysis"
+        }
+      ],
+      "recommendation": "1",
+      "gate": "S5",
+      "founderSelection": null,
+      "status": "PENDING",
+      "decidedBy": null,
+      "decidedAt": null
+    },
+    {
+      "id": "E2",
+      "group": "E. Hair Analysis/Build-A-Wig",
+      "subject": "/tools/hairstyle-analysis harness",
+      "options": [
+        {
+          "key": "1",
+          "label": "Admin-only; customers redirect to MY HAIR › ANALYSES"
+        },
+        {
+          "key": "2",
+          "label": "Keep"
+        }
+      ],
+      "recommendation": "1",
+      "gate": "S0B-2",
+      "founderSelection": null,
+      "status": "PENDING",
+      "decidedBy": null,
+      "decidedAt": null
+    },
+    {
+      "id": "E3",
+      "group": "E. Hair Analysis/Build-A-Wig",
+      "subject": "Selfie consent, retention and deletion",
+      "options": [
+        {
+          "key": "1",
+          "label": "Founder-approved consent text; private storage; retention N days (founder sets); delete on request and account deletion"
+        }
+      ],
+      "recommendation": "1",
+      "gate": "S5",
+      "founderSelection": null,
+      "status": "PENDING",
+      "decidedBy": null,
+      "decidedAt": null
+    },
+    {
+      "id": "E4",
+      "group": "E. Hair Analysis/Build-A-Wig",
+      "subject": "Edit-from-cart gate",
+      "options": [
+        {
+          "key": "1",
+          "label": "Sign-in only (canon); premium-only options stay gated"
+        },
+        {
+          "key": "2",
+          "label": "Premium only"
+        }
+      ],
+      "recommendation": "1",
+      "gate": "S1B",
+      "founderSelection": null,
+      "status": "PENDING",
+      "decidedBy": null,
+      "decidedAt": null
+    },
+    {
+      "id": "E5",
+      "group": "E. Hair Analysis/Build-A-Wig",
+      "subject": "Build-A-Wig price catalogue ownership",
+      "options": [
+        {
+          "key": "1",
+          "label": "Code-defined single catalogue with an admin read view; changes by release"
+        },
+        {
+          "key": "2",
+          "label": "Admin-editable catalogue table (founder approves price changes)"
+        }
+      ],
+      "recommendation": "1",
+      "gate": "S1B",
+      "founderSelection": null,
+      "status": "PENDING",
+      "decidedBy": null,
+      "decidedAt": null
+    },
+    {
+      "id": "E6",
+      "group": "E. Hair Analysis/Build-A-Wig",
+      "subject": "Asynchronous deliverables (PSA picks, consult add-on)",
+      "options": [
+        {
+          "key": "1",
+          "label": "Store and deliver automatically (PSA picks immediately; consult add-on generated and reviewed by admin before release within 24h)"
+        },
+        {
+          "key": "2",
+          "label": "Remove the 24h promise / add-on until built"
+        }
+      ],
+      "recommendation": "1",
+      "gate": "S5",
+      "founderSelection": null,
+      "status": "PENDING",
+      "decidedBy": null,
+      "decidedAt": null
+    },
+    {
+      "id": "F1",
+      "group": "F. Community/affiliate",
+      "subject": "Fabricated Slay Cam stats and testimonials",
+      "options": [
+        {
+          "key": "1",
+          "label": "Remove stats; label posts as curated editorial until real submissions exist"
+        },
+        {
+          "key": "2",
+          "label": "Keep"
+        }
+      ],
+      "recommendation": "1",
+      "gate": "S0B-2",
+      "founderSelection": null,
+      "status": "PENDING",
+      "decidedBy": null,
+      "decidedAt": null
+    },
+    {
+      "id": "F2",
+      "group": "F. Community/affiliate",
+      "subject": "UGC consent, usage rights and retention wording",
+      "options": [
+        {
+          "key": "1",
+          "label": "Founder supplies wording (or approves a drafted version reviewed by counsel)"
+        }
+      ],
+      "recommendation": "1",
+      "gate": "S5",
+      "founderSelection": null,
+      "status": "PENDING",
+      "decidedBy": null,
+      "decidedAt": null
+    },
+    {
+      "id": "F3",
+      "group": "F. Community/affiliate",
+      "subject": "Public review display",
+      "options": [
+        {
+          "key": "1",
+          "label": "Show approved, consented reviews on product pages and /brand/reviews"
+        },
+        {
+          "key": "2",
+          "label": "Keep private"
+        }
+      ],
+      "recommendation": "1",
+      "gate": "S5",
+      "founderSelection": null,
+      "status": "PENDING",
+      "decidedBy": null,
+      "decidedAt": null
+    },
+    {
+      "id": "F4",
+      "group": "F. Community/affiliate",
+      "subject": "Slay MVP selection and reward",
+      "options": [
+        {
+          "key": "1",
+          "label": "Admin picks MVP per period; reward defined by founder"
+        },
+        {
+          "key": "2",
+          "label": "No MVP"
+        }
+      ],
+      "recommendation": "1",
+      "gate": "S5",
+      "founderSelection": null,
+      "status": "PENDING",
+      "decidedBy": null,
+      "decidedAt": null
+    },
+    {
+      "id": "F5",
+      "group": "F. Community/affiliate",
+      "subject": "Lounge comment moderation",
+      "options": [
+        {
+          "key": "1",
+          "label": "Keep live posting; auto-hide at N unique reports (founder sets N); admin queue"
+        },
+        {
+          "key": "2",
+          "label": "Pre-moderate all comments"
+        }
+      ],
+      "recommendation": "1",
+      "gate": "S5",
+      "founderSelection": null,
+      "status": "PENDING",
+      "decidedBy": null,
+      "decidedAt": null
+    },
+    {
+      "id": "G1",
+      "group": "G. Visual/responsive",
+      "subject": "Account desktop column widths",
+      "options": [
+        {
+          "key": "1",
+          "label": "Centred 720px (forms) / 960px (lists) column on marble; optional side rail later"
+        },
+        {
+          "key": "2",
+          "label": "Founder-specified widths"
+        }
+      ],
+      "recommendation": "1",
+      "gate": "S2",
+      "founderSelection": null,
+      "status": "PENDING",
+      "decidedBy": null,
+      "decidedAt": null
+    },
+    {
+      "id": "G2",
+      "group": "G. Visual/responsive",
+      "subject": "Admin menu drawer",
+      "options": [
+        {
+          "key": "1",
+          "label": "Hamburger drawer in AdminHeader using the existing menu-toggle card pattern"
+        },
+        {
+          "key": "2",
+          "label": "Persistent side rail ≥1024px"
+        }
+      ],
+      "recommendation": "1",
+      "gate": "S3",
+      "founderSelection": null,
+      "status": "PENDING",
+      "decidedBy": null,
+      "decidedAt": null
+    },
+    {
+      "id": "G3",
+      "group": "G. Visual/responsive",
+      "subject": "Admin wide shell and Command Center layout",
+      "options": [
+        {
+          "key": "1",
+          "label": "448 phone · 720 tablet · 1280 desktop shell on marble, glass panels"
+        },
+        {
+          "key": "2",
+          "label": "Keep 448 everywhere"
+        }
+      ],
+      "recommendation": "1",
+      "gate": "S3",
+      "founderSelection": null,
+      "status": "PENDING",
+      "decidedBy": null,
+      "decidedAt": null
+    },
+    {
+      "id": "G4",
+      "group": "G. Visual/responsive",
+      "subject": "Account Overview status panels and MY HAIR page visuals",
+      "options": [
+        {
+          "key": "1",
+          "label": "Approve panels in the existing glass card language (screenshot review in S2)"
+        }
+      ],
+      "recommendation": "1",
+      "gate": "S2/S5",
+      "founderSelection": null,
+      "status": "PENDING",
+      "decidedBy": null,
+      "decidedAt": null
+    },
+    {
+      "id": "G5",
+      "group": "G. Visual/responsive",
+      "subject": "Trend Desk and PSA Broadcast re-skin",
+      "options": [
+        {
+          "key": "1",
+          "label": "Re-skin onto marble/glass admin shell"
+        },
+        {
+          "key": "2",
+          "label": "Keep dark (intentional studio look)"
+        }
+      ],
+      "recommendation": "1",
+      "gate": "S6",
+      "founderSelection": null,
+      "status": "PENDING",
+      "decidedBy": null,
+      "decidedAt": null
+    },
+    {
+      "id": "G6",
+      "group": "G. Visual/responsive",
+      "subject": "Certification collectible art",
+      "options": [
+        {
+          "key": "1",
+          "label": "Commission art in the existing collectible style"
+        },
+        {
+          "key": "2",
+          "label": "Keep placeholder"
+        }
+      ],
+      "recommendation": "2",
+      "gate": "—",
+      "founderSelection": null,
+      "status": "PENDING",
+      "decidedBy": null,
+      "decidedAt": null
+    },
+    {
+      "id": "H1",
+      "group": "H. Launch readiness",
+      "subject": "Launch definition",
+      "options": [
+        {
+          "key": "1",
+          "label": "Launch-critical = P0A + P0B + S2 + S3 + S4 at H (verified) with doc 19 launch rows passing; S5/S6 may follow"
+        },
+        {
+          "key": "2",
+          "label": "Everything through S6 verified"
+        }
+      ],
+      "recommendation": "1",
+      "gate": "S7",
+      "founderSelection": null,
+      "status": "PENDING",
+      "decidedBy": null,
+      "decidedAt": null
+    },
+    {
+      "id": "H2",
+      "group": "H. Launch readiness",
+      "subject": "Staging environment for signed-in verification",
+      "options": [
+        {
+          "key": "1",
+          "label": "Supabase branch + Stripe test mode + seeded test accounts (customer standard/premium, admin, founder)"
+        },
+        {
+          "key": "2",
+          "label": "Separate staging project"
+        }
+      ],
+      "recommendation": "1",
+      "gate": "S7 (and S0B-1 rehearsal)",
+      "founderSelection": null,
+      "status": "PENDING",
+      "decidedBy": null,
+      "decidedAt": null
+    },
+    {
+      "id": "H3",
+      "group": "H. Launch readiness",
+      "subject": "SITE00 shares the Supabase project",
+      "options": [
+        {
+          "key": "1",
+          "label": "Coordinate every FS migration with a SITE00 impact check now; plan SITE00 move to its own project"
+        },
+        {
+          "key": "2",
+          "label": "Coordinate only"
+        }
+      ],
+      "recommendation": "1",
+      "gate": "S0B-1",
+      "founderSelection": null,
+      "status": "PENDING",
+      "decidedBy": null,
+      "decidedAt": null
+    }
+  ],
+  "approvalRequirements": [
+    {
+      "gate": "S0B-1",
+      "requires": [
+        "A1",
+        "H2",
+        "H3"
+      ],
+      "plus": "Rollback migration prepared; rehearsed on a Supabase branch (H2); SITE00 service-role key confirmed in production; SITE00 and JURNL signup smoke test"
+    },
+    {
+      "gate": "S0B-2",
+      "requires": [
+        "A2",
+        "A3",
+        "A4",
+        "A5",
+        "A6",
+        "A7",
+        "A8",
+        "E2",
+        "F1"
+      ]
+    },
+    {
+      "gate": "S1",
+      "requires": [
+        "A9",
+        "C4"
+      ]
+    },
+    {
+      "gate": "S1B",
+      "requires": [
+        "E4",
+        "E5"
+      ]
+    },
+    {
+      "gate": "S2",
+      "requires": [
+        "B1",
+        "B3",
+        "B5",
+        "B8",
+        "G1",
+        "G4"
+      ]
+    },
+    {
+      "gate": "S3",
+      "requires": [
+        "C1",
+        "C2",
+        "C3",
+        "C5",
+        "G2",
+        "G3"
+      ]
+    },
+    {
+      "gate": "S4",
+      "requires": [
+        "B4",
+        "D1",
+        "D2",
+        "D3",
+        "D4",
+        "D5",
+        "D9",
+        "D10",
+        "D11",
+        "D12",
+        "D13"
+      ]
+    },
+    {
+      "gate": "S5",
+      "requires": [
+        "B2",
+        "D7",
+        "E1",
+        "E3",
+        "E6",
+        "F2",
+        "F3",
+        "F4",
+        "F5",
+        "G4"
+      ]
+    },
+    {
+      "gate": "S6",
+      "requires": [
+        "B7",
+        "D6",
+        "D8",
+        "G5"
+      ]
+    },
+    {
+      "gate": "S7",
+      "requires": [
+        "H1",
+        "H2"
+      ]
+    },
+    {
+      "gate": "none (independent)",
+      "requires": [
+        "B6",
+        "G6"
+      ]
+    }
+  ],
+  "howToRecordApproval": "Set founderSelection to an option key, status to APPROVED|REJECTED|DEFERRED, decidedBy and decidedAt (ISO 8601), commit the file. The interactive board (doc 21) can export this shape; the export is not a record until committed."
+}
