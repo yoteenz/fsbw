@@ -1,0 +1,1884 @@
+{
+  "templateVersion": "3.0",
+  "sprintId": "P0.FRONTAL-SLAYER.OPUS.S0A-FOUNDER-DECISION-TRIAGE-AND-S0B1-SECURITY-CONTAINMENT-READINESS.V1",
+  "status": "TEMPLATE — NO DECISION RECORDED",
+  "approvalRecorded": false,
+  "howToRecord": "For each decision you decide, set founderSelection to an option key (or \"custom\" with a note), state to FOUNDER APPROVED | FOUNDER REJECTED | DEFERRED, decidedBy, decidedAt (ISO 8601). Approving one wave does not approve any other wave. A selection in the board that is not recorded in its decision store, or not committed in this file, is SELECTED — NOT RECORDED and has no authority.",
+  "stateVocabulary": [
+    "RECOMMENDED",
+    "SELECTED — NOT RECORDED",
+    "FOUNDER APPROVED",
+    "FOUNDER REJECTED",
+    "DEFERRED",
+    "BLOCKED",
+    "IMPLEMENTED",
+    "VERIFIED"
+  ],
+  "traceability": {
+    "architecturePackageCommit": "df982a37",
+    "initialAuditCommit": "4863456a3c73e9c3acb8cc913294a5a1025ed1ab",
+    "priorBoard": "https://claude.ai/artifact/CpzJCzVGRK5HpEDzz91r82"
+  },
+  "experienceAuthority": {
+    "rule": "Customer Mobile, Customer Desktop/Tablet and Administration are separate experience authorities sharing business records, not UI.",
+    "source": "Founder sprint brief 2026-10-25",
+    "confirmedByFounder": null
+  },
+  "counts": {
+    "original": 55,
+    "genuineFounder": 34,
+    "engineeringDefaults": 8,
+    "alreadyEstablished": 11,
+    "blockedByEvidence": 2,
+    "carriedForward": [
+      "D14",
+      "D15",
+      "D16"
+    ],
+    "newExperienceDecisions": [
+      "XD-1",
+      "XD-2",
+      "XD-3"
+    ]
+  },
+  "waves": [
+    {
+      "wave": 1,
+      "title": "WAVE 1 — Immediate security and operational safety",
+      "founderDecisions": [
+        "A1"
+      ],
+      "defaultsForAcknowledgement": [
+        "H3"
+      ],
+      "blockedByEvidence": [
+        "H2"
+      ]
+    },
+    {
+      "wave": 2,
+      "title": "WAVE 2 — Application payment and security containment",
+      "founderDecisions": [
+        "A2",
+        "A4",
+        "A5",
+        "F1"
+      ],
+      "defaultsForAcknowledgement": [
+        "A3",
+        "A6",
+        "A7",
+        "E2"
+      ],
+      "blockedByEvidence": [
+        "A8"
+      ]
+    },
+    {
+      "wave": 3,
+      "title": "WAVE 3 — Customer and admin experience architecture",
+      "founderDecisions": [
+        "B1",
+        "C1",
+        "C2",
+        "C4",
+        "XD-1",
+        "XD-2"
+      ],
+      "defaultsForAcknowledgement": [],
+      "blockedByEvidence": [
+        "XD-3"
+      ]
+    },
+    {
+      "wave": 4,
+      "title": "WAVE 4 — Rewards and membership economics",
+      "founderDecisions": [
+        "D3",
+        "D5",
+        "D6",
+        "D7",
+        "D8",
+        "D9",
+        "D11",
+        "D12",
+        "D13",
+        "E1",
+        "D15"
+      ],
+      "defaultsForAcknowledgement": [],
+      "blockedByEvidence": []
+    },
+    {
+      "wave": 5,
+      "title": "WAVE 5 — Remaining product and experience decisions",
+      "founderDecisions": [
+        "B2",
+        "B3",
+        "B7",
+        "B8",
+        "C3",
+        "E3",
+        "F2",
+        "F4",
+        "F5",
+        "G2",
+        "G3",
+        "G4",
+        "G5",
+        "G6",
+        "H1"
+      ],
+      "defaultsForAcknowledgement": [],
+      "blockedByEvidence": []
+    }
+  ],
+  "waveApprovals": [
+    {
+      "wave": 1,
+      "approvedBy": null,
+      "approvedAt": null,
+      "scopeNote": "Approves only the listed decisions of this wave."
+    },
+    {
+      "wave": 2,
+      "approvedBy": null,
+      "approvedAt": null,
+      "scopeNote": "Approves only the listed decisions of this wave."
+    },
+    {
+      "wave": 3,
+      "approvedBy": null,
+      "approvedAt": null,
+      "scopeNote": "Approves only the listed decisions of this wave."
+    },
+    {
+      "wave": 4,
+      "approvedBy": null,
+      "approvedAt": null,
+      "scopeNote": "Approves only the listed decisions of this wave."
+    },
+    {
+      "wave": 5,
+      "approvedBy": null,
+      "approvedAt": null,
+      "scopeNote": "Approves only the listed decisions of this wave."
+    }
+  ],
+  "s0b1": {
+    "candidateMigrations": [
+      "M1A",
+      "M2",
+      "M3"
+    ],
+    "blocked": [
+      "M1B"
+    ],
+    "approvals": [
+      {
+        "id": "A1a",
+        "meaning": "Rehearse M1A+M2+M3 on staging",
+        "state": "RECOMMENDED",
+        "decidedBy": null,
+        "decidedAt": null
+      },
+      {
+        "id": "A1b",
+        "meaning": "Apply M1A+M2+M3 to production after staging evidence",
+        "state": "RECOMMENDED",
+        "decidedBy": null,
+        "decidedAt": null,
+        "requires": [
+          "A1a",
+          "staging evidence pack",
+          "H3 acknowledgement"
+        ]
+      }
+    ]
+  },
+  "evidenceItems": [
+    {
+      "id": "U-01",
+      "subject": "Service-role key present in FS and SITE00 production",
+      "status": "OPEN",
+      "resolvedBy": null,
+      "resolvedAt": null
+    },
+    {
+      "id": "H2-evidence",
+      "subject": "Supabase plan tier, production domain, Stripe test keys",
+      "status": "OPEN"
+    },
+    {
+      "id": "A8-evidence",
+      "subject": "Read-only Stripe history for affected payments",
+      "status": "OPEN"
+    },
+    {
+      "id": "XD-3-evidence",
+      "subject": "Production domain and what ≥1024px visitors see",
+      "status": "OPEN"
+    }
+  ],
+  "decisions": [
+    {
+      "id": "A1",
+      "origin": "V2 (doc 16)",
+      "group": "A. Security/payment",
+      "subject": "Approve the P0A database containment migration",
+      "classification": "TRUE FOUNDER DECISION",
+      "wave": 1,
+      "options": [
+        {
+          "key": "1",
+          "label": "Approve narrowly scoped migration with prepared rollback, rehearsed on a Supabase branch, SITE00 smoke-tested"
+        },
+        {
+          "key": "2",
+          "label": "Defer"
+        }
+      ],
+      "recommendation": "1",
+      "v2RecommendationStatus": "NARROWED",
+      "proposedDisposition": "Split into two approvals: A1a rehearse M1A+M2+M3 on staging; A1b apply the same files to production after the staging evidence pack. M1B stays blocked (U-01).",
+      "state": "RECOMMENDED",
+      "founderSelection": null,
+      "note": "",
+      "decidedBy": null,
+      "decidedAt": null,
+      "implementationGate": "S0B-1"
+    },
+    {
+      "id": "H2",
+      "origin": "V2 (doc 16)",
+      "group": "H. Launch readiness",
+      "subject": "Staging environment for signed-in verification",
+      "classification": "BLOCKED BY MISSING EVIDENCE",
+      "wave": 1,
+      "options": [
+        {
+          "key": "1",
+          "label": "Supabase branch + Stripe test mode + seeded test accounts (customer standard/premium, admin, founder)"
+        },
+        {
+          "key": "2",
+          "label": "Separate staging project"
+        }
+      ],
+      "recommendation": "1",
+      "v2RecommendationStatus": "RETAINED",
+      "proposedDisposition": "Recommend option: separate staging Supabase project + Vercel Preview on a staging domain + Stripe test mode (doc 13). Founder chooses once the operator confirms the Supabase plan tier, production host and Stripe test keys.",
+      "state": "BLOCKED",
+      "founderSelection": null,
+      "note": "",
+      "decidedBy": null,
+      "decidedAt": null,
+      "implementationGate": "S0B-1 precondition"
+    },
+    {
+      "id": "H3",
+      "origin": "V2 (doc 16)",
+      "group": "H. Launch readiness",
+      "subject": "SITE00 shares the Supabase project",
+      "classification": "ENGINEERING DEFAULT",
+      "wave": 1,
+      "options": [
+        {
+          "key": "1",
+          "label": "Coordinate every FS migration with a SITE00 impact check now; plan SITE00 move to its own project"
+        },
+        {
+          "key": "2",
+          "label": "Coordinate only"
+        }
+      ],
+      "recommendation": "1",
+      "v2RecommendationStatus": "RETAINED",
+      "proposedDisposition": "Engineering default: every FS migration gets a shared-database impact review (doc 11); FS never alters SITE00-owned objects; SITE00 owner notified and runs the SITE00/JURNL smoke (doc 11 §4). Founder acknowledges, no choice required.",
+      "state": "RECOMMENDED",
+      "founderSelection": null,
+      "note": "",
+      "decidedBy": null,
+      "decidedAt": null,
+      "implementationGate": "Every DB sprint"
+    },
+    {
+      "id": "A2",
+      "origin": "V2 (doc 16)",
+      "group": "A. Security/payment",
+      "subject": "Build-A-Wig checkout until server pricing exists",
+      "classification": "TRUE FOUNDER DECISION",
+      "wave": 2,
+      "options": [
+        {
+          "key": "1",
+          "label": "Concierge-confirmed custom quote: Atelier and bag stay open; custom lines become \"Request my custom quote\" → admin sends consult offer → customer pays the server-held quoted amount"
+        },
+        {
+          "key": "2",
+          "label": "Block card checkout for custom lines and route to \"Book a consultation\""
+        },
+        {
+          "key": "3",
+          "label": "Keep current behaviour"
+        }
+      ],
+      "recommendation": "1",
+      "v2RecommendationStatus": "RETAINED",
+      "proposedDisposition": "Founder chooses the interim BAW path. Recommendation unchanged (option 1: Concierge-confirmed custom quote), with the corrected evidence that BAW is currently undercharged, not blocked.",
+      "state": "RECOMMENDED",
+      "founderSelection": null,
+      "note": "",
+      "decidedBy": null,
+      "decidedAt": null,
+      "implementationGate": "S0B-2"
+    },
+    {
+      "id": "A3",
+      "origin": "V2 (doc 16)",
+      "group": "A. Security/payment",
+      "subject": "Non-Stripe CONFIRM ORDER on /checkout/upgrade",
+      "classification": "ENGINEERING DEFAULT",
+      "wave": 2,
+      "options": [
+        {
+          "key": "1",
+          "label": "Disable in production (keep for non-production demo builds only)"
+        },
+        {
+          "key": "2",
+          "label": "Keep"
+        }
+      ],
+      "recommendation": "1",
+      "v2RecommendationStatus": "RETAINED",
+      "proposedDisposition": "Engineering default: remove the non-Stripe CONFIRM ORDER membership path from production (dev-only flag).",
+      "state": "RECOMMENDED",
+      "founderSelection": null,
+      "note": "",
+      "decidedBy": null,
+      "decidedAt": null,
+      "implementationGate": "S0B-2"
+    },
+    {
+      "id": "A4",
+      "origin": "V2 (doc 16)",
+      "group": "A. Security/payment",
+      "subject": "Membership cancellation and saved payment methods",
+      "classification": "TRUE FOUNDER DECISION",
+      "wave": 2,
+      "options": [
+        {
+          "key": "1",
+          "label": "Stripe Customer Portal for cancel/plan/payment methods"
+        },
+        {
+          "key": "2",
+          "label": "In-app cancel (cancel_at_period_end) + Stripe Elements for cards"
+        }
+      ],
+      "recommendation": "1",
+      "v2RecommendationStatus": "NARROWED",
+      "proposedDisposition": "Founder chooses portal vs in-app cancel. Stopping raw card inputs on /account/payment is an engineering default. Portal must be configured for cancel-at-period-end only so it cannot contradict the established upgrade/downgrade policy.",
+      "state": "RECOMMENDED",
+      "founderSelection": null,
+      "note": "",
+      "decidedBy": null,
+      "decidedAt": null,
+      "implementationGate": "S0B-2"
+    },
+    {
+      "id": "A5",
+      "origin": "V2 (doc 16)",
+      "group": "A. Security/payment",
+      "subject": "Mock / demo / seed data in production",
+      "classification": "TRUE FOUNDER DECISION",
+      "wave": 2,
+      "options": [
+        {
+          "key": "1",
+          "label": "Quarantine all mock paths behind ?demo=1 on non-production hosts; founder \"view as client\" shows real data"
+        },
+        {
+          "key": "2",
+          "label": "Keep founder-only mocks"
+        }
+      ],
+      "recommendation": "1",
+      "v2RecommendationStatus": "NARROWED",
+      "proposedDisposition": "Engineering default (per this brief: accurate empty states over fabricated records): quarantine all mocks from customers and admins. Founder decides only whether the founder's own production account keeps founder-only demo data.",
+      "state": "RECOMMENDED",
+      "founderSelection": null,
+      "note": "",
+      "decidedBy": null,
+      "decidedAt": null,
+      "implementationGate": "S0B-2"
+    },
+    {
+      "id": "A6",
+      "origin": "V2 (doc 16)",
+      "group": "A. Security/payment",
+      "subject": "Slay Ticket purchases",
+      "classification": "ENGINEERING DEFAULT",
+      "wave": 2,
+      "options": [
+        {
+          "key": "1",
+          "label": "Pause pack purchases until webhook-only crediting ships (in S0B-2)"
+        },
+        {
+          "key": "2",
+          "label": "Ship webhook crediting first, then re-enable"
+        }
+      ],
+      "recommendation": "1",
+      "v2RecommendationStatus": "RETAINED",
+      "proposedDisposition": "Engineering default: pause Slay Ticket pack purchases until webhook-only crediting exists; balances and spending stay.",
+      "state": "RECOMMENDED",
+      "founderSelection": null,
+      "note": "",
+      "decidedBy": null,
+      "decidedAt": null,
+      "implementationGate": "S0B-2"
+    },
+    {
+      "id": "A7",
+      "origin": "V2 (doc 16)",
+      "group": "A. Security/payment",
+      "subject": "Booking autopay final payments",
+      "classification": "ENGINEERING DEFAULT",
+      "wave": 2,
+      "options": [
+        {
+          "key": "1",
+          "label": "Keep autopay off until server-sourced IDs and amounts ship; collect final balances manually meanwhile"
+        },
+        {
+          "key": "2",
+          "label": "Fix and enable in the same sprint"
+        }
+      ],
+      "recommendation": "1",
+      "v2RecommendationStatus": "RETAINED",
+      "proposedDisposition": "Engineering default: keep autopay dormant until card/amount are resolved server-side; do not fix the cron first. Deposit wording/collection preference recorded as U-16 for the founder.",
+      "state": "RECOMMENDED",
+      "founderSelection": null,
+      "note": "",
+      "decidedBy": null,
+      "decidedAt": null,
+      "implementationGate": "S0B-2"
+    },
+    {
+      "id": "A8",
+      "origin": "V2 (doc 16)",
+      "group": "A. Security/payment",
+      "subject": "Remediation for customers affected by money defects",
+      "classification": "BLOCKED BY MISSING EVIDENCE",
+      "wave": 2,
+      "options": [
+        {
+          "key": "1",
+          "label": "Check Stripe for any 4-pack analysis or Slay Ticket or BAW payments; refund or grant manually with audit"
+        },
+        {
+          "key": "2",
+          "label": "No action"
+        }
+      ],
+      "recommendation": "1",
+      "v2RecommendationStatus": "RETAINED",
+      "proposedDisposition": "Blocked: run read-only Stripe queries (4-pack payments, billed-after-cancel, Slay Ticket/BAW charges). Database side already known: 0 grants, 0 orders, 0 subscriptions (live 2026-10-25).",
+      "state": "BLOCKED",
+      "founderSelection": null,
+      "note": "",
+      "decidedBy": null,
+      "decidedAt": null,
+      "implementationGate": "S0B-2"
+    },
+    {
+      "id": "E2",
+      "origin": "V2 (doc 16)",
+      "group": "E. Hair Analysis/Build-A-Wig",
+      "subject": "/tools/hairstyle-analysis harness",
+      "classification": "ENGINEERING DEFAULT",
+      "wave": 2,
+      "options": [
+        {
+          "key": "1",
+          "label": "Admin-only; customers redirect to MY HAIR › ANALYSES"
+        },
+        {
+          "key": "2",
+          "label": "Keep"
+        }
+      ],
+      "recommendation": "1",
+      "v2RecommendationStatus": "RETAINED",
+      "proposedDisposition": "Engineering default: /tools/hairstyle-analysis becomes admin-only (credit-consuming test harness); fix the design-dna canon list accordingly.",
+      "state": "RECOMMENDED",
+      "founderSelection": null,
+      "note": "",
+      "decidedBy": null,
+      "decidedAt": null,
+      "implementationGate": "S0B-2"
+    },
+    {
+      "id": "F1",
+      "origin": "V2 (doc 16)",
+      "group": "F. Community/affiliate",
+      "subject": "Fabricated Slay Cam stats and testimonials",
+      "classification": "TRUE FOUNDER DECISION",
+      "wave": 2,
+      "options": [
+        {
+          "key": "1",
+          "label": "Remove stats; label posts as curated editorial until real submissions exist"
+        },
+        {
+          "key": "2",
+          "label": "Keep"
+        }
+      ],
+      "recommendation": "1",
+      "v2RecommendationStatus": "RETAINED",
+      "proposedDisposition": "Founder approves the public Slay Cam copy. Recommendation: remove the fabricated stats and named testimonials; show an accurate empty state until real approved submissions exist.",
+      "state": "RECOMMENDED",
+      "founderSelection": null,
+      "note": "",
+      "decidedBy": null,
+      "decidedAt": null,
+      "implementationGate": "S0B-2"
+    },
+    {
+      "id": "B1",
+      "origin": "V2 (doc 16)",
+      "group": "B. Customer architecture",
+      "subject": "Approve the customer page tree (10 families, 21 routed pages, 3 new)",
+      "classification": "TRUE FOUNDER DECISION",
+      "wave": 3,
+      "options": [
+        {
+          "key": "1",
+          "label": "Approve as proposed"
+        },
+        {
+          "key": "2",
+          "label": "Approve with amendments (note them)"
+        }
+      ],
+      "recommendation": "1",
+      "v2RecommendationStatus": "SUPERSEDED",
+      "proposedDisposition": "Re-scoped as the MOBILE account tree only (10 families, 21 URLs). Desktop/tablet access to the same capabilities is decided separately (XD-1). No universal responsive shell.",
+      "state": "RECOMMENDED",
+      "founderSelection": null,
+      "note": "",
+      "decidedBy": null,
+      "decidedAt": null,
+      "implementationGate": "S2 (mobile)"
+    },
+    {
+      "id": "C1",
+      "origin": "V2 (doc 16)",
+      "group": "C. Admin architecture",
+      "subject": "Approve the admin page tree (15 families, 24 routed pages, 5 new, 10 folded)",
+      "classification": "TRUE FOUNDER DECISION",
+      "wave": 3,
+      "options": [
+        {
+          "key": "1",
+          "label": "Approve as proposed"
+        },
+        {
+          "key": "2",
+          "label": "Approve with amendments"
+        }
+      ],
+      "recommendation": "1",
+      "v2RecommendationStatus": "RETAINED",
+      "proposedDisposition": "Founder approves per page (Admin Alignment Protocol: every admin page finalized unless named). Present the 5 new pages and 10 folds as separate approvals.",
+      "state": "RECOMMENDED",
+      "founderSelection": null,
+      "note": "",
+      "decidedBy": null,
+      "decidedAt": null,
+      "implementationGate": "S3"
+    },
+    {
+      "id": "C2",
+      "origin": "V2 (doc 16)",
+      "group": "C. Admin architecture",
+      "subject": "Admin roles and money authority",
+      "classification": "TRUE FOUNDER DECISION",
+      "wave": 3,
+      "options": [
+        {
+          "key": "1",
+          "label": "admin_roles: FOUNDER / ADMIN (STAFF later); refunds and adjustments above a threshold need FOUNDER"
+        },
+        {
+          "key": "2",
+          "label": "Everyone on the allow-list can do everything"
+        }
+      ],
+      "recommendation": "1",
+      "v2RecommendationStatus": "RETAINED",
+      "proposedDisposition": "Founder sets the admin role model and money-action thresholds.",
+      "state": "RECOMMENDED",
+      "founderSelection": null,
+      "note": "",
+      "decidedBy": null,
+      "decidedAt": null,
+      "implementationGate": "S3"
+    },
+    {
+      "id": "C4",
+      "origin": "V2 (doc 16)",
+      "group": "C. Admin architecture",
+      "subject": "Canonical order status vocabulary and stage SLAs",
+      "classification": "TRUE FOUNDER DECISION",
+      "wave": 3,
+      "options": [
+        {
+          "key": "1",
+          "label": "pending_payment → paid → awaiting_form → confirmed → in_production (sourcing, constructing, cleansing, customizing, finalizing) → shipped → delivered; + canceled, refunded, issue; digital: paid → processing → complete; founder supplies SLA days per stage"
+        },
+        {
+          "key": "2",
+          "label": "Founder-specified list"
+        }
+      ],
+      "recommendation": "1",
+      "v2RecommendationStatus": "NARROWED",
+      "proposedDisposition": "Founder sets the canonical physical-order stage list and SLA days. Established inputs: custom processing windows (Terms 2026-05-27), consult stages PLACED/PROCESSING/COMPLETE, digital 3-stage gift cards.",
+      "state": "RECOMMENDED",
+      "founderSelection": null,
+      "note": "",
+      "decidedBy": null,
+      "decidedAt": null,
+      "implementationGate": "S1"
+    },
+    {
+      "id": "D3",
+      "origin": "V2 (doc 16)",
+      "group": "D. Membership/rewards",
+      "subject": "Welcome credits",
+      "classification": "TRUE FOUNDER DECISION",
+      "wave": 4,
+      "options": [
+        {
+          "key": "1",
+          "label": "Founder confirms amounts, once-per-tier vs per-term, and whether premium and spend-tier credits stack"
+        }
+      ],
+      "recommendation": "1",
+      "v2RecommendationStatus": "NARROWED",
+      "proposedDisposition": "Founder sets premium welcome amounts and stacking. Established: spend-tier welcome is once per new tier.",
+      "state": "RECOMMENDED",
+      "founderSelection": null,
+      "note": "",
+      "decidedBy": null,
+      "decidedAt": null,
+      "implementationGate": "S4"
+    },
+    {
+      "id": "D5",
+      "origin": "V2 (doc 16)",
+      "group": "D. Membership/rewards",
+      "subject": "Points expiry",
+      "classification": "TRUE FOUNDER DECISION",
+      "wave": 4,
+      "options": [
+        {
+          "key": "1",
+          "label": "Points never expire (retire points_expiring email)"
+        },
+        {
+          "key": "2",
+          "label": "Expire after N months inactivity"
+        },
+        {
+          "key": "3",
+          "label": "Fixed period from earn date"
+        }
+      ],
+      "recommendation": "1",
+      "v2RecommendationStatus": "RETAINED",
+      "proposedDisposition": "Founder decides whether and how points expire.",
+      "state": "RECOMMENDED",
+      "founderSelection": null,
+      "note": "",
+      "decidedBy": null,
+      "decidedAt": null,
+      "implementationGate": "S4"
+    },
+    {
+      "id": "D6",
+      "origin": "V2 (doc 16)",
+      "group": "D. Membership/rewards",
+      "subject": "Affiliate rewards and caps",
+      "classification": "TRUE FOUNDER DECISION",
+      "wave": 4,
+      "options": [
+        {
+          "key": "1",
+          "label": "Confirm copy values as canonical; caps per copy; show sub-caps; no multipliers; define Featured Creator later"
+        },
+        {
+          "key": "2",
+          "label": "Founder edits values"
+        }
+      ],
+      "recommendation": "1",
+      "v2RecommendationStatus": "NARROWED",
+      "proposedDisposition": "Established: copy values 400/600/600, 5,000 per unit per 6 months, Featured Creator up to 1,500. Founder decides only: hidden 2+2 sub-cap, multipliers, Featured Creator award process.",
+      "state": "RECOMMENDED",
+      "founderSelection": null,
+      "note": "",
+      "decidedBy": null,
+      "decidedAt": null,
+      "implementationGate": "S6"
+    },
+    {
+      "id": "D7",
+      "origin": "V2 (doc 16)",
+      "group": "D. Membership/rewards",
+      "subject": "Points for review content",
+      "classification": "TRUE FOUNDER DECISION",
+      "wave": 4,
+      "options": [
+        {
+          "key": "1",
+          "label": "Founder sets review-content points (or none)"
+        }
+      ],
+      "recommendation": "1",
+      "v2RecommendationStatus": "RETAINED",
+      "proposedDisposition": "Founder decides points for review content.",
+      "state": "RECOMMENDED",
+      "founderSelection": null,
+      "note": "",
+      "decidedBy": null,
+      "decidedAt": null,
+      "implementationGate": "S5"
+    },
+    {
+      "id": "D8",
+      "origin": "V2 (doc 16)",
+      "group": "D. Membership/rewards",
+      "subject": "Referral program rules",
+      "classification": "TRUE FOUNDER DECISION",
+      "wave": 4,
+      "options": [
+        {
+          "key": "1",
+          "label": "Confirm $20/$20; credit when the referred order is delivered; reverse on refund/cancel; no stacking with +100 earn task"
+        },
+        {
+          "key": "2",
+          "label": "Confirm $20/$20 at confirmation (current)"
+        },
+        {
+          "key": "3",
+          "label": "Different amounts"
+        }
+      ],
+      "recommendation": "1",
+      "v2RecommendationStatus": "NARROWED",
+      "proposedDisposition": "Established: $20 off friend / $20 digital cash referrer. Founder decides timing, activation, reversal, stacking. Not implemented automatically.",
+      "state": "RECOMMENDED",
+      "founderSelection": null,
+      "note": "",
+      "decidedBy": null,
+      "decidedAt": null,
+      "implementationGate": "S6"
+    },
+    {
+      "id": "D9",
+      "origin": "V2 (doc 16)",
+      "group": "D. Membership/rewards",
+      "subject": "Undefined perks",
+      "classification": "TRUE FOUNDER DECISION",
+      "wave": 4,
+      "options": [
+        {
+          "key": "1",
+          "label": "Define each (contents, trigger, fulfilment) or remove its copy"
+        }
+      ],
+      "recommendation": "1",
+      "v2RecommendationStatus": "NARROWED",
+      "proposedDisposition": "Established: tier welcome bonuses 250/500/1,000 + vouchers (founder copy). Founder defines contents/trigger/fulfilment of the named-only perks.",
+      "state": "RECOMMENDED",
+      "founderSelection": null,
+      "note": "",
+      "decidedBy": null,
+      "decidedAt": null,
+      "implementationGate": "S4"
+    },
+    {
+      "id": "D11",
+      "origin": "V2 (doc 16)",
+      "group": "D. Membership/rewards",
+      "subject": "Anniversary semantics",
+      "classification": "TRUE FOUNDER DECISION",
+      "wave": 4,
+      "options": [
+        {
+          "key": "1",
+          "label": "Once per completed term, including renewals"
+        },
+        {
+          "key": "2",
+          "label": "Once per membership year"
+        },
+        {
+          "key": "3",
+          "label": "First term only"
+        }
+      ],
+      "recommendation": "1",
+      "v2RecommendationStatus": "NARROWED",
+      "proposedDisposition": "Established: 500/1,000/1,500 by 3/6/12 months, amounts internal. Founder decides renewal re-trigger semantics.",
+      "state": "RECOMMENDED",
+      "founderSelection": null,
+      "note": "",
+      "decidedBy": null,
+      "decidedAt": null,
+      "implementationGate": "S4"
+    },
+    {
+      "id": "D12",
+      "origin": "V2 (doc 16)",
+      "group": "D. Membership/rewards",
+      "subject": "\"Hair Bestie Bonus\"",
+      "classification": "TRUE FOUNDER DECISION",
+      "wave": 4,
+      "options": [
+        {
+          "key": "1",
+          "label": "Drop the term"
+        },
+        {
+          "key": "2",
+          "label": "Define amount, trigger, eligibility"
+        }
+      ],
+      "recommendation": "1",
+      "v2RecommendationStatus": "RETAINED",
+      "proposedDisposition": "Founder: drop the term \"Hair Bestie Bonus\" or define it.",
+      "state": "RECOMMENDED",
+      "founderSelection": null,
+      "note": "",
+      "decidedBy": null,
+      "decidedAt": null,
+      "implementationGate": "S4"
+    },
+    {
+      "id": "D13",
+      "origin": "V2 (doc 16)",
+      "group": "D. Membership/rewards",
+      "subject": "Birthday gift",
+      "classification": "TRUE FOUNDER DECISION",
+      "wave": 4,
+      "options": [
+        {
+          "key": "1",
+          "label": "Premium only; claim window around birthday; fulfilled via ledger"
+        },
+        {
+          "key": "2",
+          "label": "Premium + affiliates"
+        }
+      ],
+      "recommendation": "1",
+      "v2RecommendationStatus": "RETAINED",
+      "proposedDisposition": "Founder sets birthday gift eligibility, claim window and fulfilment.",
+      "state": "RECOMMENDED",
+      "founderSelection": null,
+      "note": "",
+      "decidedBy": null,
+      "decidedAt": null,
+      "implementationGate": "S4"
+    },
+    {
+      "id": "E1",
+      "origin": "V2 (doc 16)",
+      "group": "E. Hair Analysis/Build-A-Wig",
+      "subject": "Hair Analysis eligibility and bonus credits",
+      "classification": "TRUE FOUNDER DECISION",
+      "wave": 4,
+      "options": [
+        {
+          "key": "1",
+          "label": "Subscribers + anyone who buys credits may use purchased credits; BLACK gets no free monthly; bonus credit = one paid-credit grant"
+        },
+        {
+          "key": "2",
+          "label": "Subscribers only; disable purchase for others"
+        },
+        {
+          "key": "3",
+          "label": "Also give BLACK the monthly free analysis"
+        }
+      ],
+      "recommendation": "1",
+      "v2RecommendationStatus": "NARROWED",
+      "proposedDisposition": "Established: 1 free per month for 3/6/12-month members; paid 1=$20, 4=$60. Founder decides non-subscriber use, BLACK spend tier, bonus-credit grant path.",
+      "state": "RECOMMENDED",
+      "founderSelection": null,
+      "note": "",
+      "decidedBy": null,
+      "decidedAt": null,
+      "implementationGate": "S5"
+    },
+    {
+      "id": "B2",
+      "origin": "V2 (doc 16)",
+      "group": "B. Customer architecture",
+      "subject": "MY HAIR as its own family (profile, analyses, builds)",
+      "classification": "TRUE FOUNDER DECISION",
+      "wave": 5,
+      "options": [
+        {
+          "key": "1",
+          "label": "Own family /account/hair with 3 tabs + analysis detail route"
+        },
+        {
+          "key": "2",
+          "label": "Split: analyses under Rewards, builds under Wishlist"
+        }
+      ],
+      "recommendation": "1",
+      "v2RecommendationStatus": "NARROWED",
+      "proposedDisposition": "Founder decides MY HAIR as a MOBILE family. Desktop/tablet already has a Penthouse Analysis Lab room; its account-history presentation belongs to XD-1.",
+      "state": "RECOMMENDED",
+      "founderSelection": null,
+      "note": "",
+      "decidedBy": null,
+      "decidedAt": null,
+      "implementationGate": "S5"
+    },
+    {
+      "id": "B3",
+      "origin": "V2 (doc 16)",
+      "group": "B. Customer architecture",
+      "subject": "Concierge scope",
+      "classification": "TRUE FOUNDER DECISION",
+      "wave": 5,
+      "options": [
+        {
+          "key": "1",
+          "label": "Premium-only page: messages (with replies), offers, orders-in-progress links, gifts; tracking → order detail"
+        },
+        {
+          "key": "2",
+          "label": "Keep as is"
+        }
+      ],
+      "recommendation": "1",
+      "v2RecommendationStatus": "RETAINED",
+      "proposedDisposition": "Founder decides Concierge contents. Established: Concierge is premium-only (code conflicts: route open to non-premium).",
+      "state": "RECOMMENDED",
+      "founderSelection": null,
+      "note": "",
+      "decidedBy": null,
+      "decidedAt": null,
+      "implementationGate": "S2"
+    },
+    {
+      "id": "B7",
+      "origin": "V2 (doc 16)",
+      "group": "B. Customer architecture",
+      "subject": "Support for all members (MY REQUESTS + replies)",
+      "classification": "TRUE FOUNDER DECISION",
+      "wave": 5,
+      "options": [
+        {
+          "key": "1",
+          "label": "support_requests threads for everyone; premium keeps priority routing"
+        },
+        {
+          "key": "2",
+          "label": "Premium-only replies"
+        }
+      ],
+      "recommendation": "1",
+      "v2RecommendationStatus": "RETAINED",
+      "proposedDisposition": "Founder decides two-way support for all members. Established: priority messages are a 6/12-month perk.",
+      "state": "RECOMMENDED",
+      "founderSelection": null,
+      "note": "",
+      "decidedBy": null,
+      "decidedAt": null,
+      "implementationGate": "S6"
+    },
+    {
+      "id": "B8",
+      "origin": "V2 (doc 16)",
+      "group": "B. Customer architecture",
+      "subject": "Navigation labels (creative)",
+      "classification": "TRUE FOUNDER DECISION",
+      "wave": 5,
+      "options": [
+        {
+          "key": "1",
+          "label": "Use proposed labels"
+        },
+        {
+          "key": "2",
+          "label": "Founder wording (note it)"
+        }
+      ],
+      "recommendation": "1",
+      "v2RecommendationStatus": "RETAINED",
+      "proposedDisposition": "Founder approves navigation labels (mobile).",
+      "state": "RECOMMENDED",
+      "founderSelection": null,
+      "note": "",
+      "decidedBy": null,
+      "decidedAt": null,
+      "implementationGate": "S2"
+    },
+    {
+      "id": "C3",
+      "origin": "V2 (doc 16)",
+      "group": "C. Admin architecture",
+      "subject": "Command Center content",
+      "classification": "TRUE FOUNDER DECISION",
+      "wave": 5,
+      "options": [
+        {
+          "key": "1",
+          "label": "Queues first (forms, ready to ship, delayed, approvals, inbox, meetings, offers expiring, low stock) + system alerts + 4 metrics"
+        },
+        {
+          "key": "2",
+          "label": "Keep cards, remove fake numbers"
+        }
+      ],
+      "recommendation": "1",
+      "v2RecommendationStatus": "NARROWED",
+      "proposedDisposition": "Removing fabricated numbers is an engineering default (S0B-2 #8, no layout change). Founder decides which queues/metrics the Command Center shows.",
+      "state": "RECOMMENDED",
+      "founderSelection": null,
+      "note": "",
+      "decidedBy": null,
+      "decidedAt": null,
+      "implementationGate": "S3"
+    },
+    {
+      "id": "E3",
+      "origin": "V2 (doc 16)",
+      "group": "E. Hair Analysis/Build-A-Wig",
+      "subject": "Selfie consent, retention and deletion",
+      "classification": "TRUE FOUNDER DECISION",
+      "wave": 5,
+      "options": [
+        {
+          "key": "1",
+          "label": "Founder-approved consent text; private storage; retention N days (founder sets); delete on request and account deletion"
+        }
+      ],
+      "recommendation": "1",
+      "v2RecommendationStatus": "RETAINED",
+      "proposedDisposition": "Founder (with counsel) approves selfie consent wording, retention and deletion.",
+      "state": "RECOMMENDED",
+      "founderSelection": null,
+      "note": "",
+      "decidedBy": null,
+      "decidedAt": null,
+      "implementationGate": "S5"
+    },
+    {
+      "id": "F2",
+      "origin": "V2 (doc 16)",
+      "group": "F. Community/affiliate",
+      "subject": "UGC consent, usage rights and retention wording",
+      "classification": "TRUE FOUNDER DECISION",
+      "wave": 5,
+      "options": [
+        {
+          "key": "1",
+          "label": "Founder supplies wording (or approves a drafted version reviewed by counsel)"
+        }
+      ],
+      "recommendation": "1",
+      "v2RecommendationStatus": "RETAINED",
+      "proposedDisposition": "Founder (with counsel) approves UGC consent and usage-rights wording.",
+      "state": "RECOMMENDED",
+      "founderSelection": null,
+      "note": "",
+      "decidedBy": null,
+      "decidedAt": null,
+      "implementationGate": "S5"
+    },
+    {
+      "id": "F4",
+      "origin": "V2 (doc 16)",
+      "group": "F. Community/affiliate",
+      "subject": "Slay MVP selection and reward",
+      "classification": "TRUE FOUNDER DECISION",
+      "wave": 5,
+      "options": [
+        {
+          "key": "1",
+          "label": "Admin picks MVP per period; reward defined by founder"
+        },
+        {
+          "key": "2",
+          "label": "No MVP"
+        }
+      ],
+      "recommendation": "1",
+      "v2RecommendationStatus": "NARROWED",
+      "proposedDisposition": "Established: a Slay MVP exists. Founder decides selection, cadence and reward.",
+      "state": "RECOMMENDED",
+      "founderSelection": null,
+      "note": "",
+      "decidedBy": null,
+      "decidedAt": null,
+      "implementationGate": "S5"
+    },
+    {
+      "id": "F5",
+      "origin": "V2 (doc 16)",
+      "group": "F. Community/affiliate",
+      "subject": "Lounge comment moderation",
+      "classification": "TRUE FOUNDER DECISION",
+      "wave": 5,
+      "options": [
+        {
+          "key": "1",
+          "label": "Keep live posting; auto-hide at N unique reports (founder sets N); admin queue"
+        },
+        {
+          "key": "2",
+          "label": "Pre-moderate all comments"
+        }
+      ],
+      "recommendation": "1",
+      "v2RecommendationStatus": "RETAINED",
+      "proposedDisposition": "Founder sets community moderation policy and report threshold.",
+      "state": "RECOMMENDED",
+      "founderSelection": null,
+      "note": "",
+      "decidedBy": null,
+      "decidedAt": null,
+      "implementationGate": "S5"
+    },
+    {
+      "id": "G2",
+      "origin": "V2 (doc 16)",
+      "group": "G. Visual/responsive",
+      "subject": "Admin menu drawer",
+      "classification": "TRUE FOUNDER DECISION",
+      "wave": 5,
+      "options": [
+        {
+          "key": "1",
+          "label": "Hamburger drawer in AdminHeader using the existing menu-toggle card pattern"
+        },
+        {
+          "key": "2",
+          "label": "Persistent side rail ≥1024px"
+        }
+      ],
+      "recommendation": "1",
+      "v2RecommendationStatus": "RETAINED",
+      "proposedDisposition": "Founder approves any admin navigation change (drawer/rail).",
+      "state": "RECOMMENDED",
+      "founderSelection": null,
+      "note": "",
+      "decidedBy": null,
+      "decidedAt": null,
+      "implementationGate": "S3"
+    },
+    {
+      "id": "G3",
+      "origin": "V2 (doc 16)",
+      "group": "G. Visual/responsive",
+      "subject": "Admin wide shell and Command Center layout",
+      "classification": "TRUE FOUNDER DECISION",
+      "wave": 5,
+      "options": [
+        {
+          "key": "1",
+          "label": "448 phone · 720 tablet · 1280 desktop shell on marble, glass panels"
+        },
+        {
+          "key": "2",
+          "label": "Keep 448 everywhere"
+        }
+      ],
+      "recommendation": "1",
+      "v2RecommendationStatus": "RETAINED",
+      "proposedDisposition": "Founder approves any admin width change.",
+      "state": "RECOMMENDED",
+      "founderSelection": null,
+      "note": "",
+      "decidedBy": null,
+      "decidedAt": null,
+      "implementationGate": "S3"
+    },
+    {
+      "id": "G4",
+      "origin": "V2 (doc 16)",
+      "group": "G. Visual/responsive",
+      "subject": "Account Overview status panels and MY HAIR page visuals",
+      "classification": "TRUE FOUNDER DECISION",
+      "wave": 5,
+      "options": [
+        {
+          "key": "1",
+          "label": "Approve panels in the existing glass card language (screenshot review in S2)"
+        }
+      ],
+      "recommendation": "1",
+      "v2RecommendationStatus": "NARROWED",
+      "proposedDisposition": "Mobile-only: status panels on the mobile /account hub and MY HAIR visuals. The Penthouse Suite keeps its own design.",
+      "state": "RECOMMENDED",
+      "founderSelection": null,
+      "note": "",
+      "decidedBy": null,
+      "decidedAt": null,
+      "implementationGate": "S2/S5"
+    },
+    {
+      "id": "G5",
+      "origin": "V2 (doc 16)",
+      "group": "G. Visual/responsive",
+      "subject": "Trend Desk and PSA Broadcast re-skin",
+      "classification": "TRUE FOUNDER DECISION",
+      "wave": 5,
+      "options": [
+        {
+          "key": "1",
+          "label": "Re-skin onto marble/glass admin shell"
+        },
+        {
+          "key": "2",
+          "label": "Keep dark (intentional studio look)"
+        }
+      ],
+      "recommendation": "1",
+      "v2RecommendationStatus": "RETAINED",
+      "proposedDisposition": "Founder decides Trend Desk / PSA Broadcast visual treatment.",
+      "state": "RECOMMENDED",
+      "founderSelection": null,
+      "note": "",
+      "decidedBy": null,
+      "decidedAt": null,
+      "implementationGate": "S6"
+    },
+    {
+      "id": "G6",
+      "origin": "V2 (doc 16)",
+      "group": "G. Visual/responsive",
+      "subject": "Certification collectible art",
+      "classification": "TRUE FOUNDER DECISION",
+      "wave": 5,
+      "options": [
+        {
+          "key": "1",
+          "label": "Commission art in the existing collectible style"
+        },
+        {
+          "key": "2",
+          "label": "Keep placeholder"
+        }
+      ],
+      "recommendation": "2",
+      "v2RecommendationStatus": "RETAINED",
+      "proposedDisposition": "Founder decides whether to commission certification collectible art or keep the placeholder. No art is generated by engineering.",
+      "state": "RECOMMENDED",
+      "founderSelection": null,
+      "note": "",
+      "decidedBy": null,
+      "decidedAt": null,
+      "implementationGate": "—"
+    },
+    {
+      "id": "H1",
+      "origin": "V2 (doc 16)",
+      "group": "H. Launch readiness",
+      "subject": "Launch definition",
+      "classification": "TRUE FOUNDER DECISION",
+      "wave": 5,
+      "options": [
+        {
+          "key": "1",
+          "label": "Launch-critical = P0A + P0B + S2 + S3 + S4 at H (verified) with doc 19 launch rows passing; S5/S6 may follow"
+        },
+        {
+          "key": "2",
+          "label": "Everything through S6 verified"
+        }
+      ],
+      "recommendation": "1",
+      "v2RecommendationStatus": "RETAINED",
+      "proposedDisposition": "Founder defines launch scope — now per experience (mobile, desktop/tablet, admin).",
+      "state": "RECOMMENDED",
+      "founderSelection": null,
+      "note": "",
+      "decidedBy": null,
+      "decidedAt": null,
+      "implementationGate": "S7"
+    },
+    {
+      "id": "A9",
+      "origin": "V2 (doc 16)",
+      "group": "A. Security/payment",
+      "subject": "Approve the additive schema plan (orders first)",
+      "classification": "ENGINEERING DEFAULT",
+      "wave": 0,
+      "options": [
+        {
+          "key": "1",
+          "label": "Approve S1 tables now (customer_orders, items, status events, webhook events); later tables per sprint"
+        },
+        {
+          "key": "2",
+          "label": "Approve all at once"
+        },
+        {
+          "key": "3",
+          "label": "Defer"
+        }
+      ],
+      "recommendation": "1",
+      "v2RecommendationStatus": "RETAINED",
+      "proposedDisposition": "Engineering default: additive order-of-record schema (S1).",
+      "state": "RECOMMENDED",
+      "founderSelection": null,
+      "note": "",
+      "decidedBy": null,
+      "decidedAt": null,
+      "implementationGate": "S1"
+    },
+    {
+      "id": "D10",
+      "origin": "V2 (doc 16)",
+      "group": "D. Membership/rewards",
+      "subject": "Unknown premium tier default",
+      "classification": "ENGINEERING DEFAULT",
+      "wave": 0,
+      "options": [
+        {
+          "key": "1",
+          "label": "Default to 3-month privileges"
+        },
+        {
+          "key": "2",
+          "label": "Keep 12-month"
+        }
+      ],
+      "recommendation": "1",
+      "v2RecommendationStatus": "RETAINED",
+      "proposedDisposition": "Engineering default: an unknown tier fails closed (least privilege), never defaults to 12-month privileges.",
+      "state": "RECOMMENDED",
+      "founderSelection": null,
+      "note": "",
+      "decidedBy": null,
+      "decidedAt": null,
+      "implementationGate": "S4"
+    },
+    {
+      "id": "E5",
+      "origin": "V2 (doc 16)",
+      "group": "E. Hair Analysis/Build-A-Wig",
+      "subject": "Build-A-Wig price catalogue ownership",
+      "classification": "ENGINEERING DEFAULT",
+      "wave": 0,
+      "options": [
+        {
+          "key": "1",
+          "label": "Code-defined single catalogue with an admin read view; changes by release"
+        },
+        {
+          "key": "2",
+          "label": "Admin-editable catalogue table (founder approves price changes)"
+        }
+      ],
+      "recommendation": "1",
+      "v2RecommendationStatus": "RETAINED",
+      "proposedDisposition": "Engineering default: one code-defined BAW catalogue used by client and server (S1B). An admin price editor would be a later product decision.",
+      "state": "RECOMMENDED",
+      "founderSelection": null,
+      "note": "",
+      "decidedBy": null,
+      "decidedAt": null,
+      "implementationGate": "S1B"
+    },
+    {
+      "id": "B4",
+      "origin": "V2 (doc 16)",
+      "group": "B. Customer architecture",
+      "subject": "Where Slay Challenge lives",
+      "classification": "ALREADY ESTABLISHED",
+      "wave": 0,
+      "options": [
+        {
+          "key": "1",
+          "label": "REWARDS › SLAY CHALLENGE tab"
+        },
+        {
+          "key": "2",
+          "label": "Stay in Concierge"
+        }
+      ],
+      "recommendation": "1",
+      "v2RecommendationStatus": "WITHDRAWN",
+      "proposedDisposition": "Slay Challenge (and Quests) stay in Concierge. V2 recommendation to move them to Rewards is withdrawn; a move would be a founder reversal.",
+      "state": "RECOMMENDED",
+      "founderSelection": null,
+      "note": "",
+      "decidedBy": null,
+      "decidedAt": null,
+      "implementationGate": "S4"
+    },
+    {
+      "id": "B5",
+      "origin": "V2 (doc 16)",
+      "group": "B. Customer architecture",
+      "subject": "/account on tablet/desktop",
+      "classification": "ALREADY ESTABLISHED",
+      "wave": 0,
+      "options": [
+        {
+          "key": "1",
+          "label": "Keep the Penthouse redirect, but it must read /api/account/overview so numbers match"
+        },
+        {
+          "key": "2",
+          "label": "Pause redirect until desktop phase; centred 720px account column"
+        }
+      ],
+      "recommendation": "1",
+      "v2RecommendationStatus": "SUPERSEDED",
+      "proposedDisposition": "≥768px /account → /desktop/account (Penthouse Suite) stays. The \"pause redirect / 720px column\" options are withdrawn. Data parity (one server source) is engineering.",
+      "state": "RECOMMENDED",
+      "founderSelection": null,
+      "note": "",
+      "decidedBy": null,
+      "decidedAt": null,
+      "implementationGate": "S2"
+    },
+    {
+      "id": "B6",
+      "origin": "V2 (doc 16)",
+      "group": "B. Customer architecture",
+      "subject": "Mobile Mansion /mobile/* placeholder pages",
+      "classification": "ALREADY ESTABLISHED",
+      "wave": 0,
+      "options": [
+        {
+          "key": "1",
+          "label": "Keep unlinked and out of the account tree until a dedicated creative sprint"
+        },
+        {
+          "key": "2",
+          "label": "Remove routes"
+        },
+        {
+          "key": "3",
+          "label": "Make it the mobile home now"
+        }
+      ],
+      "recommendation": "1",
+      "v2RecommendationStatus": "RETAINED",
+      "proposedDisposition": "Mobile Mansion /mobile/* stays a foundation-only, unlinked prototype. Guarding routes and the Playfair token are engineering hygiene.",
+      "state": "RECOMMENDED",
+      "founderSelection": null,
+      "note": "",
+      "decidedBy": null,
+      "decidedAt": null,
+      "implementationGate": "—"
+    },
+    {
+      "id": "C5",
+      "origin": "V2 (doc 16)",
+      "group": "C. Admin architecture",
+      "subject": "Studio OS boundary",
+      "classification": "ALREADY ESTABLISHED",
+      "wave": 0,
+      "options": [
+        {
+          "key": "1",
+          "label": "Single STUDIO link in the admin menu; no Studio/SITE00 modules in FS admin"
+        },
+        {
+          "key": "2",
+          "label": "Keep cards"
+        }
+      ],
+      "recommendation": "1",
+      "v2RecommendationStatus": "WITHDRAWN",
+      "proposedDisposition": "Studio Command Center and Headquarters cards stay on the FS admin dashboard until Command Center moves to its own routes. V2 option 1 withdrawn.",
+      "state": "RECOMMENDED",
+      "founderSelection": null,
+      "note": "",
+      "decidedBy": null,
+      "decidedAt": null,
+      "implementationGate": "—"
+    },
+    {
+      "id": "D1",
+      "origin": "V2 (doc 16)",
+      "group": "D. Membership/rewards",
+      "subject": "Slay Challenge requirement and reveal model",
+      "classification": "ALREADY ESTABLISHED",
+      "wave": 0,
+      "options": [
+        {
+          "key": "1",
+          "label": "Keep 4 tiers; reveal phase = share of the tier's own required count (phase 2 at ≥75%, phase 3 at 100%)"
+        },
+        {
+          "key": "2",
+          "label": "Adopt 3 requirements per reward (rewrite tiers to 3 tasks)"
+        },
+        {
+          "key": "3",
+          "label": "Other (founder specifies)"
+        }
+      ],
+      "recommendation": "1",
+      "v2RecommendationStatus": "RETAINED",
+      "proposedDisposition": "4 tiers (5/7, 4/7, 5/9, 6/9), choose 1 of 2, 3 phases with phase 2 at 75%, no new art. Code conflicts (totalRequirements=3; 67%) are engineering fixes.",
+      "state": "RECOMMENDED",
+      "founderSelection": null,
+      "note": "",
+      "decidedBy": null,
+      "decidedAt": null,
+      "implementationGate": "S4"
+    },
+    {
+      "id": "D2",
+      "origin": "V2 (doc 16)",
+      "group": "D. Membership/rewards",
+      "subject": "Benefit eligibility conflicts",
+      "classification": "ALREADY ESTABLISHED",
+      "wave": 0,
+      "options": [
+        {
+          "key": "1",
+          "label": "Follow the published benefit list (special offers 12; challenges all premium; live tracking 3+)"
+        },
+        {
+          "key": "2",
+          "label": "Follow current code gates; update copy"
+        }
+      ],
+      "recommendation": "1",
+      "v2RecommendationStatus": "RETAINED",
+      "proposedDisposition": "Challenges for all premium; special offers 12-month only; live order tracking from 3 months. Code conflicts (psaFeatureGates.ts:14-16, concierge/page.tsx:1727) are engineering fixes.",
+      "state": "RECOMMENDED",
+      "founderSelection": null,
+      "note": "",
+      "decidedBy": null,
+      "decidedAt": null,
+      "implementationGate": "S4"
+    },
+    {
+      "id": "D4",
+      "origin": "V2 (doc 16)",
+      "group": "D. Membership/rewards",
+      "subject": "Purchase points formula",
+      "classification": "ALREADY ESTABLISHED",
+      "wave": 0,
+      "options": [
+        {
+          "key": "1",
+          "label": "Eligible net × multiplier (checkout rule) everywhere"
+        },
+        {
+          "key": "2",
+          "label": "Order total 1:1"
+        }
+      ],
+      "recommendation": "1",
+      "v2RecommendationStatus": "RETAINED",
+      "proposedDisposition": "Multipliers apply to eligible purchases (eligible net × multiplier; 12-month 2X overrides). Base rate 1 point/$1 exists only in code: one-line founder confirmation optional.",
+      "state": "RECOMMENDED",
+      "founderSelection": null,
+      "note": "",
+      "decidedBy": null,
+      "decidedAt": null,
+      "implementationGate": "S4"
+    },
+    {
+      "id": "E4",
+      "origin": "V2 (doc 16)",
+      "group": "E. Hair Analysis/Build-A-Wig",
+      "subject": "Edit-from-cart gate",
+      "classification": "ALREADY ESTABLISHED",
+      "wave": 0,
+      "options": [
+        {
+          "key": "1",
+          "label": "Sign-in only (canon); premium-only options stay gated"
+        },
+        {
+          "key": "2",
+          "label": "Premium only"
+        }
+      ],
+      "recommendation": "1",
+      "v2RecommendationStatus": "WITHDRAWN",
+      "proposedDisposition": "Edit-from-cart is premium-only (latest founder directive). V2 option 1 withdrawn; CORE.md:50 is stale (doc fix).",
+      "state": "RECOMMENDED",
+      "founderSelection": null,
+      "note": "",
+      "decidedBy": null,
+      "decidedAt": null,
+      "implementationGate": "S1B"
+    },
+    {
+      "id": "E6",
+      "origin": "V2 (doc 16)",
+      "group": "E. Hair Analysis/Build-A-Wig",
+      "subject": "Asynchronous deliverables (PSA picks, consult add-on)",
+      "classification": "ALREADY ESTABLISHED",
+      "wave": 0,
+      "options": [
+        {
+          "key": "1",
+          "label": "Store and deliver automatically (PSA picks immediately; consult add-on generated and reviewed by admin before release within 24h)"
+        },
+        {
+          "key": "2",
+          "label": "Remove the 24h promise / add-on until built"
+        }
+      ],
+      "recommendation": "1",
+      "v2RecommendationStatus": "WITHDRAWN",
+      "proposedDisposition": "PSA hair analysis keeps the 24-hour delivery promise; engineering builds the delivery. V2 options that removed or replaced the promise are withdrawn.",
+      "state": "RECOMMENDED",
+      "founderSelection": null,
+      "note": "",
+      "decidedBy": null,
+      "decidedAt": null,
+      "implementationGate": "S5"
+    },
+    {
+      "id": "F3",
+      "origin": "V2 (doc 16)",
+      "group": "F. Community/affiliate",
+      "subject": "Public review display",
+      "classification": "ALREADY ESTABLISHED",
+      "wave": 0,
+      "options": [
+        {
+          "key": "1",
+          "label": "Show approved, consented reviews on product pages and /brand/reviews"
+        },
+        {
+          "key": "2",
+          "label": "Keep private"
+        }
+      ],
+      "recommendation": "1",
+      "v2RecommendationStatus": "RETAINED",
+      "proposedDisposition": "Reviews will be shown publicly on PDPs and /brand/reviews; publication waits on F2 consent.",
+      "state": "RECOMMENDED",
+      "founderSelection": null,
+      "note": "",
+      "decidedBy": null,
+      "decidedAt": null,
+      "implementationGate": "S5"
+    },
+    {
+      "id": "G1",
+      "origin": "V2 (doc 16)",
+      "group": "G. Visual/responsive",
+      "subject": "Account desktop column widths",
+      "classification": "ALREADY ESTABLISHED",
+      "wave": 0,
+      "options": [
+        {
+          "key": "1",
+          "label": "Centred 720px (forms) / 960px (lists) column on marble; optional side rail later"
+        },
+        {
+          "key": "2",
+          "label": "Founder-specified widths"
+        }
+      ],
+      "recommendation": "1",
+      "v2RecommendationStatus": "SUPERSEDED",
+      "proposedDisposition": "Moot: ≥768px customers are in the desktop/tablet experience. No 720/960 widened mobile column. Residual question moved to XD-1.",
+      "state": "RECOMMENDED",
+      "founderSelection": null,
+      "note": "",
+      "decidedBy": null,
+      "decidedAt": null,
+      "implementationGate": "—"
+    },
+    {
+      "id": "D14",
+      "origin": "Audit FD-A5 (not carried into V2)",
+      "group": "D. Membership/rewards",
+      "subject": "Slay Quests show hardcoded progress",
+      "classification": "ALREADY ESTABLISHED",
+      "wave": 0,
+      "options": [
+        {
+          "key": "1",
+          "label": "Show real progress or an accurate empty state"
+        },
+        {
+          "key": "2",
+          "label": "Hide quests until real"
+        }
+      ],
+      "recommendation": "1",
+      "v2RecommendationStatus": "RETAINED",
+      "proposedDisposition": "No fabricated progress (this brief: accurate empty states over fabricated records). Engineering chooses empty state vs hide by data availability.",
+      "state": "RECOMMENDED",
+      "founderSelection": null,
+      "note": "",
+      "decidedBy": null,
+      "decidedAt": null,
+      "implementationGate": "S0B-2/S4"
+    },
+    {
+      "id": "D15",
+      "origin": "Audit FD-R4 (not carried into V2)",
+      "group": "D. Membership/rewards",
+      "subject": "Slay Challenge selection window and server-side reward options",
+      "classification": "TRUE FOUNDER DECISION",
+      "wave": 4,
+      "options": [
+        {
+          "key": "1",
+          "label": "Server picks the 2 options per user per tier; selection open for the cycle"
+        },
+        {
+          "key": "2",
+          "label": "Keep a last-3-days selection window"
+        }
+      ],
+      "recommendation": "1",
+      "v2RecommendationStatus": "RETAINED",
+      "proposedDisposition": "Founder decides the selection window. Moving option generation to the server is an engineering default (cross-experience consistency).",
+      "state": "RECOMMENDED",
+      "founderSelection": null,
+      "note": "",
+      "decidedBy": null,
+      "decidedAt": null,
+      "implementationGate": "S4"
+    },
+    {
+      "id": "D16",
+      "origin": "Audit FD-R12 (not carried into V2)",
+      "group": "D. Membership/rewards",
+      "subject": "Vouchers wiped for real customers; which events issue vouchers",
+      "classification": "ENGINEERING DEFAULT",
+      "wave": 0,
+      "options": [
+        {
+          "key": "1",
+          "label": "Stop the wipe now; define issuance events under D3/D9"
+        }
+      ],
+      "recommendation": "1",
+      "v2RecommendationStatus": "RETAINED",
+      "proposedDisposition": "Engineering default: stop the wipe (defect). Issuance events are decided inside D3/D9. Voucher validity (6 months from redemption) is established founder copy.",
+      "state": "RECOMMENDED",
+      "founderSelection": null,
+      "note": "",
+      "decidedBy": null,
+      "decidedAt": null,
+      "implementationGate": "S0B-2"
+    },
+    {
+      "id": "XD-1",
+      "origin": "NEW (S0A experience correction)",
+      "group": "X. Experience authority",
+      "subject": "How desktop/tablet customers reach account capabilities that have no desktop presentation today",
+      "classification": "TRUE FOUNDER DECISION",
+      "wave": 3,
+      "options": [
+        {
+          "key": "1",
+          "label": "Keep the hand-off to mobile pages as an explicit INTERIM, and design desktop/tablet presentations capability by capability in the Tower language (each approved separately)"
+        },
+        {
+          "key": "2",
+          "label": "Design desktop/tablet presentations for all hand-off capabilities before any further account work"
+        },
+        {
+          "key": "3",
+          "label": "Accept mobile pages as the permanent desktop/tablet presentation for these capabilities"
+        }
+      ],
+      "recommendation": "1",
+      "v2RecommendationStatus": "—",
+      "proposedDisposition": "Founder decides. Recommendation option 1, capability order: orders/order detail, rewards/membership, settings.",
+      "state": "RECOMMENDED",
+      "founderSelection": null,
+      "note": "",
+      "decidedBy": null,
+      "decidedAt": null,
+      "implementationGate": "S2+"
+    },
+    {
+      "id": "XD-2",
+      "origin": "NEW (S0A experience correction)",
+      "group": "X. Experience authority",
+      "subject": "Tablet (768–1023px) experience authority",
+      "classification": "TRUE FOUNDER DECISION",
+      "wave": 3,
+      "options": [
+        {
+          "key": "1",
+          "label": "Tablet = desktop/tablet experience everywhere (one 768px threshold)"
+        },
+        {
+          "key": "2",
+          "label": "Tablet = mobile everywhere (one 1024px threshold)"
+        },
+        {
+          "key": "3",
+          "label": "Keep the current split"
+        }
+      ],
+      "recommendation": "1",
+      "v2RecommendationStatus": "—",
+      "proposedDisposition": "Founder decides. Recommendation option 1 (matches the latest tablet directives).",
+      "state": "RECOMMENDED",
+      "founderSelection": null,
+      "note": "",
+      "decidedBy": null,
+      "decidedAt": null,
+      "implementationGate": "S2"
+    },
+    {
+      "id": "XD-3",
+      "origin": "NEW (S0A experience correction)",
+      "group": "X. Experience authority",
+      "subject": "Is the desktop/tablet Tower live on the production domain?",
+      "classification": "BLOCKED BY MISSING EVIDENCE",
+      "wave": 3,
+      "options": [
+        {
+          "key": "1",
+          "label": "Confirm desktop/tablet is live (current behaviour)"
+        },
+        {
+          "key": "2",
+          "label": "Gate desktop to staging/preview until launch"
+        }
+      ],
+      "recommendation": "—",
+      "v2RecommendationStatus": "—",
+      "proposedDisposition": "Blocked by evidence: which domain serves production (doc 12 A5) and what production visitors at ≥1024px see today.",
+      "state": "BLOCKED",
+      "founderSelection": null,
+      "note": "",
+      "decidedBy": null,
+      "decidedAt": null,
+      "implementationGate": "H1"
+    }
+  ]
+}
